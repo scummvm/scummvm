@@ -1432,68 +1432,52 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 }
 
 void SimonState::o_unk_127() {
-	int a = getVarOrWord();
-	int b = getVarOrWord();
+	int music = getVarOrWord();
+	int track = getVarOrWord();
 
+	// Jamieson630:
+	// This appears to be a "load or play music" command.
+	// The music resource is specified, and optionally
+	// a track as well. Normally we see two calls being
+	// made, one to load the resource and another to
+	// actually start a track (so the resource is
+	// effectively preloaded so there's no latency when
+	// starting playback).
 	if (_game & GF_SIMON2) {
-		uint c = getVarOrByte();
+		int play = getVarOrByte();
 
-		if (_debugMode)
-			warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
+		if (_debugMod)
+			debug (0, "o_unk_127 (%d, %d, %d);", music, track, play);
 
-		if (_last_music_played != a) {
-			if (b == 999) {
-//				_next_music_to_play = a;
-				playMusic (a);
-				_last_music_played = a;
-				// midi_play (0);
-			}
+		if (_last_music_played != music) {
+			playMusic (music);
+			_last_music_played = music;
+			_next_music_to_play = -1;
+			_vc72_var1 = _vc72_var2 = _vc72_var3 = -1;
 		}
 
-		if (b == _vc72_var1 || b == 999)
+		if (track == _vc72_var1 || track == 999)
 			return;
 
-		if (_vc72_var1 == -1 || _vc72_var1 == 999) {
-			_vc70_var2 = c;
-			_vc70_var1 = -1;
-			_vc72_var3 = -1;
-			midi_play (b);
-			_vc72_var1 = b;
-		} else {
-			midi_play (b);
-//			_vc72_var3 = b;
-//			_vc72_var2 = c;
-		}
-/*
-		if (_last_music_played == a) {
-			if (b == _vc72_var1 || b == 999) 
-				return;
+		_vc72_var1 = track;
+		_vc70_var2 = -1;
+		_vc72_var3 = -1;
+		midi_play (track);
 
-			//FIXME Changed if to allow midi jumping to work for now.
-			if (b != 1)  {
-				_vc70_var2 = c;
-				_vc70_var1 = -1;
-				_vc72_var3 = -1;
-				_next_music_to_play = -1;
-				midi_play(b);
-				_vc72_var1 = b;
-			} else {
-				//FIXME This is another midi jump, not sure if variable order is correct.
-				_vc72_var3 = b;
-				_vc72_var2 = c;
-				midi.jump (b, c);
-			}
-		} else if (b == 999) {
-			// _next_music_to_play = a;
-			playMusic (a);
-			midi_play (b);
-		}
-*/
+		// FIXME: This doesn't seem to actually be a pause
+		// indicator. If it's interpreted as such, it spoils
+		// the music when Simon is exiting Calypso's shop
+		// during the opening cutscene. Let's see if it
+		// ever goes to anything besides 0 or 1.
+//		if (play == 0)
+//			midi.pause (true);
+		if (play != 0 && play != 1)
+			warning ("o_unk_127: play mode %d encountered!", play);
 	} else {
-		if (a != _last_music_played) {
-			_last_music_played = a;
-			playMusic(a);
-			midi_play (b);
+		if (music != _last_music_played) {
+			_last_music_played = music;
+			playMusic (music);
+			midi_play (track);
 		}
 	}
 }

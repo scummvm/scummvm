@@ -5280,12 +5280,7 @@ bool SimonState::load_game(uint slot) {
 void SimonState::midi_play (uint track) {
 	if (track == 999)
 		return;
-
-	if (_vc72_var1 == 999) {
-//		_midi_var11 = 0;
-		midi.jump (track, 0);
-//		_midi_var12 = 1;
-	}
+	midi.jump (track, 0);
 }
 
 

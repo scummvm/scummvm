@@ -1804,21 +1804,46 @@ void SimonState::vc_68_skip_if_le() {
 
 void SimonState::vc_69() {
 	// Simon2
-	uint16 a = vc_read_next_word();
-	uint16 b = vc_read_next_word();
+	int16 track = vc_read_next_word();
+	int16 paused = vc_read_next_word();
 
 	if (_debugMode)
-		warning("vc_69(%d,%d): music stuff?", a, b);
+		warning("vc_69(%d,%d): music stuff", track, paused);
 
-	if (_vc72_var1 == 999 || _vc72_var1 == -1) {
-		_vc70_var2 = b;
-		midi_play (a);
-		_vc72_var1 = a;
-	} else if (_vc72_var1 != a) {
-		_vc72_var3 = a;
-		_vc72_var2 = (a & 0xFF) << 8 | (a >> 8);
+	// Jamieson630:
+	// This is a "play or queue track". The original
+	// design stored the track to play if one was
+	// already in progress, so that the next time a
+	// "fill MIDI stream" event occured, the MIDI
+	// player would find the change and switch
+	// tracks. We use a different architecture that
+	// allows for an immediate response here, but
+	// we'll simulate the variable changes so other
+	// scripts don't get thrown off.
+	// NOTE: This opcode looks very similar in function
+	// to vc_72(), except that vc_72() may allow for
+	// specifying a non-valid track number (999 or -1)
+	// as a means of stopping what music is currently
+	// playing.
+	if (_vc72_var1 != track) {
+		midi_play (track);
+		if (paused)
+			midi.pause (true);
+		_vc72_var1 = track;
+		_vc72_var2 = -1; // (a & 0xFF) << 8 | (a >> 8);
+		_vc72_var3 = -1;
 	}
-
+/*
+	// ORIGINAL TRANSLATION FROM DISASSEMBLY
+	if (_vc72_var1 == 999 || _vc72_var1 == -1) {
+		_vc70_var2 = paused;
+		midi_play (track);
+		_vc72_var1 = track;
+	} else if (_vc72_var1 != track) {
+		_vc72_var3 = track;
+		_vc72_var2 = paused; // (a & 0xFF) << 8 | (a >> 8);
+	}
+*/
 }
 
 void SimonState::vc_70() {
@@ -1841,14 +1866,48 @@ void SimonState::vc_71() {
 
 void SimonState::vc_72() {
 	// Simon2
+	// Jamieson630:
+	// This is a "queue or stop track". The original
+	// design stored the track to play if one was
+	// already in progress, so that the next time a
+	// "fill MIDI stream" event occured, the MIDI
+	// player would find the change and switch
+	// tracks. We use a different architecture that
+	// allows for an immediate response here, but
+	// we'll simulate the variable changes so other
+	// scripts don't get thrown off.
+	// NOTE: This opcode looks very similar in function
+	// to vc_72(), except that this opcode may allow
+	// for specifying a track of 999 or -1 in order to
+	// stop the music. We'll code it that way for now.
+	int16 track = vc_read_next_word();
+	int16 paused = !vc_read_next_word();
+
+	if (_debugMode)
+		warning ("vc_72 (%d, %d): music stuff?", track, paused);
+
+	if (track != _vc72_var1) {
+		if (track == -1 || track == 999) {
+			midi.stop();
+			_vc72_var1 = -1;
+		} else {
+			midi_play (track);
+			if (paused)
+				midi.pause (true);
+			_vc72_var1 = track;
+			_vc72_var2 = paused;
+		}
+		_vc72_var3 = -1;
+	}
+/*
+	// ORIGINAL TRANSLATION FROM DISASSEMBLY
 	uint16 a = vc_read_next_word();
 	uint16 b = vc_read_next_word();
 	if (a != _vc72_var1) {
 		_vc72_var2 = b;
 		_vc72_var3 = a;
 	}
-
-	midi.jump (a, b);
+*/
 }
 
 void SimonState::vc_73_set_op189_flag() {
