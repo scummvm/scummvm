@@ -437,7 +437,7 @@ void OSystem_SDL_OpenGL::update_screen() {
 
 						dst_y *= _scaleFactor;
 
-						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch, NULL,
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
 			

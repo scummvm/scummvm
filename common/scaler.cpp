@@ -155,8 +155,7 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
 #define RED_MASK555 0x7C007C00
 #define GREEN_MASK555 0x03E003E0
 
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *bP;
 	uint8 *dP;
 	uint32 inc_bP;
@@ -268,13 +267,11 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
 
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
-			deltaPtr += srcPitch;
 		}														// while (height--)
 	}
 }
 
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
 	uint32 inc_bP;
@@ -387,13 +384,11 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
-			deltaPtr += srcPitch;
 		}														// endof: while (height--)
 	}
 }
 
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-						uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
 	uint32 inc_bP;
@@ -539,7 +534,6 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
-			deltaPtr += srcPitch;
 		}														// endof: while (height--)
 	}
 }
@@ -585,8 +579,10 @@ static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32
 	return (result & redblueMask) | ((result >> 16) & greenMask);
 }
 
-void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
-								 uint8 *dstPtr, uint32 dstPitch,
+// FIXME: Scale_2xSaI is not used anywhere; however, contrary to the _2xSaI function,
+// it seems to allow for arbitrary scale factors, not just 2x... hence I leave this in
+// for now, as that seems to be a very useful feature
+void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 								 uint32 dstWidth, uint32 dstHeight, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
@@ -717,7 +713,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 	}
 }
 
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
 	uint16 *p = (uint16 *)srcPtr;
@@ -750,7 +746,7 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 	}
 }
 
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	while (height--) {
 		memcpy(dstPtr, srcPtr, 2 * width);
@@ -759,7 +755,7 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 	}
 }
 
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 
@@ -778,7 +774,7 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 	}
 }
 
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	uint32 dstPitch2 = dstPitch * 2;
@@ -804,7 +800,7 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 	}
 }
 
-void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, 
+void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
 	uint16 *p = (uint16 *)srcPtr;
@@ -834,7 +830,7 @@ static inline uint16 DOT_16(uint16 c, int j, int i) {
   return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
 }
 
-void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
+void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height)
 {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);

@@ -22,24 +22,20 @@
 #define SCALER_H
 
 extern int Init_2xSaI (uint32 BitFormat);
-extern void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-						uint32 dstPitch, int width, int height);
-extern void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-extern void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
+#define DECLARE_SCALER(x)	\
+	extern void x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
+					uint32 dstPitch, int width, int height)
+
+DECLARE_SCALER(_2xSaI);
+DECLARE_SCALER(Super2xSaI);
+DECLARE_SCALER(SuperEagle);
+DECLARE_SCALER(AdvMame2x);
+DECLARE_SCALER(Normal1x);
+DECLARE_SCALER(Normal2x);
+DECLARE_SCALER(Normal3x);
+DECLARE_SCALER(TV2x);
+DECLARE_SCALER(DotMatrix);
 
 
 enum {
