@@ -377,6 +377,7 @@ protected:
 	void o6_pickVarRandom();
 	void o6_getDateTime();
 	void o6_unknownE0();
+	void o6_unknownE1();
 	void o6_unknownE4();
 	void o6_localizeArray();
 	void o6_shuffle();

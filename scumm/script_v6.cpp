@@ -323,7 +323,7 @@ void Scumm_v6::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E0 */
 		OPCODE(o6_unknownE0),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownE1),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
@@ -2920,6 +2920,39 @@ void Scumm_v6::o6_getDateTime() {
 	
 	if (_features & GF_AFTER_V8)
 		_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
+}
+
+void Scumm_v6::o6_unknownE1() {
+	// this opcode check ground area in minigame in the dig
+	int x = pop();
+	int y = pop();
+
+	if (x > _realWidth - 1) {
+		push(-1);
+		return;
+	}
+	if (x < 0) {
+		push(-1);
+		return;
+	}
+
+	if (y < 0) {
+		push(-1);
+		return;
+	}
+	
+	VirtScreen *vs = findVirtScreen(y);
+
+	if (vs == NULL) {
+		push(-1);
+		return;
+	}
+
+	// FIXME: something is wrong, it take wrong position or wrong buffer check
+	int offset = (y - vs->topline) * _realWidth + x + vs->tdirty[0];
+
+	byte area = *(getResourceAddress(rtBuffer, vs->number + 1) + offset);
+	push(area);
 }
 
 void Scumm_v6::o6_unknownE0() {
