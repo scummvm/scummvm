@@ -868,6 +868,8 @@ void Scumm::processActors()
 	// Make a list of all actors in this room
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
+		if ((_features & GF_AFTER_V8) && a->layer < 0)
+			continue;
 		if (a->isInCurrentRoom())
 			actors[numactors++] = a;
 	}
@@ -901,6 +903,23 @@ void Scumm::processActors()
 	}
 	
 	delete [] actors;
+}
+
+// Used in Scumm v8, to allow the verb coin to be drawn over the inventory
+// chest. I'm assuming that draw order won't matter here.
+void Scumm::processUpperActors()
+{
+	Actor *a;
+	int i;
+
+	for (i = 1; i < NUM_ACTORS; i++) {
+		a = derefActor(i);
+		if (a->isInCurrentRoom() && a->costume && a->layer < 0) {
+			CHECK_HEAP getMaskFromBox(a->walkbox);
+			a->drawActorCostume();
+			CHECK_HEAP a->animateCostume();
+		}
+	}
 }
 
 void Actor::drawActorCostume()

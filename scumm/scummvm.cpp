@@ -562,6 +562,8 @@ int Scumm::scummLoop(int delta)
 		}
 
 		drawBlastObjects();
+		if (_features & GF_AFTER_V8)
+			processUpperActors();
 		drawBlastTexts();
 		drawDirtyScreenParts();
 		removeBlastObjects();

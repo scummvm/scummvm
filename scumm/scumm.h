@@ -673,6 +673,7 @@ public:
 	void setActorRedrawFlags(bool fg, bool bg);
 	void resetActorBgs();
 	void processActors();
+	void processUpperActors();
 	int getActorFromPos(int x, int y);
 	void actorFollowCamera(int act);
 	
