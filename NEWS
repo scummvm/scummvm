@@ -29,12 +29,13 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
-   - Added initial INSANE support for Full Throttle 'action sequences'
+   - Added INSANE support for Full Throttle 'action sequences'
    - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
    - Added Adlib support for indy3ega and loom (ega)
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass
    - Added FM Towns targets for Loom and Indy3
+   - Added graphics decoders for 3DO Humongous Entertainment games
    - Rewrote in-game menu (F5) to be easier to use
    - Improved FM Towns SFX support (YM2612 emulation, looping)
    - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
