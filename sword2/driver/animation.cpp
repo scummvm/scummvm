@@ -51,7 +51,6 @@ AnimationState::~AnimationState() {
 
 bool AnimationState::init(const char *name) {
 #ifdef USE_MPEG2
-
 	char tempFile[512];
 
 	decoder = NULL;
@@ -131,12 +130,11 @@ bool AnimationState::init(const char *name) {
 	framenum = 0;
 	ticks = _vm->_system->get_msecs();
 
-	/* Play audio - TODO: Sync with video?*/
+	// Play audio
 
 #ifdef USE_VORBIS
-	// Another TODO: There is no reason that this only allows OGG, and not
-	// MP3, or any other format the mixer might support one day... is
-	// there?
+	// TODO: There is no reason that this only allows OGG, and not MP3, or
+	// any other format the mixer might support one day... is there?
 	sndfile = new File;
 	sprintf(tempFile, "%s.ogg", name);
 	if (sndfile->open(tempFile)) {
@@ -226,8 +224,9 @@ bool AnimationState::lookupInit = false;
 NewGuiColor AnimationState::lookup2[BITDEPTH * BITDEPTH * 256];
 
 void AnimationState::buildLookup2() {
+	if (lookupInit)
+		return;
 
-	if (lookupInit) return;
 	lookupInit = true;
 
 	int y, cb, cr;
@@ -237,16 +236,22 @@ void AnimationState::buildLookup2() {
 	for (cr = 0; cr < BITDEPTH; cr++) {
 		for (cb = 0; cb < BITDEPTH; cb++) {
 			for (y = 0; y < 256; y++) {
-				r = ((y-16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
-				g = ((y-16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
-				b = ((y-16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
+				r = ((y - 16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+				g = ((y - 16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+				b = ((y - 16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
 
-				if (r < 0) r = 0;
-				if (r > 255) r = 255;
-				if (g < 0) g = 0;
-				if (g > 255) g = 255;
-				if (b < 0) b = 0;
-				if (b > 255) b = 255;
+				if (r < 0)
+					r = 0;
+				if (r > 255)
+					r = 255;
+				if (g < 0)
+					g = 0;
+				if (g > 255)
+					g = 255;
+				if (b < 0)
+					b = 0;
+				if (b > 255)
+					b = 255;
 
 				lookup2[pos++] = _vm->_system->RGBToColor(r, g, b);
 			}
@@ -257,7 +262,7 @@ void AnimationState::buildLookup2() {
 
 void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
 
-	NewGuiColor *ptr = overlay + (400-height)/2 * 640 + (640-width)/2;
+	NewGuiColor *ptr = overlay + (400 - height) / 2 * 640 + (640 - width) / 2;
 
 	int x, y;
 
@@ -343,12 +348,12 @@ bool AnimationState::decodeFrame() {
 
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					(bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+					(bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < (framenum + 3)){
 
 					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						while ((bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < framenum + 1)
 							_vm->_system->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -358,7 +363,7 @@ bool AnimationState::decodeFrame() {
 					_vm->_graphics->setNeedFullRedraw();
 
 				} else
-					printf("dropped frame %i\n", framenum);
+					warning("dropped frame %i", framenum);
 
 				buildLookup(palnum + 1, lutcalcnum);
 
@@ -370,7 +375,7 @@ bool AnimationState::decodeFrame() {
 					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum + 1)
 							_vm->_system->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -378,7 +383,7 @@ bool AnimationState::decodeFrame() {
 					}
 
 				} else
-					printf("dropped frame %i\n", framenum);
+					warning("dropped frame %i", framenum);
 
 #endif
 
