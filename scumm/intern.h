@@ -846,10 +846,19 @@ protected:
 		const char *desc;
 	};
 
+	struct FloodState {
+		Common::Rect box;
+		int field_10;
+		int field_14;
+		int field_18;
+		int field_1C;
+	};
+
 	int _heObject, _heObjectNum;
 	int _hePaletteNum;
 	
 	const OpcodeEntryV90he *_opcodesV90he;
+	FloodState _floodState;
 	WizParameters _wizParams;
 
 	int _curMaxSpriteId;
@@ -995,7 +1004,7 @@ protected:
 	void o90_getSpriteGroupInfo();
 	void o90_setSpriteGroupInfo();
 	void o90_getWizData();
-	void o90_unknown2F();
+	void o90_floodState();
 	void o90_mod();
 	void o90_shl();
 	void o90_shr();

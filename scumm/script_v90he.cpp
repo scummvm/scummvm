@@ -99,7 +99,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_jumpToScriptUnk),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o90_unknown2F),
+		OPCODE(o90_floodState),
 		/* 30 */
 		OPCODE(o90_mod),
 		OPCODE(o90_shl),
@@ -1601,35 +1601,41 @@ void ScummEngine_v90he::o90_getWizData() {
 	}
 }
 
-void ScummEngine_v90he::o90_unknown2F() {
+void ScummEngine_v90he::o90_floodState() {
 	byte subOp = fetchScriptByte();
 	subOp -= 54;
 
 	switch (subOp) {
 	case 0:
-		pop();
+		_floodState.field_1C = pop();
 		break;
 	case 3:
+		//memset(_floodState, 0);
+		_floodState.box.left = 0;
+		_floodState.box.top = 0;
+		_floodState.box.right = 640;
+		_floodState.box.bottom = 480;
 		break;
 	case 11:
-		pop();
-		pop();
+		_floodState.field_14 = pop();
+		_floodState.field_10 = pop();
 		break;
 	case 12:
-		pop();
+		_floodState.field_18 = pop();
 		break;
 	case 13:
-		pop();
-		pop();
-		pop();
-		pop();
+		_floodState.box.bottom = pop();
+		_floodState.box.right = pop();
+		_floodState.box.top = pop();
+		_floodState.box.left = pop();
 		break;
 	case 201:
+		//floodState(_floodState);
 		break;
 	default:
-		error("o90_unknown2F: Unknown case %d", subOp);
+		error("o90_floodState: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown2F stub (%d)", subOp);
+	debug(1,"o90_floodState stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_shl() {
