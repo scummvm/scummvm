@@ -569,11 +569,11 @@ int Sound::isSoundRunning(int sound) {
 
 	// Check raw mixer channels, to make sure we're not playing an exotic
 	// sound type manually.
-        for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
-		if (_scumm->_mixer->_channels[i] && (_scumm->_mixer->_channels[i]->_id == sound)) {
-			return 1;
-                }
-        }
+		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+			if (_scumm->_mixer->_channels[i] && (_scumm->_mixer->_channels[i]->_id == sound)) {
+				return 1;
+			 }
+		}
 
 	se = _scumm->_imuse;
 	if (!se)
