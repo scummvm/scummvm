@@ -97,7 +97,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 
 	// Lines 906-? in talk.c
 	// XXX drawmouseflag=1;
-	int16 level=1, retval=0, type=1;
+	int16 level=1, retval=0;
 	int16 head = _dialogueTree[level][0].head;
 
 	// TODO: split this loop in several functions
@@ -309,20 +309,20 @@ void Talk::load(const char *filename) {
 
 	_uniqueKey            = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	_talkKey              = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 jMax            = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 jMax            =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
 	_pMax                 = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 gameState1      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 testValue1      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 itemToInsert1   = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 gameState2      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 testValue2      = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	int16 itemToInsert2   = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 gameState1      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 testValue1      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 itemToInsert1   =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 gameState2      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 testValue2      =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*int16 itemToInsert2   =*/ (int16)READ_BE_UINT16(ptr); ptr += 2;
 
 	//debug(0, "uniqueKey = %i", _uniqueKey);
 	//debug(0, "talkKey   = %i", _talkKey);
 
 	_person1Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-	byte *cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
+	/*byte *cutawayPtr =*/ _fileData + READ_BE_UINT16(ptr); ptr += 2;
 	_person2Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 
 	if (ptr != (_fileData + 28))
