@@ -518,7 +518,6 @@ void Voice2612::nextTick(int *outbuf, int buflen) {
 	if (!_opr[0]->inUse() && !_opr[1]->inUse() &&
 	    !_opr[2]->inUse() && !_opr[3]->inUse())
 	{
-		printf ("Auto off\n");
 		_in_use = false;
 		if (_owner)
 			_owner->removeVoice (this);
