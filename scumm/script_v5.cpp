@@ -2703,14 +2703,19 @@ void ScummEngine_v5::decodeParseString() {
 
  			// In SCUMM V1-V3, there were no 'default' values for the text slot
  			// values. Hence to achieve correct behaviour, we have to keep the
- 			// 'default' values in sync with the active values. To do that we
- 			// simply call saveDefault() on the StringTab in question.
+ 			// 'default' values in sync with the active values.
  			//
 			// Note: This is needed for Indy3 (Grail Diary). It's also needed
 			// for Loom, or the lines Bobbin speaks during the intro are put
 			// at position 0,0.
+			//
+			// Note: We can't use saveDefault() here because we only want to
+			// save the position and color. In particular, we do not want to
+			// save the 'center' flag. See bug #933168.
 			if (_version <= 3) {
- 				_string[textSlot].saveDefault();
+				_string[textSlot]._default.xpos = _string[textSlot].xpos;
+				_string[textSlot]._default.ypos = _string[textSlot].ypos;
+				_string[textSlot]._default.color = _string[textSlot].color;
 			}
 			return;
 		default:
