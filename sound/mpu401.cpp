@@ -24,8 +24,6 @@
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
-extern Timer *g_timer;
-
 void MidiChannel_MPU401::init(MidiDriver_MPU401 *owner, byte channel) {
 	_owner = owner;
 	_channel = channel;
@@ -45,7 +43,7 @@ void MidiChannel_MPU401::noteOff (byte note) {
 }
 
 void MidiChannel_MPU401::noteOn(byte note, byte velocity) {
-	_owner->send (velocity << 16 | note << 8 | 0x90 | _channel);
+	_owner->send(velocity << 16 | note << 8 | 0x90 | _channel);
 }
 
 void MidiChannel_MPU401::programChange(byte program) {
@@ -61,11 +59,11 @@ void MidiChannel_MPU401::controlChange(byte control, byte value) {
 }
 
 void MidiChannel_MPU401::pitchBendFactor(byte value) {
-	_owner->setPitchBendRange (_channel, value);
+	_owner->setPitchBendRange(_channel, value);
 }
 
 void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, byte *instr) {
-	_owner->sysEx_customInstrument (_channel, type, instr);
+	_owner->sysEx_customInstrument(_channel, type, instr);
 }
 
 const char *MidiDriver::getErrorName(int error_code) {
@@ -96,7 +94,7 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 
 void MidiDriver_MPU401::close() {
 	if (_timer_proc)
-		g_timer->releaseProcedure (_timer_proc);
+		g_timer->releaseProcedure(_timer_proc);
 	_timer_proc = 0;
 	for (int i = 0; i < 16; ++i)
 		send (0x7B << 8 | 0xB0 | i);
@@ -122,7 +120,7 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 		chan = &_midi_channels[i];
 		if (!chan->_allocated) {
 			chan->allocate();
-			return (chan);
+			return chan;
 		}
 	}
 	return NULL;
@@ -131,9 +129,9 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerProc timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
-			g_timer->releaseProcedure (_timer_proc);
+			g_timer->releaseProcedure(_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			g_timer->installProcedure (timer_proc, 10000, timer_param);
+			g_timer->installProcedure(timer_proc, 10000, timer_param);
 	}
 }

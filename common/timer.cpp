@@ -25,7 +25,7 @@
 #include "common/timer.h"
 #include "common/util.h"
 
-static Timer *g_timer = NULL;
+Timer *g_timer = NULL;
 
 Timer::Timer(OSystem *system) :
 	_system(system),

@@ -85,7 +85,7 @@ const char *gScummVMFullVersion = "ScummVM 0.5.3cvs (" __DATE__ " " __TIME__ ")"
 
 Config	*g_config = 0;
 NewGui	*g_gui = 0;
-Timer   *g_timer = 0;
+OSystem *g_system = 0;
 
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>
@@ -197,10 +197,6 @@ static void launcherDialog(GameDetector &detector, OSystem *system) {
 
 	system->set_palette(dummy_palette, 0, 16);
 
-	// FIXME - hack we use because LauncherDialog accesses g_system
-	extern OSystem *g_system;
-	g_system = system;
-
 	LauncherDialog dlg(g_gui, detector);
 	dlg.runModal();
 }
@@ -281,6 +277,7 @@ int main(int argc, char *argv[]) {
 
 	// Create the system object
 	OSystem *system = detector.createSystem();
+	g_system = system;
 
 	// Set initial window caption
 	prop.caption = "ScummVM";
@@ -309,7 +306,7 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// Create the timer services
-		g_timer = new Timer (system);
+		g_timer = new Timer(system);
 
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);

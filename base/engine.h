@@ -49,7 +49,7 @@ enum GameId {
 	GID_SWORD2_FIRST,
 	GID_SWORD2_LAST = GID_SWORD2_FIRST + 9,
 
-	//Flight of the Amazon Queen
+	// Flight of the Amazon Queen
 	GID_QUEEN_FIRST,
 	GID_QUEEN_LAST = GID_QUEEN_FIRST + 9
 };
@@ -59,9 +59,6 @@ class SoundMixer;
 class GameDetector;
 class Timer;
 struct TargetSettings;
-
-/* FIXME - BIG HACK for MidiEmu */
-extern OSystem *g_system;
 
 class Engine {
 public:

@@ -31,7 +31,6 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
-#include "base/engine.h"	// for g_system
 #include "common/util.h"
 #include "morphos.h"
 #include "morphos_sound.h"

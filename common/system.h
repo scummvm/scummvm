@@ -349,4 +349,7 @@ public:
 	//@}
 };
 
+/** The global OSystem instance. Inited in main(). */
+extern OSystem *g_system;
+
 #endif 

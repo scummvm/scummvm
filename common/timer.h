@@ -60,6 +60,8 @@ protected:
 	int handler(int t);
 };
 
+extern Timer *g_timer;
+
 #endif
 
 #endif

@@ -22,7 +22,6 @@
 #include "sound/mididrv.h"
 #include "sound/fmopl.h"
 #include "sound/mixer.h"
-#include "base/engine.h"	// for g_system
 #include "common/util.h"
 
 #define BASE_FREQ 250

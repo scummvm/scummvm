@@ -29,7 +29,6 @@
 #include "sound/mixer.h"
 
 /* FIXME - BIG HACK for MidiEmu */
-OSystem *g_system = 0;
 Engine *g_engine = 0;
 
 Engine::Engine(GameDetector *detector, OSystem *syst)
@@ -39,9 +38,6 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 
 	_gameDataPath = detector->_gameDataPath;
 
-	g_system = _system; // FIXME - BIG HACK for MidiEmu
-
-	extern Timer *g_timer;
 	_timer = g_timer;
 }
 

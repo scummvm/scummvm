@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
-#include "base/engine.h"	// for g_system
 #include "common/util.h"
 
 #include "Pa1Lib.h"
