@@ -496,8 +496,6 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 			p = _vm->walk()->moveJoe(facing, x, y, false);
 			if (p != 0) {
 				_vm->logic()->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
-				// XXX if(P != 0) P = FIND_VERB
-				warning("Command::makeJoeWalkTo() - p is %d but findVerb() is not called", p);
 			}			
 		}
 	}
@@ -1237,16 +1235,6 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 
 
 void Command::lookAtSelectedObject() {
-//	if (_state.selNoun > 0 && _state.selNoun <= _vm->logic()->currentRoomObjMax()) {
-//		uint16 objNum = _vm->logic()->currentRoomData() + _state.selNoun;
-//		if (_vm->logic()->objectData(objNum)->entryObj == 0) {
-//			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _state.selAction, false) == -2) {
-//				// 'I can't get close enough to have a look.'
-//				_vm->logic()->makeJoeSpeak(13);
-//			}
-//		}
-//	}
-
 	uint16 desc;
 	if (_state.subject[0] < 0) {
 		desc = _vm->logic()->itemData(-_state.subject[0])->description;
@@ -1273,29 +1261,6 @@ void Command::lookAtSelectedObject() {
 	_vm->logic()->makeJoeSpeak(desc, true);
 	_vm->logic()->joeFace();
 }
-
-
-//void Command::lookForCurrentItem() {
-//
-//	if (isVerbInv(_state.verb)) {
-//		ItemData *id = findItemData(_state.verb);
-//		if (id != NULL && id->name > 0) {
-//			if (_state.action == VERB_NONE) {
-//				Verb v = State::findDefaultVerb(id->state);
-//				_cmdText.setVerb((v == VERB_NONE) ? VERB_LOOK_AT : v);
-//			}
-//	
-//			const char *name = _vm->logic()->objectName(id->name);
-//			if (_state.defaultVerb != VERB_NONE) {
-//				_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb, name);
-//			}
-//			else {
-//				_cmdText.displayTemp(INK_CMD_NORMAL, name);
-//			}
-//			_state.oldVerb = _state.verb;
-//		}
-//	}
-//}
 
 
 void Command::lookForCurrentObject(int16 cx, int16 cy) {

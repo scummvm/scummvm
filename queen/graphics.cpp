@@ -1156,7 +1156,7 @@ void BamScene::playSfx() {
 	// the fight bam, where the number of 'sfx bam frames' is too much 
 	// important / too much closer. The original game does not have
 	// this problem since their playSfx() function returns immediately
-	// if a sound is already begin played.
+	// if a sound is already being played.
 	if (_lastSoundIndex == 0 || _index - _lastSoundIndex >= SFX_SKIP) {
 		_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 		_lastSoundIndex = _index;
