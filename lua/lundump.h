@@ -49,5 +49,6 @@ TProtoFunc* luaU_undump1(ZIO* Z);	/* load one chunk */
 #endif
 
 #define	DumpNumber	DumpFloat
+#define LoadNumber      LoadFloat
 #define SIZEOF_NUMBER	4
 

@@ -16,8 +16,18 @@
 #define	LoadBlock(b,size,Z)	ezread(Z,b,size)
 #define	LoadNative(t,Z)		LoadBlock(&t,sizeof(t),Z)
 
-#define doLoadNumber(f,Z)	LoadNative(f,Z)
+#define doLoadNumber(f,Z)	f=LoadNumber(Z)
 
+
+static float conv_float(const char *data) {
+        const unsigned char *udata = (const unsigned char *)(data);
+        unsigned char fdata[4];
+        fdata[0] = udata[3];
+        fdata[1] = udata[2];
+        fdata[2] = udata[1];
+        fdata[3] = udata[0];
+        return *(const float *)(fdata);
+}
 
 static void unexpectedEOZ(ZIO* Z)
 {
@@ -49,6 +59,12 @@ static unsigned long LoadLong(ZIO* Z)
  unsigned long hi=LoadWord(Z);
  unsigned long lo=LoadWord(Z);
  return (hi<<16)|lo;
+}
+
+static float LoadFloat(ZIO* Z)
+{
+ unsigned long l=LoadLong(Z);
+ return conv_float((const char *)&l);
 }
 
 static Byte* LoadCode(ZIO* Z)
