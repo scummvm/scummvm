@@ -588,23 +588,23 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 	int i;
 	uint16 screenScroll = _display->horizontalScroll();
 	switch (roomNum) {
-	case 17:
-		_bobs[8].x = 250 - screenScroll + screenScroll / 2;
+	case ROOM_AMAZON_HIDEOUT:
+		_bobs[8].x = 250 - screenScroll / 2;
 		break;
-	case 100:
-		_bobs[5].x = 410 - screenScroll + screenScroll / 2;
-		_bobs[6].x = 790 - screenScroll + screenScroll / 2;
+	case ROOM_TEMPLE_MAZE5:
+		_bobs[5].x = 410 - screenScroll / 2;
+		_bobs[6].x = 790 - screenScroll / 2;
 		break;
-	case 43:
-		_bobs[5].x = 320 - screenScroll + screenScroll / 2;
+	case ROOM_TEMPLE_OUTSIDE:
+		_bobs[5].x = 320 - screenScroll / 2;
 		break;
-	case 51:
-		_bobs[5].x = 280 - screenScroll + screenScroll / 2;
+	case ROOM_TEMPLE_TREE:
+		_bobs[5].x = 280 - screenScroll / 2;
 		break;
-	case 67:
-		_bobs[5].x = 600 - screenScroll + screenScroll / 2;
+	case ROOM_VALLEY_CARCASS:
+		_bobs[5].x = 600 - screenScroll / 2;
 		break;
-	case 73 :
+	case ROOM_HOTEL_LOBBY:
 		if(_display->fullscreen()) {
 			for(i = 1; i <= 3; ++i) {
 				_bobs[i].box.y2 = 199;
@@ -612,27 +612,27 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 			_bobs[24].box.y2 = 199;
 		}
 		break;
-	case 90 :
-		_bobs[5].x = 340 - screenScroll + screenScroll / 2;
-		_bobs[6].x = 50 - screenScroll + screenScroll / 2;
-		_bobs[7].x = 79 - screenScroll + screenScroll / 2;
+	case ROOM_UNUSED_INTRO_1:
+		_bobs[5].x = 340 - screenScroll / 2;
+		_bobs[6].x = 50 - screenScroll / 2;
+		_bobs[7].x = 79 - screenScroll / 2;
 		for(i = 1; i <= 8; ++i) {
 			_bobs[i].box.y2 = 199;
 		}
 		_bobs[20].box.y2 = 199;
 		break;
-	case 94 :
+	case ROOM_UNUSED_INTRO_5:
 		for(i = 0; i < 3; ++i) {
 			_bobs[i].box.y2 = 199;
 		}
 		break;
-	case 74 : // Carbam
+	case ROOM_CAR_CHASE:
 		updateCarBamScene();
 		break;
-	case 69 : // Fight1
-		warning("Graphics::bobCustomParallax() - room 69 not handled");
+	case ROOM_FINAL_FIGHT:
+		warning("Graphics::bobCustomParallax() - ROOM_FINAL_FIGHT not handled");
 		break;
-	case 116: // CR 2 - CD-Rom pan right while Rita talks...
+	case ROOM_INTRO_RITA_JOE_HEADS: // CR 2 - CD-Rom pan right while Rita talks...
 		_cameraBob = -1;
 		debug(9, "Graphics::bobCustomParallax() - %d", screenScroll);
 		if (screenScroll < 80) {
@@ -645,7 +645,7 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 			_bobs[21].x -= 2;
 		}
 		break;
-	case 123: // CR 2 - CD-Rom the guys move off screen
+	case ROOM_INTRO_EXPLOSION: // CR 2 - CD-Rom the guys move off screen
 		_bobs[21].x += 2;
 		_bobs[21].y += 2;
 		break;

@@ -181,11 +181,11 @@ enum {
 };
 
 enum {
-	ROOM_JUNGLE_INSIDE_PLANE  =  1,
-	ROOM_JUNGLE_OUTSIDE_PLANE =  2,
-	ROOM_JUNGLE_PINNACLE      =  7,
-	ROOM_JUNGLE_SLOTH         =  8,
-	ROOM_JUNGLE_BUD_SKIP      =  9,
+	ROOM_JUNGLE_INSIDE_PLANE  =   1,
+	ROOM_JUNGLE_OUTSIDE_PLANE =   2,
+	ROOM_JUNGLE_PINNACLE      =   7,
+	ROOM_JUNGLE_SLOTH         =   8,
+	ROOM_JUNGLE_BUD_SKIP      =   9,
 	ROOM_JUNGLE_BEETLE        =  11,
 	ROOM_JUNGLE_MISSIONARY    =  13,
 	
@@ -209,17 +209,28 @@ enum {
 	ROOM_TEMPLE_OUTSIDE       =  43,
 	ROOM_TEMPLE_MUMMIES       =  46,
 	ROOM_TEMPLE_ZOMBIES       =  50,
+	ROOM_TEMPLE_TREE          =  51,
 	ROOM_TEMPLE_SNAKE         =  53,
 	ROOM_TEMPLE_LIZARD_LASER  =  55,
 	ROOM_TEMPLE_MAZE          =  58,
 	ROOM_TEMPLE_MAZE2         =  59,
 	ROOM_TEMPLE_MAZE3         =  60,
 	ROOM_TEMPLE_MAZE4         =  61,
+	ROOM_TEMPLE_MAZE5         = 100,
+
+	ROOM_VALLEY_CARCASS       =  67,
 	
 	ROOM_HOTEL_UPSTAIRS       =  70,
 	ROOM_HOTEL_DOWNSTAIRS     =  71,
 	ROOM_HOTEL_LOLA           =  72,
 	ROOM_HOTEL_LOBBY          =  73,
+
+	ROOM_CAR_CHASE            =  74,
+
+	ROOM_FINAL_FIGHT          =  69,
+
+	ROOM_INTRO_RITA_JOE_HEADS = 116,
+	ROOM_INTRO_EXPLOSION      = 123,
 
 	//special
 	SPARKY_OUTSIDE_HOTEL      =  77,
@@ -228,10 +239,11 @@ enum {
 	COMIC_1                   =  87,
 	COMIC_2                   =  88,
 	COMIC_3                   =  89,
-	UNUSED_INTRO_1            =  91,
-	UNUSED_INTRO_2            =  92,
-	UNUSED_INTRO_3            =  93,
-	UNUSED_INTRO_4            =  94,
+	ROOM_UNUSED_INTRO_1       =  90,
+	ROOM_UNUSED_INTRO_2       =  91,
+	ROOM_UNUSED_INTRO_3       =  92,
+	ROOM_UNUSED_INTRO_4       =  93,
+	ROOM_UNUSED_INTRO_5       =  94,
 	FOTAQ_LOGO                =  95,
 	AZURA_1                   = 106,
 	WARNER_LOGO               = 126
