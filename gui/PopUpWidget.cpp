@@ -24,12 +24,6 @@
 #include "newgui.h"
 #include "common/engine.h"
 
-/* TODO:
- * - draw an (unselectable) sepeator line for items that start with a '-'
- * - handle long lists by allowing scrolling (a lot of work if done right, 
- *   so I will probably only implement if we really need it)
- * - ...
- */
 
 #define UP_DOWN_BOX_HEIGHT	10
 
@@ -82,18 +76,27 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(boss->_boss->getGui(), 0, 0, 16, 16),
 	_popUpBoss(boss)
 {
+	// Copy the selection index
+	_selection = _popUpBoss->_selectedItem;
+	
 	// Calculate real popup dimensions
 	_x = _popUpBoss->_boss->getX() + _popUpBoss->_x;
 	_y = _popUpBoss->_boss->getY() + _popUpBoss->_y - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
 	_w = _popUpBoss->_w - 10;
 	
-	// Copy the selection index
-	_selection = _popUpBoss->_selectedItem;
-	
-	// TODO - perform clipping / switch to scrolling mode if we don't fit on the screen
-	
-	// TODO - backup background here
+	// Perform clipping / switch to scrolling mode if we don't fit on the screen
+	// FIXME - hard coded screen height 200. We really need an API in OSystem to query the
+	// screen height, and also OSystem should send out notification messages when the screen
+	// resolution changes... we could generalize CommandReceiver and CommandSender.
+	if (_h >= 200)
+		_h = 199;
+	if (_y < 0)
+		_y = 0;
+	else if (_y + _h >= 200)
+		_y = 199 - _h;
+
+	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
 	// Remember original mouse position
 	_clickX = clickX - _x;
@@ -106,7 +109,6 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 void PopUpDialog::drawDialog()
 {
 	// Draw the menu border
-//	_gui->box(_x, _y, _w, _h);
 	_gui->hline(_x, _y, _x+_w-1, _gui->_color);
 	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_shadowcolor);
 	_gui->vline(_x, _y, _y+_h-1, _gui->_color);
@@ -150,6 +152,9 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button)
 {
 	// Compute over which item the mouse is...
 	int item = findItem(x, y);
+
+	if (item >= 0 && _popUpBoss->_entries[item].name[0] == '-')
+		item = -1;
 
 	if (item == -1 && !isMouseDown())
 		return;
@@ -231,11 +236,16 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 	int x = _x + 1;
 	int y = _y + 1 + kLineHeight * entry;
 	int w = _w - 2;
+	ScummVM::String &name = _popUpBoss->_entries[entry].name;
 
-	_gui->fillRect(x, y, w, kLineHeight,
-						hilite ? _gui->_textcolorhi : _gui->_bgcolor);
-	_gui->drawString(_popUpBoss->_entries[entry].name, x+1, y+2, w-2,
-						hilite ? _gui->_bgcolor : _gui->_textcolor);
+	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
+	if (name[0] == '-') {
+		// Draw a seperator
+		_gui->hline(x, y+kLineHeight/2, x+w-1, _gui->_color);
+		_gui->hline(x+1, y+1+kLineHeight/2, x+w-1, _gui->_shadowcolor);
+	} else {
+		_gui->drawString(name, x+1, y+2, w-2, hilite ? _gui->_bgcolor : _gui->_textcolor);
+	}
 	_gui->addDirtyRect(x, y, w, kLineHeight);
 }
 
