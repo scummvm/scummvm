@@ -2983,16 +2983,14 @@ void SimonState::copy_img_from_3_to_2(FillOrCopyStruct *fcs)
 	_lock_word |= 0x8000;
 
 	if (!(_game & GAME_SIMON2)) {
-		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _fcs_ptr_array_3[2]) ? 1 : 0),
-														(fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _fcs_ptr_array_3[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vga_var6 && _fcs_ptr_array_3[2] == fcs) {
 			fcs = _fcs_ptr_array_3[0x18 / 4];
 			_vga_var6 = 0;
 		}
 
-		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8,
-														(fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	}
 
 	_lock_word &= ~0x8000;
@@ -4317,43 +4315,6 @@ void SimonState::runSubroutine101()
 
 	startUp_helper_2();
 }
-
-#if 0
-void SimonState::generateSound(byte *ptr, int len)
-{
-	uint cur;
-
-	cur = _voice_size;
-	if (cur > (uint) len)
-		cur = (uint) len;
-	_voice_size -= cur;
-
-	if (cur != 0) {
-		fread(ptr, cur, 1, _voice_file);
-	}
-
-	memset(ptr + cur, 0x80, len - cur);
-
-	cur = _sound_size;
-	if (cur) {
-		uint i;
-
-		if (cur > (uint) len)
-			cur = (uint) len;
-
-		for (i = 0; i != cur; i++) {
-			ptr[i] += _sound_ptr[i] ^ 0x80;
-		}
-
-		_sound_size -= cur;
-		_sound_ptr += cur;
-	}
-}
-#endif
-
-//static void fill_sound(void *userdata, int16 *stream, int len) {
-//  ((SimonState*)userdata)->generateSound((byte*)stream, len*2);
-//}
 
 void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x)
 {
