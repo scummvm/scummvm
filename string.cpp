@@ -531,7 +531,8 @@ void Scumm::drawString(int a)
 			}
 		} else {
 			if (a == 1 && (_features & GF_AFTER_V6))
-				charset._blitAlso = true;
+				if(string[a].no_talk_anim==0)
+					charset._blitAlso = true;
 			if (_features & GF_OLD256)
 				charset.printCharOld(chr);
 			else
