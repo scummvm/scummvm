@@ -3425,7 +3425,6 @@ bool SimonState::vc_59_helper()
 	if (_voice_file == NULL)
 		return true;
 	return _voice_sound == 0;
-#endif
 }
 
 void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs)
