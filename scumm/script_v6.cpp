@@ -2473,7 +2473,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], -1);
+			derefActor(args[1], "o6_kernelSetFunctions:13")->remapActorPalette(args[2], args[3], args[4], -1);
 			break;
 		case 14:
 			derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
