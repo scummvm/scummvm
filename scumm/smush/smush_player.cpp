@@ -224,7 +224,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_sf[4] = NULL;
 	_base = NULL;
 	_frameBuffer = NULL;
-	
+	_specialBuffer = NULL;
+
 	_skipNext = false;
 	_subtitles = ConfMan.getBool("subtitles");
 	_dst = NULL;
@@ -282,6 +283,10 @@ void SmushPlayer::deinit() {
 	if (_base) {
 		delete _base;
 		_base = NULL;
+	}
+	if (_specialBuffer) {
+		free(_specialBuffer);
+		_specialBuffer = NULL;
 	}
 	
 	_vm->_mixer->stopHandle(_IACTchannel);
@@ -676,18 +681,19 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	}
 
 	int codec = b.getWord();
-	int left = b.getWord(); // left
-	int top = b.getWord(); // top
+	int left = b.getWord();
+	int top = b.getWord();
 	int width = b.getWord();
 	int height = b.getWord();
 
-	if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
+	if ((height == 242) && (width == 384)) {
+		_dst = _specialBuffer = (byte *)malloc(242 * 384);
+	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
-
 	// FT Insane uses smaller frames to draw overlays with moving objects
 	// Other .san files do have them as well but their purpose in unknown
 	// and often it causes memory overdraw. So just skip those frames
-	if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
+	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
 		return;
 
 	if (!_alreadyInit) {
@@ -696,8 +702,8 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		_alreadyInit = true;
 	}
 
-	_width = _vm->_screenWidth;
-	_height = _vm->_screenHeight;
+	_width = width;
+	_height = height;
 	b.getWord();
 	b.getWord();
 
