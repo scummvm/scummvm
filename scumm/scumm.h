@@ -315,6 +315,7 @@ class ScummEngine : public Engine {
 	friend class SmushPlayer;
 	friend class Insane;
 	friend class CharsetRenderer;
+	friend class Win32ResExtractor;
 	
 	void errorString(const char *buf_input, char *buf_output);
 public:
@@ -925,6 +926,7 @@ protected:
 	void setCursorHotspot(int x, int y);
 	void grabCursor(int x, int y, int w, int h);
 	void grabCursor(byte *ptr, int width, int height);
+	void grabCursorFromBuffer(byte *ptr, int width, int height);
 	void makeCursorColorTransparent(int a);
 	void setupCursor();
 	void decompressDefaultCursor(int index);

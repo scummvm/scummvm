@@ -306,4 +306,21 @@ void ScummEngine::makeCursorColorTransparent(int a) {
 	updateCursor();
 }
 
+void ScummEngine::grabCursorFromBuffer(byte *ptr, int width, int height) {
+	uint size;
+	byte *dst;
+
+	size = width * height;
+	if (size > sizeof(_grabbedCursor))
+		error("grabCursor: grabbed cursor too big");
+
+	_cursor.width = width;
+	_cursor.height = height;
+	_cursor.animate = 0;
+
+	memcpy(_grabbedCursor, ptr, width * height);
+
+	updateCursor();
+}
+
 } // End of namespace Scumm
