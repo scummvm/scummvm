@@ -836,7 +836,7 @@ void Scumm::loadLanguageBundle() {
 
 void Scumm::translateText(byte *text, byte *trans_buff) {
 	if ((_existLanguageFile == true) && (text[0] == '/') && (text[1] != ' ')) {
-		char name[20], tmp[200], tmp2[20], num_s[20], number[4];
+		char name[20], tmp[500], tmp2[20], num_s[20], number[4];
 		int32 num, l, j, k, r, pos;
 		char enc;
 
@@ -857,7 +857,8 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 				l = 0;
 				do {
 					tmp[l++] = buf[pos++];
-				} while((buf[pos] != 0) && (buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 199));
+					assert(l < 499);
+				} while((buf[pos] != 0) && (buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
 				tmp[l] = 0;
 				pos += 2;
 				l = 0;
