@@ -1204,33 +1204,11 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 	bool dither = false;
 	byte dither_table[128];
 	byte data = 0;
-	int x = 4;
+	byte *ptr_dither_table;
+	int x = 8;
+	int y;
+	memset(dither_table, 0, sizeof(dither_table));	// FIXME - is that correct?
 	do {
-		byte *ptr_dither_table = dither_table;
-		int y = 128;
-		do {
-			if (--run == 0) {
-				data = *src++;
-				if (data & 0x80) {
-					run = data & 0x7f;
-					dither = true;
-				} else {
-					run = data >> 4;
-					dither = false;
-				}
-				if (run == 0) {
-					run = *src++;
-				}
-				color = data & 0x0f;
-			}
-			if (!dither) {
-				*ptr_dither_table = color;
-			}
-			*dst = *ptr_dither_table++;
-			dst += _vm->_realWidth;
-		} while (--y);
-		dst -= _vm->_realWidth * 128;
-		dst++;
 		ptr_dither_table = dither_table;
 		y = 128;
 		do {
