@@ -496,7 +496,7 @@ int Scumm::loadResource(int type, int idx)
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	//debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -1481,7 +1481,7 @@ void Scumm::resourceStats()
 			}
 		}
 
-	printf("Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
+	debug(1, "Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
 }
 
 void Scumm::heapClear(int mode)
