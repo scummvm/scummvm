@@ -870,7 +870,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 		_paletteDirtyEnd = start + num;
 
 	// Some games blink cursors with palette
-	if (!_overlayVisible && !_cursorHasOwnPalette)
+	if (!_overlayVisible && (!_cursorHasOwnPalette || _cursorPaletteDisabled))
 		blitCursor();
 }
 
@@ -886,6 +886,7 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorHasOwnPalette = true;
+	_cursorPaletteDisabled = false;
 
 	if (!_overlayVisible)
 		blitCursor();
@@ -1126,7 +1127,7 @@ void OSystem_SDL::blitCursor() {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
 			if (color != _mouseKeyColor) {	// transparent, don't draw
-				if (_cursorHasOwnPalette && !_overlayVisible)
+				if (_cursorHasOwnPalette && !_overlayVisible && !_cursorPaletteDisabled)
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, 
 								   _cursorPalette[color].r, _cursorPalette[color].g, 
 															   _cursorPalette[color].b);

@@ -294,6 +294,18 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {};
 
 	/**
+	 * Disable or enable cursor palette.
+	 *
+	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 *
+	 * @param disable  True to disable, false to enable.
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorHasPalette
+	 */
+	virtual void disableCursorPalette(bool disable) {};
+
+	/**
 	 * Blit a bitmap to the virtual screen.
 	 * The real screen will not immediately be updated to reflect the changes.
 	 * Client code has to to call updateScreen to ensure any changes are

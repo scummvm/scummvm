@@ -87,6 +87,9 @@ public:
 	// Set colors of cursor palette
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
+	// Disables or enables cursor palette
+	void disableCursorPalette(bool disable) { _cursorPaletteDisabled = disable; };
+
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
 
@@ -277,6 +280,7 @@ protected:
 	byte _mouseKeyColor;
 	int _cursorTargetScale;
 	bool _cursorHasOwnPalette;
+	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;
 	enum {
