@@ -1276,7 +1276,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	do {
 		if (mask & 0x8000) {
-			if (_features & GF_AFTER_V3) {
+			if ((_features & GF_AFTER_V3) || (_features & GF_AFTER_V2)) {
 				j = *r++;
 
 				if (j == 0xFF)
