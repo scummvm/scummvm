@@ -1712,10 +1712,10 @@ void Scumm_v6::o6_actorOps() {
 		a->turnToDirection(pop());
 		break;
 	case 233:										/* freeze actor */
-		a->moving |= 0x80;
+		a->moving |= MF_FROZEN;
 		break;
 	case 234:										/* unfreeze actor */
-		a->moving &= ~0x7f;
+		a->moving &= ~MF_FROZEN;
 		break;
 	case 235:										/* talk_script */
 		a->talk_script = pop();

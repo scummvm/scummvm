@@ -1155,10 +1155,10 @@ void Scumm_v8::o8_actorOps() {
 		a->talk_script = pop();
 		break;
 	case 0x85:		// SO_ACTOR_WALK_PAUSE
-		a->moving |= 0x80;
+		a->moving |= MF_FROZEN;
 		break;
 	case 0x86:		// SO_ACTOR_WALK_RESUME
-		a->moving &= ~0x7f;
+		a->moving &= ~MF_FROZEN;
 		break;
 	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
 		// TODO - implement this!

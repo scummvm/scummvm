@@ -32,7 +32,8 @@ enum MoveFlags {
 	MF_NEW_LEG = 1,
 	MF_IN_LEG = 2,
 	MF_TURN = 4,
-	MF_LAST_LEG = 8
+	MF_LAST_LEG = 8,
+	MF_FROZEN = 0x80
 };
 
 struct ActorWalkData {
