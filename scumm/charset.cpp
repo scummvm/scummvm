@@ -1226,6 +1226,8 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 
 	for (int i = 0; i < 5; i++) {
 		char fontname[256];
+		if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO) && (i == 4))
+			break;
 		sprintf(fontname, "font%d.nut", i);
 		_fr[i] = new NutRenderer(_vm);
 		if (!(_fr[i]->loadFont(fontname, _vm->getGameDataPath()))) {
