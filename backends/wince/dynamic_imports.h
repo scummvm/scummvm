@@ -30,6 +30,7 @@ typedef struct GXDisplayProperties (*tGXGetDisplayProperties)(void);
 typedef int (*tGXOpenDisplay)(HWND, unsigned long);
 typedef int (*tGXEndDraw)(void);
 typedef void* (*tGXBeginDraw)(void);
+typedef BOOL (*tGXIsDisplayDRAMBuffer)(void);
 
 extern tGXOpenInput dynamicGXOpenInput;
 extern tGXGetDefaultKeys dynamicGXGetDefaultKeys;
@@ -41,3 +42,4 @@ extern tGXGetDisplayProperties dynamicGXGetDisplayProperties;
 extern tGXOpenDisplay dynamicGXOpenDisplay;
 extern tGXEndDraw dynamicGXEndDraw;
 extern tGXBeginDraw dynamicGXBeginDraw;
+static tGXIsDisplayDRAMBuffer dynamicGXIsDisplayDRAMBuffer;
