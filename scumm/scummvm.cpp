@@ -208,7 +208,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
-/*	 
+/*
 	// Humongous Entertainment Scumm Version 7 
 	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -262,6 +262,8 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pj2demo", "Pajama Sam 2: Thunder and Lightning (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"pajama2", "Pajama Sam 2: Thunder and Lightning", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
@@ -283,9 +285,19 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version ?  engine moved to c++ 
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"pajama3", "Pajama Sam 3: You Are What You Eat", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"putttime", "Putt-Putt Travels Through Time", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"spyozon", "Spyfox 3: Operation Ozone", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	// bunch of backyard sports games...
 */
