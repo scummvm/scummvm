@@ -312,7 +312,7 @@ public:
 // be changed but should otherwise be relatively easy to understand, and using
 // VirtScreen::pitch will actually clean up the code.
 //
-#define V7_SMOOTH_SCROLLING_HACK
+//#define V7_SMOOTH_SCROLLING_HACK
 
 
 } // End of namespace Scumm
