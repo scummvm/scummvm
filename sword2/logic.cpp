@@ -180,7 +180,7 @@ int logic::Process_session(void) {	// Tony6June96 (first run 21Oct96)
 			// script or subroutine will kick in and run
 
 			// keep processing scripts until 0 for quit is returned
-		} while(ret);
+		} while (ret);
 
 		// any post logic system requests to go here
 
