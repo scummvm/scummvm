@@ -225,7 +225,7 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *dat
 		uint32 size_to_end_of_buffer = _bufferEnd - _end;
 		len -= size_to_end_of_buffer;
 		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			warning("AppendableMemoryStream: buffer overflow (A)");
+			debug(2, "AppendableMemoryStream: buffer overflow (A)");
 			return;
 		}
 		memcpy(_end, data, size_to_end_of_buffer);
@@ -233,7 +233,7 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *dat
 		_end = _bufferStart + len;
 	} else {
 		if ((_end < _pos) && (_end + len >= _pos)) {
-			warning("AppendableMemoryStream: buffer overflow (B)");
+			debug(2, "AppendableMemoryStream: buffer overflow (B)");
 			return;
 		}
 		memcpy(_end, data, len);
