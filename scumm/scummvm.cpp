@@ -33,6 +33,7 @@
 #include "gameDetector.h"
 #include "gui/gui.h"
 #include "gui/newgui.h"
+#include "gui/message.h"
 #include "object.h"
 #include "resource.h"
 #include "string.h"
@@ -936,8 +937,21 @@ void Scumm::runDialog(Dialog *dialog)
 
 void Scumm::pauseDialog()
 {
-	if (!_pauseDialog)
+	if (!_pauseDialog) {
+#if 1
+	// HACK HACK
+		const char *message = "This demonstrates MessageDialog's abilities.\n"
+						      "For example it supports multi line text.\n"
+						      " \n"
+						      "Well, not much more right now, really :-)\n"
+						      "And there are still some bugs in it, too\n"
+						      " ";	// <- FIXME: This is needed due to a bug...
+		_pauseDialog = new MessageDialog(_newgui, message);
+#else
 		_pauseDialog = new PauseDialog(_newgui, this);
+#endif
+	}
+
 	runDialog(_pauseDialog);
 }
 

@@ -32,11 +32,6 @@ enum {
 	kListNumberingOne	= 1
 };
 
-// Height of a signle entry line
-enum {
-	kLineHeight			= 11
-};
-
 // Some special commands
 enum {
 	kListItemDoubleClickedCmd	= 'LIdb',	// 'data' will be item index

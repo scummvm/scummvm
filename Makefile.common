@@ -14,7 +14,7 @@ COMMON_OBJS = common/config-file.o common/engine.o common/file.o \
 	common/timer.o common/util.o
 
 GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
-	gui/ScrollBarWidget.o 
+	gui/ScrollBarWidget.o gui/message.o
 
 SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/gfx.o scumm/imuse.o \

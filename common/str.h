@@ -33,7 +33,7 @@ namespace ScummVM {
  Only constructor: ConstString(const char *ptr)
  Then whenever you now use "const String &" in a parameter, use "const ConstString &"
  instead (mayhaps make a typedef even). Thus, parameters are passed w/o 
- causing a free/malloc. Then only for permenant storage, when we assign it to a
+ causing a free/malloc. Then only for permanent storage, when we assign it to a
  real String object, will a malloc be issued (to this end, make String aware of
  ConstString ?!?
 */
@@ -46,7 +46,7 @@ protected:
 
 public:
 	ConstString() : _str(0), _len(0) {}
-	ConstString(const char *str) : _str((char*)str) { _len = str ? strlen(str) : 0; }
+	ConstString(const char *str, int len = 0) : _str((char*)str) { _len = str ? (len ? len : strlen(str)) : 0; }
 	virtual ~ConstString() {}
 	
 	bool operator ==(const ConstString& x) const;
@@ -57,6 +57,12 @@ public:
 	bool operator <=(const ConstString& x) const;
 	bool operator >(const ConstString& x) const;
 	bool operator >=(const ConstString& x) const;
+
+	char operator [](int idx) const
+	{
+		assert(_str && idx >= 0 && idx < _len);
+		return _str[idx];
+	}
 
 	const char *c_str() const		{ return _str; }
 	int size() const				{ return _len; }
@@ -71,16 +77,32 @@ protected:
 
 public:
 	String() : _capacity(0) { _refCount = new int(1); }
-	String(const char *str);
+	String(const char *str, int len = 0);
 	String(const ConstString &str);
 	String(const String &str);
 	virtual ~String();
 	
 	String& operator  =(const char* str);
+// TODO - We should use RTTI here - that is, not real C++ RTTI but some magic
+// constant in each string object. We want to be able to optimize the case when
+// a real 'String' object is passed to a function as a ConstString obj and then
+// assigned to a 'String' object
 	String& operator  =(const String& str);
 	String& operator +=(const char* str);
 	String& operator +=(const String& str);
 	String& operator +=(char c);
+
+	char operator [](int idx) const
+	{
+		assert(_str && idx >= 0 && idx < _len);
+		return _str[idx];
+	}
+
+	char &operator [](int idx)
+	{
+		assert(_str && idx >= 0 && idx < _len);
+		return _str[idx];
+	}
 
 	void deleteLastChar();
 	void clear();
@@ -99,8 +121,19 @@ public:
 	void push_back(const char* str)
 	{
 		ensureCapacity(_size + 1);
-		_data[_size] = str;
-		_size++;
+		_data[_size++] = str;
+	}
+
+	void push_back(const ConstString& str)
+	{
+		ensureCapacity(_size + 1);
+		_data[_size++] = str;
+	}
+	
+	void push_back(const String& str)
+	{
+		ensureCapacity(_size + 1);
+		_data[_size++] = str;
 	}
 };
 

@@ -63,16 +63,13 @@ public:
 	AboutDialog(NewGui *gui, Scumm *scumm);
 };
 
-class SoundDialog;
-class KeysDialog;
-class MiscDialog;
 
 class OptionsDialog : public ScummDialog {
 protected:
-	AboutDialog		*_aboutDialog;
-	SoundDialog		*_soundDialog;
-	KeysDialog		*_keysDialog;
-	MiscDialog		*_miscDialog;
+	Dialog		*_aboutDialog;
+	Dialog		*_soundDialog;
+	Dialog		*_keysDialog;
+	Dialog		*_miscDialog;
 
 public:
 	OptionsDialog(NewGui *gui, Scumm *scumm);

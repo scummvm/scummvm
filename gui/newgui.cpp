@@ -401,11 +401,12 @@ void NewGui::drawChar(const char chr, int xx, int yy, int16 color)
 	}
 }
 
-int NewGui::getStringWidth(const char *str)
+int NewGui::getStringWidth(const String &str)
 {
 	int space = 0;
-	while (*str)
-		space += getCharWidth(*str++);
+
+	for (int i = 0; i < str.size(); ++i)
+		space += getCharWidth(str[i]);
 	return space;
 }
 
@@ -414,17 +415,17 @@ int NewGui::getCharWidth(char c)
 	return guifont[c+6];
 }
 
-void NewGui::drawString(const char *str, int x, int y, int w, int16 color, int align)
+void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int align)
 {
 	int width = getStringWidth(str);
 	if (align == kTextAlignCenter)
 		x = x + (w - width - 1)/2;
 	else if (align == kTextAlignRight)
 		x = x + w - width;
-	while (*str) {
-		drawChar(*str, x, y, color);
-		x += getCharWidth(*str);
-		str++;
+
+	for (int i = 0; i < str.size(); ++i) {
+		drawChar(str[i], x, y, color);
+		x += getCharWidth(str[i]);
 	}
 }
 

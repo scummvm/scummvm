@@ -23,12 +23,20 @@
 
 #include "scummsys.h"
 #include "system.h"	// For events
+#include "common/str.h"
 
 class Dialog;
 
 #define hline(x, y, x2, color) line(x, y, x2, y, color);
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
+// Height of a single text line
+enum {
+	kLineHeight			= 11
+};
+
+
+// Text alignment modes for drawString()
 enum {
 	kTextAlignLeft,
 	kTextAlignCenter,
@@ -59,6 +67,7 @@ public:
 // This class hopefully will replace the old Gui class completly one day 
 class NewGui {
 	friend class Dialog;
+	typedef ScummVM::String String;
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running
@@ -123,9 +132,9 @@ public:
 	void frameRect(int x, int y, int w, int h, int16 color);
 	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(char c, int x, int y, int16 color);
-	int getStringWidth(const char *str);
+	int getStringWidth(const String &str);
 	int getCharWidth(char c);
-	void drawString(const char *str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
+	void drawString(const String &str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
 
 	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
 };

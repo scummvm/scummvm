@@ -22,19 +22,27 @@
 #include "str.h"
 #include "util.h"
 
+
 #ifdef _MSC_VER
+
 #	pragma warning( disable : 4068 ) // unknown pragmas
+
 #endif
+
 
 namespace ScummVM {
 
-String::String(const char *str)
+String::String(const char *str, int len)
 {
 	_refCount = new int(1);
-	if (str) {		
-		_capacity = _len = resStrLen(str);
+	if (str) {
+		if (len)
+			_capacity = _len = len;
+		else
+			_capacity = _len = resStrLen(str);
 		_str = (char *)calloc(1, _capacity+1);
-		memcpy(_str, str, _len+1);
+		memcpy(_str, str, _len);
+		_str[_len] = 0;
 	} else {
 		_capacity = _len = 0;
 		_str = 0;
