@@ -290,7 +290,7 @@ public:
 	}
 
 	uint pushedSize() {
-		return _stackSize - _stackTopIndex - 1;
+		return _stackSize - _stackTopIndex - 2;
 	}
 
 	void push(int16 value) {

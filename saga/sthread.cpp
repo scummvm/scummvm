@@ -49,7 +49,7 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	newThread->_flags = kTFlagNone;
 	newThread->_stackSize = DEFAULT_THREAD_STACK_SIZE;
 	newThread->_stackBuf = (uint16 *)malloc(newThread->_stackSize * sizeof(*newThread->_stackBuf));
-	newThread->_stackTopIndex = newThread->_stackSize - 1; // or 2 - as in original
+	newThread->_stackTopIndex = newThread->_stackSize - 2; 
 	newThread->_instructionOffset = _modules[scriptModuleNumber].entryPoints[scriptEntryPointNumber].offset;
 	newThread->_commonBase = _commonBuffer;
 	newThread->_staticBase = _commonBuffer + _modules[scriptModuleNumber].staticOffset;
@@ -322,6 +322,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			// counter as a pointer here. But I don't think
 			// we will have to do that.
 			thread->push(param2);
+			// NOTE2: program counter is 32bit - so we should "emulate" it size - because kAddressStack relies on it
+			thread->push(0);
 			thread->_instructionOffset = iparam1;
 			
 			break;
@@ -338,7 +340,6 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			(this->*scriptFunction)(thread, argumentsCount);
 
 			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
-			//if (functionNumber ==  16) { // sfScriptGotoScene
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
 
@@ -363,6 +364,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				thread->_flags |= kTFlagFinished;
 				return true;
 			} else {
+				thread->pop(); //cause it 0
 				thread->_instructionOffset = thread->pop();
 				iparam1 = thread->pop();
 				iparam1 += iparam1;
