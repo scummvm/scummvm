@@ -23,6 +23,7 @@
 #define SIMON_MIDI_H
 
 class MidiDriver;
+class MidiStreamer;
 class File;
 struct MidiEvent;
 
@@ -67,7 +68,7 @@ private:
 		byte *sysex_data;
 	};
 
-	MidiDriver *_midiDriver;
+	MidiStreamer *_midiDriver;
 	uint _lastDelay;
 	Song *_currentSong;
 	Song _songs[8];

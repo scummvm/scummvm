@@ -27,11 +27,19 @@ class MidiStreamer;
 #include "mididrv.h"
 
 class MidiStreamer : public MidiDriver {
+public:
+	/* called whenever the midi driver is in streaming mode,
+	 * and more midi commands need to be generated
+	 * return 0 to tell the mididriver that the end of stream was reached
+	 */
+	typedef int StreamCallback (void *param, MidiEvent * ev, int num);
+
 private:
+
 	MidiDriver *_target;
 	StreamCallback *_stream_proc;
 	void *_stream_param;
-	int _mode;
+	bool _isOpen;
 	bool _paused;
 
 	MidiEvent _events [64];
@@ -43,19 +51,21 @@ private:
 	uint16 _ticks_per_beat;
 	long _delay;
 
-	uint32 property(int prop, uint32 param);
 	static void timer_thread (void *param);
 	void on_timer();
 
 public:
+
 	MidiStreamer (MidiDriver *target);
 
-	int open(int mode);
+	int open();
 	void close();
-	void send(uint32 b) { if (_mode) _target->send (b); }
+	void send(uint32 b) { if (_isOpen) _target->send (b); }
+	uint32 property(int prop, uint32 param);
+	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
+
 	void pause(bool p) { _paused = p; }
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
 
 	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
 	uint32 getBaseTempo (void) { return _target->getBaseTempo(); }

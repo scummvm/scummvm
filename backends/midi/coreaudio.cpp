@@ -39,29 +39,20 @@
 class MidiDriver_CORE : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CORE() : au_MusicDevice(0), au_output(0) { }
-	int open(int mode);
+	int open();
 	void close();
 	void send(uint32 b);
-	void pause(bool p) { }
-	void set_stream_callback(void *param, StreamCallback *sc) { }
 
 private:
 	AudioUnit au_MusicDevice;
 	AudioUnit au_output;
-
-	int _mode;
 };
 
 
-int MidiDriver_CORE::open(int mode)
+int MidiDriver_CORE::open()
 {
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
-
-	if (mode == MO_STREAMING)
-		return MERR_STREAMING_NOT_AVAILABLE;
-
-	_mode = mode;
 
 	int err;
 	AudioUnitConnection auconnect;
@@ -106,8 +97,6 @@ void MidiDriver_CORE::close()
 	// Cleanup
 	CloseComponent(au_output);
 	CloseComponent(au_MusicDevice);
-
-	_mode = 0;
 }
 
 void MidiDriver_CORE::send(uint32 b)

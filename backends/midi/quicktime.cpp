@@ -46,11 +46,11 @@
  */
 class MidiDriver_QT : public MidiDriver_MPU401 {
 public:
-	int open(int mode);
+	MidiDriver_QT();
+	
+	int open();
 	void close();
 	void send(uint32 b);
-	void pause(bool p) { }
-	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range);
 
 private:
@@ -58,33 +58,24 @@ private:
 	NoteChannel qtNoteChannel[16];
 	NoteRequest simpleNoteRequest;
 
-	StreamCallback *_stream_proc;
-	void *_stream_param;
-	int _mode;
-
 	// Pitch bend tracking. Necessary since QTMA handles
 	// pitch bending so differently from MPU401.
 	uint16 _pitchbend [16];
 	byte _pitchbend_range [16];
 };
 
-void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc)
+MidiDriver_QT::MidiDriver_QT()
 {
-	_stream_param = param;
-	_stream_proc = sc;
+	qtNoteAllocator = NULL;
 }
 
-int MidiDriver_QT::open(int mode)
+int MidiDriver_QT::open()
 {
 	ComponentResult qtErr = noErr;
 	int i;
 
-	qtNoteAllocator = NULL;
-
-	if (mode == MO_STREAMING)
-		return MERR_STREAMING_NOT_AVAILABLE;
-
-	_mode = mode;
+	if (qtNoteAllocator != NULL)
+		return MERR_ALREADY_OPEN;
 
 	for (i = 0; i < 15; i++)
 		qtNoteChannel[i] = NULL;
@@ -126,8 +117,6 @@ bail:
 
 void MidiDriver_QT::close()
 {
-	_mode = 0;
-
 	for (int i = 0; i < 15; i++) {
 		if (qtNoteChannel[i] != NULL)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
@@ -142,9 +131,6 @@ void MidiDriver_QT::close()
 
 void MidiDriver_QT::send(uint32 b)
 {
-	if (_mode != MO_SIMPLE)
-		error("MidiDriver_QT:send called but driver is not in simple mode");
-
 	MusicMIDIPacket midPacket;
 	unsigned char *midiCmd = midPacket.data;
 	midPacket.length = 3;

@@ -488,11 +488,9 @@ class MidiDriver_ADLIB : public MidiDriver {
 public:
 	MidiDriver_ADLIB();
 
-	int open(int mode);
+	int open();
 	void close();
 	void send(uint32 b);
-	void pause(bool p) { }
-	void set_stream_callback(void *param, StreamCallback *sc) { } // No streaming support. Use MidiStreamer wrapper
 	uint32 property (int prop, uint32 param);
 
 	void setPitchBendRange (byte channel, uint range); 
@@ -511,7 +509,7 @@ public:
 	MidiChannel *getPercussionChannel() { return NULL; } // Percussion currently not supported
 
 private:
-	int _mode;
+	bool _isOpen;
 	bool _game_SmallHeader;
 
 	FM_OPL *_opl;
@@ -720,15 +718,14 @@ MidiDriver_ADLIB::MidiDriver_ADLIB()
 		_parts[i].init (this);
 	}
 	_game_SmallHeader = false;
+	_isOpen = false;
 }
 
-int MidiDriver_ADLIB::open (int mode)
+int MidiDriver_ADLIB::open ()
 {
-	if (_mode != 0)
+	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-	if (mode != MO_SIMPLE)
-		return MERR_STREAMING_NOT_AVAILABLE;
-	_mode = mode;
+	_isOpen = true;
 
 	int i;
 	MidiChannelAdl *mc;
@@ -750,6 +747,7 @@ int MidiDriver_ADLIB::open (int mode)
 
 	_mixer = g_mixer;
 	_mixer->setupPremix(this, premix_proc);
+	
 	return 0;
 }
 
@@ -763,13 +761,12 @@ void MidiDriver_ADLIB::close()
 
 	// Detach the premix callback handler
 	_mixer->setupPremix (0, 0);
+
+	_isOpen = false;
 }
 
 void MidiDriver_ADLIB::send (uint32 b)
 {
-	if (_mode != MO_SIMPLE)
-		error("MidiDriver_ADLIB::send called but driver is not in simple mode");
-
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);

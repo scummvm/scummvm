@@ -3743,9 +3743,9 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 	_system = syst;
 
 	// Open MIDI driver
-	int result = _md->open(MidiDriver::MO_SIMPLE);
+	int result = _md->open();
 	if (result)
-		error("IMuseGM::error = %s", MidiDriver::get_error_name(result));
+		error("IMuseGM::error = %s", MidiDriver::getErrorName(result));
 
 	// Connect to the driver's timer
 	_se = eng;

@@ -27,7 +27,7 @@ MidiStreamer::MidiStreamer (MidiDriver *target) :
 _target (target),
 _stream_proc (0),
 _stream_param (0),
-_mode (0),
+_isOpen (false),
 _paused (false),
 _event_count (0),
 _event_index (0),
@@ -41,7 +41,7 @@ void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc)
 	_stream_param = param;
 	_stream_proc = sc;
 
-	if (_mode) {
+	if (_isOpen) {
 		_event_count = _stream_proc (_stream_param, _events, ARRAYSIZE (_events));
 		_event_index = 0;
 	}
@@ -80,23 +80,19 @@ void MidiStreamer::on_timer()
 	} // end while
 }
 
-int MidiStreamer::open (int mode)
+int MidiStreamer::open()
 {
-	if (_mode != 0)
+	if (_isOpen)
 		close();
 
-	int res = _target->open (MidiDriver::MO_SIMPLE);
+	int res = _target->open();
 	if (res && res != MERR_ALREADY_OPEN)
 		return res;
 
 	_event_index = _event_count = _delay = 0;
-	_mode = mode;
+	_isOpen = true;
 	_paused = false;
 
-	if (mode == MO_SIMPLE)
-		return 0;
-
-//	g_system->create_thread (timer_thread, this);
 	_driver_tempo = _target->getBaseTempo() / 500;
 
 	_target->setTimerCallback (this, &timer_thread);
@@ -105,7 +101,7 @@ int MidiStreamer::open (int mode)
 
 void MidiStreamer::close()
 {
-	if (!_mode)
+	if (!_isOpen)
 		return;
 
 	_target->setTimerCallback (NULL, NULL);
@@ -116,7 +112,7 @@ void MidiStreamer::close()
 	for (i = 0; i < 16; ++i)
 		_target->send ((0x7B << 8) | 0xB0 | i);
 
-	_mode = 0;
+	_isOpen = false;
 	_paused = true;
 }
 

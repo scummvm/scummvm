@@ -25,14 +25,12 @@
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
-	int open(int mode);
+	int open();
 	void close() { }
 	void send(uint32 b) { }
-	void pause(bool p) { }
-	void set_stream_callback(void *param, StreamCallback *sc) { }
 };
 
-int MidiDriver_NULL::open(int mode)
+int MidiDriver_NULL::open()
 {
 	warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
 	return 0;

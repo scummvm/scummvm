@@ -185,9 +185,9 @@ void MidiPlayer::initialize()
 
 	_midiDriver->property(MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
 
-	res = _midiDriver->open(MidiDriver::MO_STREAMING);
+	res = _midiDriver->open();
 	if (res != 0)
-		error("MidiPlayer::initializer, got %s", MidiDriver::get_error_name(res));
+		error("MidiPlayer::initializer, got %s", MidiDriver::getErrorName(res));
 
 	if (_paused)
 		_midiDriver->pause (true);

@@ -51,72 +51,33 @@
 class MidiDriver_ALSA:public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA();
-	int open(int mode);
+	int open();
 	void close();
 	void send(uint32 b);
-	void pause(bool p);
-	void set_stream_callback(void *param, StreamCallback *sc);
-	// void setPitchBendRange (byte channel, uint range);
 
 private:
 	void send_event(int do_flush);
+	bool _isOpen;
 	snd_seq_event_t ev;
-	StreamCallback *_stream_proc;
-	void *_stream_param;
-	int _mode;
 	snd_seq_t *seq_handle;
 	int seq_client, seq_port;
 	int my_client, my_port;
 	static int parse_addr(char *arg, int *client, int *port);
 };
 
-MidiDriver_ALSA::MidiDriver_ALSA():_mode(0), seq_handle(0), seq_client(0), seq_port(0), my_client(0),
-my_port(0)
+MidiDriver_ALSA::MidiDriver_ALSA()
+ : _isOpen(false), seq_handle(0), seq_client(0), seq_port(0), my_client(0), my_port(0)
 {
 }
 
-int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
-{
-	char *p;
-
-	if (isdigit(*arg)) {
-		if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
-			return -1;
-		*client = atoi(arg);
-		*port = atoi(p + 1);
-	} else {
-		if (*arg == 's' || *arg == 'S') {
-			*client = SND_SEQ_ADDRESS_SUBSCRIBERS;
-			*port = 0;
-		} else
-			return -1;
-	}
-	return 0;
-}
-
-void MidiDriver_ALSA::send_event(int do_flush)
-{
-	snd_seq_ev_set_direct(&ev);
-	snd_seq_ev_set_source(&ev, my_port);
-	snd_seq_ev_set_dest(&ev, seq_client, seq_port);
-
-	snd_seq_event_output(seq_handle, &ev);
-	if (do_flush)
-		snd_seq_flush_output(seq_handle);
-}
-
-int MidiDriver_ALSA::open(int mode)
+int MidiDriver_ALSA::open()
 {
 	char *var;
 	unsigned int caps;
 
-	if (_mode != 0)
+	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-
-	if (mode != MO_SIMPLE)
-		return MERR_STREAMING_NOT_AVAILABLE;
-
-	_mode = mode;
+	_isOpen = true;
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
 		// default alsa port if none specified
@@ -225,17 +186,34 @@ void MidiDriver_ALSA::send(uint32 b)
 	}
 }
 
-void MidiDriver_ALSA::pause(bool p)
+int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
 {
-	if (_mode == MO_STREAMING) {
-		/* Err... and what? */
+	char *p;
+
+	if (isdigit(*arg)) {
+		if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
+			return -1;
+		*client = atoi(arg);
+		*port = atoi(p + 1);
+	} else {
+		if (*arg == 's' || *arg == 'S') {
+			*client = SND_SEQ_ADDRESS_SUBSCRIBERS;
+			*port = 0;
+		} else
+			return -1;
 	}
+	return 0;
 }
 
-void MidiDriver_ALSA::set_stream_callback(void *param, StreamCallback *sc)
+void MidiDriver_ALSA::send_event(int do_flush)
 {
-	_stream_param = param;
-	_stream_proc = sc;
+	snd_seq_ev_set_direct(&ev);
+	snd_seq_ev_set_source(&ev, my_port);
+	snd_seq_ev_set_dest(&ev, seq_client, seq_port);
+
+	snd_seq_event_output(seq_handle, &ev);
+	if (do_flush)
+		snd_seq_flush_output(seq_handle);
 }
 
 MidiDriver *MidiDriver_ALSA_create()
