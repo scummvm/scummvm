@@ -2070,13 +2070,13 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 			// FIXME: Ugly workaround for bug #901462
 			if (_vm->_version == 8 && code == 10)
 				useOrDecompress = true;
-			drawStripComplex(dst, dstPitch, src, numLinesToProcess);
+			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
 		case 8:
 		case 12:
 			useOrDecompress = true;
-			drawStripComplex_trans(dst, dstPitch, src, numLinesToProcess);
+			drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
 		case 13:
@@ -2268,7 +2268,7 @@ void Gdi::drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, con
 		}                           \
 	} while (0)
 
-void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height) const {
+void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2279,55 +2279,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height)
 		int x = 8;
 		do {
 			FILL_BITS;
-			*dst++ = _roomPalette[color];
-
-		againPos:
-			if (!READ_BIT) {
-			} else if (!READ_BIT) {
-				FILL_BITS;
-				color = bits & _decomp_mask;
-				bits >>= _decomp_shr;
-				cl -= _decomp_shr;
-			} else {
-				incm = (bits & 7) - 4;
-				cl -= 3;
-				bits >>= 3;
-				if (incm) {
-					color += incm;
-				} else {
-					FILL_BITS;
-					reps = bits & 0xFF;
-					do {
-						if (!--x) {
-							x = 8;
-							dst += dstPitch - 8;
-							if (!--height)
-								return;
-						}
-						*dst++ = _roomPalette[color];
-					} while (--reps);
-					bits >>= 8;
-					bits |= (*src++) << (cl - 8);
-					goto againPos;
-				}
-			}
-		} while (--x);
-		dst += dstPitch - 8;
-	} while (--height);
-}
-
-void Gdi::drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int height) const {
-	byte color = *src++;
-	uint bits = *src++;
-	byte cl = 8;
-	byte bit;
-	byte incm, reps;
-
-	do {
-		int x = 8;
-		do {
-			FILL_BITS;
-			if (color != _transparentColor)
+			if (!transpCheck || color != _transparentColor)
 				*dst = _roomPalette[color];
 			dst++;
 
@@ -2354,7 +2306,7 @@ void Gdi::drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int h
 							if (!--height)
 								return;
 						}
-						if (color != _transparentColor)
+						if (!transpCheck || color != _transparentColor)
 							*dst = _roomPalette[color];
 						dst++;
 					} while (--reps);

@@ -237,8 +237,7 @@ protected:
 	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
 
-	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height) const;
-	void drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripBasicH_trans(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height) const;
