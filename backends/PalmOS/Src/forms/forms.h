@@ -10,6 +10,7 @@
 
 #define HANDLER(x)	Boolean  x##FormHandleEvent(EventPtr eventP);
 
+HANDLER(Main)
 HANDLER(EditGame)
 HANDLER(Volume)
 HANDLER(SystemInfo)
