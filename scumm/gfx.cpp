@@ -1255,6 +1255,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		CHECK_HEAP;
 
+		// COMI only uses flag value
+		if (_vm->_version == 8)
+			useOrDecompress = true;
+
 		if (_vm->_version == 1) {
 			mask_ptr = getMaskBuffer(x, y, 1);
 			drawStripC64Mask(mask_ptr, stripnr, width, height);
@@ -1816,9 +1820,6 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 		
 		switch (code) {
 		case 1:
-			// FIXME: Ugly workaround for bug #901462
-			if (_vm->_version == 8)
-				useOrDecompress = true;
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
@@ -1838,9 +1839,6 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	
 		case 6:
 		case 10:
-			// FIXME: Ugly workaround for bug #901462
-			if (_vm->_version == 8 && code == 10)
-				useOrDecompress = true;
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	

@@ -475,7 +475,15 @@ void ScummEngine::drawObject(int obj, int arg) {
 	}
 
 	if (numstrip != 0) {
-		byte flags = (_features & GF_HUMONGOUS) ? 0 : Gdi::dbAllowMaskOr;
+		byte flags;
+		if (_version == 8) 
+			flags = (od.flag & 16);
+		else if (_features & GF_HUMONGOUS)
+			//TODO Should be read from object header
+			flags = 0;
+		else
+			flags = Gdi::dbAllowMaskOr;;
+
 		if (_version == 1) {
 			gdi._C64ObjectMode = true;
 			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
@@ -777,6 +785,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
 		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
 		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
+		od->flag = READ_LE_UINT32(&imhd->v8.flag);
 
 	} else if (_version == 7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
