@@ -27,7 +27,7 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "050102"
+#define POCKETSCUMM_BUILD "051302"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
@@ -355,6 +355,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	hide_toolbar = false;
 
 	scummcfg = new Config("scummvm.ini", "scummvm");
+	scummcfg->set_writing(true);
 
 	game_name = GameSelector();
 	if (!game_name)
@@ -367,6 +368,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	if (!argv[2])
 		return 0;
+
+	// No default toolbar for zak256
+	if (strcmp(game_name, "zak256") == 0)
+		hide_toolbar = true;
 
 	if (detector.detectMain(argc, argv))
 		return (-1);
@@ -463,6 +468,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				SHSipPreference(hWnd, SIP_FORCEDOWN);
 			} 
 			*/
+			SHSipPreference(hWnd, SIP_FORCEDOWN);
 		}
 //		SHSipPreference(hWnd, SIP_UP); /* Hack! */
 		/* It does not happen often but I don't want to see tooltip traces */
@@ -470,10 +476,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		return 0;
 
 	case WM_ACTIVATE:
+	case WM_SETFOCUS:	
 		GraphicsResume();
 		if (!hide_toolbar)
 			toolbar_drawn = false;
 //		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
+
 		if (LOWORD(wParam) == WA_ACTIVE) {
 			if (GetScreenMode()) {		
 				SHSipPreference(hWnd, SIP_FORCEDOWN);
@@ -486,9 +494,11 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN), TRUE);
 			}
 		}
+
 		return 0;
 
 	case WM_HIBERNATE:
+	case WM_KILLFOCUS:
 		GraphicsSuspend();
 		if (!hide_toolbar)
 			toolbar_drawn = false;
@@ -539,16 +549,22 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
       break;
 
 		case IDC_LANDSCAPE:
+			HWND taskbar;
 			//SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
 			//InvalidateRect(HWND_DESKTOP, NULL, TRUE);
 			SetScreenMode(!GetScreenMode());
 			//SHSipPreference(hWnd,SIP_FORCEDOWN);
 			//MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
 			//SetCapture(hWnd); // to prevent input panel from getting taps						
-			SHSipPreference(hWnd, SIP_FORCEDOWN);
-			SHFullScreen(hWnd, SHFS_HIDETASKBAR);
+			/*taskbar = FindWindow(TEXT("HHTaskBar"), NULL);
+			if (taskbar)
+				ShowWindow(taskbar, SW_HIDE);*/
+			/*SHSipPreference(hWnd, SIP_FORCEDOWN);
+			SHFullScreen(hWnd, SHFS_HIDETASKBAR);*/
+			SetForegroundWindow(hWnd);
 			MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
 			SetCapture(hWnd);
+			UpdateWindow(hWnd);
 			if (!hide_toolbar)
 				toolbar_drawn = false;
 			break;
@@ -872,10 +888,16 @@ void action_cursoronoff() {
 	hide_cursor = !hide_cursor;
 }
 
+void action_subtitleonoff() {
+	g_scumm->_noSubtitles = !g_scumm->_noSubtitles;
+}
+
 void keypad_init() {
 	static pAction actions[TOTAL_ACTIONS] =
 	{ action_pause, action_save, action_quit, action_skip, action_hide, 
-	  action_keyboard, action_sound, action_right_click, action_cursoronoff };
+	  action_keyboard, action_sound, action_right_click, action_cursoronoff,
+	  action_subtitleonoff
+	};
 	
 	GAPIKeysInit(actions);
 	
@@ -918,6 +940,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	SetWindowLong(syst->hWnd, GWL_USERDATA, (long)syst);
 
 	ShowWindow(syst->hWnd, SW_SHOW);
+	UpdateWindow(syst->hWnd);
 
 	SHMENUBARINFO smbi;
 	smbi.cbSize = sizeof(smbi); 
@@ -979,6 +1002,7 @@ void OSystem_WINCE3::unload_gfx_mode() {
 
 void OSystem_WINCE3::init_size(uint w, uint h) {
 	load_gfx_mode();
+	SetScreenGeometry(w, h);
 }
 
 void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -1142,7 +1166,8 @@ void OSystem_WINCE3::delay_msecs(uint msecs) {
 }
 	
 void *OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
-	return NULL;
+	// needed for emulated MIDI support (Sam'n'Max)
+	return CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)proc, param, 0, NULL);
 }
 
 int mapKey(int key, byte mod)
