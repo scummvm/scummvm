@@ -1169,7 +1169,7 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 	uint16 width = 0;
 	uint16 optionLines = 0;
 	uint16 maxTextLen = MAX_TEXT_WIDTH;
-	char *p = strchr(str, '\0');
+	char *p = (char *)strchr(str, '\0');
 	while (p != str - 1) {
 		while (*p != ' ' && p != str - 1) {
 			--p;

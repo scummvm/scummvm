@@ -162,7 +162,7 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 
 	while (str) {
 		char line[256];
-		char *pos = strchr(str, '\n');
+		char *pos = (char *)strchr(str, '\n');
 		if (pos) {
 			memcpy(line, str, pos - str - 1);
 			line[pos - str - 1] = 0;

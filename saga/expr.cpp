@@ -273,7 +273,7 @@ char *EXPR_ReadString(const char **string_p, int *len, int term_char) {
 	int in_char;
 
 	if (term_char > 0) {
-		term_p = strchr(*string_p, term_char);
+		term_p = (char *)strchr(*string_p, term_char);
 		if (term_p == NULL) {
 			return NULL;
 		}

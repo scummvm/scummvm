@@ -779,7 +779,8 @@ void Logic::stopAndWait() {
 	uint16 *offset   = SkyCompact::getSub(_compact, _compact->mode + 2);
 
 	*scriptNo = (uint16)(_compact->extCompact->stopScript & 0xffff);
-	*offset   = (uint16)(_compact->extCompact->stopScript >> 16);
+	*offset   = 0; //stopScript is uint16, after right shift is zero
+//	*offset   = (uint16)(_compact->extCompact->stopScript >> 16);
 
 	_compact->logic = L_SCRIPT;
 	logicScript();
