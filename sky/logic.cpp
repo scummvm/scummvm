@@ -496,9 +496,8 @@ void SkyLogic::talk() {
 
 	// If speech is allowed then check for it to finish before finishing animations
 
-	if ((SkyState::_systemVars.systemFlags & SF_PLAY_VOCS) && // sblaster?
-		(_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
-		(!(SkyState::_systemVars.systemFlags & SF_VOC_PLAYING))) { // finished?
+	if ((_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
+		(_skySound->speechFinished())) { // finished?
 
 		_compact->logic = L_SCRIPT; // restart character control
 
@@ -517,41 +516,33 @@ void SkyLogic::talk() {
 			// we will force the animation to finish 3 game cycles
 			// before the speech actually finishes - because it looks good.
 
-			if (_compact->extCompact->spTime != 3) {
+			if ((_compact->extCompact->spTime != 3) || (!_skySound->speechFinished())) {
 				_compact->frame = *(graphixProg + 2) + _compact->offset;
 				graphixProg += 3;
 				_compact->grafixProg = graphixProg;
-				goto past_speech_anim;
 			}
+		} else {
+			// we ran out of frames, let actor stand still.
+			// TODO: we should improve this and simply restart animation.
+			_compact->frame = _compact->getToFlag;
+			_compact->grafixProg = 0;
+		}
+	}
 
-			if (SkyState::_systemVars.systemFlags & SF_VOC_PLAYING) {
-				_compact->extCompact->spTime++;
-				return;
-			}
+	if (_skySound->speechFinished()) _compact->extCompact->spTime--;
+
+	if (_compact->extCompact->spTime == 0) {
+
+		// ok, speech has finished
+
+		if (_compact->extCompact->spTextId) {
+			Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
+			cpt->status = 0; // kill the text
 		}
 
-		_compact->frame = _compact->getToFlag;
-		_compact->grafixProg = 0;
+		_compact->logic = L_SCRIPT;
+		logicScript();
 	}
-
-past_speech_anim:
-	if (--(_compact->extCompact->spTime))
-		return;
-
-	// ok, speech has finished
-
-	if (SkyState::_systemVars.systemFlags & SF_VOC_PLAYING) {
-		_compact->extCompact->spTime++;
-		return;
-	}
-
-	if (_compact->extCompact->spTextId) {
-		Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
-		cpt->status = 0; // kill the text
-	}
-
-	_compact->logic = L_SCRIPT;
-	logicScript();
 }
 
 void SkyLogic::listen() {
@@ -2198,24 +2189,16 @@ bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 }
 
 void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base) {
-	//animNum == -1 (0x??FF) means directional
-	
-	uint8 offset = (uint8)(target->extCompact->megaSet / NEXT_MEGA_SET);
-	uint16 *animPtr = 0;
-	
-	if (animNum > 0xFF)
-		warning("animNum > 255! - tell joostp when/where this happens");
-	
-	//FIXME: Is this correct?
-	if (animNum >= 0xFF)
-		offset += -1;
-	else
-		offset += (uint8)(animNum & 0xFF);   //get correct anim no
 
-	if (SkyTalkAnims::animTalkTableIsPointer[offset]) //is it a pointer?
-		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[offset];
-	else  	//then it must be a value
-		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[offset]);
+	uint16 *animPtr;
+
+	animNum += target->extCompact->megaSet / NEXT_MEGA_SET;
+	animNum &= 0xFF;
+
+	if (SkyTalkAnims::animTalkTableIsPointer[animNum]) //is it a pointer? 
+		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[animNum];
+	else 	//then it must be a value
+		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[animNum]);
 	
 	target->offset = *animPtr++;
 	target->getToFlag = *animPtr++;
@@ -2268,8 +2251,11 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 		_compact->status = 0;	//don't display text
 		//_logicTalkButtonRelease = 1; 
 	}
-
-	target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
+	// In CD version, we're doing the timing by checking when the VOC has stopped playing.
+	// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between
+	// each sentence.
+	if (SkyState::isCDVersion()) target->extCompact->spTime = 10;
+	else target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
 	target->logic = L_TALK; 
 }
 

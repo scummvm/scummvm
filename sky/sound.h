@@ -51,6 +51,7 @@ public:
 	void playSound(uint16 sound, uint16 volume);
 	bool fnStartFx(uint32 sound);
 	void fnStartSpeech(uint16 textNum);
+	bool speechFinished(void) { return _ingameSpeech == 0; };
 
 private:
 	SkyDisk *_skyDisk;

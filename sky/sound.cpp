@@ -1013,6 +1013,7 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_effectHandle = 0;
 	_bgSoundHandle = 0;
 	_ingameSound = 0;
+	_ingameSpeech = 0;
 }
 
 SkySound::~SkySound(void) {
@@ -1117,10 +1118,14 @@ bool SkySound::fnStartFx(uint32 sound) {
 
 	uint8 volume = 0x7f; // start with max vol
 
-	if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
-		volume = roomList[i].adlibVolume;
-	if (SkyState::_systemVars.systemFlags & SF_ROLAND)
-	 	volume = roomList[i].rolandVolume;
+	if (!SkyState::isCDVersion()) {
+		// as long as we can't set the volume for sfx without changing the speech volume,
+		// we're better off not setting it at all.
+		if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
+			volume = roomList[i].adlibVolume;
+		if (SkyState::_systemVars.systemFlags & SF_ROLAND)
+		 	volume = roomList[i].rolandVolume;
+	}
 
 	// Check the flags, the sound may come on after a delay.
 	if (sfx->flags & SFXF_START_DELAY) {

@@ -153,6 +153,7 @@ void SkyState::go() {
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
 		_system->update_screen();
+		//if (_skySound->speechFinished()) printf("finsihed\n"); else printf("running\n");
 	}
 }
 
@@ -172,6 +173,7 @@ void SkyState::initialise(void) {
 		_systemVars.systemFlags |= SF_ROLAND;
 		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
+	_systemVars.systemFlags |= SF_PLAY_VOCS;
 
 	_skyText = new SkyText(_skyDisk);
 	_skyMouse = new SkyMouse(_system, _skyDisk);
