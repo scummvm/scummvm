@@ -1352,20 +1352,14 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 	int8 pan;
 
 	if (v0 > v1) {
-			volume = musicVolTable[v0];
-			pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
-//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v0]);
-//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], musicVolTable[v1*16/v0]);
+		volume = musicVolTable[v0];
+		pan = (musicVolTable[v1 * 16 / v0] / 2) - 127;
 	} else if (v1 > v0) {
-			volume = musicVolTable[v1];
-			pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
-//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v1]);
-//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], -musicVolTable[v0*16/v1]);
+		volume = musicVolTable[v1];
+		pan = (musicVolTable[v0 * 16 / v1] / 2) + 127;
 	} else {
-			volume = musicVolTable[v1];
-			pan = 0;
-//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v1]);
-//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], 0);
+		volume = musicVolTable[v1];
+		pan = 0;
 	}
 
 	// FIXME: Until the mixer supports LE samples natively, we need to
@@ -1374,14 +1368,10 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		data16[i] = TO_BE_16(data16[i]);
 	}
 
-	if (soundHandleMusic[primaryStream] == 0) {
-		warning("play music newStream(): this shouldn't happen");
-//		assert(!soundHandleMusic[primaryStream]);
-		g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16, bufferSizeMusic, 22050,
-					SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
-	} else {
-		g_engine->_mixer->appendStream(soundHandleMusic[primaryStream], data16, bufferSizeMusic);
-	}
+	g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16,
+		bufferSizeMusic, 22050,
+		SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE,
+		100000, volume, pan);
 
 	// Recorder some last variables
 	musStreaming[primaryStream] = 1;
