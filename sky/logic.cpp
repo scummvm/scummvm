@@ -2333,8 +2333,10 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	} else
 		target->grafixProg = 0;
 
+	bool speechUsed = false;
+	// startSpeech returns false if no speech file exists for that text
 	if (SkyState::isCDVersion())
-		_skySound->fnStartSpeech((uint16)textNum);
+		speechUsed = _skySound->startSpeech((uint16)textNum);
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
@@ -2384,7 +2386,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	// In CD version, we're doing the timing by checking when the VOC has stopped playing.
 	// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between
 	// each sentence.
-	if (SkyState::isCDVersion()) target->extCompact->spTime = 10;
+	if (speechUsed) target->extCompact->spTime = 10;
 	else target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
 	target->logic = L_TALK; 
 }
