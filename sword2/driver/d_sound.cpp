@@ -1026,7 +1026,7 @@ int32 Sound::openFx(int32 id, uint8 *data) {
 
 	_fx[fxi]._rate = READ_LE_UINT16(data + 24);
 
-	data += READ_UINT32(data + 16) + 20;
+	data += READ_LE_UINT32(data + 16) + 20;
 
 	if (READ_UINT32(data) != MKID('data')) {
 		warning("openFx: WAV file has no 'data' chunk");
