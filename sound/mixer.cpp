@@ -65,8 +65,7 @@ void SoundMixer::on_generate_samples(void *s, byte *samples, int len) {
 	((SoundMixer*)s)->mix((int16*)samples, len>>1);
 }
 
-bool SoundMixer::bind_to_system(OSystem *syst) {
-	//_volume_table = (int16*)malloc(256 * sizeof(int16));
+bool SoundMixer::bind_to_system(OSystem *syst) {	
 	_volume_table = (int16*)calloc(256*sizeof(int16),1);
 		
 	uint rate = (uint)syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
