@@ -28,8 +28,9 @@
  */
 
 #include "stdafx.h"
-#include "sound/rate.h"
 #include "sound/audiostream.h"
+#include "sound/rate.h"
+#include "sound/mixer.h"
 
 /**
  * The precision of the fractional computations used by the rate converter.
@@ -166,10 +167,10 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			}
 
 			// output left channel
-			clampedAdd(*obuf++, (out[0] * (int)vol_l) >> 8);
+			clampedAdd(*obuf++, (out[0] * (int)vol_l) / SoundMixer::kMaxMixerVolume);
 
 			// output right channel
-			clampedAdd(*obuf++, (out[1] * (int)vol_r) >> 8);
+			clampedAdd(*obuf++, (out[1] * (int)vol_r) / SoundMixer::kMaxMixerVolume);
 
 			// Increment output position
 			unsigned long tmp = opos_frac + opos_inc_frac;
@@ -236,10 +237,10 @@ public:
 			}
 
 			// output left channel
-			clampedAdd(*obuf++, (tmp0 * (int)vol_l) >> 8);
+			clampedAdd(*obuf++, (tmp0 * (int)vol_l) / SoundMixer::kMaxMixerVolume);
 	
 			// output right channel
-			clampedAdd(*obuf++, (tmp1 * (int)vol_r) >> 8);
+			clampedAdd(*obuf++, (tmp1 * (int)vol_r) / SoundMixer::kMaxMixerVolume);
 		}
 		return (ST_SUCCESS);
 	}

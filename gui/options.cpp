@@ -26,11 +26,12 @@
 #include "gui/PopUpWidget.h"
 #include "gui/TabWidget.h"
 
-#include "backends/fs/fs.h"
 #include "base/gameDetector.h"
+#include "backends/fs/fs.h"
 #include "common/config-manager.h"
 #include "common/scaler.h"
 #include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 #if (!( defined(__PALM_OS__) || defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
 #include <sys/param.h>
@@ -328,19 +329,19 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 	// Volume controllers
 	_musicVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
-	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
+	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(SoundMixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
 	_sfxVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
-	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
+	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(SoundMixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
 	_speechVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "Speech volume: ", 100, kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
-	_speechVolumeSlider->setMinValue(0); _speechVolumeSlider->setMaxValue(255);
+	_speechVolumeSlider->setMinValue(0); _speechVolumeSlider->setMaxValue(SoundMixer::kMaxMixerVolume);
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
