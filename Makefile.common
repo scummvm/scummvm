@@ -24,7 +24,7 @@ DEPDIR := .deps
 # DEPDIRS directive works correctly.
 MODULES += \
 	scumm common simon gui backends sound \
-	scumm/smush backends/fs/posix backends/fs/morphos backends/fs/windows
+	scumm/smush backends/fs/posix backends/fs/morphos backends/fs/windows backends/midi
 
 # Include the build instructions for all modules
 -include $(patsubst %,%/module.mk,$(MODULES))
