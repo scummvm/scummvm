@@ -149,13 +149,11 @@ Broken Sword 2
 
 SIMON
 =====
+* Add support for debugger interface
+* Add support for dictionary files in Amiga and Macintosh versons of
+  Simon the Sorcerer 2
 * Add support for Protracker music format used in Amiga versions
-* Add support for decoding main graphics correctly in Amiga versions
-
-Queen
-=====
-* Get rid of the alternate 'queencomp' target (this requires some kind of 
-  doesFileExist() method)
+* Add support for drawing main graphics correctly in Amiga versions
 
 Descumm
 =======
