@@ -351,7 +351,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 			File::addDefaultDirectory(_gameDataPath + "/SPANISH/");
 			break;
 		case  3:
-			File::addDefaultDirectory(_gameDataPath + "/ITALIAN/");
+			File::addDefaultDirectory(_gameDataPath + "/italian/");
 			File::addDefaultDirectory(_gameDataPath + "/ITALIAN/");
 			break;
 		case  2:
