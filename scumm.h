@@ -574,6 +574,7 @@ public:
 	/* Init functions, etc*/
 	byte _fastMode;
 	char *getGameName();
+	Scumm(); // constructor
 
 	/* video buffer */
 

@@ -792,7 +792,7 @@ void Scumm::processKbd() {
 			videoFinished=1;
 		} else
 			exitCutscene();
-	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY]) {
+	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY] && _currentRoom != 0) {
 		if ( _features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT],0,0,0);
 		((Gui*)_gui)->saveLoadDialog();
@@ -1079,7 +1079,7 @@ void Scumm::launch()
 
 	setupSound();
 
-//	runScript(1,0,0,&_bootParam);
+	runScript(1,0,0,&_bootParam);
 	
 //	_scummTimer = 0;
 

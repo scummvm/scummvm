@@ -602,7 +602,10 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 	do {
 		if(ftell(_in)>=fileSize )
 			return;
-
+#ifdef INSANE_DEBUG
+		warning("Playing frame %d",frameIndex);
+#endif
+		
 		parseTag();
 		frameIndex++;
 

@@ -938,158 +938,6 @@ int main(int argc, char* argv[]) {
 		scumm = new Scumm_v6;
 	else
 		scumm = new Scumm_v5;
-		
-
-/* All those stuff should be moved to the constructor.... */
-	for (i=0;i<17;i++)
-	{
-		scumm->res.address[i]=0;
-		scumm->res.flags[i]=0;
-		scumm->res.mode[i]=0;
-		scumm->res.name[i]=0;
-		scumm->res.num[i]=0;
-		scumm->res.roomno[i]=0;
-		scumm->res.roomoffs[i]=0;
-		scumm->res.tags[i]=0;
-	}
-
-	scumm->_resFilePath=0;
-	scumm->_resFilePrefix=0;
-
-	for (i=1; i<NUM_SCRIPT_SLOT; i++)
-	{
-		scumm->vm.slot[i].status=0;
-		scumm->vm.slot[i].cutsceneOverride=0;
-		scumm->vm.slot[i].delay=0;
-		scumm->vm.slot[i].didexec=0;
-		scumm->vm.slot[i].freezeCount=0;
-		scumm->vm.slot[i].newfield=0;
-		scumm->vm.slot[i].number=0;
-		scumm->vm.slot[i].offs=0;
-		scumm->vm.slot[i].unk1=0;
-		scumm->vm.slot[i].unk2=0;
-		scumm->vm.slot[i].unk5=0;
-		scumm->vm.slot[i].where=0;
-	}
-
-	for (i=0; i<5;i++)
-	{
-		scumm->vm.cutScenePtr[i]=0;
-		scumm->vm.cutSceneScript[i]=0;
-		scumm->vm.cutSceneData[i]=0;
-	}
-
-	scumm->vm.cutSceneScriptIndex=0;
-	scumm->vm.cutSceneStackPointer=0;
-
-	scumm->_scummStackPos=0;
-	scumm->_verbMouseOver=0;
-
-	scumm->_palDirtyMax=0;
-	scumm->_palDirtyMin=0;
-	scumm->_debugger=0;
-	scumm->camera._cur.x=0;
-	scumm->camera._cur.y=0;
-	scumm->camera._dest.x=0;
-	scumm->camera._dest.y=0;
-	scumm->camera._accel.x=0;
-	scumm->camera._accel.y=0;
-	scumm->camera._last.x=0;
-	scumm->camera._last.y=0;
-	scumm->camera._leftTrigger=0;
-	scumm->camera._rightTrigger=0;
-	scumm->camera._follows=0;
-	scumm->camera._mode=0;
-	scumm->camera._movingToActor=0;
-
-	scumm->mouse.x=0;
-	scumm->mouse.y=0;
-	
-	scumm->_xPos = 0;
-	scumm->_yPos = 0;
-	scumm->_dir = 0;
-
-	scumm->_resultVarNumber = 0;
-	scumm->delta=0;
-	scumm->_soundEngine=0;
-	scumm->_gui=0;
-
-	scumm->_verbs=0;
-	scumm->_objs=0;
-	scumm->_debugger=0;
-
-	scumm->_inventory=0;
-	scumm->_arrays=0;
-	scumm->_newNames=0;
-	scumm->_vars=0;
-	scumm->_varwatch=0;
-	scumm->_bitVars=0;
-
-	scumm->_talk_sound_mode=0;
-	scumm->_talk_sound_a = 0;
-	scumm->_talk_sound_b = 0;
-
-	scumm->_curActor = 0;
-	scumm->_curExecScript = 0;
-	scumm->_curPalIndex = 0;
-	scumm->_curVerb = 0;
-	scumm->_curVerbSlot = 0;
-	scumm->_currentScript = 0;
-	scumm->_currentRoom = 0;
-
-	scumm->_midi_driver = 0;
-	scumm->_curSoundPos = 0;
-	scumm->_soundQuePos = 0;	
-	scumm->_soundQue2Pos = 0;
-	scumm->_soundParam = 0;
-	scumm->_soundParam2 = 0;
-	scumm->_soundParam3 = 0;
-	scumm->current_cd_sound = 0;
-	scumm->num_sound_effects = 0;
-	scumm->_noSubtitles = 0;
-
-	scumm->_screenEffectFlag = 0;
-	scumm->_switchRoomEffect = 0;
-	scumm->_switchRoomEffect2 = 0;
-	scumm->_screenLeft = 0;
-	scumm->_screenTop = 0;
-
-	scumm->_enqueue_b = 0;
-	scumm->_enqueue_c = 0;
-	scumm->_enqueue_d = 0;
-	scumm->_enqueue_e = 0;
-
-	scumm->_palManipCounter = 0;
-	scumm->_palManipStart = 0;
-	scumm->_palManipEnd = 0;
-
-	memset(scumm->_colorCycle, 0, sizeof(scumm->_colorCycle));
-
-	scumm->_CLUT_offs = 0;
-	scumm->_ENCD_offs = 0;
-	scumm->_EPAL_offs = 0;
-	scumm->_IM00_offs = 0;
-	scumm->_PALS_offs = 0;
-
-	scumm->_fastMode = 0;
-
-	for (i=0; i<6; i++) {
-		scumm->string[i].t_center = 0;
-		scumm->string[i].t_xpos = 0;
-		scumm->string[i].t_ypos = 0;
-		scumm->string[i].t_color = 0;
-		scumm->string[i].t_overhead  =0;
-		scumm->string[i].t_charset = 0;
-		scumm->string[i].t_right = 0;
-	}
-
-	scumm->_charsetColor = 0;
-
-	scumm->_insaneFlag = 12;
-
-	scumm->_insaneState = 0;
-
-/* */
 
 	scumm->_fullScreen = detector._fullScreen;
 	scumm->_debugMode = detector._debugMode;
@@ -1113,11 +961,13 @@ int main(int argc, char* argv[]) {
 	scumm->delta=0;
 	scumm->_system = &_system;
 
+	_system.last_time = SDL_GetTicks();
+	
 	scumm->launch();
 
 	_system.last_time = SDL_GetTicks();
 
-	scumm->runScript(1,0,0,&scumm->_bootParam);
+//	scumm->runScript(1,0,0,&scumm->_bootParam);
 	
 //	scumm->scummMain(argc, argv); // Todo: need to change that as well
 	
