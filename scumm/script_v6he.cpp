@@ -1185,8 +1185,7 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 
 	writeVar(0, 0);
 
-	// define size as size-1 because in defineArray it gets incremented
-	ArrayHeader *ah = defineArray(0, rtCostume, 0, size-1);
+	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
