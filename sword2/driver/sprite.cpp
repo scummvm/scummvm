@@ -370,9 +370,6 @@ void DeleteSurface(uint8 *surface) {
 #define SCALE_MAXWIDTH 512
 #define SCALE_MAXHEIGHT 512
 
-static uint16 xScale[SCALE_MAXWIDTH];
-static uint16 yScale[SCALE_MAXHEIGHT];
-
 /**
  * Draws a sprite onto the screen. The type of the sprite can be a combination
  * of the following flags, some of which are mutually exclusive:

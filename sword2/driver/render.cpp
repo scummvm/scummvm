@@ -122,9 +122,6 @@ void BlitBlockSurface(BlockSurface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rec
 	SetNeedRedraw();
 }
 
-#define SCALE_MAXWIDTH 512
-#define SCALE_MAXHEIGHT 512
-
 static uint16 xScale[SCALE_MAXWIDTH];
 static uint16 yScale[SCALE_MAXHEIGHT];
 

@@ -220,6 +220,10 @@ extern "C" {
 // Key buffer size
 #define MAX_KEY_BUFFER 32
 
+// Maximum scaled size of a sprite
+#define SCALE_MAXWIDTH 512
+#define SCALE_MAXHEIGHT 512
+
 //
 //	Structure definitions
 //	---------------------
@@ -412,8 +416,6 @@ extern uint32 SVM_timeGetTime(void);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
-extern void scumm_mkdir(const char *pathname);
-extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
 //-----------------------------------------------------------------------------
 extern int16 screenWide;	// Width of the screen display

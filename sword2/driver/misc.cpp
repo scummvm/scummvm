@@ -38,13 +38,3 @@ int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint
 	strcpy(sCDName, CD1_LABEL);
 	return 1;
 }
-
-// FIXME wrap different platform specific mkdir calls and actually do something
-void scumm_mkdir(const char *pathname) {
-	warning("stub scumm_mkdir %s", pathname);
-}
-
-void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen) {
-	warning("stub GetModuleFileName");
-}
-
