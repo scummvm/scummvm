@@ -27,6 +27,7 @@
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/music.h"
+#include "scumm/saveload.h"
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"

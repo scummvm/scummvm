@@ -77,6 +77,55 @@ void IMuseDigital::resetState() {
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
+	Common::StackLock lock(_mutex, "IMuseDigital::saveOrLoad()");
+	
+	// save-load disabled
+	return;
+
+	const SaveLoadEntry mainEntries[] = {
+		MKLINE(IMuseDigital, _volVoice, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _volSfx, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _volMusic, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicState, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicSeq, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicCue, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _nextSeqToPlay, sleInt32, VER(31)),
+		MKARRAY(IMuseDigital, _attributes, sleInt32, 188, VER(8)),
+		MKEND()
+	};
+
+	const SaveLoadEntry trackEntries[] = {
+		MKLINE(Track, pan, sleInt8, VER(31)),
+		MKLINE(Track, vol, sleInt32, VER(31)),
+		MKLINE(Track, volFadeDest, sleInt32, VER(31)),
+		MKLINE(Track, volFadeStep, sleInt32, VER(31)),
+		MKLINE(Track, volFadeDelay, sleInt32, VER(31)),
+		MKLINE(Track, volFadeUsed, sleByte, VER(31)),
+		MKLINE(Track, soundId, sleInt32, VER(31)),
+		MKLINE(Track, used, sleByte, VER(31)),
+		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
+		MKLINE(Track, started, sleByte, VER(31)),
+		MKLINE(Track, priority, sleInt32, VER(31)),
+		MKLINE(Track, regionOffset, sleInt32, VER(31)),
+		MKLINE(Track, trackOffset, sleInt32, VER(31)),
+		MKLINE(Track, dataOffset, sleInt32, VER(31)),
+		MKLINE(Track, curRegion, sleInt32, VER(31)),
+		MKLINE(Track, curHookId, sleInt32, VER(31)),
+		MKLINE(Track, volGroupId, sleInt32, VER(31)),
+		MKLINE(Track, iteration, sleInt32, VER(31)),
+		MKLINE(Track, mod, sleInt32, VER(31)),
+		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
+		MKLINE(Track, mixerVol, sleInt32, VER(31)),
+		MKLINE(Track, mixerPan, sleInt32, VER(31)),
+		MKEND()
+	};
+
+	int i;
+
+	ser->_ref_me = this;
+	ser->saveLoadEntries(this, mainEntries);
+	for (i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++)
+		ser->saveLoadEntries(_track[i], trackEntries);
 }
 
 void IMuseDigital::callback() {
