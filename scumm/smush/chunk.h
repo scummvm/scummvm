@@ -74,7 +74,7 @@ protected:
 	FileChunk();
 
 public:
-	FileChunk(const char *fname, const char *directory);
+	FileChunk(const char *fname);
 	virtual ~FileChunk();
 	Chunk *subBlock();
 	bool read(void *buffer, uint32 size);

@@ -32,11 +32,11 @@ class FilePtr : public File {
 	Common::String _filename;
 	int32 _refcount;
 public:
-	FilePtr(const char *fname, const char *directory) :
+	FilePtr(const char *fname) :
 		_filename(fname),
 		_refcount(1) {
 			debug(9, "FilePtr created for %s", fname);
-			open(fname, directory);
+			open(fname);
 			if (isOpen() == false)
 				error("FilePtr unable to read file %s", fname);
 		}
@@ -115,8 +115,8 @@ FileChunk::FileChunk() :
 	_data(0) {
 }
 
-FileChunk::FileChunk(const char *fname, const char *directory) {
-	_data = new FilePtr(fname, directory);
+FileChunk::FileChunk(const char *fname) {
+	_data = new FilePtr(fname);
 	_type = _data->readUint32BE();
 	_size = _data->readUint32BE();
 	_offset = sizeof(Chunk::type) + sizeof(uint32);

@@ -71,15 +71,15 @@ Insane::Insane(ScummEngine_v6 *scumm) {
 		readFileToMem("minedriv.flu", &_smush_minedrivFlu);
 		readFileToMem("minefite.flu", &_smush_minefiteFlu);
 		_smush_bensgoggNut = new NutRenderer(_vm);
-		_smush_bensgoggNut->loadFont("bensgogg.nut", _vm->getGameDataPath());
+		_smush_bensgoggNut->loadFont("bensgogg.nut");
 		_smush_bencutNut = new NutRenderer(_vm);
-		_smush_bencutNut->loadFont("bencut.nut", _vm->getGameDataPath());
+		_smush_bencutNut->loadFont("bencut.nut");
 	}
 
 	_smush_iconsNut = new NutRenderer(_vm);
-	_smush_iconsNut->loadFont("icons.nut", _vm->getGameDataPath());
+	_smush_iconsNut->loadFont("icons.nut");
 	_smush_icons2Nut = new NutRenderer(_vm);
-	_smush_icons2Nut->loadFont("icons2.nut", _vm->getGameDataPath());
+	_smush_icons2Nut->loadFont("icons2.nut");
 }
 
 Insane::~Insane(void) {
@@ -591,7 +591,7 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 	uint32 len;
 
 	in = new File();
-	in->open(name, _vm->getGameDataPath());
+	in->open(name);
 	len = in->size();
 	*buf = (byte *)malloc(len);
 	in->read(*buf, len);
@@ -615,7 +615,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	_player->play(filename, _vm->getGameDataPath(), offset, startFrame);
+	_player->play(filename, offset, startFrame);
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
@@ -1447,7 +1447,7 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
 	debugC(DEBUG_INSANE, "Insane::smush_setupSanFile(%s, %x, %d)", filename, offset, contFrame);
 
-	_player->seekSan(filename, _vm->getGameDataPath(), offset, contFrame);
+	_player->seekSan(filename, offset, contFrame);
 
 	_vm->_imuseDigital->pause(false);
 }

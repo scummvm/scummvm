@@ -113,16 +113,16 @@ static int32 codec1(byte *dst, byte *src, int height) {
 	return decoded_length;
 }
 
-bool NutRenderer::loadFont(const char *filename, const char *directory) {
-	debug(8, "NutRenderer::loadFont(\"%s\", \"%s\") called", filename, directory);
+bool NutRenderer::loadFont(const char *filename) {
+	debug(8, "NutRenderer::loadFont(\"%s\") called", filename);
 	if (_loaded) {
 		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
 
 	File file;
-	file.open(filename, directory);
+	file.open(filename);
 	if (file.isOpen() == false) {
-		warning("NutRenderer::loadFont() Can't open font file: %s/%s", directory, filename);
+		warning("NutRenderer::loadFont() Can't open font file: %s", filename);
 		return false;
 	}
 
@@ -183,11 +183,11 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 						_chars[l].width--;
 				}
 			} else {
-				warning("NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
+				warning("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
 				break;
 			}
 		} else {
-			warning("NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, directory, l, offset);
+			warning("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
 	}

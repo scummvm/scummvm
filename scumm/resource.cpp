@@ -845,7 +845,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		*(strstr(buffer, " ")) = '\0';
 		
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
-		if (dmuFile.open(buffer, getGameDataPath()) == false) {
+		if (dmuFile.open(buffer) == false) {
 			warning("Can't open music file %s*", buffer);
 			res.roomoffs[type][idx] = 0xFFFFFFFF;
 			return 0;

@@ -51,7 +51,7 @@ public:
 	virtual ~NutRenderer();
 	int getNbChars() { return _nbChars; }
 
-	bool loadFont(const char *filename, const char *dir);
+	bool loadFont(const char *filename);
 
 	void drawFrame(byte *dst, int c, int x, int y);
 	void drawShadowChar(int c, int x, int y, byte color, bool useMask, bool showShadow);

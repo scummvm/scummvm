@@ -384,7 +384,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
 			_vm->resource()->getLanguage() == dogFiles[i].lang) {
 			File fdog;
-			fdog.open(filename, _vm->getGameDataPath());
+			fdog.open(filename);
 			if (fdog.isOpen()) {
 				debug(6, "Loading dog file '%s' from game data path", filename);
 				uint32 size = fdog.size() - DOG_HEADER_SIZE;

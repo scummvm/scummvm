@@ -171,11 +171,11 @@ public:
 	}
 };
 
-static StringResource *getStrings(const char *file, const char *directory, bool is_encoded) {
+static StringResource *getStrings(const char *file, bool is_encoded) {
 	debug(7, "trying to read text ressources from %s", file);
 	File theFile;
 
-	theFile.open(file, directory);
+	theFile.open(file);
 	if (!theFile.isOpen()) {
 		return 0;
 	}
@@ -192,7 +192,7 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 
 		if (type != TYPE_ETRS) {
 			delete [] filebuffer;
-			return getStrings(file, directory, false);
+			return getStrings(file, false);
 		}
 
 		char *old = filebuffer;
@@ -601,7 +601,7 @@ const char *SmushPlayer::getString(int id) {
 	return _strings->get(id);
 }
 
-bool SmushPlayer::readString(const char *file, const char *directory) {
+bool SmushPlayer::readString(const char *file) {
 	const char *i = strrchr(file, '.');
 	if (i == NULL) {
 		error("invalid filename : %s", file);
@@ -609,11 +609,11 @@ bool SmushPlayer::readString(const char *file, const char *directory) {
 	char fname[260];
 	memcpy(fname, file, i - file);
 	strcpy(fname + (i - file), ".trs");
-	if ((_strings = getStrings(fname, directory, false)) != 0) {
+	if ((_strings = getStrings(fname, false)) != 0) {
 		return true;
 	}
 
-	if ((_strings = getStrings("digtxt.trs", directory, true)) != 0) {
+	if ((_strings = getStrings("digtxt.trs", true)) != 0) {
 		return true;
 	}
 	return false;
@@ -913,21 +913,21 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 	}
 }
 
-void SmushPlayer::setupAnim(const char *file, const char *directory) {
+void SmushPlayer::setupAnim(const char *file) {
 	Chunk *sub;
 	int i;
 	char file_font[11];
 
-	_base = new FileChunk(file, directory);
+	_base = new FileChunk(file);
 	sub = _base->subBlock();
 	checkBlock(*sub, TYPE_AHDR);
 	handleAnimHeader(*sub);
 
 	if (_insanity) {
 		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
-			readString("mineroad.trs", directory);
+			readString("mineroad.trs");
 	} else
-		readString(file, directory);
+		readString(file);
 
 	if (_vm->_gameId == GID_FT) {
 		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
@@ -935,17 +935,17 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 			_sf[1] = new SmushFont(true, false);
 			_sf[2] = new SmushFont(true, false);
 			_sf[3] = new SmushFont(true, false);
-			_sf[0]->loadFont("scummfnt.nut", directory);
-			_sf[1]->loadFont("techfnt.nut", directory);
-			_sf[2]->loadFont("titlfnt.nut", directory);
-			_sf[3]->loadFont("specfnt.nut", directory);
+			_sf[0]->loadFont("scummfnt.nut");
+			_sf[1]->loadFont("techfnt.nut");
+			_sf[2]->loadFont("titlfnt.nut");
+			_sf[3]->loadFont("specfnt.nut");
 		}
 	} else if (_vm->_gameId == GID_DIG) {
 		if (!(_vm->_features & GF_DEMO)) {
 			for (i = 0; i < 4; i++) {
 				sprintf(file_font, "font%d.nut", i);
 				_sf[i] = new SmushFont(i != 0, false);
-				_sf[i]->loadFont(file_font, directory);
+				_sf[i]->loadFont(file_font);
 			}
 		}
 	} else if (_vm->_gameId == GID_CMI) {
@@ -954,7 +954,7 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 				break;
 			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(false, true);
-			_sf[i]->loadFont(file_font, directory);
+			_sf[i]->loadFont(file_font);
 		}
 	} else {
 		error("SmushPlayer::setupAnim() Unknown font setup for game");
@@ -1077,7 +1077,7 @@ void SmushPlayer::insanity(bool flag) {
 	_insanity = flag;
 }
 
-void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
+void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	if(_smixer)
 		_smixer->stop();
 
@@ -1087,7 +1087,7 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 			delete _base;
 		}
 
-		_base = new FileChunk(file, directory);
+		_base = new FileChunk(file);
 		// In this case we need to get palette and number of frames
 		if (pos > 8) {
 			Chunk *sub = _base->subBlock();
@@ -1113,11 +1113,11 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 	_frame = contFrame;
 }
 
-void SmushPlayer::play(const char *filename, const char *directory, int32 offset, int32 startFrame) {
+void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 
 	// Verify the specified file exists
 	File f;
-	f.open(filename, directory);
+	f.open(filename);
 	if (!f.isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);
 		return;
@@ -1130,7 +1130,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 	bool oldMouseState = _vm->_system->showMouse(false);
 
 	// Load the video
-	setupAnim(filename, directory);
+	setupAnim(filename);
 	init();
 
 	if (offset) {

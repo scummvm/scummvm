@@ -75,7 +75,7 @@ public:
 	SmushPlayer(ScummEngine_v6 *scumm, int speed);
 	~SmushPlayer();
 
-	void play(const char *filename, const char *directory, int32 offset = 0, int32 startFrame = 0);
+	void play(const char *filename, int32 offset = 0, int32 startFrame = 0);
 
 protected:
 	SmushFont *_sf[5];
@@ -84,7 +84,7 @@ protected:
 	void insanity(bool);
 	void setPalette(const byte *palette);
 	void setPaletteValue(int n, byte r, byte g, byte b);
-	void seekSan(const char *file, const char *directory, int32 pos, int32 contFrame);
+	void seekSan(const char *file, int32 pos, int32 contFrame);
 	const char *getString(int id);
 
 private:
@@ -92,10 +92,10 @@ private:
 	void parseNextFrame();
 	void init();
 	void release();
-	void setupAnim(const char *file, const char *directory);
+	void setupAnim(const char *file);
 	void updateScreen();
 
-	bool readString(const char *file, const char *directory);
+	bool readString(const char *file);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);

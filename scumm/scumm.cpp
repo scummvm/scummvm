@@ -791,7 +791,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		default:
 			break;
 		}
-		if (fontFile && fp.open(fontFile, getGameDataPath())) {
+		if (fontFile && fp.open(fontFile)) {
 			debug(2, "Loading CJK Font");
 			_CJKMode = true;
 			fp.seek(2, SEEK_CUR);
@@ -822,7 +822,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		//use FM Towns font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom", getGameDataPath()) || fp.open("fmt_fnt.rom", "./")) { 
+		if (fp.open("fmt_fnt.rom")) { 
 			_CJKMode = true;
 			debug(2, "Loading FM Towns Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
