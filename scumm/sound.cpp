@@ -489,8 +489,7 @@ void Sound::playSound(int soundID) {
 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))
 	{
 		// experimental support for Indy3 Amiga sound effects
-		bool amigatest = (READ_LE_UINT16(ptr + 26) == 0x0001) || (READ_LE_UINT16(ptr + 26) == 0x0001)
-		 || (READ_LE_UINT16(ptr + 26) == 0x00FF);
+		bool amigatest = (READ_BE_UINT16(ptr + 26) == 0x00FF) || (READ_BE_UINT16(ptr + 26) == 0x0001) || (READ_BE_UINT16(ptr + 26) == 0x0101);
 		if (amigatest) {
 			if (READ_BE_UINT16(ptr + 26) == 0x00FF)		// looped sound
 				// TODO: support looping sounds
