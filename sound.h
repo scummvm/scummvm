@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/12/01 17:25:36  strigeus
+ * fixed to compile on unix
+ *
  * Revision 1.2  2001/12/01 17:06:13  strigeus
  * adlib sound support, use USE_ADLIB
  *
@@ -393,7 +396,7 @@ public:
 };
 
 struct MidiSoundDriver : SoundDriver {
-	HMIDIOUT *_mo;
+	void *_mo;
 	bool _mt32emulate;
 	SoundEngine *_se;
 

@@ -82,7 +82,7 @@ static int connect_to_timidity(int port)
 	return s;
 }
 
-void SoundEngine::midiInit() {
+void MidiSoundDriver::midiInit() {
 	int s, s2;
 	int len;
 	int dummy, newport;
@@ -158,7 +158,7 @@ static inline void MIDI_OUT(void *a, int b) {
 
 #else
 #define MIDI_OUT(a,b)
-void SoundEngine::midiInit() { }
+void MidiSoundDriver::midiInit() { }
 #endif
 
 void MidiSoundDriver::midiPitchBend(byte chan, int16 pitchbend) {
