@@ -17,8 +17,6 @@
  * $Header$
  */
 
-#define WIN32_LEAN_AND_MEAN
-
 #include "common/stdafx.h"
 #include "common/engine.h"
 #include "common/timer.h"

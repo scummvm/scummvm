@@ -106,8 +106,6 @@
 //=============================================================================
 
 
-#define WIN32_LEAN_AND_MEAN
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "menu.h"
