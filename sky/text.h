@@ -31,6 +31,13 @@ struct HuffTree {
 	unsigned char value;
 };
 
+#define NUM_PATCH_MSG 7
+
+struct PatchMessage {
+	uint32 textNr;
+	char text[100];
+};
+
 class SkyText {
 public:
 	SkyText(SkyDisk *skyDisk);
@@ -53,6 +60,7 @@ protected:
 	char getTextChar();
 	void patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data);
 	void patchLINCCharset();
+	bool patchMessage(uint32 textNum);
 
 	SkyDisk *_skyDisk;
 	uint8	_inputValue;
@@ -97,6 +105,10 @@ protected:
 	static const HuffTree _huffTree_00365[];
 	static const HuffTree _huffTree_00368[];
 	static const HuffTree _huffTree_00372[];
+
+	static const PatchMessage _patchedMessages[NUM_PATCH_MSG];
+	static const uint16 _patchLangIdx[8];
+	static const uint16 _patchLangNum[8];
 
 public:
 	uint32 _dtLetters;	//no of chars in message
