@@ -314,7 +314,7 @@ int32 Bundle::compDecode(byte * src, byte * dst) {
 int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output, int32 input_size) {
 	int32 output_size = input_size;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
-	byte * src, * t_table, * p;
+	byte * src, * t_table, * p, * ptr;
 	byte t_tmp1, t_tmp2;
 
 	switch(codec) {
@@ -350,9 +350,38 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 			for (z = 1; z < output_size; z++)
 				p[z] += p[z - 1];
 			
-			// FIXME: not implemented yet
-			memset (comp_output, 0, output_size);
-			output_size = 0;
+			t_table = (byte*)malloc(output_size);
+			memset (t_table, 0, output_size);
+
+			src = comp_output;
+			length = (output_size * 8) / 12;
+			k = 0;
+			if (length > 0)
+			{
+				c = -12;
+				s = 0;
+				j = 0;
+				do {
+					ptr = src + length + (k / 2);
+					if (k & 1) {
+						r = c / 8;
+						*(t_table + r + 2) = ((*(src + j) & 0x0f) << 4) | ((*(ptr + 1) & 0xf0) >> 4);
+						*(t_table + r + 1) = (*(src + j) & 0xf0) | (*(t_table + r + 1));
+					} else {
+						r = s / 8;
+						*(t_table + r + 0) = ((*(src + j) & 0x0f) << 4) | (*ptr & 0x0f);
+						*(t_table + r + 1) = (*(src + j) & 0xf0) >> 4;
+					}
+					s += 12;
+					k++;
+					j++;
+					c += 12;
+				} while (k < length);
+			}
+			offset1 = ((length - 1) * 3) / 2;
+			*(t_table + offset1 + 1) = (*(t_table + offset1 + 1)) | *(src + length - 1) & 0xf0;
+			memcpy(src, t_table, output_size);
+			free (t_table);
 		break;
 
 		case 5:
@@ -363,9 +392,37 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 			for (z = 1; z < output_size; z++)
 				p[z] += p[z - 1];
 			
-			// FIXME: not implemented yet
-			memset (comp_output, 0, output_size);
-			output_size = 0;
+			t_table = (byte*)malloc(output_size);
+			memset (t_table, 0, output_size);
+
+			src = comp_output;
+			length = (output_size * 8) / 12;
+			k = 1;
+			c = 0;
+			s = 12;
+			*t_table = (*(src + length)) >> 4;
+			t = length + k;
+			j = 1;
+			if (t > k) {
+				do {
+					ptr = src + length + (k / 2);
+					if (k & 1) {
+						r = c / 8;
+						*(t_table + r + 0) =  (*(src + j - 1) & 0xf0) | (*(t_table + r));
+						*(t_table + r + 1) = ((*(src + j - 1) & 0x0f) << 4) | (*ptr & 0x0f);
+					} else {
+						r = s / 8;
+						*(t_table + r + 0) = (*(src + j - 1) & 0xf0) >> 4;
+						*(t_table + r - 1) = ((*(src + j - 1) & 0x0f) << 4) | ((*ptr & 0xf0) >> 4);
+					}
+					s += 12;
+					k++;
+					j++;
+					c += 12;
+				} while (k < t);
+			}
+			memcpy(src, t_table, output_size);
+			free (t_table);
 		break;
 
 		case 6:
@@ -376,9 +433,38 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 			for (z = 1; z < output_size; z++)
 				p[z] += p[z - 1];
 			
-			// FIXME: not implemented yet
-			memset (comp_output, 0, output_size);
-			output_size = 0;
+			t_table = (byte*)malloc(output_size);
+			memset (t_table, 0, output_size);
+
+			src = comp_output;
+			length = (output_size * 8) / 12;
+			k = 0;
+			c = 0;
+			j = 0;
+			s = -12;
+			*t_table = *(output_size + src - 1);
+			*(t_table + output_size - 1) = *(src + length - 1);
+			t = length - 1;
+			if (t > 0) {
+				do {
+					ptr = src + length + (k / 2);
+					if (k & 1) {
+						r = s / 8;
+						*(t_table + r + 2) = (*(src + j) & 0xf0) | *(t_table + r + 2);
+						*(t_table + r + 3) = ((*(src + j) & 0x0f) << 4) | ((*ptr & 0xf0) >> 4);
+					} else {
+						r = c / 8;
+						*(t_table + r + 2) = (*(src + j) & 0xf0) >> 4;
+						*(t_table + r + 1) = ((*(src + j) & 0x0f) << 4) | (*ptr & 0x0f);
+					}
+					s += 12;
+					k++;
+					j++;
+					c += 12;
+				} while (k < t);
+			}
+			memcpy(src, t_table, output_size);
+			free (t_table);
 		break;
 
 		case 10: 
@@ -430,8 +516,10 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 					s += 12;
 					k++;
 					c += 12;
-				} while (k <= length);
+				} while (k < length);
 			}
+			offset1 = ((length - 1) * 3) / 2;
+			*(src + offset1 + 1) = (*(t_table + length) & 0xf0) | *(src + offset1 + 1);
 			free (t_table);
 		break;
 
