@@ -32,6 +32,8 @@
 #include "sndres.h"
 #include "sound.h"
 
+#include "common/file.h"
+
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) {
@@ -61,12 +63,25 @@ int SndRes::playVoice(uint32 voice_rn) {
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
-	// FIXME: In the Wyrmkeep re-release of Inherit the Earth, voices 4 and
-	// 5 are identical, even though their resources are stored at different
-	// offsets in the resource file. The correct sound for voice 4 is
-	// provided as a separate file, sound/p2_a.voc
+	// The Wyrmkeep release of Inherit the Earth provides a separate VOC
+	// file, sound/p2_a.voc, to correct voice 4 in the intro. Use that, if
+	// available.
+	// 
+	// FIXME: There's a nasty 'pop' at the beginning of the sound, and a
+	// smaller one at the end. I don't know if that's in the file, or in
+	// our playback code.
 
-	result = load(_voice_ctxt, voice_rn, &snd_buffer);
+	File f;
+
+	if (GAME_GetGameType() == R_GAMETYPE_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
+		uint32 size = f.size();
+		byte *snd_res = (byte *)malloc(size);
+		f.read(snd_res, size);
+		result = loadVocSound(snd_res, size, &snd_buffer);
+		f.close();
+	} else
+		result = load(_voice_ctxt, voice_rn, &snd_buffer);
+
 	if (result != R_SUCCESS) {
 		return R_FAILURE;
 	}
@@ -199,6 +214,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 }
 
 int SndRes::getVoiceLength(uint32 voice_rn) {
+	int res_type = _snd_info.res_type;
 	uint32 length;
 
 	double ms_f;
@@ -208,15 +224,28 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 
 	assert(_init);
 
-	result = RSC_GetResourceSize(_voice_ctxt, voice_rn, &length);
-	if (result != R_SUCCESS) {
-		return -1;
+	File f;
+
+	// The Wyrmkeep release of Inherit the Earth provides a separate VOC
+	// file, sound/p2_a.voc, to correct voice 4 in the intro. Use that, if
+	// available.
+
+	if (GAME_GetGameType() == R_GAMETYPE_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
+		length = f.size();
+		res_type = R_GAME_SOUND_VOC;
+		f.close();
+	} else {
+		result = RSC_GetResourceSize(_voice_ctxt, voice_rn, &length);
+
+		if (result != R_SUCCESS) {
+			return -1;
+		}
 	}
 
-	if (_snd_info.res_type == R_GAME_SOUND_PCM) {
+	if (res_type == R_GAME_SOUND_PCM) {
 		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
-	} else if (_snd_info.res_type == R_GAME_SOUND_VOC) {
+	} else if (res_type == R_GAME_SOUND_VOC) {
 		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;

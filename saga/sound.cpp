@@ -106,11 +106,24 @@ int Sound::stop(int channel) {
 
 int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	byte flags;
-	int game_id = GAME_GetGame();
 
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
+
+	flags = SoundMixer::FLAG_AUTOFREE;
+
+	if (buf->s_samplebits == 16)
+		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
+	if (buf->s_stereo)
+		flags |= SoundMixer::FLAG_STEREO;
+	if (!buf->s_signed)
+		flags |= SoundMixer::FLAG_UNSIGNED;
+
+	// FIXME: Remove the code below if the code above works.
+
+#if 0
+	int game_id = GAME_GetGame();
 
 	if((game_id == R_GAME_ITE_DISK) || (game_id == R_GAME_ITE_DEMO)) {
 		flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
@@ -118,6 +131,8 @@ int Sound::playVoice(R_SOUNDBUFFER *buf) {
 		flags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS |
 			SoundMixer::FLAG_LITTLE_ENDIAN;
 	}
+#endif
+
 	_mixer->playRaw(&_voiceHandle, buf->res_data, buf->res_len, buf->s_freq, flags);
 
 	return R_SUCCESS;
