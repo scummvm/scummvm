@@ -723,7 +723,7 @@ int Script::SF_getActorY(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #63 (0x3F)
 int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	SDataWord_T param = thread->pop() + 9;
 
 	if (param >= 9 && param <= 34)
 		_vm->_music->play(param);
@@ -806,7 +806,7 @@ static struct {
 
 // Script function #70 (0x46)
 int Script::SF_playSound(R_SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop() - 14;
+	SDataWord_T param = thread->pop() - 13;
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
 		_vm->_sndRes->playSound(sfxTable[param].res, sfxTable[param].vol);

@@ -156,7 +156,6 @@ namespace Saga {
 
 // TODO: These are only in the CD version, and I can't find them in the source
 //       code we got. Someone needs to verify these to get the correct values.
-//       They appear to be a bit off right now.
 
 #define FX_CROWD_01 56
 #define FX_CROWD_02 57
