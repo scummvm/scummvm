@@ -4400,7 +4400,7 @@ void SimonEngine::go() {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
 		} else if (_language < 2) {
 			_subtitles = false;
-		// Allow choose in other versions of Simon the Sorcerer 1
+		// Allow choice in other versions of Simon the Sorcerer 1
 		} else {
 			if (_noSubtitles)
 				_subtitles = false;
