@@ -764,7 +764,7 @@ command as described earlier in this section.
 
 7.5.0) Using MP3 files for CD audio:
 ------ -----------------------------
-Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
+Use LAME or some other MP3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file,
 then encode the MP3 files in constant bit rate. This can be done with the 
@@ -864,14 +864,14 @@ file to your game dir. You can safely remove the old file.
 7.5.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
 The sword1mp3 tool from the scummvm-tools package can encode music and speech
-to mp3 as well as Ogg Vorbis.
+to MP3 as well as Ogg Vorbis.
 Easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
-This way, it'll automatically encode everything to mp3.
+This way, it'll automatically encode everything to MP3.
 Afterwards, you can manually remove the SPEECH?.CLU files and the wave music files.
 
 Running "sword1mp3 --vorbis" will compress the files using Ogg Vorbis instead
-of mp3.
+of MP3.
 
 Use "sword1mp3 --help" to get a full list of the options.
 
