@@ -1059,6 +1059,7 @@ void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, i
 	_WizPolygons[i].vert[3].y = vert4y;
 	_WizPolygons[i].vert[4].x = vert1x;
 	_WizPolygons[i].vert[4].y = vert1y;
+	_WizPolygons[i].numVerts = 5;
 	_WizPolygons[i].id = id;
 	_WizPolygons[i].flag = flag;
 
@@ -1083,8 +1084,6 @@ void ScummEngine_v7he::polygonErase(int fromId, int toId) {
 }
 
 void ScummEngine_v7he::o7_polygonHit() {
-	// Checks virtual mouse x/y co-ordinates when in verb/inventory area
-	// Maybe checks for polygons ?
 	int y = pop();
 	int x = pop();
 
