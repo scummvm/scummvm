@@ -1,8 +1,5 @@
 General
 =======
-* Add plugin system (both dynamic & static plugin support)
-  [if you want to work on it, ask Fingolfin about this, he already has done
-  some planning. Also make sure that your system support 'static' plugins, too]
 * Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
@@ -16,12 +13,6 @@ General
   some kind of main loop, which, besides many other things, also polls and
   dispatches events. The idea is to turn this around: the event loop
   frequently gives the engine time to do these "other things".
-* Remove "detectname" from GameSettings struct. On the long run, "midi" and/or
-  "features" might be removed, too.
-* Enhance the Makefile-based build system to support VPATH and stuff, so that
-  one can compile scummvm in a directory tree separate from the source tree.
-  That would make it possible to build ScummVM with different build options,
-  e.g. have one debug build and one optimized build.
 * Add a FilesystemManager or FileManager or so which should unify and/or
   replace the current File/FilesystemNode classes (and maybe SaveFileManager).
   The goal is to make these things as portable as possible while keeping it
@@ -37,13 +28,35 @@ General
   of the subdirs). Better would be to introduce a somewhat higher level API,
   a replacement for File::open() which (optionally) takes a list of subdirs.
   E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
-* Add test(s) for backend usability in the configure script.
 * Use RandomSource for all random numbers. Right now there are a few places
   where we don't:
   - INSANE uses rand() in numerous places
   - sound/fmopl.cpp uses rand() in one function
   - backends/midi/adlib.cpp has its own random_nr() function.
   Any others?
+
+Build System
+============
+* Add test(s) for backend usability in the configure script.
+* Enhance the Makefile-based build system to support VPATH and stuff, so that
+  one can compile scummvm in a directory tree separate from the source tree.
+  That would make it possible to build ScummVM with different build options,
+  e.g. have one debug build and one optimized build.
+  Fingolfin implemented most of this; the only thing missing is that configure
+  should detect when it is run in a directory outside the source tree, and in
+  that case generate a custom Makefile, with content like this:
+	srcdir = /path/to/source/dir
+	vpath %.cpp $(srcdir)
+	vpath %.h $(srcdir)
+	include $(srcdir)/Makefile
+* Add support in the configure script to choose between building ScummVM
+  with plugins or normal (see also comment in Makefile.common).
+* It would be nice to get rid of Makefile.noconf (so that we can implement
+   certain improvements which aren't possible as long as we have to maintain
+   that). To this end, find out 
+   1) Which platforms/systems require Makefile.noconf?
+   2) What stops them from using 'configure' ? Document this!
+   3) If possible fix all the issue listed in 2)
 
 Documentation
 =============
@@ -106,12 +119,11 @@ GUI
 
 Game Detector
 =============
-* Make use of MD5 sums for improved game detection
-  -> in particular, a detector should be allowed to return detected
-  values for language and platform
 * Improve the detector for games with all datafiles in subdirs (i.e.
   Broken Sword 1 & 2). This could work by letting the detector proc recurse
   into sub directories...
+* Remove "detectname" from GameSettings struct. On the long run, "midi" and/or
+  "features" might be removed, too.
 
 Audio
 =====
@@ -125,8 +137,8 @@ Audio
   the code, and it also makes it possible to apply sound rate conversion to
   premixers, which makes it easier to write and maintain a premixer proc.
 
-Config
-======
+Config Manager
+==============
 * Preserve comments in config file somehow
 * Add a 'notification' system. E.g. the SoundMixer could request to be notified
   whenever the value of the "volume" config option changes. In other words,
