@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	common/config-manager.o \
 	common/file.o \
 	common/md5.o \
+	common/mutex.o \
 	common/str.o \
 	common/stream.o \
 	common/timer.o \
