@@ -697,19 +697,20 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 	for (y = maxDstY; y >= srcY; y--) {
 		uint8 *srcPtr = buf + srcX * 2 + (aspect2Real(y) + off) * pitch;
 
-		if (srcPtr == dstPtr)
-			break;
-		
 #if 0
 		// Don't use bilinear filtering, rather just duplicate pixel lines:
 		// a little bit faster, but looks ugly
+		if (srcPtr == dstPtr)
+			break;
+		
 		memcpy(dstPtr, srcPtr, width * 2);
 #else
 		// Bilinear filter
 		switch (y % 6) {
 		case 0:
 		case 5:
-			memcpy(dstPtr, srcPtr, width * 2);
+			if (srcPtr != dstPtr)
+				memcpy(dstPtr, srcPtr, width * 2);
 			break;
 		case 1:
 		case 4:
