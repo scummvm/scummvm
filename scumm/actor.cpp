@@ -944,7 +944,7 @@ void Actor::drawActorCostume()
 		// to be at the moment or, if it's not in any box, don't mask
 		// at all.
 		//
-		// This is similar to the clipping == 100 check used for AKOS
+		// This is similar to the _zbuf == 100 check used for AKOS
 		// costumes, except I haven't been able to figure out the
 		// proper check here. It's not quite enough to check if
 		// ignoreBoxes != 0 and checking if walkbox == 0 yields too
@@ -985,10 +985,10 @@ void Actor::drawActorCostume()
 
 		cr.setCostume(costume);
 		cr.setPalette(palette);
-		cr.setFacing(facing);
+		cr.setFacing(this);
 
-		cr.draw_top = top = 0xFF;
-		cr.draw_bottom = bottom = 0;
+		cr._draw_top = top = 0xFF;
+		cr._draw_bottom = bottom = 0;
 
 		cr._dirty_id = number;
 
@@ -997,28 +997,28 @@ void Actor::drawActorCostume()
 			needBgReset = true;
 			needRedraw = true;
 		}
-		top = cr.draw_top;
-		bottom = cr.draw_bottom;
+		top = cr._draw_top;
+		bottom = cr._draw_bottom;
 	} else {
 		AkosRenderer ar(_vm);
 		ar.charsetmask = true;
-		ar._x = x - _vm->virtscr[0].xstart;
-		ar._y = y - elevation;
+		ar._actorX = x - _vm->virtscr[0].xstart;
+		ar._actorY = y - elevation;
 		ar._scaleX = scalex;
 		ar._scaleY = scaley;
-		ar.clipping = forceClip;
-		if (ar.clipping == 100) {
-			ar.clipping = _vm->getMaskFromBox(walkbox);
-			if (ar.clipping > _vm->gdi._numZBuffer)
-				ar.clipping = _vm->gdi._numZBuffer;
+		ar._zbuf = forceClip;
+		if (ar._zbuf == 100) {
+			ar._zbuf = _vm->getMaskFromBox(walkbox);
+			if (ar._zbuf > _vm->gdi._numZBuffer)
+				ar._zbuf = _vm->gdi._numZBuffer;
 		}
 
 		ar.outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
 		ar.outwidth = _vm->virtscr[0].width;
 		ar.outheight = _vm->virtscr[0].height;
 
-		ar.shadow_mode = shadow_mode;
-		ar.shadow_table = _vm->_shadowPalette;
+		ar._shadow_mode = shadow_mode;
+		ar._shadow_table = _vm->_shadowPalette;
 
 		ar.setCostume(costume);
 		ar.setPalette(palette);
@@ -1026,8 +1026,8 @@ void Actor::drawActorCostume()
 
 		ar._dirty_id = number;
 
-		ar.draw_top = top = 0x7fffffff;
-		ar.draw_bottom = bottom = 0;
+		ar._draw_top = top = 0x7fffffff;
+		ar._draw_bottom = bottom = 0;
 
 		if (ar.drawCostume(cost)) {
 			// FIXME: this breaks talking in The Dig. But why?
@@ -1035,8 +1035,8 @@ void Actor::drawActorCostume()
 			//needBgReset = true;
 			//needRedraw = true;
 		}
-		top = ar.draw_top;
-		bottom = ar.draw_bottom;
+		top = ar._draw_top;
+		bottom = ar._draw_bottom;
 	}
 }
 

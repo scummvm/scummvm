@@ -274,11 +274,11 @@ byte CostumeRenderer::mainRoutine(int slot, int frame)
 	if ((uint) _bottom > _outheight)
 		_bottom = _outheight;
 
-	if (draw_top > _top)
-		draw_top = _top;
+	if (_draw_top > _top)
+		_draw_top = _top;
 
-	if (draw_bottom < _bottom)
-		draw_bottom = _bottom;
+	if (_draw_bottom < _bottom)
+		_draw_bottom = _bottom;
 
 	if (_height2 + _top >= 256) {
 		CHECK_HEAP
@@ -1227,17 +1227,6 @@ void LoadedCostume::loadCostume(int id)
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
-byte CostumeRenderer::drawCostume(const CostumeData &cost)
-{
-	int i;
-	byte result = 0;
-
-	_xmove = _ymove = 0;
-	for (i = 0; i != 16; i++)
-		result |= drawLimb(cost, i);
-	return result;
-}
-
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb)
 {
 	int i;
@@ -1360,9 +1349,9 @@ void CostumeRenderer::setPalette(byte *palette)
 	}
 }
 
-void CostumeRenderer::setFacing(uint16 facing)
+void CostumeRenderer::setFacing(Actor *a)
 {
-	_mirror = newDirToOldDir(facing) != 0 || (_loaded._ptr[7] & 0x80);
+	_mirror = newDirToOldDir(a->facing) != 0 || (_loaded._ptr[7] & 0x80);
 }
 
 void CostumeRenderer::setCostume(int costume)

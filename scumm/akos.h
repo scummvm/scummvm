@@ -23,79 +23,36 @@
 #ifndef AKOS_H
 #define AKOS_H
 
-
-#if !defined(__GNUC__)
-#pragma START_PACK_STRUCTS
-#endif
+#include "base-costume.h"
 
 struct CostumeData;
+struct AkosHeader;
+struct AkosOffset;
 
-struct AkosHeader {
-	byte unk_1[2];
-	byte flags;
-	byte unk_2;
-	uint16 num_anims;
-	uint16 unk_3;
-	uint16 codec;
-} GCC_PACK;
-
-struct AkosOffset {
-	uint32 akcd;
-	uint16 akci;
-} GCC_PACK;
-
-struct AkosCI {
-	uint16 width, height;
-	int16 rel_x, rel_y;
-	int16 move_x, move_y;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-#pragma END_PACK_STRUCTS
-#endif
-
-struct AkosRenderer {
+class AkosRenderer : public BaseCostumeRenderer {
 public:
-	byte _dirty_id;
-
-	byte shadow_mode;
-	byte *shadow_table;
-
-	int _x, _y;
-	byte _scaleX, _scaleY;
-	byte clipping;
 	bool charsetmask;	// FIXME - it seems charsetmask is only set once, in actor.cpp, to true. So can we get rid of it?!?
-
-	int draw_top, draw_bottom;
 
 	byte *outptr;
 	uint outwidth, outheight;
 
 protected:
-	Scumm *_vm;
-	int32 _numStrips;
-
 	uint16 codec;
-	bool mirror;									/* draw actor mirrored */
+	byte *srcptr;
 
-	/* pointer to various parts of the costume resource */
+	// movement of cel to decode
+	int _xmoveCur, _ymoveCur;
+
+	// actor palette
+	byte palette[256];
+
+	// pointer to various parts of the costume resource
 	byte *akos;
 	AkosHeader *akhd;
-
-	/* current move offset */
-	int move_x, move_y;
-	/* movement of cel to decode */
-	int move_x_cur, move_y_cur;
-	/* width and height of cel to decode */
-	int _width, _height;
-
-	byte *srcptr;
 
 	byte *akpl, *akci, *aksq;
 	AkosOffset *akof;
 	byte *akcd;
-
-	byte palette[256];
 
 	struct {
 		/* codec stuff */
@@ -127,21 +84,24 @@ protected:
 	} akos16;
 
 public:
-	// Constructor, sets all data to 0
-	AkosRenderer(Scumm *scumm) {
-		memset(this, 0, sizeof(AkosRenderer));
-		_vm = scumm;
-		_numStrips = _vm->gdi._numStrips;
+	AkosRenderer(Scumm *scumm) : BaseCostumeRenderer(scumm) {
+		outptr = 0;
+		srcptr = 0;
+		akos = 0;
+		akhd = 0;
+		akpl = 0;
+		akci = 0;
+		aksq = 0;
+		akof = 0;
+		akcd = 0;
 	}
 
 	void setPalette(byte *palette);
 	void setFacing(Actor *a);
 	void setCostume(int costume);
 
-	bool drawCostume(const CostumeData &cost);
-
 protected:
-	bool drawLimb(const CostumeData &cost, int limb);
+	byte drawLimb(const CostumeData &cost, int limb);
 
 	void codec1();
 	void codec1_spec1();

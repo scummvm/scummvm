@@ -21,7 +21,7 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-class Scumm;
+#include "base-costume.h"
 
 class LoadedCostume {
 protected:
@@ -42,38 +42,20 @@ protected:
 };
 
 
-class CostumeRenderer {
+class CostumeRenderer : public BaseCostumeRenderer {
 public:
-	byte _dirty_id;
-
-	byte _shadow_mode;
-	byte *_shadow_table;
-
-	int _actorX, _actorY;
-	byte _zbuf;
-	uint _scaleX, _scaleY;
-
-	int draw_top, draw_bottom;
-
 	uint _outheight;
 
 protected:
-	Scumm *_vm;
-	int32 _numStrips;
-	
 	LoadedCostume _loaded;
 	
 	byte *_frameptr;
 	byte *_srcptr;
 	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
-	int _xmove, _ymove;
-	bool _mirror;
 	byte _maskval;
 	byte _shrval;
 	byte _width2;
-	int _width;
 	byte _height2;
-	int _height;
 	int _xpos, _ypos;
 
 	int _scaleIndexXStep;
@@ -92,13 +74,11 @@ protected:
 	byte _palette[32];
 
 public:
-	CostumeRenderer(Scumm *vm) : _vm(vm), _numStrips(vm->gdi._numStrips), _loaded(vm) {}
+	CostumeRenderer(Scumm *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(byte *palette);
-	void setFacing(uint16 facing);
+	void setFacing(Actor *a);
 	void setCostume(int costume);
-
-	byte drawCostume(const CostumeData &cost);
 
 protected:
 	byte drawLimb(const CostumeData &cost, int limb);

@@ -26,6 +26,36 @@
 #include "imuse.h"
 
 
+#if !defined(__GNUC__)
+#pragma START_PACK_STRUCTS
+#endif
+
+struct AkosHeader {
+	byte unk_1[2];
+	byte flags;
+	byte unk_2;
+	uint16 num_anims;
+	uint16 unk_3;
+	uint16 codec;
+} GCC_PACK;
+
+struct AkosOffset {
+	uint32 akcd;
+	uint16 akci;
+} GCC_PACK;
+
+struct AkosCI {
+	uint16 width, height;
+	int16 rel_x, rel_y;
+	int16 move_x, move_y;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+#pragma END_PACK_STRUCTS
+#endif
+
+
+
 enum AkosOpcodes {
 	AKC_Return = 0xC001,
 	AKC_SetVar = 0xC010,
@@ -205,23 +235,12 @@ void AkosRenderer::setCostume(int costume)
 
 void AkosRenderer::setFacing(Actor *a)
 {
-	mirror = (newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
+	_mirror = (newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
 	if (a->flip)
-		mirror ^= 1;
+		_mirror = !_mirror;
 }
 
-bool AkosRenderer::drawCostume(const CostumeData &cost)
-{
-	int i;
-	bool result = false;
-
-	move_x = move_y = 0;
-	for (i = 0; i < 16; i++)
-		result |= drawLimb(cost, i);
-	return result;
-}
-
-bool AkosRenderer::drawLimb(const CostumeData &cost, int limb)
+byte AkosRenderer::drawLimb(const CostumeData &cost, int limb)
 {
 	uint code;
 	byte *p;
@@ -250,12 +269,12 @@ bool AkosRenderer::drawLimb(const CostumeData &cost, int limb)
 		srcptr = akcd + READ_LE_UINT32(&off->akcd);
 		the_akci = (AkosCI *) (akci + READ_LE_UINT16(&off->akci));
 
-		move_x_cur = move_x + (int16)READ_LE_UINT16(&the_akci->rel_x);
-		move_y_cur = move_y + (int16)READ_LE_UINT16(&the_akci->rel_y);
+		_xmoveCur = _xmove + (int16)READ_LE_UINT16(&the_akci->rel_x);
+		_ymoveCur = _ymove + (int16)READ_LE_UINT16(&the_akci->rel_y);
 		_width = READ_LE_UINT16(&the_akci->width);
 		_height = READ_LE_UINT16(&the_akci->height);
-		move_x += (int16)READ_LE_UINT16(&the_akci->move_x);
-		move_y -= (int16)READ_LE_UINT16(&the_akci->move_y);
+		_xmove += (int16)READ_LE_UINT16(&the_akci->move_x);
+		_ymove -= (int16)READ_LE_UINT16(&the_akci->move_y);
 
 		switch (codec) {
 		case 1:
@@ -283,8 +302,8 @@ bool AkosRenderer::drawLimb(const CostumeData &cost, int limb)
 			srcptr = akcd + READ_LE_UINT32(&off->akcd);
 			the_akci = (AkosCI *) (akci + READ_LE_UINT16(&off->akci));
 
-			move_x_cur = move_x + (int16)READ_LE_UINT16(p + 0);
-			move_y_cur = move_y + (int16)READ_LE_UINT16(p + 2);
+			_xmoveCur = _xmove + (int16)READ_LE_UINT16(p + 0);
+			_ymoveCur = _ymove + (int16)READ_LE_UINT16(p + 2);
 
 			p += (p[4] & 0x80) ? 6 : 5;
 
@@ -411,7 +430,7 @@ void AkosRenderer::codec1_spec1()
 						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
 					pcolor = palette[color];
 					if (pcolor == 13)
-						pcolor = shadow_table[*dst];
+						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
 				mask += _numStrips;
@@ -485,7 +504,7 @@ void AkosRenderer::codec1_spec3()
 					pcolor = palette[color];
 					if (pcolor < 8) {
 						pcolor = (pcolor << 8) + *dst;
-						*dst = shadow_table[pcolor];
+						*dst = _shadow_table[pcolor];
 					} else {
 						*dst = pcolor;
 					}
@@ -657,23 +676,23 @@ void AkosRenderer::codec1()
 
 	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
-	cur_x = _x;
-	cur_y = _y;
+	cur_x = _actorX;
+	cur_y = _actorY;
 
 	if (use_scaling) {
 
 		/* Scale direction */
 		v1.scaleXstep = -1;
-		if (move_x_cur < 0) {
-			move_x_cur = -move_x_cur;
+		if (_xmoveCur < 0) {
+			_xmoveCur = -_xmoveCur;
 			v1.scaleXstep = 1;
 		}
 
-		if (mirror) {
+		if (_mirror) {
 			/* Adjust X position */
-			tmp_x = 0x180 - move_x_cur;
+			tmp_x = 0x180 - _xmoveCur;
 			j = tmp_x;
-			for (i = 0; i < move_x_cur; i++) {
+			for (i = 0; i < _xmoveCur; i++) {
 				if (v1.scaletable[j++] < _scaleX)
 					cur_x -= v1.scaleXstep;
 			}
@@ -692,9 +711,9 @@ void AkosRenderer::codec1()
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			tmp_x = 0x180 + move_x_cur;
+			tmp_x = 0x180 + _xmoveCur;
 			j = tmp_x;
-			for (i = 0; i < move_x_cur; i++) {
+			for (i = 0; i < _xmoveCur; i++) {
 				if (v1.scaletable[j++] < _scaleX)
 					cur_x += v1.scaleXstep;
 			}
@@ -716,33 +735,33 @@ void AkosRenderer::codec1()
 			skip--;
 
 		step = -1;
-		if (move_y_cur < 0) {
-			move_y_cur = -move_y_cur;
+		if (_ymoveCur < 0) {
+			_ymoveCur = -_ymoveCur;
 			step = -step;
 		}
 
-		tmp_y = 0x180 - move_y_cur;
-		for (i = 0; i < move_y_cur; i++) {
+		tmp_y = 0x180 - _ymoveCur;
+		for (i = 0; i < _ymoveCur; i++) {
 			if (v1.scaletable[tmp_y++] < _scaleY)
 				cur_y -= step;
 		}
 
 		y_top = y_bottom = cur_y;
-		tmp_y = 0x180 - move_y_cur;
+		tmp_y = 0x180 - _ymoveCur;
 		for (i = 0; i < _height; i++) {
 			if (v1.scaletable[tmp_y++] < _scaleY)
 				y_bottom++;
 		}
 
-		tmp_y = 0x180 - move_y_cur;
+		tmp_y = 0x180 - _ymoveCur;
 	} else {
-		if (!mirror)
-			move_x_cur = -move_x_cur;
+		if (!_mirror)
+			_xmoveCur = -_xmoveCur;
 
-		cur_x += move_x_cur;
-		cur_y += move_y_cur;
+		cur_x += _xmoveCur;
+		cur_y += _ymoveCur;
 
-		if (mirror) {
+		if (_mirror) {
 			x_left = cur_x;
 			x_right = cur_x + _width;
 		} else {
@@ -762,7 +781,7 @@ void AkosRenderer::codec1()
 	v1.skip_width = _width;
 
 	v1.scaleXstep = -1;
-	if (mirror)
+	if (_mirror)
 		v1.scaleXstep = -v1.scaleXstep;
 
 	if ((int) y_top >= (int) outheight || y_bottom <= 0)
@@ -774,7 +793,7 @@ void AkosRenderer::codec1()
 	v1.replen = 0;
 	v1.y_pitch = _height * outwidth;
 
-	if (mirror) {
+	if (_mirror) {
 		v1.y_pitch--;
 		if (!use_scaling)
 			skip = -cur_x;
@@ -819,10 +838,10 @@ void AkosRenderer::codec1()
 	if ((uint) y_bottom > (uint) outheight)
 		y_bottom = outheight;
 
-	if (draw_top > y_top)
-		draw_top = y_top;
-	if (draw_bottom < y_bottom)
-		draw_bottom = y_bottom;
+	if (_draw_top > y_top)
+		_draw_top = y_top;
+	if (_draw_bottom < y_bottom)
+		_draw_bottom = y_bottom;
 
 	if (cur_x == -1)
 		cur_x = 0;									/* ?? */
@@ -830,24 +849,24 @@ void AkosRenderer::codec1()
 	v1.destptr = outptr + cur_x + cur_y * outwidth;
 
 	masking = false;
-	if (clipping) {
+	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
 		                _vm->getResourceAddress(rtBuffer, 9) +
-		                _vm->gdi._imgBufOffs[clipping] + _vm->_screenStartStrip) != 0;
+		                _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;
 
-	if (masking || charsetmask || shadow_mode) {
+	if (masking || charsetmask || _shadow_mode) {
 		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + cur_y * _numStrips + _vm->_screenStartStrip;
-		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
+		v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && masking) {
 			v1.mask_ptr += v1.imgbufoffs;
 			v1.imgbufoffs = 0;
 		}
 	}
 
-	switch (shadow_mode) {
+	switch (_shadow_mode) {
 	case 1:
 		codec1_spec1();
 		break;
@@ -895,14 +914,14 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 void AkosRenderer::codec5() {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
 
-	if (!mirror) {
-		clip_left = (_x - move_x_cur - _width) + 1;
+	if (!_mirror) {
+		clip_left = (_actorX - _xmoveCur - _width) + 1;
 	} else {
-		clip_left = _x + move_x_cur - 1;
+		clip_left = _actorX + _xmoveCur - 1;
 	}
 
 	clip_right = (clip_left + _width) - 1;
-	clip_top = _y + move_y_cur;
+	clip_top = _actorY + _ymoveCur;
 	clip_bottom = (clip_top + _height) - 1;
 	maxw = outwidth - 1;
 	maxh = outheight - 1;
@@ -931,10 +950,10 @@ void AkosRenderer::codec5() {
 
 	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << _dirty_id);
 
-	if (draw_top > clip_top)
-		draw_top = clip_top;
-	if (draw_bottom < clip_bottom)
-		draw_bottom = clip_bottom + 1;
+	if (_draw_top > clip_top)
+		_draw_top = clip_top;
+	if (_draw_bottom < clip_bottom)
+		_draw_bottom = clip_bottom + 1;
 
 	BompDrawData bdd;
 
@@ -946,25 +965,25 @@ void AkosRenderer::codec5() {
 	bdd.dataptr = srcptr;
 	bdd.scale_x = 255;
 	bdd.scale_y = 255;
-	bdd.shadowMode = shadow_mode;
+	bdd.shadowMode = _shadow_mode;
 
 	_vm->_bompScallingXPtr = NULL;
 	_vm->_bompScallingYPtr = NULL;
 
 	int decode_mode;
 
-	if (!mirror) {
-		bdd.x = (_x - move_x_cur - _width) + 1;
+	if (!_mirror) {
+		bdd.x = (_actorX - _xmoveCur - _width) + 1;
 		decode_mode = 3;
 	} else {
-		bdd.x = _x + move_x_cur;
+		bdd.x = _actorX + _xmoveCur;
 		decode_mode = 1;
 	}
 
-	bdd.y = _y + move_y_cur;
+	bdd.y = _actorY + _ymoveCur;
 
-	if (clipping != 0) {
-		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping];
+	if (_zbuf != 0) {
+		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
 		_vm->drawBomp(&bdd, decode_mode, 1);
 	} else {
 		_vm->drawBomp(&bdd, decode_mode, 0);
@@ -989,7 +1008,7 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency,
 	if (count == 0)
 		return;
 
-	switch(shadow_mode) {
+	switch(_shadow_mode) {
 	case 0:
 		do {
 			tmp_data = *(src++);
@@ -1005,7 +1024,7 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency,
 			tmp_data = *(src++);
 			if (tmp_data != transparency) {
 				if (tmp_data == 13) {
-					tmp_data = shadow_table[*(dest)];
+					tmp_data = _shadow_table[*(dest)];
 				}
 				*(dest) = tmp_data;
 			}
@@ -1018,7 +1037,7 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency,
 			tmp_data = *(src++);
 			if (tmp_data != transparency) {
 				if (tmp_data < 8) {
-					tmp_data = shadow_table[*(dest) + (tmp_data << 8)];
+					tmp_data = _shadow_table[*(dest) + (tmp_data << 8)];
 				}
 				*(dest) = tmp_data;
 			}
@@ -1207,13 +1226,13 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 void AkosRenderer::codec16() {
 	int32 clip_left;
 
-	if(!mirror) {
-		clip_left = (_x - move_x_cur - _width) + 1;
+	if(!_mirror) {
+		clip_left = (_actorX - _xmoveCur - _width) + 1;
 	} else {
-		clip_left = _x + move_x_cur;
+		clip_left = _actorX + _xmoveCur;
 	}
 
-	int32 clip_top = move_y_cur + _y;
+	int32 clip_top = _ymoveCur + _actorY;
 	int32 clip_right = (clip_left + _width) - 1;
 	int32 clip_bottom = (clip_top + _height) - 1;
 	int32 skip_x = 0;
@@ -1262,10 +1281,10 @@ void AkosRenderer::codec16() {
 
 	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << _dirty_id);
 
-	if (draw_top > clip_top)
-		draw_top = clip_top;
-	if (draw_bottom < clip_bottom)
-		draw_bottom = clip_bottom + 1;
+	if (_draw_top > clip_top)
+		_draw_top = clip_top;
+	if (_draw_bottom < clip_bottom)
+		_draw_bottom = clip_bottom + 1;
 
 	int32 width_unk, height_unk;
 
@@ -1274,7 +1293,7 @@ void AkosRenderer::codec16() {
 
 	int32 /*tmp1, tmp2, tmp3,*/ dir;
 
-	if (!mirror) {
+	if (!_mirror) {
 		dir = -1;
 
 		int tmp_skip_x = skip_x;
@@ -1316,12 +1335,12 @@ void AkosRenderer::codec16() {
 
 	byte * dest = outptr + width_unk + height_unk * _vm->_realWidth;
 
-	if (clipping == 0) {
+	if (_zbuf == 0) {
 		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255);
 		return;
 	}
 
-	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping];
+	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
 	ptr += _numStrips * clip_top + (clip_left / 8);
 	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
 }
