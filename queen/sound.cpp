@@ -117,6 +117,7 @@ Sound *Sound::giveSound(SoundMixer *mixer, Input *input, Resource *resource, uin
 		case COMPRESSION_OGG:
 				#ifndef USE_VORBIS
 					warning("Using OGG compressed datafile, but OGG support not compiled in");
+					return new SilentSound(mixer, input, resource);
 				#else
 					return new OGGSound(mixer, input, resource);
 				#endif
