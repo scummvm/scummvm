@@ -537,7 +537,11 @@ int32 CloseAppWindow(void)
 
 }
 
+static bool _needRedraw = false;
 
+void SetNeedRedraw() {
+	_needRedraw = true;
+}
 
 int32 ServiceWindows(void)
 
@@ -548,8 +552,14 @@ int32 ServiceWindows(void)
 	// FIXME: We re-render the entire picture area of the screen for each
 	// frame, which is pretty horrible.
 
-	g_system->copy_rect(lpBackBuffer + MENUDEEP * screenWide, screenWide, 0, MENUDEEP, screenWide, screenDeep - 2 * MENUDEEP);
+	if (_needRedraw) {
+		g_system->copy_rect(lpBackBuffer + MENUDEEP * screenWide, screenWide, 0, MENUDEEP, screenWide, screenDeep - 2 * MENUDEEP);
+		_needRedraw = false;
+	}
+
+	// We still need to update because of fades, menu animations, etc.
 	g_system->update_screen();
+
 //	warning("stub ServiceWindows");  // too noisy
 /*
 	MSG msg;

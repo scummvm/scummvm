@@ -265,6 +265,7 @@
 #include "render.h"
 #include "menu.h"
 #include "palette.h"
+#include "rdwin.h"
 
 
 #if PROFILING == 1
@@ -1330,6 +1331,8 @@ int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
 		free(sprite);
 
 	// UploadRect(&rd);
+	SetNeedRedraw();
+
 	return 0;
 }
 
@@ -1621,6 +1624,7 @@ int32 DrawSprite(_spriteInfo *s) {
 		free(sprite);
 
 	// UploadRect(&rd);
+	SetNeedRedraw();
 
 /*
 

@@ -157,8 +157,10 @@ void	Build_display(void)	//Tony21Sept96
 			//----------------------------------------------------
 			// clear the back buffer, before building up the new screen
 			// from the back forwards
-	
-			EraseBackBuffer();
+
+			// FIXME: I'm not convinced that this is needed. Isn't
+			// the whole screen redrawn each time?
+			// EraseBackBuffer();
 
 			//----------------------------------------------------
 			// first background parallax + related anims
@@ -253,7 +255,8 @@ void	Build_display(void)	//Tony21Sept96
  			//----------------------------------------------------
 			// ready - blit to screen
 
-			CopyScreenBuffer();
+			if (ServiceWindows() == RDERR_APPCLOSED)	// if the game is being shut down, drop out
+				break;
 
  			//----------------------------------------------------
 			// update our fps reading
@@ -262,7 +265,7 @@ void	Build_display(void)	//Tony21Sept96
 			if (SVM_timeGetTime() > cycleTime)
 			{
 				fps = frameCount;
-				debug(2, "FPS: %d", fps);
+				debug(0, "FPS: %d", fps);
 				frameCount = 0;
 				cycleTime = SVM_timeGetTime()+1000;
 			}
@@ -270,15 +273,9 @@ void	Build_display(void)	//Tony21Sept96
 			// check if we've got time to render the screen again this cycle
 			// (so drivers can smooth out the scrolling in between normal game cycles)
 
-			// FIXME: If we have already reached the scroll target,
-			// we should sleep for the rest of the render cycle.
-
 			EndRenderCycle(&end);
 
 			if (end)	// if we haven't got time to render again this cycle, drop out of 'render cycle' while-loop
-				break;
-
-			if (ServiceWindows() == RDERR_APPCLOSED)	// if the game is being shut down, drop out
 				break;
 
 			//----------------------------------------------------

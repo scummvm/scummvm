@@ -258,7 +258,6 @@ int32 renderCountIndex = 0;
 int32 renderTimeLog[RENDERAVERAGETOTAL] = {60, 60, 60, 60};
 int32 initialTime;
 int32 startTime;
-int32 originTime;
 int32 totalTime;
 int32 renderAverageTime = 60;
 int32 framesPerGameCycle;
@@ -331,6 +330,7 @@ void BlitBlockSurface(BlockSurface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rec
 	}
 
 	// UploadRect(r);
+	SetNeedRedraw();
 }
 
 #define SCALE_MAXWIDTH 512
@@ -987,10 +987,11 @@ void LogMe(int32 in)
 }
 */
 
+// Uncomment this when benchmarking the drawing routines.
+#define LIMIT_FRAME_RATE
 
 int32 InitialiseRenderCycle(void) {
 	initialTime = SVM_timeGetTime();
-	originTime = initialTime;
 	totalTime = initialTime + MILLISECSPERCYCLE;
 	return RD_OK;
 }
@@ -1018,13 +1019,27 @@ int32 StartRenderCycle(void) {
 }
 
 
+// FIXME: Move this to some better place?
+
+void sleepUntil(int32 time) {
+	while ((int32) SVM_timeGetTime() < time) {
+		g_sword2->parseEvents();
+
+		// Make sure menu animations and fades don't suffer
+		ProcessMenu();
+		if (ServiceWindows() == RDERR_APPCLOSED)
+			break;
+
+		g_system->delay_msecs(10);
+	}
+}
 
 int32 EndRenderCycle(BOOL *end) {
 	int32 time;
 
 	time = SVM_timeGetTime();
 	renderTimeLog[renderCountIndex] = time - startTime;
-	startTime += renderTimeLog[renderCountIndex];
+	startTime = time;
 	renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
 
 	framesPerGameCycle += 1;
@@ -1037,13 +1052,31 @@ int32 EndRenderCycle(BOOL *end) {
 		InitialiseRenderCycle();
 	} else if (startTime + renderAverageTime >= totalTime) {
 		*end = TRUE;
-		originTime = totalTime;
 		totalTime += MILLISECSPERCYCLE;
 		initialTime = time;
+#ifdef LIMIT_FRAME_RATE
+	} else if (scrollxTarget == scrollx && scrollyTarget == scrolly) {
+		// If we have already reached the scroll target sleep for the
+		// rest of the render cycle.
+		*end = TRUE;
+		sleepUntil(totalTime);
+		initialTime = SVM_timeGetTime();
+		totalTime += MILLISECSPERCYCLE;
+#endif
 	} else {
 		*end = FALSE;
-		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
-		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
+
+		// This is an attempt to ensure that we always reach the scroll
+		// target. Otherwise the game frequently tries to pump out new
+		// interpolation frames without ever getting anywhere.
+
+		if (ABS(scrollx - scrollxTarget) <= 1 && ABS(scrolly - scrollyTarget) <= 1) {
+			scrollx = scrollxTarget;
+			scrolly = scrollyTarget;
+		} else {
+			scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
+			scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
+		}
 	}
 
 	return RD_OK;
@@ -1057,9 +1090,8 @@ int32 SetScrollTarget(int16 sx, int16 sy) {
 }
 
 int32 CopyScreenBuffer(void) {
-	// FIXME: This function no longer seems needed. Calling copy_rect()
-	// for the whole screen is slower than the current approach. Not by
-	// much, but still...
+	// FIXME: This function no longer seems to be needed. We copy the
+	// back buffer to the screen in ServiceWindows() instead.
 	return RD_OK;
 }
 
@@ -1207,6 +1239,6 @@ int32 CloseBackgroundLayer(void) {
 
 int32 EraseSoftwareScreenBuffer(void)
 {
-	memset(myScreenBuffer, 0, RENDERWIDE * RENDERDEEP);
+	// memset(myScreenBuffer, 0, RENDERWIDE * RENDERDEEP);
 	return(RD_OK);
 }

@@ -52,5 +52,6 @@ extern RECT			rcWindow;		// size of the current window.
 extern void Message(LPSTR fmt, ...);
 */
 
+extern void SetNeedRedraw(void);
 
 #endif

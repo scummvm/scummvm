@@ -24,6 +24,7 @@
 #include "_mouse.h"
 #include "d_draw.h"
 #include "palette.h"
+#include "render.h"
 
 #define SCREENYOFFSET	40
 #define MILLISECSPERCYCLE 83
@@ -205,14 +206,7 @@ int32 WaitForVbl(void)
 }
 
 int32 EraseBackBuffer( void ) {
-	// Since the entire screen is redrawn each time, there probably isn't
-	// any need to actually clear the back buffer.
-	//
-	// At the very least, since the menu code now is solely responsible
-	// for its own parts of the screen, we'd only need to clear the
-	// picture area.
-
-	// memset(lpBackBuffer + MENUDEEP * screnWide, 0, screenWide * (screenDeep - 2 * MENUDEEP));
+	memset(lpBackBuffer + MENUDEEP * screenWide, 0, screenWide * RENDERDEEP);
 	return RD_OK;
 }
 
