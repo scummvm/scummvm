@@ -992,7 +992,7 @@ int SimonState::runScript() {
 				if (_game & GF_TALKIE) 
 					d = _array_4[a];
 
-				if (d != 0 && !_vk_t_toggle) {
+				if (d != 0 && !_subtitles) {
 					talk_with_speech(d, b);
 				} else if (s != NULL) {
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
@@ -1231,11 +1231,11 @@ void SimonState::o_177() {
 	if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
-			if (!_vk_t_toggle)
+			if (!_subtitles)
 				talk_with_speech(child->array[offs], a);
 		} else if (child != NULL && child->avail_props & 0x100) {
 			uint offs = getOffsetOfChild2Param(child, 0x100);
-			if (!_vk_t_toggle)
+			if (!_subtitles)
 				talk_with_speech(child->array[offs] + 3550, a);
 		}
 	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
@@ -1286,12 +1286,12 @@ void SimonState::o_177() {
 				}
 			}
 
-			if (!_vk_t_toggle)
+			if (!_subtitles)
 				talk_with_speech(var200, a);
 		}
 
 	}
-	if (child != NULL && (child->avail_props & 1) && _vk_t_toggle) {
+	if (child != NULL && (child->avail_props & 1) && _subtitles) {
 		if (child->avail_props & 0x100) {
 			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
 			s = buf;

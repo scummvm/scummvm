@@ -1811,7 +1811,7 @@ void SimonState::o_print_str() {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 	case GAME_SIMON1CD32:
-		if (speech_id != 0 && !_vk_t_toggle) {
+		if (speech_id != 0 && !_subtitles) {
 			talk_with_speech(speech_id, num_1);
 		} else if (string_ptr != NULL) {
 			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
@@ -1828,10 +1828,10 @@ void SimonState::o_print_str() {
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 	case GAME_SIMON2MAC:
-		if (speech_id != 0 && num_1 == 1 && !_vk_t_toggle)
+		if (speech_id != 0 && num_1 == 1 && !_subtitles)
 			talk_with_speech(speech_id, num_1);
 
-		if (speech_id != 0 && !_vk_t_toggle)
+		if (speech_id != 0 && !_subtitles)
 			return;
 
 		if (speech_id == 0)
@@ -3099,7 +3099,7 @@ void SimonState::processSpecialKeys() {
 
 		case 't':
 			if (_game & GF_SIMON2)
-				_vk_t_toggle ^= 1;
+				_subtitles ^= 1;
 			break;
 
 		case '+':
@@ -3889,7 +3889,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1) {
 		}
 	} else {
 		if (speech_id == 0xFFFF) {
-			if (_vk_t_toggle)
+			if (_subtitles)
 				return;
 			if (!(_bit_array[0] & 0x4000 || _bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
@@ -3899,7 +3899,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1) {
 			}
 			_skip_vga_wait = true;
 		} else {
-			if (_vk_t_toggle && _scriptvar_2) {
+			if (_subtitles && _scriptvar_2) {
 				start_vga_code(4, 2, 5, 0, 0, 0);
 				o_wait_for_vga(0xcd);
 				o_unk_99_simon2(2, 5);
@@ -4627,13 +4627,13 @@ void SimonState::go() {
 		_start_mainscript = true;
 
 	if (_sound->hasVoice()) {
-		_vk_t_toggle = false;
+		_subtitles = false;
 	} else {
-		_vk_t_toggle = true;
+		_subtitles = true;
 	}
 	//Only English and German voice files were produced
 	if  (_language >= 2)
-		_vk_t_toggle = true;
+		_subtitles = true;
 
 	midi._midi_sfx_toggle = false;
 	
