@@ -944,6 +944,8 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 							*(uint16 *)(_channel[l].data + t * 4 + 0) = *(uint16 *)(ptr + t * 2);
 							*(uint16 *)(_channel[l].data + t * 4 + 2) = *(uint16 *)(ptr + t * 2);
 						}
+					} else {
+						error("Stereo 16 bit sound support not yet implemented");
 					}
 					_channel[l].size = size;
 				} else if (_channel[l].bits == 8) {
