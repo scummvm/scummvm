@@ -25,9 +25,12 @@
 
 // Translation table derived from http://www.kostis.net/charsets/
 
+#include "saga/saga.h"
+#include "saga/font.h"
+
 namespace Saga {
 
-int CharMap[] = {
+const int Font::_charMap[256] = {
 	0,			//   0
 	1,			//   1
 	2,			//   2

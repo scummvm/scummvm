@@ -30,7 +30,7 @@
 #include "saga/rscfile_mod.h"
 
 #include "saga/text_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 
 #include "saga/sprite_mod.h"
 #include "saga/sprite.h"

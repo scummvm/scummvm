@@ -25,7 +25,7 @@
 
 #include "saga/saga.h"
 #include "saga/gfx.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
 
@@ -219,8 +219,8 @@ int CON_Draw(R_SURFACE *ds) {
 	txt_fgcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTCOLOR);
 	txt_shcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTSHADOW);
 
-	FONT_Draw(SMALL_FONT_ID, ds, ">", 1, 2, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-	FONT_Draw(SMALL_FONT_ID, ds, ConInfo.input_buf, strlen(ConInfo.input_buf),
+	_vm->_font->draw(SMALL_FONT_ID, ds, ">", 1, 2, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
+	_vm->_font->draw(SMALL_FONT_ID, ds, ConInfo.input_buf, strlen(ConInfo.input_buf),
 				10, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 
 	line_y = ConInfo.y_pos - (R_CON_INPUT_H + R_CON_LINE_H);
@@ -235,7 +235,7 @@ int CON_Draw(R_SURFACE *ds) {
 	}
 
 	for (walk_ptr = start_ptr; walk_ptr; walk_ptr = walk_ptr->next) {
-		FONT_Draw(SMALL_FONT_ID, ds, walk_ptr->str_p, walk_ptr->str_len, 2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
+		_vm->_font->draw(SMALL_FONT_ID, ds, walk_ptr->str_p, walk_ptr->str_len, 2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 		line_y -= R_CON_LINE_H;
 		if (line_y < -R_CON_LINE_H)
 			break;

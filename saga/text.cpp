@@ -27,7 +27,7 @@
 #include "saga/yslib.h"
 
 #include "saga/gfx.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 
 #include "saga/text_mod.h"
 #include "saga/text.h"
@@ -69,7 +69,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 			return R_FAILURE;
 		}
 
-		string_w = FONT_GetStringWidth(font_id, string, string_len, flags);
+		string_w = _vm->_font->getStringWidth(font_id, string, string_len, flags);
 
 		if (text_x < (ds->buf_w / 2)) {
 			// Fit to right side
@@ -82,12 +82,12 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 		if (fit_w >= string_w) {
 			// Entire string fits, draw it
 			text_x = text_x - (string_w / 2);
-			FONT_Draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
+			_vm->_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
 			return R_SUCCESS;
 		}
 
 		// String won't fit on one line
-		h = FONT_GetHeight(font_id);
+		h = _vm->_font->getHeight(font_id);
 		w_total = 0;
 		len_total = 0;
 		wc = 0;
@@ -106,7 +106,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				len = found_p - measure_p;
 			}
 
-			w = FONT_GetStringWidth(font_id, measure_p, len, flags);
+			w = _vm->_font->getStringWidth(font_id, measure_p, len, flags);
 			measure_p = found_p;
 
 			if ((w_total + w) > fit_w) {
@@ -117,7 +117,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				}
 
 				// Wrap what we've got and restart
-				FONT_Draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color, 
+				_vm->_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color, 
 							effect_color, flags);
 				text_y += h + R_TEXT_LINESPACING;
 				w_total = 0;
@@ -132,7 +132,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 				wc++;
 				if (found_p == NULL) {
 					// Since word hit NULL but fit, we are done
-					FONT_Draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color,
+					_vm->_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color,
 								effect_color, flags);
 					return R_SUCCESS;
 				}
@@ -141,7 +141,7 @@ int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int te
 		}
 	} else {
 		// Text is not centered; No formatting required
-		FONT_Draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
+		_vm->_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
 	}
 
 	return R_SUCCESS;

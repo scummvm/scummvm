@@ -32,7 +32,7 @@
 #include "saga/script_mod.h"
 #include "saga/sndres.h"
 #include "saga/sprite_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/text_mod.h"
 #include "saga/sound.h"
 

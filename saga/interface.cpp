@@ -29,7 +29,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/actor.h"
 #include "saga/console_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script_mod.h"
@@ -359,9 +359,9 @@ int DrawStatusBar(R_SURFACE *ds) {
 
 	_vm->_gfx->drawRect(ds, &rect, IfModule.i_desc.status_bgcol);
 
-	string_w = FONT_GetStringWidth(SMALL_FONT_ID, IfModule.status_txt, 0, 0);
+	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, IfModule.status_txt, 0, 0);
 
-	FONT_Draw(SMALL_FONT_ID, ds, IfModule.status_txt, 0, (IfModule.i_desc.status_w / 2) - (string_w / 2),
+	_vm->_font->draw(SMALL_FONT_ID, ds, IfModule.status_txt, 0, (IfModule.i_desc.status_w / 2) - (string_w / 2),
 			IfModule.i_desc.status_y + IfModule.i_desc.status_txt_y, IfModule.i_desc.status_txt_col, 0, 0);
 
 	return R_SUCCESS;
@@ -448,7 +448,7 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 
 		verb_idx = IfModule.c_panel.buttons[i].data;
 
-		string_w = FONT_GetStringWidth(SMALL_FONT_ID, I_VerbData[verb_idx].verb_str, 0, 0);
+		string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, I_VerbData[verb_idx].verb_str, 0, 0);
 
 		if (i == hit_button) {
 			color = IfModule.i_desc.cmd_txt_hilitecol;
@@ -459,7 +459,7 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 		button_x = IfModule.c_panel.x + IfModule.c_panel.buttons[i].x1;
 		button_y = IfModule.c_panel.y + IfModule.c_panel.buttons[i].y1;
 
-		FONT_Draw(SMALL_FONT_ID, ds, I_VerbData[verb_idx].verb_str, 0,
+		_vm->_font->draw(SMALL_FONT_ID, ds, I_VerbData[verb_idx].verb_str, 0,
 				button_x + ((button_w / 2) - (string_w / 2)), button_y + 1,
 				color, IfModule.i_desc.cmd_txt_shadowcol, FONT_SHADOW);
 

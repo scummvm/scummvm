@@ -26,6 +26,8 @@
 #ifndef SAGA_FONT_H__
 #define SAGA_FONT_H__
 
+#include "saga/gfx.h"
+
 namespace Saga {
 
 #define R_FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
@@ -45,6 +47,20 @@ namespace Saga {
 #define R_FONT_CHARMASK 0xFFU
 
 #define SAGA_FONT_HEADER_LEN 6
+
+enum FONT_ID {
+	SMALL_FONT_ID,
+	MEDIUM_FONT_ID,
+	BIG_FONT_ID
+};
+
+enum FONT_EFFECT_FLAGS {
+	FONT_NORMAL = 0x00,
+	FONT_OUTLINE = 0x01,
+	FONT_SHADOW = 0x02,
+	FONT_BOLD = 0x04,
+	FONT_CENTERED = 0x08
+};
 
 struct R_FONT_HEADER {
 	int c_height;
@@ -80,23 +96,32 @@ struct R_FONT {
 	size_t res_len;
 };
 
-struct R_FONT_MODULE {
-	int init;
-	R_RSCFILE_CONTEXT *font_ctxt;
+class Font {
+ public:
+	Font(SagaEngine *vm);
+	~Font(void);
+	int draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_len,
+				  int text_x, int text_y, int color, int effect_color, int flags);
+	int getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags);
+	int getHeight(int font_id);
 
-	int n_fonts;
-	R_FONT **fonts;
+ private:
 
-	int err_n;
-	const char *err_str;
+	int loadFont(uint32 font_rn, int font_id);
+	R_FONT_STYLE *createOutline(R_FONT_STYLE * src_font);
+	int outFont(R_FONT_STYLE *font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+				 int text_x, int text_y, int color);
+	int getByteLen(int num_bits);
+
+	static const int _charMap[256];
+	SagaEngine *_vm;
+
+	bool _initialized;
+	R_RSCFILE_CONTEXT *_font_ctxt;
+
+	int _n_fonts;
+	R_FONT **_fonts;
 };
-
-int FONT_Load(uint32 font_rn, int font_id);
-static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font);
-int FONT_Out(R_FONT_STYLE *font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
-			int text_x, int text_y, int color);
-static int GetByteLen(int num_bits);
-extern int CharMap[];
 
 } // End of namespace Saga
 

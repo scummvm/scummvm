@@ -31,7 +31,7 @@
 #include "saga/gfx.h"
 #include "saga/cvar_mod.h"
 #include "saga/console_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/objectmap.h"
 
 namespace Saga {
@@ -339,7 +339,7 @@ int ObjectMap::draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 	}
 
 	if (draw_txt) {
-		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2,
+		_vm->_font->draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2,
 				_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
 	}
 

@@ -28,74 +28,61 @@
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
 
-#include "saga/font_mod.h"
 #include "saga/font.h"
 
 namespace Saga {
 
-static R_FONT_MODULE FontModule;
-
-int FONT_Init() {
+Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	R_GAME_FONTDESC *gamefonts;
 	int i;
 
-	if (FontModule.init) {
-		FontModule.err_str = "Font module already initialized.";
-		return R_FAILURE;
-	}
-
 	// Load font module resource context 
-	if (GAME_GetFileContext(&FontModule.font_ctxt,
+	if (GAME_GetFileContext(&_font_ctxt,
 		R_GAME_RESOURCEFILE, 0) != R_SUCCESS) {
-		FontModule.err_str = "Couldn't get resource context.";
-		return R_FAILURE;
+		error("Font::Font(): Couldn't get resource context.");
 	}
 
 	// Allocate font table
-	GAME_GetFontInfo(&gamefonts, &FontModule.n_fonts);
+	GAME_GetFontInfo(&gamefonts, &_n_fonts);
 
-	assert(FontModule.n_fonts > 0);
+	assert(_n_fonts > 0);
 
-	FontModule.fonts = (R_FONT **)malloc(FontModule.n_fonts * sizeof *FontModule.fonts);
-	if (FontModule.fonts == NULL) {
-		FontModule.err_str = "Memory allocation failure.";
-		return R_MEM;
+	_fonts = (R_FONT **)malloc(_n_fonts * sizeof *_fonts);
+	if (_fonts == NULL) {
+		error("Font::Font(): Memory allocation failure.");
 	}
 
-	for (i = 0; i < FontModule.n_fonts; i++) {
-		FONT_Load(gamefonts[i].font_rn, gamefonts[i].font_id);
+	for (i = 0; i < _n_fonts; i++) {
+		loadFont(gamefonts[i].font_rn, gamefonts[i].font_id);
 	}
 
-	FontModule.init = 1;
-
-	return R_SUCCESS;
+	_initialized = true;
 }
 
-int FONT_Shutdown() {
+Font::~Font(void) {
 //	int i;
 
-	debug(0, "FONT_Shutdown(): Freeing fonts.");
+	debug(0, "Font::~Font(): Freeing fonts.");
 /*
 	for ( i = 0 ; i < R_FONT_COUNT ; i ++ ) {
-		if ( FontModule.fonts[i] != NULL ) {
-			if ( FontModule.fonts[i]->normal_loaded ) {
-				free( FontModule.fonts[i]->normal->font_free_p );
-				free( FontModule.fonts[i]->normal );
+		if ( _fonts[i] != NULL ) {
+			if ( _fonts[i]->normal_loaded ) {
+				free( _fonts[i]->normal->font_free_p );
+				free( _fonts[i]->normal );
 			}
 
-			if ( FontModule.fonts[i]->outline_loaded ) {
-				free( FontModule.fonts[i]->outline->font_free_p );
-				free( FontModule.fonts[i]->outline );
+			if ( _fonts[i]->outline_loaded ) {
+				free( _fonts[i]->outline->font_free_p );
+				free( _fonts[i]->outline );
 			}
 		}
 
-		free( FontModule.fonts[i] );
+		free( _fonts[i] );
 	}
 */
-	return R_SUCCESS;
 }
 
-int FONT_Load(uint32 font_rn, int font_id) {
+int Font::loadFont(uint32 font_rn, int font_id) {
 	R_FONT_HEADER fh;
 	R_FONT *font;
 	R_FONT_STYLE *normal_font;
@@ -104,18 +91,18 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	int nbits;
 	int c;
 
-	if ((font_id < 0) || (font_id >= FontModule.n_fonts)) {
+	if ((font_id < 0) || (font_id >= _n_fonts)) {
 		return R_FAILURE;
 	}
 
 	// Load font resource
-	if (RSC_LoadResource(FontModule.font_ctxt, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
-		FontModule.err_str = "Couldn't load font resource.";
+	if (RSC_LoadResource(_font_ctxt, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
+		error("Font::loadFont(): Couldn't load font resource.");
 		return R_FAILURE;
 	}
 
 	if (fontres_len < R_FONT_DESCSIZE) {
-		FontModule.err_str = "Invalid font length.";
+		error("Font::loadFont(): Invalid font length.");
 	}
 
 	MemoryReadStream readS(fontres_p, fontres_len);
@@ -123,7 +110,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	// Create new font structure
 	font = (R_FONT *)malloc(sizeof *font);
 	if (font == NULL) {
-		FontModule.err_str = "Memory allocation error.";
+		error("Font:loadFont(): Memory allocation error.");
 		return R_MEM;
 	}
 
@@ -132,7 +119,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	fh.c_width = readS.readUint16LE();
 	fh.row_length = readS.readUint16LE();
 
-	debug(1, "FONT_Load(): Reading font resource...");
+	debug(1, "Font::loadFont(): Reading font resource...");
 
 	debug(2, "Character width:\t%d", fh.c_width);
 	debug(2, "Character height:\t%d", fh.c_height);
@@ -141,7 +128,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	// Create normal font style
 	normal_font = (R_FONT_STYLE *)malloc(sizeof *normal_font);
 	if (normal_font == NULL) {
-		FontModule.err_str = "Memory allocation error.";
+		error("Font::loadFont(): Memory allocation error.");
 		free(font);
 		return R_MEM;
 	}
@@ -157,7 +144,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
 		nbits = normal_font->fce[c].width = readS.readByte();
-		normal_font->fce[c].byte_width = GetByteLen(nbits);
+		normal_font->fce[c].byte_width = getByteLen(nbits);
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
@@ -179,33 +166,33 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	font->normal_loaded = 1;
 
 	// Create outline font style
-	font->outline = FONT_CreateOutline(normal_font);
+	font->outline = createOutline(normal_font);
 	font->outline_loaded = 1;
 
 	// Set font data 
-	FontModule.fonts[font_id] = font;
+	_fonts[font_id] = font;
 
 	return R_SUCCESS;
 }
 
-int FONT_GetHeight(int font_id) {
+int Font::getHeight(int font_id) {
 	R_FONT *font;
 
-	if (!FontModule.init) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
-		FontModule.err_str = "Invalid font id.";
+	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+		error("Font::getHeight(): Invalid font id.");
 		return R_FAILURE;
 	}
 
-	font = FontModule.fonts[font_id];
+	font = _fonts[font_id];
 
 	return font->normal->hdr.c_height;
 }
 
-static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
+R_FONT_STYLE *Font::createOutline(R_FONT_STYLE *src_font) {
 	R_FONT_STYLE *new_font;
 	unsigned char *new_font_data;
 	size_t new_font_data_len;
@@ -230,7 +217,7 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 	new_font = (R_FONT_STYLE *)malloc(sizeof *new_font);
 
 	if (new_font == NULL) {
-		FontModule.err_str = "Memory allocation error.";
+		error("Font::createOutline(): Memory allocation error.");
 		return NULL;
 	}
 
@@ -250,8 +237,8 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 		new_font->fce[i].flag = src_font->fce[i].flag;
 
 		if (src_font->fce[i].width != 0) {
-			new_byte_width = GetByteLen(src_font->fce[i].width + 2);
-			old_byte_width = GetByteLen(src_font->fce[i].width);
+			new_byte_width = getByteLen(src_font->fce[i].width + 2);
+			old_byte_width = getByteLen(src_font->fce[i].width);
 
 			if (new_byte_width > old_byte_width) {
 				index_offset++;
@@ -274,7 +261,7 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 	new_font_data = (unsigned char *)malloc(new_font_data_len);
 
 	if (new_font_data == NULL) {
-		FontModule.err_str = "Memory allocation error.";
+		error("Font::createOutline(): Memory allocation error.");
 		return NULL;
 	}
 
@@ -335,7 +322,7 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 	return new_font;
 }
 
-static int GetByteLen(int num_bits) {
+int Font::getByteLen(int num_bits) {
 	int byte_len;
 	byte_len = num_bits / 8;
 
@@ -350,23 +337,23 @@ static int GetByteLen(int num_bits) {
 // of at most 'test_str_ct' characters of the string 'test_str', taking
 // into account any formatting options specified by 'flags'.
 // If 'test_str_ct' is 0, all characters of 'test_str' are counted.
-int FONT_GetStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags) {
+int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags) {
 	R_FONT *font;
 	size_t ct;
 	int width = 0;
 	int ch;
 	const byte *txt_p;
 
-	if (!FontModule.init) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
-		FontModule.err_str = "Invalid font id.";
+	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+		error("Font::getStringWidth(): Invalid font id.");
 		return R_FAILURE;
 	}
 
-	font = FontModule.fonts[font_id];
+	font = _fonts[font_id];
 	assert(font != NULL);
 
 	txt_p = (const byte *) test_str;
@@ -374,7 +361,7 @@ int FONT_GetStringWidth(int font_id, const char *test_str, size_t test_str_ct, i
 	for (ct = test_str_ct; *txt_p && (!test_str_ct || ct > 0); txt_p++, ct--) {
 		ch = *txt_p & 0xFFU;
 		// Translate character
-		ch = CharMap[ch];
+		ch = _charMap[ch];
 		assert(ch < R_FONT_CHARCOUNT);
 		width += font->normal->fce[ch].tracking;
 	}
@@ -386,37 +373,37 @@ int FONT_GetStringWidth(int font_id, const char *test_str, size_t test_str_ct, i
 	return width;
 }
 
-int FONT_Draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_ct,
+int Font::draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_ct,
 			int text_x, int text_y, int color, int effect_color, int flags) {
 	R_FONT *font;
 
-	if (!FontModule.init) {
-		FontModule.err_str = "Font Module not initialized.";
+	if (!_initialized) {
+		error("Font::draw(): Font Module not initialized.");
 
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
-		FontModule.err_str = "Invalid font id.";
+	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+		error("Font::draw(): Invalid font id.");
 		return R_FAILURE;
 	}
 
-	font = FontModule.fonts[font_id];
+	font = _fonts[font_id];
 
 	if (flags & FONT_OUTLINE) { 
-		FONT_Out(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color);
-		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	} else if (flags & FONT_SHADOW) {
-		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color);
-		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	} else { // FONT_NORMAL
-		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	}
 
 	return R_SUCCESS;
 }
 
-int FONT_Out(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+int Font::outFont(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
 				int text_x, int text_y, int color) {
 	const byte *draw_str_p;
 	byte *c_data_ptr;
@@ -449,7 +436,7 @@ int FONT_Out(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str, siz
 		c_code = *draw_str_p & 0xFFU;
 
 		// Translate character
-		c_code = CharMap[c_code];
+		c_code = _charMap[c_code];
 		assert(c_code < R_FONT_CHARCOUNT);
 
 		// Check if character is defined

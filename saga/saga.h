@@ -49,6 +49,7 @@ class Gfx;
 class SData;
 class Script;
 class Actor;
+class Font;
 
 using Common::MemoryReadStream;
 
@@ -103,6 +104,7 @@ public:
 	SData *_sdata;
 	Script *_script;
 	Actor *_actor;
+	Font *_font;
 	
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);

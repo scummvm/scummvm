@@ -31,7 +31,7 @@
 #include "saga/animation.h"
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/rscfile_mod.h"
 #include "saga/scene_mod.h"

@@ -28,7 +28,7 @@
 #include "saga/console_mod.h"
 #include "saga/text_mod.h"
 #include "saga/scene_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 
 #include "saga/script.h"
 #include "saga/sthread.h"

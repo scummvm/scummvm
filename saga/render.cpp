@@ -28,7 +28,7 @@
 #include "saga/actor.h"
 #include "saga/console_mod.h"
 #include "saga/cvar_mod.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/interface_mod.h"
 #include "saga/scene_mod.h"
@@ -155,16 +155,16 @@ int Render::drawScene() {
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
 		sprintf(txt_buf, "%d", _fps);
-		fps_width = FONT_GetStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
-		FONT_Draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
+		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
+		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
 					_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
 		int msg_len = strlen(R_PAUSEGAME_MSG);
-		int msg_w = FONT_GetStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
-		FONT_Draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
+		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
+		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
 				(backbuf_surface->buf_w - msg_w) / 2, 90, _gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
 	}
 

@@ -41,7 +41,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
 #include "saga/actionmap.h"
-#include "saga/font_mod.h"
+#include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/game.h"
 #include "saga/interface_mod.h"
@@ -149,7 +149,7 @@ void SagaEngine::go() {
 	// Initialize engine modules
 	_sndRes = new SndRes(this);
 	EVENT_Init();
-	FONT_Init();
+	_font = new Font(this);
 	SPRITE_Init();
 	_anim = new Anim(this);
 	_script = new Script();
@@ -247,7 +247,7 @@ void SagaEngine::shutdown() {
 	delete _actor;
 	delete _script;
 	SPRITE_Shutdown();
-	FONT_Shutdown();
+	delete _font;
 	CON_Shutdown();
 	CVAR_Shutdown();
 	EVENT_Shutdown();
