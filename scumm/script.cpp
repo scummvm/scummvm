@@ -843,10 +843,23 @@ void ScummEngine::killScriptsAndResources() {
 	/* Nuke local object names */
 	if (_newNames) {
 		for (i = 0; i < _numNewNames; i++) {
-			int j = _newNames[i];
-			if (j && getOwner(j) == 0) {
-				_newNames[i] = 0;
-				nukeResource(rtObjectName, i);
+			const int obj = _newNames[i];
+			if (obj) {
+				const int owner = getOwner(obj);
+				// We can delete custom name resources if either the object is
+				// no longer in use (i.e. not owned by anyone anymore); or if
+				// it is an object which is owned by a room.
+				if (owner == 0 || owner == OF_OWNER_ROOM) {
+					// WORKAROUND for a problem mentioned in bug report #941275:
+					// In FOA in the sentry room, in the chest plate of the statue,
+					// the pegs may be renamed to mouth: this custom name is lost
+					// when leaving the room; this hack prevents this).
+					if (owner == OF_OWNER_ROOM && _gameId == GID_INDY4 && 336 <= obj && obj <= 340)
+						continue;
+
+					_newNames[i] = 0;
+					nukeResource(rtObjectName, i);
+				}
 			}
 		}
 	}
