@@ -67,9 +67,6 @@ protected:
 	void queueUpdatePos();
 	uint8 randomQueuePos();
 	static void onTimer(void *data);
-	bool isBadSong(uint16 songNum) const;
-	uint8 validSongs() const;
-	uint16 nextValidSong();
 	uint32 songOffset(uint16 songNum) const;
 	uint32 songLength(uint16 songNum) const;
 
@@ -92,6 +89,7 @@ protected:
 	
 	uint16 _numSongs;
 	byte *_musicData;
+	uint16 *_buf;
 	uint32 _musicDataSize;
 };
 	
