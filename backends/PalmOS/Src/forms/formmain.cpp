@@ -7,7 +7,7 @@
 #include "scumm_globals.h"
 
 #include "stdafx.h"
-#include "engine.h"	// version
+#include "version.h"
 
 #include "formEditGame.h"
 #include "formUtil.h"
