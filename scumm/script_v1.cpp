@@ -2758,9 +2758,12 @@ void Scumm::decodeParseString()
 			}
 
 			// FIXME: Store positions, this is needed for Indy3 (Grail Diary)..
-			// I'm not sure whether having this as a generic case will break anything
-			_string[textSlot].t_xpos = _string[textSlot].xpos;
-			_string[textSlot].t_ypos = _string[textSlot].ypos;
+			// I don't believe this is the correct fix, may cause other problems
+			// later in the game.
+			if (_gameId == GID_INDY3_256) {
+				_string[textSlot].t_xpos = _string[textSlot].xpos;
+				_string[textSlot].t_ypos = _string[textSlot].ypos;
+			}
 
 			_scriptPointer = _messagePtr;
 			return;
