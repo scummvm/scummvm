@@ -915,6 +915,10 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 			/* Did if open? Check if _cdrom is NULL */
 			if (!_cdrom) {
 				warning("Couldn't open drive: %s\n", SDL_GetError());
+			} else {
+				cd_num_loops = 0;
+				cd_stop_time = 0;
+				cd_end_time = 0;
 			}
 		}
 		break;
@@ -1098,7 +1102,7 @@ void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, i
 		return;
 	
 	if (duration > 0)
-		duration +=5;
+		duration += 5;
 
 	cd_track = track;
 	cd_num_loops = num_loops;
