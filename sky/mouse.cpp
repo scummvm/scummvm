@@ -91,6 +91,8 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk) {
 	_system = system;
 	_mouseB = 0;
 	_currentCursor = 6;
+	_mouseX = GAME_SCREEN_WIDTH / 2;
+	_mouseY = GAME_SCREEN_HEIGHT / 2;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 
@@ -193,7 +195,7 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
 	_mouseX = mouseX;
 	_mouseY = mouseY;
-
+	
 	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
