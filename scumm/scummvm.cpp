@@ -825,7 +825,7 @@ void Scumm::initRoomSubBlocks()
 	ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		offs = ptr - roomptr;
-		if (_features & GF_AFTER_V7) {
+		if (_features & GF_AFTER_V8) {
 			for (i = 1; i < _maxScaleTable; i++, offs += 16) {
 				int a = READ_LE_UINT32(roomptr + offs);
 				int b = READ_LE_UINT32(roomptr + offs + 4);
