@@ -96,16 +96,16 @@ public:
 		
 	// Poll cdrom status
 	// Returns true if cd audio is playing
-	virtual bool poll_cdrom();
+	virtual bool poll_cdrom() = 0;
 
 	// Play cdrom audio track
-	virtual void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+	virtual void play_cdrom(int track, int num_loops, int start_frame, int end_frame) = 0;
 
 	// Stop cdrom audio track
-	virtual void stop_cdrom();
+	virtual void stop_cdrom() = 0;
 
 	// Update cdrom audio status
-	virtual void update_cdrom();
+	virtual void update_cdrom() = 0;
 
 	// Quit
 	virtual void quit() = 0;
