@@ -31,9 +31,10 @@
 #include "bs2/debug.h"
 #include "bs2/header.h"
 #include "bs2/layers.h"
+#include "bs2/logic.h"
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
-#include "bs2/sound.h"	// for Clear_fx_queue() called from FN_init_background()
+#include "bs2/sound.h"	// for Clear_fx_queue() called from fnInitBackground()
 
 namespace Sword2 {
 
@@ -42,10 +43,11 @@ namespace Sword2 {
 
 screen_info this_screen;
 
-int32 FN_init_background(int32 *params)	{
+int32 Logic::fnInitBackground(int32 *params) {
+	// this screen defines the size of the back buffer
+
 	// params:	0 res id of normal background layer - cannot be 0
 	//		1 1 yes 0 no for a new palette
-	// this screen defines the size of the back buffer
 
 	_multiScreenHeader *screenLayerTable;
 	_screenHeader *screen_head;
@@ -60,10 +62,10 @@ int32 FN_init_background(int32 *params)	{
 	Clear_fx_queue();
 
 #ifdef _SWORD2_DEBUG
-	debug(5, "FN_init_background(%d)", *params);
+	debug(5, "fnInitBackground(%d)", params[0]);
 
-	if (!*params) {
-		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id!");
+	if (!params[0]) {
+		Con_fatal_error("ERROR: fnInitBackground cannot have 0 for background layer id!");
 	}
 #endif
 
@@ -196,7 +198,7 @@ int32 FN_init_background(int32 *params)	{
 	return 1;
 }
 
-// called from FN_init_background & also from control panel
+// called from fnInitBackground and also from control panel
 
 void SetUpBackgroundLayers(void) {
 	_multiScreenHeader *screenLayerTable;

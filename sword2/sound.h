@@ -53,9 +53,6 @@ void UnpauseAllSound(void);
 
 void Kill_music(void);
 
-int32 FN_play_music(int32 *params);		// for save_Rest.cpp
-int32 FN_stop_music(int32 *params);
-
 // used to store id of tunes that loop, for save & restore
 extern uint32 looping_music_id;
 

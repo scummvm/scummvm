@@ -32,7 +32,8 @@
 #include "bs2/console.h"
 #include "bs2/defs.h"		// for RESULT
 #include "bs2/interpreter.h"
-#include "bs2/protocol.h"	// for FetchObjectName() for debugging FN_play_fx
+#include "bs2/logic.h"
+#include "bs2/protocol.h"	// for FetchObjectName() for debugging fnPlayFx
 #include "bs2/resman.h"
 #include "bs2/sound.h"
 #include "bs2/sword2.h"
@@ -116,7 +117,7 @@ void Trigger_fx(uint8 j) {
 		res_man.close(fxq[j].resource);
 	} else {
 		// random & looped fx are already loaded into sound memory
-		// by FN_play_fx()
+		// by fnPlayFx()
 		// - to be referenced by 'j', so pass NULL data
 
 		if (fxq[j].type == FX_RANDOM) {
@@ -134,7 +135,7 @@ void Trigger_fx(uint8 j) {
 
 // called from script only
 
-int32 FN_play_fx(int32 *params) {
+int32 Logic::fnPlayFx(int32 *params) {
 	// params:	0 sample resource id
 	//		1 type		(FX_SPOT, FX_RANDOM, FX_LOOP)
 	//		2 delay		(0..65535)
@@ -142,13 +143,13 @@ int32 FN_play_fx(int32 *params) {
 	//		4 pan		(-16..16)
 
 	// example script:
-	//		FN_play_fx (FXWATER, FX_LOOP, 0, 10, 15);
+	//		fnPlayFx (FXWATER, FX_LOOP, 0, 10, 15);
 	//		// fx_water is just a local script flag
 	//		fx_water = result;
 	//		.
 	//		.
 	//		.
-	//		FN_stop_fx (fx_water);
+	//		fnStopFx (fx_water);
 
 	uint8 j = 0;
 	uint8 *data;
@@ -207,7 +208,7 @@ int32 FN_play_fx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("FN_play_fx given invalid resource");
+			Con_fatal_error("fnPlayFx given invalid resource");
 #endif
 
 		// but then releases it to "age" out if the space is needed
@@ -223,7 +224,7 @@ int32 FN_play_fx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("FN_play_fx given invalid resource");
+			Con_fatal_error("fnPlayFx given invalid resource");
 #endif
 
 		data += sizeof(_standardHeader);
@@ -244,26 +245,27 @@ int32 FN_play_fx(int32 *params) {
 		Trigger_fx(j);
 	}
 
-	// in case we want to call FN_stop_fx() later, to kill this fx
+	// in case we want to call fnStopFx() later, to kill this fx
 	// (mainly for FX_LOOP & FX_RANDOM)
 
 	RESULT = j;
 	return IR_CONT;
 }
 
-int32 FN_sound_fetch(int32 *params) {
+int32 Logic::fnSoundFetch(int32 *params) {
+	// params:	0 id of sound to fetch [guess]
 	return IR_CONT;
 }
 
 // to alter the volume and pan of a currently playing fx
 
-int32 FN_set_fx_vol_and_pan(int32 *params) {
+int32 Logic::fnSetFxVolAndPan(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
-	//		  FN_play_fx
+	//		  fnPlayFx
 	//		1 new volume (0..16)
 	//		2 new pan (-16..16)
 
-	debug(5, "FN_set_fx_vol_and_pan(%d, %d, %d)", params[0], params[1], params[2]);
+	debug(5, "fnSetFxVolAndPan(%d, %d, %d)", params[0], params[1], params[2]);
 
 	// setFxIdVolumePan(int32 id, uint8 vol, uint8 pan);
 	// driver fx_id is 1 + <pos in queue>
@@ -273,9 +275,9 @@ int32 FN_set_fx_vol_and_pan(int32 *params) {
 
 // to alter the volume  of a currently playing fx
 
-int32 FN_set_fx_vol(int32 *params) {
+int32 Logic::fnSetFxVol(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
-	//		  FN_play_fx
+	//		  fnPlayFx
 	//		1 new volume (0..16)
 
 	// SetFxIdVolume(int32 id, uint8 vol);
@@ -285,7 +287,7 @@ int32 FN_set_fx_vol(int32 *params) {
 
 // called from script only
 
-int32 FN_stop_fx(int32 *params) {
+int32 Logic::fnStopFx(int32 *params) {
 	// params:	0 position in queue
 
 	// This will stop looped & random fx instantly, and remove the fx
@@ -314,8 +316,9 @@ int32 FN_stop_fx(int32 *params) {
 
 // called from script only
 
-int32 FN_stop_all_fx(int32 *params) {
+int32 Logic::fnStopAllFx(int32 *params) {
 	// Stops all looped & random fx and clears the entire queue
+
 	// params:	none
 
 	Clear_fx_queue();
@@ -332,22 +335,21 @@ void Clear_fx_queue(void) {
 	Init_fx_queue();
 }
 
-int32 FN_prepare_music(int32 *params) {
+int32 Logic::fnPrepareMusic(int32 *params) {
+	// params:	1 id of music to prepare [guess]
 	return IR_CONT;
 }
 
 // Start a tune playing, to play once or to loop until stopped or next one
 // played
 
-int32 FN_play_music(int32 *params) {
+int32 Logic::fnPlayMusic(int32 *params) {
 	// params:	0 tune id
 	//		1 loop flag (0 or 1)
 
 	char filename[128];
 	bool loopFlag;
 	uint32 rv;
-
-	debug(5, "FN_play_music(%d, %d)", params[0], params[1]);
 
 	if (params[1] == FX_LOOP) {
 		loopFlag = true;
@@ -388,7 +390,9 @@ int32 FN_play_music(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_stop_music(int32 *params) {	// called from script only
+// called from script only
+
+int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none
 
 	looping_music_id = 0;		// clear the 'looping' flag
@@ -401,7 +405,7 @@ void Kill_music(void) {
 	g_sound->stopMusic();
 }
 
-int32 FN_check_music_playing(int32 *params) {
+int32 Logic::fnCheckMusicPlaying(int32 *params) {
 	// params:	none
 
 	// sets result to no. of seconds of current tune remaining

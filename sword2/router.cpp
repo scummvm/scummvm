@@ -2634,7 +2634,7 @@ void Router::clearWalkGridList(void) {
 	memset(_walkGridList, 0, ARRAYSIZE(_walkGridList));
 }
 
-// called from FN_add_walkgrid
+// called from fnAddWalkGrid
 
 void Router::addWalkGrid(int32 gridResource) {
 	int i;
@@ -2658,7 +2658,7 @@ void Router::addWalkGrid(int32 gridResource) {
 	Con_fatal_error("ERROR: _walkGridList[] full");
 }
 
-// called from FN_remove_walkgrid
+// called from fnRemoveWalkGrid
 
 void Router::removeWalkGrid(int32 gridResource) {
 	for (int i = 0; i < MAX_WALKGRIDS; i++) {

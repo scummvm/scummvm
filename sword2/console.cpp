@@ -497,7 +497,7 @@ uint32 Parse_user_input(void) {
 					Print_current_info();
 					return 0;
 				case 15:	// RUNLIST
-					LLogic.examineRunList();
+					g_logic.examineRunList();
 					return 0;
 				case 16:	// KILL
 					res_man.kill(&input[1][0]);

@@ -34,11 +34,8 @@ struct _event_unit {
 extern _event_unit event_list[MAX_events];
 
 void Init_event_system(void);
-int32 FN_set_event(int32 *params);
 void Set_player_action_event(uint32 id, uint32 interact_id);
-int32 FN_check_event_waiting(void);
 void Start_event(void);
-int32 FN_start_event(void);
 bool Check_event_waiting(void);
 void Kill_all_ids_events(uint32 id);
 

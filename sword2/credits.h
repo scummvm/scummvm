@@ -27,8 +27,6 @@ namespace Sword2 {
 // int32 __declspec( dllexport ) Credits(_drvDrawStatus *pDrawStatus, _drvSoundStatus *pSoundStatus, const char *cdPath, BOOL smoke, BOOL *pAppFocus, _drvKeyStatus *pKeyStatus);
 //int32 Credits(_drvDrawStatus *pDrawStatus, _drvSoundStatus *pSoundStatus, const char *cdPath, BOOL smoke, BOOL *pAppFocus, _drvKeyStatus *pKeyStatus);
 
-int32 FN_play_credits(int32 *params);
-
 } // End of namespace Sword2
 
 #endif

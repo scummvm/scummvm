@@ -18,22 +18,23 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"		// for CloseGame()
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
 #include "bs2/defs.h"
 #include "bs2/header.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 #include "bs2/maketext.h"	// for Kill_text_bloc()
 #include "bs2/memory.h"
-#include "bs2/mouse.h"		// for FN_add_human()
+#include "bs2/mouse.h"
 #include "bs2/object.h"
 #include "bs2/resman.h"
 #include "bs2/router.h"
 #include "bs2/sound.h"
 #include "bs2/speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
 #include "bs2/startup.h"
-#include "bs2/sword2.h"		// for CloseGame()
 #include "bs2/sync.h"
 #include "bs2/tony_gsdk.h"
 
@@ -139,11 +140,9 @@ uint32 Init_start_menu(void) {
 	return 1;
 }
 
-int32 FN_register_start_point(int32 *params) {
+int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// params:	0 id of startup script to call - key
 	// 		1 pointer to ascii message
-
-	debug(5, " FN_register_start_point %d %s", params[0], params[1]);
 
 #ifdef _SWORD2_DEBUG
 	if (total_startups == MAX_starts)
@@ -252,7 +251,7 @@ uint32 Con_start(uint8 *input) {
 			Clear_fx_queue();
 
 			// fade out any music that is currently playing
-			FN_stop_music(NULL);
+			g_logic.fnStopMusic(NULL);
 
 			// halt the sample prematurely
 			g_sound->unpauseSpeech();
@@ -299,7 +298,7 @@ uint32 Con_start(uint8 *input) {
 
 			// make sure thre's a mouse, in case restarting while
 			// mouse not available
-			FN_add_human(NULL);
+			g_logic.fnAddHuman(NULL);
 		} else
 			Print_to_console("not a legal start position");
 	} else {

@@ -1327,14 +1327,14 @@ public:
 				// Prime system with a game cycle
 
 				// Reset the graphic 'buildit' list before a
-				// new logic list (see FN_register_frame)
+				// new logic list (see fnRegisterFrame)
 				Reset_render_lists();
 
 				// Reset the mouse hot-spot list (see
-				// FN_register_mouse and FN_register_frame)
+				// fnRegisterMouse and fnRegisterFrame)
 				Reset_mouse_list();
 
-				if (LLogic.processSession())
+				if (g_logic.processSession())
 					Con_fatal_error("restore 1st cycle failed??");
 			}
 		}
@@ -1441,22 +1441,22 @@ void Gui::restartControl(void) {
 	// prime system with a game cycle
 
 	// reset the graphic 'buildit' list before a new logic list
-	// (see FN_register_frame)
+	// (see fnRegisterFrame)
 	Reset_render_lists();
 
-	// reset the mouse hot-spot list (see FN_register_mouse and
-	// FN_register_frame)
+	// reset the mouse hot-spot list (see fnRegisterMouse and
+	// fnRegisterFrame)
 	Reset_mouse_list();
 
 	g_display->closeMenuImmediately();
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
-	// - this is taken from FN_init_background
+	// - this is taken from fnInitBackground
 	// switch on scrolling (2 means first time on screen)
 
 	this_screen.scroll_flag = 2;
 
-	if (LLogic.processSession())
+	if (g_logic.processSession())
 		Con_fatal_error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want

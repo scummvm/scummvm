@@ -82,7 +82,7 @@ uint32 default_response_id = 0;
 int16 officialTextNumber = 0;
 
 // usually 0; if non-zero then it's the id of whoever we're waiting for in a
-// speech script see FN_they_do, FN_they_do_we_wait & FN_we_wait
+// speech script see fnTheyDo, fnTheyDoWeWait and fnWeWait
 int32 speechScriptWaiting = 0;
 
 // calculated by LocateTalker() for use in speech-panning & text-sprite
@@ -91,7 +91,6 @@ int16 text_x, text_y;
 
 _subject_unit subject_list[MAX_SUBJECT_LIST];
 
-int32 FN_i_speak(int32 *params);
 void LocateTalker(int32	*params);
 void Form_text(int32 *params);
 uint8 WantSpeechForLine(uint32 wavId);
@@ -100,7 +99,7 @@ uint8 WantSpeechForLine(uint32 wavId);
 void GetCorrectCdForSpeech(int32 wavId);	// for testing speech & text
 #endif
 
-int32 FN_add_subject(int32 *params) {
+int32 Logic::fnAddSubject(int32 *params) {
 	// params:	0 id
 	//		1 daves reference number
 
@@ -123,12 +122,12 @@ int32 FN_add_subject(int32 *params) {
 		default_response_id = params[1];
 
 		// a luggage icon is clicked on someone when it wouldn't have
-		// been in the chooser list (see FN_choose below)
+		// been in the chooser list (see fnChoose below)
 	} else {
 		subject_list[IN_SUBJECT].res = params[0];
 		subject_list[IN_SUBJECT].ref = params[1];
 
-		debug(5, "FN_add_subject res %d, uid %d", params[0], params[1]);
+		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
 
 		IN_SUBJECT++;
 	}
@@ -139,7 +138,7 @@ int32 FN_add_subject(int32 *params) {
 // could alternately use logic->looping of course
 int choosing = 0;
 
-int32 FN_choose(int32 *params) {
+int32 Logic::fnChoose(int32 *params) {
 	// params:	none
 
 	// the human is switched off so there will be no normal mouse engine
@@ -148,8 +147,6 @@ int32 FN_choose(int32 *params) {
 	uint32 j, hit;
 	uint8 *icon;
 	uint32 pos = 0;
-
-	debug(5, "FN_choose");
 
 	AUTO_SELECTED = 0;	// see below
 
@@ -211,7 +208,7 @@ int32 FN_choose(int32 *params) {
 		// build menus from subject_list
 
 		if (!IN_SUBJECT)
-			Con_fatal_error("FN_choose with no subjects :-O");
+			Con_fatal_error("fnChoose with no subjects :-O");
 
 		// init top menu from master list
 		// all icons are highlighted / full colour
@@ -303,40 +300,29 @@ int32 FN_choose(int32 *params) {
 	}
 }
 
-int32 FN_start_conversation(int32 *params) {
+int32 Logic::fnStartConversation(int32 *params) {
 	// Start conversation
-
-	// FN_no_human();		// an FN_no_human
-	// FN_change_speech_text(PLAYER, GEORGE_WIDTH, GEORGE_PEN);
-
-	// params:	none
-
-	debug(5, "FN_start_conversation %d", ID);
 
 	// reset 'chooser_count_flag' at the start of each conversation:
 
-	// Note that FN_start_conversation might accidently be called
-	// every time the script loops back for another chooser
-	// but we only want to reset the chooser count flag the first time
-	// this function is called ie. when talk flag is zero
+	// Note that fnStartConversation might accidently be called every time
+	// the script loops back for another chooser but we only want to reset
+	// the chooser count flag the first time this function is called ie.
+	// when talk flag is zero
+
+	// params:	none
 
 	if (TALK_FLAG == 0)
-		CHOOSER_COUNT_FLAG = 0;	// see FN_chooser & speech scripts
+		CHOOSER_COUNT_FLAG = 0;	// see fnChooser & speech scripts
 
-	FN_no_human(params);
+	fnNoHuman(params);
 	return IR_CONT;
 }
 
-int32 FN_end_conversation(int32 *params) {
+int32 Logic::fnEndConversation(int32 *params) {
 	// end conversation
-	// talk_flag=0;
-	// FN_end_chooser();
-	// FN_add_human();
-	// FN_change_speech_text(PLAYER, VOICE_OVER_WIDTH, VOICE_OVER_PEN);
-	// FN_idle();
-	// params:	none
 
-	debug(5, "FN_end_conversation");
+	// params:	none
 
 	g_display->hideMenu(RDMENU_BOTTOM);
 
@@ -355,7 +341,7 @@ int32 FN_end_conversation(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_they_do(int32	*params) {
+int32 Logic::fnTheyDo(int32 *params) {
 	// doesn't send the command until target is waiting - once sent we
 	// carry on
 
@@ -375,7 +361,7 @@ int32 FN_they_do(int32	*params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("FN_they_do %d not an object", target);
+		Con_fatal_error("fnTheyDo %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -411,7 +397,7 @@ int32 FN_they_do(int32	*params) {
 	return IR_REPEAT;
 }
 
-int32 FN_they_do_we_wait(int32	*params) {
+int32 Logic::fnTheyDoWeWait(int32 *params) {
 	// give target a command and wait for it to register as finished
 
 	// params:	0 pointer to ob_logic
@@ -432,14 +418,12 @@ int32 FN_they_do_we_wait(int32	*params) {
 	_standardHeader	*head;
 	int32 target = params[1];
 
-	debug(5, "FN_they_do_we_wait id %d, command %d", params[1], params[2]);
-
 	// ok, see if the target is busy - we must request this info from the
 	// target object
 
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("FN_they_do_we_wait %d not an object", target);
+		Con_fatal_error("fnTheyDoWeWait %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -506,8 +490,9 @@ int32 FN_they_do_we_wait(int32	*params) {
 	return IR_REPEAT;
 }
 
-int32 FN_we_wait(int32 *params) {
+int32 Logic::fnWeWait(int32 *params) {
 	// loop until the target is free
+
 	// params:	0 target
 
 	uint32 null_pc = 5;		// 4th script - get-speech-state
@@ -518,7 +503,7 @@ int32 FN_we_wait(int32 *params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("FN_we_wait %d not an object", target);
+		Con_fatal_error("fnWeWait: %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -543,7 +528,7 @@ int32 FN_we_wait(int32 *params) {
 	return IR_REPEAT;
 }
 
-int32 FN_timed_wait(int32 *params) {
+int32 Logic::fnTimedWait(int32 *params) {
 	// loop until the target is free but only while the timer is high
 	// useful when clicking on a target to talk to them - if they never
 	// reply then this'll fall out avoiding a lock up
@@ -566,7 +551,7 @@ int32 FN_timed_wait(int32 *params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("FN_timed_wait %d not an object", target);
+		Con_fatal_error("fnTimedWait %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -617,7 +602,7 @@ int32 FN_timed_wait(int32 *params) {
 	return IR_REPEAT;
 }
 
-int32 FN_speech_process(int32 *params) {
+int32 Logic::fnSpeechProcess(int32 *params) {
 	// Recieve and sequence the commands sent from the conversation
 	// script.
 
@@ -666,7 +651,7 @@ int32 FN_speech_process(int32 *params) {
 			// run the function - (it thinks it's been called from
 			// script - bloody fool)
 
-			if (FN_i_speak(pars) != IR_REPEAT) {
+			if (fnISpeak(pars) != IR_REPEAT) {
 				debug(5, "speech-process talk finished");
 
 				// command finished
@@ -685,7 +670,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[3] = params[4];		// ob_walkdata
 			pars[4] = ob_speech->ins1;	// direction to turn to
 
-			if (FN_turn(pars) != IR_REPEAT) {
+			if (fnTurn(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -702,7 +687,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[3] = params[4];		// ob_walkdata
 			pars[4] = ob_speech->ins1;	// target
 
-			if (FN_face_mega(pars) != IR_REPEAT) {
+			if (fnFaceMega(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -717,7 +702,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = ob_speech->ins1;	// anim res
 
-			if (FN_anim(pars) != IR_REPEAT) {
+			if (fnAnim(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -732,7 +717,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = ob_speech->ins1;	// anim res
 
-			if (FN_reverse_anim(pars) != IR_REPEAT) {
+			if (fnReverseAnim(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -748,7 +733,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[2] = params[3];		// ob_mega
 			pars[3] = ob_speech->ins1;	// pointer to anim table
 
-			if (FN_mega_table_anim(pars) != IR_REPEAT) {
+			if (fnMegaTableAnim(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -764,7 +749,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[2] = params[3];		// ob_mega
 			pars[3] = ob_speech->ins1;	// pointer to anim table
 
-			if (FN_reverse_mega_table_anim(pars) != IR_REPEAT) {
+			if (fnReverseMegaTableAnim(pars) != IR_REPEAT) {
 				// command finished
 				ob_speech->command = 0;
 
@@ -775,22 +760,22 @@ int32 FN_speech_process(int32 *params) {
 			// come back again next cycle
 			return IR_REPEAT;
 		case INS_no_sprite:
-			FN_no_sprite(params);		// ob_graphic
+			fnNoSprite(params);		// ob_graphic
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT ;
 		case INS_sort:
-			FN_sort_sprite(params);		// ob_graphic
+			fnSortSprite(params);		// ob_graphic
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;
 		case INS_foreground:
-			FN_fore_sprite(params);		// ob_graphic
+			fnForeSprite(params);		// ob_graphic
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;
 		case INS_background:
-			FN_back_sprite(params);		// ob_graphic
+			fnBackSprite(params);		// ob_graphic
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;
@@ -803,7 +788,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[5] = ob_speech->ins2;	// target y
 			pars[6] = ob_speech->ins3;	// target direction
 
-			if (FN_walk(pars) != IR_REPEAT) {
+			if (fnWalk(pars) != IR_REPEAT) {
 				debug(5, "speech-process walk finished");
 
 				// command finished
@@ -822,7 +807,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[3] = params[4];		// ob_walkdata
 			pars[4] = ob_speech->ins1;	// anim resource
 
-			if (FN_walk_to_anim(pars) != IR_REPEAT) {
+			if (fnWalkToAnim(pars) != IR_REPEAT) {
 				debug(5, "speech-process walk finished");
 
 				// command finished
@@ -838,7 +823,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = params[3];		// ob_mega
 			pars[2] = ob_speech->ins1;	// anim resource
-			FN_stand_after_anim(pars);
+			fnStandAfterAnim(pars);
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;		// come back again next cycle
@@ -846,7 +831,7 @@ int32 FN_speech_process(int32 *params) {
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = ob_speech->ins1;	// anim_resource
 			pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
-			ret = FN_set_frame(pars);
+			ret = fnSetFrame(pars);
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
 			return IR_REPEAT;		// come back again next cycle
@@ -915,8 +900,8 @@ int32 FN_speech_process(int32 *params) {
 
 uint32 unpause_zone = 0;
 
-int32 FN_i_speak(int32 *params) {
-	// its the super versatile FN_speak
+int32 Logic::fnISpeak(int32 *params) {
+	// its the super versatile fnSpeak
 	// text and wavs can be selected in any combination
 
 	// we can assume no human - there should be no human at least!
@@ -993,7 +978,7 @@ int32 FN_i_speak(int32 *params) {
  		textNumber = params[S_TEXT];	// for debug info
 
 		// For testing all text & speech!
-		// A script loop can send any text number to FN_I_speak & it
+		// A script loop can send any text number to fnISpeak and it
 		// will only run the valid ones or return with 'result' equal
 		// to '1' or '2' to mean 'invalid text resource' and 'text
 		// number out of range' respectively

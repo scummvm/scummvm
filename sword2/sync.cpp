@@ -22,6 +22,7 @@
 #include "bs2/debug.h"
 #include "bs2/defs.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 #include "bs2/sync.h"
 
 namespace Sword2 {
@@ -42,8 +43,8 @@ void Init_sync_system(void) {
 		sync_list[j].id = 0;
 }
 
-int32 FN_send_sync(int32 *params) {
-	// param	0 sync's recipient
+int32 Logic::fnSendSync(int32 *params) {
+	// params:	0 sync's recipient
 	//		1 sync value
 
 	for (int i = 0; i < MAX_syncs; i++) {
@@ -78,7 +79,7 @@ void Clear_syncs(uint32	id) {
 
 bool Get_sync(void) {
 	// check for a sync waiting for this character
-	// - called from system code eg. from inside FN_anim(), to see if
+	// - called from system code eg. from inside fnAnim(), to see if
 	// animation to be quit
 
 	for (int i = 0; i < MAX_syncs; i++) {
@@ -92,10 +93,11 @@ bool Get_sync(void) {
 	return false;
 }
 
-int32 FN_get_sync(int32 *params) {
+int32 Logic::fnGetSync(int32 *params) {
 	// check for a sync waiting for this character
 	// - called from script
-	// params     none
+
+	// params:	none
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == ID) {
@@ -110,16 +112,17 @@ int32 FN_get_sync(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_wait_sync(int32 *params) {
+int32 Logic::fnWaitSync(int32 *params) {
 	// keep calling until a sync recieved
-	// params     none
 
-	debug(5, "FN_wait_sync: %d waits", ID);
+	// params:	none
+
+	debug(5, "fnWaitSync: %d waits", ID);
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == ID) {
 			// return sync value waiting
-			debug(5, "FN_wait_sync: go");
+			debug(5, "fnWaitSync: go");
 			RESULT = sync_list[i].sync;
 			return IR_CONT;
 		}

@@ -183,7 +183,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	g_header.screenId = this_screen.background_layer_id;
 
 	// resource id of current run-list
-	g_header.runListId = LLogic.getRunList();
+	g_header.runListId = g_logic.getRunList();
 
 	// those scroll position control things
 	g_header.feet_x = this_screen.feet_x;
@@ -382,7 +382,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	res_man.killAll(0);
 
 	// clean out the system kill list (no more objects to kill)
-	LLogic.resetKillList();
+	g_logic.resetKillList();
 	
 	// get player character data from savegame buffer
 
@@ -419,20 +419,20 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	pars[0] = g_header.screenId;
 	pars[1] = 1;
-	FN_init_background(pars);
+	g_logic.fnInitBackground(pars);
 
-	// (JEL08oct97) so palette not restored immediately after control
-	// panel - we want to fade up instead!
+	// So palette not restored immediately after control panel - we want to
+	// fade up instead!
 	this_screen.new_palette = 99;
 
-	// these need setting after the defaults get set in FN_init_background
+	// these need setting after the defaults get set in fnInitBackground
 	// remember that these can change through the game, so need saving &
 	// restoring too
 	this_screen.feet_x = g_header.feet_x;
 	this_screen.feet_y = g_header.feet_y;
 
 	// start the new run list
-	LLogic.expressChangeSession(g_header.runListId);
+	g_logic.expressChangeSession(g_header.runListId);
 
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
@@ -508,8 +508,7 @@ bool SaveExists(uint16 slotNo) {
 void GetPlayerStructures(void) {
 	 // request the player object structures which need saving
 
-	// script no. 7 - 'george_savedata_request' calls
-	// FN_pass_player_savedata
+	// script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
 
 	uint32 null_pc = 7;
  	char *raw_script_ad;
@@ -541,7 +540,7 @@ void PutPlayerStructures(void) {
 
 	raw_script_ad = (char *) head;
 
-	// script no. 8 - 'george_savedata_return' calls FN_get_player_savedata
+	// script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
 
 	null_pc = 8;
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -575,7 +574,7 @@ void PutPlayerStructures(void) {
 	res_man.close(CUR_PLAYER_ID);
 }
 
-int32 FN_pass_player_savedata(int32 *params) {
+int32 Logic::fnPassPlayerSaveData(int32 *params) {
 	// copies the 4 essential player structures into the savegame header
 	// - run script 7 of player object to request this
 
@@ -596,8 +595,8 @@ int32 FN_pass_player_savedata(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_get_player_savedata(int32 *params) {
-	// reverse of FN_pass_player_savedata
+int32 Logic::fnGetPlayerSaveData(int32 *params) {
+	// reverse of fnPassPlayerSaveData
 	// - run script 8 of player object
 
 	// params:	0 pointer to object's logic structure
@@ -634,10 +633,9 @@ int32 FN_get_player_savedata(int32 *params) {
 		pars[2] = ob_mega->current_dir;
 
 		// set player to stand
-		FN_stand(pars);
+		fnStand(pars);
 
-		// reset looping flag (which would have been '1' during
-		// FN_walk)
+		// reset looping flag (which would have been '1' during fnWalk)
 		ob_logic->looping = 0;
 	}
 

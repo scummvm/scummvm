@@ -30,7 +30,7 @@
 
 namespace Sword2 {
 
-logic LLogic;
+Logic g_logic;
 
 #define LEVEL (_curObjectHub->logic_level)
 
@@ -42,7 +42,7 @@ uint32 object_kill_list[OBJECT_KILL_LIST_SIZE];
 // keeps note of no. of objects in the kill list
 uint32 kills = 0;
 
-int logic::processSession(void) {
+int Logic::processSession(void) {
 	// do one cycle of the current session
 
 	uint32 run_list;
@@ -218,7 +218,7 @@ int logic::processSession(void) {
 	return 1;
 }
 
-void logic::expressChangeSession(uint32 sesh_id) {
+void Logic::expressChangeSession(uint32 sesh_id) {
 	// a game-object can bring an immediate halt to the session and cause
 	// a new one to start without a screen update
 
@@ -237,7 +237,7 @@ void logic::expressChangeSession(uint32 sesh_id) {
 
 	Init_sync_system();
 
-	// reset walkgrid list (see FN_register_walkgrid)
+	// reset walkgrid list (see fnRegisterWalkGrid)
 	router.clearWalkGridList();
 
 	// stops all fx & clears the queue
@@ -247,7 +247,7 @@ void logic::expressChangeSession(uint32 sesh_id) {
 	router.freeAllRouteMem();
 }
 
-void logic::naturalChangeSession(uint32 sesh_id) {
+void Logic::naturalChangeSession(uint32 sesh_id) {
 	// FIXME: This function doesn't seem to be used anywhere
 
 	// A new session will begin next game cycle. The current cycle will
@@ -256,37 +256,38 @@ void logic::naturalChangeSession(uint32 sesh_id) {
 	_currentRunList = sesh_id;
 }
 
-uint32 logic::getRunList(void) {
+uint32 Logic::getRunList(void) {
 	// pass back the private _currentRunList variable
 	return _currentRunList;
 }
 
-int32 FN_set_session(int32 *params) {
+int32 Logic::fnSetSession(int32 *params) {
 	// used by player invoked start scripts
-	// param	0 id of new run list
 
-	LLogic.expressChangeSession(params[0]);
+	// params:	0 id of new run list
+
+	expressChangeSession(params[0]);
 	return IR_CONT;
 }
 
-int32 FN_end_session(int32 *params) {
+int32 Logic::fnEndSession(int32 *params) {
 	// causes no more objects in this logic loop to be processed
 	// the logic engine will restart at the beginning of the new list
 	// !!the current screen will not be drawn!!
 
-	// param	0 id of new run-list
+	// params:	0 id of new run-list
 
 	// terminate current and change to next run-list
-	LLogic.expressChangeSession(params[0]);
+	expressChangeSession(params[0]);
 
 	// stop the script - logic engine will now go around and the new
 	// screen will begin
 	return IR_STOP;
 }
 
-void logic::logicUp(uint32 new_script) {
+void Logic::logicUp(uint32 new_script) {
 	// move the current object up a level
-	// called by FN_gosub command - remember, only the logic object has
+	// called by fnGosub command - remember, only the logic object has
 	// access to _curObjectHub
 
 	// going up a level - and we'll keeping going this cycle
@@ -304,7 +305,7 @@ void logic::logicUp(uint32 new_script) {
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-void logic::logicOne(uint32 new_script) {
+void Logic::logicOne(uint32 new_script) {
 	// force to level one
 
 	LEVEL = 1;
@@ -314,7 +315,7 @@ void logic::logicOne(uint32 new_script) {
 	_curObjectHub->script_pc[1] = new_script & 0xffff;
 }
 
-void logic::logicReplace(uint32 new_script) {
+void Logic::logicReplace(uint32 new_script) {
 	// change current logic - script must quit with a TERMINATE directive
 	// - which does not write to &pc
 
@@ -323,7 +324,7 @@ void logic::logicReplace(uint32 new_script) {
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-uint32 logic::examineRunList(void) {
+uint32 Logic::examineRunList(void) {
 	uint32 *game_object_list;
 	_standardHeader *file_header;
 	int scrolls = 0;
@@ -372,7 +373,7 @@ uint32 logic::examineRunList(void) {
 	return 1;
 }
 
-void logic::totalRestart(void) {
+void Logic::totalRestart(void) {
 	// reset the object restart script 1 on level 0
 
 	LEVEL = 0;
@@ -382,17 +383,19 @@ void logic::totalRestart(void) {
 	_curObjectHub->script_pc[0] = 1;
 }
 
-int32 FN_total_restart(int32 *params) {
+int32 Logic::fnTotalRestart(int32 *params) {
 	// mega runs this to restart its base logic again - like being cached
 	// in again
 
-	LLogic.totalRestart();
+	// params:	none
+
+	totalRestart();
 
 	// drop out without saving pc and go around again
 	return IR_TERMINATE;
 }
 
-int32 FN_add_to_kill_list(int32 *params) {
+int32 Logic::fnAddToKillList(int32 *params) {
 	// call *once* from object's logic script - ie. in startup code
 	// - so not re-called every time script drops off & restarts!
 
@@ -401,7 +404,7 @@ int32 FN_add_to_kill_list(int32 *params) {
 	// screen, which causes this object's startup logic to be re-run
 	// every time we enter the screen. "Which is nice"
 
-	// params: none
+	// params:	none
 
 	uint32 entry;
 
@@ -420,7 +423,7 @@ int32 FN_add_to_kill_list(int32 *params) {
 #ifdef _SWORD2_DEBUG
 			// no room at the inn
 			if (kills == OBJECT_KILL_LIST_SIZE)
-				Con_fatal_error("List full in FN_add_to_kill_list(%u)", ID);
+				Con_fatal_error("List full in fnAddToKillList(%u)", ID);
 #endif
 
 			// add this 'ID' to the kill list
@@ -441,14 +444,14 @@ int32 FN_add_to_kill_list(int32 *params) {
 	return IR_CONT;
 }
 
-void logic::processKillList(void) {
+void Logic::processKillList(void) {
 	for (uint32 j = 0; j < kills; j++)
 		res_man.remove(object_kill_list[j]);
 
 	kills = 0;
 }
 
-void logic::resetKillList(void) {
+void Logic::resetKillList(void) {
 	kills = 0;
 }
 

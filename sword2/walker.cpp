@@ -29,7 +29,7 @@
 #include "bs2/events.h"
 #include "bs2/function.h"
 #include "bs2/interpreter.h"
-#include "bs2/logic.h"		// for FN_add_to_kill_list
+#include "bs2/logic.h"
 #include "bs2/object.h"
 #include "bs2/protocol.h"
 #include "bs2/router.h"
@@ -37,7 +37,7 @@
 
 namespace Sword2 {
 
-int16 standby_x;		// see FN_set_standby_coords
+int16 standby_x;		// see fnSetStandbyCoords
 int16 standby_y;
 uint8 standby_dir;
 
@@ -45,7 +45,7 @@ uint8 standby_dir;
  * Walk mega to (x,y,dir)
  */
 
-int32 FN_walk(int32 *params) {
+int32 Logic::fnWalk(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -93,7 +93,7 @@ int32 FN_walk(int32 *params) {
 
 		// invalid direction (NB. '8' means end walk on ANY direction)
 		if (params[6] < 0 || params[6] > 8)
-			Con_fatal_error("Invalid direction (%d) in FN_walk", params[6]);
+			Con_fatal_error("Invalid direction (%d) in fnWalk", params[6]);
 
 		ob_walkdata = (Object_walkdata *) params[3];
 
@@ -111,7 +111,7 @@ int32 FN_walk(int32 *params) {
 		// 2 = zero route but may need to turn
 
 		if (route == 1 || route == 2) {
-			// so script FN_walk loop continues until end of
+			// so script fnWalk loop continues until end of
 			// walk-anim
 
 			ob_logic->looping = 1;
@@ -119,10 +119,10 @@ int32 FN_walk(int32 *params) {
 			// need to animate the route now, so don't set result
 			// or return yet!
 
-			// started walk(James23jun97)
+			// started walk
 			ob_mega->currently_walking = 1;
 
-			// (see FN_get_player_savedata() in save_rest.cpp
+			// (see fnGetPlayerSaveData() in save_rest.cpp
 		} else {
 			// free up the walkdata mem block
 			router.freeRouteMem();
@@ -157,7 +157,7 @@ int32 FN_walk(int32 *params) {
 		// finished walk
 		ob_mega->currently_walking = 0;
 
-		// (see FN_get_player_savedata() in save_rest.cpp
+		// (see fnGetPlayerSaveData() in save_rest.cpp
 
 		RESULT = 0;		// 0 means ok
 
@@ -202,7 +202,7 @@ int32 FN_walk(int32 *params) {
 		// finished walk
 		ob_mega->currently_walking = 0;
 
-		// (see FN_get_player_savedata() in save_rest.cpp
+		// (see fnGetPlayerSaveData() in save_rest.cpp
 
 		// if George's walk has been interrupted to run a new action
 		// script for instance or Nico's walk has been interrupted by
@@ -221,12 +221,12 @@ int32 FN_walk(int32 *params) {
 			RESULT = 0;		// 0 means ok - finished walk
 
 			// CONTINUE the script so that RESULT can be checked!
-			// Also, if an anim command follows the FN_walk
-			// command, the 1st frame of the anim (which is always
-			// a stand frame itself) can replace the final stand
-			// frame of the walk, to hide the slight difference
-			// between the shrinking on the mega frames and the
-			// pre-shrunk anim start-frame.
+			// Also, if an anim command follows the fnWalk command,
+			// the 1st frame of the anim (which is always a stand
+			// frame itself) can replace the final stand frame of
+			// the walk, to hide the slight difference between the
+			// shrinking on the mega frames and the pre-shrunk anim
+			// start-frame.
 
 			return IR_CONT;
 		}
@@ -248,7 +248,7 @@ int32 FN_walk(int32 *params) {
  * Walk mega to start position of anim
  */
 
-int32 FN_walk_to_anim(int32 *params) {
+int32 Logic::fnWalkToAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -286,14 +286,14 @@ int32 FN_walk_to_anim(int32 *params) {
 			pars[5] = standby_y;
 			pars[6] = standby_dir;
 
-			debug(5, "WARNING: FN_walk_to_anim(%s) used standby coords", FetchObjectName(params[4]));
+			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", FetchObjectName(params[4]));
 		}
 
 		if (pars[6] < 0 || pars[6] > 7)
-			Con_fatal_error("Invalid direction (%d) in FN_walk_to_anim", pars[6]);
+			Con_fatal_error("Invalid direction (%d) in fnWalkToAnim", pars[6]);
 	}
 
-	// set up the rest of the parameters for FN_walk()
+	// set up the rest of the parameters for fnWalk()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -303,17 +303,17 @@ int32 FN_walk_to_anim(int32 *params) {
 	// walkdata (param 3) is needed for earlySlowOut if player clicks
 	// elsewhere during the walk
 
-	// call FN_walk() with target coords set to anim start position
-	return FN_walk(pars);
+	// call fnWalk() with target coords set to anim start position
+	return fnWalk(pars);
 }
 
 /**
  * turn mega to <direction>
- * just needs to call FN_walk() with current feet coords, so router can
+ * just needs to call fnWalk() with current feet coords, so router can
  * produce anim of turn frames
  */
 
-int32 FN_turn(int32 *params) {
+int32 Logic::fnTurn(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -331,7 +331,7 @@ int32 FN_turn(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		if (params[4] < 0 || params[4] > 7)
-			Con_fatal_error("Invalid direction (%d) in FN_turn", params[4]);
+			Con_fatal_error("Invalid direction (%d) in fnTurn", params[4]);
 
 	 	ob_mega = (Object_mega *) params[2];
 	
@@ -340,15 +340,15 @@ int32 FN_turn(int32 *params) {
 		pars[6] = params[4];		// DIRECTION to turn to
 	}
 
-	// set up the rest of the parameters for FN_walk()
+	// set up the rest of the parameters for fnWalk()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call FN_walk() with target coords set to feet coords
-	return FN_walk(pars);
+	// call fnWalk() with target coords set to feet coords
+	return fnWalk(pars);
 }
 
 /**
@@ -357,7 +357,7 @@ int32 FN_turn(int32 *params) {
  * the mega object, so the router knows in future
  */
 
-int32 FN_stand_at(int32 *params) {
+int32 Logic::fnStandAt(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target x-coord
@@ -370,7 +370,7 @@ int32 FN_stand_at(int32 *params) {
 	// check for invalid direction
 
 	if (params[4] < 0 || params[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_at", params[4]);
+		Con_fatal_error("Invalid direction (%d) in fnStandAt", params[4]);
 
 	// set up pointers to the graphic & mega structure
 
@@ -394,9 +394,9 @@ int32 FN_stand_at(int32 *params) {
 }
 
 // stand mega in <direction> at current feet coords
-// just needs to call FN_stand_at() with current feet coords
+// just needs to call fnStandAt() with current feet coords
 
-int32 FN_stand(int32 *params) {
+int32 Logic::fnStand(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target direction
@@ -410,15 +410,15 @@ int32 FN_stand(int32 *params) {
 	pars[3] = ob_mega->feet_y;
 	pars[4] = params[2];		// DIRECTION to stand in
 
-	// call FN_stand_at() with target coords set to feet coords
-	return FN_stand_at(pars);
+	// call fnStandAt() with target coords set to feet coords
+	return fnStandAt(pars);
 }
 
 /**
  * stand mega at end position of anim
  */
 
-int32 FN_stand_after_anim(int32 *params) {
+int32 Logic::fnStandAfterAnim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
@@ -433,7 +433,7 @@ int32 FN_stand_after_anim(int32 *params) {
 	anim_file = res_man.open(params[2]);
 	anim_head = FetchAnimHeader(anim_file);
 
-	// set up the parameter list for FN_walk_to()
+	// set up the parameter list for fnWalkTo()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -450,22 +450,22 @@ int32 FN_stand_after_anim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		debug(5, "WARNING: FN_stand_after_anim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", FetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
+		Con_fatal_error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
 	res_man.close(params[2]);
 
-	// call FN_stand_at() with target coords set to anim end position
-	return FN_stand_at(pars);
+	// call fnStandAt() with target coords set to anim end position
+	return fnStandAt(pars);
 }
 
 // stand mega at start position of anim
 
-int32 FN_stand_at_anim(int32 *params) {
+int32 Logic::fnStandAtAnim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
@@ -480,7 +480,7 @@ int32 FN_stand_at_anim(int32 *params) {
 	anim_file = res_man.open(params[2]);
 	anim_head = FetchAnimHeader(anim_file);
 
-	// set up the parameter list for FN_walk_to()
+	// set up the parameter list for fnWalkTo()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -497,17 +497,17 @@ int32 FN_stand_at_anim(int32 *params) {
 		pars[3] = standby_y;
 		pars[4] = standby_dir;
 
-		debug(5, "WARNING: FN_stand_at_anim(%s) used standby coords", FetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", FetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
+		Con_fatal_error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
 	res_man.close(params[2]);
 
-	// call FN_stand_at() with target coords set to anim end position
-	return FN_stand_at(pars);
+	// call fnStandAt() with target coords set to anim end position
+	return fnStandAt(pars);
 }
 
 // Code to workout direction from start to dest
@@ -544,11 +544,11 @@ int What_target(int startX, int startY, int destX, int destY) {
 
 /**
  * turn mega to face point (x,y) on the floor
- * just needs to call FN_walk() with current feet coords & direction computed
+ * just needs to call fnWalk() with current feet coords & direction computed
  * by What_target()
  */
 
-int32 FN_face_xy(int32 *params) {
+int32 Logic::fnFaceXY(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -573,25 +573,25 @@ int32 FN_face_xy(int32 *params) {
 		pars[6] = What_target(ob_mega->feet_x, ob_mega->feet_y, params[4], params[5]);
 	}
 
-	// set up the rest of the parameters for FN_walk()
+	// set up the rest of the parameters for fnWalk()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call FN_walk() with target coords set to feet coords
-	return FN_walk(pars);
+	// call fnWalk() with target coords set to feet coords
+	return fnWalk(pars);
 }
 
-int32 FN_face_mega(int32 *params) {
+int32 Logic::fnFaceMega(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 	//		3 pointer to object's walkdata structure
 	//		4 id of target mega to face
 
-	uint32	null_pc = 3;	// get ob_mega
+	uint32 null_pc = 3;	// get ob_mega
 	char *raw_script_ad;
 	int32 pars[7];
 	Object_logic *ob_logic;
@@ -606,7 +606,7 @@ int32 FN_face_mega(int32 *params) {
 		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
-			Con_fatal_error("FN_face_mega %d not an object", params[4]);
+			Con_fatal_error("fnFaceMega %d not an object", params[4]);
 
 		raw_script_ad = (char *) head;
 
@@ -629,14 +629,13 @@ int32 FN_face_mega(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// call FN_walk() with target coords set to feet coords
-	return FN_walk(pars);
+	// call fnWalk() with target coords set to feet coords
+	return fnWalk(pars);
 }
 
-int32 FN_walk_to_talk_to_mega(int32 *params) {
+int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	// we route to left or right hand side of target id if possible
 	// target is a shrinking mega
-
 
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
@@ -669,7 +668,7 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {
 		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
-			Con_fatal_error("FN_walk_to_talk_to_mega %d not an object", params[4]);
+			Con_fatal_error("fnWalkToTalkToMega %d not an object", params[4]);
 
 		raw_script_ad = (char *) head;
 
@@ -714,20 +713,22 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {
 
   	// first cycle builds the route - thereafter merely follows it
 
-	// Call FN_walk() with target coords set to feet coords. RESULT will
+	// Call fnWalk() with target coords set to feet coords. RESULT will
 	// be 1 when it finishes, or 0 if it failed to build route.
-	return FN_walk(pars);
+	return fnWalk(pars);
 }
 
-int32 FN_set_walkgrid(int32 *params) {
-	Con_fatal_error("FN_set_walkgrid no longer valid");
+int32 Logic::fnSetWalkGrid(int32 *params) {
+	// params:	none
+
+	Con_fatal_error("fnSetWalkGrid no longer valid");
 	return IR_CONT;
 }
 
 // add this walkgrid resource to the list of those used for routing in this
 // location - note this is ignored in the resource is already in the list
 
-int32 FN_add_walkgrid(int32 *params) {
+int32 Logic::fnAddWalkGrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
 	// all objects that add walkgrids must be restarted whenever we
@@ -737,7 +738,7 @@ int32 FN_add_walkgrid(int32 *params) {
 	if (ID != 8) {
 		// need to call this in case it wasn't called in script!
 		// ('params' just used as dummy param)
-		FN_add_to_kill_list(params);
+		fnAddToKillList(params);
 	}
 
 	router.addWalkGrid(params[0]);
@@ -753,19 +754,21 @@ int32 FN_add_walkgrid(int32 *params) {
 // this location - note that this is ignored if the resource isn't actually
 // in the list
 
-int32 FN_remove_walkgrid(int32 *params) {
+int32 Logic::fnRemoveWalkGrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
 	router.removeWalkGrid(params[0]);
 	return IR_CONT;
 }
 
-int32 FN_register_walkgrid(int32 *params) {
-	Con_fatal_error("FN_register_walkgrid no longer valid");
+int32 Logic::fnRegisterWalkGrid(int32 *params) {
+	// params:	none
+
+	Con_fatal_error("fnRegisterWalkGrid no longer valid");
 	return IR_CONT;
 }
 
-int32 FN_set_scaling(int32 *params) {
+int32 Logic::fnSetScaling(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 scale constant A
 	//		2 scale constant B
@@ -783,9 +786,9 @@ int32 FN_set_scaling(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_set_standby_coords(int32 *params) {
-	// set the standby walk coords to be used by FN_walk_to_anim &
-	// FN_stand_after_anim when the anim header's start/end coords are zero
+int32 Logic::fnSetStandbyCoords(int32 *params) {
+	// set the standby walk coords to be used by fnWalkToAnim and
+	// fnStandAfterAnim when the anim header's start/end coords are zero
 
 	// useful during development; can stay in final game anyway
 
@@ -794,7 +797,7 @@ int32 FN_set_standby_coords(int32 *params) {
 	//		2 direction (0..7)
 
 	if (params[2] < 0 || params[2] > 7)
-		Con_fatal_error("Invalid direction (%d) in FN_set_standby_coords", params[2]);
+		Con_fatal_error("Invalid direction (%d) in fnSetStandbyCoords", params[2]);
 
 	standby_x = (int16) params[0];
 	standby_y = (int16) params[1];

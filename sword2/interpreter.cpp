@@ -21,6 +21,7 @@
 #include "bs2/driver/driver96.h"
 #include "bs2/console.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 
 namespace Sword2 {
 
@@ -33,253 +34,174 @@ namespace Sword2 {
 
 // The machine code table
 
-int32 FN_test_function(int32 *params);
-int32 FN_test_flags(int32 *params);
-int32 FN_register_start_point(int32 *params);
-int32 FN_init_background(int32 *params);
-int32 FN_set_session(int32 *params);
-int32 FN_back_sprite(int32 *params);	
-int32 FN_sort_sprite(int32 *params);	
-int32 FN_fore_sprite(int32 *params);	
-int32 FN_register_mouse(int32 *params);	
-int32 FN_anim(int32 *);
-int32 FN_random(int32 *);
-int32 FN_preload(int32 *);
-int32 FN_add_subject(int32 *);
-int32 FN_interact(int32 *);
-int32 FN_choose(int32 *);
-int32 FN_walk(int32 *);
-int32 FN_walk_to_anim(int32 *);		// walk to start position of anim
-int32 FN_turn(int32 *);			// turn to (dir)
-int32 FN_stand_at(int32 *);		// stand at (x,y,dir)
-int32 FN_stand(int32 *);		// stand facing (dir)
-int32 FN_stand_after_anim(int32 *);	// stand at end position of anim
-int32 FN_pause(int32 *);
-int32 FN_mega_table_anim(int32 *);
-int32 FN_add_menu_object(int32 *);
-int32 FN_start_conversation(int32 *);
-int32 FN_end_conversation(int32 *);
-int32 FN_set_frame(int32 *);
-int32 FN_random_pause(int32 *);
-int32 FN_register_frame(int32 *);
-int32 FN_no_sprite(int32 *);
-int32 FN_send_sync(int32 *);
-int32 FN_update_player_stats(int32 *);
-int32 FN_pass_graph(int32 *);
-int32 FN_init_floor_mouse(int32 *);
-int32 FN_pass_mega(int32 *);
-int32 FN_face_xy(int32 *);
-int32 FN_end_session(int32 *);
-int32 FN_no_human(int32 *);
-int32 FN_add_human(int32 *);
-int32 FN_we_wait(int32 *);
-int32 FN_they_do_we_wait(int32 *);
-int32 FN_they_do(int32 *);
-int32 FN_walk_to_talk_to_mega(int32 *);
-int32 FN_fade_down(int32 *);
-int32 FN_i_speak(int32 *);
-int32 FN_total_restart(int32 *);
-int32 FN_set_walkgrid(int32 *);
-int32 FN_speech_process(int32 *);
-int32 FN_set_scaling(int32 *);
-int32 FN_start_event(int32 *);
-int32 FN_check_event_waiting(int32 *);
-int32 FN_request_speech(int32 *);
-int32 FN_gosub(int32 *);
-int32 FN_timed_wait(int32 *);
-int32 FN_play_fx(int32 *);
-int32 FN_stop_fx(int32 *);
-int32 FN_play_music(int32 *);
-int32 FN_stop_music(int32 *);
-int32 FN_set_value(int32 *);
-int32 FN_new_script(int32 *);
-int32 FN_get_sync(int32 *);
-int32 FN_wait_sync(int32 *);
-int32 FN_register_walkgrid(int32 *);
-int32 FN_reverse_mega_table_anim(int32 *);
-int32 FN_reverse_anim(int32 *);
-int32 FN_add_to_kill_list(int32 *);
-int32 FN_set_standby_coords(int32 *);
-int32 FN_back_par0_sprite(int32 *params);
-int32 FN_back_par1_sprite(int32 *params);
-int32 FN_fore_par0_sprite(int32 *params);
-int32 FN_fore_par1_sprite(int32 *params);
-int32 FN_set_player_action_event(int32 *params);
-int32 FN_set_scroll_coordinate(int32 *params);
-int32 FN_stand_at_anim(int32 *params);
-int32 FN_set_scroll_left_mouse(int32 *params);
-int32 FN_set_scroll_right_mouse(int32 *params);
-int32 FN_colour(int32 *params);
-int32 FN_flash(int32 *params);
-int32 FN_prefetch(int32 *params);
-int32 FN_get_player_savedata(int32 *params);
-int32 FN_pass_player_savedata(int32 *params);
-int32 FN_send_event(int32 *params);
-int32 FN_add_walkgrid(int32 *params);
-int32 FN_remove_walkgrid(int32 *params);
-int32 FN_check_for_event(int32 *params);
-int32 FN_pause_for_event(int32 *params);
-int32 FN_clear_event(int32 *params);
-int32 FN_face_mega(int32 *params);
-int32 FN_play_sequence(int32 *params);
-int32 FN_shaded_sprite(int32 *params);
-int32 FN_unshaded_sprite(int32 *params);
-int32 FN_fade_up(int32 *params);
-int32 FN_display_msg(int32 *params);
-int32 FN_set_object_held(int32 *params);
-int32 FN_add_sequence_text(int32 *params);
-int32 FN_reset_globals(int32 *params);
-int32 FN_set_palette(int32 *params);
-int32 FN_register_pointer_text(int32 *params);
-int32 FN_fetch_wait(int32 *params);
-int32 FN_release(int32 *params);
-int32 FN_sound_fetch(int32 *params);
-int32 FN_prepare_music(int32 *params);
-int32 FN_smacker_lead_in(int32 *params);
-int32 FN_smacker_lead_out(int32 *params);
-int32 FN_stop_all_fx(int32 *params);
-int32 FN_check_player_activity(int32 *params);
-int32 FN_reset_player_activity_delay(int32 *params);
-int32 FN_check_music_playing(int32 *params);
-int32 FN_play_credits(int32 *params);
-int32 FN_set_scroll_speed_normal(int32 *params);
-int32 FN_set_scroll_speed_slow(int32 *params);
-int32 FN_remove_chooser(int32 *params);
-int32 FN_set_fx_vol_and_pan(int32 *params);
-int32 FN_set_fx_vol(int32 *params);
-int32 FN_restore_game(int32 *params);
-int32 FN_refresh_inventory(int32 *params);
-int32 FN_change_shadows(int32 *params);
-
 #define MAX_FN_NUMBER	117
-
-extern int32 (*McodeTable[]) (int32 *);
 
 // Point to the global variable data
 int32 *globalInterpreterVariables2 = NULL;
 
 int g_debugFlag = 0;	// Set this to turn debugging on
 
-int32 (*McodeTable[MAX_FN_NUMBER + 1]) (int32 *) = {
-	FN_test_function,
-	FN_test_flags,
-	FN_register_start_point,
-	FN_init_background,
-	FN_set_session,
-	FN_back_sprite,
-	FN_sort_sprite,
-	FN_fore_sprite,
-	FN_register_mouse,
-	FN_anim,
-	FN_random,
-	FN_preload,
-	FN_add_subject,
-	FN_interact,
-	FN_choose,
-	FN_walk,
-	FN_walk_to_anim,
-	FN_turn,
-	FN_stand_at,
-	FN_stand,
-	FN_stand_after_anim,
-	FN_pause,
-	FN_mega_table_anim,
-	FN_add_menu_object,
-	FN_start_conversation,
-	FN_end_conversation,
-	FN_set_frame,
-	FN_random_pause,
-	FN_register_frame,
-	FN_no_sprite,
-	FN_send_sync,
-	FN_update_player_stats,
-	FN_pass_graph,
-	FN_init_floor_mouse,
-	FN_pass_mega,
-	FN_face_xy,
-	FN_end_session,
-	FN_no_human,
-	FN_add_human,
-	FN_we_wait,
-	FN_they_do_we_wait,
-	FN_they_do,
-	FN_walk_to_talk_to_mega,
-	FN_fade_down,
-	FN_i_speak,
-	FN_total_restart,
-	FN_set_walkgrid,
-	FN_speech_process,
-	FN_set_scaling,
-	FN_start_event,
-	FN_check_event_waiting,
-	FN_request_speech,
-	FN_gosub,
-	FN_timed_wait,
-	FN_play_fx,
-	FN_stop_fx,
-	FN_play_music,
-	FN_stop_music,
-	FN_set_value,
-	FN_new_script,
-	FN_get_sync,
-	FN_wait_sync,
-	FN_register_walkgrid,
-	FN_reverse_mega_table_anim,
-	FN_reverse_anim,
-	FN_add_to_kill_list,
-	FN_set_standby_coords,
-	FN_back_par0_sprite,
-	FN_back_par1_sprite,
-	FN_fore_par0_sprite,
-	FN_fore_par1_sprite,
-	FN_set_player_action_event,
-	FN_set_scroll_coordinate,
-	FN_stand_at_anim,
-	FN_set_scroll_left_mouse,
-	FN_set_scroll_right_mouse,
-	FN_colour,
-	FN_flash,
-	FN_prefetch,
-	FN_get_player_savedata,
-	FN_pass_player_savedata,
-	FN_send_event,
-	FN_add_walkgrid,
-	FN_remove_walkgrid,
-	FN_check_for_event,
-	FN_pause_for_event,
-	FN_clear_event,
-	FN_face_mega,
-	FN_play_sequence,
-	FN_shaded_sprite,
-	FN_unshaded_sprite,
-	FN_fade_up,
-	FN_display_msg,
-	FN_set_object_held,
-	FN_add_sequence_text,
-	FN_reset_globals,
-	FN_set_palette,
-	FN_register_pointer_text,
-	FN_fetch_wait,
-	FN_release,
-	FN_prepare_music,
-	FN_sound_fetch,
-	FN_prepare_music,
-	FN_smacker_lead_in,
-	FN_smacker_lead_out,
-	FN_stop_all_fx,
-	FN_check_player_activity,
-	FN_reset_player_activity_delay,
-	FN_check_music_playing,
-	FN_play_credits,
-	FN_set_scroll_speed_normal,
-	FN_set_scroll_speed_slow,
-	FN_remove_chooser,
-	FN_set_fx_vol_and_pan,
-	FN_set_fx_vol,
-	FN_restore_game,
-	FN_refresh_inventory,
-	FN_change_shadows,
+#define OPCODE(x, y)	{ x, &Logic::y, #y }
+
+void Logic::setupOpcodes(void) {
+	static const OpcodeEntry opcodes[MAX_FN_NUMBER + 1] = {
+		/* 00 */
+		OPCODE(1, fnTestFunction),
+		OPCODE(1, fnTestFlags),
+		OPCODE(2, fnRegisterStartPoint),
+		OPCODE(2, fnInitBackground),
+		/* 04 */
+		OPCODE(1, fnSetSession),
+		OPCODE(1, fnBackSprite),
+		OPCODE(1, fnSortSprite),
+		OPCODE(1, fnForeSprite),
+		/* 08 */
+		OPCODE(1, fnRegisterMouse),
+		OPCODE(3, fnAnim),
+		OPCODE(2, fnRandom),
+		OPCODE(1, fnPreLoad),
+		/* 0C */
+		OPCODE(2, fnAddSubject),
+		OPCODE(1, fnInteract),
+		OPCODE(0, fnChoose),
+		OPCODE(7, fnWalk),
+		/* 10 */
+		OPCODE(5, fnWalkToAnim),
+		OPCODE(6, fnTurn),
+		OPCODE(5, fnStandAt),
+		OPCODE(3, fnStand),
+		/* 14 */
+		OPCODE(3, fnStandAfterAnim),
+		OPCODE(2, fnPause),
+		OPCODE(4, fnMegaTableAnim),
+		OPCODE(1, fnAddMenuObject),
+		/* 18 */
+		OPCODE(0, fnStartConversation),
+		OPCODE(0, fnEndConversation),
+		OPCODE(3, fnSetFrame),
+		OPCODE(3, fnRandomPause),
+		/* 1C */
+		OPCODE(3, fnRegisterFrame),
+		OPCODE(1, fnNoSprite),
+		OPCODE(2, fnSendSync),
+		OPCODE(1, fnUpdatePlayerStats),
+		/* 20 */
+		OPCODE(1, fnPassGraph),
+		OPCODE(1, fnInitFloorMouse),
+		OPCODE(1, fnPassMega),
+		OPCODE(6, fnFaceXY),
+		/* 24 */
+		OPCODE(1, fnEndSession),
+		OPCODE(0, fnNoHuman),
+		OPCODE(0, fnAddHuman),
+		OPCODE(1, fnWeWait),
+		/* 28 */
+		OPCODE(8, fnTheyDoWeWait),
+		OPCODE(7, fnTheyDo),
+		OPCODE(6, fnWalkToTalkToMega),
+		OPCODE(0, fnFadeDown),
+		/* 2C */
+		OPCODE(0, fnISpeak),
+		OPCODE(0, fnTotalRestart),
+		OPCODE(0, fnSetWalkGrid),
+		OPCODE(5, fnSpeechProcess),
+		/* 30 */
+		OPCODE(3, fnSetScaling),
+		OPCODE(0, fnStartEvent),
+		OPCODE(0, fnCheckEventWaiting),
+		OPCODE(1, fnRequestSpeech),
+		/* 34 */
+		OPCODE(1, fnGosub),
+		OPCODE(3, fnTimedWait),
+		OPCODE(5, fnPlayFx),
+		OPCODE(1, fnStopFx),
+		/* 38 */
+		OPCODE(2, fnPlayMusic),
+		OPCODE(0, fnStopMusic),
+		OPCODE(2, fnSetValue),
+		OPCODE(1, fnNewScript),
+		/* 3C */
+		OPCODE(0, fnGetSync),
+		OPCODE(0, fnWaitSync),
+		OPCODE(0, fnRegisterWalkGrid),
+		OPCODE(4, fnReverseMegaTableAnim),
+		/* 40 */
+		OPCODE(3, fnReverseAnim),
+		OPCODE(0, fnAddToKillList),
+		OPCODE(3, fnSetStandbyCoords),
+		OPCODE(1, fnBackPar0Sprite),
+		/* 44 */
+		OPCODE(1, fnBackPar1Sprite),
+		OPCODE(1, fnForePar0Sprite),
+		OPCODE(1, fnForePar1Sprite),
+		OPCODE(1, fnSetPlayerActionEvent),
+		/* 48 */
+		OPCODE(2, fnSetScrollCoordinate),
+		OPCODE(3, fnStandAtAnim),
+		OPCODE(1, fnSetScrollLeftMouse),
+		OPCODE(1, fnSetScrollRightMouse),
+		/* 4C */
+		OPCODE(1, fnColour),
+		OPCODE(1, fnFlash),
+		OPCODE(1, fnPreFetch),
+		OPCODE(3, fnGetPlayerSaveData),
+		/* 50 */
+		OPCODE(3, fnPassPlayerSaveData),
+		OPCODE(2, fnSendEvent),
+		OPCODE(1, fnAddWalkGrid),
+		OPCODE(1, fnRemoveWalkGrid),
+		/* 54 */
+		OPCODE(0, fnCheckForEvent),
+		OPCODE(2, fnPauseForEvent),
+		OPCODE(0, fnClearEvent),
+		OPCODE(5, fnFaceMega),
+		/* 58 */
+		OPCODE(2, fnPlaySequence),
+		OPCODE(1, fnShadedSprite),
+		OPCODE(1, fnUnshadedSprite),
+		OPCODE(0, fnFadeUp),
+		/* 60 */
+		OPCODE(1, fnDisplayMsg),
+		OPCODE(0, fnSetObjectHeld),
+		OPCODE(3, fnAddSequenceText),
+		OPCODE(0, fnResetGlobals),
+		/* 64 */
+		OPCODE(1, fnSetPalette),
+		OPCODE(1, fnRegisterPointerText),
+		OPCODE(1, fnFetchWait),
+		OPCODE(1, fnRelease),
+		/* 68 */
+		OPCODE(1, fnPrepareMusic),
+		OPCODE(1, fnSoundFetch),
+		OPCODE(1, fnPrepareMusic),	// Again, apparently
+		OPCODE(1, fnSmackerLeadIn),
+		/* 6C */
+		OPCODE(1, fnSmackerLeadOut),
+		OPCODE(0, fnStopAllFx),
+		OPCODE(1, fnCheckPlayerActivity),
+		OPCODE(0, fnResetPlayerActivityDelay),
+		/* 70 */
+		OPCODE(0, fnCheckMusicPlaying),
+		OPCODE(0, fnPlayCredits),
+		OPCODE(0, fnSetScrollSpeedNormal),
+		OPCODE(0, fnSetScrollSpeedSlow),
+		/* 74 */
+		OPCODE(0, fnRemoveChooser),
+		OPCODE(3, fnSetFxVolAndPan),
+		OPCODE(3, fnSetFxVol),
+		OPCODE(0, fnRestoreGame),
+		/* 78 */
+		OPCODE(0, fnRefreshInventory),
+		OPCODE(0, fnChangeShadows)
+	};
+
+	_opcodes = opcodes;
 };
+
+int32 Logic::executeOpcode(int i, int32 *params) {
+	OpcodeProc op = _opcodes[i].proc;
+	return (this->*op) (params);
+}
 
 #define CHECKSTACKPOINTER2 assert(stackPointer2 >= 0 && stackPointer2 < STACK_SIZE);
 #define	PUSHONSTACK(x) { stack2[stackPointer2] = (x); stackPointer2++; CHECKSTACKPOINTER2 }
@@ -329,10 +251,10 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	if (*offset < noScripts) {
 		ip = READ_LE_UINT32((const int *) code + *offset + 1);
-		debug(5, "Start script %d with offset %d",*offset,ip);
+		debug(5, "Start script %d with offset %d", *offset, ip);
 	} else {
 		ip = *offset;
-		debug(5, "Start script with offset %d",ip);
+		debug(5, "Start script with offset %d", ip);
 	}
 
 	code += noScripts * sizeof(int) + sizeof(int);
@@ -399,7 +321,10 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
 			debug(5, "Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
-			retVal = McodeTable[parameter](stack2 + stackPointer2 - value);
+
+			retVal = g_logic.executeOpcode(parameter, stack2 + stackPointer2 - value);
+
+//			retVal = g_logic._opcodes[parameter].proc(stack2 + stackPointer2 - value);
 			stackPointer2 -= value;
 			CHECKSTACKPOINTER2
 

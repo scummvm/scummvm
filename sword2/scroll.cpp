@@ -24,6 +24,7 @@
 #include "bs2/header.h"
 #include "bs2/interpreter.h"
 #include "bs2/layers.h"
+#include "bs2/logic.h"
 #include "bs2/scroll.h"
 
 namespace Sword2 {
@@ -146,12 +147,12 @@ void Set_scrolling(void) {
 	}
 }
 
-int32 FN_set_scroll_coordinate(int32 *params) {
+int32 Logic::fnSetScrollCoordinate(int32 *params) {
 	// set the special scroll offset variables
 
 	// call when starting screens and to change the camera within screens
 
-	// call AFTER FN_init_background() to override the defaults
+	// call AFTER fnInitBackground() to override the defaults
 
 	// called feet_x and feet_y to retain intelectual compatibility with
 	// Sword1 !
@@ -167,12 +168,16 @@ int32 FN_set_scroll_coordinate(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_speed_normal(int32 *params) {
+int32 Logic::fnSetScrollSpeedNormal(int32 *params) {
+	// params:	none
+
 	scroll_fraction = 16;
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_speed_slow(int32 *params) {
+int32 Logic::fnSetScrollSpeedSlow(int32 *params) {
+	// params:	none
+
 	scroll_fraction = 32;
 	return IR_CONT;
 }

@@ -38,114 +38,115 @@ namespace Sword2 {
 Object_graphic engine_graph;	// global for engine
 Object_mega engine_mega;	// global for engine
 
-int32 FN_test_function(int32 *params) {
-	// param	0 address of a flag
-
-	debug(5, " TEST %d %d", params[0], RESULT);
+int32 Logic::fnTestFunction(int32 *params) {
+	// params:	0 address of a flag
 	return IR_CONT;
 }
 
-int32 FN_test_flags(int32 *params) {
-	// param	0 value of flag
-
-	debug(5, "FN_test_flags %d, %d\n", params[0], params[1]);
+int32 Logic::fnTestFlags(int32 *params) {
+	// params:	0 value of flag
 	return IR_CONT;
 }
 
-int32 FN_gosub(int32 *params) {
+int32 Logic::fnGosub(int32 *params) {
 	// hurray, script subroutines
-	// param	0 id of script
 
-	LLogic.logicUp(params[0]);
+	// params:	0 id of script
+
+	logicUp(params[0]);
 
 	// logic goes up - pc is saved for current level
 	return IR_GOSUB;
 }
 
-int32 FN_new_script(int32 *params) {
+int32 Logic::fnNewScript(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
 	// directive
-	// param	0 id of script
 
-	debug(5, "FN_new_script %d", params[0]);
+	// params:	0 id of script
 
 	// must clear this
 	PLAYER_ACTION = 0;
 
-	LLogic.logicReplace(params[0]);
+	logicReplace(params[0]);
 
-	//drop out no pc save - and around again
+	// drop out no pc save - and around again
 	return IR_TERMINATE;
 }
 
-int32 FN_interact(int32 *params) {
+int32 Logic::fnInteract(int32 *params) {
 	// run targets action on a subroutine
 	// called by player on his base level 0 idle, for example
-	// param	0 id of target from which we derive action script
-	//		  reference
 
-	debug(5, "FN_interact %d", params[0]);
+	// params:	0 id of target from which we derive action script
+	//		  reference
 
 	// must clear this
 	PLAYER_ACTION = 0;
 
 	// 3rd script of clicked on id
-	LLogic.logicUp((params[0] * 65536) + 2);
+	logicUp((params[0] * 65536) + 2);
 
 	// out, up and around again - pc is saved for current level to be
 	// returned to
 	return IR_GOSUB;
 }
 
-int32 FN_preload(int32 *params)	{
+int32 Logic::fnPreLoad(int32 *params) {
 	// Open & close a resource.
+
 	// Forces a resource into memory before it's "officially" opened for
 	// use. eg. if an anim needs to run on smoothly from another,
 	// "preloading" gets it into memory in advance to avoid the cacheing
 	// delay that normally occurs before the first frame.
 
-	res_man.open(params[0]);	// open resource
-	res_man.close(params[0]);	// close resource
-	return IR_CONT;			// continue script
+	// params:	0 resource to preload
+
+	res_man.open(params[0]);
+	res_man.close(params[0]);
+	return IR_CONT;
 }
 
-int32 FN_prefetch(int32 *params) {
+int32 Logic::fnPreFetch(int32 *params) {
 	// Go fetch resource in the background.
+
+	// params:	0 resource to fetch [guess]
 
 	return IR_CONT;
 }
 
-int32 FN_fetch_wait(int32 *params) {
+int32 Logic::fnFetchWait(int32 *params) {
 	// Fetches a resource in the background but prevents the script from
 	// continuing until the resource is in memory.
 
+	// params:	0 resource to fetch [guess]
+
 	return IR_CONT;
 }
 
-int32 FN_release(int32 *params) {
+int32 Logic::fnRelease(int32 *params) {
 	// Releases a resource from memory. Used for freeing memory for
 	// sprites that have just been used and will not be used again.
 	// Sometimes it is better to kick out a sprite straight away so that
 	// the memory can be used for more frequent animations.
 
+	// params:	0 resource to release [guess]
+
 	return IR_CONT;
 }
 
-int32 FN_random(int32 *params) {
+int32 Logic::fnRandom(int32 *params) {
 	// Generates a random number between 'min' & 'max' inclusive, and
 	// sticks it in the script flag 'result'
 
 	// params:	0 min
 	//		1 max
 
-	// return_value = random integer between min and max, inclusive
 	RESULT = g_sword2->_rnd.getRandomNumberRng(params[0], params[1]);
-	
-	// continue script
 	return IR_CONT;
 }
 
-int32 FN_pause(int32 *params) {
+int32 Logic::fnPause(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
@@ -176,7 +177,7 @@ int32 FN_pause(int32 *params) {
 	}
 }
 
-int32 FN_random_pause(int32 *params) {
+int32 Logic::fnRandomPause(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
@@ -185,28 +186,26 @@ int32 FN_random_pause(int32 *params) {
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
-		pars[0] = params[1];	// min
-		pars[1] = params[2];	// max
+		pars[0] = params[1];
+		pars[1] = params[2];
 
-		FN_random(pars);
-
-		// random value between 'min' & 'max' inclusive
+		fnRandom(pars);
 		pars[1] = RESULT;
 	}
 
-	pars[0] = params[0];		// &logic
-	return FN_pause(pars);
+	pars[0] = params[0];
+	return fnPause(pars);
 }
 
-int32 FN_pass_graph(int32 *params) {
+int32 Logic::fnPassGraph(int32 *params) {
 	// makes an engine local copy of passed graphic_structure and
 	// mega_structure - run script 4 of an object to request this
-	// used by FN_turn_to(id) etc
+	// used by fnTurnTo(id) etc
 	//
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
-	//params	0 pointer to a graphic structure (might not need this?)
+	// params:	0 pointer to a graphic structure (might not need this?)
 
 	memcpy(&engine_graph, (uint8 *) params[0], sizeof(Object_graphic));
 
@@ -214,24 +213,25 @@ int32 FN_pass_graph(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_pass_mega(int32 *params) {
+int32 Logic::fnPassMega(int32 *params) {
 	// makes an engine local copy of passed graphic_structure and
 	// mega_structure - run script 4 of an object to request this
-	// used by FN_turn_to(id) etc
+	// used by fnTurnTo(id) etc
 	//
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
-	// params 	0 pointer to a mega structure
+	// params: 	0 pointer to a mega structure
 
 	memcpy(&engine_mega, (uint8 *) params[0], sizeof(Object_mega));
 
-	//makes no odds
+	// makes no odds
 	return IR_CONT;
 }
 
-int32 FN_set_value(int32 *params) {
+int32 Logic::fnSetValue(int32 *params) {
 	// temp. function!
+
 	// used for setting far-referenced megaset resource field in mega
 	// object, from start script
 
@@ -258,12 +258,12 @@ uint8 red[4]	= { 255,   0,   0,   0 };
 uint8 green[4]	= {   0, 255,   0,   0 };
 uint8 blue[4]	= {   0,   0, 255,   0 };
 
-int32 FN_flash(int32 *params) {
+int32 Logic::fnFlash(int32 *params) {
 	// flash colour 0 (ie. border) - useful during script development
-	// eg. FN_flash(BLUE) where a text line is missed; RED when some code
+	// eg. fnFlash(BLUE) where a text line is missed; RED when some code
 	// missing, etc
 
-	// params	0: colour to flash
+	// params:	0 colour to flash
 
 #ifdef _SWORD2_DEBUG
 	// what colour?
@@ -294,7 +294,7 @@ int32 FN_flash(int32 *params) {
 }
 
 
-int32 FN_colour(int32 *params) {
+int32 Logic::fnColour(int32 *params) {
 	// set border colour - useful during script development
 	// eg. set to colour during a timer situation, then black when timed
 	// out
@@ -325,10 +325,10 @@ int32 FN_colour(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_display_msg(int32 *params) {
+int32 Logic::fnDisplayMsg(int32 *params) {
 	// Display a message to the user on the screen.
-	//
-	// params	0: Text number of message to be displayed.
+
+	// params:	0 Text number of message to be displayed.
 
 	uint32 local_text = params[0] & 0xffff;
 	uint32 text_res = params[0] / SIZE;
@@ -345,24 +345,24 @@ int32 FN_display_msg(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_reset_globals(int32 *params) {
-	// FN_reset_globals is used by the demo - so it can loop back &
-	// restart itself
+int32 Logic::fnResetGlobals(int32 *params) {
+	// fnResetGlobals is used by the demo - so it can loop back & restart
+	// itself
+
+	// params:	none
 
 	int32 size;
 	uint32 *globals;
-	int j;
 
 	size = res_man.fetchLen(1);
 	size -= sizeof(_standardHeader);
 
-	debug(5, "globals size %d", size / 4);
+	debug(5, "globals size: %d", size);
 
 	globals = (uint32 *) ((uint8 *) res_man.open(1) + sizeof(_standardHeader));
 
 	// blank each global variable
-	for (j = 0; j < size / 4; j++)
-		globals[j] = 0;
+	memset(globals, 0, size);
 
 	res_man.close(1);
 
@@ -370,7 +370,7 @@ int32 FN_reset_globals(int32 *params) {
 	res_man.killAllObjects(0);
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
-	// - this is taken from FN_init_background
+	// - this is taken from fnInitBackground
 
 	// switch on scrolling (2 means first time on screen)
 	this_screen.scroll_flag = 2;
@@ -378,11 +378,11 @@ int32 FN_reset_globals(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_play_credits(int32 *params) {
-	// params:	none
-
+int32 Logic::fnPlayCredits(int32 *params) {
 	// This function just quits the game if this is the playable demo, ie.
 	// credits are NOT played in the demo any more!
+
+	// params:	none
 
 	if (!DEMO) {
 		uint8 oldPal[1024];
@@ -413,7 +413,7 @@ int32 FN_play_credits(int32 *params) {
 
 		pars[0] = 309;
 		pars[1] = FX_SPOT;
-		FN_play_music(pars);
+		fnPlayMusic(pars);
 
 		music_length = 1000 * g_sound->musicTimeRemaining();
 
@@ -439,7 +439,7 @@ int32 FN_play_credits(int32 *params) {
 			g_system->delay_msecs(30);
 		}
 
-		FN_stop_music(NULL);
+		fnStopMusic(NULL);
 		g_sound->restoreMusicState();
 
 		g_display->setPalette(0, 256, oldPal, RDPAL_FADE);

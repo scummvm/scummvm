@@ -94,9 +94,6 @@ void Mouse_engine(void);
 void Set_mouse(uint32 res);
 void Set_luggage(uint32 res);
 
-int32 FN_no_human(int32 *params);
-int32 FN_add_human(int32 *params);
-
 void ClearPointerText(void);
 
 } // End of namespace Sword2

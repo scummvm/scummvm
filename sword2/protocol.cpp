@@ -188,7 +188,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 }
 
 
-// Used for testing text & speech (see FN_I_speak in speech.cpp)
+// Used for testing text & speech (see fnISpeak in speech.cpp)
 
 uint8 CheckTextLine(uint8 *file, uint32	text_line) {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));

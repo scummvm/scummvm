@@ -28,6 +28,7 @@
 #include "bs2/defs.h"
 #include "bs2/interpreter.h"
 #include "bs2/layers.h"
+#include "bs2/logic.h"
 #include "bs2/maketext.h"
 #include "bs2/mouse.h"
 #include "bs2/object.h"
@@ -824,13 +825,14 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 	res_man.close(ob_graph->anim_resource);
 }
 
-int32 FN_register_frame(int32 *params) {
-	//this call would be made from an objects service script 0
+int32 Logic::fnRegisterFrame(int32 *params) {
+	// this call would be made from an objects service script 0
 
-	// params: 0 pointer to mouse structure or NULL for no write to mouse
-	//           list (non-zero means write sprite-shape to mouse list)
-	//         1 pointer to graphic structure
-	//         2 pointer to mega structure or NULL if not a mega
+	// params:	0 pointer to mouse structure or NULL for no write to
+	//		  mouse list (non-zero means write sprite-shape to
+	//		  mouse list)
+	//		1 pointer to graphic structure
+	//		2 pointer to mega structure or NULL if not a mega
 
 	Object_graphic *ob_graph = (Object_graphic *) params[1];
 
@@ -839,7 +841,7 @@ int32 FN_register_frame(int32 *params) {
 	case BGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp0 == MAX_bgp0_sprites)
-			Con_fatal_error("ERROR: bgp0_list full in FN_register_frame");
+			Con_fatal_error("ERROR: bgp0_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &bgp0_list[cur_bgp0]);
@@ -848,7 +850,7 @@ int32 FN_register_frame(int32 *params) {
 	case BGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp1 == MAX_bgp1_sprites)
-			Con_fatal_error("ERROR: bgp1_list full in FN_register_frame");
+			Con_fatal_error("ERROR: bgp1_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &bgp1_list[cur_bgp1]);
@@ -857,7 +859,7 @@ int32 FN_register_frame(int32 *params) {
 	case BACK_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_back == MAX_back_sprites)
-			Con_fatal_error("ERROR: back_list full in FN_register_frame");
+			Con_fatal_error("ERROR: back_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &back_list[cur_back]);
@@ -866,7 +868,7 @@ int32 FN_register_frame(int32 *params) {
 	case SORT_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_sort == MAX_sort_sprites)
-			Con_fatal_error("ERROR: sort_list full in FN_register_frame");
+			Con_fatal_error("ERROR: sort_list full in fnRegisterFrame");
 #endif
 
 		sort_order[cur_sort] = cur_sort;
@@ -876,7 +878,7 @@ int32 FN_register_frame(int32 *params) {
 	case FORE_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fore == MAX_fore_sprites)
-			Con_fatal_error("ERROR: fore_list full in FN_register_frame");
+			Con_fatal_error("ERROR: fore_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fore_list[cur_fore]);
@@ -885,7 +887,7 @@ int32 FN_register_frame(int32 *params) {
 	case FGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp0 == MAX_fgp0_sprites)
-			Con_fatal_error("ERROR: fgp0_list full in FN_register_frame");
+			Con_fatal_error("ERROR: fgp0_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fgp0_list[cur_fgp0]);
@@ -894,7 +896,7 @@ int32 FN_register_frame(int32 *params) {
 	case FGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp1 == MAX_fgp1_sprites)
-			Con_fatal_error("ERROR: fgp1_list full in FN_register_frame");
+			Con_fatal_error("ERROR: fgp1_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fgp1_list[cur_fgp1]);
@@ -937,29 +939,33 @@ void Start_new_palette(void) {
  	this_screen.new_palette = 0;
 }
 
-int32 FN_update_player_stats(int32 *params) {
-	//engine needs to know certain info about the player
+int32 Logic::fnUpdatePlayerStats(int32 *params) {
+	// engine needs to know certain info about the player
+
+	// params:	0 pointer to mega structure
 
 	Object_mega *ob_mega = (Object_mega *) params[0];
 
 	this_screen.player_feet_x = ob_mega->feet_x;
 	this_screen.player_feet_y = ob_mega->feet_y;
 
-	//for the script
+	// for the script
 	PLAYER_FEET_X = ob_mega->feet_x;
 	PLAYER_FEET_Y = ob_mega->feet_y;
 	PLAYER_CUR_DIR = ob_mega->current_dir;
 
 	SCROLL_OFFSET_X = this_screen.scroll_offset_x;
 
-	debug(5, "FN_Update_player_stats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
+	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
 
 	return IR_CONT;
 }
 
-int32 FN_fade_down(int32 *params) {
+int32 Logic::fnFadeDown(int32 *params) {
 	// NONE means up! can only be called when screen is fully faded up -
 	// multiple calls wont have strange effects
+
+	// params:	none
 
 	if (g_display->getFadeStatus() == RDFADE_NONE)
 		g_display->fadeDown();
@@ -967,7 +973,9 @@ int32 FN_fade_down(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_fade_up(int32 *params) {
+int32 Logic::fnFadeUp(int32 *params) {
+	// params:	none
+
 	g_display->waitForFade();
 
 	if (g_display->getFadeStatus() == RDFADE_BLACK)
@@ -992,15 +1000,15 @@ int32 FN_fade_up(int32 *params) {
 //	uint8 noEntries;
 // } _paletteHeader;
 
-int32 FN_set_palette(int32 *params) {
+int32 Logic::fnSetPalette(int32 *params) {
+	// params:	0 resource number of palette file, or 0 if it's to be
+	//		  the palette from the current screen
+	
 	SetFullPalette(params[0]);
 	return IR_CONT;
 }
 
 void SetFullPalette(int32 palRes) {
-	// params 0 resource number of palette file
-	//          or 0 if it's to be the palette from the current screen
-
 	uint8 *file;
 	_standardHeader *head;
 
@@ -1042,7 +1050,7 @@ void SetFullPalette(int32 palRes) {
 
 #ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
- 			Con_fatal_error("FN_set_palette() called with invalid resource!");
+ 			Con_fatal_error("fnSetPalette() called with invalid resource!");
 #endif
 
 		file = (uint8 *) (head + 1);
@@ -1083,15 +1091,18 @@ void SetFullPalette(int32 palRes) {
 			// close screen file
 	  		res_man.close(this_screen.background_layer_id);
 		} else
-			Con_fatal_error("FN_set_palette(0) called, but no current screen available!");
+			Con_fatal_error("fnSetPalette(0) called, but no current screen available!");
 	}
 }
 
-int32 FN_restore_game(int32 *params) {
+int32 Logic::fnRestoreGame(int32 *params) {
+	// params:	none
 	return IR_CONT;
 }
 
-int32 FN_change_shadows(int32 *params) {
+int32 Logic::fnChangeShadows(int32 *params) {
+	// params:	none
+
 	uint32 rv;
 
 	// if last screen was using a shading mask (see below)

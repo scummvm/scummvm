@@ -33,9 +33,9 @@ namespace Sword2 {
 _event_unit event_list[MAX_events];
 
 void Init_event_system(void) {
-	for (int j = 0; j < MAX_events; j++) {
+	for (int i = 0; i < MAX_events; i++) {
 		//denotes free slot
-		event_list[j].id = 0;
+		event_list[i].id = 0;
 	}
 }
 
@@ -43,8 +43,8 @@ void Init_event_system(void) {
 uint32 CountEvents(void) {
 	uint32 count = 0;
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id)
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id)
 			count++;
 	}
 
@@ -52,65 +52,61 @@ uint32 CountEvents(void) {
 }
 #endif
 
-int32 FN_request_speech(int32 *params) {
+int32 Logic::fnRequestSpeech(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
 	// directive
 
 	// params:	0 id of target to catch the event and startup speech
 	//		  servicing
 
-	uint32	j = 0;
+	int i;
 
-	while(1) {
-		if (event_list[j].id == (uint32) params[0])
+	for (i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == (uint32) params[0])
 			break;
 
-		if (!event_list[j].id)
+		if (!event_list[i].id)
 			break;
-
-		j++;
 	}
 
-	if (j == MAX_events)
-		Con_fatal_error("FN_set_event out of event slots");
+	if (i == MAX_events)
+		Con_fatal_error("fnSetEvent out of event slots");
 
 	// found that slot
 
 	// id of person to stop
-	event_list[j].id = params[0];
+	event_list[i].id = params[0];
 
 	// full script id to interact with - megas run their own 7th script
-	event_list[j].interact_id = (params[0] * 65536) + 6;
+	event_list[i].interact_id = (params[0] * 65536) + 6;
 
 	return IR_CONT;
 }
 
 void Set_player_action_event(uint32 id, uint32 interact_id) {
-	uint32 j = 0;
+	int i;
 
-	while (1) {
-		if (event_list[j].id == id)
+	for (i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == id)
 			break;
 
-		if (!event_list[j].id)
+		if (!event_list[i].id)
 			break;
-
-		j++;
 	}
 
-	if (j == MAX_events)
+	if (i == MAX_events)
 		Con_fatal_error("Set_event out of event slots");
 
 	// found that slot
 
 	// id of person to stop
-	event_list[j].id = id;
+	event_list[i].id = id;
 
 	// full script id of action script number 2
-	event_list[j].interact_id = (interact_id * 65536) + 2;
+	event_list[i].interact_id = (interact_id * 65536) + 2;
 }
 
-int32 FN_set_player_action_event(int32 *params) {
+int32 Logic::fnSetPlayerActionEvent(int32 *params) {
 	// we want to intercept the player character and have him interact
 	// with an object - from script this code is the same as the mouse
 	// engine calls when you click on an object - here, a third party
@@ -120,80 +116,74 @@ int32 FN_set_player_action_event(int32 *params) {
 
 	// params:	0 id to interact with
 
-	uint32	j = 0;
-
 	// search for an existing event or a slot
 
-	while(1) {
-		if (event_list[j].id == CUR_PLAYER_ID)
+	int i;
+
+	for (i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == CUR_PLAYER_ID)
 			break;
 
-		if (!event_list[j].id)
+		if (!event_list[i].id)
 			break;
-
-		j++;
 	}
 
-	if (j == MAX_events)
+	if (i == MAX_events)
 		Con_fatal_error("Set_event out of event slots");
 
 	// found that slot
 
 	// id of person to stop
-	event_list[j].id = CUR_PLAYER_ID;
+	event_list[i].id = CUR_PLAYER_ID;
 
 	// full script id of action script number 2
-	event_list[j].interact_id = (params[0] * 65536) + 2;
+	event_list[i].interact_id = (params[0] * 65536) + 2;
 
 	return IR_CONT;
 }
 
-int32 FN_send_event(int32 *params) {
+int32 Logic::fnSendEvent(int32 *params) {
 	// we want to intercept the player character and have him interact
 	// with an object - from script
 
 	// params:	0 id to recieve event
 	//		1 script to run
 
-	uint32 j = 0;
-
-	debug(5, "FN_send_event(%d, %d)", params[0], params[1]);
-
 	// search for an existing event or a slot
 
-	while(1) {
-		if (event_list[j].id == (uint32) params[0])
+	int i;
+
+	for (i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == (uint32) params[0])
 			break;
 
-		if (!event_list[j].id)
+		if (!event_list[i].id)
 			break;
-
-		j++;
 	}
 
-	if (j == MAX_events)
-		Con_fatal_error("fn_send_event out of event slots");
+	if (i == MAX_events)
+		Con_fatal_error("fnSendEvent out of event slots");
 
 	// found that slot
 
 	// id of person to stop
-	event_list[j].id = params[0];
+	event_list[i].id = params[0];
 
 	//full script id
-	event_list[j].interact_id = params[1];
+	event_list[i].interact_id = params[1];
 
 	return IR_CONT;
 }
 
-int32 FN_check_event_waiting(int32 *params) {
+int32 Logic::fnCheckEventWaiting(int32 *params) {
 	// returns yes/no in RESULT
 
-	// no params
+	// params:	none
 
 	RESULT = 0;
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID) {
 			RESULT = 1;
 			break;
 		}
@@ -202,19 +192,19 @@ int32 FN_check_event_waiting(int32 *params) {
 	return IR_CONT;
 }
 
-// like FN_check_event_waiting, but starts the event rather than setting
-// RESULT to 1
+// like fnCheckEventWaiting, but starts the event rather than setting RESULT
+// to 1
 
-int32 FN_check_for_event(int32 *params)	{
-	// no params
+int32 Logic::fnCheckForEvent(int32 *params) {
+	// params:	none
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID) {
 			// start the event
 			// run 3rd script of target object on level 1
-			LLogic.logicOne(event_list[j].interact_id);
+			logicOne(event_list[i].interact_id);
 			// clear the event slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 			return IR_TERMINATE;
 		}
 	}
@@ -222,36 +212,35 @@ int32 FN_check_for_event(int32 *params)	{
 	return IR_CONT;
 }
 
-// combination of FN_pause & FN_check_for_event
+// combination of fnPause and fnCheckForEvent
 // - ie. does a pause, but also checks for event each cycle
 
-int32 FN_pause_for_event(int32 *params) {
+int32 Logic::fnPauseForEvent(int32 *params) {
 	// returns yes/no in RESULT
 
-	// params
-	//     0 pointer to object's logic structure
-	//     1 number of game-cycles to pause
+	// params:	0 pointer to object's logic structure
+	//		1 number of game-cycles to pause
 
 	Object_logic *ob_logic = (Object_logic *)params[0];
 
 	// first, check for an event
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID) {
 			// reset the 'looping' flag
 			ob_logic->looping = 0;
 
 			// start the event
 			// run 3rd script of target object on level 1
-			LLogic.logicOne(event_list[j].interact_id);
+			logicOne(event_list[i].interact_id);
 
 			// clear the event slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 			return IR_TERMINATE;
 		}
 	}
 
-	// no event, so do the FN_pause bit
+	// no event, so do the fnPause bit
 
 	// start the pause
 	if (ob_logic->looping == 0) {
@@ -277,22 +266,21 @@ int32 FN_pause_for_event(int32 *params) {
 }
 
 bool Check_event_waiting(void) {
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID)
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID)
 			return true;
 	}
 
 	return false;
 }
 
-int32 FN_clear_event(int32 *params) {
-//	no params
-//	no return vaule
+int32 Logic::fnClearEvent(int32 *params) {
+	// params:	none
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID) {
 			//clear the slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 			return IR_CONT;
 		}
 	}
@@ -301,16 +289,16 @@ int32 FN_clear_event(int32 *params) {
 }
 
 void Start_event(void) {
-	// call this from stuff like fn_walk
+	// call this from stuff like fnWalk
 	// you must follow with a return IR_TERMINATE
 
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == ID) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == ID) {
 			// run 3rd script of target object on level 1
-			LLogic.logicOne(event_list[j].interact_id);
+			g_logic.logicOne(event_list[i].interact_id);
 
 			//clear the slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 			return;
 		}
 	}
@@ -319,27 +307,29 @@ void Start_event(void) {
 	Con_fatal_error("Start_event can't find event for id %d", ID);
 }
 
-int32 FN_start_event(int32 *params) {
-	for (int j = 0; j < MAX_events; j++)
-		if (event_list[j].id == ID) {
+int32 Logic::fnStartEvent(int32 *params) {
+	// params:	none
+
+	for (int i = 0; i < MAX_events; i++)
+		if (event_list[i].id == ID) {
 			// run 3rd script of target object on level 1
-			LLogic.logicOne(event_list[j].interact_id);
+			logicOne(event_list[i].interact_id);
 
 			// clear the slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 			return IR_TERMINATE;
 		}
 
 	// oh dear - stop the system
-	Con_fatal_error("FN_start_event can't find event for id %d", ID);
+	Con_fatal_error("fnStartEvent can't find event for id %d", ID);
 	return 0;	// never called - but lets stop them bloody errors
 }
 
 void Kill_all_ids_events(uint32 id) {
-	for (int j = 0; j < MAX_events; j++) {
-		if (event_list[j].id == id) {
+	for (int i = 0; i < MAX_events; i++) {
+		if (event_list[i].id == id) {
 			// clear the slot
-			event_list[j].id = 0;
+			event_list[i].id = 0;
 		}
 	}
 }

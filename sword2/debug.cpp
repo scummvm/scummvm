@@ -60,7 +60,7 @@ uint8 rectFlicker = 0;
 
 uint8 testingSnR = 0;			// "SAVEREST" - for system to kill all
 					// object resources (except player) in
-					// FN_add_human()
+					// fnAddHuman()
 
 int32 startTime = 0;			// "TIMEON" & "TIMEOFF" - system start
 					// time.
@@ -153,7 +153,7 @@ void Build_debug_text(void) {
 
 	// testingSnR indicator
 
-	if (testingSnR) {		// see FN_add_human()
+	if (testingSnR) {		// see fnAddHuman()
 		sprintf (buf, "TESTING LOGIC STABILITY!");
 		Make_debug_text_block (buf, 0, 105);
 	}
@@ -313,8 +313,8 @@ void Build_debug_text(void) {
 		Make_debug_text_block (largest_layer_info, 0, 60);
 		Make_debug_text_block (largest_sprite_info, 0, 75);
 
-		// "waiting for person" indicator - set form FN_they_do &
-		// FN_they_do_we_wait
+		// "waiting for person" indicator - set form fnTheyDo and
+		// fnTheyDoWeWait
 
 		if (speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",

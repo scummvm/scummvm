@@ -29,8 +29,158 @@ namespace Sword2 {
 
 #define	TREE_SIZE 3
 
-class logic {
+class Logic {
+private:
+	void setupOpcodes(void);
+
+	// FIXME: Some opcodes pass pointers in integer variables. I don't
+	// think that's entirely portable.
+
+	typedef int32 (Logic::*OpcodeProc)(int32 *);
+	struct OpcodeEntry {
+		byte numArgs;
+		OpcodeProc proc;
+		const char *desc;
+	};
+
+	const OpcodeEntry *_opcodes;
+
+	// denotes the res id of the game-object-list in current use
+	uint32 _currentRunList;
+
+	void processKillList(void);
+
+	//pc during logic loop
+	uint32 _pc;
+
+	// each object has one of these tacked onto the beginning
+	_object_hub *_curObjectHub;
+
 public:
+	Logic() {
+		setupOpcodes();
+	}
+
+	int32 executeOpcode(int op, int32 *params);
+
+	int32 fnTestFunction(int32 *params);
+	int32 fnTestFlags(int32 *params);
+	int32 fnRegisterStartPoint(int32 *params);
+	int32 fnInitBackground(int32 *params);
+	int32 fnSetSession(int32 *params);
+	int32 fnBackSprite(int32 *params);	
+	int32 fnSortSprite(int32 *params);	
+	int32 fnForeSprite(int32 *params);	
+	int32 fnRegisterMouse(int32 *params);	
+	int32 fnAnim(int32 *params);
+	int32 fnRandom(int32 *params);
+	int32 fnPreLoad(int32 *params);
+	int32 fnAddSubject(int32 *params);
+	int32 fnInteract(int32 *params);
+	int32 fnChoose(int32 *params);
+	int32 fnWalk(int32 *params);
+	int32 fnWalkToAnim(int32 *params);
+	int32 fnTurn(int32 *params);
+	int32 fnStandAt(int32 *params);
+	int32 fnStand(int32 *params);
+	int32 fnStandAfterAnim(int32 *params);
+	int32 fnPause(int32 *params);
+	int32 fnMegaTableAnim(int32 *params);
+	int32 fnAddMenuObject(int32 *params);
+	int32 fnStartConversation(int32 *params);
+	int32 fnEndConversation(int32 *params);
+	int32 fnSetFrame(int32 *params);
+	int32 fnRandomPause(int32 *params);
+	int32 fnRegisterFrame(int32 *params);
+	int32 fnNoSprite(int32 *params);
+	int32 fnSendSync(int32 *params);
+	int32 fnUpdatePlayerStats(int32 *params);
+	int32 fnPassGraph(int32 *params);
+	int32 fnInitFloorMouse(int32 *params);
+	int32 fnPassMega(int32 *params);
+	int32 fnFaceXY(int32 *params);
+	int32 fnEndSession(int32 *params);
+	int32 fnNoHuman(int32 *params);
+	int32 fnAddHuman(int32 *params);
+	int32 fnWeWait(int32 *params);
+	int32 fnTheyDoWeWait(int32 *params);
+	int32 fnTheyDo(int32 *params);
+	int32 fnWalkToTalkToMega(int32 *params);
+	int32 fnFadeDown(int32 *params);
+	int32 fnISpeak(int32 *params);
+	int32 fnTotalRestart(int32 *params);
+	int32 fnSetWalkGrid(int32 *params);
+	int32 fnSpeechProcess(int32 *params);
+	int32 fnSetScaling(int32 *params);
+	int32 fnStartEvent(int32 *params);
+	int32 fnCheckEventWaiting(int32 *params);
+	int32 fnRequestSpeech(int32 *params);
+	int32 fnGosub(int32 *params);
+	int32 fnTimedWait(int32 *params);
+	int32 fnPlayFx(int32 *params);
+	int32 fnStopFx(int32 *params);
+	int32 fnPlayMusic(int32 *params);
+	int32 fnStopMusic(int32 *params);
+	int32 fnSetValue(int32 *params);
+	int32 fnNewScript(int32 *params);
+	int32 fnGetSync(int32 *params);
+	int32 fnWaitSync(int32 *params);
+	int32 fnRegisterWalkGrid(int32 *params);
+	int32 fnReverseMegaTableAnim(int32 *params);
+	int32 fnReverseAnim(int32 *params);
+	int32 fnAddToKillList(int32 *params);
+	int32 fnSetStandbyCoords(int32 *params);
+	int32 fnBackPar0Sprite(int32 *params);
+	int32 fnBackPar1Sprite(int32 *params);
+	int32 fnForePar0Sprite(int32 *params);
+	int32 fnForePar1Sprite(int32 *params);
+	int32 fnSetPlayerActionEvent(int32 *params);
+	int32 fnSetScrollCoordinate(int32 *params);
+	int32 fnStandAtAnim(int32 *params);
+	int32 fnSetScrollLeftMouse(int32 *params);
+	int32 fnSetScrollRightMouse(int32 *params);
+	int32 fnColour(int32 *params);
+	int32 fnFlash(int32 *params);
+	int32 fnPreFetch(int32 *params);
+	int32 fnGetPlayerSaveData(int32 *params);
+	int32 fnPassPlayerSaveData(int32 *params);
+	int32 fnSendEvent(int32 *params);
+	int32 fnAddWalkGrid(int32 *params);
+	int32 fnRemoveWalkGrid(int32 *params);
+	int32 fnCheckForEvent(int32 *params);
+	int32 fnPauseForEvent(int32 *params);
+	int32 fnClearEvent(int32 *params);
+	int32 fnFaceMega(int32 *params);
+	int32 fnPlaySequence(int32 *params);
+	int32 fnShadedSprite(int32 *params);
+	int32 fnUnshadedSprite(int32 *params);
+	int32 fnFadeUp(int32 *params);
+	int32 fnDisplayMsg(int32 *params);
+	int32 fnSetObjectHeld(int32 *params);
+	int32 fnAddSequenceText(int32 *params);
+	int32 fnResetGlobals(int32 *params);
+	int32 fnSetPalette(int32 *params);
+	int32 fnRegisterPointerText(int32 *params);
+	int32 fnFetchWait(int32 *params);
+	int32 fnRelease(int32 *params);
+	int32 fnPrepareMusic(int32 *params);
+	int32 fnSoundFetch(int32 *params);
+	int32 fnSmackerLeadIn(int32 *params);
+	int32 fnSmackerLeadOut(int32 *params);
+	int32 fnStopAllFx(int32 *params);
+	int32 fnCheckPlayerActivity(int32 *params);
+	int32 fnResetPlayerActivityDelay(int32 *params);
+	int32 fnCheckMusicPlaying(int32 *params);
+	int32 fnPlayCredits(int32 *params);
+	int32 fnSetScrollSpeedNormal(int32 *params);
+	int32 fnSetScrollSpeedSlow(int32 *params);
+	int32 fnRemoveChooser(int32 *params);
+	int32 fnSetFxVolAndPan(int32 *params);
+	int32 fnSetFxVol(int32 *params);
+	int32 fnRestoreGame(int32 *params);
+	int32 fnRefreshInventory(int32 *params);
+	int32 fnChangeShadows(int32 *params);
+
 	//do one cycle of the current session
 	int processSession(void);
 
@@ -42,8 +192,7 @@ public:
 
 	uint32 getRunList(void);
 
-	// setup script_id and script_pc in _curObjectHub - called by
-	// FN_gosub()
+	// setup script_id and script_pc in _curObjectHub - called by fnGosub()
 	void logicUp(uint32 new_script);
 
 	void logicReplace(uint32 new_script);
@@ -51,23 +200,9 @@ public:
 	void totalRestart(void);
 	uint32 examineRunList(void);
 	void resetKillList(void);
-
-private:
-	// denotes the res id of the game-object-list in current use
-	uint32 _currentRunList;
-
-	void processKillList(void);
-
-	//pc during logic loop
-	uint32 _pc;
-
-	// each object has one of these tacked onto the beginning
-	_object_hub *_curObjectHub;
 };
 
-extern logic LLogic;
-
-int32 FN_add_to_kill_list(int32 *params);
+extern Logic g_logic;
 
 } // End of namespace Sword2
 

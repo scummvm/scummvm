@@ -76,13 +76,13 @@
 #define SYSTEM_TESTING_TEXT		VAR(1230)
 #define SYSTEM_WANT_PREVIOUS_LINE	VAR(1245)
 
-// 1=on 0=off (set in FN_add_human & FN_no_human)
+// 1=on 0=off (set in fnAddHuman and fnNoHuman)
 #define MOUSE_AVAILABLE			VAR(686)
 
-// used in FN_choose
+// used in fnChoose
 #define AUTO_SELECTED			VAR(1115)
 
-// see FN_start_conversation & FN_chooser
+// see fnStartConversation and fnChooser
 #define CHOOSER_COUNT_FLAG		VAR(15)
 
 // signifies a demo mode
@@ -138,7 +138,7 @@
 #define RESTORE_ICON			364
 #define RESTART_ICON			342
 
-// res id of conversation exit icon, 'EXIT' menu icon (used in FN_choose)
+// res id of conversation exit icon, 'EXIT' menu icon (used in fnChoose)
 #define EXIT_ICON			65
 
 #endif

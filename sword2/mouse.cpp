@@ -26,6 +26,7 @@
 #include "bs2/events.h"
 #include "bs2/icons.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 #include "bs2/layers.h"
 #include "bs2/maketext.h"
 #include "bs2/mouse.h"
@@ -227,7 +228,7 @@ void System_menu_mouse(void) {
 
 				pars[0] = 221;	// SystemM234 (M234.wav)
 				pars[1] = FX_LOOP;
-				FN_play_music(pars);
+				g_logic.fnPlayMusic(pars);
 
 				// restore proper looping_music_id
 				looping_music_id = safe_looping_music_id;
@@ -300,7 +301,7 @@ void System_menu_mouse(void) {
 				if (looping_music_id) {
 					pars[0] = looping_music_id;
 					pars[1] = FX_LOOP;
-					FN_play_music(pars);
+					g_logic.fnPlayMusic(pars);
 
 					// cross-fades into the required music:
 					// - either a restored game tune
@@ -308,7 +309,7 @@ void System_menu_mouse(void) {
 					// entering control panels
 				} else {
 					// stop the control panel music
-					FN_stop_music(NULL);
+					g_logic.fnStopMusic(NULL);
 				}
 			}
 		}
@@ -651,8 +652,8 @@ void Normal_mouse(void) {
 			// let the existing interaction continue and start
 			// fading down - switch the human off too
 
-			FN_no_human(NULL);
-			FN_fade_down(NULL);
+			g_logic.fnNoHuman(NULL);
+			g_logic.fnFadeDown(NULL);
 			EXIT_FADING = 1;	// tell the walker
 		} else if (old_button == button_click && mouse_touching == CLICKED_ID && mouse_pointer_res != NORMAL_MOUSE_ID) {
 			// re-click - do nothing - except on floors
@@ -1036,8 +1037,8 @@ void ClearPointerText(void) {
 	}
 }
 
-int32 FN_no_human(int32 *params) {
-	// param	none
+int32 Logic::fnNoHuman(int32 *params) {
+	// params:	none
 
 	// for logic scripts
 	MOUSE_AVAILABLE = 0;
@@ -1082,13 +1083,13 @@ void No_human(void) {
 	Set_luggage(0);
 }
 
-int32 FN_add_human(int32 *params) {
-	// param	none
+int32 Logic::fnAddHuman(int32 *params) {
+	// params:	none
 
 	// for logic scripts
 	MOUSE_AVAILABLE = 1;
 
-	//off
+	// off
 	if (mouse_status) {
 		mouse_status = 0;	// on
 		mouse_touching = 1;	// forces engine to choose a cursor
@@ -1138,7 +1139,7 @@ int32 FN_add_human(int32 *params) {
 		// testing logic scripts by simulating an instant Save &
 		// Restore
 
-		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
 
 		// stops all fx & clears the queue - eg. when leaving a
 		// location
@@ -1150,20 +1151,20 @@ int32 FN_add_human(int32 *params) {
 
 		res_man.killAllObjects(0);
 
-		BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
 	}
 #endif
 
 	return IR_CONT;
 }
 
-int32 FN_register_mouse(int32 *params) {
+int32 Logic::fnRegisterMouse(int32 *params) {
 	// this call would be made from an objects service script 0
 	// the object would be one with no graphic but with a mouse - i.e. a
 	// floor or one whose mouse area is manually defined rather than
 	// intended to fit sprite shape
 
-	// param	0 pointer to Object_mouse or 0 for no write to mouse
+	// params:	0 pointer to Object_mouse or 0 for no write to mouse
 	//		  list
 
 	debug(5, "cur_mouse = %d", cur_mouse);
@@ -1202,7 +1203,7 @@ int32 FN_register_mouse(int32 *params) {
 		mouse_list[cur_mouse].id = ID;
 
 		// not using sprite as mask - this is only done from
-		// FN_register_frame()
+		// fnRegisterFrame()
 
 		mouse_list[cur_mouse].anim_resource = 0;
 		mouse_list[cur_mouse].anim_pc = 0;
@@ -1215,11 +1216,11 @@ int32 FN_register_mouse(int32 *params) {
 }
 
 // use this in the object's service script prior to registering the mouse area
-// ie. before FN_register_mouse or FN_register_frame
+// ie. before fnRegisterMouse or fnRegisterFrame
 // - best if kept at very top of service script
 
-int32 FN_register_pointer_text(int32 *params) {
-	// param	0 local id of text line to use as pointer text
+int32 Logic::fnRegisterPointerText(int32 *params) {
+	// params:	0 local id of text line to use as pointer text
 
 #ifdef _SWORD2_DEBUG
 	if (cur_mouse == TOTAL_mouse_list)
@@ -1227,7 +1228,7 @@ int32 FN_register_pointer_text(int32 *params) {
 #endif
 
 	// current object id - used for checking pointer_text when mouse area
-	// registered (in FN_register_mouse & FN_register_frame)
+	// registered (in fnRegisterMouse and fnRegisterFrame)
 
 	mouse_list[cur_mouse].id = ID;
 	mouse_list[cur_mouse].pointer_text = params[0];
@@ -1235,16 +1236,8 @@ int32 FN_register_pointer_text(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_blank_mouse(int32 *params) {
-	//set mouse to normal pointer - used in speech
-	//no params
-
-	Set_mouse(0);
-	return IR_CONT;
-}
-
-int32 FN_init_floor_mouse(int32 *params) {
-	// params	0 pointer to object's mouse structure
+int32 Logic::fnInitFloorMouse(int32 *params) {
+	// params:	0 pointer to object's mouse structure
 
  	Object_mouse *ob_mouse = (Object_mouse *) params[0];
 
@@ -1262,8 +1255,8 @@ int32 FN_init_floor_mouse(int32 *params) {
 
 #define SCROLL_MOUSE_WIDTH 20
 
-int32 FN_set_scroll_left_mouse(int32 *params) {
-	// params	0 pointer to object's mouse structure
+int32 Logic::fnSetScrollLeftMouse(int32 *params) {
+	// params:	0 pointer to object's mouse structure
 
  	Object_mouse	*ob_mouse = (Object_mouse *) params[0];
 
@@ -1286,8 +1279,8 @@ int32 FN_set_scroll_left_mouse(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_right_mouse(int32 *params) {
-	// params	0 pointer to object's mouse structure
+int32 Logic::fnSetScrollRightMouse(int32 *params) {
+	// params:	0 pointer to object's mouse structure
 
  	Object_mouse	*ob_mouse = (Object_mouse *) params[0];
 
@@ -1310,8 +1303,8 @@ int32 FN_set_scroll_right_mouse(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_set_object_held(int32 *params) {
-	// params	0 luggage icon to set
+int32 Logic::fnSetObjectHeld(int32 *params) {
+	// params:	0 luggage icon to set
 
 	Set_luggage(params[0]);
 
@@ -1327,33 +1320,18 @@ int32 FN_set_object_held(int32 *params) {
 // called from speech scripts to remove the chooser bar when it's not
 // appropriate to keep it displayed
 
-int32 FN_remove_chooser(int32 *params) {
+int32 Logic::fnRemoveChooser(int32 *params) {
+	// params:	none
+
 	g_display->hideMenu(RDMENU_BOTTOM);
 	return IR_CONT;
 }
 
-int32 FN_disable_menu(int32 *params) {
-	// mode locked - no menu available
-	mouse_mode_locked = 1;
-	mouse_mode = MOUSE_normal;
-
-	g_display->hideMenu(RDMENU_TOP);
-	g_display->hideMenu(RDMENU_BOTTOM);
-
-	return IR_CONT;
-}
-
-int32 FN_enable_menu(int32 *params) {
-	// mode unlocked - menu available
-	mouse_mode_locked = 0;
-	return IR_CONT;
-}
-
-int32 FN_check_player_activity(int32 *params) {
+int32 Logic::fnCheckPlayerActivity(int32 *params) {
 	// Used to decide when to trigger music cues described as "no player
 	// activity for a while"
 
-	// params	0 threshold delay in seconds, ie. what we want to
+	// params:	0 threshold delay in seconds, ie. what we want to
 	//		  check the actual delay against
 
 	uint32 threshold = params[0] * 12;	// in game cycles
@@ -1371,10 +1349,11 @@ int32 FN_check_player_activity(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_reset_player_activity_delay(int32 *params) {
+int32 Logic::fnResetPlayerActivityDelay(int32 *params) {
 	// Use if you want to deliberately reset the "no player activity"
 	// counter for any reason
-	// no params
+
+	// params:	none
 
 	player_activity_delay = 0;
 	return IR_CONT;

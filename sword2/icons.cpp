@@ -23,6 +23,7 @@
 #include "bs2/defs.h"
 #include "bs2/icons.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 #include "bs2/mouse.h"
 
 namespace Sword2 {
@@ -34,10 +35,8 @@ uint32 total_temp = 0;
 menu_object master_menu_list[TOTAL_engine_pockets];
 uint32 total_masters=0;
 
-int32 FN_add_menu_object(int32 *params) {
-	// param	0 pointer to a menu_object structure to copy down
-
-	debug(5, "FN_add_menu_object icon res");
+int32 Logic::fnAddMenuObject(int32 *params) {
+	// params:	0 pointer to a menu_object structure to copy down
 
 #ifdef _SWORD2_DEBUG
 	if (total_temp == TOTAL_engine_pockets)
@@ -52,11 +51,13 @@ int32 FN_add_menu_object(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_refresh_inventory(int32 *params) {
+int32 Logic::fnRefreshInventory(int32 *params) {
 	// called from 'menu_look_or_combine' script in 'menu_master' object
 	// to update the menu to display a combined object while George runs
 	// voice-over. Note that 'object_held' must be set to the graphic of
 	// the combined object
+
+	// params:	none
 
 	// can reset this now
 	COMBINE_BASE = 0;

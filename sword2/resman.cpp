@@ -27,6 +27,7 @@
 #include "bs2/function.h"
 #include "bs2/header.h"
 #include "bs2/interpreter.h"
+#include "bs2/logic.h"
 #include "bs2/maketext.h"
 #include "bs2/memory.h"
 #include "bs2/mouse.h"	// for system Set_mouse & Set_luggage routines
@@ -1067,7 +1068,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	// down - but if we restored to a different CD the music is stopped
 	// in getCd() when it asks for the CD
 
-	FN_stop_music(NULL);
+	g_logic.fnStopMusic(NULL);
 
 	Clear_fx_queue();	// stops all fx & clears the queue (James22july97)
 	getCd(_cdTab[newCluster] & 3);
@@ -1370,7 +1371,7 @@ void ResourceManager::getCd(int cd) {
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
 
-	FN_stop_music(NULL);
+	g_logic.fnStopMusic(NULL);
 
 	textRes = res_man.open(2283);
 	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);

@@ -248,20 +248,20 @@ int32 GameCycle(void) {
 	// do one game cycle
 
 	//got a screen to run?
-	if (LLogic.getRunList()) {
+	if (g_logic.getRunList()) {
 		//run the logic session UNTIL a full loop has been performed
 		do {
 			// reset the graphic 'buildit' list before a new
-			// logic list (see FN_register_frame)
+			// logic list (see fnRegisterFrame)
 			Reset_render_lists();
 
-			// reset the mouse hot-spot list (see FN_register_mouse
-			// & FN_register_frame)
+			// reset the mouse hot-spot list (see fnRegisterMouse
+			// and fnRegisterFrame)
 			Reset_mouse_list();
 
 			// keep going as long as new lists keep getting put in
 			// - i.e. screen changes
-		} while (LLogic.processSession());
+		} while (g_logic.processSession());
 	} else {
 		// start the console and print the start options perhaps?
 		StartConsole();
@@ -386,7 +386,7 @@ void Sword2Engine::go() {
 					// 'P' while not paused = pause!
 					PauseGame();
 				} else if (c == 'C' && _gameId == GID_SWORD2) {
-					FN_play_credits(NULL);
+					g_logic.fnPlayCredits(NULL);
 				}
 #ifdef _SWORD2_DEBUG
 				else if (c == 'S') {

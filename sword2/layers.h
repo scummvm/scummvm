@@ -25,7 +25,7 @@ namespace Sword2 {
 typedef	struct {
 	uint16 scroll_offset_x;		// Position x
 	uint16 scroll_offset_y;		// Position y
-	uint16 max_scroll_offset_x;	// Calc'ed in FN_init_background
+	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
 	uint16 max_scroll_offset_y;
 	int16 player_feet_x;		// Feet coordinates to use - cant just
 	int16 player_feet_y;		// fetch the player compact anymore
@@ -48,9 +48,7 @@ typedef	struct {
 
 extern screen_info this_screen;
 
-int32 FN_init_background(int32 *params);
-
-// called from control panel (as well as inside FN_init_background)
+// called from control panel (as well as inside fnInitBackground)
 
 void SetUpBackgroundLayers(void);
 

@@ -22,13 +22,6 @@
 
 namespace Sword2 {
 
-int32 FN_face_mega(int32 *params);
-int32 FN_turn(int32 *params);
-int32 FN_walk(int32 *params);
-int32 FN_walk_to_anim(int32 *params);
-int32 FN_stand_after_anim(int32 *params);
-int32 FN_stand(int32 *params);
-
 } // End of namespace Sword2
 
 #endif

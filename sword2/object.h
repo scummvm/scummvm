@@ -42,9 +42,9 @@ typedef	struct {
 // logic structure - contains fields used in logic script processing
 
 typedef	struct {
-	int32 looping;			// 0 when first calling FN_<function>;
+	int32 looping;			// 0 when first calling fn<function>;
 					// 1 when calling subsequent times in same loop
-	int32 pause;			// pause count, used by FN_pause()
+	int32 pause;			// pause count, used by fnPause()
 } Object_logic;
 
 // status bits for 'type' field of Object_graphic)
@@ -102,7 +102,7 @@ typedef	struct {
 	int32 feet_x;			// mega feet coords - frame-offsets are added to these position mega frames
 	int32 feet_y;
 	int32 current_dir;		// current dirction faced by mega; used by autorouter to determine turns required
-	int32 NOT_USED_5;		// means were currently avoiding a collision (see FN_walk)
+	int32 NOT_USED_5;		// means were currently avoiding a collision (see fnWalk)
 	int32 megaset_res;		// resource id of mega-set file
 	int32 NOT_USED_6;		// NOT USED
 } Object_mega;

@@ -89,8 +89,6 @@ extern buildit sort_list[];
 
 void Reset_render_lists(void);
 void Build_display(void);
-int32 FN_fade_down(int32 *params);
-int32 FN_fade_up(int32 *params);
 void Process_image(buildit *build_unit);
 void DisplayMsg( uint8 *text, int time );
 void RemoveMsg(void);

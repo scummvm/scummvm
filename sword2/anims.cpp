@@ -33,7 +33,8 @@
 #include "bs2/defs.h"
 #include "bs2/header.h"
 #include "bs2/interpreter.h"
-#include "bs2/maketext.h"		// for makeTextSprite used by FN_play_sequence ultimately
+#include "bs2/logic.h"
+#include "bs2/maketext.h"		// for makeTextSprite used by fnPlaySequence ultimately
 #include "bs2/object.h"
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
@@ -49,7 +50,7 @@ static uint32 smackerLeadOut = 0;
 int32 Animate(int32 *params, uint8 reverse_flag);
 int32 Mega_table_animate(int32 *params, uint8 reverse_flag);
 
-int32 FN_anim(int32 *params) {
+int32 Logic::fnAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
@@ -58,7 +59,7 @@ int32 FN_anim(int32 *params) {
 	return Animate(params, 0);
 }
 
-int32 FN_reverse_anim(int32 *params) {
+int32 Logic::fnReverseAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
@@ -67,7 +68,7 @@ int32 FN_reverse_anim(int32 *params) {
 	return Animate(params, 1);
 }
 
-int32 FN_mega_table_anim(int32 *params) {
+int32 Logic::fnMegaTableAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -77,7 +78,7 @@ int32 FN_mega_table_anim(int32 *params) {
 	return Mega_table_animate(params, 0);
 }
 
-int32 FN_reverse_mega_table_anim(int32 *params) {
+int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -133,19 +134,19 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 					// switch off the sprite
 					// don't animate - just continue
 					// script next cycle
-					FN_no_sprite(params + 1);
+					fnNoSprite(params + 1);
 					return IR_STOP;
 				}
 			} else {
 				// Not a valid resource number. Switch off
 				// the sprite. Don't animate - just continue
 				// script next cycle.
-				FN_no_sprite(params + 1);
+				fnNoSprite(params + 1);
 				return IR_STOP;
 			}
 
 			// switch on the sprite
-			FN_sort_sprite(params + 1);
+			fnSortSprite(params + 1);
 		}
 #endif
 
@@ -245,7 +246,7 @@ int32 Mega_table_animate(int32 *params, uint8 reverse_flag) {
 		pars[2] = anim_table[ob_mega->current_dir];
 	}
 
-	// set up the rest of the parameters for FN_anim()
+	// set up the rest of the parameters for fnAnim()
 
 	pars[0] = params[0];
 	pars[1] = params[1];
@@ -256,7 +257,7 @@ int32 Mega_table_animate(int32 *params, uint8 reverse_flag) {
 	return Animate(pars, reverse_flag);
 }
 
-int32 FN_set_frame(int32 *params) {
+int32 Logic::fnSetFrame(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 resource id of animation file
 	//		2 frame flag (0=first 1=last)
@@ -274,7 +275,7 @@ int32 FN_set_frame(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res == 0)
-		Con_fatal_error("FN_set_frame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+		Con_fatal_error("fnSetFrame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 	// open the resource (& check it's valid)
@@ -285,7 +286,7 @@ int32 FN_set_frame(int32 *params) {
 	// check this this resource is actually an animation file!
 	head = (_standardHeader *) anim_file;
 	if (head->fileType != ANIMATION_FILE)
-		Con_fatal_error("FN_set_frame: %s (%d) is not an anim!", FetchObjectName(res), res);
+		Con_fatal_error("fnSetFrame: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 	// set up pointer to the animation header
@@ -294,7 +295,7 @@ int32 FN_set_frame(int32 *params) {
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
 	if (anim_head->noAnimFrames == 0)
-		Con_fatal_error("FN_set_frame: %s (%d) has zero frame count!", FetchObjectName(res), res);
+		Con_fatal_error("fnSetFrame: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 	// set up anim resource in graphic object
@@ -313,8 +314,8 @@ int32 FN_set_frame(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_no_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnNoSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -326,8 +327,8 @@ int32 FN_no_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_back_par0_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnBackPar0Sprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -339,8 +340,8 @@ int32 FN_back_par0_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_back_par1_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnBackPar1Sprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -352,8 +353,8 @@ int32 FN_back_par1_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_back_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnBackSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -365,8 +366,8 @@ int32 FN_back_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_sort_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnSortSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -378,8 +379,8 @@ int32 FN_sort_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_fore_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnForeSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -391,8 +392,8 @@ int32 FN_fore_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_fore_par0_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnForePar0Sprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
  	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -404,8 +405,8 @@ int32 FN_fore_par0_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_fore_par1_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnForePar1Sprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -417,8 +418,8 @@ int32 FN_fore_par1_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_shaded_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnShadedSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -433,8 +434,8 @@ int32 FN_shaded_sprite(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_unshaded_sprite(int32 *params) {
-	// params	0 pointer to object's graphic structure
+int32 Logic::fnUnshadedSprite(int32 *params) {
+	// params:	0 pointer to object's graphic structure
 
 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
 
@@ -479,14 +480,14 @@ static uint32 sequenceTextLines = 0;
 
 static _sequenceTextInfo sequence_text_list[MAX_SEQUENCE_TEXT_LINES];
 
-int32 FN_add_sequence_text(int32 *params) {
-//	params	0	text number
-//		1	frame number to start the text displaying
-//		2	frame number to stop the text dispalying
+int32 Logic::fnAddSequenceText(int32 *params) {
+// params:	0 text number
+//		1 frame number to start the text displaying
+//		2 frame number to stop the text dispalying
 
 #ifdef _SWORD2_DEBUG
 	if (sequenceTextLines == MAX_SEQUENCE_TEXT_LINES)
-		Con_fatal_error("FN_add_sequence_text ran out of lines");
+		Con_fatal_error("fnAddSequenceText ran out of lines");
 #endif
 
 	sequence_text_list[sequenceTextLines].textNumber = params[0];
@@ -648,19 +649,21 @@ void ClearSequenceSpeech(_movieTextObject *textSprites[]) {
 	sequenceTextLines = 0;
 }
 
-int32 FN_smacker_lead_in(int32 *params) {
+int32 Logic::fnSmackerLeadIn(int32 *params) {
 	uint8 *leadIn;
 	uint32 rv;
 #ifdef _SWORD2_DEBUG
 	_standardHeader *header;
 #endif
 
+	// params:	0 id of lead-in music
+
 	leadIn = res_man.open(params[0]);
 
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
 	if (header->fileType != WAV_FILE)
-		Con_fatal_error("FN_smacker_lead_in() given invalid resource");
+		Con_fatal_error("fnSmackerLeadIn() given invalid resource");
 #endif
 
 	leadIn += sizeof(_standardHeader);
@@ -673,22 +676,24 @@ int32 FN_smacker_lead_in(int32 *params) {
 	res_man.close(params[0]);
 
 	// fade out any music that is currently playing
-	FN_stop_music(NULL);
+	fnStopMusic(NULL);
 
 	// continue script
 	return IR_CONT;
 }
 
-int32 FN_smacker_lead_out(int32 *params) {
-	// ready for use in FN_play_sequence
+int32 Logic::fnSmackerLeadOut(int32 *params) {
+	// params:	0 id of lead-out music
+
+	// ready for use in fnPlaySequence
 	smackerLeadOut = params[0];
 
 	// continue script
 	return IR_CONT;
 }
 
-int32 FN_play_sequence(int32 *params) {
-	// params	0 pointer to null-terminated ascii filename
+int32 Logic::fnPlaySequence(int32 *params) {
+	// params:	0 pointer to null-terminated ascii filename
 	// 		1 number of frames in the sequence, used for PSX.
 
 	char filename[30];
@@ -705,7 +710,7 @@ int32 FN_play_sequence(int32 *params) {
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	debug(5, "FN_play_sequence(\"%s\");", params[0]);
+	debug(5, "fnPlaySequence(\"%s\");", params[0]);
 
 #ifdef _SWORD2_DEBUG
 	// check that the name paseed from script is 8 chars or less
@@ -733,7 +738,7 @@ int32 FN_play_sequence(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader *)leadOut;
 		if (header->fileType != WAV_FILE)
-			error("FN_smacker_lead_out() given invalid resource");
+			error("fnSmackerLeadOut() given invalid resource");
 #endif
 
 		leadOut += sizeof(_standardHeader);
@@ -742,7 +747,7 @@ int32 FN_play_sequence(int32 *params) {
 	// play the smacker
 
 	// don't want to carry on streaming game music when smacker starts!
-	FN_stop_music(NULL);
+	fnStopMusic(NULL);
 
 	// pause sfx during sequence, except the one used for lead-in music
 	g_sound->pauseFxForSequence();
@@ -785,7 +790,7 @@ int32 FN_play_sequence(int32 *params) {
 	memset(pal, 0, 256 * sizeof(_palEntry));
 	g_display->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
-	debug(5, "FN_play_sequence FINISHED");
+	debug(5, "fnPlaySequence FINISHED");
 
 	// continue script
 	return IR_CONT;
