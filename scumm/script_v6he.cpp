@@ -529,6 +529,11 @@ void ScummEngine_v6he::o6_roomOps() {
 		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
 		break;
+	case 234:
+		b = pop();
+		a = pop();
+		warning("o6_roomOps: case %d (%d, %d)", op, b, a);
+		break;
 	default:
 		error("o6_roomOps: default case %d", op);
 	}
@@ -760,6 +765,12 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 	case 4:
 	case 5:
 		//Used before mini games in 3DO versions, seems safe to ignore.
+		break;
+	case 20:
+		_skipDrawObject = 1;
+		break;
+	case 21:
+		_skipDrawObject = 0;
 		break;
 	default:
 		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);

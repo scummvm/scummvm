@@ -1032,6 +1032,7 @@ public:
 	byte _roomPalette[256];
 	byte *_shadowPalette;
 	int _heSndSoundFreq, _heSndOffset, _heSndTimer, _heSndSoundId, _heSndLoop;
+	bool _skipDrawObject;
 
 protected:
 	int _shadowPaletteSize;

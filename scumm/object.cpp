@@ -411,6 +411,9 @@ static const uint32 IMxx_tags[] = {
 };
 
 void ScummEngine::drawObject(int obj, int arg) {
+	if (_skipDrawObject)
+		return;
+
 	ObjectData &od = _objs[obj];
 	int xpos, ypos, height, width;
 	const byte *ptr;
