@@ -167,6 +167,8 @@ public:
 	uint32 fnUnPauseFx(uint32 a, uint32 b, uint32 c);
 	uint32 fnPrintf(uint32 a, uint32 b, uint32 c);
 
+	static uint16 SkyLogic::_screen;
+	
 protected:
 	void push(uint32);
 	uint32 pop();

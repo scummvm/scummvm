@@ -24,16 +24,19 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 #include "sky/text.h"
+#include "sky/logic.h"
 
 #define FIRST_TEXT_SEC	77
+#define	FIRST_TEXT_BUFFER	274
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
 #define MAX_SPEECH_SECTION	7 
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
+SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 	_skyDisk = skyDisk;
+	_language = language;
 	_gameVersion = gameVersion;
 
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE, NULL);
@@ -81,14 +84,14 @@ void SkyText::fnSetFont(uint32 fontNr) {
 	_dtCharSpacing = newCharSet->charSpacing;
 }
 
-void SkyText::getText(uint32 textNr, uint16 language) { //load text #"textNr" into textBuffer
+void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	uint32 sectionNo = (textNr & 0x0F000) >> 10;
 	
 	if (SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
 		uint32 fileNo = (sectionNo >> 2); 
-		fileNo += ((language * NO_OF_TEXT_SECTIONS) + 60600);
+		fileNo += ((_language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
 	_textItemPtr = (uint8 *)SkyState::_itemList[FIRST_TEXT_SEC + sectionNo];
@@ -322,6 +325,44 @@ void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, 
 	
 	//update position
 	dest = startPos + charWidth + _dtCharSpacing*2 - 1; 
+
+}
+
+lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
+
+	getText(textNum);
+
+	struct displayText_t textInfo = displayText(NULL, centre, width, color);
+	
+	_lowTextWidth = textInfo.textWidth;
+	byte *textData = textInfo.textData;
+
+	uint32 compactNum = FIRST_TEXT_COMPACT;
+
+	Compact *cpt = SkyState::fetchCompact(compactNum);
+
+	while (cpt->status != 0xFFFF) { //-1
+		compactNum++;
+		cpt = SkyState::fetchCompact(compactNum);
+	}
+
+	cpt->flag = (compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
+
+	byte *oldText = (byte *)SkyState::_itemList[compactNum];
+	SkyState::_itemList[compactNum] = (void **)textData; 
+
+	if (oldText != NULL)
+		free (oldText);
+
+	cpt->logic = logicNum; 
+	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
+	cpt->screen = SkyLogic::_screen; 
+
+	struct lowTextManager_t ret;
+	ret.textData = _dtData;
+	ret.compactNum = compactNum;
+
+	return ret;
 
 }
 

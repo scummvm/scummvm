@@ -227,7 +227,7 @@ void SkyState::intro(void) {
 	_introTextSpace = (uint8 *)calloc(10000, 1);
 	_introTextSave = (uint8 *)calloc(10000, 1);
 
-	_skyText->getText(77, _language);
+	_skyText->getText(77);
 	
 	delay(8000); // keep revolution up for 8 seconds
 
@@ -455,7 +455,7 @@ void SkyState::checkCommands(uint32 *&cmdPtr) {
 void SkyState::prepareText(uint32 *&cmdPtr) {
 	
 	uint32 textNum = *(cmdPtr + 2);
-	_skyText->getText(textNum, _language);
+	_skyText->getText(textNum);
 	_skyText->displayText(_introTextSpace, true, INTRO_TEXT_WIDTH, 255);
 	cmdPtr += 3;  
 }

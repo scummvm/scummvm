@@ -209,23 +209,23 @@ SkyText *SkyState::getSkyText() {
 	switch (_gameVersion) {
 	case 267:
 		//floppy demo
-		return new SkyText_v00267(_skyDisk, _gameVersion);
+		return new SkyText_v00267(_skyDisk, _gameVersion, _language);
 	case 288:
 		//floppy version
-		return new SkyText_v00288(_skyDisk, _gameVersion);
+		return new SkyText_v00288(_skyDisk, _gameVersion, _language);
 	case 303:
 		//floppy version
-		return new SkyText_v00303(_skyDisk, _gameVersion);
+		return new SkyText_v00303(_skyDisk, _gameVersion, _language);
 	case 331:
 		//floppy version
-		return new SkyText_v00331(_skyDisk, _gameVersion);
+		return new SkyText_v00331(_skyDisk, _gameVersion, _language);
 	case 365:
 		//cd demo, uses a slightly modified version of v00372
 	case 368:
 		//cd version, uses a slightly modified version of v00372
 	case 372:
 		//cd version
-		return new SkyText_v00372(_skyDisk, _gameVersion);
+		return new SkyText_v00372(_skyDisk, _gameVersion, _language);
 	default:
 		error("Unknown game version");
 	}

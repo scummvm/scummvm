@@ -26,11 +26,12 @@
 
 class SkyText {
 public:
-	SkyText(SkyDisk *skyDisk, uint32 gameVersion);
-	void getText(uint32 textNr, uint16 language);
+	SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 _language);
+	void getText(uint32 textNr);
 	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct displayText_t displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	void makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
+	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
 
 protected:
 	bool getTBit();
@@ -38,6 +39,7 @@ protected:
 	virtual char getTextChar() = 0;
 
 	SkyDisk *_skyDisk;
+	uint16 	_language;
 	uint32	_gameVersion;
 	uint8	_inputValue;
 	uint8	_shiftBits;
@@ -69,39 +71,40 @@ protected:
 	uint32	_dtWidth;	//width of chars in last line (for editing (?))
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
+	uint32	_lowTextWidth;
 };
 
 class SkyText_v00267 : public SkyText {
 public:
-	SkyText_v00267(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00267(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
 protected:
 	char getTextChar();
 };
 
 class SkyText_v00288 : public SkyText {
 public:
-	SkyText_v00288(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00288(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
 protected:
 	char getTextChar();
 };
 
 class SkyText_v00303 : public SkyText {
 public:
-	SkyText_v00303(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00303(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
 protected:
 	char getTextChar();
 };
 
 class SkyText_v00331 : public SkyText {
 public:
-	SkyText_v00331(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00331(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
 protected:
 	char getTextChar();
 };
 
 class SkyText_v00372 : public SkyText {
 public:
-	SkyText_v00372(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00372(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
 protected:
 	char getTextChar();
 };

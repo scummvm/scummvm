@@ -26,6 +26,8 @@
 #define KEY_BUFFER_SIZE	80
 #define SEQUENCE_COUNT	3
 
+#define	FIRST_TEXT_COMPACT	23
+
 //screen/grid defines
 #define GAME_SCREEN_WIDTH	320
 #define GAME_SCREEN_HEIGHT	192

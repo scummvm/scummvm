@@ -22,6 +22,11 @@
 #ifndef SKYSTRUC_H
 #define SKYSTRUC_H
 
+struct lowTextManager_t {
+	byte *textData;
+	uint16 compactNum;
+};
+
 struct displayText_t {
 	byte *textData;	
 	uint32 textWidth;

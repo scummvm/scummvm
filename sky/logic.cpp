@@ -25,6 +25,7 @@
 #include "sky/compact.h"
 #include "sky/skydefs.h"
 
+uint16 SkyLogic::_screen;
 
 typedef void (SkyLogic::*LogicTable) ();
 static const LogicTable logicTable[] = {
@@ -55,7 +56,7 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid) {
 	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
 		_moduleList[i] = 0;
 	_stackPtr = 0;
-
+	
 	initScriptVariables();
 }
 
