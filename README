@@ -259,7 +259,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         AmigaOS         - SDL
         MorphOS         - Custom backend
         BeOS            - SDL
-        Acorn (RiscOS)  - ???
+        RISC OS         - SDL
         Dreamcast       - Custom backend 
         GP32            - Custom backend
         PalmOS          - Custom backend
@@ -544,7 +544,7 @@ simon games.
                                  [Simon the Sorcerer 2 only]
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
-being ran faster than their normal speed, as scripts will lose synchronisation.
+being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
 
