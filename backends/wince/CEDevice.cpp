@@ -31,15 +31,13 @@ struct GXKeyList CEDevice::_portrait_keys = {0};
 #define KEY_TASK 0xc4
 
 bool CEDevice::hasPocketPCResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) < 320 && GetSystemMetrics(SM_CXSCREEN) >= 240);
-}
-
-bool CEDevice::hasDesktopResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) >= 320);
+	return ((GetSystemMetrics(SM_CXSCREEN) < 320 && GetSystemMetrics(SM_CXSCREEN) >= 240) ||
+			(GetSystemMetrics(SM_CXSCREEN) >= 320 && GetSystemMetrics(SM_CYSCREEN) < 480));
 }
 
 bool CEDevice::hasWideResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) >= 640 || GetSystemMetrics(SM_CYSCREEN) >= 640);
+	return ((GetSystemMetrics(SM_CXSCREEN) >= 640 && GetSystemMetrics(SM_CYSCREEN) >= 480)
+		   ||(GetSystemMetrics(SM_CYSCREEN) >= 640 && GetSystemMetrics(SM_CXSCREEN) >= 480));
 }
 
 bool CEDevice::hasSmartphoneResolution() {

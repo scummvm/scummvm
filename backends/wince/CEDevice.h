@@ -32,7 +32,6 @@
 class CEDevice {
 	public:
 		static bool hasPocketPCResolution();
-		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
 		static bool enableHardwareKeyMapping();
