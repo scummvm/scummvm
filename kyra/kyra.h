@@ -8,7 +8,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -48,23 +48,23 @@ public:
 	void errorString( const char *buf_input, char *buf_output);
 
 	void updateScreen(void);
-        void setCurrentPalette(Palette* pal, bool delNextTime = true);
+	void setCurrentPalette(Palette* pal, bool delNextTime = true);
 
-        Resourcemanager* resManager(void) { return _resMgr; }
-//        MidiDriver* midiDriver(void) { return _midiDriver; }
+	Resourcemanager* resManager(void) { return _resMgr; }
+//	MidiDriver* midiDriver(void) { return _midiDriver; }
 
 protected:
 	void go();
 	void shutdown();
-        Resourcemanager* _resMgr;
+	Resourcemanager* _resMgr;
 	uint8 *_screen;
 
-        Font* _font;
-        CPSImage* _mouse;
-        CPSImage* _items;
+	Font* _font;
+	CPSImage* _mouse;
+	CPSImage* _items;
 
-        VMContext* _currentScript; // our current script
-        VMContext* _npcScript; // script from NPCs
+	VMContext* _currentScript; // our current script
+	VMContext* _npcScript; // script from NPCs
 };
 
 } // End of namespace Kyra

@@ -36,8 +36,8 @@ namespace Kyra {
 		// ugly a hardcoded list
 		// TODO: use the FS Backend to get all .PAK Files and load them
 		static const char* kyraFilelist[] = {
-  			"A_E.PAK", "DAT.PAK", "F_L.PAK", "MAP_5.PAK", "MSC.PAK", "M_S.PAK",
-	     		"S_Z.PAK", "WSA1.PAK", "WSA2.PAK", "WSA3.PAK", "WSA4.PAK", "WSA5.PAK",
+			"A_E.PAK", "DAT.PAK", "F_L.PAK", "MAP_5.PAK", "MSC.PAK", "M_S.PAK",
+			"S_Z.PAK", "WSA1.PAK", "WSA2.PAK", "WSA3.PAK", "WSA4.PAK", "WSA5.PAK",
 			"WSA6.PAK", "startup.pak", "intro1.pak", 0
 		};
 		
@@ -45,7 +45,7 @@ namespace Kyra {
 			// prefetch file
 			PAKFile* file = new PAKFile(getPath() + kyraFilelist[tmp]);
 			assert(file);			
-     
+
 			if (file->isOpen() && file->isValid())		
 				_pakfiles.push_back(file);
 			else
@@ -109,7 +109,7 @@ namespace Kyra {
 		return buffer;
 	}
 	
-	Palette* Resourcemanager::loadPalette(const char* file)	{
+	Palette* Resourcemanager::loadPalette(const char* file) {
 		uint32 size = 0;
 		uint8* buffer = 0;
 		buffer = fileData(file, &size);
@@ -146,11 +146,11 @@ namespace Kyra {
 		return new WSAMovieV1(buffer, size);
 	}
 
-        VMContext* Resourcemanager::loadScript(const char* file) {
-                VMContext* context = new VMContext(_engine);
-                context->loadScript(file);
-                return context;
-        }
+	VMContext* Resourcemanager::loadScript(const char* file) {
+		VMContext* context = new VMContext(_engine);
+		context->loadScript(file);
+		return context;
+	}
 	
 	Common::String Resourcemanager::getPath(void) {
 		assert(_gameDir);
@@ -223,7 +223,7 @@ namespace Kyra {
 			_files.push_back(chunk);
 		}
 		_open = true;
- 	}
+	}
 
 	PAKFile::~PAKFile() {
 		delete [] _buffer;
@@ -231,7 +231,7 @@ namespace Kyra {
 		_open = false;
 
 		for (PAKFile_Iterate) {
- 			delete *start;
+			delete *start;
 			*start = 0;
 		}
 	}

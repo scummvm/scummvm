@@ -34,32 +34,32 @@
 #include "script.h"
 
 struct KyraGameSettings {
-        const char *name;
-        const char *description;
-        uint32 features;
-        const char *detectName;
-        GameSettings toGameSettings() const {
-                GameSettings dummy = { name, description, features };
-                return dummy;
-        }
+	const char *name;
+	const char *description;
+	uint32 features;
+	const char *detectName;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
 };
 
 static const KyraGameSettings kyra_settings[] = { 
-        {"kyra1cd", "Legend of Kyrandia (CD)",  GF_TALKIE & GF_KYRA1,  "CHAPTER1.VRM"},
-        {"kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY & GF_KYRA1, "INTRO.SND"},
+	{"kyra1cd", "Legend of Kyrandia (CD)",	GF_TALKIE & GF_KYRA1,  "CHAPTER1.VRM"},
+	{"kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY & GF_KYRA1, "INTRO.SND"},
 	{ 0, 0, 0, 0}
 };
 
 GameList Engine_KYRA_gameList() {
-        GameList games;
-        const KyraGameSettings *g = kyra_settings;
+	GameList games;
+	const KyraGameSettings *g = kyra_settings;
 
-        while (g->name) {
-                games.push_back(g->toGameSettings());
-                g++;
-        }
+	while (g->name) {
+		games.push_back(g->toGameSettings());
+		g++;
+	}
 
-        return games;
+	return games;
 }
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
@@ -79,7 +79,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		}
 	}
 
-        return detectedGames;
+	return detectedGames;
 }
 
 Engine *Engine_KYRA_create(GameDetector *detector, OSystem *syst) {
@@ -159,11 +159,11 @@ void KyraEngine::go() {
 		updateScreen();
 		while (g_system->pollEvent(event)) {
 			switch (event.event_code) {
-				case OSystem::EVENT_QUIT:
-					g_system->quit();
-					break;
-				default:
-					break;
+			case OSystem::EVENT_QUIT:
+				g_system->quit();
+				break;
+			default:
+				break;
 			}
 		}
 		_system->delayMillis(10);
@@ -175,23 +175,23 @@ void KyraEngine::shutdown() {
 }
 
 void KyraEngine::updateScreen(void) {
-        _system->copyRectToScreen(_screen, 320, 0, 0, 320, 240);
-        _system->updateScreen();
+	_system->copyRectToScreen(_screen, 320, 0, 0, 320, 240);
+	_system->updateScreen();
 }
 
 void KyraEngine::setCurrentPalette(Palette* pal, bool delNextTime) {
-//        if (_delPalNextTime)
-//                delete _currentPal;
+//	if (_delPalNextTime)
+//		delete _currentPal;
 
-//        _delPalNextTime = delNextTime;
+//	_delPalNextTime = delNextTime;
 
-//        _currentPal = pal;
+//	_currentPal = pal;
 
-        if (pal->getData()) {
-                _system->setPalette(pal->getData(), 0, 256);
-        } else {
-                warning("palette contains no data");
-        }
+	if (pal->getData()) {
+		_system->setPalette(pal->getData(), 0, 256);
+	} else {
+		warning("palette contains no data");
+	}
 }
 
 } // End of namespace KYRA

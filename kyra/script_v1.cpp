@@ -115,21 +115,21 @@ namespace Kyra {
 	
 	void VMContext::c1_negate(void) {
 		switch(_argument) {
-			case 0:
-				topStack() = !topStack();
+		case 0:
+			topStack() = !topStack();
 			break;
-			
-			case 1:
-				topStack() = -topStack();
+		
+		case 1:
+			topStack() = -topStack();
 			break;
-			
-			case 2:
-				topStack() = ~topStack();
+		
+		case 2:
+			topStack() = ~topStack();
 			break;
-			
-			default:
-				debug("unkown negate instruction %d", _argument);
-				_error = true;
+		
+		default:
+			debug("unkown negate instruction %d", _argument);
+			_error = true;
 			break;
 		};
 	}
@@ -142,76 +142,76 @@ namespace Kyra {
 		y = popStack();
 		
 		switch(_argument) {
-			case 0:
-				res = x && y;
+		case 0:
+			res = x && y;
+			break;
+		
+		case 1:
+			res = x || y;
+			break;
+		
+		case 3:
+			res = x != y;
+			break;
+		
+		case 4:
+			res = x < y;
+			break;
+		
+		case 5:
+			res = x <= y;
 			break;
 			
-			case 1:
-				res = x || y;
+		case 6:
+			res = x > y;
+			break;
+		
+		case 7:
+			res = x >= y;
+			break;
+		
+		case 8:
+			res = x + y;
 			break;
 			
-			case 3:
-				res = x != y;
+		case 9:
+			res = x - y;
 			break;
-			
-			case 4:
-				res = x < y;
+		
+		case 10:
+			res = x * y;
 			break;
-			
-			case 5:
-				res = x <= y;
+		
+		case 11:
+			res = x / y;
 			break;
-				
-			case 6:
-				res = x > y;
+		
+		case 12:
+			res = x >> y;
 			break;
-			
-			case 7:
-				res = x >= y;
+		
+		case 13:
+			res = x << y;
 			break;
-			
-			case 8:
-				res = x + y;
-				break;
-				
-			case 9:
-				res = x - y;
+		
+		case 14:
+			res = x & y;
 			break;
-			
-			case 10:
-				res = x * y;
+		
+		case 15:
+			res = x | y;
 			break;
-			
-     		case 11:
-				res = x / y;
+		
+		case 16:
+			res = x % y;
 			break;
-			
-     		case 12:
-				res = x >> y;
+		
+		case 17:
+			res = x ^ y;
 			break;
-			
-			case 13:
-				res = x << y;
-			break;
-			
-			case 14:
-				res = x & y;
-			break;
-			
-			case 15:
-				res = x | y;
-			break;
-			
-			case 16:
-				res = x % y;
-			break;
-			
-			case 17:
-				res = x ^ y;
-			break;
-			
-			default:
-				debug("unknown evaluate command");
+		
+		default:
+			debug("unknown evaluate command");
 			break;
 		};
 		
@@ -232,7 +232,7 @@ namespace Kyra {
 			paramString(4), paramString(5));
 	}
 
-        void VMContext::o1_0x68(void) {
-                debug("o1_0x68 was called with param0: '%d' and param1: '%d'", param(0), param(1));
-        }
+	void VMContext::o1_0x68(void) {
+		debug("o1_0x68 was called with param0: '%d' and param1: '%d'", param(0), param(1));
+	}
 } // end of namespace Kyra

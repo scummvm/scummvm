@@ -54,24 +54,19 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
     uint16 code;
     uint16 count;
 
-    while (1) 
-    {
+    while (1) {
         code = *readp++;
-        if (~code & 0x80) 
-        {
+        if (~code & 0x80) {
             //bit 7 = 0
             //command 0 (0cccpppp p): copy
             count = (code >> 4) + 3;
             copyp = writep - (((code & 0xf) << 8) + *readp++);
             while (count--)
                 *writep++ = *copyp++;
-        } 
-        else 
-        {
+        } else {
             //bit 7 = 1
             count = code & 0x3f;
-            if (~code & 0x40) 
-            {
+            if (~code & 0x40) {
                 //bit 6 = 0
                 if (!count)
                     //end of image
@@ -79,12 +74,9 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
                 //command 1 (10cccccc): copy
                 while (count--)
                     *writep++ = *readp++;
-            } 
-            else 
-            {
+            } else {
                 //bit 6 = 1
-                if (count < 0x3e) 
-                {
+                if (count < 0x3e) {
                     //command 2 (11cccccc p p): copy
                     count += 3;
 
@@ -94,9 +86,7 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
                     memcpy(writep, copyp, count);
                     writep += count;
                     copyp += count;
-                }
-                else if (count == 0x3e) 
-                {
+                } else if (count == 0x3e) {
                     //command 3 (11111110 c c v): fill
 
                     count = READ_LE_UINT16(readp);
@@ -104,9 +94,7 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
                     code = *readp++;
                     memset(writep, code, count);
                     writep += count;
-                }
-                else 
-                {
+                } else {
                     //command 4 (copy 11111111 c c p p): copy
 
                     count = READ_LE_UINT16(readp);
@@ -146,57 +134,44 @@ int Compression::decode40(const uint8* image_in, uint8* image_out) {
 
     while (1) {
         code = *readp++;
-        if (~code & 0x80) 
-        {
+        if (~code & 0x80) {
            //bit 7 = 0
-            if (!code) 
-            {
+            if (!code) {
                 //command 0 (00000000 c v): fill
                 count = *readp++;
                 code = *readp++;
                 while (count--)
                     *writep++ ^= code;
-            } 
-            else 
-            {
+            } else {
                 //command 1 (0ccccccc): copy
                 count = code;
                 while (count--)
                     *writep++ ^= *readp++;
             }
 
-        } 
-        else 
-        {
+        } else {
             //bit 7 = 1
-            if (!(count = code & 0x7f)) 
-            {
+            if (!(count = code & 0x7f)) {
 
                 count = READ_LE_UINT16(readp);
                 readp += 2;
                 code = count >> 8;
-                if (~code & 0x80) 
-                {
+                if (~code & 0x80) {
                     //bit 7 = 0
                     //command 2 (10000000 c 0ccccccc): skip
                     if (!count)
                         // end of image
                         break;
                     writep += count;
-                } 
-                else 
-                {
+                } else {
                     //bit 7 = 1
                     count &= 0x3fff;
-                    if (~code & 0x40) 
-                    {
+                    if (~code & 0x40) {
                         //bit 6 = 0
                         //command 3 (10000000 c 10cccccc): copy
                         while (count--)
                             *writep++ ^= *readp++;
-                    }
-                    else 
-                    {
+                    } else {
                         //bit 6 = 1
                         //command 4 (10000000 c 11cccccc v): fill
                         code = *readp++;
@@ -204,8 +179,7 @@ int Compression::decode40(const uint8* image_in, uint8* image_out) {
                             *writep++ ^= code;
                     }
                 }
-            }
-            else //command 5 (1ccccccc): skip
+            } else //command 5 (1ccccccc): skip
             	writep += count;       
         }
     }
@@ -232,23 +206,18 @@ int Compression::decode3(const uint8* image_in, uint8* image_out, int size)
 	
 	do {
         code = *const_cast<int8*>((const int8*)readp++);
-        if (code > 0) // Copy 
-        {      	
+        if (code > 0) { // Copy 
         	count = code ;
         	while (count--)
         		*writep++ = *readp++;        
-        }
-        else if (code == 0) // Fill(1) 
-        {
+        } else if (code == 0) { // Fill(1)
         	count = READ_BE_UINT16(readp);
  
         	readp += 2;
         	code = *readp++;
         	while (count--)
         		*writep++ = (uint8)code;
-        }
-        else if (code < 0) // Fill (2)
-        {
+        } else if (code < 0) { // Fill (2)
         	count = -code;
         	code = *readp++;
         	while (count--)

@@ -206,20 +206,20 @@ namespace Kyra {
 		for (uint8 yadd = 0; yadd < height; ++yadd) {
 			for (uint8 xadd = 0; xadd < width; ++xadd) {
 				switch(*src) {					
-					case 1:
-						plane[(y + yadd) * planewidth + x + xadd] = color;
+				case 1:
+					plane[(y + yadd) * planewidth + x + xadd] = color;
 					break;
 					
-					case 2:
-						plane[(y + yadd) * planewidth + x + xadd] = 14;
+				case 2:
+					plane[(y + yadd) * planewidth + x + xadd] = 14;
 					break;
 					
-					case 3:
-						plane[(y + yadd) * planewidth + x + xadd] = 0;
+				case 3:
+					plane[(y + yadd) * planewidth + x + xadd] = 0;
 					break;
 					
-					default:
-						// nothing to do now
+				default:
+					// nothing to do now
 					break;
 				};
 				
@@ -269,30 +269,30 @@ namespace Kyra {
 					}
 					
 					switch(index) {
-						case 1:
+					case 1:
 #ifdef DUMP_FILES
-							fprintf(dump, "#");
+						fprintf(dump, "#");
 #endif
-							dst[yadd * newChar.width + xadd] = 1;
+						dst[yadd * newChar.width + xadd] = 1;
 						break;
-						
-						case 2:
+					
+					case 2:
 #ifdef DUMP_FILES
-							fprintf(dump, "$");
+						fprintf(dump, "$");
 #endif
-							dst[yadd * newChar.width + xadd] = 2;
+						dst[yadd * newChar.width + xadd] = 2;
 						break;
-						
-						case 3:
+					
+					case 3:
 #ifdef DUMP_FILES
-							fprintf(dump, "§");
+						fprintf(dump, "§");
 #endif
-							dst[yadd * newChar.width + xadd] = 3;
+						dst[yadd * newChar.width + xadd] = 3;
 						break;
-						
-						default:
+					
+					default:
 #ifdef DUMP_FILES
-							fprintf(dump, "%d", index);
+						fprintf(dump, "%d", index);
 #endif
 						break;
 					};

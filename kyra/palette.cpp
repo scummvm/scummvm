@@ -71,9 +71,9 @@ namespace Kyra {
 			currentposdst[2] = currentpossrc[2] << 2;
 			currentpossrc += 3;
 			currentposdst += 4;
-    	}
-    	
-   		delete [] data;
+		}
+		
+		delete [] data;
 	}
 
 } // end of namespace Kyra
