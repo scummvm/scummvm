@@ -359,9 +359,10 @@ void Scumm::drawDescString(byte *msg) {
 	_charset->_nextTop = _string[0].ypos;
 
 	// Center text
-	_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
-	if (_charset->_nextLeft < 0)
-		_charset->_nextLeft = 0;
+	_string[0].xpos -= _charset->getStringWidth(0, buffer) >> 1;
+	if (_string[0].xpos < 0) {
+		_string[0].xpos = 0;
+	}
 
 	_talkDelay = 1;
 
@@ -383,12 +384,12 @@ void Scumm::drawDescString(byte *msg) {
 	} while (c);
 	_haveMsg = 1;
 
-	// hack: more 8 pixels at width redraw before and after text
+	// hack: more 8 pixels at width and height while redraw
 	// for proper description redraw while scrolling room
 	gdi._mask_left = _charset->_strLeft - 8;
 	gdi._mask_right = _charset->_strRight + 8;
-	gdi._mask_top = _charset->_strTop;
-	gdi._mask_bottom = _charset->_strBottom;
+	gdi._mask_top = _charset->_strTop - 8;
+	gdi._mask_bottom = _charset->_strBottom + 8;
 }
 
 void Scumm::drawString(int a) {

@@ -2452,11 +2452,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
-				_charset->setCurID(_string[0].charset);
-				_string[0].xpos -= _charset->getStringWidth(0, buf_output) >> 1;
-				if (_string[0].xpos < 0) {
-					_string[0].xpos = 0;
-				}
 				drawDescString(buf_output);
 			} else { 
 				setStringVars(0);
