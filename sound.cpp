@@ -26,6 +26,7 @@
 #include "sound/imuse.h"
 #include "actor.h"
 #include "config-file.h"
+#include "util.h"
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,
