@@ -1335,7 +1335,6 @@ public:
 	Scumm(GameDetector *detector, OSystem *syst);
 	virtual ~Scumm();
 
-	static Scumm *createFromDetector(GameDetector *detector, OSystem *syst);
 	void go();
 
 	void setupGUIColors();

@@ -128,7 +128,6 @@ int main(int argc, char *argv[])
 		return (-1);
 
 	OSystem *system = detector.createSystem();
-	Engine *engine;
 
 	{
 		char *s = detector.getGameName();
@@ -139,16 +138,10 @@ int main(int argc, char *argv[])
 		free(s);
 	}
 
-	/* Simon the Sorcerer? */
-	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
-		/* Simon the Sorcerer initialization */
-		detector._gameId -= GID_SIMON_FIRST;
-		engine = SimonState::createFromDetector(&detector, system);
+	// Create the game engine
+	Engine *engine = Engine::createFromDetector(&detector, system);
 
-	} else {
-		engine = Scumm::createFromDetector(&detector, system);
-	}
-
+	// Run the game engine
 	engine->go();
 	
 	delete scummcfg;

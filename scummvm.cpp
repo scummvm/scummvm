@@ -70,6 +70,8 @@ uint Scumm::getRandomNumberRng(uint min, uint max)
 Scumm::Scumm (GameDetector *detector, OSystem *syst) 
 	: Engine(detector, syst)
 {
+	OSystem::Property prop;
+
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
@@ -105,6 +107,44 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_sound->_sound_volume_master = 0;
 	_sound->_sound_volume_sfx = detector->_sfx_volume;	
 	_sound->_sound_volume_music = detector->_music_volume;	
+
+	/* Initialize backend */
+	syst->init_size(_realWidth, _realHeight);
+	prop.cd_num = detector->_cdrom;
+	syst->property(OSystem::PROP_OPEN_CD, &prop);
+
+	/* Bind the mixer to the system => mixer will be invoked
+	 * automatically when samples need to be generated */	
+	if (!_mixer->bind_to_system(syst)) {         
+		warning("Sound initialization failed");
+		if (detector->_use_adlib) {
+			_use_adlib = false;   
+			detector->_use_adlib = false;   
+			detector->_midi_driver = MD_NULL;   
+			warning("Adlib music was selected, switching to midi null driver");   
+		}   
+	} 
+	_mixer->set_volume(kDefaultSFXVolume);
+	_mixer->set_music_volume(kDefaultMusicVolume);
+
+
+	// Init iMuse
+	if (detector->_use_adlib) {
+		_imuse = IMuse::create_adlib(syst, _mixer);
+	} else {
+		_imuse = IMuse::create_midi(syst, detector->createMidi());
+	}
+	if (detector->_gameTempo != 0)
+		_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+	_imuse->set_music_volume(_sound->_sound_volume_music);
+
+
+	// Load game from specified slot, if any
+	if (detector->_save_slot != -1) {
+		_saveLoadSlot = detector->_save_slot;
+		_saveLoadFlag = 2;
+		_saveLoadCompatible = false;
+	}
 }
 
 Scumm::~Scumm ()
@@ -1544,66 +1584,6 @@ void Scumm::launch()
 	runScript(1, 0, 0, &_bootParam);
 
 //  _scummTimer = 0;
-}
-
-Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
-{
-	Scumm *scumm;
-	OSystem::Property prop;
-
-	if (detector->_features & GF_OLD256)
-		scumm = new Scumm_v3(detector, syst);
-	else if (detector->_features & GF_SMALL_HEADER)	// this force loomCD as v4
-		scumm = new Scumm_v4(detector, syst);
-	else if (detector->_features & GF_AFTER_V7)
-		scumm = new Scumm_v7(detector, syst);
-	else if (detector->_features & GF_AFTER_V6)	// this force SamnmaxCD as v6
-		scumm = new Scumm_v6(detector, syst);
-	else
-		scumm = new Scumm_v5(detector, syst);
-
-	/* This initializes SDL */
-	syst->init_size(scumm->_realWidth, scumm->_realHeight);
-	prop.cd_num = detector->_cdrom;
-	syst->property(OSystem::PROP_OPEN_CD, &prop);
-
-	/* bind the mixer to the system => mixer will be invoked
-	 * automatically when samples need to be generated */	
-	if (!scumm->_mixer->bind_to_system(syst)) {         
-		warning("Sound initialization failed");   
-		if (detector->_use_adlib) {
-			scumm->_use_adlib = false;   
-			detector->_use_adlib = false;   
-			detector->_midi_driver = MD_NULL;   
-			warning("Adlib music was selected, switching to midi null driver");   
-		}   
-	} 
-	scumm->_mixer->set_volume(kDefaultSFXVolume);
-	scumm->_mixer->set_music_volume(kDefaultMusicVolume);
-
-	{
-		IMuse *imuse;
-
-		if (detector->_use_adlib) {
-			imuse = IMuse::create_adlib(syst, scumm->_mixer);
-		} else {
-			imuse = IMuse::create_midi(syst, detector->createMidi());
-		}
-		
-		if (detector->_gameTempo != 0)
-			imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
-		
-		imuse->set_music_volume(scumm->_sound->_sound_volume_music);
-		scumm->_imuse = imuse;
-	}
-
-	if (detector->_save_slot != -1) {
-		scumm->_saveLoadSlot = detector->_save_slot;
-		scumm->_saveLoadFlag = 2;
-		scumm->_saveLoadCompatible = false;
-	}
-
-	return scumm;
 }
 
 void Scumm::go() {

@@ -144,11 +144,6 @@ SimonState::~SimonState()
 	delete [] _fcs_list;
 }
 
-SimonState *SimonState::createFromDetector(GameDetector *detector, OSystem *syst)
-{
-	return new SimonState(detector, syst);
-}
-
 void palette_fadeout(uint32 *pal_values, uint num)
 {
 	byte *p = (byte *)pal_values;

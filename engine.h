@@ -40,7 +40,12 @@ public:
 	Engine(GameDetector *detector, OSystem *syst);
 	virtual ~Engine();
 
+	// Invoke the main engine loop using this method
 	virtual void go() = 0;
+
+	// Create a new engine object based on the detector - either 
+	// a Scumm or a SimonState object currently.
+	static Engine *createFromDetector(GameDetector *detector, OSystem *syst);
 };
 
 

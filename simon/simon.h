@@ -795,8 +795,6 @@ public:
 
 	void vc_kill_thread(uint file, uint sprite);
 
-	static SimonState *createFromDetector(GameDetector *detector, OSystem *syst);
-
 	void set_dummy_cursor();
 
 	void set_volume(byte volume);

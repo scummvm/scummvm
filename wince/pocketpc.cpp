@@ -439,18 +439,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		return (-1);
 
 	OSystem *system = detector.createSystem();
-	Engine *engine;
 	
-	/* Simon the Sorcerer? */
-	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
-		/* Simon the Sorcerer. Completely different initialization */
-		detector._gameId -= GID_SIMON_FIRST;
-		engine = SimonState::createFromDetector(&detector, system);
-
-	} else {
-		engine = Scumm::createFromDetector(&detector, system);
-
-	}
+	// Create the game engine
+	Engine *engine = Engine::createFromDetector(&detector, system);
 
 	keypad_init();
 	load_key_mapping();
@@ -459,7 +450,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	if (detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG)
 		hide_cursor = FALSE;
 
-
+	// Run the game engine
 	engine->go();
 	
 	return 0;
