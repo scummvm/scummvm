@@ -166,8 +166,10 @@ void Sound::playSound(int soundID, int offset) {
 		debugC(DEBUG_SOUND, "playSound #%d", soundID);
 
 		int music_offs, total_size;
+		uint skip;
 		char buf[32];
 		File musicFile;
+
 		sprintf(buf, "%s.he4", _vm->getGameName());
 		if (musicFile.open(buf) == false) {
 			warning("playSound: Music file is not open");
@@ -176,15 +178,30 @@ void Sound::playSound(int soundID, int offset) {
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
 
-		// Skip header junk
-		musicFile.seek(+20, SEEK_CUR);
+		musicFile.seek(+40, SEEK_CUR);
+		if (musicFile.readUint32LE() == MKID('SGEN')) {
+			// Skip to correct music header
+			skip = (soundID - 4001) * 21;
+			musicFile.seek(+skip, SEEK_CUR);
 
-		// Skip to correct music header
-		uint skip = (soundID - 4001) * 25;
-		musicFile.seek(+skip, SEEK_CUR);
+			// Skip to offsets
+			musicFile.seek(+8, SEEK_CUR);
+		
+		} else {
+			// Rewind
+			musicFile.seek(-44, SEEK_CUR);
 
-		// Skip to offsets
-		musicFile.seek(+21, SEEK_CUR);
+			// Skip header junk
+			musicFile.seek(+20, SEEK_CUR);
+
+			// Skip to correct music header
+			skip = (soundID - 4001) * 25;
+			musicFile.seek(+skip, SEEK_CUR);
+
+			// Skip to offsets
+			musicFile.seek(+21, SEEK_CUR);
+		}
+
 
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();

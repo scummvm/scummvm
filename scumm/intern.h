@@ -691,6 +691,8 @@ protected:
 	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
+	void o72_getTimer();
+	void o72_setTimer();
 	void o72_wordArrayDec();
 	void o72_startScript();
 	void o72_startObject();
@@ -700,6 +702,7 @@ protected:
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
+	void o72_unknownCE();
 	void o72_shuffle();
 	void o72_jumpToScript();
 	void o72_openFile();

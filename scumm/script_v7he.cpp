@@ -707,7 +707,7 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
 		break;
 	default:
-		error("o7_quitPauseRestart invalid case %d", subOp);
+		warning("o7_quitPauseRestart invalid case %d", subOp);
 	}
 }
 

@@ -772,7 +772,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		_skipDrawObject = 0;
 		break;
 	default:
-		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		warning("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 		break;
 	}
 }
@@ -851,7 +851,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		push(retval);
 		break;
 	default:
-		error("o6_kernelGetFunctions: default case %d", args[0]);
+		warning("o6_kernelGetFunctions: default case %d", args[0]);
 	}
 }
 

@@ -156,8 +156,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_getTimer),
+		OPCODE(o72_setTimer),
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayDec),
 		/* 5C */
@@ -303,7 +303,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* CC */
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownCE),
 		OPCODE(o6_invalid),
 		/* D0 */
 		OPCODE(o6_getDateTime),
@@ -619,6 +619,24 @@ void ScummEngine_v72he::o72_objectY() {
 	push(_objs[objnum].y_pos);
 }
 
+void ScummEngine_v72he::o72_getTimer() {
+	int b =	pop();
+	int a =	fetchScriptByte();
+	warning("o72_getTimer stub (%d, %d)", b, a);
+	if (a == 10)
+		push(1);
+	else
+		push(0);
+}
+
+void ScummEngine_v72he::o72_setTimer() {
+	int b =	pop();
+	int a =	fetchScriptByte();
+	if (a != 158)
+		error("TIMER command %d?", a);
+	warning("o72_setTimer stub (%d, %d)", b, a);
+}
+
 void ScummEngine_v72he::o72_wordArrayDec() {
 	int var = fetchScriptWord();
 	int base = pop();
@@ -819,6 +837,15 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 	b = pop();
 	a = pop();
 	defineArray(fetchScriptWord(), data, 0, a, 0, b);
+}
+
+void ScummEngine_v72he::o72_unknownCE() {
+	int a =	pop();
+	int b =	pop();
+	int c =	pop();
+	int d =	pop();
+	warning("o72_unknownCE stub (%d, %d, %d, %d)", d, c, b, a);
+	push(4000);
 }
 
 void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {

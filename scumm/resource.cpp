@@ -2411,7 +2411,6 @@ void ScummEngine::allocateArrays() {
 	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
 	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
 	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	debug(2, "Allocated %d space in numObjects", _numLocalObjects);
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 	_images = (uint16 *)calloc(_numImages, sizeof(uint16));

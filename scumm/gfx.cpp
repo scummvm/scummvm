@@ -1337,7 +1337,8 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 }
 
 void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
-	uint32 color, dataBit, data, shift, iteration;
+	uint32 color, dataBit, data, shift;
+	int32 iteration;
 
      color = *src;
 	 src++;

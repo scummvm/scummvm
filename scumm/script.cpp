@@ -477,6 +477,10 @@ int ScummEngine::fetchScriptWordSigned() {
 }
 
 int ScummEngine::readVar(uint var) {
+	// HACK Seems to variable difference
+	if (_gameId == GID_PAJAMA && var == 32770) 
+		return 5;
+
 	int a;
 	static byte copyprotbypassed;
 	if (!_copyProtection)
