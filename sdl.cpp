@@ -188,6 +188,9 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
 
 
 void atexit_proc() {
@@ -250,6 +253,9 @@ void OSystem_SDL::load_gfx_mode() {
 		break;
 	case GFX_SUPEREAGLE:
 		_sai_func = SuperEagle;
+		break;
+	case GFX_ADVMAME2X:
+		_sai_func = AdvMame2x;
 		break;
 
 	case GFX_DOUBLESIZE:

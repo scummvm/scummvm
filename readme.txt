@@ -92,11 +92,8 @@ listed here, nor in the compatibility table on the website, please see below.
 
        Sam and Max:
                 - Subgames are not fully functional.
-                - Some overlap may occur in graphics, expecially the intro
-                - Music isn't perfect. Some overlap may occur
 
        Loom (256 Talkie):
-                - CD music and voices are not totally syncronised
                 - If you are having random crashes, this is a Windows bug.
                   Try copying the data files from CD to your harddisk.
 
@@ -227,6 +224,7 @@ They are:
         -g2xsai      - 2xsai filtering, double screen/window size to 640x480
         -gsuper2xsai - Enhanced 2xsai filtering. 640x480 screen/window size
         -gsupereagle - Less blurry than 2xsai, but slower. Also 640x480
+        -gadvmame2x  - 640x480 scaling. Doesn't rely on blurring like 2xSAI.
 
 Note that filters are very slow when ScummVM is compiled in a debug
 configuration without optimisations. And there is always a speed impact when
@@ -349,11 +347,12 @@ Credits:
         Claudio Matsuoka  - Daily builds (http://scummvm.sf.net/daily/)
         Janne Huttunen    - Zak256/Indy256/LoomCD actor mask support
         Jeroen Janssen    - Numerous readability and bugfix patches
+        Gregory Montoir   - AdvanceMAME Scale-2X implementation
         Edward Rudd       - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler   - Final MI1 CD music support
         Tim 'realmz'      - Initial MI1 CD music support
         Jonathan 'khalek' - Expert weaver in the Loom
-        
+ 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
 

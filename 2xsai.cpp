@@ -731,3 +731,33 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 		dstPtr += dstPitch;
 	}
 }
+
+void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	unsigned int nextlineSrc = srcPitch / sizeof(short);
+	short* p = (short*)srcPtr;
+
+	unsigned nextlineDst = dstPitch / sizeof(short);
+	short* q = (short*)dstPtr;
+
+	for(int j = 0; j < height; ++j) {
+		for(int i = 0; i < width; ++i) {
+			short A = *(p + i - nextlineSrc - 1);
+			short B = *(p + i - nextlineSrc);
+			short C = *(p + i - nextlineSrc + 1);
+			short D = *(p + i - 1);
+			short E = *(p + i );
+			short F = *(p + i + 1);
+			short G = *(p + i + nextlineSrc - 1);
+			short H = *(p + i + nextlineSrc);
+			short I = *(p + i + nextlineSrc + 1);
+
+			*(q + (i << 1)) = D == B && B != F && D != H ? D : E;
+			*(q + (i << 1) + 1) = B == F && B != D && F != H ? F : E;
+			*(q + (i << 1) + nextlineDst) = D == H && D != B && H != F ? D : E;
+			*(q + (i << 1) + nextlineDst + 1) = H == F && D != H && B != F ? F : E;
+		}
+		p += nextlineSrc;
+		q += nextlineDst << 1;
+	}
+}

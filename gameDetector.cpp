@@ -46,7 +46,7 @@ static const char USAGE_STRING[] =
 	"\te<mode> - set music engine. see readme.txt for details\n"
 	"\tr       - emulate roland mt32 instruments\n"
 	"\tf       - fullscreen mode\n"
-	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle\n"
+	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle.advmame2x\n"
 	"\ta       - specify game is amiga version\n"
 ;
 
@@ -179,6 +179,7 @@ int GameDetector::parseGraphicsMode(const char *s) {
 		{"2xsai",GFX_2XSAI},
 		{"super2xsai",GFX_SUPER2XSAI},
 		{"supereagle",GFX_SUPEREAGLE},
+		{"advmame2x",GFX_ADVMAME2X}
 	};
 
 	const GraphicsModes *gm = gfx_modes;

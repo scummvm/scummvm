@@ -153,6 +153,7 @@ enum {
 	GFX_2XSAI = 3,
 	GFX_SUPER2XSAI = 4,
 	GFX_SUPEREAGLE = 5,
+	GFX_ADVMAME2X = 6
 };
 
 
