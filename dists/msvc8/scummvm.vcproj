@@ -220,6 +220,10 @@
 				RelativePath="..\..\base\plugins.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\base\version.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="common"
@@ -266,6 +270,14 @@
 			</File>
 			<File
 				RelativePath="..\..\common\md5.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\mutex.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\mutex.h"
 				>
 			</File>
 			<File
@@ -465,6 +477,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\flac.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\flac.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\fmopl.cpp"
 				>
 			</File>
@@ -542,6 +562,14 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\vorbis.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\wave.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\wave.h"
 				>
 			</File>
 			<Filter
@@ -944,7 +972,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\fontman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\fontman.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\newfont.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\newfont_big.cpp"
 				>
 			</File>
 			<File

@@ -159,14 +159,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\saga\actionmap.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\actionmap.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\actor.cpp"
 			>
 		</File>
@@ -240,10 +232,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\image.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\image.h"
 			>
 		</File>
 		<File
