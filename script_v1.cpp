@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "cdmusic.h"
 
 void Scumm::setupOpcodes() {
 	static const OpcodeProc opcode_list[] = {
@@ -2450,14 +2451,16 @@ void Scumm::decodeParseString() {
 		case 7: /* overhead */
 			string[textSlot].overhead = true;
 			break;
-                case 8: { /* play loom talkie sound - use in other games ? */
-                        int offset = getVarOrDirectWord(0x80);
-                        int delay = getVarOrDirectWord(0x40);
+		case 8: { /* play loom talkie sound - use in other games ? */
+			int offset = (int)(getVarOrDirectWord(0x80) * 7.5 - 22650);
+			int delay = (int)(getVarOrDirectWord(0x40) * 7.5) + 10;
 
-                        if (_gameId == GID_LOOM256) 
-                                cd_playtrack(1, offset, delay);
-			break;
-                        }
+			if (_gameId == GID_LOOM256) 
+				cd_play(1, 0, offset, delay);
+			else
+				warning("parseString: 8");
+		}
+		break;
 		case 15:
 			_messagePtr = _scriptPointer;
 			switch(textSlot) {

@@ -341,7 +341,7 @@ int Scumm::scummLoop(int delta) {
 		_vars[VAR_MI1_TIMER]+=5;
 	else
 		if(_features & GF_OLD256)
-			_vars[VAR_MUSIC_FLAG]++;
+			_vars[VAR_MUSIC_FLAG]++; // ENDERFIX
 
 	if (_saveLoadFlag) {
 		if (_saveLoadFlag==1) {
@@ -432,7 +432,7 @@ int Scumm::scummLoop(int delta) {
 	if (!(++_expire_counter)) {
 		increaseResourceCounter();
 	}
-
+	
 	_vars[VAR_TIMER] = 0;
 	return _vars[VAR_TIMER_NEXT];
 

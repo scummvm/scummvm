@@ -666,32 +666,25 @@ void fill_sound(void *userdata, Uint8 *stream, int len) {
 	scumm.mixWaves((int16*)stream, len>>1);
 }
 
-void cd_playtrack(int track, int offset, int delay) {
-	if (!cdrom) return;
-    
-	SDL_CDStatus(cdrom);
-    SDL_CDPlayTracks(cdrom, track, (int)((offset * 7.5) - 22650), 0, (int)(delay * 7.5));
-}
-
-static int cd_track, cd_num_loops = 0, cd_start_frame;
+static int cd_track, cd_num_loops = 0, cd_start_frame, cd_end_frame;
 
 // On my system, calling SDL_CDStatus all the time slows things down a
 // lot and prevents music from playing at all :( So this saves the
 // time the track is expected to be finished.
-static Uint32 cd_end_time;
+static Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
-static Uint32 cd_stop_time;
-
-void cd_play(int track, int num_loops, int start_frame) {
-	// warning("cd_play(%d,%d,%d)", track, num_loops, start_frame);
+void cd_play(int track, int num_loops, int start_frame, int end_frame) {
+	// warning("cd_play(%d,%d,%d,%d)", track, num_loops, start_frame, end_frame);
 	if (!cdrom) return;
 
+	scumm._vars[14] = 0;
 	cd_track = track;
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;
-
+	
 	SDL_CDStatus(cdrom);
-	SDL_CDPlayTracks(cdrom, track, start_frame, 1, 0);
+	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame);
+	cd_end_frame = end_frame;
 	cd_stop_time = 0;
 	cd_end_time = SDL_GetTicks() +
 		cdrom->track[track].length * 1000 / CD_FPS;
@@ -721,26 +714,34 @@ static void cd_shutdown() {
 
 void cd_music_loop() {
 	if (!cdrom) return;
-
+/*	if (SDL_GetTicks() >= cd_next_second) {
+	/	printf("%d started at %d, fps\n", scumm._vars[14], cd_start_frame, CD_FPS);
+		//scumm._vars[14]++; //varmusicflag		
+		cd_next_second = SDL_GetTicks() + 1;
+	} */
+	
 	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
 		SDL_CDStop(cdrom);
 		cd_num_loops = 0;
 		cd_stop_time = 0;
 		return;
 	}
+	
 	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
 		return;
+	
 	if (cd_num_loops != 1 && SDL_CDStatus(cdrom) != CD_STOPPED) {
 		// Wait another second for it to be done
 		cd_end_time += 1000;
 		return;
 	}
+	
 	if (cd_num_loops > 0)
 		cd_num_loops--;
+
 	if (cd_num_loops != 0) {
-		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 1, 0);
-		cd_end_time = SDL_GetTicks() +
-			cdrom->track[cd_track].length * 1000 / CD_FPS;
+		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
+		cd_end_time = SDL_GetTicks() + cdrom->track[cd_track].length * 1000 / CD_FPS;
 	}
 }
 

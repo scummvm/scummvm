@@ -35,7 +35,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 
 	if (b==0)
 		stopScriptNr(script);
-
+	
 	if (script < _numGlobalScripts) {
 		scriptPtr = getResourceAddress(rtScript, script);
                 if(_features & GF_SMALL_HEADER)

@@ -106,7 +106,7 @@ void Scumm::playSound(int sound) {
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
 		cd_play(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
-			(ptr[18] * 60 + ptr[19]) * 75 + ptr[20]);
+			(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 		current_cd_sound = sound;
 		return;
 	}
