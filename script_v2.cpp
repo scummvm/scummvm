@@ -2486,7 +2486,7 @@ void Scumm::o6_miscOps() {
 			warning("o6_miscOps: stub11(%d)", args[1]);
 			break;
 		case 12:
-			setCursorImg(args[1], -1, args[2]);
+			setCursorImg(args[1], (uint) -1, args[2]);
 			break;
 		case 13:
 			warning("o6_miscOps: stub13(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);

@@ -385,7 +385,7 @@ void Scumm::startAnimActor(Actor *a, int frame) {
 				initActorCostumeData(a);
 
 			if (frame!=0x3E) {
-				cost_decodeData(a, frame, -1);
+				cost_decodeData(a, frame, (uint) -1);
 			}
 		}
 
