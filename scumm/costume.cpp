@@ -268,9 +268,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 
-	if (_loaded._format == 0x57)
-		procC64();
-	else if (newAmiCost)
+	if (_loaded._format == 0x57) {
+		// The v1 costume renderer needs the actor number, which is
+		// the same thing as the costume renderer's _dirty_id.
+		procC64(_dirty_id);
+	} else if (newAmiCost)
 		proc3_ami();
 	else
 		proc3();
@@ -319,10 +321,10 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
-int v1_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0};
-int v1_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0};
+int v1_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
+int v1_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
 
-void CostumeRenderer::procC64() {
+void CostumeRenderer::procC64(int actor) {
 	const byte *src;
 	byte *dst;
 	byte len;
@@ -338,15 +340,14 @@ void CostumeRenderer::procC64() {
 	height = _height;
 
 	// TODO:
-	// * figure out how to get the right colors/palette
 	// * test masking (once we implement any masking for V1 games)
 
-	byte palette[4] = { 0, 10, 6, 0 };
-	//FIXME We need to know actor number for correct palette
-//	palette[0] = 0;
-//	palette[1] = v1_actor_palatte_1[actor];
-//	palette[2] = v1_actor_palatte_2[actor];
-//	palette[3] = 0;
+	byte palette[4];
+
+	palette[0] = 0;
+	palette[1] = v1_actor_palatte_1[actor];
+	palette[2] = v1_actor_palatte_2[actor];
+	palette[3] = 0;
 
 	v1.skip_width >>= 3;
 

@@ -72,7 +72,7 @@ protected:
 	void proc3();
 	void proc3_ami();
 
-	void procC64();
+	void procC64(int actor);
 	void c64_ignorePakCols(int num);
 
 	byte mainRoutine(int xmoveCur, int ymoveCur);
