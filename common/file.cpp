@@ -23,7 +23,7 @@
 
 File::File() {
 	_handle = NULL;
-	_readFailed = false;
+	_ioFailed = false;
 	_encbyte = 0;
 }
 
@@ -38,7 +38,7 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 		return false;
 	}
 
-	clearReadFailed();
+	clearIOFailed();
 
 	int32 i = 0, pos = 0;
 
@@ -70,8 +70,29 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 			debug(2, "File %s not found", filename);
 			return false;
 		}
-	} else {
-		warning("Only read mode supported!");
+	}
+	else if (mode == 2) {
+		_handle = fopen(buf, "wb");
+		if (_handle == NULL) {
+			ptr = buf + pos;
+			do
+				*ptr++ = toupper(*ptr);
+			while (*ptr);
+			_handle = fopen(buf, "wb");
+		}
+		if (_handle == NULL) {
+			ptr = buf + pos;
+			do
+				*ptr++ = tolower(*ptr);
+			while (*ptr);
+			_handle = fopen(buf, "wb");
+		}
+		if (_handle == NULL) {
+			debug(2, "File %s not opened", filename);
+			return false;
+		}
+	}	else {
+		warning("Only read/write mode supported!");
 		return false;
 	}
 
@@ -88,12 +109,12 @@ bool File::isOpen() {
 	return _handle != NULL;
 }
 
-bool File::readFailed() {
-	return _readFailed != 0;
+bool File::ioFailed() {
+	return _ioFailed != 0;
 }
 
-void File::clearReadFailed() {
-	_readFailed = false;
+void File::clearIOFailed() {
+	_ioFailed = false;
 }
 
 bool File::eof() {
@@ -137,7 +158,7 @@ uint32 File::read(void *ptr, uint32 size) {
 
 	if ((uint32)fread(ptr2, 1, size, _handle) != size) {
 		clearerr(_handle);
-		_readFailed = true;
+		_ioFailed = true;
 	}
 
 	if (_encbyte != 0) {
@@ -155,7 +176,7 @@ byte File::readByte() {
 
 	if (fread(&b, 1, 1, _handle) != 1) {
 		clearerr(_handle);
-		_readFailed = true;
+		_ioFailed = true;
 	}
 	return b ^ _encbyte;
 }
@@ -182,4 +203,59 @@ uint32 File::readDwordBE() {
 	uint32 b = readWordBE();
 	uint32 a = readWordBE();
 	return (b << 16) | a;
+}
+
+uint32 File::write(void *ptr, uint32 size) {
+	byte *ptr2 = (byte *)ptr;
+
+	if (_handle == NULL) {
+		error("File is not open!");
+		return 0;
+	}
+
+	if (size == 0)
+		return 0;
+
+	if (_encbyte != 0) {
+		uint32 t_size = size;
+		do {
+			*ptr2++ ^= _encbyte;
+		} while (--t_size);
+	}
+
+	if ((uint32)fwrite(ptr2, 1, size, _handle) != size) {
+		clearerr(_handle);
+		_ioFailed = true;
+	}
+
+	return size;
+}
+
+void File::writeByte(byte value) {
+	value ^= _encbyte;
+
+	if (fwrite(&value, 1, 1, _handle) != 1) {
+		clearerr(_handle);
+		_ioFailed = true;
+	}
+}
+
+void File::writeWordLE(uint16 value) {
+	writeByte((byte)(value & 0xff));
+	writeByte((byte)(value >> 8));
+}
+
+void File::writeDwordLE(uint32 value) {
+	writeWordLE((uint16)(value & 0xffff));
+	writeWordLE((uint16)(value >> 16));
+}
+
+void File::writeWordBE(uint16 value) {
+	writeByte((byte)(value >> 8));
+	writeByte((byte)(value & 0xff));
+}
+
+void File::writeDwordBE(uint32 value) {
+	writeWordBE((uint16)(value >> 16));
+	writeWordBE((uint16)(value & 0xffff));
 }

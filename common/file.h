@@ -31,7 +31,7 @@ class File {
 private:
 
 	FILE * _handle;
-	bool _readFailed;
+	bool _ioFailed;
 	byte _encbyte;
 
 public:
@@ -41,8 +41,8 @@ public:
 	bool open(const char *filename, int mode = 1, byte encbyte = 0);
 	void close();
 	bool isOpen();
-	bool readFailed();
-	void clearReadFailed();
+	bool ioFailed();
+	void clearIOFailed();
 	bool eof();
 	uint32 pos();
 	void seek(uint32 offs, int whence);
@@ -52,7 +52,12 @@ public:
 	uint32 readDwordLE();
 	uint16 readWordBE();
 	uint32 readDwordBE();
-
+	uint32 write(void *ptr, uint32 size);
+	void writeByte(byte value);
+	void writeWordLE(uint16 value);
+	void writeDwordLE(uint32 value);
+	void writeWordBE(uint16 value);
+	void writeDwordBE(uint32 value);
 };
 
 #endif
