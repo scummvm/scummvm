@@ -1362,8 +1362,7 @@ void Insane::turnEnemy(bool battle) {
 				_actor[1].act[2].state, _actor[1].act[3].state, _actor[1].act[0].state);
 	actor11Reaction(buttons);
 	actor12Reaction(buttons);
-	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
-		actor13Reaction(buttons);
+	actor13Reaction(buttons);
 	actor10Reaction(buttons);
 }
 
@@ -2644,7 +2643,9 @@ void Insane::actor13Reaction(int32 buttons) {
 			_actor[1].act[3].state = 70;
 		break;
 	case 70:
-		if (_actor[1].scenePropSubIdx) {
+		if (!_actor[1].scenePropSubIdx || ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+			_actor[1].act[3].state = 118;
+		} else {
 			smlayer_setActorFacing(1, 3, 4, 180);
 			tmp = _currScenePropIdx + _actor[1].scenePropSubIdx;
 			if (!smlayer_startVoice(_sceneProp[tmp].sound))
@@ -2652,8 +2653,6 @@ void Insane::actor13Reaction(int32 buttons) {
 			else
 				_actor[1].runningSound = _sceneProp[tmp].sound;
 			_actor[1].act[3].state = 72;
-		} else {
-			_actor[1].act[3].state = 118;
 		}
 		break;
 	case 71:
