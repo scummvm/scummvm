@@ -124,7 +124,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_xCellCount = _vm->getDisplayWidth() / 2;
 
 	_pathCellCount = _yCellCount * _xCellCount;
-	_pathCell = (int*)malloc(_pathCellCount * sizeof *_pathCell);
+	_pathCell = (int*)malloc(_pathCellCount * sizeof(*_pathCell));
 	
 
 	_pathRect.left = 0;

@@ -48,7 +48,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream) {
 	_nameNumber = readStream->readUint16();
 	_scriptNumber = readStream->readUint16();
 
-	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof *_clickAreas);
+	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof(*_clickAreas));
 
 	if (_clickAreas == NULL) {
 		error("HitZone::HitZone Memory allocation failed");
@@ -60,7 +60,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream) {
 		
 		assert(clickArea->pointsCount);
 
-		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof *(clickArea->points));
+		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof(*(clickArea->points)));
 		if (clickArea->points == NULL) {
 			error("HitZone::HitZone Memory allocation failed");
 		}
@@ -163,7 +163,7 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 	// Obtain object count N and allocate space for N objects
 	_nObjects = readS.readUint16();
 
-	_objectMaps = (OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof *_objectMaps);
+	_objectMaps = (OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof(*_objectMaps));
 
 	if (_objectMaps == NULL) {
 		warning("Error: Memory allocation failed");
@@ -179,7 +179,7 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 		readS.readByte();
 		object_map->objectNum = readS.readUint16();
 		object_map->scriptNum = readS.readUint16();
-		object_map->clickareas = (CLICKAREA *)malloc(object_map->nClickareas * sizeof *(object_map->clickareas));
+		object_map->clickareas = (CLICKAREA *)malloc(object_map->nClickareas * sizeof(*(object_map->clickareas)));
 
 		if (object_map->clickareas == NULL) {
 			warning("Error: Memory allocation failed");
@@ -192,7 +192,7 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 			clickarea->n_points = readS.readUint16LE();
 			assert(clickarea->n_points != 0);
 
-			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof *(clickarea->points));
+			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof(*(clickarea->points)));
 			if (clickarea->points == NULL) {
 				warning("Error: Memory allocation failed");
 				return MEM;
@@ -263,7 +263,7 @@ int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	_nNames = n_names;
 
 	debug(2, "ObjectMap::loadNames: Loading %d object names.", n_names);
-	_names = (const char **)malloc(n_names * sizeof *_names);
+	_names = (const char **)malloc(n_names * sizeof(*_names));
 
 	if (_names == NULL) {
 		warning("Error: Memory allocation failed");
@@ -369,7 +369,7 @@ int ObjectMap::draw(SURFACE *ds, const Point& imousePt, int color, int color2) {
 	for (i = 0; i < _nObjects; i++) {
 		draw_color = color;
 		if (hitObject && (objectNum == _objectMaps[i].objectNum)) {
-			snprintf(txt_buf, sizeof txt_buf, "obj %d: v %d, f %X",
+			snprintf(txt_buf, sizeof(txt_buf), "obj %d: v %d, f %X",
 					_objectMaps[i].objectNum,
 					_objectMaps[i].defaultVerb,
 					_objectMaps[i].flags);

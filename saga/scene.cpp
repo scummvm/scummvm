@@ -77,7 +77,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 	_sceneCount = scene_lut_len / 2;
 	_sceneMax = _sceneCount - 1;
-	_sceneLUT = (int *)malloc(_sceneMax * sizeof *_sceneLUT);
+	_sceneLUT = (int *)malloc(_sceneMax * sizeof(*_sceneLUT));
 	if (_sceneLUT == NULL) {
 		warning("Scene::Scene(): Memory allocation failed");
 		return;
@@ -708,7 +708,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 	// Allocate memory for scene resource list 
 	_resListEntries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
 	debug(0, "Scene resource list contains %d entries.", _resListEntries);
-	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof *_resList);
+	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof(*_resList));
 
 	if (_resList == NULL) {
 		warning("Scene::loadSceneResourceList(): Error: Memory allocation failed");
@@ -764,7 +764,7 @@ int Scene::processSceneResources() {
 			}
 
 			pal_p = _vm->getImagePal(_bg.res_buf, _bg.res_len);
-			memcpy(_bg.pal, pal_p, sizeof _bg.pal);
+			memcpy(_bg.pal, pal_p, sizeof(_bg.pal));
 			_sceneMode = SCENE_MODE_NORMAL;
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource

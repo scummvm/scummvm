@@ -666,7 +666,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			param1 = thread->pop();
 			iparam2 = (long)param2;
 			// Preserve most significant bit
-			data = (0x01 << ((sizeof param1 * CHAR_BIT) - 1)) & param1;
+			data = (0x01 << ((sizeof(param1) * CHAR_BIT) - 1)) & param1;
 			for (i = 0; i < (int)iparam2; i++) {
 				param1 >>= 1;
 				param1 |= data;

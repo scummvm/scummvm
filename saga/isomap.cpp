@@ -55,7 +55,7 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 
 	readS.seek(0);
 
-	tile_tbl = (ISOTILE_ENTRY *)malloc(_tile_ct * sizeof *tile_tbl);
+	tile_tbl = (ISOTILE_ENTRY *)malloc(_tile_ct * sizeof(*tile_tbl));
 	if (tile_tbl == NULL) {
 		return MEM;
 	}
@@ -88,7 +88,7 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	MemoryReadStreamEndian readS(mtileres_p, mtileres_len, IS_BIG_ENDIAN);
 
 	mtile_ct = mtileres_len / SAGA_METATILE_ENTRY_LEN;
-	mtile_tbl = (ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof *mtile_tbl);
+	mtile_tbl = (ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof(*mtile_tbl));
 	if (mtile_tbl == NULL) {
 		return MEM;
 	}

@@ -759,7 +759,7 @@ int SagaEngine::loadGame(int game_n) {
 
 	game_filect = GameDescs[game_n].gd_filect;
 	
-	GameModule.gfile_data = (GAME_FILEDATA *)malloc(game_filect * sizeof *GameModule.gfile_data);
+	GameModule.gfile_data = (GAME_FILEDATA *)malloc(game_filect * sizeof(*GameModule.gfile_data));
 	if (GameModule.gfile_data == NULL) {
 		return MEM;
 	}

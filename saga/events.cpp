@@ -106,7 +106,7 @@ int Events::handleEvents(long msec) {
 				// and reprocess the event  */
 				delta_time = event_p->time;
 				EVENT *from_chain=event_p->chain;
-				memcpy(event_p, from_chain,sizeof *event_p);
+				memcpy(event_p, from_chain,sizeof(*event_p));
 				free(from_chain);  
 
 				event_p->time += delta_time;
@@ -435,7 +435,7 @@ EVENT *Events::chain(EVENT *head_event, EVENT *add_event) {
 	EVENT *new_event;
 
 	// Allocate space for new event
-	new_event = (EVENT *)malloc(sizeof *new_event);
+	new_event = (EVENT *)malloc(sizeof(*new_event));
 	if (new_event == NULL) {
 		return NULL;
 	}

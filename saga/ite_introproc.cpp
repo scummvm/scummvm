@@ -654,7 +654,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		"Jon Van Caneghem", MEDIUM_FONT_ID}
 	};
 
-	int n_credits = sizeof credits / sizeof credits[0];
+	int n_credits = ARRAYSIZE(credits);
 	int event_delay = 3000;
 
 	switch (param) {
@@ -926,7 +926,7 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 		MEDIUM_FONT_ID}
 	};
 
-	int n_credits = sizeof credits / sizeof credits[0];
+	int n_credits = ARRAYSIZE(credits);
 
 	switch (param) {
 	case SCENE_BEGIN:

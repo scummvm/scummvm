@@ -83,14 +83,14 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 
 	sprite_count = readS.readUint16();
 
-	new_slist = (SPRITELIST *)malloc(sizeof *new_slist);
+	new_slist = (SPRITELIST *)malloc(sizeof(*new_slist));
 	if (new_slist == NULL) {
 		return MEM;
 	}
 
 	new_slist->sprite_count = sprite_count;
 
-	new_slist->offset_list = (SPRITELIST_OFFSET *)malloc(sprite_count * sizeof *new_slist->offset_list);
+	new_slist->offset_list = (SPRITELIST_OFFSET *)malloc(sprite_count * sizeof(*new_slist->offset_list));
 	if (new_slist->offset_list == NULL) {
 		free(new_slist);
 		return MEM;
@@ -134,7 +134,7 @@ int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
 	old_sprite_count = spritelist->sprite_count;
 	new_sprite_count = spritelist->sprite_count + sprite_count;
 
-	test_p = realloc(spritelist->offset_list, new_sprite_count * sizeof *spritelist->offset_list);
+	test_p = realloc(spritelist->offset_list, new_sprite_count * sizeof(*spritelist->offset_list));
 	if (test_p == NULL) {
 		return MEM;
 	}

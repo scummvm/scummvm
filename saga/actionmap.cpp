@@ -50,7 +50,7 @@ void ActionMap::load(const byte *resourcePointer, size_t resourceLength) {
 	if (_stepZoneList)
 		error("ActionMap::load _stepZoneList != NULL");
 
-	_stepZoneList = (HitZone **) malloc(_stepZoneListCount * sizeof (HitZone *));
+	_stepZoneList = (HitZone **) malloc(_stepZoneListCount * sizeof(HitZone *));
 	if (_stepZoneList == NULL) {
 		error("ActionMap::load Memory allocation failure");
 	}

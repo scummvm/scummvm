@@ -266,7 +266,7 @@ int Script::loadScript(int script_num) {
 	// Initialize script data structure
 	debug(0, "Loading script data for script #%d", script_num);
 
-	script_data = (SCRIPTDATA *)malloc(sizeof *script_data);
+	script_data = (SCRIPTDATA *)malloc(sizeof(*script_data));
 	if (script_data == NULL) {
 		error("Memory allocation failed");
 	}
@@ -402,13 +402,13 @@ SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	// Allocate a new bytecode resource information structure and table of
 	// entrypoints
 
-	bc_new_data = (SCRIPT_BYTECODE *)malloc(sizeof *bc_new_data);
+	bc_new_data = (SCRIPT_BYTECODE *)malloc(sizeof(*bc_new_data));
 	if (bc_new_data == NULL) {
 		warning("Memory allocation failure loading script bytecode");
 		return NULL;
 	}
 
-	bc_ep_tbl = (PROC_TBLENTRY *)malloc(n_entrypoints * sizeof *bc_ep_tbl);
+	bc_ep_tbl = (PROC_TBLENTRY *)malloc(n_entrypoints * sizeof(*bc_ep_tbl));
 	if (bc_ep_tbl == NULL) {
 		warning("Memory allocation failure creating script entrypoint table");
 		free(bc_new_data);
@@ -462,7 +462,7 @@ void Script::loadStrings(const byte *stringsPointer, size_t stringsLength, Strin
 	debug(9, "Loading strings list...");
 
 	// Allocate dialogue list structure
-	strings = (StringsList *)malloc(sizeof *strings);
+	strings = (StringsList *)malloc(sizeof(*strings));
 	if (strings == NULL) {
 		error("No enough memory for strings list");
 	}
@@ -503,7 +503,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 
 	uint16 i;
 
-	voice_lut = (VOICE_LUT *)malloc(sizeof *voice_lut);
+	voice_lut = (VOICE_LUT *)malloc(sizeof(*voice_lut));
 	if (voice_lut == NULL) {
 		return NULL;
 	}
@@ -514,7 +514,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 		return NULL;
 	}
 
-	voice_lut->voices = (int *)malloc(voice_lut->n_voices * sizeof *voice_lut->voices);
+	voice_lut->voices = (int *)malloc(voice_lut->n_voices * sizeof(*voice_lut->voices));
 	if (voice_lut->voices == NULL) {
 
 		return NULL;

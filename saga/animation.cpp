@@ -79,7 +79,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 		return FAILURE;
 	}
 
-	new_anim = (ANIMATION *)malloc(sizeof *new_anim);
+	new_anim = (ANIMATION *)malloc(sizeof(*new_anim));
 	if (new_anim == NULL) {
 		warning("Anim::load Allocation failure");
 		return MEM;
@@ -96,7 +96,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 
 	if (_vm->_gameType == GType_ITE) {
 		// Cache frame offsets
-		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof *new_anim->frame_offsets);
+		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof(*new_anim->frame_offsets));
 		if (new_anim->frame_offsets == NULL) {
 			warning("Anim::load Allocation failure");
 			return MEM;

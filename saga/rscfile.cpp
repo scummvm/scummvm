@@ -39,7 +39,7 @@ RSCFILE_CONTEXT *RSC_CreateContext() {
 	empty_context.rc_file = new File();
 	RSCFILE_CONTEXT *new_context;
 
-	new_context = (RSCFILE_CONTEXT *)malloc(sizeof *new_context);
+	new_context = (RSCFILE_CONTEXT *)malloc(sizeof(*new_context));
 	if (new_context == NULL) {
 		return NULL;
 	}
@@ -141,7 +141,7 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 		return FAILURE;
 	}
 
-	rsc_restbl = (RSCFILE_RESOURCE *)malloc(res_tbl_ct * sizeof *rsc_restbl);
+	rsc_restbl = (RSCFILE_RESOURCE *)malloc(res_tbl_ct * sizeof(*rsc_restbl));
 	if (rsc_restbl == NULL) {
 		free(tbl_buf);
 		return FAILURE;
