@@ -1220,7 +1220,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 }
 
 byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
-	Common::Rect clip, src, dst;
+	Common::Rect src, dst;
 
 	if (!_mirror) {
 		dst.left = (_actorX - xmoveCur - _width) + 1;
@@ -1232,16 +1232,11 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	src.right = _width - 1;
 	src.bottom = _height - 1;
 
-	clip.top = clip.left = 0;
-	clip.right = _outwidth - 1;
-	clip.bottom = _outheight - 1;
-
 	dst.top = _actorY + ymoveCur;
 	dst.right = dst.left + _width - 1;
 	dst.bottom = dst.top + _height - 1;
 
-	clip.clip(_clipOverride);
-	dst.clip(clip);
+	dst.clip(_clipOverride);
 
 	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
 
