@@ -1077,14 +1077,24 @@ int Scumm::getObjOldDir(int obj) {
 	}
 }
 
+int another_dummy_valgrind_var = 0;
+
 int Scumm::getObjNewDir(int obj) {
+	int dir;
 	if (obj < NUM_ACTORS) {
-		return derefActorSafe(obj, "getObjNewDir")->facing;
+		dir = derefActorSafe(obj, "getObjNewDir")->facing;
+		if (dir > 0)
+			another_dummy_valgrind_var++;
 	} else {
-		int x, y, dir;
+		int x, y;
 		getObjectXYPos(obj, x, y, dir);
-		return oldDirToNewDir(dir);
+		if (dir > 0)
+			another_dummy_valgrind_var *= 2;
+		dir = oldDirToNewDir(dir);
+		if (dir > 0)
+			another_dummy_valgrind_var--;
 	}
+	return dir;
 }
 
 int Scumm::findInventory(int owner, int idx) {
