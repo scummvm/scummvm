@@ -1853,9 +1853,10 @@ void SimonEngine::vc_70_queue_music() {
 	// It specifies whether to loop the current
 	// track and, if not, whether to switch to
 	// a different track upon completion.
-	midi.setLoop (loop != 0);
 	if (track != 0xFFFF && track != 999)
-		midi.queueTrack (track, 0);
+		midi.queueTrack (track, loop != 0);
+	else
+		midi.setLoop (loop != 0);
 }
 
 void SimonEngine::vc_71_check_music_queue() {
