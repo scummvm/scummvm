@@ -824,7 +824,7 @@
 //
 //	--------------------------------------------------------------------------
 //
-//	int32 StopSpeech(void)
+//	int32 StopSpeechBS2(void)
 //
 //	Stops the speech from playing.
 //
@@ -1566,7 +1566,7 @@ extern int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 extern int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);
 extern int32 GetCompSpeechSize(const char *filename, uint32 speechid);
 extern int32 AmISpeaking();
-extern int32 StopSpeech(void);
+extern int32 StopSpeechBS2(void);
 extern int32 GetSpeechStatus(void);
 extern int32 PauseSpeech(void);
 extern int32 UnpauseSpeech(void);

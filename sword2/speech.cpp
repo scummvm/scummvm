@@ -1704,7 +1704,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 
 			if (speechRunning)							// if speech sample playing
 			{
-				StopSpeech();							// halt the sample prematurely
+				StopSpeechBS2();							// halt the sample prematurely
 			}
 		}
 	}

@@ -291,7 +291,7 @@ uint32	Con_start(uint8 *input)	//Tony15Oct96
 			//---------------------------------------------
 
 			UnpauseSpeech();
-			StopSpeech();							// halt the sample prematurely
+			StopSpeechBS2();							// halt the sample prematurely
 
 			//--------------------------------------------------------------
 			// clean out all resources & flags, ready for a total restart (James24mar97)

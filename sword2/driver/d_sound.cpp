@@ -225,7 +225,7 @@
 //
 //	--------------------------------------------------------------------------
 //
-//	int32 StopSpeech(void)
+//	int32 StopSpeechBS2(void)
 //
 //	Stops the speech from playing.
 //
@@ -1131,10 +1131,10 @@ int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan)
 }
 
 
-int32 StopSpeech(void)
+int32 StopSpeechBS2(void)
 
 {
-	warning("stub StopSpeech");
+	warning("stub StopSpeechBS2");
 /*
 	int32 status;
 
