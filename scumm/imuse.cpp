@@ -1654,6 +1654,16 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_MULTI_MIDI:
 		_enable_multi_midi = (value > 0);
+		if (!_enable_multi_midi && _midi_native && _midi_adlib) {
+			MidiDriver *driver = _midi_adlib;
+			_midi_adlib = NULL;
+			int i;
+			for (i = 0; i < ARRAYSIZE(_players); ++i) {
+				if (_players[i]._active && _players[i]._midi == driver)
+					_players[i].clear();
+			}
+			driver->close();
+		}
 		break;
 
 	case IMuse::PROP_OLD_ADLIB_INSTRUMENTS:

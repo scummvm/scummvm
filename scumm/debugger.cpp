@@ -22,6 +22,7 @@
 #include "scumm.h"
 #include "sound.h"
 #include "actor.h"
+#include "imuse.h"
 #include "debugger.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -98,6 +99,8 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 
 		DCmd_Register("show", &ScummDebugger::Cmd_Show);
 		DCmd_Register("hide", &ScummDebugger::Cmd_Hide);
+
+		DCmd_Register("imuse_multimidi", &ScummDebugger::Cmd_ImuseMultiMidi);
 	}
 }
 
@@ -352,6 +355,16 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 	
 	_detach_now = true;
 	return false;
+}
+
+bool ScummDebugger::Cmd_ImuseMultiMidi (int argc, const char **argv) {
+	if (argc > 1) {
+		_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[1], "1") || !strcmp (argv[1], "on") || !strcmp (argv[1], "true"));
+		return false;
+	} else {
+		Debug_Printf("Use 'imuse_multimidi <on/true/1 | off/false/0>' to switch\n");
+		return true;
+	}
 }
 
 bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
