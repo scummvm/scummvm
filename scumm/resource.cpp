@@ -1597,7 +1597,7 @@ void Scumm::freeResources() {
 	}
 }
 
-void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
+void Scumm::loadPtrToResource(int type, int resindex, const byte *source) {
 	byte *alloced;
 	int i, len;
 

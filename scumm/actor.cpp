@@ -1138,7 +1138,7 @@ void Scumm::stopTalk() {
 }
 
 void Scumm::clearMsgQueue() {
-	_messagePtr = (byte *)" ";
+	_messagePtr = (const byte *)" ";
 	stopTalk();
 }
 
@@ -1425,8 +1425,9 @@ void Actor::walkActorOld() {
 
 byte *Actor::getActorName() {
 	byte *ptr = _vm->getResourceAddress(rtActorName, number);
-	if (ptr == NULL)
-		return (byte *)" ";
+	if (ptr == NULL) {
+		warning("Failed to find name of actor %d\n", number);
+	}
 	return ptr;
 }
 

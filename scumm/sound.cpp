@@ -520,7 +520,7 @@ void Sound::processSfxQueues() {
 }
 
 static int compareMP3OffsetTable(const void *a, const void *b) {
-	return ((MP3OffsetTable *)a)->org_offset - ((MP3OffsetTable *)b)->org_offset;
+	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
 int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
@@ -1030,7 +1030,7 @@ static void music_handler (void *engine) {
 	g_scumm->_sound->bundleMusicHandler(g_scumm);
 }
 
-void Sound::playBundleMusic(char *song) {
+void Sound::playBundleMusic(const char *song) {
 	if (_scumm->_silentDigitalImuse == true) {
 		return;
 	}

@@ -579,7 +579,7 @@ protected:
 	bool openResourceFile(const char *filename);
 
 protected:
-	void loadPtrToResource(int type, int i, byte *ptr);
+	void loadPtrToResource(int type, int i, const byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
 	char *resTypeFromId(int id);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);

@@ -899,7 +899,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 
 	objptr = getOBCDFromObject(obj);
 	if (objptr == NULL)
-		return (byte *)" ";
+		return NULL;
 
 	return findResourceData(MKID('OBNA'), objptr);
 }
@@ -1596,7 +1596,7 @@ static byte _bompBitsTable[] = {
 int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
 	uint32 tmp = (256 - (size >> 1));
 	int32 count = (size + 7) >> 3;
-	assert(0 <= tmp && tmp < sizeof(_bompScaleTable));
+	assert(tmp < sizeof(_bompScaleTable));
 	byte * tmp_ptr = _bompScaleTable + tmp;
 	byte * tmp_scalling = scalling;
 	byte a = 0;
@@ -1656,7 +1656,7 @@ int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
 	byte ret_value = 0;
 	while(count--) {
 		tmp = *scalling++;
-		assert(0 <= tmp && tmp < sizeof(_bompBitsTable));
+		assert(tmp < sizeof(_bompBitsTable));
 		ret_value += _bompBitsTable[tmp];
 	}
 

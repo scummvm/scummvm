@@ -882,7 +882,7 @@ void Scumm_v2::o2_doSentence() {
 void Scumm_v2::o2_drawSentence() {
 	ScummVM::Rect sentenceline;
 	static char sentence[80];
-	byte *temp;
+	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
 
 	if (!(_userState & 32))
@@ -893,7 +893,7 @@ void Scumm_v2::o2_drawSentence() {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
 		if (temp) {
 			strcat(sentence, " ");
-			strcat(sentence, (char*)temp);
+			strcat(sentence, (const char*)temp);
 		}
 	}
 
@@ -901,7 +901,7 @@ void Scumm_v2::o2_drawSentence() {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT2));
 		if (temp) {
 			strcat(sentence, " with ");
-			strcat(sentence, (char*)temp);
+			strcat(sentence, (const char*)temp);
 		}
 	}
 
@@ -1263,6 +1263,8 @@ void Scumm_v2::o2_setObjectName() {
 		error("Can't set actor %d name with new-name-of", obj);
 
 	name = getObjOrActorName(obj);
+	if (name == NULL)
+		return;	// Silently abort
 
 	byte *objptr;
 	byte offset = 0;

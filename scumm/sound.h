@@ -42,8 +42,8 @@ enum {
 	bool _soundsPaused2;
 	bool _soundVolumePreset;
 
-	char *_nameBundleMusic;
-	char *_newNameBundleMusic;
+	const char *_nameBundleMusic;
+	const char *_newNameBundleMusic;
 	byte _musicDisk;
 	byte _voiceDisk;
 	int32 _currentSampleBundleMusic;
@@ -162,7 +162,7 @@ public:
 	void stopSfxSound();
 	bool isSfxFinished();
 	uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo);
-	void playBundleMusic(char *song);
+	void playBundleMusic(const char *song);
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm *scumm);
 	void stopBundleMusic();

@@ -1291,7 +1291,7 @@ void Scumm_v8::o8_verbOps() {
 	case 0xA4:		// SO_VERB_NAME_STR Set verb name
 		a = pop();
 		if (a == 0) {
-			loadPtrToResource(rtVerb, _curVerbSlot, (byte *)"");
+			loadPtrToResource(rtVerb, _curVerbSlot, (const byte *)"");
 		} else {
 			loadPtrToResource(rtVerb, _curVerbSlot, getStringAddress(a));
 		}
@@ -1343,10 +1343,10 @@ void Scumm_v8::o8_system() {
 void Scumm_v8::o8_startVideo() {
 	int len = resStrLen(_scriptPointer);
 	
-	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
+	warning("o8_startVideo(%s/%s)", getGameDataPath(), (const char*)_scriptPointer);
 	
 	SmushPlayer *sp = new SmushPlayer(this, 83333, !_noSubtitles);
-	sp->play((char*)_scriptPointer, getGameDataPath());
+	sp->play((const char*)_scriptPointer, getGameDataPath());
 	delete sp;
 
 	_scriptPointer += len + 1;

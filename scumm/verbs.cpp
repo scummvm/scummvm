@@ -70,6 +70,7 @@ void Scumm::redrawV2Inventory() {
 			_string[1].xpos = 0;
 
 		_messagePtr = getObjOrActorName(obj);
+		assert(_messagePtr);
 		drawString(1);
 		items++;
 

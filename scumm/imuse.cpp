@@ -1192,9 +1192,6 @@ int IMuseInternal::get_music_volume() {
 int IMuseInternal::set_music_volume(uint vol) {
 	if (vol > 255)
 		vol = 255;
-	else if (vol < 0)
-		vol = 0;
-
 	if (_music_volume == vol)
 		return 0;
 	_music_volume = vol;
@@ -1210,11 +1207,8 @@ int IMuseInternal::set_music_volume(uint vol) {
 int IMuseInternal::set_master_volume (uint vol) {
 	if (vol > 255)
 		vol = 255;
-	else if (vol < 0)
-		vol = 0;
 	if (_master_volume == vol)
 		return 0;
-
 	_master_volume = vol;
 	vol = vol * _music_volume / 255;
 	for (uint i = 0; i < ARRAYSIZE (_channel_volume); i++) {
@@ -2755,7 +2749,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	uint32 curpos, topos;
 	uint32 pos;
 
-	assert(totrack >= 0 && tobeat >= 0 && totick >= 0);
+//	assert(totrack >= 0 && tobeat >= 0 && totick >= 0);	// Those are all unsigned numbers anyway...
 
 	if (!_active)
 		return -1;

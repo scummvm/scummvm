@@ -1292,9 +1292,8 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 				if(run == 0) {
 					run = *src++;
 				}
-				const register byte colors[2] = { color >> 4, color & 0xf };
 				for(z = 0; z < run; z++) {
-					*(dst + y * _vm->_screenWidth + x) = colors[z&1];
+					*(dst + y * _vm->_screenWidth + x) = (z&1) ? (color & 0xf) : (color >> 4);
 
 					y++;
 					if(y >= height) {

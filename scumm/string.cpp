@@ -677,17 +677,19 @@ void Scumm::addVerbToStack(int var)
 			}
 		}
 	} else {
-		addMessageToStack((byte *)"");
+		addMessageToStack((const byte *)"");
 	}
 }
 
 void Scumm::addNameToStack(int var)
 {
 	int num;
+	byte *ptr = 0;
 
 	num = readVar(var);
-	if (num) {
-		byte *ptr = getObjOrActorName(num);
+	if (num)
+		ptr = getObjOrActorName(num);
+	if (ptr) {
 		if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
 			char pointer[20];
 			int i, j;
@@ -704,7 +706,7 @@ void Scumm::addNameToStack(int var)
 			addMessageToStack(ptr);
 		}
 	} else {
-		addMessageToStack((byte *)"");
+		addMessageToStack((const byte *)"");
 	}
 }
 
@@ -735,7 +737,7 @@ void Scumm::addStringToStack(int var) {
 			}
 		}
 	} else
-		addMessageToStack((byte *)"");
+		addMessageToStack((const byte *)"");
 }
 
 void Scumm::initCharset(int charsetno) {
@@ -752,8 +754,8 @@ void Scumm::initCharset(int charsetno) {
 }
 
 int indexCompare(const void *p1, const void *p2) {
-	struct langIndexNode *i1 = (struct langIndexNode *) p1;
-	struct langIndexNode *i2 = (struct langIndexNode *) p2;
+	const struct langIndexNode *i1 = (const struct langIndexNode *) p1;
+	const struct langIndexNode *i2 = (const struct langIndexNode *) p2;
 
 	return strcmp(i1->tag, i2->tag);
 }
@@ -885,7 +887,7 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 				}
 			}
 		}
-		byte *pointer = (byte *)strchr((char *)text + 1, '/');
+		byte *pointer = (byte *)strchr((const char *)text + 1, '/');
 		if (pointer != NULL) {
 			pointer++;
 			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
@@ -918,7 +920,7 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 			// skip translation if flag 'h' exist
 			if (buf[pos] == 'h') {
 				pos += 3;
-				byte *pointer = (byte *)strchr((char *)text + 1, '/');
+				byte *pointer = (byte *)strchr((const char *)text + 1, '/');
 				if (pointer != NULL)
 					memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 				else
@@ -976,7 +978,7 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 				}
 			}
 		}
-		byte *pointer = (byte *)strchr((char *)text + 1, '/');
+		byte *pointer = (byte *)strchr((const char *)text + 1, '/');
 		if (pointer != NULL) {
 			pointer++;
 			l = 0;

@@ -1933,6 +1933,8 @@ void Scumm_v5::o5_setObjectName() {
 	}
 
 	name = getObjOrActorName(obj);
+	if (name == NULL)
+		return;	// Silently abort
 
 	if (_features & GF_SMALL_HEADER) {
 		// FIXME this is hack to make MonkeyVGA work. needed at least for the german

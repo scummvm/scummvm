@@ -353,7 +353,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte **comp_final) {
+int32 Bundle::decompressVoiceSampleByName(const char *name, byte **comp_final) {
 	int32 final_size = 0, i;
 
 	if (_voiceFile.isOpen() == false) {
@@ -371,7 +371,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte **comp_final) {
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final) {
+int32 Bundle::decompressMusicSampleByName(const char *name, int32 number, byte *comp_final) {
 	int32 final_size = 0, i;
 
 	if (!name) {
@@ -405,7 +405,7 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	return _musicFile.readUint32BE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
+int32 Bundle::getNumberOfMusicSamplesByName(const char *name) {
 	int32 number = 0, i;
 
 	if (_musicFile.isOpen() == false) {

@@ -525,8 +525,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = detector->_bootParam;
-	_exe_name = (char*)detector->_gameRealName.c_str();
-	_game_name = (char*)detector->_gameFileName.c_str();
+	_exe_name = strdup(detector->_gameRealName.c_str());	// FIXME: probably should use String class here
+	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_gameId;
 	_features = detector->_features;
 	_noSubtitles = detector->_noSubtitles;

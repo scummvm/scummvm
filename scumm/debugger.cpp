@@ -143,7 +143,7 @@ void ScummDebugger::on_frame() {
 bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
 	ScummDebugger *debugger = (ScummDebugger *)refCon;
 	
-	return debugger->RunCommand((char*)input);
+	return debugger->RunCommand(input);
 }
 
 
@@ -229,10 +229,11 @@ void ScummDebugger::enter() {
 }
 
 // Command execution loop
-bool ScummDebugger::RunCommand(char *input) {
+bool ScummDebugger::RunCommand(const char *inputOrig) {
 	int i = 0, num_params = 0;
 	const char *param[256];
-
+	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
+	
 	// Parse out any params
 	char *tok = strtok(input, " ");
 	if (tok) {
@@ -245,6 +246,7 @@ bool ScummDebugger::RunCommand(char *input) {
 
 	for(i=0; i < _dcmd_count; i++) {
 		if (!strcmp(_dcmds[i].name, param[0])) {
+			free(input);
 			return (this->*_dcmds[i].function)(num_params, param);
 		}
 	}
@@ -321,11 +323,13 @@ bool ScummDebugger::RunCommand(char *input) {
 				}
 			}
 
+			free(input);
 			return true;
 		}
 	}
 
 	Debug_Printf("Unknown command or variable\n");
+	free(input);
 	return true;
 }
 

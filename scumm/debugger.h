@@ -67,7 +67,7 @@ protected:
 
 	void DVar_Register(const char *varname, void *pointer, int type, int optional);
 	void DCmd_Register(const char *cmdname, DebugProc pointer);
-	bool RunCommand(char *input);
+	bool RunCommand(const char *input);
 
 	// Commands
 	bool Cmd_Exit(int argc, const char **argv);

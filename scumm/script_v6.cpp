@@ -1761,7 +1761,7 @@ void Scumm_v6::o6_actorOps() {
 void Scumm_v6::o6_verbOps() {
 	int slot, a, b;
 	VerbSlot *vs;
-	byte *ptr, op;
+	byte op;
 
 	// Full Throttle implements conversation by creating new verbs, one
 	// for each option, but it never tells when to actually draw them.
@@ -1853,11 +1853,10 @@ void Scumm_v6::o6_verbOps() {
 	case 137:
 		a = pop();
 		if (a == 0) {
-			ptr = (byte *)"";
+			loadPtrToResource(rtVerb, slot, (const byte *)"");
 		} else {
-			ptr = getStringAddress(a);
+			loadPtrToResource(rtVerb, slot, getStringAddress(a));
 		}
-		loadPtrToResource(rtVerb, slot, ptr);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
