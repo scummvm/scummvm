@@ -39,6 +39,7 @@ struct Point {
 	explicit Point(int16 x1, int16 y1) : x(x1), y(y1) {};
 	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
+	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
 };
 
 /*! 	@brief simple class for handling a rectangular zone.
@@ -56,24 +57,35 @@ struct Rect {
 	int16 width() const { return right - left; }
 	int16 height() const { return top - bottom; }
 
-	/*!	@brief check if given position is inside the rectangle
+	/*!	@brief check if given position is inside this rectangle
 		
 		@param x the horizontal position to check
 		@param y the vertical position to check	
 		
-		@return true if the given position is inside the rectangle, false otherwise
+		@return true if the given position is inside this rectangle, false otherwise
 	*/
-	bool isInside(int16 x, int16 y) const {
+	bool contains(int16 x, int16 y) const {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
-	/*!	@brief check if given point is inside the rectangle
+
+	/*!	@brief check if given point is inside this rectangle
 		
 		@param p the point to check
 		
-		@return true if the given point is inside the rectangle, false otherwise
+		@return true if the given point is inside this rectangle, false otherwise
 	*/
-	bool isInside(const Point & p) const {
+	bool contains(const Point & p) const {
 		return (left <= p.x) && (p.x < right) && (top <= p.y) && (p.y < bottom);
+	}
+
+	/*!	@brief check if given rectangle is inside this rectangle
+		
+		@param p the point to check
+		
+		@return true if the given rectangle is inside the rectangle, false otherwise
+	*/
+	bool contains(const Rect & r) const {
+		return (left <= r.right) && (r.left < right) && (top <= r.bottom) && (r.top < bottom);
 	}
 };
 
