@@ -82,7 +82,7 @@ SCENE_END()					Logic::sceneStop
 -
 CUTJOEF
 CUTON						Input::_cutawayRunning
-CUTQUIT						Cutaway::_quit (rename and move to Logic?)
+CUTQUIT						Input::_cutawayQuit
 FINAL_ROOM					Cutaway::_finalRoom
 IROOM						Cutaway::_initialRoom
 OBJ_CUT
@@ -96,8 +96,8 @@ TROOM						Cutaway::_temporaryRoom
 DEBUG
 =====
 cd_sample_check()
-debuginfo()
-select_new_room()
+debuginfo()					Debug::printInfo
+select_new_room()			Debug::jumpToRoom
 -
 AREAVAR						(boolean, if true display objects/areas boxes)
 
@@ -149,9 +149,9 @@ INPUT
 check_keys()				Input::checkKeys()
 get_key()					*not needed*
 -
-drawmouseflag
-key_commands				Input::?
-key_language				Input::?
+drawmouseflag				*not needed* (equivalent to _display->mouseCursorShow(bool))
+key_commands				Input::_currentCommandKeys
+key_language				Input::_commandKeys
 KEYVERB						Input::_keyVerb
 MouseButton					Input::_mouseButton
 mouseflag
@@ -359,7 +359,6 @@ A1,A12
 actiondata					Talk::_speechParameters
 HEAD
 JMAX
-JOE2str
 JOEKEYstr
 LEVEL
 LEVELMAX
@@ -367,7 +366,6 @@ OLDLEVEL
 OLDS
 OWALK
 PERstr
-PERSON2str
 PKEYstr
 TALKHEAD
 TALKQUIT
@@ -490,4 +488,6 @@ OUTLINE	// not needed, textSet() Graphics::parameter
 FTOT //	queen.c/SETUP_FURNITURE local var
 OBJMAXv	// == Logic::_objMax[Logic::_currentRoom]
 TEMPstr
-WORDstr
+WORDstr 
+JOE2str,PERSON2str // locals in Talk::initialTalk
+
