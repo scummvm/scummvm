@@ -17,4 +17,8 @@ void addPlayerV2();
 void addSimon();
 void Simon_addCharset();
 /////////////////////////////////
-void addRestables();
+void Queen_addTalk();
+void Queen_addRestables();
+void Queen_addGraphics();
+void Queen_addDisplay();
+void Queen_addMusicdata();
