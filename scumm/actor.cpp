@@ -562,6 +562,13 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 		_vm->clearMsgQueue();
 	}
 
+	// HACK: The green transparency of the tank in the Hall of Oddities is
+	// is positioned one pixel too far to the left. This appears to be a
+	// bug in the original game as well.
+
+	if (_vm->_gameId == GID_SAMNMAX && newRoom == 16 && number == 5 && dstX == 235 && dstY == 236)
+		dstX++;
+
 	x = dstX;
 	y = dstY;
 	room = newRoom;
