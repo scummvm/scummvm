@@ -1281,7 +1281,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	int drawTop = _top - vs->topline;
 
-	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY);
+	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 
 	byte *dstPtr;
 	byte *back = NULL;
