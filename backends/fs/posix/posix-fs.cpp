@@ -27,6 +27,7 @@
 #endif
 #include <sys/stat.h>
 #include <dirent.h>
+#include <stdio.h>
 
 /*
  * Implementation of the ScummVM file system API based on POSIX.
@@ -119,9 +120,33 @@ FSList *POSIXFilesystemNode::listDir() const {
 	return myList;
 }
 
+const char *lastPathComponent(const ScummVM::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+	
+	while (cur > start && *cur != '/') {
+		--cur;
+	}
+	
+	return cur+1;
+}
+
 FilesystemNode *POSIXFilesystemNode::parent() const {
-	// TODO !!!
-	return 0;
+	
+	POSIXFilesystemNode *p = new POSIXFilesystemNode();
+
+	// Root node is its own parent. Still we can't just return this
+	// as the GUI code will call delete on the old node.
+	if (_path != "/") {
+		const char *start = _path.c_str();
+		const char *end = lastPathComponent(_path);
+
+		p->_path = String(start, end - start);
+		p->_isValid = true;
+		p->_isDirectory = true;
+		p->_displayName = lastPathComponent(p->_path);
+	}
+	return p;
 }
 
 #endif // defined(UNIX)
