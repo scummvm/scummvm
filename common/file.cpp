@@ -138,7 +138,7 @@ uint32 File::pos() {
 	return ftell(_handle);
 }
 
-void File::seek(uint32 offs, int whence) {
+void File::seek(int32 offs, int whence) {
 	if (_handle == NULL) {
 		error("File is not open!");
 		return;

@@ -44,7 +44,7 @@ public:
 	void clearIOFailed();
 	bool eof();
 	uint32 pos();
-	void seek(uint32 offs, int whence);
+	void seek(int32 offs, int whence);
 	uint32 read(void *ptr, uint32 size);
 	byte readByte();
 	uint16 readWordLE();
