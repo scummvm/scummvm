@@ -191,7 +191,7 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 
 FilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isDirectory);	// FIXME - Why this restriction? Files have parent dirs, too!
-	return _parentNode.clone();
+	return _parentNode->clone();
 }
 
 #endif // defined(_MSC_VER) || defined(__MINGW32__)
