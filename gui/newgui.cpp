@@ -104,6 +104,9 @@ void NewGui::runLoop() {
 	// different color modes (555 vs 565) might be used depending on the resolution
 	// (e.g. that's the case on my system), so we still end up with wrong colors in those
 	// sitauations. At least now the user can fix it by closing and reopening the GUI.
+	
+	// TODO: Let's add a new even type which is sent whenever the backend GFX device
+	// changes (e.g. resized, full screen toggle, etc.).
 	_bgcolor = _system->RGBToColor(0, 0, 0);
 	_color = _system->RGBToColor(96, 96, 96);
 	_shadowcolor = _system->RGBToColor(64, 64, 64);
