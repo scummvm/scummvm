@@ -658,8 +658,6 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 	}
 }
 
-static uint32 midi_counter;
-
 void fill_sound(void *userdata, Uint8 *stream, int len) {
 	scumm.mixWaves((int16*)stream, len>>1);
 }

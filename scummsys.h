@@ -236,31 +236,31 @@ typedef signed long int32;
 #define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
 #if defined(SCUMM_NEED_ALIGNMENT)
-	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
+	FORCEINLINE uint READ_LE_UINT16(void *ptr) {
 		return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
 	}
 #else
-	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
+	FORCEINLINE uint READ_LE_UINT16(void *ptr) {
 		return *(uint16*)(ptr);
 	}
 #endif
 
-uint FORCEINLINE READ_BE_UINT16(void *ptr) {
+FORCEINLINE uint READ_BE_UINT16(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 
 #if defined(SCUMM_NEED_ALIGNMENT)
-	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+	FORCEINLINE uint32 READ_LE_UINT32(void *ptr) {
 		byte *b = (byte*)ptr;
 		return (b[3]<<24)+(b[2]<<16)+(b[1]<<8)+(b[0]);
 	}
 #else
-	uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
+	FORCEINLINE uint32 READ_LE_UINT32(void *ptr) {
 		return *(uint32*)(ptr);
 	}
 #endif
 
-uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
+FORCEINLINE uint32 READ_BE_UINT32(void *ptr) {
 	byte *b = (byte*)ptr;
 	return (b[0]<<24)+(b[1]<<16)+(b[2]<<8)+(b[3]);
 }

@@ -855,7 +855,7 @@ void Scumm::initRoomSubBlocks() {
 	searchptr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if(_features & GF_SMALL_HEADER) {
 		while( (ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL ) {
-			int id;
+			int id = 0;
 			ptr += _resourceHeaderSize; /* skip tag & size */
 	#ifdef DUMP_SCRIPTS
 			do {
@@ -870,7 +870,7 @@ void Scumm::initRoomSubBlocks() {
 		}
 	} else {
                 while( (ptr = findResource(MKID('LSCR'), searchptr)) != NULL ) {
-                        int id;
+                        int id = 0;
 
                         ptr += _resourceHeaderSize; /* skip tag & size */
                         

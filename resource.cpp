@@ -55,7 +55,7 @@ void Scumm::openRoom(int room) {
                         room_offs = room ? _roomFileOffsets[room] : 0;
 #endif
 		
-		if (room_offs == 0xFFFFFFFF)
+		if (room_offs == (int)0xFFFFFFFF)
 			break;
 
 		if (room_offs != 0 && room != 0) {
@@ -495,7 +495,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 
 void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
 	debug(9, "allocResTypeData(%d,%x,%d,%s,%d)",id,FROM_LE_32(tag),num,name,mode);
-	assert(id>=0 && id<sizeof(res.mode)/sizeof(res.mode[0]));
+	assert(id>=0 && id<(int)(sizeof(res.mode)/sizeof(res.mode[0])));
 
 	if (num>=2000) {
 		error("Too many %ss (%d) in directory", name, num);
@@ -1099,7 +1099,7 @@ void Scumm::resourceStats() {
 			}
 		}
 	
-	printf("Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
+	printf("Total allocated size=%ld, locked=%ld(%ld)\n", _allocatedSize, lockedSize, lockedNum);
 }
 
 void Scumm::heapClear(int mode) {

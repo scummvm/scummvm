@@ -977,7 +977,7 @@ void Scumm::actorTalk() {
 
 	_msgPtrToAdd = charset._buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
-	assert(_msgPtrToAdd - charset._buffer < sizeof(charset._buffer));
+	assert((int)(_msgPtrToAdd - charset._buffer) < (int)(sizeof(charset._buffer)));
 	
 	if (_actorToPrintStrFor==0xFF) {
 		if (!_keepText)

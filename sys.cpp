@@ -51,7 +51,6 @@ void Scumm::clearFileReadFailed(void *file) {
 }
 
 bool Scumm::fileEof(void *file) {
-	FILE *a = (FILE*)file;
 	return feof((FILE*)file) != 0;
 }
 

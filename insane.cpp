@@ -594,7 +594,7 @@ void codec37_maketable(PersistentCodecData37 *pcd, int pitch, byte idx) {
 
 
 
-	assert(idx*255 + 254 < sizeof(maketable_bytes)/2);
+	assert(idx*255 + 254 < (int)(sizeof(maketable_bytes)/2));
 
 
 
@@ -618,7 +618,7 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 
 	int src_pitch;
 
-	byte *src = cd->src, *curbuf;
+	byte *curbuf;
 
 	uint size;
 

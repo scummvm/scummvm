@@ -940,7 +940,7 @@ void Gdi::decompressMaskImgOr() {
 void Scumm::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
-	assert(s>=0 && s<sizeof(gfxUsageBits)/sizeof(gfxUsageBits[0]));
+	assert(s>=0 && (size_t)s<sizeof(gfxUsageBits)/sizeof(gfxUsageBits[0]));
 
 	_curVirtScreen = &virtscr[0];
 

@@ -1035,7 +1035,7 @@ void Scumm::o5_drawObject() {
 
         if (_features & GF_SMALL_HEADER) {
                 int temp = getVarOrDirectWord(0x40);
-                int room = getVarOrDirectWord(0x20);
+                getVarOrDirectWord(0x20);	// Room
  
                 idx = getObjectIndex(obj);
                 if(idx==-1)
@@ -1850,7 +1850,7 @@ void Scumm::o5_roomOps() {
 		char buf[256],*s;
 		a = getVarOrDirectByte(0x80);
 		s = buf;
-		while (*s++=fetchScriptByte());
+		while ((*s++=fetchScriptByte()));
 		warning("roomops:13 save-string(%d,\"%s\") not implemented", a, buf);
 		break;
 		}
@@ -1858,7 +1858,7 @@ void Scumm::o5_roomOps() {
 		char buf[256],*s;
 		a = getVarOrDirectByte(0x80);
 		s = buf;
-		while (*s++=fetchScriptByte());
+		while ((*s++=fetchScriptByte()));
 		warning("roomops:14 load-string(%d,\"%s\") not implemented", a, buf);
 		break;
 	case 15: /* palmanip? */
@@ -2364,7 +2364,8 @@ void Scumm::o5_walkActorToObject() {
 
 int Scumm::getWordVararg(int16 *ptr) {
 	int i;
-	for (i=0; i<16; i++)
+
+	for (i=0; i<15; i++)
 		ptr[i] = 0;
 
 	i = 0;

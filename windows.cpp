@@ -507,9 +507,9 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 	int time = GetTickCount(), cur;
 
 	while (1) {
+		cur = GetTickCount();
 
 		if (!snd_driv.wave_based()) {
-			cur = GetTickCount();
 			while (time < cur) {
 				sound.on_timer();
 				time += 10;

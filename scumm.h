@@ -99,8 +99,10 @@ struct MemBlkHeader {
 };
 
 
-#pragma START_PACK_STRUCTS
-	
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
+
 #define SIZEOF_BOX 20
 struct Box { /* file format */
 	int16 ulx,uly;
@@ -219,7 +221,10 @@ struct ImageHeader { /* file format */
 		} GCC_PACK v7;
 	} GCC_PACK;
 } GCC_PACK;
-#pragma END_PACK_STRUCTS
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 struct AdjustBoxResult {
 	int16 x,y;
@@ -361,7 +366,7 @@ enum ResTypes {
 	rtBox = 15,
 	rtObjectName = 16,
 	rtLast = 16,
-	rtNumTypes = 17,
+	rtNumTypes = 17
 };
 
 enum {
@@ -375,7 +380,7 @@ enum {
 enum {
 	CM_NORMAL = 1,
 	CM_FOLLOW_ACTOR = 2,
-	CM_PANNING = 3,
+	CM_PANNING = 3
 };
 
 enum {
@@ -395,7 +400,7 @@ enum MoveFlags {
 	MF_NEW_LEG = 1,
 	MF_IN_LEG = 2,
 	MF_TURN = 4,
-	MF_LAST_LEG = 8,
+	MF_LAST_LEG = 8
 };
 
 #define _maxRooms res.num[rtRoom]
@@ -745,7 +750,7 @@ struct Gdi {
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
 		dbDrawMaskOnBoth = 2,
-		dbClear = 4,
+		dbClear = 4
 	};
 };
 
@@ -792,7 +797,7 @@ enum GameId {
 	GID_INDY3_256 = 9,
 	GID_LOOM = 10,
 	GID_FT = 11,
-	GID_DIG = 12,
+	GID_DIG = 12
 };
 
 enum GameFeatures {
@@ -814,7 +819,7 @@ enum GameFeatures {
 	GF_16COLOR = 256,
 	GF_OLD256 = 512,
 	GF_AUDIOTRACKS = 1024,
-	GF_NO_SCALLING = 2048,
+	GF_NO_SCALLING = 2048
 };
 
 struct ScummDebugger;
@@ -1941,7 +1946,7 @@ struct Scumm {
 	enum FindObjectWhat {
 		foCodeHeader = 1,
 		foImageHeader = 2,
-		foCheckAlreadyLoaded = 4,
+		foCheckAlreadyLoaded = 4
 	};
 
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
@@ -2170,7 +2175,7 @@ enum AkosOpcodes{
 	AKC_JumpLE  = 0xC093,
 	AKC_JumpG  = 0xC094,
 	AKC_JumpGE  = 0xC095,
-	AKC_ClearFlag  = 0xC09F,
+	AKC_ClearFlag  = 0xC09F
 };
 
 

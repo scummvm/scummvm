@@ -732,12 +732,12 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 
 
 void Scumm::push(int a) {
-	assert(_scummStackPos >=0 && _scummStackPos <= ARRAYSIZE(_scummStack));
+	assert(_scummStackPos >=0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
 	_scummStack[_scummStackPos++] = a;	
 }
 
 int Scumm::pop() {
-	assert(_scummStackPos >0 && _scummStackPos <= ARRAYSIZE(_scummStack));
+	assert(_scummStackPos >0 && (unsigned int)_scummStackPos <= ARRAYSIZE(_scummStack));
 	return _scummStack[--_scummStackPos];
 }
 

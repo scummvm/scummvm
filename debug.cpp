@@ -110,7 +110,7 @@ bool ScummDebugger::do_command() {
 		return true;
 	case CMD_DUMPBOX:
 		{
-			int num, i = 0, rows = 0; 
+			int num, i = 0;
 			BoxCoords box;		
 			byte *boxm = _s->getBoxMatrixBaseAddr();
 			num = _s->getNumBoxes();			
@@ -206,11 +206,11 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
 	{ "r", 1, CMD_LOAD_ROOM },
-    { "b", 1, CMD_DUMPBOX},
+	{ "b", 1, CMD_DUMPBOX},
 	{ "v", 1, CMD_VAR},
 	{ "w", 1, CMD_WATCH},
 	{ "e", 1, CMD_EXIT },
-	{ 0, 0, 0 },
+	{ "" , 0, 0 }
 };
 
 int ScummDebugger::get_command() {

@@ -33,7 +33,7 @@ void Gui::draw(int start,int end) {
 	if (end==-1)
 		end=start;
 
-	for (i=0; i<sizeof(_widgets) / sizeof(_widgets[0]); i++) {
+	for (i=0; i<(int)(sizeof(_widgets) / sizeof(_widgets[0])); i++) {
 		const GuiWidget *w = _widgets[i];
 		if (w) {
 			_parentX = 0;
