@@ -883,7 +883,10 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d)
 
 	// If the command is to start a sound, stop that sound if it's already playing.
 	// This fixes some carnival music problems.
-	if (trig->command [0] == 8 && getSoundStatus(trig->command [1]))
+	// NOTE: We ONLY do this if the sound that will trigger the command is actually
+	// playing. Otherwise, there's a problem when exiting and re-entering the
+	// Bumpusville mansion. Ref Bug #780918.
+	if (trig->command [0] == 8 && getSoundStatus(trig->command [1]) && getSoundStatus (sound))
 		stopSound(trig->command [1]);
 	return 0;
 }
