@@ -567,6 +567,8 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_14 = 0;
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
+	_spriteTable[spriteId].field_18 = 0; // Maybe HE99+?
+	_spriteTable[spriteId].field_88 = 0;
 }
 
 void ScummEngine_v90he::spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr) {
