@@ -245,10 +245,10 @@ void LauncherDialog::updateListing() {
 		if (name.isEmpty())
 			name = iter->_key;
 		if (description.isEmpty()) {
-			GameSettings g = _detector.findGame(name);
+			GameSettings g = GameDetector::findGame(name);
 			if (g.description)
 				description = g.description;
-		} 
+		}
 
 		if (!name.isEmpty() && !description.isEmpty()) {
 			// Insert the game into the launcher list
@@ -388,7 +388,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		String gameId(ConfMan.get("gameid", _domains[item]));
 		if (gameId.isEmpty())
 			gameId = _domains[item];
-		EditGameDialog editDialog(_gui, _domains[item], _detector.findGame(gameId));
+		EditGameDialog editDialog(_gui, _domains[item], GameDetector::findGame(gameId));
 		if (editDialog.runModal()) {
 			// User pressed OK, so make changes permanent
 
