@@ -396,7 +396,7 @@ void Scumm::drawObject(int obj, int arg) {
 		// the inventory and conversation icons.
 		if ((_features & GF_AFTER_V7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, 22))
 			flags |= Gdi::dbDrawMaskOnAll;
-		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, height, x - xpos, numstrip, flags);
+		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width << 3, height, x - xpos, numstrip, flags);
 	}
 }
 

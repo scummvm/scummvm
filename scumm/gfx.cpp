@@ -720,7 +720,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-								&virtscr[0], s, 0, virtscr[0].height, s, num, 0);
+								&virtscr[0], s, 0, virtscr[0].width, virtscr[0].height, s, num, 0);
 }
 
 void Scumm::restoreCharsetBg() {
@@ -838,10 +838,10 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	return false;
 }
 
-void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
-										 int stripnr, int numstrip, byte flag) {
+void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+                     int stripnr, int numstrip, byte flag) {
 	assert(ptr);
-	assert(h > 0);
+	assert(height > 0);
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
 	int i;
 	byte *zplane_list[9];
@@ -926,18 +926,23 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		smap_ptr += 24;
 	}
 
-	bottom = y + h;
+	bottom = y + height;
 	if (bottom > vs->height) {
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
 	}
 
-	_vertStripNextInc = h * _vm->_realWidth - 1;
+	_vertStripNextInc = height * _vm->_realWidth - 1;
 
 	sx = x;
 	if (vs->scrollable)
 		sx -= vs->xstart >> 3;
 
-	do {
+	if (_vm->_features & GF_AFTER_V2) {
+		// TODO: implement new V2 strip / zplane drawing in here
+		
+		//return;
+	}
+	while (numstrip--) {
 		CHECK_HEAP;
 
 		if (sx < 0)
@@ -961,27 +966,27 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		if (_vm->_features & GF_AFTER_V2) {
-			decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], h, stripnr);
+			decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], height, stripnr);
 		} else if (_vm->_features & GF_16COLOR) {
-			decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
+			decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 		} else if (_vm->_features & GF_SMALL_HEADER) {
-			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
+			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
 		} else {
-			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), h);
+			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
 		}
 
 		CHECK_HEAP;
 		if (vs->alloctwobuffers) {
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
 				if (flag & dbClear || !lightsOn)
-					clear8ColWithMasking(backbuff_ptr, h, _mask_ptr);
+					clear8ColWithMasking(backbuff_ptr, height, _mask_ptr);
 				else
-					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, h, _mask_ptr);
+					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, _mask_ptr);
 			} else {
 				if (flag & dbClear || !lightsOn)
-					clear8Col(backbuff_ptr, h);
+					clear8Col(backbuff_ptr, height);
 				else
-					draw8Col(backbuff_ptr, bgbak_ptr, h);
+					draw8Col(backbuff_ptr, bgbak_ptr, height);
 			}
 		}
 		CHECK_HEAP;
@@ -1011,9 +1016,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 			for (i = 0; i < numzbuf; i++) {
 				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 				if (useOrDecompress && (flag & dbAllowMaskOr))
-					decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
+					decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, height);
 				else
-					decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
+					decompressMaskImg(_mask_ptr_dest, z_plane_ptr, height);
 			}
 		} else {
 			for (i = 1; i < numzbuf; i++) {
@@ -1043,16 +1048,16 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 					if (_vm->_features & GF_AFTER_V2)
 						decompressMaskImgOld(_mask_ptr_dest, roomptr + _vm->_egaStripZOffsets[stripnr], stripnr);
 					else if (useOrDecompress && (flag & dbAllowMaskOr)) {
-						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
+						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, height);
 					} else {
-						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
+						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, height);
 					}
 
 				} else {
 					if (!(useOrDecompress && (flag & dbAllowMaskOr)))
-						for (int height = 0; height < h; height++)
-							_mask_ptr_dest[height * _numStrips] = 0;
-					/* needs better abstraction, FIXME */
+						for (int h = 0; h < height; h++)
+							_mask_ptr_dest[h * _numStrips] = 0;
+					// FIXME: needs better abstraction
 				}
 			}
 		}
@@ -1062,7 +1067,7 @@ next_iter:
 		x++;
 		sx++;
 		stripnr++;
-	} while (--numstrip);
+	}
 }
 
 void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
@@ -3392,7 +3397,7 @@ void Scumm::useIm01Cursor(byte *im, int w, int h) {
 
 	vs->alloctwobuffers = false;
 	gdi._disable_zbuffer = true;
-	gdi.drawBitmap(im, vs, _screenStartStrip, 0, h, 0, w >> 3, 0);
+	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w >> 3, 0);
 	vs->alloctwobuffers = true;
 	gdi._disable_zbuffer = false;
 

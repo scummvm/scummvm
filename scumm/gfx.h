@@ -161,7 +161,8 @@ protected:
 	void updateDirtyScreen(VirtScreen *vs);
 
 public:
-	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h, int stripnr, int numstrip, byte flag);
+	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+	                int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
 	void disableZBuffer() { _disable_zbuffer++; }
