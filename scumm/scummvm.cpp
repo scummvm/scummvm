@@ -1024,17 +1024,20 @@ void Scumm::initRoomSubBlocks() {
 	searchptr = roomResPtr;
 
 	if (_features & GF_OLD_BUNDLE) {
-		ptr = roomptr + 32;	// FIXME ???
-		while (*ptr) {
-			int id = *ptr++;
-			int offset = READ_LE_UINT16(ptr);
-			ptr += 2;
-			// TODO / FIXME: It seems also global scripts are stored in here?!?
-			// At least there are scripts with ID < _numGlobalScripts, need to look
-			// into this...
-			printf("Local script %d at offset %d (_numGlobalScripts = %d)\n", id, offset, _numGlobalScripts);
-			if (id >= _numGlobalScripts)
-				_localScriptList[id - _numGlobalScripts] = offset;
+		int num_objects = *(roomResPtr + 20);
+		int num_sounds = *(roomResPtr + 23);
+		int num_scripts = *(roomResPtr + 24);
+		int offset = 29 + num_objects * 4 + num_sounds + num_scripts;
+
+		if ((_gameId != GID_MANIAC) && (_gameId != GID_ZAK)) {
+			for (;;) {
+				int id = *(roomResPtr + offset);
+				if (id == 0)
+					break;
+
+				_localScriptList[id - _numGlobalScripts] = offset + 1;
+				offset += 3;
+			}
 		}
 	} else if (_features & GF_SMALL_HEADER) {
 		while ((ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL) {
