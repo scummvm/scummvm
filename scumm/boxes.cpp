@@ -769,7 +769,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
  * Computes the next point actor a has to walk towards in a straight
  * line in order to get from box1 to box3 via box2.
  */
-bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY) {
+bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, ScummVM::Point &foundPath) {
 	BoxCoords box1;
 	BoxCoords box2;
 	ScummVM::Point tmp;
@@ -831,8 +831,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 						q = box1.ur.y;
 					if (q == pos && box2nr == box3nr)
 						return true;
-					foundPathY = q;
-					foundPathX = box1.ul.x;
+					foundPath.y = q;
+					foundPath.x = box1.ul.x;
 					return false;
 				}
 			}
@@ -882,8 +882,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 						q = box1.ur.x;
 					if (q == pos && box2nr == box3nr)
 						return true;
-					foundPathX = q;
-					foundPathY = box1.ul.y;
+					foundPath.x = q;
+					foundPath.y = box1.ul.y;
 					return false;
 				}
 			}

@@ -1383,7 +1383,7 @@ void Actor::walkActor() {
 
 		walkdata.curbox = next_box;
 		
-		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPath.x, foundPath.y))
+		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPath))
 			break;
 
 		if (calcMovementFactor(foundPath))

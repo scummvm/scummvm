@@ -203,7 +203,7 @@ protected:
 	
 	bool isPlayer();
 
-	bool findPathTowards(byte box, byte box2, byte box3, int16 &foundPathX, int16 &foundPathY);
+	bool findPathTowards(byte box, byte box2, byte box3, ScummVM::Point &foundPath);
 	void findPathTowardsOld(byte box, byte box2, byte box3, ScummVM::Point &p2, ScummVM::Point &p3);
 };
 
