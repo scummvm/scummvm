@@ -249,7 +249,7 @@ const char *Config::set(const char *key, const char *value, const char *d)
 	ndomains++;
 	hash =
 		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig(domain);
+	hash[ndomains - 1] = new hashconfig(d);
 
 	return hash[ndomains - 1]->set(key, value);
 }
@@ -273,7 +273,7 @@ const char *Config::set(const char *key, int value_i, const char *d)
 	ndomains++;
 	hash =
 		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig(domain);
+	hash[ndomains - 1] = new hashconfig(d);
 
 	return hash[ndomains - 1]->set(key, value);
 }
