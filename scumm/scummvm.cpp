@@ -1517,13 +1517,6 @@ void Scumm::initRoomSubBlocks() {
 		}
 	}
 
-	// FIXME - we could simply always call findResourceData here, it will
-	// do the right thing even if GF_SMALL_HEADER is set. But then, we have
-	// to change setPaletteFromPtr() (easy). The problematic bit is save game
-	// compatibility - _CLUT_offs is stored in the save game after all.
-	// Of course we could just decide to not use _CLUT_offs anymore, and change
-	// setPaletteFromRes() to invoke findResourceData() each time
-	// (and also getPalettePtr()).
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0; // TODO ? do 16 bit games use a palette?!?
 	else if (_features & GF_SMALL_HEADER)
