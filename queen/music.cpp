@@ -124,6 +124,8 @@ static const byte mt32_to_gm[128] = {
 		}
 		
 		//Work around annoying loud notes in certain Roland Floda tunes
+		if (channel == 3 && _currentSong == 90)
+			return;
 		if (channel == 4 && _currentSong == 27)
 			return;
 		if (channel == 5 && _currentSong == 38)
