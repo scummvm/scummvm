@@ -80,6 +80,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("actor", &ScummDebugger::Cmd_Actor);
 		DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
 		DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
+		DCmd_Register("matrix", &ScummDebugger::Cmd_PrintBoxMatrix);
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
 		DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
 		DCmd_Register("object", &ScummDebugger::Cmd_Object);
@@ -728,6 +729,24 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 		Debug_Printf("\nWalk boxes:\n");
 		for (i = 0; i < num; i++)
 			printBox(i);
+	}
+	return true;
+}
+
+bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
+	byte *boxm = _s->getBoxMatrixBaseAddr();
+	int num = _s->getNumBoxes();
+	int i;
+
+	Debug_Printf("Walk matrix:\n");
+	for (i = 0; i < num; i++) {
+		Debug_Printf("%d: ", i);
+		while (*boxm != 0xFF) {
+			Debug_Printf("[%d] ", *boxm);
+			boxm++;
+		}
+		boxm++;
+		Debug_Printf("\n");
 	}
 	return true;
 }
