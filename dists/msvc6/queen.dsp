@@ -139,6 +139,14 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\queen\graphics.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\graphics.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\logic.cpp
 # End Source File
 # Begin Source File
@@ -164,6 +172,14 @@ SOURCE=..\..\queen\resource.h
 # Begin Source File
 
 SOURCE=..\..\queen\restables.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\walk.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\walk.h
 # End Source File
 # End Group
 # End Target
