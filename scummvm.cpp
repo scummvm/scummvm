@@ -425,23 +425,18 @@ int Scumm::scummLoop(int delta)
 		moveCamera();
 		fixObjectFlags();
 		CHARSET_1();
-		if (!(_features & GF_AFTER_V7)) {
-			if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw) {
-				redrawBGAreas();
-			}
-		} else {
-			if (camera._cur.x != camera._last.x || camera._cur.y != camera._last.y
-					|| _BgNeedsRedraw || _fullRedraw) {
-				redrawBGAreas();
-			}
+
+		if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw
+				|| (_features & GF_AFTER_V7 && camera._cur.y != camera._last.y)) {
+			redrawBGAreas();
 		}
+
 		processDrawQue();
 		setActorRedrawFlags();
 		resetActorBgs();
 
 		if (!(_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen) &&
 		      _vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_flashlight) {
-			warning("Flashlight not implemented in this version");
 			drawFlashlight();
 			setActorRedrawFlags();
 		}
