@@ -252,10 +252,8 @@ int Scumm::updateActorDirection(Actor * a)
 void Scumm::setActorBox(Actor * a, int box)
 {
 	a->walkbox = box;
-	if(box == 0)
-		a->mask = 1;
-	else
-		a->mask = getMaskFromBox(box);
+	a->mask = getMaskFromBox(box);
+
 	setupActorScale(a);
 }
 
