@@ -819,6 +819,11 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			 */
 			int keycode = -1;
 			int ascii = -1;
+			byte mode = 0;
+
+			if (event.xkey.state & 0x01) mode |= KBD_SHIFT;
+			if (event.xkey.state & 0x04) mode |= KBD_CTRL;
+			if (event.xkey.state & 0x08) mode |= KBD_ALT;
 			switch (event.xkey.keycode) {
 				case 9:								/* Escape on my PC */
 				case 130:							/* Calendar on the iPAQ */
@@ -857,7 +862,7 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 				scumm_event->event_code = EVENT_KEYDOWN;
 				scumm_event->kbd.keycode = keycode;
 				scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
-				scumm_event->kbd.flags = 0;
+				scumm_event->kbd.flags = mode;
 				return true;
 			}
 		} break;
