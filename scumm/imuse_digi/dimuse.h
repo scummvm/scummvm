@@ -135,7 +135,7 @@ public:
 	void startMusic(int soundId, int volume);
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);
 	void startSfx(int soundId, int priority);
-	void startSound(int soundId)
+	void startSound(int sound)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
 	void saveOrLoad(Serializer *ser);

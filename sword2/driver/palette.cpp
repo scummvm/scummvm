@@ -54,6 +54,7 @@ uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
  * @param startEntry the first colour entry to set
  * @param noEntries the number of colour entries to set
  * @param colourTable the new colour entries
+ * @param fadeNow whether to perform the change immediately or delayed
  */
 
 void Graphics::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
