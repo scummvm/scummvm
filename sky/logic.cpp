@@ -1751,10 +1751,10 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 		cpt->xcood = rollingX;
 		rollingX += 24;
 
-		//if (_scriptVariables[MENU] == 2)
+		if (_scriptVariables[MENU] == 2)
 			cpt->ycood = 136;
-		/*else
-			cpt->ycood = 112;*/
+		else
+			cpt->ycood = 112;
 	}
 
 	return true;
