@@ -39,12 +39,14 @@ struct GameVersion {
 	const struct ResourceEntry *resourceTable;	
 };
 
+
 class QueenResource {
 
 public:
 	QueenResource(char *datafilePath);
 	~QueenResource(void);
-	uint8 *loadFile(const char *filename);
+	uint8 *loadFile(const char *filename, uint32 skipbytes = 0);
+	bool exists(const char *filename);
 
 protected:
 	File *_resourceFile;
