@@ -273,6 +273,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	CHECK_HEAP
 
 	if (_loaded._format == 0x57) {
+		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips;
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _dirty_id.
 		procC64(_dirty_id);
