@@ -30,8 +30,6 @@ ImuseSndMgr::ImuseSndMgr(ScummEngine *scumm) {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		memset(&_sounds[l], 0, sizeof(soundStruct));
 	}
-	_vm = scumm;
-	_disk = 0;
 }
 
 ImuseSndMgr::~ImuseSndMgr() {
@@ -62,20 +60,24 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		default:
-			error("ImuseSndMgr::countElements() Unknown sfx header '%s'", tag2str(tag));
+			error("ImuseSndMgr::countElements() Unknown MAP tag '%s'", tag2str(tag));
 		}
 	} while (tag != MKID_BE('DATA'));
 }
 
-void ImuseSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
-//		numBlocks = READ_BE_UINT16(data + 4);
-//		codecsStart = data + 8 + numBlocks * 9;
-//		codecsLen = READ_BE_UINT16(codecsStart - 2);
-//		headerPos = codecsStart + codecsLen;
-//		_numChannels = READ_LE_UINT16(headerPos + 22);
-//		dataStart = headerPos + 28 + READ_LE_UINT32(headerPos + 16);
-//		dataSize = READ_LE_UINT32(dataStart - 4);
-	if (READ_UINT32(ptr) == MKID('iMUS')) {
+void ImuseSndMgr::parseSoundSound(byte *ptr, soundStruct *sound, int &headerSize) {
+	if (READ_UINT32(ptr) == MKID('RIFF')) {
+		sound->region = (_region *)malloc(sizeof(_region));
+		sound->jump = (_jump *)malloc(0);
+		sound->numJumps = 0;
+		sound->numRegions = 1;
+		sound->region[0].offset = 0;
+		sound->region[0].length = READ_LE_UINT32(ptr + 40);
+		sound->bits = *(ptr + 34);
+		sound->freq = READ_LE_UINT32(ptr + 24);
+		sound->channels = *(ptr + 22);
+		headerSize = 44;
+	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 		uint32 tag;
 		int32 size = 0;
 		byte *s_ptr = ptr;
@@ -121,12 +123,19 @@ void ImuseSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 				ptr += 4;
 				break;
 			default:
-				error("ImuseSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", sound->soundId, sound->name, tag2str(tag));
+				error("ImuseSndMgr::prepareSound(%s) Unknown MAP tag '%s'", sound->name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
-		sound->ptr = ptr;
+		headerSize = ptr - s_ptr;
+		int i;
+		for (i = 0; i < sound->numRegions; i++) {
+			sound->region[i].offset -= headerSize;
+		}
+		for (i = 0; i < sound->numJumps; i++) {
+			sound->jump[i].offset -= headerSize;
+		}
 	} else {
-		error("ImuseSndMgr::prepareSound(): Unknown sound format");
+		error("ImuseSndMgr::prepareSound() Unknown sound format");
 	}
 }
 
@@ -141,79 +150,74 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::allocSlot() {
 	return NULL;
 }
 
-ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int32 soundId, int volGroupId) {
-	assert(soundId >= 0);
-	assert(soundType);
+ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
+	assert(oundType);
 	const char *extension = soundName + std::strlen(soundName) - 3;
 	byte *ptr = NULL;
+	int headerSize = 0;
 
 	soundStruct *sound = allocSlot();
 	if (!sound) {
-		error("ImuseSndMgr::openSound() can't alloc free sound slot");
+		error("ImuseSndMgr::openSound() Can't alloc free sound slot");
 	}
+
+	strcpy(sound->name, soundName);
+	sound->volGroupId = volGroupId;
 
 	if (strcasecmp(extension, "imu") == 0) {
 		Block *b = getFileBlock(soundName);
 		if (b != NULL) {
 			ptr = b->data();
 			delete b;
+			parseSoundHeader(ptr, sound, headerSize);
 			sound->mcmpData = false;
+			sound->resPtr = ptr + headerSize;
 		} else {
 			closeSound(sound);
 			return NULL;
 		}
 	} else if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0) {
+		sound->mcmpMgr = new McmpMgr();
 		if (!sound->mcmpMgr->openSound(soundName, &ptr)) {
 			closeSound(sound);
 			return NULL;
 		}
+		parseSoundHeader(ptr, sound, headerSize);
 		sound->mcmpData = true;
 	} else {
-		error("ImuseSndMgr::openSound() Unrecognized extension for sound file %s\n", soundName);
+		error("ImuseSndMgr::openSound() Unrecognized extension for sound file %s", soundName);
 	}
 
-	strcpy(sound->name, soundName);
-	sound->volGroupId = volGroupId;
-	sound->soundId = soundId;
-	prepareSound(ptr, sound);
 	return sound;
 }
 
 void ImuseSndMgr::closeSound(soundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 
-	if (soundHandle->resPtr) {
-		bool found = false;
-		for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
-			if ((_sounds[l].soundId == soundHandle->soundId) && (&_sounds[l] != soundHandle))
-				found = true;
-		}
-		if (!found)
-			_vm->unlock(rtSound, soundHandle->soundId);
-	}
+	if (soundHandle->mcmpMgr)
+		delete soundHandle->mcmpMgr;
 
-	delete soundHandle->bundle;
-	for (int r = 0; r < soundHandle->numSyncs; r++)
-		free(soundHandle->sync[r].ptr);
 	free(soundHandle->region);
 	free(soundHandle->jump);
-	free(soundHandle->sync);
+
 	memset(soundHandle, 0, sizeof(soundStruct));
 }
 
-ImuseSndMgr::soundStruct *ImuseDSndMgr::cloneSound(soundStruct *soundHandle) {
+ImuseSndMgr::soundStruct *ImuseSndMgr::cloneSound(soundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 
-	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId, soundHandle->disk);
+	return openSound(soundHandle->name, soundHandle->volGroupId);
 }
 
 bool ImuseSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 	if (!soundHandle)
 		return false;
+
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		if (soundHandle == &_sounds[l])
 			return true;
 	}
+
 	return false;
 }
 

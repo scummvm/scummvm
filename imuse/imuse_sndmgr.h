@@ -60,13 +60,10 @@ public:
 		_jump *jump;
 		bool endFlag;
 		bool inUse;
-		int32 offsetData;
 		char name[32];
-		int16 soundId;
 		McmpMgr *_mcmpMgr;
-		int type;
 		int volGroupId;
-		byte *ptr;
+		byte *resPtr;
 	};
 
 private:
@@ -75,7 +72,7 @@ private:
 
 	bool checkForProperHandle(soundStruct *soundHandle);
 	soundStruct *allocSlot();
-	void prepareSound(byte *ptr, soundStruct *sound);
+	void parseSoundHeader(byte *ptr, soundStruct *sound, int &headerSize);
 	void countElements(byte *ptr, int &numRegions, int &numJumps);
 
 public:
@@ -83,7 +80,7 @@ public:
 	ImuseSndMgr();
 	~ImuseSndMgr();
 
-	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk);
+	soundStruct *openSound(const char *soundName, int volGroupId);
 	void closeSound(soundStruct *soundHandle);
 	soundStruct *cloneSound(soundStruct *soundHandle);
 

@@ -24,7 +24,7 @@
 #include "../mixer/audiostream.h"
 
 #include "imuse_sndmgr.h"
-
+/*
 void Imuse::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, int g, int h) {
 	int soundId = b;
 	int sub_cmd = c;
@@ -101,7 +101,7 @@ void Imuse::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, int g, i
 		error("Imuse::doCommand DEFAULT command %d", cmd);
 	}
 }
-
+*/
 void Imuse::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
@@ -140,25 +140,25 @@ void Imuse::refreshScripts() {
 	}
 }
 
-void Imuse::startVoice(const char *soundName, int soundId) {
-	debug(5, "startVoiceBundle(%s)", soundName);
-	startSound(soundId, soundName, IMUSE_VOLGRP_VOICE, NULL, 0, 127, 127);
+void Imuse::startVoice(const char *soundName) {
+	debug(5, "startVoice(%s)", soundName);
+	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, 127, 0, 127);
 }
 
-void Imuse::startMusic(const char *soundName, int soundId, int hookId, int volume, int pan) {
-	debug(5, "startMusicBundle(%s)", soundName);
-	startSound(soundId, soundName, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, pan, 126);
+void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
+	debug(5, "startMusic(%s)", soundName);
+	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126);
 }
 
-void Imuse::startSfx(const char *soundName, int soundId, int priority) {
-	debug(5, "startSfx(%d)", soundId);
-	startSound(soundId, soundName, IMUSE_VOLGRP_SFX, NULL, 0, 127, priority);
+void Imuse::startSfx(const char *soundName, int priority) {
+	debug(5, "startSfx(%s)", soundName);
+	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority);
 }
 
-int32 Imuse::getPosInMs(int soundId) {
+int32 Imuse::getPosInMs(const char *soundName) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 200);
 			return pos;
 		}
@@ -167,13 +167,13 @@ int32 Imuse::getPosInMs(int soundId) {
 	return 0;
 }
 
-bool Imuse::getSoundStatus(int sound) const {
-	debug(5, "Imuse::getSoundStatus(%d)", sound);
+bool Imuse::getSoundStatus(const char *soundName) const {
+	debug(5, "Imuse::getSoundStatus(%s)", soundName);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->soundId == sound) {
+		if (strcmp(track->soundName, soundName) == 0) {
 			if (track->handle.isActive() || (track->stream && track->used && !track->readyToRemove)) {
-					return true;
+				return true;
 			}
 		}
 	}
@@ -181,28 +181,28 @@ bool Imuse::getSoundStatus(int sound) const {
 	return false;
 }
 
-void Imuse::stopSound(int soundId) {
-	debug(5, "Imuse::stopSound(%d)", soundId);
+void Imuse::stopSound(const char *soundName) {
+	debug(5, "Imuse::stopSound(%s)", soundName);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
 			track->toBeRemoved = true;
 		}
 	}
 }
 
 int32 Imuse::getCurMusicPosInMs() {
-	int soundId = -1;
+	const char *soundName = NULL;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			soundId = track->soundId;
+			soundName = track->soundName;
 		}
 	}
 
-	int32 msPos = getPosInMs(soundId);
-	debug(5, "Imuse::getCurMusicPosInMs(%d) = %d", soundId, msPos);
+	int32 msPos = getPosInMs(soundName);
+	debug(5, "Imuse::getCurMusicPosInMs(%s) = %d", soundName, msPos);
 	return msPos;
 }
 

@@ -48,28 +48,22 @@ McmpMgr::~McmpMgr() {
 	_compInput = NULL;
 }
 
-bool McmpMgr::openSound(const char *filename, byte *ptr) {
-	_file = ResourceLoader::instance()->openNewStream(filename);
-
-	if (!_file) {
-		warning("McmpMgr::openFile() Can't open mcmp file: %s", filename);
-		return false;
-	}
-
+bool McmpMgr::openSound(const char *filename, byte *resPtr, int &offsetData) {
 	_outputSize = 0;
 	_lastBlock = -1;
 
-	loadCompTable(ptr);
-}
+	_file = ResourceLoader::instance()->openNewStream(filename);
 
-void McmpMgr::loadCompTable(byte *ptr) {
+	if (!_file) {
+		warning("McmpMgr::openFile() Can't open MCMP file: %s", filename);
+		return false;
+	}
+
 	uint32 tag;
-	int i;
-
 	fread(&tag, 1, 4, _file);
 	tag = MKID_BE32(tag);
 	if (tag != MKID_BE('MCMP')) {
-		error("McmpMgr::loadCompTable() Compressed sound %d invalid (%s)", index, tag2str(tag));
+		error("McmpMgr::loadCompTable() Expected MCMP tag");
 	}
 
 	fread(&_numCompItems, 1, 2, _file);
@@ -84,6 +78,7 @@ void McmpMgr::loadCompTable(byte *ptr) {
 	fread(_compTable[i].decompSize, 1, 4, _file);
 
 	int32 maxSize = 0;
+	int i;
 	for (i = 0; i < _numCompItems; i++) {
 		fread(_compTable[i].codec, 1, 1, _file);
 		fread(_compTable[i].decompSize, 1, 4, _file);
@@ -104,7 +99,8 @@ void McmpMgr::loadCompTable(byte *ptr) {
 	fseek(_file, sizeCodecs, SEEK_CUR);
 	_compInput = (byte *)malloc(maxSize);
 	fread(_compInput, 1, _compTable[0].decompSize);
-	*ptr = _compInput;
+	*resPtr = _compInput;
+	offsetData = _compTable[0].compSize;
 }
 
 int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {

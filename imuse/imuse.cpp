@@ -26,7 +26,7 @@
 #include "imuse_sndmgr.h"
 
 Imuse::Track::Track()
-	: soundId(-1), used(false), stream(NULL) {
+	: soundName(NULL), used(false), stream(NULL) {
 }
 
 void Imuse::timerHandler(void *refCon) {
@@ -46,19 +46,21 @@ Imuse::Imuse(int fps) {
 	_volMusic = 0;
 	_callbackFps = fps;
 	resetState();
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		_track[l] = new Track;
 		_track[l]->trackId = l;
 		_track[l]->used = false;
 	}
 	vimaInit(imuseDestTable);
+	_stateMusicTable = grimStateMusicTable;
+	_seqMusicTable = grimSeqMusicTable;
 	g_timer->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
 }
 
 Imuse::~Imuse() {
 	stopAllSounds();
 	g_timer->removeTimerProc(timerHandler);
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		delete _track[l];
 	}
 	delete _sound;
@@ -78,7 +80,7 @@ void Imuse::resetState() {
 void Imuse::callback() {
 	StackLock lock(_mutex);
 
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->readyToRemove) {
 			if (track->toBeRemoved) {
@@ -110,7 +112,7 @@ void Imuse::callback() {
 						}
 					}
 				}
-				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
+				debug(5, "Fade: sound(%s), Vol(%d)", track->soundName, track->vol / 1000);
 			}
 
 			int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
@@ -190,7 +192,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	assert(track);
 	debug(5, "switchToNextRegion(track:%d)", track->trackId);
 
-	if (track->trackId >= MAX_DIGITAL_TRACKS) {
+	if (track->trackId >= MAX_IMUSE_TRACKS) {
 		track->toBeRemoved = true;
 		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", track->trackId);
 		return;
@@ -220,11 +222,11 @@ void Imuse::switchToNextRegion(Track *track) {
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
-					debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					debug(5, "switchToNextRegion-sound(%s) select %d region, curHookId: %d", fadeTrack->soundName, fadeTrack->curRegion, fadeTrack->curHookId);
 					fadeTrack->curHookId = 0;
 				}
 				track->curRegion = region;
-				debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+				debug(5, "switchToNextRegion-sound(%s) jump to %d region, curHookId: %d", track->soundName, track->curRegion, track->curHookId);
 				track->curHookId = 0;
 			}
 		} else {
@@ -232,14 +234,14 @@ void Imuse::switchToNextRegion(Track *track) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 				fadeTrack->regionOffset = 0;
-				debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				debug(5, "switchToNextRegion-sound(%s) select %d region, curHookId: %d", fadeTrack->soundName, fadeTrack->curRegion, fadeTrack->curHookId);
 			}
 			track->curRegion = region;
-			debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+			debug(5, "switchToNextRegion-sound(%s) jump to %d region, curHookId: %d", track->soundName, track->curRegion, track->curHookId);
 		}
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+	debug(5, "switchToNextRegion-sound(%s) select %d region, curHookId: %d", track->soundName, track->curRegion, track->curHookId);
 	track->dataOffset = _sound->getRegionOffset(soundHandle, track->curRegion);
 	track->regionOffset = 0;
 }

@@ -27,8 +27,8 @@
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
 
-#define MAX_DIGITAL_TRACKS 8
-#define MAX_DIGITAL_FADETRACKS 8
+#define MAX_IMUSE_TRACKS 8
+#define MAX_IMUSE_FADETRACKS 8
 
 class Imuse {
 private:
@@ -45,8 +45,7 @@ private:
 		int32 volFadeDelay;
 		bool volFadeUsed;
 
-		int32 soundId;
-		char soundName[15];
+		char soundName[32];
 		bool used;
 		bool toBeRemoved;
 		bool readyToRemove;
@@ -57,7 +56,6 @@ private:
 		int32 curRegion;
 		int32 curHookId;
 		int32 volGroupId;
-		int32 soundType;
 		int32 iteration;
 		int32 mixerFlags;
 		int32 mixerVol;
@@ -70,7 +68,7 @@ private:
 		Track();
 	};
 
-	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
+	Track *_track[MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS];
 
 	MutexRef _mutex;
 	ImuseSndMgr *_sound;
@@ -85,30 +83,32 @@ private:
 	int32 _curMusicState;
 	int32 _curMusicSeq;
 
+	const ImuseTable *_stateMusicTable;
+	const ImuseTable *_seqMusicTable;
+
 	static void timerHandler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
-	void selectVolumeGroup(int soundId, int volGroupId);
+	void startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority);
+	void selectVolumeGroup(const char *soundName, int volGroupId);
 
-	int32 getPosInMs(int soundId);
+	int32 getPosInMs(const char *soundName);
 
-	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void setMusicState(int stateId);
 	void setMusicSequence(int seqId);
-	void playMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
+	void playMusic(const char *songName, const ImuseTable *table, int atribPos, bool sequence);
 
 public:
 	Imuse(int fps);
 	~Imuse();
 
-	void startVoice(const char *soundName, int soundId);
-	void startMusic(const char *soundName, int soundId, int hookId, int volume, int pan);
-	void startSfx(int soundId, int priority);
+	void startVoice(const char *soundName);
+	void startMusic(const char *soundName, int hookId, int volume, int pan);
+	void startSfx(const char *soundName, int priority);
 
 //	void saveOrLoad(Serializer *ser);
 	void resetState();
@@ -120,22 +120,21 @@ public:
 	int getGroupSfxVolume() { return _volSfx; }
 	int getGroupMusicVolume() { return _volMusic; }
 
-	void setPriority(int soundId, int priority);
-	void setVolume(int soundId, int volume);
-	void setPan(int soundId, int pan);
-	void setFade(int soundId, int destVolume, int delay60HzTicks);
-	void setMusicVolume(int vol) {}
-	void stopSound(int sound);
+	void setPriority(const char *soundName, int priority);
+	void setVolume(const char *soundName, int volume);
+	void setPan(const char *soundName, int pan);
+	void setFade(const char *soundName, int destVolume, int delay60HzTicks);
+	void stopSound(const char *soundName);
 	void stopAllSounds();
 	void pause(bool pause);
-	void parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h);
+//	void parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h);
 	void refreshScripts();
 	void flushTracks();
-	int getSoundStatus(int sound) const;
+	int getSoundStatus(const char *soundName) const;
 	int32 getCurMusicPosInMs();
 };
 
-struct imuseTable {
+struct ImuseTable {
 	byte opcode;
 	int16 soundId;
 	byte atribPos;

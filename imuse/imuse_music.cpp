@@ -25,9 +25,9 @@ void Imuse::setMusicState(int stateId) {
 	if (stateId == 0)
 		stateId = 1000;
 
-	for (l = 0; _stateMusicTable[l].soundId != -1; l++) {
-		if (_stateMusicTable[l].soundId == stateId) {
-			debug(5, "Set music state: %s", _stateMusicTable[l].filename);
+	for (l = 0; _stateMusicTable[l]->soundId != -1; l++) {
+		if (_stateMusicTable[l]->soundId == stateId) {
+			debug(5, "Set music state: %s", _stateMusicTable[l]->filename);
 			num = l;
 			break;
 		}
@@ -38,7 +38,7 @@ void Imuse::setMusicState(int stateId) {
 		return;
 
 	if (_curMusicSeq == 0) {
-		playMusic(&_stateMusicTable[num], num, false);
+		playMusic(_stateMusicTable[num], num, false);
 	}
 
 	_curMusicState = num;
@@ -50,9 +50,9 @@ void Imuse::setMusicSequence(int seqId) {
 	if (seqId == 0)
 		seqId = 2000;
 
-	for (l = 0; _seqMusicTable[l].soundId != -1; l++) {
-		if (_seqMusicTable[l].soundId == seqId) {
-			debug(5, "Set music sequence: %s", _seqMusicTable[l].filename);
+	for (l = 0; _seqMusicTable[l]->soundId != -1; l++) {
+		if (_seqMusicTable[l]->soundId == seqId) {
+			debug(5, "Set music sequence: %s", _seqMusicTable[l]->filename);
 			num = l;
 			break;
 		}
@@ -63,16 +63,16 @@ void Imuse::setMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		playMusic(&_seqMusicTable[num], 0, true);
+		playMusic(_seqMusicTable[num], 0, true);
 	} else {
-		playMusic(&_stateMusicTable[_curMusicState], _curMusicState, true);
+		playMusic(_stateMusicTable[_curMusicState], _curMusicState, true);
 		num = 0;
 	}
 
 	_curMusicSeq = num;
 }
 
-void Imuse::playMusic(const imuseComiTable *table, int atribPos, bool sequence) {
+void Imuse::playMusic(const imuseTable *table, int atribPos, bool sequence) {
 	int hookId = 0;
 
 	if (atribPos != 0) {
@@ -100,13 +100,13 @@ void Imuse::playMusic(const imuseComiTable *table, int atribPos, bool sequence) 
 		} else {
 			fadeOutMusic(table->fadeOut60TicksDelay);
 			if ((table->opcode == 3) && (!sequence) &&
-					(table->atribPos != 0) && (table->atribPos == _stateMusicTable[_curMusicState].atribPos)) {
+					(table->atribPos != 0) && (table->atribPos == _stateMusicTable[_curMusicState]->atribPos)) {
 				if (hookId == 100)
 					hookId = 0;
 				else
 					hookId = 100;
 			}
-			startMusic(table->filename, table->soundId, hookId, table->volume, table->pan);
+			startMusic(table->filename, hookId, table->volume, table->pan);
 		}
 	}
 }
