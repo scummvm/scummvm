@@ -43,11 +43,18 @@ Smush::Smush() {
 	_freq = 22050;
 	_videoFinished = false;
 	_videoPause = true;
+	_updateNeeded = false;
 	_movieTime = 0;
+	_surface = NULL;
+	_bufSurface = NULL;
 }
 
 Smush::~Smush() {
 	deinit();
+	if (_surface)
+		SDL_FreeSurface(_surface);
+	if (_bufSurface)
+		SDL_FreeSurface(_bufSurface);
 }
 
 void Smush::init() {
@@ -55,6 +62,13 @@ void Smush::init() {
 	_movieTime = 0;
 	_videoFinished = false;
 	_videoPause = false;
+	_updateNeeded = false;
+	if (!_surface)
+		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	if (!_bufSurface)
+	 	_bufSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	_dst = (byte *)_surface->pixels;
+	_buf = (byte *)_bufSurface->pixels;
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
@@ -108,7 +122,8 @@ void Smush::handleFrame() {
 	tag = _file.readUint32BE();
 	if (tag == MKID_BE('ANNO')) {
 		size = _file.readUint32BE();
-		_file.seek(size, SEEK_CUR);
+		for (int l = 0; l < size; l++)
+			_file.readByte();
 		tag = _file.readUint32BE();
 	}
 	assert(tag == MKID_BE('FRME'));
@@ -203,30 +218,13 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 }
 
 bool Smush::play(const char *filename, int x, int y) {
-	stop();
+	deinit();
 
 	// Load the video
 	if (!setupAnim(filename, x, y))
 		return false;
 
 	handleFramesHeader();
-
-	SDL_Surface* image;
-	image = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-	SDL_Surface* buf_image;
-	buf_image = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-
-	SDL_Rect src;
-	src.x = 0;
-	src.y = 0;
-	src.w = image->w;
-	src.h = image->h;
-
-	_dst = (byte *)image->pixels;
-	_buf = (byte *)buf_image->pixels;
-
-	_updateNeeded = false;
-
 	init();
 
 	return true;
@@ -234,6 +232,7 @@ bool Smush::play(const char *filename, int x, int y) {
 
 zlibFile::zlibFile() {
 	_handle = NULL;
+	_inBuf = NULL;
 }
 
 zlibFile::~zlibFile() {
@@ -243,7 +242,7 @@ zlibFile::~zlibFile() {
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
 	printf("allocing: ");
-	inBuf = (char*)calloc(1, 16385);
+	_inBuf = (char *)calloc(1, 16385);
 	printf("alloced\n");
 
 	if (_handle) {
@@ -263,35 +262,35 @@ bool zlibFile::open(const char *filename) {
 	}
 
 	// Read in the GZ header
-	fread(inBuf, 2, sizeof(char), _handle);				// Header
-	fread(inBuf, 1, sizeof(char), _handle);				// Method
-	fread(inBuf, 1, sizeof(char), _handle); flags=inBuf[0];		// Flags
-	fread(inBuf, 6, sizeof(char), _handle);				// XFlags
+	fread(_inBuf, 2, sizeof(char), _handle);				// Header
+	fread(_inBuf, 1, sizeof(char), _handle);				// Method
+	fread(_inBuf, 1, sizeof(char), _handle); flags = _inBuf[0];		// Flags
+	fread(_inBuf, 6, sizeof(char), _handle);				// XFlags
 
 	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Xtra & Comment
 		error("Unsupported header flag");
 
 	if ((flags & 0x08) != 0) {					// Orig. Name
 		do {
-			fread(inBuf, 1, sizeof(char), _handle);
-		} while(inBuf[0] != 0);
+			fread(_inBuf, 1, sizeof(char), _handle);
+		} while(_inBuf[0] != 0);
 	}
 
 	if ((flags & 0x02) != 0) // CRC
-		fread(inBuf, 2, sizeof(char), _handle);
+		fread(_inBuf, 2, sizeof(char), _handle);
 
-	memset(inBuf, 0, 16384);			// Zero buffer (debug)
-	stream.zalloc = NULL;
-	stream.zfree = NULL;
-	stream.opaque = Z_NULL;
+	memset(_inBuf, 0, 16384);			// Zero buffer (debug)
+	_stream.zalloc = NULL;
+	_stream.zfree = NULL;
+	_stream.opaque = Z_NULL;
 
-	if (inflateInit2(&stream, -15) != Z_OK)
+	if (inflateInit2(&_stream, -15) != Z_OK)
 		error("inflateInit2 failed");
 
-	stream.next_in = NULL;
-	stream.next_out = NULL;
-	stream.avail_in = 0;
-	stream.avail_out = 16384;
+	_stream.next_in = NULL;
+	_stream.next_out = NULL;
+	_stream.avail_in = 0;
+	_stream.avail_out = 16384;
 
 	warning("Opened zlibFile %s...", filename);
 
@@ -301,30 +300,14 @@ bool zlibFile::open(const char *filename) {
 void zlibFile::close() {
 	_handle = NULL;
 	printf("Closing..\n");
-	free(inBuf);
+	if (_inBuf) {
+ 		free(_inBuf);
+ 		_inBuf = NULL;
+	}
 }
 
 bool zlibFile::isOpen() {
 	return _handle != NULL;
-}
-
-bool zlibFile::eof() {
-	error("zlibFile::eof() - Not implemented");
-	return false;
-}
-
-uint32 zlibFile::pos() {
-	error("zlibFile::pos() - Not implemented");
-	return false;
-}
-
-uint32 zlibFile::size() {
-	error("zlibFile::size() - Not implemented");
-	return false;
-}
-
-void zlibFile::seek(int32 offs, int whence) {
-	error("zlibFile::seek() - Not implemented");
 }
 
 uint32 zlibFile::read(void *ptr, uint32 len) {
@@ -339,39 +322,39 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	stream.next_out = (Bytef*)ptr;
-	stream.avail_out = len;
+	_stream.next_out = (Bytef *)ptr;
+	_stream.avail_out = len;
 
-	fileDone = false;
-	while (stream.avail_out != 0) {
-		if (stream.avail_in == 0) {	// !eof
-	        	stream.avail_in = fread(inBuf, 1, 16384, _handle);
-			if (stream.avail_in == 0) {
+	_fileDone = false;
+	while (_stream.avail_out != 0) {
+		if (_stream.avail_in == 0) {	// !eof
+	        	_stream.avail_in = fread(_inBuf, 1, 16384, _handle);
+			if (_stream.avail_in == 0) {
 				fileEOF = true;
 				break;
 			}
-			stream.next_in = (Byte*)inBuf;
+			_stream.next_in = (Byte *)_inBuf;
 		}
 
-		result = inflate(&stream, Z_NO_FLUSH);
+		result = inflate(&_stream, Z_NO_FLUSH);
 		if (result == Z_STREAM_END) {	// EOF
 			warning("Stream ended");
-			fileDone = true;
+			_fileDone = true;
 			break;
 		}
 		if (result == Z_DATA_ERROR) {
 			warning("Decompression error");
-			fileDone = true;
+			_fileDone = true;
 			break;
 		}
 		if (result != Z_OK || fileEOF) {
 			warning("Unknown decomp result: %d/%d\n", result, fileEOF);
-			fileDone = true;
+			_fileDone = true;
 			break;
 		}
 	}
 
-	return (int)(len - stream.avail_out);
+	return (int)(len - _stream.avail_out);
 }
  
 byte zlibFile::readByte() {

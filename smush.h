@@ -29,9 +29,9 @@
 class zlibFile {
 private:
 	FILE *_handle;
-	z_stream stream;	// Zlib stream
-	char *inBuf;		// Buffer for decompression
-	bool fileDone;
+	z_stream _stream;	// Zlib stream
+	char *_inBuf;		// Buffer for decompression
+	bool _fileDone;
 
 public:
 	zlibFile();
@@ -39,10 +39,6 @@ public:
 	bool open(const char *filename);
 	void close();
 	bool isOpen();
-	bool eof();
-	uint32 pos();
-	uint32 size();
-	void seek(int32 offs, int whence = SEEK_SET);
 
 	uint32 read(void *ptr, uint32 size);
 	uint8 readByte();
@@ -69,8 +65,9 @@ private:
 	bool _videoPause;
 	int _x, _y;
 	int _width, _height;
-	byte *_dst;
-	byte *_buf;
+	byte *_dst, *_buf;
+	SDL_Surface* _surface;
+	SDL_Surface* _bufSurface;
 
 public:
 	Smush();
