@@ -32,7 +32,7 @@ class MessageDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	MessageDialog(NewGui *gui, const Common::String &message, bool showOKButton = true, bool showCancelButton = false);
+	MessageDialog(NewGui *gui, const Common::String &message, const char *defaultButton = "OK", const char *altButton = 0);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 

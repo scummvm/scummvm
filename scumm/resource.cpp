@@ -23,7 +23,6 @@
 #include "stdafx.h"
 #include "common/map.h"
 #include "common/str.h"
-#include "gui/message.h"
 #include "scumm/bundle.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"

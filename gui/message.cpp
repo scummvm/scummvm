@@ -29,7 +29,7 @@ enum {
 	kCancelCmd = 'CNCL'
 };
 
-MessageDialog::MessageDialog(NewGui *gui, const String &message, bool showOkButton, bool showCancelButton)
+MessageDialog::MessageDialog(NewGui *gui, const String &message, const char *defaultButton, const char *altButton)
 	: Dialog(gui, 30, 20, 260, 124) {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
@@ -60,7 +60,7 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, bool showOkButt
 	_w = maxlineWidth + 20;
 	lineCount = lines.size();
 	_h = lineCount * kLineHeight + 16;
-	if (showOkButton || showCancelButton)
+	if (defaultButton || altButton)
 		_h += 24;
 
 	if (_h > 180) {
@@ -77,18 +77,18 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, bool showOkButt
 
 	// FIXME - allow for multiple buttons, and return in runModal() which one
 	// was selected.
-	if (showOkButton && showCancelButton) { 
+	if (defaultButton && altButton) { 
 		okButtonPos = (_w - (kButtonWidth * 2))/2;
 		cancelButtonPos = ((_w - (kButtonWidth * 2))/2) + kButtonWidth + 10;
 	} else {
 		okButtonPos = cancelButtonPos = (_w-kButtonWidth)/2;
 	}
 
-	if (showOkButton)
-		addButton(okButtonPos, _h - 24, "OK", kOkCmd, '\n');	// Confirm dialog
+	if (defaultButton)
+		addButton(okButtonPos, _h - 24, defaultButton, kOkCmd, '\n');	// Confirm dialog
 
-	if (showCancelButton)
-		addButton(cancelButtonPos, _h - 24, "CANCEL", kCancelCmd, '\27');	// Cancel dialog
+	if (altButton)
+		addButton(cancelButtonPos, _h - 24, altButton, kCancelCmd, '\27');	// Cancel dialog
 }
 
 int MessageDialog::addLine(StringList &lines, const char *line, int size) {
@@ -149,7 +149,7 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 }
 
 TimedMessageDialog::TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 timer)
-	: MessageDialog(gui, message, false, false) {
+	: MessageDialog(gui, message, 0, 0) {
 	_timer = _gui->get_time() + timer;
 }
 

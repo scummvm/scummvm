@@ -2496,7 +2496,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	MessageDialog dialog(_newgui, buf, true, showCancel);
+	MessageDialog dialog(_newgui, buf, "OK", "Cancel");
 	return runDialog(dialog);
 }
 
