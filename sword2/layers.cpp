@@ -49,6 +49,10 @@ int32 Logic::fnInitBackground(int32 *params) {
 	// params:	0 res id of normal background layer - cannot be 0
 	//		1 1 yes 0 no for a new palette
 
+	return g_sword2->initBackground(params[0], params[1]);
+}
+
+int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	_multiScreenHeader *screenLayerTable;
 	_screenHeader *screen_head;
 	_layerHeader *layer;
@@ -56,15 +60,15 @@ int32 Logic::fnInitBackground(int32 *params) {
 	uint8 *file;
 	uint32 rv;
 
-	debug(5, "CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
+	debug(5, "CHANGED TO LOCATION \"%s\"", FetchObjectName(res));
 
 	// stop all fx & clears the queue
 	Clear_fx_queue();
 
 #ifdef _SWORD2_DEBUG
-	debug(5, "fnInitBackground(%d)", params[0]);
+	debug(5, "fnInitBackground(%d)", res);
 
-	if (!params[0]) {
+	if (!res) {
 		error("ERROR: fnInitBackground cannot have 0 for background layer id!");
 	}
 #endif
@@ -85,8 +89,8 @@ int32 Logic::fnInitBackground(int32 *params) {
 	if (this_screen.background_layer_id)
 		g_display->closeBackgroundLayer();
 
-	this_screen.background_layer_id = params[0];	// set the res id
-	this_screen.new_palette = params[1];		// yes or no - palette is taken from layer file
+	this_screen.background_layer_id = res;
+	this_screen.new_palette = new_palette;
 
 	// ok, now read the resource and pull out all the normal sort layer
 	// info/and set them up at the beginning of the sort list - why do it
@@ -116,9 +120,9 @@ int32 Logic::fnInitBackground(int32 *params) {
 
 			// need this for sorting - but leave the rest blank,
 			// we'll take from the header at print time
-			sort_list[i].sort_y = layer->y + layer->height;
+			g_sword2->_sortList[i].sort_y = layer->y + layer->height;
 			// signifies a layer
-			sort_list[i].layer_number = i + 1;
+			g_sword2->_sortList[i].layer_number = i + 1;
 
 			debug(5, "init layer %d", i);
 		}

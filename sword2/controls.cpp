@@ -323,7 +323,7 @@ private:
 
 public:
 	Dialog() : _numWidgets(0), _finish(false), _result(0) {
-		SetFullPalette(CONTROL_PANEL_PALETTE);
+		g_sword2->setFullPalette(CONTROL_PANEL_PALETTE);
 	}
 
 	virtual ~Dialog() {
@@ -1293,7 +1293,7 @@ public:
 
 				// Reset the graphic 'buildit' list before a
 				// new logic list (see fnRegisterFrame)
-				Reset_render_lists();
+				g_sword2->resetRenderLists();
 
 				// Reset the mouse hot-spot list (see
 				// fnRegisterMouse and fnRegisterFrame)
@@ -1310,7 +1310,7 @@ public:
 
 void SaveLoadDialog::saveLoadError(char* text) {
 	// Print a message on screen. Second parameter is duration.
-	DisplayMsg((uint8 *) text, 0);
+	g_sword2->displayMsg((uint8 *) text, 0);
 
 	// Wait for ESC or mouse click
 	while (1) {
@@ -1334,7 +1334,7 @@ void SaveLoadDialog::saveLoadError(char* text) {
 	}
 
 	// Remove the message.
-	RemoveMsg();
+	g_sword2->removeMsg();
 }
 
 Gui::Gui() : _baseSlot(0) {
@@ -1469,7 +1469,7 @@ void Gui::restartControl(void) {
 
 	// reset the graphic 'buildit' list before a new logic list
 	// (see fnRegisterFrame)
-	Reset_render_lists();
+	g_sword2->resetRenderLists();
 
 	// reset the mouse hot-spot list (see fnRegisterMouse and
 	// fnRegisterFrame)

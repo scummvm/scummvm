@@ -1285,7 +1285,7 @@ void ResourceManager::getCd(int cd) {
 	g_logic.fnStopMusic(NULL);
 
 	textRes = res_man.open(2283);
-	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
+	g_sword2->displayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
 	text_spr = fontRenderer.makeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
@@ -1338,7 +1338,7 @@ void ResourceManager::getCd(int cd) {
 	} while (!done);
 
 	memory.freeMemory(text_spr);
-	RemoveMsg();
+	g_sword2->removeMsg();
 }
 
 } // End of namespace Sword2

@@ -44,19 +44,13 @@
 
 namespace Sword2 {
 
-// stores resource id of wav to use as lead-out from smacker
-static uint32 smackerLeadOut = 0;
-
-int32 Animate(int32 *params, uint8 reverse_flag);
-int32 Mega_table_animate(int32 *params, uint8 reverse_flag);
-
 int32 Logic::fnAnim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
 	// 0 means normal forward anim
-	return Animate(params, 0);
+	return animate(params, false);
 }
 
 int32 Logic::fnReverseAnim(int32 *params) {
@@ -65,7 +59,7 @@ int32 Logic::fnReverseAnim(int32 *params) {
 	//		2 resource id of animation file
 
 	// 1 means reverse anim
-	return Animate(params, 1);
+	return animate(params, true);
 }
 
 int32 Logic::fnMegaTableAnim(int32 *params) {
@@ -75,7 +69,7 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 	//		3 pointer to animation table
 
 	// 0 means normal forward anim
-	return Mega_table_animate(params, 0);
+	return megaTableAnimate(params, false);
 }
 
 int32 Logic::fnReverseMegaTableAnim(int32 *params) {
@@ -85,10 +79,10 @@ int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 	//		3 pointer to animation table
 
 	// 1 means reverse anim
-	return Mega_table_animate(params, 1);
+	return megaTableAnimate(params, true);
 }
 
-int32 Animate(int32 *params, uint8 reverse_flag) {
+int32 Logic::animate(int32 *params, bool reverse) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
@@ -153,7 +147,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 #ifdef _SWORD2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res == 0)
-			error("Animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+			error("animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 		// open anim file
@@ -163,7 +157,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		// check this this resource is actually an animation file!
 		head = (_standardHeader *) anim_file;
 		if (head->fileType != ANIMATION_FILE)
-			error("Animate: %s (%d) is not an anim!", FetchObjectName(res), res);
+			error("animate: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 		// point to anim header
@@ -172,14 +166,14 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
 		if (anim_head->noAnimFrames == 0)
- 			error("Animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
+ 			error("animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 		// now running an anim, looping back to this 'FN' call again
 		ob_logic->looping = 1;
 		ob_graphic->anim_resource = res;
 
-		if (reverse_flag)
+		if (reverse)
 			ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
 		else
 			ob_graphic->anim_pc = 0;
@@ -199,7 +193,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		anim_file = res_man.open(ob_graphic->anim_resource);
 		anim_head = FetchAnimHeader(anim_file);
 
-		if (reverse_flag)
+		if (reverse)
 			ob_graphic->anim_pc--;
 		else
 			ob_graphic->anim_pc++;
@@ -207,7 +201,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 
 	// check for end of anim
 
-	if (reverse_flag) {
+	if (reverse) {
 		if (ob_graphic->anim_pc == 0)
 			ob_logic->looping = 0;
 	} else {
@@ -222,7 +216,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 	return ob_logic->looping ? IR_REPEAT : IR_STOP;
 }
 
-int32 Mega_table_animate(int32 *params, uint8 reverse_flag) {
+int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -253,8 +247,8 @@ int32 Mega_table_animate(int32 *params, uint8 reverse_flag) {
 
 	// pars[2] only needed setting at the start of the anim
 
-	// call Animate() with these params
-	return Animate(pars, reverse_flag);
+	// call animate() with these params
+	return animate(pars, reverse);
 }
 
 int32 Logic::fnSetFrame(int32 *params) {
@@ -462,66 +456,45 @@ int32 Logic::fnUnshadedSprite(int32 *params) {
 //		_wavHeader *speech;
 //	} _movieTextObject;
 
-// FOR TEXT LINES IN SEQUENCE PLAYER
-
-#define MAX_SEQUENCE_TEXT_LINES 15
-
-typedef struct {
-	uint32 textNumber;
-	uint16 startFrame;
-	uint16 endFrame;
-	mem *text_mem;
-	uint32 speechBufferSize;
-	uint16 *speech_mem;
-} _sequenceTextInfo;
-
-// keeps count of number of text lines to disaply during the sequence
-static uint32 sequenceTextLines = 0;
-
-static _sequenceTextInfo sequence_text_list[MAX_SEQUENCE_TEXT_LINES];
-
 int32 Logic::fnAddSequenceText(int32 *params) {
-// params:	0 text number
-//		1 frame number to start the text displaying
-//		2 frame number to stop the text dispalying
+	// params:	0 text number
+	//		1 frame number to start the text displaying
+	//		2 frame number to stop the text dispalying
 
-#ifdef _SWORD2_DEBUG
-	if (sequenceTextLines == MAX_SEQUENCE_TEXT_LINES)
-		error("fnAddSequenceText ran out of lines");
-#endif
+	assert(_sequenceTextLines < MAX_SEQUENCE_TEXT_LINES);
 
-	sequence_text_list[sequenceTextLines].textNumber = params[0];
-	sequence_text_list[sequenceTextLines].startFrame = params[1];
-	sequence_text_list[sequenceTextLines].endFrame = (uint16) params[2];
-	sequenceTextLines++;
+	_sequenceTextList[_sequenceTextLines].textNumber = params[0];
+	_sequenceTextList[_sequenceTextLines].startFrame = params[1];
+	_sequenceTextList[_sequenceTextLines].endFrame = (uint16) params[2];
+	_sequenceTextLines++;
 
 	// continue script
 	return IR_CONT;
 }
 
-void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
+void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 	uint32 line;
  	_frameHeader *frame;
  	uint32 local_text;
 	uint32 text_res;
 	uint8 *text;
 	uint32 wavId;	// ie. offical text number (actor text number)
-	uint8 speechRunning;
+	bool speechRunning;
  	char speechFile[256];
 
 	// for each sequence text line that's been logged
-	for (line = 0; line < sequenceTextLines; line++) {
+	for (line = 0; line < _sequenceTextLines; line++) {
 		// allocate this structure
 		sequenceText[line] = new _movieTextObject;
 
-		sequenceText[line]->startFrame = sequence_text_list[line].startFrame;
-		sequenceText[line]->endFrame = sequence_text_list[line].endFrame;
+		sequenceText[line]->startFrame = _sequenceTextList[line].startFrame;
+		sequenceText[line]->endFrame = _sequenceTextList[line].endFrame;
 
 		// pull out the text line to get the official text number
 		// (for wav id)
 
-  		text_res = sequence_text_list[line].textNumber / SIZE;
-		local_text = sequence_text_list[line].textNumber & 0xffff;
+  		text_res = _sequenceTextList[line].textNumber / SIZE;
+		local_text = _sequenceTextList[line].textNumber & 0xffff;
 
 		// open text resource & get the line
 		text = FetchTextLine(res_man.open(text_res), local_text);
@@ -536,8 +509,8 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		// is it to be speech or subtitles or both?
 		// assume speech is not running until know otherwise
 
-		speechRunning = 0;
-		sequence_text_list[line].speech_mem = NULL;
+		speechRunning = false;
+		_sequenceTextList[line].speech_mem = NULL;
 		sequenceText[line]->speech = NULL;
 
 		if (!g_sound->isSpeechMute()) {
@@ -556,10 +529,10 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			else
 				strcpy(speechFile, "speech.clu");
 
-			sequence_text_list[line].speechBufferSize = g_sound->preFetchCompSpeech((char *) speechFile, wavId, &sequence_text_list[line].speech_mem);
-			if (sequence_text_list[line].speechBufferSize) {
+			_sequenceTextList[line].speechBufferSize = g_sound->preFetchCompSpeech((char *) speechFile, wavId, &_sequenceTextList[line].speech_mem);
+			if (_sequenceTextList[line].speechBufferSize) {
 				// ok, we've got speech!
-				speechRunning = 1;
+				speechRunning = true;
 			}
 		}
 
@@ -578,33 +551,33 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			// When rendering text over a sequence we need a
 			// different colour for the border.
 
-			sequence_text_list[line].text_mem = fontRenderer.makeTextSprite(text + 2, 600, 255, g_sword2->_speechFontId, 1);
+			_sequenceTextList[line].text_mem = fontRenderer.makeTextSprite(text + 2, 600, 255, g_sword2->_speechFontId, 1);
 
 			// ok to close the text resource now
 			res_man.close(text_res);
 		} else {
-			sequence_text_list[line].text_mem = NULL;
+			_sequenceTextList[line].text_mem = NULL;
 			sequenceText[line]->textSprite = NULL;
 		}
 	}
 
 	// for drivers: NULL-terminate the array of pointers to
 	// _movieTextObject's
-	sequenceText[sequenceTextLines] = NULL;
+	sequenceText[_sequenceTextLines] = NULL;
 
   	// now lock all the memory blocks containing text sprites & speech
 	// samples and set up the pointers to them, etc, for the drivers
 
-	for (line = 0; line < sequenceTextLines; line++) {
+	for (line = 0; line < _sequenceTextLines; line++) {
 		// if we've made a text sprite for this line...
 
-		if (sequence_text_list[line].text_mem) {
-			memory.lockMemory(sequence_text_list[line].text_mem);
+		if (_sequenceTextList[line].text_mem) {
+			memory.lockMemory(_sequenceTextList[line].text_mem);
 
 			// now fill out the _spriteInfo structure in the
 			// _movieTextObjectStructure
 
-			frame = (_frameHeader *) sequence_text_list[line].text_mem->ad;
+			frame = (_frameHeader *) _sequenceTextList[line].text_mem->ad;
 
 			sequenceText[line]->textSprite = new _spriteInfo;
 
@@ -614,39 +587,39 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			sequenceText[line]->textSprite->w = frame->width;
 			sequenceText[line]->textSprite->h = frame->height;
 			sequenceText[line]->textSprite->type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
-			sequenceText[line]->textSprite->data = sequence_text_list[line].text_mem->ad + sizeof(_frameHeader);
+			sequenceText[line]->textSprite->data = _sequenceTextList[line].text_mem->ad + sizeof(_frameHeader);
 		}
 
 		// if we've loaded a speech sample for this line...
 
- 		if (sequence_text_list[line].speech_mem) {
+ 		if (_sequenceTextList[line].speech_mem) {
 			// for drivers: set up pointer to decompressed wav in
 			// memory
 
-			sequenceText[line]->speechBufferSize = sequence_text_list[line].speechBufferSize;
-			sequenceText[line]->speech = sequence_text_list[line].speech_mem;
+			sequenceText[line]->speechBufferSize = _sequenceTextList[line].speechBufferSize;
+			sequenceText[line]->speech = _sequenceTextList[line].speech_mem;
 		}
 	}
 }
 
-void ClearSequenceSpeech(_movieTextObject *textSprites[]) {
+void Logic::clearSequenceSpeech(_movieTextObject *sequenceText[]) {
 	uint32 line;
 
-	for (line = 0; line < sequenceTextLines; line++) {
+	for (line = 0; line < _sequenceTextLines; line++) {
 		// free up the memory used by this _movieTextObject
-		delete textSprites[line];
+		delete sequenceText[line];
 
 		// free up the mem block containing this text sprite
-		if (sequence_text_list[line].text_mem)
-			memory.freeMemory(sequence_text_list[line].text_mem);
+		if (_sequenceTextList[line].text_mem)
+			memory.freeMemory(_sequenceTextList[line].text_mem);
 
 		// free up the mem block containing this speech sample
-		if (sequence_text_list[line].speech_mem)
-			free(sequence_text_list[line].speech_mem);
+		if (_sequenceTextList[line].speech_mem)
+			free(_sequenceTextList[line].speech_mem);
 	}
 
 	// IMPORTANT! Reset the line count ready for the next sequence!
-	sequenceTextLines = 0;
+	_sequenceTextLines = 0;
 }
 
 int32 Logic::fnSmackerLeadIn(int32 *params) {
@@ -686,7 +659,7 @@ int32 Logic::fnSmackerLeadOut(int32 *params) {
 	// params:	0 id of lead-out music
 
 	// ready for use in fnPlaySequence
-	smackerLeadOut = params[0];
+	_smackerLeadOut = params[0];
 
 	// continue script
 	return IR_CONT;
@@ -727,16 +700,16 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// now create the text sprites, if any
 
-	if (sequenceTextLines)
-		CreateSequenceSpeech(sequenceSpeechArray);
+	if (_sequenceTextLines)
+		createSequenceSpeech(sequenceSpeechArray);
 
 	// open the lead-out music resource, if there is one
 
-	if (smackerLeadOut) {
-		leadOut = res_man.open(smackerLeadOut);
+	if (_smackerLeadOut) {
+		leadOut = res_man.open(_smackerLeadOut);
 
 #ifdef _SWORD2_DEBUG
-		header = (_standardHeader *)leadOut;
+		header = (_standardHeader *) leadOut;
 		if (header->fileType != WAV_FILE)
 			error("fnSmackerLeadOut() given invalid resource");
 #endif
@@ -754,7 +727,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	MoviePlayer player; 
 
-	if (sequenceTextLines && !(g_sword2->_features & GF_DEMO))
+	if (_sequenceTextLines && !(g_sword2->_features & GF_DEMO))
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = player.play(filename, NULL, leadOut);
@@ -764,9 +737,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// close the lead-out music resource
 
- 	if (smackerLeadOut) {
-		res_man.close(smackerLeadOut);
-		smackerLeadOut = 0;
+	if (_smackerLeadOut) {
+		res_man.close(_smackerLeadOut);
+		_smackerLeadOut = 0;
 	}
 
 	// check the error return-value
@@ -775,8 +748,8 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// now clear the text sprites, if any
 
-	if (sequenceTextLines)
-		ClearSequenceSpeech(sequenceSpeechArray);
+	if (_sequenceTextLines)
+		clearSequenceSpeech(sequenceSpeechArray);
 
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black

@@ -338,9 +338,9 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	DisplayMsg(FetchTextLine(res_man.open(text_res), local_text) + 2, 3);
+	g_sword2->displayMsg(FetchTextLine(res_man.open(text_res), local_text) + 2, 3);
 	res_man.close(text_res);
-	RemoveMsg();
+	g_sword2->removeMsg();
 
 	return IR_CONT;
 }
@@ -445,7 +445,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		g_display->setPalette(0, 256, oldPal, RDPAL_FADE);
 		g_display->fadeUp();
 		g_display->updateDisplay();
-		Build_display();
+		g_sword2->buildDisplay();
 		g_display->waitForFade();
 
 		g_sound->muteFx(false);

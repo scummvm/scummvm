@@ -21,7 +21,6 @@
 #include "sword2/driver/driver96.h"
 #include "sword2/sword2.h"
 #include "sword2/debug.h"
-#include "sword2/build_display.h"		// for 'fps'
 #include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/events.h"			// for CountEvents()
@@ -33,7 +32,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"			// for plotWalkGrid()
 #include "sword2/speech.h"			// for 'officialTextNumber' and
-					// 'speechScriptWaiting'
+						// 'speechScriptWaiting'
 
 namespace Sword2 {
 
@@ -263,7 +262,7 @@ void Build_debug_text(void) {
 
  		// frames-per-second counter
 
-		sprintf(buf, "fps %d", fps);
+		sprintf(buf, "fps %d", g_sword2->_fps);
 		Make_debug_text_block(buf, 440, 0);
 
  		// location number
@@ -283,32 +282,32 @@ void Build_debug_text(void) {
 
 		// sprite list usage
 
-		sprintf(buf, "bgp0: %d/%d", cur_bgp0, MAX_bgp0_sprites);
+		sprintf(buf, "bgp0: %d/%d", g_sword2->_curBgp0, MAX_bgp0_sprites);
 		Make_debug_text_block(buf, 560, 0);
 
-		sprintf(buf, "bgp1: %d/%d", cur_bgp1, MAX_bgp1_sprites);
+		sprintf(buf, "bgp1: %d/%d", g_sword2->_curBgp1, MAX_bgp1_sprites);
 		Make_debug_text_block(buf, 560, 15);
 
-		sprintf(buf, "back: %d/%d", cur_back, MAX_back_sprites);
+		sprintf(buf, "back: %d/%d", g_sword2->_curBack, MAX_back_sprites);
 		Make_debug_text_block(buf, 560, 30);
 
-		sprintf(buf, "sort: %d/%d", cur_sort, MAX_sort_sprites);
+		sprintf(buf, "sort: %d/%d", g_sword2->_curSort, MAX_sort_sprites);
 		Make_debug_text_block(buf, 560, 45);
 
-		sprintf(buf, "fore: %d/%d", cur_fore, MAX_fore_sprites);
+		sprintf(buf, "fore: %d/%d", g_sword2->_curFore, MAX_fore_sprites);
 		Make_debug_text_block(buf, 560, 60);
 
-		sprintf(buf, "fgp0: %d/%d", cur_fgp0, MAX_fgp0_sprites);
+		sprintf(buf, "fgp0: %d/%d", g_sword2->_curFgp0, MAX_fgp0_sprites);
 		Make_debug_text_block(buf, 560, 75);
 
-		sprintf(buf, "fgp1: %d/%d", cur_fgp1, MAX_fgp1_sprites);
+		sprintf(buf, "fgp1: %d/%d", g_sword2->_curFgp1, MAX_fgp1_sprites);
 		Make_debug_text_block(buf, 560, 90);
 
 		// largest layer & sprite
 
 		// NB. Strings already constructed in Build_display.cpp
-		Make_debug_text_block(largest_layer_info, 0, 60);
-		Make_debug_text_block(largest_sprite_info, 0, 75);
+		Make_debug_text_block(g_sword2->_largestLayerInfo, 0, 60);
+		Make_debug_text_block(g_sword2->_largestSpriteInfo, 0, 75);
 
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait

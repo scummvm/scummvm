@@ -22,8 +22,8 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-// #include "sword2/defs.h"
 #include "sword2/header.h"
+#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 
@@ -31,6 +31,8 @@ namespace Sword2 {
 
 // This must allow for the largest number of objects in a screen
 #define OBJECT_KILL_LIST_SIZE 50
+
+#define MAX_SEQUENCE_TEXT_LINES 15
 
 class Logic {
 private:
@@ -69,8 +71,34 @@ private:
 	void setupOpcodes(void);
 	void processKillList(void);
 
+	// Stores resource id of the wav to use as lead-out from smacker
+	uint32 _smackerLeadOut;
+
+	int32 animate(int32 *params, bool reverse);
+	int32 megaTableAnimate(int32 *params, bool reverse);
+
+	// keeps count of number of text lines to disaply during the sequence
+	uint32 _sequenceTextLines;
+
+	// FOR TEXT LINES IN SEQUENCE PLAYER
+
+	struct _sequenceTextInfo {
+		uint32 textNumber;
+		uint16 startFrame;
+		uint16 endFrame;
+		mem *text_mem;
+		uint32 speechBufferSize;
+		uint16 *speech_mem;
+	};
+
+	_sequenceTextInfo _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
+
+	void createSequenceSpeech(_movieTextObject *sequenceText[]);
+	void clearSequenceSpeech(_movieTextObject *sequenceText[]);
+
 public:
-	Logic() : _globals(NULL), _kills(0), _debugFlag(false) {
+	Logic() : _globals(NULL), _kills(0), _debugFlag(false),
+		  _smackerLeadOut(0), _sequenceTextLines(0) {
 		setupOpcodes();
 	}
 
@@ -197,7 +225,7 @@ public:
 	int32 fnRefreshInventory(int32 *params);
 	int32 fnChangeShadows(int32 *params);
 
-	//do one cycle of the current session
+	// do one cycle of the current session
 	int processSession(void);
 
 	// cause the logic loop to terminate and drop out

@@ -38,85 +38,17 @@
 
 namespace Sword2 {
 
-// ---------------------------------------------------------------------------
-
-buildit	bgp0_list[MAX_bgp0_sprites];
-buildit	bgp1_list[MAX_bgp1_sprites];
-buildit	back_list[MAX_back_sprites];
-buildit	sort_list[MAX_sort_sprites];
-buildit	fore_list[MAX_fore_sprites];
-buildit	fgp0_list[MAX_fgp0_sprites];
-buildit	fgp1_list[MAX_fgp1_sprites];
-
-// holds the order of the sort list
-// i.e the list stays static and we sort this
-
-uint16 sort_order[MAX_sort_sprites];
-
-uint32 cur_bgp0;
-uint32 cur_bgp1;
-uint32 cur_back;
-uint32 cur_sort;
-uint32 cur_fore;
-uint32 cur_fgp0;
-uint32 cur_fgp1;
-
-uint32 largest_layer_area = 0;	// should be reset to zero at start of each screen change
-uint32 largest_sprite_area = 0;	// - " -
-char largest_layer_info[128]	= { "largest layer:  none registered" };
-char largest_sprite_info[128]	= { "largest sprite: none registered" };
-
-// ---------------------------------------------------------------------------
-// last palette used - so that we can restore the correct one after a pause
-// (which dims the screen) and it's not always the main screen palette that we
-// want, eg. during the eclipse
-
-// This flag gets set in Start_new_palette() and SetFullPalette()
-
-uint32 lastPaletteRes = 0;
-
-// ---------------------------------------------------------------------------
-// 'frames per second' counting stuff
-
-uint32 fps = 0;
-uint32 cycleTime = 0;
-uint32 frameCount = 0;
-// So I know if the control Panel can be activated - CJR 1-5-97
-extern uint32 mouse_status;
-
-// ---------------------------------------------------------------------------
-// function prototypes not needed externally
-
-void Start_new_palette(void);
-
-void Register_frame(int32 *params, buildit *build_unit);
-void Process_layer(uint32 layer_number);
-void Sort_the_sort_list(void);
-
-void Send_back_par0_frames(void);
-void Send_back_par1_frames(void);
-void Send_back_frames(void);
-void Send_sort_frames(void);
-void Send_fore_frames(void);
-void Send_fore_par0_frames(void);
-void Send_fore_par1_frames(void);
-
-// ---------------------------------------------------------------------------
-//
-// PC Build_display
-//
-// ---------------------------------------------------------------------------
-
-void Build_display(void) {
+void Sword2Engine::buildDisplay(void) {
 	uint8 *file;
 	_multiScreenHeader *screenLayerTable;
 
 	if (this_screen.new_palette) {
 		// start the layer palette fading up
-		Start_new_palette();
+		startNewPalette();
 
-		largest_layer_area = 0;		// should be reset to zero at start of each screen change
-		largest_sprite_area = 0;	// - " -
+		// should be reset to zero at start of each screen change
+		_largestLayerArea = 0;
+		_largestSpriteArea = 0;
 	}
 
 	// there is a valid screen to run
@@ -148,7 +80,7 @@ void Build_display(void) {
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
-				Send_back_par0_frames();
+				sendBackPar0Frames();
 			} else {
 				// release the screen resource
  	 			res_man.close(this_screen.background_layer_id);
@@ -165,7 +97,7 @@ void Build_display(void) {
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
-				Send_back_par1_frames();
+				sendBackPar1Frames();
 			} else {
 				// release the screen resource
  	 			res_man.close(this_screen.background_layer_id);
@@ -181,10 +113,10 @@ void Build_display(void) {
 
 			// sprites & layers
 
-			Send_back_frames();	// background sprites
-			Sort_the_sort_list();
-			Send_sort_frames();	// sorted sprites & layers
-			Send_fore_frames();	// foreground sprites
+			sendBackFrames();	// background sprites
+			sortTheSortList();
+			sendSortFrames();	// sorted sprites & layers
+			sendForeFrames();	// foreground sprites
 
 			// first foreground parallax + related anims
 
@@ -197,7 +129,7 @@ void Build_display(void) {
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
-				Send_fore_par0_frames();
+				sendForePar0Frames();
 			} else {
 				// release the screen resource
  	 			res_man.close(this_screen.background_layer_id);
@@ -214,7 +146,7 @@ void Build_display(void) {
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
-				Send_fore_par1_frames();
+				sendForePar1Frames();
 			} else {
 				// release the screen resource
  	 			res_man.close(this_screen.background_layer_id);
@@ -240,12 +172,12 @@ void Build_display(void) {
 
 			// update our fps reading
 
-			frameCount++;
-			if (SVM_timeGetTime() > cycleTime) {
-				fps = frameCount;
-				debug(2, "FPS: %d", fps);
-				frameCount = 0;
-				cycleTime = SVM_timeGetTime() + 1000;
+			_frameCount++;
+			if (SVM_timeGetTime() > _cycleTime) {
+				_fps = _frameCount;
+				debug(2, "FPS: %d", _fps);
+				_frameCount = 0;
+				_cycleTime = SVM_timeGetTime() + 1000;
 			}
 
 			// Check if we've got time to render the screen again
@@ -261,12 +193,11 @@ void Build_display(void) {
 	}
 }
 
-// ---------------------------------------------------------------------------
 //
 // Fades down and displays a message on the screen for time seconds
 //
 
-void DisplayMsg(uint8 *text, int time) {
+void Sword2Engine::displayMsg(uint8 *text, int time) {
 	mem *text_spr;
 	_frameHeader *frame;
 	_spriteInfo spriteInfo;
@@ -336,16 +267,13 @@ void DisplayMsg(uint8 *text, int time) {
 	g_display->setPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
 }
 
-// ---------------------------------------------------------------------------
 //
 // Fades message down and removes it, fading up again afterwards
 //
 
-void RemoveMsg(void) {
+void Sword2Engine::removeMsg(void) {
 	g_display->fadeDown();
-
 	g_display->waitForFade();
-
 	g_display->clearScene();
 
 	// g_display->fadeUp();	
@@ -355,71 +283,71 @@ void RemoveMsg(void) {
 	// this routine to clean up!
 }
 
-void Send_back_par0_frames(void) {
+void Sword2Engine::sendBackPar0Frames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_bgp0; i++) {
+	for (uint i = 0; i < _curBgp0; i++) {
 		// frame attached to 1st background parallax
-		Process_image(&bgp0_list[i]);
+		processImage(&_bgp0List[i]);
 	}
 }
 
-void Send_back_par1_frames(void) {
+void Sword2Engine::sendBackPar1Frames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_bgp1; i++) {
+	for (uint i = 0; i < _curBgp1; i++) {
 		// frame attached to 2nd background parallax
-		Process_image(&bgp1_list[i]);
+		processImage(&_bgp1List[i]);
 	}
 }
 
-void Send_back_frames(void) {
+void Sword2Engine::sendBackFrames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_back; i++) {
-		Process_image(&back_list[i]);
+	for (uint i = 0; i < _curBack; i++) {
+		processImage(&_backList[i]);
 	}
 }
 
-void Send_sort_frames(void) {
+void Sword2Engine::sendSortFrames(void) {
 	// send the sort frames for printing - layers, shrinkers & normal flat
 	// sprites
 
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_sort; i++) {
-		if (sort_list[sort_order[i]].layer_number) {
+	for (uint i = 0; i < _curSort; i++) {
+		if (_sortList[_sortOrder[i]].layer_number) {
 			// its a layer  - minus 1 for true layer number
 			// we need to know from the buildit because the layers
 			// will have been sorted in random order
-			Process_layer(sort_list[sort_order[i]].layer_number - 1);
+			processLayer(_sortList[_sortOrder[i]].layer_number - 1);
 		} else {
 			// sprite
-			Process_image(&sort_list[sort_order[i]]);
+			processImage(&_sortList[_sortOrder[i]]);
 		}
 	}
 }
 
-void Send_fore_frames(void) {
+void Sword2Engine::sendForeFrames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_fore; i++) {
-		Process_image(&fore_list[i]);
+	for (uint i = 0; i < _curFore; i++) {
+		processImage(&_foreList[i]);
 	}
 }
 
-void Send_fore_par0_frames(void) {
+void Sword2Engine::sendForePar0Frames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_fgp0; i++) {
+	for (uint i = 0; i < _curFgp0; i++) {
 		// frame attached to 1st foreground parallax
-		Process_image(&fgp0_list[i]);
+		processImage(&_fgp0List[i]);
 	}
 }
 
-void Send_fore_par1_frames(void) {
+void Sword2Engine::sendForePar1Frames(void) {
 	// could be none at all - theoretically at least
-	for (uint i = 0; i < cur_fgp1; i++) {
+	for (uint i = 0; i < _curFgp1; i++) {
 		// frame attached to 2nd foreground parallax
-		Process_image(&fgp1_list[i]);
+		processImage(&_fgp1List[i]);
 	}
 }
 
-void Process_layer(uint32 layer_number) {
+void Sword2Engine::processLayer(uint32 layer_number) {
 	uint8 *file;
 	_layerHeader *layer_head;
  	_spriteInfo spriteInfo;
@@ -445,21 +373,17 @@ void Process_layer(uint32 layer_number) {
 	spriteInfo.data = file + sizeof(_standardHeader) + layer_head->offset;
 	spriteInfo.colourTable = 0;
 
-
-	//------------------------------------------
 	// check for largest layer for debug info
 
 	current_layer_area = layer_head->width * layer_head->height;
 
-	if (current_layer_area > largest_layer_area) {
-		largest_layer_area = current_layer_area;
-		sprintf(largest_layer_info,
+	if (current_layer_area > _largestLayerArea) {
+		_largestLayerArea = current_layer_area;
+		sprintf(_largestLayerInfo,
 			"largest layer:  %s layer(%d) is %dx%d",
 			FetchObjectName(this_screen.background_layer_id),
 			layer_number, layer_head->width, layer_head->height);
 	}
-
-	//------------------------------------------
 
 	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
@@ -468,7 +392,7 @@ void Process_layer(uint32 layer_number) {
 	res_man.close(this_screen.background_layer_id);
 }
 
-void Process_image(buildit *build_unit) {
+void Sword2Engine::processImage(buildit *build_unit) {
 	uint8 *file, *colTablePtr = NULL;
 	_animHeader *anim_head;
 	_frameHeader *frame_head;
@@ -529,7 +453,7 @@ void Process_image(buildit *build_unit) {
 
 	// if we want this frame to be affected by the shading mask,
 	// add the status bit
-	if (build_unit->shadingFlag == 1)
+	if (build_unit->shadingFlag)
 		spriteType |= RDSPR_SHADOW;
 
 	spriteInfo.x = build_unit->x;
@@ -545,14 +469,13 @@ void Process_image(buildit *build_unit) {
 	spriteInfo.data = (uint8 *) (frame_head + 1);
 	spriteInfo.colourTable	= colTablePtr;
 
-	//------------------------------------------
 	// check for largest layer for debug info
 
 	current_sprite_area = frame_head->width * frame_head->height;
 
-	if (current_sprite_area > largest_sprite_area) {
-		largest_sprite_area = current_sprite_area;
-		sprintf(largest_sprite_info,
+	if (current_sprite_area > _largestSpriteArea) {
+		_largestSpriteArea = current_sprite_area;
+		sprintf(_largestSpriteInfo,
 			"largest sprite: %s frame(%d) is %dx%d",
 			FetchObjectName(build_unit->anim_resource),
 			build_unit->anim_pc,
@@ -560,7 +483,6 @@ void Process_image(buildit *build_unit) {
 			frame_head->height);
 	}
 
-#ifdef _SWORD2_DEBUG
 	if (SYSTEM_TESTING_ANIMS) {	// see anims.cpp
 		// bring the anim into the visible screen
 		// but leave extra pixel at edge for box
@@ -582,7 +504,6 @@ void Process_image(buildit *build_unit) {
 		rect_x2 = spriteInfo.x + spriteInfo.scaledWidth;
 		rect_y2 = spriteInfo.y + spriteInfo.scaledHeight;
 	}
-#endif
 
 // #ifdef _SWORD2_DEBUG
 //	if (frame_head->width <= 1) {
@@ -592,7 +513,7 @@ void Process_image(buildit *build_unit) {
 
 	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
-		error("Driver Error %.8x with sprite %s (%d) in Process_image",
+		error("Driver Error %.8x with sprite %s (%d) in processImage",
 			rv, FetchObjectName(build_unit->anim_resource),
 			build_unit->anim_resource);
 
@@ -600,45 +521,45 @@ void Process_image(buildit *build_unit) {
 	res_man.close(build_unit->anim_resource);
 }
 
-void Reset_render_lists(void) {
+void Sword2Engine::resetRenderLists(void) {
 	// reset the sort lists - do this before a logic loop
 	// takes into account the fact that the start of the list is pre-built
 	// with the special sortable layers
 
-	cur_bgp0 = 0;
-	cur_bgp1 = 0;
-	cur_back = 0;
+	_curBgp0 = 0;
+	_curBgp1 = 0;
+	_curBack = 0;
 	// beginning of sort list is setup with the special sort layers
-	cur_sort = this_screen.number_of_layers;
-	cur_fore = 0;
-	cur_fgp0 = 0;
-	cur_fgp1 = 0;
+	_curSort = this_screen.number_of_layers;
+	_curFore = 0;
+	_curFgp0 = 0;
+	_curFgp1 = 0;
 
-	if (cur_sort) {
+	if (_curSort) {
 		// there are some layers - so rebuild the sort order
 		// positioning
-		for (uint i = 0; i < cur_sort; i++)
-			sort_order[i] = i;	//rebuild the order list
+		for (uint i = 0; i < _curSort; i++)
+			_sortOrder[i] = i;	//rebuild the order list
 	}
 }
 
-void Sort_the_sort_list(void) {
-	//sort the list
+void Sword2Engine::sortTheSortList(void) {
+	// sort the list
 
-	//cannot bubble sort 0 or 1 items!
-	if (cur_sort <= 1)
+	// cannot bubble sort 0 or 1 items!
+	if (_curSort <= 1)
 		return;
 
-	for (uint i = 0; i < cur_sort - 1; i++) {
-		for (uint j = 0; j < cur_sort - 1; j++) {
-			if (sort_list[sort_order[j]].sort_y > sort_list[sort_order[j + 1]].sort_y) {
-				SWAP(sort_order[j], sort_order[j + 1]);
+	for (uint i = 0; i < _curSort - 1; i++) {
+		for (uint j = 0; j < _curSort - 1; j++) {
+			if (_sortList[_sortOrder[j]].sort_y > _sortList[_sortOrder[j + 1]].sort_y) {
+				SWAP(_sortOrder[j], _sortOrder[j + 1]);
 			}
 		}
 	}
 }
 
-void Register_frame(int32 *params, buildit *build_unit)	{
+void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 	// params: 0 pointer to mouse structure or NULL for no write to mouse
 	//           list (non-zero means write sprite-shape to mouse list)
 	//         1 pointer to graphic structure
@@ -653,15 +574,11 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 	_cdtEntry *cdt_entry;
 	int scale = 0;
 
-	//-------------------------------------------	
 	// open animation file & set up the necessary pointers
 
 	ob_graph = (Object_graphic *) params[1];
 
-#ifdef _SWORD2_DEBUG
-	if (ob_graph->anim_resource == 0)
-		error("ERROR: %s(%d) has no anim resource in Register_frame", FetchObjectName(ID), ID);
-#endif
+	assert(ob_graph->anim_resource);
 
 	file = res_man.open(ob_graph->anim_resource);
 
@@ -669,7 +586,6 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 	cdt_entry = FetchCdtEntry(file, ob_graph->anim_pc);
 	frame_head = FetchFrameHeader(file, ob_graph->anim_pc);
 
-#ifdef _SWORD2_DEBUG
 	// update player graphic details for on-screen debug info
 	if (ID == CUR_PLAYER_ID) {
 		playerGraphic.type = ob_graph->type;
@@ -678,25 +594,22 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 		playerGraphic.anim_pc = ob_graph->anim_pc + 1;
 		player_graphic_no_frames = anim_head->noAnimFrames;
 	}
-#endif
 
-	//-------------------------------------------	
 	// fill in the buildit structure for this frame
 
-	//retrieve the resource
+	// retrieve the resource
  	build_unit->anim_resource = ob_graph->anim_resource;
-	//retrieve the frame
+	// retrieve the frame
 	build_unit->anim_pc = ob_graph->anim_pc;
-	//not a layer
+	// not a layer
 	build_unit->layer_number = 0;
 
 	// Affected by shading mask?
 	if (ob_graph->type & SHADED_SPRITE)
-		build_unit->shadingFlag = 1;
+		build_unit->shadingFlag = true;
 	else
-		build_unit->shadingFlag = 0;
+		build_unit->shadingFlag = false;
 
-	//-------------------------------------------	
 	// check if this frame has offsets ie. this is a scalable mega frame
 
 	if (cdt_entry->frameType & FRAME_OFFSET) {
@@ -746,10 +659,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 
 		// only if 'pointer' isn't NULL
 		if (ob_mouse->pointer) {
-#ifdef _SWORD2_DEBUG
-			if (cur_mouse == TOTAL_mouse_list)
-				error("ERROR: mouse_list full");
-#endif
+			assert(cur_mouse < TOTAL_mouse_list);
 
 			mouse_list[cur_mouse].x1 = build_unit->x;
 			mouse_list[cur_mouse].y1 = build_unit->y;
@@ -792,73 +702,49 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		1 pointer to graphic structure
 	//		2 pointer to mega structure or NULL if not a mega
 
+	return g_sword2->registerFrame(params);
+}
+
+int32 Sword2Engine::registerFrame(int32 *params) {
 	Object_graphic *ob_graph = (Object_graphic *) params[1];
 
 	// check low word for sprite type
 	switch (ob_graph->type & 0x0000ffff) {
 	case BGP0_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_bgp0 == MAX_bgp0_sprites)
-			error("ERROR: bgp0_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &bgp0_list[cur_bgp0]);
-		cur_bgp0++;
+		assert(_curBgp0 < MAX_bgp0_sprites);
+		registerFrame(params, &_bgp0List[_curBgp0]);
+		_curBgp0++;
 		break;
 	case BGP1_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_bgp1 == MAX_bgp1_sprites)
-			error("ERROR: bgp1_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &bgp1_list[cur_bgp1]);
-		cur_bgp1++;
+		assert(_curBgp1 < MAX_bgp1_sprites);
+		registerFrame(params, &_bgp1List[_curBgp1]);
+		_curBgp1++;
 		break;
 	case BACK_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_back == MAX_back_sprites)
-			error("ERROR: back_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &back_list[cur_back]);
-		cur_back++;
+		assert(_curBack < MAX_back_sprites);
+		registerFrame(params, &_backList[_curBack]);
+		_curBack++;
 		break;
 	case SORT_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_sort == MAX_sort_sprites)
-			error("ERROR: sort_list full in fnRegisterFrame");
-#endif
-
-		sort_order[cur_sort] = cur_sort;
-		Register_frame(params, &sort_list[cur_sort]);
-		cur_sort++;
+		assert(_curSort < MAX_sort_sprites);
+		_sortOrder[_curSort] = _curSort;
+		registerFrame(params, &_sortList[_curSort]);
+		_curSort++;
 		break;
 	case FORE_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_fore == MAX_fore_sprites)
-			error("ERROR: fore_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &fore_list[cur_fore]);
-		cur_fore++;
+		assert(_curFore < MAX_fore_sprites);
+		registerFrame(params, &_foreList[_curFore]);
+		_curFore++;
 		break;
 	case FGP0_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_fgp0 == MAX_fgp0_sprites)
-			error("ERROR: fgp0_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &fgp0_list[cur_fgp0]);
-		cur_fgp0++;
+		assert(_curFgp0 < MAX_fgp0_sprites);
+		registerFrame(params, &_fgp0List[_curFgp0]);
+		_curFgp0++;
 		break;
 	case FGP1_SPRITE:
-#ifdef _SWORD2_DEBUG
-		if (cur_fgp1 == MAX_fgp1_sprites)
-			error("ERROR: fgp1_list full in fnRegisterFrame");
-#endif
-
-		Register_frame(params, &fgp1_list[cur_fgp1]);
-		cur_fgp1++;
+		assert(_curFgp1 < MAX_fgp1_sprites);
+		registerFrame(params, &_fgp1List[_curFgp1]);
+		_curFgp1++;
 		break;
 	default:
 		// NO_SPRITE no registering!
@@ -868,8 +754,8 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	return IR_CONT;
 }
 
-void Start_new_palette(void) {
-	//start layer palette fading up
+void Sword2Engine::startNewPalette(void) {
+	// start layer palette fading up
 
 	uint8 *screenFile;
 
@@ -885,7 +771,7 @@ void Start_new_palette(void) {
 	g_display->setPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
 
 	// indicating that it's a screen palette
-	lastPaletteRes = 0;
+	_lastPaletteRes = 0;
 
 	// close screen file
   	res_man.close(this_screen.background_layer_id);
@@ -942,35 +828,18 @@ int32 Logic::fnFadeUp(int32 *params) {
 	return IR_CONT;
 }
 
-// ---------------------------------------------------------------------------
-// typedef struct {
-//	uint8 red;
-//	uint8 green;
-//	uint8 blue;
-//	uint8 alpha;
-// } _palEntry;
-
-// ---------------------------------------------------------------------------
-// typedef struct {
-//	// first colour number in this palette (0..255)
-//	uint8 firstEntry;
-//	// number of Entries-1 (0..255) to be taken as (1..256)
-//	uint8 noEntries;
-// } _paletteHeader;
-
 int32 Logic::fnSetPalette(int32 *params) {
 	// params:	0 resource number of palette file, or 0 if it's to be
 	//		  the palette from the current screen
-	
-	SetFullPalette(params[0]);
+
+	g_sword2->setFullPalette(params[0]);
 	return IR_CONT;
 }
 
-void SetFullPalette(int32 palRes) {
+void Sword2Engine::setFullPalette(int32 palRes) {
 	uint8 *file;
 	_standardHeader *head;
 
-	//----------------------------------
 	// fudge for hut interior
 	// - unpausing should restore last palette as normal (could be screen
 	// palette or 'dark_palette_13')
@@ -983,7 +852,7 @@ void SetFullPalette(int32 palRes) {
 		if (palRes == -1) {
 			// restore whatever palette was last set (screen
 			// palette or 'dark_palette_13')
-			palRes = lastPaletteRes;
+			palRes = _lastPaletteRes;
 		}
 	} else {
 		// check if we're just restoring the current screen palette
@@ -996,20 +865,16 @@ void SetFullPalette(int32 palRes) {
 			palRes = 0;
 		}
 
-		if (palRes == 0 && lastPaletteRes)
-			palRes = lastPaletteRes;
+		if (palRes == 0 && _lastPaletteRes)
+			palRes = _lastPaletteRes;
 	}
-	//----------------------------------
 
 	// non-zero: set palette to this separate palette file
 	if (palRes) {
 		// open the palette file
 		head = (_standardHeader *) res_man.open(palRes);
 
-#ifdef _SWORD2_DEBUG
-		if (head->fileType != PALETTE_FILE)
- 			error("fnSetPalette() called with invalid resource!");
-#endif
+		assert(head->fileType == PALETTE_FILE);
 
 		file = (uint8 *) (head + 1);
 
@@ -1029,7 +894,7 @@ void SetFullPalette(int32 palRes) {
 
 		if (palRes != CONTROL_PANEL_PALETTE) {	// (James 03sep97)
 			// indicating that it's a separate palette resource
-			lastPaletteRes = palRes;
+			_lastPaletteRes = palRes;
 		}
 
 		// close palette file
@@ -1044,12 +909,12 @@ void SetFullPalette(int32 palRes) {
 			g_display->setPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
 
 			// indicating that it's a screen palette
-			lastPaletteRes = 0;
+			_lastPaletteRes = 0;
 
 			// close screen file
 	  		res_man.close(this_screen.background_layer_id);
 		} else
-			error("fnSetPalette(0) called, but no current screen available!");
+			error("setFullPalette(0) called, but no current screen available!");
 	}
 }
 
@@ -1061,11 +926,9 @@ int32 Logic::fnRestoreGame(int32 *params) {
 int32 Logic::fnChangeShadows(int32 *params) {
 	// params:	none
 
-	uint32 rv;
-
 	// if last screen was using a shading mask (see below)
 	if (this_screen.mask_flag) {
-		rv = g_display->closeLightMask();
+		uint32 rv = g_display->closeLightMask();
 
 		if (rv)
 			error("Driver Error %.8x [%s line %u]", rv);

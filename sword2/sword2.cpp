@@ -140,6 +140,18 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	_newgui = g_gui;
 	_debugger = new Debugger(this);
+
+	_lastPaletteRes = 0;
+
+	_largestLayerArea = 0;
+	_largestSpriteArea = 0;
+
+	strcpy(_largestLayerInfo,  "largest layer:  none registered");
+	strcpy(_largestSpriteInfo, "largest sprite: none registered");
+
+	_fps = 0;
+	_cycleTime = 0;
+	_frameCount = 0;
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -247,7 +259,7 @@ int32 GameCycle(void) {
 		do {
 			// reset the graphic 'buildit' list before a new
 			// logic list (see fnRegisterFrame)
-			Reset_render_lists();
+			g_sword2->resetRenderLists();
 
 			// reset the mouse hot-spot list (see fnRegisterMouse
 			// and fnRegisterFrame)
@@ -402,10 +414,10 @@ void Sword2Engine::go() {
 		// display once every 4 game-cycles
 
 		if (console_status || renderSkip == 0 || (gameCycle % 4) == 0)
-			Build_display();	// create and flip the screen
+			g_sword2->buildDisplay();	// create and flip the screen
 #else
 		// create and flip the screen
-		Build_display();
+		g_sword2->buildDisplay();
 #endif
 	}
 
@@ -529,7 +541,7 @@ void UnpauseGame(void) {
 	UnpauseAllSound();
 
 	// put back game screen palette; see Build_display.cpp
-	SetFullPalette(0xffffffff);
+	g_sword2->setFullPalette(0xffffffff);
 
 	// If graphics level at max, turn up again
  	if (graphics_level_fudged) {

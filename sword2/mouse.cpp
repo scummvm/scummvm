@@ -282,7 +282,7 @@ void System_menu_mouse(void) {
 					// '0' means put back game screen
 					// palette; see Build_display.cpp
 
-					SetFullPalette(0);
+					g_sword2->setFullPalette(0);
 
 					// stop the engine fading in the
 					// restored screens palette
