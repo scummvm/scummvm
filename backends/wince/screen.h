@@ -53,6 +53,8 @@ void checkToolbar();
 void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int height);
 void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
+int getColor565 (int color);
+
 /* meaning: 0 - portrait, 1 - left hand landscape, 2 - right hand landscape */
 void SetScreenMode(int mode);
 int GetScreenMode();

@@ -25,12 +25,14 @@
 
 /* Original GFX code by Vasyl Tsvirkunov */
 
-#include <windows.h>
+#include "wince.h"
+
+//#include <windows.h>
 //#include <Aygshell.h>
-#include "gx.h"
-#include "screen.h"
-#include "resource.h"
-#include "dynamic_imports.h"
+//#include "gx.h"
+//#include "screen.h"
+//#include "resource.h"
+//#include "dynamic_imports.h"
 
 #define COLORCONV565(r,g,b) \
 (((r&0xf8)<<(11-3))|((g&0xfc)<<(5-2))|((b&0xf8)>>3))
@@ -84,6 +86,7 @@ extern UBYTE item_bomb_colors[];
 extern bool sound_activated;
 extern bool hide_toolbar;
 extern bool is_simon;
+extern bool smartphone;
 bool toolbar_drawn;
 bool draw_keyboard;
 bool wide_screen;
@@ -99,6 +102,8 @@ int _highlighted_index = -1;
 bool _gfx_mode_switch;
 int _game_selection_X_offset;
 int _game_selection_Y_offset;
+
+float _screen_factor;
 
 struct tScreenGeometry
 {
@@ -210,6 +215,13 @@ static int _saved_geometry_h;
 HWND hWndMain;
 
 typedef enum {
+	DEVICE_HPC = 0,
+	DEVICE_PPC,
+	DEVICE_SMARTPHONE
+} pdaDevice;
+
+
+typedef enum {
 	DEVICE_GAPI = 0,
 	DEVICE_VIDEO,
 	DEVICE_GDI
@@ -224,6 +236,12 @@ typedef enum {
 } gfxOption;
 
 
+unsigned char* pda_device_name[] = {
+	(unsigned char*)"HPC",
+	(unsigned char*)"PPC",
+	(unsigned char*)"Smartphone"
+};
+
 unsigned char* gfx_device_name[] = {
 	(unsigned char*)"GAPI",
 	(unsigned char*)"Direct Video",
@@ -235,9 +253,10 @@ unsigned char* gfx_device_options_name[] = {
 	(unsigned char*)"555",
 	(unsigned char*)"paletted",
 	(unsigned char*)"mono",
-	(unsigned char*)""
+	(unsigned char*)"",
 };
 
+pdaDevice _pda_device;
 gfxDevice _gfx_device;
 gfxOption _gfx_option;
 
@@ -448,13 +467,19 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	}
 
 
-	if(!pCls || !pBlt || gxdp.cxWidth < 240 || gxdp.cyHeight < 
-240)
+	if(!pCls || !pBlt || (!smartphone && (gxdp.cxWidth < 240 || gxdp.cyHeight < 240))
+	  )
 	{
 	// I don't believe there are devices that end up here
 		GraphicsOff();
 		return 1;
 	}
+
+	if (smartphone)
+		toolbar_available = 0;
+
+
+	// compute geometries
 	
 	// portrait
 	portrait_geometry.width = gxdp.cxWidth; // 240
@@ -475,7 +500,11 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	geom[0].xSkipMask = 0xffffffff;
 	geom[0].xLimit = 240;
 	geom[0].lineLimit = 320*240;
+
+	_screen_factor = 1/2;
 	
+	// This will be overridden for the Smartphone implementation
+
 	// left handed landscape
 	geom[1].width = gxdp.cyHeight; // 320
 	geom[1].height = gxdp.cxWidth; // 240
@@ -483,7 +512,7 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	geom[1].sourceoffset = 0;
 	geom[1].linestep = gxdp.cbxPitch;
 	geom[1].pixelstep = -gxdp.cbyPitch;
-	geom[1].xSkipMask = 0xffffffff;
+	geom[1].xSkipMask = 0xffffffff; 
 	geom[1].xLimit = 320; // no skip
 	geom[1].lineLimit = 320*200;	
 	
@@ -498,12 +527,22 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	geom[2].xLimit = 320; // no skip
 	geom[2].lineLimit = 320*200;
 	
-	if(gxdp.cyHeight < 320)
+	
+	if(gxdp.cyHeight < 320 && !smartphone)
 		maxMode = 0; // portrait only!
-
+	
 	active = 1;
 
 	wide_screen = GetSystemMetrics(SM_CXSCREEN) >= 320;
+
+	if (wide_screen)
+		_pda_device = DEVICE_HPC;
+	else {
+		if (smartphone)
+			_pda_device = DEVICE_SMARTPHONE;
+		else
+			_pda_device = DEVICE_PPC;
+	}
 
 	return 0;
 }
@@ -1814,7 +1853,7 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 							*(unsigned short*)dst = pal[*src];
 						else
 							*(unsigned short*)dst = 
-								COLORCONV565(own_palette[3 * *src],
+								COLORCONV555(own_palette[3 * *src],
 									own_palette[(3 * *src) + 1], 
 									own_palette[(3 * *src) + 2]);
 						dst += pixelstep;
@@ -1860,7 +1899,50 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 
 		scraddr += geom[useMode].startoffset;
 		scraddr += y * linestep;
-	
+
+		if (smartphone) {
+		while(lines != height)
+			{
+				int i;
+				current = 0;
+
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+
+				dst += x * pixelstep;
+
+				for (i=0; i<width; i+=3) {
+
+					UBYTE r,g,b;
+
+					r = (3 * RED_FROM_565(buffer[i]) + RED_FROM_565(buffer[i + 1]))>>2;
+					g = (3 * GREEN_FROM_565(buffer[i]) + GREEN_FROM_565(buffer[i + 1]))>>2;
+					b = (3 * BLUE_FROM_565(buffer[i]) + BLUE_FROM_565(buffer[i + 1]))>>2;
+
+					*(unsigned short*)dst = COLORCONV565(r, g, b);
+					dst += pixelstep;
+
+					r = (RED_FROM_565(buffer[i + 1]) + RED_FROM_565(buffer[i + 2]))>>1;
+					g = (GREEN_FROM_565(buffer[i + 1]) + GREEN_FROM_565(buffer[i + 2]))>>1;
+					b = (BLUE_FROM_565(buffer[i + 1]) + BLUE_FROM_565(buffer[i + 2]))>>1;
+
+					*(unsigned short*)dst = COLORCONV565(r, g, b);
+					dst += pixelstep;
+				}
+				
+				buffer += pitch;
+				scraddr += linestep;
+				lines++;
+				if (lines != 0 && !(lines % 7)) {
+					lines++;
+					buffer += pitch;
+				}
+			}
+		
+		}
+		else {
+
 		while(lines != height)
 			{
 				int i;
@@ -1871,9 +1953,7 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 
 				/* skip non updated pixels for this line */
 
-				for (i=0; i < x; i++) {
-						dst += pixelstep;
-				}
+				dst += x * pixelstep;
 
 				for (i=0; i<width; i++) {
 					if (skipmask == 0xffffffff || (long)i & skipmask) {
@@ -1889,7 +1969,13 @@ void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int h
 			}
 	}
 
+	}
+
 	dynamicGXEndDraw();
+}
+
+int getColor565 (int color) {
+	return COLORCONV565(palRed[color], palGreen[color], palBlue[color]);
 }
 
 void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
@@ -1935,6 +2021,91 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 		src_limit = scr_ptr + width;
 
+		/* Special Smartphone implementation */
+		/* Landscape mode, 2/3 X, 7/8 Y      */
+		if (smartphone) {
+			int line = 0;
+			int toskip = 0;
+
+			while(scr_ptr < scr_ptr_limit)
+			{
+				//int i;
+
+				src = scr_ptr;
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+				//for (i=0; i < x; i++) 
+				dst += x * pixelstep;
+
+
+				while(src < src_limit)
+				{
+					UBYTE r, g, b;
+					if (!own_palette) {
+						register first = *(src + 0);
+						register second = *(src + 1);	
+						
+						r = (3*palRed[first] + palRed[second])>>2;
+						g = (3*palGreen[first] + palGreen[second])>>2;
+						b = (3*palBlue[first] + palBlue[second])>>2;
+					} else {
+						register first = 3 * *(src + 0);
+						register second = 3 * *(src + 1);	
+
+						r = (3 * own_palette[first] + 
+							     own_palette[second]) >> 2;
+						g = (3 * own_palette[first + 1] +
+								 own_palette[second + 1]) >> 2;
+						b = (3 * own_palette[first + 2] +
+							     own_palette[second + 2]) >> 2;
+					}
+
+					*(unsigned short*)dst = COLORCONV565(r,g,b);
+
+					dst += pixelstep;
+					
+					if (!own_palette) {
+						register first = *(src + 1);
+						register second = *(src + 2);	
+						
+						r = (palRed[first] + palRed[second])>>1;
+						g = (palGreen[first] + palGreen[second])>>1;
+						b = (palBlue[first] + palBlue[second])>>1;
+					}
+					else {
+						register first = 3 * *(src + 1);
+						register second = 3 * *(src + 2);	
+
+						r = (own_palette[first] + 
+							     own_palette[second]) >> 1;
+						g = (own_palette[first + 1] +
+								 own_palette[second + 1]) >> 1;
+						b = (own_palette[first + 2] +
+							     own_palette[second + 2]) >> 1;
+					}
+
+					*(unsigned short*)dst = COLORCONV565(r,g,b);
+
+					dst += pixelstep;
+
+					src += 3;
+				}
+
+				scraddr += linestep;
+				scr_ptr += (pitch ? pitch : width);
+				src_limit += (pitch ? pitch : width);
+
+				
+				line++;
+				if (line == 7) {
+					scr_ptr += (pitch ? pitch : width);
+					src_limit += (pitch ? pitch : width);
+					line = 0;
+				}
+			}
+		}
+		else
 		/* Internal pixel loops */
 		if(skipmask == 3 && smooth_filter)
 		{
@@ -2016,6 +2187,10 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 		}
 		else if(skipmask != 0xffffffff)
 		{
+
+			int line = 0;
+			int toskip = 0;
+
 			while(scr_ptr < scr_ptr_limit)
 			{
 				int i;				
@@ -2028,7 +2203,8 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 					dst += pixelstep;
 
 				while(src < src_limit)
-				{
+				{	
+					
 					if((long)src & skipmask)
 					{
 						if (!own_palette)
@@ -2040,8 +2216,10 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 									own_palette[(3 * *src) + 2]);
 						dst += pixelstep;
 					}
+					
 					src ++;
 				}			
+
 
 				scraddr += linestep;
 				scr_ptr += (pitch ? pitch : width);
