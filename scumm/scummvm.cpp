@@ -345,6 +345,8 @@ void Scumm::initScummVars()
 		_vars[VAR_SOUNDPARAM3] = _soundParam3;
 		if (_features & GF_AFTER_V6)
 			_vars[VAR_V6_EMSSPACE] = 10000;
+	} else {
+			_vars[VAR_V6_EMSSPACE] = 10000;
 	}
 }
 
