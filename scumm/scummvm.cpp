@@ -1316,7 +1316,7 @@ void Scumm::initRoomSubBlocks() {
 	int ENCD_len = -1;
 	if (_features & GF_AFTER_V2) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1A);
-		// TODO: determine v2 entry script length
+		ENCD_len = READ_LE_UINT16(roomptr) - _ENCD_offs + _resourceHeaderSize; // HACK
 	} else if (_features & GF_OLD_BUNDLE) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 		// FIXME - the following is a hack which assumes that immediately after
@@ -1325,8 +1325,7 @@ void Scumm::initRoomSubBlocks() {
 		int num_sounds = *(roomResPtr + 23);
 		int num_scripts = *(roomResPtr + 24);
 		ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
-		if (*ptr)
-			ENCD_len = READ_LE_UINT16(ptr + 1) - _ENCD_offs + _resourceHeaderSize; // HACK
+		ENCD_len = READ_LE_UINT16(ptr + 1) - _ENCD_offs + _resourceHeaderSize; // HACK
 	} else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
 		if (ptr)
