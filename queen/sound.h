@@ -104,7 +104,7 @@ public:
 	SBSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *name);
 protected:
-	int playSound(byte *sound, uint32 size);
+	void playSound(byte *sound, uint32 size);
 };
 
 #ifdef USE_MAD

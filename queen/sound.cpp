@@ -194,9 +194,9 @@ void Sound::playSong(int16 songNum) {
 }
 
 
-int SBSound::playSound(byte *sound, uint32 size) {
+void SBSound::playSound(byte *sound, uint32 size) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-	return _mixer->playRaw(&_sfxHandle, sound, size, 11025, flags);
+	_mixer->playRaw(&_sfxHandle, sound, size, 11025, flags);
 }
 
 void SBSound::sfxPlay(const char *name) {
