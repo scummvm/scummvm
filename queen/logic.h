@@ -254,6 +254,7 @@ public:
 
 	void joeSpeak(uint16 descNum, bool objectType = false);
 
+	void makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix);
 	void dialogue(const char *dlgFile, int personInRoom, char *cutaway);
 	void playCutaway(const char *cutFile, char *next = NULL);
 

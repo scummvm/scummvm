@@ -843,11 +843,10 @@ bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+
 		char nextCutaway[20];
 		memset(nextCutaway, 0, sizeof(nextCutaway));
-
-		clear(true); // clear as Talk::speak() can be called in a Cutaway
-
 		_logic->playCutaway(description, nextCutaway);
 		while (nextCutaway[0] != '\0') {
 			_logic->playCutaway(nextCutaway, nextCutaway);
@@ -863,12 +862,11 @@ bool Command::executeIfDialog(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+
 		char cutaway[20];
 		memset(cutaway, 0, sizeof(cutaway));
-
-		int person = _selCmd.noun;
-		clear(true);
-		_logic->dialogue(description, person, cutaway);
+		_logic->dialogue(description, _selCmd.noun, cutaway);
 
 		while (cutaway[0] != '\0') {
 			char currentCutaway[20];

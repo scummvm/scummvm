@@ -1851,6 +1851,13 @@ void Logic::joeUseUnderwear() {
 }
 
 
+void Logic::makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix) {
+
+	_cmd->clear(false);
+	Talk::speak(sentence, person, voiceFilePrefix, _graphics, _input, this, _resource, _sound);
+}
+
+
 void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 
 	char cutawayFile[20];
@@ -1881,10 +1888,9 @@ void Logic::joeSpeak(uint16 descNum, bool objectType) {
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
 	}
-	_cmd->clear(false);
 	char descFilePrefix[10];
 	sprintf(descFilePrefix, "JOE%04i", descNum);
-	Talk::speak(text, NULL, descFilePrefix, _graphics, _input, this, _resource, _sound);
+	makePersonSpeak(text, NULL, descFilePrefix);
 }
 
 
@@ -2552,7 +2558,7 @@ void Logic::sceneStop() {
 void Logic::useJournal() {
 
 	if (_resource->isDemo()) {
-		Talk::speak("This is a demo, so I can't load or save games*14", NULL, "", _graphics, _input, this, _resource, _sound);
+		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
 	}
 	else {
 

@@ -1180,10 +1180,8 @@ void Cutaway::handlePersonRecord(
 			}
 
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			findCdCut(_basename, index, voiceFilePrefix);
-			
-			Talk::speak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix,
-				_graphics, _input, _logic, _resource, _sound);
+			findCdCut(_basename, index, voiceFilePrefix);			
+			_logic->makePersonSpeak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix);
 		}
 
 	}
