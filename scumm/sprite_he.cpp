@@ -1023,10 +1023,9 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 					}
 					refreshScreen = true;
 				}
+				if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->res_id)
+					spi->flags |= kSFNeedRedraw;
 			}
-			if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->res_id) {
-				spi->flags |= kSFNeedRedraw;
-			}			
 		}
 	}
 	if (refreshScreen) {
