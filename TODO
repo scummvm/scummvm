@@ -58,13 +58,6 @@ Config
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
 * Change backends to directly access the config manager
-* During the config rewrite, some command line switches were disabled.
-  Gotta decide what to do about each of them: reimplement, remove, replace?
-  In particular: -w and -l (those were kind of oddball switches, IMHO);
-  also -z should be split into two seperate functions (see TODO comment in 
-  GameDetector::list_games())
-
-
 
 SCUMM
 =====
