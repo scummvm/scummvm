@@ -200,7 +200,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	_vm->updateDirtyRect(0, x_left, x_right + 1, y_top, y_bottom, _dirty_id);
+	if (_vm->_version == 1)
+		//HACK: it fix gfx glitches leaved by actor costume in V1 games, when actor moving to left
+		_vm->updateDirtyRect(0, x_left, x_right + 8, y_top, y_bottom, _dirty_id);
+	else
+		_vm->updateDirtyRect(0, x_left, x_right + 1, y_top, y_bottom, _dirty_id);
 
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
