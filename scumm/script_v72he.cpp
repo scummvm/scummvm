@@ -538,6 +538,7 @@ void ScummEngine_v72he::copyScriptString(byte *dst) {
 }
 
 void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
+	const byte *src;
 	int args[31];
 	int num = 0, len, val;
 	byte chr, string[256];
@@ -561,21 +562,27 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			chr = string[num++];
 			switch(chr) {
 			case 'b':
-				// byte
-				error("decodeScriptString: byte unhandled");
+				itoa(args[val--], (char *)dst, 2);
+				while (*dst != 0)
+					*dst++;
 				break;
 			case 'c':
 				*dst++ = args[val--];
 				break;
 			case 'd':
-				dst += snprintf((char *)dst, 10, "%d", args[val--]);
+				itoa(args[val--], (char *)dst, 10);
+				while (*dst != 0)
+					*dst++;
 				break;
 			case 's':
-				dst += addStringToStack(dst, 512, args[val--]);
+				src = getStringAddress(args[val--]);
+				while (*src != 0)
+					*dst++ = *src++;
 				break;
 			case 'x':
-				// hexadecimal
-				error("decodeScriptString: hexadecimal unhandled");
+				itoa(args[val--], (char *)dst, 16);
+				while (*dst != 0)
+					*dst++;
 				break;
 			default:
 				error("decodeScriptString: Unknown type %d", chr);
