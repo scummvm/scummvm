@@ -85,6 +85,7 @@ public:
 	int getY() { return _y; }
 	int getWidth() {return _width; }
 	int getHeight() { return _height; }
+	int getFrame() { return _frame; }
 	void clearUpdateNeeded() { _updateNeeded = false; }
 	int32 getMovieTime() { return _movieTime; }
 

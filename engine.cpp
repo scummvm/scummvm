@@ -92,7 +92,8 @@ void Engine::mainLoop() {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
 				}
-				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+				if (g_smush->getFrame() > 0)
+					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
 			g_driver->flipBuffer();
 		} else if (_mode == ENGINE_MODE_NORMAL) {
@@ -124,7 +125,8 @@ void Engine::mainLoop() {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
 				}
-				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+				if (g_smush->getFrame() > 0)
+					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
 
 			glMatrixMode(GL_MODELVIEW);
