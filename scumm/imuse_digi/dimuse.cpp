@@ -230,7 +230,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 	}
 
 	debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
-	_track[track].dataOffset += _track[track].regionOffset;
+	_track[track].dataOffset = _sound->getRegionOffset(_track[track].soundHandle, _track[track].curRegion);
 	_track[track].regionOffset = 0;
 }
 
