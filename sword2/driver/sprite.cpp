@@ -383,7 +383,6 @@ int32 Graphics::drawSprite(_spriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
 	uint8 *backbuf = NULL;
-	uint8 red, green, blue;
 	uint16 scale;
 	int16 i, j;
 	uint16 srcPitch;
@@ -581,6 +580,12 @@ int32 Graphics::drawSprite(_spriteInfo *s) {
 	dst = _buffer + _screenWide * rd.top + rd.left;
 
 	if (s->type & RDSPR_BLEND) {
+		// The original code had two different blending cases. One for
+		// s->blend & 0x01 and one for s->blend & 0x02. However, the
+		// only values that actually appear in the cluster files are
+		// 0, 513 and 1025 so the s->blend & 0x02 case was never used.
+		// Which is just as well since that code made no sense to me.
+
 		if (!(_renderCaps & RDBLTFX_SPRITEBLEND)) {
 			for (i = 0; i < rs.height(); i++) {
 				for (j = 0; j < rs.width(); j++) {
@@ -591,55 +596,26 @@ int32 Graphics::drawSprite(_spriteInfo *s) {
 				dst += _screenWide;
 			}
 		} else {
-			if (s->blend & 0x01) {
-				red = s->blend >> 8;
-				for (i = 0; i < rs.height(); i++) {
-					for (j = 0; j < rs.width(); j++) {
-						if (src[j]) {
-							uint8 r = (_palCopy[src[j]][0] * red + _palCopy[dst[j]][0] * (8 - red)) >> 3;
-							uint8 g = (_palCopy[src[j]][1] * red + _palCopy[dst[j]][1] * (8 - red)) >> 3;
-							uint8 b = (_palCopy[src[j]][2] * red + _palCopy[dst[j]][2] * (8 - red)) >> 3;
-							dst[j] = quickMatch(r, g, b);
-						}
-					}
-					src += srcPitch;
-					dst += _screenWide;
-				}
-			} else if (s->blend & 0x02) {
-				debug(2, "DrawSprite: s->blend & 0x02");
+			uint8 n = s->blend >> 8;
 
-				// FIXME: This case looks bogus to me. The
-				// same value for the red, green and blue
-				// parameters, and we multiply with the source
-				// color's palette index rather than its color
-				// component.
-				//
-				// But as far as I can see, that's how the
-				// original code did it.
-				//
-				// Does anyone know where this case was used
-				// anyway?
+			for (i = 0; i < rs.height(); i++) {
+				for (j = 0; j < rs.width(); j++) {
+					if (src[j]) {
+						uint8 r1 = _palCopy[src[j]][0];
+						uint8 g1 = _palCopy[src[j]][1];
+						uint8 b1 = _palCopy[src[j]][2];
+						uint8 r2 = _palCopy[dst[j]][0];
+						uint8 g2 = _palCopy[dst[j]][1];
+						uint8 b2 = _palCopy[dst[j]][2];
 
-				red = _palCopy[s->blend >> 8][0];
-				green = _palCopy[s->blend >> 8][0];
-				blue = _palCopy[s->blend >> 8][0];
-				for (i = 0; i < rs.height(); i++) {
-					for (j = 0; j < rs.width(); j++) {
-						if (src[j]) {
-							uint8 r = (src[j] * red + (16 - src[j]) * _palCopy[dst[j]][0]) >> 4;
-							uint8 g = (src[j] * green + (16 - src[j]) * _palCopy[dst[j]][1]) >> 4;
-							uint8 b = (src[j] * blue + (16 - src[j]) * _palCopy[dst[j]][2]) >> 4;
-							dst[j] = quickMatch(r, g, b);
-						}
+						uint8 r = (r1 * n + r2 * (8 - n)) >> 3;
+						uint8 g = (g1 * n + g2 * (8 - n)) >> 3;
+						uint8 b = (b1 * n + b2 * (8 - n)) >> 3;
+						dst[j] = quickMatch(r, g, b);
 					}
-					src += srcPitch;
-					dst += _screenWide;
 				}
-			} else {
-				warning("DrawSprite: Invalid blended sprite");
-				if (freeSprite)
-					free(sprite);
-				return RDERR_UNKNOWNTYPE;
+				src += srcPitch;
+				dst += _screenWide;
 			}
 		}
 	} else {
