@@ -19,7 +19,7 @@ General
 * Remove "detectname" from GameSettings struct. On the long run, "midi" and/or
   "features" might be removed, too.
 * Enhance the Makefile-based build system to support VPATH and stuff, so that
-  one can compile scummvm in a directory tree seperate from the source tree.
+  one can compile scummvm in a directory tree separate from the source tree.
   That would make it possible to build ScummVM with different build options,
   e.g. have one debug build and one optimized build.
 * Add a FilesystemManager or FileManager or so which should unify and/or
