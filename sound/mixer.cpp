@@ -276,7 +276,9 @@ int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, 
 #endif
 
 void SoundMixer::mix(int16 *buf, uint len) {
+#ifndef __PALM_OS__
 	Common::StackLock lock(_mutex);
+#endif
 
 	if (_premixProc && !_paused) {
 		_premixProc(_premixParam, buf, len);
