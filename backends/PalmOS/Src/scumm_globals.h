@@ -45,10 +45,10 @@ void GlbClose();
 								void CALL_RELEASE(x);
 
 #ifndef DISABLE_SCUMM
-PROTO_GLOBALS(IMuseDigital)
+PROTO_GLOBALS(DimuseTables)
 PROTO_GLOBALS(NewGui)
 PROTO_GLOBALS(Akos)
-PROTO_GLOBALS(Bundle)
+PROTO_GLOBALS(DimuseCodecs)
 PROTO_GLOBALS(Codec47)
 PROTO_GLOBALS(Gfx)
 PROTO_GLOBALS(Dialogs)

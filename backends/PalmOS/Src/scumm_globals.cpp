@@ -25,15 +25,16 @@
 #include "globals.h"
 #include "scumm_globals.h"
 
+#include "stdafx.h"
 #include "scumm.h"
 
 static void GlbInitAll() {
 #ifndef DISABLE_SCUMM
 	if (gVars->globals[GBVARS_SCUMM]) {
-		CALL_INIT(IMuseDigital)
+		CALL_INIT(DimuseTables)
 		CALL_INIT(NewGui)
 		CALL_INIT(Akos)
-		CALL_INIT(Bundle)
+		CALL_INIT(DimuseCodecs)
 		CALL_INIT(Codec47)
 		CALL_INIT(Gfx)
 		CALL_INIT(Dialogs)
@@ -49,19 +50,19 @@ static void GlbInitAll() {
 	}
 #endif
 #ifndef DISABLE_QUEEN
-	if (gVars->globals[GBVARS_QUEEN]) {
-		CALL_INIT(Queen_Restables)
-	}
+//	if (gVars->globals[GBVARS_QUEEN]) {
+//		CALL_INIT(Queen_Restables)
+//	}
 #endif
 }
 
 static void GlbReleaseAll() {
 #ifndef DISABLE_SCUMM
 	if (gVars->globals[GBVARS_SCUMM]) {
-		CALL_RELEASE(IMuseDigital)
+		CALL_RELEASE(DimuseTables)
 		CALL_RELEASE(NewGui)
 		CALL_RELEASE(Akos)
-		CALL_RELEASE(Bundle)
+		CALL_RELEASE(DimuseCodecs)
 		CALL_RELEASE(Codec47)
 		CALL_RELEASE(Gfx)
 		CALL_RELEASE(Dialogs)
@@ -77,9 +78,9 @@ static void GlbReleaseAll() {
 	}
 #endif
 #ifndef DISABLE_QUEEN
-	if (gVars->globals[GBVARS_QUEEN]) {
-		CALL_RELEASE(Queen_Restables)
-	}
+//	if (gVars->globals[GBVARS_QUEEN]) {
+//		CALL_RELEASE(Queen_Restables)
+//	}
 #endif
 }
 
