@@ -200,6 +200,13 @@ case $cxx_version in
 		cxx_version="$cxx_version, ok"
 		cxx_verc_fail=no
 		;;
+	# whacky beos version strings
+	2.9-beos-991026*|2.9-beos-000224*)	
+		_cxx_major=2
+		_cxx_minor=95
+		cxx_version="$cxx_version, ok"
+		cxx_verc_fail=no
+		;;
 	'not found')
 		cxx_verc_fail=yes
 		;;
