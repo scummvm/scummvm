@@ -709,9 +709,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Setup GDI object
 	gdi._numStrips = _screenWidth / 8;
 
-	// Create debugger
-	_debugger = new ScummDebugger(this);
-
 	_sound = new Sound(this);
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
@@ -980,6 +977,11 @@ void ScummEngine::launch() {
 		_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 	}
 	_sound->setupSound();
+
+	// Create debugger
+	if (!_debugger)
+		_debugger = new ScummDebugger(this);
+
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
