@@ -1722,7 +1722,7 @@ char SkyControl::_quitTexts[16][35] = {
 	"SOYEZ VIGILANTS",
 	"Game over player one",
 	"BE VIGILANT",
-	"SPELET \x8Er SLUT, Agent 1.",
+	"SPELET \x2Ar SLUT, Agent 1.",
 	"VAR VAKSAM",
 	"Game over giocatore 1",
 	"SIATE VIGILANTI",
