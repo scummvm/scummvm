@@ -520,6 +520,36 @@ void Scumm::loadRoomObjects() {
 	CHECK_HEAP
 }
 
+void Scumm::loadRoomObjectsOldBundle() {
+	int i;
+	ObjectData *od;
+	byte *room, *ptr;
+
+	CHECK_HEAP
+	room = getResourceAddress(rtRoom, _roomResource);
+
+	_numObjectsInRoom = room[20];
+
+	if (_numObjectsInRoom == 0)
+		return;
+
+	if (_numObjectsInRoom > _numLocalObjects)
+		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
+
+	ptr = room + 29;
+	for (i = 0; i < _numObjectsInRoom; i++) {
+		od = &_objs[findLocalObjectSlot()];
+
+		od->OBIMoffset = READ_LE_UINT16(ptr);
+		od->OBCDoffset = READ_LE_UINT16(ptr + 2 * _numObjectsInRoom);
+		setupRoomObject(od, room);
+
+		ptr += 2;
+	}
+
+	CHECK_HEAP
+}
+
 void Scumm::loadRoomObjectsSmall() {
 	int i, j;
 	ObjectData *od;
@@ -575,8 +605,9 @@ void Scumm::loadRoomObjectsSmall() {
 	}
 
 	for (i = 1; i < _numLocalObjects; i++) {
-		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
+		if (_objs[i].obj_nr && !_objs[i].fl_object_index) {
 			setupRoomObject(&_objs[i], room);
+		}
 	}
 
 	CHECK_HEAP
@@ -592,10 +623,16 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 
 		byte *ptr = room + od->OBCDoffset;
 
-		od->obj_nr = READ_LE_UINT16(ptr + 6);	// ok
+		if (_features & GF_OLD_BUNDLE)
+			ptr -= 2;
 
-		od->width = *(ptr + 11) << 3;	// ok
-		od->x_pos = *(ptr + 9) << 3;	// ok
+		od->obj_nr = READ_LE_UINT16(ptr + 6);
+
+		od->x_pos = *(ptr + 9) << 3;
+		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
+
+		od->width = *(ptr + 11) << 3;
+		od->height = *(ptr + 17) & 0xf8;
 
 		if (*(ptr + 10) & 0x80) {
 			od->parentstate = 1;			// it's 0x10 in the original code
@@ -603,15 +640,12 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 			od->parentstate = 0;
 		}
 
-		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
-
 		od->parent = *(ptr + 12);
-		od->walk_x = READ_LE_UINT16(ptr + 13);
 
+		od->walk_x = READ_LE_UINT16(ptr + 13);
 		od->walk_y = READ_LE_UINT16(ptr + 15);
 
 		od->actordir = (*(ptr + 17)) & 7;
-		od->height = *(ptr + 17);		// ok
 
 		return;
 	}

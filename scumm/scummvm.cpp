@@ -783,7 +783,9 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	}
 
 	initRoomSubBlocks();
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		loadRoomObjectsOldBundle();
+	else if (_features & GF_SMALL_HEADER)
 		loadRoomObjectsSmall();
 	else
 		loadRoomObjects();
@@ -866,6 +868,10 @@ void Scumm::initRoomSubBlocks() {
 	for (i = 1; i < _maxScaleTable; i++)
 		nukeResource(rtScaleTable, i);
 
+	memset(_localScriptList, 0, sizeof(_localScriptList));
+
+	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
+
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (_features & GF_AFTER_V8)
@@ -873,8 +879,11 @@ void Scumm::initRoomSubBlocks() {
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
-	rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
-
+	if (_features & GF_OLD_BUNDLE)
+		rmhd = (RoomHeader *)(roomptr + 4);
+	else
+		rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
+	
 	if (_features & GF_AFTER_V8) {
 		_scrWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_scrHeight = READ_LE_UINT32(&(rmhd->v8.height));
@@ -886,7 +895,9 @@ void Scumm::initRoomSubBlocks() {
 		_scrHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
 
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
+	else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	else if (_features & GF_AFTER_V8) {
 		ptr = findResource(MKID('IMAG'), roomptr);
@@ -903,36 +914,50 @@ void Scumm::initRoomSubBlocks() {
 			findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 
 	// Look for an exit script
-	ptr = findResourceData(MKID('EXCD'), roomResPtr);
-	if (ptr) {
-		_EXCD_offs = ptr - roomResPtr;
-		if (_dumpScripts)
-			dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
+	if (_features & GF_OLD_BUNDLE)
+		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
+	else {
+		ptr = findResourceData(MKID('EXCD'), roomResPtr);
+		if (ptr) {
+			_EXCD_offs = ptr - roomResPtr;
+			if (_dumpScripts)
+				dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
+		}
 	}
 
 	// Look for an entry script
-	ptr = findResourceData(MKID('ENCD'), roomResPtr);
-	if (ptr) {
-		_ENCD_offs = ptr - roomResPtr;
-		if (_dumpScripts)
-			dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
+	if (_features & GF_OLD_BUNDLE)
+		_EXCD_offs = READ_LE_UINT16(roomptr + 0x1B);
+	else {
+		ptr = findResourceData(MKID('ENCD'), roomResPtr);
+		if (ptr) {
+			_ENCD_offs = ptr - roomResPtr;
+			if (_dumpScripts)
+				dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
+		}
 	}
 
 	if (_features & GF_SMALL_HEADER) {
-		ptr = findResourceData(MKID('BOXD'), roomptr);
+		if (_features & GF_OLD_BUNDLE)
+			ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
+		else
+			ptr = findResourceData(MKID('BOXD'), roomptr);
 		if (ptr) {
-			byte numOfBoxes = *(ptr);
+			byte numOfBoxes = *ptr;
 			int size;
 			if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
 				size = numOfBoxes * (SIZEOF_BOX - 2) + 1;
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
 
-
 			createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
-			size = getResourceDataSize(ptr - size - 6) - size;
+			if (_features & GF_OLD_BUNDLE)
+				// FIXME. This is an evil HACK!!!
+				size = (READ_LE_UINT16(roomptr + 0x15) - READ_LE_UINT16(roomptr + 0x0A)) - size;
+			else
+				size = getResourceDataSize(ptr - size - 6) - size;
 
 			if (size >= 0) {					// do this :)
 				createResource(rtMatrix, 1, size);
@@ -960,7 +985,10 @@ void Scumm::initRoomSubBlocks() {
 		}
 	}
 
-	ptr = findResourceData(MKID('SCAL'), roomptr);
+	if (_features & GF_OLD_BUNDLE)
+		ptr = 0;	// TODO ?
+	else
+		ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		offs = ptr - roomptr;
 		if (_features & GF_AFTER_V8) {
@@ -988,7 +1016,6 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Setup local script
 	//
-	memset(_localScriptList, 0, sizeof(_localScriptList));
 
 	// Determine the room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
@@ -996,7 +1023,20 @@ void Scumm::initRoomSubBlocks() {
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	searchptr = roomResPtr;
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_OLD_BUNDLE) {
+		ptr = roomptr + 32;	// FIXME ???
+		while (*ptr) {
+			int id = *ptr++;
+			int offset = READ_LE_UINT16(ptr);
+			ptr += 2;
+			// TODO / FIXME: It seems also global scripts are stored in here?!?
+			// At least there are scripts with ID < _numGlobalScripts, need to look
+			// into this...
+			printf("Local script %d at offset %d (_numGlobalScripts = %d)\n", id, offset, _numGlobalScripts);
+			if (id >= _numGlobalScripts)
+				_localScriptList[id - _numGlobalScripts] = offset;
+		}
+	} else if (_features & GF_SMALL_HEADER) {
 		while ((ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL) {
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -1047,7 +1087,9 @@ void Scumm::initRoomSubBlocks() {
 	// Of course we could just decide to not use _CLUT_offs anymore, and change
 	// setPaletteFromRes() to invoke findResourceData() each time
 	// (and also getPalettePtr()).
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		ptr = 0; // TODO ? do 16 bit games use a palette?!?
+	else if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
 		ptr = findResourceData(MKID('CLUT'), roomptr);
@@ -1065,22 +1107,28 @@ void Scumm::initRoomSubBlocks() {
 		}
 	}
 
-	ptr = findResourceData(MKID('CYCL'), roomptr);
-
+	// Color cycling
+	if (_features & GF_OLD_BUNDLE)
+		ptr = 0; // TODO / FIXME ???
+	else
+		ptr = findResourceData(MKID('CYCL'), roomptr);
 	if (ptr)
 		initCycl(ptr);
 
-	ptr = findResourceData(MKID('TRNS'), roomptr);
-	if (ptr)
-		gdi._transparentColor = ptr[0];
-	else if (_features & GF_AFTER_V8)
-		gdi._transparentColor = 5;	// FIXME
-	else
-		gdi._transparentColor = 255;
+	// Transparent color
+	if (_features & GF_OLD_BUNDLE)
+		gdi._transparentColor = 255;	// TODO - FIXME
+	else {
+		ptr = findResourceData(MKID('TRNS'), roomptr);
+		if (ptr)
+			gdi._transparentColor = ptr[0];
+		else if (_features & GF_AFTER_V8)
+			gdi._transparentColor = 5;	// FIXME
+		else
+			gdi._transparentColor = 255;
+	}
 
 	initBGBuffers(_scrHeight);
-
-	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 }
 
 void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
@@ -1121,7 +1169,9 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr) {
 	File out;
 
 	uint32 size;
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		size = READ_LE_UINT16(ptr);
+	else if (_features & GF_SMALL_HEADER)
 		size = READ_LE_UINT32(ptr);
 	else
 		size = READ_BE_UINT32_UNALIGNED(ptr + 4);

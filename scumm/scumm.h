@@ -595,8 +595,11 @@ protected:
 	bool isResourceInUse(int type, int i);
 	void initRoomSubBlocks();
 	void clearRoomObjects();
+
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
+	void loadRoomObjectsOldBundle();
+
 	void readArrayFromIndexFile();
 	virtual void readMAXS();
 	virtual void readIndexFile();
