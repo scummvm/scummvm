@@ -1027,19 +1027,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
 	ptr = createResource(type, idx, total_size);
-	memcpy(ptr, "ADL ", 4); ptr += 4;
-	uint32 dw = READ_BE_UINT32(&total_size);
-	memcpy(ptr, &dw, 4); ptr += 4;
-	memcpy(ptr, "MDhd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
-	ptr += 4;
-	memset(ptr, 0, 8), ptr += 8;
-	memcpy(ptr, "MThd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
-	ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
-	ptr += 4;
-	
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
 	// For Indy it is actually 240.
@@ -1048,18 +1035,31 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	} else {
 	    ppqn = 480;
 	}
-	*ptr++ = ppqn >> 8;
-	*ptr++ = ppqn & 0xFF;
-	
-	memcpy(ptr, "MTrk", 4); ptr += 4;
-	dw = READ_BE_UINT32(&total_size);
-	memcpy(ptr, &dw, 4); ptr += 4;
 
 	src_ptr += 2;
 	size -= 2;
 
 	if (*src_ptr == 0x80) {
 		// 0x80: is music; otherwise not.
+		memcpy(ptr, "ADL ", 4); ptr += 4;
+		uint32 dw = READ_BE_UINT32(&total_size);
+		memcpy(ptr, &dw, 4); ptr += 4;
+		memcpy(ptr, "MDhd", 4); ptr += 4;
+		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
+		ptr += 4;
+		memset(ptr, 0, 8), ptr += 8;
+		memcpy(ptr, "MThd", 4); ptr += 4;
+		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
+		ptr += 4;
+		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
+		ptr += 4;
+	
+		*ptr++ = ppqn >> 8;
+		*ptr++ = ppqn & 0xFF;
+	
+		memcpy(ptr, "MTrk", 4); ptr += 4;
+		dw = READ_BE_UINT32(&total_size);
+		memcpy(ptr, &dw, 4); ptr += 4;
 
 		// The "speed" of the song
 		ticks = *(src_ptr + 1);
@@ -1090,8 +1090,10 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			// dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
 			// But this seems closer to original???
 			dw = 73000000 / ticks;
-		} else {
+		} else if (_gameId == GID_LOOM) {
 			dw = 1000000 * ppqn / 4 / 2 / ticks;
+		} else {
+			dw = (500000 * 256) / ticks;
 		}
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 			
@@ -1217,6 +1219,26 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	/* This is a sfx resource.  First parse it quickly to find the parallel
 	 * tracks.
 	 */
+	memcpy(ptr, "ASFX", 4); ptr += 4;
+	uint32 dw = READ_BE_UINT32(&total_size);
+	memcpy(ptr, &dw, 4); ptr += 4;
+	memcpy(ptr, "MDhd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
+	ptr += 4;
+	memset(ptr, 0, 8), ptr += 8;
+	memcpy(ptr, "MThd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
+	ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
+	ptr += 4;
+
+	*ptr++ = ppqn >> 8;
+	*ptr++ = ppqn & 0xFF;
+
+	memcpy(ptr, "MTrk", 4); ptr += 4;
+	dw = READ_BE_UINT32(&total_size);
+	memcpy(ptr, &dw, 4); ptr += 4;
+
 	byte current_instr[3][14];
 	int  current_note[3];
 	int track_time[3];
