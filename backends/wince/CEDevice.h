@@ -35,12 +35,8 @@ class CEDevice {
 		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
-		static bool enableHardwareKeyMapping();
-		static bool disableHardwareKeyMapping();
 		static Common::String getKeyName(unsigned int keyCode);
 	private:
-		static bool _hasGAPIMapping;
-		static struct GXKeyList _portrait_keys;
 		typedef int (*tGXVoidFunction)(void);
 		typedef struct GXKeyList (*tGXGetDefaultKeys)(int);
 

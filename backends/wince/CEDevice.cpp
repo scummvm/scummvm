@@ -22,13 +22,28 @@
 #include "stdafx.h"
 #include "CEDevice.h"
 
-bool CEDevice::_hasGAPIMapping = false;
-struct GXKeyList CEDevice::_portrait_keys = {0};
+#include <SDL.h>
 
 #define KEY_CALENDAR 0xc1
 #define KEY_CONTACTS 0xc2
 #define KEY_INBOX 0xc3
 #define KEY_TASK 0xc4
+
+#ifdef WIN32_PLATFORM_WFSP
+const char* SMARTPHONE_KEYS_NAME[] = {
+	"1", "2", "3","4", "5", "6", "7", "8", "9", "*", "0", "#",
+	"Home", "Back", "Up", "Down", "Left", "Right", "Action", "Hang up", "Call",
+	"Soft 1", "Soft 2", "Power", "Volume Up" ,"Volume Down", "Record", "None",
+	0
+};
+
+const int SMARTPHONE_KEYS_MAPPING[] = {
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', VK_F8, '0', VK_F9,
+        VK_LWIN, VK_ESCAPE, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_RETURN, VK_F4, VK_F3,
+        VK_F1, VK_F2, VK_F18, VK_F6, VK_F7, VK_F10, 0xff, 0
+};
+#endif
+
 
 bool CEDevice::hasPocketPCResolution() {
 	return (GetSystemMetrics(SM_CXSCREEN) < 320 && GetSystemMetrics(SM_CXSCREEN) >= 240);
@@ -46,64 +61,12 @@ bool CEDevice::hasSmartphoneResolution() {
 	return (GetSystemMetrics(SM_CXSCREEN) < 240);
 }
 
-bool CEDevice::enableHardwareKeyMapping() {
-	HINSTANCE GAPI_handle;
-	tGXVoidFunction GAPIOpenInput;
-	tGXGetDefaultKeys GAPIGetDefaultKeys;
-
-	_hasGAPIMapping = false;
-	GAPI_handle = LoadLibrary(TEXT("gx.dll"));
-	if (!GAPI_handle)
-		return false;
-	GAPIOpenInput = (tGXVoidFunction)GetProcAddress(GAPI_handle, TEXT("?GXOpenInput@@YAHXZ"));
-	if (!GAPIOpenInput)
-		return false;
-	GAPIGetDefaultKeys = (tGXGetDefaultKeys)GetProcAddress(GAPI_handle, TEXT("?GXGetDefaultKeys@@YA?AUGXKeyList@@H@Z"));
-	if (!GAPIGetDefaultKeys)
-		return false;
-	GAPIOpenInput();
-	_portrait_keys = GAPIGetDefaultKeys(GX_NORMALKEYS);
-	_hasGAPIMapping = true;
-	FreeLibrary(GAPI_handle);
-	return true;
-}
-
-bool CEDevice::disableHardwareKeyMapping() {
-	HINSTANCE GAPI_handle;
-	tGXVoidFunction GAPICloseInput;
-
-	GAPI_handle = LoadLibrary(TEXT("gx.dll"));
-	if (!GAPI_handle)
-		return false;
-	GAPICloseInput = (tGXVoidFunction)GetProcAddress(GAPI_handle, TEXT("?GXCloseInput@@YAHXZ"));
-	if (!GAPICloseInput)
-		return false;
-	GAPICloseInput();
-	FreeLibrary(GAPI_handle);
-	return true;
-}
-
 Common::String CEDevice::getKeyName(unsigned int keyCode) {
 	char key_name[10];
 
 	if (!keyCode)
 		return "No key";
-	if (keyCode == (unsigned int)_portrait_keys.vkA)
-		return "Button A";
-    if (keyCode == (unsigned int)_portrait_keys.vkB)
-		return "Button B";
-    if (keyCode == (unsigned int)_portrait_keys.vkC)
-		return "Button C";
-    if (keyCode == (unsigned int)_portrait_keys.vkStart)
-		return "Button Start";
-    if (keyCode == (unsigned int)_portrait_keys.vkUp)
-		return "Pad Up";
-    if (keyCode == (unsigned int)_portrait_keys.vkDown)
-		return "Pad Down";
-    if (keyCode == (unsigned int)_portrait_keys.vkLeft)
-		return "Pad Left";
-    if (keyCode == (unsigned int)_portrait_keys.vkRight)
-		return "Pad Right";
+
 	if (keyCode == KEY_CALENDAR)
 		return "Button Calendar";
 	if (keyCode == KEY_CONTACTS)
@@ -112,6 +75,25 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 		return "Button Inbox";
 	if (keyCode == KEY_TASK)
 		return "Button Tasks";
+	if (keyCode == SDLK_F1) 
+		return "F1 (hard 1)";
+	if (keyCode == SDLK_F2) 
+		return "F2 (hard 2)";
+	if (keyCode == SDLK_F3) 
+		return "F3 (hard 3)";
+	if (keyCode == SDLK_F4) 
+		return "F4 (hard 4)";
+
+#ifdef WIN32_PLATFORM_WFSP
+	if (hasSmartphoneResolution()) {
+		int i = 0;
+		while (SMARTPHONE_KEYS_MAPPING[i]) {
+			if (keyCode == SMARTPHONE_KEYS_MAPPING[i])
+				return SMARTPHONE_KEYS_NAME[i];
+			i++;
+		}
+	}
+#endif
 
 	sprintf(key_name, "Key %.4x", keyCode);
 	return key_name;	
