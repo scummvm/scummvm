@@ -135,10 +135,10 @@ private:
 	void lookAtSelectedObject();
 
 	//! get the current object under the cursor
-	void lookForCurrentObject();
+	void lookForCurrentObject(int16 cx, int16 cy);
 
 	//! get the current icon panel under the cursor (inventory item or verb)
-	void lookForCurrentIcon();
+	void lookForCurrentIcon(int16 cx, int16 cy);
 
 	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); };
 	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }

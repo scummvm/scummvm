@@ -79,7 +79,7 @@ public:
 	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
 	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
 	bool isFloppy() const { return _versionString[0] == 'P'; }
-	uint8 compression()	const { return _compression; }
+	uint8 compression() const { return _compression; }
 	const char *JASVersion() const { return _versionString; }
 	Language getLanguage() const;
 	char *getJAS2Line();

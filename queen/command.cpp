@@ -232,8 +232,10 @@ void Command::executeCurrentAction() {
 void Command::updatePlayer() {	
 
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
-		lookForCurrentObject();
-		lookForCurrentIcon();
+		int16 cx = _vm->input()->mousePosX();
+		int16 cy = _vm->input()->mousePosY();
+		lookForCurrentObject(cx, cy);
+		lookForCurrentIcon(cx, cy);
 	}
 
 	if (_vm->input()->keyVerb() != VERB_NONE) {
@@ -1269,16 +1271,9 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 		if (objDesc->lastSeenNumber == 0) {
 			// first time look at called
 			objDesc->lastSeenNumber = firstDesc;
+			break;
 		}
-		else {
-			// already displayed first, do a random
-			i = objDesc->lastSeenNumber;
-			while (i == objDesc->lastSeenNumber) {
-				i = firstDesc + _vm->randomizer.getRandomNumber(diff);
-			}
-			objDesc->lastSeenNumber = i;
-		}
-		break;
+		// already displayed first, do a random
 	case 1:
 		i = objDesc->lastSeenNumber;
 		while (i == objDesc->lastSeenNumber) {
@@ -1368,9 +1363,9 @@ void Command::lookAtSelectedObject() {
 //}
 
 
-void Command::lookForCurrentObject() {
+void Command::lookForCurrentObject(int16 cx, int16 cy) {
 
-	uint16 obj = _vm->logic()->findObjectUnderCursor(_vm->input()->mousePosX(), _vm->input()->mousePosY());
+	uint16 obj = _vm->logic()->findObjectUnderCursor(cx, cy);
 	_state.noun = _vm->logic()->findObjectNumber(obj);
 
 	if (_state.oldNoun == _state.noun) {
@@ -1426,9 +1421,9 @@ void Command::lookForCurrentObject() {
 }
 
 
-void Command::lookForCurrentIcon() {
+void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 
-	_state.verb = _vm->logic()->findVerbUnderCursor(_vm->input()->mousePosX(), _vm->input()->mousePosY());
+	_state.verb = _vm->logic()->findVerbUnderCursor(cx, cy);
 	if (_state.oldVerb != _state.verb) {
 
 		if (_state.action == VERB_NONE) {
