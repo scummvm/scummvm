@@ -141,7 +141,7 @@ resume:
 		while (rate->ipos > rate->opos && obuf < oend) {
 
 			// interpolate
-			out = ilast[0] + (((icur[0] - ilast[0]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
+			out = (st_sample_t) (ilast[0] + (((icur[0] - ilast[0]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			// adjust volume
 			out = out * vol / 256;
 	
@@ -150,7 +150,7 @@ resume:
 			
 			if (stereo) {
 				// interpolate
-				out = ilast[1] + (((icur[1] - ilast[1]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
+				out = (st_sample_t) (ilast[1] + (((icur[1] - ilast[1]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 				// adjust volume
 				out = out * vol / 256;
 			}
@@ -180,7 +180,9 @@ the_end:
 }
 
 
+#ifndef _MSC_VER
 #pragma mark -
+#endif
 
 
 LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {

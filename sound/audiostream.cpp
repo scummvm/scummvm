@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "audiostream.h"
 #include "mixer.h"
 #include "common/engine.h"
@@ -40,9 +41,11 @@ static inline int16 readSample(const byte *ptr) {
 	}
 }
 
+#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
+#endif
 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -72,9 +75,11 @@ public:
 };
 
 
+#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- WrappedMemoryStream ---
 #pragma mark -
+#endif
 
 
 // Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
@@ -153,9 +158,11 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 }
 
 
+#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
 #pragma mark -
+#endif
 
 
 #ifdef USE_MAD
@@ -174,9 +181,11 @@ MP3InputStream::MP3InputStream() {
 #endif
 
 
+#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- Ogg Vorbis stream ---
 #pragma mark -
+#endif
 
 
 #ifdef USE_VORBIS
@@ -255,9 +264,11 @@ void VorbisInputStream::refill() {
 #endif
 
 
+#ifndef _MSC_VER
 #pragma mark -
 #pragma mark --- Input stream factories ---
 #pragma mark -
+#endif
 
 
 template<bool stereo>
@@ -294,16 +305,16 @@ static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool isUnsign
 
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len) {
 	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeLinearInputStream<true>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+		return makeLinearInputStream<true>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
 	} else {
-		return makeLinearInputStream<false>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+		return makeLinearInputStream<false>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
 	}
 }
 
 WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len) {
 	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeWrappedInputStream<true>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+		return makeWrappedInputStream<true>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
 	} else {
-		return makeWrappedInputStream<false>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+		return makeWrappedInputStream<false>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
 	}
 }

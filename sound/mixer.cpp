@@ -677,7 +677,7 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO != 0);
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -725,7 +725,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 
 	const int volume = _mixer->getVolume();
 	uint tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, (st_size_t *) &tmpLen, volume);
 #else
 	byte *s, *end;
 
@@ -768,7 +768,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO != 0);
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -846,7 +846,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 	const int volume = _mixer->getVolume();
 	uint tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, (st_size_t *) &tmpLen, volume);
 #else
 	if (_pos == _endOfData) {
 		// Normally, the stream stays around even if all its data is used up.
