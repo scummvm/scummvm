@@ -57,7 +57,7 @@ namespace MT32Emu {
 	}
 
 	bool File::readBit16u(Bit16u *in) {
-		char b[2];
+		Bit8u b[2];
 		if (read(&b[0], 2) != 2)
 			return false;
 		*in = ((b[0] << 8) | b[1]);
@@ -65,7 +65,7 @@ namespace MT32Emu {
 	}
 
 	bool File::readBit32u(Bit32u *in) {
-		char b[4];
+		Bit8u b[4];
 		if (read(&b[0], 4) != 4)
 			return false;
 		*in = ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]);
@@ -81,26 +81,26 @@ namespace MT32Emu {
 	}
 
 	bool File::writeBit16u(Bit16u out) {
-		if (!writeBit8u((Bit8u)((out >> 8) & 0xFF))) {
+		if (!writeBit8u((Bit8u)((out & 0xFF00) >> 8))) {
 			return false;
 		}
-		if (!writeBit8u((Bit8u)(out & 0xFF))) {
+		if (!writeBit8u((Bit8u)(out & 0x00FF))) {
 			return false;
 		}
 		return true;
 	}
 
 	bool File::writeBit32u(Bit32u out) {
-		if (!writeBit8u((Bit8u)((out >> 24) & 0xFF))) {
+		if (!writeBit8u((Bit8u)((out & 0xFF000000) >> 24))) {
 			return false;
 		}
-		if (!writeBit8u((Bit8u)((out >> 16) & 0xFF))) {
+		if (!writeBit8u((Bit8u)((out & 0x00FF0000) >> 16))) {
 			return false;
 		}
-		if (!writeBit8u((Bit8u)((out >> 8) & 0xFF))) {
+		if (!writeBit8u((Bit8u)((out & 0x0000FF00) >> 8))) {
 			return false;
 		}
-		if (!writeBit8u((Bit8u)(out & 0xFF))) {
+		if (!writeBit8u((Bit8u)(out & 0x000000FF))) {
 			return false;
 		}
 		return true;
