@@ -202,9 +202,9 @@ static const ScummGameSettings scumm_settings[] = {
 
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | (uint32)GF_DEFAULT_TO_1X_SCALER, 0},
 	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "comi"},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | (uint32)GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "comi"},
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */

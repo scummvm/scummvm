@@ -454,7 +454,7 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	// original game, Joe will go to the left door...
 	uint16 i;
 	uint16 pos = 1;
-	uint32 minDist = ~0;
+	uint32 minDist = (uint32)~0;
 	const Box *b = &_roomArea[1].box;
 	for (i = 1; i <= _roomAreaCount; ++i) {
 
