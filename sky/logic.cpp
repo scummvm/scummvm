@@ -191,8 +191,7 @@ void SkyLogic::arAnim() {
 	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 	Compact *cpt = 0;
 
-	uint16 id;
-	while ((id = *logicList++) != 0) { // get an id
+	while (uint16 id = *logicList++) { // get an id
 
 		if (id == 0xffff) { // address change?
 			logicList = (uint16 *)SkyState::fetchCompact(*logicList); // get new logic list
@@ -297,7 +296,7 @@ void SkyLogic::mainAnim() {
 		_compact->extCompact->arAnimIndex = 0; // reset position
 	}
 
-	uint16 dir = 0;
+	uint16 dir;
 	while ((dir = _compact->extCompact->dir) != *(sequence + 1)) {
 		// ok, setup turning
 		_compact->extCompact->dir = *(sequence + 1);
@@ -311,21 +310,21 @@ void SkyLogic::mainAnim() {
 		}
 	};
 
-	uint16 **animList = (uint16 **)SkyCompact::getCompactElem(_compact,
+	uint16 *animList = *(uint16 **)SkyCompact::getCompactElem(_compact,
 			C_ANIM_UP + _compact->extCompact->megaSet + dir * 4);
 
 	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
-	if (!(*animList)[arAnimIndex/2]) {
+	if (!animList[arAnimIndex/2]) {
 		 arAnimIndex = 0;
 		_compact->extCompact->arAnimIndex = 0; // reset
 	}
 
 	_compact->extCompact->arAnimIndex += S_LENGTH;
 
-	*sequence       -= (*animList)[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
-	_compact->frame  = (*animList)[(S_FRAME + arAnimIndex)/2]; // new graphic frame
-	_compact->xcood += (*animList)[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
-	_compact->ycood += (*animList)[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
+	*sequence       -= animList[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
+	_compact->frame  = animList[(S_FRAME + arAnimIndex)/2]; // new graphic frame
+	_compact->xcood += animList[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
+	_compact->ycood += animList[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
 }
 
 void SkyLogic::arTurn() {
