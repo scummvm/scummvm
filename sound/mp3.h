@@ -27,25 +27,11 @@
 
 #ifdef USE_MAD
 
-#include "sound/audiocd.h"
-#include <mad.h>
-
 class AudioInputStream;
+class DigitalTrackInfo;
 class File;
 
-class MP3TrackInfo : public DigitalTrackInfo {
-private:
-	struct mad_header _mad_header;
-	long _size;
-	File *_file;
-	bool _error_flag;
-
-public:
-	MP3TrackInfo(File *file);
-	~MP3TrackInfo();
-	bool error() { return _error_flag; }
-	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
-};
+DigitalTrackInfo *makeMP3TrackInfo(File *file);
 
 AudioInputStream *makeMP3Stream(File *file, uint size);
 

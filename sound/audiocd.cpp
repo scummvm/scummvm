@@ -132,7 +132,7 @@ int AudioCDManager::getCachedTrack(int track) {
 	file->open(track_name, g_engine->getGameDataPath());
 
 	if (file->isOpen()) {
-		_track_info[current_index] = new MP3TrackInfo(file);
+		_track_info[current_index] = makeMP3TrackInfo(file);
 		if (_track_info[current_index]->error()) {
 			delete _track_info[current_index];
 			_track_info[current_index] = NULL;
@@ -147,7 +147,7 @@ int AudioCDManager::getCachedTrack(int track) {
 	file->open(track_name, g_engine->getGameDataPath());
 
 	if (file->isOpen()) {
-		_track_info[current_index] = new VorbisTrackInfo(file);
+		_track_info[current_index] = makeVorbisTrackInfo(file);
 		if (_track_info[current_index]->error()) {
 			delete _track_info[current_index];
 			_track_info[current_index] = NULL;

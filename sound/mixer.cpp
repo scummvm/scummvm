@@ -260,11 +260,6 @@ void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size,
 	AudioInputStream *input = makeVorbisStream(file, size);
 	playInputStream(handle, input, false, volume, pan, id);
 }
-void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan, int id) {
-	// Create the input stream
-	AudioInputStream *input = makeVorbisStream(ov_file, duration);
-	playInputStream(handle, input, is_cd_track, volume, pan, id);
-}
 #endif
 
 void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, int id, bool autofreeStream) {

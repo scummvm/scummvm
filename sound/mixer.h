@@ -27,10 +27,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#ifdef USE_VORBIS
-#include <vorbis/vorbisfile.h>
-#endif
-
 
 class AudioInputStream;
 class Channel;
@@ -115,7 +111,6 @@ public:
 #endif
 #ifdef USE_VORBIS
 	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
-	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 
 	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1, bool autofreeStream = true);

@@ -20,11 +20,17 @@
  */
 
 #include "sound/mp3.h"
-#include "sound/audiostream.h"
+
+#ifdef USE_MAD
+
 #include "common/file.h"
 #include "common/util.h"
 
-#ifdef USE_MAD
+#include "sound/audiocd.h"
+#include "sound/audiostream.h"
+
+#include <mad.h>
+
 
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
@@ -264,6 +270,22 @@ AudioInputStream *makeMP3Stream(File *file, uint size) {
 #pragma mark --- MP3 Audio CD emulation ---
 #pragma mark -
 
+
+class MP3TrackInfo : public DigitalTrackInfo {
+private:
+	struct mad_header _mad_header;
+	long _size;
+	File *_file;
+	bool _error_flag;
+
+public:
+	MP3TrackInfo(File *file);
+	~MP3TrackInfo();
+	bool error() { return _error_flag; }
+	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
+};
+
+
 MP3TrackInfo::MP3TrackInfo(File *file) {
 	struct mad_stream stream;
 	struct mad_frame frame;
@@ -361,6 +383,10 @@ void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int start
 MP3TrackInfo::~MP3TrackInfo() {
 	if (! _error_flag)
 		_file->close();
+}
+
+DigitalTrackInfo *makeMP3TrackInfo(File *file) {
+	return new MP3TrackInfo(file);
 }
 
 

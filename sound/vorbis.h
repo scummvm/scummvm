@@ -27,27 +27,12 @@
 
 #ifdef USE_VORBIS
 
-#include "sound/audiocd.h"
-#include <vorbis/vorbisfile.h>
-
 class AudioInputStream;
+class DigitalTrackInfo;
 class File;
 
-class VorbisTrackInfo : public DigitalTrackInfo {
-private:
-	File *_file;
-	OggVorbis_File _ov_file;
-	bool _error_flag;
+DigitalTrackInfo *makeVorbisTrackInfo(File *file);
 
-public:
-	VorbisTrackInfo(File *file);
-	~VorbisTrackInfo();
-	bool error() { return _error_flag; }
-	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
-};
-
-
-AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
 AudioInputStream *makeVorbisStream(File *file, uint32 size);
 
 #endif

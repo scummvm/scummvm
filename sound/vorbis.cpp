@@ -20,11 +20,38 @@
  */
 
 #include "sound/vorbis.h"
-#include "sound/audiostream.h"
+
+#ifdef USE_VORBIS
+
 #include "common/file.h"
 #include "common/util.h"
 
-#ifdef USE_VORBIS
+#include "sound/audiostream.h"
+#include "sound/audiocd.h"
+
+#include <vorbis/vorbisfile.h>
+
+
+AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
+
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis Audio CD emulation ---
+#pragma mark -
+
+class VorbisTrackInfo : public DigitalTrackInfo {
+private:
+	File *_file;
+	OggVorbis_File _ov_file;
+	bool _error_flag;
+
+public:
+	VorbisTrackInfo(File *file);
+	~VorbisTrackInfo();
+	bool error() { return _error_flag; }
+	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
+};
+
 
 // These are wrapper functions to allow using a File object to
 // provide data to the OggVorbis_File object.
@@ -117,8 +144,9 @@ void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int st
 #else
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
-	mixer->playVorbis(handle, &_ov_file,
-							duration * ov_info(&_ov_file, -1)->rate / 75, true);
+
+	AudioInputStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
+	mixer->playInputStream(handle, input, true);
 }
 
 VorbisTrackInfo::~VorbisTrackInfo() {
@@ -126,6 +154,10 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 		ov_clear(&_ov_file);
 		delete _file;
 	}
+}
+
+DigitalTrackInfo *makeVorbisTrackInfo(File *file) {
+	return new VorbisTrackInfo(file);
 }
 
 #pragma mark -
