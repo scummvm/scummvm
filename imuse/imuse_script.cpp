@@ -61,8 +61,8 @@ void Imuse::refreshScripts() {
 	}
 }
 
-void Imuse::startVoice(const char *soundName) {
-	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, 127, 0, 127);
+void Imuse::startVoice(const char *soundName, int volume, int pan) {
+	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {

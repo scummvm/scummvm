@@ -501,7 +501,7 @@ void SoundComponent::setKey(int val) {
 		if (!g_imuse->getSoundStatus(_soundName.c_str())) {
 //			g_imuse->stopSound(_soundName.c_str());
 //		} else {
-			g_imuse->startSfx(_soundName.c_str(), 127);
+			g_imuse->startSfx(_soundName.c_str());
 		}
 		break;
 	case 1: // "Stop"
