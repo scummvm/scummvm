@@ -1944,8 +1944,8 @@ void ScummEngine_v5::o5_roomOps() {
 				ptr = getResourceAddress(rtString, a);
 				file->write(ptr, resStrLen(ptr) + 1);
 				delete file;
+				VAR(VAR_SOUNDRESULT) = 0;
 			}
-			VAR(VAR_SOUNDRESULT) = 0;
 			break;
 		}
 	case 14:	// SO_LOAD_STRING
