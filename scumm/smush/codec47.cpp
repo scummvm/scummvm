@@ -228,12 +228,12 @@ static byte smush_buf_small[32768];
 static int16 smush_table[256];
 
 void Codec47Decoder::makeTables37(int32 param) {
-	int32 variable1, variable2, variable3, variable4;
-	int32 tmp_param, b1, b2;
+	int32 variable1, variable2;
+	int32 b1, b2;
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
 	int32 value_table37_1_2, value_table37_1_1, value_table37_2_2, value_table37_2_1;
-	int32 table[64], tmp_a, tmp_c, s;
-	int32 * table37_1 = 0, * table37_2 = 0, * table_ptr, l;
+	int32 table[64], tmp, s;
+	int32 * table37_1 = 0, * table37_2 = 0, * table_ptr;
 	int i, x, y;
 	byte * ptr;
 
@@ -241,12 +241,12 @@ void Codec47Decoder::makeTables37(int32 param) {
 		table37_1 = &codec37_table[32];
 		table37_2 = &codec37_table[48];
 		ptr = smush_buf_big + 384;
-		for (l = 0; l < 256; l++) {
+		for (i = 0; i < 256; i++) {
 			*ptr = 0;
 			ptr += 388;
 		}
 		ptr = smush_buf_big + 385;
-		for (l = 0; l < 256; l++) {
+		for (i = 0; i < 256; i++) {
 			*ptr = 0;
 			ptr += 388;
 		}
@@ -254,12 +254,12 @@ void Codec47Decoder::makeTables37(int32 param) {
 		table37_1 = &codec37_table[0];
 		table37_2 = &codec37_table[16];
 		ptr = smush_buf_small + 96;
-		for (l = 0; l < 256; l++) {
+		for (i = 0; i < 256; i++) {
 			*ptr = 0;
 			ptr += 128;
 		}
 		ptr = smush_buf_small + 97;
-		for (l = 0; l < 256; l++) {
+		for (i = 0; i < 256; i++) {
 			*ptr = 0;
 			ptr += 128;
 		}
@@ -268,7 +268,6 @@ void Codec47Decoder::makeTables37(int32 param) {
 	}
 
 	s = 0;
-	tmp_param = param * param;
 	tmp_table37_1_1 = table37_1;
 	tmp_table37_2_1 = table37_2;
 	for (x = 0; x < 16; x++) {
@@ -283,12 +282,12 @@ void Codec47Decoder::makeTables37(int32 param) {
 
 			if (value_table37_2_1 == 0) {
 				b1 = 0;
-			} else if (param == value_table37_2_1 + 1) {
+			} else if (value_table37_2_1 == param - 1) {
 				b1 = 1;
 			} else {
 				if (value_table37_1_1 == 0) {
 					b1 = 2;
-				} else if (param == value_table37_1_1 + 1) {
+				} else if (value_table37_1_1 == param - 1) {
 					b1 = 3;
 				} else {
 					b1 = 4;
@@ -297,42 +296,38 @@ void Codec47Decoder::makeTables37(int32 param) {
 
 			if (value_table37_2_2 == 0) {
 				b2 = 0;
-			} else if (param == value_table37_2_2 + 1) {
+			} else if (value_table37_2_2 == param - 1) {
 				b2 = 1;
 			} else {
 				if (value_table37_1_2 == 0) {
 					b2 = 2;
-				} else if (param == value_table37_1_2 + 1) {
+				} else if (value_table37_1_2 == param - 1) {
 					b2 = 3;
 				} else {
 					b2 = 4;
 				}
 			}
-			i = tmp_param - 1;
-			if(i != 0) {
-				do {
-					table[i] = 0;
-				} while (i-- != 0);
+			
+			memset(table, 0, param * param * 4);
+
+			variable2 = abs(value_table37_2_2 - value_table37_2_1);
+			tmp = abs(value_table37_1_2 - value_table37_1_1);
+			if (variable2 <= tmp) {
+				variable2 = tmp;
 			}
 
-			tmp_c = abs(value_table37_2_2 - value_table37_2_1);
-			tmp_a = abs(value_table37_1_2 - value_table37_1_1);
-			if (tmp_c <= tmp_a) {
-				tmp_c = tmp_a;
-			}
+			for (variable1 = 0; variable1 <= variable2; variable1++) {
+				int32 variable3, variable4;
 
-			variable2 = tmp_c + 1;
-			for (variable1 = 0; variable1 < variable2; variable1++) {
-				if (variable2 > 1) {
-					int32 xyz, tmp_ib;
+				if (variable2 > 0) {
+					int32 tmp_c, tmp_ib;
 
 					// This code linearly interpolates between value_table37_1_1 and value_table37_1_2
 					// respectively value_table37_2_1 and value_table37_2_2.
-					tmp_c = variable2 - variable1 - 1;
-					tmp_ib = (variable2 - 1) / 2;
-					xyz = variable2 - 1;
-					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * tmp_c + tmp_ib) / xyz;
-					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * tmp_c + tmp_ib) / xyz;
+					tmp_c = variable2 - variable1;
+					tmp_ib = variable2 / 2;
+					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * tmp_c + tmp_ib) / variable2;
+					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * tmp_c + tmp_ib) / variable2;
 				} else {
 					variable4 = value_table37_1_1;
 					variable3 = value_table37_2_1;
@@ -431,75 +426,43 @@ void Codec47Decoder::makeTables47(int32 width) {
 	s = 0;
 	tmp_value = 0;
 	do {
-		d = 0;
-		tmp = smush_buf_small[96 + c];
-		if (tmp != 0) {
-			do {
-				tmp = smush_buf_small[64 + c + d];
-				tmp2 = tmp;
-				tmp2 >>= 2;
-				tmp &= 3;
-				tmp2 &= 0xFFFF00FF;
-				tmp2 *= (int16)width;
-				tmp2 += tmp;
-				smush_buf_small[(s + d) * 2] = (byte)tmp2;
-				smush_buf_small[(s + d) * 2 + 1] = tmp2 >> 8;
-				d++;
-				tmp = smush_buf_small[96 + c];
-			} while (tmp > d);
+		for (d = 0; d < smush_buf_small[96 + c]; d++) {
+			tmp = smush_buf_small[64 + c + d];
+			tmp2 = tmp >> 2;
+			tmp &= 3;
+			tmp2 &= 0xFFFF00FF;
+			tmp2 = tmp2 * width + tmp;
+			smush_buf_small[(s + d) * 2] = (byte)tmp2;
+			smush_buf_small[(s + d) * 2 + 1] = tmp2 >> 8;
 		}
-		d = 0;
-		tmp = smush_buf_small[97 + c];
-		if (tmp != 0) {
-			do {
-				tmp = smush_buf_small[80 + c + d];
-				tmp2 = tmp;
-				tmp2 >>= 2;
-				tmp &= 3;
-				tmp2 &= 0xFFFF00FF;
-				tmp2 *= (int16)width;
-				tmp2 += tmp;
-				smush_buf_small[32 + (s + d) * 2] = (byte)tmp2;
-				smush_buf_small[32 + (s + d) * 2 + 1] = tmp2 >> 8;
-				d++;
-				tmp = smush_buf_small[97 + c];
-			} while (tmp > d);
+		for (d = 0; d < smush_buf_small[97 + c]; d++) {
+			tmp = smush_buf_small[80 + c + d];
+			tmp2 = tmp >> 2;
+			tmp &= 3;
+			tmp2 &= 0xFFFF00FF;
+			tmp2 = tmp2 * width + tmp;
+			smush_buf_small[32 + (s + d) * 2] = (byte)tmp2;
+			smush_buf_small[32 + (s + d) * 2 + 1] = tmp2 >> 8;
 		}
-		d = 0;
-		tmp = smush_buf_big[384 + a];
-		if (tmp != 0) {
-			do {
-				tmp = smush_buf_big[256 + a + d];
-				tmp2 = tmp >> 3;
-				tmp = tmp & 7;
-				tmp2 &= 0xFFFF00FF;
-				tmp2 *= (int16)width;
-				tmp2 += tmp;
-				tmp_offset = tmp_value;
-				tmp_offset += d;
-				d++;
-				smush_buf_big[tmp_offset * 2] = (byte)tmp2;
-				smush_buf_big[tmp_offset * 2 + 1] = tmp2 >> 8;
-				tmp = smush_buf_big[384 + a];
-			} while (tmp > d);
+		for (d = 0; d < smush_buf_big[384 + a]; d++) {
+			tmp = smush_buf_big[256 + a + d];
+			tmp2 = tmp >> 3;
+			tmp = tmp & 7;
+			tmp2 &= 0xFFFF00FF;
+			tmp2 = tmp2 * width + tmp;
+			tmp_offset = tmp_value + d;
+			smush_buf_big[tmp_offset * 2] = (byte)tmp2;
+			smush_buf_big[tmp_offset * 2 + 1] = tmp2 >> 8;
 		}
-		d = 0;
-		tmp = smush_buf_big[385 + a];
-		if (tmp != 0) {
-			do {
-				tmp = smush_buf_big[320 + a + d];
-				tmp2 = tmp >> 3;
-				tmp = tmp & 7;
-				tmp2 &= 0xFFFF00FF;
-				tmp2 *= (int16)width;
-				tmp2 += tmp;
-				tmp_offset = tmp_value;
-				tmp_offset += d;
-				d++;
-				smush_buf_big[128 + (tmp_offset * 2)] = (byte)tmp2;
-				smush_buf_big[128 + (tmp_offset * 2) + 1] = tmp2 >> 8;
-				tmp = smush_buf_big[385 + a];
-			} while (tmp > d);
+		for (d = 0; d < smush_buf_big[385 + a]; d++) {
+			tmp = smush_buf_big[320 + a + d];
+			tmp2 = tmp >> 3;
+			tmp = tmp & 7;
+			tmp2 &= 0xFFFF00FF;
+			tmp2 = tmp2 * width + tmp;
+			tmp_offset = tmp_value + d;
+			smush_buf_big[128 + (tmp_offset * 2)] = (byte)tmp2;
+			smush_buf_big[128 + (tmp_offset * 2) + 1] = tmp2 >> 8;
 		}
 		
 		a += 388;
@@ -525,19 +488,20 @@ void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 			src += num;
 		}
 		dst += num;
-	} while (len -= num);
+		len -= num;
+	} while (len > 0);
+	assert(len == 0);
 }
 
 static int32 codec47_decode2_offset1;
 static int32 codec47_decode2_offset2;
-static int32 d_pitch;
 static byte * codec47_decode2_param_ptr;
 static int32 codec47_subgfx_width_blocks;
 static int32 codec47_subgfx_height_blocks;
 static int32 codec47_subgfx_width_pixels;
 static byte * d_src;
 
-static void codec47_subgfx_lev4(byte * d_dst) {
+static void codec47_subgfx_lev4(byte * d_dst, const int32 d_pitch) {
 	int32 tmp;
 	byte code = *d_src++;
 
@@ -566,30 +530,34 @@ static void codec47_subgfx_lev4(byte * d_dst) {
 	}
 }
 
-static void codec47_subgfx_lev3(byte * d_dst) {
+static void codec47_subgfx_lev3(byte * d_dst, const int32 d_pitch) {
 	int32 tmp;
 	byte code = *d_src++;
 	int i;
 
 	if (code < 0xF8) {
 		tmp = smush_table[code] + codec47_decode2_offset1;
-		for (i = 0; i < 4; i++)
-			*(uint32*)(d_dst + (d_pitch * i)) = *(uint32*)(d_dst + (d_pitch * i) + tmp);
+		for (i = 0; i < 4; i++) {
+			*(uint32*)(d_dst) = *(uint32*)(d_dst + tmp);
+			d_dst += d_pitch;
+		}
 	} else if (code == 0xFF) {
 		byte * tmp_dst = d_dst;
-		codec47_subgfx_lev4(d_dst);
+		codec47_subgfx_lev4(d_dst, d_pitch);
 		d_dst += 2;
-		codec47_subgfx_lev4(d_dst);
+		codec47_subgfx_lev4(d_dst, d_pitch);
 		d_dst += d_pitch * 2 - 2;
-		codec47_subgfx_lev4(d_dst);
+		codec47_subgfx_lev4(d_dst, d_pitch);
 		d_dst += 2;
-		codec47_subgfx_lev4(d_dst);
+		codec47_subgfx_lev4(d_dst, d_pitch);
 		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *d_src++;
 		uint32 val = t << 24 | t << 16 | t << 8 | t;
-		for (i = 0; i < 4; i++)
-			*(uint32*)(d_dst + (d_pitch * i)) = val;
+		for (i = 0; i < 4; i++) {
+			*(uint32*)(d_dst) = val;
+			d_dst += d_pitch;
+		}
 	} else if (code == 0xFD) {
 		byte * tmp_ptr = (*d_src++ << 7) + smush_buf_small;
 		int32 l = *(tmp_ptr + 96);
@@ -608,17 +576,21 @@ static void codec47_subgfx_lev3(byte * d_dst) {
 		}
 	} else if (code == 0xFC) {
 		tmp = codec47_decode2_offset2;
-		for (i = 0; i < 4; i++)
-			*(uint32*)(d_dst + (d_pitch * i)) = *(uint32*)(d_dst + (d_pitch * i) + tmp);
+		for (i = 0; i < 4; i++) {
+			*(uint32*)(d_dst) = *(uint32*)(d_dst + tmp);
+			d_dst += d_pitch;
+		}
 	} else {
 		byte t = codec47_decode2_param_ptr[code];
 		uint32 val = t << 24 | t << 16 | t << 8 | t;
-		for (i = 0; i < 4; i++)
-			*(uint32*)(d_dst + (d_pitch * i)) = val;
+		for (i = 0; i < 4; i++) {
+			*(uint32*)(d_dst) = val;
+			d_dst += d_pitch;
+		}
 	}
 }
 
-static void codec47_subgfx_lev2(byte * d_dst) {
+static void codec47_subgfx_lev2(byte * d_dst, const int32 d_pitch) {
 	int32 tmp, tmp2;
 	byte code = *d_src++;
 	int i;
@@ -626,25 +598,27 @@ static void codec47_subgfx_lev2(byte * d_dst) {
 	if (code < 0xF8) {
 		tmp2 = smush_table[code] + codec47_decode2_offset1;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + (d_pitch * i) + 0) = *(uint32*)(d_dst + (d_pitch * i) + tmp2);
-			*(uint32*)(d_dst + (d_pitch * i) + 4) = *(uint32*)(d_dst + (d_pitch * i) + tmp2 + 4);
+			*(uint32*)(d_dst + 0) = *(uint32*)(d_dst + tmp2);
+			*(uint32*)(d_dst + 4) = *(uint32*)(d_dst + tmp2 + 4);
+			d_dst += d_pitch;
 		}
 	} else if (code == 0xFF) {
 		byte * tmp_dst = d_dst;
-		codec47_subgfx_lev3(d_dst);
+		codec47_subgfx_lev3(d_dst, d_pitch);
 		d_dst += 4;
-		codec47_subgfx_lev3(d_dst);
+		codec47_subgfx_lev3(d_dst, d_pitch);
 		d_dst += d_pitch * 4 - 4;
-		codec47_subgfx_lev3(d_dst);
+		codec47_subgfx_lev3(d_dst, d_pitch);
 		d_dst += 4;
-		codec47_subgfx_lev3(d_dst);
+		codec47_subgfx_lev3(d_dst, d_pitch);
 		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *d_src++;
 		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + (d_pitch * i)) = val;
-			*(uint32*)(d_dst + (d_pitch * i) + 4) = val;
+			*(uint32*)(d_dst) = val;
+			*(uint32*)(d_dst + 4) = val;
+			d_dst += d_pitch;
 		}
 	} else if (code == 0xFD) {
 		tmp = *d_src++;
@@ -669,15 +643,17 @@ static void codec47_subgfx_lev2(byte * d_dst) {
 	} else if (code == 0xFC) {
 		tmp2 = codec47_decode2_offset2;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + (d_pitch * i) + 0) = *(uint32*)(d_dst + (d_pitch * i) + tmp2);
-			*(uint32*)(d_dst + (d_pitch * i) + 4) = *(uint32*)(d_dst + (d_pitch * i) + tmp2 + 4);
+			*(uint32*)(d_dst + 0) = *(uint32*)(d_dst + tmp2);
+			*(uint32*)(d_dst + 4) = *(uint32*)(d_dst + tmp2 + 4);
+			d_dst += d_pitch;
 		}
 	} else {
 		byte t = *(codec47_decode2_param_ptr + code);
 		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + (d_pitch * i)) = val;
-			*(uint32*)(d_dst + (d_pitch * i) + 4) = val;
+			*(uint32*)(d_dst) = val;
+			*(uint32*)(d_dst + 4) = val;
+			d_dst += d_pitch;
 		}
 	}
 }
@@ -688,7 +664,6 @@ void Codec47Decoder::decode2(byte * dst, byte * src, int32 offset1, int32 offset
 	d_src = src;
 	codec47_decode2_offset1 = offset1;
 	codec47_decode2_offset2 = offset2;
-	d_pitch = pitch;
 	codec47_decode2_param_ptr = param_ptr - 0xf8;
 	codec47_subgfx_height_blocks = (height + 7) >> 3;
 	codec47_subgfx_width_blocks = (pitch + 7) >> 3;
@@ -698,7 +673,7 @@ void Codec47Decoder::decode2(byte * dst, byte * src, int32 offset1, int32 offset
 	do {
 		int32 tmp_codec47_subgfx_width_blocks = codec47_subgfx_width_blocks;
 		do {
-			codec47_subgfx_lev2(dst);
+			codec47_subgfx_lev2(dst, pitch);
 			dst += 8;
 		} while (--tmp_codec47_subgfx_width_blocks);
 		dst += codec47_subgfx_width_pixels;
