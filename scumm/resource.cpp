@@ -2020,7 +2020,7 @@ byte *ScummEngine::createResource(int type, int idx, uint32 size) {
 }
 
 bool ScummEngine::validateResource(const char *str, int type, int idx) const {
-	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
+	if (type < rtFirst || type > 19 || (uint) idx >= (uint) res.num[type]) {
 		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
 	}
