@@ -247,4 +247,7 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_SPEED_Y = 108;
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
+	
+	// var 266, 290 and 301 have something to do with cursor images, since various scripts
+	// have setCursorImg(var290,2) or setCursorImg(var266,1) or setCursorImg(var301,1)
 }

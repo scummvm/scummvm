@@ -884,6 +884,9 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (numobj > _numLocalObjects)
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
+	if (_features & GF_AFTER_V7) {
+		roomptr = getResourceAddress(rtRoomScripts, room);
+	}
 	if (findWhat & foCodeHeader) {
 		searchptr = roomptr;
 		for (i = 0;;) {
@@ -920,6 +923,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 		}
 	}
 
+	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
 		searchptr = roomptr;
 		for (i = 0;;) {
@@ -1169,15 +1173,38 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex)
 		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
 	}
 
-	dataptr = findResource(IMxx_tags[imgindex], foir.obim);
-	if (dataptr == NULL)
-		error("setCursorImg: No such image");
+	// TODO - for V8 don't use IMxx_tags. Rather, we do something similiar to the V8
+	// code in drawBlastObject. It would be *much* nicer if we could aggregate this
+	// common code into some helper functions, instead of having long convuluted
+	// cases scattered all over the place.
+	if (_features & GF_AFTER_V8) {
+		dataptr = findResource(MKID('IMAG'), foir.obim);
+		assert(dataptr);
 
-	size = READ_BE_UINT32_UNALIGNED(dataptr + 4);
-	if (size > sizeof(_grabbedCursor))
-		error("setCursorImg: Cursor image too large");
+		dataptr = findResource(MKID('WRAP'), dataptr);
+		assert(dataptr);
 
-	if ((bomp = findResource(MKID('BOMP'), dataptr)) != NULL)
+		dataptr = findResource(MKID('OFFS'), dataptr);
+		assert(dataptr);
+
+		dataptr += READ_LE_UINT32(dataptr + 4 + 4*imgindex);
+		// TODO - distinguish between SMAP and BOMP here?
+
+		// HACK - adjust dataptr here until bomp code gets adjusted for V8
+		bomp = dataptr + 2;
+	} else {
+		dataptr = findResource(IMxx_tags[imgindex], foir.obim);
+		if (dataptr == NULL)
+			error("setCursorImg: No such image");
+	
+		size = READ_BE_UINT32_UNALIGNED(dataptr + 4);
+		if (size > sizeof(_grabbedCursor))
+			error("setCursorImg: Cursor image too large");
+		
+		bomp = findResource(MKID('BOMP'), dataptr);
+	}
+
+	if (bomp != NULL)
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);
@@ -1270,23 +1297,53 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	if (!ptr)
 		error("BlastObject object %d image not found", eo->number);
 
-	img = findResource(IMxx_tags[eo->image], ptr);
-	if (!img)
-		img = findResource(IMxx_tags[1], ptr);	// Backward compatibility with samnmax blast objects
-	if (!img)
-		error("blast-object %d invalid image %d (1-x)", eo->number, eo->image);
+	if (_features & GF_AFTER_V8) {
+		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
+		// an OFFS chunk and multiple BOMP chunks. To find the right BOMP, we can
+		// either use the offsets in the OFFS chunk, or iterate over all BOMPs we find.
+		// Here we use the first method.
+		img = findResource(MKID('IMAG'), ptr);
+		assert(img);
 
-	bomp = findResourceData(MKID('BOMP'), img);
+		img = findResource(MKID('WRAP'), img);
+		assert(img);
+
+		img = findResource(MKID('OFFS'), img);
+		assert(img);
+
+		bomp = img + READ_LE_UINT32(img + 4 + 4*eo->image) + 8;
+	} else {
+		img = findResource(IMxx_tags[eo->image], ptr);
+		if (!img)
+			img = findResource(IMxx_tags[1], ptr);	// Backward compatibility with samnmax blast objects
+
+		if (!img)
+			error("blast-object %d invalid image %d (1-x)", eo->number, eo->image);
+	
+		bomp = findResourceData(MKID('BOMP'), img);
+	}
+
 	if (!bomp)
 		error("object %d is not a blast object", eo->number);
 
-	bdd.srcwidth = READ_LE_UINT16(&((BompHeader *)bomp)->width);
-	bdd.srcheight = READ_LE_UINT16(&((BompHeader *)bomp)->height);
+	hexdump(bomp,32);
 
+	if (_features & GF_AFTER_V8) {
+		bdd.srcwidth = READ_LE_UINT32(&((BompHeader *)bomp)->v8.width);
+		bdd.srcheight = READ_LE_UINT32(&((BompHeader *)bomp)->v8.height);
+	} else {
+		bdd.srcwidth = READ_LE_UINT16(&((BompHeader *)bomp)->old.width);
+		bdd.srcheight = READ_LE_UINT16(&((BompHeader *)bomp)->old.height);
+	}
+	
 	bdd.out = vs->screenPtr + vs->xstart;
 	bdd.outwidth = vs->width;
 	bdd.outheight = vs->height;
-	bdd.dataptr = bomp + 10;
+	if (_features & GF_AFTER_V8) {
+		bdd.dataptr = bomp + 8;	// Why this? See also useBompCursor
+	} else {
+		bdd.dataptr = bomp + 10;	// Why this? See also useBompCursor
+	}
 	bdd.x = eo->posX;
 	bdd.y = eo->posY;
 	bdd.scale_x = (byte)eo->scaleX;

@@ -3085,12 +3085,14 @@ void Scumm::useBompCursor(byte *im, int width, int height)
 
 	size = width * height;
 	if (size > sizeof(_grabbedCursor))
-		error("useBompCursor: cursor too big");
+		error("useBompCursor: cursor too big (%d)", size);
 
 	_cursor.width = width;
 	_cursor.height = height;
 	_cursor.animate = 0;
 
+	// FIXME - why exactly the +10 ? Is that to account for block headers or something?
+	// Should be documented and verified that this is appropriate for V8 bomps, or not.
 	decompressBomp(_grabbedCursor, im + 10, width, height);
 
 	updateCursor();
@@ -3312,6 +3314,8 @@ void Scumm::decompressBomp(byte *dst, byte *src, int w, int h)
 	int len, num;
 	byte code, color;
 
+
+	// FIXME - why this +8? To skip some kind of header? Is this right for V8 ?
 	src += 8;
 
 	do {

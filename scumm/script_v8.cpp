@@ -513,7 +513,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		byte buffer[1024];
 		_msgPtrToAdd = buffer;
 		_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
-		printf("Message(%d): '%s'\n", m, buffer);
+//		printf("Message(%d): '%s'\n", m, buffer);
 		break;
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
 		error("decodeParseString: SO_PRINT_MUMBLE");
@@ -714,10 +714,12 @@ void Scumm_v8::o8_cursorCommand()
 		break;
 	case 0xE4:		// SO_CURSOR_IMAGE Set cursor image
 		{
-			int room, obj = popRoomAndObj(&room);
+			int idx = pop();
+			int room, obj;
+			obj = popRoomAndObj(&room);
 			// FIXME
-			printf("setCursorImg(%d, %d, 1)\n", obj, room);
-//			setCursorImg(obj, room, 1);
+			printf("setCursorImg(%d, %d, %d)\n", obj, room, idx);
+			setCursorImg(obj, room, idx);
 		}
 		break;
 	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
@@ -1141,6 +1143,13 @@ void Scumm_v8::o8_kludge()
 	case 108:
 //		warning("o8_kludge: PaletteBuildRedirection(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
+	case 118:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
+		break;
+	case 119:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
+		break;
+
 	case 12:
 	case 13:
 	case 14:
@@ -1158,8 +1167,6 @@ void Scumm_v8::o8_kludge()
 	case 33:
 	case 34:
 	case 109:
-	case 118:
-	case 119:
 	default:
 		warning("o8_kludge: default case %d", args[0]);
 	}
@@ -1187,7 +1194,7 @@ void Scumm_v8::o8_kludge2()
 	default:
 		// FIXME - hack!
 		push(0);
-		warning("o8_kludge2: default case %d", args[0]);
+//		warning("o8_kludge2: default case %d", args[0]);
 	}
 
 }

@@ -83,8 +83,16 @@ struct BlastObject {		/* BlastObjects to draw */
 #endif
 
 struct BompHeader {			/* Bomp header */
-	uint16 unk;
-	uint16 width, height;
+	union {
+		struct {
+			uint16 unk;
+			uint16 width, height;
+		} GCC_PACK old;
+
+		struct {
+			uint32 width, height;
+		} GCC_PACK v8;
+	} GCC_PACK;
 } GCC_PACK;
 
 #if !defined(__GNUC__)

@@ -712,7 +712,7 @@ public:
 		byte animate, animateIndex;
 		int8 state;
 	} _cursor;
-	byte _grabbedCursor[2048];
+	byte _grabbedCursor[8192];
 	byte _currentCursor;
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
