@@ -51,7 +51,6 @@ static char *rtrim(char *t) {
 	return t;
 }
 
-
 namespace Common {
 
 const String ConfigManager::kApplicationDomain("scummvm");
@@ -98,16 +97,18 @@ ConfigManager::ConfigManager() {
 
 void ConfigManager::loadFile(const String &filename) {
 	FILE *cfg_file;
-	char t[MAXLINELEN];
+	char buf[MAXLINELEN];
+	char *t;
 	String domain;
 
 	if (!(cfg_file = fopen(filename.c_str(), "r"))) {
 		debug(1, "Unable to open configuration file: %s.\n", filename.c_str());
 	} else {
 		while (!feof(cfg_file)) {
+			t = buf;
 			if (!fgets(t, MAXLINELEN, cfg_file))
 				continue;
-			if (t[0] != '#') {
+			if (t[0] && t[0] != '#') {
 				if (t[0] == '[') {
 					// It's a new domain which begins here.
 					char *p = strchr(t, ']');
@@ -120,10 +121,20 @@ void ConfigManager::loadFile(const String &filename) {
 						domain = t + 1;
 					}
 				} else {
-					// It's a new key in the domain.
+					// Skip leading whitespaces
+					while (*t && isspace(*t)) {
+						t++;
+					}
+					// Skip empty lines
+					if (*t == 0)
+						continue;
+
+					// If no domain has been set, this config file is invalid!
 					if (domain.isEmpty()) {
 						error("Config file buggy: we have a key without a domain first.\n");
 					}
+
+					// It's a new key in the domain.
 					char *p = strchr(t, '\n');
 					if (p)
 						*p = 0;
@@ -299,8 +310,10 @@ void ConfigManager::set(const String &key, const String &value) {
 }
 
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
-	if (dom.isEmpty())
+	if (dom.isEmpty()) {
 		set(key, value);
+		return;
+	}
 
 	if (_globalDomains.contains(dom))
 		_globalDomains[dom][key] = value;
