@@ -236,9 +236,9 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 		}
 		assert(_objs[i].obj_nr == object);
 
-		imgw = (*(roomptr + _objs[i].OBCDoffset + 11));
-		imgh = (*(roomptr + _objs[i].OBCDoffset + 17)) >> 3;
-		imptr = (roomptr + _objs[i].OBIMoffset + 8);
+		imgw = (*(roomptr + _objs[i].OBCDoffset + 13));
+		imgh = (*(roomptr + _objs[i].OBCDoffset + 19)) >> 3;
+		imptr = (roomptr + _objs[i].OBIMoffset + 2);
 	} else if (_features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
