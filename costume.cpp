@@ -755,6 +755,7 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 						if(shadow2 != 0)
 						{
 							warning("proc_special: shadow2 unimplemented");
+							pcolor = 0;
 						}
 						else // we don't need all the random stuff, just the background copy
 						{

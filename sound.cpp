@@ -603,7 +603,7 @@ int Scumm::getCachedTrack(int track) {
 	struct mad_frame frame;
 	unsigned char buffer[8192];
 	unsigned int buflen = 0;
-	int count = 0, result = 0;
+	int count = 0;
 
 	// See if we find the track in the cache
 	for (i=0; i<CACHE_TRACKS; i++)
