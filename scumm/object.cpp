@@ -199,10 +199,10 @@ int Scumm::whereIsObject(int object) const {
 int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
 	if (object < _numActors) {
 		Actor *act = derefActorSafe(object, "getObjectOrActorXY");
-		if (!act) 
-			return 0; 
-		else
+		if (act)
 			return act->getActorXYPos(x, y);
+		else
+			return -1;
 	}
 
 	switch (whereIsObject(object)) {
@@ -210,9 +210,9 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
 		return -1;
 	case WIO_INVENTORY:
 		if (_objectOwnerTable[object] < _numActors)
-			return derefActorSafe(_objectOwnerTable[object], "getObjectOrActorXY(2)")->getActorXYPos(x, y);
+			return derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)")->getActorXYPos(x, y);
 		else
-			return 0xFF;
+			return -1;
 	}
 	getObjectXYPos(object, x, y);
 	return 0;
@@ -461,7 +461,7 @@ void Scumm::clearRoomObjects() {
 					nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
-				} 
+				}
 			}
 		}
 	}
