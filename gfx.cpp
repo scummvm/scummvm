@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.11  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.10  2001/10/29 23:07:24  strigeus
  * better MI1 compatibility
  *
@@ -82,11 +86,11 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 	int i;
 
 	for (i=0; i<3; i++) {
-		nukeResource(10, i+1);
-		nukeResource(10, i+5);
+		nukeResource(rtBuffer, i+1);
+		nukeResource(rtBuffer, i+5);
 	}
 
-	if (!getResourceAddress(10,4)) {
+	if (!getResourceAddress(rtBuffer,4)) {
 		initVirtScreen(3, 80, 13, false, false);
 	}
 	initVirtScreen(0, b, h-b, true, true);
@@ -118,10 +122,10 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	if (vs->scrollable)
 		size += 320*4;
 
-	memset(createResource(10, slot+1, size),0,size);
+	memset(createResource(rtBuffer, slot+1, size),0,size);
 
 	if (twobufs) {
-		memset(createResource(10, slot+5, size),0x23,size);
+		memset(createResource(rtBuffer, slot+5, size),0x23,size);
 	}
 
 	if (slot != 3) {
@@ -149,7 +153,7 @@ void Scumm::unkVirtScreen2() {
 	} else {
 		vs = &virtscr[0];
 
-		blitToScreen(this, getResourceAddress(10, 1) + _screenStartStrip*8,
+		blitToScreen(this, getResourceAddress(rtBuffer, 1) + _screenStartStrip*8,
 			0, vs->topline, 320, vs->height);
 
 		for (i = 0; i<40; i++) {
@@ -206,7 +210,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	if (b > vs->height)
 		b = vs->height;
 
-	ptr = _vm->getResourceAddress(10, vs->number+1) + (t*40+x)*8 + _readOffs;
+	ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + (t*40+x)*8 + _readOffs;
 	blitToScreen(_vm, ptr, x*8, vs->topline+t, w, b-t);
 }
 
@@ -344,7 +348,7 @@ void Scumm::initBGBuffers() {
 	int size, itemsize, i;
 	byte *room;
 
-	room = getResourceAddress(1, _roomResource);
+	room = getResourceAddress(rtRoom, _roomResource);
 
 	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room, 0), 0);
 
@@ -355,7 +359,7 @@ void Scumm::initBGBuffers() {
 	itemsize = (_scrHeight + 4) * 40;
 	size = itemsize * gdi._numZBuffer;
 
-	memset(createResource(10, 9, size), 0, size);
+	memset(createResource(rtBuffer, 9, size), 0, size);
 	
 	for (i=0; i<4; i++)
 		gdi._imgBufOffs[i] = i*itemsize;
@@ -391,7 +395,7 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 	}
 	
 	if (_videoMode==0xE) {
-		epal = getResourceAddress(1, _roomResource) + _EPAL_offs + 8;
+		epal = getResourceAddress(rtRoom, _roomResource) + _EPAL_offs + 8;
 		for (i=0; i<256; i++,epal++) {
 			_currentPalette[i] = *epal&0xF;
 			_currentPalette[i+256] = *epal>>4;
@@ -403,7 +407,7 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 
 void Scumm::setPaletteFromRes() {
 	byte *ptr;
-	ptr = getResourceAddress(1, _roomResource) + _CLUT_offs;
+	ptr = getResourceAddress(rtRoom, _roomResource) + _CLUT_offs;
 	setPaletteFromPtr(ptr);
 }
 
@@ -503,11 +507,11 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	if (!_palManipCounter)	
 		return;
 
-	startptr = getResourceAddress(0xC, 4) + start * 6;
-	endptr = getResourceAddress(0xC, 4) + end * 6;
+	startptr = getResourceAddress(rtTemp, 4) + start * 6;
+	endptr = getResourceAddress(rtTemp, 4) + end * 6;
 
-	startptr2 = getResourceAddress(0xC, 5) + start * 6;
-	endptr2 = getResourceAddress(0xC, 5) + end * 6;
+	startptr2 = getResourceAddress(rtTemp, 5) + start * 6;
+	endptr2 = getResourceAddress(rtTemp, 5) + end * 6;
 
 	num = end - start;
 	
@@ -541,7 +545,7 @@ void Scumm::unkVirtScreen4(int a) {
 		return;
 
 	vs = &virtscr[0];
-	gdi._backbuff_ptr = getResourceAddress(0xA, 1) + vs->xstart;
+	gdi._backbuff_ptr = getResourceAddress(rtBuffer, 1) + vs->xstart;
 	memset(gdi._backbuff_ptr, 0, vs->size);
 
 	switch(a) {
@@ -655,12 +659,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 		
-		_backbuff_ptr = _vm->getResourceAddress(0xA, vs->number+1) + (y*40+x)*8;
-		_bgbak_ptr = _vm->getResourceAddress(0xA, vs->number+5) + (y*40+x)*8;
+		_backbuff_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + (y*40+x)*8;
+		_bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number+5) + (y*40+x)*8;
 		if (!twobufs) {
 			_bgbak_ptr = _backbuff_ptr;
 		}
-		_mask_ptr = _vm->getResourceAddress(0xA, 9) + (y*40+x);
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y*40+x);
 
 		where_draw_ptr = _bgbak_ptr;
 		decompressBitmap();
@@ -688,8 +692,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 			if (!zplane_list[i])
 				continue;
 			_z_plane_ptr = zplane_list[i] + READ_LE_UINT16(zplane_list[i] + stripnr*2 + 8);
-			_mask_ptr_dest = _vm->getResourceAddress(0xA, 9) + y*40 + x + _imgBufOffs[i];
-			if (dseg_4E3B!=0 && flag)
+			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y*40 + x + _imgBufOffs[i];
+			if (_useOrDecompress && flag)
 				decompressMaskImgOr();
 			else
 				decompressMaskImg();
@@ -706,7 +710,7 @@ void Gdi::decompressBitmap() {
 		0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF, 0x0,
 	};
 
-	dseg_4E3B = 0;
+	_useOrDecompress = true;
 
 	byte code = *_smap_ptr++;
 
@@ -729,14 +733,14 @@ void Gdi::decompressBitmap() {
 		break;
 	
 	case 34: case 35: case 36: case 37: case 38:
-		dseg_4E3B = 1;
+		_useOrDecompress = true;
 		_decomp_shr = code - 30;
 		_decomp_mask = decompress_table[code - 30 ];
 		unkDecode4();
 		break;
 
 	case 44: case 45: case 46: case 47: case 48:
-		dseg_4E3B = 1;
+		_useOrDecompress = true;
 		_decomp_shr = code - 40;
 		_decomp_mask = decompress_table[code - 40];
 		unkDecode2();
@@ -749,7 +753,7 @@ void Gdi::decompressBitmap() {
 		break;
 
 	case 84: case 85: case 86: case 87: case 88:
-		dseg_4E3B = 1;
+		_useOrDecompress = true;
 		_decomp_shr = code - 80;
 		_decomp_mask = decompress_table[code - 80];
 		unkDecode3();
@@ -764,7 +768,7 @@ void Gdi::decompressBitmap() {
 	
 	/* New since version 6 */
 	case 124: case 125: case 126: case 127: case 128:
-		dseg_4E3B = 1;
+		_useOrDecompress = true;
 		_decomp_shr = code - 120;
 		_decomp_mask = decompress_table[code - 120];
 		unkDecode3();
@@ -918,7 +922,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 			_scrHeight);
 	}
 
-	gdi.drawBitmap(getResourceAddress(1, _roomResource)+_IM00_offs,
+	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource)+_IM00_offs,
 		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
 }
 
@@ -1250,9 +1254,9 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 
 	height = (top-topline) * 320 + vs->xstart + left;
 	
-	backbuff = getResourceAddress(0xA, vs->number+1) + height;
-	bgbak = getResourceAddress(0xA, vs->number+5) + height;
-	mask = getResourceAddress(0xA, 9) + top * 40 + (left>>3) + _screenStartStrip;
+	backbuff = getResourceAddress(rtBuffer, vs->number+1) + height;
+	bgbak = getResourceAddress(rtBuffer, vs->number+5) + height;
+	mask = getResourceAddress(rtBuffer, 9) + top * 40 + (left>>3) + _screenStartStrip;
 	if (vs->number==0) {
 		mask += vs->topline * 216;
 	}
@@ -1455,7 +1459,7 @@ void Scumm::setShake(int mode) {
 
 void Gdi::clearUpperMask() {
 	memset(
-		_vm->getResourceAddress(0xA, 9),
+		_vm->getResourceAddress(rtBuffer, 9),
 		0,
 		_imgBufOffs[1] - _imgBufOffs[0]
 	);
@@ -1593,8 +1597,8 @@ void Scumm::palManipulate() {
 
 	if (!_palManipCounter)
 		return;
-	srcptr = getResourceAddress(0xC, 4) + _palManipStart*6;
-	destptr = getResourceAddress(0xC, 5) + _palManipStart*6;
+	srcptr = getResourceAddress(rtTemp, 4) + _palManipStart*6;
+	destptr = getResourceAddress(rtTemp, 5) + _palManipStart*6;
 	pal = _currentPalette + _palManipStart * 3;
 
 	i = _palManipStart;
@@ -1618,8 +1622,8 @@ void Scumm::palManipulate() {
 	}
 	setDirtyColors(_palManipStart, _palManipEnd);
 	if (!--_palManipCounter) {
-		nukeResource(0xC, 4);
-		nukeResource(0xC, 5);
+		nukeResource(rtTemp, 4);
+		nukeResource(rtTemp, 5);
 	}
 }
 
@@ -1635,6 +1639,7 @@ void Scumm::screenEffect(int effect) {
 	case 133:	unkScreenEffect4();	break;
 	case 134:	unkScreenEffect5(0); break;
 	case 135:	unkScreenEffect5(1); break;
+	case 129: break;
 	default:
 		warning("Unknown screen effect, %d", effect);
 	}
@@ -1683,9 +1688,9 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 		vs->bdirty[strip] = bottom;
 	
 	offs = (top * 40 + _vm->_screenStartStrip + strip);
-	_mask_ptr = _vm->getResourceAddress(0xA, 9)	+ offs;
-	_bgbak_ptr = _vm->getResourceAddress(0xA, 5)	+ (offs<<3);
-	_backbuff_ptr = _vm->getResourceAddress(0xA, 1)	+ (offs<<3);
+	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)	+ offs;
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5)	+ (offs<<3);
+	_backbuff_ptr = _vm->getResourceAddress(rtBuffer, 1)	+ (offs<<3);
 	
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
@@ -1762,6 +1767,10 @@ void Scumm::setCursorImg(int room, int img) {
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w,h,inc,i;
+	
+	if (l<0 || t<0) {
+		l = 0;
+	}
 
 	mem += b*40 + (l>>3);
 
@@ -1812,7 +1821,7 @@ byte *Scumm::findPalInPals(byte *pal, int index) {
 byte *Scumm::getPalettePtr() {
 	byte *cptr;
 
-	cptr = getResourceAddress(1, _roomResource);
+	cptr = getResourceAddress(rtRoom, _roomResource);
 	if (_CLUT_offs) {
 		cptr += _CLUT_offs;
 	} else {
@@ -1876,13 +1885,21 @@ void Scumm::unkMiscOp4(int a, int b, int c, int d) {
 	}
 
 	grabCursor(
-		getResourceAddress(10, vs->number+1) + (b-vs->topline)*320 + a, 
+		getResourceAddress(rtBuffer, vs->number+1) + (b-vs->topline)*320 + a, 
 		c,d);
-	
-	
-	warning("stub unkMiscOp4(%d,%d,%d,%d)", a,b,c,d);
+
+//	_cursor_width = c;
+//	_cursor_height = d;
 }
 
 void Scumm::grabCursor(byte *ptr, int width, int height) {
+#if 0
+	int size;
+	byte *ptr;
 	
+	size = width * height;
+	if (size > 10240)
+		error("grabCursor: grabbed cursor too big");
+	ptr = createResource(
+#endif
 }

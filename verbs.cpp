@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.4  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -143,7 +147,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 		string[4].color = color;
 		if (vs->curmode==2)
 			string[4].color = vs->dimcolor;
-		_messagePtr = getResourceAddress(8, vrb);
+		_messagePtr = getResourceAddress(rtVerb, vrb);
 		assert(_messagePtr);
 		tmp = charset._center;
 		charset._center = 0;
@@ -198,7 +202,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	ydiff = y - vs->topline;
 
 
-	obim = getResourceAddress(8, vrb);
+	obim = getResourceAddress(rtVerb, vrb);
 	IMHD_ptr = findResource(MKID('IMHD'), obim, 0);
 
 	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
@@ -247,7 +251,7 @@ void Scumm::killVerb(int slot) {
 	vs->verbid = 0;
 	vs->curmode = 0;
 
-	nukeResource(8, slot);
+	nukeResource(rtVerb, slot);
 
 	if (vs->saveid==0) {
 		drawVerb(slot, 0);
@@ -267,8 +271,8 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 	if (whereIsObject(object) == 4)
 		error("Can't grab verb image from flobject");
 
-	ensureResourceLoaded(1,room);
-	roomptr = getResourceAddress(1, room);
+	ensureResourceLoaded(rtRoom,room);
+	roomptr = getResourceAddress(rtRoom, room);
 	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
 
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
@@ -285,9 +289,9 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 		if ( READ_LE_UINT16(&imhd->obj_id) == object) {
 			imoffs = obimptr - roomptr;
 			size = READ_BE_UINT32_UNALIGNED(obimptr+4);
-			createResource(8, verb, size);
-			obimptr = getResourceAddress(1, room) + imoffs;
-			memcpy(getResourceAddress(8, verb), obimptr, size);
+			createResource(rtVerb, verb, size);
+			obimptr = getResourceAddress(rtRoom, room) + imoffs;
+			memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 			return;
 		}
 	}

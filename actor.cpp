@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.7  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -241,7 +245,7 @@ void Scumm::setupActorScale(Actor *a) {
 
 	if (scale & 0x8000) {
 		scale = (scale&0x7FFF)+1;
-		resptr = getResourceAddress(0xB, scale);
+		resptr = getResourceAddress(rtScaleTable, scale);
 		if (resptr==NULL)
 			error("Scale table %d not defined",scale);
 		if (a->y >= 0)
@@ -584,7 +588,7 @@ void Scumm::showActor(Actor *a) {
 
 	adjustActorPos(a);
 
-	ensureResourceLoaded(3, a->costume);
+	ensureResourceLoaded(rtCostume, a->costume);
 
 	if (a->costumeNeedsInit) {
 		startAnimActor(a, a->initFrame, a->facing);
@@ -615,8 +619,9 @@ void Scumm::stopTalk() {
 	act = _vars[VAR_TALK_ACTOR];
 	if (act && act<0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
-		if (_currentRoom == a->room) {
-			startAnimActor(a, a->talkFrame2, a->facing);			
+		if (_currentRoom == a->room && _useTalkAnims) {
+			startAnimActor(a, a->talkFrame2, a->facing);
+			_useTalkAnims = false;
 		}
 		_vars[VAR_TALK_ACTOR] = 0xFF;
 	}
@@ -824,7 +829,7 @@ void Scumm::actorAnimate(Actor *a) {
 	if (a->animProgress >= a->animSpeed) {
 		a->animProgress = 0;
 		cost.loadCostume(a->costume);
-		if (cost.animate(&a->cost)) {
+		if (cost.animate(a)) {
 			a->needRedraw = true;
 			a->needBgReset = true;
 		}
@@ -885,7 +890,10 @@ void Scumm::actorTalk() {
 			if (!_keepText)
 				stopTalk();
 			_vars[VAR_TALK_ACTOR] = a->number;
-			startAnimActor(a,a->talkFrame1,a->facing);
+			if (!string[0].no_talk_anim) {
+				startAnimActor(a,a->talkFrame1,a->facing);
+				_useTalkAnims = true;
+			}
 			oldact = _vars[VAR_TALK_ACTOR];
 		}
 	}
@@ -976,8 +984,22 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 }
 
 byte *Scumm::getActorName(Actor *a) {
-	byte *ptr = getResourceAddress(9, a->number);
+	byte *ptr = getResourceAddress(rtActorName, a->number);
 	if(ptr==NULL)
 		return (byte*)" ";
 	return ptr;
+}
+
+bool Scumm::isCostumeInUse(int cost) {
+	int i;
+	Actor *a;
+
+	if (_roomResource!=0)
+		for (i=1; i<13; i++) {
+			a = derefActor(i);
+			if (a->room == _currentRoom && a->costume == cost)
+				return true;
+		}
+
+	return false;
 }

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.5  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -61,7 +65,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 		stopScriptNr(script);
 
 	if (script < _numGlobalScripts) {
-		scriptPtr = getResourceAddress(2, script);
+		scriptPtr = getResourceAddress(rtScript, script);
 		scriptOffs = 8;
 		scriptType = 2;
 	} else {
@@ -194,7 +198,6 @@ void Scumm::runScriptNested(int script) {
 		slot = &vm.slot[_currentScript];
 		nest->number = slot->number;
 		nest->type = slot->type;
-		/* scumm is buggy here */
 		nest->slot = _currentScript;
 	}
 
@@ -242,24 +245,24 @@ void Scumm::getScriptBaseAddress() {
 	switch(ss->type) {
 	case 0: /* inventory script **/
 		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(5, index);
+		_scriptOrgPointer = getResourceAddress(rtInventory, index);
 		_lastCodePtr = &_baseInventoryItems[index];
 		break;
 
 	case 3:
 	case 1: /* room script */
-		_scriptOrgPointer = getResourceAddress(1, _roomResource);
+		_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 		_lastCodePtr = &_baseRooms[_roomResource];
 		break;
 
 	case 2: /* global script */
-		_scriptOrgPointer = getResourceAddress(2, ss->number);
+		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		_lastCodePtr = &_baseScripts[ss->number];
 		break;
 
 	case 4: /* flobject script */
 		index = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(13,_objs[index].fl_object_index);
+		_scriptOrgPointer = getResourceAddress(rtFlObject,_objs[index].fl_object_index);
 		_lastCodePtr = &_baseFLObject[ss->number];
 		break;
 	default:
@@ -443,7 +446,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 	updateDirtyRect(vs->number, x, x2, y-top, y2-top, 0);
 
-	backbuff = getResourceAddress(0xA, vs->number+1) + vs->xstart	+ (y-top)*320 + x;
+	backbuff = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (y-top)*320 + x;
 
 	count = y2 - y;
 	while (count) {
@@ -475,7 +478,7 @@ void Scumm::stopObjectCode() {
 	_currentScript = 0xFF;
 }
 
-bool Scumm::isScriptLoaded(int script) {
+bool Scumm::isScriptInUse(int script) {
 	ScriptSlot *ss;
 	int i;
 
@@ -602,11 +605,23 @@ void Scumm::killScriptsAndResources() {
 		}
 	}
 	
+	/* Nuke FL objects */
 	i = 0;
 	do {
 		if (_objs[i].fl_object_index)
 			nukeResource(0xD, _objs[i].fl_object_index);
 	} while (++i <= _numObjectsInRoom);
+
+	/* Nuke local object names */
+	if (_newNames) {
+		for (i=0; i<50; i++) {
+			int j = _newNames[i];
+			if (j && (getOwner(j)&0xF) == 0) {
+				_newNames[i] = 0;
+				nukeResource(rtObjectName, i);
+			}
+		}
+	}
 }
 
 void Scumm::checkAndRunVar33() {
@@ -614,7 +629,7 @@ void Scumm::checkAndRunVar33() {
 	ScriptSlot *ss;
 
 	memset(_localParamList, 0, sizeof(_localParamList));
-	if (isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT])) {
+	if (isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
 		ss = vm.slot;
 		for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 			if (ss->number==_vars[VAR_SENTENCE_SCRIPT] && ss->status!=0 && ss->freezeCount==0)
@@ -910,7 +925,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	size *= dim1+1;
 	size >>= 3;
 
-	ah = (ArrayHeader*)createResource(7, id, size+sizeof(ArrayHeader));
+	ah = (ArrayHeader*)createResource(rtString, id, size+sizeof(ArrayHeader));
 
 	ah->type = type;
 	ah->dim1_size = dim1+1;
@@ -925,7 +940,7 @@ void Scumm::nukeArray(int a) {
 	data = readVar(a);
 
 	if (data)
-		nukeResource(7, data);
+		nukeResource(rtString, data);
 	_arrays[data] = 0;
 
 	writeVar(a, 0);
@@ -948,7 +963,7 @@ void Scumm::arrayop_1(int a, byte *ptr) {
 	int len = getStringLen(ptr);
 			
 	r = defineArray(a, 4, 0, len);
-	ah = (ArrayHeader*)getResourceAddress(7,r);
+	ah = (ArrayHeader*)getResourceAddress(rtString,r);
 	copyString(ah->data,ptr,len);
 }
 

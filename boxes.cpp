@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.2  2001/10/11 10:45:39  strigeus
  * Fixed bug in Scumm::getBoxCoordinates where unsigned integers were read
  * instead of signed ones.
@@ -47,12 +51,12 @@ int Scumm::getBoxScale(int box) {
 }
 
 byte Scumm::getNumBoxes() {
-	byte *ptr = getResourceAddress(0xE, 2);
+	byte *ptr = getResourceAddress(rtMatrix, 2);
 	return ptr[8];
 }
 
 Box *Scumm::getBoxBaseAddr(int box) {
-	byte *ptr = getResourceAddress(0xE, 2);
+	byte *ptr = getResourceAddress(rtMatrix, 2);
 	checkRange(ptr[8]-1, 0, box, "Illegal box %d");
 	return (Box*)(ptr + box*SIZEOF_BOX + 10);
 }
@@ -295,7 +299,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 }
 
 byte *Scumm::getBoxMatrixBaseAddr() {
-	byte *ptr = getResourceAddress(0xE, 1) + 8;
+	byte *ptr = getResourceAddress(rtMatrix, 1) + 8;
 	if (*ptr==0xFF) ptr++;
 	return ptr;
 }
@@ -512,19 +516,19 @@ void Scumm::createBoxMatrix() {
 
 	_maxBoxVertexHeap = 1000;
 
-	createResource(0xE, 4, 1000);
-	createResource(0xE, 3, 4160); //65 items of something of size 64
-	createResource(0xE, 1, BOX_MATRIX_SIZE+8);
+	createResource(rtMatrix, 4, 1000);
+	createResource(rtMatrix, 3, 4160); //65 items of something of size 64
+	createResource(rtMatrix, 1, BOX_MATRIX_SIZE+8);
 
-	matrix_ptr = getResourceAddress(0xE, 1);
+	matrix_ptr = getResourceAddress(rtMatrix, 1);
 
 	/* endian & alignment safe */
 	((uint32*)matrix_ptr)[1] = TO_BE_32(BOX_MATRIX_SIZE+8);
 	((uint32*)matrix_ptr)[0] = MKID('BOXM');
 
-	_boxMatrixPtr4 = getResourceAddress(0xE, 4);
-	_boxMatrixPtr1 = getResourceAddress(0xE, 1) + 8;
-	_boxMatrixPtr3 = getResourceAddress(0xE, 3);
+	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
+	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1) + 8;
+	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
 
 	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
 	
@@ -628,8 +632,8 @@ void Scumm::createBoxMatrix() {
 	}
 
 	addToBoxMatrix(0xFF);
-	nukeResource(0xE, 4);
-	nukeResource(0xE, 3);
+	nukeResource(rtMatrix, 4);
+	nukeResource(rtMatrix, 3);
 }
 
 PathVertex *Scumm::unkMatrixProc1(PathVertex *vtx, PathNode *node) {
@@ -716,7 +720,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 			if (upperRightX == upperLeftX &&
 				  box.upperLeftX == upperLeftX &&
 					box.upperRightX == upperRightX) {
-				/* 5b74 */
 				n = m = 0;
 				if (upperRightY < upperLeftY) {
 					n = 1;
@@ -732,7 +735,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 						 box.upperRightY==upperLeftY) &&
 						 upperRightY != upperLeftY &&
 						 box.upperLeftY!=box.upperRightY) {
-					/* if_1_if */
 					if (n) {
 						SWAP(upperRightY, upperLeftY);
 					}
@@ -740,7 +742,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 						SWAP(box.upperRightY, box.upperLeftY);
 					}
 				} else {
-					/* if_1_else */
 					if (n) {
 						SWAP(upperRightY, upperLeftY);
 					}
@@ -751,7 +752,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 				}	
 			}
 
-			/* do_it_for_y */
 			if (upperRightY == upperLeftY && 
 					box.upperLeftY == upperLeftY &&
 					box.upperRightY == upperRightY) {
@@ -771,7 +771,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 						 upperRightX != upperLeftX &&
 						 box.upperLeftX!=box.upperRightX) {
 
-					/* if_2_if */
 					if (n) {
 						SWAP(upperRightX, upperLeftX);
 					}
@@ -779,7 +778,6 @@ bool Scumm::areBoxesNeighbours(int box1, int box2) {
 						SWAP(box.upperRightX, box.upperLeftX);
 					}
 				} else {
-					/* if_2_else */
 					if (n) {
 						SWAP(upperRightX, upperLeftX);
 					}
@@ -836,7 +834,7 @@ void *Scumm::addToBoxVertexHeap(int size) {
 }
 
 PathVertex *Scumm::addPathVertex() {
-	_boxMatrixPtr4 = getResourceAddress(0xE, 4);
+	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
 	return (PathVertex*)addToBoxVertexHeap(sizeof(PathVertex));
 }

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.8  2001/10/29 21:49:25  strigeus
  * fixed bug in validateResource
  *
@@ -424,7 +428,7 @@ void Scumm::loadCharset(int no) {
 	debug(9, "loadCharset(%d)",no);
 
 	checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
-	ensureResourceLoaded(6, no);
+//	ensureResourceLoaded(6, no);
 	ptr = getResourceAddress(6, no);
 
 	for (i=0; i<15; i++) {
@@ -434,7 +438,7 @@ void Scumm::loadCharset(int no) {
 
 void Scumm::nukeCharset(int i) {
 	checkRange(_maxCharsets-1, 1, i, "Nuking illegal charset %d");
-	nukeResource(6, i);
+	nukeResource(rtCharset, i);
 }
 
 void Scumm::ensureResourceLoaded(int type, int i) {
@@ -506,7 +510,7 @@ int Scumm::loadResource(int type, int index) {
 			/* dump the resource */
 #ifdef DUMP_SCRIPTS
 			if(type==2) {
-				dumpResource("script-", index, getResourceAddress(2, index));
+				dumpResource("script-", index, getResourceAddress(rtScript, index));
 			}
 #endif
 
@@ -540,11 +544,11 @@ int Scumm::readSoundResource(int type, int index) {
 		
 		resStart += size2 + 8;
 		
-		for (i=0,ptr=_soundTagTable; i<_numSoundTags; i++,ptr+=5) {
+		for (i=0,ptr=_soundTagTable; i<_numSoundTags; i++,ptr+=4) {
 /* endian OK, tags are in native format */
 			if (READ_UINT32_UNALIGNED(ptr) == tag) {
 				fileSeek(_fileHandle, -8, SEEK_CUR);
-				fileRead(_fileHandle,createResource(type, index, size2+8), size+8);
+				fileRead(_fileHandle,createResource(type, index, size2+8), size2+8);
 				return 1;
 			}
 		}
@@ -575,7 +579,7 @@ byte *Scumm::getResourceAddress(int type, int index) {
 		ensureResourceLoaded(type, index);
 	}	
 
-	setResourceFlags(type, index, 1);
+	setResourceCounter(type, index, 1);
 
 	ptr=(byte*)res.address[type][index];
 	if (!ptr)
@@ -585,7 +589,7 @@ byte *Scumm::getResourceAddress(int type, int index) {
 }
 
 byte *Scumm::getStringAddress(int i) {
-	byte *b = getResourceAddress(7, i);
+	byte *b = getResourceAddress(rtString, i);
 	if (!b)
 		return b;
 	
@@ -594,10 +598,13 @@ byte *Scumm::getStringAddress(int i) {
 	return b;
 }
 
-void Scumm::setResourceFlags(int type, int index, byte flag) {
+void Scumm::setResourceCounter(int type, int index, byte flag) {
 	res.flags[type][index] &= 0x80;
 	res.flags[type][index] |= flag;
 }
+
+/* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
+#define SAFETY_AREA 2
 
 byte *Scumm::createResource(int type, int index, uint32 size) {
 	byte *ptr;
@@ -612,19 +619,20 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 	validateResource("allocating", type, index);
 	nukeResource(type, index);
 
+	expireResources(size);
+
 	CHECK_HEAP
 	
-	ptr = (byte*)alloc(size + sizeof(ResHeader));
+	ptr = (byte*)alloc(size + sizeof(ResHeader) + SAFETY_AREA);
 	if (ptr==NULL) {
 		error("Out of memory while allocating %d", size);
 	}
 
+	_allocatedSize += size;
+
 	res.address[type][index] = ptr;
-
 	((ResHeader*)ptr)->size = size;
-
-	setResourceFlags(type, index, 1);
-
+	setResourceCounter(type, index, 1);
 	return ptr + sizeof(ResHeader); /* skip header */
 }
 
@@ -635,25 +643,20 @@ void Scumm::validateResource(const char *str, int type, int index) {
 }
 
 void Scumm::nukeResource(int type, int index) {
-	
+	byte *ptr;
+
 	debug(9, "nukeResource(%d,%d)", type, index);
 
 	CHECK_HEAP
 	assert( res.address[type] );
 	assert( index>=0 && index < res.num[type]);
 
-	if (res.address[type][index]) {
-		free(res.address[type][index]);
+	if ((ptr = res.address[type][index]) != NULL) {
 		res.address[type][index] = 0;
+		res.flags[type][index] = 0;
+		_allocatedSize -= ((ResHeader*)ptr)->size;
+		free(ptr);
 	}
-}
-
-void Scumm::unkResourceProc() {
-	int i;
-	for (i=1; i<16; i++) {
-	}
-	/* TODO: not implemented */
-	warning("unkResourceProc: not implemented");
 }
 
 byte *findResource(uint32 tag, byte *searchin, int index) {
@@ -687,11 +690,97 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 void Scumm::lock(int type, int i) {
 	validateResource("Locking", type, i);
 	res.flags[type][i] |= 0x80;
+
+	debug(9, "locking %d,%d", type, i);
 }
 
 void Scumm::unlock(int type, int i) {
 	validateResource("Unlocking", type, i);
-	res.flags[type][i] &= ~0x7F;
+	res.flags[type][i] &= ~0x80;
+
+	debug(9, "unlocking %d,%d", type, i);
+}
+
+bool Scumm::isResourceInUse(int type, int i) {
+	validateResource("isResourceInUse", type, i);
+	switch(type) {
+	case rtRoom:
+		return _roomResource == (byte)i;
+	case rtScript:
+		return isScriptInUse(i);
+	case rtCostume:
+		return isCostumeInUse(i);
+	case rtSound:
+		return isSoundRunning(i)!=0;
+	default:
+		return false;
+	}
+}
+
+void Scumm::increaseResourceCounter() {
+	int i,j;
+	byte counter;
+
+	for (i=1; i<=16; i++) {
+		for(j=res.num[i]; --j>=0;) {
+			counter = res.flags[i][j] & 0x7F;
+			if (counter && counter < 0x7F) {
+				setResourceCounter(i, j, counter+1);
+			}
+		}
+	}
+}
+
+#define EXPIRE_FREQ 40
+
+void Scumm::expireResources(uint32 size) {
+	int i,j;
+	byte flag;
+	byte best_counter;
+	int best_type, best_res;
+
+	if (_expire_counter != 0xFF) {
+		_expire_counter = 0xFF;
+		increaseResourceCounter();
+	}
+
+	if (size + _allocatedSize < _maxHeapThreshold)
+		return;
+
+	do {
+		best_type = 0;
+		best_counter = 2;
+
+		for (i=1; i<=16; i++)
+			if (res.mode[i]) {
+				for(j=res.num[i]; --j>=0;) {
+					flag = res.flags[i][j];
+					if (!(flag&0x80) && flag >= best_counter && !isResourceInUse(i,j)) {
+						best_counter = flag;
+						best_type = i;
+						best_res = j;
+					}
+				}
+			}
+
+		if (!best_type)
+			break;
+		nukeResource(best_type, best_res);
+	} while (size + _allocatedSize > _minHeapThreshold);
+}
+
+void Scumm::freeResources() {
+	int i,j;
+	for (i=1; i<=16; i++) {
+		for(j=res.num[i]; --j>=0;) {
+			if (isResourceLoaded(i,j))
+				nukeResource(i,j);
+		}
+		free(res.address[i]);
+		free(res.flags[i]);
+		free(res.roomno[i]);
+		free(res.roomoffs[i]);
+	}
 }
 
 void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
@@ -717,6 +806,15 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
 	}
 }
 
+bool Scumm::isResourceLoaded(int type, int index) {
+	validateResource("isLoaded", type, index);
+	return res.address[type][index] != NULL;
+}
+
+void Scumm::resourceStats() {
+	printf("Total allocated size=%d\n", _allocatedSize);
+}
+
 void Scumm::heapClear(int mode) {
 	/* TODO: implement this */
 	warning("heapClear: not implemented");
@@ -727,10 +825,9 @@ void Scumm::unkHeapProc2(int a, int b) {
 	warning("unkHeapProc2: not implemented");
 } 
 
-void Scumm::unkResProc(int a, int b) {
-	warning("unkResProc:not implemented");
+void Scumm::loadFlObject(int a, int b) {
+	debug(9, "loadFlObject(%d,%d):not implemented", a, b);
 }
-
 
 void Scumm::readMAXS() {
 	_numVariables = fileReadWordLE();

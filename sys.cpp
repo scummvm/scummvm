@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.2  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -96,7 +100,7 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size) {
 		if (size==0)
 			return;
 
-		src = getResourceAddress(0xC, 3) + _whereInResToRead;
+		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
 		_whereInResToRead += size;
 		do {
 			*ptr2++ = *src++ ^ _encbyte;
@@ -116,7 +120,7 @@ int Scumm::fileReadByte() {
 		return b ^ _encbyte;
 
 	case 3:
-		src = getResourceAddress(0xC, 3) + _whereInResToRead;
+		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
 		_whereInResToRead++;
 		return *src ^ _encbyte;
 	}
@@ -157,13 +161,15 @@ byte *Scumm::alloc(int size) {
 }
 
 void Scumm::free(void *mem) {
-	byte *me = (byte*)mem - 4;
-	if ( *((uint32*)me) != 0xDEADBEEF) {
-		error("Freeing invalid block.");
-	}
+	if (mem) {
+		byte *me = (byte*)mem - 4;
+		if ( *((uint32*)me) != 0xDEADBEEF) {
+			error("Freeing invalid block.");
+		}
 
-	*((uint32*)me) = 0xC007CAFE;
-	::free(me);
+		*((uint32*)me) = 0xC007CAFE;
+		::free(me);
+	}
 }
 
 bool Scumm::checkFixedDisk() {

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.13  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.12  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -62,10 +66,18 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+#if defined(USE_IMUSE)
+#include "sound.h"
+#endif
+
 #define SCALEUP_2x2
 
 Scumm scumm;
 ScummDebugger debugger;
+
+#if defined(USE_IMUSE)
+SoundEngine sound;
+#endif
 
 static SDL_Surface *screen;
 
@@ -113,8 +125,15 @@ void waitForTimer(Scumm *s) {
 				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 1;
 				}
+				if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
+					s->_fastMode ^= 2;
+				}
+
 				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
 					debugger.attach(s);
+				}
+				if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
+					s->resourceStats();
 				}
 				
 				break;
@@ -153,7 +172,9 @@ void waitForTimer(Scumm *s) {
 				break;
 			}
 		}
-		SDL_Delay(dontPause ? 10 : 100);
+		
+		if (!(s->_fastMode&2))
+			SDL_Delay(dontPause ? 10 : 100);
 	} while (!dontPause);
 
 	s->_scummTimer+=3;
@@ -175,10 +196,17 @@ void addDirtyRect(int x, int y, int w, int h) {
 		fullRedraw = true;
 	else if (!fullRedraw) {
 		r = &dirtyRects[numDirtyRects++];
+#if defined(SCALEUP_2x2)
 		r->x = x*2;
 		r->y = y*2;
 		r->w = w*2;
 		r->h = h*2;
+#else
+		r->x = x;
+		r->y = y;
+		r->w = w;
+		r->h = h;
+#endif
 	}
 }
 
@@ -209,7 +237,7 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	addDirtyRect(x,y,w,h);
 	do {
 		memcpy(dst, src, w);
-		dst += 640;
+		dst += 320;
 		src += 320;
 	} while (--h);
 #else
@@ -231,7 +259,11 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 }
 
 void updateScreen(Scumm *s) {
-	
+
+	if (s->_fastMode&2)
+		return;
+
+
 	if (hide_mouse) {
 		hide_mouse = false;
 		s->drawMouse();
@@ -252,6 +284,7 @@ void updateScreen(Scumm *s) {
 			area += (dirtyRects[i].w * dirtyRects[i].h);
 		debug(2,"update area %f %%", (float)area/640);
 #endif
+
 		SDL_UpdateRects(screen, numDirtyRects, dirtyRects);	
 	}
 
@@ -268,6 +301,8 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 
 	if (SDL_LockSurface(screen)==-1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+#if defined(SCALEUP_2x2)
 
 	if (has_mouse) {
 		dst = (byte*)screen->pixels + old_mouse_y*640*2 + old_mouse_x*2;
@@ -308,6 +343,43 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 			}
 		}
 	}
+#else
+	if (has_mouse) {
+		dst = (byte*)screen->pixels + old_mouse_y*320 + old_mouse_x;
+		bak = old_backup;
+
+		for (y=0; y<16; y++,bak+=24,dst+=320) {
+			if ( (uint)(old_mouse_y + y) < 200) {
+				for (x=0; x<24; x++) {
+					if ((uint)(old_mouse_x + x) < 320) {
+						dst[x] = bak[x];
+					}
+				}
+			}
+		}
+	}
+	if (visible) {
+		dst = (byte*)screen->pixels + ydraw*320 + xdraw;
+		bak = old_backup;
+
+		for (y=0; y<16; y++,dst+=320,bak+=24) {
+			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
+			mask += 4;
+			if ((uint)(ydraw+y)<200) {
+				for (x=0; x<24; x++,bits<<=1) {
+					if ((uint)(xdraw+x)<320) {
+						bak[x] = dst[x];
+						if (bits&(1<<23)) {
+							dst[x] = color;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+#endif	
 
 	SDL_UnlockSurface(screen);
 
@@ -322,13 +394,77 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 		old_mouse_x = xdraw;
 		old_mouse_y = ydraw;
 	}
-	
+
+}
+
+#define SAMPLES_PER_SEC 22050
+#define BUFFER_SIZE (8192)
+#define BITS_PER_SAMPLE 16
+
+static void *_sfx_sound;
+static int _sfx_pos;
+static int _sfx_size;
+
+static uint32 _sfx_fp_speed;
+static uint32 _sfx_fp_pos;
+
+bool isSfxFinished() {
+	return _sfx_size == 0;
+}
+
+void playSfxSound(void *sound, int size, int rate) {
+	if (_sfx_sound) {
+		free(_sfx_sound);
+	}
+	_sfx_sound = sound;
+	_sfx_pos = 0;
+	_sfx_fp_speed = (1<<16) * rate / 22050;
+	_sfx_fp_pos = 0;
+	_sfx_size = size * 22050 / rate;
+}
+
+void mix_sound(int16 *data, int len) {
+	int8 *s;
+	int i;
+	uint32 fp_pos, fp_speed;
+
+	if (!_sfx_size)
+		return;
+	if (len > _sfx_size)
+		len = _sfx_size;
+	_sfx_size -= len;
+
+	s = (int8*)_sfx_sound + _sfx_pos;
+	fp_pos = _sfx_fp_pos;
+	fp_speed = _sfx_fp_speed;
+
+	do {
+		fp_pos += fp_speed;
+		*data++ += (*s<<6);
+		s += fp_pos >> 16;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	_sfx_pos = s - (int8*)_sfx_sound;
+	_sfx_fp_speed = fp_speed;
+	_sfx_fp_pos = fp_pos;
+}
+
+void fill_sound(void *userdata, Uint8 *stream, int len) {
+#if defined(USE_IMUSE)
+	sound.generate_samples((int16*)stream, len>>1);
+#else
+	memset(stream, 0, len);
+#endif
+	mix_sound((int16*)stream, len>>1);
 }
 
 void initGraphics(Scumm *s) {
-	if (SDL_Init(SDL_INIT_VIDEO)==-1) {
+	SDL_AudioSpec desired;
+
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
-    exit(1);
+	    exit(1);
 	}
 
 	/* Clean up on exit */
@@ -338,9 +474,19 @@ void initGraphics(Scumm *s) {
 	
 	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
 	free(gameName);
-	
+
+	desired.freq = SAMPLES_PER_SEC;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 1;
+	desired.samples = 2048;
+	desired.callback = fill_sound;
+	SDL_OpenAudio(&desired, NULL);
+	SDL_PauseAudio(0);
+
+
 	SDL_WM_SetCaption(buf,buf);
 	SDL_ShowCursor(SDL_DISABLE);
+
 
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
@@ -362,6 +508,12 @@ void initGraphics(Scumm *s) {
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
+
+#if defined(USE_IMUSE)
+	sound.initialize(NULL);
+	scumm._soundDriver = &sound;
+#endif
+
 	scumm.scummMain(argc, argv);
 	return 0;
 }

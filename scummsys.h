@@ -17,9 +17,9 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.6  2001/11/03 06:33:29  cmatsuoka
- * Protecting VC++-specific pragmas with ifdef _MSC_VER to allow
- * a clean Cygwin build.
+ * Revision 1.7  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
  *
  * Revision 1.5  2001/10/23 19:51:50  strigeus
  * recompile not needed when switching games
@@ -43,11 +43,8 @@
 
 #if defined(WIN32)
 
-/* Pragmas are VC++-specific */
-#if defined(_MSC_VER)
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
-#endif
 
 #define scumm_stricmp stricmp
 

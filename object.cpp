@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.7  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -154,10 +158,10 @@ void Scumm::getObjectXYPos(int object) {
 			state = 0;
 
 		if (od->fl_object_index) {
-			ptr = getResourceAddress(0xD, od->fl_object_index);
+			ptr = getResourceAddress(rtFlObject, od->fl_object_index);
 			ptr = findResource(MKID('OBIM'), ptr, 0);
 		} else {
-			ptr = getResourceAddress(1, _roomResource);
+			ptr = getResourceAddress(rtRoom, _roomResource);
 			ptr += od->offs_obim_to_room;
 		}
 
@@ -302,10 +306,10 @@ void Scumm::drawObject(int obj, int arg) {
 		return;
 	
 	if (od->fl_object_index) {
-		ptr = getResourceAddress(0xD, od->fl_object_index);
+		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
 		ptr = findResource(MKID('OBIM'), ptr, 0); 
 	} else {
-		ptr = getResourceAddress(1, _roomResource);
+		ptr = getResourceAddress(rtRoom, _roomResource);
 		ptr = ptr + od->offs_obim_to_room;
 	}
 
@@ -351,7 +355,7 @@ void Scumm::loadRoomObjects() {
 
 	CHECK_HEAP
 	
-	room = getResourceAddress(1, _roomResource);
+	room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), room, 0);
 
 	_numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
@@ -465,7 +469,7 @@ void Scumm::clearOwnerOf(int obj) {
 			if (_objs[i].obj_nr==obj) {
 				if (!_objs[i].fl_object_index)
 					return;
-				nukeResource(0xD, _objs[i].fl_object_index);
+				nukeResource(rtFlObject, _objs[i].fl_object_index);
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
 			}
@@ -476,7 +480,7 @@ void Scumm::clearOwnerOf(int obj) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
 			if (j==0) {
-				nukeResource(5, i);
+				nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 			}
 			a = &_inventory[1];
@@ -484,7 +488,7 @@ void Scumm::clearOwnerOf(int obj) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
-					ptr = getResourceAddress(5, i+1);
+					ptr = getResourceAddress(rtInventory, i+1);
 					_baseInventoryItems[i] = _baseInventoryItems[i+1];
 					_baseInventoryItems[i+1] = 0;
 					/* TODO: some wacky write is done here */
@@ -558,14 +562,14 @@ byte *Scumm::getObjectAddress(int obj) {
 	if ((_objectFlagTable[obj]&0xF)!=0xF) {
 		for(i=0; i<_maxInventoryItems; i++) {
 			if (_inventory[i] == obj)
-				return getResourceAddress(5, i);
+				return getResourceAddress(rtInventory, i);
 		}
 	} else {
 		for(i=_numObjectsInRoom; i>0; --i) {
 			if (_objs[i].obj_nr==obj) {
 				if (_objs[i].fl_object_index)
-					return getResourceAddress(0xD, _objs[i].fl_object_index)+8;
-				return getResourceAddress(1, _roomResource) + _objs[i].offs_obcd_to_room;
+					return getResourceAddress(rtFlObject, _objs[i].fl_object_index)+8;
+				return getResourceAddress(rtRoom, _roomResource) + _objs[i].offs_obcd_to_room;
 			}
 		}
 	}
@@ -587,18 +591,18 @@ void Scumm::addObjectToInventory(int obj, int room) {
 
 	if (whereIsObject(obj)==4) {
 		i = getObjectIndex(obj);
-		ptr = getResourceAddress(0xD, _objs[i].fl_object_index) + 64;
+		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 64;
 		size = READ_BE_UINT32_UNALIGNED(ptr+4);
 		slot = getInventorySlot();
 		_inventory[slot] = obj;
-		createResource(5, slot, size);
-		ptr = getResourceAddress(0xD, _objs[i].fl_object_index) + 64;
-		memcpy(getResourceAddress(5, slot), ptr, size);
+		createResource(rtInventory, slot, size);
+		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 64;
+		memcpy(getResourceAddress(rtInventory, slot), ptr, size);
 		CHECK_HEAP
 		return;
 	}
-	ensureResourceLoaded(1, room);
-	roomptr = getResourceAddress(1, room);
+//	ensureResourceLoaded(rtRoom, room);
+	roomptr = getResourceAddress(rtRoom, room);
 	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
 	numobj = READ_LE_UINT16(&roomhdr->numObjects);
 	if (numobj==0)
@@ -616,9 +620,9 @@ void Scumm::addObjectToInventory(int obj, int room) {
 			size = READ_BE_UINT32_UNALIGNED(obcdptr+4);
 			slot = getInventorySlot();
 			_inventory[slot] = obj;
-			createResource(5, slot, size);
-			obcdptr = getResourceAddress(1, room) + cdoffs;
-			memcpy(getResourceAddress(5,slot),obcdptr,size);
+			createResource(rtInventory, slot, size);
+			obcdptr = getResourceAddress(rtRoom, room) + cdoffs;
+			memcpy(getResourceAddress(rtInventory,slot),obcdptr,size);
 			CHECK_HEAP
 			return;
 		}
@@ -713,7 +717,7 @@ void Scumm::setObjectState(int obj, int state, int x, int y) {
 
 	if (x != -1) {
 		_objs[i].x_pos = x;
-		_objs[i].x_pos = y;
+		_objs[i].y_pos = y;
 	}
 
 	addObjectToDrawQue(i);

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.6  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -275,6 +279,8 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	if ((uint)_top > (uint)_vscreenheight)
 		_top = 0;
 
+	if (_left<0) _left=0;
+
 	if ((uint)_bottom > _vscreenheight)
 		_bottom = _vscreenheight;
 
@@ -289,19 +295,20 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		return 2;
 	}
 
-	_bgbak_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
-	_backbuff_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_backbuff_ptr = _vm->getResourceAddress(rtBuffer, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
 	charsetmask = _vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right, _vm->virtscr[0].topline + _bottom);
 	masking = 0;
 
 	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,
-			_vm->getResourceAddress(0xA, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
+			_vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
 		);
 	}
 
 	if (_zbuf || charsetmask) {
-		_mask_ptr = _vm->getResourceAddress(0xA, 9) + _ypos*40 + _vm->_screenStartStrip;
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos*40 + _vm->_screenStartStrip;
 
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf!=0)
@@ -680,7 +687,6 @@ StartPos:;
 }
 
 void CostumeRenderer::loadCostume(int id) {
-	
 	_ptr = _vm->getResourceAddress(3, id);
 	
 	if (_vm->_majorScummVersion == 6) {
@@ -739,51 +745,62 @@ byte CostumeRenderer::drawCostume(Actor *a) {
 	return r;
 }
 
-byte CostumeRenderer::animateOneSlot(CostumeData *cd, int slot) {
+byte CostumeRenderer::animateOneSlot(Actor *a, int slot) {
 	int highflag;
-	int i,end,code;
+	int i,end;
+	byte code,nc;
 
-	if (cd->a[slot]==0xFFFF)
+	if (a->cost.a[slot]==0xFFFF)
 		return 0;
 
-	highflag = cd->a[slot]&0x8000;
-	i = cd->a[slot]&0x7FFF;
-	end = cd->c[slot];
+	highflag = a->cost.a[slot]&0x8000;
+	i = a->cost.a[slot]&0x7FFF;
+	end = a->cost.c[slot];
 	code=_dataptr[i]&0x7F;
 
 	do {
 		if (!highflag) {
 			if (i++ >= end)
-				i = cd->b[slot];
+				i = a->cost.b[slot];
 		} else {
 			if (i != end)
 				i++;
 		}
 
-		if (_dataptr[i]==0x7C) {
-			cd->animCounter1++;
-			if(cd->b[slot] != end)
+		nc = _dataptr[i];
+
+		if (nc==0x7C) {
+			a->cost.animCounter1++;
+			if(a->cost.b[slot] != end)
 				continue;
+		} else {
+			if (_vm->_majorScummVersion == 6) {
+				if (nc>=0x71 && nc<=0x78) {
+					_vm->addSoundToQueue2(a->sound[nc-0x71]);
+					if(a->cost.b[slot] != end)
+						continue;
+				}
+			} else {
+				if (nc==0x78) {
+					a->cost.animCounter2++;
+					if(a->cost.b[slot] != end)
+						continue;
+				}
+			}
 		}
 
-		if (_dataptr[i]==0x78) {
-			cd->animCounter2++;
-			if(cd->b[slot] != end)
-				continue;
-		}
-
-		cd->a[slot] = i|highflag;
+		a->cost.a[slot] = i|highflag;
 		return (_dataptr[i]&0x7F) != code;
 	} while(1);
 }
 
-byte CostumeRenderer::animate(CostumeData *cd) {
+byte CostumeRenderer::animate(Actor *a) {
 	int i;
 	byte r = 0;
 
 	for (i=0; i<16; i++) {
-		if(cd->a[i]!=0xFFFF)
-			r+=animateOneSlot(cd, i);
+		if(a->cost.a[i]!=0xFFFF)
+			r+=animateOneSlot(a, i);
 	}
 	return r;
 }

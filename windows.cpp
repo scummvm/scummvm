@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.9  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.8  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -61,6 +65,10 @@
 
 #include "scumm.h"
 
+#if defined(USE_IMUSE)
+#include "sound.h"
+#endif
+
 #define SRC_WIDTH 320
 #define SRC_HEIGHT 200
 #define SRC_PITCH (320)
@@ -71,6 +79,13 @@
 #define USE_DIRECTX 0
 #define USE_DRAWDIB 0
 #define USE_GDI 1
+
+#define SAMPLES_PER_SEC 22050
+#define BUFFER_SIZE (8192)
+#define BITS_PER_SAMPLE 16
+
+static bool shutdown;
+
 
 #if USE_GDI
 typedef struct DIB {
@@ -115,6 +130,11 @@ public:
 	void InitDirectX();
 #endif
 
+	HANDLE _event;
+	DWORD _threadId;
+	HWAVEOUT _handle;
+	WAVEHDR _hdr[2];
+
 public:
 	void init();
 
@@ -122,6 +142,10 @@ public:
 	void run();
 	void setPalette(byte *ctab, int first, int num);
 	void writeToScreen();
+
+	void prepare_header(WAVEHDR *wh, int i);
+	void sound_init();
+	static DWORD _stdcall sound_thread(WndMan *wm);
 
 #if USE_GDI
 	bool allocateDIB(int w, int h);
@@ -137,6 +161,7 @@ void Error(const char *msg) {
 int sel;
 Scumm scumm;
 ScummDebugger debugger;
+SoundEngine sound;
 WndMan wm[1];
 byte veryFastMode;
 
@@ -150,7 +175,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	{
 		case WM_DESTROY:
 		case WM_CLOSE:
-			PostQuitMessage(0);
+//			TerminateThread((void*)wm->_threadId, 0);
+//			wm->_scumm->destroy();
+			exit(0);
 			break;
 
 		case WM_CHAR:
@@ -177,6 +204,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 			if (wParam=='D') {
 				debugger.attach(wm->_scumm);
+			}
+			
+			if (wParam=='S') {
+				wm->_scumm->resourceStats();
 			}
 
 			break;
@@ -761,28 +792,28 @@ void outputdisplay2(Scumm *s, int disp) {
 	case 0:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf+320*144,s->getResourceAddress(0xA, 7),320*56);
+		memcpy(buf+320*144,s->getResourceAddress(rtBuffer, 7),320*56);
 		break;
 	case 1:
 		wm->_vgabuf = buf;
 		memcpy(buf, wm->_vgabuf, 64000);
-		memcpy(buf+320*144,s->getResourceAddress(0xA, 3),320*56);
+		memcpy(buf+320*144,s->getResourceAddress(rtBuffer, 3),320*56);
 		break;
 	case 2:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(0xA, 9)+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+s->_screenStartStrip);
 		break;
 	case 3:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(0xA, 9)+5920+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920+s->_screenStartStrip);
 		break;
 	case 4:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(0xA, 9)+5920*2+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920*2+s->_screenStartStrip);
 		break;
 	case 5:
 		wm->_vgabuf = NULL;
-		decompressMask(wm->dib.buf, s->getResourceAddress(0xA, 9)+5920*3+s->_screenStartStrip);
+		decompressMask(wm->dib.buf, s->getResourceAddress(rtBuffer, 9)+5920*3+s->_screenStartStrip);
 		break;
 	}
 	wm->writeToScreen();	
@@ -838,17 +869,81 @@ void initGraphics(Scumm *s) {
 void drawMouse(Scumm *s, int, int, int, byte*, bool) {
 }
 
+void WndMan::prepare_header(WAVEHDR *wh, int i) {
+	memset(wh, 0, sizeof(WAVEHDR));
+	wh->lpData = (char*)malloc(BUFFER_SIZE);
+	wh->dwBufferLength = BUFFER_SIZE;
+
+	waveOutPrepareHeader(_handle, wh, sizeof(WAVEHDR));
+
+	sound.generate_samples((int16*)wh->lpData, wh->dwBufferLength>>1);
+	waveOutWrite(_handle, wh, sizeof(WAVEHDR));
+}
+
+void WndMan::sound_init() {
+	WAVEFORMATEX wfx;
+
+	memset(&wfx, 0, sizeof(wfx));
+	wfx.wFormatTag = WAVE_FORMAT_PCM;
+	wfx.nChannels = 1;
+	wfx.nSamplesPerSec = SAMPLES_PER_SEC;
+	wfx.nAvgBytesPerSec = SAMPLES_PER_SEC * BITS_PER_SAMPLE / 8;
+	wfx.wBitsPerSample = BITS_PER_SAMPLE;
+	wfx.nBlockAlign = BITS_PER_SAMPLE * 1 / 8;
+
+	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
+
+	_event = CreateEvent(NULL, false, false, NULL);
+
+	memset(_hdr,0,sizeof(_hdr));
+	
+	waveOutOpen(&_handle, WAVE_MAPPER, &wfx, (long)_event, (long)this, CALLBACK_EVENT );
+
+	prepare_header(&_hdr[0], 0);
+	prepare_header(&_hdr[1], 1);
+}
+
+DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
+	int i;
+	while (1) {
+		WaitForSingleObject(wm->_event, INFINITE);
+		for(i=0; i<2; i++) {
+			WAVEHDR *hdr = &wm->_hdr[i];
+			if (hdr->dwFlags & WHDR_DONE) {
+				sound.generate_samples((int16*)hdr->lpData, hdr->dwBufferLength>>1);
+				waveOutWrite(wm->_handle, hdr, sizeof(WAVEHDR));
+			}
+		}
+	}
+}
+
+
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
 
 
 	wm->init();
+	wm->sound_init();
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
 	
+#if defined(USE_IMUSE)
+	sound.initialize(NULL);
+	scumm._soundDriver = &sound;
+#endif
+
 	scumm.scummMain(argc, argv);
 
 	return 0;
+}
+
+
+bool isSfxFinished() {
+	return true;
+}
+
+void playSfxSound(void *sound, int size, int rate) {
+	
 }
 

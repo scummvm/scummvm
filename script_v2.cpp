@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.4  2001/10/26 17:34:50  strigeus
  * bug fixes, code cleanup
  *
@@ -364,7 +368,7 @@ void Scumm::setupOpcodes2() {
 }
 
 int Scumm::readArray(int array, int index, int base) {
-	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(7, readVar(array));
+	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(rtString, readVar(array));
 
 	assert(ah);
 
@@ -380,7 +384,7 @@ int Scumm::readArray(int array, int index, int base) {
 }
 
 void Scumm::writeArray(int array, int index, int base, int value) {
-	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(7, readVar(array));
+	ArrayHeader *ah = (ArrayHeader*)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 	base += index*ah->dim1_size;
 
@@ -676,7 +680,7 @@ void Scumm::o6_cutScene() {
 }
 
 void Scumm::o6_stopMusic() {
-	warning("o6_stopMusic: not implemented");
+	stopAllSounds();
 }
 
 void Scumm::o6_freezeUnfreeze() {
@@ -818,7 +822,7 @@ void Scumm::o6_startSound() {
 }
 
 void Scumm::o6_stopSound() {
-	unkSoundProc1(pop());
+	stopSound(pop());
 }
 
 void Scumm::o6_startMusic() {
@@ -843,7 +847,6 @@ void Scumm::o6_setCameraAt() {
 
 void Scumm::o6_loadRoom() {
 	int room = pop();
-	debug(1,"Loading room %d", room);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -946,6 +949,12 @@ void Scumm::o6_faceActor() {
 void Scumm::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
+
+	if (_gameId==GID_TENTACLE && act==593) {
+		warning("o6_animateActor(%d,%d): fixed tentacle bug", act, anim);
+		return;
+	}
+
 	animateActor(act, anim);
 }
 
@@ -1102,7 +1111,7 @@ void Scumm::o6_setObjectName() {
 
 	for (i=1; i<50; i++) {
 		if (_newNames[i] == obj) {
-			nukeResource(16, i);
+			nukeResource(rtObjectName, i);
 			_newNames[i] = 0;
 			break;
 		}
@@ -1110,7 +1119,7 @@ void Scumm::o6_setObjectName() {
 
 	for (i=1; i<50; i++) {
 		if (_newNames[i] == 0) {
-			loadPtrToResource(16, i, NULL);
+			loadPtrToResource(rtObjectName, i, NULL);
 			_newNames[i] = obj;
 			runHook(0);
 			return;
@@ -1123,7 +1132,7 @@ void Scumm::o6_setObjectName() {
 void Scumm::o6_isSoundRunning() {
 	int snd = pop();
 	if (snd)
-		snd = unkSoundProc23(snd);
+		snd = isSoundRunning(snd);
 	push(snd);
 }
 
@@ -1149,75 +1158,76 @@ void Scumm::o6_resourceRoutines() {
 	switch(fetchScriptByte()) {
 	case 100: /* load script */
 		res = pop();
-		ensureResourceLoaded(2, res);
+		ensureResourceLoaded(rtScript, res);
 		break;
 	case 101: /* load sound */
 		res = pop();
-		ensureResourceLoaded(4, res);
+		ensureResourceLoaded(rtSound, res);
 		break;
 	case 102: /* load costume */
 		res = pop();
-		ensureResourceLoaded(3, res);
+		ensureResourceLoaded(rtCostume, res);
 		break;
 	case 103: /* load room */
 		res = pop();
-		ensureResourceLoaded(1, res);
+		ensureResourceLoaded(rtRoom, res);
 		break;
 	case 104: /* nuke script */
 		res = pop();
-		setResourceFlags(2, res, 0x7F);
+		setResourceCounter(rtScript, res, 0x7F);
+		debug(5, "nuke script %d", res);
 		break;
 	case 105: /* nuke sound */
 		res = pop();
-		setResourceFlags(4, res, 0x7F);
+		setResourceCounter(rtSound, res, 0x7F);
 		break;
 	case 106: /* nuke costume */
 		res = pop();
-		setResourceFlags(3, res, 0x7F);
+		setResourceCounter(rtCostume, res, 0x7F);
 		break;
 	case 107: /* nuke room */
 		res = pop();
-		setResourceFlags(1, res, 0x7F);
+		setResourceCounter(rtRoom, res, 0x7F);
 		break;
 	case 108:  /* lock script */
 		res = pop();
 		if (res >= _numGlobalScripts)
 			break;
-		lock(2,res);
+		lock(rtScript,res);
 		break;
 	case 109:/* lock sound */
 		res = pop();
-		lock(4,res);
+		lock(rtSound,res);
 		break;
 	case 110:/* lock costume */
 		res = pop();
-		lock(3,res);
+		lock(rtCostume,res);
 		break;
 	case 111:/* lock room */
 		res = pop();
 		if (res > 0x7F)
 			res = _resourceMapper[res&0x7F];
-		lock(1,res);
+		lock(rtRoom,res);
 		break;
 	case 112:/* unlock script */
 		res = pop();
 		if (res >= _numGlobalScripts)
 			break;
-		unlock(2,res);
+		unlock(rtScript,res);
 		break;
 	case 113:/* unlock sound */
 		res = pop();
-		unlock(4,res);
+		unlock(rtSound,res);
 		break;
 	case 114:/* unlock costume */
 		res = pop();
-		unlock(3,res);
+		unlock(rtCostume,res);
 		break;
 	case 115:/* unlock room */
 		res = pop();
 		if (res > 0x7F)
 			res = _resourceMapper[res&0x7F];
-		unlock(1,res);
+		unlock(rtRoom,res);
 		break;
 	case 116:/* clear heap */
 		/* this is actually a scumm message */
@@ -1232,9 +1242,9 @@ void Scumm::o6_resourceRoutines() {
 		res = pop();
 		nukeCharset(res);
 		break;
-	case 119:/* ? */
+	case 119:/* load fl object */
 		res = pop();
-		unkResProc(pop(), res);
+		loadFlObject(pop(), res);
 		break;
 	default:
 		error("o6_resourceRoutines: default case");
@@ -1751,11 +1761,11 @@ void Scumm::o6_wait() {
 	case 171:
 		if (_sentenceIndex!=0xFF) {
 			if (sentence[_sentenceIndex].unk &&
-				!isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT]) )
+				!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]) )
 				return;
 			break;
 		}
-		if (!isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT]))
+		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 			return;
 		break;
 	default:
@@ -2090,13 +2100,13 @@ void Scumm::decodeParseString2(int m, int n) {
 		break;
 	case 72:
 		string[m].overhead = 1;
-		string[m].new_3 = 0;
+		string[m].no_talk_anim = 0;
 		break;
 	case 73:
 		error("decodeParseString2: case 73");
 		break;
 	case 74:
-		string[m].new_3 = 1;
+		string[m].no_talk_anim = 1;
 		break;
 	case 75:
 		_messagePtr = _scriptPointer;
@@ -2119,7 +2129,7 @@ void Scumm::decodeParseString2(int m, int n) {
 		string[m].t_ypos = string[m].ypos;
 		string[m].t_center = string[m].center;
 		string[m].t_overhead = string[m].overhead;
-		string[m].t_new3 = string[m].new_3;
+		string[m].t_no_talk_anim = string[m].no_talk_anim;
 		string[m].t_right = string[m].right;
 		string[m].t_color = string[m].color;
 		string[m].t_charset = string[m].charset;

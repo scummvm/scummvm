@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.5  2001/10/29 22:09:20  strigeus
  * script invoked loading&saving in compatible mode
  *
@@ -1046,7 +1050,7 @@ void Scumm::o5_isSoundRunning() {
 	getResultPos();
 	snd = getVarOrDirectByte(0x80);
 	if (snd)
-		snd = unkSoundProc23(snd);
+		snd = isSoundRunning(snd);
 	setResult(snd);
 }
 
@@ -1071,7 +1075,6 @@ void Scumm::o5_lights() {
 
 void Scumm::o5_loadRoom() {
 	int room = getVarOrDirectByte(0x80);
-	debug(1,"Loading room %d", room);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -1259,60 +1262,60 @@ void Scumm::o5_resourceRoutines() {
 		res = getVarOrDirectByte(0x80);
 	switch(_opcode&0x1F) {
 	case 1: /* load script */
-		ensureResourceLoaded(2, res);
+		ensureResourceLoaded(rtScript, res);
 		break;
 	case 2: /* load sound */
-		ensureResourceLoaded(4, res);
+		ensureResourceLoaded(rtSound, res);
 		break;
 	case 3: /* load costume */
-		ensureResourceLoaded(3, res);
+		ensureResourceLoaded(rtCostume, res);
 		break;
 	case 4: /* load room */
-		ensureResourceLoaded(1, res);
+		ensureResourceLoaded(rtRoom, res);
 		break;
 	case 5: /* nuke script */
-		setResourceFlags(2, res, 0x7F);
+		setResourceCounter(rtScript, res, 0x7F);
 		break;
 	case 6: /* nuke sound */
-		setResourceFlags(4, res, 0x7F);
+		setResourceCounter(rtSound, res, 0x7F);
 		break;
 	case 7: /* nuke costume */
-		setResourceFlags(3, res, 0x7F);
+		setResourceCounter(rtCostume, res, 0x7F);
 		break;
 	case 8: /* nuke room */
-		setResourceFlags(1, res, 0x7F);
+		setResourceCounter(rtRoom, res, 0x7F);
 		break;
 	case 9:  /* lock script */
 		if (res >= _numGlobalScripts)
 			break;
-		lock(2,res);
+		lock(rtScript,res);
 		break;
 	case 10:/* lock sound */
-		lock(4,res);
+		lock(rtSound,res);
 		break;
 	case 11:/* lock costume */
-		lock(3,res);
+		lock(rtCostume,res);
 		break;
 	case 12:/* lock room */
 		if (res > 0x7F)
 			res = _resourceMapper[res&0x7F];
-		lock(1,res);
+		lock(rtRoom,res);
 		break;
 	case 13:/* unlock script */
 		if (res >= _numGlobalScripts)
 			break;
-		unlock(2,res);
+		unlock(rtScript,res);
 		break;
 	case 14:/* unlock sound */
-		unlock(4,res);
+		unlock(rtSound,res);
 		break;
 	case 15:/* unlock costume */
-		unlock(3,res);
+		unlock(rtCostume,res);
 		break;
 	case 16:/* unlock room */
 		if (res > 0x7F)
 			res = _resourceMapper[res&0x7F];
-		unlock(1,res);
+		unlock(rtRoom,res);
 		break;
 	case 17:/* clear heap */
 		heapClear(0);
@@ -1324,8 +1327,8 @@ void Scumm::o5_resourceRoutines() {
 	case 19:/* nuke charset */
 		nukeCharset(res);
 		break;
-	case 20:/* ? */
-		unkResProc(getVarOrDirectWord(0x40), res);
+	case 20:/* load fl object */
+		loadFlObject(getVarOrDirectWord(0x40), res);
 		break;
 	}
 }
@@ -1573,7 +1576,6 @@ void Scumm::o5_soundKludge() {
 	getWordVararg(items);
 
 	soundKludge(items);
-
 }
 
 void Scumm::o5_startMusic() {
@@ -1613,8 +1615,7 @@ void Scumm::o5_startSound() {
 }
 
 void Scumm::o5_stopMusic() {
-	/* TODO: not implemented */
-	warning("o5_stopMusic: not implemented");
+	stopAllSounds();
 }
 
 void Scumm::o5_stopObjectCode() {
@@ -1636,7 +1637,7 @@ void Scumm::o5_stopScript() {
 }
 
 void Scumm::o5_stopSound() {
-	unkSoundProc1(getVarOrDirectByte(0x80));
+	stopSound(getVarOrDirectByte(0x80));
 }
 
 void Scumm::o5_stringOps() {
@@ -1651,9 +1652,9 @@ void Scumm::o5_stringOps() {
 	case 2: /* copystring */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		nukeResource(7, a);
-		ptr = getResourceAddress(7, b);
-		if (ptr) loadPtrToResource(7, a, ptr);
+		nukeResource(rtString, a);
+		ptr = getResourceAddress(rtString, b);
+		if (ptr) loadPtrToResource(rtString, a, ptr);
 		break;
 	case 3: /* set string char */
 		a = getVarOrDirectByte(0x80);
@@ -1668,7 +1669,7 @@ void Scumm::o5_stringOps() {
 		getResultPos();
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		ptr = getResourceAddress(7, a);
+		ptr = getResourceAddress(rtString, a);
 		if (ptr==NULL) error("String %d does not exist", a);
 		setResult(ptr[b]);
 		break;
@@ -1676,9 +1677,9 @@ void Scumm::o5_stringOps() {
 	case 5: /* create empty string */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
-		nukeResource(7, a);
+		nukeResource(rtString, a);
 		if (b) {
-			ptr = createResource(7, a, b);
+			ptr = createResource(rtString, a, b);
 			if (ptr) {
 				for(i=0; i<b; i++)
 					ptr[i] = 0;
@@ -1719,9 +1720,9 @@ void Scumm::o5_verbOps() {
 			}
 			break;
 		case 2: /* load from code */
-			loadPtrToResource(8, slot, NULL);
+			loadPtrToResource(rtVerb, slot, NULL);
 			if (slot==0)
-				nukeResource(8, slot);
+				nukeResource(rtVerb, slot);
 			vs->type = 0;
 			vs->imgindex = 0;
 			break;
@@ -1781,14 +1782,14 @@ void Scumm::o5_verbOps() {
 			vs->center = 1;
 			break;
 		case 20: /* set to string */
-			ptr = getResourceAddress(7, getVarOrDirectWord(0x80));
+			ptr = getResourceAddress(rtString, getVarOrDirectWord(0x80));
 			if (!ptr)
-				nukeResource(8, slot);
+				nukeResource(rtVerb, slot);
 			else {
-				loadPtrToResource(8, slot, ptr);
+				loadPtrToResource(rtVerb, slot, ptr);
 			}
 			if (slot==0)
-				nukeResource(8, slot);
+				nukeResource(rtVerb, slot);
 			vs->type = 0;
 			vs->imgindex = 0;
 			break;
@@ -1832,11 +1833,11 @@ void Scumm::o5_wait() {
 	case 4: /* wait for sentence */
 		if (_sentenceIndex!=0xFF) {
 			if (sentence[_sentenceIndex].unk &&
-				!isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT]) )
+				!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]) )
 				return;
 			break;
 		}
-		if (!isScriptLoaded(_vars[VAR_SENTENCE_SCRIPT]))
+		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 			return;
 		break;
 	default:

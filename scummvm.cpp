@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.15  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.14  2001/10/29 23:07:24  strigeus
  * better MI1 compatibility
  *
@@ -212,7 +216,7 @@ void Scumm::scummInit() {
 
 	_numInMsgStack = 0;
 
-	createResource(12, 6, 500);
+	createResource(rtTemp, 6, 500);
 
 	initScummVars();
 
@@ -254,6 +258,9 @@ void Scumm::scummMain(int argc, char **argv) {
 	_fileHandle = NULL;
 	
 	_debugMode = 1;
+
+	_maxHeapThreshold = 350000;
+	_minHeapThreshold = 300000;
 	
 	parseCommandLine(argc, argv);
 
@@ -285,6 +292,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		_vars[74] = 1225;
 	}
 
+	setupSound();
 
 	runScript(1,0,0,&_bootParam);
 	_scummTimer = 0;
@@ -300,6 +308,10 @@ void Scumm::scummMain(int argc, char **argv) {
 
 		if (_debugger)
 			_debugger->on_frame();
+
+		if (!(++_expire_counter)) {
+			increaseResourceCounter();
+		}
 
 		_vars[VAR_TIMER] = _scummTimer >> 2;
 		do {
@@ -340,7 +352,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		if (_saveLoadFlag) {
 			char buf[256];
 
-			sprintf(buf, "savegame.%d", _saveLoadSlot);
+			sprintf(buf, "%s.%c%.2d", _exe_name, _saveLoadCompatible ? 'c': 's', _saveLoadSlot);
 			if (_saveLoadFlag==1) {
 				saveState(buf);
 				if (_saveLoadCompatible)
@@ -372,7 +384,7 @@ void Scumm::scummMain(int argc, char **argv) {
 			gdi._unk4 = 0;
 			CHARSET_1();
 			unkVirtScreen2();
-			unkSoundProc22();
+			processSoundQues();
 			camera._lastPos = camera._curPos;
 			continue;
 		}
@@ -414,7 +426,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		if (_majorScummVersion==5)
 			playActorSounds();
 
-		unkSoundProc22();
+		processSoundQues();
 		camera._lastPos = camera._curPos;
 	} while (1);
 }
@@ -506,6 +518,8 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	CHECK_HEAP
 
+	debug(1,"Loading room %d", room);
+
 	clearMsgQueue();
 
 	unkVirtScreen4(_switchRoomEffect2);
@@ -543,7 +557,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	_roomResource = _currentRoom = 0xFF;
 
-	unkResourceProc();
+	increaseResourceCounter();
 
 	_currentRoom = room;
 	_vars[VAR_ROOM] = room;
@@ -619,13 +633,13 @@ void Scumm::initRoomSubBlocks() {
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
 
-	nukeResource(0xE, 1);
-	nukeResource(0xE, 2);
+	nukeResource(rtMatrix, 1);
+	nukeResource(rtMatrix, 2);
 	
 	for (i=1; i<_maxScaleTable; i++)
-		nukeResource(0xB, i);
+		nukeResource(rtScaleTable, i);
 
-	roomptr = getResourceAddress(1, _roomResource);
+	roomptr = getResourceAddress(rtRoom, _roomResource);
 	
 	ptr = findResource(MKID('RMHD'), roomptr, 0);
 	_scrWidthIn8Unit = READ_LE_UINT16(&((RoomHeader*)ptr)->width) >> 3;
@@ -653,19 +667,19 @@ void Scumm::initRoomSubBlocks() {
 	ptr = findResource(MKID('BOXD'), roomptr, 0);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		createResource(14, 2, size);
-		roomptr = getResourceAddress(1, _roomResource);
+		createResource(rtMatrix, 2, size);
+		roomptr = getResourceAddress(rtRoom, _roomResource);
 		ptr = findResource(MKID('BOXD'), roomptr, 0);
-		memcpy(getResourceAddress(0xE, 2), ptr, size);
+		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 	}
 
 	ptr = findResource(MKID('BOXM'), roomptr, 0);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		createResource(14, 1, size);
-		roomptr = getResourceAddress(1, _roomResource);
+		createResource(rtMatrix, 1, size);
+		roomptr = getResourceAddress(rtRoom, _roomResource);
 		ptr = findResource(MKID('BOXM'), roomptr, 0);
-		memcpy(getResourceAddress(0xE, 1), ptr, size);
+		memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 	}
 
 	ptr = findResource(MKID('SCAL'), roomptr, 0);
@@ -678,13 +692,13 @@ void Scumm::initRoomSubBlocks() {
 			int d = READ_LE_UINT16(roomptr + offs + 14);
 			if (a || b || c || d) {
 				setScaleItem(i, b, a, d, c);
-				roomptr = getResourceAddress(1, _roomResource);
+				roomptr = getResourceAddress(rtRoom, _roomResource);
 			}
 		}
 	}
 	memset(_localScriptList, 0, (0x100 - _numGlobalScripts) * 4);
 
-	roomptr = getResourceAddress(1, _roomResource);
+	roomptr = getResourceAddress(rtRoom, _roomResource);
 	for (i=0; ptr = findResource(MKID('LSCR'), roomptr, i++) ;) {
 		_localScriptList[ptr[8] - _numGlobalScripts] = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
@@ -730,7 +744,7 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
 	byte *ptr;
 	int cur,amounttoadd,i,tmp;
 
-	ptr = createResource(11, slot, 200);
+	ptr = createResource(rtScaleTable, slot, 200);
 
 	if (a==c)
 		return;
@@ -908,7 +922,7 @@ void Scumm::setStringVars(int slot) {
 	st->ypos = st->t_ypos;
 	st->center = st->t_center;
 	st->overhead = st->t_overhead;
-	st->new_3 = st->t_new3;
+	st->no_talk_anim = st->t_no_talk_anim;
 	st->right = st->t_right;
 	st->color = st->t_color;
 	st->charset = st->t_charset;
@@ -920,6 +934,20 @@ void Scumm::unkMiscOp9() {
 
 void Scumm::startManiac() {
 	warning("stub startManiac()");
+}
+
+void Scumm::destroy() {
+	freeResources();
+
+	free(_objectFlagTable);
+	free(_inventory);
+	free(_arrays);
+	free(_verbs);
+	free(_objs);
+	free(_vars);
+	free(_bitVars);
+	free(_newNames);
+	free(_classData);
 }
 
 

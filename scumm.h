@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.16  2001/11/05 19:21:49  strigeus
+ * bug fixes,
+ * speech in dott
+ *
  * Revision 1.15  2001/10/29 23:07:24  strigeus
  * better MI1 compatibility
  *
@@ -251,15 +255,11 @@ struct PathVertex {
 	PathNode *right;
 };
 
-struct SaveLoadEntry {
-	uint16 offs;
-	uint8 type;
-	uint8 size;
-};
 
 enum {
 	sleByte = 1,
 	sleUint8 = 1,
+	sleInt8 = 1,
 	sleInt16 = 2,
 	sleUint16 = 3,
 	sleInt32 = 4,
@@ -342,28 +342,48 @@ enum ScummVars {
 
 };
 
-#define _maxRooms res.num[1]
-#define _maxScripts res.num[2]
-#define _maxCostumes res.num[3]
-#define _maxInventoryItems res.num[5]
-#define _maxCharsets res.num[6]
-#define _maxStrings res.num[7]
-#define _maxVerbs res.num[8]
-#define _maxActorNames res.num[9]
-#define _maxBuffer res.num[10]
-#define _maxScaleTable res.num[11]
-#define _maxTemp res.num[12]
-#define _maxFLObject res.num[13]
-#define _maxMatrixes res.num[14]
-#define _maxBoxes res.num[15]
+enum ResTypes {
+	rtRoom = 1,
+	rtScript = 2,
+	rtCostume = 3,
+	rtSound = 4,
+	rtInventory = 5,
+	rtCharset = 6,
+	rtString = 7,
+	rtVerb = 8,
+	rtActorName = 9,
+	rtBuffer = 10,
+	rtScaleTable = 11,
+	rtTemp = 12,
+	rtFlObject = 13,
+	rtMatrix = 14,
+	rtBox = 15,
+	rtObjectName = 16,
 
-#define _baseRooms res.address[1]
-#define _baseScripts res.address[2]
-#define _baseInventoryItems res.address[5]
-#define _baseFLObject res.address[13]
-#define _baseArrays res.address[7]
+};
 
-#define _roomFileOffsets res.roomoffs[1]
+#define _maxRooms res.num[rtRoom]
+#define _maxScripts res.num[rtScript]
+#define _maxCostumes res.num[rtCostume]
+#define _maxInventoryItems res.num[rtInventory]
+#define _maxCharsets res.num[rtCharset]
+#define _maxStrings res.num[rtString]
+#define _maxVerbs res.num[rtVerb]
+#define _maxActorNames res.num[rtActorName]
+#define _maxBuffer res.num[rtBuffer]
+#define _maxScaleTable res.num[rtScaleTable]
+#define _maxTemp res.num[rtTemp]
+#define _maxFLObject res.num[rtFlObject]
+#define _maxMatrixes res.num[rtMatrix]
+#define _maxBoxes res.num[rtBox]
+
+#define _baseRooms res.address[rtRoom]
+#define _baseScripts res.address[rtScript]
+#define _baseInventoryItems res.address[rtInventory]
+#define _baseFLObject res.address[rtFlObject]
+#define _baseArrays res.address[rtString]
+
+#define _roomFileOffsets res.roomoffs[rtRoom]
 
 struct CharsetRenderer {
 	Scumm *_vm;
@@ -459,8 +479,8 @@ struct CostumeRenderer {
 	byte drawOneSlot(Actor *a, int slot);
 	byte drawCostume(Actor *a);
 
-	byte animateOneSlot(CostumeData *cd, int slot);
-	byte animate(CostumeData *cd);
+	byte animateOneSlot(Actor *a, int slot);
+	byte animate(Actor *a);
 };
 
 struct Actor {
@@ -520,11 +540,11 @@ struct SentenceTab {
 
 struct StringTab {
 	int16 t_xpos, t_ypos, t_center, t_overhead;
-	int16 t_new3, t_right, t_color, t_charset;
+	int16 t_no_talk_anim, t_right, t_color, t_charset;
 	int16 xpos, ypos;
 	int16 xpos2,ypos2;
 	int16 center, overhead;
-	int16 new_3, right;
+	int16 no_talk_anim, right;
 	int16 color,charset;
 	int16 mask_top, mask_bottom, mask_right, mask_left;
 };
@@ -549,7 +569,7 @@ struct Gdi {
 	int _imgBufOffs[4];
 	byte _disable_zbuffer;
 
-	byte dseg_4E3B;
+	bool _useOrDecompress;
 	byte _numLinesToProcess;
 	byte _tempNumLines;
 	byte _currentX;
@@ -614,7 +634,7 @@ enum GameId {
 };
 
 struct ScummDebugger;
-
+struct Serializer;
 
 struct Scumm {
 	const char *_gameText;
@@ -629,6 +649,7 @@ struct Scumm {
 	int _roomResource;
 	byte _encbyte;
 	void *_fileHandle;
+	void *_sfxFile;
 	char *_exe_name;
 
 	byte _saveLoadFlag;
@@ -637,11 +658,15 @@ struct Scumm {
 
 	bool _dynamicRoomOffsets;
 	byte _resFilePathId;
+
+	bool _useTalkAnims;
 	
 	char *_resFilePrefix;
 	char *_resFilePath;
 
 	int _keyPressed;
+
+	void *_soundDriver;
 
 	uint16 *_inventory;
 	byte *_arrays;
@@ -685,6 +710,13 @@ struct Scumm {
 	byte *_scriptPointer, *_scriptOrgPointer;
 	byte *_scriptPointerStart;
 	byte _opcode;
+	
+	byte _expire_counter;
+
+	bool _noTalkAnims;
+
+	bool _mouthSyncMode;
+	bool _endOfMouthSync;
 
 	uint32 _randSeed1;
 	uint32 _randSeed2;
@@ -703,6 +735,9 @@ struct Scumm {
 	bool _doEffect;
 	bool _screenEffectFlag;
 	bool _keepText;
+
+	uint32 _maxHeapThreshold;
+	uint32 _minHeapThreshold;
 	
 	byte _bkColor;
 	uint16 _lastXstart;
@@ -713,8 +748,6 @@ struct Scumm {
 	int16 _virtual_mouse_x, _virtual_mouse_y;
 
 	byte _charsetColor;
-
-	uint32 _localScriptList[0x39];
 
 	uint16 _debugMode;
 
@@ -737,15 +770,17 @@ struct Scumm {
 	
 	uint16 _completeScreenRedraw;
 
-	
-
 	int8 _userPut;
 	int8 _cursorState;
+
+	byte _sfxMode;
 
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
 	int _numInMsgStack;
+
+	uint32 _localScriptList[0x39];
 
 	VirtScreen virtscr[4];
 
@@ -753,6 +788,11 @@ struct Scumm {
 	uint32 _CLUT_offs, _EPAL_offs;
 	uint32 _IM00_offs;
 	uint32 _PALS_offs;
+
+	uint32 _allocatedSize;
+
+	uint32 _talk_sound_a, _talk_sound_b;
+	byte _talk_sound_mode;
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[0xC8];
@@ -841,6 +881,8 @@ struct Scumm {
 
 	CostumeRenderer cost;
 
+	uint16 _mouthSyncTimes[52];
+
 	int16 _soundQuePos;
 	int16 _soundQue[0x100];
 
@@ -858,6 +900,7 @@ struct Scumm {
 
 	int _palDirtyMin, _palDirtyMax;
 
+	uint _curSoundPos;
 
 	ColorCycle _colorCycle[16];
 
@@ -881,6 +924,8 @@ struct Scumm {
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
+
+//	void _grabbedCursor[1024];
 	
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
@@ -909,8 +954,8 @@ struct Scumm {
 	uint fileReadWordLE();
 	uint fileReadWordBE();
 
-	byte *alloc(int size);
-	void free(void *mem);
+	static byte *alloc(int size);
+	static void free(void *mem);
 
 	void readResTypeList(int id, uint32 tag, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
@@ -943,7 +988,7 @@ struct Scumm {
 	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);
 	int readSoundResource(int type, int index);
-	void setResourceFlags(int type, int index, byte flag);
+	void setResourceCounter(int type, int index, byte flag);
 	void validateResource(const char *str, int type, int index);
 	
 	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
@@ -1281,7 +1326,7 @@ struct Scumm {
 	int getObjectOrActorXY(int object);
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
-	bool isScriptLoaded(int script);
+	bool isScriptInUse(int script);
 	int getActorXYPos(Actor *a);
 	void getObjectXYPos(int object);
 	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y);
@@ -1289,7 +1334,7 @@ struct Scumm {
 	int getWordVararg(int16 *ptr);
 
 	int getObjActToObjActDist(int a, int b);
-	void unkSoundProc22();
+	void processSoundQues();
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 
@@ -1312,7 +1357,8 @@ struct Scumm {
 	void runExitScript();
 	void runEntryScript();
 
-	void unkResourceProc();
+	void increaseResourceCounter();
+	bool isResourceInUse(int type, int i);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
 
@@ -1320,11 +1366,6 @@ struct Scumm {
 	void initCycl(byte *ptr);
 	void initBGBuffers();
 	void setDirtyColors(int min, int max);
-
-#if 0
-	byte *findResource(uint32 tag, byte *searchin);
-	byte *findResource2(uint32 tag, byte *searchin);
-#endif
 
 	void setScaleItem(int slot, int a, int b, int c, int d);
 
@@ -1337,8 +1378,6 @@ struct Scumm {
 	void redrawBGStrip(int start, int num);
 	void drawObject(int obj, int arg);
 
-//	void drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr);
-	
 	int hasCharsetMask(int x, int y, int x2, int y2);
 
 	void restoreBG(int left, int top, int right, int bottom);
@@ -1357,7 +1396,6 @@ struct Scumm {
 
 	void decreaseScriptDelay(int amount);
 	void processKbd();
-
 	
 	void redrawVerbs();
 	void checkExecVerbs();
@@ -1414,7 +1452,7 @@ struct Scumm {
 	void initCharset(int charset);
 	void addObjectToDrawQue(int object);
 	int getVerbEntrypoint(int obj, int entry);
-	int unkSoundProc23(int a);
+	int isSoundRunning(int a);
 	void startWalkActor(Actor *a, int x, int y, int dir);
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
@@ -1428,7 +1466,7 @@ struct Scumm {
 	void unlock(int type, int i);
 	void heapClear(int mode);
 	void unkHeapProc2(int a, int b);
-	void unkResProc(int a, int b);
+	void loadFlObject(int a, int b);
 	void setPalColor(int index, int r, int g, int b);
 	void darkenPalette(int a, int b, int c, int d, int e);
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
@@ -1439,7 +1477,6 @@ struct Scumm {
 	byte *getObjOrActorName(int obj);
 	void clearOwnerOf(int obj);
 	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
-	void unkSoundProc1(int a);
 	void setVerbObject(int room, int object, int verb);
 	void unkMessage1();
 	void unkMessage2();
@@ -1469,25 +1506,13 @@ struct Scumm {
 
 	void dumpResource(char *tag, int index, byte *ptr);
 
-	FILE *_saveLoadStream;
-	bool _saveOrLoad;
 	bool saveState(const char *filename);
 	bool loadState(const char *filename);
-	void saveOrLoad(FILE *inout, bool mode);
-	void saveLoadBytes(void *b, int len);
-	void saveLoadResource(int type, int index);
+	void saveOrLoad(Serializer *s);
+
+	void saveLoadResource(Serializer *ser, int type, int index);
 	bool isResourceLoaded(int type, int index);
-	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 
-	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
-
-	void saveUint32(uint32 d);
-	void saveWord(uint16 d);
-	void saveByte(byte b);
-
-	byte loadByte();
-	uint16 loadWord();
-	uint32 loadUint32();
 
 	Actor *derefActor(int id) { return &actor[id]; }
 	Actor *derefActorSafe(int id, const char *errmsg);
@@ -1565,12 +1590,26 @@ struct Scumm {
 	void unkMiscOp4(int a, int b, int c, int d);
 	void unkMiscOp9();
 	void startManiac();
-
 	void readIndexFileV5(int i);
-
 	void grabCursor(byte *ptr, int width, int height);
-
 	byte *getPalettePtr();
+	void setupSound();
+	void stopAllSounds();
+	void stopSound(int sound);
+	bool isSoundInQueue(int sound);
+	void clearSoundQue();
+	void talkSound(uint32 a, uint32 b, int mode);
+	void processSfxQueues();
+	void startTalkSound(uint32 a, uint32 b, int mode);
+	bool isMouthSyncOff(uint pos);
+	void startSfxSound(void *file);
+	void *openSfxFile();
+	void resourceStats();
+	bool isCostumeInUse(int i);
+	void expireResources(uint32 size);
+	
+	void freeResources();
+	void destroy();
 };
 
 struct ScummDebugger {
@@ -1595,6 +1634,44 @@ struct ScummDebugger {
 	void printScripts();
 };
 
+struct SaveLoadEntry {
+	uint16 offs;
+	uint8 type;
+	uint8 size;
+};
+
+typedef int SerializerSaveReference(void *me, byte type, void *ref);
+typedef void *SerializerLoadReference(void *me, byte type, int ref);
+
+
+struct Serializer {
+	FILE *_saveLoadStream;
+
+	union {
+		SerializerSaveReference *_save_ref;
+		SerializerLoadReference *_load_ref;
+	};
+	void *_ref_me;
+
+	bool _saveOrLoad;
+
+	
+	void saveLoadBytes(void *b, int len);
+	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
+	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
+	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);
+
+	void saveUint32(uint32 d);
+	void saveWord(uint16 d);
+	void saveByte(byte b);
+
+	byte loadByte();
+	uint16 loadWord();
+	uint32 loadUint32();
+
+	bool isSaving() { return _saveOrLoad; }
+};
+
 
 
 void waitForTimer(Scumm *s);
@@ -1612,3 +1689,5 @@ void updateScreen(Scumm *s);
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 id, byte *searchin, int index);
+void playSfxSound(void *sound, int size, int rate);
+bool isSfxFinished();
