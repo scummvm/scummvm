@@ -362,7 +362,7 @@ protected:
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
 	void o6_getActorLayer();
-	void o6_unknownCD();
+	void o6_stampObject();
 	void o6_bor();
 	void o6_band();
 	void o6_stopTalking();

@@ -299,7 +299,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_pickOneOf),
 		/* CC */
 		OPCODE(o6_pickOneOfDefault),
-		OPCODE(o6_unknownCD),
+		OPCODE(o6_stampObject),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* D0 */
@@ -2888,16 +2888,17 @@ void Scumm_v6::o6_pickOneOfDefault()
 	push(i);
 }
 
-void Scumm_v6::o6_unknownCD() {
+void Scumm_v6::o6_stampObject() {
 	// Full Throttle: FIXME
 	//		  Opcode is used when placing the bunny into the
 	//		  mine field. Some kind of drawBlastObject() wrapper
-	int a, b, c, d;
-	a = pop();
-	b = pop();
-	c = pop();
-	d = pop();
-	warning("o6_unknownCD: stub(%d, %d, %d, %d)", a, b, c, d);
+	//	also used at least once in the humongous games
+	int object, x, y, image;
+	object = pop();
+	x = pop();
+	y = pop();
+	image = pop();
+	warning("o6_stampObject: stub(%d at (%d,%d) image %d)", object, x, y, image);
 }
 
 void Scumm_v6::o6_stopTalking() {
