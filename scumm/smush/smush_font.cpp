@@ -137,6 +137,12 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 }
 
 void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y) {
+	// This happens in the Full Throttle intro. I don't know if our
+	// text-drawing functions are buggy, or if this function is supposed
+	// to have to check for it.
+	if (x < 0)
+		x = 0;
+
 	for (int i = 0; str[i] != 0; i++) {
 		if ((byte)str[i] >= 0x80 && _vm->_CJKMode) {
 			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
@@ -168,69 +174,23 @@ void SmushFont::drawStringAbsolute(const char *str, byte *buffer, int dst_width,
 	}
 }
 
-void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right) {
-	debug(9, "SmushFont::drawStringCentered(%s, %d, %d, %d, %d)", str, x, y, left, right);
+void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y) {
+	debug(9, "SmushFont::drawStringCentered(%s, %d, %d)", str, x, y);
 
-	const int width = right - left;
-	char *s = strdup(str);
-	char *words[MAX_WORDS];
-	int word_count = 0;
-
-	char *tmp = s;
-	while (tmp) {
-		assert(word_count < MAX_WORDS);
-		words[word_count++] = tmp;
-		tmp = strpbrk(tmp, " \t\r\n");
-		if (tmp == 0)
-			break;
-		*tmp++ = 0;
-	}
-
-	int i = 0, max_width = 0, height = 0, line_count = 0;
-
-	char *substrings[MAX_WORDS];
-	int substr_widths[MAX_WORDS];
-	const int space_width = getCharWidth(' ');
-
-	i = 0;
-	while (i < word_count) {
-		char *substr = words[i++];
-		int substr_width = getStringWidth(substr);
-
-		while (i < word_count) {
-			int word_width = getStringWidth(words[i]);
-			if ((substr_width + space_width + word_width) >= width)
-				break;
-			substr_width += word_width + space_width;
-			*(words[i]-1) = ' ';	// Convert 0 byte back to space
-			i++;
+	while (str) {
+		char line[256];
+		char *pos = strchr(str, '\n');
+		if (pos) {
+			memcpy(line, str, pos - str - 1);
+			line[pos - str - 1] = 0;
+			str = pos + 1;
+		} else {
+			strcpy(line, str);
+			str = 0;
 		}
-
-		substrings[line_count] = substr;
-		substr_widths[line_count++] = substr_width;
-		if (max_width < substr_width)
-			max_width = substr_width;
-		height += getStringHeight(substr);
+		drawSubstring(line, buffer, dst_width, x - getStringWidth(line) / 2, y);
+		y += getStringHeight(line);
 	}
-
-	if (y > dst_height - height) {
-		y = dst_height - height;
-	}
-
-	max_width = (max_width + 1) >> 1;
-	x = left + width / 2;
-
-	if (x < left + max_width)
-		x = left + max_width;
-	if (x > right - max_width)
-		x = right - max_width;
-
-	for (i = 0; i < line_count; i++) {
-		drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
-		y += getStringHeight(substrings[i]);
-	}
-	
-	free(s);
 }
 
 void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right) {

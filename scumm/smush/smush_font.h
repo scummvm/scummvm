@@ -44,7 +44,7 @@ public:
 
 	void setColor(byte c) { _color = c; }
 	void drawStringAbsolute    (const char *str, byte *buffer, int dst_width, int x, int y);
-	void drawStringCentered    (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
+	void drawStringCentered    (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y);
 	void drawStringWrap        (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
 	void drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
 };
