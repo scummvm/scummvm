@@ -64,7 +64,7 @@ namespace CEGUI {
 	bool Panel::action(int x, int y, bool pushed) {
 		ItemMap::const_iterator iterator;
 		bool result = false;
-		if (!checkInside(x, y))
+		if (!_visible || !checkInside(x, y))
 			return false;
 
 		for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator) 
