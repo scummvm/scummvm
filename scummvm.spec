@@ -1,5 +1,5 @@
 Name: scummvm
-Version: 0.0.3
+Version: 0.2.0
 Release: 1cm
 Summary: SCUMM graphic adventure game interpreter
 Group: Interpreters
@@ -32,7 +32,18 @@ rm -Rf %{buildroot}
 %{_mandir}/man6/scummvm.6*
 
 %changelog
-* Mon Nov 19 2001 Claudio Matsuoka <claudio@helllabs.org>
-+ scummvm-0.0.3-1cm
++ scummvm-0.2.0-1cm
+- core engine updates
+- add support for cd audio (Monkey Island/LoomCD)
+- add support for v3 games (Zak256/LoomCD/Indy3)
+- add support for v7 games (Full Throttle/Dig)
+- added more command line options
+- save game screen works in more games
+- auto-save feature
+- support for graphic filters
+- support for MAD (Mpeg Audio Decoding)
++ scummvm-0.1.0
+- bug fix release
++ scummvm-0.0.3
 - package creation
 
