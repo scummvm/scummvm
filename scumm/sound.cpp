@@ -1733,7 +1733,7 @@ Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
 
 int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
 #ifdef VORBIS_TREMOR
-	ov_time_seek(&_ov_file, (int)(start / 75.0) * 1000);
+	ov_time_seek(&_ov_file, (ogg_int64_t)(start / 75.0 * 1000));
 #else
 	ov_time_seek(&_ov_file, (int)(start / 75.0));
 #endif
