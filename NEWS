@@ -2,7 +2,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.5.3(CVS) (2003-??-??)
-- ...
+- Added (still unplayable) Broken Sword 2 engine
+- Improved (still incomplete) V1 game support
+- Rewrote sound mixer, and several iMUSE bugs fixed
+- Adlib GM emulation table revamped, providing more accurate software MIDI
+- Added full and partial sound looping to Zak McKracken FmTowns
 
 0.5.1 (2003-08-06) 
 - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
