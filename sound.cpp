@@ -89,7 +89,7 @@ void Scumm::processSoundQues()
 				);
 #endif
 			if ((_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
-				uint32 size, rate, tag, chan, bits;
+				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
 				uint8 * ptr = getResourceAddress(rtSound, data[1]);
 				if (ptr != NULL) {
 					ptr+=16;       /* Skip header */
@@ -125,8 +125,7 @@ void Scumm::processSoundQues()
 						else if (chan == 2) {
 							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
 						}
-					}
-					if (bits == 12) {
+					} else if (bits == 12) {
 						uint32 s_size = (size * 4) / 3;
 						byte * buffer = (byte*)malloc (s_size + 4);
 						uint32 l = 0, r = 0, tmp;
@@ -853,7 +852,7 @@ void Scumm::decompressBundleSound(int index) {
 	{	/* Parse decompressed data */
 		int rate = 22050;
 		byte *ptr = CompFinal;
-		int tag, size;
+		int tag, size = -1;
 		tag = READ_BE_UINT32(ptr); ptr+=4;
 		if (tag != MKID_BE('iMUS')) {
 			warning("Decompression of bundle sound failed");
@@ -884,6 +883,11 @@ void Scumm::decompressBundleSound(int index) {
 			}
 		}
 
+		if (size < 0) {
+			warning("Decompression of bundle sound failed (no size field)");
+			free(CompFinal);
+			return;
+		}
 		Final = (unsigned char *)malloc(size);
 		memcpy(&Final[0], &ptr[0], size);
 		_mixer->play_raw(NULL, Final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);

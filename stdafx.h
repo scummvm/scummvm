@@ -2,6 +2,10 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.17  2002/06/02 20:28:09  bbrox
+ * Small warning fix + double inclusion protection (can always be useful
+ * :) ).
+ *
  * Revision 1.16  2002/05/05 20:04:25  fingolfin
  * cleaning up the mess drigo left... <sigh>
  *
@@ -41,6 +45,9 @@
  * Re-added changes to allow cygwin and beos cross-compilation.
  *
  */
+
+#ifndef _STDAFX_H
+#define _STDAFX_H
 
 #if defined(NONSTANDARD_PORT)
 
@@ -150,3 +157,4 @@
 #endif
 #endif
 
+#endif

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef _SYSTEM_H
+#define _SYSTEM_H
+
 /* Interface to what's below ScummVM */
 
 class OSystem {
@@ -178,3 +181,5 @@ enum {
 	GD_MAC,
 	GD_DC
 };
+
+#endif 
