@@ -29,6 +29,7 @@ _alsa=auto
 _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
+_need_memalign=no
 # binary names
 _ranlib=ranlib
 
@@ -258,6 +259,20 @@ case $endianess in
 esac
 rm -f tmp_endianess_check tmp_endianess_check.cpp
 
+echo -n "Alignment required... "
+cat > $TMPC << EOF
+#include <malloc.h>
+int main (void) { (void) memalign(64, sizeof(char)); return 0; }
+EOF
+_need_memalign=yes
+cc_check && _need_memalign=no
+if test "$_need_memalign" = yes ; then
+  echo "#define SCUMM_NEED_ALIGNMENT" >> config.h
+else
+ echo "#undef SCUMM_NEED_ALIGNMENT" >> config.h
+fi
+echo "$_need_memalign"
+
 #
 # Determine data type sizes
 # TODO: proper error checking
@@ -298,7 +313,7 @@ EOF
 fi
 if test "$_vorbis" = yes ; then
   echo "#define USE_VORBIS" >> config.h
-  LIBS="$LIBS -lvorbisfile -lvorbis"
+  LIBS="$LIBS -lvorbisfile -lvorbis -logg"
 else
   echo "#undef USE_VORBIS" >> config.h
 fi
