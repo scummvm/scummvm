@@ -26,15 +26,32 @@
 
 namespace Scumm {
 
-class BundleMgr {
+class BundleDirCache {
 public:
-
 	struct AudioTable {
 		char filename[13];
 		int32 size;
 		int32 offset;
 	};
+private:
 
+	struct FileDirCache {
+		char fileName[20];
+		AudioTable *bundleTable;
+		int32 numFiles;
+	} _budleDirCache[4];
+	
+	int matchFile(const char *filename, const char *directory);
+
+public:
+	BundleDirCache();
+	~BundleDirCache();
+
+	AudioTable *getTable(const char *filename, const char *directory);
+	int32 getNumFiles(const char *filename, const char *directory);
+};
+
+class BundleMgr {
 private:
 
 	struct CompTable {
@@ -43,7 +60,8 @@ private:
 		int32 codec;
 	};
 
-	AudioTable *_bundleTable;
+	BundleDirCache *_cache;
+	BundleDirCache::AudioTable *_bundleTable;
 	CompTable *_compTable;
 	int32 _numFiles;
 	int32 _curSample;
@@ -56,7 +74,7 @@ private:
 
 public:
 
-	BundleMgr();
+	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
 	bool openFile(const char *filename, const char *directory);

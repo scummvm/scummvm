@@ -33,6 +33,7 @@ ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	_scumm = scumm;
 	_mutex = g_system->create_mutex();
 	_disk = 0;
+	_cacheBundleDir = new BundleDirCache();
 	BundleCodecs::initializeImcTables();
 }
 
@@ -40,6 +41,7 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		closeSound(&_sounds[l]);
 	}
+	delete _cacheBundleDir;
 }
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
@@ -137,7 +139,7 @@ int ImuseDigiSndMgr::allocSlot() {
 bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 	bool result = false;
 
-	_sounds[slot]._bundle = new BundleMgr();
+	_sounds[slot]._bundle = new BundleMgr(_cacheBundleDir);
 	if (_scumm->_gameId == GID_CMI) {
 		if (_scumm->_features & GF_DEMO) {
 			result = _sounds[slot]._bundle->openFile("music.bun", _scumm->getGameDataPath());
@@ -164,7 +166,7 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 	bool result = false;
 
-	_sounds[slot]._bundle = new BundleMgr();
+	_sounds[slot]._bundle = new BundleMgr(_cacheBundleDir);
 	if (_scumm->_gameId == GID_CMI) {
 		if (_scumm->_features & GF_DEMO) {
 			result = _sounds[slot]._bundle->openFile("voice.bun", _scumm->getGameDataPath());

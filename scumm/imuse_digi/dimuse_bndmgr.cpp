@@ -25,14 +25,93 @@
 
 namespace Scumm {
 
-struct FileDirCache {
-	char fileName[20];
-	BundleMgr::AudioTable *bundleTable;
-	int32 numFiles;
-	int32 instance;
-} static budleDirCache[4];
+BundleDirCache::BundleDirCache() {
+	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
+		_budleDirCache[fileId].bundleTable = NULL;
+	}
+}
 
-BundleMgr::BundleMgr() {
+BundleDirCache::~BundleDirCache() {
+	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
+		if (_budleDirCache[fileId].bundleTable != NULL)
+			free (_budleDirCache[fileId].bundleTable);
+	}
+}
+
+BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename, const char *directory) {
+	int slot = matchFile(filename, directory);
+	assert(slot != -1);
+	return _budleDirCache[slot].bundleTable;
+}
+
+int32 BundleDirCache::getNumFiles(const char *filename, const char *directory) {
+	int slot = matchFile(filename, directory);
+	assert(slot != -1);
+	return _budleDirCache[slot].numFiles;
+}
+
+int BundleDirCache::matchFile(const char *filename, const char *directory) {
+	int32 tag, offset;
+	bool found = false;
+	int freeSlot = -1;
+	int fileId;
+
+	for (fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
+		if ((_budleDirCache[fileId].bundleTable == NULL) && (freeSlot == -1)) {
+			freeSlot = fileId;
+		}
+		if (scumm_stricmp(filename, _budleDirCache[fileId].fileName) == 0) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		File file;
+
+		if (file.open(filename, directory) == false) {
+			warning("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
+			return false;
+		}
+
+		if (freeSlot == -1)
+			error("BundleDirCache::matchFileFile() Can't find free slot for file bundle dir cache");
+
+		tag = file.readUint32BE();
+		offset = file.readUint32BE();
+		
+		strcpy(_budleDirCache[freeSlot].fileName, filename);
+		_budleDirCache[freeSlot].numFiles = file.readUint32BE();
+		_budleDirCache[freeSlot].bundleTable = (AudioTable *) malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
+
+		file.seek(offset, SEEK_SET);
+
+		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
+			char name[13], c;
+			int32 z = 0;
+			int32 z2;
+
+			for (z2 = 0; z2 < 8; z2++)
+				if ((c = file.readByte()) != 0)
+					name[z++] = c;
+			name[z++] = '.';
+			for (z2 = 0; z2 < 4; z2++)
+				if ((c = file.readByte()) != 0)
+					name[z++] = c;
+
+			name[z] = '\0';
+			strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
+			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
+			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
+		}
+		return freeSlot;
+	} else {
+		return fileId;
+	}
+}
+
+BundleMgr::BundleMgr(BundleDirCache *cache) {
+	_cache = cache;
 	_bundleTable = NULL;
 	_compTable = NULL;
 	_numFiles = 0;
@@ -45,8 +124,6 @@ BundleMgr::~BundleMgr() {
 }
 
 bool BundleMgr::openFile(const char *filename, const char *directory) {
-	int32 tag, offset;
-
 	if (_file.isOpen())
 		return true;
 
@@ -55,59 +132,10 @@ bool BundleMgr::openFile(const char *filename, const char *directory) {
 		return false;
 	}
 
-	bool found = false;
-	int freeSlot = -1;
-	int fileId;
-
-	for (fileId = 0; fileId < ARRAYSIZE(budleDirCache); fileId++) {
-		if ((budleDirCache[fileId].instance == 0) && (freeSlot == -1)) {
-			freeSlot = fileId;
-		}
-		if (scumm_stricmp(filename, budleDirCache[fileId].fileName) == 0) {
-			found = true;
-		}
-	}
-
-	if (!found) {
-		if (freeSlot == -1)
-			error("BundleMgr::openFile() Can't find free slot for file bundle dir cache");
-
-		tag = _file.readUint32BE();
-		offset = _file.readUint32BE();
-		
-		strcpy(budleDirCache[freeSlot].fileName, filename);
-		budleDirCache[freeSlot].numFiles = _numFiles = _file.readUint32BE();
-		budleDirCache[freeSlot].bundleTable = _bundleTable = (AudioTable *) malloc(_numFiles * sizeof(AudioTable));
-
-		_file.seek(offset, SEEK_SET);
-
-		for (int32 i = 0; i < _numFiles; i++) {
-			char name[13], c;
-			int32 z = 0;
-			int32 z2;
-
-			for (z2 = 0; z2 < 8; z2++)
-				if ((c = _file.readByte()) != 0)
-					name[z++] = c;
-			name[z++] = '.';
-			for (z2 = 0; z2 < 4; z2++)
-				if ((c = _file.readByte()) != 0)
-					name[z++] = c;
-
-			name[z] = '\0';
-			strcpy(_bundleTable[i].filename, name);
-			_bundleTable[i].offset = _file.readUint32BE();
-			_bundleTable[i].size = _file.readUint32BE();
-		}
-		budleDirCache[freeSlot].instance++;
-		_fileBundleId = freeSlot;
-	} else {
-		_fileBundleId = fileId;
-		_numFiles = budleDirCache[fileId].numFiles;
-		_bundleTable = budleDirCache[fileId].bundleTable;
-		budleDirCache[fileId].instance++;
-	}
-
+	_numFiles = _cache->getNumFiles(filename, directory);
+	assert(_numFiles);
+	_bundleTable = _cache->getTable(filename, directory);
+	assert(_bundleTable);
 	_compTableLoaded = false;
 	_lastCacheOutputSize = 0;
 	_lastBlock = -1;
@@ -118,12 +146,6 @@ bool BundleMgr::openFile(const char *filename, const char *directory) {
 void BundleMgr::closeFile() {
 	if (_file.isOpen()) {
 		_file.close();
-		if (--budleDirCache[_fileBundleId].instance <= 0) {
-			free (budleDirCache[_fileBundleId].bundleTable);
-			budleDirCache[_fileBundleId].instance = 0;
-			budleDirCache[_fileBundleId].fileName[0] = 0;
-			budleDirCache[_fileBundleId].numFiles = 0;
-		}
 		_bundleTable = NULL;
 		_numFiles = 0;
 		_compTableLoaded = false;
@@ -225,7 +247,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final) {
 	int32 final_size = 0, i;
 
-	if (_file.isOpen() == false) {
+	if (!_file.isOpen()) {
 		warning("BundleMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}

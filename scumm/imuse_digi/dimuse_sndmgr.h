@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "scumm/imuse_digi/dimuse_bndmgr.h"
 
 namespace Scumm {
 
@@ -88,6 +89,7 @@ private:
 	ScummEngine *_scumm;
 	OSystem::MutexRef _mutex;
 	byte _disk;
+	BundleDirCache *_cacheBundleDir;
 
 	bool openMusicBundle(int slot);
 	bool openVoiceBundle(int slot);
