@@ -1715,7 +1715,7 @@ void ScummEngine::processKbd() {
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
-	if (_version <= 2 && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+	if (((_version <= 2) || (_features & GF_FMTOWNS)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
 		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
 		_lastKeyHit -= 314;
 	}
@@ -1843,7 +1843,7 @@ void ScummEngine::processKbd() {
 #endif
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
-	   (_version <= 2 && _lastKeyHit == 8)) {
+	   (((_version <= 2) || (_features & GF_FMTOWNS)) && _lastKeyHit == 8)) {
 		confirmrestartDialog();
 		return;
 	}
