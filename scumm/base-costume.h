@@ -71,8 +71,7 @@ protected:
 	ScummEngine *_vm;
 
 	// Destination
-	byte *_outptr;
-	int _outwidth, _outheight;
+	Graphics::Surface _out;
 	int32 _numStrips;
 
 	// Source pointer
@@ -119,14 +118,6 @@ public:
 		_width = _height = 0;
 		_skipLimb = 0;
 		_transparency = 0;
-		
-		_clipOverride.right = 0;
-		_clipOverride.left = 0;
-		_clipOverride.top = 0;
-		_clipOverride.bottom = 0;
-
-		_outptr = 0;
-		_outwidth = _outheight = 0;
 	}
 
 	virtual void setPalette(byte *palette) = 0;

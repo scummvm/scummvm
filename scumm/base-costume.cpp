@@ -29,13 +29,12 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 	int i;
 	byte result = 0;
 
+	_out = vs;
 	if (drawToBackBuf)
-		_outptr = vs.getBackPixels(0, 0);
+		_out.pixels = vs.getBackPixels(0, 0);
 	else
-		_outptr = vs.getPixels(0, 0);
+		_out.pixels = vs.getPixels(0, 0);
 
-	_outwidth = vs.pitch;
-	_outheight = vs.h;
 	_numStrips = numStrips;
 
 	if (_vm->_version == 1) {
