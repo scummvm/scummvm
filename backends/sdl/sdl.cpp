@@ -159,7 +159,7 @@ void OSystem_SDL_Normal::draw_mouse() {
 	SDL_UnlockSurface(sdl_tmpscreen);
 	
 	// Mark as dirty
-	add_dirty_rect(x, y, w, h);
+	add_dirty_rect(x-1, y-1, w, h);
 
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouse_drawn = true;
@@ -194,7 +194,7 @@ void OSystem_SDL_Normal::undraw_mouse() {
 		}
 	}
 
-	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+	add_dirty_rect(old_mouse_x-1, old_mouse_y-1, old_mouse_w, old_mouse_h);
 
 	SDL_UnlockSurface(sdl_tmpscreen);
 }
