@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-05-05
+Last updated:    2003-05-16
 Release version: 0.4.1cvs
 ------------------------------------------------------------------------
 
@@ -313,29 +313,31 @@ Command Line Options:
 
         scummvm [OPTIONS] [GAME]
 
-        [GAME]     - Short name of game to load. For example, 'monkey' for Monkey Island.
+        [GAME]        - Short name of game to load. For example, 'monkey' for Monkey Island.
         
-        -p<path>   - Path to where the game is installed. Default is Cwd.
-        -x[<num>]  - Save game slot to load (default: autosave)
-        -f         - Full-screen mode.
-        -g<mode>   - Select graphics scaler. See below.
-        -e<mode>   - Select sound engine. See below.
-        -a         - Enable amiga pal conversion, for playing Amiga versions
-        -q<lang>   - Select language. See below.
-        -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
-        -m<num>    - Set the music volume, 0-255.  Default is '192'
-        -o<num>    - Set the master volume, 0-255. Default is '192'
-        -s<num>    - Set the sfx volume, 0-255.    Default is '192'
-        -t<num>    - Set music tempo. 50-200. Default is '100' (percent)
-        -n         - Disable subtitles. Use with games that have voice.
-        -y         - Set talk speed ('yak option'). Default is '60'
-        -l<file>   - Load alternate configuration file
-        -w[<file>] - Write configuration file
-        -v         - Show version information and exit
-        -z         - Display list of games
-        -b<num>    - Start in room <num>.
-        -d[<num>]  - Set debug verbosity to <num>
-        -u         - Dump scripts if a directory called 'dumps' exists in current directory
+        -p<path>      - Path to where the game is installed. Default is Cwd.
+        -x[<num>]     - Save game slot to load (default: autosave)
+        -f            - Full-screen mode.
+        -g<mode>      - Select graphics scaler. See below.
+        -e<mode>      - Select sound engine. See below.
+        -a            - Enable amiga pal conversion, for playing Amiga versions
+        -q<lang>      - Select language. See below.
+        -c<num>       - Drive to play cd audio from.  E.g., 0 is first drive.
+        -m<num>       - Set the music volume, 0-255.  Default is '192'
+        -o<num>       - Set the master volume, 0-255. Default is '192'
+        -s<num>       - Set the sfx volume, 0-255.    Default is '192'
+        -t<num>       - Set music tempo. 50-200. Default is '100' (percent)
+        -n            - Disable subtitles. Use with games that have voice.
+        -y            - Set talk speed ('yak option'). Default is '60'
+        -l<file>      - Load alternate configuration file
+        -w[<file>]    - Write configuration file
+        -v            - Show version information and exit
+        -z            - Display list of games
+        -b<num>       - Start in room <num>.
+        -d[<num>]     - Set debug verbosity to <num>
+        -u            - Dump scripts if a directory called 'dumps' exists in current directory
+		--multi-midi  - enable combination Adlib and native MIDI
+		--native-mt32 - true Roland MT-32 (disable GM emulation)
 
 
 Hot Keys:

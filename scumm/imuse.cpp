@@ -31,10 +31,6 @@
 // the most common iMuse diagnostic messages.
 // #define IMUSE_DEBUG
 
-// Unremark this statement to support simultaneous
-// use of Adlib and native MIDI drivers.
-// #define ADLIB_TOO
-
 //
 // Some constants
 //
@@ -290,6 +286,7 @@ class IMuseInternal {
 	friend struct Player;
 
 private:
+	bool _enable_multi_midi;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 
@@ -631,10 +628,7 @@ MidiDriver *IMuseInternal::getBestMidiDriver (int sound) {
 		}
 #if !defined(__PALM_OS__) // Adlib not supported on PalmOS
 	} else {
-		if (!_midi_adlib) {
-#if !defined(ADLIB_TOO)
-			if (_midi_native) return NULL;
-#endif
+		if (!_midi_adlib && (_enable_multi_midi || !_midi_native)) {
 			_midi_adlib = MidiDriver_ADLIB_create();
 			initMidiDriver (_midi_adlib);
 		}
@@ -1651,6 +1645,14 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		// ranging from 50 to 200 (for 50% to 200% normal speed).
 		if (value >= 50 && value <= 200)
 			_tempoFactor = value;
+		break;
+
+	case IMuse::PROP_NATIVE_MT32:
+		Instrument::nativeMT32 (value > 0);
+		break;
+
+	case IMuse::PROP_MULTI_MIDI:
+		_enable_multi_midi = (value > 0);
 		break;
 	}
 	return 0;

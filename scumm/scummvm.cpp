@@ -604,6 +604,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+			_imuse->property (IMuse::PROP_MULTI_MIDI, detector->_multi_midi);
+			_imuse->property (IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
 			_imuse->set_music_volume(_sound->_sound_volume_music);
 		}
 	}

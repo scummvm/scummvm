@@ -52,6 +52,7 @@ public:
 	};
 
 	Instrument() : _type (0), _instrument (0) { }
+	static void nativeMT32 (bool native);
 
 	void clear();
 	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }

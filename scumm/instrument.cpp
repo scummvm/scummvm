@@ -25,7 +25,7 @@
 #include "scumm/instrument.h"
 #include "sound/mididrv.h"
 
-#define NATIVE_MT32 false
+static bool _native_mt32 = false;
 
 static const byte mt32_to_gm[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
@@ -239,7 +239,7 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->roland ((byte *) &_instrument); }
-	bool is_valid() { return (NATIVE_MT32 ? true : (_instrument_name[0] != '\0')); }
+	bool is_valid() { return (_native_mt32 ? true : (_instrument_name[0] != '\0')); }
 };
 
 ////////////////////////////////////////
@@ -247,6 +247,10 @@ public:
 // Instrument class members
 //
 ////////////////////////////////////////
+
+void Instrument::nativeMT32 (bool native) {
+	_native_mt32 = native;
+}
 
 void Instrument::clear() {
 	if (_instrument)
@@ -339,7 +343,7 @@ void Instrument_Program::send (MidiChannel *mc) {
 	if (_program > 127)
 		return;
 
-	if (NATIVE_MT32) // if (mc->device()->mt32device())
+	if (_native_mt32) // if (mc->device()->mt32device())
 		mc->programChange (_mt32 ? _program : _program /*gm_to_mt32 [_program]*/);
 	else
 		mc->programChange (_mt32 ? mt32_to_gm [_program] : _program);
@@ -383,7 +387,7 @@ Instrument_Roland::Instrument_Roland (byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 	_instrument_name[10] = '\0';
-	if (!NATIVE_MT32 && getEquivalentGM() >= 128) {
+	if (!_native_mt32 && getEquivalentGM() >= 128) {
 		warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
 		_instrument_name[0] = '\0';
 	}
@@ -404,7 +408,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 		s->loadBytes (&_instrument, sizeof (_instrument));
 		memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 		_instrument_name[10] = '\0';
-		if (!NATIVE_MT32 && getEquivalentGM() >= 128) {
+		if (!_native_mt32 && getEquivalentGM() >= 128) {
 			debug (2, "MT-32 custom instrument \"%s\" not supported", _instrument_name);
 			_instrument_name[0] = '\0';
 		}
@@ -412,7 +416,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 }
 
 void Instrument_Roland::send (MidiChannel *mc) {
-	if (NATIVE_MT32) { // if (mc->device()->mt32device()) {
+	if (_native_mt32) { // if (mc->device()->mt32device()) {
 		_instrument.device_id = mc->getNumber();
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {

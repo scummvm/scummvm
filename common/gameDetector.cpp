@@ -46,35 +46,38 @@ static const char USAGE_STRING[] =
 	"Syntax:\n"
 	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
-	"\t-p<path>   - look for game in <path>\n"
-	"\t-x[<num>]  - load this savegame (default: 0 - autosave)\n"
-	"\t-f         - fullscreen mode\n"
-	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x,dotmatrix)\n"
-	"\t-e<mode>   - set music engine (see README for details)\n"
-	"\t-a         - specify game is amiga version\n"
-	"\t-q<lang>   - specify language (en,de,fr,it,pt,es,ja,zh,ko,hb)\n"
+	"\t-p<path>      - look for game in <path>\n"
+	"\t-x[<num>]     - load this savegame (default: 0 - autosave)\n"
+	"\t-f            - fullscreen mode\n"
+	"\t-g<mode>      - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x,dotmatrix)\n"
+	"\t-e<mode>      - set music engine (see README for details)\n"
+	"\t-a            - specify game is amiga version\n"
+	"\t-q<lang>      - specify language (en,de,fr,it,pt,es,ja,zh,ko,hb)\n"
 	"\n"
-	"\t-c<num>    - use cdrom <num> for cd audio\n"
-	"\t-m<num>    - set music volume to <num> (0-255)\n"
-	"\t-o<num>    - set master volume to <num> (0-255)\n"
-	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
-	"\t-t<num>    - set music tempo (default- adlib: 0x1D9000, midi: 0x4A0000)\n"
+	"\t-c<num>       - use cdrom <num> for cd audio\n"
+	"\t-m<num>       - set music volume to <num> (0-255)\n"
+	"\t-o<num>       - set master volume to <num> (0-255)\n"
+	"\t-s<num>       - set sfx volume to <num> (0-255)\n"
+	"\t-t<num>       - set music tempo (50-200, default 100%%)\n"
 	"\n"
-	"\t-n         - no subtitles for speech\n"
-	"\t-y         - set text speed (default: 60)\n"
+	"\t-n            - no subtitles for speech\n"
+	"\t-y            - set text speed (default: 60)\n"
 	"\n"
-	"\t-l<file>   - load config file instead of default\n"
+	"\t-l<file>      - load config file instead of default\n"
 #if defined(UNIX)
-	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
+	"\t-w[<file>]    - write to config file [~/.scummvmrc]\n"
 #else
-	"\t-w[<file>] - write to config file [scummvm.ini]\n"
+	"\t-w[<file>]    - write to config file [scummvm.ini]\n"
 #endif
-	"\t-v         - show version info and exit\n"
-	"\t-z         - display list of games\n"
+	"\t-v            - show version info and exit\n"
+	"\t-z            - display list of games\n"
 	"\n"
-	"\t-b<num>    - start in room <num>\n"
-	"\t-d[<num>]  - enable debug output (debug level [1])\n"
-	"\t-u         - dump scripts\n"
+	"\t-b<num>       - start in room <num>\n"
+	"\t-d[<num>]     - enable debug output (debug level [1])\n"
+	"\t-u            - dump scripts\n"
+	"\n"
+	"\t--multi-midi  - enable combination Adlib and native MIDI\n"
+	"\t--native-mt32 - true Roland MT-32 (disable GM emulation)\n"
 ;
 #endif
 // This contains a pointer to a list of all supported games.
@@ -161,6 +164,9 @@ GameDetector::GameDetector() {
 	_gameTempo = 0;
 	_midi_driver = MD_AUTO;
 	_features = 0;
+
+	_multi_midi = false;
+	_native_mt32 = false;
 
 	_cdrom = 0;
 	_save_slot = 0;
@@ -271,6 +277,9 @@ void GameDetector::updateconfig() {
 		_gameTempo = strtol(val, NULL, 0);
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
+
+	_multi_midi = g_config->getBool ("multi_midi");
+	_native_mt32 = g_config->getBool ("native_mt32");
 }
 
 void GameDetector::list_games() {
@@ -445,6 +454,18 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				CHECK_OPTION();
 				list_games();
 				exit(1);
+			case '-':
+				// Long options. Let the fun begin!
+				if (!strcmp (s, "multi-midi")) {
+					_multi_midi = true;
+					g_config->setBool ("multi_midi", true);
+				} else if (!strcmp (s, "native-mt32")) {
+					_native_mt32 = true;
+					g_config->setBool ("native_mt32", true);
+				} else {
+					goto ShowHelpAndExit;
+				}
+				break;
 			default:
 				goto ShowHelpAndExit;
 			}

@@ -170,6 +170,9 @@ public:
 
 	int _gfx_mode;
 	bool _default_gfx_mode;
+
+	bool _multi_midi;
+	bool _native_mt32;
 	
 	int _cdrom;
 	int _save_slot;
