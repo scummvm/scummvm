@@ -28,7 +28,6 @@
 
 #include "saga/text.h"
 #include "saga/yslib.h"
-#include "common/stack.h"
 
 namespace Saga {
 
@@ -44,8 +43,6 @@ namespace Saga {
 #define R_SCRIPTLIST_HDR 12
 #define R_SCRIPT_STRINGLIMIT 255
 #define R_TAB "    "
-
-#define R_DEF_THREAD_STACKSIZE 16
 
 #define S_ERROR_PREFIX "SError: "
 #define S_WARN_PREFIX "SWarning: "
@@ -80,7 +77,33 @@ struct R_SCRIPT_THREAD {
 	unsigned long i_offset; // Instruction offset
 
 	R_SEMAPHORE sem;
-	Common::Stack<SDataWord_T> *stack;
+
+	// The scripts are allowed to access the stack like any other memory
+	// area. It's therefore probably quite important that our stacks work
+	// the same as in the original interpreter.
+
+	SDataWord_T stackBuf[64];
+
+	int stackPtr;
+	int framePtr;
+
+	SDataWord_T stackTop() {
+		return stackBuf[stackPtr];
+	}
+
+	int stackSize() {
+		return ARRAYSIZE(stackBuf) - stackPtr - 1;
+	}
+
+	void push(SDataWord_T n) {
+		assert(stackPtr > 0);
+		stackBuf[--stackPtr] = n;
+	}
+
+	SDataWord_T pop() {
+		assert(stackPtr < ARRAYSIZE(stackBuf));
+		return stackBuf[stackPtr++];
+	}
 };
 
 struct R_PROC_TBLENTRY {

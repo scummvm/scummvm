@@ -33,8 +33,6 @@
 
 #include "saga/sdata.h"
 
-#include "common/stack.h"
-
 namespace Saga {
 
 R_SCRIPT_THREAD *Script::SThreadCreate() {
@@ -50,7 +48,8 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 		return NULL;
 	}
 
-	new_thread->stack = new Common::Stack<SDataWord_T>();
+	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
+	new_thread->framePtr = ARRAYSIZE(new_thread->stackBuf) - 1;
 
 	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
 
@@ -63,8 +62,6 @@ int Script::SThreadDestroy(R_SCRIPT_THREAD *thread) {
 	if (thread == NULL) {
 		return R_FAILURE;
 	}
-
-	delete thread->stack;
 
 	return R_SUCCESS;
 }
@@ -220,7 +217,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		saved_offset = thread->i_offset;
 		in_char = scriptS.readByte();
 
-		debug(0, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stack->size());
+		debug(0, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
 
 		switch (in_char) {
 		case 0x01: // nextblock
@@ -231,21 +228,21 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 // STACK INSTRUCTIONS
 		case 0x02: // Dup top element (DUP)
-			thread->stack->push(thread->stack->top());
+			thread->push(thread->stackTop());
 			break;
 		case 0x03: // Pop nothing (POPN)
-			thread->stack->pop();
+			thread->pop();
 			break;
 		case 0x04: // Push false (PSHF)
-			thread->stack->push(0);
+			thread->push(0);
 			break;
 		case 0x05: // Push true (PSHT)
-			thread->stack->push(1);
+			thread->push(1);
 			break;
 		case 0x06: // Push word (PUSH)
 		case 0x08: // Push word (PSHD) (dialogue string index)
 			param1 = (SDataWord_T)scriptS.readUint16LE();
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 
 // DATA INSTRUCTIONS  
@@ -254,19 +251,19 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			n_buf = scriptS.readByte();
 			param1 = (SDataWord_T)scriptS.readUint16LE();
 			_vm->_sdata->getBit(n_buf, param1, &bitstate);
-			thread->stack->push(bitstate);
+			thread->push(bitstate);
 			break;
 		case 0x0C: // Get word (GETW)
 			n_buf = scriptS.readByte();
 			param1 = scriptS.readUint16LE();
 			_vm->_sdata->getWord(n_buf, param1, &data);
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 		case 0x0F: // Modify flag (MODF)
 			n_buf = scriptS.readByte();
 			param1 = (SDataWord_T)scriptS.readUint16LE();
 			bitstate = _vm->_sdata->readWordU(param1);
-			data = thread->stack->top();
+			data = thread->stackTop();
 			if (bitstate) {
 				_vm->_sdata->setBit(n_buf, data, 1);
 			} else {
@@ -276,13 +273,13 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		case 0x10: // Put word (PUTW)
 			n_buf = scriptS.readByte();
 			param1 = (SDataWord_T)scriptS.readUint16LE();
-			data = thread->stack->top();
+			data = thread->stackTop();
 			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
 		case 0x13: // Modify flag and pop (MDFP)
 			n_buf = scriptS.readByte();
 			param1 = (SDataWord_T)scriptS.readUint16LE();
-			param1 = thread->stack->pop();
+			param1 = thread->pop();
 			bitstate = _vm->_sdata->readWordU(param1);
 			if (bitstate) {
 				_vm->_sdata->setBit(n_buf, param1, 1);
@@ -293,7 +290,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		case 0x14: // Put word and pop (PTWP)
 			n_buf = scriptS.readByte();
 			param1 = (SDataWord_T)scriptS.readUint16LE();
-			data = thread->stack->top();
+			data = thread->stackTop();
 			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
 
@@ -311,11 +308,11 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					error("Calling dynamically generated script? Wow");
 				param1 = (SDataWord_T)scriptS.readUint16LE();
 				data = scriptS.pos();
-				thread->stack->push(n_args);
+				thread->push(n_args);
 				// NOTE: The original pushes the program
 				// counter as a pointer here. But I don't think
 				// we will have to do that.
-				thread->stack->push(data);
+				thread->push(data);
 				thread->i_offset = (unsigned long)param1;
 			}
 			break;
@@ -342,7 +339,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 							thread->i_offset, func_num);
 					_vm->_console->print(S_WARN_PREFIX "Removing %d operand(s) from stack.\n", n_args);
 					for (i = 0; i < n_args; i++) {
-						thread->stack->pop();
+						thread->pop();
 					}
 				} else {
 					FIXME_SHADOWED_result = (this->*sfunc)(thread);
@@ -354,7 +351,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 		case 0x1A: // (ENTR) Enter the dragon
 			//data = scriptS.pos();
-			//thread->stack->push(data);
+			//thread->push(data);
 			
 			param1 = scriptS.readUint16LE();
 			break;
@@ -362,12 +359,12 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			unhandled = 1;
 			break;
 		case 0x1C: // Return with void
-			if (thread->stack->size() == 0) {
+			if (thread->stackSize() == 0) {
 				_vm->_console->print("Script execution complete.");
 				thread->executing = 0;
 			} else {
-				data = thread->stack->pop();
-				/* int n_args = */ thread->stack->pop();
+				data = thread->pop();
+				/* int n_args = */ thread->pop();
 				thread->i_offset = data;
 			}
 			break;
@@ -382,7 +379,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (JNZP): Jump if nonzero + POP
 		case 0x1E:
 			param1 = scriptS.readUint16LE();
-			data = thread->stack->pop();
+			data = thread->pop();
 			if (data) {
 				thread->i_offset = (unsigned long)param1;
 			}
@@ -390,7 +387,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (JZP): Jump if zero + POP
 		case 0x1F:
 			param1 = scriptS.readUint16LE();
-			data = thread->stack->pop();
+			data = thread->pop();
 			if (!data) {
 				thread->i_offset = (unsigned long)param1;
 			}
@@ -398,7 +395,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (JNZ): Jump if nonzero
 		case 0x20:
 			param1 = scriptS.readUint16LE();
-			data = thread->stack->top();
+			data = thread->stackTop();
 			if (data) {
 				thread->i_offset = (unsigned long)param1;
 			}
@@ -406,7 +403,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (JZ): Jump if zero
 		case 0x21:
 			param1 = scriptS.readUint16LE();
-			data = thread->stack->top();
+			data = thread->stackTop();
 			if (!data) {
 				thread->i_offset = (unsigned long)param1;
 			}
@@ -420,7 +417,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				unsigned int default_jmp;
 				int case_found = 0;
 
-				data = thread->stack->pop();
+				data = thread->pop();
 				n_switch = scriptS.readUint16LE();
 				for (i = 0; i < n_switch; i++) {
 					switch_num = scriptS.readUint16LE();
@@ -471,22 +468,22 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 			// (NEG) Negate stack by 2's complement
 		case 0x25:
-			data = thread->stack->pop();
+			data = thread->pop();
 			data = ~data;
 			data++;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (TSTZ) Test for zero
 		case 0x26:
-			data = thread->stack->pop();
+			data = thread->pop();
 			data = data ? 0 : 1;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (NOT) Binary not
 		case 0x27:
-			data = thread->stack->pop();
+			data = thread->pop();
 			data = ~data;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 		case 0x28: // inc_v increment, don't push
 			unhandled = 1;
@@ -517,110 +514,110 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 			// (ADD): Addition
 		case 0x2C:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 + iparam2;
-			thread->stack->push((SDataWord_T) iresult);
+			thread->push((SDataWord_T) iresult);
 			break;
 			// (SUB): Subtraction
 		case 0x2D:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 - iparam2;
-			thread->stack->push((SDataWord_T) iresult);
+			thread->push((SDataWord_T) iresult);
 			break;
 			// (MULT): Integer multiplication
 		case 0x2E:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 * iparam2;
-			thread->stack->push((SDataWord_T) iresult);
+			thread->push((SDataWord_T) iresult);
 			break;
 			// (DIV): Integer division
 		case 0x2F:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 / iparam2;
-			thread->stack->push((SDataWord_T) iresult);
+			thread->push((SDataWord_T) iresult);
 			break;
 			// (MOD) Modulus
 		case 0x30:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 % iparam2;
-			thread->stack->push((SDataWord_T) iresult);
+			thread->push((SDataWord_T) iresult);
 			break;
 			// (EQU) Test equality
 		case 0x33:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 == iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (NEQU) Test inequality
 		case 0x34:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 != iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (GRT) Test Greater-than
 		case 0x35:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 > iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (LST) Test Less-than
 		case 0x36:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 < iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (GRTE) Test Greater-than or Equal to
 		case 0x37:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 >= iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (LSTE) Test Less-than or Equal to
 		case 0x38:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			data = (iparam1 <= iparam2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 
 // BITWISE INSTRUCTIONS   
 
 			// (SHR): Arithmetic binary shift right
 		case 0x3F:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			iparam2 = (long)param2;
 			// Preserve most significant bit
 			data = (0x01 << ((sizeof param1 * CHAR_BIT) - 1)) & param1;
@@ -628,59 +625,59 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				param1 >>= 1;
 				param1 |= data;
 			}
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 			// (SHL) Binary shift left
 		case 0x40:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			param1 <<= param2;
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 			// (AND) Binary AND
 		case 0x41:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			param1 &= param2;
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 			// (OR) Binary OR
 		case 0x42:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			param1 |= param2;
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 			// (XOR) Binary XOR
 		case 0x43:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			param1 ^= param2;
-			thread->stack->push(param1);
+			thread->push(param1);
 			break;
 
 // BOOLEAN LOGIC INSTRUCTIONS     
 
 			// (LAND): Logical AND
 		case 0x44:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			data = (param1 && param2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (LOR): Logical OR
 		case 0x45:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			data = (param1 || param2) ? 1 : 0;
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 			// (LXOR): Logical XOR
 		case 0x46:
-			param2 = thread->stack->pop();
-			param1 = thread->stack->pop();
+			param2 = thread->pop();
+			param1 = thread->pop();
 			data = ((param1) ? !(param2) : !!(param2));
-			thread->stack->push(data);
+			thread->push(data);
 			break;
 
 // GAME INSTRUCTIONS  
@@ -704,7 +701,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				}
 
 				for (i = 0; i < n_voices; i++) {
-					data = thread->stack->pop();
+					data = thread->pop();
 					if (a_index < 0)
 						continue;
 					if (!isVoiceLUTPresent()) {
