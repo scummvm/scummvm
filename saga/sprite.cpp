@@ -73,18 +73,21 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 	uint16 sprite_count;
 	uint16 i;
 
-	new_slist = (SPRITELIST *)malloc(sizeof *new_slist);
-	if (new_slist == NULL) {
-		return MEM;
-	}
-
 	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != SUCCESS) {
 		return FAILURE;
 	}
 
+	if (spritelist_len == 0)
+		return FAILURE;
+
 	MemoryReadStreamEndian readS(spritelist_data, spritelist_len, IS_BIG_ENDIAN);
 
 	sprite_count = readS.readUint16();
+
+	new_slist = (SPRITELIST *)malloc(sizeof *new_slist);
+	if (new_slist == NULL) {
+		return MEM;
+	}
 
 	new_slist->sprite_count = sprite_count;
 

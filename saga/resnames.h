@@ -29,7 +29,6 @@
 namespace Saga {
 
 // Lookup tables
-#define ITEMACDEMO_SCENE_LUT  1804
 #define ITE_SCENE_LUT  1806
 #define ITE_SCRIPT_LUT 216
 
@@ -58,7 +57,6 @@ namespace Saga {
 #define ITE_DEFAULT_PORTRAITS 125
 
 // ITE Scene resource numbers
-#define ITEMACDEMO_INTRO_ANIM_SCENE 1536
 #define ITE_INTRO_ANIM_SCENE 1538
 #define ITE_CAVE_SCENE_1 1542
 #define ITE_CAVE_SCENE_2 1545

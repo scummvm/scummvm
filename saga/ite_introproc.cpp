@@ -126,12 +126,15 @@ int Scene::ITEStartProc() {
 	size_t i;
 
 	SCENE_QUEUE first_scene;
+	SCENE_QUEUE tempScene;
 	GAME_SCENEDESC gs_desc;
 
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
-		_vm->_scene->queueScene(&ITE_IntroList[i]);
+		tempScene = ITE_IntroList[i];
+		tempScene.scene_n = RSC_ConvertID(tempScene.scene_n);
+		_vm->_scene->queueScene(&tempScene);
 	}
 
 	GAME_GetSceneInfo(&gs_desc);

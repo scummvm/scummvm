@@ -177,8 +177,9 @@ struct ACTORINTENT {
 typedef Common::List<ACTORINTENT> ActorIntentList;
 
 struct ActorData {
-	int index;		// Actor index
-	uint16 actorId;	// Actor id
+	bool _disabled;
+	int _index;		// Actor index
+	uint16 _actorId;	// Actor id
 
 	int name_i;		// Actor's index in actor name string list
 	uint16 flags;
@@ -219,8 +220,9 @@ struct ActorData {
 
 
 	ActorData() {
-		index = 0;
-		actorId = 0;
+		_disabled = false;
+		_index = 0;
+		_actorId = 0;
 		name_i = 0;
 		flags = 0;
 		frames = NULL;
@@ -288,7 +290,7 @@ private:
 
 	ActorData *getActor(uint16 actorId);
 
-	int loadActorResources(ActorData * actor);
+	bool loadActorResources(ActorData * actor);
 	
 	ActorOrderList::iterator getActorOrderIterator(const ActorData *actor);
 	void reorderActorUp(ActorData *actor);

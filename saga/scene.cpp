@@ -232,7 +232,7 @@ int Scene::nextScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(RSC_ConvertID(scene_qdat->scene_n), scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
 	return SUCCESS;
 }

@@ -70,13 +70,13 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
-		actor->actorId = ACTOR_INDEX_TO_ID(i);
-		actor->index = i;
-		debug(0, "init actorId=0x%X index=0x%X", actor->actorId, actor->index);
+		actor->_actorId = ACTOR_INDEX_TO_ID(i);
+		actor->_index = i;
+		debug(0, "init actorId=0x%X index=0x%X", actor->_actorId, actor->_index);
 		actor->spriteListResourceId = ActorTable[i].spriteListResourceId;
 		actor->frameListResourceId = ActorTable[i].frameListResourceId;
 		actor->flags = ActorTable[i].flags;
-		actor->speechColor = ActorTable[actor->index].speechColor;
+		actor->speechColor = ActorTable[i].speechColor;
 		actor->orient = ACTOR_DEFAULT_ORIENT;
 		actor->def_action = 0;
 		actor->def_action_flags = 0;
@@ -84,9 +84,13 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor->action_flags = 0;
 		actor->action_time = 0;
 		actor->action_frame = 0;
-		if (loadActorResources(actor) != SUCCESS)
-			error("Error while loading actors resource actorId=0x%X index=0x%X", actor->actorId, actor->index);
-		_orderList.push_back(actor);
+		actor->_disabled = !loadActorResources(actor);
+		if (actor->_disabled) {
+			warning("Disabling actorId=0x%X index=0x%X", actor->_actorId, actor->_index);
+		} else {
+			_orderList.push_back(actor);
+		}
+
 	}
 }
 
@@ -103,7 +107,7 @@ Actor::~Actor() {
 	}
 }
 
-int Actor::loadActorResources(ActorData * actor) {
+bool Actor::loadActorResources(ActorData * actor) {
 	byte *resourcePointer;
 	size_t resourceLength;
 	int frameCount;
@@ -112,20 +116,19 @@ int Actor::loadActorResources(ActorData * actor) {
 	int i, orient;
 	int result;
 
+	debug(0, "Loading frame resource id 0x%X", actor->frameListResourceId);
 	result = RSC_LoadResource(_actorContext, actor->frameListResourceId, &resourcePointer, &resourceLength);
 	if (result != SUCCESS) {
 		warning("Couldn't load sprite action index resource");
-		return FAILURE;
+		return false;
 	}
 
 	frameCount = resourceLength / 16;
-	debug(0, "Sprite resource contains %d frames", frameCount);
+	debug(0, "Frame resource contains %d frames", frameCount);
 	
 	framesPointer = (ActorFrame *)malloc(sizeof(ActorFrame) * frameCount);
 	if (framesPointer == NULL) {
-		warning("Couldn't allocate memory for sprite frames");
-		RSC_FreeResource(resourcePointer);
-		return MEM;
+		error("Couldn't allocate memory for sprite frames");
 	}
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
@@ -149,27 +152,37 @@ int Actor::loadActorResources(ActorData * actor) {
 	actor->frameCount = frameCount;
 
 
+	debug(0, "Loading sprite resource id 0x%X", actor->spriteListResourceId);
 	if (_vm->_sprite->loadList(actor->spriteListResourceId, &actor->spriteList) != SUCCESS) {
 		warning("Unable to load sprite list");
-		return FAILURE;
+		return false;
 	}
 
-	if (lastFrame >= _vm->_sprite->getListLen(actor->spriteList)) {
+	i = _vm->_sprite->getListLen(actor->spriteList);
+
+	if ( (lastFrame >= i)) {
 		debug(0, "Appending to sprite list 0x%X", actor->spriteListResourceId);
 		if (_vm->_sprite->appendList(actor->spriteListResourceId + 1, actor->spriteList) != SUCCESS) {
 			warning("Unable append sprite list");
-			return FAILURE;
+			return false;
 		}
 	}
 
-	return SUCCESS;
+	return true;
 }
 
 ActorData *Actor::getActor(uint16 actorId) {
-	if(!IS_VALID_ACTOR_ID(actorId))
+	ActorData *actor;
+	
+	if (!IS_VALID_ACTOR_ID(actorId))
 		error("Actor::getActor Wrong actorId 0x%X", actorId);
 
-	return &_actors[ACTOR_ID_TO_INDEX(actorId)];
+	actor = &_actors[ACTOR_ID_TO_INDEX(actorId)];
+
+	if (actor->_disabled)
+		error("Actor::getActor disabled actorId 0x%X", actorId);
+
+	return actor;
 }
 
 ActorOrderList::iterator Actor::getActorOrderIterator(const ActorData *actor) {
@@ -297,9 +310,12 @@ int Actor::drawList() {
 
 	for (actorOrderIterator = _orderList.begin(); actorOrderIterator != _orderList.end(); ++actorOrderIterator) {
 		actor =  actorOrderIterator.operator*();
+		if(actor->frameCount == 0) continue;
+
 		o_idx = ActorOrientationLUT[actor->orient];
 		sprite_num = actor->frames[actor->action].dir[o_idx].frameIndex;
 		sprite_num += actor->action_frame;
+		if(actor->spriteList->sprite_count <= sprite_num) continue;
 		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->s_pt.x, actor->s_pt.y);
 
 		// If actor's current intent is to speak, oblige him by 
@@ -604,7 +620,7 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 	// Initialize walk intent 
 	if (!a_walkint->wi_init) {
 		setPathNode(a_walkint, &actor->a_pt, &a_walkint->dst_pt, a_walkint->sem);
-		setDefaultAction(actor->actorId, ACTION_IDLE, ACTION_NONE);
+		setDefaultAction(actor->_actorId, ACTION_IDLE, ACTION_NONE);
 		a_walkint->wi_init = 1;
 	}
 

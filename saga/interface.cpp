@@ -574,7 +574,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 	if (objectNum == -1) {
 		// Player clicked on empty spot - walk here regardless of verb
 		_vm->_actor->StoA(iactor_pt, imousePt);
-		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
+		_vm->_actor->walkTo(1, &iactor_pt, 0, NULL);
 		return SUCCESS;
 	}
 
@@ -593,7 +593,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 	} else {
 		// Not a normal scene object - walk to it as if it weren't there
 		_vm->_actor->StoA(iactor_pt, imousePt);
-		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
+		_vm->_actor->walkTo(1, &iactor_pt, 0, NULL);
 	}
 
 	return SUCCESS;

@@ -112,12 +112,6 @@ GAME_RESOURCEDESC ITE_Resources = {
 	ITE_DIALOGUE_PANEL
 };
 
-GAME_RESOURCEDESC ITEMACDEMO_Resources = {
-		ITEMACDEMO_SCENE_LUT,  // Scene lookup table RN
-		ITE_SCRIPT_LUT, // Script lookup table RN
-		ITE_COMMAND_PANEL,
-		ITE_DIALOGUE_PANEL
-};
 
 GAME_SOUNDINFO ITE_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
@@ -218,7 +212,7 @@ GAMEDESC GameDescs[] = {
 			320, 200,
 			137,
 			ITE_DEFAULT_SCENE,
-			&ITEMACDEMO_Resources,
+			&ITE_Resources,
 			ARRAYSIZE(ITEMACDEMO_GameFiles),
 			ITEMACDEMO_GameFiles,
 			ARRAYSIZE(ITEMACDEMO_GameFonts),
@@ -593,7 +587,7 @@ int GAME_GetSceneInfo(GAME_SCENEDESC *gs_desc) {
 	assert(gs_desc != NULL);
 
 	gs_desc->first_scene = GameModule.gamedesc->gd_startscene;
-	gs_desc->scene_lut_rn = GameModule.gamedesc->gd_resource_desc->scene_lut_rn;
+	gs_desc->scene_lut_rn = RSC_ConvertID(GameModule.gamedesc->gd_resource_desc->scene_lut_rn);
 
 	return SUCCESS;
 }
