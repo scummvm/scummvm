@@ -316,7 +316,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* D8 */
 		OPCODE(o72_unknown5A),
 		OPCODE(o6_isSoundRunning),
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown49),
 		OPCODE(o100_unknown25),
 		/* DC */
 		OPCODE(o90_sqrt),
@@ -324,18 +324,18 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		OPCODE(o6_getState),
 		/* E0 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF1),
+		OPCODE(o72_unknownEC),
+		OPCODE(o72_unknownEF),
+		OPCODE(o72_unknownF0),
 		/* E4 */
+		OPCODE(o70_stringLen),
+		OPCODE(o72_unknownF5),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF6),
 		/* E8 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownED),
+		OPCODE(o60_readFilePos),
 		OPCODE(o72_getTimer),
 		OPCODE(o6_getVerbEntrypoint),
 		/* EC */
