@@ -356,7 +356,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_unknownF8),
-		OPCODE(o72_unknownF9),
+		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
 		OPCODE(o7_unknownFB),
 		/* FC */

@@ -356,7 +356,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_unknownF8),
-		OPCODE(o72_unknownF9),
+		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
 		OPCODE(o7_unknownFB),
 		/* FC */
@@ -1913,11 +1913,11 @@ void ScummEngine_v72he::o72_unknownF8() {
 	debug(1,"stub o72_unknownF8(%d)", a);
 }
 
-void ScummEngine_v72he::o72_unknownF9() {
+void ScummEngine_v72he::o72_setFilePath() {
 	// File related
 	byte filename[100];
 	copyScriptString(filename);
-	debug(1,"o72_unknownF9: %s", filename);
+	debug(1,"o72_setFilePath: %s", filename);
 }
 
 void ScummEngine_v72he::o72_unknownFA() {

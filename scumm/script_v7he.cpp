@@ -357,7 +357,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
-		OPCODE(o7_unknownF9),
+		OPCODE(o7_setFilePath),
 		OPCODE(o7_unknownFA),
 		OPCODE(o7_unknownFB),
 		/* FC */
@@ -986,9 +986,9 @@ void ScummEngine_v7he::o7_unknownF6() {
 	debug(1,"stub o7_unknownF6");
 }
 
-void ScummEngine_v7he::o7_unknownF9() {
+void ScummEngine_v7he::o7_setFilePath() {
 	// File related
-	int len, r;
+	int len;
 	byte filename[100];
 
 	addMessageToStack(_scriptPointer, filename, sizeof(filename));
@@ -996,12 +996,7 @@ void ScummEngine_v7he::o7_unknownF9() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	debug(1,"stub o7_unknownF9(\"%s\")", filename + r);
+	debug(1,"stub o7_setFilePath(%s)", filename);
 }
 
 void ScummEngine_v7he::o7_unknownFA() {

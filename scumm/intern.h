@@ -634,7 +634,7 @@ protected:
 	void o7_writeINI();
 	void o7_unknownF5();
 	void o7_unknownF6();
-	void o7_unknownF9();
+	void o7_setFilePath();
 	void o7_unknownFA();
 	void o7_unknownFB();
 	void o7_unknownFC();
@@ -760,7 +760,7 @@ protected:
 	void o72_unknownF5();
 	void o72_unknownF6();
 	void o72_unknownF8();
-	void o72_unknownF9();
+	void o72_setFilePath();
 	void o72_unknownFA();
 };
 
