@@ -168,6 +168,7 @@ public:
 
 	uint16 numFrames() const { return _numFrames; }
 
+	ActorData *findActor(uint16 noun, const char *name = NULL);
 	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp);
 	uint16 personSetup(uint16 noun, uint16 curImage);
 	uint16 personAllocate(uint16 noun, uint16 curImage);

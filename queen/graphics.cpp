@@ -1026,7 +1026,7 @@ void Graphics::bobSetText(
 		y = y - height - 16 - lineCount * 9;
 	}
 
-	// XXX x -= scrollx;
+	x -= _vm->display()->horizontalScroll();
 
 	if (y < 0) {
 		y = 0;

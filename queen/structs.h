@@ -366,7 +366,7 @@ struct ActorData {
 	//! entry in ACTOR_NAME
 	uint16 name;
 	//! gamestate entry/value, actor is valid if GAMESTATE[slot] == value
-	int16 gameStateSlot, gameStateValue;
+	int16 gsSlot, gsValue;
 	//! spoken text color
 	uint16 color;
 	//! bank bobframe for standing position of the actor
@@ -378,25 +378,25 @@ struct ActorData {
 	//! bank to use to load the actor file
 	uint16 bankNum;
 	//! entry in ACTOR_FILE
-	uint16 actorFile;
+	uint16 file;
 
 	void readFromBE(byte *&ptr) {
 		room = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		bobNum = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		name = READ_BE_UINT16(ptr); ptr += 2;
-		gameStateSlot = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		gsSlot = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		gsValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		color = READ_BE_UINT16(ptr); ptr += 2;
 		bobFrameStanding = READ_BE_UINT16(ptr); ptr += 2;
 		x = READ_BE_UINT16(ptr); ptr += 2;
 		y = READ_BE_UINT16(ptr); ptr += 2;
 		anim = READ_BE_UINT16(ptr); ptr += 2;
 		bankNum = READ_BE_UINT16(ptr); ptr += 2;
-		actorFile = READ_BE_UINT16(ptr); ptr += 2;
+		file = READ_BE_UINT16(ptr); ptr += 2;
 		// Fix the actor data (see queen.c - l.1518-1519). When there is no 
 		// valid actor file, we must load the data from the objects room bank.
 		// This bank has number 15 (not 10 as in the data files).
-		if (actorFile == 0) {
+		if (file == 0) {
 			bankNum = 15;
 		}
 	}

@@ -1002,20 +1002,16 @@ uint16 Logic::findScale(uint16 x, uint16 y) {
 }
 
 
-void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
-	if (noun <= 0) {
-		warning("Logic::personSetData() - Invalid object number: %i", noun);
-	}
-
-	uint16 i;
+ActorData *Logic::findActor(uint16 noun, const char *name) {
 	uint16 obj = currentRoomData() + noun;
 	int16 img = _objectData[obj].image;
 	if (img != -3 && img != -4) {
-		warning("Logic::personSetData() - Object %d is not a person", obj);
-		return;
+		warning("Logic::findActor() - Object %d is not a person", obj);
+		return NULL;
 	}
 
 	// search Bob number for the person
+	uint16 i;
 	uint16 bobNum = 0;
 	for (i = currentRoomData() + 1; i <= obj; ++i) {
 		img = _objectData[i].image;
@@ -1025,40 +1021,38 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 	}
 
 	// search for a matching actor
-	uint16 actor = 0;
-	for (i = 1; i <= _numActors; ++i) {
-		ActorData *pad = &_actorData[i];
-		if (pad->room == _currentRoom) {
-			if (_gameState[pad->gameStateSlot] == pad->gameStateValue) {
-				if ((bobNum > 0 && bobNum == pad->bobNum) || strcmp(_aName[pad->name], actorName) == 0) {
-					actor = i;
-					break;
+	if (bobNum > 0) {
+		for (i = 1; i <= _numActors; ++i) {
+			ActorData *pad = &_actorData[i];
+			if (pad->room == _currentRoom && gameState(pad->gsSlot) == pad->gsValue) {
+				if (bobNum == pad->bobNum || (name && !strcmp(_aName[pad->name], name))) {
+					return pad;
 				}
 			}
 		}
 	}
+	return NULL;
+}
 
-	if (actor != 0) {
 
-		pp->actor = &_actorData[actor];
-		pp->name = _aName[pp->actor->name];
-		if (pp->actor->anim != 0) {
-			pp->anim = _aAnim[pp->actor->anim];
+void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
+	if (noun <= 0) {
+		warning("Person::setData() - Invalid object number: %i", noun);
+	}	
+	ActorData *pad = findActor(noun, actorName);
+	if (pad != NULL) {
+		pp->actor = pad;
+		pp->name = _aName[pad->name];
+		if (pad->anim != 0) {
+			pp->anim = _aAnim[pad->anim];
 		} else {
 			pp->anim = NULL;
 		}
-
-		debug(6, "Logic::personSetData() - name=%s n=%d", pp->name, actor);
-
-		if (loadBank) {
-			const char *actorFile = _aFile[pp->actor->actorFile];
-			if (actorFile) {
-				_vm->bankMan()->load(actorFile, pp->actor->bankNum);
-			}
-			// if actorFile is null, the person data is already loaded as
-			// it is contained in objects room bank (.bbk)
+		if (loadBank && pad->file != 0) {
+			_vm->bankMan()->load(_aFile[pad->file], pad->bankNum);
+			// if there is no valid actor file (ie pad->file is 0), the person 
+			// data is already loaded as it is contained in objects room bank (.bbk)
 		}
-
 		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
 	}
 }
@@ -1082,17 +1076,12 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	}
 
 	_vm->bankMan()->unpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
-	bool xflip = false;
-	uint16 person = currentRoomData() + noun;
-	if (_objectData[person].image == -3) {
-		// person is facing left
-		xflip = true;
-	}
+	uint16 obj = currentRoomData() + noun;
 	BobSlot *pbs = _vm->graphics()->bob(pad->bobNum);
 	pbs->curPos(pad->x, pad->y);
 	pbs->scale = scale;
 	pbs->frameNum = p.bobFrame;
-	pbs->xflip = xflip;
+	pbs->xflip = (_objectData[obj].image == -3); // person is facing left
 
 	debug(6, "Logic::personSetup(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
 
@@ -1107,51 +1096,24 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 
 
 uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
-	uint16 i;
-	uint16 person = currentRoomData() + noun;
-
-	// search Bob number for the person
-	uint16 bobNum = 0;
-	for (i = currentRoomData() + 1; i <= person; ++i) {
-		int16 img = _objectData[i].image;
-		if (img == -3 || img == -4) {
-			++bobNum;
-		}
-	}
-
-	// search for a matching actor
-	uint16 actor = 0;
-	for (i = 1; i <= _numActors; ++i) {
-		ActorData *pad = &_actorData[i];
-		if (pad->room == _currentRoom) {
-			if (_gameState[pad->gameStateSlot] == pad->gameStateValue) {
-				if (bobNum > 0 && bobNum == pad->bobNum) {
-					actor = i;
-					break;
-				}
+	ActorData *pad = findActor(noun);
+	if (pad != NULL && pad->anim != 0) {
+		const char *animStr = _aAnim[pad->anim];
+		bool allocatedFrames[256];
+		memset(allocatedFrames, 0, sizeof(allocatedFrames));
+		uint16 f1, f2;
+		do {
+			sscanf(animStr, "%3hu,%3hu", &f1, &f2);
+			animStr += 8;
+			allocatedFrames[f1] = true;
+		} while(f1 != 0);
+		for (int i = 1; i <= 255; ++i) {
+			if (allocatedFrames[i]) {
+				++curImage;
 			}
 		}
-	}
-
-	if (actor > 0) {
-		const char *animStr = _aAnim[_actorData[actor].anim];
-		if (animStr) {
-			bool allocatedFrames[256];
-			memset(allocatedFrames, 0, sizeof(allocatedFrames));
-			uint16 f1, f2;
-			do {
-				sscanf(animStr, "%3hu,%3hu", &f1, &f2);
-				animStr += 8;
-				allocatedFrames[f1] = true;
-			} while(f1 != 0);
-			for (i = 1; i <= 255; ++i) {
-				if (allocatedFrames[i]) {
-					++curImage;
-				}
-			}
-			// FIXME: shouldn't this line be executed BEFORE curImage is incremented ?
-			_personFrames[bobNum] = curImage + 1;
-		}
+		// FIXME: shouldn't this line be executed BEFORE curImage is incremented ?
+		_personFrames[pad->bobNum] = curImage + 1;
 	}
 	return curImage;
 }
