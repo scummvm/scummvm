@@ -206,6 +206,8 @@ static const TargetSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"ff2-demo", "Freddi Fish 2: Haunted Schoolbus (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"freddi2", "Freddi Fish 2: Haunted Schoolbus", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	/* Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90 */
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
@@ -238,6 +240,8 @@ static const TargetSettings scumm_settings[] = {
 
 	/* Humongous Entertainment Scumm Version ?  engine moved to c++ */
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"putttime", "Putt-Putt Travels Through Time", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
