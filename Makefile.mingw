@@ -1,0 +1,48 @@
+# Where is scummvm will be installed
+SCUMMVMPATH=C:/scummvm
+SRC=.
+
+### Modify these paths
+SDL_CFLAGS=-I$(SRC)/sdl/include
+SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
+
+CC      = gcc
+CFLAGS  = -g -Wno-multichar
+DEFINES = -DUSE_ADLIB
+LDFLAGS :=
+INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
+CPPFLAGS= $(DEFINES) $(INCLUDES)
+LIBS	= -lmingw32 $(SDL_LIBS) -mwindows -mconsole
+
+EXEC=scummvm.exe
+
+INCS	= scumm.h scummsys.h stdafx.h
+
+OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
+	saveload.o script.o scummvm.o sound.o string.o \
+	sys.o verbs.o sdl.o script_v1.o script_v2.o debug.o gui.o \
+	sound/imuse.o sound/fmopl.o sound/adlib.o sound/gmidi.o debugrl.o \
+	akos.o
+
+.cpp.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+all: $(EXEC)
+
+$(EXEC): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+clean:
+	rm -f $(OBJS) $(EXEC)
+
+install:   $(EXEC)
+	mkdir -p $(SCUMMVMPATH)
+	strip $(EXEC) -o $(SCUMMVMPATH)/$(EXEC)
+
+dist:   install
+	cp copying.txt $(SCUMMVMPATH)/copying.txt
+	cp readme.txt $(SCUMMVMPATH)/readme.txt
+	cp whatsnew.txt $(SCUMMVMPATH)/whatsnew.txt
+	cp SDL/README-SDL.txt $(SCUMMVMPATH)/README-SDL.txt
+	cp SDL/lib/SDL.dll $(SCUMMVMPATH)/SDL.dll
+	u2d $(SCUMMVMPATH)/readme.txt
