@@ -191,7 +191,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 74 */
 		OPCODE(o70_startSound),
 		OPCODE(o6_stopSound),
-		OPCODE(o6_startMusic),
+		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectScript),
 		/* 78 */
 		OPCODE(o6_panCameraTo),
