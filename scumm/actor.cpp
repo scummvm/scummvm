@@ -354,7 +354,6 @@ int Actor::actorWalkStep()
 void Actor::setupActorScale()
 {
 	uint16 scale;
-	byte *resptr;
 
 	if (_vm->_features & GF_NO_SCALLING) {
 		scalex = 0xFF;
@@ -368,20 +367,7 @@ void Actor::setupActorScale()
 	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
 		return;
 
-	scale = _vm->getBoxScale(walkbox);
-
-	if (scale & 0x8000) {
-		scale = (scale & 0x7FFF) + 1;
-		resptr = _vm->getResourceAddress(rtScaleTable, scale);
-		if (resptr == NULL)
-			error("Scale table %d not defined", scale);
-		int theY = y;
-		if (theY >= _vm->_realHeight)
-			theY = _vm->_realHeight - 1;
-		else if (theY < 0)
-			theY = 0;
-		scale = resptr[theY];
-	}
+	scale = _vm->getScale(walkbox, x, y);
 
 	// FIXME - Hack for The Dig 'Tomb' (room 88)
 	//	Otherwise walking to the far-left door causes the actor
@@ -400,15 +386,21 @@ void Actor::setupActorScale()
 	// When standing at the bottom of the ladder, Ben's Y position is
 	// 356, and by the looks of it he ought to be unscaled there.
 
-	if (scale == 1 && _vm->_currentRoom == 76) {
+	if (_vm->_gameId == GID_FT && scale == 1 && _vm->_currentRoom == 76) {
 		scale = 0xff;
 		if (y < 356)
 			scale -= 2 * (356 - y);
 	}
 
-	if (scale > 255)
-		warning("Actor %d at %d, scale %d out of range", number, y, scale);
-
+	if (scale > 255) {
+		if (_vm->_features & GF_AFTER_V8) {
+			// In COMI, the scale values often are bigger than 255;
+			// however, the original engine seems to just cap them at 255,
+			// hence we do the same (the result looks correct, too);
+			scale = 255;
+		} else
+			warning("Actor %d at %d, scale %d out of range", number, y, scale);
+	}
 	scalex = (byte)scale;
 	scaley = (byte)scale;
 }

@@ -532,6 +532,16 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKEND()
 	};
 
+	const SaveLoadEntry scaleSlotsEntries[] = {
+		MKLINE(ScaleSlot, x1, sleUint16, VER_V13),
+		MKLINE(ScaleSlot, y1, sleUint16, VER_V13),
+		MKLINE(ScaleSlot, scale1, sleUint16, VER_V13),
+		MKLINE(ScaleSlot, x2, sleUint16, VER_V13),
+		MKLINE(ScaleSlot, y2, sleUint16, VER_V13),
+		MKLINE(ScaleSlot, scale2, sleUint16, VER_V13),
+		MKEND()
+	};
+
 	int i, j;
 	int var120Backup;
 	int var98Backup;
@@ -563,6 +573,9 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 	/* XXX: next time save game format changes, Fingolfin wants to revise StringTab - contact him */
 	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
+
+	if (savegameVersion >= VER_V13)
+		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
 
 	for (i = rtFirst; i <= rtLast; i++)
 		if (res.mode[i] == 0)

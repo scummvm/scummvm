@@ -1378,6 +1378,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 		break;
 	case 21:	// setScaleSlot
 		warning("o8_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+		setScaleSlot(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:	// setBannerColors
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);

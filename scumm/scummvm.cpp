@@ -835,14 +835,11 @@ void Scumm::initRoomSubBlocks()
 		offs = ptr - roomptr;
 		if (_features & GF_AFTER_V8) {
 			for (i = 1; i < _maxScaleTable; i++, offs += 16) {
-				int a = READ_LE_UINT32(roomptr + offs);
-				int b = READ_LE_UINT32(roomptr + offs + 4);
-				int c = READ_LE_UINT32(roomptr + offs + 8);
-				int d = READ_LE_UINT32(roomptr + offs + 12);
-				if (a || b || c || d) {
-					setScaleItem(i, b, a, d, c);
-					roomptr = getResourceAddress(rtRoom, _roomResource);
-				}
+				int scale1 = READ_LE_UINT32(roomptr + offs);
+				int y1 = READ_LE_UINT32(roomptr + offs + 4);
+				int scale2 = READ_LE_UINT32(roomptr + offs + 8);
+				int y2 = READ_LE_UINT32(roomptr + offs + 12);
+				setScaleSlot(i, 0, y1, scale1, 0, y2, scale2);
 			}
 		} else {
 			for (i = 1; i < _maxScaleTable; i++, offs += 8) {
@@ -979,6 +976,16 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d)
 		*ptr++ = tmp;
 		cur += amounttoadd;
 	}
+}
+
+void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2)
+{
+	_scaleSlots[slot].x2 = x2;
+	_scaleSlots[slot].y2 = y2;
+	_scaleSlots[slot].scale2 = scale2;
+	_scaleSlots[slot].x1 = x1;
+	_scaleSlots[slot].y1 = y1;
+	_scaleSlots[slot].scale1 = scale1;
 }
 
 void Scumm::dumpResource(char *tag, int idx, byte *ptr)

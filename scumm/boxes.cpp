@@ -50,7 +50,7 @@ struct Box {				/* Internal walkbox file format */
 			int32 llx, lly;
 			uint32 mask;	// FIXME - is 'mask' really here?
 			uint32 flags;	// FIXME - is 'flags' really here?
-			uint32 unk1;
+			uint32 scaleSlot;
 			uint32 scale;
 			uint32 unk2;
 			uint32 unk3;
@@ -126,6 +126,59 @@ void Scumm::setBoxScale(int box, int scale)
 		b->v8.scale = TO_LE_32(scale);
 	else
 		b->old.scale = TO_LE_16(scale);
+}
+
+int Scumm::getScale(int box, int x, int y)
+{
+	Box *ptr = getBoxBaseAddr(box);
+	assert(ptr);
+
+	if (_features & GF_AFTER_V8) {
+		int slot = FROM_LE_32(ptr->v8.scaleSlot);
+		if (slot) {
+			assert(0 <= slot && slot < 20);
+			int scaleX = 0, scaleY = 0;
+			ScaleSlot &s = _scaleSlots[slot];
+
+			if (s.y1 == s.y2 && s.x1 == s.x2)
+				error("Invalid scale slot %d", slot);
+			
+			if (s.y1 != s.y2) {
+				if (y < 0)
+					y = 0;
+				
+				scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
+				if (s.x1 == s.x2) {
+					return scaleY;
+				}
+			}
+		
+			scaleX = (s.scale2 - s.scale1) * (x - s.x1) / (s.x2 - s.x1) + s.scale1;
+		
+			if (s.y1 == s.y2) {
+				return scaleX;
+			} else {
+				return (scaleX + scaleY - s.x1) / 2;
+			}
+		} else
+			return FROM_LE_32(ptr->v8.scale);
+	} else {
+		uint16 scale = FROM_LE_16(ptr->old.scale);
+
+		if (scale & 0x8000) {
+			scale = (scale & 0x7FFF) + 1;
+			byte *resptr = getResourceAddress(rtScaleTable, scale);
+			if (resptr == NULL)
+				error("Scale table %d not defined", scale);
+			if (y >= _realHeight)
+				y = _realHeight - 1;
+			else if (y < 0)
+				y = 0;
+			scale = resptr[y];
+		}
+		
+		return scale;
+	}
 }
 
 int Scumm::getBoxScale(int box)

@@ -378,7 +378,6 @@ public:
 	byte _numObjectsInRoom;
 	int8 _userPut;
 	int _resourceHeaderSize;
-	void setScaleItem(int slot, int a, int b, int c, int d);
 	void clearClickedStatus();
 	void startManiac();
 
@@ -854,6 +853,19 @@ public:
 	Box *getBoxBaseAddr(int box);
 	byte getBoxFlags(int box);
 	int getBoxScale(int box);
+	
+	int getScale(int box, int x, int y);
+	void setScaleItem(int slot, int a, int b, int c, int d);
+
+	// V8 scaling stuff: should be in V8 class
+	struct ScaleSlot {
+		int x1, y1, scale1;
+		int x2, y2, scale2;
+	};
+	ScaleSlot _scaleSlots[20];	// FIXME - not sure if this limit is right, but based on my observations it is
+	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
+	
+
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
