@@ -1041,6 +1041,17 @@ void Scumm_v2::o2_delayVariable() {
 	o5_breakHere();
 }
 
+void Scumm_v2::o2_delay() {
+	int delay = fetchScriptByte();
+	delay |= fetchScriptByte() << 8;
+	delay |= fetchScriptByte() << 16;
+	delay = 0xFFFFFF - delay;
+
+	vm.slot[_currentScript].delay = delay;
+	vm.slot[_currentScript].status = 1;
+	o5_breakHere();
+}
+
 void Scumm_v2::o2_matrixOps() {
 	int a, b;
 
@@ -1172,18 +1183,6 @@ void Scumm_v2::o2_getActorWalkBox() {
 
 void Scumm_v2::o2_drawSentence() {
 	warning("TODO o2_drawSentence()");
-}
-
-void Scumm_v2::o2_delay() {
-	int delay = fetchScriptByte();
-	delay |= fetchScriptByte() << 8;
-	delay |= fetchScriptByte() << 16;
-
-	vm.slot[_currentScript].delay = 1;	// FIXME: Fix conversion
-	vm.slot[_currentScript].status = 1;
-	o5_breakHere();
-
-	warning("TODO: o2_delay(%d)", delay);
 }
 
 void Scumm_v2::o2_dummy() {
