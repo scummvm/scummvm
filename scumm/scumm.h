@@ -228,7 +228,9 @@ enum ScummGameId {
 	GID_FBEAR,
 	GID_PJSDEMO,
 	GID_MONKEY_SEGA,
-	GID_FBPACK
+	GID_FBPACK,
+	GID_FREDDI,
+	GID_FREDDEMO
 };
 
 #define _baseRooms res.address[rtRoom]

@@ -344,7 +344,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownEE),
+		OPCODE(o6_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -352,7 +352,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_readINI),
 		/* F4 */
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownF4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -404,6 +404,27 @@ void ScummEngine_v7he::o7_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v7he::o7_unknownF4() {
+	byte b;
+	int len;
+	b = fetchScriptByte();
+
+	switch (b) {
+	case 6:
+		pop();
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		break;
+	case 7:
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+		break;
+	}
+	warning("o7_unknownF4 stub");
 }
 
 void ScummEngine_v7he::o7_unknownFB() {

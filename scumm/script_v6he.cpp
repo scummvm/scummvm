@@ -344,7 +344,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownEE),
+		OPCODE(o6_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -1244,10 +1244,22 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	ah->dim2 = TO_LE_16(newX + 1);
 }
 
-void ScummEngine_v6he::o6_unknownEE() {
-	int a;
+// TODO: It's Win32 specific
+void ScummEngine_v6he::o6_stringLen() {
+	int a, len;
+
+	if (_gameId == GID_PUTTPUTT) {
+		o6_invalid();
+	}
+
 	a = pop();
-	loadPtrToResource(rtVerb, _curVerbSlot, getStringAddress(a));
+
+	if (_gameId == GID_FREDDEMO) {
+		len = strlen((char *)getStringAddress(a));
+	} else {
+		
+	}
+	push()
 }
 
 void ScummEngine_v6he::o6_readINI() {
