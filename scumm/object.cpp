@@ -1256,8 +1256,8 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	_bompShadowMode = 0;
 
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
-		_bompScallingXPtr = (byte*)&bomp_scalling_x;
-		_bompScallingYPtr = (byte*)&bomp_scalling_y;
+		_bompScallingXPtr = bomp_scalling_x;
+		_bompScallingYPtr = bomp_scalling_y;
 		_bompScaleRight = setupBompScale(_bompScallingXPtr, bdd.srcwidth, bdd.scale_x);
 		_bompScaleBottom = setupBompScale(_bompScallingYPtr, bdd.srcheight, bdd.scale_y);
 		drawBomp(&bdd, 0, bdd.dataptr, 1, 3);
