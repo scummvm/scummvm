@@ -235,7 +235,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			return;
 		}
 
-		// This pointer needs to be freed
+		// This pointer will be freed at the end of the function
 		mallocedPtr = ptr;
 	} else {
 		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
@@ -509,7 +509,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
-		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
+		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
