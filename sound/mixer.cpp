@@ -44,6 +44,7 @@ protected:
 	RateConverter *_converter;
 	AudioInputStream *_input;
 	byte _volume;
+	byte _flags;
 	int8 _pan;
 	bool _paused;
 
@@ -510,6 +511,7 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	: Channel(mixer, handle) {
 	_id = id;
 	_ptr = (byte *)sound;
+	_flags = flags;
 	_volume = volume;
 	_pan = pan;
 	
@@ -533,7 +535,10 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 }
 
 ChannelRaw::~ChannelRaw() {
-	free(_ptr);
+	if (_flags & SoundMixer::FLAG_AUTOFREE)
+		free(_ptr);
+	else if (_flags & SoundMixer::FLAG_AUTODELETE)
+		delete _ptr;
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
