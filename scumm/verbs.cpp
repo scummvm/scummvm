@@ -266,8 +266,10 @@ void ScummEngine::redrawVerbs() {
 	if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
 		return;
 
-	int i;
-	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
+	int i, verb = 0;
+	if ((_gameId == GID_FT) || _cursor.state > 0)
+		verb = checkMouseOver(_mouse.x, _mouse.y);
+
 	for (i = _numVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
@@ -323,6 +325,9 @@ void ScummEngine::checkExecVerbs() {
 void ScummEngine::verbMouseOver(int verb) {
 	// Don't do anything unless verbs are active
 	if (_version <= 2 && !(_userState & 128))
+		return;
+
+	if (_gameId == GID_FT)
 		return;
 
 	if (_verbMouseOver == verb)
@@ -422,6 +427,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
+	if (_gameId == GID_FT)
+		return;
+
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];

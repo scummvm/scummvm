@@ -1900,12 +1900,6 @@ void ScummEngine_v6::o6_verbOps() {
 	VerbSlot *vs;
 	byte op;
 
-	// Full Throttle implements conversation by creating new verbs, one
-	// for each option, but it never tells when to actually draw them.
-
-	if (_gameId == GID_FT)
-		_verbRedraw = true;
-
 	op = fetchScriptByte();
 	if (op == 196) {
 		_curVerb = pop();

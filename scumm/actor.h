@@ -165,6 +165,7 @@ public:
 protected:
 	void startWalkAnim(int cmd, int angle);
 public:
+	void runActorTalkScript(int f);
 	void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);

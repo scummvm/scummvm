@@ -1036,7 +1036,6 @@ void ScummEngine_v8::o8_actorOps() {
 		break;
 //	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
-		// FIXME - is this right??
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
@@ -1306,15 +1305,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
-		// FIXME: This still isn't quite working correctly. See bug #754419
-		// This opcode is used a lot in script 28.
-
-//		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
-
 		a->startAnimActor(args[2]);
 		a->animateLimb(args[3], args[4]);
-		
 		break;
 	case 24:	// clearTextQueue
 		// TODO - clearTextQueue. Maybe this should just call removeBlastTexts() ?
@@ -1502,15 +1495,6 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 void ScummEngine_v8::o8_getActorChore() {
 	int actnum = pop();
 	Actor *a = derefActor(actnum, "o8_getActorChore");
-
-	// FIXME: This is a hack for the cannon scene, as something isn't quite right
-	// here yet..
-	if ((_roomResource == 10) && (vm.slot[_currentScript].number == 2021)) {
-		//warning("o8_getActorChore() hack: would have returned %d", a->frame);
-		push(11);
-		return;
-	}
-
 	push(a->frame);
 }
 

@@ -166,7 +166,7 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if (_haveMsg == 1) {
+	if ((_version <= 7 && _haveMsg == 1) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
 		if ((_sound->_sfxMode & 2) == 0)
 			stopTalk();
 		return;
@@ -333,9 +333,13 @@ void ScummEngine::CHARSET_1() {
 	if (has_talk_sound)
 		_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
 	if (a && has_anim)
-		a->startAnimActor(frme != -1 ? frme : a->talkStartFrame);
+		a->runActorTalkScript(frme != -1 ? frme : a->talkStartFrame);
 
 	_charsetBufPos = buffer - _charsetBuffer;
+
+	// TODO Verify this is correct spot
+	if (_version == 8)
+		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 
 	_charset->_hasMask = (_charset->_str.left != -1);
 	_charset->_mask = _charset->_str;
@@ -387,14 +391,6 @@ void ScummEngine::drawString(int a) {
 
 	if (_version < 7)
 		_charset->_ignoreCharsetMask = true;
-
-
-	// In Full Throttle (and other games?), verb text should always mask
-	// and never time out. We can't do it blindly for all games, because
-	// it causes problem with the FOA intro.
-
-	if ((_gameId == GID_FT) && a == 4)
-		_talkDelay = -1;
 
 	if (!buf[0]) {
 		buf[0] = ' ';
