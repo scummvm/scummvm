@@ -677,6 +677,7 @@ private:
 	bool _dragging;
 	int _value, _targetValue;
 	int _maxValue;
+	int _valueStep;
 	int _dragOffset;
 
 	int posFromValue(int value) {
@@ -689,11 +690,14 @@ private:
 
 public:
 	Slider(Dialog *parent, Widget *background, int max,
-		int x, int y, int w, int h, Widget *base = NULL)
+		int x, int y, int w, int h, int step, Widget *base = NULL)
 		: Widget(parent, 1), _background(background),
 		  _dragging(false), _value(0), _targetValue(0),
-		  _maxValue(max) {
+		  _maxValue(max), _valueStep(step) {
 		setHitRect(x, y, w, h);
+
+		if (_valueStep <= 0)
+			_valueStep = 1;
 
 		if (base)
 			linkSurfaceImages(base, x, y);
@@ -748,11 +752,15 @@ public:
 			_dragging = true;
 			_dragOffset = x - _sprites[0].x;
 		} else if (x < _sprites[0].x) {
-			if (_targetValue > 0)
-				_targetValue--;
+			if (_targetValue >= _valueStep)
+				_targetValue -= _valueStep;
+			else
+				_targetValue = 0;
 		} else {
-			if (_targetValue < _maxValue)
-				_targetValue++;
+			if (_targetValue < _maxValue - _valueStep)
+				_targetValue += _valueStep;
+			else
+				_targetValue = _maxValue;
 		}
 	}
 
@@ -897,10 +905,12 @@ public:
 		_fxSwitch->linkSurfaceImages(_musicSwitch, 516, 250);
 		_fxSwitch->reverseStates();
 
-		_musicSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 161, 170, 27);
-		_speechSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 208, 170, 27, _musicSlider);
-		_fxSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 254, 170, 27, _musicSlider);
-		_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, _musicSlider);
+		int volStep = SoundMixer::kMaxMixerVolume / 10;
+
+		_musicSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 161, 170, 27, volStep);
+		_speechSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 208, 170, 27, volStep, _musicSlider);
+		_fxSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 254, 170, 27, volStep, _musicSlider);
+		_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, 1, _musicSlider);
 
 		_gfxPreview = new Widget(this, 4);
 		_gfxPreview->createSurfaceImages(256, 495, 310);
