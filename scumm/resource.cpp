@@ -787,111 +787,13 @@ int Scumm::readSoundResource(int type, int idx) {
 		_fileHandle.read(createResource(type, idx, total_size), total_size);
 		return 1;
 	} else if (basetag == MKID('Mac0')) {
-		debug(1, "Found base tag Mac0 in sound %d, size %d", idx, total_size);
-		debug(1, "It was at position %d", _fileHandle.pos());
-
-		/* Offset
-		   0x14, 0x1C, 0x20, 0x24 - offsets of channel 1/2/3/4 chunk-
-		   Each channel has tag "Chan", followed by its length. At the end
-		   of each chan follows either an empty "Done" chunk (length 0) or an
-		   empty "Loop" chunk. Maybe "Loop" indicates the song should be
-		   played forever?!?.
-
-		   There can be various different subchunks it seems. The
-		   following combinations appear in Monkey Island:
-		   100: ORGA, TROM, BASS, 
-		   101: ORGA, SHAK, BASS, 
-		   103: PIPE, PIPE, PIPE, 
-		   104: VIBE, WHIS, BASS, 
-		   108: ORGA, MARI, BASS, 
-		   110: ORGA, SHAK, VIBE, 
-		   111: MARI, SHAK, BASS, 
-		   115: PLUC, SHAK, WHIS, 
-		   One guess is that these are instrument names: Organ, Marimba, Whistle...
-		   Maybe there is a mapping table someplace? Maybe these are even mapped to
-		   Mac1 type "instruments" ?
-
-		   What follows are four byte "commands" it seems, like this (hex):
-		   01 68 4F 49
-		   01 68 00 40
-		   01 68 4F 49
-		   ...
-		   01 68 00 40
-		   02 1C 5B 40
-		   00 B4 00 40
-		   ...
-		   01 68 37 3C
-		   00 18 37 38
-		   04 20 3E 34
-		   01 68 4A 3C
-
-		   More data:
-		   00 09 3E 10
-		   01 5F 00 40
-		   00 9C 36 40
-		   00 CC 00 40
-		   00 18 42 49
-		   00 18 45 3C
-		   01 29 4A 3C
-		   00 0F 00 40
-
-		   Maybe I am mistaken when I think it's four byte, some other parts
-		   seem to suggest it's 2 byte oriented, or even variable length...
-		*/
-		/*
-		From Markus Magnuson (superqult) we got this information:
-		Mac0
-		---
-		   4 bytes - 'SOUN'
-		BE 4 bytes - block length
-		
-			   4 bytes  - 'Mac0'
-			BE 4 bytes  - (blockLength - 27)
-			   28 bytes - ???
-		
-			   do this three times (once for each channel):
-				  4 bytes  - 'Chan'
-			   BE 4 bytes  - channel length
-				  4 bytes  - instrument name (e.g. 'MARI')
-		
-				  do this for ((chanLength-24)/4) times:
-					 2 bytes  - note duration
-					 1 byte   - note value
-					 1 byte   - note velocity
-		
-				  4 bytes - ???
-				  4 bytes - 'Loop'/'Done'
-				  4 bytes - ???
-		
-		   1 byte - 0x09
-		---
-		
-		Instruments (General Midi):
-		"MARI" - Marimba (13)
-		"PLUC" - Pizzicato Strings (46)
-		"HARM" - Harmonica (23)
-		"PIPE" - Church Organ? (20) or Flute? (74)
-		"TROM" - Trombone (58)
-		"STRI" - String Ensemble (49 or 50)
-		"HORN" - French Horn? (61) or English Horn? (70)
-		"VIBE" - Vibraphone (12)
-		"SHAK" - Shakuhachi? (78)
-		"PANP" - Pan Flute (76)
-		"WHIS" - Whistle (79) / Bottle (77)
-		"ORGA" - Drawbar Organ (17; but could also be 18-21)
-		"BONG" - Woodblock? (116)
-		"BASS" - Bass (33-40)
-		
-		
-		Now the task could be to convert this into MIDI, to be fed into iMuse.
-		Or we do something similiar to what is done in Player_V3, assuming
-		we can identify SFX in the MI datafiles for each of the instruments
-		listed above.
-		*/
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
-//		dumpResource("sound-", idx, getResourceAddress(type, idx));
+		total_size = _fileHandle.readUint32BE() - 8;
+		byte *ptr = (byte *)calloc(total_size, 1);
+		_fileHandle.read(ptr, total_size);
+//		dumpResource("sound-", idx, ptr);
+		convertMac0Resource(type, idx, ptr, total_size);
+		free(ptr);
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
 		_fileHandle.seek(-12, SEEK_CUR);
@@ -1070,17 +972,147 @@ int Scumm::convert_extraflags(byte * ptr, byte * src_ptr) {
 	return time;
 }
 
-int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
+void Scumm::convertMac0Resource(int type, int idx, byte *src_ptr, int size) {
+	/* Offset
+	   0x14, 0x1C, 0x20, 0x24 - offsets of channel 1/2/3/4 chunk-
+	   Each channel has tag "Chan", followed by its length. At the end
+	   of each chan follows either an empty "Done" chunk (length 0) or an
+	   empty "Loop" chunk. Maybe "Loop" indicates the song should be
+	   played forever?!?.
 
-	byte * ptr;
+	   There can be various different subchunks it seems. The
+	   following combinations appear in Monkey Island:
+	   100: ORGA, TROM, BASS, 
+	   101: ORGA, SHAK, BASS, 
+	   103: PIPE, PIPE, PIPE, 
+	   104: VIBE, WHIS, BASS, 
+	   108: ORGA, MARI, BASS, 
+	   110: ORGA, SHAK, VIBE, 
+	   111: MARI, SHAK, BASS, 
+	   115: PLUC, SHAK, WHIS, 
+	   One guess is that these are instrument names: Organ, Marimba, Whistle...
+	   Maybe there is a mapping table someplace? Maybe these are even mapped to
+	   Mac1 type "instruments" ?
+
+	   What follows are four byte "commands" it seems, like this (hex):
+	   01 68 4F 49
+	   01 68 00 40
+	   01 68 4F 49
+	   ...
+	   01 68 00 40
+	   02 1C 5B 40
+	   00 B4 00 40
+	   ...
+	   01 68 37 3C
+	   00 18 37 38
+	   04 20 3E 34
+	   01 68 4A 3C
+
+	   More data:
+	   00 09 3E 10
+	   01 5F 00 40
+	   00 9C 36 40
+	   00 CC 00 40
+	   00 18 42 49
+	   00 18 45 3C
+	   01 29 4A 3C
+	   00 0F 00 40
+
+	   Maybe I am mistaken when I think it's four byte, some other parts
+	   seem to suggest it's 2 byte oriented, or even variable length...
+	*/
+	/*
+	From Markus Magnuson (superqult) we got this information:
+	Mac0
+	---
+	   4 bytes - 'SOUN'
+	BE 4 bytes - block length
+	
+		   4 bytes  - 'Mac0'
+		BE 4 bytes  - (blockLength - 27)
+		   28 bytes - ???
+	
+		   do this three times (once for each channel):
+			  4 bytes  - 'Chan'
+		   BE 4 bytes  - channel length
+			  4 bytes  - instrument name (e.g. 'MARI')
+	
+			  do this for ((chanLength-24)/4) times:
+				 2 bytes  - note duration
+				 1 byte   - note value
+				 1 byte   - note velocity
+	
+			  4 bytes - ???
+			  4 bytes - 'Loop'/'Done'
+			  4 bytes - ???
+	
+	   1 byte - 0x09
+	---
+	
+	Instruments (General Midi):
+	"MARI" - Marimba (13)
+	"PLUC" - Pizzicato Strings (46)
+	"HARM" - Harmonica (23)
+	"PIPE" - Church Organ? (20) or Flute? (74) or Bag Pipe (110)
+	"TROM" - Trombone (58)
+	"STRI" - String Ensemble (49 or 50)
+	"HORN" - French Horn? (61) or English Horn? (70)
+	"VIBE" - Vibraphone (12)
+	"SHAK" - Shakuhachi? (78)
+	"PANP" - Pan Flute (76)
+	"WHIS" - Whistle (79) / Bottle (77)
+	"ORGA" - Drawbar Organ (17; but could also be 18-21)
+	"BONG" - Woodblock? (116)
+	"BASS" - Bass (33-40)
+	
+	
+	Now the task could be to convert this into MIDI, to be fed into iMuse.
+	Or we do something similiar to what is done in Player_V3, assuming
+	we can identify SFX in the MI datafiles for each of the instruments
+	listed above.
+	*/
+
+	byte *ptr = createResource(type, idx, size);
+	
+	// TODO: Implement Mac0 -> GM conversion
+	// For now, just copy the resource data
+	memcpy(ptr, src_ptr, size);
+}
+
+static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
+	uint32 dw = TO_BE_32(total_size);
+	
+	memcpy(ptr, "ADL ", 4); ptr += 4;
+	memcpy(ptr, &dw, 4); ptr += 4;
+	memcpy(ptr, "MDhd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
+	ptr += 4;
+	memset(ptr, 0, 8), ptr += 8;
+	memcpy(ptr, "MThd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
+	ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
+	ptr += 4;
+	
+	*ptr++ = ppqn >> 8;
+	*ptr++ = ppqn & 0xFF;
+
+	memcpy(ptr, "MTrk", 4); ptr += 4;
+	memcpy(ptr, &dw, 4); ptr += 4;
+
+	return ptr;
+}
+
+void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
+
+	byte *ptr;
 	byte ticks, play_once;
 	byte num_instr;
 	byte *channel, *instr, *track;
-	byte *tracks[3];
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
     const int ppqn = 480;
-	int delay, delay2, olddelay;
+	uint32 dw;
 	int i, ch;
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
@@ -1092,25 +1124,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 	if (*src_ptr == 0x80) {
 		// 0x80 marks a music resource. Otherwise it's a SFX
-		memcpy(ptr, "ADL ", 4); ptr += 4;
-		uint32 dw = READ_BE_UINT32(&total_size);
-		memcpy(ptr, &dw, 4); ptr += 4;
-		memcpy(ptr, "MDhd", 4); ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
-		ptr += 4;
-		memset(ptr, 0, 8), ptr += 8;
-		memcpy(ptr, "MThd", 4); ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
-		ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
-		ptr += 4;
-	
-		*ptr++ = ppqn >> 8;
-		*ptr++ = ppqn & 0xFF;
-	
-		memcpy(ptr, "MTrk", 4); ptr += 4;
-		dw = READ_BE_UINT32(&total_size);
-		memcpy(ptr, &dw, 4); ptr += 4;
+		ptr = writeMIDIHeader(ptr, "ADL ", ppqn, total_size);
 
 		// The "speed" of the song
 		ticks = *(src_ptr + 1);
@@ -1262,38 +1276,22 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		// Finally we reinsert the end of song sysex, just in case
 		memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
 		
-		return 1;
+		return;
 	}
 
 	/* This is a sfx resource.  First parse it quickly to find the parallel
 	 * tracks.
 	 */
-	memcpy(ptr, "ASFX", 4); ptr += 4;
-	uint32 dw = READ_BE_UINT32(&total_size);
-	memcpy(ptr, &dw, 4); ptr += 4;
-	memcpy(ptr, "MDhd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
-	ptr += 4;
-	memset(ptr, 0, 8), ptr += 8;
-	memcpy(ptr, "MThd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
-	ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
-	ptr += 4;
-
-	*ptr++ = ppqn >> 8;
-	*ptr++ = ppqn & 0xFF;
-
-	memcpy(ptr, "MTrk", 4); ptr += 4;
-	dw = READ_BE_UINT32(&total_size);
-	memcpy(ptr, &dw, 4); ptr += 4;
+	ptr = writeMIDIHeader(ptr, "ASFX", ppqn, total_size);
 
 	byte current_instr[3][14];
 	int  current_note[3];
 	int track_time[3];
+	byte *tracks[3];
 
 	int track_ctr = 0;
 	byte chunk_type = 0;
+	int delay, delay2, olddelay;
 
 	// Write a tempo change Meta event
 	// 473 / 4 Hz, convert to micro seconds.
@@ -1308,6 +1306,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		current_note[i] = -1;
 	}
 	while (size > 0) {
+		assert(track_ctr < 3);
 		tracks[track_ctr] = src_ptr;
 		track_time[track_ctr] = 0;
 		track_ctr++;
@@ -1504,8 +1503,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 	/* insert end of song sysex */
 	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
-
-	return 1;
 }
 
 
@@ -1597,12 +1594,16 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			ptr = (byte *) calloc(ad_size - 4, 1);
 			_fileHandle.seek(ad_offs + 4, SEEK_SET);
 			_fileHandle.read(ptr, ad_size - 4);
-			return convertADResource(type, idx, ptr, ad_size - 4);
+			convertADResource(type, idx, ptr, ad_size - 4);
+			free(ptr);
+			return 1;
 		} else {
 			ptr = (byte *) calloc(ad_size - 6, 1);
 			_fileHandle.seek(ad_offs, SEEK_SET);
 			_fileHandle.read(ptr, ad_size - 6);
-			return convertADResource(type, idx, ptr, ad_size - 6);
+			convertADResource(type, idx, ptr, ad_size - 6);
+			free(ptr);
+			return 1;
 		} 
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
