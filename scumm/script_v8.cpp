@@ -1017,7 +1017,6 @@ void Scumm_v8::o8_roomOps()
 
 void Scumm_v8::o8_actorOps()
 {
-	// TODO
 	byte subOp = fetchScriptByte();
 	Actor *a;
 	int i, j;
@@ -1067,6 +1066,7 @@ void Scumm_v8::o8_actorOps()
 		break;
 	case 0x6D:		// SO_ACTOR_DEFAULT
 		// FIXME - is this right? Or maybe a->initActor(2) ?
+		warning("o8_actorOps: SO_ACTOR_DEFAULT");
 		a->initActor(0);
 		break;
 	case 0x6E:		// SO_ACTOR_ELEVATION
@@ -1114,15 +1114,13 @@ void Scumm_v8::o8_actorOps()
 			a->putActor(a->x, a->y, a->room);
 		break;
 	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
-		// TODO - implement this!
-		i = pop();
-		warning("o8_actorOps: specialDraw(%d) not implemented", i);
+		a->shadow_mode = pop();
 		break;
 	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
 		a->talkPosX = pop();
 		a->talkPosY = pop();
 		break;
-//	case 0x7A:		// SO_ACTOR_INIT Initialize actor
+//	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
 		// FIXME - is this right??
 		i = pop();
@@ -1136,6 +1134,7 @@ void Scumm_v8::o8_actorOps()
 		break;
 	case 0x7E:		// SO_ACTOR_NEW New actor
 		// FIXME - is this right? Or maybe a->initActor(0) ?
+		warning("o8_actorOps: SO_ACTOR_NEW");
 		a->initActor(2);
 		break;
 	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
@@ -1435,10 +1434,10 @@ void Scumm_v8::o6_kernelSetFunctions()
 	case 116:	// isPointInBox
 		// TODO
 		break;
-	case 118:
+	case 118:	// blastShadowObject
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
 		break;
-	case 119:
+	case 119:	// superBlastObject
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 		break;
 
