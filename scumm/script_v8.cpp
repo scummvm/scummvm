@@ -1445,6 +1445,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	}
 	case 0xDA:		// lipSyncWidth
 		push(_imuseDigital->getCurVoiceLipSyncWidth());
+		break;
 	case 0xDB:		// lipSyncHeight
 		push(_imuseDigital->getCurVoiceLipSyncHeight());
 		break;
