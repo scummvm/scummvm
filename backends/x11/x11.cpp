@@ -649,7 +649,7 @@ bool OSystem_X11::show_mouse(bool visible)
 
 void OSystem_X11::quit()
 {
-	exit(1);
+	exit(0);
 }
 
 void OSystem_X11::draw_mouse()

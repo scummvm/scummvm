@@ -681,7 +681,7 @@ void OSystem_SDL_Common::quit() {
 		SDL_CDClose(cdrom);
 	}
 	unload_gfx_mode();		
-	exit(1);
+	exit(0);
 }
 
 void OSystem_SDL_Common::draw_mouse() {

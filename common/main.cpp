@@ -96,6 +96,7 @@ static void do_memory_test(void) {
 
 int main(int argc, char *argv[])
 {
+	int result;
 #ifdef __DC__
 	extern void dc_init_hardware();
 	dc_init_hardware();
@@ -120,19 +121,29 @@ int main(int argc, char *argv[])
 	#endif
 #endif
 
+	// Read the config file
 	scummcfg = new Config(scummhome, "scummvm");
 	scummcfg->set("versioninfo", SCUMMVM_VERSION);
-	if (detector.detectMain(argc, argv))
-		return (-1);
+	
+	// Parse the command line information
+	result = detector.detectMain(argc, argv);
 
+	// Create the system object
 	OSystem *system = detector.createSystem();
 
-	{
-		OSystem::Property prop;
-
-		prop.caption = (char *)detector.getGameName();
-		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+	// TODO - if detectMain() returns an error, fire up the launcher dialog
+	// TODO - implement the launcher dialog; also implement some sort of generic
+	//        error dialog, to be used by the launcher if e.g. the game data can't
+	//        be found.
+	if (result) {
+		system->quit();
+		return (-1);
 	}
+
+	// Set the window caption (for OSystems that support it)
+	OSystem::Property prop;
+	prop.caption = (char *)detector.getGameName();
+	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);
@@ -140,7 +151,12 @@ int main(int argc, char *argv[])
 	// Run the game engine
 	engine->go();
 	
+	// Free up memory
+	delete engine;
 	delete scummcfg;
+	
+	// ...and quit (the return 0 should never be reached)
+	system->quit();
 	
 	return 0;
 }

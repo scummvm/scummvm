@@ -1499,8 +1499,8 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 }
 		
 void OSystem_WINCE3::quit() {
-	unload_gfx_mode();		
-	exit(1);
+	unload_gfx_mode();
+	exit(0);
 }
 
 /* CDRom Audio */
