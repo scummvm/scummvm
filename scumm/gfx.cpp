@@ -2113,7 +2113,7 @@ void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 	for (;;) {
 		byte color = *src++;
 		if (color < numcolors) {
-			*dst = local_palette[_vm->_roomPalette[color]];
+			*dst = _vm->_roomPalette[local_palette[color]];
 			NEXT_ROW;
 		} else {
 			uint run = color - numcolors + 1;
