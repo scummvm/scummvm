@@ -2529,19 +2529,18 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 6: {
 				uint32 speed;
-				assert(getStringAddressVar(VAR_VIDEONAME));
-				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0) {
-					speed = 1000000 / 14;
-				} else {
-					if (_smushFrameRate == 0) 
-						_smushFrameRate = 14;
-					speed = 1000000 / _smushFrameRate;
-				}
+				if (_smushFrameRate == 0) 
+					_smushFrameRate = 14;
+				speed = 1000000 / _smushFrameRate;
 
 				debug(1, "INSANE Arg: %d %d", args[1], args[2]);
 
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
+					assert(getStringAddressVar(VAR_VIDEONAME));
+					if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
+						speed = 1000000 / 14;
+
 					SmushPlayer *sp = new SmushPlayer(this, speed);
 
 					// Correct incorrect smush filename in Macintosh FT demo

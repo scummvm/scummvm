@@ -67,11 +67,17 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 2:
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(11));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(10));
+		else
+			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 
 		_mainRoadPos = readArray(2);
-		if (_mainRoadPos == _posBrokenTruck) {
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+			initScene(4);
+			startVideo("tovista.san", 1, 32, 12, 0);
+		} else if (_mainRoadPos == _posBrokenTruck) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0);
 		} else if (_mainRoadPos == _posBrokenCar) {
@@ -645,7 +651,10 @@ void Insane::setSceneCostumes(int sceneId) {
 	case 4:
 	case 5:
 	case 6:
-		smlayer_setActorCostume(0, 2, readArray(11));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(10));
+		else
+			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		setupValues();
 		return;
