@@ -197,7 +197,7 @@ GameDetector::GameDetector() {
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH 
 	// environment variable.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(__PALM_OS__)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
 	if (dir && *dir) {
 		// TODO: Verify whether the path is valid
