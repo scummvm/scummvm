@@ -282,6 +282,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 		switch (_prevZoneNum) {
 		case ZN_REVIEW_ENTRY:
 			if (_saveDescriptions[currentSlot][0]) {
+				_vm->graphics()->clearBobs();
 				_vm->display()->palFadeOut(0, 223, JOURNAL_ROOM);
 				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);

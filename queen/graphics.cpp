@@ -200,7 +200,7 @@ void Graphics::setupMouseCursor() {
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
 }
 
-void Graphics::drawBob(const BobSlot *bs, BobFrame *bf, int16 x, int16 y) {
+void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, int16 x, int16 y) {
 	debug(9, "Graphics::drawBob(%d, %d, %d)", bs->frameNum, x, y);
 
 	uint16 w, h;
@@ -410,7 +410,7 @@ BobSlot *Graphics::bob(int index) {
 }
 
 void Graphics::setBobText(
-		BobSlot *pbs, 
+		const BobSlot *pbs, 
 		const char *text, 
 		int textX, int textY, 
 		int color, int flags) {

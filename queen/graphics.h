@@ -95,7 +95,7 @@ public:
 	void unpackControlBank();
 	void setupMouseCursor();
 
-	void drawBob(const BobSlot *bs, BobFrame *bf, int16 x, int16 y);
+	void drawBob(const BobSlot *bs, const BobFrame *bf, int16 x, int16 y);
 	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
 	void pasteBob(uint16 objNum, uint16 image);
 	void shrinkFrame(const BobFrame *bf, uint16 percentage);
@@ -105,7 +105,7 @@ public:
 	void clearBobs();
 	void stopBobs();
 	BobSlot *bob(int index);
-	void setBobText(BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
+	void setBobText(const BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
 
 	void handleParallax(uint16 roomNum);
 

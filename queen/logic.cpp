@@ -529,7 +529,7 @@ void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	}
 }
 
-ActorData *Logic::findActor(uint16 noun, const char *name) {
+ActorData *Logic::findActor(uint16 noun, const char *name) const {
 	uint16 obj = currentRoomData() + noun;
 	int16 img = objectData(obj)->image;
 	if (img != -3 && img != -4) {
@@ -1362,9 +1362,8 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 }
 
 void Logic::setupRestoredGame() {
-	if (_vm->bam()->_flag != BamScene::F_STOP) {
-		_vm->bam()->prepareAnimation();
-	}
+	uint16 flag = _vm->bam()->_flag;
+	_vm->bam()->_flag = BamScene::F_STOP;
 
 	_vm->sound()->playSong(_vm->sound()->lastOverride());
 
@@ -1391,6 +1390,11 @@ void Logic::setupRestoredGame() {
 	_entryObj = 0;
 
 	inventoryRefresh();
+
+	if (flag != BamScene::F_STOP) {
+		_vm->bam()->_flag = flag;
+		_vm->bam()->prepareAnimation();
+	}
 }
 
 void Logic::sceneStart() {

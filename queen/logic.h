@@ -128,7 +128,7 @@ public:
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }
 
-	ActorData *findActor(uint16 noun, const char *name = NULL);
+	ActorData *findActor(uint16 noun, const char *name = NULL) const;
 	bool initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp);
 	uint16 findPersonNumber(uint16 obj) const;
 
