@@ -128,7 +128,7 @@ protected:
 	virtual byte drawLimb(const CostumeData &cost, int limb) = 0;
 
 	void codec1_ignorePakCols(int num);
-
+	void V1_ignorePakCols(int num);
 };
 
 #endif

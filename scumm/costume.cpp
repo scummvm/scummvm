@@ -205,10 +205,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			skip = -v1.x;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			if (_vm->_version != 1)
+
+			if (_vm->_version == 1)
+				V1_ignorePakCols(skip);
+			else
 				codec1_ignorePakCols(skip);
-			else 
-				warning ("TODO: ignore columns for v1 gfx costume codec");
 			v1.x = 0;
 		} else {
 			skip = x_right - _vm->_screenWidth;
@@ -223,10 +224,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
 			v1.skip_width -= skip;
-			if (_vm->_version != 1)
+
+			if (_vm->_version == 1)
+				V1_ignorePakCols(skip);
+			else
 				codec1_ignorePakCols(skip);
-			else 
-				warning ("TODO: ignore columns for v1 gfx costume codec");
 			v1.x = _vm->_screenWidth - 1;
 		} else {
 			skip = -1 - x_left;
