@@ -460,7 +460,7 @@ int ScummEngine::readVar(uint var) {
 	else
 		copyprotbypassed = true;
 
-	debug(DEBUG_VARS, "readvar(%d)", var);
+	debugC(DEBUG_VARS, "readvar(%d)", var);
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
 		a = fetchScriptWord();

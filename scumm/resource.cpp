@@ -1734,7 +1734,7 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 
 	setResourceCounter(type, idx, 1);
 
-	debug(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
+	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
 }
 
