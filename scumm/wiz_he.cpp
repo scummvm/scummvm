@@ -865,14 +865,14 @@ void ScummEngine_v72he::displayWizImage(WizImage *pwi) {
 		memcpy(&_wiz._images[_wiz._imagesNum], pwi, sizeof(WizImage));
 		++_wiz._imagesNum;
 	} else if (pwi->flags & kWIFIsPolygon) {
-		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags);
+		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, 0);
 	} else {
 		const Common::Rect *r = NULL;
-		drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, NULL, 0);
+		drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, 0, 0);
 	}
 }
 
-uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, uint8 *dstPtr, int paletteNum) {
+uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, int xmapNum, const Common::Rect *clipBox, int flags, int dstResNum, int paletteNum) {
 	debug(1, "drawWizImage(%d, %d, %d, 0x%X)", resNum, x1, y1, flags);
 	uint8 *dst = NULL;
 	uint8 *dataPtr = getResourceAddress(rtImage, resNum);
@@ -916,13 +916,17 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			cw = width;
 			ch = height;
 		} else {
-			VirtScreen *pvs = &virtscr[kMainVirtScreen];
-			if (dstPtr) {
-				cw  = READ_LE_UINT32(dstPtr + 0x4);
-				ch = READ_LE_UINT32(dstPtr + 0x8);
-				assert(cw <= pvs->w  && ch <= pvs->h);
-				dst = dstPtr;
+			if (dstResNum) {
+				uint8 *dstPtr = getResourceAddress(rtImage, dstResNum);
+				assert(dstPtr);
+				wizh = findWrappedBlock(MKID('WIZH'), dstPtr, 0, 0);
+				assert(wizh);
+				cw  = READ_LE_UINT32(wizh + 0x4);
+				ch = READ_LE_UINT32(wizh + 0x8);
+				dst = findWrappedBlock(MKID('WIZD'), dstPtr, state, 0);
+				assert(dst);
 			} else {
+				VirtScreen *pvs = &virtscr[kMainVirtScreen];
 				if (flags & kWIFMarkBufferDirty) {
 					dst = pvs->getPixels(0, pvs->topline);
 				} else {
@@ -969,7 +973,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			warning("unhandled wiz compression type %d", comp);
 		}
 
-		if (!(flags & kWIFBlitToMemBuffer) && dstPtr == NULL) {
+		if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
 			Common::Rect rImage(x1, y1, x1 + width, y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
@@ -1051,7 +1055,7 @@ struct PolygonDrawData {
 	}
 };
 
-void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, uint8 *dstPtr, int paletteNum) {
+void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int xmapNum, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int paletteNum) {
 	Common::Point pts[4];
 	int32 w, h;
 	getWizImageDim(resNum, state, w, h);
@@ -1090,26 +1094,26 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resNum, int state, int po_x, i
 		switch(angle) {
 		case 270:
 			flags |= kWIFFlipX | kWIFFlipY;
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstPtr, paletteNum);
+			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, paletteNum);
 			break;
 		case 180:
 			flags |= kWIFFlipX | kWIFFlipY;
-			drawWizImage(resNum, state, x1, y1, xmapNum, r, flags, dstPtr, paletteNum);
+			drawWizImage(resNum, state, x1, y1, xmapNum, r, flags, dstResNum, paletteNum);
 			break;
 		case 90:
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstPtr, paletteNum);
+			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, paletteNum);
 			break;
 		case 0:
-			drawWizImage(resNum, state, x1, y1, xmapNum, r, flags, dstPtr, paletteNum);
+			drawWizImage(resNum, state, x1, y1, xmapNum, r, flags, dstResNum, paletteNum);
 			break;
 		default:
-			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, paletteNum, xmapPtr);
+			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstResNum, paletteNum, xmapPtr);
 			break;
 		}
 	}
 }
 
-void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags) {
+void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags, int xmapNum, int dstResNum, int paletteNum) {
 	int i;
 	WizPolygon *wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_wiz._polygons); ++i) {
@@ -1125,7 +1129,7 @@ void ScummEngine_v72he::drawWizPolygon(int resNum, int state, int id, int flags)
 		error("Invalid point count %d for Polygon %d", wp->numVerts, id);
 	}
 	const Common::Rect *r = NULL;
-	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, xmapNum, r, kWIFBlitToMemBuffer, dstResNum, paletteNum);
 	if (srcWizBuf) {
 		uint8 *dst;
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
@@ -1208,10 +1212,10 @@ void ScummEngine_v72he::flushWizBuffer() {
 	for (int i = 0; i < _wiz._imagesNum; ++i) {
 		WizImage *pwi = &_wiz._images[i];
 		if (pwi->flags & kWIFIsPolygon) {
-			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags);
+			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->xmapNum, 0, 0);
 		} else {
 			const Common::Rect *r = NULL;
-			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, NULL, 0);
+			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->xmapNum, r, pwi->flags, 0, 0);
 		}
 	}
 	_wiz._imagesNum = 0;
@@ -1293,13 +1297,9 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 	if (params->processFlags & kWPFClipBox) {
 		r = &params->box;
 	}
-	uint8 *wizd = NULL;
+	int dstResNum = 0;
 	if (params->processFlags & kWPFDstResNum) {
-		uint8 *dataPtr = getResourceAddress(rtImage, params->dstResNum);
-		assert(dataPtr);
-		wizd = findWrappedBlock(MKID('WIZD'), dataPtr, 0, 0);
-		assert(wizd);
-		warning("displayWizComplexImage() flag 0x10000");
+		dstResNum = params->dstResNum;
 	}
 	if (params->processFlags & kWPFRemapPalette) {
 		int st = (params->processFlags & kWPFNewState) ? params->img.state : 0;
@@ -1316,7 +1316,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		}
 	}
 
-	if (_fullRedraw && wizd == NULL) {
+	if (_fullRedraw && dstResNum == 0) {
 		if (unk_178 != 0 || (params->processFlags & (kWPFZoom | kWPFRotate)))
 			error("Can't do this command in the enter script.");
 
@@ -1334,12 +1334,12 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		if (unk_178 != 0) {
 			// TODO
 		} else if (params->processFlags & (kWPFZoom | kWPFRotate)) {
-			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, xmapNum, rotationAngle, zoom, r, flags, wizd, paletteNum);
+			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, xmapNum, rotationAngle, zoom, r, flags, dstResNum, paletteNum);
 		} else {
 			if (flags & kWIFIsPolygon) {
-				drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(VAR_WIZ_TCOLOR));
+				drawWizPolygon(params->img.resNum, state, po_x, flags, xmapNum, dstResNum, paletteNum); // XXX , VAR(VAR_WIZ_TCOLOR));
 			} else {
-				drawWizImage(params->img.resNum, state, po_x, po_y, xmapNum, r, flags, wizd, paletteNum);
+				drawWizImage(params->img.resNum, state, po_x, po_y, xmapNum, r, flags, dstResNum, paletteNum);
 			}
 		}
 	}
