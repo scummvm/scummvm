@@ -751,12 +751,49 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 	return false;
 }
 
+#define BOX_DEBUG 0
+
+#if BOX_DEBUG
+static void printMatrix(byte *boxm, int num) {
+	int i;
+	for (i = 0; i < num; i++) {
+		printf("%d: ", i);
+		while (*boxm != 0xFF) {
+			printf("%d, ", *boxm);
+			boxm++;
+		}
+		boxm++;
+		printf("\n");
+	}
+}
+
+static void printMatrix2(byte *matrix, int num) {
+	int i, j;
+	printf("    ");
+	for (i = 0; i < num; i++)
+		printf("%2d ", i);
+	printf("\n");
+	for (i = 0; i < num; i++) {
+		printf("%2d: ", i);
+		for (j = 0; j < num; j++) {
+			int val = matrix[i * 64 + j];
+			if (val == 250)
+				printf(" ? ");
+			else
+				printf("%2d ", val);
+		}
+		printf("\n");
+	}
+}
+#endif
+
 void Scumm::createBoxMatrix() {
 	int num, i, j;
 	byte flags;
 	int table_1[66], table_2[66];
 	int counter, val;
 	int code;
+
 
 	// A heap (an optiimsation to avoid calling malloc/free extremly often)
 	_maxBoxVertexHeap = 1000;
@@ -774,6 +811,21 @@ void Scumm::createBoxMatrix() {
 
 	num = getNumBoxes();
 
+#if BOX_DEBUG
+printf("Creating box matrix...\n");
+	for (i = 0; i < num; i++) {
+		BoxCoords coords;
+		flags = getBoxFlags(i);
+		getBoxCoordinates(i, &coords);
+
+		printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n",
+								i,
+								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
+								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
+								flags);
+	}
+#endif
+
 	// Initialise the distance matrix: each box has distance 0 to itself,
 	// and distance 1 to its direct neighbors. Initially, it has distance
 	// 250 (= infinity) to all other boxes.
@@ -788,6 +840,11 @@ void Scumm::createBoxMatrix() {
 			}
 		}
 	}
+	
+#if BOX_DEBUG
+	printf("Initial matrix:\n");
+	printMatrix2(_boxMatrixPtr3, num);
+#endif
 
 	// Iterate over all boxes
 	for (j = 0; j < num; j++) {
@@ -877,6 +934,12 @@ void Scumm::createBoxMatrix() {
 	addToBoxMatrix(0xFF);
 	nukeResource(rtMatrix, 4);
 	nukeResource(rtMatrix, 3);
+	
+#if BOX_DEBUG
+	printf("End result:\n");
+	printMatrix2(_boxMatrixPtr3, num);
+	printMatrix(getBoxMatrixBaseAddr(), num);
+#endif
 }
 
 PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node) {
