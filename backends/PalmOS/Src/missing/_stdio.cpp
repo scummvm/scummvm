@@ -22,6 +22,27 @@
 
 #include "stdio.h"
 #include "extend.h"
+
+static void DrawStatus(Boolean show) {
+	if (OPTIONS_TST(kOptDisableOnScrDisp))
+		return;
+
+	UInt8 x,y;
+	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
+	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
+
+	if (gVars->screenLocked)
+		screen = (screen == gVars->flipping.pageAddr1) ? gVars->flipping.pageAddr2 : gVars->flipping.pageAddr1;
+
+	screen += gVars->screenPitch + 1;
+	for(y=0; y < 4; y++) {
+		for(x=0; x < 4; x++)
+			screen[x] = color;
+
+		screen += gVars->screenPitch;
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //FileRef gLogFile;
 
@@ -70,7 +91,9 @@ UInt16 feof(FileRef *stream) {
 ///////////////////////////////////////////////////////////////////////////////
 Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	UInt32 numBytesRead;
+	DrawStatus(true);
 	Err error = VFSFileRead(*stream, n, s, &numBytesRead);
+	DrawStatus(false);
 	if (error == errNone || error == vfsErrFileEOF) {
 		UInt32 reset = 0;
 		Char *endLine = StrChr(s, '\n');
@@ -196,7 +219,9 @@ FileRef *fopen(const Char *filename, const Char *type) {
 ///////////////////////////////////////////////////////////////////////////////
 UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesRead;
+	DrawStatus(true);
 	Err error = VFSFileRead(*stream, size*nitems, ptr, &numBytesRead);
+	DrawStatus(false);
 	if (error == errNone || error == vfsErrFileEOF)
 		return (UInt32)(numBytesRead/size);
 
@@ -228,7 +253,9 @@ UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 ///////////////////////////////////////////////////////////////////////////////
 UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesWritten;
+	DrawStatus(true);
 	Err error = VFSFileWrite(*stream, size*nitems, ptr, &numBytesWritten);
+	DrawStatus(false);
 
 	if (error == errNone || error == vfsErrFileEOF)
 		return (UInt32)(numBytesWritten/size);
@@ -324,6 +351,7 @@ Int16 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	StrReplace(format, 256, "%02ld","%.2d");
 	StrReplace(format, 256, "%01ld","%.1d");
 	StrReplace(format, 256, "%02ld","%02d");
+	StrReplace(format, 256, "%02lx","%02x");
 
 	StrReplace(format, 256, "%2ld","%2d");
 	StrReplace(format, 256, "%3ld","%3d");
