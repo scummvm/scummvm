@@ -20,7 +20,6 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions=" /wd4068 /wd4244 /wd4390"
 				Optimization="0"
 				AdditionalIncludeDirectories=".,sound,common"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,ALLOW_GDI,BYPASS_COPY_PROT"
@@ -78,7 +77,6 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions=" /wd4068 /wd4244 /wd4390"
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".,sound,common"
@@ -136,7 +134,6 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions=" /wd4068 /wd4244 /wd4390"
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".,sound,common"
@@ -194,7 +191,6 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions=" /wd4068 /wd4244 /wd4390"
 				Optimization="0"
 				AdditionalIncludeDirectories=".,sound,common"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,ALLOW_GDI,USE_ADLIB,BYPASS_COPY_PROT,USE_MAD"
