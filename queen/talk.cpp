@@ -630,7 +630,7 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 	
 	char voiceFileName[MAX_STRING_SIZE];
-	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix + 1, index);
+	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
 
 	//debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person, voiceFileName);
