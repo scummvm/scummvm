@@ -1121,6 +1121,12 @@ void ScummEngine::actorTalk() {
 	_messagePtr = addMessageToStack(_messagePtr);
 	assert((int)(_msgPtrToAdd - _charsetBuffer) < (int)(sizeof(_charsetBuffer)));
 
+	// FIXMW: Workaround for bug #770049
+	if (_gameId == GID_LOOM) {
+		if (!*_charsetBuffer)
+			return;
+	}
+
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText)
 			stopTalk();
