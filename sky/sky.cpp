@@ -266,7 +266,7 @@ void SkyEngine::initialise(void) {
 		_skyMusic = new AdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
-		if (ConfMan.getBool("native_mt32"))
+		if (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32))
 			_skyMusic = new MT32Music(GameDetector::createMidi(midiDriver), _skyDisk, _system);
 		else
 			_skyMusic = new GmMusic(GameDetector::createMidi(midiDriver), _skyDisk, _system);
