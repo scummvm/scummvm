@@ -436,9 +436,10 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 					w += 8;
 					continue;
 				}
-				if (_vm->_features & GF_AFTER_V7)
-					drawStripToScreen(vs, start * 8, w, 0, vs->height);
-				else
+				// FIXME - why was this code in there? I don't see why it would be needed...
+//				if (_vm->_features & GF_AFTER_V7)
+//					drawStripToScreen(vs, start * 8, w, 0, vs->height);
+//				else
 					drawStripToScreen(vs, start * 8, w, top, bottom);
 				w = 8;
 			}
