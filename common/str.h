@@ -39,13 +39,14 @@ namespace ScummVM {
 */
 
 class ConstString {
+	friend class String;
 protected:
 	char	*_str;
 	int		_len;
 
 public:
 	ConstString() : _str(0), _len(0) {}
-	ConstString(const char *str) : _str((char*)str) { _len = str ? strlen(str) : 0;}
+	ConstString(const char *str) : _str((char*)str) { _len = str ? strlen(str) : 0; }
 	virtual ~ConstString() {}
 	
 	bool operator ==(const ConstString& x) const;
@@ -71,6 +72,7 @@ protected:
 public:
 	String() : _capacity(0) { _refCount = new int(1); }
 	String(const char *str);
+	String(const ConstString &str);
 	String(const String &str);
 	virtual ~String();
 	

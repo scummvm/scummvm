@@ -37,6 +37,20 @@ String::String(const char *str)
 	}
 }
 
+String::String(const ConstString &str)
+{
+	printf("String::String(const ConstString &str)\n");
+	_refCount = new int(1);
+	if (str._str) {
+		_capacity = _len = strlen(str._str);
+		_str = (char *)calloc(1, _capacity+1);
+		memcpy(_str, str._str, _len+1);
+	} else {
+		_capacity = _len = 0;
+		_str = 0;
+	}
+}
+
 String::String(const String &str)
 {
 	++(*str._refCount);
