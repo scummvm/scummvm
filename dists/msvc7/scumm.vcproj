@@ -376,6 +376,12 @@
 			RelativePath="..\..\scumm\resource_v4.cpp">
 		</File>
 		<File
+			RelativePath="..\..\scumm\resource_v7he.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\resource_v7he.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\saveload.cpp">
 		</File>
 		<File
