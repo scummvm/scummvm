@@ -509,9 +509,9 @@ void Player::sysEx(byte *p, uint16 len) {
 	}
 }
 
-void Player::decode_sysex_bytes(byte *src, byte *dst, int len) {
+void Player::decode_sysex_bytes(const byte *src, byte *dst, int len) {
 	while (len >= 0) {
-		*dst++ = (src[0] << 4) |(src[1] & 0xF);
+		*dst++ = ((src[0] << 4)&0xFF) |(src[1] & 0xF);
 		src += 2;
 		len -= 2;
 	}
