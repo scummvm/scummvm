@@ -57,6 +57,7 @@ class V2A_Sound {
 public:
 	V2A_Sound() : _id(0), _mod(NULL) { }
 
+	virtual V2A_Sound *copy() = 0;
 	virtual void start(Player_MOD *mod, int id, const byte *data) = 0;
 	virtual bool update() = 0;
 	virtual void stop() = 0;
@@ -67,6 +68,11 @@ protected:
 
 class V2A_Sound_Unsupported : public V2A_Sound {
 public:
+	V2A_Sound_Unsupported(V2A_Sound_Unsupported *other) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Unsupported(this);
+	}
+	V2A_Sound_Unsupported() { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		warning("player_v2a - sound %i not supported yet", id);
 	}
@@ -77,6 +83,8 @@ public:
 template<int numChan>
 class V2A_Sound_Base : public V2A_Sound {
 public:
+	V2A_Sound_Base (V2A_Sound_Base *other) :
+		_offset(other->_offset), _size(other->_size), _data(0) { }
 	V2A_Sound_Base() : _offset(0), _size(0), _data(0) { }
 	V2A_Sound_Base(uint16 offset, uint16 size) : _offset(offset), _size(size), _data(0) { }
 	virtual void stop() {
@@ -96,6 +104,11 @@ protected:
 
 class V2A_Sound_Music : public V2A_Sound {
 public:
+	V2A_Sound_Music (V2A_Sound_Music *other) :
+		_instoff(other->_instoff), _voloff(other->_voloff), _chan1off(other->_chan1off), _chan2off(other->_chan2off), _chan3off(other->_chan3off), _chan4off(other->_chan4off), _sampoff(other->_sampoff), _looped(other->_looped) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Music(this);
+	}
 	V2A_Sound_Music(uint16 instoff, uint16 voloff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff, bool looped) :
 		_instoff(instoff), _voloff(voloff), _chan1off(chan1off), _chan2off(chan2off), _chan3off(chan3off), _chan4off(chan4off), _sampoff(sampoff), _looped(looped) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -223,6 +236,11 @@ private:
 
 class V2A_Sound_Single : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Single (V2A_Sound_Single *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Single(this);
+	}
 	V2A_Sound_Single(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -251,6 +269,11 @@ private:
 
 class V2A_Sound_SingleLooped : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_SingleLooped (V2A_Sound_SingleLooped *other) :
+		V2A_Sound_Base<1>(other), _loopoffset(other->_loopoffset), _loopsize(other->_loopsize), _freq(other->_freq), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_SingleLooped(this);
+	}
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize) :
 		V2A_Sound_Base<1>(offset, size), _loopoffset(loopoffset), _loopsize(loopsize), _freq(freq), _vol(vol) { }
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -276,6 +299,11 @@ private:
 
 class V2A_Sound_MultiLooped : public V2A_Sound_Base<2> {
 public:
+	V2A_Sound_MultiLooped (V2A_Sound_MultiLooped *other) :
+		V2A_Sound_Base<2>(other), _freq1(other->_freq1), _vol1(other->_vol1), _freq2(other->_freq2), _vol2(other->_vol2) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_MultiLooped(this);
+	}
 	V2A_Sound_MultiLooped(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2) :
 		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _vol1(vol1), _freq2(freq2), _vol2(vol2) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -303,6 +331,11 @@ private:
 
 class V2A_Sound_MultiLoopedDuration : public V2A_Sound_MultiLooped {
 public:
+	V2A_Sound_MultiLoopedDuration (V2A_Sound_MultiLoopedDuration *other) :
+		V2A_Sound_MultiLooped(other), _duration(other->_duration) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_MultiLoopedDuration(this);
+	}
 	V2A_Sound_MultiLoopedDuration(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes) :
 		V2A_Sound_MultiLooped(offset, size, freq1, vol1, freq2, vol2), _duration(numframes) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -324,6 +357,11 @@ private:
 
 class V2A_Sound_SingleLoopedPitchbend : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_SingleLoopedPitchbend(V2A_Sound_SingleLoopedPitchbend *other) :
+		V2A_Sound_Base<1>(other), _freq1(other->_freq1), _freq2(other->_freq2), _vol(other->_vol), _step(other->_step) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_SingleLoopedPitchbend(this);
+	}
 	V2A_Sound_SingleLoopedPitchbend(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol, uint8 step) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol), _step(step) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -363,6 +401,11 @@ private:
 
 class V2A_Sound_Special_FastPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_FastPitchbendDownAndFadeout(V2A_Sound_Special_FastPitchbendDownAndFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_FastPitchbendDownAndFadeout(this);
+	}
 	V2A_Sound_Special_FastPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -394,6 +437,11 @@ private:
 
 class V2A_Sound_Special_LoopedFadeinFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_LoopedFadeinFadeout(V2A_Sound_Special_LoopedFadeinFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _fade1(other->_fade1), _fade2(other->_fade2) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_LoopedFadeinFadeout(this);
+	}
 	V2A_Sound_Special_LoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _fade1(fadeinrate), _fade2(fadeoutrate) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -432,6 +480,11 @@ private:
 
 class V2A_Sound_Special_MultiLoopedFadeinFadeout : public V2A_Sound_Base<2> {
 public:
+	V2A_Sound_Special_MultiLoopedFadeinFadeout(V2A_Sound_Special_MultiLoopedFadeinFadeout *other) :
+		V2A_Sound_Base<2>(other), _freq1(other->_freq1), _freq2(other->_freq2), _fade1(other->_fade1), _fade2(other->_fade2) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_MultiLoopedFadeinFadeout(this);
+	}
 	V2A_Sound_Special_MultiLoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate) :
 		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _freq2(freq2), _fade1(fadeinrate), _fade2(fadeoutrate) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -475,6 +528,11 @@ private:
 
 class V2A_Sound_Special_PitchbendDownThenFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_PitchbendDownThenFadeout(V2A_Sound_Special_PitchbendDownThenFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq1(other->_freq1), _freq2(other->_freq2), _step(other->_step) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_PitchbendDownThenFadeout(this);
+	}
 	V2A_Sound_Special_PitchbendDownThenFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -508,6 +566,11 @@ private:
 
 class V2A_Sound_Special_PitchbendDownAndBackUp : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_PitchbendDownAndBackUp(V2A_Sound_Special_PitchbendDownAndBackUp *other) :
+		V2A_Sound_Base<1>(other), _freq1(other->_freq1), _freq2(other->_freq2), _step(other->_step), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_PitchbendDownAndBackUp(this);
+	}
 	V2A_Sound_Special_PitchbendDownAndBackUp(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -551,6 +614,11 @@ private:
 
 class V2A_Sound_Special_SlowPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_SlowPitchbendDownAndFadeout(V2A_Sound_Special_SlowPitchbendDownAndFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq1(other->_freq1), _freq2(other->_freq2) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_SlowPitchbendDownAndFadeout(this);
+	}
 	V2A_Sound_Special_SlowPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -583,6 +651,11 @@ private:
 
 class V2A_Sound_Special_MultiLoopedDurationMulti : public V2A_Sound_Base<2> {
 public:
+	V2A_Sound_Special_MultiLoopedDurationMulti(V2A_Sound_Special_MultiLoopedDurationMulti *other) :
+		V2A_Sound_Base<2>(other), _freq1(other->_freq1), _vol1(other->_vol1), _freq2(other->_freq2), _vol2(other->_vol2), _duration(other->_duration), _playwidth(other->_playwidth), _loopwidth(other->_loopwidth) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_MultiLoopedDurationMulti(this);
+	}
 	V2A_Sound_Special_MultiLoopedDurationMulti(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth) :
 		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _vol1(vol1), _freq2(freq2), _vol2(vol2), _duration(numframes), _playwidth(playwidth), _loopwidth(loopwidth) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -636,6 +709,11 @@ private:
 
 class V2A_Sound_Special_SingleDurationMulti : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_SingleDurationMulti(V2A_Sound_Special_SingleDurationMulti *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _vol(other->_vol), _loopwidth(other->_loopwidth), _numloops(other->_numloops) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_SingleDurationMulti(this);
+	}
 	V2A_Sound_Special_SingleDurationMulti(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopwidth(loopwidth), _numloops(numloops) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -678,6 +756,11 @@ private:
 
 class V2A_Sound_Special_SingleDurationMultiDurations : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_SingleDurationMultiDurations(V2A_Sound_Special_SingleDurationMultiDurations *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _vol(other->_vol), _numdurs(other->_numdurs), _durations(other->_durations), _looped(other->_looped) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_SingleDurationMultiDurations(this);
+	}
 	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations), _looped(looped) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -724,6 +807,11 @@ private:
 
 class V2A_Sound_Special_TwinSirenMulti : public V2A_Sound_Base<2> {
 public:
+	V2A_Sound_Special_TwinSirenMulti(V2A_Sound_Special_TwinSirenMulti *other) :
+		_offset1(other->_offset1), _size1(other->_size1), _offset2(other->_offset2), _size2(other->_size2), _freq1(other->_freq1), _freq2(other->_freq2), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_TwinSirenMulti(this);
+	}
 	V2A_Sound_Special_TwinSirenMulti(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
 		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -787,6 +875,11 @@ private:
 
 class V2A_Sound_Special_QuadSiren : public V2A_Sound_Base<4> {
 public:
+	V2A_Sound_Special_QuadSiren(V2A_Sound_Special_QuadSiren *other) :
+		_offset1(other->_offset1), _size1(other->_size1), _offset2(other->_offset2), _size2(other->_size2), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_QuadSiren(this);
+	}
 	V2A_Sound_Special_QuadSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
 		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -858,6 +951,11 @@ private:
 
 class V2A_Sound_Special_QuadFreqLooped : public V2A_Sound_Base<4> {
 public:
+	V2A_Sound_Special_QuadFreqLooped(V2A_Sound_Special_QuadFreqLooped *other) :
+		V2A_Sound_Base<4>(other), _freq1(other->_freq1), _freq2(other->_freq2), _freq3(other->_freq3), _freq4(other->_freq4), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_QuadFreqLooped(this);
+	}
 	V2A_Sound_Special_QuadFreqLooped(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
 		V2A_Sound_Base<4>(offset, size), _freq1(freq1), _freq2(freq2), _freq3(freq3), _freq4(freq4), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -891,6 +989,11 @@ protected:
 
 class V2A_Sound_Special_QuadFreqFadeout : public V2A_Sound_Special_QuadFreqLooped {
 public:
+	V2A_Sound_Special_QuadFreqFadeout(V2A_Sound_Special_QuadFreqFadeout *other) :
+		V2A_Sound_Special_QuadFreqLooped(other), _dur(other->_dur) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_QuadFreqFadeout(this);
+	}
 	V2A_Sound_Special_QuadFreqFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
 		V2A_Sound_Special_QuadFreqLooped(offset, size, freq1, freq2, freq3, freq4, vol), _dur(dur) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -917,6 +1020,11 @@ private:
 
 class V2A_Sound_Special_SingleFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_SingleFadeout(V2A_Sound_Special_SingleFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq(other->_freq), _vol(other->_vol) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_SingleFadeout(this);
+	}
 	V2A_Sound_Special_SingleFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -943,6 +1051,11 @@ private:
 
 class V2A_Sound_Special_SlowPitchbendThenSlowFadeout : public V2A_Sound_Base<1> {
 public:
+	V2A_Sound_Special_SlowPitchbendThenSlowFadeout(V2A_Sound_Special_SlowPitchbendThenSlowFadeout *other) :
+		V2A_Sound_Base<1>(other), _freq1(other->_freq1), _freq2(other->_freq2) { }
+	virtual V2A_Sound *copy() {
+		return new V2A_Sound_Special_SlowPitchbendThenSlowFadeout(this);
+	}
 	V2A_Sound_Special_SlowPitchbendThenSlowFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
@@ -1151,6 +1264,7 @@ void Player_V2A::stopAllSounds() {
 		if (!_slot[i].id)
 			continue;
 		_slot[i].sound->stop();
+		delete _slot[i].sound;
 		_slot[i].sound = NULL;
 		_slot[i].id = 0;
 	}
@@ -1164,6 +1278,7 @@ void Player_V2A::stopSound(int nr) {
 	if (i == -1)
 		return;
 	_slot[i].sound->stop();
+	delete _slot[i].sound;
 	_slot[i].sound = NULL;
 	_slot[i].id = 0;
 }
@@ -1183,7 +1298,7 @@ void Player_V2A::startSound(int nr) {
 	if (i == -1)
 		return;
 	_slot[i].id = nr;
-	_slot[i].sound = snd;
+	_slot[i].sound = snd->copy();
 	_slot[i].sound->start(_mod,nr,data);
 }
 
@@ -1196,6 +1311,7 @@ void Player_V2A::updateSound() {
 	for (i = 0; i < V2A_MAXSLOTS; i++) {
 		if ((_slot[i].id) && (!_slot[i].sound->update())) {
 			_slot[i].sound->stop();
+			delete _slot[i].sound;
 			_slot[i].sound = NULL;
 			_slot[i].id = 0;
 		}
