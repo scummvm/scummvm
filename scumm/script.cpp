@@ -355,8 +355,8 @@ void ScummEngine::nukeArrays(int script) {
 		return;
 
 	//FIXME Should be used all the time
-	// Limited to only location in puttmoon that requires it
-	if (!(_gameId == GID_PUTTMOON && _roomResource == 22))
+	// Only required in puttmoon
+	if (_gameId != GID_PUTTMOON)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
