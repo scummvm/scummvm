@@ -355,7 +355,7 @@ void CostumeRenderer::procC64(int actor) {
 		palette[1] = v1_mm_actor_palatte_1[actor];
 		palette[2] = v1_mm_actor_palatte_2[actor];
 	} else {
-		palette[1] = 8;
+		palette[1] = 10;
 		palette[2] = _palette[0];
 	}
 
