@@ -437,9 +437,8 @@ void Scumm::loadRoomObjects()
 			continue;
 
 		// Nuke all non-flObjects (flObjects are nuked in script.cpp)
-		if (!_objs[i].fl_object_index) {
+		if (_objs[i].fl_object_index == 0) {
 			_objs[i].obj_nr = 0;
-			_objs[i].fl_object_index = 0;
 		} else {
 			// Nuke all unlocked flObjects
 			if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
@@ -461,7 +460,6 @@ void Scumm::loadRoomObjects()
 	else
 		searchptr = rootptr = room;
 	assert(searchptr);
-
 
 	// Load in new room objects
 	for (i = 0; i < _numObjectsInRoom; i++) {
@@ -545,6 +543,11 @@ void Scumm::loadRoomObjectsSmall()
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
+	// Clear out old room objects
+	for (i = 0; i < _numLocalObjects; i++) {
+		_objs[i].obj_nr = 0;
+	}
+
 	searchptr = room;
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
@@ -555,7 +558,6 @@ void Scumm::loadRoomObjectsSmall()
 
 		od->OBCDoffset = ptr - room;
 		od->obj_nr = READ_LE_UINT16(ptr + 6);
-
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
