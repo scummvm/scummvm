@@ -207,8 +207,8 @@ struct ArrayHeader {
 struct SentenceTab {
 	byte verb;
 	byte unk2;
-	uint16 unk4;
-	uint16 unk3;
+	uint16 objectA;
+	uint16 objectB;
 	uint8 freezeCount;
 };
 

@@ -748,8 +748,8 @@ void Scumm_v5::o5_doSentence() {
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = a;
-	st->unk4 = getVarOrDirectWord(0x40);
-	b = st->unk3 = getVarOrDirectWord(0x20);
+	st->objectA = getVarOrDirectWord(0x40);
+	b = st->objectB = getVarOrDirectWord(0x20);
 	if (b == 0) {
 		st->unk2 = 0;
 	} else {

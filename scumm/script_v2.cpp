@@ -843,8 +843,8 @@ void Scumm_v2::o2_doSentence() {
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = a;
-	st->unk4 = getVarOrDirectWord(0x40);
-	st->unk3 = getVarOrDirectWord(0x20);
+	st->objectA = getVarOrDirectWord(0x40);
+	st->objectB = getVarOrDirectWord(0x20);
 	st->freezeCount = 0;
 	
 	// TODO
@@ -852,19 +852,24 @@ void Scumm_v2::o2_doSentence() {
 	case 1:
 		// Execute the sentence
 		_sentenceNum--;
-		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->unk4, st->unk3);
+		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
 
 		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
 		_scummVars[8] = st->verb;
-		_scummVars[9] = st->unk4;
-		_scummVars[10] = st->unk3;
-		runVerbCode(st->unk4, st->verb, 0, 0, NULL);
+		_scummVars[9] = st->objectA;
+		_scummVars[10] = st->objectB;
+		runVerbCode(st->objectA, st->verb, 0, 0, NULL);
 
 		break;
 	case 2:
-		// TODO - print the sentence
+		// Print the sentence
 		_sentenceNum--;
-		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->unk4, st->unk3);
+		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
+		
+		_scummVars[26] = st->verb;
+		_scummVars[27] = st->objectA;
+		_scummVars[28] = st->objectB;
+		o2_drawSentence();
 		break;
 	}
 }

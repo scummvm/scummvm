@@ -532,8 +532,8 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	const SaveLoadEntry sentenceTabEntries[] = {
 		MKLINE(SentenceTab, verb, sleUint8, VER_V8),
 		MKLINE(SentenceTab, unk2, sleUint8, VER_V8),
-		MKLINE(SentenceTab, unk4, sleUint16, VER_V8),
-		MKLINE(SentenceTab, unk3, sleUint16, VER_V8),
+		MKLINE(SentenceTab, objectA, sleUint16, VER_V8),
+		MKLINE(SentenceTab, objectB, sleUint16, VER_V8),
 		MKLINE(SentenceTab, freezeCount, sleUint8, VER_V8),
 		MKEND()
 	};
