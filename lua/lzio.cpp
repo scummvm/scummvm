@@ -15,7 +15,7 @@
 
 /* ----------------------------------------------------- memory buffers --- */
 
-static int zmfilbuf (ZIO* z)
+static int zmfilbuf (ZIO* /*z*/)
 {
  return EOZ;
 }

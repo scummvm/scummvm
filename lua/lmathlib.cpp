@@ -122,7 +122,7 @@ static void math_frexp (void) {
 }
 
 static void math_ldexp (void) {
-  lua_pushnumber(ldexp(luaL_check_number(1), luaL_check_number(2)));
+  lua_pushnumber(ldexp(luaL_check_number(1), (int)luaL_check_number(2)));
 }
 
 
@@ -168,7 +168,7 @@ static void math_random (void)
 
 static void math_randomseed (void)
 {
-  srand(luaL_check_number(1));
+  srand((unsigned int)luaL_check_number(1));
 }
 
 

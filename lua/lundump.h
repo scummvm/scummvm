@@ -44,35 +44,10 @@ TProtoFunc* luaU_undump1(ZIO* Z);	/* load one chunk */
 * dump and undump routines.
 */
 
-#ifndef ID_NUMBER
 #define	ID_NUMBER	ID_REAL4
-#endif
-
-#if 0
-#define	ID_NUMBER	ID_INT4
-#define	ID_NUMBER	ID_REAL4
-#define	ID_NUMBER	ID_REAL8
-#define	ID_NUMBER	ID_NATIVE
-#endif
 
 #endif
 
-#if   ID_NUMBER==ID_REAL4
-	#define	DumpNumber	DumpFloat
-	#define	LoadNumber	LoadFloat
-	#define SIZEOF_NUMBER	4
-#elif ID_NUMBER==ID_REAL8
-	#define	DumpNumber	DumpDouble
-	#define	LoadNumber	LoadDouble
-	#define SIZEOF_NUMBER	8
-#elif ID_NUMBER==ID_INT4
-	#define	DumpNumber	DumpLong
-	#define	LoadNumber	LoadLong
-	#define SIZEOF_NUMBER	4
-#elif ID_NUMBER==ID_NATIVE
-	#define	DumpNumber	DumpNative
-	#define	LoadNumber	LoadNative
-	#define SIZEOF_NUMBER	sizeof(real)
-#else
-	#error	bad ID_NUMBER
-#endif
+#define	DumpNumber	DumpFloat
+#define SIZEOF_NUMBER	4
+

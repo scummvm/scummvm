@@ -49,8 +49,8 @@ static void str_sub (void)
 {
   long l;
   char *s = luaL_check_lstr(1, &l);
-  long start = posrelat(luaL_check_number(2), l);
-  long end = posrelat(luaL_opt_number(3, -1), l);
+  long start = posrelat((int)luaL_check_number(2), l);
+  long end = posrelat((int)luaL_opt_number(3, -1), l);
   if (1 <= start && start <= end && end <= l)
     lua_pushlstring(s+start-1, end-start+1);
   else lua_pushstring("");
@@ -96,7 +96,7 @@ static void str_byte (void)
 {
   long l;
   char *s = luaL_check_lstr(1, &l);
-  long pos = posrelat(luaL_opt_number(2, 1), l);
+  long pos = posrelat((int)luaL_opt_number(2, 1), l);
   luaL_arg_check(0<pos && pos<=l, 2,  "out of range");
   lua_pushnumber((unsigned char)s[pos-1]);
 }
@@ -337,7 +337,7 @@ static void str_find (void)
   long l;
   char *s = luaL_check_lstr(1, &l);
   char *p = luaL_check_string(2);
-  long init = posrelat(luaL_opt_number(3, 1), l) - 1;
+  long init = posrelat((int)luaL_opt_number(3, 1), l) - 1;
   struct Capture cap;
   luaL_arg_check(0 <= init && init <= l, 3, "out of range");
   if (lua_getparam(4) != LUA_NOOBJECT ||

@@ -51,7 +51,7 @@ int pclose();
 
 static int gettag (int i)
 {
-  return lua_getnumber(lua_getparam(i));
+  return (int)lua_getnumber(lua_getparam(i));
 }
 
 
@@ -266,7 +266,7 @@ static void io_write (void)
   char *s;
   long l;
   while ((s = luaL_opt_lstr(arg++, NULL, &l)) != NULL)
-    status = status && (fwrite(s, 1, l, f) == l);
+    status = status && (fwrite(s, 1, l, f) == (unsigned long)l);
   pushresult(status);
 }
 
@@ -424,7 +424,7 @@ static void openwithtags (void)
 {
   int iotag = lua_newtag();
   int closedtag = lua_newtag();
-  int i;
+  unsigned int i;
   for (i=0; i<sizeof(iolibtag)/sizeof(iolibtag[0]); i++) {
     /* put both tags as upvalues for these functions */
     lua_pushnumber(iotag);

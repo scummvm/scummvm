@@ -205,7 +205,7 @@ static void luaI_type (void)
 
 static void tonumber (void)
 {
-  int base = luaL_opt_number(2, 10);
+  int base = (int)luaL_opt_number(2, 10);
   if (base == 10) {  /* standard conversion */
     lua_Object o = lua_getparam(1);
     if (lua_isnumber(o))
@@ -276,7 +276,7 @@ static int getnarg (lua_Object table)
   lua_Object temp;
   /* temp = table.n */
   lua_pushobject(table); lua_pushstring("n"); temp = lua_rawgettable();
-  return (lua_isnumber(temp) ? lua_getnumber(temp) : MAX_INT);
+  return (lua_isnumber(temp) ? (int)lua_getnumber(temp) : MAX_INT);
 }
 
 static void luaI_call (void)
@@ -326,7 +326,7 @@ static void settag (void)
 {
   lua_Object o = luaL_tablearg(1);
   lua_pushobject(o);
-  lua_settag(luaL_check_number(2));
+  lua_settag((int)luaL_check_number(2));
   lua_pushobject(o);  /* returns first argument */
 }
 
@@ -339,8 +339,8 @@ static void newtag (void)
 
 static void copytagmethods (void)
 {
-  lua_pushnumber(lua_copytagmethods(luaL_check_number(1),
-                                    luaL_check_number(2)));
+  lua_pushnumber(lua_copytagmethods((int)luaL_check_number(1),
+                                    (int)luaL_check_number(2)));
 }
 
 
@@ -387,7 +387,7 @@ static void seterrormethod (void)
 
 static void luaI_collectgarbage (void)
 {
-  lua_pushnumber(lua_collectgarbage(luaL_opt_number(1, 0)));
+  lua_pushnumber(lua_collectgarbage((long int)luaL_opt_number(1, 0)));
 }
 
 

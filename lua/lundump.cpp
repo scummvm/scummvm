@@ -13,27 +13,11 @@
 #include "lstring.h"
 #include "lundump.h"
 
-#include <SDL_byteorder.h>
-
 #define	LoadBlock(b,size,Z)	ezread(Z,b,size)
 #define	LoadNative(t,Z)		LoadBlock(&t,sizeof(t),Z)
 
-#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
-	#define doLoadNumber(f,Z)	LoadNative(f,Z)
-#else
-	#define doLoadNumber(f,Z)	f=LoadNumber(Z)
-#endif
+#define doLoadNumber(f,Z)	LoadNative(f,Z)
 
-
-static float conv_float(const char *data) {
-        const unsigned char *udata = (const unsigned char *)(data);
-        unsigned char fdata[4];
-        fdata[0] = udata[3];
-        fdata[1] = udata[2];
-        fdata[2] = udata[1];
-        fdata[3] = udata[0];
-        return *(const float *)(fdata);
-}
 
 static void unexpectedEOZ(ZIO* Z)
 {
@@ -66,39 +50,6 @@ static unsigned long LoadLong(ZIO* Z)
  unsigned long lo=LoadWord(Z);
  return (hi<<16)|lo;
 }
-
-#if ID_NUMBER==ID_REAL4
-/* LUA_NUMBER */
-/* assumes sizeof(long)==4 and sizeof(float)==4 (IEEE) */
-static float LoadFloat(ZIO* Z)
-{
- unsigned long l=LoadLong(Z);
- return conv_float((const char *)&l);
-}
-#endif
-
-#if ID_NUMBER==ID_REAL8
-/* LUA_NUMBER */
-/* assumes sizeof(long)==4 and sizeof(double)==8 (IEEE) */
-static double LoadDouble(ZIO* Z)
-{
- unsigned long l[2];
- double f;
- int x=1;
- if (*(char*)&x==1)			/* little-endian */
- {
-  l[1]=LoadLong(Z);
-  l[0]=LoadLong(Z);
- }
- else					/* big-endian */
- {
-  l[0]=LoadLong(Z);
-  l[1]=LoadLong(Z);
- }
- memcpy(&f,l,sizeof(f));
- return f;
-}
-#endif
 
 static Byte* LoadCode(ZIO* Z)
 {
@@ -223,7 +174,9 @@ static void LoadSignature(ZIO* Z)
 static void LoadHeader(ZIO* Z)
 {
  int version,id,sizeofR;
+#if 0
  real f=(real)-TEST_NUMBER,tf=(real)TEST_NUMBER;
+#endif
  LoadSignature(Z);
  version=ezgetc(Z);
  if (version>VERSION)

@@ -37,7 +37,7 @@ char *reserved [] = {"and", "do", "else", "elseif", "end", "function",
 
 void luaX_init (void)
 {
-  int i;
+  unsigned int i;
   for (i=0; i<(sizeof(reserved)/sizeof(reserved[0])); i++) {
     TaggedString *ts = luaS_new(reserved[i]);
     ts->head.marked = FIRST_RESERVED+i;  /* reserved word  (always > 255) */
@@ -59,7 +59,7 @@ void luaX_error (LexState *ls, char *s) {
 }
 
 
-void luaX_token2str (LexState *ls, int token, char *s) {
+void luaX_token2str (LexState * /*ls*/, int token, char *s) {
   if (token < 255) {
     s[0] = token;
     s[1] = 0;
