@@ -53,7 +53,12 @@ enum {
 	kAddGameCmd = 'ADDG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
-	kQuitCmd = 'QUIT'
+	kQuitCmd = 'QUIT',
+	
+	
+	kCmdGlobalGraphicsOverride = 'OGFX',
+	kCmdGlobalAudioOverride = 'OSFX',
+	kCmdGlobalVolumeOverride = 'OVOL'
 };
 
 /*
@@ -88,10 +93,14 @@ protected:
 
 	PopUpWidget *_langPopUp;
 	PopUpWidget *_platformPopUp;
+
+	CheckboxWidget *_globalGraphicsOverride;
+	CheckboxWidget *_globalAudioOverride;
+	CheckboxWidget *_globalVolumeOverride;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
-	: OptionsDialog(domain, 10, 50, 320 - 2 * 10, 140) {
+	: OptionsDialog(domain, 10, 40, 320 - 2 * 10, 140) {
 
 	const int x = 5;
 	const int w = _w - 15;
@@ -157,6 +166,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	//
 	tab->addTab("Graphics");
 	yoffset = vBorder;
+
+	_globalGraphicsOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global graphic settings", kCmdGlobalGraphicsOverride);
+	yoffset += 16;
+
 	yoffset = addGraphicControls(tab, yoffset);
 
 	//
@@ -164,6 +177,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	//
 	tab->addTab("Audio");
 	yoffset = vBorder;
+
+	_globalAudioOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global audio settings", kCmdGlobalAudioOverride);
+	yoffset += 16;
+
 	yoffset = addMIDIControls(tab, yoffset);
 
 	//
@@ -171,6 +188,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	//
 	tab->addTab("Volume");
 	yoffset = vBorder;
+
+	_globalVolumeOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global volume settings", kCmdGlobalVolumeOverride);
+	yoffset += 16;
+
 	yoffset = addVolumeControls(tab, yoffset);
 
 
@@ -184,6 +205,23 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 void EditGameDialog::open() {
 	OptionsDialog::open();
+
+	// En-/disable dialog items depending on whether overrides are active or not.
+	bool e;
+
+	e = ConfMan.hasKey("fullscreen", _domain) ||
+		ConfMan.hasKey("aspect_ratio", _domain);
+	_globalGraphicsOverride->setState(e);
+
+	e = ConfMan.hasKey("music_driver", _domain) ||
+		ConfMan.hasKey("multi_midi", _domain) ||
+		ConfMan.hasKey("native_mt32", _domain);
+	_globalAudioOverride->setState(e);
+
+	e = ConfMan.hasKey("master_volume", _domain) ||
+		ConfMan.hasKey("music_volume", _domain) ||
+		ConfMan.hasKey("sfx_volume", _domain);
+	_globalVolumeOverride->setState(e);
 
 	int sel = 0;
 	
@@ -229,7 +267,20 @@ void EditGameDialog::close() {
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd == kOKCmd) {
+	switch (cmd) {
+	case kCmdGlobalGraphicsOverride:
+		setGraphicSettingsState(data != 0);
+		draw();
+		break;
+	case kCmdGlobalAudioOverride:
+		setAudioSettingsState(data != 0);
+		draw();
+		break;
+	case kCmdGlobalVolumeOverride:
+		setVolumeSettingsState(data != 0);
+		draw();
+		break;
+	case kOKCmd: {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
 		if (newDomain != _domain) {
@@ -241,8 +292,11 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			ConfMan.renameGameDomain(_domain, newDomain);
 			_domain = newDomain;
 		}
+		}
+		// FALL THROUGH to default case
+	default:
+		OptionsDialog::handleCommand(sender, cmd, data);
 	}
-	OptionsDialog::handleCommand(sender, cmd, data);
 }
 
 

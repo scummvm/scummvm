@@ -167,7 +167,6 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, cons
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
-		sendCommand(_cmd, _state);
 	}
 }
 
@@ -177,6 +176,7 @@ void CheckboxWidget::setState(bool state) {
 		_flags ^= WIDGET_INV_BORDER;
 		draw();
 	}
+	sendCommand(_cmd, _state);
 }
 
 void CheckboxWidget::drawWidget(bool hilite) {
@@ -248,7 +248,9 @@ void SliderWidget::drawWidget(bool hilite) {
 	gui->box(_x + _labelWidth, _y, _w - _labelWidth, _h, gui->_color, gui->_shadowcolor);
 
 	// Draw the 'bar'
-	gui->fillRect(_x + _labelWidth + 2, _y + 2, valueToPos(_value), _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->fillRect(_x + _labelWidth + 2, _y + 2, valueToPos(_value), _h - 4,
+	              !isEnabled() ? gui->_color :
+	              hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 int SliderWidget::valueToPos(int value) {

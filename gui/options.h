@@ -52,11 +52,16 @@ protected:
 	int addGraphicControls(GuiObject *boss, int yoffset);
 	int addMIDIControls(GuiObject *boss, int yoffset);
 	int addVolumeControls(GuiObject *boss, int yoffset);
+	
+	void setGraphicSettingsState(bool enabled);
+	void setAudioSettingsState(bool enabled);
+	void setVolumeSettingsState(bool enabled);
 
 private:
 	//
 	// Graphics controls
 	//
+	bool _enableGraphicSettings;
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
@@ -64,14 +69,16 @@ private:
 	//
 	// MIDI controls
 	//
+	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
-
 	CheckboxWidget *_multiMidiCheckbox;
 	CheckboxWidget *_mt32Checkbox;
 
 	//
 	// Volume controls
 	//
+	bool _enableVolumeSettings;
+
 	SliderWidget *_masterVolumeSlider;
 	StaticTextWidget *_masterVolumeLabel;
 

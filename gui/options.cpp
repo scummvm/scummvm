@@ -53,8 +53,11 @@ enum {
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h),
 	_domain(domain),
+	_enableGraphicSettings(false),
 	_gfxPopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
+	_enableAudioSettings(false),
 	_multiMidiCheckbox(0), _mt32Checkbox(0),
+	_enableVolumeSettings(false),
 	_masterVolumeSlider(0), _masterVolumeLabel(0),
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
 	_sfxVolumeSlider(0), _sfxVolumeLabel(0) {
@@ -67,71 +70,97 @@ void OptionsDialog::open() {
 	// Reset result value
 	setResult(0);
 	
-	// FIXME - disable GFX popup for now
-	_gfxPopUp->setSelected(0);
-	_gfxPopUp->setEnabled(false);
-
-	// Fullscreen setting
-	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-
-	// Aspect ratio setting
-	_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
-
-	// Music driver
-	const MidiDriverDescription *md = getAvailableMidiDrivers();
-	const int midiDriver = parseMusicDriver(ConfMan.get("music_driver", _domain));
-	int i = 0;
-	while (md->name && md->id != midiDriver) {
-		i++;
-		md++;
+	if (_fullscreenCheckbox) {
+		// FIXME - disable GFX popup for now
+		_gfxPopUp->setSelected(0);
+		_gfxPopUp->setEnabled(false);
+	
+		// Fullscreen setting
+		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+	
+		// Aspect ratio setting
+		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 	}
-	_midiPopUp->setSelected(md->name ? i : 0);
 
-	// Multi midi setting
-	_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
-
-	// Native mt32 setting
-	_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
-
-	int vol;
-
-	vol = ConfMan.getInt("master_volume", _domain);
-	_masterVolumeSlider->setValue(vol);
-	_masterVolumeLabel->setValue(vol);
-
-	vol = ConfMan.getInt("music_volume", _domain);
-	_musicVolumeSlider->setValue(vol);
-	_musicVolumeLabel->setValue(vol);
-
-	vol = ConfMan.getInt("sfx_volume", _domain);
-	_sfxVolumeSlider->setValue(vol);
-	_sfxVolumeLabel->setValue(vol);
+	if (_multiMidiCheckbox) {
+		// Music driver
+		const MidiDriverDescription *md = getAvailableMidiDrivers();
+		int i = 0;
+		const int midiDriver =
+			ConfMan.hasKey("music_driver", _domain)
+				? parseMusicDriver(ConfMan.get("music_driver", _domain))
+				: MD_AUTO;
+		while (md->name && md->id != midiDriver) {
+			i++;
+			md++;
+		}
+		_midiPopUp->setSelected(md->name ? i : 0);
+	
+		// Multi midi setting
+		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
+	
+		// Native mt32 setting
+		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+	}
+	
+	if (_masterVolumeSlider) {
+		int vol;
+	
+		vol = ConfMan.getInt("master_volume", _domain);
+		_masterVolumeSlider->setValue(vol);
+		_masterVolumeLabel->setValue(vol);
+	
+		vol = ConfMan.getInt("music_volume", _domain);
+		_musicVolumeSlider->setValue(vol);
+		_musicVolumeLabel->setValue(vol);
+	
+		vol = ConfMan.getInt("sfx_volume", _domain);
+		_sfxVolumeSlider->setValue(vol);
+		_sfxVolumeLabel->setValue(vol);
+	}
 }
 
 void OptionsDialog::close() {
 	if (getResult()) {
 		if (_fullscreenCheckbox) {
-			ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
-			ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
+			if (_enableGraphicSettings) {
+				ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
+				ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
+			} else {
+				ConfMan.removeKey("fullscreen", _domain);
+				ConfMan.removeKey("aspect_ratio", _domain);
+			}
 		}
 
 		if (_masterVolumeSlider) {
-			ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
-			ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
-			ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
+			if (_enableVolumeSettings) {
+				ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
+				ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
+				ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
+			} else {
+				ConfMan.removeKey("master_volume", _domain);
+				ConfMan.removeKey("music_volume", _domain);
+				ConfMan.removeKey("sfx_volume", _domain);
+			}
 		}
 
 		if (_multiMidiCheckbox) {
-			ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
-			ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
-	
-			const MidiDriverDescription *md = getAvailableMidiDrivers();
-			while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
-				md++;
-			if (md->name)
-				ConfMan.set("music_driver", md->name, _domain);
-			else
+			if (_enableAudioSettings) {
+				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
+		
+				const MidiDriverDescription *md = getAvailableMidiDrivers();
+				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
+					md++;
+				if (md->name)
+					ConfMan.set("music_driver", md->name, _domain);
+				else
+					ConfMan.removeKey("music_driver", _domain);
+			} else {
+				ConfMan.removeKey("multi_midi", _domain);
+				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("music_driver", _domain);
+			}
 		}
 		
 		// Save config file
@@ -163,6 +192,34 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
+
+void OptionsDialog::setGraphicSettingsState(bool enabled) {
+	_enableGraphicSettings = enabled;
+
+//	_gfxPopUp->setEnabled(enabled);
+	_fullscreenCheckbox->setEnabled(enabled);
+	_aspectCheckbox->setEnabled(enabled);
+}
+
+void OptionsDialog::setAudioSettingsState(bool enabled) {
+	_enableAudioSettings = enabled;
+
+	_midiPopUp->setEnabled(enabled);
+	_multiMidiCheckbox->setEnabled(enabled);
+	_mt32Checkbox->setEnabled(enabled);
+}
+
+void OptionsDialog::setVolumeSettingsState(bool enabled) {
+	_enableVolumeSettings = enabled;
+
+	_masterVolumeSlider->setEnabled(enabled);
+	_masterVolumeLabel->setEnabled(enabled);
+	_musicVolumeSlider->setEnabled(enabled);
+	_musicVolumeLabel->setEnabled(enabled);
+	_sfxVolumeSlider->setEnabled(enabled);
+	_sfxVolumeLabel->setEnabled(enabled);
+}
+
 
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
@@ -197,6 +254,8 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Aspect ratio correction");
 	yoffset += 16;
+	
+	_enableGraphicSettings = true;
 
 	return yoffset;
 }
@@ -223,6 +282,8 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(boss, x, yoffset, w, 16, "True Roland MT-32 (disable GM emulation)");
 	yoffset += 16;
+	
+	_enableAudioSettings = true;
 
 	return yoffset;
 }
@@ -246,6 +307,8 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
+	
+	_enableVolumeSettings = true;
 
 	return yoffset;
 }
