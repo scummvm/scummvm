@@ -34,10 +34,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
-#include "scumm/smush/smush_player.h"
-
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
 
 namespace Scumm {
 

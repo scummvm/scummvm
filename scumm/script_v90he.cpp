@@ -34,9 +34,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 namespace Scumm {
 
 #define OPCODE(x)	_OPCODE(ScummEngine_v90he, x)
