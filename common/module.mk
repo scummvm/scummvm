@@ -2,7 +2,6 @@ MODULE := common
 
 MODULE_OBJS := \
 	common/config-file.o \
-	common/engine.o \
 	common/file.o \
 	common/scaler.o \
 	common/str.o \

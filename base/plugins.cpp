@@ -22,7 +22,7 @@
 
 #include "base/gameDetector.h"
 #include "base/plugins.h"
-#include "common/engine.h"
+#include "base/engine.h"
 
 
 // Factory functions => no need to include the specific classes

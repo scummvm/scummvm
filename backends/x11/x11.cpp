@@ -24,7 +24,7 @@
 
 #include "backends/intern.h"
 #include "common/util.h"
-#include "common/engine.h"	// Only #included for error() and warning()
+#include "base/engine.h"	// Only #included for error() and warning()
 
 #include <stdio.h>
 #include <assert.h>

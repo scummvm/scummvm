@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "sky/disk.h"
 #include "sky/skydefs.h"
 #include "sky/sky.h"

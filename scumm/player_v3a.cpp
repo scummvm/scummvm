@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "player_v3a.h"
 #include "scumm.h"
 #include "sound/mixer.h"

@@ -22,7 +22,7 @@
 
 #include "stdafx.h"
 #include "common/config-file.h"
-#include "common/engine.h" // for debug()
+#include "base/engine.h" // for debug()
 
 #define MAXLINELEN 256
 

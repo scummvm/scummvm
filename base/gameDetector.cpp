@@ -25,7 +25,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "common/config-file.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/scaler.h"	// Only for gfx_modes
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

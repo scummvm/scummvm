@@ -22,7 +22,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include <common/engine.h>
+#include "base/engine.h"
 #include "dc.h"
 
 #define SCREEN_W 640

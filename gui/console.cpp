@@ -22,7 +22,7 @@
 #include "console.h"
 #include "ScrollBarWidget.h"
 
-#include "common/engine.h"
+#include "base/engine.h"
 
 
 #define PROMPT	") "

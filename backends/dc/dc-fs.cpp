@@ -20,7 +20,7 @@
 
 #include <common/stdafx.h>
 #include <backends/fs/fs.h>
-#include <common/engine.h>
+#include "base/engine.h"
 
 FilesystemNode *FilesystemNode::getRoot() {
   error ("No filesystem implemented for DC!");

@@ -23,7 +23,7 @@
 #define GMMUSIC_H
 
 #include "stdafx.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "musicbase.h"
 #include "sound/mididrv.h"
 #include "gmchannel.h"

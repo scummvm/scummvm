@@ -1,6 +1,7 @@
 MODULE := base
 
 MODULE_OBJS := \
+	base/engine.o \
 	base/gameDetector.o \
 	base/main.o \
 	base/plugins.o

@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/scummsys.h"
 #include "common/stdafx.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "scumm/saveload.h"
 #include "common/scaler.h"
 

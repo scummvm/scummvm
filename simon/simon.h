@@ -23,7 +23,7 @@
 #define SIMON_H
 
 #include <stdio.h>
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/util.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"

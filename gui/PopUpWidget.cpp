@@ -22,7 +22,7 @@
 #include "PopUpWidget.h"
 #include "dialog.h"
 #include "newgui.h"
-#include "common/engine.h"
+#include "base/engine.h"
 
 #define UP_DOWN_BOX_HEIGHT	10
 

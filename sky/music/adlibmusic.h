@@ -25,7 +25,7 @@
 #include "stdafx.h"
 #include "sky/sky.h"
 #include "sound/mixer.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "adlibchannel.h"
 #include "musicbase.h"
 #include "sound/fmopl.h"

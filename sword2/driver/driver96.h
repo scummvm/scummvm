@@ -1022,7 +1022,7 @@
 #include <string.h>
 
 #include "common/scummsys.h"
-#include "common/engine.h" // for warning()
+#include "base/engine.h" // for warning()
 #include "common/system.h"
 #include "common/rect.h"
 //#include "ddraw.h"

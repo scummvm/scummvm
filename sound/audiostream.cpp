@@ -22,7 +22,7 @@
 #include "stdafx.h"
 #include "audiostream.h"
 #include "mixer.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/file.h"
 #include "common/util.h"
 

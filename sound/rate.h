@@ -23,7 +23,7 @@
 #define SOUND_RATE_H
 
 #include "common/scummsys.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/util.h"
 
 //#include "sound/audiostream.h"

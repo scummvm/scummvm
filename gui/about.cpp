@@ -21,7 +21,7 @@
 #include "stdafx.h"
 #include "about.h"
 #include "newgui.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/str.h"
 
 AboutDialog::AboutDialog(NewGui *gui)

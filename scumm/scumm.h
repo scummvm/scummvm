@@ -23,7 +23,7 @@
 #ifndef SCUMM_H
 #define SCUMM_H
 
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/file.h"
 #include "common/map.h"
 #include "common/rect.h"

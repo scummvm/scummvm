@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "player_v2.h"
 #include "scumm.h"
 #include "sound/mididrv.h"

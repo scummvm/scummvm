@@ -36,7 +36,7 @@
 #include "base/plugins.h"
 
 #include "common/config-file.h"
-#include "common/engine.h"
+#include "base/engine.h"
 
 enum {
 	kStartCmd = 'STRT',

@@ -25,7 +25,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "sky/struc.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "sky/screen.h"
 #include "sky/disk.h"
 #include "sky/mouse.h"

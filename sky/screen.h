@@ -24,7 +24,7 @@
 
 #include "stdafx.h"
 #include <string.h>
-#include "common/engine.h"
+#include "base/engine.h"
 #include "common/scummsys.h"
 #include "sky/disk.h"
 #include "sky/skydefs.h"

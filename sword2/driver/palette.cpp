@@ -147,7 +147,7 @@
 #include <stdio.h>
 
 #include "common/util.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "d_draw.h"
 #include "driver96.h"
 #include "../sword2.h"

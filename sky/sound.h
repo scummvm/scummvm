@@ -24,7 +24,7 @@
 
 #include "sound/mixer.h"
 #include "sky/disk.h"
-#include "common/engine.h"
+#include "base/engine.h"
 
 enum {
 	SOUND_CH0    = 0,

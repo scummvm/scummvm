@@ -22,9 +22,9 @@
 #if defined(_MSC_VER)
 #include <malloc.h>
 #endif
-#include "common/config-file.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "base/gameDetector.h"
+#include "common/config-file.h"
 #include "common/timer.h"
 #include "sound/mixer.h"
 

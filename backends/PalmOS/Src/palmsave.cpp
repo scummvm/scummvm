@@ -22,7 +22,7 @@
 
 #include <ctype.h>
 #include "common/scummsys.h"
-#include "common/engine.h"
+#include "base/engine.h"
 #include "scumm/saveload.h"
 #include "palm.h"
 
