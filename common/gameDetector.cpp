@@ -503,13 +503,13 @@ const VersionSettings version_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7},
 
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
-	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0, "SIMON2.GME"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+4, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+5, 99, 99, 99, 0, "SIMON2.GME"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+6, 99, 99, 99, 0, "SIMON.GME"},	
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "SIMON2.GME"},
-	{"simon1demo", "Simon the Sorcerer 1 for DOS (demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "SIMON.GME"}, 
+	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "GAMEPC"},
+	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+4, 99, 99, 99, 0, "GAMEPC"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+6, 99, 99, 99, 0, "GAMEPC"},	
+	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "GDEMO"}, 
 
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
