@@ -858,8 +858,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
 		zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
-	}
-	if (_vm->_gameId == GID_MONKEY_EGA) {
+	} else if (_vm->_gameId == GID_MONKEY_EGA) {
 		byte *ptr_z = smap_ptr;
 		for (i = 0; i < numzbuf; i++) {
 			int off = READ_LE_UINT16(ptr_z);
