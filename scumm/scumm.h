@@ -941,7 +941,7 @@ public:
 	char *_languageBuffer;
 	void loadLanguageBundle();
 	void translateText(byte *text, byte *trans_buff);
-	byte _transText[256];
+	byte _transText[500];
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }
