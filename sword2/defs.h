@@ -20,16 +20,13 @@
 #ifndef	DEFS
 #define	DEFS
 
-#include "sword2/header.h"
-#include "sword2/resman.h"
-
 #define	SIZE	0x10000			// 65536 items per section
 #define	NuSIZE	0xffff			// & with this
 
 // global variable references
 // NB. 4 * <number from linc's Global Variables list>
 
-#define VAR(n)				(*(uint32 *) (res_man->_resList[1]->ad + sizeof(_standardHeader) + 4 * (n)))
+#define VAR(n)				(*(uint32 *) (g_sword2->_resman->_resList[1]->ad + sizeof(_standardHeader) + 4 * (n)))
 
 #define ID				VAR(0)
 #define RESULT				VAR(1)

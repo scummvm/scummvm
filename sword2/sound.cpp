@@ -27,16 +27,11 @@
 //
 // ---------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/defs.h"		// for RESULT
+#include "sword2/defs.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/protocol.h"	// for fetchObjectName() for debugging fnPlayFx
-#include "sword2/resman.h"
-#include "sword2/sound.h"
-#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -72,7 +67,7 @@ void Sword2Engine::processFxQueue(void) {
 			break;
 		case FX_SPOT2:
 			// Once the Fx has finished remove it from the queue.
-			if (g_sound->isFxOpen(i + 1))
+			if (_sound->isFxOpen(i + 1))
 				_fxQueue[i].resource = 0;
 			break;
 		}
@@ -90,12 +85,12 @@ void Sword2Engine::triggerFx(uint8 j) {
 
 	if (_fxQueue[j].type == FX_SPOT) {
 		// load in the sample
-		data = res_man->openResource(_fxQueue[j].resource);
+		data = _resman->openResource(_fxQueue[j].resource);
 		data += sizeof(_standardHeader);
 		// wav data gets copied to sound memory
-		rv = g_sound->playFx(id, data, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
+		rv = _sound->playFx(id, data, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
 		// release the sample
-		res_man->closeResource(_fxQueue[j].resource);
+		_resman->closeResource(_fxQueue[j].resource);
 	} else {
 		// random & looped fx are already loaded into sound memory
 		// by fnPlayFx()
@@ -103,10 +98,10 @@ void Sword2Engine::triggerFx(uint8 j) {
 
 		if (_fxQueue[j].type == FX_RANDOM) {
 			// Not looped
-			rv = g_sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
+			rv = _sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
 		} else {
 			// Looped
-			rv = g_sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXLOOP);
+			rv = _sound->playFx(id, NULL, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXLOOP);
 		}
 	}
 
@@ -118,7 +113,7 @@ void Sword2Engine::triggerFx(uint8 j) {
 
 void Sword2Engine::clearFxQueue(void) {
 	// stop all fx & remove the samples from sound memory
-	g_sound->clearAllFx();
+	_sound->clearAllFx();
 
 	// clean out the queue
 	initFxQueue();
@@ -126,19 +121,19 @@ void Sword2Engine::clearFxQueue(void) {
 
 void Sword2Engine::killMusic(void) {
 	_loopingMusicId = 0;		// clear the 'looping' flag
-	g_sound->stopMusic();
+	_sound->stopMusic();
 }
 
 void Sword2Engine::pauseAllSound(void) {
-	g_sound->pauseMusic();
-	g_sound->pauseSpeech();
-	g_sound->pauseFx();
+	_sound->pauseMusic();
+	_sound->pauseSpeech();
+	_sound->pauseFx();
 }
 
 void Sword2Engine::unpauseAllSound(void) {
-	g_sound->unpauseMusic();
-	g_sound->unpauseSpeech();
-	g_sound->unpauseFx();
+	_sound->unpauseMusic();
+	_sound->unpauseSpeech();
+	_sound->unpauseFx();
 }
 
 // called from script only
@@ -212,26 +207,26 @@ int32 Logic::fnPlayFx(int32 *params) {
 
 	if (_vm->_fxQueue[j].type == FX_SPOT) {
 		// "pre-load" the sample; this gets it into memory
-		data = res_man->openResource(_vm->_fxQueue[j].resource);
+		data = _vm->_resman->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
-		header = (_standardHeader*) data;
+		header = (_standardHeader *) data;
 		if (header->fileType != WAV_FILE)
 			error("fnPlayFx given invalid resource");
 #endif
 
 		// but then releases it to "age" out if the space is needed
-		res_man->closeResource(_vm->_fxQueue[j].resource);
+		_vm->_resman->closeResource(_vm->_fxQueue[j].resource);
 	} else {
 		// random & looped fx
 
 		id = (uint32) j + 1;	// because 0 is not a valid id
 
 		// load in the sample
-		data = res_man->openResource(_vm->_fxQueue[j].resource);
+		data = _vm->_resman->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
-		header = (_standardHeader*)data;
+		header = (_standardHeader *) data;
 		if (header->fileType != WAV_FILE)
 			error("fnPlayFx given invalid resource");
 #endif
@@ -239,13 +234,13 @@ int32 Logic::fnPlayFx(int32 *params) {
 		data += sizeof(_standardHeader);
 
 		// copy it to sound memory, using position in queue as 'id'
-		rv = g_sound->openFx(id, data);
+		rv = _vm->_sound->openFx(id, data);
 
 		if (rv)
 			debug(5, "SFX ERROR: openFx() returned %.8x", rv);
 
 		// release the sample
-		res_man->closeResource(_vm->_fxQueue[j].resource);
+		_vm->_resman->closeResource(_vm->_fxQueue[j].resource);
 	}
 
 	if (_vm->_fxQueue[j].type == FX_LOOP) {
@@ -278,7 +273,7 @@ int32 Logic::fnSetFxVolAndPan(int32 *params) {
 
 	// setFxIdVolumePan(int32 id, uint8 vol, uint8 pan);
 	// driver fx_id is 1 + <pos in queue>
-	g_sound->setFxIdVolumePan(1 + params[0], params[1], params[2]);
+	_vm->_sound->setFxIdVolumePan(1 + params[0], params[1], params[2]);
 	return IR_CONT;
 }
 
@@ -290,7 +285,7 @@ int32 Logic::fnSetFxVol(int32 *params) {
 	//		1 new volume (0..16)
 
 	// SetFxIdVolume(int32 id, uint8 vol);
-	g_sound->setFxIdVolume(1 + params[0], params[1]);
+	_vm->_sound->setFxIdVolume(1 + params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -311,7 +306,7 @@ int32 Logic::fnStopFx(int32 *params) {
 		id = (uint32) j + 1;		// because 0 is not a valid id
 
 		// stop fx & remove sample from sound memory
-		rv = g_sound->closeFx(id);
+		rv = _vm->_sound->closeFx(id);
 
 		if (rv)
 			debug(5, "SFX ERROR: closeFx() returned %.8x", rv);
@@ -374,14 +369,14 @@ int32 Logic::fnPlayMusic(int32 *params) {
 	} else {
 		File f;
 
-		sprintf(filename, "music%d.clu", res_man->whichCd());
+		sprintf(filename, "music%d.clu", _vm->_resman->whichCd());
 		if (f.open(filename))
 			f.close();
 		else
 			strcpy(filename, "music.clu");
 	}
 
-	rv = g_sound->streamCompMusic(filename, params[0], loopFlag);
+	rv = _vm->_sound->streamCompMusic(filename, params[0], loopFlag);
 
 	if (rv)
 		debug(5, "ERROR: streamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
@@ -395,7 +390,7 @@ int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none
 
 	_vm->_loopingMusicId = 0;		// clear the 'looping' flag
-	g_sound->stopMusic();
+	_vm->_sound->stopMusic();
 	return IR_CONT;
 }
 
@@ -406,7 +401,7 @@ int32 Logic::fnCheckMusicPlaying(int32 *params) {
 	// or 0 if no music playing
 
 	// in seconds, rounded up to the nearest second
-	RESULT = g_sound->musicTimeRemaining();
+	RESULT = _vm->_sound->musicTimeRemaining();
 
 	return IR_CONT;
 }

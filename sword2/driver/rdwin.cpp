@@ -19,11 +19,7 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/driver/render.h"
 #include "sword2/driver/menu.h"
-#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
 
@@ -34,7 +30,7 @@ namespace Sword2 {
 void Input::parseEvents(void) {
 	OSystem::Event event;
 	
-	while (g_system->poll_event(&event)) {
+	while (_vm->_system->poll_event(&event)) {
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
 			writeKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
@@ -56,7 +52,7 @@ void Input::parseEvents(void) {
 			logMouseEvent(RD_RIGHTBUTTONUP);
 			break;
 		case OSystem::EVENT_QUIT:
-			g_sword2->closeGame();
+			_vm->closeGame();
 			break;
 		default:
 			break;
@@ -74,19 +70,19 @@ void Graphics::setNeedFullRedraw() {
  */
 
 void Graphics::updateDisplay(void) {
-	g_input->parseEvents();
+	_vm->_input->parseEvents();
 	fadeServer();
 
 	// FIXME: We re-render the entire picture area of the screen for each
 	// frame, which is pretty horrible.
 
 	if (_needFullRedraw) {
-		g_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
+		_vm->_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
 		_needFullRedraw = false;
 	}
 
 	// We still need to update because of fades, menu animations, etc.
-	g_system->update_screen();
+	_vm->_system->update_screen();
 }
 
 /**
@@ -97,7 +93,7 @@ void Graphics::setWindowName(const char *windowName) {
 	OSystem::Property prop;
 
 	prop.caption = windowName;
-	g_system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+	_vm->_system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 }
 
 } // End of namespace Sword2

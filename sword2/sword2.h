@@ -21,23 +21,22 @@
 #define	_SWORD2
 
 #include "base/engine.h"
-#include "common/file.h"
-#include "common/map.h"
-#include "common/rect.h"
-#include "common/str.h"
+#include "sword2/driver/driver96.h"
+#include "sword2/driver/d_sound.h"
+#include "sword2/driver/d_draw.h"
 #include "sword2/build_display.h"
 #include "sword2/console.h"
-#include "sword2/header.h"
+#include "sword2/controls.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
 #include "sword2/logic.h"
+#include "sword2/maketext.h"
 #include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/object.h"
+#include "sword2/resman.h"
 #include "sword2/save_rest.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_sound.h"
-#include "sword2/driver/d_draw.h"
 
 class GameDetector;
 
@@ -137,10 +136,14 @@ public:
 	uint32 _features;
 	char *_targetName; // target name for saves
 
+	MemoryManager *_memory;
+	ResourceManager	*_resman;
 	Input *_input;
 	Sound *_sound;
 	Graphics *_graphics;
 	Logic *_logic;
+	FontRenderer *_fontRenderer;
+	Gui *_gui;
 
 	Debugger *_debugger;
 
@@ -281,7 +284,7 @@ public:
 
 	// savegame file header
 
-	struct _savegameHeader {
+	struct SaveGameHeader {
 		// sum of all bytes in file, excluding this uint32
 		uint32 checksum;
 
@@ -304,7 +307,7 @@ public:
 		Object_mega mega;
 	};
 
-	_savegameHeader g_header;
+	SaveGameHeader _saveGameHeader;
 
 	uint32 saveGame(uint16 slotNo, uint8 *description);
 	uint32 restoreGame(uint16 slotNo);
@@ -366,9 +369,6 @@ public:
 };
 
 extern Sword2Engine *g_sword2;
-extern Input *g_input; 
-extern Sound *g_sound;
-extern Graphics *g_graphics; 
 
 } // End of namespace Sword2
 

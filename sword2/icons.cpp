@@ -17,14 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
 #include "sword2/defs.h"
-#include "sword2/icons.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/mouse.h"
 
 namespace Sword2 {
 
@@ -34,7 +30,7 @@ int32 Logic::fnAddMenuObject(int32 *params) {
 	assert(_vm->_totalTemp < TOTAL_engine_pockets);
 
 	// copy the structure to our in-the-engine list
-	memcpy(&_vm->_tempList[_vm->_totalTemp], memory->intToPtr(params[0]), sizeof(menu_object));
+	memcpy(&_vm->_tempList[_vm->_totalTemp], _vm->_memory->intToPtr(params[0]), sizeof(menu_object));
 	_vm->_totalTemp++;
 
 	// script continue
@@ -87,9 +83,9 @@ void Sword2Engine::buildMenu(void) {
 	// Call menu builder script which will register all carried menu
 	// objects. Run the 'build_menu' script in the 'menu_master' object
 
-	head = res_man->openResource(MENU_MASTER_OBJECT);
+	head = _resman->openResource(MENU_MASTER_OBJECT);
 	_logic->runScript((char*) head, (char*) head, &null_pc);
-	res_man->closeResource(MENU_MASTER_OBJECT);
+	_resman->closeResource(MENU_MASTER_OBJECT);
 
 	// Compare new with old. Anything in master thats not in new gets
 	// removed from master - if found in new too, remove from temp
@@ -191,7 +187,7 @@ void Sword2Engine::buildMenu(void) {
 					icon_coloured = true;
 			}
 
-			icon = res_man->openResource(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
+			icon = _resman->openResource(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -199,16 +195,16 @@ void Sword2Engine::buildMenu(void) {
 			if (icon_coloured)
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-			g_graphics->setMenuIcon(RDMENU_BOTTOM, j, icon);
-			res_man->closeResource(res);
+			_graphics->setMenuIcon(RDMENU_BOTTOM, j, icon);
+			_resman->closeResource(res);
 		} else {
 			// no icon here
-			g_graphics->setMenuIcon(RDMENU_BOTTOM, j, NULL);
+			_graphics->setMenuIcon(RDMENU_BOTTOM, j, NULL);
 			debug(5, " NULL for %d", j);
 		}
 	}
 
-	g_graphics->showMenu(RDMENU_BOTTOM);
+	_graphics->showMenu(RDMENU_BOTTOM);
 }
 
 void Sword2Engine::buildSystemMenu(void) {
@@ -228,7 +224,7 @@ void Sword2Engine::buildSystemMenu(void) {
 	// rest will grey out
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		icon = res_man->openResource(icon_list[i]) + sizeof(_standardHeader);
+		icon = _resman->openResource(icon_list[i]) + sizeof(_standardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
@@ -236,11 +232,11 @@ void Sword2Engine::buildSystemMenu(void) {
 		if (!DEAD || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-		g_graphics->setMenuIcon(RDMENU_TOP, i, icon);
-		res_man->closeResource(icon_list[i]);
+		_graphics->setMenuIcon(RDMENU_TOP, i, icon);
+		_resman->closeResource(icon_list[i]);
 	}
 
-	g_graphics->showMenu(RDMENU_TOP);
+	_graphics->showMenu(RDMENU_TOP);
 }
 
 } // End of namespace Sword2

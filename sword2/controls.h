@@ -26,12 +26,12 @@ class Sword2Engine;
 
 class Gui {
 private:
-	Sword2Engine *_vm;
-
 	int _musicVolume[17];
 	int _soundVolume[15];
 
 public:
+	Sword2Engine *_vm;
+
 	int _baseSlot;
 	uint8 _currentGraphicsLevel;
 
@@ -50,8 +50,6 @@ public:
 	void writeOptionSettings(void);
 	void updateGraphicsLevel(int newLevel);
 };
-
-extern Gui *gui;
 
 } // End of namespace Sword2
 

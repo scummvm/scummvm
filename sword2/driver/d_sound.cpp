@@ -32,13 +32,9 @@
 // Does anyone who can run the original interpreter have any
 // opinions on this?
 
-#include "stdafx.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/rate.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
 
@@ -119,8 +115,9 @@ static void premix_proc(void *param, int16 *data, uint len) {
 	((Sound *) param)->fxServer(data, len);
 }
 
-Sound::Sound(SoundMixer *mixer) {
-	_mutex = g_system->create_mutex();
+Sound::Sound(Sword2Engine *vm) {
+	_vm = vm;
+	_mutex = _vm->_system->create_mutex();
 
 	_soundOn = false;
 	_speechStatus = false;
@@ -133,21 +130,20 @@ Sound::Sound(SoundMixer *mixer) {
 	_musicVol = 16;
 
 	_musicMuted = 0;
-	_mixer = mixer;
 
 	memset(_fx, 0, sizeof(_fx));
 
 	_soundHandleSpeech = 0;
 	_soundOn = true;
 
-	_converter = makeRateConverter(_music[0].getRate(), _mixer->getOutputRate(), _music[0].isStereo(), false);
+	_converter = makeRateConverter(_music[0].getRate(), _vm->_mixer->getOutputRate(), _music[0].isStereo(), false);
 
-	_mixer->setupPremix(premix_proc, this);
+	_vm->_mixer->setupPremix(premix_proc, this);
 }
 
 Sound::~Sound() {
 	if (_mutex)
-		g_system->delete_mutex(_mutex);
+		_vm->_system->delete_mutex(_mutex);
 }
 
 // --------------------------------------------------------------------------
@@ -248,8 +244,8 @@ void Sound::playLeadOut(uint8 *leadOut) {
 	}
 
 	while (_fx[i]._handle) {
-		g_graphics->updateDisplay();
-		g_system->delay_msecs(30);
+		_vm->_graphics->updateDisplay();
+		_vm->_system->delay_msecs(30);
 	}
 }
 
@@ -418,7 +414,7 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 			
 		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 
-		_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
+		_vm->_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 
 		_speechStatus = true;
 	}
@@ -437,7 +433,7 @@ int32 Sound::stopSpeech(void) {
 		return RD_OK;
   
 	if (_speechStatus) {
-		g_engine->_mixer->stopHandle(_soundHandleSpeech);
+		_vm->_mixer->stopHandle(_soundHandleSpeech);
 		_speechStatus = false;
 		return RD_OK;
 	}
@@ -474,7 +470,7 @@ void Sound::setSpeechVolume(uint8 volume) {
 	_speechVol = volume;
 
 	if (_soundHandleSpeech != 0 && !_speechMuted && getSpeechStatus() == RDSE_SAMPLEPLAYING) {
-		g_engine->_mixer->setChannelVolume(_soundHandleSpeech, 16 * _speechVol);
+		_vm->_mixer->setChannelVolume(_soundHandleSpeech, 16 * _speechVol);
 	}
 }
 
@@ -498,7 +494,7 @@ void Sound::muteSpeech(bool mute) {
 	if (getSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		byte volume = mute ? 0 : 16 * _speechVol;
 
-		g_engine->_mixer->setChannelVolume(_soundHandleSpeech, volume);
+		_vm->_mixer->setChannelVolume(_soundHandleSpeech, volume);
 	}
 }
 
@@ -517,7 +513,7 @@ bool Sound::isSpeechMute(void) {
 void Sound::pauseSpeech(void) {
 	if (getSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		_speechPaused = true;
-		g_engine->_mixer->pauseHandle(_soundHandleSpeech, true);
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
 	}
 }
 
@@ -528,7 +524,7 @@ void Sound::pauseSpeech(void) {
 void Sound::unpauseSpeech(void) {
 	if (_speechPaused) {
 		_speechPaused = false;
-		g_engine->_mixer->pauseHandle(_soundHandleSpeech, false);
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
 	}
 }
 
@@ -664,7 +660,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 			byte volume = _fxMuted ? 0 : vol * _fxVol;
 			int8 p = _panTable[pan + 16];
 
-			g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
+			_vm->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
 		} else {
 			if (type == RDSE_FXLEADIN || type == RDSE_FXLEADOUT) {
 				if (type == RDSE_FXLEADIN)
@@ -685,7 +681,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 
 				byte volume = _musicMuted ? 0 : musicVolTable[_musicVol];
 
-				g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, 0);
+				_vm->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, 0);
 			} else {
 				hr = openFx(id, data);
 				if (hr != RD_OK) {
@@ -708,7 +704,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 				byte volume = _fxMuted ? 0 : vol * _fxVol;
 				int8 p = _panTable[pan + 16];
 
-				g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
+				_vm->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
 			}
 		}
 	}
@@ -735,8 +731,8 @@ int32 Sound::setFxIdVolumePan(int32 id, uint8 vol, int8 pan) {
 	_fx[i]._volume = vol;
 
 	if (!_fxMuted) {
-		g_engine->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
-		g_engine->_mixer->setChannelPan(_fx[i]._handle, _panTable[pan + 16]);
+		_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
+		_vm->_mixer->setChannelPan(_fx[i]._handle, _panTable[pan + 16]);
 	}
 
 	return RD_OK;
@@ -750,7 +746,7 @@ int32 Sound::setFxIdVolume(int32 id, uint8 vol) {
 
 	_fx[i]._volume = vol;
 	if (!_fxMuted)
-		g_engine->_mixer->setChannelVolume(_fx[i]._handle, vol * _fxVol);
+		_vm->_mixer->setChannelVolume(_fx[i]._handle, vol * _fxVol);
 
 	return RD_OK;
 }
@@ -766,7 +762,7 @@ void Sound::clearAllFx(void) {
 
 	for (int i = 0; i < MAXFX; i++) {
 		if (_fx[i]._id && _fx[i]._id != -1 && _fx[i]._id != -2) {
-			g_engine->_mixer->stopHandle(_fx[i]._handle);
+			_vm->_mixer->stopHandle(_fx[i]._handle);
 			_fx[i]._id = 0;
 			_fx[i]._paused = false;
 			if (_fx[i]._buf != NULL) {
@@ -797,7 +793,7 @@ int32 Sound::closeFx(int32 id) {
 	if (i == MAXFX)
 		return RDERR_FXNOTOPEN;
 
-	g_engine->_mixer->stopHandle(_fx[i]._handle);
+	_vm->_mixer->stopHandle(_fx[i]._handle);
 	_fx[i]._id = 0;
 	_fx[i]._paused = false;
 	if (_fx[i]._buf != NULL) {
@@ -814,7 +810,7 @@ void Sound::pauseFx(void) {
 	if (!_fxPaused) {
 		for (int i = 0; i < MAXFX; i++) {
 			if (_fx[i]._id) {
-				g_engine->_mixer->pauseHandle(_fx[i]._handle, true);
+				_vm->_mixer->pauseHandle(_fx[i]._handle, true);
 				_fx[i]._paused = true;
 			} else
 				_fx[i]._paused = false;
@@ -827,7 +823,7 @@ void Sound::pauseFxForSequence(void) {
 	if (!_fxPaused) {
 		for (int i = 0; i < MAXFX; i++) {
 			if (_fx[i]._id && _fx[i]._id != -2) {
-				g_engine->_mixer->pauseHandle(_fx[i]._handle, true);
+				_vm->_mixer->pauseHandle(_fx[i]._handle, true);
 				_fx[i]._paused = true;
 			} else {
 				_fx[i]._paused = false;
@@ -841,7 +837,7 @@ void Sound::unpauseFx(void) {
 	if (_fxPaused) {
 		for (int i = 0; i < MAXFX; i++) {
 			if (_fx[i]._paused && _fx[i]._id) {
-				g_engine->_mixer->pauseHandle(_fx[i]._handle, false);
+				_vm->_mixer->pauseHandle(_fx[i]._handle, false);
 			}
 		}
 		_fxPaused = false;
@@ -871,7 +867,7 @@ void Sound::setFxVolume(uint8 volume) {
 	// Now update the volume of any fxs playing
 	for (int i = 0; i < MAXFX; i++) {
 		if (_fx[i]._id && !_fxMuted)
-			g_engine->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
+			_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
 	}
 }
 
@@ -889,7 +885,7 @@ void Sound::muteFx(bool mute) {
 		if (_fx[i]._id) {
 			byte volume = mute ? 0 : _fx[i]._volume * _fxVol;
 
-			g_engine->_mixer->setChannelVolume(_fx[i]._handle, volume);
+			_vm->_mixer->setChannelVolume(_fx[i]._handle, volume);
 		}
 	}
 }

@@ -17,24 +17,8 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/sword2.h"		// for CloseGame()
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
-#include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"	// for Kill_text_bloc()
-#include "sword2/memory.h"
-#include "sword2/mouse.h"
-#include "sword2/object.h"
-#include "sword2/resman.h"
-#include "sword2/router.h"
-#include "sword2/sound.h"
-#include "sword2/speech.h"		// for '_speechTextBlocNo' - so that speech text can be cleared when running a new start-script
-#include "sword2/startup.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -117,17 +101,17 @@ uint32 Logic::initStartMenu(void) {
 		// - need to check in case un-built sections included in
 		// start list
 
-		if (res_man->checkValid(_startRes)) {
+		if (_vm->_resman->checkValid(_startRes)) {
 			debug(5, "- resource %d ok", _startRes);
-			raw_script = (char *) res_man->openResource(_startRes);
+			raw_script = (char *) _vm->_resman->openResource(_startRes);
 			null_pc = 0;
 			runScript(raw_script, raw_script, &null_pc);
-			res_man->closeResource(_startRes);
+			_vm->_resman->closeResource(_startRes);
 		} else
 			debug(5, "- resource %d invalid", _startRes);
 	}
 
-	memory->freeMemory(temp);
+	_vm->_memory->freeMemory(temp);
 
 	return 1;
 }
@@ -141,7 +125,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 		error("ERROR: _startList full");
 
 	// +1 to allow for NULL terminator
-	if (strlen((const char *) memory->intToPtr(params[1])) + 1 > MAX_description)
+	if (strlen((const char *) _vm->_memory->intToPtr(params[1])) + 1 > MAX_description)
 		error("ERROR: startup description too long");
 #endif
 
@@ -152,7 +136,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// the correct start
 	_startList[_totalStartups].key = params[0];
 
-	strcpy(_startList[_totalStartups].description, (const char *) memory->intToPtr(params[1]));
+	strcpy(_startList[_totalStartups].description, (const char *) _vm->_memory->intToPtr(params[1]));
 
 	// point to next
 	_totalStartups++;
@@ -195,8 +179,8 @@ void Logic::conStart(int start) {
 		fnStopMusic(NULL);
 
 		// halt the sample prematurely
-		g_sound->unpauseSpeech();
-		g_sound->stopSpeech();
+		_vm->_sound->unpauseSpeech();
+		_vm->_sound->stopSpeech();
 
 		// clean out all resources & flags, ready for a total
 		// restart
@@ -204,27 +188,27 @@ void Logic::conStart(int start) {
 		// remove all resources from memory, including player
 		// object & global variables
 
-		res_man->removeAll();
+		_vm->_resman->removeAll();
 
 		// reopen global variables resource & send address to
 		// interpreter - it won't be moving
-		setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
-		res_man->closeResource(1);
+		setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader)));
+		_vm->_resman->closeResource(1);
 
 		// free all the route memory blocks from previous game
 		_router->freeAllRouteMem();
 
 		// if there was speech text, kill the text block
 		if (_speechTextBlocNo) {
-			fontRenderer->killTextBloc(_speechTextBlocNo);
+			_vm->_fontRenderer->killTextBloc(_speechTextBlocNo);
 			_speechTextBlocNo = 0;
 		}
 
 		// set the key
 
 		// Open George
-		raw_data_ad = (char *) res_man->openResource(8);
-		raw_script = (char *) res_man->openResource(_startList[start].start_res_id);
+		raw_data_ad = (char *) _vm->_resman->openResource(8);
+		raw_script = (char *) _vm->_resman->openResource(_startList[start].start_res_id);
 
 		// denotes script to run
 		null_pc = _startList[start].key & 0xffff;
@@ -232,10 +216,10 @@ void Logic::conStart(int start) {
 		Debug_Printf("Running start %d\n", start);
 		runScript(raw_script, raw_data_ad, &null_pc);
 
-		res_man->closeResource(_startList[start].start_res_id);
+		_vm->_resman->closeResource(_startList[start].start_res_id);
 
 		// Close George
-		res_man->closeResource(8);
+		_vm->_resman->closeResource(8);
 
 		// make sure thre's a mouse, in case restarting while
 		// mouse not available

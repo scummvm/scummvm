@@ -66,6 +66,8 @@ enum {
 
 class MemoryManager {
 private:
+	Sword2Engine *_vm;
+
 	// Address of init malloc to be freed later
 	uint8 *_freeMemman;
 
@@ -92,7 +94,7 @@ public:
 	mem _memList[MAX_mem_blocks];
 	uint32 _baseMemBlock;
 
-	MemoryManager(void);
+	MemoryManager(Sword2Engine *vm);
 	~MemoryManager(void);
 
 	int32 ptrToInt(const uint8 *p);
@@ -107,8 +109,6 @@ public:
 	void displayMemory(void);
 	void memoryString(char *string);
 };
-
-extern MemoryManager *memory;
 
 } // End of namespace Sword2
 

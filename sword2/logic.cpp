@@ -17,16 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/router.h"		// for clearWalkGridList()
-#include "sword2/sound.h"
 
 namespace Sword2 {
 
@@ -57,7 +51,7 @@ int Logic::processSession(void) {
 	// processing on the current list
 
 	while (_pc != 0xffffffff) {
-		head = (_standardHeader*) res_man->openResource(run_list);
+		head = (_standardHeader*) _vm->_resman->openResource(run_list);
 
 		if (head->fileType != RUN_LIST)
 			error("Logic_engine %d not a run_list", run_list);
@@ -71,7 +65,7 @@ int Logic::processSession(void) {
 		// release the list again so it can float in memory - at this
 		// point not one thing should be locked
 
-		res_man->closeResource(run_list);
+		_vm->_resman->closeResource(run_list);
 
 		debug(5, "%d", ID);
 
@@ -81,7 +75,7 @@ int Logic::processSession(void) {
 			return 0;
 		}
 
-		head = (_standardHeader*) res_man->openResource(ID);
+		head = (_standardHeader*) _vm->_resman->openResource(ID);
 
 		if (head->fileType != GAME_OBJECT)
 			error("Logic_engine %d not an object", ID);
@@ -127,7 +121,7 @@ int Logic::processSession(void) {
 
 				raw_data_ad = (char*) head;
 
-				far_head = (_standardHeader*) res_man->openResource(script / SIZE);
+				far_head = (_standardHeader*) _vm->_resman->openResource(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
 					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
@@ -142,7 +136,7 @@ int Logic::processSession(void) {
 				ret = runScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 
 				// close foreign object again
-				res_man->closeResource(script / SIZE);
+				_vm->_resman->closeResource(script / SIZE);
 
 				// reset to us for service script
 				raw_script_ad = raw_data_ad;
@@ -198,7 +192,7 @@ int Logic::processSession(void) {
 
 		// and that's it so close the object resource
 
-		res_man->closeResource(ID);
+		_vm->_resman->closeResource(ID);
 	}
 
 	// leaving a room so remove all ids that must reboot correctly
@@ -336,17 +330,17 @@ void Logic::examineRunList(void) {
 
 	if (_currentRunList) {
 		// open and lock in place
-		game_object_list = (uint32 *) (res_man->openResource(_currentRunList) + sizeof(_standardHeader));
+		game_object_list = (uint32 *) (_vm->_resman->openResource(_currentRunList) + sizeof(_standardHeader));
 
 		Debug_Printf("Runlist number %d\n", _currentRunList);
 
 		for (int i = 0; game_object_list[i]; i++) {
-			file_header = (_standardHeader *) res_man->openResource(game_object_list[i]);
+			file_header = (_standardHeader *) _vm->_resman->openResource(game_object_list[i]);
 			Debug_Printf("%d %s\n", game_object_list[i], file_header->name);
-			res_man->closeResource(game_object_list[i]);
+			_vm->_resman->closeResource(game_object_list[i]);
 		}
 
-		res_man->closeResource(_currentRunList);
+		_vm->_resman->closeResource(_currentRunList);
 	} else
 		Debug_Printf("No run list set\n");
 }
@@ -427,7 +421,7 @@ int32 Logic::fnAddToKillList(int32 *params) {
 
 void Logic::processKillList(void) {
 	for (uint32 i = 0; i < _kills; i++)
-		res_man->remove(_objectKillList[i]);
+		_vm->_resman->remove(_objectKillList[i]);
 
 	_kills = 0;
 }

@@ -20,7 +20,7 @@
 #ifndef D_DRAW_H
 #define D_DRAW_H
 
-#include "sword2/driver/driver96.h"
+#include "common/rect.h"
 
 namespace Sword2 {
 
@@ -61,13 +61,15 @@ struct _mouseAnim {
 
 class MoviePlayer {
 private:
+	Sword2Engine *_vm;
+
 	uint8 *_textSurface;
 	void openTextObject(_movieTextObject *obj);
 	void closeTextObject(_movieTextObject *obj);
 	void drawTextObject(_movieTextObject *obj);
 
 public:
-	MoviePlayer() : _textSurface(NULL) {}
+	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
 	int32 play(char *filename, _movieTextObject *text[], uint8 *musicOut);
 };
 
@@ -80,6 +82,8 @@ class Graphics {
 	friend class MoviePlayer;
 
 private:
+	Sword2Engine *_vm;
+
 	byte *_buffer;
 
 	int32 _renderCaps;
@@ -174,7 +178,7 @@ private:
 	int32 decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable);
 
 public:
-	Graphics(int16 width, int16 height);
+	Graphics(Sword2Engine *vm, int16 width, int16 height);
 
 	// Game screen metrics
 	int16 _screenWide;

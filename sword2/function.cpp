@@ -17,19 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/build_display.h"
-#include "sword2/credits.h"
-#include "sword2/debug.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
-#include "sword2/layers.h"		// for '_thisScreen' structure
-#include "sword2/logic.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"
-#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -97,8 +88,8 @@ int32 Logic::fnPreLoad(int32 *params) {
 
 	// params:	0 resource to preload
 
-	res_man->openResource(params[0]);
-	res_man->closeResource(params[0]);
+	_vm->_resman->openResource(params[0]);
+	_vm->_resman->closeResource(params[0]);
 	return IR_CONT;
 }
 
@@ -148,7 +139,7 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		// start the pause
@@ -177,7 +168,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
@@ -202,7 +193,7 @@ int32 Logic::fnPassGraph(int32 *params) {
 
 	// params:	0 pointer to a graphic structure (might not need this?)
 
-	memcpy(&_vm->_engineGraph, memory->intToPtr(params[0]), sizeof(Object_graphic));
+	memcpy(&_vm->_engineGraph, _vm->_memory->intToPtr(params[0]), sizeof(Object_graphic));
 
 	// makes no odds
 	return IR_CONT;
@@ -218,7 +209,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_vm->_engineMega, memory->intToPtr(params[0]), sizeof(Object_mega));
+	memcpy(&_vm->_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -233,7 +224,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[0]);
+	Object_mega *ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
 
@@ -266,25 +257,25 @@ int32 Logic::fnFlash(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case WHITE:
-		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		g_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		g_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		g_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 
 	// There used to be a busy-wait loop here, so I don't know how long
 	// the delay was meant to be. Probably doesn't matter much.
 
-	g_graphics->updateDisplay();
-	g_system->delay_msecs(250);
-	g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
+	_vm->_graphics->updateDisplay();
+	_vm->_system->delay_msecs(250);
+	_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 #endif
 
 	return IR_CONT;
@@ -302,19 +293,19 @@ int32 Logic::fnColour(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case BLACK:
-		g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 		break;
 	case WHITE:
-		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		g_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		g_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		g_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 #endif
@@ -335,8 +326,8 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	_vm->displayMsg(_vm->fetchTextLine(res_man->openResource(text_res), local_text) + 2, 3);
-	res_man->closeResource(text_res);
+	_vm->displayMsg(_vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text) + 2, 3);
+	_vm->_resman->closeResource(text_res);
 	_vm->removeMsg();
 
 	return IR_CONT;
@@ -351,20 +342,20 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	int32 size;
 	uint32 *globals;
 
-	size = res_man->fetchLen(1);
+	size = _vm->_resman->fetchLen(1);
 	size -= sizeof(_standardHeader);
 
 	debug(5, "globals size: %d", size);
 
-	globals = (uint32 *) ((uint8 *) res_man->openResource(1) + sizeof(_standardHeader));
+	globals = (uint32 *) ((uint8 *) _vm->_resman->openResource(1) + sizeof(_standardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);
 
-	res_man->closeResource(1);
+	_vm->_resman->closeResource(1);
 
 	// all objects but george
-	res_man->killAllObjects(false);
+	_vm->_resman->killAllObjects(false);
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground
@@ -387,23 +378,23 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		int32 music_length;
 		int32 pars[2];
 
-		g_sound->saveMusicState();
+		_vm->_sound->saveMusicState();
 
-		g_sound->muteFx(true);
-		g_sound->muteSpeech(true);
-		g_sound->stopMusic();
+		_vm->_sound->muteFx(true);
+		_vm->_sound->muteSpeech(true);
+		_vm->_sound->stopMusic();
 
-		memcpy(oldPal, g_graphics->_palCopy, 1024);
+		memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
 
-		g_graphics->waitForFade();
-		g_graphics->fadeDown();
-		g_graphics->waitForFade();
+		_vm->_graphics->waitForFade();
+		_vm->_graphics->fadeDown();
+		_vm->_graphics->waitForFade();
 
 		tmpPal[4] = 255;
 		tmpPal[5] = 255;
 		tmpPal[6] = 255;
-		g_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		// Play the credits music. Is it enough with just one
 		// repetition of it?
@@ -412,41 +403,41 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		pars[1] = FX_SPOT;
 		fnPlayMusic(pars);
 
-		music_length = 1000 * g_sound->musicTimeRemaining();
+		music_length = 1000 * _vm->_sound->musicTimeRemaining();
 
 		debug(0, "Credits music length: ~%d ms", music_length);
 
-		g_graphics->closeMenuImmediately();
+		_vm->_graphics->closeMenuImmediately();
 
-		while (g_sound->musicTimeRemaining()) {
-			g_graphics->clearScene();
-			g_graphics->setNeedFullRedraw();
+		while (_vm->_sound->musicTimeRemaining()) {
+			_vm->_graphics->clearScene();
+			_vm->_graphics->setNeedFullRedraw();
 
 			// FIXME: Draw the credits text. The actual text
 			// messages are stored in credits.clu, and I'm guessing
 			// that credits.bmp or font.clu may be the font.
 
-			g_graphics->updateDisplay();
+			_vm->_graphics->updateDisplay();
 
 			_keyboardEvent ke;
 
-			if (g_input->readKey(&ke) == RD_OK && ke.keycode == 27)
+			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27)
 				break;
 
-			g_system->delay_msecs(30);
+			_vm->_system->delay_msecs(30);
 		}
 
 		fnStopMusic(NULL);
-		g_sound->restoreMusicState();
+		_vm->_sound->restoreMusicState();
 
-		g_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
-		g_graphics->fadeUp();
-		g_graphics->updateDisplay();
+		_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
+		_vm->_graphics->fadeUp();
+		_vm->_graphics->updateDisplay();
 		_vm->buildDisplay();
-		g_graphics->waitForFade();
+		_vm->_graphics->waitForFade();
 
-		g_sound->muteFx(false);
-		g_sound->muteSpeech(false);
+		_vm->_sound->muteFx(false);
+		_vm->_sound->muteSpeech(false);
 	}
 
 	if (_vm->_features & GF_DEMO) {

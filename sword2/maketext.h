@@ -57,7 +57,6 @@
 #ifndef _MAKETEXT_H
 #define _MAKETEXT_H
 
-#include "sword2/memory.h"
 #include "sword2/debug.h"
 
 // Output colour for character border - should be be black but note that we
@@ -108,6 +107,7 @@ typedef struct {
 
 class FontRenderer {
 private:
+	Sword2Engine *_vm;
 	TextBloc _blocList[MAX_text_blocs];
 
 	// layout variables - these used to be defines, but now we're dealing
@@ -128,7 +128,7 @@ private:
 	void copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
 	
 public:
-	FontRenderer() {
+	FontRenderer(Sword2Engine *vm) : _vm(vm) {
 		for (int i = 0; i < MAX_text_blocs; i++)
 			_blocList[i].text_mem = NULL;
 	}
@@ -140,8 +140,6 @@ public:
 
 	uint32 buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 };
-
-extern FontRenderer *fontRenderer;
 
 } // End of namespace Sword2
 

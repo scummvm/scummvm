@@ -17,23 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"
-#include "sword2/memory.h"
-#include "sword2/mouse.h"	// for system setMouse & setLuggage routines
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"	// for clearFxQueue() called from cacheNewCluster()
-#include "sword2/router.h"
 
 namespace Sword2 {
 
@@ -52,8 +39,6 @@ namespace Sword2 {
 #define FETCHING 1
 
 #define BUFFERSIZE	4096
-
-ResourceManager	*res_man;	// declare the object global
 
 // ---------------------------------------------------------------------------
 //
@@ -107,7 +92,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	end = file.size();
 
 	//get some space for the incoming resource file - soon to be trashed
-	temp = memory->allocMemory(end, MEM_locked, UID_temp);
+	temp = _vm->_memory->allocMemory(end, MEM_locked, UID_temp);
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();
@@ -191,6 +176,8 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 			_cdTab[j] = cdInf[i].cd;
 	}
 
+	delete cdInf;
+
 	debug(5, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (j = 0; j < _totalClusters; j++)
 		debug(5, "filename of cluster %d: -%s", j, _resourceFiles[j]);
@@ -208,7 +195,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	}
 
 	_resTime = 1;	//cannot start at 0
-	memory->freeMemory(temp);	//get that memory back
+	_vm->_memory->freeMemory(temp);	//get that memory back
 }
 
 ResourceManager::~ResourceManager(void) {
@@ -487,7 +474,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 
 		// ok, we know the length so try and allocate the memory
 		// if it can't then old files will be ditched until it works
-		_resList[res] = memory->allocMemory(len, MEM_locked, res);
+		_resList[res] = _vm->_memory->allocMemory(len, MEM_locked, res);
 
 		// now load the file
 		// hurray, load it in.
@@ -512,7 +499,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 
 	// pass the address of the mem & lock the memory too
 	// might be locked already (if count > 1)
-	memory->lockMemory(_resList[res]);
+	_vm->_memory->lockMemory(_resList[res]);
 
 	return (uint8 *) _resList[res]->ad;
 }
@@ -592,7 +579,7 @@ void ResourceManager::closeResource(uint32 res) {
 	//if noone has the file open then unlock and allow to float
 	if (!_count[res]) {
 		// pass the address of the mem
-		memory->floatMemory(_resList[res]);
+		_vm->_memory->floatMemory(_resList[res]);
 	}
 }
 
@@ -682,7 +669,7 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 	// trash this old resource
 
 	_age[oldest_res] = 0;		// effectively gone from _resList
-	memory->freeMemory(_resList[oldest_res]);	// release the memory too
+	_vm->_memory->freeMemory(_resList[oldest_res]);	// release the memory too
 
 	return _resList[oldest_res]->size;	// return bytes freed
 }
@@ -817,7 +804,7 @@ void ResourceManager::kill(int res) {
 	if (!_count[res]) {
 		if (_age[res]) {
 			_age[res] = 0;		// effectively gone from _resList
-			memory->freeMemory(_resList[res]);	// release the memory too
+			_vm->_memory->freeMemory(_resList[res]);	// release the memory too
 			Debug_Printf("Trashed %d\n", res);
 		} else
 			Debug_Printf("%d not in memory\n", res);
@@ -828,7 +815,7 @@ void ResourceManager::kill(int res) {
 void ResourceManager::remove(uint32 res) {
 	if (_age[res]) {
 		_age[res] = 0;			// effectively gone from _resList
-		memory->freeMemory(_resList[res]);	// release the memory too
+		_vm->_memory->freeMemory(_resList[res]);	// release the memory too
 		debug(5, " - Trashing %d", res);
 	} else
 		debug(5, "remove(%d) not even in memory!", res);
@@ -841,16 +828,16 @@ void ResourceManager::removeAll(void) {
 	int j;
 	uint32 res;
 
-	j = memory->_baseMemBlock;
+	j = _vm->_memory->_baseMemBlock;
 
 	do {
-		if (memory->_memList[j].uid < 65536) {	// a resource
-			res = memory->_memList[j].uid;
+		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
+			res = _vm->_memory->_memList[j].uid;
 			_age[res] = 0;		// effectively gone from _resList
-			memory->freeMemory(_resList[res]);	// release the memory too
+			_vm->_memory->freeMemory(_resList[res]);	// release the memory too
 		}
 
-		j = memory->_memList[j].child;
+		j = _vm->_memory->_memList[j].child;
 	} while	(j != -1);
 }
 
@@ -864,11 +851,11 @@ void ResourceManager::killAll(bool wantInfo) {
 	uint32 nuked = 0;
   	_standardHeader *header;
 
-	j = memory->_baseMemBlock;
+	j = _vm->_memory->_baseMemBlock;
 
 	do {
-		if (memory->_memList[j].uid < 65536) {	// a resource
-			res = memory->_memList[j].uid;
+		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
+			res = _vm->_memory->_memList[j].uid;
 
 			// not the global vars which are assumed to be open in
 			// memory & not the player object!
@@ -877,7 +864,7 @@ void ResourceManager::killAll(bool wantInfo) {
 				closeResource(res);
 
 				_age[res] = 0;		// effectively gone from _resList
-				memory->freeMemory(_resList[res]);	// release the memory too
+				_vm->_memory->freeMemory(_resList[res]);	// release the memory too
 				nuked++;
 
 				// if this was called from the console,
@@ -887,7 +874,7 @@ void ResourceManager::killAll(bool wantInfo) {
 				}	
 			}
 		}
-		j = memory->_memList[j].child;
+		j = _vm->_memory->_memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console
@@ -914,11 +901,11 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 	uint32 nuked = 0;
  	_standardHeader *header;
 
-	j = memory->_baseMemBlock;
+	j = _vm->_memory->_baseMemBlock;
 
 	do {
-		if (memory->_memList[j].uid < 65536) {	// a resource
-			res = memory->_memList[j].uid;
+		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
+			res = _vm->_memory->_memList[j].uid;
 			//not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
@@ -927,7 +914,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 
 				if (header->fileType == GAME_OBJECT) {
 					_age[res] = 0;		// effectively gone from _resList
-					memory->freeMemory(_resList[res]);	// release the memory too
+					_vm->_memory->freeMemory(_resList[res]);	// release the memory too
    					nuked++;
 
 					// if this was called from the console
@@ -938,7 +925,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 				}
 			}
 		}
-		j = memory->_memList[j].child;
+		j = _vm->_memory->_memList[j].child;
 	} while (j != -1);
 
 	// if this was called from the console
@@ -974,15 +961,15 @@ void ResourceManager::getCd(int cd) {
 		_keyboardEvent ke;
 		_mouseEvent *me;
 
-		me = g_input->mouseEvent();
+		me = _vm->_input->mouseEvent();
 		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
 			break;
 
-		if (g_input->readKey(&ke) == RD_OK)
+		if (_vm->_input->readKey(&ke) == RD_OK)
 			break;
 
-		g_graphics->updateDisplay();
-		g_system->delay_msecs(50);
+		_vm->_graphics->updateDisplay();
+		_vm->_system->delay_msecs(50);
 	}
 
 	_vm->removeMsg();

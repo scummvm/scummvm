@@ -20,8 +20,6 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "sword2/object.h"
-
 #define	TOTAL_mouse_list	50
 
 namespace Sword2 {

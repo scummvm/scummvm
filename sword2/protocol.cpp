@@ -17,14 +17,8 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/memory.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
 
 namespace Sword2 {
 
@@ -223,8 +217,8 @@ uint8 Sword2Engine::checkTextLine(uint8 *file, uint32 text_line) {
 uint8 *Sword2Engine::fetchObjectName(int32 resourceId) {
 	_standardHeader *header;
 	
-	header = (_standardHeader *) res_man->openResource(resourceId);
-	res_man->closeResource(resourceId);
+	header = (_standardHeader *) _resman->openResource(resourceId);
+	_resman->closeResource(resourceId);
 
 	// note this pointer is no longer valid, but it should be ok until
 	// another resource is opened!

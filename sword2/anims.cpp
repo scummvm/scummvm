@@ -23,21 +23,11 @@
 // DON'T TOUCH!
 // ---------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/console.h"
-#include "sword2/controls.h"		// for 'subtitles'
 #include "sword2/defs.h"
-#include "sword2/header.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"		// for makeTextSprite used by fnPlaySequence ultimately
-#include "sword2/object.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"			// for Speech stuff.
 
 namespace Sword2 {
 
@@ -97,8 +87,8 @@ int32 Logic::animate(int32 *params, bool reverse) {
 
 	// read the main parameters
 
-	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
-	ob_graphic = (Object_graphic *) memory->intToPtr(params[1]);
+	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
+	ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[1]);
 	
 	if (ob_logic->looping == 0) {
 		// This is the start of the anim - set up the first frame
@@ -114,11 +104,11 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (res_man->Res_check_valid(res)) {
+			if (_resman->Res_check_valid(res)) {
 				// Open the resource. Can close it immediately.
 				// We've got a pointer to the header.
-				head = (_standardHeader *) res_man->openResource(res);
-				res_man->closeResource(res);
+				head = (_standardHeader *) _resman->openResource(res);
+				_resman->closeResource(res);
 
 				// if it's not an animation file
 				if (head->fileType != ANIMATION_FILE) {
@@ -144,17 +134,17 @@ int32 Logic::animate(int32 *params, bool reverse) {
 #ifdef _SWORD2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res == 0)
-			error("animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+			error("animate: %s (id %d) passed zero anim resource", _vm->fetchObjectName(ID), ID);
 #endif
 
 		// open anim file
-		anim_file = res_man->openResource(res);
+		anim_file = _vm->_resman->openResource(res);
 
 #ifdef _SWORD2_DEBUG
 		// check this this resource is actually an animation file!
 		head = (_standardHeader *) anim_file;
 		if (head->fileType != ANIMATION_FILE)
-			error("animate: %s (%d) is not an anim!", FetchObjectName(res), res);
+			error("animate: %s (%d) is not an anim!", _vm->fetchObjectName(res), res);
 #endif
 
 		// point to anim header
@@ -163,7 +153,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
 		if (anim_head->noAnimFrames == 0)
- 			error("animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
+ 			error("animate: %s (%d) has zero frame count!", _vm->fetchObjectName(res), res);
 #endif */
 
 		// now running an anim, looping back to this 'FN' call again
@@ -187,7 +177,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		// frame of the anim.
 
 		// open anim file and point to anim header
-		anim_file = res_man->openResource(ob_graphic->anim_resource);
+		anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
 		anim_head = _vm->fetchAnimHeader(anim_file);
 
 		if (reverse)
@@ -207,7 +197,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	}
 
 	// close the anim file
-	res_man->closeResource(ob_graphic->anim_resource);
+	_vm->_resman->closeResource(ob_graphic->anim_resource);
 
 	// check if we want the script to loop back & call this function again
 	return ob_logic->looping ? IR_REPEAT : IR_STOP;
@@ -227,11 +217,11 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	// if this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
-	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
-		anim_table = (uint32 *) memory->intToPtr(params[3]);
+	 	ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[2]);
+		anim_table = (uint32 *) _vm->_memory->intToPtr(params[3]);
 
 		// appropriate anim resource is in 'table[direction]'
 		pars[2] = anim_table[ob_mega->current_dir];
@@ -266,18 +256,18 @@ int32 Logic::fnSetFrame(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res == 0)
-		error("fnSetFrame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+		error("fnSetFrame: %s (id %d) passed zero anim resource", _vm->fetchObjectName(ID), ID);
 #endif
 
 	// open the resource (& check it's valid)
 
-	anim_file = res_man->openResource(res);
+	anim_file = _vm->_resman->openResource(res);
 
 #ifdef _SWORD2_DEBUG
 	// check this this resource is actually an animation file!
 	head = (_standardHeader *) anim_file;
 	if (head->fileType != ANIMATION_FILE)
-		error("fnSetFrame: %s (%d) is not an anim!", FetchObjectName(res), res);
+		error("fnSetFrame: %s (%d) is not an anim!", _vm->fetchObjectName(res), res);
 #endif
 
 	// set up pointer to the animation header
@@ -286,12 +276,12 @@ int32 Logic::fnSetFrame(int32 *params) {
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
 	if (anim_head->noAnimFrames == 0)
-		error("fnSetFrame: %s (%d) has zero frame count!", FetchObjectName(res), res);
+		error("fnSetFrame: %s (%d) has zero frame count!", _vm->fetchObjectName(res), res);
 #endif */
 
 	// set up anim resource in graphic object
 
-	ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+	ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 	ob_graphic->anim_resource = res;
 
 	if (params[2])
@@ -301,14 +291,14 @@ int32 Logic::fnSetFrame(int32 *params) {
 
 	// Close the anim file and drop out of script
 
-	res_man->closeResource(ob_graphic->anim_resource);
+	_vm->_resman->closeResource(ob_graphic->anim_resource);
 	return IR_CONT;
 }
 
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -321,7 +311,7 @@ int32 Logic::fnNoSprite(int32 *params) {
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -334,7 +324,7 @@ int32 Logic::fnBackPar0Sprite(int32 *params) {
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -347,7 +337,7 @@ int32 Logic::fnBackPar1Sprite(int32 *params) {
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -360,7 +350,7 @@ int32 Logic::fnBackSprite(int32 *params) {
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -373,7 +363,7 @@ int32 Logic::fnSortSprite(int32 *params) {
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -386,7 +376,7 @@ int32 Logic::fnForeSprite(int32 *params) {
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+ 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -399,7 +389,7 @@ int32 Logic::fnForePar0Sprite(int32 *params) {
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -412,7 +402,7 @@ int32 Logic::fnForePar1Sprite(int32 *params) {
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
@@ -428,7 +418,7 @@ int32 Logic::fnShadedSprite(int32 *params) {
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
+	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
@@ -494,11 +484,11 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		local_text = _sequenceTextList[line].textNumber & 0xffff;
 
 		// open text resource & get the line
-		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 		wavId = (int32) READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man->closeResource(text_res);
+		_vm->_resman->closeResource(text_res);
 
 		// 1st word of text line is the official line number
 		debug(5,"(%d) SEQUENCE TEXT: %s", READ_LE_UINT16(text), text + 2);
@@ -510,7 +500,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		_sequenceTextList[line].speech_mem = NULL;
 		sequenceText[line]->speech = NULL;
 
-		if (!g_sound->isSpeechMute()) {
+		if (!_vm->_sound->isSpeechMute()) {
 			// speech is selected, so try that first
 
 			// set up path to speech cluster
@@ -520,13 +510,13 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man->whichCd());
+			sprintf(speechFile, "speech%d.clu", _vm->_resman->whichCd());
 			if (fp.open(speechFile))
 				fp.close();
 			else
 				strcpy(speechFile, "speech.clu");
 
-			_sequenceTextList[line].speechBufferSize = g_sound->preFetchCompSpeech((char *) speechFile, wavId, &_sequenceTextList[line].speech_mem);
+			_sequenceTextList[line].speechBufferSize = _vm->_sound->preFetchCompSpeech((char *) speechFile, wavId, &_sequenceTextList[line].speech_mem);
 			if (_sequenceTextList[line].speechBufferSize) {
 				// ok, we've got speech!
 				speechRunning = true;
@@ -535,9 +525,9 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		// if we want subtitles, or speech failed to load
 
-		if (gui->_subtitles || !speechRunning) {
+		if (_vm->_gui->_subtitles || !speechRunning) {
 			// open text resource & get the line
-			text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
+			text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 			// make the sprite
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -548,10 +538,10 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 			// When rendering text over a sequence we need a
 			// different colour for the border.
 
-			_sequenceTextList[line].text_mem = fontRenderer->makeTextSprite(text + 2, 600, 255, _vm->_speechFontId, 1);
+			_sequenceTextList[line].text_mem = _vm->_fontRenderer->makeTextSprite(text + 2, 600, 255, _vm->_speechFontId, 1);
 
 			// ok to close the text resource now
-			res_man->closeResource(text_res);
+			_vm->_resman->closeResource(text_res);
 		} else {
 			_sequenceTextList[line].text_mem = NULL;
 			sequenceText[line]->textSprite = NULL;
@@ -569,7 +559,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		// if we've made a text sprite for this line...
 
 		if (_sequenceTextList[line].text_mem) {
-			memory->lockMemory(_sequenceTextList[line].text_mem);
+			_vm->_memory->lockMemory(_sequenceTextList[line].text_mem);
 
 			// now fill out the _spriteInfo structure in the
 			// _movieTextObjectStructure
@@ -608,7 +598,7 @@ void Logic::clearSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		// free up the mem block containing this text sprite
 		if (_sequenceTextList[line].text_mem)
-			memory->freeMemory(_sequenceTextList[line].text_mem);
+			_vm->_memory->freeMemory(_sequenceTextList[line].text_mem);
 
 		// free up the mem block containing this speech sample
 		if (_sequenceTextList[line].speech_mem)
@@ -628,7 +618,7 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 
 	// params:	0 id of lead-in music
 
-	leadIn = res_man->openResource(params[0]);
+	leadIn = _vm->_resman->openResource(params[0]);
 
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
@@ -638,12 +628,12 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 
 	leadIn += sizeof(_standardHeader);
 	// wav data gets copied to sound memory
-	rv = g_sound->playFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
+	rv = _vm->_sound->playFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
 
 	if (rv)
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 
-	res_man->closeResource(params[0]);
+	_vm->_resman->closeResource(params[0]);
 
 	// fade out any music that is currently playing
 	fnStopMusic(NULL);
@@ -680,17 +670,17 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	debug(5, "fnPlaySequence(\"%s\");", (const char *) memory->intToPtr(params[0]));
+	debug(5, "fnPlaySequence(\"%s\");", (const char *) _vm->_memory->intToPtr(params[0]));
 
 #ifdef _SWORD2_DEBUG
 	// check that the name paseed from script is 8 chars or less
-	if (strlen((const char *) memory->intToPtr(params[0])) > 8)
+	if (strlen((const char *) _vm->_memory->intToPtr(params[0])) > 8)
 		error("Sequence filename too long");
 #endif
 
 	// add the appropriate file extension & play it
 
-	sprintf(filename, "%s.smk", (const char *) memory->intToPtr(params[0]));
+	sprintf(filename, "%s.smk", (const char *) _vm->_memory->intToPtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
@@ -703,7 +693,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// open the lead-out music resource, if there is one
 
 	if (_smackerLeadOut) {
-		leadOut = res_man->openResource(_smackerLeadOut);
+		leadOut = _vm->_resman->openResource(_smackerLeadOut);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader *) leadOut;
@@ -720,9 +710,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	fnStopMusic(NULL);
 
 	// pause sfx during sequence, except the one used for lead-in music
-	g_sound->pauseFxForSequence();
+	_vm->_sound->pauseFxForSequence();
 
-	MoviePlayer player; 
+	MoviePlayer player(_vm);
 
 	if (_sequenceTextLines && !(_vm->_features & GF_DEMO))
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
@@ -730,12 +720,12 @@ int32 Logic::fnPlaySequence(int32 *params) {
 		rv = player.play(filename, NULL, leadOut);
 
 	// unpause sound fx again, in case we're staying in same location
-	g_sound->unpauseFx();
+	_vm->_sound->unpauseFx();
 
 	// close the lead-out music resource
 
 	if (_smackerLeadOut) {
-		res_man->closeResource(_smackerLeadOut);
+		_vm->_resman->closeResource(_smackerLeadOut);
 		_smackerLeadOut = 0;
 	}
 
@@ -751,14 +741,14 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black
 
-	g_graphics->clearScene();
+	_vm->_graphics->clearScene();
 
 	// zero the entire palette in case we're about to fade up!
 
 	_palEntry pal[256];
 
 	memset(pal, 0, 256 * sizeof(_palEntry));
-	g_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
+	_vm->_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
 

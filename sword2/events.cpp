@@ -17,14 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/object.h"
 
 namespace Sword2 {
 
@@ -185,7 +181,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 
 	// first, check for an event
 

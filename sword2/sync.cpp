@@ -17,13 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "common/util.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/debug.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
 
 namespace Sword2 {
 

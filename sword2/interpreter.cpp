@@ -17,11 +17,9 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/console.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 #include "sword2/interpreter.h"
-#include "sword2/logic.h"
 
 namespace Sword2 {
 
@@ -353,8 +351,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_LOCAL_ADDR:
 			// push the address of a local variable
 			Read16ip(parameter);
-			debug(5, "Push address of local variable %d (%x)", parameter, memory->ptrToInt((const uint8 *) (variables + parameter)));
-			PUSHONSTACK(memory->ptrToInt((uint8 *) (variables + parameter)));
+			debug(5, "Push address of local variable %d (%x)", parameter, _vm->_memory->ptrToInt((const uint8 *) (variables + parameter)));
+			PUSHONSTACK(_vm->_memory->ptrToInt((uint8 *) (variables + parameter)));
 			break;
 		case CP_PUSH_INT32:
 			// Push a long word value on to the stack
@@ -589,14 +587,14 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip points to the string
-			PUSHONSTACK(memory->ptrToInt((const uint8 *) (code + ip)));
+			PUSHONSTACK(_vm->_memory->ptrToInt((const uint8 *) (code + ip)));
 			ip += (parameter + 1);
 			break;
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			debug(5, "Push address of far variable (%x)", memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
-			PUSHONSTACK(memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
+			debug(5, "Push address of far variable (%x)", _vm->_memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
+			PUSHONSTACK(_vm->_memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
 			break;
 		case OP_GTTHANE:
 			// '>='

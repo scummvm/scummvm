@@ -17,12 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "common/util.h"
-#include "base/engine.h"
+#include "common/stdafx.h"
+// #include "common/util.h"
+// #include "base/engine.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/driver/driver96.h"
 
 namespace Sword2 {
 
@@ -116,9 +114,9 @@ void Graphics::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable,
 	if (noEntries) {
 		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
 		if (fadeNow == RDPAL_INSTANT)
-			g_system->set_palette((const byte *) _palCopy, startEntry, noEntries);
+			_vm->_system->set_palette((const byte *) _palCopy, startEntry, noEntries);
 	} else
-		g_system->set_palette((const byte *) _palCopy, 0, 256);
+		_vm->_system->set_palette((const byte *) _palCopy, 0, 256);
 }
 
 void Graphics::dimPalette(void) {
@@ -127,7 +125,7 @@ void Graphics::dimPalette(void) {
 	for (int i = 0; i < 256 * 4; i++)
 		p[i] /= 2;
 
-	g_system->set_palette(p, 0, 256);
+	_vm->_system->set_palette(p, 0, 256);
 }
 
 /**
@@ -141,7 +139,7 @@ int32 Graphics::fadeUp(float time) {
 
 	_fadeTotalTime = (int32) (time * 1000);
 	_fadeStatus = RDFADE_UP;
-	_fadeStartTime = g_system->get_msecs();
+	_fadeStartTime = _vm->_system->get_msecs();
 
 	return RD_OK;
 }
@@ -157,7 +155,7 @@ int32 Graphics::fadeDown(float time) {
 
 	_fadeTotalTime = (int32) (time * 1000);
 	_fadeStatus = RDFADE_DOWN;
-	_fadeStartTime = g_system->get_msecs();
+	_fadeStartTime = _vm->_system->get_msecs();
 
 	return RD_OK;
 }
@@ -175,7 +173,7 @@ uint8 Graphics::getFadeStatus(void) {
 void Graphics::waitForFade(void) {
 	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK) {
 		updateDisplay();
-		g_system->delay_msecs(20);
+		_vm->_system->delay_msecs(20);
 	}
 }
 
@@ -196,7 +194,7 @@ void Graphics::fadeServer(void) {
 
 	// I don't know if this is necessary, but let's limit how often the
 	// palette is updated, just to be safe.
-	currentTime = g_system->get_msecs();
+	currentTime = _vm->_system->get_msecs();
 	if (currentTime - previousTime <= 25)
 		return;
 
@@ -228,7 +226,7 @@ void Graphics::fadeServer(void) {
 		}
 	}
 
-	g_system->set_palette(newPalette, 0, 256);
+	_vm->_system->set_palette(newPalette, 0, 256);
 }
 
 } // End of namespace Sword2

@@ -17,11 +17,8 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "common/rect.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/menu.h"
-#include "sword2/driver/d_draw.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 #include "sword2/driver/render.h"
 
 namespace Sword2 {
@@ -65,10 +62,10 @@ void Graphics::processMenu(void) {
 	static int32 lastTime = 0;
 
 	if (lastTime == 0) {
-		lastTime = g_system->get_msecs();
+		lastTime = _vm->_system->get_msecs();
 		frameCount = 1;
 	} else {
-		delta = g_system->get_msecs() - lastTime;
+		delta = _vm->_system->get_msecs() - lastTime;
 		if (delta > 250) {
 			lastTime += delta;
 			delta = 250;

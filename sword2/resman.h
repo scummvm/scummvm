@@ -20,8 +20,6 @@
 #ifndef	RESMAN_H
 #define	RESMAN_H
 
-#include "sword2/memory.h"
-
 namespace Sword2 {
 
 #define	MAX_res_files	20
@@ -101,8 +99,6 @@ private:
 	char _resourceFiles[MAX_res_files][20];
 	uint8 _cdTab[MAX_res_files];		// Location of each cluster.
 };							
-
-extern ResourceManager *res_man;	// declare the object global
 
 } // End of namespace Sword2
 

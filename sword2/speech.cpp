@@ -17,23 +17,11 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/controls.h"	// for 'subtitles' & 'speechSelected'
-#include "sword2/debug.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
-#include "sword2/layers.h"		// for 'this_screen'
-#include "sword2/logic.h"
-#include "sword2/maketext.h"
-#include "sword2/memory.h"
-#include "sword2/mouse.h"
-#include "sword2/object.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"
-#include "sword2/speech.h"
 
 namespace Sword2 {
 
@@ -171,18 +159,18 @@ int32 Logic::fnChoose(int32 *params) {
 		for (j = 0; j < 15; j++) {
 			if (j < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", _subjectList[j].res, j);
-				icon = res_man->openResource(_subjectList[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-				g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-				res_man->closeResource(_subjectList[j].res);
+				icon = _vm->_resman->openResource(_subjectList[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+				_vm->_resman->closeResource(_subjectList[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
-				g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
+				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
 			}
 		}
 
 		// start menus appearing
-		g_graphics->showMenu(RDMENU_BOTTOM);
+		_vm->_graphics->showMenu(RDMENU_BOTTOM);
 
 		// lets have the mouse pointer back
 		_vm->setMouse(NORMAL_MOUSE_ID);
@@ -195,7 +183,7 @@ int32 Logic::fnChoose(int32 *params) {
 		// menu is there - we're just waiting for a click
 		debug(5, "choosing");
 
-		me = g_input->mouseEvent();
+		me = _vm->_input->mouseEvent();
 
 		// we only care about left clicks
 		// we ignore mouse releases
@@ -205,9 +193,9 @@ int32 Logic::fnChoose(int32 *params) {
 			// if so then end the choose, highlight only the
 			// chosen, blank the mouse and return the ref code * 8
 
-			if (g_input->_mouseY > 399 && g_input->_mouseX >= 24 && g_input->_mouseX < 640 - 24) {
+			if (_vm->_input->_mouseY > 399 && _vm->_input->_mouseX >= 24 && _vm->_input->_mouseX < 640 - 24) {
 				//which are we over?
-				hit = (g_input->_mouseX - 24) / 40;
+				hit = (_vm->_input->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
 				if (hit < IN_SUBJECT) {
@@ -219,9 +207,9 @@ int32 Logic::fnChoose(int32 *params) {
 
 						// change all others to grey
 						if (j != hit) {
-							icon = res_man->openResource( _subjectList[j].res ) + sizeof(_standardHeader);
-							g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-							res_man->closeResource(_subjectList[j].res);
+							icon = _vm->_resman->openResource( _subjectList[j].res ) + sizeof(_standardHeader);
+							_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+							_vm->_resman->closeResource(_subjectList[j].res);
 						}
 					}
 
@@ -279,9 +267,9 @@ int32 Logic::fnEndConversation(int32 *params) {
 
 	// params:	none
 
-	g_graphics->hideMenu(RDMENU_BOTTOM);
+	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
 
-	if (g_input->_mouseY > 399) {
+	if (_vm->_input->_mouseY > 399) {
 		// will wait for cursor to move off the bottom menu
 		_vm->_mouseMode = MOUSE_holding;
 		debug(5, "   holding");
@@ -290,7 +278,7 @@ int32 Logic::fnEndConversation(int32 *params) {
 	TALK_FLAG = 0;	// in-case DC forgets
 
 	// restart george's base script
-	// LLogic.totalRestart();
+	// totalRestart();
 
 	//drop out without saving pc and go around again
 	return IR_CONT;
@@ -314,7 +302,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man->openResource(target);
+	head = (_standardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDo %d not an object", target);
 
@@ -323,7 +311,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man->closeResource(target);
+	_vm->_resman->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -376,7 +364,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	// ok, see if the target is busy - we must request this info from the
 	// target object
 
-	head = (_standardHeader*) res_man->openResource(target);
+	head = (_standardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDoWeWait %d not an object", target);
 
@@ -385,9 +373,9 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man->closeResource(target);
+	_vm->_resman->closeResource(target);
 
-	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 
 	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
@@ -456,7 +444,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man->openResource(target);
+	head = (_standardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnWeWait: %d not an object", target);
 
@@ -465,7 +453,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man->closeResource(target);
+	_vm->_resman->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -498,13 +486,13 @@ int32 Logic::fnTimedWait(int32 *params) {
 	_standardHeader	*head;
 	int32 target = params[1];
 
-	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
 
 	if (!ob_logic->looping)
 		ob_logic->looping = params[2];	// first time in
 
 	// request status of target
-	head = (_standardHeader*) res_man->openResource(target);
+	head = (_standardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTimedWait %d not an object", target);
 
@@ -513,7 +501,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man->closeResource(target);
+	_vm->_resman->closeResource(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -580,7 +568,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	int32 pars[9];
 	int32 ret;
 
-	ob_speech = (Object_speech *) memory->intToPtr(params[1]);
+	ob_speech = (Object_speech *) _vm->_memory->intToPtr(params[1]);
 
 	debug(5, "  SP");
 
@@ -896,8 +884,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// set up the pointers which we know we'll always need
 
-	ob_logic = (Object_logic *) memory->intToPtr(params[S_OB_LOGIC]);
-	ob_graphic = (Object_graphic *) memory->intToPtr(params[S_OB_GRAPHIC]);
+	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[S_OB_LOGIC]);
+	ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -906,7 +894,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// New fudge to wait for smacker samples to finish
 		// since they can over-run into the game
 
-		if (g_sound->getSpeechStatus() != RDSE_SAMPLEFINISHED)
+		if (_vm->_sound->getSpeechStatus() != RDSE_SAMPLEFINISHED)
 			return IR_REPEAT;
 		
 		// New fudge for 'fx' subtitles
@@ -914,7 +902,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// for this line either, then just quit back to script right
 		// now!
 
-		if (gui->_subtitles == 0 && wantSpeechForLine(params[S_WAV]) == 0)
+		if (_vm->_gui->_subtitles == 0 && wantSpeechForLine(params[S_WAV]) == 0)
 			return IR_CONT;
 
 		if (cycle_skip == 0) {
@@ -947,14 +935,14 @@ int32 Logic::fnISpeak(int32 *params) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (res_man->checkValid(text_res)) {
+			if (_vm->_resman->checkValid(text_res)) {
 				// open the resource
-				head = (_standardHeader*) res_man->openResource(text_res);
+				head = (_standardHeader *) _vm->_resman->openResource(text_res);
 
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
 					// if line number is out of range
-					if (_vm->checkTextLine((uint8*) head, local_text) == 0) {
+					if (_vm->checkTextLine((uint8 *) head, local_text) == 0) {
 						// line number out of range
 						RESULT = 2;
 					}
@@ -964,7 +952,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				}
 
 				// close the resource
-				res_man->closeResource(text_res);
+				_vm->_resman->closeResource(text_res);
 
 				if (RESULT)
 					return IR_CONT;
@@ -984,11 +972,11 @@ int32 Logic::fnISpeak(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 		_officialTextNumber = READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man->closeResource(text_res);
+		_vm->_resman->closeResource(text_res);
 
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
@@ -1039,10 +1027,10 @@ int32 Logic::fnISpeak(int32 *params) {
 			// use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ob_mega = (Object_mega *) memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
 
 			// pointer to anim table
-			anim_table = (int32 *) memory->intToPtr(params[S_DIR_TABLE]);
+			anim_table = (int32 *) _vm->_memory->intToPtr(params[S_DIR_TABLE]);
 
 			// appropriate anim resource is in 'table[direction]'
 			_animId = anim_table[ob_mega->current_dir];
@@ -1077,7 +1065,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if speech is selected, and this line is allowed speech
 		// (not if it's an fx subtitle!)
 
-		if (!g_sound->isSpeechMute() && wantSpeechForLine(_officialTextNumber)) {
+		if (!_vm->_sound->isSpeechMute() && wantSpeechForLine(_officialTextNumber)) {
 			// if the wavId paramter is zero because not yet
 			// compiled into speech command, we can still get it
 			// from the 1st 2 chars of the text line
@@ -1111,7 +1099,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				if (text_res != currentTextResource && params[S_WAV]) {
 					// ensure correct CD is in for this
 					// wavId
-					// GetCorrectCdForSpeech(params[S_WAV]);
+					// getCorrectCdForSpeech(params[S_WAV]);
 					currentTextResource = text_res;
 				}
 			}
@@ -1123,7 +1111,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man->whichCd());
+			sprintf(speechFile, "speech%d.clu", _vm->_resman->whichCd());
 
 			if (fp.open(speechFile))
 				fp.close();
@@ -1131,7 +1119,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				strcpy(speechFile, "speech.clu");
 
 			// Load speech but don't start playing yet
-			rv = g_sound->playCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
+			rv = _vm->_sound->playCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
 			if (rv == RD_OK) {
 				// ok, we've got something to play
 				// (2 means not playing yet - see below)
@@ -1139,14 +1127,14 @@ int32 Logic::fnISpeak(int32 *params) {
 
 				// set it playing now (we might want to do
 				// this next cycle, don't know yet)
-				g_sound->unpauseSpeech();
+				_vm->_sound->unpauseSpeech();
 			} else {
 				debug(5, "ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
 			}
 		}
 
 		// if we want subtitles, or speech failed to load
-		if (gui->_subtitles || speechRunning == 0) {
+		if (_vm->_gui->_subtitles || speechRunning == 0) {
 			// then we're going to show the text
 			textRunning = 1;
 
@@ -1166,7 +1154,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		ob_graphic->anim_pc++;
 
 		// open the anim file
-		anim_file = res_man->openResource(ob_graphic->anim_resource);
+		anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
 		anim_head = _vm->fetchAnimHeader(anim_file);
 
 		if (!_speechAnimType) {
@@ -1179,7 +1167,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				// if playing a sample
 				if (!_unpauseZone) {
 					// if we're at a quiet bit
-					if (g_sound->amISpeaking() == RDSE_QUIET) {
+					if (_vm->_sound->amISpeaking() == RDSE_QUIET) {
 						// restart from frame 0
 						// ('closed mouth' frame)
 						ob_graphic->anim_pc = 0;
@@ -1196,7 +1184,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		}
 
 		// close the anim file
-		res_man->closeResource(ob_graphic->anim_resource);
+		_vm->_resman->closeResource(ob_graphic->anim_resource);
 	} else if (_speechAnimType) {
 		// Placed here so we actually display the last frame of the
 		// anim.
@@ -1212,7 +1200,7 @@ int32 Logic::fnISpeak(int32 *params) {
 	if (speechRunning == 1) {
 		if (!_unpauseZone) {
 			// has it finished?
-			if (g_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
+			if (_vm->_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
 				speechFinished = 1;
 		} else
 			_unpauseZone--;
@@ -1233,8 +1221,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// so that we can go to the options panel while text & speech is
 	// being tested
-	if (SYSTEM_TESTING_TEXT == 0 || g_input->_mouseY > 0) {
-		me = g_input->mouseEvent();
+	if (SYSTEM_TESTING_TEXT == 0 || _vm->_input->_mouseY > 0) {
+		me = _vm->_input->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
@@ -1258,7 +1246,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			do {
 				// trash anything thats buffered
-				me = g_input->mouseEvent();
+				me = _vm->_input->mouseEvent();
 			} while (me);
 
 			speechFinished = 1;
@@ -1266,7 +1254,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			// if speech sample playing
 			if (speechRunning) {
 				// halt the sample prematurely
-				g_sound->stopSpeech();
+				_vm->_sound->stopSpeech();
 			}
 		}
 	}
@@ -1280,7 +1268,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if there is text
 		if (_speechTextBlocNo) {
 			// kill the text block
-			fontRenderer->killTextBloc(_speechTextBlocNo);
+			_vm->_fontRenderer->killTextBloc(_speechTextBlocNo);
 			_speechTextBlocNo = 0;
 		}
 
@@ -1358,7 +1346,7 @@ void Logic::locateTalker(int32 *params) {
 		// build_display.cpp
 
 		// open animation file & set up the necessary pointers
-		file = res_man->openResource(_animId);
+		file = _vm->_resman->openResource(_animId);
 
 		anim_head = _vm->fetchAnimHeader(file);
 
@@ -1373,7 +1361,7 @@ void Logic::locateTalker(int32 *params) {
 
 		if (cdt_entry->frameType & FRAME_OFFSET) {
 			// this may be NULL
-			ob_mega = (Object_mega *) memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
 
 			// calc scale at which to print the sprite, based on
 			// feet y-coord & scaling constants (NB. 'scale' is
@@ -1410,7 +1398,7 @@ void Logic::locateTalker(int32 *params) {
 		_textY -= _vm->_thisScreen.scroll_offset_y;
 
 		// release the anim resource
-		res_man->closeResource(_animId);
+		_vm->_resman->closeResource(_animId);
 	}
 }
 
@@ -1446,7 +1434,7 @@ void Logic::formText(int32 *params) {
 	// text
 
 	if (params[S_TEXT]) {
-	 	ob_speech = (Object_speech *) memory->intToPtr(params[S_OB_SPEECH]);
+	 	ob_speech = (Object_speech *) _vm->_memory->intToPtr(params[S_OB_SPEECH]);
 
 		// establish the max width allowed for this text sprite
 
@@ -1464,19 +1452,19 @@ void Logic::formText(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
 
-		_speechTextBlocNo = fontRenderer->buildNewBloc(
+		_speechTextBlocNo = _vm->_fontRenderer->buildNewBloc(
 			text + 2, _textX, _textY,
 			textWidth, ob_speech->pen,
 			RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 			_vm->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
 
 		// now ok to close the text file
-		res_man->closeResource(text_res);
+		_vm->_resman->closeResource(text_res);
 
 		// set speech duration, in case not using wav
 		// no. of cycles = (no. of chars) + 30
@@ -1506,7 +1494,7 @@ void Logic::getCorrectCdForSpeech(int32 wavId) {
 	// if we specifically need CD1 or CD2 (ie. it's not on both)
 	// then check it's there (& ask for it if it's not there)
 	if (cd == 1 || cd == 2)
-		res_man->getCd(cd);
+		_vm->_resman->getCd(cd);
 }
 #endif
 

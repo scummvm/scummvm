@@ -17,21 +17,9 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/debug.h"
-#include "sword2/console.h"
 #include "sword2/defs.h"
-#include "sword2/layers.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"
-#include "sword2/mouse.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/router.h"			// for plotWalkGrid()
-#include "sword2/speech.h"			// for '_officialTextNumber'
-						// and '_speechScriptWaiting'
 
 namespace Sword2 {
 
@@ -40,7 +28,7 @@ void Debugger::clearDebugTextBlocks(void) {
 
 	while (blockNo < MAX_DEBUG_TEXT_BLOCKS && _debugTextBlocks[blockNo] > 0) {
 		// kill the system text block
-		fontRenderer->killTextBloc(_debugTextBlocks[blockNo]);
+		_vm->_fontRenderer->killTextBloc(_debugTextBlocks[blockNo]);
 
 		// clear this element of our array of block numbers
 		_debugTextBlocks[blockNo] = 0;
@@ -57,7 +45,7 @@ void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 
 	assert(blockNo < MAX_DEBUG_TEXT_BLOCKS);
 
-	_debugTextBlocks[blockNo] = fontRenderer->buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
+	_debugTextBlocks[blockNo] = _vm->_fontRenderer->buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
 
 void Debugger::buildDebugText(void) {
@@ -120,7 +108,7 @@ void Debugger::buildDebugText(void) {
 	// debug info at top of screen - enabled/disabled as one complete unit
 
 	if (_displayTime) {
-		int32 time = g_system->get_msecs();
+		int32 time = _vm->_system->get_msecs();
 
 		if ((time - _startTime) / 1000 >= 10000)
 			_startTime = time;
@@ -186,14 +174,14 @@ void Debugger::buildDebugText(void) {
 
 		if (_vm->_mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				g_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				g_input->_mouseY + _vm->_thisScreen.scroll_offset_y,
+				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				_vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y,
 				_vm->_mouseTouching,
 				_vm->fetchObjectName(_vm->_mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				g_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				g_input->_mouseY + _vm->_thisScreen.scroll_offset_y);
+				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				_vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -280,7 +268,7 @@ void Debugger::buildDebugText(void) {
 		showVarPos = 115;	// y-coord for first showVar
 
 		// res 1 is the global variables resource
-		varTable = (int32 *) (res_man->openResource(1) + sizeof(_standardHeader));
+		varTable = (int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader));
 
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
 			varNo = _showVar[showVarNo];	// get variable number
@@ -295,12 +283,12 @@ void Debugger::buildDebugText(void) {
 			}
 		}
 
-		res_man->closeResource(1);	// close global variables resource
+		_vm->_resman->closeResource(1);	// close global variables resource
 
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
 
-		memory->memoryString(buf);
+		_vm->_memory->memoryString(buf);
 		makeDebugTextBlock(buf, 0, 0);
 	}
 }
@@ -319,7 +307,7 @@ void Debugger::drawDebugGraphics(void) {
 	// mouse marker & coords
 
 	if (_displayMouseMarker)
-		plotCrossHair(g_input->_mouseX + _vm->_thisScreen.scroll_offset_x, g_input->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
+		plotCrossHair(_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x, _vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -335,20 +323,20 @@ void Debugger::drawDebugGraphics(void) {
 }
 
 void Debugger::plotCrossHair(int16 x, int16 y, uint8 pen) {
-	g_graphics->plotPoint(x, y, pen);		// driver function
+	_vm->_graphics->plotPoint(x, y, pen);
 
-	g_graphics->drawLine(x - 2, y, x - 5, y, pen);	// driver function
-	g_graphics->drawLine(x + 2, y, x + 5, y, pen);
+	_vm->_graphics->drawLine(x - 2, y, x - 5, y, pen);
+	_vm->_graphics->drawLine(x + 2, y, x + 5, y, pen);
 
-	g_graphics->drawLine(x, y - 2, x, y - 5, pen);
-	g_graphics->drawLine(x, y + 2, x, y + 5, pen);
+	_vm->_graphics->drawLine(x, y - 2, x, y - 5, pen);
+	_vm->_graphics->drawLine(x, y + 2, x, y + 5, pen);
 }
 
 void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
-	g_graphics->drawLine(x1, y1, x2, y1, pen);	// top edge
-	g_graphics->drawLine(x1, y2, x2, y2, pen);	// bottom edge
-	g_graphics->drawLine(x1, y1, x1, y2, pen);	// left edge
-	g_graphics->drawLine(x2, y1, x2, y2, pen);	// right edge
+	_vm->_graphics->drawLine(x1, y1, x2, y1, pen);	// top edge
+	_vm->_graphics->drawLine(x1, y2, x2, y2, pen);	// bottom edge
+	_vm->_graphics->drawLine(x1, y1, x1, y2, pen);	// left edge
+	_vm->_graphics->drawLine(x2, y1, x2, y2, pen);	// right edge
 }
 
 void Debugger::printCurrentInfo(void) {

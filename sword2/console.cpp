@@ -17,32 +17,13 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"
-#include "sword2/mouse.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/save_rest.h"
-#include "sword2/startup.h"
 
 #include "common/debugger.cpp"
 
 namespace Sword2 {
-
-void Debugger::varGet(int var) {
-	Debug_Printf("%d\n", VAR(var));
-}
-
-void Debugger::varSet(int var, int val) {
-	Debug_Printf("was %d, ", VAR(var));
-	VAR(var) = val;
-	Debug_Printf("now %d\n", VAR(var));
-}
 
 Debugger::Debugger(Sword2Engine *vm)
 	: Common::Debugger<Debugger>() {
@@ -130,22 +111,31 @@ Debugger::Debugger(Sword2Engine *vm)
 	DCmd_Register("polish", &Debugger::Cmd_Polish);
 }
 
+void Debugger::varGet(int var) {
+	Debug_Printf("%d\n", VAR(var));
+}
+
+void Debugger::varSet(int var, int val) {
+	Debug_Printf("was %d, ", VAR(var));
+	VAR(var) = val;
+	Debug_Printf("now %d\n", VAR(var));
+}
+
 void Debugger::preEnter() {
 	// Pause sound output
-	g_sound->pauseFx();
-	g_sound->pauseSpeech();
-	g_sound->pauseMusic();
+	_vm->_sound->pauseFx();
+	_vm->_sound->pauseSpeech();
+	_vm->_sound->pauseMusic();
 }
 
 void Debugger::postEnter() {
 	// Resume previous sound state
-	g_sound->unpauseFx();
-	g_sound->unpauseSpeech();
-	g_sound->unpauseMusic();
+	_vm->_sound->unpauseFx();
+	_vm->_sound->unpauseSpeech();
+	_vm->_sound->unpauseMusic();
 
 	// Restore old mouse cursor
-	g_graphics->drawMouse();
-
+	_vm->_graphics->drawMouse();
 }
 
 ///////////////////////////////////////////////////
@@ -181,7 +171,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Mem(int argc, const char **argv) {
-	memory->displayMemory();
+	_vm->_memory->displayMemory();
 	return true;
 }
 
@@ -191,7 +181,7 @@ bool Debugger::Cmd_Tony(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Res(int argc, const char **argv) {
-	res_man->printConsoleClusters();
+	_vm->_resman->printConsoleClusters();
 	return true;
 }
 
@@ -209,7 +199,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 	}
 
 	_vm->_logic->conStart(atoi(argv[1]));
-	g_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
+	_vm->_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
 
@@ -261,7 +251,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s number\n", argv[0]);
 	else
-		res_man->examine(atoi(argv[1]));
+		_vm->_resman->examine(atoi(argv[1]));
 	return true;
 }
 
@@ -279,13 +269,13 @@ bool Debugger::Cmd_Kill(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s number\n", argv[0]);
 	else
-		res_man->kill(atoi(argv[1]));
+		_vm->_resman->kill(atoi(argv[1]));
 	return true;
 }
 
 bool Debugger::Cmd_Nuke(int argc, const char **argv) {
 	DebugPrintf("Killing all resources except variable file and player object\n");
-	res_man->killAll(true);
+	_vm->_resman->killAll(true);
 	return true;
 }
 
@@ -318,7 +308,7 @@ bool Debugger::Cmd_Rect(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Clear(int argc, const char **argv) {
-	res_man->killAllObjects(true);
+	_vm->_resman->killAllObjects(true);
 	return true;
 }
 
@@ -451,14 +441,14 @@ bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
 // FIXME: Replace these with a command to modify the graphics detail setting
 
 bool Debugger::Cmd_BltFxOn(int argc, const char **argv) {
-	// g_graphics->setBltFx();
+	// _vm->_graphics->setBltFx();
 	// DebugPrintf("Blit fx enabled\n");
 	DebugPrintf("FIXME: The setBltFx() function no longer exists\n");
 	return true;
 }
 
 bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
-	// g_graphics->clearBltFx();
+	// _vm->_graphics->clearBltFx();
 	// DebugPrintf("Blit fx disabled\n");
 	DebugPrintf("FIXME: The clearBltFx() function no longer exists\n");
 	return true;
@@ -466,9 +456,9 @@ bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
 
 bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	if (argc == 2)
-		_startTime = g_system->get_msecs() - atoi(argv[1]) * 1000;
+		_startTime = _vm->_system->get_msecs() - atoi(argv[1]) * 1000;
 	else if (_startTime == 0)
-		_startTime = g_system->get_msecs();
+		_startTime = _vm->_system->get_msecs();
 	_displayTime = true;
 	DebugPrintf("Timer display on\n");
 	return true;

@@ -73,18 +73,9 @@
  *
  ****************************************************************************/
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
 #include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/interpreter.h"
-#include "sword2/memory.h"
-#include "sword2/object.h"
-#include "sword2/resman.h"
-#include "sword2/router.h"
 
 namespace Sword2 {
 
@@ -115,7 +106,7 @@ void Router::allocateRouteMem(void) {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = memory->allocMemory(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
+	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(_walkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per '_walkData' frame
@@ -133,14 +124,14 @@ void Router::allocateRouteMem(void) {
 _walkData* Router::lockRouteMem(void) {
 	uint8 slotNo = returnSlotNo(ID); 
 	
-	memory->lockMemory(_routeSlots[slotNo]);
+	_vm->_memory->lockMemory(_routeSlots[slotNo]);
 	return (_walkData *) _routeSlots[slotNo]->ad;
 }
 
 void Router::floatRouteMem(void) {
 	uint8 slotNo = returnSlotNo(ID); 
 
-	memory->floatMemory(_routeSlots[slotNo]);
+	_vm->_memory->floatMemory(_routeSlots[slotNo]);
 }
 
 void Router::freeRouteMem(void) {
@@ -148,7 +139,7 @@ void Router::freeRouteMem(void) {
 
 	// free the mem block pointed to from this entry of _routeSlots[]
 
-	memory->freeMemory(_routeSlots[slotNo]);
+	_vm->_memory->freeMemory(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
 }
 
@@ -157,7 +148,7 @@ void Router::freeAllRouteMem(void) {
 		if (_routeSlots[i]) {
 			// free the mem block pointed to from this entry of
 			// _routeSlots[]
-			memory->freeMemory(_routeSlots[i]);
+			_vm->_memory->freeMemory(_routeSlots[i]);
 			_routeSlots[i] = NULL;
 		}
 	}
@@ -2530,7 +2521,7 @@ void Router::plotWalkGrid(void) {
 	// lines
 
 	for (i = 0; i < _nbars; i++)
-		g_graphics->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
+		_vm->_graphics->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
 
 	// nodes
 
@@ -2540,8 +2531,8 @@ void Router::plotWalkGrid(void) {
 }
 
 void Router::plotCross(int16 x, int16 y, uint8 colour) {
-	g_graphics->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	g_graphics->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
+	_vm->_graphics->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
+	_vm->_graphics->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
 
 void Router::loadWalkGrid(void) {
@@ -2559,7 +2550,7 @@ void Router::loadWalkGrid(void) {
 	for (int i = 0; i < MAX_WALKGRIDS; i++) {
 		if (_walkGridList[i]) {
 			// open walk grid file
-			fPolygrid = res_man->openResource(_walkGridList[i]);
+			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
  			fPolygrid += sizeof(_standardHeader);
  			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(_walkGridHeader));
  			fPolygrid += sizeof(_walkGridHeader);
@@ -2601,7 +2592,7 @@ void Router::loadWalkGrid(void) {
 			}
 
 			// close walk grid file
-			res_man->closeResource(_walkGridList[i]);
+			_vm->_resman->closeResource(_walkGridList[i]);
 
 			// increment counts of total bars & nodes in whole
 			// walkgrid

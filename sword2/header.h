@@ -20,8 +20,6 @@
 #ifndef	_HEADER
 #define	_HEADER
 
-#include "common/scummsys.h"
-
 namespace Sword2 {
 
 //----------------------------------------------------------

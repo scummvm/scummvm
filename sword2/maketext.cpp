@@ -46,21 +46,11 @@
 #define LAST_CHAR	255	// last character in character set
 #define DUD		64	// the first "chequered flag" (dud) symbol in
 				// our character set is in the '@' position
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/console.h"
-#include "sword2/debug.h"
-#include "sword2/defs.h"		// for SPEECH_FONT_ID & CONSOLE_FONT_ID
-#include "sword2/header.h"
-#include "sword2/maketext.h"
-#include "sword2/memory.h"
-#include "sword2/protocol.h"	// for fetchFrameHeader()
-#include "sword2/resman.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
 
 namespace Sword2 {
-
-FontRenderer *fontRenderer;
 
 // info for each line of words in the output text sprite
 
@@ -94,7 +84,7 @@ mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, u
 
 	// allocate memory for array of lineInfo structures
 
-	line = memory->allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, UID_temp);
+	line = _vm->_memory->allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, UID_temp);
 
 	// get details of sentence breakdown into array of LineInfo structures
 	// and get the no of lines involved
@@ -107,7 +97,7 @@ mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, u
 	textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *) line->ad, noOfLines);
 
 	// free up the lineInfo array now
-	memory->freeMemory(line);
+	_vm->_memory->freeMemory(line);
 
 	return textSprite;
 }
@@ -220,7 +210,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 
 	// allocate memory for sprite, and lock it ready for use
 	// NB. 'textSprite' is the given pointer to the handle to be used
-	textSprite = memory->allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
+	textSprite = _vm->_memory->allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
 
 	// the handle (*textSprite) now points to UNMOVABLE memory block
 	// set up the frame header
@@ -244,7 +234,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 	memset(linePtr, NO_COL, sizeOfSprite);
 
 	// open font file
-	charSet = res_man->openResource(fontRes);
+	charSet = _vm->_resman->openResource(fontRes);
 
 	// fill sprite with characters, one line at a time
 
@@ -278,10 +268,10 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 	}
 
 	// close font file
-	res_man->closeResource(fontRes);
+	_vm->_resman->closeResource(fontRes);
 
 	// unlock the sprite memory block, so it's movable
-	memory->floatMemory(textSprite);
+	_vm->_memory->floatMemory(textSprite);
 
 	return textSprite;
 }
@@ -295,14 +285,14 @@ uint16 FontRenderer::charWidth(uint8 ch, uint32 fontRes) {
 	uint16 width;
 
 	// open font file
-	charSet = res_man->openResource(fontRes);
+	charSet = _vm->_resman->openResource(fontRes);
 
 	// move to approp. sprite (header)
 	charFrame = findChar(ch, charSet);
 	width = charFrame->width;
 
 	// close font file
- 	res_man->closeResource(fontRes);
+	_vm->_resman->closeResource(fontRes);
 
 	// return its width
 	return width;
@@ -317,14 +307,14 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
 	uint16 height;
 
 	// open font file
-	charSet = res_man->openResource(fontRes);
+	charSet = _vm->_resman->openResource(fontRes);
 
 	// assume all chars the same height, i.e. FIRST_CHAR is as good as any
 	charFrame = findChar(FIRST_CHAR, charSet);
 	height = charFrame->height;
 
 	// close font file
-	res_man->closeResource(fontRes);
+	_vm->_resman->closeResource(fontRes);
 
 	// return its height
 	return height;
@@ -525,7 +515,7 @@ void FontRenderer::printTextBlocs(void) {
 			spriteInfo.data = _blocList[j].text_mem->ad + sizeof(_frameHeader);
 			spriteInfo.colourTable = 0;
 
-			rv = g_graphics->drawSprite(&spriteInfo);
+			rv = _vm->_graphics->drawSprite(&spriteInfo);
 			if (rv)
 				error("Driver Error %.8x in Print_text_blocs", rv);
 		}
@@ -538,7 +528,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 
 	if (_blocList[bloc_number].text_mem) {
 		// release the floating memory and mark it as free
-		memory->freeMemory(_blocList[bloc_number].text_mem);
+		_vm->_memory->freeMemory(_blocList[bloc_number].text_mem);
 		_blocList[bloc_number].text_mem = 0;
 	} else {
 		// illegal kill - stop the system
@@ -564,7 +554,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	uint8 language;
 
 	// open the text resource
-	textFile = res_man->openResource(TEXT_RES);
+	textFile = _resman->openResource(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.
 	// Otherwise, use regular fonts
@@ -603,10 +593,10 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	// GERMAN:   "Baphomet's Fluch II"
 	// default:  "Some game or other, part 86"
 
-	g_graphics->setWindowName((char *) textLine);
+	_graphics->setWindowName((char *) textLine);
 
 	// now ok to close the text file
-	res_man->closeResource(TEXT_RES);
+	_resman->closeResource(TEXT_RES);
 }
 
 // called from the above function, and also from console.cpp

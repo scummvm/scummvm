@@ -34,21 +34,16 @@
 
 // MemMan v1.1
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/debug.h"
-#include "sword2/memory.h"
-#include "sword2/resman.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
-
-MemoryManager *memory;
 
 #define MEMORY_POOL (1024 * 12000)
 
 // #define MEMDEBUG 1
 
-MemoryManager::MemoryManager(void) {
+MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
 	uint32 j;
 	uint8 *memory_base;
 
@@ -56,12 +51,10 @@ MemoryManager::MemoryManager(void) {
 
 	_totalFreeMemory = MEMORY_POOL;
 
-	// malloc memory and adjust for long boundaries
 	memory_base = (uint8 *) malloc(_totalFreeMemory);
 
-	if (!memory_base) {	//could not grab the memory
-		error("Init_memory_manager() couldn't malloc %d bytes", _totalFreeMemory);
-	}
+	if (!memory_base)
+		error("MemoryManager: couldn't malloc %d bytes", _totalFreeMemory);
 
 	// the original malloc address
 	_freeMemman = memory_base;
@@ -501,7 +494,7 @@ mem *MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
 
 	while (virtualDefrag(size)) {
 		// trash the oldest closed resource
-		if (!res_man->helpTheAgedOut()) {
+		if (!_vm->_resman->helpTheAgedOut()) {
 			error("alloc ran out of memory: size=%d type=%d unique_id=%d", size, type, unique_id);
 		}
 	}

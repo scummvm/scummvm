@@ -28,8 +28,6 @@
 
 namespace Sword2 {
 
-class Sword2Engine;
-
 class Debugger : public Common::Debugger<Debugger> {
 private:
 	void varGet(int var);

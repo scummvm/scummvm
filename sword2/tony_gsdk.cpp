@@ -19,11 +19,9 @@
 
 // general odds and ends
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/debug.h"
-#include "sword2/memory.h"
 
 namespace Sword2 {
 
@@ -41,7 +39,7 @@ uint32 Sword2Engine::readFile(const char *name, mem **membloc, uint32 uid) {
 	size = fh.size();
 
 	// reserve enough floating memory for the file
-	*membloc = memory->allocMemory(size, MEM_float, uid);
+	*membloc = _memory->allocMemory(size, MEM_float, uid);
 	
 	if (fh.read((*membloc)->ad, size) != size) {
 		debug(5, "Read_file read fail %d", name);

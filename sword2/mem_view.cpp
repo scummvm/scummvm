@@ -17,18 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/header.h"
-#include "sword2/memory.h"
-#include "sword2/resman.h"
 
 namespace Sword2 {
-
-// has to be global because a local in Fetch_mem_owner is destroyed on exit
-char buf[50];
 
 void MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
@@ -44,9 +36,9 @@ void MemoryManager::displayMemory(void) {
 	j = _baseMemBlock;
 	do {
 		if (_memList[j].uid < 65536) {
-			file_header = (_standardHeader*) res_man->openResource(_memList[j].uid);
+			file_header = (_standardHeader*) _vm->_resman->openResource(_memList[j].uid);
 			// close immediately so give a true count
-			res_man->closeResource(_memList[j].uid);
+			_vm->_resman->closeResource(_memList[j].uid);
 
 			debug(5, "view %d", _memList[j].uid);
 
@@ -73,10 +65,10 @@ void MemoryManager::displayMemory(void) {
 					_memList[j].size / 1024,
 					(_memList[j].size * 100) / _totalFreeMemory,
 					_memList[j].uid,
-					res_man->fetchCluster(_memList[j].uid),
+					_vm->_resman->fetchCluster(_memList[j].uid),
 					file_header->name,
-					res_man->fetchAge(_memList[j].uid),
-					res_man->fetchCount(_memList[j].uid));
+					_vm->_resman->fetchAge(_memList[j].uid),
+					_vm->_resman->fetchCount(_memList[j].uid));
 			} else
 				Debug_Printf(" %d is an illegal resource\n", _memList[j].uid);
 		} else {
@@ -100,6 +92,8 @@ void MemoryManager::displayMemory(void) {
 }
 
 const char *MemoryManager::fetchOwner(uint32 uid) {
+	static char buf[50];
+
 	switch (uid) {
 	case UID_memman:
 		return "MEMMAN";
@@ -160,7 +154,7 @@ void MemoryManager::memoryString(char *string) {
 	sprintf(string,
 		"locked(%u)+float(%u)+free(%u) = %u/%u blocks (%u%% used)(cur %uk)",
 		mem_locked, mem_floating, mem_free, blocksUsed, MAX_mem_blocks,
-		percent, (res_man->fetchUsage() / 1024));
+		percent, (_vm->_resman->fetchUsage() / 1024));
 }
 
 } // End of namespace Sword2

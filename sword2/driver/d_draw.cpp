@@ -17,22 +17,18 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sound/mixer.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
+#include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
-#include "sword2/header.h"		// HACK: For cutscenes instruction message
-#include "sword2/maketext.h"	// HACK: For cutscenes instruction message
 
 namespace Sword2 {
 
-Graphics::Graphics(int16 width, int16 height) 
-	: _iconCount(0), _needFullRedraw(false), _fadeStatus(RDFADE_NONE),
-	  _mouseSprite(NULL), _mouseAnim(NULL), _luggageAnim(NULL),
-	  _layer(0), _renderAverageTime(60), _lightMask(NULL),
-	  _screenWide(width), _screenDeep(height) {
+Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height) 
+	: _vm(vm), _iconCount(0), _needFullRedraw(false),
+	  _fadeStatus(RDFADE_NONE), _mouseSprite(NULL), _mouseAnim(NULL),
+	  _luggageAnim(NULL), _layer(0), _renderAverageTime(60),
+	  _lightMask(NULL), _screenWide(width), _screenDeep(height) {
 
 	int i, j;
 
@@ -40,7 +36,7 @@ Graphics::Graphics(int16 width, int16 height)
 	if (!_buffer)
 		error("Could not initialise display");
 
-	g_system->init_size(width, height);
+	_vm->_system->init_size(width, height);
 
 	for (i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
 		_blockSurfaces[i] = NULL;
@@ -98,19 +94,19 @@ void Graphics::clearScene(void) {
 
 void MoviePlayer::openTextObject(_movieTextObject *obj) {
 	if (obj->textSprite)
-		g_graphics->createSurface(obj->textSprite, &_textSurface);
+		_vm->_graphics->createSurface(obj->textSprite, &_textSurface);
 }
 
 void MoviePlayer::closeTextObject(_movieTextObject *obj) {
 	if (_textSurface) {
-		g_graphics->deleteSurface(_textSurface);
+		_vm->_graphics->deleteSurface(_textSurface);
 		_textSurface = NULL;
 	}
 }
 
 void MoviePlayer::drawTextObject(_movieTextObject *obj) {
 	if (obj->textSprite && _textSurface)
-		g_graphics->drawSurface(obj->textSprite, _textSurface);
+		_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
 }
 
 /**
@@ -130,32 +126,32 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		uint8 oldPal[1024];
 		uint8 tmpPal[1024];
 
-		g_graphics->clearScene();
+		_vm->_graphics->clearScene();
 
 		// HACK: Draw instructions
 		//
 		// I'm using the the menu area, because that's unlikely to be
 		// touched by anything else during the cutscene.
 
-		memset(g_graphics->_buffer, 0, g_graphics->_screenWide * MENUDEEP);
+		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
 		uint8 msg[] = "Cutscene - Press ESC to exit";
-		mem *data = fontRenderer->makeTextSprite(msg, 640, 255, g_sword2->_speechFontId);
+		mem *data = _vm->_fontRenderer->makeTextSprite(msg, 640, 255, _vm->_speechFontId);
 		_frameHeader *frame = (_frameHeader *) data->ad;
 		_spriteInfo msgSprite;
 		uint8 *msgSurface;
 
-		msgSprite.x = g_graphics->_screenWide / 2 - frame->width / 2;
+		msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
 		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
 		msgSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 		msgSprite.data = data->ad + sizeof(_frameHeader);
 
-		g_graphics->createSurface(&msgSprite, &msgSurface);
-		g_graphics->drawSurface(&msgSprite, msgSurface);
-		g_graphics->deleteSurface(msgSurface);
-		memory->freeMemory(data);
+		_vm->_graphics->createSurface(&msgSprite, &msgSurface);
+		_vm->_graphics->drawSurface(&msgSprite, msgSurface);
+		_vm->_graphics->deleteSurface(msgSurface);
+		_vm->_memory->freeMemory(data);
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.
@@ -170,12 +166,12 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		// The text should probably be colored the same as the rest of
 		// the in-game text.
 
-		memcpy(oldPal, g_graphics->_palCopy, 1024);
+		memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
 		tmpPal[255 * 4 + 0] = 255;
 		tmpPal[255 * 4 + 1] = 255;
 		tmpPal[255 * 4 + 2] = 255;
-		g_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		PlayingSoundHandle handle = 0;
 
@@ -186,28 +182,28 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 				break;
 
 			if (frameCounter == text[textCounter]->startFrame) {
-				g_graphics->clearScene();
+				_vm->_graphics->clearScene();
 				openTextObject(text[textCounter]);
 				drawTextObject(text[textCounter]);
 				if (text[textCounter]->speech) {
-					g_sword2->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS);
+					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS);
 				}
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
-				g_graphics->clearScene();
+				_vm->_graphics->clearScene();
 				textCounter++;
 			}
 
 			frameCounter++;
 
-			g_graphics->updateDisplay();
+			_vm->_graphics->updateDisplay();
 
 			_keyboardEvent ke;
 
-			if (g_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
-				g_sword2->_mixer->stopHandle(handle);
+			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
+				_vm->_mixer->stopHandle(handle);
 				skipCutscene = true;
 				break;
 			}
@@ -216,38 +212,38 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 			// frame rate the original movies had, or even if it
 			// was constant, but this seems to work reasonably.
 
-			g_system->delay_msecs(90);
+			_vm->_system->delay_msecs(90);
 		}
 
 		closeTextObject(text[textCounter]);
 
-		g_graphics->clearScene();
-		g_graphics->setNeedFullRedraw();
+		_vm->_graphics->clearScene();
+		_vm->_graphics->setNeedFullRedraw();
 
 		// HACK: Remove the instructions created above
 		Common::Rect r;
 
-		memset(g_graphics->_buffer, 0, g_graphics->_screenWide * MENUDEEP);
+		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 		r.left = r.top = 0;
-		r.right = g_graphics->_screenWide;
+		r.right = _vm->_graphics->_screenWide;
 		r.bottom = MENUDEEP;
-		g_graphics->updateRect(&r);
+		_vm->_graphics->updateRect(&r);
 
 		// FIXME: For now, only play the lead-out music for cutscenes
 		// that have subtitles.
 
 		if (!skipCutscene)
-			g_sound->playLeadOut(musicOut);
+			_vm->_sound->playLeadOut(musicOut);
 
-		g_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 	}
 
 	// Lead-in and lead-out music are, as far as I can tell, only used for
 	// the animated cut-scenes, so this seems like a good place to close
 	// both of them.
 
-	g_sound->closeFx(-1);
-	g_sound->closeFx(-2);
+	_vm->_sound->closeFx(-1);
+	_vm->_sound->closeFx(-2);
 
 	return RD_OK;
 }

@@ -17,11 +17,7 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/driver/render.h"
-#include "sword2/driver/menu.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
 
 namespace Sword2 {
@@ -171,7 +167,7 @@ void Graphics::drawMouse(void) {
 	if (_mouseAnim)
 		decompressMouse(_mouseData, _mouseSprite, _mouseAnim->mousew, _mouseAnim->mouseh, mouse_width);
 
-	g_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
+	_vm->_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
 /**
@@ -225,12 +221,12 @@ int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		animateMouse();
 		drawMouse();
 
-		g_system->show_mouse(true);
+		_vm->_system->show_mouse(true);
 	} else {
 		if (_luggageAnim)
 			drawMouse();
 		else
-			g_system->show_mouse(false);
+			_vm->_system->show_mouse(false);
 	}
 
 	return RD_OK;
@@ -260,12 +256,12 @@ int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
 		animateMouse();
 		drawMouse();
 
-		g_system->show_mouse(true);
+		_vm->_system->show_mouse(true);
 	} else {
 		if (_mouseAnim)
 			drawMouse();
 		else
-			g_system->show_mouse(false);
+			_vm->_system->show_mouse(false);
 	}
 
 	return RD_OK;

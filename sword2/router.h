@@ -20,9 +20,6 @@
 #ifndef _ROUTER_H
 #define _ROUTER_H
 
-#include "sword2/memory.h"
-#include "sword2/object.h"
-
 // This used to be a variable, but it was never set. Actually, it wasn't even
 // initialised!
 //
@@ -30,6 +27,8 @@
 // ending walk in ANY direction)
 //
 // #define FORCE_SLIDY
+
+#include "sword2/object.h"
 
 namespace Sword2 {
 
@@ -103,6 +102,8 @@ typedef	struct {
 
 class Router {
 private:
+	Sword2Engine *_vm;
+
 	// stores pointers to mem blocks containing routes created & used by
 	// megas (NULL if slot not in use)
 	mem *_routeSlots[TOTAL_ROUTE_SLOTS];
@@ -214,9 +215,9 @@ private:
 	void plotCross(int16 x, int16 y, uint8 colour);
 
 public:
-	Router() :
-		_nExtraBars(0), _nExtraNodes(0), _diagonalx(0),
-		_diagonaly(0) {
+	Router(Sword2Engine *vm)
+		: _vm(vm), _nExtraBars(0), _nExtraNodes(0), _diagonalx(0),
+		  _diagonaly(0) {
 		memset(_routeSlots, 0, sizeof(_routeSlots));
 		memset(_bars, 0, sizeof(_bars));
 		memset(_node, 0, sizeof(_node));

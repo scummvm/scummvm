@@ -22,7 +22,6 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-#include "sword2/driver/driver96.h"
 #include "sword2/header.h"
 #include "sword2/memory.h"
 #include "sword2/router.h"
@@ -189,7 +188,7 @@ public:
 		memset(_subjectList, 0, sizeof(_subjectList));
 		memset(_eventList, 0, sizeof(_eventList));
 		memset(_syncList, 0, sizeof(_syncList));
-		_router = new Router();
+		_router = new Router(_vm);
 		setupOpcodes();
 		initStartMenu();
 	}

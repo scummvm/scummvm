@@ -25,16 +25,8 @@
 //	3 normal sorted layers
 //	up to 2 foreground parallax layers
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/build_display.h"
-#include "sword2/debug.h"
-#include "sword2/header.h"
-#include "sword2/layers.h"
-#include "sword2/logic.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"	// for clearFxQueue() called from fnInitBackground()
 
 namespace Sword2 {
 
@@ -69,11 +61,11 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 #endif
 
 	// if the screen is still fading down then wait for black
-	g_graphics->waitForFade();
+	_graphics->waitForFade();
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
-		rv = g_graphics->closeLightMask();
+		rv = _graphics->closeLightMask();
 		if (rv)
 			error("Driver Error %.8x", rv);
 	}
@@ -82,7 +74,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// for drivers: close the previous screen if one is open
 	if (_thisScreen.background_layer_id)
-		g_graphics->closeBackgroundLayer();
+		_graphics->closeBackgroundLayer();
 
 	_thisScreen.background_layer_id = res;
 	_thisScreen.new_palette = new_palette;
@@ -92,7 +84,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// each cycle
 
 	// file points to 1st byte in the layer file
-	file = res_man->openResource(_thisScreen.background_layer_id);
+	file = _resman->openResource(_thisScreen.background_layer_id);
 	
 	screen_head = fetchScreenHeader(file);
 
@@ -104,7 +96,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
 	//initialise the driver back buffer
-	g_graphics->setLocationMetrics(screen_head->width, screen_head->height);
+	_graphics->setLocationMetrics(screen_head->width, screen_head->height);
 
 	if (screen_head->noLayers) {
 		for (int i = 0; i < screen_head->noLayers; i++) {
@@ -126,7 +118,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// using the screen size setup the scrolling variables
 
 	// if layer is larger than physical screen
-	if (screen_head->width > g_graphics->_screenWide || screen_head->height > g_graphics->_screenDeep) {
+	if (screen_head->width > _graphics->_screenWide || screen_head->height > _graphics->_screenDeep) {
 		// switch on scrolling (2 means first time on screen)
 		_thisScreen.scroll_flag = 2;
 
@@ -141,9 +133,9 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		// calc max allowed offsets (to prevent scrolling off edge) -
 		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
 		// NB. min scroll offsets are both zero
-		_thisScreen.max_scroll_offset_x = screen_head->width - g_graphics->_screenWide;
+		_thisScreen.max_scroll_offset_x = screen_head->width - _graphics->_screenWide;
 		// 'screenDeep' includes the menu's, so take away 80 pixels
-		_thisScreen.max_scroll_offset_y = screen_head->height - (g_graphics->_screenDeep - (RDMENU_MENUDEEP * 2));
+		_thisScreen.max_scroll_offset_y = screen_head->height - (_graphics->_screenDeep - (RDMENU_MENUDEEP * 2));
 	} else {
 		// layer fits on physical screen - scrolling not required
 		_thisScreen.scroll_flag = 0;		// switch off scrolling
@@ -153,7 +145,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// no inter-cycle scroll between new screens (see setScrollTarget in
 	// build display)
-	g_graphics->resetRenderEngine();
+	_graphics->resetRenderEngine();
 
 	// these are the physical screen coords where the system
 	// will try to maintain George's actual feet coords
@@ -177,7 +169,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		spriteInfo.data = fetchShadingMask(file);
 		spriteInfo.colourTable = 0;
 
-		rv = g_graphics->openLightMask(&spriteInfo);
+		rv = _graphics->openLightMask(&spriteInfo);
 		if (rv)
 			error("Driver Error %.8x", rv);
 
@@ -189,7 +181,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	}
 
 	// close the screen file
-   	res_man->closeResource(_thisScreen.background_layer_id);
+   	_resman->closeResource(_thisScreen.background_layer_id);
 
 	setUpBackgroundLayers();
 
@@ -211,7 +203,7 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 		// open resource & set pointers to headers
 		// file points to 1st byte in the layer file
 
-		file = res_man->openResource(_thisScreen.background_layer_id);
+		file = _resman->openResource(_thisScreen.background_layer_id);
 
 		screen_head = fetchScreenHeader(file);
 
@@ -221,26 +213,26 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->bg_parallax[i])
-				g_graphics->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
+				_graphics->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
 			else
-				g_graphics->initialiseBackgroundLayer(NULL);
+				_graphics->initialiseBackgroundLayer(NULL);
 		}
 
 		// Normal backround layer
 
-		g_graphics->initialiseBackgroundLayer(fetchBackgroundLayer(file));
+		_graphics->initialiseBackgroundLayer(fetchBackgroundLayer(file));
 
 		// Foreground parallax layers
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->fg_parallax[i])
-				g_graphics->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
+				_graphics->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
 			else
-				g_graphics->initialiseBackgroundLayer(NULL);
+				_graphics->initialiseBackgroundLayer(NULL);
 		}
 
 		// close the screen file
-		res_man->closeResource(_thisScreen.background_layer_id);
+		_resman->closeResource(_thisScreen.background_layer_id);
 	}
 }
 

@@ -20,12 +20,9 @@
 #ifndef DRIVER96_H
 #define DRIVER96_H
 
-#include "common/scummsys.h"
-#include "base/engine.h" // for warning()
-#include "common/system.h"
-#include "common/rect.h"
-
 namespace Sword2 {
+
+class Sword2Engine;
 
 //
 //	Defines
@@ -282,6 +279,9 @@ extern int32 SetLanguageVersion(uint8 version);
 #define MAX_KEY_BUFFER 32
 
 class Input {
+private:
+	Sword2Engine *_vm;
+
 	uint8 _mouseBacklog;
 	uint8 _mouseLogPos;
 	_mouseEvent _mouseLog[MAX_MOUSE_EVENTS];
@@ -303,8 +303,8 @@ public:
 	int16 _mouseX;
 	int16 _mouseY;
 
-	Input() :
-		_mouseBacklog(0), _mouseLogPos(0), _keyBacklog(0),
+	Input(Sword2Engine *vm) :
+		_vm(vm), _mouseBacklog(0), _mouseLogPos(0), _keyBacklog(0),
 		_keyLogPos(0) {};
 
 	void parseEvents(void);

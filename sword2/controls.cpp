@@ -17,27 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "common/config-manager.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/controls.h"
-#include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/interpreter.h"
-#include "sword2/layers.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"			// for font resource variables
-#include "sword2/mouse.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/router.h"
-#include "sword2/save_rest.h"
-#include "sword2/sound.h"
 #include "sword2/sword2.h"
-
-namespace Sword2 {
+#include "sword2/defs.h"
 
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
@@ -45,80 +28,180 @@ namespace Sword2 {
 // our fonts start on SPACE character (32)
 #define SIZE_OF_CHAR_SET	(256 - 32)
 
-Gui *gui;
+#define MAX_WIDGETS 25
 
-enum {
-	kAlignLeft,
-	kAlignRight,
-	kAlignCenter
+namespace Sword2 {
+
+class Widget;
+
+/**
+ * Base class for all dialogs.
+ */
+
+class Dialog {
+private:
+	int _numWidgets;
+	Widget *_widgets[MAX_WIDGETS];
+	bool _finish;
+	int _result;
+
+public:
+	Gui *_gui;
+
+	Dialog(Gui *gui);
+	virtual ~Dialog();
+
+	void registerWidget(Widget *widget);
+
+	virtual void paint();
+	virtual void setResult(int result);
+
+	int run();
+
+	virtual void onAction(Widget *widget, int result = 0) {}
 };
+
+/**
+ * Base class for all widgets.
+ */
+
+class Widget {
+protected:
+	Dialog *_parent;
+
+	_spriteInfo *_sprites;
+
+	struct WidgetSurface {
+		uint8 *_surface;
+		bool _original;
+	};
+ 
+	WidgetSurface *_surfaces;
+	int _numStates;
+	int _state;
+
+	Common::Rect _hitRect;
+
+public:
+	Widget(Dialog *parent, int states);
+
+	virtual ~Widget();
+
+	void createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc);
+	void linkSurfaceImage(Widget *from, int state, int x, int y);
+
+	void createSurfaceImages(uint32 res, int x, int y);
+	void linkSurfaceImages(Widget *from, int x, int y);
+
+	void setHitRect(int x, int y, int width, int height);
+	bool isHit(int16 x, int16 y);
+
+	void setState(int state);
+	int getState();
+
+	virtual void paint(Common::Rect *clipRect = NULL);
+
+	virtual void onMouseEnter() {}
+	virtual void onMouseExit() {}
+	virtual void onMouseMove(int x, int y) {}
+	virtual void onMouseDown(int x, int y) {}
+	virtual void onMouseUp(int x, int y) {}
+	virtual void onKey(_keyboardEvent *ke) {}
+	virtual void onTick() {}
+
+	virtual void releaseMouse(int x, int y) {}
+};
+
+/**
+ * This class is used to draw text in dialogs, buttons, etc.
+ */
 
 class FontRendererGui {
 private:
+	Gui *_gui;
+	
 	struct Glyph {
 		uint8 *_data;
 		int _width;
 		int _height;
-	} _glyph[SIZE_OF_CHAR_SET];
+	};
+
+	Glyph _glyph[SIZE_OF_CHAR_SET];
+
 	int _fontId;
 
 public:
-	FontRendererGui(int fontId) : _fontId(fontId) {
-		uint8 *font = res_man->openResource(fontId);
-		_frameHeader *head;
-		_spriteInfo sprite;
+	enum {
+		kAlignLeft,
+		kAlignRight,
+		kAlignCenter
+	};
 
-		sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+	FontRendererGui(Gui *gui, int fontId);
+	~FontRendererGui();
 
-		for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
-			head = (_frameHeader *) g_sword2->fetchFrameHeader(font, i);
-			sprite.data = (uint8 *) (head + 1);
-			sprite.w = head->width;
-			sprite.h = head->height;
-			g_graphics->createSurface(&sprite, &_glyph[i]._data);
-			_glyph[i]._width = head->width;
-			_glyph[i]._height = head->height;
-		}
+	void fetchText(int textId, char *buf);
 
-		res_man->closeResource(fontId);
-	}
-
-	~FontRendererGui() {
-		for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
-			g_graphics->deleteSurface(_glyph[i]._data);
-	}
-
-	void fetchText(int textId, char *buf) {
-		uint8 *data = g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff);
-		int i;
-
-		for (i = 0; data[i + 2]; i++) {
-			if (buf)
-				buf[i] = data[i + 2];
-		}
-			
-		buf[i] = 0;
-		res_man->closeResource(textId / SIZE);
-	}
-
-	int getTextWidth(char *text) {
-		int textWidth = 0;
-
-		for (int i = 0; text[i]; i++)
-			textWidth += (_glyph[text[i] - 32]._width - CHARACTER_OVERLAP);
-		return textWidth;
-	}
-
-	int getTextWidth(int textId) {
-		char text[MAX_STRING_LEN];
-
-		fetchText(textId, text);
-		return getTextWidth(text);
-	}
+	int getTextWidth(char *text);
+	int getTextWidth(int textId);
 
 	void drawText(char *text, int x, int y, int alignment = kAlignLeft);
 	void drawText(int textId, int x, int y, int alignment = kAlignLeft);
 };
+
+FontRendererGui::FontRendererGui(Gui *gui, int fontId)
+	: _gui(gui), _fontId(fontId) {
+	uint8 *font = _gui->_vm->_resman->openResource(fontId);
+	_frameHeader *head;
+	_spriteInfo sprite;
+
+	sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+
+	for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
+		head = (_frameHeader *) _gui->_vm->fetchFrameHeader(font, i);
+		sprite.data = (uint8 *) (head + 1);
+		sprite.w = head->width;
+		sprite.h = head->height;
+		_gui->_vm->_graphics->createSurface(&sprite, &_glyph[i]._data);
+		_glyph[i]._width = head->width;
+		_glyph[i]._height = head->height;
+	}
+
+	_gui->_vm->_resman->closeResource(fontId);
+}
+
+FontRendererGui::~FontRendererGui() {
+	for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
+		_gui->_vm->_graphics->deleteSurface(_glyph[i]._data);
+}
+
+void FontRendererGui::fetchText(int textId, char *buf) {
+	uint8 *data = _gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
+	int i;
+
+	for (i = 0; data[i + 2]; i++) {
+		if (buf)
+			buf[i] = data[i + 2];
+	}
+			
+	buf[i] = 0;
+	_gui->_vm->_resman->closeResource(textId / SIZE);
+}
+
+int FontRendererGui::getTextWidth(char *text) {
+	int textWidth = 0;
+
+	for (int i = 0; text[i]; i++)
+		textWidth += (_glyph[text[i] - 32]._width - CHARACTER_OVERLAP);
+	return textWidth;
+}
+
+int FontRendererGui::getTextWidth(int textId) {
+	char text[MAX_STRING_LEN];
+
+	fetchText(textId, text);
+	return getTextWidth(text);
+}
 
 void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 	_spriteInfo sprite;
@@ -144,7 +227,7 @@ void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 		sprite.w = _glyph[text[i] - 32]._width;
 		sprite.h = _glyph[text[i] - 32]._height;
 
-		g_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
+		_gui->_vm->_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
 
 		sprite.x += (_glyph[(int) text[i] - 32]._width - CHARACTER_OVERLAP);
 	}
@@ -157,91 +240,127 @@ void FontRendererGui::drawText(int textId, int x, int y, int alignment) {
 	drawText(text, x, y, alignment);
 }
 
-class Dialog;
+//
+// Dialog class functions
+//
 
-typedef struct Surface {
-	uint8 *_surface;
-	bool _original;
-} WidgetSurface;
+Dialog::Dialog(Gui *gui)
+	: _numWidgets(0), _finish(false), _result(0), _gui(gui) {
+	_gui->_vm->setFullPalette(CONTROL_PANEL_PALETTE);
+}
 
-class Widget {
-protected:
-	Dialog *_parent;
+Dialog::~Dialog() {
+	for (int i = 0; i < _numWidgets; i++)
+		delete _widgets[i];
+}
 
-	_spriteInfo *_sprites;
-	WidgetSurface *_surfaces;
-	int _numStates;
-	int _state;
+void Dialog::registerWidget(Widget *widget) {
+	if (_numWidgets < MAX_WIDGETS)
+		_widgets[_numWidgets++] = widget;
+}
 
-	Common::Rect _hitRect;
+void Dialog::paint() {
+	_gui->_vm->_graphics->clearScene();
+	for (int i = 0; i < _numWidgets; i++)
+		_widgets[i]->paint();
+}
 
-public:
-	Widget(Dialog *parent, int states) :
-			_parent(parent), _numStates(states), _state(0) {
-		_sprites = (_spriteInfo *) calloc(states, sizeof(_spriteInfo));
-		_surfaces = (WidgetSurface *) calloc(states, sizeof(WidgetSurface));
+void Dialog::setResult(int result) {
+	_result = result;
+	_finish = true;
+}
 
-		_hitRect.left = _hitRect.right = _hitRect.top = _hitRect.bottom = -1;
-	}
+int Dialog::run() {
+	int i;
 
-	virtual ~Widget() {
-		for (int i = 0; i < _numStates; i++) {
-			if (_surfaces[i]._original)
-				g_graphics->deleteSurface(_surfaces[i]._surface);
+	paint();
+
+	int16 oldMouseX = -1;
+	int16 oldMouseY = -1;
+
+	while (!_finish) {
+		// So that the menu icons will reach their full size
+		_gui->_vm->_graphics->processMenu();
+		_gui->_vm->_graphics->updateDisplay();
+
+		int16 newMouseX = _gui->_vm->_input->_mouseX;
+		int16 newMouseY = _gui->_vm->_input->_mouseY + 40;
+
+		_mouseEvent *me = _gui->_vm->_input->mouseEvent();
+		_keyboardEvent ke;
+		int32 keyboardStatus = _gui->_vm->_input->readKey(&ke);
+
+		if (keyboardStatus == RD_OK) {
+			if (ke.keycode == 27)
+				setResult(0);
+			else if (ke.keycode == '\n' || ke.keycode == '\r')
+				setResult(1);
 		}
-		free(_sprites);
-		free(_surfaces);
-	}
 
-	void createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc);
-	void linkSurfaceImage(Widget *from, int state, int x, int y);
+		for (i = 0; i < _numWidgets; i++) {
+			bool oldHit = _widgets[i]->isHit(oldMouseX, oldMouseY);
+			bool newHit = _widgets[i]->isHit(newMouseX, newMouseY);
 
-	void createSurfaceImages(uint32 res, int x, int y) {
-		for (int i = 0; i < _numStates; i++)
-			createSurfaceImage(i, res, x, y, i);
-	}
+			if (!oldHit && newHit)
+				_widgets[i]->onMouseEnter();
+			if (oldHit && !newHit)
+				_widgets[i]->onMouseExit();
+			if (_gui->_vm->_input->_mouseX != oldMouseX || _gui->_vm->_input->_mouseY != oldMouseY)
+				_widgets[i]->onMouseMove(newMouseX, newMouseY);
 
-	void linkSurfaceImages(Widget *from, int x, int y) {
-		for (int i = 0; i < from->_numStates; i++)
-			linkSurfaceImage(from, i, x, y);
-	}
+			if (me) {
+				switch (me->buttons) {
+				case RD_LEFTBUTTONDOWN:
+					if (newHit)
+						_widgets[i]->onMouseDown(newMouseX, newMouseY);
+					break;
+				case RD_LEFTBUTTONUP:
+					if (newHit)
+						_widgets[i]->onMouseUp(newMouseX, newMouseY);
+					// So that slider widgets will know
+					// when the user releases the mouse
+					// button, even if the cursor is
+					// outside of the slider's hit area.
+					_widgets[i]->releaseMouse(newMouseX, newMouseY);
+					break;
+				}
+			}
 
-	void setHitRect(int x, int y, int width, int height) {
-		_hitRect.left = x;
-		_hitRect.right = x + width;
-		_hitRect.top = y;
-		_hitRect.bottom = y + height;
-	}
+			if (keyboardStatus == RD_OK)
+				_widgets[i]->onKey(&ke);
 
-	bool isHit(int16 x, int16 y) {
-		return _hitRect.left >= 0 && _hitRect.contains(x, y);
-	}
-
-	void setState(int state) {
-		if (state != _state) {
-			_state = state;
-			paint();
+			_widgets[i]->onTick();
 		}
+
+		oldMouseX = newMouseX;
+		oldMouseY = newMouseY;
+
+		_gui->_vm->_system->delay_msecs(20);
 	}
 
-	int getState() {
-		return _state;
+	return _result;
+}
+
+//
+// Widget functions
+//
+
+Widget::Widget(Dialog *parent, int states)
+	: _parent(parent), _numStates(states), _state(0) {
+	_sprites = (_spriteInfo *) calloc(states, sizeof(_spriteInfo));
+	_surfaces = (WidgetSurface *) calloc(states, sizeof(WidgetSurface));
+
+	_hitRect.left = _hitRect.right = _hitRect.top = _hitRect.bottom = -1;
+}
+
+Widget::~Widget() {
+	for (int i = 0; i < _numStates; i++) {
+		if (_surfaces[i]._original)
+			_parent->_gui->_vm->_graphics->deleteSurface(_surfaces[i]._surface);
 	}
-
-	virtual void paint(Common::Rect *clipRect = NULL) {
-		g_graphics->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
-	}
-
-	virtual void onMouseEnter() {}
-	virtual void onMouseExit() {}
-	virtual void onMouseMove(int x, int y) {}
-	virtual void onMouseDown(int x, int y) {}
-	virtual void onMouseUp(int x, int y) {}
-	virtual void onKey(_keyboardEvent *ke) {}
-	virtual void onTick() {}
-
-	virtual void releaseMouse(int x, int y) {}
-};
+	free(_sprites);
+	free(_surfaces);
+}
 
 void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
 	uint8 *file, *colTablePtr = NULL;
@@ -251,11 +370,11 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	uint32 spriteType = RDSPR_TRANS;
 
 	// open anim resource file, point to base
-	file = res_man->openResource(res);
+	file = _parent->_gui->_vm->_resman->openResource(res);
 
-	anim_head = g_sword2->fetchAnimHeader(file);
-	cdt_entry = g_sword2->fetchCdtEntry(file, pc);
-	frame_head = g_sword2->fetchFrameHeader(file, pc);
+	anim_head = _parent->_gui->_vm->fetchAnimHeader(file);
+	cdt_entry = _parent->_gui->_vm->fetchCdtEntry(file, pc);
+	frame_head = _parent->_gui->_vm->fetchFrameHeader(file, pc);
 
 	// If the frame is flipped. (Only really applicable to frames using
 	// offsets.)
@@ -292,11 +411,11 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	// Points to just after frame header, ie. start of sprite data
 	_sprites[state].data = (uint8 *) (frame_head + 1);
 
-	g_graphics->createSurface(&_sprites[state], &_surfaces[state]._surface);
+	_parent->_gui->_vm->_graphics->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
-	res_man->closeResource(res);
+	_parent->_gui->_vm->_resman->closeResource(res);
 };
 
 void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
@@ -312,122 +431,50 @@ void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
 	_surfaces[state]._original = false;
 };
 
-#define MAX_WIDGETS 25
-
-class Dialog {
-private:
-	int _numWidgets;
-	Widget *_widgets[MAX_WIDGETS];
-	bool _finish;
-	int _result;
-
-public:
-	Dialog() : _numWidgets(0), _finish(false), _result(0) {
-		g_sword2->setFullPalette(CONTROL_PANEL_PALETTE);
-	}
-
-	virtual ~Dialog() {
-		for (int i = 0; i < _numWidgets; i++)
-			delete _widgets[i];
-	}
-
-	void registerWidget(Widget *widget) {
-		if (_numWidgets < MAX_WIDGETS) {
-			_widgets[_numWidgets++] = widget;
-		}
-	}
-
-	virtual void onAction(Widget *widget, int result = 0) {}
-
-	virtual void paint() {
-		g_graphics->clearScene();
-		for (int i = 0; i < _numWidgets; i++)
-			_widgets[i]->paint();
-	}
-
-	virtual void setResult(int result) {
-		_result = result;
-		_finish = true;
-	}
-
-	int run();
-};
-
-int Dialog::run() {
-	int i;
-
-	paint();
-
-	int16 oldMouseX = -1;
-	int16 oldMouseY = -1;
-
-	while (!_finish) {
-		// So that the menu icons will reach their full size
-		g_graphics->processMenu();
-		g_graphics->updateDisplay();
-
-		int16 newMouseX = g_input->_mouseX;
-		int16 newMouseY = g_input->_mouseY + 40;
-
-		_mouseEvent *me = g_input->mouseEvent();
-		_keyboardEvent ke;
-		int32 keyboardStatus = g_input->readKey(&ke);
-
-		if (keyboardStatus == RD_OK) {
-			if (ke.keycode == 27)
-				setResult(0);
-			else if (ke.keycode == '\n' || ke.keycode == '\r')
-				setResult(1);
-		}
-
-		for (i = 0; i < _numWidgets; i++) {
-			bool oldHit = _widgets[i]->isHit(oldMouseX, oldMouseY);
-			bool newHit = _widgets[i]->isHit(newMouseX, newMouseY);
-
-			if (!oldHit && newHit)
-				_widgets[i]->onMouseEnter();
-			if (oldHit && !newHit)
-				_widgets[i]->onMouseExit();
-			if (g_input->_mouseX != oldMouseX || g_input->_mouseY != oldMouseY)
-				_widgets[i]->onMouseMove(newMouseX, newMouseY);
-
-			if (me) {
-				switch (me->buttons) {
-				case RD_LEFTBUTTONDOWN:
-					if (newHit)
-						_widgets[i]->onMouseDown(newMouseX, newMouseY);
-					break;
-				case RD_LEFTBUTTONUP:
-					if (newHit)
-						_widgets[i]->onMouseUp(newMouseX, newMouseY);
-					// So that slider widgets will know
-					// when the user releases the mouse
-					// button, even if the cursor is
-					// outside of the slider's hit area.
-					_widgets[i]->releaseMouse(newMouseX, newMouseY);
-					break;
-				}
-			}
-
-			if (keyboardStatus == RD_OK)
-				_widgets[i]->onKey(&ke);
-
-			_widgets[i]->onTick();
-		}
-
-		oldMouseX = newMouseX;
-		oldMouseY = newMouseY;
-
-		g_system->delay_msecs(20);
-	}
-
-	return _result;
+void Widget::createSurfaceImages(uint32 res, int x, int y) {
+	for (int i = 0; i < _numStates; i++)
+		createSurfaceImage(i, res, x, y, i);
 }
+
+void Widget::linkSurfaceImages(Widget *from, int x, int y) {
+	for (int i = 0; i < from->_numStates; i++)
+		linkSurfaceImage(from, i, x, y);
+}
+
+void Widget::setHitRect(int x, int y, int width, int height) {
+	_hitRect.left = x;
+	_hitRect.right = x + width;
+	_hitRect.top = y;
+	_hitRect.bottom = y + height;
+}
+
+bool Widget::isHit(int16 x, int16 y) {
+	return _hitRect.left >= 0 && _hitRect.contains(x, y);
+}
+
+void Widget::setState(int state) {
+	if (state != _state) {
+		_state = state;
+		paint();
+	}
+}
+
+int Widget::getState() {
+	return _state;
+}
+
+void Widget::paint(Common::Rect *clipRect) {
+	_parent->_gui->_vm->_graphics->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
+}
+
+/**
+ * Standard button class.
+ */
 
 class Button : public Widget {
 public:
-	Button(Dialog *parent, int x, int y, int w, int h) :
-			Widget(parent, 2) {
+	Button(Dialog *parent, int x, int y, int w, int h)
+		: Widget(parent, 2) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -447,13 +494,18 @@ public:
 	}
 };
 
+/**
+ * Scroll buttons are used to scroll the savegame list. The difference between
+ * this and a normal button is that we want this to repeat.
+ */
+
 class ScrollButton : public Widget {
 private:
 	uint32 _holdCounter;
 
 public:
-	ScrollButton(Dialog *parent, int x, int y, int w, int h) :
-			Widget(parent, 2), _holdCounter(0) {
+	ScrollButton(Dialog *parent, int x, int y, int w, int h)
+		: Widget(parent, 2), _holdCounter(0) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -480,15 +532,20 @@ public:
 	}
 };
 
+/**
+ * A switch is a button that changes state when clicked, and keeps that state
+ * until clicked again.
+ */
+
 class Switch : public Widget {
 private:
 	bool _holding, _value;
 	int _upState, _downState;
 
 public:
-	Switch(Dialog *parent, int x, int y, int w, int h) :
-			Widget(parent, 2), _holding(false),
-			_value(false), _upState(0), _downState(1) {
+	Switch(Dialog *parent, int x, int y, int w, int h)
+		: Widget(parent, 2), _holding(false), _value(false),
+		  _upState(0), _downState(1) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -537,6 +594,10 @@ public:
 	}
 };
 
+/**
+ * A slider is used to specify a value within a pre-defined range.
+ */
+
 class Slider : public Widget {
 private:
 	Widget *_background;
@@ -555,10 +616,10 @@ private:
 
 public:
 	Slider(Dialog *parent, Widget *background, int max,
-		int x, int y, int w, int h, Widget *base = NULL) :
-			Widget(parent, 1), _background(background),
-			_dragging(false), _value(0), _targetValue(0),
-			_maxValue(max) {
+		int x, int y, int w, int h, Widget *base = NULL)
+		: Widget(parent, 1), _background(background),
+		  _dragging(false), _value(0), _targetValue(0),
+		  _maxValue(max) {
 		setHitRect(x, y, w, h);
 
 		if (base)
@@ -654,9 +715,12 @@ public:
 	}
 };
 
+/**
+ * A "mini" dialog is basically a yes/no question.
+ */
+
 class MiniDialog : public Dialog {
 private:
-	Sword2Engine *_vm;
 	int _textId;
 	FontRendererGui *_fr;
 	Widget *_panel;
@@ -664,8 +728,9 @@ private:
 	Button *_cancelButton;
 
 public:
-	MiniDialog(int fontId, uint32 textId) : _textId(textId) {
-		_fr = new FontRendererGui(fontId);
+	MiniDialog(Gui *gui, uint32 textId)
+		: Dialog(gui), _textId(textId) {
+		_fr = new FontRendererGui(_gui, _gui->_vm->_controlsFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(1996, 203, 104);
@@ -688,7 +753,7 @@ public:
 	virtual void paint() {
 		Dialog::paint();
 
-		_fr->drawText(_textId, 310, 134, kAlignCenter);
+		_fr->drawText(_textId, 310, 134, FontRendererGui::kAlignCenter);
 		_fr->drawText(149618688, 270, 214);	// ok
 		_fr->drawText(149618689, 270, 276);	// cancel
 	}
@@ -700,6 +765,10 @@ public:
 			setResult(0);
 	}
 };
+
+/**
+ * The game settings dialog.
+ */
 
 class OptionsDialog : public Dialog {
 private:
@@ -720,8 +789,8 @@ private:
 	Button *_cancelButton;
 
 public:
-	OptionsDialog() {
-		_fr = new FontRendererGui(g_sword2->_controlsFontId);
+	OptionsDialog(Gui *gui) : Dialog(gui) {
+		_fr = new FontRendererGui(gui, gui->_vm->_controlsFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(3405, 0, 40);
@@ -776,19 +845,19 @@ public:
 		registerWidget(_okButton);
 		registerWidget(_cancelButton);
 
-		gui->readOptionSettings();
+		_gui->readOptionSettings();
 
-		_objectLabelsSwitch->setValue(gui->_pointerTextSelected);
-		_subtitlesSwitch->setValue(gui->_subtitles);
-		_reverseStereoSwitch->setValue(gui->_stereoReversed);
-		_musicSwitch->setValue(!g_sound->isMusicMute());
-		_speechSwitch->setValue(!g_sound->isSpeechMute());
-		_fxSwitch->setValue(!g_sound->isFxMute());
-		_musicSlider->setValue(g_sound->getMusicVolume());
-		_speechSlider->setValue(g_sound->getSpeechVolume());
-		_fxSlider->setValue(g_sound->getFxVolume());
-		_gfxSlider->setValue(g_graphics->getRenderLevel());
-		_gfxPreview->setState(g_graphics->getRenderLevel());
+		_objectLabelsSwitch->setValue(_gui->_pointerTextSelected);
+		_subtitlesSwitch->setValue(_gui->_subtitles);
+		_reverseStereoSwitch->setValue(_gui->_stereoReversed);
+		_musicSwitch->setValue(!_gui->_vm->_sound->isMusicMute());
+		_speechSwitch->setValue(!_gui->_vm->_sound->isSpeechMute());
+		_fxSwitch->setValue(!_gui->_vm->_sound->isFxMute());
+		_musicSlider->setValue(_gui->_vm->_sound->getMusicVolume());
+		_speechSlider->setValue(_gui->_vm->_sound->getSpeechVolume());
+		_fxSlider->setValue(_gui->_vm->_sound->getFxVolume());
+		_gfxSlider->setValue(_gui->_vm->_graphics->getRenderLevel());
+		_gfxPreview->setState(_gui->_vm->_graphics->getRenderLevel());
 	}
 
 	~OptionsDialog() {
@@ -817,9 +886,9 @@ public:
 		}
 
 		// Options
-		_fr->drawText(149618698, 321, 55, kAlignCenter);
+		_fr->drawText(149618698, 321, 55, FontRendererGui::kAlignCenter);
 		// Subtitles
-		_fr->drawText(149618699, 500, 103, kAlignRight);
+		_fr->drawText(149618699, 500, 103, FontRendererGui::kAlignRight);
 		// Object labels
 		_fr->drawText(149618700, 299 - maxWidth, 103);
 		// Music volume
@@ -833,9 +902,9 @@ public:
 		// Graphics quality
 		_fr->drawText(149618705, 299 - maxWidth, 341);
 		// Ok
-		_fr->drawText(149618688, 193, 382, kAlignRight);
+		_fr->drawText(149618688, 193, 382, FontRendererGui::kAlignRight);
 		// Cancel
-		_fr->drawText(149618689, 385, 382, kAlignRight);
+		_fr->drawText(149618689, 385, 382, FontRendererGui::kAlignRight);
 	}
 
 	virtual void onAction(Widget *widget, int result = 0) {
@@ -843,10 +912,10 @@ public:
 		// we need to update music volume immediately.
 
 		if (widget == _musicSwitch) {
-			g_sound->muteMusic(result != 0);
+			_gui->_vm->_sound->muteMusic(result != 0);
 		} else if (widget == _musicSlider) {
-			g_sound->setMusicVolume(result);
-			g_sound->muteMusic(result == 0);
+			_gui->_vm->_sound->setMusicVolume(result);
+			_gui->_vm->_sound->muteMusic(result == 0);
 			_musicSwitch->setValue(result != 0);
 		} else if (widget == _speechSlider) {
 			_speechSwitch->setValue(result != 0);
@@ -854,32 +923,34 @@ public:
 			_fxSwitch->setValue(result != 0);
 		} else if (widget == _gfxSlider) {
 			_gfxPreview->setState(result);
-			gui->updateGraphicsLevel(result);
+			_gui->updateGraphicsLevel(result);
 		} else if (widget == _okButton) {
-			gui->_subtitles = _subtitlesSwitch->getValue();
-			gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
-			gui->_stereoReversed = _reverseStereoSwitch->getValue();
+			_gui->_subtitles = _subtitlesSwitch->getValue();
+			_gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
+			_gui->_stereoReversed = _reverseStereoSwitch->getValue();
 
 			// Apply the changes
-			g_sound->muteMusic(!_musicSwitch->getValue());
-			g_sound->muteSpeech(!_speechSwitch->getValue());
-			g_sound->muteFx(!_fxSwitch->getValue());
-			g_sound->setMusicVolume(_musicSlider->getValue());
-			g_sound->setSpeechVolume(_speechSlider->getValue());
-			g_sound->setFxVolume(_fxSlider->getValue());
-			g_sound->buildPanTable(gui->_stereoReversed);
+			_gui->_vm->_sound->muteMusic(!_musicSwitch->getValue());
+			_gui->_vm->_sound->muteSpeech(!_speechSwitch->getValue());
+			_gui->_vm->_sound->muteFx(!_fxSwitch->getValue());
+			_gui->_vm->_sound->setMusicVolume(_musicSlider->getValue());
+			_gui->_vm->_sound->setSpeechVolume(_speechSlider->getValue());
+			_gui->_vm->_sound->setFxVolume(_fxSlider->getValue());
+			_gui->_vm->_sound->buildPanTable(_gui->_stereoReversed);
 
-			gui->updateGraphicsLevel(_gfxSlider->getValue());
+			_gui->updateGraphicsLevel(_gfxSlider->getValue());
 
-			gui->writeOptionSettings();
+			_gui->writeOptionSettings();
 			setResult(1);
 		} else if (widget == _cancelButton) {
 			// Revert the changes
-			gui->readOptionSettings();
+			_gui->readOptionSettings();
 			setResult(0);
 		}
 	}
 };
+
+// FIXME: Move these into some class
 
 enum {
 	kSaveDialog,
@@ -902,9 +973,8 @@ private:
 	bool _editable;
 
 public:
-	Slot(Dialog *parent, int x, int y, int w, int h) :
-			Widget(parent, 2), _clickable(false),
-			_editable(false) {
+	Slot(Dialog *parent, int x, int y, int w, int h)
+		: Widget(parent, 2), _clickable(false), _editable(false) {
 		setHitRect(x, y, w, h);
 		_text[0] = 0;
 	}
@@ -988,8 +1058,6 @@ public:
 
 class SaveLoadDialog : public Dialog {
 private:
-	Sword2Engine *_vm;
-
 	int _mode, _selectedSlot;
 	char _editBuffer[SAVE_DESCRIPTION_LEN];
 	int _editPos, _firstPos;
@@ -1009,15 +1077,15 @@ private:
 	void saveLoadError(char *text);
 
 public:
-	SaveLoadDialog(Sword2Engine *vm, int mode)
-		: _vm(vm), _mode(mode), _selectedSlot(-1) {
+	SaveLoadDialog(Gui *gui, int mode)
+		: Dialog(gui), _mode(mode), _selectedSlot(-1) {
 		int i;
 
 		// FIXME: The "control font" and the "red font" are currently
 		// always the same font, so one should be eliminated.
 
-		_fr1 = new FontRendererGui(_vm->_controlsFontId);
-		_fr2 = new FontRendererGui(_vm->_redFontId);
+		_fr1 = new FontRendererGui(_gui, _gui->_vm->_controlsFontId);
+		_fr2 = new FontRendererGui(_gui, _gui->_vm->_redFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(2016, 0, 40);
@@ -1074,13 +1142,13 @@ public:
 
 	void updateSlots() {
 		for (int i = 0; i < 8; i++) {
-			Slot *slot = _slotButton[(gui->_baseSlot + i) % 8];
+			Slot *slot = _slotButton[(_gui->_baseSlot + i) % 8];
 			FontRendererGui *fr;
 			uint8 description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
 
-			if (gui->_baseSlot + i == _selectedSlot) {
+			if (_gui->_baseSlot + i == _selectedSlot) {
 				slot->setEditable(_mode == kSaveDialog);
 				slot->setState(1);
 				fr = _fr2;
@@ -1090,11 +1158,11 @@ public:
 				fr = _fr1;
 			}
 
-			if (_vm->getSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
-				slot->setText(fr, gui->_baseSlot + i, (char *) description);
+			if (_gui->_vm->getSaveDescription(_gui->_baseSlot + i, description) == SR_OK) {
+				slot->setText(fr, _gui->_baseSlot + i, (char *) description);
 				slot->setClickable(true);
 			} else {
-				slot->setText(fr, gui->_baseSlot + i, NULL);
+				slot->setText(fr, _gui->_baseSlot + i, NULL);
 				slot->setClickable(_mode == kSaveDialog);
 			}
 
@@ -1107,29 +1175,29 @@ public:
 
 	virtual void onAction(Widget *widget, int result = 0) {
 		if (widget == _zupButton) {
-			if (gui->_baseSlot > 0) {
-				if (gui->_baseSlot >= 8)
-					gui->_baseSlot -= 8;
+			if (_gui->_baseSlot > 0) {
+				if (_gui->_baseSlot >= 8)
+					_gui->_baseSlot -= 8;
 				else
-					gui->_baseSlot = 0;
+					_gui->_baseSlot = 0;
 				updateSlots();
 			}
 		} else if (widget == _upButton) {
-			if (gui->_baseSlot > 0) {
-				gui->_baseSlot--;
+			if (_gui->_baseSlot > 0) {
+				_gui->_baseSlot--;
 				updateSlots();
 			}
 		} else if (widget == _downButton) {
-			if (gui->_baseSlot < 92) {
-				gui->_baseSlot++;
+			if (_gui->_baseSlot < 92) {
+				_gui->_baseSlot++;
 				updateSlots();
 			}
 		} else if (widget == _zdownButton) {
-			if (gui->_baseSlot < 92) {
-				if (gui->_baseSlot <= 84)
-					gui->_baseSlot += 8;
+			if (_gui->_baseSlot < 92) {
+				if (_gui->_baseSlot <= 84)
+					_gui->_baseSlot += 8;
 				else
-					gui->_baseSlot = 92;
+					_gui->_baseSlot = 92;
 				updateSlots();
 			}
 		} else if (widget == _okButton) {
@@ -1187,7 +1255,7 @@ public:
 				}
 			} else {
 				if (result == kSelectSlot)
-					_selectedSlot = gui->_baseSlot + (slot->getY() - 72) / 35;
+					_selectedSlot = _gui->_baseSlot + (slot->getY() - 72) / 35;
 				else if (result == kDeselectSlot)
 					_selectedSlot = -1;
 
@@ -1215,7 +1283,7 @@ public:
 		// but I doubt that will make any noticeable difference.
 
 		slot->paint();
-		_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui->_baseSlot) * 36);
+		_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - _gui->_baseSlot) * 36);
 	}
 
 	virtual void paint() {
@@ -1251,7 +1319,7 @@ public:
 
 			_editBuffer[_editPos] = 0;
 
-			uint32 rv = _vm->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
+			uint32 rv = _gui->_vm->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1265,11 +1333,11 @@ public:
 					break;
 				}
 
-				saveLoadError((char *) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char *) (_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			}
 		} else {
-			uint32 rv = _vm->restoreGame(_selectedSlot);
+			uint32 rv = _gui->_vm->restoreGame(_selectedSlot);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1286,20 +1354,20 @@ public:
 					break;
 				}
 
-				saveLoadError((char *) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char *) (_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			} else {
 				// Prime system with a game cycle
 
 				// Reset the graphic 'buildit' list before a
 				// new logic list (see fnRegisterFrame)
-				_vm->resetRenderLists();
+				_gui->_vm->resetRenderLists();
 
 				// Reset the mouse hot-spot list (see
 				// fnRegisterMouse and fnRegisterFrame)
-				_vm->resetMouseList();
+				_gui->_vm->resetMouseList();
 
-				if (_vm->_logic->processSession())
+				if (_gui->_vm->_logic->processSession())
 					error("restore 1st cycle failed??");
 			}
 		}
@@ -1310,31 +1378,31 @@ public:
 
 void SaveLoadDialog::saveLoadError(char* text) {
 	// Print a message on screen. Second parameter is duration.
-	g_sword2->displayMsg((uint8 *) text, 0);
+	_gui->_vm->displayMsg((uint8 *) text, 0);
 
 	// Wait for ESC or mouse click
 	while (1) {
 		_mouseEvent *me;
 
-		g_graphics->updateDisplay();
+		_gui->_vm->_graphics->updateDisplay();
 
-		if (g_input->keyWaiting()) {
+		if (_gui->_vm->_input->keyWaiting()) {
 			_keyboardEvent ke;
 
-			g_input->readKey(&ke);
+			_gui->_vm->_input->readKey(&ke);
 			if (ke.keycode == 27)
 				break;
 		}
 
-		me = g_input->mouseEvent();
+		me = _gui->_vm->_input->mouseEvent();
 		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
 			break;
 
-		g_system->delay_msecs(20);
+		_gui->_vm->_system->delay_msecs(20);
 	}
 
 	// Remove the message.
-	g_sword2->removeMsg();
+	_gui->_vm->removeMsg();
 }
 
 Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
@@ -1371,23 +1439,23 @@ void Gui::readOptionSettings(void) {
 
 	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
 
-	g_sound->setMusicVolume((16 * ConfMan.getInt("music_volume")) / 255);
-	g_sound->setSpeechVolume((14 * ConfMan.getInt("speech_volume")) / 255);
-	g_sound->setFxVolume((14 * ConfMan.getInt("sfx_volume")) / 255);
-	g_sound->muteMusic(ConfMan.getBool("music_mute"));
-	g_sound->muteSpeech(ConfMan.getBool("speech_mute"));
-	g_sound->muteFx(ConfMan.getBool("sfx_mute"));
-	g_sound->buildPanTable(_stereoReversed);
+	_vm->_sound->setMusicVolume((16 * ConfMan.getInt("music_volume")) / 255);
+	_vm->_sound->setSpeechVolume((14 * ConfMan.getInt("speech_volume")) / 255);
+	_vm->_sound->setFxVolume((14 * ConfMan.getInt("sfx_volume")) / 255);
+	_vm->_sound->muteMusic(ConfMan.getBool("music_mute"));
+	_vm->_sound->muteSpeech(ConfMan.getBool("speech_mute"));
+	_vm->_sound->muteFx(ConfMan.getBool("sfx_mute"));
+	_vm->_sound->buildPanTable(_stereoReversed);
 }
 
 void Gui::writeOptionSettings(void) {
-	ConfMan.set("music_volume", _musicVolume[g_sound->getMusicVolume()]);
-	ConfMan.set("speech_volume", _soundVolume[g_sound->getSpeechVolume()]);
-	ConfMan.set("sfx_volume", _soundVolume[g_sound->getFxVolume()]);
-	ConfMan.set("music_mute", g_sound->isMusicMute());
-	ConfMan.set("speech_mute", g_sound->isSpeechMute());
-	ConfMan.set("sfx_mute", g_sound->isFxMute());
-	ConfMan.set("gfx_details", g_graphics->getRenderLevel());
+	ConfMan.set("music_volume", _musicVolume[_vm->_sound->getMusicVolume()]);
+	ConfMan.set("speech_volume", _soundVolume[_vm->_sound->getSpeechVolume()]);
+	ConfMan.set("sfx_volume", _soundVolume[_vm->_sound->getFxVolume()]);
+	ConfMan.set("music_mute", _vm->_sound->isMusicMute());
+	ConfMan.set("speech_mute", _vm->_sound->isSpeechMute());
+	ConfMan.set("sfx_mute", _vm->_sound->isFxMute());
+	ConfMan.set("gfx_details", _vm->_graphics->getRenderLevel());
 	ConfMan.set("nosubtitles", !_subtitles);
 	ConfMan.set("object_labels", _pointerTextSelected);
 	ConfMan.set("reverse_stereo", _stereoReversed);
@@ -1399,17 +1467,17 @@ uint32 Gui::restoreControl(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
 
-	SaveLoadDialog loadDialog(_vm, kLoadDialog);
+	SaveLoadDialog loadDialog(this, kLoadDialog);
 	return loadDialog.run();
 }
 
 void Gui::saveControl(void) {
-	SaveLoadDialog saveDialog(_vm, kSaveDialog);
+	SaveLoadDialog saveDialog(this, kSaveDialog);
 	saveDialog.run();
 }
 
 void Gui::quitControl(void) {
-	MiniDialog quitDialog(_vm->_controlsFontId, 149618692);
+	MiniDialog quitDialog(this, 149618692);
 
 	if (quitDialog.run())
 		_vm->closeGame();
@@ -1418,7 +1486,7 @@ void Gui::quitControl(void) {
 void Gui::restartControl(void) {
 	uint32 temp_demo_flag;
 
-	MiniDialog restartDialog(_vm->_controlsFontId, 149618693);
+	MiniDialog restartDialog(this, 149618693);
 
 	if (!restartDialog.run())
 		return;
@@ -1431,19 +1499,19 @@ void Gui::restartControl(void) {
 	// In case we were dead - well we're not anymore!
 	DEAD = 0;
 
-	g_graphics->clearScene();
+	_vm->_graphics->clearScene();
 
 	// Restart the game. Clear all memory and reset the globals
 	temp_demo_flag = DEMO;
 
 	// Remove all resources from memory, including player object and
 	// global variables
-	res_man->removeAll();
+	_vm->_resman->removeAll();
 
 	// Reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	_vm->_logic->setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
-	res_man->closeResource(1);
+	_vm->_logic->setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader)));
+	_vm->_resman->closeResource(1);
 
 	DEMO = temp_demo_flag;
 
@@ -1463,7 +1531,7 @@ void Gui::restartControl(void) {
 	// fnRegisterFrame)
 	_vm->resetMouseList();
 
-	g_graphics->closeMenuImmediately();
+	_vm->_graphics->closeMenuImmediately();
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground
@@ -1479,7 +1547,7 @@ void Gui::restartControl(void) {
 }
 
 void Gui::optionControl(void) {
-	OptionsDialog optionsDialog;
+	OptionsDialog optionsDialog(this);
 
 	optionsDialog.run();
 	return;
@@ -1491,7 +1559,7 @@ void Gui::updateGraphicsLevel(int newLevel) {
 	else if (newLevel > 3)
 		newLevel = 3;
 
-	g_graphics->setRenderLevel(newLevel);
+	_vm->_graphics->setRenderLevel(newLevel);
 
 	// update our global variable - which needs to be checked when dimming
 	// the palette in PauseGame() in sword2.cpp (since palette-matching

@@ -17,12 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/driver/render.h"
-#include "sword2/driver/menu.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/driver/menu.h"
+#include "sword2/driver/render.h"
 
 namespace Sword2 {
 
@@ -32,7 +30,7 @@ namespace Sword2 {
 #define BLOCKHBITS		6
 
 void Graphics::updateRect(Common::Rect *r) {
-	g_system->copy_rect(_buffer + r->top * _screenWide + r->left,
+	_vm->_system->copy_rect(_buffer + r->top * _screenWide + r->left,
 		_screenWide, r->left, r->top, r->right - r->left,
 		r->bottom - r->top);
 }
@@ -575,7 +573,7 @@ void Graphics::renderParallax(_parallax *p, int16 l) {
  */
 
 void Graphics::initialiseRenderCycle(void) {
-	_initialTime = g_system->get_msecs();
+	_initialTime = _vm->_system->get_msecs();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
 
@@ -588,7 +586,7 @@ void Graphics::startRenderCycle(void) {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
-	_startTime = g_system->get_msecs();
+	_startTime = _vm->_system->get_msecs();
 
 	if (_startTime + _renderAverageTime >= _totalTime)	{
 		_scrollX = _scrollXTarget;
@@ -614,7 +612,7 @@ bool Graphics::endRenderCycle(void) {
 	static int32 renderCountIndex = 0;
 	int32 time;
 
-	time = g_system->get_msecs();
+	time = _vm->_system->get_msecs();
 	renderTimeLog[renderCountIndex] = time - _startTime;
 	_startTime = time;
 	_renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
@@ -639,8 +637,8 @@ bool Graphics::endRenderCycle(void) {
 	if (_scrollXTarget == _scrollX && _scrollYTarget == _scrollY) {
 		// If we have already reached the scroll target sleep for the
 		// rest of the render cycle.
-		g_sword2->sleepUntil(_totalTime);
-		_initialTime = g_system->get_msecs();
+		_vm->sleepUntil(_totalTime);
+		_initialTime = _vm->_system->get_msecs();
 		_totalTime += MILLISECSPERCYCLE;
 		return true;
 	}

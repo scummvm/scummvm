@@ -17,23 +17,10 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/controls.h"
-#include "sword2/defs.h"
-#include "sword2/icons.h"
-#include "sword2/interpreter.h"
-#include "sword2/logic.h"
-#include "sword2/layers.h"
-#include "sword2/maketext.h"
-#include "sword2/mouse.h"
-#include "sword2/object.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/sound.h"
+#include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/defs.h"
+#include "sword2/interpreter.h"
 
 namespace Sword2 {
 
@@ -180,9 +167,9 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
 		if (i != hit) {
-			icon = res_man->openResource(icon_list[i]) + sizeof(_standardHeader);
+			icon = _resman->openResource(icon_list[i]) + sizeof(_standardHeader);
 			_graphics->setMenuIcon(RDMENU_TOP, i, icon);
-			res_man->closeResource(icon_list[i]);
+			_resman->closeResource(icon_list[i]);
 		}
 	}
 
@@ -211,19 +198,19 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	switch (hit) {
 	case 0:
-		gui->optionControl();
+		_gui->optionControl();
 		break;
 	case 1:
-		gui->quitControl();
+		_gui->quitControl();
 		break;
 	case 2:
-		gui->saveControl();
+		_gui->saveControl();
 		break;
 	case 3:
-		gui->restoreControl();
+		_gui->restoreControl();
 		break;
 	case 4:
-		gui->restartControl();
+		_gui->restartControl();
 		break;
 	}
 
@@ -773,8 +760,8 @@ void Sword2Engine::setMouse(uint32 res) {
 	_mousePointerRes = res;
 
 	if (res) {
-		icon = res_man->openResource(res) + sizeof(_standardHeader);
-		len = res_man->_resList[res]->size - sizeof(_standardHeader);
+		icon = _resman->openResource(res) + sizeof(_standardHeader);
+		len = _resman->_resList[res]->size - sizeof(_standardHeader);
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -784,7 +771,7 @@ void Sword2Engine::setMouse(uint32 res) {
 		else
  			_graphics->setMouseAnim(icon, len, RDMOUSE_FLASH);
 
-		res_man->closeResource(res);
+		_resman->closeResource(res);
 	} else {
 		// blank cursor
 		_graphics->setMouseAnim(NULL, 0, 0);
@@ -798,12 +785,12 @@ void Sword2Engine::setLuggage(uint32 res) {
 	_realLuggageItem = res;
 
 	if (res) {
-		icon = res_man->openResource(res) + sizeof(_standardHeader);
-		len = res_man->_resList[res]->size - sizeof(_standardHeader);
+		icon = _resman->openResource(res) + sizeof(_standardHeader);
+		len = _resman->_resList[res]->size - sizeof(_standardHeader);
 
 		_graphics->setLuggageAnim(icon, len);
 
-		res_man->closeResource(res);
+		_resman->closeResource(res);
 	} else
 		_graphics->setLuggageAnim(NULL, 0);
 }
@@ -862,7 +849,7 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 	int16 xOffset, yOffset;
 	uint8 justification;
 
-	if (!gui->_pointerTextSelected || !text_id)
+	if (!_gui->_pointerTextSelected || !text_id)
 		return;
 
 	// Check what the pointer is, to set offsets correctly for text
@@ -992,12 +979,12 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 	local_text = text_id & 0xffff;
 
 	// open text file & get the line
-	text = fetchTextLine(res_man->openResource(text_res), local_text);
+	text = fetchTextLine(_resman->openResource(text_res), local_text);
 
 	// 'text+2' to skip the first 2 bytes which form the
 	// line reference number
 
-	_pointerTextBlocNo = fontRenderer->buildNewBloc(
+	_pointerTextBlocNo = _fontRenderer->buildNewBloc(
 		text + 2, _input->_mouseX + xOffset,
 		_input->_mouseY + yOffset,
 		POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
@@ -1005,12 +992,12 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 		_speechFontId, justification);
 
 	// now ok to close the text file
-	res_man->closeResource(text_res);
+	_resman->closeResource(text_res);
 }
 
 void Sword2Engine::clearPointerText(void) {
 	if (_pointerTextBlocNo) {
-		fontRenderer->killTextBloc(_pointerTextBlocNo);
+		_fontRenderer->killTextBloc(_pointerTextBlocNo);
 		_pointerTextBlocNo = 0;
 	}
 }
@@ -1090,12 +1077,12 @@ int32 Logic::fnNoHuman(int32 *params) {
 
 	// dont hide menu in conversations
 	if (TALK_FLAG == 0)
-		g_graphics->hideMenu(RDMENU_BOTTOM);
+		_vm->_graphics->hideMenu(RDMENU_BOTTOM);
 
 	if (_vm->_mouseMode == MOUSE_system_menu) {
 		// close menu
 		_vm->_mouseMode = MOUSE_normal;
-		g_graphics->hideMenu(RDMENU_TOP);
+		_vm->_graphics->hideMenu(RDMENU_TOP);
 	}
 
 	// script continue
@@ -1138,7 +1125,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	}
 
 	// if mouse is over menu area
-	if (g_input->_mouseY > 399) {
+	if (_vm->_input->_mouseY > 399) {
 		if (_vm->_mouseMode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
 			_vm->_mouseMode = MOUSE_normal;
@@ -1157,7 +1144,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// testing logic scripts by simulating an instant Save &
 		// Restore
 
-		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 
 		// stops all fx & clears the queue - eg. when leaving a
 		// location
@@ -1167,9 +1154,9 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts
 
-		res_man->killAllObjects(false);
+		_vm->_resman->killAllObjects(false);
 
-		g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
+		_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 	}
 
 	return IR_CONT;
@@ -1184,7 +1171,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to Object_mouse or 0 for no write to mouse
 	//		  list
 
-	_vm->registerMouse((Object_mouse *) memory->intToPtr(params[0]));
+	_vm->registerMouse((Object_mouse *) _vm->_memory->intToPtr(params[0]));
 	return IR_CONT;
 }
 
@@ -1209,7 +1196,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
+ 	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
 
 	// floor is always lowest priority
 
@@ -1228,7 +1215,7 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
+ 	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
 
 	// Highest priority
 
@@ -1252,11 +1239,11 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
+	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
 
 	// Highest priority
 
-	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + g_graphics->_screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + _vm->_graphics->_screenWide - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
 	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
 	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
@@ -1293,7 +1280,7 @@ int32 Logic::fnSetObjectHeld(int32 *params) {
 int32 Logic::fnRemoveChooser(int32 *params) {
 	// params:	none
 
-	g_graphics->hideMenu(RDMENU_BOTTOM);
+	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
 	return IR_CONT;
 }
 

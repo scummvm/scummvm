@@ -23,7 +23,6 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/rate.h"
-#include "common/file.h"
 
 namespace Sword2 {
 
@@ -71,7 +70,7 @@ public:
 
 class Sound {
 private:
-	SoundMixer *_mixer;
+	Sword2Engine *_vm;
 
 	OSystem::MutexRef _mutex;
 	RateConverter *_converter;
@@ -100,7 +99,7 @@ private:
 	void updateCompSampleStreaming(int16 *data, uint len);
 
 public:
-	Sound(SoundMixer *mixer);
+	Sound(Sword2Engine *vm);
 	~Sound();
 	void fxServer(int16 *data, uint len);
 	int32 playCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);

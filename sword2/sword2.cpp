@@ -17,32 +17,13 @@
  * $Header$
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "backends/fs/fs.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/driver96.h"
 #include "sword2/defs.h"
-#include "sword2/build_display.h"
-#include "sword2/console.h"
-#include "sword2/controls.h"
-#include "sword2/credits.h"
-#include "sword2/debug.h"
-#include "sword2/header.h"
-#include "sword2/interpreter.h"
-#include "sword2/layers.h"
-#include "sword2/logic.h"
-#include "sword2/maketext.h"
-#include "sword2/memory.h"
-#include "sword2/mouse.h"
-#include "sword2/protocol.h"
-#include "sword2/resman.h"
-#include "sword2/save_rest.h"
-#include "sword2/sound.h"
-#include "sword2/speech.h"
-#include "sword2/startup.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -98,9 +79,6 @@ REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_gameList, Engine_SWORD2_create,
 namespace Sword2 {
 
 Sword2Engine *g_sword2 = NULL;
-Input *g_input = NULL;
-Sound *g_sound = NULL;
-Graphics *g_graphics = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
@@ -126,14 +104,14 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	// get some falling RAM and put it in your pocket, never let it slip
 	// away
 
-	memory = new MemoryManager();
-	res_man = new ResourceManager(this);
+	_memory = new MemoryManager(this);
+	_resman = new ResourceManager(this);
 	_logic = new Logic(this);
-	fontRenderer = new FontRenderer();
-	gui = new Gui(this);
-	g_input = _input = new Input();
-	g_sound = _sound = new Sound(_mixer);
-	g_graphics = _graphics = new Graphics(640, 480);
+	_fontRenderer = new FontRenderer(this);
+	_gui = new Gui(this);
+	_input = new Input(this);
+	_sound = new Sound(this);
+	_graphics = new Graphics(this, 640, 480);
 	_debugger = new Debugger(this);
 
 	_lastPaletteRes = 0;
@@ -192,11 +170,11 @@ Sword2Engine::~Sword2Engine() {
 	delete _graphics;
 	delete _sound;
 	delete _input;
-	delete gui;
-	delete fontRenderer;
+	delete _gui;
+	delete _fontRenderer;
 	delete _logic;
-	delete res_man;
-	delete memory;
+	delete _resman;
+	delete _memory;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
@@ -223,9 +201,9 @@ int32 Sword2Engine::InitialiseGame(void) {
 
 	// initialise global script variables
 	// res 1 is the globals list
-	file = res_man->openResource(1);
+	file = _resman->openResource(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
-	_logic->setGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
+	_logic->setGlobalInterpreterVariables((int32 *) (file + sizeof(_standardHeader)));
 
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
@@ -233,7 +211,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
 	// CAN'T MOVE!
 
-	file = res_man->openResource(8);
+	file = _resman->openResource(8);
 
 	// Set up font resource variables for this language version
 
@@ -257,7 +235,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 void Sword2Engine::closeGame(void) {
 	// Stop music instantly!
 	killMusic();
-	g_system->quit();
+	_system->quit();
 }
 
 void Sword2Engine::gameCycle(void) {
@@ -291,7 +269,7 @@ void Sword2Engine::gameCycle(void) {
 	processFxQueue();
 
 	// update age and calculate previous cycle memory usage
-	res_man->nextCycle();
+	_resman->nextCycle();
 }
 
 void Sword2Engine::go() {
@@ -306,7 +284,7 @@ void Sword2Engine::go() {
 	// via a window, thus time becomes a loop.
 
 	debug(5, "CALLING: readOptionSettings");
-	gui->readOptionSettings();
+	_gui->readOptionSettings();
 
 	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
@@ -319,7 +297,7 @@ void Sword2Engine::go() {
 			restoreGame(_saveSlot);
 		else { // show restore menu
 			setMouse(NORMAL_MOUSE_ID);
-			if (!gui->restoreControl())
+			if (!_gui->restoreControl())
 				startGame();
 		}
 	} else
@@ -359,8 +337,8 @@ void Sword2Engine::go() {
 		}
 #endif
 
-		if (g_input->keyWaiting()) {
-			g_input->readKey(&ke);
+		if (_input->keyWaiting()) {
+			_input->readKey(&ke);
 
 			char c = toupper(ke.ascii);
 
@@ -458,19 +436,19 @@ void Sword2Engine::startGame(void) {
 	uint32 null_pc = 1;
 
 	// open george object, ready for start script to reference
-	raw_data_ad = (char *) res_man->openResource(8);
+	raw_data_ad = (char *) _resman->openResource(8);
 
 	// open the ScreenManager object
-	raw_script = (char *) res_man->openResource(screen_manager_id);
+	raw_script = (char *) _resman->openResource(screen_manager_id);
 
 	// run the start script now (because no console)
 	_logic->runScript(raw_script, raw_data_ad, &null_pc);
 
 	// close the ScreenManager object
-	res_man->closeResource(screen_manager_id);
+	_resman->closeResource(screen_manager_id);
 
 	// close george
-	res_man->closeResource(8);
+	_resman->closeResource(8);
 
 	debug(5, "startGame() DONE.");
 }
@@ -491,10 +469,10 @@ void Sword2Engine::pauseGame(void) {
 	// uint8 *text;
 
 	// open text file & get the line "PAUSED"
-	// text = FetchTextLine(res_man->openResource(3258), 449);
-	// pause_text_bloc_no = Build_new_block(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
+	// text = fetchTextLine(_resman->openResource(3258), 449);
+	// pause_text_bloc_no = _fontRenderer->buildNewBloc(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
 	// now ok to close the text file
-	// res_man->closeResource(3258);
+	// _resman->closeResource(3258);
 
 	// don't allow Pause while screen fading or while black
 	if (_graphics->getFadeStatus() != RDFADE_NONE)
@@ -519,8 +497,8 @@ void Sword2Engine::pauseGame(void) {
 	// if level at max, turn down because palette-matching won't work
 	// when dimmed
 
-	if (gui->_currentGraphicsLevel == 3) {
-		gui->updateGraphicsLevel(2);
+	if (_gui->_currentGraphicsLevel == 3) {
+		_gui->updateGraphicsLevel(2);
 		_graphicsLevelFudged = true;
 	}
 
@@ -535,7 +513,7 @@ void Sword2Engine::pauseGame(void) {
 
 void Sword2Engine::unpauseGame(void) {
 	// removed "PAUSED" from screen
-	// Kill_text_bloc(pause_text_bloc_no);
+	// _fontRenderer->killTextBloc(pause_text_bloc_no);
 
 	if (OBJECT_HELD && _realLuggageItem)
 		setLuggage(_realLuggageItem);
@@ -547,7 +525,7 @@ void Sword2Engine::unpauseGame(void) {
 
 	// If graphics level at max, turn up again
 	if (_graphicsLevelFudged) {
-		gui->updateGraphicsLevel(3);
+		_gui->updateGraphicsLevel(3);
 		_graphicsLevelFudged = false;
 	}
 

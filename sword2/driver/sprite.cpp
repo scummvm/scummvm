@@ -17,10 +17,8 @@
  * $Header$
  */
 
-#include "stdafx.h"
-#include "sword2/driver/driver96.h"
-#include "sword2/driver/d_draw.h"
-#include "sword2/driver/render.h"
+#include "common/stdafx.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
