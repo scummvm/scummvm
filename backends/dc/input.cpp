@@ -81,8 +81,14 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	  newkey = key+((shift & 0x22)? ('!'-0x1e) : ('1'-0x1e));
 	else if(key >= 0x59 && key <= 0x61)
 	  newkey = key+('1'-0x59);
+	else if(key >= 0x2d && key <= 0x38 && key != 0x31)
+	  newkey = ((shift & 0x22)?
+		    "=¯`{ }+*½<>?" :
+		    "-^@[ ];:§,./")[key - 0x2d];
 	else if(key >= 0x3a && key <= 0x43)
 	  newkey = key+(315-0x3a);
+	else if(key >= 0x54 && key <= 0x57)
+	  newkey = "/*-+"[key-0x54];
 	else switch(key) {
 	case 0x27: case 0x62:
 	  newkey = ((shift & 0x22)? '~' : '0'); break;
@@ -108,6 +114,12 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	  mouse_y++; break;
 	case 0x52:
 	  mouse_y--; break;
+	case 0x63:
+	  newkey = '.'; break;
+	case 0x64: case 0x87:
+	  newkey = ((shift & 0x22)? '_' : '\\'); break;
+	case 0x89:
+	  newkey = ((shift & 0x22)? '|' : '¥'); break;
 	}
       }
     }

@@ -159,8 +159,29 @@ static bool checkName(const char *base, char *text = 0)
   return false;
 }
 
+static const char *checkDetect(const char *fname)
+{
+  GameDetector g;
+  const VersionSettings *gnl = version_settings;
+
+  do {
+    if (!scumm_stricmp(fname, gnl->detectname))
+      return gnl->filename;
+  } while ((++gnl)->filename);
+  return false;
+}
+
 static bool isGame(const char *fn, char *base)
 {
+  if(!strcasecmp(fn, "00.LFL") ||
+     !strcasecmp(fn, "000.LFL")) {
+    *base = '\0';
+    return true;
+  }
+  if(const char *dtct = checkDetect(fn)) {
+    strcpy(base, dtct);
+    return true;
+  }
 #if 0
   int l = strlen(fn);
   if(l>4 && (!strcasecmp(fn+l-4, ".000") ||
@@ -182,11 +203,6 @@ static bool isGame(const char *fn, char *base)
       return true;
   }
 #endif  
-  if(!strcasecmp(fn, "00.LFL") ||
-     !strcasecmp(fn, "000.LFL")) {
-    *base = '\0';
-    return true;
-  }
   return false;
 }
 
