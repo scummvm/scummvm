@@ -162,14 +162,14 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_byteArrayDec),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
-		OPCODE(o6_jumpTrue),
-		OPCODE(o6_jumpFalse),
-		OPCODE(o6_startScriptEx),
+		OPCODE(o6_if),
+		OPCODE(o6_ifNot),
 		OPCODE(o6_startScript),
+		OPCODE(o6_startScriptQuick),
 		/* 60 */
-		OPCODE(o6_startObjectEx),
-		OPCODE(o6_setObjectState),
-		OPCODE(o6_setObjectXY),
+		OPCODE(o6_startObject),
+		OPCODE(o6_drawObject),
+		OPCODE(o6_drawObjectAt),
 		OPCODE(o6_drawBlastObject),
 		/* 64 */
 		OPCODE(o6_setBlastObjectWindow),
@@ -183,7 +183,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
-		OPCODE(o6_ifClassOfIs),
+		OPCODE(o6_getClass),
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
@@ -205,7 +205,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_stopScript),
 		OPCODE(o6_walkActorToObj),
 		OPCODE(o6_walkActorTo),
-		OPCODE(o6_putActorInRoom),
+		OPCODE(o6_putActorAtXY),
 		/* 80 */
 		OPCODE(o6_putActorAtObject),
 		OPCODE(o6_faceActor),
@@ -285,9 +285,9 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_dim),
 		OPCODE(o6_dummy),
 		OPCODE(o6_startObjectQuick),
-		OPCODE(o6_startScriptQuick),
+		OPCODE(o6_startScriptQuick2),
 		/* C0 */
-		OPCODE(o6_dim2),
+		OPCODE(o6_dim2dim),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -666,14 +666,14 @@ void ScummEngine_v6::o6_wordArrayDec() {
 	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
-void ScummEngine_v6::o6_jumpTrue() {
+void ScummEngine_v6::o6_if() {
 	if (pop())
 		o6_jump();
 	else
 		fetchScriptWord();
 }
 
-void ScummEngine_v6::o6_jumpFalse() {
+void ScummEngine_v6::o6_ifNot() {
 	if (!pop())
 		o6_jump();
 	else
@@ -684,7 +684,7 @@ void ScummEngine_v6::o6_jump() {
 	_scriptPointer += fetchScriptWordSigned();
 }
 
-void ScummEngine_v6::o6_startScriptEx() {
+void ScummEngine_v6::o6_startScript() {
 	int args[16];
 	int script, flags;
 
@@ -705,7 +705,7 @@ void ScummEngine_v6::o6_jumpToScript() {
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
-void ScummEngine_v6::o6_startScript() {
+void ScummEngine_v6::o6_startScriptQuick() {
 	int args[16];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
@@ -713,7 +713,7 @@ void ScummEngine_v6::o6_startScript() {
 	runScript(script, 0, 0, args);
 }
 
-void ScummEngine_v6::o6_startScriptQuick() {
+void ScummEngine_v6::o6_startScriptQuick2() {
 	int args[16];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
@@ -721,7 +721,7 @@ void ScummEngine_v6::o6_startScriptQuick() {
 	runScript(script, 0, 1, args);
 }
 
-void ScummEngine_v6::o6_startObjectEx() {
+void ScummEngine_v6::o6_startObject() {
 	int args[16];
 	int script, entryp;
 	int flags;
@@ -741,21 +741,20 @@ void ScummEngine_v6::o6_startObjectQuick() {
 	runObjectScript(script, entryp, 0, 1, args);
 }
 
-void ScummEngine_v6::o6_setObjectState() {
+void ScummEngine_v6::o6_drawObject() {
 	int a = pop();
 	int b = pop();
+
 	if (a == 0)
 		a = 1;
-//	debug(1, "setObjectState(%d,%d)", a, b);
 
 	setObjectState(b, a, -1, -1);
 }
 
-void ScummEngine_v6::o6_setObjectXY() {
+void ScummEngine_v6::o6_drawObjectAt() {
 	int y = pop();
 	int x = pop();
 	int obj = pop();
-//  debug(1, "setObjectXY(%d,%d,%d)", obj, x, y);
 	setObjectState(obj, 1, x, y);
 }
 
@@ -779,6 +778,7 @@ void ScummEngine_v6::o6_stopMusic() {
 
 void ScummEngine_v6::o6_freezeUnfreeze() {
 	int a = pop();
+
 	if (a)
 		freezeScripts(a);
 	else
@@ -788,40 +788,40 @@ void ScummEngine_v6::o6_freezeUnfreeze() {
 void ScummEngine_v6::o6_cursorCommand() {
 	int a, i;
 	int args[16];
-	int op = fetchScriptByte();
+	int subOp = fetchScriptByte();
 
-	switch (op) {
-	case 0x90:
+	switch (subOp) {
+	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
-	case 0x91:
+	case 0x91:		// SO_CURSOR_OFF Turn cursor off
 		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
-	case 0x92:
+	case 0x92:		// SO_USERPUT_ON
 		_userPut = 1;
 		break;
-	case 0x93:
+	case 0x93:		// SO_USERPUT_OFF
 		_userPut = 0;
 		break;
-	case 0x94:
+	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
 			error("Cursor state greater than 1 in script");
 		verbMouseOver(0);
 		break;
-	case 0x95:
+	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
 		_cursor.state--;
 		verbMouseOver(0);
 		break;
-	case 0x96:
+	case 0x96:		// SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 0x97:
+	case 0x97:		// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 0x99:{
+	case 0x99:{		// SO_CURSOR_IMAGE Set cursor image
 			if (_features & GF_AFTER_HEV7) {
 				warning("cursorCommand 0x99 PC_SetCursorToID(%d) stub", pop());
 				break;
@@ -830,23 +830,23 @@ void ScummEngine_v6::o6_cursorCommand() {
 			setCursorImg(obj, room, 1);
 			break;
 		}
-	case 0x9A:
+	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
 		a = pop();
 		setCursorHotspot(pop(), a);
 		break;
-	case 0x9C:										/* init charset */
+	case 0x9C:		// SO_CHARSET_SET
 		initCharset(pop());
 		break;
-	case 0x9D:										/* set charset colors */
+	case 0x9D:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
-	case 0xD6:
+	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
 		makeCursorColorTransparent(pop());
 		break;
 	default:
-		error("o6_cursorCommand: default case %x", op);
+		error("o6_cursorCommand: default case %x", subOp);
 	}
 
 	VAR(VAR_CURSORSTATE) = _cursor.state;
@@ -858,7 +858,7 @@ void ScummEngine_v6::o6_breakHere() {
 	_currentScript = 0xFF;
 }
 
-void ScummEngine_v6::o6_ifClassOfIs() {
+void ScummEngine_v6::o6_getClass() {
 	int args[16];
 	int num, obj, cls;
 	bool b;
@@ -907,7 +907,6 @@ void ScummEngine_v6::o6_setState() {
 		putState(obj, state);
 		return;
 	}
-//  debug(1, "setState(%d,%d)", obj, state);
 
 	putState(obj, state);
 	removeObjectFromRoom(obj);
@@ -1043,7 +1042,7 @@ void ScummEngine_v6::o6_walkActorTo() {
 	a->startWalkActor(x, y, -1);
 }
 
-void ScummEngine_v6::o6_putActorInRoom() {
+void ScummEngine_v6::o6_putActorAtXY() {
 	int room, x, y, act;
 	Actor *a;
 
@@ -1051,7 +1050,7 @@ void ScummEngine_v6::o6_putActorInRoom() {
 	y = pop();
 	x = pop();
 	act = pop();
-	a = derefActor(act, "o6_putActorInRoom");
+	a = derefActor(act, "o6_putActorAtXY");
 
 	if (room == 0xFF || room == 0x7FFFFFFF) {
 		room = a->room;
@@ -1380,26 +1379,26 @@ void ScummEngine_v6::o6_resourceRoutines() {
 	op = fetchScriptByte();
 
 	switch (op) {
-	case 100:										/* load script */
+	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
 		if (_version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
 		ensureResourceLoaded(rtScript, resid);
 		break;
-	case 101:										/* load sound */
+	case 101:		// SO_LOAD_SOUND
 		resid = pop();
 		ensureResourceLoaded(rtSound, resid);
 		break;
-	case 102:										/* load costume */
+	case 102:		// SO_LOAD_COSTUME
 		resid = pop();
 		ensureResourceLoaded(rtCostume, resid);
 		break;
-	case 103:										/* load room */
+	case 103:		// SO_LOAD_ROOM
 		resid = pop();
 		ensureResourceLoaded(rtRoom, resid);
 		break;
-	case 104:										/* nuke script */
+	case 104:		// SO_NUKE_SCRIPT
 		resid = pop();
 		if (_version >= 7)
 			if (resid >= _numGlobalScripts)
@@ -1407,71 +1406,71 @@ void ScummEngine_v6::o6_resourceRoutines() {
 		setResourceCounter(rtScript, resid, 0x7F);
 		debug(5, "nuke script %d", resid);
 		break;
-	case 105:										/* nuke sound */
+	case 105:		// SO_NUKE_SOUND
 		resid = pop();
 		setResourceCounter(rtSound, resid, 0x7F);
 		break;
-	case 106:										/* nuke costume */
+	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
 		setResourceCounter(rtCostume, resid, 0x7F);
 		break;
-	case 107:										/* nuke room */
+	case 107:		// SO_NUKE_ROOM
 		resid = pop();
 		setResourceCounter(rtRoom, resid, 0x7F);
 		break;
-	case 108:										/* lock script */
+	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
 		lock(rtScript, resid);
 		break;
-	case 109:										/* lock sound */
+	case 109:		// SO_LOCK_SOUND
 		resid = pop();
 		lock(rtSound, resid);
 		break;
-	case 110:										/* lock costume */
+	case 110:		// SO_LOCK_COSTUME
 		resid = pop();
 		lock(rtCostume, resid);
 		break;
-	case 111:										/* lock room */
+	case 111:		// SO_LOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		lock(rtRoom, resid);
 		break;
-	case 112:										/* unlock script */
+	case 112:		// SO_UNLOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
 		unlock(rtScript, resid);
 		break;
-	case 113:										/* unlock sound */
+	case 113:		// SO_UNLOCK_SOUND
 		resid = pop();
 		unlock(rtSound, resid);
 		break;
-	case 114:										/* unlock costume */
+	case 114:		// SO_UNLOCK_COSTUME
 		resid = pop();
 		unlock(rtCostume, resid);
 		break;
-	case 115:										/* unlock room */
+	case 115:		// SO_UNLOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		unlock(rtRoom, resid);
 		break;
-	case 116:										/* clear heap */
+	case 116:		// SO_CLEAR_HEAP
 		/* this is actually a scumm message */
 		error("clear heap not working yet");
 		break;
-	case 117:										/* load charset */
+	case 117:		// SO_LOAD_CHARSET
 		resid = pop();
 		loadCharset(resid);
 		break;
-	case 118:										/* nuke charset */
+	case 118:		// SO_NUKE_CHARSET
 		resid = pop();
 		nukeCharset(resid);
 		break;
-	case 119:{										/* load fl object */
+	case 119:{		// SO_LOAD_OBJECT
 			int room, obj = popRoomAndObj(&room);
 			loadFlObject(obj, room);
 			break;
@@ -1495,7 +1494,7 @@ void ScummEngine_v6::o6_roomOps() {
 	op = fetchScriptByte();
 
 	switch (op) {
-	case 172:										/* room scroll */
+	case 172:		// SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
 		if (a < (_screenWidth / 2))
@@ -1510,13 +1509,13 @@ void ScummEngine_v6::o6_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 
-	case 174:										/* set screen */
+	case 174:		// SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
 		initScreens(0, a, _screenWidth, b);
 		break;
 
-	case 175:										/* set palette color */
+	case 175:		// SO_ROOM_PALETTE
 		d = pop();
 		c = pop();
 		b = pop();
@@ -1524,29 +1523,29 @@ void ScummEngine_v6::o6_roomOps() {
 		setPalColor(d, a, b, c);
 		break;
 
-	case 176:										/* shake on */
+	case 176:		// SO_ROOM_SHAKE_ON
 		setShake(1);
 		break;
 
-	case 177:										/* shake off */
+	case 177:		// SO_ROOM_SHAKE_OFF
 		setShake(0);
 		break;
 
-	case 179:
+	case 179:		// SO_ROOM_INTENSITY
 		c = pop();
 		b = pop();
 		a = pop();
 		darkenPalette(a, a, a, b, c);
 		break;
 
-	case 180:
+	case 180:		// SO_ROOM_SAVEGAME
 		_saveLoadCompatible = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		warning("o6_roomops:180: partially unimplemented");
 		break;
 
-	case 181:
+	case 181:		// SO_ROOM_FADE
 		a = pop();
 		if (a) {
 			_switchRoomEffect = (byte)(a&0xFF);
@@ -1556,7 +1555,7 @@ void ScummEngine_v6::o6_roomOps() {
 		}
 		break;
 
-	case 182:
+	case 182:		// SO_RGB_ROOM_INTENSITY
 		e = pop();
 		d = pop();
 		c = pop();
@@ -1565,7 +1564,7 @@ void ScummEngine_v6::o6_roomOps() {
 		darkenPalette(a, b, c, d, e);
 		break;
 
-	case 183:
+	case 183:		// SO_ROOM_SHADOW
 		e = pop();
 		d = pop();
 		c = pop();
@@ -1574,15 +1573,15 @@ void ScummEngine_v6::o6_roomOps() {
 		setupShadowPalette(a, b, c, d, e);
 		break;
 
-	case 184:
+	case 184:		// SO_SAVE_STRING
 		error("save string not implemented");
 		break;
 
-	case 185:
+	case 185:		// SO_LOAD_STRING
 		error("load string not implemented");
 		break;
 
-	case 186:										/* palmanip? */
+	case 186:		// SO_ROOM_TRANSFORM
 		d = pop();
 		c = pop();
 		b = pop();
@@ -1590,14 +1589,14 @@ void ScummEngine_v6::o6_roomOps() {
 		palManipulateInit(a, b, c, d);
 		break;
 
-	case 187:										/* color cycle delay */
+	case 187:		// SO_CYCLE_SPEED
 		b = pop();
 		a = pop();
 		checkRange(16, 1, a, "o6_roomOps: 187: color cycle out of range (%d)");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 
-	case 213:										/* set palette */
+	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
 
 		// This opcode is used when turning off noir mode in Sam & Max,
@@ -1634,83 +1633,83 @@ void ScummEngine_v6::o6_actorOps() {
 		return;
 
 	switch (b) {
-	case 76:											/* actor-costume */
+	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
 		break;
-	case 77:											/* actor-speed */
+	case 77:		// SO_STEP_DIST
 		j = pop();
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 78:											/* actor-sound */
+	case 78:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
 			a->sound[i] = args[i];
 		break;
-	case 79:											/* actor-walkframe */
+	case 79:		// SO_WALK_ANIMATION
 		a->walkFrame = pop();
 		break;
-	case 80:											/* actor-talkframe */
+	case 80:		// SO_TALK_ANIMATION
 		a->talkStopFrame = pop();
 		a->talkStartFrame = pop();
 		break;
-	case 81:											/* actor-standframe */
+	case 81:		// SO_STAND_ANIMATION
 		a->standFrame = pop();
 		break;
-	case 82:
+	case 82:		// SO_ANIMATION
 		// FIXME: what does this opcode do ???
 		pop();
 		pop();
 		pop();
 		break;
-	case 83:
+	case 83:		// SO_DEFAULT
 		a->initActor(0);
 		break;
-	case 84:											/* actor-elevation */
+	case 84:		// SO_ELEVATION
 		i = pop();
 		if (i != a->elevation) {
 			a->elevation = i;
 			a->needRedraw = true;
 		}
 		break;
-	case 85:											/* actor-defaultanims */
+	case 85:		// SO_ANIMATION_DEFAULT
 		a->initFrame = 1;
 		a->walkFrame = 2;
 		a->standFrame = 3;
 		a->talkStartFrame = 4;
 		a->talkStopFrame = 5;
 		break;
-	case 86:											/* actor-palette */
+	case 86:		// SO_PALETTE
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
 		a->palette[i] = j;
 		a->needRedraw = true;
 		break;
-	case 87:											/* actor-talkcolor */
+	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
 		break;
-	case 88:											/* actor-name */
+	case 88:		// SO_ACTOR_NAME
 		loadPtrToResource(rtActorName, a->number, NULL);
 		break;
-	case 89:											/* actor-initframe */
+	case 89:		// SO_INIT_ANIMATION
 		a->initFrame = pop();
 		break;
-	case 91:
+	case 91:		// SO_ACTOR_WIDTH
 		a->width = pop();
 		break;
-	case 92:
+	case 92:		// SO_SCALE
 		a->scalex = a->scaley = pop();
 		a->needRedraw = true;
 		break;
-	case 93:
+	case 93:		// SO_NEVER_ZCLIP
 		a->forceClip = 0;
 		break;
-	case 225:	// FIXME: Is subop 225 really identical to subop 94
-	case 94:
+	case 225:		// FIXME: Is subop 225 really identical to subop 94
+	case 94:		// SO_ALWAYS_ZCLIP
 		a->forceClip = pop();
 		break;
-	case 95:
+	case 95:		// SO_IGNORE_BOXES
 		a->ignoreBoxes = 1;
 		if (_version >= 7)
 			a->forceClip = 100;
@@ -1719,7 +1718,7 @@ void ScummEngine_v6::o6_actorOps() {
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
-	case 96:
+	case 96:		// SO_FOLLOW_BOXES
 		a->ignoreBoxes = 0;
 		if (_version >= 7)
 			a->forceClip = 100;
@@ -1728,31 +1727,31 @@ void ScummEngine_v6::o6_actorOps() {
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
-	case 97:
+	case 97:		// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
-	case 98:
+	case 98:		// SO_SHADOW
 		a->shadow_mode = pop();
 		break;
-	case 99:
+	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();
 		a->talkPosX = pop();
 		break;
-	case 198:										/* set anim variable */
-		i = pop();									/* value */
+	case 198:		// SO_ACTOR_VARIABLE
+		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
-	case 215:
+	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
 		warning("ignoreTurns not yet implemented");
 		a->ignoreTurns = true;
 		break;
-	case 216:
+	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF
 		a->ignoreTurns = false;
 		break;
-	case 217:
+	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:
+	case 218:		
 		{
 			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
 			warning("o6_actorOps(): unimplemented opcode 218");
@@ -1775,13 +1774,13 @@ void ScummEngine_v6::o6_actorOps() {
 			}
 		}
 		break;
-	case 227:										/* actor_layer */
+	case 227:		// SO_ACTOR_DEPTH
 		a->layer = pop();
 		break;
-	case 228:										/* walk script */
+	case 228:		// SO_ACTOR_WALK_SCRIPT
 		a->walkScript = pop();
 		break;
-	case 229:										/* stand */
+	case 229:		// SO_ACTOR_STOP
 		a->stopActorMoving();
 		break;
 	case 230:										/* set direction */
@@ -1791,13 +1790,13 @@ void ScummEngine_v6::o6_actorOps() {
 	case 231:										/* turn to direction */
 		a->turnToDirection(pop());
 		break;
-	case 233:										/* freeze actor */
+	case 233:		// SO_ACTOR_WALK_PAUSE
 		a->moving |= MF_FROZEN;
 		break;
-	case 234:										/* unfreeze actor */
+	case 234:		// SO_ACTOR_WALK_RESUME
 		a->moving &= ~MF_FROZEN;
 		break;
-	case 235:										/* talkScript */
+	case 235:		// SO_ACTOR_TALK_SCRIPT
 		a->talkScript = pop();
 		break;
 	default:
@@ -1826,42 +1825,42 @@ void ScummEngine_v6::o6_verbOps() {
 	vs = &_verbs[_curVerbSlot];
 	slot = _curVerbSlot;
 	switch (op) {
-	case 124:										/* load img */
+	case 124:		// SO_VERB_IMAGE
 		a = pop();
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
 			vs->type = kImageVerbType;
 		}
 		break;
-	case 125:
+	case 125:		// SO_VERB_NAME
 		loadPtrToResource(rtVerb, slot, NULL);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 126:
+	case 126:		// SO_VERB_COLOR
 		vs->color = pop();
 		break;
-	case 127:
+	case 127:		// SO_VERB_HICOLOR
 		vs->hicolor = pop();
 		break;
-	case 128:
+	case 128:		// SO_VERB_AT
 		vs->y = pop();
 		vs->x = pop();
 		break;
-	case 129:
+	case 129:		// SO_VERB_ON
 		vs->curmode = 1;
 		break;
-	case 130:
+	case 130:		// SO_VERB_OFF
 		vs->curmode = 0;
 		break;
-	case 131:
+	case 131:		// SO_VERB_DELETE
 		if (_features & GF_HUMONGOUS) {
 			// delete verb supposedly...
 			pop();
 		}
 		killVerb(slot);
 		break;
-	case 132:
+	case 132:		// SO_VERB_NEW
 		slot = getVerbSlot(_curVerb, 0);
 		if (slot == 0) {
 			for (slot = 1; slot < _maxVerbs; slot++) {
@@ -1885,19 +1884,19 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->center = 0;
 		vs->imgindex = 0;
 		break;
-	case 133:
+	case 133:		// SO_VERB_DIMCOLOR
 		vs->dimcolor = pop();
 		break;
-	case 134:
+	case 134:		// SO_VERB_DIM
 		vs->curmode = 2;
 		break;
-	case 135:
+	case 135:		// SO_VERB_KEY
 		vs->key = pop();
 		break;
-	case 136:
+	case 136:		// SO_VERB_CENTER
 		vs->center = 1;
 		break;
-	case 137:
+	case 137:		// SO_VERB_NAME_STR
 		a = pop();
 		if (a == 0) {
 			loadPtrToResource(rtVerb, slot, (const byte *)"");
@@ -1907,7 +1906,7 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 139:
+	case 139:		// SO_VERB_IMAGE_IN_ROOM
 		b = pop();
 		a = pop();
 		if (slot && a != vs->imgindex) {
@@ -1916,7 +1915,7 @@ void ScummEngine_v6::o6_verbOps() {
 			vs->imgindex = a;
 		}
 		break;
-	case 140:
+	case 140:		// SO_VERB_BAKCOLOR
 		vs->bkcolor = pop();
 		break;
 	case 255:
@@ -1969,14 +1968,14 @@ void ScummEngine_v6::o6_arrayOps() {
 	int list[128];
 
 	switch (subOp) {
-	case 205:
+	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
 		c = defineArray(array, 4, 0, len + 1);
 		ah = (ArrayHeader *)getResourceAddress(rtString, c);
 		copyScriptString(ah->data + b);
 		break;
-	case 208:
+	case 208:		// SO_ASSIGN_INT_LIST
 		b = pop();
 		c = pop();
 		d = readVar(array);
@@ -1987,7 +1986,7 @@ void ScummEngine_v6::o6_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-	case 212:
+	case 212:		// SO_ASSIGN_2DIM_LIST
 		b = pop();
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
@@ -2017,7 +2016,7 @@ void ScummEngine_v6::o6_saveRestoreVerbs() {
 	}
 	
 	switch (subOp) {
-	case 141:
+	case 141:		// SO_SAVE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, 0);
 			if (slot && _verbs[slot].saveid == 0) {
@@ -2028,7 +2027,7 @@ void ScummEngine_v6::o6_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 142:
+	case 142:		// SO_RESTORE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot) {
@@ -2043,7 +2042,7 @@ void ScummEngine_v6::o6_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 143:
+	case 143:		// SO_DELETE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot)
@@ -2073,18 +2072,18 @@ void ScummEngine_v6::o6_wait() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 168:
+	case 168:		// SO_WAIT_FOR_ACTOR Wait for actor
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
 		if (a->isInCurrentRoom() && a->moving)
 			break;
 		return;
-	case 169:
+	case 169:		// SO_WAIT_FOR_MESSAGE Wait for message
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
-	case 170:
+	case 170:		// SO_WAIT_FOR_CAMERA Wait for camera
 		if (_version >= 7) {
 			if (camera._dest != camera._cur)
 				break;
@@ -2094,7 +2093,7 @@ void ScummEngine_v6::o6_wait() {
 		}
 
 		return;
-	case 171:
+	case 171:		// SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -2103,14 +2102,14 @@ void ScummEngine_v6::o6_wait() {
 		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
-	case 226:										/* wait until actor drawn */
+	case 226:		// SO_WAIT_FOR_ANIMATION
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:226");
 		if (a->isInCurrentRoom() && a->needRedraw)
 			break;
 		return;
-	case 232:										/* wait until actor stops turning */
+	case 232:		// SO_WAIT_FOR_TURN
 		// FIXME: This opcode is really odd. It's used a lot in The Dig.
 		// But sometimes it receives the actor ID as params, and sometimes an
 		// angle. However in (almost?) all cases, just before calling it, _curActor
@@ -2166,13 +2165,13 @@ void ScummEngine_v6::o6_isAnyOf() {
 void ScummEngine_v6::o6_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
-	case 158:		// Restart
+	case 158:		// SO_RESTART
 		restart();
 		break;
-	case 159:		// Pause
+	case 159:		// SO_PAUSE
 		pauseGame();
 		break;
-	case 160:		// Quit
+	case 160:		// SO_QUIT
 		shutDown();
 		break;
 	default:
@@ -2264,22 +2263,22 @@ void ScummEngine_v6::o6_dim() {
 	int data;
 
 	switch (fetchScriptByte()) {
-	case 199:
+	case 199:		// SO_INT_ARRAY
 		data = 5;
 		break;
-	case 200:
+	case 200:		// SO_BIT_ARRAY
 		data = 1;
 		break;
-	case 201:
+	case 201:		// SO_NIBBLE_ARRAY
 		data = 2;
 		break;
-	case 202:
+	case 202:		// SO_BYTE_ARRAY
 		data = 3;
 		break;
-	case 203:
+	case 203:		// SO_STRING_ARRAY
 		data = 4;
 		break;
-	case 204:
+	case 204:		// SO_UNDIM_ARRAY
 		nukeArray(fetchScriptWord());
 		return;
 	default:
@@ -2295,26 +2294,26 @@ void ScummEngine_v6::o6_dummy() {
 		stopObjectCode();
 }
 
-void ScummEngine_v6::o6_dim2() {
+void ScummEngine_v6::o6_dim2dim() {
 	int a, b, data;
 	switch (fetchScriptByte()) {
-	case 199:
+	case 199:		// SO_INT_ARRAY
 		data = 5;
 		break;
-	case 200:
+	case 200:		// SO_BIT_ARRAY
 		data = 1;
 		break;
-	case 201:
+	case 201:		// SO_NIBBLE_ARRAY
 		data = 2;
 		break;
-	case 202:
+	case 202:		// SO_BYTE_ARRAY
 		data = 3;
 		break;
-	case 203:
+	case 203:		// SO_STRING_ARRAY
 		data = 4;
 		break;
 	default:
-		error("o6_dim2: default case");
+		error("o6_dim2dim: default case");
 	}
 
 	b = pop();
@@ -3188,36 +3187,36 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 	b = fetchScriptByte();
 
 	switch (b) {
-	case 65:
+	case 65:		// SO_AT
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 66:
+	case 66:		// SO_COLOR
 		_string[m].color = pop();
 		break;
-	case 67:
+	case 67:		// SO_CLIPPED
 		_string[m].right = pop();
 		break;
-	case 69:
+	case 69:		// SO_CENTER
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 71:
+	case 71:		// SO_LEFT
 		_string[m].center = false;
 		_string[m].overhead = false;
 		break;
-	case 72:
+	case 72:		// SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 73:
+	case 73:		// SO_SAY_VOICE
 		error("decodeParseString: case 73");
 		break;
-	case 74:
+	case 74:		// SO_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
-	case 75:
+	case 75:		// SO_TEXTSTRING
 		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer)+ 1;
 

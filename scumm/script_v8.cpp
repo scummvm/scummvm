@@ -165,8 +165,8 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* 64 */
-		OPCODE(o6_jumpTrue),
-		OPCODE(o6_jumpFalse),
+		OPCODE(o6_if),
+		OPCODE(o6_ifNot),
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */
@@ -185,20 +185,20 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_wordArrayInc),
 		OPCODE(o6_wordArrayDec),
 		/* 74 */
-		OPCODE(o8_dim2),
+		OPCODE(o8_dim2dim),
 		OPCODE(o6_wordArrayIndexedWrite),
 		OPCODE(o8_arrayOps),
 		OPCODE(o6_invalid),
 		/* 78 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_startScriptEx),
 		OPCODE(o6_startScript),
+		OPCODE(o6_startScriptQuick),
 		OPCODE(o6_stopObjectCode),
 		/* 7C */
 		OPCODE(o6_stopScript),
 		OPCODE(o6_jumpToScript),
 		OPCODE(o6_dummy),				// O_RETURN boils down to a NOP
-		OPCODE(o6_startObjectEx),
+		OPCODE(o6_startObject),
 		/* 80 */
 		OPCODE(o6_stopObjectScript),
 		OPCODE(o6_cutscene),
@@ -241,7 +241,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_walkActorToObj),
 		/* A0 */
 		OPCODE(o6_walkActorTo),
-		OPCODE(o6_putActorInRoom),
+		OPCODE(o6_putActorAtXY),
 		OPCODE(o6_putActorAtObject),
 		OPCODE(o6_faceActor),
 		/* A4 */
@@ -290,7 +290,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScriptQuick),	// FIXME: are these really the "quick" (=recursive) variants,
+		OPCODE(o6_startScriptQuick2),	// FIXME: are these really the "quick" (=recursive) variants,
 		OPCODE(o6_startObjectQuick),	// or aren't these maybe supposed to be the "plain" versions, too?
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
@@ -300,7 +300,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
-		OPCODE(o6_ifClassOfIs),
+		OPCODE(o6_getClass),
 		OPCODE(o6_getState),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_isScriptRunning),
@@ -458,12 +458,12 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 	b = fetchScriptByte();
 
 	switch (b) {
-	case 0xC8:
+	case 0xC8:		// SO_PRINT_BASEOP
 		setStringVars(m);
 		if (n)
 			_actorToPrintStrFor = pop();
 		break;
-	case 0xC9:
+	case 0xC9:		// SO_PRINT_END
 		_string[m].t_xpos = _string[m].xpos;
 		_string[m].t_ypos = _string[m].ypos;
 		_string[m].t_center = _string[m].center;
@@ -473,33 +473,33 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_string[m].t_color = _string[m].color;
 		_string[m].t_charset = _string[m].charset;
 		break;
-	case 0xCA:
+	case 0xCA:		// SO_PRINT_AT
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 0xCB:
+	case 0xCB:		// SO_PRINT_COLOR
 		_string[m].color = pop();
 		break;
-	case 0xCC:
+	case 0xCC:		// SO_PRINT_CENTER
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
 	case 0xCD:		// SO_PRINT_CHARSET Set print character set
 		_string[m].charset = pop();
 		break;
-	case 0xCE:
+	case 0xCE:		// SO_PRINT_LEFT
 		_string[m].center = false;
 		_string[m].overhead = false;
 		break;
-	case 0xCF:
+	case 0xCF:		// SO_PRINT_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
 	case 0xD0:		// SO_PRINT_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
-	case 0xD1:
+	case 0xD1:		// SO_PRINT_STRING
 		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer)+ 1;
 
@@ -610,7 +610,7 @@ void ScummEngine_v8::o8_dim() {
 	}
 }
 
-void ScummEngine_v8::o8_dim2() {
+void ScummEngine_v8::o8_dim2dim() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord(), a, b;
 	
@@ -629,7 +629,7 @@ void ScummEngine_v8::o8_dim2() {
 		nukeArray(array);
 		break;
 	default:
-		error("o8_dim2: default case 0x%x", subOp);
+		error("o8_dim2dim: default case 0x%x", subOp);
 	}
 }
 
@@ -732,7 +732,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
 		makeCursorColorTransparent(pop());
 		break;
-	case 0xE7: {		// SO_CHARSET_SET
+	case 0xE7: {	// SO_CHARSET_SET
 		int charset = pop();
 		warning("Set userface charset to %d", charset);
 //		loadCharset(charset);
@@ -991,10 +991,10 @@ void ScummEngine_v8::o8_actorOps() {
 		a->scalex = a->scaley = pop();
 		a->needRedraw = true;
 		break;
-	case 0x74:		// SO_ACTOR_NEVER_ZCLIP ?
+	case 0x74:		// SO_ACTOR_NEVER_ZCLIP
 		a->forceClip = 0;
 		break;
-	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP ?
+	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP
 		a->forceClip = pop();
 		// V8 uses 255 where we used to use 100
 		if (a->forceClip == 255)

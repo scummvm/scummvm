@@ -392,14 +392,14 @@ protected:
 	void o6_wordVarDec();
 	void o6_byteArrayDec();
 	void o6_wordArrayDec();
-	void o6_jumpTrue();
-	void o6_jumpFalse();
+	void o6_if();
+	void o6_ifNot();
 	void o6_jump();
-	void o6_startScriptEx();
 	void o6_startScript();
-	void o6_startObjectEx();
-	void o6_setObjectState();
-	void o6_setObjectXY();
+	void o6_startScriptQuick();
+	void o6_startObject();
+	void o6_drawObject();
+	void o6_drawObjectAt();
 	void o6_stopObjectCode();
 	void o6_endCutscene();
 	void o6_cutscene();
@@ -407,7 +407,7 @@ protected:
 	void o6_freezeUnfreeze();
 	void o6_cursorCommand();
 	void o6_breakHere();
-	void o6_ifClassOfIs();
+	void o6_getClass();
 	void o6_setClass();
 	void o6_getState();
 	void o6_setState();
@@ -424,7 +424,7 @@ protected:
 	void o6_stopScript();
 	void o6_walkActorToObj();
 	void o6_walkActorTo();
-	void o6_putActorInRoom();
+	void o6_putActorAtXY();
 	void o6_putActorAtObject();
 	void o6_faceActor();
 	void o6_animateActor();
@@ -486,8 +486,8 @@ protected:
 	void o6_dim();
 	void o6_dummy();
 	void o6_startObjectQuick();
-	void o6_startScriptQuick();
-	void o6_dim2();
+	void o6_startScriptQuick2();
+	void o6_dim2dim();
 	void o6_abs();
 	void o6_distObjectObject();
 	void o6_distObjectPt();
@@ -579,7 +579,7 @@ protected:
 	void o8_wait();
 
 	void o8_dim();
-	void o8_dim2();
+	void o8_dim2dim();
 	void o8_arrayOps();
 	void o8_blastText();
 
