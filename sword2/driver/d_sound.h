@@ -49,6 +49,7 @@ struct FxHandle {
 
 class MusicHandle : public AudioStream {
 public:
+	RateConverter *_converter;
 	bool _firstTime;
 	bool _streaming;
 	bool _paused;
@@ -88,7 +89,6 @@ private:
 	static int32 _musicVolTable[17];
 	MusicHandle _music[MAXMUS + 1];
 	char *savedMusicFilename;
-	RateConverter *_converter;
 	bool _musicMuted;
 	uint8 _musicVol;
 

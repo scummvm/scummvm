@@ -72,16 +72,23 @@ Sound::Sound(Sword2Engine *vm) {
 	_musicVol = 16;
 	_musicMuted = false;
 
-	_converter = makeRateConverter(_music[0].getRate(), _vm->_mixer->getOutputRate(), _music[0].isStereo(), false);
+	for (int i = 0; i < MAXMUS; i++)
+		_music[i]._converter = makeRateConverter(_music[i].getRate(), _vm->_mixer->getOutputRate(), _music[i].isStereo(), false);
 
 	_vm->_mixer->setupPremix(premix_proc, this);
 }
 
 Sound::~Sound() {
+	int i;
+
 	_vm->_mixer->setupPremix(0, 0);
-	delete _converter;
-	for (int i = 0; i < MAXFX; i++)
+
+	for (i = 0; i < MAXMUS; i++)
+		delete _music[i]._converter;
+
+	for (i = 0; i < MAXFX; i++)
 		stopFxHandle(i);
+
 	if (_mutex)
 		_vm->_system->deleteMutex(_mutex);
 }
@@ -99,7 +106,7 @@ void Sound::streamMusic(int16 *data, uint len) {
 		st_volume_t volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
 
 		fpMus.seek(_music[i]._filePos, SEEK_SET);
-		_converter->flow(_music[i], data, len, volume, volume);
+		_music[i]._converter->flow(_music[i], data, len, volume, volume);
 	}
 
 	// DipMusic();
