@@ -354,25 +354,11 @@ int Scumm::getVarOrDirectWord(byte mask) {
 
 int Scumm::readVar(uint var) {
 	int a;
-#ifdef BYPASS_COPY_PROT
-	static byte copyprotbypassed;
-#endif
-	debug(9, "readvar(%d)", var);
-	if (!(var & 0xF000)) {
 #if defined(BYPASS_COPY_PROT)
-		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
-			copyprotbypassed = true;
-			var = 518;
-		} else if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
-			copyprotbypassed = true;
-			var = 266;
-		}
+	static byte copyprotbypassed = false;
 #endif
 
-		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-
-		return _vars[var];
-	}
+	debug(9, "readvar(%d)", var);
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
 		a = fetchScriptWord();
@@ -383,32 +369,41 @@ int Scumm::readVar(uint var) {
 		var &= ~0x2000;
 	}
 
-	if (!(var & 0xF000))
-			return _vars[var];
+	if (!(var & 0xF000)) {
+#if defined(BYPASS_COPY_PROT)
+		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
+			copyprotbypassed = true;
+			var = 518;
+		} else if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
+			copyprotbypassed = true;
+			var = 266;
+		}
+#endif
+		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+		return _vars[var];
+	}
 
 	if (var & 0x8000) {
 		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
-			// Emulate a wierd hack in Zak256 to read individual
-			// bits of a normal global
-			int b = (var & 0x000F);
-			var &= 0x0FFF;
-			var >>= 4;
-			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
+			int bit = var & 0xF;
+			var = (var >> 4) & 0xFF;
+
 #if defined(BYPASS_COPY_PROT)
 			// INDY3 checks this during the game...
-			if (var == 94 && _gameId == GID_INDY3 && b == 4) {
+			if (_gameId == GID_INDY3 && var == 94 && bit == 4) {
 				return 0;
-			} else if (var == 214 && b == 15 && _gameId == GID_LOOM && !copyprotbypassed) {
+			} else if (_gameId == GID_LOOM && var == 214 && bit == 15 && !copyprotbypassed) {
 				copyprotbypassed = true;
 				return 0;
-			} else
+			}
 #endif
-				return (_vars[ var ] & ( 1 << b ) ) ? 1 : 0;
+			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
+			return (_vars[ var ] & ( 1 << bit ) ) ? 1 : 0;
+		} else {
+			var &= 0x7FFF;
+			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
+			return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 		}
-
-		var &= 0x7FFF;
-		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
-		return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 	}
 
 	if (var & 0x4000) {
@@ -447,30 +442,29 @@ void Scumm::writeVar(uint var, int value) {
 
 	if (var & 0x8000) {
 		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
-			// Emulate a wierd hack in Zak256 to read individual
-			// bits of a normal global
-			int b = (var & 0x000F);
-			var &= 0x7FFF;
-			var >>= 4;
+			// In the old games, the bit variables were using the same memory
+			// as the normal variables!
+			int bit = var & 0xF;
+			var = (var >> 4) & 0xFF;
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(wzb)");
 			if(value)
-				_vars[ var ] |= ( 1 << b );
+				_vars[var] |= ( 1 << bit );
 			else
-				_vars[ var ] &= ~( 1 << b );
-			return;
+				_vars[var] &= ~( 1 << bit );
+		} else {
+			var &= 0x7FFF;
+			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
+	
+			// FIXME: Enable Indy4 mousefighting by default. 
+			// is there a better place to put this?
+			if (_gameId == GID_INDY4 && var == 107 && vm.slot[_currentScript].number == 1)
+				value = 1;
+	
+			if (value)
+				_bitVars[var >> 3] |= (1 << (var & 7));
+			else
+				_bitVars[var >> 3] &= ~(1 << (var & 7));
 		}
-		var &= 0x7FFF;
-		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
-
-		/* FIXME: Enable Indy4 mousefighting by default. 
-		   is there a better place to put this? */
-		if (_gameId == GID_INDY4 && var == 107 && vm.slot[_currentScript].number == 1)
-			value = 1;
-
-		if (value)
-			_bitVars[var >> 3] |= (1 << (var & 7));
-		else
-			_bitVars[var >> 3] &= ~(1 << (var & 7));
 		return;
 	}
 
