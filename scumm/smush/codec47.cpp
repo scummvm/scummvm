@@ -384,7 +384,6 @@ void Codec47Decoder::level2(byte *d_dst) {
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
-		byte *tmp_dst = d_dst;
 		level3(d_dst);
 		d_dst += 2;
 		level3(d_dst);
@@ -392,7 +391,6 @@ void Codec47Decoder::level2(byte *d_dst) {
 		level3(d_dst);
 		d_dst += 2;
 		level3(d_dst);
-		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
 		for (i = 0; i < 4; i++) {
@@ -400,7 +398,7 @@ void Codec47Decoder::level2(byte *d_dst) {
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFD) {
-		byte *tmp_ptr = _tableSmall + (*_d_src++ << 7);
+		byte *tmp_ptr = _tableSmall + *_d_src++ * 128;
 		int32 l = tmp_ptr[96];
 		byte val = *_d_src++;
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
@@ -443,7 +441,6 @@ void Codec47Decoder::level1(byte *d_dst) {
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
-		byte *tmp_dst = d_dst;
 		level2(d_dst);
 		d_dst += 4;
 		level2(d_dst);
@@ -451,7 +448,6 @@ void Codec47Decoder::level1(byte *d_dst) {
 		level2(d_dst);
 		d_dst += 4;
 		level2(d_dst);
-		d_dst = tmp_dst;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
 		for (i = 0; i < 8; i++) {
@@ -461,7 +457,7 @@ void Codec47Decoder::level1(byte *d_dst) {
 		}
 	} else if (code == 0xFD) {
 		tmp = *_d_src++;
-		byte *tmp_ptr = _tableBig + (tmp << 2) + (tmp << 7) + (tmp << 8);
+		byte *tmp_ptr = _tableBig + tmp * 388;
 		byte l = tmp_ptr[384];
 		byte val = *_d_src++;
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
