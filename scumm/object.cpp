@@ -520,7 +520,6 @@ void Scumm::loadRoomObjects()
 		searchptr = NULL;
 	}
 
-	// ENDERFIXME: Switch this one over to numLocals also
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
 			setupRoomObject(&_objs[i], room);
@@ -585,7 +584,6 @@ void Scumm::loadRoomObjectsSmall()
 		searchptr = NULL;
 	}
 
-	// ENDERFIXME: Switch to numLocals
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
 			setupRoomObject(&_objs[i], room);
