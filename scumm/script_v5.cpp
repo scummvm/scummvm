@@ -2484,6 +2484,52 @@ void Scumm_v5::o5_oldRoomEffect() {
 	_opcode = fetchScriptByte();
 	if ((_opcode & 0x1F) == 3) {
 		a = getVarOrDirectWord(0x80);
+
+#if 1
+		if (_gameId == GID_ZAK256) {
+			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
+			// maybe also in other games, this opcode does a bit more. I added
+			// some stubs here, but somebody with a full IDA or more knowledge
+			// about this will have to fill in the gaps. At least now we know
+			// that something is missing here :-)
+		
+			if (a == 4) {
+				// No idea what byte_2FCCF is, but it's a globale boolean flag.
+				// I only add it here as a temporary hack to make the pseudo code compile.
+				int byte_2FCCF = 0;
+
+				if (byte_2FCCF) {
+					// Here now "sub_1C44" is called, which sets byte_2FCCF to 0 then
+					// calls yet another sub (which also reads byte_2FCCF):
+
+					byte_2FCCF = 0;
+					//call    sub_0BB3
+					
+					
+					// Now sub_085C is called. This is quite simply: it sets 
+					// 0xF000 bytes. starting at 0x40000 to 0. No idea what that
+					// buffer is, maybe a screen buffer, though. Note that
+					// 0xF000 = 320*192
+					
+					// call sub_085C
+
+					
+					// And then sub_1C54 is called, which is almost identical to
+					// the above sub_1C44, only it sets byte_2FCCF to 1:
+					
+					byte_2FCCF = 1;
+					// call    sub_0BB3
+
+				} else {
+					// Here only sub_085C is called (see comment above) 
+
+					// call    sub_085C
+				}
+			return;
+			}
+#endif
+
+		}
 		if (a) {
 			_switchRoomEffect = (byte)a;
 			_switchRoomEffect2 = (byte)(a >> 8);
