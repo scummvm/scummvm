@@ -337,7 +337,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			(this->*scriptFunction)(thread, argumentsCount);
 
-			if (scriptFunction == sfScriptGotoScene) {			
+			if (scriptFunction == &Saga::Script::sfScriptGotoScene) {			
 			//if (functionNumber ==  16) { // sfScriptGotoScene
 				return true; // cause abortAllThreads called and _this_ thread destroyed
 			}
