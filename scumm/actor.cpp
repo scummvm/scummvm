@@ -471,7 +471,7 @@ void Actor::startAnimActor(int f) {
 			animProgress = 0;
 			cost.animCounter = 0;
 			needRedraw = true;
-			if (f == initFrame)
+			if (_vm->_version >= 3 && f == initFrame)
 				cost.reset();
 			_vm->cost_decodeData(this, f, (uint) - 1);
 		}
