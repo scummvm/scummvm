@@ -206,7 +206,7 @@ void Scumm_v8::setupOpcodes()
 		/* 84 */
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o6_invalid),
+		OPCODE(o6_stopSentence),
 		OPCODE(o6_invalid),
 		/* 88 */
 		OPCODE(o6_invalid),
@@ -335,7 +335,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_getObjectX),
 		/* EC */
 		OPCODE(o6_getObjectY),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getActorAnimCounter1),
 		OPCODE(o6_distObjectObject),
 		OPCODE(o6_distPtPt),
 		/* F0 */
