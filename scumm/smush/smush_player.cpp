@@ -856,11 +856,13 @@ void SmushPlayer::setPalette(byte *palette) {
 void SmushPlayer::updateScreen() {
 	if (_whileUpdate == false) {
 		_whileCopyRect = true;
+
 		uint32 end_time, start_time = _scumm->_system->get_msecs();
 		_scumm->_system->copy_rect(_data, _width, 0, 0, _width, _height);
+		_updateNeeded = true;
 		end_time = _scumm->_system->get_msecs();
 		debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
-		_updateNeeded = true;
+
 		_whileCopyRect = false;
 	}
 }
@@ -883,14 +885,18 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	while (true) {
 		_scumm->processKbd();
 		_scumm->waitForTimer(1);
-		if ((_whileCopyRect == false) && (_updateNeeded == true)) {
-			_whileUpdate = true;
-			uint32 end_time, start_time = _scumm->_system->get_msecs();
-			_scumm->_system->update_screen();
-			end_time = _scumm->_system->get_msecs();
-			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
-			_updateNeeded = false;
-			_whileUpdate = false;
+		if(_updateNeeded == true) {
+			if(_whileCopyRect == false) {
+				_whileUpdate = true;
+
+				uint32 end_time, start_time = _scumm->_system->get_msecs();
+				_scumm->_system->update_screen();
+				_updateNeeded = false;
+				end_time = _scumm->_system->get_msecs();
+				debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
+
+				_whileUpdate = false;
+			}
 		}
 		if (_scumm->_videoFinished == true)
 			break;
