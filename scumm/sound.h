@@ -88,7 +88,7 @@ protected:
 	int _dig_cd_index;
 	int _dig_cd_track;
 	int _dig_cd_start;
-	int _dig_cd_delay;
+	int _dig_cd_end;
 	int _dig_cd_num_loops;
 	bool _dig_cd_playing;
 
@@ -139,7 +139,7 @@ public:
 	void startCDTimer();
 	void stopCDTimer();
 
-	void playCDTrack(int track, int num_loops, int start, int delay);
+	void playCDTrack(int track, int numLoops, int startFrame, int endFrame);
 	void stopCD();
 	int pollCD() const;
 	void updateCD();
@@ -156,7 +156,7 @@ protected:
 	int playSfxSound_Vorbis(void *sound, uint32 size);
 
 	int getCachedTrack(int track);
-	int playMP3CDTrack(int track, int num_loops, int start, int delay);
+	int playMP3CDTrack(int track, int numLoops, int startFrame, int endFrame);
 	int stopMP3CD();
 	int pollMP3CD() const;
 	int updateMP3CD();
