@@ -329,7 +329,7 @@ void Sound::playSound(int soundID) {
 			
 			As you can see, there are quite some patterns, e.g.
 			the 00 00 00 3c - the sound data seems to start at
-			offset 54.
+			offset 54 = 0x36, but it could also be 0x3c...
 			
 			Indy 3 seems to use a different format. The very first sound played
 			in Indy 3 looks as follows:
@@ -358,9 +358,8 @@ void Sound::playSound(int soundID) {
 	#endif
 			rate = 11000;
 			
-			ptr += 0x16;
 			if (size == 30) {
-				int track = *ptr;
+				int track = *(ptr + 0x16);
 
 				if (track == _scumm->current_cd_sound)
 					if (pollCD() == 1)
@@ -371,21 +370,15 @@ void Sound::playSound(int soundID) {
 				return;
 			}
 	
+			ptr += 0x36;
 			size -= 0x36;
 			sound = (char *)malloc(size);
 			for (int x = 0; x < size; x++) {
 				int bit = *ptr++;
-				if (_scumm->_gameId == GID_INDY3_256) {
-					// FIXME - this is an (obviously incorrect, just listen to it)
-					// test hack for the Indy3 music format.... it doesn't work better
-					// but at least the generated data "looks" somewhat OK :-)
-					sound[x] = bit ^ 0x80;
-				} else {
-					if (bit < 0x80)
-						sound[x] = 0x7F - bit;
-					else
-						sound[x] = bit;
-				}
+				if (bit < 0x80)
+					sound[x] = 0x7F - bit;
+				else
+					sound[x] = bit;
 			}
 	
 			// FIXME: Maybe something in the header signifies looping? Need to
