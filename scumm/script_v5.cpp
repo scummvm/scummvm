@@ -1662,6 +1662,7 @@ void Scumm_v5::o5_roomOps() {
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
 			_roomPalette[b] = a;
+			_fullRedraw = true;
 		} else {
 			error("room-color is no longer a valid command");
 		}
