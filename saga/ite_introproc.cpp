@@ -30,7 +30,6 @@
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/font.h"
-#include "saga/game_mod.h"
 #include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
 #include "saga/text.h"
@@ -137,7 +136,7 @@ int Scene::ITEStartProc() {
 		_vm->_scene->queueScene(&tempScene);
 	}
 
-	GAME_GetSceneInfo(&gs_desc);
+	_vm->getSceneInfo(&gs_desc);
 
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = gs_desc.first_scene;

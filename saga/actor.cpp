@@ -24,7 +24,6 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
-#include "saga/game_mod.h"
 #include "saga/console.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
@@ -66,7 +65,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	debug(9, "Actor::Actor()");
 
 	// Get actor resource file context
-	_actorContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_actorContext == NULL) {
 		error("Actor::Actor(): Couldn't load actor module resource context.");
 	}

@@ -27,7 +27,6 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/font.h"
-#include "saga/game_mod.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
 #include "saga/text.h"
@@ -51,7 +50,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	int tmp_w, tmp_h, tmp_bytepp;
 
 	// Initialize system graphics
-	GAME_GetDisplayInfo(&disp_info);
+	_vm->getDisplayInfo(&disp_info);
 
 	// Initialize FPS timer callback
 	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
@@ -119,7 +118,7 @@ int Render::drawScene() {
 	mouse_pt = _vm->getMousePos();
 
 	_vm->_scene->getBGInfo(&bg_info);
-	GAME_GetDisplayInfo(&disp_info);
+	_vm->getDisplayInfo(&disp_info);
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 

@@ -28,6 +28,8 @@
 #include "common/scummsys.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
+#include "base/plugins.h"
+
 #include "common/util.h"
 #include "common/stream.h"
 #include "common/rect.h"
@@ -72,9 +74,9 @@ enum ERRORCODE {
 	SUCCESS = 0
 };
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_IHNM
+enum SAGAGameType {
+	GType_ITE,
+	GType_IHNM
 };
 
 enum scriptTimings {
@@ -84,6 +86,84 @@ enum scriptTimings {
 struct CLICKAREA {
 	int n_points;
 	Point *points;
+};
+
+
+#define IS_BIG_ENDIAN ((_vm->_features & GF_BIG_ENDIAN_DATA) != 0)
+#define IS_MAC_VERSION (_vm->_gameId == GID_ITE_MACDEMO)
+
+
+enum GAME_IDS {
+	GID_ITE_DEMO = 0,
+	GID_ITE_DISK = 1,
+	GID_ITE_CD = 2,
+	GID_IHNM_DEMO = 3,
+	GID_IHNM_CD = 4,
+	GID_ITE_WINDEMO = 5,
+	GID_ITE_MACDEMO = 6
+};
+
+enum GAME_FILETYPES {
+	GAME_RESOURCEFILE = 0x01,
+	GAME_SCRIPTFILE = 0x02,
+	GAME_SOUNDFILE = 0x04,
+	GAME_VOICEFILE = 0x08,
+	GAME_DEMOFILE = 0x10,
+	GAME_MUSICFILE = 0x20,
+	GAME_MUSICFILE_GM = 0x40,
+	GAME_MUSICFILE_FM = 0x80
+};
+
+enum GAME_SOUNDINFO_TYPES {
+	GAME_SOUND_PCM = 0,
+	GAME_SOUND_VOC,
+	GAME_SOUND_WAV,
+	GAME_SOUND_VOX
+};
+
+enum GAME_FONT_IDS {
+	GAME_FONT_SMALL = 0,
+	GAME_FONT_MEDIUM,
+	GAME_FONT_LARGE,
+	GAME_FONT_SMALL2,
+	GAME_FONT_MEDIUM2,
+	GAME_FONT_LARGE2,
+	GAME_FONT_LARGE3
+};
+
+enum GAME_FEATURES {
+	GF_VOX_VOICES = 1,
+	GF_BIG_ENDIAN_DATA = 2
+};
+
+struct GAME_DISPLAYINFO {
+	int logical_w;
+	int logical_h;
+	int scene_h;
+};
+
+struct GAME_SOUNDINFO {
+	int res_type;
+	long freq;
+	int sample_size;
+	int stereo;
+};
+
+struct GAME_FONTDESC {
+	uint16 font_id;
+	uint32 font_rn;
+};
+
+struct GAME_SCENEDESC {
+	uint32 scene_lut_rn;
+	uint32 first_scene;
+};
+
+struct GAME_RESOURCEDESC {
+	uint32 scene_lut_rn;
+	uint32 script_lut_rn;
+	uint32 command_panel_rn;
+	uint32 dialogue_panel_rn;
 };
 
 inline int ticksToMSec(int tick) {
@@ -105,6 +185,10 @@ public:
 
 	int _soundEnabled;
 	int _musicEnabled;
+
+	int _gameId;
+	int _gameType;
+	uint32 _features;
 
 	SndRes *_sndRes;
 	Sound *_sound;
@@ -159,8 +243,23 @@ public:
 	int processInput(void);
 	Point getMousePos();
 
- private:
+private:
 	Point _mousePos;
+
+public:
+	int initGame();
+	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
+	int getFontInfo(GAME_FONTDESC **, int *);
+	const GAME_RESOURCEDESC getResourceInfo(void);
+	const GAME_SOUNDINFO getSoundInfo(void);
+	int getDisplayInfo(GAME_DISPLAYINFO *disp_info);
+	int getSceneInfo(GAME_SCENEDESC *);
+
+private:
+	int loadLanguage();
+	int loadGame(uint16 game_n_p);
+	int detectGame(uint16 *game_n_p);
+
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

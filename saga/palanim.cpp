@@ -26,7 +26,6 @@
 #include "saga/gfx.h"
 
 #include "saga/events.h"
-#include "saga/game_mod.h"
 
 #include "saga/palanim.h"
 #include "saga/stream.h"
@@ -57,7 +56,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	MemoryReadStreamEndian readS(resdata, resdata_len, IS_BIG_ENDIAN);
 
-	if (GAME_GetGameType() == GID_IHNM) {
+	if (_vm->_gameType == GType_IHNM) {
 		return SUCCESS;
 	}
 

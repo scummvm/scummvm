@@ -24,7 +24,6 @@
 
 #include "saga/music.h"
 #include "saga/rscfile_mod.h"
-#include "saga/game_mod.h"
 #include "saga/stream.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
@@ -298,7 +297,7 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 	_musicInitialized = 1;
 	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 
-	if (GAME_GetGameType() == GID_ITE) {
+	if (_vm->_gameType == GType_ITE) {
 		File file;
 		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
 
@@ -314,7 +313,7 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 		// Proper approach would be to extend resource manager so it could
 		// return File object.
 
-		_musicContext = GAME_GetFileContext(GAME_MUSICFILE, 0);
+		_musicContext = _vm->getFileContext(GAME_MUSICFILE, 0);
 		if (_musicContext != NULL) {
 			_hasDigiMusic = true;
 
@@ -407,7 +406,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	MidiParser *parser;
 	File midiFile;
 
-	if (GAME_GetGameType() == GID_ITE) {
+	if (_vm->_gameType == GType_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
 			if (flags == MUSIC_DEFAULT) {
 				flags = _midiTableITECD[music_rn - 9].flags;
@@ -457,8 +456,8 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		// Load MIDI/XMI resource data
 
-		if (GAME_GetGameType() == GID_ITE) {
-			rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+		if (_vm->_gameType == GType_ITE) {
+			rsc_ctxt = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 		} else {
 			// I've listened to music from both the FM and the GM
 			// file, and I've tentatively reached the conclusion
@@ -484,9 +483,9 @@ int Music::play(uint32 music_rn, uint16 flags) {
 			// different in the two files. I have no idea why.
 
 			if (hasAdlib()) {
-				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_FM, 0);
+				rsc_ctxt = _vm->getFileContext(GAME_MUSICFILE_FM, 0);
 			} else {
-				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
+				rsc_ctxt = _vm->getFileContext(GAME_MUSICFILE_GM, 0);
 			}
 
 			_player->setGM(true);

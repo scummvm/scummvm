@@ -25,7 +25,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/game_mod.h"
 #include "saga/actor.h"
 #include "saga/console.h"
 #include "saga/font.h"
@@ -164,7 +163,6 @@ int Interface::registerLang(void) {
 Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	GAME_RESOURCEDESC g_resdesc;
 
-	int game_type;
 	int result;
 
 	if (_initialized) {
@@ -178,20 +176,19 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Load interface module resource file context
-	_interfaceContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	_interfaceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_interfaceContext == NULL) {
 		return;
 	}
 
 	// Initialize interface data by game type
-	game_type = GAME_GetGameType();
-	if (game_type == GID_ITE) {
+	if (_vm->_gameType == GType_ITE) {
 		// Load Inherit the Earth interface desc
 		_cPanel.buttons = ITE_c_buttons;
 		_cPanel.nbuttons = ARRAYSIZE(ITE_c_buttons);
 
 		_iDesc = ITE_interface;
-	} else if (game_type == GID_IHNM) {
+	} else if (_vm->_gameType == GType_IHNM) {
 		// Load I Have No Mouth interface desc
 		_cPanel.buttons = IHNM_c_buttons;
 		_cPanel.nbuttons = ARRAYSIZE(IHNM_c_buttons);
@@ -201,7 +198,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Load interface resources
-	GAME_GetResourceInfo(&g_resdesc);
+	g_resdesc = _vm->getResourceInfo();
 
 	// Load command panel resource
 	result = RSC_LoadResource(_interfaceContext, g_resdesc.command_panel_rn,
@@ -330,7 +327,7 @@ int Interface::draw() {
 	}
 
 	// Get game display info
-	GAME_GetDisplayInfo(&g_di);
+	_vm->getDisplayInfo(&g_di);
 
 	drawStatusBar(back_buf);
 
@@ -390,7 +387,7 @@ int Interface::update(const Point& imousePt, int update_flag) {
 	back_buf = _vm->_gfx->getBackBuffer();
 
 	// Get game display info
-	GAME_GetDisplayInfo(&g_di);
+	_vm->getDisplayInfo(&g_di);
 
 	if (_panelMode == kPanelCommand) {
 		// Update playfield space ( only if cursor is inside )
@@ -425,12 +422,12 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	// Disable this for IHNM for now, since that game uses the full screen
 	// in some cases.
 
-	if (GAME_GetGameType() == GID_IHNM) {
+	if (_vm->_gameType == GType_IHNM) {
 		return SUCCESS;
 	}
 
 	// Get game display info
-	GAME_GetDisplayInfo(&g_di);
+	_vm->getDisplayInfo(&g_di);
 
 	// Erase background of status bar
 	rect.left = 0;

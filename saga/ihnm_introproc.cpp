@@ -105,7 +105,7 @@ int Scene::IHNMStartProc() {
 	// it will cause the end titles music to play, which is wrong. (But
 	// hey, it's a nice piece of music!)
 
-	GAME_GetSceneInfo(&gs_desc);
+	_vm->getSceneInfo(&gs_desc);
 
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = gs_desc.first_scene;

@@ -30,7 +30,6 @@
 #include "saga/font.h"
 
 #include "saga/script.h"
-#include "saga/game_mod.h"
 #include "saga/stream.h"
 
 namespace Saga {

@@ -27,7 +27,6 @@
 #define SAGA_SOUND_H_
 
 #include "saga/rscfile_mod.h"
-#include "saga/game_mod.h"
 #include "sound/mixer.h"
 
 namespace Saga {

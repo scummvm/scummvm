@@ -25,7 +25,6 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/game_mod.h"
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/interface.h"
@@ -55,10 +54,10 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Load game-specific scene data
-	GAME_GetSceneInfo(&gs_desc);
+	_vm->getSceneInfo(&gs_desc);
 
 	// Load scene module resource context
-	_sceneContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	_sceneContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_sceneContext == NULL) {
 		warning("Scene::Scene(): Couldn't load scene resource context");
 		return;
@@ -173,11 +172,11 @@ int Scene::startScene() {
 	event.op = EVENT_HIDE;
 	_vm->_events->queue(&event);
 
-	switch (GAME_GetGameType()) {
-	case GID_ITE:
+	switch (_vm->_gameType) {
+	case GType_ITE:
 		ITEStartProc();
 		break;
-	case GID_IHNM:
+	case GType_IHNM:
 		IHNMStartProc();
 		break;
 	default:
@@ -334,7 +333,7 @@ int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
 	bginfo->bg_h = _bg.h;
 	bginfo->bg_p = _bg.p;
 
-	GAME_GetDisplayInfo(&di);
+	_vm->getDisplayInfo(&di);
 	x = 0;
 	y = 0;
 
@@ -784,7 +783,7 @@ int Scene::draw(SURFACE *dst_s) {
 	assert(_initialized);
 
 	_vm->_render->getBufferInfo(&buf_info);
-	GAME_GetDisplayInfo(&disp_info);
+	_vm->getDisplayInfo(&disp_info);
 
 	bg_pt.x = 0;
 	bg_pt.y = 0;

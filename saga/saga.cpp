@@ -40,7 +40,6 @@
 #include "saga/console.h"
 #include "saga/events.h"
 #include "saga/font.h"
-#include "saga/game_mod.h"
 #include "saga/game.h"
 #include "saga/interface.h"
 #include "saga/isomap.h"
@@ -51,7 +50,6 @@
 #include "saga/sprite.h"
 #include "saga/sound.h"
 #include "saga/music.h"
-#include "saga/game_mod.h"
 #include "saga/palanim.h"
 
 static const GameSettings saga_games[] = {
@@ -142,7 +140,7 @@ int SagaEngine::init(GameDetector &detector) {
 	// Process command line
 
 	// Detect game and open resource files
-	if (GAME_Init() != SUCCESS) {
+	if (initGame() != SUCCESS) {
 		return -1;
 	}
 
@@ -171,7 +169,7 @@ int SagaEngine::init(GameDetector &detector) {
 
 	// Initialize graphics
 	GAME_DISPLAYINFO disp_info;
-	GAME_GetDisplayInfo(&disp_info);
+	getDisplayInfo(&disp_info);
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h, detector);
 
 	// Graphics driver should be initialized before console

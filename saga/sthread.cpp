@@ -31,7 +31,6 @@
 #include "saga/script.h"
 
 #include "saga/sdata.h"
-#include "saga/game_mod.h"
 #include "saga/stream.h"
 #include "saga/scene.h"
 #include "saga/resnames.h"
@@ -763,7 +762,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				}
 				// now data contains last string index
 
-				if (GAME_GetGame() == GAME_ITE_DISK) { // special ITE dos
+				if (_vm->_gameId == GID_ITE_DISK) { // special ITE dos
 					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (SCENE1_VOICE_138 - SCENE1_VOICE_009 + 288))) {
 						sampleResourceId = SCENE1_VOICE_009 + data - 288;
 					}

@@ -28,7 +28,6 @@
 #include "saga/console.h"
 
 #include "saga/actionmap.h"
-#include "saga/game_mod.h"
 #include "saga/stream.h"
 
 namespace Saga {

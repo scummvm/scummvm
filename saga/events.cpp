@@ -35,7 +35,6 @@
 #include "saga/text.h"
 #include "saga/palanim.h"
 #include "saga/render.h"
-#include "saga/game_mod.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 

@@ -26,7 +26,6 @@
 #include "saga/gfx.h"
 
 #include "saga/rscfile_mod.h"
-#include "saga/game_mod.h"
 
 #include "saga/font.h"
 #include "saga/stream.h"
@@ -38,13 +37,13 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Load font module resource context 
-	_fontContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	_fontContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_fontContext == NULL) {
 		error("Font::Font(): Couldn't get resource context.");
 	}
 
 	// Allocate font table
-	GAME_GetFontInfo(&gamefonts, &_nFonts);
+	_vm->getFontInfo(&gamefonts, &_nFonts);
 
 	assert(_nFonts > 0);
 

@@ -26,7 +26,6 @@
 #include "saga/gfx.h"
 
 #include "saga/console.h"
-#include "saga/game_mod.h"
 #include "saga/events.h"
 #include "saga/render.h"
 
@@ -89,7 +88,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->resdata = anim_resdata;
 	new_anim->resdata_len = anim_resdata_len;
 
-	if (GAME_GetGameType() == GID_ITE) {
+	if (_vm->_gameType == GType_ITE) {
 		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != SUCCESS) {
 			warning("Anim::load Couldn't get animation frame count");
 			return FAILURE;
@@ -176,7 +175,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 		return FAILURE;
 	}
 
-	GAME_GetDisplayInfo(&disp_info);
+	_vm->getDisplayInfo(&disp_info);
 
 	_vm->_render->getBufferInfo(&buf_info);
 	display_buf = buf_info.bg_buf;
@@ -191,7 +190,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 
 	if (anim->play_flag) {
 		frame = anim->current_frame;
-		if (GAME_GetGameType() == GID_ITE) {
+		if (_vm->_gameType == GType_ITE) {
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != SUCCESS) {
@@ -346,7 +345,7 @@ int Anim::freeId(uint16 anim_id) {
 		return FAILURE;
 	}
 
-	if (GAME_GetGameType() == GID_ITE) {
+	if (_vm->_gameType == GType_ITE) {
 		free(anim->frame_offsets);
 		anim->frame_offsets = NULL;
 	}
@@ -385,7 +384,7 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 	ah.unknown07 = readS.readByte();
 	ah.nframes = readS.readByte();
 
-	if (GAME_GetGameType() == GID_IHNM) {
+	if (_vm->_gameType == GType_IHNM) {
 		*n_frames = ah.nframes;
 	}
 
@@ -618,7 +617,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 	GAME_DISPLAYINFO di;
 
-	GAME_GetDisplayInfo(&di);
+	_vm->getDisplayInfo(&di);
 
 	*nextf_p = NULL;
 

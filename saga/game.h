@@ -26,7 +26,7 @@
 #ifndef SAGA_GAME_H_
 #define SAGA_GAME_H_
 
-#include "base/plugins.h"
+#include "saga/saga.h"
 
 namespace Saga {
 
@@ -47,7 +47,7 @@ struct GAME_FILEDESC {
 
 struct GAMEDESC {
 	const char *name;
-	SAGAGameId gd_game_type;
+	SAGAGameType gd_game_type;
 	GAME_IDS gd_game_id;
 	const char *gd_title;
 	int gd_logical_w;
@@ -75,7 +75,6 @@ struct GAME_FILEDATA {
 };
 
 struct GAMEMODULE {
-	int game_init;
 	int game_number;
 	GAMEDESC *gamedesc;
 	int g_skipintro;
@@ -88,9 +87,7 @@ struct GAMEMODULE {
 	const char *err_str;
 };
 
-int LoadLanguage();
-int LoadGame(uint16 game_n_p);
-int DetectGame(uint16 *game_n_p);
+DetectedGameList GAME_ProbeGame(const FSList &fslist);
 
 } // End of namespace Saga
 

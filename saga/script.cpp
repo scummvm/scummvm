@@ -26,7 +26,6 @@
 
 #include "saga/gfx.h"
 #include "saga/rscfile_mod.h"
-#include "saga/game_mod.h"
 #include "saga/console.h"
 
 #include "saga/script.h"
@@ -55,17 +54,17 @@ Script::Script() {
 	_skipSpeeches = false;
 	memset(_dataBuf, 0, sizeof(_dataBuf));
 
-	GAME_GetResourceInfo(&gr_desc);
+	gr_desc = _vm->getResourceInfo();
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
-	_scriptContext = GAME_GetFileContext(GAME_SCRIPTFILE, 0);
+	_scriptContext = _vm->getFileContext(GAME_SCRIPTFILE, 0);
 	if (_scriptContext == NULL) {
 		error("Couldn't get script file context");
 	}
 
 	// Load script LUT resource
-	s_lut_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	s_lut_ctxt = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (s_lut_ctxt == NULL) {
 		error("Couldn't get resource file context");
 	}
@@ -156,7 +155,7 @@ int Script::loadScript(int script_num) {
 	uint32 voicelut_rn;
 	int result;
 
-	if (GAME_GetGameType() == GID_IHNM) {
+	if (_vm->_gameType == GType_IHNM) {
 		return SUCCESS;
 	}
 

@@ -27,7 +27,6 @@
 #define SAGA_SNDRES_H_
 
 #include "saga/rscfile_mod.h"
-#include "saga/game_mod.h"
 #include "saga/sound.h"
 
 namespace Saga {

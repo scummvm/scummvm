@@ -26,7 +26,6 @@
 
 #include "saga/rscfile_mod.h"
 #include "saga/rscfile.h"
-#include "saga/game_mod.h"
 #include "saga/stream.h"
 
 namespace Saga {

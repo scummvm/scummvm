@@ -23,7 +23,6 @@
 #include "saga/saga.h"
 
 #include "saga/sound.h"
-#include "saga/game_mod.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -171,19 +170,6 @@ int Sound::playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int vol
 		flags |= SoundMixer::FLAG_STEREO;
 	if (!buf->s_signed)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-
-	// FIXME: Remove the code below if the code above works.
-
-#if 0
-	int game_id = GAME_GetGame();
-
-	if((game_id == GAME_ITE_DISK) || (game_id == GAME_ITE_DEMO)) {
-		flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-	} else {
-		flags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS |
-			SoundMixer::FLAG_LITTLE_ENDIAN;
-	}
-#endif
 
 	_mixer->playRaw(handle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags, -1, volume);
 

@@ -24,7 +24,6 @@
 // Sprite management module
 #include "saga/saga.h"
 
-#include "saga/game_mod.h"
 #include "saga/gfx.h"
 #include "saga/scene.h"
 #include "saga/rscfile_mod.h"
@@ -41,7 +40,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	debug(0, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
-	_spriteContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	_spriteContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_spriteContext == NULL) {
 		return;
 	}
