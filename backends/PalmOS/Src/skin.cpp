@@ -396,6 +396,10 @@ static void SknRedrawTools(DmOpenRef skinDBP) {
 			SknSetState(skinDBP, skinButtonGameEdit,sknStateDisabled);
 			SknShowObject(skinDBP, skinButtonGameEdit);
 		}
+		if (SknGetState(skinDBP, skinButtonGameAudio) == sknStateNormal) {
+			SknSetState(skinDBP, skinButtonGameAudio,sknStateDisabled);
+			SknShowObject(skinDBP, skinButtonGameAudio);
+		}
 
 	} else {
 		if (SknGetState(skinDBP, skinButtonGameDelete) == sknStateDisabled) {
@@ -405,6 +409,10 @@ static void SknRedrawTools(DmOpenRef skinDBP) {
 		if (SknGetState(skinDBP, skinButtonGameEdit) == sknStateDisabled) {
 			SknSetState(skinDBP, skinButtonGameEdit,sknStateNormal);
 			SknShowObject(skinDBP, skinButtonGameEdit);
+		}
+		if (SknGetState(skinDBP, skinButtonGameAudio) == sknStateDisabled) {
+			SknSetState(skinDBP, skinButtonGameAudio,sknStateNormal);
+			SknShowObject(skinDBP, skinButtonGameAudio);
 		}
 	}
 }

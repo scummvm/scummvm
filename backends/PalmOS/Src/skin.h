@@ -61,6 +61,7 @@
 #define skinButtonGameParams		3000
 #define skinButtonGameAdd			3100
 #define skinButtonGameEdit			3200
+#define skinButtonGameAudio			3300
 #define skinButtonGameDelete		4000
 #define skinButtonGameStart			7000
 
