@@ -48,7 +48,12 @@
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
  */
-
+ 
+/* 
+ * TODO - Instead of starting with getRoot(), we should rather add a getDefaultDir()
+ * call that on Unix might return the current dir or the users home dir...
+ * i.e. the root dir is usually not the best starting point for browsing.
+ */
 
 #include "common/list.h"
 #include "common/str.h"
