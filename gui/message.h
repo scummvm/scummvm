@@ -29,12 +29,14 @@ class MessageDialog : public Dialog {
 	typedef ScummVM::String String;
 	typedef ScummVM::StringList StringList;
 public:
-	MessageDialog(NewGui *gui, const String &message);
+	MessageDialog(NewGui *gui, const String &message, uint32 timer = 0, bool showButton = true);
+	
+	void handleTickle();
 
 protected:
-	StringList _lines;
-	
-	int addLine(const char *line, int size);
+	uint32 _timer;
+
+	int addLine(StringList &lines, const char *line, int size);
 };
 
 #endif

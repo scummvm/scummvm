@@ -23,13 +23,14 @@
 #include "newgui.h"
 
 
-MessageDialog::MessageDialog(NewGui *gui, const String &message)
+MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, bool showButton)
 	: Dialog(gui, 30, 20, 260, 124)
 {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
+	StringList lines;
 	const char *str = message.c_str();
 	const char *start = str;
 	int lineWidth, maxlineWidth = 0;
@@ -37,7 +38,7 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	
 	while (*str) {
 		if (*str == '\n') {
-			lineWidth = addLine(start, str - start);
+			lineWidth = addLine(lines, start, str - start);
 			if (maxlineWidth < lineWidth)
 				maxlineWidth = lineWidth;
 			start = str + 1;
@@ -46,14 +47,17 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	}
 
 	// Add the last line
-	lineWidth = addLine(start, str - start);
+	lineWidth = addLine(lines, start, str - start);
 	if (maxlineWidth < lineWidth)
 		maxlineWidth = lineWidth;
 	
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = maxlineWidth + 20;
-	lineCount = _lines.size();
-	_h = lineCount * kLineHeight + 40;
+	lineCount = lines.size();
+	_h = lineCount * kLineHeight + 16;
+	if (showButton)
+		_h += 24;
+
 	if (_h > 180) {
 		lineCount = (180 - 34) / kLineHeight;
 		_h = lineCount * kLineHeight + 34;
@@ -63,15 +67,28 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10+i*kLineHeight, maxlineWidth, kLineHeight,
-								_lines[i], kTextAlignCenter);
+								lines[i], kTextAlignCenter);
 	}
 
 	// FIXME - allow for multiple buttons, and return in runModal() which one
 	// was selected.
-	addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
+	if (showButton)
+		addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
+	
+	if (timer)
+		_timer = _gui->get_time() + timer;
+	else
+		_timer = 0;
 }
 
-int MessageDialog::addLine(const char *line, int size)
+void MessageDialog::handleTickle()
+{
+	Dialog::handleTickle();
+	if (_timer && _gui->get_time() > _timer)
+		close();
+}
+
+int MessageDialog::addLine(StringList &lines, const char *line, int size)
 {
 	int width = 0, maxWidth = 0;
 	const char *start = line, *pos = line, *end = start + size;
@@ -92,7 +109,7 @@ int MessageDialog::addLine(const char *line, int size)
 			
 			// Add the substring from intervall [start, i-1]
 			tmp = String(start, pos - start);
-			_lines.push_back(tmp);
+			lines.push_back(tmp);
 			
 			// Determine the width of the string, and adjust maxWidth accordingly
 			width = _gui->getStringWidth(tmp);
@@ -112,7 +129,7 @@ int MessageDialog::addLine(const char *line, int size)
 
 	if (start < pos) {
 		tmp = String(start, pos - start);
-		_lines.push_back(tmp);
+		lines.push_back(tmp);
 	}
 	return maxWidth;
 }
