@@ -150,8 +150,11 @@ void SoundEngine::unlock() {
 }
 
 byte *SoundEngine::findTag(int sound, char *tag, int index) {
-	byte *ptr = _base_sounds[sound];
+	byte *ptr = NULL;
 	int32 size,pos;
+
+	if (_base_sounds)
+		 ptr = _base_sounds[sound];
 
 	if (ptr==NULL) {
 		debug(1, "SoundEngine::findTag completely failed finding sound %d", sound);
@@ -921,7 +924,7 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver *driver) {
 	_s = scumm;
 
 	_driver = (SOUND_DRIVER_TYPE*)driver;
-
+	
 	_master_volume = 127;
 	if (_music_volume < 1) _music_volume = 60;
 

@@ -199,9 +199,15 @@ void Scumm::scummMain(int argc, char **argv) {
 	_minHeapThreshold = 400000;
 
 	_gameDataPath = NULL;
-        _gameTempo = 0;
+    _gameTempo = 0;
 	_videoMode = 0;
-        _soundCardType = 3;
+    _soundCardType = 3;
+
+	#ifdef WIN32
+		_midi_driver = MIDI_WINDOWS;
+	#else
+		_midi_driver = MIDI_NULL;
+	#endif
 	parseCommandLine(argc, argv);
 
 	if (_exe_name==NULL)
@@ -419,6 +425,7 @@ int Scumm::scummLoop(int delta) {
 						"\ts<num>  - set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
 						"\tp<path> - look for game in <path>\n" \
 						"\tm<num>  - set music volume to <num> (0-100)\n" \
+						"\te<num>  - set music engine. see readme.txt for details\n" \
 						"\tr       - emulate roland mt32 instruments\n" \
 						"\tf       - fullscreen mode\n" \
 						"\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
@@ -500,6 +507,11 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 						se->_mt32emulate = true;
 					break;
 				}
+				case 'e':
+					if (*(s+1) == '\0')
+						goto ShowHelpAndExit;
+					_midi_driver = atoi(s+1);
+					goto NextArg;
 				case 'g':
                 	if (*(s+1) == '\0')
                 		goto ShowHelpAndExit;

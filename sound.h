@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2002/03/14 08:04:21  ender
+ * Rewire the MIDI subsystem to use drivers selecting from the commandline.
+ * No -DTIMIDITY, etc! Yippie!. Also updated readme.
+ *
  * Revision 1.5  2002/03/14 06:06:49  ender
  * Added some new midi drivers - QuickTime Music and RawMidi.
  * -DUSE_RAWMIDI and -DUSE_QTMUSIC respectivly.
@@ -404,10 +408,30 @@ public:
 	bool wave_based() { return true; }	
 };
 
-struct MidiSoundDriver : SoundDriver {
-	void *_mo;	
-	SoundEngine *_se;
+struct MidiDriver {
+	bool MidiInitialized;
+	int DeviceType;
+	int SeqDevice;
+	void *_mo; /* midi out */
+	
+	void midiInit();
+	void midiInitTimidity();
+	void midiInitSeq();
+	void midiInitWindows();
+	void midiInitNull();
+	void midiInitQuicktime();
 
+	void MidiOut(int b);
+	void MidiOutSeq(void *a, int b);
+	void MidiOutWindows(void *a, int b);
+	void MidiOutQuicktime(void *a, int b);
+
+	int connect_to_timidity(int port);
+	int open_sequencer_device();
+};
+
+struct MidiSoundDriver : SoundDriver {	
+	SoundEngine *_se;
 	MidiChannelGM _midi_channels[9];
 
 	int16 _midi_pitchbend_last[16];
@@ -418,6 +442,7 @@ struct MidiSoundDriver : SoundDriver {
 	byte _midi_chorus_last[16];
 	int8 _midi_pan_last[16];
 
+	MidiDriver _midi_driver;
 	void midiPitchBend(byte chan, int16 pitchbend);
 	void midiVolume(byte chan, byte volume);
 	void midiPedal(byte chan, bool pedal);
@@ -447,7 +472,7 @@ public:
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part,byte what);
-
+	void midiSetDriver(int devicetype);
 	bool wave_based() { return false; }
 };
 
@@ -550,9 +575,11 @@ public:
 	int get_sound_status(int sound);
 	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
-	void setBase(byte **base) { _base_sounds = base; }
+	void setBase(byte **base) { _base_sounds = base; }	
 
 	SOUND_DRIVER_TYPE *driver() { return _driver; }
+	int  midiGetDriver() {return _s->_midi_driver;}
+	void midiSetDriver(int devicetype);
 	bool _mt32emulate;	
 };
 

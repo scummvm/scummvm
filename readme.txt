@@ -28,7 +28,7 @@ be playable to the end:
 The following games should load, but are not yet in a playable form.
 
 	Loom (256 color CD version)
-	Zak McKraken (256 color FM towns version)
+	Zak McKraken (256 color FM Towns version)
 	Indiana Jones and the Last Crusade (256 color version)
         Full Throttle
         The Dig
@@ -42,9 +42,9 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 	Curse of Monkey Island
 
 Please be aware that the engine may contains bugs and non-implemented-
-features that sometimes make it impossible to finish the game. Please file a
-bug report (follow the link on the homepage) if you discover such a bug. Attach
-a saved game if possible.
+features that sometimes make it impossible to finish the game. Save often,
+and please file a bug report (follow the link on the homepage) if you discover
+such a bug. Attach a saved game if possible.
 
 Known Bugs:
 -----------
@@ -124,8 +124,11 @@ Command Line Options:
         -s<num>   - set the scale factor, 1-3    default is '2'
         -m<num>   - set the music volume, 0-100  default is '60'
         -t<num>   - set music tempo              default is '2031616'
+        -e<num>   - select sound engine. see below.
+        -g<num>   - select graphics scaler. see below.
 	-f        - fullscreen mode
         -n        - disable subtitles
+        -r        - enable roland conversion. Use this option if music doesn't sound correct.
 
 In game Hot Keys:
 -----------------
@@ -138,6 +141,63 @@ In game Hot Keys:
 	F5 displays a save/load box.
 	Space pauses.
 	Alt-Enter toggles full screen (on *nix only)
+
+
+Graphics filters:
+-----------------
+ScummVM offers several antialiasing filters to attempt to improve visual
+quality. These are the same filters used in many other emulators, such as
+MAME. They are:
+        -g0 - No filtering. Fastest, obviously.
+        -g1 - 2xSal
+        -g2 - SuperSal. Less blurrier than 2x, but slightly slower
+        -g3 - SuperEagle.
+
+Note that at the moment filters are very slow, and slightly buggy. Use at 
+your own risk! .... but feel free to submit a bugfix or optimisation patch :)
+
+
+Music and Sound: 
+----------------
+By default, on most operating systems, ScummVM will automatically use ADLIB
+emulation. However, some games do not include adlib music - such as Sam and
+Max. To hear music in such games, you will need to remove the 'USE_ADLIB'
+define and recompile using Midi support.. (TODO: Make ADLIB and MIDI dynamic!)
+
+If you ARE using MIDI, you have several different choices of output, 
+depending on your operating system and configuration.
+
+        -e0 - Null output. Don't play any music. This is default on non-windows operating systems
+        -e1 - Windows output. This uses the builtin Windows sequencer. Naturally, only on Windows
+        -e4 - Quicktime sound, for Macintosh users.
+
+
+Playing sound with Adlib emulation:
+-----------------------------------
+If you compile ScummVM with the USE_ADLIB flag, an Adlib card will be
+emulated and ScummVM will output the music as sampled waves. This offers
+far superior preformance to Timidity, however does not work with some games
+such as Sam and Max.
+
+
+Playing sound with Sequencer:
+-----------------------------
+If your soundcard driver supports a sequencer, you may set the environment
+variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
+
+Then start ScummVM with the parameter '-e3'. This should work on several
+cards, and may offer better preformance and quality than Adlib emulation.
+
+
+Playing music with Timidity:
+----------------------------
+Start Timidity with the following command line :
+	$ timidity -irv 7777
+Then start ScummVM with the parameter '-e2'. However, Timidity is not designed
+to cope with the rapid changes most iMUSE equipped games use - so Adlib emulation
+or sequencer support are the recommended methods for non-windows/non-macintosh 
+users.
+
 
 Savegames:
 ----------
@@ -152,19 +212,6 @@ Bash Example:
 Windows example:
         set SCUMMVM_SAVEPATH=C:\saved_games\
 
-Playing sound with Timidity (*nix only):
-----------------------------------------
-
-Start Timidity with the following command line :
-
-$ timidity -irv 7777
-
-Then just start ScummVM and you should have sound.
-In order to use timidity, you need to compile ScummVM with USE_TIMIDITY.
-
-If you compile ScummVM with the USE_ADLIB flag, an Adlib card will be
-emulated and ScummVM will output the music as sampled waves.
-(doesn't work with Sam&Max)
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!

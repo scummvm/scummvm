@@ -7,7 +7,7 @@
 #define SPECIAL_CHANNEL 9
 #define DEVICE_NUM 0
 
-#if defined(USE_QTMUSIC)
+#ifdef __APPLE__CW
 	#include <QuickTimeComponents.h>
 	#include "QuickTimeMusic.h"
 
@@ -15,6 +15,21 @@
 	NoteChannel qtNoteChannel[16];
 	NoteRequest simpleNoteRequest;
 #endif
+
+#ifdef WIN32
+	#include <winsock.h>
+#elif defined(UNIX)
+	#include <sys/time.h>
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <netdb.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+#endif
+
 
 /* Roland to General Midi patch table. Still needs much work. */
 static const byte mt32_to_gmidi[128] = {

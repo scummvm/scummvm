@@ -51,6 +51,13 @@ enum {
 	MAX_ACTORS = 30
 };
 
+enum {
+	MIDI_NULL = 0,
+	MIDI_WINDOWS = 1,
+	MIDI_TIMIDITY = 2,
+	MIDI_SEQ = 3,
+	MIDI_QTMUSIC = 4
+};
 
 const uint16 many_direction_tab[18] = {
 	4,
@@ -902,6 +909,7 @@ struct Scumm {
 
 	int _keyPressed;
 
+	int _midi_driver;	
 	void *_soundEngine;
 
 	uint16 *_inventory;

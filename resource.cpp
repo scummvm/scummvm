@@ -696,8 +696,7 @@ int Scumm::readSoundResource(int type, int idx) {
 			fileSeek(_fileHandle, best_offs - 8, SEEK_SET);
 			fileRead(_fileHandle,createResource(type, idx, best_size), best_size);
 			return 1;
-		}
-
+		}		
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
