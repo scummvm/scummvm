@@ -110,6 +110,9 @@ public:
 	void setBuffer(int idx, R_SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
 	R_SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
 	YS_DL_LIST *threadList() { return _threadList; }
+
+	void scriptInfo(int argc, char *argv[]);
+	void scriptExec(int argc, char *argv[]);
 	
 protected:
 	bool _initialized;
@@ -121,7 +124,7 @@ protected:
 	R_SCRIPTDATA *_currentScript;
 	R_SCRIPT_DATABUF *_dataBuf[R_SCRIPT_DATABUF_NUM];
 	YS_DL_LIST *_threadList;
-	
+
 public:
 	int _dbg_singlestep;
 	int _dbg_dostep;

@@ -486,31 +486,31 @@ R_VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R
 	return voice_lut;
 }
 
-void CF_script_info(int argc, char *argv[], void *refCon) {
+void Script::scriptInfo(int argc, char *argv[]) {
 	uint32 n_entrypoints;
 	uint32 i;
 	char *name_ptr;
 
-	if (((Script *)refCon)->currentScript() == NULL) {
+	if (currentScript() == NULL) {
 		return;
 	}
 
-	if (!((Script *)refCon)->currentScript()->loaded) {
+	if (!currentScript()->loaded) {
 		return;
 	}
 
-	n_entrypoints = ((Script *)refCon)->currentScript()->bytecode->n_entrypoints;
+	n_entrypoints = currentScript()->bytecode->n_entrypoints;
 
 	_vm->_console->print("Current script contains %d entrypoints:", n_entrypoints);
 
 	for (i = 0; i < n_entrypoints; i++) {
-		name_ptr = (char *)((Script *)refCon)->currentScript()->bytecode->bytecode_p +
-							((Script *)refCon)->currentScript()->bytecode->entrypoints[i].name_offset;
+		name_ptr = (char *)currentScript()->bytecode->bytecode_p +
+							currentScript()->bytecode->entrypoints[i].name_offset;
 		_vm->_console->print("%lu: %s", i, name_ptr);
 	}
 }
 
-void CF_script_exec(int argc, char *argv[], void *refCon) {
+void Script::scriptExec(int argc, char *argv[]) {
 	uint16 ep_num;
 
 	if (argc < 1) {
@@ -519,21 +519,29 @@ void CF_script_exec(int argc, char *argv[], void *refCon) {
 
 	ep_num = atoi(argv[0]);
 
-	if (((Script *)refCon)->_dbg_thread == NULL) {
+	if (_dbg_thread == NULL) {
 		_vm->_console->print("Creating debug thread...");
-		((Script *)refCon)->_dbg_thread = STHREAD_Create();
-		if (((Script *)refCon)->_dbg_thread == NULL) {
+		_dbg_thread = STHREAD_Create();
+		if (_dbg_thread == NULL) {
 			_vm->_console->print("Thread creation failed.");
 			return;
 		}
 	}
 
-	if (ep_num >= ((Script *)refCon)->currentScript()->bytecode->n_entrypoints) {
+	if (ep_num >= currentScript()->bytecode->n_entrypoints) {
 		_vm->_console->print("Invalid entrypoint.");
 		return;
 	}
 
-	STHREAD_Execute(((Script *)refCon)->_dbg_thread, ep_num);
+	STHREAD_Execute(_dbg_thread, ep_num);
+}
+
+void CF_script_info(int argc, char *argv[], void *refCon) {
+	((Script *)refCon)->scriptInfo(argc, argv);
+}
+
+void CF_script_exec(int argc, char *argv[], void *refCon) {
+	((Script *)refCon)->scriptExec(argc, argv);
 }
 
 void CF_script_togglestep(int argc, char *argv[], void *refCon) {
