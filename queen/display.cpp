@@ -161,19 +161,25 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 }
 
 
-void Display::dynalumUpdate(int x, int y) {
+void Display::dynalumUpdate(int16 x, int16 y) {
 
 	if (!_dynalum.valid)
 		return;
 
-	if (x >= _bdWidth) {
+	if (x < 0) {
+		x = 0;
+	}
+	else if (x >= _bdWidth) {
 		x = _bdWidth;
 	}
-	if (y >= ROOM_ZONE_HEIGHT - 1) {
+	if (y < 0) {
+		y = 0;
+	}
+	else if (y >= ROOM_ZONE_HEIGHT - 1) {
 		y = ROOM_ZONE_HEIGHT - 1;
 	}
 
-	unsigned offset = (y / 4) * 160 + (x / 4);
+	uint offset = (y / 4) * 160 + (x / 4);
 	if (offset >= sizeof(_dynalum.msk)) {
 		debug(0, "Graphics::dynalumUpdate(%d, %d) - invalid offset: %08x", x, y, offset);
 		return;
@@ -654,7 +660,7 @@ void Display::prepareUpdate() {
 }
 
 
-void Display::update(bool dynalum, int dynaX, int dynaY) {
+void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
 	if (dynalum) {
 		dynalumUpdate(dynaX, dynaY);

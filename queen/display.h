@@ -67,7 +67,7 @@ public:
 	~Display();
 
 	void dynalumInit(Resource *resource, const char *roomName, uint16 roomNum);
-	void dynalumUpdate(int x, int y);
+	void dynalumUpdate(int16 x, int16 y);
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
@@ -83,7 +83,7 @@ public:
 	void screenMode(int comPanel, bool inCutaway);
 
 	void prepareUpdate();
-	void update(bool dynalum, int dynaX, int dynaY);
+	void update(bool dynalum, int16 dynaX, int16 dynaY);
 
 	void blit(RenderingBuffer dstBuf, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked);
 	void fill(RenderingBuffer dstBuf, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
