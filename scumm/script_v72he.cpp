@@ -1475,7 +1475,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			cw = pvs->w;
 			ch = pvs->h;
 		}
-		Common::Rect rScreen(0, 0, cw - 1, ch - 1);
+		Common::Rect rScreen(cw, ch);
 		if (pwi->flags & 0x80) {    
 //  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 			warning("drawWizImage() unhandled flag 0x80");
@@ -1489,7 +1489,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			warning("printing Wiz image is unimplemented");
 			dst = NULL;
 		} else if (!(pwi->flags & 0x20)) {
-			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width - 1, pwi->y1 + height - 1);
+			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
 				if (pwi->flags & 0x18) {

@@ -1450,21 +1450,19 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 }
 
 static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
-	srcRect = Common::Rect(0, 0, src_w, src_h);
-	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	Common::Rect r3;
-
 	if (rect) {
 		r3 = *rect;
-		Common::Rect r4(0, 0, dst_w, dst_h);
+		Common::Rect r4(dst_w, dst_h);
 		if (r3.intersects(r4)) {
 			r3.clip(r4);
 		} else {
 			return false;
 		}
 	} else {
-		r3 = Common::Rect(0, 0, dst_w, dst_h);
+		r3 = Common::Rect(dst_w, dst_h);
 	}
+	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	dstRect.clip(r3);
 	srcRect = dstRect;
 	srcRect.moveTo(0, 0);
