@@ -253,37 +253,16 @@
 					RelativePath=".\common\config-file.h">
 				</File>
 				<File
-					RelativePath=".\common\engine.cpp">
-				</File>
-				<File
-					RelativePath=".\common\engine.h">
-				</File>
-				<File
 					RelativePath=".\common\file.cpp">
 				</File>
 				<File
 					RelativePath=".\common\file.h">
 				</File>
 				<File
-					RelativePath=".\common\gameDetector.cpp">
-				</File>
-				<File
-					RelativePath=".\common\gameDetector.h">
-				</File>
-				<File
 					RelativePath=".\common\list.h">
 				</File>
 				<File
-					RelativePath=".\common\main.cpp">
-				</File>
-				<File
 					RelativePath=".\common\map.h">
-				</File>
-				<File
-					RelativePath="common\plugins.cpp">
-				</File>
-				<File
-					RelativePath="common\plugins.h">
 				</File>
 				<File
 					RelativePath=".\common\rect.h">
@@ -510,6 +489,31 @@
 						RelativePath=".\backends\midi\windows.cpp">
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="base"
+				Filter="">
+				<File
+					RelativePath="base\engine.cpp">
+				</File>
+				<File
+					RelativePath="base\engine.h">
+				</File>
+				<File
+					RelativePath="base\gameDetector.cpp">
+				</File>
+				<File
+					RelativePath="base\gameDetector.h">
+				</File>
+				<File
+					RelativePath="base\main.cpp">
+				</File>
+				<File
+					RelativePath="base\plugins.cpp">
+				</File>
+				<File
+					RelativePath="base\plugins.h">
+				</File>
 			</Filter>
 		</Filter>
 		<File
