@@ -384,7 +384,7 @@ void SmushPlayer::handleImuseAction8(Chunk &b, int32 flags, int32 unknown, int32
 
 					if (_IACTchannel == -1) {
 						_IACTchannel = g_scumm->_mixer->playStream(NULL, -1, output_data, 0x1000, 22050,
-															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS);
+															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, -1, 200000);
 					} else {
 						g_scumm->_mixer->append(_IACTchannel, output_data, 0x1000, 22050,
 															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS);
