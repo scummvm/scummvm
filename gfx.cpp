@@ -160,6 +160,9 @@ void Scumm::drawDirtyScreenParts()
 	if (_shakeEnabled && !_gui->isActive() && !_newgui->isActive()) {
 		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
+	} else if (!_shakeEnabled &&_shakeFrame != 0) {
+		_shakeFrame = 0;
+		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	}
 }
 
