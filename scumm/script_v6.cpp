@@ -423,9 +423,18 @@ void Scumm::writeArray(int array, int idx, int base, int value) {
 	if (ah->type == 4) {
 		ah->data[base] = value;
 	} else if (_features & GF_AFTER_V8) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(&ah->data[base], &TO_LE_32(value), 4);
+#else
 		((uint32 *)ah->data)[base] = TO_LE_32(value);
+#endif
+		
 	} else {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(&ah->data[base], &TO_LE_16(value), 2);
+#else
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
+#endif
 	}
 }
 
