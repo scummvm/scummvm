@@ -240,8 +240,8 @@ int NutRenderer::getCharHeight(byte c) {
 	return _chars[c].height;
 }
 
-void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) {
-	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
+void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask, bool showShadow) {
+	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d, %d) called", c, x, y, (int)color, useMask, showShadow);
 	if (!_loaded) {
 		warning("NutRenderer::drawShadowChar() Font is not loaded");
 		return;
@@ -261,8 +261,12 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
 	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
+	int i = 0;
+	
+	if (!showShadow)
+		i = 6;
 
-	for (int i = 0; i < 7; i++) {
+	for (; i < 7; i++) {
 		x += offsetX[i];
 		y += offsetY[i];
 		color = cTable[i];

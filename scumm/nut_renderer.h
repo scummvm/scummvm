@@ -54,7 +54,7 @@ public:
 	bool loadFont(const char *filename, const char *dir);
 
 	void drawFrame(byte *dst, int c, int x, int y);
-	void drawShadowChar(int c, int x, int y, byte color, bool useMask);
+	void drawShadowChar(int c, int x, int y, byte color, bool useMask, bool showShadow);
 
 	int getCharWidth(byte c);
 	int getCharHeight(byte c);
