@@ -90,20 +90,19 @@ bool ScummEngine::saveState(int slot, bool compat, SaveFileManager *mgr) {
 
 bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	char filename[256];
-	SaveFile *out;
+	SaveFile *in;
 	int i, j;
 	SaveGameHeader hdr;
-	int sb, sh;
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
-	if (!(out = mgr->open_savefile(filename, getSavePath(), false)))
+	if (!(in = mgr->open_savefile(filename, getSavePath(), false)))
 		return false;
 
-	out->read(&hdr, sizeof(hdr));
+	in->read(&hdr, sizeof(hdr));
 	if (hdr.type != MKID('SCVM')) {
 		warning("Invalid savegame '%s'", filename);
-		delete out;
+		delete in;
 		return false;
 	}
 
@@ -114,7 +113,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER)
 	{
 		warning("Invalid version of '%s'", filename);
-		delete out;
+		delete in;
 		return false;
 	}
 
@@ -133,11 +132,17 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	_sound->pauseSounds(true);
 
 	CHECK_HEAP
+
 	closeRoom();
+
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
 	memset(_newNames, 0, sizeof(_newNames[0]) * _numNewNames);
+	
+	// Because old savegames won't fill the entire gfxUsageBits[] array,
+	// clear it here just to be sure it won't hold any unforseen garbage.
+	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
-	/* Nuke all resources */
+	// Nuke all resources
 	for (i = rtFirst; i <= rtLast; i++)
 		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
 			for (j = 0; j < res.num[i]; j++) {
@@ -149,36 +154,20 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	if (_features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
-	
-	Serializer ser(out, false, hdr.ver);
+
+	//
+	// Now do the actual loading
+	//
+	Serializer ser(in, false, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
-	delete out;
-
-	sb = _screenB;
-	sh = _screenH;
-
-	gdi._mask.top = gdi._mask.left = 32767;
-	gdi._mask.right = gdi._mask.bottom = 0;
-	_charset->_hasMask = false;
-
-	initScreens(kMainVirtScreen, _screenWidth, _screenHeight);
-
-	// Force a fade to black
-	int old_screenEffectFlag = _screenEffectFlag;
-	_screenEffectFlag = true;
-	fadeOut(129);
-	_screenEffectFlag = old_screenEffectFlag ? true : false;
-
-	initScreens(sb, _screenWidth, sh);
-
-	_completeScreenRedraw = true;
+	delete in;
+	
 
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games
 	// anyway. There was a time, though, when re-initializing was necessary
 	// for backwards compatibility, and it may still prove useful if we
 	// ever add options for using different 16-colour palettes.
-
 	if (_version == 1) {
 		if (_gameId == GID_MANIAC)
 			setupV1ManiacPalette();
@@ -192,16 +181,8 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	} else
 		setDirtyColors(0, 255);
 
-	_lastCodePtr = NULL;
 
-	_drawObjectQueNr = 0;
-	_verbMouseOver = 0;
-
-	cameraMoved();
-
-	initBGBuffers(_roomHeight);
-
-	// Regenerate strip table when loading
+	// Regenerate strip table (for V1/V2 games)
 	if (_version == 1) {
 		roomptr = getResourceAddress(rtRoom, _roomResource);
 		_IM00_offs = 0;
@@ -219,7 +200,43 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		                                     _roomWidth, _roomHeight, _roomStrips);
 	}
 
-	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
+	if (!(_features & GF_NEW_CAMERA)) {
+		camera._last.x = camera._cur.x;
+	}
+
+	// Restore the virtual screens and force a fade to black.
+	initScreens(_screenB, _screenWidth, _screenH);
+	VirtScreen *vs = &virtscr[0];
+	memset(vs->screenPtr + vs->xstart, 0, vs->width * vs->height);
+	vs->setDirtyRange(0, vs->height);
+	updateDirtyScreen(kMainVirtScreen);
+	updatePalette();
+	_completeScreenRedraw = true;
+
+	// Reset charset mask
+	gdi._mask.top = gdi._mask.left = 32767;
+	gdi._mask.right = gdi._mask.bottom = 0;
+	_charset->_hasMask = false;
+
+	// With version 22, we replaced the scale items with scale slots. So when
+	// loading such an old save game, try to upgrade the old to new format.
+	if (hdr.ver < VER(22)) {
+		// Convert all rtScaleTable resources to matching scale items
+		for (i = 1; i < res.num[rtScaleTable]; i++) {
+			convertScaleTableToScaleSlot(i);
+		}
+	}
+
+	_lastCodePtr = NULL;
+	_drawObjectQueNr = 0;
+	_verbMouseOver = 0;
+
+	cameraMoved();
+
+	initBGBuffers(_roomHeight);
+
+	CHECK_HEAP
+	debug(1, "State loaded from '%s'", filename);
 
 	_sound->pauseSounds(false);
 
@@ -567,11 +584,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	int var120Backup;
 	int var98Backup;
 
-	// Because old savegames won't fill the entire gfxUsageBits[] array,
-	// clear it here just to be sure it won't hold any unforseen garbage.
-	if (s->isLoading())
-		memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-
 	s->saveLoadEntries(this, mainEntries);
 
 	if (s->isLoading() && savegameVersion < VER(14))
@@ -704,14 +716,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		int r;
 		while ((r = s->loadByte()) != 0xFF) {
 			res.flags[r][s->loadUint16()] |= RF_LOCK;
-		}
-	}
-	
-	// With version 22, we replace the scale items with scale slots
-	if (savegameVersion < VER(22) && s->isLoading()) {
-		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < res.num[rtScaleTable]; i++) {
-			convertScaleTableToScaleSlot(i);
 		}
 	}
 
