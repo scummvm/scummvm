@@ -944,6 +944,10 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 
 		_vm->_events->queue(&event);
+		
+		// Start scene animations
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, 0);
 
 		debug(0, "Scene started");
 		break;
