@@ -856,7 +856,7 @@ void Scumm_v2::o2_doSentence() {
 	case 1:
 		// Execute the sentence
 		_sentenceNum--;
-		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
+		//warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
 
 		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
 		VAR(VAR_ACTIVE_VERB) = st->verb;
@@ -872,7 +872,7 @@ void Scumm_v2::o2_doSentence() {
 	case 2:
 		// Print the sentence
 		_sentenceNum--;
-		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
+		//warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
 		
 		VAR(VAR_SENTENCE_VERB) = st->verb;
 		VAR(VAR_SENTENCE_OBJECT1) = st->objectA;
@@ -1162,7 +1162,7 @@ void Scumm_v2::o2_roomOps() {
 }
 
 void Scumm_v2::o2_cutscene() {
-	warning("TODO o2_cutscene()");
+	//warning("TODO o2_cutscene()");
 
 	vm.cutSceneData[0] = _userState;
 	vm.cutSceneData[1] = (int16) VAR(VAR_CURSORSTATE);
@@ -1181,7 +1181,7 @@ void Scumm_v2::o2_cutscene() {
 }
 
 void Scumm_v2::o2_endCutscene() {
-	warning("TODO o2_endCutscene()");
+	//warning("TODO o2_endCutscene()");
 
 	vm.cutSceneStackPointer = 0;
 
@@ -1290,9 +1290,8 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 	int cmd = getVarOrDirectWord(0x80);
 	int a2 = cmd >> 8;
 
-	if (cmd & 0xFF) {	// (?)
+	if (cmd & 0xFF) {
 		VAR(VAR_CURSORSTATE) = cmd & 0xFF;
-		printf("Set cmd %d\n", cmd & 0xFF);
 	}
 
 	if (a2 & 4) {						// Userface
