@@ -51,6 +51,7 @@ private:
 	int format_;
 	int num_tex_;
 	GLuint *tex_ids_;
+	bool hasTransparency_;
 };
 
 #endif

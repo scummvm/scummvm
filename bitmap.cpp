@@ -64,6 +64,29 @@ Resource(filename) {
 	}	
 	
 	if (format_ == 1) {
+		hasTransparency_ = false;
+
+		// Convert data to 32-bit RGBA format
+		char *texData = new char[4 * width_ * height_];
+		char *texDataPtr = texData;
+		uint16 *bitmapData = reinterpret_cast<uint16 *>(data_[0]);
+		for (int i = 0; i < width_ * height_;
+		     i++, texDataPtr += 4, bitmapData++) {
+			uint16 pixel = *bitmapData;
+			int r = pixel >> 11;
+			texDataPtr[0] = (r << 3) | (r >> 2);
+			int g = (pixel >> 5) & 0x3f;
+			texDataPtr[1] = (g << 2) | (g >> 4);
+			int b = pixel & 0x1f;
+			texDataPtr[2] = (b << 3) | (b >> 2);
+			if (pixel == 0xf81f) { // transparent
+				texDataPtr[3] = 0;
+				hasTransparency_ = true;
+			}
+			else
+				texDataPtr[3] = 255;
+		}
+
 		num_tex_ = ((width_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((height_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
 		tex_ids_ = new GLuint[num_tex_];
@@ -74,9 +97,9 @@ Resource(filename) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
 				BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
-				GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+				GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		}
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
@@ -92,14 +115,15 @@ Resource(filename) {
 					0,
 					0, 0,
 					width, height,
-					GL_RGB,
-					GL_UNSIGNED_SHORT_5_6_5,
-					data_[curr_image_] + (y * 2 * width_) + (2 * x));
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					texData + (y * 4 * width_) + (4 * x));
 				cur_tex_idx++;
 			}
 		}
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		delete [] texData;
 	} else {
 		for (int i = 0; i < (width_ * height_); i++) {
 			uint16 val = READ_LE_UINT16(data_[curr_image_] + 2 * i);
@@ -120,6 +144,12 @@ void Bitmap::draw() const {
 	glLoadIdentity();
 	// A lot more may need to be put there : disabling Alpha test, blending, ...
 	// For now, just keep this here :-)
+	if (hasTransparency_) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	else
+		glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	if (format_ == 1) {		// Normal image
@@ -152,6 +182,7 @@ void Bitmap::draw() const {
 
 		glDisable(GL_SCISSOR_TEST);
 		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 	} else if (format_ == 5) {	// ZBuffer image
