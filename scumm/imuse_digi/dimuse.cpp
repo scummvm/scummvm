@@ -106,7 +106,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, started, sleByte, VER(31)),
 		MKLINE(Track, priority, sleInt32, VER(31)),
 		MKLINE(Track, regionOffset, sleInt32, VER(31)),
-		MKLINE(Track, trackOffset, sleInt32, VER(31)),
+		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
 		MKLINE(Track, dataOffset, sleInt32, VER(31)),
 		MKLINE(Track, curRegion, sleInt32, VER(31)),
 		MKLINE(Track, curHookId, sleInt32, VER(31)),
@@ -125,6 +125,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 	ser->_load_ref = NULL;
 
 	ser->saveLoadEntries(this, mainEntries);
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		ser->saveLoadEntries(track, trackEntries);

@@ -1134,7 +1134,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		_middleAudio = true;
 	}
 
-	while (true) {
+	for (;;) {
 		_vm->parseEvents();
 		_vm->processKbd(true);
 		if (_updateNeeded) {
@@ -1156,6 +1156,7 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		if (_vm->_videoFinished || _vm->_quit || _vm->_saveLoadFlag)
 			break;
 		_vm->_system->delay_msecs(10);
+		_vm->_imuseDigital->flushTracks();
 	};
 
 	release();

@@ -62,7 +62,6 @@ private:
 		bool souStream;
 		int32 priority;
 		int32 regionOffset;
-		int32 trackOffset;
 		int32 dataOffset;
 		int32 curRegion;
 		int32 curHookId;

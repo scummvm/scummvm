@@ -160,6 +160,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 }
 
 void IMuseDigital::flushTracks() {
+	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->readyToRemove) {
@@ -180,6 +181,7 @@ void IMuseDigital::flushTracks() {
 }
 
 void IMuseDigital::refreshScripts() {
+	debug(5, "refreshScripts()");
 	bool found = false;
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
@@ -189,6 +191,7 @@ void IMuseDigital::refreshScripts() {
 	}
 
 	if (!found && (_curMusicSeq != 0)) {
+		debug(5, "refreshScripts() Start Sequence");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 	}
 }
