@@ -108,12 +108,13 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 	if (argc > 1) {
 		uint music = atoi(argv[1]);
-		if (_vm->_game & GF_SIMON2)
-			DebugPrintf("No support for Simon the Sorcerer 2\n");
-		else if (music <= 34)
-			_vm->loadMusic(music);
-		else
-			DebugPrintf("Music out of range (0 - 34)\n");
+		uint range = (_vm->_game & GF_SIMON2) ? 93 : 34;
+		if (music <= range) {
+			_vm->loadMusic (music);
+			if (_vm->_game & GF_SIMON2)
+				_vm->midi.startTrack (0);
+		} else
+			DebugPrintf("Music out of range (0 - %d)\n", range);
 	} else
 		DebugPrintf("Syntax: music <musicnum>\n");
 
