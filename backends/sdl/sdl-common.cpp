@@ -989,3 +989,112 @@ void OSystem_SDL_Common::unlock_mutex(void *mutex) {
 void OSystem_SDL_Common::delete_mutex(void *mutex) {
 	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
+
+void OSystem_SDL_Common::show_overlay()
+{
+	// hide the mouse
+	undraw_mouse();
+
+	_overlayVisible = true;
+	clear_overlay();
+}
+
+void OSystem_SDL_Common::hide_overlay()
+{
+	// hide the mouse
+	undraw_mouse();
+
+	_overlayVisible = false;
+	_forceFull = true;
+}
+
+void OSystem_SDL_Common::clear_overlay()
+{
+	if (!_overlayVisible)
+		return;
+	
+	// hide the mouse
+	undraw_mouse();
+
+	// Clear the overlay by making the game screen "look through" everywhere.
+	SDL_Rect src, dst;
+	src.x = src.y = 0;
+	dst.x = dst.y = 1;
+	src.w = dst.w = _screenWidth;
+	src.h = dst.h = _screenHeight;
+	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
+		error("SDL_BlitSurface failed: %s", SDL_GetError());
+
+	_forceFull = true;
+}
+
+void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch)
+{
+	if (!_overlayVisible)
+		return;
+
+	if (_tmpscreen == NULL)
+		return;
+
+	// hide the mouse
+	undraw_mouse();
+
+	if (SDL_LockSurface(_tmpscreen) == -1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+	int16 *src = (int16 *)_tmpscreen->pixels + _tmpScreenWidth + 1;
+	int h = _screenHeight;
+	do {
+		memcpy(buf, src, _screenWidth*2);
+		src += _tmpScreenWidth;
+		buf += pitch;
+	} while (--h);
+
+	SDL_UnlockSurface(_tmpscreen);
+}
+
+void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h)
+{
+	if (!_overlayVisible)
+		return;
+
+	if (_tmpscreen == NULL)
+		return;
+
+	// Clip the coordinates
+	if (x < 0) { w+=x; buf-=x; x = 0; }
+	if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
+	if (w > _screenWidth-x) { w = _screenWidth - x; }
+	if (h > _screenHeight-y) { h = _screenHeight - y; }
+	if (w <= 0 || h <= 0)
+		return;
+	
+	// Mark the modified region as dirty
+	cksum_valid = false;
+	add_dirty_rect(x, y, w, h);
+
+	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+	undraw_mouse();
+
+	if (SDL_LockSurface(_tmpscreen) == -1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+	int16 *dst = (int16 *)_tmpscreen->pixels + (y+1) * _tmpScreenWidth + (x+1);
+	do {
+		memcpy(dst, buf, w*2);
+		dst += _tmpScreenWidth;
+		buf += pitch;
+	} while (--h);
+
+	SDL_UnlockSurface(_tmpscreen);
+}
+
+int16 OSystem_SDL_Common::RBGToColor(uint8 r, uint8 g, uint8 b)
+{
+	return SDL_MapRGB(_tmpscreen->format, r, g, b);
+}
+
+void OSystem_SDL_Common::colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b)
+{
+	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
+}

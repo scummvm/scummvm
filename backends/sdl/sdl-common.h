@@ -103,6 +103,17 @@ public:
 	void unlock_mutex(void *mutex);
 	void delete_mutex(void *mutex);
 
+	// Overlay
+	virtual void show_overlay();
+	virtual void hide_overlay();
+	virtual void clear_overlay();
+	virtual void grab_overlay(int16 *buf, int pitch);
+	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+
+	// Methods that convert RBG to/from colors suitable for the overlay.
+	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b);
+	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b);
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 protected:
