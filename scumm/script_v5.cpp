@@ -1287,7 +1287,8 @@ void Scumm_v5::o5_loadRoom() {
 	room = getVarOrDirectByte(0x80);
 
 	// FIXME nasty hack to make indy have right costume
-	if ((_gameId == GID_INDY3_256) && (_currentRoom == 6) && (_currentScript == 1))
+	if ( ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) &&
+			(_currentRoom == 6) && (_currentScript == 1))
 		_actors[1].setActorCostume(10);
 	
 	// For small header games, we only call startScene if the room
