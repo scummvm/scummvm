@@ -23,6 +23,7 @@
 #include "browser.h"
 #include "chooser.h"
 #include "newgui.h"
+#include "message.h"
 #include "ListWidget.h"
 
 #include "backends/fs/fs.h"
@@ -34,7 +35,8 @@ enum {
 	kStartCmd = 'STRT',
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
-	kConfigureGameCmd = 'CONF',
+	kEditGameCmd = 'EDTG',
+	kRemoveGameCmd = 'REMG',
 	kQuitCmd = 'QUIT'
 };
 
@@ -54,17 +56,14 @@ typedef ScummVM::List<const VersionSettings *> GameList;
 LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
 {
-	Widget *bw;
-
 	// Show game name
 	new StaticTextWidget(this, 10, 8, 300, kLineHeight,
 								"ScummVM "SCUMMVM_VERSION " (" SCUMMVM_CVS ")", 
 								kTextAlignCenter);
 
 	// Add three buttons at the bottom
-	bw = addButton(1*(_w - kButtonWidth)/6, _h - 24, "Quit", kQuitCmd, 'Q');
-	bw = addButton(3*(_w - kButtonWidth)/6, _h - 24, "Options", kOptionsCmd, 'O');
-	bw->setEnabled(false);
+	addButton(1*(_w - kButtonWidth)/6, _h - 24, "Quit", kQuitCmd, 'Q');
+	addButton(3*(_w - kButtonWidth)/6, _h - 24, "Options", kOptionsCmd, 'O');
 	_startButton = addButton(5*(_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
 	_startButton->setEnabled(false);
 
@@ -80,10 +79,12 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	//_list->setSelected(0);
 
 	// Two more buttons directly below the list box
-	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
-//	bw->setEnabled(false);
-	_configureButton = new ButtonWidget(this, 320-90, 144, 80, 16, "Configure...", kConfigureGameCmd, 'C');
-	_configureButton->setEnabled(false);
+	const int kBigButtonWidth = 90;
+	new ButtonWidget(this, 10, 144, kBigButtonWidth, 16, "Add Game...", kAddGameCmd, 'A');
+	_editButton = new ButtonWidget(this, (320-kBigButtonWidth)/2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
+	_editButton->setEnabled(false);
+	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth-10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
+	_removeButton->setEnabled(false);
 	
 	// Create file browser dialog
 	_browser = new BrowserDialog(_gui);
@@ -187,8 +188,8 @@ GameList findGame(FilesystemNode *dir)
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
-	int item;
-	
+	int item =  _list->getSelected();
+
 	switch (cmd) {
 	case kAddGameCmd: {
 		// Allow user to add a new game to the list.
@@ -207,8 +208,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			const VersionSettings *v = 0;
 			
 			if (candidates.isEmpty()) {
-				// TODO - display dialog telling user that no match was found?!?
-				// Optionally, offer to let the user force a certain game?
+				// No game was found in the specified directory
+				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory");
+				alert.runModal();
 			} else if (candidates.size() == 1) {
 				// Exact match
 				v = candidates[0];
@@ -244,25 +246,38 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		}
 		break;
-	case kConfigureGameCmd:
+	case kRemoveGameCmd: {
+		// TODO - remove the currently selected game from the list
+		assert(item >= 0);
+		MessageDialog alert(_gui, "'Remove game' dialog not yet implemented!");
+		alert.runModal();
+		}
+		break;
+	case kEditGameCmd: {
 		// Set game specifc options. Most of these should be "optional", i.e. by 
 		// default set nothing and use the global ScummVM settings. E.g. the user
 		// can set here an optional alternate music volume, or for specific games
 		// a different music driver etc.
 		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
 		// music support etc.
+		assert(item >= 0);
+		MessageDialog alert(_gui, "'Edit game' dialog not yet implemented!");
+		alert.runModal();
+		}
 		break;
-	case kOptionsCmd:
+	case kOptionsCmd: {
 		// TODO - show up a generic options dialog, loosely based upon the one 
 		// we have in scumm/dialogs.cpp. So we will be modifying the settings
 		// in _detector, like which music engine to use, volumes, etc.
 		//
 		// We also allow the global save game path to be set here.
+		MessageDialog alert(_gui, "Global game options dialog not yet implemented!");
+		alert.runModal();
+		}
 		break;
 	case kStartCmd:
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
-		item =  _list->getSelected();
 		assert(item >= 0);
 		_detector.setGame(_filenames[item].c_str());
 		close();
@@ -270,8 +285,10 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListSelectionChangedCmd:
 		_startButton->setEnabled(data >= 0);
 		_startButton->draw();
-		//_configureButton->setEnabled(data >= 0);
-		//_configureButton->draw();
+		//_editButton->setEnabled(data >= 0);
+		//_editButton->draw();
+		_removeButton->setEnabled(data >= 0);
+		_removeButton->draw();
 		break;
 	case kQuitCmd:
 		g_system->quit();
