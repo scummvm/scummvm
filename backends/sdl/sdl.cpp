@@ -301,10 +301,19 @@ void OSystem_SDL_Normal::unload_gfx_mode() {
 
 void OSystem_SDL_Normal::update_screen() {
 	
-	if (sdl_hwscreen == NULL)
-		return;	// Can this really happen?
+	assert(sdl_hwscreen != NULL);
 
-	// First make sure the mouse is drawn, if it should be drawn.
+	// If the shake position changed, fill the dirty area with blackness
+	if (_currentShakePos != _newShakePos) {
+		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
+		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
+
+		_currentShakePos = _newShakePos;
+
+		_forceFull = true;
+	}
+
+	// Make sure the mouse is drawn, if it should be drawn.
 	draw_mouse();
 	
 	// Check whether the palette was changed in the meantime and update the
@@ -315,17 +324,6 @@ void OSystem_SDL_Normal::update_screen() {
 			_paletteDirtyEnd - _paletteDirtyStart);
 		
 		_paletteDirtyEnd = 0;
-
-		_forceFull = true;
-	}
-
-	
-	/* If the shake position changed, fill the dirty area with blackness */
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
-		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
-
-		_currentShakePos = _newShakePos;
 
 		_forceFull = true;
 	}
@@ -387,6 +385,13 @@ void OSystem_SDL_Normal::update_screen() {
 		
 		SDL_UnlockSurface(sdl_tmpscreen);
 		SDL_UnlockSurface(sdl_hwscreen);
+
+		// Readjust the dirty rect list in case we are doing a full update.
+		// This is necessary if shaking is active.
+		if (_forceFull) {
+			_dirty_rect_list[0].y = 0;
+			_dirty_rect_list[0].h = _screenHeight * _scaleFactor;
+		}
 
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(sdl_hwscreen, _num_dirty_rects, _dirty_rect_list);
