@@ -127,8 +127,8 @@ bool Scumm::loadState(int slot, bool compat)
 	gdi._mask_left = -1;
 
 	initScreens(0, 0, 320, 200);
-	_screenEffectFlag = 1;
-	unkVirtScreen4(129);
+	_screenEffectFlag = true;
+	fadeToBlackEffect(129);
 
 	initScreens(0, sb, 320, sh);
 

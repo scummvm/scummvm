@@ -374,7 +374,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	clearMsgQueue();
 
-	unkVirtScreen4(_switchRoomEffect2);
+	fadeToBlackEffect(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
 	if (_currentScript != 0xFF) {

@@ -2776,7 +2776,7 @@ void Scumm::o6_miscOps()
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
 		case 5:
-			unkVirtScreen4(args[1]);
+			fadeToBlackEffect(args[1]);
 			break;
 		case 6:
 			_fullRedraw = 1;

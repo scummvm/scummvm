@@ -555,13 +555,14 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	}
 }
 
-void Scumm::unkVirtScreen4(int a)
+void Scumm::fadeToBlackEffect(int a)
 {
 	VirtScreen *vs;
 
 	setDirtyRange(0, 0, 0);
 	if (!(_features & GF_AFTER_V7))
 		camera._last.x = camera._cur.x;
+
 	if (!_screenEffectFlag)
 		return;
 	_screenEffectFlag = false;
@@ -569,10 +570,12 @@ void Scumm::unkVirtScreen4(int a)
 	if (a == 0)
 		return;
 
+	// Fill screen 0 with black
 	vs = &virtscr[0];
 	gdi._backbuff_ptr = vs->screenPtr + vs->xstart;
 	memset(gdi._backbuff_ptr, 0, vs->size);
 
+	// Fade to black with the specified effect, if any.
 	switch (a) {
 	case 1:
 	case 2:
@@ -583,8 +586,9 @@ void Scumm::unkVirtScreen4(int a)
 		unkScreenEffect6();
 		break;
 	case 129:
-		//setDirtyRange(0, 0, vs->height);
-		//updateDirtyScreen(0);
+		// Just blit screen 0 to the display (i.e. display will be black)
+		setDirtyRange(0, 0, vs->height);
+		updateDirtyScreen(0);
 		/* XXX: EGA_proc4(0); */
 //		warning("EGA_proc4");				/* FIXME */
 		break;
@@ -595,7 +599,7 @@ void Scumm::unkVirtScreen4(int a)
 		unkScreenEffect5(1);
 		break;
 	default:
-		warning("unkVirtScreen4: default case %d", a);
+		warning("fadeToBlackEffect: default case %d", a);
 	}
 }
 
@@ -1759,6 +1763,7 @@ static const byte screen_eff7_table3[4] = {
 	13, 25, 25, 25
 };
 
+/* Transition effect */
 void Scumm::unkScreenEffect7(int a)
 {
 	int tab_1[16];

@@ -1212,7 +1212,7 @@ public:
 	void updateDirtyScreen(int slot);
 
 	VirtScreen *findVirtScreen(int y);
-	void unkVirtScreen4(int a);
+	void fadeToBlackEffect(int a);
 	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
 	void screenEffect(int effect);
