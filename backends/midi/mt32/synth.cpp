@@ -35,25 +35,25 @@
 // **************************
 
 // files missing
-#define ERR_PRESET1   1
-#define ERR_PRESET2   2
-#define ERR_DRUMPAT   3
-#define ERR_PATCHLOG  4
-#define ERR_MT32ROM   5
+#define ERR_PRESET1		1
+#define ERR_PRESET2		2
+#define ERR_DRUMPAT		3
+#define ERR_PATCHLOG		4
+#define ERR_MT32ROM		5
 
 // HW spec
-#define PRESENT_SSE       6
-#define PRESENT_3DNOW     7
-#define USING_SSE         8
-#define USING_3DNOW       9
+#define PRESENT_SSE		6
+#define PRESENT_3DNOW		7
+#define USING_SSE		8
+#define USING_3DNOW		9
 
 // General info
-#define LCD_MESSAGE       10
-#define DEV_RESET         11
-#define DEV_RECONFIG      12
-#define NEW_REVERB_MODE   13
-#define NEW_REVERB_TIME   14
-#define NEW_REVERB_LEVEL  15
+#define LCD_MESSAGE		10
+#define DEV_RESET		11
+#define DEV_RECONFIG		12
+#define NEW_REVERB_MODE		13
+#define NEW_REVERB_TIME		14
+#define NEW_REVERB_LEVEL	15
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -363,13 +363,13 @@ int16 Moog2(int16 wg, float *hist, float usefilt, float resonance) {
 
 	input -= hist[4] * fb;
 	input *= 0.35013 * (f*f)*(f*f);
-	hist[1] = input + 0.3 * hist[5] + (invf) * hist[1]; // Pole 1
+	hist[1] = input + 0.3 * hist[5] + (invf) * hist[1];   // Pole 1
 	hist[5] = input;
-	hist[2] = hist[1] + 0.3 * hist[6] + (invf) * hist[2];  // Pole 2
+	hist[2] = hist[1] + 0.3 * hist[6] + (invf) * hist[2]; // Pole 2
 	hist[6] = hist[1];
-	hist[3] = hist[2] + 0.3 * hist[7] + (invf) * hist[3];  // Pole 3
+	hist[3] = hist[2] + 0.3 * hist[7] + (invf) * hist[3]; // Pole 3
 	hist[7] = hist[2];
-	hist[4] = hist[3] + 0.3 * hist[0] + (invf) * hist[4];  // Pole 4
+	hist[4] = hist[3] + 0.3 * hist[0] + (invf) * hist[4]; // Pole 4
 	hist[0] = hist[3];
 
 	return (int16)(hist[4] * 32767.0);
@@ -439,47 +439,43 @@ public:
 	float allpassfilt(float input, COMB_STATE *state);
 };
 
-/*
-t60    = reverb time
-hlratio  = ratio of low freq t60 to high freq t60
-dur    = duration of event/dealloc. on last samp
-hall_fact= mult. factor for delay times
-revstate =   running values for event reverb
-*/
-Reverb::Reverb(float t60, float hlratio, float dur, float hall_fact, int sampling_rate)
-{
+/**
+ * @param t60       reverb time
+ * @param hlratio   ratio of low freq t60 to high freq t60
+ * @param dur       duration of event/dealloc. on last samp
+ * @param hall_fact mult. factor for delay times
+ * @param revstate  running values for event reverb
+ */
+
+Reverb::Reverb(float t60, float hlratio, float dur, float hall_fact, int sampling_rate) {
 	revstate = new ST_REVERB;
 	SR = sampling_rate;
 	int i;
 	float glow[NUM_COMBS], ghi[NUM_COMBS];
-	/* initialize sample counter and compute last sample    */
+	// initialize sample counter and compute last sample
 	revstate->cursamp=0;
-	revstate->lastsamp = (int)(dur*(float)SR);
+	revstate->lastsamp = (int)(dur * (float)SR);
 	revstate->done=0;
 
-	/* ALLPASS INITIALIZATIONS */
+	// ALLPASS INITIALIZATIONS
 	revstate->allpass[0].tau = .006 * hall_fact;
 	revstate->allpass[1].tau = .0065 * hall_fact;
 
-	/* allocate allpass delay buffers and head/tail ptr.    */
-	for(i=0; i<2; i++){
-		revstate->allpass[i].bufsiz = (int) (revstate->allpass[i].tau*SR + .5);
-		revstate->allpass[i].delbuf =
-		new float[revstate->allpass[i].bufsiz];
-		memset(revstate->allpass[i].delbuf, 0,
-		revstate->allpass[i].bufsiz*sizeof(float));
+	// allocate allpass delay buffers and head/tail ptr.
+	for (i = 0; i < 2; i++) {
+		revstate->allpass[i].bufsiz = (int) (revstate->allpass[i].tau * SR + .5);
+		revstate->allpass[i].delbuf = new float[revstate->allpass[i].bufsiz];
+		memset(revstate->allpass[i].delbuf, 0, revstate->allpass[i].bufsiz * sizeof(float));
 		revstate->allpass[i].bufpos = -1;
 	}
 
 	revstate->allpass[0].g = .71f;
 	revstate->allpass[1].g = .7f;
 
-	revstate->allpass[0].gsqu =
-	revstate->allpass[0].g * revstate->allpass[0].g;
-	revstate->allpass[1].gsqu =
-	revstate->allpass[1].g * revstate->allpass[1].g;
+	revstate->allpass[0].gsqu = revstate->allpass[0].g * revstate->allpass[0].g;
+	revstate->allpass[1].gsqu = revstate->allpass[1].g * revstate->allpass[1].g;
 
-	/* COMB AND IIR LOWPASS FILTER INITIALIZATIONS */
+	// COMB AND IIR LOWPASS FILTER INITIALIZATIONS
 
 	revstate->comb[0].tau = .0050 * hall_fact;
 	revstate->comb[1].tau = .0068 * hall_fact;
@@ -488,74 +484,70 @@ Reverb::Reverb(float t60, float hlratio, float dur, float hall_fact, int samplin
 	revstate->comb[4].tau = .0061 * hall_fact;
 	revstate->comb[5].tau = .0078 * hall_fact;
 
-	/* allocate comb delay buffers and head/tail ptr.       */
-	for(i=0; i<NUM_COMBS; i++)  {
+	// allocate comb delay buffers and head/tail ptr.
+	for (i = 0; i < NUM_COMBS; i++) {
 		revstate->comb[i].bufsiz = (int)(revstate->comb[i].tau * SR + .5);
 
-		revstate->comb[i].delbuf =
-		new float[revstate->comb[i].bufsiz];
-		memset(revstate->comb[i].delbuf, 0,
-		revstate->comb[i].bufsiz*sizeof(float));
+		revstate->comb[i].delbuf = new float[revstate->comb[i].bufsiz];
+		memset(revstate->comb[i].delbuf, 0, revstate->comb[i].bufsiz * sizeof(float));
 
 		revstate->comb[i].bufpos = -1;
 
 		revstate->lowpass[i].lastval = 0.;
 	}
 
-	/* if hlratio set by user, set various values            */
-	if (hlratio != 0.)  {
-		for(i=0; i<NUM_COMBS; i++)  {
+	// if hlratio set by user, set various values
+	// else, use default g's and coef's
+	if (hlratio != 0.) {
+		for (i = 0; i < NUM_COMBS; i++) {
 
-		/* compute reverb attenuation factor for hi and low      */
-		/* frequency reverberation times                         */
-		glow[i] =
-		pow(10.,(-3. * revstate->comb[i].tau) / t60);
-		ghi[i]  =
-		pow(10.,(-3. * revstate->comb[i].tau)/( t60 * hlratio));
+			// compute reverb attenuation factor for hi and low
+			// frequency reverberation times
+			glow[i] = pow(10.,(-3. * revstate->comb[i].tau) / t60);
+			ghi[i] = pow(10.,(-3. * revstate->comb[i].tau) / ( t60 * hlratio));
 
-		/* compute recursive lowpass factor and comb attenuation */
-		/* factor to produce the correct reverberation time for  */
-		/* both hi and low frequencies                           */
-		revstate->lowpass[i].coef = (glow[i] - ghi[i])/(glow[i] + ghi[i]);
-		revstate->comb[i].g = glow[i] * (1. - revstate->lowpass[i].coef);
+			// compute recursive lowpass factor and comb
+			// attenuation factor to produce the correct
+			// reverberation time for both hi and low frequencies
+			revstate->lowpass[i].coef = (glow[i] - ghi[i]) / (glow[i] + ghi[i]);
+			revstate->comb[i].g = glow[i] * (1. - revstate->lowpass[i].coef);
 		}
-	}
-	/* else, use default g's and coef's                      */
-	else  {
-		revstate->lowpass[0].coef = .24f; revstate->lowpass[1].coef = .26f;
-		revstate->lowpass[2].coef = .28f; revstate->lowpass[3].coef = .29f;
-		revstate->lowpass[4].coef = .30f; revstate->lowpass[5].coef = .32f;
+	} else {
+		revstate->lowpass[0].coef = .24f;
+		revstate->lowpass[1].coef = .26f;
+		revstate->lowpass[2].coef = .28f;
+		revstate->lowpass[3].coef = .29f;
+		revstate->lowpass[4].coef = .30f;
+		revstate->lowpass[5].coef = .32f;
 
-		for(i=0; i<6; i++)  {
-
-			/* compute reverb attenuation factor and comb      */
-			/* attenuation factor based on default coef        */
-			glow[i] =
-			pow(10., (-3. * revstate->comb[i].tau) / t60);
-			revstate->comb[i].g = glow[i] *
-			(1. - revstate->lowpass[i].coef);
+		for (i = 0; i < 6; i++) {
+			// compute reverb attenuation factor and comb
+			// attenuation factor based on default coef
+			glow[i] = pow(10., (-3. * revstate->comb[i].tau) / t60);
+			revstate->comb[i].g = glow[i] *	(1. - revstate->lowpass[i].coef);
 		}
 	}
 }
 
-Reverb:: ~Reverb()
-{
+Reverb:: ~Reverb() {
 	int i;
 
-	for(i=0; i<NUM_COMBS; i++) delete[] revstate->comb[i].delbuf;
-	for(i=0; i<2; i++) delete[] revstate->allpass[i].delbuf;
+	for (i = 0; i < NUM_COMBS; i++)
+		delete[] revstate->comb[i].delbuf;
+	for (i = 0; i < 2; i++)
+		delete[] revstate->allpass[i].delbuf;
 	delete revstate;
 }
 
+/**
+ * @param lchan   non-reverberated input sample
+ * @param rchan   non-reverberated input sample
+ * @param revfrac percent of output to be reverberated
+ */
 
-INLINE void Reverb::run(float *lchan, float *rchan, float  revfrac)
-	/*  lchan,rchan      non-reverberated input samples       */
-	/*  revfrac           percent of output to be reverberated */
-	{
+INLINE void Reverb::run(float *lchan, float *rchan, float revfrac) {
 	int i;
-	float lchanrev, rchanrev, tot=0;
-
-	//cout << " in run \n";
+	float lchanrev, rchanrev, tot = 0;
 
 	if (revstate->done) {
 		*lchan = 0.0;
@@ -563,140 +555,112 @@ INLINE void Reverb::run(float *lchan, float *rchan, float  revfrac)
 		return;
 	}
 
-	for (i=0; i<NUM_COMBS; i++)
-		tot = tot + lpcomb( (*lchan) + (*rchan),
-		&(revstate->lowpass[i]),
-		&(revstate->comb[i])
-		);
+	for (i = 0; i < NUM_COMBS; i++)
+		tot = tot + lpcomb((*lchan) + (*rchan),	&(revstate->lowpass[i]), &(revstate->comb[i]));
 
-	tot = tot/(float)NUM_COMBS;
-
+	tot = tot / (float)NUM_COMBS;
 
 	lchanrev = allpassfilt(tot * .7, &(revstate->allpass[0]));
-	//  rchanrev = lchanrev ;
 	rchanrev = allpassfilt(tot * .7, &(revstate->allpass[1]));
 
-	if (revstate->cursamp == revstate->lastsamp)   {
-		for(i=0; i<NUM_COMBS; i++) delete[] revstate->comb[i].delbuf;
-		for(i=0; i<2; i++) delete[] revstate->allpass[i].delbuf;
+	if (revstate->cursamp == revstate->lastsamp) {
+		for (i = 0; i < NUM_COMBS; i++)
+			delete[] revstate->comb[i].delbuf;
+		for (i = 0; i < 2; i++)
+			delete[] revstate->allpass[i].delbuf;
 		revstate->done = 1;
 	}
 
-	(revstate->cursamp)++;
+	revstate->cursamp++;
 
-	*lchan = lchanrev*revfrac + (*lchan)*(1. - revfrac) ;
-	*rchan = rchanrev*revfrac + (*rchan)*(1. - revfrac) ;
-
-	//*lchan = lchanrev*revfrac + (*lchan) ;
-	//*rchan = rchanrev*revfrac + (*rchan) ;
-
-	// cout << "lchan = \t" << *lchan <<endl;
-	//cout << "rchan = \t" << *rchan <<endl;
-
-
+	*lchan = lchanrev * revfrac + (*lchan) * (1. - revfrac);
+	*rchan = rchanrev * revfrac + (*rchan) * (1. - revfrac);
 }
 
-INLINE float Reverb::lowpass(float input, LOWPASS_STATE *state)
-{
-	/* simple IIR lowpass filter algorithm              */
-	/* y(n) = x(n) + coef * y(n-1)                      */
+INLINE float Reverb::lowpass(float input, LOWPASS_STATE *state) {
+	// simple IIR lowpass filter algorithm
+	// y(n) = x(n) + coef * y(n - 1)
 	state->lastval = (input + state->coef * state->lastval);
-	return(state->lastval);
+	return state->lastval;
 }
 
-INLINE float Reverb::lpcomb(float input, LOWPASS_STATE *lpstate, COMB_STATE *cstate)
-{
-
+INLINE float Reverb::lpcomb(float input, LOWPASS_STATE *lpstate, COMB_STATE *cstate) {
 	float temp;
 
-	/* move head-tail pointer in circular queue    */
+	// move head-tail pointer in circular queue
 	cstate->bufpos = (cstate->bufpos + 1) % cstate->bufsiz;
 
-	/* pop circular queue                          */
+	// pop circular queue
 	temp = cstate->delbuf[cstate->bufpos];
 
-	/* add new value to end of queue               */
+	// add new value to end of queue
 	lpstate->lastval = (cstate->delbuf[cstate->bufpos] + lpstate->coef * lpstate->lastval);
 
-	cstate->delbuf[cstate->bufpos] =
-	input +  cstate->g *
-	//lowpass(cstate->delbuf[cstate->bufpos], lpstate);
-	lpstate->lastval;
+	cstate->delbuf[cstate->bufpos] = input + cstate->g * lpstate->lastval;
 
-	/* return popped value                         */
-	return(temp);
-
+	// return popped value
+	return temp;
 }
 
-INLINE float Reverb::allpassfilt(float input, COMB_STATE* state)
-{
+INLINE float Reverb::allpassfilt(float input, COMB_STATE* state) {
 	float temp;
 
-	/* move head-tail pointer in circular queue          */
+	// move head-tail pointer in circular queue
 	state->bufpos = (state->bufpos + 1) % state->bufsiz;
 
-	/* pop circular queue                                */
+	// pop circular queue
 	temp = state->delbuf[state->bufpos];
 
-	/* add new value to end of queue                     */
-	state->delbuf[state->bufpos] = input +
-	state->g * state->delbuf[state->bufpos];
+	// add new value to end of queue
+	state->delbuf[state->bufpos] = input + state->g * state->delbuf[state->bufpos];
 
-	/* return a sum of the current in with the delay out */
-	return(-1.* state->g * input + (1. - state->gsqu) * temp);
-
+	// return a sum of the current in with the delay out
+	return -1. * state->g * input + (1. - state->gsqu) * temp;
 }
 
-/* End reverb stuff */
+// End reverb stuff
 
-
-
-/* Begin filter stuff */
+// Begin filter stuff
 
 void InitFilter(float fs, float fc, float *icoeff, float Q, float resfac) {
-	
 	float *coef;
 	unsigned nInd;
-	double   a0, a1, a2, b0, b1, b2;
-	double   k;           /* overall gain factor */
+	double a0, a1, a2, b0, b1, b2;
+	double k;	// overall gain factor
 
-	/* Section 1 */
-        ProtoCoef[0].a0 = 1.0;
-        ProtoCoef[0].a1 = 0;
-        ProtoCoef[0].a2 = 0;
-        ProtoCoef[0].b0 = 1.0;
-        ProtoCoef[0].b1 = 0.765367;
-        ProtoCoef[0].b2 = 1.0;
+	// Section 1
+	ProtoCoef[0].a0 = 1.0;
+	ProtoCoef[0].a1 = 0;
+	ProtoCoef[0].a2 = 0;
+	ProtoCoef[0].b0 = 1.0;
+	ProtoCoef[0].b1 = 0.765367;
+	ProtoCoef[0].b2 = 1.0;
 
+	// Section 2
+	ProtoCoef[1].a0 = 1.0;
+	ProtoCoef[1].a1 = 0;
+	ProtoCoef[1].a2 = 0;
+	ProtoCoef[1].b0 = 1.0;
+	ProtoCoef[1].b1 = 1.847759;
+	ProtoCoef[1].b2 = 1.0;
 
-	/* Section 2 */
-        ProtoCoef[1].a0 = 1.0;
-        ProtoCoef[1].a1 = 0;
-        ProtoCoef[1].a2 = 0;
-        ProtoCoef[1].b0 = 1.0;
-        ProtoCoef[1].b1 = 1.847759;
-        ProtoCoef[1].b2 = 1.0;
+	k = 1.5;		// Set overall filter gain
+	coef = icoeff + 1;	// Skip k, or gain
 
-      k = 1.5;          /* Set overall filter gain */
-      coef = icoeff+1;     /* Skip k, or gain */
+	for (nInd = 0; nInd < 2; nInd++) {
+		a0 = ProtoCoef[nInd].a0;
+		a1 = ProtoCoef[nInd].a1;
+		a2 = ProtoCoef[nInd].a2;
 
-	for (nInd = 0; nInd < 2; nInd++)
-    {
-         a0 = ProtoCoef[nInd].a0;
-         a1 = ProtoCoef[nInd].a1;
-         a2 = ProtoCoef[nInd].a2;
+		b0 = ProtoCoef[nInd].b0;
+		b1 = ProtoCoef[nInd].b1 / Q;	// Divide by resonance or Q
+		b2 = ProtoCoef[nInd].b2;
 
-         b0 = ProtoCoef[nInd].b0;
-         b1 = ProtoCoef[nInd].b1 / Q;      /* Divide by resonance or Q
-*/
-         b2 = ProtoCoef[nInd].b2;
-         szxform(&a0, &a1, &a2, &b0, &b1, &b2, fc, fs, &k, coef);
-         coef += 4;                       /* Point to next filter
-section */
+		szxform(&a0, &a1, &a2, &b0, &b1, &b2, fc, fs, &k, coef);
+		coef += 4;			// Point to next filter section
 	}
 	icoeff[0] = k;
 }
-
 
 #if FILTER_FLOAT == 1
 
