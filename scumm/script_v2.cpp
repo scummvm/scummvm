@@ -2548,6 +2548,7 @@ void Scumm::o6_talkActor()
 				pointer[j++] = _messagePtr[i];
 		}
 		pointer[j] = 0;
+
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
@@ -2575,6 +2576,7 @@ void Scumm::o6_talkEgo()
 				pointer[j++] = _messagePtr[i];
 		}
 		pointer[j] = 0;
+
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
@@ -3178,9 +3180,20 @@ void Scumm::decodeParseString2(int m, int n)
 			_messagePtr = _scriptPointer;
 
 			if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
+				char pointer[20];
+				int i, j;
+
+				_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
 				translateText((char*)_messagePtr, (char*)&transText);
+				for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+				if (_messagePtr[i] != '/')
+					pointer[j++] = _messagePtr[i];
+				}
+				pointer[j] = 0;
+
+				_sound->playBundleSound(pointer);
 				_messagePtr = (byte*)&transText;
-				_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
+
 				switch (m) {
 				case 0:
 					actorTalk();
