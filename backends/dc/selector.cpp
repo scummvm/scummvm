@@ -255,7 +255,7 @@ static int findGames(Game *games, int max)
       struct dirent *entry;
       while((entry = readdir(dirp)))
 	if(entry->d_size < 0) {
-	  if(num_dirs < MAX_DIR) {
+	  if(num_dirs < MAX_DIR && strcasecmp(entry->d_name, "install")) {
 	    strcpy(dirs[num_dirs].name, dirs[curr_dir-1].name);
 	    if(strlen(dirs[num_dirs].name)+strlen(entry->d_name)<255) {
 	      strcat(dirs[num_dirs].name, entry->d_name);
