@@ -85,8 +85,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
-				state = getWizImageStates(spi->field_80);
-				state /= spi->cur_img_state;
+				state = spi->cur_img_state / getWizImageStates(spi->field_80);
 
 				x = x_pos - spi->pos.x;
 				y = y_pos - spi->pos.y;
@@ -450,8 +449,8 @@ void ScummEngine_v90he::spriteInfoSet_resState(int spriteId, int state) {
 
 	if (_spriteTable[spriteId].res_id) {
 		int res_wiz_states = _spriteTable[spriteId].res_wiz_states - 1;
-		if (state > res_wiz_states)
-			state = res_wiz_states;
+		state = MAX(0, state);
+		state = MIN(state, res_wiz_states);
 	
 		if (_spriteTable[spriteId].res_state != state) {
 			_spriteTable[spriteId].res_state = state;
