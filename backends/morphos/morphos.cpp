@@ -30,6 +30,7 @@
 #include <exec/libraries.h>
 #include <exec/semaphores.h>
 #include <devices/ahi.h>
+#include <devices/rawkeycodes.h>
 #include <dos/dostags.h>
 #include <intuition/screens.h>
 #include <cybergraphics/cybergraphics.h>
@@ -67,7 +68,7 @@ static TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 
 TagItem musicProcTags[] = { { NP_Entry,       0							       	  },
 									 { NP_Name,        (ULONG)"ScummVM Music Thread"  },
-									 { NP_Priority,    0  							        },
+									 { NP_Priority,    60 							        },
 									 {	TAG_DONE,       0 					       		  }
 								  };
 TagItem soundProcTags[] = { { NP_Entry,       0							       	  },
@@ -732,13 +733,28 @@ bool OSystem_MorphOS::poll_event(Event *event)
 				event->event_code = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
 				ScummMsg->Code &= ~IECODE_UP_PREFIX;
 
-				if (ScummMsg->Code >= 0x50 && ScummMsg->Code <= 0x59)
+				if (ScummMsg->Code >= RAWKEY_F1 && ScummMsg->Code <= RAWKEY_F10)
 				{
 					/*
 					 * Function key
 					 */
-					event->kbd.ascii = (ScummMsg->Code-0x50)+315;
+					event->kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+315;
 					event->kbd.keycode = 0;
+				}
+				else if (ScummMsg->Code == RAWKEY_F11 || ScummMsg->Code == RAWKEY_F12)
+				{
+					/*
+					 * Function key on PC keyboard
+					 */
+					event->kbd.ascii = (ScummMsg->Code == RAWKEY_F11) ? 325 : 326;
+					event->kbd.keycode = 0;
+				}
+				else if (ScummMsg->Code == NM_WHEEL_UP || ScummMsg->Code == NM_WHEEL_DOWN)
+				{
+					/*
+					 * Wheelmouse event
+					 */
+					event->event_code = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
 				}
 				else if (MapRawKey(&FakedIEvent, &charbuf, 1, NULL) == 1)
 				{
