@@ -24,7 +24,7 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
-#include "common/scummsys.h"
+#include "bs2/sword2.h"
 #include "bs2/driver/driver96.h"
 #include "bs2/driver/d_draw.h"
 #include "bs2/anims.h"

@@ -71,6 +71,7 @@ public:
 	byte _gameId;
 	char *_game_name; // target name for saves
 	Sound *_sound;
+	Common::RandomSource _rnd;
 
 private:
 	bool _quit;

@@ -28,6 +28,7 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/console.h"
 #include "bs2/defs.h"		// for RESULT
 #include "bs2/interpreter.h"
@@ -78,7 +79,7 @@ void Process_fx_queue(void) {
 		switch (fxq[j].type) {
 		case FX_RANDOM:
 			// 1 in 'delay' chance of this fx occurring
-			if (rand() % fxq[j].delay == 0)
+			if (g_sword2->_rnd.getRandomNumber(fxq[j].delay) == 0)
 				Trigger_fx(j);
 			break;
 		case FX_SPOT:
@@ -190,9 +191,8 @@ int32 FN_play_fx(int32 *params) {
 
 	if (fxq[j].type == FX_RANDOM) {
 		// 'delay' param is the intended average no. seconds between
-		// playing this effect (+1 to avoid divide-by-zero in
-		// Process_fx_queue)
-		fxq[j].delay = params[2] * 12 + 1;
+		// playing this effect
+		fxq[j].delay = params[2] * 12;
 	} else {
 		// FX_SPOT or FX_LOOP:
 		//  'delay' is no. frames to wait before playing

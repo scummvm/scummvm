@@ -135,11 +135,11 @@ int32 FN_random(int32 *params) {
 	// Generates a random number between 'min' & 'max' inclusive, and
 	// sticks it in the script flag 'result'
 
-	uint32 min = params[0];
-	uint32 max = params[1];
+	// params:	0 min
+	//		1 max
 
 	// return_value = random integer between min and max, inclusive
-	RESULT = (rand() % (max-min + 1)) + min;
+	RESULT = g_sword2->_rnd.getRandomNumberRng(params[0], params[1]);
 	
 	// continue script
 	return IR_CONT;
