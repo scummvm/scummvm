@@ -642,7 +642,7 @@ void Scumm_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
-		if (_gameId == GID_INDY3 || _gameId == GID_INDY3_256) {
+		if (_features & GF_OLD_BUNDLE || _gameId == GID_INDY3_256) {
 			// FIXME: What is this supposed to do? From comparing
 			// Indy3's script 118 to the Passport Demo's script 58
 			// my guess is that it's some sort of "init charset",
@@ -655,7 +655,9 @@ void Scumm_v5::o5_cursorCommand() {
 			// loadCharset(a);
 			// Assuming this is correct, we might not actually need it, as our
 			// initCharset automatically calls loadCharset for GF_SMALL_HEADER, if needed.
-			// And finally, are we sure only Indy3 needs this, and not also e.g. Loom?
+			// Loom ega at least does need this and v2 has its own cursor command
+			// so making this for OLD_BUNDLE. Going by disassembly zak256 does not have a
+			// sub op for this case, not sure about loomcd
 		} else {
 			getWordVararg(table);
 			for (i = 0; i < 16; i++)
