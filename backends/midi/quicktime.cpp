@@ -62,56 +62,55 @@ private:
 	// pitch bending so differently from MPU401.
 	uint16 _pitchbend [16];
 	byte _pitchbend_range [16];
+	
+	void dispose();
 };
 
 MidiDriver_QT::MidiDriver_QT() {
 	qtNoteAllocator = NULL;
+	for (int i = 0; i < 16; i++)
+		qtNoteChannel[i] = NULL;
 }
 
 int MidiDriver_QT::open() {
 	ComponentResult qtErr = noErr;
-	int i;
 
 	if (qtNoteAllocator != NULL)
 		return MERR_ALREADY_OPEN;
-
-	for (i = 0; i < 15; i++)
-		qtNoteChannel[i] = NULL;
 
 	qtNoteAllocator = OpenDefaultComponent(kNoteAllocatorComponentType, 0);
 	if (qtNoteAllocator == NULL)
 		goto bail;
 
 	simpleNoteRequest.info.flags = 0;
-	*(short *)(&simpleNoteRequest.info.polyphony) = EndianS16_NtoB(15);	// simultaneous tones
-	*(Fixed *) (&simpleNoteRequest.info.typicalPolyphony) = EndianU32_NtoB(0x00010000);
+	simpleNoteRequest.info.polyphony = 11;	// simultaneous tones
+	simpleNoteRequest.info.typicalPolyphony = 0x00010000;
 
 	qtErr = NAStuffToneDescription(qtNoteAllocator, 1, &simpleNoteRequest.tone);
 	if (qtErr != noErr)
 		goto bail;
 
-	for (i = 0; i < 15; i++) {
+	for (int i = 0; i < 16; i++) {
 		qtErr = NANewNoteChannel(qtNoteAllocator, &simpleNoteRequest, &(qtNoteChannel[i]));
-		if ((qtErr != noErr) || (qtNoteChannel == NULL))
+		if ((qtErr != noErr) || (qtNoteChannel[i] == NULL))
 			goto bail;
+
+		qtErr = NAResetNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
+		if (qtErr != noErr)
+			goto bail;
+
 		// Channel 10 (i.e. index 9) is the drum channel. Set it up as such.
 		// All other channels default to piano.
-		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[i], (i == 9 ? kFirstDrumkit : kFirstGMInstrument) + 1);
+		qtErr = NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[i], (i == 9 ? kFirstDrumkit : kFirstGMInstrument) + 1);
+		if (qtErr != noErr)
+			goto bail;
 	}
 	return 0;
 
 bail:
 	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel, (int)qtErr);
-	for (i = 0; i < 15; i++) {
-		if (qtNoteChannel[i] != NULL)
-			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
-		qtNoteChannel[i] = NULL;
-	}
-
-	if (qtNoteAllocator != NULL) {
-		CloseComponent(qtNoteAllocator);
-		qtNoteAllocator = NULL;
-	}
+	
+	dispose();
 
 	return MERR_DEVICE_NOT_AVAILABLE;
 }
@@ -119,17 +118,7 @@ bail:
 void MidiDriver_QT::close()
 {
 	MidiDriver_MPU401::close();
-
-	for (int i = 0; i < 15; i++) {
-		if (qtNoteChannel[i] != NULL)
-			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
-		qtNoteChannel[i] = NULL;
-	}
-
-	if (qtNoteAllocator != NULL) {
-		CloseComponent(qtNoteAllocator);
-		qtNoteAllocator = NULL;
-	}
+	dispose();
 }
 
 void MidiDriver_QT::send(uint32 b) {
@@ -180,8 +169,13 @@ void MidiDriver_QT::send(uint32 b) {
 			break;
 
 		case 0x7b:									// mode message all notes off
-			for (int i = 0; i < 128; i++)
+			// FIXME: For unknown reasons, the following code causes weird
+			// troubles. In particular, in the Sam&Max intro, all channel are
+			// sent this event. As a result, not only does the music stop - it
+			// also never resumes!!! This is very odd.
+/*			for (int i = 0; i < 128; i++)
 				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], i, 0);
+*/
 			break;
 		case 0x64:
 		case 0x65:
@@ -203,11 +197,7 @@ void MidiDriver_QT::send(uint32 b) {
 		break;
 
 	case 0xC0:										// Program change
-		// Don't change instrument for the drum channel (I have no idea how a
-		// program change for the drum channel would work; maybe we would just
-		// have to use 'midiCmd[1] + kFirstDrumkit' ?).
-		if (chanID != 9)
-			NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + kFirstGMInstrument);
+		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + (chanID == 9 ? kFirstDrumkit : kFirstGMInstrument));
 		break;
 
 	case 0xE0:{									// Pitch bend
@@ -239,6 +229,20 @@ void MidiDriver_QT::setPitchBendRange (byte channel, uint range) {
 	long theBend = _pitchbend[channel];
 	theBend = (theBend - 0x2000) * range / 32;
 	NASetController(qtNoteAllocator, qtNoteChannel[channel], kControllerPitchBend, theBend);
+}
+
+void MidiDriver_QT::dispose()
+{
+	for (int i = 0; i < 16; i++) {
+		if (qtNoteChannel[i] != NULL)
+			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);
+		qtNoteChannel[i] = NULL;
+	}
+
+	if (qtNoteAllocator != NULL) {
+		CloseComponent(qtNoteAllocator);
+		qtNoteAllocator = NULL;
+	}
 }
 
 MidiDriver *MidiDriver_QT_create() {
