@@ -1762,12 +1762,12 @@ void ScummEngine_v6::o6_actorOps() {
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
 //			a->_zbuf = 1; ???
-			a->needRedraw = 1;
+			a->needRedraw = true;
 			a->drawActorCostume();
 //			a->_zbuf = 0; ???
-			a->needRedraw = 1;
+			a->needRedraw = true;
 			a->drawActorCostume();
-			a->needRedraw = 0;
+			a->needRedraw = false;
 
 			if (a->top > top_actor) {
 				a->bottom = top_actor;
