@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 	// TODO - move this up for the launcher dialog?
 	g_gui = new NewGui(system);
 
-#if 1
+#if 0
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
 	// with a different widht/height!9 However, this method is not for all OSystem 
