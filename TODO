@@ -323,23 +323,25 @@ SAGA
    should be INTERVAL_EVENT
  * No script func should use ScriptDataWord directly. All of them should
    be converted to appropriate data types via getTYPE() functions
- * _scene->getMode() == SCENE_MODE_ISO -> _scene->getFlags() & kSceneFlagISO
-   and remove Scene::getMode() as well as Scene::_sceneMode
  * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
    e.g. a rectangle covering the entire ITE screen should have right=320 and
    bottom=200. (eriktorbjorn, partly - mostly? - done)
+ * Walk bug. When announcer puts medallion on Rif he should go backwards instead
+   of turning and walking faced to screen
 
 - plans -
- * Implement unimplemented opcodes
+ * Implement unimplemented/proofread unchecked opcodes
  * Remove use of floating point, especially doubles.
+ * Implement Verbs (h00ligan)
  * Implement ShowSaveReminder(), that is that rotating diskette
  * Implement Save/Load
  * Finish inventory code
- * Rewrite path finder (h00ligan)
+ * Implement ISO path finder
  * Implement conversations
  * Change script buffer so that its point to the appropriate data.
    (eriktorbjorn - mostly done)
  * ISO - tile scene implementation
+ * Puzzle
 
 - features -
  * Add sound/voices compression. Should _considerably_ save space.
