@@ -2059,6 +2059,10 @@ void ScummEngine::readMAXS() {
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); 
 
+		// FIXME: Is this correct??? A V6+ game which doesn't use object name
+		// resources seems odd...
+		_numNewNames = 0;
+
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
 		_numGlobalScripts = 200;
 		_shadowPaletteSize = 256;
