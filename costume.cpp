@@ -1072,3 +1072,18 @@ byte Scumm::cost_increaseAnim(LoadedCostume * lc, Actor * a, int slot)
 		return (lc->_dataptr[i] & 0x7F) != code;
 	} while (1);
 }
+
+bool Scumm::isCostumeInUse(int cost)
+{
+	int i;
+	Actor *a;
+
+	if (_roomResource != 0)
+		for (i = 1; i < NUM_ACTORS; i++) {
+			a = derefActor(i);
+			if (a->isInCurrentRoom() && a->costume == cost)
+				return true;
+		}
+
+	return false;
+}

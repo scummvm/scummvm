@@ -377,6 +377,7 @@ void Actor::setupActorScale()
 	if (scale > 255)
 		warning("Actor %d at %d, scale %d out of range", number, y, scale);
 
+	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
 	if(scale == 1 && _scumm->_currentRoom == 76)
 		scale = 0xFF;
 
@@ -433,7 +434,7 @@ void Actor::startAnimActor(int frame)
 			break;
 		}
 
-		if (room == _scumm->_currentRoom && costume) {
+		if (isInCurrentRoom() && costume) {
 			animProgress = 0;
 			cost.animCounter1 = 0;
 			needRedraw = true;
@@ -517,7 +518,7 @@ int Scumm::getActorXYPos(Actor * a)
 	if (!a)
 		return -1;
 
-	if (a->room != _currentRoom)
+	if (!a->isInCurrentRoom())
 		return -1;
 	_xPos = a->x;
 	_yPos = a->y;
@@ -682,7 +683,7 @@ void Scumm::showActors()
 
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
-		if (a->room == _currentRoom)
+		if (a->isInCurrentRoom())
 			a->showActor();
 	}
 }
@@ -699,7 +700,7 @@ void Scumm::stopTalk()
 	act = _vars[VAR_TALK_ACTOR];
 	if (act && act < 0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
-		if (_currentRoom == a->room && _useTalkAnims) {
+		if (a->isInCurrentRoom() && _useTalkAnims) {
 			a->startAnimActor(a->talkFrame2);
 			_useTalkAnims = false;
 		}
@@ -722,7 +723,7 @@ void Scumm::walkActors()
 
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
-		if (a->room == _currentRoom)
+		if (a->isInCurrentRoom())
 			if (_features & GF_OLD256)
 				a->walkActorOld();
 			else
@@ -738,7 +739,7 @@ void Scumm::playActorSounds()
 
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
-		if (a->cost.animCounter2 && a->room == _currentRoom && a->sound) {
+		if (a->cost.animCounter2 && a->isInCurrentRoom() && a->sound) {
 			_currentScript = 0xFF;
 			addSoundToQueue(a->sound[0]);
 			for (i = 1; i < NUM_ACTORS; i++) {
@@ -900,7 +901,7 @@ void Scumm::processActors()
 
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
-		if (a->room == _currentRoom)
+		if (a->isInCurrentRoom())
 			actors[numactors++] = a;
 	}
 	if (!numactors)
@@ -1115,7 +1116,7 @@ void Scumm::actorTalk()
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
-		if (a->room != _currentRoom && !(_features & GF_AFTER_V7)) {
+		if (!a->isInCurrentRoom() && !(_features & GF_AFTER_V7)) {
 			oldact = 0xFF;
 		} else {
 			if (!_keepText)
@@ -1170,7 +1171,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 
 	abr = _scumm->adjustXYToBeInBox(this, destX, destY, walkbox);
 
-	if (room != _scumm->_currentRoom) {
+	if (!isInCurrentRoom()) {
 		x = abr.x;
 		x = abr.y;
 		if (dir != -1)
@@ -1215,21 +1216,6 @@ byte *Actor::getActorName()
 	return ptr;
 }
 
-bool Scumm::isCostumeInUse(int cost)
-{
-	int i;
-	Actor *a;
-
-	if (_roomResource != 0)
-		for (i = 1; i < NUM_ACTORS; i++) {
-			a = derefActor(i);
-			if (a->room == _currentRoom && a->costume == cost)
-				return true;
-		}
-
-	return false;
-}
-
 void Actor::remapActor(int r_fact, int g_fact, int b_fact,
 											 int threshold)
 {
@@ -1238,7 +1224,7 @@ void Actor::remapActor(int r_fact, int g_fact, int b_fact,
 	int r, g, b;
 	byte akpl_color;
 
-	if (room != _scumm->_currentRoom) {
+	if (!isInCurrentRoom()) {
 		warning("Remap actor %d not in current room", number);
 		return;
 	}
