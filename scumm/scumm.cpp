@@ -582,7 +582,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_shakeFrame = 0;
 	_screenStartStrip = 0;
 	_screenEndStrip = 0;
-	_screenLeft = 0;
 	_screenTop = 0;
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));

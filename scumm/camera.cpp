@@ -314,6 +314,7 @@ void ScummEngine_v7::moveCamera() {
 
 
 void ScummEngine::cameraMoved() {
+	int screenLeft;
 	if (_features & GF_NEW_CAMERA) {
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
@@ -329,13 +330,13 @@ void ScummEngine::cameraMoved() {
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
 	if (_features & GF_NEW_CAMERA) {
-		_screenLeft = camera._cur.x - (_screenWidth / 2);
+		screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
-		_screenLeft = _screenStartStrip * 8;
+		screenLeft = _screenStartStrip * 8;
 	}
 
 #ifdef V7_SMOOTH_SCROLLING_HACK
-	virtscr[0].xstart = _screenLeft;
+	virtscr[0].xstart = screenLeft;
 #else
 	virtscr[0].xstart = _screenStartStrip * 8;
 #endif
