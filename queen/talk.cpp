@@ -757,7 +757,7 @@ void Talk::defaultAnimation(
 				break;
 			}
 			
-			if (_vm->sound()->speechOn()) {
+			if (_vm->sound()->speechOn() && _vm->sound()->speechSfxExists()) {
 				// sfx is finished, stop the speak animation
 				if (!_vm->sound()->isSpeechActive()) {
 					break;
@@ -772,7 +772,7 @@ void Talk::defaultAnimation(
 		}
 	}
 
-	// Make sure that Person closes their mouths
+	// Make sure that Person closes their mouth
 	if (!isJoe && parameters->ff > 0)
 		_vm->bankMan()->overpack(parameters->ff, startFrame, bankNum);
 }
@@ -834,7 +834,7 @@ void Talk::speakSegment(
 	if (!isJoe) {
 		if (SPEAK_AMAL_ON == command) {
 			// It's the oracle!
-			// Dont turn AMAL animation off, and dont manually anim person
+			// Don't turn AMAL animation off, and don't manually anim person
 			command = SPEAK_ORACLE;
 			oracle = true;
 			uint16 frameNum = _vm->graphics()->personFrames(bobNum);

@@ -77,6 +77,8 @@ public:
 	bool isSpeechActive() const	{ return _speechHandle.isActive(); }
 	bool isSfxActive() const 	{ return _sfxHandle.isActive(); }
 	
+	bool speechSfxExists() const	{ return _speechSfxExists; }
+	
 	int16 lastOverride() const	{ return _lastOverride; }
 
 	void saveState(byte *&ptr);
@@ -107,6 +109,7 @@ protected:
 	bool _sfxToggle;
 	bool _speechToggle;
 	bool _musicToggle;
+	bool _speechSfxExists;
 	
 	int16 _lastOverride;
 	PlayingSoundHandle _sfxHandle;

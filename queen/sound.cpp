@@ -92,7 +92,7 @@ void Sound::waitFinished(bool isSpeech) {
 
 void Sound::playSfx(uint16 sfx, bool isSpeech) {
 	if (isSpeech && !speechOn()) return;
-        else if (!sfxOn()) return;
+	else if (!sfxOn()) return;
 
 	if (sfx != 0) {
 		char name[13];
@@ -103,7 +103,12 @@ void Sound::playSfx(uint16 sfx, bool isSpeech) {
 #endif
 		strcat(name, ".SB");
 		waitFinished(isSpeech);
-		sfxPlay(name, isSpeech);
+		if (_vm->resource()->fileExists(name)) {
+			sfxPlay(name, isSpeech);
+			_speechSfxExists = isSpeech;
+		} else {
+			_speechSfxExists = false;
+		}
 	}
 }
 
@@ -120,7 +125,12 @@ void Sound::playSfx(const char *base, bool isSpeech) {
 	}
 	strcat(name, ".SB");
 	waitFinished(isSpeech);
-	sfxPlay(name, isSpeech);
+	if (_vm->resource()->fileExists(name)) {
+		sfxPlay(name, isSpeech);
+		_speechSfxExists = isSpeech;
+	} else {
+		_speechSfxExists = false;
+	}
 }
 
 void Sound::playSong(int16 songNum) {
@@ -182,40 +192,32 @@ void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
 }
 
 void SBSound::sfxPlay(const char *name, bool isSpeech) {
-	if (_vm->resource()->fileExists(name)) {
-		uint32 size;
-		uint8 *buf = _vm->resource()->loadFile(name, SB_HEADER_SIZE, &size, true);
-		playSound(buf, size, isSpeech);
-	}
+	uint32 size;
+	uint8 *buf = _vm->resource()->loadFile(name, SB_HEADER_SIZE, &size, true);
+	playSound(buf, size, isSpeech);
 }
 
 #ifdef USE_MAD
 void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
-	if (_vm->resource()->fileExists(name)) {
-		uint32 size;
-		File *f = _vm->resource()->giveCompressedSound(name, &size);
-		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size), false);
-	}
+	uint32 size;
+	File *f = _vm->resource()->giveCompressedSound(name, &size);
+	_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size), false);
 }
 #endif
 
 #ifdef USE_VORBIS
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
-	if (_vm->resource()->fileExists(name)) {
-		uint32 size;
-		File *f = _vm->resource()->giveCompressedSound(name, &size);		
-		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size), false);
-	}
+	uint32 size;
+	File *f = _vm->resource()->giveCompressedSound(name, &size);		
+	_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size), false);
 }
 #endif
 
 #ifdef USE_FLAC
 void FLACSound::sfxPlay(const char *name, bool isSpeech) {
-	if (_vm->resource()->fileExists(name)) {
-		uint32 size;
-		File *f = _vm->resource()->giveCompressedSound(name, &size);		
-		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size), false);
-	}
+	uint32 size;
+	File *f = _vm->resource()->giveCompressedSound(name, &size);		
+	_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size), false);
 }
 #endif
 

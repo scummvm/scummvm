@@ -960,7 +960,7 @@ void Cutaway::run(char *nextFilename) {
 
 	// if the cutaway has been cancelled, we must stop the speech and the sfx as well
 	if (_vm->input()->cutawayQuit()) {
-		if (_vm->sound()->speechOn())
+		if (_vm->sound()->isSpeechActive())
 			_vm->sound()->stopSpeech();
 		_vm->sound()->stopSfx();
 	}
@@ -1262,7 +1262,7 @@ void Cutaway::handleText(
 			break;
 		}
 
-		if ((OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) && _vm->sound()->speechOn()) {
+		if ((OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) && _vm->sound()->speechOn() && _vm->sound()->speechSfxExists()) {
 			if (!_vm->sound()->isSpeechActive()) {
 				break;
 			}
