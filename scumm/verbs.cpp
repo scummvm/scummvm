@@ -31,6 +31,7 @@ void Scumm::redrawVerbs()
 	for (i = 0; i < _maxVerbs; i++)
 		drawVerb(i, 0);
 	verbMouseOver(0);
+	_verbRedraw = false;
 }
 
 void Scumm::checkExecVerbs()

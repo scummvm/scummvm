@@ -471,6 +471,10 @@ int Scumm::scummLoop(int delta)
 		}
 
 		processDrawQue();
+
+		if (_verbRedraw)
+			redrawVerbs();
+		
 		setActorRedrawFlags(true, true);
 		resetActorBgs();
 
@@ -1480,6 +1484,8 @@ void Scumm::launch()
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
 
+	_verbRedraw = false;
+	
 	// Create a primary virtual screen
 	_videoBuffer = (byte *)calloc((_realWidth + 8) * _realHeight, 1);
 

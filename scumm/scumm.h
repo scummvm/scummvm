@@ -756,7 +756,7 @@ public:
 	uint32 _IM00_offs, _PALS_offs;
 
 	//ender: fullscreen
-	bool _fullRedraw, _BgNeedsRedraw, _shakeEnabled;
+	bool _fullRedraw, _BgNeedsRedraw, _shakeEnabled, _verbRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
 	int _cursorHotspotX, _cursorHotspotY, _cursorWidth, _cursorHeight;
