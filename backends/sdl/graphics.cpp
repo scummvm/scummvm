@@ -1062,13 +1062,15 @@ void OSystem_SDL::drawMouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 
+	assert(_mouseData);
+
 	int x = _mouseCurState.x - _mouseHotspotX;
 	int y = _mouseCurState.y - _mouseHotspotY;
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 	byte color;
 	const byte *src = _mouseData;		// Image representing the mouse
-
+	
 	// clip the mouse rect, and addjust the src pointer accordingly
 	if (x < 0) {
 		w += x;
