@@ -386,20 +386,12 @@ int SimonState::runScript()
 			break;
 
 		case 67:{									/* set array 3 and 4 */
-				if (_game & GAME_TALKIE) {
-					uint var = getVarOrByte();
-					uint string_id = getNextStringID();
-					uint value = getNextWord();
-					if (var < 20) {
-						_stringid_array_3[var] = string_id;
-						_array_4[var] = value;
-					}
-				} else {
-					uint var = getVarOrByte();
-					uint string_id = getNextStringID();
-					if (var < 20) {
-						_stringid_array_3[var] = string_id;
-					}
+				uint var = getVarOrByte();
+				uint string_id = getNextStringID();
+				if (var < 20) {
+					_stringid_array_3[var] = string_id;
+					if (_game & GAME_TALKIE)
+						_array_4[var] = getNextWord();
 				}
 			}
 			break;
@@ -743,13 +735,11 @@ int SimonState::runScript()
 
 		case 130:{									/* set script cond */
 				uint a = getVarOrByte();
-				if (a == 1) {
-					getNextWord();
+				getNextWord();
+				if (a == 1)
 					_script_cond_b = getNextWord();
-				} else {
-					getNextWord();
+				else
 					_script_cond_c = getNextWord();
-				}
 			}
 			break;
 
@@ -930,24 +920,7 @@ int SimonState::runScript()
 
 		case 161:{									/* setup text */
 				uint value = getVarOrByte();
-				ThreeValues *tv;
-
-				switch (value) {
-				case 1:
-					tv = &_threevalues_1;
-					break;
-				case 2:
-					tv = &_threevalues_2;
-					break;
-				case 101:
-					tv = &_threevalues_3;
-					break;
-				case 102:
-					tv = &_threevalues_4;
-					break;
-				default:
-					error("setup text, invalid value %d", value);
-				}
+				ThreeValues *tv = getThreeValues(value);
 
 				tv->a = getVarOrWord();
 				tv->b = getVarOrByte();
@@ -1039,24 +1012,7 @@ int SimonState::runScript()
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-					ThreeValues *tv;
-
-					switch (b) {
-					case 1:
-						tv = &_threevalues_1;
-						break;
-					case 2:
-						tv = &_threevalues_2;
-						break;
-					case 101:
-						tv = &_threevalues_3;
-						break;
-					case 102:
-						tv = &_threevalues_4;
-						break;
-					default:
-						error("setup text, invalid value %d", b);
-					}
+					ThreeValues *tv = getThreeValues(b);
 
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
@@ -1065,24 +1021,7 @@ int SimonState::runScript()
 					uint a = getVarOrByte();
 					uint d;
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-					ThreeValues *tv;
-
-					switch (b) {
-					case 1:
-						tv = &_threevalues_1;
-						break;
-					case 2:
-						tv = &_threevalues_2;
-						break;
-					case 101:
-						tv = &_threevalues_3;
-						break;
-					case 102:
-						tv = &_threevalues_4;
-						break;
-					default:
-						error("setup text, invalid value %d", b);
-					}
+					ThreeValues *tv = getThreeValues(b);
 
 					d = _array_4[a];
 					if (d != 0 && !_vk_t_toggle)
@@ -1095,24 +1034,8 @@ int SimonState::runScript()
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-					ThreeValues *tv;
 
-					switch (b) {
-					case 1:
-						tv = &_threevalues_1;
-						break;
-					case 2:
-						tv = &_threevalues_2;
-						break;
-					case 101:
-						tv = &_threevalues_3;
-						break;
-					case 102:
-						tv = &_threevalues_4;
-						break;
-					default:
-						error("setup text, invalid value %d", b);
-					}
+					ThreeValues *tv = getThreeValues(b);
 
 					if (s != NULL)
 						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
@@ -1361,24 +1284,9 @@ void SimonState::o_177()
 		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 		if (child != NULL && child->avail_props & 1) {
 			const char *s = (const char *)getStringPtrByID(child->array[0]);
-			ThreeValues *tv;
 			char buf[256];
-			switch (a) {
-			case 1:
-				tv = &_threevalues_1;
-				break;
-			case 2:
-				tv = &_threevalues_2;
-				break;
-			case 101:
-				tv = &_threevalues_3;
-				break;
-			case 102:
-				tv = &_threevalues_4;
-				break;
-			default:
-				error("setup text, invalid value %d", a);
-			}
+
+			ThreeValues *tv = getThreeValues(a);
 
 			if (child->avail_props & 0x100) {
 				uint x = getOffsetOfChild2Param(child, 0x100);
@@ -1398,22 +1306,7 @@ void SimonState::o_177()
 
 		if (child != NULL && child->avail_props & 1) {
 			s = (const char *)getStringPtrByID(child->array[0]);
-			switch (a) {
-			case 1:
-				tv = &_threevalues_1;
-				break;
-			case 2:
-				tv = &_threevalues_2;
-				break;
-			case 101:
-				tv = &_threevalues_3;
-				break;
-			case 102:
-				tv = &_threevalues_4;
-				break;
-			default:
-				error("setup text, invalid value %d", a);
-			}
+			tv = getThreeValues(a);
 		}
 
 		if (child != NULL && child->avail_props & 0x200) {
@@ -1489,22 +1382,7 @@ void SimonState::o_177()
 
 		if (child != NULL && child->avail_props & 1) {
 			s = (const char *)getStringPtrByID(child->array[0]);
-			switch (a) {
-			case 1:
-				tv = &_threevalues_1;
-				break;
-			case 2:
-				tv = &_threevalues_2;
-				break;
-			case 101:
-				tv = &_threevalues_3;
-				break;
-			case 102:
-				tv = &_threevalues_4;
-				break;
-			default:
-				error("setup text, invalid value %d", a);
-			}
+			tv = getThreeValues(a);
 		}
 
 		if (child == NULL || !(child->avail_props & 1))

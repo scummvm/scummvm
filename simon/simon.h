@@ -474,6 +474,9 @@ public:
 	void o_clear_vgapointer_entry(uint a);
 	void o_unk_186();
 	void o_fade_to_black();
+
+	
+	ThreeValues *getThreeValues(uint a);
 	void o_print_str();
 	void o_setup_cond_c();
 	void setup_cond_c_helper();

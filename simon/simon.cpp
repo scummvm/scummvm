@@ -1700,6 +1700,24 @@ void SimonState::handle_verb_clicked(uint verb)
 	startUp_helper_2();
 }
 
+ThreeValues *SimonState::getThreeValues(uint a)
+{
+	switch (a) {
+	case 1:
+		return &_threevalues_1;
+	case 2:
+		return &_threevalues_2;
+	case 101:
+		return &_threevalues_3;
+		break;
+	case 102:
+		return &_threevalues_4;
+		break;
+	default:
+		error("text, invalid value %d", a);
+	}
+}
+
 void SimonState::o_print_str()
 {
 	uint num_1 = getVarOrByte();
@@ -1709,54 +1727,16 @@ void SimonState::o_print_str()
 	uint speech_id = 0;
 	ThreeValues *tv;
 
-
-	switch (_game) {
-	case GAME_SIMON1TALKIE:
-	case GAME_SIMON1WIN:
+	if (_game & GAME_TALKIE) {
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
 
 		speech_id = (uint16)getNextWord();
-		break;
-
-	case GAME_SIMON2TALKIE:
-	case GAME_SIMON2WIN:
-		if (string_id != 0xFFFF)
-			string_ptr = getStringPtrByID(string_id);
-
-		speech_id = (uint16)getNextWord();
-		break;
-
-	case GAME_SIMON2DOS:
+	} else {
 		string_ptr = getStringPtrByID(string_id);
-		break;
-
-	case GAME_SIMON1DEMO:
-		string_ptr = getStringPtrByID(string_id);
-		break;
-
-	case GAME_SIMON1DOS:
-		string_ptr = getStringPtrByID(string_id);
-		break;
 	}
 
-	switch (num_1) {
-	case 1:
-		tv = &_threevalues_1;
-		break;
-	case 2:
-		tv = &_threevalues_2;
-		break;
-	case 101:
-		tv = &_threevalues_3;
-		break;
-	case 102:
-		tv = &_threevalues_4;
-		break;
-	default:
-		error("o_print_str, invalid value %d", num_1);
-	}
-
+	tv = getThreeValues(num_1);
 
 	switch (_game) {
 	case GAME_SIMON1TALKIE:
