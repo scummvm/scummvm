@@ -151,9 +151,15 @@ static const TransitionEffect transitionEffects[5] = {
 /*
  * Mouse cursor cycle colors (for the default crosshair).
  */
+static const byte default_v1_cursor_colors[4] = {
+	1, 1, 12, 11
+};
+
 static const byte default_cursor_colors[4] = {
 	15, 15, 7, 8
 };
+
+
 
 static const uint16 default_cursor_images[5][16] = {
 	/* cross-hair */
@@ -3502,7 +3508,10 @@ void Scumm::decompressDefaultCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	color = default_cursor_colors[idx];
+	if (_version == 1)
+		color = default_v1_cursor_colors[idx];
+	else
+		color = default_cursor_colors[idx];
 
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
 
