@@ -23,6 +23,7 @@
 #include "cutaway.h"
 #include "display.h"
 #include "graphics.h"
+#include "sound.h"
 #include "talk.h"
 #include "walk.h"
 
@@ -356,7 +357,7 @@ void Cutaway::actionSpecialMove(int index) {
 					if (horizontalScroll > k)
 						horizontalScroll = k;
 
-					debug(0, "horizontalScroll = %i", horizontalScroll);
+					//debug(0, "horizontalScroll = %i", horizontalScroll);
 
 					display->horizontalScroll(horizontalScroll);
 
@@ -1124,7 +1125,7 @@ void Cutaway::run(char *nextFilename) {
 			case OBJECT_TYPE_TEXT_SPEAK:
 			case OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK:
 			case OBJECT_TYPE_TEXT_DISPLAY:
-				handleText(objectType, object, sentence);
+				handleText(i + 1, objectType, object, sentence);
 				break;
 
 			default:
@@ -1433,13 +1434,13 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 
 	for (i = 0; i < frameCount; i++) {
 		_cutAnim[bobNum][i].frame = currentImage + frameIndex[objAnim[i].unpackFrame];
-		debug(0, "_cutAnim[%i][%i].frame = %i", bobNum, i, _cutAnim[bobNum][i].frame);
+		//debug(0, "_cutAnim[%i][%i].frame = %i", bobNum, i, _cutAnim[bobNum][i].frame);
 	}
 
 	for (i = 1; i < 256; i++) {
 		if (frameIndex[i]) {
 			currentImage++;
-			debug(0, "bankUnpack(%i, %i, %i)", i, currentImage, objAnim[0].bank);
+			//debug(0, "bankUnpack(%i, %i, %i)", i, currentImage, objAnim[0].bank);
 			_graphics->bankUnpack(i, currentImage, objAnim[0].bank);
 		}
 	}
@@ -1450,6 +1451,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 }
 
 void Cutaway::handleText(
+		int index,
 		ObjectType type, 
 		CutawayObject &object,
 		const char *sentence) {
@@ -1477,7 +1479,10 @@ void Cutaway::handleText(
 	_graphics->bobSetText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 
 	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
-		// XXX: speak
+		char voiceFileName[MAX_STRING_SIZE];
+		findCdCut(_basename, index, voiceFileName);
+		strcat(voiceFileName, "1");
+		_sound->sfxPlay(voiceFileName);
 	}
 
 	int i;

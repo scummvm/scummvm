@@ -254,6 +254,7 @@ class Cutaway {
 		
 		//! Perform text actions
 		void handleText(
+				int index, 
 				ObjectType type, 
 				CutawayObject &object, 
 				const char *sentence);
