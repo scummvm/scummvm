@@ -931,7 +931,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
-		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
+		assert(numzbuf <= ARRAYSIZE(zplane_list));
 		
 		if (_vm->_features & GF_OLD256) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
@@ -1282,6 +1282,8 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	int x, y, length = 0;
 	byte run = 1;
 
+	// Decode the graphics strips, and memorize the run/color values
+	// as well as the byte offset.
 	for (x = 0 ; x < width; x++) {
 
 		if ((x % 8) == 0) {
@@ -1307,7 +1309,7 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 		}
 	}
 
-	// Directly after the graphics data, the mask follows
+	// The mask data follows immediately after the graphics.
 	x = 0;
 	y = height;
 	width /= 8;
@@ -1377,6 +1379,7 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) {
 	int maskIdx;
 	height >>= 3;
+	width >>= 3;
 	for (int y = 0; y < height; y++) {
 		if (_C64ObjectMode)
 			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
@@ -1385,10 +1388,8 @@ void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) {
 		for (int i = 0; i < 8; i++) {
 			byte c = _C64MaskChar[maskIdx + i];
 
-			// Room masks are inverted compared to the object masks
-			if (!_C64ObjectMode)
-				c ^= 0xFF;
-			*dst = c;
+			// V1/C64 masks are inverted compared to what ScummVM expects
+			*dst = c ^ 0xFF;
 			dst += _numStrips;
 		}
 	}
@@ -1403,23 +1404,23 @@ void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) {
 	}
 
 	x = 0;
-	while (x < size){
-		color = *src++;
-		if (color < 0x40) {
-			for (z = 0; z <= color; z++) {
-				dst[x++] = *src++;
+	while (x < size) {
+		run = *src++;
+		if (run & 0x80) {
+			color = common[(run >> 5) & 3];
+			run &= 0x1F;
+			for (z = 0; z <= run; z++) {
+				dst[x++] = color;
 			}
-		} else if (color < 0x80) {
-			color &= 0x3F;
-			run = *src++;
-			for (z = 0; z <= color; z++) {
-				dst[x++] = run;
+		} else if (run & 0x40) {
+			run &= 0x3F;
+			color = *src++;
+			for (z = 0; z <= run; z++) {
+				dst[x++] = color;
 			}
 		} else {
-			run = common[(color >> 5) & 3];
-			color &= 0x1F;
-			for (z = 0; z <= color; z++) {
-				dst[x++] = run;
+			for (z = 0; z <= run; z++) {
+				dst[x++] = *src++;
 			}
 		}
 	}
