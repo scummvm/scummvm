@@ -33,35 +33,36 @@
 
 void Scumm_v8::setupOpcodes()
 {
+	// TODO: any of the o6_ entries are potentially wrong and pure guesses :-)
 	static const OpcodeEntryV8 opcodes[256] = {
 		/* 00 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_pushNumber),
-		OPCODE(o8_pushVariable),
-		OPCODE(o8_arrayRead),
+		OPCODE(o6_pushWord),
+		OPCODE(o6_pushWordVar),
+		OPCODE(o6_wordArrayRead),
 		/* 04 */
-		OPCODE(o8_arrayIndexedRead),
-		OPCODE(o8_dup),
+		OPCODE(o6_wordArrayIndexedRead),
+		OPCODE(o6_dup),
 		OPCODE(o8_pop),
-		OPCODE(o8_not),
+		OPCODE(o6_not),
 		/* 08 */
-		OPCODE(o8_eq),
-		OPCODE(o8_neq),
-		OPCODE(o8_gt),
-		OPCODE(o8_lt),
+		OPCODE(o6_eq),
+		OPCODE(o6_neq),
+		OPCODE(o6_gt),
+		OPCODE(o6_lt),
 		/* 0C */
-		OPCODE(o8_le),
-		OPCODE(o8_ge),
-		OPCODE(o8_add),
-		OPCODE(o8_sub),
+		OPCODE(o6_le),
+		OPCODE(o6_ge),
+		OPCODE(o6_add),
+		OPCODE(o6_sub),
 		/* 10 */
-		OPCODE(o8_mul),
-		OPCODE(o8_div),
-		OPCODE(o8_land),
-		OPCODE(o8_lor),
+		OPCODE(o6_mul),
+		OPCODE(o6_div),
+		OPCODE(o6_land),
+		OPCODE(o6_lor),
 		/* 14 */
-		OPCODE(o8_band),
-		OPCODE(o8_bor),
+		OPCODE(o6_band),
+		OPCODE(o6_bor),
 		OPCODE(o8_mod),
 		OPCODE(o8_unknown),
 		/* 18 */
@@ -160,10 +161,10 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 64 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_jump),
-		OPCODE(o8_breakHere),
+		OPCODE(o6_jumpFalse),
+		OPCODE(o6_jumpTrue),
+		OPCODE(o6_jump),
+		OPCODE(o6_breakHere),
 		/* 68 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_wait),
@@ -171,17 +172,17 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* 6C */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_writeWordVar),
+		OPCODE(o6_wordVarInc),
+		OPCODE(o6_wordVarDec),
 		/* 70 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_dim),
+		OPCODE(o6_wordArrayWrite),
+		OPCODE(o6_wordArrayInc),
+		OPCODE(o6_wordArrayDec),
 		/* 74 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_dim2),
+		OPCODE(o6_wordArrayIndexedWrite),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 78 */
@@ -196,12 +197,12 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* 80 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_cutscene),
-		OPCODE(o8_endCutscene),
+		OPCODE(o6_cutscene),
+		OPCODE(o6_endCutscene),
 		OPCODE(o8_unknown),
 		/* 84 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_beginOverride),
+		OPCODE(o6_endOverride),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 88 */
@@ -285,15 +286,15 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* C8 */
-		OPCODE(o8_startScript),
-		OPCODE(o8_startObject),
+		OPCODE(o6_startScript),
+		OPCODE(o6_startObject),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* CC */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_getRandomNumber),
+		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
@@ -380,149 +381,15 @@ void Scumm_v8::o8_invalid()
 	error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
 }
 
-void Scumm_v8::o8_pushNumber()
-{
-	// TODO - is this correct?!?
-	push((int16)fetchScriptWord());
-}
-
-void Scumm_v8::o8_pushVariable()
-{
-	// TODO - is this correct?!?
-	push(readVar(fetchScriptWord()));
-}
-
-void Scumm_v8::o8_arrayRead()
-{
-	// TODO - is this correct?!?
-	int base = pop();
-	push(readArray(fetchScriptWord(), 0, base));
-}
-
-void Scumm_v8::o8_arrayIndexedRead()
-{
-	// TODO - is this correct?!?
-	int base = pop();
-	int idx = pop();
-	push(readArray(fetchScriptWord(), idx, base));
-}
-
-void Scumm_v8::o8_dup()
-{
-	int a = pop();
-	push(a);
-	push(a);
-}
-
 void Scumm_v8::o8_pop()
 {
 	pop();
-}
-
-void Scumm_v8::o8_not()
-{
-	push(pop() == 0);
-}
-
-void Scumm_v8::o8_eq()
-{
-	push(pop() == pop());
-}
-
-void Scumm_v8::o8_neq()
-{
-	push(pop() != pop());
-}
-
-void Scumm_v8::o8_gt()
-{
-	int a = pop();
-	push(pop() > a);
-}
-
-void Scumm_v8::o8_lt()
-{
-	int a = pop();
-	push(pop() < a);
-}
-
-void Scumm_v8::o8_le()
-{
-	int a = pop();
-	push(pop() <= a);
-}
-
-void Scumm_v8::o8_ge()
-{
-	int a = pop();
-	push(pop() >= a);
-}
-
-void Scumm_v8::o8_add()
-{
-	int a = pop();
-	push(pop() + a);
-}
-
-void Scumm_v8::o8_sub()
-{
-	int a = pop();
-	push(pop() - a);
-}
-
-void Scumm_v8::o8_mul()
-{
-	int a = pop();
-	push(pop() * a);
-}
-
-void Scumm_v8::o8_div()
-{
-	int a = pop();
-	if (a == 0)
-		error("division by zero");
-	push(pop() / a);
-}
-
-void Scumm_v8::o8_land()	// Logical And
-{
-	int a = pop();
-	push(pop() && a);
-}
-
-void Scumm_v8::o8_lor()	// Logical Or
-{
-	int a = pop();
-	push(pop() || a);
-}
-
-void Scumm_v8::o8_bor()	// Bitwise Or
-{
-	int a = pop();
-	push(pop() | a);
-}
-
-void Scumm_v8::o8_band()	// Bitwise And
-{
-	int a = pop();
-	push(pop() | a);
 }
 
 void Scumm_v8::o8_mod()
 {
 	int a = pop();
 	push(pop() % a);
-}
-
-void Scumm_v8::o8_jump()
-{
-	// TODO - is this correct?!?
-	_scriptPointer += (int16)fetchScriptWord();
-}
-
-void Scumm_v8::o8_breakHere()
-{
-	// TODO
 }
 
 void Scumm_v8::o8_wait()
@@ -539,16 +406,6 @@ void Scumm_v8::o8_wait()
 	default:
 		error("o8_wait: default case %d", subOp);
 	}
-}
-
-void Scumm_v8::o8_cutscene()
-{
-	// TODO
-}
-
-void Scumm_v8::o8_endCutscene()
-{
-	// TODO
 }
 
 void Scumm_v8::o8_cursorCommand()
@@ -720,17 +577,6 @@ void Scumm_v8::o8_verbOps()
 		error("o8_verbops: default case %d", subOp);
 	}
 }
-
-void Scumm_v8::o8_startObject()
-{
-	// TODO
-}
-
-void Scumm_v8::o8_startScript()
-{
-	// TODO
-}
-
 
 /*
 

@@ -376,7 +376,7 @@ protected:
 	virtual void setupScummVars();
 };
 
-class Scumm_v8 : public Scumm
+class Scumm_v8 : public Scumm_v6
 {
 protected:
 	typedef void (Scumm_v8::*OpcodeProcV8)();
@@ -388,7 +388,7 @@ protected:
 	const OpcodeEntryV8 *_opcodesV8;
 	
 public:
-	Scumm_v8(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+	Scumm_v8(GameDetector *detector, OSystem *syst) : Scumm_v6(detector, syst) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -400,41 +400,15 @@ protected:
 	void o8_unknown();
 	void o8_invalid();
 
-	void o8_pushNumber();
-	void o8_pushVariable();
-	void o8_arrayRead();
-	void o8_arrayIndexedRead();
-	void o8_dup();
 	void o8_pop();
-	void o8_not();
-	void o8_eq();
-	void o8_neq();
-	void o8_gt();
-	void o8_lt();
-	void o8_le();
-	void o8_ge();
-	void o8_add();
-	void o8_sub();
-	void o8_mul();
-	void o8_div();
-	void o8_land();
-	void o8_lor();
-	void o8_band();
-	void o8_bor();
 	void o8_mod();
-	void o8_jump();
-	void o8_breakHere();
 	void o8_wait();
-	void o8_cutscene();
-	void o8_endCutscene();
 	void o8_cursorCommand();
 	void o8_resourceRoutines();
 	void o8_roomOps();
 	void o8_actorSet();
 	void o8_cameraStuff();
 	void o8_verbOps();
-	void o8_startScript();
-	void o8_startObject();
 };
 
 
