@@ -1925,6 +1925,10 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					if (soundHandleMusic[i] == 0) {
 						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
 					} else {
+						// Paranoid check that seems to
+						// be necessary.
+						if (len & 1)
+							len--;
 						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
 					}
 
