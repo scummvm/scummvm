@@ -29,11 +29,11 @@ CXXFLAGS+= -Wall -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
 CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized -Wimplicit
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 CXXFLAGS+= -Wwrite-strings -Wredundant-decls -Wdisabled-optimization -fcheck-new -Wundef
-CXXFLAGS+= -Wctor-dtor-privacy -Wnon-virtual-dtor -Woverloaded-virtual -Wfloat-equal
+CXXFLAGS+= -Wctor-dtor-privacy -Wnon-virtual-dtor
 # Seems GCC 2.95 doesn't support the following, so we do not yet turn them
 # on by default (but I'd strongly recommend to all GCC 2.95 users to update
 # to a better compiler like GCC 3.x).
-# CXXFLAGS+= -ansi -W -Wno-unused-parameter
+# CXXFLAGS+= -ansi -W -Wno-unused-parameter -Woverloaded-virtual -Wfloat-equal
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
@@ -100,7 +100,9 @@ bundle: scummvm-static
 # Special target to create a static linked binary for Mac OS X
 scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
-		/sw/lib/libSDLmain.a /sw/lib/libSDL.a /sw/lib/libmad.a \
+		/sw/lib/libSDLmain.a /sw/lib/libSDL.a \
+		/sw/lib/libmad.a \
+		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
 		-framework Cocoa -framework Carbon -framework IOKit \
 		-framework OpenGL -framework AGL -framework QuickTime \
 		-framework AudioUnit -framework AudioToolbox
