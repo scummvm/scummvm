@@ -26,6 +26,8 @@
 #include "dc.h"
 #include "icon.h"
 #include <scumm/saveload.h>
+#include <gui/newgui.h>
+#include <gui/message.h>
 
 #include <ronin/zlib.h>
 
@@ -43,6 +45,34 @@ enum vmsaveResult {
 
 
 static int lastvm=-1;
+
+static void displaySaveResult(vmsaveResult res)
+{
+  extern NewGui *g_gui;
+  char buf[1024];
+
+  switch(res) {
+  case VMSAVE_OK:
+    sprintf(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
+    break;
+  case VMSAVE_NOVM:
+    strcpy(buf, "No memory card present!");
+    break;
+  case VMSAVE_NOSPACE:
+    strcpy(buf, "Not enough space available!");
+    break;
+  case VMSAVE_WRITEERROR:
+    strcpy(buf, "Write error!!!");
+    break;
+  default:
+    strcpy(buf, "Unknown error!!!");
+    break;
+  }
+
+  Dialog *dialog = new MessageDialog(g_gui, buf);
+  dialog->runModal();
+  delete dialog;
+}
 
 static vmsaveResult trySave(const char *gamename, const char *data, int size,
 			    const char *filename, class Icon &icon, int vm)
@@ -216,8 +246,8 @@ void SerializerStream::fclose()
 	  c->pos = destlen;
 	} else delete compbuf;
       }
-      writeSaveGame(gGameName, c->buffer, c->pos,
-		    c->filename, icon);
+      displaySaveResult(writeSaveGame(gGameName, c->buffer,
+				      c->pos, c->filename, icon));
     }
     delete c->buffer;
     delete c;
