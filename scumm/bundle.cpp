@@ -276,7 +276,9 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 	*comp_final = (byte *)malloc(0x2000 * num);
 
 	for (i = 0; i < num; i++) {
-		comp_input = (byte *)malloc(_compVoiceTable[i].size);
+		// CMI hack: one more zero byte at the end of input buffer
+		comp_input = (byte *)malloc(_compVoiceTable[i].size + 1);
+		comp_input[_compVoiceTable[i].size] = 0;
 
 		_voiceFile.seek(_bundleVoiceTable[index].offset + _compVoiceTable[i].offset, SEEK_SET);
 		_voiceFile.read(comp_input, _compVoiceTable[i].size);
@@ -329,7 +331,9 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 		_lastSong = index;
 	}
 
-	comp_input = (byte *)malloc(_compMusicTable[number].size);
+	// CMI hack: one more zero byte at the end of input buffer
+	comp_input = (byte *)malloc(_compMusicTable[number].size + 1);
+	comp_input[_compMusicTable[number].size] = 0;
 
 	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
 	_musicFile.read(comp_input, _compMusicTable[number].size);
