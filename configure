@@ -82,9 +82,9 @@ EOF
 
 if test -n "$_host"; then
     # In cross-compiling mode, we cannot run the result
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -159,7 +159,7 @@ if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
 	exit 1
   fi
 fi
-rm -f tmp_find_type_with_size tmp_find_type_with_size.cpp
+rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
 }
 
@@ -315,6 +315,19 @@ if test "$_host" = "linupy"; then
 fi
 
 #
+# Determine extension used for executables
+#
+hosttype=`uname -s`
+case $hosttype in
+	MINGW32* | CYGWIN*)
+	EXEEXT=".exe"
+	;;
+*)
+	EXEEXT=""
+	;;
+esac
+
+#
 # Determine the C++ compiler
 #
 printf "Looking for C++ compiler... "
@@ -385,8 +398,16 @@ fi
 #
 
 if test "$_cxx_major" -ge "3" ; then
+    hosttype=`uname -s`
+    case $hosttype in
+	MINGW32* | CYGWIN*)
+	CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+	    ;;
+	*)
 	CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-	_make_def_HAVE_GCC3='HAVE_GCC3 = 1'
+	    ;;
+    esac
+    _make_def_HAVE_GCC3='HAVE_GCC3 = 1'
 fi;
 
 #
@@ -472,13 +493,14 @@ else
 		CXXFLAGS="$CXXFLAGS -faltivec"
 		;;
 	MINGW32*)
-		echo "mingw32 not supported by configure script"
-		echo "Try 'make -f Makefile.mingw'"
-		exit 1
+		DEFINES="$DEFINES -DWIN32"
+		LIBS="$LIBS -lmingw32 -lwinmm"
+		OBJS="$OBJS scummvmico.o"
 		;;
 	CYGWIN*)
-		echo "cygwin not supported by configure script"
-		exit 1
+		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
+		OBJS="$OBJS scummvmico.o"
 		;;
 	# given this is a shell script assume some type of unix
 	*)
@@ -521,7 +543,7 @@ EOF
 	    exit 1
 	    ;;
     esac
-    rm -f tmp_endianess_check tmp_endianess_check.cpp
+    rm -f tmp_endianess_check$EXEEXT tmp_endianess_check.cpp
 
     #
     # Check whether memory alignment is required
@@ -791,6 +813,7 @@ RANLIB := $_ranlib
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
+EXEEXT := $EXEEXT
 
 $_make_def_HAVE_GCC3
 $_mak_scumm

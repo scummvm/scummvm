@@ -10,6 +10,7 @@ RM      := rm -f
 RM_REC  := $(RM) -r
 ZIP     := zip -q
 CP      := cp
+WIN32PATH=C:/scummvm
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
@@ -54,6 +55,9 @@ config.mak: $(srcdir)/configure
 	@echo "Either you haven't run it before or it has changed."
 	@echo "If you cannot run configure, use 'make -f Makefile.noconf'"
 	@exit 1
+
+scummvmico.o: scummvm.ico
+	windres scummvm.rc scummvmico.o
 
 dist:
 	$(RM) $(ZIPFILE)
@@ -105,5 +109,16 @@ scummvm-static: $(OBJS)
 		-framework Cocoa -framework Carbon -framework IOKit \
 		-framework OpenGL -framework AGL -framework QuickTime \
 		-framework AudioUnit -framework AudioToolbox
+
+# Special target to create a win32 snapshot binary
+win32dist: scummvm$(EXEEXT)
+	mkdir -p $(WIN32PATH)
+	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
+	cp COPYING $(WIN32PATH)/copying.txt
+	cp README $(WIN32PATH)/readme.txt
+	cp NEWS $(WIN32PATH)/news.txt
+	cp SDL/README-SDL.txt $(WIN32PATH)
+	cp SDL/lib/SDL.dll $(WIN32PATH)
+	u2d $(WIN32PATH)/*.txt
 
 .PHONY: deb bundle test
