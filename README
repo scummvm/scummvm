@@ -202,6 +202,10 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Type make (or gmake if that's what GNU make is called on your
           system) and hopefully ScummVM will compile for you.
 
+    Mingw:
+        * Open Makefile.mingw, alter SDL paths and choose compiling options.
+        * Type make -f Makefile.mingw and hopefully ScummVM will compile for you.
+
     Microsoft Visual C++:
         * Open the workspace, scummwm.dsw
         * Enter the path to the SDL include files in Tools|Options|Directories
@@ -284,24 +288,25 @@ Command Line Options:
 
         [GAME]     - Short name of game to load. For example, 'monkey' for Monkey Island.
         
-        -p<path>   - Path to where the game is installed. Default is Cwd.
-        -b<num>    - Start in room <num>.
-        -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
-        -o<num>    - Set the master volume, 0-255. Default is '192'
-        -s<num>    - Set the sfx volume, 0-255.    Default is '192'
-        -m<num>    - Set the music volume, 0-255.  Default is '192'
-        -t<num>    - Set music tempo. Adlib default: 0x1D9000, Midi: 0x4A0000
-        -e<mode>   - Select sound engine. See below.
-        -g<mode>   - Select graphics scaler. See below.
-        -f         - Full-screen mode.
-        -n         - Disable subtitles. Use with games that have voice.
-        -y         - Set talk speed ('yak option'). Default is '60'
-        -a         - Enable amiga pal conversion, for playing Amiga versions
-        -d[<num>]  - Set debug verbosity to <num>
-        -w[<file>] - Write configuration file
-        -l<file>   - Load alternate configuration file
-        -x[<num>]  - Save game slot to load (default: autosave)
-        -z         - Display list of games
+        -p<path>     - Path to where the game is installed. Default is Cwd.
+        -l<language> - Select language. See below.
+        -b<num>      - Start in room <num>.
+        -c<num>      - Drive to play cd audio from.  E.g., 0 is first drive.
+        -o<num>      - Set the master volume, 0-255. Default is '192'
+        -s<num>      - Set the sfx volume, 0-255.    Default is '192'
+        -m<num>      - Set the music volume, 0-255.  Default is '192'
+        -t<num>      - Set music tempo. Adlib default: 0x1D9000, Midi: 0x4A0000
+        -e<mode>     - Select sound engine. See below.
+        -g<mode>     - Select graphics scaler. See below.
+        -f           - Full-screen mode.
+        -n           - Disable subtitles. Use with games that have voice.
+        -y           - Set talk speed ('yak option'). Default is '60'
+        -a           - Enable amiga pal conversion, for playing Amiga versions
+        -d[<num>]    - Set debug verbosity to <num>
+        -w[<file>]   - Write configuration file
+        -l<file>     - Load alternate configuration file
+        -x[<num>]    - Save game slot to load (default: autosave)
+        -z           - Display list of games
 
 
 Hot Keys:
@@ -343,6 +348,21 @@ simon games.
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose synchronisation
 
+
+Language options:
+-----------------
+ScummVM includes a language option for the Curse of Money Island and the Simon the Sorcerer 1 & 2 games.
+
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        pt  - Portuguese
+        es  - Spanish
+        ja  - Japanese
+        zh  - Chinese
+        ko  - Korean
+        hb  - Hebrew
 
 Graphics filters:
 -----------------
