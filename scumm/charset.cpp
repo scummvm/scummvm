@@ -929,12 +929,13 @@ void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
 	_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
-	if (_vm->_features & GF_OLD256) {
-		_dropShadow = ((_color & 0x80) != 0);
-		_color &= 0x7f;
-	} else if (_vm->_features & GF_16COLOR) {
+	// FM Towns version of Loom uses old colour method as well
+	if (_vm->_features & GF_16COLOR || _vm->_gameId == GID_LOOM) {
 		_dropShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;
+	} else if (_vm->_features & GF_OLD256) {
+		_dropShadow = ((_color & 0x80) != 0);
+		_color &= 0x7f;
 	} else
 		_dropShadow = false;
 }
