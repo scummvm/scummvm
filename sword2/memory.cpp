@@ -57,10 +57,6 @@ int32 suggestedStart = 0;			// Start position of the Defragger as indicated by i
 //------------------------------------------------------------------------------------
 void	Close_memory_manager(void)	//Tony2Oct96
 {
-
-//unlock our supposedly locked in memory
-	SVM_VirtualUnlock(free_memman, total_free_memory);
-
 	free(free_memman);
 }
 //------------------------------------------------------------------------------------
@@ -68,33 +64,11 @@ void	Init_memory_manager(void)	//Tony9April96
 {
 	uint32	j;
 	uint8	*memory_base;
-	//BOOL			res;
-	SVM_MEMORYSTATUS	memo;
 
-//find out how much actual physical RAM this computer has
-	SVM_GlobalMemoryStatus(&memo);
-
-//now decide how much to grab - 8MB computer are super critical
-	if	(memo.dwTotalPhys<=(8000*1024))	//if 8MB or less :-O
-		total_free_memory=4500*1024;	//4.5MB
-
-	else if	(memo.dwTotalPhys<=(12000*1024))	//if 8MB or less :-O
-		total_free_memory=8000*1024;	//8MB
-
-	else	if	(memo.dwTotalPhys<=(16000*1024))	//if 16MB or less :-)
-		total_free_memory=10000*1024;	//10MB
-
-	else	//:-)) loads of RAM
-		total_free_memory=12000*1024;	//12MB
+	total_free_memory=12000*1024;	//12MB
 
 
-
-	Zdebug("MEM = %d", memo.dwTotalPhys);
-	Zdebug("Sword 2 grabbed %dk", total_free_memory/1024);
-
-
-
-//malloc memory and adjust for long boundaries
+	//malloc memory and adjust for long boundaries
 	memory_base = (uint8	*)	malloc(total_free_memory);
 
 	if	(!memory_base)	//could not grab the memory
@@ -128,13 +102,6 @@ void	Init_memory_manager(void)	//Tony9April96
 	mem_list[0].uid=UID_memman;	//init id
 
 	base_mem_block=0;	//for now
-
-
-//supposedly this will stop the memory swapping out?? Well, as much as we're allowed
-//	res=VirtualLock(free_memman, total_free_memory);
-
-//	if	(res!=TRUE)
-//		Zdebug(" *VirtualLock failed");
 }
 //------------------------------------------------------------------------------------
 mem	*Talloc(uint32	size,	uint32	type,	uint32	unique_id)	//Tony10Apr96

@@ -1231,14 +1231,14 @@ typedef int BOOL;
 //	---------------------
 //
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
 typedef struct
 {
 	uint16 buttons;
 } _mouseEvent;
+
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
 
 typedef struct
 {
@@ -1246,6 +1246,11 @@ typedef struct
 	uint16	h;
 	uint32	offset[2];	// 2 is arbitrary
 } GCC_PACK _parallax;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
 
 //	The _spriteInfo structure is used to tell the driver96 code what attributes
 //	are linked to a sprite for drawing.  These include position, scaling and
@@ -1357,23 +1362,6 @@ typedef struct
 	uint8 *pPointer;
 	char  *pBuffer;
 } _drvKeyStatus;
-
-
-// should probably remove this struct as it just replaces a windows struct...
-typedef struct {
-    uint32 dwLength;
-    uint32 dwMemoryLoad;
-    uint32 dwTotalPhys;
-    uint32 dwAvailPhys;
-    uint32 dwTotalPageFile;
-    uint32 dwAvailPageFile;
-    uint32 dwTotalVirtual;
-    uint32 dwAvailVirtual;
-} GCC_PACK SVM_MEMORYSTATUS;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
 
 
 //
@@ -1496,8 +1484,6 @@ extern int32 CloseMenuImmediately(void);
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
 extern uint32 SVM_timeGetTime(void);
-extern void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory);
-extern void SVM_GlobalMemoryStatus(SVM_MEMORYSTATUS *memo);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern void SVM_GetCurrentDirectory(uint32 max, char* path);

@@ -25,15 +25,6 @@ uint32 SVM_timeGetTime(void) {
 	return g_system->get_msecs();
 }
 
-void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
-	warning("stub VirtualUnlock");
-}
-
-void SVM_GlobalMemoryStatus(SVM_MEMORYSTATUS *memo) {
-	warning("stub GlobalMemoryStatus");
-	memo->dwTotalPhys = 16000*1024; // hard code 16mb for now
-}
-
 void SVM_SetFileAttributes(char *file, uint32 atrib) {
 	warning("stub SetFileAttributes");
 }
