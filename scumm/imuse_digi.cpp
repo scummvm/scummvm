@@ -25,6 +25,8 @@
 #include "scumm/imuse_digi.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/voc.h"
 
@@ -681,6 +683,7 @@ IMuseDigital::~IMuseDigital() {
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopHandle(_channel[l].handle);
 		delete _channel[l].stream;
+		_channel[l].stream = 0;
 	}
 
 	delete _bundle;
@@ -694,16 +697,17 @@ void IMuseDigital::callback() {
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l].used) {
-			if (_channel[l].toBeRemoved) {
-				debug(5, "IMuseDigital::callback(): stoped sound: %d", _channel[l].idSound);
-				if (_channel[l].stream)
-					_channel[l].stream->finish();
-				free(_channel[l].data);
+			assert(_channel[l].stream);
+
+			if (!_channel[l].handle.isActive()) {
+				debug(5, "IMuseDigital::callback(): stopped sound: %d", _channel[l].idSound);
+				delete _channel[l].stream;
+				_channel[l].stream = 0;
 				_channel[l].used = false;
 				continue;
 			}
 
-			if (_channel[l].volFadeUsed == true) {
+			if (_channel[l].volFadeUsed) {
 				if (_channel[l].volFadeStep < 0) {
 					if (_channel[l].vol > _channel[l].volFadeDest) {
 						_channel[l].vol += _channel[l].volFadeStep;
@@ -712,7 +716,7 @@ void IMuseDigital::callback() {
 							_channel[l].volFadeUsed = false;
 						}
 						if (_channel[l].vol == 0) {
-							_channel[l].toBeRemoved = true;
+							_scumm->_mixer->stopHandle(_channel[l].handle);
 						}
 					}
 				} else if (_channel[l].volFadeStep > 0) {
@@ -727,24 +731,14 @@ void IMuseDigital::callback() {
 				debug(5, "Fade: sound(%d), Vol(%d)", _channel[l].idSound, _channel[l].vol / 1000);
 			}
 
-			int32 mixer_size = _channel[l].mixerSize;
-			
-			assert(_channel[l].stream);
-			if (_channel[l].stream->endOfData())
-				mixer_size *= 2;
-
-			if (_channel[l].offset + mixer_size > _channel[l].size) {
-				mixer_size = _channel[l].size - _channel[l].offset;
-				_channel[l].toBeRemoved = true;
-			}
-
-			int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
 			if (_scumm->_mixer->isReady()) {
-				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
+				int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
+				// FIXME: For whatever reasons, vol gets set to extremly low values, which
+				// results in the affected sounds not really being audible (e.g. volume
+				// 8 out of 255 is *really* quiet).
+//				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
 				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
-				_channel[l].stream->append(_channel[l].data + _channel[l].offset, mixer_size);
 			}
-			_channel[l].offset += mixer_size;
 		}
 	}
 }
@@ -784,30 +778,26 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 			_channel[l].numRegions = 0;
 			_channel[l].numMarkers = 0;
 
-			_channel[l].offset = 0;
 			_channel[l].idSound = sound;
 			
-			delete _channel[l].stream;
-			_channel[l].stream = 0;
-
 			uint32 tag;
 			int32 size = 0;
 			
 			int freq, channels, bits;
 			int mixerFlags;
+			byte *data;
 
 			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
 				if (READ_UINT32(ptr) == MKID('Crea')) {
 					int loops = 0;
 					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
 				}
-				_channel[l].mixerSize = voc_rate;
 				freq = voc_rate;
 				size = voc_size;
 				bits = 8;
 				channels = 1;
 				mixerFlags = SoundMixer::FLAG_UNSIGNED;
-				_channel[l].data = voc_src;
+				data = voc_src;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				freq = channels = bits = 0;
@@ -915,44 +905,38 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					// mono data, which includes the 12 bit compressed format).
 
 					mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-					_channel[l].mixerSize = freq * 2;
 				} else {
 					mixerFlags = 0;
-					_channel[l].mixerSize = freq;
 				}
 
 				if (bits == 12) {
-					_channel[l].mixerSize *= 2;
 					mixerFlags |= SoundMixer::FLAG_16BITS;
-					size = decode12BitsSample(ptr, &_channel[l].data, size);
+					size = decode12BitsSample(ptr, &data, size);
 				} else if (bits == 16) {
-					_channel[l].mixerSize *= 2;
 					mixerFlags |= SoundMixer::FLAG_16BITS;
 					
 					// FIXME: For some weird reasons, sometimes we get an odd size, even though
 					// the data is supposed to be in 16 bit format... that makes no sense...
 					size &= ~1;
 					
-					_channel[l].data = (byte *)malloc(size);
-					memcpy(_channel[l].data, ptr, size);
+					data = (byte *)malloc(size);
+					memcpy(data, ptr, size);
 				} else if (bits == 8) {
 					mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 
-					_channel[l].data = (byte *)malloc(size);
-					memcpy(_channel[l].data, ptr, size);
+					data = (byte *)malloc(size);
+					memcpy(data, ptr, size);
 				} else
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 			} else {
 				error("IMuseDigital::startSound(): Unknown sound format");
 			}
-			_channel[l].size = size;
-			_channel[l].mixerSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
 
 			// Create an AudioInputStream and hook it to the mixer.
-			_channel[l].stream = makeWrappedInputStream(freq, mixerFlags, 100000);
+			_channel[l].stream = makeLinearInputStream(freq, mixerFlags | SoundMixer::FLAG_AUTOFREE, data, size, 0, 0);
+
 			_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
 
-			_channel[l].toBeRemoved = false;
 			_channel[l].used = true;
 			return;
 		}
@@ -964,7 +948,7 @@ void IMuseDigital::stopSound(int sound) {
 	debug(5, "IMuseDigital::stopSound(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l].idSound == sound) && _channel[l].used) {
-			_channel[l].toBeRemoved = true;
+			_scumm->_mixer->stopHandle(_channel[l].handle);
 		}
 	}
 }
@@ -973,7 +957,7 @@ void IMuseDigital::stopAllSounds() {
 	debug(5, "IMuseDigital::stopAllSounds");
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l].used) {
-			_channel[l].toBeRemoved = true;
+			_scumm->_mixer->stopHandle(_channel[l].handle);
 		}
 	}
 }
@@ -1008,7 +992,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		case 0x500: // set priority - could be ignored
 			break;
 		case 0x600: // set volume
-			debug(5, "ImuseSetParam (0x600), sample(%d), volume(%d)", sub_cmd, sample, d);
+			debug(5, "ImuseSetParam (0x600), sample(%d), volume(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 				if ((_channel[l].idSound == sample) && _channel[l].used) {
 					_channel[l].vol = d * 1000;
@@ -1017,7 +1001,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 			if (l == -1) {
-				debug(5, "ImuseSetParam (0x600), sample(%d) not exist in channels", sub_cmd, sample);
+				debug(5, "ImuseSetParam (0x600), sample(%d) not exist in channels", sample);
 				return;
 			}
 			break;
