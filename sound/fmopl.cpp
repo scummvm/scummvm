@@ -564,7 +564,7 @@ static void init_timetables( FM_OPL *OPL , int ARRATE , int DRRATE )
 		OPL->AR_TABLE[i] = (int)(rate / ARRATE);
 		OPL->DR_TABLE[i] = (int)(rate / DRRATE);
 	}
-	for (i = 60;i < 76;i++)
+	for (i = 60;i < 75;i++)
 	{
 		OPL->AR_TABLE[i] = EG_AED-1;
 		OPL->DR_TABLE[i] = OPL->DR_TABLE[60];
@@ -1038,7 +1038,7 @@ FM_OPL *OPLCreate(int type, int clock, int rate)
 	state_size += sizeof(OPL_CH)*max_ch;
 
 	/* allocate memory block */
-	ptr = (char *)malloc(state_size);
+	ptr = (char *)calloc(state_size, 1);
 	if(ptr==NULL) return NULL;
 
 	/* clear */
