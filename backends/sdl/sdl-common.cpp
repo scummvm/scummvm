@@ -400,12 +400,7 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 }
 
 void OSystem_SDL_Common::warp_mouse(int x, int y) {
-	// FIXME: For whatever reason, I can't get CMI's cannon scene to work
-	// properly in fullscreen mode unless I temporarily show the mouse
-	// cursor here.
-	if (_full_screen) SDL_ShowCursor(SDL_ENABLE);
 	SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
-	if (_full_screen) SDL_ShowCursor(SDL_DISABLE);
 //	set_mouse_pos(x, y);
 }
 	
