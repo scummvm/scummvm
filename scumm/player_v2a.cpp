@@ -744,7 +744,7 @@ private:
 
 class V2A_Sound_Special_SingleDurationMultiDurations : public V2A_Sound {
 public:
-	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, uint8 *durations) :
+	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations) :
 		_offset(offset), _size(size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -1118,7 +1118,7 @@ struct soundObj {
 	{0xE1A91583,new V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x007C,0x3F,0x007B,0x3F,0x3C,5,6)},	// Maniac 23
 	{0x64816ED5,new V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x00BE,0x37,0x00BD,0x37,0x3C,5,6)},	// Maniac 24
 	{0x639D72C2,new V2A_Sound_Special_SingleDurationMulti(0x00D0,0x10A4,0x0080,0x3F,0x28,3)},	// Maniac 46
-	{0xE8826D92,new V2A_Sound_Special_SingleDurationMultiDurations(0x00EC,0x025A,0x023C,0x3F,8,(uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07")},	// Maniac 45
+	{0xE8826D92,new V2A_Sound_Special_SingleDurationMultiDurations(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07")},	// Maniac 45
 	{0xEDFF3D41,new V2A_Sound_Single(0x00F8,0x2ADE,0x01F8,0x3F)},	// Maniac 42 (this should echo, but it's barely noticeable and I don't feel like doing it)
 	{0x15606D06,new V2A_Sound_Special_QuadSiren(0x0148,0x0020,0x0168,0x0020,0x3F)},	// Maniac 32
 	{0x753EAFE3,new V2A_Sound_Special_TwinSirenMulti(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F)},	// Maniac 44
