@@ -307,13 +307,7 @@ int32 Sword2Sound::IsFxOpen(int32 id) {
 //	a slow timer from rdwin.c
 //	--------------------------------------------------------------------------
 void Sword2Sound::FxServer(void) {
-	// FIXME: This function is called from a separate thread, and
-	// manipulates data structures that are used by several other
-	// functions throughout the file.
-	//
-	// I guess that means we need to add locking and stuff.
-	//
-	// Maybe that explains why BS2 still crashes every now and then.
+	StackLock lock(_mutex);
 
 	if (!soundOn)
 		return;
@@ -323,9 +317,15 @@ void Sword2Sound::FxServer(void) {
 			UpdateCompSampleStreaming();
 	}
 
+	if (!musStreaming[0] && !musStreaming[1] && fpMus.isOpen())
+		fpMus.close();
+
 	// FIXME: Doing this sort of things from a separate thread seems like
-	// just asking for trouble. But removing it outright will cause
-	// regressions which need to be investigated.
+	// just asking for trouble. But removing it outright causes regressions
+	// which need to be investigated.
+	//
+	// I've fixed one such regression, and as far as I can tell it's
+	// working now.
 
 #if 0
 	int i;
@@ -1060,7 +1060,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	musEnd[primaryStream] = fpMus.readUint32LE();
 
 	if (!musEnd[primaryStream] || !musFilePos[primaryStream]) {
-		fpMus.close();
 		return RDERR_INVALIDID;
 	}
 
@@ -1070,7 +1069,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// Create a temporary buffer
 	data8 = (uint8*) malloc(bufferSizeMusic / 2);
 	if (!data8) {
-		fpMus.close();
 		return RDERR_OUTOFMEMORY;
 	}
 
@@ -1079,7 +1077,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 
 	// Read the compressed data in to the buffer
 	if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
-		fpMus.close();
 		free(data8);
 		return RDERR_INVALIDID;
 	}
@@ -1153,8 +1150,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 }
 
 void Sword2Sound::UpdateCompSampleStreaming(void) {
-	StackLock lock(_mutex);
-
 	uint32 	i,j;
 	int32 	v0, v1;
 	int32	len;
@@ -1301,10 +1296,6 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 				StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
 		}
 	}
-
-	if (!musStreaming[0] && !musStreaming[1] && fpMus.isOpen())
-		fpMus.close();
-
 	DipMusic();
 }
 
