@@ -23,6 +23,8 @@
 #include "bits.h"
 #include "debug.h"
 
+#define BITMAP_TEXTURE_SIZE 256
+
 static void decompress_codec3(const char *compressed, char *result);
 
 Bitmap::Bitmap(const char *filename, const char *data, int len) :
@@ -54,27 +56,94 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
       pos += compressed_len + 12;
     }
   }
+
+  if (format_ == 1) {
+    num_tex_ = ((width_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+      ((height_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+    tex_ids_ = new GLuint[num_tex_];
+    glGenTextures(num_tex_, tex_ids_);
+    for (int i = 0; i < num_tex_; i++) {
+      glBindTexture(GL_TEXTURE_2D, tex_ids_[i]);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+		   BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
+		   GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+    }
+    
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, width_);
+
+    int cur_tex_idx = 0;
+    for (int y = 0; y < height_; y += BITMAP_TEXTURE_SIZE) {
+      for (int x = 0; x < width_; x += BITMAP_TEXTURE_SIZE) {
+	int width  = (x + BITMAP_TEXTURE_SIZE >= width_)  ? (width_  - x) : BITMAP_TEXTURE_SIZE;
+	int height = (y + BITMAP_TEXTURE_SIZE >= height_) ? (height_ - y) : BITMAP_TEXTURE_SIZE;
+	glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+	glTexSubImage2D(GL_TEXTURE_2D,
+			0,
+			0, 0,
+			width, height,
+			GL_RGB,
+			GL_UNSIGNED_SHORT_5_6_5,
+			data_[curr_image_] + (y * 2 * width_) + (2 * x));
+	cur_tex_idx++;
+      }
+    }
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+  } else {
+    tex_ids_ = NULL;
+  }
 }
 
 void Bitmap::prepareGL() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, 640, 480, 0, 0, 1);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glPixelZoom(1, -1);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+  glMatrixMode(GL_TEXTURE);
+  glLoadIdentity();
+  // A lot more may need to be put there : disabling Alpha test, blending, ...
+  // For now, just keep this here :-)
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
 }
 
 void Bitmap::draw() const {
-  glRasterPos2i(x_, y_);
 
-  // FIXME: glDrawPixels is SLOW, we should be splitting the image into precached textures
-  // and mapping them onto rectangles, or something.
-  if (format_ == 1)
-    glDrawPixels(width_, height_, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data_[curr_image_]);
-  else if (format_ == 5) {
+  if (format_ == 1) {
+    if (curr_image_ != 0) {
+      warning("Animation not handled yet in GL texture path !\n");
+    }
+    glEnable(GL_SCISSOR_TEST);
+    int cur_tex_idx = 0;
+    for (int y = y_; y < (y_ + height_); y += BITMAP_TEXTURE_SIZE) {
+      for (int x = x_; x < (x_ + width_); x += BITMAP_TEXTURE_SIZE) {
+	int width  = (x + BITMAP_TEXTURE_SIZE >= (x_ + width_))  ? ((x_ + width_)  - x) : BITMAP_TEXTURE_SIZE;
+	int height = (y + BITMAP_TEXTURE_SIZE >= (y_ + height_)) ? ((y_ + height_) - y) : BITMAP_TEXTURE_SIZE;
+	glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+	glScissor(x, 480 - (y + height), x + width, 480 - y);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);
+	glVertex2i(x, y);
+	glTexCoord2f(1.0, 0.0);
+	glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+	glTexCoord2f(1.0, 1.0);
+	glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+	glTexCoord2f(0.0, 1.0);
+	glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+	glEnd();
+	cur_tex_idx++;
+      }
+    }
+    glDisable(GL_SCISSOR_TEST);
+  } else if (format_ == 5) {
+    glRasterPos2i(x_, y_);
     printf("format2\n");
     glDrawPixels(width_, height_, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_]);
   }
@@ -84,6 +153,10 @@ Bitmap::~Bitmap() {
   for (int i = 0; i < num_images_; i++)
     delete[] data_[i];
   delete[] data_;
+  if (tex_ids_) {
+    glDeleteTextures(num_tex_, tex_ids_);
+    delete[] tex_ids_;
+  }
 }
 
 #define GET_BIT bit = bitstr_value & 1; \

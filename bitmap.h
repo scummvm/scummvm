@@ -20,6 +20,7 @@
 
 #include "resource.h"
 #include <cstring>
+#include <SDL_opengl.h>
 
 class Bitmap : public Resource {
 public:
@@ -48,6 +49,8 @@ private:
   int num_images_, curr_image_;
   int width_, height_, x_, y_;
   int format_;
+  int num_tex_;
+  GLuint *tex_ids_;
 };
 
 #endif
