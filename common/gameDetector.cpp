@@ -632,9 +632,10 @@ int GameDetector::detectMain() {
 
 	/* Use the adlib sound driver if auto mode is selected,
 	 * and the game is one of those that want adlib as
-	 * default */
+	 * default, OR if the game is an older game that doesn't
+	 * support anything else anyway. */
 #ifndef __PALM_OS__ // currently adlib is not supported, is this really needed ?
-	if (_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) {
+	if ((_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) || GF_SMALL_HEADER) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
