@@ -505,9 +505,8 @@ ArrayHeader *ScummEngine_v6::getArray(int array) {
 int ScummEngine_v6::readArray(int array, int idx, int base) {
 	ArrayHeader *ah = getArray(array);
 
-	if (ah == NULL || ah->data == NULL) {
+	if (ah == NULL || ah->data == NULL)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
-	}
 	
 	// WORKAROUND bug #645711. This is clearly a script bug, as this script
 	// excerpt shows nicely:
@@ -565,7 +564,10 @@ void ScummEngine_v6::readArrayFromIndexFile() {
 		a = _fileHandle.readUint16LE();
 		b = _fileHandle.readUint16LE();
 		c = _fileHandle.readUint16LE();
-		defineArray(num, c, a, b);
+		if (c == 1)
+			defineArray(num, kBitArray, a, b);
+		else
+			defineArray(num, kIntArray, a, b);
 	}
 }
 

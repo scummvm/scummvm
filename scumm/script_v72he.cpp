@@ -551,6 +551,9 @@ void ScummEngine_v72he::o72_dimArray() {
 	case 4:		// SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
+	case 6:
+		error("New array type");
+		break;
 	case 7:		// SO_STRING_ARRAY
 		data = kStringArray;
 		break;
@@ -568,20 +571,23 @@ void ScummEngine_v72he::o72_dimArray() {
 void ScummEngine_v72he::o72_dim2dimArray() {
 	int a, b, data;
 	int type = fetchScriptByte();
-	switch (type - 2) {
-	case 0:		// SO_INT_ARRAY
-		data = kIntArray;
-		break;
-	case 1:		// SO_BIT_ARRAY
+	switch (type) {
+	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 2:		// SO_NIBBLE_ARRAY
+	case 3:		// SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 3:		// SO_BYTE_ARRAY
+	case 4:		// SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 4:		// SO_STRING_ARRAY
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 6:		
+		error("New array type");
+		break;
+	case 7:		// SO_STRING_ARRAY
 		data = kStringArray;
 		break;
 	default:
@@ -645,20 +651,13 @@ void ScummEngine_v72he::o72_readINI() {
 
 void ScummEngine_v72he::o72_unknownF4() {
 	byte b;
-	int len;
 	b = fetchScriptByte();
 
 	switch (b) {
 	case 6:
 		pop();
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
 		break;
 	case 7:
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
 		break;
 	}
 	warning("o72_unknownF4 stub");

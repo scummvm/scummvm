@@ -987,6 +987,14 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
+	} else if (basetag == MKID('TALK')) {
+		debugC(DEBUG_SOUND, "Found base tag TALK in sound %d, size %d", idx, total_size);
+		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle.pos());
+
+		_fileHandle.seek(-12, SEEK_CUR);
+		total_size = _fileHandle.readUint32BE();
+		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		return 1;
 	} else if (basetag == MKID('DIGI')) {
 		// Use in Putt-Putt Demo
 		debugC(DEBUG_SOUND, "Found base tag DIGI in sound %d, size %d", idx, total_size);
