@@ -34,7 +34,6 @@
 
 #include "sound/audiocd.h"
 #include "sound/mididrv.h"
-#include "sound/midiparser.h"
 #include "sound/mixer.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
