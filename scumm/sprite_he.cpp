@@ -1150,7 +1150,6 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	Common::Rect *bboxPtr;
 	int rot_angle, zoom;
 	int w, h;
-	int ebx;
 	WizParameters wiz;
 
 	if (!_numSpritesToProcess)
@@ -1206,34 +1205,52 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			spr_flags_ = spi->flags & kSFRotated;
 			getWizImageDim(res_id, res_state, w, h);
 			if (!(spi->flags & (kSFZoomed | kSFRotated)) || 1) { // FIXME. remove '|| 1'
-				bboxPtr->bottom = wiz.img.y1 + h;
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
-				bboxPtr->right = w + wiz.img.x1;
-
-				ebx = -1234;
+				bboxPtr->right = wiz.img.x1 + w;
+				bboxPtr->bottom = wiz.img.y1 + h;
 			} else {
-				// TODO
-				// what is this?
-				//
-				// mov eax, something
-				// cdq
-				// sub eax, edx
-				// sar eax, 1
-				// mov ecx, eax
-				// neg ecx
-				
-				// => ecx = - something / 2
+				Common::Point pts[4];
 
-				ebx = -1234;
+				pts[1].x = pts[2].x = w / 2 - 1;
+				pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
+				pts[2].y = pts[3].y = h / 2 - 1;
+
+				// transform points
+				if (zoom) {
+					for (int j = 0; j < 4; ++j) {
+						pts[j].x = pts[i].x * zoom / 256;
+						pts[j].y = pts[i].y * zoom / 256;
+					}
+				}
+				if (rot_angle) {
+					double alpha = rot_angle * PI / 180.;
+					double cos_alpha = cos(alpha);
+					double sin_alpha = sin(alpha);
+					for (int j = 0; j < 4; ++j) {
+						int16 x = pts[j].x;
+						int16 y = pts[j].y;
+						pts[j].x = (int16)(x * cos_alpha - y * sin_alpha);
+						pts[j].y = (int16)(y * cos_alpha + x * sin_alpha);
+					}
+				}
+
+				for (int j = 0; j < 4; ++j) {
+					pts[j].x += wiz.img.x1;
+					pts[j].y += wiz.img.y1;
+				}
+
+				for (int j = 0; j < 4; j++) {
+					Common::Rect r(pts[j].x, pts[j].y, pts[j].x + 1, pts[j].y + 1);
+					spi->bbox.extend(r);
+				}
+
 			}
 		} else {
 			bboxPtr->left = 1234;
 			bboxPtr->top = 1234;
 			bboxPtr->right = -1234;
 			bboxPtr->bottom = -1234;
-			
-			ebx = -1234;
 		}
 
 		wiz.img.flags = 0x10;
@@ -1268,10 +1285,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		spi->imgFlags = wiz.img.flags;
 		
-		if (spi->group_num && _spriteGroups[spi->group_num].flags & kSGF01) {
-			/* TODO: rectClipIfIntersects() is missing
-			if (r1.intersects(r2)) {
-				r1.clip(r2);
+		if (spi->group_num && (_spriteGroups[spi->group_num].flags & kSGF01)) {
+			if (spi->bbox.intersects(_spriteGroups[spi->group_num].bbox)) {
+				spi->bbox.clip(_spriteGroups[spi->group_num].bbox);
 				wiz.processFlags |= 0x200;
 				wiz.box = spi->bbox;
 			} else {
@@ -1281,7 +1297,6 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				bboxPtr->bottom = -1234;
 				continue;
 			}
-			*/
 		}
 		if (spi->field_14) {
 			wiz.processFlags |= 0x8000;
