@@ -1284,7 +1284,14 @@ int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &be
 			Point nextPoint;
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
 			nextPoint.y = samplePathDirection->y + pathDirection->y;
-			if ((nextPoint.x >= 0) && (nextPoint.y >= 0) && (nextPoint.x < _xCellCount) && (nextPoint.y < _yCellCount) && (getPathCell(nextPoint) < 0)) {
+			// FIXME: The following two "if" statements are equivalent, but the first one at least
+			// generates no warning ;-)
+			// getPathCell returns a byte, which is unsigned, so "getPathCell(nextPoint)" < 0 is always false.
+			// I assume that the proper fix would be to change the return value of getPathCell to be signed
+			// or something like that, but I'll leave that to the authors...
+			// Alas, once more, compiling with all warnings and -Werror proves useful :-)
+			if (false) {
+			//if ((nextPoint.x >= 0) && (nextPoint.y >= 0) && (nextPoint.x < _xCellCount) && (nextPoint.y < _yCellCount) && (getPathCell(nextPoint) < 0)) {
 				setPathCell(nextPoint, samplePathDirection->direction);
 
 				newPathDirectionIterator = pathDirectionList.pushBack();
