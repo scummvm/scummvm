@@ -681,16 +681,16 @@ void Scumm::fadeIn(int effect)
 		unkScreenEffect6();
 		break;
 	case 130:
-		unkScreenEffect1();
+		scrollEffect(3); // right   unkScreenEffect1();
 		break;
 	case 131:
-		unkScreenEffect2();
+		scrollEffect(2); // left     unkScreenEffect2();
 		break;
 	case 132:
-		unkScreenEffect3();
+		scrollEffect(1);  // down    unkScreenEffect3();
 		break;
 	case 133:
-		unkScreenEffect4();
+		scrollEffect(0);  // up   unkScreenEffect4();
 		break;
 	case 134:
 		dissolveEffect(1, 1);
@@ -2091,6 +2091,88 @@ void Scumm::dissolveEffect(int width, int height) {
 		waitForTimer(30);
 	}
 }
+
+void Scumm::scrollEffect(int dir) {
+
+	VirtScreen *vs = &virtscr[0];
+
+	int x, y;
+	int step;
+
+	if ((dir == 0) || (dir == 1))
+		step = vs->height;
+	else
+		step = vs->width;
+
+#define scrolltime 500  // ms the scroll is supposed to take
+#define picturedelay 20
+
+        step /= (scrolltime/picturedelay);
+
+	switch (dir) {
+	case 0:
+		//up
+		y = 1 + step;
+		while (y < vs->height) {
+			_system->move_screen(0, -step, vs->height);
+			_system->copy_rect(vs->screenPtr + vs->xstart + (y - step) * vs->width,
+				vs->width,
+				0, vs->height - step,
+				vs->width, step);
+			_system->update_screen();
+			waitForTimer(picturedelay);
+
+			y += step;
+		}
+		break;
+	case 1:
+		// down
+		y = 1 + step;
+		while (y < vs->height) {
+			_system->move_screen(0, step, vs->height);
+			_system->copy_rect(vs->screenPtr + vs->xstart + vs->width * (vs->height-y),
+				vs->width,
+				0, 0,
+				vs->width, step);
+			_system->update_screen();
+			waitForTimer(picturedelay);
+
+			y += step;
+		}
+		break;
+	case 2:
+		// left
+		x = 1 + step;
+		while (x < vs->width) {
+			_system->move_screen(-step, 0, vs->height);
+			_system->copy_rect(vs->screenPtr + vs->xstart + x - step,
+				vs->width,
+				vs->width - step, 0,
+				step, vs->height);
+			_system->update_screen();
+			waitForTimer(picturedelay);
+
+			x += step;
+		}
+		break;
+	case 3:
+		// right
+		x = 1 + step;
+		while (x < vs->width) {
+			_system->move_screen(step, 0, vs->height);
+			_system->copy_rect(vs->screenPtr + vs->xstart + vs->width - x,
+				vs->width,
+				0, 0,
+				step, vs->height);
+			_system->update_screen();
+			waitForTimer(picturedelay);
+
+			x += step;
+		}
+		break;
+	}
+}
+
 
 void Scumm::unkScreenEffect6() {
 	if (_gameId == GID_LOOM256)

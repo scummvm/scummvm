@@ -927,6 +927,46 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 	}
 }
 
+void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
+
+	if ((dx == 0) && (dy == 0))
+		return;
+
+	if (dx == 0) {
+		// vertical movement
+		if (dy > 0) {
+			// move down
+			// copy from bottom to top
+			for (int y = height - 1; y >= dy; y--)
+				copy_rect((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
+		} else {
+			// move up
+			// copy from top to bottom
+			for (int y = 0; y < height + dx; y++)
+				copy_rect((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
+		}
+	} else if (dy == 0) {
+		// horizontal movement
+		if (dx > 0) {
+			// move right
+			// copy from right to left
+			for (int x = ScummBufferWidth - 1; x >= dx; x--)
+				copy_rect((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
+		} else {
+			// move left
+			// copy from left to right
+			for (int x = 0; x < ScummBufferWidth; x++)
+				copy_rect((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
+		}
+	} else {
+		// free movement
+		// not neccessary for now
+	}
+
+
+}
+
+
 bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 {
 	if (UpdateRects > 25)

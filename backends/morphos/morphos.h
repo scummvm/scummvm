@@ -47,6 +47,7 @@ class OSystem_MorphOS : public OSystem
 		// Draw a bitmap to screen.
 		// The screen will not be updated to reflect the new bitmap
 		virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+		void move_screen(int dx, int dy, int height);
 
 		// Update the dirty areas of the screen
 		virtual void update_screen();

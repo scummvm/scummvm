@@ -30,6 +30,7 @@ public:
 	void set_palette(const byte *colors, uint start, uint num) {}
 	void init_size(uint w, uint h);
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
+	void move_screen(int dx, int dy) {}
 	void update_screen() {}
 	bool show_mouse(bool visible) { return false; }
 	void set_mouse_pos(int x, int y) {}

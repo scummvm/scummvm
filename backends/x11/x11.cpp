@@ -62,6 +62,8 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
 
+	void move_screen(int dx, int dy, int height);
+
 	// Update the dirty areas of the screen
 	void update_screen();
 
@@ -508,6 +510,44 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		buf += pitch;
 	}
 }
+
+void OSystem_X11::move_screen(int dx, int dy, int height) {
+
+	if ((dx == 0) && (dy == 0))
+		return;
+
+	if (dx == 0) {
+		// vertical movement
+		if (dy > 0) {
+			// move down
+			// copy from bottom to top
+			for (int y = height - 1; y >= dy; y--)
+				copy_rect(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
+		} else {
+			// move up
+			// copy from top to bottom
+			for (int y = 0; y < height + dx; y++)
+				copy_rect(local_fb + fb_width * (y - dy), fb_width, 0, y, fb_width, 1);
+		}
+	} else if (dy == 0) {
+		// horizontal movement
+		if (dx > 0) {
+			// move right
+			// copy from right to left
+			for (int x = fb_width - 1; x >= dx; x--)
+				copy_rect(local_fb + x - dx, fb_width, x, 0, 1, height);
+		} else {
+			// move left
+			// copy from left to right
+			for (int x = 0; x < fb_width; x++)
+				copy_rect(local_fb + x - dx, fb_width, x, 0, 1, height);
+		}
+	} else {
+		// free movement
+		// not neccessary for now
+	}
+}
+
 
 void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout)
 {

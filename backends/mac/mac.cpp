@@ -772,6 +772,12 @@ void OSystem_MAC::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 	} while(--h);
 }
 
+void OSystem_MAC::move_screen(int dx, int dy) {
+
+
+}
+
+
 void OSystem_MAC::add_dirty_rect(int x, int y, int w, int h) {
 	if (force_full)
 		return;

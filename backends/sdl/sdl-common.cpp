@@ -135,6 +135,43 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 }
 
 
+void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
+
+	if ((dx == 0) && (dy == 0))
+		return;
+
+	if (dx == 0) {
+		// vertical movement
+		if (dy > 0) {
+			// move down
+			// copy from bottom to top
+			for (int y = height - 1; y >= dy; y--)
+				copy_rect((byte *)sdl_screen->pixels + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+		} else {
+			// move up
+			// copy from top to bottom
+			for (int y = 0; y < height + dx; y++)
+				copy_rect((byte *)sdl_screen->pixels + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+		}
+	} else if (dy == 0) {
+		// horizontal movement
+		if (dx > 0) {
+			// move right
+			// copy from right to left
+			for (int x = SCREEN_WIDTH - 1; x >= dx; x--)
+				copy_rect((byte *)sdl_screen->pixels + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+		} else {
+			// move left
+			// copy from left to right
+			for (int x = 0; x < SCREEN_WIDTH; x++)
+				copy_rect((byte *)sdl_screen->pixels + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+		}
+	} else {
+		// free movement
+		// not neccessary for now
+	}
+}
+
 void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 	if (force_full)
 		return;
