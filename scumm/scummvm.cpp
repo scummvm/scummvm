@@ -1992,21 +1992,12 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	if (_currentScript != 0xFF) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
-			if (ss->cutsceneOverride != 0)
+			if (ss->cutsceneOverride && _version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 			_currentScript = 0xFF;
 		} else if (ss->where == WIO_LOCAL) {
-			if (ss->cutsceneOverride != 0) {
-				if (_gameId == GID_ZAK256 && _roomResource == 15 && ss->number == 202) {
-					// HACK to make Zak256 work (see bug #770093)
-					warning("Script %d stopped with active cutscene/override in exit", ss->number);
-				} else if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && _roomResource == 3) {
-					// HACK to make Indy3 Demo work
-					warning("Script %d stopped with active cutscene/override in exit", ss->number);
-				} else {
-					error("Script %d stopped with active cutscene/override in exit", ss->number);
-				}
-			}
+			if (ss->cutsceneOverride && _version >= 5)
+				error("Script %d stopped with active cutscene/override in exit", ss->number);
 			_currentScript = 0xFF;
 		}
 	}
