@@ -397,7 +397,7 @@ void ScummEngine_v72he::o72_compareStackList() {
 
 	if (num) {
 		for (i = 1; i < 128; i++) {
-			if (args[i] = value) {
+			if (args[i] == value) {
 				push(1);
 				break;
 			}
