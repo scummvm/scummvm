@@ -584,10 +584,7 @@ void ScummEngine::loadCharset(int no) {
 	assert(no < (int)sizeof(_charsetData) / 16);
 	checkRange(_numCharsets - 1, 1, no, "Loading illegal charset %d");
 
-//  ensureResourceLoaded(rtCharset, no);
 	ptr = getResourceAddress(rtCharset, no);
-	if (_features & GF_SMALL_HEADER)
-		ptr -= 12;
 
 	for (i = 0; i < 15; i++) {
 		_charsetData[no][i + 1] = ptr[i + 14];
