@@ -171,7 +171,6 @@
 	
 	#define STRINGBUFLEN 256
 
-	#define __PALM_OS__
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 	
