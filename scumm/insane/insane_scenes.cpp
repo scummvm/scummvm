@@ -1135,8 +1135,11 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	turnBen(true);
-	
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		turnBen(false);
+	else
+		turnBen(true);
+
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
 			smlayer_startSfx(86);
