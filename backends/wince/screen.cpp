@@ -863,19 +863,12 @@ void Blt(UBYTE * scr_ptr)
 
 void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, bool check) {
 
-	if (check && (y > _geometry_h || (y + height) > _geometry_h))
-		return;
-
 	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
 
 	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
 
 	if (check && (y > _geometry_h || (y + height) > _geometry_h)) {
-		char message[100];
-		sprintf(message, "Override geometry : h %d y %d height %d", _geometry_h, y, height);
-		drawError(message);
-		exit(1);
 		toolbar_drawn = false;
 	}
 
