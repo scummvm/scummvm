@@ -272,7 +272,7 @@ static const VersionSettings version_settings[] = {
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
