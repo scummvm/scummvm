@@ -113,7 +113,6 @@ class WndMan
 {
 	bool terminated;
 public:
-	Scumm *_scumm;
 	byte *_vgabuf;
 	GWorldPtr	screenBuf;
 	WindowRef wPtr;
@@ -198,11 +197,16 @@ static pascal OSStatus WindowEventHandler( EventHandlerCallRef inCallRef, EventR
 			break;
 			
 			case kEventWindowHandleContentClick:
-				//debug(1, "Sending MouseDown");
 				if(CommandKeyDown())
-					wm->_scumm->_rightBtnPressed |= msClicked|msDown;
+					scumm->_rightBtnPressed |= msClicked|msDown;
 				else
-					wm->_scumm->_leftBtnPressed |= msClicked|msDown;
+					scumm->_leftBtnPressed |= msClicked|msDown;
+				
+				if(wm->wPtr != FrontWindow())
+				{
+					ActivateWindow(wm->wPtr, true);
+					BringToFront(wm->wPtr);
+				}
 			break;
 			
 			case kEventWindowClose:
@@ -211,6 +215,24 @@ static pascal OSStatus WindowEventHandler( EventHandlerCallRef inCallRef, EventR
 		}
 	}
 	return result;
+}
+
+char mapKey(char key, char code, byte mod)
+{
+	switch(code)
+	{
+		case 0x35:
+			key = 27;
+		break;
+		
+		case 0x31:
+			key = 32;
+		break;
+		
+		case 0x60:
+			key = 601;
+	}
+	return key;
 }
 
 static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* userData )
@@ -232,14 +254,14 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 				break;
 				
 				case kOpenGameCmd:
-					wm->_scumm->_saveLoadSlot = 0;
-					wm->_scumm->_saveLoadFlag = 2;
+					scumm->_saveLoadSlot = 0;
+					scumm->_saveLoadFlag = 2;
 				break;
 				
 				case kSaveGameCmd:
-					wm->_scumm->_saveLoadSlot = 0;
-					sprintf(wm->_scumm->_saveLoadName, "Quicksave %d", wm->_scumm->_saveLoadSlot);
-					wm->_scumm->_saveLoadFlag = 1;
+					scumm->_saveLoadSlot = 0;
+					sprintf(scumm->_saveLoadName, "Quicksave %d", scumm->_saveLoadSlot);
+					scumm->_saveLoadFlag = 1;
 				break;
 				
 				case kQuitCmd:
@@ -260,10 +282,13 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 		case kEventClassKeyboard:
 			if(GetEventKind(inEvent) == kEventRawKeyDown)
 			{
-				char key;
+				char	key;
+				UInt32	mod, code;
 				
+				GetEventParameter(inEvent, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &code);
 				GetEventParameter(inEvent, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &key);
-				wm->_scumm->_keyPressed = (int)key;
+				GetEventParameter(inEvent, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &mod);
+				scumm->_keyPressed = (int)mapKey(key, code, mod);
 			}
 		break;
 		
@@ -278,12 +303,13 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 				if(theWin != FrontWindow())
 				{
 					ActivateWindow(theWin, true);
+					BringToFront(theWin);
 				}
 			break;
 			
 			case kEventMouseUp:
-				wm->_scumm->_rightBtnPressed &= ~msDown;
-				wm->_scumm->_leftBtnPressed &= ~msDown;
+				scumm->_rightBtnPressed &= ~msDown;
+				scumm->_leftBtnPressed &= ~msDown;
 			break;
 			
 			case kEventMouseMoved:				
@@ -320,10 +346,10 @@ void WndMan::init()
 {
 	Rect			rectWin;
 	
-	_scumm->_scale = scale;
+	scumm->_scale = scale;
 	
-	DEST_WIDTH = 320 * _scumm->_scale;
-	DEST_HEIGHT = 200 * _scumm->_scale;
+	DEST_WIDTH = 320 * scumm->_scale;
+	DEST_HEIGHT = 200 * scumm->_scale;
 	
 	MenuRef AppleMenu = GetMenu(1000);
 	InsertMenu(AppleMenu, 0);
@@ -378,13 +404,13 @@ void WndMan::init()
 
 void WndMan::ChangeScaling(short scaling)
 {
-	_scumm->_scale = scaling;
+	scumm->_scale = scaling;
 	scale = scaling;
 	
 	Rect rectWin;
 	
-	DEST_WIDTH = 320 * _scumm->_scale;
-	DEST_HEIGHT = 200 * _scumm->_scale;
+	DEST_WIDTH = 320 * scumm->_scale;
+	DEST_HEIGHT = 200 * scumm->_scale;
 	
 	SetRect(&rectWin, 0, 0, DEST_WIDTH, DEST_HEIGHT);
 	
@@ -794,9 +820,9 @@ OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef even
       GetControlID(controlRef,&controlID);
       if(controlID.id == 'okay')
       {
-        wm->_scumm->_noSubtitles = (Boolean)!GetControlValue(checkBoxControlRef);
+        scumm->_noSubtitles = (Boolean)!GetControlValue(checkBoxControlRef);
         short scale = GetControlValue(radioGroupRef);
-        if(scale != wm->_scumm->_scale)
+        if(scale != scumm->_scale)
         	wm->ChangeScaling(scale);
         short music_vol = GetControlValue(musicVolumeSlider);
         if(music_vol != sound.get_music_volume())
@@ -846,7 +872,7 @@ void Preferences()
     CreateCheckBoxControl(prefsWin,&rect, CFSTR("Subtitles"), 1, true, &checkBoxControlRef);
     AutoEmbedControl(checkBoxControlRef, prefsWin);
     
-    if(wm->_scumm->_noSubtitles)
+    if(scumm->_noSubtitles)
     	SetControlValue(checkBoxControlRef, false);
     
     OffsetRect(&rect, 0, 20);
@@ -875,7 +901,7 @@ void Preferences()
     CreateRadioButtonControl(prefsWin, &RadioButtonRect, CFSTR("Scaling 3x"), 0, true, &radioButton);
     AutoEmbedControl(radioButton, prefsWin);
     
-    SetControlValue(radioGroupRef, wm->_scumm->_scale);
+    SetControlValue(radioGroupRef, scumm->_scale);
     
     SetRect(&rect, 5, 110, 175, 146);
     
@@ -997,7 +1023,6 @@ void main(void)
 //	initGraphics(&scumm, wm->fullscreen, wm->scale);
 	
 	wm->_vgabuf = (byte*)calloc(320,200);
-	wm->_scumm = scumm;
 	
 	InitScummStuff();
 	
@@ -1005,7 +1030,7 @@ void main(void)
 	
 	gui.init(scumm);
 	
-	setWindowName(wm->_scumm);
+	setWindowName(scumm);
 	
 	RunApplicationEventLoop();
 	
