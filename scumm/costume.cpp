@@ -670,6 +670,8 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	const CostumeData &cost = a->_cost;
 	int anim = cost.frame[limb];
 	int frameNum = cost.curpos[limb];
+	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
+	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
 
 	src = _loaded._dataOffsets;
 
@@ -692,7 +694,6 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	numSprites = numSpritesTab[frame] + 1;
 
 	int left = 239, right = 0, top = 239, bottom = 0;
-	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
 
 	for (int spr = 0; spr < numSprites; spr++) {
 		byte mask = (ptr[0] & 0x80) ? 0x01 : 0x80;
@@ -713,28 +714,27 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 		if ((_actorY + y < 0) || (_actorY + y + 8 >= _out.h))
 			continue;
 
-
+		bool doMask = (_zbuf && gfxMaskBuf[(_actorY + y) * _numStrips + (_actorX + x + 4) / 8 - 2]);
+				
 		for (int ty = 0; ty < 8; ty++) {
 			byte c1 = _vm->_NESPatTable[0][tile * 16 + ty];
 			byte c2 = _vm->_NESPatTable[0][tile * 16 + ty + 8];
-			byte gfxMask = gfxMaskBuf[(_actorY + y + ty) * _numStrips + (_actorX + x) / 8 - 2];
 
 			for (int tx = 0; tx < 8; tx++) {
 				unsigned char c = ((c1 & mask) ? 1 : 0) | ((c2 & mask) ? 2 : 0) | palette;
-				bool draw = ((gfxMask & mask) == 0);
 				if (mask == 0x01) {
 					c1 >>= 1;
 					c2 >>= 1;
-					gfxMask >>= 1;
 				} else {
 					c1 <<= 1;
 					c2 <<= 1;
-					gfxMask <<= 1;
 				}
 				if (!(c & 3))
 					continue;
-				if (draw)
-					*((byte *)_out.pixels + (_actorY + y + ty) * _out.pitch + (_actorX + x + tx)) = _vm->_NESPalette[1][c];
+				int my = _actorY + y + ty;
+				int mx = _actorX + x + tx;
+				if (!doMask || !(bgTransBuf[my * _numStrips + mx / 8] & (0x80 >> (mx & 7))))
+					*((byte *)_out.pixels + my * _out.pitch + mx) = _vm->_NESPalette[1][c];
 			}
 		}
 		if (left > _actorX + x)

@@ -1399,8 +1399,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
 
 		if (_vm->_version == 1) {
-			if (_vm->_features & GF_NES)
-				drawStripNES(dstPtr, vs->pitch, stripnr, y, height);
+			if (_vm->_features & GF_NES) {
+				mask_ptr = getMaskBuffer(x, y, 0);
+				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
+			}
 			else if (_objectMode)
 				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
@@ -2037,8 +2039,7 @@ void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int he
 	} while (y < height);
 }
 
-void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height) {
-//	printf("drawStripNES, pitch=%i, strip=%i, height=%i\n",dstPitch,stripnr,height);
+void Gdi::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
 	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
@@ -2059,6 +2060,8 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height
 			for (int j = 0; j < 8; j++)
 				dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
+			*mask = c0 | c1;
+			mask += _numStrips;
 		}
 	}
 }
