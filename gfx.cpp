@@ -587,6 +587,7 @@ void Scumm::fadeIn(int effect)
 	case 1:
 	case 2:
 	case 3:
+	case 4:
 		transitionEffect(effect - 1);
 		break;
 	case 128:
@@ -643,6 +644,7 @@ void Scumm::fadeOut(int a)
 	case 1:
 	case 2:
 	case 3:
+	case 4:
 		transitionEffect(a - 1);
 		break;
 	case 128:
