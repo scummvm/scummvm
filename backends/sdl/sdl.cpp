@@ -215,6 +215,10 @@ void OSystem_SDL::update_screen() {
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
+
+		if (_adjustAspectRatio)
+			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
 		SDL_FillRect(_hwscreen, &blackrect, 0);
 
 		_currentShakePos = _newShakePos;

@@ -365,6 +365,10 @@ void OSystem_SDL_OpenGL::update_screen() {
 			fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
 		} else { // SDL backend
 			SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
+
+			if (_adjustAspectRatio)
+				blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
 			SDL_FillRect(_hwscreen, &blackrect, 0);
 		}
 
