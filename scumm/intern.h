@@ -432,6 +432,7 @@ protected:
 
 	void o8_getActorChore();
 
+	void o8_drawObject();
 	void o8_getObjectImageX();
 	void o8_getObjectImageY();
 	void o8_getObjectImageWidth();

@@ -229,7 +229,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_printSystem),
 		OPCODE(o8_blastText),
 		/* 98 */
-		OPCODE(o6_isSoundRunning), // FIXME should be O_DRAW_OBJECT
+		OPCODE(o8_drawObject),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1730,4 +1730,29 @@ void Scumm_v8::o8_getStringWidth()
 	
 	push(width);
 	_scriptPointer += len + 1;
+}
+
+void Scumm_v8::o8_drawObject()
+{
+	int state = pop(), y = pop(), x = pop(), objnum = getObjectIndex(pop());
+	ObjectData *od;
+
+	if (!objnum)
+		return;
+
+        od = &_objs[objnum];
+        if (x != 0x7FFFFFFF) {
+                od->x_pos = x;
+                od->y_pos = y;
+		printf("setting position: 0x%X b 0x%X\n", x, y);
+        }
+
+	addObjectToDrawQue(objnum);
+
+	if (state == 255 || state == 254)
+		warning("o8_drawObject(%d, %d, %d, %d): extended attributes unimplemented", x, y, objnum, state);
+	else
+		warning("o8_drawObject(%d, %d, %d, %d)", x, y, objnum, state);
+
+	putState(objnum, state);
 }
