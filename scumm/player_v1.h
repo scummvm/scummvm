@@ -80,15 +80,15 @@ private:
 	uint  _freq_current;
 	uint  _forced_level;
 	uint16 _random_lsr;
-	uint  _channel;
+	uint  *_value_ptr;
 	uint  _time_left;
 	uint  _start;
 	uint  _end;
 	int   _delta;
+	uint  *_value_ptr_2;
 	uint  _time_left_2;
 	uint  _start_2;
 	int   _delta_2;
-	uint  _channel_2;
 };
 
 #endif

@@ -265,10 +265,6 @@ void Player_V1::parsePCjrChunk() {
 
 	_next_chunk += 2;
 	switch (_chunk_type) {
-	case 1: /* FIXME: implement! */
-		warning("Unimplemented PCjr chunk in sound %d:", _current_nr);
-		hexdump(_next_chunk-2, 160);
-		/* fall through*/
 	case 0xffff:
 		for (i = 0; i < 4; ++i)
 			clear_channel(i);
@@ -309,6 +305,49 @@ void Player_V1::parsePCjrChunk() {
 			_channels[i].volume    = 15;
 			_channels[i].cmd_ptr   = _current_data + tmp + 10;
 		}
+		break;
+	case 1: /* FIXME: implement! */
+		set_mplex(READ_LE_UINT16(_next_chunk));
+		tmp = READ_LE_UINT16(_next_chunk + 2);
+		_channels[0].cmd_ptr = tmp != 0xffff ? _current_data + tmp : NULL;
+		tmp = READ_LE_UINT16(_next_chunk + 4);
+		_start = READ_LE_UINT16(_next_chunk + 6);
+		_delta = (int16) READ_LE_UINT16(_next_chunk + 8);
+		_time_left = READ_LE_UINT16(_next_chunk + 10);
+		_next_chunk += 12;
+		if (tmp >= 0xe0) {
+			_channels[3].freq = tmp & 0xf;
+			_value_ptr = &_channels[3].volume;
+		} else {
+			assert(!(tmp & 0x10));
+			tmp = (tmp & 0x60) >> 5;
+			_value_ptr = &_channels[tmp].freq;
+			_channels[tmp].volume = 0;
+		}
+		*_value_ptr = _start;
+		if (_channels[0].cmd_ptr) {
+			tmp = READ_LE_UINT16(_channels[0].cmd_ptr);
+			_start_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 2);
+			_delta_2 = (int16) READ_LE_UINT16(_channels[0].cmd_ptr + 4);
+			_time_left_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 6);
+			_channels[0].cmd_ptr += 8;
+			if (_value_ptr == &_channels[3].volume) {
+				tmp = (tmp & 0x70) >> 4;
+				if (tmp & 1)
+					_value_ptr_2 = &_channels[tmp >> 1].volume;
+				else
+					_value_ptr_2 = &_channels[tmp >> 1].freq;
+			} else {
+				assert(!(tmp & 0x10));
+				tmp = (tmp & 0x60) >> 5;
+				_value_ptr_2 = &_channels[tmp].freq;
+				_channels[tmp].volume = 0;
+			}
+			*_value_ptr_2 = _start_2;
+		}
+		debug(6, "chunk 1: %d: %d step %d for %d, %d: %d step %d for %d", 
+			  _value_ptr - (uint*)_channels, _start, _delta, _time_left,
+			  _value_ptr_2 - (uint*)_channels, _start_2, _delta_2, _time_left_2);
 		break;
 
 	case 2:
@@ -398,6 +437,36 @@ void Player_V1::nextPCjrCmd() {
 		break;
 
 	case 1:
+		_start += _delta;
+		*_value_ptr = _start;
+		if (!--_time_left) {
+			_start = READ_LE_UINT16(_next_chunk);
+			_next_chunk += 2;
+			if (_start == 0xffff) {
+				parsePCjrChunk();
+				return;
+			}
+			_delta = (int16) READ_LE_UINT16(_next_chunk);
+			_time_left = READ_LE_UINT16(_next_chunk + 2);
+			_next_chunk += 4;
+			*_value_ptr = _start;
+		}
+
+		if (_channels[0].cmd_ptr) {
+			_start_2 += _delta_2;
+			*_value_ptr_2 = _start_2;
+			if (!--_time_left_2) {
+				_start_2 = READ_LE_UINT16(_channels[0].cmd_ptr);
+				if (_start_2 == 0xffff) {
+					_next_chunk = _channels[0].cmd_ptr + 2;
+					parsePCjrChunk();
+					return;
+				}
+				_delta_2 = (int16) READ_LE_UINT16(_channels[0].cmd_ptr + 2);
+				_time_left_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 4);
+				_channels[0].cmd_ptr += 6;
+			}
+		}
 		break;
 
 	case 2:
@@ -522,7 +591,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 	for (i = 0; i < 4; i++) {
 		freq = _channels[i].freq;
 		vol  = _channels[i].volume;
-		if (!freq || !_volumetable[_channels[i].volume]) {
+		if (!_volumetable[_channels[i].volume]) {
 			_timer_count[i] -= len << FIXP_SHIFT;
 			if (_timer_count[i] < 0)
 				_timer_count[i] = 0;
