@@ -249,6 +249,7 @@ protected:
 	void unkDecode10(byte *dst, const byte *src, int height);
 	void unkDecode11(byte *dst, const byte *src, int height);
 	void decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck);
+	void decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck);
 
 	void draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask);
 	void draw8Col(byte *dst, const byte *src, int height);

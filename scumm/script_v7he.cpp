@@ -196,7 +196,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
 		/* 74 */
-		OPCODE(o6_startSound),
+		OPCODE(o7_startSound),
 		OPCODE(o6_stopSound),
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopObjectScript),
@@ -641,6 +641,50 @@ void ScummEngine_v7he::o7_pickupObject() {
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 	runInventoryScript(obj);									/* Difference */
+}
+
+
+void ScummEngine_v7he::o7_startSound() {
+	byte op;
+	op = fetchScriptByte();
+
+	switch (op) {
+	case 224:
+		// _staticVar1 = pop();
+		pop();
+		break;
+
+	case 230:
+		// _staticVar2 = pop();
+		pop();
+		break;
+
+	case 231:
+		// _staticVar3 = pop();
+		pop();
+		break;
+
+	case 232:
+		pop();
+		// _staticVar4 = pop();
+		// _staticVar3 = 0;
+		// _staticVar1 = 11025;
+		// _staticVar2 = VAR(VAR_MUSIC_TIMER);
+		break;
+
+	case 245:
+		// _staticVar5 |= 1;
+		break;
+
+	case 255:
+		// _sound->addSoundToQueue(_staticVar4, _staticVar3, _staticVar2, _staticVar5);
+		// _staticVar5 = 0;
+		break;
+
+	default:
+		break;
+	}
+	warning("o7_startSound stub (%d)", op);
 }
 
 

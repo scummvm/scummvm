@@ -204,6 +204,7 @@ enum ResTypes {
 	rtBox = 15,
 	rtObjectName = 16,
 	rtRoomScripts = 17,
+	rtRoomStart = 17,
 	rtLast = 17,
 	rtNumTypes = 18
 };
@@ -626,6 +627,8 @@ protected:
 	byte _expire_counter;
 	byte *_HEV7RoomOffsets;
 	uint32 *_HEV7RoomIntOffsets;
+	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
+	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 
 	void allocateArrays();
 	void openRoom(int room);
@@ -677,6 +680,7 @@ protected:
 	int _lastLoadedRoom;
 public:
 	const byte *findResourceData(uint32 tag, const byte *ptr);
+	const byte *findResource(uint32 tag, const byte *ptr);
 	int getResourceDataSize(const byte *ptr) const;
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 

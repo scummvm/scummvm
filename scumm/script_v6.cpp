@@ -386,7 +386,7 @@ const char *ScummEngine_v6::getOpcodeDesc(byte i) {
 int ScummEngine_v6::popRoomAndObj(int *room) {
 	int obj;
 
-	if (_version >= 7) {
+	if (_version >= 7 || _heversion >= 70) {
 		obj = pop();
 		*room = getObjectRoom(obj);
 	} else {
@@ -1461,6 +1461,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 	int resid, op;
 	op = fetchScriptByte();
 
+	debug(0, "resourceRoutines op: %d", op);
 	switch (op) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
@@ -1586,7 +1587,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			// QL_QueGlobForLoad(3, pop(), 1);
 			break;
 		}
-	case 123: 
+	case 123:
 		{
 			if (_heversion < 70)
 				error("o6_resourceRoutines: default case %d", op);
@@ -1597,6 +1598,16 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			// QL_QueGlobForLoad(1, resid, 1);
 			break;
 		}
+	case 233:
+		resid = pop();
+		warning("stub o6_resourceRoutines resource %d, 1", resid);
+		// foo(resid, 1);
+		break;
+	case 235:
+		resid = pop();
+		warning("stub o6_resourceRoutines resource %d, 0", resid);
+		// foo(resid, 0);
+		break;
 	default:
 		error("o6_resourceRoutines: default case %d", op);
 	}

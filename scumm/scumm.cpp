@@ -2060,6 +2060,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	initRoomSubBlocks();
+
 	if (_features & GF_OLD_BUNDLE)
 		loadRoomObjectsOldBundle();
 	else if (_features & GF_SMALL_HEADER)
@@ -2149,7 +2150,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 void ScummEngine::initRoomSubBlocks() {
 	int i;
 	const byte *ptr;
-	byte *roomptr, *searchptr, *roomResPtr;
+	byte *roomptr, *searchptr, *roomResPtr, *roomStartPtr = 0;
 	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -2169,7 +2170,9 @@ void ScummEngine::initRoomSubBlocks() {
 
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
-	if (_version == 8)
+	if (_heversion >= 70)
+		roomStartPtr = getResourceAddress(rtRoomStart, _roomResource);
+	else if (_version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
@@ -2222,6 +2225,8 @@ void ScummEngine::initRoomSubBlocks() {
 		_IM00_offs = getObjectImage(roomptr, 1) - roomptr;
 	} else if (_features & GF_SMALL_HEADER) {
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
+	} else if (_heversion >= 70) {
+		_IM00_offs = findResource(MKID('IM00'), roomStartPtr) - roomStartPtr;
 	} else {
 		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 	}
@@ -2990,8 +2995,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 		// There are both Windows and DOS versions of early HE titles
 		// specify correct version here
-		if (game.features & GF_HUMONGOUS && (game.heversion == 60 || game.id == GID_PUTTDEMO))
+		if (game.features & GF_HUMONGOUS && (game.heversion == 60 || game.id == GID_PUTTDEMO)) {
 			game.heversion = 70;
+			game.features |= GF_NEW_COSTUMES;
+		}
 		break;
 	case Common::kPlatformFMTowns:
 		if (game.version == 3) {

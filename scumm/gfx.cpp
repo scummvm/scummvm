@@ -466,7 +466,11 @@ void ScummEngine::initBGBuffers(int height) {
 		initVirtScreen(kMainVirtScreen, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
 	}
 
-	room = getResourceAddress(rtRoom, _roomResource);
+	if (_heversion >= 70)
+		room = getResourceAddress(rtLast, _roomResource);
+	else
+		room = getResourceAddress(rtRoom, _roomResource);
+
 	if (_version <= 3) {
 		gdi._numZBuffer = 2;
 	} else if (_features & GF_SMALL_HEADER) {
@@ -488,6 +492,9 @@ void ScummEngine::initBGBuffers(int height) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
 		ptr = findResource(MKID('RMHD'), room);
 		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
+	} else if (_heversion >= 70) {
+		ptr = findResource(MKID('RMIH'), room);
+		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
@@ -566,6 +573,8 @@ void ScummEngine::redrawBGAreas() {
 }
 
 void ScummEngine::redrawBGStrip(int start, int num) {
+	byte *room;
+
 	int s = _screenStartStrip + start;
 
 	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / (3 * sizeof(gfxUsageBits[0])));
@@ -576,7 +585,12 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	if (_version == 1) {
 		gdi._C64ObjectMode = false;
 	}
-	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
+	if (_heversion >= 70)
+		room = getResourceAddress(rtRoomStart, _roomResource);
+	else
+		room = getResourceAddress(rtRoom, _roomResource);
+
+	gdi.drawBitmap(room + _IM00_offs,
 					&virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
 
@@ -922,7 +936,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	else if (_vm->_version == 8)
 		smap_ptr = ptr;
 	else
-		smap_ptr = findResource(MKID('SMAP'), ptr);
+		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
 	assert(smap_ptr);
 
@@ -974,7 +988,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			};
 			
 			for (i = 1; i < numzbuf; i++) {
-				zplane_list[i] = findResource(zplane_tags[i], ptr);
+				zplane_list[i] = _vm->findResource(zplane_tags[i], ptr);
 			}
 		}
 	}
@@ -1632,6 +1646,23 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 		unkDecodeA_trans(bgbak_ptr, src, numLinesToProcess);
 		break;
 
+	case 134:
+	case 135:
+	case 136:
+	case 137:
+	case 138:
+		decodeStripHE(bgbak_ptr, src, numLinesToProcess, false);
+		break;
+
+	case 144:
+	case 145:
+	case 146:
+	case 147:
+	case 148:
+		useOrDecompress = true;
+		decodeStripHE(bgbak_ptr, src, numLinesToProcess, true);
+		break;
+
 	default:
 		error("Gdi::decompressBitmap: default case %d", code);
 	}
@@ -2240,6 +2271,56 @@ void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpChec
 	} while (olddestbytes2 > 0);
 }
 
+
+void Gdi::decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck) {
+	uint32 color, dataBit, data, shift, iteration;
+
+     color = *src;
+	 src++;
+	 data = READ_LE_UINT24(src);
+	 src += 3;
+     shift = 24;
+
+	 while (height) {
+		 for (iteration = 0; iteration < 8; iteration++) {
+			 if (color != _transparentColor || !transpCheck)
+				 *dst = color;
+			 dst++;
+			 if (shift <= 16) {
+				 data |= *src << shift;
+				 src++;
+				 shift += 8;
+				 data |= *src << shift;
+				 src++;
+				 shift += 8;
+			 }
+			 
+			 dataBit = data & 1;
+			 shift--;
+			 data >>= 1;
+			 if (dataBit) {
+				 dataBit = data & 1;
+				 shift--;
+				 data >>= 1;
+				 if (!dataBit) {
+					 color = _decomp_mask & data;
+					 shift -= _decomp_shr;
+					 data >>= _decomp_shr;
+				 } else {
+					 dataBit = data & 7;
+					 shift -= 3;
+					 data >>= 3;
+					 if (dataBit >= 4)
+						 color += dataBit - 3;
+					 else
+						 color += dataBit - 4;
+				 }
+			 }
+		 }
+		 dst += 312;
+		 height--;
+	 }
+}
 
 #undef NEXT_ROW
 #undef READ_256BIT

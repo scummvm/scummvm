@@ -2283,21 +2283,32 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 	return result;
 }
 
-const byte *findResource(uint32 tag, const byte *searchin) {
+const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 	uint32 curpos, totalsize, size;
 
-	// It seems that in HE games if searchin == NULL, it continues
-	// search from last position
-	assert(searchin);
+	debugC(DEBUG_RESOURCE, "findResource(%s, %lx)", tag2str(tag), searchin);
 
-	searchin += 4;
-	totalsize = READ_BE_UINT32(searchin);
-	curpos = 8;
-	searchin += 4;
+	if (!searchin) {
+		if (_heversion >= 70) {
+			searchin = _resourceLastSearchBuf;
+			totalsize = _resourceLastSearchSize;
+			curpos = 0;
+		} else {
+			assert(searchin);
+			return NULL;
+		}
+	} else {
+		searchin += 4;
+		_resourceLastSearchSize = totalsize = READ_BE_UINT32(searchin);
+		curpos = 8;
+		searchin += 4;
+	}
 
 	while (curpos < totalsize) {
-		if (READ_UINT32(searchin) == tag)
+		if (READ_UINT32(searchin) == tag) {
+			_resourceLastSearchBuf = searchin;
 			return searchin;
+		}
 
 		size = READ_BE_UINT32(searchin + 4);
 		if ((int32)size <= 0) {

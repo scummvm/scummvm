@@ -1624,7 +1624,7 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 		return;
 	}
 
-	akpl = findResource(MKID('AKPL'), akos);
+	akpl = _vm->findResource(MKID('AKPL'), akos);
 	if (!akpl) {
 		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", number, costume);
 		return;
@@ -1660,7 +1660,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 		return;
 	}
 
-	akpl = findResource(MKID('AKPL'), akos);
+	akpl = _vm->findResource(MKID('AKPL'), akos);
 	if (!akpl) {
 		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", number, costume);
 		return;
@@ -1672,7 +1672,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	//skip resource header
 	akpl = RES_DATA(akpl);
 
-	rgbs = findResource(MKID('RGBS'), akos);
+	rgbs = _vm->findResource(MKID('RGBS'), akos);
 
 	if (!rgbs) {
 		warning("Can't remap actor %d costume %d doesn't contain an RGB block", number, costume);

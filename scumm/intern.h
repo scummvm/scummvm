@@ -636,6 +636,7 @@ protected:
 	void o7_unknownFB();
 	void o7_quitPauseRestart();
 	void o7_pickupObject();
+	void o7_startSound();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
