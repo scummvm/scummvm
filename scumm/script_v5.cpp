@@ -2311,6 +2311,15 @@ void Scumm_v5::o5_walkActorToActor() {
 		warning("Bypassing Indy4 bug");
 		return;
 	}
+	
+	if (_gameId == GID_LOOM256 && nr == 1 && nr2 == 0 &&
+		dist == 255 && vm.slot[_currentScript].number == 98) {
+		// FIXME: Work around bug #743615. LoomCD script 98
+		// contains this: walkActorToActor(1,0,255)
+		// Once more this is either a script bug, or there is
+		// some hidden meaning in this odd walk request?
+		return;
+	}
 
 	a = derefActor(nr, "o5_walkActorToActor");
 	if (!a->isInCurrentRoom())
