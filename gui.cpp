@@ -522,7 +522,7 @@ byte *Gui::getBasePtr(int x, int y)
 		return NULL;
 
 	return _vs->screenPtr + x + (y - _vs->topline) * 320 +
-		_s->_screenStartStrip * 8;
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100)*320;
 }
 
 void Gui::lineto(int x, int y)

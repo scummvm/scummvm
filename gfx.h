@@ -53,8 +53,8 @@ struct VirtScreen {		/* Virtual screen areas */
 	byte alloctwobuffers;
 	byte scrollable;
 	uint16 xstart;
-	byte tdirty[40];
-	byte bdirty[40];
+	uint16 tdirty[40];
+	uint16 bdirty[40];
 	byte *screenPtr;
 	byte *backBuf;
 };

@@ -231,7 +231,7 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 		scrollY = 0;
 
 	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs + scrollY * 320;
-		_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t , w, height);
+	_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t , w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)

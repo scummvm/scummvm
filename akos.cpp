@@ -928,8 +928,10 @@ void AkosRenderer::codec5()
 	if(left > max_width)
 		left -= left - max_width;
 
+	// Yazoo: this is not correct, but fix a lots of bugs for the momment
+	
 	draw_top = 0;
-	draw_bottom = 200;
+	draw_bottom = vs->height;
 
 	_vm->updateDirtyRect(0, left, right+1, top, bottom+1, 1 << dirty_id);
 
