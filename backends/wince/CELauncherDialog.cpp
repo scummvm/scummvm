@@ -50,7 +50,7 @@ public:
 		videoDriver += tempo;
 		new StaticTextWidget(this, 0, 10, _w, kLineHeight, videoDriver, kTextAlignCenter);
 		Common::String displayInfos("Display ");
-		sprintf(tempo, "%dx%d", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+		sprintf(tempo, "%dx%d (real %dx%d)", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), OSystem_WINCE3::getScreenWidth(), OSystem_WINCE3::getScreenHeight());
 		displayInfos += tempo;
 		new StaticTextWidget(this, 0, 20, _w, kLineHeight, displayInfos, kTextAlignCenter);
 	}

@@ -24,6 +24,8 @@
 
 #include <SDL.h>
 
+#include "wince-sdl.h"
+
 #define KEY_CALENDAR 0xc1
 #define KEY_CONTACTS 0xc2
 #define KEY_INBOX 0xc3
@@ -46,19 +48,23 @@ const int SMARTPHONE_KEYS_MAPPING[] = {
 
 
 bool CEDevice::hasPocketPCResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) < 320 && GetSystemMetrics(SM_CXSCREEN) >= 240);
+	if (OSystem_WINCE3::isOzone() && hasWideResolution())
+		return true;
+	return (OSystem_WINCE3::getScreenWidth() < 320 && OSystem_WINCE3::getScreenWidth() >= 240);
 }
 
 bool CEDevice::hasDesktopResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) >= 320);
+	if (OSystem_WINCE3::isOzone() && hasWideResolution())
+		return true;
+	return (OSystem_WINCE3::getScreenWidth() >= 320);
 }
 
 bool CEDevice::hasWideResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) >= 640 || GetSystemMetrics(SM_CYSCREEN) >= 640);
+	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
 }
 
 bool CEDevice::hasSmartphoneResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) < 240);
+	return (OSystem_WINCE3::getScreenWidth() < 240);
 }
 
 Common::String CEDevice::getKeyName(unsigned int keyCode) {

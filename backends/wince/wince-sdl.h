@@ -80,6 +80,10 @@ public:
 	void switch_zone();
 #endif
 
+	static int getScreenWidth();
+	static int getScreenHeight();
+	static void initScreenInfos();
+	static bool isOzone();
 
 protected:
 	void load_gfx_mode();
@@ -88,7 +92,7 @@ protected:
 	bool save_screenshot(const char *filename);
 
 	
-	//const GraphicsMode *getSupportedGraphicsModes() const;	
+	const GraphicsMode *getSupportedGraphicsModes() const;	
 	bool setGraphicsMode(int mode);
 	//int getGraphicsMode() const;	
 	int getDefaultGraphicsMode() const;
@@ -154,6 +158,11 @@ private:
 	int _scaleFactorXd;
 	int _scaleFactorYm;
 	int _scaleFactorYd;
+	bool _scalersChanged;
+
+	static int _platformScreenWidth;
+	static int _platformScreenHeight;
+	static bool _isOzone;
 };
 
 #endif

@@ -44,6 +44,9 @@
 
 #include "sound/fmopl.h"
 
+#include "ozone.h"
+#include "CEException.h"
+
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
@@ -72,13 +75,49 @@ static FILE *stderr_file;
 bool OSystem_WINCE3::_soundMaster = true;
 OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 
+// Graphics mode consts
+
+// Low end devices 240x320
+
+static const OSystem::GraphicsMode s_supportedGraphicsModesLow[] = {
+	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{0, 0, 0}
+};
+
+// High end device 480x640
+
+static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
+	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"2x", "2x", GFX_DOUBLESIZE},
+#ifndef _MSC_VER // EVC breaks template functions, and I'm tired of fixing them :)
+	{"2xsai", "2xSAI", GFX_2XSAI},
+	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
+	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
+#endif
+	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+#ifndef _MSC_VER
+	{"hq2x", "HQ2x", GFX_HQ2X},
+	{"tv2x", "TV2x", GFX_TV2X},
+#endif
+	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
+	{0, 0, 0}
+};
+
+
 // ********************************************************************************************
 
 // MAIN
 
 extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 
+void handleException(EXCEPTION_POINTERS *exceptionPointers) {
+	CEException::writeException(TEXT("\\scummvmCrash"), exceptionPointers);
+	drawError("Unrecoverable exception occurred - see crash dump in latest \\scummvmCrash file");
+	exit(1);
+}
+
 int SDL_main(int argc, char **argv) {
+	OSystem_WINCE3::initScreenInfos();
 	/* Sanity check */
 #ifndef WIN32_PLATFORM_WFSP
 	if (CEDevice::hasSmartphoneResolution()) {
@@ -90,7 +129,11 @@ int SDL_main(int argc, char **argv) {
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
 	CEActions::init(_gameDetector);
-	return scummvm_main(_gameDetector, argc, argv);
+	__try {
+		return scummvm_main(_gameDetector, argc, argv);
+	}
+	__except (handleException(GetExceptionInformation())) {
+	}
 }    
    
 // ********************************************************************************************
@@ -120,6 +163,34 @@ bool isSmartphone(void) {
 
 // ********************************************************************************************
 
+int OSystem_WINCE3::getScreenWidth() {
+	return _platformScreenWidth;
+}
+
+int OSystem_WINCE3::getScreenHeight() {
+	return _platformScreenHeight;
+}
+
+void OSystem_WINCE3::initScreenInfos() {
+	// Check if we're running Ozone
+	int result;
+	RawFrameBufferInfo frameBufferInfo;
+	HDC hdc = GetDC(NULL);
+	result = ExtEscape(hdc, GETRAWFRAMEBUFFER, 0, NULL, sizeof(RawFrameBufferInfo), (char *)&frameBufferInfo);
+	ReleaseDC(NULL, hdc);
+	_isOzone = (result > 0);
+	// And obtain the real screen size
+	_platformScreenWidth = (result > 0 ? frameBufferInfo.cxPixels : GetSystemMetrics(SM_CXSCREEN));
+	_platformScreenHeight = (result > 0 ? frameBufferInfo.cyPixels : GetSystemMetrics(SM_CYSCREEN));
+}
+
+bool OSystem_WINCE3::isOzone() {
+	return _isOzone;
+}
+
+// ********************************************************************************************
+
+
 OSystem *OSystem_WINCE3_create() {
 	return new OSystem_WINCE3();
 }
@@ -127,7 +198,8 @@ OSystem *OSystem_WINCE3_create() {
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(), 
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
-	_freeLook(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false)
+	_freeLook(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
+	_scalersChanged(false)
 {
 	create_toolbar();
 }
@@ -339,6 +411,12 @@ bool OSystem_WINCE3::openCD(int drive) {
 	return false;
 }
 
+const OSystem::GraphicsMode *OSystem_WINCE3::getSupportedGraphicsModes() const {
+	if (CEDevice::hasWideResolution())
+		return s_supportedGraphicsModesHigh;
+	else
+		return s_supportedGraphicsModesLow;
+}
 
 bool OSystem_WINCE3::hasFeature(Feature f) {
 return
@@ -488,7 +566,7 @@ void OSystem_WINCE3::update_game_settings() {
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
 		// portrait/landscape - screen dependant
-		if (_screenWidth <= 320 && !CEDevice::hasDesktopResolution()) {
+		if (_screenWidth <= 320 && (isOzone() || !CEDevice::hasDesktopResolution())) {
 			_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
 			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
 		}
@@ -501,12 +579,12 @@ void OSystem_WINCE3::update_game_settings() {
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
 
-		if (ConfMan.hasKey("landscape") && ConfMan.getBool("landscape")) {
+		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getBool("landscape")) {
 			setGraphicsMode(GFX_NORMAL);
 			hotswap_gfx_mode();
 		}
 	}
-
+ 
 	get_sample_rate();
 }
 
@@ -519,13 +597,22 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	else
 		_toolbarHandler.setOffset(400);	
 
-	OSystem_SDL::initSize(w, h);	
+	if (w != _screenWidth || h != _screenHeight)
+		_scalersChanged = false;
 
-	update_game_settings();
+	OSystem_SDL::initSize(w, h);
+	
+	if (_scalersChanged) {
+		unload_gfx_mode();
+		load_gfx_mode();
+		_scalersChanged = false;
+	}
+
+	update_game_settings(); 
 }
 
 int OSystem_WINCE3::getDefaultGraphicsMode() const {
-    return GFX_NORMAL;
+    return GFX_NORMAL; 
 }
 
 bool OSystem_WINCE3::update_scalers() {
@@ -539,12 +626,20 @@ bool OSystem_WINCE3::update_scalers() {
 			_scaler_proc = PocketPCPortrait;
 			_mode_flags = 0;
 		}
-		if (_screenWidth == 640) {
+		if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
 			_scaler_proc = PocketPCHalf;
+			_mode_flags = 0;
+		}
+		if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+			_scaleFactorXm = 1;
+			_scaleFactorXd = 1;
+			_scaleFactorYm = 1;
+			_scaleFactorYd = 1;
+			_scaler_proc = Normal1x;
 			_mode_flags = 0;
 		}
 
@@ -570,6 +665,10 @@ bool OSystem_WINCE3::update_scalers() {
 
 bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
+	int oldScaleFactorXm = _scaleFactorXm;
+	int oldScaleFactorXd = _scaleFactorXd;
+	int oldScaleFactorYm = _scaleFactorYm;
+	int oldScaleFactorYd = _scaleFactorYd;
 
 	_scaleFactorXm = -1;
 	_scaleFactorXd = -1;
@@ -580,17 +679,19 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	
 	update_scalers();
 	
-	if (CEDevice::hasPocketPCResolution() && _orientationLandscape)
+	if (CEDevice::hasPocketPCResolution() && !CEDevice::hasWideResolution() && _orientationLandscape)
 		_mode = GFX_NORMAL;
+	else
+		_mode = mode;
 
-	if (_scaleFactorXm < 0) {
+	if (_scaleFactorXm < 0) { 
 		/* Standard scalers, from the SDL backend */
 		switch(_mode) {    
 		case GFX_NORMAL:     
-			_scaleFactor = 1;
+			_scaleFactor = 1; 
 			_scaler_proc = Normal1x;
 			break;
-		case GFX_DOUBLESIZE: 
+		case GFX_DOUBLESIZE:  
 			_scaleFactor = 2;
 			_scaler_proc = Normal2x;
 			break;
@@ -641,10 +742,10 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	}
 
 	// Check if the scaler can be accepted, if not get back to normal scaler
-	if (_scaleFactor && ((_scaleFactor * _screenWidth > GetSystemMetrics(SM_CXSCREEN) &&
-						  _scaleFactor * _screenWidth > GetSystemMetrics(SM_CYSCREEN))
-					 || (_scaleFactor * _screenHeight > GetSystemMetrics(SM_CXSCREEN) &&
-						_scaleFactor * _screenHeight > GetSystemMetrics(SM_CYSCREEN)))) {
+	if (_scaleFactor && ((_scaleFactor * _screenWidth > getScreenWidth() &&
+						  _scaleFactor * _screenWidth > getScreenHeight())
+					 || (_scaleFactor * _screenHeight > getScreenWidth() &&
+						_scaleFactor * _screenHeight > getScreenHeight()))) {
 				_scaleFactor = 1;
 				_scaler_proc = Normal1x;
 	}
@@ -658,6 +759,15 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	}
 
 	_forceFull = true;
+
+	if (oldScaleFactorXm != _scaleFactorXm ||
+		oldScaleFactorXd != _scaleFactorXd ||
+		oldScaleFactorYm != _scaleFactorYm ||
+		oldScaleFactorYd != _scaleFactorYd) {
+		_scalersChanged = true;
+	}
+	else
+		_scalersChanged = false;
 
 	return true;
 
@@ -690,11 +800,12 @@ void OSystem_WINCE3::load_gfx_mode() {
 	displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
 	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
 
+	// FIXME
 	if (!(displayWidth > GetSystemMetrics(SM_CXSCREEN))) { // no rotation
 		displayWidth = GetSystemMetrics(SM_CXSCREEN);
-		displayHeight = GetSystemMetrics(SM_CYSCREEN);
+		displayHeight = GetSystemMetrics(SM_CYSCREEN); 
 	}
-
+	
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, SDL_FULLSCREEN | SDL_SWSURFACE);
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
@@ -837,7 +948,7 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 void OSystem_WINCE3::update_keyboard() {
 
 	// Update the forced keyboard for Monkey Island copy protection
-	if (_monkeyKeyboard && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
+	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
 			_monkeyKeyboard = false;
@@ -1013,7 +1124,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 				Normal2x((byte*)_toolbarLow->pixels, _toolbarLow->pitch, (byte*)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
 				SDL_UnlockSurface(_toolbarHigh);
 				SDL_UnlockSurface(_toolbarLow);
-				_toolbarHighDrawn = true;
+				_toolbarHighDrawn = true; 
 			}
 			else
 				_toolbarHighDrawn = false;
@@ -1300,3 +1411,7 @@ void OSystem_WINCE3::quit() {
 	}
 	OSystem_SDL::quit();
 }
+
+int OSystem_WINCE3::_platformScreenWidth;
+int OSystem_WINCE3::_platformScreenHeight;
+bool OSystem_WINCE3::_isOzone;
