@@ -1462,6 +1462,11 @@ void Scumm_v5::o5_putActorInRoom() {
 
 	a = derefActor(act, "o5_putActorInRoom");
 
+	if (room == 0 && a->room != _currentRoom && a->room != room && _currentRoom != room) {
+		warning ("o5_putActorInRoom (%d [%d], %d) ignored", act, a->room, room);
+		return;
+	}
+
 	if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
 		clearMsgQueue();
 	}
