@@ -127,6 +127,42 @@ You can change the keys mapping in the main screen in the "Options" menu. Select
 an action in the "Keys Mapping" submenu, then press the key you want to map to 
 this action.
 
+How can I apply a ScummVM command line option (f.e. to change the language) 
+---------------------------------------------------------------------------
+
+See the section regarding the configuration file (scummvm.ini) in ScummVM
+README file - the same keywords apply.
+
+Some parameters are specific to this port  
+
+[wince] section
+
+NoDirectVideo         bool      Do not try direct video access if GAPI
+                                cannot be found (debug option) if set
+
+Sound                 bool      Comput everything but mute output if set 
+FMHighQuality         bool      Desktop quality FM synthesis if set
+SoundThreadPriority   int       Set the priority of the sound thread
+                                (given to SetThreadPriority API)
+NoMusic               bool      Equivalent to -e NULL if set
+DisplayMode           int       0 : Portrait | 1 : Landscape
+
+The following parameters are specific to Microsoft Smartphone devices
+
+[smartfon-keys] section
+
+RepeatX               int       Number of events before changing horizontal
+                                cursor behaviour 
+StepX1                int       First horizontal cursor increment value
+StepX2                int       Second horizontal cursor increment value
+                                triggered when the key is repeated less than
+                                repeatX 
+StepX3                int       Third horizontal cursor increment value
+                                triggered when the key is repeated more than
+                                repeatX
+
+And you'll guess what RepeatY and StepY do :p
+
 Game xxx is too slow on my device
 ---------------------------------
 
