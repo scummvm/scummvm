@@ -247,6 +247,11 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	textChar = (uint8)*curPos++;
 	_dtLetters++;
 
+	// work around bug #778105 (line width exceeded)
+	char *tmpPtr = strstr(textPtr, "MUND-BEATMUNG!");
+	if (tmpPtr)
+		strcpy(tmpPtr, "MUND BEATMUNG!");
+
 	while (textChar >= 0x20) {
 		if ((_curCharSet == 1) && (textChar >= 0x80))
 			textChar = 0x20;
