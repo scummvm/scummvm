@@ -694,6 +694,7 @@ Credits:
         Ludvig Strigeus      - Original ScummVM and SimonVM Author
 
  Contributors:
+        Stuart Caie          - Decoders for Simon 1 Amiga data files
         Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
@@ -705,7 +706,6 @@ Credits:
         Daniel Schepler      - Final MI1 CD music support/ Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
         Tim 'realmz'         - Initial MI1 CD music support
-        Stuart Caie          - Decoders for Simon 1 Amiga data files
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
