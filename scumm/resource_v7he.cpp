@@ -99,33 +99,27 @@ Win32ResExtractor::CachedCursor *Win32ResExtractor::getCachedCursorSlot() {
 
 void Win32ResExtractor::setCursor(int id) {
 	char buf[20];
-	byte *cursorRes = 0, *cursor = 0;
+	byte *cursorRes = 0;
 	int cursorsize;
-	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0, keycolor = 0;
+	int keycolor = 0;
 	CachedCursor *cc = findCachedCursor(id);
 	if (cc != NULL) {
 		debug(7, "Found cursor %d in cache slot %d", id, cc - _cursorCache);
-		_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
-		_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
 	} else {
-		snprintf(buf, 20, "%d", id);
-		cursorsize = extractResource("group_cursor", buf, &cursorRes);
-		convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y, &keycolor);
+		snprintf(buf, sizeof(buf), "%d", id);
 		cc = getCachedCursorSlot();
 		assert(cc && !cc->valid);
+		cursorsize = extractResource("group_cursor", buf, &cursorRes);
+		convertIcons(cursorRes, cursorsize, &cc->bitmap, &cc->w, &cc->h, &cc->hotspot_x, &cc->hotspot_y, &keycolor);
 		debug(7, "Adding cursor %d to cache slot %d", id, cc - _cursorCache);
-		_vm->setCursorHotspot(hotspot_x, hotspot_y);
-		_vm->setCursorFromBuffer(cursor, w, h, w);
 		free(cursorRes);
 		cc->valid = true;
 		cc->id = id;
-		cc->bitmap = cursor;
-		cc->w = w;
-		cc->h = h;
-		cc->hotspot_x = hotspot_x;
-		cc->hotspot_y = hotspot_y;
 		cc->last_used = g_system->getMillis();
 	}
+
+	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
+	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
 }
 
 int Win32ResExtractor::extractResource(const char *resType, char *resName, byte **data) {
