@@ -40,7 +40,7 @@ public:
 	void set_shake_pos(int shake_pos) {}
 	uint32 get_msecs();
 	void delay_msecs(uint msecs);
-	void *create_thread(ThreadProc *proc, void *param) { return NULL; }
+	void create_thread(ThreadProc *proc, void *param) { }
 	bool poll_event(Event *event) { return false; }
 	bool set_sound_proc(void *param, SoundProc *proc, byte sound) {}
 	void quit() { exit(1); }

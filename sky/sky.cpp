@@ -298,6 +298,9 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 				case OSystem::EVENT_RBUTTONDOWN:
 					
 					break;
+
+				default:
+					break;
 			}
 		}
 

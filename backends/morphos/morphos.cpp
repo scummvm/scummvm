@@ -308,16 +308,15 @@ void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
 	warning("set_timer() unexpectedly called");
 }
 
-void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
+void OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 {
 	ScummMusicThread = CreateNewProcTags(NP_Entry, (ULONG) proc, NP_CodeType, CODETYPE_PPC,
 													 NP_Name, (ULONG) "ScummVM Music Thread",
 													 NP_Priority, 60, NP_StackSize, 32000,
 													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
-	return ScummMusicThread;
 }
 
-void *OSystem_MorphOS::create_mutex(void)
+void *OSystem_MorphOS::create_mutex()
 {
 	SignalSemaphore *sem = (SignalSemaphore *) AllocVec(sizeof (SignalSemaphore), MEMF_PUBLIC);
 

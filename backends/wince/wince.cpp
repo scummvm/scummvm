@@ -71,7 +71,7 @@ typedef BOOL (*tSHCreateMenuBar)(void*);
 
 /*
 // Dynamically linked SDLAudio
-typedef void (*tSDL_AudioQuit)(void);
+typedef void (*tSDL_AudioQuit)();
 typedef int (*tSDL_Init)(Uint32);
 typedef void (*tSDL_PauseAudio)(int);
 typedef int (*tSDL_OpenAudio)(SDL_AudioSpec*, SDL_AudioSpec*);
@@ -439,7 +439,7 @@ SoundProc *real_soundproc;
 
 extern void startFindGame();
 extern void displayGameInfo();
-extern bool loadGameSettings(void);
+extern bool loadGameSettings();
 extern void setFindGameDlgHandle(HWND);
 extern void getSelectedGame(int, char*, TCHAR*, char*);
 extern void runGame(char*);
@@ -448,7 +448,7 @@ extern void palette_update();
 
 extern void own_soundProc(void *buffer, byte *samples, int len);
 
-extern int chooseGame(void);
+extern int chooseGame();
 
 //#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
@@ -1623,12 +1623,11 @@ void OSystem_WINCE3::delay_msecs(uint msecs) {
 	Sleep(msecs);
 }
 	
-void *OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
+void OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
 	// needed for emulated MIDI support (Sam'n'Max)
 	HANDLE handle;
 	handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)proc, param, 0, NULL);
 	SetThreadPriority(handle, THREAD_PRIORITY_NORMAL);
-	return handle;
 }
 
 int mapKey(int key, byte mod)

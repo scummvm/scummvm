@@ -89,7 +89,7 @@ public:
 	void delay_msecs(uint msecs);
 
 	// Create a thread
-	void *create_thread(ThreadProc *proc, void *param);
+	void create_thread(ThreadProc *proc, void *param);
 
 	// Get the next event.
 	// Returns true if an event was retrieved.  
@@ -121,7 +121,7 @@ public:
 	void set_timer(int timer, int (*callback) (int));
 
 	// Mutex handling
-	void *create_mutex(void);
+	void *create_mutex();
 	void lock_mutex(void *mutex);
 	void unlock_mutex(void *mutex);
 	void delete_mutex(void *mutex);
@@ -302,7 +302,7 @@ void OSystem_X11::create_empty_cursor()
 	XDefineCursor(display, window, cursor);
 }
 
-OSystem *OSystem_X11_create(void)
+OSystem *OSystem_X11_create()
 {
 	return OSystem_X11::create(0, 0);
 }
@@ -765,7 +765,7 @@ void OSystem_X11::set_shake_pos(int shake_pos)
 	new_shake_pos = shake_pos;
 }
 
-void *OSystem_X11::create_thread(ThreadProc *proc, void *param)
+void OSystem_X11::create_thread(ThreadProc *proc, void *param)
 {
 	pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
 	if (pthread_create(thread, NULL, (void *(*)(void *))proc, param))
@@ -1029,7 +1029,7 @@ void OSystem_X11::set_timer(int timer, int (*callback) (int))
 	}
 }
 
-void *OSystem_X11::create_mutex(void)
+void *OSystem_X11::create_mutex()
 {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);

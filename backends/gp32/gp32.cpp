@@ -685,7 +685,7 @@ void OSystem_GP32::undraw_mouse() {	//return; //fixme!
 	///SDL_UnlockSurface(sdl_tmpscreen); 
 }
 
-char * SDL_GetError(void) {
+char * SDL_GetError() {
 
 	// implement
 	return NULL;
@@ -860,7 +860,7 @@ void OSystem_GP32::delay_msecs(uint msecs) {
 }
 	
 // Create a thread
-void* OSystem_GP32::create_thread(ThreadProc *proc, void *param) { return NULL;}
+void OSystem_GP32::create_thread(ThreadProc *proc, void *param) { }
 	
 // Get the next event.
 // Returns true if an event was retrieved.	
@@ -1075,7 +1075,7 @@ void OSystem_GP32::update_cdrom() { }
 void OSystem_GP32::set_timer(int timer, int (*callback)(int)) { }
 
 // Mutex handling
-void* OSystem_GP32::create_mutex(void) { }
+void* OSystem_GP32::create_mutex() { }
 void OSystem_GP32::lock_mutex(void *mutex) { }
 void OSystem_GP32::unlock_mutex(void *mutex) { }
 void OSystem_GP32::delete_mutex(void *mutex) { }

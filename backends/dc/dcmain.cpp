@@ -118,13 +118,13 @@ void OSystem_Dreamcast::quit() {
   exit(0);
 }
 
-void *OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
+void OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
   warning("Creating a thread! (not supported.)\n");
 }
 
 
 /* Mutex handling */
-void *OSystem_Dreamcast::create_mutex(void)
+void *OSystem_Dreamcast::create_mutex()
 {
   return NULL;
 }
@@ -142,7 +142,7 @@ void OSystem_Dreamcast::delete_mutex(void *mutex)
 }
 
 
-void dc_init_hardware(void)
+void dc_init_hardware()
 {
 #ifndef NOSERIAL
   serial_init(57600);

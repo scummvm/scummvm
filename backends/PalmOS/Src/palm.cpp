@@ -515,12 +515,10 @@ void OSystem_PALMOS::delay_msecs(uint msecs) {
 	SysTaskDelay((SysTicksPerSecond()*msecs)/1000);
 }
 
-void *OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
+void OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
 	_thread.active	= true;
 	_thread.proc	= proc;
 	_thread.param	= param;
-	
-	return 0;
 }
 
 void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
@@ -536,7 +534,7 @@ void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
 }
 
 /* Mutex handling */
-void *OSystem_PALMOS::create_mutex(void)
+void *OSystem_PALMOS::create_mutex()
 {
   return NULL;
 }

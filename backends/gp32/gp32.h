@@ -71,7 +71,7 @@ public:
 	void delay_msecs(uint msecs);
 	
 	// Create a thread
-	void *create_thread(ThreadProc *proc, void *param);
+	void create_thread(ThreadProc *proc, void *param);
 	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
@@ -102,7 +102,7 @@ public:
 	void set_timer(int timer, int (*callback)(int));
 
 	// Mutex handling
-	void *create_mutex(void);
+	void *create_mutex();
 	void lock_mutex(void *mutex);
 	void unlock_mutex(void *mutex);
 	void delete_mutex(void *mutex);

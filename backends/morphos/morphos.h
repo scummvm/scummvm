@@ -83,13 +83,13 @@ class OSystem_MorphOS : public OSystem
 		virtual void set_timer(int timer, int (*callback)(int));
 
 		// Mutex handling
-		virtual void *create_mutex(void);
+		virtual void *create_mutex();
 		virtual void lock_mutex(void *mutex);
 		virtual void unlock_mutex(void *mutex);
 		virtual void delete_mutex(void *mutex);
 
 		// Create a thread
-		virtual void *create_thread(ThreadProc *proc, void *param);
+		virtual void create_thread(ThreadProc *proc, void *param);
 
 		// Get the next event.
 		// Returns true if an event was retrieved.

@@ -26,26 +26,20 @@
 #include "scummsys.h"
 #include "savefile.h"
 
-// Interface to the ScummVM backend
-
+/**
+ * Interface for ScummVM backends.
+ */
 class OSystem {
 public:
+	typedef void *MutexRef;
 	typedef int ThreadProc(void *param);
 	typedef void SoundProc(void *param, byte *buf, int len);
 
-	struct Event {
-		int event_code;
-		struct {
-			uint16 ascii;
-			byte flags;
-			int keycode;
-		} kbd;
-		struct {
-			int x,y;
-		} mouse;
-	};
-
-	enum {
+	/**
+	 * The types of events backends can generate.
+	 * @see Event
+	 */
+	enum EventCode {
 		EVENT_KEYDOWN = 1,
 		EVENT_KEYUP = 2,
 		EVENT_MOUSEMOVE = 3,
@@ -61,6 +55,23 @@ public:
 		KBD_CTRL = 1,
 		KBD_ALT = 2,
 		KBD_SHIFT = 4
+	};
+
+	/**
+	 * Data structure for an event. A pointer to an instance of Event
+	 * can be passed to poll_event. 
+	 */
+	struct Event {
+		EventCode event_code;
+		struct {
+			int keycode;
+			uint16 ascii;
+			byte flags;
+		} kbd;
+		struct {
+			int x;
+			int y;
+		} mouse;
 	};
 
 	enum {
@@ -86,49 +97,77 @@ public:
 		SOUND_16BIT = 1
 	};
 	
-	// Set colors of the palette
+	/** Set colors of the palette. */
 	virtual void set_palette(const byte *colors, uint start, uint num) = 0;
 
-	// Set the size of the video bitmap.
-	// Typically, 320x200
+	/** Set the size of the video bitmap. Typically 320x200 pixels. */
 	virtual void init_size(uint w, uint h) = 0;
 
-	// Draw a bitmap to screen.
-	// The screen will not be updated to reflect the new bitmap
+	/**
+	 * Draw a bitmap to screen.
+	 * The screen will not be updated to reflect the new bitmap, you have
+	 * to call update_screen to do that.
+	 * @see update_screen
+	 */
 	virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
 
-	// Moves the screen content around by the given amount of pixels
-	// but only the top height pixel rows, the rest stays untouched
+	/**
+	 * Moves the screen content by the offset specified via dx/dy.
+	 * Only the region from x=0 till x=height-1 is affected.
+	 * @param dx	the horizontal offset.
+	 * @param dy	the vertical offset.
+	 * @param height	the number of lines which in which the move will be done.
+	 */
 	virtual void move_screen(int dx, int dy, int height) = 0;
 
-	// Update the dirty areas of the screen
+	/** Update the dirty areas of the screen. */
 	virtual void update_screen() = 0;
 
-	// Either show or hide the mouse cursor
+	/** Show or hide the mouse cursor. */
 	virtual bool show_mouse(bool visible) = 0;
 	
-	// Set the position of the mouse cursor
+	/**
+	 * Set the position of the mouse cursor.
+	 * @see warp_mouse
+	 */
 	virtual void set_mouse_pos(int x, int y) = 0;
 
-	// Warp the mouse cursor. Where set_mouse_pos() only informs the
-	// backend of the mouse cursor's current position, this function
-	// actually moves the cursor to the specified position.
+	/** 
+	 * Warp the mouse cursor to the specified position. Where set_mouse_pos()
+	 * only informs the backend of the mouse cursor's current position, this
+	 * function actually moves the cursor to the specified position.
+	 * @see set_mouse_pos
+	 */
 	virtual void warp_mouse(int x, int y) = 0;
 	
-	// Set the bitmap that's used when drawing the cursor.
+	/** Set the bitmap used for drawing the cursor. */
 	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) = 0;
 	
-	// Shaking is used in SCUMM. Set current shake position.
-	virtual void set_shake_pos(int shake_pos) = 0;
+	/**
+	 * Set current shake position, a feature needed for some SCUMM screen effects.
+	 * The effect causes the displayed graphics to be shifted upwards by the specified 
+	 * (always positive) offset. The area at the bottom of the screen which is moved
+	 * into view by this is filled by black. This does not cause any graphic data to
+	 * be lost - that is, to restore the original view, the game engine only has to
+	 * call this method again with a 0 offset. No calls to copy_rect are necessary.
+	 * @param shakeOffset	the shake offset
+	 */
+	virtual void set_shake_pos(int shakeOffset) = 0;
 		
-	// Get the number of milliseconds since the program was started.
+	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 get_msecs() = 0;
 	
-	// Delay for a specified amount of milliseconds
+	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delay_msecs(uint msecs) = 0;
 	
-	// Create a thread
-	virtual void *create_thread(ThreadProc *proc, void *param) = 0;
+	/**
+	 * Create a thread with the given entry procedure.
+	 * @param proc	the thread main procedure
+	 * @param param	an arbitrary parameter which is stored and passed to
+	 *              proc when it is invoked in its own thread.
+	 * @return 
+	 */
+	virtual void create_thread(ThreadProc *proc, void *param) = 0;
 	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
@@ -142,37 +181,87 @@ public:
 	// Get or set a property
 	virtual uint32 property(int param, Property *value) = 0;
 		
-	// Poll cdrom status
-	// Returns true if cd audio is playing
+
+	/**
+	 * @name Audio CD
+	 * The methods in this group deal with Audio CD playback.
+	 */
+	//@{
+
+	/**
+	 * Poll CD status
+	 * @return true if CD audio is playing
+	 */
 	virtual bool poll_cdrom() = 0;
 
-	// Play cdrom audio track
+	/**
+	 * Start audio CD playback. 
+	 * @param track			the track to play.
+	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
+	 * @param start_frame	the frame at which playback should start.
+	 * @param end_frame		the frame at which playback should end.
+	 */
 	virtual void play_cdrom(int track, int num_loops, int start_frame, int end_frame) = 0;
 
-	// Stop cdrom audio track
+	/**
+	// Stop audio CD playback
+	 */
 	virtual void stop_cdrom() = 0;
 
+	/**
 	// Update cdrom audio status
+	 */
 	virtual void update_cdrom() = 0;
+	//@} 
+
 
 	// Add a new callback timer
 	virtual void set_timer(int timer, int (*callback)(int)) = 0;
 
-	// Mutex handling
-	virtual void *create_mutex(void) = 0;
-	virtual void lock_mutex(void *mutex) = 0;
-	virtual void unlock_mutex(void *mutex) = 0;
-	virtual void delete_mutex(void *mutex) = 0;
+	/**
+	 * @name Mutex handling
+	 */
+	//@{
+	/**
+	 * Create a new mutex.
+	 * @return the newly created mutex, or 0 if an error occured.
+	 */
+	virtual MutexRef create_mutex(void) = 0;
+
+	/**
+	 * Lock the given mutex.
+	 * @param mutex	the mutex to lock.
+	 */
+	virtual void lock_mutex(MutexRef mutex) = 0;
+
+	/**
+	 * Unlock the given mutex.
+	 * @param mutex	the mutex to unlock.
+	 */
+	virtual void unlock_mutex(MutexRef mutex) = 0;
+
+	/**
+	 * Delete the given mutex. Make sure the mutex is unlocked before you delete it.
+	 * If you delete a locked mutex, the behavior is undefined, in particular, your
+	 * program may crash.
+	 * @param mutex	the mutex to delete.
+	 */
+	virtual void delete_mutex(MutexRef mutex) = 0;
+	//@} 
 
 	// Quit
 	virtual void quit() = 0;
 	
-	// Overlay
+	/**
+	 * @name Overlay
+	 */
+	//@{
 	virtual void show_overlay() = 0;
 	virtual void hide_overlay() = 0;
 	virtual void clear_overlay() = 0;
 	virtual void grab_overlay(NewGuiColor *buf, int pitch) = 0;
 	virtual void copy_rect_overlay(const NewGuiColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	//@} 
 
 	// Low-level graphics access
 	virtual int16 get_height() {return 200;}
@@ -195,11 +284,9 @@ public:
 	}
 };
 
-/* Factory functions. This means we don't have to include the
- * OSystem_SDL header file. (which in turn would require the SDL headers)
+/* Factory functions. This means we don't have to include the headers for
+ * all backends.
  */
-
-/* OSystem_SDL */
 extern OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
 extern OSystem *OSystem_NULL_create();
 extern OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);

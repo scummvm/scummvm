@@ -41,7 +41,7 @@ class OSystem_Dreamcast : public OSystem {
   void delay_msecs(uint msecs);
   
   // Create a thread
-  void *create_thread(ThreadProc *proc, void *param);
+  void create_thread(ThreadProc *proc, void *param);
 	
   // Get the next event.
   // Returns true if an event was retrieved.	
@@ -80,7 +80,7 @@ class OSystem_Dreamcast : public OSystem {
   virtual void set_timer(int timer, int (*callback)(int));
 
   // Mutex handling
-  virtual void *create_mutex(void);
+  virtual void *create_mutex();
   virtual void lock_mutex(void *mutex);
   virtual void unlock_mutex(void *mutex);
   virtual void delete_mutex(void *mutex);

@@ -496,8 +496,8 @@ void OSystem_SDL_Common::delay_msecs(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void *OSystem_SDL_Common::create_thread(ThreadProc *proc, void *param) {
-	return SDL_CreateThread(proc, param);
+void OSystem_SDL_Common::create_thread(ThreadProc *proc, void *param) {
+	SDL_CreateThread(proc, param);
 }
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)

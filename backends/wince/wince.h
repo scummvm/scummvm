@@ -109,7 +109,7 @@ public:
 	void delay_msecs(uint msecs);
 	
 	// Create a thread
-	void *create_thread(ThreadProc *proc, void *param);
+	void create_thread(ThreadProc *proc, void *param);
 	
 	// Get the next event.
 	// Returns true if an event was retrieved.	

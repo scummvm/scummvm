@@ -2155,6 +2155,9 @@ void Scumm::parseEvents() {
 		case OSystem::EVENT_RBUTTONUP:
 			_rightBtnPressed &= ~msDown;
 			break;
+		
+		default:
+			break;
 		}
 	}
 }

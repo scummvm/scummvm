@@ -4498,6 +4498,9 @@ void SimonState::delay(uint amount) {
 					else
 					_exit_cutscene = true;
 					break;
+				
+				default:
+					break;
 			}
 		}
 
