@@ -28,9 +28,10 @@
 
 #include "sword2/sword2.h"
 #include "sword2/maketext.h"
+#include "sword2/resman.h"
+#include "sword2/sound.h"
 #include "sword2/driver/animation.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
@@ -42,7 +43,6 @@ AnimationState::AnimationState(Sword2Engine *vm)
 
 AnimationState::~AnimationState() {
 }
-
 
 #ifdef BACKEND_8BIT
 
@@ -168,12 +168,63 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen) {
+int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes) {
+	PlayingSoundHandle leadInHandle;
+
 	// This happens if the user quits during the "eye" smacker
 	if (_vm->_quit)
 		return RD_OK;
 
+	if (leadInRes) {
+		byte *leadIn = _vm->_resman->openResource(leadInRes);
+		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - sizeof(StandardHeader);
+		StandardHeader *header = (StandardHeader *) leadIn;
+
+		assert(header->fileType == WAV_FILE);
+
+		leadIn += sizeof(StandardHeader);
+
+		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
+	}
+
+	byte *leadOut = NULL;
+	uint32 leadOutLen = 0;
+
+	if (leadOutRes) {
+		leadOut = _vm->_resman->openResource(leadOutRes);
+		leadOutLen = _vm->_resman->fetchLen(leadOutRes) - sizeof(StandardHeader);
+		StandardHeader *header = (StandardHeader *) leadOut;
+
+		assert(header->fileType == WAV_FILE);
+
+		leadOut += sizeof(StandardHeader);
+	}
+
 #ifdef USE_MPEG2
+	playMPEG(filename, text, leadOut, leadOutLen);
+#else
+	// No MPEG2? Use the old 'Narration Only' hack
+	playDummy(filename, text, leadOut);
+#endif
+
+	_vm->_mixer->stopHandle(leadInHandle);
+
+	// Wait for the lead-out to stop, if there is any.
+	while (_leadOutHandle.isActive()) {
+		_vm->_graphics->updateDisplay();
+		_vm->_system->delayMillis(30);
+	}
+
+	if (leadInRes)
+		_vm->_resman->closeResource(leadInRes);
+
+	if (leadOutRes)
+		_vm->_resman->closeResource(leadOutRes);
+
+	return RD_OK;
+}
+
+void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen) {
 	uint frameCounter = 0, textCounter = 0;
 	PlayingSoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
@@ -188,8 +239,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	if (!anim->init(filename)) {
 		delete anim;
 		// Missing Files? Use the old 'Narration Only' hack
-		playDummy(filename, text, musicOut, musicOutLen);
-		return RD_OK;
+		playDummy(filename, text, leadOut, leadOutLen);
+		return;
 	}
 
 #ifndef BACKEND_8BIT
@@ -249,11 +300,10 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 		}
 
 		anim->updateScreen();
-
 		frameCounter++;
 
-		if (frameCounter == leadOutFrame && musicOut)
-			_vm->_sound->playFx(0, musicOutLen, musicOut, 0, 0, RDSE_FXLEADOUT);
+		if (frameCounter == leadOutFrame && leadOut)
+			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
 
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
@@ -299,10 +349,9 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 
 	anim->updateScreen();
 
-	// Wait for the voice to stop playing. This is to make sure
-	// that we don't cut off the speech in mid-sentence, and - even
-	// more importantly - that we don't free the sound buffer while
-	// it's in use.
+	// Wait for the voice to stop playing. This is to make sure that we
+	// don't cut off the speech in mid-sentence, and - even more
+	// importantly - that we don't free the sound buffer while it's in use.
 
 	if (skipCutscene)
 		_snd->stopHandle(handle);
@@ -313,30 +362,12 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	}
 
 	// Clear the screen again
-
 	anim->clearScreen();
 	anim->updateScreen();
 
 	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
 	delete anim;
-
-	// Wait for the lead-out to stop, if there is any.
-	_vm->_sound->waitForLeadOut();
-
-	// Lead-in and lead-out music are, as far as I can tell, only used for
-	// the animated cut-scenes, so this seems like a good place to close
-	// both of them.
-
-	_vm->_sound->stopFx(-1);
-	_vm->_sound->stopFx(-2);
-
-	return RD_OK;
-#else
-	// No MPEG2? Use the old 'Narration Only' hack
-	playDummy(filename, text, musicOut, musicOutLen);
-	return RD_OK;
-#endif
 }
 
 /**
@@ -344,161 +375,152 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
  * are missing.
  */
 
-int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen) {
+void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen) {
+	if (!text)
+		return;
+
 	int frameCounter = 0, textCounter = 0;
-	if (text) {
-		byte oldPal[256 * 4];
-		byte tmpPal[256 * 4];
 
-		_vm->_graphics->clearScene();
+	byte oldPal[256 * 4];
+	byte tmpPal[256 * 4];
 
-		// HACK: Draw instructions
-		//
-		// I'm using the the menu area, because that's unlikely to be
-		// touched by anything else during the cutscene.
+	_vm->_graphics->clearScene();
 
-		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+	// HACK: Draw instructions
+	//
+	// I'm using the the menu area, because that's unlikely to be touched
+	// by anything else during the cutscene.
 
-		byte *data;
+	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
-		// Russian version substituted latin characters with cyrillic. That's why
-		// it renders completely unreadable with default message
-		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
-			byte msg[] = "Po\344uk - to\344\345ko pev\345: hagmute k\344abuwy Ucke\343n, u\344u nocetute ca\343t npoekta u ckava\343te budeo po\344uku";
-			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
-		} else {
-			// TODO: Translate message to other languages?
+	byte *data;
+
+	// Russian version substituted latin characters with cyrillic. That's
+	// why it renders completely unreadable with default message
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
+		byte msg[] = "Po\344uk - to\344\345ko pev\345: hagmute k\344abuwy Ucke\343n, u\344u nocetute ca\343t npoekta u ckava\343te budeo po\344uku";
+		data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
+	} else {
+		// TODO: Translate message to other languages?
 #ifdef USE_MPEG2
-			byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
+		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
 #else
-			byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 support";
-#endif
-			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
-		}
-
-		FrameHeader *frame = (FrameHeader *) data;
-		SpriteInfo msgSprite;
-		byte *msgSurface;
-
-		msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
-		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
-		msgSprite.w = frame->width;
-		msgSprite.h = frame->height;
-		msgSprite.type = RDSPR_NOCOMPRESSION;
-		msgSprite.data = data + sizeof(FrameHeader);
-
-		_vm->_graphics->createSurface(&msgSprite, &msgSurface);
-		_vm->_graphics->drawSurface(&msgSprite, msgSurface);
-		_vm->_graphics->deleteSurface(msgSurface);
-		free(data);
-
-		// In case the cutscene has a long lead-in, start just before
-		// the first line of text.
-
-		frameCounter = text[0]->startFrame - 12;
-
-		// Fake a palette that will hopefully make the text visible.
-		// In the opening cutscene it seems to use colours 1 (black?)
-		// and 255 (white?).
-
-		memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
-		memset(tmpPal, 0, sizeof(tmpPal));
-		tmpPal[255 * 4 + 0] = 255;
-		tmpPal[255 * 4 + 1] = 255;
-		tmpPal[255 * 4 + 2] = 255;
-		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
-
-		PlayingSoundHandle handle;
-
-		bool skipCutscene = false;
-
-		uint32 flags = SoundMixer::FLAG_16BITS;
-
-#ifndef SCUMM_BIG_ENDIAN
-		flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 support";
 #endif
 
-		while (1) {
-			if (!text[textCounter])
-				break;
-
-			if (frameCounter == text[textCounter]->startFrame) {
-				_vm->_graphics->clearScene();
-				openTextObject(text[textCounter]);
-				drawTextObject(NULL, text[textCounter]);
-				if (text[textCounter]->speech) {
-					_snd->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
-				}
-			}
-			if (frameCounter == text[textCounter]->endFrame) {
-				closeTextObject(text[textCounter]);
-				_vm->_graphics->clearScene();
-				_vm->_graphics->setNeedFullRedraw();
-				textCounter++;
-			}
-
-			frameCounter++;
-
-			_vm->_graphics->updateDisplay();
-
-			KeyboardEvent *ke = _vm->keyboardEvent();
-
-			if ((ke && ke->keycode == 27) || _vm->_quit) {
-				_snd->stopHandle(handle);
-				skipCutscene = true;
-				break;
-			}
-
-			// Simulate ~12 frames per second. I don't know what
-			// frame rate the original movies had, or even if it
-			// was constant, but this seems to work reasonably.
-
-			_sys->delayMillis(90);
-		}
-
-		// Wait for the voice to stop playing. This is to make sure
-		// that we don't cut off the speech in mid-sentence, and - even
-		// more importantly - that we don't free the sound buffer while
-		// it's in use.
-
-		while (handle.isActive()) {
-			_vm->_graphics->updateDisplay(false);
-			_sys->delayMillis(100);
-		}
-
-		closeTextObject(text[textCounter]);
-
-		_vm->_graphics->clearScene();
-		_vm->_graphics->setNeedFullRedraw();
-
-		// HACK: Remove the instructions created above
-		Common::Rect r;
-
-		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
-		r.left = r.top = 0;
-		r.right = _vm->_graphics->_screenWide;
-		r.bottom = MENUDEEP;
-		_vm->_graphics->updateRect(&r);
-
-		// FIXME: For now, only play the lead-out music for cutscenes
-		// that have subtitles.
-
-		if (!skipCutscene && musicOut) {
-			_vm->_sound->playFx(0, musicOutLen, musicOut, 0, 0, RDSE_FXLEADOUT);
-			_vm->_sound->waitForLeadOut();
-		}
-
-		_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
+		data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 	}
 
-	// Lead-in and lead-out music are, as far as I can tell, only used for
-	// the animated cut-scenes, so this seems like a good place to close
-	// both of them.
+	FrameHeader *frame = (FrameHeader *) data;
+	SpriteInfo msgSprite;
+	byte *msgSurface;
 
-	_vm->_sound->stopFx(-1);
-	_vm->_sound->stopFx(-2);
+	msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
+	msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
+	msgSprite.w = frame->width;
+	msgSprite.h = frame->height;
+	msgSprite.type = RDSPR_NOCOMPRESSION;
+	msgSprite.data = data + sizeof(FrameHeader);
 
-	return RD_OK;
+	_vm->_graphics->createSurface(&msgSprite, &msgSurface);
+	_vm->_graphics->drawSurface(&msgSprite, msgSurface);
+	_vm->_graphics->deleteSurface(msgSurface);
+
+	free(data);
+
+	// In case the cutscene has a long lead-in, start just before the first
+	// line of text.
+
+	frameCounter = text[0]->startFrame - 12;
+
+	// Fake a palette that will hopefully make the text visible. In the
+	// opening cutscene it seems to use colours 1 (black) and 255 (white).
+
+	memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
+	memset(tmpPal, 0, sizeof(tmpPal));
+	tmpPal[255 * 4 + 0] = 255;
+	tmpPal[255 * 4 + 1] = 255;
+	tmpPal[255 * 4 + 2] = 255;
+	_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+
+	PlayingSoundHandle handle;
+
+	bool skipCutscene = false;
+
+	uint32 flags = SoundMixer::FLAG_16BITS;
+
+#ifndef SCUMM_BIG_ENDIAN
+	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
+
+	while (1) {
+		if (!text[textCounter])
+			break;
+
+		if (frameCounter == text[textCounter]->startFrame) {
+			_vm->_graphics->clearScene();
+			openTextObject(text[textCounter]);
+			drawTextObject(NULL, text[textCounter]);
+			if (text[textCounter]->speech) {
+				_snd->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+			}
+		}
+
+		if (frameCounter == text[textCounter]->endFrame) {
+			closeTextObject(text[textCounter]);
+			_vm->_graphics->clearScene();
+			_vm->_graphics->setNeedFullRedraw();
+			textCounter++;
+		}
+
+		frameCounter++;
+		_vm->_graphics->updateDisplay();
+
+		KeyboardEvent *ke = _vm->keyboardEvent();
+
+		if ((ke && ke->keycode == 27) || _vm->_quit) {
+			_snd->stopHandle(handle);
+			skipCutscene = true;
+			break;
+		}
+
+		// Simulate ~12 frames per second. I don't know what frame rate
+		// the original movies had, or even if it was constant, but
+		// this seems to work reasonably.
+
+		_sys->delayMillis(90);
+	}
+
+	// Wait for the voice to stop playing. This is to make sure that we
+	// don't cut off the speech in mid-sentence, and - even more
+	// importantly - that we don't free the sound buffer while it's in use.
+
+	while (handle.isActive()) {
+		_vm->_graphics->updateDisplay(false);
+		_sys->delayMillis(100);
+	}
+
+	closeTextObject(text[textCounter]);
+
+	_vm->_graphics->clearScene();
+	_vm->_graphics->setNeedFullRedraw();
+
+	// HACK: Remove the instructions created above
+	Common::Rect r;
+
+	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+	r.left = r.top = 0;
+	r.right = _vm->_graphics->_screenWide;
+	r.bottom = MENUDEEP;
+	_vm->_graphics->updateRect(&r);
+
+	// FIXME: For now, only play the lead-out music for cutscenes that have
+	// subtitles.
+
+	if (!skipCutscene && leadOut)
+		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
+
+	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 }
 
 } // End of namespace Sword2

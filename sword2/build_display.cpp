@@ -557,18 +557,6 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	_resman->closeResource(ob_graph->anim_resource);
 }
 
-int32 Logic::fnRegisterFrame(int32 *params) {
-	// this call would be made from an objects service script 0
-
-	// params:	0 pointer to mouse structure or NULL for no write to
-	//		  mouse list (non-zero means write sprite-shape to
-	//		  mouse list)
-	//		1 pointer to graphic structure
-	//		2 pointer to mega structure or NULL if not a mega
-
-	return _vm->registerFrame(params);
-}
-
 int32 Sword2Engine::registerFrame(int32 *params) {
 	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->decodePtr(params[1]);
 
@@ -640,58 +628,6 @@ void Sword2Engine::startNewPalette(void) {
  	_thisScreen.new_palette = 0;
 }
 
-int32 Logic::fnUpdatePlayerStats(int32 *params) {
-	// engine needs to know certain info about the player
-
-	// params:	0 pointer to mega structure
-
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[0]);
-
-	_vm->_thisScreen.player_feet_x = ob_mega->feet_x;
-	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;
-
-	// for the script
-	_scriptVars[PLAYER_FEET_X] = ob_mega->feet_x;
-	_scriptVars[PLAYER_FEET_Y] = ob_mega->feet_y;
-	_scriptVars[PLAYER_CUR_DIR] = ob_mega->current_dir;
-	_scriptVars[SCROLL_OFFSET_X] = _vm->_thisScreen.scroll_offset_x;
-
-	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
-
-	return IR_CONT;
-}
-
-int32 Logic::fnFadeDown(int32 *params) {
-	// NONE means up! can only be called when screen is fully faded up -
-	// multiple calls wont have strange effects
-
-	// params:	none
-
-	if (_vm->_graphics->getFadeStatus() == RDFADE_NONE)
-		_vm->_graphics->fadeDown();
-
-	return IR_CONT;
-}
-
-int32 Logic::fnFadeUp(int32 *params) {
-	// params:	none
-
-	_vm->_graphics->waitForFade();
-
-	if (_vm->_graphics->getFadeStatus() == RDFADE_BLACK)
-		_vm->_graphics->fadeUp();
-
-	return IR_CONT;
-}
-
-int32 Logic::fnSetPalette(int32 *params) {
-	// params:	0 resource number of palette file, or 0 if it's to be
-	//		  the palette from the current screen
-
-	_vm->setFullPalette(params[0]);
-	return IR_CONT;
-}
-
 void Sword2Engine::setFullPalette(int32 palRes) {
 	// fudge for hut interior
 	// - unpausing should restore last palette as normal (could be screen
@@ -761,25 +697,6 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 
 	if (palRes != CONTROL_PANEL_PALETTE)
 		_lastPaletteRes = palRes;
-}
-
-int32 Logic::fnRestoreGame(int32 *params) {
-	// params:	none
-	return IR_CONT;
-}
-
-int32 Logic::fnChangeShadows(int32 *params) {
-	// params:	none
-
-	// if last screen was using a shading mask (see below)
-	if (_vm->_thisScreen.mask_flag) {
-		uint32 rv = _vm->_graphics->closeLightMask();
-		if (rv)
-			error("Driver Error %.8x", rv);
-		_vm->_thisScreen.mask_flag = false;
-	}
-
-	return IR_CONT;
 }
 
 } // End of namespace Sword2

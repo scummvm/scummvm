@@ -27,6 +27,7 @@
 #include "sword2/memory.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
+#include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
 
 #define Debug_Printf _vm->_debugger->DebugPrintf
@@ -786,7 +787,7 @@ void ResourceManager::removeAll(void) {
 	// will still believe that the sound resources are in memory, and that
 	// it's ok to close them.
 
-	_vm->clearFxQueue();
+	_vm->_sound->clearFxQueue();
 
 	for (uint i = 0; i < _totalResFiles; i++)
 		remove(i);
@@ -803,7 +804,7 @@ void ResourceManager::killAll(bool wantInfo) {
 	// will still believe that the sound resources are in memory, and that
 	// it's ok to close them.
 
-	_vm->clearFxQueue();
+	_vm->_sound->clearFxQueue();
 
 	for (uint i = 0; i < _totalResFiles; i++) {
 		// Don't nuke the global variables or the player object!

@@ -26,26 +26,6 @@
 
 namespace Sword2 {
 
-int32 Logic::fnSendSync(int32 *params) {
-	// params:	0 sync's recipient
-	//		1 sync value
-
-	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == 0) {
-			debug(5, "%d sends sync %d to %d", _scriptVars[ID], params[1], params[0]);
-			_syncList[i].id = params[0];
-			_syncList[i].sync = params[1];
-			return IR_CONT;
-		}
-	}
-
-	// The original code didn't even check for this condition, so maybe
-	// it should be a fatal error?
-
-	warning("No free sync slot");
-	return IR_CONT;
-}
-
 /**
  * Clear any syncs registered for this id. Call this just after the id has been
  * processed. Theoretically there could be more than one sync waiting for us,
@@ -73,40 +53,6 @@ int Logic::getSync(void) {
 	}
 
 	return -1;
-}
-
-/**
- * Like getSync(), but called from scripts. Sets the RESULT variable to
- * the sync value, or 0 if none is found.
- */
-
-int32 Logic::fnGetSync(int32 *params) {
-	// params:	none
-
-	int slot = getSync();
-
-	_scriptVars[RESULT] = (slot != -1) ? _syncList[slot].sync : 0;
-	return IR_CONT;
-}
-
-/**
- * Wait for sync to happen. Sets the RESULT variable to the sync value, once
- * it has been found.
- */
-
-int32 Logic::fnWaitSync(int32 *params) {
-	// params:	none
-
-	debug(6, "fnWaitSync: %d waits", _scriptVars[ID]);
-
-	int slot = getSync();
-
-	if (slot == -1)
-		return IR_REPEAT;
-
-	debug(5, "fnWaitSync: %d got sync %d", _scriptVars[ID], _syncList[slot].sync);
-	_scriptVars[RESULT] = _syncList[slot].sync;
-	return IR_CONT;
 }
 
 } // End of namespace Sword2

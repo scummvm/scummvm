@@ -29,33 +29,6 @@
 
 namespace Sword2 {
 
-int32 Logic::fnAddMenuObject(int32 *params) {
-	// params:	0 pointer to a MenuObject structure to copy down
-
-	_vm->addMenuObject((MenuObject *) _vm->_memory->decodePtr(params[0]));
-	return IR_CONT;
-}
-
-int32 Logic::fnRefreshInventory(int32 *params) {
-	// called from 'menu_look_or_combine' script in 'menu_master' object
-	// to update the menu to display a combined object while George runs
-	// voice-over. Note that 'object_held' must be set to the graphic of
-	// the combined object
-
-	// params:	none
-
-	// can reset this now
-	_scriptVars[COMBINE_BASE] = 0;
-
-	// so that the icon in 'object_held' is coloured while the rest are
-	// grey
-	_vm->_examiningMenuIcon = true;
-	_vm->buildMenu();
-	_vm->_examiningMenuIcon = false;
-
-	return IR_CONT;
-}
-
 void Sword2Engine::addMenuObject(MenuObject *obj) {
 	assert(_totalTemp < TOTAL_engine_pockets);
 	memcpy(&_tempList[_totalTemp], obj, sizeof(MenuObject));

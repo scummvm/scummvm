@@ -28,8 +28,8 @@
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
+#include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
@@ -1029,7 +1029,6 @@ public:
 			_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, _musicSlider->getValue());
 			_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, _speechSlider->getValue());
 			_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, _fxSlider->getValue());
-			_gui->_vm->_sound->buildPanTable(_gui->_stereoReversed);
 
 			_gui->updateGraphicsLevel(_gfxSlider->getValue());
 
@@ -1515,7 +1514,6 @@ void Gui::readOptionSettings(void) {
 	_vm->_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_vm->_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_vm->_sound->muteFx(ConfMan.getBool("sfx_mute"));
-	_vm->_sound->buildPanTable(_stereoReversed);
 }
 
 void Gui::writeOptionSettings(void) {
@@ -1588,7 +1586,7 @@ void Gui::restartControl(void) {
 	// Restart the game. To do this, we must...
 
 	// Stop music instantly!
-	_vm->killMusic();
+	_vm->_sound->stopMusic();
 
 	// In case we were dead - well we're not anymore!
 	Logic::_scriptVars[DEAD] = 0;

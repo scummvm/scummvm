@@ -24,7 +24,6 @@
 #define _LOGIC
 
 #include "sword2/speech.h"
-#include "sword2/startup.h"
 
 namespace Sword2 {
 
@@ -68,7 +67,8 @@ private:
 
 	EventUnit _eventList[MAX_events];
 
-	// Stores resource id of the wav to use as lead-out from smacker
+	// Resource id of the wav to use as lead-in/lead-out from smacker
+	uint32 _smackerLeadIn;
 	uint32 _smackerLeadOut;
 
 	int32 animate(int32 *params, bool reverse);
@@ -133,26 +133,6 @@ private:
 	void formText(int32 *params);
 	bool wantSpeechForLine(uint32 wavId);
 
-	uint32 _totalStartups;
-	uint32 _totalScreenManagers;
-	uint32 _startRes;
-
-	struct StartUp {
-		char description[MAX_description];
-
-		// id of screen manager object
-		uint32 start_res_id;
-
-		// tell the manager which startup you want (if there are more
-		// than 1) (i.e more than 1 entrance to a screen and/or
-		// separate game boots)
-		uint32 key;
-	};
-
-	StartUp _startList[MAX_starts];
-
-	bool initStartMenu(void);
-
 	int16 _standbyX;	// see fnSetStandbyCoords()
 	int16 _standbyY;
 	int16 _standbyDir;
@@ -179,9 +159,6 @@ public:
 
 	// could alternately use logic->looping of course
 	bool _choosing;
-
-	void conPrintStartMenu(void);
-	void conStart(int start);
 
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 

@@ -41,6 +41,9 @@
 #include "sword2/object.h"
 #include "sword2/save_rest.h"
 
+#define	MAX_starts	100
+#define	MAX_description	100
+
 class GameDetector;
 class OSystem;
 
@@ -170,6 +173,24 @@ private:
 
 	MenuObject _masterMenuList[TOTAL_engine_pockets];
 	uint32 _totalMasters;
+
+	uint32 _totalStartups;
+	uint32 _totalScreenManagers;
+	uint32 _startRes;
+
+	struct StartUp {
+		char description[MAX_description];
+
+		// id of screen manager object
+		uint32 start_res_id;
+
+		// tell the manager which startup you want (if there are more
+		// than 1) (i.e more than 1 entrance to a screen and/or
+		// separate game boots)
+		uint32 key;
+	};
+
+	StartUp _startList[MAX_starts];
 
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
@@ -378,25 +399,6 @@ public:
 
 	void setScrolling();
 
-	// used to store id of tunes that loop, for save & restore
-	uint32 _loopingMusicId;
-
-	// to be called during system initialisation
-	void initFxQueue();
-
-	// to be called from the main loop, once per cycle
-	void processFxQueue();
-
-	// stops all fx & clears the queue - eg. when leaving a location
-	void clearFxQueue();
-
-	void pauseAllSound();
-	void unpauseAllSound();
-
-	void killMusic();
-
-	void triggerFx(uint8 j);
-
 	bool _gamePaused;
 	bool _graphicsLevelFudged;
 
@@ -410,6 +412,10 @@ public:
 	void initialiseFontResourceFlags();
 	void initialiseFontResourceFlags(uint8 language);
 
+	bool initStartMenu();
+	void registerStartPoint(int32 key, char *name);
+	void conPrintStartMenu();
+	void conStart(int start);
 
 	// Convenience alias for OSystem::getMillis().
 	// This is a bit hackish, of course :-).

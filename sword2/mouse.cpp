@@ -30,7 +30,6 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
 
@@ -199,14 +198,14 @@ void Sword2Engine::systemMenuMouse(void) {
 	// playing when returning from control panels because control panel
 	// music will overwrite it!
 
-	safe_looping_music_id = _loopingMusicId;
+	safe_looping_music_id = _sound->getLoopingMusicId();
 
 	pars[0] = 221;
 	pars[1] = FX_LOOP;
 	_logic->fnPlayMusic(pars);
 
-	// restore proper looping_music_id
-	_loopingMusicId = safe_looping_music_id;
+	// HACK: Restore proper looping_music_id
+	_sound->setLoopingMusicId(safe_looping_music_id);
 
 	_graphics->processMenu();
 
@@ -262,8 +261,8 @@ void Sword2Engine::systemMenuMouse(void) {
 	// then restart it! NB. If a game has been restored the music will be
 	// restarted twice, but this shouldn't cause any harm.
 
-	if (_loopingMusicId) {
-		pars[0] = _loopingMusicId;
+	if (_sound->getLoopingMusicId()) {
+		pars[0] = _sound->getLoopingMusicId();
 		pars[1] = FX_LOOP;
 		_logic->fnPlayMusic(pars);
 	} else
@@ -1079,252 +1078,6 @@ void Sword2Engine::monitorPlayerActivity(void) {
 		// no. of game cycles since mouse event queue last empty
 		_playerActivityDelay++;
 	}
-}
-
-int32 Logic::fnNoHuman(int32 *params) {
-	// params:	none
-
-	_vm->noHuman();
-	_vm->clearPointerText();
-
-	// must be normal mouse situation or a largely neutral situation -
-	// special menus use noHuman
-
-	// dont hide menu in conversations
-	if (_scriptVars[TALK_FLAG] == 0)
-		_vm->_graphics->hideMenu(RDMENU_BOTTOM);
-
-	if (_vm->_mouseMode == MOUSE_system_menu) {
-		// close menu
-		_vm->_mouseMode = MOUSE_normal;
-		_vm->_graphics->hideMenu(RDMENU_TOP);
-	}
-
-	return IR_CONT;
-}
-
-int32 Logic::fnAddHuman(int32 *params) {
-	// params:	none
-
-	// for logic scripts
-	_scriptVars[MOUSE_AVAILABLE] = 1;
-
-	// off
-	if (_vm->_mouseStatus) {
-		_vm->_mouseStatus = false;	// on
-		_vm->_mouseTouching = 1;	// forces engine to choose a cursor
-	}
-
-	// clear this to reset no-second-click system
-	_scriptVars[CLICKED_ID] = 0;
-
-	// this is now done outside the OBJECT_HELD check in case it's set to
-	// zero before now!
-
-	// unlock the mouse from possible large object lock situtations - see
-	// syphon in rm 3
-
-	_vm->_mouseModeLocked = false;
-
-	if (_scriptVars[OBJECT_HELD]) {
-		// was dragging something around
-		// need to clear this again
-		_scriptVars[OBJECT_HELD] = 0;
-
-		// and these may also need clearing, just in case
-		_vm->_examiningMenuIcon = false;
-		Logic::_scriptVars[COMBINE_BASE] = 0;
-
-		_vm->setLuggage(0);
-	}
-
-	// if mouse is over menu area
-	if (_vm->_mouseY > 399) {
-		if (_vm->_mouseMode != MOUSE_holding) {
-			// VITAL - reset things & rebuild the menu
-			_vm->_mouseMode = MOUSE_normal;
-			_vm->setMouse(NORMAL_MOUSE_ID);
-		} else
-			_vm->setMouse(NORMAL_MOUSE_ID);
-	}
-
-	// enabled/disabled from console; status printed with on-screen debug
-	// info
-
-	if (_vm->_debugger->_testingSnR) {
-		uint8 black[4] = {   0,  0,    0,   0 };
-		uint8 white[4] = { 255, 255, 255,   0 };
-
-		// testing logic scripts by simulating an instant Save &
-		// Restore
-
-		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
-
-		// stops all fx & clears the queue - eg. when leaving a
-		// location
-
-		_vm->clearFxQueue();
-
-		// Trash all object resources so they load in fresh & restart
-		// their logic scripts
-
-		_vm->_resman->killAllObjects(false);
-
-		_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
-	}
-
-	return IR_CONT;
-}
-
-int32 Logic::fnRegisterMouse(int32 *params) {
-	// this call would be made from an objects service script 0
-	// the object would be one with no graphic but with a mouse - i.e. a
-	// floor or one whose mouse area is manually defined rather than
-	// intended to fit sprite shape
-
-	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
-	//		  list
-
-	_vm->registerMouse((ObjectMouse *) _vm->_memory->decodePtr(params[0]));
-	return IR_CONT;
-}
-
-// use this in the object's service script prior to registering the mouse area
-// ie. before fnRegisterMouse or fnRegisterFrame
-// - best if kept at very top of service script
-
-int32 Logic::fnRegisterPointerText(int32 *params) {
-	// params:	0 local id of text line to use as pointer text
-
-	assert(_vm->_curMouse < TOTAL_mouse_list);
-
-	// current object id - used for checking pointer_text when mouse area
-	// registered (in fnRegisterMouse and fnRegisterFrame)
-
-	_vm->_mouseList[_vm->_curMouse].id = _scriptVars[ID];
-	_vm->_mouseList[_vm->_curMouse].pointer_text = params[0];
-	return IR_CONT;
-}
-
-int32 Logic::fnInitFloorMouse(int32 *params) {
-	// params:	0 pointer to object's mouse structure
-
- 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
-
-	// floor is always lowest priority
-
-	ob_mouse->x1 = 0;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
-	ob_mouse->priority = 9;
-	ob_mouse->pointer = NORMAL_MOUSE_ID;
-	return IR_CONT;
-}
-
-#define SCROLL_MOUSE_WIDTH 20
-
-int32 Logic::fnSetScrollLeftMouse(int32 *params) {
-	// params:	0 pointer to object's mouse structure
-
- 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
-
-	// Highest priority
-
-	ob_mouse->x1 = 0;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
-	ob_mouse->priority = 0;
-
-	if (_vm->_thisScreen.scroll_offset_x > 0) {
-		// not fully scrolled to the left
-		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
-	} else {
-		// so the mouse area doesn't get registered
-		ob_mouse->pointer = 0;
-	}
-
-	return IR_CONT;
-}
-
-int32 Logic::fnSetScrollRightMouse(int32 *params) {
-	// params:	0 pointer to object's mouse structure
-
-	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
-
-	// Highest priority
-
-	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + _vm->_graphics->_screenWide - SCROLL_MOUSE_WIDTH;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
-	ob_mouse->priority = 0;
-
-	if (_vm->_thisScreen.scroll_offset_x < _vm->_thisScreen.max_scroll_offset_x) {
-		// not fully scrolled to the right
-		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
-	} else {
-		// so the mouse area doesn't get registered
-		ob_mouse->pointer = 0;
-	}
-
-	return IR_CONT;
-}
-
-int32 Logic::fnSetObjectHeld(int32 *params) {
-	// params:	0 luggage icon to set
-
-	_vm->setLuggage(params[0]);
-
-	_scriptVars[OBJECT_HELD] = params[0];
-	_vm->_currentLuggageResource = params[0];
-
-	// mode locked - no menu available
-	_vm->_mouseModeLocked = true;
-	return IR_CONT;
-}
-
-// called from speech scripts to remove the chooser bar when it's not
-// appropriate to keep it displayed
-
-int32 Logic::fnRemoveChooser(int32 *params) {
-	// params:	none
-
-	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
-	return IR_CONT;
-}
-
-int32 Logic::fnCheckPlayerActivity(int32 *params) {
-	// Used to decide when to trigger music cues described as "no player
-	// activity for a while"
-
-	// params:	0 threshold delay in seconds, ie. what we want to
-	//		  check the actual delay against
-
-	uint32 threshold = params[0] * 12;	// in game cycles
-
-	// if the actual delay is at or above the given threshold
-	if (_vm->_playerActivityDelay >= threshold) {
-		// reset activity delay counter, now that we've got a
-		// positive check
-
-		_vm->_playerActivityDelay = 0;
-		_scriptVars[RESULT] = 1;
-	} else
-		_scriptVars[RESULT] = 0;
-
-	return IR_CONT;
-}
-
-int32 Logic::fnResetPlayerActivityDelay(int32 *params) {
-	// Use if you want to deliberately reset the "no player activity"
-	// counter for any reason
-
-	// params:	none
-
-	_vm->_playerActivityDelay = 0;
-	return IR_CONT;
 }
 
 } // End of namespace Sword2

@@ -122,7 +122,7 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 	_saveGameHeader.runListId = _logic->getRunList();
 	_saveGameHeader.feet_x = _thisScreen.feet_x;
 	_saveGameHeader.feet_y	= _thisScreen.feet_y;
-	_saveGameHeader.music_id = _loopingMusicId;
+	_saveGameHeader.music_id = _sound->getLoopingMusicId();
 
 	memcpy(&_saveGameHeader.player_hub, _resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), sizeof(ObjectHub));
 
@@ -334,14 +334,12 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	// Any music required will be started after we've returned from
 	// restoreControl() - see systemMenuMouse() in mouse.cpp!
 
-	_loopingMusicId = _saveGameHeader.music_id;
-
 	// Restart any looping music. Originally this was - and still is - done
 	// in systemMenuMouse(), but with ScummVM we have other ways of
 	// restoring savegames so it's easier to put it here as well.
 
-	if (_loopingMusicId) {
-		pars[0] = _loopingMusicId;
+	if (_saveGameHeader.music_id) {
+		pars[0] = _saveGameHeader.music_id;
 		pars[1] = FX_LOOP;
 		_logic->fnPlayMusic(pars);
 	} else
@@ -468,72 +466,6 @@ uint32 Sword2Engine::calcChecksum(byte *buffer, uint32 size) {
 		total += buffer[pos];
 
 	return total;
-}
-
-/**
- * Copies the 4 essential player structures into the savegame header - run
- * script 7 of player object to request this.
- *
- * Remember, we cannot simply read a compact any longer but instead must
- * request it from the object itself.
- */
-
-int32 Logic::fnPassPlayerSaveData(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 pointer to object's mega structure
-
-	// Copy from player object to savegame header
-
-	memcpy(&_vm->_saveGameHeader.logic, _vm->_memory->decodePtr(params[0]), sizeof(ObjectLogic));
-	memcpy(&_vm->_saveGameHeader.graphic, _vm->_memory->decodePtr(params[1]), sizeof(ObjectGraphic));
-	memcpy(&_vm->_saveGameHeader.mega, _vm->_memory->decodePtr(params[2]), sizeof(ObjectMega));
-
-	return IR_CONT;
-}
-
-/**
- * Reverse of fnPassPlayerSaveData() - run script 8 of player object.
- */
-
-int32 Logic::fnGetPlayerSaveData(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 pointer to object's mega structure
-
-	byte *logic_ptr = _vm->_memory->decodePtr(params[0]);
-	byte *graphic_ptr = _vm->_memory->decodePtr(params[1]);
-	byte *mega_ptr = _vm->_memory->decodePtr(params[2]);
-
-	// Copy from savegame header to player object
-
-	memcpy(logic_ptr, &_vm->_saveGameHeader.logic, sizeof(ObjectLogic));
-	memcpy(graphic_ptr, &_vm->_saveGameHeader.graphic, sizeof(ObjectGraphic));
-	memcpy(mega_ptr, &_vm->_saveGameHeader.mega, sizeof(ObjectMega));
-
- 	// Any walk-data must be cleared - the player will be set to stand if
-	// he was walking when saved.
-
-	ObjectMega *ob_mega = (ObjectMega *) mega_ptr;
-
-	if (ob_mega->currently_walking) {
-		ob_mega->currently_walking = 0;
-
-		int32 pars[3];
-
-		pars[0] = params[1];			// ob_graphic;
-		pars[1] = params[2];			// ob_mega
-		pars[2] = ob_mega->current_dir;
-
-		fnStand(pars);
-
-		// Reset looping flag (which would have been 1 during fnWalk)
-		ObjectLogic *ob_logic = (ObjectLogic *) logic_ptr;
-
-		ob_logic->looping = 0;
-	}
-
-	return IR_CONT;
 }
 
 } // End of namespace Sword2

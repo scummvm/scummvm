@@ -65,17 +65,20 @@ private:
 
 	byte *_textSurface;
 
+	PlayingSoundHandle _leadOutHandle;
+
 	static struct MovieInfo _movies[];
 
 	void openTextObject(MovieTextObject *obj);
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(AnimationState *anim, MovieTextObject *obj);
 
-	int32 playDummy(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen);
+	void playMPEG(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen);
+	void playDummy(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen);
 
 public:
 	MoviePlayer(Sword2Engine *vm);
-	int32 play(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen);
+	int32 play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes);
 };
 
 } // End of namespace Sword2

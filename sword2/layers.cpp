@@ -31,18 +31,10 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
+#include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
-
-int32 Logic::fnInitBackground(int32 *params) {
-	// this screen defines the size of the back buffer
-
-	// params:	0 res id of normal background layer - cannot be 0
-	//		1 1 yes 0 no for a new palette
-
-	return _vm->initBackground(params[0], params[1]);
-}
 
 /**
  * This function is called when entering a new room.
@@ -60,7 +52,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	_resman->passTime();
 	_resman->expireOldResources();
 
-	clearFxQueue();
+	_sound->clearFxQueue();
 	_graphics->waitForFade();
 
 	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res, buf));

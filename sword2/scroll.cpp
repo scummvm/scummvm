@@ -135,41 +135,4 @@ void Sword2Engine::setScrolling(void) {
 	}
 }
 
-/**
- * Set the special scroll offset variables
- *
- * Call when starting screens and to change the camera within screens
- *
- * call AFTER fnInitBackground() to override the defaults
- */
-
-int32 Logic::fnSetScrollCoordinate(int32 *params) {
-	// params:	0 feet_x value
-	// 		1 feet_y value
-
-  	// Called feet_x and feet_y to retain intellectual compatibility with
-	// Sword1!
-	//
-	// feet_x & feet_y refer to the physical screen coords where the
-	// system will try to maintain George's feet
-
-	_vm->_thisScreen.feet_x = params[0];
-	_vm->_thisScreen.feet_y = params[1];
-	return IR_CONT;
-}
-
-int32 Logic::fnSetScrollSpeedNormal(int32 *params) {
-	// params:	none
-
-	_vm->_scrollFraction = 16;
-	return IR_CONT;
-}
-
-int32 Logic::fnSetScrollSpeedSlow(int32 *params) {
-	// params:	none
-
-	_vm->_scrollFraction = 32;
-	return IR_CONT;
-}
-
 } // End of namespace Sword2

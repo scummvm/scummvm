@@ -39,7 +39,6 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -190,8 +189,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 }
 
 Sword2Engine::~Sword2Engine() {
-	killMusic();
-
 	delete _debugger;
 	delete _graphics;
 	delete _sound;
@@ -261,13 +258,14 @@ int Sword2Engine::init(GameDetector &detector) {
 	_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
 
+	initStartMenu();
+
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.
 	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
 	setupPersistentResources();
 	initialiseFontResourceFlags();
-	initFxQueue();
 
 	if (_features & GF_DEMO)
 		Logic::_scriptVars[DEMO] = 1;
@@ -511,7 +509,7 @@ void Sword2Engine::gameCycle() {
 		setScrolling();
 
 	mouseEngine();
-	processFxQueue();
+	_sound->processFxQueue();
 }
 
 void Sword2Engine::startGame() {
@@ -564,7 +562,7 @@ void Sword2Engine::pauseGame() {
 	if (_graphics->getFadeStatus() != RDFADE_NONE)
 		return;
 	
-	pauseAllSound();
+	_sound->pauseAllSound();
 
 	// Make the mouse cursor normal. This is the only place where we are
 	// allowed to clear the luggage this way.
@@ -599,7 +597,7 @@ void Sword2Engine::unpauseGame() {
 	if (Logic::_scriptVars[OBJECT_HELD] && _realLuggageItem)
 		setLuggage(_realLuggageItem);
 
-	unpauseAllSound();
+	_sound->unpauseAllSound();
 
 	// Put back game screen palette; see build_display.cpp
 	setFullPalette(-1);

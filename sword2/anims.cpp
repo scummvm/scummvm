@@ -34,49 +34,11 @@
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
+#include "sword2/sound.h"
 #include "sword2/driver/animation.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
-
-int32 Logic::fnAnim(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 resource id of animation file
-
-	// 0 means normal forward anim
-	return animate(params, false);
-}
-
-int32 Logic::fnReverseAnim(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 resource id of animation file
-
-	// 1 means reverse anim
-	return animate(params, true);
-}
-
-int32 Logic::fnMegaTableAnim(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 pointer to object's mega structure
-	//		3 pointer to animation table
-
-	// 0 means normal forward anim
-	return megaTableAnimate(params, false);
-}
-
-int32 Logic::fnReverseMegaTableAnim(int32 *params) {
-	// params:	0 pointer to object's logic structure
-	//		1 pointer to object's graphic structure
-	//		2 pointer to object's mega structure
-	//		3 pointer to animation table
-
-	// 1 means reverse anim
-	return megaTableAnimate(params, true);
-}
 
 int32 Logic::animate(int32 *params, bool reverse) {
 	// params:	0 pointer to object's logic structure
@@ -217,34 +179,6 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	return animate(pars, reverse);
 }
 
-int32 Logic::fnSetFrame(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	//		1 resource id of animation file
-	//		2 frame flag (0=first 1=last)
-
-	int32 res = params[1];
-	assert(res);
-
-	// open the resource (& check it's valid)
-	byte *anim_file = _vm->_resman->openResource(res);
-
-	StandardHeader *head = (StandardHeader *) anim_file;
-	assert(head->fileType == ANIMATION_FILE);
-
-	// set up pointer to the animation header
-	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
-
-	// set up anim resource in graphic object
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[0]);
-
-	ob_graphic->anim_resource = res;
-	ob_graphic->anim_pc = params[2] ? anim_head->noAnimFrames - 1 : 0;
-
-	// Close the anim file and drop out of script
-	_vm->_resman->closeResource(ob_graphic->anim_resource);
-	return IR_CONT;
-}
-
 void Logic::setSpriteStatus(uint32 sprite, uint32 type) {
 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(sprite);
 
@@ -259,80 +193,6 @@ void Logic::setSpriteShading(uint32 sprite, uint32 type) {
 	// Note that drivers may still shade mega frames automatically, even
 	// when not sent 'RDSPR_SHADOW'.
 	ob_graphic->type = (ob_graphic->type & 0x0000ffff) | type;
-}
-
-int32 Logic::fnNoSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], NO_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnBackPar0Sprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BGP0_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnBackPar1Sprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BGP1_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnBackSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], BACK_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnSortSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], SORT_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnForeSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FORE_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnForePar0Sprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FGP0_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnForePar1Sprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteStatus(params[0], FGP1_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnShadedSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteShading(params[0], SHADED_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnUnshadedSprite(int32 *params) {
-	// params:	0 pointer to object's graphic structure
-	setSpriteShading(params[0], UNSHADED_SPRITE);
-	return IR_CONT;
-}
-
-int32 Logic::fnAddSequenceText(int32 *params) {
-	// params:	0 text number
-	//		1 frame number to start the text displaying
-	//		2 frame number to stop the text dispalying
-
-	assert(_sequenceTextLines < MAX_SEQUENCE_TEXT_LINES);
-
-	_sequenceTextList[_sequenceTextLines].textNumber = params[0];
-	_sequenceTextList[_sequenceTextLines].startFrame = params[1];
-	_sequenceTextList[_sequenceTextLines].endFrame = params[2];
-	_sequenceTextLines++;
-	return IR_CONT;
 }
 
 void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
@@ -460,126 +320,6 @@ void Logic::clearSequenceSpeech(MovieTextObject *sequenceText[]) {
 
 	// IMPORTANT! Reset the line count ready for the next sequence!
 	_sequenceTextLines = 0;
-}
-
-int32 Logic::fnSmackerLeadIn(int32 *params) {
-	// params:	0 id of lead-in music
-	byte *leadIn = _vm->_resman->openResource(params[0]);
-
-	StandardHeader *header = (StandardHeader *) leadIn;
-	assert(header->fileType == WAV_FILE);
-
-	leadIn += sizeof(StandardHeader);
-
-	uint32 len = _vm->_resman->fetchLen(params[0]) - sizeof(StandardHeader);
-	uint32 rv = _vm->_sound->playFx(0, len, leadIn, 0, 0, RDSE_FXLEADIN);
-
-	if (rv)
-		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
-
-	_vm->_resman->closeResource(params[0]);
-
-	// fade out any music that is currently playing
-	fnStopMusic(NULL);
-	return IR_CONT;
-}
-
-int32 Logic::fnSmackerLeadOut(int32 *params) {
-	// params:	0 id of lead-out music
-
-	// ready for use in fnPlaySequence
-	_smackerLeadOut = params[0];
-	return IR_CONT;
-}
-
-int32 Logic::fnPlaySequence(int32 *params) {
-	// params:	0 pointer to null-terminated ascii filename
-	// 		1 number of frames in the sequence, used for PSX.
-
-	char filename[30];
-	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
-	byte *leadOut = NULL;
-	uint32 leadOutLen = 0;
-
-	// The original code had some #ifdef blocks for skipping or muting the
-	// cutscenes - fondly described as "the biggest fudge in the history
-	// of computer games" - but at the very least we want to show the
-	// cutscene subtitles, so I removed them.
-
-	debug(5, "fnPlaySequence(\"%s\");", (const char *) _vm->_memory->decodePtr(params[0]));
-
-	// add the appropriate file extension & play it
-
-	strcpy(filename, (const char *) _vm->_memory->decodePtr(params[0]));
-
-	// Write to walkthrough file (zebug0.txt)
- 	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
-
-	// now create the text sprites, if any
-
-	if (_sequenceTextLines)
-		createSequenceSpeech(sequenceSpeechArray);
-
-	// open the lead-out music resource, if there is one
-
-	if (_smackerLeadOut) {
-		leadOut = _vm->_resman->openResource(_smackerLeadOut);
-
-		StandardHeader *header = (StandardHeader *) leadOut;
-		assert(header->fileType == WAV_FILE);
-
-		leadOut += sizeof(StandardHeader);
-
-		leadOutLen = _vm->_resman->fetchLen(_smackerLeadOut) - sizeof(StandardHeader);
-	}
-
-	// don't want to carry on streaming game music when smacker starts!
-	fnStopMusic(NULL);
-
-	// pause sfx during sequence, except the one used for lead-in music
-	_vm->_sound->pauseFxForSequence();
-
-	MoviePlayer player(_vm);
- 	uint32 rv;
-
-	if (_sequenceTextLines && !_scriptVars[DEMO])
-		rv = player.play(filename, sequenceSpeechArray, leadOut, leadOutLen);
-	else
-		rv = player.play(filename, NULL, leadOut, leadOutLen);
-
-	// check the error return-value
-	if (rv)
-		debug(5, "MoviePlayer.play(\"%s\") returned 0x%.8x", filename, rv);
-
-	// unpause sound fx again, in case we're staying in same location
-	_vm->_sound->unpauseFx();
-
-	// close the lead-out music resource
-
-	if (_smackerLeadOut) {
-		_vm->_resman->closeResource(_smackerLeadOut);
-		_smackerLeadOut = 0;
-	}
-
-	// now clear the text sprites, if any
-
-	if (_sequenceTextLines)
-		clearSequenceSpeech(sequenceSpeechArray);
-
-	// now clear the screen in case the Sequence was quitted (using ESC)
-	// rather than fading down to black
-
-	_vm->_graphics->clearScene();
-
-	// zero the entire palette in case we're about to fade up!
-
-	byte pal[4 * 256];
-
-	memset(pal, 0, sizeof(pal));
-	_vm->_graphics->setPalette(0, 256, pal, RDPAL_INSTANT);
-
-	debug(5, "fnPlaySequence FINISHED");
-	return IR_CONT;
 }
 
 } // End of namespace Sword2

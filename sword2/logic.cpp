@@ -26,6 +26,7 @@
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
+#include "sword2/sound.h"
 
 #define LEVEL (_curObjectHub->logic_level)
 
@@ -36,15 +37,14 @@ namespace Sword2 {
 Logic::Logic(Sword2Engine *vm) :
 	_vm(vm), _kills(0), _smackerLeadOut(0), _sequenceTextLines(0),
 	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
-	_rightClickDelay(0), _defaultResponseId(0), _totalStartups(0),
-	_totalScreenManagers(0), _officialTextNumber(0), _speechTextBlocNo(0),
+	_rightClickDelay(0), _defaultResponseId(0), _officialTextNumber(0),
+	_speechTextBlocNo(0),
 	_choosing(false) {
 	_scriptVars = NULL;
 	memset(_subjectList, 0, sizeof(_subjectList));
 	memset(_eventList, 0, sizeof(_eventList));
 	memset(_syncList, 0, sizeof(_syncList));
 	_router = new Router(_vm);
-	initStartMenu();
 }
 
 Logic::~Logic() {
@@ -212,7 +212,7 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 
 	// Various clean-ups
 	_router->clearWalkGridList();
-	_vm->clearFxQueue();
+	_vm->_sound->clearFxQueue();
 	_router->freeAllRouteMem();
 }
 
@@ -222,34 +222,6 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 
 uint32 Logic::getRunList(void) {
 	return _currentRunList;
-}
-
-/**
- * This function is by start scripts.
- */
-
-int32 Logic::fnSetSession(int32 *params) {
-	// params:	0 id of new run list
-
-	expressChangeSession(params[0]);
-	return IR_CONT;
-}
-
-/**
- * Causes no more objects in this logic loop to be processed. The logic engine
- * will restart at the beginning of the new list. The current screen will not
- * be drawn!
- */
-
-int32 Logic::fnEndSession(int32 *params) {
-	// params:	0 id of new run-list
-
-	// terminate current and change to next run-list
-	expressChangeSession(params[0]);
-
-	// stop the script - logic engine will now go around and the new
-	// screen will begin
-	return IR_STOP;
 }
 
 /**
@@ -305,59 +277,6 @@ void Logic::examineRunList(void) {
 		_vm->_resman->closeResource(_currentRunList);
 	} else
 		Debug_Printf("No run list set\n");
-}
-
-/**
- * Reset the object and restart script 1 on level 0
- */
-
-int32 Logic::fnTotalRestart(int32 *params) {
-	// mega runs this to restart its base logic again - like being cached
-	// in again
-
-	// params:	none
-
-	LEVEL = 0;
-	_curObjectHub->script_pc[0] = 1;
-	return IR_TERMINATE;
-}
-
-/**
- * Mark this object for killing - to be killed when player leaves this screen.
- * Object reloads and script restarts upon re-entry to screen, which causes
- * this object's startup logic to be re-run every time we enter the screen.
- * "Which is nice."
- *
- * @note Call ONCE from object's logic script, i.e. in startup code, so not
- * re-called every time script frops off and restarts!
- */
-
-int32 Logic::fnAddToKillList(int32 *params) {
-	// params:	none
-
-	// DON'T EVER KILL GEORGE!
-	if (_scriptVars[ID] == CUR_PLAYER_ID)
-		return IR_CONT;
-
-	// Scan the list to see if it's already included
-
-	for (uint32 i = 0; i < _kills; i++) {
-		if (_objectKillList[i] == _scriptVars[ID])
-			return IR_CONT;
-	}
-
-	assert(_kills < OBJECT_KILL_LIST_SIZE);	// no room at the inn
-
-	_objectKillList[_kills++] = _scriptVars[ID];
-
-	// "another one bites the dust"
-
-	// When we leave the screen, all these object resources are to be
-	// cleaned out of memory and the kill list emptied by doing
-	// '_kills = 0', ensuring that all resources are in fact still in
-	// memory and, more importantly, closed before killing!
-
-	return IR_CONT;
 }
 
 void Logic::resetKillList(void) {

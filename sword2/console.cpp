@@ -26,8 +26,8 @@
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
+#include "sword2/sound.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/d_sound.h"
 
 #include "common/debugger.cpp"
 
@@ -206,7 +206,7 @@ bool Debugger::Cmd_ResList(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Starts(int argc, const char **argv) {
-	_vm->_logic->conPrintStartMenu();
+	_vm->conPrintStartMenu();
 	return true;
 }
 
@@ -218,7 +218,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_logic->conStart(atoi(argv[1]));
+	_vm->conStart(atoi(argv[1]));
 	_vm->_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
@@ -466,7 +466,7 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 32" to run the animation testing start script
-	_vm->_logic->conStart(32);
+	_vm->conStart(32);
 
 	// Same as typing "VAR 912 <value>" at the console
 	varSet(912, atoi(argv[1]));
@@ -482,7 +482,7 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	_vm->_logic->conStart(33);
+	_vm->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -501,7 +501,7 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	_vm->_logic->conStart(33);
+	_vm->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));

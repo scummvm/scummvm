@@ -30,13 +30,13 @@
 #include "sword2/memory.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
-#include "sword2/driver/d_sound.h"
+#include "sword2/sound.h"
 
-#define Debug_Printf _vm->_debugger->DebugPrintf
+#define Debug_Printf _debugger->DebugPrintf
 
 namespace Sword2 {
 
-bool Logic::initStartMenu(void) {
+bool Sword2Engine::initStartMenu() {
 	// Print out a list of all the start points available.
 	// There should be a linc produced file called startup.txt.
 	// This file should contain ascii numbers of all the resource game
@@ -49,6 +49,7 @@ bool Logic::initStartMenu(void) {
 	// ok, load in the master screen manager file
 
 	_totalStartups = 0;
+	_totalScreenManagers = 0;
 
 	if (!fp.open("startup.inf")) {
 		warning("Cannot open startup.inf - the debugger won't have a start menu");
@@ -119,12 +120,12 @@ bool Logic::initStartMenu(void) {
 		// - need to check in case un-built sections included in
 		// start list
 
-		if (_vm->_resman->checkValid(_startRes)) {
-			char *raw_script = (char *) _vm->_resman->openResource(_startRes);
+		if (_resman->checkValid(_startRes)) {
+			char *raw_script = (char *) _resman->openResource(_startRes);
 			uint32 null_pc = 0;
 
-			runScript(raw_script, raw_script, &null_pc);
-			_vm->_resman->closeResource(_startRes);
+			_logic->runScript(raw_script, raw_script, &null_pc);
+			_resman->closeResource(_startRes);
 		} else
 			warning("Start menu resource %d invalid", _startRes);
 	}
@@ -132,22 +133,16 @@ bool Logic::initStartMenu(void) {
 	return 1;
 }
 
-int32 Logic::fnRegisterStartPoint(int32 *params) {
-	// params:	0 id of startup script to call - key
-	// 		1 pointer to ascii message
-
+void Sword2Engine::registerStartPoint(int32 key, char *name) {
 	assert(_totalStartups < MAX_starts);
 
-	char *name = (char *) _vm->_memory->decodePtr(params[1]);
-
 	_startList[_totalStartups].start_res_id	= _startRes;
-	_startList[_totalStartups].key = params[0];
+	_startList[_totalStartups].key = key;
 
 	strncpy(_startList[_totalStartups].description, name, MAX_description);
 	_startList[_totalStartups].description[MAX_description - 1] = 0;
 
 	_totalStartups++;
-	return IR_CONT;
 }
 
 /**
@@ -155,7 +150,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
  * start points in the game.
  */
 
-void Logic::conPrintStartMenu(void) {
+void Sword2Engine::conPrintStartMenu() {
 	if (!_totalStartups) {
 		Debug_Printf("Sorry - no startup positions registered?\n");
 
@@ -170,7 +165,7 @@ void Logic::conPrintStartMenu(void) {
 		Debug_Printf("%d  (%s)\n", i, _startList[i].description);
 }
 
-void Logic::conStart(int start) {
+void Sword2Engine::conStart(int start) {
 	if (!_totalStartups) {
 		Debug_Printf("Sorry - there are no startups!\n");
 		return;
@@ -183,44 +178,44 @@ void Logic::conStart(int start) {
 
 	// Restarting - stop sfx, music & speech!
 
-	_vm->clearFxQueue();
-	fnStopMusic(NULL);
-	_vm->_sound->unpauseSpeech();
-	_vm->_sound->stopSpeech();
+	_sound->clearFxQueue();
+	_logic->fnStopMusic(NULL);
+	_sound->unpauseSpeech();
+	_sound->stopSpeech();
 
 	// Remove all resources from memory, including player object and global
 	// variables
 
-	_vm->_resman->removeAll();
+	_resman->removeAll();
 
 	// Reopen global variables resource and player object
-	_vm->setupPersistentResources();
+	setupPersistentResources();
 
 	// Free all the route memory blocks from previous game
-	_router->freeAllRouteMem();
+	_logic->_router->freeAllRouteMem();
 
 	// If there was speech text, kill the text block
-	if (_speechTextBlocNo) {
-		_vm->_fontRenderer->killTextBloc(_speechTextBlocNo);
-		_speechTextBlocNo = 0;
+	if (_logic->_speechTextBlocNo) {
+		_fontRenderer->killTextBloc(_logic->_speechTextBlocNo);
+		_logic->_speechTextBlocNo = 0;
 	}
 
 	// Open George
-	char *raw_data_ad = (char *) _vm->_resman->openResource(CUR_PLAYER_ID);
-	char *raw_script = (char *) _vm->_resman->openResource(_startList[start].start_res_id);
+	char *raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
+	char *raw_script = (char *) _resman->openResource(_startList[start].start_res_id);
 
 	// Denotes script to run
 	uint32 null_pc = _startList[start].key & 0xffff;
 
 	Debug_Printf("Running start %d\n", start);
-	runScript(raw_script, raw_data_ad, &null_pc);
+	_logic->runScript(raw_script, raw_data_ad, &null_pc);
 
-	_vm->_resman->closeResource(_startList[start].start_res_id);
-	_vm->_resman->closeResource(CUR_PLAYER_ID);
+	_resman->closeResource(_startList[start].start_res_id);
+	_resman->closeResource(CUR_PLAYER_ID);
 
 	// Make sure there's a mouse, in case restarting while mouse not
 	// available
-	fnAddHuman(NULL);
+	_logic->fnAddHuman(NULL);
 }
 
 } // End of namespace Sword2

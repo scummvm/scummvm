@@ -31,12 +31,25 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-// max number of fx in queue at once [DO NOT EXCEED 255]
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
+// Max number of sound fx
+#define MAXMUS 2
+
+// Max number of fx in queue at once
 #define FXQ_LENGTH 32
+
+#define BUFFER_SIZE 4096
 
 namespace Sword2 {
 
-// fx types
+enum {
+	kCLUMode = 1,
+	kMP3Mode,
+	kVorbisMode,
+	kFlacMode
+};
 
 enum {
 	// These three types correspond to types set by the scripts
@@ -47,6 +60,181 @@ enum {
 	// These are used for FX queue bookkeeping
 	FX_SPOT2	= 3,
 	FX_LOOPING	= 4
+};
+
+extern void sword2_sound_handler(void *refCon);
+
+class CLUInputStream : public AudioStream {
+private:
+	File *_file;
+	bool _firstTime;
+	uint32 _file_pos;
+	uint32 _end_pos;
+	int16 _outbuf[BUFFER_SIZE];
+	byte _inbuf[BUFFER_SIZE];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+
+	uint16 _prev;
+
+	void refill();
+
+	inline bool eosIntern() const {
+		return _pos >= _bufferEnd;
+	}
+
+public:
+	CLUInputStream(File *file, int size);
+	~CLUInputStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool endOfData() const	{ return eosIntern(); }
+	bool isStereo() const	{ return false; }
+	int getRate() const	{ return 22050; }
+};
+
+class MusicInputStream : public AudioStream {
+private:
+	int _cd;
+	uint32 _musicId;
+	AudioStream *_decoder;
+	int16 _buffer[BUFFER_SIZE];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+	bool _remove;
+	uint32 _numSamples;
+	uint32 _samplesLeft;
+	bool _looping;
+	int32 _fading;
+	int32 _fadeSamples;
+	bool _paused;
+
+	void refill();
+
+	inline bool eosIntern() const {
+		if (_looping)
+			return false;
+		return _remove || _pos >= _bufferEnd;
+	}
+
+public:
+	MusicInputStream(int cd, uint32 musicId, bool looping);
+	~MusicInputStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool endOfData() const	{ return eosIntern(); }
+	bool isStereo() const	{ return _decoder->isStereo(); }
+	int getRate() const	{ return _decoder->getRate(); }
+
+	void fadeUp();
+	void fadeDown();
+
+	bool isReady()		{ return _decoder != NULL; }
+	int32 isFading()	{ return _fading; }
+
+	bool readyToRemove();
+	int32 getTimeRemaining();
+};
+
+class Sound : public AudioStream {
+private:
+	Sword2Engine *_vm;
+
+	Common::MutexRef _mutex;
+
+	struct FxQueueEntry {
+		PlayingSoundHandle handle;	// sound handle
+		uint32 resource;		// resource id of sample
+		byte *data;			// pointer to WAV data
+		uint32 len;			// WAV data length
+		uint16 delay;			// cycles to wait before playing (or 'random chance' if FX_RANDOM)
+		uint8 volume;			// sound volume
+		int8 pan;			// sound panning
+		uint8 type;			// FX_SPOT, FX_RANDOM, FX_LOOP
+	};
+
+	FxQueueEntry _fxQueue[FXQ_LENGTH];
+
+	void triggerFx(uint8 i);
+
+	bool _reverseStereo;
+
+	bool _speechMuted;
+	bool _fxMuted;
+	bool _musicMuted;
+
+	bool _speechPaused;
+	bool _fxPaused;
+	bool _musicPaused;
+
+	int32 _loopingMusicId;
+
+	PlayingSoundHandle _soundHandleSpeech;
+	
+	MusicInputStream *_music[MAXMUS];
+	int16 *_mixBuffer;
+	int _mixBufferLen;
+
+public:
+	Sound(Sword2Engine *vm);
+	~Sound();
+
+	// AudioStream API
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const;
+	bool endOfData() const;
+	int getRate() const;
+
+	// End of AudioStream API
+
+	void clearFxQueue();
+	void processFxQueue();
+
+	void setReverseStereo(bool reverse) { _reverseStereo = reverse; }
+	bool isReverseStereo() const { return _reverseStereo; }
+
+	void muteSpeech(bool mute);
+	bool isSpeechMute() const { return _speechMuted; }
+
+	void muteFx(bool mute);
+	bool isFxMute() const { return _fxMuted; }
+
+	void muteMusic(bool mute) { _musicMuted = mute; }
+	bool isMusicMute() const { return _musicMuted; }
+
+	void setLoopingMusicId(int32 id) { _loopingMusicId = id; }
+	int32 getLoopingMusicId() const { return _loopingMusicId; }
+
+	void pauseSpeech();
+	void unpauseSpeech();
+
+	void pauseFx();
+	void unpauseFx();
+
+	void pauseMusic();
+	void unpauseMusic();
+
+	void pauseAllSound();
+	void unpauseAllSound();
+
+	void queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan);
+	int32 playFx(FxQueueEntry *fx);
+	int32 playFx(PlayingSoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType);
+	int32 stopFx(int32 i);
+	int32 setFxIdVolumePan(int32 id, int vol, int pan = -1);
+
+	int32 getSpeechStatus();
+	int32 amISpeaking();
+	int32 playCompSpeech(uint32 speechId, uint8 vol, int8 pan);
+	uint32 preFetchCompSpeech(uint32 speechId, uint16 **buf);
+	int32 stopSpeech();
+
+	int32 streamCompMusic(uint32 musicId, bool loop);
+	void stopMusic();
+	int32 musicTimeRemaining();
 };
 
 } // End of namespace Sword2
