@@ -728,31 +728,72 @@ void Scumm_v2::o2_resourceRoutines() {
 
 void Scumm_v2::o2_verbOps() {
 	int opcode = fetchScriptByte();
-	int slot, state;
+	int verb, slot, state;
 	
 	switch (opcode) {
 	case 0:		// Delete Verb
-		slot = getVarOrDirectByte(0x80);
+		verb = getVarOrDirectByte(0x80);
+		slot = getVerbSlot(verb, 0);
+
+		printf("o2_verbOps delete verb = %d, slot = %d\n", verb, slot);
+		killVerb(slot);
 		break;
 	
 	case 0xFF:	// Verb On/Off
-		slot = fetchScriptByte();
+		verb = fetchScriptByte();
 		state = fetchScriptByte();
+		slot = getVerbSlot(verb, 0);
+
+		printf("o2_verbOps Verb On/Off: verb = %d, slot = %d, state = %d\n", verb, slot, state);
+		
+		_verbs[slot].curmode = state;
+
 		break;
 	
 	default: {	// New Verb
-		int x = fetchScriptByte();
-		int y = fetchScriptByte();
-		slot = getVarOrDirectByte(0x80);
+		int x = fetchScriptByte() << 3;
+		int y = fetchScriptByte() << 3;
+		verb = getVarOrDirectByte(0x80);
 		int unk = fetchScriptByte(); // ?
 		
-		// It follows the verb name
 		printf("o2_verbOps: opcode = %d, x = %d, y = %d, slot = %d, unk = %d, name = %s\n",
-				opcode, x, y, slot, unk, _scriptPointer);
-		_scriptPointer += strlen((char *)_scriptPointer) + 1; 
+				opcode, x, y, verb, unk, _scriptPointer);
+
+		VerbSlot *vs;
+		slot = getVerbSlot(verb, 0);
+		if (slot == 0) {
+			for (slot = 1; slot < _maxVerbs; slot++) {
+				if (_verbs[slot].verbid == 0)
+					break;
+			}
+			if (slot == _maxVerbs)
+				error("Too many verbs");
+		}
+		vs = &_verbs[slot];
+		vs->verbid = verb;
+		vs->color = 2;
+		vs->hicolor = 0;
+		vs->dimcolor = 8;
+		vs->type = kTextVerbType;
+		vs->charset_nr = _string[0].t_charset;
+		vs->curmode = 1;
+		vs->saveid = 0;
+		vs->key = 0;
+		vs->center = 0;
+		vs->imgindex = 0;
+		
+		vs->x = x;
+		vs->y = y;
+
+		// It follows the verb name
+		loadPtrToResource(rtVerb, slot, NULL);
 		}
 		break;
 	}
+
+	// FIXME - hack!
+	drawVerb(slot, 0);
+	verbMouseOver(0);
 }
 
 void Scumm_v2::o2_doSentence() {

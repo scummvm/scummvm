@@ -35,7 +35,6 @@ public:
 	int _top;
 	int _left, _startLeft;
 	int _right;
-	int _nbChars;
 
 protected:
 	byte _color;
@@ -98,16 +97,27 @@ public:
 	void printChar(int chr);
 };
 
-class CharsetRendererOld256 : public CharsetRendererCommon {
+class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
+	int _nbChars;
+	byte *_widthTable;
+
 	int getCharWidth(byte chr);
 
 public:
-	CharsetRendererOld256(Scumm *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererV3(Scumm *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
-	
+	void setCurID(byte id);
 	void setColor(byte color);
+};
+
+class CharsetRendererV2 : public CharsetRendererV3 {
+public:
+	CharsetRendererV2(Scumm *vm) : CharsetRendererV3(vm) {}
+	
+	void setCurID(byte id);
+	int getFontHeight() { return 8; }
 };
 
 class CharsetRendererNut : public CharsetRenderer {

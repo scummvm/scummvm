@@ -664,8 +664,10 @@ void Scumm::scummInit() {
 		setupEGAPalette();
 	}
 	
-	if (_features & GF_AFTER_V3)
-		_charset = new CharsetRendererOld256(this);
+	if (_features & GF_AFTER_V2)
+		_charset = new CharsetRendererV2(this);
+	else if (_features & GF_AFTER_V3)
+		_charset = new CharsetRendererV3(this);
 	else if (_features & GF_AFTER_V8)
 		_charset = new CharsetRendererNut(this);
 	else
