@@ -116,7 +116,6 @@ int Scumm::checkMouseOver(int x, int y)
 void Scumm::drawVerb(int vrb, int mode)
 {
 	VerbSlot *vs;
-	byte color;
 	byte tmp;
 
 	if (!vrb)
@@ -136,13 +135,13 @@ void Scumm::drawVerb(int vrb, int mode)
 		string[4].ypos = vs->y;
 		string[4].right = 319;
 		string[4].center = vs->center;
-		if (mode && vs->hicolor)
-			color = vs->hicolor;
-		else
-			color = vs->color;
-		string[4].color = color;
+
 		if (vs->curmode == 2)
 			string[4].color = vs->dimcolor;
+		else if (mode && vs->hicolor)
+			string[4].color = vs->hicolor;
+		else
+			string[4].color = vs->color;
 
 		// FIXME For the future: Indy3 and under inv scrolling
 		/*
