@@ -1375,6 +1375,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				}
 				break;
 			case AKC_C021:
+			case AKC_C022:
 			case AKC_C045:
 			case AKC_C046:
 			case AKC_C047:
@@ -1516,6 +1517,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			break;
 
 		case AKC_C021:
+		case AKC_C022:
 			needRedraw = 1;
 			break;
 
