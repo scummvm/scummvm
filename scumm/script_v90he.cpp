@@ -836,6 +836,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			pop();
 			pop();
 		}
+		push(0);
 		break;
 	case 22:
 		spriteId = pop();
@@ -896,6 +897,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 95:
 		getStackList(args, ARRAYSIZE(args));
 		pop();
+		push(0);
 		break;
 	case 109:
 		// dummy case
@@ -920,7 +922,6 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	default:
 		error("o90_getSpriteInfo: Unknown case %d", subOp);
 	}
-	push(0);
 }
 
 void ScummEngine_v90he::o90_setSpriteInfo() {
