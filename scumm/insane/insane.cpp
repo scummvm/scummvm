@@ -39,7 +39,6 @@
 #include "scumm/insane/insane.h"
 
 // TODO (in no particular order):
-// o Road signs are not aligned properly
 // o SAUD complaining again
 // o Insane::postCase16() has workaround. Cockpit is not transparent so it is
 //   disabled now
