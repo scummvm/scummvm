@@ -599,7 +599,7 @@ void ResourceManager::readCluIndex(uint16 fileNum, File *file) {
 			error("unable to read index table from file %s\n", _resFiles[fileNum].fileName);
 #ifdef SCUMM_BIG_ENDIAN
 		for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
-			_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_UINT32(_resFiles[fileNum].entryTab[tabCnt]);
+			_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
 #endif
 		file->decRef();
 	}
