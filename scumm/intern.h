@@ -326,8 +326,6 @@ protected:
 	
 	const OpcodeEntryV6 *_opcodesV6;
 
-	File _hFileTable[17];
-	
 public:
 	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs) {
 		VAR_VIDEONAME = 0xFF;
@@ -364,9 +362,6 @@ protected:
 	void writeArray(int array, int index, int base, int value);
 
 	void shuffleArray(int num, int minIdx, int maxIdx);
-	void unknownEA_func(int a, int b, int c, int d, int e);
-	int readFileToArray(int slot, int32 size);
-	void writeFileFromArray(int slot, int resID);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -522,23 +517,12 @@ protected:
 	void o6_bor();
 	void o6_band();
 	void o6_stopTalking();
-	void o6_openFile();
-	void o6_closeFile();
-	void o6_deleteFile();
-	void o6_readFile();
-	void o6_rename();
-	void o6_writeFile();
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
-	void o6_unknownE0();
 	void o6_unknownE1();
 	void o6_unknownE4();
-	void o6_localizeArray();
 	void o6_shuffle();
-	void o6_unknownFA();
-	void o6_unknownEA();
-	void o6_readINI();
 
 	byte VAR_VIDEONAME;
 	byte VAR_RANDOM_NR;
@@ -582,6 +566,8 @@ protected:
 	/* Version 6 script opcodes */
 	void o6_drawBlastObject();
 	void o6_setBlastObjectWindow();
+	void o6_setState();
+	void o6_startSound();
 	void o6_roomOps();
 	void o6_actorOps();
 	void o6_verbOps();

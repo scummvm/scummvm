@@ -382,6 +382,29 @@ const char *ScummEngine_v6he::getOpcodeDesc(byte i) {
 	return _opcodesV6he[i].desc;
 }
 
+void ScummEngine_v6he::o6_setState() {
+	int state = pop();
+	int obj = pop();
+
+	if (state & 0x8000) {
+		state = state & 0x7F00;
+		putState(obj, state);
+		return;
+	}
+
+	putState(obj, state);
+	markObjectRectAsDirty(obj);
+	if (_BgNeedsRedraw)
+		clearDrawObjectQueue();
+}
+
+void ScummEngine_v6he::o6_startSound() {
+	if (_gameId != GID_PUTTDEMO)
+		pop(); // offset which seems to always be zero
+
+	_sound->addSoundToQueue(pop());
+}
+
 void ScummEngine_v6he::o6_roomOps() {
 	int a, b, c, d, e;
 	byte op;
@@ -437,8 +460,6 @@ void ScummEngine_v6he::o6_roomOps() {
 		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
-		if (_gameId == GID_TENTACLE)
-			_saveSound = (_saveLoadSlot != 0);
 		break;
 
 	case 181:		// SO_ROOM_FADE
@@ -494,17 +515,7 @@ void ScummEngine_v6he::o6_roomOps() {
 
 	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-
-		// This opcode is used when turning off noir mode in Sam & Max,
-		// but since our implementation of this feature doesn't change
-		// the original palette there's no need to reload it. Doing it
-		// this way, we avoid some graphics glitches that the original
-		// interpreter had.
-
-		if (_gameId == GID_SAMNMAX && vm.slot[_currentScript].number == 64)
-			setDirtyColors(0, 255);
-		else
-			setPalette(a);
+		setPalette(a);
 		break;
 	case 220:
 		a = pop();
@@ -617,19 +628,13 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 95:		// SO_IGNORE_BOXES
 		a->ignoreBoxes = 1;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->ignoreBoxes = 0;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
@@ -811,7 +816,7 @@ void ScummEngine_v6he::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
-		if (a->isInCurrentRoom() && a->moving)
+		if (a->moving)
 			break;
 		return;
 	case 169:		// SO_WAIT_FOR_MESSAGE Wait for message
@@ -819,14 +824,8 @@ void ScummEngine_v6he::o6_wait() {
 			break;
 		return;
 	case 170:		// SO_WAIT_FOR_CAMERA Wait for camera
-		if (_version >= 7) {
-			if (camera._dest != camera._cur)
-				break;
-		} else {
-			if (camera._cur.x / 8 != camera._dest.x / 8)
-				break;
-		}
-
+		if (camera._cur.x / 8 != camera._dest.x / 8)
+			break;
 		return;
 	case 171:		// SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {

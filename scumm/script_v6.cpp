@@ -320,18 +320,18 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6_closeFile),
-		OPCODE(o6_openFile),
-		OPCODE(o6_readFile),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* DC */
-		OPCODE(o6_writeFile),
+		OPCODE(o6_invalid),
 		OPCODE(o6_findAllObjects),
-		OPCODE(o6_deleteFile),
-		OPCODE(o6_rename),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* E0 */
-		OPCODE(o6_unknownE0),
+		OPCODE(o6_invalid),
 		OPCODE(o6_unknownE1),
-		OPCODE(o6_localizeArray),
+		OPCODE(o6_invalid),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_unknownE4),
@@ -341,7 +341,7 @@ void ScummEngine_v6::setupOpcodes() {
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownEA),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* EC */
 		OPCODE(o6_getActorLayer),
@@ -352,7 +352,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_readINI),
+		OPCODE(o6_invalid),
 		/* F4 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -361,7 +361,7 @@ void ScummEngine_v6::setupOpcodes() {
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownFA),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* FC */
 		OPCODE(o6_invalid),
@@ -1011,12 +1011,6 @@ void ScummEngine_v6::o6_setState() {
 	int state = pop();
 	int obj = pop();
 
-	if ((_features & GF_HUMONGOUS) && (state & 0x8000)) {
-		state = state & 0x7F00;
-		putState(obj, state);
-		return;
-	}
-
 	putState(obj, state);
 	markObjectRectAsDirty(obj);
 	if (_BgNeedsRedraw)
@@ -1064,9 +1058,6 @@ void ScummEngine_v6::o6_getOwner() {
 }
 
 void ScummEngine_v6::o6_startSound() {
-	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
-		pop(); // offset which seems to always be zero
-
 	if (_features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop());
 	else
@@ -1838,10 +1829,7 @@ void ScummEngine_v6::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
-			a->remapActorPaletteColor(i, j);
-		else
-			a->setPalette(i, j);
+		a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
@@ -1987,8 +1975,6 @@ void ScummEngine_v6::o6_verbOps() {
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
 			vs->type = kImageVerbType;
-			if (_features & GF_HUMONGOUS)
-				vs->imgindex = a;
 		}
 		break;
 	case 125:		// SO_VERB_NAME
@@ -2013,8 +1999,6 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->curmode = 0;
 		break;
 	case 131:		// SO_VERB_DELETE
-		if (_features & GF_HUMONGOUS)
-			slot = getVerbSlot(pop(), 0);
 		killVerb(slot);
 		break;
 	case 132:		// SO_VERB_NEW
@@ -2446,8 +2430,6 @@ void ScummEngine_v6::o6_dimArray() {
 
 void ScummEngine_v6::o6_dummy() {
 	/* nothing */
-	if (_features & GF_HUMONGOUS)
-		stopObjectCode();
 }
 
 void ScummEngine_v6::o6_dim2dimArray() {
@@ -2986,27 +2968,8 @@ void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
 	
 	// dummy opcode in tentacle
-	if (_gameId == GID_TENTACLE)
+	if (_version == 6)
 		return;
-
-	// V6 version
-	if (_version == 6) {
-		state = pop();
-		if (state == 0) {
-			state = 1;
-		}
-		y = pop();
-		x = pop();
-		object = pop();
-		int objnum = getObjectIndex(object);
-		if (objnum == -1)
-			return;
-		_objs[objnum].x_pos = x * 8;
-		_objs[objnum].y_pos = y * 8;
-		putState(object, state);
-		drawObject(objnum, 0);
-		return;	
-	}
 
 	// V7 version
 	state = pop();
@@ -3043,153 +3006,6 @@ void ScummEngine_v6::o6_stopTalking() {
 	stopTalk();
 }
 
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_openFile() {
-	int mode, len, slot, l, r;
-	byte filename[100];
-
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-	
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-	
-	mode = pop();
-	slot = -1;
-	for (l = 0; l < 17; l++) {
-		if (_hFileTable[l].isOpen() == false) {
-			slot = l;
-			break;
-		}
-	}
-
-	if (slot != -1) {
-		if (mode == 1)
-			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileReadMode);
-		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileWriteMode);
-		else
-			error("o6_openFile(): wrong open file mode");
-
-		warning("%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
-	}
-	push(slot);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_closeFile() {
-	int slot = pop();
-	_hFileTable[slot].close();
-	warning("o6_closeFile(%d)", slot);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_deleteFile() {
-	int len, r;
-	byte filename[100];
-
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	warning("stub o6_deleteFile(\"%s\")", filename + r);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_rename() {
-	int len, r1, r2;
-	byte filename[100],filename2[100];
-
-	_msgPtrToAdd = filename;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-
-	for (r1 = strlen((char*)filename); r1 != 0; r1--) {
-		if (filename[r1 - 1] == '\\')
-			break;
-	}
-
-	_msgPtrToAdd = filename2;
-	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-
-	for (r2 = strlen((char*)filename2); r2 != 0; r2--) {
-		if (filename2[r2 - 1] == '\\')
-			break;
-	}
-
-	warning("stub o6_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
-}
-
-int ScummEngine_v6::readFileToArray(int slot, int32 size) {
-	if (size == 0)
-		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
-	writeVar(0, 0);
-	defineArray(0, 3, 0, size);
-	byte *ptr = getResourceAddress(rtString, readVar(0));
-	_hFileTable[slot].read(ptr, size);
-	return readVar(0);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_readFile() {
-	int32 size = pop();
-	int slot = pop();
-
-	if (size == -2) {
-		push(_hFileTable[slot].readUint16LE());
-	} else if (size == -1) {
-		push(_hFileTable[slot].readByte());
-	} else {
-		push(readFileToArray(slot, size));
-	}
-	warning("o6_readFile(%d, %d)", slot, size);
-}
-
-void ScummEngine_v6::writeFileFromArray(int slot, int resID) {
-	byte *ptr = getResourceAddress(rtString, resID);
-	// FIXME: hack for proper size: / 2 - 5
-	int32 size = getResourceSize(rtString, resID) / 2 - 5;
-	_hFileTable[slot].write(ptr, size);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_writeFile() {
-	int32 size = pop();
-	int16 resID = pop();
-	int slot = pop();
-
-	if (size == -2) {
-		_hFileTable[slot].writeUint16LE(resID);
-	} else if (size == -1) {
-		_hFileTable[slot].writeByte(resID);
-	} else {
-		writeFileFromArray(slot, resID);
-	}
-	warning("o6_writeFile(%d, %d)", slot, resID);
-}
-
-// Humongous Entertainment games only
 void ScummEngine_v6::o6_findAllObjects() {
 	int a = pop();
 	int i = 1;
@@ -3326,85 +3142,8 @@ void ScummEngine_v6::o6_unknownE1() {
 	push(area);
 }
 
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_unknownE0() {
-	int a = fetchScriptByte();
-	a -= 222;
-	if (a != 0) {
-		a -= 2;
-		if (a != 0) 
-			return;
-		warning("o6_unknownE0(%d) stub", pop());
-	} else {
-		warning("o6_uknownE0, sound volume %d stub", pop());
-	}
-}
-
-// Humongous Entertainment games only
 void ScummEngine_v6::o6_unknownE4() {
 	warning("o6_unknownE4(%d) stub", pop());
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_unknownFA() {
-	int len, a = fetchScriptByte();
-	
-	len = resStrLen(_scriptPointer);
-	warning("stub o6_unknownFA(%d, \"%s\")", a, _scriptPointer);
-	_scriptPointer += len + 1;
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_unknownEA() {
-	int edi, esi, eax;
-	edi = pop();
-	esi = pop();
-
-	if (edi ==  0) {
-		eax = esi;
-		esi = edi;
-		edi = eax;
-	}
-
-	eax = fetchScriptByte();
-	switch (eax) {
-	case 199:
-		unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
-		break;
-	case 202:
-		unknownEA_func(3, esi, edi, fetchScriptWord(), eax);
-		break;
-	default:
-		break;
-	}
-}
-
-void ScummEngine_v6::unknownEA_func(int a, int b, int c, int d, int e) {
-	// Used in mini game at Cosmic Dust Diner in puttmoon
-	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_readINI() {
-	int len;
-
-	len = resStrLen(_scriptPointer);
-	warning("stub o6_readINI(\"%s\")", _scriptPointer);
-	_scriptPointer += len + 1;
-	pop();
-	push(0);
-	
-}
-
-// Humongous Entertainment games only
-void ScummEngine_v6::o6_localizeArray() {
-	int stringID = pop();
-
-	if (stringID < _numArray) {
-		_baseArrays[stringID][0] = (byte)_currentScript;
-	} else {
-		warning("o6_localizeArray(%d): too big scriptID", stringID);
-	}
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
