@@ -197,56 +197,69 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 		return;
 	}
 
-	byte * src = (byte*)(_dataSrc + _offsets[c] + 14);
-	byte * dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
-	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
-					+ (y * _vm->_realWidth + x) / 8 + _vm->_screenStartStrip;
-	byte maskmask;
-	int maskpos;
+	const uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
+	const int32 width = READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
+	const int32 height = READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
 
-	uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
-
+	byte *src = (byte*)(_dataSrc + _offsets[c] + 14);
 	decodeCodec44(_tmpCodecBuffer, src, length);
-	src = _tmpCodecBuffer;
-
-	int32 width = READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
-	int32 height = READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
 	
-	for (int32 ty = 0; ty < height; ty++) {
-		maskmask = revBitMask[x & 7];
-		maskpos = 0;
-		for (int32 tx = 0; tx < width; tx++) {
-			byte pixel = *src++;
+	// HACK: we draw the character a total of 7 times: 6 times shifted
+	// and in black for the shadow, and once in the right color and position.
+	// This way we achieve the exact look as the original CMI had. However,
+	// the question remains whether they did it this way, too, or if there is
+	// some "font shadow" resource we don't know yet.
+	// One problem remains: the fonts on the save/load screen don't have a
+	// shadow. So how do we know whether to draw text with or without shadow?
+	
+	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
+	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
+	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
+	
+	for (int i = 0; i < 7; i++) {
+		x += offsetX[i];
+		y += offsetY[i];
+		color = cTable[i];
+	
+		byte *dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
+		byte *mask = _vm->getResourceAddress(rtBuffer, 9)
+						+ (y * _vm->_realWidth + x) / 8 + _vm->_screenStartStrip;
+		byte maskmask;
+		int maskpos;
+	
+		src = _tmpCodecBuffer;
+	
+		for (int32 ty = 0; ty < height; ty++) {
+			maskmask = revBitMask[x & 7];
+			maskpos = 0;
+			for (int32 tx = 0; tx < width; tx++) {
+				byte pixel = *src++;
 #if 1
-			// FIXME: This way, at least the actor speech colors are done right.
-			// However, we still don't draw any "shadows" behind the text, and indeed
-			// the character data doesn't seem to contain it. So how does CMI draw the
-			// font shadows? Either they are stored seperatly and we have to render them
-			// in addition to the normal font. Or maybe the created the shadows dynamically
-			// on the fly: if we draw the character several times in black, moved a bit
-			// each time, that would mostly create the shadow effect. But why would they
-			// do this, as it would increase the char drawing time by factor 5-6 ? And in
-			// fact, even then the shadow would not be 100% right.
-			if (pixel != 0) {
-				mask[maskpos] |= maskmask;
-				dst[tx] = color;
-			}
+				if (pixel != 0) {
+					dst[tx] = color;
+					mask[maskpos] |= maskmask;
+				}
 #else
-			if (pixel != 0) {
-				if (pixel == 0x01)
-					pixel = (color == 0) ? 0xf : color;
-				if (pixel == 0xff)
-					pixel = 0x0;
-				dst[tx] = pixel;
-			}
+				if (pixel != 0) {
+					if (pixel == 0x01)
+						pixel = (color == 0) ? 0xf : color;
+					if (pixel == 0xff)
+						pixel = 0x0;
+					dst[tx] = pixel;
+					mask[maskpos] |= maskmask;
+				}
 #endif
-			maskmask >>= 1;
-			if (maskmask == 0) {
-				maskmask = 0x80;
-				maskpos++;
+				maskmask >>= 1;
+				if (maskmask == 0) {
+					maskmask = 0x80;
+					maskpos++;
+				}
 			}
+			dst += _vm->_realWidth;
+			mask += _vm->gdi._numStrips;
 		}
-		dst += _vm->_realWidth;
-		mask += _vm->gdi._numStrips;
+	
+		x -= offsetX[i];
+		y -= offsetY[i];
 	}
 }
