@@ -63,6 +63,18 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 	return new_thread;
 }
 
+void Script::wakeUpActorThread(int waitType, void *threadObj) {
+	SCRIPT_THREAD *thread;
+	ScriptThreadList::iterator threadIterator;
+
+	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
+		thread = threadIterator.operator->();
+		if ((thread->flags & kTFlagWaiting) && (thread->waitType == waitType) && (thread->threadObj == threadObj)) {
+			thread->flags &= ~kTFlagWaiting;
+		}
+	}
+}
+
 void Script::wakeUpThreads(int waitType) {
 	SCRIPT_THREAD *thread;
 	ScriptThreadList::iterator threadIterator;
@@ -109,15 +121,26 @@ int Script::executeThreads(uint msec) {
 			continue;
 		}
 
-		if ((thread->flags & kTFlagWaiting) && (thread->waitType == kWaitTypeDelay)) {
-			if (thread->sleepTime < msec) {
-				thread->sleepTime = 0;
-			} else {
-				thread->sleepTime -= msec;
-			}
+		if (thread->flags & kTFlagWaiting) {
+			
+			if (thread->waitType == kWaitTypeDelay) {
+				if (thread->sleepTime < msec) {
+					thread->sleepTime = 0;
+				} else {
+					thread->sleepTime -= msec;
+				}
 
-			if (thread->sleepTime == 0)
-				thread->flags &= ~kTFlagWaiting;			
+				if (thread->sleepTime == 0)
+					thread->flags &= ~kTFlagWaiting;			
+			} else {
+				if (thread->waitType == kWaitTypeWalk) {
+					ActorData *actor;
+					actor = (ActorData *)thread->threadObj;
+					if (actor->currentAction == kActionWait) {
+						thread->flags &= ~kTFlagWaiting;			
+					}
+				}
+			}
 		}
 
 		if (!(thread->flags & kTFlagWaiting))

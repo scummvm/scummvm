@@ -112,6 +112,7 @@ enum CycleFlags {
 struct SCRIPT_THREAD {
 	int flags;				// ThreadFlags
 	int waitType;			// ThreadWaitTypes
+	void *threadObj;		// which object we're handling
 
 	uint sleepTime;
 	int ep_num; // Entrypoint number
@@ -262,6 +263,7 @@ public:
 	void SThreadCompleteThread(void);
 	int SThreadDestroy(SCRIPT_THREAD *thread);
 
+	void wakeUpActorThread(int waitType, void *threadObj);
 	void wakeUpThreads(int waitType);
 	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
@@ -310,7 +312,7 @@ private:
 	int SF_startAnim(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
 	int SF_enableZone(SCRIPTFUNC_PARAMS);
-	int SF_setActorState(SCRIPTFUNC_PARAMS);
+	int sfSetActorState(SCRIPTFUNC_PARAMS);
 	int scriptMoveTo(SCRIPTFUNC_PARAMS);
 	int SF_sceneEq(SCRIPTFUNC_PARAMS);
 	int SF_dropObject(SCRIPTFUNC_PARAMS);

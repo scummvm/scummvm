@@ -74,7 +74,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_startAnim),
 		OPCODE(SF_actorWalkToAsync),
 		OPCODE(SF_enableZone),
-		OPCODE(SF_setActorState),
+		OPCODE(sfSetActorState),
 		OPCODE(scriptMoveTo),
 		OPCODE(SF_sceneEq),
 		OPCODE(SF_dropObject),
@@ -247,6 +247,7 @@ int Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 
 	actor = _vm->_actor->getActor(actorId);
 	actor->facingDirection = actor->actionDirection = actorDirection;
+	actor->targetObject = ID_NOTHING;
 
 	return SUCCESS;
 }
@@ -507,11 +508,24 @@ int Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #29 (0x1D)
-int Script::SF_setActorState(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param1 = thread->pop();
-	ScriptDataWord param2 = thread->pop();
+// Param1: actor id
+// Param2: current action
+int Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
+	uint16 actorId;
+	int currentAction;
+	ActorData *actor;
 
-	debug(1, "stub: SF_setActorState(%d, %d)", param1, param2);
+	actorId = getSWord(thread->pop());
+	currentAction = getSWord(thread->pop());
+
+	actor = _vm->_actor->getActor(actorId);
+
+	if ((currentAction >= kActionWalkToPoint) && (currentAction <= kActionWalkToPoint)) {
+		wakeUpActorThread(kWaitTypeWalk, actor);
+	}
+	actor->currentAction = currentAction;
+	actor->actorFlags &= ~kActorBackwards;
+
 	return SUCCESS;
 }
 
@@ -742,8 +756,11 @@ int Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 
 	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
-	if (frameRange->frameCount <= frameOffset)
-		error("Wrong frameOffset 0x%X", frameOffset);
+	if (frameRange->frameCount <= frameOffset) {
+	//	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
+
+		warning("Wrong frameOffset 0x%X", frameOffset);
+	}
 	actor->frameNumber = frameRange->frameIndex + frameOffset;
 
 	if (actor->currentAction != kActionFall) {
@@ -839,6 +856,7 @@ int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
 	actor->facingDirection = actor->actionDirection = actorDirection;
+
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 	

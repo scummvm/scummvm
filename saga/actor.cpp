@@ -157,7 +157,9 @@ bool Actor::loadActorResources(ActorData * actor) {
 		for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 			// Load all four orientations
 			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
-			framesPointer[i].directions[orient].frameCount = readS.readUint16();
+			framesPointer[i].directions[orient].frameCount = readS.readSint16();
+			if (framesPointer[i].directions[orient].frameCount < 0)
+				warning("frameCount < 0", framesPointer[i].directions[orient].frameCount);
 			if (framesPointer[i].directions[orient].frameIndex > lastFrame) {
 				lastFrame = framesPointer[i].directions[orient].frameIndex;
 			}
@@ -228,6 +230,7 @@ void Actor::updateActorsScene() {
 
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	ActorData *actor;
+	int fourDirection;
 
 	actor = getActor(actorId);
 	if (actor->disabled)
@@ -239,7 +242,8 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if ((actor->facingDirection < kDirUp) || (actor->facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->facingDirection, actorId);
 
-	return &actor->frames[frameType].directions[actor->facingDirection];
+	fourDirection = ActorDirectectionsLUT[actor->facingDirection];
+	return &actor->frames[frameType].directions[fourDirection];
 }
 
 void Actor::handleSpeech(int msec) {
