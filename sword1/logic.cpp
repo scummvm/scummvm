@@ -1520,7 +1520,7 @@ int SwordLogic::fnStopFx(BsObject *cpt, int32 id, int32 fxNo, int32 b, int32 c, 
 
 int SwordLogic::fnPlayMusic(BsObject *cpt, int32 id, int32 tuneId, int32 loopFlag, int32 c, int32 d, int32 z, int32 x) {
 	if (tuneId == 153)
-		return ;
+		return SCRIPT_CONT;
 	if (loopFlag == LOOPED)
 		_scriptVars[CURRENT_MUSIC] = tuneId; // so it gets restarted when saving & reloading
 	else
