@@ -2528,7 +2528,7 @@ void SimonState::o_wait_for_vga(uint a) {
 			processSpecialKeys();
 		}
 
-		delay(10);
+		delay(1);
 
 		if (_game & GF_SIMON2) {
 			if (_timer_1 >= 1000) {
@@ -5037,16 +5037,17 @@ bool SimonState::load_game(uint slot) {
 	return true;
 }
 
-void SimonState::midi_play(uint music) {
-	// FIXME What exactly should this function do?
-	if (music != 0) {
-		//_midi_cur_song_ptr = ((arg_0 & 0xFFFF) << 4) + midi_songs;
+void SimonState::midi_play(uint a) {
+		if (a == 999)
+			return;
+
 		if (_vc72_var1 == 999) {
-			//midi.initialize();
+			if (_game & GF_WIN) {	
+				midi.playMultipleSMF (_game_file);
+			} else {
+				midi.playXMIDI (_game_file);
+			}
 		}
-		//_midi_var11 = 0;
-		//_midi_var12 = 1;
-	}
 }
 
 
@@ -5057,11 +5058,6 @@ void SimonState::playMusic(uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		if (_game & GF_WIN) {	
-			midi.playMultipleSMF (_game_file);
-		} else {
-			midi.playXMIDI (_game_file);
-		}
 		_last_music_played = music;
 		_vc72_var1 = 999;
 		_vc70_var1 = 0xFFFF;
