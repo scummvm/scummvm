@@ -47,7 +47,13 @@ extern void save_key_mapping();
 extern void load_key_mapping();
 #endif
 
-using namespace GUI;
+using GUI::CommandSender;
+using GUI::StaticTextWidget;
+using GUI::kButtonWidth;
+using GUI::kCloseCmd;
+using GUI::kTextAlignCenter;
+using GUI::kTextAlignLeft;
+using GUI::WIDGET_ENABLED;
 
 namespace Scumm {
 
@@ -191,7 +197,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-class SaveLoadChooser : public ChooserDialog {
+class SaveLoadChooser : public GUI::ChooserDialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
@@ -208,7 +214,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	: ChooserDialog(title, buttonLabel, 182), _saveMode(saveMode) {
 
 	_list->setEditable(saveMode);
-	_list->setNumberingMode(saveMode ? kListNumberingOne : kListNumberingZero);
+	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 }
 
 const Common::String &SaveLoadChooser::getResultString() const {
@@ -218,8 +224,8 @@ const Common::String &SaveLoadChooser::getResultString() const {
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int selItem = _list->getSelected();
 	switch (cmd) {
-	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
 			if (_saveMode || !getResultString().isEmpty()) {
 				setResult(selItem);
@@ -227,7 +233,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 			}
 		}
 		break;
-	case kListSelectionChangedCmd:
+	case GUI::kListSelectionChangedCmd:
 		if (_saveMode) {
 			_list->startEditMode();
 		}
@@ -273,7 +279,7 @@ enum {
 };
 
 #define addBigButton(label, cmd, hotkey) \
-	new ButtonWidget(this, x, y, kBigButtonWidth, 16, label, cmd, hotkey); y += kRowHeight
+	new GUI::ButtonWidget(this, x, y, kBigButtonWidth, 16, label, cmd, hotkey); y += kRowHeight
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, (320 - kMainMenuWidth) / 2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
@@ -299,7 +305,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	//
 	// Create the sub dialog(s)
 	//
-	_aboutDialog = new AboutDialog();
+	_aboutDialog = new GUI::AboutDialog();
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
@@ -431,7 +437,7 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 	//
 	// Some misc options
 	//
-	subtitlesCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
+	subtitlesCheckbox = new GUI::CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
 
 	//
 	// Create the sub dialog(s)
