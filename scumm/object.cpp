@@ -445,12 +445,12 @@ void Scumm::loadRoomObjects()
 			_objs[i].obj_nr = 0;
 			_objs[i].fl_object_index = 0;
 		} else {
-                        // Nuke all unlocked flObjects
-                        if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
-                                nukeResource(rtFlObject, _objs[i].fl_object_index);
-                                _objs[i].obj_nr = 0;
-                                _objs[i].fl_object_index = 0;
-                        } 
+			// Nuke all unlocked flObjects
+			if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
+				nukeResource(rtFlObject, _objs[i].fl_object_index);
+				_objs[i].obj_nr = 0;
+				_objs[i].fl_object_index = 0;
+			} 
 		}
 	}
 
@@ -607,7 +607,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr)
 
 		od->obj_nr = READ_LE_UINT16(ptr + 6);	// ok
 
-		od->width = *(ptr + 11) << 3;	// ok   
+		od->width = *(ptr + 11) << 3;	// ok
 		od->x_pos = *(ptr + 9) << 3;	// ok
 
 		if (*(ptr + 10) & 0x80) {
@@ -1630,8 +1630,8 @@ int Scumm::findLocalObjectSlot()
 {
 	int i;
 
-        for (i = 1; i < _numLocalObjects; i++) {
-                if (!_objs[i].obj_nr)
+	for (i = 1; i < _numLocalObjects; i++) {
+		if (!_objs[i].obj_nr)
 			return i;
 	}
 
