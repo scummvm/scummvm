@@ -32,6 +32,8 @@ protected:
 	bool _loaded;
 	int _nbChars;
 	struct {
+		int xoffs;
+		int yoffs;
 		int width;
 		int height;
 		byte *src;
@@ -39,15 +41,17 @@ protected:
 
 	void decodeCodec44(byte *dst, const byte *src, uint32 length);
 
-	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
 	void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
+	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
 
 public:
 	NutRenderer(Scumm *vm);
 	virtual ~NutRenderer();
+	int getNbChars() { return _nbChars; }
 
 	bool loadFont(const char *filename, const char *dir);
 
+	void drawFrame(byte *dst, int c, int x, int y);
 	void drawShadowChar(int c, int x, int y, byte color, bool useMask);
 
 	int getCharWidth(byte c);

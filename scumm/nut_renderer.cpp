@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "nut_renderer.h"
+#include "bomp.h"
 
 
 NutRenderer::NutRenderer(Scumm *vm) :
@@ -71,6 +72,37 @@ void NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
 	} while (length > 1);
 }
 
+static void codec1(byte *dst, byte *src, int height) {
+	byte val, code;
+	int32 length;
+	int h = height, size_line;
+
+	for (h = 0; h < height; h++) {
+		size_line = READ_LE_UINT16(src);
+		src += 2;
+		while (size_line > 0) {
+			code = *src++;
+			size_line--;
+			length = (code >> 1) + 1;
+			if (code & 1) {
+				val = *src++;
+				size_line--;
+				if (val)
+					memset(dst, val, length);
+				dst += length;
+			} else {
+				size_line -= length;
+				while (length--) {
+					val = *src++;
+					if (val)
+						*dst = val;
+					dst++;
+				}
+			}
+		}
+	}
+}
+
 bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	debug(8, "NutRenderer::loadFont() called");
 	if (_loaded) {
@@ -104,13 +136,24 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	_nbChars = READ_LE_UINT16(dataSrc + 10);
 	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
 	for (int l = 0; l < _nbChars; l++) {
-		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
-			offset += 8;
+		if ((READ_BE_UINT32(dataSrc + offset) == 'FRME') || (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME')) {
+			if (READ_BE_UINT32(dataSrc + offset) == 'FRME')
+				offset += 8;
+			else if (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME') // hack for proper offset
+				offset += 9;
 			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
+				int codec = READ_LE_UINT16(dataSrc + offset + 8);
+				_chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
+				_chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
 				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 				_chars[l].src = new byte[_chars[l].width * _chars[l].height + 1000];
-				decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
+				if ((codec == 44) || (codec == 21))
+					decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
+				else if (codec == 1) {
+					codec1(_chars[l].src, dataSrc + offset + 22, _chars[l].height);
+				} else
+					error("NutRenderer::loadFont: unknown codec: %d", codec);
 				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 			} else {
 				warning("NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
@@ -206,6 +249,26 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		
 		x -= offsetX[i];
 		y -= offsetY[i];
+	}
+}
+
+void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
+	const int width = _chars[c].width;
+	const int height = _chars[c].height;
+	const byte *src = _chars[c].src;
+	byte bits = 0;
+
+	dst += _vm->_screenWidth * y + x;
+	for (int ty = 0; ty < height; ty++) {
+		for (int tx = 0; tx < width; tx++) {
+			bits = *src++;
+			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
+				continue;
+			if (bits != 231) {
+				dst[tx] = bits;
+			}
+		}
+		dst += _vm->_screenWidth;
 	}
 }
 
