@@ -134,10 +134,9 @@ class Win32ResExtractor {
  * Structures 
  */
 
-#if !defined (WIN32)
-#define PACKED __attribute__ ((packed))
-#endif
-#pragma pack(1) 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
 
 	struct WinLibrary {
 		File *file;
@@ -184,7 +183,7 @@ class Win32ResExtractor {
 		uint16 reserved;
 		uint16 type;
 		uint16 count;
-		Win32CursorIconDirEntry entries[1] PACKED;
+		Win32CursorIconDirEntry entries[1] GCC_PACK;
 	};
 
 	struct Win32CursorIconFileDirEntry {
@@ -419,7 +418,9 @@ class Win32ResExtractor {
 		uint16 number_of_id_entries;
 	};
 
-#pragma pack()
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 /*
  * Function Prototypes
