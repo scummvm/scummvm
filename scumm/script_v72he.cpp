@@ -1909,7 +1909,7 @@ void ScummEngine_v72he::o72_writeINI() {
 	case 7: // string
 		copyScriptString(string);
 		copyScriptString(option);
-		debug(1,"o72_writeINI: %s set to %s", option, option2);
+		debug(1,"o72_writeINI: %s set to %s", option, string);
 		break;
 	default:
 		error("o72_writeINI: default type %d", type);
