@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Configuration Variable Module
 
- Notes: 
-*/
+// Configuration Variable Module
 
 #ifndef SAGA_CVAR_H_
 #define SAGA_CVAR_H_
@@ -36,15 +31,12 @@ namespace Saga {
 #define R_CVAR_HASHLEN 32
 
 struct R_SUBCVAR_INT {
-
 	cv_int_t *var_p;
 	cv_int_t ubound;
 	cv_int_t lbound;
-
 };
 
 struct R_SUBCVAR_UINT {
-
 	cv_uint16_t *var_p;
 	cv_uint16_t ubound;
 	cv_uint16_t lbound;
@@ -52,31 +44,24 @@ struct R_SUBCVAR_UINT {
 };
 
 struct R_SUBCVAR_FLOAT {
-
 	cv_float_t *var_p;
 	cv_float_t ubound;
 	cv_float_t lbound;
-
 };
 
 struct R_SUBCVAR_STRING {
-
 	cv_char_t *var_str;
 	int ubound;
-
 };
 
 struct R_SUBCVAR_FUNC {
-
 	cv_func_t func_p;
 	const char *func_argstr;
 	int min_args;
 	int max_args;
-
 };
 
 typedef struct R_CVAR_tag {
-
 	int type;
 	const char *name;
 	const char *section;
@@ -96,5 +81,4 @@ typedef struct R_CVAR_tag {
 
 } // End of namespace Saga
 
-#endif				/* R_CVAR_H_ */
-/* end "r_cvar.h" */
+#endif

@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Console module header file
 
- Notes: 
-*/
+ // Console module header file
 
 #ifndef SAGA_CONSOLE_H_
 #define SAGA_CONSOLE_H_
@@ -40,7 +35,6 @@ namespace Saga {
 #define R_CONSOLE_TXTSHADOW 0x00202020UL
 
 struct R_CONSOLEINFO {
-
 	int active;
 	int y_max;
 	int line_max;
@@ -52,33 +46,24 @@ struct R_CONSOLEINFO {
 	int prompt_w;
 	char input_buf[R_CON_INPUTBUF_LEN + 1];
 	int input_pos;
-
 };
 
 struct R_CONSOLE_LINE {
-
 	R_CONSOLE_LINE *next;
 	R_CONSOLE_LINE *prev;
 	char *str_p;
 	int str_len;
-
 };
 
 struct R_CON_SCROLLBACK {
-
 	R_CONSOLE_LINE *head;
 	R_CONSOLE_LINE *tail;
 	int lines;
-
 };
 
-static int
-CON_AddLine(R_CON_SCROLLBACK * scroll, int line_max, const char *constr_p);
-
-static int CON_DeleteLine(R_CON_SCROLLBACK * scroll);
-
-static int CON_DeleteScroll(R_CON_SCROLLBACK * scroll);
-
+static int CON_AddLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p);
+static int CON_DeleteLine(R_CON_SCROLLBACK *scroll);
+static int CON_DeleteScroll(R_CON_SCROLLBACK *scroll);
 static int CON_SetDropPos(double percent);
 
 #define R_CON_DEFAULTPOS 136
@@ -91,6 +76,4 @@ static int CON_SetDropPos(double percent);
 
 } // End of namespace Saga
 
-#endif				/* R_CONSOLE_H_ */
-
-/* end "r_console.h" */
+#endif

@@ -20,34 +20,22 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Console module
 
- Notes: 
-*/
+// Console module
 
 #include "reinherit.h"
 
-/*
-   Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "font_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
 #include "gfx_mod.h"
 
-/*
-   Begin module
-\*--------------------------------------------------------------------------*/
 #include "console_mod.h"
 #include "console.h"
 
 namespace Saga {
 
 static R_CONSOLEINFO ConInfo = {
-
 	0,
 	R_CON_DEFAULTPOS,
 	R_CON_DEFAULTLINES,
@@ -67,31 +55,19 @@ static R_CON_SCROLLBACK ConHistory;
 static int CV_ConResize = R_CON_DEFAULTPOS;
 static int CV_ConDroptime = R_CON_DROPTIME;
 
-int CON_Register(void)
-{
-
-	CVAR_Register_I(&CV_ConResize, "con_h",
-	    NULL, R_CVAR_NONE, 12, R_CON_DEFAULTPOS);
-
-	CVAR_Register_I(&CV_ConDroptime, "con_droptime",
-	    NULL, R_CVAR_NONE, 0, 5000);
-
-	CVAR_Register_I(&ConInfo.line_max, "con_lines",
-	    NULL, R_CVAR_NONE, 5, 5000);
-
+int CON_Register() {
+	CVAR_Register_I(&CV_ConResize, "con_h", NULL, R_CVAR_NONE, 12, R_CON_DEFAULTPOS);
+	CVAR_Register_I(&CV_ConDroptime, "con_droptime", NULL, R_CVAR_NONE, 0, 5000);
+	CVAR_Register_I(&ConInfo.line_max, "con_lines", NULL, R_CVAR_NONE, 5, 5000);
 	return R_SUCCESS;
 }
 
-int CON_Init(void)
-{
+int CON_Init() {
 	return R_SUCCESS;
 }
 
-int CON_Shutdown(void)
-{
-
-	R_printf(R_STDOUT,
-	    "CON_Shutdown(): Deleting console scrollback and command history.\n");
+int CON_Shutdown() {
+	R_printf(R_STDOUT, "CON_Shutdown(): Deleting console scrollback and command history.\n");
 
 	CON_DeleteScroll(&ConScrollback);
 	CON_DeleteScroll(&ConHistory);
@@ -99,8 +75,7 @@ int CON_Shutdown(void)
 	return R_SUCCESS;
 }
 
-int CON_Activate(void)
-{
+int CON_Activate() {
 	R_EVENT con_event;
 
 	if (ConInfo.active) {
@@ -120,8 +95,7 @@ int CON_Activate(void)
 	return R_SUCCESS;
 }
 
-int CON_Deactivate(void)
-{
+int CON_Deactivate() {
 	R_EVENT con_event;
 
 	if (!ConInfo.active) {
@@ -139,26 +113,20 @@ int CON_Deactivate(void)
 	return R_SUCCESS;
 }
 
-int CON_IsActive(void)
-{
-
+int CON_IsActive(void) {
 	return ConInfo.active;
 }
 
-int CON_Type(int in_char)
-/****************************************************************************\
- Responsible for processing character input to the console and maintaining
- the console input buffer.
- Input buffer is processed by EXPR_Parse on enter.
- High ASCII characters are ignored.
-\****************************************************************************/
-{
-
+// Responsible for processing character input to the console and maintaining
+// the console input buffer.
+// Input buffer is processed by EXPR_Parse on enter.
+// High ASCII characters are ignored.
+int CON_Type(int in_char) {
 	int input_pos = ConInfo.input_pos;
 	const char *expr;
 	int expr_len;
 	int result;
-	/*char *lvalue; */
+	//char *lvalue;
 
 	char *rvalue = NULL;
 	R_CVAR_P con_cvar = NULL;
@@ -167,27 +135,22 @@ int CON_Type(int in_char)
 	const char *err_str;
 
 	if (ConInfo.y_pos != ConInfo.y_max) {
-		/* Ignore keypress until console fully down */
+		// Ignore keypress until console fully down
 		return R_SUCCESS;
 	}
 
 	if ((in_char > 127) || (!in_char)) {
-		/* Ignore non-ascii codes */
+		// Ignore non-ascii codes
 		return R_SUCCESS;
 	}
 
 	switch (in_char) {
-
 	case '\r':
-
 		expr = ConInfo.input_buf;
 		CON_Print("> %s", ConInfo.input_buf);
-
 		expr_len = strlen(ConInfo.input_buf);
 		result = EXPR_Parse(&expr, &expr_len, &con_cvar, &rvalue);
-
 		CON_AddLine(&ConHistory, ConInfo.hist_max, ConInfo.input_buf);
-
 		memset(ConInfo.input_buf, 0, R_CON_INPUTBUF_LEN);
 		ConInfo.input_pos = 0;
 		ConInfo.hist_pos = 0;
@@ -208,18 +171,14 @@ int CON_Type(int in_char)
 			CVAR_GetError(&err_str);
 			CON_Print("Illegal assignment: %s.", err_str);
 		}
-
 		break;
-
 	case '\b':
 		ConInfo.input_buf[input_pos] = 0;
-
 		if (input_pos > 0) {
 			ConInfo.input_pos--;
 			ConInfo.input_buf[ConInfo.input_pos] = 0;
 		}
 		break;
-
 	default:
 		if (input_pos < R_CON_INPUTBUF_LEN) {
 			ConInfo.input_buf[input_pos] = (char)in_char;
@@ -234,19 +193,13 @@ int CON_Type(int in_char)
 	return R_SUCCESS;
 }
 
-int CON_Draw(R_SURFACE * ds)
-{
-
+int CON_Draw(R_SURFACE *ds) {
 	int line_y;
-
 	R_CONSOLE_LINE *walk_ptr;
 	R_CONSOLE_LINE *start_ptr;
-
 	int txt_fgcolor;
 	int txt_shcolor;
-
 	R_RECT fill_rect;
-
 	int i;
 
 	if (!ConInfo.active) {
@@ -260,27 +213,18 @@ int CON_Draw(R_SURFACE * ds)
 
 	fill_rect.top = 0;
 	fill_rect.left = 0;
-
 	fill_rect.bottom = ConInfo.y_pos;
 	fill_rect.right = ds->buf_w - 1;
 
 	GFX_DrawRect(ds, &fill_rect, SYSGFX_MatchColor(R_CONSOLE_BGCOLOR));
-
 	txt_fgcolor = SYSGFX_MatchColor(R_CONSOLE_TXTCOLOR);
 	txt_shcolor = SYSGFX_MatchColor(R_CONSOLE_TXTSHADOW);
 
-	FONT_Draw(SMALL_FONT_ID,
-	    ds,
-	    ">", 1,
-	    2, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-
-	FONT_Draw(SMALL_FONT_ID,
-	    ds,
-	    ConInfo.input_buf, strlen(ConInfo.input_buf),
-	    10, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
+	FONT_Draw(SMALL_FONT_ID, ds, ">", 1, 2, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
+	FONT_Draw(SMALL_FONT_ID, ds, ConInfo.input_buf, strlen(ConInfo.input_buf),
+				10, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 
 	line_y = ConInfo.y_pos - (R_CON_INPUT_H + R_CON_LINE_H);
-
 	start_ptr = ConScrollback.head;
 
 	for (i = 0; i < ConInfo.line_pos; i++) {
@@ -292,15 +236,8 @@ int CON_Draw(R_SURFACE * ds)
 	}
 
 	for (walk_ptr = start_ptr; walk_ptr; walk_ptr = walk_ptr->next) {
-
-		FONT_Draw(SMALL_FONT_ID,
-		    ds,
-		    walk_ptr->str_p,
-		    walk_ptr->str_len,
-		    2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-
+		FONT_Draw(SMALL_FONT_ID, ds, walk_ptr->str_p, walk_ptr->str_len, 2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 		line_y -= R_CON_LINE_H;
-
 		if (line_y < -R_CON_LINE_H)
 			break;
 	}
@@ -308,29 +245,21 @@ int CON_Draw(R_SURFACE * ds)
 	return R_SUCCESS;
 }
 
-int CON_Print(const char *fmt_str, ...)
-{
-
+int CON_Print(const char *fmt_str, ...) {
 	char vsstr_p[R_CON_PRINTFLIMIT + 1];
 	va_list argptr;
 	int ret_val;
 
 	va_start(argptr, fmt_str);
-
 	ret_val = vsprintf(vsstr_p, fmt_str, argptr);
-
 	CON_AddLine(&ConScrollback, ConInfo.line_max, vsstr_p);
-
 	va_end(argptr);
-
 	ConInfo.line_pos = 0;
 
 	return ret_val;
 }
 
-int CON_CmdUp(void)
-{
-
+int CON_CmdUp() {
 	R_CONSOLE_LINE *start_ptr = ConHistory.head;
 	int i;
 
@@ -354,15 +283,12 @@ int CON_CmdUp(void)
 	strcpy(ConInfo.input_buf, start_ptr->str_p);
 	ConInfo.input_pos = start_ptr->str_len - 1;
 
-	R_printf(R_STDOUT, "History pos: %d/%d", ConInfo.hist_pos,
-	    ConHistory.lines);
+	R_printf(R_STDOUT, "History pos: %d/%d", ConInfo.hist_pos, ConHistory.lines);
 
 	return R_SUCCESS;
 }
 
-int CON_CmdDown(void)
-{
-
+int CON_CmdDown(void) {
 	R_CONSOLE_LINE *start_ptr = ConHistory.head;
 	int i;
 
@@ -396,11 +322,8 @@ int CON_CmdDown(void)
 	return R_SUCCESS;
 }
 
-int CON_PageUp(void)
-{
-
+int CON_PageUp() {
 	int n_lines;
-
 	n_lines = (ConInfo.y_max - R_CON_INPUT_H) / R_CON_LINE_H;
 
 	if (ConInfo.line_pos < (ConScrollback.lines - n_lines)) {
@@ -408,15 +331,11 @@ int CON_PageUp(void)
 	}
 
 	R_printf(R_STDOUT, "Line pos: %d", ConInfo.line_pos);
-
 	return R_SUCCESS;
 }
 
-int CON_PageDown(void)
-{
-
+int CON_PageDown() {
 	int n_lines;
-
 	n_lines = (ConInfo.y_max - R_CON_INPUT_H) / R_CON_LINE_H;
 
 	if (ConInfo.line_pos > n_lines) {
@@ -428,9 +347,7 @@ int CON_PageDown(void)
 	return R_SUCCESS;
 }
 
-int CON_DropConsole(double percent)
-{
-
+int CON_DropConsole(double percent) {
 	R_SURFACE *back_buf;
 
 	if (percent > 1.0) {
@@ -439,15 +356,12 @@ int CON_DropConsole(double percent)
 
 	back_buf = SYSGFX_GetBackBuffer();
 	CON_SetDropPos(percent);
-
 	CON_Draw(back_buf);
 
 	return R_SUCCESS;
 }
 
-int CON_RaiseConsole(double percent)
-{
-
+int CON_RaiseConsole(double percent) {
 	R_SURFACE *back_buf;
 
 	if (percent >= 1.0) {
@@ -456,17 +370,13 @@ int CON_RaiseConsole(double percent)
 	}
 
 	back_buf = SYSGFX_GetBackBuffer();
-
 	CON_SetDropPos(1.0 - percent);
-
 	CON_Draw(back_buf);
 
 	return R_SUCCESS;
 }
 
-static int CON_SetDropPos(double percent)
-{
-
+static int CON_SetDropPos(double percent) {
 	double exp_percent;
 
 	if (percent > 1.0)
@@ -475,16 +385,12 @@ static int CON_SetDropPos(double percent)
 		percent = 0.0;
 
 	exp_percent = percent * percent;
-
 	ConInfo.y_pos = (int)(ConInfo.y_max * exp_percent);
 
 	return R_SUCCESS;
 }
 
-static int
-CON_AddLine(R_CON_SCROLLBACK * scroll, int line_max, const char *constr_p)
-{
-
+static int CON_AddLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p) {
 	int constr_len;
 	char *newstr_p;
 	R_CONSOLE_LINE *newline_p;
@@ -492,7 +398,6 @@ CON_AddLine(R_CON_SCROLLBACK * scroll, int line_max, const char *constr_p)
 	int i;
 
 	constr_len = strlen(constr_p) + 1;
-
 	newstr_p = (char *)malloc(constr_len);
 	if (newstr_p == NULL) {
 		return R_MEM;
@@ -531,9 +436,7 @@ CON_AddLine(R_CON_SCROLLBACK * scroll, int line_max, const char *constr_p)
 	return R_SUCCESS;
 }
 
-static int CON_DeleteLine(R_CON_SCROLLBACK * scroll)
-{
-
+static int CON_DeleteLine(R_CON_SCROLLBACK *scroll) {
 	R_CONSOLE_LINE *temp_p = scroll->tail;
 
 	if (temp_p->prev == NULL) {
@@ -552,9 +455,7 @@ static int CON_DeleteLine(R_CON_SCROLLBACK * scroll)
 	return R_SUCCESS;
 }
 
-static int CON_DeleteScroll(R_CON_SCROLLBACK * scroll)
-{
-
+static int CON_DeleteScroll(R_CON_SCROLLBACK * scroll) {
 	R_CONSOLE_LINE *walk_ptr;
 	R_CONSOLE_LINE *temp_ptr;
 

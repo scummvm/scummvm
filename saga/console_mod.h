@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Console module public header file
 
- Notes: 
-*/
+// Console module public header file
 
 #ifndef SAGA_CONSOLE_MOD_H_
 #define SAGA_CONSOLE_MOD_H_
@@ -42,7 +37,7 @@ int CON_Deactivate(void);
 int CON_IsActive(void);
 
 int CON_Type(int in_char);
-int CON_Draw(R_SURFACE * ds);
+int CON_Draw(R_SURFACE *ds);
 int CON_Print(const char *fmt_str, ...);
 
 int CON_CmdUp(void);
@@ -55,5 +50,4 @@ int CON_RaiseConsole(double percent);
 
 } // End of namespace Saga
 
-#endif				/* R_CONSOLE_MOD_H_ */
-/* end "r_console_mod.h" */
+#endif
