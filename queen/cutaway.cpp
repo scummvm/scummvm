@@ -188,23 +188,23 @@ byte *Cutaway::getCutawayObject(byte *ptr, CutawayObject &object)
 {
 	byte *oldPtr = ptr;
 
-	object.objectNumber  = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.objectNumber = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.moveToX      = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.moveToY      = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.bank           = (int16)READ_BE_INT16(ptr); ptr += 2;      
-	object.animList      = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.execute        = (int16)READ_BE_INT16(ptr); ptr += 2;    
+	object.bank         = (int16)READ_BE_INT16(ptr); ptr += 2;      
+	object.animList     = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.execute      = (int16)READ_BE_INT16(ptr); ptr += 2;    
 	object.limitBobX1   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobY1   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobX2   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.limitBobY2   = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.specialMove   = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.animType      = (int16)READ_BE_INT16(ptr); ptr += 2;   
-	object.fromObject    = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.specialMove  = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.animType     = (int16)READ_BE_INT16(ptr); ptr += 2;   
+	object.fromObject   = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.bobStartX    = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.bobStartY    = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.room           = (int16)READ_BE_INT16(ptr); ptr += 2;
-	object.scale          = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.room         = (int16)READ_BE_INT16(ptr); ptr += 2;
+	object.scale        = (int16)READ_BE_INT16(ptr); ptr += 2;
 
 	if ((ptr - oldPtr) != 17*sizeof(int16))
 		error("Wrong number of values read");
@@ -858,7 +858,6 @@ void Cutaway::run(char *nextFilename) {
 
 		char sentence[MAX_STRING_SIZE];
 		_nextSentence = Talk::getString(_nextSentence, sentence, MAX_STRING_LENGTH);
-		//debug(6, "Sentence = '%s'", sentence);
 
 		if (OBJECT_ROOMFADE == object.objectNumber) {
 			_roomFade = true;

@@ -106,7 +106,6 @@ void Logic::initialise() {
 		}	
 	}
 
-
 	_numItems = READ_BE_UINT16(ptr); ptr += 2;
 	_itemData = new ItemData[_numItems + 1];
 	memset(&_itemData[0], 0, sizeof(ItemData));
@@ -1186,7 +1185,6 @@ void Logic::handlePinnacleRoom() {
 	_vm->display()->horizontalScroll(_vm->input()->mousePosX());
 
 	joe->x = piton->x = 3 * _vm->input()->mousePosX() / 4 + 200;
-
 	joe->frameNum = _vm->input()->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
 
 	// bobs have been unpacked from animating objects, we don't need them
@@ -1725,7 +1723,6 @@ void Logic::asmMakeLightningHitPlane() {
 	lightningBob->x = 160;
 	lightningBob->y = 0;
 
-	// 23/2/95 - Play lightning SFX
 	_vm->sound()->playSfx(currentRoomSfx(), false);
 
 	_vm->bankMan()->unpack(18, lightningBob->frameNum, 15);
@@ -1850,27 +1847,25 @@ void Logic::asmPanRightToHugh() {
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 	_vm->update();
-				
-	int k = 160;
 
 	// Adjust thug1 gun so it matches rest of body
-	bob_thugA1->x += (k / 2) * 2 - 45; 
-	bob_thugA2->x += (k / 2) * 2; 
-	bob_thugA3->x += (k / 2) * 2;
+	bob_thugA1->x += 160 - 45; 
+	bob_thugA2->x += 160; 
+	bob_thugA3->x += 160;
 
-	bob_hugh1->x += (k / 2) * 3 + (k / 2);
-	bob_hugh2->x += (k / 2) * 3 + (k / 2);
-	bob_hugh3->x += (k / 2) * 3 + (k / 2);
+	bob_hugh1->x += 160 * 2;
+	bob_hugh2->x += 160 * 2;
+	bob_hugh3->x += 160 * 2;
 
-	bob_thugB1->x += (k / 2) * 4 + k; 
-	bob_thugB2->x += (k / 2) * 4 + k; 
+	bob_thugB1->x += 160 * 3;
+	bob_thugB2->x += 160 * 3; 
 
 	int horizontalScroll = 0;
-	while (horizontalScroll < k && !_vm->input()->cutawayQuit()) {
+	while (horizontalScroll < 160 && !_vm->input()->cutawayQuit()) {
 
 		horizontalScroll += 8;
-		if (horizontalScroll > k)
-			horizontalScroll = k;
+		if (horizontalScroll > 160)
+			horizontalScroll = 160;
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
@@ -2011,7 +2006,6 @@ void Logic::asmEndInterview() {
 }
 
 void Logic::startCredits(const char *filename) {
-
 	stopCredits();
 	_credits = new Credits(_vm, filename);
 }

@@ -118,9 +118,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (selectedValue(i) > 0) {
 			// This option has been redefined so display new dialogue option
 			_dialogueTree[1][i].head = selectedValue(i);
-		}
-		else if (selectedValue(i) == -1) {
-
+		} else if (selectedValue(i) == -1) {
 			// Already selected so don't redisplay
 			if (_dialogueTree[1][i].gameStateIndex >= 0) {
 				_dialogueTree[1][i].head = -1;
@@ -140,10 +138,8 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	int16 head = _dialogueTree[level][0].head;
 
 	// TODO: split this loop in several functions
-	while(retval != -1) {
-		// debug(6, "retval = %i", retval);
-		
-		char otherVoiceFilePrefix    [MAX_STRING_SIZE];
+	while(retval != -1) {		
+		char otherVoiceFilePrefix[MAX_STRING_SIZE];
 
 		_talkString[0][0] = '\0';
 
@@ -269,7 +265,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (index > 0)
 			_vm->logic()->gameState(index, _dialogueTree[oldLevel][selectedSentence].gameStateValue);
 
-
 		// check to see if person has something final to say
 		if (-1 == retval) {
 			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
@@ -280,8 +275,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 	}
-
-// TALK_PROC_EXIT:
 
 	cutawayFilename[0] = '\0';
 
@@ -400,18 +393,12 @@ byte *Talk::loadDialogFile(const char *filename) {
 
 void Talk::load(const char *filename) {
 	int i;
-	
 	byte *ptr = _fileData = loadDialogFile(filename);
-
 	bool canQuit;
 
-	//
 	// Load talk header
-	//
 
 	_levelMax = (int16)READ_BE_INT16(ptr); ptr += 2;
-
-	//debug(6, "levelMax = %i", _levelMax);
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
@@ -431,9 +418,6 @@ void Talk::load(const char *filename) {
 		_itemNumber[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
-	//debug(6, "uniqueKey = %i", _uniqueKey);
-	//debug(6, "talkKey   = %i", _talkKey);
-
 	_person1Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 	_cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 	_person2Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
@@ -444,10 +428,7 @@ void Talk::load(const char *filename) {
 	byte *dataPtr    = _fileData + 32;
 	_joePtr          = dataPtr + _levelMax * 96;
 	
-	//
 	// Load dialogue tree
-	//
-
 	ptr = dataPtr;
 
 	memset(&_dialogueTree[0], 0, sizeof(_dialogueTree[0]));
@@ -474,40 +455,31 @@ void Talk::initialTalk() {
 	char joeString[MAX_STRING_SIZE];
 	if (!hasNotString) {
 		ptr = getString(ptr, joeString, MAX_STRING_LENGTH);
-		//debug(6, "joeString = '%s'", joeString);
-	}
-	else
+	} else {
 		joeString[0] = '\0';
+	}
 
 	ptr = _person2Ptr;
 	ptr = getString(ptr, _person2String, MAX_STRING_LENGTH);
-	//debug(6, "person2String = '%s'", _person2String);
 
 	char joe2String[MAX_STRING_SIZE];
 	ptr = getString(ptr, joe2String, MAX_STRING_LENGTH);
-	//debug(6, "joe2String = '%s'", joe2String);
 
-	if (!hasTalkedTo()) {
-		
-		// Not yet talked to this person
-		
+	if (!hasTalkedTo()) {		
+		// Not yet talked to this person		
 		if (joeString[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
 			speak(joeString, NULL, voiceFilePrefix);
 		}
-	}
-	else {
-		// Already spoken to them, choose second response
-		
+	} else {
+		// Already spoken to them, choose second response		
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
 			speak(joe2String, NULL, voiceFilePrefix);
 		}
-
 	}
-
 }
 
 int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &index) {
@@ -602,7 +574,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 			sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
-		goto exit;
+		return personWalking;
 	}
 
 	if (0 == strcmp(person->name, "FAYE-H" ) ||
@@ -641,7 +613,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 			i++;
 
 		if (_vm->input()->cutawayQuit() || _vm->input()->talkQuit())
-			goto exit;
+			return personWalking;
 	}
 
 	if (segmentStart != i) {
@@ -654,7 +626,6 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 				segmentIndex);
 	}
 
-exit:
 	return personWalking;
 }
 
@@ -678,7 +649,6 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 		int offset = 1;
 	
 		BobSlot *bob  = _vm->graphics()->bob(bobNum);
-
 		int16 x = bob->x;
 		int16 y = bob->y;
 
@@ -1147,17 +1117,22 @@ TalkSelected *Talk::talkSelected() {
 }
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
-	debug(6, "Talk::splitOption(%s)", str);
+	char option[MAX_STRING_SIZE];
+	strcpy(option, str);
+	// option text ends at '*' char
+	char *p = strchr(option, '*');
+	if (p) {
+		*p = '\0';
+	}
 	int lines;
 	memset(optionText, 0, 5 * MAX_STRING_SIZE);
-	if (_vm->resource()->getLanguage() == ENGLISH || 
-		_vm->display()->textWidth(str) <= MAX_TEXT_WIDTH) {
-		strcpy(optionText[0], str);
+	if (_vm->resource()->getLanguage() == ENGLISH || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
+		strcpy(optionText[0], option);
 		lines = 1;
 	} else if (_vm->resource()->getLanguage() == HEBREW) {
-		lines = splitOptionHebrew(str, optionText);
+		lines = splitOptionHebrew(option, optionText);
 	} else {
-		lines = splitOptionDefault(str, optionText);
+		lines = splitOptionDefault(option, optionText);
 	}
 	return lines;
 }
@@ -1169,7 +1144,7 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 	uint16 width = 0;
 	uint16 optionLines = 0;
 	uint16 maxTextLen = MAX_TEXT_WIDTH;
-	char *p = (char *)strchr(str, '\0');
+	const char *p = strchr(str, '\0');
 	while (p != str - 1) {
 		while (*p != ' ' && p != str - 1) {
 			--p;
@@ -1245,19 +1220,6 @@ int Talk::splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE
 	return optionLines;
 }
 
-static char *removeStar(char *str) {
-	
-	// The remove_star function in talk.c uses a static variable, but this
-	// modifies the string instead, so the caller should use a copy of the
-	// string.
-
-	char *p = strchr(str, '*');
-	if (p)
-		*p = '\0';
-
-	return str;
-}
-
 int16 Talk::selectSentence() {
 	int selectedSentence = 0;
 
@@ -1289,7 +1251,7 @@ int16 Talk::selectSentence() {
 			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
-		_vm->display()->clearTexts(151,199);
+		_vm->display()->clearTexts(151, 199);
 
 		int sentenceCount = 0;
 		int yOffset = 1;
@@ -1299,10 +1261,7 @@ int16 Talk::selectSentence() {
 
 			if (_talkString[i][0] != '\0') {
 				sentenceCount++;
-
-				char temp[MAX_STRING_SIZE];
-				strcpy(temp, _talkString[i]);
-				optionLines = splitOption(removeStar(temp), optionText);
+				optionLines = splitOption(_talkString[i], optionText);
 
 				if (yOffset < 5) {
 					_vm->grid()->setZone(
@@ -1317,7 +1276,6 @@ int16 Talk::selectSentence() {
 				int j;
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
-						//debug(6, "Draw text '%s'", optionText[j]);
 						_vm->display()->setText(
 								(j == 0) ? 0 : OPTION_TEXT_MARGIN, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 

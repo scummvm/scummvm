@@ -128,12 +128,10 @@ void Input::delay(uint amount) {
 		if (amount == 0)
 			break;
 
-		{
-			uint this_delay = 20; // 1?
-			if (this_delay > amount)
-				this_delay = amount;
-			_system->delay_msecs(this_delay);
-		}
+		uint this_delay = 20; // 1?
+		if (this_delay > amount)
+			this_delay = amount;
+		_system->delay_msecs(this_delay);
 		cur = _system->get_msecs();
 	} while (cur < start + amount);
 }

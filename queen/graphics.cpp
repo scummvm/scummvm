@@ -914,7 +914,7 @@ void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 
 	// unpack the paste downs
 	for  (i = 1; i <= furnitureCount; ++i) {
-		if (furniture[i] > 5000) {;
+		if (furniture[i] > 5000) {
 			pasteBob(furniture[i] - 5000, curImage + 1);
 		}
 	}
@@ -948,11 +948,11 @@ void Graphics::setupRoomObjects() {
 			// create a blank frame for the OFF object
 			++_numFrames;
 			++curImage;
-		} else if(pod->image == -2) {
+		} else if (pod->image == -2) {
 			// animated OFF Bob
 			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
 			++numObjectAnimated;
-		} else if(pod->image > 0 && pod->image < 5000) {
+		} else if (pod->image > 0 && pod->image < 5000) {
 			GraphicData *pgd = _vm->logic()->graphicData(pod->image);
 			int16 lastFrame = pgd->lastFrame;
 			bool rebound = false;
@@ -1196,7 +1196,7 @@ void BamScene::updateFightAnimation() {
 		case 99: // end of BAM data
 			_lastSoundIndex = _index = 0;
 			const BamDataBlock *data[] = {
-				_fight1Data, 
+				_fight1Data,
 				_fight2Data,
 				_fight3Data
 			};
