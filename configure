@@ -303,27 +303,27 @@ fi;
 # Engine selection
 #
 if test "$_build_scumm" = no ; then
-	_def_scumm='#define DISABLE_SCUMM'
+	_mak_scumm='DISABLE_SCUMM = 1'
 else
-	_def_scumm='#undef DISABLE_SCUMM'
+	_mak_scumm='# DISABLE_SCUMM = 1'
 fi
 
 if test "$_build_simon" = no ; then
-	_def_simon='#define DISABLE_SIMON'
+	_mak_simon='DISABLE_SIMON = 1'
 else
-	_def_simon='#undef DISABLE_SIMON'
+	_mak_simon='# DISABLE_SIMON = 1'
 fi
 
 if test "$_build_sky" = no ; then
-	_def_sky='#define DISABLE_SKY'
+	_mak_sky='DISABLE_SKY = 1'
 else
-	_def_sky='#undef DISABLE_SKY'
+	_mak_sky='# DISABLE_SKY = 1'
 fi
 
 if test "$_build_bs2" = no ; then
-	_def_bs2='#define DISABLE_SWORD2'
+	_mak_bs2='DISABLE_SWORD2 = 1'
 else
-	_def_bs2='#undef DISABLE_SWORD2'
+	_mak_bs2='# DISABLE_SWORD2 = 1'
 fi
 
 #
@@ -547,11 +547,6 @@ cat > config.h << EOF
 #ifndef CONFIG_H
 #define CONFIG_H
 
-$_def_scumm
-$_def_simon
-$_def_sky
-$_def_bs2
-
 $_def_endianess
 $_def_align
 
@@ -585,6 +580,10 @@ BACKEND := $_backend
 MODULES += $MODULES
 
 $_make_def_HAVE_GCC3
+$_mak_scumm
+$_mak_simon
+$_mak_sky
+$_mak_bs2
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
