@@ -274,8 +274,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	code += noScripts * sizeof(int32);
 
-	// Code should nop be pointing at an identifier and a checksum
-	const int *checksumBlock = (const int *) code;
+	// Code should now be pointing at an identifier and a checksum
+	const char *checksumBlock = code;
 
 	code += sizeof(int32) * 3;
 
@@ -284,15 +284,18 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		return 0;
 	}
 
-	int codeLen = READ_LE_UINT32(checksumBlock + 1);
-	int checksum = 0;
+	int32 codeLen = READ_LE_UINT32(checksumBlock + 4);
+	int32 checksum = 0;
 
 	for (int i = 0; i < codeLen; i++)
 		checksum += (unsigned char) code[i];
 
-	if (checksum != (int32) READ_LE_UINT32(checksumBlock + 2)) {
-		error("Checksum error in object %s", header->name);
-		return 0;
+	if (checksum != (int32) READ_LE_UINT32(checksumBlock + 8)) {
+		debug(1, "Checksum error in object %s", header->name);
+		// This could be bad, but there has been a report about someone
+		// who had problems running the German version because of
+		// checksum errors. Could there be a version where checksums
+		// weren't properly calculated?
 	}
 
 	bool runningScript = true;
