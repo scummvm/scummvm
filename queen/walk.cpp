@@ -515,9 +515,6 @@ void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImag
 		}
 		++mpd;
 	}
-	if (mpd->name[0] == '*') {
-		error("Walk::personMove() - Unknown person : '%s'", pp->name);
-	}
 
 	if (_walkDataCount > 0) {
 		animatePersonPrepare(mpd, direction);
