@@ -845,6 +845,7 @@ void Scumm::o5_setClass()
 			if ((_features & GF_SMALL_HEADER) && obj <= NUM_ACTORS) {
 				Actor *a;
 				a = derefActorSafe(obj, "setClass");
+				a->ignoreBoxes = 0;
 				a->forceClip = 0;
 			}
 			continue;
