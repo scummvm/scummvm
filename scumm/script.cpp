@@ -355,7 +355,7 @@ int Scumm::readVar(uint var) {
 		return _vars[var];
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_gameId == GID_LOOM)) {
+		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
 			// Emulate a wierd hack in Zak256 to read individual
 			// bits of a normal global
 			int b = (var & 0x000F);
@@ -405,7 +405,7 @@ void Scumm::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_gameId == GID_LOOM)) {
+		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
 			// Emulate a wierd hack in Zak256 to read individual
 			// bits of a normal global
 			int b = (var & 0x000F);

@@ -954,7 +954,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if ((_gameId == GID_INDY3_256) || (_features & GF_OLD_BUNDLE)) {
+	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		byte *oldaddr = _scriptPointer - 1;
 		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
 			_scriptPointer = oldaddr;
@@ -986,7 +986,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_256)
+	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3))
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -998,7 +998,9 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_256) {
+	if (_gameId == GID_INDY3)
+		a = getVarOrDirectByte(0x80);
+	else if (_gameId == GID_INDY3_256) {
 		a = getVarOrDirectByte(0x80);
 
 		// Indy3 hack to cheat the 'Leap of Faith' grail test
