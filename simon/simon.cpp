@@ -127,7 +127,7 @@ FILE *SimonState::fopen_maybe_lowercase(const char *filename) {
 	e = strchr(buf, 0);
 	strcpy(e, filename);
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__MORPHOS__)
 	/* win32 is not case sensitive */
 	return fopen(buf, "rb");
 #else
