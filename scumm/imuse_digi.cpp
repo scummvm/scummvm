@@ -94,16 +94,16 @@ IMuseDigital::IMuseDigital(Scumm *scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
 	_scumm = scumm;
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_channel[l]._initialized = false;
+		_channel[l]._mixerChannel = -1;
 	}
-	_scumm->_mixer->beginSlots(MAX_DIGITAL_CHANNELS + 1);
 	_scumm->_timer->installProcedure(imus_digital_handler, 200000);
 	_pause = false;
 }
 
 IMuseDigital::~IMuseDigital() {
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_scumm->_mixer->stop(l);
+		if (_channel[l]._mixerChannel != -1)
+			_scumm->_mixer->stop(_channel[l]._mixerChannel);
 	}
 	_scumm->_timer->releaseProcedure(imus_digital_handler);
 }
@@ -708,17 +708,20 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 void IMuseDigital::handler() {
 	uint32 l = 0, i = 0;
 
-	if (_pause == true)
+	if (_pause)
 		return;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
 			if (_channel[l]._toBeRemoved == true) {
-				_scumm->_mixer->stop(l);
+				if (_channel[l]._mixerChannel != -1) {
+					_scumm->_mixer->stop(_channel[l]._mixerChannel);
+					_channel[l]._mixerChannel = -1;
+				}
 				if (_scumm->_mixer->_channels[l] == NULL) {
 					free(_channel[l]._data);
 					_channel[l]._used = false;
-					_channel[l]._initialized = false;
+					_channel[l]._mixerChannel = -1;
 				}
 				continue;
 			}
@@ -764,7 +767,7 @@ void IMuseDigital::handler() {
 			uint32 new_size = _channel[l]._mixerSize;
 			uint32 mixer_size = new_size;
 
-			if (_channel[l]._initialized == false) {
+			if (_channel[l]._mixerChannel == -1) {
 				mixer_size *= 2;
 				new_size *= 2;
 			}
@@ -820,12 +823,11 @@ void IMuseDigital::handler() {
 			}
 
 			if (_scumm->_silentDigitalImuse == false) {
-				if (_channel[l]._initialized == false) {
-					_scumm->_mixer->playStream(l, buf, mixer_size,
-					                           _channel[l]._freq, _channel[l]._mixerFlags, 3, 100000);
-					_channel[l]._initialized = true;
+				if (_channel[l]._mixerChannel == -1) {
+					_channel[l]._mixerChannel = _scumm->_mixer->playStream(buf, mixer_size,
+					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000);
 				} else {
-					_scumm->_mixer->append(l, buf, mixer_size);
+					_scumm->_mixer->append(_channel[l]._mixerChannel, buf, mixer_size);
 				}
 			}
 			free(buf);

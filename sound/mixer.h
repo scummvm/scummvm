@@ -39,9 +39,14 @@
 
 typedef uint32 PlayingSoundHandle;
 
+class Channel;
 class File;
 class SoundMixer;
 
+// TODO: class Channel should really be declared non-public, inside mixer.cpp
+// However, right now Sound::updateMP3CD directly calls soundFinished. That
+// should be changed, by adding proper API abstraction to SoundMixer for
+// MP3/Vorbis "CD" playback.
 class Channel {
 protected:
 	SoundMixer *_mixer;
@@ -86,15 +91,9 @@ public:
 
 	Channel *_channels[NUM_CHANNELS];
 
-	int _beginSlots;
-
 public:
 	SoundMixer();
 	~SoundMixer();
-
-	int insertAt(PlayingSoundHandle *handle, int index, Channel *chan);
-	void unInsert(Channel *chan);
-	void beginSlots(int index);
 
 	// start playing a raw sound
 	enum {
@@ -107,8 +106,7 @@ public:
 		FLAG_LOOP = 1 << 5              // loop the audio
 	};
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
-	int playStream(int index, void *sound, uint32 size, uint rate,
-									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
+	int playStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
 	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
@@ -150,6 +148,8 @@ public:
 	/** pause - unpause */
 	void pause(bool paused);
 
+private:
+	int insertAt(PlayingSoundHandle *handle, int index, Channel *chan);
 };
 
 #endif

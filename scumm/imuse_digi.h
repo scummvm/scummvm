@@ -69,9 +69,9 @@ private:
 		int32 _idSound;
 		uint32 _mixerSize;
 		uint8 _mixerFlags;
+		int _mixerChannel;
 		bool _used;
 		bool _toBeRemoved;
-		bool _initialized;
 	};
 	
 	Channel _channel[MAX_DIGITAL_CHANNELS];

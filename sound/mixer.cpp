@@ -53,16 +53,14 @@ class ChannelStream : public Channel {
 	uint32 _fpPos;
 	uint32 _bufferSize;
 	uint32 _rate;
-	int32 _timeOut;
-	int32 _setTimeOut;
 	byte _flags;
 
 public:
-	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int32 timout, int32 buffer_size);
+	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
 
-	void append(void *sound, uint32 size);
 	void mix(int16 *data, uint len);
 	void realDestroy();
+	void append(void *sound, uint32 size);
 };
 
 #ifdef USE_MAD
@@ -129,7 +127,6 @@ SoundMixer::SoundMixer() {
 	memset(this,0,sizeof(SoundMixer)); // palmos
 
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
-	_beginSlots = 0;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		_channels[i] = NULL;
 	}
@@ -141,20 +138,6 @@ SoundMixer::~SoundMixer() {
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		delete _channels[i];
 	}
-}
-
-void SoundMixer::unInsert(Channel *chan) {
-	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] == chan) {
-			if (_handles[i]) {
-				*_handles[i] = 0;
-				_handles[i] = NULL;
-			}
-			_channels[i] = NULL;
-			return;
-		}
-	}
-	error("SoundMixer::channel_deleted chan not found");
 }
 
 int SoundMixer::append(int index, void *sound, uint32 size) {
@@ -173,8 +156,11 @@ int SoundMixer::append(int index, void *sound, uint32 size) {
 
 int SoundMixer::insertAt(PlayingSoundHandle *handle, int index, Channel *chan) {
 	if(index == -1) {
-		for (int i = _beginSlots; i != NUM_CHANNELS; i++)
-			if (_channels[i] == NULL) { index = i; break; }
+		for (int i = 0; i != NUM_CHANNELS; i++)
+			if (_channels[i] == NULL) {
+				index = i;
+				break;
+			}
 		if(index == -1) {
 			warning("SoundMixer::out of mixer slots");
 			return -1;
@@ -191,7 +177,7 @@ int SoundMixer::insertAt(PlayingSoundHandle *handle, int index, Channel *chan) {
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, id));
 		}
@@ -201,22 +187,13 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 	return -1;
 }
 
-int SoundMixer::playStream(int idx, void *sound, uint32 size,
-													uint rate, byte flags, int32 timeout, int32 buffer_size) {
-	return insertAt(NULL, idx, new ChannelStream(this, sound, size, rate, flags, timeout, buffer_size));
-}
-
-void SoundMixer::beginSlots(int index) {
-	if ((index < 0) && (index >= NUM_CHANNELS)) {
-		warning("soundMixer::beginSlots has invalid index %d", index);
-		return;
-	}
-	_beginSlots = index;
+int SoundMixer::playStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size) {
+	return insertAt(NULL, -1, new ChannelStream(this, sound, size, rate, flags, buffer_size));
 }
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3(this, sound, size, flags));
 		}
@@ -227,7 +204,7 @@ int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, by
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
 	/* Stop the previously playing CD track (if any) */
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3CDMusic(this, file, duration));
 		}
@@ -240,7 +217,7 @@ int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelVorbis(this, ov_file, duration, is_cd_track));
 		}
@@ -266,10 +243,20 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	}
 
 	if (!_paused) {
-		/* now mix all channels */
+		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i])
-				_channels[i]->mix(buf, len);
+			if (_channels[i]) {
+				if (_channels[i]->_toBeDestroyed) {
+					if (_handles[i]) {
+						*_handles[i] = 0;
+						_handles[i] = NULL;
+					}
+					_channels[i]->realDestroy();
+					delete _channels[i];
+					_channels[i] = NULL;
+				} else
+					_channels[i]->mix(buf, len);
+			}
 	}
 	
 	_syst->unlock_mutex(_mutex);
@@ -309,7 +296,7 @@ void SoundMixer::stop(int index) {
 
 void SoundMixer::stopID(int id) {
 
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != NULL && _channels[i]->_id == id) {
 			_channels[i]->destroy();
 			return;
@@ -322,7 +309,7 @@ void SoundMixer::pause(bool paused) {
 }
 
 bool SoundMixer::hasActiveChannel() {
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++)
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			return true;
 	return false;
@@ -653,7 +640,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, b
 	_pos = 0;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;
-	_toBeDestroyed = false;
 	_realSize = size;
 
 	// adjust the magnitude to prevent division error
@@ -676,11 +662,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, b
 void ChannelRaw::mix(int16 *data, uint len) {
 	byte *s, *end;
 
-	if (_toBeDestroyed) {
-		realDestroy();
-		return;
-	}
-
 	if (len > _size)
 		len = _size;
 	_size -= len;
@@ -702,7 +683,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 			_pos = 0;
 			_fpPos = 0;
 		} else {
-			realDestroy();
+			_toBeDestroyed = true;
 		}
 	}
 
@@ -711,14 +692,12 @@ void ChannelRaw::mix(int16 *data, uint len) {
 void ChannelRaw::realDestroy() {
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
-	_mixer->unInsert(this);
-	delete this;
 }
 
 #define WARP_WORKAROUND 50000
 
 ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate,
-										 byte flags, int32 timeout, int32 buffer_size) {
+										 byte flags, int32 buffer_size) {
 	_mixer = mixer;
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -729,8 +708,6 @@ ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint r
 	_pos = _ptr;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;
-	_toBeDestroyed = false;
-	_setTimeOut = timeout;
 
 	// adjust the magnitude to prevent division error
 	while (size & 0xFFFF0000)
@@ -769,18 +746,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 	const int16 *vol_tab = _mixer->_volumeTable;
 	byte *end_of_data = _endOfData;
 
-	if (_toBeDestroyed) {
-		realDestroy();
-		return;
-	}
-
 	if (_pos == end_of_data) {
-		if (_timeOut == -1) {
-			return;
-		}
-		if (--_timeOut == 0) {
-			realDestroy();
-		}
 		return;
 	}
 
@@ -813,14 +779,11 @@ void ChannelStream::mix(int16 *data, uint len) {
 			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
-	_timeOut = _setTimeOut;
 	_fpPos = fp_pos;
 }
 
 void ChannelStream::realDestroy() {
 	free(_ptr);
-	_mixer->unInsert(this);
-	delete this;
 }
 
 #ifdef USE_MAD
@@ -831,7 +794,6 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
 	_position = 0;
 	_size = size;
 	_ptr = (byte *)sound;
-	_toBeDestroyed = false;
 
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
@@ -875,11 +837,6 @@ void ChannelMP3::mix(int16 *data, uint len) {
 	const int16 * vol_tab = _mixer->_volumeTable;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 
-	if (_toBeDestroyed) {
-		realDestroy();
-		return;
-	}
-	
 	while (1) {
 		ch = _synth.pcm.samples[0] + _posInFrame;
 
@@ -908,7 +865,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 			return;
 
 		if (_position >= _size) {
-			realDestroy();
+			_toBeDestroyed = true;
 			return;
 		}
 
@@ -918,7 +875,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			/* End of audio... */
 			if (_stream.error == MAD_ERROR_BUFLEN) {
-				realDestroy();
+				_toBeDestroyed = true;
 				return;
 			} else if (!MAD_RECOVERABLE(_stream.error)) {
 				error("MAD frame decode error !");
@@ -933,12 +890,9 @@ void ChannelMP3::mix(int16 *data, uint len) {
 void ChannelMP3::realDestroy() {
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
-	_mixer->unInsert(this);
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
-
-	delete this;
 }
 
 #define MP3CD_BUFFERING_SIZE 131072
@@ -951,7 +905,6 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file,
 	_initialized = false;
 	_bufferSize = MP3CD_BUFFERING_SIZE;
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
-	_toBeDestroyed = false;
 
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
@@ -968,18 +921,13 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	mad_timer_t frame_duration;
 	unsigned char volume = _mixer->_musicVolume / 8;
 
-	if (_toBeDestroyed) {
-		realDestroy();
-		return;
-	}
-
 	if (!_initialized) {
 		int skip_loop;
 		// just skipped
 		memset(_ptr, 0, _bufferSize);
 		_size = _file->read(_ptr, _bufferSize);
 		if (!_size) {
-			realDestroy();
+			_toBeDestroyed = true;
 			return;
 		}
 		// Resync
@@ -995,7 +943,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 			} else {
 				if (!MAD_RECOVERABLE(_stream.error)) {
 					debug(1, "Unrecoverable error while skipping !");
-					realDestroy();
+					_toBeDestroyed = true;
 					return;
 				}
 			}
@@ -1009,7 +957,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 			_initialized = true;
 		} else {
 			debug(1, "Cannot resume decoding");
-			realDestroy();
+			_toBeDestroyed = true;
 			return;
 		}
 	}
@@ -1069,12 +1017,9 @@ bool ChannelMP3CDMusic::soundFinished() {
 
 void ChannelMP3CDMusic::realDestroy() {
 	free(_ptr);
-	_mixer->unInsert(this);
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
-
-	delete this;
 }
 
 #endif
@@ -1091,14 +1036,9 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int dur
 
 	_eof_flag = false;
 	_is_cd_track = is_cd_track;
-	_toBeDestroyed = false;
 }
 
 void ChannelVorbis::mix(int16 *data, uint len) {
-	if (_toBeDestroyed) {
-		realDestroy();
-		return;
-	}
 
 	if (_eof_flag) {
 		memset(data, 0, sizeof(int16) * 2 * len);
@@ -1158,12 +1098,10 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	delete [] samples;
 
 	if (_eof_flag && ! _is_cd_track)
-		realDestroy();
+		_toBeDestroyed = true;
 }
 
 void ChannelVorbis::realDestroy() {
-	_mixer->unInsert(this);
-	delete this;
 }
 
 bool ChannelVorbis::soundFinished() {
