@@ -441,7 +441,7 @@ void SimonSound::playVoice(uint sound) {
 		return;
 
 	if (_voice_handle)
-		_mixer->stop(_voice_index);
+		_mixer->stopChannel(_voice_index);
 
 	_voice_index = _voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
@@ -469,7 +469,7 @@ void SimonSound::playAmbient(uint sound) {
 		return;
 
 	if (_ambient_handle)
-		_mixer->stop(_ambient_index);
+		_mixer->stopChannel(_ambient_index);
 
 	_ambient_index = _effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
 }
@@ -479,7 +479,7 @@ bool SimonSound::hasVoice() {
 }
 
 void SimonSound::stopVoice() {
-	_mixer->stop(_voice_index);
+	_mixer->stopChannel(_voice_index);
 }
 
 void SimonSound::stopAll() {
@@ -495,7 +495,7 @@ void SimonSound::ambientPause(bool b) {
 	_ambient_paused = b;
 
 	if (_ambient_paused && _ambient_playing) {
-		_mixer->stop(_ambient_index);
+		_mixer->stopChannel(_ambient_index);
 	} else if (_ambient_playing) {
 		uint tmp = _ambient_playing;
 		_ambient_playing = 0;

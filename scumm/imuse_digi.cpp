@@ -709,7 +709,7 @@ IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->releaseProcedure(imus_digital_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_scumm->_mixer->stop(_channel[l]._mixerChannel);
+		_scumm->_mixer->stopChannel(_channel[l]._mixerChannel);
 	}
 }
 

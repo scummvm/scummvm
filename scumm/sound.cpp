@@ -590,7 +590,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
 			if (i != talkChannel) {
-				_scumm->_mixer->stop(i);
+				_scumm->_mixer->stopChannel(i);
 			}
 		}
 	}
@@ -871,7 +871,8 @@ void Sound::pauseSounds(bool pause) {
 		return;
 
 	_soundsPaused = pause;
-	_scumm->_mixer->pauseMixer(pause);
+
+	_scumm->_mixer->pauseAll(pause);
 
 	_scumm->_sound->pauseBundleMusic(pause);
 
@@ -1148,7 +1149,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	if (_musicBundleToBeRemoved) {
 		_scumm->_timer->releaseProcedure(&music_handler);
 		_nameBundleMusic = "";
-		_scumm->_mixer->stop(_bundleMusicTrack);
+		_scumm->_mixer->stopChannel(_bundleMusicTrack);
 		if (_musicBundleBufFinal) {
 			free(_musicBundleBufFinal);
 			_musicBundleBufFinal = NULL;

@@ -72,7 +72,7 @@ private:
 	int _globalVolume;
 	int _musicVolume;
 
-	bool _paused, _channelsPaused;
+	bool _paused;
 
 	Channel *_channels[NUM_CHANNELS];
 
@@ -112,16 +112,13 @@ public:
 	void stopAll();
 
 	/** stop playing the given channel */
-	void stop(int channel);
+	void stopChannel(int channel);
 
 	/** stop playing the sound with given ID  */
 	void stopID(int id);
 
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
-
-	/** pause/unpause all mixing (including adlib) */
-	void pauseMixer(bool paused);
 
 	/** pause/unpause all channels */
 	void pauseAll(bool paused);

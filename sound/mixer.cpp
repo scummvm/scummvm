@@ -137,7 +137,6 @@ SoundMixer::SoundMixer() {
 	_musicVolume = 0;
 
 	_paused = false;
-	_channelsPaused = false;
 
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = NULL;
@@ -280,7 +279,7 @@ int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, 
 void SoundMixer::mix(int16 *buf, uint len) {
 	StackLock lock(_mutex);
 
-	if (_premixProc && !_paused) {
+	if (_premixProc) {
 		int i;
 		_premixProc(_premixParam, buf, len);
 		// Convert mono data from the premix proc to stereo
@@ -292,7 +291,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 		memset(buf, 0, 2 * len * sizeof(int16));
 	}
 
-	if (!_paused && !_channelsPaused) {
+	if (!_paused) {
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] && !_channels[i]->isPaused())
@@ -315,7 +314,7 @@ void SoundMixer::stopAll() {
 			_channels[i]->destroy();
 }
 
-void SoundMixer::stop(int index) {
+void SoundMixer::stopChannel(int index) {
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::stop has invalid index %d", index);
 		return;
@@ -388,15 +387,8 @@ void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 		_channels[index]->setChannelPan(pan);
 }
 
-void SoundMixer::pauseMixer(bool paused) {
-	// TODO/FIXME: This is only used by scumm/sound.cpp, and 
-	// even there it can probably be replaced by a call to pauseAll.
-	// Research that, and if possible remove this method.
-	_paused = paused;
-}
-
 void SoundMixer::pauseAll(bool paused) {
-	_channelsPaused = paused;
+	_paused = paused;
 }
 
 void SoundMixer::pauseChannel(int index, bool paused) {

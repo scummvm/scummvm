@@ -290,7 +290,7 @@ void SmushPlayer::deinit() {
 		_base = NULL;
 	}
 	
-	_scumm->_mixer->stop(_IACTchannel);
+	_scumm->_mixer->stopChannel(_IACTchannel);
 
 	_scumm->_insaneState = false;
 	_scumm->abortCutscene();
