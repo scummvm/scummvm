@@ -79,12 +79,16 @@ SCUMM
 Broken Sword 2
 ==============
 * Replace all uses of std C file I/O (fopen, fread, fwrite, fclose) by
-  the File class (excluding that in SWORD2_DEBUG)
+  the File class (excluding that in SWORD2_DEBUG). This is probably mostly
+  done. I only find a few such calls in resMan::CacheNewCluster(), and that
+  one needs to be rewritten anyway.
+* Enforce ScummVM code formatting guidelines.
+* Encapsulate the code into sensible objects.
+* Enable the CD swapping code.
 
 SIMON
 =====
 * Add support for Amiga decompressor and music
-
 
 Descumm
 =======
