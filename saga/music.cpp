@@ -429,9 +429,6 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 		_player->setGM(true);
 		parser = MidiParser::createParser_SMF();
-
-		// FIXME: Is this really the case or we receive correct parameter?
-		flags = _midiTableITECD[music_rn - 9].flags;
 	} else {
 		// Load XMI resource data
 
