@@ -20,23 +20,21 @@
 #ifndef	_ICONS
 #define	_ICONS
 
+#include "object.h"
 
-//#include	"src\driver96.h"
-#include	"object.h"
+#define MENU_MASTER_OBJECT	44
+#define TOTAL_subjects		(375 - 256 + 1)	// the speech subject bar
+#define TOTAL_engine_pockets	(15 + 10)	// +10 for overflow
 
-#define	MENU_MASTER_OBJECT	44
-#define	TOTAL_subjects	375-256+1	//the speech subject bar
-#define	TOTAL_engine_pockets	15+10	// +10 for overflow
+// define these in a script and then register them with the system
+typedef	struct {
+	int32 icon_resource;	// icon graphic graphic
+	int32 luggage_resource;	// luggage icon resource (for attaching to mouse pointer)
+} menu_object;
 
-typedef	struct
-{
-	int32	icon_resource;		// icon graphic graphic
-	int32	luggage_resource;	// luggage icon resource (for attaching to mouse pointer)
-} menu_object;	//define these in a script and then register them with the system
+extern menu_object master_menu_list[TOTAL_engine_pockets];
 
-extern	menu_object master_menu_list[TOTAL_engine_pockets];
-
-void	Build_top_menu(void);	//Tony19Nov96
-void	Build_system_menu(void);	//Tony19Mar97
+void Build_top_menu(void);	// Tony19Nov96
+void Build_system_menu(void);	// Tony19Mar97
 
 #endif
