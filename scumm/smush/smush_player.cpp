@@ -885,8 +885,8 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 
 	while (true) {
 		_scumm->_system->lock_mutex(_mutex);
+		_scumm->parseEvents();
 		_scumm->processKbd();
-		_scumm->waitForTimer(1);
 		if(_updateNeeded == true) {
 			
 			uint32 end_time, start_time = _scumm->_system->get_msecs();
@@ -901,6 +901,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			break;
 		if (_scumm->_saveLoadFlag)
 			break;
+		_scumm->_system->delay_msecs(10);
 	};
 
 	deinit();
