@@ -342,7 +342,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_appendString),
+		OPCODE(o72_appendString),
 		/* F0 */
 		OPCODE(o72_concatString),
 		OPCODE(o70_compareString),

@@ -774,6 +774,7 @@ protected:
 	void o72_pickVarRandom();
 	void o72_redimArray();
 	void o72_copyString();
+	void o72_appendString();
 	void o72_concatString();
 	void o72_checkGlobQueue();
 	void o72_readINI();

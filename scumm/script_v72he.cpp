@@ -343,7 +343,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_appendString),
+		OPCODE(o72_appendString),
 		/* F0 */
 		OPCODE(o72_concatString),
 		OPCODE(o70_compareString),
@@ -2382,6 +2382,27 @@ void ScummEngine_v72he::o72_copyString() {
 
 	push(dst);
 	debug(1,"stub o72_copyString");
+}
+
+void ScummEngine_v72he::o72_appendString() {
+	int dst, size;
+
+	int len = pop();
+	int srcOffs = pop();
+	int src = pop();
+
+	size = len - srcOffs + 2;
+
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, 0, 0, size);
+	writeArray(0, 0, 0, 0);
+
+	dst = readVar(0);
+
+	appendSubstring(dst, src, srcOffs, len);
+
+	push(dst);
+	debug(1,"stub o72_appendString");
 }
 
 void ScummEngine_v72he::o72_concatString() {
