@@ -499,9 +499,11 @@ void ScummEngine_v7he::o7_readINI() {
 	if (_heversion <= 71) {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
+		type = pop();
+	} else {
+		type = fetchScriptByte();
 	}
 
-	type = fetchScriptByte();
 
 	switch (type) {
 	case 1: // number
