@@ -342,41 +342,35 @@ void Sword2Engine::go() {
 		if (_input->keyWaiting()) {
 			_input->readKey(&ke);
 
-			char c = toupper(ke.ascii);
-
-			if ((ke.modifiers == OSystem::KBD_CTRL && ke.keycode == 'd') || c == '~' || c == '#') {
+			if ((ke.modifiers == OSystem::KBD_CTRL && ke.keycode == 'd') || ke.ascii == '#' || ke.ascii == '~') {
 				_debugger->attach();
-			}
-
-			if (_gamePaused) {	// if currently paused
-				if (c == 'P') {
-					// 'P' while paused = unpause!
-					unpauseGame();
-				}
+			} else if (ke.modifiers == 0 || ke.modifiers == OSystem::KBD_SHIFT) {
+				switch (ke.keycode) {
+				case 'p':
+					if (_gamePaused)
+						unpauseGame();
+					else
+						pauseGame();
+					break;
+				case 'c':
+					if (!(_features & GF_DEMO))
+						_logic->fnPlayCredits(NULL);
+					break;
 #ifdef _SWORD2_DEBUG
-				// frame-skipping only allowed on
-				// debug version
-
-				else if (c == ' ') {
-					// SPACE bar while paused =
-					// step one frame!
-					_stepOneCycle = true;
-					unpauseGame();
+				case ' ':
+					if (_gamePaused) {
+						_stepOneCycle = true;
+						unpauseGame();
+					}
+					break;
+				case 's':
+					_renderSkip = !_renderSkip;
+					break;
+#endif
+				default:
+					break;
 				}
-#endif
-			} else if (c == 'P') {
-				// 'P' while not paused = pause!
-				pauseGame();
-			} else if (c == 'C' && !(_features & GF_DEMO)) {
-				_logic->fnPlayCredits(NULL);
 			}
-#ifdef _SWORD2_DEBUG
-			else if (c == 'S') {
-				// 'S' toggles speed up (by skipping
-				// display rendering)
-				_renderSkip = !_renderSkip;
-			}
-#endif
 		}
 
 		// skip GameCycle if we're paused
