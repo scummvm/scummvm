@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/18 20:04:58  strigeus
+ * flags were not saved properly
+ *
  * Revision 1.4  2001/10/17 10:07:39  strigeus
  * fixed verbs not saved in non dott games,
  * implemented a screen effect
@@ -44,6 +47,8 @@ struct SaveGameHeader {
 	uint32 ver;
 };
 
+#define CURRENT_VER 2
+
 bool Scumm::saveState(const char *filename) {
 	FILE *out = fopen(filename,"wb");
 	SaveGameHeader hdr;
@@ -53,7 +58,7 @@ bool Scumm::saveState(const char *filename) {
 
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
-	hdr.ver = 1;
+	hdr.ver = CURRENT_VER;
 	
 	fwrite(&hdr, sizeof(hdr), 1, out);
 
@@ -78,7 +83,7 @@ bool Scumm::loadState(const char *filename) {
 		return false;
 	}
 
-	if (hdr.ver != 1) {
+	if (hdr.ver != CURRENT_VER) {
 		warning("Invalid version of '%s'", filename);
 		fclose(out);
 		return false;
@@ -291,7 +296,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,gdi.unk4,sleByte),
 		MKLINE(Scumm,gdi.currentCursor,sleByte),
 
-		MKLINE(Scumm,doEffect,sleUint16), /* Convert to byte */
+		MKLINE(Scumm,doEffect,sleByte),
 		MKLINE(Scumm,_switchRoomEffect,sleByte),
 		MKLINE(Scumm,_newEffect,sleByte),
 		MKLINE(Scumm,_switchRoomEffect2,sleByte),
@@ -417,7 +422,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 	saveLoadArrayOf(_objectFlagTable, _numGlobalObjects, sizeof(_objectFlagTable[0]), sleByte);
 	saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 	saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
-	saveLoadArrayOf(_bitVars, _numBitVariables>>8, 1, sleByte);
+	saveLoadArrayOf(_bitVars, _numBitVariables>>3, 1, sleByte);
 }
 
 void Scumm::saveLoadResource(int type, int index) {
