@@ -126,7 +126,6 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				WholeProgramOptimization="TRUE"
 				AdditionalIncludeDirectories="../../;../../common"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
 				StringPooling="TRUE"
