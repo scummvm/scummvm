@@ -899,7 +899,6 @@ void SimonEngine::vc_10_draw() {
 		if (_game & GF_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
-			debug(1,"vc_10_draw: (state.e&0x4)");
 		}
 
 		if (state.e & 0x8) {
