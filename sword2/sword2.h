@@ -279,6 +279,10 @@ public:
 
 	// savegame file header
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 	struct SaveGameHeader {
 		// sum of all bytes in file, excluding this uint32
 		uint32 checksum;
@@ -294,13 +298,13 @@ public:
 		uint32 music_id;	// copy of 'looping_music_id'
 		ObjectHub player_hub;	// copy of player object's object_hub structure
 		ObjectLogic logic;	// copy of player character logic structure
+		ObjectGraphic graphic;	// copy of player character graphic structure
+		ObjectMega mega;	// copy of player character mega structure
+	} GCC_PACK;
 
-		// copy of player character graphic structure
-		ObjectGraphic graphic;
-
-		// copy of player character mega structure
-		ObjectMega mega;
-	};
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 	SaveGameHeader _saveGameHeader;
 
