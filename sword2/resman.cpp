@@ -165,7 +165,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 			_cdTab[j] = cdInf[i].cd;
 	}
 
-	delete cdInf;
+	delete [] cdInf;
 
 	debug(5, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (j = 0; j < _totalClusters; j++)

@@ -708,14 +708,9 @@ int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
 
 	// Decode the parallax layer into a large chunk of memory
 
-	memchunk = (uint8 *) malloc(_xBlocks[_layer] * BLOCKWIDTH * _yBlocks[_layer] * BLOCKHEIGHT);
+	memchunk = (uint8 *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
-
-	// We clear not the entire memory chunk, but enough of it to store
-	// the entire parallax layer.
-
-	memset(memchunk, 0, p->w * p->h);
 
 	for (i = 0; i < p->h; i++) {
 		if (p->offset[i] == 0)
@@ -762,6 +757,10 @@ int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
 		bool block_is_transparent = false;
 
 		data = memchunk + (p->w * BLOCKHEIGHT * (i / _xBlocks[_layer])) + BLOCKWIDTH * (i % _xBlocks[_layer]);
+
+		// FIXME: The 'block_is_transparent' flag should only consider
+		// data that is inside the parallax layer. Still, it won't do
+		// any harm to leave it this way...
 
 		for (j = 0; j < BLOCKHEIGHT; j++) {
 			for (k = 0; k < BLOCKWIDTH; k++) {
