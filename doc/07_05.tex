@@ -11,7 +11,6 @@ the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file,
 then encode the MP3 files in constant bit rate. This can be done with the 
 following LAME command line:
-
 \begin{verbatim}
   lame -t -q 0 -b 96 track1.wav track1.mp3
 \end{verbatim}
@@ -24,7 +23,6 @@ Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
 support to use this option. You'll need to rip the files from the CD as a WAV
 file, then encode the vorbis files. This can be done with the following oggenc
 command line with the value after q specifying the desired quality from 0 to 10:
-
 \begin{verbatim}
   oggenc -q 5 track1.wav
 \end{verbatim}
@@ -34,7 +32,6 @@ command line with the value after q specifying the desired quality from 0 to 10:
 
 You need LAME, and our extract util from the scummvm-tools package to perform
 this task, and ScummVM must be compiled with MAD support.
-
 \begin{verbatim}
   extract monster.sou
 \end{verbatim}
@@ -46,7 +43,6 @@ to your game directory. You can safely remove the monster.sou file.
 \subsubsection{Compressing MONSTER.SOU with Ogg Vorbis}
 
 As above, but ScummVM must be compiled with OGG support. Run:
-
 \begin{verbatim}
   extract --vorbis monster.sou
 \end{verbatim}
@@ -69,10 +65,9 @@ this task, and ScummVM must be compiled with MAD or VORBIS support.\\
   simon2mp3 simon.wav  &(For simon1win)\\
   simon2mp3 simon2.voc &(For simon2talkie)\\
   simon2mp3 simon2.wav &(For simon2win)\\
-\end{tabular}\\
-~\\
-For Ogg Vorbis add --vorbis, ie
+\end{tabular}
 
+For Ogg Vorbis add --vorbis, i.e.
 \begin{verbatim}
   simon2mp3 --vorbis
 \end{verbatim}

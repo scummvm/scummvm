@@ -7,8 +7,8 @@
 \subsection{Playing sound with Sequencer MIDI}
 
 If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM\_MIDI" to your sequencer device - e.g., /dev/sequencer\\
-~\\
+variable "SCUMMVM\_MIDI" to your sequencer device - e.g., /dev/sequencer
+
 If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM\_MIDIPORT" variable to 1 or 2. This
 selects the port on the selected sequencer to use. Then start scummvm with the
@@ -21,8 +21,8 @@ sequencer support does not work, you can always fall back on Adlib emulation.
 
 If you have installed the ALSA driver with the sequencer support, then
 set the environment variable SCUMMVM\_PORT or the config file parameter
-alsa\_port to your sequencer port. The default is "65:0".\\
-~\\
+alsa\_port to your sequencer port. The default is "65:0".
+
 Here is a little howto on how to use the ALSA sequencer with your soundcard.
 In all cases, to have a list of all the sequencer ports you have, try the
 command 
@@ -30,7 +30,6 @@ command
      aconnect -o -l
 \end{verbatim}
 This should give output similar to:
-
 \begin{verbatim}
 client 64: 'External MIDI 0' [type=kernel]
     0 'MIDI 0-0        '
@@ -46,8 +45,8 @@ client 128: 'Client-128' [type=user]
 %
 This means the external MIDI output of the sound card is located on the
 port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
-and 65:3, and two TiMidity ports, located at 128:0 and 128:1.\\
-~\\
+and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
+
 If you have a FM-chip on your card, like the SB16, then you have to load
 the soundfonts using the sbiload software. \\
 Example:
@@ -66,15 +65,15 @@ If you don't have a MIDI capable soundcard, there are two options: FluidSynth
 and TiMidity. We recommend FluidSynth, as on many systems TiMidity will 'lag'
 behind music. This is very noticable in iMUSE-enabled games, which use fast
 and dynamic music transitions. Running TiMidity as root will allow it to
-setup real time priority, which may reduce music lag.\\
-~\\
+setup real time priority, which may reduce music lag.
+
 Asking TiMidity to become an ALSA sequencer:
 \begin{verbatim}
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
 \end{verbatim}
 If you get distorted output with this setting, you can try dropping the 
--B2,8 or changing the value.\\
-~\\
+-B2,8 or changing the value.
+
 Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
 \begin{verbatim}
   fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
