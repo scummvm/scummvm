@@ -25,40 +25,6 @@
 //
 //	Summary		:	This module holds the code for the driver96 menu system.
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		15-Nov-96	PRP		Initial Menu functions.
-//
-//	1.1		20-Nov-96	PRP		Fixed the displaying of the bottom menu.
-//
-//	1.2		08-Nov-96	PRP		Made the speed of the menubar dependent upon
-//								the number of icons displayed.
-//
-//	1.3		24-Jan-97	PRP		Changed the creation of menu icon sprite 
-//								surfaces depending upon whether the hardware
-//								can stretch blit or not.  Also, made it so
-//								that the full size icon sprite is not stretch
-//								blitted.
-//
-//	1.4		10-Feb-97	PRP		Changed the creation of menu icon sprite
-//								surfaces as the capability bits for the drivers
-//								have been changed.  Also, changed the error
-//								reporting code (for directDraw) so that it
-//								works.
-//
-//	1.5		04-Mar-97	PRP		Tried to fix bug where running out of video 
-//								memory creating menubar icon surfaces.
-//
-//	1.6		16-Apr-97	PRP		Got rid of bug where task switching causes
-//								failure of icon draw.
-//
-//	1.7		23-Jul-97	PRP		Checked error value of stretched blit.
-//
-//	1.8		13-Aug-97	PRP		Added CloseMenuImmediately.
-//
-//	1.9		13-Aug-97	PRP		Fixed spelling of above
-//
-//
 //	Functions
 //	---------
 //

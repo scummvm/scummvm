@@ -23,36 +23,6 @@
 //	Created		:	22nd August 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		16-Sep-96	PRP		Interface to the DirectDraw driver functions
-//								and data.
-//
-//	1.1		19-Sep-96	PRP		Increased scope of directDraw data, such as
-//								the back buffer object, so that mouse.c can
-//								have access to the screen.
-//
-//	1.2		25-Sep-96	PRP		Made scrollx and scrolly available to all
-//								driver code.
-//
-//	1.3		26-Sep-96	PRP		Moved scroll stuff to render.h for clarity.
-//
-//	1.4		07-Nov-96	PRP		Made bFullScreen available to all driver code.
-//
-//	1.5		18-Nov-96	PRP		Added reference to lpDD2 object.
-//
-//	1.6		24-Jan-97	PRP		Added hardware capability bits and defines.
-//
-//	1.7		06-Mar-97	PRP		Changed capability bits, and changed the 
-//								direct draw error reporting call.  Added 
-//								function to grab screen shot.
-//
-//	1.8		16-Jun-97	PSJ		Made globall externable to c++.
-//
-//	1.9		27-Jun-97	PRP		Moving the definition of GrabScreenShot to 
-//								driver96.h for external access.
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the d_draw.c module, but can be accessed by
 //					other parts of the driver96 library.

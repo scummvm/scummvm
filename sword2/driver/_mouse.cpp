@@ -25,65 +25,6 @@
 //
 //	Summary		:	This module holds the interface to the mouse..
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		18-Sep-96	PRP		Initial mouse functions.  Simple logging of
-//								previous 16 mouse events implemented.  Mouse
-//								drawing is currently hard coded, but animations
-//								will be definable at a later date.
-//
-//	1.1		03-Oct-96	PRP		Changed the mouse position so that mouse y of
-//								zero is the top left corner of the screen, and
-//								not the top left corner of the top menubar.
-//								Also, removed the x and y position from the
-//								mouse log.  And changed the MouseEvent function
-//								so that it returns a pointer to _mouseEvent
-//
-//	1.2		04-Oct-96	PRP		Put direct path in for ddraw.h
-//
-//	1.3		31-Oct-96	PRP		Added code to draw the proper type of mouse
-//								sprite, which comprises of the internal
-//								function DrawMouse and globally available
-//								AnimateMouse and SetMouseAnim.
-//
-//	1.4		15-Nov-96	PRP		Definition of menubar size is now obtained
-//								from menu.h
-//
-//	1.5		18-Nov-96	PRP		Changed the direct draw interface to
-//								IDirectDraw2.
-//
-//	1.6		25-Nov-96	PRP		Added functionality to set the luggage
-//								sprite.
-//
-//	1.7		06-Jan-97	PRP		Changed the width and height of sprites
-//								to be signed.
-//
-//	1.8		14-Jan-97	JEL		Reset mouse frame when new animation starts.
-//
-//	1.9		27-Jan-97	PRP		Changed the mouse drawing routines to utilize
-//								directDraw surfaces and transparency blitting.
-//
-//	1.10	10-Feb-97	PRP		Changed the directDraw error reporting so that
-//								it works properly.  Also, created the mouse
-//								sprite depending upon whether the hardware can
-//								blt or not.
-//
-//	1.11	19-Mar-97	PRP		Fixed a bug which was causing the mouse sprite
-//								to be freed up each frame and therefore 
-//								decompressed and re-loaded each frame.
-//
-//	1.12	20-Mar-97	PRP		Added a function to reset the render code when
-//								the control panel is entered.
-//
-//	1.13	09-Apr-97	PRP		Made the mouse animation wrap back to the
-//								seventh frame.
-//
-//	1.14	10-Apr-97	PRP		Added parameter to define whether mouse flashes
-//								or not.
-//
-//	1.15	23-Jul-97	JEL		Added CheckForMouseEvents() to return no. of events outstanding
-//
-//
 //	Functions
 //	---------
 //

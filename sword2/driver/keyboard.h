@@ -23,12 +23,6 @@
 //	Created		:	19th September 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		19-Sep-96	PRP		Internal driver interface to the keyboard driver
-//								functions and data.
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the keyboard.c module, but can be accessed by
 //					other parts of the driver96 library.

@@ -23,15 +23,6 @@
 //	Created		:	18th September 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		18-Sep-96	PRP		Internal driver interface to the mouse driver
-//								functions and data.
-//
-//	1.1		03-Oct-96	PRP		Changed the definition of mousex and y so that
-//								negative values are allowed.
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the mouse.c module, but can be accessed by
 //					other parts of the driver96 library.

@@ -25,15 +25,6 @@
 //
 //	Summary		:	This module holds the interface to the keyboard
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		19-Sep-96	PRP		Keyboard functions.  Simple logging of
-//								previous 32 keys pressed.
-//
-//	1.1		19-Sep-96	PRP		Fixed bug, ReadKey did not return RD_OK.
-//
-//	1.2		13-Aug-97	PSJ		Added GetKeyStatus
-//
 //	Functions
 //	---------
 //

@@ -23,10 +23,6 @@
 //	Created		:	5th December 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		05-Dec-96	PRP		Interface to the DirectSound driver functions
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the d_sound.c module, but can be accessed by
 //					other parts of the driver96 library.

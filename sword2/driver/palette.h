@@ -23,28 +23,6 @@
 //	Created		:	8th November 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		08-Nov-96	PRP		Internal driver interface to the palette
-//								functions and data.
-//
-//	1.1		11-Nov-96	PRP		Added internal driver reference for
-//								RestorePalette which should be called by the
-//								windows message handler whenever the window
-//								has been minimised/maximised.
-//
-//	1.2		22-Nov-96	PRP		Made the palette available to the rest of the
-//								driver96 library.
-//
-//	1.3		29-Nov-96	PRP		Made paletteMatch table available to other
-//								parts of the driver library.  Also, made the
-//								FadeServer available for the windows module
-//								to have access.
-//
-//	1.4		11-Apr-97	CJR		Moved palCopy to driver96.h for use in the
-//								game engine.
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the palette.c module, but can be accessed by
 //					other parts of the driver96 library.

@@ -23,17 +23,6 @@
 //	Created		:	20th August 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		16-Sep-96	PRP		Driver interface to the rdwin functions/data
-//
-//	1.1		07-Nov-96	PRP		Added debug windows message handler, and RECT
-//								defining the size of the current window.
-//
-//	1.2		04-Apr-97	PRP		Oops - no changes
-//
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the rdwin.c module, but can be accessed by
 //					other parts of the driver96 library.

@@ -23,33 +23,6 @@
 //	Created		:	26th August 1996
 //	By			:	P.R.Porter
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		16-Sep-96	PRP		Interface to the current scroll position.
-//
-//	1.1		23-Oct-96	PRP		Added definition of _parallaxLine structure.
-//
-//	1.2		05-Nov-96	PRP		Added definition of myScreenBuffer.
-//
-//	1.3		06-Nov-96	PRP		Fixed definition of myScreenBuffer.
-//
-//	1.4		15-Nov-96	PRP		Definition of menubar size removed, and put
-//								into menu.h
-//
-//	1.5		24-Jan-97	PRP		Added references to parallaxScrollx and
-//								parallaxScrolly.  These are used by the sprite
-//								drawing code to link sprites to parallax
-//								layers.
-//
-//	1.6		19-Mar-97	PRP		Added profiling flag for testing purposes.
-//
-//	1.7		24-Mar-97	PRP		Turned profiling off
-//
-//	1.8		08-Apr-97	JEL		Made locationWide and locationDeep accessible
-//								to other drivers.
-//
-//
-//
 //	Summary		:	This include file defines links to all data which is
 //					defined in the render.c module, but can be accessed by
 //					other parts of the driver96 library.

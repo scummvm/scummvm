@@ -26,14 +26,6 @@
 //	Summary		:	This module holds the functions which govern which language
 //					version is current.
 //
-//
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		16-Sep-96	PRP		Initial language version control functions.
-//								Many of the functions are currently stubs, and
-//								this will be addressed shortly.
-//
-//
 //	Functions
 //	---------
 //

@@ -26,12 +26,6 @@
 //	Summary		:	This module holds the code which controls and displays
 //					the console/debugging window.
 //
-//	Version	Date		By		Description
-//	------- ---------	---		-----------------------------------------------
-//	1.0		20-Sep-96	PRP		Inital console code.  Currently draws the 
-//								background of the console window.  Tex
-//
-//
 //	Functions
 //	---------
 //
