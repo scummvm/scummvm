@@ -73,17 +73,8 @@ struct Box {				/* Internal walkbox file format */
 	#pragma END_PACK_STRUCTS
 #endif
 
-struct PathNode {		/* Linked list of walkpath nodes */
-	uint index;
-	struct PathNode *left, *right;
-};
-
-struct PathVertex {		/* Linked list of walkpath nodes */
-	PathNode *left;
-	PathNode *right;
-};
-
 #define BOX_MATRIX_SIZE 2000
+#define BOX_DEBUG 0
 
 
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
@@ -750,233 +741,138 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 	return false;
 }
 
-
-class BoxHeap {
-	int heapSize, heapCurrentIndex;
-	byte *heapCurrent, *heapStart;
-	
-	void *getHeapBlock(int size) {
-		byte *ptr = heapCurrent;
-	
-		heapCurrent += size;
-		heapCurrentIndex += size;
-	
-		if (heapCurrentIndex >= heapSize)
-			error("Box path vertex heap overflow");
-	
-		return ptr;
-	}
-	
-public:
-	BoxHeap() {
-		heapSize = 1000;
-		heapStart = heapCurrent = (byte *)calloc(heapSize, 1);
-		heapCurrentIndex = 0;
-	}
-	
-	~BoxHeap() {
-		free(heapStart);
-	}
-
-	PathNode *unkMatrixProc2(PathVertex *vtx, int i) {
-		PathNode *node;
-	
-		if (vtx == NULL)
-			return NULL;
-	
-		node = (PathNode *)getHeapBlock(sizeof(PathNode));
-		node->index = i;
-		node->left = 0;
-		node->right = 0;
-	
-		if (!vtx->right) {
-			vtx->left = node;
-		} else {
-			vtx->right->left = node;
-			node->right = vtx->right;
+#if BOX_DEBUG
+static void printMatrix(byte *boxm, int num) {
+	int i;
+	for (i = 0; i < num; i++) {
+		printf("%d: ", i);
+		while (*boxm != 0xFF) {
+			printf("%d, ", *boxm);
+			boxm++;
 		}
-	
-		vtx->right = node;
-	
-		return vtx->right;
+		boxm++;
+		printf("\n");
 	}
-	
-
-	PathVertex *newPathVertex() {
-		// Reset the heap
-		heapCurrent = heapStart;
-		heapCurrentIndex = 0;
-		
-		// Add a single new PathVertex to the heap
-		return (PathVertex *)getHeapBlock(sizeof(PathVertex));
-	}
-	
-};
-
-class BoxMatrix {
-	int matrixSize;
-	byte *matrixPtr;
-	
-public:
-	BoxMatrix(byte *matrix) {
-		assert(matrix);
-		matrixSize = 0;
-		matrixPtr = matrix;
-	}
-	
-	void add(byte b) {
-		if (++matrixSize > BOX_MATRIX_SIZE)
-			error("Box matrix overflow");
-		*matrixPtr++ = b;
-	}
-};
-
-
-PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node) {
-	if (node == NULL || vtx == NULL)
-		return NULL;
-
-	if (!node->right) {
-		vtx->left = node->left;
-	} else {
-		node->right->left = node->left;
-	}
-
-	if (!node->left) {
-		vtx->right = node->right;
-	} else {
-		node->left->right = node->right;
-	}
-
-	if (vtx->left)
-		return vtx;
-
-	return NULL;
 }
 
+static void printMatrix2(byte *matrix, int num) {
+	int i, j;
+	printf("    ");
+	for (i = 0; i < num; i++)
+		printf("%2d ", i);
+	printf("\n");
+	for (i = 0; i < num; i++) {
+		printf("%2d: ", i);
+		for (j = 0; j < num; j++) {
+			int val = matrix[i * 64 + j];
+			if (val == 250)
+				printf(" ? ");
+			else
+				printf("%2d ", val);
+		}
+		printf("\n");
+	}
+}
+#endif
+
 void Scumm::createBoxMatrix() {
-	int num, i, j;
-	byte flags;
-	int table_1[66], table_2[66];
-	int counter, val;
-	int code;
-	byte *distanceMatrix;
+	int num, i, j, k;
+	byte *adjacentMatrix, *itineraryMatrix;
 
-
-	// A heap (an optiimsation to avoid calling malloc/free extremly often)
-	BoxHeap heap;
-
-	// Temporary 64*65 distance matrix
-	distanceMatrix = (byte *)calloc(65, 64);
-
-	// The result "matrix" in the special format used by Scumm.
-	BoxMatrix boxMatrix(createResource(rtMatrix, 1, BOX_MATRIX_SIZE));
-
+	// The total number of boxes
 	num = getNumBoxes();
+	assert(num <= 64);
 
-	// Initialise the distance matrix: each box has distance 0 to itself,
+	// Allocate the adjacent & itinerary matrices
+	adjacentMatrix = (byte *)malloc(64 * 64);
+	itineraryMatrix = (byte *)malloc(64 * 64);
+
+	// Initialise the adjacent matrix: each box has distance 0 to itself,
 	// and distance 1 to its direct neighbors. Initially, it has distance
-	// 250 (= infinity) to all other boxes.
+	// 255 (= infinity) to all other boxes.
 	for (i = 0; i < num; i++) {
 		for (j = 0; j < num; j++) {
 			if (i == j) {
-				distanceMatrix[i * 64 + j] = 0;
+				adjacentMatrix[i * 64 + j] = 0;
+				itineraryMatrix[i * 64 + j] = j;
 			} else if (areBoxesNeighbours(i, j)) {
-				distanceMatrix[i * 64 + j] = 1;
+				adjacentMatrix[i * 64 + j] = 1;
+				itineraryMatrix[i * 64 + j] = j;
 			} else {
-				distanceMatrix[i * 64 + j] = 250;
-			}
-		}
-	}
-	
-	// Iterate over all boxes
-	for (j = 0; j < num; j++) {
-		flags = getBoxFlags(j);
-		if (flags & kBoxInvisible) {
-			// Locked/invisible boxes are only reachable from themselves.
-			boxMatrix.add(0xFF);
-			boxMatrix.add(j);
-			boxMatrix.add(j);
-			boxMatrix.add(j);
-		} else {
-			PathNode *node, *node2 = NULL;
-			PathVertex *vtx = heap.newPathVertex();
-			for (i = 0; i < num; i++) {
-				flags = getBoxFlags(j);
-				if (!(flags & kBoxInvisible)) {
-					node = heap.unkMatrixProc2(vtx, i);
-					if (i == j)
-						node2 = node;
-				}
-			}
-			table_1[j] = 0;
-			table_2[j] = j;
-			vtx = unkMatrixProc1(vtx, node2);
-			node = vtx ? vtx->left : NULL;
-
-			counter = 250;
-			while (node) {
-				val = distanceMatrix[j * 64 + node->index];
-				table_1[node->index] = val;
-				if (val < counter)
-					counter = val;
-
-				if (table_1[node->index] != 250)
-					table_2[node->index] = node->index;
-				else
-					table_2[node->index] = -1;
-
-				node = node->left;
-			}
-
-			while (vtx) {
-				counter = 250;
-				node2 = node = vtx->left;
-
-				while (node) {
-					if (table_1[node->index] < counter) {
-						counter = table_1[node->index];
-						node2 = node;
-					}
-					node = node->left;
-				}
-				vtx = unkMatrixProc1(vtx, node2);
-				node = vtx ? vtx->left : NULL;
-				while (node) {
-					code = distanceMatrix[node2->index * 64 + node->index];
-					code += table_1[node2->index];
-					if (code < table_1[node->index]) {
-						table_1[node->index] = code;
-						table_2[node->index] = table_2[node2->index];
-					}
-					node = node->left;
-				}
-			}
-
-			boxMatrix.add(0xFF);
-			for (i = 1; i < num; i++) {
-				if (table_2[i - 1] != -1) {
-					boxMatrix.add(i - 1);	/* lo */
-					while (table_2[i - 1] == table_2[i]) {
-						++i;
-						if (i == num)
-							break;
-					}
-					boxMatrix.add(i - 1);	/* hi */
-					boxMatrix.add(table_2[i - 1]);	/* dst */
-				}
-			}
-			if (i == num && table_2[i - 1] != -1) {
-				boxMatrix.add(i - 1);	/* lo */
-				boxMatrix.add(i - 1);	/* hi */
-				boxMatrix.add(table_2[i - 1]);	/* dest */
+				adjacentMatrix[i * 64 + j] = 255;
+				itineraryMatrix[i * 64 + j] = 0;
 			}
 		}
 	}
 
-	boxMatrix.add(0xFF);
+	// Compute the shortest routes between boxes via Kleene's algorithm.
+	// The original code used some kind of mangled Dijkstra's algorithm;
+	// while that might in theory be slightly faster, it was
+	// a) extremly obfuscated
+	// b) incorrect: it didn't always find the shortest paths
+	// c) not any faster in reality for our sparse & small adjacent matrices
+	for (k = 1; k < num; k++) {
+		for (i = 1; i < num; i++) {
+			for (j = 1; j < num; j++) {
+				if (i == j)
+					continue;
+				byte distIK = adjacentMatrix[64 * i + k];
+				byte distKJ = adjacentMatrix[64 * k + j];
+				if (adjacentMatrix[64 * i + j] > distIK + distKJ) {
+					adjacentMatrix[64 * i + j] = distIK + distKJ;
+					itineraryMatrix[64 * i + j] = itineraryMatrix[64 * i + k];
+				}
+			}
+		}
 	
-	free(distanceMatrix);
+	}
+
+	// "Compress" the distance matrix into the box matrix format used
+	// by the engine. The format is like this:
+	// For each box (from 0 to num) there is first a byte with value 0xFF,
+	// followed by an arbitrary number of byte triples; the end is marked
+	// again by the lead 0xFF for the next "row". The meaning of the
+	// byte triples is as follows: the first two bytes define a range
+	// of box numbers (e.g. 7-11), while the third byte defines an 
+	// itineray box. Assuming we are in the 5th "row" and encounter 
+	// the triplet 7,11,15: this means to get from box 5 to any of
+	// the boxes 7,8,9,10,11 the shortest way is to go via box 15.
+	// See also getPathToDestBox.
+	
+	byte *matrixStart = createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
+	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
+
+	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)
+
+	addToMatrix(0xFF);
+	addToMatrix(0);
+	addToMatrix(0);
+	addToMatrix(0);
+	for (i = 1; i < num; i++) {
+		addToMatrix(0xFF);
+		for (j = 1; j < num; j++) {
+			byte itinerary = itineraryMatrix[64 * i + j];
+			if (itinerary != 0) {
+				addToMatrix(j);
+				while (j < num && itinerary == itineraryMatrix[64 * i + (j + 1)])
+					j++;
+				addToMatrix(j);
+				addToMatrix(itinerary);
+			}
+		}
+	}
+	addToMatrix(0xFF);
+	
+
+#if BOX_DEBUG
+	printf("Itinerary matrix:\n");
+	printMatrix2(itineraryMatrix, num);
+	printf("compressed matrix:\n");
+	printMatrix(getBoxMatrixBaseAddr(), num);
+#endif
+
+	free(adjacentMatrix);
+	free(itineraryMatrix);
 }
 
 /** Check if two boxes are neighbours. */
