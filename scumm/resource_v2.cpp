@@ -94,5 +94,7 @@ void Scumm_v2::readMAXS() {
 }
 
 void Scumm_v2::loadCharset(int num) {
-	warning("Charset loading not yet implmeneted for V1/V2");
+	warning("loadCharset(%d): Charset loading not yet implemented for V1/V2", num);
+	// TODO: For the old games, the charset is actually encoded in the engine. So we must
+	// rip it out of one of the .exes, and create a fake resource here.
 }
