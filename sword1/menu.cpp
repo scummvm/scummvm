@@ -39,7 +39,9 @@ SwordMenuIcon::SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32
 }
 
 bool SwordMenuIcon::wasClicked(uint16 mouseX, uint16 mouseY) {
-	if ((mouseY > 440) && (mouseX >= _menuPos * 40) && (mouseX < (_menuPos + 1) * 40))
+	if (((_menuType == MENU_TOP) && (mouseY >= 40)) || ((_menuType == MENU_BOT) && (mouseY < 440)))
+		return false;
+	if ((mouseX >= _menuPos * 40) && (mouseX < (_menuPos + 1) * 40))
 		return true;
 	else
 		return false;
@@ -79,18 +81,29 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 				if (mouseEvent & BS1L_BUTTON_DOWN) {
 					SwordLogic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
 					buildSubjects();
-					return 0;
 				} else if (mouseEvent & BS1L_BUTTON_UP) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD] == _subjectBar[cnt])
 						return cnt + 1;
 					else {
 						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
 						buildSubjects();
-						return 0;
 					}
 				}
 	} else {
-		return 0;
+		for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
+			if (_objects[cnt]->wasClicked(x, y))
+				if (mouseEvent & BS1L_BUTTON_DOWN) {
+					SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+					buildMenu();
+				} else if (mouseEvent & BS1L_BUTTON_UP) {
+					if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
+						return cnt + 1;
+					} else {
+						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
+						buildMenu();
+					}
+				}
+		}
 	}
 	return 0;
 }
@@ -120,7 +133,7 @@ void SwordMenu::buildMenu(void) {
 	_inMenu = 0;
 	for (uint32 pocketNo = 0; pocketNo < TOTAL_pockets; pocketNo++)
 		if (pockets[pocketNo]) {
-			_menuList[_inMenu] = pocketNo;
+			_menuList[_inMenu] = pocketNo + 1;
 			_inMenu++;
 		}
 	for (uint32 menuSlot = 0; menuSlot < _inMenu; menuSlot++) {
@@ -163,11 +176,14 @@ void SwordMenu::fnStartMenu(void) {
 }
 
 void SwordMenu::fnEndMenu(void) {
-	for (uint32 cnt = 0; cnt < _inMenu; cnt++)
-		delete _objects[cnt];
-	_screen->clearMenu(MENU_TOP);
-	_objectBarShown = false;
-	_mouse->setMenuStatus(0);
+	if (_objectBarShown) {
+		for (uint32 cnt = 0; cnt < _inMenu; cnt++)
+			delete _objects[cnt];
+		_screen->clearMenu(MENU_TOP);
+		_screen->clearMenu(MENU_BOT);
+		_objectBarShown = false;
+		_mouse->setMenuStatus(0);
+	}
 }
 
 void SwordMenu::fnChooser(BsObject *compact) {
@@ -191,12 +207,20 @@ void SwordMenu::fnEndChooser(void) {
 	_subjectBarShown = false;
 }
 
+void SwordMenu::checkTopMenu(void) {
+	if (_objectBarShown)
+		checkMenuClick(MENU_TOP);
+}
+
 int SwordMenu::logicChooser(BsObject *compact) {
+	if (_objectBarShown)
+		uint8 objSelected = checkMenuClick(MENU_TOP);
 	if (checkMenuClick(MENU_BOT)) {
 		compact->o_logic = LOGIC_script;
 		return 1;
 	} else 
 		return 0;
+	return 0;
 }
 
 void SwordMenu::fnAddSubject(int32 sub) {

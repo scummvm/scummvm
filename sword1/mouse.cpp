@@ -29,6 +29,7 @@
 #include "sworddefs.h"
 #include "system.h"
 #include "swordres.h"
+#include "menu.h"
 
 SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
@@ -38,6 +39,7 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_menuStatus = _mouseStatus = 0; // mouse off and unlocked
 	_getOff = 0;
 	_specialPtrId = 0;
+	_inTopMenu = false;
 
 	for (uint8 cnt = 0; cnt < 17; cnt++)
 		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
@@ -61,8 +63,9 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	// luggage & chess stuff is opened dynamically
 }
 
-void SwordMouse::useLogic(SwordLogic *pLogic) {
+void SwordMouse::useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu) {
 	_logic = pLogic;
+	_menu = pMenu;
 }
 
 void SwordMouse::setMenuStatus(uint8 status) {
@@ -107,7 +110,17 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		_numObjs = 0;
 		return;	// no human, so we don't want the mouse engine
 	}
-	// todo: check menus here.
+	
+	if (y < 40) { // okay, we are in the top menu.
+		if (!_inTopMenu) // are we just entering it?
+			_menu->fnStartMenu();
+		_menu->checkTopMenu();
+		_inTopMenu = true;
+	} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
+		_menu->fnEndMenu();
+		_inTopMenu = false;
+	}
+
 	SwordLogic::_scriptVars[MOUSE_X] = SwordLogic::_scriptVars[SCROLL_OFFSET_X] + x + 128;
 	SwordLogic::_scriptVars[MOUSE_Y] = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] + y + 128 - 40;
 

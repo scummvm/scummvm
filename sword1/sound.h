@@ -39,7 +39,6 @@
 struct QueueElement {
 	uint32 id, delay;
 	PlayingSoundHandle handle;
-	uint16 *data; // FIXME: This is a hack, because our mixer only supports Big endian data (currently)
 };
 
 struct RoomVol {
@@ -58,7 +57,7 @@ class SwordSound {
 public:
 	SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
 	~SwordSound(void);
-	void startFxForScreen(uint16 screen);
+	void newScreen(uint16 screen);
 
 	bool startSpeech(uint16 roomNo, uint16 localNo); // this should work more or less.
 													 // Maybe we'll need a delay of 3 gameCycles.

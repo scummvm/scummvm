@@ -43,8 +43,10 @@ int SwordSound::addToQueue(int32 fxNo) {
 		if (_fxQueue[cnt].id == (uint32)fxNo)
 			alreadyInQueue = true;
 	if (!alreadyInQueue) {
-		if (_endOfQueue == MAX_FXQ_LENGTH)
-			error("Sound queue overflow");
+		if (_endOfQueue == MAX_FXQ_LENGTH) {
+			warning("Sound queue overflow");
+			return 0;
+		}
 		_resMan->resOpen(_fxList[fxNo].sampleId);
 		_fxQueue[_endOfQueue].id = fxNo;
 		if (_fxList[fxNo].type == FX_SPOT)
@@ -77,13 +79,28 @@ void SwordSound::engine(void) {
 				playSample(_fxQueue[cnt]);
 		} else {
 			if (!_fxQueue[cnt].handle) { // sound finished
-				_resMan->resClose(_fxQueue[cnt].id);
+				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
 				if (cnt != _endOfQueue-1)
 					_fxQueue[cnt] = _fxQueue[_endOfQueue - 1];
 				_endOfQueue--;
 			}
 		}
 	}
+}
+
+void SwordSound::fnStopFx(int32 fxNo) {
+
+	_mixer->stopID(fxNo);
+	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
+		if (_fxQueue[cnt].id == (uint32)fxNo) {
+			if (!_fxQueue[cnt].delay) // sound was started
+				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
+            if (cnt != _endOfQueue-1)
+				_fxQueue[cnt] = _fxQueue[_endOfQueue-1];
+			_endOfQueue--;
+			return ;
+		}
+	debug(8, "fnStopFx: id not found in queue");
 }
 
 bool SwordSound::amISpeaking(void) {
@@ -98,18 +115,17 @@ void SwordSound::closeCowSysten(void) {
 	warning("stub: SwordSound::closeCowSystem()");
 }
 
-void SwordSound::fnStopFx(int32 fxNo) {
-	warning("stub: SwordSound::fnStopFx(%d)", fxNo);
-}
-
 bool SwordSound::speechFinished(void) {
 	//warning("stub: SwordSound::speechFinished()");
 	//return true;
     return (_speechHandle == 0);
 }
 
-void SwordSound::startFxForScreen(uint16 screen) { // do we need this?
-	warning("stub: SwordSound::startFxForScreen(%d)", screen);
+void SwordSound::newScreen(uint16 screen) {
+	// stop all running SFX
+	while (_endOfQueue)
+		fnStopFx(_fxQueue[0].id);
+	// I don't think that we even have to start SFX here.
 }
 
 void SwordSound::playSample(QueueElement elem) {

@@ -850,7 +850,6 @@ int SwordLogic::fnFullSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, in
 }
 
 int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("fnFadeDown speed = %d", speed);
 	_screen->fadeDownPalette();
 	return SCRIPT_CONT;
 }
@@ -1484,7 +1483,6 @@ int SwordLogic::fnGetPos(BsObject *cpt, int32 id, int32 targetId, int32 b, int32
 	if (target->o_status & STAT_SHRINK) {
 		int32 scale = (target->o_scale_a * target->o_ycoord + target->o_scale_b) / 256;
 		_scriptVars[RETURN_VALUE_4] = (megaSeperation * scale) / 256;
-		debug(1, "fnGetPos: scaled megaSeperation = %d", _scriptVars[RETURN_VALUE_4]);
 	} else
 		_scriptVars[RETURN_VALUE_4] = megaSeperation;
 	return SCRIPT_CONT;

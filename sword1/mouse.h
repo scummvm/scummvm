@@ -59,6 +59,7 @@ struct MousePtr {
 #endif
 
 class SwordLogic;
+class SwordMenu;
 class ResMan;
 class ObjectMan;
 class OSystem;
@@ -67,7 +68,7 @@ class SwordMouse {
 public:
 	SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
     void addToList(int id, BsObject *compact);
-    void useLogic(SwordLogic *pLogic);
+    void useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu);
 	void setLuggage(uint32 resID, uint32 rate);
 	void setPointer(uint32 resID, uint32 rate);
 	void animate(void);
@@ -87,6 +88,7 @@ private:
 	uint32 _currentPtrId, _rate, _rateCnt, _frame;
 	OSystem *_system;
 	SwordLogic *_logic;
+	SwordMenu *_menu;
 	MouseObj _objList[MAX_MOUSE];
 	ResMan *_resMan;
 	ObjectMan *_objMan;
@@ -99,6 +101,7 @@ private:
 	uint8 _menuStatus;
 	uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
 	MousePtr *_specialPtr;
+	bool _inTopMenu;
 };
 
 #endif //BSMOUSE_H

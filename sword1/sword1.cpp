@@ -110,7 +110,7 @@ void SwordEngine::initialize(void) {
 	_sound = new SwordSound("", _mixer, _resMan);
 	_menu = new SwordMenu(_screen, _mouse);
 	_logic = new SwordLogic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu);
-	_mouse->useLogic(_logic);
+	_mouse->useLogicAndMenu(_logic, _menu);
 
 	_systemVars.justRestoredGame = _systemVars.currentCD = 
 		_systemVars.gamePaused = _systemVars.saveGameFlag = 
@@ -171,6 +171,7 @@ void SwordEngine::mainLoop(void) {
 	do {
 		// do we need the section45-hack from sword.c here?
 		// todo: ensure right cd is inserted
+		_sound->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		_screen->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		_logic->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		SwordLogic::_scriptVars[SCREEN] = SwordLogic::_scriptVars[NEW_SCREEN];
@@ -221,7 +222,8 @@ void SwordEngine::mainLoop(void) {
 		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) &&
 			(_systemVars.saveGameFlag < 2));	// change screen
 
-		if (SwordLogic::_scriptVars[SCREEN] != 53)	// don't fade down after syria pan
+		// we don't fade down after syria pan (53). Also, scripts can call fnFadeDown, in that case, we already are fading
+		if ((SwordLogic::_scriptVars[SCREEN] != 53) && (!_screen->stillFading()))
 			_screen->fadeDownPalette();
 		while (_screen->stillFading()) {
 			_music->stream();

@@ -71,6 +71,7 @@ public:
 	void refresh(uint8 menuType);
 	void fnStartMenu(void);
 	void fnEndMenu(void);
+	void checkTopMenu(void);
 
 private:
 	void buildSubjects(void);
