@@ -58,7 +58,7 @@
 
 #if (defined(MIPS) || defined(SH3)) && (_WIN32_WCE < 300)
 // Comment this out if you don't want to support GameX
-#define GAMEX
+//#define GAMEX
 #endif
 
 #ifdef GAMEX
