@@ -147,19 +147,19 @@ public:
 
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();
-	
+
 	/** set the global volume, 0-256 */
 	void setVolume(int volume);
-	
+
 	/** query the global volume, 0-256 */
 	int getVolume() const { return _globalVolume; }
 
 	/** set the music volume, 0-256 */
 	void setMusicVolume(int volume);
-	
+
 	/** query the music volume, 0-256 */
 	int getMusicVolume() const { return _musicVolume; }
-	
+
 	/** query the output rate in kHz */
 	uint getOutputRate() const { return _outputRate; }
 

@@ -199,7 +199,7 @@ void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 siz
 
 void SoundMixer::endStream(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
-	
+
 	// Simply ignore stop requests for handles of sounds that already terminated
 	if (handle == 0)
 		return;
@@ -331,7 +331,7 @@ void SoundMixer::stopID(int id) {
 
 void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
-	
+
 	// Simply ignore stop requests for handles of sounds that already terminated
 	if (handle == 0)
 		return;
@@ -349,7 +349,7 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 
 void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
-	
+
 	if (handle == 0)
 		return;
 
@@ -366,7 +366,7 @@ void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 
 void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 	Common::StackLock lock(_mutex);
-	
+
 	if (handle == 0)
 		return;
 
@@ -537,8 +537,8 @@ ChannelRaw::~ChannelRaw() {
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
-                             void *sound, uint32 size, uint rate,
-                             byte flags, uint32 buffer_size, byte volume, int8 pan)
+							void *sound, uint32 size, uint rate,
+							byte flags, uint32 buffer_size, byte volume, int8 pan)
 	: Channel(mixer, handle) {
 	_volume = volume;
 	_pan = pan;

@@ -43,8 +43,7 @@ _autoLoop (false),
 _smartJump (false),
 _num_tracks (0),
 _active_track (255),
-_abort_parse (0)
-{
+_abort_parse (0) {
 	memset (_active_notes, 0, sizeof(_active_notes));
 }
 

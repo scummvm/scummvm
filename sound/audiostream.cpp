@@ -116,7 +116,7 @@ protected:
 	byte *_bufferEnd;
 	byte *_pos;
 	byte *_end;
-	
+
 	inline int16 readIntern();
 	inline bool eosIntern() const { return _end == _pos; };
 public:
@@ -255,11 +255,11 @@ public:
  */
 MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	// duration == 0 means: play everything till end of file
-	
+
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
-	
+
 	_duration = duration;
 
 	_posInFrame = 0;
@@ -276,27 +276,26 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	if (size) {
 		_file = 0;
 	}
-	
 }
 
 MP3InputStream::~MP3InputStream() {
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
-	
+
 	free(_ptr);
 }
 
 bool MP3InputStream::init() {
 	// TODO
-	
+
 	// Read in the first chunk of the MP3 file
 	_size = _file->read(_ptr, _bufferSize);
 	if (_size <= 0) {
 		warning("MP3InputStream: Failed to read MP3 data");
 		return false;
 	}
-	
+
 	// Feed the data we just read into the stream decoder
 	mad_stream_buffer(&_stream, _ptr, _size);
 
@@ -305,8 +304,7 @@ bool MP3InputStream::init() {
 
 	// Check the header, determine if this is a stereo stream
 	int num;
-	switch(_frame.header.mode)
-	{
+	switch(_frame.header.mode) {
 		case MAD_MODE_SINGLE_CHANNEL:
 		case MAD_MODE_DUAL_CHANNEL:
 		case MAD_MODE_JOINT_STEREO:
@@ -333,7 +331,7 @@ void MP3InputStream::refill(bool first) {
 
 			if (!_file)
 				_size = -1;
-		
+
 			// Give up immediately if we are at the EOF already
 			if (_size <= 0)
 				return;
@@ -347,7 +345,7 @@ void MP3InputStream::refill(bool first) {
 			}
 			// Read in more data from the input file
 			_size = _file->read(_ptr + offset, _bufferSize - offset);
-			
+
 			// Nothing read -> EOF -> bail out
 			if (_size <= 0) {
 				return;
@@ -364,7 +362,7 @@ void MP3InputStream::refill(bool first) {
 			error("MP3InputStream: Unrecoverable error");
 		}
 	}
-	
+
 	// Subtract the duration of this frame from the time left to play
 	mad_timer_t frame_duration = _frame.header.duration;
 	mad_timer_negate(&frame_duration);
@@ -372,7 +370,7 @@ void MP3InputStream::refill(bool first) {
 
 	if (!first && _file && mad_timer_compare(_duration, mad_timer_zero) <= 0)
 		_size = -1;	// Mark for EOF
-	
+
 	// Synthesise the frame into PCM samples and reset the buffer position
 	mad_synth_frame(&_synth, &_frame);
 	_posInFrame = 0;
@@ -494,7 +492,7 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 		_end_pos = ov_pcm_tell(_ov_file) + duration;
 	else
 		_end_pos = ov_pcm_total(_ov_file, -1);
-	
+
 	// Read in initial data
 	refill();
 }
@@ -537,14 +535,14 @@ void VorbisInputStream::refill() {
 		long result = ov_read(_ov_file, read_pos, len_left,
 #ifndef VORBIS_TREMOR
 #ifdef SCUMM_BIG_ENDIAN
-				      1,
+						1,
 #else
-				      0,
+						0,
 #endif
-				      2,	// 16 bit
-				      1,	// signed
+						2,	// 16 bit
+						1,	// signed
 #endif
-					  NULL);
+						NULL);
 		if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");

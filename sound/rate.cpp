@@ -115,7 +115,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 
 	ilast[0] = ilast[1] = 0;
 	icur[0] = icur[1] = 0;
-	
+
 	inLen = 0;
 }
 
@@ -124,11 +124,10 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
  * Return number of samples processed.
  */
 template<bool stereo, bool reverseStereo>
-int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r)
-{
+int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
 	st_sample_t out[2];
-	
+
 	const int numChannels = stereo ? 2 : 1;
 	int i;
 

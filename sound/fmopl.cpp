@@ -625,9 +625,9 @@ static int OPLOpenTable(void) {
 		pom = 20 * log10(1 / pom);	   /* decibel */
 		j = int(pom / EG_STEP);         /* TL_TABLE steps */
 
-        /* degree 0   -  90    , degree 180 -  90 : plus section */
+		/* degree 0   -  90    , degree 180 -  90 : plus section */
 		SIN_TABLE[          s] = SIN_TABLE[SIN_ENT / 2 - s] = &TL_TABLE[j];
-        /* degree 180 - 270    , degree 360 - 270 : minus section */
+		/* degree 180 - 270    , degree 360 - 270 : minus section */
 		SIN_TABLE[SIN_ENT / 2 + s] = SIN_TABLE[SIN_ENT - s] = &TL_TABLE[TL_MAX + j];
 	}
 	for (s = 0;s < SIN_ENT; s++) {

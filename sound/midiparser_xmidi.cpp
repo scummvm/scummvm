@@ -144,7 +144,7 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 		// Read length of 
 		len = read4high (pos);
 		start = pos;
-		
+
 		// XDIRless XMIDI, we can handle them here.
 		if (!memcmp (pos, "XMID", 4)) {	
 			printf ("Warning: XMIDI doesn't have XDIR\n");
@@ -166,11 +166,11 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 
 				// Read length of chunk
 				chunk_len = read4high (pos);
-			
+
 				// Add eight bytes
 				i += 8;
-				
-				if (memcmp (buf, "INFO", 4)) {	
+
+				if (memcmp (buf, "INFO", 4)) {
 					// Must align
 					pos += (chunk_len + 1) & ~1;
 					i += (chunk_len + 1) & ~1;
@@ -182,7 +182,7 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 					printf ("Invalid chunk length %d for 'INFO' block!\n", (int) chunk_len);
 					return false;
 				}
-				
+
 				_num_tracks = (byte) read2low (pos);
 
 				if (chunk_len > 2) {
@@ -197,21 +197,21 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 				printf ("Didn't find a valid track count\n");
 				return false;
 			}
-		
+
 			// Ok now to start part 2
 			// Goto the right place
 			pos = start + ((len + 1) & ~1);
-		
+
 			if (memcmp (pos, "CAT ", 4)) {
 				// Not an XMID
 				printf ("Expected 'CAT ' but found '%c%c%c%c'\n", pos[0], pos[1], pos[2], pos[3]);
 				return false;
 			}
 			pos += 4;
-			
+
 			// Now read length of this track
 			len = read4high (pos);
-			
+
 			if (memcmp (pos, "XMID", 4)) {
 				// Not an XMID
 				printf ("Expected 'XMID' but found '%c%c%c%c'\n", pos[0], pos[1], pos[2], pos[3]);
