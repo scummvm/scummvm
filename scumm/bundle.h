@@ -48,7 +48,6 @@ private:
 	int32 _numMusicFiles;
 	int32 _lastSong;
 
-	bool _initializedImcTables;
 	byte _destImcTable[93];
 	uint32 _destImcTable2[5697];
 
@@ -65,8 +64,8 @@ public:
 	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
-	void closeVoiceFile() { _voiceFile.close(); }
-	void closeMusicFile() { _musicFile.close(); }
+	void closeVoiceFile();
+	void closeMusicFile();
 	int32 decompressVoiceSampleByName(const char *name, byte **comp_final);
 	int32 decompressVoiceSampleByIndex(int32 index, byte **comp_final);
 	int32 decompressMusicSampleByName(const char *name, int32 number, byte *comp_final);

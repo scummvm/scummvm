@@ -24,7 +24,7 @@
 #include "bundle.h"
 #include "file.h"
 
-const int16 imcTable[] = {
+static const int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
 	0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F, 0x0022, 0x0025, 0x0029, 0x002D,
 	0x0032, 0x0037, 0x003C, 0x0042, 0x0049, 0x0050, 0x0058, 0x0061, 0x006B, 0x0076,
@@ -36,7 +36,7 @@ const int16 imcTable[] = {
 	0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF
 };
 
-const byte imxOtherTable[6][128] = {
+static const byte imxOtherTable[6][128] = {
 	{
 		0xFF, 0x04, 0xFF, 0x04
 	},
@@ -103,7 +103,8 @@ Bundle::Bundle() {
 	_numMusicFiles = 0;
 
 	_lastSong = -1;
-	_initializedImcTables = false;
+
+	initializeImcTables();
 }
 
 Bundle::~Bundle() {
@@ -114,9 +115,6 @@ Bundle::~Bundle() {
 }
 
 void Bundle::initializeImcTables() {
-	if (_initializedImcTables == true)
-		return;
-
 	int32 destTablePos = 0;
 	int32 imcTable1Pos = 0;
 	do {
@@ -158,16 +156,12 @@ void Bundle::initializeImcTables() {
 			destTablePos += 64;
 		} while (++imcTable1Pos <= 88);
 	}
-
-	_initializedImcTables = true;
 }
 
 bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 	int32 tag, offset;
 
-	initializeImcTables();
-
-	if (_voiceFile.isOpen() == true)
+	if (_voiceFile.isOpen())
 		return true;
 
 	if (_voiceFile.open(filename, directory) == false) {
@@ -204,12 +198,17 @@ bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 	return true;
 }
 
+void Bundle::closeVoiceFile() {
+	if (_voiceFile.isOpen()) {
+		_voiceFile.close();
+		free(_bundleVoiceTable);
+	}
+}
+
 bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	int32 tag, offset;
 
-	initializeImcTables();
-
-	if (_musicFile.isOpen() == true)
+	if (_musicFile.isOpen())
 		return true;
 
 	if (_musicFile.open(filename, directory) == false) {
@@ -245,6 +244,14 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 
 	return true;
 }
+
+void Bundle::closeMusicFile() {
+	if (_musicFile.isOpen()) {
+		_musicFile.close();
+		free(_bundleMusicTable);
+	}
+}
+
 
 int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 	int32 i, tag, num, final_size, output_size;
