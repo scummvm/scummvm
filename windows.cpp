@@ -540,7 +540,9 @@ int main(int argc, char* argv[]) {
 
 	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);
-	gui.init(&scumm);
+
+        if (!(scumm._features & GF_SMALL_HEADER))
+                gui.init(&scumm);
 
 	delta = 0;
 	do {
