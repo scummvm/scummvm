@@ -1327,7 +1327,10 @@ void Scumm_v6::o6_isActorInBox()
 {
 	int box = pop();
 	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
-	push(checkXYInBoxBounds(box, a->x, a->y));
+	if(!a)
+		push(0); // FIXME: DIG seems to call this with an invalid actor id
+	else
+		push(checkXYInBoxBounds(box, a->x, a->y));
 }
 
 void Scumm_v6::o6_getActorLayer()
