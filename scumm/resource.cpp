@@ -441,7 +441,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		default:
-			error("Bad ID '%s' found in directory!", tag2str(blocktype));
+			error("Bad ID '%s' found in index file directory!", tag2str(blocktype));
 			return;
 		}
 	}
@@ -460,7 +460,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%x,%s)", resTypeFromId(id), FROM_LE_32(tag), name);
+	debug(9, "readResTypeList(%s,%s,%s)", resTypeFromId(id), tag2str(TO_BE_32(tag)), name);
 
 	if (_version == 8)
 		num = _fileHandle.readUint32LE();
@@ -513,7 +513,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 }
 
 void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
-	debug(9, "allocResTypeData(%s/%s,%x,%d,%d)", resTypeFromId(id), name, FROM_LE_32(tag), num, mode);
+	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name, tag2str(TO_BE_32(tag)), num, mode);
 	assert(id >= 0 && id < (int)(ARRAYSIZE(res.mode)));
 
 	if (num >= 2000) {
