@@ -2250,7 +2250,7 @@ void Scumm_v6::o6_dim() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o6_dim	: default case");
+		error("o6_dim: default case");
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
@@ -2347,9 +2347,10 @@ void Scumm_v6::o6_setBlastObjectWindow() {
 
 void Scumm_v6::o6_kernelSetFunctions() {
 	int args[30];
+	int num;
 	Actor *a;
 
-	getStackList(args, ARRAYSIZE(args));
+	num = getStackList(args, ARRAYSIZE(args));
 
 	if (_features & GF_AFTER_V7) {
 		switch (args[0]) {
@@ -2532,6 +2533,9 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 124:
 			_saveSound = args[1];
 			break;
+		default:
+			error("o6_kernelSetFunctions: default case %d (paramg count %d)", args[0], num);
+			break;
 		}
 	} else {
 		switch (args[0]) {
@@ -2557,41 +2561,32 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 9:
 			warning("stub unkMiscOp9()");
 			break;
-
 		case 104:									/* samnmax */
 			nukeFlObjects(args[2], args[3]);
 			break;
-
-		case 106:
-			error("stub o6_kernelSetFunctions_106()");
-			break;
-
 		case 107:									/* set actor scale */
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
 			break;
-
 		case 108:									/* create proc_special_palette */
 		case 109:
 			// FIXME: are 108 and 109 really identical?! That seems unlikely.
+			if (num != 6)
+				warning("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
 			break;
-
 		case 110:
 			gdi.clearUpperMask();
 			break;
-
 		case 111:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 111");
 			a->shadow_mode = args[2] + args[3];
 			break;
-
 		case 112:									/* palette shift? */
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 			break;
-
 		case 114:
 			// Sam & Max film noir mode
 			if (_gameId == GID_SAMNMAX) {
@@ -2609,45 +2604,28 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			} else
 				warning("stub o6_kernelSetFunctions_114()");
 			break;
-
 		case 117:
 			warning("stub o6_kernelSetFunctions_117()");
 			break;
-
-		case 118:
-			error("stub o6_kernelSetFunctions_118(%d,%d,%d,%d,%d,%d,%d)",
-						args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-			break;
-
 		case 119:
 			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 			break;
-
 		case 120:
 			swapPalColors(args[1], args[2]);
 			break;
-
-		case 121:
-			error("stub o6_kernelSetFunctions_121(%d)", args[1]);
-			break;
-
 		case 122:
-
 			VAR(VAR_SOUNDRESULT) =
 				(short)_imuse->doCommand(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
 			break;
-
 		case 123:
 			copyPalColor(args[2], args[1]);
 			break;
-
-		case 124:									/* samnmax */
-//			warning("o6_kernelSetFunctions: _saveSound=%d", args[1]);
+		case 124:
 			_saveSound = args[1];
 			break;
-
 		default:
-			error("o6_kernelSetFunctions: default case %d", args[0]);
+			error("o6_kernelSetFunctions: default case %d (paramg count %d)", args[0], num);
+			break;
 		}
 	}
 }
