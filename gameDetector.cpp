@@ -317,6 +317,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"qt",MD_QTMUSIC},
 		{"core",MD_COREAUDIO},
 		{"amidi",MD_AMIDI},
+		{"midiemu",MD_MIDIEMU},
 		{"adlib",-1},
 	};
 
@@ -579,6 +580,7 @@ MidiDriver *GameDetector::createMidi() {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
+	case MD_MIDIEMU:	return MidiDriver_MIDIEMU_create();
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif
@@ -586,13 +588,13 @@ MidiDriver *GameDetector::createMidi() {
 	case MD_AMIDI:		return MidiDriver_AMIDI_create();
 #endif
 #if defined(UNIX) && !defined(__BEOS__)
-    case MD_SEQ:        return MidiDriver_SEQ_create();
+	case MD_SEQ:		return MidiDriver_SEQ_create();
 #endif
 #if defined(__APPLE__) || defined(macintosh)
-	case MD_QTMUSIC:		return MidiDriver_QT_create();
+	case MD_QTMUSIC:	return MidiDriver_QT_create();
 #endif
 #if defined(__APPLE__)
-	case MD_COREAUDIO:		return MidiDriver_CORE_create();
+	case MD_COREAUDIO:	return MidiDriver_CORE_create();
 #endif
 	}
 

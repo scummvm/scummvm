@@ -1398,6 +1398,9 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
          } 
 	scumm->_mixer->set_volume(128);
 
+	/* HACK !!! */
+	g_scumm = scumm;
+	/* END HACK */
 
 	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
