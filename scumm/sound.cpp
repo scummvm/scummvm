@@ -651,16 +651,13 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		if (_vm->_features & GF_HUMONGOUS) {
 			_sfxMode |= mode;
 
-			// SKIP TALK (8) HSHD (14)
-			_sfxFile->seek(offset + 22, SEEK_SET);
-			int rate = _sfxFile->readUint16LE();
-			// SKIP HSHD (8) and SDAT (8)
-			_sfxFile->seek(+16, SEEK_CUR);
+			// SKIP TALK (8) HSHD (22) and SDAT (8)
+			_sfxFile->seek(offset + 40, SEEK_SET);
 
 			size = b - 40;
 			sound = (byte *)malloc(size);
 			_sfxFile->read(sound, size);
-			_vm->_mixer->playRaw(handle, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
 

@@ -82,6 +82,8 @@ void ScummEngine::CHARSET_1() {
 	int frme;
 	Actor *a;
 	byte *buffer;
+	int code = (_gameId == GID_PAJAMA) ? 127 : 64;
+	char value[32];
 
 	if (!_haveMsg)
 		return;
@@ -177,11 +179,6 @@ void ScummEngine::CHARSET_1() {
 
 	buffer = _charsetBuffer + _charsetBufPos;
 
-	// TODO HE 7.2 games use difference charset codes
-	// Skip the code for now
-	if (_heversion >= 72)
-		buffer += 15;
-
 	if (_version > 3)
 		_charset->addLinebreaks(0, buffer, 0, t);
 
@@ -224,7 +221,49 @@ void ScummEngine::CHARSET_1() {
 			continue;
 		}
 
-		if (c == 0xFE || c == 0xFF) {
+		if (_heversion >= 72 && c == code) {
+			c = *buffer++;
+			switch(c) {
+			case 84:
+				i = 0;
+				memset(value, 0, 32);
+				c = *buffer++;
+				while(c != 44) {
+					value[i] = c;
+					c = *buffer++;
+					i++;
+				}
+				value[i] = 0;
+				talk_sound_a = atoi(value);
+
+				i = 0;
+				memset(value, 0, 32);
+				c = *buffer++;
+				while(c != code) {
+					value[i] = c;
+					c = *buffer++;
+					i++;
+				}
+				value[i] = 0;
+				talk_sound_b = atoi(value);
+
+				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				break;
+			case 110:
+				goto newLine;
+			case 104:
+				_haveMsg = 0;
+				_keepText = true;
+				break;
+			case 119:
+				if (_haveMsg != 0xFE)
+					_haveMsg = 0xFF;
+				_keepText = false;
+				break;
+			default:
+				warning("CHARSET_1: invalid code %d", c);
+			}
+		} else if (c == 0xFE || c == 0xFF) {
 			c = *buffer++;
 			switch(c) {
 			case 1:
