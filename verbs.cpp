@@ -67,14 +67,14 @@ void Scumm::checkExecVerbs() {
 void Scumm::verbMouseOver(int verb) {
 	if (_verbMouseOver==verb)
 		return;
-
+	
 	if (_verbs[_verbMouseOver].type!=1) {
 		drawVerb(_verbMouseOver, 0);
 		_verbMouseOver = verb;
 	}
 
 	if (_verbs[verb].type!=1 && _verbs[verb].hicolor) {
-		drawVerb(verb, 1);
+		drawVerb(verb, 1);		
 		_verbMouseOver = verb;
 	}
 }
@@ -85,16 +85,20 @@ int Scumm::checkMouseOver(int x, int y) {
 
 	vs = &_verbs[i];
 	do {
+		if (_features && GF_OLD256)
+			vs->saveid = 0;
+
 		if (vs->curmode!=1 || !vs->verbid || vs->saveid ||
-				y < vs->y || y >= vs->bottom)
+			y < vs->y || y >= vs->bottom)
 				continue;
 		if (vs->center) {
 			if (x < -(vs->right - vs->x - vs->x) || x >= vs->right)
-					continue;
-		} else {
+				continue;
+		} else {	
 			if (x < vs->x || x >= vs->right)
 				continue;
 		}
+		
 		return i;
 	} while (--vs,--i);
 	return 0;
@@ -109,7 +113,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 		return;
 
 	vs = &_verbs[vrb];
-
+	
 	if (!vs->saveid && vs->curmode && vs->verbid) {
 		if (vs->type==1) {
 			drawVerbBitmap(vrb, vs->x, vs->y);
@@ -129,19 +133,22 @@ void Scumm::drawVerb(int vrb, int mode) {
 		string[4].color = color;
 		if (vs->curmode==2)
 			string[4].color = vs->dimcolor;
+
 		_messagePtr = getResourceAddress(rtVerb, vrb);
 		assert(_messagePtr);
+		
 		tmp = charset._center;
 		charset._center = 0;
 		drawString(4);
 		charset._center = tmp;
+		
 		vs->right = charset._strRight;
 		vs->bottom = charset._strBottom;
 		vs->oldleft = charset._strLeft;
 		vs->oldright = charset._strRight;
 		vs->oldtop = charset._strTop;
 		vs->oldbottom = charset._strBottom;
-		charset._strLeft = charset._strRight;
+		charset._strLeft = charset._strRight;				
 	} else {
 		restoreVerbBG(vrb);
 	}

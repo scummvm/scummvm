@@ -697,11 +697,11 @@ void Scumm::initCharset(int charsetno) {
 void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr;
-	unsigned int buffer, mask=0, x, y;
+	unsigned int buffer, mask=0, x = 0, y = 0;
 	unsigned char color;
 
 	_vm->checkRange(_vm->_maxCharsets-1, 0, _curId, "Printing with bad charset %d");
-
+		
 	if ((vs=_vm->findVirtScreen(_top)) == NULL)
 		return;
 
@@ -720,8 +720,15 @@ void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 				*(dest_ptr + y*320 + x) = _color;
 		}
 	}
-		
+
 	_left+=8;
+
+	if (_left  > _strRight)
+		_strRight = _left;
+
+	if (_top + 8 > _strBottom)
+		_strBottom = _top + 8;
+
 }
 
 
