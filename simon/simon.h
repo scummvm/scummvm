@@ -644,8 +644,7 @@ public:
 	uint getNextItemID();
 	uint getItem1ID() {
 		return 1;
-	}
-	Item *getItem1Ptr();
+	} Item *getItem1Ptr();
 	Item *getItemPtrB();
 
 	byte getByte();
