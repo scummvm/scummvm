@@ -1812,7 +1812,12 @@ void Scumm::mainRun() {
 void Scumm::launch() {
 	gdi._vm = this;
 
-	_maxHeapThreshold = 900000;
+	// Since the new costumes are very big, we increase the heap limit, to avoid having
+	// to constantly reload stuff from the data files.
+	if (_features & GF_NEW_COSTUMES)
+		_maxHeapThreshold = 1500000;
+	else
+		_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
 
 	_verbRedraw = false;
