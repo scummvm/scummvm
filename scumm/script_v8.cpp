@@ -38,7 +38,7 @@ void Scumm_v8::setupOpcodes()
 	// TODO: any of the o6_ entries are potentially wrong and pure guesses :-)
 	static const OpcodeEntryV8 opcodes[256] = {
 		/* 00 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o6_pushWord),
 		OPCODE(o6_pushWordVar),
 		OPCODE(o6_wordArrayRead),
@@ -168,12 +168,12 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o8_wait),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_delay),			// FIXME - is the delay period right?
+		OPCODE(o6_delayLonger),		// FIXME - is the delay period right?
 		/* 6C */
-		OPCODE(o8_unknown),
+		OPCODE(o6_delayVeryLong),	// FIXME - is the delay period right?
 		OPCODE(o6_writeWordVar),
 		OPCODE(o6_wordVarInc),
 		OPCODE(o6_wordVarDec),
@@ -186,52 +186,52 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_dim2),
 		OPCODE(o6_wordArrayIndexedWrite),
 		OPCODE(o8_arrayOps),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* 78 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o6_startScript),
 		OPCODE(o6_startScriptQuick),
 		OPCODE(o6_stopObjectCode),
 		/* 7C */
-		OPCODE(o8_unknown),
-		OPCODE(o6_jumpToScript),	// FIXME - is this right? "O_CHAIN_SCRIPT"
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_stopScript),
+		OPCODE(o6_jumpToScript),		// FIXME - is this right? "O_CHAIN_SCRIPT"
+		OPCODE(o6_invalid),
+		OPCODE(o6_startObject),
 		/* 80 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
 		OPCODE(o6_cutscene),
 		OPCODE(o6_endCutscene),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* 84 */
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* 88 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o6_setClass),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* 8C */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* 90 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		OPCODE(o8_printLine),
 		/* 94 */
 		OPCODE(o8_printCursor),
 		OPCODE(o8_printDebug),
 		OPCODE(o8_printSystem),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* 98 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* 9C */
 		OPCODE(o8_cursorCommand),
 		OPCODE(o6_loadRoom),
@@ -246,117 +246,117 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		OPCODE(o6_pickupObject),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* A8 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
 		/* AC */
 		OPCODE(o8_actorOps),
 		OPCODE(o8_cameraOps),
 		OPCODE(o8_verbOps),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* B0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o8_soundKludge),
 		OPCODE(o8_system),
 		/* B4 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* B8 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		OPCODE(o8_kludge),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* BC */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* C0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* C4 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* C8 */
 		OPCODE(o6_startScript),
 		OPCODE(o6_startObject),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* CC */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_ifClassOfIs),	// FIXME - this is a guess
+		OPCODE(o6_getState),
+		OPCODE(o6_getOwner),
 		OPCODE(o6_isScriptRunning),
 		/* D4 */
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_abs),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
 		/* D8 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_kludge2),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_getActorFromXY),
 		/* DC */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_findObject),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* E0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* E4 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* E8 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* EC */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* F0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* F4 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 		/* FC */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
+		OPCODE(o6_invalid),
 	};
 	
 	_opcodesV8 = opcodes;
@@ -521,11 +521,6 @@ void Scumm_v8::decodeParseString(int m, int n)
 	}
 }
 
-void Scumm_v8::o8_unknown()
-{
-	warning("Unknown opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
-}
-
 void Scumm_v8::o8_mod()
 {
 	int a = pop();
@@ -596,6 +591,8 @@ void Scumm_v8::o8_arrayOps()
 {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
+	int b, c, d, len;
+	int16 list[128];
 	
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
@@ -603,7 +600,7 @@ void Scumm_v8::o8_arrayOps()
 		int idx = pop();
 		ArrayHeader *ah;
 		int r;
-		int len = getStringLen(NULL);
+		len = getStringLen(NULL);
 	
 		r = defineArray(array, 4, 0, len);
 		ah = (ArrayHeader *)getResourceAddress(rtString, r);
@@ -611,9 +608,29 @@ void Scumm_v8::o8_arrayOps()
 		}
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
-		// TODO
+		// TODO / FIXME: is this right?
+		b = pop();
+		c = pop();
+		d = readVar(array);
+		if (d == 0) {
+			defineArray(array, 5, 0, b + c);
+		}
+		while (c--) {
+			writeArray(array, 0, b + c, pop());
+		}
+		break;
 	case 0x16:		// SO_ASSIGN_2DIM_LIST
-		// TODO
+		// TODO / FIXME: is this right?
+		b = pop();
+		len = getStackList(list, sizeof(list) / sizeof(list[0]));
+		d = readVar(array);
+		if (d == 0)
+			error("Must DIM a two dimensional array before assigning");
+		c = pop();
+		while (--len >= 0) {
+			writeArray(array, c, b + len, list[len]);
+		}
+		break;
 	default:
 		error("o8_arrayOps: default case %d (array %d)", subOp, array);
 	}
@@ -937,6 +954,12 @@ void Scumm_v8::o8_verbOps()
 	}
 }
 
+void Scumm_v8::o8_soundKludge()
+{
+	// TODO
+	int16 args[30];
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+}
 
 void Scumm_v8::o8_system()
 {
@@ -957,6 +980,22 @@ void Scumm_v8::o8_kludge()
 	switch (args[0]) {
 	default:
 		warning("o8_kludge: default case %d", args[0]);
+	}
+}
+
+void Scumm_v8::o8_kludge2()
+{
+	// TODO
+	int16 args[30];
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+
+	switch (args[0]) {
+	case 0xE0:
+		// TODO - ReadRegistryValue
+		push(0);
+		break;
+	default:
+		warning("o8_kludge2: default case %d", args[0]);
 	}
 }
 

@@ -407,8 +407,6 @@ protected:
 	void decodeParseString(int m, int n);
 
 	/* Version 8 script opcodes */
-	void o8_unknown();
-
 	void o8_mod();
 	void o8_wait();
 
@@ -427,8 +425,10 @@ protected:
 	void o8_cameraOps();
 	void o8_verbOps();
 	
+	void o8_soundKludge();
 	void o8_system();
 	void o8_kludge();
+	void o8_kludge2();
 };
 
 
