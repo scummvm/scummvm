@@ -71,7 +71,7 @@ Cutaway::Cutaway(
 		Logic *logic,
 		Resource *resource) 
 : _graphics(graphics), _logic(logic), _resource(resource), _walk(logic->walk()),
-	_quit(false), _personFaceCount(0), _personDataCount(0), _lastSong(0), _songBeforeComic(0) {
+	_quit(false), _personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
 }
