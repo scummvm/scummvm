@@ -286,7 +286,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
 		OPCODE(o72_dim2dimArray),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownC1),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C4 */

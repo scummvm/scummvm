@@ -286,7 +286,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
 		OPCODE(o72_dim2dimArray),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownC1),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C4 */
@@ -1240,6 +1240,15 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 	b = pop();
 	a = pop();
 	defineArray(fetchScriptWord(), data, 0, a, 0, b);
+}
+
+void ScummEngine_v72he::o72_unknownC1() {
+	byte string[80];
+
+	copyScriptString(string);
+	pop();
+
+	debug(1, "stub o72_unknownC1(%s)", string);
 }
 
 void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, int flags) {

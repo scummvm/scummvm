@@ -733,6 +733,7 @@ protected:
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
+	void o72_unknownC1();
 	void o72_drawWizImage();
 	void o72_shuffle();
 	void o72_jumpToScript();
