@@ -1,9 +1,0 @@
-scummvm for Debian
-------------------
-
- There is no documentation for the configuration file. For now you can use:
- scummvm -w -p[path] [options] game
- it will write a config file in ~/.scummvmrc and from then on you can just
- run 'scummvm game' and it will remember your options
-
- -- Bastien Nocera <hadess@hadess.net>, Friday 10 May 2002

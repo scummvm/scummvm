@@ -28,7 +28,7 @@
 #include "ListWidget.h"
 #include "config-file.h"
 #include "sound/mididrv.h"
-#include "sound/imuse.h"
+#include "scumm/imuse.h"
 
 /*
  * TODO list
@@ -407,9 +407,27 @@ AboutDialog::AboutDialog(NewGui *gui)
 }
 
 PauseDialog::PauseDialog(NewGui *gui)
-	: Dialog (gui, 50, 80, 220, 16)
+	: Dialog (gui, 60, 20, 100, 100)
 {
 	addResText(4, 4, 220, 16, 10);
+}
+
+void PauseDialog::draw()
+{
+	if (_screenBuf) {
+		_gui->blitFrom(_screenBuf, _x, _y, _w, _h); 
+	} else {
+		_gui->fillRect(_x, _y, _w, _h, _gui->_bgcolor);
+		_gui->box(_x, _y, _w, _h);
+	}
+	_gui->addDirtyRect(_x, _y, _w, _h);
+	
+	_gui->frameRect(10 + _x, 15 + _y, 100, 100, _gui->_color);
+	for (int y = 0; y < 16; ++y)
+		for (int x = 0; x < 16; ++x)
+			_gui->fillRect(10 + _x + x*5, 15 + _y + y*5, 5, 5, y*16 + x);
+
+
 }
 
 SoundDialog::SoundDialog(NewGui *gui)

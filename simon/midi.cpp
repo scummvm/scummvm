@@ -22,10 +22,10 @@
 
 #include "stdafx.h"
 #include "scummsys.h"
-#include "system.h"
-#include "../sound/mididrv.h"
-#include "../sound/mixer.h"
-#include "simon.h"
+#include "common/system.h"
+#include "sound/mididrv.h"
+#include "sound/mixer.h"
+#include "simon/simon.h"
 
 void MidiPlayer::read_from_file(void *dst, uint size)
 {

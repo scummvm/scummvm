@@ -20,9 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "simon.h"
-#include "simonintern.h"
-#include "gameDetector.h"
+#include "simon/simon.h"
+#include "simon/intern.h"
+#include "common/gameDetector.h"
 #include <errno.h>
 #include <time.h>
 

@@ -4,31 +4,44 @@
 
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
-INCS	= scumm.h scummsys.h stdafx.h
+INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 
-OBJS	+= util.o newgui.o gui/widget.o gui/dialog.o \
-	gui/ListWidget.o gui/ScrollBarWidget.o \
-	actor.o akos.o boxes.o bundle.o config-file.o costume.o debug.o \
-	debugrl.o engine.o gameDetector.o gfx.o gui.o insane.o main.o object.o \
-	resource.o saveload.o scaler.o script.o script_v1.o script_v2.o \
-	scummvm.o sound.o string.o sys.o timer.o vars.o verbs.o  \
-	sound/imuse.o sound/fmopl.o sound/mixer.o \
-	v3/resource_v3.o v4/resource_v4.o \
-	simon/midi.o simon/simon.o simon/simonsys.o simon/simonvga.o \
-	simon/simondebug.o simon/simonres.o simon/simonitems.o simon/simonverb.o \
-	sound/mididrv.o
+COMMON_OBJS = common/config-file.o common/gameDetector.o common/main.o \
+	common/timer.o common/util.o
 
-DISTFILES=$(OBJS:.o=.cpp) Makefile scummvm.dsp scummvm.dsw stdafx.cpp \
-	whatsnew.txt readme.txt copying.txt \
-	actor.h akos.h boxes.h bundle.h cmdline.h config-file.h costume.h debug.h \
-	debugrl.h engine.h fb2opengl.h gameDetector.h gapi_keys.h gfx.h gui.h guimaps.h \
-	newgui.h object.h resource.h saveload.h scaler.h scumm.h scummsys.h smush.h \
-	sound.h stdafx.h system.h timer.h util.h sound/fmopl.h
+GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
+	gui/ScrollBarWidget.o 
+
+SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
+	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/engine.o scumm/gfx.o \
+	scumm/imuse.o scumm/insane.o scumm/object.o scumm/resource.o \
+	scumm/resource_v3.o scumm/resource_v4.o scumm/saveload.o scumm/scaler.o \
+	scumm/script.o scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o \
+	scumm/string.o scumm/sys.o scumm/vars.o scumm/verbs.o
+
+SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
+	simon/sys.o simon/verb.o simon/vga.o
+
+SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o sound/sound.o
+
+OBJS	+= $(COMMON_OBJS) $(GUI_OBJS) scumm/libscumm.a simon/libsimon.a $(SOUND_OBJS)
+
+DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
+	debugrl.h whatsnew.txt readme.txt copying.txt \
+	scummvm.dsp scummvm.dsw sound/fmopl.h gui.h sound.h
 
 all: scummvm$(EXEEXT)
 
 scummvm$(EXEEXT): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+scumm/libscumm.a: $(SCUMM_OBJS)
+	ar cru $@ $+
+	ranlib $@ 
+
+simon/libsimon.a: $(SIMON_OBJS)
+	ar cru $@ $+
+	ranlib $@ 
 
 clean:
 	rm -f $(OBJS) scummvm$(EXEEXT)
@@ -37,7 +50,7 @@ clean:
 
 # Default (dumb) compile & dependcy rules
 .cpp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 $(OBJS): $(INCS)
 
 
@@ -45,10 +58,10 @@ $(OBJS): $(INCS)
 # dependency tracking. 
 #DEPDIR := .deps
 #.cpp.o:
-#	mkdir -p $(DEPDIR)
-#	$(CC) -Wp,-MMD,"$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	echo -n "$(*D)/" > $(DEPDIR)/$(*F).d
-#	cat "$(DEPDIR)/$(*F).d2" >> "$(DEPDIR)/$(*F).d"
-#	rm -f "$(DEPDIR)/$(*F).d2"
+#	mkdir -p $(*D)/$(DEPDIR)
+#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#	echo -n "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+#	cat "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+#	rm -f "$(*D)/$(DEPDIR)/$(*F).d2"
 #
 #-include $(DEPDIR)/*.d

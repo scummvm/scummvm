@@ -1,15 +1,15 @@
 # $Header$
 
-CC       = g++
+CXX      = c++
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
 DEFINES  =
 LDFLAGS :=
-INCLUDES:= -I./ -I./sound
+INCLUDES:= -I. -Icommon -Iscumm -Isound
 LIBS	 = -lncurses
 
 # Uncomment this to activate the MAD lib for compressed sound files
-# DEFINES += -DCOMPRESSED_SOUND_FILE
-# LIBS    += -lmad
+DEFINES += -DCOMPRESSED_SOUND_FILE
+LIBS    += -lmad
 
 # Uncomment this to activate the ALSA lib for midi
 # DEFINES += -DUSE_ALSA
@@ -19,23 +19,23 @@ LIBS	 = -lncurses
 # Beware, only define one of them, otherwise the compilation will blow up.
 
 # Comment this if you want to disable SDL output
-OBJS	 = sdl.o
+OBJS	 = backends/sdl/sdl.o
 INCLUDES += `sdl-config --cflags`
 LIBS    += `sdl-config --libs`
 DEFINES += -DUNIX
 
 # Uncomment this (instead of the above) to activate the SDL with OpenGL output
-# OBJS	 = sdl_gl.o
+# OBJS	 = backends/sdl/sdl_gl.o
 # INCLUDES += `sdl-config --cflags`
 # LIBS    += `sdl-config --libs` -lGL
 # DEFINES += -DUNIX
 
 # Uncomment this in addition to the above if you compile on Mac OS X
-# LIBS	+= -framework QuickTime -framework AudioUnit
-# DEFINES += -DMACOSX
+LIBS	+= -framework QuickTime -framework AudioUnit
+DEFINES += -DMACOSX
 
 # Uncomment this if you rather want X11 output
-# OBJS     = x11.o
+# OBJS     = backends/x11/x11.o
 # DEFINES += -DUNIX -DX11_BACKEND
 # LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib
 # INCLUDES+= -I/usr/X11R6/include
