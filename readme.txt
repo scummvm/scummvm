@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-06-18
+Last updated:    2002-06-26
 Release version: 0.2.2 [CVS]
 ------------------------------------------------------------------------
 
@@ -126,6 +126,11 @@ the section on Reporting Bugs.
                   Try copying the data files from CD to your hard disk.
 
                 - Bobbin may sometimes appear to walk backwards.
+
+
+       Monkey 1 (CD Version):
+                - If you are having random crashes, this is a Windows bug.
+                  Try copying the data files from CD to your hard disk.
 
 
 Reporting Bugs:
