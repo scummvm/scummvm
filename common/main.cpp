@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
 
 	// Read the config file
 	g_config = new Config(scummhome, "scummvm");
-	g_config->set("versioninfo", SCUMMVM_VERSION);
+	g_config->set("versioninfo", gScummVMVersion);
 
 	// Parse the command line information
 	detector._saveconfig = false;

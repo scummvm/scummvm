@@ -66,8 +66,8 @@ ConsoleDialog::ConsoleDialog(NewGui *gui, int _realWidth)
 	_scrollBar->setTarget(this);
 
 	// Display greetings & prompt
-	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
-	print("Console is ready\n");
+	print(gScummVMFullVersion);
+	print("\nConsole is ready\n");
 
 	_promptStartPos = _promptEndPos = -1;
 

@@ -1104,32 +1104,38 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 
 void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 	// Open MIDI driver
-	midi->property (MidiDriver::PROP_OLD_ADLIB, _old_adlib_instruments ? 1 : 0);
+	midi->property(MidiDriver::PROP_OLD_ADLIB, _old_adlib_instruments ? 1 : 0);
 
 	int result = midi->open();
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
 
 	// In case we have an MT-32 attached.
-	initMT32 (midi);
+	initMT32(midi);
 
 	// Connect to the driver's timer
-	midi->setTimerCallback (midi, &IMuseInternal::midiTimerCallback);
+	midi->setTimerCallback(midi, &IMuseInternal::midiTimerCallback);
 }
 
 void IMuseInternal::initMT32 (MidiDriver *midi) {
 	byte buffer[32] = "\x41\x10\x16\x12\x00\x00\x00                        ";
+	char info[256] = "ScummVM ";
+	int len;
+	
+	// Compute version string (truncated to 20 chars max.)
+	strcat(info, gScummVMVersion);
+	len = strlen(info);
+	if (len > 20)
+		len = 20;
 
 	// Reset the MT-32
-	memcpy (&buffer[4], "\x7f\x00\x00\x01\x00", 5);
-	midi->sysEx (buffer, 9);
+	memcpy(&buffer[4], "\x7f\x00\x00\x01\x00", 5);
+	midi->sysEx(buffer, 9);
 
 	// Display a welcome message on MT-32 displays.
-	memcpy (&buffer[4], "\x20\x00\x00", 3);
-	memcpy (&buffer[7], "                    ", 20);
-	memcpy (buffer + 7 + (20 - strlen ("ScummVM " SCUMMVM_VERSION)) / 2,
-	        "ScummVM " SCUMMVM_VERSION,
-	        strlen ("ScummVM " SCUMMVM_VERSION));
+	memcpy(&buffer[4], "\x20\x00\x00", 3);
+	memcpy(&buffer[7], "                    ", 20);
+	memcpy(buffer + 7 + (20 - len) / 2, info, len);
 	byte checksum = 0;
 	for (int i = 4; i < 27; ++i)
 		checksum -= buffer[i];
@@ -1163,7 +1169,7 @@ void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
 		if (!ptr->time_left)
 			continue;
 		if (ptr->time_left <= advance) {
-			doCommand (ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
+			doCommand(ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
 			ptr->time_left = advance;
 		}
 		ptr->time_left -= advance;

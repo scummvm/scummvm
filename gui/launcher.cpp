@@ -175,9 +175,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	: Dialog(gui, 0, 0, 320, 200), _detector(detector) {
 	// Show game name
-	new StaticTextWidget(this, 10, 8, 300, kLineHeight,
-								"ScummVM "SCUMMVM_VERSION " (" SCUMMVM_CVS ")", 
-								kTextAlignCenter);
+	new StaticTextWidget(this, 10, 8, 300, kLineHeight, gScummVMFullVersion, kTextAlignCenter);
 
 	// Add three buttons at the bottom
 	addButton(1 * (_w - kButtonWidth) / 6, _h - 24, "Quit", kQuitCmd, 'Q');

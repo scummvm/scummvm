@@ -24,9 +24,9 @@
 #include "scummsys.h"
 #include "system.h"
 
-#define SCUMMVM_VERSION "0.5.0pre-cvs"
-#define SCUMMVM_CVS "2003-07-xx"
-
+extern const char *gScummVMVersion;		// e.g. "0.4.1"
+extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"
+extern const char *gScummVMFullVersion;	// e.g. "ScummVM 0.4.1 (2003-06-24)"
 
 enum GameId {
 	GID_SCUMM_FIRST = 1,

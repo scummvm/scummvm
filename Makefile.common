@@ -58,6 +58,11 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 # Include the build instructions for all modules
 -include $(addsuffix /module.mk,$(MODULES))
 
+# Make engine.o depend on all other object files. This way if anything is
+# changed, it causes engine.cpp to be recompiled. This in turn ensures that
+# the build date in gScummVMBuildDate is correct.
+common/engine.o: $(OBJS)
+
 # HACK temporary fix to get compilation on OS X (and possibly others) working again
 OBJS:=common/engine.o $(OBJS)
 

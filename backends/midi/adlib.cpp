@@ -872,11 +872,11 @@ void MidiDriver_ADLIB::close() {
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
 		if (_voices [i]._part)
-			mc_off (&_voices [i]);
+			mc_off(&_voices [i]);
 	}
 
 	// Detach the premix callback handler
-	_mixer->setupPremix (0, 0);
+	_mixer->setupPremix(0, 0);
 	
 	// Turn off the OPL emulation
 //	YM3812Shutdown();

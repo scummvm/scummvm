@@ -819,7 +819,7 @@ void drawBlankGameSelection() {
 void drawVideoDevice() {
 	char info[100];
 
-	sprintf(info, "Video device : %s %s - CVS %s PPC %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option], SCUMMVM_VERSION, getBuildDate());
+	sprintf(info, "Video device : %s %s - CVS %s PPC %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option], gScummVMVersion, getBuildDate());
 	drawString(info, 10, 0, 2, 1);
 	/*
 	printString(video_device, 10, 270, 2, 0);

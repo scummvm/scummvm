@@ -653,7 +653,7 @@ void doPaint() {
 	DrawText(hDC, TEXT("http://www.scummvm.org"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	rcClient.left = 0;
 	rcClient.top = 90;
-	DrawText(hDC, TEXT(SCUMMVM_VERSION), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
+	DrawText(hDC, TEXT(gScummVMVersion), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	rcClient.left = 0;
 	rcClient.top = 110;
 	DrawText(hDC, TEXT("http://arisme.free.fr"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);

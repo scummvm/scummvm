@@ -437,8 +437,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				break;
 			case 'v':
 				CHECK_OPTION();
-				printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
-							 __TIME__ "\n");
+				printf("%s\n", gScummVMFullVersion);
 				exit(1);
 			case 'w':
 				_saveconfig = true;

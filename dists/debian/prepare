@@ -1,5 +1,5 @@
 #! /bin/sh
 
-VER=`sed -n -e 's/ CVS//' -e 's/^#define SCUMMVM_VERSION "\(.*\)"/\1/p' common/engine.h``date +%Y%m%d`
+VER=`sed -n -e 's/ CVS//' -e 's/^const char \*gScummVMVersion = "\(.*\)"/\1/p' common/engine.cpp``date +%Y%m%d`
 
 sed "s/@VERSION@/$VER/g" debian/changelog.in > debian/changelog
