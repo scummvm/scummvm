@@ -145,6 +145,7 @@ GameDetector::GameDetector() {
 //	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
+	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("save_slot", -1);
