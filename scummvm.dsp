@@ -362,6 +362,22 @@ SOURCE=.\gui\newgui.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\options.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\options.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\PopUpWidget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\PopUpWidget.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\ScrollBarWidget.cpp
 # End Source File
 # Begin Source File
@@ -440,11 +456,11 @@ SOURCE=.\backends\midi\windows.cpp
 # End Group
 # Begin Source File
 
-SOURCE=.\README
+SOURCE=.\NEWS
 # End Source File
 # Begin Source File
 
-SOURCE=.\NEWS
+SOURCE=.\README
 # End Source File
 # Begin Source File
 
