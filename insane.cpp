@@ -23,6 +23,10 @@
 #define NEED_SDL_HEADERS
 #endif
 
+#ifdef _WIN32_WCE
+#define PICKY_ALIGN
+#endif
+
 #include "stdafx.h"
 #include "scumm.h"
 #include "smush.h"
@@ -763,32 +767,62 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitc
 			if (code == 0xFD) {
 				t = src[0];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst, &t, sizeof uint32);
+				memcpy(dst + 320, &t, sizeof uint32);
+				memcpy(dst + 320 * 2, &t, sizeof uint32);
+				memcpy(dst + 320 * 3, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = t;
 				*(uint32 *)(dst + 320) = t;
 				*(uint32 *)(dst + 320 * 2) = t;
 				*(uint32 *)(dst + 320 * 3) = t;
+#endif
 				src += 1;
 				dst += 4;
 			} else if (code == 0xFE) {
 				t = src[0];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = t;
+#endif
 				t = src[1];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320) = t;
+#endif
 				t = src[2];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320 * 2, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320 * 2) = t;
+#endif
 				t = src[3];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320 * 3, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320 * 3) = t;
+#endif
 				src += 4;
 				dst += 4;
 			} else if (code == 0xFF) {
+#ifdef PICKY_ALIGN
+				memcpy(dst, src, sizeof uint32);
+				memcpy(dst + 320, src + sizeof uint32, sizeof uint32);
+				memcpy(dst + 320 * 2, src + 2 * sizeof uint32, sizeof uint32);
+				memcpy(dst + 320 * 3, src + 3 * sizeof uint32, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
 				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
 				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
 				*(uint32 *)(dst + 320 * 3) = ((uint32 *)src)[3];
+#endif
 				src += 16;
 				dst += 4;
 			} else if (code == 0x00) {
@@ -796,10 +830,17 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitc
 				src += 1;
 				for (uint16 l = 0; l < count; l++) {
 					tmp = dst + next_offs;
+#ifdef PICKY_ALIGN
+					memcpy(dst, tmp, sizeof uint32);
+					memcpy(dst + 320, tmp + 320, sizeof uint32);
+					memcpy(dst + 320 * 2, tmp + 320 * 2, sizeof uint32);
+					memcpy(dst + 320 * 3, tmp + 320 * 3, sizeof uint32);
+#else
 					*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
 					*(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
 					*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
 					*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
+#endif
 					dst += 4;
 					i--;
 					if (i == 0) {
@@ -811,10 +852,17 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitc
 				i++;
 			} else {
 				tmp = dst + table[code] + next_offs;
+#ifdef PICKY_ALIGN
+				memcpy(dst, tmp, sizeof uint32);
+				memcpy(dst + 320, tmp + 320, sizeof uint32);
+				memcpy(dst + 320 * 2, tmp + 320 * 2, sizeof uint32);
+				memcpy(dst + 320 * 3, tmp + 320 * 3, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
 				*(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
 				*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
 				*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
+#endif
 				dst += 4;
 			}
 			if (i <= 0)
@@ -850,40 +898,77 @@ void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh
 			if ((game == GID_DIG) && (code == 0xFD)) {
 				t = src[0];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst, &t, sizeof uint32);
+				memcpy(dst + 320, &t, sizeof uint32);
+				memcpy(dst + 320 * 2, &t, sizeof uint32);
+				memcpy(dst + 320 * 3, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = t;
 				*(uint32 *)(dst + 320) = t;
 				*(uint32 *)(dst + 320 * 2) = t;
 				*(uint32 *)(dst + 320 * 3) = t;
+#endif
 				src += 1;
 				dst += 4;
 			} else if ((game == GID_DIG) && (code == 0xFE)) {
 				t = src[0];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = t;
+#endif
 				t = src[1];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320) = t;
+#endif
 				t = src[2];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320 * 2, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320 * 2) = t;
+#endif
 				t = src[3];
 				t += (t << 8) + (t << 16) + (t << 24);
+#ifdef PICKY_ALIGN
+				memcpy(dst + 320 * 3, &t, sizeof uint32);
+#else
 				*(uint32 *)(dst + 320 * 3) = t;
+#endif
 				src += 4;
 				dst += 4;
 			} else if (code == 0xFF) {
+#ifdef PICKY_ALIGN
+				memcpy(dst, src, sizeof uint32);
+				memcpy(dst + 320, src + sizeof uint32, sizeof uint32);
+				memcpy(dst + 320 * 2, src + 2 * sizeof uint32, sizeof uint32);
+				memcpy(dst + 320 * 3, src + 3 * sizeof uint32, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
 				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
 				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
 				*(uint32 *)(dst + 320 * 3) = ((uint32 *)src)[3];
+#endif
 				src += 16;
 				dst += 4;
 			} else {
 				tmp = dst + table[code] + next_offs;
+#ifdef PICKY_ALIGN
+				memcpy(dst, tmp, sizeof uint32);
+				memcpy(dst + 320, tmp + 320, sizeof uint32);
+				memcpy(dst + 320 * 2, tmp + 320 * 2, sizeof uint32);
+				memcpy(dst + 320 * 3, tmp + 320 * 3, sizeof uint32);
+#else
 				*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
 				*(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
 				*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
 				*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
+#endif
 				dst += 4;
 			}
 		} while (--i);
