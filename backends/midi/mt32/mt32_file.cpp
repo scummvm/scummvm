@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 
-#include "file.h"
+#include "mt32_file.h"
 
 namespace MT32Emu {
 

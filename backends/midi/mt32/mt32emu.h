@@ -29,7 +29,7 @@
 
 #include "structures.h"
 #include "i386.h"
-#include "file.h"
+#include "mt32_file.h"
 #include "partial.h"
 #include "partialManager.h"
 #include "part.h"
