@@ -30,7 +30,7 @@ EXTERN_C void *memcpy4(void *s1, const void *s2, unsigned int n);
 void initSound()
 {
   stop_sound();
-  do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
+  do_sound_command(CMD_SET_FREQ_EXP(FREQ_44100_EXP));
   do_sound_command(CMD_SET_BUFFER(3));
 }
 
