@@ -409,7 +409,7 @@ void Scumm::startAnimActor(Actor * a, int frame)
 
 			// FIXME: FOA hack, room 17, climbing off machine
 			if (_gameId == GID_INDY4 && a->costume == 27) {
-				a->facing = 0;
+ 				a->facing = 0;
 			}
 
 			if (a->initFrame == frame)
@@ -433,9 +433,7 @@ void Scumm::setActorDirection(Actor * a, int direction)
 	if (a->facing == direction)
 		return;
 
-	// Make sure the direction is between 0 and 359 degree.
-	// We add 360 to be able to cope with negative directions.
-	a->facing = (direction+360) % 360;
+	a->facing = normalizeAngle(direction);
 
 	if (a->costume == 0)
 		return;
@@ -625,10 +623,10 @@ void Scumm::turnToDirection(Actor * a, int newdir)
 	if (newdir == -1)
 		return;
 
-	a->moving &= ~4;
+	a->moving &= ~MF_TURN;
 
 	if (newdir != a->facing) {
-		a->moving = 4;
+		a->moving = MF_TURN;
 		a->newDirection = newdir;
 	}
 }
@@ -762,18 +760,18 @@ void Scumm::walkActor(Actor * a)
 	if (!a->moving)
 		return;
 
-	if (!(a->moving & 1)) {
-		if (a->moving & 2 && actorWalkStep(a))
+	if (!(a->moving & MF_NEW_LEG)) {
+		if (a->moving & MF_IN_LEG && actorWalkStep(a))
 			return;
 
-		if (a->moving & 8) {
+		if (a->moving & MF_LAST_LEG) {
 			a->moving = 0;
 			setActorBox(a, a->walkdata.destbox);
 			startWalkAnim(a, 3, a->walkdata.destdir);
 			return;
 		}
 
-		if (a->moving & 4) {
+		if (a->moving & MF_TURN) {
 			j = updateActorDirection(a);
 			if (a->facing != j)
 				setActorDirection(a, j);
@@ -783,22 +781,22 @@ void Scumm::walkActor(Actor * a)
 		}
 
 		setActorBox(a, a->walkdata.curbox);
-		a->moving &= 2;
+		a->moving &= MF_IN_LEG;
 	}
 #if OLD
-	a->moving &= ~1;
+	a->moving &= ~MF_NEW_LEG;
 
 	if (!a->walkbox) {
 		a->walkbox = a->walkdata.destbox;
 		a->walkdata.curbox = a->walkdata.destbox;
-		a->moving |= 8;
+		a->moving |= MF_LAST_LEG;
 		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 		return;
 	}
 
 	if (a->ignoreBoxes || a->walkbox == a->walkdata.destbox) {
 		a->walkdata.curbox = a->walkbox;
-		a->moving |= 8;
+		a->moving |= MF_LAST_LEG;
 		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 		return;
 	}
@@ -811,7 +809,7 @@ void Scumm::walkActor(Actor * a)
 	a->walkdata.curbox = j;
 
 	if (findPathTowards(a, a->walkbox, j, a->walkdata.destbox)) {
-		a->moving |= 8;
+		a->moving |= MF_LAST_LEG;
 		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 		return;
 	}
@@ -819,7 +817,7 @@ void Scumm::walkActor(Actor * a)
 #endif
 #if 1
 	do {
-		a->moving &= ~1;
+		a->moving &= ~MF_NEW_LEG;
 		if ((!a->walkbox && (!(_features & GF_SMALL_HEADER)))) {
 			setActorBox(a, a->walkdata.destbox);
 			a->walkdata.curbox = a->walkdata.destbox;
@@ -830,14 +828,14 @@ void Scumm::walkActor(Actor * a)
 		j = getPathToDestBox(a->walkbox, a->walkdata.destbox);
 		if (j == -1 || j > 0xF0) {
 			a->walkdata.destbox = a->walkbox;
-			a->moving |= 8;
+			a->moving |= MF_LAST_LEG;
 			return;
 		}
 		a->walkdata.curbox = j;
 		if (_features & GF_OLD256) {
 			findPathTowardsOld(a, a->walkbox, j, a->walkdata.destbox);
 			if (p[2].x == 32000 && p[3].x == 32000) {
-				a->moving |= 8;
+				a->moving |= MF_LAST_LEG;
 				calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 				return;
 			}
@@ -862,7 +860,7 @@ void Scumm::walkActor(Actor * a)
 
 		setActorBox(a, a->walkdata.curbox);
 	} while (1);
-	a->moving |= 8;
+	a->moving |= MF_LAST_LEG;
 	calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 #endif
 }
@@ -1149,7 +1147,8 @@ void Scumm::startWalkActor(Actor * a, int x, int y, int dir)
 		a->x = abr.x;
 		a->y = abr.y;
 		if (dir != -1)
-			a->facing = dir;
+			setActorDirection(a, dir);
+//			a->facing = dir;
 		return;
 	}
 
@@ -1176,7 +1175,7 @@ void Scumm::startWalkActor(Actor * a, int x, int y, int dir)
 	a->walkdata.desty = abr.y;
 	a->walkdata.destbox = (byte)abr.dist;	/* a box */
 	a->walkdata.destdir = dir;
-	a->moving = (a->moving & 2) | 1;
+	a->moving = (a->moving & MF_IN_LEG) | MF_NEW_LEG;
 	a->walkdata.point3x = 32000;
 
 	a->walkdata.curbox = a->walkbox;
@@ -1297,20 +1296,20 @@ void Scumm::walkActorOld(Actor * a)
 	if (!a->moving)
 		return;
 
-	if (a->moving & 1) {
+	if (a->moving & MF_NEW_LEG) {
 	restart:
-		a->moving &= ~1;
+		a->moving &= ~MF_NEW_LEG;
 
 		if (a->walkbox == 0xFF) {
 			a->walkbox = a->walkdata.destbox;
 			a->walkdata.curbox = a->walkdata.destbox;
-			a->moving |= 8;
+			a->moving |= MF_LAST_LEG;
 			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 			return;
 		}
 
 		if (a->walkbox == a->walkdata.destbox) {
-			a->moving |= 8;
+			a->moving |= MF_LAST_LEG;
 			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 			return;
 		}
@@ -1318,7 +1317,7 @@ void Scumm::walkActorOld(Actor * a)
 		next_box = getPathToDestBox(a->walkbox, a->walkdata.destbox);
 
 		if (next_box == -1) {
-			a->moving |= 8;
+			a->moving |= MF_LAST_LEG;
 			return;
 		}
 
@@ -1326,7 +1325,7 @@ void Scumm::walkActorOld(Actor * a)
 
 		findPathTowardsOld(a, a->walkbox, next_box, a->walkdata.destbox);
 		if (p[2].x == 32000 && p[3].x == 32000) {
-			a->moving |= 8;
+			a->moving |= MF_LAST_LEG;
 			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
 			return;
 		}
@@ -1348,18 +1347,18 @@ void Scumm::walkActorOld(Actor * a)
 
 	}
 
-	if (a->moving & 2) {
+	if (a->moving & MF_IN_LEG) {
 		if (actorWalkStep(a))
 			return;
 	}
 
-	if (a->moving & 8) {
+	if (a->moving & MF_LAST_LEG) {
 		a->moving = 0;
 		startWalkAnim(a, 3, a->walkdata.destdir);
 		return;
 	}
 
-	if (a->moving & 4) {
+	if (a->moving & MF_TURN) {
 		new_dir = updateActorDirection(a);
 		if (a->facing != new_dir) {
 			setActorDirection(a, new_dir);
@@ -1379,7 +1378,7 @@ void Scumm::walkActorOld(Actor * a)
 
 	a->walkbox = a->walkdata.curbox;
 	a->mask = getMaskFromBox(a->walkbox);
-	a->moving &= 2;
-	a->moving |= 1;
+	a->moving &= MF_IN_LEG;
+	a->moving |= MF_NEW_LEG;
 	goto restart;
 }
