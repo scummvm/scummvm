@@ -149,8 +149,8 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 				break;
 			}
 		} else {
-			printf ("Unknown Euphony music event 0x%02X\n", (int) cmd);
-			memset (&info, 0, sizeof(info));
+			warning("Unknown Euphony music event 0x%02X", (int) cmd);
+			memset(&info, 0, sizeof(info));
 			pos = 0;
 			break;
 		}
@@ -163,8 +163,8 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	byte *pos = data;
 	int i;
 
-	if (memcmp (pos, "SO", 2)) {
-		printf ("Warning: 'SO' header expected but found '%c%c' instead.\n", pos[0], pos[1]);
+	if (memcmp(pos, "SO", 2)) {
+		warning("'SO' header expected but found '%c%c' instead.", pos[0], pos[1]);
 		return false;
 	}
 

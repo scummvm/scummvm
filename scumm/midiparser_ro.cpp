@@ -120,7 +120,7 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 	byte *pos = data;
 
 	if (memcmp (pos, "RO", 2)) {
-		printf ("Warning: 'RO' header expected but found '%c%c' instead.\n", pos[0], pos[1]);
+		warning("'RO' header expected but found '%c%c' instead", pos[0], pos[1]);
 		return false;
 	}
 
