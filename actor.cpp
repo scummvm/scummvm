@@ -576,9 +576,6 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 	abr.y = dstY;
 	abr.dist = 0;
 
-	if ((_vm->_features & GF_SMALL_HEADER) && isInClass(22))
-		return abr;
-
 	if (ignoreBoxes == 0) {
 		threshold = 30;
 
@@ -871,7 +868,7 @@ void Actor::drawActorCostume()
 		cr._zbuf = _vm->getMaskFromBox(walkbox);
 
 		if (forceClip)
-			cr._zbuf = 1;
+			cr._zbuf = forceClip;
 		else if (isInClass(20))
 			cr._zbuf = 0;
 		else if (cr._zbuf > _vm->gdi._numZBuffer)
