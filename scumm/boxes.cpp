@@ -82,6 +82,11 @@ static ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x,
 
 
 byte Scumm::getMaskFromBox(int box) {
+	// FIXME: see bug #740244 and #755863. This appears to have been a 
+	// long standing bug in the original engine?
+	if (_version <= 3 && box == 255)
+		return 1;
+
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
