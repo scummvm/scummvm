@@ -52,7 +52,6 @@
 // they will only be used from this file, so it will reduce
 // compile time.
 
-class IMuseDriver;
 struct Part;
 
 struct HookDatas {
@@ -70,6 +69,7 @@ struct HookDatas {
 
 struct Player {
 	IMuseInternal *_se;
+	MidiDriver *_midi;
 
 	Part *_parts;
 	bool _active;
@@ -111,7 +111,7 @@ struct Player {
 	// Player part
 	void hook_clear();
 	void clear();
-	bool startSound(int sound);
+	bool startSound (int sound, MidiDriver *midi);
 	void uninit_parts();
 	byte *parse_midi(byte *s);
 	void key_off(uint8 chan, byte data);
@@ -209,7 +209,6 @@ struct IsNoteCmdData {
 
 struct Part {
 	int _slot;
-	IMuseDriver *_drv;
 	Part *_next, *_prev;
 	MidiChannel *_mc;
 	Player *_player;
@@ -240,7 +239,7 @@ struct Part {
 	void key_on(byte note, byte velocity);
 	void key_off(byte note);
 	void set_param(byte param, int value) { }
-	void init(IMuseDriver * _driver);
+	void init();
 	void setup(Player *player);
 	void uninit();
 	void off();
@@ -282,30 +281,6 @@ struct ImTrigger {
 	byte command [4];
 };
 
-// IMuseDriver class
-
-class IMuseDriver {
-private:
-	IMuseInternal *_se;
-	OSystem *_system;
-	MidiDriver *_md;
-	Instrument _glob_instr[32]; // Adlib custom instruments
-
-	static void timer_callback (void *);
-
-public:
-	IMuseDriver(MidiDriver *midi);
-	void uninit();
-	void init(IMuseInternal *eng, OSystem *os);
-
-	void set_instrument(uint slot, byte *instr);
-	void part_load_global_instrument (Part *part, byte slot);
-
-	MidiChannel *allocateChannel() { return _md->allocateChannel(); }
-	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
-	uint32 getBaseTempo() { return _md->getBaseTempo(); }
-};
-
 // WARNING: This is the internal variant of the IMUSE class.
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
@@ -313,7 +288,8 @@ class IMuseInternal {
 	friend struct Player;
 
 private:
-	IMuseDriver * _driver;
+	MidiDriver *_midi_adlib;
+	MidiDriver *_midi_native;
 
 	byte **_base_sounds;
 
@@ -351,6 +327,7 @@ private:
 	Part _parts[32];
 
 	uint16 _active_notes[128];
+	Instrument _global_adlib_instruments[32];
 	CommandQueue _cmd_queue[64];
 
 	byte *findTag(int sound, char *tag, int index);
@@ -360,17 +337,18 @@ private:
 	Player *allocate_player(byte priority);
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
+	void initMidiDriver (MidiDriver *midi);
 	void init_players();
 	void init_parts();
 	void init_volume_fader();
 	void init_sustaining_notes();
 	void init_queue();
 
-	void sequencer_timers();
-	void expire_sustain_notes();
-	void expire_volume_faders();
+	void sequencer_timers (MidiDriver *midi);
+	void expire_sustain_notes (MidiDriver *midi);
+	void expire_volume_faders (MidiDriver *midi);
 
-	Part *allocate_part(byte pri);
+	Part *allocate_part(byte pri, MidiDriver *midi);
 
 	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
 	int32 ImClearTrigger (int sound, int id);
@@ -396,22 +374,22 @@ private:
 	static int saveReference(void *me_ref, byte type, void *ref);
 	static void *loadReference(void *me_ref, byte type, int ref);
 
+	static void midiTimerCallback (void *data);
+
 public:
 	IMuseInternal() {
 		memset(this,0,sizeof(IMuseInternal));	// palmos
 	}
 	~IMuseInternal();
 
-	IMuseDriver *driver() {
-		return _driver;
-	}
-	
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
-	void reallocateMidiChannels();
+	void reallocateMidiChannels (MidiDriver *midi);
+	void setGlobalAdlibInstrument (byte slot, byte *data);
+	void copyGlobalAdlibInstrument (byte slot, Instrument *dest);
 
 	// IMuse interface
 
-	void on_timer();
+	void on_timer (MidiDriver *midi);
 	void pause(bool paused);
 	int terminate();
 	int save_or_load(Serializer *ser, Scumm *scumm);
@@ -676,7 +654,7 @@ bool IMuseInternal::startSound(int sound) {
 		return false;
 
 	player->clear();
-	return player->startSound(sound);
+	return player->startSound (sound, _midi_native);
 }
 
 
@@ -740,7 +718,7 @@ void IMuseInternal::init_parts() {
 	int i;
 
 	for (i = 0, part = _parts; i != ARRAYSIZE(_parts); i++, part++) {
-		part->init(_driver);
+		part->init();
 		part->_slot = i;
 	}
 }
@@ -770,21 +748,21 @@ int IMuseInternal::stop_all_sounds() {
 	return 0;
 }
 
-void IMuseInternal::on_timer() {
+void IMuseInternal::on_timer (MidiDriver *midi) {
 	if (_paused)
 		return;
 
-	sequencer_timers();
-	expire_sustain_notes();
-	expire_volume_faders();
+	sequencer_timers (midi);
+	expire_sustain_notes (midi);
+	expire_volume_faders (midi);
 }
 
-void IMuseInternal::sequencer_timers() {
+void IMuseInternal::sequencer_timers (MidiDriver *midi) {
 	Player *player = _players;
 	int i;
 
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
-		if (player->_active) {
+		if (player->_active && player->_midi == midi) {
 			player->sequencer_timer();
 		}
 	}
@@ -844,7 +822,7 @@ int IMuseInternal::get_channel_volume(uint a) {
 	return (_master_volume * _music_volume / 255) >> 1;
 }
 
-Part *IMuseInternal::allocate_part(byte pri) {
+Part *IMuseInternal::allocate_part (byte pri, MidiDriver *midi) {
 	Part *part, *best = NULL;
 	int i;
 
@@ -859,14 +837,14 @@ Part *IMuseInternal::allocate_part(byte pri) {
 
 	if (best) {
 		best->uninit();
-		reallocateMidiChannels();
+		reallocateMidiChannels (midi);
 	} else {
 		debug(1, "Denying part request");
 	}
 	return best;
 }
 
-void IMuseInternal::expire_sustain_notes() {
+void IMuseInternal::expire_sustain_notes (MidiDriver *midi) {
 	SustainingNotes *sn, *next;
 	Player *player;
 	uint32 counter;
@@ -874,6 +852,7 @@ void IMuseInternal::expire_sustain_notes() {
 	for (sn = _sustain_notes_head; sn; sn = next) {
 		next = sn->next;
 		player = sn->player;
+		if (player->_midi != midi) continue;
 
 		counter = sn->counter + player->_timer_speed;
 		sn->pos += counter >> 16;
@@ -897,7 +876,7 @@ void IMuseInternal::expire_sustain_notes() {
 	}
 }
 
-void IMuseInternal::expire_volume_faders() {
+void IMuseInternal::expire_volume_faders (MidiDriver *midi) {
 	VolumeFader *vf;
 	int i;
 
@@ -910,7 +889,7 @@ void IMuseInternal::expire_volume_faders() {
 	_active_volume_faders = false;
 	vf = _volume_fader;
 	for (i = ARRAYSIZE(_volume_fader); i != 0; i--, vf++) {
-		if (vf->active) {
+		if (vf->active && vf->player->_midi == midi) {
 			_active_volume_faders = true;
 			vf->on_timer(false);
 		}
@@ -1172,13 +1151,19 @@ int IMuseInternal::get_master_volume() {
 }
 
 int IMuseInternal::terminate() {
-	if (_driver) {
-		_driver->uninit();
-		delete _driver;
-		_driver = NULL;
+	if (_midi_adlib) {
+		_midi_adlib->close();
+		delete _midi_adlib;
+		_midi_adlib = 0;
 	}
+
+	if (_midi_native) {
+		_midi_native->close();
+		delete _midi_native;
+		_midi_native = 0;
+	}
+
 	return 0;
-	// Not implemented
 }
 
 int IMuseInternal::enqueue_trigger(int sound, int marker) {
@@ -1638,17 +1623,13 @@ IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer
 
 int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
 	int i;
-	IMuseDriver *driv;
 
 	if (midi == NULL)
-		driv = NULL;
-	else
-		driv = new IMuseDriver (midi);
+		error ("IMuse was initialized without a MIDI driver (even the NULL driver)");
 
-	_driver = driv;
-	_game_tempo = driv->getBaseTempo();
-
-	driv->init(this, syst);
+	_midi_native = midi;
+	_game_tempo = _midi_native->getBaseTempo();
+	initMidiDriver (_midi_native);
 
 	_master_volume = 255;
 	if (_music_volume < 1)
@@ -1666,6 +1647,16 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 	_initialized = true;
 
 	return 0;
+}
+
+void IMuseInternal::initMidiDriver (MidiDriver *midi) {
+	// Open MIDI driver
+	int result = midi->open();
+	if (result)
+		error("IMuse initialization - ", MidiDriver::getErrorName(result));
+
+	// Connect to the driver's timer
+	midi->setTimerCallback (midi, &IMuseInternal::midiTimerCallback);
 }
 
 void IMuseInternal::init_queue() {
@@ -1739,9 +1730,10 @@ void Player::clear() {
 	_se->ImFireAllTriggers (_id);
 	_active = false;
 	_ticks_per_beat = TICKS_PER_BEAT;
+	_midi = NULL;
 }
 
-bool Player::startSound(int sound) {
+bool Player::startSound (int sound, MidiDriver *midi) {
 	void *mdhd;
 
 	mdhd = _se->findTag(sound, MDHD_TAG, 0);
@@ -1774,6 +1766,7 @@ bool Player::startSound(int sound) {
 		_active = false;
 		return false;
 	}
+	_midi = midi;
 	return true;
 }
 
@@ -1846,7 +1839,7 @@ void Player::uninit_parts() {
 		error("asd");
 	while (_parts)
 		_parts->uninit();
-	_se->reallocateMidiChannels(); // In case another player couldn't allocate all its parts
+	_se->reallocateMidiChannels (_midi); // In case another player couldn't allocate all its parts
 }
 
 void Player::uninit_seq() {
@@ -1923,7 +1916,7 @@ byte *Player::parse_midi(byte *s) {
 			break;
 		case 18: // GP Slider 3
 			part->set_pri(value - 0x40);
-			_se->reallocateMidiChannels();
+			_se->reallocateMidiChannels (_midi);
 			break;
 		case 64: // Sustain Pedal
 			part->set_pedal(value != 0);
@@ -2056,7 +2049,7 @@ void Player::parse_sysex(byte *p, uint len) {
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
-						_se->reallocateMidiChannels();
+						_se->reallocateMidiChannels (_midi);
 					}
 				} else {
 					part->sendAll();
@@ -2112,7 +2105,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		p++;
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
-		_se->_driver->set_instrument(a, buf);
+		_se->setGlobalAdlibInstrument (a, buf);
 		break;
 
 	case 33: // Parameter adjust
@@ -2586,7 +2579,7 @@ Part *Player::get_part(uint8 chan) {
 		part = part->_next;
 	}
 
-	part = _se->allocate_part(_priority);
+	part = _se->allocate_part (_priority, _midi);
 	if (!part) {
 		warning("no parts available");
 		return NULL;
@@ -2619,7 +2612,7 @@ void Player::set_priority(int pri) {
 	for (part = _parts; part; part = part->_next) {
 		part->set_pri(part->_pri);
 	}
-	_se->reallocateMidiChannels();
+	_se->reallocateMidiChannels (_midi);
 }
 
 void Player::set_pan(int pan) {
@@ -2676,7 +2669,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	pos = scanptr - mtrk;
 
 	_scanning = false;
-	_se->reallocateMidiChannels();
+	_se->reallocateMidiChannels (_midi);
 	play_active_notes();
 	_beat_index = tobeat;
 	_tick_index = totick;
@@ -2696,7 +2689,7 @@ void Player::turn_off_parts() {
 
 	for (part = _parts; part; part = part->_next)
 		part->off();
-	_se->reallocateMidiChannels();
+	_se->reallocateMidiChannels (_midi);
 }
 
 void Player::play_active_notes() {
@@ -2996,7 +2989,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		init_sustaining_notes();
 		_active_volume_faders = true;
 		fix_parts_after_load();
-		reallocateMidiChannels();
+		reallocateMidiChannels (_midi_native);
 		set_master_volume (_master_volume);
 	}
 
@@ -3118,7 +3111,7 @@ void Part::set_onoff(bool on) {
 		if (!on)
 			off();
 		if (!_percussion)
-			_player->_se->reallocateMidiChannels();
+			_player->_se->reallocateMidiChannels (_player->_midi);
 	}
 }
 
@@ -3128,7 +3121,8 @@ void Part::set_instrument(byte * data) {
 }
 
 void Part::load_global_instrument (byte slot) {
-	_drv->part_load_global_instrument (this, slot);
+	_player->_se->copyGlobalAdlibInstrument (slot, &_instrument);
+	if (clearToTransmit()) _instrument.send (_mc);
 }
 
 void Part::key_on(byte note, byte velocity) {
@@ -3147,7 +3141,7 @@ void Part::key_on(byte note, byte velocity) {
 	if (mc && _instrument.isValid()) {
 		mc->noteOn (note, velocity);
 	} else if (_percussion) {
-		mc = _drv->getPercussionChannel();
+		mc = _player->_midi->getPercussionChannel();
 		if (!mc)
 			return;
 		mc->volume (_vol_eff);
@@ -3162,14 +3156,13 @@ void Part::key_off(byte note) {
 	if (mc) {
 		mc->noteOff (note);
 	} else if (_percussion) {
-		mc = _drv->getPercussionChannel();
+		mc = _player->_midi->getPercussionChannel();
 		if (mc)
 			mc->noteOff (note);
 	}
 }
 
-void Part::init(IMuseDriver * driver) {
-	_drv = driver;
+void Part::init() {
 	_player = NULL;
 	_next = NULL;
 	_prev = NULL;
@@ -3235,13 +3228,14 @@ void Part::off() {
 		_mc->allNotesOff();
 		_mc->release();
 		_mc = NULL;
-		memset (_actives, 0, sizeof(_actives));
 	}
+	memset (_actives, 0, sizeof(_actives));
 }
 
 bool Part::clearToTransmit() {
 	if (_mc) return true;
-	_player->_se->reallocateMidiChannels();
+	_player->_se->reallocateMidiChannels (_player->_midi);
+	if (_mc) sendAll();
 	return false;
 }
 
@@ -3301,38 +3295,17 @@ void Part::set_instrument(uint b) {
 
 ////////////////////////////////////////
 //
-// General MIDI implementation of iMuse
+// Some more IMuseInternal stuff
 //
 ////////////////////////////////////////
 
-IMuseDriver::IMuseDriver (MidiDriver *midi) {
-	memset(this,0,sizeof(IMuseDriver));	//palmos
-	_md = midi;
-}
-
-void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
-	_system = syst;
-
-	// Open MIDI driver
-	int result = _md->open();
-	if (result)
-		error("IMuseDriver::error = %s", MidiDriver::getErrorName(result));
-
-	// Connect to the driver's timer
-	_se = eng;
-	_md->setTimerCallback (NULL, &IMuseDriver::timer_callback);
-}
-
-void IMuseDriver::timer_callback (void *) {
+void IMuseInternal::midiTimerCallback (void *data) {
+	MidiDriver *driver = (MidiDriver *) data;
 	if (g_scumm->_imuse)
-		g_scumm->_imuse->on_timer();
+		g_scumm->_imuse->on_timer (driver);
 }
 
-void IMuseDriver::uninit() {
-	_md->close();
-}
-
-void IMuseInternal::reallocateMidiChannels() {
+void IMuseInternal::reallocateMidiChannels (MidiDriver *midi) {
 	Part *part, *hipart;
 	int i;
 	byte hipri, lopri;
@@ -3342,7 +3315,10 @@ void IMuseInternal::reallocateMidiChannels() {
 		hipri = 0;
 		hipart = NULL;
 		for (i = 32, part = _parts; i; i--, part++) {
-			if (part->_player && !part->_percussion && part->_on && !part->_mc && part->_pri_eff >= hipri) {
+			if (part->_player && part->_player->_midi == midi &&
+			    !part->_percussion && part->_on &&
+				!part->_mc && part->_pri_eff >= hipri)
+			{
 				hipri = part->_pri_eff;
 				hipart = part;
 			}
@@ -3351,11 +3327,11 @@ void IMuseInternal::reallocateMidiChannels() {
 		if (!hipart)
 			return;
 
-		if ((hipart->_mc = _driver->allocateChannel()) == NULL) {
+		if ((hipart->_mc = midi->allocateChannel()) == NULL) {
 			lopri = 255;
 			lopart = NULL;
 			for (i = 32, part = _parts; i; i--, part++) {
-				if (part->_mc && part->_pri_eff <= lopri) {
+				if (part->_mc && part->_mc->device() == midi && part->_pri_eff <= lopri) {
 					lopri = part->_pri_eff;
 					lopart = part;
 				}
@@ -3365,25 +3341,23 @@ void IMuseInternal::reallocateMidiChannels() {
 				return;
 			lopart->off();
 
-			if ((hipart->_mc = _driver->allocateChannel()) == NULL)
+			if ((hipart->_mc = midi->allocateChannel()) == NULL)
 				return;
 		}
 		hipart->sendAll();
 	}
 }
 
-void IMuseDriver::set_instrument(uint slot, byte *data) {
+void IMuseInternal::setGlobalAdlibInstrument (byte slot, byte *data) {
 	if (slot < 32) {
-		// memcpy(&_glob_instr[slot], data, sizeof(Instrument));
-		_glob_instr[slot].adlib (data);
+		_global_adlib_instruments[slot].adlib (data);
 	}
 }
 
-void IMuseDriver::part_load_global_instrument (Part *part, byte slot) {
+void IMuseInternal::copyGlobalAdlibInstrument (byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
-	_glob_instr [slot].copy_to (&part->_instrument);
-	if (part->clearToTransmit()) part->_instrument.send (part->_mc);
+	_global_adlib_instruments[slot].copy_to (dest);
 }
 
 ////////////////////////////////////////////////////////////
@@ -3403,7 +3377,7 @@ IMuse::~IMuse() { if (_mutex) _system->delete_mutex (_mutex); if (_target) delet
 inline void IMuse::in() { _system->lock_mutex (_mutex); }
 inline void IMuse::out() { _system->unlock_mutex (_mutex); }
 
-void IMuse::on_timer() { in(); _target->on_timer(); out(); }
+void IMuse::on_timer (MidiDriver *midi) { in(); _target->on_timer (midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause (paused); out(); }
 int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load (ser, scumm); out(); return ret; }
 int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume (vol); out(); return ret; }

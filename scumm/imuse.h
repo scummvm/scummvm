@@ -47,7 +47,7 @@ public:
 		PROP_TEMPO_BASE = 1
 	};
 
-	void on_timer();
+	void on_timer (MidiDriver *midi);
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, Scumm *scumm);
 	int set_music_volume(uint vol);
