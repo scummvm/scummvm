@@ -1060,12 +1060,15 @@ void Logic::roomSetupObjects() {
 	++curImage;
 	_numFrames = curImage;
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
-		int16 obj = _objectData[i].image;
-		if (obj > 5000) {
-			obj -= 5000;
-			GraphicData *pgd = &_graphicData[obj];
-			_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
-			_graphics->bobPaste(curImage, pgd->x, pgd->y);
+		ObjectData *pod = &_objectData[i];
+		if (pod->name > 0) {
+			int16 obj = pod->image;
+			if (obj > 5000) {
+				obj -= 5000;
+				GraphicData *pgd = &_graphicData[obj];
+				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+				_graphics->bobPaste(curImage, pgd->x, pgd->y);
+			}
 		}
 	}
 }
