@@ -219,6 +219,88 @@ void codec37_bompdepack(byte *dst, byte *src, int len)
 	} while (len -= num);
 }
 
+void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
+									 int pitch, int16 * table)
+{
+	byte code, *tmp;
+	int i;
+	uint32 t;
+
+ 	if (pitch != 320) {
+		warning("invalid pitch");
+		return;
+	}
+
+	do {
+		i = bw;
+		do {
+			code = *src++;
+			if (code == 0xFD) {
+ 				t = src[0];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 0) = t;
+ 				*(uint32 *)(dst + 320) = t;
+ 				*(uint32 *)(dst + 320 * 2) = t;
+ 				*(uint32 *)(dst + 320 * 3) = t;
+				 src += 1;
+				 dst += 4;
+			} else if (code == 0xFE) {
+ 				t = src[0];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 0) = t;
+ 				t = src[1];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320) = t;
+ 				t = src[2];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320 * 2) = t;
+ 				t = src[3];
+ 				t += (t << 8) + (t << 16) + (t << 24);
+ 				*(uint32 *)(dst + 320 * 3) = t;	
+				src += 4;
+				dst += 4;
+			} else if (code == 0xFF) {			
+				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
+				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
+				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
+				*(uint32 *)(dst + 320 * 3) = ((uint32 *)src)[3];
+				src += 16;
+				dst += 4;
+			} else if (code == 0x00) {
+			        uint16 count = src[0] + 1;
+			        src += 1;
+			        for (uint16 l = 0; l < count; l++) {
+				        tmp = dst + next_offs;
+					*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
+				        *(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
+					*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
+					*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
+					dst += 4;
+					i--;
+					if (i == 0) {
+					        i = bw;
+					        dst += 320 * 4 - 320;
+					        bh--;
+					}
+				}
+				i++;
+			} else {
+				tmp = dst + table[code] + next_offs;
+				*(uint32 *)(dst + 0) = *(uint32 *)(tmp);
+				*(uint32 *)(dst + 320) = *(uint32 *)(tmp + 320);
+				*(uint32 *)(dst + 320 * 2) = *(uint32 *)(tmp + 320 * 2);
+				*(uint32 *)(dst + 320 * 3) = *(uint32 *)(tmp + 320 * 3);
+				dst += 4;
+			}
+			if (i <= 0) break;
+			if (bh <= 0) break;
+		} while (--i);
+		dst += 320 * 4 - 320;
+		if (bh <= 0) break;
+	} while (--bh);
+}
+
+
 void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 									 int pitch, int16 * table)
 {
@@ -463,10 +545,32 @@ int codec37(CodecData * cd, PersistentCodecData37 * pcd)
 										pcd->deltaBufs[pcd->curtable], width_in_blocks,
 										height_in_blocks, src_pitch, pcd->table1);
 			break;
+
+		  }
+	case 4:{
+			uint16 number = *(uint16 *)(cd->src + 2);
+
+			if (number && pcd->flags + 1 != number)
+				break;
+
+			if (number & 1 && cd->src[12] & 1 && cd->flags & 0x10) {
+				_frameChanged = 0;
+				result = true;
+				break;
+			}
+
+			if ((number & 1) || !(cd->src[12] & 1)) {
+				pcd->curtable ^= 1;
+			}
+
+			codec37_proc4(pcd->deltaBufs[pcd->curtable], cd->src + 16,
+										pcd->deltaBufs[pcd->curtable ^ 1] -
+										pcd->deltaBufs[pcd->curtable], width_in_blocks,
+										height_in_blocks, src_pitch, pcd->table1);
+			break;
 		}
 
 	case 1:
-	case 4:
 		warning("code %d", cd->src[0]);
 		return (1);
 
