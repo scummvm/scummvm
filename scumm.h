@@ -72,10 +72,6 @@ enum {
 	ssRunning = 2
 };
 
-extern const int16 many_direction_tab[18];
-extern const int16 many_direction_tab_2[16];
-extern const int bit_table[16];
-
 struct ScummPoint {
 	int x,y;
 };
@@ -1024,8 +1020,6 @@ public:
 	void akos_decodeData(Actor *a, int frame, uint usemask);
 	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(Actor *a);
-	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
-
 
 
 	/* Should be in Graphics class? */
