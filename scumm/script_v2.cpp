@@ -561,8 +561,10 @@ void Scumm_v2::o2_actorSet() {
 	Actor *a = derefActorSafe(act, "actorSet");
 	int i;
 
-	if (!a)
+	if (!a) {
+		fetchscriptByte();
 		return;
+	}
 
 	switch (fetchScriptByte()) {
 		case 1: 	// Actor Sound
