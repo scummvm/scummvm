@@ -369,12 +369,12 @@ void Scumm::initBGBuffers(int height)
 		// for GF_SMALL_HEADER already.
 		gdi._numZBuffer = 2;
 	} else if (_features & GF_SMALL_HEADER) {
-		// FIXME
-		#define DEBUG_ZPLANE_CODE
+
+//#define DEBUG_ZPLANE_CODE
 		
 		ptr = findResourceData(MKID('SMAP'), room);
 #ifdef DEBUG_ZPLANE_CODE
-		printf("Trying to determine room zplanes':\n");
+		printf("Trying to determine room zplanes:\n");
 		hexdump(ptr-6, 0x20);
 #endif
 
