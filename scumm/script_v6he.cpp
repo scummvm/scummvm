@@ -352,7 +352,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_readINI),
 		/* F4 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownF4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1248,22 +1248,21 @@ void ScummEngine_v6he::o6_stringLen() {
 	int a, len;
 	byte *addr;
 
-	if (!(_features & GF_WINDOWS)) {
-		o6_invalid();
-		return;
-	}
-
 	a = pop();
 
 	addr = getStringAddress(a);
 	if (!addr) {
 		// FIXME: should be error here
-		warning("ScummEngine_v6he::o7_stringLen: Reference to zeroed array pointer (%d)", a);
+		warning("o6_stringLen: Reference to zeroed array pointer (%d)", a);
 		push(0);
 		return;
 	}
 
-	len = stringLen(addr);
+	if (_gameId == GID_FREDDEMO) {
+		len = strlen((char *)getStringAddress(a));
+	} else { // FREDDI, PUTTMOON
+		len = stringLen(addr);
+	}
 	push(len);
 }
 
@@ -1313,6 +1312,65 @@ void ScummEngine_v6he::o6_localizeArray() {
 	} else {
 		warning("o6_localizeArray(%d): too big scriptID", stringID);
 	}
+}
+
+void ScummEngine_v6he::o6_unknownF4() {
+	if (_gameId == GID_FREDDEMO) {
+		byte b;
+		int len;
+		b = fetchScriptByte();
+
+		switch (b) {
+		case 6:
+			pop();
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			break;
+		case 7:
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			break;
+		}
+	} else { // FREDDI, PUTTMOON
+		int a, b;
+		byte filename1[256], filename2[256];
+		int len;
+
+		
+		b = pop();
+		a = pop();
+
+		switch (b) {
+		case 1:
+			_msgPtrToAdd = filename1;
+			_messagePtr = _scriptPointer;
+			addMessageToStack(_messagePtr);
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			debug(1, "o6_unknownF4(%d, %d, \"%s\")", a, b, _messagePtr);
+			break;
+		case 2:
+			_msgPtrToAdd = filename1;
+			_messagePtr = _scriptPointer;
+			addMessageToStack(_messagePtr);
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+
+			_msgPtrToAdd = filename2;
+			_messagePtr = _scriptPointer;
+			addMessageToStack(_messagePtr);
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			debug(1, "o6_unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
+			break;
+		}
+	}
+	warning("o6_unknownF4 stub");
 }
 
 void ScummEngine_v6he::o6_unknownF9() {

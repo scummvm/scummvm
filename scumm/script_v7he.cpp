@@ -344,7 +344,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o7_stringLen),
+		OPCODE(o6_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -352,7 +352,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_readINI),
 		/* F4 */
-		OPCODE(o7_unknownF4),
+		OPCODE(o6_unknownF4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -404,120 +404,6 @@ void ScummEngine_v7he::o7_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
-}
-
-void ScummEngine_v7he::o7_stringLen() {
-	int a, len;
-	byte *addr;
-
-	if (!(_features & GF_WINDOWS)) {
-		o6_invalid();
-		return;
-	}
-
-	a = pop();
-
-	addr = getStringAddress(a);
-	if (!addr) {
-		// FIXME: should be error here
-		warning("ScummEngine_v7he::o7_stringLen: Reference to zeroed array pointer (%d)", a);
-		push(0);
-		return;
-	}
-
-	len = strlen((char *)getStringAddress(a));
-	push(len);
-}
-
-byte ScummEngine_v7he::stringLen(byte *ptr) {
-	byte len;
-	byte c;
-	if (!ptr) {
-		//ptr = _someGlobalPtr;
-		error("ScummEngine_v7he::stringLen(): zero ptr. Undimplemented behaviour");
-		return 1;
-	}
-
-	len = 0;
-	c = *ptr++;
-
-	if (len == c)
-		return 1;
-
-	do {
-		len++;
-		if (c == 0xff) {
-			ptr += 3;
-			len += 3;
-		}
-		c = *ptr++;
-	} while (c);
-
-	return len+1;
-}
-
-void ScummEngine_v7he::o7_unknownF4() {
-	if (!(_features & GF_WINDOWS)) {
-		o6_invalid();
-		return;
-	}
-
-	if (_gameId == GID_FREDDEMO) {
-		byte b;
-		int len;
-		b = fetchScriptByte();
-
-		switch (b) {
-		case 6:
-			pop();
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-			break;
-		case 7:
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-			break;
-		}
-	} else { // FREDDI.w32, PUTTMOON.w32
-		int a, b;
-		byte filename1[256], filename2[256];
-		int len;
-
-		
-		b = pop();
-		a = pop();
-
-		switch (b) {
-		case 1:
-			_msgPtrToAdd = filename1;
-			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
-
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-			debug(0, "unknownF4(%d, %d, \"%s\")", a, b, _messagePtr);
-			break;
-		case 2:
-			_msgPtrToAdd = filename1;
-			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
-
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-
-			_msgPtrToAdd = filename2;
-			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
-
-			len = resStrLen(_scriptPointer);
-			_scriptPointer += len + 1;
-			debug(0, "unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
-			break;
-		}
-	}
-	warning("o7_unknownF4 stub");
 }
 
 void ScummEngine_v7he::o7_unknownFB() {

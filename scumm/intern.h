@@ -593,6 +593,7 @@ protected:
 	void o6_redimArray();
 	void o6_stringLen();
 	void o6_readINI();
+	void o6_unknownF4();
 	void o6_unknownF9();
 	void o6_readFilePos();
 };
@@ -617,13 +618,9 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	byte stringLen(byte *);
-
 	/* Version 7 script opcodes */
 	void o7_objectX();
 	void o7_objectY();
-	void o7_stringLen();
-	void o7_unknownF4();
 	void o7_unknownFB();
 };
 
