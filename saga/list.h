@@ -21,22 +21,18 @@
 
 #ifndef SAGA_LIST_H__
 #define SAGA_LIST_H__
-
 #include "common/list.h"
 
 namespace Saga {
-
 
 template <class T>
 class SortedList : public Common::List<T> {
 public:
 	typedef int ( CompareFunction ) (const T& , const T&);
-
 	typedef typename Common::List<T>::iterator        iterator;
 	typedef typename Common::List<T>::const_iterator  const_iterator;
 	
 public:
-
 	iterator pushFront(const T& element) {
 		return insert(Common::List<T>::begin(), element);
 	}
@@ -91,7 +87,6 @@ public:
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res <= 0) {
-
 				T temp(*pos);
 				erase(pos);
 				++i;				
@@ -110,7 +105,6 @@ public:
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res >= 0) {
-
 				T temp(*pos);
 				erase(pos);
 				return insert(i, temp);
@@ -149,6 +143,5 @@ public:
 		return false;
 	}
 };
-
 } // End of namespace Saga
 #endif
