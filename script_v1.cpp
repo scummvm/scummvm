@@ -696,7 +696,7 @@ void Scumm::o5_actorSet() {
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
                if(_features & GF_SMALL_HEADER)
                        _opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
-
+if (!a) return;
 		switch(_opcode&0x1F) {
 		case 0: /* dummy case */
 			getVarOrDirectByte(0x80);
@@ -1581,6 +1581,7 @@ void Scumm::o5_putActor() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActor");
+	if (!a) return;
 	x = getVarOrDirectWord(0x40);
 	y = getVarOrDirectWord(0x20);
 	
