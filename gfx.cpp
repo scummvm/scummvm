@@ -455,6 +455,9 @@ void Scumm::cyclePalette() {
 	if (valueToAdd < _vars[VAR_TIMER_NEXT])
 		valueToAdd = _vars[VAR_TIMER_NEXT];
 
+	if (!_colorCycle)	// FIXME
+		return;
+
 	for (i=0,cycl=_colorCycle; i<16; i++,cycl++) {
 		if (cycl->delay &&
 			(cycl->counter+=valueToAdd) >= cycl->delay) {
@@ -499,7 +502,12 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	endptr2 = getResourceAddress(rtTemp, 5) + end * 6;
 
 	num = end - start;
-	
+
+	if (!endptr) {
+		warning("moveMemInPalRes(%d,%d): Bad end pointer\n", start, end);
+		return;
+	}
+
 	if (!direction) {
 		memmove(tmp, endptr, 6);
 		memmove(startptr+6, startptr, num*6);

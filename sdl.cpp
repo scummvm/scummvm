@@ -918,7 +918,9 @@ int main(int argc, char* argv[]) {
 	
 #endif
 
+
 	long i;
+
 
 	detecter.detectMain(argc, argv);
 
@@ -927,11 +929,12 @@ int main(int argc, char* argv[]) {
 	else
 	if( detecter._features & GF_OLD256 )
 		scumm = new Scumm_v3;
+
 	else
 		scumm = new Scumm;
 
-/* All those stuff should be moved to the constructor.... */
 
+/* All those stuff should be moved to the constructor.... */
 	for (i=0;i<17;i++)
 	{
 		scumm->res.address[i]=0;
@@ -972,13 +975,12 @@ int main(int argc, char* argv[]) {
 
 	scumm->vm.cutSceneScriptIndex=0;
 	scumm->vm.cutSceneStackPointer=0;
-
+	
 	scumm->_scummStackPos=0;
 	scumm->_verbMouseOver=0;
 
 	scumm->_palDirtyMax=0;
 	scumm->_palDirtyMin=0;
-
 	scumm->_debugger=0;
 	scumm->camera._cur.x=0;
 	scumm->camera._cur.y=0;
@@ -998,7 +1000,6 @@ int main(int argc, char* argv[]) {
 	scumm->mouse.y=0;
 
 	scumm->delta=0;
-
 	scumm->_soundEngine=0;
 	scumm->_gui=0;
 
@@ -1015,7 +1016,22 @@ int main(int argc, char* argv[]) {
 
 	scumm->_talk_sound_mode=0;
 
+	scumm->_curActor = 0;
+	scumm->_curExecScript = 0;
+	scumm->_curPalIndex = 0;
+	scumm->_curVerb = 0;
+	scumm->_curVerbSlot = 0;
+	scumm->_currentScript = 0;
+	scumm->_currentRoom = 0;
+
+	scumm->_soundQuePos = 0;	
+	scumm->_soundQue2Pos = 0;
+
+	scumm->_screenEffectFlag = 0;
+	memset(scumm->_colorCycle, 0, sizeof(scumm->_colorCycle));
 /* */
+
+
 
 
 	scumm->_fullScreen = detecter._fullScreen;
