@@ -507,7 +507,7 @@ void CharsetRendererV2::setCurID(byte id) {
 		}
 	}
 	printf("\n");
-	exit(0);
+	_system->quit();
 #endif
 }
 
