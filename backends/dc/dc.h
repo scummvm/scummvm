@@ -26,6 +26,14 @@
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3
 
+class Interactive
+{
+ public:
+  virtual int key(int k, byte &shiftFlags) = 0;
+};
+
+#include "softkbd.h"
+
 class OSystem_Dreamcast : public OSystem {
 
  public:
@@ -145,6 +153,8 @@ class OSystem_Dreamcast : public OSystem {
 
  private:
 
+  SoftKeyboard _softkbd;
+
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;
   int _current_shake_pos, _screen_w, _screen_h;
@@ -154,8 +164,9 @@ class OSystem_Dreamcast : public OSystem {
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
-  bool _aspect_stretch;
+  bool _aspect_stretch, _softkbd_on;
   float _overlay_fade, _xscale, _yscale, _top_offset;
+  int _softkbd_motion;
 
   uint32 _timer_duration, _timer_next_expiry;
   bool _timer_active;
@@ -179,9 +190,10 @@ class OSystem_Dreamcast : public OSystem {
   void setScaling();
 };
 
+
 extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
-		       byte &shiftFlags);
+		       byte &shiftFlags, Interactive *inter = NULL);
 extern void initSound();
 extern bool selectGame(char *&, char *&, class Icon &);
 

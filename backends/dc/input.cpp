@@ -27,7 +27,7 @@
 #include "dc.h"
 
 int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
-		byte &shiftFlags)
+		byte &shiftFlags, Interactive *inter)
 {
   static const char numpadmap[] = "0000039601740285";
   int lmb=0, rmb=0, newkey=0;
@@ -47,13 +47,17 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       else if(!(buttons & 512)) newkey = ' ';
       else if(!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
-      if(!(buttons & 128)) mouse_x++;
-      if(!(buttons & 64)) mouse_x--;
-      if(!(buttons & 32)) mouse_y++;
-      if(!(buttons & 16)) mouse_y--;
+      if(!(buttons & 128)) if(inter) newkey = 1001; else mouse_x++;
+      if(!(buttons & 64)) if(inter) newkey = 1002; else mouse_x--;
+      if(!(buttons & 32)) if(inter) newkey = 1003; else mouse_y++;
+      if(!(buttons & 16)) if(inter) newkey = 1004; else mouse_y--;
 
       mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
       mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
+
+      if(pad->cond.controller.ltrigger > 200) newkey = 1005;
+      else if(pad->cond.controller.rtrigger > 200) newkey = 1006;
+
     } else if(pad->func & MAPLE_FUNC_MOUSE) {
       int buttons = pad->cond.mouse.buttons;
 
@@ -107,13 +111,13 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	    exit(0);
 	  break;
 	case 0x4f:
-	  mouse_x++; break;
+	  if(inter) newkey = 1001; else mouse_x++; break;
 	case 0x50:
-	  mouse_x--; break;
+	  if(inter) newkey = 1002; else mouse_x--; break;
 	case 0x51:
-	  mouse_y++; break;
+	  if(inter) newkey = 1003; else mouse_y++; break;
 	case 0x52:
-	  mouse_y--; break;
+	  if(inter) newkey = 1004; else mouse_y--; break;
 	case 0x63:
 	  newkey = '.'; break;
 	case 0x64: case 0x87:
@@ -123,6 +127,11 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	}
       }
     }
+
+  if(lmb && inter) {
+    newkey = 1000;
+    lmb = 0;
+  }
 
   if(lmb && !lastlmb) {
     lastlmb = 1;
@@ -139,13 +148,24 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
     return -OSystem::EVENT_RBUTTONUP;
   }
 
+  if(newkey && inter && newkey != lastkey) {
+    int transkey = inter->key(newkey, shiftFlags);
+    if(transkey) {
+      newkey = transkey;
+      inter = NULL;
+    }
+  }
+
   if(!newkey || (lastkey && newkey != lastkey)) {
     int upkey = lastkey;
     lastkey = 0;
     if(upkey)
       return upkey | (1<<30);
-  } else if(!lastkey)
-    return lastkey = newkey;
+  } else if(!lastkey) {
+    lastkey = newkey;
+    if(newkey >= 1000 || !inter)
+      return newkey;
+  }
 
   return 0;
 }
@@ -164,11 +184,12 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   _devpoll += USEC_TO_TIMER(17000);
   if(((int)(t-_devpoll))>=0)
     _devpoll = t + USEC_TO_TIMER(17000);
+
   int mask = getimask();
   setimask(15);
   checkSound();
   int e = handleInput(locked_get_pads(), _ms_cur_x, _ms_cur_y,
-		      event->kbd.flags);
+		      event->kbd.flags, (_softkbd_on? &_softkbd : NULL));
   setimask(mask);
   if (_ms_cur_x<0) _ms_cur_x=0;
   if (_ms_cur_x>=_screen_w) _ms_cur_x=_screen_w-1;
@@ -185,12 +206,20 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     event->event_code = (EventCode)-e;
     return true;
   } else if(e>0) {
-    event->event_code = ((e&(1<<30))? EVENT_KEYUP : EVENT_KEYDOWN);
+    bool processed = false, down = !(e&(1<<30));
     e &= ~(1<<30);
-    event->kbd.keycode = e;
-    event->kbd.ascii = (e>='a' && e<='z' && (event->kbd.flags & KBD_SHIFT)?
-			e &~ 0x20 : e);
-    return true;
+    if(e < 1000) {
+      event->event_code = (down? EVENT_KEYDOWN : EVENT_KEYUP);
+      event->kbd.keycode = e;
+      event->kbd.ascii = (e>='a' && e<='z' && (event->kbd.flags & KBD_SHIFT)?
+			  e &~ 0x20 : e);
+      processed = true;
+    } else if(down) {
+      if(e == 1005)
+	setFeatureState(kFeatureVirtualKeyboard,
+			!getFeatureState(kFeatureVirtualKeyboard));
+    }
+    return processed;
   } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
     event->event_code = EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;

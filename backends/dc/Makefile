@@ -10,7 +10,7 @@ CXXFLAGS= -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-point
 DEFINES = -D__DC__ -DNONSTANDARD_PORT
 LDFLAGS = -Wl,-Ttext,0x8c010000 -nostartfiles $(ronindir)/lib/crt0.o
 INCLUDES= -I./ -I$(srcdir) -I$(srcdir)/common -I$(ronindir)/include/
-LIBS	= -L$(ronindir)/lib -lronin -lz -lm
+LIBS	= -L$(ronindir)/lib -lronin-netcd -lz -lm
 EXECUTABLE = scummvm.elf
 MKDIR = mkdir -p
 RM = rm -f
@@ -20,7 +20,7 @@ RANLIB = sh-elf-ranlib
 HAVE_GCC3 = true
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
-	label.o vmsave.o
+	label.o vmsave.o softkbd.o
 
 MODULE_DIRS += .
 

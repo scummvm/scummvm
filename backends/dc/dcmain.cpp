@@ -47,7 +47,7 @@ OSystem *OSystem_Dreamcast::create() {
 OSystem_Dreamcast::OSystem_Dreamcast()
   : screen(NULL), mouse(NULL), overlay(NULL), _ms_buf(NULL),
     _sound_proc(NULL), _timer_active(false), _current_shake_pos(0),
-    _aspect_stretch(false)
+    _aspect_stretch(false), _softkbd_on(false), _softkbd_motion(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(mouse_tx));
@@ -165,7 +165,7 @@ void OSystem_Dreamcast::setFeatureState(Feature f, bool enable)
       setScaling();
     break;
   case kFeatureVirtualKeyboard:
-    /* FIXME */
+    _softkbd_on = enable;
     break;
   default:
     break;
@@ -178,8 +178,7 @@ bool OSystem_Dreamcast::getFeatureState(Feature f)
   case kFeatureAspectRatioCorrection:
     return _aspect_stretch;
   case kFeatureVirtualKeyboard:
-    /* FIXME */
-    return false;
+    return _softkbd_on;
   default:
     return false;
   }

@@ -419,6 +419,19 @@ void OSystem_Dreamcast::updateScreen(void)
     ta_commit_list(&myvertex);
   }
 
+  if(_softkbd_on)
+    if(_softkbd_motion < 120)
+      _softkbd_motion += 10;
+    else
+      ;
+  else
+    if(_softkbd_motion > 0)
+      _softkbd_motion -= 10;
+
+  if(_softkbd_motion)
+    _softkbd.draw(330.0*sin(0.013*_softkbd_motion) - 320.0, 200.0,
+		  120-_softkbd_motion);
+
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xffff00;
   drawMouse(_ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_buf, _ms_visible);
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff00ff;
