@@ -44,9 +44,7 @@
 #include <proto/intuition.h>
 #include <proto/keymap.h>
 #include <proto/timer.h>
-#define USE_INLINE_STDARG
 #include <proto/cdda.h>
-#undef USE_INLINE_STDARG
 #include <proto/cybergraphics.h>
 
 #include <time.h>

@@ -141,7 +141,8 @@ static void ReadToolTypes(WBArg *OfFile)
 	if (dobj == NULL)
 		return;
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "STORY"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "STORY");
+	if (ToolValue)
 	{
 		if (ScummStory)
 			FreeVec(ScummStory);
@@ -149,7 +150,8 @@ static void ReadToolTypes(WBArg *OfFile)
 		strcpy(ScummStory, ToolValue);
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "DATAPATH"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "DATAPATH");
+	if (ToolValue)
 	{
 		if (ScummPath)
 			FreeVec(ScummPath);
@@ -158,7 +160,8 @@ static void ReadToolTypes(WBArg *OfFile)
 		strcat(ScummPath, ToolValue);
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "WINDOW"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "WINDOW");
+	if (ToolValue)
 	{
 		if (MatchToolValue(ToolValue, "YES"))
 			args[USG_WINDOW] = TRUE;
@@ -166,7 +169,8 @@ static void ReadToolTypes(WBArg *OfFile)
 			args[USG_WINDOW] = FALSE;
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SCALER"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SCALER");
+	if (ToolValue)
 	{
 		if ((ScummGfxScaler = MorphOSScaler::FindByName(ToolValue)) == ST_INVALID)
 		{
@@ -175,7 +179,8 @@ static void ReadToolTypes(WBArg *OfFile)
 		}
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSIC"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSIC");
+	if (ToolValue)
 	{
 		if (!(ScummMusicDriver = FindMusicDriver(ToolValue)))
 		{
@@ -185,10 +190,12 @@ static void ReadToolTypes(WBArg *OfFile)
 		args[USG_MUSIC] = (ULONG) &ScummMusicDriver;
 	}
 
-	if( ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MIDIUNIT"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MIDIUNIT");
+	if (ToolValue)
 		ScummMidiUnit = atoi(ToolValue);
 
-	if( ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSICVOL"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSICVOL");
+	if (ToolValue)
 	{
 		int vol = atoi(ToolValue);
 		if (vol >= 0 && vol <= 100)
@@ -198,7 +205,8 @@ static void ReadToolTypes(WBArg *OfFile)
 		}
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SFXVOL"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SFXVOL");
+	if (ToolValue)
 	{
 		int vol = atoi(ToolValue);
 		if (vol >= 0 && vol <= 255)
@@ -208,19 +216,22 @@ static void ReadToolTypes(WBArg *OfFile)
 		}
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TEMPO"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TEMPO");
+	if (ToolValue)
 	{
 		ScummMidiTempo = atoi(ToolValue);
 		args[USG_TEMPO] = (ULONG) &ScummMidiTempo;
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TALKSPEED"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "TALKSPEED");
+	if (ToolValue)
 	{
 		ScummTalkSpeed = atoi(ToolValue);
 		args[USG_TALKSPEED] = (ULONG) &ScummMidiTempo;
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SUBTITLES"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SUBTITLES");
+	if (ToolValue)
 	{
 		if (MatchToolValue(ToolValue, "YES"))
 			args[USG_NOSUBTITLES] = FALSE;
@@ -228,7 +239,8 @@ static void ReadToolTypes(WBArg *OfFile)
 			args[USG_NOSUBTITLES] = TRUE;
 	}
 
-	if (ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "AMIGA"))
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "AMIGA");
+	if (ToolValue)
 	{
 		if (MatchToolValue(ToolValue, "YES"))
 			args[USG_AMIGA] = FALSE;
@@ -243,8 +255,6 @@ static void ReadToolTypes(WBArg *OfFile)
 
 int main()
 {
-	int delta;
-	int last_time, new_time;
 	char *argv[20];
 	char musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
 	int argc = 0;
@@ -338,12 +348,12 @@ int main()
 		argv[argc++] = "-gsuper2xsai";
 	if (args[USG_MUSICVOL] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100)
 	{
-		sprintf(musicvol, "-m%d", ScummMidiVolume);
+		sprintf(musicvol, "-m%ld", ScummMidiVolume);
 		argv[argc++] = musicvol;
 	}
 	if (args[USG_SFXVOL] && ScummSfxVolume >= 0 && ScummSfxVolume <= 255)
 	{
-		sprintf(sfxvol, "-s%d", ScummSfxVolume);
+		sprintf(sfxvol, "-s%ld", ScummSfxVolume);
 		argv[argc++] = sfxvol;
 	}
 	if (args[USG_TEMPO] && ScummMidiTempo > 0)
@@ -353,7 +363,7 @@ int main()
 	}
 	if (args[USG_TALKSPEED] && ScummTalkSpeed >= 0 && ScummTalkSpeed <= 255)
 	{
-		sprintf(talkspeed, "-y%d", ScummTalkSpeed);
+		sprintf(talkspeed, "-y%ld", ScummTalkSpeed);
 		argv[argc++] = talkspeed;
 	}
 	if (ScummStory)
