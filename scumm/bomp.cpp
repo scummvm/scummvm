@@ -41,31 +41,9 @@ void decompressBomp(byte *dst, const byte *src, int w, int h) {
 	assert(h > 0);
 
 	do {
-#if 0
 		bompDecodeLine(dst, src + 2, w);
 		src += READ_LE_UINT16(src) + 2;
-#else
-		int len, num;
-		byte code, color;
-	
-		len = w;
-		src += 2;
-		while (len) {
-			code = *src++;
-			num = (code >> 1) + 1;
-			if (num > len)
-				num = len;
-			len -= num;
-			if (code & 1) {
-				color = *src++;
-				memset(dst, color, num);
-			} else {
-				memcpy(dst, src, num);
-				src += num;
-			}
-			dst += num;
-		}
-#endif
+		dst += w;
 	} while (--h);
 }
 
