@@ -173,6 +173,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
 	
+	_game_file = 0;
 	_stripped_txt_mem = 0;
 	_text_size = 0;
 	_stringtab_num = 0;
