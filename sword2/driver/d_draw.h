@@ -99,8 +99,6 @@ private:
 	int32 _fadeStartTime;
 	int32 _fadeTotalTime;
 
-	byte _mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
-
 	uint8 _mouseFrame;
 	byte *_mouseSprite;
 	struct MouseAnim *_mouseAnim;

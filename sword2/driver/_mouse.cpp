@@ -64,10 +64,6 @@ MouseEvent *Input::mouseEvent(void) {
 	return NULL;
 }
 
-// FIXME: The original code used 0 for transparency, while our backend uses
-// 0xFF. That means that parts of the mouse cursor that weren't meant to be
-// transparent may be now.
-
 void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;
@@ -94,6 +90,8 @@ void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, 
 }
 
 void Graphics::drawMouse(void) {
+	byte mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
+
 	if (!_mouseAnim && !_luggageAnim)
 		return;
 
@@ -147,21 +145,21 @@ void Graphics::drawMouse(void) {
 	mouse_width += deltaX;
 	mouse_height += deltaY;
 
-	if ((uint32) (mouse_width * mouse_height) > sizeof(_mouseData)) {
+	if ((uint32) (mouse_width * mouse_height) > sizeof(mouseData)) {
 		warning("Mouse cursor too large");
 		return;
 	}
 
-	memset(_mouseData, 0xFF, mouse_width * mouse_height);
+	memset(mouseData, 0, mouse_width * mouse_height);
 
 	if (_luggageAnim)
-		decompressMouse(_mouseData, (byte *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
+		decompressMouse(mouseData, (byte *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
 				_luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (_mouseAnim)
-		decompressMouse(_mouseData, _mouseSprite, _mouseAnim->mousew, _mouseAnim->mouseh, mouse_width);
+		decompressMouse(mouseData, _mouseSprite, _mouseAnim->mousew, _mouseAnim->mouseh, mouse_width);
 
-	_vm->_system->setMouseCursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
+	_vm->_system->setMouseCursor(mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y, 0);
 }
 
 /**
