@@ -393,7 +393,6 @@ int Actor::actorWalkStep() {
 
 
 void Actor::setupActorScale() {
-	uint16 scale;
 
 	if (_vm->_features & GF_NO_SCALING) {
 		scalex = 0xFF;
@@ -404,26 +403,13 @@ void Actor::setupActorScale() {
 	if (ignoreBoxes)
 		return;
 
-	// FIXME: The following two lines we apparenly added to fix bug #551944,
-	// which deals with "Script race in mystery vortex" in Sam&Max.
-	// (this was added in the *old* CVS repository in rev 1.61 of actor.cpp).
-	// The comment on that bug says: "Fixed by initial guesswork from jah.
-	// Turned out we need to check the box locking state."
-	// However:
-	// 1) Contrary to the bug comment, this doesn't check the box locking flag
-	// 2) For all Scumm versions from 1-5 this is definitely wrong
-	// 3) I checked a Sam&Max IDA DB, and found no evidence for this either
-	// 4) From a purely logical point of view (i.e. considering how actors,
-	//    scaling etc. work), this makes no sense either.
-	//
-	// Hence, I am hereby commenting out this code. It may cause regressions,
-	// esp. in the Mystery Vortex; it would be very good if people could hence
-	// playtest the Vortex. Should it turn out the Vortex needs this, we could
-	// re-enable it, although it would be preferable to find a proper fix :-)
-//	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
-//		return;
+	// For some boxes, we ignore the scaling and use whatever values the
+	// scripts set. This is used e.g. in the Mystery Vortex in Sam&Max.
+	// Older games used the flag 0x20 differently, though.
+	if (_vm->_version >= 6 && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
+		return;
 
-	scale = _vm->getScale(walkbox, _pos.x, _pos.y);
+	uint16 scale = _vm->getScale(walkbox, _pos.x, _pos.y);
 	assert(scale <= 0xFF);
 
 	scalex = scaley = (byte)scale;

@@ -35,6 +35,7 @@ namespace Scumm {
 typedef enum {
 	kBoxXFlip		= 0x08,
 	kBoxYFlip		= 0x10,
+	kBoxIgnoreScale	= 0x20,
 	kBoxPlayerOnly	= 0x20,
 	kBoxLocked		= 0x40,
 	kBoxInvisible	= 0x80
