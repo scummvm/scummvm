@@ -25,31 +25,6 @@
 
 SoundMixer *g_mixer = NULL;
 
-StackLock::StackLock(MutexRef mutex)
-	: _mutex(mutex) {
-	lock_mutex(_mutex);
-}
-
-StackLock::~StackLock() {
-	unlock_mutex(_mutex);
-}
-
-MutexRef create_mutex() {
-	return (MutexRef) SDL_CreateMutex();
-}
-
-void lock_mutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
-}
-
-void unlock_mutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
-}
-
-void delete_mutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
-}
-
 /**
  * Channels used by the sound mixer.
  */

@@ -26,6 +26,7 @@
 #include "registry.h"
 #include "engine.h"
 #include "sound.h"
+#include "timer.h"
 #include "mixer/mixer.h"
 #ifndef _MSC_VER
 #include <unistd.h>
@@ -54,6 +55,7 @@ static void saveRegistry() {
 #endif
 
 extern SoundMixer *g_mixer;
+extern Timer *g_timer;
 
 int main(int argc, char *argv[]) {
   char 	GLDriver[1024];
@@ -106,6 +108,7 @@ int main(int argc, char *argv[]) {
   }
 
   g_mixer = new SoundMixer();
+  g_timer = new Timer();
   Mixer::instance()->start();
 
   lua_open();
@@ -158,7 +161,33 @@ int main(int argc, char *argv[]) {
   #endif
   Engine::instance()->mainLoop();
 
+  delete g_timer;
   delete g_mixer;
 
   return 0;
+}
+
+StackLock::StackLock(MutexRef mutex)
+	: _mutex(mutex) {
+	lock_mutex(_mutex);
+}
+
+StackLock::~StackLock() {
+	unlock_mutex(_mutex);
+}
+
+MutexRef create_mutex() {
+	return (MutexRef) SDL_CreateMutex();
+}
+
+void lock_mutex(MutexRef mutex) {
+	SDL_mutexP((SDL_mutex *) mutex);
+}
+
+void unlock_mutex(MutexRef mutex) {
+	SDL_mutexV((SDL_mutex *) mutex);
+}
+
+void delete_mutex(MutexRef mutex) {
+	SDL_DestroyMutex((SDL_mutex *) mutex);
 }

@@ -249,6 +249,12 @@
 				RelativePath="textsplit.h">
 			</File>
 			<File
+				RelativePath="timer.cpp">
+			</File>
+			<File
+				RelativePath="timer.h">
+			</File>
+			<File
 				RelativePath="vima.cpp">
 			</File>
 			<File

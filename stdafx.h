@@ -19,6 +19,20 @@
 #define _STDAFX_H
 
 
+typedef struct Mutex *MutexRef;
+
+class StackLock {
+	MutexRef _mutex;
+public:
+	StackLock(MutexRef mutex);
+	~StackLock();
+};
+
+MutexRef create_mutex();
+void lock_mutex(MutexRef mutex);
+void unlock_mutex(MutexRef mutex);
+void delete_mutex(MutexRef mutex);
+
 #if defined(WIN32)
 
 #ifdef _MSC_VER
