@@ -128,6 +128,7 @@ static DmOpenRef _dbP = NULL;
 static UInt16 _lstIndex = 0;	// last index
 static UInt8 __editMode__;
 static UInt16 sknLastOn = skinButtonNone;
+static Boolean bStartScumm = false;
 
 GlobalsDataType *gVars;
 /***********************************************************************
@@ -185,11 +186,10 @@ static void GBInitAll() {
 	IMuseDigital_initGlobals();
 	NewGui_initGlobals();
 	//Resource_initGlobals();
+	Akos_initGlobals();
 	Codec47_initGlobals();
 	Gfx_initGlobals();
-#endif
-#ifndef DISABLE_SIMON
-	Simon_initGlobals();
+	Dialogs_initGlobals();
 #endif
 }
 
@@ -198,11 +198,10 @@ static void GBReleaseAll() {
 	IMuseDigital_releaseGlobals();
 	NewGui_releaseGlobals();
 	//Resource_releaseGlobals();
+	Akos_releaseGlobals();
 	Codec47_releaseGlobals();
 	Gfx_releaseGlobals();
-#endif
-#ifndef DISABLE_SIMON
-	Simon_releaseGlobals();
+	Dialogs_releaseGlobals();
 #endif
 }
 
@@ -2249,6 +2248,7 @@ static void StartScummVM()
 	Boolean debug;
 	UInt16 musicDriver = sysInvalidRefNum; // for launch call
 
+	bStartScumm = false;	//
 	UInt16 index = GamGetSelected();
 /*	
 	if (index == dmMaxRecordIndex) {
@@ -2258,7 +2258,7 @@ static void StartScummVM()
 	}
 */
 	for(count = 0; count < MAX_ARG; count++)
-		argvP[count] = 0;
+		argvP[count] = NULL;
 
 	if (index != dmMaxRecordIndex) {
 		Char pathP[256];
@@ -2425,7 +2425,8 @@ static void StartScummVM()
 		VFSFileOpen(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log",vfsModeWrite, &gVars->logFile);
 	}
 
-	void *sndStateOnFuncP = 0, *sndStateOffFuncP = 0;
+	void *sndStateOnFuncP = NULL,
+		 *sndStateOffFuncP = NULL;
 
 	if (musicDriver == 1 || musicDriver == sysInvalidRefNum) {
 
@@ -2434,15 +2435,15 @@ static void StartScummVM()
 		FtrGet(sonySysFtrCreatorSystem, sonySysFtrNumSystemAOutSndStateOnHandlerP, (UInt32*) &sndStateOnFuncP);
 		FtrGet(sonySysFtrCreatorSystem, sonySysFtrNumSystemAOutSndStateOffHandlerP, (UInt32*) &sndStateOffFuncP);
 
+		Pa1Lib_devHpVolume(gPrefs->volume.headphone, gPrefs->volume.headphone);
+		Pa1Lib_devSpVolume(gPrefs->volume.speaker);
+	//	Pa1Lib_devEqVolume(gPrefs->volume.speaker);
+
 		if (sndStateOnFuncP && sndStateOffFuncP) {
 			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindSp, gPrefs->volume.headphone, gPrefs->volume.headphone);
 			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindHp, gPrefs->volume.speaker, gPrefs->volume.speaker);
 
 		}
-
-		Pa1Lib_devHpVolume(gPrefs->volume.headphone, gPrefs->volume.headphone);
-		Pa1Lib_devSpVolume(gPrefs->volume.speaker);
-	//	Pa1Lib_devEqVolume(gPrefs->volume.speaker);
 	}
 	SavePrefs();	// free globals pref memory
 	GBOpen();
@@ -2456,11 +2457,12 @@ static void StartScummVM()
 	GBClose();
 
 	if (musicDriver == 1 || musicDriver == sysInvalidRefNum) {
+		Pa1Lib_Close();
+
 		if (sndStateOnFuncP && sndStateOffFuncP) {
 			((sndStateOffType)(sndStateOffFuncP))(aOutSndKindSp);
 			((sndStateOffType)(sndStateOffFuncP))(aOutSndKindHp);
 		}
-		Pa1Lib_Close();
 	}
 
 	if (debug)
@@ -2666,7 +2668,7 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 							if (gPrefs->volRefNum == sysInvalidRefNum)
 								FrmCustomAlert(FrmWarnAlert,"Please select/insert a memory card.", 0, 0);
 							else
-								StartScummVM();
+								bStartScumm = true;
 							handled = true;
 							break;
 
@@ -2805,6 +2807,9 @@ static void AppEventLoop(void)
 
 	do {
 		EvtGetEvent(&event, evtNoWait);
+
+		if(bStartScumm)
+			StartScummVM();
 
 		if (! SysHandleEvent(&event))
 			if (! MenuHandleEvent(0, &event, &error))
@@ -3085,30 +3090,23 @@ static Err AppStopCheckNotify()
 
 static void AppStop(void)
 {
+	WinEraseWindow();
+	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
 	// Write the saved preferences / saved-state information.  This data 
 	// will saved during a HotSync backup.
-/*
-	StrCopy(prefs.skin.nameP,gPrefsskin.nameP);
-	prefs.skin.cardNo = _skin.cardNo;
-	prefs.skin.dbID = _skin.dbID;
-
-	prefs.vibrator = iconState[IcnVibr].selected;
-	prefs.autoOff = iconState[IcnAOff].selected;
-	prefs.listPosition = ArrowManager.position;
-*/
 	SavePrefs();
 	AppStopCheckNotify();
 	AppStopMathLib();
 	AppStopHRMode();
-/*
+
 	// Close all the open forms.
-*/	FrmCloseAllForms();
+
+	FrmCloseAllForms();
 	GamCloseDatabase();
 
 	if (gVars)
 		MemPtrFree(gVars);
 
-	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
 }
 
 
