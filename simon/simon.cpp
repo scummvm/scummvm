@@ -2471,19 +2471,21 @@ void SimonState::o_wait_for_vga(uint a)
 	_vga_wait_for = a;
 	_timer_1 = 0;
 	_exit_cutscene = false;
+	_skip_speech = false;
 	_system->show_mouse(false);
 	while (_vga_wait_for != 0) {
-		if (_exit_cutscene) {
-			if (vc_get_bit(9)) {
-				_system->show_mouse(true);
-				startSubroutine170();
-				break;
-			}
+		if (_skip_speech) {
 			if (_game & GAME_SIMON2) {
 				if (_vga_wait_for == 200 && !vc_get_bit(14)) {
 					skip_speech();
 					break;
 				}
+			}
+		} else if (_exit_cutscene) {
+			if (vc_get_bit(9)) {
+				_system->show_mouse(true);
+				startSubroutine170();
+				break;
 			}
 		} else {
 			processSpecialKeys();
@@ -4599,7 +4601,7 @@ void SimonState::delay(uint amount)
 					break;
 
 				case OSystem::EVENT_RBUTTONDOWN:
-					_exit_cutscene = true;
+					_skip_speech = true;
 					break;
 			}
 		}

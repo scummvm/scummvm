@@ -242,6 +242,7 @@ public:
 	bool _video_var_3;
 	bool _unk_pal_flag;
 	bool _exit_cutscene;
+	bool _skip_speech;
 	byte _video_var_9;
 
 	uint _last_music_played;
