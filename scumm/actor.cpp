@@ -572,7 +572,7 @@ void Actor::setDirection(int direction) {
 		if (_vm->_features & GF_NEW_COSTUMES)
 			_vm->akos_decodeData(this, vald, aMask);
 		else
-			_vm->cost_decodeData(this, vald, aMask);
+			_vm->cost_decodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
 	}
 
 	needRedraw = true;
