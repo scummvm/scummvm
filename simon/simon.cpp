@@ -229,7 +229,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_game = (byte)detector->_game.features;
 
 	if (_game & GF_SIMON2) {
-		VGA_DELAY_BASE = 5;
+		VGA_DELAY_BASE = 1;
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
 		NUM_VIDEO_OP_CODES = 75;
@@ -2490,51 +2490,28 @@ void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
 }
 
 void SimonEngine::expire_vga_timers() {
-	if (_game & GF_SIMON2) {
-		VgaTimerEntry *vte = _vga_timer_list;
+	VgaTimerEntry *vte = _vga_timer_list;
 
-		_vga_tick_counter++;
+	_vga_tick_counter++;
 
-		while (vte->delay) {
-			// not quite ok, good enough
-			if ((int16)(vte->delay -= 5) <= 0) {
-				uint16 cur_file = vte->cur_vga_file;
-				uint16 cur_unk = vte->sprite_id;
-				byte *script_ptr = vte->script_pointer;
+	while (vte->delay) {
+		if (!--vte->delay) {
+			uint16 cur_file = vte->cur_vga_file;
+			uint16 cur_unk = vte->sprite_id;
+			byte *script_ptr = vte->script_pointer;
 
-				_next_vga_timer_to_process = vte + 1;
-				delete_vga_timer(vte);
+			_next_vga_timer_to_process = vte + 1;
+			delete_vga_timer(vte);
 
-				if (script_ptr == NULL) {
-					// special scroll timer
-					scroll_timeout();
-				} else {
-					vc_resume_sprite(script_ptr, cur_file, cur_unk);
-				}
-				vte = _next_vga_timer_to_process;
+			if ((_game & GF_SIMON2) && script_ptr == NULL) {
+				// special scroll timer
+				scroll_timeout();
 			} else {
-				vte++;
-			}
-		}
-	} else {
-		VgaTimerEntry *vte = _vga_timer_list;
-
-		_vga_tick_counter++;
-
-		while (vte->delay) {
-			if (!--vte->delay) {
-				uint16 cur_file = vte->cur_vga_file;
-				uint16 cur_unk = vte->sprite_id;
-				byte *script_ptr = vte->script_pointer;
-
-				_next_vga_timer_to_process = vte + 1;
-				delete_vga_timer(vte);
-
 				vc_resume_sprite(script_ptr, cur_file, cur_unk);
-				vte = _next_vga_timer_to_process;
-			} else {
-				vte++;
 			}
+			vte = _next_vga_timer_to_process;
+		} else {
+			vte++;
 		}
 	}
 }
@@ -2558,7 +2535,7 @@ void SimonEngine::scroll_timeout() {
 		}
 	}
 
-	add_vga_timer(10, NULL, 0, 0);
+	add_vga_timer(2, NULL, 0, 0);
 }
 
 void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
@@ -3133,7 +3110,7 @@ void SimonEngine::timer_proc1() {
 	_lock_word |= 2;
 
 	if (!(_lock_word & 0x10)) {
-		if (!(_game & GF_SIMON2)) {
+		//if (!(_game & GF_SIMON2)) {
 			expire_vga_timers();
 			expire_vga_timers();
 			_sync_flag_2 ^= 1;
@@ -3141,12 +3118,14 @@ void SimonEngine::timer_proc1() {
 			if (!_cepe_flag)
 				expire_vga_timers();
 
+/*
 		} else {
 			_sync_flag_2 ^= 1;
 			if (!_sync_flag_2)
 				expire_vga_timers();
 
 		}
+*/
 
 		if (_lock_counter != 0 && !_sync_flag_2) {
 			_lock_word &= ~2;
