@@ -38,6 +38,9 @@ public:
   const char *currentLine() const { return curr_line_; }
   bool eof() const { return curr_line_ == NULL; }
 
+  // Check if the current line contains 'needle'
+  bool TextSplitter::checkString(const char *needle);
+
   // Expect a certain fixed string; bail out with an error if not
   // found.  Advance to the next line.
   void expectString(const char *expected);

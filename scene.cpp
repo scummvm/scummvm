@@ -130,8 +130,14 @@ void Scene::Setup::load(TextSplitter &ts) {
 
   ts.scanString(" background %256s", 1, buf);
   bkgnd_bm_ = ResourceLoader::instance()->loadBitmap(buf);
-  ts.scanString(" zbuffer %256s", 1, buf);
-  bkgnd_zbm_ = ResourceLoader::instance()->loadBitmap(buf);
+
+  // ZBuffer is optional
+  if (!ts.checkString("zbuffer")) {
+    bkgnd_zbm_ = NULL;
+  } else {
+    ts.scanString(" zbuffer %256s", 1, buf);
+    bkgnd_zbm_ = ResourceLoader::instance()->loadBitmap(buf);
+  }
 
   ts.scanString(" position %f %f %f", 3, &pos_.x(), &pos_.y(), &pos_.z());
   ts.scanString(" interest %f %f %f", 3, &interest_.x(), &interest_.y(),

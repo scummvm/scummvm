@@ -50,6 +50,13 @@ TextSplitter::TextSplitter(const char *data, int len) {
   processLine();
 }
 
+bool TextSplitter::checkString(const char *needle) {
+ if (std::strstr(currentLine(), needle))
+   return true;
+ else
+   return false;
+}
+
 void TextSplitter::expectString(const char *expected) {
   if (eof())
     error("Expected `%s', got EOF\n", expected);
