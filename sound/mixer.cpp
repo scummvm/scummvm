@@ -459,13 +459,17 @@ void SoundMixer::Channel_STREAM::mix(int16 *data, uint len) {
 		mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _ptr + _buffer_size);
 		if (len != 0) {
 			_pos = _ptr;
-			mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
-		}
-	}
-	if (len != 0) {
-		warning("Streaming underflow ");
-		real_destroy();
-		return;
+			mixer_helper_table[_flags & 0x07](data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);			
+		} else
+			_to_be_destroyed = true;
+	}	
+	if (len != 0) {		
+		// FIXME: BBrox, what does this mean? :)
+		//        Commented by Ender to remove non-existant
+		//        streamer bug in Dig smush movies.
+		//warning("Streaming underflow of %d bytes", len);
+		//real_destroy();
+		//return;
 	}
 	_fp_pos = fp_pos;
 }

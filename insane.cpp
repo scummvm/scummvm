@@ -28,6 +28,7 @@
 #include "scumm.h"
 
 #define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+#define MAX_STREAMER 10
 
 void invalidblock(uint32 tag)
 {
@@ -144,15 +145,13 @@ void SmushPlayer::parseIACT() {
 	trk = READ_LE_UINT32(_cur + pos); /* FIXME: is this correct ? */
 	pos += 4;
 
-	/* FIXME: number 8 should be replaced with a sensible literal */
-
-	for (idx = 0; idx < 8; idx++) {
+	for (idx = 0; idx < MAX_STREAMER; idx++) {
 		if (_imusTrk[idx] == trk)
 			break;
 	}
 
-	if (idx == 8) {
-		for (idx = 0; idx < 8; idx++) {
+	if (idx == MAX_STREAMER) {
+		for (idx = 0; idx < MAX_STREAMER; idx++) {			
 			if (_imusTrk[idx] == 0 &&
 			    g_scumm->_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
@@ -163,8 +162,8 @@ void SmushPlayer::parseIACT() {
 		}
 	}
 
-	if (idx == 8) {
-		warning("iMUS table full ");
+	if (idx == MAX_STREAMER) {
+		warning("iMUS table full");
 		return;
 	}
 
@@ -797,15 +796,13 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 	trk = READ_LE_UINT16(_cur + pos); /* FIXME: is this correct ? */
 	pos += 2;
 
-	/* FIXME: number 8 should be replaced with a sensible literal */
-
-	for (idx = 0; idx < 8; idx++) {
+	for (idx = 0; idx < MAX_STREAMER; idx++) {
 		if (_psadTrk[idx] == trk)
 			break;
 	}
 
-	if (idx == 8) {
-		for (idx = 0; idx < 8; idx++) {
+	if (idx == MAX_STREAMER) {
+		for (idx = 0; idx < MAX_STREAMER; idx++) {
 			if (_psadTrk[idx] == 0 &&
 			    g_scumm->_mixer->_channels[idx] == NULL) {
 				_psadTrk[idx] = trk;
@@ -816,7 +813,7 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 		}
 	}
 
-	if (idx == 8) {
+	if (idx == MAX_STREAMER) {
 		warning("PSAD table full\n");
 		return;
 	}
