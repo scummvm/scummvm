@@ -168,7 +168,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 	if (sampleSize) {
 		uint8 speechVol = (_speechVolR + _speechVolL) / 2;
 		int8 speechPan = (_speechVolR - _speechVolL) / 2;
-		if (_cowMode == CowWave) {
+		if ((_cowMode == CowWave) || (_cowMode == CowDemo)) {
 			uint32 size;
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
