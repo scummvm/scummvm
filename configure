@@ -85,7 +85,7 @@ printf "Looking for sdl-config... "
 sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 _sdlconfig=
 
-IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS=":"
+IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
 
 for path_dir in $PATH; do
   for sdlconfig in $sdlconfigs; do
