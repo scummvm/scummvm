@@ -223,7 +223,10 @@ void Scumm::scummInit()
 		_vars[VAR_V5_DRAWFLAGS] = 11;
 		_vars[VAR_59] = 3;
 
+		// Setup light
 		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+		_flashlightXStrips = 7;
+		_flashlightYStrips = 7;
 	}
 
 	mouse.x = 104;
