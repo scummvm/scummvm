@@ -1355,6 +1355,10 @@ AdlibVoice *MidiDriver_ADLIB::allocate_voice(byte pri) {
 		}
 	}
 
+	/* V3 games don't have note priorities, first comes wins. */
+	if (_game_SmallHeader) 
+		return NULL;
+
 	if (best)
 		mc_off(best);
 	return best;
