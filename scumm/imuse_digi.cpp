@@ -23,6 +23,7 @@
 #include "scumm/scumm.h"
 #include "scumm/imuse_digi.h"
 #include "scumm/sound.h"
+#include "sound/mixer.h"
 
 ////////////////////////////////////////
 //
@@ -30,6 +31,57 @@
 //   for SCUMM v7 and higher
 //
 ////////////////////////////////////////
+
+static byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops) {
+	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
+	int32 offset = READ_LE_UINT16(ptr + 20);
+	int16 version = READ_LE_UINT16(ptr + 22);
+	int16 code = READ_LE_UINT16(ptr + 24);
+	assert(version == 0x010A || version == 0x0114);
+	assert(code == ~version + 0x1234);
+	bool quit = 0;
+	byte *ret_sound = 0; size = 0, loops = 0;
+	while (!quit) {
+		int len = READ_LE_UINT32(ptr + offset);
+		offset += 4;
+		code = len & 0xFF;
+		len >>= 8;
+		switch(code) {
+			case 0: quit = 1; break;
+			case 1: {
+				int time_constant = ptr[offset++];
+				int packing = ptr[offset++];
+				len -= 2;
+				rate = 1000000L / (256L - time_constant);
+				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
+				if (packing == 0) {
+					if (size) {
+						ret_sound = (byte *)realloc(ret_sound, size + len);
+					} else {
+						ret_sound = (byte *)malloc(len);
+					}
+					memcpy(ret_sound + size, ptr + offset, len);
+					size += len;
+				} else {
+					warning("VOC file packing %d unsupported", packing);
+				}
+				} break;
+			case 6:	// begin of loop
+				loops = len + 1;
+				break;
+			case 7:	// end of loop
+				break;
+			default:
+				warning("Invalid code in VOC file : %d", code);
+				quit = 1;
+				break;
+		}
+		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
+		offset += len;
+	}
+	debug(9, "VOC Data Size : %d", size);
+	return ret_sound;
+}
 
 static void imus_digital_handler(void *engine) {
 	// Avoid race condition
@@ -808,7 +860,7 @@ void IMuseDigital::startSound(int sound) {
 				_channel[l]._channels = 2;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
-				byte * t_ptr= _scumm->_sound->readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
+				byte * t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
 
 				if (_channel[l]._freq == 22222) {
 					_channel[l]._freq = 22050;
@@ -1187,7 +1239,6 @@ int IMuseDigital::getSoundStatus(int sound) {
 
 	return 0;
 }
-
 
 
 #ifdef __PALM_OS__

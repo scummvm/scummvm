@@ -903,8 +903,6 @@ void Scumm::scummInit() {
 	// FIXME: disabled, why we need this, it's looks completly dummy and slow down startup
 	//	getGraphicsPerformance();
 
-	_sound->_current_cache = 0;
-
 	_lastSaveTime = _system->get_msecs();
 }
 

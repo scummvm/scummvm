@@ -26,8 +26,9 @@
 #include "intern.h"
 #include "sound.h"
 #include "verbs.h"
-
 #include "smush/smush_player.h"
+
+#include "sound/mixer.h"
 
 #include <time.h>
 

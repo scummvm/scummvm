@@ -22,21 +22,14 @@
 #define SOUND_H
 
 #include "scummsys.h"
-#include "sound/mixer.h"
-#include "common/timer.h"
 
-class Scumm;
+class DigitalTrackInfo;
 class File;
+class Scumm;
+struct MP3OffsetTable;
 
 class Sound {
-
-private:
-
-enum {
-	SOUND_HEADER_SIZE = 26,
-	SOUND_HEADER_BIG_SIZE = 26 + 8
-};
-
+protected:
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos, _soundQue2[10];
 	bool _soundsPaused2;
@@ -85,50 +78,11 @@ enum {
 	int _dig_cd_num_loops;
 	bool _dig_cd_playing;
 
-	class DigitalTrackInfo {
-	public:
-		virtual bool error() = 0;
-		virtual int play(SoundMixer *mixer, int start, int delay) = 0;
-		virtual ~DigitalTrackInfo() { }
-	};
-
 	DigitalTrackInfo *_track_info[CACHE_TRACKS];
-
-#ifdef USE_MAD
-	class MP3TrackInfo : public DigitalTrackInfo {
-	private:
-		struct mad_header _mad_header;
-		long _size;
-		File *_file;
-		bool _error_flag;
-
-	public:
-		MP3TrackInfo(File *file);
-		~MP3TrackInfo();
-		bool error() { return _error_flag; }
-		int play(SoundMixer *mixer, int start, int delay);
-	};
-#endif
-
-#ifdef USE_VORBIS
-	class VorbisTrackInfo : public DigitalTrackInfo {
-	private:
-		File *_file;
-		OggVorbis_File _ov_file;
-		bool _error_flag;
-
-	public:
-		VorbisTrackInfo(File *file);
-		~VorbisTrackInfo();
-		bool error() { return _error_flag; }
-		int play(SoundMixer *mixer, int start, int delay);
-	};
-#endif
 
 	Scumm *_scumm;
 
 public:
-
 	int _current_cache;
 	int32 _bundleMusicPosition;
 
@@ -137,6 +91,7 @@ public:
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	byte _sfxMode;
 
+public:
 	Sound(Scumm *parent);
 	~Sound();
 	void addSoundToQueue(int sound);
@@ -152,25 +107,18 @@ public:
 	bool isSoundInQueue(int sound);
 	void stopSound(int a);
 	void stopAllSounds();
-	void clearSoundQue();
 	void soundKludge(int *list, int num);
 	void talkSound(uint32 a, uint32 b, int mode, int frame);
 	void setupSound();
 	void pauseSounds(bool pause);
-	int startSfxSound(File *file, int file_size);
-	File *openSfxFile();
-	void stopSfxSound();
-	bool isSfxFinished();
-	uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo);
+
 	void playBundleMusic(const char *song);
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm *scumm);
 	void stopBundleMusic();
 	int playBundleSound(char *sound);
-	byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops);
-	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
-	int playSfxSound_MP3(void *sound, uint32 size);
-	int playSfxSound_Vorbis(void *sound, uint32 size);
+
+	uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo);
 
 	void startCDTimer();
 	void stopCDTimer();
@@ -181,6 +129,16 @@ public:
 	void updateCD();
 
 protected:
+	void clearSoundQue();
+
+	File *openSfxFile();
+	int startSfxSound(File *file, int file_size);
+	void stopSfxSound();
+	bool isSfxFinished();
+	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
+	int playSfxSound_MP3(void *sound, uint32 size);
+	int playSfxSound_Vorbis(void *sound, uint32 size);
+
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);
 	int stopMP3CD();

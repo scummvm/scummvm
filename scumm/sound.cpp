@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "sound.h"
 #include "sound/mididrv.h"
+#include "sound/mixer.h"
 #include "imuse.h"
 #include "imuse_digi.h"
 #include "player_v2.h"
@@ -34,6 +35,53 @@
 
 #include "sound/midiparser.h"
 
+
+enum {
+	SOUND_HEADER_SIZE = 26,
+	SOUND_HEADER_BIG_SIZE = 26 + 8
+};
+
+
+class DigitalTrackInfo {
+public:
+	virtual bool error() = 0;
+	virtual int play(SoundMixer *mixer, int start, int delay) = 0;
+	virtual ~DigitalTrackInfo() { }
+};
+
+#ifdef USE_MAD
+class MP3TrackInfo : public DigitalTrackInfo {
+private:
+	struct mad_header _mad_header;
+	long _size;
+	File *_file;
+	bool _error_flag;
+
+public:
+	MP3TrackInfo(File *file);
+	~MP3TrackInfo();
+	bool error() { return _error_flag; }
+	int play(SoundMixer *mixer, int start, int delay);
+};
+#endif
+
+#ifdef USE_VORBIS
+class VorbisTrackInfo : public DigitalTrackInfo {
+private:
+	File *_file;
+	OggVorbis_File _ov_file;
+	bool _error_flag;
+
+public:
+	VorbisTrackInfo(File *file);
+	~VorbisTrackInfo();
+	bool error() { return _error_flag; }
+	int play(SoundMixer *mixer, int start, int delay);
+};
+#endif
+
+
+
 Sound::Sound(Scumm *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
@@ -43,6 +91,7 @@ Sound::Sound(Scumm *parent) {
 	_musicBundleBufOutput = NULL;
 	_musicDisk = 0;
 	_talkChannel = -1;
+	_current_cache = 0;
 }
 
 Sound::~Sound() {
@@ -117,57 +166,6 @@ void Sound::processSoundQues() {
 		}
 	}
 	_soundQuePos = 0;
-}
-
-byte *Sound::readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops) {
-	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
-	int32 offset = READ_LE_UINT16(ptr + 20);
-	int16 version = READ_LE_UINT16(ptr + 22);
-	int16 code = READ_LE_UINT16(ptr + 24);
-	assert(version == 0x010A || version == 0x0114);
-	assert(code == ~version + 0x1234);
-	bool quit = 0;
-	byte *ret_sound = 0; size = 0, loops = 0;
-	while (!quit) {
-		int len = READ_LE_UINT32(ptr + offset);
-		offset += 4;
-		code = len & 0xFF;
-		len >>= 8;
-		switch(code) {
-			case 0: quit = 1; break;
-			case 1: {
-				int time_constant = ptr[offset++];
-				int packing = ptr[offset++];
-				len -= 2;
-				rate = 1000000L / (256L - time_constant);
-				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
-				if (packing == 0) {
-					if (size) {
-						ret_sound = (byte *)realloc(ret_sound, size + len);
-					} else {
-						ret_sound = (byte *)malloc(len);
-					}
-					memcpy(ret_sound + size, ptr + offset, len);
-					size += len;
-				} else {
-					warning("VOC file packing %d unsupported", packing);
-				}
-				} break;
-			case 6:	// begin of loop
-				loops = len + 1;
-				break;
-			case 7:	// end of loop
-				break;
-			default:
-				warning("Invalid code in VOC file : %d", code);
-				quit = 1;
-				break;
-		}
-		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
-		offset += len;
-	}
-	debug(9, "VOC Data Size : %d", size);
-	return ret_sound;
 }
 
 void Sound::playSound(int soundID) {
@@ -1582,7 +1580,7 @@ int Sound::updateMP3CD() {
 }
 
 #ifdef USE_MAD
-Sound::MP3TrackInfo::MP3TrackInfo(File *file) {
+MP3TrackInfo::MP3TrackInfo(File *file) {
 	struct mad_stream stream;
 	struct mad_frame frame;
 	unsigned char buffer[8192];
@@ -1653,7 +1651,7 @@ error:
 	delete file;
 }
 
-int Sound::MP3TrackInfo::play(SoundMixer *mixer, int start, int delay) {
+int MP3TrackInfo::play(SoundMixer *mixer, int start, int delay) {
 	unsigned int offset;
 	mad_timer_t duration;
 
@@ -1674,7 +1672,7 @@ int Sound::MP3TrackInfo::play(SoundMixer *mixer, int start, int delay) {
 	return mixer->playMP3CDTrack(NULL, _file, duration);
 }
 
-Sound::MP3TrackInfo::~MP3TrackInfo() {
+MP3TrackInfo::~MP3TrackInfo() {
 	if (! _error_flag)
 		_file->close();
 }
@@ -1744,7 +1742,7 @@ static ov_callbacks File_wrap = {
 	read_wrap, seek_wrap, close_wrap, tell_wrap
 };
 
-Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
+VorbisTrackInfo::VorbisTrackInfo(File *file) {
 	file_info *f = new file_info;
 
 	f->file = file;
@@ -1772,7 +1770,7 @@ Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
 #define VORBIS_TREMOR
 #endif
 
-int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
+int VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(start / 75.0 * 1000));
 #else
@@ -1783,7 +1781,7 @@ int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
 				 true);
 }
 
-Sound::VorbisTrackInfo::~VorbisTrackInfo() {
+VorbisTrackInfo::~VorbisTrackInfo() {
 	if (! _error_flag) {
 		ov_clear(&_ov_file);
 		delete _file;

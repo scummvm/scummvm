@@ -22,17 +22,18 @@
 
 
 #include "stdafx.h"
-#include "scumm.h"
+#include <time.h>
+
 #include "actor.h"
 #include "charset.h"
 #include "imuse.h"
 #include "intern.h"
+#include "scumm.h"
 #include "sound.h"
 #include "verbs.h"
-#include <time.h>
 #include "smush/smush_player.h"
-
 #include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 #include "dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented

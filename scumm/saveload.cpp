@@ -31,6 +31,7 @@
 #include "sound.h"
 #include "verbs.h"
 #include "common/config-file.h"
+#include "sound/mixer.h"
 
 struct SaveGameHeader {
 	uint32 type;

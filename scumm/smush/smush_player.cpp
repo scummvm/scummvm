@@ -881,7 +881,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	File f;
 	f.open(filename, directory);
 	if (!f.isOpen()) {
-		warning("SmushPlayer::setupAnim() File not found %s", filename);
+		warning("SmushPlayer::play() File not found %s", filename);
 		return;
 	}
 
