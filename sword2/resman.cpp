@@ -333,6 +333,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 //		** at this point here we start to think about where the file is and prompt the user for the right CD to be inserted **
 //		** we need to know the position that we're at within the game - LINC should write this someplace.
 
+/* these probably aren't necessary - khalek
 
 		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM))
 		{
@@ -343,7 +344,7 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 		{
 			GetCd(cdTab[parent_res_file] & 3);				// Makes sure that the correct CD is in the drive.
 		}
-
+*/
 		//open the cluster file
 		if (file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()) == false) 
 			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
