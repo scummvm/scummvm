@@ -1481,10 +1481,10 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		push(_imuseDigital->getCurMusicPosInMs());
 		break;
 	case 0xE2:		// musicLipSyncWidth
-		push(_imuseDigital->getCurMusicLipSyncWidth());
+		push(_imuseDigital->getCurMusicLipSyncWidth(args[1]));
 		break;
 	case 0xE3:		// musicLipSyncHeight
-		push(_imuseDigital->getCurMusicLipSyncHeight());
+		push(_imuseDigital->getCurMusicLipSyncHeight(args[1]));
 		break;
 	default:
 		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);

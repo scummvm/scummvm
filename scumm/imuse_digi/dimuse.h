@@ -109,8 +109,8 @@ public:
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
 	int32 getCurVoiceLipSyncHeight();
-	int32 getCurMusicLipSyncWidth();
-	int32 getCurMusicLipSyncHeight();
+	int32 getCurMusicLipSyncWidth(int32 param);
+	int32 getCurMusicLipSyncHeight(int32 param);
 
 	void closeBundleFiles();
 };

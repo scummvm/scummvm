@@ -181,6 +181,8 @@ void IMuseDigital::callback() {
 							break;
 					}
 					mixer_size -= result;
+//					if (mixer_size < 0)
+//						mixer_size = 0;
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
 			}
@@ -570,7 +572,6 @@ void IMuseDigital::closeBundleFiles() {
 }
 
 int32 IMuseDigital::getPosInMs(int soundId) {
-	debug(5, "IMuseDigital::getPosInMs(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].idSound == soundId) && _track[l].used) {
 			int32 pos = 1000 * _track[l].trackOffset / _track[l].iteration;
@@ -582,6 +583,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 }
 
 int32 IMuseDigital::getCurMusicPosInMs() {
+	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", _curMusicId);
 	return getPosInMs(_curMusicId);
 }
 
@@ -595,12 +597,12 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
-int32 IMuseDigital::getCurMusicLipSyncWidth() {
+int32 IMuseDigital::getCurMusicLipSyncWidth(int32 param) {
 //	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
-int32 IMuseDigital::getCurMusicLipSyncHeight() {
+int32 IMuseDigital::getCurMusicLipSyncHeight(int32 param) {
 //	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
