@@ -116,70 +116,20 @@ BaseSound::~BaseSound() {
 		free(_offsets);
 	delete _file;
 }
-
-#if !defined(__GNUC__)
-#pragma START_PACK_STRUCTS
-#endif
-
-struct WaveHeader {
-	uint32 riff;
-	uint32 unk;
-	uint32 wave;
-	uint32 fmt;
-
-	uint32 size;
-
-	uint16 format_tag;
-	uint16 channels;
-	uint32 samples_per_sec;
-	uint32 avg_bytes;
-
-	uint16 block_align;
-	uint16 bits_per_sample;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-#pragma END_PACK_STRUCTS
-#endif
 	
 void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
-	WaveHeader wave_hdr;
-	uint32 data[2];
-
-	flags |= SoundMixer::FLAG_AUTOFREE;
-
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	// TODO: use loadWAVFromStream to load the WAVE data!
-	/*
-	int rate, size;
-	bye flags;
-	isValidWAV = loadWAVFromStream(*_file, size, rate, flags);
-	*/
-
-	if (_file->read(&wave_hdr, sizeof(wave_hdr)) != sizeof(wave_hdr) ||
-			wave_hdr.riff != MKID('RIFF') || wave_hdr.wave != MKID('WAVE')
-			|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
-			|| READ_LE_UINT16(&wave_hdr.channels) != 1
-			|| READ_LE_UINT16(&wave_hdr.bits_per_sample) != 8) {
-		error("playWav(%d): can't read RIFF header", sound);
+	// Try to load the WAVE data into an audio stream
+	AudioStream *stream = makeWAVStream(*_file);
+	if (!stream) {
+		error("playWav(%d): can't read WAVE header", sound);
 	}
 
-	_file->seek(FROM_LE_32(wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
-
-	data[0] = _file->readUint32LE();
-	data[1] = _file->readUint32LE();
-	if (data[0] != 'atad') {
-		error("playWav(%d): can't read data header", sound);
-	}
-
-	byte *buffer = (byte *)malloc(data[1]);
-	_file->read(buffer, data[1]);
-
-	_mixer->playRaw(handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
+	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, stream);
 }
 
 void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
