@@ -969,7 +969,7 @@ void ScummEngine::launch() {
 	scummInit();
 
 	if (_version > 2) {
-		if (_version < 7)
+		if (_version < 7 && _heversion <= 71)
 			VAR(VAR_VERSION) = 21;
 	
 		if (!((_features & GF_MACINTOSH) && (_version == 3))) {
@@ -1196,6 +1196,8 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_LANGUAGE) = _language;
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
+	} else if (_heversion >= 72) {
+		// TODO
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
