@@ -501,8 +501,9 @@ else
 	    OBJS="$OBJS scummvmico.o"
 	    ;;
 	CYGWIN*)
-	    echo "cygwin not supported by configure script"
-	    exit 1
+	    DEFINES="$DEFINES -mno-cygwin -DWIN32"
+	    LIBS="$LIBS -lmingw32 -lwinmm"
+	    OBJS="$OBJS scummvmico.o"
 	    ;;
 	# given this is a shell script assume some type of unix
 	*)
