@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2003-09-21
-Release version: 0.5.3-cvs
+Last updated:    2003-10-05
+Release version: 0.5.4-cvs
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -193,7 +193,7 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-3.3) Known Problems in ScummVM 0.5.3-cvs
+3.3) Known Problems in ScummVM 0.5.4-cvs
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
