@@ -46,17 +46,24 @@ protected:
 	AudioInputStream *_input;
 	byte _volume;
 	int8 _pan;
+	bool _paused;
 
 public:
 	int _id;
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
-		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _id(-1) {
+		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _id(-1), _paused(false) {
 		assert(mixer);
 	}
 	virtual ~Channel();
 	void destroy();
 	virtual void mix(int16 *data, uint len);
+	virtual void pause(bool paused) {
+		_paused = paused;
+	}
+	virtual bool isPaused() {
+		return _paused;
+	}
 	virtual void setChannelVolume(const byte volume) {
 		_volume = volume;
 	}
@@ -271,7 +278,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	if (!_paused && !_channelsPaused) {
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i])
+			if (_channels[i] && !_channels[i]->isPaused())
 				_channels[i]->mix(buf, len);
 	}
 }
@@ -381,6 +388,45 @@ void SoundMixer::pause(bool paused) {
 
 void SoundMixer::pauseChannels(bool paused) {
 	_channelsPaused = paused;
+}
+
+void SoundMixer::pauseChannel(int index, bool paused) {
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::pauseChannel has invalid index %d", index);
+		return;
+	}
+
+	StackLock lock(_mutex);
+	if (_channels[index])
+		_channels[index]->pause(paused);
+}
+
+void SoundMixer::pauseID(int id, bool paused) {
+	StackLock lock(_mutex);
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] != NULL && _channels[i]->_id == id) {
+			_channels[i]->pause(paused);
+			return;
+		}
+	}
+}
+
+void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool pause) {
+	StackLock lock(_mutex);
+
+	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
+	if (handle == 0)
+		return;
+
+	int index = handle - 1;
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::pauseHandle has invalid index %d", index);
+		return;
+	}
+
+	if (_channels[index])
+		_channels[index]->pause(pause);
 }
 
 bool SoundMixer::hasActiveSFXChannel() {

@@ -107,6 +107,15 @@ public:
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
 
+	/** pause/unpause the given channel */
+	void pauseChannel(int index, bool paused);
+
+	/** pause/unpause the sound with the given ID */
+	void pauseID(int id, bool paused);
+
+	/** pause/unpause the channel for the given handle */
+	void pauseHandle(PlayingSoundHandle handle, bool paused);
+
 	/** changing the channel volume for the given handle (0 - 255) */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
