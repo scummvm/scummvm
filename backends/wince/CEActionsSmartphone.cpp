@@ -19,12 +19,13 @@
  *
  */
 
+//#define SIMU_SMARTPHONE 1
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 
 #include "stdafx.h"
-#include "CEActionsPocket.h"
-#include "KeysBuffer.h"
+#include "CEActionsSmartphone.h"
+#include "EventsBuffer.h"
 
 #include "gui/message.h"
 
@@ -43,6 +44,12 @@ const String smartphoneActionNames[] = {
 	"Skip",
 	"Zone"
 };
+
+#ifdef SIMU_SMARTPHONE
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8 };
+#else
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, VK_F10 };
+#endif
 
 void CEActionsSmartphone::init(GameDetector &detector) {
 	_instance = new CEActionsSmartphone(detector);
@@ -71,25 +78,15 @@ CEActionsSmartphone::CEActionsSmartphone(GameDetector &detector) :
 	int i;
 
 	for (i=0; i<SMARTPHONE_ACTION_LAST; i++) {
-		_action_mapping[i] = 0;
+		_action_mapping[i] = ACTIONS_SMARTPHONE_DEFAULT[i];
 		_action_enabled[i] = false;
 	}
 
 }
 
-void CEActionsSmartphone::initInstance(OSystem_WINCE3 *mainSystem) {
-{
-	int i;
-	bool is_simon = (strncmp(_detector->_targetName.c_str(), "simon", 5) == 0);
-	bool is_sky = (_detector->_targetName == "sky");
-
-	CEActions::initInstance(mainSystem);
-
-	// See if a right click mapping could be needed
-	if (is_sky || _detector->_targetName == "samnmax")
-		_right_click_needed = true;
-
-	// Initialize keys for different actions
+void CEActionsSmartphone::initInstanceMain(OSystem_WINCE3 *mainSystem) {
+	CEActions::initInstanceMain(mainSystem);
+	
 	// Mouse Up
 	_action_enabled[SMARTPHONE_ACTION_UP] = true;
 	// Mouse Down
@@ -101,7 +98,21 @@ void CEActionsSmartphone::initInstance(OSystem_WINCE3 *mainSystem) {
 	// Left Click
 	_action_enabled[SMARTPHONE_ACTION_LEFTCLICK] = true;
 	// Right Click
-	_action_enabled[ACTION_RIGHTCLICK] = true;
+	_action_enabled[SMARTPHONE_ACTION_RIGHTCLICK] = true;
+}
+
+void CEActionsSmartphone::initInstanceGame() {
+	bool is_simon = (strncmp(_detector->_targetName.c_str(), "simon", 5) == 0);
+	bool is_sky = (_detector->_targetName == "sky");
+	bool is_queen = (_detector->_targetName == "queen");
+	
+	CEActions::initInstanceGame();
+
+	// See if a right click mapping could be needed
+	if (is_sky || _detector->_targetName == "samnmax")
+		_right_click_needed = true;
+
+	// Initialize keys for different actions
 	// Save
 	if (is_simon) 
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
@@ -133,10 +144,9 @@ void CEActionsSmartphone::initInstance(OSystem_WINCE3 *mainSystem) {
 CEActionsSmartphone::~CEActionsSmartphone() {
 }
 
-bool CEActionsSmartphone::perform(ActionType action, bool pushed = true) {
+bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 	if (!pushed) {
-		_mainSystem->clear_key_repeat();
-		return true;
+		return false;
 	}
 
 	switch (action) {
@@ -170,4 +180,4 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed = true) {
 	return false;
 }
 
-#endif
+//#endif

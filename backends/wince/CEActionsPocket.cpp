@@ -82,7 +82,12 @@ CEActionsPocket::CEActionsPocket(GameDetector &detector) :
 
 }
 
-void CEActionsPocket::initInstance(OSystem_WINCE3 *mainSystem) {
+void CEActionsPocket::initInstanceMain(OSystem_WINCE3 *mainSystem) {
+	// Nothing generic to do for Pocket PC
+	CEActions::initInstanceMain(mainSystem);
+}
+
+void CEActionsPocket::initInstanceGame() {
 	bool is_simon = (strncmp(_detector->_targetName.c_str(), "simon", 5) == 0);
 	bool is_sword1 = (_detector->_targetName == "sword1");
 	bool is_sword2 = (strcmp(_detector->_targetName.c_str(), "sword2") == 0);
@@ -90,7 +95,7 @@ void CEActionsPocket::initInstance(OSystem_WINCE3 *mainSystem) {
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_comi = (strncmp(_detector->_targetName.c_str(), "comi", 4) == 0);
 
-	CEActions::initInstance(mainSystem);
+	CEActions::initInstanceGame();
 
 	// See if a right click mapping could be needed
 	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi ||

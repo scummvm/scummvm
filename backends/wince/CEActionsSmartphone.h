@@ -22,7 +22,7 @@
 #ifndef CEACTIONSSMARTPHONE
 #define CEACTIONSSMARTPHONE
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
@@ -59,7 +59,8 @@ class CEActionsSmartphone : public CEActions {
 		String actionName(ActionType action);
 		int size();
 		static void init(GameDetector &detector);
-		void initInstance(OSystem_WINCE3 *mainSystem);
+		void initInstanceMain(OSystem_WINCE3 *mainSystem);
+		void initInstanceGame();
 
 		// Action domain
 		String domain();
@@ -68,8 +69,9 @@ class CEActionsSmartphone : public CEActions {
 		~CEActionsSmartphone();
 	private:
 		CEActionsSmartphone(GameDetector &detector);
+		bool _right_click_needed;
 	};	
 
 #endif
 
-#endif
+//#endif
