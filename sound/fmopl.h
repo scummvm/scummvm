@@ -27,6 +27,7 @@
 #define FMOPL_H_
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,
@@ -158,6 +159,9 @@ unsigned char OPLRead(FM_OPL *OPL, int a);
 int OPLTimerOver(FM_OPL *OPL, int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
+
+static Common::RandomSource oplRnd;			/* OPL random number generator */
+
 #endif
 
 // Factory method

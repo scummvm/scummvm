@@ -29,12 +29,6 @@ General
   of the subdirs). Better would be to introduce a somewhat higher level API,
   a replacement for File::open() which (optionally) takes a list of subdirs.
   E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
-* Use RandomSource for all random numbers. Right now there are a few places
-  where we don't:
-  - sound/fmopl.cpp uses rand() in one function
-  - backends/midi/adlib.cpp has its own random_nr() function.
-  Any others?
-  
 
 Build System
 ============
