@@ -70,6 +70,8 @@ public:
 	void add_right_click();
 	void swap_mouse_visibility();
 	void swap_freeLook();
+	void swap_zoom_up();
+	void swap_zoom_down();
 
 protected:
 	SDL_Surface *_hwscreen;    // hardware screen
@@ -127,6 +129,10 @@ private:
 
 	bool _saveToolbarState;		// save visibility when forced
 	String _saveActiveToolbar;	// save active toolbar when forced
+
+	bool _saveToolbarZoom;		// save visibility when zooming 
+	bool _zoomUp;				// zooming up mode
+	bool _zoomDown;				// zooming down mode
 
 	int _scaleFactorXm;
 	int _scaleFactorXd;

@@ -81,6 +81,7 @@ int SDL_main(int argc, char **argv) {
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
+	CEActions::init(_gameDetector);
 	return scummvm_main(_gameDetector, argc, argv);
 }    
    
@@ -129,7 +130,8 @@ OSystem_WINCE3::OSystem_WINCE3()
 	 : _hwscreen(0), _scaler_proc(0), _orientationLandscape(false), _newOrientation(false),
 	   _panelInitialized(false), _forcePanelInvisible(false), _panelVisible(true),
 	   _panelStateForced(false), _addRightClickDown(false), _addRightClickUp(false),
-	   _forceHideMouse(false), _freeLook(false), _toolbarHighDrawn(false)
+	   _forceHideMouse(false), _freeLook(false), _toolbarHighDrawn(false), _zoomUp(false),
+	   _zoomDown(false), _saveToolbarZoom(false)
 {
 	CEDevice::enableHardwareKeyMapping();
 	create_toolbar();
@@ -178,6 +180,68 @@ void OSystem_WINCE3::swap_freeLook() {
 	_freeLook = !_freeLook;
 }
 
+void OSystem_WINCE3::swap_zoom_up() {	
+	if (_zoomUp) {
+		// restore visibility
+		_toolbarHandler.setVisible(_saveToolbarZoom);
+		// restore scaler
+		_scaleFactorYd = 2;
+		_scaler_proc = PocketPCHalf;
+		_zoomUp = false;
+	}
+	else
+	{
+		// only active if running on a PocketPC
+		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+			return;
+		if (_scaler_proc == PocketPCHalf) {
+			_saveToolbarZoom = _toolbarHandler.visible();
+			_toolbarHandler.setVisible(false);
+			// set zoom scaler
+			_scaleFactorYd = 1;
+			_scaler_proc = PocketPCHalfZoom;
+		}
+		else
+			_zoomDown = false;
+
+		_zoomUp = true;
+	}
+	// redraw whole screen
+	add_dirty_rect(0, 0, 640, 480);
+	update_screen();
+}
+
+void OSystem_WINCE3::swap_zoom_down() {	
+	if (_zoomDown) {
+		// restore visibility
+		_toolbarHandler.setVisible(_saveToolbarZoom);
+		// restore scaler
+		_scaleFactorYd = 2;
+		_scaler_proc = PocketPCHalf;
+		_zoomDown = false;
+	}
+	else
+	{
+		// only active if running on a PocketPC
+		if (_scaler_proc != PocketPCHalf && _scaler_proc != PocketPCHalfZoom)
+			return;
+		if (_scaler_proc == PocketPCHalf) {
+			_saveToolbarZoom = _toolbarHandler.visible();
+			_toolbarHandler.setVisible(false);
+			// set zoom scaler
+			_scaleFactorYd = 1;
+			_scaler_proc = PocketPCHalfZoom;
+		}
+		else
+			_zoomUp = false;
+
+		_zoomDown = true;
+	}
+	// redraw whole screen
+	add_dirty_rect(0, 0, 640, 480);
+	update_screen();
+}
+
 void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
 
@@ -206,12 +270,14 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
                 if (!ov_open(testFile, test_ov_file, NULL, 0)) {
                         bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
                         ov_clear(test_ov_file);
+						delete test_ov_file;
                         return highSampleRate;
                 }
-        }
+        }		
 
         // Do not test for OGG samples - too big and too slow anyway :)
 
+		delete test_ov_file;
         return false;
 }
 #endif
@@ -277,32 +343,45 @@ void OSystem_WINCE3::check_mappings() {
 		if (!_gameDetector._targetName.size())
 			return;
 		
-		CEActions::init(this, _gameDetector);
+		//CEActions::init(this, _gameDetector);
+		CEActions::Instance()->initInstance(this);
 		// Load key mapping
 		CEActions::Instance()->loadMapping();
 
 		// Some games need to map the right click button, signal it here if it wasn't done
 		if (CEActions::Instance()->needsRightClickMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map right click action");	
 			while (!CEActions::Instance()->getMapping(ACTION_RIGHTCLICK)) {
-				CEKeysDialog *keysDialog = new CEKeysDialog("Map right click action");	
 				keysDialog->runModal();
 				if (!CEActions::Instance()->getMapping(ACTION_RIGHTCLICK)) {
 					GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
 					alert.runModal();
 				}					
 			}
+			delete keysDialog;
 		}
 
 		// Map the "hide toolbar" action if needed
 		if (CEActions::Instance()->needsHideToolbarMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
 			while (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
-				CEKeysDialog *keysDialog = new CEKeysDialog("Map hide toolbar action");
 				keysDialog->runModal();
 				if (!CEActions::Instance()->getMapping(ACTION_HIDE)) {
 					GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
 					alert.runModal();
 				}
 			}
+			delete keysDialog;
+		}
+
+		// Map the "zoom" actions if needed
+		if (CEActions::Instance()->needsZoomMapping()) {
+			CEKeysDialog *keysDialog = new CEKeysDialog("Map Zoom Up action (optional)");
+			keysDialog->runModal();
+			delete keysDialog;
+			keysDialog = new CEKeysDialog("Map Zoom Down action (optional)");
+			keysDialog->runModal();
+			delete keysDialog;
 		}
 
 		// Extra warning for Zak Mc Kracken
@@ -328,7 +407,7 @@ void OSystem_WINCE3::update_game_settings() {
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
 		// portrait/landscape - screen dependant
-		if (_screenWidth <= 320) {
+		if (_screenWidth <= 320 && !CEDevice::hasDesktopResolution()) {
 			_newOrientation = _orientationLandscape = ConfMan.getBool("CE_landscape");
 			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
 		}
@@ -380,6 +459,9 @@ void OSystem_WINCE3::load_gfx_mode() {
 	_scaleFactorYd = -1;  
 	_scaleFactor = 0;	
 
+	if (CEDevice::hasDesktopResolution())
+		_orientationLandscape = true;
+
 	if (CEDevice::hasPocketPCResolution()) {
 		if (!_orientationLandscape && _screenWidth == 320) {
 			_scaleFactorXm = 3;
@@ -399,7 +481,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 		}
 	}
 
-	if (CEDevice::hasPocketPCResolution() && _orientationLandscape)
+	if (CEDevice::hasPocketPCResolution() && _orientationLandscape) 
 		_mode = GFX_NORMAL;
 
 	if (_scaleFactorXm < 0) {
@@ -496,7 +578,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	}
 
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, SDL_FULLSCREEN | SDL_SWSURFACE);
-	if (_hwscreen == NULL) {
+	if (_hwscreen == NULL) { 
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwscreen is hosed.
 
@@ -624,9 +706,9 @@ void OSystem_WINCE3::hotswap_gfx_mode() {
 	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
 	
 	// Free the old surfaces
-	SDL_FreeSurface(old_screen);
+	SDL_FreeSurface(old_screen); 
 	free(old_tmpscreen->pixels);
-	SDL_FreeSurface(old_tmpscreen);
+	SDL_FreeSurface(old_tmpscreen); 
 
 	// Blit everything to the screen
 	update_screen();
@@ -674,10 +756,10 @@ void OSystem_WINCE3::update_screen() {
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart, 
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
+			_paletteDirtyStart, 
+			_paletteDirtyEnd - _paletteDirtyStart); 
 		
-		_paletteDirtyEnd = 0;
+		_paletteDirtyEnd = 0;   
 
 		_forceFull = true;
 	}
@@ -687,9 +769,15 @@ void OSystem_WINCE3::update_screen() {
 		_num_dirty_rects = 1;
 
 		_dirty_rect_list[0].x = 0;
-		_dirty_rect_list[0].y = 0;
+		if (!_zoomDown)
+			_dirty_rect_list[0].y = 0;
+		else
+			_dirty_rect_list[0].y = _screenHeight / 2;
 		_dirty_rect_list[0].w = _screenWidth;
-		_dirty_rect_list[0].h = _screenHeight;
+		if (!_zoomUp && !_zoomDown)
+			_dirty_rect_list[0].h = _screenHeight;
+		else
+			_dirty_rect_list[0].h = _screenHeight / 2;
 
 		_toolbarHandler.forceRedraw();
 	}
@@ -734,7 +822,7 @@ void OSystem_WINCE3::update_screen() {
 				}
 			}
 
-			SDL_LockSurface(_tmpscreen);
+			SDL_LockSurface(_tmpscreen); 
 			SDL_LockSurface(_hwscreen);
 
 			srcPitch = _tmpscreen->pitch;
@@ -762,13 +850,21 @@ void OSystem_WINCE3::update_screen() {
 						orig_dst_y = dst_y;
 						dst_y = real2Aspect(dst_y);
 					}
-				
-					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
+
+					if (!_zoomDown)
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					else {
+						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
+					}
 				}
 
 				r->x = r->x * _scaleFactorXm / _scaleFactorXd;
-				r->y = dst_y;
+				if (!_zoomDown)
+					r->y = dst_y;
+				else
+					r->y = dst_y - 240;
 				r->w = r->w * _scaleFactorXm / _scaleFactorXd;
 				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
 
@@ -784,7 +880,7 @@ void OSystem_WINCE3::update_screen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactorYm / _scaleFactorYd;
+			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
 		}
 	}
 	// Add the toolbar if needed
@@ -964,6 +1060,9 @@ void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
 	km.y = event.mouse.y;
 
 	// Adjust for the screen scaling
+	if (_zoomDown) 
+		event.mouse.y += 240;
+
 	event.mouse.x = event.mouse.x * _scaleFactorXd / _scaleFactorXm;
 	event.mouse.y = event.mouse.y * _scaleFactorYd / _scaleFactorYm;
 }
@@ -995,7 +1094,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 		while (w % 4) w++;
 	}
 	else
-	if (_scaler_proc == PocketPCHalf) {
+	if (_scaler_proc == PocketPCHalf || _scaler_proc == PocketPCHalfZoom) {
 		// Align on a 2x2 square
 		if (x != 0) {
 			while (x % 2) {
@@ -1008,6 +1107,29 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 			}
 			while (w % 2) w++;
 			while (h % 2) h++;
+		}
+
+
+		// Restrict rect if we're zooming
+
+		if (_zoomUp) {
+			if (y + h >= 240) {
+				if (y >= 240)
+					return;
+				else
+					h = 240 - y;
+			}
+		}
+		else
+		if (_zoomDown) {
+			if (y + h >= 240) {
+				if (y < 240) {
+					h = 240 - y;
+					y = 240;
+				}
+			}
+			else
+				return;
 		}
 	}
 
@@ -1178,9 +1300,15 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 
 			// Check mapping
 			if (CEActions::Instance()->mappingActive()) {
+				Key mappingKey;
+				mappingKey.setAscii(ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
+				mappingKey.setFlags(0xff);
+				_keysBuffer->Instance()->simulate(&mappingKey);
+				/*
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.ascii = (ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
 				event->kbd.flags = 0xff;
+				*/
 				return true;
 			}
 			else

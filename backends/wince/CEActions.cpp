@@ -41,7 +41,9 @@ const String actionNames[] = {
 	"Sound",
 	"Right click",
 	"Cursor",
-	"Free look"
+	"Free look",
+	"Zoom up",
+	"Zoom down",
 };
 
 CEActions* CEActions::Instance() {		
@@ -53,30 +55,38 @@ String CEActions::actionName(ActionType action) {
 }
 
 int CEActions::size() {
-	return ACTION_LAST - 1;
+	return ACTION_LAST;
 }
 
-CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
-	_mainSystem(mainSystem), _mapping_active(false), _right_click_needed(false),
-	_hide_toolbar_needed(false) 
+CEActions::CEActions(GameDetector &detector) :
+	_detector(&detector), _mapping_active(false), _right_click_needed(false), 
+	_hide_toolbar_needed(false), _zoom_needed(false)
 {
 	int i;
-	bool is_simon = (strncmp(detector._targetName.c_str(), "simon", 5) == 0);
-	bool is_sword1 = (detector._targetName == "sword1");
-	bool is_sword2 = (strcmp(detector._targetName.c_str(), "sword2") == 0);
-	bool is_queen = (detector._targetName == "queen");
-	bool is_sky = (detector._targetName == "sky");
 
-	for (i=0; i<ACTION_LAST; i++)
+	for (i=0; i<ACTION_LAST; i++) {
 		_action_mapping[i] = 0;
+		_action_enabled[i] = false;
+	}
+}
 
+void CEActions::initInstance(OSystem_WINCE3 *mainSystem) {
+	bool is_simon = (strncmp(_detector->_targetName.c_str(), "simon", 5) == 0);
+	bool is_sword1 = (_detector->_targetName == "sword1");
+	bool is_sword2 = (strcmp(_detector->_targetName.c_str(), "sword2") == 0);
+	bool is_queen = (_detector->_targetName == "queen");
+	bool is_sky = (_detector->_targetName == "sky");
+	bool is_comi = (strncmp(_detector->_targetName.c_str(), "comi", 4) == 0);
+
+	_mainSystem = mainSystem;
+	
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || strncmp(detector._targetName.c_str(), "comi", 4) == 0 ||
-		detector._targetName == "samnmax")
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi ||
+		_detector->_targetName == "samnmax")
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
-	if (is_sword1 || is_sword2 || strncmp(detector._targetName.c_str(), "comi", 4) == 0)
+	if (is_sword1 || is_sword2 || is_comi)
 		_hide_toolbar_needed = true;
 
 	// Initialize keys for different actions
@@ -120,17 +130,30 @@ CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
 	_action_enabled[ACTION_CURSOR] = true;
 	// Freelook
 	_action_enabled[ACTION_FREELOOK] = true;
+	// Zoom
+	if (is_sword1 || is_sword2 || is_comi) {
+		_zoom_needed = true;
+		_action_enabled[ACTION_ZOOM_UP] = true;
+		_action_enabled[ACTION_ZOOM_DOWN] = true;
+	}
+	else {
+		_action_enabled[ACTION_ZOOM_UP] = false;
+		_action_enabled[ACTION_ZOOM_DOWN] = false;
+	}
 }
 
 
 CEActions::~CEActions() {
 }
 
-void CEActions::init(OSystem_WINCE3 *mainSystem, GameDetector &detector) {
-	_instance = new CEActions(mainSystem, detector);
+void CEActions::init(GameDetector &detector) {
+	_instance = new CEActions(detector);
 }
 
 bool CEActions::perform(ActionType action) {
+	if (!_action_enabled[action])
+		return false;
+
 	switch (action) {
 		case ACTION_PAUSE:
 		case ACTION_SAVE:
@@ -151,6 +174,12 @@ bool CEActions::perform(ActionType action) {
 			return true;
 		case ACTION_CURSOR:
 			_mainSystem->swap_mouse_visibility();
+			return true;
+		case ACTION_ZOOM_UP:
+			_mainSystem->swap_zoom_up();
+			return true;
+		case ACTION_ZOOM_DOWN:
+			_mainSystem->swap_zoom_down();
 			return true;
 		case ACTION_QUIT:
 			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
@@ -258,6 +287,13 @@ bool CEActions::needsHideToolbarMapping() {
 		return false;
 	else
 		return (_action_mapping[ACTION_HIDE] == 0);
+}
+
+bool CEActions::needsZoomMapping() {
+	if (!_zoom_needed)
+		return false;
+	else
+		return (_action_mapping[ACTION_ZOOM_UP] == 0 || _action_mapping[ACTION_ZOOM_DOWN] == 0);
 }
 
 CEActions *CEActions::_instance = NULL;    

@@ -95,3 +95,27 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 	}
 }
 
+
+void PocketPCHalfZoom(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	uint8 *work;
+	int i;
+	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
+
+	if (!height)
+		return;
+
+	while (height--) {
+		i = 0;
+		work = dstPtr;
+
+		for (int i=0; i<width; i+=2) {
+			uint16 color1 = *(((const uint16 *)srcPtr) + i);
+			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
+			*(((uint16 *)work) + 0) = CEinterpolate16_2(color1, 1, color2, 1);
+			
+			work += sizeof(uint16);
+		}
+		srcPtr += srcPitch; 
+		dstPtr += dstPitch;
+	}
+}

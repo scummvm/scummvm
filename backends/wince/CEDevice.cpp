@@ -35,6 +35,10 @@ bool CEDevice::hasPocketPCResolution() {
 			(GetSystemMetrics(SM_CXSCREEN) >= 320 && GetSystemMetrics(SM_CYSCREEN) < 480));
 }
 
+bool CEDevice::hasDesktopResolution() {
+	return (GetSystemMetrics(SM_CXSCREEN) >= 320 && GetSystemMetrics(SM_CYSCREEN) >= 240);
+}
+
 bool CEDevice::hasWideResolution() {
 	return ((GetSystemMetrics(SM_CXSCREEN) >= 640 && GetSystemMetrics(SM_CYSCREEN) >= 480)
 		   ||(GetSystemMetrics(SM_CYSCREEN) >= 640 && GetSystemMetrics(SM_CXSCREEN) >= 480));

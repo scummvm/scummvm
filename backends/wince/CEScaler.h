@@ -30,6 +30,7 @@
 
 DECLARE_SCALER(PocketPCPortrait);
 DECLARE_SCALER(PocketPCHalf);
+DECLARE_SCALER(PocketPCHalfZoom);
 
 void initCEScaler(void);
 

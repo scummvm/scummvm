@@ -43,18 +43,21 @@ enum ActionType {
         ACTION_RIGHTCLICK,
         ACTION_CURSOR,
         ACTION_FREELOOK,
+		ACTION_ZOOM_UP,
+		ACTION_ZOOM_DOWN,
 
 		ACTION_LAST
 };
 
-#define ACTIONS_VERSION 1
+#define ACTIONS_VERSION 2
 
 class OSystem_WINCE3;
 
 class CEActions {
 	public:
 		static CEActions* Instance();
-		static void init(OSystem_WINCE3 *mainSystem, GameDetector &detector);
+		static void init(GameDetector &detector);
+		void initInstance(OSystem_WINCE3 *mainSystem);
 
 		// Actions
 		bool perform(ActionType action);
@@ -75,12 +78,14 @@ class CEActions {
 		// Utility
 		bool needsRightClickMapping();
 		bool needsHideToolbarMapping();
+		bool needsZoomMapping();
 
 		~CEActions();
 	private:
-		CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector);
+		CEActions(GameDetector &detector);
 		static CEActions* _instance;
 		OSystem_WINCE3 *_mainSystem;
+		GameDetector *_detector;
 		Key _key_action[ACTION_LAST];
 		bool _action_active[ACTION_LAST];
 		bool _action_enabled[ACTION_LAST];
@@ -88,6 +93,7 @@ class CEActions {
 		bool _mapping_active;
 		bool _right_click_needed;
 		bool _hide_toolbar_needed;
+		bool _zoom_needed;
 	};	
 
 #endif
