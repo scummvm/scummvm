@@ -2877,8 +2877,8 @@ void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
 		video_putchar(fcs, *string2);
 
 	fcs->textColumn = (fcs->width >> 1) - 3;
-	fcs->textRow = fcs->height - 1; //height
-	fcs->textLength = 0; // left allign
+	fcs->textRow = fcs->height - 1;
+	fcs->textLength = 0;
 
 	string = "[ OK ]";
 	for (; *string; string++)
