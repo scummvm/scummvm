@@ -166,10 +166,9 @@ ImuseSndMgr::SoundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 	sound->volGroupId = volGroupId;
 
 	if (strcasecmp(extension, "imu") == 0) {
-		Block *b = g_resourceloader->getFileBlock(soundName);
-		if (b != NULL) {
-			ptr = (byte *)b->data();
-			delete b;
+		sound->blockRes = g_resourceloader->getFileBlock(soundName);
+		if (sound->blockRes != NULL) {
+			ptr = (byte *)sound->blockRes->data();
 			parseSoundHeader(ptr, sound, headerSize);
 			sound->mcmpData = false;
 			sound->resPtr = ptr + headerSize;
@@ -198,6 +197,11 @@ void ImuseSndMgr::closeSound(SoundStruct *soundHandle) {
 	if (soundHandle->mcmpMgr) {
 		delete soundHandle->mcmpMgr;
 		soundHandle->mcmpMgr = NULL;
+	}
+
+	if (soundHandle->blockRes) {
+		delete soundHandle->blockRes;
+		soundHandle->blockRes = NULL;
 	}
 
 	if (soundHandle->region) {

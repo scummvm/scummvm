@@ -677,10 +677,9 @@ static void InputDialog() {
 
 static void IsMessageGoing() {
 	Actor *act;
-	if (lua_getparam(1) == LUA_NOOBJECT)
-//		pushbool(Mixer::instance()->voicePlaying());
-		pushbool(false);
-	else {
+	if (lua_getparam(1) == LUA_NOOBJECT) {
+		pushbool(g_imuse->isVoicePlaying());
+	} else {
 		act = check_actor(1);
 		pushbool(act->talking());
 	}

@@ -104,8 +104,6 @@ private:
 	int allocSlot(int priority);
 	void selectVolumeGroup(const char *soundName, int volGroupId);
 
-	int32 getPosInMs(const char *soundName);
-
 	void fadeOutMusic(int fadeDelay);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
@@ -143,8 +141,9 @@ public:
 	void setMusicSequence(int seqId);
 	void refreshScripts();
 	void flushTracks();
+	bool isVoicePlaying();
 	bool getSoundStatus(const char *soundName) const;
-	int32 getCurMusicPosInMs();
+	int32 getPosIn60HzTicks(const char *soundName);
 };
 
 extern Imuse *g_imuse;

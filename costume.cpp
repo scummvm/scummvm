@@ -26,6 +26,8 @@
 #include "model.h"
 #include "lua.h"
 
+#include "imuse/imuse.h"
+
 #include <string>
 #include <cstdio>
 #include <map>
@@ -480,35 +482,37 @@ public:
 	~SoundComponent() { }
 
 private:
-//	ResPtr<Sound> _sound;
+	std::string _soundName;
 };
 
 SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename) :
 		Costume::Component(parent, parentID) {
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
-		std::string realName(filename, comma);
-//		_sound = g_resourceloader->loadSound(realName.c_str());
+		_soundName = std::string(filename, comma);
 	} else {
-//		_sound = g_resourceloader->loadSound(filename);
+		_soundName = filename;
 	}
 }
 
 void SoundComponent::setKey(int val) {
-/*	switch (val) {
+	switch (val) {
 	case 0:
-		Mixer::instance()->playSfx(_sound);
+		g_imuse->startSfx(_soundName.c_str(), 127);
+		break;
+	case 1:
+		g_imuse->stopSound(_soundName.c_str());
 		break;
 	case 2:
-		Mixer::instance()->stopSfx(_sound);
+		g_imuse->stopSound(_soundName.c_str());
 		break;
 	default:
-		warning("Unknown key %d for sound %s\n", val, _sound->filename());
-	}*/
+		warning("Unknown key %d for sound %s\n", val, _soundName);
+	}
 }
 
 void SoundComponent::reset() {
-//	Mixer::instance()->stopSfx(_sound);
+	g_imuse->stopSound(_soundName.c_str());
 }
 
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :

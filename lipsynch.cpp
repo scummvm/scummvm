@@ -38,11 +38,9 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 
 		// There are cases where the lipsync file has no entries
 		if (_numEntries == 0) {
-			_status = false;
 			_entries = NULL;
 		}
 		else {
-		    _status = true;
 			data += 8;
 #ifdef DEBUG_VERBOSE
 			printf("Reading LipSynch %s, %d entries\n", filename, _numEntries);
@@ -65,8 +63,7 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 				for (int j = 0; j < _numEntries; j++)
 					printf("LIP %d) frame %d, anim %d\n", j, _entries[j].frame, _entries[j].anim);
 #endif
-		    _currEntry = 0;
-		}    
+		}
 	}
 }
 
@@ -74,13 +71,26 @@ LipSynch::~LipSynch() {
 	delete[] _entries;
 }
 
-LipSynch::LipEntry LipSynch::getCurrEntry() {
-	return _entries[_currEntry];
-}
+int LipSynch::getAnim(int pos) {
+	int frame1, frame2;
 
-void LipSynch::advanceEntry() {
-	if (_currEntry < _numEntries)
-		_currEntry++;
+	// tune a bit to prevent internal imuse drift
+	pos += 15;
+
+	for (int i = 0; i < _numEntries; i++) {
+		frame1 = _entries[i].frame;
+		if ((i + 1) < _numEntries) {
+			frame2 = _entries[i + 1].frame;
+		} else {
+			frame2 = (unsigned int)-1L;
+		}
+		if ((pos >= frame1) && (pos < frame2)) {
+			//printf("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
+			return _entries[i].anim;
+		}
+	}
+
+	return -1;
 }
 
 const LipSynch::PhonemeAnim LipSynch::_animTable[] = {

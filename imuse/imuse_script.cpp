@@ -73,16 +73,29 @@ void Imuse::startSfx(const char *soundName, int priority) {
 	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority);
 }
 
-int32 Imuse::getPosInMs(const char *soundName) {
+int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 200);
+			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 12);
 			return pos;
 		}
 	}
 
-	return 0;
+	return -1;
+}
+
+bool Imuse::isVoicePlaying() {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->volGroupId == IMUSE_VOLGRP_VOICE) {
+			if (track->handle.isActive() || (track->stream && track->used && !track->readyToRemove)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool Imuse::getSoundStatus(const char *soundName) const {
@@ -105,20 +118,6 @@ void Imuse::stopSound(const char *soundName) {
 			track->toBeRemoved = true;
 		}
 	}
-}
-
-int32 Imuse::getCurMusicPosInMs() {
-	const char *soundName = NULL;
-
-	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			soundName = track->soundName;
-		}
-	}
-
-	int32 msPos = getPosInMs(soundName);
-	return msPos;
 }
 
 void Imuse::stopAllSounds() {

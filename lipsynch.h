@@ -33,20 +33,17 @@ public:
 		uint16 anim;
 	};
 
-	LipEntry getCurrEntry();
-	void advanceEntry();
-	bool getStatus() const { return _status; }
+	int getAnim(int pos);
 
 private:
 	LipEntry *_entries;
 	int _numEntries;
-	int _currEntry;
-	bool _status;
 
 	struct PhonemeAnim {
 		uint16 phoneme;
 		uint16 anim;
 	};
+
 	static const PhonemeAnim _animTable[];
 	static const int _animTableSize;
 };

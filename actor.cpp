@@ -25,13 +25,15 @@
 
 #include "mixer/mixer.h"
 
+#include "imuse/imuse.h"
+
 #include <cmath>
 #include <cstring>
 
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
-		_visible(true),/* _talkSound(NULL),*/ _lipSynch(NULL), _turning(false), _walking(false),
+		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
@@ -220,53 +222,33 @@ void Actor::sayLine(const char *msg) {
 	if (secondSlash == NULL)
 		return;
 
-//	if (_talkSound) // Only one line at a time, please :)
-//		shutUp();
-
 	std::string msgText = g_localizer->localize(secondSlash + 1);
  	std::string msgId(msg + 1, secondSlash);
 
-//	_talkSound = g_resourceloader->loadSound((msgId + ".wav").c_str());
+	if (_talkSoundName == (msgId + ".wav"))
+		return;
+
+	if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
+		shutUp();
+
 	_lipSynch = g_resourceloader->loadLipSynch((msgId + ".lip").c_str());
-
-/*	if (_talkSound != NULL) {
-		Mixer::instance()->playVoice(_talkSound);
-
-		// Sometimes actors speak offscreen before they, including their 
-		// talk chores are initialized.
-		// For example, when reading the work order (a LIP file exists for no reason).
-		// Also, some lip synch files have no entries
-		// In these case, revert to using the mumble chore.
-		if (_lipSynch != NULL && _lipSynch->getStatus()) {
-			_talkAnim = _lipSynch->getCurrEntry().anim;
-		    if (_talkChore[_talkAnim] >= 0) {
-				_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
-				_lipSynch->advanceEntry();
-			}			
-		} else {
-		    _lipSynch = NULL;
-      		if (_mumbleChore >= 0)
-      			_mumbleCostume->playChoreLooping(_mumbleChore);
-		}		
-	}*/
+	_talkSoundName = msgId + ".wav";
+	g_imuse->startVoice(_talkSoundName.c_str());
+	_talkAnim = -1;
 }
 
 bool Actor::talking() {
-//	return (_talkSound != NULL && !_talkSound->done());
-	return false;
+	return g_imuse->getSoundStatus(_talkSoundName.c_str());
 }
 
 void Actor::shutUp() {
-/*	if (_talkSound) {
-		Mixer::instance()->stopVoice(_talkSound);
-		if (_lipSynch != NULL) {
-			if (_talkChore[_talkAnim] >= 0)
-				_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
-			_lipSynch = NULL;
-		} else if (_mumbleChore >= 0)
-			_mumbleCostume->stopChore(_mumbleChore);
-		_talkSound = NULL;
-	}*/
+	if (_lipSynch != NULL) {
+		g_imuse->stopSound(_talkSoundName.c_str());
+		if (_talkChore[_talkAnim] >= 0)
+			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+		_lipSynch = NULL;
+	} else if (_mumbleChore >= 0)
+		_mumbleCostume->stopChore(_mumbleChore);
 }
 
 void Actor::pushCostume(const char *name) {
@@ -396,27 +378,26 @@ void Actor::update() {
 	_currTurnDir = 0;
 
 	// Update lip synching
-/*	if (_lipSynch != NULL && _talkSound != NULL &&
-			_talkSound->hasReachedPos(_lipSynch->getCurrEntry().frame * g_mixer->getOutputRate() / 60)) {
-
-		//printf("Reached beyond frame %d (=pos %d). Playing anim %d\n",
-  				//_lipSynch->getCurrEntry().frame, _lipSynch->getCurrEntry().frame * 
-				//g_mixer->getOutputRate() / 60, _lipSynch->getCurrEntry().anim);
-
-		if (_talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
-
-		_talkAnim = _lipSynch->getCurrEntry().anim;
-
-		if (_talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
-
-		_lipSynch->advanceEntry();
+	if (_lipSynch != NULL) {
+		int posSound = g_imuse->getPosIn60HzTicks(_talkSoundName.c_str());
+		if (posSound != -1) {
+			int anim = _lipSynch->getAnim(posSound);
+			if (_talkAnim != anim) {
+				if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
+					_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+				if (anim != -1) {
+					_talkAnim = anim;
+					if (_talkChore[_talkAnim] >= 0) {
+						_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
+					}
+				}
+			}
+		}
 	}
 
-	if (_talkSound != NULL && _talkSound->done())
+	if (!g_imuse->isVoicePlaying())
 		shutUp();
-*/
+
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
 		(*i)->update();

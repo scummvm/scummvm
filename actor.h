@@ -25,7 +25,6 @@
 #include <string>
 #include <list>
 
-class Sound;
 class Costume;
 class LipSynch;
 
@@ -126,7 +125,7 @@ private:
 	bool _constrain;	// Constrain to walkboxes
 	bool _visible;
 	bool _lookingMode;
-//	ResPtr<Sound> _talkSound;
+	std::string _talkSoundName;
 	ResPtr<LipSynch> _lipSynch;
 	std::list<Costume *> _costumeStack;
 

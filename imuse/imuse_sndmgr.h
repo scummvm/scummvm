@@ -27,6 +27,7 @@
 #include "mixer/audiostream.h"
 
 class McmpMgr;
+class Block;
 
 class ImuseSndMgr {
 public:
@@ -64,6 +65,7 @@ public:
 		bool inUse;
 		char name[32];
 		McmpMgr *mcmpMgr;
+		Block *blockRes;
 		int volGroupId;
 		byte *resPtr;
 		bool mcmpData;

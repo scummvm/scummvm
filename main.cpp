@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 	g_timer = new Timer();
 	g_smush = new Smush();
 	g_driver = new Driver(640, 480, 24);
-	g_imuse = new Imuse(10);
+	g_imuse = new Imuse(20);
 
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));

@@ -46,8 +46,7 @@ ResourceLoader::ResourceLoader() {
 
 #ifdef _MSC_VER
 	WIN32_FIND_DATAA find_file_data;
-	std::string dir_strWin32 = dir_str;
-	dir_strWin32 += '*';
+	std::string dir_strWin32 = dir_str + '*';
 	HANDLE d = FindFirstFile(dir_strWin32.c_str(), &find_file_data);
 #else
 	DIR *d = opendir(dir_str.c_str());
@@ -59,7 +58,6 @@ ResourceLoader::ResourceLoader() {
 	if (d == NULL)
 		error("Cannot open DataDir (%s)- check configuration file", dir_str.c_str());
 
-	printf("dir open\n");
 #ifdef _MSC_VER
 	do {
 		int namelen = strlen(find_file_data.cFileName);
