@@ -71,13 +71,15 @@ Sound::~Sound() {
 	_vm->_mixer->setupPremix(0);
 
 	clearFxQueue();
-	stopMusic();
+	stopMusic(true);
 	stopSpeech();
 
-	for (int i = 0; i < MAXMUS; i++)
-		delete _music[i];
-
 	free(_mixBuffer);
+
+	for (int i = 0; i < MAXMUS; i++) {
+		if (_musicFile[i].isOpen())
+			_musicFile[i].close();
+	}
 }
 
 /**

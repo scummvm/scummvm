@@ -1586,7 +1586,7 @@ void Gui::restartControl(void) {
 	// Restart the game. To do this, we must...
 
 	// Stop music instantly!
-	_vm->_sound->stopMusic();
+	_vm->_sound->stopMusic(true);
 
 	// In case we were dead - well we're not anymore!
 	Logic::_scriptVars[DEAD] = 0;

@@ -863,11 +863,11 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 void ResourceManager::getCd(int cd) {
 	byte *textRes;
 
-	// stop any music from playing - so the system no longer needs the
+	// Stop any music from playing - so the system no longer needs the
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
 
-	_vm->_logic->fnStopMusic(NULL);
+	_vm->_sound->stopMusic(true);
 
 	textRes = openResource(2283);
 	_vm->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);

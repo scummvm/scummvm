@@ -41,8 +41,6 @@ namespace Sword2 {
 
 static AudioStream *makeCLUStream(File *fp, int size);
 
-static File fpMus;
-
 static AudioStream *getAudioStream(File *fp, const char *base, int cd, uint32 id, uint32 *numSamples) {
 	struct {
 		const char *ext;
@@ -228,10 +226,17 @@ AudioStream *makeCLUStream(File *file, int size) {
 // The length of a fade-in/out, in milliseconds.
 #define FADE_LENGTH 3000
 
-MusicInputStream::MusicInputStream(int cd, uint32 musicId, bool looping)
-	: _cd(cd), _musicId(musicId), _bufferEnd(_buffer + BUFFER_SIZE),
-	  _remove(false), _looping(looping), _fading(0) {
-	_decoder = getAudioStream(&fpMus, "music", _cd, _musicId, &_numSamples);
+MusicInputStream::MusicInputStream(int cd, File *fp, uint32 musicId, bool looping) {
+	_cd = cd;
+	_file = fp;
+	_musicId = musicId;
+	_looping = looping;
+
+	_bufferEnd = _buffer + BUFFER_SIZE;
+	_remove = false;
+	_fading = 0;
+	
+	_decoder = getAudioStream(fp, "music", _cd, _musicId, &_numSamples);
 	if (_decoder) {
 		_samplesLeft = _numSamples;
 		_fadeSamples = (getRate() * FADE_LENGTH) / 1000;
@@ -349,7 +354,7 @@ void MusicInputStream::refill() {
 	if (!_samplesLeft) {
 		if (_looping) {
 			delete _decoder;
-			_decoder = getAudioStream(&fpMus, "music", _cd, _musicId, &_numSamples);
+			_decoder = getAudioStream(_file, "music", _cd, _musicId, &_numSamples);
 			_samplesLeft = _numSamples;
 		} else
 			_remove = true;
@@ -429,15 +434,36 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 		}
 	}
 
-	if (!_music[0] && !_music[1] && fpMus.isOpen())
-		fpMus.close();
+	bool inUse[MAXMUS];
+
+	for (i = 0; i < MAXMUS; i++)
+		inUse[i] = false;
+
+	for (i = 0; i < MAXMUS; i++) {
+		if (_music[i]) {
+			if (_music[i]->whichCd() == 1)
+				inUse[0] = true;
+			else
+				inUse[1] = true;
+		}
+	}
+
+	for (i = 0; i < MAXMUS; i++) {
+		if (!inUse[i] && _musicFile[i].isOpen())
+			_musicFile[i].close();
+	}
 
 	return numSamples;
 }
 
-bool Sound::isStereo() const { return false; }
-bool Sound::endOfData() const { return !fpMus.isOpen(); }
-int Sound::getRate() const { return 22050; }
+bool Sound::endOfData() const {
+	for (int i = 0; i < MAXMUS; i++) {
+		if (_musicFile[i].isOpen())
+			return false;
+	}
+
+	return true;
+}
 
 // ----------------------------------------------------------------------------
 // MUSIC
@@ -468,14 +494,20 @@ void Sound::unpauseMusic() {
  * Fades out and stops the music.
  */
 
-void Sound::stopMusic() {
+void Sound::stopMusic(bool immediately) {
 	Common::StackLock lock(_mutex);
 
 	_loopingMusicId = 0;
 
-	for (int i = 0; i < MAXMUS; i++)
-		if (_music[i])
-			_music[i]->fadeDown();
+	for (int i = 0; i < MAXMUS; i++) {
+		if (_music[i]) {
+			if (immediately) {
+				delete _music[i];
+				_music[i] = NULL;
+			} else
+				_music[i]->fadeDown();
+		}
+	}
 }
 
 /**
@@ -488,19 +520,6 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 	Common::StackLock lock(_mutex);
 
 	int cd = _vm->_resman->whichCd();
-
-	// HACK: We only have one music file handle, so if any music from the
-	// "wrong" CD is playing, kill it immediately.
-
-	for (int i = 0; i < MAXMUS; i++) {
-		if (_music[i] && _music[i]->whichCd() != cd) {
-			delete _music[i];
-			_music[i] = NULL;
-
-			if (fpMus.isOpen())
-				fpMus.close();
-		}
-	}
 
 	if (loop)
 		_loopingMusicId = musicId;
@@ -560,7 +579,9 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 	if (secondary != -1)
 		_music[secondary]->fadeDown();
 
-	_music[primary] = new MusicInputStream(cd, musicId, loop);
+	File *fp = (cd == 1) ? &_musicFile[0] : &_musicFile[1];
+
+	_music[primary] = new MusicInputStream(cd, fp, musicId, loop);
 
 	if (!_music[primary]->isReady()) {
 		delete _music[primary];

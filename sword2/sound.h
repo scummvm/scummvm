@@ -31,6 +31,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include "common/file.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -95,6 +96,7 @@ public:
 class MusicInputStream : public AudioStream {
 private:
 	int _cd;
+	File *_file;
 	uint32 _musicId;
 	AudioStream *_decoder;
 	int16 _buffer[BUFFER_SIZE];
@@ -117,7 +119,7 @@ private:
 	}
 
 public:
-	MusicInputStream(int cd, uint32 musicId, bool looping);
+	MusicInputStream(int cd, File *fp, uint32 musicId, bool looping);
 	~MusicInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -172,8 +174,10 @@ private:
 	int32 _loopingMusicId;
 
 	PlayingSoundHandle _soundHandleSpeech;
-	
+
 	MusicInputStream *_music[MAXMUS];
+	File _musicFile[MAXMUS];
+
 	int16 *_mixBuffer;
 	int _mixBufferLen;
 
@@ -184,9 +188,9 @@ public:
 	// AudioStream API
 
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const;
+	bool isStereo() const { return false; }
 	bool endOfData() const;
-	int getRate() const;
+	int getRate() const { return 22050; }
 
 	// End of AudioStream API
 
@@ -233,7 +237,7 @@ public:
 	int32 stopSpeech();
 
 	int32 streamCompMusic(uint32 musicId, bool loop);
-	void stopMusic();
+	void stopMusic(bool immediately);
 	int32 musicTimeRemaining();
 };
 

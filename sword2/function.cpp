@@ -2095,7 +2095,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none
 
-	_vm->_sound->stopMusic();
+	_vm->_sound->stopMusic(false);
 	return IR_CONT;
 }
 
