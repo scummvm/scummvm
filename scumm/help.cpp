@@ -197,6 +197,12 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("u", "Use");
 			ADD_BIND("s", "puSh");
 			ADD_BIND("y", "pull (Yank)");
+			if (gameId == GID_MONKEY_SEGA) {
+			// FIXME look at scripts to figure all options out...
+			// keys 1->4 seem to do something as well
+				ADD_BIND("6", "Highlight prev dialogue");
+				ADD_BIND("7", "Highlight next dialogue");
+			}
 			break;
 		case GID_SAMNMAX:
 			ADD_BIND("w", "Walk");
