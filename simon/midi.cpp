@@ -92,12 +92,12 @@ int MidiPlayer::open() {
 
 void MidiPlayer::close() {
 	stop();
-	_system->lock_mutex (_mutex);
+//	_system->lock_mutex (_mutex);
 	if (_driver)
 		_driver->close();
 	_driver = NULL;
 	clearConstructs();
-	_system->unlock_mutex (_mutex);
+//	_system->unlock_mutex (_mutex);
 }
 
 void MidiPlayer::send (uint32 b) {
