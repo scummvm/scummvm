@@ -108,7 +108,7 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 void ScummEngine::updateCursor() {
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY, 
-							(_features & GF_NES ? 0x40 : 255),
+							(_features & GF_NES ? _grabbedCursor[63] : 255),
 							(_heversion == 70 ? 2 : 1));
 }
 
@@ -344,15 +344,13 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 
 		byte *dst = _grabbedCursor;
 		byte *src = &_NESCostumeGfx[0][0xfa * 16];
+		byte *palette = getResourceAddress(rtCostume, 35) + 2;
 
-		// Cursor uses colors 0-2, which are differ from room to room
-		// Instead of remapping, we shift it 0x40 colors up (beyond NES
-		// palette) and specify those colors in setupNESPalette()
 		for (i = 0; i < 8; i++) {
 			byte c0 = src[i];
 			byte c1 = src[i + 8];
 			for (j = 0; j < 8; j++)
-				*dst++ = ((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) + 0x40;
+				*dst++ = palette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | ((idx == 3) ? 4 : 0)];
 		}
 
 	} else if (_version <= 2) {
