@@ -36,7 +36,9 @@ public:
 	virtual void stopSound(int sound) = 0;
 	virtual void stopAllSounds() = 0;
 	virtual int  getSoundStatus(int sound) const = 0;
-//	virtual int  getMusicTimer() const = 0;
+
+	virtual int  getMusicTimer() const { return 0; }
+
 	virtual void terminate() {}
 };
 

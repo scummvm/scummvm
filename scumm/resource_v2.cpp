@@ -32,7 +32,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 
 	if (_gameId == GID_MANIAC) {
 		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
-			_musicEngine = _playerV2 = new Player_V1(this);
+			_musicEngine = new Player_V1(this);
 
 		_numGlobalObjects = 800;
 		_numRooms = 55;
@@ -41,7 +41,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 		_numSounds = 100;
 	} else if (_gameId == GID_ZAK) {
 		if (!(_features & GF_AMIGA))
-			_musicEngine = _playerV2 = new Player_V2(this);
+			_musicEngine = new Player_V2(this);
 
 		_numGlobalObjects = 775;
 		_numRooms = 61;
@@ -107,7 +107,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 void ScummEngine_v2::readEnhancedIndexFile() {
 
 	if (!(_features & GF_AMIGA))
-		_musicEngine = _playerV2 = new Player_V2(this);
+		_musicEngine = new Player_V2(this);
 
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags

@@ -732,22 +732,19 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Init iMuse
 	_imuse = NULL;
 	_imuseDigital = NULL;
-	_playerV2 = NULL;
-	_playerV2A = NULL;
-	_playerV3A = NULL;
 	_musicEngine = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
 #ifndef __PALM_OS__
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
-		_musicEngine = _playerV2A = new Player_V2A(this);
+		_musicEngine = new Player_V2A(this);
 #endif
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
-		_musicEngine = _playerV3A = new Player_V3A(this);
+		_musicEngine = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
-		_musicEngine = _playerV2 = new Player_V2(this);
+		_musicEngine = new Player_V2(this);
 	} else if (_version > 2) {
 		MidiDriver *driver = detector->createMidi();
 		if (driver && detector->_native_mt32)
@@ -1352,22 +1349,23 @@ int ScummEngine::scummLoop(int delta) {
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
-	} else if (_playerV2) {
-		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
-	} else if (_playerV2A) {
-		VAR(VAR_MUSIC_TIMER) = _playerV2A->getMusicTimer();
-	} else if (_playerV3A) {
-		VAR(VAR_MUSIC_TIMER) = _playerV3A->getMusicTimer();
-	} else if (_imuse) {
-		VAR(VAR_MUSIC_TIMER) = _imuse->getMusicTimer();
+	} else if (_musicEngine && VAR_MUSIC_TIMER != 0xFF) {
+		// The music engine generates the timer data for us.
+		VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
 	} else if (_features & GF_SMALL_HEADER) {
+		// FIXME: Is this code here really still necessary? It used to be there to sync
+		// MonkeyVGA, back before we used iMuse for it, too. Right now, I can't find
+		// anything which would need this... so I put an aggressive error in here,
+		// if there is something needing this, I am guranteed a report :-)
+		error("Fingolfin asks: when is this ever triggered anyway? %s:%d", __FILE__, __LINE__);
+
 		// TODO: The music delay (given in milliseconds) might have to be tuned a little
 		// to get it correct for all games. Without the ability to watch/listen to the
 		// original games, I can't do that myself.
 		const int MUSIC_DELAY = 480;
 		tempMusic += delta * 15;	// Convert delta to milliseconds
 		if (tempMusic >= MUSIC_DELAY) {
-			tempMusic %= MUSIC_DELAY;
+			tempMusic -= MUSIC_DELAY;
 			VAR(VAR_MUSIC_TIMER) += 1;
 		}
 	}
