@@ -429,7 +429,7 @@ int IMuseInternal::getSoundStatus (int sound, bool ignoreFadeouts) {
 		player = _players;
 		for (int i = ARRAYSIZE(_players); i; --i, ++player) {
 			if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut()))
-				return player->getID();
+				return 1;
 		}
 		return 0;
 	}
