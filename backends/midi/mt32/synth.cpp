@@ -94,52 +94,35 @@ int axtoi(char *str) {
 	return result;
 }
 
-typedef struct {
-    unsigned int length;       /* size of filter */
-    float *history;            /* pointer to history in filter */
-    float *coef;               /* pointer to coefficients of filter */
-} FILTER;
+struct FILTER {
+	unsigned int length;	// size of filter
+	float *history;		// pointer to history in filter
+	float *coef;		// pointer to coefficients of filter
+};
 
+#define FILTER_SECTIONS 2	// 2 filter sections for 24 db/oct filter
 
-#define FILTER_SECTIONS   2   /* 2 filter sections for 24 db/oct filter */
+struct BIQUAD {
+	double a0, a1, a2;	// numerator coefficients
+	double b0, b1, b2;	// denominator coefficients
+};
 
-typedef struct {
-        double a0, a1, a2;       /* numerator coefficients */
-        double b0, b1, b2;       /* denominator coefficients */
-} BIQUAD;
+// Filter prototype coefficients, 1 for each filter section
+BIQUAD ProtoCoef[FILTER_SECTIONS];
 
-BIQUAD ProtoCoef[FILTER_SECTIONS];      /* Filter prototype coefficients,
-                                                     1 for each filter section */
-
-void prewarp(double *a0, double *a1, double *a2, double fc, double fs);
-void bilinear(
-    double a0, double a1, double a2,    /* numerator coefficients */
-    double b0, double b1, double b2,    /* denominator coefficients */
-    double *k,                                   /* overall gain factor */
-    double fs,                                   /* sampling rate */
-    float *coef);                         /* pointer to 4 iir coefficients */
-
-
-/*
- * ----------------------------------------------------------
- *      Pre-warp the coefficients of a numerator or denominator.
- *      Note that a0 is assumed to be 1, so there is no wrapping
- *      of it.
- * ----------------------------------------------------------
+/**
+ * Pre-warp the coefficients of a numerator or denominator. Note that a0 is
+ * assumed to be 1, so there is no wrapping of it.
  */
-void prewarp(
-    double *a0, double *a1, double *a2,
-    double fc, double fs)
-{
-    double wp, pi;
 
-    pi = 4.0 * atan(1.0);
-    wp = 2.0 * fs * tan(pi * fc / fs);
+void prewarp(double *a0, double *a1, double *a2, double fc, double fs) {
+	double wp;
 
-    *a2 = (*a2) / (wp * wp);
-    *a1 = (*a1) / wp;
+	wp = 2.0 * fs * tan(PI * fc / fs);
+
+	*a2 = (*a2) / (wp * wp);
+	*a1 = (*a1) / wp;
 }
-
 
 /*
  * ----------------------------------------------------------
