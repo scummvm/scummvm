@@ -160,6 +160,28 @@ enum {
 	MBS_MAX_KEY	= 0x0200
 };
 
+enum ScummGameId {
+	GID_TENTACLE = GID_SCUMM_FIRST,
+	GID_MONKEY2,
+	GID_INDY4,
+	GID_MONKEY,
+	GID_SAMNMAX,
+	GID_MONKEY_EGA,
+	GID_LOOM256,
+	GID_ZAK256,
+	GID_INDY3_256,
+	GID_LOOM,
+	GID_FT,
+	GID_DIG,
+	GID_MONKEY_VGA,
+	GID_CMI,
+	GID_MANIAC,
+	GID_ZAK,
+	//GID_MANIAC64,
+	//GID_ZAK64,
+	GID_PUTTDEMO
+};
+
 #define _maxRooms res.num[rtRoom]
 #define _maxScripts res.num[rtScript]
 #define _maxCostumes res.num[rtCostume]

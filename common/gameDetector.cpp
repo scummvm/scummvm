@@ -27,8 +27,6 @@
 #include "common/gameDetector.h"
 #include "common/config-file.h"
 
-#include "simon/intern.h"	// FIXME - remove this, only used for the GAME_* constants in it!
-
 
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
@@ -79,113 +77,9 @@ static const char USAGE_STRING[] =
 
 
 
-// This is a list of all known SCUMM games. Commented games are not
-// supported at this time.
+// This contains a pointer to a list of all supported games.
+const VersionSettings *version_settings = NULL;
 
-const VersionSettings version_settings[] = {
-	/* Scumm Version 1 */
-//	{"maniac64",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
-//      {"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
-
-	/* Scumm Version 2 */
-	{"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
-	GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIACEX.EXE"},
-//      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
-//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "ZAKEXE.EXE"},
-//      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
-
-	/* Scumm Version 3 */
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_OLD256 | GF_NO_SCALLING | GF_ADLIB_DEFAULT, "00.LFL"},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, 0, 0,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_OLD256 | GF_AUDIOTRACKS | GF_NO_SCALLING, "00.LFL"},
-	{"loom", "Loom", GID_LOOM, 3, 5, 40,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR | GF_NO_SCALLING, "00.LFL"},
-
-	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 67,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0},	// EGA version
-
-	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 2, 2,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-
-	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 5, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 5, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-
-	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6, 0},
-
-	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
-	{"dig", "The Dig", GID_DIG, 7, 5, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
-
-	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES, 0},
-
-	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
-	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST+GAME_SIMON1AMIGA, 99, 99, 99, 0, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+GAME_SIMON2DOS, 99, 99, 99, 0, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON1TALKIE, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30."},
-	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON1WIN, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST+GAME_SIMON1CD32, 99, 99, 99, 0, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30."},
-	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON1DEMO, 99, 99, 99, 0, "GDEMO"}, 
-	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"}, 
-
-	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
-};
 
 static const struct GraphicsModes gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
@@ -227,6 +121,14 @@ static const struct MusicDrivers music_drivers[] = {
 	{0, 0, 0}
 };
 
+
+static int countVersions(const VersionSettings *v)
+{
+	int count;
+	for (count = 0; v->filename; v++, count++)
+		;
+	return count;
+}
 
 GameDetector::GameDetector()
 {
@@ -282,6 +184,20 @@ GameDetector::GameDetector()
 	/* SDL is the default driver for now */
 	_gfx_driver = GD_SDL;
 #endif
+
+
+	if (version_settings == NULL) {
+		// Gather & combine the target lists from the modules
+		const VersionSettings *scummVersions = Engine_SCUMM_targetList();
+		const VersionSettings *simonVersions = Engine_SIMON_targetList();
+		int scummCount = countVersions(scummVersions);
+		int simonCount = countVersions(simonVersions);
+		
+		VersionSettings *v = (VersionSettings *)calloc(scummCount + simonCount + 1, sizeof(VersionSettings));
+		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
+		memcpy(v+scummCount, simonVersions, simonCount * sizeof(VersionSettings));
+		version_settings = v;
+	}
 }
 
 void GameDetector::updateconfig()
@@ -674,7 +590,6 @@ int GameDetector::detectMain()
 
 	if (!detectGame()) {
 		warning("Game detection failed. Using default settings");
-		_features = GF_DEFAULT;
 		_gameText = "Please choose a game";
 	}
 
@@ -701,9 +616,6 @@ int GameDetector::detectMain()
 		_gameDataPath = (char *)malloc((strlen(slashless) + 2) * sizeof(char));
 		sprintf(_gameDataPath, "%s/", slashless);
 	}
-
-	if (_amiga)
-		_features = _features | GF_AMIGA;
 
 	return (0);
 }

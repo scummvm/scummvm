@@ -35,35 +35,16 @@ enum {
 };
 
 enum GameId {
-	GID_TENTACLE = 1,
-	GID_MONKEY2,
-	GID_INDY4,
-	GID_MONKEY,
-	GID_SAMNMAX,
-	GID_MONKEY_EGA,
-	GID_LOOM256,
-	GID_ZAK256,
-	GID_INDY3_256,
-	GID_LOOM,
-	GID_FT,
-	GID_DIG,
-	GID_MONKEY_VGA,
-	GID_CMI,
-	GID_MANIAC,
-	GID_ZAK,
-	//GID_MANIAC64,
-	//GID_ZAK64,
-	GID_PUTTDEMO,
+	GID_SCUMM_FIRST = 1,
+	GID_SCUMM_LAST = GID_SCUMM_FIRST + 99,
 
 	// Simon the Sorcerer
-	GID_SIMON_FIRST = 100,
-	GID_SIMON_LAST = GID_SIMON_FIRST + 36,
-	
-	// BASS
-	GID_BASS
-	
+	GID_SIMON_FIRST,
+	GID_SIMON_LAST = GID_SIMON_FIRST + 99
 };
 
+// TODO: the GameFeatures really should be moved to scumm/scumm.h, too
+// but right now, gameDetector.h still uses GF_ADLIB_DEFAULT, so we can't.
 enum GameFeatures {
 	// SCUMM features
 	GF_NEW_OPCODES         = 1 << 0,
@@ -120,7 +101,7 @@ struct Languages {
 	int id;
 };
 
-extern const VersionSettings version_settings[];
+extern const VersionSettings *version_settings;
 
 
 class GameDetector {

@@ -29,6 +29,7 @@
 
 class SoundMixer;
 class GameDetector;
+struct VersionSettings;
 
 /* FIXME - BIG HACK for MidiEmu */
 extern OSystem *g_system;
@@ -71,10 +72,15 @@ void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
 
-/* Factory functions => no need to include the specific classes
- * in this header => faster compile */
+// Factory functions => no need to include the specific classes
+// in this header. This serves two purposes:
+// 1) Clean seperation from the game modules (scumm, simon) and the generic code
+// 2) Faster (compiler doesn't have to parse lengthy header files)
 extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
 extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
+
+extern const VersionSettings *Engine_SIMON_targetList();
+extern const VersionSettings *Engine_SCUMM_targetList();
 
 #endif
 
