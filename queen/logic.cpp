@@ -98,7 +98,7 @@ void Logic::initialise() {
 	else {
 		_sfxName = new uint16[_numRooms + 1];
 
-		for (i = 0; i < (_numRooms + 1); i++) {
+		for (i = 1; i < (_numRooms + 1); i++) {
 			_sfxName[i] = READ_BE_UINT16(ptr);
 			ptr += 2;
 		}	
