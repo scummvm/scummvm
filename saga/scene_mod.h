@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Scene management module public header file
 
- Notes: 
-*/
+// Scene management module public header file
 
 #ifndef SAGA_SCENE_MOD_H__
 #define SAGA_SCENE_MOD_H__
@@ -35,69 +30,52 @@
 
 namespace Saga {
 
-/*
- * r_scene.c                                                
-\*--------------------------------------------------------------------------*/
 enum R_SCENE_MODES {
-
 	R_SCENE_MODE_INVALID,
 	R_SCENE_MODE_NORMAL,
 	R_SCENE_MODE_ISO
 };
 
 struct SCENE_ZINFO {
-
 	int begin_slope;
 	int end_slope;
 
 };
 
 struct SCENE_BGINFO {
-
 	int bg_x;
 	int bg_y;
-
 	int bg_w;
 	int bg_h;
 	int bg_p;
-
 	byte *bg_buf;
 	size_t bg_buflen;
-
 };
 
 struct R_SCENE_INFO {
-
 	SCENE_ZINFO z_info;
 	SCENE_BGINFO bg_info;
-
 	R_TEXTLIST *text_list;
-
 };
 
 typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *);
 
-int SCENE_Register(void);
-int SCENE_Init(void);
-int SCENE_Shutdown(void);
-
-int SCENE_Start(void);
-int SCENE_Next(void);
-int SCENE_Skip(void);
-int SCENE_End(void);
-
+int SCENE_Register();
+int SCENE_Init();
+int SCENE_Shutdown();
+int SCENE_Start();
+int SCENE_Next();
+int SCENE_Skip();
+int SCENE_End();
 int SCENE_Draw(R_SURFACE *);
-
-int SCENE_GetMode(void);
-int SCENE_GetBGMaskInfo(int *w, int *h, byte ** buf, size_t * buf_len);
-
+int SCENE_GetMode();
+int SCENE_GetBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len);
 int SCENE_IsBGMaskPresent(void);
-int SCENE_GetBGInfo(SCENE_BGINFO * bginfo);
-int SCENE_GetZInfo(SCENE_ZINFO * zinfo);
-int SCENE_GetBGPal(PALENTRY ** pal);
-
-int SCENE_GetInfo(R_SCENE_INFO * si);
+int SCENE_GetBGInfo(SCENE_BGINFO *bginfo);
+int SCENE_GetZInfo(SCENE_ZINFO *zinfo);
+int SCENE_GetBGPal(PALENTRY **pal);
+int SCENE_GetInfo(R_SCENE_INFO *si);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SCENE_MOD_H__ */
+#endif
