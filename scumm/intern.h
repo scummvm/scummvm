@@ -896,6 +896,7 @@ protected:
 	void o90_unknown3A();
 	void o90_unknown94();
 	void o90_unknown9E();
+	void o90_unknownA5();
 	void o90_getActorAnimProgress();
 	void o90_unknownCF();
 };

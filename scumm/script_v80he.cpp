@@ -33,7 +33,6 @@
 #include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/verbs.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -230,7 +229,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_findInventory),
 		OPCODE(o6_getInventoryCount),
 		/* 94 */
-		OPCODE(o6_getVerbFromXY),
+		OPCODE(o6_invalid),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
 		OPCODE(o6_setObjectName),
@@ -242,7 +241,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 9C */
 		OPCODE(o72_roomOps),
 		OPCODE(o72_actorOps),
-		OPCODE(o72_verbOps),
+		OPCODE(o6_invalid),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
 		OPCODE(o72_findObject),
@@ -251,7 +250,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
 		OPCODE(o72_arrayOps),
-		OPCODE(o6_saveRestoreVerbs),
+		OPCODE(o6_invalid),
 		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
 		/* A8 */
@@ -514,11 +513,9 @@ void ScummEngine_v80he::o80_cursorCommand() {
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
-		verbMouseOver(0);
 		break;
 	case 0x91:		// SO_CURSOR_OFF Turn cursor off
 		_cursor.state = 0;
-		verbMouseOver(0);
 		break;
 	case 0x92:		// SO_USERPUT_ON
 		_userPut = 1;

@@ -33,7 +33,6 @@
 #include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/verbs.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -251,7 +250,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
 		OPCODE(o72_arrayOps),
-		OPCODE(o6_saveRestoreVerbs),
+		OPCODE(o90_unknownA5),
 		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
 		/* A8 */
@@ -1163,15 +1162,38 @@ void ScummEngine_v90he::o90_unknown9E() {
 	debug(1,"o90_unknown9E stub (%d)", subOp);
 }
 
+
+
+void ScummEngine_v90he::o90_unknownA5() {
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 42:
+		if (pop() - 1 == 0)
+			pop();
+		break;
+	case 57:
+		break;
+	default:
+		error("o90_unknownA5: Unknown case %d", subOp);
+	}
+
+	push(0);
+	debug(1,"o90_unknownA5 stub (%d)", subOp);
+}
+
 void ScummEngine_v90he::o90_getActorAnimProgress() {
 	Actor *a = derefActor(pop(), "o90_getActorAnimProgress");
 	push(a->getAnimProgress());
 }
 
 void ScummEngine_v90he::o90_unknownCF() {
-	byte name[256];
+	byte name[255];
 
 	copyScriptString(name);
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, 0, 0, 0);
+	writeArray(0, 0, 0, 0);
 	push(readVar(0));
 }
 
