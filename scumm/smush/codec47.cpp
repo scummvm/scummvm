@@ -20,7 +20,7 @@
  */
 
 #include <stdafx.h>
-#include "scumm.h"
+#include "../scumm.h"
 #include "engine.h"
 #include "codec47.h"
 #include "chunk.h"
