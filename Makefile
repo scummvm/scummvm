@@ -7,7 +7,7 @@ LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 
-# Add -lMAD for -DCOMPRESSED_SOUND_FILE
+# Add -lmad for -DCOMPRESSED_SOUND_FILE
 LIBS	= `sdl-config --libs` -lncurses -lm
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
