@@ -245,8 +245,6 @@ SCUMM
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* COMI: Fix setActorChoreLimbFrame opcode (see bug #754419, "Wally's Fake
-  piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
 * COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
