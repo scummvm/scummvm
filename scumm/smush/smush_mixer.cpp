@@ -106,10 +106,6 @@ bool SmushMixer::handleFrame() {
 	for (int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
 		if (_channels[i].id != -1) {
 			if (_channels[i].chan->isTerminated()) {
-				if (_channels[i].mixer_index != -1) {
-					_mixer->stop(_channels[i].mixer_index);
-					_channels[i].mixer_index = -1;
-				}
 				delete _channels[i].chan;
 				_channels[i].id = -1;
 				_channels[i].chan = NULL;
