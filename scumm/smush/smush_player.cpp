@@ -702,9 +702,9 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	case 3:
 #if 1
 		// FIXME: I am not 100% sure if this is correct. I tried to test this,
-		// but the only place I found codec 1 being used was in the FT.
-		// Yet either in all the cases is the codec used to encode an all-black
-		// frame, or smush_decode_codec1 already produces invalid (all-black?)
+		// but the only place I found codec 1 being used was in FT.
+		// But either is the codec only used to encode all-black frames, or
+		// smush_decode_codec1 already produced invalid (all-black?) output.
 		//
 		// BTW regarding codec 3: I haven't yet actually seen it being used,
 		// but is it really identical to codec 1? Or isn't it maybe a
