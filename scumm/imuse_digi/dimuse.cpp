@@ -90,7 +90,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(IMuseDigital, _curMusicSeq, sleInt32, VER(31)),
 		MKLINE(IMuseDigital, _curMusicCue, sleInt32, VER(31)),
 		MKLINE(IMuseDigital, _nextSeqToPlay, sleInt32, VER(31)),
-		MKARRAY(IMuseDigital, _attributes, sleInt32, 188, VER(31)),
+		MKARRAY(IMuseDigital, _attributes[0], sleInt32, 188, VER(31)),
 		MKEND()
 	};
 
@@ -102,7 +102,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, volFadeDelay, sleInt32, VER(31)),
 		MKLINE(Track, volFadeUsed, sleByte, VER(31)),
 		MKLINE(Track, soundId, sleInt32, VER(31)),
-		MKARRAY(Track, soundName, sleByte, 15, VER(31)),
+		MKARRAY(Track, soundName[0], sleByte, 15, VER(31)),
 		MKLINE(Track, used, sleByte, VER(31)),
 		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
 		MKLINE(Track, souStream, sleByte, VER(31)),
