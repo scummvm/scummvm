@@ -54,7 +54,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316};
+SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0};
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {

@@ -427,10 +427,13 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
 bool SkyControl::getYesNo(void) {
 
-	_yesNo->drawToScreen(WITH_MASK);
-	bool retVal; bool quitPanel = false;
+	bool retVal = false;
+	bool quitPanel = false;
 	uint8 mouseType = MOUSE_NORMAL;
 	uint8 wantMouse = MOUSE_NORMAL;
+
+	_yesNo->drawToScreen(WITH_MASK);
+
 	while (!quitPanel) {
 		if (mouseType != wantMouse) {
 			mouseType = wantMouse;
@@ -442,15 +445,19 @@ bool SkyControl::getYesNo(void) {
 			if ((_mouseX >= 77) && (_mouseX <= 114)) { // over 'yes'
 				wantMouse = MOUSE_CROSS;
 				if (_mouseClicked) {
-                    quitPanel = true; retVal = true;
+                    quitPanel = true;
+                    retVal = true;
 				}
 			} else if ((_mouseX >= 156) && (_mouseX <= 193)) { // over 'no'
 				wantMouse = MOUSE_CROSS;
 				if (_mouseClicked) {
-                    quitPanel = true; retVal = false;
+                    quitPanel = true;
+                    retVal = false;
 				}
-			} else wantMouse = MOUSE_NORMAL;
-		} else wantMouse = MOUSE_NORMAL;
+			} else
+				wantMouse = MOUSE_NORMAL;
+		} else
+			wantMouse = MOUSE_NORMAL;
 	}
 	return retVal;
 }
