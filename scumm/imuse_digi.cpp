@@ -1,5 +1,4 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2003 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -46,12 +45,12 @@ struct imuse_music_table {
 };
 
 struct imuse_music_map {
-	int16 room;
-	int16 table_index;
-	int16 unk1;
-	int16 unk2;
-	int16 unk3;
-	int16 unk4;
+	int room;
+	int table_index;
+	int unk1;
+	int unk2;
+	int unk3;
+	int unk4;
 };
 
 #ifdef __PALM_OS__
@@ -513,10 +512,10 @@ static const imuse_music_table _comiSeqMusicTable[] = {
 #endif
 
 struct imuse_ft_music_table {
-	int16 index;
+	int index;
 	char audioname[15];
-	int8 unk1;
-	int8 volume;
+	int unk1;
+	int volume;
 	char name[30];
 };
 
@@ -637,7 +636,7 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 };
 #endif
 
-static byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops) {
+static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
@@ -645,7 +644,8 @@ static byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	bool quit = 0;
-	byte *ret_sound = 0; size = 0, loops = 0;
+	byte *ret_sound = 0; size = 0;
+	int loops = 0;
 	while (!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
@@ -698,7 +698,7 @@ static void imus_digital_handler(void *engine) {
 IMuseDigital::IMuseDigital(Scumm *scumm)
 	: _scumm(scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_channel[l]._mixerChannel = -1;
 	}
 	_scumm->_timer->installProcedure(imus_digital_handler, 200000);
@@ -708,7 +708,7 @@ IMuseDigital::IMuseDigital(Scumm *scumm)
 IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->releaseProcedure(imus_digital_handler);
 
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l]._mixerChannel != -1) {
 			_scumm->_mixer->stop(_channel[l]._mixerChannel);
 			_channel[l]._mixerChannel = -1;
@@ -717,7 +717,7 @@ IMuseDigital::~IMuseDigital() {
 }
 
 void IMuseDigital::handler() {
-	uint32 l = 0, i = 0;
+	int l = 0, i = 0;
 
 	if (_pause)
 		return;
@@ -769,47 +769,25 @@ void IMuseDigital::handler() {
 				}
 			}
 
-			if ((_channel[l]._jump[0]._numLoops == 0) && _channel[l]._isJump) {
-				_channel[l]._isJump = false;
-			}
-
-			uint32 new_size = _channel[l]._mixerSize;
-			uint32 mixer_size = new_size;
+			int32 new_size = _channel[l]._mixerSize;
+			int32 mixer_size = new_size;
 
 			if (_channel[l]._mixerChannel == -1) {
 				mixer_size *= 2;
 				new_size *= 2;
 			}
 
-			if (_channel[l]._isJump) {
-				if (_channel[l]._jump[0]._numLoops != 500) {
-					_channel[l]._jump[0]._numLoops--;
-				}
-				if (_channel[l]._offset + mixer_size >= _channel[l]._jump[0]._offset) {
-					new_size = _channel[l]._jump[0]._offset - _channel[l]._offset;
-				}
-			} else {
-				if (_channel[l]._offset + mixer_size > _channel[l]._size) {
-					new_size = _channel[l]._size - _channel[l]._offset;
-					if (_channel[l]._numLoops == 0) {
-						_channel[l]._toBeRemoved = true;
-						mixer_size = new_size;
-					}
+			if (_channel[l]._offset + mixer_size > _channel[l]._size) {
+				new_size = _channel[l]._size - _channel[l]._offset;
+				if (_channel[l]._numLoops == 0) {
+					_channel[l]._toBeRemoved = true;
+					mixer_size = new_size;
 				}
 			}
 
 			byte *buf = (byte*)malloc(mixer_size);
-
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
-			if ((new_size != mixer_size) && _channel[l]._isJump) {
-				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, mixer_size - new_size);
-				_channel[l]._offset = _channel[l]._jump[0]._dest + (mixer_size - new_size);
-			} else if ((_channel[l]._numLoops > 0) && (new_size != mixer_size)) {
-				memcpy(buf + new_size, _channel[l]._data, mixer_size - new_size);
-				_channel[l]._offset = mixer_size - new_size;
-			} else {
-				_channel[l]._offset += mixer_size;
-			}
+			_channel[l]._offset += mixer_size;
 
 			if (_channel[l]._bits == 12) {
 				for (i = 0; i < (mixer_size / 4); i++) {
@@ -846,7 +824,7 @@ void IMuseDigital::handler() {
 
 void IMuseDigital::startSound(int sound) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
-	int32 l;
+	int l;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l]._used == false) {
@@ -866,7 +844,9 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._volumeFadeParam = 0;
 			_channel[l]._delay = 1;
 
-			uint32 tag, size = 0, r, t;
+			uint32 tag;
+			int32 size = 0;
+			int r, t;
 
 			if (READ_UINT32(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
@@ -875,8 +855,9 @@ void IMuseDigital::startSound(int sound) {
 				// That might also be the justification for specifying FLAG_REVERSE_STEREO here. Not sure.
 				_channel[l]._channels = 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
-				byte * t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
-
+				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq);
+				_channel[l]._numLoops = 0;
+				
 				if (_channel[l]._freq == 22222) {
 					_channel[l]._freq = 22050;
 				} else if (_channel[l]._freq == 10989) {
@@ -930,8 +911,8 @@ void IMuseDigital::startSound(int sound) {
 							}
 							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._hookId = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._fadeParam = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._isJump = true;
 							_channel[l]._numJumps++;
 						break;
@@ -1008,7 +989,7 @@ void IMuseDigital::startSound(int sound) {
 
 void IMuseDigital::stopSound(int sound) {
 	debug(5, "IMuseDigital::stopSound(%d)", sound);
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && _channel[l]._used) {
 			_channel[l]._toBeRemoved = true;
 		}
@@ -1016,7 +997,7 @@ void IMuseDigital::stopSound(int sound) {
 }
 
 void IMuseDigital::stopAll() {
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l]._used) {
 			_channel[l]._toBeRemoved = true;
 		}
@@ -1028,83 +1009,38 @@ void IMuseDigital::pause(bool p) {
 }
 
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
-	byte cmd = a & 0xFF;
-	byte param = a >> 8;
-	int32 sample = b, r;
-	byte sub_cmd = c >> 8;
-	int8 chan = -1, l;
-	int8 tmp;
+	int cmd = a;
+	int sample = b;
+	int sub_cmd = c;
+	int chan = -1;
+	int tmp, l, r;
 
-	if (!(cmd || param))
+	if (!cmd)
 		return 1;
 
-	if (param == 0) {
-		switch (cmd) {
-		case 12:
-			switch (sub_cmd) {
-			case 5:
-				debug(5, "IMuseDigital::doCommand 12,5 sample(%d), param(%d)", sample, d);
-				return 0;
-			case 6: // volume control (0-127)
-				debug(5, "IMuseDigital::doCommand setting volume sample(%d), volume(%d)", sample, d);
-				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-					if ((_channel[l]._idSound == sample) && _channel[l]._used) {
-						chan = l;
-						break;
-					}
+	switch (cmd) {
+	case 10:
+		debug(5, "ImuseStopAllSounds()");
+		stopAll();
+		return 0;
+	case 12: // ImuseSetParam
+		switch (sub_cmd) {
+		case 0x500: // volume control (0-127)
+		case 0x600: // volume control (0-127) with pan
+			debug(5, "ImuseSetParam (%x), setting volume sample(%d), volume(%d)", sub_cmd, sample, d);
+			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+					chan = l;
+					break;
 				}
-				if (chan == -1) {
-					debug(5, "IMuseDigital::doCommand 12,6 sample(%d) not exist in channels", sample);
-					return 1;
-				}
-				_channel[chan]._volume = d;
-				_channel[chan]._volumeRight = d;
-				if (_channel[chan]._volumeFade != -1) {
-					tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
-					if ((tmp < 0) && (tmp > -2)) {
-						tmp = -1;
-					} else if ((tmp > 0) && (tmp < 2)) {
-						tmp = 1;
-					} else {
-						tmp /= 2;
-					}
-				_channel[chan]._volumeFadeStep = tmp;
-				}
-				return 0;
-			case 7: // right volume control (0-127)
-				debug(5, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
-				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-					if ((_channel[l]._idSound == sample) && _channel[l]._used) {
-						chan = l;
-						break;
-					}
-				}
-				if (chan == -1) {
-					debug(5, "IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
-					return 1;
-				}
-				_channel[chan]._volumeRight = d;
-				return 0;
-			default:
-				warning("IMuseDigital::doCommand 12 DEFAULT sub command %d", sub_cmd);
+			}
+			if (chan == -1) {
+				debug(5, "ImuseSetParam (%x), sample(%d) not exist in channels", sub_cmd, sample);
 				return 1;
 			}
-		case 14:
-			switch (sub_cmd) {
-			case 6: // fade volume control
-				debug(5, "IMuseDigital::doCommand fading volume sample(%d),fade(%d, %d)", sample, d, e);
-				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-					if ((_channel[l]._idSound == sample) && _channel[l]._used) {
-						chan = l;
-						break;
-					}
-				}
-				if (chan == -1) {
-						debug(5, "IMuseDigital::doCommand 14,6 sample %d not exist in channels", sample);
-					return 1;
-				}
-				_channel[chan]._volumeFade = d;
-				_channel[chan]._volumeFadeParam = e;
+			_channel[chan]._volume = d;
+			_channel[chan]._volumeRight = d;
+			if (_channel[chan]._volumeFade != -1) {
 				tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
 				if ((tmp < 0) && (tmp > -2)) {
 					tmp = -1;
@@ -1113,140 +1049,189 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				} else {
 					tmp /= 2;
 				}
-				_channel[chan]._volumeFadeStep = tmp;
-				debug(1, "volumeFade is %d, step is %d", d, tmp);
-
-				return 0;
-			default:
-				warning("IMuseDigital::doCommand 14 DEFAULT sub command %d", sub_cmd);
+			_channel[chan]._volumeFadeStep = tmp;
+			debug(5, "ImuseSetParam: to volume %d, step is %d", d, tmp);
+			}
+			return 0;
+		case 0x700: // right volume control (0-127)
+			debug(5, "ImuseSetParam (0x700), setting right volume sample(%d), volume(%d)", sample, d);
+			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+					chan = l;
+					break;
+				}
+			}
+			if (chan == -1) {
+				debug(5, "ImuseSetParam (0x700), sample(%d) not exist in channels", sample);
 				return 1;
 			}
+			_channel[chan]._volumeRight = d;
+			return 0;
 		default:
-			warning("IMuseDigital::doCommand DEFAULT command %d", cmd);
+			warning("IMuseDigital::doCommand SetParam DEFAULT command %d", sub_cmd);
 			return 1;
 		}
-	} else if (param == 16) {
-		switch (cmd) {
-		case 0: // play music (state)
-			debug(5, "IMuseDigital::doCommand 0x1000 (%d)", b);
-			if (_scumm->_gameId == GID_DIG) {
-				for (l = 0;; l++) {
-					if (_digStateMusicMap[l].room == -1) {
-						return 1;
-					}
-					if (_digStateMusicMap[l].room == b) {
-						int16 music = _digStateMusicMap[l].table_index;
-						debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
-						if ((_digStateMusicTable[music].filename[0] != 0) && 
-							(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _scumm->_sound->_nameBundleMusic) != 0) ) {
-							_scumm->_sound->playBundleMusic(_digStateMusicTable[music].filename);
-						}
-						return 0;
-					}
+	case 14: // ImuseFadeParam
+		switch (sub_cmd) {
+		case 0x600: // control volume fade
+			debug(5, "ImuseFadeParam - fading volume sample(%d), to volume(%d) with speed(%d)", sample, d, e);
+			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+				if ((_channel[l]._idSound == sample) && _channel[l]._used) {
+					chan = l;
+					break;
 				}
-			} else if (_scumm->_gameId == GID_CMI) {
-				if (b == 1000) {		// STATE_NULL
-					// FIXME: Fade this out properly, in the same increments as the real engine
-					_scumm->_sound->stopBundleMusic();
+			}
+			if (chan == -1) {
+					debug(5, "ImuseFadeParam (0x600), sample %d not exist in channels", sample);
+				return 1;
+			}
+			_channel[chan]._volumeFade = d;
+			_channel[chan]._volumeFadeParam = e;
+			tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
+			if ((tmp < 0) && (tmp > -2)) {
+				tmp = -1;
+			} else if ((tmp > 0) && (tmp < 2)) {
+				tmp = 1;
+			} else {
+				tmp /= 2;
+			}
+			_channel[chan]._volumeFadeStep = tmp;
+			debug(5, "ImuseFadeParam: to volume %d, step is %d", d, tmp);
+			return 0;
+		default:
+			warning("IMuseDigital::doCommand FadeParam DEFAULT sub command %d", sub_cmd);
+			return 1;
+		}
+	case 0x1000: // ImuseSetState
+		debug(5, "ImuseSetState (%d)", b);
+		if (_scumm->_gameId == GID_DIG) {
+			if (b == 1000) {		// STATE_NULL
+				// FIXME: Fade this out properly, in the same increments as the real engine
+				_scumm->_sound->stopBundleMusic();
+				return 0;
+			}
+			for (l = 0;; l++) {
+				if (_digStateMusicMap[l].room == -1) {
+					return 1;
+				}
+				if (_digStateMusicMap[l].room == b) {
+					int music = _digStateMusicMap[l].table_index;
+					debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
+					if ((_digStateMusicTable[music].filename[0] != 0) && 
+						(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _scumm->_sound->_nameBundleMusic) != 0) ) {
+						_scumm->_sound->playBundleMusic(_digStateMusicTable[music].filename);
+					}
 					return 0;
 				}
-
-				for (l = 0;; l++) {
-					if (_comiStateMusicTable[l].id == -1) {
-						return 1;
-					}
-					if ((_comiStateMusicTable[l].id == b)) {
-						debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
-						if (_comiStateMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic(_comiStateMusicTable[l].filename);
-						}
-						return 0;
-					}
+			}
+		} else if (_scumm->_gameId == GID_CMI) {
+			if (b == 1000) {		// STATE_NULL
+				// FIXME: Fade this out properly, in the same increments as the real engine
+				_scumm->_sound->stopBundleMusic();
+				return 0;
+			}
+			for (l = 0;; l++) {
+				if (_comiStateMusicTable[l].id == -1) {
+					return 1;
 				}
-			} else if (_scumm->_gameId == GID_FT) {
-				for (l = 0;; l++) {
-					if (_ftStateMusicTable[l].index == -1) {
-						return 1;
+				if ((_comiStateMusicTable[l].id == b)) {
+					debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
+					if (_comiStateMusicTable[l].filename[0] != 0) {
+						_scumm->_sound->playBundleMusic(_comiStateMusicTable[l].filename);
 					}
-					if (_ftStateMusicTable[l].index == b) {
-						debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
-						if (_ftStateMusicTable[l].audioname[0] != 0) {
-							for (r = 0; r < _scumm->_numAudioNames; r++) {
-								if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
-									startSound(r);
-									doCommand(12, r, 1536, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
-								}
+					return 0;
+				}
+			}
+		} else if (_scumm->_gameId == GID_FT) {
+			for (l = 0;; l++) {
+				if (_ftStateMusicTable[l].index == -1) {
+					return 1;
+				}
+				if (_ftStateMusicTable[l].index == b) {
+					debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
+					if (_ftStateMusicTable[l].audioname[0] != 0) {
+						for (r = 0; r < _scumm->_numAudioNames; r++) {
+							if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+								startSound(r);
+								doCommand(12, r, 1536, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
 							}
 						}
 					}
 				}
 			}
-			return 0;
-		case 1: // play music (seq)
-			debug(5, "IMuseDigital::doCommand 0x1001 (%d)", b);
-			if (_scumm->_gameId == GID_DIG) {
-				for (l = 0;; l++) {
-					if (_digSeqMusicTable[l].room == -1) {
-						return 1;
-					}
-					if ((_digSeqMusicTable[l].room == b)) {
-						debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
-						if (_digSeqMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic(_digSeqMusicTable[l].filename);
-						}
-						return 0;
-					}
-				}
-			} else if (_scumm->_gameId == GID_CMI) {
-				for (l = 0;; l++) {
-					if (_comiSeqMusicTable[l].id == -1) {
-						return 1;
-					}
-					if ((_comiSeqMusicTable[l].id == b)) {
-						debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
-						if (_comiSeqMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic(_comiSeqMusicTable[l].filename);
-						}
-						return 0;
-					}
-				}
-			} else if (_scumm->_gameId == GID_FT) {
-				for (l = 0;; l++) {
-					if (_ftSeqMusicTable[l].index == -1) {
-						return 1;
-					}
-					if (_ftSeqMusicTable[l].index == b) {
-						debug(5, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
-						if (_ftSeqMusicTable[l].audioname[0] != 0) {
-							for (r = 0; r < _scumm->_numAudioNames; r++) {
-								if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
-									startSound(r);
-									doCommand(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
-								}
-							}
-						}
-					}
-				}
-			}
-			return 0;
-		case 2: // dummy in DIG and CMI
-			debug(5, "IMuseDigital::doCommand 0x1002 (%d)", b);
-			return 0;
-		case 3: // ??? (stream related)
-			debug(5, "IMuseDigital::doCommand 0x1003 (%d,%d)", b, c);
-			return 0;
-		default:
-			warning("IMuseDigital::doCommand (0x1xxx) DEFAULT command %d", cmd);
-			return 1;
 		}
+		return 0;
+	case 0x1001: // ImuseSetSequence
+		debug(5, "ImuseSetSequence (%d)", b);
+		if (_scumm->_gameId == GID_DIG) {
+			for (l = 0;; l++) {
+				if (_digSeqMusicTable[l].room == -1) {
+					return 1;
+				}
+				if ((_digSeqMusicTable[l].room == b)) {
+					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
+					if (_digSeqMusicTable[l].filename[0] != 0) {
+						_scumm->_sound->playBundleMusic(_digSeqMusicTable[l].filename);
+					}
+					return 0;
+				}
+			}
+		} else if (_scumm->_gameId == GID_CMI) {
+			for (l = 0;; l++) {
+				if (_comiSeqMusicTable[l].id == -1) {
+					return 1;
+				}
+				if ((_comiSeqMusicTable[l].id == b)) {
+					debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
+					if (_comiSeqMusicTable[l].filename[0] != 0) {
+						_scumm->_sound->playBundleMusic(_comiSeqMusicTable[l].filename);
+					}
+					return 0;
+				}
+			}
+		} else if (_scumm->_gameId == GID_FT) {
+			for (l = 0;; l++) {
+				if (_ftSeqMusicTable[l].index == -1) {
+					return 1;
+				}
+				if (_ftSeqMusicTable[l].index == b) {
+					debug(5, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
+					if (_ftSeqMusicTable[l].audioname[0] != 0) {
+						for (r = 0; r < _scumm->_numAudioNames; r++) {
+							if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+								startSound(r);
+								doCommand(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
+							}
+						}
+					}
+				}
+			}
+		}
+		return 0;
+	case 0x1002: // ImuseSetCuePoint
+		debug(5, "ImuseSetCuePoint (%d)", b);
+		return 0;
+	case 0x1003: // ImuseSetAttribute
+		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
+		return 0;
+	case 0x2000: // ImuseSetMasterSFXVolume
+		debug(5, "ImuseSetMasterSFXVolume (%d)", b);
+		return 0;
+	case 0x2001: // ImuseSetMasterVoiceVolume
+		debug(5, "ImuseSetMasterVoiceVolume (%d)", b);
+		return 0;
+	case 0x2002: // ImuseSetMasterMusicVolume
+		debug(5, "ImuseSetMasterMusicVolume (%d)", b);
+		return 0;
+	default:
+		warning("IMuseDigital::doCommand DEFAULT command %d", cmd);
+		return 1;
 	}
-
-	return 1;
 }
 
 int IMuseDigital::getSoundStatus(int sound) {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
-	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && _channel[l]._used) {
 			return 1;
 		}

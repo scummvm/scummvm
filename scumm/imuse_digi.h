@@ -35,15 +35,15 @@ class IMuseDigital {
 private:
 
 	struct Region {
-		uint32 _offset;		// begin of region
-		uint32 _length;		// length of region
+		int32 _offset;		// begin of region
+		int32 _length;		// length of region
 	};
 
 	struct Jump {
-		uint32 _offset;		// jump position
-		uint32 _dest;			// jump to 
-		uint32 _id;				// id of jump
-		uint32 _numLoops;	// allmost 500 except one value: 2
+		int32 _offset;		// jump position
+		int32 _dest;			// jump to 
+		int _hookId;			// id of jump
+		int _fadeParam;		// fade param
 	};
 
 	struct Channel {
@@ -52,23 +52,23 @@ private:
 		int8 _volumeFade;
 		int8 _volumeFadeParam;
 		int8 _volumeFadeStep;
-		uint32 _delay;
+		int _delay;
 		bool _isJump;
-		uint32 _numLoops;
-		uint32 _offsetStop;
+		int _numLoops;
+		int32 _offsetStop;
 		Jump _jump[MAX_IMUSE_JUMPS];
-		uint32 _numJumps;
+		int _numJumps;
 		Region _region[MAX_IMUSE_REGIONS];
-		uint32 _numRegions;
-		uint32 _offset;
+		int _numRegions;
+		int32 _offset;
 		byte *_data;
-		uint32 _freq;
-		uint32 _channels;
-		uint32 _bits;
-		uint32 _size;
-		int32 _idSound;
-		uint32 _mixerSize;
-		uint8 _mixerFlags;
+		int _freq;
+		int _channels;
+		int _bits;
+		int32 _size;
+		int _idSound;
+		int32 _mixerSize;
+		int _mixerFlags;
 		int _mixerChannel;
 		bool _used;
 		bool _toBeRemoved;
