@@ -35,22 +35,20 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-int RGBMatch(byte *palette, int r, int g, int b);
-int Blend(int src, int dst, byte *palette);
-void ClearBlendCache();
+namespace Common {
 
 /**
- * Print a hexdump of the data passed in. The number of bytes per line
- * is customizable.
+ * Print a hexdump of the data passed in. The number of bytes per line is
+ * customizable.
  * @param data	the data to be dumped
  * @param len	the lenght of that data
  * @param bytes_per_line	number of bytes to print per line (default: 16)
  */
-void hexdump(const byte * data, int len, int bytes_per_line = 16);
+void hexdump(const byte * data, int len, int bytesPerLine = 16);
 
 /**
- * A simple random number generator. Although it is definitely not suitable
- * for cryptographic purposes, it serves our purposes just fine.
+ * Simple random number generator. Although it is definitely not suitable for
+ * cryptographic purposes, it serves our purposes just fine.
  */
 class RandomSource {
 private:
@@ -87,6 +85,8 @@ public:
 	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0);
 	~StackLock();
 };
+
+}	// End of namespace Common
 
 
 

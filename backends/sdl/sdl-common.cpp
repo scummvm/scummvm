@@ -150,7 +150,7 @@ void OSystem_SDL_Common::copy_rect(const byte *src, int pitch, int x, int y, int
 	if (_screen == NULL)
 		return;
 
-	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 	
 	if (((long)src & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
@@ -218,7 +218,7 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 	
-	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	byte *src, *dst;
 	int x, y;
@@ -1295,7 +1295,7 @@ void OSystem_SDL_Common::clear_overlay() {
 	if (!_overlayVisible)
 		return;
 	
-	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 	
 	// hide the mouse
 	undraw_mouse();

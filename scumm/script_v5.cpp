@@ -907,7 +907,7 @@ void ScummEngine_v5::saveVars() {
 void ScummEngine_v5::loadVars() {
 	int a, b;
 
-	hexdump(_scriptPointer, 64);
+//	Common::hexdump(_scriptPointer, 64);
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
 		case 0x01: // read a range of variables

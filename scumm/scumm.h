@@ -362,7 +362,7 @@ protected:
 
 public:
 	/* Random number generation */
-	RandomSource _rnd;
+	Common::RandomSource _rnd;
 
 	/* Core variable definitions */
 	byte _gameId;

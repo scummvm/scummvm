@@ -22,106 +22,34 @@
 #include "base/engine.h"
 #include "common/util.h"
 
-//
-// 8-bit alpha blending routines
-//
-#ifndef NEWGUI_256
-static int BlendCache[256][256];
-#endif
-//
-// Find the entry in the given palette which matches the color defined by
-// the tripel (r,b,g) most closely.
-//
-int RGBMatch(byte *palette, int r, int g, int b) {
-	int i, bestidx = 0, besterr = 0xFFFFFF;
-	int error = 0;
-
-	for (i = 0;i < 256;i++) {
-		byte *pal = palette + (i * 3);
-		int r_diff = r - (int)*pal++; 
-		int g_diff = g - (int)*pal++; 
-		int b_diff = b - (int)*pal++; 
-		r_diff *= r_diff; g_diff *= g_diff; b_diff *= b_diff;
-
-		error = r_diff + g_diff + b_diff;
-		if (error < besterr) {
-			besterr = error;
-			bestidx = i;
-		}
-	}
-	return bestidx;
-}
-
-//
-// Blend two 8 bit colors into a third, all colors being defined by palette indices.
-//
-int Blend(int src, int dst, byte *palette) {
-#ifndef NEWGUI_256
-	int r, g, b;
-	int alpha = 128;	// Level of transparency [0-256]
-	byte *srcpal = palette + (dst * 3);
-	byte *dstpal = palette + (src * 3);
-
-	if (BlendCache[dst][src] > -1)
-		return BlendCache[dst][src];
-
-	r =  (*srcpal++ * alpha);
-	r += (*dstpal++ * (256 - alpha));
-	r /= 256;
-
-	g =  (*srcpal++ * alpha);
-	g += (*dstpal++ * (256 - alpha));
-	g /= 256;
-
-	b =  (*srcpal++ * alpha);
-	b += (*dstpal++  * (256 - alpha));
-	b /= 256;
-
-	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
-#else
-	return 0;
-#endif
-}
-
-//
-// Reset the blending cache
-//
-void ClearBlendCache() {
-#ifndef NEWGUI_256
-	for (int i = 0; i < 256; i++)
-		for (int j = 0 ; j < 256 ; j++)
-//			BlendCache[i][j] = i;	// No alphablending
-//			BlendCache[i][j] = j;	// 100% translucent
-			BlendCache[i][j] = -1;	// Enable alphablending
-#endif
-}
+namespace Common {
 
 //
 // Print hexdump of the data passed in
 //
-void hexdump(const byte * data, int len, int bytes_per_line) {
-	assert(1 <= bytes_per_line && bytes_per_line <= 32);
+void hexdump(const byte * data, int len, int bytesPerLine) {
+	assert(1 <= bytesPerLine && bytesPerLine <= 32);
 	int i;
 	byte c;
 	int offset = 0;
-	while (len >= bytes_per_line) {
+	while (len >= bytesPerLine) {
 		printf("%06x: ", offset);
-		for (i = 0; i < bytes_per_line; i++) {
+		for (i = 0; i < bytesPerLine; i++) {
 			printf("%02x ", data[i]);
 			if (i % 4 == 3)
 				printf(" ");
 		}
 		printf(" |");
-		for (i = 0; i < bytes_per_line; i++) {
+		for (i = 0; i < bytesPerLine; i++) {
 			c = data[i];
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
 		}
 		printf("|\n");
-		data += bytes_per_line;
-		len -= bytes_per_line;
-		offset += bytes_per_line;
+		data += bytesPerLine;
+		len -= bytesPerLine;
+		offset += bytesPerLine;
 	}
 
 	if (len <= 0) 
@@ -133,7 +61,7 @@ void hexdump(const byte * data, int len, int bytes_per_line) {
 		if (i % 4 == 3)
 			printf(" ");
 	}
-	for (; i < bytes_per_line; i++)
+	for (; i < bytesPerLine; i++)
 		printf("   ");
 	printf(" |");
 	for (i = 0; i < len; i++) {
@@ -142,7 +70,7 @@ void hexdump(const byte * data, int len, int bytes_per_line) {
 			c = '.';
 		printf("%c", c);
 	}
-	for (; i < bytes_per_line; i++)
+	for (; i < bytesPerLine; i++)
 		printf(" ");
 	printf("|\n");
 }
@@ -187,3 +115,4 @@ void StackLock::unlock() {
 	_syst->unlock_mutex(_mutex);
 }
 
+}	// End of namespace Common

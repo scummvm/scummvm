@@ -255,7 +255,7 @@ protected:
 
 	uint32 _currentSection;
 
-	RandomSource _rnd;
+	Common::RandomSource _rnd;
 	
 	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;

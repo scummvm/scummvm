@@ -347,7 +347,7 @@ protected:
 	byte *_sdl_buf;
 	byte *_sdl_buf_attached;
 
-	RandomSource _rnd;
+	Common::RandomSource _rnd;
 
 	byte *_vc_10_base_ptr_old;
 	byte _hebrew_char_widths[32];

@@ -359,7 +359,7 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 
 void OSystem_SDL_OpenGL::update_screen() {
 
-	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -563,7 +563,7 @@ bool OSystem_SDL_OpenGL::poll_event(Event *event) {
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 
-	StackLock lock(_graphicsMutex, this); // Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this); // Lock the mutex until this function ends
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		if (!_usingOpenGL)
@@ -686,7 +686,7 @@ bool OSystem_SDL_OpenGL::save_screenshot(const char *filename) {
 	if (_usingOpenGL)
 		return false;
 
-	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 
 	assert(_hwscreen != NULL);
 	SDL_SaveBMP(_hwscreen, filename);

@@ -296,7 +296,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_confirmExitDialog = NULL;
 	_debuggerDialog = NULL;
 	_fastMode = 0;
-	memset(&_rnd, 0, sizeof(RandomSource));
 	_gameId = 0;
 	memset(&gdi, 0, sizeof(Gdi));
 	_actors = NULL;

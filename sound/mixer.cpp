@@ -161,18 +161,18 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 }
 
 void SoundMixer::setupPremix(PremixProc *proc, void *param) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	_premixParam = param;
 	_premixProc = proc;
 }
 
 int SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelStream(this, handle, sound, size, rate, flags, buffer_size, volume, pan));
 }
 
 void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	
 	if (handle == 0)
 		return;
@@ -198,7 +198,7 @@ void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 siz
 }
 
 void SoundMixer::endStream(PlayingSoundHandle handle) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	
 	// Simply ignore stop requests for handles of sounds that already terminated
 	if (handle == 0)
@@ -245,7 +245,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
 	if (id != -1) {
@@ -259,24 +259,24 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelMP3(this, handle, file, size, volume, pan));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration, volume, pan));
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track, volume, pan));
 }
 #endif
 
 void SoundMixer::mix(int16 *buf, uint len) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	if (_premixProc && !_paused) {
 		_premixProc(_premixParam, buf, len);
@@ -302,7 +302,7 @@ void SoundMixer::mixCallback(void *s, byte *samples, int len) {
 }
 
 void SoundMixer::stopAll() {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
@@ -314,13 +314,13 @@ void SoundMixer::stopChannel(int index) {
 		return;
 	}
 
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	if (_channels[index])
 		_channels[index]->destroy();
 }
 
 void SoundMixer::stopID(int id) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != NULL && _channels[i]->_id == id) {
 			_channels[i]->destroy();
@@ -330,7 +330,7 @@ void SoundMixer::stopID(int id) {
 }
 
 void SoundMixer::stopHandle(PlayingSoundHandle handle) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	
 	// Simply ignore stop requests for handles of sounds that already terminated
 	if (handle == 0)
@@ -348,7 +348,7 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 }
 
 void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	
 	if (handle == 0)
 		return;
@@ -365,7 +365,7 @@ void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 }
 
 void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	
 	if (handle == 0)
 		return;
@@ -391,13 +391,13 @@ void SoundMixer::pauseChannel(int index, bool paused) {
 		return;
 	}
 
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	if (_channels[index])
 		_channels[index]->pause(paused);
 }
 
 void SoundMixer::pauseID(int id, bool paused) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != NULL && _channels[i]->_id == id) {
 			_channels[i]->pause(paused);
@@ -407,7 +407,7 @@ void SoundMixer::pauseID(int id, bool paused) {
 }
 
 void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
 	if (handle == 0)
@@ -429,7 +429,7 @@ bool SoundMixer::hasActiveSFXChannel() {
 	// (and maybe also voice) here to work properly in iMuseDigital
 	// games. In the past that was achieve using the _beginSlots hack.
 	// Since we don't have that anymore, it's not that simple anymore.
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;

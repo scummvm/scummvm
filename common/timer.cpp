@@ -54,7 +54,7 @@ Timer::~Timer() {
 	_system->set_timer(0, 0);
 
 	{
-		StackLock lock(_mutex);
+		Common::StackLock lock(_mutex);
 		for (int i = 0; i < MAX_TIMERS; i++) {
 			_timerSlots[i].procedure = NULL;
 			_timerSlots[i].interval = 0;
@@ -81,7 +81,7 @@ int Timer::timer_handler(int t) {
 }
 
 int Timer::handler(int t) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
@@ -102,7 +102,7 @@ int Timer::handler(int t) {
 }
 
 bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	int32 l;
 	bool found = false;
 
@@ -124,7 +124,7 @@ bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) 
 }
 
 void Timer::releaseProcedure(TimerProc procedure) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	int32 l;
 
 	for (l = 0; l < MAX_TIMERS; l++) {

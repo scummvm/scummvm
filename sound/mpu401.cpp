@@ -126,7 +126,7 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 	return NULL;
 }
 
-void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerProc timer_proc) {
+void MidiDriver_MPU401::setTimerCallback(void *timer_param, TimerProc timer_proc) {
 	if (!_timer_proc || !timer_proc) {
 		if (_timer_proc)
 			g_timer->releaseProcedure(_timer_proc);

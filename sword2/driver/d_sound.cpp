@@ -180,7 +180,7 @@ void Sound::reverseStereo(void) {
 // after the credits.
 
 void Sound::saveMusicState() {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	int saveStream;
 
@@ -203,7 +203,7 @@ void Sound::saveMusicState() {
 }
 
 void Sound::restoreMusicState() {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	int restoreStream;
 
@@ -272,7 +272,7 @@ int32 Sound::isFxOpen(int32 id) {
 }
 
 void Sound::fxServer(int16 *data, uint len) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	if (!_soundOn)
 		return;
@@ -899,7 +899,7 @@ uint8 Sound::isFxMute(void) {
  */
 
 int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	uint32 len;
 	int32 primaryStream = -1;
@@ -1062,7 +1062,7 @@ int32 Sound::dipMusic() {
  */
 
 int32 Sound::musicTimeRemaining() {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < MAXMUS; i++) {
 		if (_music[i]._streaming && !_music[i]._fading)
@@ -1077,7 +1077,7 @@ int32 Sound::musicTimeRemaining() {
  */
 
 void Sound::stopMusic(void) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < MAXMUS; i++) {
 		if (_music[i]._streaming)
@@ -1092,7 +1092,7 @@ void Sound::stopMusic(void) {
  */
 
 void Sound::pauseMusic(void) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	if (_soundOn) {
 		for (int i = 0; i < MAXMUS; i++) {
@@ -1110,7 +1110,7 @@ void Sound::pauseMusic(void) {
  */
 
 void Sound::unpauseMusic(void) {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
 	if (_soundOn) {
 		for (int i = 0; i < MAXMUS; i++)
