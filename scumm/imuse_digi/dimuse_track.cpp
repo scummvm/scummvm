@@ -296,10 +296,19 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 	fadeTrack->volFadeUsed = true;
 
+	SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+
+	if (fadeTrack->volGroupId == 1)
+		type = SoundMixer::kSpeechAudioDataType;
+	if (fadeTrack->volGroupId == 2)
+		type = SoundMixer::kSFXAudioDataType;
+	if (fadeTrack->volGroupId == 3)
+		type = SoundMixer::kMusicAudioDataType;
+
 	// setup 1 second stream wrapped buffer
 	int32 streamBufferSize = fadeTrack->iteration;
 	fadeTrack->stream = makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), fadeTrack->mixerFlags, streamBufferSize);
-	_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
+	_vm->_mixer->playInputStream(type, &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
 	fadeTrack->started = true;
 	fadeTrack->used = true;
 
