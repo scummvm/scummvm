@@ -66,6 +66,7 @@ void ScummDebugger::attach(Scumm *s)
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
 
 		DCmd_Register("level", &ScummDebugger::Cmd_DebugLevel);
+		DCmd_Register("help", &ScummDebugger::Cmd_Help);
 	}
 }
 
@@ -359,7 +360,46 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	return true;
 }
 
+bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size;
+	
+	Debug_Printf("Commands are:\n");
+	for (int i=0 ; i < _dcmd_count ; i++) {
+		size = strlen(_dcmds[i].name) + 1;
+				
+		if ((width + size) >= 39) {
+			Debug_Printf("\n");
+			width = size;
+		} else
+			width += size;
+
+		Debug_Printf("%s ", _dcmds[i].name);
+	}
+
+	width = 0;
+	
+	Debug_Printf("\n\nVariables are:\n");
+	for (int i=0 ; i < _dvar_count ; i++) {
+		size = strlen(_dvars[i].name) + 1;
+				
+		if ((width + size) >= 39) {
+			Debug_Printf("\n");
+			width = size;
+		} else
+			width += size;
+
+		Debug_Printf("%s ", _dvars[i].name);
+	}
+
+	Debug_Printf("\n");
+	
+	return true;
+}
+
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
+	
 	if (argc == 1) {
 		if (_s->_debugMode == false)
 			Debug_Printf("Debugging is not enabled at this time\n");

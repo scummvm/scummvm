@@ -78,6 +78,7 @@ protected:
 	bool Cmd_Actor(int argc, const char **argv);
 	
 	bool Cmd_DebugLevel(int argc, const char **argv);
+	bool Cmd_Help(int argc, const char **argv);
 	
 	void printBox(int box);
 
