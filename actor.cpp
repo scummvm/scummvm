@@ -759,8 +759,6 @@ void Scumm::playActorSounds()
 
 void Actor::startWalkAnim(int cmd, int angle)
 {
-	int16 args[16];
-
 	if (angle == -1)
 		angle = facing;
 
@@ -770,7 +768,9 @@ void Actor::startWalkAnim(int cmd, int angle)
  * note: walk scripts aren't required to make the game
  * work as usual */
 	
-/*	if (walk_script != 0) {
+/*	int16 args[16];
+
+	if (walk_script != 0) {
 		args[2] = angle;
 		args[0] = number;
 		args[1] = cmd;
