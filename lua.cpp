@@ -496,7 +496,7 @@ static void GetActorSector(void) {
   int numSectors = Engine::instance()->currScene()->getSectorCount();
   for (int i = 0; i < numSectors; i++) {
     Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
-    if (sector->type() & sectorFlag) {
+    if (sector->visible() && (sector->type() & sectorFlag)) {
       if (sector->isPointInSector(act->pos())) {
 	lua_pushnumber(sector->id());
 	lua_pushstring(const_cast<char *>(sector->name()));
@@ -517,7 +517,7 @@ static void IsActorInSector(void) {
   for (i=0; i<numSectors; i++) {
    Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
 
-   if (strstr(sector->name(), name)) {
+   if (sector->visible() && strstr(sector->name(), name)) {
     if (sector->isPointInSector(act->pos())) {
       lua_pushnumber(sector->id());
       lua_pushstring((char*)sector->name());

@@ -34,6 +34,7 @@ public:
     const char *name() const { return name_.c_str(); }
     const int id() const { return id_; }
     const int type() const { return type_; } // FIXME: Implement type de-masking
+    bool visible() const { return visible_; }
     bool isPointInSector(Vector3d point) const;
 
 private:
@@ -41,7 +42,7 @@ private:
 
     std::string name_;
     int type_;
-    std::string visibility_;
+    bool visible_;
     Vector3d *vertices_;
     float height_;
 };

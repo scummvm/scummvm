@@ -62,7 +62,12 @@ void Sector::load0(TextSplitter &ts, char *name, int id) {
    error("Unknown sector type '%s' in room setup", buf);
 
   ts.scanString(" default visibility %256s", 1, buf);
-  visibility_ = buf;
+  if (strcmp(buf, "visible") == 0)
+    visible_ = true;
+  else if (strcmp(buf, "invisible") == 0)
+    visible_ = false;
+  else
+    error("Invalid visibility spec: %s\n", buf);
   ts.scanString(" height %f", 1, &height_);
   ts.scanString(" numvertices %d", 1, &numVertices_);
   vertices_ = new Vector3d[numVertices_ + 1];
