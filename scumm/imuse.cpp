@@ -74,7 +74,6 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 
 	if (_midi_native) {
 		driver = _midi_native;
-#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
 	} else {
 		// Route it through Adlib anyway.
 		if (!_midi_adlib) {
@@ -82,7 +81,6 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 			initMidiDriver (_midi_adlib);
 		}
 		driver = _midi_adlib;
-#endif
 	}
 
 	return driver;
@@ -184,7 +182,6 @@ MidiDriver *IMuseInternal::getBestMidiDriver (int sound) {
 	if (isGM (sound)) {
 		if (_midi_native) {
 			driver = _midi_native;
-#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
 		} else {
 			// Route it through Adlib anyway.
 			if (!_midi_adlib) {
@@ -192,16 +189,13 @@ MidiDriver *IMuseInternal::getBestMidiDriver (int sound) {
 				initMidiDriver (_midi_adlib);
 			}
 			driver = _midi_adlib;
-#endif
 		}
-#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
 	} else {
 		if (!_midi_adlib && (_enable_multi_midi || !_midi_native)) {
 			_midi_adlib = MidiDriver_ADLIB_create();
 			initMidiDriver (_midi_adlib);
 		}
 		driver = _midi_adlib;
-#endif
 	}
 	return driver;
 }

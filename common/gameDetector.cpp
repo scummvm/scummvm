@@ -528,7 +528,7 @@ bool GameDetector::isMusicDriverAvailable(int drv) {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL: return true;
-#ifndef __PALM_OS__	// not avalaible on palmos : Clie use only ADPCM data and cannot be converted on the fly, may be possible on TT ?
+#ifndef __PALM_OS__	// don't show it on palmos
 	case MD_ADLIB: return true;
 #else
 	case MD_YPA1: return true;
@@ -627,13 +627,11 @@ int GameDetector::detectMain() {
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
-#ifndef __PALM_OS__ // currently adlib is not supported on PalmOS
 	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) ||
 	   ((_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO)) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
-#endif
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
@@ -708,13 +706,12 @@ MidiDriver *GameDetector::createMidi() {
 
 	switch(drv) {
 	case MD_NULL:		return MidiDriver_NULL_create();
-#ifndef __PALM_OS__
 	// In the case of Adlib, we won't specify anything.
 	// IMuse is designed to set up its own Adlib driver
 	// if need be, and we only have to specify a native
 	// driver.
 	case MD_ADLIB:		_use_adlib = true; return NULL;
-#else
+#if defined(__PALM_OS__)
 	case MD_YPA1:		return MidiDriver_YamahaPa1_create();
 #endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
