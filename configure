@@ -18,8 +18,121 @@
 # * detect whether mad/ALSA/... are available
 # * detect endianess and write that into config.h
 # * detect size of data types and write that into config.h
+# * check whether compiler supports "bool" and if not, 
+#   define HAVE_NO_BOOL and add code to config.h to implement "bool"
 # * ....
 
-echo "Implement me!"
+
+# Check whether the given command is a working C++ compiler
+test_compiler ()
+{
+cat <<EOF >tmp_cxx_compiler.cpp
+class Foo {
+  int a;
+};
+int main(int argc, char **argv)
+{
+	Foo *a = new Foo();
+	delete a;
+	return 0;
+}
+EOF
+eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null"
+}
+
+
+#
+# Check any parameters we received
+#
+# TOOD: allow for multi value params, e.g. --target=dreamcast or --backend=morphos
+#
+USE_MAD=0;
+DUMP_SCRIPTS=0;
+
+for x in $@; do
+    case x$x in
+      x--enable-mad)
+        USE_MAD=1;;
+      x--enable-dump-scripts)
+        DUMP_SCRIPTS=1;;
+    esac;
+done;
+
+#
+# Greet user
+#
+echo "Running ScummVM configure..."
+echo -n > config.h
+
+
+#
+# Determine the C++ compiler
+#
+echo -n "Looking for C++ compiler... "
+compilers="$CXX g++ c++"
+CXX=
+for compiler in $compilers; do
+  if test_compiler $compiler; then
+    CXX=$compiler
+    echo $CXX
+    break
+  fi
+done
+if test -z $CXX; then
+    echo "none found!"
+    exit 1
+fi
+
+#
+# Determine hosttype
+#
+# TODO - also add an command line option to override this
+echo -n "Checking hosttype... "
+hosttype=`uname -s`
+echo $hosttype
+case $hosttype in
+	Linux)
+		echo "#define UNIX" >> config.h
+		;;
+	Darwin)
+		echo "#define UNIX" >> config.h
+		echo "#define MACOSX" >> config.h
+		;;
+esac
+
+#
+# Check for endianess
+#
+echo -n "Checking endianess... "
+cat <<EOF >tmp_endianess_check.cpp
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char **argv)
+{
+	unsigned int data = 0x01234567;
+	char *ptr = (char *)&data;
+	if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
+		printf("big\n");
+	else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
+		printf("little\n");
+	else
+		printf("unknown\n");
+	return 0;
+}
+EOF
+$CXX -o tmp_endianess_check tmp_endianess_check.cpp
+endianess=`./tmp_endianess_check`
+echo $endianess;
+case $endianess in
+	big)
+		echo "#define SCUMM_BIG_ENDIAN" >> config.h
+		;;
+	little)
+		echo "#define SCUMM_LITTLE_ENDIAN" >> config.h
+		;;
+	*)
+		exit 1
+		;;
+esac
 
 
