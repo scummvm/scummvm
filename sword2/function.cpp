@@ -442,15 +442,16 @@ int32 FN_play_credits(int32 *params)
 	}
 
 	// returns non-zero if Ctrl-Q was pressed to quit the game during the credits
-
-	if (rv || DEMO)		// if Ctrl-Q pressed during credits, or if this is the playable demo
+*/
+	//if (rv || DEMO)		// if Ctrl-Q pressed during credits, or if this is the playable demo
+	if (g_sword2->_gameId == GID_SWORD2_DEMO)
 	{
 		Close_game();	//close engine systems down
 		CloseAppWindow();
 		exit(0);		// quit the game
 	}
 
-*/
+
 	return (IR_CONT);
 }
 //------------------------------------------------------------------------------------
