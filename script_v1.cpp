@@ -2129,6 +2129,7 @@ void Scumm::o5_setObjectName()
 			work[i++] = fetchScriptByte();
 		}
 	}
+	work[i] = 0;
 
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
@@ -2136,7 +2137,7 @@ void Scumm::o5_setObjectName()
 	if (!getOBCDFromObject(obj)) {
 		// FIXME: Bug 587553. This is an odd one and looks more like
 		// an actual bug in the original script. Usually we would error
-		warning("Can't find OBCD to rename object %d to %s", obj, name);
+		warning("Can't find OBCD to rename object %d to %s", obj, work);
 		return;
 	}
 
@@ -2157,12 +2158,10 @@ void Scumm::o5_setObjectName()
 	}
 
 	if (i >= size) {
-		work[i] = 0;
 		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
 		i = size - 1;
 	}
 
-	work[i] = 0;
 	strcpy((char *)name, (char *)work);
 	runHook(0);
 }
