@@ -442,19 +442,19 @@ void SkyState::checkCommands(uint32 *&cmdPtr) {
 	//check for sequence commands
 	assert (cmdPtr != NULL);
 	
-	uint32 afterFrame = READ_LE_UINT32(cmdPtr);
+	uint32 afterFrame = *(cmdPtr);
 	
 	if (afterFrame >= _tseqFrames) { 
 
 		//do a command
-		uint32 command = READ_LE_UINT32(cmdPtr + 1);
+		uint32 command = *(cmdPtr + 1);
 		(this->*commandRoutines[command])(cmdPtr); 
 	} 
 }
 
 void SkyState::prepareText(uint32 *&cmdPtr) {
 	
-	uint32 textNum = READ_LE_UINT32(cmdPtr + 2);
+	uint32 textNum = *(cmdPtr + 2);
 	_skyText->getText(textNum, _language);
 	_skyText->displayText(_introTextSpace, true, INTRO_TEXT_WIDTH, 255);
 	cmdPtr += 3;  
@@ -462,13 +462,13 @@ void SkyState::prepareText(uint32 *&cmdPtr) {
 
 void SkyState::showIntroText(uint32 *&cmdPtr) {
 	
-	uint32 xPos = READ_LE_UINT32(cmdPtr + 2); 
-	uint32 yPos = READ_LE_UINT32(cmdPtr + 3); 
+	uint32 xPos = *(cmdPtr + 2); 
+	uint32 yPos = *(cmdPtr + 3); 
 	uint32 startPos = (yPos * FULL_SCREEN_WIDTH) + xPos;
 	byte *destBuf = _introTextSpace;
 	byte *saveBuf = _introTextSave;
-	uint32 width = FROM_LE_32(((struct dataFileHeader *)destBuf)->s_width);	
-	uint32 height = FROM_LE_32(((struct dataFileHeader *)destBuf)->s_height);	
+	uint16 width = FROM_LE_16(((struct dataFileHeader *)destBuf)->s_width);	
+	uint16 height = FROM_LE_16(((struct dataFileHeader *)destBuf)->s_height);	
 	
 	*(uint32 *)saveBuf = TO_LE_32(startPos); 
 	*(uint32 *)(saveBuf + 4) = TO_LE_32(height);
