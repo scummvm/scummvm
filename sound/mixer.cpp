@@ -411,7 +411,7 @@ void SoundMixer::pauseID(int id, bool paused) {
 	}
 }
 
-void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool pause) {
+void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
 	StackLock lock(_mutex);
 
 	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
@@ -426,7 +426,7 @@ void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool pause) {
 	}
 
 	if (_channels[index])
-		_channels[index]->pause(pause);
+		_channels[index]->pause(paused);
 }
 
 bool SoundMixer::hasActiveSFXChannel() {
