@@ -91,30 +91,32 @@ TOOLS := tools/convbdf$(EXEEXT) tools/md5table$(EXEEXT)
 
 tools: $(TOOLS)
 
-tools/convbdf$(EXEEXT): tools/convbdf.c
+tools/convbdf$(EXEEXT): $(srcdir)/tools/convbdf.c
+	$(MKDIR) tools/$(DEPDIR)
 	$(CC) -Wall -o $@ $<
 
-tools/md5table$(EXEEXT): tools/md5table.c
+tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
+	$(MKDIR) tools/$(DEPDIR)
 	$(CC) -Wall -o $@ $<
 
-#simon/simon-md5.h: tools/simon-md5.txt
+#simon/simon-md5.h: $(srcdir)/tools/simon-md5.txt
 #	tools/md5table$(EXEEXT) --c++ < $< > $@
 
-#scumm/scumm-md5.h: tools/scumm-md5.txt
+#scumm/scumm-md5.h: $(srcdir)/tools/scumm-md5.txt
 #	tools/md5table$(EXEEXT) --c++ < $< > $@
 
 credits:
-	tools/credits.pl --text > AUTHORS
-	tools/credits.pl --html > ../web/credits.inc
-	tools/credits.pl --cpp > gui/credits.h
-	tools/credits.pl --xml > ../docs/docbook/credits.xml
+	$(srcdir)/tools/credits.pl --text > AUTHORS
+	$(srcdir)/tools/credits.pl --html > ../web/credits.inc
+	$(srcdir)/tools/credits.pl --cpp > gui/credits.h
+	$(srcdir)/tools/credits.pl --xml > ../docs/docbook/credits.xml
 
 md5scumm: tools/md5table$(EXEEXT)
-	tools/md5table$(EXEEXT) --c++ < tools/scumm-md5.txt > scumm/scumm-md5.h
-	tools/md5table$(EXEEXT) --php < tools/scumm-md5.txt > ../web/docs/md5.inc
+	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > scumm/scumm-md5.h
+	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../web/docs/md5.inc
 
 md5simon: tools/md5table$(EXEEXT)
-	tools/md5table$(EXEEXT) --c++ < tools/simon-md5.txt > simon/simon-md5.h
+	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/simon-md5.txt > simon/simon-md5.h
 
 #######################################################################
 # Unit/regression tests                                               #
