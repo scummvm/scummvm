@@ -778,6 +778,7 @@ public:
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
 	void realizePalette();
+	void realizePalette_unk();
 
 	void vc_kill_thread(uint file, uint sprite);
 

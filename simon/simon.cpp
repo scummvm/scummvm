@@ -4608,19 +4608,44 @@ void SimonState::dx_update_screen_and_palette()
 void SimonState::realizePalette()
 {
 	if (_palette_color_count & 0x8000) {
-		if (_debugMode)
-			warning("realizePalette subroutine unimplemented");
-		_palette_color_count = 0;
+		realizePalette_unk();
 	} else {
-	_video_var_9 = false;
-	memcpy(_palette_backup, _palette, 256 * 4);
+		_video_var_9 = false;
+		memcpy(_palette_backup, _palette, 256 * 4);
 
-	_system->set_palette(_palette, 0, _palette_color_count);
-	_palette_color_count = 0;
+		_system->set_palette(_palette, 0, _palette_color_count);
+		_palette_color_count = 0;
 	}
-
 }
 
+void SimonState::realizePalette_unk()
+{
+	uint8 *src;
+	byte *dst;
+	uint8 palette_unk[768];
+
+	_palette_color_count &= 0x7fff;
+	memset(_video_buf_1, 0, 768);
+	_video_var_9 = false;
+	memcpy(_palette_backup, _palette, 768);
+	memcpy(palette_unk, _palette, 768);
+
+	int i, j;
+	for (i = 255; i >= 0; i -= 4) {
+	  	src = palette_unk;
+		dst = _video_buf_1;
+
+		for (j = _palette_color_count; j >= 0; j--) {
+			if (*src >= i)
+				*dst += 4;
+			dst++;
+			src++;
+		}
+		_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+		delay(5);
+ 	}
+	_palette_color_count = 0;
+}
 
 void SimonState::go()
 {
