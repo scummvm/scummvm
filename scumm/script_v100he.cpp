@@ -1226,7 +1226,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.resDefImgW = pop();
 		break;
 	case 92:
-		processWizImage(&_wizParams);
+		if (_wizParams.img.resNum)
+			processWizImage(&_wizParams);
 		break;
 	case 128:
 		pop();

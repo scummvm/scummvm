@@ -647,7 +647,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 209:
-		processWizImage(&_wizParams);
+		if (_wizParams.img.resNum)
+			processWizImage(&_wizParams);
 		break;
 	default:
 		error("o90_wizImageOps: unhandled case %d", subOp);
