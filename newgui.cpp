@@ -27,6 +27,60 @@
 #define hline(x, y, x2, color) line(x, y, x2, y, color);
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
+// 8-bit alpha blending routines
+int BlendCache[256][256];
+
+int RGBMatch(byte *palette, int r, int g, int b) {
+	int i, bestidx = 0, besterr = 0xFFFFFF;
+	int error = 0;
+
+	for (i = 0;i < 256;i++) {
+		byte *pal = palette + (i * 3);
+		int r_diff = r - (int)*pal++; 
+		int g_diff = g - (int)*pal++; 
+		int b_diff = b - (int)*pal++; 
+		r_diff *= r_diff; g_diff *= g_diff; b_diff *= b_diff;
+
+		error = r_diff + g_diff + b_diff;
+		if (error < besterr) {
+			besterr = error;
+			bestidx = i;
+		}
+	}
+	return bestidx;
+}
+
+int Blend(int src, int dst, byte *palette) {
+	int r, g, b, idx;
+	int alpha = 128;	// Level of transparency [0-256]
+	byte *srcpal = palette + (dst  * 3);
+	byte *dstpal = palette + (src * 3);
+
+	if (BlendCache[dst][src] > -1)
+		return BlendCache[dst][src];
+
+	r =  (*srcpal++ * alpha);
+    r += (*dstpal++ * (256-alpha));
+    r /= 256;
+
+    g =  (*srcpal++ * alpha);
+    g += (*dstpal++ * (256-alpha));
+    g /= 256;
+
+    b =  (*srcpal++ * alpha);
+    b += (*dstpal++  * (256-alpha));
+    b /= 256;
+       
+	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
+}
+
+void ClearBlendCache(byte *palette, int weight) {
+	for (int i = 0; i < 256; i++)
+		for (int j = 0 ; j < 256 ; j++)			
+//			BlendCache[i][j] = i;	// No alphablending
+//			BlendCache[i][j] = j;	// 100% translucent
+			BlendCache[i][j] = -1;	// Enable alphablending
+}
 
 /*
  * TODO list
@@ -42,7 +96,7 @@
 
 NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false), _pauseDialog(0),
 	_saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0)
-{
+{	
 }
 
 void NewGui::pauseDialog()
@@ -54,6 +108,7 @@ void NewGui::pauseDialog()
 
 void NewGui::saveloadDialog()
 {
+	ClearBlendCache(_s->_currentPalette, 128);
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(this);
 	openDialog(_saveLoadDialog);
@@ -249,8 +304,11 @@ void NewGui::fillArea(int x, int y, int w, int h, byte color)
 		return;
 
 	while (h--) {
-		for (int i = 0; i < w; i++)
-			ptr[i] = color;
+		for (int i = 0; i < w; i++) {
+			int srcc = ptr[i];
+			ptr[i] = Blend(srcc, color, _s->_currentPalette);
+		}
+			//ptr[i] = color;
 		ptr += 320;
 	}
 }
