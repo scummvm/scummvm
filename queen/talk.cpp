@@ -312,19 +312,19 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	if (_vm->logic()->gameState(cutawayGameState) == cutawayTestValue) {
 		getString(ptr, cutawayFilename, 20);
-
-		//CR 2 - 7/3/95, If we're executing a cutaway scene, then make sure
-		// Joe can talk, so set TALKQUIT to 0 just in case we exit on the
-		// line that set's the cutaway game states.
-		_vm->input()->talkQuitReset();
+		if (cutawayFilename[0]) {
+			//CR 2 - 7/3/95, If we're executing a cutaway scene, then make sure
+			// Joe can talk, so set TALKQUIT to 0 just in case we exit on the
+			// line that set's the cutaway game states.
+			_vm->input()->talkQuitReset();
+		}
 	}
-
 	if (_vm->input()->talkQuit()) {
 		if (_oldSelectedSentenceIndex > 0)
 			selectedValue(_oldSelectedSentenceIndex, _oldSelectedSentenceValue);
 		_vm->input()->talkQuitReset();
 		_vm->display()->clearTexts(0, 198);
-		speak(_talkString[15], NULL, "JOE0015");
+		_vm->logic()->makeJoeSpeak(15, false);
 	}
 	else {
 		setHasTalkedTo();
