@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
-#include "mididrv.h"
+#include "sound/mididrv.h"
 #include "gameDetector.h"
 #include "scaler.h"
 #include "scumm.h"	// Only #included for error() and warning()

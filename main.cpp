@@ -22,7 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
+#include "sound/mididrv.h"
 #include "gameDetector.h"
 #include "gui.h"
 #include "simon/simon.h"
