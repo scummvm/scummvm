@@ -2506,7 +2506,7 @@ void SimonState::skip_speech()
 	_sound->stopVoice();
 	if (!(_bit_array[1] & 0x1000)) {
 		_bit_array[0] |= 0x4000;
-		_variableArray[200] = 5;
+		_variableArray[100] = 5;
 		start_vga_code(4, 1, 0x1e, 0, 0, 0);
 		o_wait_for_vga(0x82);
 		o_unk_99_simon2(2, 1);
@@ -3743,7 +3743,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 		if (speech_id == 9999) {
 			if (!(_bit_array[0] & 0x4000) && !(_bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
-				_variableArray[0xc8 / 2] = 0xF;
+				_variableArray[100] = 0xF;
 				start_vga_code(4, 1, 0x82, 0, 0, 0);
 				o_wait_for_vga(0x82);
 			}
@@ -3765,7 +3765,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 				return;
 			if (!(_bit_array[0] & 0x4000 || _bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
-				_variableArray[200] = 5;
+				_variableArray[100] = 5;
 				start_vga_code(4, 1, 0x1e, 0, 0, 0);
 				o_wait_for_vga(0x82);
 			}
