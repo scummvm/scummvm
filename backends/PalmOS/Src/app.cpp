@@ -17,6 +17,7 @@
 #include "modules.h"
 #include "init_mathlib.h"
 #include "init_sony.h"
+#include "init_palmos.h"
 
 #ifndef DISABLE_TAPWAVE
 #define __TWKEYS_H__
@@ -40,67 +41,24 @@
  ***********************************************************************/
 static Err AppStartCheckHRmode()
 {
-	SonySysFtrSysInfoP sonySysFtrSysInfoP;
-	Err error = errNone;
+	Err e = errNone;
+	UInt32 depth = (OPTIONS_TST(kOptMode16Bit) && OPTIONS_TST(kOptDeviceOS5)) ? 16 : 8;
 
-	// test if sonyHR is present
-	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
-		if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrHR) {		// HR available
+	// try to init Sony HR mode then Palm HR mode
+	gVars->HRrefNum = SonyHRInit(depth);
 
-			if ((error = SysLibFind(sonySysLibNameHR, &gVars->HRrefNum)))
-				if (error == sysErrLibNotFound)							// couldn't find lib
-					error = SysLibLoad( 'libr', sonySysFileCHRLib, &gVars->HRrefNum);
-
-			if (!error) {	// Now we can use HR lib. Executes Open library.
-				error = HROpen(gVars->HRrefNum);
-				OPTIONS_SET(kOptDeviceClie);
-			}
-		}
-	}
-	// if not, Hi-Density ?
-	if (error) {
-		gVars->HRrefNum = sysInvalidRefNum;	// Not sony HR
-		OPTIONS_RST(kOptDeviceClie);
-		error = (OPTIONS_TST(kOptModeHiDensity) == 0);
-	}
-
-	if (!error) { // Not, error processing
-		UInt32 width, height, depth;
-		Boolean color;
-
-		width = hrWidth;
-		height= hrHeight;
-		depth = (OPTIONS_TST(kOptMode16Bit) && OPTIONS_TST(kOptDeviceOS5)) ? 16 : 8;
-		color = true;
-
-		if (gVars->HRrefNum != sysInvalidRefNum) {
-			error = HRWinScreenMode (gVars->HRrefNum, winScreenModeSet, &width, &height, &depth, &color);
-		} else {
-			error = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color);
-			
-			// check if we are now in hi-density
-			if (!error) {
-				UInt32 attr;
-				WinScreenGetAttribute(winScreenDensity, &attr); 
-				error = (attr != kDensityDouble);
-			}
-		}
-
-		// high-resolution mode entered from here if no error
-		if (error != errNone)
+	if (gVars->HRrefNum == sysInvalidRefNum)
+		if (e = PalmHRInit(depth))
 			FrmCustomAlert(FrmErrorAlert,"Your device doesn't seem to support Hi-Res or 256color mode.",0,0);
-	}
-	else
-		FrmCustomAlert(FrmErrorAlert,"This device doesn't seem to support\nHi-Res mode.",0,0);
 
-	return error;
+	return e;
 }
 
 static void AppStopHRMode() {
-	if (gVars->HRrefNum != sysInvalidRefNum) {
-			HRClose(gVars->HRrefNum);
-			//SysLibRemove(gVars->HRrefNum);	// never call this !!
-	}
+	if (gVars->HRrefNum != sysInvalidRefNum)
+		SonyHRRelease(gVars->HRrefNum);
+	else
+		PalmHRRelease();
 }
 
 static Err AppStartCheckNotify() {
