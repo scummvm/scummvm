@@ -1288,9 +1288,21 @@ void OSystem_SDL::blitCursor() {
   	}
   
 	SDL_LockSurface(_mouseSurface);
-	(scalersMagn[_cursorTargetScale-1][_scaleFactor-1])((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
+
+	ScalerProc *scalerProc;
+
+	// If possible, use the same scaler for the cursor as for the rest of
+	// the game. This only works well with the non-blurring scalers so we
+	// actually only use the 1x, 1.5x, 2x and AdvMame scalers.
+
+	if (_cursorTargetScale == 1 && (_mode == GFX_DOUBLESIZE || _mode == GFX_TRIPLESIZE))
+		scalerProc = _scalerProc;
+	else
+		scalerProc = scalersMagn[_cursorTargetScale - 1][_scaleFactor - 1];
+
+	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			  _mouseCurState.w, _mouseCurState.h);
+		_mouseCurState.w, _mouseCurState.h);
 
 	if (_adjustAspectRatio)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
