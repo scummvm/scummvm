@@ -2746,8 +2746,9 @@ void Scumm::o6_miscOps()
 				if (args[1] == 0) {
  					sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 				} else if (_gameId == GID_FT) {
-					// Full Throttle INSANE modes
-					switch (args[1]) {
+					int insaneMode = readArray(233,0,0);
+					debug(1, "FT_INSANE Mode: %d", insaneMode);
+  					switch (insaneMode) {
 					 case 0:
  						sp->play("minedriv.san", getGameDataPath());
 						break;
