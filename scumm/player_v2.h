@@ -79,6 +79,7 @@ private:
 
 
 	bool _pcjr;
+	int _header_len;
 
 	int _sample_rate;
 	int _next_tick;
@@ -89,6 +90,9 @@ private:
 	unsigned int _RNG;
 	unsigned int _volumetable[16];
 
+	int _music_timer;
+	int _music_timer_ctr;
+	int _ticks_per_music_timer;
 	int _timer_count[4];
 	int _timer_output;
 

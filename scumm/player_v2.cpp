@@ -336,6 +336,8 @@ Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 	_mutex = _system->create_mutex();
 
+	_header_len = (scumm->_features & GF_SMALL_HEADER) ? 6 : 4;
+
 	// Initialize sound queue 
 	current_nr = next_nr = 0;
 	current_data = next_data = 0;
@@ -346,6 +348,10 @@ Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
 
 	_next_tick = 0;
 	_tick_len = (_sample_rate << FIXP_SHIFT) / FREQ_HZ;
+
+	// Initialize V3 music timer
+	_music_timer_ctr = _music_timer = 0;
+	_ticks_per_music_timer = 65535;
 
 	// Initialize square generator
 	_level = 0;
@@ -418,7 +424,8 @@ void Player_V2::set_master_volume (int vol) {
 }
 
 void Player_V2::chainSound(int nr, byte *data) {
-	int offset = _pcjr ? 14 : 6;
+	int offset = _header_len + (_pcjr ? 10 : 2);
+
 	current_nr = nr;
 	current_data = data;
 
@@ -432,6 +439,7 @@ void Player_V2::chainSound(int nr, byte *data) {
 				channels[i].d.time_left = 1;
 		}
 	}
+	_music_timer = 0;
 }
 
 void Player_V2::chainNextSound() {
@@ -472,11 +480,11 @@ void Player_V2::stopSound(int nr) {
 void Player_V2::startSound(int nr, byte *data) {
 	mutex_up();
 
-	int cprio = current_data ? *(current_data+4) : 0;
-	int prio  = *(data+4);
-	int nprio = next_data ? *(next_data+4) : 0;
+	int cprio = current_data ? *(current_data + _header_len) : 0;
+	int prio  = *(data + _header_len);
+	int nprio = next_data ? *(next_data + _header_len) : 0;
 
-	int restartable = *(data+5);
+	int restartable = *(data + _header_len + 1);
 
 	if (!current_nr || cprio <= prio) {
 		int tnr = current_nr;
@@ -487,7 +495,7 @@ void Player_V2::startSound(int nr, byte *data) {
 		nr   = tnr;
 		prio = tprio;
 		data = tdata;
-		restartable = data ? *(data+5) : 0;
+		restartable = data ? *(data + _header_len + 1) : 0;
 	}
 	
 	if (!current_nr) {
@@ -509,7 +517,7 @@ void Player_V2::startSound(int nr, byte *data) {
 }
 
 void Player_V2::restartSound() {
-	if (*(current_data + 5)) {
+	if (*(current_data + _header_len + 1)) {
 		/* current sound is restartable */
 		chainSound(current_nr, current_data);
 	} else {
@@ -548,7 +556,10 @@ void Player_V2::clear_channel(int i) {
 }
 
 int Player_V2::getMusicTimer() {
-	return channels[0].d.music_timer;
+	if ((_scumm->_features & GF_AFTER_V3))
+		return _music_timer;
+	else
+		return channels[0].d.music_timer;
 }
 
 void Player_V2::execute_cmd(ChannelInfo *channel) {
@@ -640,7 +651,11 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				channel->array[opcode/2] = value;
 				debug(9, "channels[%d]: set param %2d = %5d", 
 				channel - &channels[0], opcode, value);
-				script_ptr+=2;
+				script_ptr += 2;
+				if (opcode == 14) {
+				    /* tempo var */
+				    _ticks_per_music_timer = 125;
+				}
 				if (opcode == 0)
 					goto end;
 				break;
@@ -806,6 +821,10 @@ void Player_V2::do_mix (int16 *data, int len) {
 				next_freqs(&channels[i]);
 			}
 			_next_tick += _tick_len;
+			if (_music_timer_ctr++ >= _ticks_per_music_timer) {
+				_music_timer_ctr = 0;
+				_music_timer++;
+			}
 		}
 	} while (len -= step);
 	mutex_down();
