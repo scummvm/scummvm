@@ -22,7 +22,9 @@
 
 #include "../fs.h"
 
+#ifdef MACOSX
 #include <sys/types.h>
+#endif
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -80,7 +82,7 @@ FilesystemNode *FilesystemNode::getRoot() {
 POSIXFilesystemNode::POSIXFilesystemNode() {
 #if 1
 	char buf[MAXPATHLEN];
-	getwd(buf);
+	getcwd(buf, MAXPATHLEN);
 	
 	_path = buf;
 	_displayName = lastPathComponent(_path);
