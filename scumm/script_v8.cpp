@@ -320,7 +320,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_findInventory),
 		/* E0 */
 		OPCODE(o6_getInventoryCount),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_getActorRoom),
 		OPCODE(o6_getActorWalkBox),
 		/* E4 */
