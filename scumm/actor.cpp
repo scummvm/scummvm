@@ -1402,7 +1402,7 @@ void Actor::setActorCostume(int c) {
 			palette[i] = i;
 
 		// Make stuff more visible on CGA. Based on disassembly
-		if (_vm->_renderMode == Common::kRenderCGA) {
+		if (_vm->_renderMode == Common::kRenderCGA && _vm->_version > 2) {
 			palette[6] = 5;
 			palette[7] = 15;
 		}

@@ -555,6 +555,10 @@ void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height
 		ptr = dst + y1 * dstPitch;
 
 		idx1 = (y + y1) % 2;
+
+		if (_vm->_version == 2)
+			idx1 = 0;
+
 		for (int x1 = 0; x1 < width; x1++) {
 			idx2 = (x + x1) % 2;
 			*ptr++ = cgaDither[idx1][idx2][*ptr & 0xF];
