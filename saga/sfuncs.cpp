@@ -86,9 +86,9 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfScriptWalk),
 		OPCODE(sfCycleFrames),
 		OPCODE(sfSetFrame),
-		OPCODE(SF_setRightPortrait),
-		OPCODE(SF_setLeftPortrait),
-		OPCODE(SF_linkAnim),
+		OPCODE(sfSetPortrait),
+		OPCODE(sfSetProtagPortrait),
+		OPCODE(sfChainBgdAnim),
 		OPCODE(SF_scriptSpecialWalk),
 		OPCODE(sfPlaceActor),
 		OPCODE(SF_checkUserInterrupt),
@@ -110,19 +110,19 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_getActorX),
 		OPCODE(SF_getActorY),
 		OPCODE(SF_eraseDelta),
-		OPCODE(SF_playMusic),
+		OPCODE(sfPlayMusic),
 		OPCODE(SF_pickClimbOutPos),
 		OPCODE(SF_tossRif),
 		OPCODE(SF_showControls),
 		OPCODE(SF_showMap),
 		OPCODE(SF_puzzleWon),
-		OPCODE(SF_enableEscape),
-		OPCODE(SF_playSound),
+		OPCODE(sfEnableEscape),
+		OPCODE(sfPlaySound),
 		OPCODE(SF_playLoopedSound),
 		OPCODE(SF_getDeltaFrame),
 		OPCODE(SF_showProtect),
 		OPCODE(SF_protectResult),
-		OPCODE(SF_rand),
+		OPCODE(sfRand),
 		OPCODE(SF_fadeMusic),
 		OPCODE(SF_playVoice)
 	};
@@ -320,13 +320,15 @@ int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: target object
 int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
-	uint16 actorId;
-	uint16 targetObject;
+	int16 actorId;
+	int16 targetObject;
 
 	ActorData *actor;
 
 	actorId = getSWord(thread->pop());
 	targetObject = getSWord(thread->pop());
+
+	debug(1, "sfSetFollower(%d, %d) [%d]", actorId, targetObject, ACTOR_ID_TO_INDEX(actorId));
 	
 	actor = _vm->_actor->getActor(actorId);
 	actor->targetObject = targetObject;
@@ -775,7 +777,7 @@ int Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 
 // Script function #39 (0x27)
 // Sets the right-hand portrait
-int Script::SF_setRightPortrait(SCRIPTFUNC_PARAMS) {
+int Script::sfSetPortrait(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setRightPortrait(param);
@@ -783,7 +785,7 @@ int Script::SF_setRightPortrait(SCRIPTFUNC_PARAMS) {
 
 // Script function #40 (0x28)
 // Sets the left-hand portrait
-int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
+int Script::sfSetProtagPortrait(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setLeftPortrait(param);
@@ -796,28 +798,20 @@ int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
 // Param2: total linked frame count
 // Param3: animation id link target
 // Param4: animation id link source
-int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord timer_parm;
-	ScriptDataWord tframes_parm;
-	ScriptDataWord anim1_parm;
-	ScriptDataWord anim2_parm;
-	int tframes;
-	uint16 anim_id1;
-	uint16 anim_id2;
+int Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
+	int animId1 = getSWord(thread->pop());
+	int animId = getSWord(thread->pop());
+	int cycles = getSWord(thread->pop());
+	int speed = getSWord(thread->pop());
 
-	anim1_parm = thread->pop();
-	anim2_parm = thread->pop();
-	tframes_parm = thread->pop();
-	timer_parm = thread->pop();
-	tframes = getSWord(tframes_parm);
-	anim_id1 = getUWord(anim1_parm);
-	anim_id2 = getUWord(anim2_parm);
-
-	if (_vm->_anim->link(anim_id1, anim_id2) != SUCCESS) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
-		return FAILURE;
+	if (speed >= 0) {
+		_vm->_anim->setCycles(animId, cycles);
+		_vm->_anim->stop(animId);
+		_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
 	}
 
+	_vm->_anim->link(animId1, animId);
+	debug(1, "sfChainBgdAnim(%d, %d, %d, %d)", animId1, animId, cycles, speed);
 	return SUCCESS;
 }
 
@@ -1105,7 +1099,7 @@ int Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #63 (0x3F)
-int Script::SF_playMusic(SCRIPTFUNC_PARAMS) {
+int Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop() + 9;
 
 	if (param >= 9 && param <= 34)
@@ -1162,7 +1156,7 @@ int Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #69 (0x45)
-int Script::SF_enableEscape(SCRIPTFUNC_PARAMS) {
+int Script::sfEnableEscape(SCRIPTFUNC_PARAMS) {
 	if (thread->pop())
 		_abortEnabled = true;
 	else {
@@ -1245,7 +1239,7 @@ static struct {
 };
 
 // Script function #70 (0x46)
-int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
+int Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop() - 13;
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
@@ -1293,7 +1287,7 @@ int Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #75 (0x4d)
-int Script::SF_rand(SCRIPTFUNC_PARAMS) {
+int Script::sfRand(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
 	thread->retVal = (_vm->_rnd.getRandomNumber(param));

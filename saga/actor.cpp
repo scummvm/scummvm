@@ -142,7 +142,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor = &_actors[i];
 		actor->actorId = ACTOR_INDEX_TO_ID(i);
 		actor->index = i;
-		debug(9, "init actorId=0x%X index=0x%X", actor->actorId, actor->index);
+		debug(9, "init actorId=%d index=%d", actor->actorId, actor->index);
 		actor->nameIndex = ActorTable[i].nameIndex;
 		actor->spriteListResourceId = ActorTable[i].spriteListResourceId;
 		actor->frameListResourceId = ActorTable[i].frameListResourceId;
@@ -162,7 +162,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 		actor->disabled = !loadActorResources(actor);
 		if (actor->disabled) {
-			warning("Disabling actorId=0x%X index=0x%X", actor->actorId, actor->index);
+			warning("Disabling actorId=%d index=%d", actor->actorId, actor->index);
 		} 
 	}
 }
@@ -181,18 +181,21 @@ Actor::~Actor() {
 	}
 }
 
-bool Actor::loadActorResources(ActorData * actor) {
+bool Actor::loadActorResources(ActorData *actor) {
 	byte *resourcePointer;
 	size_t resourceLength;
 	int framesCount;
 	ActorFrameSequence *framesPointer;
 	int lastFrame;
 	int i, orient;
-	int result;
 
-	debug(9, "Loading frame resource id 0x%X", actor->frameListResourceId);
-	result = RSC_LoadResource(_actorContext, actor->frameListResourceId, &resourcePointer, &resourceLength);
-	if (result != SUCCESS) {
+	if (actor->frameListResourceId == 0) {
+		warning("Frame List ID = 0 for actor index %d", actor->index);
+		return true;
+	}
+
+	debug(9, "Loading frame resource id %d", actor->frameListResourceId);
+	if (RSC_LoadResource(_actorContext, actor->frameListResourceId, &resourcePointer, &resourceLength) != SUCCESS) {
 		warning("Couldn't load sprite action index resource");
 		return false;
 	}
@@ -228,7 +231,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	actor->framesCount = framesCount;
 
 
-	debug(9, "Loading sprite resource id 0x%X", actor->spriteListResourceId);
+	debug(9, "Loading sprite resource id %d", actor->spriteListResourceId);
 	if (_vm->_sprite->loadList(actor->spriteListResourceId, &actor->spriteList) != SUCCESS) {
 		warning("Unable to load sprite list");
 		return false;
@@ -237,7 +240,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	i = _vm->_sprite->getListLen(actor->spriteList);
 
 	if (lastFrame >= i) {
-		debug(9, "Appending to sprite list 0x%X", actor->spriteListResourceId);
+		debug(9, "Appending to sprite list %d (+ %d)", actor->spriteListResourceId, lastFrame);
 		if (_vm->_sprite->appendList(actor->spriteListResourceId + 1, actor->spriteList) != SUCCESS) {
 			warning("Unable append sprite list");
 			return false;
@@ -676,7 +679,7 @@ int Actor::direct(int msec) {
 	return SUCCESS;
 }
 
-void Actor::calcActorScreenPosition(ActorData * actor) {
+void Actor::calcActorScreenPosition(ActorData *actor) {
 	int	beginSlope, endSlope, middle;
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
@@ -810,7 +813,7 @@ void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
 }
 
-bool Actor::followProtagonist(ActorData * actor) {
+bool Actor::followProtagonist(ActorData *actor) {
 	ActorLocation protagonistLocation;
 	ActorLocation newLocation;
 	ActorLocation delta;
@@ -951,8 +954,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		_vm->_scene->setDoorState(2, 0);
 		_vm->_scene->setDoorState(3, 0xff);
 	}
-	if (actorId == 0x2002)
-		debug("eah");
+
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
 	} else {
@@ -1174,7 +1176,7 @@ void Actor::abortSpeech() {
 	_activeSpeech.playingTime = 0;
 }
 
-void Actor::findActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint) {
+void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
 	Point tempPoint;
 	Point iteratorPoint;
 	Point bestPoint;
@@ -1373,7 +1375,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	return pointCounter;
 }
 
-void Actor::setActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint) {
+void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
 	Point  pathFromPoint;
 	Point  pathToPoint;
 	Point *point;

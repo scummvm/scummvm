@@ -226,7 +226,7 @@ struct ActorData {
 	}
 };
 
-typedef ActorData* ActorDataPointer;
+typedef ActorData *ActorDataPointer;
 typedef SortedList<ActorDataPointer> ActorOrderList;
 
 struct SpeechData {
@@ -288,12 +288,12 @@ public:
 	}
 	
 private:
-	bool loadActorResources(ActorData * actor);
+	bool loadActorResources(ActorData *actor);
 	
 	void createDrawOrderList();
-	void calcActorScreenPosition(ActorData * actor);
-	bool followProtagonist(ActorData * actor);
-	void findActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint);
+	void calcActorScreenPosition(ActorData *actor);
+	bool followProtagonist(ActorData *actor);
+	void findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
 	void setPathCell(const Point &testPoint, int value) {
@@ -304,7 +304,7 @@ private:
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);
 	int fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint);
-	void setActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint);
+	void setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint);
 	void pathToNode();
 	void condenseNodeList();
 	void removeNodes();
