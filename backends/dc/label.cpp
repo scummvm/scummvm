@@ -25,14 +25,20 @@
 
 #include "label.h"
 
-static void *get_romfont_address()
-{
-  void *ret;
-  __asm__("jsr @%1; mov #0,r1; mov r0,%0" :
-	  "=r" (ret) : "r" (*(void **)0x8c0000b4) :
-	  "pr", "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7");
-  return ret;
-}
+
+static void *get_romfont_address() __asm__(".get_romfont_address");
+__asm__("\
+			\n\
+.get_romfont_address:	\n\
+    mov.l 1f,r0		\n\
+    mov.l @r0,r0	\n\
+    jmp @r0		\n\
+    mov #0,r1		\n\
+    .align 2		\n\
+1:  .long 0x8c0000b4	\n\
+			\n\
+");
+
 
 static void draw_char(unsigned short *dst, int mod, int c, void *font_base)
 {
