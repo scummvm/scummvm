@@ -295,7 +295,7 @@ void DrawMouse(void) {
 	mouse_width += deltaX;
 	mouse_height += deltaY;
 
-	if (mouse_width * mouse_height > sizeof(_mouseData)) {
+	if ((uint32)(mouse_width * mouse_height) > sizeof(_mouseData)) {
 		warning("Mouse cursor too large");
 		return;
 	}

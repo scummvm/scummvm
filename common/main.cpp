@@ -238,7 +238,6 @@ int main(int argc, char *argv[]) {
 	// ...and quit (the return 0 should never be reached)
 	system->quit();
 	delete system;
-	free((void *)version_settings); // allocated in GameDetector
 	return 0;
 }
 
