@@ -25,7 +25,6 @@
 #include "color.h"
 #include "costume.h"
 #include "engine.h"
-#include "sound.h"
 #include "smush.h"
 #include "textobject.h"
 #include "objectstate.h"
@@ -78,13 +77,13 @@ static inline Color *check_color(int num) {
 		luaL_argerror(num, "color expected");
 	return static_cast<Color *>(lua_getuserdata(lua_getparam(num)));
 }
-
+/*
 static inline Sound *check_sound(int num) {
 	if (lua_tag(lua_getparam(num)) != sound_tag)
 		luaL_argerror(num, "sound expected");
 	return static_cast<Sound *>(lua_getuserdata(lua_getparam(num)));
 }
-
+*/
 static inline int check_int(int num) {
 	double val = luaL_check_number(num);
 
@@ -691,7 +690,8 @@ static void InputDialog() {
 static void IsMessageGoing() {
 	Actor *act;
 	if (lua_getparam(1) == LUA_NOOBJECT)
-		pushbool(Mixer::instance()->voicePlaying());
+//		pushbool(Mixer::instance()->voicePlaying());
+		pushbool(false);
 	else {
 		act = check_actor(1);
 		pushbool(act->talking());
@@ -848,34 +848,34 @@ enum ImuseParam {
 };
 
 void ImStartSound() {
-	const char *name = luaL_check_string(1);
+/*	const char *name = luaL_check_string(1);
 	Sound *s = ResourceLoader::instance()->loadSound(name);
 	if (s != NULL) {
 		Mixer::instance()->playSfx(s);
 		s->luaRef();
 		lua_pushusertag(s, sound_tag);
 	} else
-		lua_pushnil();
+*/		lua_pushnil();
 }
 
 void gc_Sound() {
-	Sound *s = check_sound(1);
-	s->luaGc();
+//	Sound *s = check_sound(1);
+//	s->luaGc();
 }
 
 void ImStopSound() {
-	Sound *s;
+/*	Sound *s;
 	if (lua_isstring(lua_getparam(1))) {
 		s = Mixer::instance()->findSfx(lua_getstring(lua_getparam(1)));
 		if (s == NULL)
 			return;
 	} else
 		s = check_sound(1);
-	Mixer::instance()->stopSfx(s);
+	Mixer::instance()->stopSfx(s);*/
 }
 
 void ImGetParam() {
-	int param = check_int(2);
+/*	int param = check_int(2);
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
 	if (lua_isstring(lua_getparam(1))) {
@@ -896,19 +896,19 @@ void ImGetParam() {
 		lua_pushnumber(127);
 		break;
 	default:
-		warning("Unimplemented ImGetParam with %d\n", param);
+		warning("Unimplemented ImGetParam with %d\n", param);*/
 		lua_pushnil();
-	}
+//	}
 }
 
 void ImSetState() {
-	int state = check_int(1);
-	Mixer::instance()->setImuseState(state);
+//	int state = check_int(1);
+//	Mixer::instance()->setImuseState(state);
 }
 
 void ImSetSequence() {
-	int seq = check_int(1);
-	Mixer::instance()->setImuseSeq(seq);
+//	int seq = check_int(1);
+//	Mixer::instance()->setImuseSeq(seq);
 }
 
 void setFrameTime(float frameTime) {
@@ -1239,8 +1239,8 @@ static void stubWarning(char *funcName) {
 				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 			}
 			else if (lua_tag(lua_getparam(i)) == sound_tag) {
-				Sound *s = check_sound(i);
-				fprintf(stderr, "<sound %s>", s->filename());
+//				Sound *s = check_sound(i);
+//				fprintf(stderr, "<sound %s>", s->filename());
 			}
 			else
 				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));

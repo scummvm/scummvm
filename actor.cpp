@@ -19,7 +19,6 @@
 #include "actor.h"
 #include "engine.h"
 #include "costume.h"
-#include "sound.h"
 #include "lipsynch.h"
 #include "localize.h"
 #include <cmath>
@@ -32,7 +31,7 @@ extern SoundMixer *g_mixer;
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
-		_visible(true), _talkSound(NULL), _lipSynch(NULL), _turning(false), _walking(false),
+		_visible(true),/* _talkSound(NULL),*/ _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
@@ -221,16 +220,16 @@ void Actor::sayLine(const char *msg) {
 	if (secondSlash == NULL)
 		return;
 
-	if (_talkSound) // Only one line at a time, please :)
-		shutUp();
+//	if (_talkSound) // Only one line at a time, please :)
+//		shutUp();
 
 	std::string msgText = Localizer::instance()->localize(secondSlash + 1);
  	std::string msgId(msg + 1, secondSlash);
 
-	_talkSound = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
+//	_talkSound = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
 	_lipSynch = ResourceLoader::instance()->loadLipSynch((msgId + ".lip").c_str());
 
-	if (_talkSound != NULL) {
+/*	if (_talkSound != NULL) {
 		Mixer::instance()->playVoice(_talkSound);
 
 		// Sometimes actors speak offscreen before they, including their 
@@ -249,15 +248,16 @@ void Actor::sayLine(const char *msg) {
       		if (_mumbleChore >= 0)
       			_mumbleCostume->playChoreLooping(_mumbleChore);
 		}		
-	}
+	}*/
 }
 
 bool Actor::talking() {
-	return (_talkSound != NULL && !_talkSound->done());
+//	return (_talkSound != NULL && !_talkSound->done());
+	return false;
 }
 
 void Actor::shutUp() {
-	if (_talkSound) {
+/*	if (_talkSound) {
 		Mixer::instance()->stopVoice(_talkSound);
 		if (_lipSynch != NULL) {
 			if (_talkChore[_talkAnim] >= 0)
@@ -266,7 +266,7 @@ void Actor::shutUp() {
 		} else if (_mumbleChore >= 0)
 			_mumbleCostume->stopChore(_mumbleChore);
 		_talkSound = NULL;
-	}
+	}*/
 }
 
 void Actor::pushCostume(const char *name) {
@@ -396,7 +396,7 @@ void Actor::update() {
 	_currTurnDir = 0;
 
 	// Update lip synching
-	if (_lipSynch != NULL && _talkSound != NULL &&
+/*	if (_lipSynch != NULL && _talkSound != NULL &&
 			_talkSound->hasReachedPos(_lipSynch->getCurrEntry().frame * g_mixer->getOutputRate() / 60)) {
 
 		//printf("Reached beyond frame %d (=pos %d). Playing anim %d\n",
@@ -416,7 +416,7 @@ void Actor::update() {
 
 	if (_talkSound != NULL && _talkSound->done())
 		shutUp();
-
+*/
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
 		(*i)->update();

@@ -24,7 +24,6 @@
 #include "keyframe.h"
 #include "material.h"
 #include "model.h"
-#include "sound.h"
 #include "lipsynch.h"
 #include "debug.h"
 #include <cstring>
@@ -257,23 +256,6 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	if (b == NULL)
 		error("Could not find model %s\n", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
-	delete b;
-	_cache[fname] = result;
-	return result;
-}
-
-Sound *ResourceLoader::loadSound(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
-	if (i != _cache.end()) {
-		return dynamic_cast<Sound *>(i->second);
-	}
-
-	Block *b = getFileBlock(filename);
-	if (b == NULL)
-		return NULL;
-	Sound *result = new Sound(filename, b->data(), b->len());
 	delete b;
 	_cache[fname] = result;
 	return result;

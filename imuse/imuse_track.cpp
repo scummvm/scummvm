@@ -40,7 +40,7 @@ int Imuse::allocSlot(int priority) {
 		debug(5, "Imuse::startSound(): All slots are full");
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
-			if (track->used && !track->toBeRemoved && (lowest_priority > track->priority) && !track->stream2) {
+			if (track->used && !track->toBeRemoved && lowest_priority > track->priority) {
 				lowest_priority = track->priority;
 				trackId = l;
 			}

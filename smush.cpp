@@ -30,6 +30,11 @@
 
 Smush *g_smush;
 extern SoundMixer *g_mixer;
+static uint16 smushDestTable[5786];
+void vimaInit(uint16 *destTable);
+void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable);
+
+extern SoundMixer *g_mixer;
 
 void Smush::timerCallback(void *refCon) {
 	g_smush->handleFrame();
@@ -70,6 +75,7 @@ void Smush::init() {
 	_internalBuffer = (byte *)malloc(_width * _height * 2);
 	_externalBuffer = (byte *)malloc(_width * _height * 2);
 
+	vimaInit(smushDestTable);
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
@@ -99,15 +105,9 @@ void Smush::handleBlocky16(byte *src) {
 	_blocky16.decode(_internalBuffer, src);
 }
 
-static uint16 destTable[5786];
-void vimaInit(uint16 *destTable);
-void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable);
-
-extern SoundMixer *g_mixer;
-
 void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
-	decompressVima((char *)src, dst, size * _channels * 2, destTable);
+	decompressVima((char *)src, dst, size * _channels * 2, smushDestTable);
 	
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
@@ -196,7 +196,6 @@ void Smush::handleFramesHeader() {
 		} else if (READ_BE_UINT32(f_header + pos) == MKID_BE('Wave')) {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
-			vimaInit(destTable);
 			pos += 20;
 		} else {
 			error("unknown tag");

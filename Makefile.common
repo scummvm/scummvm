@@ -49,7 +49,6 @@ OBJS =\
 	scene.o \
 	screen.o \
 	smush.o \
-	sound.o \
 	textobject.o \
 	textsplit.o \
 	timer.o \

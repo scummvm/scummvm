@@ -24,7 +24,6 @@
 #include "lua.h"
 #include "registry.h"
 #include "engine.h"
-#include "sound.h"
 #include "timer.h"
 #include "smush.h"
 #include "mixer/mixer.h"
@@ -122,7 +121,7 @@ int main(int argc, char *argv[]) {
 	
 	g_mixer->setVolume(255);
 
-	Mixer::instance()->start();
+//	Mixer::instance()->start();
 
 	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 

@@ -61,12 +61,12 @@ public:
 		bool endFlag;
 		bool inUse;
 		int32 offsetData;
-		char name[15];
+		char name[32];
 		int16 soundId;
-		BundleMgr *bundle;
+		McmpMgr *_mcmpMgr;
 		int type;
 		int volGroupId;
-		int disk;
+		byte *ptr;
 	};
 
 private:
@@ -76,9 +76,6 @@ private:
 	bool checkForProperHandle(soundStruct *soundHandle);
 	soundStruct *allocSlot();
 	void prepareSound(byte *ptr, soundStruct *sound);
-
-	byte _disk;
-
 	void countElements(byte *ptr, int &numRegions, int &numJumps);
 
 public:

@@ -25,7 +25,6 @@
 #include "material.h"
 #include "model.h"
 #include "lua.h"
-#include "sound.h"
 #include <string>
 #include <cstdio>
 #include <map>
@@ -480,7 +479,7 @@ public:
 	~SoundComponent() { }
 
 private:
-	ResPtr<Sound> _sound;
+//	ResPtr<Sound> _sound;
 };
 
 SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename) :
@@ -488,14 +487,14 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const c
 	const char *comma = std::strchr(filename, ',');
 	if (comma != NULL) {
 		std::string realName(filename, comma);
-		_sound = ResourceLoader::instance()->loadSound(realName.c_str());
+//		_sound = ResourceLoader::instance()->loadSound(realName.c_str());
 	} else {
-		_sound = ResourceLoader::instance()->loadSound(filename);
+//		_sound = ResourceLoader::instance()->loadSound(filename);
 	}
 }
 
 void SoundComponent::setKey(int val) {
-	switch (val) {
+/*	switch (val) {
 	case 0:
 		Mixer::instance()->playSfx(_sound);
 		break;
@@ -504,11 +503,11 @@ void SoundComponent::setKey(int val) {
 		break;
 	default:
 		warning("Unknown key %d for sound %s\n", val, _sound->filename());
-	}
+	}*/
 }
 
 void SoundComponent::reset() {
-	Mixer::instance()->stopSfx(_sound);
+//	Mixer::instance()->stopSfx(_sound);
 }
 
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :

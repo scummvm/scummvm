@@ -125,7 +125,7 @@ private:
 	bool _constrain;	// Constrain to walkboxes
 	bool _visible;
 	bool _lookingMode;
-	ResPtr<Sound> _talkSound;
+//	ResPtr<Sound> _talkSound;
 	ResPtr<LipSynch> _lipSynch;
 	std::list<Costume *> _costumeStack;
 

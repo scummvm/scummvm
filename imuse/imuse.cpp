@@ -34,6 +34,9 @@ void Imuse::timerHandler(void *refCon) {
 	imuse->callback();
 }
 
+extern void vimaInit(uint16 *destTable);
+extern uint16 imuseDestTable[5786];
+
 Imuse::Imuse(int fps) {
 	_mutex = createMutex();
 	_pause = false;
@@ -48,6 +51,7 @@ Imuse::Imuse(int fps) {
 		_track[l]->trackId = l;
 		_track[l]->used = false;
 	}
+	vimaInit(imuseDestTable);
 	g_timer->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
 }
 

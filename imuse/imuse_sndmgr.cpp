@@ -19,6 +19,7 @@
 #include "../bits.h"
 #include "../debug.h"
 #include "../timer.h"
+#include "../resource.h"
 
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
@@ -31,8 +32,6 @@ ImuseSndMgr::ImuseSndMgr(ScummEngine *scumm) {
 	}
 	_vm = scumm;
 	_disk = 0;
-//	_cacheBundleDir = new BundleDirCache();
-//	BundleCodecs::initializeImcTables();
 }
 
 ImuseSndMgr::~ImuseSndMgr() {
@@ -69,6 +68,13 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 }
 
 void ImuseSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
+//		numBlocks = READ_BE_UINT16(data + 4);
+//		codecsStart = data + 8 + numBlocks * 9;
+//		codecsLen = READ_BE_UINT16(codecsStart - 2);
+//		headerPos = codecsStart + codecsLen;
+//		_numChannels = READ_LE_UINT16(headerPos + 22);
+//		dataStart = headerPos + 28 + READ_LE_UINT32(headerPos + 16);
+//		dataSize = READ_LE_UINT32(dataStart - 4);
 	if (READ_UINT32(ptr) == MKID('iMUS')) {
 		uint32 tag;
 		int32 size = 0;
@@ -118,7 +124,7 @@ void ImuseSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 				error("ImuseSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", sound->soundId, sound->name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
-		sound->offsetData =  ptr - s_ptr;
+		sound->ptr = ptr;
 	} else {
 		error("ImuseSndMgr::prepareSound(): Unknown sound format");
 	}
@@ -135,40 +141,40 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::allocSlot() {
 	return NULL;
 }
 
-ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk) {
+ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int32 soundId, int volGroupId) {
 	assert(soundId >= 0);
 	assert(soundType);
+	const char *extension = soundName + std::strlen(soundName) - 3;
+	byte *ptr = NULL;
 
 	soundStruct *sound = allocSlot();
 	if (!sound) {
 		error("ImuseSndMgr::openSound() can't alloc free sound slot");
 	}
 
-	const bool header_outside = true;
-	bool result = false;
-	byte *ptr = NULL;
-	
-	if (!result) {
-		closeSound(sound);
-		return NULL;
-	}
-	if (soundName[0] == 0) {
-//		if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
-//			closeSound(sound);
-//			return NULL;
-//		}
+	if (strcasecmp(extension, "imu") == 0) {
+		Block *b = getFileBlock(soundName);
+		if (b != NULL) {
+			ptr = b->data();
+			delete b;
+			sound->mcmpData = false;
+		} else {
+			closeSound(sound);
+			return NULL;
+		}
+	} else if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0) {
+		if (!sound->mcmpMgr->openSound(soundName, &ptr)) {
+			closeSound(sound);
+			return NULL;
+		}
+		sound->mcmpData = true;
 	} else {
-//		if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
-//			closeSound(sound);
-//			return NULL;
-//		}
+		error("ImuseSndMgr::openSound() Unrecognized extension for sound file %s\n", soundName);
 	}
 
 	strcpy(sound->name, soundName);
-	sound->soundId = soundId;
-	sound->type = soundType;
 	sound->volGroupId = volGroupId;
-	sound->disk = _disk;
+	sound->soundId = soundId;
 	prepareSound(ptr, sound);
 	return sound;
 }
@@ -300,19 +306,20 @@ int32 ImuseSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte 
 
 	int32 region_offset = soundHandle->region[region].offset;
 	int32 region_length = soundHandle->region[region].length;
-	int32 offset_data = soundHandle->offsetData;
-	int32 start = region_offset - offset_data;
 
-	if (offset + size + offset_data > region_length) {
+	if (offset + size > region_length) {
 		size = region_length - offset;
 		soundHandle->endFlag = true;
 	} else {
 		soundHandle->endFlag = false;
 	}
 
-	int header_size = soundHandle->offsetData;
-	bool header_outside = true;
-//	size = soundHandle->bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
+	if (sound->mcmpData) {
+		size = soundHandle->mcmpMgr->decompressSample(region_offset + offset, size, buf);
+	} else {
+		*buf = (byte *)malloc(size);
+		memcpy(*buf, soundHandle->resPtr + start + offset, size);
+	}
 	
 	return size;
 }
