@@ -15,3 +15,7 @@ LIBS   = `sdl-config --libs` -lmad -lm
 OBJS	= sdl.o
 
 include Makefile.common
+
+dist:
+	rm -f $(ZIPFILE)
+	zip -q $(ZIPFILE) $(DISTFILES)

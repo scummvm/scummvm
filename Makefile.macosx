@@ -13,3 +13,7 @@ LIBS	= `sdl-config --libs` -framework QuickTime -framework AudioUnit
 OBJS	= sdl.o
 
 include Makefile.common
+
+dist:
+	rm -f $(ZIPFILE)
+	zip -q $(ZIPFILE) $(DISTFILES)

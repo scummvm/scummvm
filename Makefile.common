@@ -29,10 +29,6 @@ scummvm$(EXEEXT): $(OBJS)
 clean:
 	rm -f $(OBJS) scummvm$(EXEEXT)
 
-dist:
-	rm -f $(ZIPFILE)
-	zip -q $(ZIPFILE) $(DISTFILES)
-
 $(OBJS): $(INCS)
 
 .PHONY: all clean dist

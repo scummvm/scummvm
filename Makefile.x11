@@ -13,3 +13,7 @@ LIBS	= -lXext -lX11 -lncurses -lm -lmad -lpthread
 OBJS	= x11.o
 
 include Makefile.common
+
+dist:
+	rm -f $(ZIPFILE)
+	zip -q $(ZIPFILE) $(DISTFILES)

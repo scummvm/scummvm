@@ -13,3 +13,7 @@ LIBS	= `sdl-config --libs` -lncurses
 OBJS	= sdl.o
 
 include Makefile.common
+
+dist:
+	rm -f $(ZIPFILE)
+	zip -q $(ZIPFILE) $(DISTFILES)
