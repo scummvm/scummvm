@@ -95,10 +95,15 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 #endif
 					exit(1);
 				case 'p':
-					if (*(s + 1) == '\0')
-						goto ShowHelpAndExit;
-					_gameDataPath = s + 1;
-					goto NextArg;
+					if (*(s + 1) == '\0') {
+						if (i+1 < argc && argv[i+1] && argv[i+1][0] != '-' && argv[i+1][0] != '\0') {
+							i++;
+							_gameDataPath = argv[i];
+						} else
+							goto ShowHelpAndExit;
+					} else
+						_gameDataPath = s + 1;
+ 					goto NextArg; 				
 				case 't':
 					if (*(s + 1) == '\0')
 						goto ShowHelpAndExit;
