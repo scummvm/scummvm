@@ -76,18 +76,18 @@ static inline void pushbool(bool val) {
     lua_pushnil();
 }
 
-static Costume *get_costume(Actor *a, int param) {
+static Costume *get_costume(Actor *a, int param, char *called_from) {
   Costume *result;
   if (lua_isnil(lua_getparam(param))) {
     result = a->currentCostume();
     if (result == NULL)
-      error("Actor %s has no costume\n", a->name());
+      warning("Actor %s has no costume [%s]\n", a->name(), called_from);
   }
   else {
     result = a->findCostume(luaL_check_string(param));
     if (result == NULL)
-      error("Actor %s has no costume %s\n", a->name(),
-	    lua_getstring(lua_getparam(param)));
+      warning("Actor %s has no costume %s [%s]\n", a->name(),
+	    lua_getstring(lua_getparam(param)), called_from);
   }
   return result;
 }
@@ -238,8 +238,10 @@ static void SetActorTalkChore() {
   Actor *act = check_actor(1);
   int index = check_int(2);
   int chore = check_int(3);
-  Costume *costume = get_costume(act, 4);
+  Costume *costume = get_costume(act, 4, "setActorTalkChore");
 
+  if (!costume)
+    return;
   costume->setTalkChore(index, chore);
 }
 
@@ -358,14 +360,20 @@ static void GetActorCostumeDepth() {
 static void PlayActorChore() {
   Actor *act = check_actor(1);
   int num = check_int(2);
-  Costume *cost = get_costume(act, 3);
+  Costume *cost = get_costume(act, 3, "playActorChore");
+
+  if (!cost)
+    return;
   cost->playChore(num);
 }
 
 static void PlayActorChoreLooping() {
   Actor *act = check_actor(1);
   int num = check_int(2);
-  Costume *cost = get_costume(act, 3);
+  Costume *cost = get_costume(act, 3, "playActorChoreLooping");
+
+  if (!cost)
+    return;
   cost->playChoreLooping(num);
 }
 
@@ -373,13 +381,20 @@ static void SetActorChoreLooping() {
   Actor *act = check_actor(1);
   int num = check_int(2);
   bool val = getbool(3);
-  Costume *cost = get_costume(act, 4);
+  Costume *cost = get_costume(act, 4, "setActorChoreLooping");
+
+  if (!cost)
+    return;
   cost->setChoreLooping(num, val);
 }
 
 static void StopActorChore() {
   Actor *act = check_actor(1);
-  Costume *cost = get_costume(act, 3);
+  Costume *cost = get_costume(act, 3, "stopActorChore");
+
+  if (!cost)
+    return;
+
   if (lua_isnil(lua_getparam(2)))
     cost->stopChores();
   else
@@ -389,8 +404,14 @@ static void StopActorChore() {
 static void IsActorChoring() {
   Actor *act = check_actor(1);
   bool excludeLooping = getbool(3);
-  Costume *cost = get_costume(act, 4);
+  Costume *cost = get_costume(act, 4, "isActorChoring");
   int result;
+
+
+  if (!cost) {
+    lua_pushnil();
+    return;
+  }
   if (lua_isnil(lua_getparam(2)))
     result = cost->isChoring(excludeLooping);
   else
