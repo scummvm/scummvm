@@ -565,6 +565,10 @@ void ScummEngine_v6he::o6_actorOps() {
 		return;
 
 	switch (b) {
+	case 21:
+		// HE 7.3 (Pajama Sam onwards)
+		k = getStackList(args, ARRAYSIZE(args));
+		break;
 	case 30:
 		// _heversion >= 70
 		l = pop();
@@ -714,10 +718,15 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->needBgReset = true;
 		break;
 	case 225:
-		i = pop(); // talkie slot
-		resStrLen(_scriptPointer);
+		{
+		byte string[256];
+		copyScriptString(string);
+		_actorToPrintStrFor = pop();
+		_string[0].loadDefault();
+		actorTalk(string);
 		warning("o6_actorOps: stub case %d", b);
 		break;
+		}
 	default:
 		error("o6_actorOps: default case %d", b);
 	}
