@@ -34,6 +34,8 @@ public:
   BitmapComponent(Costume::Component *parent, int parentID,
 		 const char *filename);
   BitmapComponent *copy(Costume::Component *newParent);
+  ~BitmapComponent();
+
   void update();
   void draw();
 
@@ -105,6 +107,14 @@ BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
 
   bitmap_ = ResourceLoader::instance()->loadBitmap(filename);
   warning("Instanced BitmapComponenet from Costume renderer: NOT IMPLEMENTED YET");
+}
+
+BitmapComponent::~BitmapComponent() {
+  if (bitmap_)
+	delete[] bitmap_;
+
+  if (zbuffer_)
+	delete[] zbuffer_;
 }
 
 BitmapComponent *BitmapComponent::copy(Costume::Component *newParent) {
