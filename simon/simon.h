@@ -353,6 +353,9 @@ public:
 	byte *_sdl_buf;
 	byte *_sdl_buf_attached;
 
+	RandomSource _rnd;
+
+
 	SimonState(GameDetector *detector, OSystem *syst);
 	virtual ~SimonState();
 
@@ -754,7 +757,6 @@ public:
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);
 
-
 	Item *getNextItemPtrStrange();
 
 	bool save_game(uint slot, const char *caption);
@@ -798,8 +800,6 @@ public:
 	void show_it(void *buf);
 
 	char *gen_savename(int slot);
-
-	RandomSource _rnd;
 };
 
 void palette_fadeout(uint32 *pal_values, uint num);

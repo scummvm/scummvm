@@ -371,6 +371,8 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	memset(_fcs_data_1, 0, sizeof(_fcs_data_1));
 	memset(_fcs_data_2, 0, sizeof(_fcs_data_2));
 
+	_free_string_slot = 0;
+	
 	memset(_pathfind_array, 0, sizeof(_pathfind_array));
 
 	memset(_palette_backup, 0, sizeof(_palette_backup));
@@ -378,13 +380,34 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	memset(_video_buf_1, 0, sizeof(_video_buf_1));
 
-//... TODO: init more member vars
-
 	_fcs_list = new FillOrCopyStruct[16];
 
-	_free_string_slot = 0;
-	
+	_num_screen_updates = 0;
+	_vga_tick_counter = 0;
+
+	_sound = 0;
+
+	_effects_paused = false;
+	_ambient_paused = false;
+	_music_paused = false;
+
+	_timer_id = 0;
+
 	_dump_file = 0;
+
+	_saveload_row_curpos = 0;
+	_num_savegame_rows = 0;
+	_savedialog_flag = false;
+	_save_or_load = false;
+	_saveload_flag = false;
+
+	_sdl_mouse_x = 0;
+	_sdl_mouse_y = 0;
+	
+	_sdl_buf_3 = 0;
+	_sdl_buf = 0;
+	_sdl_buf_attached = 0;
+
 
 	// Setup midi driver
 	if (!driver)
@@ -406,10 +429,6 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
-
-	_effects_paused = false;
-	_ambient_paused = false;
-	_music_paused = false;
 }
 
 SimonState::~SimonState() {
