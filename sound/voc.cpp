@@ -26,7 +26,7 @@
 #include "sound/voc.h"
 
 
-byte *readCreativeVoc(byte *ptr, int32 &size, int &rate, int32 &loops) {
+byte *readVOCFromMemory(byte *ptr, int32 &size, int &rate, int32 &loops) {
 	
 	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
@@ -88,11 +88,11 @@ enum {
 	SOUND_HEADER_BIG_SIZE = 26 + 8
 };
 
-// FIXME/TODO: loadVocSample() essentially duplicates all the code from
+// FIXME/TODO: loadVOCFile() essentially duplicates all the code from
 // readCreativeVoc(). Obviously this is bad, it should rather use that function
 // (after some tweaks to readCreativeVoc, to deal with the alternate VTLK
 // header).
-byte *loadVocSample(File *file, int32 &size, int &rate) {
+byte *loadVOCFile(File *file, int32 &size, int &rate) {
 	char ident[8];
 
 	if (file->read(ident, 8) != 8)
@@ -104,7 +104,7 @@ byte *loadVocSample(File *file, int32 &size, int &rate) {
 		file->seek(SOUND_HEADER_SIZE - 8, SEEK_CUR);
 	} else {
 	invalid:;
-		warning("loadVocSample: invalid header");
+		warning("loadVOCFile: invalid header");
 		return NULL;
 	}
 
@@ -112,7 +112,7 @@ byte *loadVocSample(File *file, int32 &size, int &rate) {
 
 	file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 	if (voc_block_hdr.blocktype != 1) {
-		warning("loadVocSample: Expecting block_type == 1, got %d", voc_block_hdr.blocktype);
+		warning("loadVOCFile: Expecting block_type == 1, got %d", voc_block_hdr.blocktype);
 		return NULL;
 	}
 
@@ -121,18 +121,18 @@ byte *loadVocSample(File *file, int32 &size, int &rate) {
 	int comp = voc_block_hdr.pack;
 
 	if (comp != 0) {
-		warning("loadVocSample: Unsupported compression type %d", comp);
+		warning("loadVOCFile: Unsupported compression type %d", comp);
 		return NULL;
 	}
 
 	byte *data = (byte *)malloc(size);
 	if (data == NULL) {
-		error("loadVocSample: out of memory");
+		error("loadVOCFile: out of memory");
 	}
 
 	if ((int)file->read(data, size) != size) {
 		/* no need to free the memory since error will shut down */
-		error("startSfxSound: cannot read %d bytes", size);
+		error("loadVOCFile: cannot read %d bytes", size);
 	}
 
 	return data;

@@ -812,7 +812,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 	int32 size;
 	int rate;
-	byte *data = loadVocSample(_sfxFile, size, rate);
+	byte *data = loadVOCFile(_sfxFile, size, rate);
 
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->setVocVoice(data, size, rate);

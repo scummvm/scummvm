@@ -836,7 +836,7 @@ void IMuseDigital::startSound(int sound) {
 				_voiceVocData = NULL;
 			} else if (READ_UINT32(ptr) == MKID('Crea')) {
 				int32 loops = 0;
-				byte *t_ptr= readCreativeVoc(ptr, size, _channel[l].freq, loops);
+				byte *t_ptr= readVOCFromMemory(ptr, size, _channel[l].freq, loops);
 				_channel[l].mixerSize = _channel[l].freq * 2;
 				_channel[l].size = size * 2;
 				_channel[l].bits = 8;
