@@ -68,7 +68,7 @@ void Scumm::openRoom(int room) {
                 _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 #else
                 if (!(_features & GF_SMALL_HEADER)) {
-                        sprintf(buf, "%s//%s.%.3d", _exe_name, _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
+                        sprintf(buf, "%s.%.3d",  _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
 			
                         _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
                 } else if(!(_features & GF_SMALL_NAMES)) {
