@@ -36,7 +36,9 @@ public:
 	LauncherDialog(NewGui *gui, GameDetector &detector);
 	~LauncherDialog();
 
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void open();
+	virtual void close();
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	ListWidget		*_list;

@@ -35,22 +35,20 @@ protected:
 	bool			_caretVisible;
 	uint32			_caretTime;
 public:
-	EditTextWidget(Dialog *boss, int x, int y, int w, int h);
-	virtual ~EditTextWidget();
+	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual bool handleKeyDown(char key, int modifiers);
 	virtual bool handleKeyUp(char key, int modifiers);
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	//virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual bool wantsFocus() { return true; };
 
 protected:
 	void drawWidget(bool hilite);
 	void drawCaret(bool erase);
-	void lostFocusWidget();
+	void lostFocusWidget() { _backupString = _label; drawCaret(true); }
 };
 
 #endif

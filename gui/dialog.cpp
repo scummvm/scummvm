@@ -90,11 +90,17 @@ void Dialog::close()
 		_mouseWidget->handleMouseLeft(0);
 		_mouseWidget = 0;
 	}
+	releaseFocus();
+}
+
+void Dialog::releaseFocus()
+{
 	if (_focusedWidget) {
 		_focusedWidget->lostFocus();
 		_focusedWidget = 0;
 	}
 }
+
 
 void Dialog::draw()
 {
@@ -134,8 +140,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 	if (w && w != _focusedWidget) {
 		// The focus will change. Tell the old focused widget (if any)
 		// that it lost the focus.
-		if (_focusedWidget)
-			_focusedWidget->lostFocus();
+		releaseFocus();
 	
 		// Tell the new focused widget (if any) that it just gained the focus.
 		if (w)
@@ -157,8 +162,7 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount)
 		
 		// Lose focus on mouseup unless the widget requested to retain the focus
 		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
-			_focusedWidget->lostFocus();
-			_focusedWidget = 0;
+			releaseFocus();
 		}
 
 	} else {
@@ -208,6 +212,8 @@ void Dialog::handleKeyDown(char key, int modifiers)
 	// ESC closes all dialogs by default
 	if (key == 27)
 		close();
+	
+	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
 
 void Dialog::handleKeyUp(char key, int modifiers)

@@ -62,6 +62,8 @@ public:
 	int16	getX() const		{ return _x; }
 	int16	getY() const		{ return _y; }
 
+	void releaseFocus();
+
 protected:
 	virtual void open();
 	virtual void close();

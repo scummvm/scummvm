@@ -92,47 +92,13 @@ void ListWidget::handleTickle()
 {
 	uint32 time = _boss->getGui()->get_time();
 	if (_editMode && _caretTime < time) {
-		_caretTime = time + 300;
+		_caretTime = time + kCaretBlinkTime;
 		if (_caretVisible) {
 			drawCaret(true);
 		} else {
 			drawCaret(false);
 		}
 	}
-}
-
-void ListWidget::drawCaret(bool erase)
-{
-	// Only draw if item is visible
-	if (_selectedItem < _currentPos || _selectedItem >= _currentPos + _entriesPerPage)
-		return;
-	if (!isVisible() || !_boss->isVisible())
-		return;
-
-	NewGui *gui = _boss->getGui();
-	
-	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
-	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
-	int x = _x + _boss->getX() + 3;
-	int y = _y + _boss->getY() + 1;
-	ScummVM::String	buffer;
-
-	y += (_selectedItem - _currentPos) * kLineHeight;
-
-	if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
-		char temp[10];
-		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
-		buffer = temp;
-		buffer += _list[_selectedItem];
-	} else
-		buffer = _list[_selectedItem];
-
-	x += gui->getStringWidth(buffer);
-
-	gui->vline(x, y, y+kLineHeight, color);
-	gui->addDirtyRect(x, y, 2, kLineHeight);
-	
-	_caretVisible = !erase;
 }
 
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
@@ -330,6 +296,40 @@ void ListWidget::drawWidget(bool hilite)
 		gui->drawString(buffer, _x+2, _y+3 + kLineHeight * i, _w - 4,
 							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
 	}
+}
+
+void ListWidget::drawCaret(bool erase)
+{
+	// Only draw if item is visible
+	if (_selectedItem < _currentPos || _selectedItem >= _currentPos + _entriesPerPage)
+		return;
+	if (!isVisible() || !_boss->isVisible())
+		return;
+
+	NewGui *gui = _boss->getGui();
+	
+	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
+	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
+	int x = _x + _boss->getX() + 3;
+	int y = _y + _boss->getY() + 1;
+	ScummVM::String	buffer;
+
+	y += (_selectedItem - _currentPos) * kLineHeight;
+
+	if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
+		char temp[10];
+		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
+		buffer = temp;
+		buffer += _list[_selectedItem];
+	} else
+		buffer = _list[_selectedItem];
+
+	x += gui->getStringWidth(buffer);
+
+	gui->vline(x, y, y+kLineHeight, color);
+	gui->addDirtyRect(x, y, 2, kLineHeight);
+	
+	_caretVisible = !erase;
 }
 
 void ListWidget::scrollToCurrent() {

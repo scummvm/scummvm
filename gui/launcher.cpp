@@ -50,6 +50,7 @@ typedef ScummVM::List<const VersionSettings *> GameList;
  * - the description (used for user feedback only)
  * - amiga/subtitles flag? Although those make only sense for Scumm games
  * - the music driver for that game (<Default> or custom)
+ *   Of course this means we need an API to query the available music drivers.
  * - maybe scaler. But there are two problems:
  *   1) different backends can have different scalers with different names,
  *      so we first have to add a way to query those... no Ender, I don't
@@ -97,19 +98,18 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	}
 	
 	// Label & edit widget for the description
-	new StaticTextWidget(this, 10, 8, 40, kLineHeight, "Name: ", kTextAlignRight);
-	new StaticTextWidget(this, 50, 8, _w-50-10, kLineHeight, description, kTextAlignLeft);	// TODO - should be an EditTextWidget
-	
-	
+	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "Name: ", kTextAlignRight);
+	new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, description);
+
 	// Path to game data (view only)
 	String path(_config.get("path", domain));
-	new StaticTextWidget(this, 10, 20, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(this, 50, 20, _w-50-10, kLineHeight, path, kTextAlignLeft);
+	new StaticTextWidget(this, 10, 24, 40, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(this, 50, 24, _w-50-10, kLineHeight, path, kTextAlignLeft);
 	
 
 	// Add OK & Cancel buttons
 	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
-	addButton(_w-(kButtonWidth+10), _h-24, "OK", kCloseCmd, 0);
+	addButton(_w-(kButtonWidth+10), _h-24, "OK", kOKCmd, 0);
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -172,6 +172,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	
 	// Create file browser dialog
 	_browser = new BrowserDialog(_gui);
+
 }
 
 LauncherDialog::~LauncherDialog()
@@ -179,18 +180,29 @@ LauncherDialog::~LauncherDialog()
 	delete _browser;
 }
 
+void LauncherDialog::open()
+{
+	Dialog::open();
+	g_config->set_writing(true);
+}
+
+void LauncherDialog::close()
+{
+	g_config->flush();
+	g_config->set_writing(false);
+	Dialog::close();
+}
+
 void LauncherDialog::updateListing()
 {
 	int i;
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
-	// TODO - maybe only display those games for which settings are known
-	// (i.e. a path to the game data was set and is accesible) ?
-
 
 	// Retrieve a list of all games defined in the config file
+	_domains.clear();
 	StringList domains = g_config->get_domains();
-	for (i = 0; i < domains.size();i++) {
+	for (i = 0; i < domains.size(); i++) {
 		String name(g_config->get("gameid", domains[i]));
 		String description(g_config->get("description", domains[i]));
 		
@@ -217,8 +229,7 @@ void LauncherDialog::updateListing()
 		}
 	}
 
-	if (l.size() > 0) 
-		_list->setList(l);
+	_list->setList(l);
 }
 
 /*
@@ -340,9 +351,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 					// User pressed OK, so make changes permanent
 
 					// Write config to disk
-					g_config->set_writing(true);
 					g_config->flush();
-					g_config->set_writing(false);
 					
 					// Update the ListWidget and force a redraw
 					updateListing();
@@ -358,6 +367,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Remove the currently selected game from the list
 		assert(item >= 0);
 		g_config->delete_domain(_domains[item]);
+
+		// Write config to disk
+		g_config->flush();
+		
+		// Update the ListWidget and force a redraw
 		updateListing();
 		draw();
 		break;
@@ -374,9 +388,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User pressed OK, so make changes permanent
 
 			// Write config to disk
-			g_config->set_writing(true);
 			g_config->flush();
-			g_config->set_writing(false);
 			
 			// Update the ListWidget and force a redraw
 			updateListing();

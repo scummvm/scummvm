@@ -41,11 +41,16 @@ enum {
 
 enum {
 	kStaticTextWidget	= 'TEXT',
+	kEditTextWidget		= 'EDIT',
 	kButtonWidget		= 'BTTN',
 	kCheckboxWidget		= 'CHKB',
 	kSliderWidget		= 'SLDE',
 	kListWidget			= 'LIST',
 	kScrollBarWidget	= 'SCRB'
+};
+
+enum {
+	kCaretBlinkTime = 300
 };
 
 enum {

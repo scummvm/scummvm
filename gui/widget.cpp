@@ -101,7 +101,7 @@ void StaticTextWidget::setValue(int value)
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label.c_str(), _x, _y, _w, gui->_textcolor, _align);
+	gui->drawString(_label, _x, _y, _w, gui->_textcolor, _align);
 }
 
 
@@ -125,7 +125,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount)
 void ButtonWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label.c_str(), _x, _y, _w,
+	gui->drawString(_label, _x, _y, _w,
 	                !isEnabled() ? gui->_color :
 	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
@@ -195,7 +195,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 		gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 	
 	// Finally draw the label
-	gui->drawString(_label.c_str(), _x + 20, _y + 3, _w, gui->_textcolor);
+	gui->drawString(_label, _x + 20, _y + 3, _w, gui->_textcolor);
 }
 
 #pragma mark -
