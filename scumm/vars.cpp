@@ -91,6 +91,7 @@ void ScummEngine::setupScummVars() {
 		VAR_SOUNDPARAM3 = 66;
 	}
 	if (_version >= 5) {
+		VAR_FADE_DELAY = 59;
 		VAR_MOUSEPRESENT = 67;
 		VAR_PERFORMANCE_1 = 68;
 		VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
@@ -335,6 +336,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_DEFAULT_TALK_DELAY = 114;
 	VAR_CHARINC = 115;
 	VAR_DEBUGMODE = 116;
+	VAR_FADE_DELAY = 117;
 
 	// Full Throttle specific	
 	VAR_CHARSET_MASK = 119;

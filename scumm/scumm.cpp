@@ -668,6 +668,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_USERPUT = 0xFF;
 	VAR_SOUNDRESULT = 0xFF;
 	VAR_TALKSTOP_KEY = 0xFF;
+	VAR_FADE_DELAY = 0xFF;
 	VAR_NOSUBTITLES = 0xFF;
 
 	VAR_SOUNDPARAM = 0xFF;
@@ -1350,10 +1351,6 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_MOUSEPRESENT) = true;
 		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
-
-		// Sets fade delay
-		// byte VAR_FADE_DELAY = (_version == 7) ? 117 : 59;
-		// VAR(VAR_FADE_DELAY) = 3;
 	}
 	
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {
@@ -1374,6 +1371,9 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 	}
 
+	if (VAR_FADE_DELAY != 0xFF)
+		VAR(VAR_FADE_DELAY) = 3;
+		
 	VAR(VAR_CHARINC) = 4;
 	setTalkingActor(0);
 }
