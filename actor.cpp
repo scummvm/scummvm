@@ -120,7 +120,8 @@ void Actor::setRestChore(int chore, Costume *cost) {
 		restCostume_->stopChore(restChore_);
 	restCostume_ = cost;
 	restChore_ = chore;
-	restCostume_->playChoreLooping(restChore_);
+	if (restChore_ >= 0)
+		restCostume_->playChoreLooping(restChore_);
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {

@@ -148,7 +148,15 @@ void Scene::Light::load(TextSplitter &ts) {
 }
 
 void Scene::Setup::setupCamera() const {
-	g_driver->setupCamera(fov_, nclip_, fclip_, roll_);
+	// Ignore nclip_ and fclip_ for now.  This fixes:
+	// (a) Nothing was being displayed in the Land of the Living
+	// diner because lr.set set nclip to 0.
+	// (b) The zbuffers for setups with different nclip or
+	// fclip values.  If it turns out that the clipping planes
+	// are important at some point, we'll need to modify the
+	// zbuffer transformation in bitmap.cpp to take nclip_ and
+	// fclip_ into account.
+	g_driver->setupCamera(fov_, 0.01f, 3276.8f, roll_);
 	g_driver->positionCamera(pos_, interest_);
 }
 

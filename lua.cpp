@@ -278,8 +278,17 @@ static void GetActorTalkColor() {
 
 static void SetActorRestChore() {
 	Actor *act = check_actor(1);
-	int chore = check_int(2);
-	Costume *costume = get_costume(act, 3, "SetActorRestChore");
+	int chore;
+	Costume *costume;
+
+	if (lua_isnil(lua_getparam(2))) {
+		chore = -1;
+		costume = NULL;
+	}
+	else {
+		chore = check_int(2);
+		costume = get_costume(act, 3, "SetActorRestChore");
+	}
 
 	act->setRestChore(chore, costume);
 }
