@@ -36,6 +36,8 @@
 
 #include <SDL.h>
 
+#define TOTAL_ZONES 3
+
 class OSystem_WINCE3 : public OSystem_SDL {
 public:
 	OSystem_WINCE3();
@@ -72,6 +74,7 @@ public:
 
 //#ifdef WIN32_PLATFORM_WFSP
 	// Smartphone actions
+	void initZones();
 	void loadSmartphoneConfigurationElement(String element, int &value, int defaultValue);
 	void loadSmartphoneConfiguration();
 	void add_left_click(bool pushed);
@@ -181,6 +184,21 @@ private:
 	int _stepY1;				// offset for up and down cursor moves (slowest)
 	int _stepY2;				// offset for up and down cursor moves (faster)
 	int _stepY3;				// offset for up and down cursor moves (fastest)
+
+	int _mouseXZone[TOTAL_ZONES];
+	int _mouseYZone[TOTAL_ZONES];
+	int _currentZone;
+
+	typedef struct zoneDesc {
+		    int x;
+	        int y;
+			int width;
+			int height;
+	} zoneDesc;
+
+	static zoneDesc _zones[TOTAL_ZONES];
+
+
 };
 
 #endif
