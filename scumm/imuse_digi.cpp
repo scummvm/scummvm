@@ -751,9 +751,8 @@ void IMuseDigital::callback() {
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l].used) {
 			if (_channel[l].toBeRemoved) {
+				debug(5, "IMuseDigital::callback(): stoped sound: %d", _channel[l].idSound);
 				_scumm->_mixer->endStream(_channel[l].handle);
-				debug(5, "IMuseDigital::mixerCallback(): stop sound: %d", _channel[l].idSound);
-
 				free(_channel[l].data);
 				_channel[l].used = false;
 				continue;
@@ -1044,7 +1043,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	case 14: // ImuseFadeParam
 		switch (sub_cmd) {
 		case 0x600: // set new volume with fading
-			debug(0, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
+			debug(5, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
 			if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
 				stopSound(sample);
 				return;
