@@ -4039,6 +4039,10 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 		char buf[50];
 		uint32 size;
 
+        // FIXME - weird hack to make the beard show up when wearing it (see bug #590800)
+        if (vga_id == 328)
+            sprintf(buf, "0119.VGA");
+        else
 		sprintf(buf, "%.3d%d.VGA", vga_id >> 1, (vga_id & 1) + 1);
 
 		in = fopen_maybe_lowercase(buf);
