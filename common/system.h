@@ -128,7 +128,74 @@ public:
 
 
 
-	/** @name Graphics */
+	/**
+	 * @name Graphics
+	 *
+	 * The way graphics work in the class OSystem are meant to make
+	 * it possible for game frontends to implement all they need in
+	 * an efficient manner. The downside of this is that it may be
+	 * rather complicated for backend authors to fully understand and
+	 * implement the semantics of the OSystem interface.
+	 * 
+	 * 
+	 * The graphics visible to the user in the end are actually
+	 * composed in three layers: the game graphics, the overlay
+	 * graphics, and the mouse.
+	 * 
+	 * First, there are the game graphics. They are always 8bpp, and
+	 * the methods in this section deal with them exclusively. In
+	 * particular, the size of the game graphics is defined by a call
+	 * to initSize(), and copyRectToScreen() blits 8bpp data into the
+	 * game layer. Let W and H denote the width and height of the
+	 * game graphics.
+	 * 
+	 * Before the user sees these graphics, they may undergo certain
+	 * transformations; for example, the may be scaled to better fit
+	 * on the visible screen; or aspect ratio correction may be
+	 * performed (see kFeatureAspectRatioCorrection). As a result of
+	 * this, a pixel of the game graphics may occupy a region bigger
+	 * than a single pixel on the screen. We define p_w and p_h to be
+	 * the width resp. height of a game pixel on the screen.
+	 * 
+	 * In addition, there is a vertical "shake offset" (as defined by
+	 * setShakePos) which is used in some games to provide a shaking
+	 * effect. Note that shaking is applied to all three layers, i.e.
+	 * also to the overlay and the mouse. We denote the shake offset
+	 * by S.
+	 * 
+	 * Putting this together, a pixel (x,y) of the game graphics is
+	 * transformed to a rectangle of height p_h and widht p_w
+	 * appearing at position (p_w * x, p_hw * (y + S)) on the real
+	 * screen (in addition, a backend may choose to offset
+	 * everything, e.g. to center the graphics on the screen).
+	 * 
+	 * 
+	 * The next layer is the overlay. It is composed over the game
+	 * graphics. By default, it has exactly the same size and
+	 * resolution as the game graphics. However, client code can
+	 * specify an overlay scale (as an additional parameter to
+	 * initSize()). This is meant to increase the resolution of the
+	 * overlay while keeping its size the same as that of the game
+	 * graphics. For example, if the overlay scale is 2, and the game
+	 * graphics have a resolution of 320x200; then the overlay shall
+	 * have a resolution of 640x400, but it still has the same
+	 * physical size as the game graphics. 
+	 * 
+	 * 
+	 * Finally, there is the mouse layer. This layer doesn't have to
+	 * actually exist within the backend -- it all depends on how a
+	 * backend chooses to implement mouse cursors, but in the default
+	 * SDL backend, it really is a separate layer. The mouse is
+	 * always in 8bpp but can have a palette of its own, if the
+	 * backend supports it. The scale of the mouse cursor is called
+	 * 'cursorTargetScale'. This is meant as a hint to the backend.
+	 * For example, let us assume the overlay is not visible, and the
+	 * game graphics are displayed using a 2x scaler. If a mouse
+	 * cursor with a cursorTargetScale of 1 is set, then it should be
+	 * scaled by factor 2x, too, just like the game graphics. But if
+	 * it has a cursorTargetScale of 2, then it shouldn't be scaled
+	 * again by the game graphics scaler.
+	 */
 	//@{
 
 	/**
@@ -358,7 +425,7 @@ public:
 	
 	/**
 	 * Copy the content of the overlay into a buffer provided by the caller.
-	 * This is used to implement fake alpha blending.
+	 * This is only used to implement fake alpha blending.
 	 */
 	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
 	
