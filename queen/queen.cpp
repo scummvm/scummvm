@@ -360,7 +360,7 @@ int QueenEngine::init(GameDetector &detector) {
 		warning("Sound initialisation failed.");
 	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
 	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, 256);
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, SoundMixer::kMaxMixerVolume);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
