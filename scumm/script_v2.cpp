@@ -2550,7 +2550,6 @@ void Scumm::o6_talkActor()
 		pointer[j] = 0;
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
-		printf("Said %s, talkchannel is %d\n", transText, _sound->_talkChannel);
 		setStringVars(0);
 		actorTalk();
 	} else {
@@ -2577,7 +2576,6 @@ void Scumm::o6_talkEgo()
 		}
 		pointer[j] = 0;
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
-		printf("Said %s, talkchannel is %d\n", transText, _sound->_talkChannel);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
 		actorTalk();
