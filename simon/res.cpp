@@ -103,10 +103,12 @@ bool SimonState::loadGamePcFile(const char *filename)
 	/* read main gamepc file */
 	in->open(filename, _gameDataPath);
 	if (in->isOpen() == false) {
-		char filename2[strlen(filename) + 1];
+		char *filename2;
+		filename2 = (char *)malloc(strlen(filename) + 1);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
 		in->open(filename2, _gameDataPath);
+		free(filename2);
 		if (in->isOpen() == false)
 			return false;
 	}

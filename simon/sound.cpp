@@ -94,10 +94,12 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
 	file->open(filename, gameDataPath);
 
 	if (file->isOpen() == false) {
-		char filename2[strlen(filename) + 1];
+		char *filename2;
+		filename2 = (char *)malloc(strlen(filename) + 1);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
 		file->open(filename2, gameDataPath);
+		free(filename2);
 		if (file->isOpen() == false) {
 			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
 			warning("readSfxFile: Cannot load sfx file %s", filename);
