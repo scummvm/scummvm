@@ -95,7 +95,7 @@ void ScummEngine::CHARSET_1() {
 	if (getTalkingActor() != 0xFF)
 		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
 
-	if (a && a->isInCurrentRoom() && _string[0].overhead != 0) {
+	if (a && _string[0].overhead != 0) {
 		if (_version <= 5) {
 			_string[0].xpos = a->_pos.x - camera._cur.x + (_screenWidth / 2);
 
@@ -110,9 +110,11 @@ void ScummEngine::CHARSET_1() {
 			s = a->scaley * a->talkPosY / 0xFF;
 			_string[0].ypos = ((a->talkPosY - s) / 2) + s - a->getElevation() + a->_pos.y;
 
-			if (_string[0].ypos < _screenTop) {
-				_string[0].ypos = _screenTop;
-			}
+			if (_features & GF_NEW_CAMERA)
+				_string[0].ypos = _string[0].ypos - camera._cur.y + (_screenHeight / 2);
+
+			if (_string[0].ypos > _screenHeight - 40)
+				_string[0].ypos = _screenHeight - 40;
 
 			s = a->scalex * a->talkPosX / 0xFF;
 			_string[0].xpos = ((a->talkPosX - s) / 2) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
