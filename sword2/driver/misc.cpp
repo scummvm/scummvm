@@ -21,32 +21,32 @@
 #include "driver96.h"
 #include "../sword2.h"
 
-uint32 timeGetTime(void) {
+uint32 SVM_timeGetTime(void) {
 	return g_bs2->_syst->get_msecs();
 }
 
-void VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
+void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
 	warning("stub VirtualUnlock");
 }
 
-void GlobalMemoryStatus(MEMORYSTATUS *memo) {
+void SVM_GlobalMemoryStatus(MEMORYSTATUS *memo) {
 	warning("stub GlobalMemoryStatus");
 	memo->dwTotalPhys = 16000*1024; // hard code 16mb for now
 }
 
-void SetFileAttributes(char *file, uint32 atrib) {
+void SVM_SetFileAttributes(char *file, uint32 atrib) {
 	warning("stub SetFileAttributes");
 }
 
-void DeleteFile(char *file) {
+void SVM_DeleteFile(char *file) {
 	warning("stub DeleteFile");
 }
 
-void GetCurrentDirectory(uint32 max, char* path) {
+void SVM_GetCurrentDirectory(uint32 max, char* path) {
 	warning("stub GetCurrentDirectory");
 }
 
-int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a) {
+int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a) {
 	warning("stub GetVolumeInformation %s", cdPath);
 	strcpy(sCDName, CD1_LABEL);
 	return 1;
@@ -57,7 +57,7 @@ void scumm_mkdir(const char *pathname) {
 	warning("stub scumm_mkdir %s", pathname);
 }
 
-void GetModuleFileName(void *module, char *destStr, uint32 maxLen) {
+void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen) {
 	warning("stub GetModuleFileName");
 }
 

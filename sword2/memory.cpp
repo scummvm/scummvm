@@ -59,7 +59,7 @@ void	Close_memory_manager(void)	//Tony2Oct96
 {
 
 //unlock our supposedly locked in memory
-	VirtualUnlock(free_memman, total_free_memory);
+	SVM_VirtualUnlock(free_memman, total_free_memory);
 
 	free(free_memman);
 }
@@ -72,7 +72,7 @@ void	Init_memory_manager(void)	//Tony9April96
 	MEMORYSTATUS	memo;
 
 //find out how much actual physical RAM this computer has
-	GlobalMemoryStatus(&memo);
+	SVM_GlobalMemoryStatus(&memo);
 
 //now decide how much to grab - 8MB computer are super critical
 	if	(memo.dwTotalPhys<=(8000*1024))	//if 8MB or less :-O

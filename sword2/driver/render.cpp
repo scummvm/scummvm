@@ -901,7 +901,7 @@ int32 InitialiseRenderCycle(void)
 
 {
 
-	initialTime = timeGetTime();
+	initialTime = SVM_timeGetTime();
 	originTime = initialTime;
 	totalTime = initialTime + MILLISECSPERCYCLE;
 
@@ -919,7 +919,7 @@ int32 StartRenderCycle(void)
 	scrollxOld = scrollx;
 	scrollyOld = scrolly;
 
-	startTime = timeGetTime();
+	startTime = SVM_timeGetTime();
 
 	if (startTime + renderAverageTime >= totalTime)
 	{
@@ -948,7 +948,7 @@ int32 EndRenderCycle(BOOL *end)
 
 	int32 time;
 
-	time = timeGetTime();
+	time = SVM_timeGetTime();
 	renderTimeLog[renderCountIndex] = time - startTime;
 	startTime += renderTimeLog[renderCountIndex];
 	renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;

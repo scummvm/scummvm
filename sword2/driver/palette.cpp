@@ -378,7 +378,7 @@ int32 FadeUp(float time)
 
 	fadeTotalTime = (int32) (time * 1000);
 	fadeStatus = RDFADE_UP;
-	fadeStartTime = timeGetTime();
+	fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
 
@@ -394,7 +394,7 @@ int32 FadeDown(float time)
 
 	fadeTotalTime = (int32) (time * 1000);
 	fadeStatus = RDFADE_DOWN;
-	fadeStartTime = timeGetTime();
+	fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
 

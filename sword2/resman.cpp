@@ -1007,8 +1007,8 @@ void resMan::CacheNewCluster(uint32 newCluster)
 
 	if (i<total_clusters)
 	{
-		SetFileAttributes(resource_files[i], FILE_ATTRIBUTE_NORMAL);
-		DeleteFile(resource_files[i]);
+		SVM_SetFileAttributes(resource_files[i], FILE_ATTRIBUTE_NORMAL);
+		SVM_DeleteFile(resource_files[i]);
 		cdTab[i] &= (0xff - LOCAL_CACHE);
 		FILE *file;
 		file = fopen("cd.inf", "r+b");
@@ -1106,7 +1106,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	RenderParallax(FetchBackgroundLayer(bgfile), 2);
 	res_man.Res_close(2950);		// release the screen resource
 
-	SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status, if it is set.
+	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status, if it is set.
 
 	FILE *inFile, *outFile;
 	
@@ -1299,7 +1299,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	FlipScreens();
 	FadeUp((float)0.75);
 
-	SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status.
+	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status.
 
 	// Update cd.inf and cdTab
 	cdTab[newCluster] |= LOCAL_CACHE;
@@ -1338,7 +1338,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 		fseek(file, -3, SEEK_END);
 
 		char path[_MAX_PATH];
-		GetCurrentDirectory(_MAX_PATH, path);
+		SVM_GetCurrentDirectory(_MAX_PATH, path);
 
 		strcat(path, "\\");
 		strcat(path, resource_files[newCluster]);
@@ -1389,7 +1389,7 @@ void resMan::GetCd(int cd)
 		{
 			sprintf(cdPath, "%c:\\", cdDrives[index]);
 
-			if (!GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
+			if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
 			{
 				sCDName[0] = 0;		// Force the following code to ask for the correct CD.
 			}
@@ -1469,7 +1469,7 @@ void resMan::GetCd(int cd)
 			{
 				sprintf(cdPath, "%c:\\", cdDrives[index]);
 
-				if (!GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
+				if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
 				{
 					sCDName[0] = 0;
 				}

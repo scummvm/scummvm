@@ -1612,30 +1612,18 @@ extern int32 IsFxOpen(int32 id);
 extern int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
 extern int32 SetFxIdVolume(int32 id, uint8 vol);
 
-#ifdef WIN32
-
-#undef timeGetTime
-#undef VirtualUnlock
-#undef GlobalMemoryStatus
-#undef SetFileAttributes
-#undef GetCurrentDirectory
-#undef GetVolumeInformation
-#undef GetModuleFileName
-
-#endif
-
 //-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
-extern uint32 timeGetTime(void);
-extern void VirtualUnlock(uint8 *free_memman, uint32 total_free_memory);
-extern void GlobalMemoryStatus(MEMORYSTATUS *memo);
-extern void SetFileAttributes(char *file, uint32 atrib);
-extern void DeleteFile(char *file);
-extern void GetCurrentDirectory(uint32 max, char* path);
-extern int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
+extern uint32 SVM_timeGetTime(void);
+extern void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory);
+extern void SVM_GlobalMemoryStatus(MEMORYSTATUS *memo);
+extern void SVM_SetFileAttributes(char *file, uint32 atrib);
+extern void SVM_DeleteFile(char *file);
+extern void SVM_GetCurrentDirectory(uint32 max, char* path);
+extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
 extern void scumm_mkdir(const char *pathname);
-extern void GetModuleFileName(void *module, char *destStr, uint32 maxLen);
+extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
 //-----------------------------------------------------------------------------
 //Macro for calling error handler with source filename and line.

@@ -260,11 +260,11 @@ void	Build_display(void)	//Tony21Sept96
 			// update our fps reading
 
 			frameCount += 1;
-			if (timeGetTime() > cycleTime)
+			if (SVM_timeGetTime() > cycleTime)
 			{
 				fps = frameCount;
 				frameCount = 0;
-				cycleTime = timeGetTime()+1000;
+				cycleTime = SVM_timeGetTime()+1000;
 			}
  			//----------------------------------------------------
 			// check if we've got time to render the screen again this cycle
@@ -429,9 +429,9 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 	}
 	while(GetFadeStatus()==RDFADE_UP);
 
-	DWORD targetTime = timeGetTime() + (time*1000);
+	DWORD targetTime = SVM_timeGetTime() + (time*1000);
 
-	while(timeGetTime() < targetTime)
+	while(SVM_timeGetTime() < targetTime)
 	{
 		//--------------------------------------------------
 		// Service windows
