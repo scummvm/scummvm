@@ -2219,7 +2219,7 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
-		if ((_vm->_features & GF_AFTER_V7) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
+		if ((_vm->_features & GF_AFTER_V6) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
 //		if (1 /*_vm->_vars[VAR_V5_DRAWFLAGS]&2*/ ) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
 				draw8ColWithMasking();
