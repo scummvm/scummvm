@@ -631,7 +631,8 @@ void Scumm_v8::o8_mod() {
 }
 
 void Scumm_v8::o8_wait() {
-	int actnum, offs;
+	int actnum;
+	int offs = -2;
 	Actor *a;
 	byte subOp = fetchScriptByte();
 
@@ -684,7 +685,7 @@ void Scumm_v8::o8_wait() {
 		error("o8_wait: default case 0x%x", subOp);
 	}
 
-	_scriptPointer -= 2;
+	_scriptPointer += offs;
 	o6_breakHere();
 }
 

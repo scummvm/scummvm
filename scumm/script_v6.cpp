@@ -2031,14 +2031,19 @@ void Scumm_v6::o6_drawBox() {
 }
 
 void Scumm_v6::o6_wait() {
-	switch (fetchScriptByte()) {
-	case 168:{
-		Actor *a = derefActor(pop(), "o6_wait");
-		int offs = (int16)fetchScriptWord();
+	int actnum;
+	int offs = -2;
+	Actor *a;
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 168:
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		a = derefActor(actnum, "o6_wait:168");
 		if (a->isInCurrentRoom() && a->moving) {
 			_scriptPointer += offs;
 			o6_breakHere();
-		}
 		return;
 	}
 	case 169:
@@ -2057,11 +2062,11 @@ void Scumm_v6::o6_wait() {
 			break;
 		return;
 	case 170:
-		if (!(_features & GF_AFTER_V7)) {
-			if (camera._cur.x >> 3 != camera._dest.x >> 3)
+		if (_features & GF_AFTER_V7) {
+			if (camera._dest != camera._cur)
 				break;
 		} else {
-			if (camera._dest != camera._cur)
+			if (camera._cur.x >> 3 != camera._dest.x >> 3)
 				break;
 		}
 
@@ -2075,31 +2080,42 @@ void Scumm_v6::o6_wait() {
 		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
-	case 226:{										/* wait until actor drawn */
-			int actnum = pop();
-			Actor *a = derefActor(actnum, "o6_wait:226");
-			int offs = fetchScriptWordSigned();
-			if (a->isInCurrentRoom() && a->needRedraw) {
-				_scriptPointer += offs;
-				o6_breakHere();
-			}
-			return;
+	case 226:										/* wait until actor drawn */
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		a = derefActor(actnum, "o6_wait:226");
+		if (a->isInCurrentRoom() && a->needRedraw) {
+			_scriptPointer += offs;
+			o6_breakHere();
 		}
-	case 232:{										/* wait until actor stops turning */
-			int actnum = pop();
-			Actor *a = derefActor(actnum, "o6_wait:232");
-			int offs = fetchScriptWordSigned();
-			if (a->isInCurrentRoom() && a->moving & MF_TURN) {
-				_scriptPointer += offs;
-				o6_breakHere();
-			}
-			return;
+		return;
+	case 232:										/* wait until actor stops turning */
+		// FIXME: This opcode is really odd. It's used a lot in The Dig.
+		// But sometimes it receives the actor ID as params, and sometimes an
+		// angle. However in (almost?) all cases, just before calling it, _curActor
+		// is set, so we can use it. I tried to add code that detects if an angle
+		// is passed, and if so, wait till that angle is reached, but that leads to hangs.
+		// It would be very good if somebody could disassmble the original code
+		// for this opcode so that we could figure out what's really going on here.
+		//
+		// For now, if the value passed in is divisible by 45, assume it is an
+		// angle, and use _curActor as the actor to wait for.
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		if (actnum % 45 == 0) {
+			actnum = _curActor;
 		}
+		a = derefActor(actnum, "o6_wait:232b");
+		if (a->isInCurrentRoom() && a->moving & MF_TURN) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
 	default:
-		error("o6_wait: default case");
+		error("o6_wait: default case 0x%x", subOp);
 	}
 
-	_scriptPointer -= 2;
+	_scriptPointer += offs;
 	o6_breakHere();
 }
 
