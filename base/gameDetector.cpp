@@ -559,11 +559,6 @@ bool GameDetector::detectGame() {
 	
 	if (target) {
 		_game = *target;
-		if (ConfMan.hasKey("basename")) {
-			// FIXME: What is this good for?
-			// FIXME: This leaks now!
-			_game.gameName = strdup(ConfMan.get("basename").c_str());
-		}
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {

@@ -895,13 +895,13 @@ File *Sound::openSfxFile() {
 	char buf[256];
 	File *file = new File();
 
-	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
+	/* Try opening the file <_gameName>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 	offset_table = NULL;
 
 #ifdef USE_MAD
-	sprintf(buf, "%s.so3", _scumm->getExeName());
+	sprintf(buf, "%s.so3", _scumm->getGameName());
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.so3", _scumm->getGameDataPath());
 	}
@@ -911,7 +911,7 @@ File *Sound::openSfxFile() {
 
 #ifdef USE_VORBIS
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.sog", _scumm->getExeName());
+		sprintf(buf, "%s.sog", _scumm->getGameName());
 		if (!file->open(buf, _scumm->getGameDataPath()))
 			file->open("monster.sog", _scumm->getGameDataPath());
 		if (file->isOpen())
@@ -953,13 +953,13 @@ File *Sound::openSfxFile() {
 		return file;
 	}
 
-	sprintf(buf, "%s.sou", _scumm->getExeName());
+	sprintf(buf, "%s.sou", _scumm->getGameName());
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.sou", _scumm->getGameDataPath());
 	}
 
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.tlk", _scumm->getExeName());
+		sprintf(buf, "%s.tlk", _scumm->getGameName());
 		file->open(buf, _scumm->getGameDataPath(), 1, 0x69);
 	}
 	return file;

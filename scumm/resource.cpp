@@ -83,18 +83,18 @@ void ScummEngine::openRoom(int room) {
 		if (!(_features & GF_SMALL_HEADER)) {
 
 			if (_features & GF_AFTER_HEV7) {
-				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : 1);
+				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
-				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
-				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.la%d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
-				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else {
-				sprintf(buf, "%s.%.3d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf, "%s.%.3d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 				if (_gameId == GID_SAMNMAX)
-					sprintf(buf2, "%s.sm%.1d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+					sprintf(buf2, "%s.sm%.1d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			}
 
 			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;

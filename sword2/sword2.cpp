@@ -104,7 +104,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
-	_gameName = strdup(detector->_targetName.c_str());
+	_targetName = strdup(detector->_targetName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 	_debugLevel = ConfMan.getInt("debuglevel");
@@ -123,7 +123,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 }
 
 Sword2Engine::~Sword2Engine() {
-	free(_gameName);
+	free(_targetName);
 	delete _sound;
 }
 

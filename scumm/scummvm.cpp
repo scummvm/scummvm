@@ -364,8 +364,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
 	_fileOffset = 0;
-	_exe_name = NULL;
-	_game_name = NULL;
 	_dynamicRoomOffsets = false;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
 	_allocatedSize = 0;
@@ -595,8 +593,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
-	_exe_name = strdup(detector->_game.gameName);
-	_game_name = strdup(detector->_targetName.c_str());
+
+	// Allow the user to override the game name with a custom string.
+	// This allows some game versions to work which use filenames
+	// differing from the regular version(s) of that game.
+	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : detector->_game.gameName;
+
+	_targetName = detector->_targetName;
 	_gameId = detector->_game.id;
 	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
@@ -786,8 +789,6 @@ ScummEngine::~ScummEngine() {
 	free(_bitVars);
 	free(_newNames);
 	free(_classData);
-	free(_exe_name);
-	free(_game_name);
 
 	free(_roomStrips);
 	free(_languageIndex);

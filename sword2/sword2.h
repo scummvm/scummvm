@@ -75,7 +75,7 @@ public:
 	GameDetector *_detector;
 	uint32 _features;
 	byte _gameId;
-	char *_gameName; // target name for saves
+	char *_targetName; // target name for saves
 	Sound *_sound;
 	Common::RandomSource _rnd;
 

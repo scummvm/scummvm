@@ -21,6 +21,7 @@
 #include "stdafx.h"
 
 #include "common/file.h"
+#include "common/str.h"
 #include "common/util.h"
 
 #include "scumm/actor.h"
@@ -64,8 +65,8 @@ ScummDebugger::ScummDebugger(ScummEngine *s) {
 	DVar_Register("scumm_roomresource", &_vm->_roomResource, DVAR_INT, 0);
 	DVar_Register("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
 
-	DVar_Register("scumm_gamename", &_vm->_game_name, DVAR_STRING, 0);
-	DVar_Register("scumm_exename", &_vm->_exe_name, DVAR_STRING, 0);
+	DVar_Register("scumm_gamename", &_vm->_targetName, DVAR_STRING, 0);
+	DVar_Register("scumm_exename", &_vm->_gameName, DVAR_STRING, 0);
 	DVar_Register("scumm_gameid", &_vm->_gameId, DVAR_INT, 0);
 
 	// Register commands
@@ -325,7 +326,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 				break;
 				// String
 				case DVAR_STRING:
-					Debug_Printf("(string)%s = %s\n", param[0], *(char **)_dvars[i].variable);
+					Debug_Printf("(string)%s = %s\n", param[0], ((Common::String *)_dvars[i].variable)->c_str());
 					break;
 				default:
 					Debug_Printf("%s = (unknown type)\n", param[0]);

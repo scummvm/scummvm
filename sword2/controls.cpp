@@ -893,7 +893,7 @@ int32 OptionsDialog::writeOptionSettings(void) {
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	sprintf(filename, "%s-settings.dat", g_sword2->_gameName);
+	sprintf(filename, "%s-settings.dat", g_sword2->_targetName);
 
 	buff[0] = g_sound->getMusicVolume();
 	buff[1] = g_sound->getSpeechVolume();
@@ -1483,7 +1483,7 @@ int32 Gui::readOptionSettings(void) {
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	sprintf(filename, "%s-settings.dat", g_sword2->_gameName);
+	sprintf(filename, "%s-settings.dat", g_sword2->_targetName);
 
 	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false)))
 		return 1;

@@ -228,7 +228,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 }
 
 void ScummEngine::makeSavegameName(char *out, int slot, bool compatible) {
-	sprintf(out, "%s.%c%.2d", _game_name, compatible ? 'c' : 's', slot);
+	sprintf(out, "%s.%c%.2d", _targetName.c_str(), compatible ? 'c' : 's', slot);
 }
 
 void ScummEngine::listSavegames(bool *marks, int num, SaveFileManager *mgr) {

@@ -311,7 +311,7 @@ public:
 	void clearClickedStatus();
 
 	// Misc utility functions
-	const char *getExeName() const { return _exe_name; }
+	const char *getGameName() const { return _gameName.c_str(); }
 	const char *getGameDataPath() const;
 
 	// Cursor/palette
@@ -556,8 +556,8 @@ protected:
 	File _fileHandle;
 	uint32 _fileOffset;
 	int _resourceHeaderSize;
-	char *_exe_name;	// This is the name we use for opening resource files
-	char *_game_name;	// This is the game the user calls it, so use for saving
+	Common::String _gameName;	// This is the name we use for opening resource files
+	Common::String _targetName;	// This is the game the user calls it, so use for saving
 	bool _dynamicRoomOffsets;
 	byte _resourceMapper[128];
 	uint32 _allocatedSize;
