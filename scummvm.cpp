@@ -420,7 +420,9 @@ static const VersionSettings version_settings[] = {
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0},
 	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
 	{"tentacle", "Day Of The Tenctacle", GID_TENTACLE, 6, 4, 2},
+	{"dottdemo", "Day Of The Tenctacle (Demo)", GID_TENTACLE, 6, 3, 2},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2},
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0},
 	{NULL,NULL}
 };
 
