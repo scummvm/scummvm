@@ -33,6 +33,61 @@ enum {
 	kSentenceLine = 6
 };
 
+void Scumm::initV1MouseOver() {
+	int i;
+
+	v2_mouseover_box = -1;
+
+	// Inventory items
+
+	for (i = 0; i < 2; i++) {
+		v2_mouseover_boxes[2 * i].rect.left = 0;
+		v2_mouseover_boxes[2 * i].rect.right = 144;
+		v2_mouseover_boxes[2 * i].rect.top = 34 + 8 * i;
+		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+
+		v2_mouseover_boxes[2 * i].color = 4;
+		v2_mouseover_boxes[2 * i].hicolor = 7;
+
+
+		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
+		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
+		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+
+		v2_mouseover_boxes[2 * i + 1].color = 4;
+		v2_mouseover_boxes[2 * i + 1].hicolor = 7;
+	}
+
+	// Inventory arrows
+
+	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 34;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 42;
+
+	v2_mouseover_boxes[kInventoryUpArrow].color = 6;
+	v2_mouseover_boxes[kInventoryUpArrow].hicolor = 7;
+
+	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 42;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 50;
+
+	v2_mouseover_boxes[kInventoryDownArrow].color = 6;
+	v2_mouseover_boxes[kInventoryDownArrow].hicolor = 7;
+
+	// Sentence line
+
+	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
+	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.bottom = 6;
+
+	v2_mouseover_boxes[kSentenceLine].color = 4;
+	v2_mouseover_boxes[kSentenceLine].hicolor = 7;
+}
+
 void Scumm::initV2MouseOver() {
 	int i;
 
