@@ -21,7 +21,7 @@
 #define D_DEBUG
 
 // FIXME: I don't know how large this constant used to be
-#define MAX_DEBUG_TEXT_BLOCKS 50
+#define MAX_DEBUG_TEXTS 50
 
 #define MAX_SHOWVARS 15
 

@@ -17,64 +17,28 @@
  * $Header$
  */
 
-/****************************************************************************
- * MAKETEXT.H - Function prototype for text sprite builder routine JEL Oct96
- *
- * The routine returns a memory handle to a movable memory block containing
- * the required sprite, which must be locked before use. ie. lock, draw
- * sprite, unlock/free.
- * 
- * The sprite data contains a frameHeader, but not a standard file header.
- *
- * Debugger will trap error when word too big for line (maxWidth) or when
- * more lines needed than max expected (MAX_LINES)
- *
- * PARAMETERS:
- *
- * 'sentence' points to a NULL-TERMINATED STRING
- *      - string must contain no leading/tailing/extra spaces
- *      - out-of-range characters in the string are forced to the output as
- *        a special error-signal character (chequered flag)
- *
- * 'maxWidth' is the maximum allowed text sprite width, in PIXELS
- *
- * 'pen' is the desired colour (0-255) for the main body of each character
- * 
- * NB. Border colour is #DEFINEd in textsprt.c (to a colour value for BLACK)
- * if 'pen' is zero, the characters are copied directly and NOT remapped.
- *
- * 'charSet' points to the beginning of the standard file header for the
- * desired character set
- *
- * NB. The first and last characters in the set are #DEFINEd in textsprt.c
- *
- * RETURNS:
- *
- * 'textSprite' points to the handle to be used for the text sprite
- *
- ****************************************************************************/
-
 #ifndef _MAKETEXT_H
 #define _MAKETEXT_H
 
 #include "sword2/debug.h"
+
+namespace Sword2 {
 
 // Output colour for character border - should be be black but note that we
 // have to use a different pen number during sequences
 
 #define BORDER_PEN 194
 
-namespace Sword2 {
-
-// allow enough for all the debug text blocks (see debug.cpp)
-#define MAX_text_blocs MAX_DEBUG_TEXT_BLOCKS + 1
+// Usually the only texts on screen are the subtitles and the mouse-over text,
+// but there can also be a considerable number of debugging messages...
+    
+#define MAX_text_blocs MAX_DEBUG_TEXTS + 1
 
 enum {
-	// only for debug text, since it doesn't keep text inside the screen
-	// margin!
+	// Doesn't keep the text inside the screen - only for debug text!
 	NO_JUSTIFICATION = 0,
 
-	// these all force text inside the screen edge margin when necessary
+	// These all force text inside the screen edge margin when necessary
 	POSITION_AT_CENTRE_OF_BASE = 1,
 	POSITION_AT_CENTRE_OF_TOP = 2,
 	POSITION_AT_LEFT_OF_TOP = 3,
@@ -91,18 +55,20 @@ enum {
 	POLISH_TEXT = 2
 };
 
-struct TextBloc {
+// Info about the text, used to create the SpriteInfo struct
+
+ struct TextBloc {
 	int16 x;
 	int16 y;
-	// RDSPR_ status bits - see defintion of SpriteInfo structure for
-	// correct size!
 	uint16 type;
 	Memory *text_mem;
 };
 
+// Info for each line of words in the output text sprite
+
 struct LineInfo {
-	uint16 width;	// width of line in pixels
-	uint16 length;	// length of line in characters
+	uint16 width;	// Width in pixels
+	uint16 length;	// Length in characters
 };
 
 class FontRenderer {
@@ -110,8 +76,8 @@ private:
 	Sword2Engine *_vm;
 	TextBloc _blocList[MAX_text_blocs];
 
-	// layout variables - these used to be defines, but now we're dealing
-	// with 2 character sets
+	// Layout variables - these used to be defines, but now we're dealing
+	// with three character sets
 
 	int8 _lineSpacing;	// no. of pixels to separate lines of
 				// characters in the output sprite - negative

@@ -44,7 +44,7 @@ private:
 
 	int32 _showVar[MAX_SHOWVARS];
 
-	uint8 _debugTextBlocks[MAX_DEBUG_TEXT_BLOCKS];
+	uint8 _debugTextBlocks[MAX_DEBUG_TEXTS];
 
 	void clearDebugTextBlocks(void);
 	void makeDebugTextBlock(char *text, int16 x, int16 y);

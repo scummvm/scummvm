@@ -31,7 +31,7 @@ namespace Sword2 {
 void Debugger::clearDebugTextBlocks(void) {
 	uint8 blockNo = 0;
 
-	while (blockNo < MAX_DEBUG_TEXT_BLOCKS && _debugTextBlocks[blockNo] > 0) {
+	while (blockNo < MAX_DEBUG_TEXTS && _debugTextBlocks[blockNo] > 0) {
 		// kill the system text block
 		_vm->_fontRenderer->killTextBloc(_debugTextBlocks[blockNo]);
 
@@ -45,10 +45,10 @@ void Debugger::clearDebugTextBlocks(void) {
 void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 	uint8 blockNo = 0;
 
-	while (blockNo < MAX_DEBUG_TEXT_BLOCKS && _debugTextBlocks[blockNo] > 0)
+	while (blockNo < MAX_DEBUG_TEXTS && _debugTextBlocks[blockNo] > 0)
 		blockNo++;
 
-	assert(blockNo < MAX_DEBUG_TEXT_BLOCKS);
+	assert(blockNo < MAX_DEBUG_TEXTS);
 
 	_debugTextBlocks[blockNo] = _vm->_fontRenderer->buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
