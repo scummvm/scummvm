@@ -57,8 +57,11 @@ void Scumm_v2::readIndexFile() {
 	_palManipIntermediatePal = 0; // Will allocate when needed
 
 	_fileHandle.readUint16LE(); /* version magic number */
-	_fileHandle.readUint16LE(); /* nb global objects */
-	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+	int num = _fileHandle.readUint16LE();
+	assert(num == _numGlobalObjects);
+	for (int i = 0; i != num; i++) {
+		_objectStateTable[i] = _fileHandle.readByte();
+	}
 	readResTypeList(rtRoom, MKID('ROOM'), "room");
 	readResTypeList(rtCostume, MKID('COST'), "costume");
 	readResTypeList(rtScript, MKID('SCRP'), "script");
