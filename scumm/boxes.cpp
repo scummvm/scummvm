@@ -850,7 +850,7 @@ void Scumm::createBoxMatrix() {
 			byte itinerary = itineraryMatrix[64 * i + j];
 			if (itinerary != Actor::kInvalidBox) {
 				addToMatrix(j);
-				while (j < num && itinerary == itineraryMatrix[64 * i + (j + 1)])
+				while (j < num - 1 && itinerary == itineraryMatrix[64 * i + (j + 1)])
 					j++;
 				addToMatrix(j);
 				addToMatrix(itinerary);
