@@ -1369,23 +1369,17 @@ void Actor::startWalkAnim(int cmd, int angle) {
 	if (angle == -1)
 		angle = facing;
 
-	/* FIXME: (yazoo/fingolfin): using the walk script is buggy in Dig,
-	 * troubles while walking. It's disabled until we can figure out how
-	 * to fix this properly.
-	 * Note: walk scripts aren't required to make the game
+	/* Note: walk scripts aren't required to make the Dig
 	 * work as usual
 	 */
-#if 1
-	if (walkScript != 0) {
+	if (walkScript) {
 		int args[16];
 		memset(args, 0, sizeof(args));
 		args[0] = number;
 		args[1] = cmd;
 		args[2] = angle;
 		_vm->runScript(walkScript, 1, 0, args);
-	} else
-#endif
-	{
+	} else {
 		switch (cmd) {
 		case 1:										/* start walk */
 			setDirection(angle);
