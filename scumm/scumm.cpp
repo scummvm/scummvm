@@ -2783,7 +2783,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	if (num == ')')
 		num = filename[strlen(filename) - 2];
 
-	char *ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename, '.');
 	int len = ext - filename;
 
 	if (index > 0)
