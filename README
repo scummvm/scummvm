@@ -568,7 +568,6 @@ longer necessary, as ScummVM can now open and understand the format natively.
 
 5.6) Multi-CD Games:
 ---- ---------------
-
 In general, ScummVM does not deal very well with multi-CD games. This is
 because ScummVM assumes everything about a game can be found in one directory.
 Even if ScummVM does make some provisions for asking the user to change CD, the
@@ -594,7 +593,6 @@ now.
 
 5.6.1) The Curse of Monkey Island:
 ------ ---------------------------
-
 For this game, you'll need the comi.la0, comi.la1 and comi.la2 files. The
 comi.la0 file can be found on either CD, but since they are identical it
 doesn't matter which one of them you use.
@@ -605,7 +603,6 @@ again they're identical.
 
 5.6.2) Broken Sword 1:
 ------ ---------------
-
 For this game, you'll need all of the files from the clusters directories on
 both CDs. You will also need the speech.clu files from the speech directories,
 but since they are not identical you'll need to rename them speech1.clu and
@@ -621,7 +618,6 @@ copy them.
 
 5.6.3) Broken Sword 2:
 ------ ---------------
-
 For this game, you'll need all of the files from the clusters directories on
 both CDs. (Actually, a few of them may not be strictly necessary, but the ones
 that I'm uncertain about are all fairly small.) You will need to rename the
