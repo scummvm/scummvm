@@ -87,4 +87,11 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 	return false;
 }
 
+void ScummEngine::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	if (_features & GF_NEW_COSTUMES)
+		akos_decodeData(a, frame, usemask);
+	else
+		cost_decodeData(a, frame, usemask);
+}
+
 } // End of namespace Scumm

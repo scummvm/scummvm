@@ -1816,7 +1816,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 	}
 }
 
-void DecodeNESTileData(const byte *src, byte *dest) {
+void decodeNESTileData(const byte *src, byte *dest) {
 	int len = READ_LE_UINT16(src);	src += 2;
 	const byte *end = src + len;
 	int numtiles;
@@ -1834,23 +1834,23 @@ void Gdi::decodeNESGfx(const byte *room) {
 	if (_NESBaseTiles == 0) {
 		byte *basetiles = _vm->getResourceAddress(rtCostume,37);
 		_NESBaseTiles = basetiles[2];
-		DecodeNESTileData(basetiles,_NESPatTable);
+		decodeNESTileData(basetiles,_NESPatTable);
 	}
 	const byte *gdata = room + READ_LE_UINT16(room + 0x0A);
 	int tileset = *gdata++;
 	int width = READ_LE_UINT16(room + 0x04);
 	// int height = READ_LE_UINT16(room + 0x06);
-	int i;
+	int i, j, n;
 
-	DecodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
+	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
 	for (i = 0; i < 16; i++)
 		_NESPalette[i] = *gdata++;
 	for (i = 0; i < 16; i++) {
-		int n = 0;
 		_NESNametable[i][0] = _NESNametable[i][1] = 0;
+		n = 0;
 		while (n < width) {
 			byte data = *gdata++;
-			for (int j = 0; j < (data & 0x7F); j++)
+			for (j = 0; j < (data & 0x7F); j++)
 				_NESNametable[i][2 + n++] = (data & 0x80) ? (*gdata++) : (*gdata);
 			if (!(data & 0x80))
 				gdata++;
@@ -1859,9 +1859,9 @@ void Gdi::decodeNESGfx(const byte *room) {
 	}
 
 	const byte *adata = room + READ_LE_UINT16(room + 0x0C);
-	for (int n = 0; n < 64;) {
+	for (n = 0; n < 64;) {
 		byte data = *adata++;
-		for (int j = 0; j < (data & 0x7F); j++)
+		for (j = 0; j < (data & 0x7F); j++)
 			_NESAttributes[n++] = (data & 0x80) ? (*adata++) : (*adata);
 		if (!(n & 7) && (width == 0x1C))
 			n += 8;

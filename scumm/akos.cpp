@@ -148,13 +148,6 @@ bool ScummEngine::akos_hasManyDirections(int costume) {
 	return (akhd->flags & 2) != 0;
 }
 
-int ScummEngine::akos_frameToAnim(Actor *a, int frame) {
-	if (_version >= 7 && akos_hasManyDirections(a->_costume))
-		return toSimpleDir(1, a->getFacing()) + frame * 8;
-	else
-		return newDirToOldDir(a->getFacing()) + frame * 4;
-}
-
 void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 	uint anim;
 	const byte *akos, *r;
@@ -168,7 +161,10 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 	if (a->_costume == 0)
 		return;
 
-	anim = akos_frameToAnim(a, frame);
+	if (_version >= 7 && akos_hasManyDirections(a->_costume))
+		anim = toSimpleDir(1, a->getFacing()) + frame * 8;
+	else
+		anim = newDirToOldDir(a->getFacing()) + frame * 4;
 
 	akos = getResourceAddress(rtCostume, a->_costume);
 	assert(akos);

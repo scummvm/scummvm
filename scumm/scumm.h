@@ -810,8 +810,6 @@ protected:
 	void processUpperActors();
 	int getActorFromPos(int x, int y);
 	
-	bool isCostumeInUse(int i) const;
-
 public:
 	/* Actor AuxQueue stuff (HE) */	
 	AuxBlock _auxBlocks[16];
@@ -836,9 +834,12 @@ public:
 	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void setTalkingActor(int variable);
 
+	// Generic costume code
+	void costumeDecodeData(Actor *a, int frame, uint usemask);
+	bool isCostumeInUse(int i) const;
+
 	// Costume class
 	void cost_decodeData(Actor *a, int frame, uint usemask);
-	int cost_frameToAnim(Actor *a, int frame);
 	void cost_decodeNESCostumeGfx();
 
 	// Akos Class
@@ -857,7 +858,6 @@ public:
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	void akos_processQueue();
 	void akos_decodeData(Actor *a, int frame, uint usemask);
-	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(int costume);
 
 protected:

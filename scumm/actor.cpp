@@ -467,7 +467,7 @@ void Actor::startAnimActor(int f) {
 			_needRedraw = true;
 			if (f == _initFrame)
 				_cost.reset();
-			_vm->akos_decodeData(this, f, (uint) - 1);
+			_vm->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
 		}
 	} else {
@@ -501,10 +501,7 @@ void Actor::startAnimActor(int f) {
 				_cost.reset();
 				_auxBlock.visible = false;
 			}
-			if (_vm->_features & GF_NEW_COSTUMES)
-				_vm->akos_decodeData(this, f, (uint) - 1);
-			else
-				_vm->cost_decodeData(this, f, (uint) - 1);
+			_vm->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
 		}
 	}
@@ -573,10 +570,7 @@ void Actor::setDirection(int direction) {
 		vald = _cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
-		if (_vm->_features & GF_NEW_COSTUMES)
-			_vm->akos_decodeData(this, vald, aMask);
-		else
-			_vm->cost_decodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
+		_vm->costumeDecodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
 	}
 
 	_needRedraw = true;

@@ -808,7 +808,7 @@ byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 }
 
-extern void DecodeNESTileData(const byte *src, byte *dest);
+extern void decodeNESTileData(const byte *src, byte *dest);
 
 void ScummEngine::cost_decodeNESCostumeGfx() {
 	for (int n = 0; n < 2; n++) {
@@ -817,14 +817,10 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		if (maxSprites == 0)
 			maxSprites = 256;
 		_v1MMNESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
-		DecodeNESTileData(patTable,_v1MMNESCostumeGfx[n]);
+		decodeNESTileData(patTable,_v1MMNESCostumeGfx[n]);
 		// We will not need it anymore
 		nukeResource(rtCostume, v1MMNEScostTables[n][4]);
 	}
-}
-
-int ScummEngine::cost_frameToAnim(Actor *a, int frame) {
-	return newDirToOldDir(a->getFacing()) + frame * 4;
 }
 
 void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
@@ -837,7 +833,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 
 	lc.loadCostume(a->_costume);
 
-	anim = cost_frameToAnim(a, frame);
+	anim = newDirToOldDir(a->getFacing()) + frame * 4;
 
 	if (anim > lc._numAnim) {
 		return;
