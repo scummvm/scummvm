@@ -205,8 +205,6 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	int32 stack[STACK_SIZE];
 	int32 stackPtr = 0;
 
-	bool checkPyramidBug = false;
-
 	StandardHeader *header = (StandardHeader *) scriptData;
 	scriptData += sizeof(StandardHeader) + sizeof(ObjectHub);
 
@@ -264,7 +262,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	// So if his click hander (action script number 2) finishes, and
 	// variable 913 is 1, we set it back to 0 manually.
 
-	checkPyramidBug = strcmp((char *) header->name, "titipoco_81") == 0 && scriptNumber == 2;
+	bool checkPyramidBug = scriptNumber == 2 && strcmp((char *) header->name, "titipoco_81") == 0;
 
 	code += noScripts * sizeof(int32);
 
