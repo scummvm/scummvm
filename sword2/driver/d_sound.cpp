@@ -349,17 +349,17 @@ void Sound::saveMusicState(void) {
 void Sound::restoreMusicState(void) {
 	Common::StackLock lock(_mutex);
 
-	int restoreStream;
-
-	if (!_music[2]._streaming)
-		return;
-
 	// Fade out any music that happens to be playing
 
 	for (int i = 0; i < MAXMUS; i++) {
 		if (_music[i]._streaming)
 			_music[i].fadeDown();
 	}
+
+	if (!_music[2]._streaming)
+		return;
+
+	int restoreStream;
 
 	if (!_music[0]._streaming)
 		restoreStream = 0;

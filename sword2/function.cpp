@@ -585,8 +585,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	// Start the music and roll the credits
 
 	// The credits music (which can also be heard briefly in the "carib"
-	// cutscene) is played once, and there is no attempt at synchronizing
-	// it with the credits scroll.
+	// cutscene) is played once.
 
 	int32 pars[2];
 
@@ -606,7 +605,18 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	int startLine = 0;
 	int scrollPos = 0;
 
-	while (scrollPos < lineTop + CREDITS_FONT_HEIGHT && !_vm->_quit) {
+	bool abortCredits = false;
+
+	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
+	uint32 musicStart = _vm->_system->get_msecs();
+
+	// Ideally the music should last just a tiny bit longer than the
+	// credits. Note that musicTimeRemaining() will return 0 if the music
+	// is muted, so we need a sensible fallback for that case.
+
+	uint32 musicLength = MAX(1000 * (_vm->_sound->musicTimeRemaining() - 3), 25 * scrollSteps);
+
+	while (scrollPos < scrollSteps && !_vm->_quit) {
 		bool foundStartLine = false;
 
 		_vm->_graphics->clearScene();
@@ -671,13 +681,16 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		KeyboardEvent ke;
 
 		if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
-			fnStopMusic(NULL);
-			break;
+			if (!abortCredits) {
+				abortCredits = true;
+				_vm->_graphics->fadeDown();
+			}
 		}
-	  
 
-		_vm->_system->delay_msecs(30);
+		if (abortCredits && _vm->_graphics->getFadeStatus() == RDFADE_BLACK)
+			break;
 
+		_vm->sleepUntil(musicStart + (musicLength * scrollPos) / scrollSteps);
 		scrollPos++;
 	}
 
@@ -694,19 +707,18 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	if (logoData)
 		free(logoData);
 
+	if (!abortCredits) {
+		// The music should either have stopped or be about to stop, so
+		// wait for it to really happen.
+
+		while (_vm->_sound->musicTimeRemaining() && !_vm->_quit) {
+			_vm->_graphics->updateDisplay(false);
+			_vm->_system->delay_msecs(100);
+		}
+	}
+
 	if (_vm->_quit)
 		return IR_CONT;
-
-	_vm->_graphics->fadeDown();
-	_vm->_graphics->waitForFade();
-
-	// The music should have stopped by now, but I suppose there is a
-	// slim chance it hasn't on a really, really fast computer.
-
-	while (_vm->_sound->musicTimeRemaining()) {
-		_vm->_graphics->updateDisplay(false);
-		_vm->_system->delay_msecs(100);
-	}
 
 	_vm->_sound->restoreMusicState();
 	_vm->_sound->muteFx(false);
