@@ -371,7 +371,10 @@ int Scumm::scummLoop(int delta)
 
 	if (_features & GF_AUDIOTRACKS) {		
 		if (delta) {
-			if (++counter != 2)
+			if (delta == 1) {
+				// Better sync with the Loom CD intro
+				_vars[VAR_MI1_TIMER]++;
+			} else if (++counter != 2)
 				_vars[VAR_MI1_TIMER] += 5;
 			else {
 				counter = 0;
