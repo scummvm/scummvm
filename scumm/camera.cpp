@@ -77,11 +77,18 @@ void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 
 	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 
-	if ((camera._cur.x != old.x || camera._cur.y != old.y)
-			&& VAR(VAR_SCROLL_SCRIPT)) {
-		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
-		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
-		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
+	if (camera._cur.x != old.x || camera._cur.y != old.y) {
+		if (VAR(VAR_SCROLL_SCRIPT)) {
+			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+			VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
+		}
+
+		// Even though cameraMoved() is called automatically, we may
+		// need to know at once that the camera has moved, or text may
+		// be printed at the wrong coordinates. See bugs #795938 and
+		// #929242
+		cameraMoved();
 	}
 }
 
