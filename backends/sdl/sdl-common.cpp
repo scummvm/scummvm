@@ -543,19 +543,20 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				break;
 			}
 
-			// Ctrl-z and Alt-X quit
-			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
-				event->event_code = EVENT_QUIT;
-				return true;
-			}
-
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
 				event->event_code = EVENT_QUIT;
 				return true;
 			}
+#else
+			// Ctrl-z and Alt-X quit
+			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
+				event->event_code = EVENT_QUIT;
+				return true;
+			}
 #endif
+
 			// Ctr-Alt-<key> will change the GFX mode
 			if (b == (KBD_CTRL|KBD_ALT)) {
 				char keys[] = "1234567890";
