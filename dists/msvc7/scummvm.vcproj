@@ -41,7 +41,7 @@
 				AdditionalDependencies="winmm.lib sdl.lib libz.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib queen_debug/queen.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="libc.lib libcmt.lib"
+				IgnoreDefaultLibraryNames="libcmtd.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
 				SubSystem="1"
