@@ -230,6 +230,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				exit(1);
 			case 'w':
 				_saveconfig = true;
+				scummcfg->set_writing(true);
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					scummcfg->change_filename(option);
@@ -258,7 +259,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 		}
 	}
 	
-	if (_saveconfig)
+	if (_exe_name)
 		scummcfg->flush();
 
 	return;

@@ -155,7 +155,7 @@ void hashconfig::merge(const hashconfig * h)
 // The config-class itself.
 
 Config::Config(const char *cfg, const char *d)
- : filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0)
+ : filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
 {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
@@ -302,6 +302,9 @@ void Config::flush() const
 {
 	FILE *cfg_file;
 	int i;
+	
+	if (!willwrite)
+	    return;
 
 	if (!(cfg_file = fopen(filename, "w"))) {
 		debug(1, "Unable to write configuration file: %s.\n", filename);
@@ -376,4 +379,8 @@ void Config::merge_config(const Config * c)
 			hash[ndomains - 1]->merge(c->hash[i]);
 		}
 	}
+}
+
+void Config::set_writing(bool w) {
+    willwrite = w;
 }

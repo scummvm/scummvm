@@ -38,10 +38,12 @@ class Config {
     void delete_domain(const char *);
     void change_filename(const char *);
     void merge_config(const Config *);
+    void set_writing(bool);
   private:
     char * filename, * domain;
     hashconfig ** hash;
     int ndomains;
+    bool willwrite;
 };
 
 // The global config object
