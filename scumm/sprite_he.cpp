@@ -591,7 +591,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr) {
 	int listNum;
 	int *ptr;
-	int origResId;
+	int origResId, origResWizStates;
 
 	// XXX needs review
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
@@ -604,6 +604,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 	}
 
 	origResId = _spriteTable[spriteId].res_id;
+	origResWizStates = _spriteTable[spriteId].res_wiz_states;
 
 	if (imageNum == 1)
 		_spriteTable[spriteId].res_id = *spriteIdptr;
@@ -637,8 +638,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].res_id);
 		_spriteTable[spriteId].flags |= kSFActive | kSFYFlipped | kSFXFlipped | kSFBlitDirectly;
 
-		if (_spriteTable[spriteId].res_id == origResId &&
-			_spriteTable[spriteId].res_wiz_states == spriteId)
+		if (_spriteTable[spriteId].res_id == origResId && _spriteTable[spriteId].res_wiz_states == origResWizStates)
 			return;
 
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
