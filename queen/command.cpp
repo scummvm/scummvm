@@ -668,17 +668,14 @@ void Command::grabSelectedVerb() {
 	_state.subject[0] = 0;
 	_state.subject[1] = 0;
 
-	// if right mouse key selected, then store command VERB
-	if (_mouseKey == Input::MOUSE_LBUTTON) {
-		if (_vm->logic()->joeWalk() == JWM_MOVE && _state.verb != VERB_NONE) {
-			_vm->logic()->joeWalk(JWM_NORMAL);
-		}
-		_state.commandLevel = 1;
-		_state.oldVerb = VERB_NONE;
-		_state.oldNoun = 0;
-		_cmdText.setVerb(_state.verb);
-		_cmdText.display(INK_CMD_NORMAL);
+	if (_vm->logic()->joeWalk() == JWM_MOVE && _state.verb != VERB_NONE) {
+		_vm->logic()->joeWalk(JWM_NORMAL);
 	}
+	_state.commandLevel = 1;
+	_state.oldVerb = VERB_NONE;
+	_state.oldNoun = 0;
+	_cmdText.setVerb(_state.verb);
+	_cmdText.display(INK_CMD_NORMAL);
 }
 
 bool Command::executeIfCutaway(const char *description) {
