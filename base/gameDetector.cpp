@@ -114,16 +114,6 @@ static const char USAGE_STRING[] =
 ;
 #endif
 
-
-/** Default sound/music volumes.
- * @todo move this to a better place.
- */
-enum {
-	kDefaultMasterVolume = 192,
-	kDefaultSFXVolume = 192,
-	kDefaultMusicVolume = 192
-};
-
 struct GraphicsMode {
 	const char *name;
 	const char *description;
