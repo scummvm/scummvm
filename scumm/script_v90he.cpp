@@ -89,7 +89,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_atan2),
 		OPCODE(o90_getSegmentAngle),
 		/* 24 */
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown24),
 		OPCODE(o90_unknown25),
 		OPCODE(o90_unknown26),
 		OPCODE(o90_unknown27),
@@ -823,6 +823,31 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	debug(1,"o90_wizImageOps stub (%d)", subOp);
 }
 
+void ScummEngine_v90he::o90_unknown24() {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 28:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 29:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_unknown24: Unknown case %d", subOp);
+	}
+	push(0);
+	debug(1,"o90_unknown24 stub (%d)", subOp);
+}
+
 void ScummEngine_v90he::o90_unknown25() {
 	int args[16];
 	byte subOp = fetchScriptByte();
@@ -1001,8 +1026,11 @@ void ScummEngine_v90he::o90_unknown26() {
 	case 91:
 		getStackList(args, ARRAYSIZE(args));
 		break;
-	case 105: // HE99+
+	case 105: // HE 99+
 		pop();
+		pop();
+		break;
+	case 106: // HE 99+
 		pop();
 		break;
 	case 124:
@@ -1059,6 +1087,10 @@ void ScummEngine_v90he::o90_unknown28() {
 	subOp -= 37;
 
 	switch (subOp) {
+	case 5:
+		pop();
+		pop();
+		break;
 	case 6:
 		pop();
 		break;

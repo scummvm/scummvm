@@ -1929,8 +1929,11 @@ void ScummEngine_v72he::o72_openFile() {
 	mode = pop();
 	copyScriptString(filename);
 
-	// HACK bb2demo uses incorrect filename
-	if (!strcmp((char *)filename,".HE9")) {
+	// HACK Correct incorrect filenames
+	if (!strcmp((char *)filename,".he7")) {
+		memset(filename, 0, sizeof(filename));
+		sprintf((char *)filename, "%s.he7", _gameName.c_str());
+	} else if (!strcmp((char *)filename,".HE9")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he9", _gameName.c_str());
 	}
@@ -2324,7 +2327,8 @@ void ScummEngine_v72he::o72_unknownF1() {
 		i++;
 	}
 
-	push (i);
+	int r = (i) ? 1 : -1;
+	push (r);
 	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
 }
 
