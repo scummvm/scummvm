@@ -1724,7 +1724,6 @@ void game_playTot(int16 skipPlay) {
 	char *savedIP;
 	//struct date dateVal;
 	int16 i;
-	int16 j;
 
 	oldNestLevel = inter_nestLevel;
 	oldBreakFrom = inter_breakFromLevel;

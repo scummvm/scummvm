@@ -790,7 +790,6 @@ void inter_loadCursor(void) {
 	int16 width;
 	int16 height;
 	int16 offset;
-	int16 elemsCount;
 	char *dataBuf;
 	int16 id;
 	int8 index;
