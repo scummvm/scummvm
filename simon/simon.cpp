@@ -4776,6 +4776,13 @@ void SimonEngine::go() {
 
 	_sound = new SimonSound(_game, gss, _gameDataPath, _mixer);
 
+	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
+		if (_game == GAME_SIMON1DOS)
+			midi._enable_sfx ^= 1;
+		else
+			_sound->effectsPause(_effects_paused ^= 1);
+	}
+
 	loadGamePcFile(gss->gamepc_filename);
 
 	addTimeEvent(0, 1);
