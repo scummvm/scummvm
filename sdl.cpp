@@ -111,9 +111,9 @@ private:
 	typedef void TwoXSaiProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
-	SDL_Surface *sdl_screen;
-	SDL_Surface *sdl_hwscreen;
-	SDL_Surface *sdl_tmpscreen;
+	SDL_Surface *sdl_screen;      // unseen game screen
+	SDL_Surface *sdl_hwscreen;    // hardware screen
+	SDL_Surface *sdl_tmpscreen;   // temporary screen (for 2xsai)
 	SDL_CD *cdrom;
 
 	enum {
@@ -150,6 +150,12 @@ private:
 	/* CD Audio */
 	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
 	Uint32 cd_end_time, cd_stop_time, cd_next_second;
+
+	/* Keyboard mouse emulation */
+	struct KbdMouse {	
+		int16 x, y, xv, yv, xm, ym, xd, yd;
+		uint32 last, delay, xdown, ydown;
+	} km;
 
 	struct MousePos {
 		int16 x,y,w,h;
@@ -188,6 +194,7 @@ private:
 	void get_320x200_image(byte *buf);	
 
 	void setup_icon();
+	void kbd_mouse();
 };
 
 int Init_2xSaI (uint32 BitFormat);
@@ -362,6 +369,13 @@ normal_mode:;
 		
 		sdl_tmpscreen = sdl_screen;
 	}
+
+	// keyboard cursor control, some other better place for it?
+	km.xm = SCREEN_WIDTH * scaling;
+	km.ym = SCREEN_HEIGHT * scaling;
+	km.delay = 25;
+	km.last = 0;
+
 }
 
 void OSystem_SDL::unload_gfx_mode() {
@@ -688,6 +702,75 @@ void OSystem_SDL::update_screen() {
 	force_full = false;
 }
 
+void OSystem_SDL::kbd_mouse() {
+	uint32 time = get_msecs();
+	if (time >= km.last + km.delay) {
+		km.last = time;
+		if (km.xd == 1) {
+			km.xdown = time;
+			km.xd = 2;
+		}
+		if (km.yd == 1) {
+			km.ydown = time;      
+			km.yd = 2;
+		}
+
+		if (km.xv || km.yv) {
+			if (km.xd) {
+				if (time > km.xdown + km.delay*12) {
+					if (km.xv > 0)
+						km.xv++;
+					else
+						km.xv--;
+				} else if (time > km.xdown + km.delay*8) {
+					if (km.xv > 0)
+						km.xv = 5;
+					else
+						km.xv = -5;
+				}
+			}
+			if (km.yd) {
+				if (time > km.ydown + km.delay*12) {
+					if (km.yv > 0)
+						km.yv++;
+					else
+						km.yv--;
+				} else if (time > km.ydown + km.delay*8) {
+					if (km.yv > 0)
+						km.yv = 5;
+					else
+						km.yv = -5;
+				}
+			}
+
+			km.x += km.xv;
+			km.y += km.yv;
+
+			if (km.x <= 0) {
+				km.x = 0;
+				km.xv = -1;
+				km.xd = 1;
+			} else if (km.x >= km.xm) {
+				km.x = km.xm - 1;
+				km.xv = 1;
+				km.xd = 1;
+			}
+
+			if (km.y <= 0) {
+				km.y = 0;
+				km.yv = -1;
+				km.yd = 1;
+			} else if (km.y >= km.ym) {
+				km.y = km.ym - 1;
+				km.yv = 1;
+				km.yd = 1;
+			}
+
+			SDL_WarpMouse(km.x, km.y);
+		}
+	}
+}
+
 bool OSystem_SDL::show_mouse(bool visible) {
 	if (_mouse_visible == visible)
 		return visible;
@@ -752,6 +835,7 @@ int mapKey(int key, byte mod)
 	
 bool OSystem_SDL::poll_event(Event *event) {
 	SDL_Event ev;
+	kbd_mouse();
 
 	for(;;) {
 		if (!SDL_PollEvent(&ev))
@@ -788,13 +872,66 @@ bool OSystem_SDL::poll_event(Event *event) {
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+				switch(ev.key.keysym.sym) {
+					case SDLK_LEFT:
+						km.xv = -1;
+						km.xd = 1;
+					break;
+					case SDLK_RIGHT:
+						km.xv =  1;
+						km.xd = 1;
+					break;
+					case SDLK_UP:
+						km.yv = -1;
+						km.yd = 1;
+					break;
+					case SDLK_DOWN:
+						km.yv =  1;
+						km.yd = 1;
+					break;
+					default:
+					break;
+				}
+
+				return true;
+			}
+
+			case SDL_KEYUP: {
+				switch(ev.key.keysym.sym){
+					case SDLK_LEFT:                
+						if (km.xv < 0) {
+							km.xv = 0;
+							km.xd = 0;
+						}
+					break;
+					case SDLK_RIGHT:
+						if (km.xv > 0) {
+							km.xv = 0;
+							km.xd = 0;
+						}
+					break;
+					case SDLK_UP:
+						if (km.yv < 0) {
+							km.yv = 0;
+							km.yd = 0;
+						}
+					break;
+					case SDLK_DOWN:
+						if (km.yv > 0) {
+							km.yv = 0;
+							km.yd = 0;
+						}
+					break;
+					default:
+					break;
+				}
 				return true;
 			}
 
 		case SDL_MOUSEMOTION:
 			event->event_code = EVENT_MOUSEMOVE;
-			event->mouse.x = ev.motion.x;
-			event->mouse.y = ev.motion.y;
+			km.x = event->mouse.x = ev.motion.x;
+			km.y = event->mouse.y = ev.motion.y;
 
 			event->mouse.x /= scaling;
 			event->mouse.y /= scaling;
@@ -808,8 +945,8 @@ bool OSystem_SDL::poll_event(Event *event) {
 				event->event_code = EVENT_RBUTTONDOWN;
 			else
 				break;
-			event->mouse.x = ev.button.x;
-			event->mouse.y = ev.button.y;
+			km.x = event->mouse.x = ev.motion.x;
+			km.y = event->mouse.y = ev.motion.y;
 			event->mouse.x /= scaling;
 			event->mouse.y /= scaling;
 

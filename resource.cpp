@@ -47,9 +47,6 @@ void Scumm::openRoom(int room)
 
 	/* Either xxx.lfl or monkey.xxx file name */
 	while (!_resFilePrefix) {
-#if REAL_CODE
-		room_offs = _roomFileOffsets[room];
-#else
 		if (_features & GF_SMALL_NAMES)
 			roomlimit = 98;
 		else
@@ -58,7 +55,6 @@ void Scumm::openRoom(int room)
 			room_offs = 0;
 		else
 			room_offs = room ? _roomFileOffsets[room] : 0;
-#endif
 
 		if (room_offs == (int)0xFFFFFFFF)
 			break;
@@ -176,18 +172,7 @@ bool Scumm::openResourceFile(const char *filename)
 	char buf[256];
 
 	debug(9, "openResourceFile(%s)", filename);
-
-	if (_resFilePath) {
-#if defined(macintosh)
-		sprintf(buf, ":%s.%d:%s", _resFilePath, _resFilePathId, filename);
-#else
-		sprintf(buf, "%s.%d\\%s", _resFilePath, _resFilePathId, filename);
-#endif
-	} else if (_resFilePrefix) {
-		sprintf(buf, "%s%s", _resFilePrefix, filename);
-	} else {
-		strcpy(buf, filename);
-	}
+	strcpy(buf, filename);
 
 	if (_fileHandle != NULL) {
 		fileClose(_fileHandle);
@@ -195,6 +180,11 @@ bool Scumm::openResourceFile(const char *filename)
 	}
 
 	_fileHandle = fileOpen(buf, 1);
+	if (!_fileHandle) {
+		char *e = buf; 
+		do *e = tolower(*e); while(*e++);	
+		_fileHandle = fileOpen(buf, 1);
+	}
 
 	return _fileHandle != NULL;
 }
