@@ -342,7 +342,7 @@ depending on your operating system and configuration.
         -eqt        - Quicktime sound, for Macintosh users.
         -ecore      - CoreAudio sound, for MacOS X users.
         -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
-	-ealsa      - Output using ALSA sequencer device. See below.
+        -ealsa      - Output using ALSA sequencer device. See below.
         -enull      - Null output. Don't play any music.
         
 
@@ -501,7 +501,7 @@ An example config file is as follows:
 
 Credits:
 --------
-  The core ScummVM team:
+ The core ScummVM team:
         James Brown        - Current lead developer, ScummVM
         Vincent Hamm       - Co-lead developer, ScummVM (inactive)
         Jeremy Newman      - Webmaster
@@ -510,7 +510,7 @@ Credits:
  Porters:
         Lionel Ulmer       - X11/Linux port
         Nicolas Bacca      - PocketPC/WinCE port
-        Mutwin Kraus       - MacOS 9 port (Retired)
+        Mutwin Kraus       - MacOS Carbon port (Retired)
         Max Horn           - MacOS X port, many bug fixes, new GUI
         Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
@@ -528,8 +528,8 @@ Credits:
         Nicolas Noble      - Config file and ALSA support
         Pawel Kolodziejski - Added missing Dig SMUSH codecs
         Felix Jakschitsc   - His hard work on Zak256
-        Andr‚ Souza        - SDL-based OpenGL renderer
-        Kov cs Endre J nos - Several fixes for Simon1
+        Andre Souza        - SDL-based OpenGL renderer
+        Kovacs Endre Janos - Several fixes for Simon1
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
