@@ -826,10 +826,10 @@ affect the encoding time and resulting filesize.
 
 7.6.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
-You need LAME, and our extract util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD support.
+You need LAME, and our compress_scumm_sou util from the scummvm-tools package
+to perform this task, and ScummVM must be compiled with MAD support.
 
-  extract monster.sou
+  compress_scumm_sou monster.sou
 
 Eventually you will have a much smaller monster.so3 file, copy this file
 to your game directory. You can safely remove the monster.sou file.
@@ -839,7 +839,7 @@ to your game directory. You can safely remove the monster.sou file.
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with OGG support. Run:
 
-  extract --vorbis monster.sou
+  compress_scumm_sou --vorbis monster.sou
 
 This should produce a smaller monster.sog file, which you should copy to your
 game directory. Ogg encoding may take a considerable longer amount of time
@@ -850,7 +850,7 @@ than MP3, so have a good book handy.
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
-  extract --flac --best -b 1152 monster.sou
+  compress_scumm_sou --flac --best -b 1152 monster.sou
 
 This should produce a smaller monster.sof file, which you should copy to your
 game directory. Remember that the quality is always the same, varying encoder
@@ -862,58 +862,60 @@ to read the encoder documentation before you use other values.
 
 7.6.6) Compressing sfx/speech in Simon the Sorcerer 1 and 2
 ------ ----------------------------------------------------
-Use our simon2mp3 util from the scummvm-tools package to perform this task.
-You can choose between multiple target formats, but note that you can only use
-each if ScummVM was compiled with the respective decoder support enabled.
+Use our compress_simon util from the scummvm-tools package to perform this
+task. You can choose between multiple target formats, but note that you can
+only use each if ScummVM was compiled with the respective decoder support
+enabled.
 
-  simon2mp3 effects     (For simon1acorn)
-  simon2mp3 simon       (For simon1acorn)
-  simon2mp3 effects.voc (For simon1talkie)
-  simon2mp3 simon.voc   (For simon1talkie)
-  simon2mp3 simon.wav   (For simon1win)
-  simon2mp3 simon2.voc  (For simon2talkie)
-  simon2mp3 simon2.wav  (For simon2win) 
-  simon2mp3 mac         (For simon2mac) 
+  compress_simon effects     (For simon1acorn)
+  compress_simon simon       (For simon1acorn)
+  compress_simon effects.voc (For simon1talkie)
+  compress_simon simon.voc   (For simon1talkie)
+  compress_simon simon.wav   (For simon1win)
+  compress_simon simon2.voc  (For simon2talkie)
+  compress_simon simon2.wav  (For simon2win) 
+  compress_simon mac         (For simon2mac) 
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
-  simon2mp3 --vorbis
+  compress_simon --vorbis
 
 For Flac add --flac and optional parameters, i.e.
 
-  simon2mp3 --flac --best -b 1152 
+  compress_simon --flac --best -b 1152 
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
 
 7.6.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
-The sword1mp3 tool from the scummvm-tools package can encode music and speech
-to MP3 as well as Ogg Vorbis.
+The compress_sword1 tool from the scummvm-tools package can encode music and
+speech to MP3 as well as Ogg Vorbis.
 Easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
 This way, it'll automatically encode everything to MP3.
 Afterwards, you can manually remove the SPEECH?.CLU files and the wave music
 files.
 
-Running "sword1mp3 --vorbis" will compress the files using Ogg Vorbis instead
-of MP3.
+Running "compress_sword1 --vorbis" will compress the files using Ogg Vorbis
+instead of MP3.
 
-Use "sword1mp3 --help" to get a full list of the options.
+Use "compress_sword1 --help" to get a full list of the options.
 
 
 7.6.8) Compressing speech/music in Broken Sword 2
 ------ ------------------------------------------
-Use our sword2mp3 util from the scummvm-tools package to perform this task.
-You can choose between multiple target formats, but note  that you can only use
-each if ScummVM was compiled with the respective decoder support enabled.
+Use our compress_sword2 util from the scummvm-tools package to perform this
+task. You can choose between multiple target formats, but note  that you can
+only use each if ScummVM was compiled with the respective decoder support
+enabled.
 
-  sword2mp3 speech1.clu
-  sword2mp3 music1.clu
+  compress_sword2 speech1.clu
+  compress_sword2 music1.clu
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
-  sword2mp3 --vorbis
+  compress_sword2 --vorbis
 
 Eventually you will have a much smaller *.cl3 or *.clg file, copy this file to
 your game dir. You can safely remove the old file.
@@ -921,9 +923,9 @@ your game dir. You can safely remove the old file.
 It is possible to use Flac compression by adding the --flac option. However,
 the resulting *.clf file will actually be larger than the original.
 
-Please note that sword2mp3 will only work with the four speech/music files in
-Broken Sword 2. It will not work with any of the other *.clu files, nor will it
-work with the speech files from Broken Sword 1.
+Please note that compress_sword2 will only work with the four speech/music
+files in Broken Sword 2. It will not work with any of the other *.clu files,
+nor will it work with the speech files from Broken Sword 1.
 
 
 7.7) Output sample rate:
