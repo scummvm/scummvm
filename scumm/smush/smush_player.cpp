@@ -731,7 +731,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	debug(6, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
-	uint32 start_time, curr_time, start_update, end_update;
+	uint32 start_time, end_time;
 	start_time = _scumm->_system->get_msecs();
 
 	while(!b.eof()) {
@@ -774,20 +774,12 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		delete sub;
 	}
 
-	curr_time = _scumm->_system->get_msecs();
+	end_time = _scumm->_system->get_msecs();
 
+	updateScreen();
 	_smixer->handleFrame();
 
-	start_update = _scumm->_system->get_msecs();
-	if (curr_time < (start_time + _speed / 1000)) {
-		updateScreen();
-	} else {
-		warning("SmushPlayer: skipping update frame %d", _frame);
-	}
-	end_update = _scumm->_system->get_msecs();
-	debug(4, "Smush stats: FRME( %03d ),GFX_update( %03d ),FRME+GFX+SFX( %03d ),Limit(%d)",
-		curr_time - start_time, end_update - start_update,
-		end_update - start_time, _speed / 1000);
+	debug(5, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed / 1000);
 
 	_frame++;
 }
@@ -876,18 +868,36 @@ void SmushPlayer::updateScreen() {
 	int width = MIN(_width, _scumm->_realWidth);
 	int height = MIN(_height, _scumm->_realHeight);
 
-//	_scumm->parseEvents();
-	_scumm->_system->copy_rect(_data, _width, 0, 0, width, height);
-	_scumm->_system->update_screen();
+	if (_whileUpdate == false) {
+		_whileCopyRect = true;
+		uint32 end_time, start_time = _scumm->_system->get_msecs();
+		_scumm->_system->copy_rect(_data, _width, 0, 0, width, height);
+		end_time = _scumm->_system->get_msecs();
+		debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
+		_updateNeeded = true;
+		_whileCopyRect = false;
+	}
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {
+	_whileUpdate = false;
+	_whileCopyRect = false;
+	_updateNeeded = false;
 	setupAnim(filename, directory);
 	init();
 
 	while (true) {
 		_scumm->processKbd();
 		_scumm->waitForTimer(1);
+		if ((_whileCopyRect == false) && (_updateNeeded == true)) {
+			_whileUpdate = true;
+			uint32 end_time, start_time = _scumm->_system->get_msecs();
+			_scumm->_system->update_screen();
+			end_time = _scumm->_system->get_msecs();
+			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
+			_whileUpdate = false;
+			_updateNeeded = false;
+		}
 		if (_scumm->_videoFinished == true)
 			break;
 		if (_scumm->_saveLoadFlag)
