@@ -27,8 +27,8 @@
 
 #define SCREEN_W 640
 #define SCREEN_H 480
-#define MOUSE_W 64
-#define MOUSE_H 64
+#define MOUSE_W 128
+#define MOUSE_H 128
 
 #define OVL_W 320
 #define OVL_H 200
@@ -454,7 +454,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   mypoly.mode2 =
     TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
     TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
-    TA_POLYMODE2_U_SIZE_64|TA_POLYMODE2_V_SIZE_64;
+    TA_POLYMODE2_U_SIZE_128|TA_POLYMODE2_V_SIZE_128;
   mypoly.texture = TA_TEXTUREMODE_ARGB1555|TA_TEXTUREMODE_NON_TWIDDLED|
     TA_TEXTUREMODE_ADDRESS(mouse_tx[_mouse_buffer]);
 
