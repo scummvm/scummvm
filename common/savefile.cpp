@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "common/util.h"
 #include "common/savefile.h"
 

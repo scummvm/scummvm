@@ -20,6 +20,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "scumm/player_mod.h"
 
 namespace Scumm {

@@ -22,6 +22,7 @@
  * $Header$
  */
 
+#include "stdafx.h"
 #include "common/util.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

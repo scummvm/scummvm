@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "common/util.h"
 #include "sky/autoroute.h"
 #include "sky/compact.h"

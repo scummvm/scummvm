@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "common/util.h"
 #include "sky/music/adlibchannel.h"
 #include "sky/sky.h"

@@ -20,6 +20,8 @@
  *
  */
 
+#include "stdafx.h"
+
 #include "backends/intern.h"
 
 #include "base/gameDetector.h"

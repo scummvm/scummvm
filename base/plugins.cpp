@@ -20,6 +20,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "backends/fs/fs.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"

@@ -20,6 +20,8 @@
  *
  */
 
+#include "stdafx.h"
+
 #include "common/config-manager.h"
 
 #if defined(UNIX)
