@@ -38,6 +38,7 @@
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
 
+#include <memory>
 
 namespace Scumm {
 
@@ -63,7 +64,9 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-bool ScummEngine::saveState(int slot, bool compat, SaveFileManager *mgr) {
+bool ScummEngine::saveState(int slot, bool compat) {
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
@@ -88,7 +91,9 @@ bool ScummEngine::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	return true;
 }
 
-bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
+bool ScummEngine::loadState(int slot, bool compat) {
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	char filename[256];
 	SaveFile *in;
 	int i, j;

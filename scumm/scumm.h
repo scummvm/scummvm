@@ -507,20 +507,8 @@ protected:
 	bool _saveTemporaryState;
 	char _saveLoadName[32];
 
-	bool saveState(int slot, bool compat, SaveFileManager *mgr);
-	bool loadState(int slot, bool compat, SaveFileManager *mgr);
-	bool saveState(int slot, bool compat) {
-		SaveFileManager *mgr = _system->get_savefile_manager();
-		bool result = saveState(slot, compat, mgr);
-		delete mgr;
-		return result;
-	}
-	bool loadState(int slot, bool compat) {
-		SaveFileManager *mgr = _system->get_savefile_manager();
-		bool result = loadState(slot, compat, mgr);
-		delete mgr;
-		return result;
-	}
+	bool saveState(int slot, bool compat);
+	bool loadState(int slot, bool compat);
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
