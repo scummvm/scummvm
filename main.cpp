@@ -158,6 +158,8 @@ int main(int argc, char *argv[]) {
 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	Engine::instance()->mainLoop();
 
+	lua_close();
+
 	delete g_smush;
 	delete g_timer;
 	delete g_mixer;
