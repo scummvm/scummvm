@@ -1276,13 +1276,13 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	// bit 3 - wrap around  8
 	switch (flags) {
 	case 0: 
-		sf->drawStringAbsolute(str, renderBitmap, _player->_width, pos_x, pos_y);
+		sf->drawString(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, false);
 		break;
 	case 1:
-		sf->drawStringCentered(str, renderBitmap, _player->_width, _player->_height, pos_x, MAX(pos_y, top));
+		sf->drawString(str, renderBitmap, _player->_width, _player->_height, pos_x, MAX(pos_y, top), true);
 		break;
 	case 5:
-		sf->drawStringWrapCentered(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, 10, 300);
+		sf->drawStringWrap(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, 10, 300, true);
 		break;
 	default:
 		warning("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
