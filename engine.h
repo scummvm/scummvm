@@ -21,7 +21,7 @@
 #include "scene.h"
 #include <cstdlib>
 #include <list>
-#include <SDL/SDL_keysym.h>
+#include <SDL_keysym.h>
 
 class Actor;
 

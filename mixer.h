@@ -20,7 +20,7 @@
 
 #include "resource.h"
 #include <list>
-#include <SDL/SDL_audio.h>
+#include <SDL_audio.h>
 
 class Sound;
 

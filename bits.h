@@ -18,7 +18,7 @@
 #ifndef BITS_H
 #define BITS_H
 
-#include <SDL/SDL_byteorder.h>
+#include <SDL_byteorder.h>
 #include <stdint.h>
 #include "vector3d.h"
 
