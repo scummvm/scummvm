@@ -18,12 +18,12 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 # The name for the directory used for depenency tracking
 DEPDIR := .deps
 
-# List of all sub modules.
-# TODO - the nested ones (scumm/smus, backends/...) should be handled from the
+# List of all sub modules (note: order is important, don't mess with it)
+# TODO - the nested ones (scumm/smush, backends/...) should be handled from the
 # module.mk of their parents. In fact the only reason they are listed here is to ensure the
 # DEPDIRS directive works correctly.
 MODULES += \
-	scumm simon gui sound common backends  \
+	scumm sound common gui backends simon  \
 	scumm/smush backends/fs/posix backends/fs/morphos backends/fs/windows
 
 # Include the build instructions for all modules
