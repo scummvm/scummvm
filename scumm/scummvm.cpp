@@ -633,8 +633,9 @@ load_game:
 
 		processDrawQue();
 
-		if (_verbRedraw)
+		if (_verbRedraw) {
 			redrawVerbs();
+		}
 		
 		setActorRedrawFlags(true, true);
 		resetActorBgs();
@@ -656,9 +657,10 @@ load_game:
 			clearClickedStatus();
 		}
 
-		if (_cursor.state > 0) {
+		if (!_verbRedraw && _cursor.state > 0) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
+		_verbRedraw = false;
 
 		drawBlastObjects();
 		if (_features & GF_AFTER_V8)

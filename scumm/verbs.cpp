@@ -29,10 +29,14 @@
 
 void Scumm::redrawVerbs() {
 	int i;
-	for (i = 0; i < _maxVerbs; i++)
-		drawVerb(i, 0);
-	verbMouseOver(0);
-	_verbRedraw = false;
+	int verb = checkMouseOver(mouse.x, mouse.y);
+	for (i = _maxVerbs-1; i >= 0; i--) {
+		if (i == verb && _verbs[verb].hicolor)
+			drawVerb(i, 1);
+		else
+			drawVerb(i, 0);
+	}
+	_verbMouseOver = verb;
 }
 
 void Scumm::checkExecVerbs() {
@@ -127,10 +131,7 @@ void Scumm::drawVerb(int verb, int mode) {
 			return;
 		}
 		
-		// FIXME: Commenting this out fixes some drawing glitches,
-		// but TOTALLY screws up scrolling conversation items.
-		//if (_gameId != GID_CMI)
-			restoreVerbBG(verb);
+		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->x;
