@@ -232,21 +232,21 @@ public:
 	void   fixAfterLoad();
 	Part * getActivePart(uint8 part);
 	uint   getBeatIndex();
-	int8   getDetune() { return _detune; }
-	byte   getEffectiveVolume() { return _vol_eff; }
-	int    getID() { return _id; }
-	MidiDriver *getMidiDriver() { return _midi; }
+	int8   getDetune() const { return _detune; }
+	byte   getEffectiveVolume() const { return _vol_eff; }
+	int    getID() const { return _id; }
+	MidiDriver *getMidiDriver() const { return _midi; }
 	int    getParam(int param, byte chan);
-	int8   getPan() { return _pan; }
+	int8   getPan() const { return _pan; }
 	Part * getPart(uint8 part);
-	byte   getPriority() { return _priority; }
-	uint   getTicksPerBeat() { return TICKS_PER_BEAT; }
-	int8   getTranspose() { return _transpose; }
-	byte   getVolume() { return _volume; }
-	bool   isActive() { return _active; }
-	bool   isFadingOut();
-	bool   isGM() { return _isGM; }
-	bool   isMT32() { return _isMT32; }
+	byte   getPriority() const { return _priority; }
+	uint   getTicksPerBeat() const { return TICKS_PER_BEAT; }
+	int8   getTranspose() const { return _transpose; }
+	byte   getVolume() const { return _volume; }
+	bool   isActive() const { return _active; }
+	bool   isFadingOut() const;
+	bool   isGM() const { return _isGM; }
+	bool   isMT32() const { return _isMT32; }
 	bool   jump(uint track, uint beat, uint tick);
 	void   onTimer();
 	void   removePart(Part *part);
@@ -397,7 +397,7 @@ protected:
 	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
 	bool isGM(int sound);
-	int get_queue_sound_status(int sound);
+	int get_queue_sound_status(int sound) const;
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
 	void initMidiDriver(MidiDriver *midi);
@@ -462,7 +462,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stopAllSounds();
-	int getSoundStatus(int sound, bool ignoreFadeouts = true);
+	int getSoundStatus(int sound, bool ignoreFadeouts = true) const;
 	int getMusicTimer();
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand (int numargs, int args[]);

@@ -58,7 +58,7 @@ protected:
 	void clear_channel(int i);
 	void chainSound(int nr, byte *data);
 
-	void do_mix (int16 *buf, uint len);
+	void do_mix(int16 *buf, uint len);
 
 	void set_mplex(uint mplex);
 	void parseSpeakerChunk();

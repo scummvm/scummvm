@@ -125,7 +125,7 @@ public:
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound) const;
-	bool isSoundActive(int sound) const;
+	bool isSoundInUse(int sound) const;
 	bool isSoundInQueue(int sound) const;
 	void stopSound(int a);
 	void stopAllSounds();

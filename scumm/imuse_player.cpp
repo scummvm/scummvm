@@ -132,7 +132,7 @@ int Player::getMusicTimer() {
 	return _parser ? (_parser->getTick() * 2 / _parser->getPPQN()) : 0;
 }
 
-bool Player::isFadingOut() {
+bool Player::isFadingOut() const {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
 		if (_parameterFaders[i].param == ParameterFader::pfVolume &&

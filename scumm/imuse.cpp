@@ -424,25 +424,23 @@ Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
 	return best;
 }
 
-int IMuseInternal::getSoundStatus(int sound, bool ignoreFadeouts) {
-	Player *player;
-	if (sound == -1) {
-		player = _players;
-		for (int i = ARRAYSIZE(_players); i; --i, ++player) {
-			if (player->isActive() &&(!ignoreFadeouts || !player->isFadingOut()))
-				return player->getID();
-		}
-		return 0;
-	}
+int IMuseInternal::getSoundStatus(int sound, bool ignoreFadeouts) const {
+	int i;
+	const Player *player = _players;
 
-	player = findActivePlayer(sound);
-	if (player &&(!ignoreFadeouts || !player->isFadingOut()))
-		return 1;
-	return get_queue_sound_status(sound);
+	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
+		if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut())) {
+			if (sound == -1)
+				return player->getID();
+			else if (player->getID() == (uint16)sound)
+				return 1;
+		}
+	}
+	return (sound == -1) ? 0 : get_queue_sound_status(sound);
 }
 
-int IMuseInternal::get_queue_sound_status(int sound) {
-	uint16 *a;
+int IMuseInternal::get_queue_sound_status(int sound) const {
+	const uint16 *a;
 	int i, j;
 
 	j = _queue_pos;
@@ -1049,9 +1047,9 @@ int HookDatas::set(byte cls, byte value, byte chan) {
 
 Player *IMuseInternal::findActivePlayer(int id) {
 	int i;
-	Player *player;
+	Player *player = _players;
 
-	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		if (player->isActive() && player->getID() == (uint16)id)
 			return player;
 	}
@@ -1746,8 +1744,8 @@ void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
 
 IMuse::IMuse(OSystem *system, IMuseInternal *target) : _system(system), _target(target) { _mutex = system->create_mutex(); }
 IMuse::~IMuse() { if (_mutex) _system->delete_mutex(_mutex); if (_target) delete _target; }
-inline void IMuse::in() { _system->lock_mutex(_mutex); }
-inline void IMuse::out() { _system->unlock_mutex(_mutex); }
+inline void IMuse::in() const { _system->lock_mutex(_mutex); }
+inline void IMuse::out() const { _system->unlock_mutex(_mutex); }
 
 void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
@@ -1759,8 +1757,8 @@ int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); o
 void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
 void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
 int IMuse::stopAllSounds() { in(); int ret = _target->stopAllSounds(); out(); return ret; }
-int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
-bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
+int IMuse::getSoundStatus(int sound) const { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
+bool IMuse::get_sound_active(int sound) const { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
 int IMuse::getMusicTimer() { in(); int ret = _target->getMusicTimer(); out(); return ret; }
 int32 IMuse::doCommand (int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
 int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->doCommand (numargs, args); out(); return ret; }

@@ -81,7 +81,7 @@ public:
 	virtual void startSound(int nr);
 	virtual void stopSound(int nr);
 	virtual void stopAllSounds();
-	virtual bool getSoundStatus(int nr) const;
+	virtual int  getSoundStatus(int nr) const;
 	virtual int  getMusicTimer() const;
 
 protected:

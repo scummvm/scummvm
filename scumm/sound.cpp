@@ -179,20 +179,30 @@ void Sound::playSound(int soundID) {
 	debug(3, "playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
-		// FIXME: Should we replace this by an assert, and/or print an error message?
 		return;
 	}
 
 	if (READ_UINT32(ptr) == MKID('iMUS')){
-		assert(_scumm->_imuseDigital);
-		_scumm->_imuseDigital->startSound(soundID);
+		assert(_scumm->_musicEngine);
+		_scumm->_musicEngine->startSound(soundID);
 		return;
 	}
 	else if (READ_UINT32(ptr) == MKID('Crea')) {
-		assert(_scumm->_imuseDigital);
-		_scumm->_imuseDigital->startSound(soundID);
+		assert(_scumm->_musicEngine);
+		_scumm->_musicEngine->startSound(soundID);
 		return;
 	}
+/*
+	// XMIDI 
+	else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
+		// Pass XMIDI on to IMuse unprocessed.
+		// IMuse can handle XMIDI resources now.
+	}
+	else if (READ_UINT32(ptr) == MKID('ADL ')) {
+		// played as MIDI, just to make perhaps the later use
+		// of WA possible (see "else if" with GF_OLD256 below)
+	}
+*/
 	else if (READ_UINT32(ptr) == MKID('SOUN')) {
 		ptr += 24;
 		int track = ptr[0];
@@ -258,17 +268,6 @@ void Sound::playSound(int soundID) {
 		
 		return;
 	}	
-/*
-	// XMIDI 
-	else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
-		// Pass XMIDI on to IMuse unprocessed.
-		// IMuse can handle XMIDI resources now.
-	}
-	else if (READ_UINT32(ptr) == MKID('ADL ')) {
-		// played as MIDI, just to make perhaps the later use
-		// of WA possible (see "else if" with GF_OLD256 below)
-	}
-*/
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
 		debug(2, "Using SBL sound effect");
@@ -645,7 +644,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 
 int Sound::isSoundRunning(int sound) const {
-	int i;
 
 	if (sound == _currentCDSound)
 		return pollCD();
@@ -661,12 +659,6 @@ int Sound::isSoundRunning(int sound) const {
 		}
 	}
 	
-	i = _soundQue2Pos;
-	while (i--) {
-		if (_soundQue2[i] == sound)
-			return 1;
-	}
-
 	if (isSoundInQueue(sound))
 		return 1;
 
@@ -688,21 +680,21 @@ int Sound::isSoundRunning(int sound) const {
 	return 0;
 }
 
-// This is exactly the same as isSoundRunning except that it
-// calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
-// This is necessary when determining what resources to
-// expire from memory.
-bool Sound::isSoundActive(int sound) const {
-	int i;
+/**
+ * Check whether the sound resource with the specified ID is still
+ * used. This is invoked by Scumm::isResourceInUse, to determine
+ * which resources can be expired from memory.
+ * Technically, this works very similar to isSoundRunning, however it
+ * calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
+ * The difference between those two is in how they treat sounds which
+ * are being faded out: get_sound_active() returns true even when the
+ * sound is being faded out, while getSoundStatus() returns false in
+ * that case.
+ */
+bool Sound::isSoundInUse(int sound) const {
 
 	if (sound == _currentCDSound)
 		return pollCD() != 0;
-
-	i = _soundQue2Pos;
-	while (i--) {
-		if (_soundQue2[i] == sound)
-			return true;
-	}
 
 	if (isSoundInQueue(sound))
 		return true;
@@ -710,19 +702,26 @@ bool Sound::isSoundActive(int sound) const {
 	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return false;
 
-	if (_scumm->_imuseDigital) {
-		return _scumm->_imuseDigital->getSoundStatus(sound) != 0;
-	}
+	if (_scumm->_imuseDigital)
+		return _scumm->_imuseDigital->getSoundStatus(sound);
 
-	if (!_scumm->_imuse)
-		return false;
-	return _scumm->_imuse->get_sound_active(sound);
+	if (_scumm->_imuse)
+		return _scumm->_imuse->get_sound_active(sound);
+
+	return false;
 }
 
 bool Sound::isSoundInQueue(int sound) const {
-	int i = 0, j, num;
+	int i, j, num;
 	int16 table[16];
 
+	i = _soundQue2Pos;
+	while (i--) {
+		if (_soundQue2[i] == sound)
+			return 1;
+	}
+
+	i = 0;
 	while (i < _soundQuePos) {
 		num = _soundQue[i++];
 

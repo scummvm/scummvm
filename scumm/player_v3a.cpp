@@ -294,11 +294,11 @@ int Player_V3A::getMusicTimer() const {
 	return _music_timer / 30;
 }
 
-bool Player_V3A::getSoundStatus(int nr) const {
+int Player_V3A::getSoundStatus(int nr) const {
 	if (nr == _curSong)
-		return true;
+		return 1;
 	for (int i = 0; i < V3A_MAXCHANS; i++)
 		if (_soundID[i] == nr)
-			return true;
-	return false;
+			return 1;
+	return 0;
 }

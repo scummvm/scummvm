@@ -72,7 +72,7 @@ public:
 	void stopAll();
 	void pause(bool pause);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
-	bool getSoundStatus(int sound);
+	int getSoundStatus(int sound) const;
 };
 
 #endif

@@ -38,11 +38,11 @@ class IMuse : public MusicEngine {
 private:
 	OSystem *_system;
 	IMuseInternal *_target;
-	OSystem::MutexRef _mutex;
+	mutable OSystem::MutexRef _mutex;
 
 	IMuse(OSystem *system, IMuseInternal *target);
-	void in();
-	void out();
+	void in() const;
+	void out() const;
 
 public:
 	~IMuse();
@@ -66,8 +66,8 @@ public:
 	void startSound(int sound);
 	void stopSound(int sound);
 	int stopAllSounds();
-	int getSoundStatus(int sound);
-	bool get_sound_active(int sound);
+	int getSoundStatus(int sound) const;
+	bool get_sound_active(int sound) const;
 	int getMusicTimer();
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand (int numargs, int args[]);

@@ -45,7 +45,7 @@ public:
 	virtual int  getMusicTimer() const;
 
 	virtual void playMusic();
-	virtual bool getSoundStatus(int nr) const;
+	virtual int  getSoundStatus(int nr) const;
 
 protected:
 	SoundMixer *_mixer;

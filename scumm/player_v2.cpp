@@ -522,7 +522,7 @@ void Player_V2::startSound(int nr) {
 	mutex_down();
 }
 
-bool Player_V2::getSoundStatus(int nr) const {
+int Player_V2::getSoundStatus(int nr) const {
 	return _current_nr == nr || _next_nr == nr;
 }
 
