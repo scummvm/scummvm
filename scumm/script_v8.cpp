@@ -336,7 +336,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_getObjectX),
 		/* EC */
 		OPCODE(o6_getObjectY),
-		OPCODE(o6_getActorAnimCounter1),
+		OPCODE(o6_getActorAnimCounter1),	// FIXME: This is bogus, it should return the value set by setActorChoreLimbFrame
+							// It's pretty critical, and part of (At least) the cannon toomanyscripts crash
 		OPCODE(o6_distObjectObject),
 		OPCODE(o6_distPtPt),
 		/* F0 */
@@ -1116,7 +1117,8 @@ void Scumm_v8::o8_actorOps()
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
 		// TODO - implement this!
 		i = pop();
-		warning("o8_actorOps: setActorFrequency(%d) not implemented", i);
+		if (i != 256)	// De-verbosed: 256 is the default frequency so don't warn on it
+			warning("o8_actorOps: setActorFrequency(%d) not implemented", i);
 		break;
 	case 0x89:		// SO_ACTOR_PAN
 		// TODO - implement this!
@@ -1351,7 +1353,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 	case 22:	// setBannerColors
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
-	case 23:	// setActorChoreLimbFrame
+	case 23:	// setActorChoreLimbFrame - FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
 //		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 24:	// clearTextQueue
@@ -1472,6 +1474,13 @@ void Scumm_v8::o8_kernelGetFunctions()
 		else
 			push(0);
 		}
+		break;
+	case 0XE2:		// musicLipSyncWidth
+	case 0xE3:		// musicLipSyncHeight
+		// FIXME: These are needed for the song intro to Part III - the scene will freeze
+		// without them.
+		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		push(255);
 		break;
 	default:
 		error("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
