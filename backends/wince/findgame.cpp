@@ -30,10 +30,15 @@
 #include "resource.h"
 #include "scumm.h"
 #include "config-file.h"
+#include "screen.h"
 
 extern Config *g_config;
 
 #define MAX_GAMES 20
+#define MAX_DIRECTORY 40
+
+#define MAX_DISPLAYED_DIRECTORIES 7
+#define MAX_DISPLAYED_GAMES 7
 
 struct ScummGame {
 	const char *gamename;
@@ -50,23 +55,39 @@ struct InstalledScummGame {
 	TCHAR directory[MAX_PATH];
 };
 
+struct DirectoryName {
+	TCHAR name[MAX_PATH];
+};
+
+struct GameReference {
+	char name[100];
+	unsigned char reference;
+};
+
 static const ScummGame GameList[] = {
 	{	
-		 "Simon The Sorcerer 1 (dos)",
+		 "Simon 1 (dos)",
 		 "Completable",
 		 "", "1631.VGA", "GAMEPC",
 		 "simon1dos",
 		 0
 	},
 	{	 
-		 "Simon The Sorcerer 1 (win)",
+		 "Simon 1 (win)",
 		 "Completable",
 		 "", "SIMON.GME", "GAMEPC",
 		 "simon1win",
 		 0
 	},
 	{	 
-		 "Simon The Sorcerer 2 (win)",
+		 "Simon 2 (dos)",
+		 "To be tested",
+		 "", "SIMON2.GME", "GAME32",
+		 "simon2dos",
+		 0
+	},
+	{	 
+		 "Simon 2 (win)",
 		 "To be tested",
 		 "", "SIMON2.GME", "GSPTR30",
 		 "simon2win",
@@ -115,6 +136,13 @@ static const ScummGame GameList[] = {
 		 0
 	},
 	{
+		 "Monkey Island 1 (VGA)",
+		 "Completable, MP3 music",
+		 "", "MONKEY1.000", "MONKEY1.001",
+		 "monkey1",
+		 0
+	},
+	{
 		 "Monkey Island 2 (VGA)",
 		 "Completable",
 		 "", "MONKEY2.000", "MONKEY2.001",
@@ -143,7 +171,7 @@ static const ScummGame GameList[] = {
 		 1
 	},
 	{
-		 "Day of the Tentacle demo",
+		 "Day of Tentacle demo",
 		 "Completable",
 		 "", "DOTTDEMO.000", "DOTTDEMO.001",
 		 "dottdemo",
@@ -151,7 +179,7 @@ static const ScummGame GameList[] = {
 	},
 	{	
 		 "Sam & Max",
-		 "Completable, music glitches",
+		 "Completable",
 		 "", "SAMNMAX.000", "SAMNMAX.001",
 		 "samnmax",
 		 1
@@ -172,7 +200,7 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "The Dig",
-		 "Partially working",
+		 "Completable",
 		 "", "DIG.LA0", "DIG.LA1",
 		 "dig",
 		 0
@@ -184,11 +212,14 @@ static const ScummGame GameList[] = {
 
 void findGame(TCHAR*);
 int displayFoundGames(void);
-void doScan();
-void startFindGame();
+void displayDirectoryList(void);
+void displayGamesList(void);
+void doScan(void);
+void startFindGame(void);
+bool loadGameSettings(void);
 
 char gamesFound[MAX_GAMES];
-unsigned char listIndex[MAX_GAMES];
+GameReference listIndex[MAX_GAMES];
 InstalledScummGame gamesInstalled[MAX_GAMES];
 int installedGamesNumber;
 HWND hwndDlg;
@@ -196,9 +227,43 @@ TCHAR basePath[MAX_PATH];
 TCHAR old_basePath[MAX_PATH];
 BOOL prescanning;
 
+DirectoryName directories[MAX_DIRECTORY];
+int _first_index;
+int _total_directories;
+int _first_index_games;
+int _total_games;
+bool _scanning;
+int _last_selected = -1;
+bool _game_selected;
+
+extern int _game_selection_X_offset;
+extern int _game_selection_Y_offset;
+
+int chooseGame(bool need_rescan) {
+	drawBlankGameSelection();
+	
+	if (!need_rescan)
+		loadGameSettings();
+	_game_selected = false;
+	while (!_game_selected) {
+		MSG msg;
+
+		if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) 
+			Sleep(100);
+		else {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+		}
+	}
+
+	return _last_selected;
+}
+
+/*
 BOOL isPrescanning() {
 	return prescanning;
 }
+*/
 
 void setFindGameDlgHandle(HWND x) {
 	hwndDlg = x;
@@ -209,7 +274,8 @@ bool loadGameSettings() {
 	int				i;
 	const char		*current;
 
-	prescanning = FALSE;
+	/*prescanning = FALSE;*/
+	_scanning = false;
 
 	current = g_config->get("GamesInstalled", "wince");
 	if (!current)
@@ -265,13 +331,15 @@ int countGameReferenced(int reference, int *infos) {
 
 int displayFoundGames() {
 
-	int i;
-	int index = 0;
+	int i;	
+
+	_total_games = 0;
+	_first_index_games = 0;
 
 	for (i = 0; i< MAX_GAMES; i++) {
 		ScummGame current_game;
 		char    work[400];
-		TCHAR	desc[400];
+		//TCHAR	desc[400];
 		int		numberReferenced;
 		int		infos[10];
 		int		j;
@@ -289,25 +357,118 @@ int displayFoundGames() {
 				sprintf(work, "%s (%d)", current_game.gamename, j + 1);
 			else
 				strcpy(work, current_game.gamename);
-			MultiByteToWideChar(CP_ACP, 0, work, strlen(work) + 1, desc, sizeof(desc));
-			SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)desc);
-			listIndex[index++] = infos[j];
+			//MultiByteToWideChar(CP_ACP, 0, work, strlen(work) + 1, desc, sizeof(desc));
+			//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)desc);
+			strcpy(listIndex[_total_games].name, work);
+			listIndex[_total_games].reference = infos[j];
+			_total_games++;
 		}
 	}
 
-	return index;
+	displayGamesList();
+
+	return _total_games;
 
 }
 
-void changeScanPath() {
-	int item;
-	TCHAR path[MAX_PATH];
+void changeSelectedGame(int index) {
 
-	item = SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETCURSEL, 0, 0);
-	if (item == LB_ERR)
+	int array_index;
+	ScummGame game;
+
+	if (index > MAX_DISPLAYED_GAMES - 1)
 		return;
 
-	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETTEXT, item, (LPARAM)path);
+	if (_first_index_games)
+		array_index = _first_index_games + index - 1;
+	else
+		array_index = index;
+
+	if (array_index >= _total_games)
+		return;
+
+	// See if it's a previous/next link
+	if (index == 0) {
+		// potential previous
+		if (_first_index_games) {
+			_first_index_games -= (MAX_DISPLAYED_GAMES - 2);
+			if (_first_index_games < 0 || _first_index_games - (MAX_DISPLAYED_GAMES - 2) < 0)
+				_first_index_games = 0;
+			resetLastHighlighted();
+			displayGamesList();
+			return;
+		}
+	}
+	if (index == MAX_DISPLAYED_GAMES - 1) {
+		char work[100];
+
+		sprintf(work, "X %d Total %d", array_index, _total_games - 1);
+		drawCommentString(work);
+		// potential next
+		if (array_index != _total_games) {
+			if (!_first_index_games)
+				_first_index_games += (MAX_DISPLAYED_GAMES - 1);
+			else
+				_first_index_games += (MAX_DISPLAYED_GAMES - 2);
+			resetLastHighlighted();
+			displayGamesList();
+			return;
+		}
+	}
+
+	// Highlight the current game and displays game informations
+
+	drawHighlightedString(listIndex[array_index].name, index);	
+
+	game = GameList[gamesInstalled[listIndex[array_index].reference].reference];
+	drawCommentString((char*)game.description);
+
+	_last_selected = array_index;
+}
+	
+
+void changeScanPath(int index) {
+	//int item;
+	TCHAR path[MAX_PATH];
+	int array_index;
+
+	if (index > MAX_DISPLAYED_DIRECTORIES - 1)
+		return;
+
+	if (_first_index)
+		array_index = _first_index + index - 1;
+	else
+		array_index = index;
+
+	if (array_index >= _total_directories) 
+		return;
+
+	// See if it's a previous/next link
+	if (index == 0) {
+		// potential previous
+		if (_first_index) {
+			_first_index -= (MAX_DISPLAYED_DIRECTORIES - 2);
+			if (_first_index < 0 || _first_index - (MAX_DISPLAYED_DIRECTORIES - 2) < 0)
+				_first_index = 0;
+			resetLastHighlighted();
+			displayDirectoryList();
+			return;
+		}
+	}
+	if (index == MAX_DISPLAYED_DIRECTORIES - 1) {
+		// potential next
+		if (array_index != _total_directories) {
+			if (!_first_index)
+				_first_index += (MAX_DISPLAYED_DIRECTORIES - 1);
+			else
+				_first_index += (MAX_DISPLAYED_DIRECTORIES - 2);
+			resetLastHighlighted();
+			displayDirectoryList();
+			return;
+		}
+	}
+
+	wcscpy(path, directories[array_index].name);
 
 	if (wcscmp(path, TEXT("..")) != 0) {
 		wcscat(basePath, TEXT("\\"));
@@ -329,58 +490,140 @@ void doScan() {
 	TCHAR			 searchPath[MAX_PATH];
 	HANDLE			 x;
 
-	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
+	//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);	
 
-	if (wcslen(basePath) != 0)
-		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)TEXT(".."));
+	_total_directories = 0;
+	_first_index = 0;
+
+	if (wcslen(basePath) != 0) {
+		//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)TEXT(".."));
+		wcscpy(directories[_total_directories++].name, TEXT(".."));
+	}
 
 	wsprintf(searchPath, TEXT("%s\\*"), basePath);
 
 	x = FindFirstFile(searchPath, &desc);
-	if (x == INVALID_HANDLE_VALUE)
+	if (x == INVALID_HANDLE_VALUE) {
+		FindClose(x);
+		displayDirectoryList();
 		return;
+	}
 	if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 		TCHAR *work;
 
 		work = wcsrchr(desc.cFileName, '\\');
+		/*
 		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
+		*/
+		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
 	}
 	while (FindNextFile(x, &desc))
 		if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 		TCHAR *work;
 
 		work = wcsrchr(desc.cFileName, '\\');
+		/*
 		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
+		*/
+		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
 	}	
+
 	FindClose(x);
+	displayDirectoryList();
+}
+
+void displayGamesList() {
+	int current = _first_index_games;
+	int index_games = 0;
+
+	_last_selected = -1;
+
+	drawBlankGameSelection();
+	drawCommentString("Choose a game");
+
+	if (_first_index_games) {
+		// include "previous" link
+		drawStandardString("***[PREVIOUS]***", index_games++);
+	}
+
+	while (current < _total_games && index_games < MAX_DISPLAYED_GAMES - 1) 
+		drawStandardString(listIndex[current++].name, index_games++);
+
+
+	if (current != _total_games) {
+		// add "next" link
+		drawStandardString("***[NEXT]***", index_games);
+	}
+}
+
+void displayDirectoryList() {
+	int current = _first_index;	
+	int index_link = 0;
+
+	_last_selected = -1;
+
+	drawBlankGameSelection();
+	drawCommentString("Choose root directory");
+
+	if (_first_index) {
+		// include "previous" link
+		drawStandardString("***[PREVIOUS]***", index_link++);
+	}
+
+	while (current < _total_directories && index_link < MAX_DISPLAYED_DIRECTORIES - 1) {
+		char work[MAX_PATH];
+
+		WideCharToMultiByte(CP_ACP, 0, directories[current].name, wcslen(directories[current].name) + 1, work, sizeof(work), NULL, NULL);
+		if (strlen(work) > 17) {
+			strcpy(work + 17, "[...]");
+		}
+		drawStandardString(work, index_link++);
+		current++;
+	}
+
+	if (current != _total_directories) {
+		// add "next" link
+		drawStandardString("***[NEXT]***", index_link);
+	}
 }
 
 void startScan() {
-	prescanning = TRUE;
+	/*prescanning = TRUE;*/
+	_scanning = true;
 	wcscpy(old_basePath, basePath);
-	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Choose the games root directory"));
+	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Choose the games root directory"));
+	drawCommentString("Choose root directory");
+	/*
 	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("OK"));
 	SetDlgItemText(hwndDlg, IDC_GAMEDESC, TEXT(""));
 	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_HIDE);
+	*/
 	doScan();
 }
 
 void endScanPath() {
-	prescanning = FALSE;
+	/*prescanning = FALSE;*/
+	_scanning = false;
+	/*
 	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("Scan"));
 	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_SHOW);
+	*/
 	startFindGame();
 }
 
 void abortScanPath() {
-	prescanning = FALSE;
+	/*prescanning = FALSE;*/
+	_scanning = false;
 	wcscpy(basePath, old_basePath);
-	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT(""));
+	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT(""));
+	drawCommentString("");
+	/*
 	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("Scan"));	
 	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
 	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_SHOW);
+	*/
 	displayFoundGames();
 }
 
@@ -392,11 +635,14 @@ void startFindGame() {
 	char			tempo[1024];
 	char		    workdir[MAX_PATH];	
 
-	prescanning = FALSE;
+	//prescanning = FALSE;
+	_scanning = false;
 
-	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scanning, please wait"));
+	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scanning, please wait"));
+	drawBlankGameSelection();
+	drawCommentString("Scanning, please wait");
 
-	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
+	//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
 
 	memset(gamesFound, 0, MAX_GAMES);
 	/*
@@ -414,9 +660,10 @@ void startFindGame() {
 	index = displayFoundGames();
 
 	// Save the results in the registry
-	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Saving the results"));
+	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Saving the results"));
+	drawCommentString("Saving the results");
 
-	g_config->set("GamesInstalled", index, "wince");
+	g_config->setInt("GamesInstalled", index, "wince");
 
 	tempo[0] = '\0';
 	for (i=0; i<index; i++) {
@@ -441,33 +688,39 @@ void startFindGame() {
 
 	g_config->flush();
 
-	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
+	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
+	drawCommentString("Scan finished");
 
 }
 
 void getSelectedGame(int result, char *id, TCHAR *directory) {
 	ScummGame game;
 
-	game = GameList[gamesInstalled[listIndex[result]].reference];
+	game = GameList[gamesInstalled[listIndex[result].reference].reference];
 	strcpy(id, game.filename);
-	wcscpy(directory, gamesInstalled[listIndex[result]].directory);
+	wcscpy(directory, gamesInstalled[listIndex[result].reference].directory);
 }
 
-void displayGameInfo() {
-	int item;	
-	TCHAR work[400];
+void displayGameInfo(int index) {
+	//int item;	
+	//TCHAR work[400];
 	ScummGame game;
 
+	/*
 	item = SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETCURSEL, 0, 0);
 	if (item == LB_ERR)
 		return;
+	*/
 
-	game = GameList[gamesInstalled[listIndex[item]].reference];
+	game = GameList[gamesInstalled[listIndex[_last_selected].reference].reference];
+	/*
 	wcscpy(work, TEXT("File path : ..."));	
 	wcscat(work, wcsrchr(gamesInstalled[listIndex[item]].directory, '\\'));			
 	SetDlgItemText(hwndDlg, IDC_FILEPATH, work);
 	MultiByteToWideChar(CP_ACP, 0, game.description, strlen(game.description) + 1, work, sizeof(work));
 	SetDlgItemText(hwndDlg, IDC_GAMEDESC, work);	
+	*/
+	drawCommentString((char*)game.description);
 }
 
 void findGame(TCHAR *directory) {
@@ -552,5 +805,87 @@ void findGame(TCHAR *directory) {
 	}	
 	FindClose(x);
 }
+
+void handleSelectGameDown() {
+	if (!_scanning) {
+		if (_last_selected == -1) {
+			if (_first_index_games)
+				changeSelectedGame(1);
+			else
+				changeSelectedGame(0);
+		}
+		else
+			changeSelectedGame(_last_selected - _first_index_games + 1);
+	}
+}
+
+void handleSelectGameUp() {
+	if (!_scanning) {
+		if (_last_selected != -1 && _last_selected) {
+			if (_last_selected == _first_index_games)
+				changeSelectedGame(0);
+			else
+				changeSelectedGame(_last_selected - _first_index_games - 1);
+		}
+	}
+}
+
+void handleSelectGameButton() {
+	if (!_scanning) {
+		if (_last_selected == -1)
+			drawCommentString("Please select a game");
+		else
+			_game_selected = true;
+	}
+}
+
+void handleSelectGame(int x, int y) {
+
+	int start = 70;
+	int i;
+
+	x -= _game_selection_X_offset;
+	y -= _game_selection_Y_offset;
+
+	/* See if it's a selection */
+
+	for (i=0; i<MAX_DISPLAYED_GAMES; i++) {
+		if (y >= start && y <= start + 8) {
+			if (!_scanning)
+				changeSelectedGame(i);
+			else
+				changeScanPath(i);
+			return;
+		}
+		start += 15;
+	}
+
+	/* See if it's a button */
+
+	if (y>=217 && y<=238) {
+		if (x>=8 && x<=45) {
+			if (!_scanning)
+				startScan();
+			else
+				startFindGame();
+		}
+		if ((x>=93 && x<=129)) {
+			if (!_scanning) {
+				if (_last_selected == -1)
+					drawCommentString("Please select a game");
+				else
+					_game_selected = true;
+			}
+			else
+				startFindGame();
+		}
+		if (x>=175 && x<=208) {
+			if (!_scanning)
+				exit(1);
+			else
+				abortScanPath();
+		}
+	}
+}			
 
 #endif
