@@ -469,6 +469,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_versionDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
+	_arraySlot = NULL;
 	_inventory = NULL;
 	_newNames = NULL;
 	_scummVars = NULL;
