@@ -243,10 +243,11 @@ typedef ActorData *ActorDataPointer;
 typedef SortedList<ActorDataPointer> ActorOrderList;
 
 struct SpeechData {
-	int speechColor;
-	int outlineColor;
+	int speechColor[ACTOR_SPEECH_ACTORS_MAX];
+	int outlineColor[ACTOR_SPEECH_ACTORS_MAX];
 	int speechFlags;
 	const char *strings[ACTOR_SPEECH_STRING_MAX];
+	Point speechCoords[ACTOR_SPEECH_ACTORS_MAX];
 	int stringsCount;
 	int slowModeCharIndex;
 	uint16 actorIds[ACTOR_SPEECH_ACTORS_MAX];
@@ -294,8 +295,8 @@ public:
 	void nonActorSpeech(const char **strings, int stringsCount, int speechFlags);
 	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags);
 	void setSpeechColor(int speechColor, int outlineColor) {
-		_activeSpeech.speechColor = speechColor;
-		_activeSpeech.outlineColor = outlineColor;
+		_activeSpeech.speechColor[0] = speechColor;
+		_activeSpeech.outlineColor[0] = outlineColor;
 	}
 	void abortAllSpeeches();
 	void abortSpeech();

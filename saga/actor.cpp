@@ -609,6 +609,15 @@ void Actor::handleSpeech(int msec) {
 			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
 		}
 		_activeSpeech.stringsCount--;
+		if (_activeSpeech.stringsCount > 0 && _activeSpeech.actorIds[0] != 0) {
+			// Update actor speech position for the next string.
+			// Note that we only need to do this for the first
+			// actor since simultaneous speech is never more than
+			// one string at a time.
+			actor = getActor(_activeSpeech.actorIds[0]);
+			_activeSpeech.speechCoords[0] = actor->screenPosition;
+			_activeSpeech.speechCoords[0].y -= ACTOR_DIALOGUE_HEIGHT;
+		}
 	}
 
 	if (!isSpeaking())
@@ -966,8 +975,7 @@ int Actor::drawActors() {
 // draw speeches
 	if (isSpeaking() && !_vm->_script->_skipSpeeches) {
 		int i;
-		int textDrawFlags, speechColor;
-		Point speechCoord;
+		int textDrawFlags;
 		char oneChar[2];
 		oneChar[1] = 0;
 		const char *outputString;
@@ -987,16 +995,7 @@ int Actor::drawActors() {
 		if (_activeSpeech.actorIds[0] != 0) {
 			
 			for (i = 0; i < _activeSpeech.actorsCount; i++){
-				actor = getActor(_activeSpeech.actorIds[i]);
-				speechCoord.x = actor->screenPosition.x;
-				speechCoord.y = actor->screenPosition.y;
-				speechCoord.y -= ACTOR_DIALOGUE_HEIGHT;
-				if (_activeSpeech.actorsCount > 1)
-					speechColor = actor->speechColor;
-				else
-					speechColor = _activeSpeech.speechColor;
-
-				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString, speechCoord.x, speechCoord.y, speechColor, _activeSpeech.outlineColor, textDrawFlags);
+				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString, _activeSpeech.speechCoords[i].x, _activeSpeech.speechCoords[i].y, _activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], textDrawFlags);
 			}
 
 		} else { // non actors speech
@@ -1315,15 +1314,17 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	int i;
 
 	actor = getActor(actorId);
-	for (i = 0; i < stringsCount; i++) {		
+	for (i = 0; i < stringsCount; i++) {
 		_activeSpeech.strings[i] = strings[i];
 	}
 	_activeSpeech.stringsCount = stringsCount;
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = actorId;
-	_activeSpeech.speechColor = actor->speechColor;
-	_activeSpeech.outlineColor = 15; // fixme - BLACK
+	_activeSpeech.speechCoords[0] = actor->screenPosition;
+	_activeSpeech.speechCoords[0].y -= ACTOR_DIALOGUE_HEIGHT;
+	_activeSpeech.speechColor[0] = actor->speechColor;
+	_activeSpeech.outlineColor[0] = _vm->_gfx->getBlack();
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
@@ -1341,8 +1342,10 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = 0;
-	//_activeSpeech.speechColor = ;
-	//_activeSpeech.outlineColor = ; 
+	//_activeSpeech.speechColor[0] = ;
+	//_activeSpeech.outlineColor[0] = ;
+	//_activeSpeech.speechCoords[0].x = ;
+	//_activeSpeech.speechCoords[0].y = ;
 	_activeSpeech.sampleResourceId = -1;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
@@ -1351,15 +1354,20 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags) {
 	int i;
 	
-	for (i = 0; i < actorIdsCount; i++) {		
+	for (i = 0; i < actorIdsCount; i++) {
+		ActorData *actor;
+
+		actor = getActor(actorIds[i]);
 		_activeSpeech.actorIds[i] = actorIds[i];
+		_activeSpeech.speechCoords[i] = actor->screenPosition;
+		_activeSpeech.speechCoords[i].y -= ACTOR_DIALOGUE_HEIGHT;
+		_activeSpeech.speechColor[i] = actor->speechColor;
+		_activeSpeech.outlineColor[i] = 0; // disable outline
 	}
 	_activeSpeech.actorsCount = actorIdsCount;
 	_activeSpeech.strings[0] = string;
 	_activeSpeech.stringsCount = 1;
 	_activeSpeech.speechFlags = speechFlags;
-	//_activeSpeech.speechColor = ; // get's from every actor 
-	_activeSpeech.outlineColor = 0; // disable outline 
 	_activeSpeech.sampleResourceId = -1;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
