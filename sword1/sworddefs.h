@@ -50,6 +50,11 @@ namespace Sword1 {
 #define LOGIC_new_script 15
 #define LOGIC_pause_for_event 16
 
+#define SCRIPT_CONT 1
+#define SCRIPT_STOP 0
+
+#define INS_talk 1
+
 #define TOTAL_pockets 52
 #define TOTAL_subjects (375-256+1)
 #define BASE_SUBJECT 256
@@ -111,12 +116,6 @@ struct WalkGridHeader {
 	#pragma END_PACK_STRUCTS
 #endif
 
-/*struct RSprite {
-	Header header;
-	uint32 totalSprites;
-	uint32 spriteOffset[2];			//2 is arbitrary number
-}*/
-
 enum Language {
 	BS1_ENGLISH = 0,
 	BS1_FRENCH,
@@ -127,12 +126,11 @@ enum Language {
 	BS1_PORT
 };
 
-#define SCRIPT_CONT 1
-#define SCRIPT_STOP 0
-
+#define SAM 2162689
 #define PLAYER 8388608
-#define NICO 8454144
 #define GEORGE 8388608
+#define NICO 8454144
+
 #define UP 0
 #define UP_RIGHT 1
 #define U_R 1

@@ -1215,8 +1215,11 @@ int Logic::fnTheyDo(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param
 //send an instruction to mega we're talking to and wait
 //until it has finished before returning to script
 int Logic::fnTheyDoWeWait(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
-	Object *target;
-	target = _objMan->fetchObject(tar);
+	// workaround for scriptbug #928791: Freeze at hospital
+	// in at least one game version, a script forgets to set sam_returning back to zero
+	if ((tar == SAM) && (instruc == INS_talk) && (param2 == 2162856))
+		_scriptVars[SAM_RETURNING] = 0;
+	Object *target = _objMan->fetchObject(tar);
 	target->o_down_flag = instruc; // instruction for the mega
 	target->o_ins1 = param1;
 	target->o_ins2 = param2;
