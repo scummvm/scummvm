@@ -1211,8 +1211,11 @@ void ScummEngine::stopTalk() {
 			a->startAnimActor(a->talkStopFrame);
 			_useTalkAnims = false;
 		}
-		talkingActor(0xFF);
+		if (!(_features & GF_NEW_COSTUMES))
+			talkingActor(0xFF);
 	}
+	if (_features & GF_NEW_COSTUMES)
+		talkingActor(0);
 	_keepText = false;
 	_charset->restoreCharsetBg();
 }
