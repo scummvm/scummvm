@@ -69,6 +69,7 @@ protected:
 	uint8 _musicTempo1; // given once per music
 	uint32 _tempo;      // calculated from musicTempo0 and musicTempo1
 	uint32 _aktTime;
+	uint32 _playTime;
 	Actions _onNextPoll;
 	SkyChannelBase *_channels[10];
 	OSystem::MutexRef _mutex;
