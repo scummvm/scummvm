@@ -32,7 +32,7 @@ protected:
 public:
 	bool _toBeDestroyed;
 	int _id;
-	Channel() : _mixer(0), _toBeDestroyed(false), _id(-1) {}
+	Channel(SoundMixer *mixer) : _mixer(mixer), _toBeDestroyed(false), _id(-1) {}
 	virtual ~Channel() {}
 	virtual void mix(int16 *data, uint len) = 0;
 	void destroy() {
@@ -89,34 +89,33 @@ public:
 
 #ifdef USE_MAD
 
-class ChannelMP3 : public Channel {
+class ChannelMP3Common : public Channel {
+protected:
 	byte *_ptr;
+	bool _releasePtr;
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
-	uint32 _silenceCut;
 	uint32 _posInFrame;
-	uint32 _position;
 	uint32 _size;
-	byte _flags;
+
+public:
+	ChannelMP3Common(SoundMixer *mixer);
+	~ChannelMP3Common();
+};
+
+class ChannelMP3 : public ChannelMP3Common {
+	uint32 _silenceCut;
+	uint32 _position;
 
 public:
 	ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags);
-	~ChannelMP3();
 
 	void mix(int16 *data, uint len);
-	bool isMusicChannel() {
-		return false;
-	}
+	bool isMusicChannel() { return false; }
 };
 
-class ChannelMP3CDMusic : public Channel {
-	byte *_ptr;
-	struct mad_stream _stream;
-	struct mad_frame _frame;
-	struct mad_synth _synth;
-	uint32 _posInFrame;
-	uint32 _size;
+class ChannelMP3CDMusic : public ChannelMP3Common {
 	uint32 _bufferSize;
 	mad_timer_t _duration;
 	File *_file;
@@ -125,13 +124,10 @@ class ChannelMP3CDMusic : public Channel {
 
 public:
 	ChannelMP3CDMusic(SoundMixer *mixer, File *file, mad_timer_t duration);
-	~ChannelMP3CDMusic();
 
 	void mix(int16 *data, uint len);
 	bool isActive();
-	bool isMusicChannel() {
-		return true;
-	}
+	bool isMusicChannel() { return true; }
 };
 
 #endif
@@ -670,9 +666,9 @@ bool Channel::isActive() {
 }
 
 /* RAW mixer */
-ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id) {
+ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id)
+	: Channel(mixer) {
 	_id = id;
-	_mixer = mixer;
 	_flags = flags;
 	_ptr = (byte *)sound;
 	_pos = 0;
@@ -733,8 +729,8 @@ void ChannelRaw::mix(int16 *data, uint len) {
 #define WARP_WORKAROUND 50000
 
 ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate,
-										 byte flags, int32 buffer_size) {
-	_mixer = mixer;
+										 byte flags, int32 buffer_size)
+	: Channel(mixer) {
 	_flags = flags;
 	_bufferSize = buffer_size;
 	_ptr = (byte *)malloc(_bufferSize + WARP_WORKAROUND);
@@ -825,14 +821,9 @@ void ChannelStream::mix(int16 *data, uint len) {
 }
 
 #ifdef USE_MAD
-ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
-	_mixer = mixer;
-	_flags = flags;
-	_posInFrame = 0xFFFFFFFF;
-	_position = 0;
-	_size = size;
-	_ptr = (byte *)sound;
 
+ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer)
+	: Channel(mixer) {
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
 	// 11 kHz on WinCE if necessary
@@ -841,6 +832,24 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
+}
+
+ChannelMP3Common::~ChannelMP3Common() {
+	if (_releasePtr)
+		free(_ptr);
+	mad_synth_finish(&_synth);
+	mad_frame_finish(&_frame);
+	mad_stream_finish(&_stream);
+}
+
+ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) 
+	: ChannelMP3Common(mixer) {
+	_posInFrame = 0xFFFFFFFF;
+	_position = 0;
+	_size = size;
+	_ptr = (byte *)sound;
+	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE);
+
 	/* This variable is the number of samples to cut at the start of the MP3
 	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
 	   of blank at the start (as, I suppose, the MP3 compression algorithm need to
@@ -854,14 +863,6 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
 	   from the start of the sound => we skip about 2 frames (at 22.05 khz).
 	 */
 	_silenceCut = 576 * 2;
-}
-
-ChannelMP3::~ChannelMP3() {
-	if (_flags & SoundMixer::FLAG_AUTOFREE)
-		free(_ptr);
-	mad_synth_finish(&_synth);
-	mad_frame_finish(&_frame);
-	mad_stream_finish(&_stream);
 }
 
 static inline int scale_sample(mad_fixed_t sample) {
@@ -934,30 +935,14 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file,
-														 mad_timer_t duration){
-	_mixer = mixer;
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file, mad_timer_t duration)
+	: ChannelMP3Common(mixer) {
 	_file = file;
 	_duration = duration;
 	_initialized = false;
 	_bufferSize = MP3CD_BUFFERING_SIZE;
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
-
-	mad_stream_init(&_stream);
-#ifdef _WIN32_WCE
-	// 11 kHz on WinCE if necessary
-	if ((uint)_mixer->_syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0) != 22050)
-		mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
-#endif
-	mad_frame_init(&_frame);
-	mad_synth_init(&_synth);
-}
-
-ChannelMP3CDMusic::~ChannelMP3CDMusic() {
-	free(_ptr);
-	mad_synth_finish(&_synth);
-	mad_frame_finish(&_frame);
-	mad_stream_finish(&_stream);
+	_releasePtr = true;
 }
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {
@@ -1062,8 +1047,8 @@ bool ChannelMP3CDMusic::isActive() {
 #endif
 
 #ifdef USE_VORBIS
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
-	_mixer = mixer;
+ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track)
+	: Channel(mixer) {
 	_ov_file = ov_file;
 
 	if (duration)
