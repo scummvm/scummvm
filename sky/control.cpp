@@ -327,9 +327,9 @@ void SkyControl::doControlPanel(void) {
 	initPanel();
 
 	_skyScreen->clearScreen();
-	if (SkyState::_systemVars.gameVersion < 368) {
+	if (SkyState::_systemVars.gameVersion < 368) 
 		_skyScreen->setPalette(60509);
-	} else 
+	else 
 		_skyScreen->setPalette(60510);
 	
 	drawMainPanel();
