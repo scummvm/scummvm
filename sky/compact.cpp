@@ -23,6 +23,7 @@
 #ifdef _MSC_VER
 // disable warning "truncation of constant value". Some signed
 // fields of the structs are saved as unsigned in the .h files
+#pragma warning(disable : 4305)
 #pragma warning(disable : 4309) 
 #endif
 
@@ -44,6 +45,7 @@
 #include "sky/compacts/z_compac.h"
 
 #ifdef _MSC_VER
+#pragma warning(default : 4305)
 #pragma warning(default : 4309) 
 #endif
 
