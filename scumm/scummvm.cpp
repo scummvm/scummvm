@@ -101,7 +101,7 @@ static const VersionSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY, "000.LFL"},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, "000.LFL"},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, MDT_NONE,
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
