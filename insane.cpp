@@ -510,6 +510,7 @@ void SmushPlayer::parseFOBJ()
 	cd.src = _cur + 0xE;
 	cd.w = *(uint16 *)(_cur + 6);
 	cd.h = *(uint16 *)(_cur + 8);
+	cd.flags = 0;
 
 	codec = _cur[0];
 
