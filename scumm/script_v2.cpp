@@ -2719,9 +2719,11 @@ void Scumm::o6_miscOps()
 	 				speed = 71;
 				else
 					speed = 1000 / _insaneFlag;
-				ScummRenderer sr(this, speed);
- 				SmushPlayer sp(&sr);
- 				sp.play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+				ScummRenderer * sr = new ScummRenderer(this, speed);
+ 				SmushPlayer * sp = new SmushPlayer(sr);
+ 				sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+				delete sp;
+				delete sr;
  			}
 			break;
 		case 7:
