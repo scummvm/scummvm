@@ -402,14 +402,18 @@ void Scumm_v5::o5_actorSet() {
 	int i, j;
 
 	if (act == 0) {
-		// This case happens in Zak256 (and maybe elsewhere, to set the default talk color (9).
-		// For now, we hack this to modify actor 1 instead, but clearly that's bad.
-		// Better might be to modify _string[0].color, or even add a new dedicated
-		// 'default talk color' variable.
-		act = 1;
-		ScriptSlot *ss = &vm.slot[_currentScript];
-		warning("o5_actorSet: act = 0, setting to 1 as a workaround (%d:%d:0x%X)", _roomResource,
-			ss->number, _scriptPointer - _scriptOrgPointer);
+		// This case happens in Zak256 (and maybe elsewhere), to set the
+		// default talk color (9).
+		while ((_opcode = fetchScriptByte()) != 0xFF) {
+			if (_features & GF_SMALL_HEADER)
+				_opcode = (_opcode & 0xE0) | convertTable[(_opcode & 0x1F) - 1];
+				
+			if (_opcode== 12)
+				_string[0].color = getVarOrDirectByte(0x80);
+			else
+				error("o5_actorSet: Invalid sub opcode %d in actor 0 case", _opcode);
+		}
+		return;
 	}
 
 	a = derefActor(act, "o5_actorSet");
