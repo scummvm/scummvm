@@ -1181,8 +1181,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	} else
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
-Common::hexdump(smap_ptr - 24, 48);
-
 	if (!smap_ptr) {
 		// This will go away eventually. HE 7.2 titles used different function
 		// here which read BMAP. But it was replaced not in every place. So
