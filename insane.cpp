@@ -198,17 +198,23 @@ void SmushPlayer::parseIACT() {
 				error("trk %d: no FRMT section");
 			_imusCodec[idx] = READ_BE_UINT32(_cur + pos + 16);
 			_imusRate[idx] = READ_BE_UINT32(_cur + pos + 20);
+			_imusChan[idx] = READ_BE_UINT32(_cur + pos + 24);
 			_imusPos[idx] = 0;
 			break;
 		case 'DATA' :
 			switch (_imusCodec[idx]) {
 			case 8 :
+				if (_imusChan[idx] == 2)
+					flags |= SoundMixer::FLAG_STEREO;
 				flags |= SoundMixer::FLAG_UNSIGNED;
 				buf = (byte *) malloc(sublen);
 				memcpy(buf, _cur + pos, sublen);
 				bpos = sublen;
 				break;
 			case 12 :
+				if (_imusChan[idx] == 2)
+					flags |= SoundMixer::FLAG_STEREO;
+				flags |= SoundMixer::FLAG_16BITS;
 				buf = (byte *) malloc(2 * sublen);
 
 				bpos = 0;
@@ -229,15 +235,15 @@ void SmushPlayer::parseIACT() {
 						temp = (temp | _imusData[idx][0]) << 4;
 						temp -= 0x8000;
 
-						//buf[bpos++] = temp & 0xff;
 						buf[bpos++] = (temp >> 8) & 0xff;
+						buf[bpos++] = temp & 0xff;
 
 						temp = (_imusData[idx][1] & 0xf0) << 4;
 						temp = (temp | _imusData[idx][2]) << 4;
 						temp -= 0x8000;
 
-						//buf[bpos++] = temp & 0xff;
 						buf[bpos++] = (temp >> 8) & 0xff;
+						buf[bpos++] = temp & 0xff;
 						_imusPos[idx] = 0;
 					}
 				}

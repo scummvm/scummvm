@@ -72,7 +72,7 @@ struct SmushPlayer {
 
 		/* IACT: The Dig audio */
 		uint32 _imusSize[8], _imusSubSize[8];
-		uint32 _imusTrk[8], _imusRate[8];
+		uint32 _imusTrk[8], _imusRate[8], _imusChan[8];
 		uint32 _imusSubTag[8];
 		byte _imusData[8][3];
 		uint32 _imusPos[8], _imusCodec[8];
