@@ -2244,6 +2244,8 @@ void Scumm_v6::o6_dim() {
 
 void Scumm_v6::o6_dummy() {
 	/* nothing */
+	if (_features & GF_HUMONGOUS)
+		stopObjectCode();
 }
 
 void Scumm_v6::o6_dim2() {
