@@ -193,7 +193,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	}
 
-	if (hdr.ver < VER(32) && _heversion == 70) {
+	if (_heversion == 70) {
 		roomptr = getResourceAddress(rtRoom, _roomResource);
 		const byte *ptr = findResourceData(MKID('REMP'), roomptr);
 		if (ptr) {
