@@ -514,7 +514,7 @@ void ScummEngine_v7he::o7_startSound() {
 		break;
 
 	case 230:
-		_heSndTimer = pop();
+		_heSndChannel = pop();
 		break;
 
 	case 231:
@@ -525,7 +525,7 @@ void ScummEngine_v7he::o7_startSound() {
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
-		_heSndTimer = VAR(VAR_MUSIC_TIMER);
+		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
 		break;
 
 	case 245:
@@ -533,9 +533,9 @@ void ScummEngine_v7he::o7_startSound() {
 		break;
 
 	case 255:
-		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
+		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
-		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
+		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
 		_heSndLoop = 0;
 		break;
 
