@@ -78,6 +78,8 @@ protected:
 	int		_capacity;
 
 public:
+	static const String emptyString;
+
 	String() : _capacity(0) { _refCount = new int(1); }
 	String(const char *str, int len = -1);
 	String(const ConstString &str);

@@ -25,6 +25,8 @@
 
 namespace Common {
 
+const String String::emptyString;
+
 String::String(const char *str, int len) {
 	_refCount = new int(1);
 	if (str && len != 0) {
