@@ -28,6 +28,9 @@ namespace Common {
 	class StringList;
 }
 
+/**
+ * Simple message dialog ("alert box"): presents a text message in a dialog with up to two buttons.
+ */
 class MessageDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
@@ -40,9 +43,12 @@ protected:
 	int addLine(Common::StringList &lines, const char *line, int size);
 };
 
+/**
+ * Timed message dialog: displays a message to the user for brief time period.
+ */
 class TimedMessageDialog : public MessageDialog {
 public:
-	TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 timer);
+	TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 duration);
 
 	void handleTickle();
 

@@ -148,9 +148,9 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-TimedMessageDialog::TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 timer)
+TimedMessageDialog::TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 duration)
 	: MessageDialog(gui, message, 0, 0) {
-	_timer = _gui->get_time() + timer;
+	_timer = _gui->get_time() + duration;
 }
 
 void TimedMessageDialog::handleTickle() {
