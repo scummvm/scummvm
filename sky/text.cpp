@@ -286,11 +286,11 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	curPos += bytesToClear;
 
 	//make the header
-	((struct dataFileHeader *)curDest)->s_width = TO_LE_16(_dtLineWidth);
-	((struct dataFileHeader *)curDest)->s_height = TO_LE_16((uint16)(_charHeight * _dtLines));
-	((struct dataFileHeader *)curDest)->s_sp_size = TO_LE_16((uint16)(_dtLineWidth * _charHeight * _dtLines));
-	((struct dataFileHeader *)curDest)->s_offset_x = TO_LE_16(0);
-	((struct dataFileHeader *)curDest)->s_offset_y = TO_LE_16(0);
+	((struct dataFileHeader *)curDest)->s_width = _dtLineWidth;
+	((struct dataFileHeader *)curDest)->s_height = _charHeight * _dtLines;
+	((struct dataFileHeader *)curDest)->s_sp_size = _dtLineWidth * _charHeight * _dtLines;
+	((struct dataFileHeader *)curDest)->s_offset_x = 0;
+	((struct dataFileHeader *)curDest)->s_offset_y = 0;
 	
 	//reset position
 	curPos = textPtr;
