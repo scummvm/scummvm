@@ -131,7 +131,7 @@ struct ImageHeader { /* file format */
 			char name[32];      //                                |
 			uint32 unk_1[2];	// always 0 ?                     v
 			uint32 version;		// 801; 801; 801; 801; 801; 801; 801
-			uint32 unk_2;		//   0;   0;   0;   0;   0:   1;   2
+			uint32 image_count;		//   0;   0;   0;   0;   0:   1;   2
 			uint32 x_pos;		//   0; 184; 264; 336; 450; 272;   0
 			uint32 y_pos;		//   0; 272; 248; 216; 168; 320;   0
 			uint32 width;		//  64; 128; 120; 128;  80;  48;  80

@@ -1582,6 +1582,7 @@ void ScummEngine_v8::o8_drawObject() {
 	int x = pop();
 	int obj = pop();
 	int objnum = getObjectIndex(obj);
+	int imagecount;
 	ObjectData *od;
 
 	if (!objnum)
@@ -1595,10 +1596,18 @@ void ScummEngine_v8::o8_drawObject() {
 
 	addObjectToDrawQue(objnum);
 
-	if (state == 255 || state == 254)
-		warning("o8_drawObject(%d, %d, %d, %d): extended attributes unimplemented", x, y, objnum, state);
-	else
-		warning("o8_drawObject(%d, %d, %d, %d)", x, y, objnum, state);
+	if (state == 255) {
+		state = getState(obj);
+		imagecount = getObjectImageCount(obj);
+
+		if (imagecount != state)
+			state++;
+		else
+			state = 1;
+	}
+
+	if (state == 254)
+		state = _rnd.getRandomNumber(getObjectImageCount(obj));
 
 	putState(obj, state);
 }

@@ -723,6 +723,7 @@ protected:
 	int getObjOldDir(int obj);
 	int getObjNewDir(int obj);
 	int getObjectIndex(int object) const;
+	int getObjectImageCount(int object);
 	int whereIsObject(int object) const;
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	

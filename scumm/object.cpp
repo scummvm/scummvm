@@ -168,6 +168,23 @@ int ScummEngine::getObjectIndex(int object) const {
 	return -1;
 }
 
+int ScummEngine::getObjectImageCount(int object) {
+	const byte *ptr;
+	const ImageHeader *imhd;
+	int count, objnum;
+
+	objnum = getObjectIndex(object);
+	if (objnum == -1)
+		error("getObjectImageCount: object %d not in memory", object);
+
+	ptr = getOBIMFromObject(_objs[objnum]);
+	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+
+	count = READ_LE_UINT32(&imhd->v8.image_count);
+	debug(1, "getObjectImageCount: image count %d", count);
+	return count;
+}
+
 int ScummEngine::whereIsObject(int object) const {
 	int i;
 
