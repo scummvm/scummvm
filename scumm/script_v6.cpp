@@ -2516,7 +2516,12 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				if (args[1] == 0) {
 					SmushPlayer *sp = new SmushPlayer(this, speed);
 
-					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+					// Correct incorrect smush filename in Macintosh FT demo
+					if ((_gameId == GID_FT) && (_features & GF_DEMO) && (_features & GF_MACINTOSH) &&
+					    (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
+						sp->play("jumpgorg.san", getGameDataPath());
+					else
+						sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 					delete sp;
 				} else if (_gameId == GID_FT) {
 					const int insaneVarNum = ((_features & GF_DEMO) && (_features & GF_PC)) 
