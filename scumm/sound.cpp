@@ -282,6 +282,13 @@ void Sound::playSound(int soundID) {
 			// I'm going to assume that the sample frequency is
 			// the only important difference between the two.
 
+			// FIXME: SBL resources are apparently horribly
+			// distorted on segacd even though it shares the same
+			// header etc. So don't try to play them for now.
+			if (_scumm->_gameId == GID_MONKEY_SEGA)	{
+				return;
+			}
+	
 			if (READ_UINT32(ptr + 8) == MKID('WVhd'))
 				rate = 11025;
 			else

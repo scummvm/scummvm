@@ -112,6 +112,8 @@ static const VersionSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
+	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, VersionSettings::ADLIB_PREFERRED,
+	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, VersionSettings::ADLIB_PREFERRED,
@@ -2500,7 +2502,7 @@ void Scumm::launch() {
 		VAR(VAR_DEBUGMODE) = _debugMode;
 	}
 
-	if (_gameId == GID_MONKEY)
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
 		_scummVars[74] = 1225;
 
 	_sound->setupSound();
