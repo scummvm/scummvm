@@ -809,16 +809,12 @@ void Scumm::o5_actorSet()
 			a->forceClip = getVarOrDirectByte(0x80);
 			break;
 		case 20:										/* ignoreboxes */
-			a->ignoreBoxes = 1;
+		case 21:										/* followboxes */
+			a->ignoreBoxes = !(_opcode & 1);
 			a->forceClip = 0;
-		FixRoom:
 			if (a->isInCurrentRoom())
 				a->putActor(a->x, a->y, a->room);
 			break;
-		case 21:										/* followboxes */
-			a->ignoreBoxes = 0;
-			a->forceClip = 0;
-			goto FixRoom;
 
 		case 22:										/* animspeed */
 			a->animSpeed = getVarOrDirectByte(0x80);
@@ -1571,27 +1567,26 @@ void Scumm::o5_loadRoom()
 
 void Scumm::o5_loadRoomWithEgo()
 {
-	int obj, room, x, y;
 	Actor *a;
+	int obj, room, x, y;
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
 	a = derefActorSafe(_vars[VAR_EGO], "o5_loadRoomWithEgo");
 
-	/* Warning: used previously _xPos, _yPos from a previous update of those */
-	a->putActor(a->x, a->y, room);
+	a->putActor(0, 0, room);
+	_egoPositioned = false;
 
 	x = (int16)fetchScriptWord();
 	y = (int16)fetchScriptWord();
-
-	_egoPositioned = false;
 
 	_vars[VAR_WALKTO_OBJ] = obj;
 	startScene(a->room, a, obj);
 	_vars[VAR_WALKTO_OBJ] = 0;
 
 	camera._dest.x = camera._cur.x = a->x;
+	setCameraAt(a->x, a->y);
 	setCameraFollows(a);
 
 	_fullRedraw = 1;
@@ -2775,7 +2770,7 @@ void Scumm::o5_pickupObjectOld()
 
 	// FIXME: Zak256 (Zaire): Why does this happen at all?
 	if (obj < 1) {
-		warning("pickupObjectOld received negative index");
+		warning("pickupObjectOld received negative index %d (0x%02x)", obj, obj);
 		return;
 	}
 
