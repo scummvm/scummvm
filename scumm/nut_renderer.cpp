@@ -30,14 +30,14 @@ NutRenderer::NutRenderer(ScummEngine *vm) :
 	_vm(vm),
 	_initialized(false),
 	_loaded(false),
-	_nbChars(0) {
+	_numChars(0) {
 
 	for (int i = 0; i < 256; i++)
 		_chars[i].src = NULL;
 }
 
 NutRenderer::~NutRenderer() {
-	for (int i = 0; i < _nbChars; i++) {
+	for (int i = 0; i < _numChars; i++) {
 		if (_chars[i].src)
 			delete []_chars[i].src;
 	}
@@ -143,11 +143,11 @@ bool NutRenderer::loadFont(const char *filename) {
 		return false;
 	}
 
-	_nbChars = READ_LE_UINT16(dataSrc + 10);
+	_numChars = READ_LE_UINT16(dataSrc + 10);
 	uint32 offset = 0;
 	int32 decoded_length;
 
-	for (int l = 0; l < _nbChars; l++) {
+	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
 			offset += 8;
@@ -197,7 +197,7 @@ bool NutRenderer::loadFont(const char *filename) {
 	return true;
 }
 
-int NutRenderer::getCharWidth(byte c) {
+int NutRenderer::getCharWidth(byte c) const {
 	debug(8, "NutRenderer::getCharWidth() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharWidth() Font is not loaded");
@@ -212,13 +212,13 @@ int NutRenderer::getCharWidth(byte c) {
 		return 0;
 	}
 
-	if (c >= _nbChars)
-		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _nbChars);
+	if (c >= _numChars)
+		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _numChars);
 
 	return _chars[c].width;
 }
 
-int NutRenderer::getCharHeight(byte c) {
+int NutRenderer::getCharHeight(byte c) const {
 	debug(8, "NutRenderer::getCharHeight() called");
 	if (!_loaded) {
 		warning("NutRenderer::getCharHeight() Font is not loaded");
@@ -233,10 +233,44 @@ int NutRenderer::getCharHeight(byte c) {
 		return 0;
 	}
 
-	if (c >= _nbChars)
-		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _nbChars);
+	if (c >= _numChars)
+		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _numChars);
 
 	return _chars[c].height;
+}
+
+int NutRenderer::getCharOffsX(byte c) const {
+	debug(8, "NutRenderer::getCharOffsX() called");
+	if (!_loaded) {
+		warning("NutRenderer::getCharOffsX() Font is not loaded");
+		return 0;
+	}
+
+	if (c >= 0x80 && _vm->_useCJKMode) {
+		return 0;
+	}
+
+	if (c >= _numChars)
+		error("invalid character in NutRenderer::getCharOffsX : %d (%d)", c, _numChars);
+
+	return _chars[c].xoffs;
+}
+
+int NutRenderer::getCharOffsY(byte c) const {
+	debug(8, "NutRenderer::getCharOffsY() called");
+	if (!_loaded) {
+		warning("NutRenderer::getCharOffsY() Font is not loaded");
+		return 0;
+	}
+
+	if (c >= 0x80 && _vm->_useCJKMode) {
+		return 0;
+	}
+
+	if (c >= _numChars)
+		error("invalid character in NutRenderer::getCharOffsY : %d (%d)", c, _numChars);
+
+	return _chars[c].yoffs;
 }
 
 void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {

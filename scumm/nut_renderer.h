@@ -33,7 +33,7 @@ protected:
 	ScummEngine *_vm;
 	bool _initialized;
 	bool _loaded;
-	int _nbChars;
+	int _numChars;
 	struct {
 		int xoffs;
 		int yoffs;
@@ -50,15 +50,18 @@ protected:
 public:
 	NutRenderer(ScummEngine *vm);
 	virtual ~NutRenderer();
-	int getNbChars() { return _nbChars; }
+	int getNumChars() { return _numChars; }
 
 	bool loadFont(const char *filename);
 
 	void drawFrame(byte *dst, int c, int x, int y);
 	void drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow);
 
-	int getCharWidth(byte c);
-	int getCharHeight(byte c);
+	int getCharWidth(byte c) const;
+	int getCharHeight(byte c) const;
+
+	int getCharOffsX(byte c) const;
+	int getCharOffsY(byte c) const;
 };
 
 } // End of namespace Scumm
