@@ -130,7 +130,7 @@ public:
 class OGGSound : public Sound {
 public:
 	OGGSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name);
+	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif
 } // End of namespace Queen
