@@ -2047,17 +2047,6 @@ void Scumm_v6::o6_wait() {
 			break;
 		return;
 	case 169:
-		// HACK: For Conroy Bumpus' song in Sam & Max.
-		// During the song three calls to o6_wait() appear,
-		// but because of the way in which the actor talk is done
-		// and the fact that the song extends beyond the span
-		// of each individual line, no end-of-talk is ever
-		// detected and the script hangs on o6_wait().
-		if (_gameId == GID_SAMNMAX && vm.slot[_currentScript].number == 99 && _sound->isSoundRunning (64)) {
-			debug (2, "Sam & Max hack: Bypassing o6_wait() during Conroy's song.");
-			return;
-		}
-
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
