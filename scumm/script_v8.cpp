@@ -690,7 +690,9 @@ void Scumm_v8::o8_cursorCommand()
 		makeCursorColorTransparent(pop());
 		break;
 	case 0xE7:		// SO_CHARSET_SET
-		initCharset(pop());
+		// FIXME - TODO
+		pop();
+//		initCharset(pop());
 		break;
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, sizeof(args) / sizeof(args[0]));
