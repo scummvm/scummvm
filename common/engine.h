@@ -24,8 +24,8 @@
 #include "scummsys.h"
 #include "system.h"
 
-#define SCUMMVM_VERSION "0.4.2cvs"
-#define SCUMMVM_CVS "2003-05-25"
+#define SCUMMVM_VERSION "0.5.0pre-cvs"
+#define SCUMMVM_CVS "2003-07-xx"
 
 
 enum GameId {
