@@ -167,7 +167,8 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 #endif
 			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
 			unpackLen = rncDecoder.unpackM1(fileDest + sizeof(dataFileHeader), uncompDest + sizeof(dataFileHeader), 0);
-			unpackLen += sizeof(dataFileHeader);
+			if (unpackLen)
+				unpackLen += sizeof(dataFileHeader);
 		}
 
 		debug(3, "UnpackM1 returned: %d", unpackLen);
@@ -177,7 +178,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 			return fileDest;
 		} else {
 			if (unpackLen != (int32)decompSize)
-				debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unpackLen, decompSize);
+				debug(1, "ERROR: File %d: invalid decomp size! (was: %d, should be: %d)", fileNr, unpackLen, decompSize);
 			_lastLoadedFileSize = decompSize;
 
 			free(fileDest);
