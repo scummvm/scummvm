@@ -41,7 +41,7 @@ struct R_RSCFILE_RESOURCE {
 	size_t res_size;
 };
 
-struct R_RSCFILE_CONTEXT_tag {
+struct R_RSCFILE_CONTEXT {
 	const char *rc_file_fspec;
 	File rc_file;
 	int rc_file_loaded;

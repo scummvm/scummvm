@@ -36,15 +36,13 @@ namespace Saga {
 
 #define R_MAXPATH 512
 
-#define R_MEMFAIL_MSG "Memory allocation error."
-
 // Define opaque types
 
 // r_rscfile
-typedef struct R_RSCFILE_CONTEXT_tag R_RSCFILE_CONTEXT;
+struct R_RSCFILE_CONTEXT;
 
 // r_script
-typedef struct R_SEMAPHORE_tag R_SEMAPHORE;
+struct R_SEMAPHORE;
 
 // Define common data types
 
@@ -64,7 +62,6 @@ struct R_SURFACE {
 	int buf_h;
 	int buf_pitch;
 	R_RECT clip_rect;
-	void *impl_src;
 };
 
 #define R_RGB_RED   0x00FF0000UL

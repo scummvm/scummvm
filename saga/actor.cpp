@@ -81,7 +81,7 @@ int ACTOR_Init() {
 	// Create actor lookup table
 	ActorModule.tbl = (YS_DL_NODE **)malloc(R_ACTORCOUNT * sizeof *ActorModule.tbl);
 	if (ActorModule.tbl == NULL) {
-		ActorModule.err_str = R_MEMFAIL_MSG;
+		ActorModule.err_str = "Memory allocation error.";
 		return R_MEM;
 	}
 
@@ -93,7 +93,7 @@ int ACTOR_Init() {
 	ActorModule.alias_tbl = (int *)malloc(R_ACTORCOUNT * sizeof *ActorModule.alias_tbl);
 	if (ActorModule.alias_tbl == NULL) {
 		free(ActorModule.tbl);
-		ActorModule.err_str = R_MEMFAIL_MSG;
+		ActorModule.err_str = "Memory allocation error.";
 		return R_MEM;
 	}
 

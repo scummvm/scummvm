@@ -32,7 +32,7 @@ namespace Saga {
 
 #define STHREAD_DEF_INSTR_COUNT 7
 
-struct R_SEMAPHORE_tag {
+struct R_SEMAPHORE {
 	int hold_count;
 };
 
