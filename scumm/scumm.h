@@ -297,9 +297,6 @@ public:
 	virtual void setupScummVars();
 
 	// Startup functions
-	void main();
-	void parseCommandLine(int argc, char **argv);
-	bool detectGame();
 	void launch();
 	void go();
 
