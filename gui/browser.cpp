@@ -140,6 +140,7 @@ BrowserDialog::BrowserDialog(const char *title)
 	// Add file list
 	_fileList = new ListWidget(this, 10, 34, _w - 2 * 10, _h - 34 - 24 - 10);
 	_fileList->setNumberingMode(kListNumberingOff);
+	_fileList->setEditable(false);
 
 	// Buttons
 	addButton(10, _h - 24, "Go up", kGoUpCmd, 0);
@@ -180,6 +181,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_node = _node.getParent();
 		updateListing();
 		break;
+	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
 		_node = _nodeContent[data];
 		updateListing();
