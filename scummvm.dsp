@@ -202,6 +202,14 @@ SOURCE=.\common\rect.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\savefile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\savefile.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\scaler.cpp
 # End Source File
 # Begin Source File
