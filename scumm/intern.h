@@ -591,8 +591,10 @@ protected:
 	void o6_redimArray();
 	void o6_readINI();
 	void o6_unknownF9();
-	void o6_kernelSetFunctions1(byte *addr);
-	int o6_kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4);
+	void o6_tellFile();
+	void kernelSetFunctions1(byte *addr);
+	int kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4);
+	void seekWrapper(int slot, int offset, int mode);
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

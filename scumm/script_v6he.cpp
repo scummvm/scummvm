@@ -340,7 +340,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_seekFile),
 		OPCODE(o6_redimArray),
-		OPCODE(o6_invalid),
+		OPCODE(o6_tellFile),
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -883,7 +883,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		// Fatty Bear's Birthday Surprise
 		debug(0, "stub ScummEngine_v6he::o6_kernelSetFunctions(%d, %d, %d, %d, %d, %d)",
 			  args[0], args[1], args[2], args[3], args[4], args[5]);
-		//o6_kernelSetFunctions1(getResourceAddress(rtScreen, args[1]) + 6);
+		//kernelSetFunctions1(getResourceAddress(rtScreen, args[1]) + 6);
 		//if (args[5] >= args[3]) {
 		//}
 		break;
@@ -893,7 +893,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 	}
 }
 
-void ScummEngine_v6he::o6_kernelSetFunctions1(byte *addr) {
+void ScummEngine_v6he::kernelSetFunctions1(byte *addr) {
 	// TODO
 }
 
@@ -911,10 +911,10 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		debug(0, "stub ScummEngine_v6he::o6_kernelGetFunctions(%d, %d, %d, %d, %d)",
 			  args[0], args[1], args[2], args[3], args[4]);
 		writeVar(0, 0);
-		defineArray(0, 3, 0, o6_kernelGetFunctions1(0, args[1], args[2], args[3], args[4]));
+		defineArray(0, 3, 0, kernelGetFunctions1(0, args[1], args[2], args[3], args[4]));
 		retval = readVar(0);
 		addr = getResourceAddress(rtString, retval);
-		o6_kernelGetFunctions1(addr + 6, args[1], args[2], args[3], args[4]);
+		kernelGetFunctions1(addr + 6, args[1], args[2], args[3], args[4]);
 		push(retval);
 		break;
 	default:
@@ -922,7 +922,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 	}
 }
 
-int ScummEngine_v6he::o6_kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4) {
+int ScummEngine_v6he::kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4) {
 	// TODO
 	return 0;
 }
@@ -1132,23 +1132,57 @@ void ScummEngine_v6he::o6_unknownFA() {
 }
 
 void ScummEngine_v6he::o6_seekFile() {
-	int a, b, c;
-	a = pop();
-	b = pop();
-	c = pop();
+	int mode, offset, slot;
+	mode = pop();
+	offset = pop();
+	slot = pop();
 
-	switch (a) {
+	warning("stub o6_seekFile(%d, %d, %d)", slot, offset, mode);
+
+	switch (mode) {
 	case 1:
-		//seekWrapper(c, b, 0, 0);
+		seekWrapper(slot, offset, 0);
 		break;
 	case 2:
-		//seekWrapper(c, b, ?, 1);
+		seekWrapper(slot, offset, 1);
+		break;
+	case 3:
+		seekWrapper(slot, offset, 2);
 		break;
 	default:
 		break;
 	}
+}
 
-	warning("stub o6_seekFile(%d, %d, %d)", a, b, c);
+void ScummEngine_v6he::seekWrapper(int slot, int offset, int mode) {
+	if (slot == 1)
+		return;
+
+	switch (mode) {
+	case 0:
+		// _hFileTable[slot].seek(offset, SEEK_SET);
+		break;
+	case 1:
+		// _hFileTable[slot].seek(offset, SEEK_CUR);
+		break;
+	case 2:
+		// _hFileTable[slot].seek(offset, SEEK_END);
+		break;
+	}
+}
+
+void ScummEngine_v6he::o6_tellFile() {
+	int slot = pop();
+
+	warning("stub o6_tellFile(%d)", slot);
+
+	if (slot == -1) {
+		push(0);
+		return;
+	}
+
+	// push(_hFileTable[slot].tell());
+	push(0);
 }
 
 void ScummEngine_v6he::o6_redimArray() {
