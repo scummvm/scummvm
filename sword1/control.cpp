@@ -517,7 +517,7 @@ bool SwordControl::savegamesExist(void) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
 	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
-	if (inf->isOpen())
+	if (inf && inf->isOpen())
 		retVal = true;
 	delete inf;
 	delete mgr;
