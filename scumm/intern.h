@@ -596,6 +596,7 @@ protected:
 	void o6_unknownF9();
 	void o6_unknownFB();
 	void o6_readFilePos();
+	void o6_quitPauseRestart();
 };
 
 class ScummEngine_v7he : public ScummEngine_v6he {

@@ -1475,4 +1475,37 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 	}
 }
 
+void ScummEngine_v6he::o6_quitPauseRestart() {
+	byte subOp = fetchScriptByte();
+	int par1;
+
+	if (_heversion == 60)
+		if (subOp != 158 && subOp != 160)
+			error("o6_quitPauseRestart invalid case %d", subOp);
+
+
+	switch (subOp & 0xff) {
+	case 158:		// SO_RESTART
+		restart();
+		break;
+	case 160:		// SO_QUIT
+		shutDown();
+		break;
+	case 250:
+		par1 = pop();
+		warning("stub: o6_quitPauseRestart subOpcode %d", subOp);
+		break;
+	case 253:
+		par1 = pop();
+		warning("stub: o6_quitPauseRestart subOpcode %d", subOp);
+	case 244:
+	case 251:
+	case 252:
+		warning("stub: o6_quitPauseRestart subOpcode %d", subOp);
+		break;
+	default:
+		error("o6_quitPauseRestart invalid case %d", subOp);
+	}
+}
+
 } // End of namespace Scumm
