@@ -104,7 +104,10 @@ struct ImageHeader { /* file format */
 		struct {
 			uint16 obj_id;
 			uint16 image_count;
-			uint16 unk[4];
+			uint16 unk[1];
+			byte flag;
+			byte unk1;
+			uint16 unk2[2];
 			uint16 width;
 			uint16 height;
 			uint16 hotspot_num;

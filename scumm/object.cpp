@@ -479,8 +479,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		if (_version == 8) 
 			flags = (od.flag & 16) == 0;
 		else if (_features & GF_HUMONGOUS)
-			// TODO: Should be read from object header
-			flags = 0;
+			flags = (od.flag & 1) != 0;
 		else
 			flags = Gdi::dbAllowMaskOr;
 
@@ -771,6 +770,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 	cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
+	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 
 	if (_version == 8) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
@@ -778,7 +778,6 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
-		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 		od->x_pos = (int)READ_LE_UINT32(&imhd->v8.x_pos);
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
@@ -793,7 +792,6 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
-		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 		od->x_pos = READ_LE_UINT16(&imhd->v7.x_pos);
 		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
 		od->width = READ_LE_UINT16(&imhd->v7.width);
@@ -814,6 +812,8 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		}
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
+		od->flag = imhd->old.flag;
+
 	} else {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
