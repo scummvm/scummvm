@@ -239,7 +239,6 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
 
 	byte *resptr = getResourceAddress(rtScaleTable, slot);
-	ScaleSlot &s = _scaleSlots[slot-1];
 	int lowerIdx, upperIdx;
 	float m, oldM;
 	
@@ -251,9 +250,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 		// The scale is constant This usually means we encountered one of the
 		// "broken" cases. We set pseudo scale item values which lead to a 
 		// constant scale of 255.
-		s.y1 = 0;
-		s.y2 = 199;
-		s.scale1 = s.scale2 = 255;
+		setScaleSlot(slot, 0, 0, 255, 0, 199, 255);
 		return;
 	}
 	
@@ -310,13 +307,10 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	}
 
 	// The values of y1 and y2, as well as the scale, can now easily be computed
-	s.y1 = lowerIdx;
-	s.y2 = upperIdx;
-	s.scale1 = resptr[lowerIdx];
-	s.scale2 = resptr[upperIdx];
-
+	setScaleSlot(slot, 0, lowerIdx, resptr[lowerIdx], 0, upperIdx, resptr[upperIdx]);
 	
 	// Compute the variance, for debugging. It shouldn't exceed 1
+	ScaleSlot &s = _scaleSlots[slot-1];
 	int y;
 	int sum = 0;
 	int scale;
@@ -332,7 +326,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	}
 	variance = sum / (200.0 - 1.0);
 	if (variance > 1)
-		warning("scale item %d, variance %f exceeds 1 (room %d)\n", slot, variance, _currentRoom);
+		debug(1, "scale item %d, variance %f exceeds 1 (room %d)", slot, variance, _currentRoom);
 }
 
 void ScummEngine::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
