@@ -50,6 +50,7 @@ Smush::Smush() {
 	_updateNeeded = false;
 	_stream = NULL;
 	_movieTime = 0;
+	_frame = 0;
 }
 
 Smush::~Smush() {
