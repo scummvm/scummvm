@@ -28,6 +28,7 @@
 #include "timer.h"
 #include "smush.h"
 #include "mixer/mixer.h"
+
 #include "driver_gl.h"
 
 #ifndef _MSC_VER
@@ -53,6 +54,7 @@ extern Timer *g_timer;
 static bool parseBoolStr(const char *val) {
 	if (val == NULL || val[0] == 0)
 		return false;
+
 	switch (val[0]) {
 	case 'y': case 'Y':	// yes
 	case 't': case 'T':	// true
@@ -70,7 +72,9 @@ static bool parseBoolStr(const char *val) {
 			return false;
 		}
 	}
+
 	error("Unrecognized boolean value %s\n", val);
+	return false;
 }
 
 int main(int argc, char *argv[]) {
