@@ -100,9 +100,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 		ADD_BIND("Ctrl g", "Run in really fast mode (*)");
 		ADD_BIND("Ctrl m", "Toggle mouse capture");
 		ADD_BIND("Ctrl Alt 1-8", "Switch between graphics filters");
-		ADD_BIND("Ctrl Alt + and -", "Increase/Decrease the scale factor");
+		ADD_BIND("Ctrl Alt +, -", "Increase / Decrease scale factor");
 		ADD_BIND("Ctrl Alt a", "Toggle aspect-ratio correction");
-		ADD_LINE;
 		ADD_LINE;
 		ADD_LINE;
 		ADD_TEXT("* Note that using ctrl-f and");
