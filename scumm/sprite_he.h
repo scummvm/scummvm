@@ -26,15 +26,15 @@
 namespace Scumm {
 
 enum SpriteFlags {
-	kSF1       = (1 << 0),
-	kSF2       = (1 << 1),
-	kSF3       = (1 << 2),
-	kSF4       = (1 << 3),
+	kSF01      = (1 << 0),
+	kSF02      = (1 << 1),
+	kSF03      = (1 << 2),
+	kSF04      = (1 << 3),
 	kSFZoomed  = (1 << 4),
 	kSFRotated = (1 << 5),
-	kSF7       = (1 << 6),
-	kSF8       = (1 << 7),
-	kSF9       = (1 << 8),
+	kSF07      = (1 << 6),
+	kSF08      = (1 << 7),
+	kSF09      = (1 << 8),
 	kSF10      = (1 << 9),
 	kSF11      = (1 << 10),
 	kSF12      = (1 << 11),
@@ -61,8 +61,8 @@ enum SpriteFlags {
 };
 
 enum SpriteGroupFlags {
-	kSGF1  = 1 << 0,
-	kSFG2  = 1 << 1
+	kSGF01  = 1 << 0,
+	kSGF02  = 1 << 1
 };
 
 struct SpriteInfo {

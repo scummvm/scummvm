@@ -903,6 +903,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 
 void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
+	int spriteId;
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
@@ -934,12 +935,27 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		pop();
 		break;
 	case 23:
-		pop();
-		if (_gameId == GID_FREDDI4 || _heversion >= 99)
-			pop();
+		if (_gameId == GID_FREDDI4 || _heversion >= 99) {
+			_curMaxSpriteId = pop();
+			_curSpriteId = pop();
+			
+			if (_curSpriteId > _curMaxSpriteId)
+				SWAP(_curSpriteId, _curMaxSpriteId);
+		} else {
+			_curSpriteId = pop();
+			_curMaxSpriteId = _curSpriteId; // to make all functions happy
+		}
 		break;
 	case 28: // HE99+
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_7C(spriteId, args[0]);
 		break;
 	case 29:
 		pop();
@@ -959,7 +975,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		pop();
 		break;
 	case 52: // HE 98+
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_14(spriteId, args[0]);
 		break;
 	case 58: // HE 99+
 		pop();
@@ -981,7 +1005,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		pop();
 		break;
 	case 106: // HE 99+
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_80(spriteId, args[0]);
 		break;
 	case 124:
 		break;
@@ -990,6 +1022,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		pop();
 		break;
 	case 183:
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_case183(spriteId);
 		break;
 	default:
 		error("o90_setSpriteInfo: Unknown case %d", subOp);

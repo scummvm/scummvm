@@ -852,6 +852,9 @@ protected:
 	const OpcodeEntryV90he *_opcodesV90he;
 	WizParameters _wizParams;
 
+	int _curMaxSpriteId;
+	int _curSpriteId;
+
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v80he(detector, syst, gs, md5sum) {}
 
@@ -892,6 +895,11 @@ protected:
 	int spriteInfoGet_field_78(int spriteNun);
 	int spriteInfoGet_field_80(int spriteNun);
 	void getSpriteImageDim(int spriteNum, int32 &w, int32 &h);
+
+	void spriteInfoSet_field_14(int spriteNum, int value);
+	void spriteInfoSet_field_7C(int spriteNum, int value);
+	void spriteInfoSet_field_80(int spriteNum, int value);
+	void spriteInfoSet_case183(int spriteNum);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);

@@ -161,6 +161,39 @@ void ScummEngine_v90he::getSpriteImageDim(int spriteNum, int32 &w, int32 &h) {
 	getWizImageDim(_spriteTable[spriteNum].res_id, _spriteTable[spriteNum].res_state, w, h);
 }
 
+//
+// spriteInfoSet functions
+//
+void ScummEngine_v90he::spriteInfoSet_field_14(int spriteNum, int value) {
+	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+
+	if (_spriteTable[spriteNum].field_14 != value) {
+		_spriteTable[spriteNum].field_14 = value;
+		_spriteTable[spriteNum].flags |= kSF01 | kSF02;
+	}
+}
+
+void ScummEngine_v90he::spriteInfoSet_field_7C(int spriteNum, int value) {
+	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+
+	if (_spriteTable[spriteNum].field_7C != value) {
+		_spriteTable[spriteNum].field_7C = value;
+		_spriteTable[spriteNum].flags |= kSF01 | kSF02;
+	}
+}
+
+void ScummEngine_v90he::spriteInfoSet_field_80(int spriteNum, int value) {
+	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+
+	_spriteTable[spriteNum].field_80 = value;
+}
+
+void ScummEngine_v90he::spriteInfoSet_case183(int spriteNum) {
+	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+
+	// TODO
+}
+
 void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numImgLists) {
 	_varNumSpriteGroups = numGroups;
 	_numSpritesToProcess = 0;
@@ -189,7 +222,7 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF1 | kSF2;
+					spi->flags |= kSF01 | kSF02;
 				}
 			}
 		}
@@ -199,18 +232,18 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF1 | kSF2;
+					spi->flags |= kSF01 | kSF02;
 				}
 			}
 		}
-		spg->flags &= ~kSGF1;
-		spriteMarkIfInGroup(curGrp, kSF1 | kSF2);
+		spg->flags &= ~kSGF01;
+		spriteMarkIfInGroup(curGrp, kSF01 | kSF02);
 		if (spg->field_20 != 0) {
 			spriteGroupCheck(curGrp);
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF1 | kSF2;
+					spi->flags |= kSF01 | kSF02;
 				}
 			}
 		}
