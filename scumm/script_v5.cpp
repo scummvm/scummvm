@@ -647,8 +647,15 @@ void Scumm_v5::o5_cursorCommand() {
 			// Indy3's script 118 to the Passport Demo's script 58
 			// my guess is that it's some sort of "init charset",
 			// but why does it need two parameters?
-			getVarOrDirectByte(0x80);
-			getVarOrDirectByte(0x40);
+			int a = getVarOrDirectByte(0x80);
+			int b = getVarOrDirectByte(0x40);
+			warning("o5_cursorCommand: unknown subopcode 14 (init charset?): %d, %d", a, b);
+			// Maybe the following is what to do (or maybe b instead of a); since I have only
+			// seen a = b = 1, this is not clear; still even if this is right, what's b?
+			// loadCharset(a);
+			// Assuming this is correct, we might not actually need it, as our
+			// initCharset automatically calls loadCharset for GF_SMALL_HEADER, if needed.
+			// And finally, are we sure only Indy3 needs this, and not also e.g. Loom?
 		} else {
 			getWordVararg(table);
 			for (i = 0; i < 16; i++)
