@@ -529,7 +529,66 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 }
 
 void ScummEngine_v90he::spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr) {
-	// TODO
+	int listNum;
+	int *ptr;
+	int origResId;
+
+	// XXX needs review
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+
+	if (_spriteTable[spriteId].imglist_num) {
+		checkRange(_varMaxSprites, 1, _spriteTable[spriteId].imglist_num,
+				   "Image list %d out of range");
+		_imageListStack[_curSprImageListNum++] = _spriteTable[spriteId].imglist_num - 1;
+		_spriteTable[spriteId].imglist_num = 0;
+	}
+
+	origResId = _spriteTable[spriteId].res_id;
+
+	if (imageNum == 1)
+		_spriteTable[spriteId].res_id = *spriteIdptr;
+	else {
+		if (!_curSprImageListNum)
+			error("Out of image lists");
+
+		if (imageNum > 32)
+			error("Too many images in image list (%d)!", imageNum);
+
+		_curSprImageListNum--;
+		_spriteTable[spriteId].imglist_num = _imageListStack[_curSprImageListNum] + 1;
+
+		listNum = _spriteTable[spriteId].imglist_num;
+
+		checkRange(_varMaxSprites, 1, listNum, "Image list %d out of range");
+
+		_imageListTable[0x21 * listNum - 1] = imageNum;
+		
+		ptr = spriteIdptr;
+		for (int i = 0; i < listNum; i++) {
+			_imageListTable[0x21 * listNum - 0x21 + i] = *ptr++;
+		}
+		_spriteTable[spriteId].res_id = *spriteIdptr;
+	}
+
+	_spriteTable[spriteId].field_74 = 0;
+	_spriteTable[spriteId].res_state = 0;
+
+	if (_spriteTable[spriteId].res_id) {
+		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].res_id);
+		_spriteTable[spriteId].flags |= kSF16 | kSF22 | kSF23 | kSFBlitDirectly;
+
+		if (_spriteTable[spriteId].res_id == origResId &&
+			_spriteTable[spriteId].res_wiz_states == spriteId)
+			return;
+
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
+	} else {
+		_spriteTable[spriteId].flags &= ~(kSF31);
+		_spriteTable[spriteId].flags |= kSF01 | kSFBlitDirectly;
+		_spriteTable[spriteId].field_4C = 0;
+		_spriteTable[spriteId].field_48 = 0;
+		_spriteTable[spriteId].res_wiz_states = 0;
+	}
 }
 
 //
