@@ -67,6 +67,9 @@ struct IsoTileData {
 	size_t offset;
 	uint16 terrainMask;
 	byte FGBGAttr;
+	int8 GetMaskRule() {
+		return attributes & 0x0F;
+	}
 };
 
 struct TilePlatformData {
@@ -146,6 +149,8 @@ private:
 		}
 		return value;
 	}	
+	int16 findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH );
+
 
 	byte *_tileData;
 	size_t _tileDataLength;	
@@ -159,6 +164,8 @@ private:
 	
 	uint16 _multiCount;
 	MultiTileEntryData *_multiTable;
+	uint16 _multiDataCount;
+	int16 *_multiTableData;
 
 	TileMapData _tileMap;
 	

@@ -33,6 +33,24 @@
 
 namespace Saga {
 
+enum MaskRules {
+	kMaskRuleNever = 0,
+	kMaskRuleAlways,
+	kMaskRuleUMIN,
+	kMaskRuleUMID,
+	kMaskRuleUMAX,
+	kMaskRuleVMIN,
+	kMaskRuleVMID,
+	kMaskRuleVMAX,
+	kMaskRuleYMIN,
+	kMaskRuleYMID,
+	kMaskRuleYMAX,
+	kMaskRuleUVMAX,
+	kMaskRuleUVMIN,
+	kMaskRuleUorV,
+	kMaskRuleUandV
+};
+
 IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_tileData = NULL;
 	_tilesCount = 0;
@@ -42,6 +60,8 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_metaTilesCount = 0;
 	_multiTable = NULL;
 	_multiCount = 0;
+	_multiTableData = NULL;
+	_multiDataCount = 0;
 	_viewScroll.x = (128 - 8) * 16;
 	_viewScroll.x = (128 - 8) * 16 - 64;
 	_viewDiff = 1;
@@ -188,6 +208,16 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 		multiTileEntryData->currentState = readS.readByte();
 		readS.readByte();//skip
 	}
+	for (i = 0; i < _multiCount; i++) {
+		_multiTable[i].offset -= readS.pos();
+	}
+
+	_multiDataCount = (readS.size() - readS.pos()) / 2;
+
+	_multiTableData = (int16 *)malloc(_multiDataCount * sizeof(*_multiTableData));
+	for (i = 0; i < _multiDataCount; i++) {
+		_multiTableData[i] = readS.readSint16();
+	}
 }
 
 void IsoMap::freeMem() {
@@ -199,6 +229,8 @@ void IsoMap::freeMem() {
 	_metaTilesCount = 0;
 	free(_multiTable);
 	_multiCount = 0;
+	free(_multiTableData);
+	_multiDataCount = 0;
 }
 
 void IsoMap::adjustScroll(bool jump) {
@@ -258,6 +290,48 @@ void IsoMap::adjustScroll(bool jump) {
 	}
 }
 
+int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
+	MultiTileEntryData *multiTileEntryData;
+	int16 ru;
+	int16 rv;
+	int16 mu;
+	int16 mv;
+	int16 state;
+	uint16 i, offset;
+
+	ru = (tileIndex >> 13) & 0x03;
+	rv = (tileIndex >> 11) & 0x03;
+	mu = absU - ru;
+	mv = absV - rv;
+	
+	tileIndex = 0;
+	for (i = 0; i < _multiCount; i++) {
+		multiTileEntryData = &_multiTable[i];
+
+		if ((multiTileEntryData->u == mu) && 
+			(multiTileEntryData->v == mv) && 
+			(multiTileEntryData->h == absH)) {
+			state = multiTileEntryData->currentState;
+			
+			offset = (ru + state * multiTileEntryData->uSize) * multiTileEntryData->vSize + rv;
+			offset += multiTileEntryData->offset;
+			if (offset >= _multiDataCount * sizeof(*_multiTableData)) {
+				error("wrong multiTileEntryData->offset");
+			}
+			tileIndex = _multiTableData[offset];
+			if (tileIndex >= 256) {
+				warning("something terrible happened");
+				return 1;
+			}
+
+			return tileIndex;
+		}
+	}
+	
+	warning("something terrible happened");
+	return 1;
+}
+
 int IsoMap::draw(SURFACE *ds) {
 	
 	Rect isoRect(_vm->getDisplayWidth(), _vm->getDisplayInfo().sceneHeight);
@@ -282,10 +356,10 @@ void IsoMap::drawSprite(SURFACE *ds, SpriteList &spriteList, int spriteNumber, c
 	spritePointer.x = screenPosition.x + xAlign;
 	spritePointer.y = screenPosition.y + yAlign;
 
-	_tileClip.left = screenPosition.x;
-	_tileClip.top = screenPosition.y;
-	_tileClip.right = screenPosition.x + width;
-	_tileClip.bottom = screenPosition.y + height;
+	_tileClip.left = spritePointer.x;
+	_tileClip.top = spritePointer.y;
+	_tileClip.right = spritePointer.x + width;
+	_tileClip.bottom = spritePointer.y + height;
 
 	if (_tileClip.left < 0) {
 		_tileClip.left = 0;
@@ -526,7 +600,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 				tileIndex = tilePlatform->tiles[u][v];
 				if (tileIndex != 0) {
 					if (tileIndex & SAGA_MULTI_TILE) {
-						warning("SAGA_MULTI_TILE"); //TODO: do it !
+						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
 					}
 
 					drawSpriteTile(ds, tileIndex, location, s);
@@ -578,7 +652,7 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 				tileIndex = tilePlatform->tiles[u][v];
 				if (tileIndex > 1) {
 					if (tileIndex & SAGA_MULTI_TILE) {
-						warning("SAGA_MULTI_TILE"); //TODO: do it !
+						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
 					}
 
 					drawTile(ds, tileIndex, s);
@@ -681,6 +755,10 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 
 }
 
+#define THRESH0		0
+#define THRESH8		8
+#define THRESH16		16
+
 void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &location, const Point &point) {
 	const byte *tilePointer;
 	const byte *readPointer;
@@ -691,7 +769,6 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
-
 
 	if (tileIndex >= _tilesCount) {
 		error("IsoMap::drawTile wrong tileIndex");
@@ -722,6 +799,95 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 		return;
 	}
 
+	if (location.z <= -16) {
+		if (location.z <= -48) {
+			if (location.u() < -THRESH8 || location.v() < -THRESH8) {
+				return;
+			}
+		} else {
+			if (location.u() < THRESH0 || location.v() < THRESH0) {
+				return;
+			}
+		}
+	} else {
+		if (location.z >= 16) {
+			return;
+		} else {
+			switch (_tilesTable[tileIndex].GetMaskRule()) {
+			case kMaskRuleNever:
+				return;
+			case kMaskRuleAlways:
+				break;
+			case kMaskRuleUMIN:
+				if (location.u() < THRESH0) {
+					return; 
+				}
+				break;
+			case kMaskRuleUMID:	
+				if (location.u() < THRESH8) {
+					return;
+				}
+				break;
+			case kMaskRuleUMAX:
+				if (location.u() < THRESH16) {
+					return; 
+				}
+				break;
+			case kMaskRuleVMIN:
+				if (location.v() < THRESH0) {
+					return;
+				}
+				break;
+			case kMaskRuleVMID:
+				if (location.v() < THRESH8) {
+					return; 
+				}
+				break;
+			case kMaskRuleVMAX:
+				if (location.v() < THRESH16) {
+					return; 
+				}
+				break;
+			case kMaskRuleYMIN:
+				if (location.u() + location.v() < THRESH0 * 2) {
+					return;
+				}
+				break;
+			case kMaskRuleYMID:
+				if (location.u() + location.v() < THRESH8 * 2) {
+					return;
+				}
+				break;
+			case kMaskRuleYMAX:
+				if (location.u() + location.v() < THRESH16 * 2) {
+					return;
+				}
+				break;
+			case kMaskRuleUVMAX:
+				if (location.u() < THRESH16 && location.v() < THRESH16) {
+					return;
+				}
+				break;
+			case kMaskRuleUVMIN:
+				if (location.u() < THRESH0 || location.v() < THRESH0) {
+					return;
+				}
+				break;
+			case kMaskRuleUorV:
+				if (location.u() < THRESH8 && location.v() < THRESH8) {
+					return;
+				}
+				break;
+			case kMaskRuleUandV:
+				if (location.u() < THRESH8 || location.v() < THRESH8) {
+					return;
+				}
+				break;
+			}
+		}
+	}
+
+///
 	readPointer = tilePointer;
 	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
 	for (row = drawPoint.y; row < lowBound; row++) {
