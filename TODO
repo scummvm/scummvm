@@ -1,5 +1,5 @@
 Residual in-progress items (in rough order of priority):
--------------------------------------------------------0
+--------------------------------------------------------
  * Figure out why SMUSH doesn't display graphics on Windows
  * Get SMUSH to stream from .lab instead of needing uncompressed snm
  * Add LAF font support to replace existing hack
@@ -12,7 +12,7 @@ Residual TODO list (in rough order of priority):
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
  * Add OpenGL lighting
- * Rewrite sound mixer (volume control, etc)
+ * Implement iMuse
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) original used MFC
 
