@@ -246,9 +246,9 @@ void ScummEngine::CHARSET_1() {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 
 				// Set flag that speech variant exist of this msg.
-				// TODO: This does not work for the speech system in V7+ games
-				// since they encode the voice information differently, and it
-				// is being stripped from the string before it ever gets here.
+				// This is actually a hack added by ScummVM; the original did
+				// subtitle hiding in some other way. I am not sure exactly
+				// how, though.
 				if (_haveMsg == 0xFF)
 					_haveMsg = 0xFE;
 				break;
@@ -871,7 +871,6 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	if (found != NULL) {
 		strcpy((char *)trans_buff, _languageBuffer + found->offset);
 
-		// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
 		if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
 			// Replace any '%___' by the corresponding special codes in the source text
 			const byte *src = text;

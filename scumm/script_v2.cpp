@@ -1389,8 +1389,6 @@ void ScummEngine_v2::o2_roomOps() {
 }
 
 void ScummEngine_v2::o2_cutscene() {
-	//warning("TODO o2_cutscene()");
-
 	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
 	vm.cutSceneData[1] = (int16)VAR(VAR_CURSORSTATE);
 	vm.cutSceneData[2] = _currentRoom;
@@ -1413,8 +1411,6 @@ void ScummEngine_v2::o2_cutscene() {
 }
 
 void ScummEngine_v2::o2_endCutscene() {
-	//warning("TODO o2_endCutscene()");
-
 	vm.cutSceneStackPointer = 0;
 
 	VAR(VAR_OVERRIDE) = 0;

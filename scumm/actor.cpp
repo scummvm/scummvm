@@ -148,6 +148,12 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	speedx = newSpeedX;
 	speedy = newSpeedY;
 
+if (newSpeedX == 10 && newSpeedY == 5) {
+	speedx = 5;
+	speedy = 5;
+}
+
+
 	if (moving) {
 		calcMovementFactor(walkdata.next);
 	}
@@ -171,17 +177,15 @@ int ScummEngine::getAngleFromPos(int x, int y) const {
 }
 
 int Actor::calcMovementFactor(Common::Point next) {
-	Common::Point actorPos(_pos);
-	int diffX, diffY;
-	int32 deltaXFactor, deltaYFactor;
+	int deltaXFactor, deltaYFactor;
 
-	if (actorPos == next)
+	if (_pos == next)
 		return 0;
 
-	diffX = next.x - actorPos.x;
-	diffY = next.y - actorPos.y;
-	deltaYFactor = speedy << 16;
+	const int diffX = next.x - _pos.x;
+	const int diffY = next.y - _pos.y;
 
+	deltaYFactor = speedy << 16;
 	if (diffY < 0)
 		deltaYFactor = -deltaYFactor;
 
@@ -192,7 +196,7 @@ int Actor::calcMovementFactor(Common::Point next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint) abs((int)(deltaXFactor >> 16)) > speedx) {
+	if ((uint) abs(deltaXFactor >> 16) > speedx) {
 		deltaXFactor = speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
@@ -205,7 +209,7 @@ int Actor::calcMovementFactor(Common::Point next) {
 		}
 	}
 
-	walkdata.cur = actorPos;
+	walkdata.cur = _pos;
 	walkdata.next = next;
 	walkdata.deltaXFactor = deltaXFactor;
 	walkdata.deltaYFactor = deltaYFactor;
@@ -379,8 +383,11 @@ int Actor::actorWalkStep() {
 	distX = abs(walkdata.next.x - walkdata.cur.x);
 	distY = abs(walkdata.next.y - walkdata.cur.y);
 
+if (number == 6) printf("actorWalkStep: actor %d at (%d,%d); ", number, actorPos.x, actorPos.y);
 	if (abs(actorPos.x - walkdata.cur.x) >= distX && abs(actorPos.y - walkdata.cur.y) >= distY) {
 		moving &= ~MF_IN_LEG;
+if (number == 6) printf("MF_IN_LEG: walkdata.cur=(%d,%d), walkdata.next=(%d,%d)\n", 
+		walkdata.cur.x, walkdata.cur.y, walkdata.next.x, walkdata.next.y);
 		return 0;
 	}
 
@@ -399,6 +406,11 @@ int Actor::actorWalkStep() {
 	if (abs(actorPos.y - walkdata.cur.y) > distY) {
 		actorPos.y = walkdata.next.y;
 	}
+
+if (number == 6) printf("new pos (%d,%d): delta=(%d,%d), delta>>8=(%d,%d)\n",
+		actorPos.x, actorPos.y,
+		walkdata.deltaXFactor, walkdata.deltaYFactor,
+		(walkdata.deltaXFactor >> 8), (walkdata.deltaYFactor >> 8));
 
 	_pos = actorPos;
 	return 1;

@@ -858,7 +858,6 @@ void ScummEngine_v5::o5_drawObject() {
 }
 
 void ScummEngine_v5::o5_getStringWidth() {
-	// TODO - not sure if this is correct... needs testing
 	int string, width = 0;
 	byte *ptr;
 	
@@ -874,7 +873,6 @@ void ScummEngine_v5::o5_getStringWidth() {
 }
 
 void ScummEngine_v5::o5_saveLoadVars() {
-	// TODO
 	if (fetchScriptByte() == 1)
 		saveVars();
 	else

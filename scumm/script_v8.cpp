@@ -1063,7 +1063,6 @@ void ScummEngine_v8::o8_actorOps() {
 }
 
 void ScummEngine_v8::o8_cameraOps() {
-	// TODO
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
@@ -1368,7 +1367,6 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 }
 
 void ScummEngine_v8::o8_kernelGetFunctions() {
-	// TODO
 	int args[30];
 	int len = getStackList(args, ARRAYSIZE(args));
 

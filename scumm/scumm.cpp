@@ -439,9 +439,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// The first step is to check whether one of them is present (we do that
 	// here); the rest is handled by the  ScummFile class and code in
 	// openResourceFile() (and in the Sound class, for MONSTER.SOU handling).
-	//
-	// TODO: Smush/iMuse need to be extended to be able to load files from the
-	//       container, too (for The Dig and FT, as well as their demos).
 	if (gs.detectFilename) {
 		if (_fileHandle.open(gs.detectFilename)) {
 			_containerFile = gs.detectFilename;
@@ -1197,7 +1194,7 @@ void ScummEngine::scummInit() {
 		setupV1ActorTalkColor();
 	} else if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
 		// HACK Some palette changes needed for demo script
-		// in Maniac Mansion (Enchanced)
+		// in Maniac Mansion (Enhanced)
 		_actors[3].setPalette(3, 1);
 		_actors[9].talkColor = 15;
 		_actors[10].talkColor = 7;
@@ -1441,7 +1438,6 @@ void ScummEngine::mainRun() {
 
 		if (_quit) {
 			// TODO: Maybe perform an autosave on exit?
-			// TODO: Also, we could optionally show a "Do you really want to quit?" dialog here
 		}
 	}
 }
@@ -2608,7 +2604,7 @@ void ScummEngine::initRoomSubBlocks() {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		ptr = 0; // TODO ? do 16 bit games use a palette?!?
+		ptr = 0;
 	else if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
