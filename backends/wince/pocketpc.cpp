@@ -94,6 +94,8 @@ typedef struct
 
 #include "dynamic_imports.h"
 
+#include "backends/fs/fs.h"
+
 #if defined(MIPS) || defined(SH3)
 // Comment this out if you don't want to support GameX
 #define GAMEX
@@ -103,11 +105,8 @@ typedef struct
 #include "GameX.h"
 #endif
 
-#define POCKETSCUMM_BUILD "101902"
-#define CURRENT_GAMES_VERSION 1
+#define CURRENT_GAMES_VERSION 3
 #define CURRENT_KEYS_VERSION 3
-
-#define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
 typedef int (*tTimeCallback)(int);
 typedef void SoundProc(void *param, byte *buf, int len);
@@ -188,6 +187,8 @@ pseudoGAPI availablePseudoGAPI[] = {
 };
 
 int _pseudoGAPI_device;
+
+extern char noGAPI;
 
 /* Default SDLAUDIO */
 
@@ -311,7 +312,7 @@ GameX *gameX;
 int gameXGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
 	gameX = new GameX();
 	if (!gameX->OpenGraphics()) {
-		MessageBox(NULL, TEXT("Couldn't initialize GameX. Reverting to GDI graphics"), TEXT("PocketScumm rendering"), MB_OK);
+		//MessageBox(NULL, TEXT("Couldn't initialize GameX. Reverting to GDI graphics"), TEXT("PocketScumm rendering"), MB_OK);
 		noGAPI = 1;
 	}
 	return 0;
@@ -418,8 +419,6 @@ extern void endScanPath();
 extern void abortScanPath();
 
 void keypad_init();
-
-extern char noGAPI;
 
 class OSystem_WINCE3 : public OSystem {
 public:
@@ -648,6 +647,8 @@ extern void handleSelectGame(int, int);
 /* Monkey2 keyboard stuff */
 bool monkey2_keyboard;
 
+bool new_audio_rate;
+
 bool closing = false;
 
 void close_GAPI() {
@@ -698,6 +699,7 @@ int mapKey(int key) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
 {
+
 	TCHAR directory[MAX_PATH];
 	char game_name[100];
 	bool sound;
@@ -708,27 +710,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	HMODULE aygshell_handle;
 	//HMODULE SDLAudio_handle;
 	HMODULE GAPI_handle;
-
-	/* Create the main window */
-	WNDCLASS wcex;
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC)OSystem_WINCE3::WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= GetModuleHandle(NULL);
-	wcex.hIcon			= 0;
-	wcex.hCursor		= NULL;
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName	= 0;	
-	wcex.lpszClassName	= TEXT("ScummVM");
-	if (!RegisterClass(&wcex))
-		Error(TEXT("Cannot register window class!"));
-
-	hWnd_Window = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
-      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, GetModuleHandle(NULL), NULL);
-
-	ShowWindow(hWnd_Window, SW_SHOW);
-	UpdateWindow(hWnd_Window);
 
 	hide_toolbar = false;
 	noGAPI = 0;
@@ -784,13 +765,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 			noGAPI = 1;
 		}
 		else {
-			if (!g_config->getBool("DirectVideoCheck", false, "wince")) {
-				if (MessageBox(NULL, TEXT("Direct video support is available for this device. Do you want to use it ?"), TEXT("PocketScumm Rendering"), MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1|MB_APPLMODAL) == IDNO)
-					noGAPI = 1;
-				MessageBox(NULL, TEXT("Delete scummvm.ini or remove the DirectVideoCheck key if you want to change this setting later"), TEXT("PocketScumm Rendering"), MB_OK|MB_APPLMODAL);
-				g_config->setBool("DirectVideoCheck", true, "wince");
-				g_config->flush();
+			FILE *test;
+
+			test = fopen("NoDirectVideo", "r");
+			if (test) {
+				noGAPI = 1;
+				fclose(test);
 			}
+			else
+			if (g_config->getBool("NoDirectVideo", false, "wince")) 
+				noGAPI = 1;
 		}
 
 		dynamicGXOpenInput = defaultGXOpenInput;
@@ -834,6 +818,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	select_game = true;
 
+	/* Create the main window */
+	WNDCLASS wcex;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= (WNDPROC)OSystem_WINCE3::WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= GetModuleHandle(NULL);
+	wcex.hIcon			= 0;
+	wcex.hCursor		= NULL;
+	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName	= 0;	
+	wcex.lpszClassName	= TEXT("ScummVM");
+	if (!RegisterClass(&wcex))
+		Error(TEXT("Cannot register window class!"));
+
+	hWnd_Window = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
+      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, GetModuleHandle(NULL), NULL);
+
+	ShowWindow(hWnd_Window, SW_SHOW);
+	UpdateWindow(hWnd_Window);
 
 	GraphicsOn(hWnd_Window, gfx_mode_switch);  // open GAPI in Portrait mode
 	GAPIKeysInit();
@@ -850,6 +854,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		g_config->setInt("GamesVersion", CURRENT_GAMES_VERSION, "wince");
 		g_config->flush();
 	}
+
+	if (result < 0)
+		return 0;
 
 	getSelectedGame(result, game_name, directory);
 	WideCharToMultiByte(CP_ACP, 0, directory, wcslen(directory) + 1, _directory, sizeof(_directory), NULL, NULL);
@@ -887,6 +894,9 @@ void runGame(char *game_name) {
 		draw_keyboard = true;
 		monkey2_keyboard = true;
 	}		
+
+	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
+	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0);
 
 	detector.parseCommandLine(argc, argv);
 
@@ -953,6 +963,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
 	case WM_ERASEBKGND:
 		{
+			/*
 			
 			RECT rc;
 			HDC hDC;
@@ -965,7 +976,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				if(rc.top < rc.bottom)
 					FillRect(hDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 				ReleaseDC(hWnd, hDC);			
-			}			
+			}
+			*/
 		}
 		return 1;
 
@@ -975,6 +987,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			PAINTSTRUCT ps;
 			hDC = BeginPaint (hWnd, &ps);
 			EndPaint (hWnd, &ps);
+			
 			if (!hide_toolbar)
 				toolbar_drawn = false;
 
@@ -1199,7 +1212,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						*/
 						/*}*/
 						wm->_event.event_code = EVENT_KEYDOWN;
-						wm->_event.kbd.ascii = mapKey(VK_F5);
+						if (g_scumm->_features & GF_OLD256)
+							wm->_event.kbd.ascii = 319;
+						else
+							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY];
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
@@ -1213,7 +1229,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							break;
 						}
 						wm->_event.event_code = EVENT_KEYDOWN;
-						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
+						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 						else
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
@@ -1388,8 +1404,10 @@ void action_save() {
 			toolbar_drawn = false;
 	*/
 	/*}*/
-
-	system->addEventKeyPressed(mapKey(VK_F5));
+	if (g_scumm->_features & GF_OLD256)
+		system->addEventKeyPressed(319);
+	else
+		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY]);						
 }
 
 void action_quit() {
@@ -1428,7 +1446,7 @@ void action_skip() {
 	OSystem_WINCE3* system;
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
-	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
+	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
 	else
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY]);						
@@ -1441,6 +1459,7 @@ void do_hide(bool hide_state) {
 	else
 		LimitScreenGeometry();
 	Cls();
+	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 	toolbar_drawn = hide_toolbar;
 	g_scumm->_system->update_screen();
 }
@@ -1627,7 +1646,7 @@ void OSystem_WINCE3::update_screen() {
 		else {
 			int i;
 			for (i=0; i<num_of_dirty_square; i++) {
-				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320);
+				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, true);
 			}
 			num_of_dirty_square = 0;
 		}
@@ -1832,7 +1851,7 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	/* only one format supported at the moment */
 
 	real_soundproc = proc;
-	desired.freq = SAMPLES_PER_SEC;
+	desired.freq = (new_audio_rate ? SAMPLES_PER_SEC_NEW : SAMPLES_PER_SEC_OLD);
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = 128;
@@ -1867,7 +1886,7 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 		break;
 
 	case PROP_GET_SAMPLE_RATE:
-		return SAMPLES_PER_SEC;
+		return (new_audio_rate ? SAMPLES_PER_SEC_NEW : SAMPLES_PER_SEC_OLD);
 	}
 
 	return 0;
