@@ -37,7 +37,7 @@ static R_ACTIONMAP_INFO ActmapModule;
 
 int ACTIONMAP_Register(void) {
 	CVAR_RegisterFunc(CF_action_info,
-					  "action_info", NULL, R_CVAR_NONE, 0, 0);
+					  "action_info", NULL, R_CVAR_NONE, 0, 0, NULL);
 	return R_SUCCESS;
 }
 
@@ -159,7 +159,7 @@ int ACTIONMAP_Draw(R_SURFACE * ds, int color) {
 	return R_SUCCESS;
 }
 
-void CF_action_info(int argc, char *argv[]) {
+void CF_action_info(int argc, char *argv[], void *refCon) {
 	R_POINT *pt;
 
 	int i;

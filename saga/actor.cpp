@@ -52,12 +52,12 @@ R_ACTIONTIMES ActionTDeltas[] = {
 };
 
 int ACTOR_Register() {
-	CVAR_RegisterFunc(CF_actor_add, "actor_add", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3);
-	CVAR_RegisterFunc(CF_actor_del, "actor_del", "<Actor id>", R_CVAR_NONE, 1, 1);
-	CVAR_RegisterFunc(CF_actor_move, "actor_move", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3);
-	CVAR_RegisterFunc(CF_actor_moverel, "actor_moverel", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3);
-	CVAR_RegisterFunc(CF_actor_seto, "actor_seto", "<Actor id> <Orientation>", R_CVAR_NONE, 2, 2);
-	CVAR_RegisterFunc(CF_actor_setact, "actor_setact", "<Actor id> <Action #>", R_CVAR_NONE, 2, 2);
+	CVAR_RegisterFunc(CF_actor_add, "actor_add", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, NULL);
+	CVAR_RegisterFunc(CF_actor_del, "actor_del", "<Actor id>", R_CVAR_NONE, 1, 1, NULL);
+	CVAR_RegisterFunc(CF_actor_move, "actor_move", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, NULL);
+	CVAR_RegisterFunc(CF_actor_moverel, "actor_moverel", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, NULL);
+	CVAR_RegisterFunc(CF_actor_seto, "actor_seto", "<Actor id> <Orientation>", R_CVAR_NONE, 2, 2, NULL);
+	CVAR_RegisterFunc(CF_actor_setact, "actor_setact", "<Actor id> <Action #>", R_CVAR_NONE, 2, 2, NULL);
 
 	return R_SUCCESS;
 }
@@ -1051,7 +1051,7 @@ int ACTOR_StoA(R_POINT *actor, const R_POINT *screen) {
 	return R_SUCCESS;
 }
 
-static void CF_actor_add(int argc, char *argv[]) {
+static void CF_actor_add(int argc, char *argv[], void *refCon) {
 	R_ACTOR actor;
 
 	if (argc < 3)
@@ -1067,7 +1067,7 @@ static void CF_actor_add(int argc, char *argv[]) {
 	return;
 }
 
-static void CF_actor_del(int argc, char *argv[]) {
+static void CF_actor_del(int argc, char *argv[], void *refCon) {
 	int id;
  
 	if (argc < 0)
@@ -1080,7 +1080,7 @@ static void CF_actor_del(int argc, char *argv[]) {
 	return;
 }
 
-static void CF_actor_move(int argc, char *argv[]) {
+static void CF_actor_move(int argc, char *argv[], void *refCon) {
 	int id;
 	R_POINT move_pt;
 
@@ -1097,7 +1097,7 @@ static void CF_actor_move(int argc, char *argv[]) {
 	return;
 }
 
-static void CF_actor_moverel(int argc, char *argv[]) {
+static void CF_actor_moverel(int argc, char *argv[], void *refCon) {
 	int id;
 	R_POINT move_pt;
 
@@ -1114,7 +1114,7 @@ static void CF_actor_moverel(int argc, char *argv[]) {
 	return;
 }
 
-static void CF_actor_seto(int argc, char *argv[]) {
+static void CF_actor_seto(int argc, char *argv[], void *refCon) {
 	int id;
 	int orient;
 
@@ -1129,7 +1129,7 @@ static void CF_actor_seto(int argc, char *argv[]) {
 	return;
 }
 
-static void CF_actor_setact(int argc, char *argv[]) {
+static void CF_actor_setact(int argc, char *argv[], void *refCon) {
 	int index = 0;
 	int action_n = 0;
 

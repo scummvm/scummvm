@@ -142,8 +142,8 @@ int SCENE_Load(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *
 int LoadSceneDescriptor(uint32 res_number);
 int LoadSceneResourceList(uint32 res_number);
 int ProcessSceneResources();
-void CF_scenechange(int argc, char *argv[]);
-void CF_sceneinfo(int argc, char *argv[]);
+void CF_scenechange(int argc, char *argv[], void *refCon);
+void CF_sceneinfo(int argc, char *argv[], void *refCon);
 
 int IHNM_StartProc();
 

@@ -111,9 +111,9 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len);
 R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len);
 R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script);
 int SCRIPT_Disassemble(R_SCRIPT_BYTECODE *script_list, R_DIALOGUE_LIST *diag_list);
-void CF_script_info(int argc, char *argv[]);
-void CF_script_exec(int argc, char *argv[]);
-void CF_script_togglestep(int argc, char *argv[]);
+void CF_script_info(int argc, char *argv[], void *refCon);
+void CF_script_exec(int argc, char *argv[], void *refCon);
+void CF_script_togglestep(int argc, char *argv[], void *refCon);
 
 } // End of namespace Saga
 

@@ -82,8 +82,8 @@ struct R_MAIN_DATA {
 	int music_enabled;
 };
 
-static void CF_quitfunc(int argc, char *argv[]);
-static void CF_testfunc(int argc, char *argv[]);
+static void CF_quitfunc(int argc, char *argv[], void *refCon);
+static void CF_testfunc(int argc, char *argv[], void *refCon);
 
 static R_MAIN_DATA MainData;
 
@@ -128,13 +128,13 @@ void SagaEngine::go() {
 	MainData.sound_enabled = 1;
 	MainData.music_enabled = 1;
 
-	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1);
+	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1, this);
 
 	CVAR_Register_I(&MainData.sound_enabled, "sound", NULL, R_CVAR_CFG, 0, 1);
 
 	CVAR_Register_I(&MainData.music_enabled, "music", NULL, R_CVAR_CFG, 0, 1);
 
-	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, R_CVAR_NONE, 0, 0);
+	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, R_CVAR_NONE, 0, 0, this);
 
 	// Process config file
 	// FIXME
@@ -254,12 +254,12 @@ void SagaEngine::shutdown() {
 	_system->quit();
 }
 
-static void CF_quitfunc(int argc, char *argv[]) {
-	_vm->shutdown();
+static void CF_quitfunc(int argc, char *argv[], void *refCon) {
+	((SagaEngine *)refCon)->shutdown();
 	exit(0);
 }
 
-static void CF_testfunc(int argc, char *argv[]) {
+static void CF_testfunc(int argc, char *argv[], void *refCon) {
 	int i;
 
 	CON_Print("Test function invoked: Got %d arguments.", argc);

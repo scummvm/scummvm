@@ -66,6 +66,7 @@ typedef struct R_CVAR_tag {
 	const char *name;
 	const char *section;
 	uint16 flags;
+	void *refCon;
 
 	union {
 		R_SUBCVAR_INT i;

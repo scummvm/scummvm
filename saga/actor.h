@@ -171,12 +171,12 @@ int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, 
 int HandleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
 int ACTOR_SetPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem);
 int LoadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
-static void CF_actor_add(int argc, char *argv[]);
-static void CF_actor_del(int argc, char *argv[]);
-static void CF_actor_move(int argc, char *argv[]);
-static void CF_actor_moverel(int argc, char *argv[]);
-static void CF_actor_seto(int argc, char *argv[]);
-static void CF_actor_setact(int argc, char *argv[]);
+static void CF_actor_add(int argc, char *argv[], void *refCon);
+static void CF_actor_del(int argc, char *argv[], void *refCon);
+static void CF_actor_move(int argc, char *argv[], void *refCon);
+static void CF_actor_moverel(int argc, char *argv[], void *refCon);
+static void CF_actor_seto(int argc, char *argv[], void *refCon);
+static void CF_actor_setact(int argc, char *argv[], void *refCon);
 
 } // End of namespace Saga
 

@@ -96,6 +96,8 @@ Render::Render(OSystem *system) : _system(system), _initialized(false) {
 Render::~Render(void) {
 	free(_bg_buf);
 	free(_tmp_buf);
+
+	_initialized = false;
 }
 
 bool Render::initialized() {

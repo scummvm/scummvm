@@ -47,7 +47,7 @@ struct R_ACTIONMAP_INFO {
 	size_t exmap_res_len;
 };
 
-void CF_action_info(int argc, char *argv[]);
+void CF_action_info(int argc, char *argv[], void *refCon);
 
 } // End of namespace Saga
 

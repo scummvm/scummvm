@@ -42,7 +42,7 @@ namespace Saga {
 static R_OBJECTMAP_INFO OMInfo;
 
 int OBJECTMAP_Register() {
-	CVAR_RegisterFunc(CF_object_info, "object_info", NULL, R_CVAR_NONE, 0, 0);
+	CVAR_RegisterFunc(CF_object_info, "object_info", NULL, R_CVAR_NONE, 0, 0, NULL);
 
 	return R_SUCCESS;
 }
@@ -426,7 +426,7 @@ int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num) {
 	return R_FAILURE;
 }
 
-static void CF_object_info(int argc, char *argv[]) {
+static void CF_object_info(int argc, char *argv[], void *refCon) {
 	int i;
 
 	(void)(argc);

@@ -86,13 +86,6 @@ struct R_ANIMATION {
 	uint16 flags;
 };
 
-struct R_ANIMINFO {
-	int initialized;
-	uint16 anim_count;
-	uint16 anim_limit;
-	R_ANIMATION *anim_tbl[R_MAX_ANIMATIONS];
-};
-
 enum ANIM_FLAGS {
 	ANIM_LOOP = 0x01,
 	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
@@ -110,12 +103,21 @@ public:
 	int setFlag(uint16 anim_id, uint16 flag);
 	int setFrameTime(uint16 anim_id, int time);
 	int reset(void);
+	void animInfo(int argc, char *argv[]);
+
 private:
 	int getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames);
 	int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);
 	int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
 					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
 	int getFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
+
+	bool _initialized;
+
+	uint16 _anim_count;
+	uint16 _anim_limit;
+	R_ANIMATION *_anim_tbl[R_MAX_ANIMATIONS];
+
 };
 
 } // End of namespace Saga

@@ -35,29 +35,27 @@
 
 namespace Saga {
 
-static void CF_anim_info(int argc, char *argv[]);
-
-static R_ANIMINFO AnimInfo;
+static void CF_anim_info(int argc, char *argv[], void *refCon);
 
 int Anim::reg() {
-	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, R_CVAR_NONE, 0, 0);
+	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, R_CVAR_NONE, 0, 0, this);
 	return R_SUCCESS;
 }
 
 Anim::Anim(void) {
-	AnimInfo.anim_limit = R_MAX_ANIMATIONS;
-	AnimInfo.anim_count = 0;
-	AnimInfo.initialized = 1;
+	_anim_limit = R_MAX_ANIMATIONS;
+	_anim_count = 0;
+	_initialized = true;
 }
 
 Anim::~Anim(void) {
 	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
-		free(AnimInfo.anim_tbl[i]);
+		free(_anim_tbl[i]);
 	}
 
-	AnimInfo.initialized = 0;
+	_initialized = false;
 }
 
 int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p) {
@@ -66,13 +64,13 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	uint16 anim_id = 0;
 	uint16 i;
 
-	if (!AnimInfo.initialized) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
 	// Find an unused animation slot
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
-		if (AnimInfo.anim_tbl[i] == NULL) {
+		if (_anim_tbl[i] == NULL) {
 			anim_id = i;
 			break;
 		}
@@ -124,11 +122,11 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->link_flag = 0;
 	new_anim->link_id = 0;
 
-	AnimInfo.anim_tbl[anim_id] = new_anim;
+	_anim_tbl[anim_id] = new_anim;
 
 	*anim_id_p = anim_id;
 
-	AnimInfo.anim_count++;
+	_anim_count++;
 
 	return R_SUCCESS;
 }
@@ -137,12 +135,12 @@ int Anim::link(uint16 anim_id1, uint16 anim_id2) {
 	R_ANIMATION *anim1;
 	R_ANIMATION *anim2;
 
-	if ((anim_id1 >= AnimInfo.anim_count) || (anim_id2 >= AnimInfo.anim_count)) {
+	if ((anim_id1 >= _anim_count) || (anim_id2 >= _anim_count)) {
 		return R_FAILURE;
 	}
 
-	anim1 = AnimInfo.anim_tbl[anim_id1];
-	anim2 = AnimInfo.anim_tbl[anim_id2];
+	anim1 = _anim_tbl[anim_id1];
+	anim2 = _anim_tbl[anim_id2];
 
 	if ((anim1 == NULL) || (anim2 == NULL)) {
 		return R_FAILURE;
@@ -174,7 +172,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 
 	R_GAME_DISPLAYINFO disp_info;
 
-	if (anim_id >= AnimInfo.anim_count) {
+	if (anim_id >= _anim_count) {
 		return R_FAILURE;
 	}
 
@@ -183,7 +181,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 	_vm->_render->getBufferInfo(&buf_info);
 	display_buf = buf_info.r_bg_buf;
 
-	anim = AnimInfo.anim_tbl[anim_id];
+	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
 		return R_FAILURE;
 	}
@@ -228,7 +226,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 			anim->current_frame = 1;
 
 			link_anim_id = anim->link_id;
-			link_anim = AnimInfo.anim_tbl[link_anim_id];
+			link_anim = _anim_tbl[link_anim_id];
 
 			if (link_anim != NULL) {
 				link_anim->current_frame = 1;
@@ -277,7 +275,7 @@ int Anim::reset() {
 		freeId(i);
 	}
 
-	AnimInfo.anim_count = 0;
+	_anim_count = 0;
 
 	return R_SUCCESS;
 }
@@ -285,11 +283,11 @@ int Anim::reset() {
 int Anim::setFlag(uint16 anim_id, uint16 flag) {
 	R_ANIMATION *anim;
 
-	if (anim_id > AnimInfo.anim_count) {
+	if (anim_id > _anim_count) {
 		return R_FAILURE;
 	}
 
-	anim = AnimInfo.anim_tbl[anim_id];
+	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
 		return R_FAILURE;
 	}
@@ -302,11 +300,11 @@ int Anim::setFlag(uint16 anim_id, uint16 flag) {
 int Anim::setFrameTime(uint16 anim_id, int time) {
 	R_ANIMATION *anim;
 
-	if (anim_id > AnimInfo.anim_count) {
+	if (anim_id > _anim_count) {
 		return R_FAILURE;
 	}
 
-	anim = AnimInfo.anim_tbl[anim_id];
+	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
 		return R_FAILURE;
 	}
@@ -319,11 +317,11 @@ int Anim::setFrameTime(uint16 anim_id, int time) {
 int Anim::freeId(uint16 anim_id) {
 	R_ANIMATION *anim;
 
-	if (anim_id > AnimInfo.anim_count) {
+	if (anim_id > _anim_count) {
 		return R_FAILURE;
 	}
 
-	anim = AnimInfo.anim_tbl[anim_id];
+	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
 		return R_FAILURE;
 	}
@@ -334,8 +332,8 @@ int Anim::freeId(uint16 anim_id) {
 	}
 
 	free(anim);
-	AnimInfo.anim_tbl[anim_id] = NULL;
-	AnimInfo.anim_count--;
+	_anim_tbl[anim_id] = NULL;
+	_anim_count--;
 
 	return R_SUCCESS;
 }
@@ -352,7 +350,7 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 
 	int x;
 
-	if (!AnimInfo.initialized) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
@@ -414,7 +412,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 
 	uint16 i;
 
-	if (!AnimInfo.initialized) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
@@ -788,7 +786,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 
 	int i;
 
-	if (!AnimInfo.initialized) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
@@ -890,7 +888,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	return R_SUCCESS;
 }
 
-static void CF_anim_info(int argc, char *argv[]) {
+void Anim::animInfo(int argc, char *argv[]) {
 	uint16 anim_ct;
 	uint16 i;
 	uint16 idx;
@@ -898,19 +896,21 @@ static void CF_anim_info(int argc, char *argv[]) {
 	(void)(argc);
 	(void)(argv);
 
-	anim_ct = AnimInfo.anim_count;
+	anim_ct = _anim_count;
 
 	CON_Print("There are %d animations loaded:", anim_ct);
 
 	for (idx = 0, i = 0; i < anim_ct; idx++, i++) {
-		while (AnimInfo.anim_tbl[idx] == NULL) {
+		while (_anim_tbl[idx] == NULL) {
 			idx++;
 		}
 
-		CON_Print("%02d: Frames: %u Flags: %u", i, AnimInfo.anim_tbl[idx]->n_frames, AnimInfo.anim_tbl[idx]->flags);
+		CON_Print("%02d: Frames: %u Flags: %u", i, _anim_tbl[idx]->n_frames, _anim_tbl[idx]->flags);
 	}
+}
 
-	return;
+static void CF_anim_info(int argc, char *argv[], void *refCon) {
+	((Anim *)refCon)->animInfo(argc, argv);
 }
 
 } // End of namespace Saga

@@ -56,7 +56,7 @@ struct R_OBJECTMAP_INFO {
 	const char **names;
 };
 
-static void CF_object_info(int argc, char *argv[]);
+static void CF_object_info(int argc, char *argv[], void *refCon);
 
 } // End of namespace Saga
 

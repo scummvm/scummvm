@@ -51,8 +51,8 @@ static R_SCENE_MODULE SceneModule;
 
 int SCENE_Register() {
 	CVAR_Register_I(&SceneModule.scene_number, "scene", NULL, R_CVAR_READONLY, 0, 0);
-	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", R_CVAR_NONE, 1, 1);
-	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, R_CVAR_NONE, 0, 0);
+	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", R_CVAR_NONE, 1, 1, NULL);
+	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, R_CVAR_NONE, 0, 0, NULL);
 
 	return R_SUCCESS;
 }
@@ -806,7 +806,7 @@ int SCENE_End() {
 	return R_SUCCESS;
 }
 
-void CF_scenechange(int argc, char *argv[]) {
+void CF_scenechange(int argc, char *argv[], void *refCon) {
 	int scene_num = 0;
 
 	if ((argc == 0) || (argc > 1)) {
@@ -829,7 +829,7 @@ void CF_scenechange(int argc, char *argv[]) {
 	}
 }
 
-void CF_sceneinfo(int argc, char *argv[]) {
+void CF_sceneinfo(int argc, char *argv[], void *refCon) {
 	const char *fmt = "%-20s %d";
 
 	CON_Print(fmt, "Scene number:", SceneModule.scene_number);

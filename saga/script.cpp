@@ -43,9 +43,9 @@ namespace Saga {
 R_SCRIPT_MODULE ScriptModule;
 
 int SCRIPT_Register() {
-	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, R_CVAR_NONE, 0, 0);
-	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", R_CVAR_NONE, 1, 1);
-	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, R_CVAR_NONE, 0, 0);
+	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, R_CVAR_NONE, 0, 0, NULL);
+	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", R_CVAR_NONE, 1, 1, NULL);
+	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, R_CVAR_NONE, 0, 0, NULL);
 
 	return R_SUCCESS;
 }
@@ -490,7 +490,7 @@ R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_
 	return voice_lut;
 }
 
-void CF_script_info(int argc, char *argv[]) {
+void CF_script_info(int argc, char *argv[], void *refCon) {
 	uint32 n_entrypoints;
 	uint32 i;
 	char *name_ptr;
@@ -514,7 +514,7 @@ void CF_script_info(int argc, char *argv[]) {
 	}
 }
 
-void CF_script_exec(int argc, char *argv[]) {
+void CF_script_exec(int argc, char *argv[], void *refCon) {
 	uint16 ep_num;
 
 	if (argc < 1) {
@@ -540,7 +540,7 @@ void CF_script_exec(int argc, char *argv[]) {
 	STHREAD_Execute(ScriptModule.dbg_thread, ep_num);
 }
 
-void CF_script_togglestep(int argc, char *argv[]) {
+void CF_script_togglestep(int argc, char *argv[], void *refCon) {
 	ScriptModule.dbg_singlestep = !ScriptModule.dbg_singlestep;
 }
 

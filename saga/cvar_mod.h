@@ -37,7 +37,7 @@ typedef int cv_int_t;
 typedef unsigned int cv_uint16_t;
 typedef float cv_float_t;
 typedef char cv_char_t;
-typedef void (*cv_func_t) (int cv_argc, char *cv_argv[]);
+typedef void (*cv_func_t) (int cv_argc, char *cv_argv[], void *refCon);
 /******************************************/
 
 typedef struct R_CVAR_tag *R_CVAR_P;	// opaque typedef
@@ -70,7 +70,7 @@ int CVAR_GetError(const char **err_str);
 int CVAR_IsFunc(R_CVAR_P cvar_func);
 int CVAR_Exec(R_CVAR_P cvar_func, char *r_value);
 int CVAR_RegisterFunc(cv_func_t func, const char *func_name,
-						const char *func_argstr, uint16 flags, int min_args, int max_args);
+		  const char *func_argstr, uint16 flags, int min_args, int max_args, void *refCon);
 int CVAR_Register_I(cv_int_t * var_p, const char *var_name,
 					const char *section, uint16 flags, cv_int_t lbound, cv_int_t ubound);
 int CVAR_Register_UI(cv_uint16_t * var_p, const char *var_name,

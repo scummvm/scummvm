@@ -160,7 +160,7 @@ int CVAR_Exec(R_CVAR_P cvar_func, char *r_value) {
 	}
 
 	// Call function
-	(cvar_func->t.func.func_p) (cf_argc, cf_argv);
+	(cvar_func->t.func.func_p) (cf_argc, cf_argv, cvar_func->refCon);
 
 	if (cf_argv)
 		free(cf_argv);
@@ -334,13 +334,14 @@ int CVAR_IsFunc(R_CVAR_P cvar_func) {
 // Registers a console function 'cvar' 
 // (could think of a better place to put these...?)
 int CVAR_RegisterFunc(cv_func_t func, const char *func_name,
-					 const char *func_argstr, uint16 flags, int min_args, int max_args) {
+		  const char *func_argstr, uint16 flags, int min_args, int max_args, void *refCon) {
 	R_CVAR new_cvar;
 	int hash;
 
 	new_cvar.name = func_name;
 	new_cvar.type = R_CVAR_FUNC;
 	new_cvar.section = NULL;
+	new_cvar.refCon = refCon;
 	new_cvar.flags = flags;
 	new_cvar.t.func.func_p = func;
 	new_cvar.t.func.func_argstr = func_argstr;
