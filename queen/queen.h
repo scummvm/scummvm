@@ -46,6 +46,8 @@ protected:
 	int _number_of_savegames;
 	int _sdl_mouse_x, _sdl_mouse_y;
 
+	FILE *_dump_file;
+	
 	QueenResource *_queenResource;
 	QueenLogic *_queenLogic;
 
