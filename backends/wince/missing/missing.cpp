@@ -13,7 +13,16 @@
 #include "dirent.h"
 
 /* forward declaration */
+
+#if _WIN32_WCE < 300
+
+#include "portdefs.h"
+
+#else
+
 char *strdup(const char *strSource);
+
+#endif
 
 /* Limited dirent implementation. Used by UI.C and DEVICES.C */
 static WIN32_FIND_DATA wfd;
@@ -198,6 +207,7 @@ void mkdir(char* dirname, int mode)
 /* Used in DEVICES.C and UI.C for some purpose. Not critical in this port */
 int system(const char* path) { return 0; }
 
+#if 0
 
 char *tmpnam(char *string)
 {
@@ -223,6 +233,8 @@ FILE *tmpfile()
 	else
 		return 0;
 }
+
+#endif
 
 void rewind(FILE *stream)
 {
@@ -376,3 +388,78 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 			return (void*)((size_t)base + size * i);
 	return NULL;
 }
+
+#if _WIN32_WCE < 300
+
+void *calloc(size_t n, size_t s) {
+	void *result = malloc(n * s);
+	if (result) 
+		memset(result, 0, n * s);
+
+	return result;
+}
+
+int isdigit(int c) {
+	return (c >='0' && c <= '9');
+}
+
+void assert (int expression) {
+	if (!expression)
+		abort();
+}
+
+void assert (void *expression) {
+	if (!expression)
+		abort();
+}
+
+int stricmp( const char *string1, const char *string2 ) {
+	char src[4096];
+	char dest[4096];
+	int i;
+
+	for (i=0; i<strlen(string1); i++)
+		if (string1[i] >= 'A' && string1[i] <= 'Z')
+			src[i] = string1[i] + 32;
+		else
+			src[i] = string1[i];
+	src[i] = 0;
+
+	for (i=0; i<strlen(string2); i++)
+		if (string2[i] >= 'A' && string2[i] <= 'Z')
+			dest[i] = string2[i] + 32;
+		else
+			dest[i] = string2[i];
+	dest[i] = 0;
+
+	return strcmp(src, dest);
+}
+
+int _stricmp( const char *string1, const char *string2 ) {
+	return stricmp(string1, string2);
+}
+
+char *strrchr(const char *s, int c) {
+	int i;
+
+	for (i = strlen(s) - 1; i > 0; i++)
+		if (s[i] == c)
+			return (char*)(s + i);
+
+	return NULL;
+}
+
+long int strtol(const char *nptr, char **endptr, int base) {
+	// not correct but that's all we are using
+
+	long int result;
+
+	sscanf(nptr, "%ld", &result);
+
+	return result;
+}
+		
+
+#endif
+		
+

@@ -22,6 +22,60 @@
 #include "stdafx.h"
 #include <assert.h>
 
+//#include "commctrl.h"
+
+#if _WIN32_WCE < 300
+
+#include <Wingdi.h>
+#include <Winbase.h>
+#include <Wtypes.h>
+
+#endif
+
+#include <Winuser.h>
+#include <Winnls.h>
+#include <sipapi.h>
+
+#if _WIN32_WCE >= 300
+
+#include <Aygshell.h>
+
+#else
+
+// Put in include file
+
+typedef enum tagSIPSTATE
+{
+    SIP_UP = 0,
+    SIP_DOWN,
+	SIP_FORCEDOWN,
+    SIP_UNCHANGED,
+    SIP_INPUTDIALOG,
+} SIPSTATE;
+
+#define SHFS_SHOWTASKBAR            0x0001
+#define SHFS_HIDETASKBAR            0x0002
+#define SHFS_SHOWSIPBUTTON          0x0004
+#define SHFS_HIDESIPBUTTON          0x0008
+#define SHFS_SHOWSTARTICON          0x0010
+#define SHFS_HIDESTARTICON          0x0020
+
+typedef struct
+{
+    DWORD cbSize;
+    HWND hwndLastFocus;
+    UINT fSipUp :1;
+    UINT fSipOnDeactivation :1;
+    UINT fActive :1;
+    UINT fReserved :29;
+} SHACTIVATEINFO, *PSHACTIVATEINFO;
+
+
+#endif
+
+#include <gx.h>
+#include "resource.h"
+
 #include "scumm.h"
 #include "debug.h"
 #include "screen.h"
@@ -32,15 +86,6 @@
 #include "gapi_keys.h"
 #include "config-file.h"
 
-
-#include "commctrl.h"
-#include <Winuser.h>
-#include <Winnls.h>
-#include <sipapi.h>
-#include <Aygshell.h>
-#include <gx.h>
-#include <aygshell.h>
-#include "resource.h"
 
 #include "SDL.h"
 #include "SDL_audio.h"

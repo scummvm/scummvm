@@ -25,9 +25,18 @@
 
 #include "stdafx.h"
 #include <assert.h>
+
+#if _WIN32_WCE < 300
+
+#include <Wingdi.h>
+#include <Winbase.h>
+#include <Wtypes.h>
+
+#endif
+
 #include <Winuser.h>
 #include <sipapi.h>
-#include <Aygshell.h>
+//#include <Aygshell.h>
 #include <gx.h>
 #include "dynamic_imports.h"
 

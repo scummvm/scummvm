@@ -25,6 +25,13 @@
 
 #include "stdafx.h"
 #include <assert.h>
+
+#if _WIN32_WCE < 300
+
+#include <Wingdi.h>
+#include <Winbase.h>
+
+#endif
 #include <Winuser.h>
 #include <Winnls.h>
 #include "resource.h"

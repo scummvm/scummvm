@@ -24,7 +24,7 @@
 /* Original GFX code by Vasyl Tsvirkunov */
 
 #include <windows.h>
-#include <Aygshell.h>
+//#include <Aygshell.h>
 #include "gx.h"
 #include "screen.h"
 #include "resource.h"
