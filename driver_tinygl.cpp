@@ -399,7 +399,7 @@ void DriverTinyGL::drawEmergString(int /*x*/, int /*y*/, const char * /*text*/, 
 }
 
 Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
-	TextObjectHandle *handle = new TextObjectHandle();
+	TextObjectHandle *handle = new TextObjectHandle;
 	handle->width = width;
 	handle->height = height;
 	handle->numTex = 0;
