@@ -1077,7 +1077,7 @@ int Scumm::scummLoop(int delta) {
 	if (_saveLoadFlag) {
 load_game:
 		bool success;
-		const char *errMsg;
+		const char *errMsg = 0;
 		char filename[256];
 
 		if (_saveLoadFlag == 1) {
