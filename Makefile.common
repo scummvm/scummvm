@@ -1,5 +1,5 @@
 # $Header$
-# This file is used by Makefile and Makefile.mingw and declares common build rules,
+# This file is used by Makefile and declares common build rules,
 # a list of common object files etc.
 
 ######################################################################
@@ -14,7 +14,7 @@ all: $(EXECUTABLE) plugins
 
 # Files that are to be included in the archive built by "make dist"
 DISTFILES := \
-	Makefile Makefile.common Makefile.mingw \
+	Makefile Makefile.common \
 	NEWS README COPYING scummvm.6 Info.plist \
 	scumm.dsp  scummvm.dsp scummvm.dsw scummvm.icns scummvm.ico \
 	scummvm.proj scummvm.rc scummvm.spec scummvm.xpm simon.dsp sky.dsp \
