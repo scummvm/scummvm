@@ -67,8 +67,10 @@ void Sword2Engine::processFxQueue(void) {
 			break;
 		case FX_SPOT2:
 			// Once the Fx has finished remove it from the queue.
-			if (_sound->isFxOpen(i + 1))
+			if (!_sound->isFxPlaying(i + 1)) {
 				_fxQueue[i].resource = 0;
+				_sound->closeFx(i + 1);
+			}
 			break;
 		}
 	}
@@ -178,6 +180,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 			break;
 		default:
 			strcpy(type, "INVALID");
+			break;
 		}
 
 		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->fetchObjectName(params[0]), params[3], params[4], params[2], type);
@@ -244,7 +247,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 	}
 
 	if (_vm->_fxQueue[j].type == FX_LOOP) {
-		// play now, rather than in Process_fx_queue where it was
+		// play now, rather than in processFxQueue where it was
 		// getting played again & again!
 		_vm->triggerFx(j);
 	}

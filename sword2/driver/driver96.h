@@ -218,26 +218,6 @@ struct SpriteInfo {
 	uint8 *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
 };
 
-// This is the format of a .WAV file.  Somewhere after this header is the
-// string 'DATA' followed by an int32 size which is the size of the data.
-// Following the size of the data is the data itself.
-
-struct WavHeader {
-	uint32 riff;
-	uint32 fileLength;
-	uint32 wavID;
-	uint32 format;
-	uint32 formatLen;
-	uint16 formatTag;
-	uint16 channels;
-	uint16 samplesPerSec;
-	uint16 avgBytesPerSec;
-	uint16 blockAlign;
-	uint16 unknown1;
-	uint16 unknown2;
-	uint16 bitsPerSample;
-};
-
 // This is the structure which is passed to the sequence player. It includes
 // the smack to play, and any text lines which are to be displayed over the top
 // of the sequence.
