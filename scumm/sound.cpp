@@ -448,7 +448,7 @@ void Sound::playSound(int soundID) {
 				// the second check is for simple looped sounds
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, vol, 0, soundID,
-							READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
+							READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8), READ_BE_UINT16(ptr + 14));
 			} else {
 				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, vol, 0, soundID);
 			}
@@ -478,7 +478,7 @@ void Sound::playSound(int soundID) {
 			if (start == 108 || start == 106)
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, vol, 0, soundID,
-						start,size);
+						start, size);
 			else
 				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, vol, 0, soundID);
 			return;
@@ -579,7 +579,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		_sfxFile->seek(offset + 48, SEEK_SET);
 		sound = (byte *)malloc(b - 64);
 		_sfxFile->read(sound, b - 64);
-		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 255, 0);
+		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
@@ -917,7 +917,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 			playSfxSound_Vorbis(data, file_size, handle);
 		} else {
 #ifdef USE_MAD
-			_scumm->_mixer->playMP3(handle, file, file_size, 255, 0);
+			_scumm->_mixer->playMP3(handle, file, file_size);
 #endif
 		}
 		return;
@@ -1265,7 +1265,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	_bundleMusicPosition += final_size;
 	if (_bundleMusicTrack == 0) {
 		_scumm->_mixer->newStream(&_bundleMusicTrack, buffer, final_size, rate,
-															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000, 255, 0);
+															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
 	} else {
 		_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
 	}
@@ -1394,7 +1394,7 @@ void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, P
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	_scumm->_mixer->playRaw(handle, sound, size, rate, flags, 255, 0);
+	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
 }
 
 #ifdef USE_VORBIS
@@ -1473,7 +1473,7 @@ void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *ha
 		delete f;
 		free(sound);
 	} else
-		_scumm->_mixer->playVorbis(handle, ov_file, 0, false, 255, 0);
+		_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
 #endif
 }
 
@@ -1750,7 +1750,7 @@ int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startF
 	}
 
 	// Play it
-	return mixer->playMP3CDTrack(handle, _file, durationTime, 255, 0);
+	return mixer->playMP3CDTrack(handle, _file, durationTime);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {
@@ -1854,7 +1854,7 @@ int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int sta
 #endif
 	return mixer->playVorbis(handle, &_ov_file,
 				 duration * ov_info(&_ov_file, -1)->rate / 75,
-				 true, 255, 0);
+				 true);
 }
 
 VorbisTrackInfo::~VorbisTrackInfo() {
