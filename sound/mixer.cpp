@@ -674,10 +674,9 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
-	printf("   data has %d bits and is %s\n",
-			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
-			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
-
+//	printf("   data has %d bits and is %s\n",
+//			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
+//			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -768,9 +767,9 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
-	printf("   data has %d bits and is %s\n",
-			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
-			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
+//	printf("   data has %d bits and is %s\n",
+//			((flags & SoundMixer::FLAG_16BITS) ? 16 : 8),
+//			((flags & SoundMixer::FLAG_UNSIGNED) ? "unsigned" : "signed"));
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -1002,7 +1001,7 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 	_input = new MP3InputStream(file, duration);
 
 	// Get a rate converter instance
-printf("ChannelMP3CDMusic: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
+//printf("ChannelMP3CDMusic: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
 }
 #else

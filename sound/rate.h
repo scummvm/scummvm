@@ -94,7 +94,6 @@ public:
 };
 
 static inline RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo) {
-printf("makeRateConverter: inrate %d, outrate %d, %s\n", inrate, outrate, (stereo ? "stereo" : "mono"));
 	if (inrate != outrate) {
 		return new LinearRateConverter(inrate, outrate);
 		//return new ResampleRateConverter(inrate, outrate, 1);
