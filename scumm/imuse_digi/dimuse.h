@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header$
  */
 
 #ifndef IMUSE_DIGI_H
@@ -99,7 +98,7 @@ private:
 
 	static void timer_handler(void *refConf);
 	void callback();
-	void switchToNextRegion(int track);
+	void switchToNextRegion(int trackId);
 	bool allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
 	void selectVolumeGroup(int soundId, int volGroupId);
@@ -109,7 +108,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
-	int cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTrack);
+	int cloneToFadeOutTrack(int trackId, int fadeDelay, int killNormalTrack);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);

@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header$
  */
 
 #include "stdafx.h"
@@ -431,8 +430,9 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int re
 	debug(5, "getJumpIdByRegionAndHookId() region:%d, hookId:%d", region, hookId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
+	int32 offset = soundHandle->region[region].offset;
 	for (int l = 0; l < soundHandle->numJumps; l++) {
-		if (soundHandle->jump[l].offset == soundHandle->region[region].offset) {
+		if (offset == soundHandle->jump[l].offset) {
 			if (soundHandle->jump[l].hookId == hookId)
 				return l;
 		}
@@ -457,8 +457,9 @@ int ImuseDigiSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
 	debug(5, "getRegionIdByJumpId() jumpId:%d", jumpId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(jumpId >= 0 && jumpId < soundHandle->numJumps);
+	int32 dest = soundHandle->jump[jumpId].dest;
 	for (int l = 0; l < soundHandle->numRegions; l++) {
-		if (soundHandle->jump[jumpId].dest == soundHandle->region[l].offset) {
+		if (dest == soundHandle->region[l].offset) {
 			return l;
 		}
 	}

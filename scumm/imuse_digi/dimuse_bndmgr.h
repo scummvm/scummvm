@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header$
  */
 
 #ifndef BUNDLE_MGR_H
@@ -63,15 +62,16 @@ private:
 	BundleDirCache *_cache;
 	BundleDirCache::AudioTable *_bundleTable;
 	CompTable *_compTable;
-	int32 _numFiles;
-	int32 _numCompItems;
-	int32 _curSample;
+	int _numFiles;
+	int _numCompItems;
+	int _curSample;
 	File _file;
 	bool _compTableLoaded;
 	int _fileBundleId;
-	byte _blockChache[0x2000];
-	int32 _lastCacheOutputSize;
-	int32 _lastBlock;
+	byte _compOutput[0x2000];
+	byte *_compInput;
+	int _outputSize;
+	int _lastBlock;
 
 public:
 
