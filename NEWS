@@ -16,6 +16,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
      same time.
 
+ BASS:
+   - Fixed crash when talking to the gardener using spanish text with the 
+     floppy version.
+
 0.7.0 (2004-12-24)
  New Games:
    - Added 26 Humongous Entertainment titles, only a few are completable.
