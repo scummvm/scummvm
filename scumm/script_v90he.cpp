@@ -505,17 +505,22 @@ void ScummEngine_v90he::o90_unknown25() {
 
 void ScummEngine_v90he::o90_unknown26() {
 	// Incomplete
-	int value = fetchScriptByte();
-	value -= 34;
+	int subOp = fetchScriptByte();
+	subOp -= 34;
 
-	if (value == 10) {
-		pop();
-		pop();
-	} else if (value == 23) {
-		pop();
+	switch (subOp) {
+		case 10:
+			pop();
+			pop();
+			break;
+		case 23:
+			pop();
+			break;
+		case 124:
+			break;
+		default:
+			error("o90_unknown26: Unknown case %d", subOp);
 	}
-
-	debug(1,"o90_unknown26 stub (%d)", value);
 }
 
 void ScummEngine_v90he::o90_unknown27() {
@@ -540,14 +545,16 @@ void ScummEngine_v90he::o90_unknown27() {
 
 void ScummEngine_v90he::o90_unknown28() {
 	// Incomplete
-	int value = fetchScriptByte();
-	value -= 37;
+	int subOp = fetchScriptByte();
+	subOp -= 37;
 
-	if (value == 20) {
-		pop();
+	switch (subOp) {
+		case 20:
+			pop();
+			break;
+		default:
+			error("o90_unknown28: Unknown case %d", subOp);
 	}
-
-	debug(1,"o90_unknown28 stub (%d)", value);
 }
 
 } // End of namespace Scumm
