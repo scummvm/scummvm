@@ -47,7 +47,7 @@ Resource::Resource(const Common::String &datafilePath, SaveFileManager *mgr, con
 	: _JAS2Pos(0), _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
 
 	_resourceFile = new File();
-	if (!findNormalVersion() && !findCompressedVersion())
+	if (!findCompressedVersion() && !findNormalVersion())
 		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
 	checkJASVersion();
 	debug(5, "Detected game version: %s, which has %d resource entries", _versionString, _resourceEntries);
