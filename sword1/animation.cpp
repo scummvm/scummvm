@@ -69,16 +69,26 @@ void MoviePlayer::play(const char *filename) {
 #ifndef BACKEND_8BIT
 			_sys->updateScreen();
 #endif
-			// FIXME: check for ESC and abbort animation be just returning from the function
 			OSystem::Event event;
 			while (_sys->poll_event(&event)) {
-				if ((event.event_code == OSystem::EVENT_KEYDOWN) &&
-				    (event.kbd.keycode == 27)) {
-					delete anim;
-					return;
-				}
-				if (event.event_code == OSystem::EVENT_QUIT)
+				switch (event.event_code) {
+#ifndef BACKEND_8BIT
+				case OSystem::EVENT_SCREEN_CHANGED:
+					anim->invalidateLookup(true);
+					break;
+#endif
+				case OSystem::EVENT_KEYDOWN:
+					if (event.kbd.keycode == 27) {
+						delete anim;
+						return;
+					}
+					break;
+				case OSystem::EVENT_QUIT:
 					_sys->quit();
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}

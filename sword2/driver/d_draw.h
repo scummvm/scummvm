@@ -182,6 +182,8 @@ public:
 
 	uint8 _palCopy[256][4];
 
+	byte *getScreen(void) { return _buffer; }
+
 	int8 getRenderLevel(void);
 	void setRenderLevel(int8 level);
 

@@ -76,29 +76,33 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 	}
 }
 
-void AnimationState::clearDisplay(void) {
+#endif
+
+void AnimationState::clearScreen(void) {
+#ifdef BACKEND_8BIT
+	memset(_vm->_graphics->getScreen(), 0, MOVIE_WIDTH * MOVIE_HEIGHT);
+#else
 	OverlayColor black = _sys->RGBToColor(0, 0, 0);
 
 	for (int i = 0; i < MOVIE_WIDTH * MOVIE_HEIGHT; i++)
 		overlay[i] = black;
-}
-
-void AnimationState::updateDisplay(void) {
-	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
-}
-
 #endif
+}
+
+void AnimationState::updateScreen(void) {
+#ifdef BACKEND_8BIT
+	byte *buf = _vm->_graphics->getScreen() + ((480 - MOVIE_HEIGHT) / 2) * RENDERWIDE + (640 - MOVIE_WIDTH) / 2;
+
+	_vm->_system->copy_rect(buf, MOVIE_WIDTH, (640 - MOVIE_WIDTH) / 2, (480 - MOVIE_HEIGHT) / 2, MOVIE_WIDTH, MOVIE_HEIGHT);
+#else
+	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
+#endif
+	_vm->_system->updateScreen();
+}
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
 	_vm->_graphics->plotYUV(lut, width, height, dat);
-	// FIXME: We used to call setNeedFullRedraw() a bit later (that is,
-	// it was called by decodeFrame(), after the 'delay_msecs' calls, so
-	// after the syncing code. Not sure if moving it here causes any
-	// problems, and I have no way to test it. However I do not see why
-	// it should cause problems... of course that doesn't mean anything,
-	// only that I can't see that far :-)
-	_vm->_graphics->setNeedFullRedraw();
 #else
 	plotYUV(lookup, width, height, dat);
 #endif
@@ -163,6 +167,10 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  */
 
 int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
+	// This happens if the user quits during the "eye" smacker
+	if (_vm->_quit)
+		return RD_OK;
+
 #ifdef USE_MPEG2
 	uint frameCounter = 0, textCounter = 0;
 	PlayingSoundHandle handle;
@@ -182,7 +190,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 		return RD_OK;
 	}
 
-	_vm->_graphics->clearScene();
+	anim->clearScreen();
+	anim->updateScreen();
 
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
@@ -204,7 +213,10 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	if (i == ARRAYSIZE(_movies))
 		warning("Unknown movie, '%s'", filename);
 
-	while (anim->decodeFrame()) {
+	while (!skipCutscene && anim->decodeFrame()) {
+		// The frame has been drawn. Now draw the subtitles, if any,
+		// before updating the screen.
+
 		if (text && text[textCounter]) {
 			if (frameCounter == text[textCounter]->startFrame) {
 				openTextObject(text[textCounter]);
@@ -225,30 +237,38 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 				textCounter++;
 				textVisible = false;
 			}
+
 			if (textVisible)
 				drawTextObject(anim, text[textCounter]);
 		}
+
+		anim->updateScreen();
 
 		frameCounter++;
 
 		if (frameCounter == leadOutFrame && musicOut)
 			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
 
-#ifdef BACKEND_8BIT
-		_vm->_graphics->updateDisplay(true);
-#else
-		anim->updateDisplay();
-		_vm->_graphics->updateDisplay(false);
+		OSystem::Event event;
+		while (_sys->poll_event(&event)) {
+			switch (event.event_code) {
+#ifndef BACKEND_8BIT
+			case OSystem::EVENT_SCREEN_CHANGED:
+				anim->invalidateLookup(true);
+				break;
 #endif
-
-		KeyboardEvent ke;
-
-		if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
-			_snd->stopHandle(handle);
-			skipCutscene = true;
-			break;
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode == 27)
+					skipCutscene = true;
+				break;
+			case OSystem::EVENT_QUIT:
+				_vm->closeGame();
+				skipCutscene = true;
+				break;
+			default:
+				break;
+			}
 		}
-
 	}
 
 	if (!skipCutscene) {
@@ -256,16 +276,11 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 		_sys->delay_msecs(1000 / 12);
 	}
 
-#ifndef BACKEND_8BIT
 	// Most movies fade to black on their own, but not all of them. Since
 	// we may be hanging around in the cutscene player for a while longer,
 	// waiting for the lead-out sound to finish, paint the overlay black.
 
-	anim->clearDisplay();
-#else
-	_vm->_graphics->clearScene();
-	_vm->_graphics->setNeedFullRedraw();
-#endif
+	anim->clearScreen();
 
 	// If the speech is still playing, redraw the subtitles. At least in
 	// the English version this is most noticeable in the "carib" cutscene.
@@ -276,16 +291,15 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	if (text)
 		closeTextObject(text[textCounter]);
 
-#ifndef BACKEND_8BIT
-	anim->updateDisplay();
-#else
-	_vm->_graphics->updateDisplay(true);
-#endif
+	anim->updateScreen();
 
 	// Wait for the voice to stop playing. This is to make sure
 	// that we don't cut off the speech in mid-sentence, and - even
 	// more importantly - that we don't free the sound buffer while
 	// it's in use.
+
+	if (skipCutscene)
+		_snd->stopHandle(handle);
 
 	while (handle.isActive()) {
 		_vm->_graphics->updateDisplay(false);
@@ -294,13 +308,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	// Clear the screen again
 
-#ifndef BACKEND_8BIT
-	anim->clearDisplay();
-	anim->updateDisplay();
-#endif
-
-	_vm->_graphics->clearScene();
-	_vm->_graphics->setNeedFullRedraw();
+	anim->clearScreen();
+	anim->updateScreen();
 
 	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 

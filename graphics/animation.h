@@ -124,6 +124,9 @@ public:
 
 	bool init(const char *name);
 	bool decodeFrame();
+#ifndef BACKEND_8BIT
+	void invalidateLookup(bool rebuild);
+#endif
 
 protected:
 	bool checkPaletteSwitch();

@@ -61,33 +61,27 @@ bool BaseAnimationState::init(const char *name) {
 	uint i, p;
 
 	// Load lookup palettes
-	// TODO: Binary format so we can use File class
 	sprintf(tempFile, "%s.pal", name);
-	FILE *f = fopen(tempFile, "r");
 
-	if (!f) {
-		warning("Cutscene: %s.pal palette missing", name);
+	File f;
+
+	if (!f.open(tempFile)) {
+		warning("Cutscene: %s palette missing", tempFile);
 		return false;
 	}
 
 	p = 0;
-	while (!feof(f)) {
-		int end, cnt;
+	while (1) {
+		palettes[p].end = f.readUint16LE();
+		palettes[p].cnt = f.readUint16LE();
 
-		if (fscanf(f, "%i %i", &end, &cnt) != 2)
+		if (f.ioFailed())
 			break;
 
-		palettes[p].end = (uint) end;
-		palettes[p].cnt = (uint) cnt;
-
 		for (i = 0; i < palettes[p].cnt; i++) {
-			int r, g, b;
-			fscanf(f, "%i", &r);
-			fscanf(f, "%i", &g);
-			fscanf(f, "%i", &b);
-			palettes[p].pal[4 * i] = r;
-			palettes[p].pal[4 * i + 1] = g;
-			palettes[p].pal[4 * i + 2] = b;
+			palettes[p].pal[4 * i] = f.readByte();
+			palettes[p].pal[4 * i + 1] = f.readByte();
+			palettes[p].pal[4 * i + 2] = f.readByte();
 			palettes[p].pal[4 * i + 3] = 0;
 		}
 		for (; i < 256; i++) {
@@ -96,9 +90,11 @@ bool BaseAnimationState::init(const char *name) {
 			palettes[p].pal[4 * i + 2] = 0;
 			palettes[p].pal[4 * i + 3] = 0;
 		}
+
 		p++;
 	}
-	fclose(f);
+
+	f.close();
 
 	palnum = 0;
 	maxPalnum = p;
@@ -299,6 +295,25 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 #else
 
 OverlayColor *BaseAnimationState::lookup = 0;
+
+/**
+ * This function should be called when the screen changes to invalidate and,
+ * optionally, rebuild the lookup table.
+ * @param rebuild If true, rebuild the table.
+ */
+
+// FIXME: We will need to call the function from the game's main event loop
+// as well, not just the cutscene players' ones.
+
+// FIXME: It would be nice with a heuristic to check if the table really does
+// need to be rebuilt.
+
+void BaseAnimationState::invalidateLookup(bool rebuild) {
+	free(lookup);
+	lookup = 0;
+	if (rebuild)
+		buildLookup();
+}
 
 void BaseAnimationState::buildLookup() {
 	if (lookup)
