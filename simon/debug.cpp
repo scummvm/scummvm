@@ -37,14 +37,14 @@ byte *SimonState::dumpOpcode(byte *p) {
 	opcode = *p++;
 	if (opcode == 255)
 		return NULL;
-	if (_game == GAME_SIMON1DOS || _game == GAME_SIMON1DEMO) {
-	st = s = simon1dos_opcode_name_table[opcode];
-	} else if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
-	st = s = simon1talkie_opcode_name_table[opcode];
-	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+	if (_game & GF_SIMON2 && _game & GF_TALKIE) {
 	st = s = simon2talkie_opcode_name_table[opcode];
-	} else {
+	} else if (_game & GF_TALKIE) {
+	st = s = simon1talkie_opcode_name_table[opcode];
+	} else if (_game & GF_SIMON2) {
 	st = s = simon2dos_opcode_name_table[opcode];
+	} else {
+	st = s = simon1dos_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
 		error("INVALID OPCODE %d\n", opcode);
