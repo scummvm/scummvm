@@ -246,16 +246,16 @@ bool ConstString::operator !=(const char* x) const
 
 bool ConstString::operator < (const ConstString& x) const
 {
-	if (!_len || !x._len)	// Any or both particpants are empty?
+	if (!_len || !x._len)	// Any or both empty?
 		return !_len && x._len;	// Less only if this string is empty and the other isn't
-	return strcmp(_str, x._str) < 0;
+	return scumm_stricmp(_str, x._str) < 0;
 }
 
 bool ConstString::operator <= (const ConstString& x) const
 {
-	if (!_len || !x._len)	// Any or both particpants are empty?
+	if (!_len || !x._len)	// Any or both empty?
 		return !_len;	// Less or equal unless the other string is empty and this one isn't
-	return strcmp(_str, x._str) <= 0;
+	return scumm_stricmp(_str, x._str) <= 0;
 }
 
 bool ConstString::operator > (const ConstString& x) const
