@@ -132,11 +132,19 @@ public:
 	 * Return a clone of this node allocated with new().
 	 */
 	virtual FilesystemNode *clone() const = 0;
+	
+	/*
+	 * Compare the name of this node to the name of another.
+	 */
+	virtual bool operator< (const FilesystemNode& node) const
+	{
+		return displayName() < node.displayName();
+	}
 };
 
 
 /*
- * A list of multiple file system nodes. E.g. the contents of a given directory.
+ * A sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
 class FSList : ScummVM::List<FilesystemNode *> {
 public:
@@ -149,7 +157,15 @@ public:
 	void push_back(const FilesystemNode& element)
 	{
 		ensureCapacity(_size + 1);
-		_data[_size++] = element.clone();
+		// Determine where to insert the item.
+		// TODO this is inefficient, should use binary search instead
+		int i = 0;
+		while (i < _size && *_data[i] < element)
+			i++;
+		if (i < _size)
+			memmove(&_data[i+1], &_data[i], (_size - i) * sizeof(FilesystemNode *));
+		_data[i] = element.clone();
+		_size++;
 	}
 	
 	const FilesystemNode& operator [](int idx) const
