@@ -491,23 +491,23 @@ void CostumeRenderer::proc3_ami() {
 
 void LoadedCostume::loadCostume(int id) {
 	_id = id;
-	_ptr = _vm->getResourceAddress(rtCostume, id);
+	byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
 	if (_vm->_version >= 6)
-		_ptr += 8;
+		ptr += 8;
 	else if (_vm->_features & GF_OLD_BUNDLE)
-		_ptr += -2;
+		ptr += -2;
 	else if (_vm->_features & GF_SMALL_HEADER)
-		_ptr += 0;
+		ptr += 0;
 	else
-		_ptr += 2;
+		ptr += 2;
 
-	_baseptr = _ptr;
+	_baseptr = ptr;
 
-	_numAnim = _ptr[6];
-	_format = _ptr[7] & 0x7F;
-	_mirror = (_ptr[7] & 0x80) != 0;
-	_palette = _ptr + 8;
+	_numAnim = ptr[6];
+	_format = ptr[7] & 0x7F;
+	_mirror = (ptr[7] & 0x80) != 0;
+	_palette = ptr + 8;
 	switch (_format) {
 	case 0x57:				// Only used in V1 games
 		_numColors = 0;
@@ -537,9 +537,10 @@ void LoadedCostume::loadCostume(int id) {
 		_numColors = (_vm->_version == 1) ? 0 : 1;
 		_baseptr += 2;
 	}
-	_ptr += 8 + _numColors;
-	_frameOffsets = _ptr + 2;
-	_dataptr = _baseptr + READ_LE_UINT16(_ptr);
+	ptr += 8 + _numColors;
+	_frameOffsets = ptr + 2;
+	_dataOffsets = ptr + ((_vm->_version == 1) ? 20 : 34);	// FIXME - V1 case might be wrong
+	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -558,7 +559,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
 	
 	// Determine the offset to the costume data for the limb at position i
-	code = _loaded._dataptr[i] & 0x7F;
+	code = _loaded._animCmds[i] & 0x7F;
 
 	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
@@ -607,7 +608,6 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	uint mask, j;
 	int i;
 	byte extra, cmd;
-	const byte *dataptr;
 	int anim;
 	LoadedCostume lc(this);
 
@@ -619,14 +619,9 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	if (_version == 1) {
-		// FIXME
 //printf("Offset table:\n");
-//hexdump(lc._ptr + anim * 2 + 34 - 0x10, 0x20);
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + 20 + anim * 2);
-	} else {
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + 34 + anim * 2);
-	}
+//hexdump(lc._dataOffsets + anim * 2 - 0x10, 0x20);
+	r = lc._baseptr + READ_LE_UINT16(lc._dataOffsets + anim * 2);
 //printf("actor %d, costum %d, frame %d, anim %d:\n", a->number, lc._id, frame, anim);
 //hexdump(r, 0x20);
 
@@ -634,7 +629,6 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	dataptr = lc._dataptr;
 	// FIXME: Maybe V1 only ready one byte here? At least it seems by comparing the
 	// V1 and V2 data that there is a 1-byte len difference.
 /*	if (_version == 1) {
@@ -663,7 +657,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 					a->cost.frame[i] = frame;
 				} else {
 					extra = *r++;
-					cmd = dataptr[j];
+					cmd = lc._animCmds[j];
 					if (cmd == 0x7A) {
 						a->cost.stopped &= ~(1 << i);
 					} else if (cmd == 0x79) {
@@ -717,7 +711,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 }
 
 void CostumeRenderer::setFacing(Actor *a) {
-	_mirror = newDirToOldDir(a->facing) != 0 || (_loaded._mirror);
+	_mirror = newDirToOldDir(a->facing) != 0 || _loaded._mirror;
 }
 
 void CostumeRenderer::setCostume(int costume) {
@@ -746,10 +740,10 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	highflag = a->cost.curpos[slot] & 0x8000;
 	i = a->cost.curpos[slot] & 0x7FFF;
 	end = a->cost.end[slot];
-	code = _dataptr[i] & 0x7F;
+	code = _animCmds[i] & 0x7F;
 	
 	if (_vm->_version <= 3) {
-		if (_dataptr[i] & 0x80)
+		if (_animCmds[i] & 0x80)
 			a->cost.soundCounter++;
 	}
 	
@@ -761,7 +755,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 			if (i != end)
 				i++;
 		}
-		nc = _dataptr[i];
+		nc = _animCmds[i];
 
 		if (nc == 0x7C) {
 			a->cost.animCounter++;
@@ -784,7 +778,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 		}
 
 		a->cost.curpos[slot] = i | highflag;
-		return (_dataptr[i] & 0x7F) != code;
+		return (_animCmds[i] & 0x7F) != code;
 	} while (1);
 }
 

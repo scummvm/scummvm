@@ -29,17 +29,19 @@ protected:
 
 public:
 	int _id;
-	const byte *_ptr;
 	const byte *_baseptr;
-	const byte *_dataptr;
+	const byte *_animCmds;
+	const byte *_dataOffsets;
+	const byte *_palette;
+	const byte *_frameOffsets;
 	byte _numColors;
 	byte _numAnim;
 	byte _format;
 	bool _mirror;
-	const byte *_palette;
-	const byte *_frameOffsets;
 
-	LoadedCostume(Scumm *vm) : _vm(vm), _ptr(0), _dataptr(0), _numColors(0) {}
+	LoadedCostume(Scumm *vm) :
+		_vm(vm), _id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
+		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
 
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
