@@ -43,10 +43,10 @@ public:
 	SmushFont(bool use_original_colors, bool new_colors);
 
 	void setColor(byte c) { _color = c; }
-	void drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset);
-	void drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
-	void drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
-	void drawStringAbsolute(const char *str, byte *buffer, int dst_width, int x, int y);
+	void drawStringAbsolute    (const char *str, byte *buffer, int dst_width, int x, int y);
+	void drawStringCentered    (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
+	void drawStringWrap        (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
+	void drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
 };
 
 #endif

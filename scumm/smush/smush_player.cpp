@@ -484,7 +484,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	int flags = b.getShort();
 	int left = b.getShort();
 	int top = b.getShort();
-	int width = b.getShort();
+	int right = b.getShort();
 	/*int32 height =*/ b.getShort();
 	/*int32 unk2 =*/ b.getWord();
 
@@ -561,13 +561,13 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
 			break;
 		case 1:
-			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
+			sf->drawStringCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, right);
 			break;
 		case 8:
-			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
+			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, right);
 			break;
 		case 9:
-			sf->drawStringWrapCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
+			sf->drawStringWrapCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, right);
 			break;
 		default:
 			warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
