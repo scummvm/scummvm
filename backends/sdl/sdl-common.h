@@ -31,6 +31,9 @@
 
 #include <SDL.h>
 
+// Uncomment this to enable the 'on screen display' code.
+#define USE_OSD	1
+
 class OSystem_SDL : public OSystem {
 public:
 	OSystem_SDL();
@@ -111,14 +114,14 @@ public:
 	virtual void show_overlay();
 	virtual void hide_overlay();
 	virtual void clear_overlay();
-	virtual void grab_overlay(int16 *buf, int pitch);
-	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+	virtual void grab_overlay(OverlayColor *buf, int pitch);
+	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 get_height();
 	virtual int16 get_width();
 
 	// Methods that convert RGB to/from colors suitable for the overlay.
-	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b);
+	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
+	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
@@ -136,6 +139,20 @@ public:
 protected:
 	void init_intern();
 
+#ifdef USE_OSD
+	SDL_Surface *_osdSurface;
+	Uint8 _osdAlpha;			// Transparency level of the OSD
+	uint32 _osdFadeStartTime;	// When to start the fade out
+	enum {
+		kOSDFadeOutDelay = 2 * 1000,	// Delay before the OSD is faded out (in milliseconds)
+		kOSDFadeOutDuration = 500,		// Duration of the OSD fade out (in milliseconds)
+		kOSDColorKey = 1,
+		kOSDInitialAlpha = 80			// Initial alpha level, in percent
+	};
+	
+	void displayMessageOnOSD(const char *msg);
+#endif
+
 	// hardware screen
 	SDL_Surface *_hwscreen;
 
@@ -145,7 +162,6 @@ protected:
 
 	// temporary screen (for scalers/overlay)
 	SDL_Surface *_tmpscreen;
-	int _tmpScreenWidth;
 	bool _overlayVisible;
 
 	// CD Audio

@@ -23,6 +23,7 @@
 #include "backends/sdl/sdl-common.h"
 #include "common/scaler.h"
 #include "common/util.h"
+#include "gui/font.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -107,19 +108,41 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	}
 
 	_mode = mode;
-
+	_scaler_proc = newScalerProc;
 	if (newScaleFactor != _scaleFactor) {
+		_scaleFactor = newScaleFactor;
 		hotswap_gfx_mode();
-	} else {
-		_scaler_proc = newScalerProc;
-		_forceFull = true;
-
-		// Blit everything to the screen
-		internUpdateScreen();
-	
-		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-		_modeChanged = true;
 	}
+
+	if (!_screen)
+		return true;
+
+#ifdef USE_OSD
+	if (_osdSurface) {
+		const char *newScalerName = 0;
+		const GraphicsMode *g = s_supportedGraphicsModes;
+		while (g->name) {
+			if (g->id == mode) {
+				newScalerName = g->description;
+				break;
+			}
+			g++;
+		}
+		if (newScalerName) {
+			char buffer[128];
+			sprintf(buffer, "Active graphics filter: %s", newScalerName);
+			displayMessageOnOSD(buffer);
+		}
+	}
+#endif
+
+
+	// Blit everything to the screen
+	_forceFull = true;
+	internUpdateScreen();
+	
+	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+	_modeChanged = true;
 
 	return true;
 }
@@ -153,69 +176,13 @@ void OSystem_SDL::load_gfx_mode() {
 	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	_tmpscreen = NULL;
-	_tmpScreenWidth = (_screenWidth + 3);
 	
-	switch(_mode) {
-	case GFX_NORMAL:
-		_scaleFactor = 1;
-		_scaler_proc = Normal1x;
-		break;
-	case GFX_DOUBLESIZE:
-		_scaleFactor = 2;
-		_scaler_proc = Normal2x;
-		break;
-	case GFX_TRIPLESIZE:
-		_scaleFactor = 3;
-		_scaler_proc = Normal3x;
-		break;
-
-	case GFX_2XSAI:
-		_scaleFactor = 2;
-		_scaler_proc = _2xSaI;
-		break;
-	case GFX_SUPER2XSAI:
-		_scaleFactor = 2;
-		_scaler_proc = Super2xSaI;
-		break;
-	case GFX_SUPEREAGLE:
-		_scaleFactor = 2;
-		_scaler_proc = SuperEagle;
-		break;
-	case GFX_ADVMAME2X:
-		_scaleFactor = 2;
-		_scaler_proc = AdvMame2x;
-		break;
-	case GFX_ADVMAME3X:
-		_scaleFactor = 3;
-		_scaler_proc = AdvMame3x;
-		break;
-	case GFX_HQ2X:
-		_scaleFactor = 2;
-		_scaler_proc = HQ2x;
-		break;
-	case GFX_HQ3X:
-		_scaleFactor = 3;
-		_scaler_proc = HQ3x;
-		break;
-	case GFX_TV2X:
-		_scaleFactor = 2;
-		_scaler_proc = TV2x;
-		break;
-	case GFX_DOTMATRIX:
-		_scaleFactor = 2;
-		_scaler_proc = DotMatrix;
-		break;
-
-	default:
-		error("unknown gfx mode %d", _mode);
-	}
-
 	//
 	// Create the surface that contains the 8 bit game data
 	//
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
-		error("_screen failed");
+		error("allocating _screen failed");
 
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
@@ -256,16 +223,31 @@ void OSystem_SDL::load_gfx_mode() {
 		InitScalers(565);
 	
 	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));
-	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
+	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
+						_screenWidth + 3,
+						_screenHeight + 3,
+						16,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,
 						_hwscreen->format->Bmask,
 						_hwscreen->format->Amask);
 
 	if (_tmpscreen == NULL)
-		error("_tmpscreen failed");
+		error("allocating _tmpscreen failed");
+	
+#ifdef USE_OSD
+	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+						_hwscreen->w,
+						_hwscreen->h,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+	if (_osdSurface == NULL)
+		error("allocating _osdSurface failed");
+	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
+#endif
 
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
@@ -286,10 +268,16 @@ void OSystem_SDL::unload_gfx_mode() {
 	}
 
 	if (_tmpscreen) {
-		free(_tmpscreen->pixels);
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
 	}
+
+#ifdef USE_OSD
+	if (_osdSurface) {
+		SDL_FreeSurface(_osdSurface);
+		_osdSurface = NULL;
+	}
+#endif
 }
 
 void OSystem_SDL::hotswap_gfx_mode() {
@@ -304,6 +292,11 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	// Release the HW screen surface
 	SDL_FreeSurface(_hwscreen); 
 
+#ifdef USE_OSD
+	// Release the OSD surface
+	SDL_FreeSurface(_osdSurface); 
+#endif
+
 	// Setup the new GFX mode
 	load_gfx_mode();
 
@@ -316,7 +309,6 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	
 	// Free the old surfaces
 	SDL_FreeSurface(old_screen);
-	free(old_tmpscreen->pixels);
 	SDL_FreeSurface(old_tmpscreen);
 
 	// Blit everything to the screen
@@ -363,6 +355,26 @@ void OSystem_SDL::internUpdateScreen() {
 
 		_forceFull = true;
 	}
+
+#ifdef USE_OSD
+	// OSD visible (i.e. non-transparent)?
+	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
+		// Updated alpha value
+		const int diff = SDL_GetTicks() - _osdFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency
+				_osdAlpha = SDL_ALPHA_TRANSPARENT;
+			} else {
+				// Do a linear fade out...
+				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
+			}
+			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
+			_forceFull = true;
+		}
+	}
+#endif
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -453,6 +465,12 @@ void OSystem_SDL::internUpdateScreen() {
 			_dirty_rect_list[0].h = effectiveScreenHeight();
 		}
 
+#ifdef USE_OSD
+		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
+			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
+		}
+#endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
 	}
@@ -488,11 +506,21 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
-		} else {
-			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-			_modeChanged = true;
 		}
 #endif
+			
+#ifdef USE_OSD
+		if (_full_screen)
+			displayMessageOnOSD("Fullscreen mode");
+		else
+			displayMessageOnOSD("Windowed mode");
+#endif
+
+		// Blit everything to the screen
+		internUpdateScreen();
+		
+		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+		_modeChanged = true;
 	}
 }
 
@@ -830,7 +858,7 @@ void OSystem_SDL::clear_overlay() {
 	_forceFull = true;
 }
 
-void OSystem_SDL::grab_overlay(int16 *buf, int pitch) {
+void OSystem_SDL::grab_overlay(OverlayColor *buf, int pitch) {
 	if (!_overlayVisible)
 		return;
 
@@ -843,18 +871,18 @@ void OSystem_SDL::grab_overlay(int16 *buf, int pitch) {
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	int16 *src = (int16 *)_tmpscreen->pixels + _tmpScreenWidth + 1;
+	byte *src = (byte *)_tmpscreen->pixels + _tmpscreen->pitch + 2;	// Offset by one row, one column
 	int h = _screenHeight;
 	do {
 		memcpy(buf, src, _screenWidth*2);
-		src += _tmpScreenWidth;
+		src += _tmpscreen->pitch;
 		buf += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-void OSystem_SDL::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_SDL::copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	if (!_overlayVisible)
 		return;
 
@@ -894,21 +922,21 @@ void OSystem_SDL::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, i
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	int16 *dst = (int16 *)_tmpscreen->pixels + (y + 1) * _tmpScreenWidth + (x + 1);
+	byte *dst = (byte *)_tmpscreen->pixels + (y + 1) * _tmpscreen->pitch + (x + 1) * 2;
 	do {
 		memcpy(dst, buf, w * 2);
-		dst += _tmpScreenWidth;
+		dst += _tmpscreen->pitch;
 		buf += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-int16 OSystem_SDL::RGBToColor(uint8 r, uint8 g, uint8 b) {
+OverlayColor OSystem_SDL::RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return SDL_MapRGB(_tmpscreen->format, r, g, b);
 }
 
-void OSystem_SDL::colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b) {
+void OSystem_SDL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
 }
 
@@ -1040,22 +1068,22 @@ void OSystem_SDL::draw_mouse() {
 	
 	} else {
 		uint16 *bak = (uint16 *)_mouseBackup;	// Surface used to backup the area obscured by the mouse
-		uint16 *dst;					// Surface we are drawing into
+		byte *dst;					// Surface we are drawing into
 	
-		dst = (uint16 *)_tmpscreen->pixels + (y + 1) * _tmpScreenWidth + (x + 1);
+		dst = (byte *)_tmpscreen->pixels + (y + 1) * _tmpscreen->pitch + (x + 1) * 2;
 		while (h > 0) {
 			int width = w;
 			while (width > 0) {
-				*bak++ = *dst;
+				*bak++ = *(uint16 *)dst;
 				color = *src++;
 				if (color != 0xFF)	// 0xFF = transparent, don't draw
-					*dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
-				dst++;
+					*(uint16 *)dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+				dst += 2;
 				width--;
 			}
 			src += _mouseCurState.w - w;
 			bak += MAX_MOUSE_W - w;
-			dst += _tmpScreenWidth - w;
+			dst += _tmpscreen->pitch - w * 2;
 			h--;
 		}
 	}
@@ -1113,13 +1141,14 @@ void OSystem_SDL::undraw_mouse() {
 	
 	} else {
 
-		uint16 *dst, *bak = (uint16 *)_mouseBackup;
+		byte *dst;
+		uint16 *bak = (uint16 *)_mouseBackup;
 	
 		// No need to do clipping here, since draw_mouse() did that already
-		dst = (uint16 *)_tmpscreen->pixels + (old_mouse_y + 1) * _tmpScreenWidth + (old_mouse_x + 1);
-		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpScreenWidth) {
+		dst = (byte *)_tmpscreen->pixels + (old_mouse_y + 1) * _tmpscreen->pitch + (old_mouse_x + 1) * 2;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpscreen->pitch) {
 			for (x = 0; x < old_mouse_w; ++x) {
-				dst[x] = bak[x];
+				*((uint16 *)dst + x) = bak[x];
 			}
 		}
 	}
@@ -1128,3 +1157,61 @@ void OSystem_SDL::undraw_mouse() {
 
 	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
 }
+
+
+#pragma mark -
+#pragma mark --- Mouse ---
+#pragma mark -
+
+#ifdef USE_OSD
+void OSystem_SDL::displayMessageOnOSD(const char *msg) {
+	
+//	printf("displayMessageOnOSD(%s)\n", msg);
+	if (SDL_LockSurface(_osdSurface))
+		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+
+	GUI::Surface dst;
+	dst.pixels = _osdSurface->pixels;
+	dst.w = _osdSurface->w;
+	dst.h = _osdSurface->h;
+	dst.pitch = _osdSurface->pitch;
+	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
+	
+	// Clear everything with the "transparent" color, i.e. the colorkey
+	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
+
+	// Determine a rect which would contain the message string (clipped to the
+	// screen dimensions).
+	const int vOffset = 10;
+	int width = GUI::g_sysfont.getStringWidth(msg) + 16;
+	int height = GUI::g_sysfont.getFontHeight() + 2 * vOffset;
+	if (width > dst.w)
+		width = dst.w;
+	if (height > dst.h)
+		height = dst.h;
+
+	// Draw a dark gray rect
+	// TODO: Rounded corners ? Border?
+	SDL_Rect osdRect;
+	osdRect.x = (dst.w - width) / 2;
+	osdRect.y = (dst.h - height) / 2;
+	osdRect.w = width;
+	osdRect.h = height;
+	SDL_FillRect(_osdSurface, &osdRect, SDL_MapRGB(_osdSurface->format, 64, 64, 64));
+
+	// Render the message, centered, and in white
+	GUI::g_sysfont.drawString(&dst, msg, osdRect.x, osdRect.y + vOffset, osdRect.w,
+							SDL_MapRGB(_osdSurface->format, 255, 255, 255),
+							GUI::kTextAlignCenter);
+
+	SDL_UnlockSurface(_osdSurface);
+
+	// Init the OSD display parameters, and the fade out
+	_osdAlpha = SDL_ALPHA_TRANSPARENT +  kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
+	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
+	
+	// Ensure a full redraw takes place next time the screen is updated
+	_forceFull = true;
+}
+#endif

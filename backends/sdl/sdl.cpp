@@ -56,6 +56,8 @@ void OSystem_SDL::init_intern() {
 
 	cksum_valid = false;
 	_mode = GFX_DOUBLESIZE;
+	_scaleFactor = 2;
+	_scaler_proc = Normal2x;
 	_full_screen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 	_mode_flags = 0;
@@ -74,8 +76,12 @@ void OSystem_SDL::init_intern() {
 }
 
 OSystem_SDL::OSystem_SDL()
-	: _hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
-	_tmpscreen(0), _tmpScreenWidth(0), _overlayVisible(false),
+	:
+#ifdef USE_OSD
+	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
+#endif
+	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
+	_tmpscreen(0), _overlayVisible(false),
 	_cdrom(0), _scaler_proc(0), _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
@@ -143,6 +149,19 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 			//assert(_hwscreen != 0);
 			_adjustAspectRatio ^= true;
 			hotswap_gfx_mode();
+			
+#ifdef USE_OSD
+			if (_adjustAspectRatio)
+				displayMessageOnOSD("Enabled aspect ratio correction");
+			else
+				displayMessageOnOSD("Disabled aspect ratio correction");
+#endif
+
+			// Blit everything to the screen
+			internUpdateScreen();
+			
+			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+			_modeChanged = true;
 		}
 		break;
 	case kFeatureAutoComputeDirtyRects:
