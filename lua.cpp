@@ -651,8 +651,23 @@ static void stubWarning() {
       fprintf(stderr, "nil");
     else if (lua_istable(lua_getparam(i)))
       fprintf(stderr, "{...}");
-    else if (lua_isuserdata(lua_getparam(i)))
-      fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+    else if (lua_isuserdata(lua_getparam(i))) {
+      if (lua_tag(lua_getparam(i)) == actor_tag) {
+	Actor *a = check_actor(i);
+	fprintf(stderr, "<actor \"%s\">", a->name());
+      }
+      else if (lua_tag(lua_getparam(i)) == color_tag) {
+	Color *c = check_color(i);
+	fprintf(stderr, "<color #%02x%02x%02x>",
+		c->red(), c->green(), c->blue());
+      }
+      else if (lua_tag(lua_getparam(i)) == sound_tag) {
+	Sound *s = check_sound(i);
+	fprintf(stderr, "<sound %s>", s->filename());
+      }
+      else
+	fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+    }
     else if (lua_isfunction(lua_getparam(i)))
       fprintf(stderr, "<function>");
     else if (lua_isnumber(lua_getparam(i)))
