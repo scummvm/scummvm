@@ -66,7 +66,7 @@ static R_INTRO_DIALOGUE IntroDiag[] = {
 	{
 		CAVE_VOICE_4, "intro1b",
 		"The humans also knew the Secret of Life, "
-		"and used it to give us the Four Great Gifts:"
+		"and they used it to give us the Four Great Gifts:"
 	},
 	{
 		CAVE_VOICE_5, "intro2b",
