@@ -122,7 +122,7 @@ void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("talkspeed", Logic::DEFAULT_TALK_SPEED);
-	ConfMan.registerDefault("speech_mute", false);
+	ConfMan.registerDefault("speech_mute", _resource->isDemo());
 	ConfMan.registerDefault("subtitles", true);
 }
 
