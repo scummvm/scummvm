@@ -1136,7 +1136,9 @@ void Scumm_v5::o5_saveLoadGame() {
 		case 0x00: // num slots available
 			result = 100;
 			break;
-		case 0x20: // dos drive?
+		case 0x20: // drive
+			// 0 = hard drive
+			// 1 = disk drive
 			result = 0;
 			break;
 		case 0x40: // load 
