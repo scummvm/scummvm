@@ -39,8 +39,8 @@ protected:
 
 	void decodeCodec44(byte *dst, const byte *src, uint32 length);
 
-	void draw2byte(int c, int x, int y, byte color, bool useMask);
-	void drawChar(byte c, int x, int y, byte color, bool useMask);
+	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
+	void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
 
 public:
 	NutRenderer(Scumm *vm);

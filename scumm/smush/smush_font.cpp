@@ -183,6 +183,8 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	const byte *src = _chars[chr].src;
 	byte *dst = buffer + dst_width * y + x;
 
+	assert(dst_width == g_scumm->_screenWidth);
+
 	if(_original) {
 		for(int j = 0; j < h; j++) {
 			for(int i = 0; i < w; i++) {

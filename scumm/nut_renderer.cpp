@@ -191,6 +191,8 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		return;
 	}
 
+	byte *dst, *mask = NULL;
+
 	// HACK: we draw the character a total of 7 times: 6 times shifted
 	// and in black for the shadow, and once in the right color and position.
 	// This way we achieve the exact look as the original CMI had. However,
@@ -207,39 +209,40 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		x += offsetX[i];
 		y += offsetY[i];
 		color = cTable[i];
-	
+		
+		dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
+		if (useMask)
+			mask = _vm->getMaskBuffer(x, y, 0);
+		
 		if(c >= 256 && _vm->_CJKMode)
-			draw2byte(c, x, y, color, useMask);
+			draw2byte(dst, mask, c, x, y, color);
 		else
-			drawChar((byte)c, x, y, color, useMask);
+			drawChar(dst, mask, (byte)c, x, y, color);
 		
 		x -= offsetX[i];
 		y -= offsetY[i];
 	}
 }
 
-void NutRenderer::drawChar(byte c, int x, int y, byte color, bool useMask) {
+void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color) {
 	const int width = _chars[c].width;
 	const int height = _chars[c].height;
 	const byte *src = _chars[c].src;
+	byte bits = 0;
 
-	byte *dst, *mask = NULL;
 	byte maskmask;
 	int maskpos;
 	
-	dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
-	mask = _vm->getMaskBuffer(x, y, 0);
-
 	for (int ty = 0; ty < height; ty++) {
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;
 		for (int tx = 0; tx < width; tx++) {
-			byte pixel = *src++;
+			bits = *src++;
 			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
 				continue;
-			if (pixel != 0) {
+			if (bits != 0) {
 				dst[tx] = color;
-				if (useMask)
+				if (mask)
 					mask[maskpos] |= maskmask;
 			}
 			maskmask >>= 1;
@@ -249,11 +252,12 @@ void NutRenderer::drawChar(byte c, int x, int y, byte color, bool useMask) {
 			}
 		}
 		dst += _vm->_screenWidth;
-		mask += _vm->gdi._numStrips;
+		if (mask)
+			mask += _vm->gdi._numStrips;
 	}
 }
 
-void NutRenderer::draw2byte(int c, int x, int y, byte color, bool useMask) {
+void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color) {
 	if (!_loaded) {
 		debug(2, "NutRenderer::draw2byte() Font is not loaded");
 		return;
@@ -264,14 +268,9 @@ void NutRenderer::draw2byte(int c, int x, int y, byte color, bool useMask) {
 	byte *src = g_scumm->get2byteCharPtr(c);
 	byte bits = 0;
 
-	byte *dst, *mask = NULL;
 	byte maskmask;
 	int maskpos;
 	
-	dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
-	mask = _vm->getMaskBuffer(x, y, 0);
-
-//	drawBits1(&_vm->virtscr[0], dst, src, mask, ?, width, height);
 	for (int ty = 0; ty < height; ty++) {
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;
@@ -282,7 +281,7 @@ void NutRenderer::draw2byte(int c, int x, int y, byte color, bool useMask) {
 				continue;
 			if (bits & revBitMask[tx % 8]) {
 				dst[tx] = color;
-				if (useMask) {
+				if (mask) {
 					mask[maskpos] |= maskmask;
 				}
 			}
@@ -294,6 +293,7 @@ void NutRenderer::draw2byte(int c, int x, int y, byte color, bool useMask) {
 			}
 		}
 		dst += _vm->_screenWidth;
-		mask += _vm->gdi._numStrips;
+		if (mask)
+			mask += _vm->gdi._numStrips;
 	}
 }
