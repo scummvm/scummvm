@@ -174,7 +174,7 @@ void Scumm::unkMessage1()
 		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
 		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 //    if (_saveSound != 1)
-		_sound->talkSound(a, b, 1);
+		_sound->talkSound(a, b, 1, -1);
 	}
 //  warning("unkMessage1(\"%s\")", buffer);
 }
@@ -196,10 +196,14 @@ void Scumm::unkMessage2()
 
 void Scumm::CHARSET_1()
 {
+	uint32 talk_sound_a = 0;
+	uint32 talk_sound_b = 0;
 	int s, i, t, c;
-	int frme;
+	int frme = -1;
 	Actor *a;
 	byte *buffer;
+	bool has_talk_sound = false;
+	bool has_anim = false;
 
 	if (!_haveMsg)
 		return;
@@ -290,7 +294,8 @@ void Scumm::CHARSET_1()
 	}
 
 	if (a && !string[0].no_talk_anim) {
-		a->startAnimActor(a->talkFrame1);
+//		a->startAnimActor(a->talkFrame1);
+		has_anim = true;
 		_useTalkAnims = true;
 	}
 
@@ -397,14 +402,11 @@ void Scumm::CHARSET_1()
 		} else if (c == 9) {
 			frme = *buffer++;
 			frme |= *buffer++ << 8;
-			if (a)
-				a->startAnimActor(frme);
+			has_anim = true;
 		} else if (c == 10) {
-			uint32 tmpA, tmpB;
-
-			tmpA = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			tmpB = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
-			_sound->talkSound(tmpA, tmpB, 2);
+			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+			has_talk_sound = true;
 			buffer += 14;
 
 			// Set flag that speech variant exist of this msg
@@ -435,6 +437,16 @@ void Scumm::CHARSET_1()
 			warning("CHARSET_1: invalid code %d", c);
 		}
 	} while (1);
+
+	// Even if talkSound() is called, we may still have to call
+	// startAnimActor() since actorTalk() may already have caused the
+	// wrong animation frame to be drawn, and the talkSound() won't be
+	// processed until after the next screen update. Bleah.
+
+	if (has_talk_sound)
+		_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
+	if (a && has_anim)
+		a->startAnimActor(frme != -1 ? frme : a->talkFrame1);
 
 	charset._bufPos = buffer - charset._buffer;
 

@@ -907,6 +907,8 @@ void Gui::getSavegameNames(int start)
 
 const char *Gui::queryString(int stringno, int id)
 {
+	if ((stringno == 1) && (_s->_gameId == GID_MONKEY2)) return "How may I serve you?"; // FIXME (MI2 data file is wrong)
+
 	static char namebuf[64];
 	char *result;
 	int string;

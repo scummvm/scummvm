@@ -56,6 +56,7 @@ enum {
 	File *_sfxFile;
 	uint32 _talk_sound_a, _talk_sound_b;
 	byte _talk_sound_mode;
+	int _talk_sound_frame;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[52];
@@ -107,7 +108,7 @@ public:
 	void stopAllSounds();
 	void clearSoundQue();
 	void soundKludge(int16 * list);
-	void talkSound(uint32 a, uint32 b, int mode);
+	void talkSound(uint32 a, uint32 b, int mode, int frame);
 	void setupSound();
 	void pauseSounds(bool pause);
 	int startSfxSound(File *file, int file_size);

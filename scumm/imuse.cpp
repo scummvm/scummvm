@@ -170,6 +170,7 @@ struct Player {
 	int query_param(int param);
 
 	int fade_vol(byte vol, int time);
+	bool is_fading_out();
 	void sequencer_timer();
 };
 
@@ -185,7 +186,9 @@ struct VolumeFader {
 
 	void initialize() {
 		active = false;
-	} void on_timer();
+	}
+	void on_timer(bool probe);
+	byte fading_to();
 };
 
 struct SustainingNotes {
@@ -1134,12 +1137,12 @@ void IMuseInternal::expire_volume_faders()
 	for (i = ARRAYSIZE(_volume_fader); i != 0; i--, vf++) {
 		if (vf->active) {
 			_active_volume_faders = true;
-			vf->on_timer();
+			vf->on_timer(false);
 		}
 	}
 }
 
-void VolumeFader::on_timer()
+void VolumeFader::on_timer(bool probe)
 {
 	byte newvol;
 
@@ -1152,18 +1155,50 @@ void VolumeFader::on_timer()
 	}
 
 	if (curvol != newvol) {
+		curvol = newvol;
 		if (!newvol) {
-			player->clear();
+			if (!probe)
+				player->clear();
 			active = false;
 			return;
 		}
-		curvol = newvol;
-		player->set_vol(newvol);
+		if (!probe)
+			player->set_vol(newvol);
 	}
 
 	if (!--num_steps) {
 		active = false;
 	}
+}
+
+byte VolumeFader::fading_to()
+{
+	byte newvol;
+	byte orig_curvol;
+	uint16 orig_speed_lo_counter, orig_num_steps;
+
+	if (!active)
+		return 127;
+
+	// It would be so much easier to just store the fade-to volume in a
+	// variable, but then we'd have to break savegame compatibility. So
+	// instead we do a "dry run" fade.
+
+	orig_speed_lo_counter = speed_lo_counter;
+	orig_num_steps = num_steps;
+	orig_curvol = curvol;
+
+	while (active)
+		on_timer(true);
+
+	active = true;
+	newvol = curvol;
+
+	speed_lo_counter = orig_speed_lo_counter;
+	num_steps = orig_num_steps;
+	curvol = orig_curvol;
+
+	return newvol;
 }
 
 int IMuseInternal::get_sound_status(int sound)
@@ -1172,8 +1207,17 @@ int IMuseInternal::get_sound_status(int sound)
 	Player *player;
 
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-		if (player->_active && player->_id == (uint16)sound)
+		if (player->_active && player->_id == (uint16)sound) {
+			// Assume that anyone asking for the sound status is
+			// really asking "is it ok if I start playing this
+			// sound now?" So if the sound is about to fade out,
+			// shut it down and pretend it wasn't playing.
+			if (player->is_fading_out()) {
+				player->clear();
+				continue;
+			}
 			return 1;
+		}
 	}
 	return get_queue_sound_status(sound);
 }
@@ -1779,6 +1823,18 @@ int Player::fade_vol(byte vol, int time)
 	vf->speed_lo = i % time;
 	vf->speed_lo_counter = 0;
 	return 0;
+}
+
+bool Player::is_fading_out()
+{
+	VolumeFader *vf = _se->_volume_fader;
+	int i;
+
+	for (i = 0; i < 8; i++, vf++) {
+		if (vf->active && vf->direction < 0 && vf->player == this && vf->fading_to() == 0)
+			return true;
+	}
+	return false;
 }
 
 void Player::clear()
@@ -3038,6 +3094,18 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm)
 			player->set_tempo(player->_tempo);
 			scumm->getResourceAddress(rtSound, player->_id);
 			player->_mt32emulate = isMT32(player->_id);
+			if (scumm->_use_adlib) {
+				// FIXME - This should make sure the right
+				// instruments are loaded, but it does not
+				// even try to move to the right position in
+				// the track. Using scan() gives a marginally
+				// better result, but not good enough.
+				//
+				// The correct fix is probably to store the
+				// Adlib instruments, or information on where
+				// to find them, in the savegame.
+				player->jump(player->_track_index, 0, 0);
+			}
 		}
 	}
 }

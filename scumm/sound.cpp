@@ -407,7 +407,11 @@ void Sound::processSfxQueues() {
 					b = isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
-					a->startAnimActor(b ? a->talkFrame2 : a->talkFrame1);
+					if (_talk_sound_frame != -1) {
+						a->startAnimActor(_talk_sound_frame);
+						_talk_sound_frame = -1;
+					} else
+						a->startAnimActor(b ? a->talkFrame2 : a->talkFrame1);
 				}
 			}
 		}
@@ -618,10 +622,11 @@ void Sound::soundKludge(int16 * list) {
 		error("Sound que buffer overflow");
 }
 
-void Sound::talkSound(uint32 a, uint32 b, int mode) {
+void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
 	_talk_sound_a = a;
 	_talk_sound_b = b;
 	_talk_sound_mode = mode;
+	_talk_sound_frame = frame;
 }
 
 /* The sound code currently only supports General Midi.
