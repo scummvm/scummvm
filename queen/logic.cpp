@@ -235,10 +235,8 @@ uint16 QueenLogic::findBob(uint16 obj) {
 	uint16 bobnum = 0;
 	uint16 bobtype = 0; // 1 for animated, 0 for static
 
-	if (obj > _numObjects) {
-		debug(0, "Object index (%i) > _numObjects (%i)", obj, _numObjects);
-		abort();
-	}
+	if (obj > _numObjects)
+		error("Object index (%i) > _numObjects (%i)", obj, _numObjects);
 
 	uint16 room = _objectData[obj].room;
 
