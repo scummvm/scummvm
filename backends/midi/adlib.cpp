@@ -997,14 +997,16 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 			step = _next_tick;
 		YM3812UpdateOne(0, data, step);
 
-		if (!(_next_tick -= step)) {
+		_next_tick -= step;
+		if (!_next_tick) {
 			if (_timer_proc)
 				(*_timer_proc) (_timer_param);
 			on_timer();
 			reset_tick();
 		}
 		data += step;
-	} while (len -= step);
+		len -= step;
+	} while (len);
 }
 
 void MidiDriver_ADLIB::reset_tick() {
