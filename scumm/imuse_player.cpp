@@ -686,7 +686,7 @@ void Player::key_on(uint8 chan, uint8 note, uint8 velocity) {
 	part->key_on(note, velocity);
 }
 
-void Player::key_off(uint8 chan, uint8 note) {
+void Player::key_off(uint8 chan, byte note) {
 	Part *part;
 
 	for (part = _parts; part; part = part->_next) {
