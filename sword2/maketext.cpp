@@ -283,7 +283,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	memset(linePtr, NO_COL, sizeOfSprite);
 
 	// open font file
-	charSet = res_man.Res_open(fontRes);
+	charSet = res_man.open(fontRes);
 
 	// fill sprite with characters, one line at a time
 
@@ -317,7 +317,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	}
 
 	// close font file
-	res_man.Res_close(fontRes);
+	res_man.close(fontRes);
 
 	// unlock the sprite memory block, so it's movable
 	Float_mem(textSprite);
@@ -334,14 +334,14 @@ uint16 CharWidth(uint8 ch, uint32 fontRes) {
 	uint16 width;
 
 	// open font file
-	charSet = res_man.Res_open(fontRes);
+	charSet = res_man.open(fontRes);
 
 	// move to approp. sprite (header)
 	charFrame = FindChar(ch, charSet);
 	width = charFrame->width;
 
 	// close font file
- 	res_man.Res_close(fontRes);
+ 	res_man.close(fontRes);
 
 	// return its width
 	return width;
@@ -356,14 +356,14 @@ uint16 CharHeight(uint32 fontRes) {
 	uint16 height;
 
 	// open font file
-	charSet = res_man.Res_open(fontRes);
+	charSet = res_man.open(fontRes);
 
 	// assume all chars the same height, i.e. FIRST_CHAR is as good as any
 	charFrame = FindChar(FIRST_CHAR, charSet);
 	height = charFrame->height;
 
 	// close font file
-	res_man.Res_close(fontRes);
+	res_man.close(fontRes);
 
 	// return its height
 	return height;
@@ -625,7 +625,7 @@ void InitialiseFontResourceFlags(void) {
 	uint8 language;
 
 	// open the text resource
-	textFile = res_man.Res_open(TEXT_RES);
+	textFile = res_man.open(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.
 	// Otherwise, use regular fonts
@@ -662,7 +662,7 @@ void InitialiseFontResourceFlags(void) {
 	SetWindowName((char*) textLine);
 
 	// now ok to close the text file
-	res_man.Res_close(TEXT_RES);
+	res_man.close(TEXT_RES);
 }
 
 // called from the above function, and also from console.cpp

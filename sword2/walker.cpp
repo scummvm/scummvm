@@ -270,7 +270,7 @@ int32 FN_walk_to_anim(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		// open anim file
-		anim_file = res_man.Res_open(params[4]);
+		anim_file = res_man.open(params[4]);
 
 		// point to animation header
 		anim_head = FetchAnimHeader( anim_file );
@@ -280,7 +280,7 @@ int32 FN_walk_to_anim(int32 *params) {
 		pars[6] = anim_head->feetStartDir;	// target_dir
 
 		// close anim file
-		res_man.Res_close(params[4]);
+		res_man.close(params[4]);
 
 		// if start coords not yet set in anim header, use the standby
 		// coords (which should be set beforehand in the script)
@@ -428,7 +428,7 @@ int32 FN_stand_after_anim(int32 *params) {
 	// open the anim file & set up a pointer to the animation header
 
 	// open anim file
-	anim_file = res_man.Res_open(params[2]);
+	anim_file = res_man.open(params[2]);
 	anim_head = FetchAnimHeader(anim_file);
 
 	// set up the parameter list for FN_walk_to()
@@ -455,7 +455,7 @@ int32 FN_stand_after_anim(int32 *params) {
 		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
 
 	// close the anim file
-	res_man.Res_close(params[2]);
+	res_man.close(params[2]);
 
 	// call FN_stand_at() with target coords set to anim end position
 	return FN_stand_at(pars);
@@ -475,7 +475,7 @@ int32 FN_stand_at_anim(int32 *params) {
 	// open the anim file & set up a pointer to the animation header
 
 	// open anim file
-	anim_file = res_man.Res_open(params[2]);
+	anim_file = res_man.open(params[2]);
 	anim_head = FetchAnimHeader(anim_file);
 
 	// set up the parameter list for FN_walk_to()
@@ -502,7 +502,7 @@ int32 FN_stand_at_anim(int32 *params) {
 		Con_fatal_error("Invalid direction (%d) in FN_stand_after_anim", pars[4]);
 
 	// close the anim file
-	res_man.Res_close(params[2]);
+	res_man.close(params[2]);
 
 	// call FN_stand_at() with target coords set to anim end position
 	return FN_stand_at(pars);
@@ -599,7 +599,7 @@ int32 FN_face_mega(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		// get targets info
-		head = (_standardHeader*) res_man.Res_open(params[4]);
+		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			Con_fatal_error("FN_face_mega %d not an object", params[4]);
@@ -609,7 +609,7 @@ int32 FN_face_mega(int32 *params) {
 		//call the base script - this is the graphic/mouse service call
 		RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-		res_man.Res_close(params[4]);
+		res_man.close(params[4]);
 
 		// engine_mega is now the Object_mega of mega we want to turn
 		// to face
@@ -662,7 +662,7 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {
 	// not been here before so decide where to walk-to
 	if (!ob_logic->looping)	{
 		// first request the targets info
-		head = (_standardHeader*) res_man.Res_open(params[4]);
+		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			Con_fatal_error("FN_walk_to_talk_to_mega %d not an object", params[4]);
@@ -673,7 +673,7 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {
 		// call
 		RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-		res_man.Res_close(params[4]);
+		res_man.close(params[4]);
 
 		// engine_mega is now the Object_mega of mega we want to
 		// route to
@@ -739,8 +739,8 @@ int32 FN_add_walkgrid(int32 *params) {
 	AddWalkGrid(params[0]);
 
 	// Touch the grid, getting it into memory.
-	res_man.Res_open(params[0]);
-	res_man.Res_close(params[0]);
+	res_man.open(params[0]);
+	res_man.close(params[0]);
 
 	return IR_CONT;
 }

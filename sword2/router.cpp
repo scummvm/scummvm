@@ -2732,7 +2732,7 @@ void LoadWalkGrid(void) {
 	for (entry = 0; entry < MAX_WALKGRIDS; entry++) {
 		if (walkGridList[entry]) {
 			// open walk grid file
-			fPolygrid = res_man.Res_open(walkGridList[entry]);
+			fPolygrid = res_man.open(walkGridList[entry]);
  			fPolygrid += sizeof(_standardHeader);
  			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(_walkGridHeader));
  			fPolygrid += sizeof(_walkGridHeader);
@@ -2774,7 +2774,7 @@ void LoadWalkGrid(void) {
 			}
 
 			// close walk grid file
-			res_man.Res_close(walkGridList[entry]);
+			res_man.close(walkGridList[entry]);
 
 			// increment counts of total bars & nodes in whole
 			// walkgrid

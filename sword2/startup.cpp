@@ -124,12 +124,12 @@ uint32 Init_start_menu(void) {
 		// - need to check in case un-built sections included in
 		// start list
 
-		if (res_man.Res_check_valid(res)) {
+		if (res_man.checkValid(res)) {
 			debug(5, "- resource %d ok", res);
-			raw_script = (char*) res_man.Res_open(res);
+			raw_script = (char*) res_man.open(res);
 			null_pc = 0;
 			RunScript(raw_script, raw_script, &null_pc);
-			res_man.Res_close(res);
+			res_man.close(res);
 		} else
 			debug(5, "- resource %d invalid", res);
 	}
@@ -264,12 +264,12 @@ uint32 Con_start(uint8 *input) {
 			// remove all resources from memory, including player
 			// object & global variables
 
-			res_man.Remove_all_res();
+			res_man.removeAll();
 
 			// reopen global variables resource & send address to
 			// interpreter - it won't be moving
-			SetGlobalInterpreterVariables((int32 *) (res_man.Res_open(1) + sizeof(_standardHeader)));
-			res_man.Res_close(1);
+			SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+			res_man.close(1);
 
 			// free all the route memory blocks from previous game
 			FreeAllRouteMem();
@@ -283,8 +283,8 @@ uint32 Con_start(uint8 *input) {
 			// set the key
 
 			// Open George
-			raw_data_ad = (char*) (res_man.Res_open(8));
-			raw_script = (char*) (res_man.Res_open(start_list[start].start_res_id));
+			raw_data_ad = (char*) (res_man.open(8));
+			raw_script = (char*) (res_man.open(start_list[start].start_res_id));
 
 			// denotes script to run
 			null_pc = start_list[start].key & 0xffff;
@@ -292,10 +292,10 @@ uint32 Con_start(uint8 *input) {
 			Print_to_console("running start %d", start);
 			RunScript(raw_script, raw_data_ad, &null_pc);
 
-			res_man.Res_close(start_list[start].start_res_id);
+			res_man.close(start_list[start].start_res_id);
 
 			// Close George
-			res_man.Res_close(8);
+			res_man.close(8);
 
 			// make sure thre's a mouse, in case restarting while
 			// mouse not available

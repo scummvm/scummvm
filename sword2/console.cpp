@@ -453,7 +453,7 @@ uint32 Parse_user_input(void) {
 					Print_to_console("What about him?");
 					return 0;
 				case 6:		// RES
-					res_man.Print_console_clusters();
+					res_man.printConsoleClusters();
 					return 0;
 				case 7:		// STARTS
 					Con_print_start_menu();
@@ -493,7 +493,7 @@ uint32 Parse_user_input(void) {
 						Print_to_console("player feet marker off");
 					return 0;
 				case 13:	// RESLOOK
-					res_man.Examine_res(&input[1][0]);
+					res_man.examine(&input[1][0]);
 					return 0;
 				case 14:	// CUR
 					Print_current_info();
@@ -502,12 +502,12 @@ uint32 Parse_user_input(void) {
 					LLogic.examineRunList();
 					return 0;
 				case 16:	// KILL
-					res_man.Kill_res(&input[1][0]);
+					res_man.kill(&input[1][0]);
 					return 0;
 				case 17:	// NUKE
 					Print_to_console("killing all resources except variable file & player object...");
 					// '1' means we want output to console
-					res_man.Kill_all_res(1);
+					res_man.killAll(1);
 					return 0;
 				case 19:	// VAR
 					if (total_commands == 2)
@@ -527,7 +527,7 @@ uint32 Parse_user_input(void) {
 				case 21:	// CLEAR
 					Print_to_console("killing all object resources except player...");
 					// '1' means we want output to console
-					res_man.Kill_all_objects(1);
+					res_man.killAllObjects(1);
 					return 0;
 				case 22:	// DEBUGON
 					displayDebugText = 1;
@@ -754,7 +754,7 @@ void Con_print(uint8 *ascii, uint32 pen, uint32 paper) {
 	int chr, x = 0;
 
 	// open font file
-	charSet = res_man.Res_open(CONSOLE_FONT_ID);
+	charSet = res_man.open(CONSOLE_FONT_ID);
 
 	do {
 		chr = (int) *(ascii);
@@ -770,7 +770,7 @@ void Con_print(uint8 *ascii, uint32 pen, uint32 paper) {
 	} while(*(ascii));
 
 	// close font file
-	res_man.Res_close(CONSOLE_FONT_ID);
+	res_man.close(CONSOLE_FONT_ID);
 }
 
 void Con_colour_block(int x, int width, int height, uint32 pen, uint32 paper, uint8 *sprite_data_ad) {
@@ -835,7 +835,7 @@ void Var_check(uint8 *pointer) {
 
 	sscanf((char *) pointer, "%d", &var);
 
-	Print_to_console("%d", *(uint32 *) (res_man.resList[1]->ad + sizeof(_standardHeader) + 4 * var));
+	Print_to_console("%d", *(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var));
 }
 
 void Var_set(uint8 *pointer, uint8 *p2) {
@@ -845,9 +845,9 @@ void Var_set(uint8 *pointer, uint8 *p2) {
 	sscanf((char *) pointer, "%d", &var);
 	sscanf((char *) p2, "%d", &val);
 
-	Print_to_console("was %d", *(uint32 *) (res_man.resList[1]->ad + sizeof(_standardHeader) + 4 * var));
+	Print_to_console("was %d", *(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var));
 
-	*(uint32 *) (res_man.resList[1]->ad + sizeof(_standardHeader) + 4 * var) = val;
+	*(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var) = val;
 
 	Print_to_console("now %d", val);
 }

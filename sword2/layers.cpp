@@ -89,7 +89,7 @@ int32 FN_init_background(int32 *params)	{
 	// each cycle
 
 	// file points to 1st byte in the layer file
-	file = res_man.Res_open(this_screen.background_layer_id);
+	file = res_man.open(this_screen.background_layer_id);
 	
 	screen_head = FetchScreenHeader(file);
 
@@ -186,7 +186,7 @@ int32 FN_init_background(int32 *params)	{
 	}
 
 	// close the screen file
-   	res_man.Res_close(this_screen.background_layer_id);
+   	res_man.close(this_screen.background_layer_id);
 
 	SetUpBackgroundLayers();
 
@@ -208,7 +208,7 @@ void SetUpBackgroundLayers(void) {
 		// open resource & set pointers to headers
 		// file points to 1st byte in the layer file
 
-		file = res_man.Res_open(this_screen.background_layer_id);
+		file = res_man.open(this_screen.background_layer_id);
 
 		screen_head = FetchScreenHeader(file);
 
@@ -237,6 +237,6 @@ void SetUpBackgroundLayers(void) {
 		}
 
 		// close the screen file
-		res_man.Res_close(this_screen.background_layer_id);
+		res_man.close(this_screen.background_layer_id);
 	}
 }

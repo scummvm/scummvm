@@ -332,7 +332,7 @@ void Build_debug_text(void) {
 		showVarPos = 115;	// y-coord for first showVar
 
 		// res 1 is the global variables resource
-		varTable = (int32 *) (res_man.Res_open(1) + sizeof(_standardHeader));
+		varTable = (int32 *) (res_man.open(1) + sizeof(_standardHeader));
 
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
 			varNo = showVar[showVarNo];	// get variable number
@@ -348,7 +348,7 @@ void Build_debug_text(void) {
 			}
 		}
 
-		res_man.Res_close(1);	// close global variables resource
+		res_man.close(1);	// close global variables resource
 
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!

@@ -62,7 +62,7 @@ int logic::processSession(void) {
 	// processing on the current list
 
 	while (_pc != 0xffffffff) {
-		head = (_standardHeader*) res_man.Res_open(run_list);
+		head = (_standardHeader*) res_man.open(run_list);
 
 		if (head->fileType != RUN_LIST)
 			Con_fatal_error("Logic_engine %d not a run_list", run_list);
@@ -76,7 +76,7 @@ int logic::processSession(void) {
 		// release the list again so it can float in memory - at this
 		// point not one thing should be locked
 
-		res_man.Res_close(run_list);
+		res_man.close(run_list);
 
 		debug(5, "%d", ID);
 
@@ -86,7 +86,7 @@ int logic::processSession(void) {
 			return 0;
 		}
 
-		head = (_standardHeader*) res_man.Res_open(ID);
+		head = (_standardHeader*) res_man.open(ID);
 
 		if (head->fileType != GAME_OBJECT)
 			Con_fatal_error("Logic_engine %d not an object", ID);
@@ -132,7 +132,7 @@ int logic::processSession(void) {
 
 				raw_data_ad = (char*) head;
 
-				far_head = (_standardHeader*) res_man.Res_open(script / SIZE);
+				far_head = (_standardHeader*) res_man.open(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
 					Con_fatal_error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
@@ -147,7 +147,7 @@ int logic::processSession(void) {
 				ret = RunScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 
 				// close foreign object again
-				res_man.Res_close(script / SIZE);
+				res_man.close(script / SIZE);
 
 				// reset to us for service script
 				raw_script_ad = raw_data_ad;
@@ -203,7 +203,7 @@ int logic::processSession(void) {
 
 		// and that's it so close the object resource
 
-		res_man.Res_close(ID);
+		res_man.close(ID);
 	}
 
 	// leaving a room so remove all ids that must reboot correctly
@@ -328,14 +328,14 @@ uint32 logic::examineRunList(void) {
 
 	if (_currentRunList) {
 		// open and lock in place
-		game_object_list = (uint32 *) (res_man.Res_open(_currentRunList) + sizeof(_standardHeader));
+		game_object_list = (uint32 *) (res_man.open(_currentRunList) + sizeof(_standardHeader));
 
 		Print_to_console("runlist number %d", _currentRunList);
 
 		while(*(game_object_list)) {
-			file_header = (_standardHeader*) res_man.Res_open(*(game_object_list));
+			file_header = (_standardHeader*) res_man.open(*(game_object_list));
 			Print_to_console(" %d %s", *(game_object_list), file_header->name);
-			res_man.Res_close(*(game_object_list++));
+			res_man.close(*(game_object_list++));
 
 			scrolls++;
 			Build_display();
@@ -361,7 +361,7 @@ uint32 logic::examineRunList(void) {
 			}
 		}
 
-		res_man.Res_close(_currentRunList);
+		res_man.close(_currentRunList);
 	} else
 		Print_to_console("no run list set");
 
@@ -440,7 +440,7 @@ int32 FN_add_to_kill_list(int32 *params) {
 
 void logic::processKillList(void) {
 	for (uint32 j = 0; j < kills; j++)
-		res_man.Remove_res(object_kill_list[j]);
+		res_man.remove(object_kill_list[j]);
 
 	kills = 0;
 }

@@ -219,9 +219,9 @@ int32 FN_choose(int32 *params) {
 		for (j = 0; j < 15; j++) {
 			if (j < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", subject_list[j].res, j);
-				icon = res_man.Res_open(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				icon = res_man.open(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-				res_man.Res_close(subject_list[j].res);
+				res_man.close(subject_list[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
@@ -267,9 +267,9 @@ int32 FN_choose(int32 *params) {
 
 						// change all others to grey
 						if (j != hit) {
-							icon = res_man.Res_open( subject_list[j].res ) + sizeof(_standardHeader);
+							icon = res_man.open( subject_list[j].res ) + sizeof(_standardHeader);
 							SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
-							res_man.Res_close(subject_list[j].res);
+							res_man.close(subject_list[j].res);
 						}
 					}
 
@@ -373,7 +373,7 @@ int32 FN_they_do(int32	*params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man.Res_open(target);
+	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("FN_they_do %d not an object", target);
 
@@ -382,7 +382,7 @@ int32 FN_they_do(int32	*params) {
 	//call the base script - this is the graphic/mouse service call
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.Res_close(target);
+	res_man.close(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -437,7 +437,7 @@ int32 FN_they_do_we_wait(int32	*params) {
 	// ok, see if the target is busy - we must request this info from the
 	// target object
 
-	head = (_standardHeader*) res_man.Res_open(target);
+	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("FN_they_do_we_wait %d not an object", target);
 
@@ -446,7 +446,7 @@ int32 FN_they_do_we_wait(int32	*params) {
 	// call the base script - this is the graphic/mouse service call
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.Res_close(target);
+	res_man.close(target);
 
 	ob_logic = (Object_logic *) params[0];
 
@@ -516,7 +516,7 @@ int32 FN_we_wait(int32 *params) {
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader*) res_man.Res_open(target);
+	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("FN_we_wait %d not an object", target);
 
@@ -525,7 +525,7 @@ int32 FN_we_wait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.Res_close(target);
+	res_man.close(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -564,7 +564,7 @@ int32 FN_timed_wait(int32 *params) {
 		ob_logic->looping = params[2];	//first time in
 
 	// request status of target
-	head = (_standardHeader*) res_man.Res_open(target);
+	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("FN_timed_wait %d not an object", target);
 
@@ -573,7 +573,7 @@ int32 FN_timed_wait(int32 *params) {
 	// call the base script - this is the graphic/mouse service call
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
 
-	res_man.Res_close(target);
+	res_man.close(target);
 
 	// result is 1 for waiting, 0 for busy
 
@@ -1010,9 +1010,9 @@ int32 FN_i_speak(int32 *params) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (res_man.Res_check_valid(text_res)) {
+			if (res_man.checkValid(text_res)) {
 				// open the resource
-				head = (_standardHeader*) res_man.Res_open(text_res);
+				head = (_standardHeader*) res_man.open(text_res);
 
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
@@ -1027,7 +1027,7 @@ int32 FN_i_speak(int32 *params) {
 				}
 
 				// close the resource
-				res_man.Res_close(text_res);
+				res_man.close(text_res);
 
 				if (RESULT)
 					return IR_CONT;
@@ -1048,11 +1048,11 @@ int32 FN_i_speak(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = FetchTextLine(res_man.Res_open(text_res), local_text);
+		text = FetchTextLine(res_man.open(text_res), local_text);
 		officialTextNumber = READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man.Res_close(text_res);
+		res_man.close(text_res);
 
 #ifdef _SWORD2_DEBUG
 		// prevent dud lines from appearing while testing text & speech
@@ -1191,7 +1191,7 @@ int32 FN_i_speak(int32 *params) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man.WhichCd());
+			sprintf(speechFile, "speech%d.clu", res_man.whichCd());
 
 			if (fp.open(speechFile))
 				fp.close();
@@ -1234,7 +1234,7 @@ int32 FN_i_speak(int32 *params) {
 		ob_graphic->anim_pc++;
 
 		// open the anim file
-		anim_file = res_man.Res_open(ob_graphic->anim_resource);
+		anim_file = res_man.open(ob_graphic->anim_resource);
 		anim_head = FetchAnimHeader(anim_file);
 
 		if (!speech_anim_type) {
@@ -1264,7 +1264,7 @@ int32 FN_i_speak(int32 *params) {
 		}
 
 		// close the anim file
-		res_man.Res_close(ob_graphic->anim_resource);
+		res_man.close(ob_graphic->anim_resource);
 	} else if (speech_anim_type) {
 		// Placed here so we actually display the last frame of the
 		// anim.
@@ -1436,7 +1436,7 @@ void LocateTalker(int32	*params) {
 		// build_display.cpp
 
 		// open animation file & set up the necessary pointers
-		file = res_man.Res_open(anim_id);
+		file = res_man.open(anim_id);
 
 		anim_head = FetchAnimHeader(file);
 
@@ -1488,7 +1488,7 @@ void LocateTalker(int32	*params) {
 		text_y -= this_screen.scroll_offset_y;
 
 		// release the anim resource
-		res_man.Res_close(anim_id);
+		res_man.close(anim_id);
 	}
 }
 
@@ -1542,7 +1542,7 @@ void Form_text(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = FetchTextLine(res_man.Res_open(text_res), local_text);
+		text = FetchTextLine(res_man.open(text_res), local_text);
 
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
@@ -1553,7 +1553,7 @@ void Form_text(int32 *params) {
 			POSITION_AT_CENTRE_OF_BASE);
 
 		// now ok to close the text file
-		res_man.Res_close(text_res);
+		res_man.close(text_res);
 
 		// set speech duration, in case not using wav
 		// no. of cycles = (no. of chars) + 30
@@ -1583,7 +1583,7 @@ void GetCorrectCdForSpeech(int32 wavId) {
 	// if we specifically need CD1 or CD2 (ie. it's not on both)
 	// then check it's there (& ask for it if it's not there)
 	if (cd == 1 || cd == 2)
-		res_man.GetCd(cd);
+		res_man.getCd(cd);
 }
 #endif
 

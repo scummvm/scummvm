@@ -138,12 +138,12 @@ int32 Sword2State::InitialiseGame(void) {
 	Init_memory_manager();
 
 	// initialise the resource manager
-	debug(5, "CALLING: res_man.InitResMan");
-	res_man.InitResMan();
+	debug(5, "CALLING: res_man.init");
+	res_man.init();
 
 	// initialise global script variables
 	// res 1 is the globals list
-	file = res_man.Res_open(1);
+	file = res_man.open(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
 	SetGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
 
@@ -153,7 +153,7 @@ int32 Sword2State::InitialiseGame(void) {
 	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
 	// CAN'T MOVE!
 
-	file = res_man.Res_open(8);
+	file = res_man.open(8);
 
 	// Set up font resource variables for this language version
 
@@ -206,7 +206,7 @@ void Close_game() {
 
 	// free the memory again
 	Close_memory_manager();
-	res_man.Close_ResMan();
+	res_man.exit();
 }
 
 int32 GameCycle(void) {
@@ -241,7 +241,7 @@ int32 GameCycle(void) {
 	Process_fx_queue();
 
 	// update age and calculate previous cycle memory usage
-	res_man.Res_next_cycle();
+	res_man.nextCycle();
 
 	if (quitGame)
 		return 1;
@@ -456,19 +456,19 @@ void Sword2State::Start_game(void) {
 	uint32 null_pc = 1;
 
 	// open george object, ready for start script to reference
-	raw_data_ad = (char *) res_man.Res_open(8);
+	raw_data_ad = (char *) res_man.open(8);
 
 	// open the ScreenManager object
-	raw_script = (char *) res_man.Res_open(screen_manager_id);
+	raw_script = (char *) res_man.open(screen_manager_id);
 
 	// run the start script now (because no console)
 	RunScript(raw_script, raw_data_ad, &null_pc);
 
 	// close the ScreenManager object
-	res_man.Res_close(screen_manager_id);
+	res_man.close(screen_manager_id);
 
 	// close george
-	res_man.Res_close(8);
+	res_man.close(8);
 
 	debug(5, "Start_game() DONE.");
 }
@@ -477,10 +477,10 @@ void PauseGame(void) {
 	// uint8 *text;
 
 	// open text file & get the line "PAUSED"
-	// text = FetchTextLine(res_man.Res_open(3258), 449);
+	// text = FetchTextLine(res_man.open(3258), 449);
 	// pause_text_bloc_no = Build_new_block(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
 	// now ok to close the text file
-	// res_man.Res_close(3258);
+	// res_man.close(3258);
 
 	// don't allow Pause while screen fading or while black (James 03sep97)
 	if (GetFadeStatus() != RDFADE_NONE)

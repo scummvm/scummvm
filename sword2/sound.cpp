@@ -109,12 +109,12 @@ void Trigger_fx(uint8 j) {
 
 	if (fxq[j].type == FX_SPOT) {
 		// load in the sample
-		data = res_man.Res_open(fxq[j].resource);
+		data = res_man.open(fxq[j].resource);
 		data += sizeof(_standardHeader);
 		// wav data gets copied to sound memory
 		rv = g_sound->PlayFx(id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
 		// release the sample
-		res_man.Res_close(fxq[j].resource);
+		res_man.close(fxq[j].resource);
 	} else {
 		// random & looped fx are already loaded into sound memory
 		// by FN_play_fx()
@@ -204,7 +204,7 @@ int32 FN_play_fx(int32 *params) {
 
 	if (fxq[j].type == FX_SPOT) {
 		// "pre-load" the sample; this gets it into memory
-		data = res_man.Res_open(fxq[j].resource);
+		data = res_man.open(fxq[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
@@ -213,14 +213,14 @@ int32 FN_play_fx(int32 *params) {
 #endif
 
 		// but then releases it to "age" out if the space is needed
-		res_man.Res_close(fxq[j].resource);
+		res_man.close(fxq[j].resource);
 	} else {
 		// random & looped fx
 
 		id = (uint32) j + 1;	// because 0 is not a valid id
 
 		// load in the sample
-		data = res_man.Res_open(fxq[j].resource);
+		data = res_man.open(fxq[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
@@ -237,7 +237,7 @@ int32 FN_play_fx(int32 *params) {
 			debug(5, "SFX ERROR: OpenFx() returned %.8x", rv);
 
 		// release the sample
-		res_man.Res_close(fxq[j].resource);
+		res_man.close(fxq[j].resource);
 	}
 
 	// (James07uag97)
@@ -399,7 +399,7 @@ int32 FN_play_music(int32 *params) {
 	} else {
 		File f;
 
-		sprintf(filename, "music%d.clu", res_man.WhichCd());
+		sprintf(filename, "music%d.clu", res_man.whichCd());
 		if (f.open(filename))
 			f.close();
 		else

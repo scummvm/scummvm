@@ -204,8 +204,8 @@ uint8 CheckTextLine(uint8 *file, uint32	text_line) {
 uint8 *FetchObjectName(int32 resourceId) {
 	_standardHeader *header;
 	
-	header = (_standardHeader*) res_man.Res_open(resourceId);
-	res_man.Res_close(resourceId);
+	header = (_standardHeader*) res_man.open(resourceId);
+	res_man.close(resourceId);
 
 	// note this pointer is no longer valid, but it should be ok until
 	// another resource is opened!

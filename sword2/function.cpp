@@ -102,8 +102,8 @@ int32 FN_preload(int32 *params)	{
 	// "preloading" gets it into memory in advance to avoid the cacheing
 	// delay that normally occurs before the first frame.
 
-	res_man.Res_open(params[0]);	// open resource
-	res_man.Res_close(params[0]);	// close resource
+	res_man.open(params[0]);	// open resource
+	res_man.close(params[0]);	// close resource
 	return IR_CONT;			// continue script
 }
 
@@ -336,8 +336,8 @@ int32 FN_display_msg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	DisplayMsg(FetchTextLine(res_man.Res_open(text_res), local_text) + 2, 3);
-	res_man.Res_close(text_res);
+	DisplayMsg(FetchTextLine(res_man.open(text_res), local_text) + 2, 3);
+	res_man.close(text_res);
 	RemoveMsg();
 
 	return IR_CONT;
@@ -351,26 +351,26 @@ int32 FN_reset_globals(int32 *params) {
 	uint32 *globals;
 	int j;
 
-	size = res_man.Res_fetch_len(1);
+	size = res_man.fetchLen(1);
 	size -= sizeof(_standardHeader);
 
 	debug(5, "globals size %d", size / 4);
 
-	globals = (uint32*) ((uint8 *) res_man.Res_open(1) + sizeof(_standardHeader));
+	globals = (uint32*) ((uint8 *) res_man.open(1) + sizeof(_standardHeader));
 
 	// blank each global variable
 	for (j = 0; j < size / 4; j++)
 		globals[j] = 0;
 
-	res_man.Res_close(1);
+	res_man.close(1);
 
 	// all objects but george
-	res_man.Kill_all_objects(0);
+	res_man.killAllObjects(0);
 
 	// reopen global variables resource & send address to interpreter - it
 	// won't be moving
-	// SetGlobalInterpreterVariables((int32 *) (res_man.Res_open(1) + sizeof(_standardHeader)));
-	// res_man.Res_close(1);
+	// SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+	// res_man.close(1);
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET! (James29may97)
 	// - this is taken from FN_init_background

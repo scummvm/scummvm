@@ -154,46 +154,46 @@ void Build_display(void) {	//Tony21Sept96
 			// first background parallax + related anims
 
 			// open the screen resource
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[0]) {
 				RenderParallax(FetchBackgroundParallaxLayer(file, 0), 0);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.Res_close(this_screen.background_layer_id);
+	 			res_man.close(this_screen.background_layer_id);
 				Send_back_par0_frames();
 			} else {
 				// release the screen resource
- 	 			res_man.Res_close(this_screen.background_layer_id);
+ 	 			res_man.close(this_screen.background_layer_id);
 			}
 
  			// ---------------------------------------------------
 			// second background parallax + related anims
 
 			// open the screen resource
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[1]) {
 				RenderParallax(FetchBackgroundParallaxLayer(file, 1), 1);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.Res_close(this_screen.background_layer_id);
+	 			res_man.close(this_screen.background_layer_id);
 				Send_back_par1_frames();
 			} else {
 				// release the screen resource
- 	 			res_man.Res_close(this_screen.background_layer_id);
+ 	 			res_man.close(this_screen.background_layer_id);
 			}
 
  			// ---------------------------------------------------
 			// normal backround layer (just the one!)
 
 			// open the screen resource
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			RenderParallax(FetchBackgroundLayer(file), 2);
 			// release the screen resource
-			res_man.Res_close(this_screen.background_layer_id);
+			res_man.close(this_screen.background_layer_id);
 
  			// ---------------------------------------------------
 			// sprites & layers
@@ -207,36 +207,36 @@ void Build_display(void) {	//Tony21Sept96
 			// first foreground parallax + related anims
 
 			// open the screen resource
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[0]) {
 				RenderParallax(FetchForegroundParallaxLayer(file, 0), 3);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.Res_close(this_screen.background_layer_id);
+	 			res_man.close(this_screen.background_layer_id);
 				Send_fore_par0_frames();
 			} else {
 				// release the screen resource
- 	 			res_man.Res_close(this_screen.background_layer_id);
+ 	 			res_man.close(this_screen.background_layer_id);
 			}
 
  			//----------------------------------------------------
 			// second foreground parallax + related anims
 
 			// open the screen resource
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[1]) {
 				RenderParallax(FetchForegroundParallaxLayer(file, 1), 4);
 				// release the screen resource before cacheing
 				// the sprites
-	 			res_man.Res_close(this_screen.background_layer_id);
+	 			res_man.close(this_screen.background_layer_id);
 				Send_fore_par1_frames();
 			} else {
 				// release the screen resource
- 	 			res_man.Res_close(this_screen.background_layer_id);
+ 	 			res_man.close(this_screen.background_layer_id);
 			}
 
  			// ---------------------------------------------------
@@ -510,7 +510,7 @@ void Process_layer(uint32 layer_number) {
 #endif
 
 	// file points to 1st byte in the layer file
-	file = res_man.Res_open(this_screen.background_layer_id);
+	file = res_man.open(this_screen.background_layer_id);
 
 	// point to layer header
 	layer_head = FetchLayerHeader(file,layer_number);
@@ -548,7 +548,7 @@ void Process_layer(uint32 layer_number) {
 	if (rv)
 		error("Driver Error %.8x in Process_layer(%d)", rv, layer_number);
 
-	res_man.Res_close(this_screen.background_layer_id);
+	res_man.close(this_screen.background_layer_id);
 }
 
 void Process_image(buildit *build_unit) {
@@ -565,7 +565,7 @@ void Process_image(buildit *build_unit) {
 #endif
 
 	// open anim resource file & point to base
-	file = res_man.Res_open(build_unit->anim_resource);
+	file = res_man.open(build_unit->anim_resource);
 
 	anim_head = FetchAnimHeader(file);
 	cdt_entry = FetchCdtEntry(file, build_unit->anim_pc);
@@ -685,7 +685,7 @@ void Process_image(buildit *build_unit) {
 			build_unit->anim_resource);
 
 	// release the anim resource
-	res_man.Res_close(build_unit->anim_resource);
+	res_man.close(build_unit->anim_resource);
 }
 
 void Reset_render_lists(void) {		//Tony18Sept96
@@ -758,7 +758,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 		Con_fatal_error("ERROR: %s(%d) has no anim resource in Register_frame", FetchObjectName(ID), ID);
 #endif
 
-	file = res_man.Res_open(ob_graph->anim_resource);
+	file = res_man.open(ob_graph->anim_resource);
 
 	anim_head = FetchAnimHeader(file);
 	cdt_entry = FetchCdtEntry(file, ob_graph->anim_pc);
@@ -875,7 +875,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 	}
 
 	// close animation file
-	res_man.Res_close(ob_graph->anim_resource);
+	res_man.close(ob_graph->anim_resource);
 }
 
 int32 FN_register_frame(int32 *params) {
@@ -972,7 +972,7 @@ void Start_new_palette(void) {
 	WaitForFade();
 
 	// open the screen file
-	screenFile = res_man.Res_open(this_screen.background_layer_id);
+	screenFile = res_man.open(this_screen.background_layer_id);
 
 	UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(screenFile));
 
@@ -982,7 +982,7 @@ void Start_new_palette(void) {
 	lastPaletteRes = 0;
 
 	// close screen file
-  	res_man.Res_close(this_screen.background_layer_id);
+  	res_man.close(this_screen.background_layer_id);
 
 	// start fade up
 	// FadeUp((float) 1.75);
@@ -1095,7 +1095,7 @@ void SetFullPalette(int32 palRes) {
 	// non-zero: set palette to this separate palette file
 	if (palRes) {
 		// open the palette file
-		head = (_standardHeader*) res_man.Res_open(palRes);
+		head = (_standardHeader*) res_man.open(palRes);
 
 #ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
@@ -1124,12 +1124,12 @@ void SetFullPalette(int32 palRes) {
 		}
 
 		// close palette file
-	  	res_man.Res_close(palRes);
+	  	res_man.close(palRes);
 	} else {
 		// 0: set palette to current screen palette
 		if (this_screen.background_layer_id) {
 			// open the screen file
-			file = res_man.Res_open(this_screen.background_layer_id);
+			file = res_man.open(this_screen.background_layer_id);
 			UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(file));
 
 			BS2_SetPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
@@ -1138,7 +1138,7 @@ void SetFullPalette(int32 palRes) {
 			lastPaletteRes = 0;
 
 			// close screen file
-	  		res_man.Res_close(this_screen.background_layer_id);
+	  		res_man.close(this_screen.background_layer_id);
 		} else
 			Con_fatal_error("FN_set_palette(0) called, but no current screen available!");
 	}

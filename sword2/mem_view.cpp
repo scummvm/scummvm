@@ -44,9 +44,9 @@ void Console_mem_display(void) {
 	j = base_mem_block;
 	do {
 		if (mem_list[j].uid < 65536) {
-			file_header = (_standardHeader*) res_man.Res_open(mem_list[j].uid);
+			file_header = (_standardHeader*) res_man.open(mem_list[j].uid);
 			// close immediately so give a true count
-			res_man.Res_close(mem_list[j].uid);
+			res_man.close(mem_list[j].uid);
 
 			debug(5, "view %d", mem_list[j].uid);
 
@@ -73,10 +73,10 @@ void Console_mem_display(void) {
 					mem_list[j].size / 1024,
 					(mem_list[j].size * 100) / total_free_memory,
 					mem_list[j].uid,
-					res_man.Fetch_cluster(mem_list[j].uid),
+					res_man.fetchCluster(mem_list[j].uid),
 					file_header->name,
-					res_man.Fetch_age(mem_list[j].uid),
-					res_man.Fetch_count(mem_list[j].uid));
+					res_man.fetchAge(mem_list[j].uid),
+					res_man.fetchCount(mem_list[j].uid));
 			} else
 				Print_to_console(" %d is an illegal resource", mem_list[j].uid);
 		} else {
@@ -182,5 +182,5 @@ void Create_mem_string(char *string) {
 	sprintf(string,
 		"locked(%u)+float(%u)+free(%u) = %u/%u blocks (%u%% used)(cur %uk)",
 		mem_locked, mem_floating, mem_free, blocksUsed, MAX_mem_blocks,
-		percent, (res_man.Res_fetch_useage() / 1024));
+		percent, (res_man.fetchUsage() / 1024));
 }

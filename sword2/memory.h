@@ -28,7 +28,7 @@ typedef	struct {
 	uint32 size;
 	int32 parent;	// who is before us
 	int32 child;	// who is after us
-	// id of a position in the resList or some other unique id - for the
+	// id of a position in the _resList or some other unique id - for the
 	// visual display only
 	uint32 uid;
 	uint8 *ad;

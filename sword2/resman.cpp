@@ -39,8 +39,8 @@
 #include "mouse.h"	// for system Set_mouse & Set_luggage routines
 #include "protocol.h"
 #include "resman.h"
-#include "sound.h"	// (James22july97) for Clear_fx_queue() called from CacheNewCluster()
-#include "sword2.h"	// (James11aug97) for CloseGame()
+#include "sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
+#include "sword2.h"	// for CloseGame()
 #include "router.h"
 
 // ---------------------------------------------------------------------------
@@ -59,7 +59,7 @@
 
 #define BUFFERSIZE	4096
 
-resMan	res_man;	//declare the object global
+ResourceManager	res_man;	//declare the object global
 
 // ---------------------------------------------------------------------------
 //
@@ -88,9 +88,9 @@ typedef struct {
 	#pragma END_PACK_STRUCTS
 #endif
 
-// ---------------------------------------------------------------------------
+// FIXME: Should init() / exit() be moved to constructor / destructor instead?
 
-void resMan::InitResMan(void) {
+void ResourceManager::init(void) {
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -102,10 +102,10 @@ void resMan::InitResMan(void) {
 	uint32 pos = 0;
 	uint32 j = 0;
 
-	total_clusters = 0;
+	_totalClusters = 0;
 
 	if (!file.open("resource.inf")) {
-		error("InitResMan cannot *OPEN* resource.inf");
+		error("init cannot *OPEN* resource.inf");
 	}
 
 	end = file.size();
@@ -115,7 +115,7 @@ void resMan::InitResMan(void) {
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();
-		error("InitResMan cannot *READ* resource.inf");
+		error("init cannot *READ* resource.inf");
 	}
 
 	file.close();
@@ -125,95 +125,94 @@ void resMan::InitResMan(void) {
 	do {
 		// item must have an #0d0a
 		while(temp->ad[j] != 13) {
-			resource_files[total_clusters][pos] = temp->ad[j];
+			_resourceFiles[_totalClusters][pos] = temp->ad[j];
 			j++;
 			pos++;
 		}
 
 		// NULL terminate our extracted string
-		resource_files[total_clusters][pos]=0;
+		_resourceFiles[_totalClusters][pos]=0;
 
 		// Reset position in current slot between entries, skip the
 		// 0x0a in the source and increase the number of clusters.
 
 		pos = 0;
 		j += 2;
-		total_clusters++;
+		_totalClusters++;
 
 		// TODO: put overload check here
 	} while (j != end);	// using this method the Gode generated resource.inf must have #0d0a on the last entry
 
 	// now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		error("InitResMan cannot *OPEN* resource.tab");
+		error("init cannot *OPEN* resource.tab");
 	}
 
 	// find how many resources
 	end = file.size();
 
-	total_res_files = end / 4;
+	_totalResFiles = end / 4;
 
 	// table seems ok so malloc some space
-	res_conv_table = (uint16 *) malloc(end);
+	_resConvTable = (uint16 *) malloc(end);
 
 	for (j = 0; j < end / 2; j++)
-		res_conv_table[j] = file.readUint16LE();
+		_resConvTable[j] = file.readUint16LE();
 
 	if (file.ioFailed()) {
 		file.close();
-		error("InitResMan cannot *READ* resource.tab");
+		error("init cannot *READ* resource.tab");
 	}
 
 	file.close();
 
 	if (!file.open("cd.inf")) {
-		error("InitResMan cannot *OPEN* cd.inf");
+		error("init cannot *OPEN* cd.inf");
 	}
 
-	_cd_inf *cdInf = new _cd_inf[total_clusters];
+	_cd_inf *cdInf = new _cd_inf[_totalClusters];
 
-	for (j = 0; j < total_clusters; j++) {
+	for (j = 0; j < _totalClusters; j++) {
 		file.read(cdInf[j].clusterName, sizeof(cdInf[j].clusterName));
 		cdInf[j].cd = file.readByte();
 		
 		if (file.ioFailed()) {
-			error("InitResMan failed to read cd.inf. Insufficient entries?");
+			error("init failed to read cd.inf. Insufficient entries?");
 		}
 	}
 
 	file.close();
 
-	for (j = 0; j < total_clusters; j++) {
+	for (j = 0; j < _totalClusters; j++) {
 		uint32 i = 0;
 
-		while (scumm_stricmp((char *) cdInf[i].clusterName, resource_files[j]) != 0 && i < total_clusters)
+		while (scumm_stricmp((char *) cdInf[i].clusterName, _resourceFiles[j]) != 0 && i < _totalClusters)
 			i++;
 
-		if (i == total_clusters) {
-			error("InitResMan, %s is not in cd.inf",resource_files[j]);
+		if (i == _totalClusters) {
+			error("init, %s is not in cd.inf", _resourceFiles[j]);
 		} else
-			cdTab[j] = cdInf[i].cd;
+			_cdTab[j] = cdInf[i].cd;
 	}
 
 
-	debug(5, "%d resources in %d cluster files", total_res_files, total_clusters);
-	for (j = 0; j < total_clusters; j++)
-		debug(5, "filename of cluster %d: -%s", j, resource_files[j]);
+	debug(5, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
+	for (j = 0; j < _totalClusters; j++)
+		debug(5, "filename of cluster %d: -%s", j, _resourceFiles[j]);
 
 	// create space for a list of pointers to mem's
-	resList = (mem **) malloc(total_res_files * sizeof(mem *));
+	_resList = (mem **) malloc(_totalResFiles * sizeof(mem *));
 
-	age = (uint32 *) malloc(total_res_files * sizeof(uint32));
-	// status = (uint16 *) malloc(total_res_files * sizeof(uint16));
-	count = (uint16 *) malloc(total_res_files * sizeof(uint16));
+	_age = (uint32 *) malloc(_totalResFiles * sizeof(uint32));
+	_count = (uint16 *) malloc(_totalResFiles * sizeof(uint16));
 
-	for (j = 0; j < total_res_files; j++) {
+	for (j = 0; j < _totalResFiles; j++) {
 		// age must be 0 if the file is not in memory at all
-		age[j] = 0;
-		count[j] = 0;
+		_age[j] = 0;
+		_count[j] = 0;
 	}
 
-	resTime = 1;	//cannot start at 0
+	_resTime = 1;	//cannot start at 0
 	Free_mem(temp);	//get that memory back
 
 	// FIXME: Is this really needed?
@@ -223,39 +222,36 @@ void resMan::InitResMan(void) {
 /*
 		// Scan for CD drives.
 		for (char c = 'C'; c <= 'Z'; c++) {
-			sprintf(cdPath, "%c:\\", c);
-			if (GetDriveType(cdPath) == DRIVE_CDROM)
-				cdDrives[index++] = c;
+			sprintf(_cdPath, "%c:\\", c);
+			if (GetDriveType(_cdPath) == DRIVE_CDROM)
+				_cdDrives[index++] = c;
 		}
 */
-		cdDrives[index++] = 'C';
+		_cdDrives[index++] = 'C';
 		
 		if (index == 0) {
-			error("InitResMan, cannot find CD drive");
+			error("init, cannot find CD drive");
 		}
 
 		while (index < 24)
-			cdDrives[index++] = 0;
+			_cdDrives[index++] = 0;
 	}
 	else
 		file.close();
 }
 
-char *resMan::GetCdPath(void) {
-	return cdPath;
-}
-
-void resMan::Close_ResMan(void) {
+void ResourceManager::exit(void) {
 	// free up our mallocs
-	free(resList);
-	free(age);
-	// free(status);
-	free(count);
+	free(_resList);
+	free(_age);
+	free(_count);
 }
 
 // Quick macro to make swapping in-place easier to write
+
 #define SWAP16(x)	x = SWAP_BYTES_16(x)
 #define SWAP32(x)	x = SWAP_BYTES_32(x)
+
 void convertEndian(uint8 *file, uint32 len) {
 	int i;
 	_standardHeader *hdr = (_standardHeader *)file;
@@ -437,7 +433,7 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *resMan::Res_open(uint32 res) {
+uint8 *ResourceManager::open(uint32 res) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
@@ -452,31 +448,31 @@ uint8 *resMan::Res_open(uint32 res) {
 	uint32	table_offset;
 
 //#ifdef _SWORD2_DEBUG
-	if (res >= total_res_files)
-		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
+	if (res >= _totalResFiles)
+		Con_fatal_error("open illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
 //#endif
 
 	// is the resource in memory already?
 	// if the file is not in memory then age should and MUST be 0
-	if (!age[res]) {
+	if (!_age[res]) {
 		// fetch the correct file and read in the correct portion
 		// if the file cannot fit then we must trash the oldest large
 		// enough floating file
 
 		// points to the number of the ascii filename
-		parent_res_file = res_conv_table[res * 2];
+		parent_res_file = _resConvTable[res * 2];
 
 //#ifdef _SWORD2_DEBUG
 		if (parent_res_file == 0xffff)
-			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
+			Con_fatal_error("open tried to open null & void resource number %d", res);
 //#endif
 
 		// relative resource within the file
-		actual_res = res_conv_table[(res * 2) + 1];
+		actual_res = _resConvTable[(res * 2) + 1];
 
-		// first we have to find the file via the res_conv_table
+		// first we have to find the file via the _resConvTable
 
-		debug(5, "resOpen %s res %d", resource_files[parent_res_file], res);
+		debug(5, "resOpen %s res %d", _resourceFiles[parent_res_file], res);
 
 		// ** at this point here we start to think about where the
 		// ** file is and prompt the user for the right CD to be
@@ -486,12 +482,12 @@ uint8 *resMan::Res_open(uint32 res) {
 		// ** game - LINC should write this someplace.
 
 /* these probably aren't necessary - khalek
-		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM)) {
+		if (!(_cdTab[parent_res_file] & LOCAL_CACHE) && !(_cdTab[parent_res_file] & LOCAL_PERM)) {
 			// This cluster is on a CD, we need to cache a new one.
-			CacheNewCluster(parent_res_file);
-		} else if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
+			cacheNewCluster(parent_res_file);
+		} else if (!(_cdTab[parent_res_file] & LOCAL_PERM)) {
 			// Makes sure that the correct CD is in the drive.
-			GetCd(cdTab[parent_res_file] & 3);
+			getCd(_cdTab[parent_res_file] & 3);
 		}
 */
 
@@ -504,18 +500,18 @@ uint8 *resMan::Res_open(uint32 res) {
 		// The code to ask for the correct CD will probably be needed
 		// later, too.
 		//
-		// And there's some music / FX stuff in CacheNewCluster() that
+		// And there's some music / FX stuff in cacheNewCluster() that
 		// might be needed as well.
 		//
 		// But this will do for now.
 
-		if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
-			curCd = cdTab[parent_res_file] & 3;
+		if (!(_cdTab[parent_res_file] & LOCAL_PERM)) {
+			_curCd = _cdTab[parent_res_file] & 3;
 		}
 
 		// open the cluster file
-		if (!file.open(resource_files[parent_res_file]))
-			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
+		if (!file.open(_resourceFiles[parent_res_file]))
+			Con_fatal_error("open cannot *OPEN* %s", _resourceFiles[parent_res_file]);
 
 
 		// 1st DWORD of a cluster is an offset to the look-up table
@@ -537,7 +533,7 @@ uint8 *resMan::Res_open(uint32 res) {
 
 		// ok, we know the length so try and allocate the memory
 		// if it can't then old files will be ditched until it works
-		resList[res] = Twalloc(len, MEM_locked, res);
+		_resList[res] = Twalloc(len, MEM_locked, res);
 
 /* This probably isn't needed
 		// Do a quick ServiceWindows to stop the music screwing up.
@@ -546,44 +542,44 @@ uint8 *resMan::Res_open(uint32 res) {
 
 		// now load the file
 		// hurray, load it in.
-		file.read(resList[res]->ad, len);
+		file.read(_resList[res]->ad, len);
 
 		//close the cluster
 		file.close();
 
 #ifdef SCUMM_BIG_ENDIAN
-		convertEndian((uint8 *)resList[res]->ad, len);
+		convertEndian((uint8 *) _resList[res]->ad, len);
 #endif
 	} else {
-		debug(5, "RO %d, already open count=%d", res, count[res]);
+		debug(5, "RO %d, already open count=%d", res, _count[res]);
 	}
 
 	// number of times opened - the file won't move in memory while count
 	// is non zero
-	count[res]++;
+	_count[res]++;
 
 	// update the accessed time stamp - touch the file in other words
-	age[res] = resTime;
+	_age[res] = _resTime;
 
 	// pass the address of the mem & lock the memory too
 	// might be locked already (if count > 1)
-	Lock_mem(resList[res]);
+	Lock_mem(_resList[res]);
 
-	return (uint8 *) resList[res]->ad;
+	return (uint8 *) _resList[res]->ad;
 }
 
-uint8 resMan::Res_check_valid(uint32 res) {
+uint8 ResourceManager::checkValid(uint32 res) {
 	// returns '1' if resource is valid, otherwise returns '0'
 	// used in startup.cpp to ignore invalid screen-manager resources
 
 	uint16 parent_res_file;
 
 	// resource number out of range
-	if (res >= total_res_files)
+	if (res >= _totalResFiles)
 		return 0;
 
 	// points to the number of the ascii filename
-	parent_res_file = res_conv_table[res * 2];
+	parent_res_file = _resConvTable[res * 2];
 
 	// null & void resource
 	if (parent_res_file == 0xffff)
@@ -593,7 +589,7 @@ uint8 resMan::Res_check_valid(uint32 res) {
 	return 1;
 }
 
-void resMan::Res_next_cycle(void) {
+void ResourceManager::nextCycle(void) {
 	// increment the cycle and calculate actual per-cycle memory useage
 
 #ifdef _SWORD2_DEBUG
@@ -601,16 +597,16 @@ void resMan::Res_next_cycle(void) {
 #endif
 
 #ifdef _SWORD2_DEBUG
-	current_memory_useage = 0;
+	_currentMemoryUsage = 0;
 
-	for (j = 1; j < total_res_files; j++) {
+	for (j = 1; j < _totalResFiles; j++) {
 		// was accessed last cycle
-		if (age[j] == resTime)
-			current_memory_useage += resList[j]->size;
+		if (_age[j] == _resTime)
+			_currentMemoryUsage += _resList[j]->size;
 	}
 #endif
 
-	resTime++;
+	_resTime++;
 
 	// if you left the game running for a hundred years when this went to 0
 	// there'd be a resource left stuck in memory - after another hundred
@@ -619,39 +615,38 @@ void resMan::Res_next_cycle(void) {
 	// Mind you, by then the our get_msecs() function will have wrapped
 	// around too, probably causing a mess of other problems.
 
-	if (!resTime)
-		resTime++;
+	if (!_resTime)
+		_resTime++;
 }
 
-uint32 resMan::Res_fetch_useage(void) {
+uint32 ResourceManager::fetchUsage(void) {
 	// returns memory usage previous cycle
-	return current_memory_useage;
+	return _currentMemoryUsage;
 }
 
-void resMan::Res_close(uint32 res) {
+void ResourceManager::close(uint32 res) {
 	// decrements the count
 	// resource floats when count = 0
 
 //#ifdef _SWORD2_DEBUG
-	if (res >= total_res_files)
-		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
+	if (res >= _totalResFiles)
+		Con_fatal_error("closing illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
 
 	//closing but isnt open?
-	if (!(count[res]))
-		Con_fatal_error("Res_close closing %d but it isn't open", res);
+	if (!(_count[res]))
+		Con_fatal_error("close: closing %d but it isn't open", res);
 //#endif
 
 	//one less has it open
-	count[res]--;
+	_count[res]--;
 
 	//if noone has the file open then unlock and allow to float
-	if (!count[res]) {
-		Float_mem(resList[res]);	// pass the address of the mem
-		// *(status+res) -= RES_locked;	// unlock the resource
+	if (!_count[res]) {
+		Float_mem(_resList[res]);	// pass the address of the mem
 	}
 }
 
-uint32 resMan::Res_fetch_len(uint32 res) {
+uint32 ResourceManager::fetchLen(uint32 res) {
 	// returns the total file length of a resource - i.e. all headers are
 	// included too
 
@@ -662,16 +657,16 @@ uint32 resMan::Res_fetch_len(uint32 res) {
 	uint32 table_offset;
 
 	// points to the number of the ascii filename
-	parent_res_file = res_conv_table[res * 2];
+	parent_res_file = _resConvTable[res * 2];
 
 	// relative resource within the file
-	actual_res = res_conv_table[(res * 2) + 1];
+	actual_res = _resConvTable[(res * 2) + 1];
 
-	// first we have to find the file via the res_conv_table
+	// first we have to find the file via the _resConvTable
 	// open the cluster file
 
-	if (!fh.open(resource_files[parent_res_file]))
-		Con_fatal_error("Res_fetch_len cannot *OPEN* %s", resource_files[parent_res_file]);
+	if (!fh.open(_resourceFiles[parent_res_file]))
+		Con_fatal_error("fetchLen cannot *OPEN* %s", _resourceFiles[parent_res_file]);
 
 	// 1st DWORD of a cluster is an offset to the look-up table
 	table_offset = fh.readUint32LE();
@@ -684,45 +679,45 @@ uint32 resMan::Res_fetch_len(uint32 res) {
 	return len;
 }
 
-char *resMan::Fetch_cluster(uint32 res) {
+char *ResourceManager::fetchCluster(uint32 res) {
 	// returns a pointer to the ascii name of the cluster file which
 	// contains resource res
-	return resource_files[res_conv_table[res * 2]];
+	return _resourceFiles[_resConvTable[res * 2]];
 }
 
-uint32 resMan::Fetch_age(uint32 res) {
+uint32 ResourceManager::fetchAge(uint32 res) {
 	// return the age of res
-	return age[res];
+	return _age[res];
 }
 
-uint32 resMan::Fetch_count(uint32 res) {
+uint32 ResourceManager::fetchCount(uint32 res) {
 	// return the open count of res
-	return count[res];
+	return _count[res];
 }
 
-uint32 resMan::Help_the_aged_out(void) {
+uint32 ResourceManager::helpTheAgedOut(void) {
 	// remove from memory the oldest closed resource
 
-	uint32 oldest_res;	//holds id of oldest found so far when we have to chuck stuff out of memory
-	uint32 oldest_age;	//age of above during search
+	uint32 oldest_res;	// holds id of oldest found so far when we have to chuck stuff out of memory
+	uint32 oldest_age;	// age of above during search
 	uint32 j;
 	uint32 largestResource = 0;
 
-	oldest_age = resTime;
+	oldest_age = _resTime;
 	oldest_res = 0;
 
-	for (j = 2; j < total_res_files; j++) {
+	for (j = 2; j < _totalResFiles; j++) {
 		// not held open and older than this one
-		if (!count[j] && age[j] && age[j] <= oldest_age) {	
-			if (age[j] == oldest_age && resList[j]->size > largestResource)	{
+		if (!_count[j] && _age[j] && _age[j] <= oldest_age) {	
+			if (_age[j] == oldest_age && _resList[j]->size > largestResource)	{
 				// Kick old resource of oldest age and largest
 				// size (Helps the poor defragger).
 				oldest_res = j;
-				largestResource = resList[j]->size;
-			} else if (age[j] < oldest_age)	{
+				largestResource = _resList[j]->size;
+			} else if (_age[j] < oldest_age)	{
 				oldest_res = j;
-				oldest_age = age[j];
-				largestResource = resList[j]->size;
+				oldest_age = _age[j];
+				largestResource = _resList[j]->size;
 			}
 		}
 	}
@@ -732,30 +727,30 @@ uint32 resMan::Help_the_aged_out(void) {
 	if (!oldest_res)
 		return 0;
 
-	debug(5, "removing %d, age %d, size %d", oldest_res, age[oldest_res], resList[oldest_res]->size);
+	debug(5, "removing %d, age %d, size %d", oldest_res, _age[oldest_res], _resList[oldest_res]->size);
 
 	// trash this old resource
 
-	age[oldest_res] = 0;		// effectively gone from resList
-	Free_mem(resList[oldest_res]);	// release the memory too
+	_age[oldest_res] = 0;		// effectively gone from _resList
+	Free_mem(_resList[oldest_res]);	// release the memory too
 
-	return resList[oldest_res]->size;	//return bytes freed
+	return _resList[oldest_res]->size;	// return bytes freed
 }
 
-void resMan::Print_console_clusters(void) {
+void ResourceManager::printConsoleClusters(void) {
 	uint32 j;
 
-	if (total_clusters) {
-		for (j = 0; j < total_clusters; j++)
-			Print_to_console(" %s", resource_files[j]);
-		Print_to_console(" %d resources", total_res_files);
+	if (_totalClusters) {
+		for (j = 0; j < _totalClusters; j++)
+			Print_to_console(" %s", _resourceFiles[j]);
+		Print_to_console(" %d resources", _totalResFiles);
 	} else
 		Print_to_console(" argh! No resources");
 
 	Scroll_console();
 }
 
-void resMan::Examine_res(uint8 *input) {
+void ResourceManager::examine(uint8 *input) {
 	uint32 j = 0;
 	uint32 res;
 	_standardHeader	*file_header;
@@ -773,13 +768,13 @@ void resMan::Examine_res(uint8 *input) {
 
 		if (!res)
 			Print_to_console("illegal resource");
-		else if (res >= total_res_files)
-			Print_to_console("illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
-		else if (res_conv_table[res * 2] == 0xffff)
+		else if (res >= _totalResFiles)
+			Print_to_console("illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
+		else if (_resConvTable[res * 2] == 0xffff)
 			Print_to_console("%d is a null & void resource number", res);
 		else {
 			//open up the resource and take a look inside!
-			file_header = (_standardHeader*) res_man.Res_open(res);
+			file_header = (_standardHeader*) res_man.open(res);
 
 			// Print_to_console("%d", file_header->fileType);
 			// Print_to_console("%s", file_header->name);
@@ -861,14 +856,14 @@ void resMan::Examine_res(uint8 *input) {
 				Print_to_console(" unrecognised fileType %d", file_header->fileType);
 				break;
 			}
-			res_man.Res_close(res);
+			res_man.close(res);
 		}
 	} else {
 		Print_to_console("try typing a number");
 	}
 }
 
-void resMan::Kill_res(uint8 *input) {
+void ResourceManager::kill(uint8 *input) {
 	int j = 0;
 	uint32 res;
 
@@ -883,19 +878,19 @@ void resMan::Kill_res(uint8 *input) {
 	if (!input[j]) {
 		res = atoi((char*) input);
 
-//#ifdef _SWORD2_DEBUG
+// #ifdef _SWORD2_DEBUG
 		if (!res)
 			Print_to_console("illegal resource");
 
-		if (res >= total_res_files)
-			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
-//#endif
+		if (res >= _totalResFiles)
+			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
+// #endif
 
 		// if noone has the file open then unlock and allow to float
-		if (!count[res]) {
-			if (age[res]) {
-				age[res] = 0;		//effectively gone from resList
-				Free_mem(resList[res]);	//release the memory too
+		if (!_count[res]) {
+			if (_age[res]) {
+				_age[res] = 0;		// effectively gone from _resList
+				Free_mem(_resList[res]);	// release the memory too
 				Print_to_console(" trashed %d", res);
 			} else
 				Print_to_console("%d not in memory", res);
@@ -906,16 +901,16 @@ void resMan::Kill_res(uint8 *input) {
 	}
 }
 
-void resMan::Remove_res(uint32 res) {
-	if (age[res]) {
-		age[res] = 0;		//effectively gone from resList
-		Free_mem(resList[res]);	//release the memory too
+void ResourceManager::remove(uint32 res) {
+	if (_age[res]) {
+		_age[res] = 0;			// effectively gone from _resList
+		Free_mem(_resList[res]);	// release the memory too
 		debug(5, " - Trashing %d", res);
 	} else
-		debug(5, "Remove_res(%d) not even in memory!", res);
+		debug(5, "remove(%d) not even in memory!", res);
 }
 
-void resMan::Remove_all_res(void) {
+void ResourceManager::removeAll(void) {
 	// remove all res files from memory - ready for a total restart
 	// including player object & global variables resource
 
@@ -927,15 +922,15 @@ void resMan::Remove_all_res(void) {
 	do {
 		if (mem_list[j].uid < 65536) {	// a resource
 			res = mem_list[j].uid;
-			age[res] = 0;		// effectively gone from resList
-			Free_mem(resList[res]);	// release the memory too
+			_age[res] = 0;		// effectively gone from _resList
+			Free_mem(_resList[res]);	// release the memory too
 		}
 
 		j = mem_list[j].child;
 	} while	(j != -1);
 }
 
-void resMan::Kill_all_res(uint8 wantInfo) {
+void ResourceManager::killAll(uint8 wantInfo) {
 	// remove all res files from memory
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -954,13 +949,13 @@ void resMan::Kill_all_res(uint8 wantInfo) {
 			res = mem_list[j].uid;
 
 			// not the global vars which are assumed to be open in
-			// memory & not the player object! (James17jan97)
+			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader*) res_man.Res_open(res);
-				res_man.Res_close(res);
+				header = (_standardHeader *) res_man.open(res);
+				res_man.close(res);
 
-				age[res] = 0;		// effectively gone from resList
-				Free_mem(resList[res]);	// release the memory too
+				_age[res] = 0;		// effectively gone from _resList
+				Free_mem(_resList[res]);	// release the memory too
 				nuked++;
 
 				// if this was called from the console + we
@@ -979,8 +974,8 @@ void resMan::Kill_all_res(uint8 wantInfo) {
 							ServiceWindows();
 						} while(!KeyWaiting());
 
-						ReadKey(&ke);	//kill the key we just pressed
-						if (ke.keycode == 27)	//ESC
+						ReadKey(&ke);
+						if (ke.keycode == 27)
 							break;
 
 						// clear the Press Esc message ready for the new line
@@ -1001,14 +996,14 @@ void resMan::Kill_all_res(uint8 wantInfo) {
 }
 
 //----------------------------------------------------------------------------
-// Like Kill_all_res but only kills objects (except George & the variable
-// table of course) - ie. forcing them to reload & restart their scripts,
-// which simulates the effect of a save & restore, thus checking that each
-// object's re-entrant logic works correctly, and doesn't cause a statuette to
+// Like killAll but only kills objects (except George & the variable table of
+// course) - ie. forcing them to reload & restart their scripts, which
+// simulates the effect of a save & restore, thus checking that each object's
+// re-entrant logic works correctly, and doesn't cause a statuette to
 // disappear forever, or some plaster-filled holes in sand to crash the game &
 // get James in trouble again.
 
-void resMan::Kill_all_objects(uint8 wantInfo) {
+void ResourceManager::killAllObjects(uint8 wantInfo) {
 	// remove all object res files from memory, excluding George
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -1028,12 +1023,12 @@ void resMan::Kill_all_objects(uint8 wantInfo) {
 			//not the global vars which are assumed to be open in
 			// memory & not the player object! (James17jan97)
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader*) res_man.Res_open(res);
-				res_man.Res_close(res);
+				header = (_standardHeader*) res_man.open(res);
+				res_man.close(res);
 
 				if (header->fileType == GAME_OBJECT) {
-					age[res] = 0;		// effectively gone from resList
-					Free_mem(resList[res]);	// release the memory too
+					_age[res] = 0;		// effectively gone from _resList
+					Free_mem(_resList[res]);	// release the memory too
    					nuked++;
 
 					// if this was called from the console + we want info
@@ -1072,7 +1067,7 @@ void resMan::Kill_all_objects(uint8 wantInfo) {
 		Print_to_console(" expelled %d object resource(s)", nuked);
 }
 
-void resMan::CacheNewCluster(uint32 newCluster) {
+void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	// Stop any music from streaming off the CD before we start the
 	// cluster-copy!
 	//
@@ -1080,46 +1075,46 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	// restored a game to a different cluster on the same CD - and music
 	// streaming would interfere with cluster copying, slowing it right
 	// down - but if we restored to a different CD the music is stopped
-	// in GetCd() when it asks for the CD
+	// in getCd() when it asks for the CD
 
 	FN_stop_music(NULL);
 
 	Clear_fx_queue();	// stops all fx & clears the queue (James22july97)
-	GetCd(cdTab[newCluster] & 3);
+	getCd(_cdTab[newCluster] & 3);
 
 	// Kick out old cached cluster and load the new one.
 	uint32 i = 0;
-	while (!(cdTab[i] & LOCAL_CACHE) && i < total_clusters)
+	while (!(_cdTab[i] & LOCAL_CACHE) && i < _totalClusters)
 		i++;
 
-	if (i < total_clusters)	{
-		SVM_SetFileAttributes(resource_files[i], FILE_ATTRIBUTE_NORMAL);
-		SVM_DeleteFile(resource_files[i]);
-		cdTab[i] &= (0xff - LOCAL_CACHE);
+	if (i < _totalClusters)	{
+		SVM_SetFileAttributes(_resourceFiles[i], FILE_ATTRIBUTE_NORMAL);
+		SVM_DeleteFile(_resourceFiles[i]);
+		_cdTab[i] &= (0xff - LOCAL_CACHE);
 		FILE *file;
 		file = fopen("cd.inf", "r+b");
 
 		if (file == NULL) {
-			Con_fatal_error("InitResMan cannot *OPEN* cd.inf");
+			Con_fatal_error("init cannot *OPEN* cd.inf");
 		}
 
 		_cd_inf cdInf;
 		
 		do {
 			fread(&cdInf, 1, sizeof(_cd_inf), file);
-		} while ((scumm_stricmp((char *) cdInf.clusterName, resource_files[i]) != 0) && !feof(file));
+		} while ((scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[i]) != 0) && !feof(file));
 
 		if (feof(file)) {
-			Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[i]);
+			Con_fatal_error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[i]);
 		}
 
 		fseek(file, -1, SEEK_CUR);
-		fwrite(&cdTab[i], 1, 1, file);
+		fwrite(&_cdTab[i], 1, 1, file);
 		fclose(file);
 	}
 
 	char buf[1024];
-	sprintf(buf, "%sClusters\\%s", cdPath, resource_files[newCluster]);
+	sprintf(buf, "%sClusters\\%s", _cdPath, _resourceFiles[newCluster]);
 
 	WaitForFade();
 
@@ -1134,7 +1129,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	Set_luggage(0);	//tw28Aug
 
 	uint8 *bgfile;
-	bgfile = res_man.Res_open(2950);	// open the screen resource
+	bgfile = res_man.open(2950);	// open the screen resource
 	InitialiseBackgroundLayer(NULL);
 	InitialiseBackgroundLayer(NULL);
 	InitialiseBackgroundLayer(FetchBackgroundLayer(bgfile));
@@ -1143,18 +1138,18 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	BS2_SetPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
 
 	RenderParallax(FetchBackgroundLayer(bgfile), 2);
-	res_man.Res_close(2950);		// release the screen resource
+	res_man.close(2950);		// release the screen resource
 
 	// Git rid of read-only status, if it is set.
-	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);
+	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
 
 	File inFile, outFile;
 	
 	inFile.open(buf);
-	outFile.open(resource_files[newCluster], NULL, File::kFileWriteMode);
+	outFile.open(_resourceFiles[newCluster], NULL, File::kFileWriteMode);
 
 	if (!inFile.isOpen() || !outFile.isOpen()) {
-		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
+		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 	}
 
 	_spriteInfo textSprite;
@@ -1164,7 +1159,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	uint8 *loadingBar;
 	_cdtEntry *cdt;
 
-	text_spr = MakeTextSprite(FetchTextLine(res_man.Res_open(2283), 8) + 2, 640, 187, speech_font_id);
+	text_spr = MakeTextSprite(FetchTextLine(res_man.open(2283), 8) + 2, 640, 187, speech_font_id);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1179,9 +1174,9 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	textSprite.blend = 0;
 	textSprite.colourTable	= 0;
 
-	res_man.Res_close(2283);
+	res_man.close(2283);
 
-	loadingBar = res_man.Res_open(2951);
+	loadingBar = res_man.open(2951);
 
 	frame = FetchFrameHeader(loadingBar, 0);
 	cdt   = FetchCdtEntry(loadingBar, 0);
@@ -1197,12 +1192,12 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
 
-	res_man.Res_close(2951);
+	res_man.close(2951);
 
-	loadingBar = res_man.Res_open(2951);
+	loadingBar = res_man.open(2951);
 	frame = FetchFrameHeader(loadingBar, 0);
 	barSprite.data = (uint8 *) (frame + 1);
-	res_man.Res_close(2951);
+	res_man.close(2951);
 
 	int16 barX = barSprite.x;
 	int16 barY = barSprite.y;
@@ -1235,20 +1230,20 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		realRead = inFile.read(buffer, BUFFERSIZE);
 		read += realRead;
 		if (outFile.write(buffer, realRead) != realRead) {
-			Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
+			Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 		}
 
 		if (step == stepSize) {
 			step = 0;
 			// open the screen resource
-			bgfile = res_man.Res_open(2950);
+			bgfile = res_man.open(2950);
 			RenderParallax(FetchBackgroundLayer(bgfile), 2);
 			// release the screen resource
-			res_man.Res_close(2950);
-			loadingBar = res_man.Res_open(2951);
+			res_man.close(2950);
+			loadingBar = res_man.open(2951);
 			frame = FetchFrameHeader(loadingBar, fr);
 			barSprite.data = (uint8 *) (frame + 1);
-			res_man.Res_close(2951);
+			res_man.close(2951);
 			DrawSprite(&barSprite);
 			barSprite.x = barX;
 			barSprite.y = barY;
@@ -1266,7 +1261,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
-		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
+		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 	}
 
 	inFile.close();
@@ -1280,34 +1275,34 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	FadeUp((float) 0.75);
 
 	// Git rid of read-only status.
-	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);
+	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
 
-	// Update cd.inf and cdTab
-	cdTab[newCluster] |= LOCAL_CACHE;
+	// Update cd.inf and _cdTab
+	_cdTab[newCluster] |= LOCAL_CACHE;
 
 	FILE *file;
 	file = fopen("cd.inf", "r+b");
 
 	if (file == NULL) {
-		Con_fatal_error("InitResMan cannot *OPEN* cd.inf");
+		Con_fatal_error("init cannot *OPEN* cd.inf");
 	}
 
 	_cd_inf cdInf;
 	
 	do {
 		fread(&cdInf, 1, sizeof(_cd_inf), file);
-	} while (scumm_stricmp((char *) cdInf.clusterName, resource_files[newCluster]) != 0 && !feof(file));
+	} while (scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[newCluster]) != 0 && !feof(file));
 
 	if (feof(file)) {
-		Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[newCluster]);
+		Con_fatal_error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[newCluster]);
 	}
 
 	fseek(file, -1, SEEK_CUR);
-	fwrite(&cdTab[newCluster], 1, 1, file);
+	fwrite(&_cdTab[newCluster], 1, 1, file);
 	fclose(file);
 }
 
-void resMan::GetCd(int cd) {
+void ResourceManager::getCd(int cd) {
 	// TODO support a seperate path for cd data?
 	
 	bool done = false;
@@ -1341,15 +1336,15 @@ void resMan::GetCd(int cd) {
 		// Determine what CD is in the drive, and either use it or ask
 		// the user to insert the correct CD.
 		// Scan all CD drives for our CD as well.
-		while(cdDrives[index] != 0 && index < 24) {
-			sprintf(cdPath, "%c:\\", cdDrives[index]);
+		while(_cdDrives[index] != 0 && index < 24) {
+			sprintf(_cdPath, "%c:\\", _cdDrives[index]);
 
-			if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
+			if (!SVM_GetVolumeInformation(_cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
 				// Force the following code to ask for the correct CD.
 				sCDName[0] = 0;
 			}
 
-			curCd = cd;
+			_curCd = cd;
 		
 			if (!scumm_stricmp(sCDName,CD1_LABEL)) {
 				if (cd == CD1)
@@ -1367,13 +1362,13 @@ void resMan::GetCd(int cd) {
 		// from CD
 		debug(5, "RUNNING OFF NETWORK");
 
-		fscanf(file, "%s", cdPath);
+		fscanf(file, "%s", _cdPath);
 		fclose(file);
 
-		if (curCd == cd)
+		if (_curCd == cd)
 			return;
 		else
-			curCd = cd;
+			_curCd = cd;
 
 		// don't show CD-requests if testing anims or text/speech
 		if (SYSTEM_TESTING_ANIMS || SYSTEM_TESTING_TEXT)
@@ -1388,7 +1383,7 @@ void resMan::GetCd(int cd) {
 
 	FN_stop_music(NULL);
 
-	textRes = res_man.Res_open(2283);
+	textRes = res_man.open(2283);
 	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
 	text_spr = MakeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, speech_font_id);
 
@@ -1408,24 +1403,24 @@ void resMan::GetCd(int cd) {
 	oldY = spriteInfo.y;
 	oldX = spriteInfo.x;
 
-	res_man.Res_close(2283);
+	res_man.close(2283);
 
 	do {
 		if (offNetwork == 1)
 			done = true;
 		else {
 			index = 0;
-			while (cdDrives[index] != 0 && !done && index < 24) {
-				sprintf(cdPath, "%c:\\", cdDrives[index]);
+			while (_cdDrives[index] != 0 && !done && index < 24) {
+				sprintf(_cdPath, "%c:\\", _cdDrives[index]);
 
-				if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
+				if (!SVM_GetVolumeInformation(_cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0)) {
 					sCDName[0] = 0;
 				}
 
-				if (!scumm_stricmp(sCDName,CD1_LABEL)) {
+				if (!scumm_stricmp(sCDName, CD1_LABEL)) {
 					if (cd == CD1)
 						done = true;
-				} else if (!scumm_stricmp(sCDName,CD2_LABEL)) {
+				} else if (!scumm_stricmp(sCDName, CD2_LABEL)) {
 					if (cd == CD2)
 						done = true;
 				}

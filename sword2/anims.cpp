@@ -128,8 +128,8 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 			if (res_man.Res_check_valid(res)) {
 				// Open the resource. Can close it immediately.
 				// We've got a pointer to the header.
-				head = (_standardHeader *) res_man.Res_open(res);
-				res_man.Res_close(res);
+				head = (_standardHeader *) res_man.open(res);
+				res_man.close(res);
 
 				// if it's not an animation file
 				if (head->fileType != ANIMATION_FILE) {
@@ -159,7 +159,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 #endif
 
 		// open anim file
-		anim_file = res_man.Res_open(res);
+		anim_file = res_man.open(res);
 
 #ifdef _SWORD2_DEBUG
 		// check this this resource is actually an animation file!
@@ -198,7 +198,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		// frame of the anim.
 
 		// open anim file and point to anim header
-		anim_file = res_man.Res_open(ob_graphic->anim_resource);
+		anim_file = res_man.open(ob_graphic->anim_resource);
 		anim_head = FetchAnimHeader(anim_file);
 
 		if (reverse_flag)
@@ -218,7 +218,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 	}
 
 	// close the anim file
-	res_man.Res_close(ob_graphic->anim_resource);
+	res_man.close(ob_graphic->anim_resource);
 
 	// check if we want the script to loop back & call this function again
 	return ob_logic->looping ? IR_REPEAT : IR_STOP;
@@ -282,7 +282,7 @@ int32 FN_set_frame(int32 *params) {
 
 	// open the resource (& check it's valid)
 
-	anim_file = res_man.Res_open(res);
+	anim_file = res_man.open(res);
 
 #ifdef _SWORD2_DEBUG
 	// check this this resource is actually an animation file!
@@ -312,7 +312,7 @@ int32 FN_set_frame(int32 *params) {
 
 	// Close the anim file and drop out of script
 
-	res_man.Res_close(ob_graphic->anim_resource);
+	res_man.close(ob_graphic->anim_resource);
 	return IR_CONT;
 }
 
@@ -531,11 +531,11 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		local_text = sequence_text_list[line].textNumber & 0xffff;
 
 		// open text resource & get the line
-		text = FetchTextLine(res_man.Res_open(text_res), local_text);
+		text = FetchTextLine(res_man.open(text_res), local_text);
 		wavId = (int32) READ_LE_UINT16(text);
 
 		// now ok to close the text file
-		res_man.Res_close(text_res);
+		res_man.close(text_res);
 
 		// 1st word of text line is the official line number
 		debug(5,"(%d) SEQUENCE TEXT: %s", *(uint16 *) text, text + 2);
@@ -557,7 +557,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 			File fp;
 
-			sprintf(speechFile, "speech%d.clu", res_man.WhichCd());
+			sprintf(speechFile, "speech%d.clu", res_man.whichCd());
 			if (fp.open(speechFile))
 				fp.close();
 			else
@@ -574,7 +574,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		if (subtitles || !speechRunning) {
 			// open text resource & get the line
-			text = FetchTextLine(res_man.Res_open(text_res), local_text);
+			text = FetchTextLine(res_man.open(text_res), local_text);
 			// make the sprite
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -585,7 +585,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			sequence_text_list[line].text_mem = MakeTextSprite(text + 2, 600, 255, speech_font_id);
 
 			// ok to close the text resource now
-			res_man.Res_close(text_res);
+			res_man.close(text_res);
 		} else {
 			sequence_text_list[line].text_mem = NULL;
 			sequenceText[line]->textSprite = NULL;
@@ -660,7 +660,7 @@ int32 FN_smacker_lead_in(int32 *params) {
 	_standardHeader *header;
 #endif
 
-	leadIn = res_man.Res_open(params[0]);
+	leadIn = res_man.open(params[0]);
 
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
@@ -675,7 +675,7 @@ int32 FN_smacker_lead_in(int32 *params) {
 	if (rv)
 		debug(5, "SFX ERROR: PlayFx() returned %.8x", rv);
 
-	res_man.Res_close(params[0]);
+	res_man.close(params[0]);
 
 	// fade out any music that is currently playing (James22july97)
 	FN_stop_music(NULL);
@@ -733,7 +733,7 @@ int32 FN_play_sequence(int32 *params) {
 	// open the lead-out music resource, if there is one
 
 	if (smackerLeadOut) {
-		leadOut = res_man.Res_open(smackerLeadOut);
+		leadOut = res_man.open(smackerLeadOut);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader *)leadOut;
@@ -763,7 +763,7 @@ int32 FN_play_sequence(int32 *params) {
 	// close the lead-out music resource
 
  	if (smackerLeadOut) {
-		res_man.Res_close(smackerLeadOut);
+		res_man.close(smackerLeadOut);
 		smackerLeadOut = 0;
 	}
 

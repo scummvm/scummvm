@@ -498,7 +498,7 @@ mem *Twalloc(uint32 size, uint32 type, uint32 unique_id) {
 
 	while (VirtualDefrag(size)) {
 		// trash the oldest closed resource
-		if (!res_man.Help_the_aged_out()) {
+		if (!res_man.helpTheAgedOut()) {
 			error("Twalloc ran out of memory: size=%d type=%d unique_id=%d", size, type, unique_id);
 		}
 	}

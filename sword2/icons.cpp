@@ -92,9 +92,9 @@ void Build_top_menu(void) {
 	// Call menu builder script which will register all carried menu
 	// objects. Run the 'build_menu' script in the 'menu_master' object
 
-	head = res_man.Res_open(MENU_MASTER_OBJECT);
+	head = res_man.open(MENU_MASTER_OBJECT);
 	RunScript((char*) head, (char*) head, &null_pc);
-	res_man.Res_close(MENU_MASTER_OBJECT);
+	res_man.close(MENU_MASTER_OBJECT);
 
 	// Compare new with old. Anything in master thats not in new gets
 	// removed from master - if found in new too, remove from temp
@@ -196,7 +196,7 @@ void Build_top_menu(void) {
 					icon_coloured = 1;
 			}
 
-			icon = res_man.Res_open(master_menu_list[j].icon_resource) + sizeof(_standardHeader);
+			icon = res_man.open(master_menu_list[j].icon_resource) + sizeof(_standardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -205,7 +205,7 @@ void Build_top_menu(void) {
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 			SetMenuIcon(RDMENU_BOTTOM, j, icon);
-			res_man.Res_close(res);
+			res_man.close(res);
 		} else {
 			// no icon here
 			SetMenuIcon(RDMENU_BOTTOM, j, NULL);
@@ -234,7 +234,7 @@ void Build_system_menu(void) {
 	// rest will grey out
 
 	for (j = 0; j < ARRAYSIZE(icon_list); j++) {
-		icon = res_man.Res_open(icon_list[j]) + sizeof(_standardHeader);
+		icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
@@ -243,7 +243,7 @@ void Build_system_menu(void) {
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 		SetMenuIcon(RDMENU_TOP, j, icon);
-		res_man.Res_close(icon_list[j]);
+		res_man.close(icon_list[j]);
 	}
 
 	ShowMenu(RDMENU_TOP);

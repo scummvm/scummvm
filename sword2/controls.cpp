@@ -70,7 +70,7 @@ private:
 
 public:
 	Sword2FontRenderer(int fontId) : _fontId(fontId) {
-		uint8 *font = res_man.Res_open(fontId);
+		uint8 *font = res_man.open(fontId);
 		_frameHeader *head;
 		_spriteInfo sprite;
 
@@ -86,7 +86,7 @@ public:
 			_glyph[i]._height = head->height;
 		}
 
-		res_man.Res_close(fontId);
+		res_man.close(fontId);
 	}
 
 	~Sword2FontRenderer() {
@@ -95,7 +95,7 @@ public:
 	}
 
 	void fetchText(int textId, char *buf) {
-		uint8 *data = FetchTextLine(res_man.Res_open(textId / SIZE), textId & 0xffff);
+		uint8 *data = FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff);
 		int i;
 
 		for (i = 0; data[i + 2]; i++) {
@@ -104,7 +104,7 @@ public:
 		}
 			
 		buf[i] = 0;
-		res_man.Res_close(textId / SIZE);
+		res_man.close(textId / SIZE);
 	}
 
 	int getTextWidth(char *text) {
@@ -257,7 +257,7 @@ void Sword2Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint3
 	uint32 spriteType = RDSPR_TRANS;
 
 	// open anim resource file, point to base
-	file = res_man.Res_open(res);
+	file = res_man.open(res);
 
 	anim_head = FetchAnimHeader(file);
 	cdt_entry = FetchCdtEntry(file, pc);
@@ -302,7 +302,7 @@ void Sword2Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint3
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
-	res_man.Res_close(res);
+	res_man.close(res);
 };
 
 void Sword2Widget::linkSurfaceImage(Sword2Widget *from, int state, int x, int y) {
@@ -1271,7 +1271,7 @@ public:
 					break;
 				}
 
-				Control_error((char*) (FetchTextLine(res_man.Res_open(textId / SIZE), textId & 0xffff) + 2));
+				Control_error((char*) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			}
 		} else {
@@ -1292,7 +1292,7 @@ public:
 					break;
 				}
 
-				Control_error((char *) (FetchTextLine(res_man.Res_open(textId / SIZE), textId & 0xffff) + 2));
+				Control_error((char *) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			} else {
 				// Prime system with a game cycle
@@ -1366,12 +1366,12 @@ void Restart_control(void) {
 
 	// remove all resources from memory, including player object and
 	// global variables
-	res_man.Remove_all_res();
+	res_man.removeAll();
 
 	// reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	SetGlobalInterpreterVariables((int32 *) (res_man.Res_open(1) + sizeof(_standardHeader)));
-	res_man.Res_close(1);
+	SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+	res_man.close(1);
 
 	DEMO = temp_demo_flag;
 

@@ -163,7 +163,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc) {
 
 uint32 FindBufferSize(void) {
 	// size of savegame header + size of global variables
-	return (sizeof(g_header) + res_man.Res_fetch_len(1));
+	return (sizeof(g_header) + res_man.fetchLen(1));
 }
 
 void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
@@ -177,7 +177,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	sprintf(g_header.description, "%s", (char*) desc);
 
 	// length of global variables resource
-	g_header.varLength = res_man.Res_fetch_len(1);
+	g_header.varLength = res_man.fetchLen(1);
 
 	// resource id of current screen file
 	g_header.screenId = this_screen.background_layer_id;
@@ -193,8 +193,8 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	g_header.music_id = looping_music_id;
 
 	// object hub
-	memcpy(&g_header.player_hub, res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
-	res_man.Res_close(CUR_PLAYER_ID);
+	memcpy(&g_header.player_hub, res_man.open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
+	res_man.close(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
 	// copy the 4 essential player object structures into the header
@@ -212,7 +212,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	// copy the global variables to the buffer
 
 	// open variables resource
-	varsRes = res_man.Res_open(1);
+	varsRes = res_man.open(1);
 
 	// copy that to the buffer, following the header
 	memcpy(buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength));
@@ -226,7 +226,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 #endif
 
 	// close variables resource
- 	res_man.Res_close(1);
+ 	res_man.close(1);
 
 	// set the checksum & copy that to the buffer (James05aug97)
 
@@ -368,7 +368,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// shorter than the current expected length
 
 	// if header contradicts actual current size of global variables
-	if (g_header.varLength != res_man.Res_fetch_len(1)) {
+	if (g_header.varLength != res_man.fetchLen(1)) {
 		Free_mem(buffer);
 
 		// error: incompatible save-data - can't use!
@@ -379,7 +379,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// trash all resources from memory except player object & global
 	// variables
-	res_man.Kill_all_res(0);
+	res_man.killAll(0);
 
 	// clean out the system kill list (no more objects to kill)
 	LLogic.resetKillList();
@@ -387,9 +387,9 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// get player character data from savegame buffer
 
 	// object hub is just after the standard header 
-	memcpy(res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
+	memcpy(res_man.open(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
 
-	res_man.Res_close(CUR_PLAYER_ID);
+	res_man.close(CUR_PLAYER_ID);
 
 	// fill in the 4 essential player object structures from the header
 	PutPlayerStructures();
@@ -397,7 +397,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// get variables resource from the savegame buffer	
 
 	// open variables resource
-	varsRes = res_man.Res_open(1);
+	varsRes = res_man.open(1);
 
 	// copy that to the buffer, following the header
 	memcpy(varsRes, buffer->ad + sizeof(g_header), g_header.varLength );
@@ -411,7 +411,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 #endif
 
 	// close variables resource
- 	res_man.Res_close(1);
+ 	res_man.close(1);
 
 	// free it now, rather than in RestoreGame, to unblock memory before
 	// new screen & runlist loaded
@@ -515,14 +515,14 @@ void GetPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) res_man.Res_open(CUR_PLAYER_ID);
+	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
-	res_man.Res_close(CUR_PLAYER_ID);
+	res_man.close(CUR_PLAYER_ID);
 }
 
 void PutPlayerStructures(void) {
@@ -534,7 +534,7 @@ void PutPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) res_man.Res_open(CUR_PLAYER_ID);
+	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
@@ -572,7 +572,7 @@ void PutPlayerStructures(void) {
 	}
 
 	RunScript(raw_script_ad, raw_script_ad, &null_pc);
-	res_man.Res_close(CUR_PLAYER_ID);
+	res_man.close(CUR_PLAYER_ID);
 }
 
 int32 FN_pass_player_savedata(int32 *params) {

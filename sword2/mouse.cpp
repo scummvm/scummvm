@@ -209,9 +209,9 @@ void System_menu(void) {
 				for (j = 0; j < ARRAYSIZE(icon_list); j++) {
 					// change all others to grey
 					if (j != hit) {
-						icon = res_man.Res_open(icon_list[j]) + sizeof(_standardHeader);
+						icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
 						SetMenuIcon(RDMENU_TOP, j, icon);
-						res_man.Res_close( icon_list[j] );
+						res_man.close( icon_list[j] );
 					}
 				}
 
@@ -798,8 +798,8 @@ void Set_mouse(uint32 res) {
 	mouse_pointer_res = res;
 
 	if (res) {
-		icon = res_man.Res_open(res) + sizeof(_standardHeader);
-		len = res_man.resList[res]->size - sizeof(_standardHeader);
+		icon = res_man.open(res) + sizeof(_standardHeader);
+		len = res_man._resList[res]->size - sizeof(_standardHeader);
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -809,7 +809,7 @@ void Set_mouse(uint32 res) {
 		else
  			SetMouseAnim(icon, len, RDMOUSE_FLASH);
 
-		res_man.Res_close(res);
+		res_man.close(res);
 	} else {
 		// blank cursor
 		SetMouseAnim(NULL, 0, 0);
@@ -823,12 +823,12 @@ void Set_luggage(uint32	res) {
 	real_luggage_item = res;
 
 	if (res) {
-		icon = res_man.Res_open(res) + sizeof(_standardHeader);
-		len = res_man.resList[res]->size - sizeof(_standardHeader);
+		icon = res_man.open(res) + sizeof(_standardHeader);
+		len = res_man._resList[res]->size - sizeof(_standardHeader);
 
 		SetLuggageAnim(icon, len);
 
-		res_man.Res_close(res);
+		res_man.close(res);
 	} else
 		SetLuggageAnim(NULL, 0);
 }
@@ -1017,7 +1017,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 			local_text = textId & 0xffff;
 
 			// open text file & get the line
-			text = FetchTextLine(res_man.Res_open(text_res), local_text);
+			text = FetchTextLine(res_man.open(text_res), local_text);
 
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -1029,7 +1029,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 				speech_font_id, justification);
 
 			// now ok to close the text file
-			res_man.Res_close(text_res);
+			res_man.close(text_res);
 		}
 	}
 }
@@ -1153,7 +1153,7 @@ int32 FN_add_human(int32 *params) {
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts
 
-		res_man.Kill_all_objects(0);
+		res_man.killAllObjects(0);
 
 		BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
 	}
