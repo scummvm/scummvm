@@ -74,5 +74,5 @@ void exit(Int16 status)
 	event.eType = keyDownEvent;
 	event.data.keyDown.chr = vchrLaunch;
 	event.data.keyDown.modifiers = commandKeyMask;
-	EvtAddEventToQueue (&event);
+	EvtAddUniqueEventToQueue  (&event, 0, true);
 }
