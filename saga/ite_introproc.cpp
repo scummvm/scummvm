@@ -143,7 +143,7 @@ int ITE_StartProc() {
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = gs_desc.first_scene;
 	first_scene.scene_skiptarget = 1;
-	first_scene.scene_proc = InitialSceneProc;
+	first_scene.scene_proc = initialScene;
 
 	SCENE_Queue(&first_scene);
 

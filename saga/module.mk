@@ -24,7 +24,6 @@ MODULE_OBJS = \
 	saga/rscfile.o \
 	saga/saga.o \
 	saga/scene.o \
-	saga/sceneproc.o \
 	saga/script.o \
 	saga/sdata.o \
 	saga/sdebug.o \

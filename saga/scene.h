@@ -28,6 +28,8 @@
 
 namespace Saga {
 
+#define PALETTE_FADE_DURATION 1000
+
 enum SCENE_LOAD_FLAGS {
 	BY_RESOURCE = 0,
 	BY_SCENE,
@@ -147,8 +149,8 @@ void CF_sceneinfo(int argc, char *argv[], void *refCon);
 
 int IHNM_StartProc();
 
-int InitialSceneProc(int param, R_SCENE_INFO *scene_info);
-int DefaultSceneProc(int param, R_SCENE_INFO *scene_info);
+int initialScene(int param, R_SCENE_INFO *scene_info);
+int defaultScene(int param, R_SCENE_INFO *scene_info);
 
 int ITE_StartProc();
 int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info);

@@ -39,6 +39,8 @@
 #include "render.h"
 #include "rscfile_mod.h"
 #include "text_mod.h"
+#include "sound.h"
+#include "music.h"
 
 #include "scene_mod.h"
 #include "scene.h"
@@ -302,7 +304,7 @@ int SCENE_Change(int scene_num) {
 	}
 
 	SCENE_End();
-	SCENE_Load(scene_num, BY_SCENE, DefaultSceneProc, NULL);
+	SCENE_Load(scene_num, BY_SCENE, defaultScene, NULL);
 
 	return R_SUCCESS;
 }
@@ -476,7 +478,7 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 	SceneModule.scene_loaded = 1;
 
 	if (scene_proc == NULL) {
-		SceneModule.scene_proc = DefaultSceneProc;
+		SceneModule.scene_proc = defaultScene;
 	} else {
 		SceneModule.scene_proc = scene_proc;
 	}
@@ -838,6 +840,122 @@ void CF_sceneinfo(int argc, char *argv[], void *refCon) {
 	CON_Print(fmt, "Scene script:", SceneModule.desc.scene_scriptnum);
 	CON_Print(fmt, "Start script:", SceneModule.desc.start_scriptnum);
 	CON_Print(fmt, "Music R#", SceneModule.desc.music_rn);
+}
+
+int initialScene(int param, R_SCENE_INFO *scene_info) {
+	R_EVENT event;
+	R_EVENT *q_event;
+	int delay_time = 0;
+	static PALENTRY current_pal[R_PAL_ENTRIES];
+	PALENTRY *pal;
+
+	switch (param) {
+	case SCENE_BEGIN:
+		_vm->_music->stop();
+		_vm->_sound->stopVoice();
+
+		// Fade palette to black from intro scene
+		GFX_GetCurrentPal(current_pal);
+
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_PALTOBLACK;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = current_pal;
+
+		delay_time += PALETTE_FADE_DURATION;
+
+		q_event = EVENT_Queue(&event);
+
+		// Activate user interface
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_INTERFACE_EVENT;
+		event.op = EVENT_ACTIVATE;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		// Set first scene background w/o changing palette
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_BG_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.param = NO_SET_PALETTE;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		// Fade in to first scene background palette
+		SCENE_GetBGPal(&pal);
+
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_BLACKTOPAL;
+		event.time = delay_time;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = pal;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		event.code = R_PALANIM_EVENT;
+		event.op = EVENT_CYCLESTART;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, delay_time);
+
+		debug(0, "InitialSceneproc(): Scene started");
+		break;
+	case SCENE_END:
+		break;
+	default:
+		warning("Illegal scene procedure parameter");
+		break;
+	}
+
+	return 0;
+}
+
+int defaultScene(int param, R_SCENE_INFO *scene_info) {
+	R_EVENT event;
+
+	switch (param) {
+	case SCENE_BEGIN:
+		// Set scene background
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_BG_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.param = SET_PALETTE;
+		event.time = 0;
+
+		EVENT_Queue(&event);
+
+		// Activate user interface
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_INTERFACE_EVENT;
+		event.op = EVENT_ACTIVATE;
+		event.time = 0;
+
+		EVENT_Queue(&event);
+
+		// Begin palette cycle animation if present
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_PALANIM_EVENT;
+		event.op = EVENT_CYCLESTART;
+		event.time = 0;
+
+		EVENT_Queue(&event);
+		break;
+	case SCENE_END:
+		break;
+	default:
+		warning("Illegal scene procedure parameter");
+		break;
+	}
+
+	return 0;
 }
 
 } // End of namespace Saga
