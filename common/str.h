@@ -83,10 +83,12 @@ public:
 	virtual ~String();
 	
 	String& operator  =(const char* str);
-// TODO - We should use RTTI here - that is, not real C++ RTTI but some magic
+// TODO - We should use RTTI here - that is, not real C++ RTTI but maybe some magic
 // constant in each string object. We want to be able to optimize the case when
 // a real 'String' object is passed to a function as a ConstString obj and then
-// assigned to a 'String' object
+// assigned to a 'String' object.
+// An alternative would be to add private clone() and cloneMutable methods that 
+// would do the right thing.
 	String& operator  =(const String& str);
 	String& operator +=(const char* str);
 	String& operator +=(const String& str);
@@ -106,6 +108,9 @@ public:
 
 	void deleteLastChar();
 	void clear();
+	
+	void toLowercase();
+	void toUppercase();
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);

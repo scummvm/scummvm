@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "str.h"
 
+#include <ctype.h>
 
 #ifdef _MSC_VER
 #	pragma warning( disable : 4068 ) // unknown pragmas
@@ -169,6 +170,24 @@ void String::clear()
 		_len = 0;
 		_str = 0;
 	}
+}
+
+void String::toLowercase()
+{
+	if (_str == 0 || _len == 0)
+		return;
+	
+	for (int i = 0; i < _len; ++i)
+		_str[i] = tolower(_str[i]);
+}
+
+void String::toUppercase()
+{
+	if (_str == 0 || _len == 0)
+		return;
+	
+	for (int i = 0; i < _len; ++i)
+		_str[i] = toupper(_str[i]);
 }
 
 void String::ensureCapacity(int new_len, bool keep_old)

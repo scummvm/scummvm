@@ -164,6 +164,7 @@ void Config::setBool(const String &key, bool value_b, const String &d)
 void Config::set_domain(const String &d)
 {
 	defaultDomain = d;
+	defaultDomain.toLowercase();
 }
 
 bool Config::has_domain(const String &d) const
