@@ -85,6 +85,8 @@ int Scumm::getObjectIndex(int object) {
 int Scumm::whereIsObject(int object) {
 	int i;
 
+	assert(object>=0 && object < _numGlobalObjects);
+
 	if ((_objectFlagTable[object]&0xF)!=0xF) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)

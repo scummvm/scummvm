@@ -29,8 +29,9 @@ void Scumm::initThingsV5() {
 	_numBitVariables = 2048;
 	_numLocalObjects = 200;
 	_numVerbs = 100;
+	_numInventory = 80;
 	
-	_inventory = (uint16*)alloc(0x50 * sizeof(uint16));
+	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
 	_verbs = (VerbSlot*)alloc(100 * sizeof(VerbSlot));
 	_objs = (ObjectData*)alloc(200 * sizeof(ObjectData));
 	_vars = (int16*)alloc(800 * sizeof(int16));
@@ -84,9 +85,6 @@ void Scumm::scummInit() {
 		a->number = i;
 		initActor(a, 1);
 	}
-
-//	memset(vm.vars, 0, sizeof(vm.vars));
-//	memset(vm.bitvars, 0, sizeof(vm.bitvars));
 
 	_defaultTalkDelay = 60;
 	_vars[VAR_CHARINC] = 4;

@@ -79,12 +79,12 @@ bool Scumm::loadState(const char *filename) {
 	CHECK_HEAP
 
 	openRoom(-1);
-	memset(_inventory, 0, sizeof(_inventory));
+	memset(_inventory, 0, sizeof(_inventory[0])*_numInventory);
 
 	/* Nuke all resources */
-	for (i=1; i<16; i++)
-		if (!(i==13 || i==12 || i==10 || res.mode[i]))
-			for(j=1; j<res.num[i]; j++)
+	for (i=1; i<=16; i++)
+		if (!(i==rtFlObject || i==rtTemp || i==rtBuffer || res.mode[i]))
+			for(j=0; j<res.num[i]; j++)
 				nukeResource(i,j);
 
 	initScummVars();

@@ -706,6 +706,7 @@ void Scumm::expireResources(uint32 size) {
 	byte flag;
 	byte best_counter;
 	int best_type, best_res;
+	uint32 oldAllocatedSize;
 
 	if (_expire_counter != 0xFF) {
 		_expire_counter = 0xFF;
@@ -714,6 +715,8 @@ void Scumm::expireResources(uint32 size) {
 
 	if (size + _allocatedSize < _maxHeapThreshold)
 		return;
+
+	oldAllocatedSize = _allocatedSize;
 
 	do {
 		best_type = 0;
@@ -735,6 +738,8 @@ void Scumm::expireResources(uint32 size) {
 			break;
 		nukeResource(best_type, best_res);
 	} while (size + _allocatedSize > _minHeapThreshold);
+
+	debug(1, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
 
 void Scumm::freeResources() {

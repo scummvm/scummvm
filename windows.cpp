@@ -17,6 +17,11 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.13  2001/11/06 21:29:23  strigeus
+ * fix in save game loader,
+ * sizeof(an element) * number of elements instead of sizeof(a pointer) fixed it,
+ * buffer out of bounds read fixed in Scumm::isMaskActiveAt
+ *
  * Revision 1.12  2001/11/06 20:00:47  strigeus
  * full screen flag,
  * better mouse cursors,
@@ -937,6 +942,9 @@ void initGraphics(Scumm *s, bool fullScreen) {
 }
 
 void drawMouse(Scumm *s, int, int, int, byte*, bool) {
+}
+
+void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible) {
 }
 
 void fill_buffer(int16 *buf, int len) {

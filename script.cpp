@@ -707,6 +707,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 		return 0;
 
 	objptr = getObjectAddress(obj);
+	assert(objptr);
 
 	verbptr = findResource(MKID('VERB'), objptr, 0);
 	if (verbptr==NULL)

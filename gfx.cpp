@@ -83,10 +83,10 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	if (vs->scrollable)
 		size += 320*4;
 
-	memset(createResource(rtBuffer, slot+1, size),0,size);
+	createResource(rtBuffer, slot+1, size);
 
 	if (twobufs) {
-		memset(createResource(rtBuffer, slot+5, size),0x23,size);
+		createResource(rtBuffer, slot+5, size);
 	}
 
 	if (slot != 3) {
@@ -320,7 +320,7 @@ void Scumm::initBGBuffers() {
 	itemsize = (_scrHeight + 4) * 40;
 	size = itemsize * gdi._numZBuffer;
 
-	memset(createResource(rtBuffer, 9, size), 0, size);
+	createResource(rtBuffer, 9, size);
 	
 	for (i=0; i<4; i++)
 		gdi._imgBufOffs[i] = i*itemsize;
@@ -1721,23 +1721,25 @@ void Scumm::setCursorHotspot2(int x,int y) {
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
-	int w,h,inc,i;
+	int w,h,i;
 	
-	if (l<0 || t<0) {
-		l = 0;
-	}
+	l>>=3;
+	if (l<0) l = 0;
+	if (t<0) t = 0;
 
-	mem += b*40 + (l>>3);
+	r>>=3;
+	if (r>39) r=39;
 
-	w = (r>>3) - (l>>3) + 1;
-	inc = w+40;
-	h = b-t-1;
+	mem += l + t*40;
+
+	w = r-l;
+	h = b-t+1;
 
 	do {
-		for(i=0; i<w; i++)
+		for(i=0; i<=w; i++)
 			if (mem[i])
 				return true;
-		mem -= 40;
+		mem += 40;
 	} while (--h);
 	
 	return false;
