@@ -1079,8 +1079,8 @@ void ScummEngine_v8::o8_actorOps() {
 		// setChannelPan() won't do anything.)
 
 		if (_actorToPrintStrFor == a->number) {
-			if (_sound->isSoundRunning(10000))
-				_imuseDigital->parseScriptCmds(12, 0x700, 10000, a->talkPan, 0, 0, 0, 0);
+			if (_sound->isSoundRunning(kTalkSoundID))
+				_imuseDigital->parseScriptCmds(12, 0x700, kTalkSoundID, a->talkPan, 0, 0, 0, 0);
 		}
 
 		break;

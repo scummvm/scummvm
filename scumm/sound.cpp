@@ -407,7 +407,7 @@ void Sound::processSfxQueues() {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
 
 		if (_scumm->_imuseDigital) {
-			finished = !isSoundRunning(10000);
+			finished = !isSoundRunning(kTalkSoundID);
 		} else {
 			finished = !_talkChannelHandle.isActive();
 		}
@@ -565,7 +565,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_scumm->_imuseDigital) {
-			_scumm->_imuseDigital->stopSound(10000);
+			_scumm->_imuseDigital->stopSound(kTalkSoundID);
 		} else {
 			_scumm->_mixer->stopHandle(_talkChannelHandle);
 		}
@@ -822,7 +822,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->setVocVoice(data, size, rate);
-		_scumm->_imuseDigital->startSound(10000);
+		_scumm->_imuseDigital->startSound(kTalkSoundID);
 		free(data);
 	} else {
 		_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, id);

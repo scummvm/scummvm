@@ -164,9 +164,9 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_imuseDigital)
-				&& _sound->isSoundRunning(10000)) {
+				&& _sound->isSoundRunning(kTalkSoundID)) {
 		// Keep the 'speech' flag in _sound->_sfxMode set as long as the
-		// sound 10000 is playing.
+		// sound kTalkSoundID is playing.
 		_sound->_sfxMode |= 2;
 	}
 

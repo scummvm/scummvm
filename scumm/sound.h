@@ -32,6 +32,10 @@ class ScummEngine;
 
 struct MP3OffsetTable;
 
+enum {
+	kTalkSoundID = 10000
+};
+
 class Sound {
 protected:
 	int16 _soundQuePos, _soundQue[0x100];

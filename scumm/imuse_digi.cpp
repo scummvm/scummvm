@@ -773,11 +773,12 @@ void IMuseDigital::startSound(int sound) {
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (!_channel[l].used && !_channel[l].handle.isActive()) {
 			byte *ptr, *s_ptr;
-			if ((sound == 10000) && (_voiceBundleData)) {
+			if ((sound == kTalkSoundID) && (_voiceBundleData)) {
 				s_ptr = ptr = _voiceBundleData;
-			} else if ((sound == 10000) && (_voiceVocData)) {
+			} else if ((sound == kTalkSoundID) && (_voiceVocData)) {
 				//
-			} else if (sound != 10000) {
+				s_ptr = ptr = 0;
+			} else if (sound != kTalkSoundID) {
 				ptr = _scumm->getResourceAddress(rtSound, sound);
 				s_ptr = ptr;
 				if (ptr == NULL) {
@@ -805,7 +806,7 @@ void IMuseDigital::startSound(int sound) {
 			int32 size = 0;
 			int t;
 
-			if ((sound == 10000) && (_voiceVocData)) {
+			if ((sound == kTalkSoundID) && (_voiceVocData)) {
 				_channel[l].mixerSize = _voiceVocRate * 2;
 				_channel[l].size = _voiceVocSize * 2;
 				_channel[l].bits = 8;
@@ -897,7 +898,7 @@ void IMuseDigital::startSound(int sound) {
 						break;
 				}
 
-				if ((sound == 10000) && (_voiceBundleData)) {
+				if ((sound == kTalkSoundID) && (_voiceBundleData)) {
 					if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 						Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
 						_channel[l].freq = (_channel[l].freq * a->talkFrequency) / 256;
@@ -1429,7 +1430,7 @@ void IMuseDigital::bundleMusicHandler() {
 }
 
 void IMuseDigital::playBundleSound(const char *sound) {
-	byte *ptr = 0, *orig_ptr = 0;
+	byte *ptr = 0;
 	bool result;
 
 	if (!_scumm->_mixer->isReady())
@@ -1469,9 +1470,9 @@ void IMuseDigital::playBundleSound(const char *sound) {
 	}
 
 	if (ptr) {
-		stopSound(10000);
+		stopSound(kTalkSoundID);
 		setBundleVoice(ptr);
-		startSound(10000);
+		startSound(kTalkSoundID);
 		free(ptr);
 	}
 }
