@@ -43,7 +43,7 @@ protected:
 
 	File *_sfxFile;
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
-	byte _talk_sound_mode;
+	byte _talk_sound_mode, _talk_sound_channel;
 	int _talk_sound_frame;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
@@ -81,7 +81,7 @@ public:
 	void stopSound(int a);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
-	void talkSound(uint32 a, uint32 b, int mode, int frame);
+	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
 	void setupSound();
 	void pauseSounds(bool pause);
 

@@ -437,7 +437,7 @@ void Sound::processSfxQueues() {
 	const int act = _vm->getTalkingActor();
 	if ((_sfxMode & 2) && act != 0) {
 		Actor *a;
-		bool b, finished;
+		bool finished;
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
@@ -445,18 +445,20 @@ void Sound::processSfxQueues() {
 			finished = !_talkChannelHandle.isActive();
 		}
 
-		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim)) && (finished || !_endOfMouthSync)) {
+		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
-				b = finished || isMouthSyncOff(_curSoundPos);
-				if (_mouthSyncMode != b) {
-					_mouthSyncMode = b;
-					if (_talk_sound_frame != -1) {
-						a->runActorTalkScript(_talk_sound_frame);
-						_talk_sound_frame = -1;
-					} else
-						a->runActorTalkScript(b ? a->talkStopFrame : a->talkStartFrame);
+				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
+					if (!_endOfMouthSync)
+						a->runActorTalkScript(a->talkStopFrame);
+					_mouthSyncMode = 0;
+				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
+					a->runActorTalkScript(a->talkStartFrame);
+					_mouthSyncMode = 1;
 				}
+
+				if (_vm->_version <= 6 && finished)
+					a->runActorTalkScript(a->talkStopFrame);
 			}
 		}
 
@@ -552,15 +554,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		// Some games frequently assume that starting one sound effect will
 		// automatically stop any other that may be playing at that time. So
 		// that is what we do here, but we make an exception for speech.
-		//
-		// Do any other games than these need this hack?
-		//
-		// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
-		// from being interrupted.
 
-		if (mode == 1 && (_vm->_gameId == GID_TENTACLE
-			|| (_vm->_gameId == GID_SAMNMAX && !_vm->isScriptRunning(99)))) {
-			id = 777777;
+		if (mode == 1 && (_vm->_gameId == GID_TENTACLE || _vm->_gameId == GID_SAMNMAX)) {
+			id = 777777 + _talk_sound_channel;
 			_vm->_mixer->stopID(id);
 		}
 
@@ -795,16 +791,16 @@ void Sound::soundKludge(int *list, int num) {
 	}
 }
 
-void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
+void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
 	if (mode == 1) {
 		_talk_sound_a1 = a;
 		_talk_sound_b1 = b;
+		_talk_sound_channel = channel;
 	} else {
 		_talk_sound_a2 = a;
 		_talk_sound_b2 = b;
 	}
 
-	_talk_sound_frame = frame;
 	_talk_sound_mode |= mode;
 }
 
