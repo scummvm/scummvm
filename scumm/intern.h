@@ -1082,6 +1082,8 @@ protected:
 	void o100_loadSBNG();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
+	void o100_jumpToScriptUnk();
+	void o100_startScriptUnk();
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_startSound();

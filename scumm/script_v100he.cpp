@@ -152,8 +152,8 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_printSystem),
 		/* 58 */
 		OPCODE(o6_printCursor),
-		OPCODE(o90_jumpToScriptUnk),
-		OPCODE(o90_startScriptUnk),
+		OPCODE(o100_jumpToScriptUnk),
+		OPCODE(o100_startScriptUnk),
 		OPCODE(o6_pseudoRoom),
 		/* 5C */
 		OPCODE(o6_pushByte),
@@ -1515,6 +1515,31 @@ void ScummEngine_v100he::o100_paletteOps() {
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
 	debug(1, "o100_paletteOps stub (%d)", subOp);
+}
+
+void ScummEngine_v100he::o100_jumpToScriptUnk() {
+	int args[25];
+	int script, cycle;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	cycle = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args, cycle);
+}
+
+void ScummEngine_v100he::o100_startScriptUnk() {
+	int args[25];
+	int script, cycle;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	cycle = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args, cycle);
 }
 
 void ScummEngine_v100he::o100_redimArray() {
