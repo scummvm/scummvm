@@ -825,6 +825,9 @@ int Scumm::getCachedTrack(int track) {
 	sprintf(track_name, "%strack%d.mp3", _gameDataPath, track);
 	file = fopen(track_name, "rb");
 	_cached_tracks[current_index] = track;
+	/* First, close the previous file */
+	if (_mp3_tracks[current_index])
+		fclose(_mp3_tracks[current_index]);
 	_mp3_tracks[current_index] = NULL;
 	if (!file) {
 		// This warning is pretty pointless.
@@ -892,6 +895,7 @@ int Scumm::getCachedTrack(int track) {
  error:
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
+	fclose(file);
 
 	return -1;
 }
@@ -918,12 +922,13 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	// Calc offset
 	frame_size = (float)(144 * _mad_header[index].bitrate / _mad_header[index].samplerate);
 	offset = (long)( (float)start / (float)75 * ((float)_mad_header[index].bitrate/(float)8));
-	
+
 	// Calc delay
 	if (!delay) {
-		mad_timer_set(&duration, 0, _mp3_size[index], (_mad_header[index].bitrate/8));
+		mad_timer_set(&duration, (_mp3_size[index] * 8) / _mad_header[index].bitrate,
+		              (_mp3_size[index] * 8) % _mad_header[index].bitrate, _mad_header[index].bitrate);
 	} else {
-		mad_timer_set(&duration, 0, delay, 75);
+		mad_timer_set(&duration, delay / 75, delay % 75, 75);
 	}	
 
 	// Go
