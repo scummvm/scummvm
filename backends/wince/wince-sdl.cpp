@@ -328,8 +328,10 @@ void OSystem_WINCE3::update_game_settings() {
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
 		// portrait/landscape - screen dependant
-		if (_screenWidth <= 320) 
+		if (_screenWidth <= 320) {
+			_newOrientation = _orientationLandscape = ConfMan.getBool("CE_landscape");
 			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
+		}
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 
@@ -376,9 +378,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	_scaleFactorXd = -1;
 	_scaleFactorYm = -1;    
 	_scaleFactorYd = -1;  
-	_scaleFactor = 0;
-
-	_newOrientation = _orientationLandscape = ConfMan.getBool("CE_landscape");
+	_scaleFactor = 0;	
 
 	if (CEDevice::hasPocketPCResolution()) {
 		if (!_orientationLandscape && _screenWidth == 320) {
