@@ -26,9 +26,7 @@
 #include "simon/debug.h"
 #include "simon/vga.h"
 
-#if !defined(_WIN32_WCE)
 #include <sys/stat.h>
-#endif
 
 namespace Simon {
 
