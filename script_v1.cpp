@@ -2702,11 +2702,10 @@ void Scumm::o5_pickupObjectOld()
 		return;
 
 	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;											/* object twice */
+		return;									/* object twice */
 
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
-	addObjectToInventory(obj, _currentRoom);
-	// warning("added to inventoryOld");
+	addObjectToInventory(obj, _currentRoom);	
 	removeObjectFromRoom(obj);
 	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);

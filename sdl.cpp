@@ -485,7 +485,7 @@ void updateScreen2xSaI(Scumm *s)
 		SDL_Rect *dr;
 		int i;
 
-		for (i = 0; i <= numDirtyRects; i++) {
+		for (i = 0; i < numDirtyRects; i++) {
 			dr = &dirtyRects[i];
 			Draw2xSaI(dr, s->_videoMode);
 		}
