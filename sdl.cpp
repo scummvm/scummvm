@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/11 11:49:51  strigeus
+ * Determine caption from file name.
+ *
  * Revision 1.6  2001/10/11 10:15:58  strigeus
  * no SDL cursor
  *
@@ -311,7 +314,12 @@ void initGraphics(Scumm *s) {
 	/* Clean up on exit */
   	atexit(SDL_Quit);
 
-	SDL_WM_SetCaption("ScummVM - Monkey Island 2: LeChuck's revenge","ScummVM - Monkey Island 2: LeChuck's revenge");
+	char buf[512], *gameName;
+	
+	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+	free(gameName);
+	
+	SDL_WM_SetCaption(buf,buf);
 	SDL_ShowCursor(SDL_DISABLE);
 
 #if !defined(SCALEUP_2x2)

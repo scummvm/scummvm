@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/11 11:49:51  strigeus
+ * Determine caption from file name.
+ *
  * Revision 1.5  2001/10/10 16:29:59  strigeus
  * temporary fix to prevent freeze in stan's room until sound is there
  *
@@ -389,6 +392,29 @@ ShowHelpAndExit:;
 	}
 }
 
+struct GameNameList {
+	char *filename;
+	char *gamename;
+};
+
+static const GameNameList game_list[] = {
+	{"monkey1", "Monkey Island 1"},
+	{"monkey2", "Monkey Island 2: LeChuck's revenge"},
+	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis"},
+	{"fate", "Indiana Jones 4 and the Fate of Atlantis (Demo)"},
+	{NULL,NULL}
+};
+
+char *Scumm::getGameName() {
+	const GameNameList *gnl = game_list;
+	char buf[256];
+	do {
+		if (!strcmp(_exe_name, gnl->filename))
+			return strdup(gnl->gamename);
+	} while ((++gnl)->filename);
+	sprintf(buf, "Unknown game: \"%s\"", _exe_name);
+	return strdup(buf);
+}
 
 void Scumm::startScene(int room, Actor *a, int objectNr) {
 	int i;
