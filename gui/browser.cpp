@@ -36,7 +36,8 @@ enum {
 };
 
 BrowserDialog::BrowserDialog(NewGui *gui)
-	: Dialog(gui, 40, 10, 320-2*40, 200-2*10)
+	: Dialog(gui, 40, 10, 320-2*40, 200-2*10),
+	  _node(0), _nodeContent(0)
 {
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, 10, 8, _w-2*10, kLineHeight,
@@ -74,6 +75,18 @@ void BrowserDialog::open()
 	Dialog::open();
 }
 
+void BrowserDialog::close()
+{
+	delete _node;
+	_node = 0;
+
+	delete _nodeContent;
+	_nodeContent = 0;
+
+	// Call super implementation
+	Dialog::close();
+}
+
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	FilesystemNode *tmp;
@@ -86,12 +99,10 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		close();
 		break;
 	case kGoUpCmd:
-/*
 		tmp = _node->parent();
 		delete _node;
 		_node = tmp;
 		updateListing();
-*/
 		break;
 	case kListItemDoubleClickedCmd:
 		tmp = (*_nodeContent)[data].clone();

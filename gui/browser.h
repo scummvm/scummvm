@@ -37,7 +37,8 @@ class BrowserDialog : public Dialog {
 public:
 	BrowserDialog(NewGui *gui);
 
-	virtual void open();	
+	virtual void open();
+	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
