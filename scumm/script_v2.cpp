@@ -394,11 +394,11 @@ void Scumm_v2::decodeParseString() {
 }
 
 int Scumm_v2::readVar(uint var) {
-	debug(6, "readvar(%d)", var);
 	if (var >= 14 && var <= 16)
 		var = _vars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+	debug(6, "readvar(%d) = %d", var, _vars[var]);
 	return _vars[var];
 }
 
@@ -647,6 +647,7 @@ void Scumm_v2::o2_waitForSentence() {
 }
 
 void Scumm_v2::o2_restart() {
+	warning("o2_restart NYI");
 }
 
 void Scumm_v2::o2_drawObject() {
