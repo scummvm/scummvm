@@ -247,7 +247,10 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		}
 		drawConfigPanel();
 	} else if (zoneNum == ZN_VOICE_TOGGLE) {
-		_vm->sound()->toggleSpeech();
+		if (_vm->resource()->isCD())
+			_vm->sound()->toggleSpeech();
+		else
+			_vm->sound()->speechToggle(false);
 		drawConfigPanel();
 	} else if (zoneNum == ZN_TEXT_TOGGLE) {
 		_vm->subtitles(!_vm->subtitles());
