@@ -598,8 +598,8 @@ const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int
 			return NULL;
 
 		size = getResourceDataSize(offs) / 4;
-		if ((uint32)state >= (uint32)size)
-			return NULL;
+		assert((uint32)state <= (uint32)size);
+			
 
 		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
 		offs = findResourceData(tag, offs - 8);

@@ -845,6 +845,7 @@ void ScummEngine_v72he::getWizImageDim(int resnum, int state, int32 &w, int32 &h
 	const uint8 *dataPtr = getResourceAddress(rtImage, resnum);
 	assert(dataPtr);
 	const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	assert(wizh);
 	w = READ_LE_UINT32(wizh + 0x4);
 	h = READ_LE_UINT32(wizh + 0x8);
 }
@@ -1311,10 +1312,10 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 10:
 	case 11:
 	case 12:
-		warning("unhandled processWizImage mode %d", params->processMode);
+		warning("Unhandled processWizImage mode %d", params->processMode);
 		break;
 	default:
-		warning("invalid processWizImage mode %d", params->processMode);
+		debug(1, "Invalid processWizImage mode %d", params->processMode);
 	}
 }
 
