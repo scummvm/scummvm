@@ -324,7 +324,7 @@ void NewGui::line(int x, int y, int x2, int y2, NewGuiColor color) {
 
 void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level) {
 #ifdef NEWGUI_256
-	fillRect(x,y,w,h,color);
+	fillRect(x, y, w, h, color);
 #else
 	int r, g, b;
 	uint8 ar, ag, ab;

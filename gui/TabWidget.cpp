@@ -25,7 +25,7 @@
 #include "gui/newgui.h"
 
 enum {
-	kTabHeight = 14,
+	kTabHeight = 15,
 	
 	kTabLeftOffset = 4,
 	kTabSpacing = 2,
@@ -115,8 +115,9 @@ void TabWidget::drawWidget(bool hilite) {
 	int i, x = _x + kTabLeftOffset;
 	for (i = 0; i < _tabs.size(); ++i) {
 		NewGuiColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
-		gui->box(x, _y, _tabWidth, kTabHeight, color, color);
-		gui->drawString(_tabs[i].title, x + kTabPadding, _y + 4, _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
+		int yOffset = (i == _activeTab) ? 0 : 2; 
+		gui->box(x, _y + yOffset, _tabWidth, kTabHeight - yOffset, color, color);
+		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset/2 + 4, _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
 		x += _tabWidth + kTabSpacing;
 	}
 
