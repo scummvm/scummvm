@@ -148,7 +148,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			rect.right = rect.left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (rect.left >= (int)_outwidth) {
+				if (rect.left >= _outwidth) {
 					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
@@ -205,10 +205,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
 
-	if (rect.top >= (int)_outheight || rect.bottom <= 0)
+	if (rect.top >= _outheight || rect.bottom <= 0)
 		return 0;
 
-	if (rect.left >= (int)_outwidth || rect.right <= 0)
+	if (rect.left >= _outwidth || rect.right <= 0)
 		return 0;
 
 	v1.replen = 0;
@@ -254,10 +254,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (rect.left < 0)
 		rect.left = 0;
 
-	if ((uint) rect.top > _outheight)
+	if (rect.top > _outheight)
 		rect.top = 0;
 
-	if ((uint) rect.bottom > _outheight)
+	if (rect.bottom > _outheight)
 		rect.bottom = _outheight;
 
 	if (_draw_top > rect.top)
@@ -352,7 +352,8 @@ void CostumeRenderer::procC64(int actor) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len;
-	uint y, height;
+	int y;
+	uint height;
 	byte color, pcolor;
 	bool rep;
 
@@ -409,7 +410,7 @@ void CostumeRenderer::procC64(int actor) {
 				height = _height;
 				y = v1.y;
 				v1.x += 8 * v1.scaleXstep;
-				if (v1.x < 0 || v1.x >= (int)_outwidth)
+				if (v1.x < 0 || v1.x >= _outwidth)
 					return;
 				mask = v1.mask_ptr;
 				v1.destptr += 8 * v1.scaleXstep;
@@ -426,7 +427,8 @@ void CostumeRenderer::proc3() {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
-	uint y, color, height, pcolor;
+	int y;
+	uint color, height, pcolor;
 	const byte *scaleytab;
 	bool masked;
 
@@ -482,7 +484,7 @@ void CostumeRenderer::proc3() {
 
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= (int)_outwidth)
+					if (v1.x < 0 || v1.x >= _outwidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -501,7 +503,7 @@ void CostumeRenderer::proc3_ami() {
 	byte *dst;
 	byte maskbit, len, height, width;
 	int color;
-	uint y;
+	int y;
 	bool masked;
 	int oldXpos, oldScaleIndexX;
 
@@ -525,7 +527,7 @@ void CostumeRenderer::proc3_ami() {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
 				masked = (y >= _outheight) || v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
-				if (color && v1.x >= 0 && v1.x < (int)_outwidth && !masked) {
+				if (color && v1.x >= 0 && v1.x < _outwidth && !masked) {
 					*dst = _palette[color];
 				}
 
