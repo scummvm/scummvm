@@ -71,9 +71,7 @@ public:
 	// Dialogs
 	void pauseDialog();
 	void saveloadDialog();
-	void aboutDialog();
 	void optionsDialog();
-	void soundDialog();
 
 	void loop();
 
@@ -145,13 +143,6 @@ public:
 	void drawString(const char *str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
 
 	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
-
-	// Query a string from the resources
-	const char *queryResString(int stringno);
-	
-	// Query a custom string. This is in a seperate method so that we
-	// can easily localize the messages in the future if we want to.
-	const char *queryCustomString(int stringno);
 };
 
 #endif

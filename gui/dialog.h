@@ -22,14 +22,9 @@
 #define DIALOG_H
 
 #include "scummsys.h"
-#include "widget.h"
-#include "ListWidget.h"
+#include "widget.h"	// For CommandReceiver
 
 class NewGui;
-class Scumm;
-
-#define RES_STRING(id)		_gui->queryResString(id)
-#define CUSTOM_STRING(id)	_gui->queryCustomString(id)
 
 // Some "common" commands sent to handleCommand()
 enum {
@@ -75,96 +70,7 @@ public:
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
 
-	void addResText(int x, int y, int w, int h, int resID);
 	void addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey);
 };
-
-
-class SaveLoadDialog : public Dialog {
-public:
-	SaveLoadDialog(NewGui *gui, Scumm *scumm);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-protected:
-	Scumm *_scumm;
-	ListWidget	*_savegameList;
-};
-
-
-class AboutDialog : public Dialog {
-public:
-	AboutDialog(NewGui *gui);
-};
-
-class SoundDialog;
-class KeysDialog;
-class MiscDialog;
-
-class OptionsDialog : public Dialog {
-protected:
-	SoundDialog		*_soundDialog;
-	KeysDialog		*_keysDialog;
-	MiscDialog		*_miscDialog;
-
-public:
-	OptionsDialog(NewGui *gui);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-};
-
-class PauseDialog : public Dialog {
-public:
-	PauseDialog(NewGui *gui);
-
-	virtual void handleMouseDown(int x, int y, int button, int clickCount)
-		{ close(); }
-	virtual void handleKeyDown(char key, int modifiers)
-		{
-			if (key == 32)
-				close();
-			else
-				Dialog::handleKeyDown(key, modifiers);
-		}
-
-	// Enforce no transparency!
-	virtual void	setupScreenBuf() {}
-	virtual void	teardownScreenBuf() {}
-
-};
-
-
-class SoundDialog : public Dialog {
-public:
-	SoundDialog(NewGui *gui, Scumm *scumm);
-
-	enum {
-		kMasterVolumeChanged	= 'mavc',
-		kMusicVolumeChanged		= 'muvc',
-		kSfxVolumeChanged		= 'sfvc',
-		kOKCmd					= 'ok  ',
-		kCancelCmd				= 'cncl',
-	};
-
-	virtual void open();
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-protected:
-	Scumm *_scumm;
-	
-	int _soundVolumeMaster;
-	int _soundVolumeMusic;
-	int _soundVolumeSfx;
-
-	SliderWidget *masterVolumeSlider;
-	SliderWidget *musicVolumeSlider;
-	SliderWidget *sfxVolumeSlider;
-	
-	StaticTextWidget *masterVolumeLabel;
-	StaticTextWidget *musicVolumeLabel;
-	StaticTextWidget *sfxVolumeLabel;
-};
-
 
 #endif
