@@ -1246,10 +1246,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
-			if (flag & dbClear || !lightsOn)
-				clear8Col(backbuff_ptr, vs->pitch, height);
-			else
+			if (lightsOn)
 				copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, height);
+			else
+				clear8Col(backbuff_ptr, vs->pitch, height);
 		}
 		CHECK_HEAP;
 

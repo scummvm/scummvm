@@ -295,8 +295,7 @@ public:
 
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
-		dbDrawMaskOnAll = 2,
-		dbClear = 4
+		dbDrawMaskOnAll = 2
 	};
 };
 
