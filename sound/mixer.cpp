@@ -1183,7 +1183,6 @@ ChannelVorbis::~ChannelVorbis() {
 #endif
 
 void ChannelVorbis::mix(int16 *data, uint len) {
-
 #ifdef SOX_HACK
 	assert(_input);
 	assert(_converter);
@@ -1194,7 +1193,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 		return;
 	}
 
-	const int volume = _mixer->getVolume();
+	const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 	st_size_t tmpLen = len;
 	_converter->flow(*_input, data, &tmpLen, volume);
 #else
