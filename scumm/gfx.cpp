@@ -203,7 +203,7 @@ void Scumm::getGraphicsPerformance() {
 		initScreens(0, 0, _screenWidth, _screenHeight);
 	}
 
-	if (!(_features & GF_SMALL_HEADER))	// Variable is reserved for game scripts in earlier games
+	if (VAR_PERFORMANCE_1 != 0xFF)	// Variable is reserved for game scripts in earlier games
 		VAR(VAR_PERFORMANCE_1) = 0;
 
 	for (i = 10; i != 0; i--) {
@@ -211,7 +211,7 @@ void Scumm::getGraphicsPerformance() {
 		drawDirtyScreenParts();
 	}
 
-	if (!(_features & GF_SMALL_HEADER))	// Variable is reserved for game scripts in earlier games
+	if (VAR_PERFORMANCE_2 != 0xFF)	// Variable is reserved for game scripts in earlier games
 		VAR(VAR_PERFORMANCE_2) = 0;
 
 	if (_features & GF_AFTER_V7)

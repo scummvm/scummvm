@@ -795,7 +795,12 @@ void Scumm::initScummVars() {
 	if (!(_features & GF_AFTER_V6))
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
-	if (!(_features & GF_AFTER_V7)) {
+	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
+		VAR(VAR_CURRENTDISK) = 1;
+		VAR(VAR_LANGUAGE) = _language;
+	} else if (_features & GF_AFTER_V7) {
+		VAR(VAR_V6_EMSSPACE) = 10000;
+	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
 		VAR(VAR_SOUNDCARD) = 3;
@@ -815,14 +820,8 @@ void Scumm::initScummVars() {
 
 		// Setup light
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
-	} else {
-		VAR(VAR_V6_EMSSPACE) = 10000;
 	}
 
-	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
-		VAR(VAR_CURRENTDISK) = 1;
-		VAR(VAR_LANGUAGE) = _language;
-	}
 
 	VAR(VAR_CHARINC) = 4;
 	VAR(VAR_TALK_ACTOR) = 0;
