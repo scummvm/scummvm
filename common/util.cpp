@@ -140,7 +140,7 @@ const LanguageDescription g_languages[] = {
 	{"kr", "Korean", KO_KOR},
 	{"gb", "English (GB)", EN_GRB},
 	{"se", "Swedish", SE_SWE},
-	{"hb", "Hebrew", HB_HEB},
+	{"hb", "Hebrew", HB_ISR},
 	{"ru", "Russian", RU_RUS},
 	{"cz", "Czech", CZ_CZE},
 	{"nl", "Dutch", NL_NLD},

@@ -107,7 +107,7 @@ enum Language {
 	KO_KOR = 8,
 	SE_SWE = 9,
 	EN_GRB = 10,
-	HB_HEB = 20,
+	HB_ISR = 20,
 	RU_RUS = 21,
 	CZ_CZE = 22,
 	NL_NLD = 23
