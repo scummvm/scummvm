@@ -105,9 +105,6 @@ public:
 /**
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
- *
- * Currently not used anywhere, just a proof of concept, and meant to give an
- * idea of what streams can be used for.
  */
 class MemoryReadStream : public ReadStream {
 private:
