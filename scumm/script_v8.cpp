@@ -979,25 +979,37 @@ void Scumm_v8::o8_kludge()
 
 	switch (args[0]) {
 	case 11:
+		warning("o8_kludge: ObjectsFindObjectRelNum(%d)", args[1]);
+		// TODO
+		break;
+	case 15:
+		// not used
+		break;
+	case 22:
+		warning("o8_kludge: BannerSetBannerColor(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		break;
+	case 29:
+		warning("o8_kludge: opcode 29 (%d, %d)", args[1], args[2]);
+		break;
+	case 108:
+		warning("o8_kludge: PaletteBuildRedirection(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		break;
 	case 12:
 	case 13:
 	case 14:
 	case 20:
 	case 21:
-	case 22:
 	case 23:
 	case 24:
 	case 25:
 	case 26:
 	case 27:
 	case 28:
-	case 29:
 	case 30:
 	case 31:
 	case 32:
 	case 33:
 	case 34:
-	case 108:
 	case 109:
 	case 118:
 	case 119:
