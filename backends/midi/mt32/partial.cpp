@@ -32,7 +32,7 @@ Partial::Partial(Synth *useSynth) {
 	ownerPart = -1;
 	poly = NULL;
 	pair = NULL;
-};
+}
 
 int Partial::getOwnerPart() {
 	return ownerPart;
@@ -881,4 +881,4 @@ void Partial::startDecay(int envnum, Bit32s startval) {
 		break;
 	}
 	tStat->envsize++;
-};
+}

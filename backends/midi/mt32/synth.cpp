@@ -680,7 +680,7 @@ bool Synth::open(SynthProperties &useProp) {
 
 	printDebug("**************** Initialisation complete ****************");
 	return true;
-};
+}
 
 void Synth::close(void) {
 	if (!isOpen)
@@ -712,7 +712,7 @@ void Synth::close(void) {
 	}
 
 	isOpen=false;
-};
+}
 
 void Synth::playMsg(Bit32u msg) {
 	unsigned char code = (unsigned char)((msg & 0xf0) >> 4);
@@ -807,7 +807,7 @@ void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char 
 	}
 
 	//midiOutShortMsg(m_out, msg);
-};
+}
 
 void Synth::playSysex(Bit8u * sysex,Bit32u len) {
 	if (len < 3) {
@@ -1126,7 +1126,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 	} else {
 		printDebug("Sysex write to unrecognised address %06x", SYSEXMEMADDR(addr));
 	}
-};
+}
 
 int Synth::dumpSysex(char *filename) {
 	File *file = openFile(filename, File::OpenMode_write);
