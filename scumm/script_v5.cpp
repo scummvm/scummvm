@@ -1948,7 +1948,7 @@ void ScummEngine_v5::o5_roomOps() {
 			delete mgr;
 			break;
 		}
-	case 14:	// SO_SAVE_STRING
+	case 14:	// SO_LOAD_STRING
 		{
 			SaveFile *file;
 			char filename[256], *s;

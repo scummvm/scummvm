@@ -675,13 +675,13 @@ void ScummEngine_v2::o2_actorOps() {
 		return;
 	}
 
-	a = derefActor(act, "actorSet");
+	a = derefActor(act, "actorOps");
 
 	switch (_opcode) {
-	case 1: 	// Actor Sound
+	case 1: 	// SO_SOUND
 		a->sound[0] = arg;
 		break;
-	case 2:		// Actor Set Color
+	case 2:		// SO_PALETTE
 		if (_version == 1)
 			i = act;
 		else
@@ -690,13 +690,13 @@ void ScummEngine_v2::o2_actorOps() {
 		a->palette[i] = arg;
 		a->needRedraw = true;
 		break;
-	case 3:		// Actor Name
+	case 3:		// SO_ACTOR_NAME
 		loadPtrToResource(rtActorName, a->number, NULL);
 		break;
-	case 4:		// Actor Costume
+	case 4:		// SO_COSTUME
 		a->setActorCostume(arg);
 		break;
-	case 5:		// Talk Color
+	case 5:		// SO_TALK_COLOR
 		if ((_gameId == GID_MANIAC) && (_version == 1))
 			v1_mm_actor_speech_color[act] = arg;
 		else
@@ -783,7 +783,7 @@ void ScummEngine_v2::o2_verbOps() {
 	int slot, state;
 	
 	switch (verb) {
-	case 0:		// Delete Verb
+	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(0x80) + 1;
 		assert(0 < slot && slot < _maxVerbs);
 
@@ -1243,7 +1243,7 @@ void ScummEngine_v2::o2_lights() {
 				VAR(VAR_CURRENT_LIGHTS) = 4;
 			else 
 				VAR(VAR_CURRENT_LIGHTS) = 0;
-;		} else
+		} else
 			VAR(VAR_CURRENT_LIGHTS) = a;
 	} else if (c == 1) {
 		_flashlight.xStrips = a;
@@ -1325,7 +1325,7 @@ void ScummEngine_v2::o2_roomOps() {
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
-	case 1:											/* room scroll */
+	case 1:			// SO_ROOM_SCROLL
 		a *= 8;
 		b *= 8;
 		if (a < (_screenWidth / 2))
@@ -1339,7 +1339,7 @@ void ScummEngine_v2::o2_roomOps() {
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
-	case 2:											/* room color */
+	case 2:			// SO_ROOM_COLOR
 		if (_version == 1) {
 			// V1 zak needs to know when room color is changed
 			_roomPalette[0] = 255;
