@@ -31,6 +31,8 @@
 
 AudioCDManager::AudioCDManager() {
 	_current_cache = 0;
+	_cd.playing = false;
+	memset(_track_info, 0, sizeof(_track_info));
 }
 
 void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
