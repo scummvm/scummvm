@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.3.1cvs, Copyright 2001-2002 The ScummVM team</string>
+	<string>0.3.1cvs, Copyright 2001-2003 The ScummVM team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -23,6 +23,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2002 The ScummVM team</string>
+	<string>Copyright 2001-2003 The ScummVM team</string>
 </dict>
 </plist>
