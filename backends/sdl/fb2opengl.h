@@ -124,7 +124,7 @@ void FB2GL::makeTextures() {
 
 	if (flags & FB2GL_RGBA) {
 		mode = GL_RGBA;
-		buffer1 = (unsigned char *)RGBAFrameBuffer1;
+		buffer1 = RGBAFrameBuffer1;
 		buffer2 = RGBAFrameBuffer2;
 	} else {
 		mode = GL_RGBA;
