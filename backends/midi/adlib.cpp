@@ -1412,7 +1412,7 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument *instr, byt
 	port = channel_mappings_2[chan];
 	adlib_write(port + 0x20, instr->flags_2);
 	if (!_game_SmallHeader)
-		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
+		adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
 	else
 		adlib_write(port + 0x40, instr->oplvl_2 );
 	adlib_write(port + 0x60, 0xff & (~instr->atdec_2));
