@@ -138,8 +138,8 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	clearIOFailed();
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
-	if (directory) {
-		_handle = fopenNoCase(filename, directory, modeStr);
+	if (mode == kFileWriteMode || directory) {
+		_handle = fopenNoCase(filename, directory ? directory : "", modeStr);
 	} else {
 		Common::StringList::const_iterator x;
 		// Try all default directories
