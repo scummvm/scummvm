@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 
+#include "gui/about.h"
 #include "gui/message.h"
 
 #include "simon/simon.h"
@@ -4847,7 +4848,11 @@ void SimonEngine::delay(uint amount) {
 					if (!_lock_counter)
 						quick_load_or_save();
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f')
+					if (event.kbd.keycode == 'a') {
+						GUI::Dialog *_aboutDialog;
+						_aboutDialog = new GUI::AboutDialog();
+						_aboutDialog->runModal();
+					} else if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
 				}
 				// Make sure backspace works right (this fixes a small issue on OS X)
