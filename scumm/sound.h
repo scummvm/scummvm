@@ -91,7 +91,7 @@ public:
 
 protected:
 	File *openSfxFile();
-	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle);
+	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id = -1);
 	bool isSfxFinished() const;
 };
 

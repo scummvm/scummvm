@@ -432,9 +432,7 @@ void Sound::processSfxQueues() {
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom() && (finished || !_endOfMouthSync)) {
-				b = true;
-				if (!finished)
-					b = isMouthSyncOff(_curSoundPos);
+				b = finished || isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
 					if (_talk_sound_frame != -1) {
@@ -466,6 +464,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	int num = 0, i;
 	int size;
 	byte *sound;
+	int id = -1;
 
 	if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
 		char filename[30];
@@ -534,14 +533,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
 	// from being interrupted.
 
-	int talkChannel = (_talkChannelHandle - 1);	// EVIL HACK!!!
 	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
-		for (i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
-			if (i != talkChannel) {
-				_scumm->_mixer->stopHandle(i+1);	// EVIL HACK!!!!
-			}
-		}
+		id = 777777;
+		_scumm->_mixer->stopID(id);
 	}
 
 	if (b > 8) {
@@ -582,7 +577,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	_curSoundPos = 0;
 	_mouthSyncMode = true;
 
-	startSfxSound(_sfxFile, size, handle);
+	startSfxSound(_sfxFile, size, handle, id);
 }
 
 void Sound::stopTalkSound() {
@@ -825,7 +820,7 @@ void Sound::pauseSounds(bool pause) {
 	}
 }
 
-void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle) {
+void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
 	char ident[8];
 	uint size = 0;
 	int rate, comp;
@@ -837,11 +832,11 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 	if (file_size > 0) {
 		if (_vorbis_mode) {
 #ifdef USE_VORBIS
-			_scumm->_mixer->playVorbis(handle, file, file_size);
+			_scumm->_mixer->playVorbis(handle, file, file_size, 255, 0, id);
 #endif
 		} else {
 #ifdef USE_MAD
-			_scumm->_mixer->playMP3(handle, file, file_size);
+			_scumm->_mixer->playMP3(handle, file, file_size, 255, 0, id);
 #endif
 		}
 		return;
@@ -887,7 +882,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 		error("startSfxSound: cannot read %d bytes", size);
 	}
 
-	_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+	_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, id);
 }
 
 File *Sound::openSfxFile() {
