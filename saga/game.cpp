@@ -283,7 +283,7 @@ GAMEDESC GameDescs[] = {
 		"I Have No Mouth and I Must Scream (DOS)",
 		640, 480,
 		304,
-		1,
+		152,
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFiles),
 		IHNMCD_GameFiles,
