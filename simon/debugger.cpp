@@ -75,10 +75,11 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
-	uint music = atoi(argv[1]);
-	if (_vm->_game & GF_SIMON2) {
-		DebugPrintf("No support for Simon the Sorcerer 2\n");
-	} else if (music > 0 && music < 35) {
+	if (argc > 1) {
+		uint music = atoi(argv[1]);
+		if (_vm->_game & GF_SIMON2)
+			DebugPrintf("No support for Simon the Sorcerer 2\n");
+		else if (music < 35)
 		_vm->loadMusic(music);
 	} else
 		DebugPrintf("Syntax: music <musicnum>\n");
