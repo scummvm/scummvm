@@ -682,7 +682,6 @@ protected:
 	void o8_blastText();
 
 	void o8_cursorCommand();
-	void o8_createBoxMatrix();
 	void o8_resourceRoutines();
 	void o8_roomOps();
 	void o8_actorOps();

@@ -251,7 +251,7 @@ void ScummEngine_v8::setupOpcodes() {
 		OPCODE(o6_pickupObject),
 		OPCODE(o6_setBoxFlags),
 		/* A8 */
-		OPCODE(o8_createBoxMatrix),
+		OPCODE(o6_createBoxMatrix),
 		OPCODE(o6_invalid),
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
@@ -777,19 +777,6 @@ void ScummEngine_v8::o8_cursorCommand() {
 
 	VAR(VAR_CURSORSTATE) = _cursor.state;
 	VAR(VAR_USERPUT) = _userPut;
-}
-
-void ScummEngine_v8::o8_createBoxMatrix() {
-	int i;
-	Actor *a;
-
-	createBoxMatrix();
-
-	for (i = 1; i < _numActors; i++) {
-		a = &_actors[i];
-		if (a && a->isInCurrentRoom())
-			a->adjustActorPos();
-	}
 }
 
 void ScummEngine_v8::o8_resourceRoutines() {
