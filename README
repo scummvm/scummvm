@@ -145,9 +145,9 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
        Beneath a Steel Sky:
-                - Only version 0.0368 has been tested
-                - Restarting is not supported yet
-                - Wrong SFX are played often
+                - Floppy demo does not work at all
+                - Only versions 0.0288, 0.0368 and 0.0372 were tested
+                - Menu item descriptions are not shown
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
