@@ -267,6 +267,7 @@ void Scumm_v8::setupScummVars()
 	VAR_EGO = 126;
 
 	VAR_DEBUGMODE = 130;
+	VAR_KEYPRESS = 132;
 	
 	VAR_CHARINC = 221;
 	
