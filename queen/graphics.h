@@ -95,6 +95,7 @@ public:
 	~Graphics();
 
 	void unpackControlBank();
+	void setupArrows();
 	void setupMouseCursor();
 
 	void drawBob(const BobSlot *bs, const BobFrame *bf, const Box *box, int16 x, int16 y);
@@ -140,6 +141,8 @@ public:
 	void update(uint16 room);
 
 	enum {
+		ARROW_BOB_UP        =  62,
+		ARROW_BOB_DOWN      =  63,
 		MAX_BOBS_NUMBER     =  64,
 		MAX_STRING_LENGTH   = 255,
 		MAX_STRING_SIZE     = (MAX_STRING_LENGTH + 1),
