@@ -28,6 +28,7 @@ extern const Char *SCUMMVM_SAVEPATH;
 //#define DISABLE_SCUMM
 #define DISABLE_SKY
 #define DISABLE_SIMON
+#define DISABLE_SWORD2
 
 #define appFileCreator			'ScVM'
 
