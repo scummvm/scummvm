@@ -884,10 +884,10 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	init();
 
 	while (true) {
+		_scumm->_system->lock_mutex(_mutex);
 		_scumm->processKbd();
 		_scumm->waitForTimer(1);
 		if(_updateNeeded == true) {
-			_scumm->_system->lock_mutex(_mutex);
 			
 			uint32 end_time, start_time = _scumm->_system->get_msecs();
 			_scumm->_system->update_screen();
@@ -895,8 +895,8 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			end_time = _scumm->_system->get_msecs();
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
-			_scumm->_system->unlock_mutex(_mutex);
 		}
+		_scumm->_system->unlock_mutex(_mutex);
 		if (_scumm->_videoFinished == true)
 			break;
 		if (_scumm->_saveLoadFlag)
