@@ -356,15 +356,25 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ll.y, box->lr.y);
 		}
 	} else if (_version <= 2) {
+		// We have to adjust the x/y values of the walk box, since the coordinates
+		// given in the data files are *character* coordinates. Each character is
+		// 8 pixels wide and 2 pixels high. To compute the leftmost *pixel*
+		// coordinate of the walkbox, we just multiply the left most char-x by 8.
+		// For the rightmost, however, we multiply by 8 and then add 7 - to account
+		// for the fact that the character has a width of 8 pixels.
+		// We proceeed likewise for the y coordinates.
+
 		box->ul.x = bp->v2.ulx * 8;
 		box->ul.y = bp->v2.uy * 2;
-		box->ur.x = bp->v2.urx * 8;
+		box->ur.x = bp->v2.urx * 8 + 7;
 		box->ur.y = bp->v2.uy * 2;
 	
 		box->ll.x = bp->v2.llx * 8;
-		box->ll.y = bp->v2.ly * 2;
-		box->lr.x = bp->v2.lrx * 8;
-		box->lr.y = bp->v2.ly * 2;
+		box->ll.y = bp->v2.ly * 2 + 1;
+		box->lr.x = bp->v2.lrx * 8 + 7;
+		box->lr.y = bp->v2.ly * 2 + 1;
+		
+		
 	} else {
 		box->ul.x = (int16)READ_LE_UINT16(&bp->old.ulx);
 		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);
