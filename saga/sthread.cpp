@@ -230,7 +230,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		saved_offset = thread->i_offset;
 		in_char = scriptS.readByte();
 
-		debug(0, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
+		debug(1, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
 
 		switch (in_char) {
 		case 0x01: // nextblock
