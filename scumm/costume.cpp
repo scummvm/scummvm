@@ -436,7 +436,9 @@ void LoadedCostume::loadCostume(int id) {
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a seperate
 	// _baseptr value (instead of adding tons of if's throughout the code).
-	if (_vm->_features & GF_OLD_BUNDLE) {
+	if (_vm->_version == 1)
+		_baseptr += 2;
+	else if (_vm->_features & GF_OLD_BUNDLE) {
 		_numColors = 1;
 		_baseptr += 2;
 	}
@@ -510,7 +512,10 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
+	if (_version == 1)
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 30);
+	else
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
 
 	if (r == lc._baseptr) {
 		return;
@@ -573,6 +578,8 @@ void CostumeRenderer::setPalette(byte *palette) {
 			memset(_palette, 8, 16);
 			_palette[12] = 0;
 		}
+		if (_vm->_version == 1)
+			return;
 		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
 		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
