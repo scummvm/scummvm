@@ -67,25 +67,21 @@
 	} while (0)
 
 #ifdef __PALM_OS__
-static int32 *codec47_8x8_table_small_line1;
-static int32 *codec47_8x8_table_small_line2;
-static int32 *codec47_8x8_table_big_line1;
-static int32 *codec47_8x8_table_big_line2;
 static int16 *codec47_table;
 #else
-static int32 codec47_8x8_table_small_line1[] = {
+static int32 codec47_table_small1[] = {
   0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static int32 codec47_8x8_table_small_line2[] = {
+static int32 codec47_table_small2[] = {
   0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static int32 codec47_8x8_table_big_line1[] = {
+static int32 codec47_table_big1[] = {
   0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static int32 codec47_8x8_table_big_line2[] = {
+static int32 codec47_table_big2[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
@@ -154,8 +150,8 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 	int i, x, y;
 
 	if (param == 8) {
-		table47_1 = codec47_8x8_table_big_line1;
-		table47_2 = codec47_8x8_table_big_line2;
+		table47_1 = codec47_table_big1;
+		table47_2 = codec47_table_big2;
 		ptr = _tableBig + 384;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -167,8 +163,8 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 			ptr += 388;
 		}
 	} else if (param == 4) {
-		table47_1 = codec47_8x8_table_small_line1;
-		table47_2 = codec47_8x8_table_small_line2;
+		table47_1 = codec47_table_small1;
+		table47_2 = codec47_table_small2;
 		ptr = _tableSmall + 96;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -624,17 +620,17 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 #ifdef __PALM_OS__
 #include "scumm_globals.h" // init globals
 void Codec47_initGlobals() {
-	GSETPTR(codec47_8x8_table_small_line1,	GBVARS_CODEC47_8X8TABLE_SMALL_LINE1_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_8x8_table_small_line2,	GBVARS_CODEC47_8X8TABLE_SMALL_LINE2_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_8x8_table_big_line1,	GBVARS_CODEC47_8X8TABLE_BIG_LINE1_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_8x8_table_big_line2,	GBVARS_CODEC47_8X8TABLE_BIG_LINE2_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_table_small1,	GBVARS_CODEC47TABLE_SMALL1_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_table_small2,	GBVARS_CODEC47TABLE_SMALL2_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_table_big1,	GBVARS_CODEC47TABLE_BIG1_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_table_big2,	GBVARS_CODEC47TABLE_BIG2_INDEX,	int32	, GBVARS_SCUMM)
 	GSETPTR(codec47_table,	GBVARS_CODEC47TABLE_INDEX,	int16	, GBVARS_SCUMM)
 }
 void Codec47_releaseGlobals() {
-	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_SMALL_LINE1_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_SMALL_LINE2_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_BIG_LINE1_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_BIG_LINE2_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47TABLE_SMALL1_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47TABLE_SMALL2_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47TABLE_BIG1_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47TABLE_BIG2_INDEX		, GBVARS_SCUMM)
 	GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX		, GBVARS_SCUMM)
 }
 #endif
