@@ -52,6 +52,8 @@ struct FxDef {
 
 class SoundMixer;
 class ResMan;
+#define WAVE_VOL_TAB_LENGTH 480
+#define WAVE_VOL_THRESHOLD 190000 //120000
 
 class SwordSound {
 public:
@@ -60,11 +62,10 @@ public:
 	void newScreen(uint32 screen);
 	void quitScreen(void);
 
-	bool startSpeech(uint16 roomNo, uint16 localNo); // this should work more or less.
-													 // Maybe we'll need a delay of 3 gameCycles.
+	bool startSpeech(uint16 roomNo, uint16 localNo);
 	bool speechFinished(void);
 	void stopSpeech();
-	bool amISpeaking(void); // this is supposed to return if the sounddata is near the ending or very silent...
+	bool amISpeaking(void);
 
 	void fnStopFx(int32 fxNo);
 	int addToQueue(int32 fxNo);
@@ -77,6 +78,9 @@ private:
 	void closeCowSystem(void);
 
 	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size);
+	void calcWaveVolume(int16 *data, uint32 length);
+	bool _waveVolume[WAVE_VOL_TAB_LENGTH];
+	uint16 _waveVolPos;
 	File		 _cowFile;
 	uint32		 *_cowHeader;
 	uint32		 _cowHeaderSize;

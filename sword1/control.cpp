@@ -31,6 +31,7 @@
 #include "sword1.h"
 #include "common/util.h"
 #include "mouse.h"
+#include "music.h"
 
 #define SAVEFILE_WRITE true
 #define SAVEFILE_READ false
@@ -144,11 +145,12 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, const char *savePath) {
+SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordMusic *pMusic, const char *savePath) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
 	_mouse = pMouse;
+	_music = pMusic;
 	strcpy(_savePath, savePath);
 }
 
@@ -173,8 +175,10 @@ uint8 SwordControl::runPanel(void) {
 	bool fullRefresh = false;
 	_mouse->controlPanel(true);
 	uint8 retVal = CONTROL_NOTHING_DONE;
+	_music->startMusic(61, 1);
 
 	do {
+		_music->stream();
 		if (newMode) {
 			mode = newMode;
 			fullRefresh = true;
@@ -214,6 +218,7 @@ uint8 SwordControl::runPanel(void) {
 	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
 	_mouse->controlPanel(false);
+	_music->startMusic(SwordLogic::_scriptVars[CURRENT_MUSIC], 1);
 	return retVal;
 }
 
@@ -306,7 +311,7 @@ void SwordControl::setupMainPanel(void) {
 	}
 
 	if (SwordEngine::_systemVars.deathScreenFlag == 2) // end of game
-		renderText(_lStrings[STR_THE_END], 480, 188, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_THE_END], 480, 188 + 40, TEXT_RIGHT_ALIGN);
 
 	if (SwordEngine::_systemVars.deathScreenFlag == 0) { // normal panel
 		renderText(_lStrings[STR_SAVE], 180, 188 + 40, TEXT_LEFT_ALIGN);
@@ -321,7 +326,7 @@ void SwordControl::setupMainPanel(void) {
 	} else {
 		renderText(_lStrings[STR_RESTORE], 285, 224 + 40, TEXT_LEFT_ALIGN);
 		if (SwordEngine::_systemVars.deathScreenFlag == 3) // just started game
-			renderText(_lStrings[STR_START], 285, 260, TEXT_LEFT_ALIGN);
+			renderText(_lStrings[STR_START], 285, 260 + 40, TEXT_LEFT_ALIGN);
 		else
 			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
 		renderText(_lStrings[STR_QUIT], 285, 296 + 40, TEXT_LEFT_ALIGN);
@@ -543,7 +548,7 @@ void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
 	while (*str) {
 		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
 
-		FrameHeader *chSpr = _resMan->fetchFrame(_font, *str - 32);
+		FrameHeader *chSpr = _resMan->fetchFrame(_font, ((uint8)*str) - 32);
 		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
 		for (uint16 cnty = 0; cnty < FROM_LE_16(chSpr->height); cnty++) {
 			for (uint16 cntx = 0; cntx < FROM_LE_16(chSpr->width); cntx++) {
@@ -563,7 +568,6 @@ void SwordControl::renderVolumeBar(uint8 id) {
 
 }
 
-// I can hardly believe this is all it takes for loading and saving...
 void SwordControl::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
@@ -703,9 +707,9 @@ void SwordControl::delay(uint32 msecs) {
 }
 
 const ButtonInfo SwordControl::_deathButtons[3] = {
-	{250, 224, SR_BUTTON, BUTTON_RESTORE_PANEL },
-	{250, 260, SR_BUTTON, BUTTON_RESTART },
-	{250, 296, SR_BUTTON, BUTTON_QUIT }
+	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
+	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART },
+	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT }
 };
 
 const ButtonInfo SwordControl::_panelButtons[8] = {

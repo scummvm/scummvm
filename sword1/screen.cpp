@@ -86,7 +86,7 @@ void SwordScreen::fadeDownPalette(void) {
 }
 
 void SwordScreen::fadeUpPalette(void) {
-	_fadingStep = 15;
+	_fadingStep = 1;
 	_fadingDirection = FADE_UP;
 }
 

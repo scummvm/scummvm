@@ -864,12 +864,11 @@ int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 
 }
 
 int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_scriptVars[NEW_PALETTE] = 1;
+	_screen->fadeUpPalette();
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-
 	_scriptVars[RETURN_VALUE] = (uint8)_screen->stillFading();
 	return SCRIPT_CONT;
 }
@@ -901,7 +900,7 @@ int SwordLogic::fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int
 
 int SwordLogic::fnPlaySequence(BsObject *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	warning("fnPlaySequence(%d) called", sequenceId);
-	_scriptVars[NEW_PALETTE] = 1;
+	//_scriptVars[NEW_PALETTE] = 1;
 	/* the logic usually calls fnFadeDown before playing the sequence, so we have to
 	   set NEW_PALETTE now to force a palette refresh */
 	return SCRIPT_CONT;

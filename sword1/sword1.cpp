@@ -148,7 +148,7 @@ void SwordEngine::initialize(void) {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
-	_control = new SwordControl(_resMan, _objectMan, _system, _mouse, getSavePath());
+	_control = new SwordControl(_resMan, _objectMan, _system, _mouse, _music, getSavePath());
 }
 
 void SwordEngine::reinitialize(void) {
@@ -1023,6 +1023,7 @@ void SwordEngine::startPositions(int32 startNumber) {
 	compact = (BsObject*)_objectMan->fetchObject(PLAYER);
 	_logic->fnEnterSection(compact, PLAYER, startNumber, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
 	_systemVars.deathScreenFlag = 0;
+	_systemVars.wantFade = true;
 }
 
 void SwordEngine::go(void) {
@@ -1055,6 +1056,8 @@ void SwordEngine::go(void) {
 		reinitialize();
 		if (action == CONTROL_GAME_RESTORED)
 			_control->doRestore();
+		else if (action == CONTROL_RESTART_GAME)
+			startPositions(1);
 		_systemVars.forceRestart = false;
 		_systemVars.deathScreenFlag = 0;
 	} while (true);
@@ -1108,7 +1111,7 @@ uint8 SwordEngine::mainLoop(void) {
 
 			if (_systemVars.forceRestart)
 				retCode = CONTROL_RESTART_GAME;
-			else if (_keyPressed == 63) {
+			else if (((_keyPressed == 63) && (SwordLogic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.deathScreenFlag)) {
 				retCode = _control->runPanel();
 				if (!retCode)
 					_screen->refreshPalette();

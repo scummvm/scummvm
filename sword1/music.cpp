@@ -130,7 +130,7 @@ void SwordMusic::mixer(int16 *buf, uint32 len) {
 
 void SwordMusic::stream(void) {
 	// make sure we've got enough samples in buffer.
-	if ((_smpInBuf < 4 * SAMPLERATE) && _playing) {
+	if ((_smpInBuf < 4 * SAMPLERATE) && _playing && _musicFile.isOpen()) {
 		_system->lock_mutex(_mutex);
 		uint32 loadTotal = BUFSIZE - _smpInBuf;
 		while (uint32 doLoad = loadTotal) {

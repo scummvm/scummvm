@@ -29,7 +29,7 @@ class ObjectMan;
 class ResMan;
 class OSystem;
 class SwordMouse;
-class SwordEngine;
+class SwordMusic;
 
 #define MAX_BUTTONS 16
 
@@ -63,7 +63,7 @@ struct ButtonInfo {
 
 class SwordControl {
 public:
-	SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, const char *savePath);
+	SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordMusic *pMusic, const char *savePath);
 	~SwordControl(void);
 	uint8 runPanel(void);
 	void doRestore(void);
@@ -113,7 +113,7 @@ private:
 	ResMan *_resMan;
 	OSystem *_system;
 	SwordMouse *_mouse;
-	SwordEngine *_engine;
+	SwordMusic *_music;
 	char _savePath[256];
 	uint8 *_font;
 	uint32 _fontId;

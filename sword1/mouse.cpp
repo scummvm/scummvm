@@ -134,7 +134,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	uint16 clicked = 0;
 	if (y > 40) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
-			for (uint16 cnt = 0; cnt < _numObjs; cnt++) {
+			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
 				if ((_objList[cnt].compact->o_priority == priority) && 
 					(SwordLogic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
 					(SwordLogic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&

@@ -105,7 +105,8 @@ void SwordSound::fnStopFx(int32 fxNo) {
 }
 
 bool SwordSound::amISpeaking(void) {
-	return true;
+	_waveVolPos++;
+    return _waveVolume[_waveVolPos - 1];
 }
 
 bool SwordSound::speechFinished(void) {
@@ -202,12 +203,38 @@ int16 *SwordSound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		}
 		free(fBuf);
 		*size = resSize * 2;
+		calcWaveVolume(dstData, resSize);
 		return dstData;
 	} else {
 		free(fBuf);
 		warning("SwordSound::uncompressSpeech(): DATA tag not found in wave header");
 		*size = 0;
 		return NULL;
+	}
+}
+
+void SwordSound::calcWaveVolume(int16 *data, uint32 length) {
+	int16 *blkPos = data + 918;
+	for (uint32 cnt = 0; cnt < WAVE_VOL_TAB_LENGTH; cnt++)
+		_waveVolume[cnt] = false;
+	_waveVolPos = 0;
+	for (uint32 blkCnt = 1; blkCnt < length / 918; blkCnt++) {
+		if (blkCnt >= WAVE_VOL_TAB_LENGTH) {
+			warning("Wave vol tab too small.");
+			return;
+		}
+		int32 average = 0;		
+		for (uint32 cnt = 0; cnt < 918; cnt++)
+			average += blkPos[cnt];
+        average /= 918;
+		uint32 diff = 0;
+		for (uint32 cnt = 0; cnt < 918; cnt++) {
+			int16 smpDiff = *blkPos - average;
+			diff += (uint32)ABS(smpDiff);
+			blkPos++;
+		}
+		if (diff > WAVE_VOL_THRESHOLD)
+			_waveVolume[blkCnt - 1] = true;
 	}
 }
 
