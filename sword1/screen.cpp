@@ -285,7 +285,7 @@ void SwordScreen::newScreen(uint32 screen) {
 	_targetPalette[0] = _targetPalette[1] = _targetPalette[2] = 0;
 	_system->set_palette(_targetPalette, 0, 256);	
 	_resMan->resClose(_roomDefTable[_currentScreen].palettes[0]);
-	_resMan->resClose(_roomDefTable[_currentScreen].palettes[1]);
+	//_resMan->resClose(_roomDefTable[_currentScreen].palettes[1]);
 }
 
 void SwordScreen::quitScreen(void) {
@@ -861,24 +861,5 @@ void SwordScreen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		bsubline_4(x1, y1, x2, y2);
     } else {
 		bsubline_3(x1, y1, x2, y2);
-    }	
-
+    }
 }
-
-void SwordScreen::showBarsAndNodes(SwordRouter *router) {
-	for (uint16 cnt = 0; cnt < router->_nBars; cnt++) {
-		drawLine(router->_bars[cnt].x1 - 128, router->_bars[cnt].y1 - 128, router->_bars[cnt].x2 - 128, router->_bars[cnt].y2 - 128);
-	}
-	if (!router->_nNodes)
-		return;
-	for (uint16 cnt = 0; cnt <= router->_nNodes; cnt++) {
-		uint16 y = router->_node[cnt].y - 128;
-		uint16 x = router->_node[cnt].x - 128;
-		vline(x, y - 2, y + 2);
-		hline(x - 2, x + 2, y);
-		if (router->_node[cnt].dist != 9999) {
-			drawLine(x, y, router->_node[router->_node[cnt].prev].x - 128, router->_node[router->_node[cnt].prev].y - 128);
-		}
-	}
-}
-

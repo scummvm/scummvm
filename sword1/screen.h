@@ -19,8 +19,6 @@
  *
  */
 
-// vertical_mask from layers.c belongs here, as well.
-
 #ifndef BSSCREEN_H
 #define BSSCREEN_H
 
@@ -93,8 +91,6 @@ public:
 	void fnSetParallax(uint32 screen, uint32 resId);
 	void fnFlash(uint8 color);
 	void fnBorder(uint8 color);
-
-	void showBarsAndNodes(SwordRouter *router);
 
 private:
 	// for router debugging

@@ -50,7 +50,6 @@ public:
 	void engine(void);
 	void updateScreenParams(void);
 	void runMouseScript(BsObject *cpt, int32 scriptId);
-	SwordRouter *giveRouter(void) { return _router; }; // for router debugging
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
 private:

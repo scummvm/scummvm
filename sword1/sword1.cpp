@@ -218,7 +218,6 @@ void SwordEngine::mainLoop(void) {
 			}*/
 
 			_sound->engine();
-			_screen->showBarsAndNodes(_logic->giveRouter());
 			_screen->updateScreen();
 		//-
 			_menu->refresh(MENU_TOP);

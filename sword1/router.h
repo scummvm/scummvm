@@ -79,7 +79,7 @@ struct PathData {
 	int32	num;
 };
 
-struct FrameInfos {
+/*struct FrameInfos {
 	int32 framesPerStep, framesPerChar;
 	int32 standFrames;
 	int32 slowInFrames, slowOutFrames;
@@ -87,7 +87,7 @@ struct FrameInfos {
 	int32 walkFramesLeft, walkFramesRight;
 	uint16 startX, startY, targetX, targetY, targetDir;
 	int32 scaleA, scaleB;
-};
+};*/
 
 #define ROUTE_END_FLAG 255
 #define NO_DIRECTIONS 8
@@ -97,20 +97,21 @@ struct FrameInfos {
 
 class ObjectMan;
 class ResMan;
+class SwordScreen;
 
 class SwordRouter {
 public:
 	SwordRouter(ObjectMan *pObjMan, ResMan *pResMan);
 	~SwordRouter(void);
-	int routeFinder(int32 id, BsObject *mega, int32 x, int32 y, int32 dir);
+	int32 routeFinder(int32 id, BsObject *mega, int32 x, int32 y, int32 dir);
 	int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY);
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
 	void resetExtraData(void);
 
 	// these should be private but are read by SwordScreen for debugging:
-	int32 _nBars, _nNodes;
-	BarData _bars[O_GRID_SIZE + EXTRA_GRID_SIZE];
-	NodeData _node[O_GRID_SIZE + EXTRA_GRID_SIZE];
+	BarData   bars[O_GRID_SIZE+EXTRA_GRID_SIZE];
+	NodeData  node[O_GRID_SIZE+EXTRA_GRID_SIZE];
+	int32 nbars, nnodes;
 private:
 	// when the player collides with another mega, we'll receive a ReRouteRequest here.
 	// that's why we need to remember the player's target coordinates
@@ -122,40 +123,63 @@ private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 
-	uint8 _nWalkFrames, _nTurnFrames;
+	/*uint8 _nWalkFrames, _nTurnFrames;
 	int32 _dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
 	int32 _dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
 	int32 _modX[NO_DIRECTIONS];
 	int32 _modY[NO_DIRECTIONS];
-	int32 _diagonalx, _diagonaly;
+	int32 _diagonalx, _diagonaly;*/
 
-	RouteData _route[O_ROUTE_SIZE];
+	int32 startX, startY, startDir;
+	int32 targetX, targetY, targetDir;
+	int32 scaleA, scaleB;
+	int32 megaId;
+
+	/*RouteData _route[O_ROUTE_SIZE];
 	//int32 _routeLength;
 	PathData  _smoothPath[O_ROUTE_SIZE];
-	PathData  _modularPath[O_ROUTE_SIZE];
+	PathData  _modularPath[O_ROUTE_SIZE];*/
+	RouteData			route[O_ROUTE_SIZE];
+	PathData			smoothPath[O_ROUTE_SIZE];
+	PathData			modularPath[O_ROUTE_SIZE];
+	int32   			routeLength;
+
+	int32		framesPerStep, framesPerChar;
+	uint8		nWalkFrames, nTurnFrames;
+	int32		dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32		dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32		modX[NO_DIRECTIONS];
+	int32		modY[NO_DIRECTIONS];
+	int32		diagonalx, diagonaly;
+	int32		standFrames;
+	int32		turnFramesLeft, turnFramesRight;
+	int32		walkFramesLeft, walkFramesRight; // left/right walking turn
+	int32		slowInFrames, slowOutFrames;
 
 
-	void loadWalkResources(int32 megaId, BsObject *mega, int32 x, int32 y, int32 targetDir);
-	int getRoute(void);
-	int checkTarget(int16 x, int16 y);
+	int32 LoadWalkResources(BsObject *mega, int32 x, int32 y, int32 targetDir);
+	int32 GetRoute(void);
+	int32 CheckTarget(int32 x, int32 y);
 	
-	int scan(int32 level);	
-	int newCheck(int32 status, int16 x1, int16 x2, int16 y1, int16 y2);
-	int check(int16 x1, int16 y1, int16 x2, int16 y2);
-	int horizCheck(int16 x1, int16 y, int16 x2);
-	int vertCheck(int16 x, int16 y1, int16 y2);
-	int lineCheck(int16 x1, int16 y1, int16 x2, int16 y2);
+	int32 Scan(int32 level);	
+	int32 NewCheck(int32 status, int32 x1, int32 x2, int32 y1, int32 y2);
+	int32 Check(int32 x1, int32 y1, int32 x2, int32 y2);
+	int32 HorizCheck(int32 x1, int32 y, int32 x2);
+	int32 VertCheck(int32 x, int32 y1, int32 y2);
+	int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2);
 
-	int32 extractRoute(int32 targetDir);
+	void ExtractRoute();
 
-	void slidyPath(int32 scaleA, int32 scaleB, uint16 targetDir);
-	void slidyWalkAnimator(WalkData *walkAnim, FrameInfos *frInfo, int32 megaId);
+	int32 SlidyPath();
+	void SlidyWalkAnimator(WalkData *walkAnim);
 	
-	int32 smoothestPath(uint16 startX, uint16 startY, uint16 startDir, int32 routeLength);
-	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+	int32 SmoothestPath();
+	int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
-    int32 solidPath(int32 scaleA, int32 scaleB);
-	int32 solidWalkAnimator(WalkData *walkAnim, FrameInfos *frInfo, int32 megaId);
+    int32 SolidPath();
+	int32 SolidWalkAnimator(WalkData *walkAnim);
+	void RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
+	void BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour);
 };
 
 #endif //BSROUTER_H
