@@ -810,9 +810,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	assert(smap_ptr);
 
-	if (_vm->_features & GF_AFTER_V8)
-		smap_ptr += 24;
-
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
 	if (_vm->_features & GF_SMALL_HEADER) {
@@ -834,13 +831,30 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		} else {
 			zplane_list[1] = 0;
 		}
+	} else if (_vm->_features & GF_AFTER_V8) {
+		// Find the OFFS chunk of the ZPLN chunk
+		byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
+		
+		// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
+		// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
+		// and OFFS chunk. The content of this OFFS chunk contains the offsets to the
+		// Z-planes.
+		// We do not directly make use of this, but rather hard code offsets (like we do
+		// for all other Scumm-versions, too). Clearly this is a bit hackish, but works
+		// well enough, and there is no reason to assume that there are any cases where it
+		// might fail. Still, doing this properly would have the advantage of catching
+		// invalid/damaged data files, and allow us to exit gracefully instead of segfaulting.
+		for (i = 1; i < numzbuf; i++) {
+			zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 12;
+		}
+		
+		// A small hack to skip to the BSTR->WRAP->OFFS chunk
+		smap_ptr += 24;
 	} else {
 		for (i = 1; i < numzbuf; i++) {
 			zplane_list[i] = findResource(zplane_tags[i], ptr);
 		}
 	}
-
-
 
 	bottom = y + h;
 	if (bottom > vs->height) {
@@ -913,7 +927,11 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		// are still too unstable for me to investigate.
 
 		if (flag & dbDrawMaskOnAll) {
-			byte *z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
+			byte *z_plane_ptr;
+			if (_vm->_features & GF_AFTER_V8)
+				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
+			else
+				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
 				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 				if (_useOrDecompress && flag & dbAllowMaskOr)
@@ -933,7 +951,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
 					else
 						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-				} else
+				} else if (_vm->_features & GF_AFTER_V8)
+					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
+				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
 				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
@@ -1711,10 +1731,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 				&& _vars[VAR_SCROLL_SCRIPT]) {
 			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 			_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
-			// FIXME - HACK - for now disable scroll script in V8, until we figure out
-			// what value VAR_SCROLL_SCRIPT has.
-			if (!(_features & GF_AFTER_V8))
-				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
 		int t;
