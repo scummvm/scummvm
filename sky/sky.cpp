@@ -89,8 +89,8 @@ void SkyState::go() {
 
 	initialise();
 
-	//if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
-	//	intro();
+	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
+		intro();
 
 	while (1) {
 		delay(100);
