@@ -361,6 +361,28 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	_next_vga_timer_to_process = 0;
 
+	memset(_vc_item_array, 0, sizeof(_vc_item_array));
+	memset(_item_array_6, 0, sizeof(_item_array_6));
+
+	memset(_stringid_array_2, 0, sizeof(_stringid_array_2));
+	memset(_stringid_array_3, 0, sizeof(_stringid_array_3));
+	memset(_array_4, 0, sizeof(_array_4));
+
+	memset(_bit_array, 0, sizeof(_bit_array));
+	memset(_variableArray, 0, sizeof(_variableArray));
+
+	memset(_fcs_ptr_array_3, 0, sizeof(_fcs_ptr_array_3));
+
+	memset(_fcs_data_1, 0, sizeof(_fcs_data_1));
+	memset(_fcs_data_2, 0, sizeof(_fcs_data_2));
+
+	memset(_pathfind_array, 0, sizeof(_pathfind_array));
+
+	memset(_palette_backup, 0, sizeof(_palette_backup));
+	memset(_palette, 0, sizeof(_palette));
+
+	memset(_video_buf_1, 0, sizeof(_video_buf_1));
+
 //... TODO: init more member vars
 
 	_fcs_list = new FillOrCopyStruct[16];

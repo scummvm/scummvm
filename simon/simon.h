@@ -50,6 +50,7 @@ struct TimeEvent;
 
 struct ThreeValues {
 	int16 a, b, c;
+	ThreeValues() { memset(this, 0, sizeof(*this)); }
 };
 
 struct HitArea {
@@ -61,12 +62,14 @@ struct HitArea {
 	Item *item_ptr;
 	uint16 unk3;
 	uint16 layer;
+	HitArea() { memset(this, 0, sizeof(*this)); }
 };
 
 struct VgaPointersEntry {
 	byte *vgaFile1;
 	byte *vgaFile2;
 	uint32 dd;
+	VgaPointersEntry() { memset(this, 0, sizeof(*this)); }
 };
 
 struct VgaSprite {
@@ -77,6 +80,7 @@ struct VgaSprite {
 	uint16 unk4;
 	uint16 priority;
 	uint16 unk6, unk7;
+	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
 struct VgaSleepStruct {
@@ -84,6 +88,7 @@ struct VgaSleepStruct {
 	byte *code_ptr;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
+	VgaSleepStruct() { memset(this, 0, sizeof(*this)); }
 };
 
 struct VgaTimerEntry {
@@ -91,6 +96,7 @@ struct VgaTimerEntry {
 	byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
+	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
 struct GameSpecificSettings;
