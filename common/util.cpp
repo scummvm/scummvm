@@ -200,6 +200,7 @@ const PlatformDescription g_platforms[] = {
 
 	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
 	{"pc", "dos", "PC", kPlatformPC},
+	{"windows", "windows", "Windows", kPlatformWindows},
 
 	{0, 0, "Default", kPlatformUnknown}
 };
