@@ -358,13 +358,10 @@ Windows example:
 
 Music and Sound: 
 ----------------
-By default, on most operating systems, ScummVM will automatically use ADLIB
-emulation. However, some games do not include Adlib music - such as Sam and
-Max. Note: MIDI may not be available on all operating systems or may need
-manual configuration.
-
-If you ARE using MIDI, you have several different choices of output, 
-depending on your operating system and configuration.
+By default, on most operating systems, ScummVM will automatically use Adlib
+emulation. MIDI may not be available on all operating systems or may need
+manual configuration. If you ARE using MIDI, you have several different
+choices of output, depending on your operating system and configuration.
         
         -eadlib     - Uses internal Adlib Emulation (default) 
         -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
@@ -380,8 +377,7 @@ Playing sound with Adlib emulation:
 -----------------------------------
 By default an Adlib card will be emulated and ScummVM will output the music
 as sampled waves. This is the default mode for most games, and offers the
-best compatibility between machines and games. However, Sam and Max does not
-include Adlib emulation.
+best compatibility between machines and games.
 
 
 Playing sound with MIDI emulation:
@@ -389,12 +385,10 @@ Playing sound with MIDI emulation:
 Until recently, some games (particularly Sam and Max) were only able to run
 in MIDI mode. This prevented music for these games from working on platforms
 that do not support MIDI, or soundcards that do not provide MIDI drivers (e.g.,
-many soundcards will not play MIDI under Linux). We have recently added an
-'emulated MIDI' technology. It can be accessed using the 'midiemu' option,
-and is the default for Sam and Max on UNIX platforms. -HOWEVER-, it is still
-very buggy and the emulation is not perfect. If you are capable of using
-native midi, we recommend using one of the MIDI modes below, or Adlib if
-your game includes music in the appropriate format.
+many soundcards will not play MIDI under Linux). ScummVM can now emulate MIDI
+mode using sampled waves and Adlib emulation using the -adlib option.
+However, if you are capable of using native MIDI, we recommend using one of
+the MIDI modes below for best sound.
 
 
 Playing sound with Native MIDI:
@@ -413,9 +407,8 @@ If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
 selects the port on the selected sequencer to use. Then start scummvm with the
 -eseq parameter. This should work on several cards, and may offer better
-performance and quality than Adlib or MIDI emulation. However, for those
-systems where sequencer support does not work, you can always fall back on
-either of those methods.
+performance and quality than Adlib emulation. However, for those systems where
+sequencer support does not work, you can always fall back on Adlib emulation.
 
 
 Playing sound with ALSA sequencer:              [UNIX ONLY]
