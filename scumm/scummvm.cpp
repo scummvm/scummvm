@@ -1624,13 +1624,13 @@ void Scumm::processKbd() {
 			_videoFinished = true;
 		} else
 			abortCutscene();
-	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
-		if (VAR_SAVELOAD_SCRIPT != 0xFF)
+	} else if (_lastKeyHit == saveloadkey) {
+		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
 		saveloadDialog();		// Display NewGui
 
-		if (VAR_SAVELOAD_SCRIPT != 0xFF)
+		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 		return;
 	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
