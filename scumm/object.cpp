@@ -657,7 +657,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr)
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
-		od->actordir = READ_LE_UINT32(&imhd->v8.actordir);
+		od->actordir = (byte)READ_LE_UINT32(&imhd->v8.actordir);
 
 	} else if (_features & GF_AFTER_V7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
