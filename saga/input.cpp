@@ -111,6 +111,9 @@ int SagaEngine::processInput() {
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
+			_mousePos.x = event.mouse.x;
+			_mousePos.y = event.mouse.y;
+			imouse_pt = _mousePos;
 			_vm->_interface->update(&imouse_pt, UPDATE_MOUSECLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
