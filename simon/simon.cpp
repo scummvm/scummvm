@@ -537,7 +537,7 @@ byte *SimonEngine::allocateItem(uint size) {
 }
 
 void SimonEngine::alignTableMem() {
-	if ((uint32)_tablesheap_ptr & 3) {
+	if ((unsigned long)_tablesheap_ptr & 3) {
 		_tablesheap_ptr += 2;
 		_tablesheap_curpos += 2;
 	}
