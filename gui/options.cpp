@@ -69,6 +69,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	gfxPopUp->appendEntry("Super2xSAI");
 	gfxPopUp->appendEntry("SuperEagle");
 	gfxPopUp->appendEntry("AdvMAME2x");
+	gfxPopUp->appendEntry("TV2x");
 	gfxPopUp->setSelected(0);
 
 	// The MIDI mode popup & a label

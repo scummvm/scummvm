@@ -47,7 +47,7 @@ static const char USAGE_STRING[] =
 	"\t-p<path>   - look for game in <path>\n"
 	"\t-x[<num>]  - load this savegame (default: 0 - autosave)\n"
 	"\t-f         - fullscreen mode\n"
-	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
+	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x)\n"
 	"\t-e<mode>   - set music engine (see README for details)\n"
 	"\t-a         - specify game is amiga version\n"
 	"\n"
@@ -182,6 +182,7 @@ static const struct GraphicsModes gfx_modes[] = {
 	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+	{"tv2x", "TV2x", GFX_TV2X},
 	{0, 0}
 };
 
