@@ -35,6 +35,10 @@
 
 #elif defined(WIN32)
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#endif
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
