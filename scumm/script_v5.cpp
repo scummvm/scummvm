@@ -667,8 +667,8 @@ void Scumm_v5::o5_cursorCommand() {
 		break;
 	case 14:											/* unk */
 		if (_features & GF_OLD_BUNDLE || _gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
-			int a = getVarOrDirectByte(0x80);
-			int b = getVarOrDirectByte(0x40);
+			/*int a = */ getVarOrDirectByte(0x80);
+			/*int b = */ getVarOrDirectByte(0x40);
 			// This is some kind of "init charset" opcode. However, we don't have to do anything
 			// in here, as our initCharset automatically calls loadCharset for GF_SMALL_HEADER,
 			// games if needed.
