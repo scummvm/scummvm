@@ -523,8 +523,8 @@ void Scumm_v2::o2_setObjUnknown() {
 }
 
 void Scumm_v2::o2_getObjUnknown() {
-	int obj = getVarOrDirectWord(0x80);
 	getResultPos();
+	int obj = getVarOrDirectWord(0x80);
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		ObjectData *od = &_objs[getObjectIndex(obj)];
