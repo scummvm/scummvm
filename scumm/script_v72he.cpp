@@ -550,23 +550,14 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(string) + 1;
 	}
 
-	// The boot script in some HE games just set data file name
-	// to a bunch to spaces for some odd reason.
-	// We work around that.
-	if (!strcmp((char *)string,"%s.he3")) {
-		memset(string, 0, sizeof(string));
-		sprintf((char *)string, "%s.he3", _gameName.c_str());
-		len = resStrLen(string);
-	}
-
 	while (len--) {
 		chr = string[num++];
 		if (chr == 0x25) {
 			chr = string[num++];
 			if (chr == 0x64)
-				dst += snprintf((char *)dst, 5, "%d", args[val++]);
+				dst += snprintf((char *)dst, 10, "%d", args[val++]);
 			else if (chr == 0x73)
-				dst += addStringToStack(dst, 1024, args[val++]);
+				dst += addStringToStack(dst, 512, args[val++]);
 			continue;
 		}
 		*dst++ = chr;
@@ -1455,6 +1446,16 @@ void ScummEngine_v72he::o72_openFile() {
 
 	mode = pop();
 	copyScriptString(filename);
+	// The boot script in some HE games doen't set the 
+	// complete data file name. So we work around that.
+	if (!strcmp((char *)filename,".he3")) {
+		memset(filename, 0, sizeof(filename));
+		sprintf((char *)filename, "%s.he3", _gameName.c_str());
+	} else if (!strcmp((char *)filename,".he7")) {
+		memset(filename, 0, sizeof(filename));
+		sprintf((char *)filename, "%s.he7", _gameName.c_str());
+	}
+
 	debug(1,"File %s", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {

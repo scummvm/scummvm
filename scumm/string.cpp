@@ -627,7 +627,7 @@ int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 		return i;
 	}
 
-	if (_version == 3 || _version >= 6)
+	if (_version == 3 || (_version >= 6 && _heversion < 72))
 		var = readVar(var);
 
 	if (var) {
