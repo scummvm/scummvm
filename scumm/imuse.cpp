@@ -3394,6 +3394,7 @@ void Part::fix_after_load()
 	set_detune(_detune);
 	set_pri(_pri);
 	set_pan(_pan);
+	changed (IMuseDriver::pcAll);
 }
 
 void Part::set_pitchbend_factor(uint8 value)
