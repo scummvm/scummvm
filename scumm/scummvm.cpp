@@ -880,9 +880,8 @@ void Scumm::launch() {
 		if (_version < 7)
 			VAR(VAR_VERSION) = 21;
 	
-		if (!(_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3))) {
-			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
-			// distinguish the Mac version from the PC (and other) versions.
+		if (!(_features & GF_MACINTOSH) && (_version == 3)) {
+			// This is the for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
@@ -1141,9 +1140,8 @@ void Scumm::initScummVars() {
 		VAR(VAR_59) = 3;
 	}
 	
-	if (_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3)) {
-		// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
-		// distinguish the Mac version from the PC (and other) versions.
+	if ((_features & GF_MACINTOSH) && (_version == 3)) {
+		// This is the for the Mac version of Indy3/Loom
 		VAR(39) = 320;
 	}
 
@@ -1260,9 +1258,8 @@ int Scumm::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (_features & GF_OLD_BUNDLE && (_gameId == GID_LOOM || _gameId == GID_INDY3)) {
-			// This is the for the Mac version of Indy3/Loom. TODO: add code to properly
-			// distinguish the Mac version from the PC (and other) versions.
+		if ((_features & GF_MACINTOSH) && (_version == 3))  {
+			// This is the for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
