@@ -1755,50 +1755,37 @@ void Scumm_v5::o5_roomOps() {
 		break;
 
 	case 13:{										/* save-string */
-			// TODO - use class File instead of fopen/fwrite/fclose
-			char buf[256], *s;
-			FILE *out;
+			File file;
+			char filename[256], *s;
 
 			a = getVarOrDirectByte(0x80);
 
-			// FIXME - check for buffer overflow
-			strcpy(buf, getSavePath());
-			s = buf + strlen(buf);
+			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			// Use buf as filename
-			out = fopen(buf, "wb");
-			if (out) {
+			file.open(filename, getSavePath(), File::kFileWriteMode);
+			if (file.isOpen()) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
-				fwrite(ptr, resStrLen(ptr) + 1, 1, out);
-				fclose(out);
+				file.write(ptr, resStrLen(ptr) + 1);
 			}
 			break;
 		}
 	case 14:{										/* load-string */
-			// TODO - use class File instead of fopen/fread/fclose
-			char buf[256], *s;
-			FILE *in;
+			File file;
+			char filename[256], *s;
 
 			a = getVarOrDirectByte(0x80);
 
-			// FIXME - check for buffer overflow
-			strcpy(buf, getSavePath());
-			s = buf + strlen(buf);
+			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			// Use buf as filename
-			in = fopen(buf, "rb");
-			if (in) {
+			file.open(filename, getSavePath(), File::kFileReadMode);
+			if (file.isOpen()) {
 				byte *ptr;
-				int len;
-				fseek(in, 0, SEEK_END);
-				len = ftell(in);				// Determine file size
+				int len = file.size();
 				ptr = (byte *)calloc(len + 1, 1);	// Create a zero terminated buffer
-				fseek(in, 0, SEEK_SET);
-				fread(ptr, len, 1, in);	// Read in the data
-				fclose(in);
+				file.read(ptr, len);	// Read in the data
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
 			}
