@@ -31,6 +31,10 @@
 #include "sky/mouse.h"
 #include "sky/logic.h"
 
+class SkyScreen;
+class SkyLogic;
+class SkyMouse;
+
 #define MAX_SAVE_GAMES 999
 #define MAX_TEXT_LEN 80
 #define PAN_LINE_WIDTH 184

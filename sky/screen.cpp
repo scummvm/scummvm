@@ -383,7 +383,7 @@ void SkyScreen::startSequence(uint16 fileNum) {
 void SkyScreen::startSequenceItem(uint16 itemNum) {
 
 	_seqInfo.seqData = (uint8*)SkyState::fetchItem(itemNum);
-	_seqInfo.framesLeft = _seqInfo.seqData[0];
+	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;

@@ -69,6 +69,20 @@ SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, Sky
 	initScriptVariables();
 }
 
+bool SkyLogic::checkProtection(void) {
+
+	if (!_scriptVariables[ENTER_DIGITS]) return false;
+	if (_scriptVariables[CONSOLE_TYPE] == 5) { // reactor code
+		_scriptVariables[FS_COMMAND] = 240;
+		_scriptVariables[ENTER_DIGITS] = 0;
+		return true;
+	} else {								   // copy protection
+		_scriptVariables[FS_COMMAND] = 337;
+		_scriptVariables[ENTER_DIGITS] = 0;
+		return true;
+	}
+}
+
 void SkyLogic::engine() {
 	uint16 *logicList = (uint16 *)SkyState::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
 
@@ -1026,7 +1040,8 @@ static const uint32 forwardList5b[] = {
 	UP_MOUSE,
 	DOWN_MOUSE,
 	LEFT_MOUSE,
-	RIGHT_MOUSE
+	RIGHT_MOUSE,
+	DISCONNECT_FOSTER
 };
 
 void SkyLogic::initScriptVariables() {
@@ -2311,7 +2326,8 @@ bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnQuitToDos");
+	_skyControl->showGameQuitMsg();  // calls _system->quit()
+	return true;
 }
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
@@ -2359,7 +2375,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
             target->extCompact->spTime = 10;
 			target->logic = L_TALK; 
 			return ;
-	}	
+	}
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;

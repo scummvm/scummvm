@@ -1298,4 +1298,6 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 	_skyScreen->halvePalette();
 	_skyScreen->showScreen(screenData);
 	free(textBuf1); free(textBuf2);
+	delay(1500);
+	_system->quit();
 }

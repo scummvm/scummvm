@@ -116,12 +116,14 @@ void SkyState::go() {
 		}
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
-		//_skyScreen->forceRefresh();
-		_skyScreen->recreate();
-		_skyScreen->spriteEngine();
-		_skyScreen->flip();
-		//_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
-		_system->update_screen();
+		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
+			//_skyScreen->forceRefresh();
+			_skyScreen->recreate();
+			_skyScreen->spriteEngine();
+			_skyScreen->flip();
+			//_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
+			_system->update_screen();
+		}
 	}
 }
 
@@ -164,6 +166,7 @@ void SkyState::initialise(void) {
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
 
 	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _system, getSavePath());
+	_skyLogic->useControlInstance(_skyControl);
 }
 
 void SkyState::initItemList() {
@@ -279,9 +282,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 					break;
 
 				case OSystem::EVENT_QUIT:
-					_skyControl->showGameQuitMsg();
-					delay(1500);
-					_system->quit();
+					_skyControl->showGameQuitMsg(); // will call _system->quit()
 					break;
 
 				default:

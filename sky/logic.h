@@ -29,6 +29,7 @@
 #include "sky/music/musicbase.h"
 #include "sky/mouse.h"
 #include "sky/screen.h"
+#include "sky/control.h"
 
 enum scriptVariableOffsets {
 	RESULT = 0,
@@ -64,7 +65,10 @@ enum scriptVariableOffsets {
 	MENU = 102,
 	RND = 115,
 	CUR_SECTION = 143,
+	CONSOLE_TYPE = 345,
 	REICH_DOOR_FLAG = 470,
+	FS_COMMAND = 643,
+	ENTER_DIGITS = 644,
 	LINC_DIGIT_0 = 646,
 	LINC_DIGIT_1 = 647,
 	LINC_DIGIT_2 = 648,
@@ -80,11 +84,14 @@ enum scriptVariableOffsets {
 class SkyAutoRoute;
 class SkyScreen;
 class SkyMouse;
+class SkyControl;
 
 class SkyLogic {
 public:
 	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound);
 	void engine();
+	bool checkProtection(void);
+	void useControlInstance(SkyControl *control) { _skyControl = control; };
 
 	void nop();
 	void logicScript();
@@ -257,6 +264,7 @@ protected:
 	SkySound *_skySound;
 	SkyAutoRoute *_skyAutoRoute;
 	SkyMouse *_skyMouse;
+	SkyControl *_skyControl;
 };
 
 #endif
