@@ -202,8 +202,8 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 
 		move_x_cur = move_x + (int16)READ_LE_UINT16(&the_akci->rel_x);
 		move_y_cur = move_y + (int16)READ_LE_UINT16(&the_akci->rel_y);
-		width = READ_LE_UINT16(&the_akci->width);
-		height = READ_LE_UINT16(&the_akci->height);
+		_width = READ_LE_UINT16(&the_akci->width);
+		_height = READ_LE_UINT16(&the_akci->height);
 		move_x += (int16)READ_LE_UINT16(&the_akci->move_x);
 		move_y -= (int16)READ_LE_UINT16(&the_akci->move_y);
 
@@ -238,8 +238,8 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 
 			p += (p[4] & 0x80) ? 6 : 5;
 
-			width = READ_LE_UINT16(&the_akci->width);
-			height = READ_LE_UINT16(&the_akci->height);
+			_width = READ_LE_UINT16(&the_akci->width);
+			_height = READ_LE_UINT16(&the_akci->height);
 
 			switch (codec) {
 			case 1:
@@ -260,53 +260,9 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 	return true;
 }
 
-void akos_c1_0y_decode(AkosRenderer * ar)
+void AkosRenderer::akos_generic_decode()
 {
-	byte len, color;
-	byte *src, *dst;
-	int height;
-	uint y;
-	uint scrheight;
-
-	len = ar->v1.replen;
-	src = ar->srcptr;
-	dst = ar->v1.destptr;
-	color = ar->v1.repcolor;
-	scrheight = ar->outheight;
-	height = ar->height;
-	y = ar->v1.y;
-
-	if (len)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> ar->v1.shl;
-		len &= ar->v1.mask;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && y < scrheight) {
-				*dst = ar->palette[color];
-			}
-
-			dst += ar->outwidth;
-			y++;
-			if (!--height) {
-				if (!--ar->v1.skip_width)
-					return;
-				dst -= ar->v1.y_pitch;
-				height = ar->height;
-				y = ar->v1.y;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void akos_generic_decode(AkosRenderer * ar)
-{
+	AkosRenderer * ar = this;
 	byte *src, *dst;
 	byte len, height, maskbit;
 	uint y, color;
@@ -319,7 +275,7 @@ void akos_generic_decode(AkosRenderer * ar)
 	src = ar->srcptr;
 	dst = ar->v1.destptr;
 	color = ar->v1.repcolor;
-	height = ar->height;
+	height = ar->_height;
 
 	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
 	maskbit = revBitMask[ar->v1.x & 7];
@@ -348,7 +304,7 @@ void akos_generic_decode(AkosRenderer * ar)
 			if (!--height) {
 				if (!--ar->v1.skip_width)
 					return;
-				height = ar->height;
+				height = ar->_height;
 				y = ar->v1.y;
 
 				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
@@ -369,12 +325,12 @@ void akos_generic_decode(AkosRenderer * ar)
 	} while (1);
 }
 
-
 void akos_c1_spec1(AkosRenderer * ar)
 {
 	byte *src, *dst;
-	byte len, height, pcolor, maskbit;
+	byte len, height, maskbit;
 	uint y, color;
+	byte pcolor;
 	const byte *scaleytab, *mask;
 
 
@@ -384,7 +340,7 @@ void akos_c1_spec1(AkosRenderer * ar)
 	src = ar->srcptr;
 	dst = ar->v1.destptr;
 	color = ar->v1.repcolor;
-	height = ar->height;
+	height = ar->_height;
 
 	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
 	maskbit = revBitMask[ar->v1.x & 7];
@@ -416,7 +372,7 @@ void akos_c1_spec1(AkosRenderer * ar)
 			if (!--height) {
 				if (!--ar->v1.skip_width)
 					return;
-				height = ar->height;
+				height = ar->_height;
 				y = ar->v1.y;
 
 				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
@@ -441,7 +397,8 @@ void akos_c1_spec3(AkosRenderer * ar)
 {
 	byte *src, *dst;
 	byte len, height, maskbit;
-	uint y, color, pcolor;
+	uint y, color;
+	uint pcolor;
 	const byte *scaleytab, *mask;
 
 
@@ -451,7 +408,7 @@ void akos_c1_spec3(AkosRenderer * ar)
 	src = ar->srcptr;
 	dst = ar->v1.destptr;
 	color = ar->v1.repcolor;
-	height = ar->height;
+	height = ar->_height;
 
 	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
 	maskbit = revBitMask[ar->v1.x & 7];
@@ -486,7 +443,7 @@ void akos_c1_spec3(AkosRenderer * ar)
 			if (!--height) {
 				if (!--ar->v1.skip_width)
 					return;
-				height = ar->height;
+				height = ar->_height;
 				y = ar->v1.y;
 
 				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
@@ -646,8 +603,8 @@ void AkosRenderer::codec1()
 
 	use_scaling = (scale_x != 0xFF) || (scale_y != 0xFF);
 
-	cur_x = x;
-	cur_y = y;
+	cur_x = _x;
+	cur_y = _y;
 
 	if (use_scaling) {
 
@@ -670,7 +627,7 @@ void AkosRenderer::codec1()
 			x_left = x_right = cur_x;
 
 			j = tmp_x;
-			for (i = 0, skip = 0; i < width; i++) {
+			for (i = 0, skip = 0; i < _width; i++) {
 				if (x_right < 0) {
 					skip++;
 					tmp_x = j;
@@ -691,7 +648,7 @@ void AkosRenderer::codec1()
 			x_left = x_right = cur_x;
 
 			j = tmp_x;
-			for (i = 0, skip = 0; i < width; i++) {
+			for (i = 0, skip = 0; i < _width; i++) {
 				if (x_left >= (int)outwidth) {
 					tmp_x = j;
 					skip++;
@@ -718,7 +675,7 @@ void AkosRenderer::codec1()
 
 		y_top = y_bottom = cur_y;
 		tmp_y = 0x180 - move_y_cur;
-		for (i = 0; i < height; i++) {
+		for (i = 0; i < _height; i++) {
 			if (v1.scaletable[tmp_y++] < scale_y)
 				y_bottom++;
 		}
@@ -733,14 +690,14 @@ void AkosRenderer::codec1()
 
 		if (mirror) {
 			x_left = cur_x;
-			x_right = cur_x + width;
+			x_right = cur_x + _width;
 		} else {
 			x_right = cur_x;
-			x_left = cur_x - width;
+			x_left = cur_x - _width;
 		}
 
 		y_top = cur_y;
-		y_bottom = cur_y + height;
+		y_bottom = cur_y + _height;
 
 		tmp_x = 0x180;
 		tmp_y = 0x180;
@@ -748,7 +705,7 @@ void AkosRenderer::codec1()
 
 	v1.tmp_x = tmp_x;
 	v1.tmp_y = tmp_y;
-	v1.skip_width = width;
+	v1.skip_width = _width;
 
 	v1.scaleXstep = -1;
 	if (mirror)
@@ -761,7 +718,7 @@ void AkosRenderer::codec1()
 		return;
 
 	v1.replen = 0;
-	v1.y_pitch = height * outwidth;
+	v1.y_pitch = _height * outwidth;
 
 	if (mirror) {
 		v1.y_pitch--;
@@ -795,7 +752,7 @@ void AkosRenderer::codec1()
 	v1.x = cur_x;
 	v1.y = cur_y;
 
-	if (v1.skip_width <= 0 || height <= 0)
+	if (v1.skip_width <= 0 || _height <= 0)
 		return;
 
 	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1 << dirty_id);
@@ -849,51 +806,7 @@ void AkosRenderer::codec1()
 		return;
 	}
 
-	akos_generic_decode(this);
-
-//  akos_c1_0y_decode(this);
-
-#if 0
-
-	switch (((byte)y_clipping << 3) | ((byte)use_scaling << 2) | ((byte)masking << 1) | (byte)charsetmask) {
-	case 0:
-		akos_c1_0_decode(this);
-		break;
-	case 0 + 8:
-		akos_c1_0y_decode(this);
-		break;
-	case 2:
-	case 1:
-		akos_c1_12_decode(this);
-		break;
-	case 2 + 8:
-	case 1 + 8:
-		akos_c1_12y_decode(this);
-		break;
-	case 3 + 8:
-	case 3:
-		akos_c1_3_decode(this);
-		break;
-	case 4:
-		akos_c1_4_decode(this);
-		break;
-	case 4 + 8:
-		akos_c1_4y_decode(this);
-		break;
-	case 6:
-	case 5:
-		akos_c1_56_decode(this);
-		break;
-	case 6 + 8:
-	case 5 + 8:
-		akos_c1_56y_decode(this);
-		break;
-	case 7:
-	case 7 + 8:
-		akos_c1_7_decode(this);
-		break;
-	}
-#endif
+	akos_generic_decode();
 }
 
 
@@ -904,7 +817,7 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 	byte replen;
 	byte *src;
 
-	n = height;
+	n = _height;
 	if (num > 1)
 		n *= num;
 	src = srcptr;
@@ -952,14 +865,14 @@ void AkosRenderer::codec5()
 	vs = &_vm->virtscr[0];
 
 	if (!mirror) {
-		left = (x - move_x_cur - width) + 1;
+		left = (_x - move_x_cur - _width) + 1;
 	} else {
-		left = x + move_x_cur - 1;
+		left = _x + move_x_cur - 1;
 	}
 
-	right = left + width;
-	top = y + move_y_cur;
-	bottom = top + height;
+	right = left + _width;
+	top = _y + move_y_cur;
+	bottom = top + _height;
 
 	if (left >= _vm->_realWidth || top >= _vm->_realHeight)
 		return;
@@ -1002,7 +915,7 @@ void AkosRenderer::codec5()
 	src = srcptr;
 	dest = outptr;
 
-	for (src_y = 0, dst_y = top; src_y < height; src_y++) {
+	for (src_y = 0, dst_y = top; src_y < _height; src_y++) {
 		byte code, color;
 		uint num, i;
 		byte *d = dest + dst_y * _vm->_realWidth + left;
@@ -1021,7 +934,7 @@ void AkosRenderer::codec5()
 		dst_x = left;
 		s = src + 2;
 
-		while (src_x < width) {
+		while (src_x < _width) {
 			code = *s++;
 			num = (code >> 1) + 1;
 			if (code & 1) {
@@ -1068,25 +981,16 @@ void AkosRenderer::codec5()
 	}
 }
 
-static byte akos16_unk5;
-static int akos16_unk6;
-static byte akos16_mask;
-static byte akos16_color;
-static byte akos16_shift;
-static uint16 akos16_bits;
-static byte akos16_numbits;
-static byte * akos16_dataptr;
-static byte _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
-static byte akos16_buffer[336];
+static const byte _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
 
 void AkosRenderer::akos16SetupBitReader(byte *src) {
-	akos16_unk5 = 0;
-	akos16_numbits = 16;
-	akos16_mask = _bitMask[*(src)];
-	akos16_shift = *(src);
-	akos16_color = *(src + 1);
-	akos16_bits = (*(src + 2) | *(src + 3) << 8);
-	akos16_dataptr = src + 4;
+	akos16.unk5 = 0;
+	akos16.numbits = 16;
+	akos16.mask = _bitMask[*(src)];
+	akos16.shift = *(src);
+	akos16.color = *(src + 1);
+	akos16.bits = (*(src + 2) | *(src + 3) << 8);
+	akos16.dataptr = src + 4;
 }
 
 void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency, int32 count) {
@@ -1135,49 +1039,49 @@ void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency,
 }
 
 #define AKOS16_FILL_BITS()																				\
-				if (akos16_numbits <= 8) {																\
-					akos16_bits |= (*akos16_dataptr++) << akos16_numbits;		\
-					akos16_numbits += 8;																		\
+				if (akos16.numbits <= 8) {																\
+					akos16.bits |= (*akos16.dataptr++) << akos16.numbits;		\
+					akos16.numbits += 8;																		\
 				}
 
 #define AKOS16_EAT_BITS(n)																				\
-						akos16_numbits -= (n);																\
-						akos16_bits >>= (n);
+						akos16.numbits -= (n);																\
+						akos16.bits >>= (n);
 	
 
 void AkosRenderer::akos16SkipData(int32 numskip) {
 	uint16 bits, tmp_bits;
 	
 	while (numskip != 0) {
-		if (akos16_unk5 == 0) {
+		if (akos16.unk5 == 0) {
 			AKOS16_FILL_BITS()
-			bits = akos16_bits & 3;
+			bits = akos16.bits & 3;
 			if (bits & 1) {
 				AKOS16_EAT_BITS(2)
 				if (bits & 2) {
-					tmp_bits = akos16_bits & 7;
+					tmp_bits = akos16.bits & 7;
 					AKOS16_EAT_BITS(3)
 					if (tmp_bits != 4) {
-						akos16_color += (tmp_bits - 4);
+						akos16.color += (tmp_bits - 4);
 					} else {
-						akos16_unk5 = 1;
+						akos16.unk5 = 1;
 						AKOS16_FILL_BITS()
-						akos16_unk6 = (akos16_bits & 0xff) - 1;
+						akos16.unk6 = (akos16.bits & 0xff) - 1;
 						AKOS16_EAT_BITS(8)
 						AKOS16_FILL_BITS()
 					}
 				} else {
 					AKOS16_FILL_BITS()
-					akos16_color = ((byte)akos16_bits) & akos16_mask;
-					AKOS16_EAT_BITS(akos16_shift)					
+					akos16.color = ((byte)akos16.bits) & akos16.mask;
+					AKOS16_EAT_BITS(akos16.shift)					
 					AKOS16_FILL_BITS()
 				}
 			} else {
 				AKOS16_EAT_BITS(1);
 			}
 		} else {
-			if (--akos16_unk6 == 0) {
-				akos16_unk5 = 0;
+			if (--akos16.unk6 == 0) {
+				akos16.unk5 = 0;
 			}
 		}
 		numskip--;
@@ -1188,38 +1092,38 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	uint16 bits, tmp_bits;
 
 	while (numbytes != 0) {
-		*buf = akos16_color;
+		*buf = akos16.color;
 		buf += dir;
 		
-		if (akos16_unk5 == 0) {
+		if (akos16.unk5 == 0) {
 			AKOS16_FILL_BITS()
-			bits = akos16_bits & 3;
+			bits = akos16.bits & 3;
 			if (bits & 1) {
 				AKOS16_EAT_BITS(2)
 				if (bits & 2) {
-					tmp_bits = akos16_bits & 7;
+					tmp_bits = akos16.bits & 7;
 					AKOS16_EAT_BITS(3)
 					if (tmp_bits != 4) {
-						akos16_color += (tmp_bits - 4);
+						akos16.color += (tmp_bits - 4);
 					} else {
-						akos16_unk5 = 1;
+						akos16.unk5 = 1;
 						AKOS16_FILL_BITS()
-						akos16_unk6 = (akos16_bits & 0xff) - 1;
+						akos16.unk6 = (akos16.bits & 0xff) - 1;
 						AKOS16_EAT_BITS(8)
 						AKOS16_FILL_BITS()
 					}
 				} else {
 					AKOS16_FILL_BITS()
-					akos16_color = ((byte)akos16_bits) & akos16_mask;
-					AKOS16_EAT_BITS(akos16_shift)					
+					akos16.color = ((byte)akos16.bits) & akos16.mask;
+					AKOS16_EAT_BITS(akos16.shift)					
 					AKOS16_FILL_BITS()
 				}
 			} else {
 				AKOS16_EAT_BITS(1);
 			}
 		} else {
-			if (--akos16_unk6 == 0) {
-				akos16_unk5 = 0;
+			if (--akos16.unk6 == 0) {
+				akos16.unk5 = 0;
 			}
 		}
 		numbytes--;
@@ -1252,7 +1156,7 @@ void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32
 }
 
 void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
-	byte * tmp_buf = akos16_buffer;
+	byte * tmp_buf = akos16.buffer;
 
 	if (dir < 0) {
 		dest -= (t_width - 1);
@@ -1267,7 +1171,7 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 
 	while (t_height != 0) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		akos16PutOnScreen(dest, akos16_buffer, transparency, t_width);
+		akos16PutOnScreen(dest, akos16.buffer, transparency, t_width);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -1279,7 +1183,7 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 }
 
 void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
-	byte * tmp_buf = akos16_buffer;
+	byte * tmp_buf = akos16.buffer;
 	int maskpitch;
 
 	if (dir < 0) {
@@ -1297,8 +1201,8 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 
 	while (t_height != 0) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		akos16ApplyMask(akos16_buffer, maskptr, (byte)bitpos_start, t_width, transparency);
-		akos16PutOnScreen(dest, akos16_buffer, transparency, t_width);
+		akos16ApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
+		akos16PutOnScreen(dest, akos16.buffer, transparency, t_width);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -1314,18 +1218,18 @@ void AkosRenderer::codec16() {
 	int32 clip_left;
 
 	if(!mirror) {
-		clip_left = (x - move_x_cur - width) + 1;
+		clip_left = (_x - move_x_cur - _width) + 1;
 	} else {
-		clip_left = x + move_x_cur;
+		clip_left = _x + move_x_cur;
 	}
 
-	int32 clip_top = move_y_cur + y;
-	int32 clip_right = (clip_left + width) - 1;
-	int32 clip_bottom = (clip_top + height) - 1;
+	int32 clip_top = move_y_cur + _y;
+	int32 clip_right = (clip_left + _width) - 1;
+	int32 clip_bottom = (clip_top + _height) - 1;
 	int32 skip_x = 0;
 	int32 skip_y = 0;
-	int32 cur_x = width - 1;
-	int32 cur_y = height - 1;
+	int32 cur_x = _width - 1;
+	int32 cur_y = _height - 1;
 	int32 maxw = outwidth - 1;
 	int32 maxh = outheight - 1;
 	int32 tmp_x, tmp_y;
@@ -1386,8 +1290,8 @@ void AkosRenderer::codec16() {
 		dir = -1;
     
     int tmp_skip_x = skip_x;
-    skip_x = width-1-cur_x;
-    cur_x = width-1-tmp_skip_x;
+    skip_x = _width-1-cur_x;
+    cur_x = _width-1-tmp_skip_x;
     width_unk = clip_right;
 /*
 		tmp1 = width - 1;
@@ -1418,8 +1322,8 @@ void AkosRenderer::codec16() {
 
 	cur_x++;
 
-	int32 numskip_before = skip_x + (skip_y * width);
-	int32 numskip_after = width - cur_x;
+	int32 numskip_before = skip_x + (skip_y * _width);
+	int32 numskip_after = _width - cur_x;
 
 	byte * dest = outptr + width_unk + height_unk * _vm->_realWidth;
 

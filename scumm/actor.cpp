@@ -301,6 +301,7 @@ int Actor::actorWalkStep()
 
 	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
+		printf("walkFrame = %d, frame = %d\n", walkFrame, frame);
 		if (walkFrame != frame || facing != direction) {
 			startWalkAnim(walkFrame == frame ? 2 : 1, direction);
 		}
@@ -948,8 +949,8 @@ void Actor::drawActorCostume()
 	} else {
 		AkosRenderer ar(_vm);
 		ar.charsetmask = true;
-		ar.x = x - _vm->virtscr->xstart;
-		ar.y = y - elevation;
+		ar._x = x - _vm->virtscr->xstart;
+		ar._y = y - elevation;
 		ar.scale_x = scalex;
 		ar.scale_y = scaley;
 		ar.clipping = forceClip;

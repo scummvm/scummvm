@@ -55,10 +55,10 @@ struct AkosCI {
 struct AkosRenderer {
 //protected:
 	CostumeData *cd;
-	int x, y;											/* where to draw costume */
+	int _x, _y;											/* where to draw costume */
 	byte scale_x, scale_y;				/* scaling */
 	byte clipping;								/* clip mask */
-	bool charsetmask;
+	bool charsetmask;	// FIXME - it seems charsetmask is only set once, in actor.cpp, to true. So can we get rid of it?!?
 	byte shadow_mode;
 	uint16 codec;
 	bool mirror;									/* draw actor mirrored */
@@ -75,7 +75,7 @@ struct AkosRenderer {
 	/* movement of cel to decode */
 	int move_x_cur, move_y_cur;
 	/* width and height of cel to decode */
-	int width, height;
+	int _width, _height;
 
 	byte *srcptr;
 	byte *shadow_table;
@@ -108,6 +108,18 @@ struct AkosRenderer {
 protected:
 	Scumm *_vm;
 
+	struct {
+		byte unk5;
+		int unk6;
+		byte mask;
+		byte color;
+		byte shift;
+		uint16 bits;
+		byte numbits;
+		byte * dataptr;
+		byte buffer[336];
+	} akos16;
+
 public:
 
 	// Constructor, sets all data to 0
@@ -118,6 +130,9 @@ public:
 	void setPalette(byte *palette);
 	void setCostume(int costume);
 	void setFacing(Actor * a);
+
+protected:
+	void akos_generic_decode();
 	bool drawCostumeChannel(int chan);
 	void codec1();
 	void codec5();
