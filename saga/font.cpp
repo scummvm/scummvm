@@ -228,7 +228,7 @@ int FONT_Load(ulong font_rn, int font_id)
 		return R_FAILURE;
 	}
 
-	normal_font->font_p = (uchar *) read_p;
+	normal_font->font_p = fontres_p + R_FONT_DESCSIZE;
 
 	font->normal = normal_font;
 	font->normal_loaded = 1;
