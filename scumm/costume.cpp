@@ -539,7 +539,12 @@ void LoadedCostume::loadCostume(int id) {
 	}
 	ptr += 8 + _numColors;
 	_frameOffsets = ptr + 2;
-	_dataOffsets = ptr + ((_vm->_version == 1) ? 18 : 34);	// FIXME - V1 case might be wrong
+	if (_vm->_version == 1) {
+		_dataOffsets = ptr + 18;
+		_baseptr += 4;
+	} else {
+		_dataOffsets = ptr + 34;
+	}
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
@@ -555,15 +560,25 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
 	
+//printf("costume %d, limb %d:\n", _loaded._id, limb);
+
 	// Get the frame pointer for that limb
 	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
-	
+
+//printf("frameptr:\n");
+//hexdump(frameptr-0x10, 0x20);
+
 	// Determine the offset to the costume data for the limb at position i
 	code = _loaded._animCmds[i] & 0x7F;
 
 	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
+//printf("code %d:\n", code);
+//hexdump(frameptr + code * 2 - 0x10, 0x20);
 		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
+//printf("_srcptr:\n");
+//hexdump(_srcptr, 0x20);
+
 		if (!(_vm->_features & GF_OLD256) || code < 0x79) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
@@ -619,24 +634,18 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-//printf("Offset table:\n");
-//hexdump(lc._dataOffsets + anim * 2 - 0x10, 0x20);
 	r = lc._baseptr + READ_LE_UINT16(lc._dataOffsets + anim * 2);
-//printf("actor %d, costum %d, frame %d, anim %d:\n", a->number, lc._id, frame, anim);
-//hexdump(r, 0x20);
 
 	if (r == lc._baseptr) {
 		return;
 	}
 
 	if (_version == 1) {
-		r += 4;
 		mask = *r++ << 8;
 	} else {
 		mask = READ_LE_UINT16(r);
 		r += 2;
 	}
-//printf("mask = 0x%x, usemask = 0x%x\n", mask, usemask);
 	i = 0;
 	do {
 		if (mask & 0x8000) {
