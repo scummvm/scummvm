@@ -771,14 +771,16 @@ protected:
 
 public:
 	/* Actor talking stuff */
-	byte _actorToPrintStrFor;
+	byte _actorToPrintStrFor, _V1_talkingActor;
 	int _sentenceNum;
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
 	int16 _talkDelay;
 	void actorTalk();
 	void stopTalk();
-	
+	int talkingActor();		// Wrapper around VAR_TALK_ACTOR for V1/V2 purposes
+	void talkingActor(int variable);
+
 	// Costume class
 	void cost_decodeData(Actor *a, int frame, uint usemask);
 	int cost_frameToAnim(Actor *a, int frame);

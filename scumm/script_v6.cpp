@@ -1069,7 +1069,7 @@ void ScummEngine_v6::o6_putActorAtXY() {
 	if (room == 0xFF || room == 0x7FFFFFFF) {
 		room = a->room;
 	} else {
-		if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
+		if (a->visible && _currentRoom != room && talkingActor() == a->number) {
 			clearMsgQueue();
 		}
 		if (room != 0)

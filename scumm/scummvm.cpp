@@ -1237,7 +1237,7 @@ void ScummEngine::initScummVars() {
 	}
 	
 	VAR(VAR_CHARINC) = 4;
-	VAR(VAR_TALK_ACTOR) = 0;
+	talkingActor(0);
 }
 
 #pragma mark -

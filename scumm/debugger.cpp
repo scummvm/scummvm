@@ -56,7 +56,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 	vsprintf(buf, s, va);
 	va_end(va);
 
-	debug(g_debugLevel, buf);
+	debug(buf);
 };
 	
 ScummDebugger::ScummDebugger(ScummEngine *s)

@@ -561,7 +561,7 @@ void Actor::setDirection(int direction) {
 }
 
 void Actor::putActor(int dstX, int dstY, byte newRoom) {
-	if (visible && _vm->_currentRoom != newRoom && _vm->VAR(_vm->VAR_TALK_ACTOR) == number) {
+	if (visible && _vm->_currentRoom != newRoom && _vm->talkingActor() == number) {
 		_vm->clearMsgQueue();
 	}
 
@@ -780,6 +780,22 @@ void Actor::showActor() {
 	visible = true;
 	needRedraw = true;
 }
+
+// Maniac doesn't have a ScummVar for VAR_TALK_ACTOR, and just uses
+// an internal variable. Emulate this to prevent overwriting script vars...
+int ScummEngine::talkingActor() {
+	if (_gameId == GID_MANIAC)
+		return _V1_talkingActor;
+	else
+		return VAR(VAR_TALK_ACTOR);
+};
+
+void ScummEngine::talkingActor(int value) {
+	if (_gameId == GID_MANIAC)
+		_V1_talkingActor = value;
+	else
+		VAR(VAR_TALK_ACTOR) = value;
+};
 
 void ScummEngine::showActors() {
 	int i;
@@ -1138,7 +1154,7 @@ void ScummEngine::actorTalk() {
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText)
 			stopTalk();
-		VAR(VAR_TALK_ACTOR) = 0xFF;
+		talkingActor(0xFF);
 	} else {
 		int oldact;
 		
@@ -1154,21 +1170,21 @@ void ScummEngine::actorTalk() {
 		} else {
 			if (!_keepText)
 				stopTalk();
-			VAR(VAR_TALK_ACTOR) = a->number;
+			talkingActor(a->number);
 			if (!_string[0].no_talk_anim) {
 				a->startAnimActor(a->talkStartFrame);
 				_useTalkAnims = true;
 			}
-			oldact = VAR(VAR_TALK_ACTOR);
+			oldact = talkingActor();
 		}
 		if (oldact >= 0x80)
 			return;
 	}
 
-	if (((_gameId == GID_MANIAC) && (_version == 1)) || VAR(VAR_TALK_ACTOR) > 0x7F) {
+	if (((_gameId == GID_MANIAC) && (_version == 1)) || talkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
-		a = derefActor(VAR(VAR_TALK_ACTOR), "actorTalk(2)");
+		a = derefActor(talkingActor(), "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
 	_charsetBufPos = 0;
@@ -1188,14 +1204,14 @@ void ScummEngine::stopTalk() {
 	_haveMsg = 0;
 	_talkDelay = 0;
 
-	act = VAR(VAR_TALK_ACTOR);
+	act = talkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
 		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
 			a->startAnimActor(a->talkStopFrame);
 			_useTalkAnims = false;
 		}
-		VAR(VAR_TALK_ACTOR) = 0xFF;
+		talkingActor(0xFF);
 	}
 	_keepText = false;
 	_charset->restoreCharsetBg();

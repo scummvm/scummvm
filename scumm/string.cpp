@@ -103,14 +103,14 @@ void ScummEngine::CHARSET_1() {
 	if (!_haveMsg)
 		return;
 
-	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xff)) {
+	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && talkingActor() == 0xFF)) {
 		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
 
 	a = NULL;
-	if (VAR(VAR_TALK_ACTOR) != 0xFF)
-		a = derefActorSafe(VAR(VAR_TALK_ACTOR), "CHARSET_1");
+	if (talkingActor() != 0xFF)
+		a = derefActorSafe(talkingActor(), "CHARSET_1");
 
 	if (a && _string[0].overhead != 0) {
 		if (_version <= 5) {
