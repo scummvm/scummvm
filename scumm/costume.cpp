@@ -617,7 +617,12 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	i = a->cost.curpos[slot] & 0x7FFF;
 	end = a->cost.end[slot];
 	code = _dataptr[i] & 0x7F;
-
+	
+	if (_vm->_features & GF_AFTER_V2 || _vm->_features & GF_AFTER_V3) {
+		if (_dataptr[i] & 0x80)
+			a->cost.soundCounter++;
+	}
+	
 	do {
 		if (!highflag) {
 			if (i++ >= end)
@@ -629,7 +634,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 		nc = _dataptr[i];
 
 		if (nc == 0x7C) {
-			a->cost.animCounter1++;
+			a->cost.animCounter++;
 			if (a->cost.start[slot] != end)
 				continue;
 		} else {
@@ -641,7 +646,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 				}
 			} else {
 				if (nc == 0x78) {
-					a->cost.animCounter2++;
+					a->cost.soundCounter++;
 					if (a->cost.start[slot] != end)
 						continue;
 				}

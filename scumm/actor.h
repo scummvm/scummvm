@@ -50,8 +50,8 @@ struct ActorWalkData {
 
 struct CostumeData {
 	byte active[16];
-	uint16 animCounter1;
-	byte animCounter2;
+	uint16 animCounter;
+	byte soundCounter;
 	uint16 stopped;
 	uint16 curpos[16];
 	uint16 start[16];

@@ -1250,7 +1250,7 @@ void Scumm_v6::o6_getActorScaleX() {
 
 void Scumm_v6::o6_getActorAnimCounter1() {
 	Actor *a = derefActor(pop(), "o6_getActorAnimCounter");
-	push(a->cost.animCounter1);
+	push(a->cost.animCounter);
 }
 
 void Scumm_v6::o6_getAnimateVariable() {

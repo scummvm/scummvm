@@ -1025,7 +1025,7 @@ void Scumm_v5::o5_getAnimCounter() {
 	getResultPos();
 	int act = getVarOrDirectByte(0x80);
 	Actor *a = derefActor(act, "o5_getAnimCounter");
-	setResult(a->cost.animCounter1);
+	setResult(a->cost.animCounter);
 }
 
 void Scumm_v5::o5_getClosestObjActor() {

@@ -480,7 +480,7 @@ void Actor::startAnimActor(int f) {
 
 		if (isInCurrentRoom() && costume != 0) {
 			animProgress = 0;
-			cost.animCounter1 = 0;
+			cost.animCounter = 0;
 			needRedraw = true;
 			if (f == initFrame)
 				cost.reset();
@@ -689,7 +689,7 @@ void Actor::adjustActorPos() {
 	walkdata.destx = -1;
 
 	moving = 0;
-	cost.animCounter2 = 0;
+	cost.soundCounter = 0;
 
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		stopActorMoving();
@@ -737,7 +737,7 @@ void Actor::hideActor() {
 		moving = 0;
 	}
 	visible = false;
-	cost.animCounter2 = 0;
+	cost.soundCounter = 0;
 	needRedraw = false;
 	needBgReset = true;
 }
@@ -789,11 +789,11 @@ void Scumm::playActorSounds() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i].cost.animCounter2 && _actors[i].isInCurrentRoom() && _actors[i].sound) {
+		if (_actors[i].cost.soundCounter && _actors[i].isInCurrentRoom() && _actors[i].sound) {
 			_currentScript = 0xFF;
 			_sound->addSoundToQueue(_actors[i].sound[0]);
 			for (i = 1; i < _numActors; i++) {
-				_actors[i].cost.animCounter2 = 0;
+				_actors[i].cost.soundCounter = 0;
 			}
 			return;
 		}
@@ -1530,8 +1530,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkStopFrame, sleByte, VER_V8),
 		MKLINE(Actor, speedx, sleUint16, VER_V8),
 		MKLINE(Actor, speedy, sleUint16, VER_V8),
-		MKLINE(Actor, cost.animCounter1, sleUint16, VER_V8),
-		MKLINE(Actor, cost.animCounter2, sleByte, VER_V8),
+		MKLINE(Actor, cost.animCounter, sleUint16, VER_V8),
+		MKLINE(Actor, cost.soundCounter, sleByte, VER_V8),
 	
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER_V8, VER_V9),
