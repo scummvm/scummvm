@@ -1097,7 +1097,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY);
 
 	byte *dst;
-	byte *back;
+	byte *back = NULL;
 
 	if (!_ignoreCharsetMask) {
 		_hasMask = true;
