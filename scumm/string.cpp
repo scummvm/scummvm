@@ -999,7 +999,7 @@ void CharsetRenderer::printChar(int chr)
 		return;
 	}
 
-	_disableOffsX = true;
+	_disableOffsX = false;
 
 	if (_firstChar) {
 		_strLeft = _left;
