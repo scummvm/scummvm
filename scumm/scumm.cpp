@@ -812,6 +812,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_IMAGES = 0xFF;
 	VAR_NUM_CHARSETS = 0xFF;
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
+	VAR_NUM_SOUND_CHANNELS = 0xFF;
+	VAR_WINDOWS_VERSION = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -1394,20 +1396,21 @@ void ScummEngine::initScummVars() {
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-	} else if (_heversion >= 71) {
-		// TODO
+	} else if (_heversion >= 72) {
+		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
 
-		// Set amount of sound channels
-		VAR(9) = 8;
-		if (_heversion >= 72) {
-			VAR(VAR_NUM_ROOMS) = _numRooms - 1;
-			VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
-			VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
-			VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
-			VAR(VAR_NUM_IMAGES) = _numImages - 1;
-			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
-			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-		}
+		VAR(VAR_NUM_ROOMS) = _numRooms - 1;
+		VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
+		VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
+		VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
+		VAR(VAR_NUM_IMAGES) = _numImages - 1;
+		VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
+		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+
+		if (_heversion >= 80)
+			VAR(VAR_WINDOWS_VERSION) = 40;
+	} else if (_heversion >= 70) {
+		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		switch (_midiDriver) {

@@ -166,7 +166,10 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
 	
-	VAR_V6_SOUNDMODE = 9;
+	if (_heversion >= 70)
+		VAR_NUM_SOUND_CHANNELS = 9;
+	else
+		VAR_V6_SOUNDMODE = 9;
 
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
@@ -229,6 +232,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_SOUNDPARAM = 51;
 	VAR_MUSIC_TIMER = 52;
 
+	VAR_NUM_SOUND_CHANNELS = 56;
 	VAR_MEMORY_PERFORMANCE = 57;
 	VAR_VIDEO_PERFORMANCE = 58;
 	VAR_NEW_ROOM = 59;
@@ -249,6 +253,9 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_NUM_CHARSETS = 73;
 	VAR_NUM_GLOBAL_OBJS = 74;
 
+	if (_heversion >= 80) {
+		VAR_WINDOWS_VERSION = 79;
+	}
 }
 
 void ScummEngine_v7::setupScummVars() {

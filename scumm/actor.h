@@ -117,7 +117,7 @@ public:
 	bool drawToBackBuf;
 	bool talking;
 	int8 layer;
-	uint16 sound[8];
+	uint16 sound[32];
 	CostumeData cost;
 protected:
 	byte palette[256];

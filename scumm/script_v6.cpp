@@ -398,6 +398,9 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 }
 
 ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
+	if (_heversion >= 72)
+		error("Call to old defineArray");
+
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -503,6 +506,9 @@ ArrayHeader *ScummEngine_v6::getArray(int array) {
 }
 
 int ScummEngine_v6::readArray(int array, int idx, int base) {
+	if (_heversion >= 72)
+		error("Call to old readArray");
+
 	ArrayHeader *ah = getArray(array);
 
 	if (ah == NULL || ah->data == NULL)
@@ -536,6 +542,9 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 }
 
 void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
+	if (_heversion >= 72)
+		error("Call to old writeArray");
+
 	ArrayHeader *ah = getArray(array);
 	if (!ah)
 		return;
@@ -1910,7 +1919,6 @@ void ScummEngine_v6::o6_verbOps() {
 	int slot, a, b;
 	VerbSlot *vs;
 	byte op;
-	byte name[200];
 
 	op = fetchScriptByte();
 	if (op == 196) {
@@ -1932,8 +1940,7 @@ void ScummEngine_v6::o6_verbOps() {
 		}
 		break;
 	case 125:		// SO_VERB_NAME
-		copyScriptString(name);
-		loadPtrToResource(rtVerb, slot, name);
+		loadPtrToResource(rtVerb, slot, NULL);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;

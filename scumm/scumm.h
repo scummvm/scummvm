@@ -623,7 +623,7 @@ protected:
 	void beginOverride();
 	void endOverride();
 
-	int copyScriptString(byte *dst, bool override = false);
+	void copyScriptString(byte *dst);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 
@@ -1303,6 +1303,8 @@ public:
 	byte VAR_NUM_IMAGES;
 	byte VAR_NUM_CHARSETS;
 	byte VAR_NUM_GLOBAL_OBJS;
+	byte VAR_NUM_SOUND_CHANNELS;
+	byte VAR_WINDOWS_VERSION;
 };
 
 // This is a constant lookup table of reverse bit masks

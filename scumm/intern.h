@@ -574,8 +574,6 @@ protected:
 	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);
 
-	void decodeScriptString(byte *dst, bool scriptString = false);
-
 	/* Version 6 script opcodes */
 	void o6_setState();
 	void o6_roomOps();
@@ -702,6 +700,10 @@ protected:
 	void flushWizBuffer();
 	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *pr);
 
+	virtual void decodeParseString(int a, int b);
+	void decodeScriptString(byte *dst, bool scriptString = false);
+	int copyScriptString(byte *dst);
+
 	/* Version 7 script opcodes */
 	void o72_pushDWord();
 	void o72_addMessageToStack();
@@ -727,6 +729,8 @@ protected:
 	void o72_getArrayDimSize();
 	void o72_getNumFreeArrays();
 	void o72_pickupObject();
+	void o72_actorOps();
+	void o72_verbOps();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
@@ -744,6 +748,7 @@ protected:
 	void o72_unknownED();
 	void o72_unknownEF();
 	void o72_unknownF1();
+	void o72_unknownF2();
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_unknownF4();

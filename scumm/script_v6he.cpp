@@ -552,7 +552,6 @@ void ScummEngine_v6he::o6_actorOps() {
 	int i, j, k;
 	int args[8];
 	byte b;
-	byte name[256];
 
 	b = fetchScriptByte();
 	if (b == 197) {
@@ -565,25 +564,12 @@ void ScummEngine_v6he::o6_actorOps() {
 		return;
 
 	switch (b) {
-	case 21:
-		// HE 7.3 (Pajama Sam onwards)
-		k = getStackList(args, ARRAYSIZE(args));
-		break;
 	case 30:
 		// _heversion >= 70
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
-		warning("o6_actorOps: stub case %d", b);
-		break;
-	case 64:
-		// _heversion >= 72
-		_actorClipOverride.bottom = pop();
-		_actorClipOverride.right = pop();
-		_actorClipOverride.top = pop();
-		_actorClipOverride.left = pop();
-		warning("o6_actorOps: stub case %d", b);
 		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -637,8 +623,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		copyScriptString(name);
-		loadPtrToResource(rtActorName, a->number, name);
+		loadPtrToResource(rtActorName, a->number, NULL);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->initFrame = pop();
@@ -1252,7 +1237,6 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
 	int i, color;
 	int args[31];
-	byte name[1024];
 
 	b = fetchScriptByte();
 
@@ -1303,23 +1287,6 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		}
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-		break;
-	case 194:		// HE 7.2
-		decodeScriptString(name, true);
-		switch (m) {
-		case 0:
-			actorTalk(name);
-			break;
-		case 1:
-			drawString(1, name);
-			break;
-		case 2:
-			unkMessage1(name);
-			break;
-		case 3:
-			unkMessage2(name);
-			break;
-		}
 		break;
 	case 0xF9:
 		color = pop();
