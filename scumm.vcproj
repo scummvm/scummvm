@@ -320,6 +320,12 @@
 				RelativePath=".\scumm\object.h">
 			</File>
 			<File
+				RelativePath="scumm\player_v1.cpp">
+			</File>
+			<File
+				RelativePath="scumm\player_v1.h">
+			</File>
+			<File
 				RelativePath=".\scumm\player_v2.cpp">
 			</File>
 			<File
