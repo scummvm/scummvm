@@ -85,7 +85,7 @@ int Scumm::checkMouseOver(int x, int y) {
 
 	vs = &_verbs[i];
 	do {
-		if (_features && GF_OLD256)
+                if (_features & GF_OLD256)
 			vs->saveid = 0;
 
 		if (vs->curmode!=1 || !vs->verbid || vs->saveid ||
