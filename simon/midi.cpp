@@ -321,8 +321,10 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr)
 		if ((cmd_byte & 0xF0) != 0xE0)
 			break;
 
+		warning ("Malformed pitch bend event skipped");
+		warning ("If music sounds screwed up now, submit a bug report");
 		track_read_byte(t);
-		track_read_byte(t);
+//		track_read_byte(t);
 	}
 
 	if (!(cmd_byte & 0x80)) {
