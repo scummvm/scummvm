@@ -370,6 +370,10 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
+
+		if (_mouseDrawn)
+			undraw_mouse();
+
 #ifdef MACOSX
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// it still always returns -1. So we simply don't call it at all and
