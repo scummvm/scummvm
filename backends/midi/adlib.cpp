@@ -82,6 +82,7 @@ public:
 	AdlibPart() {
 		_voice = 0;
 		_pitchbend = 0;
+		_pitchbend_factor = 2;
 		_transpose_eff = 0;
 		_vol_eff = 0;
 		_detune_eff = 0;
