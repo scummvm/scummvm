@@ -108,7 +108,7 @@ bool Scumm::loadState(int slot, bool compat)
 	}
 
 	_sound->stopBundleMusic();
-
+	_sound->stopCD();
 	_sound->pauseSounds(true);
 
 	CHECK_HEAP openRoom(-1);
