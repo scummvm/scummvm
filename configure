@@ -567,14 +567,17 @@ else
 fi
 echo "$_zlib"
 
-echocheck "mpeg2"
+echocheck "mpeg2 - version >= 0.4.0"
 if test "$_mpeg2" = auto ; then
   _mpeg2=no
   cat > $TMPC << EOF
 #include <inttypes.h>
 #include <mpeg2dec/mpeg2.h>
-int main(void) { 
-	#ifdef MPEG2_RELEASE
+int main(void) {
+	/* mpeg2_state_t first appears in 0.4.0 */
+	mpeg2_state_t state;
+
+        #ifdef MPEG2_RELEASE
 		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 4, 0))
 			return 0;
 	#endif
