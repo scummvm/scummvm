@@ -27,7 +27,7 @@
 #include "common/scummsys.h"
 
 class AudioStream;
-class File;
+namespace Common { class ReadStream; }
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -63,10 +63,9 @@ struct VocBlockHeader {
  */
 extern int getSampleRateFromVOCRate(int vocSR);
 
-extern byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_loop, int &end_loop);
-extern byte *loadVOCFile(File *file, int &size, int &rate);
+extern byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop);
+extern byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate);
 
-AudioStream *makeVOCStream(byte *ptr);
-AudioStream *makeVOCStream(File *file);
+AudioStream *makeVOCStream(Common::ReadStream *stream);
 
 #endif
