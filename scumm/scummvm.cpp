@@ -337,6 +337,8 @@ void Scumm::scummInit() {
 
 	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
 		loadCharset(1);
+	if (_features & GF_OLD_BUNDLE)
+		loadCharset(0);	// FIXME - HACK ?
 
 	setShake(0);
 	setupCursor();
