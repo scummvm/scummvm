@@ -1177,7 +1177,11 @@ void ScummEngine_v6::o6_putActorAtObject() {
 	int room, obj, x, y;
 	Actor *a;
 
-	obj = popRoomAndObj(&room);
+	if (_features & GF_HUMONGOUS) {
+		room = pop();
+		obj = pop();
+	} else
+		obj = popRoomAndObj(&room);
 
 	a = derefActor(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
@@ -1257,7 +1261,11 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 	y = pop();
 	x = pop();
 
-	obj = popRoomAndObj(&room);
+	if (_features & GF_HUMONGOUS) {
+		room = pop();
+		obj = pop();
+	} else
+		obj = popRoomAndObj(&room);
 
 	a = derefActor(VAR(VAR_EGO), "o6_loadRoomWithEgo");
 	a->putActor(0, 0, room);
