@@ -239,7 +239,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	Common::StackLock lock(_mutex);
 	debug(5, "IMuseDigital::fadeOutMusic");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC) && _track[l]->used) {
+		if ((_track[l]->used) && (_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			cloneToFadeOutTrack(l, fadeDelay, true);
 		}
 	}
@@ -251,7 +251,7 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 	int fadeTrack = -1;
 
 	for (int l = MAX_DIGITAL_TRACKS; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		if (!_track[l]->used && !_track[l]->handle.isActive()) {
+		if (!_track[l]->used) {
 			fadeTrack = l;
 			break;
 		}

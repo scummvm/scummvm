@@ -278,7 +278,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 	int soundId = -1;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC) && _track[l]->used) {
+		if ((_track[l]->used) && (_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = _track[l]->soundId;
 		}
 	}
@@ -331,7 +331,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 	int soundId = -1;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC) && _track[l]->used) {
+		if ((_track[l]->used) && (_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = _track[l]->soundId;
 		}
 	}
