@@ -206,7 +206,7 @@ R_GAME_FONTDESC IHNMCD_GameFonts[] = {
 	{R_GAME_FONT_LARGE3, 8}
 };
 
-R_GAME_RESOURCEDESC IHNM_Resources[] = {
+R_GAME_RESOURCEDESC IHNM_Resources = {
 	IHNM_SCENE_LUT,		/* Scene lookup table RN */
 	IHNM_SCRIPT_LUT,	/* Script lookup table RN */
 
@@ -308,7 +308,7 @@ R_GAMEDESC GameDescs[] = {
 
 		    0,
 
-		    IHNM_Resources,
+		    &IHNM_Resources,
 
 		    ARRAYSIZE(IHNMDEMO_GameFiles),
 		    IHNMDEMO_GameFiles,
@@ -333,7 +333,7 @@ R_GAMEDESC GameDescs[] = {
 
 		    1,
 
-		    IHNM_Resources,
+		    &IHNM_Resources,
 
 		    ARRAYSIZE(IHNMCD_GameFiles),
 		    IHNMCD_GameFiles,
@@ -444,7 +444,7 @@ int LoadLanguage(void)
 {
 
 	char lang_file[R_MAXPATH];
-	char lang_path[R_MAXPATH];
+	// char lang_path[R_MAXPATH];
 	uint game_n;
 
 	File test_file;
@@ -461,7 +461,7 @@ int LoadLanguage(void)
 		if (!test_file.open(lang_file)) {
 			R_printf(R_STDOUT,
 			    "Couldn't open language file %s. "
-			    "Using default (US English)\n", lang_path);
+			    "Using default (US English)\n", lang_file);
 
 			return R_SUCCESS;
 		}
@@ -483,7 +483,7 @@ int LoadLanguage(void)
 			return R_FAILURE;
 		}
 
-		R_printf(R_STDOUT, "Using language file %s.\n", lang_path);
+		R_printf(R_STDOUT, "Using language file %s.\n", lang_file);
 
 		// FIXME
 		//CFG_Read(lang_path);
