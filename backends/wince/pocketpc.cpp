@@ -100,7 +100,7 @@ typedef struct {
 
 #define AddDirtyRect(xi,yi,wi,hi) 				\
   if (num_of_dirty_square < MAX_NUMBER_OF_DIRTY_SQUARES) {	\
-    ds[num_of_dirty_square].x = xi;				\
+    ds[num_of_dirty_square].x = xi; \
     ds[num_of_dirty_square].y = yi;				\
     ds[num_of_dirty_square].w = wi;				\
     ds[num_of_dirty_square].h = hi;				\
@@ -1144,6 +1144,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
+						num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 						if (!hide_toolbar)
 							toolbar_drawn = false;
 						break;
@@ -1563,7 +1564,7 @@ void OSystem_WINCE3::update_screen() {
 		else {
 			int i;
 			for (i=0; i<num_of_dirty_square; i++) {
-				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ds[i].x, ds[i].y, ds[i].w, ds[i].h, 320);
+				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320);
 			}
 			num_of_dirty_square = 0;
 		}
