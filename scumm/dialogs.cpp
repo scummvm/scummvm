@@ -53,6 +53,7 @@ using GUI::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;
+typedef GUI::ChooserDialog GUI_ChooserDialog;
 
 namespace Scumm {
 
@@ -243,7 +244,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		_chooseButton->draw();
 		break;
 	default:
-		GUI::ChooserDialog::handleCommand(sender, cmd, data);
+		GUI_ChooserDialog::handleCommand(sender, cmd, data);
 	}
 }
 

@@ -129,10 +129,11 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 }
 
 int AudioCDManager::getCachedTrack(int track) {
+	int i;
 	int current_index;
 
 	// See if we find the track in the cache
-	for (int i = 0; i < CACHE_TRACKS; i++)
+	for (i = 0; i < CACHE_TRACKS; i++)
 		if (_cached_tracks[i] == track) {
 			if (_track_info[i])
 				return i;
@@ -150,7 +151,7 @@ int AudioCDManager::getCachedTrack(int track) {
 
 	_cached_tracks[current_index] = track;
 
-	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _track_info[current_index] == NULL; ++i)
+	for (i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _track_info[current_index] == NULL; ++i)
 		_track_info[current_index] = TRACK_FORMATS[i].openTrackFunction(track);
 
 	if (_track_info[current_index] != NULL)
