@@ -826,12 +826,17 @@ enum WhereIsObject {
 	WIO_ROOM = 1,
 	WIO_GLOBAL = 2,
 	WIO_LOCAL = 3,
-	WIO_FLOBJECT = 4,
+	WIO_FLOBJECT = 4
 };
 
 enum MouseButtonStatus {
 	msDown = 1,
-	msClicked = 2,
+	msClicked = 2
+};
+
+enum VideoMode {
+	VIDEO_SCALE = 0,
+	VIDEO_2XSAI = 1
 };
 
 struct BoxCoords {
@@ -975,6 +980,7 @@ struct Scumm {
 	uint32 _minHeapThreshold;
 	
 	bool _fullScreen;
+	int  _videoMode;
 
 	byte _bkColor;
 	uint16 _lastXstart;

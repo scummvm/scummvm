@@ -200,6 +200,7 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	_gameDataPath = NULL;
     _gameTempo = 0;
+	_videoMode = 0;
 
 	parseCommandLine(argc, argv);
 
@@ -418,7 +419,8 @@ int Scumm::scummLoop(int delta) {
 						"\ts<num>  - Set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
 						"\tp<path> - look for game in <path>\n" \
 						"\tm<num> - Set music volume to <num> (0-100)\n" \
-						"\tf       - fullscreen mode\n"
+						"\tf       - fullscreen mode\n" \
+						"\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
 
 void Scumm::parseCommandLine(int argc, char **argv) {
 	#if !defined(__APPLE__CW)
@@ -490,6 +492,12 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 						se->set_music_volume(atoi(s+1));					
                     goto NextArg;
 				}
+				case 'g':
+                	if (*(s+1) == '\0')
+                		goto ShowHelpAndExit;
+					_videoMode = atoi(s+1);
+					goto NextArg;
+
 				default:
 ShowHelpAndExit:;
 					printf( USAGE_STRING );
