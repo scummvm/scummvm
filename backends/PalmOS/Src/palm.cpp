@@ -113,6 +113,7 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 	Coord h = FntLineHeight() + 2;
 	Coord w, y;
 
+	WinSetActiveWindow(WinGetDisplayWindow());
 	WinSetBackColor(0);
 	WinSetTextColor(255);
 
