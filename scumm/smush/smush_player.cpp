@@ -257,6 +257,18 @@ void SmushPlayer::init() {
 	_vm->_smushVideoShouldFinish = false;
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].getPixels(0, 0);
+	
+	// HACK HACK HACK: This is an *evil* trick, beware!
+	// We do this to fix bug #1037052. A proper solution would change all the
+	// drawing code to use the pitch value specified by the virtual screen.
+	// However, since a lot of the SMUSH code currently assumes the screen
+	// width and pitch to be equal, this will require lots of changes. So
+	// we resort to this hackish solution for now.
+	_origPitch = _vm->virtscr[0].pitch;
+	_origNumStrips = _vm->gdi._numStrips;
+	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
+	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
+	
 	_smixer = new SmushMixer(_vm->_mixer);
 	g_timer->installTimerProc(&timerCallback, _speed, this);
 }
@@ -298,6 +310,12 @@ void SmushPlayer::release() {
 	_vm->_mixer->stopHandle(_IACTchannel);
 
 	_vm->_fullRedraw = true;
+
+
+	// HACK HACK HACK: This is an *evil* trick, beware! See above for
+	// some explanation.
+	_vm->virtscr[0].pitch = _origPitch;
+	_vm->gdi._numStrips = _origNumStrips;
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
