@@ -113,7 +113,7 @@ struct Gui {
 	int _editLen;
 	bool valid_games[9];
 	char game_names[9][SAVEGAME_NAME_LEN];
-	void loop();
+	void loop(Scumm *s);
 	void init(Scumm *s);
 	void draw(int start, int end);
 	void draw(int item) { draw(item,-1); }
@@ -140,10 +140,10 @@ struct Gui {
 	byte getDefaultColor(int color);
 
 	// Dialogs
-	void saveLoadDialog();
-	void pause();
-	void options();
-	void launcher();
+	void saveLoadDialog(Scumm *s);
+	void pause(Scumm *s);
+	void options(Scumm *s);
+	void launcher(Scumm *s);
 
 	void handleSoundDialogCommand(int cmd);
 	void handleOptionsDialogCommand(int cmd);

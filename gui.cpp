@@ -630,7 +630,7 @@ void Gui::handleCommand(int cmd) {
 		close();
 		return;
 	case 9: /* options button */
-		options();
+		options(_s);
 		draw(0, 100);
 		return;
 	default:
@@ -772,7 +772,7 @@ byte Gui::getDefaultColor(int color) {
 
 void Gui::init(Scumm *s) {
 	_s = s;
-	if (_s->_gameId && !(_s->_features & GF_SMALL_HEADER)) {
+	if (_s->_gameId && !(_s->_features & GF_SMALL_HEADER) && !(_s->_features & GF_AFTER_V7)) {
 		_bgcolor =  getDefaultColor(0);
 		_color = getDefaultColor(1);
 		_textcolor = getDefaultColor(2);
@@ -787,7 +787,8 @@ void Gui::init(Scumm *s) {
 	}
 }
 
-void Gui::loop() {
+void Gui::loop(Scumm *s) {
+	init(s);
 	if (_active==1) {
 		_active++;
 		draw(0,200); // was 100
@@ -837,7 +838,8 @@ void Gui::close() {
 #endif
 }
 
-void Gui::saveLoadDialog() {
+void Gui::saveLoadDialog(Scumm *s) {
+	init(s);
 	_widgets[0] = save_load_dialog;
 	_editString = -1;
 	_cur_page = 0;
@@ -845,21 +847,24 @@ void Gui::saveLoadDialog() {
 	_dialog = SAVELOAD_DIALOG;
 }
 
-void Gui::pause() {
+void Gui::pause(Scumm *s) {
+	init(s);
 	_widgets[0] = pause_dialog;
 	_cur_page = 0;
 	_active = true;
 	_dialog = PAUSE_DIALOG;
 }
 
-void Gui::options() {
+void Gui::options(Scumm *s) {
+	init(s);
 	_widgets[0] = options_dialog;
 	_active = true;
 	_cur_page = 0;
 	_dialog = OPTIONS_DIALOG;
 }
 
-void Gui::launcher() {
+void Gui::launcher(Scumm *s) {
+	init(s);
 	_widgets[0] = launcher_dialog;
 	_active = true;
 	_cur_page = 0;

@@ -866,7 +866,7 @@ void launcherLoop() {
 	int delta = 0;
 	last_time = SDL_GetTicks();
 
-	gui.launcher();
+	gui.launcher(scumm);
 	do {
 		updateScreen(scumm);
 
@@ -875,7 +875,7 @@ void launcherLoop() {
 		last_time = SDL_GetTicks();
 
 		if (gui._active) {
-			gui.loop();
+			gui.loop(scumm);
 			delta = 5;
 		} else
 			error("gui closed!");
@@ -2003,7 +2003,7 @@ int OSystem::waitTick(int delta)
 		waitForTimer(scumm, delta * 15 + last_time - new_time);
 		last_time = SDL_GetTicks();
 		if (gui._active) { 
-			gui.loop();
+			gui.loop(scumm);
 			delta = 5;
 		}
 	}while(gui._active);

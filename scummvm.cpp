@@ -734,11 +734,11 @@ void Scumm::unkRoomFunc4(int a, int b, int c, int d, int e) {
 }
 
 void Scumm::pauseGame(bool user) {
-	((Gui*)_gui)->pause();
+	((Gui*)_gui)->pause(this);
 }
 
 void Scumm::setOptions() {
-	((Gui*)_gui)->options();
+	((Gui*)_gui)->options(this);
 }
 
 void Scumm::shutDown(int i) {
@@ -758,7 +758,7 @@ void Scumm::processKbd() {
 		_virtual_mouse_y-=16;
 	
 	if (_virtual_mouse_y < 0)
-		_virtual_mouse_y = -1;
+		_virtual_mouse_y =-1;
 	if (_features & GF_OLD256) {
 		if (_virtual_mouse_y >= virtscr[0].height + virtscr[0].topline)
 			_virtual_mouse_y = -1;
@@ -795,7 +795,7 @@ void Scumm::processKbd() {
 	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY] && _currentRoom != 0) {
 		if ( _features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT],0,0,0);
-		((Gui*)_gui)->saveLoadDialog();
+		((Gui*)_gui)->saveLoadDialog(this);
 		if ( _features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT_2],0,0,0);
 	} else if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
