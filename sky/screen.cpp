@@ -99,6 +99,19 @@ void SkyScreen::setPalette(uint8 *pal) {
 	_system->update_screen();
 }
 
+void SkyScreen::setPaletteEndian(uint8 *pal) {
+
+#ifdef SCUMM_BIG_ENDIAN
+	uint8 endPalette[256 * 3];
+	for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
+		endPalette[cnt] = pal[cnt ^ 1];
+	convertPalette(endPal, _palette);
+#else
+	convertPalette(pal, _palette);
+	_system->set_palette(_palette, 0, GAME_COLOURS);
+	_system->update_screen();
+}
+
 void SkyScreen::halvePalette(void) {
 
 	uint8 halfPalette[1024];

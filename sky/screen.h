@@ -52,6 +52,7 @@ public:
 	SkyScreen(OSystem *pSystem, SkyDisk *pDisk);
 	~SkyScreen(void);
 	void setPalette(uint8 *pal);
+	void setPaletteEndian(uint8 *pal);
 	void setPalette(uint16 fileNum);
 	void paletteFadeUp(uint8 *pal);
 	void paletteFadeUp(uint16 fileNr);

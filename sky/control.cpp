@@ -415,7 +415,7 @@ void SkyControl::doLoadSavePanel(void) {
 	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->update_screen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -481,7 +481,7 @@ void SkyControl::doControlPanel(void) {
 	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->update_screen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -1432,7 +1432,7 @@ uint16 *SkyControl::lz77decode(uint16 *data) {
 	uint16 lzBuf[0x1000];
 	memset(lzBuf + 0xF00, 0, 0x200);
 	for (lzPos = 0; lzPos < 0xF00; lzPos++)
-		lzBuf[lzPos] = 0xF00 - lzPos;
+		lzBuf[lzPos] = TO_LE_16(0xF00 - lzPos);
 	lzPos = 0;
 	uint32 indic = 0;
 	while (outPos < size) {
@@ -1499,7 +1499,7 @@ void SkyControl::restartGame(void) {
 	_skyScreen->forceRefresh();
 	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_skyScreen->showScreen(_skyScreen->giveCurrent());
-	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	SkyState::_systemVars.pastIntro = true;
 }
