@@ -833,7 +833,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	
 	if (!input) {
 		warning("startSfxSound failed to load sound");
-		return 0;
+		return;
 	}
 
 	if (_vm->_imuseDigital) {
