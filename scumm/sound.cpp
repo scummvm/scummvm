@@ -464,7 +464,7 @@ void Sound::playSound(int soundID) {
 		// This hack relays on the fact that we currently don't support SFX
 		// in these games, only music. Once we add SFX support, we'll have to
 		// revise it / replace it by a proper fix.
-		if (ptr) {
+		if (READ_BE_UINT16(ptr) == 'RO' || READ_UINT32(ptr) == MKID('ADL ')) {
 			_scumm->_imuse->stop_all_sounds();
 		}
 	}
