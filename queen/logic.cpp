@@ -68,6 +68,9 @@ Logic::Logic(QueenEngine *vm)
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	_puzzleAttemptCount = 0;
 	_journal = new Journal(vm);
+	_scene = 0;
+	memset(_gameState, 0, sizeof(_gameState));	
+	initialise();
 }
 
 Logic::~Logic() {
@@ -85,7 +88,7 @@ Logic::~Logic() {
 	delete[] _graphicAnim;
 }
 
-void Logic::start() {	
+void Logic::initialise() {	
 	int16 i;
 
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
@@ -187,7 +190,7 @@ void Logic::start() {
 	_currentRoom = _objectData[_entryObj].room;
 	_entryObj = 0;
 
-	if(memcmp(ptr, _vm->resource()->JASVersion(), 5) != 0) {
+	if (memcmp(ptr, _vm->resource()->JASVersion(), 5) != 0) {
 		warning("Unexpected queen.jas file format");
 	}
 
@@ -250,10 +253,10 @@ void Logic::start() {
 	for (i = 1; i <= _numAFile; i++) {
 		_aFile.push_back(queen2jas.nextLine());
 	}
+}
 
+void Logic::start() {
 	_vm->command()->clear(false);
-	_scene = 0;
-	memset(_gameState, 0, sizeof(_gameState));
 	_vm->display()->setupPanel();
 	_vm->graphics()->unpackControlBank();
 	_vm->graphics()->setupMouseCursor();
@@ -261,6 +264,7 @@ void Logic::start() {
 	_vm->grid()->setupPanel();
 
 	_oldRoom = 0;
+	_newRoom = _currentRoom;
 }
 
 ObjectData* Logic::objectData(int index) const {
@@ -285,7 +289,7 @@ uint16 Logic::findBob(uint16 obj) const {
 
 			if (img <= -10) {
 				// object has been turned off, but the image order hasn't been updated
-				if(_graphicData[-(img + 10)].lastFrame != 0) {
+				if (_graphicData[-(img + 10)].lastFrame != 0) {
 					bobtype = 1;
 				}
 			} else if (img == -2) {

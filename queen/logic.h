@@ -207,6 +207,8 @@ public:
 
 protected:
 
+	void initialise();
+
 	void asmMakeJoeUseDress();
 	void asmMakeJoeUseNormalClothes();
 	void asmMakeJoeUseUnderwear();

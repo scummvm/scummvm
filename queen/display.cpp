@@ -279,25 +279,25 @@ void Display::palCustomColors(uint16 roomNum) {
 	int i;
 	switch (roomNum) {
 	case 31:
-		for(i = 72; i < 84; i++) {
+		for (i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 90 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 70 / 100;
 		}
 		break;
 	case 29:
-		for(i = 72; i < 84; i++) {
+		for (i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 60 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 60 / 100;
 		}
 		break;
 	case 30:
-		for(i = 72; i < 84; i++) {
+		for (i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 60 / 100;
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 80 / 100;
 		}
 		break;
 	case 28:
-		for(i = 72; i < 84; i++) {
+		for (i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 80 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 1] * 60 / 100;
 		}
@@ -321,12 +321,12 @@ void Display::palCustomScroll(uint16 roomNum) {
 	switch (roomNum) {
 	case 123: {
 			static int16 j = 0, jdir = 2;
-			for(i = 96; i < 111; ++i) {
+			for (i = 96; i < 111; ++i) {
 				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
 				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
 			}
 			j += jdir;
-			if(j <= 0 || j >= 18) {
+			if (j <= 0 || j >= 18) {
 				jdir = -jdir;
 			}
 			loPal = 96; 
@@ -335,12 +335,12 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 124: {
 			static int16 j = 0,jdir = 2;
-			for(i = 80; i < 144; ++i) {
+			for (i = 80; i < 144; ++i) {
 				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
 				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
 			}
 			j += jdir;
-			if(j <= 0 || j >= 14) {
+			if (j <= 0 || j >= 14) {
 				jdir = -jdir;
 				if (_rnd.getRandomNumber(1)) {
 					if (ABS(jdir) == 1) {
@@ -361,7 +361,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 95;
 		break;
 	case 100:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(128, 132);
 			palScroll(133, 137);
 			palScroll(138, 143);
@@ -370,14 +370,14 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 102:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(112, 127);
 			loPal = 112;
 			hiPal = 127;
 		}
 		break;
 	case 62:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(108, 119);
 			loPal = 108;
 			hiPal = 119;
@@ -389,7 +389,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 123;
 		break;
 	case 59:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(56, 63);
 			loPal = 56;
 			hiPal = 63;
@@ -405,24 +405,24 @@ void Display::palCustomScroll(uint16 roomNum) {
 		palScroll(88, 91);
 		palScroll(92, 95);
 		palScroll(128, 135);
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(136, 143);
 		}
 		loPal = 28;
 		hiPal = 143;
 		break;
 	case 40:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(96, 103);
 		}
-		if(scrollx & 3) {
+		if (scrollx & 3) {
 			palScroll(104, 107);
 		}
 		loPal = 96;
 		hiPal = 107;
 		break;
 	case 97:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(96, 107);
 			palScroll(108, 122);
 			loPal = 96;
@@ -436,7 +436,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 57:
 		palScroll(128, 143);
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(96, 103);
 		}
 		loPal = 96;
@@ -448,7 +448,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 95;
 		break;
 	case 2:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(120, 127);
 			loPal = 120;
 			hiPal = 127;
@@ -456,7 +456,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 3:
 	case 5:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(128, 135);
 			palScroll(136, 143);
 			loPal = 128;
@@ -464,14 +464,14 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 7:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(119, 127);
 			loPal = 119;
 			hiPal = 127;
 		}
 		break;
 	case 42:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(118, 127);
 			palScroll(136, 143);
 			loPal = 118;
@@ -479,7 +479,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		}
 		break;
 	case 4:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(32,47);
 		}
 		palScroll(64, 70);
@@ -488,7 +488,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 79;
 		break;
 	case 8:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(120, 127);
 		}
 		loPal = 120;
@@ -496,7 +496,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 12:
 	case 64:
-		if(scrollx & 1) {
+		if (scrollx & 1) {
 			palScroll(112, 119);
 			palScroll(120, 127);
 			loPal = 112;
@@ -721,9 +721,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else if (!xflip) { // Masked bitmap unflipped
 		while (h--) {
-			for(int i = 0; i < w; ++i) {
+			for (int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if(b != 0) {
+				if (b != 0) {
 					*(dstBuf + i) = b;
 				}
 			}
@@ -732,9 +732,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else { // Masked bitmap flipped
 		while (h--) {
-			for(int i = 0; i < w; ++i) {
+			for (int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if(b != 0) {
+				if (b != 0) {
 					*(dstBuf - i) = b;
 				}
 			}
@@ -907,7 +907,7 @@ void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 		uint8 c = *chr++;
 		if (c != 0) {
 			for (i = 0; i < 8; ++i) {
-				if(c & 0x80) {
+				if (c & 0x80) {
 					*p = color;
 				}
 				++p;
@@ -969,9 +969,10 @@ void Display::blankScreen() {
 }
 
 void Display::blankScreenEffect1() {
+	static const int inc[] = { -1, 1 };
 	uint8 buf[32 * 32];
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
-		for(int i = 0; i < 2; ++i) {    
+		for (int i = 0; i < 2; ++i) {    
 			uint16 x = _rnd.getRandomNumber(SCREEN_W - 32 - 2) + 1;
 			uint16 y = _rnd.getRandomNumber(SCREEN_H - 32 - 2) + 1;
 			uint8 *p = _screenBuf + SCREEN_W * y + x;
@@ -982,7 +983,6 @@ void Display::blankScreenEffect1() {
 				p += SCREEN_W;
 				q += 32;
 			}
-			const int inc[] = { -1, 1 };
 			x += inc[_rnd.getRandomNumber(1)];
 			y += inc[_rnd.getRandomNumber(1)];
 			_system->copyRectToScreen(buf, 32, x, y, 32, 32);

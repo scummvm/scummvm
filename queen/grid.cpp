@@ -92,7 +92,7 @@ uint16 Grid::findZoneForPos(GridScreen screen, uint16 x, uint16 y) const {
 	if (screen == GS_PANEL) {
 		y -= ROOM_ZONE_HEIGHT;
 	}
-	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
+	for (i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		const ZoneSlot *pzs = &_zones[screen][i];
 		if (pzs->valid && pzs->box.contains(x, y)) {
 			return i;
@@ -114,7 +114,7 @@ uint16 Grid::findAreaForPos(GridScreen screen, uint16 x, uint16 y) const {
 
 void Grid::clear(GridScreen screen) {
 	debug(9, "Grid::clear(%d)", screen);
-	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
+	for (int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		_zones[screen][i].valid = false;
 	}
 }
@@ -161,7 +161,7 @@ void Grid::setupPanel() {
 }
 
 void Grid::drawZones() {
-	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
+	for (int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		const ZoneSlot *pzs = &_zones[GS_ROOM][i];
 		if (pzs->valid) {
 			const Box *b = &pzs->box;
@@ -227,7 +227,7 @@ uint16 Grid::findScale(uint16 x, uint16 y) const {
 	uint16 room = _vm->logic()->currentRoom();
 	uint16 scale = 100;
 	uint16 areaNum = findAreaForPos(GS_ROOM, x, y);
-	if(areaNum != 0) {
+	if (areaNum != 0) {
 		scale = _area[room][areaNum].calcScale(y);
 	}
 	return scale;

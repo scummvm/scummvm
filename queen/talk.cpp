@@ -123,7 +123,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	int16 head = _dialogueTree[level][0].head;
 
 	// TODO: split this loop in several functions
-	while(retval != -1) {		
+	while (retval != -1) {		
 		char otherVoiceFilePrefix[MAX_STRING_SIZE];
 
 		_talkString[0][0] = '\0';

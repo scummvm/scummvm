@@ -32,7 +32,7 @@ BankManager::BankManager(Resource *res)
 }
 
 BankManager::~BankManager() {
-	for(uint32 i = 0; i < MAX_BANKS_NUMBER; ++i) {
+	for (uint32 i = 0; i < MAX_BANKS_NUMBER; ++i) {
 		close(i);
 	}
 	eraseFrames(true);

@@ -170,7 +170,7 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 			k *= ((k * ds) / pwd->area->box.yDiff()) / 2;
 		}
 
-		if(ABS(pwd->dx) < k) {
+		if (ABS(pwd->dx) < k) {
 			if (pwd->dy < 0) {
 				if (mpd->walkBack1 > 0) {
 					pwd->anim.set(mpd->walkBack1, mpd->walkBack2, DIR_BACK);
@@ -182,7 +182,7 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 			} else if (pwd->dy > 0) {
 				if (mpd->walkFront1 > 0) {
 					pwd->anim.set(mpd->walkFront1, mpd->walkFront2, DIR_FRONT);
-				} else if(ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
+				} else if (ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
 					if (pwd->dx < 0) {
 						pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_FRONT);
 					} else {
@@ -272,7 +272,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	debug(9, "Walk::moveJoe(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	// if in cutaway, allow Joe to walk anywhere
-	if(newPos == 0 && inCutaway) {
+	if (newPos == 0 && inCutaway) {
 		incWalkData(oldx, oldy, endx, endy, oldPos);
 	} else {
 		if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
@@ -470,10 +470,10 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
  	// the X,Y coord to be in this area
 	if (recalibrate) {
 		b = &_roomArea[pos].box;
-		if(*x < b->x1) *x = b->x1;
-		if(*x > b->x2) *x = b->x2;
-		if(*y < b->y1) *y = b->y1;
-		if(*y > b->y2) *y = b->y2;
+		if (*x < b->x1) *x = b->x1;
+		if (*x > b->x2) *x = b->x2;
+		if (*y < b->y1) *y = b->y1;
+		if (*y > b->y2) *y = b->y2;
 	}
 	return pos;
 }
@@ -486,7 +486,7 @@ uint16 Walk::findFreeArea(uint16 area) const {
 		int b = _roomAreaCount - testArea;
 		if (map & (1 << b)) {
 			// connecting area, check if it's been struck off
-			if(!isAreaStruck(testArea)) {
+			if (!isAreaStruck(testArea)) {
 				// legitimate connecting area, keep it
 				freeArea = testArea;
 				break;
@@ -524,7 +524,7 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 			++_areaListCount;
 			assert(_areaListCount < MAX_WALK_DATA);
 			_areaList[_areaListCount] = area;
-			if(!isAreaStruck(area)) {
+			if (!isAreaStruck(area)) {
 				++_areaStrikeCount;
 				assert(_areaStrikeCount < MAX_WALK_DATA);
 				_areaStrike[_areaStrikeCount] = area;

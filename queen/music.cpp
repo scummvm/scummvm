@@ -186,7 +186,7 @@ static const byte mt32_to_gm[128] = {
 		if ((tuneList + 1) == 3) {
 			_randomLoop = true;
 			int i = 0;
-			while(Sound::_jungleList[i])
+			while (Sound::_jungleList[i])
 				queueSong(Sound::_jungleList[i++] - 1);
 			return;
 		}
@@ -211,10 +211,10 @@ static const byte mt32_to_gm[128] = {
 		
 		int i = 0;
 		if (_numSongs == 40) {
-			while(Sound::_tuneDemo[tuneList].tuneNum[i])
+			while (Sound::_tuneDemo[tuneList].tuneNum[i])
 				queueSong(Sound::_tuneDemo[tuneList].tuneNum[i++] - 1);
 		} else {
-			while(Sound::_tune[tuneList].tuneNum[i])
+			while (Sound::_tune[tuneList].tuneNum[i])
 				queueSong(Sound::_tune[tuneList].tuneNum[i++] - 1);
 		}
 			

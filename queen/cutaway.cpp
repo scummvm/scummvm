@@ -426,7 +426,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 	if (object.fromObject > 0) {
 		/* Copy FROM_OBJECT into OBJECT */
 
-		if(object.objectNumber != object.fromObject) {
+		if (object.objectNumber != object.fromObject) {
 			_vm->logic()->objectCopy(object.fromObject, object.objectNumber);
 		} else {
 			// Same object, so just turn it on!
@@ -1130,7 +1130,7 @@ void Cutaway::updateGameState() {
 		bool update = false;
 
 		if (stateIndex > 0) {
-			if(_vm->logic()->gameState(stateIndex) == stateValue) 
+			if (_vm->logic()->gameState(stateIndex) == stateValue) 
 				update = true;
 		} else {
 			_vm->logic()->gameState(ABS(stateIndex), stateValue);

@@ -86,26 +86,26 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 }
 
 void BobSlot::moveOneStep() {
-	if(xmajor) {
-		if(x == endx) {
+	if (xmajor) {
+		if (x == endx) {
 			y = endy;
 			moving = false;
 		} else {
 			x += xdir;
 			total += dy;
-			if(total > dx) {
+			if (total > dx) {
 				y += ydir;
 				total -= dx;
 			}
 		}
 	} else {
-		if(y == endy) {
+		if (y == endy) {
 			x = endx;
 			moving = false;
 		} else {
 			y += ydir;
 			total += dx;
-			if(total > dy) {
+			if (total > dy) {
 				x += xdir;
 				total -= dy;
 			}
@@ -116,7 +116,7 @@ void BobSlot::moveOneStep() {
 void BobSlot::animOneStep() {
 	if (anim.string.buffer != NULL) {
 		--anim.speed;
-		if(anim.speed <= 0) {
+		if (anim.speed <= 0) {
 			// jump to next entry
 			++anim.string.curPos;
 			uint16 nextFrame = anim.string.curPos->frame;
@@ -131,7 +131,7 @@ void BobSlot::animOneStep() {
 	} else {
 		// normal looping animation
 		--anim.speed;
-		if(anim.speed == 0) {
+		if (anim.speed == 0) {
 			anim.speed = anim.speedBak;
 
 			int16 nextFrame = frameNum + frameDir;
@@ -259,7 +259,7 @@ void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, const Box *bbox, i
 
 	const Box *box = (bs->box == BobSlot::_defaultBox) ? bbox : &bs->box;
 
-	if(w != 0 && h != 0 && box->intersects(x, y, w, h)) {
+	if (w != 0 && h != 0 && box->intersects(x, y, w, h)) {
 		uint8 *src = bf->data;
 		uint16 x_skip = 0;
 		uint16 y_skip = 0;
@@ -333,7 +333,7 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 		uint8* dst = _shrinkBuffer.data;
 		for (y = 0; y < new_h; ++y) {
 			uint8 *p = bf->data + sh[y] * bf->width;
-			for(x = 0; x < new_w; ++x) {
+			for (x = 0; x < new_w; ++x) {
 				*dst++ = *(p + sh[x]);
 			}
 		}
@@ -400,13 +400,13 @@ void Graphics::drawBobs() {
 }
 
 void Graphics::clearBobs() {
-	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].clear();
 	}
 }
 
 void Graphics::stopBobs() {
-	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}
 }

@@ -95,7 +95,7 @@ void Credits::update() {
 				/* wait until next room */
 				if (0 == _pause)
 					_pause = -1;
-				for(i = 0; i < _count; i++)	{
+				for (i = 0; i < _count; i++)	{
 					_vm->display()->textCurrentColor(_list[i].color);
 					_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
 				}

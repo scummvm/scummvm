@@ -122,7 +122,8 @@ void CmdState::init() {
 }
 
 Command::Command(QueenEngine *vm)
-	: _cmdText((vm->resource()->getLanguage() == HEBREW), CmdText::COMMAND_Y_POS, vm), _vm(vm) {
+	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL),
+	_cmdText((vm->resource()->getLanguage() == HEBREW), CmdText::COMMAND_Y_POS, vm), _vm(vm) {
 }
 
 Command::~Command() {

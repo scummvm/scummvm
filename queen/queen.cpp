@@ -290,9 +290,6 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 
 int QueenEngine::go() {
 	_logic->start();
-	_logic->oldRoom(0);
-	_logic->newRoom(_logic->currentRoom());
-
 	_quit = false;
 	while (!_quit) {
 		// queen.c lines 4080-4104

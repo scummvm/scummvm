@@ -65,7 +65,7 @@ Resource::~Resource() {
 	_resourceFile->close();
 	delete _resourceFile;
 
-	if(_resourceTable != _resourceTablePEM10) 
+	if (_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
 }
 
