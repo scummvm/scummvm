@@ -347,7 +347,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o72_unknownF1),
-		OPCODE(o72_unknownF2),
+		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
@@ -1700,11 +1700,12 @@ void ScummEngine_v72he::o72_unknownF1() {
 	push(-1);
 }
 
-void ScummEngine_v72he::o72_unknownF2() {
-	int a = pop();
-	int b = pop();
-	debug(1,"o7_unknownF2 stub (%d, %d)", b, a);
-	push(-1);
+void ScummEngine_v72he::o72_checkGlobQueue() {
+	int subOp = fetchScriptByte();
+	int idx = pop();
+
+	debug(1,"o72_checkGlobQueue stub (%d, %d)", subOp, idx);
+	push(100);
 }
 
 void ScummEngine_v72he::o72_readINI() {

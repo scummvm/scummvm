@@ -747,7 +747,7 @@ protected:
 	void o72_unknownED();
 	void o72_unknownEF();
 	void o72_unknownF1();
-	void o72_unknownF2();
+	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_unknownF4();

@@ -347,7 +347,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o72_unknownF1),
-		OPCODE(o72_unknownF2),
+		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
