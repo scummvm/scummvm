@@ -619,6 +619,13 @@ void ScummEngine_v70he::o70_quitPauseRestart() {
 	int par1;
 
 	switch (subOp & 0xff) {
+	case 22: // HE80+
+		clearDrawObjectQueue();
+		break;
+	case 26: // HE80+
+		// Clear screen
+		// Update palette
+		break;
 	case 158:		// SO_RESTART
 		restart();
 		break;
