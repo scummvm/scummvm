@@ -145,7 +145,7 @@ public:
 	void savegameRestore();
 	static void savegameGzread(void *data, int32 size);
 	static void savegameGzwrite(void *data, int32 size);
-	void savegameCallback(void *func);
+	void savegameCallback(void (*func)(void *, int32));
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;

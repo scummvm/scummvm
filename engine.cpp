@@ -262,7 +262,7 @@ void Engine::savegameRestore() {
 	lua_dofile("patch05.bin");
 }
 
-void Engine::savegameCallback(void *func) {
+void Engine::savegameCallback(void (*func)(void *, int32)) {
 	lua_Object funcParam1;
 	lua_Object funcParam2;
 	bool unk1 = false;

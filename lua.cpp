@@ -1303,7 +1303,7 @@ static void BlastText() {
 			Localizer::instance()->localize(str).c_str(), x, y);
 }
 
-#define STUB_FUNC(name) static void name() { stubWarning(__FUNCTION__); }
+#define STUB_FUNC(name) static void name() { stubWarning(#name); }
 STUB_FUNC(RestoreIMuse)
 STUB_FUNC(SaveIMuse)
 STUB_FUNC(SetActorInvClipNode)
