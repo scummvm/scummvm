@@ -71,7 +71,7 @@ Scene::~Scene() {
   delete [] cmaps_;
   delete [] setups_;
   delete [] lights_;
-  delete [] sectors_;
+  delete [] sectors_; // Endy<-yaz: if I remember well, sometime sectors aren't allocated... (inventory room)
 }
 
 void Scene::Sector::load(TextSplitter &ts) {
@@ -85,6 +85,7 @@ void Scene::Sector::load(TextSplitter &ts) {
 void Scene::Sector::load0(TextSplitter &ts, char *name, int id) {
   char buf[256];
   int i = 0;
+  float height = 12345.f; // Yaz: this is in the original code...
   Vector3d tempVert;
 
   name_ = name;
@@ -92,16 +93,19 @@ void Scene::Sector::load0(TextSplitter &ts, char *name, int id) {
   ts.scanString(" type %256s", 1, buf);
 
   // FIXME: I don't think these are right (see grim loc_4A7D19, result is var_200?)
+  // Yaz: actualy, those should be flags that are later used function at 4A66C0 (I named it buildWalkPlane)
+
+  
   if (strstr(buf, "walk"))
-   type_ = 1;
+   type_ = 0x1000;
   else if (strstr(buf, "funnel"))
-   type_ = 3; // ??
+   type_ = 0x1100; 
   else if (strstr(buf, "camera"))
-   type_ = 2;
+   type_ = 0x2000;
   else if (strstr(buf, "special"))
-   type_ = 4;
+   type_ = 0x4000;
   else if (strstr(buf, "chernobyl"))
-   type_ = 0;
+   type_ = 0x8000;
   else
    error("Unknown sector type '%s' in room setup", buf);
 
@@ -118,6 +122,7 @@ void Scene::Sector::load0(TextSplitter &ts, char *name, int id) {
 
 void Scene::Setup::load(TextSplitter &ts) {
   char buf[256];
+
   ts.scanString(" setup %256s", 1, buf);
   name_ = buf;
 
