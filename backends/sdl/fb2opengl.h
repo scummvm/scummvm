@@ -151,10 +151,9 @@ void FB2GL::makeTextures() {
 
 
 void FB2GL::makeDisplayList(int xf, int yf) {
-	double xfix = (double)xf / 128; // 128 = 256/2 (half texture => 0.0 to 1.0)
-	double yfix = (double)yf / 128;
-	// End of 256x256 (from -1.0 to 1.0)
-	double texend;
+	float xfix = xf / 128.0; // 128 = 256/2 (half texture => 0.0 to 1.0)
+	float yfix = yf / 128.0;
+	float texend;	// End of 256x256 (from -1.0 to 1.0)
 
 	if (flags & FB2GL_NO_320)
 		texend = 96.0 / 160.0; // 160=320/2 (== 0.0), 256-160=96.
