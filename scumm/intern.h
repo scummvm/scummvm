@@ -54,7 +54,6 @@ protected:
 	void o5_add();
 	void o5_and();
 	void o5_animateActor();
-	void o5_badOpcode();
 	void o5_breakHere();
 	void o5_chainScript();
 	void o5_cursorCommand();

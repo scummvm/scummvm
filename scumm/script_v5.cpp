@@ -445,7 +445,7 @@ void Scumm_v5::o5_actorSet() {
 		case 11:										/* palette */
 			i = getVarOrDirectByte(0x80);
 			j = getVarOrDirectByte(0x40);
-			checkRange(31, 0, i, "Illegal palet slot %d");
+			checkRange(31, 0, i, "Illegal palette slot %d");
 			a->palette[i] = j;
 			a->needRedraw = true;
 			break;
@@ -559,10 +559,6 @@ void Scumm_v5::o5_animateActor() {
 		return;
 
 	a->animateActor(anim);
-}
-
-void Scumm_v5::o5_badOpcode() {
-	error("Scumm opcode %d illegal", _opcode);
 }
 
 void Scumm_v5::o5_breakHere() {
