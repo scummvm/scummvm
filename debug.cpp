@@ -26,6 +26,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "debug.h"
 
 #ifdef HAVE_READLINE
 #include "debugrl.h"
@@ -34,7 +35,7 @@
 enum {
 	CMD_INVALID,
 	CMD_HELP,
-	CMD_QUIT,
+	CMD_CONTINUE,
 	CMD_GO,
 	CMD_ACTOR,
 	CMD_SCRIPTS,
@@ -42,7 +43,7 @@ enum {
 	CMD_DUMPBOX,
 	CMD_VAR,
 	CMD_WATCH,
-	CMD_EXIT
+	CMD_QUIT
 };
 
 void ScummDebugger::attach(Scumm *s)
@@ -60,25 +61,24 @@ void ScummDebugger::attach(Scumm *s)
 #endif
 }
 
-void BoxTest(int num);
-
 bool ScummDebugger::do_command()
 {
 	switch (get_command()) {
 	case CMD_HELP:
 		printf("Debugger commands:\n"
-					 "(h)elp -> display this help text\n"
-					 "(q)uit -> quit the debugger\n"
-					 "(g)o [numframes] -> increase frame\n"
 					 "(a)ctor [actornum] -> show actor information\n"
+					 "(b)oxes -> list and draw boxen\n"
+					 "(c)ontinue -> exit the debugger and continue the program\n"
+					 "(h)elp -> display this help text\n"
+					 "(g)o [numframes] -> increase frame\n"
 					 "(r)oom [roomnum] -> load room\n"
 					 "(s)cripts -> show running scripts\n"
-					 "(b)oxes -> list and draw boxen\n"
 					 "(v)ariable -> set or show a variable value\n"
-					 "(w)atch [varnum] -> set a variable watch. 0 means all variables.\n" "(e)xit -> exit game\n");
+					 "(w)atch [varnum] -> set a variable watch. 0 means all variables.\n"
+					 "(q)uit -> exit game\n");
 		return true;
 
-	case CMD_QUIT:
+	case CMD_CONTINUE:
 		detach();
 		return false;
 
@@ -127,8 +127,7 @@ bool ScummDebugger::do_command()
 
 			printf("\nWalk boxes:\n");
 			for (i = 0; i < num; i++) {
-				//warning("BoxTest currently unimplemented in new graphics code\n");
-				/*BoxTest(i); */
+				boxTest(i);
 				_s->getBoxCoordinates(i, &box);
 				flags = _s->getBoxFlags(i);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n", i,
@@ -162,7 +161,7 @@ bool ScummDebugger::do_command()
 				printf("Watching vars[%d]\n", _s->_varwatch);
 		}
 		return true;
-	case CMD_EXIT:
+	case CMD_QUIT:
 		exit(1);
 
 	default:											/* this line is never reached */
@@ -207,7 +206,7 @@ struct DebuggerCommands {
 
 static const DebuggerCommands debugger_commands[] = {
 	{"h", 1, CMD_HELP},
-	{"q", 1, CMD_QUIT},
+	{"c", 1, CMD_CONTINUE},
 	{"g", 1, CMD_GO},
 	{"a", 1, CMD_ACTOR},
 	{"s", 1, CMD_SCRIPTS},
@@ -215,7 +214,7 @@ static const DebuggerCommands debugger_commands[] = {
 	{"b", 1, CMD_DUMPBOX},
 	{"v", 1, CMD_VAR},
 	{"w", 1, CMD_WATCH},
-	{"e", 1, CMD_EXIT},
+	{"q", 1, CMD_QUIT},
 	{"", 0, 0}
 };
 
@@ -231,7 +230,7 @@ int ScummDebugger::get_command()
 		buf = _cmd_buffer;
 		printf("debug> ");
 		if (!fgets(_cmd_buffer, sizeof(_cmd_buffer), stdin))
-			return CMD_QUIT;
+			return CMD_CONTINUE;
 
 		i = strlen(_cmd_buffer);
 		while (i > 0 && _cmd_buffer[i - 1] == 10)
@@ -247,7 +246,7 @@ int ScummDebugger::get_command()
 		buf = readline("debug> ");
 		if (!buf) {
 			printf("\n");
-			return CMD_QUIT;
+			return CMD_CONTINUE;
 		}
 		if (strlen(buf) == 0) {
 			continue;
@@ -315,4 +314,154 @@ void ScummDebugger::printScripts()
 		}
 	}
 	printf("+---------------------------------+\n");
+}
+
+
+
+
+/************ ENDER: Temporary debug code for boxen **************/
+/*
+int hlineColor(SDL_Surface * dst, Sint16 x1, Sint16 x2, Sint16 y, Uint32 color)
+*/
+
+static int gfxPrimitivesCompareInt(const void *a, const void *b);
+
+static int *gfxPrimitivesPolyInts = NULL;
+static int gfxPrimitivesPolyAllocated = 0;
+
+
+static byte *getBasePtr(Scumm *_s, int x, int y)
+{
+	VirtScreen *vs = _s->findVirtScreen(y);
+
+	if (vs == NULL)
+		return NULL;
+
+	return vs->screenPtr + x + (y - vs->topline) * 320 +
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100) * 320;
+}
+
+static void hline(Scumm *scumm, int x1, int x2, int y, byte color)
+{
+	byte *ptr;
+
+	if (x2 < x1)
+		x2 ^= x1 ^= x2 ^= x1;				// Swap x2 and x1
+
+	ptr = getBasePtr(scumm, x1, y);
+
+	if (ptr == NULL)
+		return;
+
+	while (x1++ <= x2) {
+		*ptr++ = color;
+	}
+}
+
+
+static void filledPolygonColor(Scumm *scumm, int16 *vx, int16 *vy, int n, int color)
+{
+	int i;
+	int y;
+	int miny, maxy;
+	int x1, y1;
+	int x2, y2;
+	int ind1, ind2;
+	int ints;
+
+	/* Sanity check */
+	if (n < 3) {
+		return;
+	}
+
+	/* Allocate temp array, only grow array */
+	if (!gfxPrimitivesPolyAllocated) {
+		gfxPrimitivesPolyInts = (int *)malloc(sizeof(int) * n);
+		gfxPrimitivesPolyAllocated = n;
+	} else {
+		if (gfxPrimitivesPolyAllocated < n) {
+			gfxPrimitivesPolyInts = (int *)realloc(gfxPrimitivesPolyInts, sizeof(int) * n);
+			gfxPrimitivesPolyAllocated = n;
+		}
+	}
+
+	/* Determine Y maxima */
+	miny = vy[0];
+	maxy = vy[0];
+	for (i = 1; (i < n); i++) {
+		if (vy[i] < miny) {
+			miny = vy[i];
+		} else if (vy[i] > maxy) {
+			maxy = vy[i];
+		}
+	}
+
+	/* Draw, scanning y */
+	for (y = miny; (y <= maxy); y++) {
+		ints = 0;
+		for (i = 0; (i < n); i++) {
+			if (!i) {
+				ind1 = n - 1;
+				ind2 = 0;
+			} else {
+				ind1 = i - 1;
+				ind2 = i;
+			}
+			y1 = vy[ind1];
+			y2 = vy[ind2];
+			if (y1 < y2) {
+				x1 = vx[ind1];
+				x2 = vx[ind2];
+			} else if (y1 > y2) {
+				y2 = vy[ind1];
+				y1 = vy[ind2];
+				x2 = vx[ind1];
+				x1 = vx[ind2];
+			} else {
+				continue;
+			}
+			if ((y >= y1) && (y < y2)) {
+				gfxPrimitivesPolyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+			} else if ((y == maxy) && (y > y1) && (y <= y2)) {
+				gfxPrimitivesPolyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+			}
+		}
+		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
+
+		for (i = 0; (i < ints); i += 2) {
+			hline(scumm, gfxPrimitivesPolyInts[i], gfxPrimitivesPolyInts[i + 1], y, color);
+		}
+	}
+
+	return;
+}
+
+static int gfxPrimitivesCompareInt(const void *a, const void *b)
+{
+	return (*(const int *)a) - (*(const int *)b);
+}
+
+void ScummDebugger::boxTest(int num)
+{
+	BoxCoords box;
+	int16 rx1[4], ry1[4];
+
+	_s->getBoxCoordinates(num, &box);
+	rx1[0] = box.ul.x;
+	ry1[0] = box.ul.y;
+	rx1[1] = box.ur.x;
+	ry1[1] = box.ur.y;
+	rx1[2] = box.lr.x;
+	ry1[2] = box.lr.y;
+	rx1[3] = box.ll.x;
+	ry1[3] = box.ll.y;
+
+	// TODO - maybe use different colors for each box, and/or print the box number inside it?
+	filledPolygonColor(_s, &rx1[0], &ry1[0], 4, 255);
+
+	VirtScreen *vs = _s->findVirtScreen(box.ul.y);
+	if (vs != NULL)
+		_s->setVirtscreenDirty(vs, 0, 0, 320, 200);
+	_s->drawDirtyScreenParts();
+	_s->_system->update_screen();
 }

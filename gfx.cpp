@@ -2765,3 +2765,4 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 		}
 	}
 }
+

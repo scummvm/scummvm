@@ -25,6 +25,7 @@
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 #include "actor.h"
+#include "debug.h"
 #include "gameDetector.h"
 #include "gui.h"
 #include "newgui.h"

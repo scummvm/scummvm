@@ -1446,28 +1446,6 @@ class Scumm_v7 : public Scumm
 {
 };
 
-struct ScummDebugger {
-	Scumm *_s;
-	byte _command;
-	char *_parameters;
-
-	bool _welcome;
-
-	int _go_amount;
-	
-	char _cmd_buffer[256];
-	
-	void on_frame();
-	bool do_command();
-	void enter();
-	int get_command();
-	void attach(Scumm *s);
-	void detach();
-
-	void printActors(int act);
-	void printScripts();
-};
-
 extern uint16 _debugLevel;
 
 extern const byte revBitMask[8];
