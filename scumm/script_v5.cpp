@@ -1721,7 +1721,10 @@ void Scumm_v5::o5_roomOps() {
 			b = getVarOrDirectByte(0x40);
 			c = getVarOrDirectByte(0x20);
 		}
-		darkenPalette(a, a, a, b, c);
+		//FIXME Amiga versions don't seem to use darkening effect
+		//      Caused voodoo lady to become too dark in MI2
+		if (!(_features & GF_AMIGA))
+			darkenPalette(a, a, a, b, c);
 		break;
 	case 9:											/* ? */
 		_saveLoadFlag = getVarOrDirectByte(0x80);
