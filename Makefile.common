@@ -10,7 +10,7 @@ DISTFILES := \
 	Makefile Makefile.common Makefile.mingw \
 	NEWS README COPYING scummvm.6 Info.plist \
 	scumm.dsp  scummvm.dsp scummvm.dsw scummvm.icns scummvm.ico \
-	scummvm.proj scummvm.rc scummvm.spec scummvm.xpm simon.dsp
+	scummvm.proj scummvm.rc scummvm.spec scummvm.xpm simon.dsp sky.dsp
 
 # The dist file name
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip

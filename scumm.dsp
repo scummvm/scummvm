@@ -138,14 +138,6 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\scumm\smush\brenderer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\brenderer.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\smush\channel.h
 # End Source File
 # Begin Source File
@@ -166,23 +158,11 @@ SOURCE=.\scumm\smush\codec1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\smush\codec1.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\smush\codec37.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\scumm\smush\codec37.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\codec44.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\codec44.h
 # End Source File
 # Begin Source File
 
@@ -194,51 +174,7 @@ SOURCE=.\scumm\smush\codec47.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\smush\color.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\color.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\decoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\frenderer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\frenderer.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\smush\imuse_channel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\mixer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\palette.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\player.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\player.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\renderer.h
 # End Source File
 # Begin Source File
 
@@ -246,11 +182,27 @@ SOURCE=.\scumm\smush\saud_channel.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\smush\scumm_renderer.cpp
+SOURCE=.\scumm\smush\smush_font.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\smush\scumm_renderer.h
+SOURCE=.\scumm\smush\smush_font.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\smush\smush_mixer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\smush\smush_mixer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\smush\smush_player.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\smush\smush_player.h
 # End Source File
 # End Group
 # Begin Source File

@@ -45,7 +45,7 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
 # ADD CPP /nologo /G6 /MT /W3 /WX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
-# SUBTRACT CPP /Z<none> /YX /Yc /Yu
+# SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
 BSC32=bscmake.exe
@@ -127,7 +127,7 @@ LINK32=link.exe
 # ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "USE_MAD" /FD /c
 # SUBTRACT BASE CPP /YX /Yc /Yu
 # ADD CPP /nologo /G6 /MT /W3 /WX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /FD /c
-# SUBTRACT CPP /Z<none> /YX /Yc /Yu
+# SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
 BSC32=bscmake.exe
