@@ -91,7 +91,7 @@ public:
 	void keyOn();
 	void keyOff();
 	void frequency(int freq);
-	void nextTick(uint16 rate, const int *phaseShift, int *outbuf, int buflen);
+	void nextTick(const int *phaseShift, int *outbuf, int buflen);
 };
 
 class Voice2612 {
@@ -325,7 +325,7 @@ void Operator2612::frequency(int freq) {
 	_releaseRate = (int32) value / _owner->_rate;
 }
 
-void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int buflen) {
+void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 	if (_state == _s_ready)
 		return;
 	if (_state == _s_attacking && _attackTime <= 0) {
@@ -391,7 +391,6 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 			}
 
 			if (level < zero_level) {
-				_phase &= 0x3ffff;
 				int phaseShift = *phasebuf >> 2; // 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
 				if (_feedbackLevel)
 					phaseShift += (output << (_feedbackLevel - 1)) / 1024;
@@ -412,6 +411,7 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 				output = ((output >> 4) * (powtbl[511-((level>>9)&511)] >> 3)) / 1024;
 
 				_phase += phaseIncrement;
+				_phase &= 0x3ffff;
 			} else
 				output = 0;
 
@@ -523,55 +523,55 @@ void Voice2612::nextTick(int *outbuf, int buflen) {
 
 	switch (_algorithm) {
 	case 0:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf2, buf1, buflen);
 		memset (buf2, 0, sizeof (int) * buflen);
-		_opr[2]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[3]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[2]->nextTick(buf1, buf2, buflen);
+		_opr[3]->nextTick(buf2, outbuf, buflen);
 		break;
 	case 1:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf1, buf2, buflen);
+		_opr[2]->nextTick(buf2, buf1, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	case 2:
-		_opr[1]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[1]->nextTick(buf1, buf2, buflen);
+		_opr[2]->nextTick(buf2, buf1, buflen);
 		memset(buf2, 0, sizeof(int) * buflen);
-		_opr[0]->nextTick(_rate, buf2, buf1, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[0]->nextTick(buf2, buf1, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	case 3:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf2, buf1, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf2, buf1, buflen);
 		memset(buf2, 0, sizeof(int) * buflen);
-		_opr[2]->nextTick(_rate, buf2, buf1, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[2]->nextTick(buf2, buf1, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	case 4:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
-		_opr[2]->nextTick(_rate, buf1, buf1, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf2, outbuf, buflen);
+		_opr[2]->nextTick(buf1, buf1, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	case 5:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
-		_opr[2]->nextTick(_rate, buf2, outbuf, buflen);
-		_opr[3]->nextTick(_rate, buf2, outbuf, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf2, outbuf, buflen);
+		_opr[2]->nextTick(buf2, outbuf, buflen);
+		_opr[3]->nextTick(buf2, outbuf, buflen);
 		break;
 	case 6:
-		_opr[0]->nextTick(_rate, buf1, buf2, buflen);
-		_opr[1]->nextTick(_rate, buf2, outbuf, buflen);
-		_opr[2]->nextTick(_rate, buf1, outbuf, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[0]->nextTick(buf1, buf2, buflen);
+		_opr[1]->nextTick(buf2, outbuf, buflen);
+		_opr[2]->nextTick(buf1, outbuf, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	case 7:
-		_opr[0]->nextTick(_rate, buf1, outbuf, buflen);
-		_opr[1]->nextTick(_rate, buf1, outbuf, buflen);
-		_opr[2]->nextTick(_rate, buf1, outbuf, buflen);
-		_opr[3]->nextTick(_rate, buf1, outbuf, buflen);
+		_opr[0]->nextTick(buf1, outbuf, buflen);
+		_opr[1]->nextTick(buf1, outbuf, buflen);
+		_opr[2]->nextTick(buf1, outbuf, buflen);
+		_opr[3]->nextTick(buf1, outbuf, buflen);
 		break;
 	};
 }
