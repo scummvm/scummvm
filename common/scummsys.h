@@ -121,7 +121,7 @@
 		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
 		#define SCUMM_BIG_ENDIAN
 		#else
-		#error Neither SDL_BIG_ENDIAN nor SDL_LITTLE_ENDIAN is set.
+		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
 		#endif
 		#endif
 	#endif
