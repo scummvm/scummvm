@@ -163,7 +163,7 @@ static const TransitionEffect transitionEffects[5] = {
 #pragma mark -
 
 
-#define CHARSET_MASK_TRANSPARENCY	254
+#define CHARSET_MASK_TRANSPARENCY	253
 
 Gdi::Gdi(ScummEngine *vm) {
 	memset(this, 0, sizeof(*this));
