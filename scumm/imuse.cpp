@@ -1321,12 +1321,6 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKEND()
 	};
 
-#if defined(__PALM_OS__) //	previous PalmOS ver. without imuse implementation or not saved(Oopps...forgot it !), is this really working ? will we have sound with old saved game ?
-	if (!ser->isSaving() && ser->checkEOFLoadStream())
-		return 0;	//palmfixme
-
-#endif
-
 	int i;
 
 	ser->_ref_me = this;

@@ -717,17 +717,6 @@ void Serializer::loadBytes(void *b, int len) {
 	_saveLoadStream->fread(b, 1, len);
 }
 
-#if defined(__PALM_OS__)
-bool Serializer::checkEOFLoadStream() {
-
-	if (_saveLoadStream->feof())
-		return true;
-
-	return false;
-}
-#endif
-
-
 void Serializer::saveUint32(uint32 d) {
 	uint32 e = FROM_LE_32(d);
 	saveBytes(&e, 4);
