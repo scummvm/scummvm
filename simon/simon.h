@@ -475,7 +475,7 @@ protected:
 
 	uint getOffsetOfChild2Param(Child2 *child, uint prop);
 	void o_unk_160(uint a);
-	void o_unk_163(uint a);
+	void o_play_sound(uint a);
 	void o_unk_175();
 	void o_unk_176();
 	void o_pathfind(int x, int y, uint var_1, uint var_2);

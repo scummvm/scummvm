@@ -362,7 +362,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 66:{									/* set array 2 */
+		case 66:{									/* set item name */
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
 				if (var < 20)
@@ -370,7 +370,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 67:{									/* set array 3 and 4 */
+		case 67:{									/* set item description */
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
 				if (_game & GF_TALKIE) {
@@ -413,7 +413,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 76:{									/* add event */
+		case 76:{									/* add timeout */
 				uint timeout = getVarOrWord();
 				addTimeEvent(timeout, getVarOrWord());
 			}
@@ -452,7 +452,7 @@ int SimonEngine::runScript() {
 				return -10;
 			}
 
-		case 87:{									/* dummy opcode? */
+		case 87:{									/* dummy opcode */
 				getNextStringID();
 			}
 			break;
@@ -712,12 +712,12 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 128:{									/* dummy instruction? */
+		case 128:{									/* dummy instruction */
 				getVarOrWord();
 			}
 			break;
 
-		case 129:{									/* dummy instruction? */
+		case 129:{									/* dummy instruction */
 				getVarOrWord();
 				condition = true;
 			}
@@ -759,7 +759,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 134:{
+		case 134:{									/* dummy opcode? */
 				midi.stop();
 				_last_music_played = -1;
 			}
@@ -923,7 +923,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 163:{									/* play sound */
-				o_unk_163(getVarOrWord());
+				o_play_sound(getVarOrWord());
 			}
 			break;
 
@@ -988,8 +988,8 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 179:{									/* room descriptions */
-				uint b = getVarOrByte();
+		case 179:{									/* conversation responses */
+				uint b = getVarOrByte();					/* and room descriptions */
 				uint c = getVarOrByte();
 				uint a = getVarOrByte();
 				uint d = 0;
@@ -1540,7 +1540,7 @@ void SimonEngine::o_unk_120(uint a) {
 	}
 }
 
-void SimonEngine::o_unk_163(uint a) {
+void SimonEngine::o_play_sound(uint a) {
 	if (_game == GAME_SIMON1DOS)
 		playSting(a);
 	else
