@@ -1729,7 +1729,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	int args2[32];
 
 	int n1 = getStackList(args1, ARRAYSIZE(args1));
-	getStackList(args2, ARRAYSIZE(args2));
+	int n2 = getStackList(args2, ARRAYSIZE(args2));
 
 	int subOp = pop();
 
@@ -1791,9 +1791,81 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		break;
 	// HE 98+
 	case 6:
+		{
+			Common::Rect r1, r2;
+			getSpriteBounds(args2[0], false, r2);
+			getSpriteBounds(args1[0], false, r1);
+			if (r2.isValidRect() == false) {
+				push(0);
+				break;
+			}
+
+			if (n2 == 3) { 
+				r2.left += args2[1];
+				r2.right += args2[1];
+				r2.top += args2[2];
+				r2.bottom += args2[2];
+			}
+			push(r2.intersects(r1) ? 1 : 0);
+		}
+		break;
 	case 7:
+		{
+			Common::Rect r2;
+			getSpriteBounds(args2[0], false, r2);
+			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			if (r2.isValidRect() == false) {
+				push(0);
+				break;
+			}
+
+			if (n2 == 3) { 
+				r2.left += args2[1];
+				r2.right += args2[1];
+				r2.top += args2[2];
+				r2.bottom += args2[2];
+			}
+			push(r2.intersects(r1) ? 1 : 0);
+		}
+		break;
 	case 8:
+		{
+			Common::Rect r1, r2;
+			getSpriteBounds(args2[0], true, r2);
+			getSpriteBounds(args1[0], true, r1);
+			if (r2.isValidRect() == false) {
+				push(0);
+				break;
+			}
+
+			if (n2 == 3) { 
+				r2.left += args2[1];
+				r2.right += args2[1];
+				r2.top += args2[2];
+				r2.bottom += args2[2];
+			}
+			push(r2.intersects(r1) ? 1 : 0);
+		}
+		break;
 	case 9:
+		{
+			Common::Rect r2;
+			getSpriteBounds(args2[0], true, r2);
+			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			if (r2.isValidRect() == false) {
+				push(0);
+				break;
+			}
+
+			if (n2 == 3) { 
+				r2.left += args2[1];
+				r2.right += args2[1];
+				r2.top += args2[2];
+				r2.bottom += args2[2];
+			}
+			push(r2.intersects(r1) ? 1 : 0);
+		}
+		break;
 	case 10:
 		push(0);
 		break;

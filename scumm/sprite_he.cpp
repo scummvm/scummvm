@@ -35,6 +35,70 @@ void ScummEngine_v90he::allocateArrays() {
 	spritesAllocTables(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 
+void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	int16 spr_wiz_x, spr_wiz_y;
+	int rot_angle, zoom, x1, y1;
+	int32 w, h;
+
+	SpriteInfo *spi = &_spriteTable[spriteId];
+
+	loadImgSpot(spi->res_id, spi->res_state, spr_wiz_x, spr_wiz_y);
+	if (checkGroup && spi->group_num) {
+		SpriteGroup *spg = &_spriteGroups[spi->group_num];
+
+		if (spg->scaling) {
+			x1 = spi->tx * spg->scale_x - spr_wiz_x + spg->tx;
+			y1 = spi->ty * spg->scale_y - spr_wiz_y + spg->ty;
+		} else {
+			x1 = spi->tx - spr_wiz_x + spg->tx;
+			y1 = spi->ty - spr_wiz_y + spg->ty;
+		}
+	} else {
+		x1 = spi->tx - spr_wiz_x;
+		y1 = spi->ty - spr_wiz_y;
+	}
+
+	if (spi->res_id) {
+		rot_angle = spi->rot_angle;
+		zoom = spi->zoom;
+		getWizImageDim(spi->res_id, spi->res_state, w, h);
+		if (!(spi->flags & (kSFZoomed | kSFRotated))) {
+			bound.left = x1;
+			bound.top = y1;
+			bound.right = x1 + w;
+			bound.bottom = y1 + h;
+		} else {
+			Common::Point pts[4];
+
+			pts[1].x = pts[2].x = w / 2 - 1;
+			pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
+			pts[2].y = pts[3].y = h / 2 - 1;
+
+			if ((spi->flags & kSFZoomed) && zoom) {
+				for (int j = 0; j < 4; ++j) {
+					pts[j].x = pts[j].x * zoom / 256;
+					pts[j].y = pts[j].y * zoom / 256;
+				}
+			}
+			if ((spi->flags & kSFRotated) && rot_angle)
+				_wiz.polygonRotatePoints(pts, 4, rot_angle);
+
+			for (int j = 0; j < 4; ++j) {
+				pts[j].x += x1;
+				pts[j].y += y1;
+			}
+
+			_wiz.polygonCalcBoundBox(pts, 4, bound);
+		}
+	} else {
+		bound.left = 1234;
+		bound.top = 1234;
+		bound.right = -1234;
+		bound.bottom = -1234;
+	}
+}
+
 //
 // spriteInfoGet functions
 //
@@ -1193,7 +1257,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			rot_angle = spi->rot_angle;
 			zoom = spi->zoom;
 			getWizImageDim(res_id, res_state, w, h);
-			if (!(spi->flags & kSFZoomed) && !(spi->flags & kSFRotated)) {
+			if (!(spi->flags & (kSFZoomed | kSFRotated))) {
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
 				bboxPtr->right = wiz.img.x1 + w;
@@ -1205,13 +1269,13 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
 				pts[2].y = pts[3].y = h / 2 - 1;
 
-				if (spi->flags & kSFZoomed && zoom) {
+				if ((spi->flags & kSFZoomed) && zoom) {
 					for (int j = 0; j < 4; ++j) {
-						pts[j].x = pts[i].x * zoom / 256;
-						pts[j].y = pts[i].y * zoom / 256;
+						pts[j].x = pts[j].x * zoom / 256;
+						pts[j].y = pts[j].y * zoom / 256;
 					}
 				}
-				if (spi->flags & kSFRotated && rot_angle)
+				if ((spi->flags & kSFRotated) && rot_angle)
 					_wiz.polygonRotatePoints(pts, 4, rot_angle);
 
 				for (int j = 0; j < 4; ++j) {

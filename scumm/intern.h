@@ -910,6 +910,7 @@ protected:
 	void copyHEPalette(int dstPalSlot, int srcPalSlot);
 	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
 
+	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
 	int spriteInfoGet_classFlags(int spriteId, int num, int *args);
 	int spriteInfoGet_flagDoubleBuffered(int spriteId);
