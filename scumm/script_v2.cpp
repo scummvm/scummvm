@@ -820,7 +820,7 @@ void ScummEngine_v2::o2_verbOps() {
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if (_features & GF_NES) {
 			y -= 16;
-			x -= 8;
+			x += 8;
 		}
 		else if ((_gameId == GID_MANIAC) && (_version == 1))
 			y += 8;

@@ -1752,6 +1752,10 @@ void CharsetRendererNES::printChar(int chr) {
 	VirtScreen *vs;
 	byte *charPtr, *dst;
 
+	// HACK: how to set it properly?
+	if (_top == 0)
+		_top = 16;
+
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
 		return;
 
@@ -1766,7 +1770,6 @@ void CharsetRendererNES::printChar(int chr) {
 	origHeight = height;
 
 	if (_firstChar) {
-		_left += 16;
 		_str.left = _left;
 		_str.top = _top;
 		_str.right = _left;

@@ -210,6 +210,7 @@ Gdi::Gdi(ScummEngine *vm) {
 
 void ScummEngine::initScreens(int b, int h) {
 	int i;
+	int adj = 0;
 
 	for (i = 0; i < 3; i++) {
 		nukeResource(rtBuffer, i + 1);
@@ -230,10 +231,14 @@ void ScummEngine::initScreens(int b, int h) {
 		}
 	}
 
-	initVirtScreen(kMainVirtScreen, 0, b, _screenWidth, h - b, true, true);
-	initVirtScreen(kTextVirtScreen, 0, 0, _screenWidth, b, false, false);
-	initVirtScreen(kVerbVirtScreen, 0, h, _screenWidth, _screenHeight - h, false, false);
+	if (_features & GF_NES) {
+		adj = 16;
+		initVirtScreen(kUnkVirtScreen, 0, 0, _screenWidth, adj, false, false);
+	}
 
+	initVirtScreen(kMainVirtScreen, 0, b + adj, _screenWidth, h - b, true, true);
+	initVirtScreen(kTextVirtScreen, 0, adj, _screenWidth, b, false, false);
+	initVirtScreen(kVerbVirtScreen, 0, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
 	_screenB = b;
 	_screenH = h;
 	
@@ -550,7 +555,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		// NES can address negative number sprites and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if (_vm->_features & GF_NES && _vm->_NESStartStrip > 0 && vs->number == kMainVirtScreen) {
+		if (_vm->_features & GF_NES && _vm->_NESStartStrip > 0) {
 			x += _vm->_NESStartStrip * 8;
 		}
 
