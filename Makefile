@@ -71,6 +71,7 @@ LIBS    += -lmad
 # DISABLE_SCUMM = 1
 # DISABLE_SIMON = 1
 # DISABLE_SKY = 1
+DISABLE_BS2 = 1
 
 
 #######################################################################
