@@ -224,7 +224,7 @@ private:
 			int state, 
 			int faceDirection); // FIND_SACTION
 
-	static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
+	int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 
 };

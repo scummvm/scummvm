@@ -98,6 +98,7 @@ public:
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 	int textCenterX(const char *text) const;
 	uint16 textWidth(const char *text) const;
+	uint16 textWidth(const char *text, uint16 len) const;
 	void drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr);
 	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);

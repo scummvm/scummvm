@@ -898,12 +898,17 @@ int Display::textCenterX(const char *text) const {
 
 
 uint16 Display::textWidth(const char *text) const {
-	uint16 len = 0;
-	while (*text) {
-		len += _charWidth[ (uint8)*text ];
-		++text;
+	return textWidth(text, strlen(text));
+}
+
+
+uint16 Display::textWidth(const char *text, uint16 len) const {
+	assert(len <= strlen(text));
+	uint16 width = 0;
+	for (uint16 i = 0; i < len; ++i) {
+		width += _charWidth[ (uint8)text[i] ];
 	}
-	return len;
+	return width;
 }
 
 

@@ -1231,19 +1231,48 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 
-	//debug(6, "splitOption(\"%s\")", str);
+//	debug(0, "splitOption(\"%s\") width=%d", str, _vm->display()->textWidth(str));
 
 	// Check to see if option fits on one line, and exit early
 
-	/* XXX if (_vm->logic()->language() == ENGLISH || textWidth(str) <= MAX_TEXT_WIDTH)*/ {
+	if (_vm->resource()->getLanguage() == ENGLISH || 
+		_vm->display()->textWidth(str) <= MAX_TEXT_WIDTH) {
 		strcpy(optionText[0], str);
 		return 1;
 	}
 
-	abort();
-
 	// Split up multiple line option at closest space character
-	// int optionLines = 0;
+	memset(optionText, 0, 5 * MAX_STRING_SIZE);
+	uint16 width = 0;
+	uint16 optionLines = 0;
+	uint16 maxTextLen = MAX_TEXT_WIDTH;
+	const char *p = str;
+	while (p) {
+		p = strchr(str, ' ');
+		if (p) {
+			uint16 len = p - str + 1;
+			width += _vm->display()->textWidth(str, len);
+			if (width > maxTextLen) {
+				strncat(optionText[optionLines], str, len - 1);
+//debug(0, "1optionLines=%d optionText='%s'", optionLines, optionText[optionLines]);
+				++optionLines;
+				width = 0;
+				maxTextLen = MAX_TEXT_WIDTH - 16; // compensate left margin
+			} else {
+				strncat(optionText[optionLines], str, len);
+//debug(0,"2optionLines=%d optionText='%s' width=%d", optionLines, optionText[optionLines], width);
+			}
+//debug(0, "3str=%s p+1=%s", str, p+1);
+			str = p + 1;
+		}
+	}
+//debug(0, "str='%s'", str);
+	width += _vm->display()->textWidth(str);
+	if (width > maxTextLen) {
+		++optionLines;
+	}
+	strcat(optionText[optionLines], str);
+	return optionLines + 1;
 }
 
 static char *removeStar(char *str) {
@@ -1370,17 +1399,34 @@ int16 Talk::selectSentence() {
 
 				zone = _vm->grid()->findZoneForPos(GS_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
 
-				if (5 == zone || 6 == zone) {
-					// XXX Arrow zones
-					debug(6, "Arrow zones");
+				int mouseButton = _vm->input()->mouseButton();
+				_vm->input()->clearMouseButton();
+
+				if (ARROW_ZONE_UP == zone || ARROW_ZONE_DOWN == zone) {
+					if (oldZone > 0) {
+						int16 y;
+						const Box *b = _vm->grid()->zone(GS_PANEL, oldZone);
+						for (y = b->y1; y < b->y2; y += 10)
+							_vm->display()->textColor(150 + y, INK_TALK_NORMAL);
+						oldZone = 0;
+					}
+					if (mouseButton != 0) {
+						if (zone == ARROW_ZONE_UP && arrowBobUp->active) {
+							startOption--;
+						} else if (zone == ARROW_ZONE_DOWN && arrowBobDown->active) {
+							startOption++;
+						}
+					}
+					rezone = true;
+					break;
 				}
 				else {
 					if (oldZone != zone) {
 						// Changed zone, change text colors
 						int y;
 
-						/*debug(6, "Changed zone. oldZone = %i, zone = %i",
-								oldZone, zone);*/
+						debug(0, "Changed zone. oldZone = %i, zone = %i",
+								oldZone, zone);
 
 						if (zone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, zone);
@@ -1398,9 +1444,6 @@ int16 Talk::selectSentence() {
 					}
 
 				}
-
-				int mouseButton = _vm->input()->mouseButton();
-				_vm->input()->clearMouseButton();
 
 				Verb v = _vm->input()->keyVerb();
 				if (v >= VERB_DIGIT_FIRST && v <= VERB_DIGIT_LAST) {
