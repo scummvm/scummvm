@@ -1122,7 +1122,7 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (!smlayer_isSoundRunning(86))
 			smlayer_startSfx(86);
 	} else {
-		if (!smlayer_isSoundRunning(86))
+		if (smlayer_isSoundRunning(86))
 			smlayer_stopSound(86);
 	}
 
@@ -1166,7 +1166,7 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (!smlayer_isSoundRunning(86))
 			smlayer_startSfx(86);
 	} else {
-		if (!smlayer_isSoundRunning(86))
+		if (smlayer_isSoundRunning(86))
 			smlayer_stopSound(86);
 	}
 

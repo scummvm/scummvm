@@ -330,7 +330,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
-				if (weaponMaxRange(actor2) >= dist)
+				if (weaponMaxRange(actor2) <= dist)
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
 			}
@@ -2519,13 +2519,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].kicking = false;
 		
-		if (_actor[1].act[2].frame >= 16) {
-			if (_actor[1].x >= 50 && _actor[1].x <= 270)
-				break;
-
-			if (_actor[1].act[2].frame < 8)
-				break;
-
+		if (_actor[1].act[2].frame >= 16 || ((_actor[1].x < 50 || _actor[1].x > 270)
+											 && (_actor[1].act[2].frame >= 8))) {
 			queueSceneSwitch(11, 0, _enemy[_currEnemy].filename, 64, 0, 0, 0);
 			_actor[1].act[2].state = 38;
 		}
