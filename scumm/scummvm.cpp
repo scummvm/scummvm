@@ -334,11 +334,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_switchRoomEffect = 0;
 	_doEffect = false;
 	memset(&_flashlight,0,sizeof(_flashlight));
-	_bompScaleRight = 0;
-	_bompScaleBottom = 0;
-	_bompScallingXPtr = NULL;
-	_bompScallingYPtr = NULL;
-	_bompMaskPtr = NULL;
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled= false;
 	_shakeFrame = 0;

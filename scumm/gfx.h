@@ -55,12 +55,6 @@ struct VirtScreen {		/* Virtual screen areas */
 	byte *backBuf;
 };
 
-struct MouseCursor {	/* Mouse cursor */
-	int8 hotspot_x, hotspot_y;
-	byte colors[4];
-	byte data[32];
-};
-
 struct ColorCycle {		/* Palette cycles */
 	uint16 delay;
 	uint16 counter;
@@ -78,27 +72,6 @@ struct BlastObject {		/* BlastObjects to draw */
 	uint16 mode;
 };
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
-struct BompHeader {			/* Bomp header */
-	union {
-		struct {
-			uint16 unk;
-			uint16 width, height;
-		} GCC_PACK old;
-
-		struct {
-			uint32 width, height;
-		} GCC_PACK v8;
-	} GCC_PACK;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
-
 struct BompDrawData {		/* Bomp graphics data */
 	byte *out;
 	int outwidth, outheight;
@@ -107,6 +80,12 @@ struct BompDrawData {		/* Bomp graphics data */
 	const byte *dataptr;
 	int srcwidth, srcheight;
 	uint16 shadowMode;
+
+	int32 scaleRight, scaleBottom;
+	byte *scalingXPtr, *scalingYPtr;
+	byte *maskPtr;
+	
+	BompDrawData() { memset(this, 0, sizeof(*this)); }
 };
 
 class Gdi {

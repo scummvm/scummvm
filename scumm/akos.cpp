@@ -781,8 +781,10 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.scale_y = 255;
 	bdd.shadowMode = _shadow_mode;
 
-	_vm->_bompScallingXPtr = NULL;
-	_vm->_bompScallingYPtr = NULL;
+	bdd.scalingXPtr = NULL;
+	bdd.scalingYPtr = NULL;
+	bdd.scaleRight = 0;
+	bdd.scaleBottom = 0;
 
 	int decode_mode;
 
@@ -797,10 +799,10 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.y = _actorY + ymoveCur;
 
 	if (_zbuf != 0) {
-		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
-		_vm->drawBomp(&bdd, decode_mode, 1);
+		bdd.maskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
+		_vm->drawBomp(bdd, decode_mode, 1);
 	} else {
-		_vm->drawBomp(&bdd, decode_mode, 0);
+		_vm->drawBomp(bdd, decode_mode, 0);
 	}
 
 	_vm->_bompActorPalettePtr = NULL;

@@ -897,18 +897,14 @@ protected:
 	void blit(byte *dst, const byte *src, int w, int h);
 
 	// bomp
-protected:
-	int32 _bompScaleRight, _bompScaleBottom;
 public:
-	byte *_bompScallingXPtr, *_bompScallingYPtr;
-	byte *_bompMaskPtr;
 	byte *_bompActorPalettePtr;
 
-	void drawBomp(BompDrawData *bd, int decode_mode, int mask);
+	void drawBomp(const BompDrawData &bd, int decode_mode, int mask);
 protected:
 	void decompressBomp(byte *dst, const byte *src, int w, int h);
-	int32 setupBompScale(byte *scalling, int32 size, byte scale);
-	void bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size);
+	int32 setupBompScale(byte *scaling, int32 size, byte scale);
+	void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
 	int32 bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size);
 	int32 bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size);
 	int32 bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size);

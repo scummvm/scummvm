@@ -3245,9 +3245,7 @@ int32 Scumm::bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size)
 	if (size <= 0)
 		return size;
 
-	for (int32 l = 0; l < size; l++) {
-		*(line_buffer++) = *(src++);
-	}
+	memcpy(line_buffer, src, size);
 	return size;
 }
 
@@ -3376,11 +3374,11 @@ void Scumm::bompApplyActorPalette(byte *line_buffer, int32 size) {
 	}
 }
 
-void Scumm::bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size) {
+void Scumm::bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size) {
 	byte * line_ptr1 = line_buffer;
 	byte * line_ptr2 = line_buffer;
 
-	byte tmp = *(scalling_x_ptr++);
+	byte tmp = *(scaling_x_ptr++);
 
 	while (size--) {
 		if ((skip & tmp) == 0) {
@@ -3390,7 +3388,7 @@ void Scumm::bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, i
 		skip >>= 1;
 		if (skip == 0) {
 			skip = 128;
-			tmp = *(scalling_x_ptr++);
+			tmp = *(scaling_x_ptr++);
 		}
 	}
 }
@@ -3427,7 +3425,7 @@ void Scumm::decompressBomp(byte *dst, const byte *src, int w, int h) {
 	} while (--h);
 }
 
-void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
+void Scumm::drawBomp(const BompDrawData &bd, int decode_mode, int mask) {
 	byte skip_y = 128;
 	byte skip_y_new = 0;
 	byte bits;
@@ -3435,55 +3433,56 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 	byte *charset_mask;
 	byte tmp;
 	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y, mask_offset, mask_pitch;
+	byte *scalingYPtr = bd.scalingYPtr;
 
-	if (bd->x < 0) {
-		clip_left = -bd->x;
+	if (bd.x < 0) {
+		clip_left = -bd.x;
 	} else {
 		clip_left = 0;
 	}
 
-	if (bd->y < 0) {
-		clip_top = -bd->y;
+	if (bd.y < 0) {
+		clip_top = -bd.y;
 	} else {
 		clip_top = 0;
 	}
 
-	clip_right = bd->srcwidth - clip_left;
-	tmp_x = bd->x + bd->srcwidth;
-	if (tmp_x > bd->outwidth) {
-		clip_right -= tmp_x - bd->outwidth;
+	clip_right = bd.srcwidth - clip_left;
+	tmp_x = bd.x + bd.srcwidth;
+	if (tmp_x > bd.outwidth) {
+		clip_right -= tmp_x - bd.outwidth;
 	}
 
-	clip_bottom = bd->srcheight;
-	tmp_y = bd->y + bd->srcheight;
-	if (tmp_y > bd->outheight) {
-		clip_bottom -= tmp_y - bd->outheight;
+	clip_bottom = bd.srcheight;
+	tmp_y = bd.y + bd.srcheight;
+	if (tmp_y > bd.outheight) {
+		clip_bottom -= tmp_y - bd.outheight;
 	}
 
-	const byte *src = bd->dataptr;
-	byte *dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
+	const byte *src = bd.dataptr;
+	byte *dst = bd.out + bd.y * bd.outwidth + bd.x + clip_left;
 
 	mask_pitch = _screenWidth / 8;
-	mask_offset = _screenStartStrip + (bd->y * mask_pitch) + ((bd->x + clip_left) >> 3);
+	mask_offset = _screenStartStrip + (bd.y * mask_pitch) + ((bd.x + clip_left) >> 3);
 
 	charset_mask = getResourceAddress(rtBuffer, 9) + mask_offset;
-	bits = 128 >> ((bd->x + clip_left) & 7);
+	bits = 128 >> ((bd.x + clip_left) & 7);
 
 	if (mask == 1) {
-		mask_out = _bompMaskPtr + mask_offset;
+		mask_out = bd.maskPtr + mask_offset;
 	}
 
 	if (mask == 3) {
-		if (_bompScallingYPtr != NULL) {
-			skip_y_new = *(_bompScallingYPtr++);
+		if (scalingYPtr != NULL) {
+			skip_y_new = *(scalingYPtr++);
 		}
 
-		if ((clip_right + clip_left) > _bompScaleRight) {
-			clip_right = _bompScaleRight - clip_left;
+		if ((clip_right + clip_left) > bd.scaleRight) {
+			clip_right = bd.scaleRight - clip_left;
 		}
 
-		if (clip_bottom > _bompScaleBottom) {
-			clip_bottom = _bompScaleBottom;
+		if (clip_bottom > bd.scaleBottom) {
+			clip_bottom = bd.scaleBottom;
 		}
 	}
 
@@ -3499,33 +3498,33 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 	while(1) {
 		switch(decode_mode) {
 		case 0:
-			src += bompDecodeLineMode0(src, line_buffer, bd->srcwidth);
+			src += bompDecodeLineMode0(src, line_buffer, bd.srcwidth);
 			break;
 		case 1:
-			src += bompDecodeLineMode1(src, line_buffer, bd->srcwidth);
+			src += bompDecodeLineMode1(src, line_buffer, bd.srcwidth);
 			break;
 		case 3:
-			src += bompDecodeLineMode3(src, line_buffer, bd->srcwidth);
+			src += bompDecodeLineMode3(src, line_buffer, bd.srcwidth);
 			break;
 		default:
 			error("Unknown bomp decode_mode %d", decode_mode);
 		}
 
 		if (mask == 3) {
-			if (bd->scale_y != 255) {
+			if (bd.scale_y != 255) {
 				tmp = skip_y_new & skip_y;
 				skip_y >>= 1;
 				if (skip_y == 0) {
 					skip_y = 128;
-					skip_y_new = *(_bompScallingYPtr++);
+					skip_y_new = *(scalingYPtr++);
 				}
 
 				if (tmp != 0) 
 					continue;
 			}
 
-			if (bd->scale_x != 255) {
-				bompScaleFuncX(line_buffer, _bompScallingXPtr, 128, bd->srcwidth);
+			if (bd.scale_x != 255) {
+				bompScaleFuncX(line_buffer, bd.scalingXPtr, 128, bd.srcwidth);
 			}
 		}
 
@@ -3540,7 +3539,7 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 			bompApplyMask(line_ptr, charset_mask, bits, clip_right);
 			bompApplyActorPalette(line_ptr, clip_right);
 	
-			switch(bd->shadowMode) {
+			switch(bd.shadowMode) {
 			case 0:
 				bompApplyShadow0(line_ptr, dst, clip_right);
 				break;
@@ -3551,14 +3550,14 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 				bompApplyShadow3(line_ptr, dst, clip_right);
 				break;
 			default:
-				error("Unknown bomp shadowMode %d", bd->shadowMode);
+				error("Unknown bomp shadowMode %d", bd.shadowMode);
 			}
 		}
 
 		mask_out += mask_pitch;
 		charset_mask += mask_pitch;
 		pos_y++;
-		dst += bd->outwidth;
+		dst += bd.outwidth;
 		if (pos_y >= clip_bottom)
 			break;
 	}

@@ -27,6 +27,28 @@
 #include "resource.h"
 #include "usage_bits.h"
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
+struct BompHeader {			/* Bomp header */
+	union {
+		struct {
+			uint16 unk;
+			uint16 width, height;
+		} GCC_PACK old;
+
+		struct {
+			uint32 width, height;
+		} GCC_PACK v8;
+	} GCC_PACK;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
+
 bool Scumm::getClass(int obj, int cls)
 {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getClass");
@@ -1518,24 +1540,19 @@ void Scumm::drawBlastObject(BlastObject *eo) {
 	bdd.scale_x = (byte)eo->scaleX;
 	bdd.scale_y = (byte)eo->scaleY;
 
-	byte bomp_scalling_x[64], bomp_scalling_y[64];
 
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
-		_bompScallingXPtr = bomp_scalling_x;
-		_bompScallingYPtr = bomp_scalling_y;
-		_bompScaleRight = setupBompScale(_bompScallingXPtr, bdd.srcwidth, bdd.scale_x);
-		_bompScaleBottom = setupBompScale(_bompScallingYPtr, bdd.srcheight, bdd.scale_y);
+		byte bomp_scaling_x[64], bomp_scaling_y[64];
+		bdd.scalingXPtr = bomp_scaling_x;
+		bdd.scalingYPtr = bomp_scaling_y;
+		bdd.scaleRight = setupBompScale(bomp_scaling_x, bdd.srcwidth, bdd.scale_x);
+		bdd.scaleBottom = setupBompScale(bomp_scaling_y, bdd.srcheight, bdd.scale_y);
 		bdd.shadowMode = 0;
-		drawBomp(&bdd, 1, 3);
-	}	else {
+		drawBomp(bdd, 1, 3);
+	} else {
 		bdd.shadowMode = eo->mode;
-		drawBomp(&bdd, 1, 0);
+		drawBomp(bdd, 1, 0);
 	}
-
-	_bompScallingXPtr = NULL;
-	_bompScallingYPtr = NULL;
-	_bompScaleRight = 0;
-	_bompScaleBottom = 0;
 
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
 }
@@ -1627,12 +1644,12 @@ static byte _bompBitsTable[] = {
 	4, 3, 3, 2, 3, 2, 2, 1, 3, 2, 2, 1, 2, 1, 1, 0,
 };
 
-int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
+int32 Scumm::setupBompScale(byte * scaling, int32 size, byte scale) {
 	uint32 tmp = (256 - (size >> 1));
 	int32 count = (size + 7) >> 3;
 	assert(tmp < sizeof(_bompScaleTable));
 	byte * tmp_ptr = _bompScaleTable + tmp;
-	byte * tmp_scalling = scalling;
+	byte * tmp_scaling = scaling;
 	byte a = 0;
 
 	while((count--) != 0) {
@@ -1680,16 +1697,16 @@ int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
 		}
 		tmp_ptr += 4;
 
-		*(tmp_scalling++) = a;
+		*(tmp_scaling++) = a;
 	}
 	if ((size & 7) != 0) {
-		*(tmp_scalling - 1) |= revBitMask[size & 7];
+		*(tmp_scaling - 1) |= revBitMask[size & 7];
 	}
 
 	count = (size + 7) >> 3;
 	byte ret_value = 0;
 	while(count--) {
-		tmp = *scalling++;
+		tmp = *scaling++;
 		assert(tmp < sizeof(_bompBitsTable));
 		ret_value += _bompBitsTable[tmp];
 	}
