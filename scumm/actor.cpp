@@ -1933,7 +1933,10 @@ void ScummEngine::postProcessAuxQueue() {
 							warning("unimplemented compression type %d", comp);
 							break;
 						}
+					} else {
+						warning("unimplemented compression type %d", comp);
 					}
+
 				}
 				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
 				if (axur) {

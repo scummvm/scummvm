@@ -739,6 +739,7 @@ protected:
 	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
+	void o72_unknown56();
 	void o72_getTimer();
 	void o72_setTimer();
 	void o72_unknown5A();

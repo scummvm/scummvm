@@ -152,7 +152,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 54 */
 		OPCODE(o72_objectX),
 		OPCODE(o72_objectY),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown56),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
 		OPCODE(o72_getTimer),

@@ -1191,8 +1191,10 @@ void ScummEngine::launch() {
 	scummInit();
 
 	if (VAR_DEBUGMODE != 0xFF) {
-			// This is NOT for the Mac version of Indy3/Loom
-			VAR(VAR_DEBUGMODE) = _debugMode;
+		// This is NOT for the Mac version of Indy3/Loom
+		VAR(VAR_DEBUGMODE) = _debugMode;
+		if (_heversion >= 80)
+			VAR(85) = 1;
 	}
 
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
@@ -1459,8 +1461,6 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 		}
 		if (_heversion >= 80)
-			// Enable built-in debug mode keys
-			VAR(85) = 1;
 			VAR(VAR_WINDOWS_VERSION) = 40;
 		if (_heversion >= 90)
 			VAR(VAR_NUM_SPRITES) = _numSprites - 1;

@@ -152,7 +152,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 54 */
 		OPCODE(o72_objectX),
 		OPCODE(o72_objectY),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown56),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
 		OPCODE(o72_getTimer),
@@ -741,6 +741,17 @@ void ScummEngine_v72he::o72_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v72he::o72_unknown56() {
+	// Drawing related
+	int a = pop();
+	int b = pop();
+	int c = pop();
+	int d = pop();
+	int e = pop();
+
+	debug(1, "stub o72_unknown56(%d, %d, %d, %d, %d)", a, b, c, d, e);
 }
 
 void ScummEngine_v72he::o72_getTimer() {
@@ -1533,7 +1544,10 @@ void ScummEngine_v72he::o72_openFile() {
 	copyScriptString(filename);
 	// The boot script in some HE games doen't set the 
 	// complete data file name. So we work around that.
-	if (!strcmp((char *)filename,".he3")) {
+	if (!strcmp((char *)filename,".he7")) {
+		memset(filename, 0, sizeof(filename));
+		sprintf((char *)filename, "%s.he7", _gameName.c_str());
+	} else if (!strcmp((char *)filename,".he3")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he3", _gameName.c_str());
 	}
@@ -1920,9 +1934,7 @@ void ScummEngine_v72he::o72_readINI() {
 
 	switch (type) {
 	case 6: // number
-		if (!strcmp((char *)option, "ReadPagesAutomatically"))
-			push(1);
-		else if (!strcmp((char *)option, "NoPrinting"))
+		if (!strcmp((char *)option, "NoPrinting"))
 			push(1);
 		else
 			push(0);
