@@ -949,6 +949,10 @@ uint32 OSystem_SDL::property(int param, uint32 value) {
 }
 		
 void OSystem_SDL::quit() {
+  if(cdrom) {
+    SDL_CDStop(cdrom);
+    SDL_CDClose(cdrom);
+  }
 	unload_gfx_mode();		
 	exit(1);
 }
