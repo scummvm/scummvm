@@ -108,6 +108,8 @@ public:
 	~Music(void);
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
+	void setAdlib(bool b)		{ _adlib = b; }
+	bool hasAdlib()			{ return _adlib; }
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 
 	int play(uint32 music_rn, uint16 flags = MUSIC_DEFAULT);
@@ -128,6 +130,7 @@ private:
 	int _musicInitialized;
 	int _enabled;
 	bool _hasDigiMusic;
+	bool _adlib;
 
 	RSCFILE_CONTEXT *_musicContext;
 	const char *_musicFname;

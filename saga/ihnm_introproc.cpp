@@ -31,6 +31,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/events.h"
 #include "saga/rscfile_mod.h"
+#include "saga/music.h"
 
 #include "saga/scene.h"
 
@@ -258,7 +259,7 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = IHNM_TITLE_TIME;
+		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_ADLIB : IHNM_TITLE_TIME_GM;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;

@@ -296,7 +296,7 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled) {
+Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer), _enabled(enabled), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_musicInitialized = 1;
 	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
@@ -454,20 +454,18 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		// Load MIDI/XMI resource data
 
-		bool isGM = false;
-
 		if (GAME_GetGameType() == GID_ITE) {
 			rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
 		} else {
-			// TODO: Someone else will have to verify that the "FM"
-			// music is really the appropriate choice for MT-32. Is
-			// either of them the best choice for Adlib, or will
-			// they both sound equally wimpy?
-			if (!hasNativeMT32()) {
-				isGM = true;
-				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
-			} else {
+			// TODO: I'm not sure if this is right, but the FM file
+			// sounds better with Adlib than the AM file does. On
+			// the other hand, it doesn't sound like quite the same
+			// music, which is strange.
+
+			if (hasAdlib()) {
 				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_FM, 0);
+			} else {
+				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
 			}
 		}
 
@@ -477,7 +475,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 			return FAILURE;
 		}
 
-		_player->setGM(isGM);
+		_player->setGM(true);
 		parser = MidiParser::createParser_XMIDI();
 	}
 

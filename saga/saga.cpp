@@ -193,14 +193,18 @@ void SagaEngine::go() {
 	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
 
+	bool adlib = false;
+
 	MidiDriver *driver = GameDetector::createMidi(midiDriver);
-	if (!driver)
+	if (!driver) {
 		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (native_mt32)
+		adlib = true;
+	} else if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	_music = new Music(_mixer, driver, _musicEnabled);
 	_music->setNativeMT32(native_mt32);
+	_music->setAdlib(adlib);
 
 	if (midiDriver == MD_MT32)
 		_music->setPassThrough(true);
