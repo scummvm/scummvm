@@ -31,6 +31,8 @@
 #include "common/config-file.h"
 #include "common/util.h"
 
+#include "sound/midiparser.h"
+
 Sound::Sound(Scumm *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
@@ -174,6 +176,8 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
+debug (0, "playSound (%d)", soundID);
+
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
@@ -244,6 +248,25 @@ void Sound::playSound(int soundID) {
 
 			// XMI playing stuff goes here
 			// ptr should be pointing to XMI file in memory
+			// HACK (Jamieson630): Just to see if it works.
+			static MidiParser *parser = 0;
+
+			MidiDriver *driver = 0;
+			if (_scumm && _scumm->_imuse)
+				driver = _scumm->_imuse->getMidiDriver();
+			if (driver) {
+				driver->setTimerCallback (0, 0);
+				if (parser) {
+					delete parser;
+					parser = 0;
+				}
+				parser = MidiParser::createParser_XMIDI();
+				parser->setMidiDriver (driver);
+				parser->setTimerRate (driver->getBaseTempo());
+				parser->loadMusic (ptr, size);
+				driver->open();
+				driver->setTimerCallback (parser, &MidiParser::timerCallback);
+			}
 
 			// FIXME: dumping xmi files for testing, remove when working
 			if (1) {

@@ -408,6 +408,7 @@ public:
 	void setBase(byte **base);
 
 	uint32 property(int prop, uint32 value);
+	MidiDriver *getMidiDriver();
 
 	static IMuseInternal *create(OSystem *syst, MidiDriver *midi);
 };
@@ -524,6 +525,25 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote) {
 
 IMuseInternal::~IMuseInternal() {
 	terminate();
+}
+
+MidiDriver *IMuseInternal::getMidiDriver() {
+	MidiDriver *driver = NULL;
+
+	if (_midi_native) {
+		driver = _midi_native;
+#if !defined(__PALM_OS__) // Adlib not supported on PalmOS
+	} else {
+		// Route it through Adlib anyway.
+		if (!_midi_adlib) {
+			_midi_adlib = MidiDriver_ADLIB_create();
+			initMidiDriver (_midi_adlib);
+		}
+		driver = _midi_adlib;
+#endif
+	}
+
+	return driver;
 }
 
 byte *IMuseInternal::findTag(int sound, char *tag, int index) {
@@ -3488,6 +3508,7 @@ int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase (base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }
+MidiDriver *IMuse::getMidiDriver() { in(); MidiDriver *ret = _target->getMidiDriver(); out(); return ret; }
 
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
