@@ -124,7 +124,7 @@ bool SmushPlayer::parseTag()
 
 void SmushPlayer::parseAHDR()
 {
-//  memcpy(_fluPalette, _block, 0x300);
+	memcpy(_fluPalette, _block + 6, 0x300);
 	_paletteChanged = true;
 
 //  printf("parse AHDR\n");
@@ -1057,7 +1057,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 		if (_paletteChanged) {
 			_paletteChanged = false;
 			setPalette();
-		//	sm->setDirtyColors(0, 255);
+			sm->setDirtyColors(0, 255);
 		}
 
 		if (_frameChanged) {
