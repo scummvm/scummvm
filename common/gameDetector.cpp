@@ -693,8 +693,8 @@ int GameDetector::detectMain() {
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
-	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) ||
-	   ((_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO)) {
+	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) && _midi_driver != MD_NULL ||
+	    (_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
