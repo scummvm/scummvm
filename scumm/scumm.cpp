@@ -1790,6 +1790,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		}
 		if (_features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);
+	} else if (_version == 8) {
+		// Set the shadow palette(s) to all black. This fixes
+		// bug #795940, and actually makes some sense (after all,
+		// shadows tend to be rather black, don't they? ;-)
+		memset(_shadowPalette, 0, NUM_SHADOW_PALETTE * 256);
 	}
 
 	clearDrawObjectQueue();
