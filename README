@@ -229,11 +229,11 @@ file can be found near the end of this readme.
 The short game name ('game target') you see at the end of the command
 line is very important. A short list is contained at the top of this
 file. You can also get the current list of games and game names at:
-        http://scummvm.sourceforge.net/compatibility.php
+        http://www.scummvm.org/compatibility.php
 
 For the adventurous, who like to live on the edge... you can download
 daily builds of Win32, Redhat, Debian and other packages here:
-        Daily builds - http://scummvm.sourceforge.net/daily/
+        Daily builds - http://www.scummvm.org/daily/
 
 
 Command Line Options:
@@ -566,5 +566,5 @@ Credits:
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
-http://scummvm.sourceforge.net/
+http://www.scummvm.org/
 ------------------------------------------------------------------------

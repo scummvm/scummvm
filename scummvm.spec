@@ -14,7 +14,7 @@ Summary		: SCUMM graphic adventure game interpreter
 Group		: Interpreters
 License		: GPL
 
-Url             : http://scummvm.sourceforge.net
+Url             : http://www.scummvm.org
 
 Source		: %{name}-%{version}.tar.gz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root

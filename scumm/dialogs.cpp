@@ -59,7 +59,7 @@ static const char* string_map_table_custom[] = {
 	"About",			//7
 	"Pocket ScummVM",	//8
 	"Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")",	//9
-	"ScummVM http://scummvm.sourceforge.net",		//10
+	"ScummVM http://www.scummvm.org",		//10
 	"All games (c) LucasArts",						//11
 	"Quit",											//12
 	"Pause",										//13
@@ -634,7 +634,7 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 {
 	addButton(110, 100, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
 	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 30, 240, 16, "http://scummvm.sourceforge.net", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 30, 240, 16, "http://www.scummvm.org", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);

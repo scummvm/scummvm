@@ -62,7 +62,7 @@ BEGIN
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "ScummVM Team\0"
-            VALUE "FileDescription", "http://scummvm.sourceforge.net/\0"
+            VALUE "FileDescription", "http://www.scummvm.org/\0"
             VALUE "FileVersion", "0, 2, 0, 0\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright © 2002 The ScummVM Team\0"
