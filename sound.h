@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.11  2002/04/05 04:24:39  ender
+ * Fix last BOOL
+ *
  * Revision 1.10  2002/04/04 22:47:03  arisme
  * MP3 cd music patch - still WIP, VBR doesn't work, compress the audio track X to MP3 CBR and name them trackX.mp3 in the game directory - only tested with Loom
  *
@@ -99,7 +102,7 @@ struct MixerChannel {	/* Mixer Channel */
             uint32 size;
             uint32 buffer_size;
             mad_timer_t duration;
-            BOOL   playing;
+            bool   playing;
             FILE   *file;
           } mp3_cdmusic;
 #endif
