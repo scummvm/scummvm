@@ -346,8 +346,8 @@ void CostumeRenderer::procC64() {
 	// * figure out how to get the right colors/palette
 	// * test masking (once we implement any masking for V1 games)
 
-	const byte *palette = _vm->gdi._C64Colors;
-//	const byte palette[4] = { 0, 1, 2, 3 };
+//	const byte *palette = _vm->gdi._C64Colors;
+	const byte palette[4] = { 0, 10, 6, 0 };
 //	const byte *palette = _palette;
 
 	v1.skip_width >>= 3;
