@@ -7,19 +7,28 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "newres.h"
+#include "afxres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// French (France) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
 #ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    DISCARDABLE     "PocketScumm.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -34,7 +43,7 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""newres.h""\r\n"
+    "#include ""afxres.h""\r\n"
     "\0"
 END
 
@@ -46,152 +55,6 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_GAMESELECT DIALOG DISCARDABLE  0, 0, 128, 134
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
-CAPTION "Choose a Game"
-FONT 8, "System"
-BEGIN
-    LISTBOX         IDC_LISTAVAILABLE,6,47,113,70,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP | SS_CENTERIMAGE,0,2,
-                    125,35
-    LTEXT           "",IDC_GAMEDESC,2,117,116,8
-    PUSHBUTTON      "Play",IDC_PLAY,52,125,19,9
-    LTEXT           "",IDC_FILEPATH,5,39,120,8
-    PUSHBUTTON      "Scan",IDC_SCAN,4,125,19,9
-    PUSHBUTTON      "Exit",IDC_EXIT,100,125,19,9
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menubar
-//
-
-IDM_MENU MENU DISCARDABLE 
-BEGIN
-    POPUP "PocketSCUMM"
-    BEGIN
-        MENUITEM "Load/Save",                   IDC_LOADSAVE
-        MENUITEM "Options",                     IDC_OPTIONS
-        MENUITEM "Exit",                        IDC_EXIT
-        MENUITEM SEPARATOR
-        MENUITEM "Landscape",                   IDC_LANDSCAPE
-        MENUITEM "Skip section",                IDC_SKIP
-        MENUITEM SEPARATOR
-        MENUITEM "Sound",                       IDC_SOUND
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Data
-//
-
-IDM_MENU SHMENUBAR DISCARDABLE 
-BEGIN
-    IDM_MENU, 1,
-    I_IMAGENONE, IDM_POCKETSCUMM, TBSTATE_ENABLED, 
-    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_POCKETSCUMM, 0, 0,
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    IDD_GAMESELECT, DIALOG
-    BEGIN
-        RIGHTMARGIN, 125
-        HORZGUIDE, 2
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_CAP_POCKETSCUMM     "PocketSCUMM"
-END
-
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// French (France) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-#ifdef _WIN32
-LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_DIALOG1 DIALOG DISCARDABLE  0, 0, 186, 90
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dialog"
-FONT 8, "System"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    IDD_DIALOG1, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 179
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 83
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDL_POCKETSCUMM         ICON    DISCARDABLE     "PocketSCUMM.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_MENUTITLE           BITMAP  DISCARDABLE     "MenuTitle.bmp"
 #endif    // French (France) resources
 /////////////////////////////////////////////////////////////////////////////
 
