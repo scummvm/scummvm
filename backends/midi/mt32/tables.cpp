@@ -25,15 +25,6 @@
 
 #include "mt32emu.h"
 
-// Determines how the waveform cache file is handled (must be regenerated after sampling rate change)
-#define WAVECACHEMODE 0 // Load existing cache if possible, otherwise generate and save cache
-//#define WAVECACHEMODE 1 // Load existing cache if possible, otherwise generage but don't save cache
-//#define WAVECACHEMODE 2 // Ignore existing cache, generate and save cache
-//#define WAVECACHEMODE 3 // Ignore existing cache, generate but don't save cache
-
-// Constant tuning for now
-#define TUNING 440.0f
-
 namespace MT32Emu {
 
 //Amplitude time velocity follow exponential coefficients
@@ -95,26 +86,25 @@ Bit32s envtimetable[101];
 Bit32s decaytimetable[101];
 Bit32s lasttimetable[101];
 Bit32s voltable[128];
-Bit32s bendtable[49];
 float ResonFactor[31];
 float ResonInv[31];
 
 // Per-note initialisation tables follow
 
-Bit16s freqtable[NUMNOTES];
-Bit32s fildeptable[5][NUMNOTES];
-Bit32s timekeytable[5][NUMNOTES];
-int filttable[2][NUMNOTES][201];
-int nfilttable[NUMNOTES][101][101];
+Bit16s freqtable[NUM_NOTES];
+Bit32s fildeptable[5][NUM_NOTES];
+Bit32s timekeytable[5][NUM_NOTES];
+int filttable[2][NUM_NOTES][201];
+int nfilttable[NUM_NOTES][101][101];
 
-Bit32s divtable[NUMNOTES];
-Bit32s smalldivtable[NUMNOTES];
-Bit32u wavtabler[54][NUMNOTES];
-Bit32u looptabler[9][10][NUMNOTES];
-Bit32s sawtable[NUMNOTES][101];
+Bit32s divtable[NUM_NOTES];
+Bit32s smalldivtable[NUM_NOTES];
+Bit32u wavtabler[54][NUM_NOTES];
+Bit32u looptabler[9][10][NUM_NOTES];
+Bit32s sawtable[NUM_NOTES][101];
 
-Bit16s *waveforms[4][NUMNOTES];
-Bit32u waveformsize[4][NUMNOTES];
+Bit16s *waveforms[4][NUM_NOTES];
+Bit32u waveformsize[4][NUM_NOTES];
 static Bit16s tmpforms[4][65536];
 
 
@@ -126,7 +116,7 @@ static Bit16s tmpforms[4][65536];
 static void prewarp(double *a1, double *a2, double fc, double fs) {
 	double wp;
 
-	wp = 2.0 * fs * tan(PI * fc / fs);
+	wp = 2.0 * fs * tan(DOUBLE_PI * fc / fs);
 
 	*a2 = *a2 / (wp * wp);
 	*a1 = *a1 / wp;
@@ -331,8 +321,6 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 		//FIXME:KG: I'm fairly sure this is wrong... lf=100 should yield no fine-tuning (4096)?
 		finetable[lf] = (int)((powf(2.0f, (((float)lf / 200.0f) - 1.0f) / 12.0f)) * 4096.0f);
 	}
-	for (lf = 0; lf <= 48; lf++)
-		bendtable[lf] = (int)((powf(2.0f, (((float)lf / 12.0f) - 2.0f))) * 4096.0f);
 
 	float lff;
 	for (lf = 0; lf < 128; lf++) {
@@ -345,7 +333,7 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 
 	for (lf = 0; lf < 128; lf++) {
 		// Converts MIDI velocity to volume.
-		voltable[lf] = (int)(127.0 * pow((float)lf / 127.0, LN));
+		voltable[lf] = (int)(127.0 * pow((float)lf / 127.0, DOUBLE_LN));
 	}
 	for (lf = 0; lf < MAX_SAMPLE_OUTPUT; lf++) {
 		int myRand;
@@ -440,7 +428,7 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 				dval = 1;
 				ampbiastable[lf][distval] = 256;
 			} else {
-				amplog = powf(1.431817011f, (float)lf) / (float)PI;
+				amplog = powf(1.431817011f, (float)lf) / FLOAT_PI;
 				dval = ((128.0f - (float)distval) / 128.0f);
 				amplog = expf(amplog);
 				dval = powf(amplog, dval) / amplog;
@@ -459,8 +447,8 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 				dval = 1;
 				fbiastable[lf][distval] = 256;
 			} else {
-				//amplog = pow(1.431817011, filval) / (float)PI;
-				amplog = powf(1.531817011f, filval) / (float)PI;
+				//amplog = pow(1.431817011, filval) / FLOAT_PI;
+				amplog = powf(1.531817011f, filval) / FLOAT_PI;
 				dval = (128.0f - (float)distval) / 128.0f;
 				amplog = expf(amplog);
 				dval = powf(amplog,dval)/amplog;
@@ -519,7 +507,7 @@ static void initDep(int f) {
 }
 
 void TableInitialiser::initWave(Synth *synth, File *file, bool reading, bool writing, int f, float freq, float rate, double ampsize, Bit32s div) {
-	double sd = (2.0*PI)/((((float)div/65536.0)) * 4.0);
+	double sd = (2.0 * DOUBLE_PI) / ((((float)div / 65536.0)) * 4.0);
 	waveformsize[0][f] = div >> 14;
 	waveformsize[1][f] = div >> 14;
 	waveformsize[2][f] = div >> 14;
@@ -541,15 +529,15 @@ void TableInitialiser::initWave(Synth *synth, File *file, bool reading, bool wri
 		int fa = 0;
 		memset(tmpforms, 0,sizeof(tmpforms));
 
-		while (sa <= (2.0 * PI)) {
+		while (sa <= (2.0 * DOUBLE_PI)) {
 			float sqp;
 
-			if (sa < PI) {
+			if (sa < DOUBLE_PI) {
 				sqp = -1;
-				sqp = (float)(sqp + (0.25 * (sa/PI)));
+				sqp = (float)(sqp + (0.25 * (sa/DOUBLE_PI)));
 			} else {
 				sqp=1;
-				sqp = (float)(sqp - (0.25 * ((sa-PI)/PI)));
+				sqp = (float)(sqp - (0.25 * ((sa - DOUBLE_PI)/DOUBLE_PI)));
 			}
 
 			saw = 0;
@@ -565,8 +553,8 @@ void TableInitialiser::initWave(Synth *synth, File *file, bool reading, bool wri
 			tmpforms[1][fa] = (Bit16s)(saw * ampsize / 2);
 
 			tmpforms[2][fa] = (Bit16s)(cos(dumbfire) * -ampsize);
-			tmpforms[3][fa * 2] = (Bit16s)(cos(sa - PI) * -ampsize);
-			tmpforms[3][fa * 2 + 1] = (Bit16s)(cos((sa + (sd / 2)) - PI) * -ampsize);
+			tmpforms[3][fa * 2] = (Bit16s)(cos(sa - DOUBLE_PI) * -ampsize);
+			tmpforms[3][fa * 2 + 1] = (Bit16s)(cos((sa + (sd / 2)) - DOUBLE_PI) * -ampsize);
 
 			fa++;
 			sa += sd;
@@ -628,7 +616,7 @@ static void initNFiltTable(int f, float freq, float rate) {
 	}
 }
 
-void TableInitialiser::initNotes(Synth *synth, sampleFormat pcms[54], float rate) {
+void TableInitialiser::initNotes(Synth *synth, PCMWave pcms[54], float rate) {
 	char filename[32];
 	int intRate = (int)rate;
 	sprintf(filename, "waveformcache-%d.raw", intRate);
@@ -645,7 +633,7 @@ void TableInitialiser::initNotes(Synth *synth, sampleFormat pcms[54], float rate
 	header[pos++] = (char)((intRate >> 8) & 0xFF);
 	header[pos++] = (char)((intRate >> 16) & 0xFF);
 	header[pos] = (char)((intRate >> 24) & 0xFF);
-#if WAVECACHEMODE < 2
+#if MT32EMU_WAVECACHEMODE < 2
 	file = synth->openFile(filename, File::OpenMode_read);
 	if (file != NULL) {
 		char fileHeader[16];
@@ -662,7 +650,7 @@ void TableInitialiser::initNotes(Synth *synth, sampleFormat pcms[54], float rate
 		synth->printDebug("Unable to open %s for reading - will generate", filename);
 	}
 #endif
-#if WAVECACHEMODE == 0 || WAVECACHEMODE == 2
+#if MT32EMU_WAVECACHEMODE == 0 || MT32EMU_WAVECACHEMODE == 2
 	if (!reading) {
 		file = synth->openFile(filename, File::OpenMode_write);
 		if (file != NULL) {
@@ -710,9 +698,10 @@ void TableInitialiser::initNotes(Synth *synth, sampleFormat pcms[54], float rate
 		synth->closeFile(file);
 }
 
-void TableInitialiser::initMT32Tables(Synth *synth, sampleFormat pcms[54], float sampleRate) {
+bool TableInitialiser::initMT32Tables(Synth *synth, PCMWave pcms[54], float sampleRate) {
 	if (sampleRate <= 0.0f) {
 		synth->printDebug("Bad sampleRate (%d <= 0.0f)", sampleRate);
+		return false;
 	}
 	if (initialisedSampleRate == 0.0f) {
 		initMT32ConstantTables(synth);
@@ -722,6 +711,7 @@ void TableInitialiser::initMT32Tables(Synth *synth, sampleFormat pcms[54], float
 	}
 	// This always needs to be done, to allocate the waveforms
 	initNotes(synth, pcms, sampleRate);
+	return true;
 }
 
 }

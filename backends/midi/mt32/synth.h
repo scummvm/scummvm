@@ -24,16 +24,13 @@
 
 #include <stdarg.h>
 
-// Shows number of partials MT-32 is playing
-#define MONITORPARTIALS 0
-
-#define ROMSIZE (512 * 1024)
-#define PCMSIZE (ROMSIZE / 2)
-#define GRAN 512
-
 class revmodel;
 
 namespace MT32Emu {
+
+const int ROMSIZE = 512 * 1024;
+const int PCMSIZE = ROMSIZE / 2;
+const int GRAN = 512;
 
 class File;
 class TableInitialiser;
@@ -48,38 +45,39 @@ enum ReportType {
 	ReportType_errorDrumpat    = 3,
 	ReportType_errorPatchlog   = 4,
 	ReportType_errorMT32ROM    = 5,
+	ReportType_errorSampleRate = 6,
 
 	// HW spec
-	ReportType_availableSSE    = 6,
-	ReportType_available3DNow  = 7,
-	ReportType_usingSSE        = 8,
-	ReportType_using3DNow      = 9,
+	ReportType_availableSSE    = 7,
+	ReportType_available3DNow  = 8,
+	ReportType_usingSSE        = 9,
+	ReportType_using3DNow      = 10,
 
 	// General info
-	ReportType_lcdMessage      = 10,
-	ReportType_devReset        = 11,
-	ReportType_devReconfig     = 12,
-	ReportType_newReverbMode   = 13,
-	ReportType_newReverbTime   = 14,
-	ReportType_newReverbLevel  = 15
+	ReportType_lcdMessage      = 11,
+	ReportType_devReset        = 12,
+	ReportType_devReconfig     = 13,
+	ReportType_newReverbMode   = 14,
+	ReportType_newReverbTime   = 15,
+	ReportType_newReverbLevel  = 16
 };
 
 struct SynthProperties {
 	// Sample rate to use in mixing
-	int SampleRate;
+	int sampleRate;
 
 	// Flag to activate reverb.  True = use reverb, False = no reverb
-	bool UseReverb;
-	// Flag True to use software set reverb settings, Flag False to set reverb settings in
+	bool useReverb;
+	// True to use software set reverb settings, False to set reverb settings in
 	// following parameters
-	bool UseDefault;
+	bool useDefaultReverb;
 	// When not using the default settings, this specifies one of the 4 reverb types
 	// 1 = Room 2 = Hall 3 = Plate 4 = Tap
-	unsigned char RevType;
+	unsigned char reverbType;
 	// This specifies the delay time, from 0-7 (not sure of the actual MT-32's measurement)
-	unsigned char RevTime;
+	unsigned char reverbTime;
 	// This specifies the reverb level, from 0-7 (not sure of the actual MT-32's measurement)
-	unsigned char RevLevel;
+	unsigned char reverbLevel;
 	// The name of the directory in which the ROM and data files are stored (with trailing slash/backslash)
 	// Not used if "openFile" is set. May be NULL in any case.
 	char *baseDir;
@@ -116,15 +114,14 @@ friend class TableInitialiser;
 private:
 	bool isEnabled;
 
-	sampleFormat PCM[54];
-	sampleTable PCMList[128];
-	Bit32u PCMReassign[54];
+	PCMWave PCM[54];
+	PCMWaveEntry PCMList[128];
 	Bit32s PCMLoopTable[54];
 
 	Bit16s romfile[PCMSIZE + GRAN];
 	Bit8s chantable[32];
 
-	#if MONITORPARTIALS == 1
+	#if MT32EMU_MONITOR_PARTIALS == 1
 	static Bit32s samplepos = 0;
 	#endif
 

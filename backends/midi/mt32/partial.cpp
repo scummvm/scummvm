@@ -34,6 +34,9 @@ Partial::Partial(Synth *useSynth) {
 	pair = NULL;
 }
 
+Partial::~Partial() {
+}
+
 int Partial::getOwnerPart() {
 	return ownerPart;
 }
@@ -62,12 +65,12 @@ void Partial::deactivate() {
 	}
 }
 
-void Partial::initKeyFollow(int freqNum) {
+void Partial::initKeyFollow(int key) {
 	// Setup partial keyfollow
 	// Note follow relative to middle C
 	int keyfollow;
-	int realfol = (freqNum * 2 - MIDDLEC * 2) / 2;
-	int antirealfol = (MIDDLEC * 2 - freqNum * 2) / 2;
+	int realfol = (key * 2 - MIDDLEC * 2) / 2;
+	int antirealfol = (MIDDLEC * 2 - key * 2) / 2;
 	// Calculate keyfollow for pitch
 	switch(patchCache->pitchkeydir) {
 	case -1:
@@ -99,7 +102,7 @@ void Partial::initKeyFollow(int freqNum) {
 		keyfollow = (antirealfol * patchCache->filtkeyfollow) >> 12;
 		break;
 	case 0:
-		keyfollow = freqNum;
+		keyfollow = key;
 		break;
 	case 1:
 		keyfollow = (realfol * patchCache->filtkeyfollow) >> 12;
@@ -120,11 +123,11 @@ void Partial::startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPa
 	}
 	patchCache = useCache;
 	poly = usePoly;
-	mixType = patchCache->mix;
+	mixType = patchCache->structureMix;
 	structurePosition = patchCache->structurePosition;
 
 	play = true;
-	initKeyFollow(poly->freqnum);
+	initKeyFollow(poly->freqnum); // Initialises noteVal, filtVal and realVal
 	lfoPos = 0;
 	pulsewidth = patchCache->pulsewidth + pwveltable[patchCache->pwsens][poly->vel];
 	if (pulsewidth > 100) {
@@ -174,10 +177,10 @@ Bit16s *Partial::generateSamples(long length) {
 	while (length--) {
 		Bit32s envval, ampval;
 		Bit32s ptemp = 0;
-		if (envs[AMPENV].sustaining)
+		if (envs[EnvelopeType_amp].sustaining)
 			ampval = ampEnvCache;
 		else {
-			if (envs[AMPENV].count<=0) {
+			if (envs[EnvelopeType_amp].count <= 0) {
 				ampval = getAmpEnvelope();
 				if (!play) {
 					deactivate();
@@ -192,18 +195,18 @@ Bit16s *Partial::generateSamples(long length) {
 				}
 
 				ampval = voltable[ampval];
-				int tmpvel = poly->vel;
+				int tmpvel;
 				if (patchCache->ampenvdir == 1)
-					tmpvel = 127 - tmpvel;
+					tmpvel = 127 - poly->vel;
+				else
+					tmpvel = poly->vel;
 				ampval = (ampval * ampveltable[tmpvel][(int)patchCache->ampEnv.velosens]) >> 8;
-				//if (envs[AMPENV].sustaining)
+				//if (envs[EnvelopeType_amp].sustaining)
 				ampEnvCache = ampval;
 			} else
 				ampval = ampEnvCache;
-			--envs[AMPENV].count;
+			--envs[EnvelopeType_amp].count;
 		}
-
-		int delta = 0x10707;
 
 		// Calculate Pitch envelope
 		int lfoat = 0x1000;
@@ -211,7 +214,7 @@ Bit16s *Partial::generateSamples(long length) {
 		if (pitchSustain) {
 			// Calculate LFO position
 			// LFO does not kick in completely until pitch envelope sustains
-			if (patchCache->lfodepth>0) {
+			if (patchCache->lfodepth > 0) {
 				lfoPos++;
 				if (lfoPos >= patchCache->lfoperiod)
 					lfoPos = 0;
@@ -228,18 +231,23 @@ Bit16s *Partial::generateSamples(long length) {
 				pitchEnvCache = pdep;
 		}
 
+		int delta;
+		// These two are only for PCM partials, obviously
+		PCMWaveEntry *pcmWave = NULL; // Initialise to please compiler
+		int pcmAddr = 0; // Initialise to please compiler
+
 		// Get waveform - either PCM or synthesized sawtooth or square
 		if (patchCache->PCMPartial) {
 			// PCM partial
-			int addr,len;
-			sampleTable *tPCM = &synth->PCMList[patchCache->pcm];
+			int len;
+			pcmWave = &synth->PCMList[patchCache->pcm];
 
-			if (tPCM->aggSound == -1) {
-				delta = wavtabler[tPCM->pcmnum][noteVal];
-				addr = tPCM->addr;
-				len = tPCM->len;
+			if (pcmWave->aggSound == -1) {
+				delta = wavtabler[pcmWave->pcmnum][noteVal];
+				pcmAddr = pcmWave->addr;
+				len = pcmWave->len;
 				if (partialOff.pcmplace >= len) {
-					if (tPCM->loop) {
+					if (pcmWave->loop) {
 						partialOff.pcmplace = partialOff.pcmoffset = 0;
 						// FIXME:KG: Use this?: partialOff.pcmplace %= len;
 					} else {
@@ -249,56 +257,66 @@ Bit16s *Partial::generateSamples(long length) {
 					}
 				}
 			} else {
-				int tmppcm = LoopPatterns[tPCM->aggSound][loopPos];
-				delta = looptabler[tPCM->aggSound][loopPos][noteVal];
-				addr = synth->PCM[tmppcm].addr;
+				int tmppcm = LoopPatterns[pcmWave->aggSound][loopPos];
+				delta = looptabler[pcmWave->aggSound][loopPos][noteVal];
+				pcmAddr = synth->PCM[tmppcm].addr;
 				len = synth->PCM[tmppcm].len;
 				if (partialOff.pcmplace >= len) {
 					loopPos++;
-					if (LoopPatterns[tPCM->aggSound][loopPos]==-1)
-						loopPos=0;
+					if (LoopPatterns[pcmWave->aggSound][loopPos] == -1)
+						loopPos = 0;
 					partialOff.pcmplace = partialOff.pcmoffset = 0;
 				}
 			}
+		} else {
+			// Synthesis partial
+			delta = 0x10707;
+			partialOff.pcmplace %= (Bit16u)(divtable[noteVal] >> 15);
+		}
 
-			if (ampval>0) {
-				int ra,rb,dist;
+		// Build delta for position of next sample
+		// Fix delta code
+		Bit64s tdelta = (Bit64s)delta;
+		tdelta = (tdelta * patchCache->fineshift) >> 12;
+		tdelta = (tdelta * pdep) >> 12;
+		tdelta = (tdelta * lfoat) >> 12;
+		tdelta = (tdelta * bendShift) >> 12;
+		delta = (int)tdelta;
+
+		if (ampval > 0) {
+			if (patchCache->PCMPartial) {
+				// Render PCM sample
+				int ra, rb, dist;
 				int taddr;
-				if (delta<0x10000) {
+				if (delta < 0x10000) {
 					// Linear sound interpolation
-					taddr = addr + partialOff.pcmplace;
+					taddr = pcmAddr + partialOff.pcmplace;
 					if (taddr >= ROMSIZE) {
 						synth->printDebug("Overflow ROMSIZE!");
 						taddr = ROMSIZE - 1;
 					}
 					ra = synth->romfile[taddr];
-					rb = synth->romfile[taddr+1];
-					dist = rb-ra;
+					//FIXME:KG: Deal with condition that taddr + 1 is past PCM length
+					rb = synth->romfile[taddr + 1];
+					dist = rb - ra;
 					ptemp = (ra + ((dist * (Bit32s)(partialOff.pcmoffset >> 8)) >> 8));
 				} else {
 					// Sound decimation
 					// The right way to do it is to use a lowpass filter on the waveform before selecting
 					// a point.  This is too slow.  The following approximates this as fast as possible
 					int idelta = delta >> 16;
-					taddr = addr + partialOff.pcmplace;
+					taddr = pcmAddr + partialOff.pcmplace;
 					ra = 0;
 					for (int ix = 0; ix < idelta; ix++)
 						ra += synth->romfile[taddr++];
 					ptemp = ra / idelta;
 				}
-			}
-		} else {
-			// Synthesis partial
-			int divis = divtable[noteVal] >> 15;
-
-			partialOff.pcmplace %= (Bit16u)divis;
-
-			if (ampval > 0) {
-				int wf = patchCache->waveform ;
+			} else {
+				// Render synthesised sample
+				int divis = divtable[noteVal] >> 15;
+				int wf = patchCache->waveform;
 				int toff = partialOff.pcmplace;
 				int minorplace = partialOff.pcmoffset >> 14;
-
-				int pa, pb;
 
 				Bit32s filtval = getFiltEnvelope();
 
@@ -308,7 +326,7 @@ Bit16s *Partial::generateSamples(long length) {
 					// Square waveform.  Made by combining two pregenerated bandlimited
 					// sawtooth waveforms
 					// Pulse width is not yet correct
-
+					int pa, pb;
 					int hdivis = divis >> 1;
 					int divmark = smalldivtable[noteVal];
 
@@ -371,18 +389,9 @@ Bit16s *Partial::generateSamples(long length) {
 			}
 		}
 
-		// Build delta for position of next sample
-		// Fix delta code
-		Bit64s tdelta = (Bit64s)delta;
-		tdelta = (tdelta * patchCache->fineshift)>>12;
-		tdelta = (tdelta * pdep)>>12;
-		tdelta = (tdelta * lfoat)>>12;
-		if (patchCache->useBender)
-			tdelta = (tdelta * *poly->bendptr)>>12;
-
 		// Add calculated delta to our waveform offset
 		Bit32u absOff = ((partialOff.pcmplace << 16) | partialOff.pcmoffset);
-		absOff += (int)tdelta;
+		absOff += delta;
 		partialOff.pcmplace = (Bit16u)((absOff & 0xFFFF0000) >> 16);
 		partialOff.pcmoffset = (Bit16u)(absOff & 0xFFFF);
 
@@ -390,15 +399,29 @@ Bit16s *Partial::generateSamples(long length) {
 		ptemp = (ptemp * ampval) >> 9;
 		ptemp = (ptemp * *poly->volumeptr) >> 7;
 
-		envs[AMPENV].envpos++;
-		envs[PITCHENV].envpos++;
-		envs[FILTENV].envpos++;
+		envs[EnvelopeType_amp].envpos++;
+		envs[EnvelopeType_pitch].envpos++;
+		envs[EnvelopeType_filt].envpos++;
 
 		*partialBuf++ = (Bit16s)ptemp;
 	}
+	// We may have deactivated and broken out of the loop before the end of the buffer,
+	// if so then fill the remainder with 0s.
 	if (++length > 0)
 		memset(partialBuf, 0, length * 2);
 	return &myBuffer[0];
+}
+
+void Partial::setBend(float factor) {
+	if (!patchCache->useBender || factor == 0.0f) {
+		bendShift = 4096;
+		return;
+	}
+	// NOTE:KG: We can't do this smoothly with lookup tables, unless we use several MB.
+	float bendSemitones = factor * patchCache->benderRange; // -24 .. 24
+	float mult = powf(2.0f, bendSemitones / 12.0f);
+	synth->printDebug("setBend(): semitones=%f, mult=%f, factor=%f, benderRange=%d\n", bendSemitones, mult, factor, patchCache->benderRange);
+	bendShift = (int)(mult * 4096.0f);
 }
 
 Bit16s *Partial::mixBuffers(Bit16s * buf1, Bit16s *buf2, int len) {
@@ -408,7 +431,7 @@ Bit16s *Partial::mixBuffers(Bit16s * buf1, Bit16s *buf2, int len) {
 		return buf1;
 
 	Bit16s *outBuf = buf1;
-#if USE_MMX >= 1
+#if MT32EMU_USE_MMX >= 1
 	// KG: This seems to be fine
 	int donelen = i386_mixBuffers(buf1, buf2, len);
 	len -= donelen;
@@ -438,7 +461,7 @@ Bit16s *Partial::mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len) {
 	}
 
 	Bit16s *outBuf = buf1;
-#if USE_MMX >= 1
+#if MT32EMU_USE_MMX >= 1
 	// KG: This seems to be fine
 	int donelen = i386_mixBuffersRingMix(buf1, buf2, len);
 	len -= donelen;
@@ -471,7 +494,7 @@ Bit16s *Partial::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
 	}
 
 	Bit16s *outBuf = buf1;
-#if USE_MMX >= 1
+#if MT32EMU_USE_MMX >= 1
 	// FIXME:KG: Not really checked as working
 	int donelen = i386_mixBuffersRing(buf1, buf2, len);
 	len -= donelen;
@@ -585,7 +608,7 @@ bool Partial::produceOutput(Bit16s *partialBuf, long length) {
 	leftvol = poly->pansetptr->leftvol;
 	rightvol = poly->pansetptr->rightvol;
 
-#if USE_MMX >= 2
+#if MT32EMU_USE_MMX >= 2
 	// FIXME:KG: This appears to introduce crackle
 	int donelen = i386_partialProductOutput(length, leftvol, rightvol, partialBuf, mixedBuf);
 	length -= donelen;
@@ -605,7 +628,7 @@ Bit32s Partial::getFiltEnvelope() {
 
 	int cutoff,depth,keyfollow, realfollow;
 
-	envstatus *tStat  = &envs[FILTENV];
+	envstatus *tStat  = &envs[EnvelopeType_filt];
 
 	keyfollow = filtVal;
 	realfollow = realVal;
@@ -621,7 +644,7 @@ Bit32s Partial::getFiltEnvelope() {
 		if (tStat->envstat==4) {
 			reshigh = patchCache->filtsustain;
 			if (!poly->sustain) {
-				startDecay(FILTENV, reshigh);
+				startDecay(EnvelopeType_filt, reshigh);
 			}
 		} else {
 			if ((tStat->envstat==-1) || (tStat->envpos >= tStat->envsize)) {
@@ -713,7 +736,7 @@ bool Partial::shouldReverb() {
 Bit32s Partial::getAmpEnvelope() {
 	Bit32s tc;
 
-	envstatus *tStat = &envs[AMPENV];
+	envstatus *tStat = &envs[EnvelopeType_amp];
 
 	if (!play)
 		return 0;
@@ -754,7 +777,7 @@ Bit32s Partial::getAmpEnvelope() {
 				//synth->printDebug("Envstat %d, size %d", tStat->envstat, tStat->envsize);
 				tc = patchCache->ampsustain;
 				if (!poly->sustain)
-					startDecay(AMPENV, tc);
+					startDecay(EnvelopeType_amp, tc);
 				else
 					tStat->sustaining = true;
 
@@ -815,7 +838,7 @@ PastCalc:
 }
 
 Bit32s Partial::getPitchEnvelope() {
-	envstatus *tStat  = &envs[PITCHENV];
+	envstatus *tStat = &envs[EnvelopeType_pitch];
 
 	Bit32s tc;
 	pitchSustain = false;
@@ -832,7 +855,7 @@ Bit32s Partial::getPitchEnvelope() {
 			if (poly->sustain)
 				pitchSustain = true;
 			else
-				startDecay(PITCHENV, tc);
+				startDecay(EnvelopeType_pitch, tc);
 		} else {
 			if ((tStat->envstat==-1) || (tStat->envpos >= tStat->envsize)) {
 				tStat->envstat++;
@@ -853,13 +876,13 @@ Bit32s Partial::getPitchEnvelope() {
 }
 
 void Partial::startDecayAll() {
-	startDecay(AMPENV, envs[AMPENV].prevlevel);
-	startDecay(FILTENV, envs[FILTENV].prevlevel);
-	startDecay(PITCHENV, envs[PITCHENV].prevlevel);
+	startDecay(EnvelopeType_amp, envs[EnvelopeType_amp].prevlevel);
+	startDecay(EnvelopeType_filt, envs[EnvelopeType_filt].prevlevel);
+	startDecay(EnvelopeType_pitch, envs[EnvelopeType_pitch].prevlevel);
 	pitchSustain = false;
 }
 
-void Partial::startDecay(int envnum, Bit32s startval) {
+void Partial::startDecay(EnvelopeType envnum, Bit32s startval) {
 	envstatus *tStat  = &envs[envnum];
 
 	tStat->sustaining = false;
@@ -868,15 +891,15 @@ void Partial::startDecay(int envnum, Bit32s startval) {
 	tStat->envbase = startval;
 
 	switch(envnum) {
-	case AMPENV:
+	case EnvelopeType_amp:
 		tStat->envsize = (decaytimetable[(int)patchCache->ampEnv.envtime[4]] * timekeytable[(int)patchCache->ampEnv.envtkf][poly->freqnum]) >> 8;
 		tStat->envdist = -startval;
 		break;
-	case FILTENV:
+	case EnvelopeType_filt:
 		tStat->envsize = (decaytimetable[(int)patchCache->filtEnv.envtime[4]] * timekeytable[(int)patchCache->filtEnv.envtkf][poly->freqnum]) >> 8;
 		tStat->envdist = -startval;
 		break;
-	case PITCHENV:
+	case EnvelopeType_pitch:
 		tStat->envsize = (decaytimetable[(int)patchCache->pitchEnv.time[3]] * timekeytable[(int)patchCache->pitchEnv.timekeyfollow][poly->freqnum]) >> 8 ;
 		tStat->envdist = patchCache->pitchEnv.level[4] - startval;
 		break;

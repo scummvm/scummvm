@@ -22,18 +22,9 @@
 #ifndef MT32EMU_STRUCTURES_H
 #define MT32EMU_STRUCTURES_H
 
-#if (defined (_MSC_VER) && defined(_M_IX86)) || (defined(__GNUC__) && defined(__i386__))
-#define HAVE_X86
-#endif
-
-#define MAX_SAMPLE_OUTPUT 4096
-#ifdef HAVE_X86
-#define USE_MMX 1
-#else
-#define USE_MMX 0
-#endif
-
 namespace MT32Emu {
+
+const unsigned int MAX_SAMPLE_OUTPUT = 4096;
 
 #ifdef _MSC_VER
 #define  MT32EMU_ALIGN_PACKED __declspec(align(1))
@@ -195,7 +186,8 @@ union MT32RAMFormat {
 #pragma pack()
 #endif
 
-struct sampleFormat {
+struct PCMWave {
+	char name[16];
 	Bit32u addr;
 	Bit32u len;
 	bool loop;
@@ -203,7 +195,7 @@ struct sampleFormat {
 	Bit32s ampval;
 };
 
-struct sampleTable {
+struct PCMWaveEntry {
 	Bit32u addr;
 	Bit32u len;
 	Bit32u pcmnum;
@@ -216,7 +208,7 @@ struct soundaddr {
 	Bit16u pcmoffset;
 };
 
-struct volset {
+struct StereoVolume {
 	Bit16s leftvol;
 	Bit16s rightvol;
 };
@@ -257,6 +249,7 @@ struct PatchCache {
 	int tvfdepth;
 
 	bool useBender;
+	float benderRange; // 0.0, 1.0, .., 24.0 (semitones)
 
 	TimbreParam::partialParam::envParam pitchEnv;
 	TimbreParam::partialParam::tvaParam ampEnv;
@@ -266,7 +259,7 @@ struct PatchCache {
 	Bit32s pitchsustain;
 	Bit32s filtsustain;
 
-	Bit32u mix;
+	Bit32u structureMix;
 	int structurePosition;
 	int structurePair;
 
@@ -288,9 +281,8 @@ struct dpoly {
 	bool reverb;
 	bool isDecay;
 
-	const Bit32u *bendptr;
-	Bit32s *volumeptr;
-	volset *pansetptr;
+	const Bit32s *volumeptr;
+	const StereoVolume *pansetptr;
 
 	Partial *partials[4];
 

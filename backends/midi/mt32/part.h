@@ -22,12 +22,6 @@
 #ifndef MT32EMU_PART_H
 #define MT32EMU_PART_H
 
-#define AMPENV 0
-#define FILTENV 1
-#define PITCHENV 2
-
-#define MAXPOLY 64
-
 namespace MT32Emu {
 
 class PartialManager;
@@ -52,38 +46,38 @@ private:
 
 	bool holdpedal;
 
-	volset volumesetting;
+	StereoVolume volumesetting;
 
 	PatchCache patchCache[4];
 
-	Bit32u bend;
+	float bend; // -1.0 .. +1.0 
 	Bit32s volume;
 
-	dpoly polyTable[MAXPOLY];
+	dpoly polyTable[MT32EMU_MAX_POLY];
 
-	void AbortPoly(dpoly *poly);
+	void abortPoly(dpoly *poly);
+
+	static int fixKeyfollow(int srckey, int *dir);
+	static int fixBiaslevel(int srcpnt, int *dir);
 
 public:
 	Part(Synth *synth, int usePartNum);
 	char *getName();
-	void PlayNote(PartialManager *partialManager, int f, int vel);
-	void StopNote(int f);
-	void AllStop();
-	void SetVolume(int vol);
-	void SetPan(int vol);
-	void SetBend(int vol);
-	void SetModulation(int vol);
-	void SetPatch(int patchnum);
-	void SetHoldPedal(bool pedalval);
-	void StopPedalHold();
-	void RefreshPatch();
-	void RefreshDrumCache();
+	void playNote(PartialManager *partialManager, int f, int vel);
+	void stopNote(int f);
+	void allStop();
+	void setVolume(int vol);
+	void setPan(int vol);
+	void setBend(int vol);
+	void setModulation(int vol);
+	void setPatch(int patchnum);
+	void setHoldPedal(bool pedalval);
+	void stopPedalHold();
+	void refreshPatch();
+	void refreshDrumCache();
 	void setPatch(PatchParam *patch);
 	void setTimbre(TimbreParam *timbre);
 	unsigned int getAbsTimbreNum();
-
-	int FixKeyfollow(int srckey, int *dir);
-	int FixBiaslevel(int srcpnt, int *dir);
 };
 
 }

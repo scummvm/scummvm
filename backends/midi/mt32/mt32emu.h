@@ -22,15 +22,49 @@
 #ifndef MT32EMU_MT32EMU_H
 #define MT32EMU_MT32EMU_H
 
+// Debugging
+// Show the instruments played
+#define MT32EMU_MONITOR_INSTRUMENTS 1
+// Shows number of partials MT-32 is playing, and on which parts
+#define MT32EMU_MONITOR_PARTIALS 0
+// Dump drum patches to syx file for viewing
+#define MT32EMU_DRUMP_DRUMS 0
+// Output benchmarks for the filter implementations
+#define MT32EMU_BENCHMARK_FILTERS 0
+// Determines how the waveform cache file is handled (must be regenerated after sampling rate change)
+#define MT32EMU_WAVECACHEMODE 0 // Load existing cache if possible, otherwise generate and save cache
+//#define MT32EMU_WAVECACHEMODE 1 // Load existing cache if possible, otherwise generage but don't save cache
+//#define MT32EMU_WAVECACHEMODE 2 // Ignore existing cache, generate and save cache
+//#define MT32EMU_WAVECACHEMODE 3 // Ignore existing cache, generate but don't save cache
+
+// Configuration
+// The maximum number of partials playing simultaneously
+#define MT32EMU_MAX_PARTIALS 32
+// The maximum number of notes playing simultaneously per part.
+// No point making it more than MT32EMU_MAX_PARTIALS, since each note needs at least one partial.
+#define MT32EMU_MAX_POLY 32
+// This calculates the exact frequencies of notes as they are played, instead of offsetting from pre-cached semitones. Potentially very slow.
+#define MT32EMU_ACCURATENOTES 0
+
+#if (defined (_MSC_VER) && defined(_M_IX86)) || (defined(__GNUC__) && defined(__i386__))
+#define MT32EMU_HAVE_X86
+#endif
+
+#ifdef MT32EMU_HAVE_X86
+#define MT32EMU_USE_MMX 1
+#else
+#define MT32EMU_USE_MMX 0
+#endif
+
 #include "freeverb.h"
 
 #include "structures.h"
 #include "i386.h"
 #include "mt32_file.h"
+#include "tables.h"
 #include "partial.h"
 #include "partialManager.h"
 #include "part.h"
-#include "tables.h"
 #include "synth.h"
 
 #endif

@@ -24,6 +24,14 @@
 
 namespace MT32Emu {
 
+class Synth;
+
+enum EnvelopeType {
+	EnvelopeType_amp = 0,
+	EnvelopeType_filt = 1,
+	EnvelopeType_pitch = 2
+};
+
 struct envstatus {
 	Bit32s envpos;
 	Bit32s envstat;
@@ -38,8 +46,6 @@ struct envstatus {
 	Bit32s counter;
 	Bit32s count;
 };
-
-class Synth;
 
 // Class definition of MT-32 partials.  32 in all.
 class Partial {
@@ -80,6 +86,8 @@ private:
 
 	dpoly *poly;
 
+	int bendShift;
+
 	Bit16s *mixBuffers(Bit16s * buf1, Bit16s * buf2, int len);
 	Bit16s *mixBuffersRingMix(Bit16s * buf1, Bit16s * buf2, int len);
 	Bit16s *mixBuffersRing(Bit16s * buf1, Bit16s * buf2, int len);
@@ -100,14 +108,16 @@ public:
 	Bit64s age;
 
 	Partial(Synth *synth);
+	~Partial();
 
 	int getOwnerPart();
 	bool isActive();
 	void activate(int part);
 	void deactivate(void);
 	void startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPartial);
-	void startDecay(int envnum, Bit32s startval);
+	void startDecay(EnvelopeType envnum, Bit32s startval);
 	void startDecayAll();
+	void setBend(float factor);
 	bool shouldReverb();
 
 	// Returns true only if data written to buffer

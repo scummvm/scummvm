@@ -21,7 +21,7 @@
 
 #include "mt32emu.h"
 
-#ifdef HAVE_X86
+#ifdef MT32EMU_HAVE_X86
 
 namespace MT32Emu {
 
@@ -628,7 +628,7 @@ float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLev
 	return output;
 }
 
-#if USE_MMX > 0
+#if MT32EMU_USE_MMX > 0
 
 int i386_partialProductOutput(int len, Bit16s leftvol, Bit16s rightvol, Bit16s *partialBuf, Bit16s *mixedBuf) {
 	int tmplen = len >> 1;

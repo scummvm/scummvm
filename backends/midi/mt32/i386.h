@@ -23,7 +23,7 @@
 #define MT32EMU_I386_H
 
 namespace MT32Emu {
-#ifdef HAVE_X86
+#ifdef MT32EMU_HAVE_X86
 
 // Function that detects the availablity of SSE SIMD instructions
 bool DetectSIMD();
@@ -34,7 +34,7 @@ float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel
 float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
 float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
 
-#if USE_MMX > 0
+#if MT32EMU_USE_MMX > 0
 int i386_partialProductOutput(int len, Bit16s leftvol, Bit16s rightvol, Bit16s *partialBuf, Bit16s *mixedBuf);
 int i386_mixBuffers(Bit16s * buf1, Bit16s *buf2, int len);
 int i386_mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len);

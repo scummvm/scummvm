@@ -19,21 +19,16 @@
  * IN THE SOFTWARE.
  */
 
-#define BENCHMARK 0
-
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#if BENCHMARK > 0
-#include <time.h>
-#endif
 
 #include "mt32emu.h"
 
-// Debugging stuff
-// Used to dump drum patches to syx file for viewing
-#define DUMPDRUMS 0
+#if MT32EMU_BENCHMARK_FILTERS > 0
+#include <time.h>
+#endif
 
 namespace MT32Emu {
 
@@ -347,7 +342,8 @@ bool Synth::loadPCMToROMMap(const char *filename) {
 		return false;
 	}
 
-	for (int i=0;i<54;i++) {
+	Bit32u PCMReassign[54];
+	for (int i = 0; i < 54; i++) {
 		PCMReassign[i] = i;
 		PCM[i].tune = 220.0f;
 		PCM[i].ampval = 256;
@@ -378,6 +374,8 @@ bool Synth::loadPCMToROMMap(const char *filename) {
 			if (cp != NULL) {
 				cp = strtok(NULL," \n\r");
 				if (cp != NULL) {
+					strncpy(PCM[patchcount].name, cp, 15);
+					PCM[patchcount].name[15] = 0;
 					cp = strtok(NULL," \n\r");
 					if (cp !=NULL) {
 						int newpcm = atoi(cp);
@@ -581,7 +579,7 @@ bool Synth::open(SynthProperties &useProp) {
 		return false;
 	}
 
-#if DUMPDRUMS == 1
+#if MT32EMU_DUMP_DRUMS == 1
 	strcpy(&pathBuf[0], baseDir);
 	dumpDrums(strcat(&pathBuf[0],"drumsys.syx"));
 #endif
@@ -605,12 +603,14 @@ bool Synth::open(SynthProperties &useProp) {
 		mt32ram.params.patches[i].timbreNum = i & 63;
 	}
 
-	TableInitialiser tableInitialiser;
-	tableInitialiser.initMT32Tables(this, PCM, (float)myProp.SampleRate);
-	if (myProp.UseDefault)
-		initReverb(0,5);
+	if (!TableInitialiser::initMT32Tables(this, PCM, (float)myProp.sampleRate)) {
+		report(ReportType_errorSampleRate, NULL);
+		return false;
+	}
+	if (myProp.useDefaultReverb)
+		initReverb(0, 5);
 	else
-		initReverb(myProp.RevType, myProp.RevTime);
+		initReverb(myProp.reverbType, myProp.reverbTime);
 
 	for (int i = 0; i < 9; i++) {
 		parts[i] = new Part(this, i);
@@ -619,14 +619,14 @@ bool Synth::open(SynthProperties &useProp) {
 			// The patch is already set by the presets, now set the timbre it wants
 			parts[i]->setTimbre(&mt32ram.params.timbres[parts[i]->getAbsTimbreNum()].timbre);
 			// And refresh the part's cache
-			parts[i]->RefreshPatch();
+			parts[i]->refreshPatch();
 		}
 	}
 
 	// For resetting mt32 mid-execution
 	mt32default = mt32ram;
 
-#ifdef HAVE_X86
+#ifdef MT32EMU_HAVE_X86
 	bool availableSSE = DetectSIMD();
 	bool available3DNow = Detect3DNow();
 
@@ -646,7 +646,7 @@ bool Synth::open(SynthProperties &useProp) {
 	}
 #endif
 
-#if BENCHMARK > 1
+#if MT32EMU_BENCHMARK_FILTERS > 1
 	// Benchmark 3DNow, Floating point, and SSE filters
 	clock_t start, end;
 	float histval[50];
@@ -691,7 +691,7 @@ void Synth::close(void) {
 		return;
 
 	for (int t = 0; t < 4; t++) {
-		for (int m = 0; m < 128; m++) {
+		for (int m = 0; m < NUM_NOTES; m++) {
 			if (waveforms[t][m]!=NULL) {
 				delete[] waveforms[t][m];
 				waveforms[t][m] = NULL;
@@ -743,51 +743,52 @@ void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char 
 	case 0x8:
 		//printDebug("Note OFF - Part %d", part);
 		// The MT-32 ignores velocity for note off
-		parts[part]->StopNote(note);
+		parts[part]->stopNote(note);
 		break;
 	case 0x9:
 		//printDebug("Note ON - Part %d, Note %d Vel %d", part, note, velocity);
 		if (velocity == 0) {
 			// MIDI defines note-on with velocity 0 as being the same as note-off with velocity 40
-			parts[part]->StopNote(note);
+			parts[part]->stopNote(note);
 		} else {
-			parts[part]->PlayNote(partialManager, note, velocity);
+			parts[part]->playNote(partialManager, note, velocity);
 		}
 		break;
 	case 0xB: // Control change
 		switch (note) {
 		case 0x01:  // Modulation
 			//printDebug("Modulation: %d", velocity);
-			parts[part]->SetModulation(velocity);
-			break;
-		case 0x0B:
-			//printDebug("Expression set: %d", velocity);
-			parts[part]->SetVolume(velocity);
+			parts[part]->setModulation(velocity);
 			break;
 		case 0x07:  // Set volume
 			//if (part!=3) return;
 			//printDebug("Volume set: %d", velocity);
-			parts[part]->SetVolume(velocity);
+			parts[part]->setVolume(velocity);
 			break;
 		case 0x0A:  // Pan
 			//printDebug("Pan set: %d", velocity);
-			parts[part]->SetPan(velocity);
+			parts[part]->setPan(velocity);
+			break;
+		case 0x0B:
+			//printDebug("Expression set: %d", velocity);
+			parts[part]->setVolume(velocity);
 			break;
 		case 0x40: // Hold pedal
 			//printDebug("Hold pedal set: %d", velocity);
-			parts[part]->SetHoldPedal(velocity>=64);
+			parts[part]->setHoldPedal(velocity>=64);
 			break;
 
-		case 0x7B: // All notes off
-			//printDebug("All notes off");
-			parts[part]->AllStop();
-			break;
 		case 0x79: // Reset all controllers
 			printDebug("Reset all controllers (NYI)");
 			break;
 
+		case 0x7B: // All notes off
+			//printDebug("All notes off");
+			parts[part]->allStop();
+			break;
+
 		default:
-			printDebug("Unknown MIDI Control code: 0x%02x - vel %02x",note, velocity);
+			printDebug("Unknown MIDI Control code: 0x%02x - vel 0x%02x", note, velocity);
 			break;
 		}
 
@@ -795,7 +796,7 @@ void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char 
 	case 0xC: // Program change
 		//printDebug("Program change %01x", note);
 		if (part < 8) {
-			parts[part]->SetPatch(note);
+			parts[part]->setPatch(note);
 		} else {
 			printDebug("Program change attempted on rhythm part");
 		}
@@ -803,7 +804,7 @@ void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char 
 	case 0xE: // Pitch bender
 		bend = (velocity << 7) | (note);
 		//printDebug("Pitch bender %02x", bend);
-		parts[part]->SetBend(bend);
+		parts[part]->setBend(bend);
 		break;
 	default:
 		printDebug("Unknown Midi code: 0x%01x - %02x - %02x", code, note, velocity);
@@ -936,8 +937,13 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 			timbreName[10] = 0;
 			printDebug("WRITE-PARTPATCH (%d-%d@%d..%d): %d; timbre=%d (%s)", firstPart, lastPart, off, off + len, i, absTimbreNum, timbreName);
 			if (parts[i] != NULL) {
-				parts[i]->setTimbre(&mt32ram.params.timbres[parts[i]->getAbsTimbreNum()].timbre);
-				parts[i]->RefreshPatch();
+				if (i == firstPart && off > 2) {
+					printDebug(" (Not updating timbre, since those values weren't touched)");
+				} else {
+					// Not sure whether we should do this at all, really.
+					parts[i]->setTimbre(&mt32ram.params.timbres[parts[i]->getAbsTimbreNum()].timbre);
+				}
+				parts[i]->refreshPatch();
 			}
 		}
 	} else if (addr >= MEMADDR(0x030110) && addr < MEMADDR(0x040000)) {
@@ -963,7 +969,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 			printDebug("WRITE-RHYTHM (%d-%d@%d..%d): %d; level=%02x, panpot=%02x, reverb=%02x, timbre=%d (%s)", firstDrum, lastDrum, off, off + len, i, mt32ram.params.rhythmSettings[i].outlevel, mt32ram.params.rhythmSettings[i].panpot, mt32ram.params.rhythmSettings[i].reverbSwitch, mt32ram.params.rhythmSettings[i].timbre, timbreName);
 		}
 		if (parts[8] != NULL) {
-			parts[8]->RefreshDrumCache();
+			parts[8]->refreshDrumCache();
 		}
 	} else if (addr >= MEMADDR(0x040000) && addr < MEMADDR(0x050000)) {
 		int off = addr - MEMADDR(0x040000);
@@ -982,7 +988,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 			instrumentName[10] = 0;
 			printDebug("WRITE-PARTTIMBRE (%d-%d@%d..%d): timbre=%d (%s)", firstPart, lastPart, off, off + len, i, instrumentName);
 			if (parts[i] != NULL) {
-				parts[i]->RefreshPatch();
+				parts[i]->refreshPatch();
 			}
 		}
 	}
@@ -1053,12 +1059,12 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 			// Does the real MT-32 automatically do this?
 			if (i >= 128 && parts[8] != NULL) {
 				// FIXME:KG: Only bother to re-cache when this timbre's actually in the rhythm map
-				parts[8]->SetPatch(i); // Re-cache this timbre
+				parts[8]->setPatch(i); // Re-cache this timbre
 			}
 			for (unsigned int part = 0; part < 8; part++) {
 				if (parts[part] != NULL) {
 					if (parts[part]->getAbsTimbreNum() == i) {
-						parts[part]->RefreshPatch();
+						parts[part]->refreshPatch();
 					}
 				}
 			}
@@ -1080,7 +1086,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 		for (unsigned int i = 0; i < 9; i++) {
 			//LOG(LOG_MISC|LOG_ERROR,"Part %d set to MIDI channel %d",i,mt32ram.params.system.chanAssign[i]);
 			if (mt32ram.params.system.chanAssign[i] == 16) {
-				parts[i]->AllStop();
+				parts[i]->allStop();
 			} else {
 				chantable[(int)mt32ram.params.system.chanAssign[i]] = (char)i;
 			}
@@ -1093,12 +1099,12 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 		report(ReportType_newReverbLevel, &mt32ram.params.system.reverbLevel);
 
 		if ((mt32ram.params.system.reverbMode != curRevMode) || (mt32ram.params.system.reverbTime != curRevTime)) {
-			if (myProp.UseDefault) {
+			if (myProp.useDefaultReverb) {
 				initReverb(mt32ram.params.system.reverbMode, mt32ram.params.system.reverbTime);
 				curRevLevel = mt32ram.params.system.reverbLevel;
 			} else {
-				initReverb(myProp.RevType, myProp.RevTime);
-				curRevLevel = myProp.RevLevel;
+				initReverb(myProp.reverbType, myProp.reverbTime);
+				curRevLevel = myProp.reverbLevel;
 			}
 		}
 
@@ -1127,9 +1133,9 @@ void Synth::playSysexWithoutHeader(unsigned char device, Bit8u *sysex, Bit32u le
 		partialManager->DeactivateAll();
 		mt32ram = mt32default;
 		for (int i = 0; i < 8; i++) {
-			parts[i]->RefreshPatch();
+			parts[i]->refreshPatch();
 		}
-		parts[8]->RefreshDrumCache();
+		parts[8]->refreshDrumCache();
 		isEnabled = false;
 	} else {
 		printDebug("Sysex write to unrecognised address %06x", SYSEXMEMADDR(addr));
@@ -1195,7 +1201,7 @@ int Synth::dumpSysex(char *filename) {
 }
 
 void ProduceOutput1(Bit16s *useBuf, Bit16s *stream, Bit32u len, Bit16s volume) {
-#if USE_MMX > 2
+#if MT32EMU_USE_MMX > 2
 	//FIXME:KG: This appears to introduce crackle
 	int donelen = i386_produceOutput1(useBuf, stream, len, volume);
 	len -= donelen;
@@ -1226,9 +1232,9 @@ void Synth::doRender(Bit16s * stream,Bit32u len) {
 
 	partialManager->AgeAll();
 
-	if (myProp.UseReverb) {
+	if (myProp.useReverb) {
 		bool hasOutput = false;
-		for (unsigned int i = 0; i < MAXPARTIALS; i++) {
+		for (unsigned int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (partialManager->shouldReverb(i)) {
 				if (partialManager->ProduceOutput(i, &tmpBuffer[0], len)) {
 					ProduceOutput1(&tmpBuffer[0], stream, len, mastervolume);
@@ -1254,7 +1260,7 @@ void Synth::doRender(Bit16s * stream,Bit32u len) {
 				m++;
 			}
 		}
-		for (unsigned int i = 0; i < MAXPARTIALS; i++) {
+		for (unsigned int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (!partialManager->shouldReverb(i)) {
 				if (partialManager->ProduceOutput(i, &tmpBuffer[0], len)) {
 					ProduceOutput1(&tmpBuffer[0], stream, len, mastervolume);
@@ -1262,7 +1268,7 @@ void Synth::doRender(Bit16s * stream,Bit32u len) {
 			}
 		}
 	} else {
-		for (unsigned int i = 0; i < MAXPARTIALS; i++) {
+		for (unsigned int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (partialManager->ProduceOutput(i, &tmpBuffer[0], len))
 				ProduceOutput1(&tmpBuffer[0], stream, len, mastervolume);
 		}
@@ -1270,14 +1276,14 @@ void Synth::doRender(Bit16s * stream,Bit32u len) {
 
 	partialManager->ClearAlreadyOutputed();
 
-#if MONITORPARTIALS == 1
+#if MT32EMU_MONITOR_PARTIALS == 1
 	samplepos += len;
 	if (samplepos > myProp.SampleRate * 5) {
 		samplepos = 0;
 		int partialUsage[9];
 		partialManager->GetPerPartPartialUsage(partialUsage);
 		printDebug("1:%02d 2:%02d 3:%02d 4:%02d 5:%02d 6:%02d 7:%02d 8:%02d", partialUsage[0], partialUsage[1], partialUsage[2], partialUsage[3], partialUsage[4], partialUsage[5], partialUsage[6], partialUsage[7]);
-		printDebug("Rhythm: %02d  TOTAL: %02d", partialUsage[8], MAXPARTIALS - partialManager->GetFreePartialCount());
+		printDebug("Rhythm: %02d  TOTAL: %02d", partialUsage[8], MT32EMU_MAX_PARTIALS - partialManager->GetFreePartialCount());
 	}
 #endif
 }

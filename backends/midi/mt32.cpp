@@ -179,12 +179,12 @@ int MidiDriver_MT32::open() {
 	MidiDriver_Emulated::open();
 	
 	memset(&prop, 0, sizeof(prop));
-	prop.SampleRate = getRate();
-	prop.UseReverb = true;
-	prop.UseDefault = false;
-	prop.RevType = 0;
-	prop.RevTime = 5;
-	prop.RevLevel = 3;
+	prop.sampleRate = getRate();
+	prop.useReverb = true;
+	prop.useDefaultReverb = false;
+	prop.reverbType = 0;
+	prop.reverbTime = 5;
+	prop.reverbLevel = 3;
 	prop.printDebug = MT32_PrintDebug;
 	prop.report = MT32_Report;
 	prop.openFile = MT32_OpenFile;
