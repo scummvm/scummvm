@@ -2827,7 +2827,7 @@ void Scumm_v6::o6_stopTalking() {
 }
 
 void Scumm_v6::o6_openFile() {
-	int a, len;
+	int mode, len, slot;
 	byte filename[100];
 
 	_msgPtrToAdd = filename;
@@ -2837,15 +2837,32 @@ void Scumm_v6::o6_openFile() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	a = pop();
-	warning("stub o6_openFile(\"%s\", %d)", filename, a);
-	// -1 open failed, otherwise file slot
-	push(0);
+	mode = pop();
+	slot = -1;
+	for (int l = 0; l < 17; l++) {
+		if (_hFileTable[l].isOpen() == false) {
+			slot = l;
+			break;
+		}
+	}
+
+	if (slot != -1) {
+		if (mode == 1)
+			_hFileTable[slot].open((char*)filename, this->getGameDataPath(), File::kFileReadMode);
+		else if (mode == 2)
+			_hFileTable[slot].open((char*)filename, this->getGameDataPath(), File::kFileWriteMode);
+		else
+			error("o6_openFile(): wrong open file mode");
+
+		warning("%d = o6_openFile(\"%s\", %d)", slot, filename, mode);
+	}
+	push(slot);
 }
 
 void Scumm_v6::o6_closeFile() {
-	// pop'd variable should be that pushed in o6_openFile()
-	warning("stub o6_closeFile(%d)", pop());
+	int slot = pop();
+	_hFileTable[slot].close();
+	warning("o6_closeFile(%d)", slot);
 }
 
 void Scumm_v6::o6_deleteFile() {
