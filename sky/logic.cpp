@@ -2226,10 +2226,12 @@ bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnPauseFx");
+	return true;
 }
 
 bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnUnPauseFx");
+	return true;
 }
 
 bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
