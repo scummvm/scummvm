@@ -753,8 +753,7 @@ void Actor::showActor()
 	if (_vm->_currentRoom == 0 || visible)
 		return;
 
-	if (!(_vm->_features & GF_AFTER_V7))
-		adjustActorPos();
+	adjustActorPos();
 
 	_vm->ensureResourceLoaded(rtCostume, costume);
 
