@@ -573,14 +573,17 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			if (frameCounter == text[textCounter]->startFrame) {
 				EraseBackBuffer();
-				OpenTextObject(text[textCounter]);
-				DrawTextObject(text[textCounter]);
+				if (text[textCounter]->textSprite) {
+					OpenTextObject(text[textCounter]);
+					DrawTextObject(text[textCounter]);
+				}
 				if (text[textCounter]->speech)
 					debug(0, "FIXME: Play subtitle speech");
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
-				CloseTextObject(text[textCounter]);
+				if (text[textCounter]->textSprite)
+					CloseTextObject(text[textCounter]);
 				EraseBackBuffer();
 				textCounter++;
 			}
