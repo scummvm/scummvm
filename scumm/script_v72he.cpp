@@ -1931,12 +1931,14 @@ void ScummEngine_v72he::o72_unknownF5() {
 	while (pos < len) {
 		chr = readArray(0, 0, pos);
 		result += getCharsetOffsets(chr);
-		if (result >= max)
-			break;
+		if (result >= max) {
+			push(pos);
+			return;
+		}
 		pos++;
 	}
 
-	push(result);
+	push(len);
 	debug(1,"stub o72_unknownF5 (%d)", result);
 }
 
