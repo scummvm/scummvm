@@ -397,8 +397,14 @@ static void convertEndian(uint8 *file, uint32 len) {
 			break;
 		case PARALLAX_FILE_null:
 			break;
-		case RUN_LIST:
+		case RUN_LIST: {
+			uint32 *list = (uint32 *)file;
+			while (*list) {
+				SWAP32(*list);
+				list++;
+			}
 			break;
+		}
 		case TEXT_FILE: {
 			_textHeader *textHeader = (_textHeader *)file;
 			SWAP32(textHeader->noOfLines);

@@ -81,7 +81,7 @@ int	logic::Process_session(void)	//Tony6June96 (first run 21Oct96)
 			Con_fatal_error("Logic_engine %d not a run_list", run_list);
 
 		game_object_list = (uint32	*) (head+1);
-		ID = FROM_LE_32(game_object_list[pc++]);	//read the next id
+		ID = game_object_list[pc++];	//read the next id
 		id=ID;
 		res_man.Res_close(run_list);	//release the list again so it can float in memory - at this point not one thing should be locked
 
