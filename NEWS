@@ -5,7 +5,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  New Games:
    - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
      and "Inherit the Earth")
-   - 60+ new Humongous Entertainment SCUMM games are supported now
+   - Added 26 Humongous Entertainment titles, only a few are completable.
 
  General:
    - Added support for FLAC (lossless) encoded audio files
@@ -31,8 +31,6 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed actor drawing glitches in V1 Maniac and Zak
    - Fixed ship-to-ship graphic glitches in COMI
    - Fixed palette glitches in COMI
-   - Additional 60+ Humongous Entertainment titles/demos now supported. Only
-     few are completable
 
  Queen:
    - Fixed some issues with the Dreamcast backend.
