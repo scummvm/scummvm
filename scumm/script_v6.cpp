@@ -1727,7 +1727,7 @@ void ScummEngine_v6::o6_actorOps() {
 	case 93:		// SO_NEVER_ZCLIP
 		a->forceClip = 0;
 		break;
-	case 225:		// FIXME: Is subop 225 really identical to subop 94
+	case 225:		// SO_ALWAYS_ZCLIP
 	case 94:		// SO_ALWAYS_ZCLIP
 		a->forceClip = pop();
 		break;
