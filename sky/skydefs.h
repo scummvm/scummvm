@@ -51,6 +51,7 @@
 #define SEQUENCE_COUNT	3
 
 #define	FIRST_TEXT_COMPACT	23
+#define FIXED_TEXT_WIDTH	128
 
 //screen/grid defines
 #define GAME_SCREEN_WIDTH	320

@@ -202,6 +202,8 @@ public:
 	bool fnUnPauseFx(uint32 a, uint32 b, uint32 c);
 	bool fnPrintf(uint32 a, uint32 b, uint32 c);
 
+	void stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base);
+	
 	static uint32 _scriptVariables[838];
 	
 protected:

@@ -2046,3 +2046,78 @@ bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 	printf("fnPrintf: %d\n", a);
 	return true;
 }
+
+void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base) {
+	//animNum == -1 (0x??FF) means directional
+	
+	uint8 offset = (uint8)(target->extCompact->megaSet / NEXT_MEGA_SET);
+	uint16 *animPtr = 0;
+	
+	if (animNum > 0xFF)
+		warning("animNum > 255! - tell joostp when/where this happens");
+	
+	//FIXME: Is this correct?
+	if (animNum >= 0xFF)
+		offset += -1;
+	else
+		offset += (uint8)(animNum & 0xFF);   //get correct anim no
+
+	if (SkyTalkAnims::animTalkTableIsPointer[offset]) //is it a pointer?
+		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[offset];
+	else { 	//then it must be a value
+		animPtr = (uint16 *)SkyState::fetchCompact(SkyTalkAnims::animTalkTableVal[offset]);
+		target->offset = *animPtr++;
+		target->getToFlag = *animPtr++;
+	}
+
+	target->grafixProg = animPtr;
+
+	//now form the text sprite
+	struct lowTextManager_t textInfo;
+	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);    
+	target->extCompact->spTextId = textInfo.compactNum;	//So we know what text to kill
+	byte *textGfx = textInfo.textData;
+
+	//create the x coordinate for the speech text
+	//we need the talkers sprite information
+
+	_compact->screen = target->screen;	//put our screen in
+
+	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen 
+		//talking on-screen
+		byte *targetGfx = (byte *)SkyState::fetchItem(target->frame >> 6);
+		uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
+		uint16 width = (((struct dataFileHeader *)targetGfx)->s_width >> 1);
+
+		xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
+
+		if (xPos > TOP_LEFT_X)
+			xPos = TOP_LEFT_X;
+
+		width += FIXED_TEXT_WIDTH;
+		if ((TOP_LEFT_X + FULL_SCREEN_WIDTH) <= width) {
+			xPos = TOP_LEFT_X + FULL_SCREEN_WIDTH;
+			xPos -= FIXED_TEXT_WIDTH;
+		}
+			
+		_compact->xcood = xPos;
+		uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
+		
+		if (yPos > TOP_LEFT_Y)
+			yPos = TOP_LEFT_Y;
+
+		_compact->ycood = yPos;
+		//_logicTalkButtonRelease = 1;  
+			
+	} else {
+		//talking off-screen
+		target->extCompact->spTextId = 0; 	//don't kill any text 'cos none was made
+		_compact->status = 0;	//don't display text
+		//_logicTalkButtonRelease = 1; 
+	}
+
+	target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
+	target->logic = L_TALK; 
+}
+
+
