@@ -317,10 +317,11 @@ int SwordLogic::speechDriver(BsObject *compact) {
 		uint8 *animData = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
 		int32 numFrames = READ_LE_UINT32(animData);
 		animData += 4;
+		compact->o_anim_pc++; // go to next frame of anim
 
 		if (_speechFinished || (compact->o_anim_pc >= numFrames) || 
 			(_speechRunning && (_sound->amISpeaking() == 0)))
-				compact->o_anim_pc = 0;
+				compact->o_anim_pc = 0; //set to frame 0, closed mouth
 		
 		AnimUnit *animPtr = (AnimUnit*)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
 		if (!(compact->o_status & STAT_SHRINK)) {
