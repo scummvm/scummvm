@@ -193,7 +193,7 @@ static const PlatformDescription g_platforms[] = {
 	{"amiga", "Amiga", kPlatformAmiga},
 	{"atari", "Atari ST", kPlatformAtariST},
 	{"macintosh", "Macintosh", kPlatformMacintosh},
-	{0, 0, kPlatformUnknown}
+	{0, "Default", kPlatformUnknown}
 };
 
 Platform parsePlatform(const String &str) {
