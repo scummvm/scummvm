@@ -209,7 +209,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_version == 1)
-		// HACK: Fix a glitch where costumes in V1 games leave a trail when the actor moves left
+		// V1 games uses 8 x 8 pixels for actors
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
@@ -249,6 +249,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				v1.x = _outwidth - 1;
 			}
 		} else {
+			// V1 games uses 8 x 8 pixels for actors
 			if (_loaded._format == 0x57)
 				skip = -8 - rect.left;
 			else
@@ -302,46 +303,6 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 	return drawFlag;
-}
-
-void CostumeRenderer::c64_ignorePakCols(int num) {
-
-	warning("c64_ignorePakCols(%d) - this needs testing", num);
-
-	// FIXME: A problem with this is that num can be a number
-	// not divisible by 8, e.g. c64_ignorePakCols(17) happens.
-	// We currently don't really deal with that. OTOH it seems
-	// in all cases the number was of the form 8n+1, e.g. 1, 9, 17
-	//
-	
-	uint height = _height;
-	num /= 8;
-
-	while (num > 0) {
-		v1.replen = *_srcptr++;
-		if (v1.replen & 0x80) {
-			v1.replen &= 0x7f;
-			v1.repcolor = *_srcptr++;
-			while (v1.replen--) {
-				if (!--height) {
-					if (!--num) {
-						v1.replen |= 0x80;
-						return;
-					}
-					height = _height;
-				}
-			}
-		} else {
-			while (v1.replen--) {
-				v1.repcolor = *_srcptr++;
-				if (!--height) {
-					if (!--num)
-						return;
-					height = _height;
-				}
-			}
-		}
-	}
 }
 
 static const int v1MMActorPalatte1[25] = {
