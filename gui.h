@@ -1,3 +1,6 @@
+#if !defined(gui_h)
+#define gui_h
+
 enum {
 	GUI_NONE = 0,
 	GUI_TEXT = 1,
@@ -73,3 +76,5 @@ struct Gui {
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);
 };
+
+#endif

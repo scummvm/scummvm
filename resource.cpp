@@ -175,7 +175,7 @@ void Scumm::readIndexFileV5(int mode) {
 
 		switch(blocktype) {
 		case MKID('DCHR'):
-			readResTypeList(6,MKID('CHAR'),"charset");
+			readResTypeList(rtCharset,MKID('CHAR'),"charset");
 			break;
 
 		case MKID('DOBJ'):
@@ -200,15 +200,15 @@ void Scumm::readIndexFileV5(int mode) {
 			break;
 
 		case MKID('DROO'):
-			readResTypeList(1,MKID('ROOM'),"room");
+			readResTypeList(rtRoom,MKID('ROOM'),"room");
 			break;
 
 		case MKID('DSCR'):
-			readResTypeList(2,MKID('SCRP'),"script");
+			readResTypeList(rtScript,MKID('SCRP'),"script");
 			break;
 
 		case MKID('DCOS'):
-			readResTypeList(3,MKID('COST'),"costume");
+			readResTypeList(rtCostume,MKID('COST'),"costume");
 			break;
 
 		case MKID('MAXS'):
@@ -224,7 +224,7 @@ void Scumm::readIndexFileV5(int mode) {
 			break;
 
 		case MKID('DSOU'):
-			readResTypeList(4,MKID('SOUN'),"sound");
+			readResTypeList(rtSound,MKID('SOUN'),"sound");
 			break;
 
 		default:
@@ -265,7 +265,7 @@ void Scumm::readIndexFileV6() {
 
 			switch(blocktype) {
 		case MKID('DCHR'):
-			readResTypeList(6,MKID('CHAR'),"charset");
+			readResTypeList(rtCharset,MKID('CHAR'),"charset");
 			break;
 
 		case MKID('DOBJ'):
@@ -284,15 +284,15 @@ void Scumm::readIndexFileV6() {
 			break;
 
 		case MKID('DROO'):
-			readResTypeList(1,MKID('ROOM'),"room");
+			readResTypeList(rtRoom,MKID('ROOM'),"room");
 			break;
 
 		case MKID('DSCR'):
-			readResTypeList(2,MKID('SCRP'),"script");
+			readResTypeList(rtScript,MKID('SCRP'),"script");
 			break;
 
 		case MKID('DCOS'):
-			readResTypeList(3,MKID('COST'),"costume");
+			readResTypeList(rtCostume,MKID('COST'),"costume");
 			break;
 
 		case MKID('MAXS'):
@@ -300,7 +300,7 @@ void Scumm::readIndexFileV6() {
 			break;
 
 		case MKID('DSOU'):
-			readResTypeList(4,MKID('SOUN'),"sound");
+			readResTypeList(rtSound,MKID('SOUN'),"sound");
 			break;
 
 		case MKID('AARY'):
@@ -412,7 +412,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	debug(9, "ensureResourceLoaded(%d,%d)", type, i);
 
-	if (type==1 && i>127) {
+	if (type==rtRoom && i>127) {
 		i = _resourceMapper[i&127];
 	}
 
@@ -425,7 +425,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-	if (type==1 && i==_roomResource)
+	if (type==rtRoom && i==_roomResource)
 		_vars[VAR_ROOM_FLAG] = 1;
 }
 
@@ -442,7 +442,7 @@ int Scumm::loadResource(int type, int index) {
 			res.name[type],index);
 	}
 
-	if (type==1) {
+	if (type==rtRoom) {
 		fileOffs = 0;
 	} else {
 		fileOffs = res.roomoffs[type][index];
@@ -455,7 +455,7 @@ int Scumm::loadResource(int type, int index) {
 			openRoom(roomNr);
 
 			fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
-			if (type==4) {
+			if (type==rtSound) {
 				fileReadDwordLE();
 				fileReadDwordLE();
 				return readSoundResource(type, index);
@@ -475,7 +475,7 @@ int Scumm::loadResource(int type, int index) {
 
 			/* dump the resource */
 #ifdef DUMP_SCRIPTS
-			if(type==2) {
+			if(type==rtScript) {
 				dumpResource("script-", index, getResourceAddress(rtScript, index));
 			}
 #endif
@@ -526,7 +526,7 @@ int Scumm::readSoundResource(int type, int index) {
 }
 
 int Scumm::getResourceRoomNr(int type, int index) {
-	if (type==1)
+	if (type==rtRoom)
 		return index;
 	return res.roomno[type][index];
 }
@@ -602,7 +602,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 }
 
 void Scumm::validateResource(const char *str, int type, int index) {
-	if (type<1 || type>16 || index<0 || index >= res.num[type]) {
+	if (type<rtFirst || type>rtLast || (uint)index >= (uint)res.num[type]) {
 		error("%d Illegal Glob type %d num %d", str, type, index);
 	}
 }
@@ -686,7 +686,7 @@ void Scumm::increaseResourceCounter() {
 	int i,j;
 	byte counter;
 
-	for (i=1; i<=16; i++) {
+	for (i=rtFirst; i<=rtLast; i++) {
 		for(j=res.num[i]; --j>=0;) {
 			counter = res.flags[i][j] & 0x7F;
 			if (counter && counter < 0x7F) {
@@ -717,7 +717,7 @@ void Scumm::expireResources(uint32 size) {
 		best_type = 0;
 		best_counter = 2;
 
-		for (i=1; i<=16; i++)
+		for (i=rtFirst; i<=rtLast; i++)
 			if (res.mode[i]) {
 				for(j=res.num[i]; --j>=0;) {
 					flag = res.flags[i][j];
@@ -741,7 +741,7 @@ void Scumm::expireResources(uint32 size) {
 
 void Scumm::freeResources() {
 	int i,j;
-	for (i=1; i<=16; i++) {
+	for (i=rtFirst; i<=rtLast; i++) {
 		for(j=res.num[i]; --j>=0;) {
 			if (isResourceLoaded(i,j))
 				nukeResource(i,j);
@@ -786,7 +786,7 @@ void Scumm::resourceStats() {
 	uint32 lockedSize = 0, lockedNum = 0;
 	byte flag;
 	
-	for (i=1; i<=16; i++)
+	for (i=rtFirst; i<=rtLast; i++)
 		for(j=res.num[i]; --j>=0;) {
 			flag = res.flags[i][j];
 			if (flag&0x80 && res.address[i][j]) {

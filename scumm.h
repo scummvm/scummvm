@@ -29,6 +29,7 @@ struct Actor;
 typedef void (Scumm::*OpcodeProc)();
 
 #define NUM_SCRIPT_SLOT 25
+#define NUM_ACTORS 13
 
 #pragma START_PACK_STRUCTS
 	
@@ -289,6 +290,7 @@ enum ScummVars {
 };
 
 enum ResTypes {
+	rtFirst = 1,
 	rtRoom = 1,
 	rtScript = 2,
 	rtCostume = 3,
@@ -305,6 +307,9 @@ enum ResTypes {
 	rtMatrix = 14,
 	rtBox = 15,
 	rtObjectName = 16,
+	rtLast = 16,
+
+	rtNumTypes = 17,
 
 };
 
@@ -759,14 +764,14 @@ struct Scumm {
 	int16 _palManipCounter;
 
 	struct {
-		byte mode[17];
-		uint16 num[17];
-		uint32 tags[17];
-		const char *name[17];
-		byte **address[17];
-		byte *flags[17];
-		byte *roomno[17];
-		uint32 *roomoffs[17];
+		byte mode[rtNumTypes];
+		uint16 num[rtNumTypes];
+		uint32 tags[rtNumTypes];
+		const char *name[rtNumTypes];
+		byte **address[rtNumTypes];
+		byte *flags[rtNumTypes];
+		byte *roomno[rtNumTypes];
+		uint32 *roomoffs[rtNumTypes];
 	} res;
 
 	struct {
@@ -784,7 +789,7 @@ struct Scumm {
 		int16 x,y;
 	} mouse;
 
-	Actor actor[13];
+	Actor actor[NUM_ACTORS];
 
 	uint16 actorDrawBits[200];
 

@@ -574,7 +574,7 @@ void Scumm::showActors() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<13; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			showActor(a);
@@ -608,7 +608,7 @@ void Scumm::clearMsgQueue() {
 void Scumm::walkActors() {
 	int i;
 	Actor *a;
-	for (i=1; i<13; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);	
 		if (a->room==_currentRoom)
 			walkActor(a);
@@ -620,12 +620,12 @@ void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<13; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->room==_currentRoom && a->sound) {
 			_currentScript = 0xFF;
 			addSoundToQueue(a->sound[0]);
-			for (i=1; i<13; i++) {
+			for (i=1; i<NUM_ACTORS; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;
 			}
@@ -708,10 +708,10 @@ void Scumm::walkActor(Actor *a) {
 
 void Scumm::processActors() {
 	int i;
-	Actor *actors[13],*a,**ac,**ac2,*tmp;
+	Actor *actors[NUM_ACTORS],*a,**ac,**ac2,*tmp;
 	int numactors = 0, cnt,cnt2;
 
-	for (i=1; i<13; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			actors[numactors++] = a;
@@ -814,7 +814,7 @@ void Scumm::setActorRedrawFlags() {
 	for (i=0; i<40; i++) {
 		bits = actorDrawBits[_screenStartStrip+i];
 		if (bits&0x3FFF) {
-			for(j=0; j<13; j++) {
+			for(j=0; j<NUM_ACTORS; j++) {
 				if ((bits&(1<<j)) && bits!=(1<<j)) {
 					Actor *a = derefActor(j);
 					a->needRedraw = true;
@@ -832,7 +832,7 @@ int Scumm::getActorFromPos(int x, int y) {
 	drawbits = actorDrawBits[x>>3];
 	if (!(drawbits & 0x3FFF))
 		return 0;
-	for (i=1; i<13; i++) {
+	for (i=1; i<NUM_ACTORS; i++) {
 		Actor *a = derefActor(i);
 		if (drawbits&(1<<i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
@@ -966,7 +966,7 @@ bool Scumm::isCostumeInUse(int cost) {
 	Actor *a;
 
 	if (_roomResource!=0)
-		for (i=1; i<13; i++) {
+		for (i=1; i<NUM_ACTORS; i++) {
 			a = derefActor(i);
 			if (a->room == _currentRoom && a->costume == cost)
 				return true;

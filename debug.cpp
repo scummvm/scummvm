@@ -165,7 +165,7 @@ void ScummDebugger::printActors(int act) {
 	printf("+--------------------------------------------------------------+\n");
 	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
 	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
-	for(i=1; i<13; i++) {
+	for(i=1; i<NUM_ACTORS; i++) {
 		if (act==-1 || act==i) {
 			a = &_s->actor[i];
 			if (a->visible)

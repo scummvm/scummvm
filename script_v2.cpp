@@ -2004,7 +2004,7 @@ void Scumm::o6_miscOps() {
 	case 6:
 		_fullRedraw = 1;
 		redrawBGAreas();
-		for (i=0; i<13; i++)
+		for (i=0; i<NUM_ACTORS; i++)
 			derefActor(i)->needRedraw = true;
 		processActors();
 		screenEffect(args[1]);

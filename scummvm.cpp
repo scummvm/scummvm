@@ -72,7 +72,7 @@ void Scumm::scummInit() {
 	setShake(0);
 	setupCursor();
 
-	for (i=1,a=getFirstActor(); ++a,i<13; i++) {
+	for (i=1,a=getFirstActor(); ++a,i<NUM_ACTORS; i++) {
 		a->number = i;
 		initActor(a, 1);
 	}
@@ -287,7 +287,7 @@ int Scumm::scummLoop(int delta) {
 		charset._hasMask = false;
 		redrawVerbs();
 		_fullRedraw = true;
-		for (i=0,a=getFirstActor(); i<13; i++,a++)
+		for (i=0,a=getFirstActor(); i<NUM_ACTORS; i++,a++)
 			a->needRedraw = 1;
 	}
 
@@ -484,7 +484,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	killScriptsAndResources();
 	stopCycle(0);
 	
-	for(i=1,at=getFirstActor(); ++at,i<13; i++) {
+	for(i=1,at=getFirstActor(); ++at,i<NUM_ACTORS; i++) {
 		if (at->visible)
 			hideActor(at);
 	}
@@ -836,7 +836,7 @@ void Scumm::convertKeysToClicks() {
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
-	if (id<1 || id>=13)
+	if (id<1 || id>=NUM_ACTORS)
 		error("Invalid actor %d in %s", id, errmsg);
 	return derefActor(id);
 }

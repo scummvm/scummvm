@@ -295,7 +295,7 @@ void Scumm::setCameraFollows(Actor *a) {
 		  t-_screenStartStrip > cd->_rightTrigger)
 		setCameraAt(a->x);
 
-	for (i=1,a=getFirstActor(); ++a,i<13; i++) {
+	for (i=1,a=getFirstActor(); ++a,i<NUM_ACTORS; i++) {
 		if (a->room==_currentRoom)
 			a->needRedraw = true;
 	}
@@ -1632,7 +1632,7 @@ void Scumm::resetActorBgs() {
 		}
 	}
 
-	for(i=1,a=getFirstActor(); ++a,i<13; i++) {
+	for(i=1,a=getFirstActor(); ++a,i<NUM_ACTORS; i++) {
 		a->needBgReset = false;
 	}
 }

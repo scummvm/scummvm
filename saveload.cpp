@@ -95,7 +95,7 @@ bool Scumm::loadState(int slot, bool compat) {
 	memset(_inventory, 0, sizeof(_inventory[0])*_numInventory);
 
 	/* Nuke all resources */
-	for (i=1; i<=16; i++)
+	for (i=rtFirst; i<=rtLast; i++)
 		if (i!=rtTemp && i!=rtBuffer)
 			for(j=0; j<res.num[i]; j++) {
 				nukeResource(i,j);
@@ -452,7 +452,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	s->saveLoadArrayOf(string, 6, sizeof(string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
 
-	for (i=1; i<=16; i++)
+	for (i=rtFirst; i<=rtLast; i++)
 		if (res.mode[i]==0)
 			for(j=1; j<res.num[i]; j++)
 				saveLoadResource(s,i,j);
@@ -464,7 +464,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 	/* Save or load a list of the locked objects */
 	if (s->isSaving()) {
-		for (i=1; i<=16; i++)
+		for (i=rtFirst; i<=rtLast; i++)
 			for(j=1; j<res.num[i]; j++) {
 				if (res.flags[i][j]&0x80) {
 					s->saveByte(i);
@@ -486,7 +486,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 	byte flag;
 
 	/* don't save/load these resource types */
-	if (type==13 || type==12 || type==10 || res.mode[type])
+	if (type==rtFlObject || type==rtTemp || type==rtBuffer || res.mode[type])
 		return;
 
 	if (ser->isSaving()) {
@@ -501,7 +501,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 		ser->saveUint32(size);
 		ser->saveLoadBytes(ptr+sizeof(ResHeader),size);
 
-		if (type==5) {
+		if (type==rtInventory) {
 			ser->saveWord(_inventory[index]);
 		}
 	} else {
@@ -509,7 +509,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 		if (size) {
 			createResource(type, index, size);
 			ser->saveLoadBytes(getResourceAddress(type, index), size);
-			if (type==5) {
+			if (type==rtInventory) {
 				_inventory[index] = ser->loadWord();
 			}
 		}
