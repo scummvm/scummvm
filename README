@@ -433,8 +433,16 @@ being ran faster than their normal speed, as scripts will loose synchronisation
 
 Language options:
 -----------------
-ScummVM includes a language option for the Curse of Monkey Island, Simon
-the Sorcerer 1 & 2 and Beneath a Steel Sky.
+ScummVM includes a language option for Maniac Mansion, Zak KcKracken, the
+Curse of Monkey Island, Beneath a Steel Sky.and Simon the Sorcerer 1 & 2.
+
+Maniac Mansion and Zak McKracken
+
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
 
 Curse of Monkey Island
 
@@ -447,16 +455,6 @@ Curse of Monkey Island
         jp  - Japanese
         zh  - Chinese
         kr  - Korean
-        hb  - Hebrew
-
-Simon the Sorcerer: 1 & 2
-
-        en  - English (default)
-        de  - German
-        fr  - French
-        it  - Italian
-        es  - Spanish
-        hb  - Hebrew
 
 Beneath a Steel Sky:
 	en  - English USA (default)
@@ -467,6 +465,15 @@ Beneath a Steel Sky:
         es  - Spanish
         se  - Swedish
         gb  - English (Great Britain)
+
+Simon the Sorcerer: 1 & 2
+
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
+        hb  - Hebrew
 
 
 Graphics filters:
