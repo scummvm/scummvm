@@ -158,7 +158,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	_scalerProc = newScalerProc;
 	if (newScaleFactor != _scaleFactor) {
 		_scaleFactor = newScaleFactor;
-		hotswap_gfx_mode();
+		hotswapGFXMode();
 	}
 
 	// Determine the "scaler type", i.e. essentially an index into the
@@ -215,20 +215,20 @@ void OSystem_SDL::initSize(uint w, uint h) {
 	if (h != 200)
 		_adjustAspectRatio = false;
 
-	CKSUM_NUM = (_screenWidth * _screenHeight / (8 * 8));
+	_cksumNum = (_screenWidth * _screenHeight / (8 * 8));
 
-	free(_dirty_checksums);
-	_dirty_checksums = (uint32 *)calloc(CKSUM_NUM * 2, sizeof(uint32));
+	free(_dirtyChecksums);
+	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 
 	_mouseData = NULL;
 
-	unload_gfx_mode();
-	load_gfx_mode();
+	unloadGFXMode();
+	loadGFXMode();
 }
 
-void OSystem_SDL::load_gfx_mode() {
+void OSystem_SDL::loadGFXMode() {
 	_forceFull = true;
-	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
+	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	_tmpscreen = NULL;
 	
@@ -244,7 +244,7 @@ void OSystem_SDL::load_gfx_mode() {
 	//
 
 	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, effectiveScreenHeight(), 16, 
-		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		_fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
@@ -305,13 +305,13 @@ void OSystem_SDL::load_gfx_mode() {
 #endif
 
 	// keyboard cursor control, some other better place for it?
-	km.x_max = _screenWidth * _scaleFactor - 1;
-	km.y_max = effectiveScreenHeight() - 1;
-	km.delay_time = 25;
-	km.last_time = 0;
+	_km.x_max = _screenWidth * _scaleFactor - 1;
+	_km.y_max = effectiveScreenHeight() - 1;
+	_km.delay_time = 25;
+	_km.last_time = 0;
 }
 
-void OSystem_SDL::unload_gfx_mode() {
+void OSystem_SDL::unloadGFXMode() {
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL; 
@@ -335,7 +335,7 @@ void OSystem_SDL::unload_gfx_mode() {
 #endif
 }
 
-void OSystem_SDL::hotswap_gfx_mode() {
+void OSystem_SDL::hotswapGFXMode() {
 	if (!_screen)
 		return;
 
@@ -353,7 +353,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 #endif
 
 	// Setup the new GFX mode
-	load_gfx_mode();
+	loadGFXMode();
 
 	// reset palette
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
@@ -399,7 +399,7 @@ void OSystem_SDL::internUpdateScreen() {
 	}
 
 	// Make sure the mouse is drawn, if it should be drawn.
-	draw_mouse();
+	drawMouse();
 	
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
@@ -435,25 +435,24 @@ void OSystem_SDL::internUpdateScreen() {
 
 	// Force a full redraw if requested
 	if (_forceFull) {
-		_num_dirty_rects = 1;
-
-		_dirty_rect_list[0].x = 0;
-		_dirty_rect_list[0].y = 0;
-		_dirty_rect_list[0].w = _screenWidth;
-		_dirty_rect_list[0].h = _screenHeight;
+		_numDirtyRects = 1;
+		_dirtyRectList[0].x = 0;
+		_dirtyRectList[0].y = 0;
+		_dirtyRectList[0].w = _screenWidth;
+		_dirtyRectList[0].h = _screenHeight;
 	}
 
 	// Only draw anything if necessary
-	if (_num_dirty_rects > 0) {
+	if (_numDirtyRects > 0) {
 
 		SDL_Rect *r; 
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
-		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
+		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
 
 		if (_scalerProc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirtyRectList; r != lastRect; ++r) {
 				dst = *r;
 				
 				if (_overlayVisible) {
@@ -467,7 +466,7 @@ void OSystem_SDL::internUpdateScreen() {
 			}
 		} else {
 			if (!_overlayVisible) {
-				for (r = _dirty_rect_list; r != last_rect; ++r) {
+				for (r = _dirtyRectList; r != lastRect; ++r) {
 					dst = *r;
 					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
@@ -482,7 +481,7 @@ void OSystem_SDL::internUpdateScreen() {
 			srcPitch = _tmpscreen->pitch;
 			dstPitch = _hwscreen->pitch;
 
-			for (r = _dirty_rect_list; r != last_rect; ++r) {
+			for (r = _dirtyRectList; r != lastRect; ++r) {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
@@ -518,8 +517,8 @@ void OSystem_SDL::internUpdateScreen() {
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
 		if (_forceFull) {
-			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = effectiveScreenHeight();
+			_dirtyRectList[0].y = 0;
+			_dirtyRectList[0].h = effectiveScreenHeight();
 		}
 
 #ifdef USE_OSD
@@ -529,19 +528,18 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
+		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
 
-	_num_dirty_rects = 0;
+	_numDirtyRects = 0;
 	_forceFull = false;
 }
 
-bool OSystem_SDL::save_screenshot(const char *filename) {
+bool OSystem_SDL::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-	SDL_SaveBMP(_hwscreen, filename);
-	return true;
+	return SDL_SaveBMP(_hwscreen, filename) == 0;
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
@@ -559,22 +557,22 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 
 	Common::StackLock lock(_graphicsMutex);
 
-	if (_full_screen != enable) {
+	if (_fullscreen != enable) {
 		assert(_hwscreen != 0);
-		_full_screen ^= true;
+		_fullscreen ^= true;
 
-		undraw_mouse();
+		undrawMouse();
 	
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
 		// successful switch). So we simply don't call it at all and use
-		// hotswap_gfx_mode() directly to switch to fullscreen mode.
-		hotswap_gfx_mode();
+		// hotswapGFXMode() directly to switch to fullscreen mode.
+		hotswapGFXMode();
 #else
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-			hotswap_gfx_mode();
+			hotswapGFXMode();
 		}
 #endif
 			
@@ -604,7 +602,7 @@ void OSystem_SDL::setAspectRatioCorrection(bool enable) {
 
 		//assert(_hwscreen != 0);
 		_adjustAspectRatio ^= true;
-		hotswap_gfx_mode();
+		hotswapGFXMode();
 			
 		// Blit everything to the screen
 		internUpdateScreen();
@@ -638,12 +636,12 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
-	if (((long)src & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
-			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
+	if (((long)src & 3) == 0 && pitch == _screenWidth && x == 0 && y == 0 &&
+			w == _screenWidth && h == _screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
-		add_dirty_rgn_auto(src);
+		addDirtyRgnAuto(src);
 	} else {
 		/* Clip the coordinates */
 		if (x < 0) {
@@ -669,12 +667,12 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 		if (w <= 0 || h <= 0)
 			return;
 
-		cksum_valid = false;
-		add_dirty_rect(x, y, w, h);
+		_cksumValid = false;
+		addDirtyRect(x, y, w, h);
 	}
 
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	undraw_mouse();
+	undrawMouse();
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
@@ -697,17 +695,17 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 }
 
 
-void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
+void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
 	if (_forceFull)
 		return;
 
-	if (_num_dirty_rects == NUM_DIRTY_RECT)
+	if (_numDirtyRects == NUM_DIRTY_RECT)
 		_forceFull = true;
 	else {
-		SDL_Rect *r = &_dirty_rect_list[_num_dirty_rects++];
+		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
 		// Extend the dirty region by 1 pixel for scalers
 		// that "smear" the screen, e.g. 2xSAI
-		if (_mode_flags & DF_UPDATE_EXPAND_1_PIXEL) {
+		if (_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) {
 			x--;
 			y--;
 			w+=2;
@@ -743,8 +741,8 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 }
 
 
-void OSystem_SDL::mk_checksums(const byte *buf) {
-	uint32 *sums = _dirty_checksums;
+void OSystem_SDL::makeChecksums(const byte *buf) {
+	uint32 *sums = _dirtyChecksums;
 	uint x,y;
 	const uint last_x = (uint)_screenWidth / 8;
 	const uint last_y = (uint)_screenHeight / 8;
@@ -780,36 +778,36 @@ void OSystem_SDL::mk_checksums(const byte *buf) {
 	}
 }
 
-void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
+void OSystem_SDL::addDirtyRgnAuto(const byte *buf) {
 	assert(((long)buf & 3) == 0);
 
 	/* generate a table of the checksums */
-	mk_checksums(buf);
+	makeChecksums(buf);
 
-	if (!cksum_valid) {
+	if (!_cksumValid) {
 		_forceFull = true;
-		cksum_valid = true;
+		_cksumValid = true;
 	}
 
 	/* go through the checksum list, compare it with the previous checksums,
 		 and add all dirty rectangles to a list. try to combine small rectangles
 		 into bigger ones in a simple way */
 	if (!_forceFull) {
-		int x,y,w;
-		uint32 *ck = _dirty_checksums;
+		int x, y, w;
+		uint32 *ck = _dirtyChecksums;
 
-		for(y = 0; y!=_screenHeight / 8; y++) {
-			for(x = 0; x!=_screenWidth / 8; x++, ck++) {
-				if (ck[0] != ck[CKSUM_NUM]) {
+		for(y = 0; y != _screenHeight / 8; y++) {
+			for(x = 0; x != _screenWidth / 8; x++, ck++) {
+				if (ck[0] != ck[_cksumNum]) {
 					/* found a dirty 8x8 block, now go as far to the right as possible,
 						 and at the same time, unmark the dirty status by setting old to new. */
 					w=0;
 					do {
-						ck[w + CKSUM_NUM] = ck[w];
+						ck[w + _cksumNum] = ck[w];
 						w++;
-					} while (x + w != _screenWidth / 8 && ck[w] != ck[w + CKSUM_NUM]);
+					} while (x + w != _screenWidth / 8 && ck[w] != ck[w + _cksumNum]);
 
-					add_dirty_rect(x * 8, y * 8, w * 8, 8);
+					addDirtyRect(x * 8, y * 8, w * 8, 8);
 
 					if (_forceFull)
 						goto get_out;
@@ -819,7 +817,7 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 	} else {
 		get_out:;
 		/* Copy old checksums to new */
-		memcpy(_dirty_checksums + CKSUM_NUM, _dirty_checksums, CKSUM_NUM * sizeof(uint32));
+		memcpy(_dirtyChecksums + _cksumNum, _dirtyChecksums, _cksumNum * sizeof(uint32));
 	}
 }
 
@@ -864,7 +862,7 @@ void OSystem_SDL::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
 	// hide the mouse
-	undraw_mouse();
+	undrawMouse();
 
 	_overlayVisible = true;
 	clearOverlay();
@@ -874,7 +872,7 @@ void OSystem_SDL::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
 	// hide the mouse
-	undraw_mouse();
+	undrawMouse();
 
 	_overlayVisible = false;
 	_forceFull = true;
@@ -889,7 +887,7 @@ void OSystem_SDL::clearOverlay() {
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
 	// hide the mouse
-	undraw_mouse();
+	undrawMouse();
 
 	// Clear the overlay by making the game screen "look through" everywhere.
 	SDL_Rect src, dst;
@@ -913,7 +911,7 @@ void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 		return;
 
 	// hide the mouse
-	undraw_mouse();
+	undrawMouse();
 
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -962,11 +960,11 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 		return;
 
 	// Mark the modified region as dirty
-	cksum_valid = false;
-	add_dirty_rect(x, y, w, h);
+	_cksumValid = false;
+	addDirtyRect(x, y, w, h);
 
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	undraw_mouse();
+	undrawMouse();
 
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -1002,16 +1000,16 @@ bool OSystem_SDL::showMouse(bool visible) {
 	_mouseVisible = visible;
 
 	if (visible)
-		draw_mouse();
+		drawMouse();
 	else
-		undraw_mouse();
+		undrawMouse();
 
 	return last;
 }
 
-void OSystem_SDL::set_mouse_pos(int x, int y) {
+void OSystem_SDL::setMousePos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
-		undraw_mouse();
+		undrawMouse();
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
 		updateScreen();
@@ -1023,19 +1021,19 @@ void OSystem_SDL::warpMouse(int x, int y) {
 		SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
-		// set_mouse_pos() would be called eventually. However, the
+		// setMousePos() would be called eventually. However, the
 		// cannon script in CoMI calls this function twice each time
 		// the cannon is reloaded. Unless we update the mouse position
 		// immediately the second call is ignored, causing the cannon
 		// to change its aim.
 
-		set_mouse_pos(x, y);
+		setMousePos(x, y);
 	}
 }
 	
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {
 
-	undraw_mouse();
+	undrawMouse();
 
 	assert(w <= MAX_MOUSE_W);
 	assert(h <= MAX_MOUSE_H);
@@ -1045,10 +1043,9 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseKeycolor = keycolor;
+	_mouseKeyColor = keycolor;
 
-	if (_mouseData)
-		free(_mouseData);
+	free(_mouseData);
 
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
@@ -1061,7 +1058,7 @@ void OSystem_SDL::toggleMouseGrab() {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-void OSystem_SDL::draw_mouse() {
+void OSystem_SDL::drawMouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 
@@ -1098,7 +1095,7 @@ void OSystem_SDL::draw_mouse() {
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	// Mark as dirty
-	add_dirty_rect(x, y, w, h);
+	addDirtyRect(x, y, w, h);
 
 	if (!_overlayVisible) {
 		byte *bak = _mouseBackup;		// Surface used to backup the area obscured by the mouse
@@ -1110,7 +1107,7 @@ void OSystem_SDL::draw_mouse() {
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeycolor)	// transparent, don't draw
+				if (color != _mouseKeyColor)	// transparent, don't draw
 					*dst = color;
 				dst++;
 				width--;
@@ -1149,7 +1146,7 @@ void OSystem_SDL::draw_mouse() {
 	_mouseDrawn = true;
 }
 
-void OSystem_SDL::undraw_mouse() {
+void OSystem_SDL::undrawMouse() {
 	assert (_transactionMode == kTransactionNone);
 
 	if (!_mouseDrawn)
@@ -1187,7 +1184,7 @@ void OSystem_SDL::undraw_mouse() {
 	if (!_overlayVisible) {
 		byte *dst, *bak = _mouseBackup;
 
-		// No need to do clipping here, since draw_mouse() did that already
+		// No need to do clipping here, since drawMouse() did that already
 		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
 		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
 			for (x = 0; x < old_mouse_w; ++x) {
@@ -1200,7 +1197,7 @@ void OSystem_SDL::undraw_mouse() {
 		byte *dst;
 		uint16 *bak = (uint16 *)_mouseBackup;
 	
-		// No need to do clipping here, since draw_mouse() did that already
+		// No need to do clipping here, since drawMouse() did that already
 		dst = (byte *)_tmpscreen->pixels + (old_mouse_y + 1) * _tmpscreen->pitch + (old_mouse_x + 1) * 2;
 		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpscreen->pitch) {
 			for (x = 0; x < old_mouse_w; ++x) {
@@ -1209,7 +1206,7 @@ void OSystem_SDL::undraw_mouse() {
 		}
 	}
 
-	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+	addDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
 	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
 }

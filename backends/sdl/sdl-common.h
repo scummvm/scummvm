@@ -160,7 +160,7 @@ public:
 #endif
 
 protected:
-	void init_intern();
+	void initIntern();
 
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;
@@ -190,8 +190,8 @@ protected:
 
 	// CD Audio
 	SDL_CD *_cdrom;
-	int cd_track, cd_num_loops, cd_start_frame, cd_duration;
-	Uint32 cd_end_time, cd_stop_time;
+	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
+	uint32 _cdEndTime, _cdStopTime;
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0,
@@ -217,14 +217,17 @@ protected:
 		bool arChanged;
 	} _transactionDetails;
 
-	bool _forceFull; // Force full redraw on next updateScreen
+	/** Force full redraw on next updateScreen */
+	bool _forceFull;
 	ScalerProc *_scalerProc;
-	int _scalerType;
+	int _scalerType;	
 	int _scaleFactor;
 	int _mode;
 	int _transactionMode;
-	bool _full_screen;
-	uint32 _mode_flags;
+	bool _fullscreen;
+	
+	/** Current video mode flags (see DF_* constants) */
+	uint32 _modeFlags;
 	bool _modeChanged;
 
 	/** True if aspect ratio correction is enabled. */
@@ -238,25 +241,25 @@ protected:
 		MAX_SCALING = 3
 	};
 
-	// Dirty rect managment
-	SDL_Rect _dirty_rect_list[NUM_DIRTY_RECT];
-	int _num_dirty_rects;
-	uint32 *_dirty_checksums;
-	bool cksum_valid;
-	int CKSUM_NUM;
+	// Dirty rect management
+	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
+	int _numDirtyRects;
+	uint32 *_dirtyChecksums;
+	bool _cksumValid;
+	int _cksumNum;
 
 	// Keyboard mouse emulation
 	struct KbdMouse {	
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
-	} km;
+	};
 
 	struct MousePos {
 		int16 x, y, w, h;
-		MousePos() : x(0), y(0), w(0), h(0) {}
 	};
 
 	// mouse
+	KbdMouse _km;
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	byte *_mouseData;
@@ -264,7 +267,7 @@ protected:
 	MousePos _mouseCurState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
-	byte _mouseKeycolor;
+	byte _mouseKeyColor;
 
 	// joystick
 	SDL_Joystick *_joystick;
@@ -284,35 +287,34 @@ protected:
 	MutexRef _graphicsMutex;
 
 
-	void add_dirty_rgn_auto(const byte *buf);
-	void mk_checksums(const byte *buf);
+	void addDirtyRgnAuto(const byte *buf);
+	void makeChecksums(const byte *buf);
+	
+	void addDirtyRect(int x, int y, int w, int h);
 
-	virtual void add_dirty_rect(int x, int y, int w, int h);
-
-	void draw_mouse();
-	void undraw_mouse();
+	void drawMouse();
+	void undrawMouse();
+	
 	/** Set the position of the virtual mouse cursor. */
-	void set_mouse_pos(int x, int y);
+	void setMousePos(int x, int y);
 	void fillMouseEvent(Event &event, int x, int y);
 	void toggleMouseGrab();
 
+	void internUpdateScreen();
 
-	virtual void internUpdateScreen();
-
-	virtual void load_gfx_mode();
-	virtual void unload_gfx_mode();
-	virtual void hotswap_gfx_mode();
+	void loadGFXMode();
+	void unloadGFXMode();
+	void hotswapGFXMode();
 	
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
 
-	bool save_screenshot(const char *filename);
+	bool saveScreenshot(const char *filename);
 	
-	int effectiveScreenHeight() { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
+	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 
-	void setup_icon();
-	void kbd_mouse();
-	void init_joystick(int joystick_num) { _joystick = SDL_JoystickOpen(joystick_num); }
+	void setupIcon();
+	void handleKbdMouse();
 };
 
 #endif

@@ -35,7 +35,7 @@ OSystem *OSystem_SDL_create() {
 	return new OSystem_SDL();
 }
 
-void OSystem_SDL::init_intern() {
+void OSystem_SDL::initIntern() {
 
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
@@ -61,33 +61,33 @@ void OSystem_SDL::init_intern() {
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1); 
 
-	cksum_valid = false;
+	_cksumValid = false;
 #ifndef _WIN32_WCE
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
 	_scalerProc = Normal2x;
-	_full_screen = ConfMan.getBool("fullscreen");
+	_fullscreen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 #else
 	_mode = GFX_NORMAL;
 	_scaleFactor = 1;
 	_scalerProc = Normal1x;
-	_full_screen = true;
+	_fullscreen = true;
 	_adjustAspectRatio = false;
 #endif
 	_scalerType = 0;
-	_mode_flags = 0;
+	_modeFlags = 0;
 
 
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
-	setup_icon();
+	setupIcon();
 #endif
 
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		init_joystick(joystick_num);
+		_joystick = SDL_JoystickOpen(joystick_num);
 	}
 }
 
@@ -99,9 +99,10 @@ OSystem_SDL::OSystem_SDL()
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _overlayVisible(false),
 	_samplesPerSec(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirty_checksums(0),
+	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
+	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
@@ -113,22 +114,17 @@ OSystem_SDL::OSystem_SDL()
 	_mouseBackup = (byte *)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 
 	// reset mouse state
-	memset(&km, 0, sizeof(km));
+	memset(&_km, 0, sizeof(_km));
+	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	
-	init_intern();
+	initIntern();
 }
 
 OSystem_SDL::~OSystem_SDL() {
-//	unload_gfx_mode();
-
-	if (_dirty_checksums)
-		free(_dirty_checksums);
+	free(_dirtyChecksums);
 	free(_currentPalette);
 	free(_mouseBackup);
-	deleteMutex(_graphicsMutex);
-
-	SDL_ShowCursor(SDL_ENABLE);
-	SDL_Quit();
+	free(_mouseData);
 }
 
 uint32 OSystem_SDL::getMillis() {
@@ -164,9 +160,9 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 		break;
 	case kFeatureAutoComputeDirtyRects:
 		if (enable)
-			_mode_flags |= DF_WANT_RECT_OPTIM;		
+			_modeFlags |= DF_WANT_RECT_OPTIM;		
 		else
-			_mode_flags &= ~DF_WANT_RECT_OPTIM;		
+			_modeFlags &= ~DF_WANT_RECT_OPTIM;		
 		break;
 	default:
 		break;
@@ -178,30 +174,33 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 
 	switch (f) {
 	case kFeatureFullscreenMode:
-		return _full_screen;
+		return _fullscreen;
 	case kFeatureAspectRatioCorrection:
 		return _adjustAspectRatio;
 	case kFeatureAutoComputeDirtyRects:
-		return _mode_flags & DF_WANT_RECT_OPTIM;
+		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:
 		return false;
 	}
 }
 
 void OSystem_SDL::quit() {
-	if(_cdrom) {
+	if (_cdrom) {
 		SDL_CDStop(_cdrom);
 		SDL_CDClose(_cdrom);
 	}
-	unload_gfx_mode();
+	unloadGFXMode();
+	deleteMutex(_graphicsMutex);
 
+	if (_joystick)
+		SDL_JoystickClose(_joystick);
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 
 	exit(0);
 }
 
-void OSystem_SDL::setup_icon() {
+void OSystem_SDL::setupIcon() {
 	int w, h, ncols, nbytes, i;
 	unsigned int rgba[256], icon[32 * 32];
 	unsigned char mask[32][4];
@@ -327,9 +326,9 @@ bool OSystem_SDL::openCD(int drive) {
 		if (!_cdrom) {
 			warning("Couldn't open drive: %s", SDL_GetError());
 		} else {
-			cd_num_loops = 0;
-			cd_stop_time = 0;
-			cd_end_time = 0;
+			_cdNumLoops = 0;
+			_cdStopTime = 0;
+			_cdEndTime = 0;
 		}
 	}
 	
@@ -337,8 +336,8 @@ bool OSystem_SDL::openCD(int drive) {
 }
 
 void OSystem_SDL::stopCD() {	/* Stop CD Audio in 1/10th of a second */
-	cd_stop_time = SDL_GetTicks() + 100;
-	cd_num_loops = 0;
+	_cdStopTime = SDL_GetTicks() + 100;
+	_cdNumLoops = 0;
 }
 
 void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration) {
@@ -351,55 +350,55 @@ void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration
 	if (duration > 0)
 		duration += 5;
 
-	cd_track = track;
-	cd_num_loops = num_loops;
-	cd_start_frame = start_frame;
+	_cdTrack = track;
+	_cdNumLoops = num_loops;
+	_cdStartFrame = start_frame;
 
 	SDL_CDStatus(_cdrom);
 	if (start_frame == 0 && duration == 0)
 		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
 	else
 		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
-	cd_duration = duration;
-	cd_stop_time = 0;
-	cd_end_time = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
+	_cdDuration = duration;
+	_cdStopTime = 0;
+	_cdEndTime = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
 }
 
 bool OSystem_SDL::pollCD() {
 	if (!_cdrom)
 		return false;
 
-	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(_cdrom) != CD_STOPPED));
+	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) != CD_STOPPED));
 }
 
 void OSystem_SDL::updateCD() {
 	if (!_cdrom)
 		return;
 
-	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
+	if (_cdStopTime != 0 && SDL_GetTicks() >= _cdStopTime) {
 		SDL_CDStop(_cdrom);
-		cd_num_loops = 0;
-		cd_stop_time = 0;
+		_cdNumLoops = 0;
+		_cdStopTime = 0;
 		return;
 	}
 
-	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
+	if (_cdNumLoops == 0 || SDL_GetTicks() < _cdEndTime)
 		return;
 
-	if (cd_num_loops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
+	if (_cdNumLoops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
 		// Wait another second for it to be done
-		cd_end_time += 1000;
+		_cdEndTime += 1000;
 		return;
 	}
 
-	if (cd_num_loops > 0)
-		cd_num_loops--;
+	if (_cdNumLoops > 0)
+		_cdNumLoops--;
 
-	if (cd_num_loops != 0) {
-		if (cd_start_frame == 0 && cd_duration == 0)
-			SDL_CDPlayTracks(_cdrom, cd_track, 0, 1, 0);
+	if (_cdNumLoops != 0) {
+		if (_cdStartFrame == 0 && _cdDuration == 0)
+			SDL_CDPlayTracks(_cdrom, _cdTrack, 0, 1, 0);
 		else
-			SDL_CDPlayTracks(_cdrom, cd_track, cd_start_frame, 0, cd_duration);
-		cd_end_time = SDL_GetTicks() + _cdrom->track[cd_track].length * 1000 / CD_FPS;
+			SDL_CDPlayTracks(_cdrom, _cdTrack, _cdStartFrame, 0, _cdDuration);
+		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
 	}
 }

@@ -64,8 +64,8 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 	event.mouse.y = y;
 	
 	// Update the "keyboard mouse" coords
-	km.x = x;
-	km.y = y;
+	_km.x = x;
+	_km.y = y;
 
 	// Adjust for the screen scaling
 	event.mouse.x /= _scaleFactor;
@@ -76,71 +76,71 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 		event.mouse.y = aspect2Real(event.mouse.y);
 }
 
-void OSystem_SDL::kbd_mouse() {
+void OSystem_SDL::handleKbdMouse() {
 	uint32 curTime = getMillis();
-	if (curTime >= km.last_time + km.delay_time) {
-		km.last_time = curTime;
-		if (km.x_down_count == 1) {
-			km.x_down_time = curTime;
-			km.x_down_count = 2;
+	if (curTime >= _km.last_time + _km.delay_time) {
+		_km.last_time = curTime;
+		if (_km.x_down_count == 1) {
+			_km.x_down_time = curTime;
+			_km.x_down_count = 2;
 		}
-		if (km.y_down_count == 1) {
-			km.y_down_time = curTime;
-			km.y_down_count = 2;
+		if (_km.y_down_count == 1) {
+			_km.y_down_time = curTime;
+			_km.y_down_count = 2;
 		}
 
-		if (km.x_vel || km.y_vel) {
-			if (km.x_down_count) {
-				if (curTime > km.x_down_time + km.delay_time * 12) {
-					if (km.x_vel > 0)
-						km.x_vel++;
+		if (_km.x_vel || _km.y_vel) {
+			if (_km.x_down_count) {
+				if (curTime > _km.x_down_time + _km.delay_time * 12) {
+					if (_km.x_vel > 0)
+						_km.x_vel++;
 					else
-						km.x_vel--;
-				} else if (curTime > km.x_down_time + km.delay_time * 8) {
-					if (km.x_vel > 0)
-						km.x_vel = 5;
+						_km.x_vel--;
+				} else if (curTime > _km.x_down_time + _km.delay_time * 8) {
+					if (_km.x_vel > 0)
+						_km.x_vel = 5;
 					else
-						km.x_vel = -5;
+						_km.x_vel = -5;
 				}
 			}
-			if (km.y_down_count) {
-				if (curTime > km.y_down_time + km.delay_time * 12) {
-					if (km.y_vel > 0)
-						km.y_vel++;
+			if (_km.y_down_count) {
+				if (curTime > _km.y_down_time + _km.delay_time * 12) {
+					if (_km.y_vel > 0)
+						_km.y_vel++;
 					else
-						km.y_vel--;
-				} else if (curTime > km.y_down_time + km.delay_time * 8) {
-					if (km.y_vel > 0)
-						km.y_vel = 5;
+						_km.y_vel--;
+				} else if (curTime > _km.y_down_time + _km.delay_time * 8) {
+					if (_km.y_vel > 0)
+						_km.y_vel = 5;
 					else
-						km.y_vel = -5;
+						_km.y_vel = -5;
 				}
 			}
 
-			km.x += km.x_vel;
-			km.y += km.y_vel;
+			_km.x += _km.x_vel;
+			_km.y += _km.y_vel;
 
-			if (km.x < 0) {
-				km.x = 0;
-				km.x_vel = -1;
-				km.x_down_count = 1;
-			} else if (km.x > km.x_max) {
-				km.x = km.x_max;
-				km.x_vel = 1;
-				km.x_down_count = 1;
+			if (_km.x < 0) {
+				_km.x = 0;
+				_km.x_vel = -1;
+				_km.x_down_count = 1;
+			} else if (_km.x > _km.x_max) {
+				_km.x = _km.x_max;
+				_km.x_vel = 1;
+				_km.x_down_count = 1;
 			}
 
-			if (km.y < 0) {
-				km.y = 0;
-				km.y_vel = -1;
-				km.y_down_count = 1;
-			} else if (km.y > km.y_max) {
-				km.y = km.y_max;
-				km.y_vel = 1;
-				km.y_down_count = 1;
+			if (_km.y < 0) {
+				_km.y = 0;
+				_km.y_vel = -1;
+				_km.y_down_count = 1;
+			} else if (_km.y > _km.y_max) {
+				_km.y = _km.y_max;
+				_km.y_vel = 1;
+				_km.y_down_count = 1;
 			}
 
-			SDL_WarpMouse(km.x, km.y);
+			SDL_WarpMouse(_km.x, _km.y);
 		}
 	}
 }
@@ -150,7 +150,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	int axis;
 	byte b = 0;
 	
-	kbd_mouse();
+	handleKbdMouse();
 	
 	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
@@ -182,9 +182,9 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			// Alt-Return and Alt-Enter toggle full screen mode				
 			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-				setFullscreenMode(!_full_screen);
+				setFullscreenMode(!_fullscreen);
 #ifdef USE_OSD
-				if (_full_screen)
+				if (_fullscreen)
 					displayMessageOnOSD("Fullscreen mode");
 				else
 					displayMessageOnOSD("Windowed mode");
@@ -206,7 +206,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 						break;
 					SDL_RWclose(file);
 				}
-				if (save_screenshot(filename))
+				if (saveScreenshot(filename))
 					printf("Saved '%s'\n", filename);
 				else
 					printf("Could not save screenshot!\n");
@@ -321,26 +321,26 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 #ifdef LINUPY
 			// On Yopy map the End button to quit
-			if ((ev.key.keysym.sym==293)) {
+			if ((ev.key.keysym.sym == 293)) {
 				event.event_code = EVENT_QUIT;
 				return true;
 			}
 			// Map menu key to f5 (scumm menu)
-			if (ev.key.keysym.sym==306) {
+			if (ev.key.keysym.sym == 306) {
 				event.event_code = EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_F5;
 				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 				return true;
 			}
 			// Map action key to action
-			if (ev.key.keysym.sym==291) {
+			if (ev.key.keysym.sym == 291) {
 				event.event_code = EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_TAB;
 				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 				return true;
 			}
 			// Map OK key to skip cinematic
-			if (ev.key.keysym.sym==292) {
+			if (ev.key.keysym.sym == 292) {
 				event.event_code = EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_ESCAPE;
 				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
@@ -390,20 +390,20 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
-				km.x_vel = -1;
-				km.x_down_count = 1;
+				_km.x_vel = -1;
+				_km.x_down_count = 1;
 				break;
 			case SDLK_RIGHT:
-				km.x_vel =  1;
-				km.x_down_count = 1;
+				_km.x_vel =  1;
+				_km.x_down_count = 1;
 				break;
 			case SDLK_UP:
-				km.y_vel = -1;
-				km.y_down_count = 1;
+				_km.y_vel = -1;
+				_km.y_down_count = 1;
 				break;
 			case SDLK_DOWN:
-				km.y_vel =  1;
-				km.y_down_count = 1;
+				_km.y_vel =  1;
+				_km.y_down_count = 1;
 				break;
 			default:
 				break;
@@ -418,27 +418,27 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
-				if (km.x_vel < 0) {
-					km.x_vel = 0;
-					km.x_down_count = 0;
+				if (_km.x_vel < 0) {
+					_km.x_vel = 0;
+					_km.x_down_count = 0;
 				}
 				break;
 			case SDLK_RIGHT:
-				if (km.x_vel > 0) {
-					km.x_vel = 0;
-					km.x_down_count = 0;
+				if (_km.x_vel > 0) {
+					_km.x_vel = 0;
+					_km.x_down_count = 0;
 				}
 				break;
 			case SDLK_UP:
-				if (km.y_vel < 0) {
-					km.y_vel = 0;
-					km.y_down_count = 0;
+				if (_km.y_vel < 0) {
+					_km.y_vel = 0;
+					_km.y_down_count = 0;
 				}
 				break;
 			case SDLK_DOWN:
-				if (km.y_vel > 0) {
-					km.y_vel = 0;
-					km.y_down_count = 0;
+				if (_km.y_vel > 0) {
+					_km.y_vel = 0;
+					_km.y_down_count = 0;
 				}
 				break;
 			default:
@@ -450,7 +450,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.event_code = EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
 			
-			set_mouse_pos(event.mouse.x, event.mouse.y);
+			setMousePos(event.mouse.x, event.mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -551,15 +551,15 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 			if ( ev.jaxis.axis == JOY_XAXIS) { 
 #ifdef JOY_ANALOG
-				km.x_vel = axis/2000;
-				km.x_down_count = 0;
+				_km.x_vel = axis/2000;
+				_km.x_down_count = 0;
 #else
 				if (axis != 0) {
-					km.x_vel = (axis > 0) ? 1:-1;
-					km.x_down_count = 1;
+					_km.x_vel = (axis > 0) ? 1:-1;
+					_km.x_down_count = 1;
 				} else {
-					km.x_vel = 0;
-					km.x_down_count = 0;
+					_km.x_vel = 0;
+					_km.x_down_count = 0;
 				}
 #endif
 
@@ -568,20 +568,20 @@ bool OSystem_SDL::pollEvent(Event &event) {
 				axis = -axis;
 #endif
 #ifdef JOY_ANALOG
-				km.y_vel = -axis / 2000;
-				km.y_down_count = 0;
+				_km.y_vel = -axis / 2000;
+				_km.y_down_count = 0;
 #else
 				if (axis != 0) {
-					km.y_vel = (-axis > 0) ? 1: -1;
-					km.y_down_count = 1;
+					_km.y_vel = (-axis > 0) ? 1: -1;
+					_km.y_down_count = 1;
 				} else {
-					km.y_vel = 0;
-					km.y_down_count = 0;
+					_km.y_vel = 0;
+					_km.y_down_count = 0;
 				}
 #endif
 			}
 			
-			fillMouseEvent(event, km.x, km.y);
+			fillMouseEvent(event, _km.x, _km.y);
 
 			return true;
 
