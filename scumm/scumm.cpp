@@ -929,7 +929,7 @@ void ScummEngine::launch() {
 	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
 	//	_bootParam = 10001;
 
-	if (_gameId == GID_INDY4 && _bootParam == 0) {
+	if (!_copyProtection && _gameId == GID_INDY4 && _bootParam == 0) {
 		_bootParam = -7873;
 	}
 
