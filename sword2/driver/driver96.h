@@ -1070,7 +1070,7 @@ extern "C" {
 //
 
 // defines specific to windows headers...
-#ifndef _MSC_VER
+#ifndef WIN32
 
 #define SEM_FAILCRITICALERRORS 1
 #define FILE_ATTRIBUTE_NORMAL 0x80
@@ -1254,9 +1254,11 @@ extern "C" {
 typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
-typedef uint32 DWORD;
 
+#ifndef WIN32
+typedef uint32 DWORD;
 typedef long int LARGE_INTEGER;
+#endif
 
 //
 //	Structure definitions
@@ -1431,6 +1433,7 @@ typedef struct
 } _drvKeyStatus;
 
 
+#ifndef WIN32
 // should probably remove this struct as it just replaces a windows struct...
 typedef struct {
     DWORD dwLength;
@@ -1442,6 +1445,7 @@ typedef struct {
     DWORD dwTotalVirtual;
     DWORD dwAvailVirtual;
 } GCC_PACK MEMORYSTATUS;
+#endif
 
 //
 //	Function Prototypes
@@ -1606,6 +1610,7 @@ extern int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
 extern int32 SetFxIdVolume(int32 id, uint8 vol);
 
 
+#ifndef WIN32
 //-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
@@ -1618,6 +1623,7 @@ extern void GetCurrentDirectory(uint32 max, char* path);
 extern int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
 extern void _mkdir(const char *pathname);
 extern void GetModuleFileName(void *module, char *destStr, uint32 maxLen);
+#endif
 
 //-----------------------------------------------------------------------------
 //Macro for calling error handler with source filename and line.

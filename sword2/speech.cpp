@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------------
 #include "stdafx.h"
 
+#include "stdafx.h"
 //#include "src\driver96.h"
 #include "anims.h"
 #include "console.h"

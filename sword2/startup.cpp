@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------------
 #include <stdio.h>
 
+#include "stdafx.h"
 //#include "src\driver96.h"
 #include "build_display.h"
 #include "console.h"

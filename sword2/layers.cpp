@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "stdafx.h"
 #include "driver/driver96.h"
 #include "build_display.h"
 #include "console.h"

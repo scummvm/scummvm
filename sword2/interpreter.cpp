@@ -17,6 +17,8 @@
  * $Header$
  */
 
+#include "stdafx.h"
+
 #ifndef INSIDE_LINC			// Are we running in linc?
 #include "console.h"
 #endif

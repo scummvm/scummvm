@@ -27,6 +27,7 @@
 #include <stdio.h>	// for sprintf
 #include <string.h>
 
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "driver/driver96.h"
 #include "anims.h"

@@ -25,6 +25,7 @@
 
 //#include	"src\driver96.h"
 
+#include "stdafx.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"

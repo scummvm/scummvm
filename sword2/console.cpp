@@ -17,6 +17,7 @@
  * $Header$
  */
 
+#include "stdafx.h"
 #include "driver/driver96.h"
 
 uint32	console_status=0;	//0 off		// LEFT IN RELEASE VERSION

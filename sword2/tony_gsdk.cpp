@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "stdafx.h"
 //#include "src\driver96.h"
 #include "debug.h"
 #include "header.h"

@@ -114,6 +114,7 @@
 
 //#include "ddraw.h"
 
+#include "stdafx.h"
 #include "driver96.h"
 #include "menu.h"
 #include "d_draw.h"

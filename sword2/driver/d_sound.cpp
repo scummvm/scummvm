@@ -355,6 +355,7 @@
 //#include <windowsx.h>
 #include <stdio.h>
 
+#include "stdafx.h"
 #include "driver96.h"
 #include "rdwin.h"			// for hwnd.
 

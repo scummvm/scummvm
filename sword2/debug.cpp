@@ -21,6 +21,7 @@
 #include <stdarg.h> // for ExitWithReport, which stays in RELEASE version
 #include <stdio.h>
 
+#include "stdafx.h"
 #include "driver/driver96.h"
 #include "debug.h"
 //--------------------------------------------------------------------------------------

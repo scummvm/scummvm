@@ -22,6 +22,7 @@
 #include <stdio.h>
 //#include <windows.h>
 
+#include "stdafx.h"
 #include "driver/driver96.h"
 #include "common/gameDetector.h"
 #include "build_display.h"

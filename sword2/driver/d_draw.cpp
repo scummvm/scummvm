@@ -26,6 +26,7 @@
 
 //#include "ddraw.h"
 
+#include "stdafx.h"
 #include "driver96.h"
 #include "rdwin.h"
 #include "_mouse.h"

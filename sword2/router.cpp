@@ -81,6 +81,7 @@
  */
 
 
+#include "stdafx.h"
 #include "driver/driver96.h"
 #include "console.h"
 #include "debug.h"

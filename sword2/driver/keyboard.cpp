@@ -65,6 +65,7 @@
 //#include <windows.h>
 //#include <windowsx.h>
 
+#include "stdafx.h"
 #include "driver96.h"
 
 uint8	keyBacklog = 0;				// The number of key presses waiting to be processed.

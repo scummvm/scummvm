@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 
+#include "stdafx.h"
 //#include "src\driver96.h"
 #include "console.h"
 #include "defs.h"	// for RESULT

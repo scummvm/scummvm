@@ -267,6 +267,7 @@
 
 //#include "ddraw.h"
 
+#include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
 #include "render.h"
