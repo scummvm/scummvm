@@ -365,7 +365,7 @@ void SoundEngine::handle_marker(uint id, byte data) {
 	_trigger_count--;
 	_queue_cleared = false;
 	do {
-		pos = (++pos) & (ARRAYSIZE(_cmd_queue)-1);
+		pos = (pos+1) & (ARRAYSIZE(_cmd_queue)-1);
 		if (_queue_pos == pos)
 			break;
 		p = _cmd_queue[pos].array;
@@ -508,7 +508,7 @@ int SoundEngine::get_queue_sound_status(int sound) {
 		a = _cmd_queue[i].array;
 		if (a[0] == COMMAND_ID && a[1] == 8 && a[2] == (uint16)sound)
 			return 2;
-		i = (++i) & (ARRAYSIZE(_cmd_queue)-1);
+		i = (i+1) & (ARRAYSIZE(_cmd_queue)-1);
 	}
 	return 0;
 }
@@ -592,13 +592,13 @@ int SoundEngine::enqueue_command(int a, int b, int c, int d, int e, int f, int g
 	p[6] = f;
 	p[7] = g;
 
-	i = (++i) & (ARRAYSIZE(_cmd_queue)-1);
+	i = (i+1) & (ARRAYSIZE(_cmd_queue)-1);
 
 	if (_queue_end!=i) {
 		_queue_pos = i;
 		return 0;
 	} else {
-		_queue_pos = (--i) & (ARRAYSIZE(_cmd_queue)-1);
+		_queue_pos = (i-1) & (ARRAYSIZE(_cmd_queue)-1);
 		return -1;
 	}
 }
@@ -652,9 +652,9 @@ int SoundEngine::enqueue_trigger(int sound, int marker) {
 	p[1] = sound;
 	p[2] = marker;
 
-	pos = (++pos) & (ARRAYSIZE(_cmd_queue)-1);
+	pos = (pos+1) & (ARRAYSIZE(_cmd_queue)-1);
 	if (_queue_end==pos) {
-		_queue_pos =  (--pos) & (ARRAYSIZE(_cmd_queue)-1);
+		_queue_pos = (pos-1) & (ARRAYSIZE(_cmd_queue)-1);
 		return -1;
 	}
 	
