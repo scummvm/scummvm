@@ -37,6 +37,8 @@
 // could only handle up to 999 blocks of memory. That means we can encode a
 // pointer as a 10-bit id and a 22-bit offset into the block. Judging by early
 // testing, both should be plenty.
+//
+// The number zero is used to represent the NULL pointer.
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
@@ -92,6 +94,9 @@ MemoryManager::~MemoryManager() {
 }
 
 int32 MemoryManager::encodePtr(byte *ptr) {
+	if (ptr == NULL)
+		return 0;
+
 	int idx = findPointerInIndex(ptr);
 
 	assert(idx != -1);
@@ -99,15 +104,18 @@ int32 MemoryManager::encodePtr(byte *ptr) {
 	uint32 id = _memBlockIndex[idx]->id;
 	uint32 offset = ptr - _memBlocks[id].ptr;
 
-	assert(id <= 0x03ff);
+	assert(id < 0x03ff);
 	assert(offset <= 0x003fffff);
 	assert(offset < _memBlocks[id].size);
 
-	return (id << 22) | (ptr - _memBlocks[id].ptr);
+	return ((id + 1) << 22) | (ptr - _memBlocks[id].ptr);
 }
 
 byte *MemoryManager::decodePtr(int32 n) {
-	uint32 id = (n & 0xffc00000) >> 22;
+	if (n == 0)
+		return NULL;
+
+	uint32 id = ((n & 0xffc00000) >> 22) - 1;
 	uint32 offset = n & 0x003fffff;
 
 	assert(_memBlocks[id].ptr);
