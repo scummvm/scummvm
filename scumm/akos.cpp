@@ -273,8 +273,8 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 void AkosRenderer::codec1_genericDecode()
 {
 	byte *src, *dst;
-	byte len, height, maskbit;
-	uint y, color;
+	byte len, maskbit;
+	uint y, color, height;
 	const byte *scaleytab, *mask;
 
 
@@ -337,8 +337,8 @@ void AkosRenderer::codec1_genericDecode()
 void AkosRenderer::codec1_spec1()
 {
 	byte *src, *dst;
-	byte len, height, maskbit;
-	uint y, color;
+	byte len, maskbit;
+	uint y, color, height;
 	byte pcolor;
 	const byte *scaleytab, *mask;
 
@@ -410,8 +410,8 @@ void AkosRenderer::codec1_spec2()
 void AkosRenderer::codec1_spec3()
 {
 	byte *src, *dst;
-	byte len, height, maskbit;
-	uint y, color;
+	byte len, maskbit;
+	uint y, color, height;
 	uint pcolor;
 	const byte *scaleytab, *mask;
 
