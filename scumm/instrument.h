@@ -25,8 +25,6 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-#define NATIVE_MT32 false
-
 class Serializer;
 class MidiChannel;
 

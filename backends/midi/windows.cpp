@@ -32,6 +32,9 @@
 
 class MidiDriver_WIN : public MidiDriver_MPU401 {
 private:
+	MIDIHDR _streamHeader;
+	byte _streamBuffer [258];	// SysEx blocks should be no larger than 256 bytes
+	HANDLE _streamEvent;
 	HMIDIOUT _mo;
 	bool _isOpen;
 
@@ -43,6 +46,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void sysEx (byte *msg, uint16 length);
 };
 
 int MidiDriver_WIN::open()
@@ -50,7 +54,8 @@ int MidiDriver_WIN::open()
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MMRESULT res = midiOutOpen((HMIDIOUT *) &_mo, MIDI_MAPPER, 0, 0, 0);
+	_streamEvent = CreateEvent (NULL, true, true, NULL);
+	MMRESULT res = midiOutOpen((HMIDIOUT *) &_mo, MIDI_MAPPER, (unsigned long) _streamEvent, 0, CALLBACK_EVENT);
 	if (res != MMSYSERR_NOERROR) {
 		check_error(res);
 		return MERR_DEVICE_NOT_AVAILABLE;
@@ -64,6 +69,7 @@ void MidiDriver_WIN::close()
 {
 	_isOpen = false;
 	check_error(midiOutClose(_mo));
+	CloseHandle (_streamEvent);
 }
 
 void MidiDriver_WIN::send(uint32 b)
@@ -80,6 +86,42 @@ void MidiDriver_WIN::send(uint32 b)
 
 	// printMidi(u.bData[0], u.bData[1], u.bData[2], u.bData[3]);
 	check_error(midiOutShortMsg(_mo, u.dwData));
+}
+
+void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
+{
+	if (!_isOpen)
+		return;
+
+	if (WaitForSingleObject (_streamEvent, 2000) == WAIT_TIMEOUT) {
+		warning ("Could not send SysEx - MMSYSTEM is still trying to send data.");
+		return;
+	}
+
+	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
+	_streamBuffer [0] = 0xFF;
+	memcpy (&_streamBuffer[1], msg, length);
+	_streamBuffer [length+1] = 0xF7;
+
+	_streamHeader.lpData = (char *) _streamBuffer;
+	_streamHeader.dwBufferLength = length + 2;
+	_streamHeader.dwBytesRecorded = length + 2;
+	_streamHeader.dwUser = 0;
+	_streamHeader.dwFlags |= MHDR_ISSTRM;
+
+	MMRESULT result = midiOutPrepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
+	if (result != MMSYSERR_NOERROR) {
+		check_error (result);
+		return;
+	}
+
+	ResetEvent (_streamEvent);
+	result = midiOutLongMsg (_mo, &_streamHeader, sizeof (_streamHeader));
+	if (result != MMSYSERR_NOERROR) {
+		check_error (result);
+		SetEvent (_streamEvent);
+		return;
+	}
 }
 
 void MidiDriver_WIN::check_error(MMRESULT result)
