@@ -1258,8 +1258,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 						dst[j] = dst2[j] = 12+i;
 					maskbits <<= 1;
 				}
-				dst += vs->width;
-				dst2 += vs->width;
+				dst += vs->pitch;
+				dst2 += vs->pitch;
 				mask_ptr += _numStrips;
 			}
 		}
