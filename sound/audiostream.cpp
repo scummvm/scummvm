@@ -289,8 +289,8 @@ void MP3InputStream::refill() {
 	// Subtract the duration of this frame from the time left to play
 	mad_timer_t frame_duration = _frame.header.duration;
 	mad_timer_negate(&frame_duration);
-	mad_timer_add(&_duration, _frame.header.duration);
-	
+	mad_timer_add(&_duration, frame_duration);
+
 	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
 		_size = -1;	// Mark for EOF
 	
