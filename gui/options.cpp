@@ -58,10 +58,16 @@ enum {
 	kMasterVolumeChanged	= 'mavc',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
-	kSpeechVolumeChanged		= 'vcvc',
+	kSpeechVolumeChanged	= 'vcvc',
 	kChooseSaveDirCmd		= 'chos',
 	kChooseExtraDirCmd		= 'chex'
 };
+
+#ifdef _WIN32_WCE
+enum {
+	kChooseKeyMappingCmd    = 'chma'
+};
+#endif
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h),
@@ -416,6 +422,11 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	yoffset += 18;
 #endif
 
+#ifdef _WIN32_WCE
+	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Keys", kChooseKeyMappingCmd, 0);
+	yoffset += 18;
+#endif
+
 	// TODO: joystick setting
 
 
@@ -428,10 +439,18 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory for savegames");
+
+#ifdef _WIN32_WCE
+	_keysDialog = new CEKeysDialog();
+#endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
 	delete _browser;
+
+#ifdef _WIN32_WCE
+	delete _keysDialog;
+#endif
 }
 
 void GlobalOptionsDialog::open() {
@@ -488,6 +507,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_extraPath->setLabel(dir.path());
 		}
 		break;
+#ifdef _WIN32_WCE
+	case kChooseKeyMappingCmd:
+		_keysDialog->runModal();
+		break;
+#endif
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}

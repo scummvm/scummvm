@@ -24,6 +24,10 @@
 #include "gui/dialog.h"
 #include "common/str.h"
 
+#ifdef _WIN32_WCE
+#include "backends/wince/CEKeysDialog.h"
+#endif
+
 class GameDetector;
 
 namespace GUI {
@@ -108,6 +112,9 @@ public:
 
 protected:
 	BrowserDialog *_browser;
+#ifdef _WIN32_WCE
+	CEKeysDialog *_keysDialog;
+#endif
 	StaticTextWidget *_savePath;
 	StaticTextWidget *_extraPath;
 };
