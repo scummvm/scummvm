@@ -308,6 +308,62 @@ int32 Sword2Sound::ReverseStereo(void) {
 	return RD_OK;
 }
 
+// Save/Restore information about current music so that we can restore it
+// after the credits.
+
+void Sword2Sound::saveMusicState() {
+	StackLock lock(_mutex);
+
+	int saveStream;
+
+	if (music[0]._streaming && !music[0]._fading) {
+		saveStream = 0;
+	} else if (music[1]._streaming && !music[0]._fading) {
+		saveStream = 1;
+	} else {
+		music[2]._streaming = false;
+		return;
+	}
+
+	music[2]._streaming = true;
+	music[2]._fading = 0;
+	music[2]._looping = music[saveStream]._looping;
+	music[2]._fileStart = music[saveStream]._fileStart;
+	music[2]._filePos = music[saveStream]._filePos;
+	music[2]._fileEnd = music[saveStream]._fileEnd;
+	music[2]._lastSample = music[saveStream]._lastSample;
+}
+
+void Sword2Sound::restoreMusicState() {
+	StackLock lock(_mutex);
+
+	int restoreStream;
+
+	if (!music[2]._streaming)
+		return;
+
+	// Fade out any music that happens to be playing
+
+	for (int i = 0; i < MAXMUS; i++) {
+		if (music[i]._streaming && !music[i]._fading)
+			music[i]._fading = FADE_SAMPLES;
+	}
+
+	if (!music[0]._streaming && !music[0]._fading) {
+		restoreStream = 0;
+	} else {
+		restoreStream = 1;
+	}
+
+	music[restoreStream]._streaming = true;
+	music[restoreStream]._fading = 0;
+	music[restoreStream]._looping = music[2]._looping;
+	music[restoreStream]._fileStart = music[2]._fileStart;
+	music[restoreStream]._filePos = music[2]._filePos;
+	music[restoreStream]._fileEnd = music[2]._fileEnd;
+	music[restoreStream]._lastSample = music[2]._lastSample;
+}
+
 // --------------------------------------------------------------------------
 // This function returns the index of the sound effect with the ID passed in.
 // --------------------------------------------------------------------------

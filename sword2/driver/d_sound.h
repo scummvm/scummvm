@@ -100,6 +100,8 @@ class Sword2Sound {
 		int32 PauseMusic(void);
 		int32 UnpauseMusic(void);
 		int32 StreamCompMusic(const char *filename, uint32 musicId, bool looping);
+		void saveMusicState();
+		void restoreMusicState();
 		int32 MusicTimeRemaining();
 		int32 ReverseStereo(void);
 		uint8 GetFxVolume(void);
@@ -129,7 +131,7 @@ class Sword2Sound {
 		RateConverter *_converter;
 
 		FxHandle fx[MAXFX];
-		MusicHandle music[MAXMUS];
+		MusicHandle music[MAXMUS + 1];
 
 		// We used to have two music volumes - one for each channel -
 		// but they were always set to the same value.

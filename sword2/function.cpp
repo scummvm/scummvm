@@ -391,13 +391,12 @@ int32 FN_play_credits(int32 *params) {
 		uint8 oldPal[1024];
 		uint8 tmpPal[1024];
 		int32 music_length;
-		uint32 safe_looping_music_id;
 		int32 pars[2];
 
 		// FIXME: We need a better method for saving/restoring the
 		// music state as this one only restarts looping music.
 
-		safe_looping_music_id = looping_music_id;
+		g_sound->saveMusicState();
 
 		g_sound->MuteFx(1);
 		g_sound->MuteSpeech(1);
@@ -446,14 +445,8 @@ int32 FN_play_credits(int32 *params) {
 			g_system->delay_msecs(30);
 		}
 
-		looping_music_id = safe_looping_music_id;
-
-		if (looping_music_id) {
-			pars[0] = looping_music_id;
-			pars[1] = FX_LOOP;
-			FN_play_music(pars);
-		} else
-			FN_stop_music(NULL);
+		FN_stop_music(NULL);
+		g_sound->restoreMusicState();
 
 		BS2_SetPalette(0, 256, oldPal, RDPAL_FADE);
 		FadeUp(0.75);
