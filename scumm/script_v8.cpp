@@ -397,7 +397,10 @@ int ScummEngine_v8::readVar(uint var) {
 
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-		return _scummVars[var];
+		if (var == VAR_CHARINC)
+			return (9 - _scummVars[var]);
+		else
+			return _scummVars[var];
 	}
 
 	if (var & 0x80000000) {
