@@ -2078,7 +2078,7 @@ void SimonEngine::o_print_str() {
 		if (speech_id != 0 && !_subtitles)
 			return;
 
-		if (speech_id == 0)
+		if ((_game & GF_TALKIE) && (speech_id == 0))
 			o_kill_sprite_simon2(2, num_1 + 2);
 
 		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
