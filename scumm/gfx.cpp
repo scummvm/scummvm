@@ -1719,20 +1719,17 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
-		int t;
 
 		if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > (_realWidth / 2)) {
 			camera._cur.x = pos_x;
 		}
 		camera._dest.x = pos_x;
 
-		t = _vars[VAR_CAMERA_MIN_X];
-		if (camera._cur.x < t)
-			camera._cur.x = t;
+		if (camera._cur.x < _vars[VAR_CAMERA_MIN_X])
+			camera._cur.x = _vars[VAR_CAMERA_MIN_X];
 
-		t = _vars[VAR_CAMERA_MAX_X];
-		if (camera._cur.x > t)
-			camera._cur.x = t;
+		if (camera._cur.x > _vars[VAR_CAMERA_MAX_X])
+			camera._cur.x = _vars[VAR_CAMERA_MAX_X];
 
 		if (_vars[VAR_SCROLL_SCRIPT]) {
 			_vars[VAR_CAMERA_POS_X] = camera._cur.x;

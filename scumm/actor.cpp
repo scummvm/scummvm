@@ -1112,10 +1112,8 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 	if (_fullRedraw) {
 		for (j = 1; j < NUM_ACTORS; j++) {
 			Actor *a = derefActor(j);
-			if (fg)
-				a->needRedraw = true;
-			if (bg)
-				a->needBgReset = true;
+			a->needRedraw |= fg;
+			a->needBgReset |= bg;
 		}
 	} else {
 		for (i = 0; i < gdi._numStrips; i++) {
@@ -1125,10 +1123,8 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						Actor *a = derefActor(j);
 						assert(a->number == j);
-						if (fg)
-							a->needRedraw = true;
-						if (bg)
-							a->needBgReset = true;
+						a->needRedraw |= fg;
+						a->needBgReset |= bg;
 					}
 				}
 			}
