@@ -175,22 +175,18 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	bool flipX;
 	bool flipY;
 
-	// FIXME - why was this here? It breaks some animations in LoomCD, and logical,
-	// why should we not honor box flags when ignoreBoxes is on? If this change
-	// breaks anything, or if you know why the if() was in originally, please
-	// tell this to Fingolfin.
+	// FIXME - It seems that at least in The Dig the original code does
+	// check ignoreBoxes here. However, it breaks some animations in Loom,
+	// causing Bobbin to face towards the camera instead of away from it
+	// in some places: After the tree has been destroyed by lightning, and
+	// when entering the dark tunnels beyond the dragon's lair at the very
+	// least. Possibly other places as well.
+	//
+	// The Dig also checks if the actor is in the current room, but that's
+	// not necessary here because we never call the function unless the
+	// actor is in the current room anyway.
 	
-	// Addendum: it seems that at least in "The Dig" the original code
-	// does check ignoreBoxes here...
-	// I am not sure what was broken in LoomCD. I am re-enabling this for now
-	// If new breakage occurs in LoomCD, we can perform this check
-	// conditionally depending on the Scumm version being used...
-	
-	// Also at least in The Dig, it checks if the actor is in the current room, but
-	// that's not necessary here because we can never be called if the actor is
-	// not in the current room anyway.
-	
-	if (!ignoreBoxes) {
+	if (!ignoreBoxes || _vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256) {
 		specdir = _vm->_extraBoxFlags[walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
@@ -212,16 +208,16 @@ int Actor::remapDirection(int dir, bool is_walking) {
 		flipX = (walkdata.XYFactor > 0);
 		flipY = (walkdata.YXFactor > 0);
 
-		// FIXME - this special cases for the class might be necesary for other
-		// games besides Loom CD!
+		// FIXME - this special cases for the class might be necesary
+		// for other games besides Loom!
 
 		// Check for X-Flip
-		if ((flags & kBoxXFlip) || isInClass(_vm->_gameId == GID_LOOM256 ? 19 : 30)) {
+		if ((flags & kBoxXFlip) || isInClass((_vm->_gameId == GID_LOOM256 || _vm->_gameId == GID_LOOM) ? 19 : 30)) {
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & kBoxYFlip) || isInClass(_vm->_gameId == GID_LOOM256 ? 18 : 29)) {
+		if ((flags & kBoxYFlip) || isInClass((_vm->_gameId == GID_LOOM256 || _vm->_gameId == GID_LOOM) ? 18 : 29)) {
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
