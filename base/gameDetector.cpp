@@ -36,6 +36,16 @@
 #include "config.h"
 #endif
 
+#ifdef UNIX
+#include <sys/errno.h>
+#include <sys/stat.h>
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
+#else
+#define DEFAULT_SAVE_PATH ".scummvm"
+#endif
+#endif
+
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
@@ -99,6 +109,7 @@ static const char USAGE_STRING[] =
 ;
 #endif
 
+
 GameDetector::GameDetector() {
 
 	// Graphics
@@ -150,6 +161,29 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("confirm_exit", false);
 #ifdef USE_ALSA
 	ConfMan.registerDefault("alsa_port", "65:0");
+#endif
+
+#ifdef DEFAULT_SAVE_PATH 
+	char savePath[MAXPATHLEN];
+#ifdef UNIX
+	struct stat sb;
+	if (getenv("HOME") != NULL) {
+		snprintf(savePath, MAXPATHLEN, "%s/%s", getenv("HOME"), DEFAULT_SAVE_PATH);	
+		if (stat(savePath, &sb) == -1) {
+			/* create the dir if it does not exist */
+			if (errno == ENOENT) {
+				if (mkdir(savePath, 0755) != 0) {
+					perror("mkdir");
+					exit(1);
+				}
+			}
+		}
+		/* check that we can the dir is there */
+		if (stat(savePath, &sb) == 0) {
+			ConfMan.registerDefault("savepath", savePath);
+		}
+	}
+#endif
 #endif
 
 	_dumpScripts = false;
