@@ -511,7 +511,7 @@ struct Gdi {
 	byte *_readPtr;
 	uint _readOffs;
 
-	int8 _unk4;
+	int8 _cursorActive;
 
 	int _numZBuffer;
 	int _imgBufOffs[4];
@@ -591,8 +591,8 @@ struct Scumm {
 	byte _majorScummVersion;
 	byte _middleScummVersion;
 	byte _minorScummVersion;
-
 	ScummDebugger *_debugger;
+	void *_gui; /* actually a pointer to a Gui */
 	
 	int _lastLoadedRoom;
 	int _roomResource;
@@ -675,7 +675,7 @@ struct Scumm {
 	uint16 _defaultTalkDelay;
 	byte _haveMsg;
 	byte _newEffect;
-	uint16 _fullRedraw;
+	bool _fullRedraw;
 	uint16 _soundParam,_soundParam2,_soundParam3;
 	
 	byte _switchRoomEffect2, _switchRoomEffect;
@@ -701,7 +701,7 @@ struct Scumm {
 	int _cursorHotspotX, _cursorHotspotY;
 	int _cursorWidth, _cursorHeight;
 	byte _cursorAnimateIndex;
-	bool _cursorAnimate;
+	byte _cursorAnimate;
 
 	byte _charsetColor;
 
@@ -719,12 +719,9 @@ struct Scumm {
 	int16 _screenStartStrip;
 	int16 _screenEndStrip;
 
-	int16 _scummTimer;
-
-	byte _playBackFile;
 	byte _fastMode;
 	
-	uint16 _completeScreenRedraw;
+	bool _completeScreenRedraw;
 
 	int8 _userPut;
 	int8 _cursorState;
@@ -755,7 +752,6 @@ struct Scumm {
 
 	uint16 _currentDrive;
 	uint16 _soundCardType;
-	uint16 _videoMode;
 	byte _mousePresent;
 
 	int16 _palManipStart;
@@ -882,7 +878,9 @@ struct Scumm {
 	int _boxMatrixItem;
 
 	byte _grabbedCursor[1024];
-	
+
+	char _saveLoadName[32];
+
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
 	void openRoom(int room);
@@ -949,12 +947,10 @@ struct Scumm {
 	
 	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
 	void setDirtyRange(int slot, int a, int height);
-	void unkVirtScreen2();
+	void drawDirtyScreenParts();
 	void updateDirtyScreen(int slot);
 	void unkVirtScreen4(int a);
 	
-	
-
 	void restoreMouse();
 	void initActor(Actor *a, int mode);
 	bool checkFixedDisk();
@@ -1462,8 +1458,8 @@ struct Scumm {
 
 	void dumpResource(char *tag, int index, byte *ptr);
 
-	bool saveState(const char *filename);
-	bool loadState(const char *filename);
+	bool saveState(int slot, bool compat);
+	bool loadState(int slot, bool compat);
 	void saveOrLoad(Serializer *s);
 
 	void saveLoadResource(Serializer *ser, int type, int index);
@@ -1572,13 +1568,21 @@ struct Scumm {
 
 	void decompressBomp(byte *dst, byte *src, int w, int h);
 
-	void setupCursor() { _cursorAnimate = true; }
+	void setupCursor() { _cursorAnimate = 1; }
 
 	void decompressDefaultCursor(int index);
 
 	void allocateArrays();
 
 	void initializeLocals(int slot, int16 *vars);
+
+	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
+	int scummLoop(int delta);
+
+	bool getSavegameName(int slot, char *desc);
+	void makeSavegameName(char *out, int slot, bool compatible);
+
+	void exitCutscene();
 };
 
 struct ScummDebugger {
@@ -1624,7 +1628,6 @@ struct Serializer {
 
 	bool _saveOrLoad;
 
-	
 	void saveLoadBytes(void *b, int len);
 	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 	void saveLoadEntries(void *d, const SaveLoadEntry *sle);

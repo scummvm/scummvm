@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DUMP_SCRIPTS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -150,6 +150,10 @@ SOURCE=.\gfx.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui.cpp
 # End Source File
 # Begin Source File
 
@@ -317,6 +321,10 @@ SOURCE=.\verbs.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\gui.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\scumm.h

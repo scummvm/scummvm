@@ -759,7 +759,6 @@ void CharsetRenderer::printChar(int chr) {
 	_top -= _offsY;
 }
 
-
 void CharsetRenderer::drawBits() {
 	bool usemask;
 	byte *dst, *mask,maskmask;

@@ -481,7 +481,6 @@ int Scumm::loadResource(int type, int index) {
 #endif
 
 			if (!fileReadFailed(_fileHandle)) {
-				_scummTimer = 0;
 				return 1;
 			}
 

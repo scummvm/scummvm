@@ -26,18 +26,25 @@ struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
 	uint32 ver;
+	char name[32];
 };
 
-#define CURRENT_VER 3
+#define CURRENT_VER 4
 
-bool Scumm::saveState(const char *filename) {
-	FILE *out = fopen(filename,"wb");
+bool Scumm::saveState(int slot, bool compat) {
+	char filename[256];
+	FILE *out;
 	SaveGameHeader hdr;
 	Serializer ser;
+
+	makeSavegameName(filename, slot, compat);
 	
+	out = fopen(filename,"wb");
 	if (out==NULL)
 		return false;
 
+	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
+		
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -53,12 +60,16 @@ bool Scumm::saveState(const char *filename) {
 	return true;
 }
 
-bool Scumm::loadState(const char *filename) {
-	FILE *out = fopen(filename,"rb");
+bool Scumm::loadState(int slot, bool compat) {
+	char filename[256];
+ 	FILE *out;
 	int i,j;
 	SaveGameHeader hdr;
 	Serializer ser;
 	int sb,sh;
+
+	makeSavegameName(filename, slot, compat);
+	out = fopen(filename,"rb");
 
 	if (out==NULL)
 		return false;
@@ -75,6 +86,8 @@ bool Scumm::loadState(const char *filename) {
 		fclose(out);
 		return false;
 	}
+
+	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 	
 	CHECK_HEAP
 
@@ -107,7 +120,7 @@ bool Scumm::loadState(const char *filename) {
 
 	initScreens(0, sb, 320, sh);
 
-	_completeScreenRedraw = 1;
+	_completeScreenRedraw = true;
 	setDirtyColors(0,255);
 
 	_lastCodePtr = NULL;
@@ -121,6 +134,41 @@ bool Scumm::loadState(const char *filename) {
 
 	debug(1,"State loaded from '%s'", filename);
 
+	return true;
+}
+
+void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
+	sprintf(out, "%s.%c%.2d", _exe_name, compatible ? 'c': 's', slot);
+}
+
+bool Scumm::getSavegameName(int slot, char *desc) {
+	char filename[256];
+	FILE *out;
+	SaveGameHeader hdr;
+	bool result;
+	int len;
+
+	makeSavegameName(filename, slot, false);
+	out = fopen(filename,"rb");	
+	if (out==NULL) {
+		strcpy(desc,"");
+		return false;
+	}
+	len = fread(&hdr, sizeof(hdr), 1, out);
+	fclose(out);
+
+	if (len!=1 || hdr.type != MKID('SCVM')) {
+		strcpy(desc, "Invalid savegame");
+		return false;
+	}
+	
+	if (hdr.ver != CURRENT_VER) {
+		strcpy(desc, "Invalid version");
+		return false;
+	}
+	
+	memcpy(desc, hdr.name, sizeof(hdr.name));
+	desc[sizeof(hdr.name)-1] = 0;
 	return true;
 }
 
@@ -267,7 +315,6 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,camera._lastPos,sleInt16),
 		MKLINE(Scumm,_screenStartStrip,sleInt16),
 		MKLINE(Scumm,_screenEndStrip,sleInt16),
-		MKLINE(Scumm,_scummTimer,sleInt16),
 		MKLINE(Scumm,camera._mode,sleByte),
 		MKLINE(Scumm,camera._follows,sleByte),
 		MKLINE(Scumm,camera._leftTrigger,sleInt16),
@@ -295,7 +342,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_numNestedScripts,sleByte),
 		MKLINE(Scumm,_userPut,sleByte),
 		MKLINE(Scumm,_cursorState,sleByte),
-		MKLINE(Scumm,gdi._unk4,sleByte),
+		MKLINE(Scumm,gdi._cursorActive,sleByte),
 		MKLINE(Scumm,gdi._currentCursor,sleByte),
 
 		MKLINE(Scumm,_doEffect,sleByte),

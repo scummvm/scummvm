@@ -712,6 +712,7 @@ void Scumm::o5_drawObject() {
 	default:
 		error("o5_drawObject: default case");
 	}
+
 	index = getObjectIndex(obj);
 	if (index==-1)
 		return;

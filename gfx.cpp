@@ -24,21 +24,19 @@
 
 void Scumm::getGraphicsPerformance() {
 	int i;
-	_scummTimer = 0;
 
 	for (i=10; i!=0; i--) {
 		initScreens(0, 0, 320, 200);
 	}
 
-	_vars[VAR_PERFORMANCE_1] = _scummTimer;
-	_scummTimer = 0;
+	_vars[VAR_PERFORMANCE_1] = 0;//_scummTimer;
 
 	for (i=10; i!=0; i--) {
 		setDirtyRange(0, 0, 200);
-		unkVirtScreen2();
+		drawDirtyScreenParts();
 	}
 
-	_vars[VAR_PERFORMANCE_2] = _scummTimer;
+	_vars[VAR_PERFORMANCE_2] = 0;//_scummTimer;
 	
 	initScreens(0, 16, 320, 144);
 }
@@ -103,7 +101,7 @@ void Scumm::setDirtyRange(int slot, int top, int bottom) {
 	}
 }
 
-void Scumm::unkVirtScreen2() {
+void Scumm::drawDirtyScreenParts() {
 	int i;
 	VirtScreen *vs;
 
@@ -340,21 +338,20 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 
 	dest = _currentPalette;
 
-	if (_videoMode==0x13) {
-		for (i=0; i<numcolor; i++) {
-			r = *ptr++;
-			g = *ptr++;
-			b = *ptr++;
-			if (i<=15 || r<252 || g<252 || b<252) {
-				*dest++ = r>>2;
-				*dest++ = g>>2;
-				*dest++ = b>>2;
-			} else {
-				dest += 3;
-			}
+	for (i=0; i<numcolor; i++) {
+		r = *ptr++;
+		g = *ptr++;
+		b = *ptr++;
+		if (i<=15 || r<252 || g<252 || b<252) {
+			*dest++ = r>>2;
+			*dest++ = g>>2;
+			*dest++ = b>>2;
+		} else {
+			dest += 3;
 		}
 	}
-	
+
+#if 0
 	if (_videoMode==0xE) {
 		epal = getResourceAddress(rtRoom, _roomResource) + _EPAL_offs + 8;
 		for (i=0; i<256; i++,epal++) {
@@ -362,7 +359,8 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 			_currentPalette[i+256] = *epal>>4;
 		}
 	}
-	
+#endif
+
 	setDirtyColors(0, numcolor-1);
 }
 
@@ -423,9 +421,6 @@ void Scumm::cyclePalette() {
 	int i, num;
 	byte *start, *end;
 	byte tmp[3];
-
-	if(_videoMode != 0x13)
-		return;
 
 	valueToAdd = _vars[VAR_TIMER];
 	if (valueToAdd < _vars[VAR_TIMER_NEXT])
@@ -1273,8 +1268,12 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		}
 	}
 
-	rp = right >> 3;
-	lp = left >> 3;
+	setVirtscreenDirty(vs, left, top, right, bottom);
+}
+
+void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom) {
+	int lp = left >> 3;
+	int rp = right >> 3;
 
 	if (lp>=40 || rp<0)
 		return;
@@ -1287,7 +1286,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		if (bottom > vs->bdirty[lp])
 			vs->bdirty[lp] = bottom;
 		lp++;
-	}
+	}	
 }
 
 VirtScreen *Scumm::findVirtScreen(int y) {
@@ -1667,16 +1666,10 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 }
 
 void Scumm::setPalColor(int index, int r, int g, int b) {
-	if(_videoMode==0x13) {
-		_currentPalette[index*3+0] = r>>2;
-		_currentPalette[index*3+1] = g>>2;
-		_currentPalette[index*3+2] = b>>2;
-		setDirtyColors(index,index);
-	}
-	if (_videoMode==0xE) {
-		/* TODO: implement this */
-		warning("stub setPalColor(%d,%d,%d,%d)",index,r,g,b);
-	}
+	_currentPalette[index*3+0] = r>>2;
+	_currentPalette[index*3+1] = g>>2;
+	_currentPalette[index*3+2] = b>>2;
+	setDirtyColors(index,index);
 }
 
 void Scumm::drawMouse() {
@@ -1695,18 +1688,8 @@ void Scumm::drawMouse() {
 		_cursorWidth,
 		_cursorHeight,
 		_grabbedCursor,
-		gdi._unk4>0
+		gdi._cursorActive>0
 	);
-
-/*
-	::drawMouse(this,
-		mouse.x - gdi._hotspot_x,
-		mouse.y - gdi._hotspot_y,
-		gdi._mouseColors[((++gdi._mouseColorIndex)>>2)&3],
-		gdi._mouseMask + ((gdi._drawMouseX&7)<<6),
-		gdi._unk4>0
-		);
-	*/
 }
 
 void Scumm::setCursorHotspot(int cursor, int x, int y) {
@@ -1792,45 +1775,39 @@ void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
 	int num;
 	byte color;
 
-	if (_videoMode==0xE) {
-		warning("stub darkenPalette(%d,%d,%d,%d,%d)",a,b,c,d,e);
+	cptr = getPalettePtr();
+	cptr += 8 + a*3;
+	cur = _currentPalette + a*3;
+	if (a <= b) {
+		num = b - a + 1;
+
+		do {
+			if (c != 0xFF) {
+				color = *cptr++ * (c>>2) / 0xFF;
+			} else {
+				color = *cptr++ >> 2;
+			}
+			if(color>63) color = 63;
+			*cur++=color;
+
+			if (d != 0xFF) {
+				color = *cptr++ * (d>>2) / 0xFF;
+			} else {
+				color = *cptr++ >> 2;
+			}
+			if(color>63) color = 63;
+			*cur++=color;
+
+			if (e != 0xFF) {
+				color = *cptr++ * (e>>2) / 0xFF;
+			} else {
+				color = *cptr++ >> 2;
+			}
+			if(color>63) color = 63;
+			*cur++=color;
+		} while (--num);
 	}
-
-	if (_videoMode==0x13) {
-		cptr = getPalettePtr();
-		cptr += 8 + a*3;
-		cur = _currentPalette + a*3;
-		if (a <= b) {
-			num = b - a + 1;
-
-			do {
-				if (c != 0xFF) {
-					color = *cptr++ * (c>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-
-				if (d != 0xFF) {
-					color = *cptr++ * (d>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-
-				if (e != 0xFF) {
-					color = *cptr++ * (e>>2) / 0xFF;
-				} else {
-					color = *cptr++ >> 2;
-				}
-				if(color>63) color = 63;
-				*cur++=color;
-			} while (--num);
-		}
-		setDirtyColors(a,b);
-	}
+	setDirtyColors(a,b);
 }
 
 void Scumm::grabCursor(int x, int y, int w, int h) {
@@ -1881,7 +1858,7 @@ void Scumm::grabCursor(byte *ptr, int width, int height) {
 
 	_cursorWidth = width;
 	_cursorHeight = height;
-	_cursorAnimate = false;
+	_cursorAnimate = 0;
 
 	dst = _grabbedCursor;
 	for(;height;height--) {
@@ -1923,7 +1900,7 @@ void Scumm::useBompCursor(byte *im, int width, int height) {
 
 	_cursorWidth = width;
 	_cursorHeight = height;
-	_cursorAnimate = false;
+	_cursorAnimate = 0;
 
 	decompressBomp(_grabbedCursor, im+10, width, height);
 }

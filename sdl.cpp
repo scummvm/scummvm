@@ -23,6 +23,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "gui.h"
 
 #if defined(USE_IMUSE)
 #include "sound.h"
@@ -32,6 +33,7 @@
 
 Scumm scumm;
 ScummDebugger debugger;
+Gui gui;
 
 #if defined(USE_IMUSE)
 SoundEngine sound;
@@ -60,6 +62,16 @@ void updatePalette(Scumm *s) {
 	s->_palDirtyMin = 0x3E8;
 }
 
+int mapKey(int key, byte mod) {
+	if (key>=SDLK_F1 && key<=SDLK_F9) {
+		return key - SDLK_F1 + 315;
+	} else if (key>='a' && key<='z' && mod&KMOD_SHIFT) {
+		key&=~0x20;
+	} else if (key>=SDLK_NUMLOCK && key<=SDLK_EURO)
+		return 0;
+	return key;
+}
+
 void waitForTimer(Scumm *s) {
 	SDL_Event event;
 	byte dontPause = true;
@@ -68,18 +80,19 @@ void waitForTimer(Scumm *s) {
 		while (SDL_PollEvent(&event)) {
 			switch(event.type) {
 			case SDL_KEYDOWN:
-				s->_keyPressed = event.key.keysym.sym;
+				s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
 				if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
 					s->_saveLoadSlot = event.key.keysym.sym - '0';
-					if (event.key.keysym.mod&KMOD_SHIFT)
+					if (event.key.keysym.mod&KMOD_SHIFT) {
+						sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
 						s->_saveLoadFlag = 1;
-					else if (event.key.keysym.mod&KMOD_CTRL)
+					} else if (event.key.keysym.mod&KMOD_CTRL)
 						s->_saveLoadFlag = 2;
 					s->_saveLoadCompatible = false;
 				}
 				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
 					exit(1);
-				}
+				} 
 				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 1;
 				}
@@ -135,7 +148,6 @@ void waitForTimer(Scumm *s) {
 			SDL_Delay(dontPause ? 10 : 100);
 	} while (!dontPause);
 
-	s->_scummTimer+=3;
 }
 
 #define MAX_DIRTY_RECTS 40
@@ -224,7 +236,6 @@ void updateScreen(Scumm *s) {
 
 	if (s->_fastMode&2)
 		return;
-
 
 	if (hide_mouse) {
 		hide_mouse = false;
@@ -466,37 +477,58 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 #define BUFFER_SIZE (8192)
 #define BITS_PER_SAMPLE 16
 
-static void *_sfx_sound;
-static uint32 _sfx_pos;
-static uint32 _sfx_size;
+struct MixerChannel {
+	void *_sfx_sound;
+	uint32 _sfx_pos;
+	uint32 _sfx_size;
+	uint32 _sfx_fp_speed;
+	uint32 _sfx_fp_pos;
 
-static uint32 _sfx_fp_speed;
-static uint32 _sfx_fp_pos;
+	void mix(int16 *data, uint32 len);
+	void clear();
+};
+
+#define NUM_MIXER 4
+
+static MixerChannel mixer_channel[NUM_MIXER];
+
+MixerChannel *find_channel() {
+	int i;
+	MixerChannel *mc = mixer_channel;
+	for(i=0; i<NUM_MIXER; i++,mc++) {
+		if (!mc->_sfx_sound)
+			return mc;
+	}
+	return mc;
+}
+
 
 bool isSfxFinished() {
-	return _sfx_size == 0;
+	int i;
+	for(i=0; i<NUM_MIXER; i++)
+		if (mixer_channel[i]._sfx_sound)
+			return false;
+	return true;
 }
 
 void playSfxSound(void *sound, uint32 size, uint rate) {
-	if (_sfx_sound) {
-		free(_sfx_sound);
-	}
-	_sfx_sound = sound;
-	_sfx_pos = 0;
-	_sfx_fp_speed = (1<<16) * rate / 22050;
-	_sfx_fp_pos = 0;
-//	debug(1, "size=%d, rate=%d", size, rate);
-	
+	MixerChannel *mc = find_channel();
+
+	mc->_sfx_sound = sound;
+	mc->_sfx_pos = 0;
+	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
+	mc->_sfx_fp_pos = 0;
+
 	while (size&0xFFFF0000) size>>=1, rate>>=1;
-	_sfx_size = size * 22050 / rate;
+	mc->_sfx_size = size * 22050 / rate;
 }
 
-void mix_sound(int16 *data, uint32 len) {
+void MixerChannel::mix(int16 *data, uint32 len) {
 	int8 *s;
 	int i;
 	uint32 fp_pos, fp_speed;
 
-	if (!_sfx_size)
+	if (!_sfx_sound)
 		return;
 	if (len > _sfx_size)
 		len = _sfx_size;
@@ -516,15 +548,28 @@ void mix_sound(int16 *data, uint32 len) {
 	_sfx_pos = s - (int8*)_sfx_sound;
 	_sfx_fp_speed = fp_speed;
 	_sfx_fp_pos = fp_pos;
+
+	if (!_sfx_size)
+		clear();
+}
+
+void MixerChannel::clear() {
+	free(_sfx_sound);
+	_sfx_sound = NULL;
 }
 
 void fill_sound(void *userdata, Uint8 *stream, int len) {
+	int i;
+
 #if defined(USE_IMUSE)
 	sound.generate_samples((int16*)stream, len>>1);
 #else
 	memset(stream, 0, len);
 #endif
-	mix_sound((int16*)stream, len>>1);
+	
+	for(i=NUM_MIXER-1; i>=0;i--) {
+		mixer_channel[i].mix((int16*)stream, len>>1);
+	}
 }
 
 void initGraphics(Scumm *s, bool fullScreen) {
@@ -574,14 +619,39 @@ void initGraphics(Scumm *s, bool fullScreen) {
 
 #undef main
 int main(int argc, char* argv[]) {
-	scumm._videoMode = 0x13;
+	int delta,tmp;
 
 #if defined(USE_IMUSE)
 	sound.initialize(NULL);
 	scumm._soundDriver = &sound;
 #endif
 
+	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);
+
+	gui.init(&scumm);
+
+	delta = 0;
+	do {
+		updateScreen(&scumm);
+
+		if (gui._active) {
+			gui.loop();
+			tmp = 5;
+		} else {
+			tmp = delta = scumm.scummLoop(delta);
+			tmp += tmp>>1;
+			
+			if (scumm._fastMode)
+				tmp=1;
+		}
+		
+		while(tmp>0) {
+			waitForTimer(&scumm);
+			tmp--;
+		}
+	} while(1);
+
 	return 0;
 }
 

@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "gui.h"
 
 void Scumm::initThingsV5() {
 	readIndexFileV5(1);
@@ -137,7 +138,7 @@ void Scumm::scummInit() {
 	_userPut = 0;
 	
 	_newEffect = 129;
-	_fullRedraw = 1;
+	_fullRedraw = true;
 
 	clearDrawObjectQueue();
 
@@ -167,7 +168,7 @@ void Scumm::initScummVars() {
 	_vars[VAR_CURRENTDRIVE] = _currentDrive;
 	_vars[VAR_FIXEDDISK] = checkFixedDisk();
 	_vars[VAR_SOUNDCARD] = _soundCardType;
-	_vars[VAR_VIDEOMODE] = _videoMode;
+	_vars[VAR_VIDEOMODE] = 0x13;
 	_vars[VAR_HEAPSPACE] = 600;
 	_vars[VAR_MOUSEPRESENT] = _mousePresent;
 	_vars[VAR_SOUNDPARAM] = _soundParam;
@@ -195,8 +196,8 @@ void Scumm::scummMain(int argc, char **argv) {
 	
 	_debugMode = 1;
 
-	_maxHeapThreshold = 350000;
-	_minHeapThreshold = 300000;
+	_maxHeapThreshold = 500000;
+	_minHeapThreshold = 450000;
 	
 	parseCommandLine(argc, argv);
 
@@ -231,100 +232,76 @@ void Scumm::scummMain(int argc, char **argv) {
 	setupSound();
 
 	runScript(1,0,0,&_bootParam);
-	_scummTimer = 0;
+//	_scummTimer = 0;
+}
 
-	do {
-		if (_playBackFile) {
-			while ((_scummTimer>>2) < _vars[VAR_TIMER_NEXT]) {}
-			_scummTimer = _vars[VAR_TIMER_NEXT] << 2;
-		}
-		
-		CHECK_HEAP
-		updateScreen(this);
+int Scumm::scummLoop(int delta) {
+	if (_debugger)
+		_debugger->on_frame();
+	
+	_vars[VAR_TMR_1] += delta;
+	_vars[VAR_TMR_2] += delta;
+	_vars[VAR_TMR_3] += delta;
+	_vars[VAR_TMR_4] += delta;
 
-		if (_debugger)
-			_debugger->on_frame();
+	if (delta > 15)
+		delta = 15;
 
-		if (!(++_expire_counter)) {
-			increaseResourceCounter();
-		}
+	decreaseScriptDelay(delta);
 
-		_vars[VAR_TIMER] = _scummTimer >> 2;
-		do {
-			waitForTimer(this);
-			tmr = _scummTimer >> 2;
-			if (_fastMode)
-				tmr += 15;
-		} while (tmr < _vars[VAR_TIMER_NEXT]);
-		_scummTimer = 0;
+	_talkDelay -= delta;
+	if (_talkDelay<0) _talkDelay=0;
 
-		_vars[VAR_TMR_1] += tmr;
-		_vars[VAR_TMR_2] += tmr;
-		_vars[VAR_TMR_3] += tmr;
-		_vars[VAR_TMR_4] += tmr;
+	processKbd();
 
-		if (tmr > 15)
-			tmr = 15;
+	_vars[VAR_CAMERA_CUR_POS] = camera._curPos;
+	_vars[VAR_HAVE_MSG] = _haveMsg;
+	_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
+	_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
+	_vars[VAR_MOUSE_X] = mouse.x;
+	_vars[VAR_MOUSE_Y] = mouse.y;
+	_vars[VAR_DEBUGMODE] = _debugMode;
 
-		decreaseScriptDelay(tmr);
+	if (_gameId==GID_MONKEY)
+		_vars[VAR_MI1_TIMER]+=40;
 
-		_talkDelay -= tmr;
-		if (_talkDelay<0) _talkDelay=0;
-
-		processKbd();
-
-		/* XXX: memory low check skipped */
-		_vars[VAR_CAMERA_CUR_POS] = camera._curPos;
-		_vars[VAR_HAVE_MSG] = _haveMsg;
-		_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
-		_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
-		_vars[VAR_MOUSE_X] = mouse.x;
-		_vars[VAR_MOUSE_Y] = mouse.y;
-		_vars[VAR_DEBUGMODE] = _debugMode;
-
-		if (_gameId==GID_MONKEY)
-			_vars[VAR_MI1_TIMER]+=40;
-
-		if (_saveLoadFlag) {
-			char buf[256];
-
-			sprintf(buf, "%s.%c%.2d", _exe_name, _saveLoadCompatible ? 'c': 's', _saveLoadSlot);
-			if (_saveLoadFlag==1) {
-				saveState(buf);
-				if (_saveLoadCompatible)
-					_vars[VAR_GAME_LOADED] = 201;
-			} else {
-				loadState(buf);
-				if (_saveLoadCompatible) {
-					_vars[VAR_GAME_LOADED] = 203;
-				}
+	if (_saveLoadFlag) {
+		if (_saveLoadFlag==1) {
+			saveState(_saveLoadSlot, _saveLoadCompatible);
+			if (_saveLoadCompatible)
+				_vars[VAR_GAME_LOADED] = 201;
+		} else {
+			loadState(_saveLoadSlot, _saveLoadCompatible);
+			if (_saveLoadCompatible) {
+				_vars[VAR_GAME_LOADED] = 203;
 			}
-			_saveLoadFlag = 0;
 		}
+		_saveLoadFlag = 0;
+	}
 
-		if (_completeScreenRedraw) {
-			_completeScreenRedraw = 0;
-			gdi.clearUpperMask();
-			charset._hasMask = false;
-			redrawVerbs();
-			_fullRedraw = 1;
-			for (i=0,a=getFirstActor(); i<13; i++,a++)
-				a->needRedraw = 1;
-		}
+	if (_completeScreenRedraw) {
+		int i;
+		Actor *a;
+		_completeScreenRedraw = false;
+		gdi.clearUpperMask();
+		charset._hasMask = false;
+		redrawVerbs();
+		_fullRedraw = true;
+		for (i=0,a=getFirstActor(); i<13; i++,a++)
+			a->needRedraw = 1;
+	}
 
-		runAllScripts();
-		checkExecVerbs();
-		checkAndRunVar33();
+	runAllScripts();
+	checkExecVerbs();
+	checkAndRunVar33();
 
-		if (_currentRoom==0) {
-			gdi._unk4 = 0;
-			CHARSET_1();
-			unkVirtScreen2();
-			processSoundQues();
-			camera._lastPos = camera._curPos;
-			continue;
-		}
-
+	if (_currentRoom==0) {
+		gdi._cursorActive = 0;
+		CHARSET_1();
+		drawDirtyScreenParts();
+		processSoundQues();
+		camera._lastPos = camera._curPos;
+	} else {
 		walkActors();
 		moveCamera();
 		fixObjectFlags();
@@ -344,28 +321,47 @@ void Scumm::scummMain(int argc, char **argv) {
 		clear_fullRedraw();
 		cyclePalette();
 		palManipulate();
-		
+
 		if (_doEffect) {
 			_doEffect = false;
 			screenEffect(_newEffect);
 			clearClickedStatus();
 		}
-		
+
 		if (_cursorState > 0) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
 
-		gdi._unk4 = _cursorState > 0;
+		gdi._cursorActive = _cursorState > 0;
 
-		unkVirtScreen2();
+		drawDirtyScreenParts();
 
 		if (_majorScummVersion==5)
 			playActorSounds();
 
 		processSoundQues();
 		camera._lastPos = camera._curPos;
+	}
+
+	if (!(++_expire_counter)) {
+		increaseResourceCounter();
+	}
+
+	_vars[VAR_TIMER] = 0;
+	return _vars[VAR_TIMER_NEXT];
+
+}
+
+#if 0
+void Scumm::scummMain(int argc, char **argv) {
+
+	do {
+		updateScreen(this);
+
+
 	} while (1);
 }
+#endif
 
 void Scumm::parseCommandLine(int argc, char **argv) {
 	int i;
@@ -789,19 +785,10 @@ void Scumm::processKbd() {
 	}
 
 	if (_lastKeyHit==_vars[VAR_CUTSCENEEXIT_KEY]) {
-		uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
-		if (offs) {
-			ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
-			ss->offs = offs;
-			ss->status = 2;
-			ss->freezeCount = 0;
-			ss->cutsceneOverride--;
-			_vars[VAR_OVERRIDE] = 1;
-			vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
-		}
-	}
-
-	if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
+		exitCutscene();
+	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY]) {
+		((Gui*)_gui)->saveLoadDialog();
+	} else if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
 		return;
 	}

@@ -15,56 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.13  2001/11/06 21:29:23  strigeus
- * fix in save game loader,
- * sizeof(an element) * number of elements instead of sizeof(a pointer) fixed it,
- * buffer out of bounds read fixed in Scumm::isMaskActiveAt
- *
- * Revision 1.12  2001/11/06 20:00:47  strigeus
- * full screen flag,
- * better mouse cursors,
- * removed change log from individual files
- *
- * Revision 1.11  2001/11/06 07:47:00  strigeus
- * fixed integer overflow for large sounds
- *
- * Revision 1.10  2001/11/05 20:44:34  strigeus
- * speech support
- *
- * Revision 1.9  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.8  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.7  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.6  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.5  2001/10/16 10:01:48  strigeus
- * preliminary DOTT support
- *
- * Revision 1.4  2001/10/12 07:24:06  strigeus
- * fast mode support
- *
- * Revision 1.3  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.2  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
- *
+ * $Header$
  */
 
 #if USE_DIRECTX
@@ -83,6 +34,12 @@
 
 #if defined(USE_IMUSE)
 #include "sound.h"
+#endif
+
+#include "gui.h"
+
+#if !defined(ALLOW_GDI)
+#error The GDI driver is not as complete as the SDL driver. You need to define ALLOW_GDI to use this driver.
 #endif
 
 #define SRC_WIDTH 320
@@ -177,6 +134,7 @@ void Error(const char *msg) {
 int sel;
 Scumm scumm;
 ScummDebugger debugger;
+Gui gui;
 
 #if defined(USE_IMUSE)
 SoundEngine sound;
@@ -186,7 +144,6 @@ WndMan wm[1];
 byte veryFastMode;
 
 void modifyslot(int sel, int what);
-
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	WndMan *wm = (WndMan*)GetWindowLong(hWnd, GWL_USERDATA);	
@@ -207,29 +164,31 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_KEYDOWN:
 			if (wParam>='0' && wParam<='9') {
 				wm->_scumm->_saveLoadSlot = wParam - '0';
-				if (GetAsyncKeyState(VK_SHIFT)<0)
+				if (GetAsyncKeyState(VK_SHIFT)<0) {
+					sprintf(wm->_scumm->_saveLoadName, "Quicksave %d", wm->_scumm->_saveLoadSlot);
 					wm->_scumm->_saveLoadFlag = 1;
-				else if (GetAsyncKeyState(VK_CONTROL)<0)
+				} else if (GetAsyncKeyState(VK_CONTROL)<0)
 					wm->_scumm->_saveLoadFlag = 2;
 				wm->_scumm->_saveLoadCompatible = false;
 			}
 
-			if (wParam=='F') {
-				wm->_scumm->_fastMode ^= 1;
-			}
+			if (GetAsyncKeyState(VK_CONTROL)<0) {
+				if (wParam=='F') {
+					wm->_scumm->_fastMode ^= 1;
+				}
 
-			if (wParam=='G') {
-				veryFastMode ^= 1;
-			}
+				if (wParam=='G') {
+					veryFastMode ^= 1;
+				}
 
-			if (wParam=='D') {
-				debugger.attach(wm->_scumm);
+				if (wParam=='D') {
+					debugger.attach(wm->_scumm);
+				}
+				
+				if (wParam=='S') {
+					wm->_scumm->resourceStats();
+				}
 			}
-			
-			if (wParam=='S') {
-				wm->_scumm->resourceStats();
-			}
-
 			break;
 
 		case WM_MOUSEMOVE:
@@ -840,14 +799,6 @@ void outputdisplay2(Scumm *s, int disp) {
 	wm->_vgabuf = old;
 }
 
-
-#if 0
-void outputdisplay(Scumm *s) {
-	s->drawMouse();
-	wm->writeToScreen();	
-}
-#endif
-
 void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	byte *dst;
 	SDL_Rect *r;
@@ -930,9 +881,8 @@ void updateScreen(Scumm *s) {
 
 void waitForTimer(Scumm *s) {
 	if (!veryFastMode) {
-		Sleep(5);
+		Sleep(10);
 	} 
-	s->_scummTimer+=2;
 	wm->handleMessage();
 }
 
@@ -1007,8 +957,8 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 
 #undef main
 int main(int argc, char* argv[]) {
-	scumm._videoMode = 0x13;
-
+	int delta;
+	int tmp;
 
 	wm->init();
 	wm->sound_init();
@@ -1020,7 +970,30 @@ int main(int argc, char* argv[]) {
 	scumm._soundDriver = &sound;
 #endif
 
+	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);
+	gui.init(&scumm);
+
+	delta = 0;
+	do {
+		updateScreen(&scumm);
+
+		if (gui._active) {
+			gui.loop();
+			tmp = 5;
+		} else {
+			tmp = delta = scumm.scummLoop(delta);
+			tmp += tmp>>1;
+			
+			if (scumm._fastMode)
+				tmp=1;
+		}
+		
+		while(tmp>0) {
+			waitForTimer(&scumm);
+			tmp--;
+		}
+	} while(1);
 
 	return 0;
 }

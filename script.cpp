@@ -953,3 +953,16 @@ int Scumm::getStringLen(byte *ptr) {
 	} while (1);
 	return len+1;
 }
+
+void Scumm::exitCutscene() {
+	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
+	if (offs) {
+		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
+		ss->offs = offs;
+		ss->status = 2;
+		ss->freezeCount = 0;
+		ss->cutsceneOverride--;
+		_vars[VAR_OVERRIDE] = 1;
+		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+	}
+}
