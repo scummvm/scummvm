@@ -956,10 +956,11 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (offs) {
 					byte *z_plane_ptr = zplane_list[i] + offs;
 
-					if (_useOrDecompress && flag & dbAllowMaskOr)
+					if (_useOrDecompress && flag & dbAllowMaskOr) {
 						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
-					else
+					} else {
 						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
+					}
 				} else {
 					if (!(_useOrDecompress && flag & dbAllowMaskOr))
 						for (int height = 0; height < h; height++)
@@ -979,10 +980,6 @@ next_iter:
 
 void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess)
 {
-	const byte decompress_table[] = {
-		0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF, 0x0,
-	};
-
 	_useOrDecompress = false;
 
 	byte code = *smap_ptr++;
@@ -993,6 +990,10 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	else
 		_palette_mod = 0;
 
+	_decomp_shr = code % 10;
+	_decomp_mask = 0xFF >> (8 - _decomp_shr);
+
+//printf("decompressBitmap codec %d\n", code);
 	switch (code) {
 	case 1:
 		unkDecode7(bgbak_ptr, smap_ptr, numLinesToProcess);
@@ -1019,8 +1020,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 16:
 	case 17:
 	case 18:
-		_decomp_shr = code - 10;
-		_decomp_mask = decompress_table[code - 10];
 		unkDecode6(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1029,8 +1028,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 26:
 	case 27:
 	case 28:
-		_decomp_shr = code - 20;
-		_decomp_mask = decompress_table[code - 20];
 		unkDecode5(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1040,8 +1037,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 37:
 	case 38:
 		_useOrDecompress = true;
-		_decomp_shr = code - 30;
-		_decomp_mask = decompress_table[code - 30];
 		unkDecode4(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1051,8 +1046,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 47:
 	case 48:
 		_useOrDecompress = true;
-		_decomp_shr = code - 40;
-		_decomp_mask = decompress_table[code - 40];
 		unkDecode2(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1061,8 +1054,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 66:
 	case 67:
 	case 68:
-		_decomp_shr = code - 60;
-		_decomp_mask = decompress_table[code - 60];
 		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1072,8 +1063,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 87:
 	case 88:
 		_useOrDecompress = true;
-		_decomp_shr = code - 80;
-		_decomp_mask = decompress_table[code - 80];
 		unkDecode3(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1083,8 +1072,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 106:
 	case 107:
 	case 108:
-		_decomp_shr = code - 100;
-		_decomp_mask = decompress_table[code - 100];
 		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1095,8 +1082,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 127:
 	case 128:
 		_useOrDecompress = true;
-		_decomp_shr = code - 120;
-		_decomp_mask = decompress_table[code - 120];
 		unkDecode3(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
@@ -1375,27 +1360,17 @@ void Gdi::unkDecode3(byte *dst, byte *src, int height)
 				} else {
 					FILL_BITS;
 					reps = bits & 0xFF;
-					if (color == _transparency) {
-						do {
-							if (!--_currentX) {
-								_currentX = 8;
-								dst += _vm->_realWidth - 8;
-								if (!--height)
-									return;
-							}
-							dst++;
-						} while (--reps);
-					} else {
-						do {
-							if (!--_currentX) {
-								_currentX = 8;
-								dst += _vm->_realWidth - 8;
-								if (!--height)
-									return;
-							}
-							*dst++ = color + _palette_mod;
-						} while (--reps);
-					}
+					do {
+						if (!--_currentX) {
+							_currentX = 8;
+							dst += _vm->_realWidth - 8;
+							if (!--height)
+								return;
+						}
+						if (color != _transparency)
+							*dst = color + _palette_mod;
+						dst++;
+					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
 					goto againPos;
