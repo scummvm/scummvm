@@ -98,7 +98,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const GameSett
 
 	// Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.isEmpty()) {
+	if (description.isEmpty() && target) {
 		description = target->description;
 	}
 
@@ -284,7 +284,7 @@ GameList findGame(FilesystemNode *dir) {
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 	int p;
 	for (p = 0; p < plugins.size(); p++) {
-		const GameSettings *v = plugins[p]->getTargets();
+		const GameSettings *v = plugins[p]->getSupportedGames();
 		while (v->gameName && v->description) {
 	
 			// Determine the 'detectname' for this game, that is, the name of a 

@@ -74,8 +74,8 @@ extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 #pragma mark -
 
 
-int Plugin::countTargets() const {
-	const GameSettings *target = getTargets();
+int Plugin::countSupportedGames() const {
+	const GameSettings *target = getSupportedGames();
 	int count;
 	for (count = 0; target->gameName; target++, count++)
 		;
@@ -84,7 +84,7 @@ int Plugin::countTargets() const {
 
 const GameSettings *Plugin::findGame(const char *gameName) const {
 	// Find the GameSettings for this target
-	const GameSettings *target = getTargets();
+	const GameSettings *target = getSupportedGames();
 	assert(gameName);
 	while (target->gameName) {
 		if (!scumm_stricmp(target->gameName, gameName)) {
@@ -107,13 +107,13 @@ class StaticPlugin : public Plugin {
 public:
 	StaticPlugin(const char *name, const GameSettings *targets, EngineFactory ef)
 		: _name(name), _targets(targets), _ef(ef) {
-		_targetCount = Plugin::countTargets();
+		_targetCount = Plugin::countSupportedGames();
 	}
 
 	const char *getName() const					{ return _name; }
 
-	int countTargets() const					{ return _targetCount; }
-	const GameSettings *getTargets() const	{ return _targets; }
+	int countSupportedGames() const					{ return _targetCount; }
+	const GameSettings *getSupportedGames() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		return (*_ef)(detector, syst);
@@ -143,8 +143,8 @@ public:
 	
 	const char *getName() const					{ return _name.c_str(); }
 
-	int countTargets() const					{ return _targetCount; }
-	const GameSettings *getTargets() const	{ return _targets; }
+	int countSupportedGames() const					{ return _targetCount; }
+	const GameSettings *getSupportedGames() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		assert(_ef);

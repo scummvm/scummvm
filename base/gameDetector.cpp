@@ -247,7 +247,7 @@ void GameDetector::list_games() {
 
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		v = (*iter)->getTargets();
+		v = (*iter)->getSupportedGames();
 		while (v->gameName && v->description) {
 #if 1
 			printf("%-17s%-56s\n", v->gameName, v->description);

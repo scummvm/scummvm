@@ -36,6 +36,7 @@ struct GameSettings;
  * Subclasses for this can be used to wrap both static and dynamic
  * plugins.
  */
+//typedef Common::List<GameSettings> GameList;
 class Plugin {
 public:
 	virtual ~Plugin()				{}
@@ -46,9 +47,10 @@ public:
 	virtual const char *getName() const = 0;
 	virtual int getVersion() const	{ return 0; }	// TODO!
 	
-	virtual int countTargets() const;
-	virtual const GameSettings *getTargets() const = 0;
+	virtual int countSupportedGames() const;
+	virtual const GameSettings *getSupportedGames() const = 0;
 	virtual const GameSettings *findGame(const char *gameName) const;
+	//virtual GameList detectGames(const FSList &fslist) const;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };
