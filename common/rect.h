@@ -59,7 +59,7 @@ struct Rect {
 	int16 height() const { return bottom - top; }
 
 	/*!	@brief check if given position is inside this rectangle
-		
+
 		@param x the horizontal position to check
 		@param y the vertical position to check	
 		

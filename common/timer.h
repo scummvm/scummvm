@@ -65,7 +65,7 @@ public:
 	 * @return	true if the timer was installed successfully, false otherwise
 	 */
 	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
-	
+
 	/**
 	 * Remove the given timer callback. It will not be invoked anymore.
 	 */

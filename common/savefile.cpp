@@ -23,13 +23,11 @@
 #include "common/util.h"
 #include "common/savefile.h"
 
-uint32 SaveFile::read(void *ptr, uint32 size)
-{
+uint32 SaveFile::read(void *ptr, uint32 size) {
 	return fread(ptr, 1, size);
 }
 
-byte SaveFile::readByte()
-{
+byte SaveFile::readByte() {
 	byte b;
 	if (fread(&b, 1, 1) != 1)
 		return 0;
@@ -60,13 +58,11 @@ uint32 SaveFile::readUint32BE() {
 	return (b << 16) | a;
 }
 
-uint32 SaveFile::write(const void *ptr, uint32 size)
-{
+uint32 SaveFile::write(const void *ptr, uint32 size) {
 	return fwrite(ptr, 1, size);
 }
 
-void SaveFile::writeByte(byte value)
-{
+void SaveFile::writeByte(byte value) {
 	fwrite(&value, 1, 1);
 }
 
@@ -90,12 +86,11 @@ void SaveFile::writeUint32BE(uint32 value) {
 	writeUint16BE((uint16)(value & 0xffff));
 }
 
-SaveFile *SaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad)
-{
+SaveFile *SaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
 	char buf[256];
 	join_paths(filename, directory, buf, sizeof(buf));
 	StdioSaveFile *sf = new StdioSaveFile(buf,
-					      (saveOrLoad? "wb":"rb"));
+							(saveOrLoad? "wb":"rb"));
 	if (!sf->is_open()) {
 		delete sf;
 		sf = NULL;
@@ -104,8 +99,7 @@ SaveFile *SaveFileManager::open_savefile(const char *filename, const char *direc
 }
 
 void SaveFileManager::join_paths(const char *filename, const char *directory,
-				 char *buf, int bufsize)
-{
+								 char *buf, int bufsize) {
 	buf[bufsize-1] = '\0';
 	strncpy(buf, directory, bufsize-1);
 

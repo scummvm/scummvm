@@ -83,8 +83,8 @@
  */
 template<int bitFormat>
 void HQ2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
-  
+	register int w1, w2, w3, w4, w5, w6, w7, w8, w9;
+
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
@@ -116,10 +116,10 @@ void HQ2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 
 	// The YUV threshold.
 	static const vector unsigned char vThreshold = (vector unsigned char)((vector unsigned int)0x00300706);
-	
+
 	// Bit pattern mask.
-	static const vector signed int vPatternMask1 = (vector signed int)(0x01,0x02,0x04,0x08);
-	static const vector signed int vPatternMask2 = (vector signed int)(0x10,0x20,0x40,0x80);
+	static const vector signed int vPatternMask1 = (vector signed int)(0x01, 0x02, 0x04, 0x08);
+	static const vector signed int vPatternMask2 = (vector signed int)(0x10, 0x20, 0x40, 0x80);
 
 	// Permutation masks for the incremental vector loading (see below for more information).
 	static const vector unsigned char vPermuteToV1234 = (vector unsigned char)( 4, 5, 6, 7,  8,9,10,11,  20,21,22,23,  16,17,18,19);

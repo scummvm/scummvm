@@ -202,31 +202,29 @@ public:
 
 	/** Show or hide the mouse cursor. */
 	virtual bool show_mouse(bool visible) = 0;
-	
+
 	/** 
 	 * Move ("warp) the mouse cursor to the specified position.
 	 */
 	virtual void warp_mouse(int x, int y) = 0;
-	
+
 	/** Set the bitmap used for drawing the cursor. */
 	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) = 0;
 
 	//@}
-	
-	
 
 	/** @name Events and Time */
 	//@{
 
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 get_msecs() = 0;
-	
+
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delay_msecs(uint msecs) = 0;
-	
+
 	/** Set the timer callback. */
 	virtual void set_timer(TimerProc callback, int interval) = 0;
-	
+
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
@@ -248,7 +246,7 @@ public:
 	 * @param format	the sample type format.
 	 */
 	virtual bool set_sound_proc(SoundProc proc, void *param, SoundFormat format) = 0;
-	
+
 	/**
 	 * Remove any audio callback previously set via set_sound_proc, thus effectively
 	 * stopping all audio output immediately.

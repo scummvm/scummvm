@@ -79,8 +79,8 @@ public:
 
 		Node &operator *() { assert(_node != 0); return *_node; }
 		const Node &operator *() const { assert(_node != 0); return *_node; }
-        const Node *operator->() const { assert(_node != 0); return _node; }
-        bool operator !=(const ConstIterator &iter) const { return _node != iter._node; }
+		const Node *operator->() const { assert(_node != 0); return _node; }
+		bool operator !=(const ConstIterator &iter) const { return _node != iter._node; }
 		void operator ++() {
 			if (!_node)
 				return;

@@ -74,8 +74,8 @@ public:
 
 class String : public ConstString {
 protected:
-	int		*_refCount;
-	int		_capacity;
+	int *_refCount;
+	int _capacity;
 
 public:
 	static const String emptyString;

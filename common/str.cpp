@@ -203,8 +203,8 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 	if (new_len <= _capacity && *_refCount == 1)
 		return;
 
-	int		newCapacity = (new_len <= _capacity) ? _capacity : new_len + 32;
-	char	*newStr = (char *)calloc(1, newCapacity+1);
+	int newCapacity = (new_len <= _capacity) ? _capacity : new_len + 32;
+	char *newStr = (char *)calloc(1, newCapacity+1);
 
 	if (keep_old && _str)
 		memcpy(newStr, _str, _len + 1);

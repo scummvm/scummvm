@@ -261,7 +261,7 @@ const String & ConfigManager::get(const String &key, const String &dom) const {
 
 //	if (_transientDomain.contain(key))
 //		return true;
-	
+
 	if (!dom.isEmpty()) {
 		if (_gameDomains.contains(dom) && _gameDomains[dom].contains(key))
 			return _gameDomains[dom][key];
@@ -273,7 +273,7 @@ const String & ConfigManager::get(const String &key, const String &dom) const {
 		if (iter->_value.contains(key))
 			return iter->_value[key];
 	}
-	
+
 	return _defaultsDomain.get(key);
 }
 

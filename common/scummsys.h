@@ -167,10 +167,10 @@
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 	#define NONSTANDARD_SAVE
-	
+
 	#define FORCEINLINE inline
 	#define CDECL 
-	
+
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;

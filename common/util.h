@@ -59,7 +59,7 @@ private:
 public:
 	RandomSource();
 	void setSeed(uint32 seed);
-	
+
 	/**
 	 * Generates a random unsigned integer in the interval [0, max].
 	 * @param max	the upper bound

@@ -27,7 +27,7 @@
 int gBitFormat = 565;
 
 // RGB-to-YUV lookup table
-int   RGBtoYUV[65536];
+int RGBtoYUV[65536];
 
 static const uint16 dotmatrix_565[16] = {
 	0x01E0, 0x0007, 0x3800, 0x0000,
@@ -262,7 +262,7 @@ void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 MAKE_WRAPPER(TV2x)
 
 static inline uint16 DOT_16(uint16 c, int j, int i) {
-  return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
+	return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
 }
 
 // FIXME: This scaler doesn't quite work. Either it needs to know where on the
@@ -272,8 +272,7 @@ static inline uint16 DOT_16(uint16 c, int j, int i) {
 // exercise for the reader.)
 
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-					int width, int height)
-{
+					int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 

@@ -36,7 +36,7 @@ Timer::Timer(OSystem *system) :
 	_mutex = _system->create_mutex();
 
 	g_timer = this;
-	
+
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		_timerSlots[i].procedure = NULL;
 		_timerSlots[i].interval = 0;
