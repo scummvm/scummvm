@@ -73,7 +73,7 @@ void ScummHelp::updateStrings(byte gameId, int page, String &title,
 		ADD_BIND("Space", "Pause game");
 		ADD_BIND("Ctrl 0-9", "Load game state 1-10");
 		ADD_BIND("Alt 0-9", "Save game state 1-10");
-		ADD_BIND("Alt x, Ctrl q", "Quit");
+		ADD_BIND("Alt x, Ctrl z", "Quit");
 		ADD_BIND("Alt Enter", "Toggle fullscreen");
 		ADD_BIND("[, ]", "Music volume up / down");
 		ADD_BIND("-, +", "Text speed slower / faster");
