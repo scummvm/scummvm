@@ -60,7 +60,6 @@ _pan (0),
 _transpose (0),
 _detune (0),
 _vol_eff (0),
-_song_index (0),
 _track_index (0),
 _loop_to_beat (0),
 _loop_from_beat (0),
@@ -156,19 +155,20 @@ void Player::hook_clear() {
 	memset(&_hook, 0, sizeof(_hook));
 }
 
-int Player::start_seq_sound(int sound) {
+int Player::start_seq_sound (int sound, bool reset_vars) {
 	byte *ptr;
 
-	_song_index = sound;
-	_loop_to_beat = 1;
-	_loop_from_beat = 1;
-	_track_index = 0;
-	_loop_counter = 0;
-	_loop_to_tick = 0;
-	_loop_from_tick = 0;
+	if (reset_vars) {
+		_loop_to_beat = 1;
+		_loop_from_beat = 1;
+		_track_index = 0;
+		_loop_counter = 0;
+		_loop_to_tick = 0;
+		_loop_from_tick = 0;
 
-	setTempo(500000);
-	setSpeed(128);
+		setTempo(500000);
+		setSpeed(128);
+	}
 
 	ptr = _se->findStartOfSound (sound);
 	if (ptr == NULL)
@@ -219,7 +219,7 @@ void Player::uninit_parts() {
 void Player::setSpeed(byte speed) {
 	_speed = speed;
 	if (_parser)
-		_parser->setTimerRate ((_midi->getBaseTempo() * speed) >> 7);
+		_parser->setTimerRate ((_midi->getBaseTempo() * speed) / 128);
 }
 
 void Player::send (uint32 b) {
@@ -719,6 +719,7 @@ void Player::key_off(uint8 chan, uint8 note) {
 bool Player::jump(uint track, uint beat, uint tick) {
 	if (!_parser)
 		return false;
+	_track_index = track;
 	_parser->setTrack (track);
 	if (!_parser->jumpToTick ((beat - 1) * TICKS_PER_BEAT + tick))
 		return false;
@@ -1122,12 +1123,11 @@ void Player::fixAfterLoad() {
 	if (!_midi) {
 		clear();
 	} else {
-		start_seq_sound (_id);
+		start_seq_sound (_id, false);
 		setTempo (_tempo);
-		if (_parser) {
-			_parser->setTrack (_track_index);
-			_parser->jumpToTick (_music_tick);
-		}
+		setSpeed (_speed);
+		if (_parser)
+			_parser->jumpToTick (_music_tick); // start_seq_sound already switched tracks
 		_isMT32 = _se->isMT32 (_id);
 		_isGM = _se->isGM (_id);
 	}
@@ -1174,7 +1174,7 @@ int Player::save_or_load(Serializer *ser) {
 		MKLINE(Player, _vol_chan, sleUint16, VER_V8),
 		MKLINE(Player, _vol_eff, sleByte, VER_V8),
 		MKLINE(Player, _speed, sleByte, VER_V8),
-		MKLINE(Player, _song_index, sleUint16, VER_V8),
+		MK_OBSOLETE(Player, _song_index, sleUint16, VER_V8, VER_V19),
 		MKLINE(Player, _track_index, sleUint16, VER_V8),
 		MK_OBSOLETE(Player, _timer_counter, sleUint16, VER_V8, VER_V17),
 		MKLINE(Player, _loop_to_beat, sleUint16, VER_V8),

@@ -164,7 +164,6 @@ protected:
 	int8 _detune;
 	byte _vol_eff;
 
-	uint _song_index;
 	uint _track_index;
 	uint _loop_to_beat;
 	uint _loop_from_beat;
@@ -219,7 +218,7 @@ protected:
 
 	// Sequencer part
 	void setTempo(uint32 data);
-	int start_seq_sound(int sound);
+	int start_seq_sound (int sound, bool reset_vars = true);
 	int query_param(int param);
 
 public:
