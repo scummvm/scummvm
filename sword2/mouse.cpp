@@ -181,7 +181,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 				pars[0] = 221;	// SystemM234 (M234.wav)
 				pars[1] = FX_LOOP;
-				g_logic.fnPlayMusic(pars);
+				g_logic->fnPlayMusic(pars);
 
 				// restore proper looping_music_id
 				_loopingMusicId = safe_looping_music_id;
@@ -254,7 +254,7 @@ void Sword2Engine::systemMenuMouse(void) {
 				if (_loopingMusicId) {
 					pars[0] = _loopingMusicId;
 					pars[1] = FX_LOOP;
-					g_logic.fnPlayMusic(pars);
+					g_logic->fnPlayMusic(pars);
 
 					// cross-fades into the required music:
 					// - either a restored game tune
@@ -262,7 +262,7 @@ void Sword2Engine::systemMenuMouse(void) {
 					// entering control panels
 				} else {
 					// stop the control panel music
-					g_logic.fnStopMusic(NULL);
+					g_logic->fnStopMusic(NULL);
 				}
 			}
 		}
@@ -604,8 +604,8 @@ void Sword2Engine::normalMouse(void) {
 				// let the existing interaction continue and
 				// start fading down - switch the human off too
 
-				g_logic.fnNoHuman(NULL);
-				g_logic.fnFadeDown(NULL);
+				g_logic->fnNoHuman(NULL);
+				g_logic->fnFadeDown(NULL);
 				EXIT_FADING = 1;	// tell the walker
 			} else if (_oldButton == _buttonClick && _mouseTouching == CLICKED_ID && _mousePointerRes != NORMAL_MOUSE_ID) {
 				// re-click - do nothing - except on floors

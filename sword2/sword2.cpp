@@ -138,6 +138,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	memory = new MemoryManager();
 	res_man = new ResourceManager();
+	g_logic = new Logic();
 	g_sound = _sound = new Sound(_mixer);
 	g_display = _display = new Display(640, 480);
 	gui = new Gui();
@@ -196,6 +197,7 @@ Sword2Engine::~Sword2Engine() {
 	delete _display;
 	delete _debugger;
 	delete gui;
+	delete g_logic;
 	delete res_man;
 	delete memory;
 }
@@ -226,7 +228,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	// res 1 is the globals list
 	file = res_man->openResource(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
-	g_logic.setGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
+	g_logic->setGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
 
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
@@ -240,11 +242,6 @@ int32 Sword2Engine::InitialiseGame(void) {
 
 	debug(5, "CALLING: initialiseFontResourceFlags");
 	initialiseFontResourceFlags();
-
-	// read in all the startup information
-
-	debug(5, "CALLING: Init_start_menu");
-	Init_start_menu();
 
 	debug(5, "CALLING: Init_sync_system");
 	Init_sync_system();
@@ -279,7 +276,7 @@ int32 GameCycle(void) {
 	// do one game cycle
 
 	// got a screen to run?
-	if (g_logic.getRunList()) {
+	if (g_logic->getRunList()) {
 		//run the logic session UNTIL a full loop has been performed
 		do {
 			// reset the graphic 'buildit' list before a new
@@ -292,7 +289,7 @@ int32 GameCycle(void) {
 
 			// keep going as long as new lists keep getting put in
 			// - i.e. screen changes
-		} while (g_logic.processSession());
+		} while (g_logic->processSession());
 	} else {
 		// start the console and print the start options perhaps?
 		g_sword2->_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
@@ -413,7 +410,7 @@ void Sword2Engine::go() {
 				// 'P' while not paused = pause!
 				PauseGame();
 			} else if (c == 'C' && !(_features & GF_DEMO)) {
-				g_logic.fnPlayCredits(NULL);
+				g_logic->fnPlayCredits(NULL);
 			}
 #ifdef _SWORD2_DEBUG
 			else if (c == 'S') {
@@ -490,7 +487,7 @@ void Sword2Engine::Start_game(void) {
 	raw_script = (char *) res_man->openResource(screen_manager_id);
 
 	// run the start script now (because no console)
-	g_logic.runScript(raw_script, raw_data_ad, &null_pc);
+	g_logic->runScript(raw_script, raw_data_ad, &null_pc);
 
 	// close the ScreenManager object
 	res_man->closeResource(screen_manager_id);
@@ -580,10 +577,10 @@ void UnpauseGame(void) {
 	}
 
 	gamePaused = 0;
-	g_logic._unpauseZone = 2;
+	g_logic->_unpauseZone = 2;
 
 	// if mouse is about or we're in a chooser menu
-	if (!g_sword2->_mouseStatus || g_logic._choosing)
+	if (!g_sword2->_mouseStatus || g_logic->_choosing)
 		g_sword2->setMouse(NORMAL_MOUSE_ID);
 }
 

@@ -88,7 +88,7 @@ void Sword2Engine::buildMenu(void) {
 	// objects. Run the 'build_menu' script in the 'menu_master' object
 
 	head = res_man->openResource(MENU_MASTER_OBJECT);
-	g_logic.runScript((char*) head, (char*) head, &null_pc);
+	g_logic->runScript((char*) head, (char*) head, &null_pc);
 	res_man->closeResource(MENU_MASTER_OBJECT);
 
 	// Compare new with old. Anything in master thats not in new gets

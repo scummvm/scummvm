@@ -979,7 +979,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	// down - but if we restored to a different CD the music is stopped
 	// in getCd() when it asks for the CD
 
-	g_logic.fnStopMusic(NULL);
+	g_logic->fnStopMusic(NULL);
 
 	g_sword2->clearFxQueue();	// stops all fx & clears the queue (James22july97)
 	getCd(_cdTab[newCluster] & 3);
@@ -1282,7 +1282,7 @@ void ResourceManager::getCd(int cd) {
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
 
-	g_logic.fnStopMusic(NULL);
+	g_logic->fnStopMusic(NULL);
 
 	textRes = openResource(2283);
 	g_sword2->displayMsg(g_sword2->fetchTextLine(textRes, 5 + cd) + 2, 0);

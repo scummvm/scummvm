@@ -1295,7 +1295,7 @@ public:
 				// fnRegisterMouse and fnRegisterFrame)
 				g_sword2->resetMouseList();
 
-				if (g_logic.processSession())
+				if (g_logic->processSession())
 					error("restore 1st cycle failed??");
 			}
 		}
@@ -1446,7 +1446,7 @@ void Gui::restartControl(void) {
 
 	// reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	g_logic.setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
+	g_logic->setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
 	res_man->closeResource(1);
 
 	DEMO = temp_demo_flag;
@@ -1475,7 +1475,7 @@ void Gui::restartControl(void) {
 
 	g_sword2->_thisScreen.scroll_flag = 2;
 
-	if (g_logic.processSession())
+	if (g_logic->processSession())
 		error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want

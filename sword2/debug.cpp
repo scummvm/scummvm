@@ -152,7 +152,7 @@ void Debugger::buildDebugText(void) {
 			sprintf(buf, "pos: %d", _textNumber & 0xffff);
 			makeDebugTextBlock(buf, 0, 370);
 
- 			sprintf(buf, "TEXT: %d", g_logic._officialTextNumber);
+ 			sprintf(buf, "TEXT: %d", g_logic->_officialTextNumber);
 			makeDebugTextBlock(buf, 0, 385);
 		}
 	}
@@ -269,10 +269,10 @@ void Debugger::buildDebugText(void) {
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
 
-		if (g_logic._speechScriptWaiting) {
+		if (g_logic->_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				g_sword2->fetchObjectName(g_logic._speechScriptWaiting),
-				g_logic._speechScriptWaiting);
+				g_sword2->fetchObjectName(g_logic->_speechScriptWaiting),
+				g_logic->_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
 
@@ -360,7 +360,7 @@ void Debugger::printCurrentInfo(void) {
 		Debug_Printf("%d wide, %d high\n", g_sword2->_thisScreen.screen_wide, g_sword2->_thisScreen.screen_deep);
 		Debug_Printf("%d normal layers\n", g_sword2->_thisScreen.number_of_layers);
 
-		g_logic.examineRunList();
+		g_logic->examineRunList();
 	} else
 		Debug_Printf("No screen\n");
 }

@@ -20,28 +20,10 @@
 #ifndef	_STARTUP
 #define	_STARTUP
 
-namespace Sword2 {
-
 #define	MAX_starts	100
 #define	MAX_description	100
 
-typedef	struct {
-	char description[MAX_description];
-
-	// id of screen manager object
-	uint32 start_res_id;
-
-	//tell the manager which startup you want (if there are more than 1)
-	// (i.e more than 1 entrance to a screen and/or seperate game boots)
-	uint32 key;
-} _startup;
-
-extern _startup start_list[MAX_starts];
-
-uint32 Init_start_menu(void);
-void Con_print_start_menu(void);
-void Con_start(int start);
-
+namespace Sword2 {
 } // End of namespace Sword2
 
 #endif

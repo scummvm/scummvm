@@ -31,7 +31,7 @@
 
 namespace Sword2 {
 
-Logic g_logic;
+Logic *g_logic;
 
 #define LEVEL (_curObjectHub->logic_level)
 

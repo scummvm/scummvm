@@ -40,13 +40,7 @@
 
 namespace Sword2 {
 
-uint32 total_startups = 0;
-uint32 total_screen_managers = 0;
-uint32 res;
-
-_startup start_list[MAX_starts];
-
-uint32 Init_start_menu(void) {
+uint32 Logic::initStartMenu(void) {
 	// Print out a list of all the start points available.
 	// There should be a linc produced file called startup.txt.
 	// This file should contain ascii numbers of all the resource game
@@ -65,7 +59,7 @@ uint32 Init_start_menu(void) {
 
 	// ok, load in the master screen manager file
 
-	total_startups = 0;	// no starts
+	_totalStartups = 0;	// no starts
 
 	debug(5, "initialising start menu");
 
@@ -79,13 +73,13 @@ uint32 Init_start_menu(void) {
 
 	do {
 		while (temp->ad[j] != 13) {	// item must have an #0d0a
-			ascii_start_ids[total_screen_managers][pos] = temp->ad[j];
+			ascii_start_ids[_totalScreenManagers][pos] = temp->ad[j];
 			j++;
 			pos++;
 		}
 
 		// NULL terminate our extracted string
-		ascii_start_ids[total_screen_managers][pos] = 0;
+		ascii_start_ids[_totalScreenManagers][pos] = 0;
 
 		// reset position in current slot between entries
 		pos = 0;
@@ -94,9 +88,9 @@ uint32 Init_start_menu(void) {
 		j += 2;
 
 		// done another
-		total_screen_managers++;
+		_totalScreenManagers++;
 
-		if (total_screen_managers == MAX_starts) {
+		if (_totalScreenManagers == MAX_starts) {
 			debug(5, "WARNING MAX_starts exceeded!");
 			break;
 		}
@@ -105,34 +99,34 @@ uint32 Init_start_menu(void) {
 	// using this method the Gode generated resource.inf must have #0d0a
 	// on the last entry
 
-	debug(5, "%d screen manager objects", total_screen_managers);
+	debug(5, "%d screen manager objects", _totalScreenManagers);
 
 	// Open each object and make a query call. The object must fill in a
 	// startup structure. It may fill in several if it wishes - for
 	// instance a startup could be set for later in the game where
 	// specific vars are set
 
-	for (j = 0; j < total_screen_managers; j++) {
-		res = atoi(ascii_start_ids[j]);
+	for (j = 0; j < _totalScreenManagers; j++) {
+		_startRes = atoi(ascii_start_ids[j]);
 
-		debug(5, "+querying screen manager %d", res);
+		debug(5, "+querying screen manager %d", _startRes);
 
 		// resopen each one and run through the interpretter
 		// script 0 is the query request script
 
 		// if the resource number is within range & it's not a null
-		// resource (James 12mar97)
+		// resource
 		// - need to check in case un-built sections included in
 		// start list
 
-		if (res_man->checkValid(res)) {
-			debug(5, "- resource %d ok", res);
-			raw_script = (char*) res_man->openResource(res);
+		if (res_man->checkValid(_startRes)) {
+			debug(5, "- resource %d ok", _startRes);
+			raw_script = (char*) res_man->openResource(_startRes);
 			null_pc = 0;
-			g_logic.runScript(raw_script, raw_script, &null_pc);
-			res_man->closeResource(res);
+			runScript(raw_script, raw_script, &null_pc);
+			res_man->closeResource(_startRes);
 		} else
-			debug(5, "- resource %d invalid", res);
+			debug(5, "- resource %d invalid", _startRes);
 	}
 
 	memory->freeMemory(temp);
@@ -145,8 +139,8 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// 		1 pointer to ascii message
 
 #ifdef _SWORD2_DEBUG
-	if (total_startups == MAX_starts)
-		error("ERROR: start_list full");
+	if (_totalStartups == MAX_starts)
+		error("ERROR: _startList full");
 
 	// +1 to allow for NULL terminator
 	if (strlen((char*) params[1]) + 1 > MAX_description)
@@ -154,45 +148,45 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 #endif
 
 	// this objects id
-	start_list[total_startups].start_res_id	= res;
+	_startList[_totalStartups].start_res_id	= _startRes;
 
 	// a key code to be passed to a script via a script var to SWITCH in
 	// the correct start
-	start_list[total_startups].key = params[0];
+	_startList[_totalStartups].key = params[0];
 
-	strcpy(start_list[total_startups].description, (char*) params[1]);
+	strcpy(_startList[_totalStartups].description, (char*) params[1]);
 
 	// point to next
-	total_startups++;
+	_totalStartups++;
 
 	return 1;
 }
 
-void Con_print_start_menu(void) {
+void Logic::conPrintStartMenu(void) {
 	// the console 'starts' (or 's') command which lists out all the
 	// registered start points in the game
 
-	if (!total_startups) {
+	if (!_totalStartups) {
 		Debug_Printf("Sorry - no startup positions registered?\n");
 
-		if (!total_screen_managers)
+		if (!_totalScreenManagers)
 			Debug_Printf("There is a problem with startup.inf\n");
 		else
-			Debug_Printf(" (%d screen managers found in startup.inf)\n", total_screen_managers);
+			Debug_Printf(" (%d screen managers found in startup.inf)\n", _totalScreenManagers);
 	} else {
-		for (uint i = 0; i < total_startups; i++)
-			Debug_Printf("%d  (%s)\n", i, start_list[i].description);
+		for (uint i = 0; i < _totalStartups; i++)
+			Debug_Printf("%d  (%s)\n", i, _startList[i].description);
 	}
 }
 
-void Con_start(int start) {
+void Logic::conStart(int start) {
 	char *raw_script;
 	char *raw_data_ad;
 	uint32 null_pc;
 
-	if (!total_startups)
+	if (!_totalStartups)
 		Debug_Printf("Sorry - there are no startups!\n");
-	else if (start >= 0 && start < (int) total_startups) {
+	else if (start >= 0 && start < (int) _totalStartups) {
 		// do the startup as we've specified a legal start
 
 		// restarting - stop sfx, music & speech!
@@ -200,14 +194,14 @@ void Con_start(int start) {
 		g_sword2->clearFxQueue();
 
 		// fade out any music that is currently playing
-		g_logic.fnStopMusic(NULL);
+		fnStopMusic(NULL);
 
 		// halt the sample prematurely
 		g_sound->unpauseSpeech();
 		g_sound->stopSpeech();
 
 		// clean out all resources & flags, ready for a total
-		// restart (James24mar97)
+		// restart
 
 		// remove all resources from memory, including player
 		// object & global variables
@@ -216,38 +210,38 @@ void Con_start(int start) {
 
 		// reopen global variables resource & send address to
 		// interpreter - it won't be moving
-		g_logic.setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
+		setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
 		res_man->closeResource(1);
 
 		// free all the route memory blocks from previous game
 		router.freeAllRouteMem();
 
 		// if there was speech text, kill the text block
-		if (g_logic._speechTextBlocNo) {
-			fontRenderer.killTextBloc(g_logic._speechTextBlocNo);
-			g_logic._speechTextBlocNo = 0;
+		if (_speechTextBlocNo) {
+			fontRenderer.killTextBloc(_speechTextBlocNo);
+			_speechTextBlocNo = 0;
 		}
 
 		// set the key
 
 		// Open George
 		raw_data_ad = (char *) res_man->openResource(8);
-		raw_script = (char *) res_man->openResource(start_list[start].start_res_id);
+		raw_script = (char *) res_man->openResource(_startList[start].start_res_id);
 
 		// denotes script to run
-		null_pc = start_list[start].key & 0xffff;
+		null_pc = _startList[start].key & 0xffff;
 
 		Debug_Printf("Running start %d\n", start);
-		g_logic.runScript(raw_script, raw_data_ad, &null_pc);
+		runScript(raw_script, raw_data_ad, &null_pc);
 
-		res_man->closeResource(start_list[start].start_res_id);
+		res_man->closeResource(_startList[start].start_res_id);
 
 		// Close George
 		res_man->closeResource(8);
 
 		// make sure thre's a mouse, in case restarting while
 		// mouse not available
-		g_logic.fnAddHuman(NULL);
+		fnAddHuman(NULL);
 	} else
 		Debug_Printf("Not a legal start position\n");
 }

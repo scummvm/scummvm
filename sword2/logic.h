@@ -25,6 +25,7 @@
 #include "sword2/header.h"
 #include "sword2/memory.h"
 #include "sword2/speech.h"
+#include "sword2/startup.h"
 #include "sword2/driver/driver96.h"
 
 namespace Sword2 {
@@ -140,14 +141,36 @@ private:
 	void getCorrectCdForSpeech(int32 wavId);
 #endif
 
+	uint32 _totalStartups;
+	uint32 _totalScreenManagers;
+	uint32 _startRes;
+
+	struct _startup {
+		char description[MAX_description];
+
+		// id of screen manager object
+		uint32 start_res_id;
+
+		//tell the manager which startup you want (if there are more
+		// than 1) (i.e more than 1 entrance to a screen and/or
+		// seperate game boots)
+		uint32 key;
+	};
+
+	_startup _startList[MAX_starts];
+
+	uint32 initStartMenu(void);
+
 public:
 	Logic() : _globals(NULL), _kills(0), _debugFlag(false),
 		  _smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0),
 		  _animId(0), _leftClickDelay(0), _rightClickDelay(0),
-		  _defaultResponseId(0), _officialTextNumber(0),
+		  _defaultResponseId(0), _totalStartups(0),
+		  _totalScreenManagers(0), _officialTextNumber(0),
 		  _speechScriptWaiting(0), _speechTextBlocNo(0),
 		  _choosing(false), _unpauseZone(0) {
 		memset(_subjectList, 0, sizeof(_subjectList));
+		initStartMenu();
 		setupOpcodes();
 	}
 
@@ -170,6 +193,9 @@ public:
 	bool _choosing;
 
 	uint32 _unpauseZone;
+
+	void conPrintStartMenu(void);
+	void conStart(int start);
 
 	void setGlobalInterpreterVariables(int32 *vars);
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
@@ -316,7 +342,7 @@ public:
 
 };
 
-extern Logic g_logic;
+extern Logic *g_logic;
 
 } // End of namespace Sword2
 

@@ -197,7 +197,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Starts(int argc, const char **argv) {
-	Con_print_start_menu();
+	g_logic->conPrintStartMenu();
 	return true;
 }
 
@@ -209,7 +209,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 		return true;
 	}
 
-	Con_start(atoi(argv[1]));
+	g_logic->conStart(atoi(argv[1]));
 	g_display->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
@@ -272,7 +272,7 @@ bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_RunList(int argc, const char **argv) {
-	g_logic.examineRunList();
+	g_logic->examineRunList();
 	return true;
 }
 
@@ -612,7 +612,7 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 32" to run the animation testing start script
-	Con_start(32);
+	g_logic->conStart(32);
 
 	// Same as typing "VAR 912 <value>" at the console
 	varSet(912, atoi(argv[1]));
@@ -628,7 +628,7 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	Con_start(33);
+	g_logic->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -647,7 +647,7 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	Con_start(33);
+	g_logic->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
