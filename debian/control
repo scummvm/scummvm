@@ -1,7 +1,7 @@
 Source: scummvm
 Section: interpreters
 Priority: optional
-Maintainer: David Given <dg@hilfy>
+Maintainer: James Brown <ender@enderboi.com>
 Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev
 Standards-Version: 3.5.2
 

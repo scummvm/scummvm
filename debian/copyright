@@ -1,12 +1,13 @@
-This package was debianized by David Given <dg@cowlark.com> on
-Sun, 18 Nov 2001 16:22:12 +0000.
+This package was debianized by James Brown <ender@enderboi.com> on
+Sat, May 04 2002 01:08:00 +08:00, based on the original control files by
+David Given <dg@cowlark.com> on Sun, 18 Nov 2001 16:22:12 +0000.
 
-It was downloaded from http://sourceforge.net/projects/scummvm
+ScummVM was downloaded from http://sourceforge.net/projects/scummvm/
 
 Upstream Author(s): 
  James Brown     <ender@users.sourceforge.net>
  Vincent Hamm	 <yazoo@users.sourceforge.net>
- Ludvig Strigeus <strigeus@users.sourceforge.net> [No longer very active]
+ Ludvig Strigeus <strigeus@users.sourceforge.net>
 
 Copyright:
 
