@@ -163,9 +163,9 @@ void Sound::playSound(int soundID, int offset) {
 	bool music = false;
 	
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
-		debugC(DEBUG_SOUND, "playSound #%d", soundID);
+		debug(0, "playSound #%d", soundID);
 
-		int music_offs, total_size;
+		int music_offs, tunes, total_size;
 		uint skip = 0;
 		char buf[32];
 		File musicFile;
@@ -177,32 +177,31 @@ void Sound::playSound(int soundID, int offset) {
 		}
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
+		musicFile.seek(+8, SEEK_CUR);
+		tunes = musicFile.readUint32LE() - 1;
 
-		musicFile.seek(+40, SEEK_CUR);
+		musicFile.seek(+28, SEEK_CUR);
 		if (musicFile.readUint32LE() == MKID('SGEN')) {
-			// TODO Work out skip calcution
-			//skip = (soundID - 8001) * 21;
-			musicFile.seek(+skip, SEEK_CUR);
+			// Skip to correct music header
+			if (tunes)
+				skip = (soundID - 8000) * 21;
 
 			// Skip to offsets
 			musicFile.seek(+8, SEEK_CUR);
-		
 		} else {
 			// Rewind
-			musicFile.seek(-44, SEEK_CUR);
-
-			// Skip SGHD header (16)
-			musicFile.seek(+16, SEEK_CUR);
+			musicFile.seek(-28, SEEK_CUR);
 
 			// Skip to correct music header
-			if (soundID >= 8000)
-				skip = (soundID - 8001) * 25;
-			else
-				skip = (soundID - 4001) * 25;
-			musicFile.seek(+skip, SEEK_CUR);
-
+			if (tunes) {
+				if (soundID >= 8000)
+					skip = (soundID - 8000) * 25;
+				else
+					skip = (soundID - 4001) * 25;
+			}
 		}
 
+		musicFile.seek(+skip, SEEK_CUR);
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();
 
