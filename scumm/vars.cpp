@@ -107,6 +107,8 @@ void Scumm::setupScummVarsOld()
 	VAR_V6_SCREEN_HEIGHT = 54;
 	VAR_V6_EMSSPACE = 76;
 	VAR_V6_RANDOM_NR = 118;
+
+	VAR_V6_SOUNDMODE = 9;
 }
 
 

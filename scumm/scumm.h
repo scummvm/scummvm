@@ -1313,6 +1313,7 @@ public:
 
 	byte VAR_CUSTOMSCALETABLE;
 	byte VAR_VIDEONAME;
+	byte VAR_V6_SOUNDMODE;
 
 	void launch();
 
