@@ -142,7 +142,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 	voc_hb.voc_version = readS->readUint16LE();
 	voc_hb.voc_fileid = readS->readUint16LE();
 
-	if (snd_res_len - readS->tell() < voc_hb.db_offset + R_VOC_GENBLOCK_LEN) {
+	if ((int32)(snd_res_len - readS->tell()) < (int32)(voc_hb.db_offset + R_VOC_GENBLOCK_LEN)) {
 		return R_FAILURE;
 	}
 
