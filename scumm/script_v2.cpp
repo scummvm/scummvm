@@ -436,13 +436,13 @@ int Scumm_v2::readVar(uint var) {
 		var = _scummVars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-	debug(1, "readvar(%d) = %d", var, _scummVars[var]);
+	debug(6, "readvar(%d) = %d", var, _scummVars[var]);
 	return _scummVars[var];
 }
 
 void Scumm_v2::writeVar(uint var, int value) {
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-	debug(1, "writeVar(%d) = %d", var, value);
+	debug(6, "writeVar(%d) = %d", var, value);
 	_scummVars[var] = value;
 }
 
