@@ -70,7 +70,7 @@ Cutaway::Cutaway(
 		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) 
-: _graphics(graphics), _logic(logic), _resource(resource), _quit(false), _lastSong(0), _songBeforeComic(0) {
+: _logic(logic), _resource(resource), _graphics(graphics), _quit(false), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
 }
