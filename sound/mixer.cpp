@@ -153,7 +153,7 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
-		size >>= 1, rate >>= 1;
+		size >>= 1, rate = (rate>>1) + 1;
 
 	_size = size * mixer->_output_rate / rate;
 }
