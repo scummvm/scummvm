@@ -1733,7 +1733,7 @@ int32 Insane::enemy6initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
-	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 act1damage, /*act2damage,*/ act1x, act2x, retval;
 	int32 dist;
 
 	retval = 0;
