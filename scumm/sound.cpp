@@ -1251,9 +1251,8 @@ int Sound::playBundleSound(char *sound) {
 	free(orig_ptr);
 
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
-		Actor *a = _scumm->derefActorSafe(_scumm->_actorToPrintStrFor, "playBundleSound");
-		if (a)
-			rate = (rate * a->talkFrequency) / 256;
+		Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
+		rate = (rate * a->talkFrequency) / 256;
 	}
 	
 	if (bits == 8) {

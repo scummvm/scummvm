@@ -574,7 +574,12 @@ void CharsetRendererClassic::printChar(int chr) {
 
 		drawBits(vs, dst, mask, drawTop, width, height);
 
-		_vm->blit(back, dst, width, height);
+		int h = height;
+		do {
+			memcpy(back, dst, width);
+			back += _vm->_screenWidth;
+			dst += _vm->_screenWidth;
+		} while (--h);
 	} else {
 		drawBits(vs, dst, mask, drawTop, width, height);
 	}
