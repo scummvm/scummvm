@@ -340,7 +340,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_seekFile),
 		OPCODE(o6_unknownEA),
 		OPCODE(o6_invalid),
 		/* EC */
@@ -1136,6 +1136,26 @@ void ScummEngine_v6he::o6_unknownFA() {
 	len = resStrLen(_scriptPointer);
 	warning("stub o6_unknownFA(%d, \"%s\")", a, _scriptPointer);
 	_scriptPointer += len + 1;
+}
+
+void ScummEngine_v6he::o6_seekFile() {
+	int a, b, c;
+	a = pop();
+	b = pop();
+	c = pop();
+
+	switch (a) {
+	case 1:
+		//seekWrapper(c, b, 0, 0);
+		break;
+	case 2:
+		//seekWrapper(c, b, ?, 1);
+		break;
+	default:
+		break;
+	}
+
+	warning("stub o6_seekFile(%d, %d, %d)", a, b, c);
 }
 
 void ScummEngine_v6he::o6_unknownEA() {
