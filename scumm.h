@@ -1558,9 +1558,10 @@ public:
 	void o6_kernelFunction();
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
+	void o6_setBlastWindow();
 
 	/* Scumm Vars */
-		byte VAR_EGO;
+	byte VAR_EGO;
 	byte VAR_CAMERA_POS_X;
 	byte VAR_HAVE_MSG;
 	byte VAR_ROOM;
