@@ -2054,8 +2054,8 @@ int32 Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 		if (xmax >= _bars[i].xmin && xmin <= _bars[i].xmax) {
 			// skip if not on module 
 			if (ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
-				// okay its a valid line calculate an intersept
-				// wow but all this arithmatic we must have
+				// okay its a valid line calculate an intercept
+				// wow but all this arithmetic we must have
 				// loads of time
 
 				// slope it he slope between the two lines
@@ -2117,7 +2117,7 @@ int32 Router::horizCheck(int32 x1, int32 y, int32 x2) {
 			// skip if not on module
 			if (y >= _bars[i].ymin && y <= _bars[i].ymax) {
 				// okay its a valid line calculate an intercept
-				// wow but all this arithmatic we must have
+				// wow but all this arithmetic we must have
 				// loads of time
 
 				if (_bars[i].dy == 0)
@@ -2164,7 +2164,7 @@ int32 Router::vertCheck(int32 x, int32 y1, int32 y2) {
 			// skip if not on module 
 			if (ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
 				// okay its a valid line calculate an intercept
-				// wow but all this arithmatic we must have
+				// wow but all this arithmetic we must have
 				// loads of time
 
 				// both lines vertical and overlap in x and y

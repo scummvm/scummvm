@@ -113,7 +113,7 @@ int32 Logic::fnGetSync(int32 *params) {
 }
 
 int32 Logic::fnWaitSync(int32 *params) {
-	// keep calling until a sync recieved
+	// keep calling until a sync received
 
 	// params:	none
 

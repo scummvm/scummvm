@@ -1204,7 +1204,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 }
 
 void ResourceManager::getCd(int cd) {
-	// TODO support a seperate path for cd data?
+	// TODO support a separate path for cd data?
 	
 	bool done = false;
 	char sCDName[_MAX_PATH];

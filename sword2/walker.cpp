@@ -651,7 +651,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	char *raw_script_ad;
 	int32 pars[7];
 	int scale;
-	int mega_seperation = params[5];
+	int mega_separation = params[5];
 	_standardHeader	*head;
 
 	ob_logic = (Object_logic*) params[0];
@@ -690,9 +690,9 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 
 		scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256;
 
-		mega_seperation= (mega_seperation * scale) / 256;
+		mega_separation= (mega_separation * scale) / 256;
 
-		debug(5, "seperation %d", mega_seperation);
+		debug(5, "separation %d", mega_separation);
 		debug(5, " target x %d, y %d", g_sword2->_engineMega.feet_x, g_sword2->_engineMega.feet_y);
 
 		if (g_sword2->_engineMega.feet_x < ob_mega->feet_x)
@@ -700,13 +700,13 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 			// Target is left of us, so aim to stand to their
 			// right. Face down_left
 
-			pars[4] = g_sword2->_engineMega.feet_x + mega_seperation;
+			pars[4] = g_sword2->_engineMega.feet_x + mega_separation;
 			pars[6] = 5;
 		} else {
 			// Ok, must be right of us so aim to stand to their
 			// left. Face down_right.
 
-			pars[4] = g_sword2->_engineMega.feet_x - mega_seperation;
+			pars[4] = g_sword2->_engineMega.feet_x - mega_separation;
 			pars[6] = 3;
 		}
 	}

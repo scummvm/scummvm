@@ -153,7 +153,7 @@ private:
 
 		//tell the manager which startup you want (if there are more
 		// than 1) (i.e more than 1 entrance to a screen and/or
-		// seperate game boots)
+		// separate game boots)
 		uint32 key;
 	};
 

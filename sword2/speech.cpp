@@ -562,7 +562,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 }
 
 int32 Logic::fnSpeechProcess(int32 *params) {
-	// Recieve and sequence the commands sent from the conversation
+	// Receive and sequence the commands sent from the conversation
 	// script.
 
 	// We have to do this in a slightly tweeky manner as we can no longer
@@ -821,7 +821,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			ob_speech->ins4 = INS4;
 			ob_speech->ins5 = INS5;
 
-			// the current send has been recieved - i.e. seperate
+			// the current send has been received - i.e. seperate
 			// multiple they-do's
 
 			INS_COMMAND = 0;

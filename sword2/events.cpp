@@ -148,7 +148,7 @@ int32 Logic::fnSendEvent(int32 *params) {
 	// we want to intercept the player character and have him interact
 	// with an object - from script
 
-	// params:	0 id to recieve event
+	// params:	0 id to receive event
 	//		1 script to run
 
 	g_sword2->sendEvent(params[0], params[1]);
