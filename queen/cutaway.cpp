@@ -420,7 +420,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->roomDisplay(_vm->logic()->currentRoom(), mode, object.scale, comPanel, true);
 
-	_currentImage = _vm->logic()->numFrames();
+	_currentImage = _vm->graphics()->numFrames();
 
 	_temporaryRoom = _vm->logic()->currentRoom();
 
@@ -460,7 +460,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 			objectData->name = ABS(objectData->name);
 		}
 
-		_vm->logic()->roomRefreshObject(object.objectNumber);
+		_vm->graphics()->refreshObject(object.objectNumber);
 
 		// Skip doing any anim stuff
 		objectType = OBJECT_TYPE_NO_ANIMATION;
@@ -638,7 +638,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		if ((_vm->logic()->currentRoom() == 47 || _vm->logic()->currentRoom() == 63) &&
 			objAnim[0].object == 1) {
 			//CR 2 - 3/3/95, Special harcoded section to make Oracle work...
-			makeComplexAnimation(_vm->logic()->personFrames(1) - 1,  objAnim, frameCount);
+			makeComplexAnimation(_vm->graphics()->personFrames(1) - 1,  objAnim, frameCount);
 		}
 		else {
 			_currentImage = makeComplexAnimation(_currentImage, objAnim, frameCount);
@@ -856,7 +856,7 @@ void Cutaway::run(char *nextFilename) {
 	int i;
 	nextFilename[0] = '\0';
 
-	_currentImage = _vm->logic()->numFrames();
+	_currentImage = _vm->graphics()->numFrames();
 
 	BobSlot *joeBob = _vm->graphics()->bob(0);
 	int initialJoeX = joeBob->x;
@@ -1128,7 +1128,7 @@ void Cutaway::stop() {
 				}
 
 				if (_vm->logic()->currentRoom() == room)
-					_vm->logic()->roomRefreshObject(objectIndex);
+					_vm->graphics()->refreshObject(objectIndex);
 			}
 
 			if (_vm->logic()->currentRoom() == object->room) {
@@ -1225,13 +1225,13 @@ void Cutaway::updateGameState() {
 				objectData->name        = ABS(objectData->name);
 				if (fromObject > 0)
 					_vm->logic()->objectCopy(fromObject, objectIndex);
-				_vm->logic()->roomRefreshObject(objectIndex);
+				_vm->graphics()->refreshObject(objectIndex);
 			}
 			else if (objectIndex < 0) {               // Hide the object
 				objectIndex             = -objectIndex;
 				ObjectData *objectData  = _vm->logic()->objectData(objectIndex);
 				objectData->name        = -ABS(objectData->name);
-				_vm->logic()->roomRefreshObject(objectIndex);
+				_vm->graphics()->refreshObject(objectIndex);
 			}
 
 			if (areaIndex > 0) {

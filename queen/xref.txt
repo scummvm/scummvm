@@ -124,6 +124,7 @@ Box()						Display::drawBox
 CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
+DISP_OBJECTS()				Graphics::setupRoomObjects
 drawbobs()					Graphics::bobDrawAll
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				*not needed* (included in Display::setupNewRoom)
@@ -132,6 +133,7 @@ MAKE_SPEAK_BOB()			Graphics::bobSetText
 makeanim()					BobSlot::animNormal
 movebob()					BobSlot::move
 pastebob()					Graphics::bobPaste
+REDISP_OBJECT()				Graphics::refreshObject
 requestor()
 shrinkbob()					Graphics::bobShrink
 sortbobs()					Graphics::bobSortAll
@@ -206,17 +208,15 @@ LOGIC
 =====
 CHECK_PLAYER()				QueenEngine::update
 CUTAWAY_SPECIAL()			Logic::removeHotelItemsFromInventory
-DISP_OBJECTS()				Logic::roomSetupObjects
 DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 P3_COPY_FROM()				Logic::objectCopy
 R_MAP()						Logic::handlePinnacleRoom
-REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SETUP_BOBS()				Graphics::bobSetupControl
-SETUP_FURNITURE()			Logic::roomSetupFurniture
+SETUP_FURNITURE()			Graphics::setupRoomFurniture
 SETUP_ROOM()				Logic::changeRoom
 SETUP_SCREENS()				*not needed* (only calls Display::setupPanel)
 SETUP_VARS()				*not needed* (equivalent to Command::clear(), SCENE=0, clear(gamestate))

@@ -114,13 +114,9 @@ public:
 
 	void bobCustomParallax(uint16 roomNum); // CHECK_PARALLAX()
 
-	void bobSetText(
-		BobSlot *bob, 
-		const char *text, 
-		int textX, int textY, 
-		int color, int flags);	// MAKE_SPEAK_BOB
+	void bobSetText(BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
 
-	void textCurrentColor(uint8 color); // ink()
+	void textCurrentColor(uint8 color) { _curTextColor = color; }
 	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
 	void textSetCentered(uint16 y, const char *text, bool outlined = true);
 	void textDrawAll(); // drawtext()
@@ -128,6 +124,8 @@ public:
 	uint16 textWidth(const char *text) const; // textlen()
 	int textCenterX(const char *text) const; // MIDDLE()
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
+
+	void setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount);
 
 	void fillAnimBuffer(const char *anim, AnimFrame *af);
 	uint16 countAnimFrames(const char *anim);
@@ -137,9 +135,25 @@ public:
 	void erasePersonAnim(uint16 bobNum);
 	void eraseAllAnims();
 
+	uint16 refreshObject(uint16 obj);
+
+	void setupRoomFurniture(int16 *furniture, uint16 furnitureCount);
+	void setupRoomObjects();
+
+	uint16 setupPerson(uint16 noun, uint16 curImage);
+	uint16 allocPerson(uint16 noun, uint16 curImage);
+
+	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
+	void clearPersonFrames() { memset(_personFrames, 0, sizeof(_personFrames)); }
+	uint16 numFrames() const { return _numFrames; }
+	uint16 numStaticFurniture() const { return _numFurnitureStatic; }
+	uint16 numAnimatedFurniture() const { return _numFurnitureAnimated; }
+	uint16 numFurnitureFrames() const { return _numFurnitureStatic + _numFurnitureAnimatedLen; }
+
 	void putCameraOnBob(int bobNum) { _cameraBob = bobNum; }
 
 	void update(uint16 room);
+
 
 	enum {
 		MAX_BOBS_NUMBER     =  64,
@@ -166,6 +180,20 @@ private:
 	uint8 _curTextColor;
 
 	AnimFrame _newAnim[17][30];
+
+	uint16 _personFrames[4];
+
+	//! Number of animated furniture in current room
+	uint16 _numFurnitureAnimated;
+
+	//! Number of static furniture in current room
+	uint16 _numFurnitureStatic;
+
+	//! Total number of frames for the animated furniture
+	uint16 _numFurnitureAnimatedLen;
+
+	//! Current number of frames unpacked
+	uint16 _numFrames;
 
 	int _cameraBob;
 

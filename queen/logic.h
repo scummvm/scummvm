@@ -139,22 +139,15 @@ public:
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
 	void roomErase();
-	void roomSetupFurniture();
-	void roomSetupObjects();
-	uint16 roomRefreshObject(uint16 obj);
 	void roomSetup(const char *room, int comPanel, bool inCutaway);
 	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway);
 
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }
 
-	uint16 numFrames() const { return _numFrames; }
-
 	ActorData *findActor(uint16 noun, const char *name = NULL);
 	void initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp);
-	uint16 setupPersonInRoom(uint16 noun, uint16 curImage);
-	uint16 countPersonFrames(uint16 noun, uint16 curImage);
-	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
+	uint16 findPersonNumber(uint16 obj) const;
 
 	void loadJoeBanks(const char *animBank, const char *standBank);
 
@@ -357,21 +350,6 @@ protected:
 	int16 _gameState[GAME_STATE_COUNT];
 
 	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
-	
-	//! Number of animated furniture in current room
-	uint16 _numFurnitureAnimated;
-
-	//! Number of static furniture in current room
-	uint16 _numFurnitureStatic;
-
-	//! Total number of frames for the animated furniture
-	uint16 _numFurnitureAnimatedLen;
-
-	//! Current number of frames unpacked
-	uint16 _numFrames;
-
-	//! Last frame number used for person animation
-	uint16 _personFrames[4];
 
 	//! Inventory items
 	int16 _inventoryItem[4];

@@ -258,10 +258,8 @@ ObjectData* Logic::objectData(int index) const {
 }
 
 
-uint16 Logic::findBob(uint16 obj) {
-	uint16 i;
+uint16 Logic::findBob(uint16 obj) {	
 	uint16 bobnum = 0;
-	uint16 bobtype = 0; // 1 for animated, 0 for static
 
 	if (obj > _numObjects)
 		error("Object index (%i) > _numObjects (%i)", obj, _numObjects);
@@ -276,13 +274,10 @@ uint16 Logic::findBob(uint16 obj) {
 	if(img != 0) {
 		if(img == -3 || img == -4) {
 			// a person object
-			for(i = _roomData[room] + 1; i <= obj; ++i) {
-				img = _objectData[i].image;
-				if(img == -3 || img == -4) {
-					++bobnum;
-				}
-			}
+			bobnum = findPersonNumber(obj);
 		} else {
+			uint16 bobtype = 0; // 1 for animated, 0 for static
+
 			if(img <= -10) {
 				// object has been turned off, but the image order hasn't been updated
 				if(_graphicData[-(img + 10)].lastFrame != 0) {
@@ -299,6 +294,7 @@ uint16 Logic::findBob(uint16 obj) {
 
 			uint16 idxAnimated = 0;
 			uint16 idxStatic = 0;
+			uint16 i;
 			for(i = _roomData[room] + 1; i <= obj; ++i) {
 				img = _objectData[i].image;
 				if(img <= -10) {
@@ -329,12 +325,12 @@ uint16 Logic::findBob(uint16 obj) {
 			if(bobtype == 0) {
 				// static bob
 				if(idxStatic > 0) {
-					bobnum = 19 + _numFurnitureStatic + idxStatic;
+					bobnum = 19 + _vm->graphics()->numStaticFurniture() + idxStatic;
 				}
 			} else {
 				// animated bob
 				if(idxAnimated > 0) {
-					bobnum = 4 + _numFurnitureAnimated + idxAnimated;
+					bobnum = 4 + _vm->graphics()->numAnimatedFurniture() + idxAnimated;
 				}
 			}
 		}
@@ -350,13 +346,7 @@ uint16 Logic::findFrame(uint16 obj) {
 	uint16 room = _objectData[obj].room;
 	int16 img = _objectData[obj].image;
 	if(img == -3 || img == -4) {
-		uint16 bobnum = 0;
-		for(i = _roomData[room] + 1; i <= obj; ++i) {
-			img = _objectData[i].image;
-			if(img == -3 || img == -4) {
-				++bobnum;
-			}
-		}
+		uint16 bobnum = findPersonNumber(obj);
 		if(bobnum <= 3) {
 			framenum = 29 + FRAMES_JOE_XTRA + bobnum;
 		}
@@ -405,7 +395,7 @@ uint16 Logic::findFrame(uint16 obj) {
 
 		// calculate only if there are person frames
 		if(idx > 0) {
-			framenum = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen + idx;
+			framenum = 36 + FRAMES_JOE_XTRA + _vm->graphics()->numFurnitureFrames() + idx;
 		}
 	}
 	return framenum;
@@ -482,10 +472,7 @@ void Logic::roomErase() {
 	}
 
 	// invalidates all persons animations
-	uint16 i;
-	for (i = 0; i <= 3; ++i) {
-		_personFrames[i] = 0;
-	}
+	_vm->graphics()->clearPersonFrames();
 	_vm->graphics()->eraseAllAnims();
 
 	uint16 cur = _roomData[_oldRoom] + 1;
@@ -509,303 +496,6 @@ void Logic::roomErase() {
 }
 
 
-void Logic::roomSetupFurniture() {
-	int16 gstate[9];
-	_numFurnitureStatic = 0;
-	_numFurnitureAnimated = 0;
-	_numFurnitureAnimatedLen = 0;
-	uint16 curImage = 36 + FRAMES_JOE_XTRA;
-
-	// count the furniture and update gameState
-	uint16 furnitureTotal = 0;
-	uint16 i;
-	for (i = 1; i <= _numFurniture; ++i) {
-		if (_furnitureData[i].room == _currentRoom) {
-			++furnitureTotal;
-			gstate[furnitureTotal] = _furnitureData[i].gameStateValue;
-		}
-	}
-	if (furnitureTotal == 0) {
-		return;
-	}
-
-	// unpack the furniture from the bank 15
-	// there are 3 kinds :
-	// - static (bobs), gamestate range = ]0;5000]
-	// - animated (bobs), gamestate range = ]0;5000]
-	// - static (paste downs), gamestate range = [5000; [
-
-	// unpack the static bobs
-	for	(i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = gstate[i];
-		if (obj > 0 && obj <= 5000) {
-			GraphicData *pgd = &_graphicData[obj];
-			if (pgd->lastFrame == 0) {
-				++_numFurnitureStatic;
-				++curImage;
-				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
-				++_numFrames;
-				BobSlot *pbs = _vm->graphics()->bob(19 + _numFurnitureStatic);
-				pbs->curPos(pgd->x, pgd->y);
-				pbs->frameNum = curImage;
-			}
-		}
-	}
-
-	// unpack the animated bobs
-	uint16 curBob = 0;
-	for  (i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = gstate[i];
-		if (obj > 0 && obj <= 5000) {
-			GraphicData *pgd = &_graphicData[obj];
-
-			bool rebound = false;
-			int16 lastFrame = pgd->lastFrame;
-			if (lastFrame < 0) {
-				rebound = true;
-				lastFrame = -lastFrame;
-			}
-
-			if (lastFrame > 0) {
-				_numFurnitureAnimatedLen += lastFrame - pgd->firstFrame + 1;
-				++_numFurnitureAnimated;
-				uint16 image = curImage + 1;
-				int k;
-				for (k = pgd->firstFrame; k <= lastFrame; ++k) {
-					++curImage;
-					_vm->bankMan()->unpack(k, curImage, 15);
-					++_numFrames;
-				}
-				BobSlot *pbs = _vm->graphics()->bob(5 + curBob);
-				pbs->animNormal(image, curImage, pgd->speed / 4, rebound, false);
-				pbs->curPos(pgd->x, pgd->y);
-				++curBob;
-			}
-		}
-	}
-
-	// unpack the paste downs
-	++curImage;
-	for  (i = 1; i <= furnitureTotal; ++i) {
-		if (gstate[i] > 5000) {;
-			_vm->graphics()->bobPaste(gstate[i] - 5000, curImage);
-		}
-	}
-}
-
-
-void Logic::roomSetupObjects() {
-	uint16 i;
-	// furniture frames are reserved in ::roomSetupFurniture(), we append objects 
-	// frames after the furniture ones.
-	uint16 curImage = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen;
-	uint16 firstRoomObj = currentRoomData() + 1;
-	uint16 lastRoomObj = _roomData[_currentRoom + 1];
-	uint16 numObjectStatic = 0;
-	uint16 numObjectAnimated = 0;
-	uint16 curBob;
-
-	// invalidates all Bobs for persons (except Joe's one)
-	for (i = 1; i <= 3; ++i) {
-		_vm->graphics()->bob(i)->active = false;
-	}
-
-	// static/animated Bobs
-	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
-		ObjectData *pod = &_objectData[i];
-		// setup blanks bobs for turned off objects (in case 
-		// you turn them on again)
-		if (pod->image == -1) {
-			// static OFF Bob
-			curBob = 20 + _numFurnitureStatic + numObjectStatic;
-			++numObjectStatic;
-			// create a blank frame for the for the OFF object
-			++_numFrames;
-			++curImage;
-		} else if(pod->image == -2) {
-			// animated OFF Bob
-			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
-			++numObjectAnimated;
-		} else if(pod->image > 0 && pod->image < 5000) {
-			GraphicData *pgd = &_graphicData[pod->image];
-			int16 lastFrame = pgd->lastFrame;
-			bool rebound = false;
-			if (lastFrame < 0) {
-				lastFrame = -lastFrame;
-				rebound = true;
-			}
-			if (pgd->firstFrame < 0) {
-				// FIXME: if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
-				curBob = 5 + _numFurnitureAnimated;
-				_vm->graphics()->setupObjectAnim(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
-				curImage += pgd->lastFrame;
-				++numObjectAnimated;
-			} else if (lastFrame != 0) {
-				// animated objects
-				uint16 j;
-				uint16 firstFrame = curImage + 1;
-				for (j = pgd->firstFrame; j <= lastFrame; ++j) {
-					++curImage;
-					_vm->bankMan()->unpack(j, curImage, 15);
-					++_numFrames;
-				}
-				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
-				if (pod->name > 0) {
-					BobSlot *pbs = _vm->graphics()->bob(curBob);
-					pbs->curPos(pgd->x, pgd->y);
-					pbs->frameNum = firstFrame;
-					if (pgd->speed > 0) {
-						pbs->animNormal(firstFrame, curImage, pgd->speed / 4, rebound, false);
-					}
-				}
-				++numObjectAnimated;
-			} else {
-				// static objects
-				curBob = 20 + _numFurnitureStatic + numObjectStatic;
-				++curImage;
-				_vm->graphics()->bobClear(curBob);
-
-				// FIXME: if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
-
-				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
-				++_numFrames;
-				if (pod->name > 0) {
-					BobSlot *pbs = _vm->graphics()->bob(curBob);
-					pbs->curPos(pgd->x, pgd->y);
-					pbs->frameNum = curImage;
-				}
-				++numObjectStatic;
-			}
-		}
-	}
-
-	// persons Bobs
-	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
-		ObjectData *pod = &_objectData[i];
-		if (pod->image == -3 || pod->image == -4) {
-			debug(6, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
-			uint16 noun = i - currentRoomData();
-			if (pod->name > 0) {
-				curImage = setupPersonInRoom(noun, curImage);
-			} else {
-				curImage = countPersonFrames(noun, curImage);
-			}
-		}
-	}
-
-	// paste downs list
-	++curImage;
-	_numFrames = curImage;
-	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
-		ObjectData *pod = &_objectData[i];
-		if (pod->name > 0 && pod->image > 5000) {
-			_vm->graphics()->bobPaste(pod->image - 5000, curImage);
-		}
-	}
-}
-
-
-uint16 Logic::roomRefreshObject(uint16 obj) {
-	uint16 curImage = _numFrames;
-
-	if (obj == 0 || obj > _numObjects) {
-		warning("Invalid object number %d", obj);
-		return curImage;
-	}
-
-	ObjectData *pod = &_objectData[obj];
-	if (pod->image == 0) {
-		return curImage;
-	}
-
-	debug(6, "Logic::roomRefreshObject(%X, %s)", obj, _objName[ABS(pod->name)]);
-
-	// check the object is in the current room
-	if (pod->room != _currentRoom) {
-		debug(6, "Refreshing an object (%i=%s) not in current room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
-		return curImage;
-	}
-
-	// find bob for the object
-	uint16 curBob = findBob(obj);
-	BobSlot *pbs = _vm->graphics()->bob(curBob);
-
-	if (pod->image == -3 || pod->image == -4) {
-		// a person object
-		if (pod->name <= 0) {
-			_vm->graphics()->bobClear(curBob);
-		} else {
-			// find person number
-			uint16 pNum = 1;
-			uint16 i = currentRoomData() + 1;
-			while (i < obj) {
-				if (_objectData[i].image == -3 || _objectData[i].image == -4) {
-					++pNum;
-				}
-				++i;
-			}
-			curImage = _personFrames[pNum] - 1;
-			if (_personFrames[pNum] == 0) {
-				curImage = _numFrames;
-				_personFrames[pNum] = curImage;
-			}
-			curImage = setupPersonInRoom(obj - currentRoomData(), curImage);
-		}
-		return curImage;
-	}
-
-	// find frame used for object
-	curImage = findFrame(obj);
-
-	if (pod->name < 0 || pod->image < 0) {
-		// object is hidden or disabled
-		_vm->graphics()->bobClear(curBob);
-		return curImage;
-	}
-
-	int image = pod->image;
-	if (image > 5000) {
-		image -= 5000;
-	}
-	
-	GraphicData *pgd = &_graphicData[image];
-	bool rebound = false;
-	int16 lastFrame = pgd->lastFrame;
-	if (lastFrame < 0) {
-		lastFrame = -lastFrame;
-		rebound = true;
-	}
-	if (pgd->firstFrame < 0) {
-		_vm->graphics()->setupObjectAnim(pgd, curImage, curBob, pod->name != 0);
-		curImage += pgd->lastFrame - 1;
-	} else if (lastFrame != 0) {
-		// turn on an animated bob
-		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
-		pbs->animating = false;
-		uint16 firstImage = curImage;
-		--curImage;
-		uint16 j;
-		for (j = pgd->firstFrame; j <= lastFrame; ++j) {
-			++curImage;
-			_vm->bankMan()->unpack(j, curImage, 15);
-		}
-		pbs->curPos(pgd->x, pgd->y);
-		pbs->frameNum = firstImage;
-		if (pgd->speed > 0) {
-			pbs->animNormal(firstImage, curImage, pgd->speed / 4, rebound, false);
-		}
-	} else {
-		// frame 2 is used as a buffer frame to prevent BOB flickering
-		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
-		_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
-		pbs->curPos(pgd->x, pgd->y);
-		pbs->frameNum = curImage;
-	}
-
-	return curImage;
-}
-
-
 void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	// load backdrop image, init dynalum, setup colors
 	_vm->display()->setupNewRoom(room, _currentRoom);
@@ -813,23 +503,18 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	// setup graphics to enter fullscreen/panel mode
 	_vm->display()->screenMode(comPanel, inCutaway);
 
-	// reset sprites table (bounding box...)
-	_vm->graphics()->bobClearAll();
-
-	// load/setup objects associated to this room
-	char filename[20];	
-	sprintf(filename, "%s.BBK", room);
-	_vm->bankMan()->load(filename, 15);
-
-	_numFrames = 37 + FRAMES_JOE_XTRA;
-	roomSetupFurniture();
-	roomSetupObjects();
-
-	if (_currentRoom >= 90) {
-		_vm->graphics()->putCameraOnBob(0);
-	}
-
 	_vm->grid()->setupNewRoom(_currentRoom, _roomData[_currentRoom]);
+
+	int16 furn[9];
+	uint16 furnTot = 0;
+	for (uint16 i = 1; i <= _numFurniture; ++i) {
+		if (_furnitureData[i].room == _currentRoom) {
+			++furnTot;
+			furn[furnTot] = _furnitureData[i].gameStateValue;
+		}
+	}
+	_vm->graphics()->setupNewRoom(room, _currentRoom, furn, furnTot);
+
 	_vm->display()->forceFullRefresh();
 
 }
@@ -869,17 +554,11 @@ ActorData *Logic::findActor(uint16 noun, const char *name) {
 	}
 
 	// search Bob number for the person
-	uint16 i;
-	uint16 bobNum = 0;
-	for (i = currentRoomData() + 1; i <= obj; ++i) {
-		img = _objectData[i].image;
-		if (img == -3 || img == -4) {
-			++bobNum;
-		}
-	}
+	uint16 bobNum = findPersonNumber(obj);
 
 	// search for a matching actor
 	if (bobNum > 0) {
+		uint16 i;
 		for (i = 1; i <= _numActors; ++i) {
 			ActorData *pad = &_actorData[i];
 			if (pad->room == _currentRoom && gameState(pad->gsSlot) == pad->gsValue) {
@@ -916,50 +595,16 @@ void Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person 
 }
 
 
-uint16 Logic::setupPersonInRoom(uint16 noun, uint16 curImage) {
-	if (noun == 0) {
-		warning("Trying to setup person 0");
-		return curImage;
+uint16 Logic::findPersonNumber(uint16 obj) const {
+	uint16 num = 0;
+	uint16 i;
+	for (i = currentRoomData() + 1; i <= obj; ++i) {
+		int16 img = _objectData[i].image;
+		if (img == -3 || img == -4) {
+			++num;
+		}
 	}
-
-	Person p;
-	initPerson(noun, "", true, &p);
-
-	const ActorData *pad = p.actor;
-	uint16 scale = 100;
-	uint16 a = _vm->grid()->findAreaForPos(GS_ROOM, pad->x, pad->y);
-	if (a > 0) {
-		// person is not standing in the area box, scale it accordingly
-		scale = _vm->grid()->area(_currentRoom, a)->calcScale(pad->y);
-	}
-
-	_vm->bankMan()->unpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
-	uint16 obj = currentRoomData() + noun;
-	BobSlot *pbs = _vm->graphics()->bob(pad->bobNum);
-	pbs->curPos(pad->x, pad->y);
-	pbs->scale = scale;
-	pbs->frameNum = p.bobFrame;
-	pbs->xflip = (_objectData[obj].image == -3); // person is facing left
-
-	debug(6, "Logic::personSetup(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
-
-	if (p.anim != NULL) {
-		_personFrames[pad->bobNum] = curImage + 1;
-		curImage = _vm->graphics()->setupPersonAnim(pad, p.anim, curImage);
-	} else {
-		_vm->graphics()->erasePersonAnim(pad->bobNum);
-	}
-	return curImage;
-}
-
-
-uint16 Logic::countPersonFrames(uint16 noun, uint16 curImage) {
-	ActorData *pad = findActor(noun);
-	if (pad != NULL && pad->anim != 0) {
-		curImage += _vm->graphics()->countAnimFrames(_aAnim[pad->anim]);
-		_personFrames[pad->bobNum] = curImage + 1;
-	}
-	return curImage;
+	return num;
 }
 
 
@@ -2231,7 +1876,7 @@ void Logic::asmMakeLightningHitPlane() {
 	lightningBob->y = 0;
 
 	// 23/2/95 - Play lightning SFX
-	_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+	_vm->sound()->playSfx(currentRoomSfx());
 
 	_vm->bankMan()->unpack(18, lightningBob->frameNum, 15);
 	_vm->bankMan()->unpack(4,  planeBob    ->frameNum, 15);

@@ -394,14 +394,14 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		} else {
 			od->image = com->imageOrder;
 		}
-		_vm->logic()->roomRefreshObject(_state.subject[0]);
+		_vm->graphics()->refreshObject(_state.subject[0]);
 	} else {
 		// this object is not being updated by command list, see if
 		// it has another image copied to it
 		if (_state.subject[0] > 0) {
 			// an object (not an item)
 			if (_vm->logic()->objectData(_state.subject[0])->image != oldImage) {
-				_vm->logic()->roomRefreshObject(_state.subject[0]);
+				_vm->graphics()->refreshObject(_state.subject[0]);
 			}
 		}
 	}
@@ -1144,7 +1144,7 @@ void Command::setObjects(uint16 command) {
 				if (dstObj != _state.subject[0]) {
 					// if the new object we have updated is on screen and
 					// is not current object then update it
-					_vm->logic()->roomRefreshObject(dstObj);
+					_vm->graphics()->refreshObject(dstObj);
 				}
 			} else {
 				// hide the object
@@ -1153,7 +1153,7 @@ void Command::setObjects(uint16 command) {
 					// may need to turn BOBs off for objects to be hidden on current 
 					// screen ! if the new object we have updated is on screen and
 					// is not current object then update it
-					_vm->logic()->roomRefreshObject(dstObj);
+					_vm->graphics()->refreshObject(dstObj);
 				}
 			}
 		}

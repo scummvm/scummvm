@@ -590,7 +590,7 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 				if (0 == strcmp(person->name, "JOE"))
 					_vm->walk()->moveJoe(0, x, y, _vm->input()->cutawayRunning());
 				else
-					_vm->walk()->movePerson(person, x, y, _vm->logic()->numFrames(), 0);
+					_vm->walk()->movePerson(person, x, y, _vm->graphics()->numFrames(), 0);
 				index += 11;
 				// if(JOEWALK==3) CUTQUIT=0;
 				// XXX personWalking = true;
@@ -737,9 +737,9 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 
 			offset += 4;
 
-			_vm->bankMan()->unpack(frame, _vm->logic()->numFrames(), bankNum);
+			_vm->bankMan()->unpack(frame, _vm->graphics()->numFrames(), bankNum);
 
-			bob2->frameNum = _vm->logic()->numFrames();
+			bob2->frameNum = _vm->graphics()->numFrames();
 			bob2->scale = 100;
 			bob2->active = true;
 			bob2->x = x;
@@ -984,7 +984,7 @@ void Talk::speakSegment(
 			// Dont turn AMAL animation off, and dont manually anim person
 			command = SPEAK_ORACLE;
 			oracle = true;
-			uint16 frameNum = _vm->logic()->personFrames(bobNum);
+			uint16 frameNum = _vm->graphics()->personFrames(bobNum);
 			for (i = 5; i <= 8; ++i) {
 				_vm->bankMan()->unpack(i, frameNum, bankNum);
 				++frameNum;
@@ -1111,7 +1111,7 @@ void Talk::speakSegment(
 	_vm->graphics()->textClear(0,198);
 
 	if (oracle) {
-		uint16 frameNum = _vm->logic()->personFrames(bobNum);
+		uint16 frameNum = _vm->graphics()->personFrames(bobNum);
 		for (i = 1; i <= 4; ++i) {
 			_vm->bankMan()->unpack(i, frameNum, bankNum);
 			++frameNum;

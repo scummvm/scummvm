@@ -24,6 +24,7 @@
 
 #include "queen/bankman.h"
 #include "queen/display.h"
+#include "queen/grid.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
@@ -501,337 +502,6 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 }
 
 
-void Graphics::textCurrentColor(uint8 color) {
-	_curTextColor = color;
-}
-
-
-void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
-	if (y < GAME_SCREEN_HEIGHT) {
-		if (x == 0) x = 1;
-		if (y == 0) y = 1;
-		TextSlot *pts = &_texts[y];
-
-		pts->x = x;
-		pts->color = _curTextColor;
-		pts->outlined = outlined;
-		pts->text = text;
-	}
-}
-
-
-void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
-	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
-	textSet(x, y, text, outlined);
-}
-
-
-void Graphics::textDrawAll() {
-	int y;
-	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
-		const TextSlot *pts = &_texts[y];
-		if (!pts->text.isEmpty()) {
-			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
-		}
-	}
-}
-
-
-void Graphics::textClear(uint16 y1, uint16 y2) {
-	while (y1 <= y2) {
-		_texts[y1].text.clear();
-		++y1;
-	}
-}
-
-
-uint16 Graphics::textWidth(const char* text) const {
-	return _vm->display()->textWidth(text);
-}
-
-
-void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
-	while (true) {
-		sscanf(anim, "%3hu,%3hu", &af->frame, &af->speed);
-		if (af->frame == 0)
-			break;
-		anim += 8;
-		++af;
-	}
-}
-
-
-uint16 Graphics::countAnimFrames(const char *anim) {
-	AnimFrame afbuf[30];
-	fillAnimBuffer(anim, afbuf);
-
-	bool frames[256];
-	memset(frames, 0, sizeof(frames));
-	uint16 count = 0;
-	AnimFrame *af = afbuf;
-	for ( ; af->frame != 0; ++af) {
-		uint16 frameNum = af->frame;
-		if (frameNum > 500) {
-			frameNum -= 500;
-		}
-		if (!frames[frameNum]) {
-			frames[frameNum] = true;
-			++count;
-		}
-	}
-	return count;
-}
-
-
-void Graphics::setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
-	int16 tempFrames[20];
-	memset(tempFrames, 0, sizeof(tempFrames));
-	uint16 numTempFrames = 0;
-	uint16 i, j;
-	for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
-		const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
-		if (pga->keyFrame == gd->firstFrame) {
-			int16 frame = pga->frame;
-			if (frame > 500) { // SFX
-				frame -= 500;
-			}
-			bool foundMatchingFrame = false;
-			for (j = 0; j < numTempFrames; ++j) {
-				if (tempFrames[j] == frame) {
-					foundMatchingFrame = true;
-					break;
-				}
-			}
-			if (!foundMatchingFrame) {
-				assert(numTempFrames < 20);
-				tempFrames[numTempFrames] = frame;
-				++numTempFrames;
-			}
-		}
-	}
-
-	// sort found frames ascending
-	bool swap = true;
-	while (swap) {
-		swap = false;
-		for (i = 0; i < numTempFrames - 1; ++i) {
-			if (tempFrames[i] > tempFrames[i + 1]) {
-				SWAP(tempFrames[i], tempFrames[i + 1]);
-				swap = true;
-			}
-		}
-	}
-
-	// queen.c l.962-980 / l.1269-1294
-	for (i = 0; i < gd->lastFrame; ++i) {
-		_vm->bankMan()->unpack(ABS(tempFrames[i]), firstImage + i, 15);
-	}
-	BobSlot *pbs = bob(bobNum);
-	pbs->animating = false;
-	if (visible) {
-		pbs->curPos(gd->x, gd->y);
-		if (tempFrames[0] < 0) {
-			pbs->xflip = true;
-		}
-		AnimFrame *paf = _newAnim[bobNum];
-		for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
-			const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
-			if (pga->keyFrame == gd->firstFrame) {
-				uint16 frameNr = 0;
-				for (j = 1; j <= gd->lastFrame; ++j) {
-					if (pga->frame > 500) {
-						if (pga->frame - 500 == tempFrames[j - 1]) {
-							frameNr = j + firstImage - 1 + 500;
-						}
-					} else if (pga->frame == tempFrames[j - 1]) {
-						frameNr = j + firstImage - 1;
-					}
-				}
-				paf->frame = frameNr;
-				paf->speed = pga->speed;
-				++paf;
-			}
-		}
-		paf->frame = 0;
-		paf->speed = 0;
-		pbs->animString(_newAnim[bobNum]);
-	}
-}
-
-
-uint16 Graphics::setupPersonAnim(const ActorData *ad, const char *anim, uint16 curImage) {
-	debug(9, "Graphics::setupPersonAnim(%s, %d)", anim, curImage);
-	AnimFrame *animFrames = _newAnim[ad->bobNum];
-	fillAnimBuffer(anim, animFrames);
-	uint16 frameCount[256];
-	memset(frameCount, 0, sizeof(frameCount));
-	AnimFrame *af = animFrames;
-	for ( ; af->frame != 0; ++af) {
-		uint16 frameNum = af->frame;
-		if (frameNum > 500) {
-			frameNum -= 500;
-		}
-		if (!frameCount[frameNum]) {
-			frameCount[frameNum] = 1;
-		}
-	}
-	uint16 i, n = 1;
-	for (i = 1; i < 256; ++i) {
-		if (frameCount[i]) {
-			frameCount[i] = n;
-			++n;
-		}
-	}
-	af = animFrames;
-	for ( ; af->frame != 0; ++af) {
-		if (af->frame > 500) {
-			af->frame = curImage + frameCount[af->frame - 500] + 500;
-		} else {
-			af->frame = curImage + frameCount[af->frame];
-		}
-	}
-
-	// unpack necessary frames
-	for (i = 1; i < 256; ++i) {
-		if (frameCount[i]) {
-			++curImage;
-			_vm->bankMan()->unpack(i, curImage, ad->bankNum);
-		}
-	}
-
-	// start animation
-	bob(ad->bobNum)->animString(animFrames);
-	return curImage;
-}
-
-
-void Graphics::resetPersonAnim(uint16 bobNum) {
-	if (_newAnim[bobNum][0].frame != 0) {
-		bob(bobNum)->animString(_newAnim[bobNum]);
-	}
-}
-
-
-void Graphics::erasePersonAnim(uint16 bobNum) {
-	_newAnim[bobNum][0].frame = 0;
-	BobSlot *pbs = bob(bobNum);
-	pbs->animating = false;
-	pbs->anim.string.buffer = NULL;
-}
-
-
-void Graphics::eraseAllAnims() {
-	for (int i = 1; i <= 16; ++i) {
-		_newAnim[i][0].frame = 0;
-	}
-}
-
-
-void BamScene::updateCarAnimation() {
-	if (_flag != F_STOP) {
-		const BamDataBlock *bdb = &_carData[_index];
-
-		// Truck
-		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
-		_obj1->frameNum = 40 + bdb->obj1.frame;
-
-		// Rico
-		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
-		_obj2->frameNum = 30 + bdb->obj2.frame;
-
-		// FX
-		_objfx->curPos(bdb->fx.x, bdb->fx.y);
-		_objfx->frameNum = 41 + bdb->fx.frame;
-
-		if (bdb->sfx < 0) {
-			_vm->sound()->playSong(-bdb->sfx);
-		}
-
-		if (bdb->sfx == 99) {
-			_index = 0;
-		}
-		else {
-			++_index;
-		}
-
-		if (bdb->sfx == 2) {
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
-		}
-	}
-}
-
-
-void BamScene::updateFightAnimation() {
-	if (_flag != F_STOP) {
-		const BamDataBlock *bdb = &_fightData[_index];
-
-		// Frank
-		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
-		_obj1->frameNum = 40 + ABS(bdb->obj1.frame);
-		_obj1->xflip = (bdb->obj1.frame < 0);
-
-		// Robot
-		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
-		_obj2->frameNum = 40 + ABS(bdb->obj2.frame);
-		_obj2->xflip = (bdb->obj2.frame < 0);
-	
-		// FX
-		_objfx->curPos(bdb->fx.x, bdb->fx.y);
-		_objfx->frameNum = 40 + ABS(bdb->fx.frame);
-		_objfx->xflip = (bdb->fx.frame < 0);
-
-		if (bdb->sfx < 0) {
-			_vm->sound()->playSong(-bdb->sfx);
-		}
-
-		++_index;
-		switch (bdb->sfx) {
-		case 0: // nothing, so reset shaked screen if necessary
-			if (_screenShaked) {
-				OSystem::instance()->set_shake_pos(0);
-				_screenShaked = false;
-			}
-			break;
-		case 1: // shake screen
-			OSystem::instance()->set_shake_pos(3);
-			_screenShaked = true;
-			break;
-		case 2: // play background sfx
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
-			break;
-		case 3: // play background sfx and shake screen
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
-			OSystem::instance()->set_shake_pos(3);
-			_screenShaked = true;
-			break;
-		case 99: // end of BAM data
-			_index = 0;
-			const BamDataBlock *data[] = {
-				_fight1Data, 
-				_fight2Data,
-				_fight3Data
-			};
-			_fightData = data[_vm->randomizer.getRandomNumber(2)];
-			if (_flag == F_REQ_STOP) {
-				_flag = F_STOP;
-			}
-			break;
-		}
-	}
-}
-
-
-void Graphics::update(uint16 room) {
-	bobSortAll();
-	if (_cameraBob >= 0) {
-		_vm->display()->horizontalScrollUpdate(_bobs[_cameraBob].x);
-	}
-	bobCustomParallax(room);
-	_vm->display()->prepareUpdate();
-	bobDrawAll();
-	textDrawAll();
-}
-
 void Graphics::bobSetText(
 		BobSlot *pbs, 
 		const char *text, 
@@ -946,8 +616,578 @@ void Graphics::bobSetText(
 	}
 }
 
+
+void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
+	if (y < GAME_SCREEN_HEIGHT) {
+		if (x == 0) x = 1;
+		if (y == 0) y = 1;
+		TextSlot *pts = &_texts[y];
+
+		pts->x = x;
+		pts->color = _curTextColor;
+		pts->outlined = outlined;
+		pts->text = text;
+	}
+}
+
+
+void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
+	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
+	textSet(x, y, text, outlined);
+}
+
+
+void Graphics::textDrawAll() {
+	int y;
+	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
+		const TextSlot *pts = &_texts[y];
+		if (!pts->text.isEmpty()) {
+			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
+		}
+	}
+}
+
+
+void Graphics::textClear(uint16 y1, uint16 y2) {
+	while (y1 <= y2) {
+		_texts[y1].text.clear();
+		++y1;
+	}
+}
+
+
+uint16 Graphics::textWidth(const char* text) const {
+	return _vm->display()->textWidth(text);
+}
+
+
 int Graphics::textCenterX(const char *text) const {
 	return 160 - textWidth(text) / 2;
+}
+
+
+void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount) {
+	// reset sprites table (bounding box...)
+	bobClearAll();
+
+	// load/setup objects associated to this room
+	char filename[20];	
+	sprintf(filename, "%s.BBK", room);
+	_vm->bankMan()->load(filename, 15);
+
+	_numFrames = 37 + FRAMES_JOE_XTRA;
+	setupRoomFurniture(furniture, furnitureCount);
+	setupRoomObjects();
+
+	if (roomNum >= 90) {
+		putCameraOnBob(0);
+	}
+}
+
+
+void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
+	while (true) {
+		sscanf(anim, "%3hu,%3hu", &af->frame, &af->speed);
+		if (af->frame == 0)
+			break;
+		anim += 8;
+		++af;
+	}
+}
+
+
+uint16 Graphics::countAnimFrames(const char *anim) {
+	AnimFrame afbuf[30];
+	fillAnimBuffer(anim, afbuf);
+
+	bool frames[256];
+	memset(frames, 0, sizeof(frames));
+	uint16 count = 0;
+	AnimFrame *af = afbuf;
+	for ( ; af->frame != 0; ++af) {
+		uint16 frameNum = af->frame;
+		if (frameNum > 500) {
+			frameNum -= 500;
+		}
+		if (!frames[frameNum]) {
+			frames[frameNum] = true;
+			++count;
+		}
+	}
+	return count;
+}
+
+
+void Graphics::setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
+	int16 tempFrames[20];
+	memset(tempFrames, 0, sizeof(tempFrames));
+	uint16 numTempFrames = 0;
+	uint16 i, j;
+	for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
+		const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
+		if (pga->keyFrame == gd->firstFrame) {
+			int16 frame = pga->frame;
+			if (frame > 500) { // SFX
+				frame -= 500;
+			}
+			bool foundMatchingFrame = false;
+			for (j = 0; j < numTempFrames; ++j) {
+				if (tempFrames[j] == frame) {
+					foundMatchingFrame = true;
+					break;
+				}
+			}
+			if (!foundMatchingFrame) {
+				assert(numTempFrames < 20);
+				tempFrames[numTempFrames] = frame;
+				++numTempFrames;
+			}
+		}
+	}
+
+	// sort found frames ascending
+	bool swap = true;
+	while (swap) {
+		swap = false;
+		for (i = 0; i < numTempFrames - 1; ++i) {
+			if (tempFrames[i] > tempFrames[i + 1]) {
+				SWAP(tempFrames[i], tempFrames[i + 1]);
+				swap = true;
+			}
+		}
+	}
+
+	// queen.c l.962-980 / l.1269-1294
+	for (i = 0; i < gd->lastFrame; ++i) {
+		_vm->bankMan()->unpack(ABS(tempFrames[i]), firstImage + i, 15);
+	}
+	BobSlot *pbs = bob(bobNum);
+	pbs->animating = false;
+	if (visible) {
+		pbs->curPos(gd->x, gd->y);
+		if (tempFrames[0] < 0) {
+			pbs->xflip = true;
+		}
+		AnimFrame *paf = _newAnim[bobNum];
+		for (i = 1; i <= _vm->logic()->graphicAnimCount(); ++i) {
+			const GraphicAnim *pga = _vm->logic()->graphicAnim(i);
+			if (pga->keyFrame == gd->firstFrame) {
+				uint16 frameNr = 0;
+				for (j = 1; j <= gd->lastFrame; ++j) {
+					if (pga->frame > 500) {
+						if (pga->frame - 500 == tempFrames[j - 1]) {
+							frameNr = j + firstImage - 1 + 500;
+						}
+					} else if (pga->frame == tempFrames[j - 1]) {
+						frameNr = j + firstImage - 1;
+					}
+				}
+				paf->frame = frameNr;
+				paf->speed = pga->speed;
+				++paf;
+			}
+		}
+		paf->frame = 0;
+		paf->speed = 0;
+		pbs->animString(_newAnim[bobNum]);
+	}
+}
+
+
+uint16 Graphics::setupPersonAnim(const ActorData *ad, const char *anim, uint16 curImage) {
+	debug(9, "Graphics::setupPersonAnim(%s, %d)", anim, curImage);
+	_personFrames[ad->bobNum] = curImage + 1;
+
+	AnimFrame *animFrames = _newAnim[ad->bobNum];
+	fillAnimBuffer(anim, animFrames);
+	uint16 frameCount[256];
+	memset(frameCount, 0, sizeof(frameCount));
+	AnimFrame *af = animFrames;
+	for ( ; af->frame != 0; ++af) {
+		uint16 frameNum = af->frame;
+		if (frameNum > 500) {
+			frameNum -= 500;
+		}
+		if (!frameCount[frameNum]) {
+			frameCount[frameNum] = 1;
+		}
+	}
+	uint16 i, n = 1;
+	for (i = 1; i < 256; ++i) {
+		if (frameCount[i]) {
+			frameCount[i] = n;
+			++n;
+		}
+	}
+	af = animFrames;
+	for ( ; af->frame != 0; ++af) {
+		if (af->frame > 500) {
+			af->frame = curImage + frameCount[af->frame - 500] + 500;
+		} else {
+			af->frame = curImage + frameCount[af->frame];
+		}
+	}
+
+	// unpack necessary frames
+	for (i = 1; i < 256; ++i) {
+		if (frameCount[i]) {
+			++curImage;
+			_vm->bankMan()->unpack(i, curImage, ad->bankNum);
+		}
+	}
+
+	// start animation
+	bob(ad->bobNum)->animString(animFrames);
+	return curImage;
+}
+
+
+void Graphics::resetPersonAnim(uint16 bobNum) {
+	if (_newAnim[bobNum][0].frame != 0) {
+		bob(bobNum)->animString(_newAnim[bobNum]);
+	}
+}
+
+
+void Graphics::erasePersonAnim(uint16 bobNum) {
+	_newAnim[bobNum][0].frame = 0;
+	BobSlot *pbs = bob(bobNum);
+	pbs->animating = false;
+	pbs->anim.string.buffer = NULL;
+}
+
+
+void Graphics::eraseAllAnims() {
+	for (int i = 1; i <= 16; ++i) {
+		_newAnim[i][0].frame = 0;
+	}
+}
+
+
+uint16 Graphics::refreshObject(uint16 obj) {
+	debug(6, "Graphics::refreshObject(%X)", obj);
+	uint16 curImage = _numFrames;
+
+	ObjectData *pod = _vm->logic()->objectData(obj);
+	if (pod->image == 0) {
+		return curImage;
+	}
+
+	// check the object is in the current room
+	if (pod->room != _vm->logic()->currentRoom()) {
+		return curImage;
+	}
+
+	// find bob for the object
+	uint16 curBob = _vm->logic()->findBob(obj);
+	BobSlot *pbs = bob(curBob);
+
+	if (pod->image == -3 || pod->image == -4) {
+		// a person object
+		if (pod->name <= 0) {
+			bobClear(curBob);
+		} else {
+			// find person number
+			uint16 pNum = _vm->logic()->findPersonNumber(obj);
+			curImage = _personFrames[pNum] - 1;
+			if (_personFrames[pNum] == 0) {
+				_personFrames[pNum] = curImage = _numFrames;
+			}
+			curImage = setupPerson(obj - _vm->logic()->currentRoomData(), curImage);
+		}
+		return curImage;
+	}
+
+	// find frame used for object
+	curImage = _vm->logic()->findFrame(obj);
+
+	if (pod->name < 0 || pod->image < 0) {
+		// object is hidden or disabled
+		bobClear(curBob);
+		return curImage;
+	}
+
+	int image = pod->image;
+	if (image > 5000) {
+		image -= 5000;
+	}
+	
+	GraphicData *pgd = _vm->logic()->graphicData(image);
+	bool rebound = false;
+	int16 lastFrame = pgd->lastFrame;
+	if (lastFrame < 0) {
+		lastFrame = -lastFrame;
+		rebound = true;
+	}
+	if (pgd->firstFrame < 0) {
+		setupObjectAnim(pgd, curImage, curBob, pod->name != 0);
+		curImage += pgd->lastFrame - 1;
+	} else if (lastFrame != 0) {
+		// turn on an animated bob
+		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
+		pbs->animating = false;
+		uint16 firstImage = curImage;
+		--curImage;
+		uint16 j;
+		for (j = pgd->firstFrame; j <= lastFrame; ++j) {
+			++curImage;
+			_vm->bankMan()->unpack(j, curImage, 15);
+		}
+		pbs->curPos(pgd->x, pgd->y);
+		pbs->frameNum = firstImage;
+		if (pgd->speed > 0) {
+			pbs->animNormal(firstImage, curImage, pgd->speed / 4, rebound, false);
+		}
+	} else {
+		// frame 2 is used as a buffer frame to prevent BOB flickering
+		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
+		_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
+		pbs->curPos(pgd->x, pgd->y);
+		pbs->frameNum = curImage;
+	}
+
+	return curImage;
+}
+
+
+void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
+	uint16 i;
+	uint16 curImage = 36 + FRAMES_JOE_XTRA;
+
+	// unpack the furniture from bank 15
+	// there are 3 kinds :
+	// - static (bobs), gamestate range = ]0;5000]
+	// - animated (bobs), gamestate range = ]0;5000]
+	// - static (paste downs), gamestate range = [5000; [
+
+	// unpack the static bobs
+	_numFurnitureStatic = 0;
+	for	(i = 1; i <= furnitureCount; ++i) {
+		int16 obj = furniture[i];
+		if (obj > 0 && obj <= 5000) {
+			GraphicData *pgd = _vm->logic()->graphicData(obj);
+			if (pgd->lastFrame == 0) {
+				++_numFurnitureStatic;
+				++curImage;
+				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
+				++_numFrames;
+				BobSlot *pbs = bob(19 + _numFurnitureStatic);
+				pbs->curPos(pgd->x, pgd->y);
+				pbs->frameNum = curImage;
+			}
+		}
+	}
+
+	// unpack the animated bobs
+	_numFurnitureAnimated = 0;
+	_numFurnitureAnimatedLen = 0;
+	uint16 curBob = 0;
+	for  (i = 1; i <= furnitureCount; ++i) {
+		int16 obj = furniture[i];
+		if (obj > 0 && obj <= 5000) {
+			GraphicData *pgd = _vm->logic()->graphicData(obj);
+
+			bool rebound = false;
+			int16 lastFrame = pgd->lastFrame;
+			if (lastFrame < 0) {
+				rebound = true;
+				lastFrame = -lastFrame;
+			}
+
+			if (lastFrame > 0) {
+				_numFurnitureAnimatedLen += lastFrame - pgd->firstFrame + 1;
+				++_numFurnitureAnimated;
+				uint16 image = curImage + 1;
+				int k;
+				for (k = pgd->firstFrame; k <= lastFrame; ++k) {
+					++curImage;
+					_vm->bankMan()->unpack(k, curImage, 15);
+					++_numFrames;
+				}
+				BobSlot *pbs = bob(5 + curBob);
+				pbs->animNormal(image, curImage, pgd->speed / 4, rebound, false);
+				pbs->curPos(pgd->x, pgd->y);
+				++curBob;
+			}
+		}
+	}
+
+	// unpack the paste downs
+	for  (i = 1; i <= furnitureCount; ++i) {
+		if (furniture[i] > 5000) {;
+			bobPaste(furniture[i] - 5000, curImage + 1);
+		}
+	}
+}
+
+
+void Graphics::setupRoomObjects() {
+	uint16 i;
+	// furniture frames are reserved in ::setupRoomFurniture(), we append objects 
+	// frames after the furniture ones.
+	uint16 curImage = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen;
+	uint16 firstRoomObj = _vm->logic()->currentRoomData() + 1;
+	uint16 lastRoomObj = _vm->logic()->roomData(_vm->logic()->currentRoom() + 1);
+	uint16 numObjectStatic = 0;
+	uint16 numObjectAnimated = 0;
+	uint16 curBob;
+
+	// invalidates all Bobs for persons (except Joe's one)
+	for (i = 1; i <= 3; ++i) {
+		_bobs[i].active = false;
+	}
+
+	// static/animated Bobs
+	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
+		ObjectData *pod = _vm->logic()->objectData(i);
+		// setup blanks bobs for turned off objects (in case 
+		// you turn them on again)
+		if (pod->image == -1) {
+			// static OFF Bob
+			curBob = 20 + _numFurnitureStatic + numObjectStatic;
+			++numObjectStatic;
+			// create a blank frame for the OFF object
+			++_numFrames;
+			++curImage;
+		} else if(pod->image == -2) {
+			// animated OFF Bob
+			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
+			++numObjectAnimated;
+		} else if(pod->image > 0 && pod->image < 5000) {
+			GraphicData *pgd = _vm->logic()->graphicData(pod->image);
+			int16 lastFrame = pgd->lastFrame;
+			bool rebound = false;
+			if (lastFrame < 0) {
+				lastFrame = -lastFrame;
+				rebound = true;
+			}
+			if (pgd->firstFrame < 0) {
+				// XXX if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
+				curBob = 5 + _numFurnitureAnimated;
+				setupObjectAnim(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
+				curImage += pgd->lastFrame;
+				++numObjectAnimated;
+			} else if (lastFrame != 0) {
+				// animated objects
+				uint16 j;
+				uint16 firstFrame = curImage + 1;
+				for (j = pgd->firstFrame; j <= lastFrame; ++j) {
+					++curImage;
+					_vm->bankMan()->unpack(j, curImage, 15);
+					++_numFrames;
+				}
+				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
+				if (pod->name > 0) {
+					BobSlot *pbs = bob(curBob);
+					pbs->curPos(pgd->x, pgd->y);
+					pbs->frameNum = firstFrame;
+					if (pgd->speed > 0) {
+						pbs->animNormal(firstFrame, curImage, pgd->speed / 4, rebound, false);
+					}
+				}
+				++numObjectAnimated;
+			} else {
+				// static objects
+				curBob = 20 + _numFurnitureStatic + numObjectStatic;
+				++curImage;
+				bobClear(curBob);
+
+				// XXX if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
+
+				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
+				++_numFrames;
+				if (pod->name > 0) {
+					BobSlot *pbs = bob(curBob);
+					pbs->curPos(pgd->x, pgd->y);
+					pbs->frameNum = curImage;
+				}
+				++numObjectStatic;
+			}
+		}
+	}
+
+	// persons Bobs
+	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
+		ObjectData *pod = _vm->logic()->objectData(i);
+		if (pod->image == -3 || pod->image == -4) {
+			debug(6, "Graphics::setupRoomObjects() - Setting up person %X, name=%X", i, pod->name);
+			uint16 noun = i - _vm->logic()->currentRoomData();
+			if (pod->name > 0) {
+				curImage = setupPerson(noun, curImage);
+			} else {
+				curImage = allocPerson(noun, curImage);
+			}
+		}
+	}
+
+	// paste downs list
+	++curImage;
+	_numFrames = curImage;
+	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
+		ObjectData *pod = _vm->logic()->objectData(i);
+		if (pod->name > 0 && pod->image > 5000) {
+			bobPaste(pod->image - 5000, curImage);
+		}
+	}
+}
+
+
+uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
+	if (noun == 0) {
+		warning("Trying to setup person 0");
+		return curImage;
+	}
+
+	Person p;
+	_vm->logic()->initPerson(noun, "", true, &p);
+
+	const ActorData *pad = p.actor;
+	uint16 scale = 100;
+	uint16 a = _vm->grid()->findAreaForPos(GS_ROOM, pad->x, pad->y);
+	if (a != 0) {
+		// person is not standing in the area box, scale it accordingly
+		scale = _vm->grid()->area(_vm->logic()->currentRoom(), a)->calcScale(pad->y);
+	}
+
+	_vm->bankMan()->unpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
+	uint16 obj = _vm->logic()->currentRoomData() + noun;
+	BobSlot *pbs = bob(pad->bobNum);
+	pbs->curPos(pad->x, pad->y);
+	pbs->scale = scale;
+	pbs->frameNum = p.bobFrame;
+	pbs->xflip = (_vm->logic()->objectData(obj)->image == -3); // person is facing left
+
+	debug(6, "Graphics::setupPerson(%d, %d) - bob = %d name = %s", noun, curImage, pad->bobNum, p.name);
+
+	if (p.anim != NULL) {		
+		curImage = setupPersonAnim(pad, p.anim, curImage);
+	} else {
+		erasePersonAnim(pad->bobNum);
+	}
+	return curImage;
+}
+
+
+uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
+	Person p;
+	_vm->logic()->initPerson(noun, "", false, &p);
+	if (p.anim != NULL) {
+		curImage += countAnimFrames(p.anim);
+		_personFrames[p.actor->bobNum] = curImage + 1;
+	}
+	return curImage;
+}
+
+
+void Graphics::update(uint16 room) {
+	bobSortAll();
+	if (_cameraBob >= 0) {
+		_vm->display()->horizontalScrollUpdate(_bobs[_cameraBob].x);
+	}
+	bobCustomParallax(room);
+	_vm->display()->prepareUpdate();
+	bobDrawAll();
+	textDrawAll();
 }
 
 
@@ -971,6 +1211,100 @@ void BamScene::prepareAnimation() {
 	_objfx->active = true;
 
 	_index = 0;
+}
+
+
+void BamScene::updateCarAnimation() {
+	if (_flag != F_STOP) {
+		const BamDataBlock *bdb = &_carData[_index];
+
+		// Truck
+		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
+		_obj1->frameNum = 40 + bdb->obj1.frame;
+
+		// Rico
+		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
+		_obj2->frameNum = 30 + bdb->obj2.frame;
+
+		// FX
+		_objfx->curPos(bdb->fx.x, bdb->fx.y);
+		_objfx->frameNum = 41 + bdb->fx.frame;
+
+		if (bdb->sfx < 0) {
+			_vm->sound()->playSong(-bdb->sfx);
+		}
+
+		if (bdb->sfx == 99) {
+			_index = 0;
+		}
+		else {
+			++_index;
+		}
+
+		if (bdb->sfx == 2) {
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+		}
+	}
+}
+
+
+void BamScene::updateFightAnimation() {
+	if (_flag != F_STOP) {
+		const BamDataBlock *bdb = &_fightData[_index];
+
+		// Frank
+		_obj1->curPos(bdb->obj1.x, bdb->obj1.y);
+		_obj1->frameNum = 40 + ABS(bdb->obj1.frame);
+		_obj1->xflip = (bdb->obj1.frame < 0);
+
+		// Robot
+		_obj2->curPos(bdb->obj2.x, bdb->obj2.y);
+		_obj2->frameNum = 40 + ABS(bdb->obj2.frame);
+		_obj2->xflip = (bdb->obj2.frame < 0);
+	
+		// FX
+		_objfx->curPos(bdb->fx.x, bdb->fx.y);
+		_objfx->frameNum = 40 + ABS(bdb->fx.frame);
+		_objfx->xflip = (bdb->fx.frame < 0);
+
+		if (bdb->sfx < 0) {
+			_vm->sound()->playSong(-bdb->sfx);
+		}
+
+		++_index;
+		switch (bdb->sfx) {
+		case 0: // nothing, so reset shaked screen if necessary
+			if (_screenShaked) {
+				OSystem::instance()->set_shake_pos(0);
+				_screenShaked = false;
+			}
+			break;
+		case 1: // shake screen
+			OSystem::instance()->set_shake_pos(3);
+			_screenShaked = true;
+			break;
+		case 2: // play background sfx
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			break;
+		case 3: // play background sfx and shake screen
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			OSystem::instance()->set_shake_pos(3);
+			_screenShaked = true;
+			break;
+		case 99: // end of BAM data
+			_index = 0;
+			const BamDataBlock *data[] = {
+				_fight1Data, 
+				_fight2Data,
+				_fight3Data
+			};
+			_fightData = data[_vm->randomizer.getRandomNumber(2)];
+			if (_flag == F_REQ_STOP) {
+				_flag = F_STOP;
+			}
+			break;
+		}
+	}
 }
 
 
