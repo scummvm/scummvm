@@ -202,10 +202,6 @@ Gdi::Gdi(ScummEngine *vm) {
 	_roomPalette = vm->_roomPalette;
 	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
-	
-	_compositeBuf = 0;
-	_textSurface.pixels = 0;
-	_herculesBuf = 0;
 }
 
 void ScummEngine::initScreens(int b, int h) {
@@ -243,28 +239,29 @@ void ScummEngine::initScreens(int b, int h) {
 	_screenH = h;
 	
 	gdi.init();
-}
 
-void Gdi::init() {
-	const int size = _vm->_screenWidth * _vm->_screenHeight;
+	const int size = _screenWidth * _screenHeight;
 	free(_compositeBuf);
-	free(_textSurface.pixels);
+	free(_charset->_textSurface.pixels);
 	free(_herculesBuf);
 	_compositeBuf = (byte *)malloc(size);
-	_textSurface.pixels = malloc(size);
+	_charset->_textSurface.pixels = malloc(size);
 	memset(_compositeBuf, CHARSET_MASK_TRANSPARENCY, size);
-	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
+	memset(_charset->_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
 
-	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
+	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 		memset(_herculesBuf, CHARSET_MASK_TRANSPARENCY, Common::kHercW * Common::kHercH);
 	}
 
-	_textSurface.w = _vm->_screenWidth;
-	_textSurface.h = _vm->_screenHeight;
-	_textSurface.pitch = _vm->_screenWidth;
-	_textSurface.bytesPerPixel = 1;
+	_charset->_textSurface.w = _screenWidth;
+	_charset->_textSurface.h = _screenHeight;
+	_charset->_textSurface.pitch = _screenWidth;
+	_charset->_textSurface.bytesPerPixel = 1;
 
+}
+
+void Gdi::init() {
 	_numStrips = _vm->_screenWidth / 8;
 
 	// Increase the number of screen strips by one; needed for smooth scrolling
@@ -422,7 +419,7 @@ void ScummEngine::drawDirtyScreenParts() {
 	if (camera._last.x != camera._cur.x || (_features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
 		// Camera moved: redraw everything
 		VirtScreen *vs = &virtscr[kMainVirtScreen];
-		gdi.drawStripToScreen(vs, 0, vs->w, 0, vs->h);
+		drawStripToScreen(vs, 0, vs->w, 0, vs->h);
 		vs->setDirtyRange(vs->h, 0);
 	} else {
 		updateDirtyScreen(kMainVirtScreen);
@@ -438,15 +435,13 @@ void ScummEngine::drawDirtyScreenParts() {
 	}
 }
 
-void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
-	gdi.updateDirtyScreen(&virtscr[slot]);
-}
-
 /**
  * Blit the dirty data from the given VirtScreen to the display. If the camera moved,
  * a full blit is done, otherwise only the visible dirty areas are updated.
  */
-void Gdi::updateDirtyScreen(VirtScreen *vs) {
+void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
+	VirtScreen *vs = &virtscr[slot];
+
 	// Do nothing for unused virtual screens
 	if (vs->h == 0)
 		return;
@@ -455,13 +450,13 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	int w = 8;
 	int start = 0;
 
-	for (i = 0; i < _numStrips; i++) {
+	for (i = 0; i < gdi._numStrips; i++) {
 		if (vs->bdirty[i]) {
 			const int top = vs->tdirty[i];
 			const int bottom = vs->bdirty[i];
 			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
-			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
+			if (i != (gdi._numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
 				// Simple optimizations: if two or more neighbouring strips
 				// form one bigger rectangle, coalesce them.
 				w += 8;
@@ -481,7 +476,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
  * arrays which map 'strips' (sections of the real screen) to dirty areas as
  * specified by top/bottom coordinate in the virtual screen.
  */
-void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
+void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
 
 	if (bottom <= top)
 		return;
@@ -491,26 +486,26 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 
 	assert(top >= 0 && bottom <= vs->h);	// Paranoia checks
 	assert(x >= 0 && width <= vs->pitch);
-	assert(_textSurface.pixels);
+	assert(_charset->_textSurface.pixels);
 	assert(_compositeBuf);
 	
 	if (width > vs->w - x)
 		width = vs->w - x;
 
 	// Clip to the visible part of the scene
-	if (top < _vm->_screenTop)
-		top = _vm->_screenTop;
-	if (bottom > _vm->_screenTop + _vm->_screenHeight)
-		bottom = _vm->_screenTop + _vm->_screenHeight;
+	if (top < _screenTop)
+		top = _screenTop;
+	if (bottom > _screenTop + _screenHeight)
+		bottom = _screenTop + _screenHeight;
 
 	// Convert the vertical coordinates to real screen coords
-	int y = vs->topline + top - _vm->_screenTop;
+	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
 	
 	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
-	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
-	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
+	byte *dst = _compositeBuf + x + y * _screenWidth;
+	const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
 
 #ifdef __PALM_OS__
 	ARM_START(DrawStripType)
@@ -520,9 +515,9 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		ARM_ADDM(src)
 		ARM_ADDM(dst)
 		ARM_ADDM(text)
-		ARM_ADDV(_vm_screenWidth, _vm->_screenWidth)
+		ARM_ADDV(_vm_screenWidth, _screenWidth)
 		ARM_ADDV(vs_pitch, vs->pitch)
-		ARM_ADDV(_textSurface_pitch, _textSurface.pitch)
+		ARM_ADDV(_charset->_textSurface_pitch, _charset->_textSurface.pitch)
 		ARM_CALL(ARM_ENGINE, PNO_DATA())
 	ARM_CONTINUE()
 #endif
@@ -535,18 +530,18 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 				dst[w] = text[w];
 		}
 		src += vs->pitch;
-		dst += _vm->_screenWidth;
-		text += _textSurface.pitch;
+		dst += _screenWidth;
+		text += _charset->_textSurface.pitch;
 	}
 
-	if (_vm->_renderMode == Common::kRenderCGA)
-		ditherCGA(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+	if (_renderMode == Common::kRenderCGA)
+		gdi.ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
 
-	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
-		ditherHerc(_compositeBuf + x + y * _vm->_screenWidth, _herculesBuf, _vm->_screenWidth, &x, &y, &width, &height);
+	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+		gdi.ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
 		// center image on the screen
-		_vm->_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
-			Common::kHercW, x + (Common::kHercW - _vm->_screenWidth * 2) / 2, y, width, height);
+		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
+			Common::kHercW, x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
 	} else {
 		// Finally blit the whole thing to the screen
 		int x1 = x;
@@ -555,11 +550,11 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		// NES can address negative number sprites and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if (_vm->_features & GF_NES && ((_vm->_NESStartStrip > 0) || (vs->number != kMainVirtScreen))) {
+		if (_features & GF_NES && ((_NESStartStrip > 0) || (vs->number != kMainVirtScreen))) {
 			x += 16;
 		}
 
-		_vm->_system->copyRectToScreen(_compositeBuf + x1 + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+		_system->copyRectToScreen(_compositeBuf + x1 + y * _screenWidth, _screenWidth, x, y, width, height);
 	}
 }
 
@@ -810,14 +805,12 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	for (int i = 0; i < num; i++)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
-	if (_version == 1) {
-		gdi._objectMode = false;
-	}
 	if (_heversion >= 70)
 		room = getResourceAddress(rtRoomImage, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
+	gdi._objectMode = false;
 	gdi.drawBitmap(room + _IM00_offs,
 					&virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0, _roomStrips);
 }
@@ -856,8 +849,8 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * (rect.top - _screenTop) + rect.left;
-			fill(mask, gdi._textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (rect.top - _screenTop) + rect.left;
+			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
 		fill(screenBuf, vs->pitch, backColor, width, height);
@@ -898,7 +891,7 @@ void CharsetRenderer::restoreCharsetBg() {
 
 		if (vs->hasTwoBuffers) {
 			// Clean out the charset mask
-			memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
+			memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _textSurface.pitch * _textSurface.h);
 		}
 	}
 }
@@ -1038,8 +1031,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		bgbuff = vs->getBackPixels(x, y);
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		if (_charset->_hasMask) {
-			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * (y - _screenTop) + x;
-			fill(mask, gdi._textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (y - _screenTop) + x;
+			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
 		fill(backbuff, vs->pitch, color, width, height);

@@ -76,6 +76,12 @@ public:
 	bool _firstChar;
 	bool _disableOffsX;
 
+	/**
+	 * All text is normally rendered into this overlay surface. Then later
+	 * drawStripToScreen() composits it over the game graphics.
+	 */
+	Graphics::Surface _textSurface;
+
 protected:
 	ScummEngine *_vm;
 	byte _curId;

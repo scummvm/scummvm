@@ -202,6 +202,7 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_blitAlso = false;
 	_firstChar = false;
 	_disableOffsX = false;
+	_textSurface.pixels = 0;
 
 	_vm = vm;
 	_curId = 0;
@@ -1218,8 +1219,8 @@ void CharsetRendererV3::printChar(int chr) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
-		drawBits1(_vm->gdi._textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		dst = (byte *)_textSurface.pixels + _top * _textSurface.pitch + _left;
+		drawBits1(_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
@@ -1375,8 +1376,8 @@ void CharsetRendererClassic::printChar(int chr) {
 		dstSurface = *vs;
 		dstPtr = vs->getPixels(_left, drawTop);
 	} else {
-		dstSurface = _vm->gdi._textSurface;
-		dstPtr = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
+		dstSurface = _textSurface;
+		dstPtr = (byte *)_textSurface.pixels + (_top - _vm->_screenTop) * _textSurface.pitch + _left;
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
@@ -1650,7 +1651,7 @@ void CharsetRendererNut::printChar(int chr) {
 		s = *vs;
 		s.pixels = vs->getPixels(0, 0);
 	} else {
-		s = _vm->gdi._textSurface;
+		s = _textSurface;
 		drawTop -= _vm->_screenTop;
 	}
 
@@ -1790,8 +1791,8 @@ void CharsetRendererNES::printChar(int chr) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
-		drawBits1(_vm->gdi._textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		dst = (byte *)_textSurface.pixels + _top * _textSurface.pitch + _left;
+		drawBits1(_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)

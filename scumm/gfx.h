@@ -211,12 +211,7 @@ public:
 	
 	Gdi(ScummEngine *vm);
 
-	Graphics::Surface _textSurface;
-
 protected:
-	byte *_compositeBuf;
-	byte *_herculesBuf;
-
 	byte *_roomPalette;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
@@ -269,8 +264,6 @@ protected:
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 
 	/* Misc */
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
-	void updateDirtyScreen(VirtScreen *vs);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 	void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const;
 

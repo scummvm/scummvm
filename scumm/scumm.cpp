@@ -807,8 +807,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_doEffect = false;
 	memset(&_flashlight, 0, sizeof(_flashlight));
 	_roomStrips = 0;
+	_compositeBuf = 0;
+	_herculesBuf = 0;
 	_bompActorPalettePtr = NULL;
-	_shakeEnabled= false;
+	_shakeEnabled = false;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;
 	_screenEndStrip = 0;

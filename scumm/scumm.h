@@ -984,8 +984,12 @@ public:
 		markRectAsDirty(virt, rect.left, rect.right, rect.top, rect.bottom, dirtybit);
 	}
 protected:
+	// Screen rendering
+	byte *_compositeBuf;
+	byte *_herculesBuf;
 	void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
+	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 
 public:
 	VirtScreen *findVirtScreen(int y);
