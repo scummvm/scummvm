@@ -392,7 +392,7 @@ void Sound::playSound(int soundID) {
 					int waveSize = READ_LE_UINT32(ptr + 0x22);
 					int loopStart = READ_LE_UINT32(ptr + 0x26);
 					int loopEnd = READ_LE_UINT32(ptr + 0x2A);
-					rate = (READ_LE_UINT32(ptr + 0x32) == 60) ? 11025 : 22050;	// 48 means 22050
+					rate = (ptr[0x32] == 60) ? 11025 : 22050;	// 48 means 22050
 
 					if (size - 0x36 < waveSize) {
 						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
