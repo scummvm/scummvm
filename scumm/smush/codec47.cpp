@@ -234,7 +234,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
 	int32 value_table37_1_1, value_table37_1_2;
 	int32 table[64], tmp_a, tmp_c, tmp_d, s, p, d, tmp_ib, tmp;
-	int32 * table37_1 = 0, * table37_2 = 0, * tmp_table, l;
+	int32 * table37_1 = 0, * table37_2 = 0, * table_ptr, l;
 	byte * ptr;
 
 	if (param == 8) {
@@ -368,8 +368,8 @@ void Codec47Decoder::makeTables37(int32 param) {
 					tmp_d = variable4;
 					tmp_c *= tmp_a;
 					tmp_c += tmp_d;
-					tmp_table = &table[tmp_c];
-					*(tmp_table) = 1;
+					table_ptr = &table[tmp_c];
+					*(table_ptr) = 1;
 					if (b1 != 2)
 						goto label8;
 					if (b2 == 3)
@@ -395,8 +395,8 @@ label11:
 					tmp_c = param;
 					tmp_c <<= 2;
 					do {
-						*(tmp_table) = 1;
-						tmp_table -= tmp_c / 4;
+						*(table_ptr) = 1;
+						table_ptr -= tmp_c / 4;
 					} while (--tmp_a >= 0);
 					continue;
 label12:
@@ -418,8 +418,8 @@ label15:
 					tmp_d = param;
 					tmp_d -= tmp_a;
 					do {
-						*(tmp_table) = 1;
-						tmp_table += tmp_c / 4;
+						*(table_ptr) = 1;
+						table_ptr += tmp_c / 4;
 					} while (--tmp_d != 0);
 					continue;
 label16:
@@ -450,7 +450,7 @@ label21:
 					tmp_c -= variable4;
 					d = tmp_c;
 					do {
-						*(tmp_table++) = 1;
+						*(table_ptr++) = 1;
 					} while (--d != 0);
 					continue;
 label22:
@@ -469,7 +469,7 @@ label25:
 						tmp_c = variable4 + 1;
 						d = tmp_c;
 						do {
-							*(tmp_table--) = 1;
+							*(table_ptr--) = 1;
 						} while (--d != 0);
 					}
 				} while	(variable2 > ++variable1);
@@ -978,28 +978,9 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		_prevSeqNb = -1;
 	}
 	
-	byte * ptr;
-	int32 r, l, count;
 	if ((chunk_buffer[4] & 1) != 0) {
-		r = 0;
-		ptr = smush_buffer;
-		count = r;
-		do {
-			l = count;
-			if (ptr <= &smush_buffer[65536 + 256]) {
-				tmp_ptr = ptr;
-				do {
-					byte tmp = *gfx_data++;
-//					*tmp_ptr = tmp;
-//					tmp_ptr += 256;
-//					smush_buffer[l + r] = tmp;
-				} while (++l < 256);
-			}
-			r += 256;
-			ptr += 257;
-			count++;
-		} while (ptr < &smush_buffer[65536 + 256]);
-	}	
+		gfx_data += 32896;
+	}
 
 	switch(chunk_buffer[2]) {
 	case 0:
@@ -1007,37 +988,17 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		break;
 	case 1:
 		warning("codec47: not implemented decode1 proc");
-//		decode1(_curBuf, gfx_data, width * height, &smush_buffer)
 		break;
 	case 2:
-//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
-//		if (chunk_buffer[3] == 0) {
-//			_prevSeqNb = seq_nb;
-//			free(chunk_buffer);
-//			return false;
-//		}
 		if ((seq_nb - _prevSeqNb) == 1) {
-			decode2(_curBuf, gfx_data, offset1, offset2, width,
-					smush_table, chunk_buffer + 8, height,
-					smush_buf_small, smush_buf_big);
+			decode2(_curBuf, gfx_data, offset1, offset2, width,	smush_table, 
+							chunk_buffer + 8, height, smush_buf_small, smush_buf_big);
 		}
 		break;
 	case 3:
-//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
-//		if (chunk_buffer[3] == 0) {
-//			_prevSeqNb = seq_nb;
-//			free(chunk_buffer);
-//			return false;
-//		}
 		memcpy(_curBuf, _deltaBufs[1], width * height);
 		break;
 	case 4:
-//		if (((arg_7 & 16) != 0) && (chunk_buffer[3] == 0))
-//		if (chunk_buffer[3] == 0) {
-//			_prevSeqNb = seq_nb;
-//			free(chunk_buffer);
-//			return false;
-//		}
 		memcpy(_curBuf, _deltaBufs[0], width * height);
 		break;
 	case 5:
