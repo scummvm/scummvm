@@ -996,8 +996,9 @@ void ScummEngine::launch() {
 			runScript(9, 0, 0, args);
 		else
 			runScript(1, 0, 0, args);
+	} else {
+		_saveLoadFlag = 0;
 	}
-	_saveLoadFlag = 0;
 }
 
 void ScummEngine::scummInit() {
@@ -1428,6 +1429,7 @@ load_game:
 		}
 		if (success && _saveLoadFlag != 1)
 			clearClickedStatus();
+
 		_saveLoadFlag = 0;
 		_lastSaveTime = _system->get_msecs();
 	}
