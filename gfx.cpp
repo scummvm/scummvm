@@ -360,13 +360,11 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 	int numcolor;
 
         if( _features & GF_SMALL_HEADER ) {
-                if (_features & GF_OLD256) {
+                if (_features & GF_OLD256)
                         numcolor = 256;
-                        ptr+=2;
-                } else {
+                else 
                         numcolor = READ_LE_UINT16(ptr+6) / 3;
-                        ptr+=8;
-                }
+                ptr+=8;
         } else {
                 numcolor = getResourceDataSize(ptr) / 3;
         }
