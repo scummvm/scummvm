@@ -930,10 +930,14 @@ void Scumm_v8::o8_roomOps()
 		setPalette(pop());	// fixme: i think this is right
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
-		warning("V8 Save game opcode not implemented");
+		_saveLoadCompatible = true;
+		_saveLoadSlot = 1;
+		_saveLoadFlag = 1;
 		break;
 	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
-		warning("V8 Load game opcode not implemented");
+		_saveLoadCompatible = true;
+		_saveLoadSlot = 1;
+		_saveLoadFlag = 2;
 		break;
 	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
 		e = pop();

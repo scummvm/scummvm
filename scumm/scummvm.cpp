@@ -445,6 +445,7 @@ int Scumm::scummLoop(int delta)
 		_saveLoadCompatible = false;
 	}
 
+	_vars[VAR_GAME_LOADED] = 0;
 	if (_saveLoadFlag) {
 		bool success;
 		const char *errMsg = "Succesfully saved game state to file:\n\n%s";
@@ -454,16 +455,19 @@ int Scumm::scummLoop(int delta)
 			success = saveState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
 				errMsg = "Failed to save game state to file:\n\n%s";
-			// Ender: Disabled for small_header games, as
-			// can overwrite game variables (eg, Zak256 cashcards)
-			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+
+			// Ender: Disabled for small_header games, as can overwrite game
+			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
+			// because of odd timing issue with scripts and the variable reset
+ 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V8))
  				_vars[VAR_GAME_LOADED] = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
 				errMsg = "Failed to load game state from file:\n\n%s";
-			// Ender: Disabled for small_header games, as
-			// can overwrite game variables (eg, Zak256 cashcards)
+
+			// Ender: Disabled for small_header games, as can overwrite game
+			//  variables (eg, Zak256 cashcard values).
  			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
 				_vars[VAR_GAME_LOADED] = 203;
 		}
@@ -1569,7 +1573,6 @@ void Scumm::mainRun()
 	int new_time;
 
 	for(;;) {
-		
 		updatePalette();
 		
 		_system->update_screen();		
