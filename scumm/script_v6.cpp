@@ -3143,7 +3143,8 @@ void ScummEngine_v6::o6_unknownE4() {
 	assert(matrix);
 	memcpy(matrix, boxm, mboxSize);
 
-	showActors();
+	if(!(_features & GF_HUMONGOUS))
+		showActors();
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
