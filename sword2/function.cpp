@@ -433,7 +433,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	uint16 logoWidth = 0;
 	uint16 logoHeight = 0;
 	byte *logoData = NULL;
-	byte palette[1024];
+	byte palette[256 * 4];
 
 	if (f.open("credits.bmp")) {
 		logoWidth = f.readUint16LE();

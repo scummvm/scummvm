@@ -178,8 +178,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	uint32 flags = SoundMixer::FLAG_16BITS;
 	bool startNextText = false;
 
-	byte oldPal[1024];
-	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
+	byte oldPal[256 * 4];
+	memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
 
 	AnimationState *anim = new AnimationState(_vm);
 
@@ -345,8 +345,8 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *musicOut) {
 	int frameCounter = 0, textCounter = 0;
 	if (text) {
-		byte oldPal[1024];
-		byte tmpPal[1024];
+		byte oldPal[256 * 4];
+		byte tmpPal[256 * 4];
 
 		_vm->_graphics->clearScene();
 
@@ -384,8 +384,8 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 		// In the opening cutscene it seems to use colours 1 (black?)
 		// and 255 (white?).
 
-		memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
-		memset(tmpPal, 0, 1024);
+		memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
+		memset(tmpPal, 0, sizeof(tmpPal));
 		tmpPal[255 * 4 + 0] = 255;
 		tmpPal[255 * 4 + 1] = 255;
 		tmpPal[255 * 4 + 2] = 255;

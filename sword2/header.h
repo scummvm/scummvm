@@ -194,15 +194,6 @@ struct MultiScreenHeader {
 	uint32 maskOffset;
 } GCC_PACK;
 
-// Palette Data
-
-struct PalEntry {
-	uint8 red;
-	uint8 green;
-	uint8 blue;
-	uint8 alpha;
-} GCC_PACK;
-
 // Screen Header
 
 struct ScreenHeader {

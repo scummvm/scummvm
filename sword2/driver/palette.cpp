@@ -23,68 +23,15 @@
 
 namespace Sword2 {
 
-uint8 Graphics::getMatch(uint8 r, uint8 g, uint8 b) {
-	int32 diff;
-	int32 min;
-	int16 diffred, diffgreen, diffblue;
-	int16 i;
-	uint8 minIndex;
-
-	diffred = _palCopy[0][0] - r;
-	diffgreen = _palCopy[0][1] - g;
-	diffblue = _palCopy[0][2] - b;
-
-	diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
-	min = diff;
-	minIndex = 0;
-	if (diff > 0) {
-		for (i = 1; i < 256; i++) {
-			diffred = _palCopy[i][0] - r;
-			diffgreen = _palCopy[i][1] - g;
-			diffblue = _palCopy[i][2] - b;
-
-			diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
-			if (diff < min) {
-				min = diff;
-				minIndex = (uint8) i;
-				if (min == 0)
-					break;
-			}
-		}
-	}
-
-	// Here, minIndex is the index of the matchpalette which is closest.
-	return minIndex;
-}
-
 /**
- * Sets or creates a table of palette indices which will be searched later for
- * a quick palette match.
- * @param data either the palette match table, or NULL to create a new table
- * from the current palCopy
+ * Sets a table of palette indices which will be searched later for a quick
+ * palette match.
+ * @param data the palette match table
  */
 
 void Graphics::updatePaletteMatchTable(byte *data) {
-	if (!data) {
-		int16 red, green, blue;
-		byte *p;
-
-		// Create palette match table
-
-		// FIXME: Does this case ever happen?
-
-		p = &_paletteMatch[0];
-		for (red = 0; red < 256; red += 4) {
-			for (green = 0; green < 256; green += 4) {
-				for (blue = 0; blue < 256; blue += 4) {
-					*p++ = getMatch((uint8) red, (uint8) green, (uint8) blue);
-				}
-			}
-		}
-	} else {
-		// The provided data is the new palette match table
-		memcpy(_paletteMatch, data, PALTABLESIZE);
-	}
+	assert(data);
+	memcpy(_paletteMatch, data, PALTABLESIZE);
 }
 
 /**
@@ -110,23 +57,24 @@ uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
  */
 
 void Graphics::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
-	if (noEntries) {
-		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
-		if (fadeNow == RDPAL_INSTANT) {
-			_vm->_system->setPalette((const byte *) _palCopy, startEntry, noEntries);
-			setNeedFullRedraw();
-		}
-	} else {
-		_vm->_system->setPalette((const byte *) _palCopy, 0, 256);
+	assert(noEntries > 0);
+
+	memcpy(&_palette[4 * startEntry], colourTable, noEntries * 4);
+
+	if (fadeNow == RDPAL_INSTANT) {
+		_vm->_system->setPalette(_palette, startEntry, noEntries);
 		setNeedFullRedraw();
 	}
 }
 
 void Graphics::dimPalette(void) {
-	byte *p = (byte *) _palCopy;
+	byte *p = _palette;
 
-	for (int i = 0; i < 256 * 4; i++)
-		p[i] /= 2;
+	for (int i = 0; i < 256; i++) {
+		p[i * 4 + 0] /= 2;
+		p[i * 4 + 1] /= 2;
+		p[i * 4 + 2] /= 2;
+	}
 
 	_vm->_system->setPalette(p, 0, 256);
 	setNeedFullRedraw();
@@ -183,14 +131,11 @@ void Graphics::waitForFade(void) {
 
 void Graphics::fadeServer(void) {
 	static int32 previousTime = 0;
-	const byte *newPalette = (const byte *) _fadePalette;
+	byte fadePalette[256 * 4];
+	byte *newPalette = fadePalette;
 	int32 currentTime;
 	int16 fadeMultiplier;
 	int16 i;
-
-	// This used to be called through a timer, but is now called from
-	// ServiceWindows() instead, since that's the only place where we
-	// actually update the screen.
 
 	// If we're not in the process of fading, do nothing.
 	if (getFadeStatus() != RDFADE_UP && getFadeStatus() != RDFADE_DOWN)
@@ -207,25 +152,25 @@ void Graphics::fadeServer(void) {
 	if (getFadeStatus() == RDFADE_UP) {
 		if (currentTime >= _fadeStartTime + _fadeTotalTime) {
 			_fadeStatus = RDFADE_NONE;
-			newPalette = (const byte *) _palCopy;
+			newPalette = _palette;
 		} else {
 			fadeMultiplier = (int16) (((int32) (currentTime - _fadeStartTime) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				_fadePalette[i][0] = (_palCopy[i][0] * fadeMultiplier) >> 8;
-				_fadePalette[i][1] = (_palCopy[i][1] * fadeMultiplier) >> 8;
-				_fadePalette[i][2] = (_palCopy[i][2] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 2] = (_palette[i * 4 + 2] * fadeMultiplier) >> 8;
 			}
 		}
 	} else {
 		if (currentTime >= _fadeStartTime + _fadeTotalTime) {
 			_fadeStatus = RDFADE_BLACK;
-			memset(_fadePalette, 0, sizeof(_fadePalette));
+			memset(newPalette, 0, sizeof(fadePalette));
 		} else {
 			fadeMultiplier = (int16) (((int32) (_fadeTotalTime - (currentTime - _fadeStartTime)) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				_fadePalette[i][0] = (_palCopy[i][0] * fadeMultiplier) >> 8;
-				_fadePalette[i][1] = (_palCopy[i][1] * fadeMultiplier) >> 8;
-				_fadePalette[i][2] = (_palCopy[i][2] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;
+				newPalette[i * 4 + 2] = (_palette[i * 4 + 2] * fadeMultiplier) >> 8;
 			}
 		}
 	}

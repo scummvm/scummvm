@@ -152,21 +152,21 @@ void Graphics::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint1
 				c4 = c3;
 
 			if (!transparent) {
-				uint32 r1 = _palCopy[c1][0];
-				uint32 g1 = _palCopy[c1][1];
-				uint32 b1 = _palCopy[c1][2];
+				uint32 r1 = _palette[c1 * 4 + 0];
+				uint32 g1 = _palette[c1 * 4 + 1];
+				uint32 b1 = _palette[c1 * 4 + 2];
 
-				uint32 r2 = _palCopy[c2][0];
-				uint32 g2 = _palCopy[c2][1];
-				uint32 b2 = _palCopy[c2][2];
+				uint32 r2 = _palette[c2 * 4 + 0];
+				uint32 g2 = _palette[c2 * 4 + 1];
+				uint32 b2 = _palette[c2 * 4 + 2];
 
-				uint32 r3 = _palCopy[c3][0];
-				uint32 g3 = _palCopy[c3][1];
-				uint32 b3 = _palCopy[c3][2];
+				uint32 r3 = _palette[c3 * 4 + 0];
+				uint32 g3 = _palette[c3 * 4 + 1];
+				uint32 b3 = _palette[c3 * 4 + 2];
 
-				uint32 r4 = _palCopy[c4][0];
-				uint32 g4 = _palCopy[c4][1];
-				uint32 b4 = _palCopy[c4][2];
+				uint32 r4 = _palette[c4 * 4 + 0];
+				uint32 g4 = _palette[c4 * 4 + 1];
+				uint32 b4 = _palette[c4 * 4 + 2];
 
 				uint32 r5 = (r1 * xFrac + r2 * (dstWidth - xFrac)) / dstWidth;
 				uint32 g5 = (g1 * xFrac + g2 * (dstWidth - xFrac)) / dstWidth;

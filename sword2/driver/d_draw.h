@@ -93,7 +93,6 @@ private:
 
 	byte _paletteMatch[PALTABLESIZE];
 
-	byte _fadePalette[256][4];
 	uint8 _fadeStatus;
 
 	int32 _fadeStartTime;
@@ -150,7 +149,6 @@ private:
 
 	void decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
 
-	uint8 getMatch(uint8 r, uint8 g, uint8 b);
 	void fadeServer(void);
 
 	void scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth,
@@ -178,7 +176,7 @@ public:
 	int16 _screenWide;
 	int16 _screenDeep;
 
-	byte _palCopy[256][4];
+	byte _palette[256 * 4];
 
 	byte *getScreen(void) { return _buffer; }
 

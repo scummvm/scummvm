@@ -119,8 +119,8 @@ void Sword2Engine::buildDisplay(void) {
  */
 
 void Sword2Engine::displayMsg(byte *text, int time) {
-	PalEntry pal[256];
-	PalEntry oldPal[256];
+	byte pal[256 * 4];
+	byte oldPal[256 * 4];
 
 	debug(2, "DisplayMsg: %s", text);
 	
@@ -159,14 +159,14 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 	if (rv)
 		error("Driver Error %.8x (in DisplayMsg)", rv);
 
-	memcpy((char *) oldPal, (char *) _graphics->_palCopy, 256 * sizeof(PalEntry));
+	memcpy(oldPal, _graphics->_palette, sizeof(oldPal));
+	memset(pal, 0, sizeof(pal));
 
-	memset(pal, 0, 256 * sizeof(PalEntry));
-	pal[187].red = 255;
-	pal[187].green = 255;
-	pal[187].blue = 255;
+	pal[187 * 4 + 0] = 255;
+	pal[187 * 4 + 1] = 255;
+	pal[187 * 4 + 2] = 255;
 
-	_graphics->setPalette(0, 256, (byte *) pal, RDPAL_FADE);
+	_graphics->setPalette(0, 256, pal, RDPAL_FADE);
 	_graphics->fadeUp();
 	free(text_spr);
 	_graphics->waitForFade();
@@ -174,7 +174,8 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 	uint32 targetTime = _system->get_msecs() + (time * 1000);
 
 	sleepUntil(targetTime);
-	_graphics->setPalette(0, 256, (byte *) oldPal, RDPAL_FADE);
+	_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
+	_graphics->fadeUp();
 }
 
 /**

@@ -588,10 +588,10 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// zero the entire palette in case we're about to fade up!
 
-	PalEntry pal[256];
+	byte pal[4 * 256];
 
-	memset(pal, 0, 256 * sizeof(PalEntry));
-	_vm->_graphics->setPalette(0, 256, (byte *) pal, RDPAL_INSTANT);
+	memset(pal, 0, sizeof(pal));
+	_vm->_graphics->setPalette(0, 256, pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
 	return IR_CONT;
