@@ -279,23 +279,19 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 	if (!_voice) {
 		// for simon2 mac/amiga, only read index file
-		if (_game == GAME_SIMON2MAC) {
-			file->open("voices.idx", gameDataPath);
-			if (file->isOpen() == false) {
-				warning("Can't open voice index file 'voices.idx'");
-			} else {
-				file->seek(0, SEEK_END);
-				int end = file->pos();
-				file->seek(0, SEEK_SET);
-				_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
-				_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
+		file->open("voices.idx", gameDataPath);
+		if (file->isOpen() == true) {
+			file->seek(0, SEEK_END);
+			int end = file->pos();
+			file->seek(0, SEEK_SET);
+			_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
+			_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
 
-				for (int i = 1; i <= end / 6; i++) {
-					_filenums[i] = file->readUint16BE();
-					_offsets[i] = file->readUint32BE();
-				}
-				_voice_file = true;
+			for (int i = 1; i <= end / 6; i++) {
+				_filenums[i] = file->readUint16BE();
+				_offsets[i] = file->readUint32BE();
 			}
+			_voice_file = true;
 			delete file;
 		} else if (_game & GF_WIN) {
 			s = gss->wav_filename;
@@ -421,7 +417,7 @@ void Sound::readVoiceFile(const char *filename, const Common::String &gameDataPa
 }
 
 void Sound::playVoice(uint sound) {
-	if (_game == GAME_SIMON2MAC && _filenums) {
+	if (_filenums) {
 		if (_last_voice_file != _filenums[sound]) {
 			stopAll();
 
