@@ -339,9 +339,9 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 	memset(musEnd,		0, sizeof(musEnd));
 	memset(musLastSample,	0, sizeof(musLastSample));
 	memset(musId,		0, sizeof(musId));
-	memset(soundHandleMusic, -1, sizeof(soundHandleMusic));
-	memset(soundHandleFx, -1, sizeof(soundHandleFx));
-	soundHandleSpeech = -1;
+	memset(soundHandleMusic, 0, sizeof(soundHandleMusic));
+	memset(soundHandleFx, 0, sizeof(soundHandleFx));
+	soundHandleSpeech = 0;
 	memset(bufferFx, 0, sizeof(bufferFx));
 	memset(flagsFx, 0, sizeof(flagsFx));
 	memset(bufferSizeFx, 0, sizeof(bufferSizeFx));
@@ -350,7 +350,7 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 }
 
 int32 Sword2Sound::AmISpeaking() {
-	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != -1)) {
+	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != 0)) {
 		if (g_engine->_mixer->isChannelActive(soundHandleSpeech))
 			return (RDSE_SPEAKING);
 	}
@@ -549,7 +549,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		for (uint j = 0; j < (bufferSize / 2); j++)
 			data16[j] = TO_BE_16(data16[j]);
 
-		soundHandleSpeech = -1;
+		soundHandleSpeech = 0;
 		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags);
 			
 		speechStatus = 1;
@@ -566,7 +566,7 @@ int32 Sword2Sound::StopSpeechSword2(void) {
   
 	if (speechStatus) {
 		g_engine->_mixer->stopHandle(soundHandleSpeech);
-		soundHandleSpeech = -1;
+		soundHandleSpeech = 0;
 		speechStatus = 0;
 		return(RD_OK);
 	}
@@ -582,7 +582,7 @@ int32 Sword2Sound::GetSpeechStatus(void) {
 
 	if (g_engine->_mixer->isChannelActive(soundHandleSpeech) == false) {
 		speechStatus = 0;
-		soundHandleSpeech = -1;
+		soundHandleSpeech = 0;
 		return(RDSE_SAMPLEFINISHED);
 	}
 	return(RDSE_SAMPLEPLAYING);
@@ -590,7 +590,7 @@ int32 Sword2Sound::GetSpeechStatus(void) {
 
 void Sword2Sound::SetSpeechVolume(uint8 volume) {
 	speechVol = volume;
-	if ((soundHandleSpeech != -1) && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
+	if ((soundHandleSpeech != 0) && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
 //		IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[16*speechVol]);
 	}
 }
@@ -1278,7 +1278,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 			data16[j] = TO_BE_16(data16[j]);
 		}
 
-		if (soundHandleMusic[i] == -1) {
+		if (soundHandleMusic[i] == 0) {
 				soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
 		} else {
 			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, bufferSizeMusic);
@@ -1400,7 +1400,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		for (int32 j = 0; j < (bufferSizeMusic / 2); j++)
 			data16[j] = TO_BE_16(data16[j]);
 
-		if (soundHandleMusic[i] == -1) {
+		if (soundHandleMusic[i] == 0) {
 				soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
 		} else {
 			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, bufferSizeMusic);
@@ -1919,7 +1919,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 						data16[j] = TO_BE_16(data16[j]);
 					}
 
-					if (soundHandleMusic[i] == -1) {
+					if (soundHandleMusic[i] == 0) {
 						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
 					} else {
 						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);

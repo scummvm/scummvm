@@ -159,7 +159,7 @@ void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 void SoundMixer::endStream(int index) {
 	StackLock lock(_mutex);
 
-	if (index == -1)
+	if (index == 0)
 		return;
 
 	ChannelStream *chan;
@@ -191,7 +191,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 
 	_channels[index] = chan;
 	if (handle)
-		*handle = index;
+		*handle = index + 1;
 	return index;
 }
 
@@ -300,10 +300,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 	StackLock lock(_mutex);
 	
 	// Simply ignore stop requests for handles of sounds that already terminated
-	if (handle == -1)
+	if (handle == 0)
 		return;
 
-	int index = handle;
+	int index = handle - 1;
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::stopHandle has invalid index %d", index);
@@ -317,10 +317,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 bool SoundMixer::isChannelActive(PlayingSoundHandle handle) {
 	StackLock lock(_mutex);
 	
-	if (handle == -1)
+	if (handle == 0)
 		return false;
 
-	int index = handle;
+	int index = handle - 1;
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::isChannelActive has invalid index %d", index);
 		return false;
@@ -388,7 +388,7 @@ Channel::~Channel() {
 	delete _converter;
 	delete _input;
 	if (_handle)
-		*_handle = -1;
+		*_handle = 0;
 }
 
 void Channel::destroy() {
