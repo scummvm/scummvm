@@ -27,6 +27,7 @@
 #include "sky/skydefs.h"
 
 namespace SkyCompact {
+	MegaSet *getMegaSet(Compact *cpt, uint16 megaSet);
 	uint16 *getSub(Compact *cpt, uint16 mode);
 	void *getCompactElem(Compact *cpt, uint32 off);
 

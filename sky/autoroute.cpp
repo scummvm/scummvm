@@ -70,7 +70,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	
 	uint8 stretch1, stretch2; // bl / bh
 	stretch1 = 0;
-	MegaSet *mega = (MegaSet *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
+	MegaSet *mega = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet);
 	stretch2 = (uint8)(mega->gridWidth & 0xff);
 
 	uint16 cnt;

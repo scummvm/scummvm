@@ -517,8 +517,8 @@ void SkyLogic::simpleAnim() {
 }
 
 bool SkyLogic::collide(Compact *cpt) {
-	MegaSet *m1 = (MegaSet *)SkyCompact::getCompactElem(_compact, C_GRID_WIDTH + _compact->extCompact->megaSet);
-	MegaSet *m2 = (MegaSet *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
+	MegaSet *m1 = SkyCompact::getMegaSet(_compact, _compact->extCompact->megaSet);
+	MegaSet *m2 = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet);
 
 	// target's base coordinates
 	uint16 x = cpt->xcood & 0xfff8;

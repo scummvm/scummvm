@@ -50,6 +50,21 @@
 
 namespace SkyCompact {
 
+MegaSet *getMegaSet(Compact *cpt, uint16 megaSet) {
+	switch (megaSet) {
+	case 0:
+		return cpt->extCompact->megaSet0;
+	case 1 + NEXT_MEGA_SET:
+		return cpt->extCompact->megaSet1;
+	case 2 + NEXT_MEGA_SET*2:
+		return cpt->extCompact->megaSet2;
+	case 3 + NEXT_MEGA_SET*3:
+		return cpt->extCompact->megaSet3;
+	default:
+		error("Invalid MegaSet (%d)", megaSet);
+	}
+}
+
 uint16 *getSub(Compact *cpt, uint16 mode) {
 	switch (mode) {
 	case 0:
