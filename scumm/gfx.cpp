@@ -37,19 +37,19 @@ void Scumm::getGraphicsPerformance()
 	int i;
 
 	for (i = 10; i != 0; i--) {
-		initScreens(0, 0, _realWidth, _realHeight);	//ender
+		initScreens(0, 0, _realWidth, _realHeight);
 	}
 
-	if (!(_features & GF_SMALL_HEADER))	/* FIXME TEST: Enders Zak fix */
-		_vars[VAR_PERFORMANCE_1] = 0;	//_scummTimer;
+	if (!(_features & GF_SMALL_HEADER))	// Variable is reserved for game scripts in earlier games
+		_vars[VAR_PERFORMANCE_1] = 0;
 
 	for (i = 10; i != 0; i--) {
 		setDirtyRange(0, 0, _realHeight);	//ender
 		drawDirtyScreenParts();
 	}
 
-	if (!(_features & GF_SMALL_HEADER))	/* FIXME TEST: Enders Zak fix */
-		_vars[VAR_PERFORMANCE_2] = 0;	//_scummTimer;
+	if (!(_features & GF_SMALL_HEADER))	// Variable is reserved for game scripts in earlier games
+		_vars[VAR_PERFORMANCE_2] = 0;
 
 	if (_gameId == GID_DIG)
 		initScreens(0, 0, _realWidth, _realHeight);
