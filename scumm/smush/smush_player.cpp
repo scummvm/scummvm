@@ -186,7 +186,9 @@ static StringResource *getStrings(const char *file, bool is_encoded) {
 	filebuffer[length] = 0;
 
 	if (is_encoded) {
-		static const int32 ETRS_HEADER_LENGTH = 16;
+		enum {
+			ETRS_HEADER_LENGTH = 16
+		};
 		assert(length > ETRS_HEADER_LENGTH);
 		Chunk::type type = READ_BE_UINT32(filebuffer);
 
