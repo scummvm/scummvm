@@ -65,8 +65,7 @@ public:
 	uint32 property(int prop, uint32 value);
 
 	// Factory methods
-	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
-	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) { return create(syst, midi, NULL); }
+	static IMuse *create(OSystem *syst, MidiDriver *midi);
 };
 
 #endif

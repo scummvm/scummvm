@@ -600,7 +600,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuse = NULL;
 	} else {
 		_imuseDigital = NULL;
-		_imuse = IMuse::create_midi(syst, detector->createMidi());
+		_imuse = IMuse::create (syst, detector->createMidi());
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);

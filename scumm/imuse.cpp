@@ -21,12 +21,10 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
-#include "sound/fmopl.h"
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
 #include "scumm/instrument.h"
 #include "scumm/saveload.h"
-#include "scumm/sound.h"
 #include "common/util.h"
 
 // Unremark this statement to activate some of
@@ -382,7 +380,7 @@ public:
 	}
 	~IMuseInternal();
 
-	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+	int initialize(OSystem *syst, MidiDriver *midi);
 	void reallocateMidiChannels (MidiDriver *midi);
 	void setGlobalAdlibInstrument (byte slot, byte *data);
 	void copyGlobalAdlibInstrument (byte slot, Instrument *dest);
@@ -408,7 +406,7 @@ public:
 
 	uint32 property(int prop, uint32 value);
 
-	static IMuseInternal *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+	static IMuseInternal *create(OSystem *syst, MidiDriver *midi);
 };
 
 ////////////////////////////////////////
@@ -1615,13 +1613,13 @@ void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
-IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi) {
 	IMuseInternal *i = new IMuseInternal;
-	i->initialize(syst, midi, mixer);
+	i->initialize(syst, midi);
 	return i;
 }
 
-int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi) {
 	int i;
 
 	if (midi == NULL)
@@ -3416,8 +3414,8 @@ uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->pro
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
 // to the client.
-IMuse *IMuse::create (OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
-	IMuseInternal *engine = IMuseInternal::create (syst, midi, mixer);
+IMuse *IMuse::create (OSystem *syst, MidiDriver *midi) {
+	IMuseInternal *engine = IMuseInternal::create (syst, midi);
 	if (midi)
 		midi->property (MidiDriver::PROP_SMALLHEADER, (g_scumm->_features & GF_SMALL_HEADER) ? 1 : 0);
 	return new IMuse (syst, engine);
