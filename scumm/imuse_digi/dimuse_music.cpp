@@ -412,13 +412,12 @@ int IMuseDigital::getSoundIdByName(const char *soundName) {
 }
 
 void IMuseDigital::fadeOutMusic(int fadeDelay) {
+	Common::StackLock lock(_mutex);
 	debug(5, "IMuseDigital::fadeOutMusic");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		_track[l].locked = true;
 		if (_track[l].used) {
 			parseScriptCmds(14, _track[l].soundId, 0x600, 0, fadeDelay, 0, 0, 0);
 		}
-		_track[l].locked = false;
 	}
 }
 

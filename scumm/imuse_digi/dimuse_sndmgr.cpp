@@ -29,7 +29,9 @@
 namespace Scumm {
 
 ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
-	memset(&_sounds, 0, sizeof(_sounds));
+	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
+		memset(&_sounds[l], 0, sizeof(soundStruct));
+	}
 	_vm = scumm;
 	_disk = 0;
 	_cacheBundleDir = new BundleDirCache();

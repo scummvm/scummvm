@@ -62,7 +62,6 @@ private:
 		int soundGroup;
 		int iteration;
 		int mod;
-		bool locked;
 		int32 pullSize;
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
@@ -74,6 +73,7 @@ private:
 
 	Track _track[MAX_DIGITAL_TRACKS];
 
+	OSystem::MutexRef _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
@@ -130,6 +130,9 @@ public:
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
+	void setVolume(int soundId, int volume);
+	void setPan(int soundId, int pan);
+	void setFade(int soundId, int destVolume, int delay60HzTicks);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
 	void stopAllSounds() { stopAllSounds(false); }
