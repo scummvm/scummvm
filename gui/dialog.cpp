@@ -24,6 +24,7 @@
 #include "newgui.h"
 #include "dialog.h"
 #include "widget.h"
+#include "scumm.h"
 #include "ListWidget.h"
 
 Dialog::~Dialog()
@@ -248,6 +249,15 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
+/*
+ * TODO
+ * - Maybe go back to the old way of differentiating between the save and the load mode?
+ *   This would include that in the load mode the list is not editable.
+ * - Currently the savegame list is only loaded once when the dialog is created. Instead,
+ *   it should be loaded whenever the dialog is opened. Might want to add an open()
+ *   method to Dialog for that.
+ */
+
 SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	: Dialog (gui, 30, 20, 260, 124)
 {
@@ -269,16 +279,41 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	
 	// FIXME - test
 	_savegameList = new ListWidget(this, 10, 40, 180, 74);
+
+	// Get savegame names
+	ScummVM::StringList l;
+	char name[32];
+	Scumm *s = _gui->getScumm();
+
+	for (int i = 0; i <= 80; i++) {		// 80 I got from old gui
+		s->getSavegameName(i, name);
+		l.push_back(name);
+	}
+
+	((ListWidget *)_savegameList)->setList(l);
 }
 
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kSaveCmd:
-		//printf("Saving game in slot %d\n", _savegameList->getSelected());
+		if (_savegameList->getSelectedString()[0] != 0) {
+			Scumm *s = _gui->getScumm();
+			s->_saveLoadSlot = _savegameList->getSelected();
+			s->_saveLoadCompatible = false;
+			s->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
+			strcpy(s->_saveLoadName, _savegameList->getSelectedString());
+			close();
+		}
 		break;
 	case kLoadCmd:
-		//printf("Loading game in slot %d\n", _savegameList->getSelected());
+		if (_savegameList->getSelectedString()[0] != 0) {
+			Scumm *s = _gui->getScumm();
+			s->_saveLoadSlot = _savegameList->getSelected();
+			s->_saveLoadCompatible = false;
+			s->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
+			close();
+		}
 		break;
 	case kPlayCmd:
 		close();

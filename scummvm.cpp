@@ -1264,8 +1264,18 @@ void Scumm::waitForTimer(int msec_delay) {
 
 			// if newgui is running, copy event to EventList, and let the GUI handle it itself
 			// we might consider this approach for ScummLoop as well, and clean up the current mess
-			if (_newgui->isActive())
+			if (_newgui->isActive()) {
+				if (event.event_code == OSystem::EVENT_MOUSEMOVE) {
+					mouse.x = event.mouse.x;
+					mouse.y = event.mouse.y;
+					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
+#if !defined(__MORPHOS__)
+					_system->update_screen();
+#endif
+				}
 				_newgui->handleEvent(event);
+				continue;
+			}
 
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
@@ -1285,7 +1295,7 @@ void Scumm::waitForTimer(int msec_delay) {
 						g_debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
-				} else if (!_newgui->isActive())
+				} else
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 				break;
 

@@ -29,6 +29,8 @@
  * - Auto-repeat: if one clicks & holds on one of the arrows, then after a
  *   brief delay, it should start to contiously scroll
  * - Allow for a horizontal scrollbar, too?
+ * - If there are less items than fit on one pages, no scrolling can be done
+ *   and we thus should not highlight the arrows/slider.
  */
 
 #define UP_DOWN_BOX_HEIGHT	10
@@ -172,8 +174,8 @@ void ScrollBarWidget::checkBounds(int old_pos)
 void ScrollBarWidget::recalc()
 {
 	_sliderHeight = (_h - 2 * UP_DOWN_BOX_HEIGHT) * _entriesPerPage / _numEntries;
-	if (_sliderHeight < 4)
-		_sliderHeight = 4;
+	if (_sliderHeight < UP_DOWN_BOX_HEIGHT)
+		_sliderHeight = UP_DOWN_BOX_HEIGHT;
 
 	_sliderPos =
 		UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight + 1) * _currentPos / (_numEntries -

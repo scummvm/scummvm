@@ -23,6 +23,7 @@
 
 #include "scummsys.h"
 #include "widget.h"
+#include "ListWidget.h"
 
 class NewGui;
 
@@ -83,7 +84,7 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 protected:
-	Widget* _savegameList;
+	ListWidget* _savegameList;
 };
 
 

@@ -23,11 +23,12 @@
 
 #include "scummsys.h"
 
-
 int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);
 void ClearBlendCache(byte *palette, int weight);
 
+
+namespace ScummVM {
 
 template <class T>
 class List {
@@ -117,6 +118,7 @@ protected:
 	}
 };
 
+
 class String {
 protected:
 	int		*_refCount;
@@ -148,13 +150,17 @@ protected:
 	void decRefCount();
 };
 
+
 class StringList : public List<String> {
 public:
 	void push_back(const char* str)
 	{
 		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		_data[_size] = str;
+		_size++;
 	}
 };
+
+};	// End of namespace ScummVM
 
 #endif

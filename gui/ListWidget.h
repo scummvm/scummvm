@@ -33,7 +33,8 @@ enum {
 };
 
 /* ListWidget */
-class ListWidget : public Widget, public CommandReceiver {
+class ListWidget : public Widget, public CommandReceiver, public CommandSender {
+	typedef ScummVM::StringList StringList;
 protected:
 	StringList		_list;
 	bool			_editable;
@@ -48,15 +49,18 @@ public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
 	
-	void setList(const StringList& list)		{ _list = list; }
+	void setList(const StringList& list)		{ _list = list; scrollBarRecalc(); }
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
+	const ScummVM::String& getSelectedString() const	{ return _list[_selectedItem]; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
 	virtual void handleMouseDown(int x, int y, int button);
 	virtual void handleKeyDown(char key, int modifiers);
 	virtual void handleKeyUp(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	void scrollBarRecalc();
 
 protected:
 	void drawWidget(bool hilite);

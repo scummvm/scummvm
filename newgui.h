@@ -45,7 +45,7 @@ public:
 	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
 };
 
-typedef List<OSystem::Event> EventList;
+typedef ScummVM::List<OSystem::Event> EventList;
 
 // This class hopefully will replace the old Gui class completly one day 
 class NewGui {
@@ -69,6 +69,8 @@ public:
 	NewGui(Scumm *s);
 
 	void handleEvent(const OSystem::Event &event) { _eventList.push_back(event); }
+	
+	Scumm *getScumm() { return _s; }
 
 protected:
 	Scumm		*_s;

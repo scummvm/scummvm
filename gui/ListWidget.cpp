@@ -27,8 +27,13 @@
 
 /*
  * TODO:
- * - Allow escape to abort changes
- * - Add key repeat (for backspace, etc)
+ * - Abort changes when ESC is pressed or the selection changes
+ * - When the editing of a string is ended by return, we might consider sending
+ *   a message. Return means that the edit was confirmed. Hence the SaveDialog
+ *   could immediatly do the save in a trivial fashion.
+ * - Handle double clicks: either start editing of the selected item, or
+ *   send a cmd to our target (i.e. as specified via setCmd or setDoubleCmd)
+ *   This will allow a double click in the load dialog to immediatly load the game
  */
 
 
@@ -37,13 +42,13 @@
 
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w - kScrollBarWidth, h)
+	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss)
 {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_numberingMode = kListNumberingOne;
 	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
-	_currentPos = 3;
+	_currentPos = 0;
 	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
@@ -53,36 +58,18 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_editable = true;
 
 	_editMode = false;
-
-	// FIXME - fill in dummy data for now
-	_list.push_back("A simple game?");
-	_list.push_back("This space for rent!");
-	_list.push_back("To be or not to be...");
-	_list.push_back("It's not easy come up with dummy text :-)");
-	_list.push_back("Foo bar baz");
-	_list.push_back("Empty slots follow:");
-	_list.push_back("");
-	_list.push_back("");
-	_list.push_back("Now again a filled slot");
-	_list.push_back("We need some more text!");
-	_list.push_back("Because only this way...");
-	_list.push_back("...can you see the scrollbar...");
-	_list.push_back("...and verify that it works!");
-	_list.push_back("One");
-	_list.push_back("Two");
-	_list.push_back("Three");
-	_list.push_back("Four");
-	_list.push_back("The End");
-
-
-	_scrollBar->_numEntries = _list.size();
-	_scrollBar->_entriesPerPage = _entriesPerPage;
-	_scrollBar->_currentPos = _currentPos;
-	_scrollBar->recalc();
 }
 
 ListWidget::~ListWidget()
 {
+}
+
+void ListWidget::scrollBarRecalc()
+{
+	_scrollBar->_numEntries = _list.size();
+	_scrollBar->_entriesPerPage = _entriesPerPage;
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
 }
 
 void ListWidget::handleMouseDown(int x, int y, int button)
@@ -220,19 +207,19 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 void ListWidget::drawWidget(bool hilite)
 {
-	NewGui	*gui = _boss->getGui();
-	int		i, pos;
-	String	buffer;
+	NewGui			*gui = _boss->getGui();
+	int				i, pos, len = _list.size();
+	ScummVM::String	buffer;
 
 	// Draw the list items
-	// FIXME - this is just a temporary demo hack
-	for (i = 0, pos = _currentPos; i < _entriesPerPage; i++, pos++) {
+	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
 		} else
 			buffer = "";
+
 		buffer += _list[pos];
 	
 		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,

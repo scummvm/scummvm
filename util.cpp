@@ -82,6 +82,8 @@ void ClearBlendCache(byte *palette, int weight)
 
 #pragma mark -
 
+namespace ScummVM {
+
 String::String(const char *str)
 {
 	_refCount = new int(1);
@@ -123,7 +125,7 @@ String& String::operator  =(const char* str)
 		
 		_len = len;
 		memcpy(_str, str, _len + 1);
-	} if (_len > 0) {
+	} else if (_len > 0) {
 		decRefCount();
 		
 		_refCount = new int(1);
@@ -223,3 +225,4 @@ void String::ensureCapacity(int new_len, bool keep_old)
 	_str = newStr;
 }
 
+};	// End of namespace ScummVM
