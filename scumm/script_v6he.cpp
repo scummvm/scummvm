@@ -1124,19 +1124,47 @@ void ScummEngine_v6he::o6_unknownEA() {
 	eax = fetchScriptByte();
 	switch (eax) {
 	case 199:
-		unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
+		unknownEA_func(fetchScriptWord(), esi, edi, 5);
 		break;
 	case 202:
-		unknownEA_func(3, esi, edi, fetchScriptWord(), eax);
+		unknownEA_func(fetchScriptWord(), esi, edi, 3);
 		break;
 	default:
 		break;
 	}
 }
 
-void ScummEngine_v6he::unknownEA_func(int a, int b, int c, int d, int e) {
+void ScummEngine_v6he::unknownEA_func(int arrayId, int newX, int newY, int d) {
 	// Used in mini game at Cosmic Dust Diner in puttmoon
-	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
+	int var_2, var_4, ax, cx;
+
+	if (readVar(arrayId) == 0)
+		error("unknownEA_func: Reference to zeroed array pointer");
+
+	byte *ptr = getResourceAddress(rtString, readVar(arrayId));
+
+	if (!ptr)
+		error("unknownEA_func: Invalid array (%d) reference", readVar(arrayId));
+
+	if (d == 5)
+		var_2 = 2;
+	else
+		var_2 = 1;
+
+	if (READ_LE_UINT16(ptr) == 5)
+		var_4 = 2;
+	else
+		var_4 = 1;
+
+	cx = var_2 * (newX + 1) * (newY + 1);
+	ax = var_4 * READ_LE_UINT16(ptr + 2) * READ_LE_UINT16(ptr + 4);
+
+	if (ax == cx)
+		error("unknownEA_func: array %d redim mismatch", readVar(arrayId));
+
+	WRITE_LE_UINT16(ptr, d);
+	WRITE_LE_UINT16(ptr + 2, newX + 1);
+	WRITE_LE_UINT16(ptr + 4, newY + 1);
 }
 
 void ScummEngine_v6he::o6_unknownEE() {

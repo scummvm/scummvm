@@ -558,7 +558,7 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 
-	void unknownEA_func(int a, int b, int c, int d, int e);
+	void unknownEA_func(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
