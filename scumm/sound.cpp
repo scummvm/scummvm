@@ -454,7 +454,6 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 
 int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num = 0, i;
-	byte file_byte, file_byte_2;
 	int size;
 	byte *sound;
 
@@ -520,15 +519,11 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	}
 
 	_sfxFile->seek(offset, SEEK_SET);
-	i = 0;
-	while (num > 0) {
-		_sfxFile->read(&file_byte, sizeof(file_byte));
-		_sfxFile->read(&file_byte_2, sizeof(file_byte_2));
-		assert(i < (int)ARRAYSIZE(_mouthSyncTimes));
-		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
-		num--;
-	}
-	assert(i < (int)ARRAYSIZE(_mouthSyncTimes));
+
+	assert(num+1 < (int)ARRAYSIZE(_mouthSyncTimes));
+	for (i = 0; i < num; i++)
+		_mouthSyncTimes[i] = _sfxFile->readUint16BE();
+
 	_mouthSyncTimes[i] = 0xFFFF;
 	_sfxMode |= mode;
 	_curSoundPos = 0;
@@ -552,7 +547,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 	_endOfMouthSync = false;
 	do {
-		val ^= 1;
+		val = !val;
 		j = *ms++;
 		if (j == 0xFFFF) {
 			_endOfMouthSync = true;
@@ -587,13 +582,13 @@ int Sound::isSoundRunning(int sound) {
 		return _scumm->_imuseDigital->getSoundStatus(sound);
 
 	if (_scumm->_imuse)
-		return _scumm->_imuse->get_sound_status(sound);
+		return _scumm->_imuse->getSoundStatus(sound);
 
 	return 0;
 }
 
 // This is exactly the same as isSoundRunning except that it
-// calls IMuse::get_sound_active() instead of IMuse::get_sound_status().
+// calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
 // This is necessary when determining what resources to
 // expire from memory.
 bool Sound::isSoundActive(int sound) {

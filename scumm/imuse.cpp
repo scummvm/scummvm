@@ -458,7 +458,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
-	int get_sound_status(int sound);
+	int getSoundStatus(int sound);
 	bool get_sound_active(int sound);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
@@ -720,6 +720,7 @@ bool IMuseInternal::startSound(int sound) {
 		return false;
 
 	player->clear();
+
 	return player->startSound(sound);
 }
 
@@ -1011,7 +1012,7 @@ byte VolumeFader::fading_to() {
 	return newvol;
 }
 
-int IMuseInternal::get_sound_status(int sound) {
+int IMuseInternal::getSoundStatus(int sound) {
 	int i;
 	Player *player;
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
@@ -1028,7 +1029,7 @@ int IMuseInternal::get_sound_status(int sound) {
 	return get_queue_sound_status(sound);
 }
 
-// This is exactly the same as get_sound_status except that
+// This is exactly the same as getSoundStatus except that
 // it treats sounds that are fading out just the same as
 // other sounds. This is the method to use when determining
 // what resources to expire from memory.
@@ -1286,7 +1287,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			}
 			return -1;
 		case 13:
-			return get_sound_status(b);
+			return getSoundStatus(b);
 		case 14:
 			// Sam and Max: Volume Fader?
 			// Prevent instantaneous volume fades.
@@ -1490,7 +1491,7 @@ int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d
 
 	// If the command is to start a sound, stop that sound if it's already playing.
 	// This fixes some carnival music problems.
-	if (trig->command [0] == 8 && get_sound_status (trig->command [1]))
+	if (trig->command [0] == 8 && getSoundStatus (trig->command [1]))
 		stopSound (trig->command [1]);
 	return 0;
 }
@@ -3554,7 +3555,7 @@ int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); o
 bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound (sound); out(); return ret; }
 int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound (sound); out(); return ret; }
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
-int IMuse::get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
+int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus (sound); out(); return ret; }
 bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
 int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand (a,b,c,d,e,f,g,h); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }

@@ -57,7 +57,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
-	int get_sound_status(int sound);
+	int getSoundStatus(int sound);
 	bool get_sound_active(int sound);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();

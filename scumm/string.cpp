@@ -163,7 +163,7 @@ void Scumm::CHARSET_1() {
 		// This hack will force the backup cutoff system to be used instead,
 		// unless the talkChannel is null (eg, this string has no sound attached)
 		if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_sound->_talkChannel > 0))
-				return;
+			return;
 
 		if (_sound->_sfxMode == 0)
 			stopTalk();
