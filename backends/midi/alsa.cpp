@@ -19,6 +19,10 @@
  * $Header$
  */
 
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #if defined(UNIX) && defined(USE_ALSA)
 
 #include "sound/mpu401.h"

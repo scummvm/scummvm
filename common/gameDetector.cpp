@@ -27,6 +27,10 @@
 #include "config-file.h"
 #include "scaler.h"	// Only for gfx_modes
 
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
                         if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \

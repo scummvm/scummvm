@@ -23,6 +23,10 @@
 #ifndef MIXER_H
 #define MIXER_H
 
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #include <stdio.h>
 
 #ifdef USE_MAD
