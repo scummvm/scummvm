@@ -318,7 +318,7 @@ void ScummEngine::CHARSET_1() {
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
 			if (_version <= 2) {
-				_talkDelay += _defaultTalkDelay / 20;
+				_talkDelay += _defaultTalkDelay;
 				VAR(VAR_CHARCOUNT)++;
 			} else
 				_talkDelay += (int)VAR(VAR_CHARINC);

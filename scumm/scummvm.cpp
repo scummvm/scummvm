@@ -1084,6 +1084,7 @@ void ScummEngine::scummInit() {
 	_varwatch = -1;
 	_screenStartStrip = 0;
 
+	_defaultTalkDelay = 3;
 	_talkDelay = 0;
 	_keepText = false;
 
