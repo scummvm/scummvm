@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "credits.h"
+#include "sword1/credits.h"
 #include "screen.h"
 #include "common/file.h"
 #include "sound/mixer.h"

@@ -1009,7 +1009,7 @@ void Control::delay(uint32 msecs) {
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif

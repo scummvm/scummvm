@@ -449,14 +449,14 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mouseState |= BS1L_BUTTON_DOWN;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
 				_mouseState |= BS1R_BUTTON_DOWN;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif
