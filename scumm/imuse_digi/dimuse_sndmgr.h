@@ -34,10 +34,10 @@ class BundleMgr;
 class ImuseDigiSndMgr {
 public:
 
-#define MAX_IMUSE_SOUNDS 20
-#define MAX_IMUSE_JUMPS 50
-#define MAX_IMUSE_REGIONS 50
-#define MAX_IMUSE_MARKERS 50
+#define MAX_IMUSE_SOUNDS 16
+#define MAX_IMUSE_JUMPS 80
+#define MAX_IMUSE_REGIONS 85
+#define MAX_IMUSE_MARKERS 60
 
 #define IMUSE_RESOURCE 1
 #define IMUSE_BUNDLE 2
