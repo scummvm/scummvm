@@ -132,7 +132,7 @@ bool ScummDebugger::do_command()
 				_s->getBoxCoordinates(i, &box);
 				flags = _s->getBoxFlags(i);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n", i,
-							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y), flags;
+							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y, flags);
 			}
 		}
 		return true;
