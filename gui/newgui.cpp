@@ -582,7 +582,7 @@ void NewGui::animateCursor() {
 #include "scumm_globals.h"
 
 _GINIT(NewGui)
-_GSETPTR(guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(GUI::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(NewGui)
