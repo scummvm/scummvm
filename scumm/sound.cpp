@@ -993,7 +993,7 @@ void Sound::playBundleMusic(char * song) {
 		_bundleMusicTrack = -1;
 		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
-		_scumm->_timer->installProcedure(&music_handler, 1000);
+		_scumm->_timer->installProcedure(&music_handler, 1000000);
 		return;
 	}
 	if (strcmp(_nameBundleMusic, song) != 0) {
@@ -1376,7 +1376,7 @@ void Sound::startCDTimer()
 
 	_scumm->_timer->releaseProcedure(&cd_timer_handler);
 	_cd_timer_value = _scumm->_vars[_scumm->VAR_MI1_TIMER];
-	_scumm->_timer->installProcedure(&cd_timer_handler, timer_interval);
+	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval);
 }
 
 void Sound::stopCDTimer()

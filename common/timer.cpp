@@ -48,7 +48,7 @@ int Timer::handler(int * t) {
 	if (_timerRunning) {
 		_lastTime = _thisTime;
 		_thisTime = _engine->_system->get_msecs();
-		interval = _thisTime - _lastTime;
+		interval = 1000 * (_thisTime - _lastTime);
 
 		for (l = 0; l < MAX_TIMERS; l++) {
 			if ((_timerSlots[l].procedure) && (_timerSlots[l].interval > 0)) {

@@ -44,7 +44,7 @@ IMuseDigital::IMuseDigital(Scumm *scumm) {
 		_channel[l]._initialized = false;
 	}
 	_scumm->_mixer->beginSlots(MAX_DIGITAL_CHANNELS + 1);
-	_scumm->_timer->installProcedure(imus_digital_handler, 200);
+	_scumm->_timer->installProcedure(imus_digital_handler, 200000);
 	_pause = false;
 }
 

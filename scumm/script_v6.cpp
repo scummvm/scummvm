@@ -2482,11 +2482,11 @@ void Scumm_v6::o6_kernelSetFunctions()
 //				}
 				uint32 speed;
 				if (strcmp((char*)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
-	 				speed = 71;
+	 				speed = 71000;
 				else {
 					if (_smushFrameRate == 0) 
 						_smushFrameRate = 14;
-					speed = 1000 / _smushFrameRate;
+					speed = 1000000 / _smushFrameRate;
 				}
 				
 				debug(1, "INSANE Arg: %d", args[1]);

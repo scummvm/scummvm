@@ -1368,7 +1368,7 @@ void Scumm_v8::o8_startVideo()
 	
 	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
 	
-	ScummRenderer * sr = new ScummRenderer(this, 83);
+	ScummRenderer * sr = new ScummRenderer(this, 83333);
 	SmushPlayer * sp = new SmushPlayer(sr);
 
 	if (_noSubtitles)
