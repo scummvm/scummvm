@@ -177,7 +177,7 @@ void SkyState::go() {
 
 	bool introSkipped = false;
 	if (!_quickLaunch) {
-		if (_systemVars.gameVersion != 267) // don't do intro for floppydemo
+		if (_systemVars.gameVersion <= 267) // don't do intro for floppydemos
 			introSkipped = !intro();
 
 		_skyDisk->flushPrefetched();
@@ -270,8 +270,17 @@ void SkyState::initialise(void) {
 		_systemVars.language = _languageTable[_detector->_language];
 
 	if (!_skyDisk->fileExists(60600 + SkyState::_systemVars.language * 8)) {
-		warning("The language you selected does not exist in your BASS version.\nSwitching to english.");
-		SkyState::_systemVars.language = SKY_ENGLISH;
+		warning("The language you selected does not exist in your BASS version.");
+		if (_skyDisk->fileExists(60600))
+			SkyState::_systemVars.language = SKY_ENGLISH;
+		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))
+			SkyState::_systemVars.language = SKY_USA;
+		else
+			for (uint8 cnt = SKY_ENGLISH; cnt <= SKY_SPANISH; cnt++)
+				if (_skyDisk->fileExists(60600 + cnt * 8)) {
+					SkyState::_systemVars.language = cnt;
+					break;
+				}
 	}
 
 	uint16 result = 0;
