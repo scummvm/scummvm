@@ -21,6 +21,20 @@
 #include <cstring>
 #include <SDL_endian.h>
 
+#define ST_SAMPLE_MAX 0x7fffL
+#define ST_SAMPLE_MIN (-ST_SAMPLE_MAX - 1L)
+
+static inline void clampedAdd(int16_t& a, int b) {
+        register int val = a + b;
+
+        if (val > ST_SAMPLE_MAX)
+                val = ST_SAMPLE_MAX;
+        else if (val < ST_SAMPLE_MIN)
+                val = ST_SAMPLE_MIN;
+
+        a = val;
+}
+
 static uint16_t imcTable1[] = {
   0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e,
   0x0010, 0x0011, 0x0013, 0x0015, 0x0017, 0x0019, 0x001c, 0x001f,
@@ -265,7 +279,7 @@ void Sound::reset() {
 
 void Sound::mix(int16_t *data, int samples) {
   while (samples > 0 && currPos_ < numSamples_) {
-    *data += samples_[currPos_];
+    clampedAdd(*data, samples_[currPos_]);
     data++;
     if (numChannels_ == 1) {
       *data += samples_[currPos_];
