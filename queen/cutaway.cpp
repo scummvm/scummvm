@@ -696,7 +696,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				if (object.animType == 2 || object.animType == 0) {
 					// Unpack animation, but do not unpack moving people
 
-					if (!((objAnim[i].mx > 0 || objAnim[i].my > 0) && InRange(objAnim[i].object, 1, 3))) {
+					if (!((objAnim[i].mx > 0 || objAnim[i].my > 0) && inRange(objAnim[i].object, 1, 3))) {
 						/*debug(6, "Animation - bankUnpack(%i, %i, %i);",
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -730,7 +730,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 				int j;
 				for (j = 0; j < objAnim[i].speed; j++)
-					_vm->logic()->update();
+					_vm->update();
 			}
 
 			if (_vm->input()->cutawayQuit())
@@ -753,7 +753,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 	while (moving) {
 		moving = false;
-		_vm->logic()->update();
+		_vm->update();
 		
 		for (i = 0; i < frameCount; i++) {
 			BobSlot *bob = _vm->graphics()->bob(objAnim[i].object);
@@ -951,7 +951,7 @@ void Cutaway::run(char *nextFilename) {
 			break;
 
 		if (_roomFade) {
-			_vm->logic()->update();
+			_vm->update();
 			int end = 223;
 			if (IS_CD_INTRO_ROOM(_vm->logic()->currentRoom())) {
 				end = 255;
@@ -1028,18 +1028,7 @@ void Cutaway::run(char *nextFilename) {
 			}
 		}
 
-		// function CUTAWAY_SPECIAL(), lines 885-896 in cutaway.c
-		if (_vm->logic()->currentRoom() == 1 && _vm->logic()->gameState(3) == 0) {
-			// XXX hard-coded room and inventory items
-			_vm->logic()->inventoryDeleteItem(ITEM_CROWBAR, false);
-			_vm->logic()->inventoryDeleteItem(ITEM_DRESS, false);
-			_vm->logic()->inventoryDeleteItem(ITEM_CLOTHES, false);
-			_vm->logic()->inventoryDeleteItem(ITEM_HAY, false);
-			_vm->logic()->inventoryDeleteItem(ITEM_OIL, false);
-			_vm->logic()->inventoryDeleteItem(ITEM_CHICKEN, false);
-			_vm->logic()->gameState(3, 1);
-			_vm->logic()->inventoryRefresh();
-		}
+		_vm->logic()->removeHotelItemsFromInventory();
 	}
 
 	joeBob->animating = 0;
@@ -1147,7 +1136,7 @@ void Cutaway::stop() {
 				if (x || y) {
 					pbs->x = x;
 					pbs->y = y;
-					if (InRange(object->image, -4, -3))
+					if (inRange(object->image, -4, -3))
 						pbs->scale = _vm->logic()->findScale(x, y);
 				}
 
@@ -1373,7 +1362,7 @@ void Cutaway::handleText(
 
 	int i;
 	for (i = 0; i < spaces; i++) {
-		_vm->logic()->update();
+		_vm->update();
 
 		if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
 			// XXX: see if speaking is finished
@@ -1389,7 +1378,7 @@ void Cutaway::handleText(
 	}
 
 	_vm->graphics()->textClear(0,198);
-	_vm->logic()->update();
+	_vm->update();
 }
 		
 int Cutaway::countSpaces(ObjectType type, const char *segment) {
@@ -1404,7 +1393,7 @@ int Cutaway::countSpaces(ObjectType type, const char *segment) {
 	if (OBJECT_TYPE_TEXT_DISPLAY == type)
 		tmp *= 3;
 
-	return (tmp * 2) / (_vm->logic()->talkSpeed() / 3);
+	return (tmp * 2) / (_vm->talkSpeed() / 3);
 
 }
 

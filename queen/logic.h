@@ -53,8 +53,10 @@ struct ZoneSlot {
 	Box box;
 };
 
-class QueenEngine;
+
 class Credits;
+class Journal;
+class QueenEngine;
 
 class Logic {
 
@@ -208,13 +210,12 @@ public:
 	void inventoryInsertItem(uint16 itemNum, bool refresh = true);
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
+	void removeHotelItemsFromInventory();
 
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 
-	void checkPlayer();
-
-	void customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum);
+	void handleSpecialArea(int facing, uint16 areaNum, uint16 walkDataNum);
 
 	void handlePinnacleRoom();
 
@@ -235,11 +236,6 @@ public:
 	void changeRoom();
 
 	void useJournal();
-
-	int talkSpeed() const { return _talkSpeed; }
-	void talkSpeed(int speed) { _talkSpeed = speed; }
-	bool subtitles() const { return _subtitles; }
-	void subtitles(bool enable) { _subtitles = enable; }
 
 	void executeSpecialMove(uint16 sm);
 
@@ -423,12 +419,10 @@ protected:
 	//! scene counter
 	int _scene;
 
-	int _talkSpeed;
-
-	bool _subtitles;
+	Credits *_credits;
+	Journal *_journal;
 
 	QueenEngine *_vm;
-	Credits *_credits;
 };
 
 class LogicDemo : public Logic {

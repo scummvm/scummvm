@@ -253,7 +253,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		enterYesNoMode(zoneNum, TXT_GIVE_UP);
 	}
 	if (zoneNum == ZN_TEXT_SPEED) {
-		_vm->logic()->talkSpeed((x - 136) * 100 / 130);
+		_vm->talkSpeed((x - 136) * 100 / 130);
 		drawConfigPanel();
 	} else if (zoneNum == ZN_SFX_TOGGLE) {
 		_vm->sound()->toggleSfx();
@@ -283,7 +283,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		_vm->sound()->toggleSpeech();
 		drawConfigPanel();
 	} else if (zoneNum == ZN_TEXT_TOGGLE) {
-		_vm->logic()->subtitles(!_vm->logic()->subtitles());
+		_vm->subtitles(!_vm->subtitles());
 		drawConfigPanel();
 	}
 }
@@ -453,13 +453,13 @@ void Journal::drawYesNoPanel(int titleNum) {
 void Journal::drawConfigPanel() {
 	_vm->checkOptionSettings();
 
-	drawSlideBar(_vm->logic()->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
+	drawSlideBar(_vm->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
 	// XXX music_volume
 	drawSlideBar(100, 130, 100, BOB_MUSIC_VOLUME, 136 - 4, 177, FRAME_GREEN_PIN);
 
 	drawCheckBox(_vm->sound()->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);
-	drawCheckBox(_vm->logic()->subtitles(), BOB_TEXT_TOGGLE, 125, 167, FRAME_CHECK_BOX);
+	drawCheckBox(_vm->subtitles(), BOB_TEXT_TOGGLE, 125, 167, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->musicOn(), BOB_MUSIC_TOGGLE, 125, 181, FRAME_CHECK_BOX);
 }
 

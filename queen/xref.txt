@@ -127,7 +127,7 @@ clearbob()					Graphics::bobClear
 drawbobs()					Graphics::bobDrawAll
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				*included in Display::setupNewRoom*
-loadpanel()					Graphics::loadPanel
+loadpanel()					Display::setupPanel
 MAKE_SPEAK_BOB()			Graphics::bobSetText
 makeanim()					BobSlot::animNormal
 movebob()					BobSlot::move
@@ -204,8 +204,8 @@ walkgameload				*not needed ?*
 
 LOGIC
 =====
-CHECK_PLAYER()				Logic::checkPlayer
-CUTAWAY_SPECIAL()
+CHECK_PLAYER()				QueenEngine::update
+CUTAWAY_SPECIAL()			Logic::removeHotelItemsFromInventory
 DISP_OBJECTS()				Logic::roomSetupObjects
 DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
@@ -220,9 +220,9 @@ restart_game()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ROOM()				Logic::changeRoom
-SETUP_SCREENS()				*not needed* (only calls Graphics::loadPanel)
+SETUP_SCREENS()				*not needed* (only calls Display::setupPanel)
 SETUP_VARS()				*not needed* (equivalent to Command::clear(), SCENE=0, clear(gamestate))
-update() 					Logic::update
+update() 					QueenEngine::update
 -
 A_ANIMstr 					Logic::_aAnim
 A_ANIM_MAX					Logic::_numAAnim

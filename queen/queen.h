@@ -67,6 +67,13 @@ public:
 	void readOptionSettings();
 	void writeOptionSettings();
 
+	int talkSpeed() const { return _talkSpeed; }
+	void talkSpeed(int speed) { _talkSpeed = speed; }
+	bool subtitles() const { return _subtitles; }
+	void subtitles(bool enable) { _subtitles = enable; }
+
+	void update(bool checkPlayerInput = false);
+
 protected:
 
 	void errorString(const char *buf_input, char *buf_output);
@@ -75,9 +82,12 @@ protected:
 
 	void initialise();
 
-
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
+
+
+	int _talkSpeed;
+	bool _subtitles;
 
 	BamScene *_bam;
 	BankManager *_bankMan;

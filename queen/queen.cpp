@@ -128,10 +128,10 @@ void QueenEngine::registerDefaultSettings() {
 
 void QueenEngine::checkOptionSettings() {
 	// check talkspeed value
-	if (_logic->talkSpeed() < 4) {
-		_logic->talkSpeed(4);
-	} else if (_logic->talkSpeed() > 95) {
-		_logic->talkSpeed(100);
+	if (_talkSpeed < 4) {
+		_talkSpeed = 4;
+	} else if (_talkSpeed > 95) {
+		_talkSpeed = 100;
 	}
 
 	// XXX check master_volume value
@@ -143,7 +143,7 @@ void QueenEngine::checkOptionSettings() {
 
 	// ensure text is always on when voice is off
 	if (!_sound->speechOn()) {
-		_logic->subtitles(true);
+		_subtitles = true;
 	}
 }
 
@@ -152,9 +152,9 @@ void QueenEngine::readOptionSettings() {
 	// XXX master_volume
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
-	_logic->talkSpeed(ConfMan.getInt("talkspeed"));
+	_talkSpeed = ConfMan.getInt("talkspeed");
 	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
-	_logic->subtitles(ConfMan.getBool("subtitles"));
+	_subtitles = ConfMan.getBool("subtitles");
 	checkOptionSettings();
 }
 
@@ -163,12 +163,51 @@ void QueenEngine::writeOptionSettings() {
 	// XXX master_volume
 	ConfMan.set("music_mute", !_sound->musicOn());
 	ConfMan.set("sfx_mute", !_sound->sfxOn());
-	ConfMan.set("talkspeed", _logic->talkSpeed());
+	ConfMan.set("talkspeed", _talkSpeed);
 	ConfMan.set("speech_mute", !_sound->speechOn());
-	ConfMan.set("subtitles", _logic->subtitles());
+	ConfMan.set("subtitles", _subtitles);
 	ConfMan.flushToDisk();
 }
 
+
+void QueenEngine::update(bool checkPlayerInput) {
+	if (_debugger->isAttached()) {
+		_debugger->onFrame();
+	}
+
+	_graphics->update(_logic->currentRoom());
+	_logic->update();
+
+	_input->delay();
+
+	if (!_resource->isInterview()) {
+		_display->palCustomScroll(_logic->currentRoom());
+	}
+	BobSlot *joe = _graphics->bob(0);
+	_display->update(joe->active, joe->x, joe->y);
+	
+	_input->checkKeys();
+	if (_input->debugger()) {
+		_input->debuggerReset();
+		_debugger->attach();
+	}
+	if (!_input->cutawayRunning()) {
+		if (_input->quickSave()) {
+			_input->quickSaveReset();
+			_logic->gameSave(0, "Quicksave");
+		}
+		if (_input->quickLoad()) {
+			_input->quickLoadReset();
+			_logic->gameLoad(0);
+		}
+		if (checkPlayerInput) {
+			_command->updatePlayer();
+		}
+		if (_input->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
+			_display->blankScreen();
+		}
+	}
+}
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
@@ -209,7 +248,7 @@ void QueenEngine::go() {
 //					_command->clear(true);
 //				}
 				_logic->joeWalk(JWM_NORMAL);
-				_logic->checkPlayer();
+				update(true);
 			}
 		}
 	}

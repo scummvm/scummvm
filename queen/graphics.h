@@ -119,9 +119,9 @@ public:
 	void eraseAllFrames(bool joe);
 
 	enum {
-		MAX_BANK_SIZE       = 110,
-		MAX_FRAMES_NUMBER   = 256,
-		MAX_BANKS_NUMBER    =  18
+		MAX_BANK_SIZE     = 110,
+		MAX_FRAMES_NUMBER = 256,
+		MAX_BANKS_NUMBER  =  18
 	};
 
 
@@ -186,8 +186,6 @@ public:
 	void resetPersonAnim(uint16 bobNum);
 	void erasePersonAnim(uint16 bobNum);
 	void eraseAllAnims();
-
-	void loadPanel();
 
 	void putCameraOnBob(int bobNum) { _cameraBob = bobNum; }
 

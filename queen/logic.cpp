@@ -43,16 +43,18 @@
 namespace Queen {
 
 Logic::Logic(QueenEngine *vm)
-	:  _queen2jas(NULL), _vm(vm), _credits(NULL) {
+	:  _queen2jas(NULL), _credits(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	_puzzleAttemptCount = 0;
 	initialise();
+	_journal = new Journal(vm);
 }
 
 Logic::~Logic() {
+	delete _journal;
 	delete _credits;
 	delete _queen2jas;
 }
@@ -258,7 +260,7 @@ void Logic::initialise() {
 	_vm->command()->clear(false);
 	_scene = 0;
 	memset(_gameState, 0, sizeof(_gameState));
-	_vm->graphics()->loadPanel();
+	_vm->display()->setupPanel();
 	_vm->graphics()->bobSetupControl();
 	setupJoe();
 	zoneSetupPanel();
@@ -974,7 +976,7 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 		pod = setupJoeInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
 	if (mode != RDM_NOFADE_JOE) {
-		update();
+		_vm->update();
 		BobSlot *joe = _vm->graphics()->bob(0);
 		if (IS_CD_INTRO_ROOM(_currentRoom)) {
 			_vm->display()->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
@@ -1225,24 +1227,24 @@ uint16 Logic::joeFace() {
 		if (joeFacing() == DIR_FRONT) {
 			if (joePrevFacing() == DIR_BACK) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				update();
+				_vm->update();
 			}
 			frame = 34;
 		} else if (joeFacing() == DIR_BACK) {
 			if (joePrevFacing() == DIR_FRONT) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				update();
+				_vm->update();
 			}
 			frame = 35;
 		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
 			|| 	(joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
-			update();
+			_vm->update();
 		}
 		pbs->frameNum = frame + FRAMES_JOE_XTRA;
 		pbs->scale = joeScale();
 		pbs->xflip = (joeFacing() == DIR_LEFT);
-		update();
+		_vm->update();
 		joePrevFacing(joeFacing());
 		switch (frame) {
 		case 33:
@@ -1293,12 +1295,12 @@ void Logic::joeGrab(int16 grabState) {
 		_vm->bankMan()->unpack(5, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
-		update();
+		_vm->update();
 		// grab up
 		_vm->bankMan()->unpack(7, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
-		update();
+		_vm->update();
 		// turn back
 		frame = 7;
 		break;
@@ -1308,12 +1310,12 @@ void Logic::joeGrab(int16 grabState) {
 		_vm->bankMan()->unpack(frame, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
-		update();
+		_vm->update();
 
 		// extra delay for grab down
 		if (grabState == STATE_GRAB_DOWN) {
-			update();
-			update();
+			_vm->update();
+			_vm->update();
 		}
 	}
 }
@@ -1492,7 +1494,7 @@ void Logic::inventoryRefresh() {
 		x += 35;
 	}
 	// XXX OLDVERB=VERB;
-	update();
+	_vm->update();
 }
 
 int16 Logic::previousInventoryItem(int16 start) const {
@@ -1581,6 +1583,20 @@ void Logic::inventoryScroll(uint16 count, bool up) {
 }
 
 
+void Logic::removeHotelItemsFromInventory() {
+	if (currentRoom() == 1 && gameState(3) == 0) {
+		inventoryDeleteItem(ITEM_CROWBAR, false);
+		inventoryDeleteItem(ITEM_DRESS, false);
+		inventoryDeleteItem(ITEM_CLOTHES, false);
+		inventoryDeleteItem(ITEM_HAY, false);
+		inventoryDeleteItem(ITEM_OIL, false);
+		inventoryDeleteItem(ITEM_CHICKEN, false);
+		gameState(3, 1);
+		inventoryRefresh();
+	}
+}
+
+
 void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 	// P3_COPY_FROM function in cutaway.c
 	/* Copy data from Dummy (D) object to object (K)
@@ -1640,17 +1656,9 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 }
 
 
-void Logic::checkPlayer() {
-	update();
-	if (!_vm->input()->cutawayRunning()) {
-		_vm->command()->updatePlayer();
-	}
-}
-
-
-void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
+void Logic::handleSpecialArea(int facing, uint16 areaNum, uint16 walkDataNum) {
 	// queen.c l.2838-2911
-	debug(9, "customMoveJoe(%d, %d, %d)\n", facing, areaNum, walkDataNum);
+	debug(9, "handleSpecialArea(%d, %d, %d)\n", facing, areaNum, walkDataNum);
 
 	// Stop animating Joe
 	_vm->graphics()->bob(0)->animating = false;
@@ -1785,7 +1793,7 @@ void Logic::handlePinnacleRoom() {
 	// to animate anymore ; so turn animating off
 	joe->animating = piton->animating = false;
 
-	update();
+	_vm->update();
 	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
 	_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
 
@@ -1793,7 +1801,7 @@ void Logic::handlePinnacleRoom() {
 	uint16 prevObj = 0;
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
-		update();
+		_vm->update();
 		int mx = _vm->input()->mousePosX();
 		int my = _vm->input()->mousePosY();
 
@@ -1845,7 +1853,7 @@ void Logic::handlePinnacleRoom() {
 		{ 0x2F,  6 },
 		{ 0x2C,  7 },
 		{ 0x2B,  3 },
-		{ 0x30,  3 },
+		{ 0x30,  3 }
 	};
 	for (int i = 0; i < ARRAYSIZE(songs); ++i) {
 		if (songs[i].obj == prevObj) {
@@ -1864,19 +1872,9 @@ void Logic::handlePinnacleRoom() {
 
 
 void Logic::update() {
-	if (_vm->debugger()->isAttached()) {
-		_vm->debugger()->onFrame();
-	}
-
-	_vm->graphics()->update(_currentRoom);
 	if (_credits)
 		_credits->update();
 
-	_vm->input()->delay();
-
-	if (!_vm->resource()->isInterview()) {
-		_vm->display()->palCustomScroll(_currentRoom);
-	}
 	if (_vm->debugger()->_drawAreas) {
 		for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 			const ZoneSlot *pzs = &_zones[ZONE_ROOM][i];
@@ -1886,28 +1884,8 @@ void Logic::update() {
 			}
 		}
 	}
-	BobSlot *joe = _vm->graphics()->bob(0);
-	_vm->display()->update(joe->active, joe->x, joe->y);
-	
-	_vm->input()->checkKeys();
-	if (_vm->input()->debugger()) {
-		_vm->input()->debuggerReset();
-		_vm->debugger()->attach();
-	}
-	if (!_vm->input()->cutawayRunning()) {
-		if (_vm->input()->quickSave()) {
-			_vm->input()->quickSaveReset();
-			gameSave(0, "Quicksave");
-		}
-		if (_vm->input()->quickLoad()) {
-			_vm->input()->quickLoadReset();
-			gameLoad(0);
-		}
-		if (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
-			_vm->display()->blankScreen();
-		}
-	}
 }
+
 
 bool Logic::gameSave(uint16 slot, const char *desc) {
 	if (!desc)	//no description entered
@@ -1925,12 +1903,12 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	memcpy(ptr, buf, 32); ptr += 32;
 	delete[] buf;
 	
-	WRITE_BE_UINT16(ptr, _talkSpeed); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->talkSpeed()); ptr += 2;
 	WRITE_BE_UINT16(ptr, 0 /*_settings.musicVolume*/); ptr += 2;
 	WRITE_BE_UINT16(ptr, _vm->sound()->sfxOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _vm->sound()->speechOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _vm->sound()->musicOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _subtitles ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->subtitles() ? 1 : 0); ptr += 2;
 	
 	for (i = 0; i < 4; i++) {
 		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
@@ -2000,7 +1978,7 @@ bool Logic::gameLoad(uint16 slot) {
 	_vm->sound()->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_vm->sound()->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_vm->sound()->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_subtitles = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_vm->subtitles(READ_BE_UINT16(ptr) != 0); ptr += 2;
 
 	for (i = 0; i < 4; i++) {
 		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -2086,7 +2064,7 @@ void Logic::sceneStart() {
 		_vm->display()->palFadePanel();
 	}
 
-	update();
+	_vm->update();
 }
 
 void Logic::sceneStop() {
@@ -2114,8 +2092,7 @@ void Logic::useJournal() {
 		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
 	} else if (!_vm->resource()->isInterview()) {
 		_vm->command()->clear(false);
-		Journal j(_vm);
-		j.use();
+		_journal->use();
 		_vm->walk()->stopJoe();
 		// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
 	}
@@ -2177,7 +2154,7 @@ void Logic::asmStartFightAnimation() {
 void Logic::asmWaitForFrankPosition() {	
 	_vm->bam()->_flag = BamScene::F_REQ_STOP;
 	while (_vm->bam()->_flag != BamScene::F_STOP) {
-		update();
+		_vm->update();
 	}
 }
 
@@ -2192,10 +2169,10 @@ void Logic::asmMakeFrankGrowing() {
 	int i;
 	for (i = 10; i <= 100; i += 4) {
 		bobFrank->scale = i;
-		update();
+		_vm->update();
 	}
 	for (i = 0; i <= 20; ++i) {
-		update();
+		_vm->update();
 	}
 
 	objectData(521)->name =  ABS(objectData(521)->name); // Dinoray
@@ -2217,10 +2194,10 @@ void Logic::asmMakeRobotGrowing() {
 	int i;
 	for (i = 10; i <= 100; i += 4) {
 		bobRobot->scale = i;
-		update();
+		_vm->update();
 	}
 	for (i = 0; i <= 20; ++i) {
-		update();
+		_vm->update();
 	}
 	
 	objectData(524)->name = -ABS(objectData(524)->name); // Azura object off
@@ -2233,7 +2210,7 @@ void Logic::asmShrinkRobot() {
 	BobSlot *robot = _vm->graphics()->bob(6);
 	for (i = 100; i >= 35; i -= 5) {
 		robot->scale = i;
-		update();
+		_vm->update();
 	}
 }
 
@@ -2241,7 +2218,7 @@ void Logic::asmShrinkRobot() {
 void Logic::asmEndGame() {
 	int i;
 	for (i = 0; i < 40; ++i) {
-		update();
+		_vm->update();
 	}
 	debug(0, "Game completed.");
 	OSystem::instance()->quit();
@@ -2257,7 +2234,7 @@ void Logic::asmPutCameraOnDino() {
 			scrollx = 320;
 		}
 		_vm->display()->horizontalScroll(scrollx);
-		update();
+		_vm->update();
 	}
 	_vm->graphics()->putCameraOnBob(1);
 }
@@ -2271,7 +2248,7 @@ void Logic::asmPutCameraOnJoe() {
 void Logic::asmAltIntroPanRight() {
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
-	update();
+	_vm->update();
 	int16 scrollx = _vm->display()->horizontalScroll();
 	while (scrollx < 285 && !_vm->input()->cutawayQuit()) {
 		++scrollx;
@@ -2279,7 +2256,7 @@ void Logic::asmAltIntroPanRight() {
 			scrollx = 285;
 		}
 		_vm->display()->horizontalScroll(scrollx);
-		update();
+		_vm->update();
 	}
 	_vm->input()->fastMode(false);
 }
@@ -2295,7 +2272,7 @@ void Logic::asmAltIntroPanLeft() {
 			scrollx = 0;
 		}
 		_vm->display()->horizontalScroll(scrollx);
-		update();
+		_vm->update();
 	}
 	_vm->input()->fastMode(false);
 }
@@ -2315,7 +2292,7 @@ void Logic::asmPanRightFromJoe() {
 			scrollx = 320;
 		}
 		_vm->display()->horizontalScroll(scrollx);
-		update();
+		_vm->update();
 	}
 }
 
@@ -2352,7 +2329,7 @@ void Logic::asmPanToJoe() {
 				scrollx = i;
 			}
 			_vm->display()->horizontalScroll(scrollx);
-			update();
+			_vm->update();
 		}
 	} else {
 		while (scrollx < i) {
@@ -2361,9 +2338,9 @@ void Logic::asmPanToJoe() {
 				scrollx = i;
 			}
 			_vm->display()->horizontalScroll(scrollx);
-			update();
+			_vm->update();
 		}
-		update();
+		_vm->update();
 	}
 	_vm->graphics()->putCameraOnBob(0);
 }
@@ -2383,7 +2360,7 @@ void Logic::asmPanLeft320To144() {
 			scrollx = 144;
 		}
 		_vm->display()->horizontalScroll(scrollx);
-		update();
+		_vm->update();
 	}
 }
 
@@ -2403,7 +2380,7 @@ void Logic::asmSmooch() {
 			bobAzura->x += 8;
 			bobJoe->x += 8;
 		}
-		update();
+		_vm->update();
 	}
 }
 
@@ -2436,7 +2413,7 @@ void Logic::asmMakeLightningHitPlane() {
 		if (scrollX > 320)
 			scrollX = 320;
 		_vm->display()->horizontalScroll(scrollX);
-		update();
+		_vm->update();
 	}
 
 	planeBob->scale = 100;
@@ -2462,7 +2439,7 @@ void Logic::asmMakeLightningHitPlane() {
 	fireBob->y = planeBob->y + 10;
 				
 	_vm->bankMan()->unpack(19, fireBob->frameNum, 15);
-	update();
+	_vm->update();
 
 	k = 20;
 	j = 1;
@@ -2482,7 +2459,7 @@ void Logic::asmMakeLightningHitPlane() {
 				j = 1;
 		}
 					
-		update();
+		_vm->update();
 	}
 
 	_vm->graphics()->putCameraOnBob(0);
@@ -2504,7 +2481,7 @@ void Logic::asmScaleBlimp() {
 			--x;
 		}
 
-		update();
+		_vm->update();
 	}
 }
 
@@ -2517,10 +2494,10 @@ void Logic::asmScaleEnding() {
 	int i;
 	for (i = 5; i <= 100; i += 5) {
 		b->scale = i;
-		update();
+		_vm->update();
 	}
 	for (i = 0; i < 50; ++i) {
-		update();
+		_vm->update();
 	}
 	_vm->display()->palFadeOut(0, 255, currentRoom());
 }
@@ -2529,16 +2506,16 @@ void Logic::asmScaleEnding() {
 void Logic::asmWaitForCarPosition() {
 	// Wait for car to reach correct position before pouring oil
 	while (_vm->bam()->_index != 60) {
-		update();
+		_vm->update();
 	}
 }
 
 
 void Logic::asmShakeScreen() {
 	OSystem::instance()->set_shake_pos(3);
-	update();
+	_vm->update();
 	OSystem::instance()->set_shake_pos(0);
-	update();
+	_vm->update();
 }
 
 
@@ -2562,7 +2539,7 @@ void Logic::asmScaleTitle() {
 	for (i = 5; i <= 100; i +=5) {
 		bob->scale = i;
 		bob->y -= 4;
-		update();
+		_vm->update();
 	}
 }
 
@@ -2579,7 +2556,7 @@ void Logic::asmPanRightToHugh() {
 
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
-	update();
+	_vm->update();
 				
 	int i = 4, k = 160;
 
@@ -2622,7 +2599,7 @@ void Logic::asmPanRightToHugh() {
 		bob_thugB1->x -= i * 4;
 		bob_thugB2->x -= i * 4;
 
-		update();
+		_vm->update();
 	}
 
 	_vm->input()->fastMode(false);
@@ -2644,7 +2621,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 	_vm->graphics()->putCameraOnBob(-1);
 	_vm->input()->fastMode(true);
 					
-	update();
+	_vm->update();
 
 	bob_box  ->x += 280 * 2;
 	bob_beam ->x += 30;
@@ -2667,7 +2644,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 		bob_clock->x -= i * 2;
 		bob_hands->x -= i * 2;
 
-		update();
+		_vm->update();
 	}
 	_vm->input()->fastMode(false);
 }
@@ -2696,7 +2673,7 @@ void Logic::asmPanLeftToBomb() {
 
 		bob22->x += i;
 
-		update();
+		_vm->update();
 	}
 
 	_vm->input()->fastMode(false);
@@ -2724,7 +2701,7 @@ void Logic::asmInterviewIntro() {
 		if (scale < 256) {
 			scale = 256;
 		}
-		update();
+		_vm->update();
 	}
 
 	bas->scale = 90;
@@ -2732,17 +2709,17 @@ void Logic::asmInterviewIntro() {
 
 	bas->move(560, 25, 4);
 	while (bas->moving && !_vm->input()->cutawayQuit()) {
-		update();
+		_vm->update();
 	}
 
 	bas->move(545, 65, 2);
 	while (bas->moving && !_vm->input()->cutawayQuit()) {
-		update();
+		_vm->update();
 	}
 
 	bas->move(540, 75, 2);
 	while (bas->moving && !_vm->input()->cutawayQuit()) {
-		update();
+		_vm->update();
 	}
 
 	// put camera on Joe
@@ -2814,11 +2791,10 @@ bool LogicGame::preChangeRoom() {
 		// XXX enable talking for talkie version
 
 		if (ConfMan.getBool("alt_intro")) {
-			_vm->graphics()->loadPanel();
 			playCutaway("cintr.cut");
 		} else {
 			playCutaway("cdint.cut");
-			_vm->graphics()->loadPanel();
+			_vm->display()->palSetPanel();
 		}
 
 		playCutaway("cred.cut");

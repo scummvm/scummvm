@@ -177,7 +177,7 @@ void Display::palSetJoeNormal() {
 
 
 void Display::palSetPanel() {
-	warning("Display::palSetPanel()");
+	memcpy(_pal.room + 144 * 3, _pal.panel, (256 - 144) * 3);
 }
 
 
@@ -636,15 +636,31 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 }
 
 
+void Display::setupPanel() {
+	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx");
+	uint32 size = _vm->resource()->fileSize("panel.pcx");
+	uint8 *dst = _panelBuf + PANEL_W * 10;
+	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
+	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
+	memcpy(_pal.panel, pal, (256 - 144) * 3);
+	delete[] pcxBuf;
+
+	palSetPanel();
+}
+
+
 void Display::setupNewRoom(const char *name, uint16 room) {
 	dynalumInit(name, room);
 
 	char filename[20];
 	sprintf(filename, "%s.PCX", name);
-	uint8 *pcxbuf = _vm->resource()->loadFile(filename);
+	uint8 *pcxBuf = _vm->resource()->loadFile(filename);
 	uint32 size = _vm->resource()->fileSize(filename);
-	readPCXBackdrop(pcxbuf, size, room > 114);
-	delete[] pcxbuf;
+	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
+	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
+	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
+	memcpy(_pal.room, pcxBuf + size - 768, IS_CD_INTRO_ROOM(room) ? 256 * 3 : 144 * 3);
+	delete[] pcxBuf;
 
 	palCustomColors(room);
 
@@ -735,23 +751,6 @@ void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 		}
 		dst += dstPitch;
 	}
-}
-
-
-void Display::readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal) {
-	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
-	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
-	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
-	memcpy(_pal.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
-}
-
-
-void Display::readPCXPanel(const uint8 *pcxBuf, uint32 size) {
-	uint8 *dst = _panelBuf + PANEL_W * 10;
-	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
-	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
-	memcpy(_pal.room + 144 * 3, pal, (256 - 144) * 3);
-	memcpy(_pal.panel, pal, (256 - 144) * 3);
 }
 
 

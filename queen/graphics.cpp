@@ -844,17 +844,6 @@ void Graphics::eraseAllAnims() {
 }
 
 
-void Graphics::loadPanel() {
-	uint8 *pcxbuf = _vm->resource()->loadFile("panel.pcx");
-	if (pcxbuf == NULL) {
-		error("Unable to open panel file");
-	}
-	uint32 size = _vm->resource()->fileSize("panel.pcx");
-	_vm->display()->readPCXPanel(pcxbuf, size);
-	delete[] pcxbuf;
-}
-
-
 void BamScene::updateCarAnimation() {
 	if (_flag != F_STOP) {
 		const BamDataBlock *bdb = &_carData[_index];

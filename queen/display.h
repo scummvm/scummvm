@@ -59,6 +59,7 @@ public:
 	void prepareUpdate();
 	void update(bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 
+	void setupPanel();
 	void setupNewRoom(const char *name, uint16 room);
 
 	void drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip);
@@ -69,8 +70,6 @@ public:
 	void fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
 
 	void readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
-	void readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal);
-	void readPCXPanel(const uint8 *pcxBuf, uint32 size);
 
 	void horizontalScrollUpdate(int16 xCamera);
 	void horizontalScroll(int16 scroll) { _fullRefresh = true; _horizontalScroll = scroll; }

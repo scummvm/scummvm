@@ -711,7 +711,7 @@ int Talk::countSpaces(const char *segment) {
 	if (tmp < 10)
 		tmp = 10;
 
-	return (tmp * 2) / (_vm->logic()->talkSpeed() / 3);
+	return (tmp * 2) / (_vm->talkSpeed() / 3);
 }
 
 void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum) {
@@ -743,7 +743,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 			bob2->x = x;
 			bob2->y = y;
 
-			_vm->logic()->update();
+			_vm->update();
 		}
 	}
 	else
@@ -795,7 +795,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 			// XXX bobs[BNUM].scale=SF;
 		}
 
-		_vm->logic()->update();
+		_vm->update();
 	}
 
 	// XXX #ifdef __DOS__
@@ -881,23 +881,23 @@ void Talk::defaultAnimation(
 				}
 
 				if (!_talkHead)
-					_vm->logic()->update();
+					_vm->update();
 			}
 			else { // (_talkHead && isJoe)
-				_vm->logic()->update();
+				_vm->update();
 			}
 
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
 				if (_vm->input()->talkQuit())
 					break;
 
-				_vm->logic()->update();
+				_vm->update();
 			}
 			else {
 				if (_vm->input()->talkQuit())
 					break;
 
-				_vm->logic()->checkPlayer();
+				_vm->update(true);
 				if (_vm->logic()->joeWalk() == JWM_EXECUTE)
 					// Selected a command, so exit
 					break;
@@ -951,7 +951,7 @@ void Talk::speakSegment(
 			for (i = 0; i < 10; i++) {
 				if (_vm->input()->talkQuit())
 					break;
-				_vm->logic()->update();
+				_vm->update();
 			}
 			return;
 
@@ -1074,7 +1074,7 @@ void Talk::speakSegment(
 
 			if (length == 0 && !isJoe && parameters->bf > 0) {
 				_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
-				_vm->logic()->update();
+				_vm->update();
 			}
 
 			/* A12 = the frame pointer for the full body frame, well use this  */
@@ -1147,7 +1147,7 @@ void Talk::speakSegment(
 		}
 	}
 
-	_vm->logic()->update();
+	_vm->update();
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
@@ -1334,7 +1334,7 @@ int16 Talk::selectSentence() {
 				if (_vm->input()->talkQuit())
 					break;
 
-				_vm->logic()->update();
+				_vm->update();
 
 				zone = _vm->logic()->zoneIn(ZONE_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
 

@@ -114,7 +114,7 @@ void Walk::animateJoe() {
 		// area has been turned off, see if we should execute a cutaway
 		if (pwd->area->mapNeighbours < 0) {
 			// queen.c l.2838-2911
-			_vm->logic()->customMoveJoe(pwd->anim.facing, pwd->areaNum, i);
+			_vm->logic()->handleSpecialArea(pwd->anim.facing, pwd->areaNum, i);
 			_joeMoveBlock = true;
 			return;
 		}
@@ -137,7 +137,7 @@ void Walk::animateJoe() {
 			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
-			_vm->logic()->checkPlayer();
+			_vm->update(true);
 			// FIXME it would nice to be able to get rid of these 3 lines
 			// as stopJoe() should be do the same...
 			if (_vm->logic()->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
@@ -259,7 +259,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 
 		while (pbs->moving) {
-			_vm->logic()->update();
+			_vm->update();
 			uint16 scale = pwd->area->calcScale(pbs->y);
 			pbs->scale = scale;
 			if (pbs->xmajor) {

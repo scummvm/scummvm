@@ -44,7 +44,7 @@ struct MovePersonAnim {
 struct WalkData {
 	int16 dx, dy;
 	const Area *area;
-	uint16 areaNum; // extra stuff for customMoveJoe
+	uint16 areaNum;
 	MovePersonAnim anim;
 };
 
@@ -125,7 +125,7 @@ private:
 	//! set if stopJoe() is called
 	bool _joeInterrupted;
 
-	//! set if customMoveJoe() is called
+	//! set if handleSpecialArea() is called
 	bool _joeMoveBlock;
 
 	QueenEngine *_vm;

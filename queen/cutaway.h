@@ -270,6 +270,7 @@ class Cutaway {
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);
 
+		bool inRange(int16 x, int16 l, int16 h) const { return (x <= h && x >= l); }
 };
 
 } // End of namespace Queen
