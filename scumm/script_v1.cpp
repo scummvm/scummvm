@@ -680,7 +680,6 @@ void Scumm::o5_delay()
 	delay |= fetchScriptByte() << 16;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-
 	o5_breakHere();
 }
 
@@ -1929,8 +1928,17 @@ void Scumm::o5_soundKludge()
 	int16 items[15];
 	int i;
 
-	if (_features & GF_SMALL_HEADER)	// Is dummy function in
-		return;				// SCUMM V3
+	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
+                if (_sentenceNum) {
+                        if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+                                return;
+                } else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
+                        	return;
+		}
+
+                _scriptPointer--;
+		o5_breakHere();
+	}
 
 	for (i = 0; i < 15; i++)
 		items[i] = 0;
