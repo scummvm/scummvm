@@ -333,6 +333,13 @@ public:
 	virtual int overlayToScreenY(int y) { return y; }
 
 	/**
+	 * Return true if the overlay pixel format has an alpha channel.
+	 */
+	virtual bool hasAlpha() const {
+		return false;
+	}
+
+	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation generates a 16 bit color value, in the 565 format
@@ -354,6 +361,29 @@ public:
 		r = (((color >> 11) & 0x1F) << 3);
 		g = (((color >> 5) & 0x3F) << 2);
 		b = ((color&0x1F) << 3);
+	}
+
+	/**
+	* Convert the given ARGB quadruplet into an OverlayColor. A OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation generates a 16 bit color value, in the 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see colorToRGB
+	 */
+	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
+		return RGBToColor(r, g, b);
+	}
+
+	/**
+	 * Convert the given OverlayColor into an ARGB quadruplet. An OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation takes a 16 bit color value and assumes it to be in 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see RGBToColor
+	 */
+	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
+		colorToRGB(color, r, g, b);
+		a = 255;
 	}
 
 	//@}
