@@ -2378,9 +2378,11 @@ void Scumm::dissolveEffect(int width, int height) {
 	blits = 0;
 	blits_before_refresh = (3 * w * h) / 25;
 	
-	// Speed up the effect for Loom
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
-		blits_before_refresh *= 4;
+	// Speed up the effect for CD Loom since it uses it so often. I don't
+	// think the original had any delay at all, so on modern hardware it
+	// wasn't even noticeable.
+	if (_gameId == GID_LOOM256)
+		blits_before_refresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->width;
@@ -2480,7 +2482,8 @@ void Scumm::scrollEffect(int dir) {
 }
 
 void Scumm::unkScreenEffect6() {
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
+	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
+	if (_gameId == GID_LOOM256)
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);
