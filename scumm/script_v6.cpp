@@ -890,6 +890,11 @@ void Scumm_v6::o6_setState() {
 	int state = pop();
 	int obj = pop();
 
+	if ((_features & GF_HUMONGOUS) && (state & 0x8000)) {
+		state = state & 0x7F00;
+		putState(obj, state);
+		return;
+	}
 //  debug(1, "setState(%d,%d)", obj, state);
 
 	putState(obj, state);
