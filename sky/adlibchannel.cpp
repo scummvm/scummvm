@@ -20,11 +20,11 @@
  */
 
 #include "adlibchannel.h"
-#include "sound/fmopl.h"
 
-SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData)
+SkyAdlibChannel::SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, FM_OPL *pOpl)
 {
 	_musicData = pMusicData;
+	_opl = pOpl;
 	_channelData.startOfData = startOfData;
 	_channelData.eventDataPtr = startOfData;
 	_channelData.channelActive = 1;
@@ -62,8 +62,7 @@ void SkyAdlibChannel::updateVolume(uint16 pVolume) {
 void SkyAdlibChannel::setRegister(uint8 regNum, uint8 value) {
 
 	if (_adlibRegMirror[regNum] != value) {
-		YM3812Write(0, 0, regNum);
-		YM3812Write(0, 1, value);
+		OPLWriteReg(_opl,regNum,value);
 		_adlibRegMirror[regNum] = value;
 	}
 }

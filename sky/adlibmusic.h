@@ -23,6 +23,7 @@
 #define ADLIBMUSIC_H
 
 #include "stdafx.h"
+#include "sound/fmopl.h"
 #include "sound/mixer.h"
 #include "common/engine.h"
 #include "adlibchannel.h"
@@ -34,6 +35,7 @@ public:
 	~SkyAdlibMusic(void);
 private:
 	SoundMixer *_mixer;
+	FM_OPL *_opl;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;
 	virtual void setupPointers(void);

@@ -23,6 +23,7 @@
 #define ADLIBCHANNEL_H
 
 #include "stdafx.h"
+#include "sound/fmopl.h"
 #include "common/engine.h"
 #include "sky/musicbase.h"
 
@@ -59,13 +60,14 @@ typedef struct {
 
 class SkyAdlibChannel : public SkyChannelBase {
 public:
-	SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData);
+	SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, FM_OPL *pOpl);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 private:
 	uint8 *_musicData;
 	uint16 _musicVolume;
+	FM_OPL *_opl;
 	AdlibChannelType _channelData;
 	//-
 	InstrumentStruct *_instruments;
