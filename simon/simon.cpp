@@ -1710,7 +1710,7 @@ void SimonState::o_print_str()
 		speech_id = (uint16)getNextWord();
 		break;
 
-	case GAME_SIMON2DOS
+	case GAME_SIMON2DOS:
 		string_ptr = getStringPtrByID(string_id);
 		break;
 
