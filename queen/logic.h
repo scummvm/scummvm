@@ -32,6 +32,13 @@ enum {
 	FRAME_XTRA = 2
 };
 
+enum {
+	LEFT = 1,
+	RIGHT = 2,
+	FRONT = 3,
+	BACK = 4
+};
+
 class Logic {
 
 public:
@@ -53,6 +60,14 @@ public:
 	uint16 walkOffCount();
 	WalkOffData *walkOffData(int index);
 
+	uint16 joeFacing()	{ return _joe.facing; }
+	uint16 joeX()		{ return _joe.x; }
+	uint16 joeY()		{ return _joe.y; }
+
+	void joeFacing(uint16 dir);
+	void joeX(uint16 x);
+	void joeY(uint16 y);
+	
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
@@ -84,11 +99,16 @@ protected:
 	uint16 (*_actorData)[12]; // FIXME: ActorData *_actorData;
 	int16 (*_area)[11][8]; // FIXME: Area *_area[11];
 	WalkOffData *_walkOffData;
-	
+
 	enum {
 		GAME_STATE_COUNT = 211
 	};
 
+	struct {
+		uint16	x, y;
+		uint16	facing;
+	} _joe;
+	
 	int16 _gameState[GAME_STATE_COUNT];
 	
 	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN

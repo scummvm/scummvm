@@ -421,6 +421,18 @@ uint16 Logic::findFrame(uint16 obj) {
 	return framenum;
 }
 
+void Logic::joeFacing(uint16 dir) {
+	_joe.facing = dir;
+}
+
+void Logic::joeX(uint16 x) {
+	_joe.x = x;
+}
+
+void Logic::joeY(uint16 y) {
+	_joe.y = y;
+}
+
 int16 Logic::gameState(int index) {
 	if (index >= 0 && index < GAME_STATE_COUNT)
 		return _gameState[index];
