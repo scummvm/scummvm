@@ -999,7 +999,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (!zplane_list[i])
 					continue;
 
-				if (_vm->_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
+				if (_vm->_features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
 				else if (_vm->_features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
@@ -1035,55 +1035,79 @@ next_iter:
 	} while (--numstrip);
 }
 
-
 void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
-	byte data, color = 0, color2 = 0;
-	int run = 1;
-	byte *t_dst = dst;
-	int t_height = height;
+	byte color = 0;
+	int run = 0, x = 0, y = 0;
 
-	for (int x = 0; x < 4; x++) {
-		height = t_height;
-		dst = t_dst + x * 2;
-		do {
-			if (--run == 0) {
-				data = *src++;
-				if (data & 0x80) {
-					run = data & 0x3f;
-					if (data & 0x40) {
-						data = *src++;
-						color = _vm->_shadowPalette[data >> 4];
-						color2 = _vm->_shadowPalette[data & 0x0f];
-					} else {
-						color = 0xff;
-					}
-				} else {
-					run = data >> 4;
-					color = _vm->_shadowPalette[data & 0x0f];
-					color2 = color;
-				}
-				if (run == 0) {
+  while(x < 8){
+		color = *src++;
+		
+		if(color >= 0x80) {
+			run = color & 0x3f;
+
+			if(color & 0x40) {
+				color = *src++;
+
+				if(run == 0) {
 					run = *src++;
 				}
+
+				for(int z = 0; z < run; z++) {
+
+					if(z & 1) {
+						*(dst + y * _vm->_realWidth + x) = color & 0xf;
+					} else {
+						*(dst + y * _vm->_realWidth + x) = color >> 4;
+					}
+
+					y++;
+					if(y >= height){
+						y = 0;
+						x++;
+					}
+				}
+			} else{
+				if(run == 0) {
+					run = *src++;
+				}
+
+				for(int z = 0; z < run; z++) {
+					*(dst + y * _vm->_realWidth + x) = *(dst + y * _vm->_realWidth + x - 1);
+					y++;
+					if(y >= height){
+						y = 0;
+						x++;
+					}
+				}            
 			}
-			if (color != 0xff) {
-				*dst = color;
-				*(dst + 1) = color2;
-				dst += _vm->_realWidth;
+		} else if(color < 0x80){
+			run = color >> 4;
+			if(run == 0) {
+				run = *src++;
 			}
-		} while (--height);
-		dst = t_dst;
+			
+			for(int z = 0; z < run; z++) {
+				*(dst + y * _vm->_realWidth + x) = color & 0xf;
+				y++;
+
+				if(y >= height){
+					y = 0;
+					x++;
+				}
+			}
+		}
 	}
 }
 
 bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
-	byte code = *smap_ptr++;
 	assert(numLinesToProcess);
 
 	if ((_vm->_gameId == GID_MONKEY_EGA) || (_vm->_gameId == GID_LOOM)) {
 		decodeStripEGA(bgbak_ptr, smap_ptr, numLinesToProcess);
 		return false;
 	}
+
+	byte code = *smap_ptr++;
 
 	if (_vm->_features & GF_AMIGA)
 		_palette_mod = 16;
@@ -3613,4 +3637,3 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 			break;
 	}
 }
-
