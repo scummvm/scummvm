@@ -489,7 +489,7 @@ void LauncherDialog::updateListing() {
 
 	const int oldSel = _list->getSelected();
 	_list->setList(l);
-	if (oldSel < l.size())
+	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
 	updateButtons();
 }
