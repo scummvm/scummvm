@@ -46,7 +46,6 @@
 #pragma warning( disable : 4355 ) // turn off "base member init" warning
 #pragma warning( disable : 4390 ) // turn off "empty statement" warning for BS2 code
 #pragma warning( disable : 4121 ) // turn off "alignment of a member was sensitive to packing" warning
-#pragma warning( disable : 4506 ) // turn off "no definition for inline function" warning
 #pragma warning( disable : 4511 ) // turn off "copy constructor could not be generated" warning
 #pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
 
