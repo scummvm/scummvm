@@ -405,7 +405,7 @@ void CostumeRenderer::procC64(int actor) {
 			if (!rep)
 				color = *src++;
 			
-			if (0 <= y && y < _outheight && v1.x < _outwidth) {
+			if (0 <= y && y < _outheight && 0 <= v1.x && v1.x < _outwidth) {
 				if (!_mirror) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
