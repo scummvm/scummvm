@@ -43,6 +43,7 @@ class Sound;
 class Music;
 class Anim;
 class Render;
+class ActionMap;
 
 using Common::MemoryReadStream;
 
@@ -71,6 +72,7 @@ public:
 	Music *_music;
 	Anim *_anim;
 	Render *_render;
+	ActionMap *_actionMap;
 
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);

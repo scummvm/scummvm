@@ -38,16 +38,27 @@ struct R_ACTIONMAP_ENTRY {
 	R_POINT *pt_tbl;
 };
 
-struct R_ACTIONMAP_INFO {
-	int init;
-	int exits_loaded;
-	int n_exits;
-	R_ACTIONMAP_ENTRY *exits_tbl;
-	const byte *exmap_res;
-	size_t exmap_res_len;
-};
+class ActionMap {
+ public:
+	int reg(void);
+	ActionMap(void);
 
-void CF_action_info(int argc, char *argv[], void *refCon);
+	int load(const byte *exmap_res, size_t exmap_res_len);
+	int draw(R_SURFACE *ds, int color);
+
+	int freeMap(void);
+	int shutdown(void);
+
+	void actionInfo(int argc, char *argv[]);
+
+private:
+	bool _initialized;
+	int _exits_loaded;
+	int _n_exits;
+	R_ACTIONMAP_ENTRY *_exits_tbl;
+	const byte *_exmap_res;
+	size_t _exmap_res_len;
+};
 
 } // End of namespace Saga
 

@@ -32,7 +32,7 @@
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
-#include "actionmap_mod.h"
+#include "actionmap.h"
 #include "gfx_mod.h"
 #include "isomap_mod.h"
 #include "script_mod.h"
@@ -622,7 +622,7 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading exit map resource...");
-			if (ACTIONMAP_Load(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_actionMap->load(res_data, res_data_len) != R_SUCCESS) {
 				warning("Error loading exit map resource");
 				return R_FAILURE;
 			}
@@ -792,7 +792,7 @@ int SCENE_End() {
 
 	PALANIM_Free();
 	OBJECTMAP_Free();
-	ACTIONMAP_Free();
+	_vm->_actionMap->freeMap();
 
 	ys_dll_destroy(SceneModule.anim_list);
 

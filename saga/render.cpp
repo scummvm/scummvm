@@ -37,7 +37,7 @@
 #include "sprite_mod.h"
 #include "text_mod.h"
 
-#include "actionmap_mod.h"
+#include "actionmap.h"
 #include "objectmap_mod.h"
 
 #include "render.h"
@@ -50,7 +50,7 @@ int Render::reg(void) {
 	return R_SUCCESS;
 }
 
-Render::Render(OSystem *system) : _system(system), _initialized(false) {
+Render::Render(SagaEngine *vm, OSystem *system) : _vm(vm), _system(system), _initialized(false) {
 	R_GAME_DISPLAYINFO disp_info;
 	int tmp_w, tmp_h, tmp_bytepp;
 
@@ -136,7 +136,7 @@ int Render::drawScene() {
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
 		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, GFX_GetWhite(), GFX_GetBlack());
-		ACTIONMAP_Draw(backbuf_surface, GFX_MatchColor(R_RGB_RED));
+		_vm->_actionMap->draw(backbuf_surface, GFX_MatchColor(R_RGB_RED));
 	}
 
 	// Draw queued actors

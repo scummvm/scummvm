@@ -43,7 +43,7 @@
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
-#include "actionmap_mod.h"
+#include "actionmap.h"
 #include "font_mod.h"
 #include "game_mod.h"
 #include "game.h"
@@ -119,7 +119,6 @@ void SagaEngine::go() {
 
 	GAME_Register();
 
-	ACTIONMAP_Register();
 	OBJECTMAP_Register();
 	SCRIPT_Register();
 	ACTOR_Register();
@@ -158,7 +157,7 @@ void SagaEngine::go() {
 	FONT_Init();
 	SPRITE_Init();
 	_anim = new Anim();
-	ACTIONMAP_Init();
+	_actionMap = new ActionMap();
 	OBJECTMAP_Init();
 	ISOMAP_Init();
 	SCRIPT_Init();
@@ -194,7 +193,7 @@ void SagaEngine::go() {
 	}
 
 	// Initialize graphics
-	_render = new Render(_system);
+	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return;
 	}
@@ -207,6 +206,7 @@ void SagaEngine::go() {
 
 	_render->reg();
 	_anim->reg();
+	_actionMap->reg();
 
 	SYSTIMER_ResetMSCounter();
 
