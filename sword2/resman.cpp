@@ -1355,6 +1355,8 @@ void resMan::CacheNewCluster(uint32 newCluster)
 
 void resMan::GetCd(int cd)
 {
+	// TODO support a seperate path for cd data?
+	
 	bool		 done = false;
 	char		 sCDName[_MAX_PATH];
 	uint32		 dwMaxCompLength, dwFSFlags;

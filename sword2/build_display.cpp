@@ -1227,7 +1227,7 @@ int32 FN_restore_game(int32 *params)
 
 //------------------------------------------------------------
 
-int32 FN_change_shadows(int *params)
+int32 FN_change_shadows(int32 *params)
 {
 	uint32 rv;
 
