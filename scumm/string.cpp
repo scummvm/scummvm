@@ -812,8 +812,17 @@ void Scumm::initCharset(int charsetno)
 		_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 }
 
+int indexCompare(const void *p1, const void *p2)
+{
+	struct langIndexNode *i1 = (struct langIndexNode *) p1;
+	struct langIndexNode *i2 = (struct langIndexNode *) p2;
+
+	return strcmp(i1->tag, i2->tag);
+}
+
 void Scumm::loadLanguageBundle() {
 	File file;
+	int32 size;
 
 	if (_gameId == GID_DIG) {
 		file.open("language.bnd", _gameDataPath);
@@ -828,9 +837,64 @@ void Scumm::loadLanguageBundle() {
 		return;
 	}
 
-	_languageBuffer = (char*)malloc(file.size());
-	file.read(_languageBuffer, file.size());
+	size = file.size();
+	_languageBuffer = (char*)malloc(size);
+	file.read(_languageBuffer, size);
 	file.close();
+
+	// Create an index of the language file.
+	// FIXME: Extend this mechanism to also cover The Dig?
+
+	if (_gameId == GID_CMI) {
+		int32 i;
+		char *ptr = _languageBuffer;
+
+		// Count the number of lines in the language file.
+
+		_languageStrCount = 0;
+
+		for (;;) {
+			ptr = strpbrk(ptr, "\n\r");
+			if (ptr == NULL)
+				break;
+			while (*ptr == '\n' || *ptr == '\r')
+				ptr++;
+			_languageStrCount++;
+		}
+
+		// Fill the language file index. This is just an array of
+		// tags and offsets. I did consider using a balanced tree
+		// instead, but the extra overhead in the node structure would
+		// easily have doubled the memory consumption of the index.
+
+		_languageIndex = (struct langIndexNode *) malloc(_languageStrCount * sizeof(struct langIndexNode));
+
+		ptr = _languageBuffer;
+
+		for (i = 0; i < _languageStrCount; i++) {
+			int j;
+
+			for (j = 0; j < 8 && !isspace(ptr[j]); j++)
+				_languageIndex[i].tag[j] = toupper(ptr[j]);
+			_languageIndex[i].tag[j] = 0;
+			ptr += (j + 1);
+			_languageIndex[i].offset = ptr - _languageBuffer;
+			ptr = strpbrk(ptr, "\n\r");
+			if (ptr == NULL)
+				break;
+			while (*ptr == '\n' || *ptr == '\r')
+				ptr++;
+		}
+
+		// Conceptually, it may be more elegant to construct the
+		// index so that it is sorted, or otherwise ordered, from the
+		// start. However, this is less error-prone and likely to be
+		// much more optimized than anything I might implement.
+
+		qsort(_languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
+		free(_languageBuffer);
+	}
+	
 	_existLanguageFile = true;
 }
 
@@ -844,33 +908,38 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 		pos = 0;
 
 		if (_gameId == GID_CMI) {
+			struct langIndexNode target;
+			struct langIndexNode *found;
+
 			// copy name from text /..../
-			for (l = 0; (l < 20) && (text[l + 1] != '/'); l++) {
-				name[l] = text[l + 1];
-			}
-			name[l] = 0;
-			for (;;) {
-				if(buf[pos] == 0) {
-					trans_buff[0] = '\0';
-					break;
-				}
-				l = 0;
-				do {
-					tmp[l++] = buf[pos++];
-					assert(l < 499);
-				} while((buf[pos] != 0) && (buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
-				tmp[l] = 0;
-				pos += 2;
-				l = 0;
-				do {
-					tmp2[l] = tmp[l];
-					l++;
-				} while((tmp[l] != 0) && (tmp[l] != 9) && (l < 19));
-				tmp2[l] = 0;
-				if (scumm_stricmp(tmp2, name) == 0) {
-					strcpy((char*)trans_buff, &tmp[l + 1]);
+			for (l = 0; (l < 8) && (text[l + 1] != '/'); l++)
+				target.tag[l] = toupper(text[l + 1]);
+			target.tag[l] = 0;
+
+			found = (struct langIndexNode *) bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
+
+			if (found != NULL) {
+				File file;
+
+				file.open("language.tab", _gameDataPath);
+				if (file.isOpen()) {
+					byte *ptr = trans_buff;
+					byte c;
+
+					file.seek(found->offset, SEEK_SET);
+					for (;;) {
+						c = file.readByte();
+						if (c == 10 || c == 13) {
+							*ptr = 0;
+							break;
+						} else
+							*ptr++ = c;
+					}
+					file.close();
 					return;
 				}
+				// Some evil person removed the language file?
+				_existLanguageFile = false;
 			}
 		} else if (_gameId == GID_DIG) {
 			// copy name from text /..../

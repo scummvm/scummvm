@@ -486,6 +486,12 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 		g_scumm->translateText((byte*)str - 1, g_scumm->_transText);
 		while(*str++ != '/');
 		string2 = (char*)g_scumm->_transText;
+
+		// If string2 contains formatting information there probably
+		// wasn't any translation for it in the language.tab file. In
+		// that case, pretend there is no string2.
+		if (string2[0] == '^')
+			string2[0] = 0;
 	}
 
 	while(str[0] == '^') {

@@ -228,6 +228,11 @@ enum MouseButtonStatus {
 	msClicked = 2
 };
 
+struct langIndexNode {
+	char tag[9];
+	int32 offset;
+};
+
 class Scumm : public Engine {
 	friend void NORETURN CDECL error(const char *s, ...);	// FIXME - ugly but error() accesses g_scumm...
 	friend class ScummDebugger;
@@ -967,6 +972,8 @@ public:
 	bool _keepText;
 	bool _existLanguageFile;
 	char *_languageBuffer;
+	struct langIndexNode *_languageIndex;
+	int _languageStrCount;
 	void loadLanguageBundle();
 	void translateText(byte *text, byte *trans_buff);
 	byte _transText[500];
