@@ -100,6 +100,10 @@ void NewGui::loop()
 		_textcolor = RGBMatch(_s->_currentPalette, 32, 192, 32);
 		_textcolorhi = RGBMatch(_s->_currentPalette, 0, 256, 0);
 #endif
+
+		_eventList.clear();
+		_currentKeyDown = 0;
+
 		_prepare_for_gui = false;
 	}
 
