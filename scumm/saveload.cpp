@@ -52,6 +52,7 @@ void ScummEngine::requestSave(int slot, const char *name) {
 	_saveLoadSlot = slot;
 	_saveLoadCompatible = false;
 	_saveLoadFlag = 1;		// 1 for save
+	assert(name);
 	strcpy(_saveLoadName, name);
 }
 
