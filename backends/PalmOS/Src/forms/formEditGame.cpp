@@ -134,7 +134,7 @@ static void EditGameFormSave(UInt16 index) {
 	// update list position
 	{
 		RectangleType rArea;
-		UInt16 posIndex, maxIndex, maxView;
+		UInt16 posIndex, maxView;
 		
 		// get the sorted index
 		index = GamGetSelected();
@@ -142,14 +142,10 @@ static void EditGameFormSave(UInt16 index) {
 		SknGetListBounds(&rArea, NULL);
 		maxView = rArea.extent.y / sknInfoListItemSize;
 		posIndex = gPrefs->listPosition;
-		maxIndex = DmNumRecords(gameDB);
 		
-		if (index == 0 && posIndex > 0) {
-			gPrefs->listPosition = 0;
-		} else if ((maxView + posIndex) <= index) {
-			posIndex = index - (maxView - posIndex) + 1;
-			gPrefs->listPosition = posIndex;
-		}
+		// if out of the current list position
+		if (!(index >= posIndex && index < (posIndex + maxView)))
+			gPrefs->listPosition = index;	// this value is corrected in SknUpdateList if needed
 	}
 
 	FrmReturnToMain();
@@ -193,7 +189,7 @@ static void EditGameFormInit(UInt16 index) {
 	roomP = (Char *)MemHandleLock(roomH);
 	talkP = (Char *)MemHandleLock(talkH);
 
-//	index = GamGetSelected();
+	frmP = FrmGetActiveForm();
 
 	if (index != dmMaxRecordIndex) {
 		recordH = DmQueryRecord(gameDB, index);
@@ -238,6 +234,8 @@ static void EditGameFormInit(UInt16 index) {
 		LstSetSelection(list2P, 0);
 		LstSetSelection(list3P, 0);
 		CtlSetUsable((ControlType *)GetObjectPtr(EditGameDeleteButton),false);
+		
+		FrmSetFocus(frmP, FrmGetObjectIndex(frmP, EditGameEntryNameField));
 	}
 
 	MemHandleUnlock(nameH);
@@ -258,7 +256,6 @@ static void EditGameFormInit(UInt16 index) {
 	CtlSetLabel((ControlType *)GetObjectPtr(EditGameLanguagePopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
 	CtlSetLabel((ControlType *)GetObjectPtr(EditGamePlatformPopTrigger), LstGetSelectionText(list3P, LstGetSelection(list3P)));
 
-	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
 }
 
