@@ -197,16 +197,8 @@ void Scumm::checkV2Inventory(int x, int y) {
 void Scumm::redrawV2Inventory() {
 	int i;
 	int max_inv;
-	ScummVM::Rect inventoryBox;
 
 	v2_mouseover_box = -1;
-
-	// Clear on all invocations, so hiding works properly
-	inventoryBox.top = virtscr[2].topline + 32;
-	inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
-	inventoryBox.left = 0;
-	inventoryBox.right = virtscr[2].width;
-	restoreBG(inventoryBox);
 
 	if (!(_userState & 64))	// Don't draw inventory unless active
 		return;
@@ -260,6 +252,9 @@ void Scumm::redrawV2Inventory() {
 }
 
 void Scumm::redrawVerbs() {
+	if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
+		return;
+
 	int i;
 	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
 	for (i = _maxVerbs-1; i >= 0; i--) {
@@ -315,6 +310,10 @@ void Scumm::checkExecVerbs() {
 }
 
 void Scumm::verbMouseOver(int verb) {
+	// Don't do anything unless verbs are active
+	if (_version <= 2 && !(_userState & 128))
+		return;
+
 	if (_verbMouseOver == verb)
 		return;
 

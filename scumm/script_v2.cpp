@@ -1489,7 +1489,6 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 void Scumm_v2::setUserState(byte state) {
 	if (state & 4) {						// Userface
 		_userState = state & (32 | 64 | 128);
-		runInventoryScript(0);
 	}
 
 	if (state & 1) {						// Freeze
@@ -1500,31 +1499,26 @@ void Scumm_v2::setUserState(byte state) {
 	}
 
 	if (state & 2) {						// Cursor Show/Hide
-
-		// Mark verbs as hidden/visible
-		for (int i = 0; i < _maxVerbs; i++) {
-			_verbs[i].saveid = !(state & 16);
-		}
-
 		if (state & 16) {
 			_userPut = 1;
 			_cursor.state = 1;
-			
-			// Draw all verbs
-			redrawVerbs();
 		} else {
 			_userPut = 0;
 			_cursor.state = 0;
-			
-			// Hide all verbs
-			ScummVM::Rect rect;
-			rect.top = virtscr[2].topline;
-			rect.bottom = virtscr[2].topline + 6*88;
-			rect.left = 0;
-			rect.right = 319;
-			restoreBG(rect);
 		}
 	}
+
+	// Hide all verbs and inventory
+	ScummVM::Rect rect;
+	rect.top = virtscr[2].topline;
+	rect.bottom = virtscr[2].topline + 8*88;
+	rect.left = 0;
+	rect.right = 319;
+	restoreBG(rect);
+
+	// Draw all verbs and inventory
+	redrawVerbs();
+	runInventoryScript(1);
 }
 
 void Scumm_v2::o2_getActorWalkBox() {
