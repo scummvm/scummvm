@@ -1362,28 +1362,18 @@ void Scumm_v8::o8_kernelSetFunctions()
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
-		{
 		// FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
 		// This opcode is used a lot in script 28.
+		// The problem here is that args[4] is always 0, as it is computed from
+		// lipSyncWidth and lipSyncHeight, which we currently don't support. As a result,
+		// actors will currently not move their mouth at all!
 		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		a = derefActorSafe(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
 		assert(a);
-/*
-		// The naming of this opcode would suggest this labeling of variables:
-		int chore = args[2];	// mostly the return value of actorTalkAnimation() 
-		int limb = args[3];		// mostly 0 and 1, but also 2, 3
-		int frame = args[4];	// some number usually derived from lipSyncWidth and lipSyncHeight
+
+		a->startAnimActor(args[2]);
+		a->animateLimb(args[3], args[4]);
 		
-		// However, I am not fully sure that is correct (names can deceive, or can simply be wrong).
-		// And even if it is, the question is how to use it...
-		
-		// Note that akos_decodeData takes as parameter a "chore" = frame and bitmask
-		// specifiying a set of limbs. That would lead to code like this:
-		a->frame = chore;
-		akos_decodeData(a, frame, 0x8000 >> limb);
-		// But that seems to be quite bogus :-) Anyway, this is just random guessing, and
-		// it would be much better if somebody would disassmble the code in question.
-*/		}
 		break;
 	case 24:	// clearTextQueue
 		warning("o8_kernelSetFunctions: clearTextQueue()");
@@ -1478,16 +1468,14 @@ void Scumm_v8::o8_kernelGetFunctions()
 		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
-		// TODO - these methods are probably for lip syncing?
-		push(0);
+		// TODO - get lip sync data for the currently active voice
+		push(255);
 		break;
 	case 0xDC:		// actorTalkAnimation
-		// TODO - this method is used mostly to compute a parameter for setActorChoreLimbFrame 
-		// (to be precise, the second parameter, i.e. args[1])
 		{
 		Actor *a = derefActorSafe(args[1], "actorTalkAnimation");
 		assert(a);
-		push(0);
+		push(a->talkFrame1);
 		}
 		break;
 	case 0xDD:		// getMasterSFXVol
@@ -1512,8 +1500,9 @@ void Scumm_v8::o8_kernelGetFunctions()
 			push(0);
 		}
 		break;
-	case 0XE2:		// musicLipSyncWidth
+	case 0xE2:		// musicLipSyncWidth
 	case 0xE3:		// musicLipSyncHeight
+		// TODO - get lip sync data for the currently active music
 		// FIXME: These are needed for the song intro to Part III - the scene will freeze
 		// without them.
 		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
@@ -1531,11 +1520,7 @@ void Scumm_v8::o8_getActorChore()
 	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
 	assert(a);
 
-	// FIXME: hack to avoid the "Too many scripts running" in the canon scene
-	push(11);
-	// Maybe this would be the correct code here? What scumm calls a "chore" corresponds
-	// to our actor "frame", I think.
-//	push(a->frame);
+	push(a->frame);
 }
 
 void Scumm_v8::o8_getObjectImageX()

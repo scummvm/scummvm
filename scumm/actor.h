@@ -139,6 +139,9 @@ public:
 	void drawActorCostume();
 	void animateCostume();
 	void setActorCostume(int c);
+	
+	void animateLimb(int limb, int f);
+	
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 	void stopActorMoving();

@@ -1339,7 +1339,7 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor *a)
 	size = getResourceDataSize(akfo) >> 1;
 
 	result = false;
-	for (i = 0; i != 0x10; i++) {
+	for (i = 0; i < 16; i++) {
 		if (a->cost.active[i] != 0)
 			result |= akos_increaseAnim(a, i, aksq, (uint16 *)akfo, size);
 	}

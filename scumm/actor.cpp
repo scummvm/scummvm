@@ -1067,6 +1067,43 @@ void Actor::animateCostume()
 	}
 }
 
+void Actor::animateLimb(int limb, int f)
+{
+	// This methods is very similiar to animateCostume(). 
+	// However, instead of animating *all* the limbs, it only animates
+	// the specified limb to be at the frame specified by "f". 
+
+	if (!f)
+		return;
+
+	animProgress++;
+	if (animProgress >= animSpeed) {
+		animProgress = 0;
+
+		if (costume == 0)
+			return;
+
+		byte *aksq, *akfo;
+		uint size;
+		byte *akos = _vm->getResourceAddress(rtCostume, costume);
+		assert(akos);
+
+		aksq = _vm->findResourceData(MKID('AKSQ'), akos);
+		akfo = _vm->findResourceData(MKID('AKFO'), akos);
+	
+		size = _vm->getResourceDataSize(akfo) >> 1;
+	
+		while (f--) {
+			if (cost.active[limb] != 0)
+				_vm->akos_increaseAnim(this, limb, aksq, (uint16 *)akfo, size);
+		}
+
+//		needRedraw = true;
+//		needBgReset = true;
+	}
+}
+
+
 void Scumm::setActorRedrawFlags(bool fg, bool bg)
 {
 	int i, j;
