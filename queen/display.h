@@ -73,14 +73,14 @@ public:
 	void readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
 
 	void horizontalScrollUpdate(int16 xCamera);
-	void horizontalScroll(int16 scroll) { _fullRefresh = true; _horizontalScroll = scroll; }
+	void horizontalScroll(int16 scroll);
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
-	void fullscreen(bool fs) { debug(6, "Display::fullscreen(%d)", fs); _fullRefresh = true; _fullscreen = fs; }
+	void fullscreen(bool fs) { _fullRefresh = 2; _fullscreen = fs; }
 	bool fullscreen() const { return _fullscreen; }
 
 	void setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h);
-	void forceFullRefresh() { _fullRefresh = true; memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight); }
+	void forceFullRefresh() { _fullRefresh = 2; }
 
 	void handleTimer();
 	void waitForTimer();
@@ -107,7 +107,6 @@ public:
 	void blankScreenEffect1();
 	void blankScreenEffect2();
 	void blankScreenEffect3();
-
 
 private:
 
@@ -154,7 +153,7 @@ private:
 
 	uint8 _mousePtr[14 * 14];
 
-	bool _fullRefresh;
+	uint8 _fullRefresh;
 	uint8 *_dirtyBlocks;
 	uint16 _dirtyBlocksWidth, _dirtyBlocksHeight;
 

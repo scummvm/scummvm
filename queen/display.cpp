@@ -29,7 +29,6 @@
 
 namespace Queen {
 
-
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0), 
 	_system(system), _vm(vm) {
@@ -46,7 +45,7 @@ Display::Display(QueenEngine *vm, OSystem *system)
 
 	memset(_mousePtr, 0, sizeof(_mousePtr));
 
-	_fullRefresh = true;
+	_fullRefresh = 1;
 	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
 	_dirtyBlocksHeight = SCREEN_H / D_BLOCK_H;
 	_dirtyBlocks = new uint8[_dirtyBlocksWidth * _dirtyBlocksHeight];
@@ -63,7 +62,6 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	_pal.scrollable = true;
 }
 
-
 Display::~Display() {
 	delete[] _backdropBuf;
 	delete[] _panelBuf;
@@ -73,7 +71,6 @@ Display::~Display() {
 	delete[] _pal.screen;
 	delete[] _pal.panel;
 }
-
 
 void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 	debug(9, "Display::dynalumInit(%s, %d)", roomName, roomNum);
@@ -96,7 +93,6 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.lum);
 	}
 }
-
 
 void Display::dynalumUpdate(int16 x, int16 y) {
 	if (!_dynalum.valid)
@@ -141,7 +137,6 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 	}
 }
 
-
 void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) {
 	int i;
 	for (i = start; i <= end; i++) {
@@ -151,7 +146,6 @@ void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) 
 		outPal[4 * i + 3] = 0;
 	}
 }
-
 
 void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	debug(9, "Display::palSet(%d, %d)", start, end);
@@ -164,13 +158,11 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	}
 }
 
-
 void Display::palSetJoeDress() {
 	memcpy(_pal.room + 144 * 3, _palJoeDress, 16 * 3);
 	memcpy(_pal.screen + 144 * 3, _palJoeDress, 16 * 3); 
 	palSet(_pal.screen, 144, 159, true);
 }
-
 
 void Display::palSetJoeNormal() {
 	memcpy(_pal.room + 144 * 3, _palJoeClothes, 16 * 3);
@@ -178,11 +170,9 @@ void Display::palSetJoeNormal() {
 	palSet(_pal.screen, 144, 159, true);
 }
 
-
 void Display::palSetPanel() {
 	memcpy(_pal.room + 144 * 3, _pal.panel, (256 - 144) * 3);
 }
-
 
 void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
@@ -211,7 +201,6 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 	_pal.scrollable = true;
 }
 
-
 void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
 	_pal.scrollable = false;
@@ -237,7 +226,6 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	}
 }
 
-
 void Display::palFadePanel() {
 	int i;
 	uint8 tempPal[256 * 3];
@@ -248,7 +236,6 @@ void Display::palFadePanel() {
 
 	palSet(tempPal, 224, 255, true);
 }
-
 
 void Display::palScroll(int start, int end) {
 	debug(9, "Display::palScroll(%d, %d)", start, end);
@@ -270,7 +257,6 @@ void Display::palScroll(int start, int end) {
 	*palStart++ = g;
 	*palStart   = b;
 }
-
 
 void Display::palCustomColors(uint16 roomNum) {
 	debug(9, "Display::palCustomColors(%d)", roomNum);
@@ -302,7 +288,6 @@ void Display::palCustomColors(uint16 roomNum) {
 		break;
 	}
 }
-
 
 void Display::palCustomScroll(uint16 roomNum) {
 	debug(9, "Display::palCustomScroll(%d)", roomNum);
@@ -512,7 +497,6 @@ void Display::palCustomScroll(uint16 roomNum) {
 	_pal.dirtyMax = MAX(_pal.dirtyMax, hiPal);
 }
 
-
 void Display::palCustomFlash() {
 	uint8 tempPal[256 * 3];
 	int i = 0;
@@ -534,7 +518,6 @@ void Display::palCustomFlash() {
 	palSet(_pal.screen, 0, 255, true);
 }
 
-
 void Display::palCustomLightsOff(uint16 roomNum) {
 	int end = 223;
 	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 16;
@@ -545,7 +528,6 @@ void Display::palCustomLightsOff(uint16 roomNum) {
 
 	_pal.scrollable = false;
 }
-
 
 void Display::palCustomLightsOn(uint16 roomNum) {
 	int end = 223;
@@ -560,14 +542,8 @@ void Display::palCustomLightsOn(uint16 roomNum) {
 	_pal.scrollable = true;
 }
 
-
 void Display::screenMode(int comPanel, bool inCutaway) {
 	debug(6, "Display::screenMode(%d, %d)", comPanel, inCutaway);
-
-	// FIXME: this is temporary, just to see if my theory is right
-	if (comPanel == 2 && !inCutaway) {
-		warning("Display::screenMode() - (comPanel == 2 && !inCutaway)");
-	}
 
 	if (comPanel == 2 && inCutaway) {
 		fullscreen((_bdHeight == GAME_SCREEN_HEIGHT));
@@ -575,7 +551,6 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 		fullscreen(false);
 	}
 }
-
 
 void Display::prepareUpdate() {
 	if (!_fullscreen)
@@ -591,7 +566,6 @@ void Display::prepareUpdate() {
 	}
 }
 
-
 void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 	drawTexts();
 	if (_pal.scrollable && dynalum) {
@@ -602,11 +576,14 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		_pal.dirtyMin = 144;
 		_pal.dirtyMax = 144;
 	}
-//	_fullRefresh = true;
+//	_fullRefresh = 1;
 	if (_fullRefresh) {
 		_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
-		_fullRefresh = false;
-		debug(7, "Display::update() - Full blit");
+		--_fullRefresh;
+		if (_fullRefresh) {
+			memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
+		}
+		debug(7, "Display::update() - Full blit (%d)", _fullRefresh);
 	} else {
 		uint16 count = 0;
 		uint8 *scrBuf = _screenBuf;
@@ -639,7 +616,6 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 	waitForTimer();
 }
 
-
 void Display::setupPanel() {
 	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx");
 	uint32 size = _vm->resource()->fileSize("panel.pcx");
@@ -651,7 +627,6 @@ void Display::setupPanel() {
 
 	palSetPanel();
 }
-
 
 void Display::setupNewRoom(const char *name, uint16 room) {
 	dynalumInit(name, room);
@@ -671,17 +646,14 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	forceFullRefresh();
 }
 
-
 void Display::drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip) {
 	blit(_screenBuf, SCREEN_W, x, y, data, pitch, w, h, xflip, true);
 	setDirtyBlock(xflip ? (x - w + 1) : x, y, w, h);
 }
 
-
 void Display::drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
 	blit(_backdropBuf, BACKDROP_W, x, y, data, w, w, h, false, true);
 }
-
 
 void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
 	if (data != NULL) {
@@ -691,7 +663,6 @@ void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w,
 	}
 	setDirtyBlock(x, 150 + y, w, h);
 }
-
 
 void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked) {
 	assert(w <= dstPitch);
@@ -729,7 +700,6 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 	}
 }
 
-
 void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color) {
 	assert(w <= dstPitch);
 	dstBuf += dstPitch * y + x;
@@ -738,7 +708,6 @@ void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w,
 		dstBuf += dstPitch;
 	}
 }
-
 
 void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h) {
 	while (h--) {
@@ -757,23 +726,27 @@ void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 	}
 }
 
-
 void Display::horizontalScrollUpdate(int16 xCamera) {
 	debug(9, "Display::horizontalScrollUpdate(%d)", xCamera);
-	int16 hs = _horizontalScroll;
-	_horizontalScroll = 0;
-	if (_bdWidth > 320) {
+	if (_bdWidth <= 320) {
+		horizontalScroll(0);
+	} else {
 		if (xCamera > 160 && xCamera < 480) {
-			_horizontalScroll = xCamera - 160;
+			horizontalScroll(xCamera - 160);
 		} else if (xCamera >= 480) {
-			_horizontalScroll = 320;
+			horizontalScroll(320);
+		} else {
+			horizontalScroll(0);			
 		}
-	}
-	if (hs != _horizontalScroll) {
-		_fullRefresh = true;
 	}
 }
 
+void Display::horizontalScroll(int16 scroll) { 
+	if (_horizontalScroll != scroll) {
+		_fullRefresh = 2;
+		_horizontalScroll = scroll;
+	}
+}
 
 void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	if (!_fullRefresh) {
@@ -795,11 +768,9 @@ void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	}
 }
 
-
 void Display::handleTimer() {
 	_gotTick = true;
 }
-
 
 void Display::waitForTimer() {
 	_gotTick = false;
@@ -807,7 +778,6 @@ void Display::waitForTimer() {
 		_vm->input()->delay(10);
 	}
 }
-
 
 void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h) {
 	assert(w == 14 && h == 14);
@@ -826,11 +796,9 @@ void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h) {
 	_system->set_mouse_cursor(_mousePtr, 14, 14, 1, 1);
 }
 
-
 void Display::showMouseCursor(bool show) {
 	_system->show_mouse(show);
 }
-
 
 void Display::initFont() {
 	// calculate font justification sizes
@@ -852,7 +820,6 @@ void Display::initFont() {
 	--_charWidth[(uint8)'^'];
 }
 
-
 void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
 	if (y < GAME_SCREEN_HEIGHT) {
 		if (x == 0) x = 1;
@@ -866,12 +833,10 @@ void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
 	}
 }
 
-
 void Display::setTextCentered(uint16 y, const char *text, bool outlined) {
 	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
 	setText(x, y, text, outlined);
 }
-
 
 void Display::drawTexts() {
 	int y;
@@ -883,7 +848,6 @@ void Display::drawTexts() {
 	}
 }
 
-
 void Display::clearTexts(uint16 y1, uint16 y2) {
 	while (y1 <= y2) {
 		_texts[y1].text.clear();
@@ -891,16 +855,13 @@ void Display::clearTexts(uint16 y1, uint16 y2) {
 	}
 }
 
-
 int Display::textCenterX(const char *text) const {
-	return 160 - textWidth(text) / 2;
+	return (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
 }
-
 
 uint16 Display::textWidth(const char *text) const {
 	return textWidth(text, strlen(text));
 }
-
 
 uint16 Display::textWidth(const char *text, uint16 len) const {
 	assert(len <= strlen(text));
@@ -910,7 +871,6 @@ uint16 Display::textWidth(const char *text, uint16 len) const {
 	}
 	return width;
 }
-
 
 void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 	uint8 *dstBuf = _screenBuf + SCREEN_W * y + x;
@@ -930,7 +890,6 @@ void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 		dstBuf += SCREEN_W;
 	}
 }
-
 
 void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 	const uint8 *str = (const uint8*)text;
@@ -958,7 +917,6 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 	setDirtyBlock(xs - 1, y - 1, x - xs + 2, 8 + 2);
 }
 
-
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 	uint8 *p = _screenBuf;
 	int i;
@@ -969,7 +927,6 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 		*(p + y1 * SCREEN_W + i) = *(p + y2 * SCREEN_W + i) = col;
 	}
 }
-
 
 void Display::blankScreen() {
 	static int current = 0;
@@ -983,7 +940,6 @@ void Display::blankScreen() {
 	current = (current + 1) % ARRAYSIZE(effects);
 	forceFullRefresh();
 }
-
 
 void Display::blankScreenEffect1() {
 	uint8 buf[32 * 32];
@@ -1016,7 +972,6 @@ void Display::blankScreenEffect1() {
 	}
 }
 
-
 void Display::blankScreenEffect2() {
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
@@ -1036,8 +991,6 @@ void Display::blankScreenEffect2() {
 		case 3:
 			c = *(p + SCREEN_W + 1);
 			break;
-		default:
-			break;
 		}
 		uint8 *buf = p;
 		int j = 2;
@@ -1050,7 +1003,6 @@ void Display::blankScreenEffect2() {
 		waitForTimer();		
 	}
 }
-
 
 void Display::blankScreenEffect3() {
 	uint32 i = 0;
@@ -1080,7 +1032,6 @@ void Display::blankScreenEffect3() {
 		waitForTimer();
 	}
 }
-
 
 const uint8 Display::_font[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 
@@ -1290,7 +1241,6 @@ const uint8 Display::_font[] = {
 	0x00, 0x66, 0x00, 0x66, 0x66, 0x3C, 0x18, 0x30, 0xFF 
 };
 
-
 const uint8 Display::_palJoeClothes[] = {
 	0x00, 0x00, 0x00, 0x60, 0x60, 0x60, 0x87, 0x87, 0x87, 
 	0xB0, 0xB0, 0xB0, 0xDA, 0xDA, 0xDA, 0x43, 0x34, 0x20,
@@ -1299,7 +1249,6 @@ const uint8 Display::_palJoeClothes[] = {
 	0x17, 0x27, 0x63, 0x1F, 0x3F, 0x83, 0x27, 0x5B, 0xA7,
 	0x98, 0xD4, 0xFF
 };
-
 
 const uint8 Display::_palJoeDress[] = {
 	0x00, 0x00, 0x00, 0x50, 0x50, 0x50, 0x70, 0x70, 0x70,
