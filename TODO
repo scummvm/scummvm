@@ -232,9 +232,9 @@ SCUMM
   reused for this...
 * Add support for NES version of Maniac Mansion
 * Finish formating stuff in subtitles/translation code in the dig.
-* In the very long distance future add translation stuff(hashing original and replacing with translation)
-* (maybe) Add tools for encoding smush sequences into mpeg format to fit on small devices
-* (maybe) Add tools for encoding resources (ex. sounds) to fit on small devices 
+* (maybe) In the very long distance future add translation stuff(hashing original and replacing with translation)
+* Add tool and support for encoding smush sequences into mpeg format to fit on small devices
+* Add tool and support for compress *.la* file resources (ex. sounds) to fit on small devices 
 * fix codec44 for nut fonts
 * Imuse Digital:
   - fix continue playing 'state' music paused by 'sequence' music
@@ -256,7 +256,6 @@ SCUMM
   - add code for mp3 and ogg
  * SMUSH:
   - get rid smush mixer add code for imuse to handle smush tracks
-  - fix SAUD bug, reported in bug tracker
   - cleanup channel mess
   - make code more clear in some places (subtiles code for ex.)
   - add code for mp3/mad encoded sound tracks (distans future)
