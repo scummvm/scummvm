@@ -1313,21 +1313,21 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 
 	uint8 *textBuf1 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
-	char *vText1, *vText2;
+	uint8 textNum;
 	uint8 *screenData;
 	if (useScreen)
 		screenData = _skyScreen->giveCurrent();
 	else
 		screenData = _screenBuf;
 	switch (SkyState::_systemVars.language) {
-		case DE_DEU: vText1 = VIG_DE1; vText2 = VIG_DE2; break;
-		case FR_FRA: vText1 = VIG_FR1; vText2 = VIG_FR2; break;
-		case IT_ITA: vText1 = VIG_IT1; vText2 = VIG_IT2; break;
-		case PT_BRA: vText1 = VIG_PT1; vText2 = VIG_PT2; break;
-		default: vText1 = VIG_EN1; vText2 = VIG_EN2; break;
+		case DE_DEU: textNum = 1; break;
+		case FR_FRA: textNum = 2; break;
+		case IT_ITA: textNum = 4; break;
+		case PT_BRA: textNum = 5; break;
+		default: textNum = 0; break;
 	}
-	_skyText->displayText(vText1, textBuf1, true, 320, 255);
-	_skyText->displayText(vText2, textBuf2, true, 320, 255);
+	_skyText->displayText(_quitTexts[textNum + 0], textBuf1, true, 320, 255);
+	_skyText->displayText(_quitTexts[textNum + 1], textBuf2, true, 320, 255);
 	uint8 *curLine1 = textBuf1 + sizeof(dataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(dataFileHeader);
 	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
@@ -1348,3 +1348,18 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 	delay(1500);
 	_system->quit();
 }
+
+char SkyControl::_quitTexts[12][30] = {
+	"Game over player one",
+	"BE VIGILANT",
+	"Das Spiel ist aus.",
+	"SEI WACHSAM",
+	"Game over joueur 1",
+	"SOYEZ VIGILANTS",
+	"Spelet r slut, Agent 1.",
+	"VAR VAKSAM",
+	"Game over giocatore 1",
+	"SIATE VIGILANTI",
+	"Fim de jogo para o jogador um",
+	"BE VIGILANT"
+};

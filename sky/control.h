@@ -245,6 +245,8 @@ private:
 	SkyConResource *_upFastButton, *_upSlowButton, *_quitButton, *_restoreButton;
 
 	SkyConResource *_savePanLookList[6], *_restorePanLookList[6];
+
+	static char _quitTexts[12][30];
 };
 
 #endif // CONTROL_H

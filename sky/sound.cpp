@@ -1086,8 +1086,8 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	uint16 dataLoop = (_sfxInfo[(sound << 3) | 6] << 8) | _sfxInfo[(sound << 3) | 7];
 
 	byte flags = SoundMixer::FLAG_UNSIGNED;
-	if (dataSize == dataLoop)
-		flags |= SoundMixer::FLAG_LOOP;
+	/*if (dataSize == dataLoop)
+		flags |= SoundMixer::FLAG_LOOP;*/
 	
 	if (_ingameSound > 0) _mixer->stop(_ingameSound - 1);
 	_mixer->setVolume(volume);

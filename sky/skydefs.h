@@ -26,19 +26,6 @@
 
 //This file is incomplete, several flags still missing.
 
-#define VIG_EN1 "Game over player one"
-#define VIG_EN2 "BE VIGILANT"
-#define VIG_DE1 "Das Spiel ist aus."
-#define VIG_DE2 "SEI WACHSAM"
-#define VIG_FR1 "Game over joueur 1"
-#define VIG_FR2 "SOYEZ VIGILANTS"
-#define VIG_SE1 "Spelet r slut, Agent 1."
-#define VIG_SE2 "VAR VAKSAM"
-#define VIG_IT1 "Game over giocatore 1"
-#define VIG_IT2 "SIATE VIGILANTI"
-#define VIG_PT1 "Fim de jogo para o jogador um"
-#define VIG_PT2 "BE VIGILANT"
-
 #define ST_COLLISION_BIT	5
 
 #define S_COUNT	0
