@@ -49,23 +49,6 @@ void Scumm::putClass(int obj, int cls, bool set)
 			cls = 24;
 	}
 
-	if (_features & GF_SMALL_HEADER) {
-		if (cls == 21 )
-		{
-			Actor *a;
-			a=derefActor(obj);
-			a->forceClip=1;
-			return;
-		}
-		if (cls == 20 )
-		{
-			Actor *a;
-			a=derefActor(obj);
-			a->mask=0;
-			return;
-		}
-	}
-
 	if (set)
 		_classData[obj] |= (1 << (cls - 1));
 	else

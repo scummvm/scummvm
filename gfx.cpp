@@ -2232,7 +2232,7 @@ void Scumm::setCursorHotspot2(int x, int y)
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 {
 	int w, h, i;
-
+	
 	l >>= 3;
 	if (l < 0)
 		l = 0;

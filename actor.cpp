@@ -745,8 +745,7 @@ void Scumm::startWalkAnim(Actor * a, int cmd, int angle)
 		case 3:										/* stop walk */
 			turnToDirection(a, angle);
 			startAnimActor(a, a->standFrame);
-			break;
-		}
+			break;		}
 	}
 }
 
@@ -910,6 +909,11 @@ void Scumm::drawActorCostume(Actor * a)
 
 		if (a == NULL || !a->needRedraw)
 			return;
+		
+		if (g_scumm->getClass(a->number, 20))
+			a->mask = 0;
+		else if (g_scumm->getClass(a->number, 21))
+			a->forceClip = 1;
 
 		a->needRedraw = false;
 
