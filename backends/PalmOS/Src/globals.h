@@ -44,10 +44,17 @@ typedef struct {
 		UInt8 *pageAddr1;
 		UInt8 *pageAddr2;
 	} flipping;
+	
+	struct {
+		Boolean MP3;
+		Boolean setDefaultTrackLength;
+		UInt16 defaultTrackLength;
+		UInt16 firstTrack;
+	} music;
 
-} GlobalsDataType;
+} GlobalsDataType, *GlobalsDataPtr;
 
-extern GlobalsDataType *gVars;
+extern GlobalsDataPtr gVars;
 
 
 #endif

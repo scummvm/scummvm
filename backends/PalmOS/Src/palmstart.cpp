@@ -63,6 +63,7 @@ typedef struct {
 	Boolean subtitles;
 	Boolean talkSpeed;
 	UInt16 talkValue;
+	UInt8 language;
 
 } GameInfoType;
 
@@ -100,13 +101,21 @@ typedef	struct {
 	} volume;
 	
 	struct {
+		// midi
+		Boolean multiMidi;
 		Boolean music;
 		UInt8 driver;
 		UInt8 tempo;
+		// CD audio
+		Boolean MP3;
+		Boolean setDefaultTrackLength;
+		UInt16 defaultTrackLength;
+		UInt16 firstTrack;
+		// sound FX
 		Boolean sfx;
 	} sound;
 
-} GlobalsPreferenceType;
+} GlobalsPreferenceType, *GlobalsPreferencePtr;
 
 typedef struct {
 	UInt16 volRefNum;
@@ -119,14 +128,14 @@ typedef struct {
  *	Global variables
  *
  ***********************************************************************/
-static GlobalsPreferenceType *gPrefs;
+static GlobalsPreferencePtr gPrefs;
 static DmOpenRef _dbP = NULL;
 static UInt16 _lstIndex = 0;	// last index
 static UInt8 __editMode__;
 static UInt16 sknLastOn = skinButtonNone;
 static Boolean bStartScumm = false;
 
-GlobalsDataType *gVars;
+GlobalsDataPtr gVars;
 
 // form list draw
 #define	ITEM_TYPE_UNKNOWN	'U'
@@ -191,7 +200,6 @@ static void GBInitAll() {
 #ifndef DISABLE_SCUMM
 	IMuseDigital_initGlobals();
 	NewGui_initGlobals();
-	//Resource_initGlobals();
 	Akos_initGlobals();
 	Codec47_initGlobals();
 	Gfx_initGlobals();
@@ -204,7 +212,6 @@ static void GBReleaseAll() {
 #ifndef DISABLE_SCUMM
 	IMuseDigital_releaseGlobals();
 	NewGui_releaseGlobals();
-	//Resource_releaseGlobals();
 	Akos_releaseGlobals();
 	Codec47_releaseGlobals();
 	Gfx_releaseGlobals();
@@ -1115,14 +1122,15 @@ static void EditGameFormSave(UInt16 index) {
 
 	FieldType *fld1P, *fld2P, *fld3P, *fld4P, *fld5P, *fld6P;	// need to change this with good names
 	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;	
-	ListType *listP;
+	ListType *list1P, *list2P;
 	FormPtr frmP;
 
 	MemHandle recordH;
 	GameInfoType *gameInfo, newGameInfo;
 //	UInt16 index;
 
-	listP = (ListType *)GetObjectPtr(EditGameGfxListList);
+	list1P = (ListType *)GetObjectPtr(EditGameGfxListList);
+	list2P = (ListType *)GetObjectPtr(EditGameLanguageList);
 	fld1P = (FieldType *)GetObjectPtr(EditGameEntryNameField);
 	fld2P = (FieldType *)GetObjectPtr(EditGamePathField);
 	fld3P = (FieldType *)GetObjectPtr(EditGameGameField);
@@ -1184,7 +1192,8 @@ static void EditGameFormSave(UInt16 index) {
 	StrCopy(newGameInfo.nameP, FldGetTextPtr(fld1P));
 	StrCopy(newGameInfo.pathP, FldGetTextPtr(fld2P));
 	StrCopy(newGameInfo.gameP, FldGetTextPtr(fld3P));
-	newGameInfo.gfxMode = LstGetSelection(listP);
+	newGameInfo.gfxMode = LstGetSelection(list1P);
+	newGameInfo.language = LstGetSelection(list2P);
 	newGameInfo.selected = true;
 	newGameInfo.autoLoad = CtlGetValue(cck1P);
 	newGameInfo.loadSlot = StrAToI(FldGetTextPtr(fld4P));
@@ -1229,7 +1238,7 @@ static void EditGameFormInit(UInt16 index) {
 
 	FieldType *fld1P, *fld2P, *fld3P, *fld4P, *fld5P, *fld6P;
 	FormPtr frmP;
-	ListType *listP;
+	ListType *list1P, *list2P;
 
 	Char *nameP, *pathP, *gameP, *loadP, *roomP, *talkP;
 	MemHandle nameH, pathH, gameH, loadH, roomH, talkH;
@@ -1237,7 +1246,8 @@ static void EditGameFormInit(UInt16 index) {
 	MemHandle recordH = NULL;
 	GameInfoType *game;
 
-	listP = (ListType *)GetObjectPtr(EditGameGfxListList);
+	list1P = (ListType *)GetObjectPtr(EditGameGfxListList);
+	list2P = (ListType *)GetObjectPtr(EditGameLanguageList);
 	fld1P = (FieldType *)GetObjectPtr(EditGameEntryNameField);
 	fld2P = (FieldType *)GetObjectPtr(EditGamePathField);
 	fld3P = (FieldType *)GetObjectPtr(EditGameGameField);
@@ -1268,7 +1278,8 @@ static void EditGameFormInit(UInt16 index) {
 		StrCopy(pathP, game->pathP);
 		StrCopy(gameP, game->gameP);
 
-		LstSetSelection(listP, game->gfxMode);
+		LstSetSelection(list1P, game->gfxMode);
+		LstSetSelection(list2P, game->language);
 		
 		StrIToA(loadP, game->loadSlot);
 		StrIToA(roomP, game->roomNum);
@@ -1298,7 +1309,8 @@ static void EditGameFormInit(UInt16 index) {
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameSubtitlesCheckbox), 0);
 		CtlSetValue((ControlType *)GetObjectPtr(EditGameTalkSpeedCheckbox), 0);
 
-		LstSetSelection(listP, 1);	
+		LstSetSelection(list1P, 1);
+		LstSetSelection(list2P, 0);
 		CtlSetUsable((ControlType *)GetObjectPtr(EditGameDeleteButton),false);
 	}
 
@@ -1316,7 +1328,8 @@ static void EditGameFormInit(UInt16 index) {
 	FldSetTextHandle(fld5P, roomH);
 	FldSetTextHandle(fld6P, talkH);
 
-	CtlSetLabel((ControlType *)GetObjectPtr(EditGameGfxPopupPopTrigger), LstGetSelectionText(listP, LstGetSelection(listP)));
+	CtlSetLabel((ControlType *)GetObjectPtr(EditGameGfxPopupPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+	CtlSetLabel((ControlType *)GetObjectPtr(EditGameLanguagePopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
 
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
@@ -1367,6 +1380,10 @@ static Boolean EditGameFormHandleEvent(EventPtr eventP)
 
 				case EditGameGfxPopupPopTrigger:
 					FrmList(eventP, EditGameGfxListList);
+					break;
+
+				case EditGameLanguagePopTrigger:
+					FrmList(eventP, EditGameLanguageList);
 					break;
 			}
 			handled = true;
@@ -1582,42 +1599,66 @@ static Boolean VolumeFormHandleEvent(EventPtr eventP) {
 }
 
 static void SoundFormSave() {
-	ControlType *cck1P;
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P;
 	ListType *list1P;
-	FieldType *fld1P;
+	FieldType *fld1P, *fld2P, *fld3P;
 	UInt8 tempo;
+	UInt16 firstTrack;
 
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
+	cck2P = (ControlType *)GetObjectPtr(SoundMultiMidiCheckbox);
+	cck3P = (ControlType *)GetObjectPtr(SoundMP3Checkbox);
+	cck4P = (ControlType *)GetObjectPtr(SoundTrackLengthCheckbox);
 	list1P = (ListType *)GetObjectPtr(SoundDriverList);
 	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
+	fld2P = (FieldType *)GetObjectPtr(SoundLengthSecsField);
+	fld3P = (FieldType *)GetObjectPtr(SoundFirstTrackField);
 
 	tempo = StrAToI(FldGetTextPtr(fld1P));
-	
 	if (tempo < 50 || tempo > 200) {
 		FrmCustomAlert(FrmErrorAlert, "Invalid tempo value (50...200)", 0, 0);
 		return;
 	}
 
-	gPrefs->sound.music = CtlGetValue(cck1P);
-	gPrefs->sound.driver = LstGetSelection(list1P);
-	gPrefs->sound.tempo = StrAToI(FldGetTextPtr(fld1P));
+	firstTrack = StrAToI(FldGetTextPtr(fld3P));
+	if (firstTrack < 1 || firstTrack > 999) {
+		FrmCustomAlert(FrmErrorAlert, "Invalid track value (1...999)", 0, 0);
+		return;
+	}
 
+	gPrefs->sound.music = CtlGetValue(cck1P);
+	gPrefs->sound.multiMidi = CtlGetValue(cck2P);
+	gPrefs->sound.MP3 = CtlGetValue(cck3P);
+	gPrefs->sound.setDefaultTrackLength = CtlGetValue(cck4P);
+
+	gPrefs->sound.driver = LstGetSelection(list1P);
+	gPrefs->sound.tempo = tempo;
+	gPrefs->sound.defaultTrackLength = StrAToI(FldGetTextPtr(fld2P));
+	gPrefs->sound.firstTrack = firstTrack;
 	FrmReturnToMain();
 }
 
 static void SoundFormInit() {
-	ControlType *cck1P;
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P;
 	ListType *list1P;
-	FieldType *fld1P;
+	FieldType *fld1P, *fld2P, *fld3P;
 	FormPtr frmP;
-	MemHandle tempoH;
-	Char *tempoP;
+	MemHandle tempoH, lengthH, firstTrackH;
+	Char *tempoP, *lengthP, *firstTrackP;
 
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
+	cck2P = (ControlType *)GetObjectPtr(SoundMultiMidiCheckbox);
+	cck3P = (ControlType *)GetObjectPtr(SoundMP3Checkbox);
+	cck4P = (ControlType *)GetObjectPtr(SoundTrackLengthCheckbox);
 	list1P = (ListType *)GetObjectPtr(SoundDriverList);
 	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
+	fld2P = (FieldType *)GetObjectPtr(SoundLengthSecsField);
+	fld3P = (FieldType *)GetObjectPtr(SoundFirstTrackField);
 
 	CtlSetValue(cck1P, gPrefs->sound.music);
+	CtlSetValue(cck2P, gPrefs->sound.multiMidi);
+	CtlSetValue(cck3P, gPrefs->sound.MP3);
+	CtlSetValue(cck4P, gPrefs->sound.setDefaultTrackLength);
 
 	LstSetSelection(list1P, gPrefs->sound.driver);
 	CtlSetLabel((ControlType *)GetObjectPtr(SoundDriverPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
@@ -1627,6 +1668,18 @@ static void SoundFormInit() {
 	StrIToA(tempoP, gPrefs->sound.tempo);
 	MemHandleUnlock(tempoH);
 	FldSetTextHandle(fld1P, tempoH);
+
+	lengthH = MemHandleNew(FldGetMaxChars(fld2P));
+	lengthP = (Char *)MemHandleLock(lengthH);
+	StrIToA(lengthP, gPrefs->sound.defaultTrackLength);
+	MemHandleUnlock(lengthH);
+	FldSetTextHandle(fld2P, lengthH);
+
+	firstTrackH = MemHandleNew(FldGetMaxChars(fld3P));
+	firstTrackP = (Char *)MemHandleLock(firstTrackH);
+	StrIToA(firstTrackP, gPrefs->sound.firstTrack);
+	MemHandleUnlock(firstTrackH);
+	FldSetTextHandle(fld3P, firstTrackH);
 
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
@@ -1689,9 +1742,9 @@ static void MiscOptionsFormSave() {
 	cck1P = (ControlType *)GetObjectPtr(MiscOptionsVibratorCheckbox);
 	cck2P = (ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox);
 	cck3P = (ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox);
-	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
 	cck4P = (ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox);
 	cck5P = (ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox);
+	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
 
 	frmP = FrmGetActiveForm();
 
@@ -1704,9 +1757,9 @@ static void MiscOptionsFormSave() {
 	gPrefs->vibrator = CtlGetValue(cck1P);
 	gPrefs->autoOff = !CtlGetValue(cck2P);
 	gPrefs->stdPalette = CtlGetValue(cck3P);
-	gPrefs->autoReset = CtlGetValue(cck6P);
 	gPrefs->debug = CtlGetValue(cck4P);
 	gPrefs->saveConfig = CtlGetValue(cck5P);
+	gPrefs->autoReset = CtlGetValue(cck6P);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
@@ -2031,151 +2084,13 @@ static UInt16 parseCards() {
 	
 	return volRefNum;
 }
-/*
-static UInt16 parseCards(Boolean forceDisplay) {
 
-	Err err;
-	UInt16 volRefNum;
-	UInt32 volIterator = vfsIteratorStart;
-	UInt8 counter = 0;
-
-	MemHandle cards = NULL;
-	CardInfoType *cardsInfo;
-	MemHandle items = NULL;
-	Char **itemsText = NULL;
-	UInt32 other = 1;
-
-	while (volIterator != vfsIteratorStop) {
-		err = VFSVolumeEnumerate(&volRefNum, &volIterator);
-
-		if (!err)
-		{	Char labelP[expCardInfoStringMaxLen+1];
-			err = VFSVolumeGetLabel(volRefNum, labelP, expCardInfoStringMaxLen+1);
-
-			if (!err) {
-				if (StrLen(labelP) == 0) {	// if no label try to retreive card type
-					VolumeInfoType volInfo;
-					err = VFSVolumeInfo(volRefNum, &volInfo);
-					
-					if (!err) {
-						ExpCardInfoType info;
-						err = ExpCardInfo(volInfo.slotRefNum, &info);
-						StrCopy(labelP, info.deviceClassStr);
-					}
-					
-					if (err != errNone)	// if err default name
-						StrPrintF(labelP,"Other Card %ld", other++);
-				}
-			
-				if (!cards)
-					cards = MemHandleNew(sizeof(CardInfoType));
-				else
-					MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
-					
-				cardsInfo = (CardInfoType *)MemHandleLock(cards);
-				cardsInfo[counter].volRefNum = volRefNum;
-				StrCopy(cardsInfo[counter].nameP, labelP);
-				MemHandleUnlock(cards);
-				counter++;
-			}
-		}
-	}
-
-	if (counter > 0) {
-		cardsInfo = (CardInfoType *)MemHandleLock(cards);
-
-		if (forceDisplay) {
-			FormPtr frmP;
-			ListPtr listP;
-			ControlType *cck1P, *cck2P, *cck3P;
-			Int16 selected = 0;
-			UInt16 index, button;
-
-			frmP = FrmInitForm (CardSlotForm);
-			listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotSlotList));
-			cck1P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotMoveCheckbox));
-			cck2P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotDeleteCheckbox));
-			cck3P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotConfirmCheckbox));
-
-			for (index = 0; index < counter; index++) {
-				if (!items)
-					items = MemHandleNew(sizeof(Char *));
-				else
-					MemHandleResize(items, MemHandleSize(items) + sizeof(Char *));
-
-				itemsText = (Char **)MemHandleLock(items);
-				itemsText[index] = cardsInfo[index].nameP;
-				MemHandleUnlock(items);
-				
-				if (cardsInfo[index].volRefNum == gPrefs->card.volRefNum)
-					selected = index;
-			}
-
-			itemsText = (Char **)MemHandleLock(items);
-			LstSetListChoices (listP, itemsText, counter);
-			LstSetSelection(listP, selected);
-			
-			CtlSetValue(cck1P, gPrefs->card.moveDB);
-			CtlSetValue(cck2P, gPrefs->card.deleteDB);
-			CtlSetValue(cck3P, gPrefs->card.confirmMoveDB);
-
-			button = FrmDoDialog (frmP);
-
-			selected = LstGetSelection(listP);
-			MemHandleUnlock(items);
-			MemHandleFree(items);
-			FrmDeleteForm(frmP);
-			
-			// save preferences
-			if (button == CardSlotOkButton) {
-				volRefNum = cardsInfo[selected].volRefNum;
-				gPrefs->card.moveDB = CtlGetValue(cck1P);
-				gPrefs->card.deleteDB = CtlGetValue(cck2P);
-				gPrefs->card.confirmMoveDB = CtlGetValue(cck3P);
-			}
-
-		} else {
-			volRefNum = cardsInfo[0].volRefNum;	// return the first volref
-		}
-		
-		MemHandleUnlock(cards);
-		MemHandleFree(cards);
-
-	} else if (forceDisplay) {
-		FrmCustomAlert(FrmWarnAlert, "No card found.\nPlease insert a memory card.", 0, 0);
-		volRefNum = sysInvalidRefNum;
-
-	} else {
-		volRefNum = sysInvalidRefNum;
-	}
-
-	FormPtr frmP = FrmGetActiveForm();
-
-	if (volRefNum != sysInvalidRefNum) { // if found try to create folders
-		VFSDirCreate(volRefNum, "/PALM");
-		VFSDirCreate(volRefNum, "/PALM/Programs");
-		VFSDirCreate(volRefNum, "/PALM/Programs/ScummVM");
-		VFSDirCreate(volRefNum, "/PALM/Programs/ScummVM/Games");
-		VFSDirCreate(volRefNum, "/PALM/Programs/ScummVM/Saved");
-
-		if (frmP)
-			FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
-	} else {
-		if (frmP)
-			FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSNoneBitMap));
-	}
-
-	return volRefNum;
-}
-*/
 //#############################################################################
 //#############################################################################
 // Skin manager
 //#############################################################################
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define AppLastVersion	"v0.2.97"
-#define AppLastYear		"2003"
 
 static void SknApplySkin()
 {
@@ -2540,7 +2455,7 @@ static Boolean MainFormDoCommand(UInt16 command)
 			handled = true;
 			break;
 
-		case MainOptionsSoundPrefs:
+		case MainOptionsMusic:
 			FrmPopupForm(SoundForm);
 			handled = true;
 			break;
@@ -2668,13 +2583,19 @@ static void StartScummVM() {
 		}
 	*/
 		AddArg(&argvP[argc], "ScummVM", NULL, &argc);
-		
+
 		// save scummvm.ini ?
 		if (gPrefs->saveConfig)
 			AddArg(&argvP[argc], "-w", NULL, &argc);
 
 		// path
 		AddArg(&argvP[argc], "-p", pathP, &argc);
+
+		// language
+		if (gameInfoP->language > 0) {
+			const Char *lang = "en\0de\0fr\0it\0p\0es\0jp\0z\0kr\0hb\0";
+			AddArg(&argvP[argc], "-q", (lang + (gameInfoP->language - 1) * 3), &argc);
+		}
 
 		// gfx mode
 		gVars->flipping.pageAddr1 = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
@@ -2728,6 +2649,11 @@ static void StartScummVM() {
 			StrIToA(num, gPrefs->debugLevel);
 			AddArg(&argvP[argc], "-d", num, &argc);
 		}
+
+		// multi midi ?
+		if (gPrefs->sound.multiMidi)
+			AddArg(&argvP[argc], "--multi-midi", NULL, &argc);
+
 		// music driver
 		musicDriver = gPrefs->sound.music;
 		if (musicDriver) {
@@ -2778,6 +2704,10 @@ static void StartScummVM() {
 	gVars->vibrator = gPrefs->vibrator;
 	gVars->stdPalette = gPrefs->stdPalette;
 	gVars->autoReset = gPrefs->autoReset;
+	gVars->music.MP3 = gPrefs->sound.MP3;
+	gVars->music.setDefaultTrackLength = gPrefs->sound.setDefaultTrackLength;
+	gVars->music.defaultTrackLength = gPrefs->sound.defaultTrackLength;
+	gVars->music.firstTrack = gPrefs->sound.firstTrack;
 
 	if (gVars->vibrator)
 	{
@@ -3326,8 +3256,8 @@ static void AppStopMathLib() {
 	}
 }
 
-static Err AppStart(void)
-{
+
+static Err AppStart(void) {
 	UInt16 dataSize, checkSize = 0;
 	Err error;
 
@@ -3347,7 +3277,7 @@ static Err AppStart(void)
 	MemSet(gPrefs, dataSize, 0);
 
 	// Read the saved preferences / saved-state information.
-	if (PrefGetAppPreferences(appFileCreator, appPrefID, NULL, &checkSize, true) == noPreferenceFound || checkSize < dataSize) {
+	if (PrefGetAppPreferences(appFileCreator, appPrefID, NULL, &checkSize, true) == noPreferenceFound || checkSize != dataSize) {
 		UInt32 romVersion;
 		// reset all elements
 		MemSet(gPrefs, dataSize, 0);
@@ -3369,6 +3299,8 @@ static Err AppStart(void)
 		gPrefs->volume.sfx = 192;
 		
 		gPrefs->sound.tempo = 100;
+		gPrefs->sound.defaultTrackLength = 10;
+		gPrefs->sound.firstTrack = 1;
 		
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
