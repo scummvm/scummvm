@@ -23,6 +23,7 @@
 #include "common/util.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
+#include "sound/mp3.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
@@ -563,12 +564,24 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 	} else if ((soundHandle->bundle) && (soundHandle->compressed)) {	
 		*buf = (byte *)malloc(size);
 		char fileName[24];
-		sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
+		sprintf(fileName, "%s_reg%03d", soundHandle->name, region);
 		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
-			File *oggFile = soundHandle->bundle->getFile(fileName, offs, len);
+			File *cmpFile;
+			bool oggMode = false;
+			sprintf(fileName, "%s_reg%03d.mp3", soundHandle->name, region);
+			cmpFile = soundHandle->bundle->getFile(fileName, offs, len);
+			if (!cmpFile) {
+				sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
+				cmpFile = soundHandle->bundle->getFile(fileName, offs, len);
+				assert(cmpFile);
+				oggMode = true;
+			}
 			if (!soundHandle->compressedStream) {
-				soundHandle->compressedStream = makeVorbisStream(oggFile, len);
+				if (oggMode)
+					soundHandle->compressedStream = makeVorbisStream(cmpFile, len);
+				else
+					soundHandle->compressedStream = makeMP3Stream(cmpFile, len);
 				assert(soundHandle->compressedStream);
 				assert(soundHandle->compressedStream->getRate() == 22050);
 				assert(soundHandle->compressedStream->isStereo());
