@@ -78,7 +78,7 @@ public:
 	void clearScreen(void);
 
 	void recreate(void);
-	void flip(void);
+	void flip(bool doUpdate = true);
 
 	void spriteEngine(void);
 

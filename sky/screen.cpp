@@ -194,7 +194,7 @@ void SkyScreen::recreate(void) {
 	}
 }
 
-void SkyScreen::flip(void) {
+void SkyScreen::flip(bool doUpdate) {
 
 	SkyState::_systemVars.mouseFlag |= MF_NO_UPDATE;
 	uint8 *screenPos = _currentScreen;
@@ -229,7 +229,8 @@ void SkyScreen::flip(void) {
 		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
 	SkyState::_systemVars.mouseFlag &= ~MF_NO_UPDATE;
-	_system->update_screen();
+	if (doUpdate)
+		_system->update_screen();
 }
 
 void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
@@ -239,7 +240,7 @@ void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
 	forceRefresh();
 	recreate();
 	spriteEngine();
-	flip();
+	flip(false);
 	fnFadeUp(palette, scroll);
 }
 
