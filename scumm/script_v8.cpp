@@ -1371,7 +1371,10 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		warning("o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
-		warning("o8_kernelSetFunctions: queryQuit()");
+		if (_confirmExit)
+			confirmexitDialog();
+		else
+			_quit = true;
 		break;
 	case 108:	// buildPaletteShadow
 		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
