@@ -198,7 +198,6 @@ for ac_option in $@; do
 	;;
       --with-vorbis-prefix=*)
       	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	echo "prefix is $_prefix"
 	VORBIS_CFLAGS="-I$_prefix/include"
 	VORBIS_LIBS="-L$_prefix/lib"
 	;;
