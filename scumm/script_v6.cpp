@@ -23,6 +23,8 @@
 
 #include "stdafx.h"
 
+#include "common/config-manager.h"
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/imuse.h"
@@ -2413,7 +2415,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 
 				debug(1, "INSANE Arg: %d %d", args[1], args[2]);
 
-				SmushPlayer *sp = new SmushPlayer(this, speed, !_noSubtitles);
+				SmushPlayer *sp = new SmushPlayer(this, speed);
 
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
@@ -2422,7 +2424,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 #ifdef INSANE
 					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
 
-					_insane->setSmushParams(speed, !_noSubtitles);
+					_insane->setSmushParams(speed);
 					_insane->runScene(insaneVarNum);
 				    
 #else
@@ -2559,10 +2561,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			_saveSound = args[1];
 			break;
 		case 215:
-			if (args[1])
-				_noSubtitles = false;
-			else
-				_noSubtitles = true;
+			ConfMan.set("subtitles", args[1] != 0);
 			break;
 		default:
 			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);

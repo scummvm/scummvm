@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 
+#include "common/config-manager.h"
 #include "common/util.h"
 
 #include "scumm/actor.h"
@@ -476,7 +477,7 @@ int ScummEngine::readVar(uint var) {
 		}
 
 		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
-			return _noSubtitles;	
+			return !ConfMan.getBool("subtitles");	
 		}
 		
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
@@ -542,8 +543,10 @@ void ScummEngine::writeVar(uint var, int value) {
 			_scummVars[var] = value;
 
 		// stay in sync with loom cd subtitle var
-		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES && (value == 0 || value == 1)) 
-			_noSubtitles = (value != 0);
+		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
+			assert(value == 0 || value == 1);
+			ConfMan.set("subtitles", (value == 0));
+		}
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)

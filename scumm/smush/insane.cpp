@@ -24,6 +24,7 @@
 
 #include "base/engine.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "scumm/scumm.h"
@@ -106,16 +107,14 @@ Insane::~Insane(void) {
 	delete _smush_icons2Nut;
 }
 
-void Insane::setSmushParams(int speed, bool subtitles) {
+void Insane::setSmushParams(int speed) {
 	_speed = speed;
-	_subtitles = subtitles;
 }
 
 void Insane::initvars(void) {
 	int i, j;
 
 	_speed = 12;
-	_subtitles = true;
 	_insaneIsRunning = false;
 
 	_numberArray = 0;
@@ -1859,7 +1858,7 @@ void Insane::runScene(int arraynum) {
 	//	  ptrMainLoop = &ptrMainLoopBody;
 
 	_insaneIsRunning = true;
-	_player = new SmushPlayer(_scumm, _speed, _subtitles);
+	_player = new SmushPlayer(_scumm, _speed);
 	_player->insanity(true);
 
 	_numberArray = arraynum;
@@ -3501,7 +3500,7 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (tsceneProp->actor != -1) {
 		if (_actor[tsceneProp->actor].field_54) {
 			tsceneProp->counter++;
-			if (!_actor[tsceneProp->actor].runningSound || !_scumm->_noSubtitles) {
+			if (!_actor[tsceneProp->actor].runningSound || ConfMan.getBool("subtitles")) {
 				if (_actor[tsceneProp->actor].act[3].state == 72 &&
 					_currTrsMsg) {
 					smush_setPaletteValue(1, tsceneProp->r, tsceneProp->g, tsceneProp->b);

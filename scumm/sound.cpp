@@ -559,7 +559,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		_mouthSyncMode = true;
 	}
 
-	startSfxSound(_sfxFile, size, handle, id);
+	if (!_soundsPaused && _scumm->_mixer->isReady())
+		startSfxSound(_sfxFile, size, handle, id);
 }
 
 void Sound::stopTalkSound() {
@@ -794,9 +795,6 @@ void Sound::pauseSounds(bool pause) {
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
 
-	if (_soundsPaused || !_scumm->_mixer->isReady())
-		return;
-
 	if (file_size > 0) {
 		if (_vorbis_mode) {
 #ifdef USE_VORBIS
@@ -815,9 +813,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	byte *data = loadVOCFile(_sfxFile, size, rate);
 
 	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->setVocVoice(data, size, rate);
-		_scumm->_imuseDigital->startSound(kTalkSoundID);
-		free(data);
+		_scumm->_imuseDigital->startSound(kTalkSoundID, data, size, rate);
 	} else {
 		_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, id);
 	}
@@ -832,7 +828,8 @@ File *Sound::openSfxFile() {
 	 * same directory */
 	offset_table = NULL;
 
-	// for now until better streaming will be, ft voice can't not be compressed
+	// FIXME / TODO / HACK: for FT voice can only be loaded from original .sou
+	// files, not .so3 or .sog. This will be so until IMuseDigital gets fixed.
 	if (_scumm->_imuseDigital) {
 		sprintf(buf, "%s.sou", _scumm->getGameName());
 		if (!file->open(buf, _scumm->getGameDataPath())) {

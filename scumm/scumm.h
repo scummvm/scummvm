@@ -1013,8 +1013,6 @@ protected:
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
-public:
-	bool _noSubtitles;	// Whether to skip all subtitles
 protected:
 
 	void initCharset(int charset);

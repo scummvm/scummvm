@@ -1244,7 +1244,7 @@ void ScummEngine_v8::o8_startVideo() {
 
 	debug(4, "o8_startVideo(%s/%s)", getGameDataPath(), (const char*)_scriptPointer);
 
-	SmushPlayer *sp = new SmushPlayer(this, 83333, !_noSubtitles);
+	SmushPlayer *sp = new SmushPlayer(this, 83333);
 	sp->play((const char*)_scriptPointer, getGameDataPath());
 	delete sp;
 

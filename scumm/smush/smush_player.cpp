@@ -23,6 +23,7 @@
 
 #include "base/engine.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/timer.h"
@@ -209,7 +210,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 	((SmushPlayer *)refCon)->parseNextFrame();
 }
 
-SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
+SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed) {
 	_scumm = scumm;
 	_version = -1;
 	_nbframes = 0;
@@ -224,7 +225,7 @@ SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	_frameBuffer = NULL;
 	
 	_skipNext = false;
-	_subtitles = subtitles;
+	_subtitles = ConfMan.getBool("subtitles");
 	_dst = NULL;
 	_storeFrame = false;
 	_width = 0;

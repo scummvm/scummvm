@@ -458,7 +458,7 @@ void ConfigDialog::open() {
 	GUI_OptionsDialog::open();
 
 	// update checkboxes, too
-	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
+	subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
 }
 
 void ConfigDialog::close() {
@@ -484,9 +484,6 @@ void ConfigDialog::close() {
 
 	_scumm->_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
 	_scumm->_mixer->setMusicVolume(soundVolumeMusic);
-	
-	// Subtitles?
-	_scumm->_noSubtitles = !ConfMan.getBool("subtitles");
 }
 
 

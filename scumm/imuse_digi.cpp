@@ -674,12 +674,6 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
 	_pause = false;
 	
-	_voiceVocData = NULL;
-	_voiceVocSize = 0;
-	_voiceVocRate = 0;
-
-	_voiceBundleData = NULL;
-
 	_nameBundleMusic = "";
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
@@ -766,23 +760,15 @@ void IMuseDigital::callback() {
 	}
 }
 
-void IMuseDigital::setVocVoice(byte *src, int32 size, int rate) {
-	_voiceVocData = src;
-	_voiceVocSize = size;
-	_voiceVocRate = rate;
-}
-
-void IMuseDigital::setBundleVoice(byte *src) {
-	_voiceBundleData = src;
-}
-
-void IMuseDigital::startSound(int sound) {
+void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_rate) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (!_channel[l].used && !_channel[l].handle.isActive()) {
 			byte *ptr, *s_ptr;
+			byte *_voiceVocData = (voc_src && voc_size > 0) ? voc_src : 0;
+			byte *_voiceBundleData = (voc_src && voc_size <= 0) ? voc_src : 0;
 			if ((sound == kTalkSoundID) && (_voiceBundleData)) {
 				s_ptr = ptr = _voiceBundleData;
 			} else if ((sound == kTalkSoundID) && (_voiceVocData)) {
@@ -819,37 +805,26 @@ void IMuseDigital::startSound(int sound) {
 			int32 size = 0;
 			int t;
 
-			if ((sound == kTalkSoundID) && (_voiceVocData)) {
-				_channel[l].mixerSize = _voiceVocRate * 2;
-				_channel[l].freq = _voiceVocRate;
-				_channel[l].size = _voiceVocSize * 2;
+			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
+				if (READ_UINT32(ptr) == MKID('Crea')) {
+					int loops = 0;
+					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
+				}
+				_channel[l].mixerSize = voc_rate * 2;
+				_channel[l].freq = voc_rate;
+				_channel[l].size = voc_size * 2;
 				_channel[l].bits = 8;
 				_channel[l].channels = 2;
 				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				_channel[l].data = (byte *)malloc(_channel[l].size);
 
+				// Widen data to two channels
 				for (t = 0; t < _channel[l].size / 2; t++) {
-					*(_channel[l].data + t * 2 + 0) = *(_voiceVocData + t);
-					*(_channel[l].data + t * 2 + 1) = *(_voiceVocData + t);
+					*(_channel[l].data + t * 2 + 0) = *(voc_src + t);
+					*(_channel[l].data + t * 2 + 1) = *(voc_src + t);
 				}
 
-				_voiceVocData = NULL;
-			} else if (READ_UINT32(ptr) == MKID('Crea')) {
-				int32 loops = 0;
-				byte *t_ptr= readVOCFromMemory(ptr, size, _channel[l].freq, loops);
-				_channel[l].mixerSize = _channel[l].freq * 2;
-				_channel[l].size = size * 2;
-				_channel[l].bits = 8;
-				_channel[l].channels = 2;
-				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
-				_channel[l].data = (byte *)malloc(_channel[l].size);
-
-				for (t = 0; t < _channel[l].size / 2; t++) {
-					*(_channel[l].data + t * 2 + 0) = *(t_ptr + t);
-					*(_channel[l].data + t * 2 + 1) = *(t_ptr + t);
-				}
-
-				free(t_ptr);
+				free(voc_src);
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
@@ -964,11 +939,10 @@ void IMuseDigital::startSound(int sound) {
 						size *= 2;
 						_channel[l].channels = 2;
 						_channel[l].data = (byte *)malloc(size);
+						// Widen data to two channels
 						for (t = 0; t < size / 4; t++) {
-							*(_channel[l].data + t * 4 + 0) = *(ptr + t * 2 + 0);
-							*(_channel[l].data + t * 4 + 1) = *(ptr + t * 2 + 1);
-							*(_channel[l].data + t * 4 + 2) = *(ptr + t * 2 + 0);
-							*(_channel[l].data + t * 4 + 3) = *(ptr + t * 2 + 1);
+							*(uint16 *)(_channel[l].data + t * 4 + 0) = *(uint16 *)(ptr + t * 2);
+							*(uint16 *)(_channel[l].data + t * 4 + 2) = *(uint16 *)(ptr + t * 2);
 						}
 					}
 					_channel[l].size = size;
@@ -978,6 +952,7 @@ void IMuseDigital::startSound(int sound) {
 						size *= 2;
 						_channel[l].channels = 2;
 						_channel[l].data = (byte *)malloc(size);
+						// Widen data to two channels
 						for (t = 0; t < size / 2; t++) {
 							*(_channel[l].data + t * 2 + 0) = *(ptr + t);
 							*(_channel[l].data + t * 2 + 1) = *(ptr + t);
@@ -1478,8 +1453,7 @@ void IMuseDigital::playBundleSound(const char *sound) {
 
 	if (ptr) {
 		stopSound(kTalkSoundID);
-		setBundleVoice(ptr);
-		startSound(kTalkSoundID);
+		startSound(kTalkSoundID, ptr);
 		free(ptr);
 	}
 }

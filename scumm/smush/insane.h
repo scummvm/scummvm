@@ -58,7 +58,7 @@ class Insane {
 	Insane(ScummEngine *scumm);
 	~Insane();
 
-	void setSmushParams(int speed, bool subtitles);
+	void setSmushParams(int speed);
 	void runScene(int arraynum);
 
 	void procPreRendering(void);
@@ -75,7 +75,6 @@ class Insane {
 	SmushPlayer *_player;
 	
 	int32 _speed;
-	bool _subtitles;
 	bool _insaneIsRunning;
 	
 	int32 _numberArray;

@@ -21,6 +21,9 @@
  */
 
 #include "stdafx.h"
+
+#include "common/config-manager.h"
+
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -316,9 +319,9 @@ void ScummEngine::CHARSET_1() {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if ((_gameId == GID_LOOM256) && _noSubtitles && (_sound->pollCD())) {
+				if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
-				} else if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle.isActive())) {
+				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _sound->_talkChannelHandle.isActive())) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it. 
 				} else

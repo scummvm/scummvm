@@ -471,7 +471,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
 	_copyProtection = false;
 	_demoMode = false;
-	_noSubtitles = false;
 	_confirmExit = false;
 	_numInMsgStack = 0;
 	_msgPtrToAdd = NULL;
@@ -659,11 +658,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
-	_noSubtitles = ConfMan.getBool("subtitles");
-	_noSubtitles ^=1;
 	if (ConfMan.hasKey("nosubtitles")) {
 		warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
-		_noSubtitles = ConfMan.getBool("nosubtitles");
+		if (!ConfMan.hasKey("subtitles"))
+			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
 	_confirmExit = ConfMan.getBool("confirm_exit");
 	_defaultTalkDelay = ConfMan.getInt("talkspeed");

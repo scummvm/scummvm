@@ -130,17 +130,12 @@ private:
 public:
 	int32 _bundleSongPosInMs;
 	Bundle *_bundle;	// FIXME: should be protected but is used by ScummEngine::askForDisk
-	byte *_voiceVocData;
-	int32 _voiceVocSize;
-	int _voiceVocRate;
-
-	byte *_voiceBundleData;
 
 	void pauseBundleMusic(bool state);
 	void stopBundleMusic();
 	void playBundleSound(const char *sound);
-	void setVocVoice(byte *src, int32 size, int rate);
-	void setBundleVoice(byte *src);
+
+	void startSound(int sound, byte *src, int size = 0, int rate = 0);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
@@ -148,7 +143,7 @@ public:
 
 	void setMasterVolume(int vol) {}
 
-	void startSound(int sound);
+	void startSound(int sound) { startSound(sound, 0, 0, 0); }
 	void stopSound(int sound);
 	void stopAllSounds();
 	void pause(bool pause);

@@ -71,7 +71,7 @@ private:
 	bool _middleAudio;
 
 public:
-	SmushPlayer(ScummEngine *, int, bool);
+	SmushPlayer(ScummEngine *scumm, int speed);
 	~SmushPlayer();
 
 	void play(const char *filename, const char *directory);
