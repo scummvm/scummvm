@@ -1005,6 +1005,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Do some render mode restirctions
+	if (_renderMode != Common::kRenderDefault && !(_features & GF_PC))
+		_renderMode = Common::kRenderDefault;
+
 	switch (_renderMode) {
 	case Common::kRenderHerc:
 		if (_version > 2 && _gameId != GID_MONKEY_EGA)
