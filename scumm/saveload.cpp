@@ -657,18 +657,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	// Save all resource.
 	int type, idx;
-
-	if (s->isLoading()) {
-		// When loading, start by deleting old non-permanent resources (an
-		// exception is made for buffer/temp resources, they are going to be
-		// deleted later on anyway).
-		for (type = rtFirst; type <= rtLast; type++) {
-			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer)
-				for (idx = 1; idx < res.num[type]; idx++)
-					nukeResource(type, idx);
-		}
-	}
-
 	if (savegameVersion >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
 		// and index of each resource. Thus if we increase e.g. the maximum
@@ -701,9 +689,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
 		for (type = rtFirst; type <= rtLast; type++)
-			if (res.mode[type] != 1 && type != rtTemp && type != rtBuffer)
+			if (res.mode[type] != 1)
 				for (idx = 1; idx < res.num[type]; idx++)
-					saveLoadResource(s, type, idx);
+					if (type != rtTemp && type != rtBuffer)
+						saveLoadResource(s, type, idx);
 	}
 
 	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
