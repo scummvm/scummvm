@@ -122,13 +122,28 @@ public:
 	~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
-	void currentRoom(uint16 room) { _currentRoom = room; }
+	void currentRoom(uint16 room) { 
+		if (room >= 1 && room <= _numRooms)
+			_currentRoom = room; 
+		else
+			error("Invalid room number: %i", room);
+	}
 	
 	uint16 oldRoom() const { return _oldRoom; }
-	void oldRoom(uint16 room) { _oldRoom = room; }
+	void oldRoom(uint16 room) { 
+		if (room <= _numRooms)
+			_oldRoom = room; 
+		else
+			error("Invalid room number: %i", room);
+	}
 	
 	uint16 newRoom() const { return _newRoom; }
-	void newRoom(uint16 room) { _newRoom = room; }
+	void newRoom(uint16 room) { 
+		if (room <= _numRooms)
+			_newRoom = room; 
+		else
+			error("Invalid room number: %i", room);
+	}
 
 	ObjectData *objectData(int index);
 	uint16 roomData(int room);
