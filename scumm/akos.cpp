@@ -1293,12 +1293,12 @@ void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32
 	}
 }
 
-void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 width, int32 height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
+void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
 	byte * tmp_buf = akos16_buffer;
 
 	if (dir < 0) {
-		dest -= (width - 1);
-		tmp_buf += (width - 1);
+		dest -= (t_width - 1);
+		tmp_buf += (t_height - 1);
 	}
 
 	akos16SetupBitReader(src);
@@ -1308,11 +1308,11 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 	}
 
 	for (;;) {
-		if (height-- == 0)
+		if (t_height-- == 0)
 			return;
 
-		akos16DecodeLine(tmp_buf, width, dir);
-		akos16PutOnScreen(dest, akos16_buffer, transparency, width);
+		akos16DecodeLine(tmp_buf, t_width, dir);
+		akos16PutOnScreen(dest, akos16_buffer, transparency, t_width);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -1321,12 +1321,12 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 	}
 }
 
-void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 width, int32 height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
+void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
 	byte * tmp_buf = akos16_buffer;
 
 	if (dir < 0) {
-		dest -= (width - 1);
-		tmp_buf += (width - 1);
+		dest -= (t_width - 1);
+		tmp_buf += (t_width - 1);
 	}
 
 	akos16SetupBitReader(src);
@@ -1336,12 +1336,12 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 	}
 
 	for (;;) {
-		if (height-- == 0)
+		if (t_height-- == 0)
 			return;
 
-		akos16DecodeLine(tmp_buf, width, dir);
-		akos16ApplyMask(akos16_buffer, maskptr, (byte)bitpos_start, width, transparency);
-		akos16PutOnScreen(dest, akos16_buffer, transparency, width);
+		akos16DecodeLine(tmp_buf, t_width, dir);
+		akos16ApplyMask(akos16_buffer, maskptr, (byte)bitpos_start, t_width, transparency);
+		akos16PutOnScreen(dest, akos16_buffer, transparency, t_width);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -1376,9 +1376,9 @@ void AkosRenderer::codec16() {
 
 	tmp_x = clip_left;
 	if(tmp_x < 0) {
-		skip_x = tmp_x;
+		tmp_x = -tmp_x;
 		clip_left -= tmp_x;
-		skip_x = -skip_x;
+		skip_x = tmp_x;
 	}
 
 	tmp_x = clip_right - maxw;
@@ -1416,16 +1416,19 @@ void AkosRenderer::codec16() {
 	height_unk = clip_top;
 	int32 pitch = _vm->_realWidth;
 
-	int32 tmp1, tmp2, dir;
+	int32 tmp1, tmp2, tmp3, dir;
 
 	if (!mirror) {
-		cur_x = skip_x;
-		tmp1 = width - 1;
 		dir = -1;
-		width_unk = clip_right;
-		skip_x = tmp1 - cur_x;
+		tmp1 = width - 1;
 		tmp2 = cur_x;
-		cur_x = tmp1 - cur_x;
+		tmp3 = tmp1;
+		cur_x = skip_x;
+		tmp3 -= tmp2;
+		tmp1 -= cur_x;
+		width_unk = clip_right;
+		skip_x = tmp3;
+		cur_x = tmp1;
 	}	else {
 		dir = 1;
 		width_unk = clip_left;
@@ -1439,26 +1442,26 @@ void AkosRenderer::codec16() {
 	tmp_y++;
 	int32 out_height = tmp_y;
 
-	tmp_x = cur_x - skip_x;
+	cur_x -= skip_x;
 	if(cur_x < 0) {
 		cur_x = -cur_x;
 	}
 
 	cur_x++;
-	int32 out_width = cur_x;
 
 	int32 numskip_before = skip_x + (skip_y * width);
-	int32 numskip_after = width - out_width;
+	int32 numskip_after = width - cur_x;
 
 	byte * dest = outptr + width_unk + height_unk * _vm->_realWidth;
 
 	if (clipping == 0) {
-		akos16Decompress(dest, pitch, srcptr, out_width, out_height, dir, numskip_before, numskip_after, 255);
+		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255);
 		return;
 	}
 
-	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping] + ((_vm->_realWidth / 8) + 1) * clip_top + (clip_left / 8);
-	akos16DecompressMask(dest, pitch, srcptr, out_width, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
+	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping];
+	ptr += ((_vm->_realWidth / 8) + 1) * clip_top + (clip_left / 8);
+	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
 }
 
 bool Scumm::akos_increaseAnims(byte *akos, Actor *a)
