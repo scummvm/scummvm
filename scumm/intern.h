@@ -979,6 +979,7 @@ protected:
 	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_field_20(int spriteGroupId, int value);
+	void spriteGroupSet_scaling(int spriteGroupId);
 	void spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int value);
 	void spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value);
 	void spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int value);
