@@ -62,36 +62,16 @@ private:
 		byte *sysex_data;
 	};
 
-	MidiDriver *_md;
+	MidiDriver *_midiDriver;
+	uint _lastDelay;
+	Song *_currentSong;
+	Song _songs[8];
+	uint32 _volumeTable[16];
 
-	File *_input;
 
-	uint _midi_var10, _midi_5;
-	bool _midi_var9;
-	byte _midi_var1;
-	bool _shutting_down;
-	uint _midi_var8;
+	void read_mthd(File *in, Song *s, bool old);
 
-	uint _midi_var11;
-
-	uint32 _midi_tempo;
-
-	Track *_midi_tick_track_ptr;
-	Track *_midi_track_ptr;
-	int16 _midi_song_id;
-	int16 _midi_song_id_2;
-	int16 _midi_var2;
-
-	Song *_midi_cur_song_ptr;
-
-	uint32 _midi_volume_table[16];
-
-	Song _midi_songs[8];
-
-	void read_mthd(Song *s, bool old);
-
-	void read_from_file(void *dst, uint size);
-	void read_one_song(Song *s);
+	void read_one_song(File *in, Song *s);
 
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);

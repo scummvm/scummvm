@@ -31,14 +31,12 @@ void MidiPlayer::read_all_songs(File *in)
 {
 	uint i, num;
 
-	_input = in;
+	_currentSong = _songs;
 
-	_midi_cur_song_ptr = _midi_songs;
-
-	num = _input->readByte();
+	num = in->readByte();
 
 	for (i = 0; i != num; i++) {
-		read_one_song(&_midi_songs[i]);
+		read_one_song(in, &_songs[i]);
 	}
 }
 
@@ -46,34 +44,33 @@ void MidiPlayer::read_all_songs_old(File *in)
 {
 	uint i, num;
 
-	_input = in;
-	_midi_cur_song_ptr = _midi_songs;
+	_currentSong = _songs;
 
 	num = 1;
 
 	for (i = 0; i != num; i++) {
-		read_one_song(&_midi_songs[i]);
+		read_one_song(in, &_songs[i]);
 	}
 }
 
-void MidiPlayer::read_mthd(Song *s, bool old)
+void MidiPlayer::read_mthd(File *in, Song *s, bool old)
 {
 	Track *t;
 	uint i;
 
 	if (!old) {
-		if (_input->readDwordBE() != 6)
+		if (in->readDwordBE() != 6)
 			error("Invalid 'MThd' chunk size");
-		s->midi_format = _input->readWordBE();
-		s->num_tracks = _input->readWordBE();
-		s->ppqn = _input->readWordBE();
+		s->midi_format = in->readWordBE();
+		s->num_tracks = in->readWordBE();
+		s->ppqn = in->readWordBE();
 	} else {
 		s->midi_format = 0;
 		s->num_tracks = 1;
 		s->ppqn = 0xc0;
 
-		_input->readWordBE();
-		_input->readByte();
+		in->readWordBE();
+		in->readByte();
 	}
 
 	s->tracks = t = (Track *)calloc(s->num_tracks, sizeof(Track));
@@ -82,15 +79,15 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 
 	for (i = 0; i != s->num_tracks; i++, t++) {
 		if (!old) {
-			if (_input->readDwordBE() != 'MTrk')
+			if (in->readDwordBE() != 'MTrk')
 				error("Midi track has no 'MTrk'");
 
-			t->data_size = _input->readDwordLE();
+			t->data_size = in->readDwordLE();
 		} else {
-			uint32 pos = _input->pos();
-			_input->seek(0, SEEK_END);
-			uint32 end = _input->pos();
-			_input->seek(pos, SEEK_SET);
+			uint32 pos = in->pos();
+			in->seek(0, SEEK_END);
+			uint32 end = in->pos();
+			in->seek(pos, SEEK_SET);
 			t->data_size = end - pos;
 		}
 
@@ -98,7 +95,7 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 		if (t->data_ptr == NULL)
 			error("Out of memory when allocating MIDI track data");
 
-		_input->read(t->data_ptr, t->data_size);
+		in->read(t->data_ptr, t->data_size);
 
 		t->data_cur_size = t->data_size;
 		t->data_cur_ptr = t->data_ptr;
@@ -116,25 +113,25 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 	}
 }
 
-void MidiPlayer::read_one_song(Song *s)
+void MidiPlayer::read_one_song(File *in, Song *s)
 {
-	_midi_var10 = 0;
+	_lastDelay = 0;
 
 	s->ppqn = 0;
 	s->midi_format = 0;
 	s->num_tracks = 0;
 	s->tracks = NULL;
 
-	uint32 id = _input->readDwordBE();
+	uint32 id = in->readDwordBE();
 
 	switch (id) {
 	case 'MThd':
-		read_mthd(s, false);
+		read_mthd(in, s, false);
 		break;
 
 	case 'GMF\x1':
 		warning("Old style songs not properly supported yet");
-		read_mthd(s, true);
+		read_mthd(in, s, true);
 		break;
 
 	default:
@@ -175,16 +172,13 @@ void MidiPlayer::initialize()
 	int i;
 
 	for (i = 0; i != 16; i++)
-		_midi_volume_table[i] = 100;
-	_midi_5 = 0;
+		_volumeTable[i] = 100;
 
-	_md->property(MidiDriver::PROP_TIMEDIV, _midi_songs[0].ppqn);
+	_midiDriver->property(MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
 
-	res = _md->open(MidiDriver::MO_STREAMING);
+	res = _midiDriver->open(MidiDriver::MO_STREAMING);
 	if (res != 0)
 		error("MidiPlayer::initializer, got %s", MidiDriver::get_error_name(res));
-
-	_midi_var9 = true;
 }
 
 int MidiPlayer::fill(MidiEvent *me, int num_event)
@@ -202,8 +196,8 @@ int MidiPlayer::fill(MidiEvent *me, int num_event)
 		best = 0xFFFFFFFF;
 
 		/* Locate which track that's next */
-		t = _midi_cur_song_ptr->tracks;
-		for (j = _midi_cur_song_ptr->num_tracks; j; j--, t++) {
+		t = _currentSong->tracks;
+		for (j = _currentSong->num_tracks; j; j--, t++) {
 			if (!(t->a & 1)) {
 				if (t->delay < best) {
 					best = t->delay;
@@ -244,15 +238,15 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 {
 	uint b;
 
-	b = nr->delay - _midi_var10;
-	_midi_var10 = nr->delay;
+	b = nr->delay - _lastDelay;
+	_lastDelay = nr->delay;
 
 	if (nr->cmd < 0xF0) {
 		me->delta = b;
 		me->event = nr->cmd | (nr->param_1 << 8) | (nr->param_2 << 16);
 
 		if ((nr->cmd & 0xF0) == 0xB0 && nr->param_1 == 7) {
-			_midi_volume_table[nr->cmd & 0xF] = nr->param_2;
+			_volumeTable[nr->cmd & 0xF] = nr->param_2;
 			nr->param_1 = 0x76;
 			me->event = nr->cmd | (nr->param_1 << 8) | (nr->param_2 << 16) /* | MEVT_F_CALLBACK */ ;
 		}
@@ -264,11 +258,11 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 		return false;
 	}
 
-	_midi_tempo = nr->sysex_data[2] | (nr->sysex_data[1] << 8) | (nr->sysex_data[0] << 16);
-	_midi_var8 = (_midi_cur_song_ptr->ppqn * 60000) / _midi_tempo;
+	int tempo = nr->sysex_data[2] | (nr->sysex_data[1] << 8) | (nr->sysex_data[0] << 16);
+//	_midi_var8 = (_currentSong->ppqn * 60000) / tempo;
 
 	me->delta = b;
-	me->event = (MidiDriver::ME_TEMPO << 24)|_midi_tempo;
+	me->event = (MidiDriver::ME_TEMPO << 24) | tempo;
 
 	return true;
 }
@@ -278,9 +272,9 @@ void MidiPlayer::reset_tracks()
 	Track *t;
 	uint i;
 
-	_midi_var10 = 0;
+	_lastDelay = 0;
 
-	for (i = 0, t = _midi_cur_song_ptr->tracks; i != _midi_cur_song_ptr->num_tracks; i++, t++) {
+	for (i = 0, t = _currentSong->tracks; i != _currentSong->num_tracks; i++, t++) {
 		t->data_cur_size = t->data_size;
 		t->data_cur_ptr = t->data_ptr;
 		t->a = 0;
@@ -383,7 +377,7 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr)
 
 void MidiPlayer::shutdown()
 {
-	_md->close();
+	_midiDriver->close();
 	unload();
 }
 
@@ -392,7 +386,7 @@ void MidiPlayer::unload()
 	uint i, j;
 	Song *s;
 	Track *t;
-	for (i = 0, s = _midi_songs; i != 8; i++, s++) {
+	for (i = 0, s = _songs; i != 8; i++, s++) {
 		if (s->tracks) {
 			for (j = 0, t = s->tracks; j != s->num_tracks; j++, t++) {
 				if (t->data_ptr)
@@ -406,12 +400,12 @@ void MidiPlayer::unload()
 
 void MidiPlayer::play()
 {
-	_md->pause(false);
+	_midiDriver->pause(false);
 }
 
 
 void MidiPlayer::set_driver(MidiDriver *md)
 {
-	_md = md;
+	_midiDriver = md;
 	md->set_stream_callback(this, on_fill);
 }
