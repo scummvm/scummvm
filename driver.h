@@ -30,35 +30,35 @@ public:
 	Driver() { ; }
 	Driver(int screenW, int screenH, int screenBPP) { ; }
 
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = NULL;
-	virtual void positionCamera(Vector3d pos, Vector3d interest) = NULL;
+	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
+	virtual void positionCamera(Vector3d pos, Vector3d interest) = 0;
 
-	virtual void clearScreen() = NULL;
-	virtual void flipBuffer() = NULL;
+	virtual void clearScreen() = 0;
+	virtual void flipBuffer() = 0;
 
-	virtual void startActorDraw(Vector3d pos, float yaw, float pitch, float roll) = NULL;
-	virtual void finishActorDraw() = NULL;
+	virtual void startActorDraw(Vector3d pos, float yaw, float pitch, float roll) = 0;
+	virtual void finishActorDraw() = 0;
 	
-	virtual void set3DMode() = NULL;
+	virtual void set3DMode() = 0;
 
-	virtual void drawHierachyNode(const Model::HierNode *node) = NULL;
-	virtual void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) = NULL;
+	virtual void drawHierachyNode(const Model::HierNode *node) = 0;
+	virtual void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 
-	virtual void createMaterial(Material *material, const char *data, const CMap *cmap) = NULL;
-	virtual void selectMaterial(const Material *material) = NULL;
-	virtual void destroyMaterial(Material *material) = NULL;
+	virtual void createMaterial(Material *material, const char *data, const CMap *cmap) = 0;
+	virtual void selectMaterial(const Material *material) = 0;
+	virtual void destroyMaterial(Material *material) = 0;
 
-	virtual void createBitmap(Bitmap *bitmap) = NULL;
-	virtual void drawBitmap(const Bitmap *bitmap) = NULL;
-	virtual void destroyBitmap(Bitmap *bitmap) = NULL;
+	virtual void createBitmap(Bitmap *bitmap) = 0;
+	virtual void drawBitmap(const Bitmap *bitmap) = 0;
+	virtual void destroyBitmap(Bitmap *bitmap) = 0;
 
-	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = NULL;
+	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = 0;
 
-	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = NULL;
-	virtual void loadEmergFont() = NULL;
+	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
+	virtual void loadEmergFont() = 0;
 
-	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = NULL;
-	virtual void drawSmushFrame(int offsetX, int offsetY) = NULL;
+	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
+	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
 };
 
 extern Driver *g_driver;
