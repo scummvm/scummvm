@@ -411,7 +411,7 @@ void Actor::update() {
 	}
 
 	if (_lookingMode) {
-		float lookAtAmt = g_engine->perSecond(_lookAtRate);
+		/*float lookAtAmt = */g_engine->perSecond(_lookAtRate);
 	}
 }
 

@@ -210,12 +210,12 @@ static void GetColorComponents() {
 	lua_pushnumber(c->green());
 	lua_pushnumber(c->blue());
 }
-
+/*
 static void gc_Color() {
 	Color *c = static_cast<Color *>(lua_getuserdata(lua_getparam(1)));
 	delete c;
 }
-
+*/
 // Registry functions
 
 static void ReadRegistryValue() {
@@ -743,11 +743,6 @@ static void ShutUpActor() {
 		act->shutUp();
 }
 
-static void HardwareAccelerated() {
-	// FIXME: Are we always in HW accelerated ?
-	lua_pushnumber(true);
-}
-
 // Sector functions
 static void GetActorSector(void) {
 	Actor *act = check_actor(1);
@@ -1241,13 +1236,13 @@ static void GetSpeechMode() {
 }
 
 static void StartFullscreenMovie() {
-	bool mode = getbool(2);
+	/*bool mode = */getbool(2);
 	g_engine->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
 static void StartMovie() {
-	bool mode = getbool(2);
+	/*bool mode = */getbool(2);
 	int x = 0;
 	int y = 0;
 
@@ -1312,7 +1307,7 @@ static void NewObjectState() {
 }
 
 static void FreeObjectState() {
-	ObjectState *object = check_object(1);
+	/*ObjectState *object = */check_object(1);
 	warning("State: freeObjectState(...)");
 	//scene.deleteObjectState(object);
 }
@@ -1347,18 +1342,18 @@ static void Save() {
 	g_engine->_savegameSaveRequest = true;
 }
 
-static int SaveCallback(int tag, int value, SaveRestoreFunc saveFunc) {
+static int SaveCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
 	return value;
 }
 
-static int RestoreCallback(int tag, int value, SaveRestoreFunc saveFunc) {
+static int RestoreCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
 	return value;
 }
 
 static void BlastText() {
 	char * str = luaL_check_string(1), *key_text = NULL;
 	lua_Object table_obj = lua_getparam(2), key;
-	int x = 0, y = 0, height = 0, width = 0;
+	int x = 0, y = 0;//, height = 0, width = 0;
 	Color *fgColor = NULL;
 
 	for (;;) {
@@ -1400,7 +1395,7 @@ static void BlastText() {
 static void LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
-		char *fontName = lua_getstring(param1);
+		/*char *fontName = */lua_getstring(param1);
 		void *result = NULL;//g_resourceloader->loadFont(fontName);
 		if (result) {
 			lua_pushusertag(result, MKID('FONT'));
@@ -1427,7 +1422,7 @@ static void SetAmbientLight() {
 }
 
 static void EngineDisplay() {
-	bool mode = check_int(1) != 0;
+	/*bool mode = */check_int(1) != 0;
 	// it enable/disable updating display
 }
 
@@ -1562,7 +1557,6 @@ STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(GetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(SetActorColormap)
-STUB_FUNC(SearchForFileOrSwapCDs)
 STUB_FUNC(SetOffscreenTextPos)
 STUB_FUNC(SetEmergencyFont)
 STUB_FUNC(GetTranslationMode)

@@ -283,7 +283,7 @@ void DriverGL::destroyBitmap(Bitmap *bitmap) {
 	textures = (GLuint *)bitmap->_texIds;
 	if (textures) {
 		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
-		delete[] bitmap->_texIds;
+		delete[] textures;
 	}
 }
 
@@ -438,8 +438,8 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	int curTexIdx = 0;
 	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _smushWidth; x += BITMAP_TEXTURE_SIZE) {
-			int t_width = (x + BITMAP_TEXTURE_SIZE >= _smushWidth) ? (_smushWidth - x) : BITMAP_TEXTURE_SIZE;
-			int t_height = (y + BITMAP_TEXTURE_SIZE >= _smushHeight) ? (_smushHeight - y) : BITMAP_TEXTURE_SIZE;
+//			int t_width = (x + BITMAP_TEXTURE_SIZE >= _smushWidth) ? (_smushWidth - x) : BITMAP_TEXTURE_SIZE;
+//			int t_height = (y + BITMAP_TEXTURE_SIZE >= _smushHeight) ? (_smushHeight - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);

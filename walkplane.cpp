@@ -38,7 +38,7 @@ void Sector::load(TextSplitter &ts) {
 void Sector::load0(TextSplitter &ts, char *name, int id) {
 	char buf[256];
 	int i = 0;
-	float height = 12345.f; // Yaz: this is in the original code...
+//	float height = 12345.f; // Yaz: this is in the original code...
 	Vector3d tempVert;
 
 	_name = name;

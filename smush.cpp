@@ -32,7 +32,7 @@
 Smush *g_smush;
 static uint16 smushDestTable[5786];
 
-void Smush::timerCallback(void *refCon) {
+void Smush::timerCallback(void *) {
 	g_smush->handleFrame();
 }
 

@@ -518,7 +518,7 @@ void SoundComponent::setKey(int val) {
 		g_imuse->setHookId(_soundName.c_str(), 0x80);
 		break;
 	default:
-		warning("Unknown key %d for sound %s\n", val, _soundName);
+		warning("Unknown key %d for sound %s\n", val, _soundName.c_str());
 	}
 }
 

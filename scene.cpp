@@ -149,7 +149,10 @@ void Scene::Light::load(TextSplitter &ts) {
 	ts.scanString(" intensity %f", 1, &_intensity);
 	ts.scanString(" umbraangle %f", 1, &_umbraangle);
 	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
-	ts.scanString(" color %d %d %d", 3, &_color.red(), &_color.green(), &_color.blue());
+	// TODO check that
+//	ts.scanString(" color %d %d %d", 3, &_color.red(), &_color.green(), &_color.blue());
+	int red = 0, green = 0, blue = 0;
+	ts.scanString(" color %d %d %d", 3, &red, &green, &blue);
 }
 
 void Scene::Setup::setupCamera() const {
@@ -280,7 +283,7 @@ void Scene::setSoundPosition(const char *soundName, Vector3d pos) {
 	float distance = vector.magnitude();
 	float maxDistance = 8.0f;
 	int diffVolume = _maxVolume - _minVolume;
-	int newVolume = diffVolume * (1.0 - (distance / maxDistance));
+	int newVolume = (int)(diffVolume * (1.0 - (distance / maxDistance)));
 	newVolume += _minVolume;
 	g_imuse->setVolume(soundName, newVolume);
 

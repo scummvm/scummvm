@@ -52,9 +52,9 @@ public:
 	public:
 		Component(Component *parent, int parentID);
 
-		virtual void setMatrix(Matrix4 matrix) { };
+		virtual void setMatrix(Matrix4) { };
 		virtual void init() { }
-		virtual void setKey(int /* val */) { }
+		virtual void setKey(int) { }
 		virtual void update() { }
 		virtual void setupTexture() { }
 		virtual void draw() { }

@@ -144,7 +144,7 @@ void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
 		_vertices[i] = READ_LE_UINT32(data);
 		data += 4;
 	}
-	if (texPtr == NULL)
+	if (texPtr == 0)
 		_texVertices = NULL;
 	else {
 		_texVertices = new int[_numVertices];

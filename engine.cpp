@@ -282,7 +282,7 @@ void Engine::savegameRestore() {
 	//bundle_dofile("patch05.bin");
 }
 
-void Engine::savegameCallback(SaveRestoreFunc func) {
+void Engine::savegameCallback() {
 	lua_Object funcParam1;
 	lua_Object funcParam2;
 	bool unk1 = false;
@@ -338,7 +338,8 @@ void Engine::savegameSave() {
 	savegameGzwrite(&tag, 4);
 	savegameGzwrite(&version, 4);
 
-	savegameCallback(savegameGzwrite);
+	savegameCallback();
+
 	//Chore_Save(savegameGzwrite);
 	//Resource_Save(savegameGzwrite);
 	//Text_Save(savegameGzwrite);

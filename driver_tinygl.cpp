@@ -249,8 +249,9 @@ void DriverTinyGL::drawBitmap(const Bitmap *bitmap) {
 	}
 }
 
-void DriverTinyGL::destroyBitmap(Bitmap *bitmap) {
-}
+void DriverTinyGL::destroyBitmap(Bitmap *) { }
+
+void DriverTinyGL::drawDepthBitmap(int, int, int, int, char *) { }
 
 void DriverTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new TGLuint[material->_numImages];
@@ -296,10 +297,7 @@ void DriverTinyGL::selectMaterial(const Material *material) {
 
 void DriverTinyGL::destroyMaterial(Material *material) {
 	tglDeleteTextures(material->_numImages, (TGLuint *)material->_textures);
-	delete[] material->_textures;
-}
-
-void DriverTinyGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+	delete[] (TGLuint *)material->_textures;
 }
 
 void DriverTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {
@@ -329,5 +327,5 @@ void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 void DriverTinyGL::loadEmergFont() {
 }
 
-void DriverTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
+void DriverTinyGL::drawEmergString(int /*x*/, int /*y*/, const char * /*text*/, const Color &/*fgColor*/) {
 }
