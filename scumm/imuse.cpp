@@ -929,9 +929,10 @@ void IMuseInternal::expire_volume_faders (MidiDriver *midi) {
 	_active_volume_faders = false;
 	vf = _volume_fader;
 	for (i = ARRAYSIZE(_volume_fader); i != 0; i--, vf++) {
-		if (vf->active && vf->player->_midi == midi) {
+		if (vf->active) {
 			_active_volume_faders = true;
-			vf->on_timer(false);
+			if (vf->player->_midi == midi)
+				vf->on_timer(false);
 		}
 	}
 }
