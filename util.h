@@ -119,11 +119,12 @@ protected:
 
 class String {
 protected:
+	int		*_refCount;
 	int		_capacity;
 	int		_len;
 	char	*_str;
 public:
-	String() : _capacity(0), _len(0), _str(0) {}
+	String() : _capacity(0), _len(0), _str(0) { _refCount = new int(1); }
 	String(const char *str);
 	String(const String &str);
 	~String();
@@ -144,6 +145,7 @@ public:
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
+	void decRefCount();
 };
 
 class StringList : public List<String> {

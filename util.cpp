@@ -82,9 +82,9 @@ void ClearBlendCache(byte *palette, int weight)
 
 #pragma mark -
 
-
 String::String(const char *str)
 {
+	_refCount = new int(1);
 	_capacity = _len = strlen(str);
 	_str = (char *)calloc(1, _capacity+1);
 	memcpy(_str, str, _len+1);
@@ -92,38 +92,58 @@ String::String(const char *str)
 
 String::String(const String &str)
 {
+	++(*str._refCount);
+
+	_refCount = str._refCount;
 	_capacity = str._capacity;
-	_len = str._len;
-	_str = (char *)calloc(1, _capacity+1);
-	memcpy(_str, str._str, _len+1);
+	_len = str._capacity;
+	_str = str._str;
 }
 
 String::~String()
 {
-	if (_str)
-		free(_str);
+	decRefCount();
+}
+
+void String::decRefCount()
+{
+	--(*_refCount);
+	if (*_refCount <= 0) {
+		delete _refCount;
+		if (_str)
+			free(_str);
+	}
 }
 
 String& String::operator  =(const char* str)
 {
 	int len = strlen(str);
-	ensureCapacity(len, false);
-	
-	_len = len;
-	if (_str)
+	if (len > 0) {
+		ensureCapacity(len, false);
+		
+		_len = len;
 		memcpy(_str, str, _len + 1);
-
+	} if (_len > 0) {
+		decRefCount();
+		
+		_refCount = new int(1);
+		_capacity = 0;
+		_len = 0;
+		_str = 0;
+	}
 	return *this;
 }
 
 String& String::operator  =(const String& str)
 {
-	int len = str._len;
-	ensureCapacity(len, false);
+	++(*str._refCount);
+
+	decRefCount();
 	
-	_len = len;
-	if (_str)
-		memcpy(_str, str._str, _len + 1);
+	_refCount = str._refCount;
+	_capacity = str._capacity;
+	_len = str._len;
+	_str = str._str;
 
 	return *this;
 }
@@ -131,31 +151,30 @@ String& String::operator  =(const String& str)
 String& String::operator +=(const char* str)
 {
 	int len = strlen(str);
-	ensureCapacity(_len + len, true);
-	
-	if (_str)
-		memcpy(_str + _len, str, len + 1);
-	_len += len;
+	if (len > 0) {
+		ensureCapacity(_len + len, true);
 
+		memcpy(_str + _len, str, len + 1);
+		_len += len;
+	}
 	return *this;
 }
 
 String& String::operator +=(const String& str)
 {
 	int len = str._len;
-	ensureCapacity(_len + len, true);
-	
-	if (_str && str._str)
-		memcpy(_str + _len, str._str, len + 1);
-	_len += len;
+	if (len > 0) {
+		ensureCapacity(_len + len, true);
 
+		memcpy(_str + _len, str._str, len + 1);
+		_len += len;
+	}
 	return *this;
 }
 
 String& String::operator +=(char c)
 {
-	int len = _len + 1;
-	ensureCapacity(len, true);
+	ensureCapacity(_len + 1, true);
 	
 	_str[_len++] = c;
 	_str[_len] = 0;
@@ -165,33 +184,42 @@ String& String::operator +=(char c)
 
 void String::deleteLastChar() {
 	if (_len > 0) {
-		_len--;
-		_str[_len]=0;
+		ensureCapacity(_len - 1, true);
+		_str[--_len] = 0;
 	}
 }
 
 void String::clear()
 {
-	if (_str)
-		free(_str);
-	_capacity = 0;
-	_len = 0;
-	_str = 0;
+	if (_capacity) {
+		decRefCount();
+		
+		_refCount = new int(1);
+		_capacity = 0;
+		_len = 0;
+		_str = 0;
+	}
 }
 
 void String::ensureCapacity(int new_len, bool keep_old)
 {
-	if (new_len <= _capacity)
+	// If there is not enough space, or if we are not the only owner 
+	// of the current data, then we have to reallocate it.
+	if (new_len <= _capacity && *_refCount == 1)
 		return;
 
-	char	*old_str = _str;
-	_capacity = new_len + 32;
-	_str = (char *)calloc(1, _capacity+1);
+	int		newCapacity = (new_len <= _capacity) ? _capacity : new_len + 32;
+	char	*newStr = (char *)calloc(1, newCapacity+1);
 
-	if (old_str) {
-		if (keep_old)
-			memcpy(_str, old_str, _len+1);
-		free(old_str);
-	}
+	if (keep_old && _str)
+		memcpy(newStr, _str, _len + 1);
+	else
+		_len = 0;
+
+	decRefCount();
+	
+	_refCount = new int(1);
+	_capacity = newCapacity;
+	_str = newStr;
 }
 
