@@ -928,16 +928,39 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 
 void ScummEngine_v90he::o90_setSpriteInfo() {
 	int args[16];
-	int spriteId;
+	int spriteId, tmp[2];
+	static int storedFields[2];
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
 	switch (subOp) {
 	case 0:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++) {
+			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			storedFields[0] = tmp[0];
+			spriteInfoSet_field_2C_30(spriteId, args[0], tmp[1]);
+		}
 		break;
 	case 1:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++) {
+			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			storedFields[1] = tmp[1];
+			spriteInfoSet_field_2C_30(spriteId, tmp[0], args[0]);
+		}
 		break;
 	case 3:
 		args[0] = pop();
@@ -951,8 +974,34 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_groupNum(spriteId, args[0]);
 		break;
 	case 8:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			switch(args[1]) {
+			case 0:
+				spriteInfoSet_flag7(spriteId, args[0]);
+				break;
+			case 1:
+				spriteInfoSet_flagRotated(spriteId, args[0]);
+				break;
+			case 2:
+				spriteInfoSet_flag8(spriteId, args[0]);
+				break;
+			case 3:
+				spriteInfoSet_flagZoomed(spriteId, args[0]);
+				break;
+			case 4:
+				spriteInfoSet_flag20(spriteId, args[0]);
+				break;
+			default:
+				break;
+			}
 		break;
 	case 9:
 		args[0] = pop();
@@ -989,7 +1038,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_resState(spriteId, args[0]);
 		break;
 	case 19:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_rotAngle(spriteId, args[0]);
 		break;
 	case 23:
 		if (_gameId == GID_FREDDI4 || _heversion >= 99) {
@@ -1038,7 +1095,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 34:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flag31(spriteId, args[0]);
 		break;
 	case 43:
 		args[1] = pop();
@@ -1053,7 +1118,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_field_2C_30(spriteId, args[0], args[1]);
 		break;
 	case 48:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flag22(spriteId, args[0]);
 		break;
 	case 52: // HE 98+
 		args[0] = pop();
@@ -1078,7 +1151,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_zoom(spriteId, args[0]);
 		break;
 	case 63: // HE 98+
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_78_64(spriteId, args[0]);
 		break;
 	case 64:
 		args[0] = pop();
@@ -1092,7 +1173,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_field_54(spriteId, args[0]);
 		break;
 	case 90:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flags23_26(spriteId, args[0]);
 		break;
 	case 91:
 		getStackList(args, ARRAYSIZE(args));
@@ -1113,6 +1202,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_field_80(spriteId, args[0]);
 		break;
 	case 124:
+		spritesResetTables(true);
 		break;
 	case 164:
 		args[1] = pop();

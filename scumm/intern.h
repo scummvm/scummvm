@@ -919,6 +919,16 @@ protected:
 	void spriteInfoSet_field_18(int spriteNum, int value);
 	void spriteInfoSet_Inc_tx_ty(int spriteNum, int value1, int value2);
 	void spriteInfoSet_zoom(int spriteNum, int value);
+	void spriteInfoSet_rotAngle(int spriteNum, int value);
+	void spriteInfoSet_flag22(int spriteNum, int value);
+	void spriteInfoSet_flag7(int spriteNum, int value);
+	void spriteInfoSet_flagRotated(int spriteNum, int value);
+	void spriteInfoSet_flag8(int spriteNum, int value);
+	void spriteInfoSet_flagZoomed(int spriteNum, int value);
+	void spriteInfoSet_flag20(int spriteNum, int value);
+	void spriteInfoSet_flags23_26(int spriteNum, int value);
+	void spriteInfoSet_flag31(int spriteNum, int value);
+	void spriteInfoSet_field_78_64(int spriteNum, int value);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);
