@@ -1256,7 +1256,6 @@ void ScummEngine_v100he::o100_redim2dimArray() {
 
 	byte subOp = fetchScriptByte();
 
-	printf("o100_redim2dimArray: a %d b %d c %d d %d\n", a, b, c, d);
 	switch (subOp) {
 	case 42:
 		redimArray(fetchScriptWord(), a, b, c, d, kIntArray);
