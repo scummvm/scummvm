@@ -41,6 +41,8 @@
 
 extern Config *g_config;
 
+#define CURRENT_GAMES_VERSION 3
+
 #define MAX_GAMES 23
 int MAX_DIRECTORY = 40;
 
@@ -236,8 +238,9 @@ int displayFoundGames(void);
 void displayDirectoryList(void);
 void displayGamesList(void);
 void doScan(void);
-void startFindGame(void);
-bool loadGameSettings(void);
+void startFindGame(BOOL, TCHAR*);
+bool loadGameSettings(BOOL);
+void sortFoundGames(void);
 
 char gamesFound[MAX_GAMES];
 GameReference listIndex[MAX_GAMES];
@@ -260,7 +263,7 @@ bool _game_selected;
 extern int _game_selection_X_offset;
 extern int _game_selection_Y_offset;
 
-int chooseGame(bool need_rescan) {
+int chooseGame() {
 
 	if (directories)
 		free(directories);
@@ -270,8 +273,7 @@ int chooseGame(bool need_rescan) {
 	setGameSelectionPalette();
 	drawBlankGameSelection();
 	
-	if (!need_rescan)
-		loadGameSettings();
+	loadGameSettings(TRUE);
 	_game_selected = false;
 	while (!_game_selected) {
 		MSG msg;
@@ -297,13 +299,19 @@ void setFindGameDlgHandle(HWND x) {
 	hwndDlg = x;
 }
 
-bool loadGameSettings() {
+bool loadGameSettings(BOOL display) {
 	int				index;
 	int				i;
 	const char		*current;
+	int				version;
 
 	/*prescanning = FALSE;*/
 	_scanning = false;
+
+	/* check version */
+	version = g_config->getInt("GamesVersion", 0, "wince");
+	if (!version || version != CURRENT_GAMES_VERSION) 
+		return FALSE;
 
 	current = g_config->get("GamesInstalled", "wince");
 	if (!current)
@@ -341,7 +349,10 @@ bool loadGameSettings() {
 		MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, gamesInstalled[i].directory, sizeof(gamesInstalled[i].directory));
 	}
 
-	displayFoundGames();
+	if (display)
+		displayFoundGames();
+	else
+		sortFoundGames();
 
 	return TRUE;
 }
@@ -357,8 +368,7 @@ int countGameReferenced(int reference, int *infos) {
 	return number;
 }
 
-int displayFoundGames() {
-
+void sortFoundGames() {
 	int i;	
 
 	_total_games = 0;
@@ -392,6 +402,10 @@ int displayFoundGames() {
 			_total_games++;
 		}
 	}
+}
+
+int displayFoundGames() {
+	sortFoundGames();
 
 	displayGamesList();
 
@@ -598,6 +612,18 @@ void displayGamesList() {
 	}
 }
 
+int getTotalGames() {
+	return _total_games;
+}
+
+TCHAR* getGameName(int x) {
+	static TCHAR gameName[100];
+
+	MultiByteToWideChar(CP_ACP, 0, listIndex[x].name, strlen(listIndex[x].name) + 1, gameName, sizeof(gameName));
+
+	return gameName;
+}
+
 void displayDirectoryList() {
 	int current = _first_index;	
 	int index_link = 0;
@@ -650,7 +676,7 @@ void endScanPath() {
 	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("Scan"));
 	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_SHOW);
 	*/
-	startFindGame();
+	startFindGame(TRUE, NULL);
 }
 
 void abortScanPath() {
@@ -667,7 +693,7 @@ void abortScanPath() {
 	displayFoundGames();
 }
 
-void startFindGame() {
+void startFindGame(BOOL display, TCHAR *path) {
 	//TCHAR			fileName[MAX_PATH];
 	//TCHAR			*tempo;
 	int				i = 0;
@@ -679,8 +705,10 @@ void startFindGame() {
 	_scanning = false;
 
 	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scanning, please wait"));
-	drawBlankGameSelection();
-	drawCommentString("Scanning, please wait");
+	if (display) {
+		drawBlankGameSelection();
+		drawCommentString("Scanning, please wait");
+	}
 
 	//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
 
@@ -694,14 +722,22 @@ void startFindGame() {
 	installedGamesNumber = 0;
 
 	//findGame(fileName);
+	if (path)
+		wcscpy(basePath, path);
 	findGame(basePath);
 
 	// Display the results
-	index = displayFoundGames();
+	if (display)
+		index = displayFoundGames();
+	else {
+		sortFoundGames();
+		index = _total_games;
+	}
 
 	// Save the results in the registry
 	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Saving the results"));
-	drawCommentString("Saving the results");
+	if (display)
+		drawCommentString("Saving the results");
 
 	g_config->setInt("GamesInstalled", index, "wince");
 
@@ -726,10 +762,13 @@ void startFindGame() {
 		g_config->set(keyName, workdir, "wince");
 	}
 
+	g_config->setInt("GamesVersion", CURRENT_GAMES_VERSION, "wince");
+
 	g_config->flush();
 
 	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
-	drawCommentString("Scan finished");
+	if (display)
+		drawCommentString("Scan finished");
 
 }
 
@@ -912,7 +951,7 @@ void handleSelectGame(int x, int y) {
 			if (!_scanning)
 				startScan();
 			else
-				startFindGame();
+				startFindGame(TRUE, NULL);
 		}
 		if ((x>=93 && x<=129)) {
 			if (!_scanning) {
@@ -922,7 +961,7 @@ void handleSelectGame(int x, int y) {
 					_game_selected = true;
 			}
 			else
-				startFindGame();
+				startFindGame(TRUE, NULL);
 		}
 		if (x>=175 && x<=208) {
 			if (!_scanning) {
