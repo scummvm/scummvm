@@ -127,15 +127,16 @@ private:
 
 	enum {
 		NUM_DIRTY_RECT = 100,
-		SCREEN_WIDTH = 320,
-		SCREEN_HEIGHT = 200,
-		CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8)),
+		//SCREEN_WIDTH = 320,
+		//SCREEN_HEIGHT = 240,
+		//CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8)),
 
 		MAX_MOUSE_W = 40,
 		MAX_MOUSE_H = 40,
 		MAX_SCALING = 3,
 	};
 
+	int SCREEN_WIDTH, SCREEN_HEIGHT, CKSUM_NUM;
 	SDL_Rect *dirty_rect_list;
 	int num_dirty_rects;
 	uint32 *dirty_checksums;
@@ -302,15 +303,15 @@ normal_mode:;
 		break;
 	}
 
-	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
 	if (sdl_screen == NULL)
 		error("sdl_screen failed failed");
 
 	if (_sai_func) {
-		uint16 *tmp_screen = (uint16*)calloc((320+3)*(200+3),sizeof(uint16));
+		uint16 *tmp_screen = (uint16*)calloc((SCREEN_WIDTH+3)*(SCREEN_HEIGHT+3),sizeof(uint16));
 		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
-		sdl_hwscreen = SDL_SetVideoMode(320 * scaling, 200 * scaling, 16, 
+		sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 16, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 		);
 		if (sdl_hwscreen == NULL)
@@ -322,7 +323,7 @@ normal_mode:;
 		else
 			Init_2xSaI(565);
 		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-							320 + 3, 200 + 3, 16, (320 + 3)*2,
+							SCREEN_WIDTH + 3, SCREEN_HEIGHT + 3, 16, (SCREEN_WIDTH + 3)*2,
 							sdl_hwscreen->format->Rmask,
 							sdl_hwscreen->format->Gmask,
 							sdl_hwscreen->format->Bmask,
@@ -347,7 +348,7 @@ normal_mode:;
 
 		_mode_flags = DF_WANT_RECT_OPTIM;
 
-		sdl_hwscreen = SDL_SetVideoMode(320 * scaling, 200 * scaling, 8, 
+		sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 8, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 		);
 		if (sdl_hwscreen == NULL)
@@ -373,9 +374,12 @@ void OSystem_SDL::unload_gfx_mode() {
 }
 
 void OSystem_SDL::init_size(uint w, uint h) {
-	if (w != SCREEN_WIDTH && h != SCREEN_HEIGHT)
-		error("320x200 is the only game resolution supported");
+	//if (w != SCREEN_WIDTH && h != SCREEN_HEIGHT)
+	//	error("320x200 is the only game resolution supported");
 
+	SCREEN_WIDTH = w;
+	SCREEN_HEIGHT = h;
+	CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8));
 	/* allocate palette, it needs to be persistent across
 	 * driver changes, so i'll alloc it here */
 	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
@@ -417,10 +421,10 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst = (byte *)sdl_screen->pixels + y * 320 + x;
+	byte *dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
 	do {
 		memcpy(dst, buf, w);
-		dst += 320;
+		dst += SCREEN_WIDTH;
 		buf += pitch;
 	} while (--h);
 
@@ -463,14 +467,14 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 #define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(SCREEN_WIDTH/4)]; b ^= ((uint32*)buf)[1+(x)*(SCREEN_WIDTH/4)]
 void OSystem_SDL::mk_checksums(const byte *buf) {
 	uint32 *sums = dirty_checksums;
-	uint x,y;
+	int x,y;
 
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
 	for(y=0; y!=SCREEN_HEIGHT/8; y++,buf+=SCREEN_WIDTH*(8-1))
 		for(x=0; x!=SCREEN_WIDTH/8; x++,buf+=8) {
-			uint32 a = x;
-			uint32 b = y;
+			int32 a = x;
+			int32 b = y;
 
 			DOLINE(0); ROL(a,13); ROL(b,11);
 			DOLINE(2); ROL(a,13); ROL(b,11);
@@ -508,7 +512,7 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 		 and add all dirty rectangles to a list. try to combine small rectangles
 		 into bigger ones in a simple way */
 	if (!force_full) {
-		uint x,y,w;
+		int x,y,w;
 		uint32 *ck = dirty_checksums;
 		
 		for(y=0; y!=SCREEN_HEIGHT/8; y++) {
@@ -827,7 +831,7 @@ void OSystem_SDL::get_320x200_image(byte *buf) {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	memcpy(buf, sdl_screen->pixels, 320*200);
+	memcpy(buf, sdl_screen->pixels, SCREEN_WIDTH*SCREEN_HEIGHT);
 
 	SDL_UnlockSurface(sdl_screen);
 }
@@ -838,7 +842,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	 * then draw that to the new screen right after it's setup.
 	 */
 	
-	byte *bak_mem = (byte*)malloc(320*200);
+	byte *bak_mem = (byte*)malloc(SCREEN_WIDTH*SCREEN_HEIGHT);
 
 	get_320x200_image(bak_mem);
 
@@ -851,7 +855,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	SDL_SetColors(sdl_palscreen, _cur_pal, 0, 256);
 
 	/* blit image */
-	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
+	OSystem_SDL::copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	free(bak_mem);
 
 	OSystem_SDL::update_screen();
@@ -937,12 +941,12 @@ void OSystem_SDL::draw_mouse() {
 	_ms_old.x = xdraw;
 	_ms_old.y = ydraw;
 
-	dst = (byte *)sdl_screen->pixels + ydraw * 320 + xdraw;
+	dst = (byte *)sdl_screen->pixels + ydraw * SCREEN_WIDTH + xdraw;
 
-	for (y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w) {
-		if ((uint) (ydraw + y) < 200) {
+	for (y = 0; y < h; y++, dst += SCREEN_WIDTH, bak += MAX_MOUSE_W, buf += w) {
+		if ((ydraw + y) < SCREEN_HEIGHT) {
 			for (x = 0; x < w; x++) {
-				if ((uint) (xdraw + x) < 320) {
+				if ((xdraw + x) < SCREEN_WIDTH) {
 					bak[x] = dst[x];
 					if ((color = buf[x]) != 0xFF) {
 						dst[x] = color;
@@ -972,12 +976,12 @@ void OSystem_SDL::undraw_mouse() {
 	const int old_mouse_h = _ms_old.h;
 	int x,y;
 
-	dst = (byte *)sdl_screen->pixels + old_mouse_y * 320 + old_mouse_x;
+	dst = (byte *)sdl_screen->pixels + old_mouse_y * SCREEN_WIDTH + old_mouse_x;
 
-	for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += 320) {
-		if ((uint) (old_mouse_y + y) < 200) {
+	for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += SCREEN_WIDTH) {
+		if ((old_mouse_y + y) < SCREEN_HEIGHT) {
 			for (x = 0; x < old_mouse_w; x++) {
-				if ((uint) (old_mouse_x + x) < 320) {
+				if ((old_mouse_x + x) < SCREEN_WIDTH) {
 					dst[x] = bak[x];
 				}
 			}

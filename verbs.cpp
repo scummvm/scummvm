@@ -63,6 +63,12 @@ void Scumm::checkExecVerbs()
 			runInputScript(2, 0, code);
 		} else {
 			over = checkMouseOver(mouse.x, mouse.y);
+			
+			// FIXME For the future: Indy3 and under inv scrolling
+			/*
+				if (over >= 31 && over <= 36) 
+					over += _inventoryOffset;
+			*/
 			runInputScript(1, over != 0 ? _verbs[over].verbid : 0, code);
 		}
 	}
@@ -137,6 +143,12 @@ void Scumm::drawVerb(int vrb, int mode)
 		string[4].color = color;
 		if (vs->curmode == 2)
 			string[4].color = vs->dimcolor;
+
+		// FIXME For the future: Indy3 and under inv scrolling
+		/*
+			if (vrb >= 31 && vrb <= 36) 
+				vrb += _inventoryOffset;
+		*/
 
 		_messagePtr = getResourceAddress(rtVerb, vrb);
 		assert(_messagePtr);

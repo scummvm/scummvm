@@ -931,7 +931,8 @@ public:
 
 
 	/* Should be in Verb class */
-	uint16 _verbMouseOver;	
+	uint16 _verbMouseOver;
+	int _inventoryOffset;	
 	void redrawVerbs();
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
@@ -1129,7 +1130,7 @@ public:
 
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
-	int _scrHeight, _scrWidth;
+	int _scrHeight, _scrWidth, _realHeight, _realWidth;
 	VirtScreen virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
 	ColorCycle _colorCycle[16];	// Palette cycles

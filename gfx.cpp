@@ -28,22 +28,22 @@ void Scumm::getGraphicsPerformance()
 	int i;
 
 	for (i = 10; i != 0; i--) {
-		initScreens(0, 0, 320, 200);
+		initScreens(0, 0, _realWidth, _realHeight); //ender
 	}
 
 	_vars[VAR_PERFORMANCE_1] = 0;	//_scummTimer;
 
 	for (i = 10; i != 0; i--) {
-		setDirtyRange(0, 0, 200);
+		setDirtyRange(0, 0, _realHeight); //ender
 		drawDirtyScreenParts();
 	}
 
 	_vars[VAR_PERFORMANCE_2] = 0;	//_scummTimer;
 
 	if (_gameId == GID_DIG)
-		initScreens(0, 0, 320, 200);
+		initScreens(0, 0, _realWidth, _realHeight);
 	else
-		initScreens(0, 16, 320, 144);
+		initScreens(0, 16, _realWidth, 144);
 }
 
 void Scumm::initScreens(int a, int b, int w, int h)
@@ -56,11 +56,11 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
-		initVirtScreen(3, 0, 80, 320, 13, false, false);
+		initVirtScreen(3, 0, 80, _realWidth, 13, false, false);
 	}
-	initVirtScreen(0, 0, b, 320, h - b, true, true);
-	initVirtScreen(1, 0, 0, 320, b, false, false);
-	initVirtScreen(2, 0, h, 320, 200 - h, false, false);
+	initVirtScreen(0, 0, b, _realWidth, h - b, true, true);
+	initVirtScreen(1, 0, 0, _realWidth, b, false, false);
+	initVirtScreen(2, 0, h, _realWidth, _realHeight - h, false, false); //ender
 
 	_screenB = b;
 	_screenH = h;

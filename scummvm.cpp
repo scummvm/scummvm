@@ -876,7 +876,7 @@ void Scumm::processKbd()
 	} else if (_lastKeyHit == 93) { // ], eg volume down
 		_sound_volume_master+=5;
 		if (_sound_volume_master > 128)
-			_sound_volume_master = 128;
+			_sound_volume_master = 128;		
 		_imuse->set_master_volume(_sound_volume_master);
 	} else if (_lastKeyHit == 45) { // -, eg text speed down
 		_defaultTalkDelay+=5;
@@ -905,12 +905,12 @@ int Scumm::getKeyInput(int a)
 
 	if (mouse.x < 0)
 		mouse.x = 0;
-	if (mouse.x > 319)
-		mouse.x = 319;
+	if (mouse.x > _realWidth-1)
+		mouse.x = _realWidth-1;
 	if (mouse.y < 0)
 		mouse.y = 0;
-	if (mouse.y > 199)
-		mouse.y = 199;
+	if (mouse.y > _realHeight-1)
+		mouse.y = _realHeight-1;
 
 	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
 		_mouseButStat = 0;
@@ -1372,8 +1372,17 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	scumm->_system = syst;
 
+	
+	if (detector->_gameId == GID_ZAK256) {	// FmTowns is 320x240
+		scumm->_realWidth = 320;
+		scumm->_realHeight = 240;
+	} else {
+		scumm->_realWidth = 320;
+		scumm->_realHeight = 200;
+	}
+
 	/* This initializes SDL */
-	syst->init_size(320,200);
+	syst->init_size(scumm->_realWidth, scumm->_realHeight);
 	prop.cd_num = detector->_cdrom;
 	syst->property(OSystem::PROP_OPEN_CD, &prop);
 
