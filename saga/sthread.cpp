@@ -787,7 +787,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				SDataWord_T param3 = 0;
 				param1 = scriptS.readByte();
 				param2 = scriptS.readByte();
-				if (param2 > 0) {
+				if (param2 & 1) {
 					param3 = scriptS.readUint16LE();
 				}
 				debug(2, "DLGO | %02X %02X %04X", param1, param2, param3);
