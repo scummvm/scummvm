@@ -418,7 +418,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	//
 	// 3) The miscellaneous tab
 	//
-	tab->addTab("Misc");
+	tab->addTab("Paths");
 	yoffset = vBorder;
 
 #if !( defined(__DC__) || defined(__GP32__) )
