@@ -335,8 +335,11 @@ bool DLObject::open(const char *path)
 
   ::close(fd);
 
+  int oldmask = getimask();
+  setimask(15);
   purge_copyback();
   flush_instruction_cache();
+  setimask(oldmask);
 
   ctors_start = symbol("__plugin_ctors");
   ctors_end = symbol("__plugin_ctors_end");
