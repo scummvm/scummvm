@@ -420,6 +420,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\input.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\instrument.cpp"
 			>
 		</File>
