@@ -29,7 +29,7 @@ namespace Scumm {
 
 static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
 
-static void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte humongous);
+static void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check);
 static void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyActorPalette(byte *actorPalette, byte *line_buffer, int32 size);
@@ -111,11 +111,11 @@ void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte
 	}
 }
 
-void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte humongous) {
+void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check) {
 	assert(size > 0);
 	switch(shadowMode) {
 	case 0:
-		bompApplyShadow0(shadowPalette, line_buffer, dst, size, transparency, humongous);
+		bompApplyShadow0(shadowPalette, line_buffer, dst, size, transparency, HE7Check);
 		break;
 	case 1:
 		bompApplyShadow1(shadowPalette, line_buffer, dst, size, transparency);
@@ -127,11 +127,11 @@ void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line
 		error("Unknown shadow mode %d", shadowMode);
 	}
 }
-void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte humongous = false) {
+void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check = false) {
 	while (size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
-			if (humongous)
+			if (HE7Check)
  				*dst = shadowPalette[tmp];
 			else
 				*dst = tmp;

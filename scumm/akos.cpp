@@ -959,8 +959,8 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 			bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
 			maskptr += maskpitch;
 		}
-		bool humongous = (_vm->_features & GF_HUMONGOUS);
-		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency, humongous);
+		bool HE7Check = (_vm->_heversion == 70);
+		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency, HE7Check);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
