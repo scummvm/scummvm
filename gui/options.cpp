@@ -125,7 +125,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	yoffset = vBorder;
 
 	// The MIDI mode popup & a label
-	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Music driver: ", kTextAlignRight);
 	_midiPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Music driver: ", 100);
 	yoffset += 16;
 	

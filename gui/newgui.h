@@ -137,7 +137,7 @@ public:
 	void drawChar(byte c, int x, int y, NewGuiColor color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, NewGuiColor color, int align = kTextAlignLeft, int deltax = 0);
+	void drawString(const String &str, int x, int y, int w, NewGuiColor color, int align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);

@@ -151,7 +151,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 
 	// Draw the text
 	adjustOffset();
-	g_gui.drawString(_label, _x + 2, _y + 3, _w - 6, g_gui._textcolor, kTextAlignLeft, -_labelOffset);
+	g_gui.drawString(_label, _x + 2, _y + 3, _w - 6, g_gui._textcolor, kTextAlignLeft, -_labelOffset, false);
 }
 
 int EditTextWidget::getCaretPos() {

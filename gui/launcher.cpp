@@ -127,7 +127,6 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset += 16;
 
 	// GUI:  Label for the game path
- 	// TODO: Allow editing, and clip to the RIGHT on long paths (to keep meaningful portions)
 	new StaticTextWidget(tab, 10, yoffset, 40, kLineHeight, "Path: ", kTextAlignRight);
 	new StaticTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
 
