@@ -2156,6 +2156,8 @@ bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
+	_currentSection = 0xFF; // force music-, sound- and gridreload
+
 	return true;
 }
 
@@ -2191,7 +2193,10 @@ bool SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRestartGame");
+	
+	error("Stub: fnRestartGame()");
+	//_skyControl->restartGame();
+	return false;
 }
 
 bool SkyLogic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
@@ -2210,7 +2215,7 @@ bool SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnSkipIntroCode");
+	SkyState::_systemVars.pastIntro = true;
 	return true;
 }
 

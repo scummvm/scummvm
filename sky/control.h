@@ -148,6 +148,7 @@ public:
 	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
+	void restartGame(void);
 	void showGameQuitMsg(bool useScreen = true);
     
 private:
@@ -191,6 +192,7 @@ private:
 	uint16 parseSaveData(uint8 *srcBuf);
 
 	static Compact *_saveLoadCpts[833]; // moved to sky/compacts/savedata.cpp
+	//static uint8 _restartData[0xCC10];
 	const char *_savePath;
 
 	AllocedMem *_memListRoot;

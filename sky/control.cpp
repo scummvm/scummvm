@@ -292,6 +292,18 @@ void SkyControl::drawMainPanel(void) {
 	_bodge->drawToScreen(WITH_MASK);
 }
 
+void SkyControl::restartGame(void) {
+	if (SkyState::isDemo() && (!SkyState::isCDVersion()))
+		return; // I don't think this can happen
+
+	/*parseSaveData(_restartData);
+
+	_skyScreen->forceRefresh();
+	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+	SkyState::_systemVars.pastIntro = true;*/
+}
+
 void SkyControl::doLoadSavePanel(void) {
 	if (SkyState::isDemo())
 		return; // I don't think this can even happen

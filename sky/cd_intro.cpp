@@ -195,13 +195,13 @@
 #define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = _skyDisk->loadFile(num, NULL), loadedVocSize = _skyDisk->_lastLoadedFileSize ) 
 #define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = _skyDisk->loadFile(num, NULL), bgVocSize = _skyDisk->_lastLoadedFileSize )
 #define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); CHECK_ESC }
-#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); _mixer->stopAll(); return; }
+#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); _mixer->stopAll(); return false; }
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { delay(50); CHECK_ESC }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
 
 #define NORMAL_CD_INTRO
 
-void SkyState::doCDIntro() {
+bool SkyState::doCDIntro() {
 
 	uint32 loadedVocSize, bgVocSize;
 	byte *vocBuffer, *bgVocBuffer;
@@ -794,4 +794,5 @@ void SkyState::doCDIntro() {
 	WAIT_SEQUENCE; //104
 	_skyScreen->startSequence(cd_105);
 	WAIT_SEQUENCE; //105
+	return true;
 }

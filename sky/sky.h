@@ -47,6 +47,7 @@ struct SystemVars {
 	uint16 language;
 	uint32 currentPalette;
 	uint16 gameSpeed;
+	bool pastIntro;
 };
 
 class SkyLogic;
@@ -127,8 +128,8 @@ protected:
 	void initItemList();
 
 	void initVirgin();
-	void intro();
-	void doCDIntro();
+	bool intro();
+	bool doCDIntro();
 	void startTimerSequence(byte *sequence);
 	static void timerHandler(void *ptr);
 	void gotTimerTick();

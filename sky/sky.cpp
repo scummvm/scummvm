@@ -54,7 +54,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0};
+SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, false};
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -96,14 +96,19 @@ void SkyState::go() {
 
 	initialise();
 
+	bool introSkipped;
 	if (!isDemo() || isCDVersion())
-		intro();
+		introSkipped = !intro();
+	else introSkipped = false;
 
 	_skyDisk->flushPrefetched();
 
 	loadBase0();
 
 	_paintGrid = false;
+
+	/*if (introSkipped)
+		_skyControl->restartGame();*/
 
 	while (1) {
 		delay(_systemVars.gameSpeed);
@@ -119,10 +124,15 @@ void SkyState::go() {
 				_skyScreen->forceRefresh();
 			_key_pressed = 0;
 		}
+		
 		if (_key_pressed == 63) {
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
 		}
+
+		/*if ((_key_pressed == 27) && (!_systemVars.pastIntro))
+			_skyControl->restartGame();*/
+
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up

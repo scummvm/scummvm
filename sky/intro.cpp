@@ -30,7 +30,7 @@
 			FREE_IF_NOT_0(_introTextSpace) \
 			FREE_IF_NOT_0(_introTextSave) \
             _mixer->stopAll();
-#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); REMOVE_INTRO return; }
+#define CHECK_ESC if (_key_pressed == 27) { _skyScreen->stopSequence(); REMOVE_INTRO return false; }
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { checkCommands(commandPtr); delay(50); CHECK_ESC }
 
 #define INTRO_TEXT_WIDTH    128
@@ -201,7 +201,7 @@ void SkyState::escDelay(uint32 pDelay) {
 	}
 }
 
-void SkyState::intro(void) {
+bool SkyState::intro(void) {
 
 	uint32 *commandPtr = (uint32 *)zeroCommands;
 
@@ -243,7 +243,7 @@ void SkyState::intro(void) {
 
 
 	if (isCDVersion()) {
-		doCDIntro();
+		return doCDIntro();
 	} else {
 		_skyDisk->prefetchFile(FN_A_PAL);
 		_skyDisk->prefetchFile(FN_1A_LOG);
@@ -303,7 +303,7 @@ void SkyState::intro(void) {
 			delay(40); 
 			if (_key_pressed == 27) {
 				REMOVE_INTRO;
-				return;
+				return false;
 			}
 			
 			//non-scrolling frame update
@@ -366,6 +366,7 @@ void SkyState::intro(void) {
 		commandPtr = (uint32 *)anim6bCommands;
 		WAIT_SEQUENCE; //6b
 	}
+	return true;
 }
 
 void SkyState::introFrame(uint8 **diffPtr, uint8 **vgaPtr, uint8 *screenData) {
