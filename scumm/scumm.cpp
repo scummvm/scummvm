@@ -1104,7 +1104,7 @@ void ScummEngine::launch() {
 	else if (_gameId == GID_WATER)
 		_numActors = 61;
 	else 
-		_numActors = 80;
+		_numActors = 13;
 
 	if (_version >= 7)
 		OF_OWNER_ROOM = 0xFF;
