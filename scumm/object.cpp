@@ -634,21 +634,26 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
 
 		od->width = *(ptr + 11) << 3;
-		od->height = *(ptr + 17) & 0xf8;
-
-		if (*(ptr + 10) & 0x80) {
-			od->parentstate = 1;			// it's 0x10 in the original code
-		} else {
-			od->parentstate = 0;
-		}
 
 		od->parent = *(ptr + 12);
 
-		od->walk_x = READ_LE_UINT16(ptr + 13);
-		od->walk_y = READ_LE_UINT16(ptr + 15);
-
-		od->actordir = (*(ptr + 17)) & 7;
-
+		if (_features & GF_AFTER_V3) {
+			od->walk_x = *(ptr + 13);
+			od->walk_y = *(ptr + 14);
+			od->actordir = (*(ptr + 15)) & 7;
+			od->height = *(ptr + 15) & 0xf8;
+			od->parentstate = (*(ptr + 10) & 0x80) >> 4;
+		} else {
+			od->walk_x = READ_LE_UINT16(ptr + 13);
+			od->walk_y = READ_LE_UINT16(ptr + 15);
+			od->actordir = (*(ptr + 17)) & 7;
+			od->height = *(ptr + 17) & 0xf8;
+			if (*(ptr + 10) & 0x80) {
+				od->parentstate = 1;
+			} else {
+				od->parentstate = 0;
+			}
+		}
 		return;
 	}
 

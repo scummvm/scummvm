@@ -905,7 +905,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_features & GF_OLD_BUNDLE)
+	if (_features & GF_AFTER_V2)
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 	else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
@@ -926,7 +926,9 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Look for an exit script
 	//
-	if (_features & GF_OLD_BUNDLE)
+	if (_features & GF_AFTER_V2)
+		_EXCD_offs = READ_LE_UINT16(roomptr + 0x18);
+	else if (_features & GF_OLD_BUNDLE)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
 	else {
 		ptr = findResourceData(MKID('EXCD'), roomResPtr);
@@ -939,7 +941,9 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Look for an entry script
 	//
-	if (_features & GF_OLD_BUNDLE)
+	if (_features & GF_AFTER_V2)
+		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1C);
+	else if (_features & GF_OLD_BUNDLE)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 	else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
@@ -953,7 +957,9 @@ void Scumm::initRoomSubBlocks() {
 	// Load box data
 	//
 	if (_features & GF_SMALL_HEADER) {
-		if (_features & GF_OLD_BUNDLE)
+		if (_features & GF_AFTER_V2)
+			ptr = roomptr + *(roomptr + 0x15);
+		else if (_features & GF_OLD_BUNDLE)
 			ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
 		else
 			ptr = findResourceData(MKID('BOXD'), roomptr);
@@ -968,7 +974,9 @@ void Scumm::initRoomSubBlocks() {
 			createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
-			if (_features & GF_OLD_BUNDLE)
+			if (_features & GF_AFTER_V2)
+				size = (READ_LE_UINT16(roomptr + 0x0A) - *(roomptr + 0x15)) - size;
+			else if (_features & GF_OLD_BUNDLE)
 				// FIXME. This is an evil HACK!!!
 				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else
@@ -1043,11 +1051,23 @@ void Scumm::initRoomSubBlocks() {
 
 	if (_features & GF_OLD_BUNDLE) {
 		int num_objects = *(roomResPtr + 20);
-		int num_sounds = *(roomResPtr + 23);
-		int num_scripts = *(roomResPtr + 24);
-		ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
+		int num_sounds;
+		int num_scripts;
 
-		if ((_gameId != GID_MANIAC) && (_gameId != GID_ZAK)) {
+		if (_features & GF_AFTER_V2) {
+			num_sounds = *(roomResPtr + 22);
+			num_scripts = *(roomResPtr + 23);
+			ptr = roomptr + 28 + num_objects * 4;
+			while (num_sounds--)
+				loadResource(rtSound, *ptr++);
+			while (num_scripts--)
+				loadResource(rtScript, *ptr++);
+		}
+
+		if (!(_features & GF_AFTER_V2)) {
+			num_sounds = *(roomResPtr + 23);
+			num_scripts = *(roomResPtr + 24);
+			ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
 			while (*ptr) {
 				int id = *ptr;
 
