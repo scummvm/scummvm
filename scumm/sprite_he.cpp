@@ -55,14 +55,17 @@ int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int classId) {
 }
 
 int ScummEngine_v90he::spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args) {
+	int classId;
+
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (!num)
 		return 1;
 
 	for (int i = 0; i < num; i++) {
-		checkRange(32, 1, args[i], "class %d out of range in statement");
-		if (!(_spriteTable[spriteId].class_flags & (1 << args[i])))
+		classId = args[i] & 0x7F;
+		checkRange(32, 1, classId, "class %d out of range in statement");
+		if (!(_spriteTable[spriteId].class_flags & (1 << classId)))
 			return 0;
 	}
 
