@@ -306,13 +306,29 @@ int main(int argc, char *argv[]) {
 			prop.caption = detector.getGameName().c_str();
 		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
+		// FIXME: It seem not logical that we first might set the gfx mode to
+		// 1x, and then immediately after might override it again. We probably
+		// should combine both checks into one.
+
 		// See if the game should default to 1x scaler
 		if ((detector._default_gfx_mode) && 
 		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
-
+	
+		// Override global scaler with any game-specific define
+		if (g_config->get("gfx_mode")) {
+			prop.gfx_mode = detector.parseGraphicsMode(g_config->get("gfx_mode"));
+			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+		}
+	
+		// Override global fullscreen setting with any game-specific define
+		if (g_config->getBool("fullscreen", false)) {
+			if (!system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+				system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+		}
+	
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);
 		assert(engine);

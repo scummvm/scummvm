@@ -252,7 +252,6 @@ int32 GameCycle(void) {
 }
 
 void Sword2Engine::go() {
-	OSystem::Property prop;
 	uint32 rv;
 	uint8 breakOut = 0;
 	_keyboardEvent ke;
@@ -265,21 +264,9 @@ void Sword2Engine::go() {
 	// manager until a window has been created as any errors are displayed
 	// via a window, thus time becomes a loop.
 
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = _detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
-
 	debug(5, "CALLING: InitialiseDisplay");
 	rv = InitialiseDisplay(640, 480);
 
-	// Override global fullscreen setting with any game-specific define
-	if (g_config->getBool("fullscreen", false)) {
-		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-	}
-		
 	if (rv != RD_OK) {
 		// ReportDriverError(rv);
 		CloseAppWindow();

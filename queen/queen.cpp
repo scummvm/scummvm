@@ -94,23 +94,9 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
-	OSystem::Property prop;
-
 	_queenResource = new QueenResource(_gameDataPath);
 	_queenLogic = new QueenLogic(_queenResource);
 	//_queenSound = new QueenSound(_mixer, _detector->_sfx_volume);
-	
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = _detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
-
-	// Override global fullscreen setting with any game-specific define
-	if (g_config->getBool("fullscreen", false)) {
-		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-	}
 }
 
 void QueenEngine::delay(uint amount) { 

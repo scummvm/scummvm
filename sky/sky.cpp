@@ -239,8 +239,6 @@ void SkyState::go() {
 }
 
 void SkyState::initialise(void) {
-	OSystem::Property prop;
-
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk, _detector->_sfx_volume);
 	
@@ -255,18 +253,6 @@ void SkyState::initialise(void) {
 			_skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk, _system);
 		else
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
-	}
-
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = _detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
-
-	// Override global fullscreen setting with any game-specific define
-	if (g_config->getBool("fullscreen", false)) {
-		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 	}
 
 	if (isCDVersion()) {

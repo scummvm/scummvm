@@ -203,7 +203,6 @@ static const GameSpecificSettings simon2dos_settings = {
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
-	OSystem::Property prop;
 
 	_vc_ptr = 0;
 	_game_offsets_ptr = 0;
@@ -498,18 +497,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	_system->property(OSystem::PROP_WANT_RECT_OPTIM,0);
-
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
-
-	// Override global scaler with any game-specific define
-	if (g_config->getBool("fullscreen", false)) {
-		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-	}
 }
 
 SimonEngine::~SimonEngine() {

@@ -640,23 +640,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_sound->_sound_volume_sfx = detector->_sfx_volume;
 	_sound->_sound_volume_music = detector->_music_volume;
 
-	// Override global scaler with any game-specific define
-	if (g_config->get("gfx_mode")) {
-		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
-		syst->property(OSystem::PROP_SET_GFX_MODE, &prop);
-	}
-
 	/* Initialize backend */
 	syst->init_size(_screenWidth, _screenHeight);
 	prop.cd_num = detector->_cdrom;
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
-
-	// Override global fullscreen setting with any game-specific define
-	if (g_config->getBool("fullscreen", false)) {
-		if (!syst->property(OSystem::PROP_GET_FULLSCREEN, 0))
-			syst->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-	}
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
