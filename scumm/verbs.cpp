@@ -231,8 +231,8 @@ void Scumm::redrawV2Inventory() {
 		// Prevent inventory entries from overflowing by truncating the text
 		// after 144/8 = 18 chars
 		byte msg[18 + 1];
-		memcpy(msg, _messagePtr, 18),
 		msg[18] = 0;
+		strncpy((char *)msg, (const char *)_messagePtr, 18);
 		_messagePtr = msg;
 		
 		// Draw it
