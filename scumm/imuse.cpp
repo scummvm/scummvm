@@ -1427,14 +1427,14 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return start_sound(b) ? 0 : -1;
 		case 9:
 			return stop_sound(b);
-		case 10:
-			return stop_all_sounds();	//FIXME: Sam and Max unknown
+		case 10: // FIXME: Sam and Max - Not sure if this is correct
+			return stop_all_sounds();
 		case 11:
 			return stop_all_sounds();
 		case 13:
 			return get_sound_status(b);
-		case 14:{									// FIXME: Sam and Max command - Total guess
-				int i;									//      Seems to work as a volume fader
+		case 14:{ // Sam and Max: Volume Fader?
+				int i;
 				Player *player;
 
 				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
@@ -1444,7 +1444,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 					}
 				}
 			}
-		case 15:{									// FIXME: Sam and Max command - Total guess
+		case 15:{ // Sam and Max: Unconditional Jump?
 				int i;									//      Something to do with position?
 				Player *player;
 				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
@@ -1462,9 +1462,9 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 18:
 			return set_volchan_entry(b, c);
 		case 19:
-			return stop_sound(b);			//FIXME: Sam and Max unknown
-		case 20:
-			return stop_sound(b);			//FIXME: Sam and Max unknown
+			return stop_sound(b);
+		case 20: // FIXME: Deferred command system? - Sam and Max
+			return;
 		case 2:
 		case 3:
 			return 0;
