@@ -7,7 +7,7 @@ DEFINES = -DNO_PPCINLINE_STDARG -DNO_PPCINLINE_VARARGS
 LDFLAGS := -noixemul -s
 INCLUDES:= -I../ -I../sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lamiga -lamigastubs
+LIBS	= -lamiga -lamigastubs -lcdda
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
@@ -17,7 +17,7 @@ OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o 
 	morphos.o morphos_sound.o morphos_start.o script_v1.o script_v2.o debug.o gui.o \
 	imuse.o fmopl.o mixer.o mididrv.o debugrl.o vars.o insane.o \
 	gameDetector.o init.o resource_v3.o resource_v4.o main.o \
-	midi.o simon.o simonsys.o
+	midi.o simon.o simondebug.o simonitems.o simonres.o simonsys.o simonverb.o simonvga.o
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \
