@@ -105,7 +105,7 @@ public:
 	bool poll_cdrom();
 
 	// Play cdrom audio track
-	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+	void play_cdrom(int track, int num_loops, int start_frame, int duration);
 
 	// Stop cdrom audio track
 	void stop_cdrom();
@@ -801,7 +801,7 @@ bool OSystem_X11::poll_cdrom()
 	return false;
 }
 
-void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int end_frame)
+void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int duration)
 {
 }
 

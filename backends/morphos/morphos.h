@@ -112,7 +112,7 @@ class OSystem_MorphOS : public OSystem
 		virtual bool poll_cdrom();
 
 		// Play cdrom audio track
-		virtual void play_cdrom(int track, int num_loops, int start_frame, int length);
+		virtual void play_cdrom(int track, int num_loops, int start_frame, int duration);
 
 		// Stop cdrom audio track
 		virtual void stop_cdrom();

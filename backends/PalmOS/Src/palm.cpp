@@ -1089,7 +1089,7 @@ static void doErr(Err e, const Char *msg) {
 	FrmCustomAlert(1000,err,0,0);
 }
 
-void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int duration) {
 	if (!_isCDRomAvalaible)
 		return;
 
@@ -1131,13 +1131,13 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 	if (start_frame > 0)
 		start_frame += CD_FPS >> 1;
 
-	if (end_frame > 0)
-		end_frame += CD_FPS >> 1;
+	if (duration > 0)
+		duration += CD_FPS >> 1;
 
 	_msaLoops = num_loops;
 	_msaTrack = track + gVars->music.firstTrack - 1;	// first track >= 1 ?, not 0 (0=album)
 	_msaStartFrame = TO_MSECS(start_frame);
-	_msaEndFrame = TO_MSECS(end_frame);
+	_msaEndFrame = TO_MSECS(duration);
 
 	// if gVars->MP3 audio track
 //	Err e;
@@ -1182,7 +1182,7 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 		_msaEndTime = get_msecs() + _msaTrackLength - 2000; // 2sec less ...
 
 		// try to play the track
-		if (start_frame == 0 && end_frame == 0) {
+		if (start_frame == 0 && duration == 0) {
 			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
 		} else {
 			// FIXME : MsaTimeToSu doesn't work ... (may work with previous FIXME)

@@ -1831,7 +1831,7 @@ void OSystem_WINCE3::quit() {
 
 /* CDRom Audio */
 void OSystem_WINCE3::stop_cdrom() {;}
-void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {;}
+void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int duration) {;}
 
 bool OSystem_WINCE3::poll_cdrom() {return 0;}
 void OSystem_WINCE3::update_cdrom() {;}

@@ -446,7 +446,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 	return 0;
 }
 
-void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int length)
+void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int duration)
 {
 	if (CDrive && start_frame >= 0)
 	{
@@ -455,8 +455,8 @@ void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int 
 
 		PlayTags[0].ti_Data = track;
 		PlayTags[1].ti_Data = start_frame;
-		PlayTags[2].ti_Data = (length == 0) ? track+1 : track;
-		PlayTags[3].ti_Data = length ? start_frame+length : 0;
+		PlayTags[2].ti_Data = (duration == 0) ? track+1 : track;
+		PlayTags[3].ti_Data = duration ? start_frame+duration : 0;
 		PlayTags[4].ti_Data = (num_loops == 0) ? 1 : num_loops;
 		CDDA_PlayA(CDrive, PlayTags);
 	}

@@ -74,8 +74,7 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   return false;
 }
 
-void OSystem_Dreamcast::play_cdrom(int track, int num_loops,
-				   int start_frame, int end_frame)
+void OSystem_Dreamcast::play_cdrom(int track, int num_loops, int start_frame, int duration)
 {
   int first_sec, last_sec;
 #if 1
@@ -87,7 +86,7 @@ void OSystem_Dreamcast::play_cdrom(int track, int num_loops,
   if(!find_track(track, first_sec, last_sec))
     return;
   if(end_frame)
-    last_sec = first_sec + start_frame + end_frame;
+    last_sec = first_sec + start_frame + duration;
   first_sec += start_frame;
   play_cdda_sectors(first_sec, last_sec, num_loops);
 }

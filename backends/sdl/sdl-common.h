@@ -87,7 +87,7 @@ public:
 	bool poll_cdrom();
 
 	// Play CD audio track
-	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+	void play_cdrom(int track, int num_loops, int start_frame, int duration);
 
 	// Stop CD audio track
 	void stop_cdrom();
@@ -146,7 +146,7 @@ protected:
 
 	// CD Audio
 	SDL_CD *_cdrom;
-	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
+	int cd_track, cd_num_loops, cd_start, cd_duration;
 	Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 	enum {

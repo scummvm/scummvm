@@ -1090,26 +1090,26 @@ void OSystem_SDL_Common::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second *
 	cd_num_loops = 0;
 }
 
-void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, int duration) {
 	if (!num_loops && !start_frame)
 		return;
 
 	if (!_cdrom)
 		return;
 	
-	if (end_frame > 0)
-		end_frame +=5;
+	if (duration > 0)
+		duration +=5;
 
 	cd_track = track;
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;
 
 	SDL_CDStatus(_cdrom);
-	if (start_frame == 0 && end_frame == 0)
+	if (start_frame == 0 && duration == 0)
 		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
 	else
-		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, end_frame);
-	cd_end_frame = end_frame;
+		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
+	cd_duration = duration;
 	cd_stop_time = 0;
 	cd_end_time = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
 }
@@ -1145,10 +1145,10 @@ void OSystem_SDL_Common::update_cdrom() {
 		cd_num_loops--;
 
 	if (cd_num_loops != 0) {
-		if (cd_start_frame == 0 && cd_end_frame == 0)
+		if (cd_start_frame == 0 && cd_duration == 0)
 			SDL_CDPlayTracks(_cdrom, cd_track, 0, 1, 0);
 		else
-			SDL_CDPlayTracks(_cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
+			SDL_CDPlayTracks(_cdrom, cd_track, cd_start_frame, 0, cd_duration);
 		cd_end_time = SDL_GetTicks() + _cdrom->track[cd_track].length * 1000 / CD_FPS;
 	}
 }

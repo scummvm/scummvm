@@ -60,7 +60,7 @@ class OSystem_Dreamcast : public OSystem {
   bool poll_cdrom();
 
   // Play cdrom audio track
-  void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+  void play_cdrom(int track, int num_loops, int start_frame, int duration);
   
   // Stop cdrom audio track
   void stop_cdrom();

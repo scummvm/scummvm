@@ -1067,7 +1067,7 @@ uint32 OSystem_GP32::property(int param, Property *value) {
 bool OSystem_GP32::poll_cdrom() { return false; }
 
 // Play cdrom audio track
-void OSystem_GP32::play_cdrom(int track, int num_loops, int start_frame, int end_frame) { }
+void OSystem_GP32::play_cdrom(int track, int num_loops, int start_frame, int duration) { }
 
 // Stop cdrom audio track
 void OSystem_GP32::stop_cdrom() { }
