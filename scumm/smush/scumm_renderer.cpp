@@ -186,7 +186,7 @@ bool ScummMixer::stop() {
 				_channels[i].chan = 0;
 		}
 	}
-	//~ _mixer->stopAll();
+	_mixer->stopAll();
 	return true;
 }
 
