@@ -1211,7 +1211,7 @@ void LoadedCostume::loadCostume(int id) {
 	}
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
-		_dataptr = _ptr + _ptr[9];
+		_dataptr = _ptr + READ_LE_UINT16(_ptr + 9);
 	}	else {
 		_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 	}
@@ -1277,7 +1277,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		dataptr = p + p[9];
+		dataptr = p + READ_LE_UINT16(p + 9);
 	else if (_features & GF_OLD256)
 		dataptr = p + *(p + lc._numColors + 8);
 	else
