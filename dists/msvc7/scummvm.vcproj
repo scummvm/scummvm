@@ -475,7 +475,7 @@
 				<Filter
 					Name="mt32">
 					<File
-						RelativePath="..\..\backends\midi\mt32\file.cpp">
+						RelativePath="..\..\backends\midi\mt32\file_.cpp">
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\file.h">
@@ -485,6 +485,12 @@
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\i386.h">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\freeverb.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\freeverb.h">
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\mt32emu.h">

@@ -207,6 +207,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\kyra\sound.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\sound.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\kyra\wsamovie.cpp"
 			>
 		</File>
