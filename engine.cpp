@@ -86,9 +86,6 @@ void Engine::mainLoop() {
 			}
 		}
 
-		// Run asynchronous tasks
-		lua_runtasks();
-
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
 				movieTime_ = g_smush->getMovieTime();
@@ -106,13 +103,14 @@ void Engine::mainLoop() {
 			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksReset();
 
-			// Update actor costumes
-			for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-				Actor *a = *i;
-				assert(currScene_);
-				if (a->inSet(currScene_->name()) && a->visible())
-					a->update();
-			} 
+			if (currScene_ != NULL) {
+				// Update actor costumes
+				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+					Actor *a = *i;
+					if (currScene_ != NULL && a->inSet(currScene_->name()) && a->visible())
+						a->update();
+				} 
+			}
 
 			g_driver->clearScreen();
 
@@ -144,16 +142,17 @@ void Engine::mainLoop() {
 
 			g_driver->set3DMode();
 
-			if (currScene_ != NULL)
+			if (currScene_ != NULL) {
 				currScene_->setupCamera();
 
-			// Draw actors
-			for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-				Actor *a = *i;
-				if (a->inSet(currScene_->name()) && a->visible())
-					a->draw();
+				// Draw actors
+				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+					Actor *a = *i;
+					if (currScene_ != NULL && a->inSet(currScene_->name()) && a->visible())
+						a->draw();
+				}
+				//screenBlocksDrawDebug();
 			}
-			//screenBlocksDrawDebug();
 
 			// Draw text
 			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
@@ -189,6 +188,9 @@ void Engine::mainLoop() {
 				timeAccum = 0;
 			}
 		}
+
+		// Run asynchronous tasks
+		lua_runtasks();
 	}
 }
 
