@@ -329,7 +329,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
-		OPCODE(o6_unknownE0),
+		OPCODE(o6_setVolume),
 		OPCODE(o6_unknownE1),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
@@ -1114,16 +1114,21 @@ void ScummEngine_v6he::o6_unknownE1() {
 	push(area);
 }
 
-void ScummEngine_v6he::o6_unknownE0() {
-	int a = fetchScriptByte();
-	a -= 222;
-	if (a != 0) {
-		a -= 2;
-		if (a != 0) 
-			return;
-		warning("o6_unknownE0(%d) stub", pop());
-	} else {
-		warning("o6_uknownE0, sound volume %d stub", pop());
+void ScummEngine_v6he::o6_setVolume() {
+	byte subOp = fetchScriptByte();
+	int soundVolumeMaster;
+	int volume = pop();
+	switch (subOp) {
+	case 222:
+		if (_imuse)
+			_imuse->set_music_volume(volume);
+		else
+			_mixer->setMusicVolume(volume);
+		break;
+	case 224:
+		soundVolumeMaster = ConfMan.getInt("master_volume");
+		_mixer->setVolume(volume * soundVolumeMaster / 255);
+		break;
 	}
 }
 
