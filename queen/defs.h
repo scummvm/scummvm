@@ -116,7 +116,10 @@ enum Verb {
 	VERB_DIGIT_LAST = 16,
 	
 	VERB_USE_JOURNAL = 20,
-	VERB_SKIP_TEXT   = 101
+	VERB_SKIP_TEXT   = 101,
+
+	VERB_PREP_WITH = 11,
+	VERB_PREP_TO   = 12
 };
 
 
@@ -137,6 +140,12 @@ enum StateGrab {
 enum StateOn {
 	STATE_ON_ON,
 	STATE_ON_OFF
+};
+
+
+enum StateUse {
+	STATE_USE,
+	STATE_USE_ON
 };
 
 

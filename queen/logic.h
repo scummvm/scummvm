@@ -75,6 +75,8 @@ struct State {
 	//! FIND_STATE(state, "DEF");
 	static Verb findDefaultVerb(uint16 state);
 
+	static StateUse findUse(uint16 state);
+
 	//! ALTER_STATE(state, "ON");
 	static void alterOn(uint16 *objState, StateOn state);
 
@@ -121,6 +123,7 @@ public:
 	uint16 currentRoomAreaMax();
 	uint16 walkOffCount();
 	WalkOffData *walkOffData(int index);
+	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
@@ -213,6 +216,10 @@ public:
 
 	Walk *walk() { return _walk; }
 	Display *display() { return _display; }
+
+	uint16 findObjectFromZone(uint16 zoneNum);
+
+	const char *verbName(Verb v) const;
 
 	void update();
 

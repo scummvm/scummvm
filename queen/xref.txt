@@ -31,13 +31,11 @@ SELECT_VERB()				Command::grabSelectedVerb
 ACTION,ACTION2				Command::_action*
 CLEVEL						Command::_commandLevel
 COMMANDstr					Command::_command
-DEFCOMM
-OLDVERB,VERB
-OLDNOUN,NOUN,NOUN2
+DEFCOMM						Command::_defaultVerb
+OLDVERB,VERB				Command::_*verb*
+OLDNOUN,NOUN,NOUN2			Command::_*old*
 PARSE						Command::_parse
 SUBJ1,SUBJ2,SUBJECT			Command::_subject*
-TEMPstr
-WORDstr
 
 
 CREDIT SCRIPTING SYSTEM
@@ -487,3 +485,5 @@ Pstr // not needed, FIND_STATE result
 OUTLINE	// not needed, textSet() Graphics::parameter
 FTOT //	queen.c/SETUP_FURNITURE local var
 OBJMAXv	// == Logic::_objMax[Logic::_currentRoom]
+TEMPstr
+WORDstr

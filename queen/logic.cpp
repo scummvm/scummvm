@@ -116,6 +116,11 @@ Verb State::findDefaultVerb(uint16 state) {
 }
 
 
+StateUse State::findUse(uint16 state) {
+	return (state & (1 << 10)) ? STATE_USE : STATE_USE_ON;
+}
+
+
 void State::alterOn(uint16 *objState, StateOn state) {
 	switch (state) {
 	case STATE_ON_ON:
@@ -1924,6 +1929,36 @@ Verb Logic::findVerb(int16 cursorx, int16 cursory) const {
 
 	return PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)];
 }
+
+
+uint16 Logic::findObjectFromZone(uint16 zoneNum) {
+
+	// l.316-327 select.c
+	uint16 noun = zoneNum;
+	uint16 objectMax = _objMax[_currentRoom];
+	if (zoneNum > objectMax) {
+		// this is an area box, check for associated object
+		uint16 obj = _area[_currentRoom][zoneNum - objectMax].object;
+		if (obj != 0) {
+			// there is an object, get its number
+			noun = obj - _roomData[_currentRoom];
+		}
+	}
+	return noun;
+}
+
+
+const char *Logic::verbName(Verb v) const {
+
+	if (v != VERB_NONE && v < 13) {
+		return _verbName[v];
+	}
+	else {
+		error("Logic::verbName() - Invalid verb %d", v);
+		return NULL;
+	}
+}
+
 
 
 void Logic::update() {
