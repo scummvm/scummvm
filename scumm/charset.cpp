@@ -929,7 +929,7 @@ void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
 	_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
-	if (_vm->_features & GF_FMTOWNS) {
+	if (_vm->_features & GF_FMTOWNS || _vm->_gameId == GID_INDY3_256) {
 		_dropShadow = ((_color & 0x80) != 0);
 		_color &= 0x7f;
 	} else if (_vm->_features & GF_16COLOR) {

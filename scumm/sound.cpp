@@ -389,34 +389,42 @@ void Sound::playSound(int soundID) {
 
 			switch(type) {
 				case 0:	{ // Sound effect
-					int waveSize = READ_LE_UINT32(ptr + 0x22);
-					int loopStart = READ_LE_UINT32(ptr + 0x26);
-					int loopEnd = READ_LE_UINT32(ptr + 0x2A);
-					rate = (ptr[0x32] == 60) ? 11025 : 22050;	// 48 means 22050
+					int numInstruments = *(ptr + 0x14);
+					ptr += 0x16;
+					size -= 0x16;
+					while (numInstruments--) {
+						int waveSize = READ_LE_UINT32(ptr + 0x0C);
+						int loopStart = READ_LE_UINT32(ptr + 0x10);
+						int loopEnd = READ_LE_UINT32(ptr + 0x14);
+						// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
+						rate = READ_LE_UINT32(ptr + 0x18) * 10;
 
-					if (size - 0x36 < waveSize) {
-						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-						waveSize = size - 0x36;
-					}
-					ptr += 0x36;
-					sound = (char *)malloc(waveSize);
-					for (int x = 0; x < waveSize; x++) {
-						int bit = *ptr++;
-						if (bit < 0x80)
-							sound[x] = 0x7F - bit;
-						else
-							sound[x] = bit;
-					}
-	
-					if (loopEnd > 0) {
-						flags |= SoundMixer::FLAG_LOOP;
-						if ((loopEnd < waveSize) || (loopStart > 0)) {
-							// FIXME: Implement partial loops
-							warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+						ptr += 0x20;
+						size -= 0x20;
+						if (size < waveSize) {
+							warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+							waveSize = size - 0x36;
 						}
-					}
+						sound = (char *)malloc(waveSize);
+						for (int x = 0; x < waveSize; x++) {
+							int bit = *ptr++;
+							if (bit < 0x80)
+								sound[x] = 0x7F - bit;
+							else
+								sound[x] = bit;
+						}
+						size -= waveSize;
+	
+						if (loopEnd > 0) {
+							flags |= SoundMixer::FLAG_LOOP;
+							if ((loopEnd < waveSize) || (loopStart > 0)) {
+								// FIXME: Implement partial loops
+								warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+							}
+						}
 
-					_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID);
+						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID);
+					}
 					break;
 				}
 
@@ -428,7 +436,7 @@ void Sound::playSound(int soundID) {
 					ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
 					ptr += 8;	// (Unknown)
 					
-					ptr += numInstruments;	// Instrument channel's
+					ptr += 6;	// Instrument channel's. Always 6 bytes according to the disassembly.
 
 					tuneSize = READ_LE_UINT32(ptr);
 					ptr += 5;
