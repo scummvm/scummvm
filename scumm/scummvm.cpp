@@ -1199,7 +1199,6 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 	
-	_defaultTalkDelay = 60;
 	VAR(VAR_CHARINC) = 4;
 	talkingActor(0);
 }
@@ -1884,11 +1883,15 @@ void ScummEngine::processKbd(bool smushMode) {
 		if (_imuse)
 			_imuse->set_music_volume (vol);
 	} else if (_lastKeyHit == '-') { // - text speed down
-		if (VAR(VAR_CHARINC) < 9)
-			VAR(VAR_CHARINC) = + 1;
+		if (_defaultTalkDelay < 9)
+			_defaultTalkDelay++;
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '+') { // + text speed up
-		if (VAR(VAR_CHARINC) > 0)
-			VAR(VAR_CHARINC) -= 1;
+		if (_defaultTalkDelay > 0)
+			_defaultTalkDelay--;
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		_debugger->attach();
 	} else if (_version <= 2) {

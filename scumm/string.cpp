@@ -177,7 +177,8 @@ void ScummEngine::CHARSET_1() {
 		_useTalkAnims = true;
 	}
 
-	_talkDelay = _defaultTalkDelay;
+	// Always set to 60
+	_talkDelay = 60;
 
 	if (!_keepText) {
 		if (_version <= 3 && _gameId != GID_LOOM) {
