@@ -42,9 +42,9 @@ bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 		return false;
 	}
 
-	tag = _voiceFile.readDwordBE();
-	offset = _voiceFile.readDwordBE();
-	_numVoiceFiles = _voiceFile.readDwordBE();
+	tag = _voiceFile.readUint32BE();
+	offset = _voiceFile.readUint32BE();
+	_numVoiceFiles = _voiceFile.readUint32BE();
 
 	_bundleVoiceTable = (BundleAudioTable *) malloc(_numVoiceFiles * sizeof(BundleAudioTable));
 
@@ -64,8 +64,8 @@ bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 				name[z++] = c;
 		name[z] = '\0';
 		strcpy(_bundleVoiceTable[i].filename, name);
-		_bundleVoiceTable[i].offset = _voiceFile.readDwordBE();
-		_bundleVoiceTable[i].size = _voiceFile.readDwordBE();
+		_bundleVoiceTable[i].offset = _voiceFile.readUint32BE();
+		_bundleVoiceTable[i].size = _voiceFile.readUint32BE();
 	}
 
 	return true;
@@ -82,9 +82,9 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 		return false;
 	}
 
-	tag = _musicFile.readDwordBE();
-	offset = _musicFile.readDwordBE();
-	_numMusicFiles = _musicFile.readDwordBE();
+	tag = _musicFile.readUint32BE();
+	offset = _musicFile.readUint32BE();
+	_numMusicFiles = _musicFile.readUint32BE();
 
 	_bundleMusicTable = (BundleAudioTable *) malloc(_numMusicFiles * sizeof(BundleAudioTable));
 
@@ -104,8 +104,8 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 				name[z++] = c;
 		name[z] = '\0';
 		strcpy(_bundleMusicTable[i].filename, name);
-		_bundleMusicTable[i].offset = _musicFile.readDwordBE();
-		_bundleMusicTable[i].size = _musicFile.readDwordBE();
+		_bundleMusicTable[i].offset = _musicFile.readUint32BE();
+		_bundleMusicTable[i].size = _musicFile.readUint32BE();
 	}
 
 	return true;
@@ -121,10 +121,10 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 	}
 
 	_voiceFile.seek(_bundleVoiceTable[index].offset, SEEK_SET);
-	tag = _voiceFile.readDwordBE();
-	num = _voiceFile.readDwordBE();
-	_voiceFile.readDwordBE();
-	_voiceFile.readDwordBE();
+	tag = _voiceFile.readUint32BE();
+	num = _voiceFile.readUint32BE();
+	_voiceFile.readUint32BE();
+	_voiceFile.readUint32BE();
 
 	if (tag != MKID_BE('COMP')) {
 		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
@@ -133,10 +133,10 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 	}
 
 	for (i = 0; i < num; i++) {
-		_compVoiceTable[i].offset = _voiceFile.readDwordBE();
-		_compVoiceTable[i].size = _voiceFile.readDwordBE();
-		_compVoiceTable[i].codec = _voiceFile.readDwordBE();
-		_voiceFile.readDwordBE();
+		_compVoiceTable[i].offset = _voiceFile.readUint32BE();
+		_compVoiceTable[i].size = _voiceFile.readUint32BE();
+		_compVoiceTable[i].codec = _voiceFile.readUint32BE();
+		_voiceFile.readUint32BE();
 	}
 
 	final_size = 0;
@@ -171,10 +171,10 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 
 	if (_lastSong != index) {
 		_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
-		tag = _musicFile.readDwordBE();
-		num = _musicFile.readDwordBE();
-		_musicFile.readDwordBE();
-		_musicFile.readDwordBE();
+		tag = _musicFile.readUint32BE();
+		num = _musicFile.readUint32BE();
+		_musicFile.readUint32BE();
+		_musicFile.readUint32BE();
 
 		if (tag != MKID_BE('COMP')) {
 			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
@@ -183,10 +183,10 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 		}
 
 		for (i = 0; i < num; i++) {
-			_compMusicTable[i].offset = _musicFile.readDwordBE();
-			_compMusicTable[i].size = _musicFile.readDwordBE();
-			_compMusicTable[i].codec = _musicFile.readDwordBE();
-			_musicFile.readDwordBE();
+			_compMusicTable[i].offset = _musicFile.readUint32BE();
+			_compMusicTable[i].size = _musicFile.readUint32BE();
+			_compMusicTable[i].codec = _musicFile.readUint32BE();
+			_musicFile.readUint32BE();
 		}
 	}
 
@@ -250,8 +250,8 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	}
 
 	_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
-	_musicFile.readDwordBE();
-	return _musicFile.readDwordBE();
+	_musicFile.readUint32BE();
+	return _musicFile.readUint32BE();
 }
 
 int32 Bundle::getNumberOfMusicSamplesByName(char *name) {

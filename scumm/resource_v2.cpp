@@ -31,10 +31,10 @@ void Scumm_v2::readIndexFile()
 	openRoom(-1);
 	openRoom(0);
 
-	if (_fileHandle.readWordLE() != 0x0100)
+	if (_fileHandle.readUint16LE() != 0x0100)
 		warning("The magic id doesn't match\n");
 
-	_numGlobalObjects = _fileHandle.readWordLE();
+	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
 	_numRooms = _fileHandle.readByte();
 	_fileHandle.seek(_numRooms * 3, SEEK_CUR);
@@ -71,8 +71,8 @@ void Scumm_v2::readIndexFile()
 	_numFlObject = 50;
 	allocateArrays();
 
-	_fileHandle.readWordLE(); /* version magic number */
-	_fileHandle.readWordLE(); /* nb global objects */
+	_fileHandle.readUint16LE(); /* version magic number */
+	_fileHandle.readUint16LE(); /* nb global objects */
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
 	readResTypeList(rtRoom, MKID('ROOM'), "room");
 	readResTypeList(rtCostume, MKID('COST'), "costume");

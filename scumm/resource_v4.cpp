@@ -33,7 +33,7 @@ void Scumm_v4::loadCharset(int no)
 
 	openRoom(900 + no);
 
-	size = _fileHandle.readDwordLE() + 11;
+	size = _fileHandle.readUint32LE() + 11;
 
 	_fileHandle.read(createResource(6, no, size), size);
 	openRoom(-1);

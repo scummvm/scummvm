@@ -221,27 +221,27 @@ byte File::readByte() {
 	return b ^ _encbyte;
 }
 
-uint16 File::readWordLE() {
+uint16 File::readUint16LE() {
 	uint16 a = readByte();
 	uint16 b = readByte();
 	return a | (b << 8);
 }
 
-uint32 File::readDwordLE() {
-	uint32 a = readWordLE();
-	uint32 b = readWordLE();
+uint32 File::readUint32LE() {
+	uint32 a = readUint16LE();
+	uint32 b = readUint16LE();
 	return (b << 16) | a;
 }
 
-uint16 File::readWordBE() {
+uint16 File::readUint16BE() {
 	uint16 b = readByte();
 	uint16 a = readByte();
 	return a | (b << 8);
 }
 
-uint32 File::readDwordBE() {
-	uint32 b = readWordBE();
-	uint32 a = readWordBE();
+uint32 File::readUint32BE() {
+	uint32 b = readUint16BE();
+	uint32 a = readUint16BE();
 	return (b << 16) | a;
 }
 
@@ -280,22 +280,22 @@ void File::writeByte(byte value) {
 	}
 }
 
-void File::writeWordLE(uint16 value) {
+void File::writeUint16LE(uint16 value) {
 	writeByte((byte)(value & 0xff));
 	writeByte((byte)(value >> 8));
 }
 
-void File::writeDwordLE(uint32 value) {
-	writeWordLE((uint16)(value & 0xffff));
-	writeWordLE((uint16)(value >> 16));
+void File::writeUint32LE(uint32 value) {
+	writeUint16LE((uint16)(value & 0xffff));
+	writeUint16LE((uint16)(value >> 16));
 }
 
-void File::writeWordBE(uint16 value) {
+void File::writeUint16BE(uint16 value) {
 	writeByte((byte)(value >> 8));
 	writeByte((byte)(value & 0xff));
 }
 
-void File::writeDwordBE(uint32 value) {
-	writeWordBE((uint16)(value >> 16));
-	writeWordBE((uint16)(value & 0xffff));
+void File::writeUint32BE(uint32 value) {
+	writeUint16BE((uint16)(value >> 16));
+	writeUint16BE((uint16)(value & 0xffff));
 }

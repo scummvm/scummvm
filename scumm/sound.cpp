@@ -823,17 +823,17 @@ File * Sound::openSfxFile() {
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
 
-		compressed_offset = file->readDwordBE();
+		compressed_offset = file->readUint32BE();
 		offset_table = (MP3OffsetTable *) malloc(compressed_offset);
 		num_sound_effects = compressed_offset / 16;
 
 		size = compressed_offset;
 		cur = offset_table;
 		while (size > 0) {
-			cur[0].org_offset = file->readDwordBE();
-			cur[0].new_offset = file->readDwordBE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur[0].num_tags = file->readDwordBE();
-			cur[0].compressed_size = file->readDwordBE();
+			cur[0].org_offset = file->readUint32BE();
+			cur[0].new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur[0].num_tags = file->readUint32BE();
+			cur[0].compressed_size = file->readUint32BE();
 			size -= 4 * 4;
 			cur++;
 		}

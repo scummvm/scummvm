@@ -156,7 +156,7 @@ void SimonState::readGamePcText(File *in)
 	uint text_size;
 	byte *text_mem;
 
-	_text_size = text_size = in->readDwordBE();
+	_text_size = text_size = in->readUint32BE();
 	text_mem = (byte *)malloc(text_size);
 	if (text_mem == NULL)
 		error("Out of text memory");
@@ -170,19 +170,19 @@ void SimonState::readItemFromGamePc(File *in, Item *item)
 {
 	uint32 type;
 
-	item->unk2 = in->readWordBE();
-	item->unk1 = in->readWordBE();
-	item->unk3 = in->readWordBE();
+	item->unk2 = in->readUint16BE();
+	item->unk1 = in->readUint16BE();
+	item->unk3 = in->readUint16BE();
 	item->sibling = (uint16)fileReadItemID(in);
 	item->child = (uint16)fileReadItemID(in);
 	item->parent = (uint16)fileReadItemID(in);
-	in->readWordBE();
-	item->unk4 = in->readWordBE();
+	in->readUint16BE();
+	item->unk4 = in->readUint16BE();
 	item->children = NULL;
 
-	type = in->readDwordBE();
+	type = in->readUint32BE();
 	while (type) {
-		type = in->readWordBE();
+		type = in->readUint16BE();
 		if (type != 0)
 			readItemChildren(in, item, type);
 	}
@@ -191,8 +191,8 @@ void SimonState::readItemFromGamePc(File *in, Item *item)
 void SimonState::readItemChildren(File *in, Item *item, uint type)
 {
 	if (type == 1) {
-		uint fr1 = in->readWordBE();
-		uint fr2 = in->readWordBE();
+		uint fr1 = in->readUint16BE();
+		uint fr2 = in->readUint16BE();
 		uint i, size;
 		uint j, k;
 		Child1 *child;
@@ -210,7 +210,7 @@ void SimonState::readItemChildren(File *in, Item *item, uint type)
 			if (j & 3)
 				child->array[k++] = (uint16)fileReadItemID(in);
 	} else if (type == 2) {
-		uint32 fr = in->readDwordBE();
+		uint32 fr = in->readUint32BE();
 		uint i, k, size;
 		Child2 *child;
 
@@ -224,13 +224,13 @@ void SimonState::readItemChildren(File *in, Item *item, uint type)
 
 		k = 0;
 		if (fr & 1) {
-			child->array[k++] = (uint16)in->readDwordBE();
+			child->array[k++] = (uint16)in->readUint32BE();
 		}
 		for (i = 1; i != 16; i++)
 			if (fr & (1 << i))
-				child->array[k++] = in->readWordBE();
+				child->array[k++] = in->readUint16BE();
 
-		child->string_id = (uint16)in->readDwordBE();
+		child->string_id = (uint16)in->readUint32BE();
 	} else {
 		error("readItemChildren: invalid mode");
 	}
@@ -238,7 +238,7 @@ void SimonState::readItemChildren(File *in, Item *item, uint type)
 
 uint fileReadItemID(File *in)
 {
-	uint32 val = in->readDwordBE();
+	uint32 val = in->readUint32BE();
 	if (val == 0xFFFFFFFF)
 		return 0;
 	return val + 2;
@@ -288,7 +288,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 		case 'n':
 		case 'p':
 		case 'v':
-			val = in->readWordBE();
+			val = in->readUint16BE();
 			*ptr++ = val >> 8;
 			*ptr++ = val & 255;
 			break;
@@ -301,7 +301,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 			break;
 
 		case 'I':
-			val = in->readWordBE();
+			val = in->readUint16BE();
 			switch (val) {
 			case 1:
 				val = 0xFFFF;
@@ -326,7 +326,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 			break;
 
 		case 'T':
-			val = in->readWordBE();
+			val = in->readUint16BE();
 			switch (val) {
 			case 0:
 				val = 0xFFFF;
@@ -335,7 +335,7 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 				val = 0xFFFD;
 				break;
 			default:
-				val = (uint16)in->readDwordBE();
+				val = (uint16)in->readUint32BE();
 				break;
 			}
 			*ptr++ = val >> 8;

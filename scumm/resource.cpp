@@ -168,9 +168,9 @@ void Scumm::readRoomsOffsets()
 
 		room = _fileHandle.readByte();
 		if (_roomFileOffsets[room] != 0xFFFFFFFF) {
-			_roomFileOffsets[room] = _fileHandle.readDwordLE();
+			_roomFileOffsets[room] = _fileHandle.readUint32LE();
 		} else {
-			_fileHandle.readDwordLE();
+			_fileHandle.readUint32LE();
 		}
 	}
 }
@@ -211,31 +211,31 @@ void Scumm::readIndexFile()
 		/* Figure out the sizes of various resources */
 		while (!_fileHandle.eof()) {
 			blocktype = fileReadDword();
-			itemsize = _fileHandle.readDwordBE();
+			itemsize = _fileHandle.readUint32BE();
 			if (_fileHandle.ioFailed())
 				break;
 			switch (blocktype) {
 			case MKID('DOBJ'):
-				_numGlobalObjects = _fileHandle.readWordLE();
+				_numGlobalObjects = _fileHandle.readUint16LE();
 				itemsize -= 2;
 				break;
 			case MKID('DROO'):
-				_numRooms = _fileHandle.readWordLE();
+				_numRooms = _fileHandle.readUint16LE();
 				itemsize -= 2;
 				break;
 
 			case MKID('DSCR'):
-				_numScripts = _fileHandle.readWordLE();
+				_numScripts = _fileHandle.readUint16LE();
 				itemsize -= 2;
 				break;
 
 			case MKID('DCOS'):
-				_numCostumes = _fileHandle.readWordLE();
+				_numCostumes = _fileHandle.readUint16LE();
 				itemsize -= 2;
 				break;
 
 			case MKID('DSOU'):
-				_numSounds = _fileHandle.readWordLE();
+				_numSounds = _fileHandle.readUint16LE();
 				itemsize -= 2;
 				break;
 			}
@@ -250,7 +250,7 @@ void Scumm::readIndexFile()
 
 		if (_fileHandle.ioFailed())
 			break;
-		itemsize = _fileHandle.readDwordBE();
+		itemsize = _fileHandle.readUint32BE();
 
 		numblock++;
 
@@ -261,9 +261,9 @@ void Scumm::readIndexFile()
 
 		case MKID('DOBJ'):
 			if (_features & GF_AFTER_V8)
-				num = _fileHandle.readDwordLE();
+				num = _fileHandle.readUint32LE();
 			else
-				num = _fileHandle.readWordLE();
+				num = _fileHandle.readUint16LE();
 			assert(num == _numGlobalObjects);
 
 			if (_features & GF_AFTER_V8) {	/* FIXME: Not sure.. */
@@ -271,7 +271,7 @@ void Scumm::readIndexFile()
 					_fileHandle.seek(40, SEEK_CUR);
 					_objectStateTable[i] = _fileHandle.readByte();
 					_objectRoomTable[i] = _fileHandle.readByte();
-					_classData[i] = _fileHandle.readDwordLE();
+					_classData[i] = _fileHandle.readUint32LE();
 				}
 				memset(_objectOwnerTable, 0xFF, num);
 			} else if (_features & GF_AFTER_V7) {
@@ -302,7 +302,7 @@ void Scumm::readIndexFile()
 			break;
 
 		case MKID('ANAM'):
-			_numAudioNames = _fileHandle.readWordLE();
+			_numAudioNames = _fileHandle.readUint16LE();
 			_audioNames = (char*)malloc(_numAudioNames * 9);
 			_fileHandle.read(_audioNames, _numAudioNames * 9);
 			break;
@@ -353,10 +353,10 @@ void Scumm::readArrayFromIndexFile()
 	int num;
 	int a, b, c;
 
-	while ((num = _fileHandle.readWordLE()) != 0) {
-		a = _fileHandle.readWordLE();
-		b = _fileHandle.readWordLE();
-		c = _fileHandle.readWordLE();
+	while ((num = _fileHandle.readUint16LE()) != 0) {
+		a = _fileHandle.readUint16LE();
+		b = _fileHandle.readUint16LE();
+		c = _fileHandle.readUint16LE();
 		if (c == 1)
 			defineArray(num, 1, a, b);
 		else
@@ -372,9 +372,9 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 	debug(9, "readResTypeList(%s,%x,%s)", resTypeFromId(id), FROM_LE_32(tag), name);
 
 	if (_features & GF_AFTER_V8)
-		num = _fileHandle.readDwordLE();
+		num = _fileHandle.readUint32LE();
 	else if (!(_features & GF_OLD_BUNDLE))
-		num = _fileHandle.readWordLE();
+		num = _fileHandle.readUint16LE();
 	else
 		num = _fileHandle.readByte();
 
@@ -399,7 +399,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 				res.roomno[id][i] = _fileHandle.readByte();
 		}
 		for (i = 0; i < num; i++)
-			res.roomoffs[id][i] = _fileHandle.readWordLE();
+			res.roomoffs[id][i] = _fileHandle.readUint16LE();
 	} else if (_features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = _fileHandle.readByte();
@@ -526,20 +526,20 @@ int Scumm::loadResource(int type, int idx)
 		_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
 
 		if (_features & GF_OLD_BUNDLE) {
-			size = _fileHandle.readWordLE();
+			size = _fileHandle.readUint16LE();
 		} else if (_features & GF_SMALL_HEADER) {
 			if (!(_features & GF_SMALL_NAMES))
 				_fileHandle.seek(8, SEEK_CUR);
-			size = _fileHandle.readDwordLE();
-			tag = _fileHandle.readWordLE();
+			size = _fileHandle.readUint32LE();
+			tag = _fileHandle.readUint16LE();
 			_fileHandle.seek(-6, SEEK_CUR);
 			/* FIXME */
 			if ((type == rtSound) && (_gameId != GID_ZAK256))
 				return readSoundResourceSmallHeader(type, idx);
 		} else {
 			if (type == rtSound) {
-				_fileHandle.readDwordLE();
-				_fileHandle.readDwordLE();
+				_fileHandle.readUint32LE();
+				_fileHandle.readUint32LE();
 				return readSoundResource(type, idx);
 			}
 
@@ -549,7 +549,7 @@ int Scumm::loadResource(int type, int idx)
 				error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
 			}
 
-			size = _fileHandle.readDwordBE();
+			size = _fileHandle.readUint32BE();
 			_fileHandle.seek(-8, SEEK_CUR);
 		}
 		_fileHandle.read(createResource(type, idx, size), size);
@@ -582,7 +582,7 @@ int Scumm::readSoundResource(int type, int idx)
 	pos = 0;
 
 	basetag = fileReadDword();
-	total_size = _fileHandle.readDwordBE();
+	total_size = _fileHandle.readUint32BE();
 
 	debug(8, "  basetag: %c%c%c%c, total_size=%d",
 				(char)((basetag >> 24) & 0xff),
@@ -598,7 +598,7 @@ int Scumm::readSoundResource(int type, int idx)
 		best_pri = -1;
 		while (pos < total_size) {
 			tag = fileReadDword();
-			size = _fileHandle.readDwordBE() + 8;
+			size = _fileHandle.readUint32BE() + 8;
 			pos += size;
 
 			pri = -1;
@@ -650,7 +650,7 @@ int Scumm::readSoundResource(int type, int idx)
 		}
 	} else if (FROM_LE_32(basetag) == 24) {
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readDwordBE();
+		total_size = _fileHandle.readUint32BE();
 		_fileHandle.seek(-8, SEEK_CUR);
 		_fileHandle.read(createResource(type, idx, total_size), total_size);
 		return 1;
@@ -707,12 +707,12 @@ int Scumm::readSoundResource(int type, int idx)
 		   seem to suggest it's 2 byte oriented, or even variable length...
 		 */
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readDwordBE();
+		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readDwordBE();
+		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('DIGI')) {
@@ -721,12 +721,12 @@ int Scumm::readSoundResource(int type, int idx)
 		debug(1, "It was at position %d", _fileHandle.pos());
 
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readDwordBE();
+		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('Crea')) {
 		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readDwordBE();
+		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else {
@@ -871,16 +871,16 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 	//if (_rescache->readResource(roomNr, type, idx))
 	//		return 1;
 
-	total_size = size = _fileHandle.readDwordLE();
-	tag = _fileHandle.readWordLE();
+	total_size = size = _fileHandle.readUint32LE();
+	tag = _fileHandle.readUint16LE();
 	debug(4, "  tag='%c%c', size=%d",
 					(char) (tag & 0xff),
 					(char) ((tag >> 8) & 0xff), size);
 
 	pos = 6;
 	while (pos < total_size) {
-		size = _fileHandle.readDwordLE();
-		tag = _fileHandle.readWordLE();
+		size = _fileHandle.readUint32LE();
+		tag = _fileHandle.readUint16LE();
   	debug(4, "  tag='%c%c', size=%d",
 					(char) (tag & 0xff),
 					(char) ((tag >> 8) & 0xff), size);
@@ -1498,23 +1498,23 @@ void Scumm::readMAXS()
 {
 	if (_features & GF_AFTER_V8) {
 		_fileHandle.seek(50 + 50, SEEK_CUR);
-		_numVariables = _fileHandle.readDwordLE();	/* ? 1500 */
-		_numBitVariables = _fileHandle.readDwordLE();	/* ? 2048 */
-		_fileHandle.readDwordLE();					/* 40 */
-		_numScripts = _fileHandle.readDwordLE();
-		_numSounds = _fileHandle.readDwordLE();
-		_numCharsets = _fileHandle.readDwordLE();
-		_numCostumes = _fileHandle.readDwordLE();
-		_numRooms = _fileHandle.readDwordLE();
-		_numInventory = _fileHandle.readDwordLE();
-		_numGlobalObjects = _fileHandle.readDwordLE();
-		_numFlObject = _fileHandle.readDwordLE();
-		_numLocalObjects = _fileHandle.readDwordLE();
-		_numVerbs = _fileHandle.readDwordLE();
-		_numNewNames = _fileHandle.readDwordLE();
-		_fileHandle.readDwordLE();
-		_fileHandle.readDwordLE();
-		_numArray = _fileHandle.readDwordLE();
+		_numVariables = _fileHandle.readUint32LE();	/* ? 1500 */
+		_numBitVariables = _fileHandle.readUint32LE();	/* ? 2048 */
+		_fileHandle.readUint32LE();					/* 40 */
+		_numScripts = _fileHandle.readUint32LE();
+		_numSounds = _fileHandle.readUint32LE();
+		_numCharsets = _fileHandle.readUint32LE();
+		_numCostumes = _fileHandle.readUint32LE();
+		_numRooms = _fileHandle.readUint32LE();
+		_numInventory = _fileHandle.readUint32LE();
+		_numGlobalObjects = _fileHandle.readUint32LE();
+		_numFlObject = _fileHandle.readUint32LE();
+		_numLocalObjects = _fileHandle.readUint32LE();
+		_numVerbs = _fileHandle.readUint32LE();
+		_numNewNames = _fileHandle.readUint32LE();
+		_fileHandle.readUint32LE();
+		_fileHandle.readUint32LE();
+		_numArray = _fileHandle.readUint32LE();
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;
@@ -1522,42 +1522,42 @@ void Scumm::readMAXS()
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_features & GF_AFTER_V7) {
 		_fileHandle.seek(50 + 50, SEEK_CUR);
-		_numVariables = _fileHandle.readWordLE();
-		_numBitVariables = _fileHandle.readWordLE();
-		_fileHandle.readWordLE();
-		_numGlobalObjects = _fileHandle.readWordLE();
-		_numLocalObjects = _fileHandle.readWordLE();
-		_numNewNames = _fileHandle.readWordLE();
-		_numVerbs = _fileHandle.readWordLE();
-		_numFlObject = _fileHandle.readWordLE();
-		_numInventory = _fileHandle.readWordLE();
-		_numArray = _fileHandle.readWordLE();
-		_numRooms = _fileHandle.readWordLE();
-		_numScripts = _fileHandle.readWordLE();
-		_numSounds = _fileHandle.readWordLE();
-		_numCharsets = _fileHandle.readWordLE();
-		_numCostumes = _fileHandle.readWordLE();
+		_numVariables = _fileHandle.readUint16LE();
+		_numBitVariables = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
+		_numGlobalObjects = _fileHandle.readUint16LE();
+		_numLocalObjects = _fileHandle.readUint16LE();
+		_numNewNames = _fileHandle.readUint16LE();
+		_numVerbs = _fileHandle.readUint16LE();
+		_numFlObject = _fileHandle.readUint16LE();
+		_numInventory = _fileHandle.readUint16LE();
+		_numArray = _fileHandle.readUint16LE();
+		_numRooms = _fileHandle.readUint16LE();
+		_numScripts = _fileHandle.readUint16LE();
+		_numSounds = _fileHandle.readUint16LE();
+		_numCharsets = _fileHandle.readUint16LE();
+		_numCostumes = _fileHandle.readUint16LE();
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_features & GF_AFTER_V6) {
-		_numVariables = _fileHandle.readWordLE();
-		_fileHandle.readWordLE();
-		_numBitVariables = _fileHandle.readWordLE();
-		_numLocalObjects = _fileHandle.readWordLE();
-		_numArray = _fileHandle.readWordLE();
-		_fileHandle.readWordLE();
-		_numVerbs = _fileHandle.readWordLE();
-		_numFlObject = _fileHandle.readWordLE();
-		_numInventory = _fileHandle.readWordLE();
-		_numRooms = _fileHandle.readWordLE();
-		_numScripts = _fileHandle.readWordLE();
-		_numSounds = _fileHandle.readWordLE();
-		_numCharsets = _fileHandle.readWordLE();
-		_numCostumes = _fileHandle.readWordLE();
-		_numGlobalObjects = _fileHandle.readWordLE();
+		_numVariables = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
+		_numBitVariables = _fileHandle.readUint16LE();
+		_numLocalObjects = _fileHandle.readUint16LE();
+		_numArray = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
+		_numVerbs = _fileHandle.readUint16LE();
+		_numFlObject = _fileHandle.readUint16LE();
+		_numInventory = _fileHandle.readUint16LE();
+		_numRooms = _fileHandle.readUint16LE();
+		_numScripts = _fileHandle.readUint16LE();
+		_numSounds = _fileHandle.readUint16LE();
+		_numCharsets = _fileHandle.readUint16LE();
+		_numCostumes = _fileHandle.readUint16LE();
+		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numNewNames = 50;
 
 		_objectRoomTable = NULL;
@@ -1565,20 +1565,20 @@ void Scumm::readMAXS()
 
 		_shadowPaletteSize = 256;
 	} else {
-		_numVariables = _fileHandle.readWordLE();	/* 800 */
-		_fileHandle.readWordLE();						/* 16 */
-		_numBitVariables = _fileHandle.readWordLE();	/* 2048 */
-		_numLocalObjects = _fileHandle.readWordLE();	/* 200 */
+		_numVariables = _fileHandle.readUint16LE();	/* 800 */
+		_fileHandle.readUint16LE();						/* 16 */
+		_numBitVariables = _fileHandle.readUint16LE();	/* 2048 */
+		_numLocalObjects = _fileHandle.readUint16LE();	/* 200 */
 		_numArray = 50;
 		_numVerbs = 100;
 		_numNewNames = 0;
 		_objectRoomTable = NULL;
 
-		_fileHandle.readWordLE();						/* 50 */
-		_numCharsets = _fileHandle.readWordLE();	/* 9 */
-		_fileHandle.readWordLE();						/* 100 */
-		_fileHandle.readWordLE();						/* 50 */
-		_numInventory = _fileHandle.readWordLE();	/* 80 */
+		_fileHandle.readUint16LE();						/* 50 */
+		_numCharsets = _fileHandle.readUint16LE();	/* 9 */
+		_fileHandle.readUint16LE();						/* 100 */
+		_fileHandle.readUint16LE();						/* 50 */
+		_numInventory = _fileHandle.readUint16LE();	/* 80 */
 		_numGlobalScripts = 200;
 
 		_shadowPaletteSize = 256;

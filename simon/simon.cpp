@@ -190,10 +190,10 @@ int SimonState::allocGamePcVars(File *in)
 	uint32 version;
 	uint i;
 
-	item_array_size = in->readDwordBE();
-	version = in->readDwordBE();
-	item_array_inited = in->readDwordBE();
-	stringtable_num = in->readDwordBE();
+	item_array_size = in->readUint32BE();
+	version = in->readUint32BE();
+	item_array_inited = in->readUint32BE();
+	stringtable_num = in->readUint32BE();
 
 	item_array_inited += 2;				/* first two items are predefined */
 	item_array_size += 2;
@@ -297,14 +297,14 @@ void SimonState::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *su
 	int size;
 
 	if (sub->id == 0) {
-		sl->cond_a = in->readWordBE();
-		sl->cond_b = in->readWordBE();
-		sl->cond_c = in->readWordBE();
+		sl->cond_a = in->readUint16BE();
+		sl->cond_b = in->readUint16BE();
+		sl->cond_c = in->readUint16BE();
 	}
 
 	while ((*q = in->readByte()) != 0xFF) {
 		if (*q == 87) {
-			in->readWordBE();
+			in->readUint16BE();
 		} else {
 			q = readSingleOpcode(in, q);
 		}
@@ -351,7 +351,7 @@ SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where)
 
 void SimonState::readSubroutine(File *in, Subroutine *sub)
 {
-	while (in->readWordBE() == 0) {
+	while (in->readUint16BE() == 0) {
 		readSubroutineLine(in, createSubroutineLine(sub, 0xFFFF), sub);
 	}
 }
@@ -372,8 +372,8 @@ Subroutine *SimonState::createSubroutine(uint id)
 
 void SimonState::readSubroutineBlock(File *in)
 {
-	while (in->readWordBE() == 0) {
-		readSubroutine(in, createSubroutine(in->readWordBE()));
+	while (in->readUint16BE() == 0) {
+		readSubroutine(in, createSubroutine(in->readUint16BE()));
 	}
 }
 
@@ -4436,34 +4436,34 @@ bool SimonState::save_game(uint slot, const char *caption)
 
 	f.write((char*)caption, 0x12);
 
-	f.writeDwordBE(_itemarray_inited - 1);
-	f.writeDwordBE(0xFFFFFFFF);
-	f.writeDwordBE(0);
-	f.writeDwordBE(0);
+	f.writeUint32BE(_itemarray_inited - 1);
+	f.writeUint32BE(0xFFFFFFFF);
+	f.writeUint32BE(0);
+	f.writeUint32BE(0);
 
 	i = 0;
 	for (te = _first_time_struct; te; te = te->next)
 		i++;
 
-	f.writeDwordBE(i);
+	f.writeUint32BE(i);
 	for (te = _first_time_struct; te; te = te->next) {
-		f.writeDwordBE(te->time + _base_time);
-		f.writeWordBE(te->subroutine_id);
+		f.writeUint32BE(te->time + _base_time);
+		f.writeUint16BE(te->subroutine_id);
 	}
 
 	item_index = 1;
 	for (num_item = _itemarray_inited - 1; num_item; num_item--) {
 		Item *item = _itemarray_ptr[item_index++];
 
-		f.writeWordBE(item->parent);
-		f.writeWordBE(item->sibling);
-		f.writeWordBE(item->unk3);
-		f.writeWordBE(item->unk4);
+		f.writeUint16BE(item->parent);
+		f.writeUint16BE(item->sibling);
+		f.writeUint16BE(item->unk3);
+		f.writeUint16BE(item->unk4);
 
 		{
 			Child1 *child1 = findChildOfType1(item);
 			if (child1) {
-				f.writeWordBE(child1->fr2);
+				f.writeUint16BE(child1->fr2);
 			}
 		}
 
@@ -4472,12 +4472,12 @@ bool SimonState::save_game(uint slot, const char *caption)
 			uint i, j;
 
 			if (child2) {
-				f.writeDwordBE(child2->avail_props);
+				f.writeUint32BE(child2->avail_props);
 				i = child2->avail_props & 1;
 
 				for (j = 1; j < 16; j++) {
 					if ((1 << j) & child2->avail_props) {
-						f.writeWordBE(child2->array[i++]);
+						f.writeUint16BE(child2->array[i++]);
 					}
 				}
 			}
@@ -4488,7 +4488,7 @@ bool SimonState::save_game(uint slot, const char *caption)
 			if (child9) {
 				uint i;
 				for (i = 0; i != 4; i++) {
-					f.writeWordBE(child9->array[i]);
+					f.writeUint16BE(child9->array[i]);
 				}
 			}
 		}
@@ -4496,17 +4496,17 @@ bool SimonState::save_game(uint slot, const char *caption)
 
 	/* write the 255 variables */
 	for (i = 0; i != 255; i++) {
-		f.writeWordBE(readVariable(i));
+		f.writeUint16BE(readVariable(i));
 	}
 
 	/* write the items in array 6 */
 	for (i = 0; i != 10; i++) {
-		f.writeWordBE(itemPtrToID(_item_array_6[i]));
+		f.writeUint16BE(itemPtrToID(_item_array_6[i]));
 	}
 
 	/* Write the bits in array 1 & 2 */
 	for (i = 0; i != 32; i++)
-		f.writeWordBE(_bit_array[i]);
+		f.writeUint16BE(_bit_array[i]);
 
 	f.close();
 
@@ -4543,24 +4543,24 @@ bool SimonState::load_game(uint slot)
 
 	f.read(ident, 18);
 
-	num = f.readDwordBE();
+	num = f.readUint32BE();
 
-	if (f.readDwordBE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
+	if (f.readUint32BE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
 		f.close();
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	f.readDwordBE();
-	f.readDwordBE();
+	f.readUint32BE();
+	f.readUint32BE();
 	_no_parent_notify = true;
 
 
 	/* add all timers */
 	killAllTimers();
-	for (num = f.readDwordBE(); num; num--) {
-		uint32 timeout = f.readDwordBE();
-		uint16 func_to_call = f.readWordBE();
+	for (num = f.readUint32BE(); num; num--) {
+		uint32 timeout = f.readUint32BE();
+		uint16 func_to_call = f.readUint16BE();
 		addTimeEvent(timeout, func_to_call);
 	}
 
@@ -4568,8 +4568,8 @@ bool SimonState::load_game(uint slot)
 	for (num = _itemarray_inited - 1; num; num--) {
 		Item *item = _itemarray_ptr[item_index++], *parent_item;
 
-		uint parent = f.readWordBE();
-		uint sibling = f.readWordBE();
+		uint parent = f.readUint16BE();
+		uint sibling = f.readUint16BE();
 
 		parent_item = derefItem(parent);
 
@@ -4580,13 +4580,13 @@ bool SimonState::load_game(uint slot)
 			item->sibling = sibling;
 		}
 
-		item->unk3 = f.readWordBE();
-		item->unk4 = f.readWordBE();
+		item->unk3 = f.readUint16BE();
+		item->unk4 = f.readUint16BE();
 
 		{
 			Child1 *child1 = findChildOfType1(item);
 			if (child1 != NULL) {
-				child1->fr2 = f.readWordBE();
+				child1->fr2 = f.readUint16BE();
 			}
 		}
 
@@ -4594,12 +4594,12 @@ bool SimonState::load_game(uint slot)
 			Child2 *child2 = findChildOfType2(item);
 			uint i, j;
 			if (child2 != NULL) {
-				child2->avail_props = f.readDwordBE();
+				child2->avail_props = f.readUint32BE();
 				i = child2->avail_props & 1;
 
 				for (j = 1; j < 16; j++) {
 					if ((1 << j) & child2->avail_props) {
-						child2->array[i++] = f.readWordBE();
+						child2->array[i++] = f.readUint16BE();
 					}
 				}
 			}
@@ -4610,7 +4610,7 @@ bool SimonState::load_game(uint slot)
 			if (child9) {
 				uint i;
 				for (i = 0; i != 4; i++) {
-					child9->array[i] = f.readWordBE();
+					child9->array[i] = f.readUint16BE();
 				}
 			}
 		}
@@ -4619,17 +4619,17 @@ bool SimonState::load_game(uint slot)
 
 	/* read the 255 variables */
 	for (i = 0; i != 255; i++) {
-		writeVariable(i, f.readWordBE());
+		writeVariable(i, f.readUint16BE());
 	}
 
 	/* write the items in array 6 */
 	for (i = 0; i != 10; i++) {
-		_item_array_6[i] = derefItem(f.readWordBE());
+		_item_array_6[i] = derefItem(f.readUint16BE());
 	}
 
 	/* Write the bits in array 1 & 2 */
 	for (i = 0; i != 32; i++)
-		_bit_array[i] = f.readWordBE();
+		_bit_array[i] = f.readUint16BE();
 
 	f.close();
 
@@ -4761,8 +4761,8 @@ void SimonState::playVoice(uint voice)
 
 		_voice_file->seek(READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
 
-		data[0] = _voice_file->readDwordLE();
-		data[1] = _voice_file->readDwordLE();
+		data[0] = _voice_file->readUint32LE();
+		data[1] = _voice_file->readUint32LE();
 		if (												//fread(data, sizeof(data), 1, _voice_file) != 1 ||
 				 data[0] != 'atad') {
 			warning("playVoice(%d): cannot read data header", voice);

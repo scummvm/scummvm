@@ -38,29 +38,29 @@ void Scumm_v3::readIndexFile()
 	openRoom(0);
 
 	while (!_fileHandle.eof()) {
-		itemsize = _fileHandle.readDwordLE();
-		blocktype = _fileHandle.readWordLE();
+		itemsize = _fileHandle.readUint32LE();
+		blocktype = _fileHandle.readUint16LE();
 		if (_fileHandle.ioFailed())
 			break;
 
 		switch (blocktype) {
 		case 0x4E52:	// 'NR'
-			_fileHandle.readWordLE();
+			_fileHandle.readUint16LE();
 			break;
 		case 0x5230:	// 'R0'
-			_numRooms = _fileHandle.readWordLE();
+			_numRooms = _fileHandle.readUint16LE();
 			break;
 		case 0x5330:	// 'S0'
-			_numScripts = _fileHandle.readWordLE();
+			_numScripts = _fileHandle.readUint16LE();
 			break;
 		case 0x4E30:	// 'N0'
-			_numSounds = _fileHandle.readWordLE();
+			_numSounds = _fileHandle.readUint16LE();
 			break;
 		case 0x4330:	// 'C0'
-			_numCostumes = _fileHandle.readWordLE();
+			_numCostumes = _fileHandle.readUint16LE();
 			break;
 		case 0x4F30:	// 'O0'
-			_numGlobalObjects = _fileHandle.readWordLE();
+			_numGlobalObjects = _fileHandle.readUint16LE();
 			break;
 		}
 		_fileHandle.seek(itemsize - 8, SEEK_CUR);
@@ -94,12 +94,12 @@ void Scumm_v3::readIndexFile()
 	allocateArrays();
 
 	while (1) {
-		itemsize = _fileHandle.readDwordLE();
+		itemsize = _fileHandle.readUint32LE();
 
 		if (_fileHandle.ioFailed())
 			break;
 
-		blocktype = _fileHandle.readWordLE();
+		blocktype = _fileHandle.readUint16LE();
 
 		numblock++;
 
@@ -126,7 +126,7 @@ void Scumm_v3::readIndexFile()
 			break;
 
 		case 0x4F30:	// 'O0'
-			num = _fileHandle.readWordLE();
+			num = _fileHandle.readUint16LE();
 			assert(num == _numGlobalObjects);
 			for (i = 0; i != num; i++) {
 				uint32 bits = _fileHandle.readByte();
@@ -160,7 +160,7 @@ void Scumm_v3::loadCharset(int no)
 
 	openRoom(98 + no);
 
-	size = _fileHandle.readWordLE();
+	size = _fileHandle.readUint16LE();
 
 	_fileHandle.read(createResource(6, no, size), size);
 	openRoom(-1);

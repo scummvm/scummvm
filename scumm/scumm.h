@@ -964,9 +964,9 @@ public:
 	bool checkFixedDisk();
 
 #if defined(SCUMM_LITTLE_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle.readDwordLE(); }
+	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }
 #elif defined(SCUMM_BIG_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle.readDwordBE(); }
+	uint32 fileReadDword() { return _fileHandle.readUint32BE(); }
 #endif
 
 	/* Version 5 script opcodes */

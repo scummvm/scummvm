@@ -54,16 +54,16 @@ public:
 	void seek(int32 offs, int whence);
 	uint32 read(void *ptr, uint32 size);
 	byte readByte();
-	uint16 readWordLE();
-	uint32 readDwordLE();
-	uint16 readWordBE();
-	uint32 readDwordBE();
+	uint16 readUint16LE();
+	uint32 readUint32LE();
+	uint16 readUint16BE();
+	uint32 readUint32BE();
 	uint32 write(void *ptr, uint32 size);
 	void writeByte(byte value);
-	void writeWordLE(uint16 value);
-	void writeDwordLE(uint32 value);
-	void writeWordBE(uint16 value);
-	void writeDwordBE(uint32 value);
+	void writeUint16LE(uint16 value);
+	void writeUint32LE(uint32 value);
+	void writeUint16BE(uint16 value);
+	void writeUint32BE(uint32 value);
 };
 
 #endif
