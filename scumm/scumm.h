@@ -1067,21 +1067,21 @@ protected:
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
-protected:
+	bool _keepText;
+
 	void initCharset(int charset);
 
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
-	void addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize);
-	void addIntToStack(int var);
-	void addVerbToStack(int var);
-	void addNameToStack(int var);
-	void addStringToStack(int var);
 	void unkMessage1(const byte *msg);
 	void unkMessage2(const byte *msg);
-protected:
-	byte *_msgPtrToAdd;
-	bool _keepText;
+
+	int addMessageToStack(const byte *msg, byte *dst, int dstSize);
+	int addIntToStack(byte *dst, int dstSize, int var);
+	int addVerbToStack(byte *dst, int dstSize, int var);
+	int addNameToStack(byte *dst, int dstSize, int var);
+	int addStringToStack(byte *dst, int dstSize, int var);
+
 public:
 	Common::Language _language;
 protected:

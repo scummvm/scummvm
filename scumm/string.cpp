@@ -454,55 +454,55 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 }
 
-void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize) {
+int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 	uint num = 0;
 	uint32 val;
 	byte chr;
-	const byte *buf;
+	const byte *src;
+	byte *end;
 	byte transBuf[384];
 
-	if (dstBuffer) {
-		_msgPtrToAdd = dstBuffer;
-	}
+	assert(dst);
+	end = dst + dstSize;
 
 	if (msg == NULL) {
 		warning("Bad message in addMessageToStack, ignoring");
-		return;
+		return 0;
 	}
 
 	if (_version >= 7 && msg[0] == '/') {
 		translateText(msg, transBuf);
-		buf = transBuf;
+		src = transBuf;
 	} else {
-		buf = msg;
+		src = msg;
 	}
 
 	num = 0;
 
 	while (1) {
-		chr = buf[num++];
+		chr = src[num++];
 		if (chr == 0)
 			break;
 		if (chr == 0xFF) {
-			chr = buf[num++];
+			chr = src[num++];
 			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
 				// Simply copy these special codes
-				*_msgPtrToAdd++ = 0xFF;
-				*_msgPtrToAdd++ = chr;
+				*dst++ = 0xFF;
+				*dst++ = chr;
 			} else {
-				val = (_version == 8) ? READ_LE_UINT32(buf + num) : READ_LE_UINT16(buf + num);
+				val = (_version == 8) ? READ_LE_UINT32(src + num) : READ_LE_UINT16(src + num);
 				switch (chr) {
 				case 4:
-					addIntToStack(val);
+					dst += addIntToStack(dst, end - dst, val);
 					break;
 				case 5:
-					addVerbToStack(val);
+					dst += addVerbToStack(dst, end - dst, val);
 					break;
 				case 6:
-					addNameToStack(val);
+					dst += addNameToStack(dst, end - dst, val);
 					break;
 				case 7:
-					addStringToStack(val);
+					dst += addStringToStack(dst, end - dst, val);
 					break;
 				case 9:
 				case 10:
@@ -510,13 +510,13 @@ void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBuf
 				case 13:
 				case 14:
 					// Simply copy these special codes
-					*_msgPtrToAdd++ = 0xFF;
-					*_msgPtrToAdd++ = chr;
-					*_msgPtrToAdd++ = buf[num+0];
-					*_msgPtrToAdd++ = buf[num+1];
+					*dst++ = 0xFF;
+					*dst++ = chr;
+					*dst++ = src[num+0];
+					*dst++ = src[num+1];
 					if (_version == 8) {
-						*_msgPtrToAdd++ = buf[num+2];
-						*_msgPtrToAdd++ = buf[num+3];
+						*dst++ = src[num+2];
+						*dst++ = src[num+3];
 					}
 					break;
 				default:
@@ -527,27 +527,27 @@ void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBuf
 			}
 		} else {
 			if (chr != '@') {
-				*_msgPtrToAdd++ = chr;
+				*dst++ = chr;
 			}
 		}
-	}
-	*_msgPtrToAdd = 0;
-
-	if (dstBuffer) {
+	
 		// Check for a buffer overflow
-		if (_msgPtrToAdd >= dstBuffer + dstBufferSize)
+		if (dst >= end)
 			error("addMessageToStack: buffer overflow!");
 	}
+	*dst = 0;
+	
+	return dstSize - (end - dst);
 }
 
-void ScummEngine::addIntToStack(int var) {
+int ScummEngine::addIntToStack(byte *dst, int dstSize, int var) {
 	int num;
 
 	num = readVar(var);
-	_msgPtrToAdd += sprintf((char *)_msgPtrToAdd, "%d", num);
+	return snprintf((char *)dst, dstSize, "%d", num);
 }
 
-void ScummEngine::addVerbToStack(int var) {
+int ScummEngine::addVerbToStack(byte *dst, int dstSize, int var) {
 	int num, k;
 
 	num = readVar(var);
@@ -555,36 +555,40 @@ void ScummEngine::addVerbToStack(int var) {
 		for (k = 1; k < _numVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
-				addMessageToStack(ptr, 0, 0);
-				break;
+				return addMessageToStack(ptr, dst, dstSize);
 			}
 		}
 	}
+	return 0;
 }
 
-void ScummEngine::addNameToStack(int var) {
+int ScummEngine::addNameToStack(byte *dst, int dstSize, int var) {
 	int num;
 
 	num = readVar(var);
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
-			addMessageToStack(ptr, 0, 0);
+			return addMessageToStack(ptr, dst, dstSize);
 		}
 	}
+	return 0;
 }
 
-void ScummEngine::addStringToStack(int var) {
+int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 	const byte *ptr;
 
 	if (_version <= 2) {
 		byte chr;
+		int i = 0;
 		while ((chr = (byte)_scummVars[var++])) {
-			if (chr != '@')
-				*_msgPtrToAdd++ = chr;
+			if (chr != '@') {
+				*dst++ = chr;
+				i++;
+			}
 		}
 
-		return;
+		return i;
 	}
 
 	if (_version == 3 || _version >= 6)
@@ -593,9 +597,10 @@ void ScummEngine::addStringToStack(int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			addMessageToStack(ptr, 0, 0);
+			return addMessageToStack(ptr, dst, dstSize);
 		}
 	}
+	return 0;
 }
 
 void ScummEngine::initCharset(int charsetno) {
