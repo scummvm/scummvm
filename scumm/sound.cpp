@@ -64,7 +64,6 @@ Sound::Sound(ScummEngine *parent)
 	_talk_sound_b1(0),
 	_talk_sound_b2(0),
 	_talk_sound_mode(0),
-	_talk_sound_frame(0),
 	_mouthSyncMode(false),
 	_endOfMouthSync(false),
 	_curSoundPos(0),
@@ -507,7 +506,7 @@ void Sound::processSfxQueues() {
 	const int act = _vm->getTalkingActor();
 	if ((_sfxMode & 2) && act != 0) {
 		Actor *a;
-		bool b, finished;
+		bool finished;
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
@@ -515,18 +514,20 @@ void Sound::processSfxQueues() {
 			finished = !_talkChannelHandle.isActive();
 		}
 
-		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim)) && (finished || !_endOfMouthSync)) {
+		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
-				b = finished || isMouthSyncOff(_curSoundPos);
-				if (_mouthSyncMode != b) {
-					_mouthSyncMode = b;
-					if (_talk_sound_frame != -1) {
-						a->runActorTalkScript(_talk_sound_frame);
-						_talk_sound_frame = -1;
-					} else
-						a->runActorTalkScript(b ? a->talkStopFrame : a->talkStartFrame);
+				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
+					if (!_endOfMouthSync)
+						a->runActorTalkScript(a->talkStopFrame);
+					_mouthSyncMode = 0;
+				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
+					a->runActorTalkScript(a->talkStartFrame);
+					_mouthSyncMode = 1;
 				}
+
+				if (_vm->_version <= 6 && finished)
+					a->runActorTalkScript(a->talkStopFrame);
 			}
 		}
 
@@ -883,7 +884,6 @@ void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
 		_talk_sound_b2 = b;
 	}
 
-	_talk_sound_frame = frame;
 	_talk_sound_mode |= mode;
 }
 

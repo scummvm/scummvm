@@ -64,7 +64,6 @@ protected:
 
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
 	byte _talk_sound_mode;
-	int _talk_sound_frame;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[64];
