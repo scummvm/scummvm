@@ -320,7 +320,7 @@ void Scumm_v6::setupOpcodes() {
 		OPCODE(o6_openFile),
 		OPCODE(o6_readFile),
 		/* DC */
-		OPCODE(o6_invalid),
+		OPCODE(o6_writeFile),
 		OPCODE(o6_findAllObjects),
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_invalid),
@@ -2546,6 +2546,10 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		}
 	} else {
 		switch (args[0]) {
+		case 1:
+			//func(args[1], args[2], args[3], args[4], args[5]);
+			warning("o6_kernelSetFunctions: nothing in 1");
+			break;
 		case 3:
 			warning("o6_kernelSetFunctions: nothing in 3");
 			break;
@@ -2911,6 +2915,28 @@ void Scumm_v6::o6_readFile() {
 		push(readFileToArray(slot, size));
 	}
 	warning("o6_readFile(%d, %d)", slot, size);
+}
+
+void Scumm_v6::writeFileFromArray(int slot, int resID) {
+	byte *ptr = getResourceAddress(rtString, resID);
+	// FIXME: hack for proper size: / 2 - 5
+	int32 size = getResourceSize(rtString, resID) / 2 - 5;
+	_hFileTable[slot].write(ptr, size);
+}
+
+void Scumm_v6::o6_writeFile() {
+	int32 size = pop();
+	int16 resID = pop();
+	int slot = pop();
+
+	if (size == -2) {
+		_hFileTable[slot].writeUint16LE(resID);
+	} else if (size == -1) {
+		_hFileTable[slot].writeByte(resID);
+	} else {
+		writeFileFromArray(slot, resID);
+	}
+	warning("o6_writeFile(%d, %d)", slot, resID);
 }
 
 void Scumm_v6::o6_findAllObjects() {

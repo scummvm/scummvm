@@ -317,8 +317,7 @@ protected:
 	};
 	
 	const OpcodeEntryV6 *_opcodesV6;
-
-	File _hFileTable[17];
+	
 public:
 	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst)
 	{
@@ -346,6 +345,7 @@ protected:
 	void shuffleArray(int num, int minIdx, int maxIdx);
 	void unknownEA_func(int a, int b, int c, int d, int e);
 	int readFileToArray(int slot, int32 size);
+	void writeFileFromArray(int slot, int resID);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -505,6 +505,7 @@ protected:
 	void o6_closeFile();
 	void o6_deleteFile();
 	void o6_readFile();
+	void o6_writeFile();
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
