@@ -739,6 +739,10 @@ protected:
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
+	void checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end);
+	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end, 
+					int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
+	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
 	virtual int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
@@ -902,6 +906,9 @@ protected:
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
+
+	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
+	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 	
 	uint8 *getHEPalette(int palSlot);
 	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);

@@ -1423,18 +1423,19 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	case 127:
 		{
-		// TODO
-		//Array1
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
-		//Array2
-		array = fetchScriptWord();
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
+			int a1_dim1end = pop();
+			int a1_dim1start = pop();
+			int a1_dim2end = pop();
+			int a1_dim2start = pop();
+			int array2 = fetchScriptWord();
+			int a2_dim1end = pop();
+			int a2_dim1start = pop();
+			int a2_dim2end = pop();
+			int a2_dim2start = pop();
+			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
+				warning("Source and dest ranges size are mismatched");
+			}
+			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
 	case 128:
@@ -1975,6 +1976,107 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->dim1end = TO_LE_32(newDim1end);
 	ah->dim2start = TO_LE_32(newDim2start);
 	ah->dim2end = TO_LE_32(newDim2end);
+}
+
+void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end) {
+	if (dim1end < dim1start) {
+		warning("Across max %d smaller than min %d", dim1end, dim1start);
+ 	}
+ 	if (dim2end < dim2start) {
+	 	warning("Down max %d smaller than min %d", dim2end, dim2start);
+ 	}
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	assert(ah);
+	if (ah->dim2start > dim2start || ah->dim2end < dim2end || ah->dim1start > dim1start || ah->dim1end < dim1end) {
+		warning("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, ah->dim2start, ah->dim2end, ah->dim1start, ah->dim1end);
+	}
+}
+
+void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end, 
+				int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end)
+{
+	debug(5, "ScummEngine_v72he::copyArray(%d, [%d,%d,%d,%d], %d, [%d,%d,%d,%d])", array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+	byte *dst, *src;
+	int dstPitch, srcPitch;
+	int rowSize;
+	checkArrayLimits(array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
+	checkArrayLimits(array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+	int a12_num = a1_dim2end - a1_dim2start + 1;
+	int a11_num = a1_dim1end - a1_dim1start + 1;	
+	int a22_num = a2_dim2end - a2_dim2start + 1;
+	int a21_num = a2_dim1end - a2_dim1start + 1;
+	if (a22_num != a12_num || a21_num != a11_num) {
+		warning("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+	}	
+
+	if (array1 != array2) {
+		ArrayHeader *ah1 = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
+		assert(ah1);
+		ArrayHeader *ah2 = (ArrayHeader *)getResourceAddress(rtString, readVar(array2));
+		assert(ah2);
+		if (FROM_LE_32(ah1->type) == FROM_LE_32(ah2->type)) {
+			copyArrayHelper(ah1, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
+			copyArrayHelper(ah2, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
+			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
+				memcpy(dst, src, rowSize);
+				dst += dstPitch;
+				src += srcPitch;
+			}
+		} else {
+			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start) {
+				int a2dim1 = a2_dim1start;
+				int a1dim1 = a1_dim1start;
+				for(; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1) {
+					int val = readArray(array2, a2_dim2start, a2dim1);
+					writeArray(array1, a1_dim2start, a1dim1, val);
+				}
+			}
+		}
+	} else {
+		if (a2_dim2start != a1_dim2start || a2_dim1start != a1_dim1start) {
+			ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
+			assert(ah);
+			if (a2_dim2start > a1_dim2start) {
+				copyArrayHelper(ah, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
+				copyArrayHelper(ah, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
+			} else {
+				copyArrayHelper(ah, a1_dim2end, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
+				copyArrayHelper(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);				
+			}
+			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
+				memcpy(dst, src, rowSize);
+				dst += dstPitch;
+				src += srcPitch;
+			}
+		}
+	}
+}
+
+void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num) {
+	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
+	const int offset = pitch * (idx2 - FROM_LE_32(ah->dim2start)) + idx1 - FROM_LE_32(ah->dim1start);
+
+	switch (FROM_LE_32(ah->type)) {
+	case kByteArray:
+	case kStringArray:
+		*num = len1 - idx1 + 1;
+		*size = pitch;
+		*data = ah->data + offset;
+		break;
+	case kIntArray:
+		*num = (len1 - idx1 + 1) * 2;
+		*size = pitch * 2;
+		*data = ah->data + offset * 2;
+		break;
+	case kDwordArray:
+		*num = (len1 - idx1 + 1) * 4;
+		*size = pitch * 4;
+		*data = ah->data + offset * 4;
+		break;
+	default:
+		error("Invalid array type", FROM_LE_32(ah->type));
+		break;
+	}
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {

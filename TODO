@@ -265,8 +265,6 @@ SCUMM
   - Add support for processWizImage mode 7 (For soccer2004)
   - Add support for processWizImage mode 10 (For footdemo)
   - Add support for RMAP/XMAP resources in drawWizImage (Used by akos codec 32 too)
-  - Add support for arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
-  - Add support for o90_sortArray (Used in bb2demo/footdemo/lost/smaller).
   - Add support for o90_getPolygonOverlap case10 (Used in Caramel Pit of pajama3)
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)

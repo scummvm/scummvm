@@ -1960,6 +1960,103 @@ void ScummEngine_v90he::o90_redim2dimArray() {
 	}
 }
 
+void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end) {
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	assert(ah);
+	if (dim2start && *dim2start == -1) {
+		*dim2start = ah->dim2start;
+	}
+	if (dim2end && *dim2end == -1) {
+		*dim2end = ah->dim2end;
+	}
+	if (dim1start && *dim1start == -1) {
+		*dim1start = ah->dim1start;
+	}
+	if (dim1end && *dim1end == -1) {
+		*dim1end = ah->dim1end;
+	}
+}
+
+static int sortArrayOffset;
+
+static int compareByteArray(const void *a, const void *b) {
+	int va = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)a + sortArrayOffset);
+	return va - vb;
+}
+
+static int compareByteArrayReverse(const void *a, const void *b) {
+	int va = *((const uint8 *)a + sortArrayOffset);
+	int vb = *((const uint8 *)a + sortArrayOffset);
+	return vb - va;
+}
+
+static int compareIntArray(const void *a, const void *b) {
+	int va = READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	return va - vb;
+}
+
+static int compareIntArrayReverse(const void *a, const void *b) {
+	int va = READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	return vb - va;
+}
+
+static int compareDwordArray(const void *a, const void *b) {
+	int va = READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	return va - vb;
+}
+
+static int compareDwordArrayReverse(const void *a, const void *b) {
+	int va = READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	return vb - va;
+}
+
+void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder) {
+	debug(5, "sortArray(%d, [%d,%d,%d,%d], %d)", array, dim2start, dim2end, dim1start, dim1end, sortOrder);
+
+	assert(dim1start == dim1end);
+	checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	assert(ah);
+
+	const int num = dim2end - dim2start + 1;
+	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
+	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));
+	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);
+
+	switch (FROM_LE_32(ah->type)) {
+	case kByteArray:
+	case kStringArray:
+		if (sortOrder <= 0) {
+			qsort(ah->data + offset, num, pitch, compareByteArray);
+		} else {
+			qsort(ah->data + offset, num, pitch, compareByteArrayReverse);
+		}
+		break;
+	case kIntArray:
+		if (sortOrder <= 0) {
+			qsort(ah->data + offset * 2, num, pitch * 2, compareIntArray);
+		} else {
+			qsort(ah->data + offset * 2, num, pitch * 2, compareIntArrayReverse);
+		}
+		break;
+	case kDwordArray:
+		if (sortOrder <= 0) {
+			qsort(ah->data + offset * 4, num, pitch * 4, compareDwordArray);
+		} else {
+			qsort(ah->data + offset * 4, num, pitch * 4, compareDwordArrayReverse);
+		}
+		break;
+	default:
+		error("Invalid array type", FROM_LE_32(ah->type));
+		break;
+	}
+}
+
 void ScummEngine_v90he::o90_sortArray() {
 	// Sorts array via qsort
 	byte subOp = fetchScriptByte();
@@ -1967,21 +2064,24 @@ void ScummEngine_v90he::o90_sortArray() {
 	switch (subOp) {
 	case 129:
 	case 134: // HE100
-		fetchScriptWord();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		{	
+			int array = fetchScriptWord();
+			int sortOrder = pop();
+			int dim1end = pop();
+			int dim1start = pop();
+			int dim2end = pop();
+			int dim2start = pop();
+			getArrayDim(array, &dim2start, &dim2end, &dim1start, &dim1end);
+			sortArray(array, dim2start, dim2end, dim1start, dim1end, sortOrder);
+		}
 		break;
 	default:
 		error("o90_sortArray: Unknown case %d", subOp);
 	}
-	debug(1,"o90_sortArray stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getObjectData() {
-	// Object releated
+	// Object related
 	byte subOp = fetchScriptByte();
 	subOp -= 32;
 
