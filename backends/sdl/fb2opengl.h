@@ -125,7 +125,7 @@ void FB2GL::makeTextures() {
 		buffer1 = RGBAFrameBuffer1;
 		buffer2 = RGBAFrameBuffer2;
 	} else {
-		mode = GL_RGBA;
+		mode = GL_COLOR_INDEX;
 		buffer1 = palettedFrameBuffer1;
 		buffer2 = palettedFrameBuffer2;
 	}
