@@ -22,16 +22,6 @@
 
 lua_State *lua_state = NULL;
 
-void errorFB (void);
-void nilFB (void);
-void typeFB (void);
-
-static luaL_reg fbFuncs[] = {
-  {"  typeFB", typeFB},
-  {"  errorFB", errorFB},
-  {"  nilFB", nilFB}
-};
-
 void stderrorim (void);
 
 static luaL_reg stdErrorRimFunc[] = {
@@ -84,7 +74,6 @@ void lua_open (void)
   luaT_init();
   luaB_predefine();
   luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
-  luaL_addlibtolist(fbFuncs, (sizeof(fbFuncs) / sizeof(fbFuncs[0])));
 }
 
 void lua_close (void)
