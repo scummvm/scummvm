@@ -262,8 +262,8 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	}
 
 	vst = &_verbs[verb];
-	vst->right = vst->x + imgw * 8 - 1;
-	vst->bottom = vst->y + imgh * 8 - 1;
+	vst->right = vst->x + imgw * 8;
+	vst->bottom = vst->y + imgh * 8;
 	vst->oldleft = vst->x;
 	vst->oldright = vst->right;
 	vst->oldtop = vst->y;
