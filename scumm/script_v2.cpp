@@ -711,7 +711,7 @@ void ScummEngine_v2::o2_actorOps() {
 	case 5:		// SO_TALK_COLOR
 		if ((_gameId == GID_MANIAC) && (_version == 1))
 			v1_mm_actor_speech_color[act] = arg;
-		else if (_gameId == GID_MANIAC && _demoMode)
+		else if (_gameId == GID_MANIAC && _demoMode && arg == 1)
 			a->talkColor = 15;
 		else
 			a->talkColor = arg;
