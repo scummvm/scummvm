@@ -40,8 +40,8 @@ be playable to the end:
 
 
 The following games should load, but are not yet fully playable. If you want
-the latest updates on game compatability, visit our website and view the
-compatability chart.
+the latest updates on game compatibility, visit our website and view the
+compatibility chart.
 
 	Zak McKraken (256 color FM Towns version)
 	Indiana Jones and the Last Crusade (256 color version)
@@ -66,7 +66,7 @@ Supported Platforms:
 
 ScummVM has been ported to run on many platforms and operating systems.
 Links to these ports can be found either on the ScummVM webpage or by a
-google search. Many thanks to the effort of porters. If you have a port of
+Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
 	Windows 	- SDL/GDI
@@ -84,7 +84,7 @@ Known Bugs:
 
 This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatability table on the website, please see below.
+listed here, nor in the compatibility table on the website, please see below.
 
         Sam and Max:
                 - Subgames are not fully functional.
@@ -105,11 +105,10 @@ listed here, nor in the compatability table on the website, please see below.
 
 Reporting Bugs:
 ---------------
-
 To report a bug, please create a SourceForge account and follow the bugs
-link from our homepage. Please make sure the bug is reproducable, and 
+link from our homepage. Please make sure the bug is reproducible, and 
 still exists in the latest daily build/current CVS version. Also check the
-compatability listing for that game to ensure the issue is not already known.
+compatibility listing for that game to ensure the issue is not already known.
 
 Please include the following information:
 		- Game version (PLEASE test the latest CVS/Daily build)
@@ -198,31 +197,33 @@ Command Line Options:
         -s<num>   - set the scale factor, 1-3    default is '2'
         -m<num>   - set the music volume, 0-100  default is '60'
         -t<num>   - set music tempo              default is '2031616'
-        -e<mode>   - select sound engine. see below.
+        -e<mode>  - select sound engine. see below.
         -g<mode>  - select graphics scaler. see below.
-	-f        - fullscreen mode
+	-f        - full-screen mode
         -n        - disable subtitles
-        -r        - enable roland conversion. try if music sounds incorrect.
+        -r        - enable Roland conversion. Try if music sounds incorrect.
 
 
 In game Hot Keys:
 -----------------
-	Ctrl 0-9 and Shift 0-9 to load and save states.
-        Ctrl-Alt 0-4 cycles between filter modes in the order listed below
-	Ctrl-z quits
-	Ctrl-f runs in fast mode.
-	Ctrl-d starts the debugger.
-	Ctrl-s shows memory consumption.
-	F5 displays a save/load box.
-	Space pauses.
-	Alt-Enter toggles full screen (on *nix only)
+	Ctrl 0-9 and Shift 0-9   - load and save states.
+        Ctrl-Alt 0-4             - cycles between filter modes
+	Ctrl-z                   - quits
+	Ctrl-f                   - runs in fast mode.
+	Ctrl-d                   - starts the debugger.
+	Ctrl-s                   - shows memory consumption.
+	F5                       - displays a save/load box.
+	Space                    - pauses.
+	Alt-Enter                - toggles full screen (on *nix only)
 
 
 Graphics filters:
 -----------------
-ScummVM offers several antialiasing filters to attempt to improve visual
+ScummVM offers several anti-aliasing filters to attempt to improve visual
 quality. These are the same filters used in many other emulators, such as
-MAME. They are:
+MAME.
+
+They are:
         -gnormal     - No filtering, original 320x200 resolution. Fastest.
         -g2x         - No filtering, double screen/window size to 640x480
         -g3x         - No filtering, triple screen/window size to 800x600
@@ -232,22 +233,21 @@ MAME. They are:
 
 Note that filters are very slow when ScummVM is compiled in a debug
 configuration without optimisations. And there is always a speed impact when
-using any form of antialiasing/linear filtering.
+using any form of anti-aliasing/linear filtering.
 
 
 Music and Sound: 
 ----------------
 By default, on most operating systems, ScummVM will automatically use ADLIB
-emulation. However, some games do not include adlib music - such as Sam and
-Max. ScummVM will automatically switch to MIDI for these games - however note
-that MIDI may not be available on all operating systems or may need manual
+emulation. However, some games do not include Adlib music - such as Sam and
+Max. Note: MIDI may not be available on all operating systems or may need manual
 configuration.
 
 If you ARE using MIDI, you have several different choices of output, 
 depending on your operating system and configuration.
         
 	-eadlib     - Uses internal Adlib Emulation (default) 
-        -ewindows   - Windows MIDI. Uses builtin sequencer. Only on Windows
+        -ewindows   - Windows MIDI. Uses built-in sequencer. Only on Windows
 	-etimidity  - Uses Timidity for music. Requires Timidity.
 	-eseq       - Uses /dev/sequencer for MIDI. *nix only.
         -eqt        - Quicktime sound, for Macintosh users.
@@ -258,32 +258,50 @@ depending on your operating system and configuration.
 Playing sound with Adlib emulation:
 -----------------------------------
 By default an Adlib card will be emulated and ScummVM will output the music
-as sampled waves. This offers far superior preformance to Timidity, however
+as sampled waves. This offers far superior performance to Timidity, however
 does not work with some games such as Sam and Max.
 
 Playing sound with MIDI:
 ------------------------
-On Windows, MorphOS and Macintosh, MIDI will automatically be configured.
-However under UNIX, you may need to configure MIDI manually. Please see the
-below sections for information on using the various MIDI methods.
+Use the appropriate -e<mode> command line option from the list above to
+select your prefered MIDI device. For example, if you wish to use Windows
+MIDI over the default Adlib Emulation, use the -ewindows option.
 
 Playing sound with Sequencer:
 -----------------------------
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
 
-Then start ScummVM with the parameter '-e3'. This should work on several
-cards, and may offer better preformance and quality than Adlib emulation.
-
+Then start ScummVM with the parameter '-eseq'. This should work on several
+cards, and may offer better performance and quality than Adlib emulation.
 
 Playing music with Timidity:
 ----------------------------
 Start Timidity with the following command line :
 	$ timidity -irv 7777
-Then start ScummVM with the parameter '-e2'. However, Timidity is not
+Then start ScummVM with the parameter '-etimidity'. However, Timidity is not
 designed to cope with the rapid changes most iMUSE equipped games use - so
 its use over Adlib emulation or sequencer support is not recommended.
 
+Using MP3 files for CD audio:
+-----------------------------
+Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
+the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
+to use this option. You'll need to rip the file from the CD as a WAV file, then
+encode the MP3 files with the following LAME command line:
+
+lame -h -t -q 0 --vbr-new -V 9 -b 24 -B 32 --resample 22.05 track1.wav track1.mp3
+
+Compressing MONSTER.SOU with MP3:.
+---------------------------------
+You need LAME, and our extract util from the tools dir to perform this task,
+and ScummVM must be compiled with MAD support.
+
+Make a backup file of your MONSTER.SOU before attempting this. Copy your
+MONSTER.SOU file to a temporary folder. Then run:
+  extract monster.sou
+In about 30 minutes or so, you will have a much smaller monster.so3 file, copy
+this file to your game dir. You can safely remove the monter.sou file.
 
 
 Savegames:
