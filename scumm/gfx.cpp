@@ -1360,7 +1360,7 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * (height >> 3)] & 7);
 		for(int i = 0; i < 8; i++) {
 			for(int j = 7; j >= 0; j--) {
-				*(dst + (7 - j) + stripnr * 8 + (y * 8 + i) * _vm->_screenWidth) =
+				*(dst + (7 - j) + (y * 8 + i) * _vm->_screenWidth) =
 					_C64Colors[((_C64CharMap[_C64PicMap[y + stripnr * (height >> 3)] * 8 + i] >> (j & 6)) & 3)];
 			}
 		}
@@ -1371,7 +1371,7 @@ void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
 	for(int y = 0; y < (height >> 3); y++) {
 		for(int i = 0; i < 8; i++) {
 			for(int j = 7; j >= 0; j--) {
-				*(dst + (7 - j) + stripnr * 8 + (y * 8 + i) * _vm->_screenWidth) =
+				*(dst + (7 - j) + (y * 8 + i) * _vm->_screenWidth) =
 					((_C64MaskChar[_C64MaskMap[y + stripnr * (height >> 3)] * 8 + i] >> (j & 6)) & 3);
 			}
 		}
@@ -2536,7 +2536,7 @@ void Scumm::setupC64Palette() {
 	setPalColor( 4, 252,   0, 252);
 	setPalColor( 5,   0, 204,   0);
 	setPalColor( 6,   0,   0, 204);
-	setPalColor( 7, 252, 252, 252);
+	setPalColor( 7, 252, 252,   0);
 	setPalColor( 8, 252, 136,   0);
 	setPalColor( 9, 136,  68,   0);
 	setPalColor(10, 252, 136, 136);
