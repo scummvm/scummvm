@@ -141,7 +141,7 @@ void IMuseDigital::pullDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStre
 			return;
 		}
 	}
-	error("IMuseDigital::poolDataForMixer() Can't match streams");
+	error("IMuseDigital::pullDataForMixer() Can't match streams");
 }
 
 void IMuseDigital::callback() {
