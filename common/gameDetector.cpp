@@ -462,37 +462,37 @@ const VersionSettings version_settings[] = {
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY | GF_AUDIOTRACKS},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY | GF_AUDIOTRACKS},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY},
 	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_USE_KEY},
 
 	/* Scumm Version 6 */
 	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_HUMONGOUS},
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6},
 
@@ -570,10 +570,10 @@ int GameDetector::detectMain()
 		_gameText = "Please choose a game";
 	}
 
-	/* Use the adlib sound driver if auto mode is selected,
-	 * and the game is one of those that want adlib as
-	 * default */
-	if (_midi_driver == MD_AUTO && _features&GF_ADLIB_DEFAULT) {
+	/* Use the adlib sound driver if the game is one of those that want
+	 * adlib as default
+	 */
+	if (_features & GF_ADLIB_DEFAULT) {
 		_use_adlib = true;
 	}
 
@@ -633,7 +633,17 @@ OSystem *GameDetector::createSystem() {
 MidiDriver *GameDetector::createMidi() {
 	int drv = _midi_driver;
 
-#if defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+
+#if defined (WIN32) && !defined(_WIN32_WCE)
+	/* MD_WINDOWS is default MidiDriver on windows targets */
+	if (drv == MD_AUTO) drv = MD_WINDOWS;
+#elif defined(MACOSX)
+	if (drv == MD_AUTO) drv = MD_COREAUDIO;
+#elif defined(macintosh)
+	if (drv == MD_AUTO) drv = MD_QTMUSIC;
+#elif defined(__MORPHOS__)
+	if (drv == MD_AUTO) drv = MD_ETUDE;
+#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
 	/* Always use MIDI emulation via adlib driver on CE and UNIX devices */
 
 	/* FIXME: We should, for the Unix targets, attempt to detect */
@@ -643,16 +653,6 @@ MidiDriver *GameDetector::createMidi() {
 		_use_adlib = true;
 		return NULL;
 	}
-#endif
-
-#if defined (WIN32) && !defined(_WIN32_WCE)
-	/* MD_WINDOWS is default MidiDriver on windows targets */
-	if (drv == MD_AUTO) drv = MD_WINDOWS;
-#elif defined(__APPLE__) || defined(macintosh)
-	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
-	if (drv == MD_AUTO) drv = MD_QTMUSIC;
-#elif defined(__MORPHOS__)
-	if (drv == MD_AUTO) drv = MD_ETUDE;
 #endif
 
 	switch(drv) {
@@ -667,7 +667,7 @@ MidiDriver *GameDetector::createMidi() {
 #if defined(UNIX) && !defined(__BEOS__)
 	case MD_SEQ:		return MidiDriver_SEQ_create();
 #endif
-#if defined(__APPLE__) || defined(macintosh)
+#if defined(MACOSX) || defined(macintosh)
 	case MD_QTMUSIC:	return MidiDriver_QT_create();
 #endif
 #if defined(MACOSX)
