@@ -289,6 +289,7 @@ protected:
 	void o2_setState04();
 	void o2_setState08();
 	void o2_startScript();
+	void o2_stopScript();
 	void o2_subtract();
 	void o2_subIndirect();
 	void o2_switchCostumeSet();

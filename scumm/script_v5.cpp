@@ -2308,14 +2308,6 @@ void ScummEngine_v5::o5_stopScript() {
 
 	script = getVarOrDirectByte(PARAM_1);
 
-	if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
-		// FIXME: Nasty hack for bug #771499
-		// Don't let the exit script for room 7 stop the buy script (24),
-		// switching to the number selection keypad (script 15)
-		if ((script == 24) && isScriptRunning(15))
-			return;
-	}
-
 	if (!script)
 		stopObjectCode();
 	else

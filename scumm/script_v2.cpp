@@ -158,7 +158,7 @@ void ScummEngine_v2::setupOpcodes() {
 		/* 60 */
 		OPCODE(o2_cursorCommand),
 		OPCODE(o2_putActor),
-		OPCODE(o5_stopScript),
+		OPCODE(o2_stopScript),
 		OPCODE(o5_getActorFacing),
 		/* 64 */
 		OPCODE(o2_loadRoomWithEgo),
@@ -318,7 +318,7 @@ void ScummEngine_v2::setupOpcodes() {
 		/* E0 */
 		OPCODE(o2_cursorCommand),
 		OPCODE(o2_putActor),
-		OPCODE(o5_stopScript),
+		OPCODE(o2_stopScript),
 		OPCODE(o5_getActorFacing),
 		/* E4 */
 		OPCODE(o2_loadRoomWithEgo),
@@ -1112,6 +1112,20 @@ void ScummEngine_v2::o2_startScript() {
 	}
 
 	runScript(script, 0, 0, 0);
+}
+
+void ScummEngine_v2::o2_stopScript() {
+	int script;
+
+	script = getVarOrDirectByte(PARAM_1);
+
+	if (script == 0)
+		script = vm.slot[_currentScript].number;
+
+	if (_currentScript != 0) {
+		if (vm.slot[_currentScript].number == script)
+			stopScript(script);
+	}
 }
 
 void ScummEngine_v2::o2_panCameraTo() {
