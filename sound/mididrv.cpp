@@ -35,6 +35,12 @@
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"
 
+// FIXME - the following disables reverb support in the QuickTime / CoreAudio
+// midi backends. For some reasons, reverb will suck away a *lot* of CPU time.
+// Until we know for sure what is causing this and if there is a better way to
+// fix the problem, we just disable all reverb for these backends.
+#define COREAUDIO_REVERB_HACK
+
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
 /* Windows MIDI driver */
@@ -788,7 +794,9 @@ void MidiDriver_QT::send(uint32 b)
 			break;
 
 		case 0x5b:									// ext effect depth
+#if !defined(COREAUDIO_REVERB_HACK)
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerReverb, midiCmd[2] << 8);
+#endif
 			break;
 
 		case 0x5d:									// chorus depth
@@ -867,11 +875,12 @@ public:
 	MidiDriver_CORE():au_MusicDevice(NULL), au_output(NULL) {
 	} int open(int mode);
 	void close();
-	void send(uint32 b);
+	void send(uint32 b) { MidiEvent e = {0, b}; send(e); }
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
+	static OSStatus inputCallback(void *inRefCon, AudioUnitRenderActionFlags inActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, AudioBuffer *ioData);
 private:
 	AudioUnit au_MusicDevice;
 	AudioUnit au_output;
@@ -879,6 +888,8 @@ private:
 	StreamCallback *_stream_proc;
 	void *_stream_param;
 	int _mode;
+
+	void send(MidiEvent e);
 };
 
 
@@ -888,19 +899,28 @@ void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc)
 	_stream_proc = sc;
 }
 
+OSStatus MidiDriver_CORE::inputCallback(void *inRefCon, AudioUnitRenderActionFlags inActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, AudioBuffer *ioData)
+{
+	MidiDriver_CORE *md  = (MidiDriver_CORE *)inRefCon;
+	MidiEvent event[32];
+	
+	if (md && md->_stream_proc) {
+		int num = (md->_stream_proc)(md->_stream_param, event, 32);
+		for (int i = 0; i < num; i++)
+			md->send(event[i]);
+	}
+	return 0;
+}
+
 int MidiDriver_CORE::open(int mode)
 {
-
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
-
-	if (mode == MO_STREAMING)
-		return MERR_STREAMING_NOT_AVAILABLE;
 
 	_mode = mode;
 
 	int err;
-	struct AudioUnitConnection auconnect;
+	AudioUnitConnection auconnect;
 	ComponentDescription compdesc;
 	Component compid;
 
@@ -922,7 +942,17 @@ int MidiDriver_CORE::open(int mode)
 	auconnect.destInputNumber = 0;
 	err =
 		AudioUnitSetProperty(au_output, kAudioUnitProperty_MakeConnection, kAudioUnitScope_Input, 0,
-												 (void *)&auconnect, sizeof(struct AudioUnitConnection));
+												 (void *)&auconnect, sizeof(AudioUnitConnection));
+
+	// set streaming callback
+	if (_mode == MO_STREAMING) {
+		AudioUnitInputCallback auCallback;
+		auCallback.inputProc = inputCallback;
+		auCallback.inputProcRefCon = this;
+		err = AudioUnitSetProperty(au_output, kAudioUnitProperty_SetInputCallback, kAudioUnitScope_Input, 0,
+													 (void *)&auCallback, sizeof(AudioUnitInputCallback));
+	
+	}
 
 	// initialize the units
 	AudioUnitInitialize(au_MusicDevice);
@@ -962,16 +992,19 @@ void MidiDriver_CORE::close()
 	_mode = 0;
 }
 
-void MidiDriver_CORE::send(uint32 b)
+void MidiDriver_CORE::send(MidiEvent e)
 {
-	if (_mode != MO_SIMPLE)
-		error("MidiDriver_CORE:send called but driver is not in simple mode");
-
 	unsigned char first_byte, seccond_byte, status_byte;
-	status_byte = (b & 0x000000FF);
-	first_byte = (b & 0x0000FF00) >> 8;
-	seccond_byte = (b & 0x00FF0000) >> 16;
-	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
+	status_byte = (e.event & 0x000000FF);
+	first_byte = (e.event & 0x0000FF00) >> 8;
+	seccond_byte = (e.event & 0x00FF0000) >> 16;
+
+#ifdef COREAUDIO_REVERB_HACK
+	if ((status_byte&0xF0) == 0xB0 && first_byte == 0x5b)
+		return;
+#endif
+
+	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, e.delta);
 }
 
 void MidiDriver_CORE::pause(bool)
