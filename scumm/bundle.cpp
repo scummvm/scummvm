@@ -328,7 +328,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 
 	// FIXME - if _lastSong == index then i will be 0 - is the right / the desired behaviour?!?
 	final_size =
-		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, i, channels);
+		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, number, channels);
 
 	free(comp_input);
 
@@ -352,7 +352,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & 
 			return final_size;
 		}
 	}
-	warning("Failed finding voice %s\n", name);
+	warning("Failed finding voice %s", name);
 	return final_size;
 }
 
@@ -375,7 +375,7 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 			return final_size;
 		}
 	}
-	printf("Couldn't find sample %s\n", name);
+	warning("Couldn't find sample %s", name);
 	return final_size;
 }
 
@@ -778,12 +778,12 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			uint16 firstWord;
 			int32 startPos;
 			byte sByte[4];
-			uint32 sDWord[4];
+			int32 sDWord[4];
 			int32 channel;
 			int32 left;
 			int32 tableEntrySum;
 			int32 curTablePos;
-			uint32 outputWord;
+			int32 outputWord;
 			int32 imcTableEntry;
 			int32 destPos;
 			int32 curTableEntry;
@@ -799,6 +799,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			memset (comp_output, 0, 0x2000);
 			firstWord = READ_BE_UINT16(src);
 			src += 2;
+printf("firstWord = %d, index = %d\n", firstWord, index);
 			if (firstWord != 0) {
 				if (index != 0) {
 					startPos = 0;
@@ -814,17 +815,18 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				}
 				src += firstWord;
 				left = 0x2000 - firstWord;
+				// At this point we are at the start of the content of the 'DATA' chunk.
 			} else {
 				sByte[0] = *src++;
-				sDWord[0] = READ_BE_UINT32(src);
+				sDWord[0] = (int32)READ_BE_UINT32(src);
 				src += 4;
-				sDWord[1] = READ_BE_UINT32(src);
+				sDWord[1] = (int32)READ_BE_UINT32(src);
 				src += 4;
 				if (channels > 1) {
 					sByte[1] = *src++;
-					sDWord[2] = READ_BE_UINT32(src);
+					sDWord[2] = (int32)READ_BE_UINT32(src);
 					src += 4;
-					sDWord[3] = READ_BE_UINT32(src);
+					sDWord[3] = (int32)READ_BE_UINT32(src);
 					src += 4;
 				}
 				startPos = 0;
@@ -843,8 +845,8 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					imcTableEntry = 7;
 				}
 				left = ((left / 2) + 1) / channels;
-				destPos = startPos * 2 * channel;
-				do {
+				destPos = startPos + 2 * channel;
+				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = curTableEntry - 2;
 					var3b = (1 << decompTable) << 1;
@@ -863,22 +865,22 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					outputWord += adder;
 					if (outputWord > 0x7fff) 
 						outputWord = 0x7fff;
-					if (outputWord < 0xffff8000)
-						outputWord = 0xffff8000;
-					comp_output[destPos] = (byte)(outputWord) >> 8;
+					if (outputWord < -0x8000)
+						outputWord = -0x8000;
+					comp_output[destPos] = (byte)(outputWord >> 8);
 					comp_output[destPos + 1] = (byte)(outputWord);
 					switch (decompTable) {
-						case 0: curTablePos += imxOtherTable1[otherTablePos];
+						case 0: curTablePos += (signed char)imxOtherTable1[otherTablePos];
 							break;
-						case 1: curTablePos += imxOtherTable2[otherTablePos];
+						case 1: curTablePos += (signed char)imxOtherTable2[otherTablePos];
 							break;
-						case 2: curTablePos += imxOtherTable3[otherTablePos];
+						case 2: curTablePos += (signed char)imxOtherTable3[otherTablePos];
 							break;
-						case 3: curTablePos += imxOtherTable4[otherTablePos];
+						case 3: curTablePos += (signed char)imxOtherTable4[otherTablePos];
 							break;
-						case 4: curTablePos += imxOtherTable5[otherTablePos];
+						case 4: curTablePos += (signed char)imxOtherTable5[otherTablePos];
 							break;
-						case 5: curTablePos += imxOtherTable6[otherTablePos];
+						case 5: curTablePos += (signed char)imxOtherTable6[otherTablePos];
 							break;
 					}
 					if (curTablePos < 0)
@@ -887,7 +889,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 						curTablePos = 88;
 					destPos += 2 * channels;
 					imcTableEntry = imcTable1[curTablePos];
-				} while (--left != 0);
+				}
 			}
 			if (index == 0) {
 				output_size = 0x2000 - firstWord;
