@@ -470,7 +470,8 @@ void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBuf
 	uint num = 0;
 	uint32 val;
 	byte chr;
-	byte buf[512];
+	const byte *buf;
+	byte transBuf[384];
 
 	if (dstBuffer) {
 		_msgPtrToAdd = dstBuffer;
@@ -481,21 +482,11 @@ void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBuf
 		return;
 	}
 
-	while ((buf[num++] = chr = *msg++) != 0) {
-		if (num >= sizeof(buf))
-			error("Message stack overflow");
-
-		if (chr == 0xff) {	// 0xff is an escape character
-			buf[num++] = chr = *msg++;	// followed by a "command" code
-			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				buf[num++] = *msg++;	// and some commands are followed by parameters to the functions below
-				buf[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
-				if (_version == 8) {
-					buf[num++] = *msg++;
-					buf[num++] = *msg++;
-				}
-			}
-		}
+	if (_version >= 7 && msg[0] == '/') {
+		translateText(msg, transBuf);
+		buf = transBuf;
+	} else {
+		buf = msg;
 	}
 
 	num = 0;
@@ -590,13 +581,7 @@ void ScummEngine::addNameToStack(int var) {
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
-			if ((_version >= 7) && (ptr[0] == '/')) {
-				byte buf[128];
-				translateText(ptr, buf);
-				addMessageToStack(buf, 0, 0);
-			} else {
-				addMessageToStack(ptr, 0, 0);
-			}
+			addMessageToStack(ptr, 0, 0);
 		}
 	}
 }
@@ -620,13 +605,7 @@ void ScummEngine::addStringToStack(int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			if ((_version >= 7) && (ptr[0] == '/')) {
-				byte buf[128];
-				translateText(ptr, buf);
-				addMessageToStack(buf, 0, 0);
-			} else {
-				addMessageToStack(ptr, 0, 0);
-			}
+			addMessageToStack(ptr, 0, 0);
 		}
 	}
 }
@@ -863,15 +842,9 @@ void ScummEngine::loadLanguageBundle() {
 }
 
 void ScummEngine::playSpeech(const byte *ptr) {
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (ptr[0] == '/')) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && ptr[0]) {
 		char pointer[20];
-		int i, j;
-
-		for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-			if (ptr[i] != '/')
-				pointer[j++] = ptr[i];
-		}
-		pointer[j] = 0;
+		strcpy(pointer, (const char *)ptr);
 
 		// Play speech
 		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
@@ -884,71 +857,61 @@ void ScummEngine::playSpeech(const byte *ptr) {
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
-	int l;
+	LangIndexNode target;
+	int i;
 	
-	if ((text[0] == '/') && _existLanguageFile) {
-		LangIndexNode target;
-		LangIndexNode *found = NULL;
-
+	if (_version >= 7 && text[0] == '/') {
 		// copy name from text /..../
-		for (l = 0; (l < 12) && (text[l + 1] != '/'); l++)
-			target.tag[l] = toupper(text[l + 1]);
-		target.tag[l] = 0;
+		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
+			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
+		_lastStringTag[i] = target.tag[i] = 0;
+		text += i + 2;
 
-		// HACK: These are used for the object line when
-		// using one object on another. I don't know if the
-		// text in the language file is a placeholder or if
-		// we're supposed to use it, but at least in the
-		// English version things will work so much better if
-		// we can't find translations for these.
-
-		if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
-			found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
-		if (found != NULL) {
-			strcpy((char *)trans_buff, _languageBuffer + found->offset);
-
-			// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
-			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
-				// Replace any '%___' by the corresponding special codes in the source text
-				const byte *src = text;
-				char *dst = (char *)trans_buff;
-
-				while ((dst = strstr(dst, "%___"))) {
-					// Search for a special code in the message. They have
-					// the form:  255-byte OP-byte ARG-int16
-					while (*src && *src != 0xFF) {
-						src++;
-					}
-					
-					// Replace the %___ by the special code
-					if (*src == 0xFF) {
-						memcpy(dst, src, 4);
-						src += 4;
-						dst += 4;
-					} else
-						break;
-				}
-			}
-
-			return;
-		}
-	}
+		if (_existLanguageFile) {
+			LangIndexNode *found = NULL;
 	
-	byte *pointer = (byte *)strchr((const char *)text + 1, '/');
-	if (pointer != NULL) {
-		pointer++;
-		if (_gameId == GID_CMI) {
-			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
-		} else if (_gameId == GID_DIG) {
-			l = 0;
-			while (*pointer != '/' && *pointer != 0xff && *pointer != 0) {
-				trans_buff[l++] = *pointer++;
+			// HACK: These are used for the object line when
+			// using one object on another. I don't know if the
+			// text in the language file is a placeholder or if
+			// we're supposed to use it, but at least in the
+			// English version things will work so much better if
+			// we can't find translations for these.
+	
+			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
+				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
+			if (found != NULL) {
+				strcpy((char *)trans_buff, _languageBuffer + found->offset);
+	
+				// FIXME / TODO: Maybe this should be enabled for Full Throttle, too?
+				if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
+					// Replace any '%___' by the corresponding special codes in the source text
+					const byte *src = text;
+					char *dst = (char *)trans_buff;
+	
+					while ((dst = strstr(dst, "%___"))) {
+						// Search for a special code in the message. They have
+						// the form:  255-byte OP-byte ARG-int16
+						while (*src && *src != 0xFF) {
+							src++;
+						}
+						
+						// Replace the %___ by the special code
+						if (*src == 0xFF) {
+							memcpy(dst, src, 4);
+							src += 4;
+							dst += 4;
+						} else
+							break;
+					}
+				}
+	
+				return;
 			}
-			trans_buff[l] = '\0';
 		}
-	} else {
-		memcpy(trans_buff, text, resStrLen(text) + 1);
 	}
+
+	// Default: just copy the string
+	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 
 } // End of namespace Scumm

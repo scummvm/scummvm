@@ -513,24 +513,22 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 0xD1:		// SO_PRINT_STRING
-		translateText(_scriptPointer, _transText);
-
 		switch (m) {
 		case 0:
 			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, _transText);
+			drawString(1, _scriptPointer);
 			break;
 		case 2:
-			unkMessage1(_transText);
+			unkMessage1(_scriptPointer);
 			break;
 		case 3:
-			unkMessage2(_transText);
+			unkMessage2(_scriptPointer);
 			break;
 		case 5:{
 			byte buffer[256];
-			addMessageToStack(_transText, buffer, sizeof(buffer));
+			addMessageToStack(_scriptPointer, buffer, sizeof(buffer));
 			enqueueText(buffer, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
 			}
 			break;

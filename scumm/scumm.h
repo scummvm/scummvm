@@ -1078,6 +1078,7 @@ protected:
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
+	char _lastStringTag[12+1];
 	byte _transText[512];
 
 	void loadLanguageBundle();

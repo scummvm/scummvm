@@ -1439,20 +1439,18 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		translateText(_scriptPointer, _transText);
-
 		switch (m) {
 		case 0:
 			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, _transText);
+			drawString(1, _scriptPointer);
 			break;
 		case 2:
-			unkMessage1(_transText);
+			unkMessage1(_scriptPointer);
 			break;
 		case 3:
-			unkMessage2(_transText);
+			unkMessage2(_scriptPointer);
 			break;
 		}
 		_scriptPointer += resStrLen(_scriptPointer) + 1;

@@ -2482,11 +2482,6 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			byte buf_input[300];
 			const byte *message = getStringAddressVar(VAR_STRING2DRAW);
 
-			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
-				translateText(message, _transText);
-				message = _transText;
-			}
-
 			addMessageToStack(message, buf_input, sizeof(buf_input));
 			enqueueText(buf_input, args[3], args[4], args[2], args[1], true);
 			break;}
@@ -3106,20 +3101,18 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		translateText(_scriptPointer, _transText);
-
 		switch (m) {
 		case 0:
 			actorTalk(_scriptPointer);
 			break;
 		case 1:
-			drawString(1, _transText);
+			drawString(1, _scriptPointer);
 			break;
 		case 2:
-			unkMessage1(_transText);
+			unkMessage1(_scriptPointer);
 			break;
 		case 3:
-			unkMessage2(_transText);
+			unkMessage2(_scriptPointer);
 			break;
 		}
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
