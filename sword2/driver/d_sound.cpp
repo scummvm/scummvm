@@ -77,6 +77,9 @@ Sound::Sound(Sword2Engine *vm) {
 
 Sound::~Sound() {
 	_vm->_mixer->setupPremix(0, 0);
+	delete _converter;
+	for (int i = 0; i < MAXFX; i++)
+		stopFxHandle(i);
 	if (_mutex)
 		_vm->_system->delete_mutex(_mutex);
 }

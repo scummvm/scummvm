@@ -73,6 +73,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	uint32 j = 0;
 
 	_totalClusters = 0;
+	_resConvTable = NULL;
 
 	if (!file.open("resource.inf")) {
 		error("init cannot *OPEN* resource.inf");
@@ -192,6 +193,7 @@ ResourceManager::~ResourceManager(void) {
 	free(_resList);
 	free(_age);
 	free(_count);
+	free(_resConvTable);
 }
 
 // Quick macro to make swapping in-place easier to write

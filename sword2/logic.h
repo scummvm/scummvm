@@ -164,16 +164,20 @@ public:
 	Logic(Sword2Engine *vm) :
 		  _vm(vm), _globals(NULL), _kills(0), _debugFlag(false),
 		  _smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0),
-		  _animId(0), _leftClickDelay(0), _rightClickDelay(0),
-		  _defaultResponseId(0), _totalStartups(0),
-		  _totalScreenManagers(0), _officialTextNumber(0),
-		  _speechScriptWaiting(0), _speechTextBlocNo(0),
-		  _choosing(false), _unpauseZone(0) {
+		  _animId(0), _speechAnimType(0), _leftClickDelay(0),
+		  _rightClickDelay(0), _defaultResponseId(0),
+		  _totalStartups(0), _totalScreenManagers(0),
+		  _officialTextNumber(0), _speechScriptWaiting(0),
+		  _speechTextBlocNo(0), _choosing(false), _unpauseZone(0) {
 		memset(_subjectList, 0, sizeof(_subjectList));
 		memset(_eventList, 0, sizeof(_eventList));
 		memset(_syncList, 0, sizeof(_syncList));
 		_router = new Router(_vm);
 		initStartMenu();
+	}
+
+	~Logic() {
+		delete _router;
 	}
 
 	// "TEXT" - current official text line number - will match the wav

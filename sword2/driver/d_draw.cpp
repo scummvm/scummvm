@@ -66,6 +66,13 @@ Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height)
 Graphics::~Graphics() {
 	free(_buffer);
 	free(_dirtyGrid);
+	closeBackgroundLayer();
+	free(_lightMask);
+	free(_mouseAnim);
+	free(_luggageAnim);
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < RDMENU_MAXPOCKETS; j++)
+			free(_icons[i][j]);
 }
 
 /**
