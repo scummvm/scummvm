@@ -147,11 +147,15 @@ uint8 SkyChannel::process(uint16 aktTime) {
 		} else {
 			_channelData.lastCommand = opcode;
 			stopNote();
-			setupInstrument(opcode);
+			// not sure why this "if" is necessary...either a bug in my
+			// code or a bug in the music data (section 1, music 2)
+			if (_channelData.instrumentData || _channelData.tremoVibro) {
+				setupInstrument(opcode);
 
-			opcode = _musicData[_channelData.eventDataPtr];
-			_channelData.eventDataPtr++;
-			setupChannelVolume(opcode);
+				opcode = _musicData[_channelData.eventDataPtr];
+				_channelData.eventDataPtr++;
+				setupChannelVolume(opcode);
+			} else _channelData.eventDataPtr++;
 		}
 		if (_channelData.channelActive)
 			_channelData.nextEventTime += getNextEventTime();
@@ -273,7 +277,7 @@ void SkyChannel::com90_getFreqOffset(void) {
 
 	_channelData.freqOffset = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
-	if (_channelData.note) {
+	if (_channelData.note & 0x20) {
 		uint16 nextNote = getNextNote(
 			_channelData.lastCommand - 0x18 + _channelData.instrumentData->bindedEffect);
 		setRegister(0xA0|_channelData.adlibChannelNumber, (uint8)nextNote);
