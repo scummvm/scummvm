@@ -59,19 +59,18 @@ enum {
 };
 
 
-
 class CommandReceiver;
 class CommandSender;
 
-class CommandReceiver
-{
-friend class CommandSender;
+class CommandReceiver {
+	friend class CommandSender;
 protected:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) = 0;
 };
 
-class CommandSender
-{
+class CommandSender {
+	// TODO - allow for multiple targets, i.e. store targets in a list
+	// and add methods addTarget/removeTarget.
 protected:
 	CommandReceiver	*_target;
 public:
