@@ -1517,25 +1517,25 @@ void Scumm::unkHeapProc2(int a, int b)
 
 void Scumm::readMAXS()
 {
-	if (_features & GF_AFTER_V8) {
-		_fileHandle.seek(50 + 50, SEEK_CUR);
-		_numVariables = _fileHandle.readUint32LE();	/* ? 1500 */
-		_numBitVariables = _fileHandle.readUint32LE();	/* ? 2048 */
-		_fileHandle.readUint32LE();					/* 40 */
-		_numScripts = _fileHandle.readUint32LE();
-		_numSounds = _fileHandle.readUint32LE();
-		_numCharsets = _fileHandle.readUint32LE();
-		_numCostumes = _fileHandle.readUint32LE();
-		_numRooms = _fileHandle.readUint32LE();
-		_numInventory = _fileHandle.readUint32LE();
-		_numGlobalObjects = _fileHandle.readUint32LE();
-		_numFlObject = _fileHandle.readUint32LE();
-		_numLocalObjects = _fileHandle.readUint32LE();
-		_numVerbs = _fileHandle.readUint32LE();
-		_numNewNames = _fileHandle.readUint32LE();
-		_fileHandle.readUint32LE();
-		_fileHandle.readUint32LE();
-		_numArray = _fileHandle.readUint32LE();
+	if (_features & GF_AFTER_V8) {										// CMI
+		_fileHandle.seek(50 + 50, SEEK_CUR);						// 176 - 8
+		_numVariables = _fileHandle.readUint32LE();			// 1500
+		_numBitVariables = _fileHandle.readUint32LE();	// 2048
+		_fileHandle.readUint32LE();											// 40
+		_numScripts = _fileHandle.readUint32LE();				// 458
+		_numSounds = _fileHandle.readUint32LE();				// 789
+		_numCharsets = _fileHandle.readUint32LE();			// 1
+		_numCostumes = _fileHandle.readUint32LE();			// 446
+		_numRooms = _fileHandle.readUint32LE();					// 95
+		_fileHandle.readUint32LE();											// 80
+		_numGlobalObjects = _fileHandle.readUint32LE();	// 1401
+		_fileHandle.readUint32LE();											// 60
+		_numLocalObjects = _fileHandle.readUint32LE();	// 200
+		_numNewNames = _fileHandle.readUint32LE();			// 100
+		_numFlObject = _fileHandle.readUint32LE();			// 128
+		_numInventory = _fileHandle.readUint32LE();			// 80
+		_numStrings = _fileHandle.readUint32LE();				// 200
+		_numVerbs = _fileHandle.readUint32LE();					// 50
 
 		// FIXME - uhm... COMI seems to have an ARRY with 143 entries, but
 		// indeed _numArray gets set to 50 ?!?

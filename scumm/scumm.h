@@ -380,6 +380,7 @@ public:
 	int _numInventory, _numRooms, _numScripts, _numSounds;
 	int _numCharsets, _numCostumes, _numNewNames, _numGlobalScripts;
 	int NUM_ACTORS;
+	int _numStrings;
 
 	char *_audioNames;
 	int32 _numAudioNames;
