@@ -104,6 +104,9 @@ void hexdump(const byte * data, int len)
 		len -= 8;
 	}
 
+	if (len <= 0) 
+		return;
+
 	for (i = 0; i < len; i++)
 		printf("%02x ", data[i]);
 	for (; i < 8; i++)
