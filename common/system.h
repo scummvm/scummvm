@@ -208,7 +208,8 @@ enum {
 
 enum {
 #ifdef _WIN32_WCE
-	SAMPLES_PER_SEC =  11025
+	SAMPLES_PER_SEC_OLD =  11025,
+	SAMPLES_PER_SEC_NEW =  22050
 #else
 	SAMPLES_PER_SEC =  22050
 #endif

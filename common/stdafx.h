@@ -2,7 +2,11 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.3  2002/11/19 08:05:46  arisme
+ * Small Windows CE changes : detect old WinCE as NONSTANDARD_PORT, change __cdecl for these systems, add 2 sampling rates for WinCE due to problems with Smush mixer in 11 kHz
+ *
  * Revision 1.2  2002/09/22 11:37:53  kirben
+ *
  * Remove mention of Windows GDI build
  *
  * Revision 1.1.1.1  2002/08/21 16:07:23  fingolfin
@@ -57,6 +61,12 @@
 
 #ifndef _STDAFX_H
 #define _STDAFX_H
+
+#if defined(_WIN32_WCE) && _WIN32_WCE < 300
+
+#define NONSTANDARD_PORT
+
+#endif
 
 #if defined(NONSTANDARD_PORT)
 

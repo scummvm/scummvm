@@ -68,6 +68,12 @@ const bool true(1), false(0);
   #define END_PACK_STRUCTS   pack(pop)
   #define GCC_PACK
 
+#if defined(_WIN32_WCE) && _WIN32_WCE < 300
+
+  #define CDECL __cdecl
+
+#endif
+
 #elif defined(__MINGW32__)
   
   #define scumm_stricmp stricmp
