@@ -41,7 +41,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;DISABLE_SAGA"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -126,8 +126,9 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
+				WholeProgramOptimization="TRUE"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;DISABLE_SAGA"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="1"
@@ -644,11 +645,11 @@
 					Name="mt32"
 					>
 					<File
-						RelativePath="..\..\backends\midi\mt32\mt32_file.cpp"
+						RelativePath="..\..\backends\midi\mt32\freeverb.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\mt32_file.h"
+						RelativePath="..\..\backends\midi\mt32\freeverb.h"
 						>
 					</File>
 					<File
@@ -660,11 +661,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.cpp"
+						RelativePath="..\..\backends\midi\mt32\mt32_file.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.h"
+						RelativePath="..\..\backends\midi\mt32\mt32_file.h"
 						>
 					</File>
 					<File
@@ -839,6 +840,14 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\TabWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\walkthrough.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\walkthrough.h"
 				>
 			</File>
 			<File

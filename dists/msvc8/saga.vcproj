@@ -303,6 +303,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\saga\objectdata.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\saga\objectdata.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\saga\objectmap.cpp"
 			>
 		</File>
