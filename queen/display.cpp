@@ -251,7 +251,7 @@ void Display::palSetJoe(JoePalette pal) {
 	}
 	memcpy(_pals.room + 144 * 3, palJoe, 16 * 3);
 	memcpy(_pals.screen + 144 * 3, palJoe, 16 * 3); 
-	palSet(palJoe, 144, 159, true);
+	palSet(_pals.screen, 144, 159, true);
 }
 
 
