@@ -714,6 +714,24 @@ This should produce a smaller monster.sog file, which you should copy to your
 game dir.
 
 
+Compressing sound effects and speech files in Simon the Sorcerer 1 and 2
+-----------------------------------------------------------------------
+You need LAME, and our simon2mp3 util from the scummvm-tools package to perform
+this task, and ScummVM must be compiled with MAD support.
+
+Make a backup of the file before attempting this. Copy the file to a
+temporary folder. Then run:
+
+  simon2mp3 effects.voc (For simon1talkie)
+  simon2mp3 simon.voc   (For simon1talkie)
+  simon2mp3 simon.voc   (For simon1win)
+  simon2mp3 simon2.voc  (For simon2talkie)
+  simon2mp3 simon2.wav  (For simon2win) 
+
+
+In about 30 minutes or so, you will have a much smaller *.mp3 file, copy this
+file to your game dir. You can safely remove the old file.
+
 Using data files from Macintosh game versions:
 ----------------------------------------------
 All LucasArts Scumm based adventures except CMI also exist in versions for the
