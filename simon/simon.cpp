@@ -1859,6 +1859,7 @@ void SimonEngine::f10_key() {
 	else
 		color = 0xe1;
 
+	uint limit = (_game & GF_SIMON2) ? 200 : 134;
 
 	for (int i = 0; i < 5; i++) {
 		ha = _hit_areas;
@@ -1883,7 +1884,7 @@ void SimonEngine::f10_key() {
 						continue;
 				}
 
-				if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+				if (ha->y >= limit || ha->y >= _vga_var8)
 					continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
@@ -2420,7 +2421,6 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			num_lines = 200;
 		else
 			num_lines = _video_palette_mode == 4 ? 134 : 200;
-		_vga_var8 = num_lines;
 		dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 		dx_copy_from_attached_to_3(num_lines);
 		_sync_flag_2 = 1;
