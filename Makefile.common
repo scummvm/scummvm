@@ -2,6 +2,9 @@
 # This file is used by Makefile, Makefile.irix, Makefile.macosx and declares
 # common rules, a list of common object files etc.
 
+# List of all sub modules
+MODULES := common gui scumm simon sound
+
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
@@ -49,19 +52,21 @@ clean:
 .PHONY: all clean dist
 
 # Default (dumb) compile & dependcy rules
-.cpp.o:
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-$(OBJS): $(INCS)
+#.cpp.o:
+#	$(CXX) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#$(OBJS): $(INCS)
 
 
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
-#DEPDIR := .deps
-#.cpp.o:
-#	mkdir -p $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	echo -n "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-#	cat "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-#	rm -f "$(*D)/$(DEPDIR)/$(*F).d2"
-#
-#-include $(DEPDIR)/*.d
+DEPDIR := .deps
+DEPDIRS = $(patsubst %,%/$(DEPDIR),$(MODULES))
+DEPFILES = $(wildcard $(DEPDIRS)/*.d) /dev/null
+.cpp.o:
+	mkdir -p $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	echo -n "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+	cat "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+	rm -f "$(*D)/$(DEPDIR)/$(*F).d2"
+
+-include $(DEPDIR)/*.d
