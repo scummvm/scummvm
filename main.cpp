@@ -55,9 +55,11 @@ Config * scummcfg;
 #if defined(UNIX) || defined(UNIX_X11)
 #include <signal.h>
 
+#ifndef SCUMM_NEED_ALIGNMENT
 static void handle_errors(int sig_num) {
 	error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT ");
 }
+#endif
 
 /* This function is here to test if the endianness / alignement compiled it is matching
    with the one at run-time. */
