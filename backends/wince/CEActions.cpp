@@ -71,12 +71,12 @@ CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
 		_action_mapping[i] = 0;
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || detector._targetName == "comi" ||
+	if (is_sword1 || is_sword2 || is_sky || is_queen || strncmp(detector._targetName.c_str(), "comi", 4) == 0 ||
 		detector._targetName == "samnmax")
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
-	if (is_sword1 || is_sword2 || is_queen)
+	if (is_sword1 || is_sword2 || strncmp(detector._targetName.c_str(), "comi", 4) == 0)
 		_hide_toolbar_needed = true;
 
 	// Initialize keys for different actions
