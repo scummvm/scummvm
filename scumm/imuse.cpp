@@ -5635,7 +5635,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	byte param = a >> 8;
 	int32 sample = b, r;
 	byte sub_cmd = c >> 8;
-	int8 channel = -1, l;
+	int8 chan = -1, l;
 	int8 tmp;
 
 	if (!(cmd || param))
@@ -5652,18 +5652,18 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				debug(2, "IMuseDigital::doCommand setting volume sample(%d), volume(%d)", sample, d);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
-						channel = l;
+						chan = l;
 						break;
 					}
 				}
-				if (channel == -1) {
+				if (chan == -1) {
 					warning("IMuseDigital::doCommand 12,6 sample(%d) not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volume = d;
-				_channel[channel]._volumeRight = d;
-				if (_channel[channel]._volumeFade != -1) {
-					tmp = ((_channel[channel]._volumeFade - _channel[channel]._volume) * 2) / _channel[channel]._volumeFadeParam;
+				_channel[chan]._volume = d;
+				_channel[chan]._volumeRight = d;
+				if (_channel[chan]._volumeFade != -1) {
+					tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
 					if ((tmp < 0) && (tmp > -2)) {
 						tmp = -1;
 					} else if ((tmp > 0) && (tmp < 2)) {
@@ -5671,22 +5671,22 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					} else {
 						tmp /= 2;
 					}
-				_channel[channel]._volumeFadeStep = tmp;
+				_channel[chan]._volumeFadeStep = tmp;
 				}
 				return 0;
 			case 7: // right volume control (0-127)
 				debug(2, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
-						channel = l;
+						chan = l;
 						break;
 					}
 				}
-				if (channel == -1) {
+				if (chan == -1) {
 					warning("IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volumeRight = d;
+				_channel[chan]._volumeRight = d;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand 12 DEFAULT sub command %d", sub_cmd);
@@ -5698,17 +5698,17 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				debug(2, "IMuseDigital::doCommand fading volume sample(%d),fade(%d, %d)", sample, d, e);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
-						channel = l;
+						chan = l;
 						break;
 					}
 				}
-				if (channel == -1) {
+				if (chan == -1) {
 						warning("IMuseDigital::doCommand 14,6 sample %d not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volumeFade = d;
-				_channel[channel]._volumeFadeParam = e;
-				tmp = ((_channel[channel]._volumeFade - _channel[channel]._volume) * 2) / _channel[channel]._volumeFadeParam;
+				_channel[chan]._volumeFade = d;
+				_channel[chan]._volumeFadeParam = e;
+				tmp = ((_channel[chan]._volumeFade - _channel[chan]._volume) * 2) / _channel[chan]._volumeFadeParam;
 				if ((tmp < 0) && (tmp > -2)) {
 					tmp = -1;
 				} else if ((tmp > 0) && (tmp < 2)) {
@@ -5716,7 +5716,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				} else {
 					tmp /= 2;
 				}
-				_channel[channel]._volumeFadeStep = tmp;
+				_channel[chan]._volumeFadeStep = tmp;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand 14 DEFAULT sub command %d", sub_cmd);

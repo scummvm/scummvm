@@ -293,7 +293,7 @@ protected:
 	int a, b, c, d;
 	
 public:
-	CubicInterpolator(int a, int b, int c) : x0(2 * a - b), x1(a), x2(b), x3(c)
+	CubicInterpolator(int a0, int b0, int c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0)
 	{
 		// We use a simple linear interpolation for x0
 		updateCoefficients();

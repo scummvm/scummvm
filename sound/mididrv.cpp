@@ -43,7 +43,7 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
@@ -247,10 +247,10 @@ void MidiDriver_WIN::send(uint32 b)
 	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 
-void MidiDriver_WIN::pause(bool pause)
+void MidiDriver_WIN::pause(bool p)
 {
 	if (_mode == MO_STREAMING) {
-		if (pause)
+		if (p)
 			check_error(midiStreamPause(_ms));
 		else
 			check_error(midiStreamRestart(_ms));
@@ -303,7 +303,7 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
@@ -473,10 +473,10 @@ void MidiDriver_ETUDE::fill_all()
 	}
 }
 
-void MidiDriver_ETUDE::pause(bool pause)
+void MidiDriver_ETUDE::pause(bool p)
 {
 	if (_mode == MO_STREAMING && ScummMidiRequest) {
-		if (pause)
+		if (p)
 			PauseMidiStream(ScummMidiRequest);
 		else
 			RestartMidiStream(ScummMidiRequest);
@@ -515,7 +515,7 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
@@ -613,7 +613,7 @@ void MidiDriver_SEQ::send(uint32 b)
 	write(device, buf, position);
 }
 
-void MidiDriver_SEQ::pause(bool pause)
+void MidiDriver_SEQ::pause(bool p)
 {
 	if (_mode == MO_STREAMING) {
 	}
@@ -653,7 +653,7 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause) { }
+	void pause(bool p) { }
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range);
 
@@ -862,7 +862,7 @@ public:
 	} int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
@@ -985,7 +985,7 @@ public:
 	int open(int mode);
 	void close() { }
 	void send(uint32 b) { }
-	void pause(bool pause) { }
+	void pause(bool p) { }
 	void set_stream_callback(void *param, StreamCallback *sc) { }
 	void setPitchBendRange (byte channel, uint range) { }
 private:
@@ -1058,7 +1058,7 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
@@ -1228,7 +1228,7 @@ void MidiDriver_ALSA::send(uint32 b)
 	}
 }
 
-void MidiDriver_ALSA::pause(bool pause)
+void MidiDriver_ALSA::pause(bool p)
 {
 	if (_mode == MO_STREAMING) {
 		/* Err... and what? */

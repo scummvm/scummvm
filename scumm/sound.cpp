@@ -133,7 +133,7 @@ byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint
 	while(!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
-		int code = len & 0xFF;
+		code = len & 0xFF;
 		len >>= 8;
 		switch(code) {
 			case 0: quit = 1; break;
@@ -172,18 +172,19 @@ byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint
 	return ret_sound;
 }
 
-void Sound::playSound(int sound) {
+void Sound::playSound(int soundID) {
 	byte *ptr;
+	char *sound;
 	int size;
 	int rate;
 	
 	debug(3,"playSound #%d (room %d)",
-		sound, _scumm->getResourceRoomNr(rtSound, sound));
-	ptr = _scumm->getResourceAddress(rtSound, sound);
+		soundID, _scumm->getResourceRoomNr(rtSound, soundID));
+	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
 		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
 			if (_scumm->_imuseDigital)
-				_scumm->_imuseDigital->startSound(sound);
+				_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
@@ -192,7 +193,7 @@ void Sound::playSound(int sound) {
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 	
-			_scumm->current_cd_sound = sound;
+			_scumm->current_cd_sound = soundID;
 			return;
 		}
 		// Support for SFX in Monkey Island 1, Mac version
@@ -208,7 +209,7 @@ void Sound::playSound(int sound) {
 			ptr += 0x72;
 			
 			// Allocate a sound buffer, copy the data into it, and play
-			char *sound = (char*)malloc(size);
+			sound = (char*)malloc(size);
 			memcpy(sound, ptr, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
@@ -225,13 +226,13 @@ void Sound::playSound(int sound) {
 			rate = 8000;	// FIXME - what value here ?!? 8000 is just a guess
 			
 			// Allocate a sound buffer, copy the data into it, and play
-			char *sound = (char*)malloc(size);
+			sound = (char*)malloc(size);
 			memcpy(sound, ptr + 8, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-			_scumm->_imuseDigital->startSound(sound);
+			_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
@@ -285,12 +286,11 @@ void Sound::playSound(int sound) {
 			size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
 	
 			// Allocate a sound buffer, copy the data into it, and play
-			char *sound = (char*)malloc(size);
+			sound = (char*)malloc(size);
 			memcpy(sound, ptr + 33, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		} else if (_scumm->_features & GF_OLD256) {
-			char *sound;
 			size = READ_LE_UINT32(ptr);
 			
 	#if 0
@@ -394,8 +394,8 @@ void Sound::playSound(int sound) {
 
 	IMuse *se = _scumm->_imuse;
 	if (se) {
-		_scumm->getResourceAddress(rtSound, sound);
-		se->start_sound(sound);
+		_scumm->getResourceAddress(rtSound, soundID);
+		se->start_sound(soundID);
 	}
 }
 
