@@ -19,7 +19,7 @@ OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \
-	scummvm.dsp scummvm.dsw sound/fmopl.h
+	scummvm.dsp scummvm.dsw sound/fmopl.h gui.h sound.h
 
 .cpp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
