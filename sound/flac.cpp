@@ -771,14 +771,17 @@ void FlacTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int star
 
 	if (flac->isStreamDecoderReady()) {
 		const FLAC__StreamMetadata_StreamInfo &info = flac->getStreamInfo();
-		flac->setLastSample(static_cast<FLAC__uint64>(startFrame + duration) * (info.sample_rate / 75));
+		if (duration)
+			flac->setLastSample(static_cast<FLAC__uint64>(startFrame + duration) * (info.sample_rate / 75));
+		else
+			flac->setLastSample(0);
 
 		if (flac->seekAbsolute(static_cast<FLAC__uint64>(startFrame) * (info.sample_rate / 75))) {
 			mixer->playInputStream(handle, flac, true);
 			return;
 		}
 		// startSample is beyond the existing Samples
-		debug(1, "FlacTrackInfo: Audiostream %s coud not seek to frame %d (ca %d secs)", _file->name(), startFrame, startFrame/75);
+		debug(1, "FlacTrackInfo: Audiostream %s could not seek to frame %d (ca %d secs)", _file->name(), startFrame, startFrame/75);
 		flac->finish();
 	}
 	delete flac; 
