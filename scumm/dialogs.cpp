@@ -51,39 +51,6 @@ struct ResString {
 	char string[80];
 };
 
-// String maps
-static const char* string_map_table_custom[] = { 
-	"Master Volume :",	//0
-	"Music Volume :",	//1
-	"SFX Volume :",		//2
-	"+",				//3
-	"-",				//4
-	"Sound",			//5
-	"Keys",				//6
-	"About",			//7
-	"Pocket ScummVM",		//8
-	"This space intentionally left blank",	//9		SPARE
-	"Do you have a monkey in your pocket?",	//10		SPARE
-	"",					//11		SPARE
-	"Quit",					//12
-	"Pause",				//13
-	"Save",					//14
-	"Skip",					//15
-	"Hide",					//16
-	"Options",				//17
-	"Misc",					//18
-	"Show speech subtitles",		//19
-	"Amiga version",			//20
-	"If you can read this,",		//21		SPARE
-	"you don't need glasses", 		//22		SPARE
-	"Close",				//23
-	"Map",					//24
-	"Choose an action to map",		//25
-	"Press the key to associate",		//26
-	"Please select an action",		//27
-	"Help"					//28
-};
-
 #ifdef __PALM_OS__
 static ResString *string_map_table_v7;
 static ResString *string_map_table_v6;
@@ -213,10 +180,6 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	return tmp;
 }
 
-const char *ScummDialog::queryCustomString(int stringno) {
-	return string_map_table_custom[stringno];
-}
-
 #pragma mark -
 
 enum {
@@ -244,9 +207,9 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, ScummEngine *scumm)
 
 	addButton(x, y, "About", kAboutCmd, 'A'); y += 20;	// About
 #ifndef DISABLE_HELP
-	addButton(x, y, queryCustomString(28), kHelpCmd, 'H'); y += 20;	// Help
+	addButton(x, y, "Help", kHelpCmd, 'H'); y += 20;	// Help
 #endif
-	addButton(x, y, queryCustomString(17), kOptionsCmd, 'O'); y += 20;	// Options
+	addButton(x, y, "Options", kOptionsCmd, 'O'); y += 20;	// Options
 	y += 5;
 
 	addButton(x, y, queryResString(6), kPlayCmd, 'P'); y += 20;	// Play
@@ -447,31 +410,33 @@ OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
 	//
 	// Sound controllers
 	//
-	new StaticTextWidget(this, 15, 10, 95, 16, "Master volume:", kTextAlignRight);
-	new StaticTextWidget(this, 15, 26, 95, 16, "Music volume:", kTextAlignRight);
-	new StaticTextWidget(this, 15, 42, 95, 16, "SFX volume:", kTextAlignRight);
+	int yoffset = 8;
 
-	_masterVolumeSlider = new SliderWidget(this, 125, 8, 80, 12, "Volume1", kMasterVolumeChanged);
-	_musicVolumeSlider  = new SliderWidget(this, 125, 24, 80, 12, "Volume2", kMusicVolumeChanged);
-	_sfxVolumeSlider    = new SliderWidget(this, 125, 40, 80, 12, "Volume3", kSfxVolumeChanged);
-
-	_masterVolumeSlider->setMinValue(0);	_masterVolumeSlider->setMaxValue(255);
-	_musicVolumeSlider->setMinValue(0);	_musicVolumeSlider->setMaxValue(255);
-	_sfxVolumeSlider->setMinValue(0);	_sfxVolumeSlider->setMaxValue(255);
-
-	_masterVolumeLabel = new StaticTextWidget(this, 210, 10, 24, 16, "Volume1", kTextAlignLeft);
-	_musicVolumeLabel  = new StaticTextWidget(this, 210, 26, 24, 16, "Volume2", kTextAlignLeft);
-	_sfxVolumeLabel    = new StaticTextWidget(this, 210, 42, 24, 16, "Volume3", kTextAlignLeft);
-	
+	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "Master volume:", kTextAlignRight);
+	_masterVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kMasterVolumeChanged);
+	_masterVolumeLabel = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
+
+	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "Music volume:", kTextAlignRight);
+	_musicVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kMusicVolumeChanged);
+	_musicVolumeLabel = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
+
+	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "SFX volume:", kTextAlignRight);
+	_sfxVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kSfxVolumeChanged);
+	_sfxVolumeLabel  = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
+	yoffset += 16;
 
 	//
 	// Some misc options
 	//
 	subtitlesCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
-	amigaCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga version", 0, 'P');
 
 	//
 	// Create the sub dialog(s)
@@ -505,7 +470,6 @@ void OptionsDialog::open() {
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
-	amigaCheckbox->setState((_scumm->_features & GF_AMIGA) != 0);
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -553,14 +517,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// Subtitles?
 		_scumm->_noSubtitles = !subtitlesCheckbox->getState();
 		ConfMan.set("nosubtitles", _scumm->_noSubtitles);
-		
-		// Amiga version?
-		if (amigaCheckbox->getState())
-			_scumm->setFeatures (_scumm->_features | GF_AMIGA);
-		else
-			_scumm->setFeatures (_scumm->_features & (~GF_AMIGA));
-
-		ConfMan.set("amiga", amigaCheckbox->getState());
 		
 		// Finally flush the modified config
 		ConfMan.flushToDisk();
@@ -703,14 +659,14 @@ enum {
 
 KeysDialog::KeysDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 160) {
-	addButton(160, 20, queryCustomString(24), kMapCmd, 'M');	// Map
+	addButton(160, 20, "Map", kMapCmd, 'M');	// Map
 	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
 	addButton(160, 60, "Cancel", kCancelCmd, 'C');				// Cancel
 
 	_actionsList = new ListWidget(this, 10, 20, 140, 90);
 	_actionsList->setNumberingMode(kListNumberingZero);
 
-	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, queryCustomString(25), kTextAlignCenter);
+	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, "Choose an action to map", kTextAlignCenter);
 	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
@@ -742,14 +698,14 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		break;
 	case kMapCmd:
 		if (_actionsList->getSelected() < 0) {
-				_actionTitle->setLabel(queryCustomString(27));
+				_actionTitle->setLabel("Please select an action");
 		}
 		else {
 				char selection[100];
 
 				_actionSelected = _actionsList->getSelected() + 1;
 				sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
-				_actionTitle->setLabel(queryCustomString(26));
+				_actionTitle->setLabel("Press the key to associate");
 				_keyMapping->setLabel(selection);
 				_keyMapping->draw();
 				_get_key_mapping = true;
@@ -778,7 +734,7 @@ void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		clearActionKey(ascii & 0xff);
 		getAction(_actionSelected)->action_key = (ascii & 0xff);
 		sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
-		_actionTitle->setLabel(queryCustomString(25));
+		_actionTitle->setLabel("Choose an action to map");
 		_keyMapping->setLabel(selection);
 		_keyMapping->draw();
 		_actionSelected = -1;

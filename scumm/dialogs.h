@@ -49,10 +49,6 @@ protected:
 
 	// Query a string from the resources
 	const String queryResString(int stringno);
-	
-	// Query a custom string. This is in a seperate method so that we
-	// can easily localize the messages in the future if we want to.
-	const char *queryCustomString(int stringno);
 };
 
 class SaveLoadDialog : public ScummDialog {
@@ -136,7 +132,6 @@ protected:
 	StaticTextWidget *_sfxVolumeLabel;
 	
 	CheckboxWidget *subtitlesCheckbox;
-	CheckboxWidget *amigaCheckbox;
 };
 
 class InfoDialog : public ScummDialog {
