@@ -78,6 +78,10 @@ enum {
 	long _mp3_size[CACHE_TRACKS];
 	File *_mp3_tracks[CACHE_TRACKS];
 	int _mp3_index;
+	int _mp3_cd_track;
+	int _mp3_cd_start;
+	int _mp3_cd_delay;
+	int _mp3_cd_num_loops;
 	bool _mp3_cd_playing;
 #endif
 

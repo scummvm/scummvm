@@ -1349,6 +1349,10 @@ int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 		_scumm->_mixer->stop(_mp3_index);		
 	_mp3_index = _scumm->_mixer->playMP3CDTrack(NULL, _mp3_tracks[index], duration);
 	_mp3_cd_playing = true;
+	_mp3_cd_track = track;
+	_mp3_cd_num_loops = num_loops;
+	_mp3_cd_start = start;
+	_mp3_cd_delay = delay;
 	return 0;
 }
 
@@ -1356,6 +1360,10 @@ int Sound::stopMP3CD() {
 	if (_mp3_cd_playing == true) {
 		_scumm->_mixer->stop(_mp3_index);
 		_mp3_cd_playing = false;
+		_mp3_cd_track = 0;
+		_mp3_cd_num_loops = 0;
+		_mp3_cd_start = 0;
+		_mp3_cd_delay = 0;
 		return 0;
 	}
 	return -1;
@@ -1376,8 +1384,13 @@ int Sound::updateMP3CD() {
 		return -1;
 	}
 
-	if (_scumm->_mixer->_channels[_mp3_index]->soundFinished())
-		stopMP3CD();
+	if (_scumm->_mixer->_channels[_mp3_index]->soundFinished()) {
+		if (_mp3_cd_num_loops == -1 || --_mp3_cd_num_loops > 0)
+			playMP3CDTrack(_mp3_cd_track, _mp3_cd_num_loops, _mp3_cd_start, _mp3_cd_delay);
+		else
+			stopMP3CD();
+	}
+
 	return 0;
 }
 #endif
