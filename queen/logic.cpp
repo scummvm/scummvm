@@ -1915,7 +1915,7 @@ const char* Logic::objectOrItemName(int16 obj) const {
 
 	uint16 name;
 	if (obj < 0) {
-		name = _itemData[ABS(obj)].item;
+		name = _itemData[ABS(obj)].name;
 	}
 	else {
 		name = _objectData[obj].name;
@@ -1931,7 +1931,7 @@ Verb Logic::findVerb(int16 cursorx, int16 cursory) const {
 }
 
 
-uint16 Logic::findObjectFromZone(uint16 zoneNum) {
+uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 
 	// l.316-327 select.c
 	uint16 noun = zoneNum;
@@ -1948,6 +1948,12 @@ uint16 Logic::findObjectFromZone(uint16 zoneNum) {
 }
 
 
+uint16 Logic::findObjectGlobalNumber(uint16 zoneNum) const {
+
+	return _roomData[_currentRoom] + findObjectRoomNumber(zoneNum);
+}
+
+
 const char *Logic::verbName(Verb v) const {
 
 	if (v != VERB_NONE && v < 13) {
@@ -1958,7 +1964,6 @@ const char *Logic::verbName(Verb v) const {
 		return NULL;
 	}
 }
-
 
 
 void Logic::update() {

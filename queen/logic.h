@@ -28,10 +28,6 @@
 
 namespace Queen {
 
-#define MAX_ZONES_NUMBER	32
-#define MAX_AREAS_NUMBER    11
-#define JOE_RESPONSE_MAX	40
-
 enum RoomDisplayMode {
 	RDM_FADE_NOJOE  = 0, // fade in, no Joe
 	RDM_FADE_JOE    = 1, // Joe is to be displayed
@@ -58,29 +54,59 @@ struct GameSettings {
 	int talkSpeed;
 };
 
+
+/*!
+	Each object/item in game has a state field. 
+	(refer to ObjectData and ItemData).
+	
+	<table>
+		<tr>
+			<td>Name</td>
+			<td>Bits</td>
+			<td>Description</td>
+		</tr>	
+		<tr>
+			<td>USE</td>
+			<td>10</td>
+			<td>Use</td>
+		</tr>
+		<tr>
+			<td>TALK</td>
+			<td>9</td>
+			<td>Talk</td>
+		</tr>
+		<tr>
+			<td>ON</td>
+			<td>8</td>
+			<td>On/Off</td>
+		</tr>
+		<tr>
+			<td>DEF</td>
+			<td>7,6,5,4</td>
+			<td>Default verb command</td>
+		</tr>
+		<tr>
+			<td>DIR</td>
+			<td>3,2</td>
+			<td>Direction faced</td>
+		</tr>
+		<tr>
+			<td>GRAB</td>
+			<td>1,0</td>
+			<td>Grab Direction</td>
+		</tr>
+	</table>
+*/
 struct State {
 
-	//! FIND_STATE(state, "DIR");
 	static Direction findDirection(uint16 state);
-
-	//! FIND_STATE(state, "TALK");
 	static StateTalk findTalk(uint16 state);
-
-	//! FIND_STATE(state, "GRAB");
 	static StateGrab findGrab(uint16 state);
+	static StateOn   findOn(uint16 state);
+	static Verb      findDefaultVerb(uint16 state);
+	static StateUse  findUse(uint16 state);
 
-	//! FIND_STATE(state, "ON");
-	static StateOn findOn(uint16 state);
-
-	//! FIND_STATE(state, "DEF");
-	static Verb findDefaultVerb(uint16 state);
-
-	static StateUse findUse(uint16 state);
-
-	//! ALTER_STATE(state, "ON");
 	static void alterOn(uint16 *objState, StateOn state);
-
-	//! ALTER_STATE(state, verb);
 	static void alterDefaultVerb(uint16 *objState, Verb v);
 };
 
@@ -217,78 +243,127 @@ public:
 	Walk *walk() { return _walk; }
 	Display *display() { return _display; }
 
-	uint16 findObjectFromZone(uint16 zoneNum);
+	uint16 findObjectRoomNumber(uint16 zoneNum) const;
+	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
 
 	const char *verbName(Verb v) const;
 
 	void update();
 
-protected:
 
-	GameSettings _settings;
+	enum {
+		MAX_ZONES_NUMBER   = 32,
+		MAX_AREAS_NUMBER   = 11,
+		JOE_RESPONSE_MAX   = 40,
+		DEFAULT_TALK_SPEED = 7,
+		GAME_STATE_COUNT   = 211
+	};
+
+
+protected:
 
 	void initialise();
 
+	//! Contents of queen.jas file
 	uint8 *_jas;
-	uint16 _numRooms;
+
 	uint16 _currentRoom;
-	uint16 _oldRoom;	
-	uint16 _newRoom;	
-	uint16 _numNames;
-	uint16 _numObjects;
-	uint16 _numDescriptions;
+	uint16 _oldRoom;
+	uint16 _newRoom;
+
+	//! Total number of room in game
+	uint16 _numRooms;
+
+	//! First object number in room
+	uint16 *_roomData;
+
+	//! Background music to play in room
+	uint16 *_sfxName;
+
+	//! Number of objects in room
+	int16 *_objMax;
+
+	//! Bounding box of object
+	Box *_objectBox;
+
+	//! Inventory items
+	ItemData *_itemData;
 	uint16 _numItems;
+
+	GraphicData *_graphicData;
 	uint16 _numGraphics;
 
-	uint16 _numWalkOffs;
-	uint16 _numObjDesc;
-	uint16 _numCmdList;	//COM_LIST_MAX
-	uint16 _numCmdArea;	//COM_A_MAX
-	uint16 _numCmdObject;	//COM_O_MAX
-	uint16 _numCmdInventory;	//COM_I_MAX
-	uint16 _numCmdGameState;	//COM_G_MAX
-	uint16 _numFurniture;	//FURN_DATA_MAX
+	ObjectData *_objectData;
+	uint16 _numObjects;
+
+	ObjectDescription *_objectDescription;
+	uint16 _numDescriptions;
+
+	ActorData *_actorData;
 	uint16 _numActors;	//ACTOR_DATA_MAX
-	uint16 _numAAnim;	//A_ANIM_MAX
-	uint16 _numAName;	//A_NAME_MAX
-	uint16 _numAFile;	//A_FILE_MAX
+
+	//! Areas in room
+	Area (*_area)[MAX_AREAS_NUMBER];
+
+	//! Number of areas in room
+	int16 *_areaMax;
+
+	//! Walk off point for an object
+	WalkOffData *_walkOffData;
+	uint16 _numWalkOffs;
+
+	CmdListData *_cmdList;
+	uint16 _numCmdList;	//COM_LIST_MAX
+
+	CmdArea *_cmdArea;
+	uint16 _numCmdArea;	//COM_A_MAX
+
+	CmdObject *_cmdObject;
+	uint16 _numCmdObject;	//COM_O_MAX
+
+	CmdInventory *_cmdInventory;
+	uint16 _numCmdInventory;	//COM_I_MAX
+
+	CmdGameState *_cmdGameState;
+	uint16 _numCmdGameState;	//COM_G_MAX
+
+	FurnitureData *_furnitureData;
+	uint16 _numFurniture;	//FURN_DATA_MAX
+	
+	GraphicAnim *_graphicAnim;
 	uint16 _numGraphicAnim;	//GRAPHIC_ANIM_MAX
 
-	uint16 *_roomData;
-	uint16 *_sfxName;
-	int16 *_objMax;
-	int16 *_areaMax;
-	Box *_objectBox;
-	ItemData *_itemData;
-	GraphicData *_graphicData;
-	ObjectData *_objectData;
-	ObjectDescription *_objectDescription;
-	ActorData *_actorData;
-	Area (*_area)[MAX_AREAS_NUMBER];
-	WalkOffData *_walkOffData;
-	CmdListData *_cmdList;
-	CmdArea *_cmdArea;
-	CmdObject *_cmdObject;
-	CmdInventory *_cmdInventory;	
-	CmdGameState *_cmdGameState;
-	FurnitureData *_furnitureData;
-	GraphicAnim *_graphicAnim;
+	//! Current areas in room
 	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
+
+	//! Actor position in room is _walkOffData[_entryObj]
 	uint16 _entryObj;
 
+	//! Object description (Look At)
 	char **_objDescription;	//OBJECT_DESCRstr
-	char **_objName;	//OBJECT_NAMEstr
-	char **_roomName;	//ROOM_NAMEstr	
-	char *_verbName[13];	//VERB_NAMEstr
-	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
-	char **_aAnim;	//A_ANIMstr
-	char **_aName;	//A_NAMEstr
-	char **_aFile;	//A_FILEstr
+	uint16 _numObjDesc;
 
-	enum {
-		DEFAULT_TALK_SPEED = 7,
-		GAME_STATE_COUNT = 211
-	};
+	char **_objName;	//OBJECT_NAMEstr
+	uint16 _numNames;
+
+	//! Room name, prefix for data files (PCX, LUM...)
+	char **_roomName;	//ROOM_NAMEstr	
+
+	char *_verbName[13];	//VERB_NAMEstr
+
+	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
+
+	//! Actor animation string
+	char **_aAnim;
+	uint16 _numAAnim;	//A_ANIM_MAX
+
+	//! Actor name
+	char **_aName;
+	uint16 _numAName;	//A_NAME_MAX
+
+	//! Actor filename
+	char **_aFile;
+	uint16 _numAFile;	//A_FILE_MAX
 
 	struct {
 		uint16	x, y;
@@ -316,6 +391,8 @@ protected:
 
 	//! Describe a string based animation (30 frames maximum, bob number must be < 17)
 	AnimFrame _newAnim[17][30];
+
+	GameSettings _settings;
 
 	Resource *_resource;
 	Graphics *_graphics;

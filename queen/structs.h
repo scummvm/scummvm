@@ -144,7 +144,7 @@ struct GraphicData {
 
 
 struct ObjectData {
-	//! entry in OBJECT_NAME (<0: object is hidden)
+	//! entry in OBJECT_NAME (<0: object is hidden, 0: object has been deleted)
 	int16 name;
 	//! coordinates of object
 	uint16 x, y;
@@ -156,12 +156,16 @@ struct ObjectData {
 	uint16 room;
 	//! state of the object (grab direction, on/off, default command...)
 	uint16 state;
-	//! entry in GraphicData (can be negative)
+	//! entry in GraphicData
 	/*!
 		<table>
 			<tr>
 				<td>value</td>
 				<td>description</td>
+			</tr>
+			<tr>
+				<td>]-4000..-10]</td>
+				<td>graphic image turned off</td>
 			</tr>
 			<tr>
 				<td>-4</td>
@@ -180,7 +184,11 @@ struct ObjectData {
 				<td>static bob (off)</td>
 			</tr>
 			<tr>
-				<td>[0..5000]</td>
+				<td>0</td>
+				<td>object deleted</td>
+			</tr>
+			<tr>
+				<td>]0..5000]</td>
 				<td>static or animated bob (on)</td>
 			</tr>
 			<tr>
@@ -249,7 +257,7 @@ struct ObjectDescription {
 
 struct ItemData {
 	//! entry in OBJECT_NAME
-	int16 item;
+	int16 name;
 	//! entry in OBJECT_DESCR
 	uint16 description;
 	//! state of the object
@@ -260,7 +268,7 @@ struct ItemData {
 	int16 sfxDescription;
 
 	void readFrom(byte *&ptr) {
-		item = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		name = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		description = READ_BE_UINT16(ptr); ptr += 2;
 		state = READ_BE_UINT16(ptr); ptr += 2;
 		bobFrame = READ_BE_UINT16(ptr); ptr += 2;
@@ -326,8 +334,8 @@ struct CmdListData {
 	bool setItems;
 	//! if set, P1_SET_CONDITIONS must be called (using CmdGameState)
 	bool setConditions;
-	//! graphic image of object
-	int16 image;
+	//! graphic image order
+	int16 imageOrder;
 	//! special section to execute
 	/*!
 		refer to execute.c l.423-451
@@ -365,18 +373,18 @@ struct CmdListData {
 		setObjects = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		setItems = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		setConditions = READ_BE_UINT16(ptr) != 0; ptr += 2;
-		image = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		imageOrder = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		specialSection = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
 	bool match(Verb v, int16 obj1, int16 obj2) const {
-		return verb == verb && nounObj1 == obj1 && nounObj2 == obj2;
+		return verb == v && nounObj1 == obj1 && nounObj2 == obj2;
 	}
 };
 
 
 struct CmdArea {
-	//! identifier of the command
+	//! CmdListData number
 	int16 id;
 	//! area to turn off/on (<0: off, >0: on)
 	int16 area;
@@ -392,10 +400,12 @@ struct CmdArea {
 
 
 struct CmdObject {
-	//! identifier of the command
+	//! CmdListData number
 	int16 id;
-	int16 dstObj; // >0: show, <0: hide
-	int16 srcObj; // >0: copy from srcObj, 0: nothing, -1: delete dstObj
+	//! >0: show, <0: hide
+	int16 dstObj;
+	//! >0: copy from srcObj, 0: nothing, -1: delete dstObj
+	int16 srcObj;
 
 	void readFrom(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -406,10 +416,12 @@ struct CmdObject {
 
 
 struct CmdInventory {
-	//! identifier of the command
+	//! CmdListData number
 	int16 id;
-	int16 dstItem; // <0: delete, >0: add
-	int16 srcItem; // >0: valid
+	//! <0: delete, >0: add
+	int16 dstItem;
+	//! >0: valid
+	int16 srcItem;
 
 	void readFrom(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -420,17 +432,17 @@ struct CmdInventory {
 
 
 struct CmdGameState {
-	//! identifier of the command
+	//! CmdListData number
 	int16 id;
 	int16 gameStateSlot;
 	int16 gameStateValue;
-	int16 speakValue;
+	uint16 speakValue;
 
 	void readFrom(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		gameStateSlot = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		speakValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		speakValue = READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
 

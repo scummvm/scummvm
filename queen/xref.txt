@@ -18,6 +18,10 @@ ALTER_DEFAULT()				Command::alterDefault
 CLEAR_COMMAND()				Command::clear
 EXECUTE_ACTION()			Command::executeCurrentAction
 FIND_DEFAULT()				Command::findDefault
+LOOK()
+LOOK_ICON()
+LOOK_ITEM()					Command::lookCurrentItem
+LOOK_ROOM()
 OPEN_CLOSE_OTHER()			Command::openOrCloseAssociatedObject
 P1_SET_CONDITIONS()			Command::setConditions
 P2_SET_AREAS()				Command::setAreas
@@ -30,10 +34,20 @@ SELECT_VERB()				Command::grabSelectedVerb
 -
 ACTION,ACTION2				Command::_action*
 CLEVEL						Command::_commandLevel
+COM_A						Logic::_cmdArea
+COM_A_MAX					Logic::_numCmdArea
+COM_O						Logic::_cmdObject
+COM_O_MAX					Logic::_numCmdObject
+COM_G						Logic::_cmdGameState
+COM_G_MAX					Logic::_numCmdGameState
+COM_I						Logic::_cmdInventory
+COM_I_MAX					Logic::_numCmdInventory
+COM_LIST					Logic::_cmdList
+COM_LIST_MAX				Logic::_numCmdList
 COMMANDstr					Command::_command
 DEFCOMM						Command::_defaultVerb
 OLDVERB,VERB				Command::_*verb*
-OLDNOUN,NOUN,NOUN2			Command::_*old*
+OLDNOUN,NOUN,NOUN2			Command::_*noun*
 PARSE						Command::_parse
 SUBJ1,SUBJ2,SUBJECT			Command::_subject*
 
@@ -194,10 +208,6 @@ FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
 FIND_VERB()					Logic::findVerb
-LOOK()
-LOOK_ICON()
-LOOK_ITEM()
-LOOK_ROOM()
 P3_COPY_FROM()				Cutaway::objectCopy
 R_MAP()						(handle map 'm1')
 REDISP_OBJECT()				Logic::roomRefreshObject
@@ -218,16 +228,6 @@ A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
 AREA						Logic::_area
 AREAMAX						Logic::_areaMax
-COM_A						Logic::_cmdArea
-COM_A_MAX					Logic::_numCmdArea
-COM_O						Logic::_cmdObject
-COM_O_MAX					Logic::_numCmdObject
-COM_G						Logic::_cmdGameState
-COM_G_MAX					Logic::_numCmdGameState
-COM_I						Logic::_cmdInventory
-COM_I_MAX					Logic::_numCmdInventory
-COM_LIST					Logic::_cmdList
-COM_LIST_MAX				Logic::_numCmdList
 DESCTOT						Logic::_numDescriptions
 ENTRY_OBJ					Logic::_entryObj
 FMAX						Logic::_numFurnitureStatic
@@ -451,7 +451,7 @@ CANTQUIT
 
 
 (NO NEED TO BE GLOBAL)
-===============
+======================
 Nstr,F1,F2,F3,F4,F5,F6,F7,F8,SF,BF,AS,MS // MOVE_OTHER (struct movdata *)
 Nstr,S,F,BODY,BF,RF,AF,SANIMstr,FF // FIND_SACTION (struct action *)
 CURRBOB // SETUP_FURNITURE, REDISP_OBJECT, DISP_OBJECTS
