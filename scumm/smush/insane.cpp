@@ -41,7 +41,6 @@
 #ifdef INSANE
 
 // TODO (in no particular order):
-// o Cannot leave mines, problem with playing san from the middle
 // o Ben's velocity don't get zeroed after crash
 // o TRS file support. Everything is in place, I just need to figure out function parameters
 // o Code review/cleanup

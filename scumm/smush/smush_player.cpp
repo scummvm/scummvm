@@ -233,7 +233,7 @@ SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	_soundFrequency = 22050;
 	_speed = speed;
 	_insanity = false;
-	_midleAudio = false;
+	_middleAudio = false;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -317,14 +317,14 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 		_smixer->addChannel(c);
 	}
 
-	if ((_midleAudio) && (index != 0)) {
+	if ((_middleAudio) && (index != 0)) {
 		c->setParameters(max_frames, flags, vol, bal, index);
 	} else if (index == 0) {
 		c->setParameters(max_frames, flags, vol, bal, index);
 	} else {
 		c->checkParameters(index, max_frames, flags, vol, bal);
 	}
-	_midleAudio = false;
+	_middleAudio = false;
 	c->appendData(b, size);
 }
 
@@ -987,7 +987,7 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 	if (pos != 8) {
 		_base->reinit();
 		_base->seek(pos, FileChunk::seek_start);
-		_midleAudio = true;
+		_middleAudio = true;
 	}
 
 	// FIXME: is this really applicable for FLU files? HACK
