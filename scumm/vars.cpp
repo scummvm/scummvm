@@ -37,7 +37,6 @@ void ScummEngine::setupScummVars() {
 	VAR_MACHINE_SPEED = 6;
 	VAR_ME = 7;
 	VAR_NUM_ACTOR = 8;
-	VAR_CURRENTDRIVE = 10;
 	VAR_TMR_1 = 11;
 	VAR_TMR_2 = 12;
 	VAR_TMR_3 = 13;
@@ -166,10 +165,13 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
 	
-	if (_heversion >= 70)
+	if (_heversion >= 70) {
 		VAR_NUM_SOUND_CHANNELS = 9;
-	else
+		VAR_SOUND_CHANNEL = 10;
+		VAR_MUSIC_CHANNEL = 14;
+	} else {
 		VAR_V6_SOUNDMODE = 9;
+	}
 
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
@@ -229,8 +231,8 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_CHARINC = 48;
 	VAR_TALK_ACTOR = 49;
 	VAR_LAST_SOUND = 50;
-	//VAR_SOUND_CHANNEL = 51;
-	//VAR_MUSIC_CHANNEL = 52;
+	VAR_SOUND_CHANNEL = 51;
+	VAR_MUSIC_CHANNEL = 52;
 
 	VAR_NUM_SOUND_CHANNELS = 56;
 	VAR_MEMORY_PERFORMANCE = 57;
@@ -253,9 +255,10 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_NUM_CHARSETS = 73;
 	VAR_NUM_GLOBAL_OBJS = 74;
 
-	if (_heversion >= 80) {
+	if (_heversion >= 80)
 		VAR_WINDOWS_VERSION = 79;
-	}
+	if (_heversion >= 90)
+		VAR_NUM_SPRITES = 106;
 }
 
 void ScummEngine_v7::setupScummVars() {
