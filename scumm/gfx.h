@@ -185,8 +185,8 @@ struct BlastObject {
 
 /** Bomp graphics data, used as parameter to ScummEngine::drawBomp. */
 struct BompDrawData {
-	byte *out;
-	int outwidth, outheight;
+	Graphics::Surface dst;
+
 	int x, y;
 	byte scale_x, scale_y;
 	const byte *dataptr;
@@ -317,7 +317,7 @@ public:
 // be changed but should otherwise be relatively easy to understand, and using
 // VirtScreen::pitch will actually clean up the code.
 //
-// #define V7_SMOOTH_SCROLLING_HACK
+//#define V7_SMOOTH_SCROLLING_HACK
 
 
 } // End of namespace Scumm
