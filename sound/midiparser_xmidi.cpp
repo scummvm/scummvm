@@ -277,6 +277,7 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 		_data = data;
 		_ppqn = 60;
 		resetTracking();
+		setTempo (500000);
 		_inserted_delta = 0;
 		setTrack (0);
 		return true;

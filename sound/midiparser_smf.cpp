@@ -246,6 +246,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	// will persist beyond this call, i.e. we do NOT
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
+	setTempo (500000);
 	setTrack (0);
 	return true;
 }
