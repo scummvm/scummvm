@@ -265,8 +265,14 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		dir = oldDirToNewDir(od.actordir & 3);
 }
 
+static int getDist(int x, int y, int x2, int y2) {
+	int a = ABS(y - y2);
+	int b = ABS(x - x2);
+	return MAX(a, b);
+}
+
 int Scumm::getObjActToObjActDist(int a, int b) {
-	int x, y, x2, y2;
+	int x, y, x2, y2, dist;
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
@@ -291,12 +297,13 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 		y2 = r.y;
 	}
 
-	y = abs(y - y2);
-	x = abs(x - x2);
-
-	if (y > x)
-		x = y;
-	return (_version <= 2) ? x / 8 : x;
+	// Now compute the distance between the two points
+	dist = getDist(x, y, x2, y2);
+	// For V1/V2 games, distances are measured in "charactes" instead of pixels,
+	// so we divide by 8, rounding up.
+	if (_version <= 2)
+		dist = (dist + 7) / 8;
+	return dist;
 }
 
 int Scumm::findObject(int x, int y) {
@@ -1290,14 +1297,6 @@ void Scumm::setObjectState(int obj, int state, int x, int y) {
 
 	addObjectToDrawQue(i);
 	putState(obj, state);
-}
-
-static int getDist(int x, int y, int x2, int y2) {
-	int a = abs(y - y2);
-	int b = abs(x - x2);
-	if (a > b)
-		return a;
-	return b;
 }
 
 int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
