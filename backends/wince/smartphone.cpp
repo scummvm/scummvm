@@ -19,17 +19,18 @@
  *
  */
 
+
 #include "wince.h"
-#include <aygshell.h>
 
 #ifdef WIN32_PLATFORM_WFSP
 
+#include <aygshell.h>
 
 #define IDM_SMARTFON_LIST_BASE 99100
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SMARTFON_VERSION "Smartphone build 04.22.03/test"
+#define SMARTFON_VERSION "Smartphone build 0.4.0"
 
 #define SCAN_LOCATION "\\Storage Card"
 
@@ -109,7 +110,9 @@ const char* SMARTFON_KEYS_MAPPING[TOTAL_KEYS] = {
 	"Some games must be put in a specific directory\r\n" \
 	\
 	"* loomcd for Loom VGA\r\n" \
+	"* loom for Loom EGA\r\n" \
 	"* zak256 for Zak Mc Kracken FMTOWNS\r\n" \
+	"* indy3ega for Indiana Jones 3 EGA\r\n" \
 	"* indy3 for Indiana Jones 3 VGA\r\n" \
 	"* monkeyvga for Monkey Island 1 VGA floppy\r\n" \
 	"* monkeyega for Monkey Island 1 EGA\r\n" \
