@@ -1061,6 +1061,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 				case MKID_BE('REGN'):
 				case MKID_BE('STOP'):
 				case MKID_BE('JUMP'):
+				case MKID_BE('SYNC'):
 					size = READ_BE_UINT32(ptr); ptr += size + 4;
 				break;
 					case MKID_BE('DATA'):
