@@ -224,6 +224,10 @@ SOURCE=.\boxes.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=".\config-file.cpp"
+# End Source File
+# Begin Source File
+
 SOURCE=.\costume.cpp
 # End Source File
 # Begin Source File
@@ -473,6 +477,10 @@ SOURCE=.\boxes.h
 # Begin Source File
 
 SOURCE=.\cdmusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\config-file.h"
 # End Source File
 # Begin Source File
 
