@@ -282,25 +282,10 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		}
 		drawConfigPanel();
 	} else if (zoneNum == ZN_VOICE_TOGGLE) {
-
-		// Only allow change to this setting on CD-ROM version
-		if (_vm->resource()->isCdRom())
-			_vm->sound()->toggleSpeech();
-		else
-			_vm->sound()->speechToggle(true);
-
-		// Ensure text is always on when voice is off
-		if (!_vm->sound()->speechOn())
-			_vm->subtitles(true);
-
+		_vm->sound()->toggleSpeech();
 		drawConfigPanel();
 	} else if (zoneNum == ZN_TEXT_TOGGLE) {
 		_vm->subtitles(!_vm->subtitles());
-
-		// Ensure voice is always on when text is off
-		if (!_vm->subtitles())
-			_vm->sound()->speechToggle(true);
-
 		drawConfigPanel();
 	}
 }
