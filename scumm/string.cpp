@@ -229,7 +229,8 @@ void CharsetRenderer::printCharOld(int chr)
 
 void CharsetRenderer::printChar(int chr)
 {
-	int d, right;
+	int width, height;
+	int d;
 	VirtScreen *vs;
 
 	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
@@ -252,8 +253,8 @@ void CharsetRenderer::printChar(int chr)
 
 	_charPtr = _fontPtr + _charOffs;
 
-	_width = _charPtr[0];
-	_height = _charPtr[1];
+	width = _charPtr[0];
+	height = _charPtr[1];
 	if (_firstChar) {
 		_strLeft = 0;
 		_strTop = 0;
@@ -278,10 +279,8 @@ void CharsetRenderer::printChar(int chr)
 	_top += _offsY;
 	_left += _offsX;
 
-	right = _left + _width;
-
-	if (right > _right + 1 || _left < 0) {
-		_left = right;
+	if (_left + width > _right + 1 || _left < 0) {
+		_left += width;
 		_top -= _offsY;
 		return;
 	}
@@ -305,14 +304,13 @@ void CharsetRenderer::printChar(int chr)
 	int drawTop = _top - vs->topline;
 	if (drawTop < 0)
 		drawTop = 0;
+	int bottom = drawTop + height + _offsY;
 
-	_bottom = drawTop + _height + _offsY;
-
-	_vm->updateDirtyRect(vs->number, _left, right, drawTop, _bottom, 0);
+	_vm->updateDirtyRect(vs->number, _left, _left + width, drawTop, bottom, 0);
 
 	if (vs->number != 0)
 		_blitAlso = false;
-	if (vs->number == 0 && _blitAlso == 0)
+	if (vs->number == 0 && !_blitAlso)
 		_hasMask = true;
 
 	_virtScreenHeight = vs->height;
@@ -328,24 +326,24 @@ void CharsetRenderer::printChar(int chr)
 		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
 			+ vs->xstart + drawTop * _vm->_realWidth + _left;
 
-		drawBits(dst, mask, drawTop);
+		drawBits(dst, mask, drawTop, width, height);
 
-		_vm->blit(back, dst, _width, _height);
+		_vm->blit(back, dst, width, height);
 	} else {
-		drawBits(dst, mask, drawTop);
+		drawBits(dst, mask, drawTop, width, height);
 	}
 	
-	_left += _width;
+	_left += width;
 	if (_left > _strRight)
 		_strRight = _left;
 
-	if (_top + _height > _strBottom)
-		_strBottom = _top + _height;
+	if (_top + height > _strBottom)
+		_strBottom = _top + height;
 
 	_top -= _offsY;
 }
 
-void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop)
+void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop, int width, int height)
 {
 	bool usemask;
 	byte maskmask;
@@ -361,12 +359,16 @@ void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop)
 
 	y = 0;
 
-	for (y = 0; y < _height && y + drawTop < _virtScreenHeight;) {
+	for (y = 0; y < height && y + drawTop < _virtScreenHeight; y++) {
 		maskmask = revBitMask[_left & 7];
 		maskpos = 0;
 
-		for (x = 0; x < _width; x++) {
+		for (x = 0; x < width; x++) {
+			int myMask = (0xFF << (8 - _bpp)) & 0xFF;
+			int myColor = (bits & myMask) >> (8 - _bpp);
 			color = (bits >> (8 - _bpp)) & 0xFF;
+			assert(color == myColor);
+			
 			if (color) {
 				if (usemask) {
 					mask[maskpos] |= maskmask;
@@ -375,18 +377,19 @@ void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop)
 			}
 			dst++;
 			bits <<= _bpp;
-			if ((numbits -= _bpp) == 0) {
+			numbits -= _bpp;
+			if (numbits == 0) {
 				bits = *_charPtr++;
 				numbits = 8;
 			}
-			if ((maskmask >>= 1) == 0) {
+			maskmask >>= 1;
+			if (maskmask == 0) {
 				maskmask = 0x80;
 				maskpos++;
 			}
 		}
-		dst += _vm->_realWidth - _width;
+		dst += _vm->_realWidth - width;
 		mask += _vm->gdi._numStrips;
-		y++;
 	}
 }
 
@@ -856,9 +859,7 @@ void Scumm::drawString(int a)
 	}
 
 	for (i = 0; (chr = buf[i++]) != 0;) {
-		if (chr == 254)
-			chr = 255;
-		if (chr == 255) {
+		if (chr == 254 || chr == 255) {
 			chr = buf[i++];
 			switch (chr) {
 			case 9:

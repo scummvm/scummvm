@@ -25,6 +25,7 @@
 #include "object.h"
 #include "resource.h"
 #include "verbs.h"
+#include "common/util.h"
 
 void Scumm::redrawVerbs()
 {
@@ -115,22 +116,22 @@ int Scumm::checkMouseOver(int x, int y)
 	return 0;
 }
 
-void Scumm::drawVerb(int vrb, int mode)
+void Scumm::drawVerb(int verb, int mode)
 {
 	VerbSlot *vs;
 	byte tmp;
 
-	if (!vrb)
+	if (!verb)
 		return;
 
-	vs = &_verbs[vrb];
+	vs = &_verbs[verb];
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
 		if (vs->type == kImageVerbType) {
-			drawVerbBitmap(vrb, vs->x, vs->y);
+			drawVerbBitmap(verb, vs->x, vs->y);
 			return;
 		}
-		restoreVerbBG(vrb);
+		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->x;
@@ -147,14 +148,18 @@ void Scumm::drawVerb(int vrb, int mode)
 
 		// FIXME For the future: Indy3 and under inv scrolling
 		/*
-		   if (vrb >= 31 && vrb <= 36) 
-		   vrb += _inventoryOffset;
+		   if (verb >= 31 && verb <= 36) 
+		   verb += _inventoryOffset;
 		 */
 
-		_messagePtr = getResourceAddress(rtVerb, vrb);
+		_messagePtr = getResourceAddress(rtVerb, verb);
 		if (!_messagePtr)
 			return;
 		assert(_messagePtr);
+
+		if ((verb == 49 || verb == 48) && mode == 0) {
+			hexdump(_messagePtr, 32);
+		}
 
 		tmp = charset._center;
 		charset._center = 0;
@@ -169,7 +174,7 @@ void Scumm::drawVerb(int vrb, int mode)
 		vs->oldbottom = charset._strBottom;
 		charset._strLeft = charset._strRight;
 	} else {
-		restoreVerbBG(vrb);
+		restoreVerbBG(verb);
 	}
 }
 
@@ -185,7 +190,7 @@ void Scumm::restoreVerbBG(int verb)
 	}
 }
 
-void Scumm::drawVerbBitmap(int vrb, int x, int y)
+void Scumm::drawVerbBitmap(int verb, int x, int y)
 {
 	VirtScreen *vs;
 	VerbSlot *vst;
@@ -208,7 +213,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 	xstrip = x >> 3;
 	ydiff = y - vs->topline;
 
-	obim = getResourceAddress(rtVerb, vrb);
+	obim = getResourceAddress(rtVerb, verb);
 	if (_features & GF_SMALL_HEADER) {
 		int obj;
 		obj = READ_LE_UINT16(obim + 6);
@@ -229,7 +234,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 
 		imptr = findResource(MKID('IM01'), obim);
 		if (!imptr)
-			error("No image for verb %d", vrb);
+			error("No image for verb %d", verb);
 	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
@@ -237,7 +242,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgh << 3, i, 1, true);
 	}
 
-	vst = &_verbs[vrb];
+	vst = &_verbs[verb];
 	vst->right = vst->x + imgw * 8 - 1;
 	vst->bottom = vst->y + imgh * 8 - 1;
 	vst->oldleft = vst->x;

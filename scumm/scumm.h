@@ -199,13 +199,10 @@ protected:
 	byte _bpp;
 	uint32 _charOffs;
 	byte *_charPtr;
-	int _width, _height;
 	int _offsX, _offsY;
-	int _bottom;
 	int _virtScreenHeight;
 
-
-	void drawBits(byte *dst, byte *mask, int drawTop);
+	void drawBits(byte *dst, byte *mask, int drawTop, int width, int height);
 
 public:
 	byte _colorMap[16];
