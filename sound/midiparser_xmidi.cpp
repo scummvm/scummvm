@@ -46,6 +46,8 @@ protected:
 
 protected:
 	uint32 readVLQ2 (byte * &data);
+	void allNotesOff();
+	void resetTracking();
 	void parseNextEvent (EventInfo &info);
 
 public:
@@ -330,6 +332,20 @@ void MidiParser_XMIDI::unloadMusic() {
 	_data = 0;
 	_num_tracks = 0;
 	_active_track = 255;
+}
+
+void MidiParser_XMIDI::allNotesOff() {
+	MidiParser::allNotesOff();
+
+	// Reset the list of active notes.
+	int i;
+	for (i = 0; i < ARRAYSIZE(_notes_cache); ++i)
+		_notes_cache[i].off_time = 0;
+}
+
+void MidiParser_XMIDI::resetTracking() {
+	MidiParser::resetTracking();
+	_inserted_delta = 0;
 }
 
 MidiParser *MidiParser::createParser_XMIDI() { return new MidiParser_XMIDI; }

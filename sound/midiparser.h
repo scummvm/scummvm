@@ -70,8 +70,8 @@ protected:
 
 protected:
 	static uint32 readVLQ (byte * &data);
-	void resetTracking();
-	void allNotesOff();
+	virtual void resetTracking();
+	virtual void allNotesOff();
 	virtual void parseNextEvent (EventInfo &info) = 0;
 
 	// Multi-byte read helpers
