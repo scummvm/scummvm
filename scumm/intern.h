@@ -595,6 +595,7 @@ protected:
 	void o6_readINI();
 	void o6_unknownF4();
 	void o6_unknownF9();
+	void o6_unknownFB();
 	void o6_readFilePos();
 };
 
@@ -621,7 +622,6 @@ protected:
 	/* Version 7 script opcodes */
 	void o7_objectX();
 	void o7_objectY();
-	void o7_unknownFB();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

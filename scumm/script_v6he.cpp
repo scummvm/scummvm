@@ -360,7 +360,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_unknownF9),
 		OPCODE(o6_unknownFA),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownFB),
 		/* FC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1391,6 +1391,31 @@ void ScummEngine_v6he::o6_unknownF9() {
 	}
 
 	warning("stub o6_unknownF9(\"%s\")", filename + r);
+}
+
+void ScummEngine_v6he::o6_unknownFB() {
+	byte b;
+	b = fetchScriptByte();
+
+	switch (b) {
+	case 246:
+	case 248:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 247:
+		pop();
+		pop();
+		break;
+	}
+	warning("o6_unknownFB stub");
 }
 
 void ScummEngine_v6he::decodeParseString(int m, int n) {
