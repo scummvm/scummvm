@@ -422,7 +422,7 @@ static byte map_gm_to_fm [128][30] = {
 
 struct PercussionMapEntry {
 	byte _key; // 0 means no map data
-	char *_name;
+	const char *_name;
 	byte _instrument [30];
 };
 

@@ -642,7 +642,7 @@ int GameDetector::detectMain() {
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-		_gameDataPath = "";
+		_gameDataPath = strdup("");
 #ifndef __PALM_OS__	// add last slash also in File::fopenNoCase, so this is not needed
 	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/'
 #ifdef __MORPHOS__

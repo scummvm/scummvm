@@ -900,7 +900,7 @@ void ScummDebugger::drawBox(int box) {
 }
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
-	char *names[] = {
+	const char *names[] = {
 		"Opening",      "Straw to Gold", "Dyeing",
 		"Night Vision",	"Twisting",      "Sleep",
 		"Emptying",     "Invisibility",  "Terror",
@@ -913,7 +913,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 		   73, 19274,    76,    77, 20302, 20816, 21330,    84
 	};
 		
-	char *notes = "cdefgabC";
+	const char *notes = "cdefgabC";
 	int i, base, draft;
 
 	if (_s->_gameId != GID_LOOM && _s->_gameId != GID_LOOM256) {

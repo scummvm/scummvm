@@ -70,7 +70,7 @@ struct VersionSettings {
 		ADLIB_NEVER     = 3
 	} adlib;
 	uint32 features;
-	char *detectname;
+	const char *detectname;
 };
 
 struct MusicDriver {
