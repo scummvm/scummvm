@@ -21,9 +21,7 @@
 
 #include <time.h>
 #include <sys/stat.h>
-#include "scummsys.h"
-#include "system.h"
-#include "../sound/mixer.h"
+#include "engine.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
@@ -354,10 +352,8 @@ struct GameSpecificSettings {
 };
 
 
-class SimonState {
+class SimonState : public Engine {
 public:
-	OSystem *_system;
-
 	char *_game_path;
 
 	byte *_vc_ptr;								/* video code ptr */
@@ -551,8 +547,6 @@ public:
 
 	byte _fcs_data_1[8];
 	bool _fcs_data_2[8];
-
-	SoundMixer _mixer[1];
 
 	ThreeValues _threevalues_1, _threevalues_2, _threevalues_3, _threevalues_4;
 

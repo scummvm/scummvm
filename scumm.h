@@ -23,9 +23,7 @@
 #ifndef SCUMM_H
 #define SCUMM_H
 
-#include "scummsys.h"
-#include "system.h"
-#include "sound/mixer.h"
+#include "engine.h"
 #include "bundle.h"
 #include "timer.h"
 
@@ -326,12 +324,11 @@ enum MouseButtonStatus {
 #include "gfx.h"
 #include "boxes.h"
 
-class Scumm {
+class Scumm : public Engine {
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
 	 * on some architectures. */
-	OSystem *_system;
 	IMuse *_imuse;
 	Gui *_gui;
 	NewGui *_newgui;
@@ -700,8 +697,6 @@ public:
 	void setVerbObject(uint room, uint object, uint verb);
 
 	/* Should be in Sound class */
-	SoundMixer *_mixer;
-
 //	MixerChannel _mixer_channel[NUM_MIXER];
 	byte _sfxMode;
 	bool _use_adlib;
