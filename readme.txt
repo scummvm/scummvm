@@ -75,8 +75,8 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
 	Macintosh	- SDL/CUSTOM	(Including Classic and Mac OS X)
 	AmigaOS		- SDL/AGA
 	MorphOS		- SDL
+        BeOS            - SDL
 	Acorn (RiscOS)	- ???
-	BeOS		- ???
 	Dreamcast	- ???
 
 Known Bugs:
@@ -96,6 +96,8 @@ listed here, nor in the compatibility table on the website, please see below.
                   an alarm, at Bumpusville
                 - Some overlap may occur in graphics, expecially the intro
                 - Music does not work in adlib mode, use midi
+                - The dark-light torch does not work in the Tunnel of Love.
+                  You'll have to guess where to throw :)
 
        Loom (256 Talkie):
                 - CD music and voices are not always syncronised
@@ -147,7 +149,10 @@ found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 	* Enter the path to the SDL include files in Tools|Options|Directories
 	* Now it should compile successfully.
 
+        BeOS:
+        * Open the 'scummvm.proj' file in BeIDE. Compile as normal.
 
+      
 Running:
 --------
 

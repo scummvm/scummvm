@@ -7,7 +7,8 @@
 #include "mp3_cd.h"
 #include <SDL.h>
 
-
+#define MAX(a,b) (((a)<(b)) ? (b) : (a))
+#define MIN(a,b) (((a)>(b)) ? (b) : (a))
 
 class OSystem_SDL : public OSystem {
 public:
@@ -567,7 +568,7 @@ void OSystem_SDL::update_screen() {
 			/* Calculate area */
 			area += r->w * r->h;
 			
-			/* scale the rect to fit in SDL_UpdateRects */
+			/* scaling the rect to fit in SDL_UpdateRects */
 			r->x <<= 1;
 			r->y <<= 1;
 			r->w <<= 1;
@@ -624,6 +625,43 @@ void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 }
 	
 void OSystem_SDL::set_shake_pos(int shake_pos) {
+	int old_shake_pos = _current_shake_pos;
+	int dirty_height, dirty_blackheight;
+	int dirty_top, dirty_blacktop;
+	
+	if (shake_pos != old_shake_pos) {
+		_current_shake_pos = shake_pos;
+		force_full = true;
+
+		/* Old shake pos was current_shake_pos, new is shake_pos.
+		 * Move the screen up or down to account for the change.
+		 */
+		SDL_Rect dstr = { 0, shake_pos*scaling, 320*scaling, 200*scaling };
+		SDL_Rect srcr = { 0, old_shake_pos*scaling, 320*scaling, 200*scaling };
+		SDL_BlitSurface(sdl_screen, &srcr, sdl_screen, &dstr);
+
+		/* Refresh either the upper part of the screen,
+		 * or the lower part */
+		if (shake_pos > old_shake_pos) {
+			dirty_height = MIN(shake_pos, 0) - MIN(old_shake_pos, 0);
+			dirty_top = -MIN(shake_pos, 0);
+			dirty_blackheight = MAX(shake_pos, 0) - MAX(old_shake_pos, 0);
+			dirty_blacktop = MAX(old_shake_pos, 0);
+		} else {
+			dirty_height = MAX(old_shake_pos, 0) - MAX(shake_pos, 0);
+			dirty_top = 200 - MAX(old_shake_pos, 0);
+			dirty_blackheight = MIN(old_shake_pos, 0) - MIN(shake_pos, 0);
+			dirty_blacktop = 200 + MIN(shake_pos, 0);
+		}
+
+		/* Fill the dirty area with blackness or the scumm image */
+		SDL_Rect blackrect = {0, dirty_blacktop*scaling, 320*scaling, dirty_blackheight*scaling};
+		SDL_FillRect(sdl_screen, &blackrect, 0);
+
+		/* FIXME: Um, screen seems to glitch since this
+		          'not needed' function was removed */
+		//g_scumm->redrawLines(dirty_top, dirty_top + dirty_height);
+	}
 }
 		
 uint32 OSystem_SDL::get_msecs() {
