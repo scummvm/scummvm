@@ -723,11 +723,35 @@ void SwordScreen::fnFlash(uint8 color) {
 
 // ------------------- SwordMenu screen interface ---------------------------
 
-void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo) {
-	FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(resId), frameNo);
-	uint8 *frameData = ((uint8*)frameHead) + sizeof(FrameHeader);
-	_system->copy_rect(frameData, FROM_LE_16(frameHead->width), x, y, FROM_LE_16(frameHead->width), FROM_LE_16(frameHead->height));
-	_resMan->resClose(resId);
+void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask, int8 fadeStatus) {
+	uint8 frame[40 * 40];
+	int i, j;
+
+	memset(frame, 199, sizeof(frame));	// Dark gray background
+
+	if (resId != 0xffffffff) {
+		FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(resId), frameNo);
+		uint8 *frameData = ((uint8*)frameHead) + sizeof(FrameHeader);
+
+		for (i = 0; i < FROM_LE_16(frameHead->height); i++) {
+			for (j = 0; j < FROM_LE_16(frameHead->height); j++) {
+				frame[(i + 4) * 40 + j + 2] = frameData[i * FROM_LE_16(frameHead->width) + j];
+			}
+		}
+
+		_resMan->resClose(resId);
+	}
+
+	if (fadeMask) {
+		for (i = 0; i < 40; i++) {
+			for (j = 0; j < 40; j++) {
+				if (fadeMask[((i % 8) * 8) + (j % 8)] >= fadeStatus)
+					frame[i * 40 + j] = 0;
+			}
+		}
+	}
+
+	_system->copy_rect(frame, 40, x, y, 40, 40);
 }
 
 void SwordScreen::clearMenu(uint8 menuType) {

@@ -50,7 +50,7 @@ public:
 	SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, SwordScreen *screen);
 	bool wasClicked(uint16 mouseX, uint16 mouseY);
 	void setSelect(bool pSel);
-	void draw(void);
+	void draw(const byte *fadeMask = NULL, int8 fadeStatus = 0);
 
 private:
 	uint8 _menuType, _menuPos;
@@ -78,8 +78,10 @@ private:
 	void buildSubjects(void);
 	void buildMenu(void);
 	void showMenu(uint8 menuType);
-	bool _subjectBarShown; // originally "subject_status"
-	bool _objectBarShown; // originally "menu_status"
+	byte _subjectBarStatus;
+	byte _objectBarStatus;
+	int8 _fadeSubject;
+	int8 _fadeObject;
 	uint8 checkMenuClick(uint8 menuType);
 	//- lower menu, speech subjects:
 	SwordMenuIcon *_subjects[16];
@@ -92,6 +94,9 @@ private:
 	SwordScreen *_screen;
 	SwordMouse *_mouse;
 	static const Subject _subjectList[TOTAL_subjects];
+
+	static const byte _fadeEffectTop[64];
+	static const byte _fadeEffectBottom[64];
 };
 
 #endif //BSMENU_H
