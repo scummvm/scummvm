@@ -1748,7 +1748,7 @@ uint32 SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 
 uint32 SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
-	cpt->cursorText = textNo;
+	cpt->cursorText = (uint16) textNo;
 	return 1;
 }
 
