@@ -676,7 +676,7 @@ void Scumm::initCharset(int charsetno) {
 	_string[1].t_charset = charsetno;
 
 	for (i = 0; i < 16; i++)
-		_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
+		_charsetColorMap[i] = _charsetData[charsetno][i];
 }
 
 void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
