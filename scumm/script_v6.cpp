@@ -816,9 +816,10 @@ void ScummEngine_v6::o6_startScript() {
 	script = pop();
 	flags = pop();
 	
-	// HACK bug #556558: At Dino Bungee National Memorial, the buttons for the Wally 
-	// and Rex dinosaurs will always restart their speech, instead of stopping and 
-	// starting their speech. This was a script bug in the original game.
+	// WORKAROUND bug #556558: At Dino Bungee National Memorial, the buttons for
+	// the Wally and Rex dinosaurs will always restart their speech, instead of 
+	// stopping and starting their speech. This was a script bug in the original 
+	// game.
 	if (_gameId == GID_SAMNMAX && _roomResource == 59 &&
 		vm.slot[_currentScript].number == 201 && script == 48) {
 		o6_breakHere();
