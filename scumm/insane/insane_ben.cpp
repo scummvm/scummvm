@@ -1184,7 +1184,10 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 36:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
-		smlayer_setActorCostume(0, 2, readArray(18));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(17));
+		else
+			smlayer_setActorCostume(0, 2, readArray(18));
 		smlayer_setActorFacing(0, 2, 6, 180);
 		smlayer_startSfx(96);
 		switch (_currEnemy) {

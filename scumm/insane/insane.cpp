@@ -177,7 +177,7 @@ void Insane::initvars(void) {
 	
 	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san", 
-						 25, 16, 15, 27, 11, 3);
+						 25, 16, 15, 26, 11, 3);
 	} else {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
 						 26, 16, 17, 27, 11, 3);
