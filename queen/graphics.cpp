@@ -28,7 +28,18 @@ QueenGraphics::QueenGraphics(QueenResource *resource)
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
 	memset(_sortedBobs, 0, sizeof(_sortedBobs));
+	_shrinkBuffer.data = new uint8[BOB_SHRINK_BUF_SIZE];
 
+}
+
+
+QueenGraphics::~QueenGraphics() {
+	uint32 i;
+	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
+		delete _banks[i].data;
+	}
+//	frameClearAll();
+	delete _shrinkBuffer.data;
 }
 
 
@@ -269,15 +280,12 @@ void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, boo
 	BobFrame *pbf = &_frames[bobnum];
 	if (scale < 100) {  // Note: scale is unsigned, hence always >= 0
 		bobShrink(pbf, scale);
-		src = _shrinkBuffer.data;
-		w   = _shrinkBuffer.width;
-		h   = _shrinkBuffer.height;
+		pbf = &_shrinkBuffer;
 	}
-	else {
-		src = pbf->data;
-		w   = pbf->width;
-		h   = pbf->height;
-	}
+
+	src = pbf->data;
+	w   = pbf->width;
+	h   = pbf->height;
 
 	if(w != 0 && h != 0 && box.intersects(x, y, w, h)) {
 
@@ -307,10 +315,7 @@ void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, boo
 			h_new = box.y2 - y + 1;
 		}
 
-		uint16 j;
-		for (j = 0; j < h_new; ++j) {
-			memset(_ulines[y + j], 2, w_new / 16);
-		}
+//		_display->ulines(i, j, w_new / 16, h_new);
 
 		src += w * y_skip;
 		if (!xflip) {
@@ -330,13 +335,7 @@ void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, boo
 void QueenGraphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 	if (bobnum == 0) {
 		// clear panel area
-		uint8 *p = _panel + y * 320 + x;
-		for(uint32 j = 0; j < 32; ++j) {
-			for(uint32 i = 0; i < 32; ++i) {
-				*p++ = INK_BG_PANEL;
-			}
-			p += 320 - 32;
-		}
+//		_display->clear(panel, x, y, 32, 32, INK_BG_PANEL);
 	}
 	else {
 //		BobFrame *pbf = &_frames[bobnum];
@@ -391,7 +390,9 @@ void QueenGraphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 				src += pbf->width;
 				y_count &= 0xFFFF;
 			}
-		} 
+		}
+
+		debug(5, "Shrunk bob, buffer size = %d", new_w * new_h);
 	}
 }
 

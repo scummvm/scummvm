@@ -30,6 +30,8 @@
 #define MAX_BANKS_NUMBER    18
 #define MAX_BOBS_NUMBER     64
 
+#define BOB_SHRINK_BUF_SIZE  60000
+
 
 struct BobFrame {
 	uint16 width, height;
@@ -51,7 +53,7 @@ struct BobSlot {
 	bool active; 
 	uint16 x, y;     //! current position
 	Box box;         //! bounding box
-	bool xflip; 
+	bool xflip;
 	uint16 scale;    //! shrinking percentage
 	uint16 frameNum; //! associated BobFrame
 	uint8 frameDir;  //! 'direction' for the next frame (-1, 1)
@@ -88,16 +90,11 @@ struct BobSlot {
 };
 
 
-//! Inks indexes
-enum {
-	INK_BG_PANEL = 0xE2
-};
-
-
 class QueenGraphics {
 public:
 
 	QueenGraphics(QueenResource *resource);
+	~QueenGraphics();
 
 	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
 	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // unpackbank()
@@ -118,7 +115,6 @@ public:
 
 	void frameErase(uint32 fslot);
 
-
 private:
 	
 	struct PackedBank {
@@ -126,19 +122,11 @@ private:
 		uint8 *data;
 	};
 
-	struct ShrunkBobFrame {
-		uint16 width;
-		uint16 height;
-		uint8 data[60000]; // FIXME: original buffer size, maybe it can be smaller
-	};
-
 	BobFrame _frames[MAX_FRAMES_NUMBER]; //! unbanked bob frames
 	PackedBank _banks[MAX_BANKS_NUMBER]; //! banked bob frames
 	BobSlot _bobs[MAX_BOBS_NUMBER];
-	BobSlot* _sortedBobs[MAX_BOBS_NUMBER + 1]; //! bobs displayed
-	ShrunkBobFrame _shrinkBuffer;
-	uint8 _ulines[201][20];
-	uint8 _panel[320 * 50]; // FIXME: rather in QueenDisplay ?
+	BobSlot *_sortedBobs[MAX_BOBS_NUMBER + 1]; //! bobs displayed
+	BobFrame _shrinkBuffer;
 
 	QueenResource *_resource;
 	
