@@ -699,7 +699,7 @@ void IMuseDigital::callback() {
 		if (_channel[l].used) {
 			assert(_channel[l].stream);
 
-			if (!_channel[l].handle.isActive()) {
+			if (!_channel[l].handle.isActive() && _channel[l].started) {
 				debug(5, "IMuseDigital::callback(): stopped sound: %d", _channel[l].idSound);
 				delete _channel[l].stream;
 				_channel[l].stream = 0;
@@ -733,11 +733,13 @@ void IMuseDigital::callback() {
 
 			if (_scumm->_mixer->isReady()) {
 				int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
-				// FIXME: For whatever reasons, vol gets set to extremly low values, which
-				// results in the affected sounds not really being audible (e.g. volume
-				// 8 out of 255 is *really* quiet).
-//				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
-				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
+				if (!_channel[l].started) {
+					_channel[l].started = true;
+					_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
+				} else {
+					_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
+					_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
+				}
 			}
 		}
 	}
@@ -935,8 +937,7 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 			// Create an AudioInputStream and hook it to the mixer.
 			_channel[l].stream = makeLinearInputStream(freq, mixerFlags | SoundMixer::FLAG_AUTOFREE, data, size, 0, 0);
 
-			_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
-
+			_channel[l].started = false;
 			_channel[l].used = true;
 			return;
 		}

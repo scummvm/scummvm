@@ -79,6 +79,7 @@ private:
 
 		int idSound;
 		bool used;
+		bool started;
 		PlayingSoundHandle handle;
 		AudioInputStream *stream;
 		
