@@ -209,7 +209,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 		return NULL;
 	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 	if (_features & GF_SMALL_HEADER) {
-		if (_features & GF_OLD256)
+		if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
 			return (Box *)(ptr + box * (SIZEOF_BOX - 2) + 1);
 		else
 			return (Box *)(ptr + box * SIZEOF_BOX + 1);

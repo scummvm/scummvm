@@ -1226,7 +1226,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code * 2);
 
 	if (code != 0x7B) {
-		if (!(_vm->_features & GF_OLD256) || code < 0x79)
+		if (!(_vm->_features & GF_OLD256) || code < 0x79) // GF_OLD256 or GF_AFTER_V3 ?
 			return mainRoutine(limb, code);
 	}
 
@@ -1261,7 +1261,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	if (_features & GF_OLD256)
+	if (_features & GF_AFTER_V3)
 		dataptr = p + *(p + lc._numColors + 8);
 	else
 		dataptr = p + READ_LE_UINT16(p + lc._numColors + 8);
@@ -1271,7 +1271,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	do {
 		if (mask & 0x8000) {
-			if (_features & GF_OLD256) {
+			if (_features & GF_AFTER_V3) {
 				j = 0;
 				j = *(r);
 				r++;

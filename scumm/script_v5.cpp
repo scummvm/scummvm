@@ -183,7 +183,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_walkActorToObject),
 		OPCODE(o5_startObject),
 		/* 78 */
-		OPCODE(o5_isGreater),				/* less? */
+		OPCODE(o5_isGreater),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_verbOps),
 		OPCODE(o5_getActorWalkBox),
@@ -198,7 +198,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 84 */
-		OPCODE(o5_isGreaterEqual),	/* less equal? */
+		OPCODE(o5_isGreaterEqual),
 		OPCODE(o5_drawObject),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o5_setState),
@@ -1318,7 +1318,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 void Scumm_v5::o5_matrixOps() {
 	int a, b;
 
-	if (_features & GF_OLD256) {
+	if (_features & GF_AFTER_V3) {
 		a = getVarOrDirectByte(0x80);
 		b = fetchScriptByte();
 		setBoxFlags(a, b);
@@ -1492,7 +1492,7 @@ void Scumm_v5::o5_resourceRoutines() {
 		ensureResourceLoaded(resType[_opcode-1], resid);
 		break;
 	case 4:											// load room 
-		if (_gameId == GID_ZAK256) {
+		if (_features == GF_AFTER_V3) {
 			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
 				resid = _resourceMapper[resid & 0x7F];
@@ -1596,7 +1596,7 @@ void Scumm_v5::o5_resourceRoutines() {
 void Scumm_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
 
-	if (_features & GF_OLD256) {
+	if (_features & GF_AFTER_V3) {
 		a = getVarOrDirectWord(0x80);
 		b = getVarOrDirectWord(0x40);
 	}
@@ -1604,7 +1604,7 @@ void Scumm_v5::o5_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* room scroll */
-		if (!(_features & GF_OLD256)) {
+		if (!(_features & GF_AFTER_V3)) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
@@ -1621,7 +1621,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 2:											/* room color */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_OLD256)) {
+			if (!(_features & GF_AFTER_V2)) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
@@ -1639,7 +1639,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 
 	case 3:											/* set screen */
-		if (!(_features & GF_OLD256)) {
+		if (!(_features & GF_AFTER_V3)) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
@@ -1647,7 +1647,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 4:											/* set palette color */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_OLD256)) {
+			if (!(_features & GF_AFTER_V3)) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
@@ -1681,7 +1681,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 8:											/* room scale? */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_OLD256)) {
+			if (!(_features & GF_AFTER_V3)) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}

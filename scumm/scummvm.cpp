@@ -414,7 +414,7 @@ void Scumm::scummInit() {
 	clearDrawObjectQueue();
 
 	for (i = 0; i < 6; i++) {
-		if (_features & GF_OLD256) {
+		if (_features & GF_AFTER_V3) { // GF_OLD256 or GF_AFTER_V3 ?
 			_string[i].t_xpos = 0;
 			_string[i].t_ypos = 0;
 		} else {
@@ -911,7 +911,7 @@ void Scumm::initRoomSubBlocks() {
 		if (ptr) {
 			byte numOfBoxes = *(ptr);
 			int size;
-			if (_features & GF_OLD256)
+			if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
 				size = numOfBoxes * (SIZEOF_BOX - 2) + 1;
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
@@ -1229,7 +1229,7 @@ void Scumm::processKbd() {
 	else
 		_virtual_mouse_y = mouse.y;
 
-	if (!(_features & GF_OLD256))
+	if (!(_features & GF_AFTER_V3))
 		_virtual_mouse_y += virtscr[0].topline;
 	else
 		_virtual_mouse_y -= 16;
@@ -1237,7 +1237,7 @@ void Scumm::processKbd() {
 	if (_virtual_mouse_y < 0)
 		_virtual_mouse_y = -1;
 
-	if (_features & GF_OLD256) {
+	if (_features & GF_AFTER_V3) {
 		if (_virtual_mouse_y >= virtscr[0].height + virtscr[0].topline)
 			_virtual_mouse_y = -1;
 	} else {

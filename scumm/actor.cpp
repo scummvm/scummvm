@@ -822,7 +822,7 @@ void Scumm::walkActors() {
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
-			if (_features & GF_OLD256)
+			if (_features & GF_AFTER_V3)
 				a->walkActorOld();
 			else
 				a->walkActor();
