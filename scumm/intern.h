@@ -971,6 +971,7 @@ protected:
 	void spritesMarkDirty(bool unkFlag);
 	void spritesUpdateImages();
 	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
+	void spritesSortActiveSprites();
 
 	/* HE version 90 script opcodes */
 	void o90_dup();

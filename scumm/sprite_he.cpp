@@ -1091,4 +1091,52 @@ void ScummEngine_v90he::spritesUpdateImages() {
 	}
 }
 
+static int compareSprTable(const void *a, const void *b) {
+	const SpriteInfo *spr1 = *(const SpriteInfo *const*)a;
+	const SpriteInfo *spr2 = *(const SpriteInfo *const*)b;
+
+	if (spr1->field_0 > spr2->field_0)
+		return 1;
+
+	if (spr1->field_0 < spr2->field_0)
+		return -1;
+
+	return 0;
+}
+
+void ScummEngine_v90he::spritesSortActiveSprites() {
+	int groupField;
+
+	_numSpritesToProcess = 0;
+
+	if (_varNumSprites <= 1)
+		return;
+
+	for (int i = 1; i < _varNumSprites; i++) {
+		SpriteInfo *spi = &_spriteTable[i];
+
+		if (spi->flags & kSF08) {
+			if (!spi->flags & kSF23) {
+				if (!spi->flags & kSF30)
+					spi->flags |= kSFNeedRedraw;
+				if (!spi->flags & kSF31)
+					spi->flags |= kSF01;
+			}
+			if (spi->group_num)
+				groupField = _spriteGroups[spi->group_num].field_10;
+			else
+				groupField = 0;
+
+			spi->field_0 = spi->field_18 + groupField;
+
+			_activeSpritesTable[_numSpritesToProcess++] = spi;
+		}
+	}
+
+	if (_numSpritesToProcess < 2)
+		return;
+
+	qsort(_activeSpritesTable, _numSpritesToProcess, sizeof(SpriteInfo *), compareSprTable);
+}
+
 } // End of namespace Scumm
