@@ -636,7 +636,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		}
 
 	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode > 10) { // OpenGL modes
+		if (value->gfx_mode == GFX_BILINEAR) { // OpenGL mode
 			if (!_usingOpenGL) {
 				_usingOpenGL = true;
 				_mode = GFX_NORMAL;
@@ -652,7 +652,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				fb2gl.setBilinearMode(_glBilinearFilter);
 				break;
 			default: // SDL backend
-				if (value->gfx_mode >= 11)
+				if (value->gfx_mode > 11)	// FIXME! HACK, hard coded threshold, not good
 					return 0;
 
 				_mode = value->gfx_mode;
