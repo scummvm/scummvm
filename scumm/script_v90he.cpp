@@ -230,7 +230,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_findInventory),
 		OPCODE(o6_getInventoryCount),
 		/* 94 */
-		OPCODE(o6_getVerbFromXY),
+		OPCODE(o90_unknown94),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
 		OPCODE(o6_setObjectName),
@@ -658,6 +658,10 @@ void ScummEngine_v90he::o90_unknown26() {
 		case 91:
 			getStackList(args, ARRAYSIZE(args));
 			break;
+		case 105: // HE99+
+			pop();
+			pop();
+			break;
 		case 124:
 			break;
 		case 164:
@@ -909,6 +913,44 @@ void ScummEngine_v90he::o90_unknown3A() {
 	debug(1,"o90_unknown3A stub (%d)", subOp);
 }
 
+void ScummEngine_v90he::o90_unknown94() {
+	int subOp = fetchScriptByte();
+	subOp -= 45;
+
+	switch (subOp) {
+		case 0:
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 7:
+			pop();
+			pop();
+			pop();
+			break;
+		case 21:
+			pop();
+			pop();
+			break;
+		case 87:
+			pop();
+			pop();
+			break;
+		case 172:
+			pop();
+			pop();
+			pop();
+			break;
+		default:
+			error("o90_unknown94: Unknown case %d", subOp);
+	}
+	push(0);
+	debug(1,"o90_unknown94 stub (%d)", subOp);
+}
+
 void ScummEngine_v90he::o90_unknown9E() {
 	int subOp = fetchScriptByte();
 	subOp -= 57;
@@ -931,6 +973,9 @@ void ScummEngine_v90he::o90_unknown9E() {
 		case 13:
 			pop();
 			pop();
+			pop();
+			break;
+		case 19:
 			pop();
 			break;
 		case 29:

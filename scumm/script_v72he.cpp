@@ -1024,6 +1024,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 98:		// SO_SHADOW
 		a->shadow_mode = pop();
+		debug(0, "Set actor XMAP idx to %d\n", a->shadow_mode);
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();

@@ -840,6 +840,7 @@ protected:
 	void o90_unknown36();
 	void o90_unknown37();
 	void o90_unknown3A();
+	void o90_unknown94();
 	void o90_unknown9E();
 };
 
