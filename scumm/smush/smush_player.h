@@ -91,7 +91,6 @@ protected:
 	const char *getString(int id);
 
 private:
-	void updatePalette(void);
 	void parseNextFrame();
 	void init();
 	void release();

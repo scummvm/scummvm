@@ -232,9 +232,9 @@ void Gdi::init() {
 
 	_numStrips = _vm->_screenWidth / 8;
 #ifdef V7_SMOOTH_SCROLLING_HACK
+	// Increase the number of screen strips by one; needed for smooth scrolling
 	if (_vm->_version >= 7) {
-		//if (_vm->_screenWidth < _vm->virtscr[0].w)
-			_numStrips += 1;
+		_numStrips += 1;
 	}
 #endif
 }
@@ -263,6 +263,8 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->pitch = width;
 #ifdef V7_SMOOTH_SCROLLING_HACK
 	if (_version >= 7) {
+		// Increase the pitch by one; needed to accomodate the extra
+		// screen strip which we use to implement smooth scrolling.
 		vs->pitch += 8;
 	}
 #endif
@@ -334,11 +336,7 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 #endif
 		if (lp < 0)
 			lp = 0;
-#ifdef V7_SMOOTH_SCROLLING_HACK
 		rp = (right + vs->xstart) / 8;
-#else
-		rp = right / 8 + _screenStartStrip;
-#endif
 		if (_version >= 7) {
 			if (rp > 409)
 				rp = 409;
@@ -2620,16 +2618,8 @@ void ScummEngine::fadeOut(int effect) {
 		// the current VirtScreen zero.
 
 		free(_scrollBuffer);
-		_scrollBuffer = (byte *) malloc(vs->h * vs->w);
-
-		byte *src = vs->getPixels(0, 0);
-		byte *dst = _scrollBuffer;
-
-		for (int y = 0; y < vs->h; y++) {
-			memcpy(dst, src, vs->w);
-			src += vs->pitch;
-			dst += vs->w;
-		}
+		_scrollBuffer = (byte *) malloc(vs->h * vs->pitch);
+		memcpy(_scrollBuffer, vs->getPixels(0, 0), vs->h * vs->pitch);
 	}
 
 
@@ -2890,7 +2880,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->w, y);
 			if (_scrollBuffer)
 				_system->copyRectToScreen(_scrollBuffer + y * vs->w,
-					vs->w,
+					vs->pitch,
 					0, 0,
 					vs->w, vs->h - y);
 			_system->updateScreen();
@@ -2909,7 +2899,7 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->w, y);
 			if (_scrollBuffer)
 				_system->copyRectToScreen(_scrollBuffer,
-					vs->w,
+					vs->pitch,
 					0, y,
 					vs->w, vs->h - y);
 			_system->updateScreen();
@@ -2928,7 +2918,7 @@ void ScummEngine::scrollEffect(int dir) {
 				x, vs->h);
 			if (_scrollBuffer)
 				_system->copyRectToScreen(_scrollBuffer + x,
-					vs->w,
+					vs->pitch,
 					0, 0,
 					vs->w - x, vs->h);
 			_system->updateScreen();
@@ -2947,7 +2937,7 @@ void ScummEngine::scrollEffect(int dir) {
 				x, vs->h);
 			if (_scrollBuffer)
 				_system->copyRectToScreen(_scrollBuffer,
-					vs->w,
+					vs->pitch,
 					x, 0,
 					vs->w - x, vs->h);
 			_system->updateScreen();
