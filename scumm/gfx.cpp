@@ -89,6 +89,11 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	assert(height >= 0);
 	assert(slot >= 0 && slot < 4);
 
+	if (_gameId == GID_DIG) {
+		if ((!slot) && (_scrHeight != 0))
+			height = _scrHeight;
+	}
+
 	vs->number = slot;
 	vs->unk1 = 0;
 	vs->width = _realWidth;
