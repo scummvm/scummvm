@@ -47,12 +47,12 @@ uint Scumm::getRandomNumber(uint max)
 	/* TODO: my own random number generator */
 	_randSeed1 = 0xDEADBEEF * (_randSeed1 + 1);
 	_randSeed1 = (_randSeed1 >> 13) | (_randSeed1 << 19);
-	return _randSeed1 % max;
+	return _randSeed1 % (max + 1);
 }
 
 uint Scumm::getRandomNumberRng(uint min, uint max)
 {
-	return getRandomNumber(max - min + 1) + min;
+	return getRandomNumber(max - min) + min;
 }
 
 
@@ -1260,6 +1260,14 @@ void Scumm::waitForTimer(int msec_delay) {
 	for(;;) {
 		while (_system->poll_event(&event)) {
 
+
+			// if newgui is running, copy event to EventList, and let the GUI handle it itself
+			// we might consider this approach for ScummLoop as well, and clean up the current mess
+			if (_newgui->isActive()) {
+				_newgui->handleEvent(event);
+				continue;
+			}
+
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
@@ -1315,12 +1323,6 @@ void Scumm::waitForTimer(int msec_delay) {
 				_rightBtnPressed &= ~msDown;
 				break;
 			}
-
-			// if newgui is running, copy event to EventList, and let the GUI handle it itself
-			// we might consider this approach for ScummLoop as well, and clean up the current mess
-			if (_newgui->isActive())
-				_newgui->handleEvent(event);
-
 		}
 #ifdef COMPRESSED_SOUND_FILE
 		if (updateMP3CD() == -1)

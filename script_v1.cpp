@@ -783,7 +783,7 @@ void Scumm::o5_actorSet()
 			getWordVararg(args);
 			for (i = 0; i < 16; i++)
 				if (args[i] != 0xFF)
-					a->palette[i] = args[i] /* & 0x0F */;
+					a->palette[i] = args[i];
 #endif
 			break;
 		case 16:										/* width */
@@ -1393,7 +1393,7 @@ void Scumm::o5_getObjectState()
 void Scumm::o5_getRandomNr()
 {
 	getResultPos();
-	setResult(getRandomNumber(getVarOrDirectByte(0x80) + 1));
+	setResult(getRandomNumber(getVarOrDirectByte(0x80)));
 }
 
 void Scumm::o5_getScriptRunning()

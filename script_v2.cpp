@@ -1511,7 +1511,7 @@ void Scumm::o6_loadRoomWithEgo()
 void Scumm::o6_getRandomNumber()
 {
 	int rnd;
-	rnd = getRandomNumber(pop() + 1);
+	rnd = getRandomNumber(pop());
 	_vars[VAR_V6_RANDOM_NR] = rnd;
 	push(rnd);
 }
@@ -1520,7 +1520,7 @@ void Scumm::o6_getRandomNumberRange()
 {
 	int max = pop();
 	int min = pop();
-	int rnd = getRandomNumber(max - min + 1) + min;
+	int rnd = getRandomNumberRng(min, max);
 	_vars[VAR_V6_RANDOM_NR] = rnd;
 	push(rnd);
 }

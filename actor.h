@@ -63,7 +63,9 @@ struct CostumeData {
 		for (int i = 0; i < 16; i++) {
 			active[i] = 0;
 			curpos[i] = start[i] = end[i] = frame[i] = 0xFFFF;
-}}};
+		}
+	}
+};
 
 class Actor {
 
