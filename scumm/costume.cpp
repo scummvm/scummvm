@@ -93,7 +93,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		ex2 = _srcptr[1];
 		_srcptr += 2;
 		if (ex1 != 0xFF || ex2 != 0xFF) {
-printf("Funky!\n");
+printf("Funky! Tell Fingolfin where you saw this\n");
 			ex1 = READ_LE_UINT16(_loaded._frameOffsets + ex1 * 2);
 			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr-8 + ex1 + ex2 * 2) + 14;
 		}
