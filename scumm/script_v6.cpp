@@ -1741,6 +1741,9 @@ void Scumm_v6::o6_actorOps() {
 	case 217:
 		a->initActor(2);
 		break;
+	case 218:
+		warning("o6_actorOps(): unimplemented opcode 218");
+		break;
 	case 227:										/* actor_layer */
 		a->layer = pop();
 		break;
