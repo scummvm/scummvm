@@ -702,7 +702,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	switch (codec) {
 	case 1:
 	case 3:
-	  //smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
+		smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
 		break;
 	case 37:
 		_codec37.decode(_dst, chunk_buffer);
