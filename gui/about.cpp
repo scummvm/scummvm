@@ -35,9 +35,6 @@ enum {
 	kYOff = 2
 };
 
-// TODO: Probably should display something regarding GPL
-// We could just list our full credits section here now...
-//
 // The following commands can be put at the start of a line (all subject to change):
 //   \C, \L, \R  -- set center/left/right alignment
 //   \c0 - \c4   -- set a custom color:
@@ -57,6 +54,26 @@ static const char *credits_intro[] = {
 "\\C""Broken Sword Games (C) Revolution",
 "\\C""Flight of the Amazon Queen (C) John Passfield",
 "\\C""and Steve Stamatiadis",
+"\\C""",
+"\\C""This program is free software; you can",
+"\\C""redistribute it and/or modify it under the",
+"\\C""terms of the GNU General Public License as",
+"\\C""published by the Free Software Foundation;",
+"\\C""either version 2 of the License, or (at your",
+"\\C""option) any later version.",
+"\\C""",
+"\\C""This program is distributed in the hope that",
+"\\C""it will be useful, but WITHOUT ANY WARRANTY;",
+"\\C""without even the implied warranty of",
+"\\C""MERCHANTABILITY or FITNESS FOR A PARTICULAR",
+"\\C""PURPOSE.  See the GNU General Public License",
+"\\C""for more details.",
+"\\C""",
+"\\C""You should have received a copy of the GNU",
+"\\C""General Public License along with this",
+"\\C""program; if not, write to the Free Software",
+"\\C""Foundation, Inc., 59 Temple Place - Suite 330,",
+"\\C""Boston, MA  02111-1307, USA.",
 "\\C"""
 };
 
