@@ -320,6 +320,7 @@ void Cutaway::actionSpecialMove(int index) {
 			_graphics->initCarBamScene();
 			break;
 
+		// c74a.cut - Turn off big oil splat and gun shots!
 		case 8:
 			_graphics->cleanupCarBamScene(_logic->findBob(594)); // Oil object
 			break;
