@@ -107,7 +107,7 @@ void Surface::fillRect(const Common::Rect &rOld, uint32 color) const {
 			ptr += pitch/2;
 		}
 	} else {
-		error("Surface::vLine: bytesPerPixel must be 1 or 2");
+		error("Surface::fillRect: bytesPerPixel must be 1 or 2");
 	}
 }
 
