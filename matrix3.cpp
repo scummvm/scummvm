@@ -1,14 +1,14 @@
 #include <math.h>
 #include "matrix3.h"
 
-Matrix3::setAsIdentity( void )
+void Matrix3::setAsIdentity( void )
 {
 	right_.set(1.f, 0.f, 0.f);
 	up_.set(0.f, 1.f, 0.f);
 	at_.set(0.f, 0.f, 0.f);
 }
 
-Matrix3::buildFromPitchYawRoll( float pitch, float yaw, float roll )
+void Matrix3::buildFromPitchYawRoll( float pitch, float yaw, float roll )
 {
     Matrix3 temp1, temp2;
 
@@ -37,7 +37,7 @@ float DegreeToRadian( float degrees )
 }
 
 // right
-Matrix3::constructAroundPitch( float pitch )
+void Matrix3::constructAroundPitch( float pitch )
 {
 	float cosa;
 	float sina;
@@ -51,7 +51,7 @@ Matrix3::constructAroundPitch( float pitch )
 }
 
 // up
-Matrix3::constructAroundYaw( float yaw )
+void Matrix3::constructAroundYaw( float yaw )
 {
 	float cosa;
 	float sina;
@@ -65,7 +65,7 @@ Matrix3::constructAroundYaw( float yaw )
 }
 
 // at
-Matrix3::constructAroundRoll( float roll )
+void Matrix3::constructAroundRoll( float roll )
 {
 	float cosa;
 	float sina;
@@ -175,3 +175,4 @@ void Matrix3::transform( Vector3d v )
 
 	v.set( x, y, z );
 }
+

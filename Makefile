@@ -5,7 +5,8 @@ LIBS = -lSDL -lGL -lGLU -Llua/lib -llua -llualib `sdl-config --libs`
 
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
-	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o
+	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o \
+	matrix3.o matrix4.o
 
 DEPS = $(OBJS:.o=.d)
 

@@ -16,3 +16,4 @@ void Matrix4::translate( float x, float y, float z )
 
 	pos_ += v;
 }
+

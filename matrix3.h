@@ -27,12 +27,12 @@ public:
     Vector3d up_;
     Vector3d at_;
 
-	buildFromPitchYawRoll( float pitch, float yaw, float roll );
-	setAsIdentity(void);
+	void buildFromPitchYawRoll( float pitch, float yaw, float roll );
+	void setAsIdentity(void);
 
-	constructAroundPitch( float pitch );
-	constructAroundYaw( float pitch );
-	constructAroundRoll( float pitch );
+	void constructAroundPitch( float pitch );
+	void constructAroundYaw( float pitch );
+	void constructAroundRoll( float pitch );
 
 	void getPitchYawRoll( float* pPitch, float* pYaw, float* pRoll );
 
@@ -80,3 +80,4 @@ private:
 };
 
 #endif // MATRIX_HH
+
