@@ -969,40 +969,50 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 }
 
 File *Sound::openSfxFile() {
-	char buf[256];
-	XORFile *file = new XORFile();
-	_offsetTable = NULL;
-	
 	struct SoundFileExtensions {
 		const char *ext;
 		SoundMode mode;
 	};
 	
-	const SoundFileExtensions extensions[] = {
-#ifdef USE_FLAC
+	static const SoundFileExtensions extensions[] = {
+	#ifdef USE_FLAC
 		{ "sof", kFlacMode },
-#endif
-#ifdef USE_MAD
+	#endif
+	#ifdef USE_MAD
 		{ "so3", kMP3Mode },
-#endif
-#ifdef USE_VORBIS
+	#endif
+	#ifdef USE_VORBIS
 		{ "sog", kVorbisMode },
-#endif
+	#endif
 		{ "sou", kVOCMode },
 		{ 0, kVOCMode }
 	};
+	
+	
 
-	/* Try opening the file <_gameName>.sou first, eg tentacle.sou.
+	char buf[256];
+	ScummFile *file = new ScummFile();
+	_offsetTable = NULL;
+	
+	
+	if (!_vm->_containerFile.isEmpty() && file->open(_vm->_containerFile.c_str())) {
+		if (file->openSubFile("monster.sou")) {
+			_soundMode = kVOCMode;
+		} else {
+			file->close();
+		}
+	}
+	
+	/* Try opening the file <_gameName>.sou first, e.g. tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 	
-	int i, j;
 	const char *basename[3] = { 0, 0, 0 };
 	basename[0] = _vm->getGameName();
 	basename[1] = "monster";
 	
-	for (j = 0; basename[j] && !file->isOpen(); ++j) {
-		for (i = 0; extensions[i].ext; ++i) {
+	for (int j = 0; basename[j] && !file->isOpen(); ++j) {
+		for (int i = 0; extensions[i].ext; ++i) {
 			sprintf(buf, "%s.%s", basename[j], extensions[i].ext);
 			if (file->open(buf)) {
 				_soundMode = extensions[i].mode;
@@ -1019,7 +1029,9 @@ File *Sound::openSfxFile() {
 		if (file->open(buf))
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
-	} else if (_soundMode != kVOCMode) {
+	}
+	
+	if (_soundMode != kVOCMode) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
 		   The format of the .SO3 file is easy :

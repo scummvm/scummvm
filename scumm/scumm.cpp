@@ -1009,6 +1009,27 @@ void ScummEngine::go() {
 
 void ScummEngine::launch() {
 
+	// The mac versions of Sam&Max and DOTT use a special container file to
+	// store the actual SCUMM data files. The rescumm utility used to be used
+	// to extract those files. While that is still possible, we now support
+	// reading those files directly. The first step is to check whether one
+	// of them is present (what we do here); the rest is handled by the 
+	// ScummFile class and code in openResourceFile() (and in the Sound class,
+	// for MONSTER.SOU handling).
+	if (_gameId == GID_SAMNMAX) {
+		const char *samDataFile = "Sam & Max Data";
+		if (_fileHandle.open(samDataFile)) {
+			_containerFile = samDataFile;
+		}
+	}
+	if (_gameId == GID_TENTACLE) {
+		const char *dottDataFile = "Day of the Tentacle Data";
+		if (_fileHandle.open(dottDataFile)) {
+			_containerFile = dottDataFile;
+		}
+	}
+
+
 #ifdef __PALM_OS__
 	if (_features & GF_NEW_COSTUMES)
 		_maxHeapThreshold = gVars->memory[kMemScummNewCostGames];

@@ -61,23 +61,28 @@ struct ScummGameSettings;
 
 typedef Common::Map<Common::String, int> ObjectIDMap;
 
-class XORFile : public File {
+class ScummFile : public File {
 private:
 	byte _encbyte;
+	uint32	_subFileStart;
+	uint32	_subFileLen;
+	Common::String _subFileName;
 public:
-	XORFile() : _encbyte(0) {}
-	void setEnc(byte value) { _encbyte = value; }
+	ScummFile();
+	void setEnc(byte value);
+	
+	void setSubfileRange(uint32 start, uint32 len);
+	void resetSubfile();
 
-	uint32 read(void *ptr, uint32 len) {
-		uint32 realLen = File::read(ptr, len);
-		if (_encbyte) {
-			byte *p = (byte *)ptr;
-			byte *end = p + realLen;
-			while (p < end)
-				*p++ ^= _encbyte;
-		}
-		return realLen;
-	}
+	bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
+	bool openSubFile(const char *filename);
+
+	bool eof();
+	uint32 pos();
+	uint32 size();
+	void seek(int32 offs, int whence = SEEK_SET);
+	uint32 read(void *ptr, uint32 size);
+	uint32 write(const void *ptr, uint32 size);
 };
 
 // Use g_scumm from error() ONLY
@@ -619,8 +624,13 @@ protected:
 	void doSentence(int c, int b, int a);
 
 	/* Should be in Resource class */
-	XORFile _fileHandle;
+	ScummFile _fileHandle;
 	uint32 _fileOffset;
+public:
+	/** The name of the (macintosh/rescumm style) container file, if any. */
+	Common::String _containerFile;
+
+protected:
 	int _resourceHeaderSize;
 	Common::String _gameName;	// This is the name we use for opening resource files
 	Common::String _targetName;	// This is the game the user calls it, so use for saving

@@ -37,6 +37,167 @@ namespace Scumm {
 static uint16 newTag2Old(uint32 oldTag);
 static const char *resTypeFromId(int id);
 
+
+
+ScummFile::ScummFile() : _encbyte(0), _subFileStart(0), _subFileLen(0) {
+}
+
+void ScummFile::setEnc(byte value) {
+	_encbyte = value;
+}
+
+void ScummFile::setSubfileRange(uint32 start, uint32 len) {
+	// TODO: Add sanity checks
+	const uint32 fileSize = File::size();
+	assert(start <= fileSize);
+	assert(start + len <= fileSize);
+	_subFileStart = start;
+	_subFileLen = len;
+	seek(0, SEEK_SET);
+}
+
+void ScummFile::resetSubfile() {
+	_subFileStart = 0;
+	_subFileLen = 0;
+	seek(0, SEEK_SET);
+}
+
+bool ScummFile::open(const char *filename, AccessMode mode, const char *directory) {
+	if (File::open(filename, mode, directory)) {
+		resetSubfile();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool ScummFile::openSubFile(const char *filename) {
+	assert(isOpen());
+
+	// Disable the XOR encryption and reset any current subfile range
+	setEnc(0);
+	resetSubfile();
+
+	// Read in the filename table and look for the specified file
+
+	unsigned long file_off, file_len;
+	char file_name[0x20+1];
+	unsigned long i;
+
+	// Get the length of the data file to use for consistency checks
+	const uint32 data_file_len = size();
+	
+	// Read offset and length to the file records */
+	const uint32 file_record_off = readUint32BE();
+	const uint32 file_record_len = readUint32BE();
+
+	// Do a quick check to make sure the offset and length are good
+	if (file_record_off + file_record_len > data_file_len) {
+		return false;
+	}
+
+	// Do a little consistancy check on file_record_length
+	if (file_record_len % 0x28) {
+		return false;
+	}
+
+	// Scan through the files
+	for (i = 0; i < file_record_len; i += 0x28) {
+		// read a file record
+		seek(file_record_off + i, SEEK_SET);
+		file_off = readUint32BE();
+		file_len = readUint32BE();
+		read(file_name, 0x20);
+		file_name[0x20] = 0;
+
+		assert(file_name[0]);
+		//debug(0, "extracting \'%s\'", file_name);
+		
+		// Consistency check. make sure the file data is in the file
+		if (file_off + file_len > data_file_len) {
+			return false;
+		}
+		
+		if (scumm_stricmp(file_name, filename) == 0) {
+			// We got a match!
+			_subFileName = file_name;
+			setSubfileRange(file_off, file_len);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool ScummFile::eof() {
+	return _subFileLen ? (pos() >= _subFileLen) : File::eof();
+}
+
+uint32 ScummFile::pos() {
+	return File::pos() - _subFileStart;
+}
+
+uint32 ScummFile::size() {
+	return _subFileLen ? _subFileLen : File::size();
+}
+
+void ScummFile::seek(int32 offs, int whence) {
+	if (_subFileLen) {
+		// Constrain the seek to the subfile
+		switch (whence) {
+		case SEEK_END:
+			offs = _subFileStart + _subFileLen - offs;
+			break;
+		case SEEK_SET:
+			offs += _subFileStart;
+			break;
+		case SEEK_CUR:
+			offs += File::pos();
+			break;
+		}
+		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
+		whence = SEEK_SET;
+	}
+	File::seek(offs, whence);
+}
+
+uint32 ScummFile::read(void *ptr, uint32 len) {
+	uint32 realLen;
+	
+	if (_subFileLen) {
+		// Limit the amount we read by the subfile boundaries.
+		const uint32 curPos = pos();
+		assert(_subFileLen >= curPos);
+		uint32 newPos = curPos + len;
+		if (newPos > _subFileLen) {
+			len = _subFileLen - curPos;
+			_ioFailed = true;
+		}
+	}
+	
+	realLen = File::read(ptr, len);
+	
+	
+	// If an encryption byte was specified, XOR the data we just read by it.
+	// This simple kind of "encryption" was used by some of the older SCUMM
+	// games.
+	if (_encbyte) {
+		byte *p = (byte *)ptr;
+		byte *end = p + realLen;
+		while (p < end)
+			*p++ ^= _encbyte;
+	}
+
+	return realLen;
+}
+
+uint32 ScummFile::write(const void *, uint32) {
+	error("ScummFile does not support writing!");
+}
+
+
+
 /* Open a room */
 void ScummEngine::openRoom(int room) {
 	int room_offs, roomlimit;
@@ -217,15 +378,24 @@ void ScummEngine::readRoomsOffsets() {
 
 bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
+	bool result = false;
 
-	if (_fileHandle.isOpen()) {
+	if (!_containerFile.isEmpty()) {
+		if (!_fileHandle.isOpen())
+			_fileHandle.open(_containerFile.c_str());
+		assert(_fileHandle.isOpen());
+		
+		result = _fileHandle.openSubFile(filename);
+	}
+	
+	if (!result) {
 		_fileHandle.close();
+		result = _fileHandle.open(filename);
 	}
 
-	_fileHandle.open(filename);
 	_fileHandle.setEnc(encByte);
 
-	return _fileHandle.isOpen();
+	return result;
 }
 
 void ScummEngine::askForDisk(const char *filename, int disknum) {
