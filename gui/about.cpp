@@ -25,8 +25,8 @@
 #include "gui/widget.h"
 
 AboutDialog::AboutDialog()
-	: Dialog(10, 20, 300, 124) {
-	addButton((_w - kButtonWidth)/2, 100, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+	: Dialog(10, 20, 300, 144) {
+	addButton((_w - kButtonWidth)/2, 120, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 	
 	Common::String version("ScummVM ");
 	version += gScummVMVersion;
@@ -41,8 +41,10 @@ AboutDialog::AboutDialog()
 	new StaticTextWidget(this, 10, 35, _w - 20, kLineHeight, "Copyright (C) 2002-2003 The ScummVM project", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 45, _w - 20, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
 
-	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "SCUMM Games (C) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 85, _w - 20, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "LucasArts SCUMM Games (C) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Humongous SCUMM Games (C) Humongous", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 85, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 95, _w - 20, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 105, _w - 20, kLineHeight, "Broken Sword Games (C) Revolution", kTextAlignCenter);
 }
 
