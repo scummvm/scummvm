@@ -46,15 +46,16 @@ void TextRenderer::init() {
 		}
 		charWidth[i] += 2;
 	}
-    charWidth[(int)' '] = 4;
-    --charWidth[(int)'^'];
+    charWidth[(uint8)' '] = 4;
+    --charWidth[(uint8)'^'];
 }
 
 
 void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 
-	while (*text && x < dstPitch) {
-		const uint8 *pchr = FONT + (*text) * 8;
+    const uint8 *str = (const uint8*)text;
+	while (*str && x < dstPitch) {
+		const uint8 *pchr = FONT + (*str) * 8;
 
 		// FIXME: handle 0x96 character in french version (replace with 0xFB)
 
@@ -70,8 +71,8 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 		}
 		drawChar(dstBuf, dstPitch, x, y, color, pchr);
 
-		x += charWidth[ (int)*text ];
-		++text;
+		x += charWidth[ *str ];
+		++str;
 	}
 }
 
@@ -409,7 +410,7 @@ uint16 Display::textWidth(const char *text) const {
 
 	uint16 len = 0;
 	while (*text) {
-		len += _textRenderer.charWidth[ (int)*text ];
+		len += _textRenderer.charWidth[ (uint8)*text ];
 		++text;
 	}
 	return len;
