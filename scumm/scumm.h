@@ -524,7 +524,7 @@ protected:
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
 	void loadResource(Serializer *ser, int type, int index);
-	void makeSavegameName(char *out, int slot, bool compatible);
+	void makeSavegameName(char *out, int slot, bool temporary);
 
 	int getKeyState(int key);
 
@@ -532,7 +532,7 @@ public:
 	bool getSavegameName(int slot, char *desc);
 	void listSavegames(bool *marks, int num);
 	
-	void requestSave(int slot, const char *name, bool compatible = false);
+	void requestSave(int slot, const char *name, bool temporary = false);
 	void requestLoad(int slot);
 
 	void lock(int type, int i);

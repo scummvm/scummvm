@@ -52,9 +52,9 @@ struct SaveGameHeader {
 };
 
 
-void ScummEngine::requestSave(int slot, const char *name, bool compatible) {
+void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
 	_saveLoadSlot = slot;
-	_saveTemporaryState = compatible;
+	_saveTemporaryState = temporary;
 	_saveLoadFlag = 1;		// 1 for save
 	assert(name);
 	strcpy(_saveLoadName, name);
@@ -345,8 +345,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	return true;
 }
 
-void ScummEngine::makeSavegameName(char *out, int slot, bool compatible) {
-	sprintf(out, "%s.%c%.2d", _targetName.c_str(), compatible ? 'c' : 's', slot);
+void ScummEngine::makeSavegameName(char *out, int slot, bool temporary) {
+	sprintf(out, "%s.%c%.2d", _targetName.c_str(), temporary ? 'c' : 's', slot);
 }
 
 void ScummEngine::listSavegames(bool *marks, int num) {
