@@ -3,7 +3,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.5.0(CVS) (2003-??-??)
 - Added Aspect Ratio option
-- Support for music in Humongous games and siomn2dos/simon2talkie (XMIDI format)
+- Support for music in Humongous games and simon2dos/simon2talkie (XMIDI format)
 - Support for music in simon1demo (Proprietary format)
 - Complete music support for Simon the Sorcerer 2
 - Added support for Amiga version of Monkey Island 1
