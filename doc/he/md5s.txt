@@ -64,7 +64,7 @@ c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
 42161ad979949daf67924b5227b94f2d  airdemo.he4
 765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd)
 khalek, sev
 7.0.0 (Jul  5 1995 14:46:05)
 a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
@@ -275,7 +275,7 @@ faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
 6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
 a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd)
 khalek, sev
 7.0.0 (Jul  5 1995 14:46:05)
 25003798cd5f4b51bc1f4d02c6a2e218  freddemo.w32
@@ -343,6 +343,15 @@ c8aac5e3e701874e2fa4117896f9e1b1  Freddi Demo (0)
 b4805ccd0841854d6b2f596f0efb5551  Freddi Demo (1)
 faca7509c38beabb37b2347b8b6bb1ea  Freddi Demo (2)
 a8c3ced34ecb16ad1b0eed5b464ad61e  Freddi Demo (4)
+
+(freddi2 cd)
+sev
+D:\Scummsrc.80\Sputm\*.c
+d06066ae0ba8ffb338d6a00f556ae3ac FREDDI2.W32
+5057fb0e99e5aa29df1836329232f101 FREDDI2.HE0
+a586db95af3146aa7793c5e2d0ed9e83 FREDDI2.HE1
+9ff9a777a343e605278127c0bbdde58f FREDDI2.HE2
+d22f1b3bd41cb4901f89164043953bc8 FREDDI2.HE4
 
 (russian freddi)
 sev
@@ -573,7 +582,7 @@ f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
 4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
 6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
 
-(spyfox cd/puttzoo cd/he classics cd/pj2 cd)
+(spyfox cd/puttzoo cd/he classics cd/pj2 cd/freddi2 cd)
 khalek, sev
 1996-10-31 22:34 pjs-demo.w32
 D:\Scummsrc.80\Sputm\*.c
@@ -920,7 +929,7 @@ khalek
 225991e6f8d3d6ac5e519413392c34f3  Putt-Putt Saves the Zoo (2)
 d3235443d88751acd3412c1b0c6cec35  Putt-Putt Saves the Zoo (4)
 
-(spyfox cd/pjs cd/he classics cd)
+(spyfox cd/pjs cd/he classics cd/freddi2 cd)
 khalek
 7.0.0 (Jun  4 1995 15:47:12)
 f3324cfe3dec0288fd38197cf88962af  zoodemo.w32
