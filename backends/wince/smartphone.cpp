@@ -30,7 +30,7 @@
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SCAN_LOCATION "\\Storage Card"
+#define SCAN_LOCATION ""
 
 #define KEYS_VERSION 1
 #define TOTAL_KEYS 10
@@ -70,8 +70,6 @@ HMENU gamesListMenu;
 HMENU keysMappingMenu;
 HWND _hWnd;
 HWND _hWndMenu;
-
-extern Config *g_config;
 
 int mouseX;
 int mouseY;
@@ -346,7 +344,7 @@ void SmartfonSkip(OSystem_WINCE3 *wm, int repeat) {
 		else
 			wm->_event.kbd.ascii = VK_ESCAPE;						
 		*/
-		wm->_event.kbd.ascii = KEY_ALL_SKIP;
+		wm->_event.kbd.ascii = Scumm::KEY_ALL_SKIP;
 }
 
 void SmartfonBoss(OSystem_WINCE3 *wm, int repeat) {
@@ -354,8 +352,8 @@ void SmartfonBoss(OSystem_WINCE3 *wm, int repeat) {
 
 	sound_activated = false;
 	Cls();
-	g_scumm->requestSave(0, "BOSS");
-	g_scumm->scummLoop(0);
+	Scumm::g_scumm->requestSave(0, "BOSS");
+	Scumm::g_scumm->scummLoop(0);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
 	SDL_AudioQuit();
@@ -461,36 +459,52 @@ BOOL saveKeyMapping() {
 	char tempo[1024];
 	
 	tempo[0] = '\0';
-	g_config->setInt("KeysVersion", KEYS_VERSION, "smartfon");
+	ConfMan.set("KeysVersion", KEYS_VERSION, "smartfon");
 	for (i=0; i<TOTAL_KEYS; i++) {
 		 char x[4];
 		 sprintf(x, "%.4x ", current_mapping[i]);
 		 strcat(tempo, x);
 	}
-	g_config->set("ActionKeys", tempo, "smartfon");
-	g_config->flush();
+	ConfMan.set("ActionKeys", tempo, "smartfon");
+	ConfMan.flushToDisk();
 
 	return TRUE;
 }
 
 void loadKeyRepeat() {
-	repeatY = g_config->getInt("repeatY", 4, "smartfon-keys");
-	g_config->setInt("repeatY", repeatY, "smartfon-keys");
-	stepY1 = g_config->getInt("stepY1", 2, "smartfon-keys");
-	g_config->setInt("stepY1", stepY1, "smartfon-keys");
-	stepY2 = g_config->getInt("stepY2", 10, "smartfon-keys");
-	g_config->setInt("stepY2", stepY2, "smartfon-keys");
-	stepY3 = g_config->getInt("stepY3", 20, "smartfon-keys");
-	g_config->setInt("stepY3", stepY3, "smartfon-keys");
-	repeatX = g_config->getInt("repeatX", 4, "smartfon-keys");
-	g_config->setInt("repeatX", repeatX, "smartfon-keys");
-	stepX1 = g_config->getInt("stepX1", 2, "smartfon-keys");
-	g_config->setInt("stepX1", stepX1, "smartfon-keys");
-	stepX2 = g_config->getInt("stepX2", 10, "smartfon-keys");
-	g_config->setInt("stepX2", stepX2, "smartfon-keys");
-	stepX3 = g_config->getInt("stepX3", 40, "smartfon-keys");
-	g_config->setInt("stepX3", stepX3, "smartfon-keys");
-	g_config->flush();
+	repeatY = ConfMan.getInt("repeatY", "smartfon-keys");
+	if (!repeatY)
+		repeatY = 4;
+	ConfMan.set("repeatY", repeatY, "smartfon-keys");
+	stepY1 = ConfMan.getInt("stepY1", "smartfon-keys");
+	if (!stepY1)
+		stepY1 = 2;
+	ConfMan.set("stepY1", stepY1, "smartfon-keys");
+	stepY2 = ConfMan.getInt("stepY2", "smartfon-keys");
+	if (!stepY2)
+		stepY2 = 10;
+	ConfMan.set("stepY2", stepY2, "smartfon-keys");
+	stepY3 = ConfMan.getInt("stepY3", "smartfon-keys");
+	if (!stepY3)
+		stepY3 = 20;
+	ConfMan.set("stepY3", stepY3, "smartfon-keys");
+	repeatX = ConfMan.getInt("repeatX", "smartfon-keys");
+	if (!repeatX)
+		repeatX = 4;
+	ConfMan.set("repeatX", repeatX, "smartfon-keys");
+	stepX1 = ConfMan.getInt("stepX1", "smartfon-keys");
+	if (!stepX1)
+		stepX1 = 2;
+	ConfMan.set("stepX1", stepX1, "smartfon-keys");
+	stepX2 = ConfMan.getInt("stepX2", "smartfon-keys");
+	if (!stepX2)
+		stepX2 = 10;
+	ConfMan.set("stepX2", stepX2, "smartfon-keys");
+	stepX3 = ConfMan.getInt("stepX3", "smartfon-keys");
+	if (!stepX3)
+		stepX3 = 40;
+	ConfMan.set("stepX3", stepX3, "smartfon-keys");
+	ConfMan.flushToDisk();
 
 }
 
@@ -498,8 +512,8 @@ BOOL loadKeyMapping() {
 	int version;
 	const char *current;
 
-	version = g_config->getInt("KeysVersion", 0, "smartfon");
-	current = g_config->get("ActionKeys", "smartfon");
+	version = ConfMan.getInt("KeysVersion", "smartfon");
+	current = ConfMan.get("ActionKeys", "smartfon").c_str();
 	if (current && version == KEYS_VERSION) {
 		int i;
 		for (i=0; i<TOTAL_KEYS; i++) {
@@ -591,7 +605,7 @@ int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR
 		addGames();
 
 	// See if sound is activated
-	if (g_config->getBool("Sound", true, "wince"))
+	if (ConfMan.getBool("Sound", "wince") || ConfMan.get("Sound", "wince").c_str() == NULL)
 		CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_CHECKED);
 	else
 		CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_UNCHECKED);
@@ -745,14 +759,14 @@ BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OS
 					free(help);
 					break;
 				case IDM_SMARTFON_SOUND:
-					if (g_config->getBool("Sound", true, "wince")) {
+					if (ConfMan.getBool("Sound", "wince") || ConfMan.get("Sound", "wince").c_str() == NULL) {
 						sound_activated = false;
-						g_config->setBool("Sound", false, "wince");
+						ConfMan.set("Sound", false, "wince");
 						CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_UNCHECKED);
 					}
 					else {
 						sound_activated = true;
-						g_config->setBool("Sound", true, "wince");
+						ConfMan.set("Sound", true, "wince");
 						CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_CHECKED);
 					}
 					break;

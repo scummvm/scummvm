@@ -38,15 +38,16 @@
 #include <gx.h>
 #include "resource.h"
 
-#include "scumm.h"
+#include "scumm/scumm.h"
 //#include "debug.h"
 #include "screen.h"
 #include "gui/newgui.h"
 #include "sound/mididrv.h"
 #include "base/engine.h"
+#include "common/timer.h"
 //#include "simon/simon.h"
 #include "gapi_keys.h"
-#include "config-file.h"
+#include "common/config-manager.h"
 
 
 #include "SDL.h"
@@ -69,7 +70,7 @@ class OSystem_WINCE3;
 #include "pocketpc.h"
 #include "smartphone.h"
 
-#define MAX_NUMBER_OF_DIRTY_SQUARES 10 
+#define MAX_NUMBER_OF_DIRTY_SQUARES 32 
 
 class OSystem_WINCE3 : public OSystem {
 public:

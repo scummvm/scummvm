@@ -20,14 +20,17 @@
  */
 
 #include "wince.h"
+#include "scumm/scumm.h"
 
 extern bool select_game;
+extern bool _force_get_key_mapping;
 extern bool _get_key_mapping;
 extern bool draw_keyboard;
 extern bool hide_toolbar;
 extern bool freelook;
 extern bool is_simon;
 extern bool is_bass;
+extern bool is_sword2;
 extern int num_of_dirty_square;
 extern bool toolbar_drawn;
 extern Engine *engine;
@@ -69,6 +72,12 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 			GAPI_key = getGAPIKeyMapping((short)wParam);
 			if (GAPI_key) {
 			*/
+				if (_force_get_key_mapping) {
+                    unsigned char selected_key = GAPIKeysTranslate((unsigned int)(wParam)) & 0xff;
+					clearActionKey(selected_key);
+					getAction(ACTION_RIGHTCLICK)->action_key = selected_key;
+				}
+				else
 				if (_get_key_mapping) {
 					wm->_event.kbd.flags = 0xff;
 					wm->_event.kbd.ascii = GAPIKeysTranslate((unsigned int)(wParam));
@@ -91,6 +100,9 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 		break;
 
 	case WM_KEYUP:
+		if (_force_get_key_mapping)
+			_force_get_key_mapping = false;
+		else
 		if (_get_key_mapping) {
 			_get_key_mapping = false;
 			wm->_event.kbd.flags = 0xff;
@@ -246,7 +258,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 							do_quit();
 
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-						if (is_simon || is_bass) {
+						if (is_simon || is_bass || is_sword2) {
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 							wm->_event.kbd.keycode = mapKey(VK_ESCAPE);
 							break;
@@ -260,7 +272,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						else
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 						*/
-						wm->_event.kbd.ascii = KEY_ALL_SKIP;
+						wm->_event.kbd.ascii = Scumm::KEY_ALL_SKIP;
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
