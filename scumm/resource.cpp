@@ -75,16 +75,27 @@ void ScummEngine::openRoom(int room) {
 		if (room_offs == -1)
 			break;
 
-		if (room_offs != 0 && room != 0) {
+		if (room_offs != 0 && room != 0 && _heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
-			return;
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
 			if (_heversion >= 70) { // Windows titles
 				if (_heversion >= 98) {
-					sprintf(buf, "%s.%s", _gameName.c_str(), room == 0 ? "he0" : "(a)");
-					sprintf(buf2, "%s.(b)", _gameName.c_str());
+					int disk = 0;
+					if (_heV7DiskOffsets)
+						disk = _heV7DiskOffsets[room];
+
+					switch(disk) {
+					case 2:
+						sprintf(buf, "%s.%s", _gameName.c_str(), "(b)");
+						break;
+					case 1:
+						sprintf(buf, "%s.%s", _gameName.c_str(), "(a)");
+						break;
+					default:
+						sprintf(buf, "%s.%s", _gameName.c_str(), "he0");
+					}
 				} else
 					sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
@@ -424,8 +435,9 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('DISK'):
-			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			debug(2, "DISK index block not yet handled, skipping");
+			i = _fileHandle.readUint16LE();
+			_heV7DiskOffsets = (byte *)calloc(i, 1);
+			_fileHandle.read(_heV7DiskOffsets, i);
 			break;
 
 		case MKID('INIB'):

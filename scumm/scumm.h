@@ -634,6 +634,7 @@ protected:
 	byte _resourceMapper[128];
 	uint32 _allocatedSize;
 	byte _expire_counter;
+	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?

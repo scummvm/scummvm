@@ -261,6 +261,10 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memcpy(sound, ptr, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
+	// Support for later Backyard sports games sounds
+	else if (READ_UINT32(ptr) == MKID('RIFF')) {
+		// TODO: Play WAV, with set sound ID
+	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
 	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
 		if (READ_UINT32(ptr) == MKID('HSHD')) {
@@ -1299,6 +1303,11 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		free(ptr);
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
+		_fileHandle.seek(-12, SEEK_CUR);
+		total_size = _fileHandle.readUint32BE();
+		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		return 1;
+	} else if (basetag == MKID('WSOU')) {
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
