@@ -1982,7 +1982,7 @@ void ScummEngine_v72he::o72_unknownF6() {
 void ScummEngine_v72he::o72_unknownF8() {
 	int id = pop();
 	byte subOp = fetchScriptByte();
-	push(1);
+	push(10);
 
 	debug(1,"stub o72_unknownF8: subOp %d, id %d", subOp, id);
 }
