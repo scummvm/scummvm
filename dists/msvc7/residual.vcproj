@@ -27,7 +27,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -35,7 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib libz.lib"
+				AdditionalDependencies="sdl.lib libz.lib lua.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -68,6 +68,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
+				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="..\..\lua\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
@@ -84,7 +85,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib libz.lib"
+				AdditionalDependencies="sdl.lib libz.lib lua.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -255,6 +256,12 @@
 		</File>
 		<File
 			RelativePath="..\..\model.h">
+		</File>
+		<File
+			RelativePath="..\..\objectstate.cpp">
+		</File>
+		<File
+			RelativePath="..\..\objectstate.h">
 		</File>
 		<File
 			RelativePath="..\..\registry.cpp">
