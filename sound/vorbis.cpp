@@ -48,6 +48,7 @@ private:
 public:
 	VorbisTrackInfo(File *file);
 	~VorbisTrackInfo();
+	bool openTrack();
 	bool error() { return _error_flag; }
 	void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
@@ -119,21 +120,45 @@ static ov_callbacks g_File_wrap = {
 
 
 VorbisTrackInfo::VorbisTrackInfo(File *file) {
-	file_info *f = new file_info;
-
-	f->file = file;
-	f->start = 0;
-	f->len = file->size();
-	f->curr_pos = file->pos();
-
-	if (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0) {
+	
+	_file = file;
+	if (openTrack()) {
 		warning("Invalid file format");
 		_error_flag = true;
-		delete f;
-		delete file;
+		_file = 0;
 	} else {
 		_error_flag = false;
-		_file = file;
+		_file->incRef();
+		ov_clear(&_ov_file);
+	}
+}
+
+bool VorbisTrackInfo::openTrack() {
+	assert(_file);
+
+	file_info *f = new file_info;
+
+	f->file = _file;
+	f->start = 0;
+	f->len = _file->size();
+	f->curr_pos = 0;
+	_file->seek(0);
+	
+	bool err = (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0);
+	
+	if (err) {
+		delete f;
+	} else {
+		_file->incRef();
+	}
+
+	return err;
+}
+
+VorbisTrackInfo::~VorbisTrackInfo() {
+	if (! _error_flag) {
+		ov_clear(&_ov_file);
+		_file->decRef();
 	}
 }
 
@@ -142,6 +167,10 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 #endif
 
 void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
+
+	bool err = openTrack();
+	assert(!err);
+
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #else
@@ -150,13 +179,6 @@ void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int st
 
 	AudioStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
 	mixer->playInputStream(handle, input, true);
-}
-
-VorbisTrackInfo::~VorbisTrackInfo() {
-	if (! _error_flag) {
-		ov_clear(&_ov_file);
-		delete _file;
-	}
 }
 
 DigitalTrackInfo *getVorbisTrack(int track) {
@@ -168,6 +190,7 @@ DigitalTrackInfo *getVorbisTrack(int track) {
 
 	if (file->isOpen()) {
 		VorbisTrackInfo *trackInfo = new VorbisTrackInfo(file);
+		file->decRef();
 		if (!trackInfo->error())
 			return trackInfo;
 		delete trackInfo;
