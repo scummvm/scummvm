@@ -788,7 +788,9 @@ void Sound::soundKludge(int *list, int num) {
 		// is causing the sound queue overflows(in particular, to figure out
 		// the room/script/offset where the bug occurs). Please report your
 		// findings to Fingolfin.
-		error("Sound que buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
+		// Reverting to warning for now room 11, script 2016 offset 0x7Af9 was
+		// what it error'd on here
+		warning("Sound queue buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
 		return;
 	}
 
