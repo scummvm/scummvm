@@ -283,7 +283,6 @@ SCUMM
   - Fix creature behind garage door disappearing in moondemo
   - Fix remaining masking issues, when cars come out of garages in puttputt and
     when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
-  - Fix 'costume x undefined x x' errors in veggie head mini game of fbear
   - Document and fix AKOS differences in Humongous Entertainment games
   - Support various newer Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
