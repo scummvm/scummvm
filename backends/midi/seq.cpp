@@ -38,7 +38,6 @@
 ////////////////////////////////////////
 
 #define SEQ_MIDIPUTC 5
-#define EV_SYSEX     0x94
 
 class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
@@ -142,16 +141,14 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
 	unsigned char buf [1024];
 	int position = 0;
 	byte *chr = msg;
-/*
-	// Should we be using EV_SYSEX instead of SEQ_MIDIPUTC?
-	// I'm not sure how to send EV_SYSEX.
+
 	buf[position++] = SEQ_MIDIPUTC;
 	buf[position++] = 0xFF;
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 	for (; length; --length, ++chr) {
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (unsigned char) *chr;
+		buf[position++] = (unsigned char) *chr & 0x7F;
 		buf[position++] = _device_num;
 		buf[position++] = 0;
 	}
@@ -159,24 +156,6 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
 	buf[position++] = 0xF7;
 	buf[position++] = _device_num;
 	buf[position++] = 0;
-*/
-	buf[position++] = EV_SYSEX;
-	buf[position++] = _device_num;
-	buf[position++] = 0xF0;
-	for (; length; --length, ++chr) {
-		if (position % 8 == 0) {
-			buf[position++] = EV_SYSEX;
-			buf[position++] = _device_num;
-		}
-		buf[position++] = *chr & 0x7F;
-	}
-	if (position % 8 == 0) {
-		buf[position++] = EV_SYSEX;
-		buf[position++] = _device_num;
-	}
-	buf[position++] = 0xF7;
-	while (position % 8 != 0)
-		buf[position++] = 0xFF; // Filler bytes
 
 	write (device, buf, position);
 }
