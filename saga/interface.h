@@ -150,7 +150,7 @@ struct INTERFACE_PANEL {
 	int set_button;
 	int nbuttons;
 	INTERFACE_BUTTON *buttons;
-	SpriteList *sprites;
+	SpriteList sprites;
 };
 
 struct INTERFACE_DESC {
@@ -217,7 +217,7 @@ public:
 	void unlockMode() { _panelMode = _lockedMode; }
 	bool isInMainMode() { return _inMainMode; }
 	int setStatusText(const char *new_txt);
-	int loadScenePortraits(int res);
+	int loadScenePortraits(int resourceId);
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
 	int draw();
@@ -252,8 +252,8 @@ private:
 	char _statusText[STATUS_TEXT_LEN];
 	int _leftPortrait;
 	int _rightPortrait;
-	SpriteList *_defPortraits;
-	SpriteList *_scenePortraits;
+	SpriteList _defPortraits;
+	SpriteList _scenePortraits;
 	int _activeVerb;
 	SCRIPT_THREAD *_iThread;
 

@@ -198,7 +198,7 @@ struct ActorData {
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
 
-	SpriteList *spriteList;		// Actor's sprite list data
+	SpriteList spriteList;		// Actor's sprite list data
 	int spriteListResourceId;	// Actor's sprite list resource id
 
 	ActorFrameSequence *frames;	// Actor's frames
@@ -232,6 +232,7 @@ struct ActorData {
 		memset(this, 0xFE, sizeof(*this)); 
 		walkStepsPoints = NULL;
 		walkStepsAlloced = walkStepsCount = walkStepIndex = 0;
+		memset(&spriteList, 0, sizeof(spriteList));
 	}
 	~ActorData() {
 		free(walkStepsPoints);

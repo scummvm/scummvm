@@ -213,9 +213,15 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	_vm->_sprite->loadList(RID_ITE_COMMAND_BUTTONSPRITES, &_cPanel.sprites);
+	if (_vm->_sprite->loadList(RID_ITE_COMMAND_BUTTONSPRITES, _cPanel.sprites) != SUCCESS) {
+		error("Unable to load sprite list");
+	}
+	
+	
+	if (_vm->_sprite->loadList(RID_ITE_DEFAULT_PORTRAITS, _defPortraits) != SUCCESS) {
+		error("Unable to load sprite list");
+	}
 
-	_vm->_sprite->loadList(RID_ITE_DEFAULT_PORTRAITS, &_defPortraits);
 
 	_vm->decodeBGImage(_cPanel.res, _cPanel.res_len, &_cPanel.img,
 					&_cPanel.img_len, &_cPanel.img_w, &_cPanel.img_h);
@@ -231,7 +237,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_dPanel.y = 149;
 
 	_cPanel.set_button = COMMAND_DEFAULT_BUTTON;
-	_scenePortraits = 0;
 	_leftPortrait = 0;
 	_rightPortrait = 0;
 
@@ -256,6 +261,10 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 Interface::~Interface(void) {
 	free(_inventory);
+	 
+	_cPanel.sprites.freeMem();
+	_defPortraits.freeMem();
+	_scenePortraits.freeMem();
 	_initialized = false;
 }
 
@@ -332,11 +341,10 @@ int Interface::setStatusText(const char *new_txt) {
 	return SUCCESS;
 }
 
-int Interface::loadScenePortraits(int res) {
-	if (_scenePortraits)
-		_vm->_sprite->freeSprite(_scenePortraits);
+int Interface::loadScenePortraits(int resourceId) {
+	_scenePortraits.freeMem();
 
-	return _vm->_sprite->loadList(res, &_scenePortraits);
+	return _vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
 int Interface::setLeftPortrait(int portrait) {

@@ -47,12 +47,12 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_decodeBufLen = DECODE_BUF_LEN;
 
-	_decodeBuf = (byte *)malloc(DECODE_BUF_LEN);
+	_decodeBuf = (byte *)malloc(_decodeBufLen);
 	if (_decodeBuf == NULL) {
 		return;
 	}
 
-	loadList(RID_ITE_MAIN_SPRITES, &_mainSprites); //fixme: IHNM may have no such list
+	loadList(RID_ITE_MAIN_SPRITES, _mainSprites); //fixme: IHNM may have no such list
 
 	_initialized = true;
 }
@@ -63,231 +63,185 @@ Sprite::~Sprite(void) {
 	}
 
 	debug(0, "Shutting down sprite subsystem...");
-
+	_mainSprites.freeMem();
 	free(_decodeBuf);
 }
 
-int Sprite::loadList(int resource_num, SpriteList **sprite_list_p) {
-	SpriteList *new_slist;
-	byte *spritelist_data;
-	size_t spritelist_len;
-	uint16 sprite_count;
-	uint16 i;
+int Sprite::loadList(int resourceId, SpriteList &spriteList) {
+	SpriteInfo *spriteInfo;
+	byte *spriteListData;
+	size_t spriteListLength;
+	uint16 oldSpriteCount;
+	uint16 newSpriteCount;
+	uint16 spriteCount;
+	int i;
+	int outputLength;
+	uint32 offset;
+	const byte *spritePointer;
+	const byte *spriteDataPointer;
 
-	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != SUCCESS) {
+	if (RSC_LoadResource(_spriteContext, resourceId, &spriteListData, &spriteListLength) != SUCCESS) {
+		warning("Sprite::loadList RSC_LoadResource FAILURE");
 		return FAILURE;
 	}
 
-	if (spritelist_len == 0)
+	if (spriteListLength == 0) {
+		warning("Sprite::loadList spriteListLength == 0");
 		return FAILURE;
-
-	MemoryReadStreamEndian readS(spritelist_data, spritelist_len, IS_BIG_ENDIAN);
-
-	sprite_count = readS.readUint16();
-
-	new_slist = (SpriteList *)malloc(sizeof(*new_slist));
-	if (new_slist == NULL) {
-		return MEM;
 	}
 
-	new_slist->sprite_count = sprite_count;
+	MemoryReadStreamEndian readS(spriteListData, spriteListLength, IS_BIG_ENDIAN);
 
-	new_slist->offset_list = (SPRITELIST_OFFSET *)malloc(sprite_count * sizeof(*new_slist->offset_list));
-	if (new_slist->offset_list == NULL) {
-		free(new_slist);
-		return MEM;
+	spriteCount = readS.readUint16();
+
+	oldSpriteCount = spriteList.spriteCount;
+	newSpriteCount = spriteList.spriteCount + spriteCount;
+
+	spriteList.infoList = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
+	if (spriteList.infoList == NULL) {
+		error("Sprite::loadList Not enough memory");
 	}
 
-	for (i = 0; i < sprite_count; i++) {
-		new_slist->offset_list[i].data_idx = 0;
+	spriteList.spriteCount = newSpriteCount;
+
+	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
+		spriteInfo = &spriteList.infoList[i];
 		if (_vm->_features & GF_MAC_RESOURCES)
-			new_slist->offset_list[i].offset = readS.readUint32();
+			offset = readS.readUint32();
 		else
-			new_slist->offset_list[i].offset = readS.readUint16();
+			offset = readS.readUint16();
+
+		if (offset >= spriteListLength) {
+			error("Sprite::loadList offset exceed");
+		}
+
+		spritePointer = spriteListData;
+		spritePointer += offset;
+
+		MemoryReadStream readS(spritePointer, (_vm->_features & GF_MAC_RESOURCES) ? 8 : 4);
+
+		if (!(_vm->_features & GF_MAC_RESOURCES)) {
+			spriteInfo->xAlign = readS.readSByte();
+			spriteInfo->yAlign = readS.readSByte();
+
+			spriteInfo->width = readS.readByte();
+			spriteInfo->height = readS.readByte();
+		} else {
+			spriteInfo->xAlign = readS.readSint16BE();
+			spriteInfo->yAlign = readS.readSint16BE();
+
+			spriteInfo->width = readS.readUint16BE();
+			spriteInfo->height = readS.readUint16BE();
+		}
+		spriteDataPointer = spritePointer + readS.pos();
+		outputLength = spriteInfo->width * spriteInfo->height;
+		decodeRLEBuffer(spriteDataPointer, 64000, outputLength); //todo: 64000 - should be replace by real input length
+		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
+		if (spriteInfo->decodedBuffer == NULL) {
+			error("Sprite::loadList Not enough memory");
+		}
+		memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
 	}
 
-	new_slist->slist_rn = resource_num;
-	new_slist->sprite_data[0] = spritelist_data;
-	new_slist->append_count = 0;
-
-	*sprite_list_p = new_slist;
+	RSC_FreeResource(spriteListData);
 
 	return SUCCESS;
 }
 
-int Sprite::appendList(int resource_num, SpriteList *spritelist) {
-	byte *spritelist_data;
-	size_t spritelist_len;
-	void *test_p;
-	uint16 old_sprite_count;
-	uint16 new_sprite_count;
-	uint16 sprite_count;
-	int i;
+void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
+	SpriteInfo *spriteInfo;
+	assert(spriteList.spriteCount>spriteNumber);
+	spriteInfo = &spriteList.infoList[spriteNumber];
 
-	if (spritelist->append_count >= (APPENDMAX - 1)) {
-		return FAILURE;
+	if (scale < 256) {
+		xAlign = (spriteInfo->xAlign * scale) >> 8;
+		yAlign = (spriteInfo->yAlign * scale) >> 8;
+		height = (spriteInfo->height * scale + 0x80) >> 8;
+		width = (spriteInfo->width * scale + 0x80) >> 8;
+		scaleBuffer(spriteInfo->decodedBuffer, spriteInfo->width, spriteInfo->height, scale);
+		buffer = _decodeBuf;
+	} else {
+		xAlign = spriteInfo->xAlign;
+		yAlign = spriteInfo->yAlign;
+		height = spriteInfo->height;
+		width = spriteInfo->width;
+		buffer = spriteInfo->decodedBuffer;
 	}
 
-	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != SUCCESS) {
-		return FAILURE;
-	}
-
-	MemoryReadStreamEndian readS(spritelist_data, spritelist_len, IS_BIG_ENDIAN);
-
-	sprite_count = readS.readUint16();
-
-	old_sprite_count = spritelist->sprite_count;
-	new_sprite_count = spritelist->sprite_count + sprite_count;
-
-	test_p = realloc(spritelist->offset_list, new_sprite_count * sizeof(*spritelist->offset_list));
-	if (test_p == NULL) {
-		return MEM;
-	}
-
-	spritelist->offset_list = (SPRITELIST_OFFSET *)test_p;
-
-	spritelist->sprite_count = new_sprite_count;
-	spritelist->append_count++;
-
-	for (i = old_sprite_count; i < spritelist->sprite_count; i++) {
-		spritelist->offset_list[i].data_idx = spritelist->append_count;
-		spritelist->offset_list[i].offset = readS.readUint16();
-	}
-
-	spritelist->sprite_data[spritelist->append_count] = spritelist_data;
-
-	return SUCCESS;
 }
 
-int Sprite::getListLen(SpriteList *spritelist) {
-	return spritelist->sprite_count;
-}
-
-int Sprite::freeSprite(SpriteList *spritelist) {
-	int i;
-
-	for (i = 0; i <= spritelist->append_count; i++) {
-
-		RSC_FreeResource(spritelist->sprite_data[i]);
-	}
-
-	free(spritelist->offset_list);
-	free(spritelist);
-
-	return SUCCESS;
-}
-
-int Sprite::draw(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale) {
-	int offset;
-	int offset_idx;
-	byte *sprite_p;
-	const byte *sprite_data_p;
+int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale) {
+	const byte *spriteBuffer;
 	int i, j;
 	byte *buf_row_p;
-	byte *src_row_p;
-	int s_width, so_width;
-	int s_height, so_height;
+	const byte *src_row_p;
 	int clip_width;
 	int clip_height;
-	int x_align;
-	int y_align;
-	Point spr_pt;
+	int width;
+	int height;
+	int xAlign;
+	int yAlign;
+	Point spritePointer;
 
-	if (!_initialized) {
-		return FAILURE;
+	assert(_initialized);
+
+	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
+	
+	spritePointer.x = screenCoord.x + xAlign;
+	spritePointer.y = screenCoord.y + yAlign;
+
+	if (spritePointer.x < 0) {
+		return 0;
 	}
-
-	offset = sprite_list->offset_list[sprite_num].offset;
-	offset_idx = sprite_list->offset_list[sprite_num].data_idx;
-
-	sprite_p = sprite_list->sprite_data[offset_idx];
-	sprite_p += offset;
-
-	assert(sprite_p);
-
-	MemoryReadStream readS(sprite_p, 8);
-	if (!(_vm->_features & GF_MAC_RESOURCES)) {
-		x_align = readS.readSByte();
-		y_align = readS.readSByte();
-
-		so_width = s_width = readS.readByte();
-		so_height = s_height = readS.readByte();
-	} else {
-		x_align = readS.readSint16BE();
-		y_align = readS.readSint16BE();
-
-		so_width = s_width = readS.readUint16BE();
-		so_height = s_height = readS.readUint16BE();
-	}
-	spr_pt.x = screenCoord.x + x_align;
-	spr_pt.y = screenCoord.y + y_align;
-
-	if (scale < 256)
-		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
-
-	sprite_data_p = sprite_p + readS.pos();
-
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, so_width * so_height);
-
-	if (scale < 256)
-		scaleSprite(_decodeBuf, so_width, so_height, scale);
-
-	if (spr_pt.x < 0) {
+	if (spritePointer.y < 0) {
 		return 0;
 	}
 
-	if (spr_pt.y < 0) {
-		return 0;
-	}
-
-	buf_row_p = (byte *)ds->pixels + ds->pitch * spr_pt.y;
-	src_row_p = _decodeBuf;
+	buf_row_p = (byte *)ds->pixels + ds->pitch * spritePointer.y;
+	src_row_p = spriteBuffer;
 
 	// Clip to right side of surface
-	clip_width = s_width;
-	if (s_width > (ds->w - spr_pt.x)) {
-		clip_width = (ds->w - spr_pt.x);
+	clip_width = width;
+	if (width > (ds->w - spritePointer.x)) {
+		clip_width = (ds->w - spritePointer.x);
 	}
 
 	// Clip to bottom side of surface
-	clip_height = s_height;
-	if (s_height > (ds->h - spr_pt.y)) {
-		clip_height = (ds->h - spr_pt.y);
+	clip_height = height;
+	if (height > (ds->h - spritePointer.y)) {
+		clip_height = (ds->h - spritePointer.y);
 	}
 
 	for (i = 0; i < clip_height; i++) {
 		for (j = 0; j < clip_width; j++) {
 			if (*(src_row_p + j) != 0) {
-				*(buf_row_p + j + spr_pt.x) = *(src_row_p + j);
+				*(buf_row_p + j + spritePointer.x) = *(src_row_p + j);
 			}
 		}
 		buf_row_p += ds->pitch;
-		src_row_p += s_width;
+		src_row_p += width;
 	}
 
 	return SUCCESS;
 }
 
-int Sprite::drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth) {
-	int offset;
-	int offset_idx;
-	byte *sprite_p;
-	const byte *sprite_data_p;
+int Sprite::drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
+	const byte *spriteBuffer;
 	int x, y;
 	byte *dst_row_p;
-	byte *src_row_p;
-	byte *src_p;
+	const byte *src_row_p;
+	const byte *src_p;
 	byte *dst_p;
 	byte *mask_p;
-	int s_width, so_width;
-	int s_height, so_height;
-	int x_align;
-	int y_align;
+	int width;
+	int height;
+	int xAlign;
+	int yAlign;
+	Point spritePointer;
 
 	// Clipinfo variables
-	Point spr_pt;
-	Rect spr_src_rect;
-	Rect spr_dst_rect;
+	Rect spriteSourceRect;
+	Rect spriteDestRect;
 	CLIPINFO ci;
 
 	// BG mask variables
@@ -299,67 +253,32 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, c
 	int mask_z;
 
 
-	if (!_initialized) {
-		return FAILURE;
-	}
+	assert(_initialized);
 
 	if (!_vm->_scene->isBGMaskPresent()) {
-		return draw(ds, sprite_list, sprite_num, screenCoord, scale);
+		return draw(ds, spriteList, spriteNumber, screenCoord, scale);
 	}
-
-	if (sprite_num >= sprite_list->sprite_count) {
-		warning("Invalid sprite number (%d) for sprite list %d", sprite_num, sprite_list->slist_rn);
-		return FAILURE;
-	}
-
-	// Get sprite data from list 
-	offset = sprite_list->offset_list[sprite_num].offset;
-	offset_idx = sprite_list->offset_list[sprite_num].data_idx;
-
-	sprite_p = sprite_list->sprite_data[offset_idx];
-	sprite_p += offset;
-
-	MemoryReadStream readS(sprite_p, 8);
-
-	// Read sprite dimensions -- should probably cache this stuff in 
-	// sprite list
-	if (!(_vm->_features & GF_MAC_RESOURCES)) {
-		x_align = readS.readSByte();
-		y_align = readS.readSByte();
-
-		so_width = s_width = readS.readByte();
-		so_height = s_height = readS.readByte();
-	} else {
-		x_align = readS.readSint16BE();
-		y_align = readS.readSint16BE();
-
-		so_width = s_width = readS.readUint16BE();
-		so_height = s_height = readS.readUint16BE();
-	}
-
-	sprite_data_p = sprite_p + readS.pos();
 
 	_vm->_scene->getBGMaskInfo(maskWidth, maskHeight, maskBuffer, maskBufferLength);
 
-	if (scale < 256)
-		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
+	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 
-	spr_src_rect.left = 0;
-	spr_src_rect.top = 0;
-	spr_src_rect.right = s_width;
-	spr_src_rect.bottom = s_height;
+	spritePointer.x = screenCoord.x + xAlign;
+	spritePointer.y = screenCoord.y + yAlign;
 
-	spr_dst_rect.left = 0;
-	spr_dst_rect.top = 0;
-	spr_dst_rect.right = ds->clip_rect.right;
-	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)maskHeight);
+	spriteSourceRect.left = 0;
+	spriteSourceRect.top = 0;
+	spriteSourceRect.right = width;
+	spriteSourceRect.bottom = height;
 
-	spr_pt.x = screenCoord.x + x_align;
-	spr_pt.y = screenCoord.y + y_align;
-
-	ci.dst_rect = &spr_dst_rect;
-	ci.src_rect = &spr_src_rect;
-	ci.dst_pt = &spr_pt;
+	spriteDestRect.left = 0;
+	spriteDestRect.top = 0;
+	spriteDestRect.right = ds->clip_rect.right;
+	spriteDestRect.bottom = MIN(ds->clip_rect.bottom, (int16)maskHeight);
+	
+	ci.dst_rect = &spriteDestRect;
+	ci.src_rect = &spriteSourceRect;
+	ci.dst_pt = &spritePointer;
 
 	getClipInfo(&ci);
 
@@ -367,13 +286,9 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, c
 		return SUCCESS;
 	}
 
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, so_width * so_height);
-
-	if (scale < 256)
-		scaleSprite(_decodeBuf, so_width, so_height, scale);
 
 	// Finally, draw the occluded sprite
-	src_row_p = _decodeBuf + ci.src_draw_x + (ci.src_draw_y * s_width);
+	src_row_p = spriteBuffer + ci.src_draw_x + (ci.src_draw_y * width);
 
 	dst_row_p = (byte *)ds->pixels + ci.dst_draw_x + (ci.dst_draw_y * ds->pitch);
 	mask_row_p = maskBuffer + ci.dst_draw_x + (ci.dst_draw_y * maskWidth);
@@ -395,59 +310,57 @@ int Sprite::drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, c
 		}
 		dst_row_p += ds->pitch;
 		mask_row_p += maskWidth;
-		src_row_p += s_width;
+		src_row_p += width;
 	}
 
 	return SUCCESS;
 }
 
-int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
+void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength) {
 	int bg_runcount;
 	int fg_runcount;
-	byte *outbuf_ptr;
-	byte *outbuf_end;
+	byte *outPointer;
+	byte *outPointerEnd;
 	int c;
 
-	outbuf_ptr = outbuf;
+	if (outLength > _decodeBufLen) { // TODO: may we should make dynamic growing?
+		error("Sprite::decodeRLEBuffer outLength > _decodeBufLen");
+	}
+	
+	outPointer = _decodeBuf;
+	outPointerEnd = _decodeBuf + outLength;
+	outPointerEnd--;
 
-	outbuf_end = outbuf + outbuf_len;
-	outbuf_end--;
+	memset(outPointer, 0, outLength);
 
-	memset(outbuf, 0, outbuf_len);
+	MemoryReadStream readS(inputBuffer, inLength);
 
-	MemoryReadStream readS(inbuf, inbuf_len);
-
-	while (!readS.eof() && (outbuf_ptr < outbuf_end)) {
+	while (!readS.eof() && (outPointer < outPointerEnd)) {
 		bg_runcount = readS.readByte();
 		fg_runcount = readS.readByte();
 
 		for (c = 0; c < bg_runcount; c++) {
-			*outbuf_ptr = (byte) 0;
-			if (outbuf_ptr < outbuf_end)
-				outbuf_ptr++;
+			*outPointer = (byte) 0;
+			if (outPointer < outPointerEnd)
+				outPointer++;
 			else
-				return 0;
+				return;
 		}
 
 		for (c = 0; c < fg_runcount; c++) {
-			*outbuf_ptr = readS.readByte();
-			if (outbuf_ptr < outbuf_end)
-				outbuf_ptr++;
+			*outPointer = readS.readByte();
+			if (outPointer < outPointerEnd)
+				outPointer++;
 			else
-				return 0;
+				return;
 		}
 	}
-
-	return SUCCESS;
 }
 
-void Sprite::scaleSprite(byte *buf, int width, int height, int scale) {
+void Sprite::scaleBuffer(const byte *src, int width, int height, int scale) {
 	byte skip = 256 - scale; // skip factor
-
 	byte vskip = 0x80, hskip;
-	byte *src, *dst;
-
-	src = dst = buf;
+	byte *dst = _decodeBuf;
 
 	for (int i = 0; i < height; i++) {
 		vskip += skip;
@@ -466,13 +379,6 @@ void Sprite::scaleSprite(byte *buf, int width, int height, int scale) {
 			}
 		}
 	}
-}
-
-void Sprite::scaleSpriteCoords(int scale, int *width, int *height, int *x_align, int *y_align) {
-	*x_align = (*x_align * scale) >> 8;
-	*y_align = (*y_align * scale) >> 8;
-	*height = (*height * scale + 0x80) >> 8;
-	*width = (*width * scale + 0x80) >> 8;
 }
 
 

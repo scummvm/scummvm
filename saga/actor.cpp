@@ -228,7 +228,7 @@ Actor::~Actor() {
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
 		free(actor->frames);
-		_vm->_sprite->freeSprite(actor->spriteList);
+		actor->spriteList.freeMem();
 	}
 }
 
@@ -239,6 +239,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	ActorFrameSequence *framesPointer;
 	int lastFrame;
 	int i, orient;
+	int resourceId;
 
 	if (actor->frameListResourceId == 0) {
 		warning("Frame List ID = 0 for actor index %d", actor->index);
@@ -281,20 +282,22 @@ bool Actor::loadActorResources(ActorData *actor) {
 	actor->frames = framesPointer;
 	actor->framesCount = framesCount;
 
-
-	debug(9, "Loading sprite resource id %d", actor->spriteListResourceId);
-	if (_vm->_sprite->loadList(actor->spriteListResourceId, &actor->spriteList) != SUCCESS) {
+	resourceId = actor->spriteListResourceId;
+	debug(9, "Loading sprite resource id %d", resourceId);
+	if (_vm->_sprite->loadList(resourceId, actor->spriteList) != SUCCESS) {
 		warning("Unable to load sprite list");
 		return false;
 	}
 
-	i = _vm->_sprite->getListLen(actor->spriteList);
-
-	if (lastFrame >= i) {
-		debug(9, "Appending to sprite list %d (+ %d)", actor->spriteListResourceId, lastFrame);
-		if (_vm->_sprite->appendList(actor->spriteListResourceId + 1, actor->spriteList) != SUCCESS) {
-			warning("Unable append sprite list");
-			return false;
+	i = actor->spriteList.spriteCount;
+	if ((actor->flags & kExtended)) {
+		while ((lastFrame >= actor->spriteList.spriteCount)) {
+			resourceId++;
+			debug(9, "Appending to sprite list %d", resourceId);
+			if (_vm->_sprite->loadList(resourceId, actor->spriteList) != SUCCESS) {
+				warning("Unable append sprite list");
+				return false;
+			}
 		}
 	}
 
@@ -942,13 +945,13 @@ int Actor::drawActors() {
 				continue;
 			}
 			frameNumber = 8;			
-			spriteList = _vm->_sprite->_mainSprites;
+			spriteList = &_vm->_sprite->_mainSprites;
 		} else {
 			frameNumber = actor->frameNumber;			
-			spriteList = actor->spriteList;
+			spriteList = &actor->spriteList;
 		}
 		
-		if ((frameNumber < 0) || (spriteList->sprite_count <= frameNumber)) {
+		if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
 			warning("Actor::drawActors frameNumber invalid for actorId 0x%X", actor->actorId);
 			continue;
 		}
@@ -956,7 +959,7 @@ int Actor::drawActors() {
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			//todo: it
 		} else {
-			_vm->_sprite->drawOccluded(back_buf, spriteList, frameNumber, actor->screenPosition, actor->screenScale, actor->screenDepth);
+			_vm->_sprite->drawOccluded(back_buf, *spriteList, frameNumber, actor->screenPosition, actor->screenScale, actor->screenDepth);
 		}
 	}
 

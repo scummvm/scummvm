@@ -28,53 +28,54 @@
 
 namespace Saga {
 
-#define APPENDMAX 4
-
 #define SPRITE_ZMAX  16
 #define SPRITE_ZMASK 0x0F
 
 #define DECODE_BUF_LEN 64000
 
-struct SPRITELIST_ENTRY {
-	int x_align;
-	int y_align;
+struct SpriteInfo {
+	byte *decodedBuffer;
 	int width;
 	int height;
-
-};
-
-struct SPRITELIST_OFFSET {
-	uint16 data_idx;
-	uint32 offset;
+	int xAlign;
+	int yAlign;
 };
 
 struct SpriteList {
-	int append_count;
-	int sprite_count;
-	SPRITELIST_OFFSET *offset_list;
-	int slist_rn;
-	byte *sprite_data[APPENDMAX];
+	int spriteListResourceId;
+	int spriteCount;
+	SpriteInfo *infoList;
+
+	void freeMem() {
+		int i;
+		for (i = 0; i < spriteCount; i++) {
+			free(infoList[i].decodedBuffer);
+		}
+		free(infoList);
+		memset(this, 0, sizeof(*this));
+	}
+
+	SpriteList() {
+		memset(this, 0, sizeof(*this));
+	}
 };
 
 
 class Sprite {
 public:
-	SpriteList *_mainSprites;
+	SpriteList _mainSprites;
 
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
-	int loadList(int resource_num, SpriteList **sprite_list_p);
-	int appendList(int resource_num, SpriteList *spritelist);
-	int getListLen(SpriteList *spritelist);
-	int freeSprite(SpriteList *spritelist);
-	int draw(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale);
-	int drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth);
+	int loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
+	int draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale);
+	int drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
 
 private:
-	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
-	void scaleSprite(byte *buf, int width, int height, int scale);
-	void scaleSpriteCoords(int scale, int *width, int *height, int *x_align, int *y_align);
-
+	void decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength);
+	void scaleBuffer(const byte *src, int width, int height, int scale);
+	void getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer);
+	
 	SagaEngine *_vm;
 	bool _initialized;
 	RSCFILE_CONTEXT *_spriteContext;

@@ -34,10 +34,13 @@ ActorTableData ActorTable[ACTORCOUNT] = {
 
 //       flags     name scene    x     y    z  spr  frm scp  col 
 //    ------------ ---- ----  ---- ----- ---- ---- ---- --- ---- -- -- --
-	{ kProtagonist,  0,   1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0},	// map party
-	// spr and frm numbers taken from permanent actors list
-	{ kFollower,     1,   0,    0,    0,   0,  45, 177,  1, 132,  0, 0, 0},	// Okk
-	{ kFollower,     2,   0,    0,    0,   0,  48, 143,  2, 161,  0, 0, 0},	// Eeah
+	{ kProtagonist | kExtended,
+					 0,   1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0},	// map party
+																			// spr and frm numbers taken from permanent actors list
+	{ kFollower | kExtended,
+					 1,   0,    0,    0,   0,  45, 177,  1, 132,  0, 0, 0},	// Okk
+	{ kFollower | kExtended,
+					 2,   0,    0,    0,   0,  48, 143,  2, 161,  0, 0, 0},	// Eeah
 	{ 0,             3,   0,  240,  480,   0, 115, 206,  0,  25,  0, 0, 0},	// albino ferret
 	{ 0,             4,  17,  368,  400,   0, 115, 206,  4,  49,  0, 0, 0},	// moneychanger
 	{ 0,             5,  11,  552,  412,   0,  54, 152,  1, 171,  0, 0, 0},	// Sist
