@@ -306,6 +306,7 @@ bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point &
 }
 
 bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
+	int32 max_substr_width = 0;
 	debug(9, "FontRenderer::drawStringWrapCentered(%s, %d, %d)", str, x, y);
 	assert(strchr(str, '\n') == 0);
 	char * * words = split(str, ' ');
@@ -324,13 +325,14 @@ bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const
 	int32 space_width = charWidth(' ');
 
 	i = 0;
+	width = MIN(width, size.getX());
 	while(i < nb_sub) {
 		int32 substr_width = sizes[i];
 		char * substr = new char[1000];
 		strcpy(substr, words[i]);
 		int32 j = i + 1;
 
-		while(j < nb_sub && (substr_width + space_width + sizes[j]) < size.getX()) {
+		while(j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
 			substr_width += sizes[j++] + space_width;
 		}
 
@@ -341,6 +343,7 @@ bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const
 
 		substrings[nb_subs] = substr;
 		substr_widths[nb_subs++] = substr_width;
+		max_substr_width = MAX(substr_width, max_substr_width);
 		i = j;
 		height += stringHeight(substr);
 	}
@@ -353,6 +356,12 @@ bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const
 
 	if(y + height > size.getY()) {
 		y = size.getY() - height;
+	}
+
+	if(x - max_substr_width / 2 < 0) {
+		x = max_substr_width / 2;
+	} else if (x + max_substr_width / 2 >= size.getX()) {
+		x = size.getX() - 1 - max_substr_width / 2;
 	}
 
 	for(i = 0; i < nb_subs; i++) {
