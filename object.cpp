@@ -138,7 +138,7 @@ void Scumm::getObjectXYPos(int object) {
 			ptr = getResourceAddress(rtRoom, _roomResource);
 			ptr += od->offs_obim_to_room;
 		}
-
+		assert(ptr);
 		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
 		x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
 		y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
@@ -805,3 +805,125 @@ void Scumm::setCursorImg(uint room, uint img) {
 		useIm01Cursor(dataptr, w, h);
 
 }
+
+void Scumm::nukeFlObjects(int min, int max) {
+	ObjectData *od;
+	int i;
+
+	warning("nukeFlObjects(%d,%d)", min, max);
+
+	for (i=_numObjectsInRoom,od=_objs; --i>=0; od++)
+		if (od->fl_object_index && od->obj_nr>=min && od->obj_nr<=max) {
+			nukeResource(rtFlObject, od->fl_object_index);
+			od->obj_nr = 0;
+			od->fl_object_index = 0;
+		}
+}
+
+void Scumm::enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h) {
+	EnqueuedObject *eo;
+	ObjectData *od;
+
+	if (_enqueuePos==sizeof(_enqueuedObjects)/sizeof(_enqueuedObjects[0]))
+		error("enqueueObject: overflow");
+
+	eo = &_enqueuedObjects[_enqueuePos++];
+	eo->a = a;
+	eo->b = _enqueue_b;
+	eo->c = _enqueue_c;
+	eo->d = _enqueue_d;
+	eo->e = _enqueue_e;
+	eo->x = b;
+	eo->y = c;
+	if (d==0) {
+		od = &_objs[getObjectIndex(a)];
+		eo->width = od->numstrips<<3;
+	} else {
+		eo->width = d;
+	}
+	if (e==0) {
+		od = &_objs[getObjectIndex(a)];
+		eo->height = od->height<<3;
+	} else {
+		eo->height = e;
+	}
+
+	eo->j = f;
+	eo->k = g;
+	eo->l = h;
+}
+
+void Scumm::drawEnqueuedObjects() {
+	EnqueuedObject *eo;
+	int i;
+
+	eo = _enqueuedObjects;
+	for(i=0; i < _enqueuePos; i++,eo++) {
+		drawEnqueuedObject(eo);
+	}
+}
+
+
+void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
+	VirtScreen *vs;
+	byte *roomptr,*bomp;
+	byte *ptr;
+	int index;
+	ObjectData *od;
+	int width,height;
+	byte *outptr;
+	int x,y;
+	byte *dataptr;
+
+	vs = &virtscr[0];
+
+	_lastXstart = vs->xstart;
+
+	if (eo->l==0) {
+		roomptr = getResourceAddress(1, _roomResource);
+		index = getObjectIndex(eo->a);
+		ptr = roomptr + _objs[index].offs_obim_to_room;
+	} else if (eo->a!=0) {
+		od = &_objs[getObjectIndex(eo->a)];
+		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
+		ptr = findResource(MKID('OBIM'), ptr, 0);
+	} else {
+		warning("drawEnqueuedObject: invalid");
+		return;
+	}
+
+	ptr = findResource(MKID('IM01'), ptr, 0);
+	bomp = findResource(MKID('BOMP'), ptr, 0);
+
+	width = READ_LE_UINT16(&((BompHeader*)bomp)->width);
+	height = READ_LE_UINT16(&((BompHeader*)bomp)->height);
+
+	outptr = getResourceAddress(rtBuffer, vs->number+1) + vs->xstart;
+
+	x = eo->x;
+	y = eo->y;
+
+	if (eo->a) {
+		dataptr = bomp + 18;
+
+	}
+
+	updateDirtyRect(vs->number, x, x+width,y,y+height,0);
+}
+
+void Scumm::removeEnqueuedObjects() {
+	EnqueuedObject *eo;
+	int i;
+
+	eo = _enqueuedObjects;
+	for(i=0; i < _enqueuePos; i++,eo++) {
+		removeEnqueuedObject(eo);
+	}
+
+	clearEnqueue();
+}
+
+void Scumm::removeEnqueuedObject(EnqueuedObject *eo) {
+	restoreBG(eo->x, eo->y, eo->x + eo->width, eo->y + eo->height);
+}
+

@@ -19,16 +19,12 @@
  *
  */
 
-#if defined(WIN32)
-
-/* Pragmas are VC++-specific */
 #if defined(_MSC_VER)
+
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
-#endif
 
 #define scumm_stricmp stricmp
-
 
 #if defined(CHECK_HEAP)
 #undef CHECK_HEAP
@@ -54,7 +50,28 @@ typedef signed long int32;
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
 
-#elif defined(UNIX)
+#elif defined(__CYGWIN__)
+
+#define scumm_stricmp stricmp
+#define CHECK_HEAP
+#define SCUMM_LITTLE_ENDIAN
+
+#define FORCEINLINE inline
+#define NORETURN _declspec(noreturn)
+
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned long uint32;
+typedef unsigned int uint;
+typedef signed char int8;
+typedef signed short int16;
+typedef signed long int32;
+
+#define START_PACK_STRUCTS pack (push,1)
+#define END_PACK_STRUCTS   pack(pop)
+
+#elif (defined(UNIX) || defined(__APPLE__))
 
 #define scumm_stricmp strcasecmp
 

@@ -580,6 +580,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 
 	smap_ptr = findResource(MKID('SMAP'), ptr, 0);
 
+	assert(smap_ptr);
+
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
 	for(i=1; i<numzbuf; i++) {
@@ -1585,6 +1587,23 @@ void Scumm::palManipulate() {
 		nukeResource(rtTemp, 4);
 		nukeResource(rtTemp, 5);
 	}
+}
+
+void Scumm::swapPalColors(int a, int b) {
+	byte *ap,*bp;
+	byte t;
+
+	if ((uint)a>=256 || (uint)b>=256)
+		error("swapPalColors: invalid values, %d, %d", a, b);
+	
+	ap = &_currentPalette[a*3];
+	bp = &_currentPalette[b*3];
+
+	t=ap[0]; ap[0]=bp[0]; bp[0]=t;
+	t=ap[1]; ap[1]=bp[1]; bp[1]=t;
+	t=ap[2]; ap[2]=bp[2]; bp[2]=t;
+
+	setDirtyColors(a,b);
 }
 
 void Scumm::screenEffect(int effect) {

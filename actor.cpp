@@ -50,6 +50,7 @@ void Scumm::initActor(Actor *a, int mode) {
 	a->sound[7] = 0;
 	a->newDirection = 0;
 	a->moving = 0;
+	a->data8 = 0;
 
 	setActorWalkSpeed(a, 8, 2);
 

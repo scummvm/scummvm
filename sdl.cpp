@@ -106,7 +106,12 @@ void waitForTimer(Scumm *s, int delay) {
 			if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
 				s->resourceStats();
 			}
-			
+
+#if defined(__APPLE__)
+			if (event.key.keysym.sym=='q' && event.key.keysym.mod&KMOD_LMETA) {
+				exit(1);
+			} 
+#endif
 			break;
 		case SDL_MOUSEMOTION: {
 			int newx,newy;
@@ -615,7 +620,11 @@ void initGraphics(Scumm *s, bool fullScreen) {
 	);
 }
 
+
+#if !defined(__APPLE__)
 #undef main
+#endif
+
 int main(int argc, char* argv[]) {
 	int delta,tmp;
 

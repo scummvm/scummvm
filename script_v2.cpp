@@ -1448,7 +1448,7 @@ FixRooms:;
 		a->animSpeed = pop();
 		a->animProgress = 0;
 		break;
-	case 98:
+	case 98: /* set data8 */
 		a->data8 = pop();
 		break;
 	case 99:
@@ -1989,6 +1989,7 @@ void Scumm::o6_dummy_stacklist() {
 void Scumm::o6_miscOps() {
 	int16 args[30];
 	int i;
+	Actor *a;
 
 	getStackList(args,sizeof(args)/sizeof(args[0]));
 	switch(args[0]) {
@@ -2015,6 +2016,88 @@ void Scumm::o6_miscOps() {
 	case 9:
 		unkMiscOp9();
 		break;
+
+	case 124: /* samnmax */
+		warning("o6_miscOps: _saveSound=%d", args[1]);
+		break;
+
+	case 104: /* samnmax */
+		nukeFlObjects(args[2], args[3]);
+		break;
+	
+	case 106:
+		error("stub o6_miscOps_106()");
+		break;
+	
+	case 107: /* set actor scale */
+		a = derefActorSafe(args[1], "o6_miscops: 107");
+		a->scalex = args[2];
+		a->needBgReset = true;
+		a->needRedraw = true;
+		break;
+
+	case 108:
+	case 109:
+		error("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",
+			args[1], args[2], args[3], args[4], args[5],
+			0,256);
+		break;
+
+	case 110:
+		gdi.clearUpperMask();
+		break;
+
+	case 111:
+		a = derefActorSafe(args[1], "o6_miscops: 111");
+		a->data8 = args[2] + args[3];
+		break;
+
+	case 112:
+		error("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
+			args[1], args[2], args[3], args[4], args[5],
+			args[6], args[7]);
+		break;
+
+	case 114: /* palette? */
+		error("stub o6_miscOps_114()");
+		break;
+			
+	case 117:
+		error("stub o6_miscOps_117()");
+		break;
+
+	case 118:
+		error("stub o6_miscOps_118(%d,%d,%d,%d,%d,%d,%d)",
+			args[1], args[2], args[3], args[4], args[5],
+			args[6], args[7]);
+		break;
+
+	case 119:
+		enqueueObject(args[1], args[2], args[3], args[4], args[5],
+			args[6], args[7], args[8]);
+		break;
+
+	case 120:
+		swapPalColors(args[1],args[2]);
+		break;
+
+	case 121:
+		error("stub o6_miscOps_121(%d)", args[1]);
+		break;
+
+	case 122:
+		error("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
+			args[1],args[2],args[3],args[4],
+			args[5],args[6],args[7],args[8],
+			args[9],args[10],args[11],args[12]);
+		break;
+
+	case 123:
+		error("stub o6_miscOps_123(%d,%d)", args[1], args[2]);
+		break;
+
+	default:
+		error("o6_miscOps: default case %d", args[0]);
 	}
 }
 

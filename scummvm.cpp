@@ -334,7 +334,9 @@ int Scumm::scummLoop(int delta) {
 
 		gdi._cursorActive = _cursorState > 0;
 
+		drawEnqueuedObjects();
 		drawDirtyScreenParts();
+		removeEnqueuedObjects();
 
 		if (_majorScummVersion==5)
 			playActorSounds();

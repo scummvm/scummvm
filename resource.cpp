@@ -492,7 +492,7 @@ int Scumm::loadResource(int type, int index) {
 }
 
 int Scumm::readSoundResource(int type, int index) {
-	uint32 resStart, size, tag, size2;
+	uint32 resStart, size, tag, size2, basetag;
 	byte *ptr;
 	int i;
 
@@ -500,9 +500,16 @@ int Scumm::readSoundResource(int type, int index) {
 
 	resStart = 0;
 
-	fileReadDwordLE();
+	basetag = fileReadDwordLE();
 	size = fileReadDwordBE();
 
+#ifdef SAMNMAX
+	if (basetag == MKID('MIDI')) {
+		fileSeek(_fileHandle, -8, SEEK_CUR);
+		fileRead(_fileHandle,createResource(type, index, size+8), size+8);
+		return 1;
+	}
+#else
 	while (size>resStart) {
 		tag = fileReadDword();
 		size2 = fileReadDwordBE();
@@ -520,7 +527,7 @@ int Scumm::readSoundResource(int type, int index) {
 
 		fileSeek(_fileHandle, size2, SEEK_CUR);
 	}
-
+#endif
 	res.roomoffs[type][index] = 0xFFFFFFFF;
 	return 0;
 }
@@ -626,6 +633,8 @@ void Scumm::nukeResource(int type, int index) {
 
 byte *findResource(uint32 tag, byte *searchin, int index) {
 	uint32 maxsize,curpos,totalsize,size;
+
+	assert(searchin);
 
 	searchin += 4;
 	totalsize = READ_BE_UINT32_UNALIGNED(searchin);

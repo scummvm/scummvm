@@ -292,6 +292,11 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 
 	CHECK_HEAP
 
+	if (a->data8) {
+		proc_special(a->data8);
+		return b;
+	}
+
 	switch ((scaling<<2)|(masking<<1)|charsetmask) {
 	case 0: 
 		proc6();
@@ -658,6 +663,10 @@ void CostumeRenderer::proc1() {
 StartPos:;
 		} while (--len);
 	} while(1);
+}
+
+void CostumeRenderer::proc_special(byte code) {
+	warning("stub CostumeRenderer::proc_special(%d) not implemented");
 }
 
 void CostumeRenderer::loadCostume(int id) {

@@ -37,11 +37,6 @@ struct Point {
 	int x,y;
 };
 
-struct AdjustBoxResult {
-	int16 x,y;
-	uint16 dist;
-};
-
 #define SIZEOF_BOX 20
 struct Box { /* file format */
 	int16 ulx,uly;
@@ -53,102 +48,20 @@ struct Box { /* file format */
 	uint16 scale;
 };
 
-struct VerbSlot {
-	int16 x,y;
-	int16 right, bottom;
-	int16 oldleft, oldtop, oldright,oldbottom;
-	uint8 verbid;
-	uint8 color,hicolor,dimcolor,bkcolor,type;
-	uint8 charset_nr,curmode;
-	uint8 saveid;
-	uint8 key;
-	bool center;
-	uint8 field_1B;
-	uint16 imgindex;
-};
-
-struct VirtScreen {
-	int number;
-	uint16 unk1;
-	uint16 topline;
-	uint16 width,height;
-	uint16 size;
-	byte alloctwobuffers;
-	byte scrollable;
-	uint16 xstart;
-	byte tdirty[40];
-	byte bdirty[40];
-};
-
-struct ActorWalkData {
-	int16 destx,desty;
-	byte destbox;
-	byte destdir;
-	byte curbox;
-	byte field_7;
-	int16 x,y,newx,newy;
-	int32 XYFactor, YXFactor;
-	uint16 xfrac,yfrac;
-};
-
-struct CostumeData {
-	uint16 hdr;
-	uint16 animCounter1;
-	byte animCounter2;
-	byte x_1;
-	uint16 a[16], b[16], c[16], d[16];
-};
-
-struct MouseCursor {
-	int8 hotspot_x, hotspot_y;
-	byte colors[4];
-	byte data[32];
-};
-
-struct ScriptSlot {
-	uint32 offs;
-	int32 delay;
-	uint16 number;
-	uint16 newfield;
-	byte status;
-	byte type;
-	byte unk1,unk2,freezeCount,didexec;
-	byte cutsceneOverride;
-	byte unk5;
-};
-
-struct NestedScript {
-	uint16 number;
-	uint8 type;
-	uint8 slot;
-};
-
 struct ResHeader {
 	uint32 size;
-};
-
-class ObjectData {
-public:
-	uint32 offs_obim_to_room;
-	uint32 offs_obcd_to_room;
-	uint16 walk_x, walk_y;
-	uint16 obj_nr;
-	int16 x_pos;
-	int16 y_pos;
-	uint16 numstrips;
-	uint16 height;
-	byte actordir;
-	byte parent;
-	byte parentstate;
-	byte ownerstate;
-	byte fl_object_index;
-	byte unk_3;
 };
 
 struct RoomHeader {
 	uint32 tag, size;
 	uint16 width,height;
 	uint16 numObjects;
+};
+
+struct BompHeader {
+	uint32 tag,size;
+	uint16 unk;
+	uint16 width,height;
 };
 
 struct CodeHeader {
@@ -192,6 +105,58 @@ struct ImageHeader { /* file format */
 
 #pragma END_PACK_STRUCTS
 
+struct AdjustBoxResult {
+	int16 x,y;
+	uint16 dist;
+};
+
+struct VerbSlot {
+	int16 x,y;
+	int16 right, bottom;
+	int16 oldleft, oldtop, oldright,oldbottom;
+	uint8 verbid;
+	uint8 color,hicolor,dimcolor,bkcolor,type;
+	uint8 charset_nr,curmode;
+	uint8 saveid;
+	uint8 key;
+	bool center;
+	uint8 field_1B;
+	uint16 imgindex;
+};
+
+class ObjectData {
+public:
+	uint32 offs_obim_to_room;
+	uint32 offs_obcd_to_room;
+	uint16 walk_x, walk_y;
+	uint16 obj_nr;
+	int16 x_pos;
+	int16 y_pos;
+	uint16 numstrips;
+	uint16 height;
+	byte actordir;
+	byte parent;
+	byte parentstate;
+	byte ownerstate;
+	byte fl_object_index;
+	byte unk_3;
+};
+
+struct CostumeData {
+	uint16 hdr;
+	uint16 animCounter1;
+	byte animCounter2;
+	byte x_1;
+	uint16 a[16], b[16], c[16], d[16];
+};
+
+struct EnqueuedObject {
+	uint16 a,b,c,d,e;
+	uint16 x,y;
+	uint16 width,height;
+	uint16 j,k,l;
+};
+
 struct PathNode {
 	uint index;
 	struct PathNode *left, *right;
@@ -202,7 +167,54 @@ struct PathVertex {
 	PathNode *right;
 };
 
+struct VirtScreen {
+	int number;
+	uint16 unk1;
+	uint16 topline;
+	uint16 width,height;
+	uint16 size;
+	byte alloctwobuffers;
+	byte scrollable;
+	uint16 xstart;
+	byte tdirty[40];
+	byte bdirty[40];
+};
 
+struct ActorWalkData {
+	int16 destx,desty;
+	byte destbox;
+	byte destdir;
+	byte curbox;
+	byte field_7;
+	int16 x,y,newx,newy;
+	int32 XYFactor, YXFactor;
+	uint16 xfrac,yfrac;
+};
+
+struct MouseCursor {
+	int8 hotspot_x, hotspot_y;
+	byte colors[4];
+	byte data[32];
+};
+
+struct ScriptSlot {
+	uint32 offs;
+	int32 delay;
+	uint16 number;
+	uint16 newfield;
+	byte status;
+	byte type;
+	byte unk1,unk2,freezeCount,didexec;
+	byte cutsceneOverride;
+	byte unk5;
+};
+
+struct NestedScript {
+	uint16 number;
+	uint8 type;
+	uint8 slot;
+};
+ 
 enum {
 	sleByte = 1,
 	sleUint8 = 1,
@@ -424,6 +436,7 @@ struct CostumeRenderer {
 	void proc3();
 	void proc2();
 	void proc1();
+	void proc_special(byte code);
 	byte mainRoutine(Actor *a, int slot, int frame);
 	void ignorePakCols(int num);
 
@@ -453,7 +466,7 @@ struct Actor {
 	byte initFrame,walkFrame,standFrame,talkFrame1,talkFrame2;
 	bool needRedraw, needBgReset,costumeNeedsInit,visible;
 	uint speedx,speedy;
-	byte data8; /* unused */
+	byte data8;
 	byte animIndex;
 	byte walkbox;
 	byte mask;
@@ -842,6 +855,11 @@ struct Scumm {
 
 	int16 _soundQuePos;
 	int16 _soundQue[0x100];
+
+	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
+
+	int _enqueuePos; 
+	EnqueuedObject _enqueuedObjects[32];
 
 	byte _soundQue2Pos;
 	byte _soundQue2[10];
@@ -1588,6 +1606,17 @@ struct Scumm {
 	void makeSavegameName(char *out, int slot, bool compatible);
 
 	void exitCutscene();
+	void nukeFlObjects(int min, int max);
+
+	void swapPalColors(int a, int b);
+
+	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h);
+
+	void clearEnqueue() { _enqueuePos = 0; }
+	void drawEnqueuedObjects();
+	void drawEnqueuedObject(EnqueuedObject *eo);
+	void removeEnqueuedObjects();
+	void removeEnqueuedObject(EnqueuedObject *eo);
 };
 
 struct ScummDebugger {

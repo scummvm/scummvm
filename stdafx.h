@@ -2,6 +2,10 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.7  2001/11/11 16:54:45  strigeus
+ * implemented some sam&max specific features,
+ * fixed some bugs
+ *
  * Revision 1.6  2001/11/06 22:59:59  cmatsuoka
  * Re-added changes to allow cygwin and beos cross-compilation.
  *
@@ -48,6 +52,7 @@
 #include <malloc.h>
 #include <assert.h>
 #include <mmsystem.h>
+#include <ctype.h>
 
 #else
 
