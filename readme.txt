@@ -238,6 +238,7 @@ In game Hot Keys:
         Ctrl-Alt 1-7             - cycles between graphics filters
         Ctrl-z                   - quits
         Ctrl-f                   - runs in fast mode.
+        Ctrl-g                   - runs in really REALLY fast mode.
         Ctrl-d                   - starts the debugger.
         Ctrl-s                   - shows memory consumption.
         [ and ]                  - master volume, down/up
@@ -246,6 +247,8 @@ In game Hot Keys:
         Space                    - pauses.
         Alt-Enter                - toggles full screen/windowed
 
+Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
+being ran faster than their normal speed, as scripts will loose syncronisation
 
 Graphics filters:
 -----------------
