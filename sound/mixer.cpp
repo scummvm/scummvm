@@ -144,7 +144,7 @@ void SoundMixer::setupPremix(AudioStream *stream) {
 		return;
 
 	// Create the channel
-	_premixChannel = new Channel(this, 0, stream, false, false);
+	_premixChannel = new Channel(this, 0, stream, false, true);
 }
 
 void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
