@@ -1493,7 +1493,7 @@ void Scumm_v5::o5_quitPauseRestart() {
 		shutDown();
 		break;
 	default:
-		error("o5_quitPauseRestart invalid case %d\n", subOp);
+		error("o5_quitPauseRestart invalid case %d", subOp);
 	}
 }
 
@@ -1813,7 +1813,7 @@ void Scumm_v5::o5_roomOps() {
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 	default:
-		error("o5_roomOps: unknown subopcode %d\n", _opcode & 0x1F);
+		error("o5_roomOps: unknown subopcode %d", _opcode & 0x1F);
 	}
 }
 

@@ -1171,7 +1171,7 @@ script:
 	/// low level interface to interpreter
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
-	debug(3, "Doing Script %x\n", (offset << 16) | scriptNo);
+	debug(3, "Doing Script %x", (offset << 16) | scriptNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
 	if (!scriptData) { // The module has not been loaded
@@ -1353,7 +1353,7 @@ bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
-	debug(5, "Call: fnDrawScreen(%X, %X)\n",a,b);
+	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
 	SkyState::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
 	return true;
@@ -1959,11 +1959,11 @@ bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
 
 	if (!cpt) {
-		warning("fnResetId(): Compact %d (id) == NULL\n",id);
+		warning("fnResetId(): Compact %d (id) == NULL",id);
 		return true;
 	}
 	if (!rst) {
-		warning("fnResetId(): Compact %d (resetBlock) == NULL\n",resetBlock);
+		warning("fnResetId(): Compact %d (resetBlock) == NULL",resetBlock);
 		return true;
 	}
 
@@ -2263,7 +2263,7 @@ bool SkyLogic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
 	if ((a == 85) || (a == 106) || (a == 75) || (a == 15)) {
 		_skyScreen->startSequenceItem((uint16)a);
 	} else {
-		debug(1,"SkyLogic::fnNewSwingSeq: ignored seq %d\n",a);
+		debug(1,"SkyLogic::fnNewSwingSeq: ignored seq %d",a);
 	}
 	return true;
 }
@@ -2412,7 +2412,7 @@ bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
-	printf("fnPrintf: %d\n", a);
+	printf("fnPrintf: %d", a);
 	return true;
 }
 

@@ -1623,7 +1623,7 @@ void Scumm_v8::o8_drawObject() {
 	if (x != 0x7FFFFFFF) {
 		od->x_pos = x;
 		od->y_pos = y;
-		debug(1, "setting position: 0x%X b 0x%X\n", x, y);
+		debug(1, "setting position: 0x%X b 0x%X", x, y);
 	}
 
 	addObjectToDrawQue(objnum);

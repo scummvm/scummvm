@@ -62,7 +62,7 @@ uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 
 	if (!cpt->extCompact)
-		error("SkyAutoRoute::autoRoute: fatal error. cpt->extCompact == NULL!\n");
+		error("SkyAutoRoute::autoRoute: fatal error. cpt->extCompact == NULL");
 	uint16* routeData = (uint16 *)cpt->extCompact->animScratch;
 	uint8* screenGrid = _grid->giveGrid(cpt->screen);
 	screenGrid += GRID_SIZE-4; // all arrays are processed from behind, so make

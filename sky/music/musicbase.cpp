@@ -69,25 +69,25 @@ bool SkyMusicBase::musicIsPlaying(void)
 void SkyMusicBase::musicCommand(uint16 command)
 {
 	if (_musicData == NULL) {
-		debug(1,"Got music command but driver is not yet loaded.\n");
+		debug(1,"Got music command but driver is not yet loaded");
 		return ;
 	}
 	if ((command >> 8) > _allowedCommands) {
-		debug(1,"got musicCommand %d while expecting <= %d\n", command >> 8, _allowedCommands);
+		debug(1,"got musicCommand %d while expecting <= %d", command >> 8, _allowedCommands);
 		return ;
 	}
 	switch(command >> 8) {
 		case 0: 
-			debug(1,"SkyMusic: got call to startAdlibDriver(). Not necessary in this implementation.\n");
+			debug(1,"SkyMusic: got call to startAdlibDriver(). Not necessary in this implementation.");
 			break;
 		case 1: 
-			debug(1,"SkyMusic: got call to stopDriver(). Not necessary in this implementation.\n");
+			debug(1,"SkyMusic: got call to stopDriver(). Not necessary in this implementation.");
 			break;
 		case 2:
-			debug(1,"SkyMusic: got call to SetTempo(). Tempo is fixed in this implementation.\n");
+			debug(1,"SkyMusic: got call to SetTempo(). Tempo is fixed in this implementation.");
 			break;
 		case 3: 
-			debug(1,"SkyMusic: ignored direct call to driverPoll().\n");
+			debug(1,"SkyMusic: ignored direct call to driverPoll().");
 			break;
 		case 4: 
 			startMusic(command&0xFF);
@@ -102,7 +102,7 @@ void SkyMusicBase::musicCommand(uint16 command)
 			setFMVolume(command&0xFF); 
 			break;
 		default: 
-			debug(1,"musicCommand %d ignored.\n",command>>8);
+			debug(1,"musicCommand %d ignored.",command>>8);
 	}
 }
 
@@ -134,7 +134,7 @@ void SkyMusicBase::loadNewMusic(void)
 {
 	uint16 musicPos;
 	if (_onNextPoll.musicToProcess > _musicData[_musicDataLoc]) {
-		error("Music %d requested but doesn't exist in file.\n", _onNextPoll.musicToProcess);
+		error("Music %d requested but doesn't exist in file.", _onNextPoll.musicToProcess);
 		return;
 	}
 	if (_currentMusic != 0)

@@ -886,7 +886,7 @@ int Scumm::readSoundResource(int type, int idx) {
 		return 1;
 		
 	} else {
-		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08x in sound %d\n", basetag, idx);
+		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
@@ -1558,7 +1558,7 @@ void Scumm::resourceStats() {
 			}
 		}
 
-	debug(1, "Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
+	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
 void Scumm::readMAXS() {
@@ -1671,7 +1671,7 @@ void Scumm::allocateArrays() {
 	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
 	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
 	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	debug(2, "Allocated %d space in numObjects\n", _numLocalObjects);
+	debug(2, "Allocated %d space in numObjects", _numLocalObjects);
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 

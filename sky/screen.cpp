@@ -129,7 +129,7 @@ void SkyScreen::setPalette(uint16 fileNum) {
 	if (tmpPal) {
 		setPalette(tmpPal);
 		free(tmpPal);
-	} else warning("SkyScreen::setPalette: can't load file nr. %d\n",fileNum);
+	} else warning("SkyScreen::setPalette: can't load file nr. %d",fileNum);
 }
 
 void SkyScreen::showScreen(uint16 fileNum) {
@@ -138,7 +138,7 @@ void SkyScreen::showScreen(uint16 fileNum) {
 	_currentScreen = _skyDisk->loadFile(fileNum, NULL);
 	
 	if (_currentScreen) showScreen(_currentScreen);
-	else warning("SkyScreen::showScreen: can't load file nr. %d\n",fileNum);
+	else warning("SkyScreen::showScreen: can't load file nr. %d",fileNum);
 }
 
 void SkyScreen::showScreen(uint8 *pScreen) {
@@ -272,7 +272,7 @@ void SkyScreen::paletteFadeUp(uint16 fileNr) {
 	if (pal) {
 		paletteFadeUp(pal);
 		free(pal);
-	} else warning("SkyScreen::paletteFadeUp: Can't load palette #%d\n",fileNr);
+	} else warning("SkyScreen::paletteFadeUp: Can't load palette #%d",fileNr);
 }
 
 void SkyScreen::paletteFadeUp(uint8 *pal) {
@@ -304,7 +304,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	if ((scroll == 0) || (SkyState::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint8 *palette = (uint8 *)SkyState::fetchCompact(palNum);
 		if (palette == NULL)
-			error("SkyScreen::fnFadeUp: can't fetch compact %X.\n", palNum);
+			error("SkyScreen::fnFadeUp: can't fetch compact %X", palNum);
 #ifdef SCUMM_BIG_ENDIAN
 		byte tmpPal[256 * 3];
 		for (uint16 cnt = 0; cnt < 256*3; cnt++)
@@ -315,8 +315,8 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 #endif
 	} else if (scroll == 123) {
 		// scroll left (going right)
-		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll L]: _currentScreen is NULL!\n");
-		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll L]: _scrollScreen is NULL!\n");
+		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll L]: _currentScreen is NULL");
+		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll L]: _scrollScreen is NULL");
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + scrollCnt * SCROLL_JUMP;
@@ -334,8 +334,8 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		free(_scrollScreen);
 	} else if (scroll == 321) {
 		// scroll right (going left)
-		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll R]: _currentScreen is NULL!\n");
-		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll R]: _scrollScreen is NULL!\n");
+		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll R]: _currentScreen is NULL");
+		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll R]: _scrollScreen is NULL");
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + GAME_SCREEN_WIDTH - (scrollCnt + 1) * SCROLL_JUMP;
@@ -511,7 +511,7 @@ void SkyScreen::sortSprites(void) {
 							dataFileHeader *spriteData = 
 								(dataFileHeader *)SkyState::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
-								debug(9,"Missing file %d!\n",spriteComp->frame >> 6);
+								debug(9,"Missing file %d",spriteComp->frame >> 6);
 								spriteComp->status = 0;
 							} else {
 								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
@@ -571,7 +571,7 @@ void SkyScreen::doSprites(uint8 layer) {
 						(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyState::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
-						debug(9, "Spritedata %d not loaded!\n",spriteData->frame >> 6);
+						debug(9, "Spritedata %d not loaded",spriteData->frame >> 6);
 						spriteData->status = 0;
 					} else {
 						drawSprite(toBeDrawn, spriteData);
@@ -590,7 +590,7 @@ void SkyScreen::doSprites(uint8 layer) {
 void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 
 	if (spriteInfo == NULL) {
-		warning("SkyScreen::drawSprite Can't draw sprite. Data %d was not loaded.\n", sprCompact->frame >> 6);
+		warning("SkyScreen::drawSprite Can't draw sprite. Data %d was not loaded", sprCompact->frame >> 6);
 		sprCompact->status = 0;
 		return ;
 	}
@@ -651,7 +651,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return;
 	}
 	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
-		warning("SkyScreen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d\n",_sprX, _sprY, _sprWidth, _sprHeight);
+		warning("SkyScreen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d",_sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
 		return ;
 	}

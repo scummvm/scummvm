@@ -55,7 +55,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	if (_fontPtr == 0)
-		error("CharsetRendererCommon::setCurID: charset %d not found!\n", id);
+		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
 	if (_vm->_version == 4)
 		_fontPtr += 17;
@@ -70,7 +70,7 @@ void CharsetRendererV3::setCurID(byte id) {
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	if (_fontPtr == 0)
-		error("CharsetRendererCommon::setCurID: charset %d not found!\n", id);
+		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
 	_nbChars = _fontPtr[4];
 	_fontPtr += 6;

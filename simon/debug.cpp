@@ -47,7 +47,7 @@ byte *SimonEngine::dumpOpcode(byte *p) {
 		st = s = simon1dos_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
-		error("INVALID OPCODE %d\n", opcode);
+		error("INVALID OPCODE %d", opcode);
 		return NULL;
 	}
 	while (*st != '|')

@@ -593,7 +593,7 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 			return 0;
 
 		default: 
-			error("SkyControl::handleClick: unknown routine: %X\n",pButton->_onClick);
+			error("SkyControl::handleClick: unknown routine: %X",pButton->_onClick);
 	}
 }
 
@@ -1447,7 +1447,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		LODSW(srcPos, SkyCompact::high_floor_table[cnt]);
 
 	if (srcPos - srcBuf != (int32)size)
-		error("Restore failed! Savegame data = %d bytes. Expected size: %d.\n", srcPos-srcBuf, size);
+		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
 
 	if (!SkyState::isDemo()) {
 		_skyLogic->fnLeaveSection(oldSection, 0, 0);

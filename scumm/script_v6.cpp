@@ -2165,7 +2165,7 @@ void Scumm_v6::o6_quitPauseRestart() {
 		shutDown();
 		break;
 	default:
-		error("o6_quitPauseRestart invalid case %d\n", subOp);
+		error("o6_quitPauseRestart invalid case %d", subOp);
 	}
 }
 
@@ -3051,7 +3051,7 @@ void Scumm_v6::o6_unknownEA() {
 }
 
 void Scumm_v6::unknownEA_func(int a, int b, int c, int d, int e) {
-	warning("unknownEA_func(%d, %d, %d, %d, %d) stub\n", a, b, c, d, e);
+	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
 }
 
 void Scumm_v6::o6_localizeArray() {

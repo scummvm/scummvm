@@ -34,7 +34,7 @@ SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
     _midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0) {
-		error("Can't open midi device. Errorcode: %d\n",midiRes);
+		error("Can't open midi device. Errorcode: %d",midiRes);
 	}
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 	_ignoreNextPoll = false;

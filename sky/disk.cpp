@@ -41,20 +41,20 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 
 	_dnrHandle->open(dinnerFilename, _gameDataPath);
 	if (_dnrHandle->isOpen() == false)
-			error("Could not open %s%s!\n", _gameDataPath, dinnerFilename);
+			error("Could not open %s%s", _gameDataPath, dinnerFilename);
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
-		error("Error reading from sky.dnr!\n"); //even though it was opened correctly?!
+		error("Error reading from sky.dnr"); //even though it was opened correctly?!
 
 	_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
 	entriesRead = _dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
 
 	if (entriesRead != _dinnerTableEntries)
-		warning("entriesRead != dinnerTableEntries. [%d/%d]\n", entriesRead, _dinnerTableEntries);
+		warning("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
 
 	_dataDiskHandle->open(dataFilename, _gameDataPath);
 	if (_dataDiskHandle->isOpen() == false) 
-		error("Error opening %s%s!\n", _gameDataPath, dataFilename);
+		error("Error opening %s%s", _gameDataPath, dataFilename);
 
 	debug(1, "Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
 
@@ -114,7 +114,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	}
 
 	#ifdef file_order_chk
-		warning("File order checking not implemented yet!\n");
+		warning("File order checking not implemented yet");
 	#endif
 
 	_compFile = fileNr;
@@ -122,7 +122,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 	filePtr = getFileInfo(fileNr);
 	if (filePtr == NULL) {
-		printf("File %d not found!\n", fileNr);
+		printf("File %d not found", fileNr);
 		return NULL;
 	}
 
@@ -152,14 +152,14 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	_dataDiskHandle->seek(_fileOffset, SEEK_SET);
 
 	#ifdef file_order_chk
-		warning("File order checking not implemented yet!\n");
+		warning("File order checking not implemented yet");
 	#endif
 
 	//now read in the data
 	bytesRead = _dataDiskHandle->read(_fileDest, 1 * _fileSize);
 
 	if (bytesRead != (int32)_fileSize)
-		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)\n", _fileSize, bytesRead);
+		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)", _fileSize, bytesRead);
 
 	cflag = (uint8)((_fileFlags >> (23)) & 0x1);
 
@@ -240,7 +240,7 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 		fEntry = &((*fEntry)->next);
 	}
 	if (found) {
-		debug(1,"SkyDisk::prefetchFile: File %d was already prefetched.\n",fileNr);
+		debug(1,"SkyDisk::prefetchFile: File %d was already prefetched",fileNr);
 		return ;
 	}
 	uint8 *temp = loadFile(fileNr, NULL);
@@ -358,7 +358,7 @@ void SkyDisk::fnCacheFiles(void) {
 		_loadedFilesList[targCnt] = 0;
 		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
 		if (!SkyState::_itemList[_buildList[bCnt] & 2047])
-			warning("fnCacheFiles: SkyDisk::loadFile() returned NULL for file %d\n",_buildList[bCnt] & 0x7FFF);
+			warning("fnCacheFiles: SkyDisk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
 		bCnt++;
 	}
 	_buildList[0] = 0;

@@ -1236,13 +1236,13 @@ void SkyDebug::fetchCompact(uint32 a) {
 	uint32 compactNum = (a & 0x0fff);
 
 	if (sectionNum == 0)
-		debug(8, "Loading Compact %d (%s) from section %d\n", compactNum, section_0_compacts[compactNum], sectionNum);
+		debug(8, "Loading Compact %d (%s) from section %d", compactNum, section_0_compacts[compactNum], sectionNum);
 	else
-		debug(8, "Loading Compact %d from section %d\n", compactNum, sectionNum);
+		debug(8, "Loading Compact %d from section %d", compactNum, sectionNum);
 }
 
 void SkyDebug::logic(uint32 logic) {
-	debug(6, "LOGIC: %s\n", logic_table_names[logic]);
+	debug(6, "LOGIC: %s", logic_table_names[logic]);
 }
 
 void SkyDebug::script(uint32 command, uint16 *scriptData) {
@@ -1255,10 +1255,10 @@ void SkyDebug::script(uint32 command, uint16 *scriptData) {
 			debug(6, " %d", READ_LE_UINT16(scriptData + i));
 		}
 	}
-	debug(6, "\n");
+	debug(6, "");
 }
 
 void SkyDebug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
-	debug(6, "MCODE: %s(%d, %d, %d)\n", mcodes[mcode], a, b, c);
+	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
 };
 

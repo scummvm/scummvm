@@ -1082,7 +1082,7 @@ void SkySound::loadSection(uint8 pSection) {
 	if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) ||
 		(_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) ||
 		(_soundData[asmOfs + 0x30] != 0x36))
-			error("Unknown sounddriver version!\n");
+			error("Unknown sounddriver version!");
 
 	_soundsTotal = _soundData[asmOfs + 1];
 	uint16 sRateTabOfs = (_soundData[asmOfs + 0x2A] << 8) | _soundData[asmOfs + 0x29];
@@ -1102,12 +1102,12 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 		_mixer->stopID(SOUND_CH1);
 
 	if (!_soundData) {
-		warning("SkySound::playSound(%04X, %04X) called with a section having been loaded.\n", sound, volume);
+		warning("SkySound::playSound(%04X, %04X) called with a section having been loaded", sound, volume);
 		return;
 	}
 	
 	if (sound > _soundsTotal) {
-		debug(5, "SkySound::playSound %d ignored, only %d sfx in file.\n", sound, _soundsTotal);
+		debug(5, "SkySound::playSound %d ignored, only %d sfx in file", sound, _soundsTotal);
 		return ;
 	}
 
@@ -1239,7 +1239,7 @@ bool SkySound::startSpeech(uint16 textNum) {
 	
 	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000, NULL);
 	if (!speechData) {
-		debug(9,"File %d (speechFile %d from section %d) wasn't found!\n", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
+		debug(9,"File %d (speechFile %d from section %d) wasn't found", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
 		return false;
 	}
 
