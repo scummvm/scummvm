@@ -279,6 +279,10 @@ SOURCE=.\scumm\akos.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\scumm\base-costume.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\boxes.cpp
 # End Source File
 # Begin Source File
@@ -464,4 +468,3 @@ SOURCE=.\scumm\verbs.h
 # End Group
 # End Target
 # End Project
-
