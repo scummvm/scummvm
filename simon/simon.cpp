@@ -106,6 +106,17 @@ REGISTER_PLUGIN("Simon the Sorcerer", Engine_SIMON_gameList, Engine_SIMON_create
 
 namespace Simon {
 
+#ifdef __PALM_OS__
+#define PTR(a) a
+static const GameSpecificSettings *simon1_settings;
+static const GameSpecificSettings *simon1acorn_settings;
+static const GameSpecificSettings *simon1amiga_settings;
+static const GameSpecificSettings *simon1demo_settings;
+static const GameSpecificSettings *simon2win_settings;
+static const GameSpecificSettings *simon2mac_settings;
+static const GameSpecificSettings *simon2dos_settings;
+#else
+#define PTR(a) &a;
 static const GameSpecificSettings simon1_settings = {
 	1,										// VGA_DELAY_BASE
 	1576 / 4,									// TABLE_INDEX_BASE
@@ -231,7 +242,7 @@ static const GameSpecificSettings simon2dos_settings = {
 	"",										// mp3_effects_filename
 	"GAME32",									// gamepc_filename
 };
-
+#endif
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi (syst) {
@@ -242,19 +253,19 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_game = (byte)detector->_game.features;
 
 	if (_game & GF_MAC)
-		gss = &simon2mac_settings;
+		gss = PTR(simon2mac_settings);
 	else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
-		gss = &simon2win_settings;
+		gss = PTR(simon2win_settings);
 	else if (_game & GF_SIMON2)
-		gss = &simon2dos_settings;
+		gss = PTR(simon2dos_settings);
 	else if (_game & GF_ACORN)
-		gss =&simon1acorn_settings;
+		gss =PTR(simon1acorn_settings);
 	else if (_game & GF_AMIGA)
-		gss = &simon1amiga_settings;
+		gss = PTR(simon1amiga_settings);
 	else if (_game & GF_DEMO)
-		gss = &simon1demo_settings;
+		gss = PTR(simon1demo_settings);
 	else
-		gss = &simon1_settings;
+		gss = PTR(simon1_settings);
 
 	_key_pressed = 0;
 
@@ -3498,6 +3509,10 @@ void SimonEngine::processSpecialKeys() {
 	_key_pressed = 0;
 }
 
+#ifdef __PALM_OS__
+static const byte *_simon1_cursor;
+static const byte **_simon2_cursors;
+#else
 static const byte _simon1_cursor[256] = {
 	0xe1,0xe0,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	0xe1,0xe1,0xe0,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -3688,7 +3703,8 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xe5,0xe9,0xec,0xe9,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xe5,0xe8,0xe9,0xe8,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
-}; 
+};
+#endif
 
 void SimonEngine::draw_mouse_pointer() {
 	if (_game & GF_SIMON2)
@@ -5130,3 +5146,32 @@ byte SimonEngine::getByte() {
 }
 
 } // End of namespace Simon
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Simon_Simon)
+_GSETPTR(Simon::simon1_settings, GBVARS_SIMON1SETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon1acorn_settings, GBVARS_SIMON1ACORNSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon1amiga_settings, GBVARS_SIMON1AMIGASETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon1demo_settings, GBVARS_SIMON1DEMOSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon2win_settings, GBVARS_SIMON2WINSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon2mac_settings, GBVARS_SIMON2MACSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::simon2dos_settings, GBVARS_SIMON2DOSSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::_simon2_cursors, GBVARS_SIMON2CURSORS_INDEX, const byte*, GBVARS_SIMON)
+_GEND
+
+_GRELEASE(Simon_Simon)
+_GRELEASEPTR(GBVARS_SIMON1SETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON1ACORNSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON2MACSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SIMON2CURSORS_INDEX, GBVARS_SIMON)
+_GEND
+
+#endif

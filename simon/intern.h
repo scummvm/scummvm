@@ -127,6 +127,7 @@ struct GameSpecificSettings {
 	uint TABLES_MEM_SIZE;
 	uint MUSIC_INDEX_BASE;
 	uint SOUND_INDEX_BASE;
+#ifndef __PALM_OS__
 	const char *gme_filename;
 	const char *wav_filename;
 	const char *voc_filename;
@@ -134,6 +135,15 @@ struct GameSpecificSettings {
 	const char *voc_effects_filename;
 	const char *mp3_effects_filename;
  	const char *gamepc_filename;
+ #else
+	const char gme_filename[12];
+	const char wav_filename[12];
+	const char voc_filename[12];
+	const char mp3_filename[12];
+	const char voc_effects_filename[12];
+	const char mp3_effects_filename[12];
+ 	const char gamepc_filename[12]; 
+ #endif
 };
 
 } // End of namespace Simon

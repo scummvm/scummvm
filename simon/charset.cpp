@@ -285,6 +285,14 @@ void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
 		fcs->textRow++;
 }
 
+#ifdef __PALM_OS__
+static const byte *french_video_font;
+static const byte *german_video_font;
+static const byte *hebrew_video_font;
+static const byte *italian_video_font;
+static const byte *spanish_video_font;
+static const byte *video_font;
+#else
 static const byte french_video_font[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
@@ -890,6 +898,7 @@ static const byte video_font[] = {
 	252, 252, 252, 252, 252, 252, 252, 252,
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
+#endif
 
 void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr) {
 	const byte *src;
@@ -934,3 +943,33 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 }
 
 } // End of namespace Simon
+
+static const byte *french_video_font;
+static const byte *german_video_font;
+static const byte *hebrew_video_font;
+static const byte *italian_video_font;
+static const byte *spanish_video_font;
+static const byte *video_font;
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Simon_Charset)
+_GSETPTR(Simon::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::german_video_font, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::hebrew_video_font, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::italian_video_font, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::spanish_video_font, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::video_font, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GEND
+
+_GRELEASE(Simon_Charset)
+_GRELEASEPTR(GBVARS_FRENCHVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_GERMANVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_HEBREWVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_ITALIANVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_SPANISHVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_VIDEOFONT_INDEX, GBVARS_SIMON)
+_GEND
+
+#endif
