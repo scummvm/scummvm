@@ -109,10 +109,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	_gui->hline(_x, _y, _x+_w - 1, _gui->_color);
-	_gui->hline(_x, _y + _h - 1, _x + _w - 1, _gui->_shadowcolor);
-	_gui->vline(_x, _y, _y+_h - 1, _gui->_color);
-	_gui->vline(_x + _w - 1, _y, _y + _h - 1, _gui->_shadowcolor);
+	_gui->hLine(_x, _y, _x+_w - 1, _gui->_color);
+	_gui->hLine(_x, _y + _h - 1, _x + _w - 1, _gui->_shadowcolor);
+	_gui->vLine(_x, _y, _y+_h - 1, _gui->_color);
+	_gui->vLine(_x + _w - 1, _y, _y + _h - 1, _gui->_shadowcolor);
 
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
@@ -256,8 +256,8 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
 	if (name.size() == 0) {
 		// Draw a seperator
-		_gui->hline(x, y + kLineHeight / 2, x + w - 1, _gui->_color);
-		_gui->hline(x + 1, y + 1 + kLineHeight / 2, x + w - 1, _gui->_shadowcolor);
+		_gui->hLine(x, y + kLineHeight / 2, x + w - 1, _gui->_color);
+		_gui->hLine(x + 1, y + 1 + kLineHeight / 2, x + w - 1, _gui->_shadowcolor);
 	} else {
 		_gui->drawString(name, x + 1, y + 2, w - 2, hilite ? _gui->_bgcolor : _gui->_textcolor);
 	}
@@ -319,10 +319,10 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw a thin frame around us.
 	// TODO - should look different than the EditTextWidget fram
-	gui->hline(_x, _y, _x + _w - 1, gui->_color);
-	gui->hline(_x, _y +_h-1, _x + _w - 1, gui->_shadowcolor);
-	gui->vline(_x, _y, _y+_h-1, gui->_color);
-	gui->vline(_x + _w - 1, _y, _y +_h - 1, gui->_shadowcolor);
+	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
+	gui->hLine(_x, _y +_h-1, _x + _w - 1, gui->_shadowcolor);
+	gui->vLine(_x, _y, _y+_h-1, gui->_color);
+	gui->vLine(_x + _w - 1, _y, _y +_h - 1, gui->_shadowcolor);
 
 	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
 	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor);

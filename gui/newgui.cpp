@@ -286,15 +286,15 @@ void NewGui::box(int x, int y, int width, int height, bool inverted) {
 	NewGuiColor colorA = inverted ? _shadowcolor : _color;
 	NewGuiColor colorB = inverted ? _color : _shadowcolor;
 
-	hline(x + 1, y, x + width - 2, colorA);
-	hline(x, y + 1, x + width - 1, colorA);
-	vline(x, y + 1, y + height - 2, colorA);
-	vline(x + 1, y, y + height - 1, colorA);
+	hLine(x + 1, y, x + width - 2, colorA);
+	hLine(x, y + 1, x + width - 1, colorA);
+	vLine(x, y + 1, y + height - 2, colorA);
+	vLine(x + 1, y, y + height - 1, colorA);
 
-	hline(x + 1, y + height - 2, x + width - 1, colorB);
-	hline(x + 1, y + height - 1, x + width - 2, colorB);
-	vline(x + width - 1, y + 1, y + height - 2, colorB);
-	vline(x + width - 2, y + 1, y + height - 1, colorB);
+	hLine(x + 1, y + height - 2, x + width - 1, colorB);
+	hLine(x + 1, y + height - 1, x + width - 2, colorB);
+	vLine(x + width - 1, y + 1, y + height - 2, colorB);
+	vLine(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
 void NewGui::line(int x, int y, int x2, int y2, NewGuiColor color) {

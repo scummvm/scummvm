@@ -258,9 +258,9 @@ void ListWidget::drawWidget(bool hilite) {
 	ScummVM::String buffer;
 
 	// Draw a thin frame around the list.
-	gui->hline(_x, _y, _x + _w - 1, gui->_color);
-	gui->hline(_x, _y + _h - 1, _x + _w - 1, gui->_shadowcolor);
-	gui->vline(_x, _y, _y + _h - 1, gui->_color);
+	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
+	gui->hLine(_x, _y + _h - 1, _x + _w - 1, gui->_shadowcolor);
+	gui->vLine(_x, _y, _y + _h - 1, gui->_color);
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
@@ -310,7 +310,7 @@ void ListWidget::drawCaret(bool erase) {
 
 	x += gui->getStringWidth(buffer);
 
-	gui->vline(x, y, y+kLineHeight, color);
+	gui->vLine(x, y, y+kLineHeight, color);
 	gui->addDirtyRect(x, y, 2, kLineHeight);
 	
 	_caretVisible = !erase;

@@ -98,7 +98,7 @@ void ConsoleDialog::drawDialog() {
 	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor, 2);
 
 	// Draw a border
-	_gui->hline(_x, _y + _h - 1, _x + _w - 1, _gui->_color);
+	_gui->hLine(_x, _y + _h - 1, _x + _w - 1, _gui->_color);
 
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;

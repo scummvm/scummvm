@@ -27,8 +27,8 @@
 
 class Dialog;
 
-#define hline(x, y, x2, color) line(x, y, x2, y, color);
-#define vline(x, y, y2, color) line(x, y, x, y2, color);
+#define hLine(x, y, x2, color) line(x, y, x2, y, color);
+#define vLine(x, y, y2, color) line(x, y, x, y2, color);
 
 // Height of a single text line
 enum {

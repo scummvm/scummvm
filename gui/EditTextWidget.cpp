@@ -147,10 +147,10 @@ void EditTextWidget::drawWidget(bool hilite) {
 	NewGui *gui = _boss->getGui();
 
 	// Draw a thin frame around us.
-	gui->hline(_x, _y, _x + _w - 1, gui->_color);
-	gui->hline(_x, _y + _h - 1, _x +_w - 1, gui->_shadowcolor);
-	gui->vline(_x, _y, _y + _h - 1, gui->_color);
-	gui->vline(_x + _w - 1, _y, _y + _h - 1, gui->_shadowcolor);
+	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
+	gui->hLine(_x, _y + _h - 1, _x +_w - 1, gui->_shadowcolor);
+	gui->vLine(_x, _y, _y + _h - 1, gui->_color);
+	gui->vLine(_x + _w - 1, _y, _y + _h - 1, gui->_shadowcolor);
 
 	// Draw the text
 	adjustOffset();
@@ -182,7 +182,7 @@ void EditTextWidget::drawCaret(bool erase) {
 	int width = getCaretPos();
 	x += width;
 
-	gui->vline(x, y, y + kLineHeight, color);
+	gui->vLine(x, y, y + kLineHeight, color);
 	gui->addDirtyRect(x, y, 2, kLineHeight);
 
 	_caretVisible = !erase;
