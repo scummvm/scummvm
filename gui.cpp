@@ -784,7 +784,7 @@ void Gui::addLetter(byte letter)
 		if (_editString == -1)
 			return;
 
-		if (letter == 13) {
+		if (letter == 13) { 
 			handleCommand(8);
 			return;
 		}
