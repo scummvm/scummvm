@@ -361,8 +361,6 @@ public:
 
 	void sleepUntil(uint32 time);
 
-	uint32 readFile(const char *name, mem **membloc, uint32 uid);
-
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);
 	void initialiseFontResourceFlags(uint8 language);

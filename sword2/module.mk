@@ -26,7 +26,6 @@ MODULE_OBJS := \
 	sword2/startup.o \
 	sword2/sword2.o \
 	sword2/sync.o \
-	sword2/tony_gsdk.o \
 	sword2/walker.o \
 	sword2/driver/d_draw.o \
 	sword2/driver/d_sound.o \
