@@ -144,14 +144,29 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	}
 
 	_nbChars = READ_LE_UINT16(dataSrc + 10);
-	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
+	uint32 offset = 0;
 	int32 decoded_length;
+
 	for (int l = 0; l < _nbChars; l++) {
+		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
+		
+		// TODO/FIXME: The code checks for a "shift" in the FRME headers. Well, neither
+		// in my german nor in my english NUT fonts does that occur, but it's very typical
+		// for IFF style formats (like this here) to "pad" odd sized blocks. Hence, it might
+		// be a cleaner solution to insert this adjustment here:
+		//   if (offset & 1)
+		//       offset++;
+		// And then get rid of the hack for the shifted FRME. I'd do that right now, but since
+		// I have no way to test this (read: no data files where this issue occurs), I am
+		// deferring this job for now :-)
+
 		if ((READ_BE_UINT32(dataSrc + offset) == 'FRME') || (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME')) {
-			if (READ_BE_UINT32(dataSrc + offset) == 'FRME')
+			if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
 				offset += 8;
-			else if (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME') // hack for proper offset
+			} else { // hack for proper offset
 				offset += 9;
+			}
+
 			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
 				int codec = READ_LE_UINT16(dataSrc + offset + 8);
 				_chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
@@ -159,6 +174,7 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 				_chars[l].src = new byte[(_chars[l].width + 2) * _chars[l].height + 1000];
+
 				// If characters have transparency, then bytes just get skipped and
 				// so there may appear some garbage. That's why we have to fill it
 				// with zeroes first.
@@ -181,8 +197,6 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 					if (l == 134 && !strcmp(filename, "titlfnt.nut"))
 						_chars[l].width--;
 				}
-
-				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 			} else {
 				warning("NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
 				break;
