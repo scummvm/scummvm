@@ -578,10 +578,6 @@ void ScummEngine::initBGBuffers(int height) {
 	int size, itemsize, i;
 	byte *room;
 
-	if (_version >= 7) {
-		initVirtScreen(kMainVirtScreen, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
-	}
-
 	room = getResourceAddress(rtRoom, _roomResource);
 	if (_version <= 3) {
 		gdi._numZBuffer = 2;
