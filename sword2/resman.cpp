@@ -368,6 +368,10 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 
 		//close the cluster
 		file.close();
+
+#ifdef SCUMM_BIG_ENDIAN
+		convertEndian((uint8 *) resList[res]->ad);
+#endif
 	} else {
 		// Zdebug("RO %d, already open count=%d", res, count[res]);
 	}
@@ -385,6 +389,142 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 
 	return (uint8 *) resList[res]->ad;
 }
+
+void resMan::convertEndian(uint8 *file) {
+	_standardHeader *hdr = (_standardHeader *)file;
+
+	hdr->compSize = SWAP_BYTES_32(hdr->compSize);
+	hdr->decompSize = SWAP_BYTES_32(hdr->decompSize);
+
+	switch(hdr->fileType) {
+		case ANIMATION_FILE: {
+			_animHeader *animHead = (_animHeader *) (file + sizeof(_standardHeader));
+
+			animHead->noAnimFrames = SWAP_BYTES_16(animHead->noAnimFrames);
+			animHead->feetStartX = SWAP_BYTES_16(animHead->feetStartX);
+			animHead->feetStartY = SWAP_BYTES_16(animHead->feetStartY);
+			animHead->feetEndX = SWAP_BYTES_16(animHead->feetEndX);
+			animHead->feetEndY = SWAP_BYTES_16(animHead->feetEndY);
+			animHead->blend = SWAP_BYTES_16(animHead->blend);
+
+			int i;
+			for (i = 0; i < animHead->noAnimFrames; i++) {
+				_cdtEntry *cdtEntry = (_cdtEntry *) ( (uint8 *)animHead + sizeof(_animHeader) + i * sizeof(_cdtEntry) );
+				cdtEntry->x = (int16)SWAP_BYTES_16(cdtEntry->x);
+				cdtEntry->y = (int16)SWAP_BYTES_16(cdtEntry->y);
+				cdtEntry->frameOffset = SWAP_BYTES_32(cdtEntry->frameOffset);
+
+				_frameHeader *frameHeader = (_frameHeader *) (file + sizeof(_standardHeader) + cdtEntry->frameOffset);
+				frameHeader->compSize = SWAP_BYTES_32(frameHeader->compSize);
+				frameHeader->width = SWAP_BYTES_16(frameHeader->width);
+				frameHeader->height = SWAP_BYTES_16(frameHeader->height);
+			}
+			break;
+		}
+		case SCREEN_FILE: {
+			_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (file + sizeof(_standardHeader));
+
+			mscreenHeader->palette = SWAP_BYTES_32(mscreenHeader->palette);
+			mscreenHeader->bg_parallax[0] = SWAP_BYTES_32(mscreenHeader->bg_parallax[0]);
+			mscreenHeader->bg_parallax[1] = SWAP_BYTES_32(mscreenHeader->bg_parallax[1]);
+			mscreenHeader->screen = SWAP_BYTES_32(mscreenHeader->screen);
+			mscreenHeader->fg_parallax[0] = SWAP_BYTES_32(mscreenHeader->fg_parallax[0]);
+			mscreenHeader->fg_parallax[1] = SWAP_BYTES_32(mscreenHeader->fg_parallax[1]);
+			mscreenHeader->layers = SWAP_BYTES_32(mscreenHeader->layers);
+			mscreenHeader->paletteTable = SWAP_BYTES_32(mscreenHeader->paletteTable);
+			mscreenHeader->maskOffset = SWAP_BYTES_32(mscreenHeader->maskOffset);
+
+			// screenHeader
+			_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
+
+			screenHeader->width = SWAP_BYTES_16(screenHeader->width);
+			screenHeader->height = SWAP_BYTES_16(screenHeader->height);
+			screenHeader->noLayers = SWAP_BYTES_16(screenHeader->noLayers);
+
+			// layerHeader
+			_layerHeader *layerHeader;
+			int i;
+			for (i = 0; i < screenHeader->noLayers; i++) {
+				layerHeader = (_layerHeader *) ((uint8 *) mscreenHeader + mscreenHeader->layers + (i * sizeof(_layerHeader)));
+
+				layerHeader->x = SWAP_BYTES_16(layerHeader->x);
+				layerHeader->y = SWAP_BYTES_16(layerHeader->y);
+				layerHeader->width = SWAP_BYTES_16(layerHeader->width);
+				layerHeader->height = SWAP_BYTES_16(layerHeader->height);
+				layerHeader->maskSize = SWAP_BYTES_32(layerHeader->maskSize);
+				layerHeader->offset = SWAP_BYTES_32(layerHeader->offset);
+			}
+
+			// FIXME: byte swapping should be done here instead of in protocol.cpp
+/*
+			// backgroundParallaxLayer
+			_parallax *parallax;
+			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[0]);
+			parallax->w = SWAP_BYTES_16(parallax->w);
+			parallax->h = SWAP_BYTES_16(parallax->h);
+
+			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[1]);
+			parallax->w = SWAP_BYTES_16(parallax->w);
+			parallax->h = SWAP_BYTES_16(parallax->h);
+
+			// backgroundLayer
+			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
+			parallax->w = SWAP_BYTES_16(parallax->w);
+			parallax->h = SWAP_BYTES_16(parallax->h);
+
+			// foregroundParallaxLayer
+			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[0]);
+			parallax->w = SWAP_BYTES_16(parallax->w);
+			parallax->h = SWAP_BYTES_16(parallax->h);
+
+			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[1]);
+			parallax->w = SWAP_BYTES_16(parallax->w);
+			parallax->h = SWAP_BYTES_16(parallax->h);
+*/
+
+			break;
+		}
+		case GAME_OBJECT: {
+			_object_hub *objectHub = (_object_hub *) ((_standardHeader *)file+1);
+
+			objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
+			objectHub->logic_level = SWAP_BYTES_32(objectHub->logic_level);
+
+			int i;
+			for (i = 0; i < TREE_SIZE; i++) {
+				objectHub->logic[i] = SWAP_BYTES_32(objectHub->logic[i]);
+				objectHub->script_id[i] = SWAP_BYTES_32(objectHub->script_id[i]);
+				objectHub->script_pc[i] = SWAP_BYTES_32(objectHub->script_pc[i]);
+			}
+			break;
+		}
+		case WALK_GRID_FILE: {
+			_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
+			walkGridHeader->numBars = SWAP_BYTES_32(walkGridHeader->numBars);
+			walkGridHeader->numNodes = SWAP_BYTES_32(walkGridHeader->numNodes);
+
+			break;
+		}
+		case GLOBAL_VAR_FILE:
+			break;
+		case PARALLAX_FILE_null:
+			break;
+		case RUN_LIST:
+			break;
+		case TEXT_FILE: {
+			_textHeader *textHeader = (_textHeader *) (file + sizeof(_standardHeader));
+			textHeader->noOfLines = SWAP_BYTES_32(textHeader->noOfLines);
+			break;
+		}
+		case SCREEN_MANAGER:
+			break;
+		case MOUSE_FILE:
+			break;
+		case ICON_FILE:
+			break;
+	}
+}
+
 
 uint8 resMan::Res_check_valid(uint32 res) {	// James 12mar97
 	// returns '1' if resource is valid, otherwise returns '0'

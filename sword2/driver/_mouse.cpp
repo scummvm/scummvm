@@ -349,7 +349,7 @@ int32 AnimateMouse(void) {
 
 	if (++mouseFrame == mouseAnim->noAnimFrames)
 		mouseFrame = MOUSEFLASHFRAME;
-	mouseSprite = (uint8 *) mouseAnim + *(mouseOffsets + mouseFrame);
+	mouseSprite = (uint8 *) mouseAnim + (int32)READ_LE_UINT32(mouseOffsets + mouseFrame);
 
 	if (mouseFrame != prevMouseFrame)
 		DrawMouse();

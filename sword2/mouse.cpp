@@ -1252,13 +1252,13 @@ int32 FN_register_mouse(int32 *params)	//Tony29Oct96
 			Con_fatal_error("ERROR: mouse_list full [%s line %u]",__FILE__,__LINE__);
 		#endif
 
-		mouse_list[cur_mouse].x1			= ob_mouse->x1;
-		mouse_list[cur_mouse].y1			= ob_mouse->y1;
-		mouse_list[cur_mouse].x2			= ob_mouse->x2;
-		mouse_list[cur_mouse].y2			= ob_mouse->y2;
+		mouse_list[cur_mouse].x1			= FROM_LE_32(ob_mouse->x1);
+		mouse_list[cur_mouse].y1			= FROM_LE_32(ob_mouse->y1);
+		mouse_list[cur_mouse].x2			= FROM_LE_32(ob_mouse->x2);
+		mouse_list[cur_mouse].y2			= FROM_LE_32(ob_mouse->y2);
 
-		mouse_list[cur_mouse].priority		= ob_mouse->priority;
-		mouse_list[cur_mouse].pointer		= ob_mouse->pointer;
+		mouse_list[cur_mouse].priority		= FROM_LE_32(ob_mouse->priority);
+		mouse_list[cur_mouse].pointer		= FROM_LE_32(ob_mouse->pointer);
 
 		//-----------------------------------------------
 		// (James17jun97)

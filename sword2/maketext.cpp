@@ -367,6 +367,13 @@ _frameHeader* FindChar( uint8 ch, uint8 *charSet )
 	if( (ch<FIRST_CHAR) )		// if 'ch' out of range
 //	if( (ch<FIRST_CHAR) || (ch>LAST_CHAR) )		// if 'ch' out of range
 		ch = DUD;								// then print the 'dud' character (chequered flag)
+// FIXME: HACK!!!! remapping ' and ! because they cause FetchFrameHeader to crash....
+#ifdef MACOSX
+	if (ch == '\'')
+		ch = ' ';
+	if (ch == '!')
+		ch = ' ';
+#endif
 
 	// address of char = address of charSet + offset to char
 	//return (charSet + *(int32 *)(charSet + sizeof(_header) + 4 + 4*(ch - FIRST_CHAR)));

@@ -40,7 +40,7 @@ uint8 *FetchPalette(uint8 *screenFile)	// Chris 04Oct96
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-	palette = (uint8 *)mscreenHeader + FROM_LE_32(mscreenHeader->palette);
+	palette = (uint8 *)mscreenHeader + mscreenHeader->palette;
 
 	palette[0] = 0;	// always set colour 0 to black
 	palette[1] = 0;	// because most background screen palettes have a bright colour 0
@@ -57,7 +57,7 @@ uint8 *FetchPaletteMatchTable(uint8 *screenFile)	// James 09dec96
 {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-	return (uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->paletteTable);
+	return (uint8 *) mscreenHeader + mscreenHeader->paletteTable;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -67,13 +67,7 @@ _screenHeader *FetchScreenHeader(uint8 *screenFile)	//Chris 04Oct96
 {
 	// Get the table
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
-	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->screen));
-
-#if defined(SCUMM_BIG_ENDIAN)
-	screenHeader->width = SWAP_BYTES_16(screenHeader->width);
-	screenHeader->height = SWAP_BYTES_16(screenHeader->height);
-	screenHeader->noLayers = SWAP_BYTES_16(screenHeader->noLayers);
-#endif
+	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
 	return screenHeader;
 }
@@ -92,16 +86,7 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo)	//Chris 04Oct9
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-	_layerHeader *layerHeader = (_layerHeader *) ((uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->layers) + (layerNo * sizeof(_layerHeader)));
-
-#if defined(SCUMM_BIG_ENDIAN)
-	layerHeader->x = SWAP_BYTES_16(layerHeader->x);
-	layerHeader->y = SWAP_BYTES_16(layerHeader->y);
-	layerHeader->width = SWAP_BYTES_16(layerHeader->width);
-	layerHeader->height = SWAP_BYTES_16(layerHeader->height);
-	layerHeader->maskSize = SWAP_BYTES_32(layerHeader->maskSize);
-	layerHeader->offset = SWAP_BYTES_32(layerHeader->offset);
-#endif
+	_layerHeader *layerHeader = (_layerHeader *) ((uint8 *) mscreenHeader + mscreenHeader->layers + (layerNo * sizeof(_layerHeader)));
 
 	return layerHeader;
 }
@@ -114,7 +99,7 @@ uint8 *FetchShadingMask(uint8 *screenFile)	// James 08apr97
 {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
-	return (uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->maskOffset);
+	return (uint8 *) mscreenHeader + mscreenHeader->maskOffset;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -125,15 +110,6 @@ _animHeader *FetchAnimHeader(uint8 *animFile)	// (25sep96JEL)
 {
 	_animHeader *animHead;
 	animHead = (_animHeader *) (animFile + sizeof(_standardHeader));
-	
-#if defined(SCUMM_BIG_ENDIAN)
-	animHead->noAnimFrames = SWAP_BYTES_16(animHead->noAnimFrames);
-	animHead->feetStartX = SWAP_BYTES_16(animHead->feetStartX);
-	animHead->feetStartY = SWAP_BYTES_16(animHead->feetStartY);
-	animHead->feetEndX = SWAP_BYTES_16(animHead->feetEndX);
-	animHead->feetEndY = SWAP_BYTES_16(animHead->feetEndY);
-	animHead->blend = SWAP_BYTES_16(animHead->blend);
-#endif
 	
 	return animHead;
 }
@@ -157,12 +133,6 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo)	// Chris 09Oct96
 	_cdtEntry *cdtEntry;
 	cdtEntry = (_cdtEntry *) ( (uint8 *)animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry) );
 
-#if defined(SCUMM_BIG_ENDIAN)
-	cdtEntry->x = (int16)SWAP_BYTES_16(cdtEntry->x);
-	cdtEntry->y = (int16)SWAP_BYTES_16(cdtEntry->y);
-	cdtEntry->frameOffset = SWAP_BYTES_32(cdtEntry->frameOffset);
-#endif
-
 	return cdtEntry;
 }
 
@@ -176,12 +146,6 @@ _frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	// James 31oct96
 	// required address = (address of the start of the anim header) + frameOffset
 	_frameHeader *frameHeader = (_frameHeader *) (animFile + sizeof(_standardHeader) + (FetchCdtEntry(animFile,frameNo)->frameOffset) );
 	
-#if defined(SCUMM_BIG_ENDIAN)
-	frameHeader->compSize = SWAP_BYTES_32(frameHeader->compSize);
-	frameHeader->width = SWAP_BYTES_16(frameHeader->width);
-	frameHeader->height = SWAP_BYTES_16(frameHeader->height);
-#endif
-
 	return frameHeader;
 }
 //---------------------------------------------------------------
@@ -192,12 +156,13 @@ _parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
-	if (FROM_LE_32(mscreenHeader->bg_parallax[layer]) == 0)
+	if (mscreenHeader->bg_parallax[layer] == 0)
 		Con_fatal_error("FetchBackgroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->bg_parallax[layer]));
+	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 	
+// FIXME: this shouldn't be here
 #if defined(SCUMM_BIG_ENDIAN)
 	parallax->w = SWAP_BYTES_16(parallax->w);
 	parallax->h = SWAP_BYTES_16(parallax->h);
@@ -211,17 +176,18 @@ _parallax *FetchBackgroundLayer(uint8 *screenFile) // Chris 04Oct96
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
-	if (FROM_LE_32(mscreenHeader->screen) == 0)
+	if (mscreenHeader->screen == 0)
 		Con_fatal_error("FetchBackgroundLayer (%d) - No background layer exists (%s line %u)",__FILE__,__LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->screen) + sizeof(_screenHeader));
+	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
 	
+// FIXME: this shouldn't be here
 #if defined(SCUMM_BIG_ENDIAN)
 	parallax->w = SWAP_BYTES_16(parallax->w);
 	parallax->h = SWAP_BYTES_16(parallax->h);
 #endif
-	
+
 	return parallax;
 }
 //---------------------------------------------------------------
@@ -230,12 +196,13 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
-	if (FROM_LE_32(mscreenHeader->fg_parallax[layer]) == 0)
+	if (mscreenHeader->fg_parallax[layer] == 0)
 		Con_fatal_error("FetchForegroundParallaxLayer(%d) - No parallax layer exists (%s line %u)",layer,__FILE__,__LINE__);
 #endif
 
-	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + FROM_LE_32(mscreenHeader->fg_parallax[layer]));
+	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
 	
+// FIXME: this shouldn't be here
 #if defined(SCUMM_BIG_ENDIAN)
 	parallax->w = SWAP_BYTES_16(parallax->w);
 	parallax->h = SWAP_BYTES_16(parallax->h);
@@ -256,18 +223,17 @@ uint8 *FetchTextLine(uint8 *file, uint32	text_line)	//Tony24Oct96
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
 
-	if	(text_line>=FROM_LE_32(text_header->noOfLines))		// (James08aug97)
+	if	(text_line>=text_header->noOfLines)		// (James08aug97)
 	{
 		fileHeader = (_standardHeader*)file;
-		sprintf ((char*)errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, FROM_LE_32(text_header->noOfLines)-1);
+		sprintf ((char*)errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines-1);
 		errorLine[0]=0;	// first 2 chars are NULL so that actor-number comes out as '0'
 		errorLine[1]=0;
 		return(errorLine);
 
 //		GOT RID OF CON_FATAL_ERROR HERE BECAUSE WE DON'T WANT IT TO CRASH OUT ANY MORE!
-//		Con_fatal_error("FetchTextLine cannot get %d, only 0..%d avail (%s line %u)", text_line, FROM_LE_32(text_header->noOfLines)-1,__FILE__,__LINE__);
+//		Con_fatal_error("FetchTextLine cannot get %d, only 0..%d avail (%s line %u)", text_line, text_header->noOfLines-1,__FILE__,__LINE__);
 	}
-
 
 	point=(uint32*) text_header+1;	//point to the lookup table
 
@@ -279,7 +245,7 @@ uint8 CheckTextLine(uint8 *file, uint32	text_line)	// (James26jun97)
 {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
-	if (text_line>=FROM_LE_32(text_header->noOfLines))
+	if (text_line>=text_header->noOfLines)
 		return(0);	// out of range => invalid
 	else
 		return(1);	// valid

@@ -44,6 +44,7 @@ class	resMan
 		void	Res_close(uint32 res);			//decrements the count
 
 //----
+		void convertEndian(uint8 *ad);
 
 		uint8	Res_check_valid( uint32 res );	// returns '0' if resource out of range or null, otherwise '1' for ok
 
