@@ -95,7 +95,7 @@ static ov_callbacks g_File_wrap = {
 #endif
 
 Sound::Sound(SoundMixer *mixer, Input *input, Resource  *resource) : 
-  _mixer(mixer), _input(input), _resource(resource), _sfxHandle(0), _lastOverride(0), _currentSong(0) {
+  _mixer(mixer), _input(input), _resource(resource), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
 }
 
 Sound::~Sound() {
