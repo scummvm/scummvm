@@ -19,6 +19,8 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/console.h"
+#include "sword2/resman.h"
 
 #define Debug_Printf _vm->_debugger->DebugPrintf
 

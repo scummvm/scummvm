@@ -22,6 +22,11 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
+#include "sword2/logic.h"
+#include "sword2/maketext.h"
+#include "sword2/resman.h"
+#include "sword2/driver/d_draw.h"
+#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
 

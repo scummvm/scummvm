@@ -34,8 +34,10 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "sword2/sword2.h"
 #include "sound/rate.h"
+#include "sword2/sword2.h"
+#include "sword2/driver/d_draw.h"
+#include "sword2/driver/d_sound.h"
 
 namespace Sword2 {
 

@@ -19,6 +19,7 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 

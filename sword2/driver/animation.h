@@ -22,6 +22,8 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "sound/mixer.h"
+
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
 
