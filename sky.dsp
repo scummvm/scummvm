@@ -531,6 +531,14 @@ SOURCE=.\sky\logic.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\mouse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\mouse.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\musicbase.cpp
 # End Source File
 # Begin Source File
