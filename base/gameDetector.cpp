@@ -221,7 +221,6 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 
-	_debugMode = (ConfMan.getInt("debuglevel") >= 0);
 	_dumpScripts = false;
 	_midi_driver = MD_AUTO;
 
@@ -311,7 +310,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
 				break;
 			case 'd':
-				_debugMode = true;
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					ConfMan.set("debuglevel", (int)strtol(option, 0, 10));
@@ -478,7 +476,6 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
-	_debugMode = (ConfMan.getInt("debuglevel") >= 0);
 }
 
 int GameDetector::parseGraphicsMode(const String &str) {

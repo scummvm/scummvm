@@ -487,7 +487,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
-	_debugMode = detector->_debugMode;
+	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = GameDetector::parseLanguage(ConfMan.get("language"));
 	_noSubtitles = ConfMan.getBool("nosubtitles");

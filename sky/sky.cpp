@@ -106,7 +106,7 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume")); //unnecessary?
 	
-	_debugMode = detector->_debugMode;
+	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_detector = detector;
 

@@ -106,7 +106,6 @@ public:
 	GameSettings _game;
 	const Plugin *_plugin;
 	
-	bool _debugMode;
 	bool _dumpScripts;
 	bool _saveconfig;
 

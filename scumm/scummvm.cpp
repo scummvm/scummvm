@@ -595,7 +595,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_debugger = new ScummDebugger(this);
 
 	// Read settings from the detector & config manager
-	_debugMode = detector->_debugMode;
+	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
@@ -887,7 +887,7 @@ void ScummEngine::launch() {
 			VAR(VAR_VERSION) = 21;
 	
 		if (!((_features & GF_MACINTOSH) && (_version == 3))) {
-			// This is the for the Mac version of Indy3/Loom
+			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
@@ -1272,7 +1272,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
 		if ((_features & GF_MACINTOSH) && (_version == 3))  {
-			// This is the for the Mac version of Indy3/Loom
+			// This is for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
