@@ -23,7 +23,7 @@
 
 QueenLogic::QueenLogic(QueenResource *resource) {
 	_resource = resource;  
-	_jas = _resource->loadJAS();
+	_jas = _resource->loadFile("QUEEN.JAS");
 	
 	initialise();
 }
@@ -49,7 +49,8 @@ void QueenLogic::initialise() {
 	
 
 	//Object data
-	_objectData = (uint16 (*)[8])malloc((_numObjects + 1) * sizeof(_objectData[0]));
+	_objectData = new uint16[_numObjects + 1][8];
+		
 	//clear first object
 	for (uint16 j = 0; j < 8; j++)
 		_objectData[0][j] = 0;
@@ -61,7 +62,7 @@ void QueenLogic::initialise() {
 		}
 	
 	//Room data
-	_roomData = (uint16 *)malloc((_numRooms + 2) * sizeof(_roomData[0]));
+	_roomData = new uint16[_numRooms + 2];
 	for (uint16 i = 1; i < (_numRooms + 2); i++) {
 		_roomData[i] = READ_BE_UINT16(ptr);
 		ptr += 2;
@@ -70,7 +71,7 @@ void QueenLogic::initialise() {
 	_roomData[_numRooms + 1] = _numObjects;
 
 	//SFX Name
-	_sfxName = (uint16 *)malloc((_numRooms + 1) * sizeof(_sfxName[0]));
+	_sfxName = new uint16[_numRooms + 1];
 	for (uint16 i = 0; i < (_numRooms + 1); i++) {
 		_sfxName[i] = READ_BE_UINT16(ptr);
 		ptr += 2;
@@ -80,7 +81,8 @@ void QueenLogic::initialise() {
 	_numItems = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_itemData = (uint16 (*)[5])malloc((_numItems + 1) * sizeof(_itemData[0]));
+	_itemData = new uint16[_numItems + 1][5];
+	
 	for (uint16 i = 1; i < (_numItems + 1); i++) {
 		_itemData[i][0] = READ_BE_UINT16(ptr);
 		ptr += 2;
@@ -95,7 +97,7 @@ void QueenLogic::initialise() {
 	_numGraphics = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_graphicData = (uint16 (*)[5])malloc((_numGraphics + 1) * sizeof(_graphicData[0]));
+	_graphicData = new uint16[_numGraphics + 1][5];
 
 	for (uint16 i = 1; i < _numGraphics; i++)
 		for (uint16 j = 0; j < 5; j++) {
@@ -103,9 +105,9 @@ void QueenLogic::initialise() {
 			ptr += 2;
 		}
 	
-	_objMax = (uint16 *)malloc((_numRooms + 1) * sizeof(_objMax[0]));
-	_areaMax = (uint16 *)malloc((_numRooms + 1) * sizeof(_areaMax[0]));
-	_area = (uint16 (*)[11][8])malloc((_numRooms + 1) * sizeof(_area[0]));
+	_objMax = new uint16[_numRooms + 1];
+	_areaMax = new uint16[_numRooms + 1];
+	_area = new uint16[_numRooms + 1][11][8];
 /*
 	for (uint16 i = 1; i < (_numRooms + 1); i++) {
 		_objMax[i] = READ_BE_UINT16(ptr);
@@ -121,7 +123,7 @@ void QueenLogic::initialise() {
 				
 	}	
 	
-	_objectBox = (uint16 (*)[4])malloc((_numObjects + 1) * sizeof(_objectBox[0]));
+	_objectBox = new uint16[_numObjects + 1][4];
 	for (uint16 i = 1; i < (_numObjects + 1); i++)
 		for (uint16 j = 0; j < 4; j++) {
 			_objectBox[i][j] = READ_BE_UINT16(ptr);

@@ -115,12 +115,13 @@ uint32 QueenResource::fileOffset(const char *filename) {
 	return _gameVersion->resourceTable[resourceIndex(filename)].offset;
 }
 
-uint8 *QueenResource::loadJAS() {
-	uint32 size = fileSize("QUEEN.JAS");
-	uint8 *jas = (uint8 *)malloc(size);
-	_resourceFile->seek(fileOffset("QUEEN.JAS") + 20, SEEK_SET);
-	_resourceFile->read(jas, size - 20);
-	return jas;
+uint8 *QueenResource::loadFile(const char *filename) {
+	uint32 size = fileSize(filename);
+	byte *mem = new byte[size];
+	//skip 20 byte header
+	_resourceFile->seek(fileOffset(filename) + 20, SEEK_SET);
+	_resourceFile->read(mem, size - 20);
+	return mem;
 }
 
 const char *QueenResource::JASVersion() {

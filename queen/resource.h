@@ -44,7 +44,7 @@ class QueenResource {
 public:
 	QueenResource(char *datafilePath);
 	~QueenResource(void);
-	uint8 *loadJAS();
+	uint8 *loadFile(const char *filename);
 
 protected:
 	File *_resourceFile;
