@@ -470,7 +470,7 @@ int Scumm::scummLoop(int delta)
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
-				errMsg = "Failed so save game state to file:\n\n%s";
+				errMsg = "Failed to save game state to file:\n\n%s";
 			// Ender: Disabled for small_header games, as
 			// can overwrite game variables (eg, Zak256 cashcards)
 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
@@ -478,7 +478,7 @@ int Scumm::scummLoop(int delta)
 		} else {
 			success = loadState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
-				errMsg = "Failed so load game state from file:\n\n%s";
+				errMsg = "Failed to load game state from file:\n\n%s";
 			// Ender: Disabled for small_header games, as
 			// can overwrite game variables (eg, Zak256 cashcards)
  			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
