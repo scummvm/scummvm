@@ -16,5 +16,5 @@ you'll need the following:
 
 Edit the Makefile to contain the path to libronin if you installed it
 somewhere other than /usr/local/ronin, then run `make', and you should
-get an ELF binary with the name `scummvm'.
+get an ELF binary with the name `scummvm.elf'.
 
