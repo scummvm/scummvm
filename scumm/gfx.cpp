@@ -1485,11 +1485,16 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	case 7:
 		unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
-	// FIXME implement these codecs...
 	// 8/9 used in 3do version of puttputt joins the parade maybe others
 	case 8:
+		useOrDecompress = true;
+		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
+		break;
+
 	case 9:
-		error("decompressBitmap: Graphics codec %d not yet supported\n", code);
+		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
+		break;
+
 	// used in amiga version of Monkey Island
 	case 10:
 		decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
@@ -2124,6 +2129,74 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 		dst -= _vertStripNextInc;
 	} while (--x);
 }
+
+void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck) {
+	int destbytes, olddestbytes2, olddestbytes1;
+	byte color;
+	int data;
+
+	olddestbytes1 = 0;
+
+	destbytes = height << 3;
+
+	if (!height)
+		return;
+
+	do {
+		data = *src;
+		src++;
+
+		if (!(data & 1)) {
+			data >>= 1;
+			data++;
+			destbytes -= data;
+			if (destbytes < 0)
+				data += destbytes;
+
+			olddestbytes2 = destbytes;
+			destbytes = olddestbytes1;
+
+			for (; data > 0; data--, src++, dst++) {
+				if (*src != _transparentColor || !transpCheck)
+					*dst = *src;
+			
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += 312;
+			}
+
+			olddestbytes1 = destbytes;
+			if (olddestbytes2 > 0) {
+				destbytes = olddestbytes2;
+			}
+		} else {
+			data >>= 1;
+			color = *src;
+			src++;
+
+			data++;
+			destbytes -= data;
+			if (destbytes < 0)
+				data += destbytes;
+
+			olddestbytes2 = destbytes;
+			destbytes = olddestbytes1;
+
+			for (; data > 0; data--, dst++) {
+				if (color != _transparentColor || !transpCheck)
+					*dst = color;
+				destbytes++;
+				if (!(destbytes & 7))
+					dst += 312;
+			}
+			olddestbytes1 = destbytes;
+			if (olddestbytes2 > 0) {
+				destbytes = olddestbytes2;
+			}
+		}
+	} while (olddestbytes2 > 0);
+}
+
 
 #undef NEXT_ROW
 #undef READ_256BIT

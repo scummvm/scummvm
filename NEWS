@@ -1,6 +1,29 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.??
+ General:
+   - ???
+
+ SCUMM:
+   - Added graphics decoders for 3DO Humongous Entertainment games
+   - Numerous Humongous Entertainment games fixes
+
+ Queen:
+   - ???
+
+ Sword1:
+   - ???
+
+ Sword2:
+   - ???
+
+ BASS:
+   - ???
+
+ Simon:
+   - ???
+
 0.6.0 (2004-03-14)
  New Games:
    - Added Broken Sword 1 engine.
