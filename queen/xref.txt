@@ -104,8 +104,8 @@ AREAVAR						(boolean, if true display objects/areas boxes)
 
 GAME SETTINGS
 =============
-game_load()
-game_save()
+game_load()					Logic::gameLoad()
+game_save()					Logic::gameSave()
 -
 config_request
 MUSICTOGGLE					GameConfig::musicToggle
@@ -329,9 +329,9 @@ tpal						Display::_pals.screen
 SOUND
 =====
 alter_current_volume()
-playsong()
-sfxbusy()
-sfxplay()
+playsong()					Sound::playSong()
+sfxbusy()					Sound::waitSfxFinished()
+sfxplay()					Sound::sfxPlay()
 -
 CURRSONG
 SFXNAME						Logic::_sfxName
