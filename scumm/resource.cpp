@@ -223,6 +223,7 @@ void Scumm::readIndexFile() {
 	uint32 blocktype, itemsize;
 	int numblock = 0;
 	int num, i;
+	bool stop = false;
 
 	debug(9, "readIndexFile()");
 
@@ -267,7 +268,7 @@ void Scumm::readIndexFile() {
 		_fileHandle.seek(0, SEEK_SET);
 	}
 
-	while (1) {
+	while (!stop) {
 		blocktype = fileReadDword();
 
 		if (_fileHandle.ioFailed())
@@ -280,7 +281,11 @@ void Scumm::readIndexFile() {
 		case MKID('DCHR'):
 			readResTypeList(rtCharset, MKID('CHAR'), "charset");
 			break;
-
+		
+		case MKID('DIRF'):
+			readResTypeList(rtCharset, MKID('DIRF'), "charset");
+			break;
+		
 		case MKID('DOBJ'):
 			if (_features & GF_AFTER_V8)
 				num = _fileHandle.readUint32LE();
@@ -325,7 +330,13 @@ void Scumm::readIndexFile() {
 			break;
 
 		case MKID('RNAM'):
+		case MKID('DIRI'):
+		case MKID('DLFL'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			break;
+
+		case 0xFFFFFFFF:
+			stop = true;
 			break;
 
 		case MKID('ANAM'):
@@ -338,6 +349,10 @@ void Scumm::readIndexFile() {
 			readResTypeList(rtRoom, MKID('ROOM'), "room");
 			break;
 
+		case MKID('DIRR'):
+			readResTypeList(rtRoom, MKID('DIRR'), "room");
+			break;
+
 		case MKID('DRSC'):					// FIXME: Verify
 			readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
 			break;
@@ -346,8 +361,16 @@ void Scumm::readIndexFile() {
 			readResTypeList(rtScript, MKID('SCRP'), "script");
 			break;
 
+		case MKID('DIRS'):
+			readResTypeList(rtScript, MKID('DIRS'), "script");
+			break;
+
 		case MKID('DCOS'):
 			readResTypeList(rtCostume, MKID('COST'), "costume");
+			break;
+
+		case MKID('DIRC'):
+			readResTypeList(rtCostume, MKID('DIRC'), "costume");
 			break;
 
 		case MKID('MAXS'):
@@ -356,6 +379,10 @@ void Scumm::readIndexFile() {
 
 		case MKID('DSOU'):
 			readResTypeList(rtSound, MKID('SOUN'), "sound");
+			break;
+
+		case MKID('DIRN'):
+			readResTypeList(rtSound, MKID('DIRN'), "sound");
 			break;
 
 		case MKID('AARY'):
