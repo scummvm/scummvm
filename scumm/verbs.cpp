@@ -33,32 +33,52 @@ void Scumm::checkV2Inventory(int x, int y) {
 	if ((y < virtscr[2].topline + 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
 
+	if (x > 145 && x < 160) {	// Inventory Arrows
+		if (y < virtscr[2].topline + 38)	// Up arrow
+			_inventoryOffset-=2;
+		else if (y > virtscr[2].topline + 47)	// Down arrow
+			_inventoryOffset+=2;
+
+		if (_inventoryOffset < 0)
+			_inventoryOffset = 0;
+
+		if (_inventoryOffset > (getInventoryCount(_scummVars[VAR_EGO])-2))
+			_inventoryOffset = (getInventoryCount(_scummVars[VAR_EGO])-2);
+
+		redrawV2Inventory();
+        }
+
 	object = ((y - virtscr[2].topline - 34) / 8) * 2;
 	if (x > 150)
 		object++;
 
-	object = findInventory(_scummVars[VAR_EGO], object+1);
+	object = findInventory(_scummVars[VAR_EGO], object+1+_inventoryOffset);
 	if (object > 0) {
 		runInputScript(3, object, 0);
 	}
 }
 
 void Scumm::redrawV2Inventory() {
-	int i, items = 0, curInventoryCount = 0;
+	int i, items = 0;
 	bool alternate = false;
 	int max_inv = getInventoryCount(_scummVars[VAR_EGO]);
+	ScummVM::Rect inventoryBox;
 
-	if (!(_userState & 64))
+	// Clear on all invocations, so hiding works properly
+        inventoryBox.top = virtscr[2].topline + 32;
+        inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
+        inventoryBox.left = 0;
+        inventoryBox.right = 319;
+        restoreBG(inventoryBox);
+
+	if (!(_userState & 64))	// Don't draw inventory unless active
 		return;
-
-	if (curInventoryCount > max_inv)
-		curInventoryCount = max_inv;
 
 	_string[1].charset = 1;
 	_string[1].color = 5;
 
 	items = 0;
-	for (i = curInventoryCount + 1; i <= max_inv; i++) {
+	for (i = _inventoryOffset + 1; i <= max_inv; i++) {
 		int obj = findInventory(_scummVars[VAR_EGO], i);
 		if ((obj == 0) || (items == 4)) break;
 		
@@ -76,7 +96,7 @@ void Scumm::redrawV2Inventory() {
 		alternate = !alternate;
 	}
 
-	if (curInventoryCount > 0) { // Draw Up Arrow
+	if (_inventoryOffset > 0) { // Draw Up Arrow
 		_string[1].xpos = 145;
 		_string[1].ypos = virtscr[2].topline + 32;
 		_messagePtr = (const byte *)"\1\2";

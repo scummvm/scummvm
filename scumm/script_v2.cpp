@@ -938,7 +938,7 @@ void Scumm_v2::o2_drawSentence() {
 	sentenceline.top = virtscr[2].topline;
 	sentenceline.bottom = virtscr[2].topline + 8;
 	sentenceline.left = 0;
-	sentenceline.right = 200;
+	sentenceline.right = 319;
 	restoreBG(sentenceline);
 
 	drawString(2);
