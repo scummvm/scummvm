@@ -71,18 +71,20 @@ void Actor::sayLine(const char *msg) {
   if (talkSound_ != NULL)
     Mixer::instance()->playVoice(talkSound_);
 
-  if (!costumeStack_.empty()) {
-    printf("Requesting talk chore\n");
-    costumeStack_.back()->playTalkChores();
-  }
+// FIXME: Ender - Disabled until I work out why the wrong Chores play
+//  if (!costumeStack_.empty()) {
+//    printf("Requesting talk chore\n");
+//    costumeStack_.back()->playTalkChores();
+//  }
 }
 
 bool Actor::talking() {
   if (talkSound_ == NULL)
     return false;
   if (talkSound_->done()) {
-    if (!costumeStack_.empty())
-      costumeStack_.back()->stopTalkChores();
+// FIXME: Ender - Disabled until I work out why the wrong Chores play
+//    if (!costumeStack_.empty())
+//      costumeStack_.back()->stopTalkChores();
     talkSound_ = NULL;
     return false;
   }
