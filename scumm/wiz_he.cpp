@@ -35,6 +35,36 @@ Wiz::Wiz() {
 	memset(&_polygons, 0, sizeof(_polygons));
 }
 
+void Wiz::polygonClear() {
+	memset(&_polygons, 0, sizeof(_polygons));
+}
+
+void Wiz::polygonLoad(const uint8 *polData) {
+	int slots = READ_LE_UINT32(polData);
+	polData += 4;
+	debug(1, "Loading %d polygon slots", slots);
+
+	bool flag = 1;
+	int id, points, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
+	while (slots--) {
+		id = READ_LE_UINT32(polData);
+		points = READ_LE_UINT32(polData + 4);
+		if (points != 4)
+			error("Illegal polygon with %d points", points);
+		vert1x = READ_LE_UINT32(polData + 8);
+		vert1y = READ_LE_UINT32(polData + 12);
+		vert2x = READ_LE_UINT32(polData + 16);
+		vert2y = READ_LE_UINT32(polData + 20);
+		vert3x = READ_LE_UINT32(polData + 24);
+		vert3y = READ_LE_UINT32(polData + 28);
+		vert4x = READ_LE_UINT32(polData + 32);
+		vert4y = READ_LE_UINT32(polData + 36);
+
+		polData += 40;
+		polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+	}
+}
+
 void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	WizPolygon *wp = NULL;
 	for (int i = 0; i < ARRAYSIZE(_polygons); ++i) {

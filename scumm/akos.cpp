@@ -28,6 +28,7 @@
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/sound.h"
+#include "scumm/wiz_he.h"
 
 namespace Scumm {
 
@@ -1238,7 +1239,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		_draw_bottom = dst.bottom;
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
-	_vm->_wiz.decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
+	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src);
 	return 0;
 }
 

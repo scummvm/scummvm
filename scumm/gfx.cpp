@@ -26,6 +26,7 @@
 #include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
+#include "scumm/wiz_he.h"
 
 #if defined(__PALM_OS__)
 #include "init_arm.h"
@@ -1438,7 +1439,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
 		byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
-		_vm->_wiz.copyWizImage(dst, bmap_ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
+		Wiz::copyWizImage(dst, bmap_ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
 	}
 
 	Common::Rect rect1(x, y, x + w, y + h);

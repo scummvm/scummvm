@@ -22,6 +22,7 @@
 #include "scumm/charset.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
+#include "scumm/wiz_he.h"
 
 namespace Scumm {
 
@@ -1397,7 +1398,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		byte imagePalette[256];
 		memset(imagePalette, 255, sizeof(imagePalette));
 		memcpy(imagePalette, _vm->_charsetColorMap, 16);
-		_vm->_wiz.decompressWizImage(dstPtr, vs->w, dst, charPtr, src, imagePalette);
+		Wiz::decompressWizImage(dstPtr, vs->w, dst, charPtr, src, imagePalette);
 
 		if (_blitAlso && vs->hasTwoBuffers)
 			_vm->gdi.copyVirtScreenBuffers(dst);

@@ -31,6 +31,7 @@
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "scumm/usage_bits.h"
+#include "scumm/wiz_he.h"
 
 namespace Scumm {
 
@@ -1921,7 +1922,7 @@ void ScummEngine::postProcessAuxQueue() {
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {
 					case 1:
-						_wiz.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h);
+						Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h);
 						break;
 					default:
 						warning("unimplemented compression type %d", comp);

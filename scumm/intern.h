@@ -24,7 +24,7 @@
 #define INTERN_H
 
 #include "scumm/scumm.h"
-
+#include "scumm/wiz_he.h"
 
 namespace Scumm {
 
@@ -648,6 +648,8 @@ protected:
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+
+	Wiz _wiz;
 
 protected:
 	virtual void setupOpcodes();

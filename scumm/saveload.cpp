@@ -28,12 +28,14 @@
 #include "scumm/charset.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
+#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
+#include "scumm/wiz_he.h"
 
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
@@ -726,8 +728,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
-	if (_heversion >= 71)
-		s->saveLoadArrayOf(_wiz._polygons, ARRAYSIZE(_wiz._polygons), sizeof(_wiz._polygons[0]), polygonEntries);
+	if (_heversion >= 71) {
+		Wiz *wiz = &((ScummEngine_v70he *)this)->_wiz;
+		s->saveLoadArrayOf(wiz->_polygons, ARRAYSIZE(wiz->_polygons), sizeof(wiz->_polygons[0]), polygonEntries);
+	}
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit

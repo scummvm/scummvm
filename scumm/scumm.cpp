@@ -1311,6 +1311,7 @@ void ScummEngine_v60he::scummInit() {
 void ScummEngine_v90he::scummInit() {
 	ScummEngine_v80he::scummInit();
 
+debug(0, "sizeof(_wiz) = %d", sizeof(_wiz));
 	_heObject = 0;
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
@@ -1818,7 +1819,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	_sound->processSoundQues();
 
 	if (_heversion >= 71) {
-		memset(_wiz._polygons, 0, sizeof(_wiz._polygons));
+		((ScummEngine_v70he *)this)->_wiz.polygonClear();
 	}
 
 	// For HE80+ games
@@ -2353,31 +2354,8 @@ void ScummEngine::initRoomSubBlocks() {
 	if (_heversion >= 80) {
 		ptr = findResourceData(MKID('POLD'), roomptr);
 		if (ptr) {
-			int slots = READ_LE_UINT32(ptr);
-			ptr += 4;
-			debug(1, "Loading %d polygon slots", slots);
-
-			bool flag = 1;
-			int id, points, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
-			while (slots--) {
-				id = READ_LE_UINT32(ptr);
-				points = READ_LE_UINT32(ptr + 4);
-				if (points != 4)
-					error("Illegal polygon with %d points", points);
-				vert1x = READ_LE_UINT32(ptr + 8);
-				vert1y = READ_LE_UINT32(ptr + 12);
-				vert2x = READ_LE_UINT32(ptr + 16);
-				vert2y = READ_LE_UINT32(ptr + 20);
-				vert3x = READ_LE_UINT32(ptr + 24);
-				vert3y = READ_LE_UINT32(ptr + 28);
-				vert4x = READ_LE_UINT32(ptr + 32);
-				vert4y = READ_LE_UINT32(ptr + 36);
-
-				ptr += 40;
-				_wiz.polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
-			}
+			((ScummEngine_v70he *)this)->_wiz.polygonLoad(ptr);
 		}
-
 	}
 
 	if (_PALS_offs || _CLUT_offs)

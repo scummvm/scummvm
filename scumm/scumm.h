@@ -32,7 +32,6 @@
 #include "scumm/gfx.h"
 #include "scumm/script.h"
 #include "scumm/util.h"
-#include "scumm/wiz_he.h"
 
 namespace GUI {
 	class Dialog;
@@ -334,9 +333,6 @@ public:
 	/** Graphics manager */
 	Gdi gdi;
 	
-	/** Wiz graphics manager (HE) */
-	Wiz _wiz;
-
 protected:
 	/** Central resource data. */
 	struct {
