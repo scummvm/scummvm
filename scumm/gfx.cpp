@@ -601,8 +601,8 @@ void Scumm::drawFlashlight() {
 
 	// Calculate the area of the flashlight
 	if (_gameId == GID_ZAK256) {
-		x = _virtual_mouse_x;
-		y = _virtual_mouse_y;
+		x = _virtualMouse.x;
+		y = _virtualMouse.y;
 	} else {
 		Actor *a = a = derefActorSafe(VAR(VAR_EGO), "drawFlashlight");
 		x = a->x;

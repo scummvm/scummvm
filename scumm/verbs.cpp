@@ -29,7 +29,7 @@
 
 void Scumm::redrawVerbs() {
 	int i;
-	int verb = (_cursor.state > 0 ? checkMouseOver(mouse.x, mouse.y) : 0);
+	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
 	for (i = _maxVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
@@ -68,15 +68,15 @@ void Scumm::checkExecVerbs() {
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
-		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
-			over = checkMouseOver(mouse.x, mouse.y);
+		if (_mouse.y >= virtscr[0].topline && _mouse.y < virtscr[0].topline + virtscr[0].height) {
+			over = checkMouseOver(_mouse.x, _mouse.y);
 			if (over != 0) {
 				runInputScript(1, _verbs[over].verbid, code);
 				return;
 			}
 			runInputScript(2, 0, code);
 		} else {
-			over = checkMouseOver(mouse.x, mouse.y);
+			over = checkMouseOver(_mouse.x, _mouse.y);
 
 			// FIXME For the future: Indy3 and under inv scrolling
 			/*

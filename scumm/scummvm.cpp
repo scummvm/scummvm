@@ -194,7 +194,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_sound= NULL;
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
-	memset(&mouse, 0, sizeof(mouse));
 	_smushFrameRate = 0;
 	_insaneState = 0;
 	_videoFinished = 0;
@@ -247,8 +246,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mouseButStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;
-	_virtual_mouse_x = 0;
-	_virtual_mouse_y = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
@@ -728,8 +725,8 @@ void Scumm::scummInit() {
 		_flashlight.buffer = NULL;
 	}
 
-	mouse.x = 104;
-	mouse.y = 56;
+	_mouse.x = 104;
+	_mouse.y = 56;
 
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
@@ -884,13 +881,13 @@ int Scumm::scummLoop(int delta) {
 	}
 	VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
 	if (_features & GF_AFTER_V2) {
-		VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x / 8;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y / 2;
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 	} else {
-		VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x;
-		VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y;
-		VAR(VAR_MOUSE_X) = mouse.x;
-		VAR(VAR_MOUSE_Y) = mouse.y;
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
+		VAR(VAR_MOUSE_X) = _mouse.x;
+		VAR(VAR_MOUSE_Y) = _mouse.y;
 		VAR(VAR_DEBUGMODE) = _debugMode;
 	}
 
@@ -1034,7 +1031,7 @@ load_game:
 
 
 		if (!_verbRedraw && _cursor.state > 0) {
-			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
+			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
 		}
 		_verbRedraw = false;
 
@@ -1714,20 +1711,20 @@ void Scumm::processKbd() {
 	else
 		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
 
-	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
+	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
 
 	if(_features & GF_AFTER_V7)
-		_virtual_mouse_y = mouse.y + camera._cur.y - (_screenHeight / 2);
+		_virtualMouse.y = _mouse.y + camera._cur.y - (_screenHeight / 2);
 	else
-		_virtual_mouse_y = mouse.y;
+		_virtualMouse.y = _mouse.y;
 
-	_virtual_mouse_y -= virtscr[0].topline;
+	_virtualMouse.y -= virtscr[0].topline;
 
-	if (_virtual_mouse_y < 0)
-		_virtual_mouse_y = -1;
+	if (_virtualMouse.y < 0)
+		_virtualMouse.y = -1;
 
-	if (_virtual_mouse_y >= virtscr[0].height)
-		_virtual_mouse_y = -1;
+	if (_virtualMouse.y >= virtscr[0].height)
+		_virtualMouse.y = -1;
 
 	if (!_lastKeyHit)
 		return;
@@ -1813,14 +1810,14 @@ int Scumm::getKeyInput() {
 	_lastKeyHit = checkKeyHit();
 	convertKeysToClicks();
 
-	if (mouse.x < 0)
-		mouse.x = 0;
-	if (mouse.x > _screenWidth-1)
-		mouse.x = _screenWidth-1;
-	if (mouse.y < 0)
-		mouse.y = 0;
-	if (mouse.y > _screenHeight-1)
-		mouse.y = _screenHeight-1;
+	if (_mouse.x < 0)
+		_mouse.x = 0;
+	if (_mouse.x > _screenWidth-1)
+		_mouse.x = _screenWidth-1;
+	if (_mouse.y < 0)
+		_mouse.y = 0;
+	if (_mouse.y > _screenHeight-1)
+		_mouse.y = _screenHeight-1;
 
 	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
 		_mouseButStat = 0;
@@ -1861,7 +1858,7 @@ int Scumm::getKeyInput() {
 		// 5) Sentence Bar
 
 		if  (_mouseButStat & MBS_LEFT_CLICK) {
-			VirtScreen *zone = findVirtScreen(mouse.y);
+			VirtScreen *zone = findVirtScreen(_mouse.y);
 
 			if (zone->number == 0)		// Clicked in scene
 				_scummVars[32] = 2;
@@ -2076,8 +2073,8 @@ void Scumm::parseEvents() {
 			break;
 
 		case OSystem::EVENT_MOUSEMOVE:
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
 			_system->update_screen();
 			break;
@@ -2085,16 +2082,16 @@ void Scumm::parseEvents() {
 		case OSystem::EVENT_LBUTTONDOWN:
 			_leftBtnPressed |= msClicked|msDown;
 #if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 #endif
 			break;
 
 		case OSystem::EVENT_RBUTTONDOWN:
 			_rightBtnPressed |= msClicked|msDown;
 #if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			mouse.x = event.mouse.x;
-			mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 #endif
 			break;
 

@@ -421,10 +421,8 @@ protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
 
-	struct {
-		int16 x, y;
-	} mouse;
-	int16 _virtual_mouse_x, _virtual_mouse_y;
+	ScummVM::Point _mouse;
+	ScummVM::Point _virtualMouse;
 
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
