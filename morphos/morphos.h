@@ -126,6 +126,8 @@ class OSystem_MorphOS : public OSystem
 		struct Window  	  *ScummWindow;
 		char 						ScummWndTitle[ 125 ];
 		APTR            		ScummBuffer;
+		int						ScummBufferWidth;
+		int						ScummBufferHeight;
 		struct ScreenBuffer *ScummScreenBuffer[ 2 ];
 		struct BitMap  	  *ScummRenderTo;
 		bool			    		ScummPCMode;

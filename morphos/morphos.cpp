@@ -482,8 +482,8 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 		ScummScreen = NULL;
 	}
 	
-	ScummScrWidth  = 320 << ScummScale;
-	ScummScrHeight = 200 << ScummScale;
+	ScummScrWidth  = ScummBufferWidth << ScummScale;
+	ScummScrHeight = ScummBufferHeight << ScummScale;
 
 	if( FullScreenMode )
 	{
@@ -781,8 +781,8 @@ bool OSystem_MorphOS::poll_event( Event *event )
 
 				if( !FullScreenMode && !ScummDefaultMouse )
 				{
-					if( newx < 0 || newx > 320 ||
-						 newy < 0 || newy > 200
+					if( newx < 0 || newx > ScummBufferWidth ||
+						 newy < 0 || newy > ScummBufferHeight
 					  )
 					{
 						if( !ScummOrigMouse )
@@ -881,13 +881,13 @@ void OSystem_MorphOS::Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uin
 	if( (handle = LockBitMapTags( ScummRenderTo, LBMI_BYTESPERPIX, &dest_bpp, LBMI_BYTESPERROW, &dest_pitch, LBMI_BASEADDRESS, &dest, TAG_DONE )) == 0 )
 		return;
 
-	src = ((byte *)ScummBuffer)+src_y*320+src_x;
+	src = ((byte *)ScummBuffer)+src_y*ScummBufferWidth+src_x;
 
 	/* Point to the first 3 lines. */
 	src_line[0] = src;
 	src_line[1] = src;
-	src_line[2] = src + 320;
-	src_line[3] = src + 320 * 2;
+	src_line[2] = src + ScummBufferWidth;
+	src_line[3] = src + ScummBufferWidth * 2;
 
 	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
@@ -1044,7 +1044,7 @@ void OSystem_MorphOS::Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uin
 		if (y + 3 >= height)
 			src_line[3] = src_line[2];
 		else
-			src_line[3] = src_line[2] + 320;
+			src_line[3] = src_line[2] + ScummBufferWidth;
 
 		/* Then shift the color matrix up */
 		if (PixelsPerMask == 2)
@@ -1103,13 +1103,13 @@ void OSystem_MorphOS::SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uin
 	if( (handle = LockBitMapTags( ScummRenderTo, LBMI_BYTESPERPIX, &dest_bpp, LBMI_BYTESPERROW, &dest_pitch, LBMI_BASEADDRESS, &dest, TAG_DONE )) == 0 )
 		return;
 
-	src = (byte *)ScummBuffer+src_y*320+src_x;
+	src = (byte *)ScummBuffer+src_y*ScummBufferWidth+src_x;
 
 	/* Point to the first 3 lines. */
 	src_line[0] = src;
 	src_line[1] = src;
-	src_line[2] = src + 320;
-	src_line[3] = src + 320 * 2;
+	src_line[2] = src + ScummBufferWidth;
+	src_line[3] = src + ScummBufferWidth * 2;
 
 	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
@@ -1279,7 +1279,7 @@ void OSystem_MorphOS::SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uin
 		if (y + 3 >= height)
 			src_line[3] = src_line[2];
 		else
-			src_line[3] = src_line[2] + 320;
+			src_line[3] = src_line[2] + ScummBufferWidth;
 
 		/* Then shift the color matrix up */
 		if (PixelsPerMask == 2)
@@ -1328,11 +1328,11 @@ void OSystem_MorphOS::AdvMame2xScaler( uint32 src_x, uint32 src_y, uint32 dest_x
 	if( (handle = LockBitMapTags( ScummRenderTo, LBMI_BYTESPERPIX, &dest_bpp, LBMI_BYTESPERROW, &dest_pitch, LBMI_BASEADDRESS, &dest, TAG_DONE )) == 0 )
 		return;
 
-	byte *src = (byte *)ScummBuffer+src_y*320+src_x;
+	byte *src = (byte *)ScummBuffer+src_y*ScummBufferWidth+src_x;
 
 	src_line[0] = src;
 	src_line[1] = src;
-	src_line[2] = src + 320;
+	src_line[2] = src + ScummBufferWidth;
 
 	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
@@ -1396,7 +1396,7 @@ void OSystem_MorphOS::AdvMame2xScaler( uint32 src_x, uint32 src_y, uint32 dest_x
 		if (y + 2 >= height)
 			src_line[2] = src_line[1];
 		else
-			src_line[2] = src_line[1] + 320;
+			src_line[2] = src_line[1] + ScummBufferWidth;
 
 		if( y < height - 1 )
 		{
@@ -1427,7 +1427,7 @@ void OSystem_MorphOS::PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, ui
 																TAG_DONE )) == 0 )
 		return;
 
-	src = (byte *)ScummBuffer+src_y*320+src_x;
+	src = (byte *)ScummBuffer+src_y*ScummBufferWidth+src_x;
 
 	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
@@ -1458,7 +1458,7 @@ void OSystem_MorphOS::PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, ui
 			}
 		}
 
-		src += 320;
+		src += ScummBufferWidth;
 		
 		if (y < height - 1)
 		{
@@ -1477,8 +1477,8 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 
 	if (x < 0) { w+=x; src-=x; x = 0; }
 	if (y < 0) { h+=y; src-=y*pitch; y = 0; }
-	if (w >= 320-x) { w = 320 - x; }
-	if (h >= 200-y) { h = 200 - y; }
+	if (w >= ScummBufferWidth-x) { w = ScummBufferWidth - x; }
+	if (h >= ScummBufferHeight-y) { h = ScummBufferHeight - y; }
 
 	if (w<=0 || h<=0)
 		return;
@@ -1487,11 +1487,11 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 	if( MouseDrawn )
 		undraw_mouse();
 
-	dst = (byte *)ScummBuffer+y*320 + x;
+	dst = (byte *)ScummBuffer+y*ScummBufferWidth + x;
 	do
 	{
 		memcpy( dst, src, w );
-		dst += 320;
+		dst += ScummBufferWidth;
 		src += pitch;
 	} while( --h );
 	ScreenChanged = true;
@@ -1512,9 +1512,9 @@ void OSystem_MorphOS::update_screen()
 		rp.BitMap = ScummRenderTo;
 
 		if( ScummDepth == 8 )
-			WritePixelArray( ScummBuffer, 0, 0, 320, &rp, 0, ScummShakePos, 320, 200, RECTFMT_LUT8 );
+			WritePixelArray( ScummBuffer, 0, 0, ScummBufferWidth, &rp, 0, ScummShakePos, ScummBufferWidth, ScummBufferHeight, RECTFMT_LUT8 );
 		else
-			WriteLUTPixelArray( ScummBuffer, 0, 0, 320, &rp, ScummColors, 0, ScummShakePos, 320, 200, CTABFMT_XRGB8 );
+			WriteLUTPixelArray( ScummBuffer, 0, 0, ScummBufferWidth, &rp, ScummColors, 0, ScummShakePos, ScummBufferWidth, ScummBufferHeight, CTABFMT_XRGB8 );
 	}
 	else
 	{
@@ -1528,19 +1528,19 @@ void OSystem_MorphOS::update_screen()
 		switch( ScummScaler )
 		{
 			case ST_POINT:
-				PointScaler( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				PointScaler( 0, src_y, 0, dest_y, ScummBufferWidth, ScummBufferHeight-src_y-dest_y );
 				break;
 
 			case ST_ADVMAME2X:
-				AdvMame2xScaler( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				AdvMame2xScaler( 0, src_y, 0, dest_y, ScummBufferWidth, ScummBufferHeight-src_y-dest_y );
 				break;
 
 			case ST_SUPEREAGLE:
-				SuperEagle( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				SuperEagle( 0, src_y, 0, dest_y, ScummBufferWidth, ScummBufferHeight-src_y-dest_y );
 				break;
 
 			case ST_SUPER2XSAI:
-				Super2xSaI( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				Super2xSaI( 0, src_y, 0, dest_y, ScummBufferWidth, ScummBufferHeight-src_y-dest_y );
 				break;
 		}
 	}
@@ -1554,7 +1554,7 @@ void OSystem_MorphOS::update_screen()
 		rp.BitMap = ScummRenderTo;
 
 		if( ScummShakePos < 0 )
-			FillPixelArray( &rp, 0, 199 << ScummScale, ScummScrWidth, -ScummShakePos << ScummScale, 0 );
+			FillPixelArray( &rp, 0, (ScummBufferHeight-1) << ScummScale, ScummScrWidth, -ScummShakePos << ScummScale, 0 );
 		else
 			FillPixelArray( &rp, 0, 0, ScummScrWidth, ScummShakePos << ScummScale, 0 );
 	}
@@ -1596,16 +1596,16 @@ void OSystem_MorphOS::draw_mouse()
 	MouseOldWidth = w;
 	MouseOldHeight = h;
 
-	dst = (byte*)ScummBuffer + ydraw*320 + xdraw;
+	dst = (byte*)ScummBuffer + ydraw*ScummBufferWidth + xdraw;
 	bak = MouseBackup;
 
-	for( y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w )
+	for( y = 0; y < h; y++, dst += ScummBufferWidth, bak += MAX_MOUSE_W, buf += w )
 	{
-		if( (uint)(ydraw+y) < 200 )
+		if( (uint)(ydraw+y) < ScummBufferHeight )
 		{
 			for( x = 0; x<w; x++ )
 			{
-				if( (uint)(xdraw+x)<320 )
+				if( (uint)(xdraw+x) < ScummBufferWidth )
 				{
 					bak[x] = dst[x];
 					if( (color=buf[x])!=0xFF )
@@ -1625,16 +1625,16 @@ void OSystem_MorphOS::undraw_mouse()
 		return;
 	MouseDrawn = false;
 
-	dst = (byte*)ScummBuffer + MouseOldY*320 + MouseOldX;
+	dst = (byte*)ScummBuffer + MouseOldY*ScummBufferWidth + MouseOldX;
 	bak = MouseBackup;
 
-	for( y = 0; y < MouseOldHeight; y++, bak += MAX_MOUSE_W, dst += 320 )
+	for( y = 0; y < MouseOldHeight; y++, bak += MAX_MOUSE_W, dst += ScummBufferWidth )
 	{
-		if( (uint)(MouseOldY + y) < 200 )
+		if( (uint)(MouseOldY + y) < ScummBufferHeight )
 		{
 			for( x = 0; x < MouseOldWidth; x++ )
 			{
-				if( (uint)(MouseOldX + x) < 320 )
+				if( (uint)(MouseOldX + x) < ScummBufferWidth )
 					dst[ x ] = bak[ x ];
 			}
 		}
@@ -1734,6 +1734,8 @@ void OSystem_MorphOS::init_size( uint w, uint h )
 
 	memset( ScummColors, 0, 256*sizeof( ULONG ) );
 
+	ScummBufferWidth = w;
+	ScummBufferHeight = h;
 	create_screen( CSDSPTYPE_KEEP );
 }
 
