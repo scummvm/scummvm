@@ -132,7 +132,7 @@ int Icon::find_unused_pixel()
   return -1;
 }
 
-bool Icon::load_image2(void *data, int len)
+bool Icon::load_image2(const void *data, int len)
 {
   struct {
     int size, w, h;
@@ -156,16 +156,16 @@ bool Icon::load_image2(void *data, int len)
     return false;
   if(hdr.w != 32 || hdr.h != 32 || hdr.bitcnt != 4 || hdr.used > 16)
     return false;
-  memcpy(palette, ((char *)data)+hdr.size, hdr.used<<2);
-  memcpy(bitmap, ((char *)data)+hdr.size+(hdr.used<<2), 32*32/2);
+  memcpy(palette, ((const char *)data)+hdr.size, hdr.used<<2);
+  memcpy(bitmap, ((const char *)data)+hdr.size+(hdr.used<<2), 32*32/2);
   for(int i=0; i<16; i++)
     palette[i] |= 0xff000000;
   for(int i=hdr.used; i<16; i++)
     palette[i] = 0;
   int unused = find_unused_pixel();
   if(unused >= 0) {
-    unsigned char *mask =
-      ((unsigned char *)data)+hdr.size+(hdr.used<<2)+32*32/2;
+    const unsigned char *mask =
+      ((const unsigned char *)data)+hdr.size+(hdr.used<<2)+32*32/2;
     unsigned char *pix = bitmap;
     for(int y=0; y<32; y++)
       for(int x=0; x<32/8; x++) {
@@ -183,7 +183,7 @@ bool Icon::load_image2(void *data, int len)
   return true;
 }
 
-bool Icon::load_image1(void *data, int len, int offs)
+bool Icon::load_image1(const void *data, int len, int offs)
 {
   struct {
     char w, h, colors, rsrv;
@@ -192,14 +192,14 @@ bool Icon::load_image1(void *data, int len, int offs)
   } hdr;
   if(len < offs+16)
     return false;
-  memcpy(&hdr, ((char *)data)+offs, 16);
+  memcpy(&hdr, ((const char *)data)+offs, 16);
   if(hdr.bytes > 0 && hdr.offs >= 0 && hdr.offs+hdr.bytes <= len)
-    return load_image2(((char *)data)+hdr.offs, hdr.bytes);
+    return load_image2(((const char *)data)+hdr.offs, hdr.bytes);
   else
     return false;
 }
 
-bool Icon::load(void *data, int len, int offs)
+bool Icon::load(const void *data, int len, int offs)
 {
   struct { short rsrv, type, cnt; } hdr;
   memset(bitmap, 0, sizeof(bitmap));
@@ -207,7 +207,7 @@ bool Icon::load(void *data, int len, int offs)
   texture = NULL;
   if(len < offs+6)
     return false;
-  memcpy(&hdr, ((char *)data)+offs, 6);
+  memcpy(&hdr, ((const char *)data)+offs, 6);
   if(hdr.type != 1 || hdr.cnt < 1 || offs+6+(hdr.cnt<<4) > len)
     return false;
   for(int i=0; i<hdr.cnt; i++)
