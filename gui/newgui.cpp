@@ -47,7 +47,7 @@ enum {
 	kCursorAnimateDelay = 500,
 	
 	kKeyRepeatInitialDelay = 400,
-	kKeyRepeatSustainDelay = 100,
+	kKeyRepeatSustainDelay = 100
 };
 
 // Built-in font

@@ -41,7 +41,7 @@ public:
 	// event = (ME_xxx<<24) | <24-bit data associated with event>
 	enum {
 		ME_NONE = 0,
-		ME_TEMPO = 1,
+		ME_TEMPO = 1
 	};
 
 private:
