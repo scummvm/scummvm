@@ -498,9 +498,9 @@ else
 fi
 
 if test "$_build_kyra" = no ; then
-	_mak_queen='DISABLE_KYRA = 1'
+	_mak_kyra='DISABLE_KYRA = 1'
 else
-	_mak_queen='# DISABLE_KYRA = 1'
+	_mak_kyra='# DISABLE_KYRA = 1'
 fi
 
 if test "$_build_saga" = no ; then
