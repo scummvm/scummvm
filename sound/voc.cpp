@@ -75,7 +75,7 @@ byte *loadVOCFromStream(Common::ReadStream *stream, int &size, int &rate, int &l
 	int16 version = FROM_LE_16(fileHeader.version);
 	int16 code = FROM_LE_16(fileHeader.id);
 	assert(offset == sizeof(VocFileHeader));
-	assert(version == 0x010A || version == 0x0114);
+	assert(version == 0x010A || version == 0x0114 || version == 0x0100);
 	assert(code == ~version + 0x1234);
 
 	int len;
