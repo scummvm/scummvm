@@ -84,7 +84,7 @@ CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
 	_key_action[ACTION_PAUSE].setAscii(VK_SPACE);
 	_action_enabled[ACTION_PAUSE] = true;
 	// Save
-	if (is_simon) 
+	if (is_simon || is_sword2) 
 		_action_enabled[ACTION_SAVE] = false;
 	else
 	if (is_queen) {
