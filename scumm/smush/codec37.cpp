@@ -471,7 +471,11 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 #endif
 		break;
 	}
-	dst.blit((byte *)_deltaBufs[_curtable], width * height);
+	if(mask_flag & 2) {
+		error("smush:codec37 missing transparent_blitting");
+	}	else {
+		dst.blit((byte *)_deltaBufs[_curtable], width * height);
+	}
 	_prevSeqNb = seq_nb;
 	return true;
 }
