@@ -26,42 +26,21 @@
 #include "common/file.h"
 #include "common/str.h"
 
-class FilePtr {
+class FilePtr : public File {
 	ScummVM::String _filename;
-	File _ifs;
 	int32 _refcount;
-	int32 _curPos;
 public:
 	FilePtr(const char *fname, const char *directory) :
 		_filename(fname),
-		_refcount(1),
-		_curPos(0) {
+		_refcount(1) {
 			debug(9, "FilePtr created for %s", fname);
-			_ifs.open(fname, directory);
-			if (_ifs.isOpen() == false) error("FilePtr unable to read file %s", fname);
+			open(fname, directory);
+			if (isOpen() == false)
+				error("FilePtr unable to read file %s", fname);
 		}
 
 	~FilePtr() {
 		debug(9, "FilePtr destroyed for %s", _filename.c_str());
-		_ifs.close();
-	}
-
-	int32 tell() {
-		return _curPos;
-	}
-
-	bool seek(int32 pos) {
-		if (pos != _curPos) {
-			_ifs.seek(pos, SEEK_SET);
-			_curPos = pos;
-		}
-		return true;
-	}
-
-	bool read(void *ptr, int32 size) {
-		_ifs.read(ptr, size);
-		_curPos += size;
-		return true;
 	}
 
 	void incRef() {
@@ -136,11 +115,9 @@ FileChunk::FileChunk() :
 
 FileChunk::FileChunk(const char *fname, const char *directory) {
 	_data = new FilePtr(fname, directory);
-	_data->read(&_type, 4);
-	_type = TO_BE_32(_type);
-	_data->read(&_size, 4);
-	_size = TO_BE_32(_size);
-	_offset = _data->tell();
+	_type = _data->readUint32BE();
+	_size = _data->readUint32BE();
+	_offset = sizeof(Chunk::type) + sizeof(uint32);
 	_curPos = 0;
 }
 
@@ -154,14 +131,11 @@ Chunk *FileChunk::subBlock() {
 	ptr->_data = _data;
 	_data->incRef();
 	_data->seek(_offset + _curPos);
-	uint32 temp;
-	_data->read(&temp, 4);
-	ptr->_type = TO_BE_32(temp);
-	_data->read(&temp, 4);
-	ptr->_size = TO_BE_32(temp);
-	ptr->_offset = _offset + _curPos + 8;
+	ptr->_type = _data->readUint32BE();
+	ptr->_size = _data->readUint32BE();
+	ptr->_offset = _offset + _curPos + sizeof(Chunk::type) + sizeof(uint32);
 	ptr->_curPos = 0;
-	seek(8 + ptr->getSize());
+	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
 	return ptr;
 }
 
@@ -176,52 +150,41 @@ bool FileChunk::read(void *buffer, uint32 size) {
 }
 
 int8 FileChunk::getChar() {
-	if (_curPos >= _size)
-		error("invalid char read request");
-
-	_data->seek(_offset + _curPos);
-	int8 buffer;
-	_data->read(&buffer, sizeof(buffer));
-	_curPos+= sizeof(buffer);
-	return buffer;
+	return (int8)getByte();
 }
 
 byte FileChunk::getByte() {
-	if (_curPos >= _size)
+	_data->seek(_offset + _curPos);
+	_curPos++;
+
+	if (_curPos > _size)
 		error("invalid byte read request");
 
-	_data->seek(_offset + _curPos);
-	byte buffer;
-	_data->read(&buffer, sizeof(buffer));
-	_curPos+= sizeof(buffer);
-	return buffer;
+	return _data->readByte();
 }
 
 int16 FileChunk::getShort() {
-	int16 buffer = getWord();
-	return *((int16*)&buffer);
+	return (int16)getWord();
 }
 
 uint16 FileChunk::getWord() {
-	if (_curPos >= _size - 1)
+	_data->seek(_offset + _curPos);
+	_curPos += 2;
+
+	if (_curPos > _size)
 		error("invalid word read request");
 
-	_data->seek(_offset + _curPos);
-	uint16 buffer;
-	_data->read(&buffer, sizeof(buffer));
-	_curPos+= sizeof(buffer);
-	return TO_LE_16(buffer);
+	return _data->readUint16LE();
 }
 
 uint32 FileChunk::getDword() {
-	if (_curPos >= _size - 3)
+	_data->seek(_offset + _curPos);
+	_curPos += 4;
+
+	if (_curPos > _size)
 		error("invalid dword read request");
 
-	_data->seek(_offset + _curPos);
-	uint32 buffer;
-	_data->read(&buffer, sizeof(buffer));
-	_curPos+= sizeof(buffer);
-	return TO_LE_32(buffer);
+	return _data->readUint32LE();
 }
 
 MemoryChunk::MemoryChunk(byte *data) {
