@@ -106,7 +106,7 @@ class SkyMouse;
 #define SAVE_GRAFX	32
 #define SAVE_TURNP	64
 
-#define SAVE_FILE_REVISION 1
+#define SAVE_FILE_REVISION 2
 
 struct AllocedMem {
 	uint16 *mem;

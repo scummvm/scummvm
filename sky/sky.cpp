@@ -103,25 +103,36 @@ void SkyState::go() {
 
 	loadBase0();
 
+	_paintGrid = false;
+
 	while (1) {
 		delay(_systemVars.gameSpeed);
-		/*if (_key_pressed == 'g') {
+		if (_key_pressed == 'r') {
 			warning("loading grid");
 			_skyLogic->_skyGrid->loadGrids();
 			_key_pressed = 0;
-		}*/
-		if ((_key_pressed == 27) || (_key_pressed == 63)) { // 27 = escape, 63 = F5
+		}
+		if (_key_pressed == 'g') {
+			_paintGrid = !_paintGrid;
+			warning("Grid paint: %s",(_paintGrid)?("ON"):("OFF"));
+			if (!_paintGrid)
+				_skyScreen->forceRefresh();
+			_key_pressed = 0;
+		}
+		if (_key_pressed == 63) {
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
 		}
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
-			//_skyScreen->forceRefresh();
+			if (_paintGrid)
+				_skyScreen->forceRefresh();
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
 			_skyScreen->flip();
-			//_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
+			if (_paintGrid)
+				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
 			_system->update_screen();
 		}
 	}

@@ -362,11 +362,11 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 #endif
 	// the route is done. if there was an initial x/y movement tag it onto the start
 	if (initX < 0) {
-        saveRoute -= 4;
+        saveRoute -= 2;
 		saveRoute[1] = RIGHTY;
 		saveRoute[0] = ((-initX) + 7) & 0xFFF8;
 	} else if (initX > 0) {
-		saveRoute -= 4;
+		saveRoute -= 2;
 		saveRoute[1] = LEFTY;
 		saveRoute[0] = (initX + 7) & 0xFFF8;
 	}

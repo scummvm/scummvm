@@ -176,7 +176,10 @@ void SkyControl::initPanel(void) {
 	_sprites.slode			= _skyDisk->loadFile(60506, NULL);
 	_sprites.slode2			= _skyDisk->loadFile(60507, NULL);
 	_sprites.slide2			= _skyDisk->loadFile(60508, NULL);
-	_sprites.musicBodge		= _skyDisk->loadFile(60509, NULL);
+	if (SkyState::_systemVars.gameVersion < 368) 
+		_sprites.musicBodge = NULL;
+	else
+		_sprites.musicBodge = _skyDisk->loadFile(60509, NULL);
     
 	//Main control panel:                                            X    Y Text       OnClick
 	_controlPanel     = createResource(_sprites.controlPanel, 1, 0,  0,   0,  0,      DO_NOTHING, MAINPANEL);
@@ -297,7 +300,10 @@ void SkyControl::doControlPanel(void) {
 	initPanel();
 
 	_skyScreen->clearScreen();
-	_skyScreen->setPalette(60510);
+	if (SkyState::_systemVars.gameVersion < 368)
+		_skyScreen->setPalette(60509);
+	else 
+		_skyScreen->setPalette(60510);
 	
 	drawMainPanel();
 

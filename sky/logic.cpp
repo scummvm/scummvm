@@ -1127,7 +1127,7 @@ script:
 	else
 		scriptData += READ_LE_UINT16(scriptData + (scriptNo & 0x0fff));
 
-	uint32 a, b, c;
+	uint32 a = 0, b = 0, c = 0;
 	uint16 command, s;
 
 	for (;;) {
@@ -1173,7 +1173,7 @@ script:
 				scriptData += s/2;
 			break;
 		case 6: // pop_var
-			_scriptVariables[READ_LE_UINT16(scriptData++)/4] = pop();
+			b = _scriptVariables[READ_LE_UINT16(scriptData++)/4] = pop();
 			break;
 		case 7: // minus
 			a = pop();
@@ -1200,7 +1200,6 @@ script:
 		case 11: // call_mcode
 			{
 				a = READ_LE_UINT16(scriptData++);
-				b = c = 0;
 				assert(a <= 3);
 				// No, I did not forget the "break"s
 				switch (a) {
@@ -1232,7 +1231,7 @@ script:
 				push(0);
 			break;
 		case 14: // switch
-			s = READ_LE_UINT16(scriptData++); // get number of cases
+			c = s = READ_LE_UINT16(scriptData++); // get number of cases
 
 			a = pop(); // and value to switch on
 

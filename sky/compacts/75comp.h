@@ -83,6 +83,38 @@ uint16 sc75_usecard[] = {
 	0
 };
 
+ExtCompact sc75_console_ext = {
+	0,	// actionSub
+	0,	// actionSub_off
+	0,	// getToSub
+	0,	// getToSub_off
+	0,	// extraSub
+	0,	// extraSub_off
+	0,	// dir
+	0,	// stopScript
+	0,	// miniBump
+	0,	// leaving
+	0,	// atWatch
+	0,	// atWas
+	0,	// alt
+	0,	// request
+	0,	// spWidth_xx
+	0,	// spColour
+	0,	// spTextId
+	0,	// spTime
+	0,	// arAnimIndex
+	0,	// turnProg
+	0,	// waitingFor
+	0,	// arTarget_x
+	0,	// arTarget_y
+	0,	// animScratch
+	0,	// megaSet
+	0,
+	0,
+	0,
+	0
+};
+
 Compact sc75_console = {
 	L_SCRIPT,	// logic
 	ST_MOUSE+ST_LOGIC+ST_BACKGROUND,	// status
@@ -112,7 +144,7 @@ Compact sc75_console = {
 	C_BASE_MODE,	// mode
 	SC75_CONSOLE_LOGIC,	// baseSub
 	0,	// baseSub_off
-	0
+	&sc75_console_ext
 };
 
 uint16 sc75_get_tongs[] = {
