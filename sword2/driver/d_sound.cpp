@@ -346,7 +346,6 @@ void Sword2Sound::FxServer(void) {
 	}
 }
 
-
 int32 Sword2Sound::AmISpeaking() {
 	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != 0)) {
 		return (RDSE_SPEAKING);
@@ -533,13 +532,10 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		int8 p;
 		if (speechMuted) {
 			volume = 0;
-//			IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[0]);
 		} else {
 			volume = vol * speechVol;
-//			IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[vol*speechVol]);
 		}
 		p = panTable[pan + 16];
-//		IDirectSoundBuffer_SetPan(dsbSpeech, panTable[pan+16]);
 
 		//	Start the speech playing
 		speechPaused = 1;
@@ -590,7 +586,6 @@ void Sword2Sound::SetSpeechVolume(uint8 volume) {
 	speechVol = volume;
 	if ((soundHandleSpeech != 0) && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		g_engine->_mixer->setChannelVolume(soundHandleSpeech, 16 * speechVol);
-//		IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[16*speechVol]);
 	}
 }
 
@@ -604,10 +599,8 @@ void Sword2Sound::MuteSpeech(uint8 mute) {
 	if (GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		if (mute) {
 			g_engine->_mixer->setChannelVolume(soundHandleSpeech, 0);
-//			IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[0]);
 		} else {
 			g_engine->_mixer->setChannelVolume(soundHandleSpeech, 16 * speechVol);
-//			IDirectSoundBuffer_SetVolume(dsbSpeech, volTable[16*speechVol]);
 		}
 	}
 }
@@ -696,114 +689,6 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		fxCached[fxi] = RDSE_FXCACHED;
 	}
 	return(RD_OK);
-
-/*
-	uint32			dwBytes1, dwBytes2;
-  	int32 			i, fxi;
-	uint32			*data32;
-	void 			*lpv1, *lpv2;
-	_wavHeader		*wav;
-	HRESULT 		hr;
-	DSBUFFERDESC	dsbd;
-	PCMWAVEFORMAT	wf;
-
-
-	wav = (_wavHeader *) data;
-
-	if (soundOn)
-	{
-
-		// Check for a valid id.
-		if (id == 0)
-			return(RDERR_INVALIDID);
-
-		// Check that the fx is not already open
-		for (i=0; i<MAXFX; i++)
-			if (fxId[i] == id)
-				return(RDERR_FXALREADYOPEN);
-
-		// Now choose a free slot for the fx
-		fxi = 0;
-		while (fxi<MAXFX)
-		{
-			if (fxId[fxi] == 0)
-				break;
-			fxi++;
-		}
-
-		if (fxi == MAXFX)
-			return(RDERR_NOFREEBUFFERS);
-
-		memset(&wf, 0, sizeof(PCMWAVEFORMAT));
-		wf.wf.wFormatTag = WAVE_FORMAT_PCM;
-		wf.wf.nChannels = wav->channels;
-		wf.wf.nSamplesPerSec = wav->samplesPerSec;
-		wf.wBitsPerSample = 8 * wav->blockAlign / (wav->samplesPerSec * wav->channels);
-		wf.wf.nBlockAlign = wf.wf.nChannels * wf.wBitsPerSample / 8;
-		wf.wf.nAvgBytesPerSec = wf.wf.nSamplesPerSec * wf.wf.nBlockAlign;
-   
-		memset(&dsbd, 0, sizeof(DSBUFFERDESC));
-		dsbd.dwSize = sizeof(DSBUFFERDESC);
-//		dsbd.dwFlags = DSBCAPS_CTRLDEFAULT;
-		dsbd.lpwfxFormat = (LPWAVEFORMATEX) &wf;
-	
-	    //  Set the sample size - search for the size of the data.
-		i = 0;
-		while (i<100)
-		{
-			if (*data == 'd')
-			{
-				data32 = (int32 *) data;
-				if (*data32 == 'atad')
-					break;
-			}
-			i += 1;
-			data++;
-		}
-		if (!data32)
-			return(RDERR_INVALIDWAV);
-
-		dsbd.dwBufferBytes = *(data32 + 1);
-
-		//	Create the speech sample buffer
-		hr = IDirectSound_CreateSoundBuffer(lpDS, &dsbd, &dsbFx[fxi], NULL);
-		if (hr != DS_OK)
-			return(RDERR_CREATESOUNDBUFFER);
-
-		//	Lock the speech buffer, ready to fill it with data
-		hr = IDirectSoundBuffer_Lock(dsbFx[fxi], 0, dsbd.dwBufferBytes, &lpv1, &dwBytes1, &lpv2, &dwBytes2, 0);
-		if (hr == DSERR_BUFFERLOST)
-		{
-			IDirectSoundBuffer_Restore(dsbFx[fxi]);
-			hr = IDirectSoundBuffer_Lock(dsbFx[fxi], 0, dsbd.dwBufferBytes, &lpv1, &dwBytes1, &lpv2, &dwBytes2, 0);
-		}
-
-		if (hr == DS_OK)
-		{
-			//	Fill the speech buffer with data
-			memcpy((uint8 *) lpv1, (uint8 *) (data32 + 2), dwBytes1);
-
-			if (dwBytes1 != dsbd.dwBufferBytes)
-			{
-				memcpy((uint8 *) lpv1 + dwBytes1, (uint8 *) (data32 + 2) + dwBytes1, dwBytes2);
-			}
-
-			//	Unlock the buffer now that we've filled it
-			IDirectSoundBuffer_Unlock(dsbFx[fxi], lpv1, dwBytes1, lpv2, dwBytes2);
-
-		}
-		else
-		{
-			IDirectSoundBuffer_Release(dsbFx[fxi]);
-			return(RDERR_LOCKSPEECHBUFFER);
-		}
-		
-		fxId[fxi] = id;
-		fxCached[fxi] = RDSE_FXCACHED;
-
-	}
-	return(RD_OK);
-*/
 }
 
 int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
@@ -830,12 +715,9 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				//	Start the sound effect playing
 				if (musicMuted) {
 					volume = 0;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
 				} else {
 					volume = musicVolTable[volMusic[0]];
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
 				}
-//				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, 0);
 
 				fxCached[i] = RDSE_FXTOCLEAR;
@@ -857,13 +739,10 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				//	Start the sound effect playing
 				if (fxMuted) {
 					volume = 0;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
 				} else {
 					volume = vol * fxVol;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
 				}
 				p = panTable[pan + 16];
-//				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
 
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, p);
 				if (id == (int32) 0xffffffff) {
@@ -882,16 +761,15 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					return RDERR_FXFUCKED;
 				}
 				fxCached[i] = RDSE_FXTOCLEAR;
+
+				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
 				
 				byte volume;
 				if (musicMuted) {
 					volume = 0;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
 				} else {
 					volume = musicVolTable[volMusic[0]];
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
 				}
-//				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, 0);
 			} else {
 				hr = OpenFx(id, data);
@@ -916,117 +794,15 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				//	Start the sound effect playing
 				if (fxMuted) {
 					volume = 0;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
 				} else {
 					volume = vol * fxVol;
-//					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
 				}
 				p = panTable[pan + 16];
-//				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, p);
 			}
 		}
 	}
 	return(RD_OK);
-
-/*
-	int32 i, loop;
-	HRESULT hr;
-
-	if (type == RDSE_FXLOOP)
-		loop = DSBPLAY_LOOPING;
-	else
-		loop = 0;
-
-	if (soundOn)
-	{
-		if (data == NULL)
-		{
-			if (type == RDSE_FXLEADOUT)
-			{
-				id = 0xffffffff;
-				i = GetFxIndex(id);
-				if (i == MAXFX)
-					return(RDERR_FXNOTOPEN);
-
-				fxLooped[i] = 0;
-
-				//	Start the sound effect playing
-				if (musicMuted)
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
-				else
-					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
-				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
-				IDirectSoundBuffer_Play(dsbFx[i], 0, 0, 0);
-
-				fxCached[i] = RDSE_FXTOCLEAR;
-			}
-			else
-			{
-				i = GetFxIndex(id);
-				if (i == MAXFX)
-					return(RDERR_FXNOTOPEN);
-
-				fxLooped[i] = loop;
-				fxVolume[i] = vol;
-
-				//	Start the sound effect playing
-				if (fxMuted)
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
-				else
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
-				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
-
-				IDirectSoundBuffer_Play(dsbFx[i], 0, 0, loop);
-				if (id == 0xffffffff)
-					fxCached[i] = RDSE_FXTOCLEAR;
-			}
-		}
-		else
-		{
-			if (type == RDSE_FXLEADIN)
-			{
-				id = 0xfffffffe;
-				hr = OpenFx(id, data);
-				if (hr != RD_OK)
-					return hr;
-				i = GetFxIndex(id);
-				if (i == MAXFX)
-					return RDERR_FXFUCKED;
-				fxCached[i] = RDSE_FXTOCLEAR;
-				if (musicMuted)
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
-				else
-					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
-				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
-				IDirectSoundBuffer_Play(dsbFx[i], 0, 0, 0);
-			}
-			else
-			{
-				hr = OpenFx(id, data);
-				if (hr != RD_OK)
-					return(hr);
-
-				i = GetFxIndex(id);
-				if (i == MAXFX)
-					return(RDERR_FXFUCKED);
-
-				fxCached[i] = RDSE_FXTOCLEAR;
-				fxLooped[i] = loop;
-				fxVolume[i] = vol;
-
-				//	Start the sound effect playing
-				if (fxMuted)
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[0]);
-				else
-					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
-				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
-				IDirectSoundBuffer_Play(dsbFx[i], 0, 0, loop);
-			}
-		}
-	}
-	return(RD_OK);
-*/
 }
 
 int32 Sword2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan) {
@@ -1038,8 +814,6 @@ int32 Sword2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan) {
 	if (!fxMuted) {
 		g_engine->_mixer->setChannelVolume(soundHandleFx[i], vol * fxVol);
 		g_engine->_mixer->setChannelPan(soundHandleFx[i], panTable[pan + 16]);
-//		IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
-//		IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
 	}
 	return RD_OK;
 }
@@ -1052,7 +826,6 @@ int32 Sword2Sound::SetFxIdVolume(int32 id, uint8 vol) {
 	fxVolume[i] = vol;
 	if (!fxMuted) {
 		g_engine->_mixer->setChannelVolume(soundHandleFx[i], vol * fxVol);
-//		IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
 	}
 	return RD_OK;
 }
@@ -1162,7 +935,6 @@ void Sword2Sound::SetFxVolume(uint8 volume) {
 	for (fxi = 0; fxi < MAXFX; fxi++) {
 		if (fxId[fxi] && !fxMuted) {
 			g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], fxVolume[fxi] * fxVol);
-//			IDirectSoundBuffer_SetVolume(dsbFx[fxi], volTable[fxVolume[fxi]*fxVol]);
 		}
 	}
 }
@@ -1177,10 +949,8 @@ void Sword2Sound::MuteFx(uint8 mute) {
 		if (fxId[fxi]) {
 			if (mute) {
 				g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], 0);
-//				IDirectSoundBuffer_SetVolume(dsbFx[fxi], volTable[0]);
 			} else {
 				g_engine->_mixer->setChannelVolume(soundHandleFx[fxi], fxVolume[fxi] * fxVol);
-//				IDirectSoundBuffer_SetVolume(dsbFx[fxi], volTable[fxVolume[fxi]*fxVol]);
 			}
 		}
 	}
@@ -1345,9 +1115,9 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 	}
 
 	g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16,
-		bufferSizeMusic, 22050,
-		SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE,
-		100000, volume, pan);
+		bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000, volume, pan);
+		
+	free(data16);
 
 	// Recorder some last variables
 	musStreaming[primaryStream] = 1;
@@ -1875,16 +1645,8 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					if (len & 1)
 						len--;
 					
-					if (soundHandleMusic[i] == 0) {
-						warning("play music appendStream(): this shouldn't happen");
-//						assert(soundHandleMusic[i]);
-						int volume = musicVolTable[volMusic[i]];
-						g_engine->_mixer->newStream(&soundHandleMusic[i], data16, bufferSizeMusic, 22050,
-										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
-					} else {
-						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
-					}
-
+					g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
+					
 					free(data16);
 
 					// Free the compressed data buffer and unlock the sound buffer.
@@ -2261,7 +2023,6 @@ void Sword2Sound::SetMusicVolume(uint8 volume) {
 		volMusic[i] = volume;
 		if (musStreaming[i] && !musFading[i] && !musicMuted) {
 			g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[volume]);
-//			IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[volume]);
 		}
 	}
 }
@@ -2284,10 +2045,8 @@ void Sword2Sound::MuteMusic(uint8 mute) {
 		if (musStreaming[i] && !musFading[i]) {
 			if (mute) {
 				g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[0]);
-//				IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[0]);
 			} else {
 				g_engine->_mixer->setChannelVolume(soundHandleMusic[i], musicVolTable[volMusic[i]]);
-//				IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[volMusic[i]]);
 			}
 		}
 	}
