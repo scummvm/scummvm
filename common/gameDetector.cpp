@@ -290,10 +290,8 @@ void GameDetector::updateconfig() {
 	_sfx_volume = g_config->getInt("sfx_volume", _sfx_volume);
 
 	_debugLevel = g_config->getInt("debuglevel", _debugLevel);
-	if (_debugLevel > 0) {
+	if (_debugLevel > 0)
 		_debugMode = true;
-		debug(1, "Debuglevel (from config): %d", _debugLevel);
-	}
 
 	// We use strtol for the tempo to allow it to be specified in hex.
 	if ((val = g_config->get("tempo")))
@@ -530,6 +528,8 @@ void GameDetector::setGame(const String &name) {
 	g_config->delete_domain ("_COMMAND_LINE");
 	g_config->delete_domain ("_USER_OVERRIDES");
 	g_config->set_domain(name);
+	if (_debugMode)
+		debug(1, "Debuglevel (from config): %d", _debugLevel);
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
