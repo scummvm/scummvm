@@ -1736,7 +1736,7 @@ load_game:
 		processDrawQue();
 
 		// Full Throttle always redraws verbs and draws verbs before actors
-		if (_gameId == GID_FT)
+		if (_version >= 7)
 			redrawVerbs();
 	
 		setActorRedrawFlags();
@@ -1754,9 +1754,6 @@ load_game:
 		if (_version >= 4 && _heversion <= 60)
 			cyclePalette();
 		palManipulate();
-		if (_gameId == GID_DIG || _gameId == GID_CMI)
-			redrawVerbs();
-
 		if (_doEffect) {
 			_doEffect = false;
 			fadeIn(_newEffect);

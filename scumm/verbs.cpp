@@ -268,7 +268,7 @@ void ScummEngine::redrawVerbs() {
 	if (_cursor.state > 0)
 		verb = checkMouseOver(_mouse.x, _mouse.y);
 
-	for (i = 0; i < _numVerbs; i++) {
+	for (i = _numVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
 		else
@@ -413,7 +413,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
-	} else if (_version < 7) {
+	} else if (_gameId != GID_FT) {
 		restoreVerbBG(verb);
 	}
 }
@@ -424,9 +424,7 @@ void ScummEngine::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (_version == 8) {
-		// Do nothing
-	} else if (_version >= 7) {
+	if (_gameId == GID_FT) {
 		restoreBG(vs->curRect, vs->bkcolor);
 	} else if (vs->oldRect.left != -1) {
 		restoreBG(vs->oldRect, vs->bkcolor);
