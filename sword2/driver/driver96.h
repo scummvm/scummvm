@@ -1278,6 +1278,7 @@ public:
 	void clear();
 	void blit(Surface *s, ScummVM::Rect *r);
 	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
+	void upload(ScummVM::Rect *r);
 	void setColorKey(int colorKey) {
 		_colorKey = colorKey;
 	};

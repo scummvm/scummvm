@@ -343,10 +343,12 @@ void Surface::blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
 		}
 	}
 
-	g_sword2->_system->copy_rect(_pixels + r->top * _width + r->left, _width, r->left, r->top, r->right - r->left, r->bottom - r->top);
+	upload(r);
 }
 
-
+void Surface::upload(ScummVM::Rect *r) {
+	g_sword2->_system->copy_rect(_pixels + r->top * _width + r->left, _width, r->left, r->top, r->right - r->left, r->bottom - r->top);
+}
 
 int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 {

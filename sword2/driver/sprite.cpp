@@ -1495,7 +1495,226 @@ uint16 yScale[SCALE_MAXHEIGHT];
 int32 DrawSprite(_spriteInfo *s)
 
 {
-	warning("stub DrawSprite");
+	//warning("stub DrawSprite");
+	debug(2, "semi-stub DrawSprite");
+
+	uint8 *src, *dst;
+	uint8 *sprite, *newSprite;
+	uint8 pixel, red, green, blue;
+	int16 i, j;
+	int16 freeSprite = 0;
+	ScummVM::Rect rd, rs;
+
+	if (!(s->type & RDSPR_DISPLAYALIGN)) {
+		s->x += parallaxScrollx;
+		s->y += parallaxScrolly;
+	}
+
+	// The topmost 40 pixels are reserved by the GUI.
+
+	s->y += 40;
+
+	if (s->type & RDSPR_NOCOMPRESSION)
+		sprite = s->data;
+	else {
+		sprite = (uint8 *) malloc(s->w * s->h);
+		if (!sprite)
+			return RDERR_OUTOFMEMORY;
+		freeSprite = 1;
+		if (s->type >> 8 == RDSPR_RLE16 >> 8) {
+			if (DecompressRLE16(sprite, s->data, s->w * s->h, s->colourTable))
+				return RDERR_DECOMPRESSION;
+		} else {
+			if (DecompressRLE256(sprite, s->data, s->w * s->h))
+				return RDERR_DECOMPRESSION;
+		}
+
+		if (s->type & RDSPR_FLIP) {
+			newSprite = (uint8 *) malloc(s->w * s->h);
+			if (newSprite == NULL) {
+				free(sprite);
+				return RDERR_OUTOFMEMORY;
+			}
+			MirrorSprite(newSprite, sprite, s->w, s->h);
+			free(sprite);
+			sprite = newSprite;
+		}
+	}
+
+
+	if (s->type & RDSPR_BLEND) {
+		// We want to blend the sprite FROM the RECT rs.
+		// We want to blend the sprite TO   the RECT rd.
+		rd.left = s->x - scrollx;
+		rd.right = rd.left + s->w;
+		rd.top = s->y - scrolly;
+		rd.bottom = rd.top + s->h;
+
+		rs.top = 0;
+		rs.bottom = s->h;
+		rs.left = 0;
+		rs.right = s->w;
+
+		//Now do the clipping - top
+		if (rd.top < 40) {
+			rs.top = (40 - rd.top);
+			rd.top = 40;
+		}
+		//Clip the bottom
+		if (rd.bottom > RENDERDEEP) {
+			rs.bottom -= (rd.bottom - RENDERDEEP);
+			rd.bottom = RENDERDEEP;
+		}
+		//Clip the left
+		if (rd.left < 0) {
+			rs.left -= rd.left;
+			rd.left = 0;
+		}
+		//Clip the right
+		if (rd.right > RENDERWIDE) {
+			rs.right -= (rd.right - RENDERWIDE);
+			rd.right = RENDERWIDE;
+		}
+
+		if (s->blend & 0x01) {
+			red = s->blend >> 8;
+			for (i = 0; i < rs.bottom - rs.top; i++) {
+				src = sprite + (rs.top + i) * s->w + rs.left;
+				dst = (uint8 *) lpBackBuffer->_pixels + lpBackBuffer->_width * (rd.top + i) + rd.left;
+				for (j = 0; j < rs.right - rs.left; j++) {
+					if (*src) {
+						pixel = *dst;
+						*dst = paletteMatch[(((palCopy[*src][0] * red + palCopy[pixel][0] * (8 - red)) >> 5) << 12) +
+							(((palCopy[*src][1] * red + palCopy[pixel][1] * (8 - red)) >> 5) << 6) +
+							(((palCopy[*src][2] * red + palCopy[pixel][2] * (8 - red)) >> 5))];
+					}
+					src++;
+					dst++;
+				}
+			}
+		} else if (s->blend & 0x02) {
+			red = palCopy[s->blend >> 8][0];
+			green = palCopy[s->blend >> 8][0];
+			blue = palCopy[s->blend >> 8][0];
+			for (i = 0; i < rs.bottom - rs.top; i++) {
+				src = sprite + (rs.top + i) * s->w + rs.left;
+				dst = (uint8 *) lpBackBuffer->_pixels + lpBackBuffer->_width * (rd.top + i) + rd.left;
+				for (j = 0; j < rs.right - rs.left; j++) {
+					if (*src) {
+						pixel = *dst;
+						*dst = paletteMatch[((((*src * red + (16 - *src) * palCopy[pixel][0]) >> 4) >> 2) << 12) +
+							((((*src * green + (16 - *src) * palCopy[pixel][1]) >> 4) >> 2) << 6) +
+							(((*src * blue + (16 - *src) * palCopy[pixel][2]) >> 4) >> 2)];
+					}
+					src++;
+					dst++;
+				}
+			}
+		} else {
+			if (freeSprite)
+				free(sprite);
+			warning("DrawSprite: Invalid blended sprite");
+			return RDERR_UNKNOWNTYPE;
+		}
+
+		// Upload the sprite area to the backend.
+		lpBackBuffer->upload(&rd);
+	} else {
+		// Set startx and starty for the screen buffer
+
+		if (s->type & RDSPR_DISPLAYALIGN)
+			rd.top = s->y;
+		else
+			rd.top = s->y - scrolly;
+				
+		if (s->type & RDSPR_DISPLAYALIGN)
+			rd.left = s->x;
+		else
+			rd.left = s->x - scrollx;
+
+		rs.left = 0;
+		rs.right = s->w;
+		rs.top = 0;
+		rs.bottom = s->h;
+
+		if (s->scale & 0xFF) {
+			// FIXME: For now, turn scaling off.
+			warning("FIXME: DrawSprite: Implement scaling");
+			s->scale &= ~0xFF;
+		}
+
+		if (s->scale & 0xff) {
+			rd.right = rd.left + s->scaledWidth;
+			rd.bottom = rd.top + s->scaledHeight;
+			// Do clipping
+			if (rd.top < 40) {
+				rs.top = (40 - rd.top) * 256 / s->scale;
+				rd.top = 40;
+			}
+			if (rd.bottom > 440) {
+				rs.bottom -= ((rd.bottom - 440) * 256 / s->scale);
+				rd.bottom = 440;
+			}
+			if (rd.left < 0) {
+				rs.left = (0 - rd.left) * 256 / s->scale;
+				rd.left = 0;
+			}
+			if (rd.right > 640) {
+				rs.right -= ((rd.right - 640) * 256 / s->scale);
+				rd.right = 640;
+			}
+		} else {
+			rd.right = rd.left + s->w;
+			rd.bottom = rd.top + s->h;
+
+			// Do clipping
+			if (rd.top < 40) {
+				rs.top = 40 - rd.top;
+				rd.top = 40;
+			}
+			if (rd.bottom > 440) {
+				rs.bottom -= (rd.bottom - 440);
+				rd.bottom = 440;
+			}
+			if (rd.left < 0) {
+				rs.left = 0 - rd.left;
+				rd.left = 0;
+			}
+			if (rd.right > 640) {
+				rs.right -= (rd.right - 640);
+				rd.right = 640;
+			}
+		}
+
+		src = sprite + rs.top * s->w + rs.left;
+		dst = (uint8 *) lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+		if (s->type & RDSPR_TRANS) {
+			for (i = 0; i < rs.bottom - rs.top; i++) {
+				for (j = 0; j < rs.right - rs.left; j++) {
+					if (src[j])
+						dst[j] = src[j];
+				}
+				src += s->w;
+				dst += lpBackBuffer->_width;
+			}
+		} else {
+			for (i = 0; i < rs.bottom - rs.top; i++) {
+				memcpy(dst, src, rs.right - rs.left);
+				src += s->w;
+				dst += lpBackBuffer->_width;
+			}
+		}
+
+		lpBackBuffer->upload(&rd);
+
+		if (freeSprite)
+			free(sprite);
+	}
+
+	// I'm guessing that the rest of the original code is simply to draw
+	// the sprite in "software mode" at different quality setting. If so,
+	// we should probably adapt some of it. Later.
+
 /*
 
 #if PROFILING == 1
