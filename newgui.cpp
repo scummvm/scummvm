@@ -84,13 +84,14 @@ void ClearBlendCache(byte *palette, int weight) {
 
 /*
  * TODO list
+ * - keep a copy of the original game background, for alpha/moving
  * - implement the missing / incomplete dialogs
  * - add more widgets
  * - add support for right/center aligned text
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
- * - come up with a new look&feel / theme for the GUI
+ * - come up with a new look&feel / theme for the GUI 
  * - ...
  */
 
