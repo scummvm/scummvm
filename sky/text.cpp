@@ -48,11 +48,11 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 	if (!SkyState::isDemo()) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
 		_controlCharacterSet.charHeight = 12;
-		_controlCharacterSet.charSpacing = 1;
+		_controlCharacterSet.charSpacing = 0;
 		
 		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
 		_linkCharacterSet.charHeight = 12;
-		_linkCharacterSet.charSpacing = 0;
+		_linkCharacterSet.charSpacing = 1;
 	} else {
 		_controlCharacterSet.addr = NULL;
 		_linkCharacterSet.addr = NULL;
