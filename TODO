@@ -4,7 +4,8 @@ General
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
 * Fix the Map<> template, make it more robust; maybe use a red-black tree?
-* Allow for return-to-launcher instead of a normal "quit" ?
+* Fix engines so they clean up after themselves, to allow proper re-entry
+  to the launcher. See "FIXME: LAUNCHERHACK" in base/main.cpp
 * Make some generic "EventLoop" API/class which all backends and the GUI
   use. Initially this would just call the backend poll_event() etc. methods.
   But eventually the EventLoop object(s) could be made by the backend.
@@ -33,16 +34,15 @@ General
   - sound/fmopl.cpp uses rand() in one function
   - backends/midi/adlib.cpp has its own random_nr() function.
   Any others?
-* In OSystem, replace all the TOGGLE properties by GET/SET ones. E.g.
-  instead of PROP_TOGGLE_FULLSCREEN have PROP_SET_FULLSCREEN and
-  PROP_GET_FULLSCREEN.
-  Alternatively (my preferred solution) use plain methods for this:
+* In OSystem, replace Property functions with virtual methods, e.g
     void OSystem::setFullscreen(bool)
   and
     bool OSystem::getFullscreen()
+  instead of PROP_TOGGLE_FULLSCREEN and ::property()
+
   That is easier to use and has no obvious drawbacks over the "property()"
   approach (given that you always can provide empty dummy implementations for
-  new OSystem APIs). Clearly this needs discussion first, though.
+  new OSystem APIs).
   
 
 Build System
@@ -67,11 +67,12 @@ Build System
    1) Which platforms/systems require Makefile.noconf?
    2) What stops them from using 'configure' ? Document this!
    3) If possible fix all the issue listed in 2)
-* Add an install target to the Makefile. (Fingolfin asks: what for? It sounds
-  like a trivial task, you only have to copy the exe and the man page, no?)
+* Add an install target to the Makefile - Copy binary, install manpage, add
+  menu items. See also patch #891909 (Gnome/KDE .desktop file)
 
 Documentation
 =============
+  [Ender is working on a new multi-format manual/readme]
 * Update/enhance man page
 * Would be nice to have a HTML version of the README on the web page (and I
   don't just mean a big <pre> section; rather I mean "real" HTML with links
