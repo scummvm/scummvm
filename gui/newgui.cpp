@@ -363,11 +363,7 @@ void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
 }
 
 int NewGui::getStringWidth(const String &str) {
-	int space = 0;
-
-	for (uint i = 0; i < str.size(); ++i)
-		space += getCharWidth(str[i]);
-	return space;
+	return g_guifont.getStringWidth(str);
 }
 
 int NewGui::getCharWidth(byte c) {

@@ -46,6 +46,19 @@ struct Surface {
 	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
 };
 
+/**
+ * Instances of this class represent a distinct font, with a built-in renderer.
+ * @todo Maybe move the high-level methods (drawString etc.) to a separate 
+ *       FontRenderer class? That way, we could have different variants... ?
+ * @todo Add more parameters to drawString, or additional similar methods,
+ *       featuring abilities like
+ *       - rendering with wrap-around instead of inserting an ellipsis or
+ *         cutting them; needs a 'height' parameter
+ *       - rendering multi-line strings (essentially, invoke the regular
+ *         drawString for each line, and advance one line)
+ *       - combinations of the two above: honor line feeds, and also wrap
+ *         overlong lines
+ */
 class Font {
 public:
 	virtual int getFontHeight() const = 0;

@@ -71,6 +71,9 @@ void NewFont::drawChar(const Surface *dst, byte chr, int x, int y, uint32 color)
 }
 
 
+#pragma mark -
+
+
 int Font::getStringWidth(const Common::String &str) const {
 	int space = 0;
 
