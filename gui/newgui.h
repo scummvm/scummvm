@@ -48,7 +48,7 @@ class Dialog;
 #define hLine(x, y, x2, color) line(x, y, x2, y, color);
 #define vLine(x, y, y2, color) line(x, y, x, y2, color);
 
-#define g_gui	(NewGui::instance())
+#define g_gui	(GUI::NewGui::instance())
 
 
 // Text alignment modes for drawString()
