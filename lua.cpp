@@ -983,7 +983,7 @@ void ImGetParam() {
 
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
-		lua_pushnumber(g_imuse->getCountPlayedTracks());
+		lua_pushnumber(g_imuse->getCountPlayedTracks(soundName));
 		break;
 	case IM_SOUND_VOL:
 		lua_pushnumber(g_imuse->getVolume(soundName));

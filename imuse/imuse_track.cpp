@@ -193,11 +193,11 @@ void Imuse::setHookId(const char *soundName, int hookId) {
 	}
 }
 
-int Imuse::getCountPlayedTracks() {
+int Imuse::getCountPlayedTracks(const char *soundName) {
 	int count = 0;
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
 			count++;
 		}
 	}

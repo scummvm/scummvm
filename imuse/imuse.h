@@ -141,7 +141,7 @@ public:
 	void setFadePan(const char *soundName, int destPan, int duration);
 	void setFadeVolume(const char *soundName, int destVolume, int duration);
 	void setHookId(const char *soundName, int hookId);
-	int getCountPlayedTracks();
+	int getCountPlayedTracks(const char *soundName);
 	void stopSound(const char *soundName);
 	void stopAllSounds();
 	void pause(bool pause);
