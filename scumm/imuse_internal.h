@@ -396,6 +396,7 @@ private:
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
 	void initMidiDriver (MidiDriver *midi);
+	void initMT32 (MidiDriver *midi);
 	void init_players();
 	void init_parts();
 	void init_queue();

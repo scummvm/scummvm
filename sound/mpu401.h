@@ -90,8 +90,6 @@ public:
 	void setTimerCallback(void *timer_param, void (*timer_proc) (void *));
 	uint32 getBaseTempo(void) { return 10000; } // 0x4A0000; } // Now referenced in microseconds between callbacks
 
-	virtual void sysEx_customInstrument (byte channel, uint32 type, byte *instr);
-
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
 };

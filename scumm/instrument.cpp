@@ -419,17 +419,17 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 
 void Instrument_Roland::send (MidiChannel *mc) {
 	if (_native_mt32) {
+		if (mc->getNumber() > 7)
+			return;
 		_instrument.device_id = mc->getNumber();
-//		_instrument.device_id = 0x10;
 
 		// Remap instrument to appropriate address space.
-//		int address = 0x010000 + mc->getNumber() * 246;
 		int address = 0x008000;
 		_instrument.address[0] = (address >> 14) & 0x7F;
 		_instrument.address[1] = (address >>  7) & 0x7F;
 		_instrument.address[2] = (address      ) & 0x7F;
 
-		// Recompute checksum.
+		// Recompute the checksum.
 		byte checksum = 0;
 		byte *ptr = (byte *) &_instrument + 4;
 		int i;

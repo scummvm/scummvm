@@ -88,17 +88,6 @@ MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver() {
 	}
 }
 
-void MidiDriver_MPU401::sysEx_customInstrument (byte channel, uint32 type, byte *instr) {
-	if (type != 'ROL ')
-		return;
-
-	// The SysEx stream for a Roland MT-32 instrument definition starts with
-	// the Roland manufacturer ID. So we just need to substitute the appropriate
-	// device # (i.e. channel), and go.
-	instr[1] = channel;
-	sysEx (instr, 253);
-}
-
 MidiChannel *MidiDriver_MPU401::allocateChannel() {
 	MidiChannel_MPU401 *chan;
 	uint i;

@@ -1117,20 +1117,31 @@ void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 	if (result)
 		error("IMuse initialization - ", MidiDriver::getErrorName(result));
 
-	// Display a welcome message on MT-32 displays.
-	byte welcome[] = {
-		0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00,
-		' ','W','e','l','c','o','m','e',' ','t','o',' ','S','c','u','m','m','V','M',' ',
-		0
-	};
-	byte checksum = 0;
-	for (int i = 4; i < ARRAYSIZE(welcome) - 1; ++i)
-		checksum -= welcome[i];
-	welcome[ARRAYSIZE(welcome)-1] = checksum & 0x7F;
-	midi->sysEx (welcome, ARRAYSIZE(welcome));
+	// In case we have an MT-32 attached.
+	initMT32 (midi);
 
 	// Connect to the driver's timer
 	midi->setTimerCallback (midi, &IMuseInternal::midiTimerCallback);
+}
+
+void IMuseInternal::initMT32 (MidiDriver *midi) {
+	byte buffer[32] = "\x41\x10\x16\x12\x00\x00\x00                        ";
+
+	// Reset the MT-32
+	memcpy (&buffer[4], "\x7f\x00\x00\x01\x00", 5);
+	midi->sysEx (buffer, 9);
+
+	// Display a welcome message on MT-32 displays.
+	memcpy (&buffer[4], "\x20\x00\x00", 3);
+	memcpy (&buffer[7], "                    ", 20);
+	memcpy (&buffer + 7 + (20 - strlen ("ScummVM " SCUMMVM_VERSION)) / 2,
+	        "ScummVM " SCUMMVM_VERSION,
+	        strlen ("ScummVM " SCUMMVM_VERSION));
+	byte checksum = 0;
+	for (int i = 4; i < 27; ++i)
+		checksum -= buffer[i];
+	buffer[27] = checksum;
+	midi->sysEx (buffer, 28);
 }
 
 void IMuseInternal::init_queue() {
