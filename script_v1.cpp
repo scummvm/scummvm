@@ -1320,10 +1320,13 @@ void Scumm::o5_getActorY()
 
 void Scumm::o5_getAnimCounter()
 {
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe
-						(getVarOrDirectByte(0x80),
-						 "o5_getActorAnimCounter")->cost.animCounter1);
+	a=derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorAnimCounter");
+	if(a) // FIXME
+		setResult(a->cost.animCounter1);
+	else
+		setResult(0);
 }
 
 void Scumm::o5_getClosestObjActor()
@@ -1890,16 +1893,8 @@ void Scumm::o5_roomOps()
 	int a = 0, b = 0, c, d, e;
 
 	if (_features & GF_OLD256) {
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
-		if (_gameId == GID_INDY3_256 && (a == 0 || a ==16) && b == 0) {	/* FIXME */
-			// Set screen height
-			c = fetchScriptByte();
-			d = fetchScriptByte();
-			e = fetchScriptByte();
-			initScreens(0, a, 320, c);
-			return;
-		}
+		a = getVarOrDirectWord(0x80);
+		b = getVarOrDirectWord(0x40);
 	}
 
 	_opcode = fetchScriptByte();
@@ -1976,10 +1971,9 @@ void Scumm::o5_roomOps()
 		e = getVarOrDirectByte(0x40);
 		setScaleItem(e - 1, b, a, d, c);
 	case 8:											/* room scale? */
-
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
-		c = getVarOrDirectByte(0x20);
+//		a = getVarOrDirectByte(0x80);
+//		b = getVarOrDirectByte(0x40);
+//		c = getVarOrDirectByte(0x20);
 		darkenPalette(b, c, a, a, a);
 		break;
 	case 9:											/* ? */
