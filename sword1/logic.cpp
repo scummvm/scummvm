@@ -31,6 +31,7 @@
 #include "mouse.h"
 #include "sword1.h"
 #include "music.h"
+#include "swordres.h"
 
 #include "debug.h"
 
@@ -1044,6 +1045,10 @@ int SwordLogic::fnWipeHands(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, 
 
 int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, int32 f, int32 z, int32 x) {
 	_speechClickDelay = 3;
+	if (((textNo & ~1) == 0x3f0012) && (!cdt) && (!spr)) {
+		cdt = GEOSTDLCDT; // workaround for missing animation when examining
+		spr = GEOSTDL;    // the conductor on the train roof
+	}
 	_mouse->flushEvents(); // prevent player from accidently clicking text away within first three frames
 	cpt->o_logic = LOGIC_speech;
 
@@ -1419,7 +1424,7 @@ int SwordLogic::fnFace(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c
 		y = target->o_ycoord;
 	} else {
 		x = (target->o_mouse_x1 + target->o_mouse_x2) / 2;
-		y = (target->o_mouse_y1 + target->o_mouse_y2) / 2;
+		y = target->o_mouse_y2;
 	}
 	int32 megaTarDir = whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
 	fnTurn(cpt, id, megaTarDir, 0, 0, 0, 0, 0);
