@@ -181,8 +181,8 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 	int i, j;
 	byte *buf_row_p;
 	byte *src_row_p;
-	int s_width;
-	int s_height;
+	int s_width, so_width;
+	int s_height, so_height;
 	int clip_width;
 	int clip_height;
 	int x_align;
@@ -205,13 +205,21 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 	x_align = readS.readSByte();
 	y_align = readS.readSByte();
 
-	s_width = readS.readByte();
-	s_height = readS.readByte();
+	spr_pt.x = screenCoord.x + x_align;
+	spr_pt.y = screenCoord.y + y_align;
+
+	so_width = s_width = readS.readByte();
+	so_height = s_height = readS.readByte();
+
+	if (scale < 256)
+		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
 
 	sprite_data_p = sprite_p + readS.pos();
 
-	spr_pt.x = screenCoord.x + x_align;
-	spr_pt.y = screenCoord.y + y_align;
+	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, so_width * so_height);
+
+	if (scale < 256)
+		scaleSprite(_decodeBuf, so_width, so_height, scale);
 
 	if (spr_pt.x < 0) {
 		return 0;
@@ -220,8 +228,6 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 	if (spr_pt.y < 0) {
 		return 0;
 	}
-
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height, scale);
 
 	buf_row_p = (byte *)ds->pixels + ds->pitch * spr_pt.y;
 	src_row_p = _decodeBuf;
@@ -262,8 +268,8 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	byte *src_p;
 	byte *dst_p;
 	byte *mask_p;
-	int s_width;
-	int s_height;
+	int s_width, so_width;
+	int s_height, so_height;
 	int x_align;
 	int y_align;
 
@@ -309,14 +315,15 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	x_align = readS.readSByte();
 	y_align = readS.readSByte();
 
-	s_width = readS.readByte();
-	s_height = readS.readByte();
+	so_width = s_width = readS.readByte();
+	so_height = s_height = readS.readByte();
 
 	sprite_data_p = sprite_p + readS.pos();
 
-
-
 	_vm->_scene->getBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
+
+	if (scale < 256)
+		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
 
 	spr_src_rect.left = 0;
 	spr_src_rect.top = 0;
@@ -341,7 +348,10 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 		return SUCCESS;
 	}
 
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height, scale);
+	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, so_width * so_height);
+
+	if (scale < 256)
+		scaleSprite(_decodeBuf, so_width, so_height, scale);
 
 	// Finally, draw the occluded sprite
 	src_row_p = _decodeBuf + ci.src_draw_x + (ci.src_draw_y * s_width);
@@ -379,8 +389,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	return SUCCESS;
 }
 
-//TODO write scale support
-int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len, int scale) {
+int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
 	int bg_runcount;
 	int fg_runcount;
 	const byte *inbuf_ptr;
@@ -435,5 +444,40 @@ int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, s
 
 	return SUCCESS;
 }
+
+void Sprite::scaleSprite(byte *buf, int width, int height, int scale) {
+	byte skip = 256 - scale; // skip factor
+
+	byte vskip = 0x80, hskip;
+	byte *src, *dst;
+
+	src = dst = buf;
+
+	for (int i = 0; i < height; i++) {
+		vskip += skip;
+
+		if(vskip < skip) { // We had an overflow
+			src += width;
+		} else {
+			hskip = 0x80;
+
+			for (int j = 0; j < width; j++) {
+				*dst++ = *src++;
+				
+				hskip += skip;
+				if (hskip < skip) // overflow
+					dst--;
+			}
+		}
+	}
+}
+
+void Sprite::scaleSpriteCoords(int scale, int *width, int *height, int *x_align, int *y_align) {
+	*x_align = (*x_align * scale) >> 8;
+	*y_align = (*y_align * scale) >> 8;
+	*height = (*height * scale + 0x80) >> 8;
+	*width = (*width * scale + 0x80) >> 8;
+}
+
 
 } // End of namespace Saga

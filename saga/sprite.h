@@ -69,7 +69,9 @@ class Sprite {
 	int drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth);
 
  private:
-	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len, int scale);
+	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+	void scaleSprite(byte *buf, int width, int height, int scale);
+	void scaleSpriteCoords(int scale, int *width, int *height, int *x_align, int *y_align);
 
 	SagaEngine *_vm;
 	bool _initialized;
