@@ -268,19 +268,65 @@ uint32 File::write(const void *ptr, uint32 len) {
 	return len;
 }
 
+#define LF 0x0A
+#define CR 0x0D
+
 char *File::gets(void *ptr, uint32 len) {
 	char *ptr2 = (char *)ptr;
-	char *res;
+	char *res = ptr2;
+	uint32 read_chars = 1;
 
 	if (_handle == NULL) {
 		error("File::gets: File is not open!");
 		return 0;
 	}
 
-	if (len == 0)
-		return 0;
+	if (len == 0 || !ptr)
+		return NULL;
 
-	res = fgets(ptr2, len, _handle);
+	// We don't include the newline character(s) in the buffer, and we
+	// always terminate it - we never read more than len-1 characters.
 
+	// EOF is treated as a line break, unless it was the first character
+	// that was read.
+
+	// 0 is treated as a line break, even though it should never occur in
+	// a text file.
+
+	// DOS and Windows use CRLF line breaks
+	// Unix and OS X use LF line breaks
+	// Macintosh before OS X uses CR line breaks
+
+	bool first = true;
+
+	while (read_chars < len) {
+		int c = getc(_handle);
+
+		if (c == EOF) {
+			if (first)
+				return NULL;
+			break;
+		}
+
+		first = false;
+
+		if (c == 0)
+			break;
+
+		if (c == LF)
+			break;
+
+		if (c == CR) {
+			c = getc(_handle);
+			if (c != LF)
+				ungetc(c, _handle);
+			break;
+		}
+
+		*ptr2++ = (char) c;
+		read_chars++;
+	}
+
+	*ptr2 = 0;
 	return res;
 }
