@@ -60,8 +60,6 @@ struct SCENE_INFO {
 
 typedef int (SCENE_PROC) (int, SCENE_INFO *, void *);
 
-#define PALETTE_FADE_DURATION 1000
-
 enum SCENE_LOAD_FLAGS {
 	BY_RESOURCE = 0,
 	BY_SCENE,

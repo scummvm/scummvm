@@ -931,7 +931,7 @@ int Script::SF_placard(SCRIPTFUNC_PARAMS) {
 
 	_vm->_gfx->showCursor(false);
 	_vm->_gfx->getCurrentPal(cur_pal);
-	_vm->_gfx->palToBlackWait(back_buf, cur_pal, PALETTE_FADE_DURATION);
+	_vm->_gfx->palToBlackWait(back_buf, cur_pal, kNormalFadeDuration);
 
 	_vm->_interface->setStatusText("");
 
@@ -949,7 +949,7 @@ int Script::SF_placard(SCRIPTFUNC_PARAMS) {
 	_vm->_render->drawScene();
 
 	_vm->_scene->getBGPal(&pal);
-	_vm->_gfx->blackToPalWait(back_buf, pal, PALETTE_FADE_DURATION);
+	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
 
 	return SUCCESS;
 }
@@ -963,7 +963,7 @@ int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
 	// Fade down
 	_vm->_gfx->showCursor(false);
 	_vm->_gfx->getCurrentPal(cur_pal);
-	_vm->_gfx->palToBlackWait(back_buf, cur_pal, PALETTE_FADE_DURATION);
+	_vm->_gfx->palToBlackWait(back_buf, cur_pal, kNormalFadeDuration);
 
 	_vm->_render->clearFlag(RF_PLACARD);
 	_vm->_render->drawScene();
@@ -972,7 +972,7 @@ int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->getBGPal(&pal);
 
 	_vm->_gfx->showCursor(true);
-	_vm->_gfx->blackToPalWait(back_buf, pal, PALETTE_FADE_DURATION);
+	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
 
 	return SUCCESS;
 }

@@ -599,7 +599,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		event.code = PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;
 		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
+		event.duration = kNormalFadeDuration;
 		event.data = current_pal;
 		q_event = _vm->_events->queue(&event);
 
@@ -642,7 +642,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		event.code = PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
 		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
+		event.duration = kNormalFadeDuration;
 		event.data = _bg.pal;
 
 		q_event = _vm->_events->chain(q_event, &event);

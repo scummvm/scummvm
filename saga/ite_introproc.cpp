@@ -663,7 +663,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 
 		// Begin title screen background animation 
 		_vm->_anim->setCycles(0, -1);
-		_vm->_anim->play(0, PALETTE_FADE_DURATION);
+		_vm->_anim->play(0, kNormalFadeDuration);
 
 		// Begin ITE title theme music
 		_vm->_music->stop();

@@ -79,7 +79,9 @@ enum SAGAGameType {
 
 enum scriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
-	kRepeatSpeed = 40   // 25 frames/sec
+	kRepeatSpeed = 40,   // 25 frames/sec
+	kNormalFadeDuration = 1000, // should be 320. 64 steps, 5 msec each
+	kQuickFadeDuration = 200  // should be 64. 64 steps, 1 msec each
 };
 
 enum Directions {
