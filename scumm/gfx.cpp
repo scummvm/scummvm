@@ -100,23 +100,6 @@ static const TransitionEffect transitionEffects[5] = {
 		  255,  0,  0,  0
 		}
 	},
-
-	// Inverse iris effect, specially tailored for V2 games
-	{
-		8,		// Number of iterations
-		{
-			-1, -1,  1, -1,
-			-1,  1,  1,  1,
-			-1, -1, -1,  1,
-			 1, -1,  1,  1
-		},
-		{
-			 7, 7, 32, 7,
-			 7, 8, 32, 8,
-			 7, 8,  7, 8,
-			32, 7, 32, 8
-		}
-	},
 	
 	// Box wipe (a box expands from the lower-right corner to the upper-left corner)
 	{
@@ -149,6 +132,23 @@ static const TransitionEffect transitionEffects[5] = {
 		   39,  0, 39, 24,
 		   38,  0, 38, 24,
 		  255,  0,  0,  0
+		}
+	},
+
+	// Inverse iris effect, specially tailored for V1/V2 games
+	{
+		8,		// Number of iterations
+		{
+			-1, -1,  1, -1,
+			-1,  1,  1,  1,
+			-1, -1, -1,  1,
+			 1, -1,  1,  1
+		},
+		{
+			 7, 7, 32, 7,
+			 7, 8, 32, 8,
+			 7, 8,  7, 8,
+			32, 7, 32, 8
 		}
 	}
 };
