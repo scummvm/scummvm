@@ -134,7 +134,7 @@ void IMuseDigital::callback() {
 					if (_sound->getBits(_track[l].soundHandle) == 12) {
 						byte *ptr = NULL;
 						mixer_size += _track[l].mod;
-						int length = (((mixer_size * 3) / 4) / 3) * 3;
+						int length = (((mixer_size * 3) / 4) / 3) * 3;	// == (mixer_size / 4) * 3  != (mixer_size / 3) * 4
 						_track[l].mod = ((mixer_size * 3) / 4) - length;
 						mixer_size = length;
 
