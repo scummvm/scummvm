@@ -4634,47 +4634,75 @@ void SimonState::dx_update_screen_and_palette() {
 }
 
 void SimonState::realizePalette() {
-	if (_palette_color_count & 0x8000) {
-		realizePalette_unk();
-	} else {
-		_video_var_9 = false;
-		memcpy(_palette_backup, _palette, 256 * 4);
+	_video_var_9 = false;
+	memcpy(_palette_backup, _palette, 256 * 4);
 
+	if (_palette_color_count & 0x8000) {
+		fadeUpPalette();
+	} else {
 		_system->set_palette(_palette, 0, _palette_color_count);
-		_palette_color_count = 0;
 	}
+
+	_palette_color_count = 0;
 }
 
-void SimonState::realizePalette_unk() {
-// Function is disabled since it causes text display problems.
-// Only used in Simon the Sorcerer 2 when Simon rides lion to Goblin Camp
-#if 0
-	uint8 *src;
-	byte *dst;
-	uint8 palette_unk[768];
+void SimonState::fadeUpPalette() {
+	bool done;
 
-	_palette_color_count &= 0x7fff;
-	memset(_video_buf_1, 0, 768);
-	_video_var_9 = false;
-	memcpy(_palette_backup, _palette, 768);
-	memcpy(palette_unk, _palette, 768);
+	_palette_color_count = (_palette_color_count & 0x7fff) / 4;
 
-	int i, j;
-	for (i = 255; i >= 0; i -= 4) {
-	  	src = palette_unk;
+	memset(_video_buf_1, 0, _palette_color_count * sizeof(uint32));
+
+	// This function is used by Simon 2 when riding the lion to the goblin
+	// camp. Note that _palette_color_count is not 1024 in this scene, so
+	// only part of the palette is faded up. But apparently that's enough,
+	// as long as we make sure that the remaining palette colours aren't
+	// completely ignored.
+
+	if (_palette_color_count < _video_num_pal_colors)
+		memcpy(_video_buf_1 + _palette_color_count * sizeof(uint32),
+			_palette + _palette_color_count * sizeof(uint32),
+			(_video_num_pal_colors - _palette_color_count) * sizeof(uint32));
+
+	do {
+		uint8 *src;
+		byte *dst;
+		int i;
+
+		done = true;
+	  	src = _palette;
 		dst = _video_buf_1;
 
-		for (j = _palette_color_count; j >= 0; j--) {
-			if (*src >= i)
-				*dst += 4;
-			dst++;
-			src++;
+		for (i = 0; i < _palette_color_count; i++) {
+			if (src[0] > dst[0]) {
+				if (dst[0] > src[0] - 4)
+					dst[0] = src[0];
+				else
+					dst[0] += 4;
+				done = false;
+			}
+			if (src[1] > dst[1]) {
+				if (dst[1] > src[1] - 4)
+					dst[1] = src[1];
+				else
+					dst[1] += 4;
+				done = false;
+			}
+			if (src[2] > dst[2]) {
+				if (dst[2] > src[2] - 4)
+					dst[2] = src[2];
+				else
+					dst[2] += 4;
+				done = false;
+			}
+			dst += 4;
+			src += 4;
 		}
+
 		_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+		_system->update_screen();
 		delay(5);
- 	}
-#endif
-	_palette_color_count = 0;
+ 	} while (!done);
 }
 
 void SimonState::go() {
