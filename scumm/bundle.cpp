@@ -93,11 +93,17 @@ const byte imxShortTable[] = {
 };
 
 Bundle::Bundle() {
-	_lastSong = -1;
-	_initializedImcTables = false;
+	_compVoiceTable = NULL;
+	_compMusicTable = NULL;
 
 	_bundleVoiceTable = NULL;
 	_bundleMusicTable = NULL;
+	
+	_numVoiceFiles = 0;
+	_numMusicFiles = 0;
+
+	_lastSong = -1;
+	_initializedImcTables = false;
 }
 
 Bundle::~Bundle() {

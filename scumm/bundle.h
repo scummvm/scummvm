@@ -28,20 +28,18 @@ class Bundle {
 
 private:
 
-struct CompTable {
-	int32 offset;
-	int32 size;
-	int32 codec;
-};
-
-struct BundleAudioTable {
-	char filename[13];
-	int32 size;
-	int32 offset;
-};
-
-	int32 compDecode(byte *src, byte *dst);
-	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
+	struct CompTable {
+		int32 offset;
+		int32 size;
+		int32 codec;
+	};
+	
+	struct BundleAudioTable {
+		char filename[13];
+		int32 size;
+		int32 offset;
+	};
+	
 	CompTable *_compVoiceTable;
 	CompTable *_compMusicTable;
 	BundleAudioTable *_bundleVoiceTable;
@@ -54,15 +52,21 @@ struct BundleAudioTable {
 	byte _destImcTable[93];
 	uint32 _destImcTable2[5697];
 
-public:
-	  Bundle();
-	 ~Bundle();
-
-	File _musicFile;
 	File _voiceFile;
+	File _musicFile;
+
+	int32 compDecode(byte *src, byte *dst);
+	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
+
+public:
+	Bundle();
+	~Bundle();
+
 	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
+	void closeVoiceFile() { _voiceFile.close(); }
+	void closeMusicFile() { _musicFile.close(); }
 	int32 decompressVoiceSampleByName(char *name, byte **comp_final);
 	int32 decompressVoiceSampleByIndex(int32 index, byte **comp_final);
 	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final);

@@ -225,8 +225,8 @@ void Scumm::askForDisk(const char *filename, int disknum) {
 	if (_features & GF_AFTER_V8) {
 		char result;
 
-		_bundle->_voiceFile.close();
-		_bundle->_musicFile.close();
+		_bundle->closeVoiceFile();
+		_bundle->closeMusicFile();
 
 		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nHit Ok to retry, Cancel to exit", filename, disknum, getGameDataPath());
 

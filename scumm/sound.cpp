@@ -1041,7 +1041,7 @@ void Sound::playBundleMusic(char *song) {
 			char bunfile[20];
 			sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 			if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
-				_scumm->_bundle->_musicFile.close();
+				_scumm->_bundle->closeMusicFile();
 
 			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
 				if (_scumm->_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
@@ -1226,7 +1226,7 @@ int Sound::playBundleSound(char *sound) {
 		char voxfile[20];
 		sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 		if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
-			_scumm->_bundle->_voiceFile.close();
+			_scumm->_bundle->closeVoiceFile();
 
 		result = _scumm->_bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
 
