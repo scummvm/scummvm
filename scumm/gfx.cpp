@@ -506,11 +506,16 @@ void Scumm::blit(byte *dst, const byte *src, int w, int h) {
 	assert(src != NULL);
 	assert(dst != NULL);
 
-	do {
-		memcpy(dst, src, w);
-		dst += _screenWidth;
-		src += _screenWidth;
-	} while (--h);
+	if (w==_screenWidth)
+		memcpy (dst, src, w*h);
+	else
+	{
+		do {
+			memcpy(dst, src, w);
+			dst += _screenWidth;
+			src += _screenWidth;
+		} while (--h);
+	}
 }
 
 void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
