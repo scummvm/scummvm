@@ -76,7 +76,7 @@ private:
 		uint32 _offset;		// jump position
 		uint32 _dest;			// jump to 
 		uint32 _id;				// id of jump
-		uint32 _unk;			// allmost 500 except one value: 2
+		uint32 _numLoops;	// allmost 500 except one value: 2
 	};
 
 	struct channel {

@@ -4866,16 +4866,23 @@ void IMuseDigital::handler() {
 				continue;
 			}
 
+			if ((_channel[l]._jump[0]._numLoops == 0) && (_channel[l]._isLoop == true)) {
+				_channel[l]._isLoop = false;
+			}
+
 			uint32 new_size = _channel[l]._mixerSize;
 			uint32 mixer_size = new_size;
 
-			if(_channel[l]._isLoop == false) {
+			if (_channel[l]._isLoop == false) {
 				if (_channel[l]._offset + _channel[l]._mixerSize > _channel[l]._size) {
 					new_size = _channel[l]._size - _channel[l]._offset;
 					_channel[l]._toBeRemoved = true;
 					mixer_size = new_size;
 				}
 			} else {
+				if (_channel[l]._jump[0]._numLoops != 500) {
+					_channel[l]._jump[0]._numLoops--;
+				}
 				if (_channel[l]._offset + _channel[l]._mixerSize >= _channel[l]._jump[0]._offset) {
 					new_size = _channel[l]._jump[0]._offset - _channel[l]._offset;
 				}
@@ -5008,7 +5015,7 @@ void IMuseDigital::startSound(int sound) {
 						_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
 						_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
 						_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._jump[_channel[l]._numJumps]._unk = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
 						_channel[l]._isLoop = true;
 						_channel[l]._numJumps++;
 					break;
@@ -5082,10 +5089,7 @@ void IMuseDigital::stopSound(int sound) {
 	debug(1, "IMuseDigital::stopSound(%d)", sound);
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && (_channel[l]._used == true)) {
-			if (_channel[l]._isLoop == false)
-				_channel[l]._toBeRemoved = true;
-			else
-				_channel[l]._isLoop = false;
+			_channel[l]._toBeRemoved = true;
 		}
 	}
 }
