@@ -136,7 +136,6 @@ public:
 };
 
 class ChannelMP3 : public ChannelMP3Common {
-	uint32 _silenceCut;
 	uint32 _position;
 
 public:
@@ -953,41 +952,12 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	_size = size;
 	_ptr = (byte *)sound;
 	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
-
-	/* This variable is the number of samples to cut at the start of the MP3
-	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
-	   of blank at the start (as, I suppose, the MP3 compression algorithm needs to
-	   have some silence at the start to really be efficient and to not distort
-	   too much the start of the sample).
-
-	   This value was found by experimenting out. If you recompress differently your
-	   .SO3 file, you may have to change this value.
-
-	   When using Lame, it seems that the sound starts to have some volume about 50 ms
-	   from the start of the sound => we skip about 2 frames (at 22.05 khz).
-	 */
-	_silenceCut = 576 * 2;
 }
 
 void ChannelMP3::mix(int16 *data, uint len) {
 	const int volume = _mixer->getVolume();
 
-	if (!_initialized) {
-		// TODO: instead of using _silenceCut, skip first two frames like
-		// it is done in ChannelMP3CDMusic::mix()
-	}
-
 	while (1) {
-
-		/* Skip _silence_cut a the start */
-		if ((_posInFrame < _synth.pcm.length) && (_silenceCut > 0)) {
-			uint32 diff = _synth.pcm.length - _posInFrame;
-
-			if (diff > _silenceCut)
-				diff = _silenceCut;
-			_silenceCut -= diff;
-			_posInFrame += diff;
-		}
 
 		int16 sample;
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
@@ -1066,6 +1036,9 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 				}
 			}
 		}
+		
+		// FIXME: Fingolfin asks: why is this call to mad_synth_frame
+		// necessary? Or rather, *is* it actually necessary?
 		mad_synth_frame(&_synth, &_frame);
 
 		// We are supposed to be in synch
