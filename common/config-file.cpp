@@ -169,7 +169,9 @@ void Config::set_domain(const String &d)
 
 bool Config::has_domain(const String &d) const
 {
-	return domains.contains(d);
+	String temp = d;
+	temp.toLowercase();
+	return domains.contains(temp);
 }
 
 void Config::flush() const
