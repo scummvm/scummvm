@@ -72,9 +72,10 @@ public:
 		int samples = 0;
 		while (samples < numSamples && !eosIntern()) {
 			const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
-			for (; samples < len; samples++) {
+			while (samples < len) {
 				*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
 				_ptr += (is16Bit ? 2 : 1);
+				samples++;
 			}
 			if (_loopPtr && _ptr == _end) {
 				_ptr = _loopPtr;
@@ -143,10 +144,26 @@ inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readIntern() {
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
-	int samples;
+	int samples = 0;
+#if 1
+	for (int i = (_pos > _end) ? 0 : 1; i < 2 && samples < numSamples && !eosIntern(); i++) {
+		const byte *endMarker = (i == 0) ? _bufferEnd : _end;
+		const int len = MIN(numSamples, (endMarker - _pos) / (is16Bit ? 2 : 1));
+
+		while (samples < len) {
+			*buffer++ = readSample<is16Bit, isUnsigned>(_pos);
+			_pos += (is16Bit ? 2 : 1);
+			samples++;
+		}
+		// Wrap around?
+		if (_pos >= _bufferEnd)
+			_pos = _pos - (_bufferEnd - _bufferStart);
+	}
+#else
 	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
 		*buffer++ = readIntern();
 	}
+#endif
 	return samples;
 }
 
