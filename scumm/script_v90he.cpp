@@ -585,7 +585,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			} else {
 				uint32 id = f.readUint32BE();
 				if (id != MKID('AWIZ') && id != MKID('MULT')) {
-					VAR(0x20) = -1;
+					VAR(VAR_GAME_LOADED) = -1;
 				} else {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
@@ -593,9 +593,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 					if (f.read(p, size) != size) {
 						nukeResource(rtImage, params->img.resNum);
 						warning("i/o error when reading '%s'", params->filename);
-						VAR(0x20) = -2;
+						VAR(VAR_GAME_LOADED) = -2;
 					} else {
-						VAR(0x20) = 0;
+						VAR(VAR_GAME_LOADED) = 0;
 					}
 				}
 				f.close();
@@ -605,20 +605,20 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	case 4:
 		if (params->processFlags & 0x800) {
 			if (params->unk_14C != 0) {
-				VAR(0x77) = -1;
+				VAR(119) = -1;
 			} else {
 				File f;
 				if (!f.open((const char *)params->filename, File::kFileWriteMode)) {
 					warning("Unable to open for write '%s'", params->filename);
-					VAR(0x77) = -3;
+					VAR(119) = -3;
 				} else {
 					byte *p = getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
 					if (f.write(p, size) != size) {
 						warning("i/o error when writing '%s'", params->filename);
-						VAR(0x77) = -2;
+						VAR(119) = -2;
 					} else {
-						VAR(0x77) = 0;
+						VAR(119) = 0;
 					}
 					f.close();
 				}
