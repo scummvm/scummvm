@@ -171,7 +171,7 @@ public:
 
 class Instrument_Roland : public InstrumentInternal {
 private:
-	struct {
+	struct RolandInstrument {
 		byte roland_id;
 		byte device_id;
 		byte model_id;
@@ -227,7 +227,9 @@ private:
 			byte tva_env_level[3];
 			byte tva_env_sustain_level;
 		} partial[4];
-	} _instrument;
+		byte checksum;
+	} GNUPACK;
+	RolandInstrument _instrument;
 
 	char _instrument_name [11];
 
@@ -416,8 +418,10 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 }
 
 void Instrument_Roland::send (MidiChannel *mc) {
-	if (_native_mt32) { // if (mc->device()->mt32device()) {
+	if (_native_mt32) {
 		_instrument.device_id = mc->getNumber();
+		if (_instrument.device_id > 7)
+			warning ("MT-32 part %d is greater than 7", (int) _instrument.device_id);
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {
 		// Convert to a GM program change.
