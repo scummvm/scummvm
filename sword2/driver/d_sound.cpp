@@ -2144,7 +2144,7 @@ void Sword2Sound::UpdateSampleStreaming(void)
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, const char *directory, uint32 musicId, int32 looping) {
 	// FIXME: Find a good buffer size. The original code mentions three
-	// seconds, but I believe that's after ADPCM-decoding.
+	// seconds.
 	uint32	buffer_size = 32768;
 	uint32	i, j;
 	int32	v0, v1;
@@ -2229,7 +2229,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, const char *directory, 
 		return RDERR_OUTOFMEMORY;
 	}
 
-	// Allocate a sound buffer large enough for 3 seconds
+	// Allocate a buffer for the decoded sound
 	data16 = (uint16 *) malloc(buffer_size);
 	if (!data16) {
 		fpMus[0].close();
@@ -2300,9 +2300,10 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, const char *directory, 
 
 	// Start the sound effect playing
 #if 0
-	musicChannels[i] = _mixer->playADPCM(&musicHandle[i], lpDsbMus[i], buffer_size, 22050, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
+	// FIXME: This does not work. It sounds like white noise to me.
+	musicChannels[i] = _mixer->playRaw(&musicHandle[i], lpDsbMus[i], buffer_size, 22050, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
 #else
-	warning("FIXME: Implement ADPCM-decoding");
+	warning("FIXME: Play the sound");
 	free(lpDsbMus[i]);
 #endif
 
