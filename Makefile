@@ -1,17 +1,5 @@
 # $Header$
 
-CXX     := c++
-AR      := ar cru
-RANLIB  := ranlib
-MKDIR   := mkdir -p
-ECHO    := printf
-CAT     := cat
-RM      := rm -f
-RM_REC  := $(RM) -r
-ZIP     := zip -q
-CP      := cp
-WIN32PATH=C:/scummvm
-
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################

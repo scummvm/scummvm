@@ -2,17 +2,11 @@
 #
 # Some things this script could/should do when finished
 #
-# * detect the compiler name (g++/c++/...)
 # * detect whether its a GNU compiler or not (for compiler settings)
-# * detect the host platform and base settings on this:
-#   - #defines like -DUNIX and -DMACOSX
-#   - required libs like -lmingw32
 # * command line options to...
 #   - override the host settings (for cross compiles
-#   - select the desired backend (sdl, x11, ...)
 #   - whether to do a debug build (with -g) or an optimized build (-O3 etc.)
 # * detect whether the chosen backend is available (e.g. call sdl-config)
-# * generate a config.mak file for use in makefiles
 # * ....
 
 # TODO: We should really use mktemp(1) to determine a random tmp file name.
@@ -47,6 +41,15 @@ _nasm=auto
 _backend=sdl
 _ranlib=ranlib
 _install=install
+_ar="ar cru"
+_mkdir="mkdir -p"
+_echo=printf
+_cat=cat
+_rm="rm -f"
+_rm_rec="$_rm -r"
+_zip="zip -q"
+_cp=cp
+_win32path="C:/scummvm"
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
 _nasmpath="$PATH"
@@ -1044,6 +1047,16 @@ CXXFLAGS += $CXXFLAGS
 LIBS += $LIBS
 RANLIB := $_ranlib
 INSTALL := $_install
+AR := $_ar
+MKDIR := $_mkdir
+ECHO := $_echo
+CAT := $_cat
+RM := $_rm
+RM_REC := $_rm_rec
+ZIP := $_zip
+CP := $_cp
+WIN32PATH=$_win32path
+
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
