@@ -30,6 +30,8 @@
 #define MOUSE_H 64
 #define NUM_BUFFERS 4
 
+#define TOP_OFFSET 40.0
+
 #define QACR0 (*(volatile unsigned int *)(void *)0xff000038)
 #define QACR1 (*(volatile unsigned int *)(void *)0xff00003c)
 
@@ -177,7 +179,7 @@ void updateScreen(Scumm *s)
   myvertex.v = 0.0;
 
   myvertex.x = 0.0;
-  myvertex.y = shakePos*2.0;
+  myvertex.y = shakePos*2.0+TOP_OFFSET;
   ta_commit_list(&myvertex);
 
   myvertex.x = SCREEN_W*2.0;
@@ -252,7 +254,7 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h,
   myvertex.v = 0.0;
 
   myvertex.x = xdraw*2.0;
-  myvertex.y = (ydraw+shakePos)*2.0;
+  myvertex.y = (ydraw+shakePos)*2.0 + TOP_OFFSET;
   ta_commit_list(&myvertex);
 
   myvertex.x += w*2.0;
