@@ -433,7 +433,7 @@ void Instrument_Roland::send (MidiChannel *mc) {
 		byte checksum = 0;
 		byte *ptr = (byte *) &_instrument + 4;
 		int i;
-		for (i = 4; i < sizeof (_instrument) - 1; ++i)
+		for (i = 4; i < (int)sizeof (_instrument) - 1; ++i)
 			checksum -= *ptr++;
 		_instrument.checksum = checksum & 0x7F;
 
