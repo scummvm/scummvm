@@ -48,7 +48,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 00 */
 		OPCODE(o6_pushByte),
 		OPCODE(o6_pushWord),
-		OPCODE(o72_pushDWordVar),
+		OPCODE(o6_pushByteVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
 		OPCODE(o72_getString),
@@ -151,8 +151,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
-		OPCODE(o72_objectX),
-		OPCODE(o72_objectY),
+		OPCODE(o6_getObjectX),
+		OPCODE(o6_getObjectY),
 		OPCODE(o6_byteVarDec),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -169,7 +169,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_startObject),
 		OPCODE(o72_drawObject),
 		OPCODE(o72_unknown62),
-		OPCODE(o72_unknown63),
+		OPCODE(o72_getArrayDimSize),
 		/* 64 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectCode),
@@ -322,14 +322,14 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_readFile),
 		/* DC */
 		OPCODE(o6_writeFile),
-		OPCODE(o6_findAllObjects),
+		OPCODE(o72_findAllObjects),
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
 		OPCODE(o6_soundOps),
 		OPCODE(o72_getPixel),
 		OPCODE(o6_localizeArray),
-		OPCODE(o6_pickVarRandom),
+		OPCODE(o72_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
@@ -338,7 +338,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_seekFilePos),
-		OPCODE(o6_redimArray),
+		OPCODE(o72_redimArray),
 		OPCODE(o6_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
@@ -379,16 +379,113 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 	return _opcodesV72he[i].desc;
 }
 
-void ScummEngine_v72he::o72_pushDWordVar() {
-	int a;
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
+static int arrayDataSizes[] = {0, 1, 4, 8, 8, 16, 32};
+
+ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
+											int dim1start, int dim1end) {
+	int id;
+	int size;
+	ArrayHeader *ah;
+	
+	assert(dim2start >= 0 && dim2start <= dim2end);
+	assert(dim1start >= 0 && dim1start <= dim1end);
+	assert(0 <= type && type <= 5);
+
+	
+	if (type == kBitArray || type == kNibbleArray)
+		type = kByteArray;
+
+	nukeArray(array);
+
+	id = findFreeArrayId();
+
+	if (array & 0x80000000) {
+		error("Can't define bit variable as array pointer");
 	}
-	a = READ_LE_UINT32(_scriptPointer);
-	_scriptPointer += 4;
-	push(a);
+
+	size = arrayDataSizes[type];
+
+	writeVar(array, id);
+
+	size *= dim2end - dim2start + 1;
+	size *= dim1end - dim1start + 1;
+	size >>= 3;
+
+	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
+
+	ah->type = TO_LE_32(type);
+	ah->dim1start = TO_LE_32(dim1start);
+	ah->dim1end = TO_LE_32(dim1end);
+	ah->dim2start = TO_LE_32(dim2start);
+	ah->dim2end = TO_LE_32(dim2end);
+
+	return ah;
+}
+
+int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
+	if (readVar(array) == 0)
+		error("readArray: Reference to zeroed array pointer");
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+
+	if (ah == NULL || ah->data == NULL)
+		error("readArray: invalid array %d (%d)", array, readVar(array));
+
+	if (idx2 < FROM_LE_32(ah->dim2start) || idx2 >= FROM_LE_32(ah->dim2end) || 
+		idx1 < FROM_LE_32(ah->dim1start) || idx1 >= FROM_LE_32(ah->dim2end)) {
+		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
+			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
+			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+	}
+	
+	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
+
+	switch (FROM_LE_32(ah->type)) {
+	case kByteArray:
+	case kStringArray:
+		return ah->data[offset];
+
+	case kIntArray:
+		return (int16)READ_LE_UINT16(ah->data + offset * 2);
+
+	case kDwordArray:
+		return (int32)READ_LE_UINT32(ah->data + offset * 4);
+	}
+
+	return 0;
+}
+
+void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
+	if (readVar(array) == 0)
+		error("writeArray: Reference to zeroed array pointer");
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+
+	if (!ah)
+		error("writeArray: Invalid array (%d) reference", readVar(array));
+
+	if (idx2 < FROM_LE_32(ah->dim2start) || idx2 >= FROM_LE_32(ah->dim2end) || 
+		idx1 < FROM_LE_32(ah->dim1start) || idx1 >= FROM_LE_32(ah->dim2end)) {
+		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
+			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
+			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+	}
+
+	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
+
+	switch (FROM_LE_32(ah->type)) {
+	case kByteArray:
+	case kStringArray:
+		ah->data[offset] = value;
+
+	case kIntArray:
+		WRITE_LE_UINT16(ah->data + offset * 2, value);
+
+	case kDwordArray:
+		WRITE_LE_UINT32(ah->data + offset * 4, value);
+	}
 }
 
 void ScummEngine_v72he::o72_getString() {
@@ -407,7 +504,7 @@ void ScummEngine_v72he::o72_compareStackList() {
 	int value = pop();
 
 	if (num) {
-		for (i = 1; i < num; i++) {
+		for (i = 1; i < 128; i++) {
 			if (args[i] == value) {
 				push(1);
 				break;
@@ -416,31 +513,6 @@ void ScummEngine_v72he::o72_compareStackList() {
 	} else {
 		push(0);
 	}
-}
-
-void ScummEngine_v72he::o72_objectX() {
-	int object = pop();
-	int objnum = getObjectIndex(object);
-
-	if (objnum == -1) {
-		push(0);
-		return;
-	}
-
-	push(_objs[objnum].x_pos);
-}
-
-
-void ScummEngine_v72he::o72_objectY() {
-	int object = pop();
-	int objnum = getObjectIndex(object);
-
-	if (objnum == -1) {
-		push(0);
-		return;
-	}
-
-	push(_objs[objnum].y_pos);
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -510,12 +582,26 @@ void ScummEngine_v72he::o72_unknown62() {
 	warning("o72_unknown62 stub (%d)", a);
 }
 
-void ScummEngine_v72he::o72_unknown63() {
+void ScummEngine_v72he::o72_getArrayDimSize() {
 	int subOp = fetchScriptByte();
-	//int arrayId = readVar(fetchScriptWord());
+	int32 val1, val2;
+	ArrayHeader *ah;
 
-	warning("o72_unknown63 stub (%d)", subOp);
-	push(0);
+	switch (subOp) {
+		case 1:
+		case 3:
+			ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
+			val1 = FROM_LE_32(ah->dim1end);
+			val2 = FROM_LE_32(ah->dim1start);
+			push(val1 - val2 + 1);
+			break;
+		case 2:
+			ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
+			val1 = FROM_LE_32(ah->dim2end);
+			val2 = FROM_LE_32(ah->dim2start);
+			push(val1 - val2 + 1);
+			break;
+	}
 }
 
 void ScummEngine_v72he::o72_arrayOps() {
@@ -528,13 +614,13 @@ void ScummEngine_v72he::o72_arrayOps() {
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
+		ah = defineArray(array, kStringArray, 0, 0, 0, len + 1);
 		copyScriptString(ah->data);
 		break;
 	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, len + 1);
+		ah = defineArray(array, kStringArray, 0, 0, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
@@ -542,7 +628,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		c = pop();
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, kIntArray, 0, b + c);
+			defineArray(array, kIntArray, 0, 0, 0, b + c);
 		}
 		while (c--) {
 			writeArray(array, 0, b + c, pop());
@@ -582,7 +668,7 @@ void ScummEngine_v72he::o72_dimArray() {
 		data = kByteArray;
 		break;
 	case 6:
-		error("New array type");
+		data = kDwordArray;
 		break;
 	case 7:		// SO_STRING_ARRAY
 		data = kStringArray;
@@ -594,7 +680,7 @@ void ScummEngine_v72he::o72_dimArray() {
 		error("o72_dimArray: default case %d", type);
 	}
 
-	defineArray(fetchScriptWord(), data, 0, pop());
+	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
 }
 
 
@@ -615,7 +701,7 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 		data = kIntArray;
 		break;
 	case 6:		
-		error("New array type");
+		data = kDwordArray;
 		break;
 	case 7:		// SO_STRING_ARRAY
 		data = kStringArray;
@@ -626,7 +712,7 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 
 	b = pop();
 	a = pop();
-	defineArray(fetchScriptWord(), data, a, b);
+	defineArray(fetchScriptWord(), data, 0, a, 0, b);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
@@ -638,6 +724,24 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	flags = fetchScriptByte();
 	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v72he::o72_findAllObjects() {
+	int a = pop();
+	int i = 1;
+
+	if (a != _currentRoom)
+		warning("o72_findAllObjects: current room is not %d", a);
+	writeVar(0, 0);
+	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
+	writeArray(0, 0, 0, _numLocalObjects);
+	
+	while (i < _numLocalObjects) {
+		writeArray(0, 0, i, _objs[i].obj_nr);
+		i++;
+	}
+	
+	push(readVar(0));
 }
 
 void ScummEngine_v72he::o72_getPixel() {
@@ -661,6 +765,102 @@ void ScummEngine_v72he::o72_getPixel() {
 		area = *vs->getPixels(x, y - vs->topline);
 	push(area);
 }
+
+void ScummEngine_v72he::o72_pickVarRandom() {
+	int num;
+	int args[100];
+	int32 var_A;
+
+	num = getStackList(args, ARRAYSIZE(args));
+	int value = fetchScriptWord();
+
+	if (readVar(value) == 0) {
+		defineArray(value, kDwordArray, 0, 0, 0, num + 1);
+		if (num > 0) {
+			int16 counter = 0;
+			do {
+				writeArray(value, 0, counter + 1, args[counter]);
+			} while (++counter < num);
+		}
+
+		shuffleArray(value, 1, num-1);
+		writeArray(value, 0, 0, 2);
+		push(readArray(value, 0, 1));
+		return;
+	}
+
+	num = readArray(value, 0, 0);
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, num);
+	var_A = FROM_LE_32(ah->dim1end);
+
+	if (var_A-1 <= num) {
+		int16 var_2 = readArray(value, 0, num - 1);
+		shuffleArray(value, 1, num - 1);
+		if (readArray(value, 0, 1) == var_2) {
+			num = 2;
+		} else {
+			num = 1;
+		}
+	}
+
+	writeArray(value, 0, 0, num + 1);
+	push(readArray(value, 0, num));
+}
+
+void ScummEngine_v72he::o72_redimArray() {
+	int subcode, newX, newY;
+	newY = pop();
+	newX = pop();
+
+	subcode = fetchScriptByte();
+	switch (subcode) {
+	case 5:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
+		break;
+	case 4:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kByteArray);
+		break;
+	case 6:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kDwordArray);
+		break;
+	default:
+		break;
+	}
+}
+
+void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end, 
+								   int newDim1start, int newDim1end, int type) {
+	int newSize, oldSize;
+
+	if (readVar(arrayId) == 0)
+		error("redimArray: Reference to zeroed array pointer");
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(arrayId));
+
+	if (!ah)
+		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
+
+	newSize = arrayDataSizes[type];
+	oldSize = arrayDataSizes[FROM_LE_32(ah->type)];
+
+	newSize *= (newDim1end - newDim1start + 1) * (newDim2end - newDim2end + 1);
+	oldSize *= (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+
+	newSize >>= 3;
+	oldSize >>= 3;
+
+	if (newSize != oldSize)
+		error("redimArray: array %d redim mismatch", readVar(arrayId));
+
+	ah->type = TO_LE_32(type);
+	ah->dim1start = TO_LE_32(newDim1start);
+	ah->dim1end = TO_LE_32(newDim1end);
+	ah->dim2start = TO_LE_32(newDim2start);
+	ah->dim2end = TO_LE_32(newDim2end);
+}
+
 
 void ScummEngine_v72he::o72_stringLen() {
 	int a, len;
@@ -691,7 +891,7 @@ void ScummEngine_v72he::o72_readINI() {
 		push(0);
 		break;
 	case 7: // string
-		defineArray(0, kStringArray, 0, 0);
+		defineArray(0, kStringArray, 0, 0, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
 		push(retval); // var ID string

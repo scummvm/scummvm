@@ -640,6 +640,23 @@ protected:
 		const char *desc;
 	};
 	
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
+
+	struct ArrayHeader {
+		int32 type;      //0
+		int32 dim1start; //4
+		int32 dim1end;   //8
+		int32 dim2start; //0c
+		int32 dim2end;   //10
+		byte data[1];
+	} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
 	const OpcodeEntryV72he *_opcodesV72he;
 
 public:
@@ -652,6 +669,11 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
+	int readArray(int array, int idx2, int idx1);
+	void writeArray(int array, int idx2, int idx1, int value);
+	void redimArray(int arrayId, int newDim2start, int newDim2end, 
+					int newDim1start, int newDim1end, int type);
 
 	/* Version 7 script opcodes */
 	void o72_pushDWordVar();
@@ -663,12 +685,15 @@ protected:
 	void o72_startObject();
 	void o72_drawObject();
 	void o72_unknown62();
-	void o72_unknown63();
+	void o72_getArrayDimSize();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_jumpToScript();
+	void o72_findAllObjects();
 	void o72_getPixel();
+	void o72_pickVarRandom();
+	void o72_redimArray();
 	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();

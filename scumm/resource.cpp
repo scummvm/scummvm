@@ -1968,6 +1968,9 @@ byte *ScummEngine::getStringAddress(int i) {
 	if (!b)
 		return NULL;
 
+	if (_heversion >= 72)
+		return (b + 0x14); // ArrayHeader->data
+
 	if (_features & GF_NEW_OPCODES)
 		return ((ArrayHeader *)b)->data;
 	return b;
@@ -1982,6 +1985,9 @@ byte *ScummEngine::getStringAddressVar(int i) {
 		// it must be allowed to return NULL
 		// error("NULL string var %d slot %d", i, _scummVars[i]);
 		return NULL;
+
+	if (_heversion >= 72)
+		return (addr + 0x14); // ArrayHeader->data
 
 	if (_features & GF_NEW_OPCODES)
 		return ((ArrayHeader *)addr)->data;

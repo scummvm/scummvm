@@ -36,7 +36,8 @@ enum ArrayType {
 	kNibbleArray = 2,
 	kByteArray = 3,
 	kStringArray = 4,
-	kIntArray = 5
+	kIntArray = 5,
+	kDwordArray = 6
 };
 
 struct ArrayHeader {
