@@ -324,7 +324,7 @@ void Talk::load(const char *filename) {
 	//debug(0, "talkKey   = %i", _talkKey);
 
 	_person1Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-	/*byte *cutawayPtr =*/ _fileData + READ_BE_UINT16(ptr); ptr += 2;
+	/*byte *cutawayPtr = _fileData + READ_BE_UINT16(ptr);*/ ptr += 2;
 	_person2Ptr      = _fileData + READ_BE_UINT16(ptr); ptr += 2;
 
 	if (ptr != (_fileData + 28))
