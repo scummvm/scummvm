@@ -1,3 +1,6 @@
+0.1.0 (2002-01-13)
+- loads of changes
+
 0.0.2 (2001-10-12):
 - bug fixes
 - save & load support
