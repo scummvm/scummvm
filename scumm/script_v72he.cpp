@@ -1799,7 +1799,8 @@ void ScummEngine_v72he::o72_unknownF0() {
 	int src2 = pop();
 	int src1 = pop();
 
-	size = resStrLen(getStringAddress(src1)) * 2 + 2;
+	size = resStrLen(getStringAddress(src1));
+	size += resStrLen(getStringAddress(src2)) + 1;
 
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, 0, 0, size);
