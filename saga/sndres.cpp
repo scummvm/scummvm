@@ -33,6 +33,8 @@
 
 #include "common/file.h"
 
+#include "sound/voc.h"
+
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
@@ -173,88 +175,26 @@ int SndRes::load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_
 }
 
 int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
-	VOC_HEADER_BLOCK voc_hb;
-	VOC_GENBLOCK voc_gb;
-	VOC_BLOCK1 voc_b1;
-	byte *data;
-
-	long byte_rate;
-	size_t i;
-
-	if (snd_res_len < VOC_HEADER_BLOCK_LEN) {
-		return FAILURE;
-	}
-
 	MemoryReadStream readS(snd_res, snd_res_len);
+	byte *data;
+	int rate;
+	int len;
 
-	for (i = 0; i < VOC_FILE_DESC_LEN; i++)
-		voc_hb.ft_desc[i] = readS.readByte();
+	data = loadVOCFromStream(readS, len, rate);
 
-	if (memcmp(voc_hb.ft_desc, VOC_FILE_DESC, VOC_FILE_DESC_LEN) != 0) {
-		/* Voc file desc string not found */
+	if (!data) {
 		return FAILURE;
 	}
 
-	voc_hb.db_offset = readS.readUint16LE();
-	voc_hb.voc_version = readS.readUint16LE();
-	voc_hb.voc_fileid = readS.readUint16LE();
-
-	if ((int32)(snd_res_len - readS.pos()) < (int32)(voc_hb.db_offset + VOC_GENBLOCK_LEN)) {
-		return FAILURE;
-	}
-
-	while (readS.pos() < voc_hb.db_offset)
-		readS.readByte();
-
-	for (;;) {
-		/* Read generic block header */
-		if (snd_res_len - readS.pos() < VOC_GENBLOCK_LEN) {
-			return FAILURE;
-		}
-
-		voc_gb.block_id = readS.readByte();
-		if (voc_gb.block_id == 0) {
-			return FAILURE;
-		}
-
-		voc_gb.block_len = readS.readUint24LE();
-
-		/* Process block */
-		switch (voc_gb.block_id) {
-		case 1:	/* Sound data block */
-			voc_b1.time_constant = readS.readByte();
-			voc_b1.pack_method = readS.readByte();
-
-			if (voc_b1.pack_method != 0) {
-				debug(0, "Packed VOC files not supported");
-				return FAILURE;
-			}
-
-			byte_rate = VOC_TIME_BASE / (VOC_TIME_CBASE - (voc_b1.time_constant << 8));
-
-			snd_buf_i->s_stereo = 0;
-			snd_buf_i->s_samplebits = 8;
-			snd_buf_i->s_freq = byte_rate;
-			snd_buf_i->s_buf_len = snd_res_len - readS.pos() - 1;	/* -1 for end block */
-
-			data = (byte *)malloc(snd_buf_i->s_buf_len);
-			if (!data) {
-				return FAILURE;
-			}
-
-			readS.read(data, snd_buf_i->s_buf_len);
-
-			snd_buf_i->s_buf = data;
-			snd_buf_i->s_signed = 0;
-			return SUCCESS;
-		default:
-			for (i = 0; i < voc_gb.block_len; i++)
-				readS.readByte();
-			break;
-		}
-	}
-
+	snd_buf_i->s_freq = rate;
+	snd_buf_i->s_samplebits = 8;
+	snd_buf_i->s_stereo = 0;
+	snd_buf_i->s_signed = 0;
+	snd_buf_i->s_buf = data;
+	snd_buf_i->s_buf_len = len;
+	
 	return SUCCESS;
+
 }
 
 int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {

@@ -32,35 +32,6 @@
 
 namespace Saga {
 
-#define VOC_TIME_BASE  256000000L
-#define VOC_TIME_CBASE 65536L
-
-#define VOC_FILE_DESC_LEN 20
-#define VOC_FILE_DESC "Creative Voice File\x1A"
-
-struct VOC_HEADER_BLOCK {
-	char ft_desc[20]; // BYTE [20]
-	uint16 db_offset; // WORD
-	uint16 voc_version;// WORD
-	uint16 voc_fileid; // WORD
-};
-
-#define VOC_HEADER_BLOCK_LEN 26
-
-struct VOC_GENBLOCK {
-	int block_id;		// BYTE
-	uint32 block_len;	// BYTE[3]
-};
-
-#define VOC_GENBLOCK_LEN 4
-
-struct VOC_BLOCK1 {
-	int block_id; // BYTE
-	uint32 block_len; // BYTE[3]
-	uint16 time_constant; // BYTE
-	int pack_method; // BYTE
-};
-
 class SndRes {
 public:
 
