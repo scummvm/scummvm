@@ -240,6 +240,10 @@ void PluginManager::loadPlugins() {
 	LOAD_MODULE("sky", SKY);
 #endif
 
+#ifndef DISABLE_SWORD1
+	LOAD_MODULE("sword1", SWORD1);
+#endif
+
 #ifndef DISABLE_SWORD2
 	LOAD_MODULE("sword2", SWORD2);
 #endif

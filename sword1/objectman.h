@@ -1,0 +1,57 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
+// this is the object manager. our equivalent to protocol.c and coredata.c
+
+#ifndef OBJECTMAN_H
+#define OBJECTMAN_H
+
+#include "resman.h"
+#include "sworddefs.h"
+#include "object.h"
+
+class ObjectMan {
+public:
+	ObjectMan(ResMan *pResourceMan);
+	~ObjectMan(void);
+	BsObject *fetchObject(uint32 id);
+	//void unlockObject(uint32 id);
+	uint32 fetchNoObjects(int section);
+	bool sectionAlive(uint16 section);
+	void megaEntering(uint16 section);
+	void megaLeaving(uint16 section, int id);
+
+	uint8 fnCheckForTextLine(uint32 textId);
+	char *lockText(uint32 textId);
+	void unlockText(uint32 textId);
+	uint32 lastTextNumber(int section);
+
+    void closeSection(uint32 screen);
+private:
+	ResMan *_resMan;
+	static const uint32 _objectList[TOTAL_SECTIONS];	//a table of pointers to object files
+	static const uint32 _textList[TOTAL_SECTIONS][7];	//a table of pointers to text files
+	int	_liveList[TOTAL_SECTIONS]; 						//which sections are active
+	uint8 *_cptData[TOTAL_SECTIONS];
+};
+
+#endif //OBJECTMAN_H
+
