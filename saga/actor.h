@@ -327,7 +327,7 @@ public:
 
 	void drawPathTest();
 
-	uint16 testHit(const Point& mousePointer){ return ID_NOTHING;}; //TODO: do it
+	uint16 hitTest(const Point &testPoint);
 	void takeExit(uint16 actorId, const HitZone *hitZone);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const Location &toLocation);		
@@ -357,6 +357,7 @@ private:
 
 	void createDrawOrderList();
 	void calcScreenPosition(CommonObjectData *commonObjectData);
+	bool getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList);
 
 	bool followProtagonist(ActorData *actor);
 	void findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint);

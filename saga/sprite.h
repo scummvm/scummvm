@@ -70,7 +70,7 @@ public:
 	int loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
 	int draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale);
 	int drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
-
+	bool hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);
 private:
 	void decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength);
 	void scaleBuffer(const byte *src, int width, int height, int scale);

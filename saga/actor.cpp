@@ -1055,6 +1055,24 @@ void Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 }
 
+uint16 Actor::hitTest(const Point &testPoint) {
+	CommonObjectOrderList::iterator drawOrderIterator;
+	CommonObjectDataPointer drawObject;
+	int frameNumber;
+	SpriteList *spriteList;
+	createDrawOrderList();
+	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
+		drawObject =  drawOrderIterator.operator*();
+		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
+			continue;
+		}
+
+		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, testPoint)) {
+			return drawObject->id;
+		}
+	}
+	return ID_NOTHING;
+}
 
 void Actor::createDrawOrderList() {
 	int i;
@@ -1082,6 +1100,26 @@ void Actor::createDrawOrderList() {
 	}
 }
 
+bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
+	if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+		if (!(commonObjectData->flags & kProtagonist)){
+			warning("not protagonist");
+			return false;
+		}
+		frameNumber = 8;			
+		spriteList = &_vm->_sprite->_mainSprites;
+	} else {
+		frameNumber = commonObjectData->frameNumber;			
+		spriteList = &commonObjectData->spriteList;	
+	}
+
+	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
+		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X", commonObjectData->id);
+		return false;
+	}
+	return true;
+}
+
 int Actor::drawActors() {
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
@@ -1096,23 +1134,10 @@ int Actor::drawActors() {
 
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject =  drawOrderIterator.operator*();
-
-		if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
-			if (!(drawObject->flags & kProtagonist)){
-				warning("not protagonist");
-				continue;
-			}
-			frameNumber = 8;			
-			spriteList = &_vm->_sprite->_mainSprites;
-		} else {
-			frameNumber = drawObject->frameNumber;			
-			spriteList = &drawObject->spriteList;
-		}
-		
-		if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
-			warning("Actor::drawActors frameNumber invalid for object id 0x%X", drawObject->id);
+		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;
 		}
+		
 		
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			//todo: it

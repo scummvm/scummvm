@@ -173,10 +173,10 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale) {
 	const byte *spriteBuffer;
 	int i, j;
-	byte *buf_row_p;
-	const byte *src_row_p;
-	int clip_width;
-	int clip_height;
+	byte *bufRowPointer;
+	const byte *srcRowPointer;
+	int clipWidth;
+	int clipHeight;
 	int width;
 	int height;
 	int xAlign;
@@ -197,32 +197,77 @@ int Sprite::draw(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Po
 		return 0;
 	}
 
-	buf_row_p = (byte *)ds->pixels + ds->pitch * spritePointer.y;
-	src_row_p = spriteBuffer;
+	bufRowPointer = (byte *)ds->pixels + ds->pitch * spritePointer.y;
+	srcRowPointer = spriteBuffer;
 
-	// Clip to right side of surface
-	clip_width = width;
+	clipWidth = width;
 	if (width > (ds->w - spritePointer.x)) {
-		clip_width = (ds->w - spritePointer.x);
+		clipWidth = (ds->w - spritePointer.x);
 	}
 
-	// Clip to bottom side of surface
-	clip_height = height;
+	clipHeight = height;
 	if (height > (ds->h - spritePointer.y)) {
-		clip_height = (ds->h - spritePointer.y);
+		clipHeight = (ds->h - spritePointer.y);
 	}
 
-	for (i = 0; i < clip_height; i++) {
-		for (j = 0; j < clip_width; j++) {
-			if (*(src_row_p + j) != 0) {
-				*(buf_row_p + j + spritePointer.x) = *(src_row_p + j);
+	for (i = 0; i < clipHeight; i++) {
+		for (j = 0; j < clipWidth; j++) {
+			if (*(srcRowPointer + j) != 0) {
+				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
 		}
-		buf_row_p += ds->pitch;
-		src_row_p += width;
+		bufRowPointer += ds->pitch;
+		srcRowPointer += width;
 	}
 
 	return SUCCESS;
+}
+
+bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
+	const byte *spriteBuffer;
+	int i, j;
+	const byte *srcRowPointer;
+	int clipWidth;
+	int clipHeight;
+	int width;
+	int height;
+	int xAlign;
+	int yAlign;
+	Point spritePointer;
+
+
+	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
+
+	spritePointer.x = screenCoord.x + xAlign;
+	spritePointer.y = screenCoord.y + yAlign;
+
+	if (spritePointer.x < 0) {
+		return false;
+	}
+	if (spritePointer.y < 0) {
+		return false;
+	}
+
+	clipWidth = width;
+	if (width > (_vm->getDisplayWidth() - spritePointer.x)) {
+		clipWidth = (_vm->getDisplayWidth() - spritePointer.x);
+	}
+	
+	clipHeight = height;
+	if (height > (_vm->getDisplayHeight() - spritePointer.y)) {
+		clipHeight = (_vm->getDisplayHeight() - spritePointer.y);
+	}
+	
+	if ((testPoint.y < spritePointer.y) || (testPoint.y >= spritePointer.y + clipHeight)) {
+		return false;
+	}
+	if ((testPoint.x < spritePointer.x) || (testPoint.x >= spritePointer.x + clipWidth)) {
+		return false;
+	}
+	i = testPoint.y - spritePointer.y;
+	j = testPoint.x - spritePointer.x;
+	srcRowPointer = spriteBuffer + j + i * width;
+	return *srcRowPointer != 0; 
 }
 
 int Sprite::drawOccluded(SURFACE *ds, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {

@@ -904,7 +904,7 @@ void Script::whichObject(const Point& mousePoint) {
 
 	if (_vm->_actor->_protagonist->currentAction == kActionWalkDir) {
 	} else {
-		newObjectId = _vm->_actor->testHit(mousePoint);
+		newObjectId = _vm->_actor->hitTest(mousePoint);
 
 		if (newObjectId != ID_NOTHING) {
 			if (objectTypeId(newObjectId) == kGameObjectObject) {
