@@ -22,6 +22,7 @@
  */
 
 #include "stdafx.h"
+#include "common/util.h"
 #include "scumm/scumm.h"
 
 #include <exec/types.h>
@@ -126,12 +127,20 @@ OSystem_MorphOS::OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_scr
 
 	OpenATimer(&TimerMsgPort, (IORequest **) &TimerIORequest, UNIT_MICROHZ);
 
+	OvlCMap = GetColorMap(256);
+	OvlBitMap = NULL;
+	OvlSavedBuffer = NULL;
+
 	TimerBase = TimerIORequest->tr_node.io_Device;
-	ScummNoCursor = (UWORD *) AllocVec(16, MEMF_CHIP | MEMF_CLEAR);
+	ScummNoCursor = (UWORD *) AllocVec(16, MEMF_CLEAR);
 	UpdateRegion = NewRegion();
 	NewUpdateRegion = NewRegion();
 	if (!UpdateRegion || !NewUpdateRegion)
 		error("Could not create region for screen update");
+	if (!OvlCMap)
+		error("Could not allocate overlay color map");
+	if (!ScummNoCursor)
+		error("Could not allocate empty cursor image");
 }
 
 OSystem_MorphOS::~OSystem_MorphOS()
@@ -143,6 +152,12 @@ OSystem_MorphOS::~OSystem_MorphOS()
 		for (int b = 0; b < BLOCKS_X*BLOCKS_Y; b++)
 			FreeVec(BlockColors[b]);
 		FreeVec(BlockColors);
+	}
+
+	if (OvlCMap)
+	{
+		FreeColorMap(OvlCMap);
+		OvlCMap = NULL;
 	}
 
 	if (Scaler)
@@ -189,8 +204,14 @@ OSystem_MorphOS::~OSystem_MorphOS()
 	if (ScummBuffer)
 		FreeVec(ScummBuffer);
 
+	if (OvlSavedBuffer)
+		FreeVec(OvlSavedBuffer);
+
 	if (ScummRenderTo && !ScummScreen)
-		FreeBitMap (ScummRenderTo);
+		FreeBitMap(ScummRenderTo);
+
+	if (OvlBitMap)
+		FreeVec(OvlBitMap);
 
 	if (ScummWindow)
 		CloseWindow(ScummWindow);
@@ -454,7 +475,7 @@ void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
 void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 {
 	ULONG mode = INVALID_ID;
-	int   depths[] = { 8, 15, 16, 32, 0 };
+	int   depths[] = { 8, 32, 16, 15, 0 };
 	int   i;
 	Screen *wb = NULL;
 
@@ -598,7 +619,7 @@ void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 	{
 		ScummDepth = GetCyberMapAttr(ScummWindow->RPort->BitMap, CYBRMATTR_DEPTH);
 		if (ScummDepth == 8)
-			error("Workbench screen must be running in 15 bit or higher");
+			error("Default public screen must be 15 bit or higher if you want to play in window mode");
 
 		ScummRenderTo = AllocBitMap(ScummScrWidth, ScummScrHeight, ScummDepth, BMF_MINPLANES, ScummWindow->RPort->BitMap);
 		if (ScummRenderTo == NULL)
@@ -617,6 +638,13 @@ void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 
 		Scumm16ColFmt16 = (ScummDepth == 16);
 	}
+
+	if (OvlBitMap)
+		FreeVec(OvlBitMap);
+
+	OvlBitMap = AllocVec(ScummScrWidth*ScummScrHeight*3, MEMF_PUBLIC | MEMF_CLEAR);
+	if (OvlBitMap == NULL)
+		error("Failed to allocated bitmap for overlay");
 
 	if (Scaler)
 	{
@@ -701,7 +729,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 					qual |= KBD_CTRL;
 				event->kbd.flags = qual;
 
-				event->event_code = EVENT_KEYDOWN;
+				event->event_code = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
+				ScummMsg->Code &= ~IECODE_UP_PREFIX;
 
 				if (ScummMsg->Code >= 0x50 && ScummMsg->Code <= 0x59)
 				{
@@ -1118,7 +1147,7 @@ void OSystem_MorphOS::update_screen()
 	{
 		while (!ChangeScreenBuffer(ScummScreen, ScummScreenBuffer[ScummPaintBuffer]));
 		ScummPaintBuffer = !ScummPaintBuffer;
-		ScummRenderTo = ScummScreenBuffer[ScummPaintBuffer]->sb_BitMap;
+		 ScummRenderTo = ScummScreenBuffer[ScummPaintBuffer]->sb_BitMap;
 	}
 	else
 	{
@@ -1146,6 +1175,7 @@ void OSystem_MorphOS::update_screen()
 
 void OSystem_MorphOS::DrawMouse()
 {
+	APTR handle = NULL;
 	int x,y;
 	byte *dst,*bak;
 	byte color;
@@ -1167,7 +1197,6 @@ void OSystem_MorphOS::DrawMouse()
 	MouseOldHeight = h;
 
 	AddUpdateRect(xdraw, ydraw, w, h);
-
 	dst = (byte*)ScummBuffer + ydraw*ScummBufferWidth + xdraw;
 	bak = MouseBackup;
 
@@ -1175,13 +1204,13 @@ void OSystem_MorphOS::DrawMouse()
 	{
 		if ((uint)(ydraw+y) < ScummBufferHeight)
 		{
-			for( x = 0; x<w; x++ )
+			for (x = 0; x<w; x++)
 			{
 				if ((uint)(xdraw+x) < ScummBufferWidth)
 				{
 					bak[x] = dst[x];
 					if ((color=buf[x])!=0xFF)
-						dst[ x ] = color;
+						dst[x] = color;
 				}
 			}
 		}
@@ -1295,6 +1324,21 @@ void OSystem_MorphOS::fill_sound(byte *stream, int len)
 
 void OSystem_MorphOS::init_size(uint w, uint h)
 {
+	if (ScummBuffer)
+	{
+		FreeVec(ScummBuffer);
+		ScummBuffer = NULL;
+	}
+	if (DirtyBlocks)
+	{
+		FreeVec(DirtyBlocks);
+
+		for (int b = 0; b < BLOCKS_X*BLOCKS_Y; b++)
+			FreeVec(BlockColors[b]);
+		FreeVec(BlockColors);
+		DirtyBlocks = NULL;
+	}
+
 	/*
 	 * Allocate image buffer
 	 */
@@ -1303,6 +1347,15 @@ void OSystem_MorphOS::init_size(uint w, uint h)
 	if (ScummBuffer == NULL)
 	{
 		puts("Couldn't allocate image buffer");
+		exit(1);
+	}
+
+	OvlSavedBuffer = AllocVec(w*h, MEMF_CLEAR);
+	
+	if (OvlSavedBuffer == NULL)
+	{
+		FreeVec(ScummBuffer);
+		puts("Couldn't allocate overlay backup image buffer");
 		exit(1);
 	}
 
@@ -1348,22 +1401,82 @@ void OSystem_MorphOS::init_size(uint w, uint h)
 
 void OSystem_MorphOS::show_overlay()
 {
+	UndrawMouse();
+	clear_overlay();
+	memcpy(OvlSavedBuffer, ScummBuffer, ScummBufferWidth*ScummBufferHeight);
+	for (int c = 0; c < 256; c++)
+	{
+		ULONG r, g, b;
+		r = ScummColors[c] >> 16;
+		g = (ScummColors[c] >> 8) & 0xff;
+		b = ScummColors[c] & 0xff;
+		SetRGB32CM(OvlCMap, c, CVT8TO32(r), CVT8TO32(g), CVT8TO32(b));
+	}
 }
 
 void OSystem_MorphOS::hide_overlay()
 {
+	copy_rect((byte *) OvlSavedBuffer, ScummBufferWidth, 0, 0, ScummBufferWidth, ScummBufferHeight);
 }
 
 void OSystem_MorphOS::clear_overlay()
 {
+	UBYTE *src = (UBYTE *) ScummBuffer;
+	UBYTE *dest = (UBYTE *) OvlBitMap;
+	for (int y = 0; y < ScummBufferHeight; y++)
+		for (int x = 0; x < ScummBufferWidth; x++)
+		{
+			*dest++ = ScummColors[*src] >> 16;
+			*dest++ = (ScummColors[*src] >> 8) & 0xff;
+			*dest++ = ScummColors[*src++] & 0xff;
+		}
 }
 
 void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
 {
+	int h = ScummBufferHeight;
+	int x;
+	UBYTE *src = (UBYTE *) OvlBitMap;
+
+	do
+	{
+		for (x = 0; x < ScummBufferWidth; x++)
+		{
+			*buf++ = (src[0]*31/255 << 11) | (src[1]*63/255 << 5) | src[2]*31/255;
+			src += 3;
+		}
+	} while (--h);
 }
 
 void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int y, int w, int h)
 {
-}
+	int x1, y1;
+	UBYTE *dest;
+	UBYTE	*bmap, *bmap_dest;
 
+	bmap = (UBYTE*) AllocVec(w*h, MEMF_ANY);
+	if (bmap)
+	{
+		bmap_dest = bmap;
+		dest = ((UBYTE *) OvlBitMap)+y*ScummBufferWidth*3+x*3;
+		for (y1 = 0; y1 < h; y1++)
+		{
+			for (x1 = 0; x1 < w; x1++)
+			{
+				ULONG r, g, b;
+				r = RED_FROM_16(*ovl);
+				g = GREEN_FROM_16(*ovl);
+				b = BLUE_FROM_16(*ovl++);
+				*dest++ = r;
+				*dest++ = g;
+				*dest++ = b;
+				*bmap_dest++ = FindColor(OvlCMap, CVT8TO32(r), CVT8TO32(g), CVT8TO32(b), -1);
+			}
+			dest += ScummBufferWidth*3-w*3;
+			ovl += pitch-w;
+		}
+		copy_rect(bmap, w, x, y, w, h);
+		FreeVec(bmap);
+	}
+}
 

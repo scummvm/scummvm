@@ -163,6 +163,11 @@ class OSystem_MorphOS : public OSystem
 		Region 		 *NewUpdateRegion;
 		ULONG			  UpdateRects;
 
+		/* Overlay-related attributes */
+		APTR 		 OvlBitMap;
+		APTR 		 OvlSavedBuffer;
+		ColorMap *OvlCMap;
+
 		/* Sound-related attributes */
 		Process   *ScummMusicThread;
 		Process 	 *ScummSoundThread;
