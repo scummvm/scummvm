@@ -1,0 +1,35 @@
+# Makefile for GP32 development using devkitadv under Win32
+# Written 2002 by Christian Nowak <chnowak@web.de>
+# Modified by ph0x (ph0x@freemail.hu)
+
+# devkitadv base dir
+CCBASE=c:/devkitadv
+
+CXX     =	$(CCBASE)/bin/g++
+CFLAGS  =	-mcpu=arm9tdmi \
+		-mtune=arm9tdmi \
+		-mapcs \
+		-O2 \
+		-fomit-frame-pointer \
+		-finline-functions \
+		-fno-exceptions \
+		-fno-common \
+		-fno-builtin \
+		-fshort-enums \
+		-ffast-math \
+		-fshort-double \
+		-fallow-single-precision \
+		-ffreestanding \
+		-fexpensive-optimizations \
+		-mstructure-size-boundary=32 \
+		-mno-thumb-interwork \
+		-I$(CCBASE)/arm-agb-elf/include/gp32 \
+		-Wno-multichar
+
+DEFINES = -D__GP32__ -DNONSTANDARD_PORT
+LNKSCRIPT =$(CCBASE)/arm-agb-elf/lib/lnkscript
+LDFLAGS = -Wl,-T $(LNKSCRIPT)
+LIBS	+= -lgpgraphic -lgpmem -lgpos -lgpstdlib -lgpstdio -lgpsound -lgpfont
+INCLUDES += -Ibackends/gp32
+MODULES	+= backends/gp32
+OBJS	+= $(CCBASE)/arm-agb-elf/lib/gpstart/gpstart.o backends/gp32/gp32.o
