@@ -41,8 +41,6 @@
 
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
-#define MAP_TAG "MAP "
-
 
 /* Roland to General Midi patch table. Still needs some work. */
 static const byte mt32_to_gmidi[128] = {
@@ -866,61 +864,8 @@ bool IMuseInternal::start_sound(int sound)
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			mdhd = findTag(sound, MAP_TAG, 0);
-			if (!mdhd) {
-				warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
-				return false;
-			}
-			else {
-				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
-				uint8 * ptr = g_scumm->getResourceAddress(rtSound, sound);
-				if (ptr != NULL) {
-					ptr+=16;
-					for (;;) {
-				    		tag = READ_BE_UINT32(ptr);  ptr+=4;
-						switch(tag) {
-							case MKID_BE('FRMT'):
-								size = READ_BE_UINT32(ptr); ptr+=12;
-								bits = READ_BE_UINT32(ptr); ptr+=4;
-								rate = READ_BE_UINT32(ptr); ptr+=4;
-								chan = READ_BE_UINT32(ptr); ptr+=4;
-							break;
-							case MKID_BE('TEXT'):
-							case MKID_BE('REGN'):
-							case MKID_BE('STOP'):
-							case MKID_BE('JUMP'):
-								size = READ_BE_UINT32(ptr); ptr+=size+4;
-							break;
-							case MKID_BE('DATA'):
-								size = READ_BE_UINT32(ptr); ptr+=4;
-							break;
-							default:
-								error("Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
-						}
-						if (tag == MKID_BE('DATA')) break;
-					}
-					if (bits == 8) {
-						byte * buffer = (byte*)malloc (size);
-						memcpy(buffer, ptr, size);
-						if (chan == 1) {
-							g_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
-						}
-						else if (chan == 2) {
-							g_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
-						}
-					} else if (bits == 12) {
-						byte * buffer = NULL;
-						uint32 final_size = g_scumm->_sound->decode12BitsSample(ptr, &buffer, size);
-						if (chan == 1) {
-							g_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
-						}
-						else if (chan == 2) {
-							g_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
-						}
-					}
-				}
-				return true;
-			}
+			warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
+			return false;
 		}
 	}
 	player = allocate_player(128);
@@ -4894,28 +4839,171 @@ IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 	return i;
 }
 
-IMuseDigital::IMuseDigital(SoundMixer *mixer, Timer * timer) {
+static void imus_digital_handler(void * engine) {
+	g_scumm->_imuseDigital->handler();
+}
+
+IMuseDigital::IMuseDigital(Scumm *scumm) {
 	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
+	_scumm = scumm;
+	_scumm->_timer->installProcedure(imus_digital_handler, 100);
 }
 
 IMuseDigital::~IMuseDigital() {
+	_scumm->_timer->releaseProcedure(imus_digital_handler);
+}
+
+void IMuseDigital::handler() {
+	bool new_mixer;
+	int32 l, idx;
+
+	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
+		if (_channel[l]._used) {
+			if (_channel[l]._toBeRemoved == true) {
+				_channel[l]._used = false;
+				free(_channel[l]._data);
+				continue;
+			}
+
+			if (_channel[l]._offset + _channel[l]._mixerSize > _channel[l]._size) {
+				_channel[l]._mixerSize = _channel[l]._size - _channel[l]._offset;
+				_channel[l]._toBeRemoved = true;
+			}
+
+			byte *buf = (byte*)malloc(_channel[l]._mixerSize);
+			memcpy(buf, _channel[l]._data + _channel[l]._offset, _channel[l]._mixerSize);
+
+			new_mixer = false;
+			if (_channel[l]._mixerTrack == -1) {
+				_scumm->_system->lock_mutex(_scumm->_mixer->_mutex);
+				for (idx = 0; idx < SoundMixer::NUM_CHANNELS; idx++) {
+					if (_scumm->_mixer->_channels[idx] == NULL) {
+						_channel[l]._mixerTrack = idx;
+						new_mixer = true;
+						break;
+					}
+				}
+			}
+			if(SoundMixer::NUM_CHANNELS == idx) {
+				warning("IMuseDigital::handler() no free SoundMixer channel");
+				return;
+			}
+
+			if (new_mixer) {
+				_scumm->_mixer->playStream(NULL, _channel[l]._mixerTrack, buf, _channel[l]._mixerSize,
+																				 _channel[l]._freq, _channel[l]._mixerFlags);
+			} else {
+				_scumm->_mixer->append(_channel[l]._mixerTrack, buf, _channel[l]._mixerSize,
+															 _channel[l]._freq, _channel[l]._mixerFlags);
+			}
+			_scumm->_system->unlock_mutex(_scumm->_mixer->_mutex);
+
+			_channel[l]._offset += _channel[l]._mixerSize;
+		}
+	}
 }
 
 void IMuseDigital::startSound(int sound) {
 	debug(1, "IMuseDigital::startSound(%d)", sound);
+	int32 l;
+
+	for(l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		if(_channel[l]._used == false) {
+			byte *ptr = _scumm->getResourceAddress(rtSound, sound);
+			if(ptr == NULL) {
+				warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
+				return;
+			}
+			_channel[l]._idSound = sound;
+			_channel[l]._offset = 0;
+			ptr += 16;
+
+			uint32 tag, size;
+
+			for (;;) {
+		    tag = READ_BE_UINT32(ptr); ptr += 4;
+				switch(tag) {
+					case MKID_BE('FRMT'):
+						ptr += 12;
+						_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+					break;
+					case MKID_BE('TEXT'):
+						size = READ_BE_UINT32(ptr); ptr += size + 4;
+					break;
+					case MKID_BE('REGN'):
+						size = READ_BE_UINT32(ptr); ptr += size;
+						_channel[l]._offsetRegion = READ_BE_UINT32(ptr); ptr += 4;
+					break;
+					case MKID_BE('STOP'):
+						size = READ_BE_UINT32(ptr); ptr += size;
+						_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
+					break;
+					case MKID_BE('JUMP'):
+						size = READ_BE_UINT32(ptr); ptr += size;
+						_channel[l]._offsetJump = READ_BE_UINT32(ptr); ptr += 4;
+						_channel[l]._isLoop = true;
+					break;
+					case MKID_BE('DATA'):
+						size = READ_BE_UINT32(ptr); ptr += 4;
+					break;
+					default:
+						error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+				}
+				if (tag == MKID_BE('DATA')) break;
+			}
+
+			_channel[l]._mixerTrack = -1;
+			_channel[l]._mixerSize = 22050 / 10;
+			_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE;
+			if (_channel[l]._bits == 12) {
+				_channel[l]._mixerSize *= 2;
+				_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
+				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size);
+			}
+			if (_channel[l]._bits == 8) {
+				_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+				_channel[l]._data = (byte *)malloc(size);
+				memcpy(_channel[l]._data, ptr, size);
+				_channel[l]._size = size;
+			}
+			if (_channel[l]._channels == 2) {
+				_channel[l]._mixerSize *= 2;
+				_channel[l]._mixerFlags |= SoundMixer::FLAG_STEREO;
+			}
+			if (_channel[l]._freq == 11025) {
+				_channel[l]._mixerSize /= 2;
+			}
+			_channel[l]._toBeRemoved = false;
+			_channel[l]._used = true;
+			break;
+		}
+	}
 }
 
 void IMuseDigital::stopSound(int sound) {
 	debug(1, "IMuseDigital::stopSound(%d)", sound);
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
+		if ((_channel[l]._idSound == sound) && (_channel[l]._used == true)) {
+			_channel[l]._toBeRemoved = true;
+		}
+	}
 }
 
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
-	debug(1, "IMuseDigital::doCommand(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
+	debug(1, "stub IMuseDigital::doCommand(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
 						a >> 8, a & 0xFF, b, c, d, e, f, g, h);
-	return 0;
+	return 1;
 }
 
 int IMuseDigital::getSoundStatus(int sound) {
-	warning("IMuseDigital::getSoundStatus(%d) stub", sound);
+	debug(1, "IMuseDigital::getSoundStatus(%d)", sound);
+	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		if ((_channel[l]._idSound == sound) && (_channel[l]._used == true)) {
+			return 1;
+		}
+	}
+
 	return 0;
 }

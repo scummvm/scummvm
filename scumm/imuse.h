@@ -69,24 +69,29 @@ private:
 		int8 _volumeLeft;
 		int8 _volumeRight;
 		bool _isLoop;
-		uint32 _offsetEnd;
+		uint32 _offsetStop;
 		uint32 _offsetJump;
 		uint32 _offsetRegion;
 		uint32 _offset;
 		byte *_data;
 		uint32 _freq;
-		byte _channels;
-		bool _stereo;
-		byte _bits;
+		uint32 _channels;
+		uint32 _bits;
 		uint32 _size;
-		uint32 _idSound;
+		int32 _idSound;
+		uint32 _mixerSize;
+		uint8 _mixerFlags;
 		bool _used;
+		bool _toBeRemoved;
 		uint32 _mixerTrack;
 	} _channel[MAX_DIGITAL_CHANNELS];
 
+	Scumm * _scumm;
+
 public:
-	IMuseDigital(SoundMixer *mixer, Timer * timer);
+	IMuseDigital(Scumm *scumm);
 	~IMuseDigital();
+	void handler();
 	void startSound(int sound);
 	void stopSound(int sound);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);

@@ -135,7 +135,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	// Init iMuse
 	if (_gameId == GID_DIG) {
-		_imuseDigital = new IMuseDigital(_mixer, _timer);
+		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 	} else {
 		if (detector->_use_adlib) {
@@ -211,8 +211,6 @@ void Scumm::scummInit()
 	setShake(0);
 	setupCursor();
 	
-	_timer->init();
-
 	/* Allocate and initilise actors */
 	_actors = new Actor[MAX_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
