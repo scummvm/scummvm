@@ -563,7 +563,8 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].rot_angle = 0;
 	_spriteTable[spriteId].zoom = 0;
 
-	spriteInfoSet_addImageToList(spriteId, 1, &spriteId);
+	int tmp = 0;
+	spriteInfoSet_addImageToList(spriteId, 1, &tmp);
 
 	_spriteTable[spriteId].field_54 = 0;
 	_spriteTable[spriteId].tx = 0;
