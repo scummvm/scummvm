@@ -3,12 +3,10 @@
 CXX     := c++
 AR      := ar cru
 RANLIB  := ranlib
-RM      := rm -f
 MKDIR   := mkdir -p
 ECHO    := echo -n
 CAT     := cat
 RM      := rm -f
-# recursive version of RM
 RM_REC  := $(RM) -r
 ZIP     := zip -q
 CP      := cp
