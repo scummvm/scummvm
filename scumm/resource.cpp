@@ -31,7 +31,8 @@
 #include "gui/message.h"
 #include "dialogs.h"
 
-uint16 newTag2Old(uint32 oldTag);
+static uint16 newTag2Old(uint32 oldTag);
+static const char *resTypeFromId(int id);
 
 /* Open a room */
 void Scumm::openRoom(int room) {
@@ -1318,7 +1319,7 @@ byte *Scumm::createResource(int type, int idx, uint32 size) {
 	return ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
-bool Scumm::validateResource(const char *str, int type, int idx) {
+bool Scumm::validateResource(const char *str, int type, int idx) const {
 	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
 		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
@@ -1509,8 +1510,7 @@ void Scumm::unlock(int type, int i) {
 //  debug(1, "unlocking %d,%d", type, i);
 }
 
-bool Scumm::isResourceInUse(int type, int i)
-{
+bool Scumm::isResourceInUse(int type, int i) const {
 	if (!validateResource("isResourceInUse", type, i))
 		return false;
 	switch (type) {
@@ -1625,7 +1625,7 @@ void Scumm::loadPtrToResource(int type, int resindex, const byte *source) {
 	}
 }
 
-bool Scumm::isResourceLoaded(int type, int idx) {
+bool Scumm::isResourceLoaded(int type, int idx) const {
 	if (!validateResource("isLoaded", type, idx))
 		return false;
 	return res.address[type][idx] != NULL;
@@ -1781,7 +1781,7 @@ void Scumm::allocateArrays() {
 }
 
 
-bool Scumm::isGlobInMemory(int type, int idx) {
+bool Scumm::isGlobInMemory(int type, int idx) const{
 	if (!validateResource("isGlobInMemory", type, idx))
 		return false;
 
@@ -1792,99 +1792,71 @@ uint16 newTag2Old(uint32 oldTag) {
 	switch (oldTag) {
 	case (MKID('RMHD')):
 		return (0x4448);	// HD
-		break;
 	case (MKID('IM00')):
 		return (0x4D42);	// BM
-		break;
 	case (MKID('EXCD')):
 		return (0x5845);	// EX
-		break;
 	case (MKID('ENCD')):
 		return (0x4E45);	// EN
-		break;
 	case (MKID('SCAL')):
 		return (0x4153);	// SA
-		break;
 	case (MKID('LSCR')):
 		return (0x534C);	// LS
-		break;
 	case (MKID('OBCD')):
 		return (0x434F);	// OC
-		break;
 	case (MKID('OBIM')):
 		return (0x494F);	// OI
-		break;
 	case (MKID('SMAP')):
 		return (0x4D42);	// BM
-		break;
 	case (MKID('CLUT')):
 		return (0x4150);	// PA
-		break;
 	case (MKID('BOXD')):
 		return (0x5842);	// BX
-		break;
 	default:
 		return (0);
 	}
 }
 
-char *Scumm::resTypeFromId(int id) {
+const char *resTypeFromId(int id) {
 	static char buf[100];
 
 	switch (id) {
 	case rtRoom:
-		sprintf(buf, "Room");
-		break;
+		return "Room";
 	case rtScript:
-		sprintf(buf, "Script");
-		break;
+		return "Script";
 	case rtCostume:
-		sprintf(buf, "Costume");
-		break;
+		return "Costume";
 	case rtSound:
-		sprintf(buf, "Sound");
-		break;
+		return "Sound";
 	case rtInventory:
-		sprintf(buf, "Inventory");
-		break;
+		return "Inventory";
 	case rtCharset:
-		sprintf(buf, "Charset");
-		break;
+		return "Charset";
 	case rtString:
-		sprintf(buf, "String");
-		break;
+		return "String";
 	case rtVerb:
-		sprintf(buf, "Verb");
-		break;
+		return "Verb";
 	case rtActorName:
-		sprintf(buf, "ActorName");
-		break;
+		return "ActorName";
 	case rtBuffer:
-		sprintf(buf, "Buffer");
-		break;
+		return "Buffer";
 	case rtScaleTable:
-		sprintf(buf, "ScaleTable");
-		break;
+		return "ScaleTable";
 	case rtTemp:
-		sprintf(buf, "Temp");
-		break;
+		return "Temp";
 	case rtFlObject:
-		sprintf(buf, "FlObject");
-		break;
+		return "FlObject";
 	case rtMatrix:
-		sprintf(buf, "Matrix");
-		break;
+		return "Matrix";
 	case rtBox:
-		sprintf(buf, "Box");
-		break;
+		return "Box";
 	case rtLast:
-		sprintf(buf, "Last");
-		break;
+		return "Last";
 	case rtNumTypes:
-		sprintf(buf, "NumTypes");
-		break;
+		return "NumTypes";
 	default:
 		sprintf(buf, "%d", id);
+		return buf;
 	}
-	return buf;
 }

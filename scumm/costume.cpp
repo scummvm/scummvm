@@ -724,7 +724,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	} while (1);
 }
 
-bool Scumm::isCostumeInUse(int cost) {
+bool Scumm::isCostumeInUse(int cost) const {
 	int i;
 	Actor *a;
 

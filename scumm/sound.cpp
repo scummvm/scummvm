@@ -591,7 +591,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 }
 
 
-int Sound::isSoundRunning(int sound) {
+int Sound::isSoundRunning(int sound) const {
 	int i;
 
 	if (sound == _current_cd_sound)
@@ -603,7 +603,7 @@ int Sound::isSoundRunning(int sound) {
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
-			return _scumm->_imuse->getSoundStatus (sound);
+			return _scumm->_imuse->getSoundStatus(sound);
 		}
 	}
 	
@@ -626,7 +626,7 @@ int Sound::isSoundRunning(int sound) {
 		return _scumm->_imuse->getSoundStatus(sound);
 
 	if (_scumm->_playerV2)
-		return _scumm->_playerV2->getSoundStatus (sound);
+		return _scumm->_playerV2->getSoundStatus(sound);
 
 	return 0;
 }
@@ -635,7 +635,7 @@ int Sound::isSoundRunning(int sound) {
 // calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
 // This is necessary when determining what resources to
 // expire from memory.
-bool Sound::isSoundActive(int sound) {
+bool Sound::isSoundActive(int sound) const {
 	int i;
 
 	if (sound == _current_cd_sound)
@@ -662,7 +662,7 @@ bool Sound::isSoundActive(int sound) {
 	return _scumm->_imuse->get_sound_active(sound);
 }
 
-bool Sound::isSoundInQueue(int sound) {
+bool Sound::isSoundInQueue(int sound) const {
 	int i = 0, j, num;
 	int16 table[16];
 
@@ -961,7 +961,7 @@ void Sound::stopSfxSound() {
 	}
 }
 
-bool Sound::isSfxFinished() {
+bool Sound::isSfxFinished() const {
 	return !_scumm->_mixer->hasActiveSFXChannel();
 }
 
@@ -1454,7 +1454,7 @@ void Sound::stopCD() {
 		_scumm->_system->stop_cdrom();
 }
 
-int Sound::pollCD() {
+int Sound::pollCD() const {
 	if (pollMP3CD())
 		return 1;
 
@@ -1566,7 +1566,7 @@ int Sound::stopMP3CD() {
 	return -1;
 }
 
-int Sound::pollMP3CD() {
+int Sound::pollMP3CD() const{
 	if (_dig_cd_playing == true)
 		return 1;
 	return 0;

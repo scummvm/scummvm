@@ -319,7 +319,7 @@ void Scumm::verbMouseOver(int verb) {
 	}
 }
 
-int Scumm::checkMouseOver(int x, int y) {
+int Scumm::checkMouseOver(int x, int y) const {
 	VerbSlot *vs;
 	int i = _maxVerbs - 1;
 
@@ -505,7 +505,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	vs->alloctwobuffers = twobufs;
 }
 
-int Scumm::getVerbSlot(int id, int mode) {
+int Scumm::getVerbSlot(int id, int mode) const {
 	int i;
 	for (i = 1; i < _maxVerbs; i++) {
 		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {

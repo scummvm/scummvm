@@ -118,9 +118,9 @@ public:
 	int startTalkSound(uint32 offset, uint32 b, int mode);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
-	int isSoundRunning(int sound);
-	bool isSoundActive(int sound);
-	bool isSoundInQueue(int sound);
+	int isSoundRunning(int sound) const;
+	bool isSoundActive(int sound) const;
+	bool isSoundInQueue(int sound) const;
 	void stopSound(int a);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
@@ -141,7 +141,7 @@ public:
 
 	void playCDTrack(int track, int num_loops, int start, int delay);
 	void stopCD();
-	int pollCD();
+	int pollCD() const;
 	void updateCD();
 
 protected:
@@ -150,7 +150,7 @@ protected:
 	File *openSfxFile();
 	int startSfxSound(File *file, int file_size);
 	void stopSfxSound();
-	bool isSfxFinished();
+	bool isSfxFinished() const;
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
 	int playSfxSound_Vorbis(void *sound, uint32 size);
@@ -158,7 +158,7 @@ protected:
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);
 	int stopMP3CD();
-	int pollMP3CD();
+	int pollMP3CD() const;
 	int updateMP3CD();
 };
 

@@ -342,7 +342,6 @@ public:
 	// Startup functions
 	void main();
 	void parseCommandLine(int argc, char **argv);
-	void showHelpAndExit();
 	bool detectGame();
 	void launch();
 	void go();
@@ -619,15 +618,14 @@ protected:
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);
-	char *resTypeFromId(int id);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
 	void nukeResource(int type, int i);	
 
 public:
-	bool isGlobInMemory(int type, int index);
-	bool isResourceLoaded(int type, int index);
+	bool isGlobInMemory(int type, int index) const;
+	bool isResourceLoaded(int type, int index) const;
 	byte *getResourceAddress(int type, int i);
 	byte *getStringAddress(int i);
 	byte *getStringAddressVar(int i);
@@ -638,9 +636,9 @@ protected:
 	int readSoundResource(int type, int index);
 	int readSoundResourceSmallHeader(int type, int index);
 	void setResourceCounter(int type, int index, byte flag);
-	bool validateResource(const char *str, int type, int index);
+	bool validateResource(const char *str, int type, int index) const;
 	void increaseResourceCounter();
-	bool isResourceInUse(int type, int i);
+	bool isResourceInUse(int type, int i) const;
 	void initRoomSubBlocks();
 	void clearRoomObjects();
 	void loadRoomObjects();
@@ -738,12 +736,12 @@ protected:
 	void redrawVerbs();
 	void checkExecVerbs();
 	void verbMouseOver(int verb);
-	int checkMouseOver(int x, int y);
+	int checkMouseOver(int x, int y) const;
 	void drawVerb(int verb, int mode);
 	void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
-	int getVerbSlot(int id, int mode);
+	int getVerbSlot(int id, int mode) const;
 	void killVerb(int slot);
 	void setVerbObject(uint room, uint object, uint verb);
 
@@ -759,8 +757,8 @@ protected:
 
 public:
 	/* Should be in Actor class */
-	Actor *derefActor(int id, const char *errmsg = 0);
-	Actor *derefActorSafe(int id, const char *errmsg);
+	Actor *derefActor(int id, const char *errmsg = 0) const;
+	Actor *derefActorSafe(int id, const char *errmsg) const;
 
 	uint32 *_classData;
 
@@ -776,7 +774,7 @@ protected:
 	void processUpperActors();
 	int getActorFromPos(int x, int y);
 	
-	bool isCostumeInUse(int i);
+	bool isCostumeInUse(int i) const;
 
 public:
 	/* Actor talking stuff */
