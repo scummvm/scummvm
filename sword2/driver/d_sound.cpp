@@ -131,17 +131,21 @@ int32 Sound::_musicVolTable[17] = {
 };
 
 void MusicHandle::fadeDown(void) {
-	if (_fading < 0)
-		_fading = -_fading;
-	else if (_fading == 0)
-		_fading = FADE_SAMPLES;
+	if (_streaming) {
+		if (_fading < 0)
+			_fading = -_fading;
+		else if (_fading == 0)
+			_fading = FADE_SAMPLES;
+	}
 }
 
 void MusicHandle::fadeUp(void) {
-	if (_fading > 0)
-		_fading = -_fading;
-	else if (_fading == 0)
-		_fading = -1;
+	if (_streaming) {
+		if (_fading > 0)
+			_fading = -_fading;
+		else if (_fading == 0)
+			_fading = -1;
+	}
 }
 
 int32 MusicHandle::play(const char *filename, uint32 musicId, bool looping) {
@@ -223,7 +227,7 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 			} else if (_fading < 0) {
 				_fading--;
 				out = -(out * _fading) / FADE_SAMPLES;
-				if (_fading == -FADE_SAMPLES)
+				if (_fading <= -FADE_SAMPLES)
 					_fading = 0;
 			}
 		}
@@ -353,10 +357,8 @@ void Sound::restoreMusicState(void) {
 
 	// Fade out any music that happens to be playing
 
-	for (int i = 0; i < MAXMUS; i++) {
-		if (_music[i]._streaming)
-			_music[i].fadeDown();
-	}
+	for (int i = 0; i < MAXMUS; i++)
+		_music[i].fadeDown();
 
 	if (!_music[2]._streaming)
 		return;
