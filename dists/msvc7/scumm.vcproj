@@ -351,6 +351,9 @@
 			RelativePath="..\..\scumm\script_v8.cpp">
 		</File>
 		<File
+			RelativePath="..\..\scumm\scumm-md5.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\scumm.h">
 		</File>
 		<File
