@@ -178,7 +178,6 @@ void Sound::playSound(int soundID) {
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
-	  //hexdump(ptr, 0x400);
 		if (READ_UINT32(ptr) == MKID('iMUS')){
 			assert(_scumm->_imuseDigital);
 			_scumm->_imuseDigital->startSound(soundID);
