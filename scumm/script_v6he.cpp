@@ -665,6 +665,7 @@ void ScummEngine_v6he::o6_actorOps() {
 	case 218:		
 		{
 			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
+			// and in fbear at original save screen
 
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
@@ -876,32 +877,54 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-		switch (args[0]) {
-		case 1:
-			// Used to restore images when decorating cake in
-			// Fatty Bear's Birthday Surprise
-			warning("o6_kernelSetFunctions: stub1()");
-			break;
-		default:
-			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
-			break;
-		}
+	switch (args[0]) {
+	case 1:
+		// Used to restore images when decorating cake in
+		// Fatty Bear's Birthday Surprise
+		debug(0, "stub ScummEngine_v6he::o6_kernelSetFunctions(%d, %d, %d, %d, %d, %d)",
+			  args[0], args[1], args[2], args[3], args[4], args[5]);
+		//o6_kernelSetFunctions1(getResourceAddress(rtScreen, args[1]) + 6);
+		//if (args[5] >= args[3]) {
+		//}
+		break;
+	default:
+		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		break;
+	}
 }
+
+void ScummEngine_v6he::o6_kernelSetFunctions1(byte *addr) {
+	// TODO
+}
+
 
 void ScummEngine_v6he::o6_kernelGetFunctions() {
 	int args[29];
+	int retval;
+	byte *addr;
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 1:
 		// Used to store images when decorating cake in
 		// Fatty Bear's Birthday Surprise
-		warning("o6_kernelGetFunctions: stub1()");
-		push(0);
+		debug(0, "stub ScummEngine_v6he::o6_kernelGetFunctions(%d, %d, %d, %d, %d)",
+			  args[0], args[1], args[2], args[3], args[4]);
+		writeVar(0, 0);
+		defineArray(0, 3, 0, o6_kernelGetFunctions1(0, args[1], args[2], args[3], args[4]));
+		retval = readVar(0);
+		addr = getResourceAddress(rtString, retval);
+		o6_kernelGetFunctions1(addr + 6, args[1], args[2], args[3], args[4]);
+		push(retval);
 		break;
 	default:
 		error("o6_kernelGetFunctions: default case %d", args[0]);
 	}
+}
+
+int ScummEngine_v6he::o6_kernelGetFunctions1(byte *addr, int arg1, int arg2, int arg3, int agr4) {
+	// TODO
+	return 0;
 }
 
 void ScummEngine_v6he::o6_stampObject() {
@@ -1048,6 +1071,7 @@ void ScummEngine_v6he::o6_readFile() {
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
 	byte *ptr = getResourceAddress(rtString, resID);
 	// FIXME: hack for proper size: / 2 - 5
+	// does it really needed? Needs checking
 	int32 size = getResourceSize(rtString, resID) / 2 - 5;
 	_hFileTable[slot].write(ptr, size);
 }
@@ -1068,7 +1092,6 @@ void ScummEngine_v6he::o6_writeFile() {
 	} else {
 		writeFileFromArray(slot, resID);
 	}
-	debug(1, "o6_writeFile(%d, %d)", slot, resID);
 }
 
 void ScummEngine_v6he::o6_setVolume() {
