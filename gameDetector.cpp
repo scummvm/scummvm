@@ -355,7 +355,12 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	_midi_driver = MD_AUTO;
 
+#ifdef __DC__
+	extern int dc_setup(GameDetector &detector);
+	dc_setup(*this);
+#else
 	parseCommandLine(argc, argv);
+#endif
 
 	if (_exe_name == NULL) {
 		//launcherLoop();
@@ -392,6 +397,10 @@ OSystem *GameDetector::createSystem() {
 #endif
 	/* auto is to use SDL */
 	switch(_gfx_driver) {
+#ifdef __DC__
+	case GD_AUTO:
+		return OSystem_Dreamcast_create();
+#else
 	case GD_SDL:
 	case GD_AUTO:
 #if !defined(__MORPHOS__)
@@ -413,6 +422,7 @@ OSystem *GameDetector::createSystem() {
 
 	case GD_NULL:
 		return OSystem_NULL_create();
+#endif
 	}
 
 	error("Invalid graphics driver");
