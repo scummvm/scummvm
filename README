@@ -712,9 +712,9 @@ Credits:
 
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
-        Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codecs
-        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
+        Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
 	Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
+        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
         LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
