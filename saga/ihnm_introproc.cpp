@@ -259,7 +259,7 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_ADLIB : IHNM_TITLE_TIME_GM;
+		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
