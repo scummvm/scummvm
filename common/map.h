@@ -42,9 +42,11 @@ protected:
 
 	Map<Key, Value>(const Map<Key, Value> &map) {
 		error("No copy constructor!");
+		return 0;
 	}
 	Map<Key, Value> &operator =(const Map<Key, Value> &map) {
 		error("No copy operator!");
+		return 0;
 	}
 
 public:
