@@ -291,7 +291,7 @@ GameList findGame(FilesystemNode *dir) {
 			strcpy(detectName, v->filename);
 			strcpy(detectName2, v->filename);
 			strcat(detectName, ".000");
-			if (v->features & GF_AFTER_V7) {
+			if (v->version >= 7) {
 				strcat(detectName2, ".la0");
 			} else if (v->features & GF_HUMONGOUS)
 				strcat(detectName2, ".he0");
