@@ -1038,7 +1038,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		
 		if (music_type != 0x80) {
 			// It's an SFX; we don't know how to handle those yet
-			warning("Sound %d not played, format not yet supported", idx);
+			debug(4, "Sound %d not played, format not yet supported", idx);
 			nukeResource(type, idx);
 			res.roomoffs[type][idx] = 0xFFFFFFFF;
 			return 0;
