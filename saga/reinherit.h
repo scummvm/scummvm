@@ -103,19 +103,6 @@ struct R_SURFACE {
 	void *impl_src;
 };
 
-struct R_SOUNDBUFFER {
-	const uchar *res_data;
-	size_t res_len;
-
-	long s_freq;
-	int s_samplebits;
-	int s_stereo;
-	int s_signed;
-
-	const uchar *s_buf;
-	size_t s_buf_len;
-};
-
 #define R_RGB_RED   0x00FF0000UL
 #define R_RGB_GREEN 0x0000FF00UL
 #define R_RGB_BLUE  0x000000FFUL

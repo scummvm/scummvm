@@ -31,13 +31,16 @@
 #include "sound.h"
 #include "game_mod.h"
 
+#include "sound/mixer.h"
+
 namespace Saga {
 
 /*
  * Begin module component
 \*--------------------------------------------------------------------------*/
 
-Sound::Sound(int enabled) {
+Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) : 
+		_vm(vm), _mixer(mixer) {
 	int result;
 
 	/* Load sound module resource file contexts */
@@ -52,7 +55,7 @@ Sound::Sound(int enabled) {
 	}
 
     /* Grab sound resource information for the current game */
-    //GAME_GetSoundInfo(&SoundModule.snd_info);
+    GAME_GetSoundInfo(&_snd_info);
 
 	_soundInitialized = 1;
 	return;
@@ -112,11 +115,20 @@ int Sound::stop(int channel) {
 }
 
 int Sound::playVoice(R_SOUNDBUFFER *buf) {
-	(void)buf;
+	byte flags;
+	int game_id = GAME_GetGame();
 
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
+
+	if((game_id == R_GAME_ITE_DISK) || (game_id == R_GAME_ITE_DEMO)) {
+		flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+	} else {
+		flags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS |
+			SoundMixer::FLAG_LITTLE_ENDIAN;
+	}
+	_mixer->playRaw(&_voiceHandle, buf->res_data, buf->res_len, buf->s_freq, flags);
 
 	return R_SUCCESS;
 }
@@ -126,6 +138,8 @@ int Sound::pauseVoice(void) {
 		return R_FAILURE;
 	}
 
+	_mixer->pauseHandle(_voiceHandle, true);
+
 	return R_SUCCESS;
 }
 
@@ -134,6 +148,8 @@ int Sound::resumeVoice(void) {
 		return R_FAILURE;
 	}
 
+	_mixer->pauseHandle(_voiceHandle, false);
+
 	return R_SUCCESS;
 }
 
@@ -141,6 +157,8 @@ int Sound::stopVoice(void) {
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
+
+	_mixer->stopHandle(_voiceHandle);
 
 	return R_SUCCESS;
 }

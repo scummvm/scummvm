@@ -75,6 +75,8 @@ int SndRes::playVoice(ulong voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;
 
+	debug(0, "SndRes::playVoice(%ld)", voice_rn);
+
 	result = load(_voice_ctxt, voice_rn, &snd_buffer);
 	if (result != R_SUCCESS) {
 		return R_FAILURE;
@@ -135,7 +137,7 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_b
 	return R_SUCCESS;
 }
 
-int SndRes::loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
+int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
 	R_VOC_HEADER_BLOCK voc_hb;
 	R_VOC_GENBLOCK voc_gb;
 	R_VOC_BLOCK1 voc_b1;

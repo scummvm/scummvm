@@ -33,6 +33,7 @@
 
 #include "rscfile_mod.h"
 #include "game_mod.h"
+#include "sound.h"
 
 namespace Saga {
 
@@ -78,7 +79,7 @@ class SndRes {
 
  private:
 	int load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i);
-	int loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
+	int loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
 
 	int _init;
 

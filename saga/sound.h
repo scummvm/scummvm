@@ -32,13 +32,29 @@
 #define SAGA_SOUND_H_
 
 #include "rscfile_mod.h"
+#include "game_mod.h"
+#include "sound/mixer.h"
 
 namespace Saga {
+
+struct R_SOUNDBUFFER {
+	byte *res_data;
+	uint32 res_len;
+
+	uint s_freq;
+	int s_samplebits;
+	int s_stereo;
+	int s_signed;
+
+	const uchar *s_buf;
+	size_t s_buf_len;
+};
+
 
 class Sound {
  public:
 
-	Sound(int enabled);
+	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
 	~Sound(void);
 
 	int play(int sound_rn, int channel);
@@ -55,8 +71,17 @@ class Sound {
 
 	int _soundInitialized;
 
+    R_GAME_SOUNDINFO _snd_info;
+
 	R_RSCFILE_CONTEXT *_soundContext;
 	R_RSCFILE_CONTEXT *_voiceContext;
+
+	SagaEngine *_vm;
+	SoundMixer *_mixer;
+
+	PlayingSoundHandle _effectHandle;
+	PlayingSoundHandle _voiceHandle;
+	PlayingSoundHandle _musictHandle;
 
  };
 

@@ -253,7 +253,7 @@ void SagaEngine::go() {
 	}
 
 	/* Initialize system specific sound */
-	_sound = new Sound(MainData.sound_enabled);
+	_sound = new Sound(this, _mixer, MainData.sound_enabled);
 	if (!MainData.sound_enabled) {
 		R_printf(R_STDOUT, "Sound disabled.\n");
 	}
