@@ -842,17 +842,63 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 			}
 			break;
 
-		case KeyPress:
-			switch (event.xkey.keycode) {
-			case 132:
-				report_presses = 0;
-				break;
+		case KeyPress:{
+				/* I am using keycodes here and NOT keysyms to be sure that even if the user
+				   remaps his iPAQ's keyboard, it will still work.
+				 */
+				int keycode = -1;
+				int ascii = -1;
+				byte mode = 0;
 
-			case 133:
-				fake_right_mouse = 1;
-				break;
-			}
-			break;
+				if (event.xkey.state & 0x01)
+					mode |= KBD_SHIFT;
+				if (event.xkey.state & 0x04)
+					mode |= KBD_CTRL;
+				if (event.xkey.state & 0x08)
+					mode |= KBD_ALT;
+				switch (event.xkey.keycode) {
+
+				case 9:								/* Escape on my PC */
+				case 130:							/* Calendar on the iPAQ */
+					keycode = 27;
+					break;
+
+				case 71:								/* F5 on my PC */
+				case 128:							/* Record on the iPAQ */
+					keycode = 319;
+					break;
+
+				case 65:								/* Space on my PC */
+				case 131:							/* Schedule on the iPAQ */
+					keycode = 32;
+					break;
+
+				case 132:
+					report_presses = 0;
+					break;
+	
+				case 133:
+					fake_right_mouse = 1;
+					break;
+
+				default:{
+						KeySym xsym;
+						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+						keycode = xsym;
+						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
+							xsym &= ~0x20;		/* Handle shifted keys */
+						ascii = xsym;
+					}
+				}
+				if (keycode != -1) {
+					scumm_event->event_code = EVENT_KEYDOWN;
+					scumm_event->kbd.keycode = keycode;
+					scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
+					scumm_event->kbd.flags = mode;
+					return true;
+				}
+		}
+		break;
 
 		case KeyRelease:{
 				/* I am using keycodes here and NOT keysyms to be sure that even if the user
@@ -869,21 +915,6 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 				if (event.xkey.state & 0x08)
 					mode |= KBD_ALT;
 				switch (event.xkey.keycode) {
-				case 9:								/* Escape on my PC */
-				case 130:							/* Calendar on the iPAQ */
-					keycode = 27;
-					break;
-
-				case 71:								/* F5 on my PC */
-				case 128:							/* Record on the iPAQ */
-					keycode = 319;
-					break;
-
-				case 65:								/* Space on my PC */
-				case 131:							/* Schedule on the iPAQ */
-					keycode = 32;
-					break;
-
 				case 132:							/* 'Q' on the iPAQ */
 					report_presses = 1;
 					break;
@@ -902,7 +933,7 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 					}
 				}
 				if (keycode != -1) {
-					scumm_event->event_code = EVENT_KEYDOWN;
+					scumm_event->event_code = EVENT_KEYUP;
 					scumm_event->kbd.keycode = keycode;
 					scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
 					scumm_event->kbd.flags = mode;
