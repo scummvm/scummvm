@@ -1428,6 +1428,8 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
 	if ((_gameId == GID_LOOM) && VAR(VAR_SOUNDCARD) == 4) {
+		// Roland resources in Loom are tagless
+		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;
 		ro_offs = _fileHandle.pos();
 		ro_size = _fileHandle.readUint16LE();
