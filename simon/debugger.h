@@ -40,8 +40,12 @@ protected:
 
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
-	bool Cmd_PlayVoice(int argc, const char **argv);
 	bool Cmd_PlayMusic(int argc, const char **argv);
+	bool Cmd_PlaySound(int argc, const char **argv);
+	bool Cmd_PlayVoice(int argc, const char **argv);
+	bool Cmd_SetBit(int argc, const char **argv);
+	bool Cmd_SetVar(int argc, const char **argv);
+	bool Cmd_StartSubroutine(int argc, const char **argv);
 };
 
 } // End of namespace Simon

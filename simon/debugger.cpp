@@ -33,8 +33,13 @@ Debugger::Debugger(SimonEngine *vm)
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("quit", &Debugger::Cmd_Exit);
-	DCmd_Register("voice", &Debugger::Cmd_PlayVoice);
 	DCmd_Register("music", &Debugger::Cmd_PlayMusic);
+	DCmd_Register("sound", &Debugger::Cmd_PlaySound);
+	DCmd_Register("voice", &Debugger::Cmd_PlayVoice);
+	DCmd_Register("bit", &Debugger::Cmd_SetBit);
+	DCmd_Register("var", &Debugger::Cmd_SetVar);
+	DCmd_Register("sub", &Debugger::Cmd_StartSubroutine);
+
 }
 
 
@@ -79,7 +84,7 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 		uint music = atoi(argv[1]);
 		if (_vm->_game & GF_SIMON2)
 			DebugPrintf("No support for Simon the Sorcerer 2\n");
-		else if (music < 35)
+		else if (music <= 34)
 			_vm->loadMusic(music);
 		else
 			DebugPrintf("Music out of range (0 - 34)\n");
@@ -89,16 +94,83 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
+	if (argc > 1) {
+		uint sound = atoi(argv[1]);
+		uint range = (_vm->_game & GF_SIMON2) ? 222 : 127;
+		if (sound <= range)
+			_vm->_sound->playEffects(sound);
+		else
+			DebugPrintf("Voice out of range (0 - %d)\n", range);
+	} else
+		DebugPrintf("Syntax: voice <voicenum>\n");
+
+	return true;
+}
+
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
-		uint range = (_vm->_game & GF_SIMON2) ? 3633 : 1997;
-		if (voice < range)
+		uint range = (_vm->_game & GF_SIMON2) ? 3632 : 1996;
+		if (voice <= range)
 			_vm->_sound->playVoice(voice);
 		else
 			DebugPrintf("Voice out of range (0 - %d)\n", range);
 	} else
-		DebugPrintf("Syntax: voice <soundnum>\n");
+		DebugPrintf("Syntax: voice <voicenum>\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_SetBit(int argc, const char **argv) {
+	uint bit, value;
+	if (argc > 2) {
+		bit = atoi(argv[1]);
+		value = atoi(argv[2]);
+		if (value <= 1) {
+			_vm->vc_set_bit_to(bit, value);
+			DebugPrintf("Set bit %d to %d\n", bit, value);
+		} else
+			DebugPrintf("Bit value out of range (0 - 1)\n");
+	} else if (argc > 1) {
+		bit = atoi(argv[1]);
+		value = _vm->vc_get_bit(bit);
+		DebugPrintf("Bit %d is %d\n", bit, value);
+	} else
+		DebugPrintf("Syntax: bit <bitnum> <value>\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_SetVar(int argc, const char **argv) {
+	uint var, value;
+	if (argc > 1) {
+		var = atoi(argv[1]);
+		if (var <= 254) {
+			if (argc > 2) {
+				value = atoi(argv[2]);
+				_vm->writeVariable(var, value);
+				DebugPrintf("Set var %d to %d\n", var, value);
+			} else {
+				value = _vm->readVariable(var);
+				DebugPrintf("Var %d is %d\n", var, value);
+			}
+		} else
+			DebugPrintf("Var out of range (0 - 254)\n");
+	} else
+		DebugPrintf("Syntax: var <varnum> <value>\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
+	if (argc > 1) {
+		uint subroutine = atoi(argv[1]);
+		Subroutine *sub;
+		sub = _vm->getSubroutineByID(subroutine);
+		_vm->startSubroutine(sub);
+	} else
+		DebugPrintf("Syntax: sub <subroutinenum>\n");
 
 	return true;
 }
