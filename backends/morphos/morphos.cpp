@@ -1543,7 +1543,7 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 				int16 col;
 
 				col = *ovl++;
-				colorToRBG(col, r, g, b);
+				colorToRGB(col, r, g, b);
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;

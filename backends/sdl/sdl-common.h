@@ -117,9 +117,9 @@ public:
 	virtual int16 get_height();
 	virtual int16 get_width();
 
-	// Methods that convert RBG to/from colors suitable for the overlay.
-	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b);
+	// Methods that convert RGB to/from colors suitable for the overlay.
+	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b);
+	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 

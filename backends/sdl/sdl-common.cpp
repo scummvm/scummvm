@@ -925,7 +925,7 @@ void OSystem_SDL_Common::draw_mouse() {
 				*bak++ = *dst;
 				color = *src++;
 				if (color != 0xFF)	// 0xFF = transparent, don't draw
-					*dst = RBGToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+					*dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 				dst++;
 				width--;
 			}
@@ -1230,10 +1230,10 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-int16 OSystem_SDL_Common::RBGToColor(uint8 r, uint8 g, uint8 b) {
+int16 OSystem_SDL_Common::RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return SDL_MapRGB(_tmpscreen->format, r, g, b);
 }
 
-void OSystem_SDL_Common::colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b) {
+void OSystem_SDL_Common::colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b) {
 	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
 }

@@ -102,11 +102,11 @@ void NewGui::runLoop() {
 	// different color modes (555 vs 565) might be used depending on the resolution
 	// (e.g. that's the case on my system), so we still end up with wrong colors in those
 	// sitauations. At least now the user can fix it by closing and reopening the GUI.
-	_bgcolor = _system->RBGToColor(0, 0, 0);
-	_color = _system->RBGToColor(96, 96, 96);
-	_shadowcolor = _system->RBGToColor(64, 64, 64);
-	_textcolor = _system->RBGToColor(32, 160, 32);
-	_textcolorhi = _system->RBGToColor(0, 255, 0);
+	_bgcolor = _system->RGBToColor(0, 0, 0);
+	_color = _system->RGBToColor(96, 96, 96);
+	_shadowcolor = _system->RGBToColor(64, 64, 64);
+	_textcolor = _system->RGBToColor(32, 160, 32);
+	_textcolorhi = _system->RGBToColor(0, 255, 0);
 
 	if (!_stateIsSaved) {
 		saveState();
@@ -305,7 +305,7 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color) {
 void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
 	int r, g, b;
 	uint8 ar, ag, ab;
-	_system->colorToRBG(color, ar, ag, ab);
+	_system->colorToRGB(color, ar, ag, ab);
 	r = ar * level;
 	g = ag * level;
 	b = ab * level;
@@ -314,8 +314,8 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
-			_system->colorToRBG(ptr[i], ar, ag, ab);
-			ptr[i] = _system->RBGToColor((ar+r)/(level+1),
+			_system->colorToRGB(ptr[i], ar, ag, ab);
+			ptr[i] = _system->RGBToColor((ar+r)/(level+1),
 										 (ag+g)/(level+1),
 										 (ab+b)/(level+1));
 		}
