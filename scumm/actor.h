@@ -108,6 +108,7 @@ public:
 	uint16 talkScript, walkScript;
 	bool ignoreTurns;
 	bool skipLimb;
+	bool actor_draw_to_bg;
 	int8 layer;
 	uint16 sound[8];
 	CostumeData cost;

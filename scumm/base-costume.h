@@ -62,6 +62,7 @@ public:
 
 	int _draw_top, _draw_bottom;
 	bool _skipLimb;
+	bool _actor_draw_to_bg;
 
 
 protected:
@@ -116,6 +117,7 @@ public:
 		_mirror = false;
 		_width = _height = 0;
 		_skipLimb = 0;
+		_actor_draw_to_bg = 0;
 
 		
 		_outptr = 0;

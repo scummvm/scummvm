@@ -29,7 +29,11 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &c
 	int i;
 	byte result = 0;
 
-	_outptr = vs.screenPtr + vs.xstart;
+	if (_actor_draw_to_bg)
+		_outptr = _vm->getResourceAddress(rtBuffer, 5) + vs.xstart;
+	else
+		_outptr = vs.screenPtr + vs.xstart;
+
 	_outwidth = vs.width;
 	_outheight = vs.height;
 	_numStrips = vs.width / 8;
