@@ -202,6 +202,10 @@ int32 Logic::executeOpcode(int i, int32 *params) {
 // and back again with no ill effects. As far as I know, there is absolutely
 // no guarantee that this will work.
 //
+// Maybe we can represent them as offsets into the memory manager's memory?
+// Assuming, of course, that all the pointers we try to pass around this way
+// point to somewhere in that block.
+//
 // I also have a feeling the handling of a script's local variables may be
 // alignment-unsafe.
 
@@ -313,7 +317,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Pop a value into a local word variable
 			Read16ip(parameter);
 			POPOFFSTACK(value);
-			debug(5, "Pop %d into var %d", value, parameter);
+			debug(5, "Pop %d into local var %d", value, parameter);
 			*((int32 *) (variables + parameter)) = value;
 			break;
 		case CP_CALL_MCODE:
@@ -444,18 +448,16 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_ADDNPOP_GLOBAL_VAR32:
 			// Add and pop a global variable
 			Read16ip(parameter);
-			// parameter = *((int16_TYPE *) (code + ip));
-			// ip += 2;
 			POPOFFSTACK(value);
 			_globals[parameter] += value;
-			debug(5, "+= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			debug(5, "+= %d into global var %d->%d", value, parameter, _globals[parameter]);
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
 			POPOFFSTACK(value);
 			_globals[parameter] -= value;
-			debug(5, "-= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			debug(5, "-= %d into global var %d->%d", value, parameter, _globals[parameter]);
 			break;
 		case CP_DEBUGON:
 			// Turn debugging on
@@ -482,7 +484,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 				stack2[stackPointer2 - 2],
 				stack2[stackPointer2 - 1],
 				stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
-			DOOPERATION (stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
+			DOOPERATION(stack2[stackPointer2 - 2] == stack2[stackPointer2 - 1]);
 			break;
 		case OP_PLUS:
 			// '+'
@@ -602,7 +604,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			debug(5, "Push address of far variable (%x)", (int32) (variables + parameter));
+			debug(5, "Push address of far variable (%x)", (int32) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
 			PUSHONSTACK((int32) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
 			break;
 		case OP_GTTHANE:
