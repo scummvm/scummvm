@@ -5045,13 +5045,11 @@ void SimonState::playMusic(uint music_unk, uint music) {
 		return;
 
 	if (_game & GF_SIMON2) {        // Simon 2 music
+		midi.stop();
+		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 		if (_game & GF_WIN) {	
-			midi.stop();
-			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.playMultipleSMF (_game_file);
 		} else {
-			midi.stop();
-			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.playXMIDI (_game_file);
 		}
 		_midi_unk1 = music;
