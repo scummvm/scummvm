@@ -780,6 +780,10 @@ public:
 	void playVoice(uint voice);
 	void playSound(uint sound);
 
+	void playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle);
+	void playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle);
+	void playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle);
+
 	void playMusic(uint music);
 	void checkTimerCallback();
 	void delay(uint delay);
