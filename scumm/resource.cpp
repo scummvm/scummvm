@@ -2131,7 +2131,7 @@ void Scumm::allocateArrays() {
 								_numCostumes, "costume", 1);
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
 	allocResTypeData(rtRoomScripts, MKID('RMSC'), _numRooms, "room script", 1);
-	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 1);
+	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 2);
 	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
 	allocResTypeData(rtCharset, MKID('CHAR'), _numCharsets, "charset", 1);
 	allocResTypeData(rtObjectName, MKID('NONE'), _numNewNames, "new name", 0);

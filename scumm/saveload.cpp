@@ -600,7 +600,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	// We should at least store for each save resource it's type and ID. Then at least
 	// we can perform some integrety checks when loading.
 	for (i = rtFirst; i <= rtLast; i++)
-		if (res.mode[i] == 0)
+		if (res.mode[i] != 1)
 			for (j = 1; j < res.num[i]; j++)
 				saveLoadResource(s, i, j);
 
@@ -684,32 +684,42 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
 	uint32 size;
 
 	/* don't save/load these resource types */
-	if (type == rtTemp || type == rtBuffer || res.mode[type])
+	if (type == rtTemp || type == rtBuffer)
 		return;
 
-	if (ser->isSaving()) {
-		ptr = res.address[type][idx];
-		if (ptr == NULL) {
-			ser->saveUint32(0);
-			return;
-		}
-
-		size = ((MemBlkHeader *)ptr)->size;
-
-		ser->saveUint32(size);
-		ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
-
-		if (type == rtInventory) {
-			ser->saveWord(_inventory[idx]);
-		}
-	} else {
-		size = ser->loadUint32();
-		if (size) {
-			createResource(type, idx, size);
-			ser->loadBytes(getResourceAddress(type, idx), size);
-			if (type == rtInventory) {
-				_inventory[idx] = ser->loadWord();
+	if (!res.mode[type]) {
+		if (ser->isSaving()) {
+			ptr = res.address[type][idx];
+			if (ptr == NULL) {
+				ser->saveUint32(0);
+				return;
 			}
+
+			size = ((MemBlkHeader *)ptr)->size;
+
+			ser->saveUint32(size);
+			ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
+
+			if (type == rtInventory) {
+				ser->saveWord(_inventory[idx]);
+			}
+		} else {
+			size = ser->loadUint32();
+			if (size) {
+				createResource(type, idx, size);
+				ser->loadBytes(getResourceAddress(type, idx), size);
+				if (type == rtInventory) {
+					_inventory[idx] = ser->loadWord();
+				}
+			}
+		}
+	} else if (res.mode[type] == 2 && ser->getVersion() >= VER(23)) {
+		// Save/load only a list of resource numbers that need reloaded.
+		if (ser->isSaving()) {
+			ser->saveWord (res.address[type][idx] ? 1 : 0);
+		} else {
+			if (ser->loadWord())
+				ensureResourceLoaded (type, idx);
 		}
 	}
 }

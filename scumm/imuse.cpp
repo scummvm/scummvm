@@ -1287,7 +1287,11 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
 		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
 		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
-		// TODO: Add _cmd_queue in here
+		MKEND()
+	};
+
+	const SaveLoadEntry cmdQueueEntries[] = {
+		MKARRAY(CommandQueue, array[0], sleUint16, 8, VER(23)),
 		MKEND()
 	};
 
@@ -1335,6 +1339,9 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 	ser->_load_ref = loadReference;
 
 	ser->saveLoadEntries(this, mainEntries);
+	ser->saveLoadArrayOf (_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
+
+	// The players
 	for (i = 0; i < ARRAYSIZE(_players); ++i)
 		_players[i].save_or_load(ser);
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
