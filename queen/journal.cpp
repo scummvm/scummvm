@@ -216,6 +216,7 @@ void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
 void Journal::exitYesNoMode() {
 	_mode = M_NORMAL;
 	if (_prevZoneNum == ZN_MAKE_ENTRY) {
+		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		_edit.enable = false;
 	}
 	redraw();
@@ -298,6 +299,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			break;
 		case ZN_MAKE_ENTRY:
 			if (_edit.text[0]) {
+				_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 				_vm->saveGameState(currentSlot, _edit.text);
 				_quit = true;
 			} else {
@@ -497,6 +499,7 @@ void Journal::hideInformationBox() {
 
 
 void Journal::initEditBuffer(const char *desc) {
+	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	_edit.enable = true;
 	_edit.posCursor = _vm->display()->textWidth(desc);
 	_edit.textCharsCount = strlen(desc);
