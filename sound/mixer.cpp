@@ -335,6 +335,7 @@ static int16 *(*mixer_helper_table[16])(int16 *data, uint *len_ptr, byte **s_ptr
 void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
+	byte *end;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -362,15 +363,17 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 				
 		s = s_org;
 		fp_pos = 0;
+		end = s_org + num;
 	} else {
 		s = (byte*)_ptr + _pos;
 		fp_pos = _fp_pos;
+		end = (byte *) _ptr + _realsize;
 	}
 
 	const uint32 fp_speed = _fp_speed;
 	const int16 *vol_tab = _mixer->_volume_table;
 
-	mixer_helper_table[_flags & 0x07](data, &len, &s, &fp_pos, fp_speed, vol_tab, (byte *) _ptr + _realsize);
+	mixer_helper_table[_flags & 0x07](data, &len, &s, &fp_pos, fp_speed, vol_tab, end);
 
 	_pos = s - (byte*) _ptr;
 	_fp_pos = fp_pos;
