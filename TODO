@@ -122,6 +122,9 @@ General
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
 * Fix the Map<> template, make it more robust; maybe use a red-black tree?
+* Instead of the above, consider switching everything over to the STL.
+  Maybe a little bit more overhead, but we get instant access to a full-featured
+  and well-tested code base, with everything we need.
 * Make some generic "EventLoop" API/class which all backends and the GUI
   use. Initially this would just call the backend poll_event() etc. methods.
   But eventually the EventLoop object(s) could be made by the backend.
