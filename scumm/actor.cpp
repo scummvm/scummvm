@@ -1012,7 +1012,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
 	bcr->_actorY = _pos.y + _offsY - _elevation;
 
-	if (_vm->_version <= 2) {
+	if ((_vm->_version <= 2) && !(_vm->_features & GF_NES)) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
 		// V2 games. However, it is not quite clear to me why. And to fully
 		// match the original, it seems we have to offset by 2 strips if the
