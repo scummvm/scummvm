@@ -26,16 +26,25 @@ class MidiStreamer;
 
 #include "mididrv.h"
 
-class MidiStreamer : public MidiDriver {
+struct MidiEvent {
+	uint32 delta;
+	uint32 event;
+};
+
+class MidiStreamer {
 public:
-	/* called whenever the midi driver is in streaming mode,
-	 * and more midi commands need to be generated
-	 * return 0 to tell the mididriver that the end of stream was reached
-	 */
+	// Called whenever more MIDI commands need to be generated.
+	// Return 0 to tell MidiStreamer that end of stream was reached.
 	typedef int StreamCallback (void *param, MidiEvent * ev, int num);
 
-private:
+	// Special events that can be inserted in a MidiEvent.
+	// event = (ME_xxx<<24) | <24-bit data associated with event>
+	enum {
+		ME_NONE = 0,
+		ME_TEMPO = 1,
+	};
 
+private:
 	MidiDriver *_target;
 	StreamCallback *_stream_proc;
 	void *_stream_param;
@@ -55,23 +64,14 @@ private:
 	void on_timer();
 
 public:
-
 	MidiStreamer (MidiDriver *target);
 
 	int open();
 	void close();
 	void send(uint32 b) { if (_isOpen) _target->send (b); }
 	uint32 property(int prop, uint32 param);
-	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
-
 	void pause(bool p) { _paused = p; }
 	void set_stream_callback(void *param, StreamCallback *sc);
-
-	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
-	uint32 getBaseTempo (void) { return _target->getBaseTempo(); }
-
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
 };
 
 #endif

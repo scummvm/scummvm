@@ -27,22 +27,10 @@
 
 class MidiChannel;
 
-struct MidiEvent {
-	uint32 delta;
-	uint32 event;
-};
-
 // Abstract MIDI Driver Class
 class MidiDriver {
 
 public:
-	// Special events that can be inserted in a MidiEvent.
-	// event = (ME_xxx<<24) | <24-bit data associated with event>
-	enum {
-		ME_NONE = 0,
-		ME_TEMPO = 1,
-	};
-
 	// Error codes returned by open.
 	// Can be converted to a string with getErrorName()
 	enum {

@@ -274,7 +274,7 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 //	_midi_var8 = (_currentSong->ppqn * 60000) / tempo;
 
 	me->delta = b;
-	me->event = (MidiDriver::ME_TEMPO << 24) | tempo;
+	me->event = (MidiStreamer::ME_TEMPO << 24) | tempo;
 
 	return true;
 }

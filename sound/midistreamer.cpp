@@ -86,7 +86,7 @@ int MidiStreamer::open()
 		close();
 
 	int res = _target->open();
-	if (res && res != MERR_ALREADY_OPEN)
+	if (res && res != MidiDriver::MERR_ALREADY_OPEN)
 		return res;
 
 	_event_index = _event_count = _delay = 0;
@@ -121,7 +121,7 @@ uint32 MidiStreamer::property (int prop, uint32 param)
 	switch (prop) {
 
 	// 16-bit time division according to standard midi specification
-	case PROP_TIMEDIV:
+	case MidiDriver::PROP_TIMEDIV:
 		_ticks_per_beat = (uint16)param;
 		return 1;
 	}
