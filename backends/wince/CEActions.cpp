@@ -61,7 +61,7 @@ CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
 	_hide_toolbar_needed(false) 
 {
 	int i;
-	bool is_simon = (strcmp(detector._targetName.c_str(), "simon") == 0);
+	bool is_simon = (strncmp(detector._targetName.c_str(), "simon", 5) == 0);
 	bool is_sword1 = (detector._targetName == "sword1");
 	bool is_sword2 = (strcmp(detector._targetName.c_str(), "sword2") == 0);
 	bool is_queen = (detector._targetName == "queen");
