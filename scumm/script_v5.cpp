@@ -1452,19 +1452,13 @@ void Scumm_v5::o5_loadRoom() {
 	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 
-	// FIXME: Incredibly nasty evil hack to fix bug #770699 (During meeting
-	// with Guru, script 42 changes between room 0 and room 19 to create
-	// 'some time later' effects. On switching back to room 19, the camera
-	// reverts to 0,0 - Added for 0.5.0, should be fixed properly
-	if (_gameId == GID_ZAK && (vm.slot[_currentScript].number == 42) && (room == 19))
-		setCameraAt(480, 0);
-
 	_fullRedraw = 1;
 }
 
 void Scumm_v5::o5_loadRoomWithEgo() {
 	Actor *a;
 	int obj, room, x, y;
+	int x2, y2, dir, oldDir;
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
@@ -1472,6 +1466,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	a = derefActor(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
 	a->putActor(0, 0, room);
+	oldDir = a->getFacing();
 	_egoPositioned = false;
 
 	x = (int16)fetchScriptWord();
@@ -1480,6 +1475,18 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->room, a, obj);
 	VAR(VAR_WALKTO_OBJ) = 0;
+
+	if (_version <= 3) {
+		// FIXME: Maybe this should also cover V4 games. See also startScene().
+		// More investigation (ASM) needed.
+		if (!_egoPositioned) {
+			getObjectXYPos(obj, x2, y2, dir);
+			a->putActor(x2, y2, _currentRoom);
+			if (a->getFacing() == oldDir)
+				a->setDirection(dir);	// TODO: Original seems to "flip" dir here, need to investigate?
+		}
+		a->moving = 0;
+	}
 
 	// FIXME: Can this be removed?
 	camera._cur.x = a->x;

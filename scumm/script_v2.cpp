@@ -1272,7 +1272,7 @@ void Scumm_v2::o2_lights() {
 
 void Scumm_v2::o2_loadRoomWithEgo() {
 	Actor *a;
-	int obj, room, x, y;
+	int obj, room, x, y, x2, y2, dir;
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
@@ -1286,6 +1286,10 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	y = (int8)fetchScriptByte() * 2;
 
 	startScene(a->room, a, obj);
+
+	getObjectXYPos(obj, x2, y2, dir);
+	a->putActor(x2, y2, _currentRoom);
+	a->setDirection(dir);	// TODO: Original seems to "flip" dir here, need to investigate?
 
 	camera._dest.x = camera._cur.x = a->x;
 	setCameraAt(a->x, a->y);
