@@ -103,4 +103,4 @@ scummvm-static: $(OBJS)
 		-framework OpenGL -framework AGL -framework QuickTime \
 		-framework AudioUnit -framework AudioToolbox
 
-.PHONY: deb bundle
+.PHONY: deb bundle test
