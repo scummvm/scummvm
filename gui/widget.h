@@ -142,9 +142,9 @@ public:
 	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align);
 	void setValue(int value);
 	void setLabel(const String &label)	{ _label = label; }
-	const String &getLabel() const			{ return _label; }
-	void setAlign(int align)						{ _align = align; }
-	int getAlign() const								{ return _align; }
+	const String &getLabel() const		{ return _label; }
+	void setAlign(int align)			{ _align = align; }
+	int getAlign() const				{ return _align; }
 
 protected:
 	void drawWidget(bool hilite);
@@ -159,8 +159,8 @@ protected:
 public:
 	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
-	void setCmd(uint32 cmd)					{ _cmd = cmd; }
-	uint32 getCmd() const					{ return _cmd; }
+	void setCmd(uint32 cmd)				{ _cmd = cmd; }
+	uint32 getCmd() const				{ return _cmd; }
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
