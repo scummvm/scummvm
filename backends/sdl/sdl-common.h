@@ -133,9 +133,9 @@ protected:
 	};
 
 	int SCREEN_WIDTH, SCREEN_HEIGHT, CKSUM_NUM;
-	SDL_Rect *dirty_rect_list;
+	SDL_Rect _dirty_rect_list[100];
 	int num_dirty_rects;
-	uint32 *dirty_checksums;
+	uint32 *_dirty_checksums;
 
 	int scaling;
 
@@ -165,7 +165,8 @@ protected:
 
 	uint _palette_changed_first, _palette_changed_last;
 
-	OSystem_SDL_Common() : _current_shake_pos(0), _new_shake_pos(0) {}
+	OSystem_SDL_Common();
+	virtual ~OSystem_SDL_Common();
 
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);

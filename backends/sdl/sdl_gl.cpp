@@ -141,6 +141,7 @@ void OSystem_SDL_GL::update_screen() {
 		_palette_changed_last = 0;
 	}
 
+	// FIXME - this seems to be tied to 320x200 - what about Zak256 which needs 320x240 ?
 	fb2gl.update(sdl_screen->pixels,320,200,320,0,_current_shake_pos);
 
 }

@@ -27,6 +27,8 @@
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
+	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0) {}
+
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
 
@@ -337,10 +339,10 @@ void OSystem_SDL_Normal::update_screen() {
 	if (force_full) {
 		num_dirty_rects = 1;
 
-		dirty_rect_list[0].x = 0;
-		dirty_rect_list[0].y = 0;
-		dirty_rect_list[0].w = SCREEN_WIDTH;
-		dirty_rect_list[0].h = SCREEN_HEIGHT;
+		_dirty_rect_list[0].x = 0;
+		_dirty_rect_list[0].y = 0;
+		_dirty_rect_list[0].w = SCREEN_WIDTH;
+		_dirty_rect_list[0].h = SCREEN_HEIGHT;
 	}
 
 	// Only draw anything if necessary
@@ -348,12 +350,12 @@ void OSystem_SDL_Normal::update_screen() {
 	
 		SDL_Rect *r; 
 		uint32 srcPitch, dstPitch;
-		SDL_Rect *last_rect = dirty_rect_list + num_dirty_rects;
+		SDL_Rect *last_rect = _dirty_rect_list + num_dirty_rects;
 	
 		// Convert appropriate parts of the 8bpp image into 16bpp
 		if (!_overlay_visible) {
 			SDL_Rect dst;
-			for(r=dirty_rect_list; r!=last_rect; ++r) {
+			for(r=_dirty_rect_list; r!=last_rect; ++r) {
 				dst = *r;
 				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
@@ -368,7 +370,7 @@ void OSystem_SDL_Normal::update_screen() {
 		srcPitch = sdl_tmpscreen->pitch;
 		dstPitch = sdl_hwscreen->pitch;
 	
-		for(r=dirty_rect_list; r!=last_rect; ++r) {
+		for(r=_dirty_rect_list; r!=last_rect; ++r) {
 			register int dst_y = r->y + _current_shake_pos;
 			register int dst_h = 0;
 			if (dst_y < SCREEN_HEIGHT) {
@@ -389,8 +391,8 @@ void OSystem_SDL_Normal::update_screen() {
 		}
 	
 		if (force_full) {
-			dirty_rect_list[0].y = 0;
-			dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
+			_dirty_rect_list[0].y = 0;
+			_dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
 		}
 		
 		SDL_UnlockSurface(sdl_tmpscreen);
@@ -399,7 +401,7 @@ void OSystem_SDL_Normal::update_screen() {
 	
 	if (num_dirty_rects > 0) {
 		/* Finally, blit all our changes to the screen */
-		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, _dirty_rect_list);
 	}
 
 	num_dirty_rects = 0;

@@ -69,21 +69,39 @@ void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 
+OSystem_SDL_Common::OSystem_SDL_Common()
+	: sdl_screen(0), SCREEN_WIDTH(0), SCREEN_HEIGHT(0),
+	_dirty_checksums(0), _current_shake_pos(0), _new_shake_pos(0)
+{
+	// allocate palette storage
+	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
+
+	// allocate the dirty rect storage
+	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+}
+
+OSystem_SDL_Common::~OSystem_SDL_Common()
+{
+	if (_dirty_checksums)
+		free(_dirty_checksums);
+	free(_cur_pal);
+	free(_mouse_backup);
+}
+
 void OSystem_SDL_Common::init_size(uint w, uint h) {
-	//if (w != SCREEN_WIDTH && h != SCREEN_HEIGHT)
-	//	error("320x200 is the only game resolution supported");
+
+	// Avoid redundant res changes
+	if (w == SCREEN_WIDTH && h == SCREEN_HEIGHT)
+		return;
 
 	SCREEN_WIDTH = w;
 	SCREEN_HEIGHT = h;
 	CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8));
-	/* allocate palette, it needs to be persistent across
-	 * driver changes, so i'll alloc it here */
-	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
+	if (_dirty_checksums)
+		free(_dirty_checksums);
+	_dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
 
-	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
-	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
-	dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
-
+	unload_gfx_mode();
 	load_gfx_mode();
 
 #ifdef MACOSX		// Work around a bug in OS X 10.1 related to OpenGL in windowed mode
@@ -179,7 +197,7 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 	if (num_dirty_rects == NUM_DIRTY_RECT)
 		force_full = true;
 	else {
-		SDL_Rect *r = &dirty_rect_list[num_dirty_rects++];
+		SDL_Rect *r = &_dirty_rect_list[num_dirty_rects++];
 		
 		/* Update the dirty region by 1 pixel for graphics drivers
 		 * that "smear" the screen */
@@ -206,7 +224,7 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 #define ROL(a,n) a = (a<<(n)) | (a>>(32-(n)))
 #define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(SCREEN_WIDTH/4)]; b ^= ((uint32*)buf)[1+(x)*(SCREEN_WIDTH/4)]
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
-	uint32 *sums = dirty_checksums;
+	uint32 *sums = _dirty_checksums;
 	uint x,y;
 	const uint last_x = (uint)SCREEN_WIDTH/8;
 	const uint last_y = (uint)SCREEN_HEIGHT/8;
@@ -255,7 +273,7 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 		 into bigger ones in a simple way */
 	if (!force_full) {
 		int x,y,w;
-		uint32 *ck = dirty_checksums;
+		uint32 *ck = _dirty_checksums;
 		
 		for(y=0; y!=SCREEN_HEIGHT/8; y++) {
 			for(x=0; x!=SCREEN_WIDTH/8; x++,ck++) {
@@ -278,7 +296,7 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 	} else {
 		get_out:;
 		/* Copy old checksums to new */
-		memcpy(dirty_checksums + CKSUM_NUM, dirty_checksums, CKSUM_NUM * sizeof(uint32));
+		memcpy(_dirty_checksums + CKSUM_NUM, _dirty_checksums, CKSUM_NUM * sizeof(uint32));
 	}
 }
 
