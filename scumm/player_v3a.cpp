@@ -268,8 +268,6 @@ void Player_V3A::playMusic() {
 			pitch -= 24;
 		else if (_scumm->_gameId == GID_LOOM)	// Loom music still has a lot of problems
 			pitch -= 21;			// but this adjustment seems to get it mostly right
-		if (pitch < 0)
-			pitch = 0;
 		int pit = pitch % 12;
 		int oct = (pitch / 12);
 		if (oct > 5)
