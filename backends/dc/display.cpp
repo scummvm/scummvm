@@ -510,7 +510,7 @@ void OSystem_Dreamcast::clearOverlay()
   if(!_overlay_visible)
     return;
 
-  memset(overlay, 0, OVL_TXSTRIDE*OVL_H*sizeof(unsigned short));
+  memset(overlay, 0, OVL_W*OVL_H*sizeof(unsigned short));
 
   _overlay_dirty = true;
 }
