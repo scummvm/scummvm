@@ -522,6 +522,7 @@ void Gui::saveLoadDialog() {
 
 void Gui::pause() {
 	_widgets[0] = pause_dialog;
+	_cur_page = 0;
 	_active = true;
 	_dialog = PAUSE_DIALOG;
 }
