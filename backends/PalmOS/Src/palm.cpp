@@ -1619,7 +1619,7 @@ bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat for
 			success = true;					// don't generate samples
 		}
 	}
-	return success;
+	return true;	// if not true some scenes (indy3 256,...) may freeze (ESC to skip)
 }
 
 void OSystem_PALMOS::clear_sound_proc() {
