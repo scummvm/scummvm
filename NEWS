@@ -14,6 +14,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Many improvements made to iMuseDigital (used by The Dig, FT and COMI)
    - Fixed several annoying bugs
    - Fixed crash on 64 bit architectures (like AMD64)
+   - Old zak256 target removed, use zakTowns instead
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
