@@ -681,7 +681,7 @@ void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame)
 
 	scumm->_vars[14] = 0;
 
-	if (!start_frame && !end_frame)
+	if (!num_loops && !start_frame)
 		return;
 
 #ifdef COMPRESSED_SOUND_FILE
