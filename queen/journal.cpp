@@ -226,7 +226,7 @@ void Journal::drawSaveDescriptions() {
 	for (i = 0; i < SAVE_PER_PAGE; ++i) {
 		int n = _currentSavePage * 10 + i;
 		char nb[4];
-        itoa(n + 1, nb, 10);
+		sprintf(nb, "%d", n + 1);
 		int y = 9 + i * 13;
 		_graphics->textSet(136, y, _saveDescriptions[n], false);
 		_graphics->textSet(109, y + 1, nb, false);
