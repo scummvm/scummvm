@@ -46,6 +46,7 @@ ScummDebugger::ScummDebugger() {
 	_dvar_count = 0;
 	_dcmd_count = 0;
 	_detach_now = false;
+	errStr = NULL;
 }
 
 // Initialisation Functions
