@@ -25,13 +25,15 @@
 #include "resource.h"
 
 void Scumm_v2::readClassicIndexFile() {
-	if (_gameId == GID_MANIAC) {
+	int i;
+
+	if (_gameId == GID_MANIAC64) {
 		_numGlobalObjects = 800;
 		_numRooms = 55;
 		_numCostumes = 35;
 		_numScripts = 200;
 		_numSounds = 100;
-	} else if (_gameId == GID_ZAK) {
+	} else if (_gameId == GID_ZAK64) {
 		_numGlobalObjects = 775;
 		_numRooms = 61;
 		_numCostumes = 37;
@@ -51,15 +53,43 @@ void Scumm_v2::readClassicIndexFile() {
 	_palManipIntermediatePal = 0; // Will allocate when needed
 
 	_fileHandle.readUint16LE(); /* version magic number */
-	for (int i = 0; i != _numGlobalObjects; i++) {
+	for (i = 0; i != _numGlobalObjects; i++) {
 		byte tmp = _fileHandle.readByte();
 		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
-	readResTypeList(rtRoom, MKID('ROOM'), "room");
-	readResTypeList(rtCostume, MKID('COST'), "costume");
-	readResTypeList(rtScript, MKID('SCRP'), "script");
-	readResTypeList(rtSound, MKID('SOUN'), "sound");
+
+	for (i = 0; i < _numRooms; i++) {
+		res.roomno[rtRoom][i] = i;
+		_fileHandle.seek(_numRooms, SEEK_CUR);
+	}
+
+	for (i = 0; i < _numCostumes; i++) {
+		res.roomno[rtCostume][i] = _fileHandle.readByte();
+	}
+	for (i = 0; i < _numCostumes; i++) {
+		res.roomoffs[rtCostume][i] = _fileHandle.readUint16LE();
+		if (res.roomoffs[rtCostume][i] == 0xFFFF)
+			res.roomoffs[rtCostume][i] = 0xFFFFFFFF;
+	}
+
+	for (i = 0; i < _numScripts; i++) {
+		res.roomno[rtScript][i] = _fileHandle.readByte();
+	}
+	for (i = 0; i < _numScripts; i++) {
+		res.roomoffs[rtScript][i] = _fileHandle.readUint16LE();
+		if (res.roomoffs[rtScript][i] == 0xFFFF)
+			res.roomoffs[rtScript][i] = 0xFFFFFFFF;
+	}
+
+	for (i = 0; i < _numSounds; i++) {
+		res.roomno[rtSound][i] = _fileHandle.readByte();
+	}
+	for (i = 0; i < _numSounds; i++) {
+		res.roomoffs[rtSound][i] = _fileHandle.readUint16LE();
+		if (res.roomoffs[rtSound][i] == 0xFFFF)
+			res.roomoffs[rtSound][i] = 0xFFFFFFFF;
+	}
 }
 
 void Scumm_v2::readEnhancedIndexFile() {
