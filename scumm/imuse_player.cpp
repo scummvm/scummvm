@@ -1063,7 +1063,10 @@ int Player::addParameterFader (int param, int target, int time) {
 		best->param = param;
 		best->start = start;
 		best->end = target;
-		best->total_time = (uint32) time * 10000;
+		if (!time)
+			best->total_time = 1;
+		else
+			best->total_time = (uint32) time * 10000;
 		best->current_time = 0;
 	} else {
 		warning ("IMuse Player %d: Out of parameter faders", _id);
@@ -1091,7 +1094,7 @@ void Player::transitionParameters() {
 		switch (ptr->param) {
 		case ParameterFader::pfVolume:
 			// Volume.
-			if (!value) {
+			if (!value && !ptr->end) {
 				clear();
 				return;
 			}
