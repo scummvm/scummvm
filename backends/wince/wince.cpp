@@ -445,6 +445,7 @@ extern int chooseGame(void);
 bool monkey_keyboard;
 
 bool new_audio_rate;
+bool FM_high_quality;
 
 bool closing = false;
 
@@ -556,8 +557,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	if (aygshell_handle) {
 		IMPORT(aygshell_handle, dynamicSHFullScreen, tSHFullScreen, "SHFullScreen", defaultSHFullScreen)
 		IMPORT(aygshell_handle, dynamicSHSipPreference, tSHSipPreference, "SHSipPreference", NULL)
-		if (smartphone)
+		if (smartphone) {
 			IMPORT(aygshell_handle, dynamicSHCreateMenuBar, tSHCreateMenuBar, "SHCreateMenuBar", NULL)
+		}
 		// This function doesn't seem to be implemented on my 3630 !
 		//IMPORT(aygshell_handle, dynamicSHHandleWMSettingChange, tSHHandleWMSettingChange, "SHHandleWMSettingChange")
 
@@ -662,6 +664,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	else
 		sound_activated = true;
 
+	FM_high_quality = g_config->getBool("FMHighQuality", false, "wince");
+	g_config->setBool("FMHighQuality", FM_high_quality, "wince");
+
 	_thread_priority = g_config->getInt("SoundThreadPriority", -1, "wince");
 	if (_thread_priority < 0) {
 #ifdef SH3
@@ -736,6 +741,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	return 0;
 }
 
+/*
+bool checkOggSampleRate(char *directory) {
+	char trackFile[255];
+	FILE *testFile;
+	OggVorbis_File *test_ov_file = new OggVorbis_File;
+
+	sprintf(trackFile,"%s/Track1.ogg", directory);
+	// Check if we have an OGG audio track
+	testFile = fopen(trackFile, "rb");
+	if (file->isOpen()) {
+		if (!ov_open(testFile, test_ov_file, NULL, 0)) {
+			bool highSampleRate = (ov_info(&test_ov_file, -1)->rate == 22050);
+			ov_clear(test_ov_file);
+			return highSampleRate;
+		}
+	}
+	// Or if we have an OGG compressed speech file
+
+	return false;
+}
+*/
+
 void runGame(char *game_name) {
 	int argc = 4;
 	char* argv[4];
@@ -777,6 +804,11 @@ void runGame(char *game_name) {
 
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
 	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0);
+
+	// Modify the sample rate on the fly if OGG is involved 
+
+	//if (!new_audio_rate)
+	//	new_audio_rate = checkOggSampleRate(_directory);
 
 	detector.parseCommandLine(argc, argv);
 
@@ -949,8 +981,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	case WM_TIMER:
 		timer_callback(timer_interval);
 		break;
+
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
+		break;
    }
    return 0;
 }
@@ -1103,11 +1137,8 @@ void action_boss() {
 	toolbar_drawn = false;
 	hide_toolbar = true;
 	Cls();
-	g_scumm->_saveLoadSlot = 0;
-	g_scumm->_saveLoadCompatible = false;
-	g_scumm->_saveLoadFlag = 1;
-	strcpy(g_scumm->_saveLoadName, "BOSS");
-	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
+	g_scumm->requestSave(0, "BOSS");
+	g_scumm->scummLoop(0);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
 	SDL_AudioQuit();
@@ -1132,8 +1163,11 @@ void action_skip() {
 
 	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
-	else
+	else 
+	if (g_scumm->_talkDelay > 0)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY]);						
+	else
+		system->addEventKeyPressed(mapKey(VK_ESCAPE));
 }
 
 void do_hide(bool hide_state) {
@@ -1628,6 +1662,12 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 
 	case PROP_GET_SAMPLE_RATE:
 		return (new_audio_rate ? SAMPLES_PER_SEC_NEW : SAMPLES_PER_SEC_OLD);
+
+	case PROP_GET_FMOPL_ENV_BITS:
+		return (FM_high_quality ? FMOPL_ENV_BITS_HQ : FMOPL_ENV_BITS_LQ);
+
+	case PROP_GET_FMOPL_EG_ENT:
+		return (FM_high_quality ? FMOPL_EG_ENT_HQ : FMOPL_EG_ENT_LQ);
 	}
 
 	return 0;
