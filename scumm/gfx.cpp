@@ -1375,20 +1375,29 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - drawing was already handled.
 		} else {
-			uint32 offset;
+			// Do some input verification and make sure the strip/strip offset
+			// are actually valid. Normally, this should never be a problem,
+			// but if e.g. a savegame gets corrupted, we can easily get into
+			// trouble here. See also bug #795214.
+			int offset = -1, smapLen;
 			if (_vm->_features & GF_16COLOR) {
-				offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
-				assert(offset < READ_LE_UINT16(smap_ptr));
-				drawStripEGA(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
+				smapLen = READ_LE_UINT16(smap_ptr);
+				if (stripnr * 2 + 2 < smapLen)
+					offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
-				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
-				assert(offset < READ_LE_UINT32(smap_ptr));
-				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+				smapLen = READ_LE_UINT32(smap_ptr);
+				if (stripnr * 4 + 4 < smapLen)
+					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
 			} else {
-				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
-				assert(offset < READ_BE_UINT32(smap_ptr));
-				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+				smapLen = READ_BE_UINT32(smap_ptr);
+				if (stripnr * 4 + 8 < smapLen)
+					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 			}
+			if (offset < 0 || offset >= smapLen) {
+				warning("drawBitmap: Trying to draw a non-existant strip");
+				return;
+			}
+			useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 		}
 
 		CHECK_HEAP;
@@ -1643,6 +1652,11 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
+	
+	if (_vm->_features & GF_16COLOR) {
+		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
+		return false;
+	}
 
 	byte code = *src++;
 	bool useOrDecompress = false;
