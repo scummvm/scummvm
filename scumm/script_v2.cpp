@@ -419,13 +419,14 @@ void ScummEngine_v2::decodeParseString() {
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
-	// Demo mode doesn't set subtitle color before display first subtitle.
-	if (_demoMode && _actorToPrintStrFor == 0xFF)
-		_string[textSlot].color = (_version == 2) ? 15 : 1;
-	// V1 Mansion Mansion uses dynamic color table for subtitles
-	else if ((_gameId == GID_MANIAC) && (_version == 1) && (_actorToPrintStrFor != 0xFF)) 
-		_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
-
+	if (_gameId == GID_MANIAC) {
+		// Demos don't set subtitle color before display first subtitle.
+		if (_demoMode && _actorToPrintStrFor == 0xFF)
+			_string[textSlot].color = (_version == 2) ? 15 : 1;
+		// V1 Mansion Mansion uses dynamic color table for subtitles
+		else if (_version == 1 && _actorToPrintStrFor != 0xFF) 
+			_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
+	}
 
 	_messagePtr = buffer;
 	actorTalk();
