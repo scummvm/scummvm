@@ -1161,7 +1161,7 @@ void Scumm::o6_cursorCommand()
 	case 0x9D:										/* set charset colors */
 		getStackList(args, sizeof(args) / sizeof(args[0]));
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)args[i];
+			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:
 		makeCursorColorTransparent(pop());
@@ -2135,7 +2135,7 @@ void Scumm::o6_verbOps()
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = 0;
-		vs->charset_nr = string[0].t_charset;
+		vs->charset_nr = _string[0].t_charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;
@@ -2363,7 +2363,7 @@ void Scumm::o6_wait()
 	case 171:
 		printf("wait for sentence");
 		if (_sentenceNum) {
-			if (sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}
@@ -3058,33 +3058,33 @@ void Scumm::decodeParseString2(int m, int n)
 
 	switch (b) {
 	case 65:
-		string[m].ypos = pop();
-		string[m].xpos = pop();
-		string[m].overhead = false;
+		_string[m].ypos = pop();
+		_string[m].xpos = pop();
+		_string[m].overhead = false;
 		break;
 	case 66:
-		string[m].color = pop();
+		_string[m].color = pop();
 		break;
 	case 67:
-		string[m].right = pop();
+		_string[m].right = pop();
 		break;
 	case 69:
-		string[m].center = true;
-		string[m].overhead = false;
+		_string[m].center = true;
+		_string[m].overhead = false;
 		break;
 	case 71:
-		string[m].center = false;
-		string[m].overhead = false;
+		_string[m].center = false;
+		_string[m].overhead = false;
 		break;
 	case 72:
-		string[m].overhead = true;
-		string[m].no_talk_anim = false;
+		_string[m].overhead = true;
+		_string[m].no_talk_anim = false;
 		break;
 	case 73:
 		error("decodeParseString2: case 73");
 		break;
 	case 74:
-		string[m].no_talk_anim = true;
+		_string[m].no_talk_anim = true;
 		break;
 	case 75:{
 			_messagePtr = _scriptPointer;
@@ -3133,14 +3133,14 @@ void Scumm::decodeParseString2(int m, int n)
 			_actorToPrintStrFor = pop();
 		return;
 	case 0xFF:
-		string[m].t_xpos = string[m].xpos;
-		string[m].t_ypos = string[m].ypos;
-		string[m].t_center = string[m].center;
-		string[m].t_overhead = string[m].overhead;
-		string[m].t_no_talk_anim = string[m].no_talk_anim;
-		string[m].t_right = string[m].right;
-		string[m].t_color = string[m].color;
-		string[m].t_charset = string[m].charset;
+		_string[m].t_xpos = _string[m].xpos;
+		_string[m].t_ypos = _string[m].ypos;
+		_string[m].t_center = _string[m].center;
+		_string[m].t_overhead = _string[m].overhead;
+		_string[m].t_no_talk_anim = _string[m].no_talk_anim;
+		_string[m].t_right = _string[m].right;
+		_string[m].t_color = _string[m].color;
+		_string[m].t_charset = _string[m].charset;
 		return;
 	default:
 		error("decodeParseString: default case");

@@ -567,7 +567,7 @@ void Scumm::freezeScripts(int flag)
 	}
 
 	for (i = 0; i < 6; i++)
-		sentence[i].unk++;
+		_sentence[i].unk++;
 
 	if (vm.cutSceneScriptIndex != 0xFF) {
 		vm.slot[vm.cutSceneScriptIndex].status &= 0x7F;
@@ -587,8 +587,8 @@ void Scumm::unfreezeScripts()
 	}
 
 	for (i = 0; i < 6; i++) {
-		if (((int8)--sentence[i].unk) < 0)
-			sentence[i].unk = 0;
+		if (_sentence[i].unk > 0)
+			_sentence[i].unk--;
 	}
 }
 
@@ -703,18 +703,18 @@ void Scumm::checkAndRunVar33()
 				return;
 	}
 
-	if (!_sentenceNum || sentence[_sentenceNum - 1].unk)
+	if (!_sentenceNum || _sentence[_sentenceNum - 1].unk)
 		return;
 
 	_sentenceNum--;
 
 	if (!(_features & GF_AFTER_V7))
-		if (sentence[_sentenceNum].unk2 && sentence[_sentenceNum].unk3 == sentence[_sentenceNum].unk4)
+		if (_sentence[_sentenceNum].unk2 && _sentence[_sentenceNum].unk3 == _sentence[_sentenceNum].unk4)
 			return;
 
-	_localParamList[0] = sentence[_sentenceNum].unk5;
-	_localParamList[1] = sentence[_sentenceNum].unk4;
-	_localParamList[2] = sentence[_sentenceNum].unk3;
+	_localParamList[0] = _sentence[_sentenceNum].unk5;
+	_localParamList[1] = _sentence[_sentenceNum].unk4;
+	_localParamList[2] = _sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;
 	if (_vars[VAR_SENTENCE_SCRIPT])
 		runScript(_vars[VAR_SENTENCE_SCRIPT], 0, 0, _localParamList);
@@ -1079,42 +1079,39 @@ void Scumm::exitCutscene()
 }
 void Scumm::doSentence(int c, int b, int a)
 {
+	SentenceTab *st;
+
 	if (_features & GF_AFTER_V7) {
-		SentenceTab *st;
 
 		if (b == a)
 			return;
 
-		st = &sentence[_sentenceNum - 1];
-
+		st = &_sentence[_sentenceNum - 1];
+		
+		
+		// Check if this doSentence request is identical to the previous one;
+		// if yes, ignore this invocation.
 		if (_sentenceNum && st->unk5 == c && st->unk4 == b && st->unk3 == a)
 			return;
 
 		_sentenceNum++;
 		st++;
 
-		st->unk5 = c;
-		st->unk4 = b;
-		st->unk3 = a;
-		st->unk = 0;
-
-		warning("dosentence(%d,%d,%d)", c, b, a);
+		warning("doSentence(%d,%d,%d)", c, b, a);
 
 	} else {
 
-		SentenceTab *st;
-
-		st = &sentence[_sentenceNum++];
-
-		st->unk5 = c;
-		st->unk4 = b;
-		st->unk3 = a;
+		st = &_sentence[_sentenceNum++];
 
 		if (!(st->unk3 & 0xFF00))
 			st->unk2 = 0;
 		else
 			st->unk2 = 1;
 
-		st->unk = 0;
 	}
+
+	st->unk5 = c;
+	st->unk4 = b;
+	st->unk3 = a;
+	st->unk = 0;
 }

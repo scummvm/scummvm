@@ -282,16 +282,16 @@ void Scumm::scummInit()
 
 	for (i = 0; i < 6; i++) {
 		if (_features & GF_OLD256) {
-			string[i].t_xpos = 0;
-			string[i].t_ypos = 0;
+			_string[i].t_xpos = 0;
+			_string[i].t_ypos = 0;
 		} else {
-			string[i].t_xpos = 2;
-			string[i].t_ypos = 5;
+			_string[i].t_xpos = 2;
+			_string[i].t_ypos = 5;
 		}
-		string[i].t_right = _realWidth - 1;
-		string[i].t_color = 0xF;
-		string[i].t_center = 0;
-		string[i].t_charset = 0;
+		_string[i].t_right = _realWidth - 1;
+		_string[i].t_color = 0xF;
+		_string[i].t_center = 0;
+		_string[i].t_charset = 0;
 	}
 
 	_numInMsgStack = 0;
@@ -1104,7 +1104,7 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 
 void Scumm::setStringVars(int slot)
 {
-	StringTab *st = &string[slot];
+	StringTab *st = &_string[slot];
 	st->xpos = st->t_xpos;
 	st->ypos = st->t_ypos;
 	st->center = st->t_center;

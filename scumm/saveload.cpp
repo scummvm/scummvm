@@ -621,8 +621,9 @@ void Scumm::saveOrLoad(Serializer *s)
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
-	s->saveLoadArrayOf(sentence, 6, sizeof(sentence[0]), sentenceTabEntries);
-	s->saveLoadArrayOf(string, 6, sizeof(string[0]), stringTabEntries);
+	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
+	/* XXX: next time save game format changes, Fingolfin wants to revise StringTab - contact him */
+	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
 
 	for (i = rtFirst; i <= rtLast; i++)

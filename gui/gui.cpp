@@ -337,7 +337,7 @@ const GuiWidget *Gui::widgetFromPos(int x, int y)
 
 void Gui::drawString(const char *str, int x, int y, int w, byte color, bool center)
 {
-	StringTab *st = &_s->string[5];
+	StringTab *st = &_s->_string[5];
 	st->charset = 1;
 	st->center = center;
 	st->color = color;

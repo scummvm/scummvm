@@ -167,8 +167,8 @@ void Scumm::unkMessage2()
 	_msgPtrToAdd = buf;
 	tmp = _messagePtr = addMessageToStack(_messagePtr);
 
-	if (string[3].color == 0)
-		string[3].color = 4;
+	if (_string[3].color == 0)
+		_string[3].color = 4;
 
 	warning("unkMessage2(\"%s\")", buf);
 	_messagePtr = tmp;
@@ -202,51 +202,51 @@ void Scumm::CHARSET_1()
 	if (_vars[VAR_TALK_ACTOR] != 0xFF)
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
 
-	if (a && string[0].overhead != 0) {
+	if (a && _string[0].overhead != 0) {
 		if (!(_features & GF_AFTER_V6)) {
-			string[0].xpos = a->x - camera._cur.x + (_realWidth / 2);
+			_string[0].xpos = a->x - camera._cur.x + (_realWidth / 2);
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
-				string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
+				_string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
 			} else {
-				string[0].ypos = _vars[VAR_V5_TALK_STRING_Y];
+				_string[0].ypos = _vars[VAR_V5_TALK_STRING_Y];
 			}
-			if (string[0].ypos < 1)
-				string[0].ypos = 1;
+			if (_string[0].ypos < 1)
+				_string[0].ypos = 1;
 
-			if (string[0].xpos < 80)
-				string[0].xpos = 80;
-			if (string[0].xpos > 240)
-				string[0].xpos = 240;
+			if (_string[0].xpos < 80)
+				_string[0].xpos = 80;
+			if (_string[0].xpos > 240)
+				_string[0].xpos = 240;
 		} else {
 			s = a->scaley * a->new_1 / 0xFF;
-			string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
-			if (string[0].ypos < 1)
-				string[0].ypos = 1;
+			_string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
+			if (_string[0].ypos < 1)
+				_string[0].ypos = 1;
 
-			if (string[0].ypos < camera._cur.y - (_realHeight / 2))
-				string[0].ypos = camera._cur.y - (_realHeight / 2);
+			if (_string[0].ypos < camera._cur.y - (_realHeight / 2))
+				_string[0].ypos = camera._cur.y - (_realHeight / 2);
 
 			s = a->scalex * a->new_2 / 0xFF;
-			string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
-			if (string[0].xpos < 80)
-				string[0].xpos = 80;
-			if (string[0].xpos > 240)
-				string[0].xpos = 240;
+			_string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
+			if (_string[0].xpos < 80)
+				_string[0].xpos = 80;
+			if (_string[0].xpos > 240)
+				_string[0].xpos = 240;
 		}
 	}
 
-	charset._top = string[0].ypos;
-	charset._left = string[0].xpos;
-	charset._left2 = string[0].xpos;
-	charset._curId = string[0].charset;
+	charset._top = _string[0].ypos;
+	charset._left = _string[0].xpos;
+	charset._left2 = _string[0].xpos;
+	charset._curId = _string[0].charset;
 
 	if (a && a->charset)
 		charset._curId = a->charset;
 
-	charset._center = string[0].center;
-	charset._right = string[0].right;
+	charset._center = _string[0].center;
+	charset._right = _string[0].right;
 	charset._color = _charsetColor;
 	_bkColor = 0;
 
@@ -273,7 +273,7 @@ void Scumm::CHARSET_1()
 		return;
 	}
 
-	if (a && !string[0].no_talk_anim) {
+	if (a && !_string[0].no_talk_anim) {
 		has_anim = true;
 		_useTalkAnims = true;
 	}
@@ -282,19 +282,19 @@ void Scumm::CHARSET_1()
 
 	if (!_keepText) {
 		if (_features & GF_OLD256) {
-			gdi._mask_left = string[0].xpos;
-			gdi._mask_top = string[0].ypos;
-			gdi._mask_bottom = string[0].ypos + 8;
+			gdi._mask_left = _string[0].xpos;
+			gdi._mask_top = _string[0].ypos;
+			gdi._mask_bottom = _string[0].ypos + 8;
 			gdi._mask_right = _realWidth;
-			if (string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
+			if (_string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
 				gdi._mask_bottom = 16;
 		}
 		restoreCharsetBg();
-		charset._xpos2 = string[0].xpos;
-		charset._ypos2 = string[0].ypos;
+		charset._xpos2 = _string[0].xpos;
+		charset._ypos2 = _string[0].ypos;
 	}
 
-	t = charset._right - string[0].xpos - 1;
+	t = charset._right - _string[0].xpos - 1;
 	if (charset._center) {
 		if (t > charset._xpos2)
 			t = charset._xpos2;
@@ -329,7 +329,7 @@ void Scumm::CHARSET_1()
 				charset._xpos2 = 0;
 				continue;
 			} else {
-				charset._xpos2 = string[0].xpos;
+				charset._xpos2 = _string[0].xpos;
 				if (charset._center) {
 					charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
 				}
@@ -459,17 +459,17 @@ void Scumm::description()
 
 	buffer = charset._buffer;
 	charset._bufPos = 0;
-	string[0].ypos = camera._cur.y + 88;
-	string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
-	if (string[0].xpos < 0)
-		string[0].xpos = 0;
+	_string[0].ypos = camera._cur.y + 88;
+	_string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
+	if (_string[0].xpos < 0)
+		_string[0].xpos = 0;
 
-	charset._top = string[0].ypos;
-	charset._left = string[0].xpos;
-	charset._left2 = string[0].xpos;
+	charset._top = _string[0].ypos;
+	charset._left = _string[0].xpos;
+	charset._left2 = _string[0].xpos;
 	charset._right = _realWidth - 1;
-	charset._xpos2 = string[0].xpos;
-	charset._ypos2 = string[0].ypos;
+	charset._xpos2 = _string[0].xpos;
+	charset._ypos2 = _string[0].ypos;
 	charset._disableOffsX = charset._unk12 = 1;
 	charset._curId = 3;
 	charset._center = false;
@@ -515,12 +515,12 @@ void Scumm::drawString(int a)
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	charset._left2 = charset._left = string[a].xpos;
-	charset._top = string[a].ypos;
-	charset._curId = string[a].charset;
-	charset._center = string[a].center;
-	charset._right = string[a].right;
-	charset._color = string[a].color;
+	charset._left2 = charset._left = _string[a].xpos;
+	charset._top = _string[a].ypos;
+	charset._curId = _string[a].charset;
+	charset._center = _string[a].center;
+	charset._right = _string[a].right;
+	charset._color = _string[a].color;
 	_bkColor = 0;
 	charset._unk12 = 1;
 	charset._disableOffsX = 1;
@@ -592,7 +592,7 @@ void Scumm::drawString(int a)
 				color = buf[i] + (buf[i + 1] << 8);
 				i += 2;
 				if (color == 0xFF)
-					charset._color = string[a].color;
+					charset._color = _string[a].color;
 				else
 					charset._color = color;
 				break;
@@ -600,7 +600,7 @@ void Scumm::drawString(int a)
 		} else {
 			if (a == 1 && (_features & GF_AFTER_V6))
 
-				if (string[a].no_talk_anim == 0)
+				if (_string[a].no_talk_anim == 0)
 					charset._blitAlso = true;
 			if (_features & GF_OLD256)
 				charset.printCharOld(chr);
@@ -786,8 +786,8 @@ void Scumm::initCharset(int charsetno)
 	else if (!getResourceAddress(rtCharset, charsetno))
 		loadCharset(charsetno);
 
-	string[0].t_charset = charsetno;
-	string[1].t_charset = charsetno;
+	_string[0].t_charset = charsetno;
+	_string[1].t_charset = charsetno;
 
 	for (i = 0; i < 0x10; i++)
 		if (_features & GF_SMALL_HEADER)

@@ -238,10 +238,13 @@ struct SentenceTab {
 	byte unk2;
 	uint16 unk4;
 	uint16 unk3;
-	byte unk;
+	int8 unk;
 	byte pad;
 };
 
+// TODO / FIXME: next time save game format changes, Fingolfin would like to
+// revise StringTab. In particular, all t_* fields can be removed, making some
+// code a bit cleaner & easier to understand.
 struct StringTab {
 	int16 t_xpos, t_ypos;
 	int16 t_right;
@@ -721,8 +724,8 @@ public:
 	/* Actor talking stuff */
 	byte _actorToPrintStrFor;
 	int _sentenceNum;
-	SentenceTab sentence[6];
-	StringTab string[6];
+	SentenceTab _sentence[6];
+	StringTab _string[6];
 	void actorTalk();
 	void stopTalk();	
 

@@ -130,18 +130,18 @@ void Scumm::drawVerb(int vrb, int mode)
 		}
 		restoreVerbBG(vrb);
 
-		string[4].charset = vs->charset_nr;
-		string[4].xpos = vs->x;
-		string[4].ypos = vs->y;
-		string[4].right = 319;
-		string[4].center = vs->center;
+		_string[4].charset = vs->charset_nr;
+		_string[4].xpos = vs->x;
+		_string[4].ypos = vs->y;
+		_string[4].right = 319;
+		_string[4].center = vs->center;
 
 		if (vs->curmode == 2)
-			string[4].color = vs->dimcolor;
+			_string[4].color = vs->dimcolor;
 		else if (mode && vs->hicolor)
-			string[4].color = vs->hicolor;
+			_string[4].color = vs->hicolor;
 		else
-			string[4].color = vs->color;
+			_string[4].color = vs->color;
 
 		// FIXME For the future: Indy3 and under inv scrolling
 		/*

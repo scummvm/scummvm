@@ -1729,8 +1729,8 @@ void Scumm::restoreCharsetBg()
 		charset._left = -1;
 	}
 
-	charset._xpos2 = string[0].xpos;
-	charset._ypos2 = string[0].ypos;
+	charset._xpos2 = _string[0].xpos;
+	charset._ypos2 = _string[0].ypos;
 }
 
 void Scumm::restoreBG(int left, int top, int right, int bottom)

@@ -1038,7 +1038,7 @@ void Scumm::actorTalk()
 			if (!_keepText)
 				stopTalk();
 			_vars[VAR_TALK_ACTOR] = a->number;
-			if (!string[0].no_talk_anim) {
+			if (!_string[0].no_talk_anim) {
 				a->startAnimActor(a->talkFrame1);
 				_useTalkAnims = true;
 			}
@@ -1049,7 +1049,7 @@ void Scumm::actorTalk()
 		return;
 
 	if (_vars[VAR_TALK_ACTOR] > 0x7F) {
-		_charsetColor = (byte)string[0].color;
+		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "actorTalk(2)");
 		_charsetColor = a->talkColor;

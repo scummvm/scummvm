@@ -403,7 +403,7 @@ void Sound::processSfxQueues() {
 			finished = false;
 		
 
-		if (act != 0 && (uint) act < 0x80 && !_scumm->string[0].no_talk_anim) {
+		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActorSafe(act, "processSfxQueues");
 			if (a->room == _scumm->_currentRoom && (finished || !_endOfMouthSync)) {
 				b = true;

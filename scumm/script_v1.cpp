@@ -968,7 +968,7 @@ void Scumm::o5_cursorCommand()
 	case 14:											/* unk */
 		getWordVararg(table);
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)table[i];
+			charset._colorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
 		break;
 	}
 
@@ -1042,7 +1042,7 @@ void Scumm::o5_doSentence()
 		return;
 	}
 
-	st = &sentence[_sentenceNum++];
+	st = &_sentence[_sentenceNum++];
 
 	st->unk5 = a;
 	st->unk4 = getVarOrDirectWord(0x40);
@@ -2009,6 +2009,7 @@ void Scumm::o5_roomOps()
 		break;
 
 	case 13:{										/* save-string */
+			// TODO - use class File instead of fopen/fwrite/fclose
 			char buf[256], *s;
 			FILE *out;
 
@@ -2030,6 +2031,7 @@ void Scumm::o5_roomOps()
 			break;
 		}
 	case 14:{										/* load-string */
+			// TODO - use class File instead of fopen/fread/fclose
 			char buf[256], *s;
 			FILE *in;
 
@@ -2473,7 +2475,7 @@ void Scumm::o5_verbOps()
 			vs->hicolor = 0;
 			vs->dimcolor = 8;
 			vs->type = 0;
-			vs->charset_nr = string[0].t_charset;
+			vs->charset_nr = _string[0].t_charset;
 			vs->curmode = 0;
 			vs->saveid = 0;
 			vs->key = 0;
@@ -2550,7 +2552,7 @@ void Scumm::o5_wait()
 		return;
 	case 4:											/* wait for sentence */
 		if (_sentenceNum) {
-			if (sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}
@@ -2684,37 +2686,31 @@ void Scumm::decodeParseString()
 		textSlot = 0;
 	}
 
-	string[textSlot].xpos = string[textSlot].t_xpos;
-	string[textSlot].ypos = string[textSlot].t_ypos;
-	string[textSlot].center = string[textSlot].t_center;
-	string[textSlot].overhead = string[textSlot].t_overhead;
-	string[textSlot].right = string[textSlot].t_right;
-	string[textSlot].color = string[textSlot].t_color;
-	string[textSlot].charset = string[textSlot].t_charset;
+	setStringVars(textSlot);
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
 		case 0:										/* set string xy */
-			string[textSlot].xpos = getVarOrDirectWord(0x80);
-			string[textSlot].ypos = getVarOrDirectWord(0x40);
-			string[textSlot].overhead = false;
+			_string[textSlot].xpos = getVarOrDirectWord(0x80);
+			_string[textSlot].ypos = getVarOrDirectWord(0x40);
+			_string[textSlot].overhead = false;
 			break;
 		case 1:										/* color */
-			string[textSlot].color = getVarOrDirectByte(0x80);
+			_string[textSlot].color = getVarOrDirectByte(0x80);
 			break;
 		case 2:										/* right */
-			string[textSlot].right = getVarOrDirectWord(0x80);
+			_string[textSlot].right = getVarOrDirectWord(0x80);
 			break;
 		case 4:										/* center */
-			string[textSlot].center = true;
-			string[textSlot].overhead = false;
+			_string[textSlot].center = true;
+			_string[textSlot].overhead = false;
 			break;
 		case 6:										/* left */
-			string[textSlot].center = false;
-			string[textSlot].overhead = false;
+			_string[textSlot].center = false;
+			_string[textSlot].overhead = false;
 			break;
 		case 7:										/* overhead */
-			string[textSlot].overhead = true;
+			_string[textSlot].overhead = true;
 			break;
 		case 8:{										/* play loom talkie sound - use in other games ? */
 				int x = getVarOrDirectWord(0x80);
@@ -2761,13 +2757,13 @@ void Scumm::decodeParseString()
 		}
 	}
 
-	string[textSlot].t_xpos = string[textSlot].xpos;
-	string[textSlot].t_ypos = string[textSlot].ypos;
-	string[textSlot].t_center = string[textSlot].center;
-	string[textSlot].t_overhead = string[textSlot].overhead;
-	string[textSlot].t_right = string[textSlot].right;
-	string[textSlot].t_color = string[textSlot].color;
-	string[textSlot].t_charset = string[textSlot].charset;
+	_string[textSlot].t_xpos = _string[textSlot].xpos;
+	_string[textSlot].t_ypos = _string[textSlot].ypos;
+	_string[textSlot].t_center = _string[textSlot].center;
+	_string[textSlot].t_overhead = _string[textSlot].overhead;
+	_string[textSlot].t_right = _string[textSlot].right;
+	_string[textSlot].t_color = _string[textSlot].color;
+	_string[textSlot].t_charset = _string[textSlot].charset;
 }
 
 void Scumm::o5_oldRoomEffect()
