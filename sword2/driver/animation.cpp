@@ -31,6 +31,7 @@
 #include "common/file.h"
 
 #include "sound/vorbis.h"
+#include "sound/mp3.h"
 
 namespace Sword2 {
 
@@ -136,18 +137,24 @@ bool AnimationState::init(const char *name) {
 	ticks = _vm->_system->get_msecs();
 
 	// Play audio
+	sndfile = new File;
 
 #ifdef USE_VORBIS
-	// TODO: There is no reason that this only allows OGG, and not MP3, or
-	// any other format the mixer might support one day... is there?
-	sndfile = new File;
 	sprintf(tempFile, "%s.ogg", name);
-	if (sndfile->open(tempFile)) {
-		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());
-		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
-	}
-
+	if (sndfile->open(tempFile)) 
+		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());				
 #endif
+
+#ifdef USE_MAD
+	if (!sndfile->isOpen()) {
+		sprintf(tempFile, "%s.mp3", name);
+		if (sndfile->open(tempFile)) 
+			bgSoundStream = makeMP3Stream(sndfile, sndfile->size());
+	}
+#endif
+
+	if (sndfile->isOpen())
+		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);	
 
 	return true;
 #else /* USE_MPEG2 */
