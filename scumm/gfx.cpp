@@ -878,7 +878,7 @@ void ScummEngine::drawFlashlight() {
 
 	// Round the corners. To do so, we simply hard-code a set of nicely
 	// rounded corners.
-	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
+	static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
 	int maxcol = _flashlight.w - 1;
 	int maxrow = (_flashlight.h - 1) * vs->width;
