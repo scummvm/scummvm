@@ -2736,11 +2736,51 @@ void Scumm::o6_miscOps()
 	 				speed = 71;
 				else
 					speed = 1000 / _insaneFlag;
-				if (args[1] == 1) printf("startSmush one is true\n");
-				if (args[2] == 1) printf("startSmush two is true\n");
+
+				debug(1, "INSANE Arg: %d", args[1]);
+
 				ScummRenderer * sr = new ScummRenderer(this, speed);
  				SmushPlayer * sp = new SmushPlayer(sr);
- 				sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+
+				// INSANE mode 0: SMUSH movie playback
+				if (args[1] == 0) {
+ 					sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+				} else if (_gameId == GID_FT) {
+					// Full Throttle INSANE modes
+					switch (args[1]) {
+					 case 0:
+ 						sp->play("minedriv.san", getGameDataPath());
+						break;
+					 case 1:
+ 						sp->play("tovista2.san", getGameDataPath());
+						break;
+					 case 2:
+ 						sp->play("tovista1.san", getGameDataPath());
+						break;
+					 case 3:
+ 						sp->play("minefite.san", getGameDataPath());
+						break;
+					 case 4:
+ 						sp->play("rottopen.san", getGameDataPath());
+						break;
+					 case 5:
+					 case 6:
+					 case 7:
+					 case 8:
+						warning("FT_INSANE mode %d: Stub", args[1]);
+						break;
+					 case 9:
+ 						sp->play("credits.san", getGameDataPath());
+					 default:
+						// Other INSANE modes
+						warning("Unknown FT_INSANE mode for %d", args[1]);
+ 						sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+					 }
+				} else {
+					// Other INSANE modes
+					warning("Unknown insane mode for %d", args[1]);
+ 					sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+				}
 				delete sp;
 				delete sr;
  			}
