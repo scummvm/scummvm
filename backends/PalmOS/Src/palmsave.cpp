@@ -99,15 +99,14 @@ int PalmSaveFile::fwrite(const void *buf, int size, int cnt) {
 class PalmSaveFileManager : public SaveFileManager {
 
 public:
-	SaveFile *open_savefile(const char *filename, bool saveOrLoad);
-	void list_savefiles(const char *prefix, bool *marks, int num);
+	SaveFile *open_savefile(const char *filename, const char *dirname, bool saveOrLoad);
+	void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
 };
 
 SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *dirname, bool saveOrLoad) {
 	char buf[256];
 
 	join_paths(filename, dirname, buf, sizeof(buf));
-
 	PalmSaveFile *sf = new PalmSaveFile(buf, (saveOrLoad? "wb":"rb"));
 
 	if(!sf->is_open()) {
@@ -118,7 +117,7 @@ SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *d
 	return sf;
 }
 
-void PalmSaveFileManager::list_savefiles(const char *prefix, const char *direcory, bool *marks, int num) {
+void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directory, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
 	Err e = VFSFileOpen(gVars->volRefNum, directory, vfsModeRead, &fileRef);
