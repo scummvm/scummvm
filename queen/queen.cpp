@@ -70,20 +70,20 @@ GameList Engine_QUEEN_gameList() {
 	return games;
 }
 
-uint8 whichTarget(uint32 size) {
-	uint8 target = 0;	
+GameSettings determineTarget(uint32 size) {
 	switch(size) {
 		case 3724538:	//regular demo
 		case 3732177:
-			target = 1;
+			return queen_setting[1];
 			break;
 		case 1915913:   //interview demo
-			target = 2;
+			return queen_setting[2];
 			break;
 		default:	//non-demo
+			return queen_setting[0];
 			break;
 	}
-	return target;
+	return queen_setting[0];
 }
 
 DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
@@ -100,7 +100,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 				assert(dataFile.isOpen());
 				
 				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file
-					detectedGames.push_back(queen_setting[whichTarget(dataFile.size())]);
+					detectedGames.push_back(determineTarget(dataFile.size()));
 				} else if (0 == scumm_stricmp("queen.1c", gameName)) { //oh joy, it's a rebuilt file
 					char header[9];
 					dataFile.read(header, 9);
