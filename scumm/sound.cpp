@@ -187,7 +187,7 @@ void Sound::playSound(int soundID, int offset) {
 		else if	(soundID >= 4000)
 			skip = (soundID - 4000);
 		
-		if (skip > tracks)
+		if (skip > tracks - 1)
 			skip = 0;
 
 		musicFile.seek(+28, SEEK_CUR);
