@@ -1017,7 +1017,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
-	"d|SET_PALETTEETTE_MODE",
+	"d|SET_PALETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
@@ -1100,7 +1100,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
-	"d|SET_PALETTEETTE_MODE",
+	"d|SET_PALETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
