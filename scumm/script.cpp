@@ -487,7 +487,8 @@ int Scumm::readVar(uint var) {
 	}
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
+		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
+			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
@@ -557,7 +558,8 @@ void Scumm::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {
+		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
+			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
