@@ -36,6 +36,7 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 #include "simon/vga.h"
+#include "simon/debugger.h"
 
 #include "sound/mididrv.h"
 
@@ -599,6 +600,7 @@ SimonEngine::~SimonEngine() {
 	delete [] _fcs_list;
 	
 	delete _sound;
+	delete _debugger;
 }
 
 void SimonEngine::errorString(const char *buf1, char *buf2) {
@@ -4785,6 +4787,7 @@ void SimonEngine::go() {
 	setup_vga_file_buf_pointers();
 
 	_sound = new Sound(_game, gss, _gameDataPath, _mixer);
+	_debugger = new Debugger(this);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (_game == GAME_SIMON1DOS)
@@ -4896,6 +4899,9 @@ void SimonEngine::delay(uint amount) {
 	uint32 cur = start;
 	uint this_delay, vga_period;
 
+	if (_debugger->isAttached())
+		_debugger->onFrame();
+
 	if (_fast_mode)
 	 	vga_period = 10;
 	else if (_game & GF_SIMON2)
@@ -4944,6 +4950,8 @@ void SimonEngine::delay(uint amount) {
 						_aboutDialog->runModal();
 					} else if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
+					else if (event.kbd.keycode == 'd')
+						_debugger->attach();
 				}
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)

@@ -102,8 +102,12 @@ struct VgaTimerEntry {
 };
 
 struct GameSpecificSettings;
+  
+class Debugger;
 
 class SimonEngine : public Engine {
+	friend class Debugger;
+
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	void playSting(uint a);
@@ -343,6 +347,8 @@ protected:
 	bool _effects_paused;
 	bool _ambient_paused;
 	bool _music_paused;
+
+	Debugger *_debugger;
 
 	int _timer_id;
 
