@@ -144,7 +144,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_divide,
 		/* 5C */
 		&Scumm::o5_oldRoomEffect,
-		&Scumm::o5_actorSetClass,
+		&Scumm::o5_setClass,
 		&Scumm::o5_walkActorTo,
 		&Scumm::o5_isActorInBox,
 		/* 60 */
@@ -304,7 +304,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_divide,
 		/* DC */
 		&Scumm::o5_oldRoomEffect,
-		&Scumm::o5_actorSetClass,
+		&Scumm::o5_setClass,
 		&Scumm::o5_walkActorTo,
 		&Scumm::o5_isActorInBox,
 		/* E0 */
@@ -467,7 +467,7 @@ void Scumm::setupOpcodes()
 		"o5_divide",
 		/* 5C */
 		"o5_oldRoomEffect",
-		"o5_actorSetClass",
+		"o5_setClass",
 		"o5_walkActorTo",
 		"o5_isActorInBox",
 		/* 60 */
@@ -627,7 +627,7 @@ void Scumm::setupOpcodes()
 		"o5_divide",
 		/* DC */
 		"o5_oldRoomEffect",
-		"o5_actorSetClass",
+		"o5_setClass",
 		"o5_walkActorTo",
 		"o5_isActorInBox",
 		/* E0 */
@@ -833,33 +833,27 @@ void Scumm::o5_actorSet()
 	}
 }
 
-void Scumm::o5_actorSetClass()
+void Scumm::o5_setClass()
 {
-	int act = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(0x80);
 	int newClass;
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
-			_classData[act] = 0;
-			if ((_features & GF_SMALL_HEADER) && act <= NUM_ACTORS) {
+			_classData[obj] = 0;
+			if ((_features & GF_SMALL_HEADER) && obj <= NUM_ACTORS) {
 				Actor *a;
-				a = derefActorSafe(act, "actorSetClass");
+				a = derefActorSafe(obj, "setClass");
 				a->forceClip = 0;
 			}
 			continue;
 		}
 
-
 		if (_gameId == GID_INDY3_256)
-
 			newClass--;
 
-
-		if (newClass & 0x80)
-			putClass(act, newClass, 1);
-		else
-			putClass(act, newClass, 0);
+		putClass(obj, newClass, (newClass & 0x80));
 	}
 }
 

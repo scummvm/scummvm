@@ -1267,7 +1267,6 @@ public:
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
 	void o5_actorSet();
-	void o5_actorSetClass();
 	void o5_add();
 	void o5_and();
 	void o5_animateActor();
@@ -1344,6 +1343,7 @@ public:
 	void o5_roomOps();
 	void o5_saveRestoreVerbs();
 	void o5_setCameraAt();
+	void o5_setClass();
 	void o5_setObjectName();
 	void o5_setOwnerOf();
 	void o5_setState();
