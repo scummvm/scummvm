@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-11-10
-Release version: 0.2.8 [CVS]
+Last updated:    2002-11-11
+Release version: 0.2.81 [CVS]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -37,6 +37,7 @@ Supported Games:
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
+        Indiana Jones & the Last Crusade (256)    [Game: indy3]
         Loom (256 color CD version)               [Game: loomcd]
         Zak McKraken (256 color FM Towns version) [Game: zak256]
         Monkey Island 1 (VGA version)             [Game: monkeyvga]
@@ -46,7 +47,7 @@ be playable to the end:
         Day Of The Tentacle                       [Game: tentacle]
         Sam & Max                                 [Game: samnmax]
         The Dig                                   [Game: dig]
-        Simon The Sorcerer                        [Game: simon1dos/simon1talkie/simon1win]
+        Simon The Sorcerer                        [Game: simon1talkie/simon1win]
 
 
 The following games should load, but are not yet fully playable. Play these at
@@ -54,8 +55,8 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Indiana Jones & the Last Crusade (256)   [Game: indy3]
         Full Throttle                            [Game: ft]
+        Simon The Sorcerer                       [Game: simon1dos]
         Simon the Sorcerer II                    [Game: simon2dos/simon2talkie/simon2win]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
@@ -66,31 +67,10 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
         Loom (16 color floppy version)
         Curse of Monkey Island
 
-Please be aware that the engine may contains bugs and non-implemented-
+Please be aware that the engine may contains bugs and unimplemented
 features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (details on submitted bug reports are below)
 if you discover such a bug.
-
-Simon the Sorcerer 1 and 2 games note
---------------------------------------
-
-The Simon the Sorcerer 1 & 2 games were split into six targets to make 
-coding easier and to make it more clear which target should be used:
-simon1dos - Use for Simon the Sorcerer 1 for DOS (Disk)
-simon2dos - Use for Simon the Sorcerer 2 for DOS (Disk)
-simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
-simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
-simon1win - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
-simon2win - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
-
-If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
-then you will find the Windows version in the main directory of CD
-and the DOS Talkie version in the DOS directory of the CD.
-
-The filenames of saved games for Simon the Sorcerer 1 & 2 were changed too:
-Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
-Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
-So if you have any old save games you will need to change their filenames to use them
 
 Supported Platforms:
 -------------------
@@ -119,6 +99,17 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
+       Simon The Sorcerer:
+                - Music will only function under Windows and MorphOS, currently.
+                - Some minor graphical glitches may be present
+
+       Indy 3 (The Last Crusade):
+                - Music and Sound may not play
+                - In some rooms Indy may be able to walk to odd places
+                - Fighting is slightly unpredicable, use the numpad (with numlock)
+                  or the top row number keys. Fighting is best avoided.
+                - There are some minor graphical glitches
+
        Indy 4 (Fate Of Atlantis):
                 - Keyboard fighting does not work. ScummVM now defaults to
                   using mouse fighting.
@@ -126,7 +117,6 @@ the section on Reporting Bugs.
 
        Sam and Max:
                 - Subgames are not all fully functional.
-
                 - Conroy singing in Bumpusville may work incorrectly. E.g.
                   music will overlap and Conroy will get stuck singing. Just
                   hit escape to skip the cutscene. This is due to SNM using
@@ -144,6 +134,28 @@ the section on Reporting Bugs.
                  plays music from CD, you have encountered a Windows bug.
                  Try copying the data files from CD to your hard disk, and
                  running them from there.
+
+
+Simon the Sorcerer 1 and 2 games note
+--------------------------------------
+
+The Simon the Sorcerer 1 & 2 games were split into six targets to make 
+coding easier and to make it more clear which target should be used:
+simon1dos - Use for Simon the Sorcerer 1 for DOS (Disk)
+simon2dos - Use for Simon the Sorcerer 2 for DOS (Disk)
+simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
+simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
+simon1win - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
+simon2win - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
+
+If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
+then you will find the Windows version in the main directory of CD
+and the DOS Talkie version in the DOS directory of the CD.
+
+The filenames of saved games for Simon the Sorcerer 1 & 2 were changed too:
+Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
+Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
+So if you have any old save games you will need to change their filenames to use them
 
 
 Reporting Bugs:
@@ -252,8 +264,7 @@ file. You can also get the current list of games and game names at:
         http://www.scummvm.org/compatibility.php
 
 For the adventurous, who like to live on the edge... you can download
-daily builds of Win32, Redhat, Debian and other packages here:
-        Daily builds - http://www.scummvm.org/daily/
+daily builds of Win32 from the Download page of the main ScummVM homepage.
 
 
 Command Line Options:
