@@ -1223,9 +1223,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		if (bottom > vs->bdirty[sx])
 			vs->bdirty[sx] = bottom;
 
-		backbuff_ptr = (byte *)vs->pixels + (y * _numStrips + x) * 8;
+		backbuff_ptr = (byte *)vs->pixels + y * vs->pitch + x * 8;
 		if (vs->hasTwoBuffers)
-			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
+			bgbak_ptr = vs->backBuf + y * vs->pitch + x * 8;
 		else
 			bgbak_ptr = backbuff_ptr;
 

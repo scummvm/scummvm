@@ -219,17 +219,17 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	}
 
 	clip.right = bd.srcwidth;
-	if (clip.right > bd.outwidth - bd.x) {
-		clip.right = bd.outwidth - bd.x;
+	if (clip.right > bd.dst.w - bd.x) {
+		clip.right = bd.dst.w - bd.x;
 	}
 
 	clip.bottom = bd.srcheight;
-	if (clip.bottom > bd.outheight - bd.y) {
-		clip.bottom = bd.outheight - bd.y;
+	if (clip.bottom > bd.dst.h - bd.y) {
+		clip.bottom = bd.dst.h - bd.y;
 	}
 
 	src = bd.dataptr;
-	dst = bd.out + bd.y * bd.outwidth + bd.x + clip.left;
+	dst = (byte *)bd.dst.pixels + bd.y * bd.dst.pitch + (bd.x + clip.left);
 
 	const byte maskbit = revBitMask[(bd.x + clip.left) & 7];
 
@@ -319,7 +319,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 		// Advance to the next line
 		pos_y++;
 		mask += gdi._numStrips;
-		dst += bd.outwidth;
+		dst += bd.dst.pitch;
 	}
 }
 

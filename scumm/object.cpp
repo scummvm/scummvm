@@ -1192,7 +1192,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 			searchptr = roomptr;
 		assert(searchptr);
 		ResourceIterator	obcds(searchptr, (_features & GF_SMALL_HEADER) != 0);
-		for (i = 0;;) {
+		for (i = 0; i < numobj; i++) {
 			obcdptr = obcds.findNext(MKID('OBCD'));
 			if (obcdptr == NULL)
 				error("findObjectInRoom: Not enough code blocks in room %d", room);
@@ -1212,15 +1212,15 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 				fo->cdhd = cdhd;
 				break;
 			}
-			if (++i == numobj)
-				error("findObjectInRoom: Object %d not found in room %d", id, room);
 		}
+		if (i == numobj)
+			error("findObjectInRoom: Object %d not found in room %d", id, room);
 	}
 
 	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
 		ResourceIterator	obims(roomptr, (_features & GF_SMALL_HEADER) != 0);
-		for (i = 0;;) {
+		for (i = 0; i < numobj; i++) {
 			obimptr = obims.findNext(MKID('OBIM'));
 			if (obimptr == NULL)
 				error("findObjectInRoom: Not enough image blocks in room %d", room);
@@ -1241,9 +1241,9 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 				fo->imhd = imhd;
 				break;
 			}
-			if (++i == numobj)
-				error("findObjectInRoom: Object %d image not found in room %d", id, room);
 		}
+		if (i == numobj)
+			error("findObjectInRoom: Object %d image not found in room %d", id, room);
 	}
 }
 
@@ -1495,9 +1495,8 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 		bdd.srcheight = READ_LE_UINT16(&((const BompHeader *)bomp)->old.height);
 	}
 	
-	bdd.out = vs->getPixels(0, 0);
-	bdd.outwidth = vs->w;
-	bdd.outheight = vs->h;
+	bdd.dst = *vs;
+	bdd.dst.pixels = vs->getPixels(0, 0);
 	// Skip the bomp header
 	if (_version == 8) {
 		bdd.dataptr = bomp + 8;

@@ -973,9 +973,8 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	bdd.srcwidth = _width;
 	bdd.srcheight = _height;
-	bdd.out = _outptr;
-	bdd.outwidth = _outwidth;
-	bdd.outheight = _outheight;
+	bdd.dst = _vm->virtscr[kMainVirtScreen];
+	bdd.dst.pixels = _outptr;
 	bdd.dataptr = _srcptr;
 	bdd.scale_x = 255;
 	bdd.scale_y = 255;

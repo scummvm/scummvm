@@ -111,7 +111,7 @@ public:
 		_draw_top = _draw_bottom = 0;
 		
 		_vm = scumm;
-		_numStrips = _vm->gdi._numStrips;
+		_numStrips = -1;
 		_srcptr = 0;
 		_xmove = _ymove = 0;
 		_mirror = false;
