@@ -265,16 +265,19 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 				// Increase/decrease the scale factor
 				// TODO: Shall we 'wrap around' here?
-				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
-					factor += (ev.key.keysym.sym == '-' ? -1 : +1);
+				if (ev.key.keysym.sym == SDLK_EQUALS || ev.key.keysym.sym == SDLK_PLUS || ev.key.keysym.sym == SDLK_MINUS ||
+					ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
+					factor += (ev.key.keysym.sym == SDLK_MINUS || ev.key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
 					if (0 <= factor && factor < 4 && s_gfxModeSwitchTable[_scalerType][factor] >= 0) {
 						setGraphicsMode(s_gfxModeSwitchTable[_scalerType][factor]);
 					}
 					break;
 				}
 				
-				if ('1' <= ev.key.keysym.sym && ev.key.keysym.sym <= '9') {
-					_scalerType = ev.key.keysym.sym - '1';
+				const bool isNormalNumber = (SDLK_1 <= ev.key.keysym.sym && ev.key.keysym.sym <= SDLK_9);
+				const bool isKeypadNumber = (SDLK_KP1 <= ev.key.keysym.sym && ev.key.keysym.sym <= SDLK_KP9);
+				if (isNormalNumber || isKeypadNumber) {
+					_scalerType = ev.key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 					if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 						break;
 					
