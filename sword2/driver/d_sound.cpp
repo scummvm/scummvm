@@ -243,6 +243,44 @@ bool MusicHandle::endOfData(void) const {
 }
 
 /**
+ * Retrieve information about an in-memory WAV file.
+ * @param data The WAV data
+ * @param wavInfo Pointer to the WavInfo structure to fill with information.
+ * @return True if the data appears to be a WAV file, otherwise false.
+ */
+
+bool Sound::getWavInfo(uint8 *data, WavInfo *wavInfo) {
+	if (READ_UINT32(data) != MKID('RIFF')) {
+		warning("getWavInfo: No 'RIFF' header");
+		return false;
+	}
+
+	if (READ_UINT32(data + 8) != MKID('WAVE')) {
+		warning("getWavInfo: No 'WAVE' header");
+		return false;
+	}
+
+	if (READ_UINT32(data + 12) != MKID('fmt ')) {
+		warning("getWavInfo: No 'fmt' header");
+		return false;
+	}
+
+	wavInfo->channels = READ_LE_UINT16(data + 22);
+	wavInfo->rate = READ_LE_UINT16(data + 24);
+
+	data += READ_LE_UINT32(data + 16) + 20;
+
+	if (READ_UINT32(data) != MKID('data')) {
+		warning("getWavInfo: No 'data' header");
+		return false;
+	}
+
+	wavInfo->samples = READ_LE_UINT32(data + 4);
+	wavInfo->data = data + 8;
+	return true;
+}
+
+/**
  * Mutes/Unmutes the music.
  * @param mute If mute is false, restore the volume to the last set master
  * level. Otherwise the music is muted (volume 0).
@@ -1026,32 +1064,26 @@ int32 Sound::openFx(int32 id, uint8 *data) {
 		}
 	}
 
-	if (READ_UINT32(data) != MKID('RIFF') || READ_UINT32(data + 8) != MKID('WAVE') || READ_UINT32(data + 12) != MKID('fmt ')) {
-		warning("openFx: Not a valid WAV file");
-		return RDERR_INVALIDWAV;
-	}
-
 	_fx[fxi]._id = id;
 	_fx[fxi]._flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
 
-	if (READ_LE_UINT16(data + 22) == 2)
-		_fx[fxi]._flags |= SoundMixer::FLAG_STEREO;
+	WavInfo wavInfo;
 
-	_fx[fxi]._rate = READ_LE_UINT16(data + 24);
-
-	data += READ_LE_UINT32(data + 16) + 20;
-
-	if (READ_UINT32(data) != MKID('data')) {
-		warning("openFx: WAV file has no 'data' chunk");
+	if (!getWavInfo(data, &wavInfo)) {
+		warning("openFx: Not a valida WAV file");
 		return RDERR_INVALIDWAV;
 	}
 
-	_fx[fxi]._bufSize = READ_LE_UINT32(data + 4);
+	if (wavInfo.channels == 2)
+		_fx[fxi]._flags |= SoundMixer::FLAG_STEREO;
+
+	_fx[fxi]._rate = wavInfo.rate;
+	_fx[fxi]._bufSize = wavInfo.samples;
 
 	// Fill the speech buffer with data
 	free(_fx[fxi]._buf);
 	_fx[fxi]._buf = (uint16 *) malloc(_fx[fxi]._bufSize);
-	memcpy(_fx[fxi]._buf, data + 8, _fx[fxi]._bufSize);
+	memcpy(_fx[fxi]._buf, wavInfo.data, _fx[fxi]._bufSize);
 
 	return RD_OK;
 }

@@ -33,6 +33,13 @@ namespace Sword2 {
 
 extern void sword2_sound_handler(void *refCon);
 
+struct WavInfo {
+	uint8 channels;
+	uint16 rate;
+	uint32 samples;
+	uint8 *data;
+};
+
 struct FxHandle {
 	int32 _id;
 	bool _paused;
@@ -112,6 +119,8 @@ public:
 
 	void fxServer(int16 *data, uint len);
 	void buildPanTable(bool reverse);
+
+	bool getWavInfo(uint8 *data, WavInfo *wavInfo);
 
 	void muteMusic(bool mute);
 	bool isMusicMute(void);
