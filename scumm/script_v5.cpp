@@ -1897,7 +1897,7 @@ void Scumm_v5::o5_setObjectName() {
 			work[i++] = fetchScriptByte();
 		}
 	}
-	work[i] = 0;
+	work[i++] = 0;
 
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
@@ -1921,7 +1921,10 @@ void Scumm_v5::o5_setObjectName() {
 
 		if (_features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
+		else if (_version == 3)
+			offset = *(objptr + 18);
 		else
+			// FIXME: is this really correct?
 			offset = READ_LE_UINT16(objptr + 18);
 
 		size = READ_LE_UINT16(objptr) - offset;
@@ -1978,12 +1981,13 @@ void Scumm_v5::o5_setObjectName() {
 		return;		// Silently bail out
 	
 
-	if (i >= size) {
-		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
-		i = size - 1;
+	if (i > size) {
+		warning("New name of object %d too long: old 's' (%d), new '%s' (%d))",
+				obj, name, i, work, size);
+		i = size;
 	}
 
-	memcpy(name, work, i+1);
+	memcpy(name, work, i);
 	runInventoryScript(0);
 }
 
