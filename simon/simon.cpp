@@ -20,13 +20,19 @@
  */
 
 #include "stdafx.h"
+
+#include "base/gameDetector.h"
+#include "base/plugins.h"
+
+#include "common/config-file.h"
+#include "common/file.h"
+
 #include "simon/simon.h"
 #include "simon/intern.h"
 #include "simon/vga.h"
+
 #include "sound/mididrv.h"
-#include "common/config-file.h"
-#include "common/file.h"
-#include "base/gameDetector.h"
+
 #include <errno.h>
 #include <time.h>
 
@@ -58,6 +64,12 @@ static const TargetSettings simon_settings[] = {
 const TargetSettings *Engine_SIMON_targetList() {
 	return simon_settings;
 }
+
+Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
+	return new SimonEngine(detector, syst);
+}
+
+REGISTER_PLUGIN("Simon the Sorcerer", Engine_SIMON_targetList, Engine_SIMON_create);
 
 static const GameSpecificSettings simon1_settings = {
 	1,										// VGA_DELAY_BASE
@@ -167,10 +179,6 @@ static const GameSpecificSettings simon2dos_settings = {
 	"GAME32",									// gamepc_filename
 };
 
-
-Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	return new SimonEngine(detector, syst);
-}
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {

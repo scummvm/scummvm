@@ -23,7 +23,18 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "base/engine.h"
+#include "common/util.h"
 
+
+#ifdef DYNAMIC_MODULES
+
+#ifdef UNIX
+#include <dlfcn.h>
+#else
+#error No support for loading plugins on non-unix systems at this point!
+#endif
+
+#else
 
 // Factory functions => no need to include the specific classes
 // in this header. This serves two purposes:
@@ -47,6 +58,8 @@ extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
 #ifndef DISABLE_SWORD2
 extern const TargetSettings *Engine_SWORD2_targetList();
 extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
+#endif
+
 #endif
 
 
@@ -96,7 +109,6 @@ public:
 	}
 
 	const char *getName() const					{ return _name; }
-	int getVersion() const						{ return 0; }
 
 	int countTargets() const					{ return _targetCount; }
 	const TargetSettings *getTargets() const	{ return _targets; }
@@ -110,6 +122,98 @@ public:
 #pragma mark -
 
 
+#ifdef DYNAMIC_MODULES
+
+class DynamicPlugin : public Plugin {
+	void *_dlHandle;
+	ScummVM::String _filename;
+
+	ScummVM::String _name;
+	const TargetSettings *_targets;
+	int _targetCount;
+	EngineFactory _ef;
+	
+	void *findSymbol(const char *symbol);
+
+public:
+	DynamicPlugin(const char *filename)
+		: _dlHandle(0), _filename(filename), _targets(0), _targetCount(0), _ef(0) {}
+	
+	const char *getName() const					{ return _name.c_str(); }
+
+	int countTargets() const					{ return _targetCount; }
+	const TargetSettings *getTargets() const	{ return _targets; }
+
+	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
+		assert(_ef);
+		return (*_ef)(detector, syst);
+	}
+
+	bool loadPlugin();
+	void unloadPlugin();
+};
+
+void *DynamicPlugin::findSymbol(const char *symbol) {
+#ifdef UNIX
+	void *func = dlsym(_dlHandle, symbol);
+	if (!func)
+		warning("Failed loading symbold '%s' from plugin '%s' (%s)\n", symbol, _filename.c_str(), dlerror());
+	return func;
+#else
+#error TODO
+#endif
+}
+
+typedef const char *(*NameFunc)();
+typedef const TargetSettings *(*TargetListFunc)();
+
+bool DynamicPlugin::loadPlugin() {
+	assert(!_dlHandle);
+	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
+	
+	if (!_dlHandle) {
+		warning("Failed loading plugin '%s' (%s)\n", _filename.c_str(), dlerror());
+		return false;
+	}
+	
+	// Query the plugin's name
+	NameFunc nameFunc = (NameFunc)findSymbol("PLUGIN_name");
+	if (!nameFunc) {
+		unloadPlugin();
+		return false;
+	}
+	_name = nameFunc();
+	
+	// Query the plugin for the targets it supports
+	TargetListFunc targetListFunc = (TargetListFunc)findSymbol("PLUGIN_getTargetList");
+	if (!targetListFunc) {
+		unloadPlugin();
+		return false;
+	}
+	_targets = targetListFunc();
+	
+	// Finally, retrieve the factory function
+	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
+	if (!_ef) {
+		unloadPlugin();
+		return false;
+	}
+	
+	return true;
+}
+
+void DynamicPlugin::unloadPlugin() {
+	if (_dlHandle) {
+		if (dlclose(_dlHandle) != 0)
+			warning("Failed unloading plugin '%s' (%s)\n", _filename.c_str(), dlerror());
+	}
+}
+
+#endif	// DYNAMIC_MODULES
+
+#pragma mark -
+
+
 PluginManager::PluginManager() {
 }
 
@@ -119,20 +223,41 @@ PluginManager::~PluginManager() {
 }
 
 void PluginManager::loadPlugins() {
-#ifndef DISABLE_SCUMM
-	_plugins.push_back(new StaticPlugin("scumm", Engine_SCUMM_targetList(), Engine_SCUMM_create));
-#endif
-
-#ifndef DISABLE_SIMON
-	_plugins.push_back(new StaticPlugin("simon", Engine_SIMON_targetList(), Engine_SIMON_create));
-#endif
-
-#ifndef DISABLE_SKY
-	_plugins.push_back(new StaticPlugin("sky", Engine_SKY_targetList(), Engine_SKY_create));
-#endif
-
-#ifndef DISABLE_SWORD2
-	_plugins.push_back(new StaticPlugin("sword2", Engine_SWORD2_targetList(), Engine_SWORD2_create));
+#ifndef DYNAMIC_MODULES
+	// "Load" the static plugins
+	#ifndef DISABLE_SCUMM
+		tryLoadPlugin(new StaticPlugin("scumm", Engine_SCUMM_targetList(), Engine_SCUMM_create));
+	#endif
+	
+	#ifndef DISABLE_SIMON
+		tryLoadPlugin(new StaticPlugin("simon", Engine_SIMON_targetList(), Engine_SIMON_create));
+	#endif
+	
+	#ifndef DISABLE_SKY
+		tryLoadPlugin(new StaticPlugin("sky", Engine_SKY_targetList(), Engine_SKY_create));
+	#endif
+	
+	#ifndef DISABLE_SWORD2
+		tryLoadPlugin(new StaticPlugin("sword2", Engine_SWORD2_targetList(), Engine_SWORD2_create));
+	#endif
+#else
+	// Load dynamic plugins
+	// TODO... this is right now just a nasty hack. 
+	#ifndef DISABLE_SCUMM
+		tryLoadPlugin(new DynamicPlugin("scumm/libscumm.so"));
+	#endif
+	
+	#ifndef DISABLE_SIMON
+		tryLoadPlugin(new DynamicPlugin("simon/libsimon.so"));
+	#endif
+	
+	#ifndef DISABLE_SKY
+		tryLoadPlugin(new DynamicPlugin("sky/libsky.so"));
+	#endif
+	
+	#ifndef DISABLE_SWORD2
+		tryLoadPlugin(new DynamicPlugin("bs2/libbs2.so"));
+	#endif
 #endif
 }
 
@@ -144,3 +269,18 @@ void PluginManager::unloadPlugins() {
 	}
 	_plugins.clear();
 }
+
+bool PluginManager::tryLoadPlugin(Plugin *plugin) {
+	assert(plugin);
+	// Try to load the plugin
+	if (plugin->loadPlugin()) {
+		// If succesful, add it to the list of known plugins and return.
+		_plugins.push_back(plugin);
+		return true;
+	} else {
+		// Failed to load the plugin
+		delete plugin;
+		return false;
+	}
+}
+

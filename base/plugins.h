@@ -37,11 +37,13 @@ struct TargetSettings;
  */
 class Plugin {
 public:
-	virtual void loadPlugin()		{}
+	virtual ~Plugin()				{}
+
+	virtual bool loadPlugin()		{ return true; }
 	virtual void unloadPlugin()		{}
 
 	virtual const char *getName() const = 0;
-	virtual int getVersion() const = 0;
+	virtual int getVersion() const	{ return 0; }	// TODO!
 	
 	virtual int countTargets() const;
 	virtual const TargetSettings *getTargets() const = 0;
@@ -49,6 +51,27 @@ public:
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };
+
+
+/**
+ * The REGISTER_PLUGIN is a convenience macro meant to ease writing
+ * the plugin interface for our modules. In particular, using it
+ * makes it possible to compile the very same code in a module
+ * both as a static and a dynamic plugin.
+ *
+ * @todo	add some means to query the plugin API version etc.
+ * @todo	on Windows, we might need __declspec(dllexport) ?
+ */
+#ifndef DYNAMIC_MODULES
+#define REGISTER_PLUGIN(name,targetListFactory,engineFactory)
+#else
+#define REGISTER_PLUGIN(name,targetListFactory,engineFactory) \
+	extern "C" { \
+		const char *PLUGIN_name() { return name; } \
+		const TargetSettings *PLUGIN_getTargetList() { return targetListFactory(); } \
+		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
+	}
+#endif
 
 
 /** List of plugins. */
@@ -64,6 +87,8 @@ typedef ScummVM::List<Plugin *> PluginList;
 class PluginManager {
 protected:
 	PluginList _plugins;
+	
+	bool tryLoadPlugin(Plugin *plugin);
 	
 public:
 	PluginManager();

@@ -22,8 +22,10 @@
 
 #include "stdafx.h"
 
-#include "common/config-file.h"
 #include "base/gameDetector.h"
+#include "base/plugins.h"
+
+#include "common/config-file.h"
 
 #include "gui/console.h"
 #include "gui/message.h"
@@ -293,6 +295,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	return engine;
 }
+
+REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_targetList, Engine_SCUMM_create);
 
 Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {

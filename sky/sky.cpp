@@ -20,14 +20,19 @@
  */
 
 #include "stdafx.h"
+
+#include "base/gameDetector.h"
+#include "base/plugins.h"
+
+#include "common/file.h"
+
 #include "sky/sky.h"
 #include "sky/skydefs.h" //game specific defines
 #include "sky/compact.h"
 #include "sky/logic.h"
 #include "sky/debug.h"
 #include "sky/mouse.h"
-#include "base/gameDetector.h"
-#include "common/file.h"
+
 #include <errno.h>
 #include <time.h>
 
@@ -72,6 +77,8 @@ const TargetSettings *Engine_SKY_targetList() {
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 	return new SkyState(detector, syst);
 }
+
+REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_targetList, Engine_SKY_create);
 
 void **SkyState::_itemList[300];
 

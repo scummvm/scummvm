@@ -41,10 +41,10 @@ PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 
 ifdef BUILD_PLUGINS
-# FIXME/TODO: The following is OS X specific (and the '-m' is an evil hack
-# to work around the conflict between our operators new/delete and the
-# ones provided by libstdc++.a)
-LDFLAGS += -all_load -m
+# FIXME/TODO: The following is OS X specific
+LDFLAGS += -all_load
+CXXFLAGS += -DDYNAMIC_MODULES
+LIBS += -ldl
 endif
 
 ######################################################################

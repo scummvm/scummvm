@@ -19,31 +19,35 @@
 
 //------------------------------------------------------------------------------------
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "driver/palette.h"
+
 #include "base/gameDetector.h"
+#include "base/plugins.h"
+
 #include "common/config-file.h"
-#include "build_display.h"
-#include "console.h"
-#include "controls.h"
-#include "debug.h"
-#include "events.h"
-#include "header.h"
-#include "interpreter.h"
-#include "layers.h"
-#include "logic.h"
-#include "maketext.h"
-#include "memory.h"
-#include "mouse.h"
-#include "protocol.h"
-#include "resman.h"
-#include "scroll.h"
-#include "sound.h"
-#include "speech.h"
-#include "startup.h"
-#include "sword2.h"
-#include "sync.h"
-#include "save_rest.h"
+
+#include "bs2/build_display.h"
+#include "bs2/console.h"
+#include "bs2/controls.h"
+#include "bs2/debug.h"
+#include "bs2/events.h"
+#include "bs2/header.h"
+#include "bs2/interpreter.h"
+#include "bs2/layers.h"
+#include "bs2/logic.h"
+#include "bs2/maketext.h"
+#include "bs2/memory.h"
+#include "bs2/mouse.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/save_rest.h"
+#include "bs2/scroll.h"
+#include "bs2/sound.h"
+#include "bs2/speech.h"
+#include "bs2/startup.h"
+#include "bs2/sword2.h"
+#include "bs2/sync.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/palette.h"
 
 #define MAX_PATH 260
 
@@ -96,6 +100,8 @@ const TargetSettings *Engine_SWORD2_targetList() {
 Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
 	return new Sword2State(detector, syst);
 }
+
+REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_targetList, Engine_SWORD2_create);
 
 Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
