@@ -763,6 +763,12 @@ int Scene::processSceneResources() {
 			debug(0, "Loading palette animation resource.");
 			_vm->_palanim->loadPalAnim(_resList[i].res_data, _resList[i].res_data_len);
 			break;
+		case SAGA_ENTRY:
+			warning("Scene::ProcessSceneResources(): Loading scene entries is not implemented");
+			break;
+		case SAGA_FACES:
+			warning("Scene::ProcessSceneResources(): Loading scene faces is not implemented");
+			break;
 		default:
 			warning("Scene::ProcessSceneResources(): Encountered unknown resource type: %d", _resList[i].res_type);
 			break;
@@ -972,7 +978,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			_vm->_events->queue(&event);
 		} else
 			_vm->_music->stop();
-
+		//break; //HACK to disable faery script
 		if (_desc.sceneScriptNum > 0) {
 			R_SCRIPT_THREAD *_sceneScriptThread;
 

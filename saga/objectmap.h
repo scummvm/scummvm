@@ -29,6 +29,7 @@
 namespace Saga {
 
 enum R_OBJECT_FLAGS {
+	R_OBJECT_EXIT = 0x01,
 	R_OBJECT_NORMAL = 0x02
 };
 
@@ -38,8 +39,8 @@ struct R_CLICKAREA {
 };
 
 struct R_OBJECTMAP_ENTRY {
-	int unknown0;
-	uint16 flags;
+	byte flags;
+	byte defaultVerb;
 
 	int object_num;
 	int script_num;
@@ -59,9 +60,9 @@ public:
 	int freeMem(void);
 	int loadNames(const byte *onl_res, size_t onl_res_len);
 	int freeNames();
-	int getName(int object, const char **name);
-	int getFlags(int object, uint16 *flags);
-	int getEPNum(int object, int *ep_num);
+	const char *getName(int object);
+	const uint16 getFlags(int object);
+	const int getEPNum(int object);
 	int draw(R_SURFACE *draw_surface, Point *imouse_pt, int color, int color2);
 	int hitTest(Point *imouse_pt, int *object_num);
 	void objectInfo(int argc, char *argv[]);

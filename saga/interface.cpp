@@ -32,6 +32,7 @@
 #include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/rscfile_mod.h"
+#include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sprite.h"
 
@@ -492,13 +493,10 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
-		_vm->_console->print("Invalid object number: %d\n", object_num);
-		return R_FAILURE;
-	}
+	object_flags = _vm->_objectMap->getFlags(object_num);
 
 	if (object_flags & R_OBJECT_NORMAL) {
-		if (_vm->_objectMap->getEPNum(object_num, &script_num) == R_SUCCESS) {
+		if ((script_num = _vm->_objectMap->getEPNum(object_num)) != -1) {
 			// Set active verb in script module
 			_vm->_sdata->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
 
@@ -535,12 +533,9 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
-		_vm->_console->print("Invalid object number: %d\n", object_num);
-		return R_FAILURE;
-	}
+	object_flags = _vm->_objectMap->getFlags(object_num);
 
-	_vm->_objectMap->getName(object_num, &object_name);
+	object_name = _vm->_objectMap->getName(object_num);
 
 	if (object_flags & R_OBJECT_NORMAL) {
 		// Normal scene object - display as subject of verb

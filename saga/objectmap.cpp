@@ -39,7 +39,7 @@ namespace Saga {
 static void CF_object_info(int argc, char *argv[], void *refCon);
 
 int ObjectMap::reg() {
-	CVAR_RegisterFunc(CF_object_info, "object_info", NULL, R_CVAR_NONE, 0, 0, NULL);
+	CVAR_RegisterFunc(CF_object_info, "object_info", NULL, R_CVAR_NONE, 0, 0, this);
 
 	return R_SUCCESS;
 }
@@ -60,7 +60,7 @@ ObjectMap::~ObjectMap() {
 	freeMem();
 	freeNames();
 
-	debug(0, "ObjectMap Module: Shutdown AOK.");
+	debug(0, "ObjectMap Module: Shutdown OK.");
 
 	_initialized = 0;
 }
@@ -97,9 +97,10 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 	// Load all N objects
 	for (i = 0; i < _n_objects; i++) {
 		object_map = &_object_maps[i];
-		object_map->unknown0 = readS.readByte();
+		object_map->flags = readS.readByte();
 		object_map->n_clickareas = readS.readByte();
-		object_map->flags = readS.readUint16LE();
+		object_map->defaultVerb = readS.readByte();
+		readS.readByte();
 		object_map->object_num = readS.readUint16LE();
 		object_map->script_num = readS.readUint16LE();
 		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->n_clickareas * sizeof *(object_map->clickareas));
@@ -223,66 +224,45 @@ int ObjectMap::freeNames() {
 // name list resource, the funciton sets '*name' to the descriptive string
 // corresponding to 'object' and returns R_SUCCESS. Otherwise it returns
 // R_FAILURE.
-int ObjectMap::getName(int object, const char **name) {
-	if (!_names_loaded) {
-		return R_FAILURE;
-	}
+const char *ObjectMap::getName(int object) {
+	assert(_names_loaded);
+	assert((object > 0) && (object <= _n_names));
 
-	if ((object <= 0) || (object > _n_names)) {
-		return R_FAILURE;
-	}
-
-	*name = _names[object - 1];
-
-	return R_SUCCESS;
+	return _names[object - 1];
 }
 
-int ObjectMap::getFlags(int object, uint16 *flags) {
+const uint16 ObjectMap::getFlags(int object) {
 	int i;
 
-	if (!_names_loaded) {
-		return R_FAILURE;
-	}
-
-	if ((object <= 0) || (object > _n_names)) {
-		return R_FAILURE;
-	}
+	assert(_names_loaded);
+	assert((object > 0) && (object <= _n_names));
 
 	for (i = 0; i < _n_objects; i++) {
 		if (_object_maps[i].object_num == object) {
-			*flags = _object_maps[i].flags;
-			return R_SUCCESS;
+			return _object_maps[i].flags;
 		}
 	}
 
-	return R_FAILURE;
+	return 0;
 }
 
 // If 'object' is a valid object number in the currently loaded object 
 // name list resource, the funciton sets '*ep_num' to the entrypoint number
 // corresponding to 'object' and returns R_SUCCESS. Otherwise, it returns
 // R_FAILURE.
-int ObjectMap::getEPNum(int object, int *ep_num) {
+const int ObjectMap::getEPNum(int object) {
 	int i;
 
-	if (!_names_loaded) {
-		return R_FAILURE;
-	}
+	assert(_names_loaded);
 
-	if ((object < 0) || (object > (_n_objects + 1))) {
-		return R_FAILURE;
-	}
+	if ((object < 0) || (object > (_n_objects + 1)))
+		return -1;
 
-	for (i = 0; i < _n_objects; i++) {
+	for (i = 0; i < _n_objects; i++)
+		if (_object_maps[i].object_num == object)
+			return _object_maps[i].script_num;
 
-		if (_object_maps[i].object_num == object) {
-
-			*ep_num = _object_maps[i].script_num;
-			return R_SUCCESS;
-		}
-	}
-
-	return R_FAILURE;
+	return -1;
 }
 
 // Uses Gfx::drawLine to display all clickareas for each object in the 
@@ -317,9 +297,9 @@ int ObjectMap::draw(R_SURFACE *ds, Point *imouse_pt, int color, int color2) {
 	for (i = 0; i < _n_objects; i++) {
 		draw_color = color;
 		if (hit_object && (object_num == _object_maps[i].object_num)) {
-			snprintf(txt_buf, sizeof txt_buf, "obj %d: ? %d, f %X",
+			snprintf(txt_buf, sizeof txt_buf, "obj %d: v %d, f %X",
 					_object_maps[i].object_num,
-					_object_maps[i].unknown0,
+					_object_maps[i].defaultVerb,
 					_object_maps[i].flags);
 			draw_txt = 1;
 			draw_color = color2;
@@ -434,7 +414,8 @@ void ObjectMap::objectInfo(int argc, char *argv[]) {
 
 	for (i = 0; i < _n_objects; i++) {
 		_vm->_console->print("%s:", _names[i]);
-		_vm->_console->print("%d. Unk1: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, _object_maps[i].unknown0,
+		_vm->_console->print("%d. verb: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, 
+					_object_maps[i].defaultVerb,
 					_object_maps[i].flags,
 					_object_maps[i].object_num,
 					_object_maps[i].script_num,
