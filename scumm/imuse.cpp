@@ -4866,6 +4866,11 @@ void IMuseDigital::handler() {
 				continue;
 			}
 
+			if (_channel[l]._delay > 0) {
+				_channel[l]._delay--;
+				continue;
+			}
+
 			if (_channel[l]._volumeFade != -1) {
 				if (_channel[l]._volumeFadeStep < 0) {
 					if (_channel[l]._volume > _channel[l]._volumeFade) {
@@ -4991,6 +4996,7 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._volume = 127;
 			_channel[l]._volumeFade = -1;
 			_channel[l]._volumeFadeParam = 0;
+			_channel[l]._delay = 1;
 
 			uint32 tag, size = 0, r, t;
 

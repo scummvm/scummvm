@@ -85,6 +85,7 @@ private:
 		int8 _volumeFade;
 		int8 _volumeFadeParam;
 		int8 _volumeFadeStep;
+		uint32 _delay;
 		bool _isJump;
 		uint32 _numLoops;
 		uint32 _offsetStop;
