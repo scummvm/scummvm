@@ -57,6 +57,7 @@ Sound::Sound(ScummEngine *parent) {
 }
 
 Sound::~Sound() {
+	stopCDTimer();
 	delete _sfxFile;
 }
 
