@@ -61,7 +61,7 @@ static const char USAGE_STRING[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
-	"  -n, --nosubtitles        Disable subtitles (use with games that have voice)\n"
+	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
@@ -157,7 +157,8 @@ GameDetector::GameDetector() {
 //	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
-	ConfMan.registerDefault("nosubtitles", false);
+//	ConfMan.registerDefault("nosubtitles", false);
+	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("save_slot", -1);
 
@@ -362,8 +363,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("music_volume", (int)strtol(option, 0, 10), kTransientDomain);
 			END_OPTION
 
-			DO_OPTION_BOOL('n', "nosubtitles")
-				ConfMan.set("nosubtitles", cmdValue, kTransientDomain);
+			DO_OPTION_BOOL('n', "subtitles")
+				ConfMan.set("subtitles", cmdValue, kTransientDomain);
 			END_OPTION
 
 			DO_OPTION('o', "master-volume")

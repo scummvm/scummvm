@@ -624,7 +624,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
 	_demoMode = ConfMan.getBool("demo_mode");
-	_noSubtitles = ConfMan.getBool("nosubtitles");
+	_noSubtitles = ConfMan.getBool("subtitles");
+	_noSubtitles ^=1;
 	_confirmExit = ConfMan.getBool("confirm_exit");
 	_defaultTalkDelay = ConfMan.getInt("talkspeed");
 	_native_mt32 = ConfMan.getBool("native_mt32");

@@ -328,7 +328,7 @@ arguments - see the next section.
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
-  -n, --nosubtitles        Disable subtitles (use with games that have voice)
+  -n, --subtitles          Enable subtitles (use with games that have voice)
   -b, --boot-param=NUM     Pass number to the boot script (boot param)
   -d, --debuglevel=NUM     Set debug verbosity level
   -u, --dump-scripts       Enable script dumping if a directory called 'dumps'
@@ -776,7 +776,7 @@ An example config file looks as follows:
 
         [tentacle]
         path=C:\tentacle\
-        nosubtitles=true
+        subtitles=true
         master_volume=98
         music_volume=40
         sfx_volume=255
@@ -812,7 +812,7 @@ The following keywords are recognized:
 
         language        string   Specify language (en, de, fr, it, pt, es, jp,
                                  zh, kr,se, gb, hb)
-        nosubtitles     bool     Set to true to suppress subtitles.
+        subtitles       bool     Set to true to enable subtitles.
         talkspeed       number   Text speed (default: 60)
 
         fullscreen      bool     Fullscreen mode

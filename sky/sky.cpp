@@ -269,10 +269,9 @@ void SkyEngine::initialise(void) {
 	}
 
 	if (isCDVersion()) {
-		if (ConfMan.getBool("nosubtitles"))
-			_systemVars.systemFlags |= SF_ALLOW_SPEECH;
-		else
-			_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
+		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+		if (ConfMan.getBool("subtitles"))
+			_systemVars.systemFlags |= SF_ALLOW_TEXT;
 	} else
 		_systemVars.systemFlags |= SF_ALLOW_TEXT;
 

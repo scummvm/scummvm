@@ -498,7 +498,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
-	_noSubtitles = ConfMan.getBool("nosubtitles");
+	_subtitles = ConfMan.getBool("subtitles");
 
 	_system->init_size(320, 200);
 
@@ -4702,13 +4702,11 @@ void SimonEngine::go() {
 
 	if (_game & GF_TALKIE) {
 		_speech = true;
-		if ((_game & GF_SIMON2) || _language >= 2) {
-			if (_noSubtitles)
-				_subtitles = false;
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		} else {
+		if (!(_game & GF_SIMON2) || _language < 2) 
 			_subtitles = false;
-		}
+	} else {
+		_subtitles = true;
 	}
 
 	if (_language == 4 || (_language > 5 && _language < 20))
