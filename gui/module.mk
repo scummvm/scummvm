@@ -1,6 +1,7 @@
 MODULE := gui
 
 MODULE_OBJS = \
+	gui/about.o \
 	gui/browser.o \
 	gui/chooser.o \
 	gui/console.o \

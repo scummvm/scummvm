@@ -22,6 +22,7 @@
 #define SCUMM_DIALOGS_H
 
 #include "common/str.h"
+#include "gui/about.h"
 #include "gui/dialog.h"
 
 #ifndef DISABLE_HELP
@@ -77,11 +78,6 @@ protected:
 	void load();
 	void switchToSaveMode();
 	void switchToLoadMode();
-};
-
-class AboutDialog : public ScummDialog {
-public:
-	AboutDialog(NewGui *gui, Scumm *scumm);
 };
 
 #ifndef DISABLE_HELP
