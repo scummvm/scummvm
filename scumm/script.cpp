@@ -212,7 +212,8 @@ void ScummEngine::stopScript(int script) {
 		if (script == ss->number && ss->status != ssDead &&
 			(ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL)) {
 			if (ss->cutsceneOverride)
-				error("Script %d stopped with active cutscene/override", script);
+				if (_version >= 5)
+					error("Script %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
 			nukeArrays(script);
@@ -251,7 +252,8 @@ void ScummEngine::stopObjectScript(int script) {
 		if (script == ss->number && ss->status != ssDead &&
 		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
-				error("Object %d stopped with active cutscene/override", script);
+				if (_version >= 5)
+					error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
 			nukeArrays(script);
@@ -681,14 +683,14 @@ void ScummEngine::stopObjectCode() {
 
 	if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
 		if (ss->cutsceneOverride) {
-			// Earlier games only checked global scripts at this point
 			if (_version >= 5)
 				warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	} else {
 		if (ss->cutsceneOverride) {
-			warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
+			if (_version >= 5)
+				warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	}
@@ -846,16 +848,17 @@ void ScummEngine::killScriptsAndResources() {
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
-			if (ss->cutsceneOverride != 0) {
-				warning("Object %d stopped with active cutscene/override in exit", ss->number);
+			if (ss->cutsceneOverride) {
+				if (_version >= 5)
+					warning("Object %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
 			nukeArrays(i);
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
-			// Earlier games only checked global scripts at this point
-			if (ss->cutsceneOverride != 0 && _version >= 5) {
-				warning("Script %d stopped with active cutscene/override in exit", ss->number);
+			if (ss->cutsceneOverride) {
+				if ( _version >= 5)
+					warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
 			nukeArrays(i);
