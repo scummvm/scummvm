@@ -185,14 +185,6 @@ int SYSIO_Init(void);
 int SYSIO_Shutdown(void);
 
 /*
- * System : Filesystem
-\*--------------------------------------------------------------------------*/
-
-int SYSFS_GetFileLen(FILE * file_p, ulong * len);
-int SYSFS_GetFQFN(const char *f_dir,
-    const char *f_name, char *buf, size_t buf_len);
-
-/*
  * System : Sound
 \*--------------------------------------------------------------------------*/
 int SYSSOUND_Init(int enabled);
@@ -264,22 +256,6 @@ int SYSGFX_GetCurrentPal(PALENTRY * src_pal);
 int SYSGFX_PalToBlack(R_SURFACE * surface, PALENTRY * src_pal, double percent);
 
 int SYSGFX_BlackToPal(R_SURFACE * surface, PALENTRY * src_pal, double percent);
-
-/*
- * System : Timer 
-\*--------------------------------------------------------------------------*/
-typedef struct R_SYSTIMER_tag R_SYSTIMER;
-
-typedef void (*R_SYSTIMER_CALLBACK) (unsigned long, void *);
-
-int SYSTIMER_InitMSCounter(void);
-unsigned long SYSTIMER_ReadMSCounter(void);
-
-int SYSTIMER_ResetMSCounter(void);
-int SYSTIMER_Sleep(uint msec);
-int SYSTIMER_CreateTimer(R_SYSTIMER **,
-    unsigned long, void *, R_SYSTIMER_CALLBACK);
-int SYSTIMER_DestroyTimer(R_SYSTIMER *);
 
 /*
  * System : Input 

@@ -25,29 +25,19 @@
 
 namespace Saga {
 
-struct R_SYSTIMER_DATA {
+typedef void (*R_SYSTIMER_CALLBACK) (unsigned long, void *);
 
-	int initialized;
+struct R_SYSTIMER;
 
-	Uint32 t_start_ticks;
+int SYSTIMER_InitMSCounter(void);
+unsigned long SYSTIMER_ReadMSCounter(void);
 
-	Uint32 t_current_ticks;
-	Uint32 t_previous_ticks;
+int SYSTIMER_ResetMSCounter(void);
+int SYSTIMER_Sleep(uint msec);
+int SYSTIMER_CreateTimer(R_SYSTIMER **,
+    unsigned long, void *, R_SYSTIMER_CALLBACK);
+int SYSTIMER_DestroyTimer(R_SYSTIMER *);
 
-};
-
-struct R_SYSTIMER_tag {
-
-	int t_running;
-
-	unsigned long t_interval;
-	void *t_param;
-
-	R_SYSTIMER_CALLBACK t_callback_f;
-	SDL_TimerID t_sdl_timerid;
-};
-
-Uint32         SYSTIMER_Callback(Uint32 interval, void *param);
 
 } // End of namespace Saga
 

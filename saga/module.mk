@@ -47,8 +47,7 @@ MODULE_OBJS = \
 	saga/systimer.o \
 	saga/sysmusic.o \
 	saga/syssound.o \
-	saga/sysio.o \
-	saga/sys_fs.o
+	saga/sysio.o
 
 MODULE_DIRS += \
 	saga

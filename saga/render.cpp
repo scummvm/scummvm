@@ -30,6 +30,8 @@
 
 #include "reinherit.h"
 
+#include "systimer.h"
+
 #include "yslib.h"
 
 #include <SDL.h>

@@ -34,6 +34,8 @@
 
 #include "reinherit.h"
 
+#include "systimer.h"
+
 #include "rscfile_mod.h"
 #include "render_mod.h"
 #include "actor_mod.h"
