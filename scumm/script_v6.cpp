@@ -268,10 +268,10 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_delayMinutes),
 		OPCODE(o6_stopSentence),
 		/* B4 */
-		OPCODE(o6_print_0),
-		OPCODE(o6_print_1),
-		OPCODE(o6_print_2),
-		OPCODE(o6_print_3),
+		OPCODE(o6_printLine),
+		OPCODE(o6_printCursor),
+		OPCODE(o6_printDebug),
+		OPCODE(o6_printSystem),
 		/* B8 */
 		OPCODE(o6_printActor),
 		OPCODE(o6_printEgo),
@@ -2259,23 +2259,23 @@ void Scumm_v6::o6_stopSentence()
 	clearClickedStatus();
 }
 
-void Scumm_v6::o6_print_0()
+void Scumm_v6::o6_printLine()
 {
 	_actorToPrintStrFor = 0xFF;
 	decodeParseString(0, 0);
 }
 
-void Scumm_v6::o6_print_1()
+void Scumm_v6::o6_printCursor()
 {
 	decodeParseString(1, 0);
 }
 
-void Scumm_v6::o6_print_2()
+void Scumm_v6::o6_printDebug()
 {
 	decodeParseString(2, 0);
 }
 
-void Scumm_v6::o6_print_3()
+void Scumm_v6::o6_printSystem()
 {
 	decodeParseString(3, 0);
 }

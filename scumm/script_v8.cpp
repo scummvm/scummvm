@@ -223,11 +223,11 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_printEgo),
 		OPCODE(o6_talkActor),
 		OPCODE(o6_talkEgo),
-		OPCODE(o8_printLine),
+		OPCODE(o6_printLine),
 		/* 94 */
-		OPCODE(o8_printCursor),
-		OPCODE(o8_printDebug),
-		OPCODE(o8_printSystem),
+		OPCODE(o6_printCursor),
+		OPCODE(o6_printDebug),
+		OPCODE(o6_printSystem),
 		OPCODE(o8_blastText),
 		/* 98 */
 		OPCODE(o6_invalid),
@@ -724,30 +724,6 @@ void Scumm_v8::o8_arrayOps()
 	default:
 		error("o8_arrayOps: default case %d (array %d)", subOp, array);
 	}
-}
-
-void Scumm_v8::o8_printLine()
-{
-	// FIXME
-	decodeParseString(0, 0);
-}
-
-void Scumm_v8::o8_printCursor()
-{
-	// FIXME
-	decodeParseString(1, 0);
-}
-
-void Scumm_v8::o8_printDebug()
-{
-	// FIXME
-	decodeParseString(2, 0);
-}
-
-void Scumm_v8::o8_printSystem()
-{
-	// FIXME
-	decodeParseString(3, 0);
 }
 
 void Scumm_v8::o8_blastText()

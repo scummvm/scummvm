@@ -918,7 +918,6 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 void Scumm::endCutscene()
 {
 	ScriptSlot *ss = &vm.slot[_currentScript];
-	uint32 *csptr;
 	int args[16];
 
 	memset(args, 0, sizeof(args));
@@ -929,12 +928,11 @@ void Scumm::endCutscene()
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
 	_vars[VAR_OVERRIDE] = 0;
 
-	csptr = &vm.cutScenePtr[vm.cutSceneStackPointer];
-	if (*csptr && (ss->cutsceneOverride > 0))	// Only terminate if active
+	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
 		ss->cutsceneOverride--;
 
 	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
-	*csptr = 0;
+	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	vm.cutSceneStackPointer--;
 
 	if (_vars[VAR_CUTSCENE_END_SCRIPT])
@@ -998,14 +996,16 @@ bool Scumm::isRoomScriptRunning(int script)
 void Scumm::beginOverride()
 {
 	int idx;
-	uint32 *ptr;
 
 	idx = vm.cutSceneStackPointer;
-	ptr = &vm.cutScenePtr[idx];
+	assert(idx < 5);
 
-	*ptr = _scriptPointer - _scriptOrgPointer;
+	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[idx] = _currentScript;
 
+	// Skip the jump instruction following the override instruction
+	// (the jump is responsible for "skipping" cutscenes, and the reason
+	// why we record the current script position in vm.cutScenePtr).
 	fetchScriptByte();
 	fetchScriptWord();
 	_vars[VAR_OVERRIDE] = 0;
@@ -1014,12 +1014,11 @@ void Scumm::beginOverride()
 void Scumm::endOverride()
 {
 	int idx;
-	uint32 *ptr;
 
 	idx = vm.cutSceneStackPointer;
-	ptr = &vm.cutScenePtr[idx];
+	assert(idx < 5);
 
-	*ptr = 0;
+	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
 	_vars[VAR_OVERRIDE] = 0;
 }
@@ -1152,6 +1151,7 @@ void Scumm::exitCutscene()
 		if (ss->cutsceneOverride > 0)
 			ss->cutsceneOverride--;
 
+printf("exitCutscene()\n");
 		_vars[VAR_OVERRIDE] = 1;
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}

@@ -335,10 +335,10 @@ protected:
 	void o6_delaySeconds();
 	void o6_delayMinutes();
 	void o6_stopSentence();
-	void o6_print_0();
-	void o6_print_1();
-	void o6_print_2();
-	void o6_print_3();
+	void o6_printLine();
+	void o6_printCursor();
+	void o6_printDebug();
+	void o6_printSystem();
 	void o6_printActor();
 	void o6_printEgo();
 	void o6_talkActor();
@@ -413,10 +413,6 @@ protected:
 	void o8_dim();
 	void o8_dim2();
 	void o8_arrayOps();
-	void o8_printLine();
-	void o8_printCursor();
-	void o8_printDebug();
-	void o8_printSystem();
 	void o8_blastText();
 
 	void o8_cursorCommand();

@@ -235,7 +235,7 @@ void Scumm_v8::setupScummVars()
 	VAR_TIMEDATE_MINUTE = 28;
 	VAR_TIMEDATE_SECOND = 29;
 
-	//VAR_OVERRIDE = 30;	// Oops. 30 has something to do with overrides, but this isn't it..
+	VAR_OVERRIDE = 30;
 	VAR_ROOM = 31;
 
 	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
