@@ -1053,7 +1053,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					bob->y = objAnim[i].cy;
 				}
 
-				// Only flip if we are not moving and it is not a person object
+				// Only flip if we are not moving or it is not a person object
 				if (!(objAnim[i].mx || objAnim[i].my) ||
 						!(objAnim[i].object > 0 && objAnim[i].object < 4))
 					bob->xflip = objAnim[i].flip;
