@@ -107,7 +107,7 @@ void Sound::playSong(int16 songNum) {
 		return;
 	}
 
-	if (!musicOn())
+	if (!musicOn() || _vm->resource()->isDemo())
 		return;
 
 	_lastOverride = songNum;

@@ -38,8 +38,13 @@ namespace Queen {
 		_midi->setTimerRate(_driver->getBaseTempo());
 		_driver->setTimerCallback(this, myTimerProc);			
 		
-		_musicData = vm->resource()->loadFile("AQ.RL", 0, NULL);
-		_musicDataSize = vm->resource()->fileSize("AQ.RL");
+		if (vm->resource()->isDemo()) {
+			_musicData = vm->resource()->loadFile("AQ8.RL", 0, NULL);
+			_musicDataSize = vm->resource()->fileSize("AQ8.RL");
+		} else {
+			_musicData = vm->resource()->loadFile("AQ.RL", 0, NULL);
+			_musicDataSize = vm->resource()->fileSize("AQ.RL");
+		}
 		_numSongs = READ_LE_UINT16(_musicData);
 	}
 
