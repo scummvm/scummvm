@@ -56,17 +56,17 @@ struct Item {
 	uint16 sibling;
 	int16 unk1;
 	int16 unk2;
-	int16 unk3;										/* signed int */
+	int16 unk3;								/* signed int */
 	uint16 unk4;
-	uint16 xxx_1;									/* unused? */
+	uint16 xxx_1;								/* unused? */
 	Child *children;
 	
 	Item() { memset(this, 0, sizeof(*this)); }
 };
 
 struct Subroutine {
-	uint16 id;										/* subroutine ID */
-	uint16 first;									/* offset from subroutine start to first subroutine line */
+	uint16 id;								/* subroutine ID */
+	uint16 first;								/* offset from subroutine start to first subroutine line */
 	Subroutine *next;							/* next subroutine in linked list */
 };
 
@@ -91,7 +91,7 @@ struct FillOrCopyStruct {
 	uint16 width, height;
 	uint16 textColumn, textRow;
 	uint8 textColumnOffset, textLength, textMaxLength;
-    uint8 fill_color, text_color, unk5;
+	uint8 fill_color, text_color, unk5;
 	FillOrCopyData *fcs_data;
 	FillOrCopyStruct() { memset(this, 0, sizeof(*this)); }
 };
@@ -119,15 +119,6 @@ struct TimeEvent {
 };
 
 struct GameSpecificSettings {
-#ifndef __PALM_OS__
-	const char *gme_filename;
-	const char *wav_filename;
-	const char *voc_filename;
-	const char *mp3_filename;
-	const char *voc_effects_filename;
-	const char *mp3_effects_filename;
- 	const char *gamepc_filename;
- #else
 	const char gme_filename[12];
 	const char wav_filename[12];
 	const char voc_filename[12];
@@ -135,7 +126,6 @@ struct GameSpecificSettings {
 	const char voc_effects_filename[12];
 	const char mp3_effects_filename[12];
  	const char gamepc_filename[12]; 
- #endif
 };
 
 } // End of namespace Simon
