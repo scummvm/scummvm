@@ -1348,20 +1348,14 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 }
 
 void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
-	if (_queuePos > 32)
-		error("overflow");
+	checkRange(32, 0, _queuePos, "akos_queCommand overflow");
 ;
 	_queuePos++;
 	_queueCmd[_queuePos] = cmd;
 	_queueActor[_queuePos] = a->number;
 	_queueParam1[_queuePos] = param_1;
 	_queueParam2[_queuePos] = param_2;
-
-
-	warning("_queuePos %d", _queuePos);
 }
-
-
 
 void ScummEngine::akos_processQueue() {
 	byte cmd;
