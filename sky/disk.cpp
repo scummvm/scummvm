@@ -216,6 +216,9 @@ uint32 SkyDisk::determineGameVersion() {
 	case 1404:
 		//floppy (v0.0288)
 		return 288;
+	case 1413:
+		//floppy (v0.0303)
+		return 303;
 	case 1445:
 		//floppy (v0.0331)
 		return 331;

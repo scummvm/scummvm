@@ -198,6 +198,9 @@ SkyText *SkyState::getSkyText() {
 	case 288:
 		//floppy version
 		return new SkyText_v00288(_skyDisk, _gameVersion);
+	case 303:
+		//floppy version
+		return new SkyText_v00303(_skyDisk, _gameVersion);
 	case 331:
 		//floppy version
 		return new SkyText_v00331(_skyDisk, _gameVersion);
@@ -219,6 +222,8 @@ bool SkyState::isDemo(uint32 version) {
 		return true;
 	case 288:
 		return false;
+	case 303:
+		return false;
 	case 331:
 		return false;
 	case 365:
@@ -237,6 +242,8 @@ bool SkyState::isCDVersion(uint32 version) {
 	case 267:
 		return false;
 	case 288:
+		return false;
+	case 303:
 		return false;
 	case 331:
 		return false;
