@@ -121,7 +121,7 @@ void SimonState::focusVerb(uint hitarea_id)
 		default: verb_prep_names = english_verb_prep_names; break;
 		}
 		CHECK_BOUNDS(hitarea_id, verb_prep_names);
-		txt = english_verb_prep_names[hitarea_id];
+		txt = verb_prep_names[hitarea_id];
 	} else {
 		txt = verb_names[hitarea_id];
 	}
