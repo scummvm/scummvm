@@ -725,9 +725,9 @@ void CostumeRenderer::proc6_ami()
 	byte width, height, pcolor;
 	int color;
 	int step = _scaleIndexXStep;
-	uint x;
-	uint y;
-	uint scrheight;
+	int x;
+	int y;
+	int scrheight;
 
 	x = _xpos;
 	y = _ypos;
