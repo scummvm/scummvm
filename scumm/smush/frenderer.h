@@ -148,6 +148,7 @@ public:
 		@return \c true if everything went fine, \c false otherwise
 	*/
 	bool drawStringCentered(const char * str, char * buffer, const Point & size, int32 y, int32 xmin, int32 width, int32 offset) const;
+	bool drawStringWrap(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const;
 	/*!	@brief draw a string at an absolute position.
 	
 		@param str		the string to draw.

@@ -380,11 +380,35 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	assert(fr != 0);
 	fr->setColor(color);
 	if(!_curBuffer) { _curBuffer = _renderer->lockFrame(_frame); }
-	if(flags == 0 || flags == 4) {
+
+	// flags:
+	// bit 0 - center				1
+	// bit 1 - not used			2
+	// bit 2 - ???					4
+	// bit 3 - wrap around	8
+	if(flags == 0) {
 		fr->drawStringAbsolute(str, _curBuffer, _frameSize, pos_x, pos_y);
-	} else {
+	}
+	else if(flags == 1) {
 		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
 	}
+	else if(flags == 4) {
+		fr->drawStringAbsolute(str, _curBuffer, _frameSize, pos_x, pos_y);
+	}
+	else if(flags == 5) {
+		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+	}
+	else if(flags == 8) {
+		fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
+	}
+	else if(flags == 12) {
+		fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
+	}
+	else if(flags == 13) {
+		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+	}
+	else
+		warning("SmushPlayer::handleTextResource. Not handled flags: %d\n", flags);
 }
 
 void SmushPlayer::readPalette(Palette & out, Chunk & in) {

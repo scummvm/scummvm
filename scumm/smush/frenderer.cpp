@@ -232,3 +232,77 @@ bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Poi
 	delete []substrings;
 	return true;
 }
+
+bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
+	debug(9, "FontRenderer::drawStringWrap(%s, %d, %d)", str, x, y);
+	assert(strchr(str, '\n') == 0);
+	char * * words = split(str, ' ');
+	int32 nb_sub = 0;
+
+	while(words[nb_sub]) nb_sub++;
+
+	int32 * sizes = new int32[nb_sub];
+	int32 i = 0, max_width = 0, height = 0, nb_subs = 0, left_x;
+
+	for(i = 0; i < nb_sub; i++)
+		sizes[i] = stringWidth(words[i]);
+
+	char * * substrings = new char *[nb_sub];
+	int32 * substr_widths = new int32[nb_sub];
+	int32 space_width = charWidth(' ');
+
+	i = 0;
+	while(i < nb_sub) {
+		int32 substr_width = sizes[i];
+		char * substr = new char[1000];
+		strcpy(substr, words[i]);
+		int32 j = i + 1;
+
+		while(j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
+			substr_width += sizes[j++] + space_width;
+		}
+
+		for(int32 k = i + 1; k < j; k++) {
+			strcat(substr, " ");
+			strcat(substr, words[k]);
+		}
+
+		substrings[nb_subs] = substr;
+		substr_widths[nb_subs++] = substr_width;
+		i = j;
+		height += stringHeight(substr);
+	}
+
+	delete []sizes;
+	for(i = 0; i < nb_sub; i++) {
+		delete []words[i];
+	}
+	delete []words;
+
+	if(y + height > size.getY()) {
+		y = size.getY() - height;
+	}
+
+	for(i = 0; i < nb_subs; i++)
+		max_width = MAX(max_width, substr_widths[i]);
+
+	if(max_width + x > size.getX())
+		left_x = size.getX() - max_width + charWidth(' ');
+	else
+		left_x = x;
+
+	if(max_width + left_x > size.getX())
+		left_x = size.getX() - max_width;
+
+	for(i = 0; i < nb_subs; i++) {
+		int32 substr_width = substr_widths[i];
+		drawSubstring((const byte *)substrings[i], buffer, size, left_x, y);
+		y += stringHeight(substrings[i]);
+		delete []substrings[i];
+	}
+
+	delete []substr_widths;
+	delete []substrings;
+	return true;
+}
+
