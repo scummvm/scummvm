@@ -36,6 +36,9 @@ namespace Scumm {
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 static void fill(byte *dst, int dstPitch, byte color, int w, int h);
 
+static void copy8Col(byte *dst, int dstPitch, const byte *src, int height);
+static void clear8Col(byte *dst, int dstPitch, int height);
+
 struct StripTable {
 	int offsets[160];
 	int run[160];
@@ -778,6 +781,31 @@ static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 	}
 }
 
+static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
+	do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(dst, src, 8);
+#else
+		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
+		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
+#endif
+		dst += dstPitch;
+		src += dstPitch;
+	} while (--height);
+}
+
+static void clear8Col(byte *dst, int dstPitch, int height) {
+	do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memset(dst, 0, 8);
+#else
+		((uint32 *)dst)[0] = 0;
+		((uint32 *)dst)[1] = 0;
+#endif
+		dst += dstPitch;
+	} while (--height);
+}
+
 void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	int width, height;
 	VirtScreen *vs;
@@ -1154,8 +1182,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	_vertStripNextInc = height * vs->pitch - 1;
 
-	sx = x - vs->xstart / 8;
-
 	//
 	// Since V3, all graphics data was encoded in strips, which is very efficient
 	// for redrawing only parts of the screen. However, V2 is different: here
@@ -1166,14 +1192,16 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	if (_vm->_version == 2)
 		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip, table);
 
-	while (numstrip--) {
+	sx = x - vs->xstart / 8;
+	if (sx < 0) {
+		numstrip -= -sx;
+		x += -sx;
+		stripnr += -sx;
+		sx = 0;
+	}
+
+	while (numstrip && sx < _numStrips) {
 		CHECK_HEAP;
-
-		if (sx < 0)
-			goto next_iter;
-
-		if (sx >= _numStrips)
-			return;
 
 		if (y < vs->tdirty[sx])
 			vs->tdirty[sx] = y;
@@ -1189,25 +1217,27 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_version == 1) {
 			if (_C64ObjectMode)
-				drawStripC64Object(bgbak_ptr, stripnr, width, height);
+				drawStripC64Object(bgbak_ptr, vs->pitch, stripnr, width, height);
 			else
-				drawStripC64Background(bgbak_ptr, stripnr, height);
-		} else if (_vm->_version > 2) {
+				drawStripC64Background(bgbak_ptr, vs->pitch, stripnr, height);
+		} else if (_vm->_version == 2) {
+			// Do nothing here for V2 games - drawing was already handled.
+		} else {
 			if (_vm->_features & GF_16COLOR) {
-				drawStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
+				drawStripEGA(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
-				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
+				useOrDecompress = decompressBitmap(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
 			} else {
-				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
+				useOrDecompress = decompressBitmap(bgbak_ptr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
 			}
 		}
 
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
 			if (flag & dbClear || !lightsOn)
-				clear8Col(backbuff_ptr, height);
+				clear8Col(backbuff_ptr, vs->pitch, height);
 			else
-				draw8Col(backbuff_ptr, bgbak_ptr, height);
+				copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, height);
 		}
 		CHECK_HEAP;
 
@@ -1215,7 +1245,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			mask_ptr = getMaskBuffer(x, y, 1);
 			drawStripC64Mask(mask_ptr, stripnr, width, height);
 		} else if (_vm->_version == 2) {
-			// Do nothing here for V2 games - zplane was handled already.
+			// Do nothing here for V2 games - zplane was already handled.
 		} else if (flag & dbDrawMaskOnAll) {
 			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
 			// box and the speech icons. While these objects only have one
@@ -1301,9 +1331,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 #endif
-
-next_iter:
-		CHECK_HEAP;
+		numstrip--;
 		x++;
 		sx++;
 		stripnr++;
@@ -1709,9 +1737,9 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
 		if (_vm->isLightOn()) {
-			draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
+			copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, numLinesToProcess);
 		} else {
-			clear8Col(backbuff_ptr, numLinesToProcess);
+			clear8Col(backbuff_ptr, vs->pitch, numLinesToProcess);
 		}
 	}
 }
@@ -1795,7 +1823,7 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	return table;
 }
 
-void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
+void Gdi::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
 	int charIdx;
 	height /= 8;
 	for (int y = 0; y < height; y++) {
@@ -1813,12 +1841,12 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
 			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
 			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
-			dst += _vm->_screenWidth;
+			dst += dstPitch;
 		}
 	}
 }
 
-void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
+void Gdi::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
 	int charIdx;
 	height /= 8;
 	width /= 8;
@@ -1831,7 +1859,7 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
 			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
 			dst[6] = dst[7] = _C64Colors[(c >> 0) & 3];
-			dst += _vm->_screenWidth;
+			dst += dstPitch;
 		}
 	}
 }
@@ -1886,7 +1914,7 @@ void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) {
 	}
 }
 
-void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
+void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = 0;
 	int run = 0, x = 0, y = 0, z;
 
@@ -1903,7 +1931,7 @@ void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * _vm->_screenWidth + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
+					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
 
 					y++;
 					if (y >= height) {
@@ -1917,7 +1945,7 @@ void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
 				}
 
 				for (z = 0; z < run; z++) {
-					*(dst + y * _vm->_screenWidth + x) = *(dst + y * _vm->_screenWidth + x - 1);
+					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1);
 
 					y++;
 					if (y >= height) {
@@ -1933,7 +1961,7 @@ void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
 			}
 			
 			for (z = 0; z < run; z++) {
-				*(dst + y * _vm->_screenWidth + x) = _roomPalette[color & 0xf];
+				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf];
 
 				y++;
 				if (y >= height) {
@@ -1945,7 +1973,7 @@ void Gdi::drawStripEGA(byte *dst, const byte *src, int height) {
 	}
 }
 
-bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess) {
+bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
 
 	byte code = *src++;
@@ -1954,38 +1982,38 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	if (code <= 10) {
 		switch (code) {
 		case 1:
-			unkDecode7(bgbak_ptr, src, numLinesToProcess);
+			unkDecode7(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 2:
-			unkDecode8(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+			unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 			break;
 	
 		case 3:
-			unkDecode9(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+			unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 			break;
 	
 		case 4:
-			unkDecode10(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+			unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 			break;
 	
 		case 7:
-			unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+			unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 			break;
 	
 		// 8/9 used in 3do version of puttputt joins the parade maybe others
 		case 8:
 			useOrDecompress = true;
-			drawStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
+			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
 		case 9:
-			drawStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
+			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
 		// used in amiga version of Monkey Island
 		case 10:
-			drawStripEGA(bgbak_ptr, src, numLinesToProcess);
+			drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 			break;
 
 		default:
@@ -2001,21 +2029,21 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 			// FIXME: Ugly workaround for bug #901462
 			if (_vm->_version == 8)
 				useOrDecompress = true;
-			drawStripBasicV(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicV(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 2:
-			drawStripBasicH(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicH(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 3:
 			useOrDecompress = true;
-			drawStripBasicV_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicV_trans(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 4:
 			useOrDecompress = true;
-			drawStripBasicH_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripBasicH_trans(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 6:
@@ -2023,22 +2051,22 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 			// FIXME: Ugly workaround for bug #901462
 			if (_vm->_version == 8 && code == 10)
 				useOrDecompress = true;
-			drawStripComplex(bgbak_ptr, src, numLinesToProcess);
+			drawStripComplex(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 8:
 		case 12:
 			useOrDecompress = true;
-			drawStripComplex_trans(bgbak_ptr, src, numLinesToProcess);
+			drawStripComplex_trans(dst, dstPitch, src, numLinesToProcess);
 			break;
 	
 		case 13:
-			drawStripHE(bgbak_ptr, src, numLinesToProcess, false);
+			drawStripHE(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
 		case 14:
 			useOrDecompress = true;
-			drawStripHE(bgbak_ptr, src, numLinesToProcess, true);
+			drawStripHE(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
 		default:
@@ -2047,32 +2075,6 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	}
 	
 	return useOrDecompress;
-}
-
-void Gdi::draw8Col(byte *dst, const byte *src, int height) {
-	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 8);
-#else
-		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
-		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
-#endif
-		dst += _vm->_screenWidth;
-		src += _vm->_screenWidth;
-	} while (--height);
-}
-
-void Gdi::clear8Col(byte *dst, int height)
-{
-	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		memset(dst, 0, 8);
-#else
-		((uint32 *)dst)[0] = 0;
-		((uint32 *)dst)[1] = 0;
-#endif
-		dst += _vm->_screenWidth;
-	} while (--height);
 }
 
 void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) {
@@ -2136,7 +2138,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 
 
 // NOTE: decompressBMAPbg is actually very similar to drawStripComplex
-void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src) {
+void Gdi::decompressBMAPbg(byte *dst, int dstPitch, int w, int height, const byte *src) {
 	uint32 dataBit, data, shift;
 	byte color;
 	int32 iteration;
@@ -2169,13 +2171,13 @@ void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const 
 				}
 			}
 		}
-		dst += screenwidth - w;
+		dst += dstPitch - w;
 		height--;
 	}
 }
 
 // FIXME/TODO: drawStripHE and decompressBMAPbg are essentially identical!
-void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpCheck) {
+void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) {
 	uint32 dataBit, data, shift, iteration;
 	byte color;
 	const uint w = 8;
@@ -2210,7 +2212,7 @@ void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpC
 				}
 			}
 		}
-		dst += _vm->_screenWidth - w;
+		dst += dstPitch - w;
 		height--;
 	}
 }
@@ -2219,7 +2221,7 @@ void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpC
 #undef FILL_BITS
 
 
-void Gdi::drawStrip3DO(byte *dst, const byte *src, int height, const bool transpCheck) {
+void Gdi::drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) {
 	int destbytes, olddestbytes2, olddestbytes1;
 	byte color;
 
@@ -2258,7 +2260,7 @@ void Gdi::drawStrip3DO(byte *dst, const byte *src, int height, const bool transp
 			
 				destbytes++;
 				if (!(destbytes & 7))
-					dst += _vm->_screenWidth - 8;	// Next row
+					dst += dstPitch - 8;	// Next row
 			}
 		} else {
 			color = *src;
@@ -2269,7 +2271,7 @@ void Gdi::drawStrip3DO(byte *dst, const byte *src, int height, const bool transp
 					*dst = _roomPalette[color];
 				destbytes++;
 				if (!(destbytes & 7))
-					dst += _vm->_screenWidth - 8;	// Next row
+					dst += dstPitch - 8;	// Next row
 			}
 		}
 
@@ -2287,7 +2289,7 @@ void Gdi::drawStrip3DO(byte *dst, const byte *src, int height, const bool transp
 		}                           \
 	} while (0)
 
-void Gdi::drawStripComplex(byte *dst, const byte *src, int height) {
+void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2319,7 +2321,7 @@ void Gdi::drawStripComplex(byte *dst, const byte *src, int height) {
 					do {
 						if (!--x) {
 							x = 8;
-							dst += _vm->_screenWidth - 8;
+							dst += dstPitch - 8;
 							if (!--height)
 								return;
 						}
@@ -2331,11 +2333,11 @@ void Gdi::drawStripComplex(byte *dst, const byte *src, int height) {
 				}
 			}
 		} while (--x);
-		dst += _vm->_screenWidth - 8;
+		dst += dstPitch - 8;
 	} while (--height);
 }
 
-void Gdi::drawStripComplex_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripComplex_trans(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2369,7 +2371,7 @@ void Gdi::drawStripComplex_trans(byte *dst, const byte *src, int height) {
 					do {
 						if (!--x) {
 							x = 8;
-							dst += _vm->_screenWidth - 8;
+							dst += dstPitch - 8;
 							if (!--height)
 								return;
 						}
@@ -2383,11 +2385,11 @@ void Gdi::drawStripComplex_trans(byte *dst, const byte *src, int height) {
 				}
 			}
 		} while (--x);
-		dst += _vm->_screenWidth - 8;
+		dst += dstPitch - 8;
 	} while (--height);
 }
 
-void Gdi::drawStripBasicH(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2413,11 +2415,11 @@ void Gdi::drawStripBasicH(byte *dst, const byte *src, int height) {
 				color += inc;
 			}
 		} while (--x);
-		dst += _vm->_screenWidth - 8;
+		dst += dstPitch - 8;
 	} while (--height);
 }
 
-void Gdi::drawStripBasicH_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicH_trans(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2445,11 +2447,11 @@ void Gdi::drawStripBasicH_trans(byte *dst, const byte *src, int height) {
 				color += inc;
 			}
 		} while (--x);
-		dst += _vm->_screenWidth - 8;
+		dst += dstPitch - 8;
 	} while (--height);
 }
 
-void Gdi::drawStripBasicV(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2462,7 +2464,7 @@ void Gdi::drawStripBasicV(byte *dst, const byte *src, int height) {
 		do {
 			FILL_BITS;
 			*dst = _roomPalette[color];
-			dst += _vm->_screenWidth;
+			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS;
@@ -2481,7 +2483,7 @@ void Gdi::drawStripBasicV(byte *dst, const byte *src, int height) {
 	} while (--x);
 }
 
-void Gdi::drawStripBasicV_trans(byte *dst, const byte *src, int height) {
+void Gdi::drawStripBasicV_trans(byte *dst, int dstPitch, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -2495,7 +2497,7 @@ void Gdi::drawStripBasicV_trans(byte *dst, const byte *src, int height) {
 			FILL_BITS;
 			if (color != _transparentColor)
 				*dst = _roomPalette[color];
-			dst += _vm->_screenWidth;
+			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS;
@@ -2538,7 +2540,7 @@ void Gdi::drawStripBasicV_trans(byte *dst, const byte *src, int height) {
 
 #define NEXT_ROW                           \
 		do {                               \
-			dst += _vm->_screenWidth;      \
+			dst += dstPitch;               \
 			if (--h == 0) {                \
 				if (!--x)                  \
 					return;                \
@@ -2547,7 +2549,7 @@ void Gdi::drawStripBasicV_trans(byte *dst, const byte *src, int height) {
 			}                              \
 		} while (0)
 
-void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
+void Gdi::unkDecode7(byte *dst, int dstPitch, const byte *src, int height) {
 
 	if (_vm->_features & GF_OLD256) {
 		uint h = height;
@@ -2566,12 +2568,12 @@ void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
 		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
 #endif
-		dst += _vm->_screenWidth;
+		dst += dstPitch;
 		src += 8;
 	} while (--height);
 }
 
-void Gdi::unkDecode8(byte *dst, const byte *src, int height) {
+void Gdi::unkDecode8(byte *dst, int dstPitch, const byte *src, int height) {
 	uint h = height;
 
 	int x = 8;
@@ -2586,7 +2588,7 @@ void Gdi::unkDecode8(byte *dst, const byte *src, int height) {
 	}
 }
 
-void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
+void Gdi::unkDecode9(byte *dst, int dstPitch, const byte *src, int height) {
 	byte c, bits, color, run;
 	int i;
 	uint buffer = 0, mask = 128;
@@ -2621,7 +2623,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 	}
 }
 
-void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
+void Gdi::unkDecode10(byte *dst, int dstPitch, const byte *src, int height) {
 	int i;
 	byte local_palette[256], numcolors = *src++;
 	uint h = height;
@@ -2648,7 +2650,7 @@ void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 }
 
 
-void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
+void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) {
 	int bits, i;
 	uint buffer = 0, mask = 128;
 	byte inc = 1, color = *src++;
@@ -2658,7 +2660,7 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 		int h = height;
 		do {
 			*dst = _roomPalette[color];
-			dst += _vm->_screenWidth;
+			dst += dstPitch;
 			for (i = 0; i < 3; i++) {
 				READ_BIT_256;
 				if (!bits)
