@@ -811,7 +811,7 @@ void Scumm::initScummVars() {
 
 	// FIXME
 	if (_features & GF_AFTER_V2) {
-		// This needs to be at greater than 40 to get the more
+		// This needs to be at least greater than 40 to get the more
 		// elaborate version of the EGA Zak into. I don't know where
 		// else it makes any difference.
 		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
