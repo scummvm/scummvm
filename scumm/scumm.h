@@ -214,6 +214,7 @@ enum ResTypes {
 	rtRoomScripts = 17,
 	rtRoomStart = 17,
 	rtLast = 17,
+	rtRoomImage = 18,
 	rtImage = 19,
 	rtNumTypes = 20
 };

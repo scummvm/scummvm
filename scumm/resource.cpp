@@ -568,8 +568,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('DIRM'):
-			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			debug(9, "found DIRM block, skipping");
+			readResTypeList(rtImage, MKID('AWIZ'), "images");
 			break;
 			
 		case MKID('DISK'):
@@ -577,11 +576,8 @@ void ScummEngine::readIndexFile() {
 			warning("DISK index block not yet handled, skipping");
 			break;
 
-		case MKID('DIRI'): // Images?
-//			readResTypeList(rtImage, MKID('AWIZ'), "images");
-			num = _fileHandle.readUint16LE();
-			_fileHandle.seek(num + (8 * num), SEEK_CUR);
-			debug(9, "found DIRI block, skipping");
+		case MKID('DIRI'):
+			readResTypeList(rtRoom, MKID('RMIM'), "room image");
 			break;
 
 		case MKID('ANAM'):
@@ -2427,6 +2423,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
+	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
 }
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
