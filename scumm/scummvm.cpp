@@ -753,6 +753,8 @@ Scumm::~Scumm () {
 void Scumm::setFeatures (uint32 newFeatures) {
 	bool newCostumes = (_features & GF_NEW_COSTUMES) != 0;
 	bool newNewCostumes = (newFeatures & GF_NEW_COSTUMES) != 0;
+	bool amigaPalette = (_features & GF_AMIGA) != 0;
+	bool newAmigaPalette = (newFeatures & GF_AMIGA) != 0;
 
 	_features = newFeatures;
 	
@@ -762,6 +764,13 @@ void Scumm::setFeatures (uint32 newFeatures) {
 			_costumeRenderer = new AkosRenderer(this);
 		else
 			_costumeRenderer = new CostumeRenderer(this);
+	}
+
+	if ((_features & GF_16COLOR) && amigaPalette != newAmigaPalette) {
+		if (_features & GF_AMIGA)
+			setupAmigaPalette();
+		else
+			setupEGAPalette();
 	}
 }
 
@@ -784,15 +793,12 @@ void Scumm::scummInit() {
 			_shadowPalette[i] = i;
 		setupC64Palette();
 	} else if (_features & GF_16COLOR) {
-		if (_features & GF_AMIGA) {
-			for (i = 0; i < 16; i++)
-				_shadowPalette[i] = i;
+		for (i = 0; i < 16; i++)
+			_shadowPalette[i] = i;
+		if (_features & GF_AMIGA)
 			setupAmigaPalette();
-		} else {
-			for (i = 0; i < 16; i++)
-				_shadowPalette[i] = i;
+		else
 			setupEGAPalette();
-		}
 	}
 
 	if (_version <= 2) {
