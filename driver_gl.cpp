@@ -370,7 +370,6 @@ void DriverGL::createMaterial(Material *material, const char *data, const CMap *
 }
 
 void DriverGL::selectMaterial(const Material *material) {
-return;
 	GLuint *textures;
 	textures = (GLuint *)material->_textures;
 	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
@@ -488,8 +487,6 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	int curTexIdx = 0;
 	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _smushWidth; x += BITMAP_TEXTURE_SIZE) {
-//			int t_width = (x + BITMAP_TEXTURE_SIZE >= _smushWidth) ? (_smushWidth - x) : BITMAP_TEXTURE_SIZE;
-//			int t_height = (y + BITMAP_TEXTURE_SIZE >= _smushHeight) ? (_smushHeight - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
