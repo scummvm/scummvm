@@ -1485,11 +1485,16 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	case 7:
 		unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
-	// FIXME implement these codecs...
+
 	// 8/9 used in 3do version of puttputt joins the parade maybe others
 	case 8:
+		unkDecode12(bgbak_ptr, src, numLinesToProcess);
+		break;
+
 	case 9:
-		error("decompressBitmap: Graphics codec %d not yet supported\n", code);
+		unkDecode13(bgbak_ptr, src, numLinesToProcess);
+		break;
+
 	// used in amiga version of Monkey Island
 	case 10:
 		decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
@@ -2124,6 +2129,163 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 		dst -= _vertStripNextInc;
 	} while (--x);
 }
+
+
+// TODO: C'ify it
+void Gdi::unkDecode12(byte *dst, const byte *src, int height) {
+	int var_8, di, var_6;
+	const byte *bx;
+	byte si, var_4;
+
+	var_8 = 0;
+
+	di = height << 3;
+
+	if (!height)
+		return;
+
+	_cont1:
+	bx = src;
+	src++;
+	si = *bx;
+
+	if (!(si & 1)) {
+		si >>= 1;
+		si++;
+		di -= si;
+		if (di < 0)
+			si += di;
+
+		var_6 = di;
+		di = var_8;
+
+		do {
+			bx = src;
+			src++;
+
+			if (*bx != _transparentColor)
+				*dst = *bx;
+			
+			dst++;
+			di++;
+			if (!(di & 7))
+				dst += 312;
+
+			si--;
+		} while (si);
+		var_8 = di;
+		if (var_6 > 0) {
+			di = var_6;
+			goto _cont1;
+		}
+		return;
+	} else {
+		si >>= 1;
+		bx = src;
+		src++;
+		var_4 = *bx;
+		si++;
+		di -= si;
+		if (di < 0)
+			si += di;
+		var_6 = di;
+		di = var_8;
+
+		do {
+			if (var_4 != _transparentColor)
+				*dst = var_4;
+			dst++;
+			di++;
+			if (!(di & 7))
+				dst += 312;
+			si--;
+		} while (si);
+		var_8 = di;
+		if (var_6 > 0) {
+			di = var_6;
+			goto _cont1;
+		}
+		return;
+	}
+}
+
+
+// TODO: C'ify it
+void Gdi::unkDecode13(byte *dst, const byte *src, int height) {
+	int var_8, di, var_6;
+	const byte *bx;
+	byte si, var_4;
+
+	var_8 = 0;
+
+	di = height << 3;
+
+	if (!height)
+		return;
+
+	_cont1:
+	bx = src;
+	src++;
+	si = *bx;
+
+	if (!(si & 1)) {
+		si >>= 1;
+		si++;
+		di -= si;
+		if (di < 0)
+			si += di;
+
+		var_6 = di;
+		di = var_8;
+
+		do {
+			bx = src;
+			src++;
+
+			*dst = *bx;
+			
+			dst++;
+			di++;
+			if (!(di & 7))
+				dst += 312;
+
+			si--;
+		} while (si);
+		var_8 = di;
+		if (var_6 > 0) {
+			di = var_6;
+			goto _cont1;
+		}
+		return;
+	} else {
+		si >>= 1;
+		bx = src;
+		src++;
+		var_4 = *bx;
+		si++;
+		di -= si;
+		if (di < 0)
+			si += di;
+		var_6 = di;
+		di = var_8;
+
+		do {
+			*dst = var_4;
+			dst++;
+			di++;
+			if (!(di & 7))
+				dst += 312;
+			si--;
+		} while (si);
+		var_8 = di;
+		if (var_6 > 0) {
+			di = var_6;
+			goto _cont1;
+		}
+		return;
+	}
+}
+
 
 #undef NEXT_ROW
 #undef READ_256BIT

@@ -248,6 +248,8 @@ protected:
 	void unkDecode9(byte *dst, const byte *src, int height);
 	void unkDecode10(byte *dst, const byte *src, int height);
 	void unkDecode11(byte *dst, const byte *src, int height);
+	void unkDecode12(byte *dst, const byte *src, int height);
+	void unkDecode13(byte *dst, const byte *src, int height);
 
 	void draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask);
 	void draw8Col(byte *dst, const byte *src, int height);
