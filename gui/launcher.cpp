@@ -179,7 +179,10 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 	// Add three buttons at the bottom
 	addButton(1 * (_w - kButtonWidth) / 6, _h - 24, "Quit", kQuitCmd, 'Q');
-	addButton(3 * (_w - kButtonWidth) / 6, _h - 24, "Options", kOptionsCmd, 'O');
+
+	// FIXME: This option dialog is current a dummy - disable for 0.5.0 (see bug #747984)
+	//addButton(3 * (_w - kButtonWidth) / 6, _h - 24, "Options", kOptionsCmd, 'O');
+
 	_startButton = addButton(5 * (_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
 
 	// Add list with game titles
