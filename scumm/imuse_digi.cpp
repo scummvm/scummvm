@@ -1063,25 +1063,18 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		} else if ((_scumm->_gameId == GID_CMI) && (_scumm->_features & GF_DEMO)) {
 			if (b == 2) {
 				_scumm->_sound->playBundleMusic("in1.imx");
+			} else if (b == 4) {
+				_scumm->_sound->playBundleMusic("in2.imx");
 			} else if (b == 8) {
 				_scumm->_sound->playBundleMusic("out1.imx");
+			} else if (b == 9) {
+				_scumm->_sound->playBundleMusic("out2.imx");
+			} else if (b == 16) {
+				_scumm->_sound->playBundleMusic("gun.imx");
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_scumm->_currentRoom);
 				return 1;
 			}
-/*			if (b == 1000) {		// STATE_NULL
-				_scumm->_sound->stopBundleMusic();
-				return 0;
-			} else if (b == 1001)//1
-				_scumm->_sound->playBundleMusic("in1.imx");
-			else if (b == 1100)//2
-				_scumm->_sound->playBundleMusic("in2.imx");
-			else if (b == 1120)//3
-				_scumm->_sound->playBundleMusic("out1.imx");
-			else if (b == 1140)//4
-				_scumm->_sound->playBundleMusic("out2.imx");
-			else if (b == 1205)//7
-				_scumm->_sound->playBundleMusic("gun.imx");*/
 		} else if (_scumm->_gameId == GID_CMI) {
 			if (b == 1000) {		// STATE_NULL
 				_scumm->_sound->stopBundleMusic();
