@@ -466,11 +466,25 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num = 0, i;
 	byte file_byte, file_byte_2;
 	int size;
+	byte* sound;
 
 	if (_sfxFile->isOpen() == false) {
 		warning("startTalkSound: SFX file is not open");
 		return -1;
 	}
+
+	// FIXME hack until more is known
+	// the size of the data after the sample isn't known
+	// 64 is just a guess
+	if (_scumm->_features & GF_HUMONGOUS) {
+		// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
+		_sfxFile->seek(offset + 48, SEEK_SET);
+		sound = (byte*)malloc(b - 64);
+		_sfxFile->read(sound, b - 64);
+		_scumm->_mixer->playRaw(NULL, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return -1;
+	}
+
 
 	// Some games frequently assume that starting one sound effect will
 	// automatically stop any other that may be playing at that time. So
@@ -909,6 +923,11 @@ File * Sound::openSfxFile() {
 	sprintf(buf, "%s.sou", _scumm->getExeName());
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.sou", _scumm->getGameDataPath());
+	}
+
+	if (!file->isOpen()) {
+		sprintf(buf, "%s.tlk", _scumm->getExeName());
+		file->open(buf, _scumm->getGameDataPath(), 1, 0x69);
 	}
 	return file;
 }
