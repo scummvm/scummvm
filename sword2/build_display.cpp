@@ -98,7 +98,6 @@ extern uint32 mouse_status;		// So I know if the control Panel can be activated 
 void	Start_new_palette(void);	//Tony25Sept96
 
 void	Register_frame(int32 *params, buildit *build_unit);	// (1nov96JEL)
-void	Process_image(buildit	*frame);
 void	Process_layer(uint32	layer_number);	//Tony24Sept96
 void	Sort_the_sort_list(void);	//Tony18Sept96
 
@@ -119,7 +118,9 @@ void	Send_fore_par1_frames(void);	//James23Jan97
 void	Build_display(void)	//Tony21Sept96
 {
 	BOOL		end;
+#ifdef _DEBUG
 	uint8		pal[12]={0,0,0,0,0,0,0,0,0,255,0,0};
+#endif
 	uint8		*file;
 	_multiScreenHeader *screenLayerTable;
 
@@ -323,7 +324,6 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 	mem *text_spr;
 	_frameHeader *frame;
 	_spriteInfo  spriteInfo;
-	bool		 done = false;
 	_palEntry	 pal[256];
 	_palEntry	 oldPal[256];
 	int16		 oldY;
@@ -1035,7 +1035,6 @@ int32 FN_register_frame(int32 *params)	// (27nov96 JEL)
 void Start_new_palette(void)	//Tony25Sept96
 {
 	//start layer palette fading up
-	uint8 black[4]={0,0,0,0};
 
 	uint8 *screenFile;
 
@@ -1145,7 +1144,6 @@ void SetFullPalette(int32 palRes)		// James17jun97
 	// params 0 resource number of palette file
 	//			or 0 if it's to be the palette from the current screen
 
-	uint8 black[4]={0,0,0,0};
 	uint8 *file;
 	_standardHeader *head;
 
@@ -1156,7 +1154,7 @@ void SetFullPalette(int32 palRes)		// James17jun97
 	// - but restoring the screen palette after 'dark_plaette_13' should now work properly too!
 	if (LOCATION==13)	// hut interior
 	{
-		if (palRes==0xffffffff)	// unpausing
+		if (palRes==-1)	// unpausing
 			palRes = lastPaletteRes;	// restore whatever palette was last set (screen palette or 'dark_palette_13')
 	}
 	else
@@ -1166,7 +1164,7 @@ void SetFullPalette(int32 palRes)		// James17jun97
 		// because we might actually need to use a separate palette file anyway
 		// eg. for pausing & unpausing during the eclipse
 
- 		if (palRes==0xffffffff)	// unpausing (fudged for location 13)
+ 		if (palRes==-1)	// unpausing (fudged for location 13)
 			palRes=0;			// we really meant '0'
 
 		if ((palRes==0) && (lastPaletteRes))

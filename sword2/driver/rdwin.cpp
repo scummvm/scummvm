@@ -574,10 +574,10 @@ int32 ServiceWindows(void)
 
 
 
-int32 _ReportDriverError(int32 error, uint8 *filename, uint32 line)
+int32 _ReportDriverError(int32 error, const uint8 *filename, uint32 line)
 
 {
-	warning("stub _ReportDriverError 0x%.8x file: %s, line: %d ", error, (char *) filename, line);
+	warning("stub _ReportDriverError 0x%.8x file: %s, line: %d ", error, (const char *) filename, line);
 /*
 
 	char errorText[128];
@@ -594,7 +594,7 @@ int32 _ReportDriverError(int32 error, uint8 *filename, uint32 line)
 
 
 
-int32 _ReportFatalError(uint8 *error, uint8 *filename, uint32 line)
+int32 _ReportFatalError(const uint8 *error, const uint8 *filename, uint32 line)
 
 {
 

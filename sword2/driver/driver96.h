@@ -410,7 +410,7 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 ReportFatalError(uint8 *error)
+//	int32 ReportFatalError(const uint8 *error)
 //
 //	Creates a message box and displays the error string passed in, as well as
 //	the filename and line that the function was called from
@@ -1475,8 +1475,8 @@ extern int32 GrabScreenShot(void);
 //extern int32 InitialiseWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, char *gameName);
 extern int32 CloseAppWindow(void);
 extern int32 ServiceWindows(void);
-extern int32 _ReportDriverError(int32 error, uint8 *filename, uint32 line);
-extern int32 _ReportFatalError(uint8 *error, uint8 *filename, uint32 line);
+extern int32 _ReportDriverError(int32 error, const uint8 *filename, uint32 line);
+extern int32 _ReportFatalError(const uint8 *error, const uint8 *filename, uint32 line);
 extern int32 DisableQuitKey(void);
 extern void  SetWindowName(const char *windowName);
 //-----------------------------------------------------------------------------
@@ -1622,8 +1622,8 @@ extern void GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 //-----------------------------------------------------------------------------
 //Macro for calling error handler with source filename and line.
 //-----------------------------------------------------------------------------
-#define ReportDriverError(f) _ReportDriverError(f, (uint8 *) __FILE__, (uint32) __LINE__)
-#define ReportFatalError(f) _ReportFatalError(f, (uint8 *) __FILE__, (uint32) __LINE__)
+#define ReportDriverError(f) _ReportDriverError(f, (const uint8 *) __FILE__, (uint32) __LINE__)
+#define ReportFatalError(f) _ReportFatalError(f, (const uint8 *) __FILE__, (uint32) __LINE__)
 //-----------------------------------------------------------------------------
 
 

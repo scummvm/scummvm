@@ -61,8 +61,8 @@ extern uint32 player_graphic_no_frames;
 extern	int32 showVar[MAX_SHOWVARS];
 
 
-void Zdebug(char * ,...);		// Tony's special debug logging file March96
-void Zdebug(uint32	stream, char *format,...);
+void Zdebug(const char * ,...);		// Tony's special debug logging file March96
+void Zdebug(uint32 stream, const char *format,...);
 void Build_debug_text(void);	// James's debug text display
 void Draw_debug_graphics(void);	// James's debug graphics display
 
@@ -78,14 +78,14 @@ void Print_current_info(void);	//Tony30Oct96
 #define Print_current_info	NULL
 */
 
-void Zdebug(char * ,...);		// Tony's special debug logging file March96
+void Zdebug(const char * ,...);		// Tony's special debug logging file March96
 void Build_debug_text(void);	// James's debug text display
 void Draw_debug_graphics(void);	// James's debug graphics display
 
 #endif	// _DEBUG	// this whole file only included on debug versions
 //--------------------------------------------------------------------------------------
 
-void ExitWithReport(char *format,...);	// (6dec96 JEL) IN BOTH DEBUG & RELEASE VERSIONS
+void ExitWithReport(const char *format,...);	// (6dec96 JEL) IN BOTH DEBUG & RELEASE VERSIONS
 
 
 

@@ -25,7 +25,7 @@
 #include "debug.h"
 //--------------------------------------------------------------------------------------
 
-#if _DEBUG  // this whole file (except ExitWithReport) only included on debug versions
+#ifdef _DEBUG  // this whole file (except ExitWithReport) only included on debug versions
 
 #include <stdlib.h>
 
@@ -89,7 +89,7 @@ void DrawRect( int16 x, int16 y, int16 x2, int16 y2, uint8 pen );
 
 // THIS FUNCTION STAYS IN THE RELEASE VERSION
 // IN FACT, CON_FATAL_ERROR IS MAPPED TO THIS AS WELL, SO WE HAVE A MORE PRESENTABLE ERROR REPORT
-void ExitWithReport(char *format,...)	// (6dec96 JEL)
+void ExitWithReport(const char *format,...)	// (6dec96 JEL)
 {
 	//	Send a printf type string to Paul's windows routine
 	char buf[500];
@@ -105,16 +105,16 @@ void ExitWithReport(char *format,...)	// (6dec96 JEL)
 		ServiceWindows();
 
 	RestoreDisplay();
-	ReportFatalError((uint8 *)buf);	// display message box
+	ReportFatalError((const uint8 *)buf);	// display message box
 	CloseAppWindow();
 	while (ServiceWindows() != RDERR_APPCLOSED);
 
 	exit(0);
 }
 
-#if _DEBUG	// all other functions only for _DEBUG version
+#ifdef _DEBUG	// all other functions only for _DEBUG version
 //--------------------------------------------------------------------------------------
-void Zdebug(char *format,...)	//Tony's special debug logging file March96
+void Zdebug(const char *format,...)	//Tony's special debug logging file March96
 {
 //	Write a printf type string to a debug file
 
@@ -142,7 +142,7 @@ void Zdebug(char *format,...)	//Tony's special debug logging file March96
 }
 
 //--------------------------------------------------------------------------------------
-void Zdebug(uint32	stream, char *format,...)	//Tony's special debug logging file March96
+void Zdebug(uint32 stream, const char *format,...)	//Tony's special debug logging file March96
 {
 //	Write a printf type string to a debug file
 
