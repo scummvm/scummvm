@@ -23,6 +23,7 @@
 #define COMMON_RECT_H
 
 #include "scummsys.h"
+#include "util.h"
 
 namespace ScummVM {
 
@@ -78,14 +79,25 @@ struct Rect {
 		return (left <= p.x) && (p.x < right) && (top <= p.y) && (p.y < bottom);
 	}
 
-	/*!	@brief check if given rectangle is inside this rectangle
+	/*!	@brief check if given rectangle intersects with this rectangle
 		
 		@param r the rectangle to check
 		
 		@return true if the given rectangle is inside the rectangle, false otherwise
 	*/
-	bool contains(const Rect & r) const {
-		return (left <= r.right) && (r.left < right) && (top <= r.bottom) && (r.top < bottom);
+	bool intersects(const Rect & r) const {
+		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);
+	}
+
+	/*!	@brief extend this rectangle so that it contains r
+		
+		@param r the rectangle to extend by
+	*/
+	void extend(const Rect & r) {
+		left = MIN(left, r.left);
+		right = MAX(right, r.right);
+		top = MIN(top, r.top);
+		bottom = MAX(bottom, r.bottom);
 	}
 	
 	void grow(int16 offset) {
