@@ -376,6 +376,7 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
 		*n_frames = ah.nframes;
 	}
+	delete readS;
 
 	if (ah.magic == 68) {
 		for (x = ah.nframes; x > 0; x--) {
@@ -440,6 +441,8 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	screen_w = ah.screen_w;
 	screen_h = ah.screen_h;
 
+	delete readS;
+
 	if ((screen_w * screen_h) > buf_len) {
 		// Buffer argument is too small to hold decoded frame, abort.
 		warning("ITE_DecodeFrame: Buffer size inadequate");
@@ -453,6 +456,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	magic = readS->readByte();
 	if (magic != SAGA_FRAME_HEADER_MAGIC) {
 		warning("ITE_DecodeFrame: Invalid frame offset");
+		delete readS;
 		return R_FAILURE;
 	}
 
@@ -510,6 +514,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 			continue;
 			break;
 		case 0x3F: // End of frame marker
+			delete readS;
 			return R_SUCCESS;
 			break;
 		default:
@@ -550,11 +555,13 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		default:
 			// Unknown marker found - abort
 			warning("ITE_DecodeFrame: Invalid RLE marker encountered");
+			delete readS;
 			return R_FAILURE;
 			break;
 		}
 	} while (mark_byte != 63); // end of frame marker
 
+	delete readS;
 	return R_SUCCESS;
 }
 
@@ -622,6 +629,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 				if (outbuf_p > outbuf_endp) {
 					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
 							in_ch, in_ch_offset, x_origin, y_origin);
+					delete readS;
 					return R_FAILURE;
 				}
 
@@ -633,10 +641,12 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			runcount = readS->readSint16BE();
 			if (thisf_len - readS->pos() < runcount) {
 				warning("0x%02X: Input buffer underrun", in_ch);
+				delete readS;
 				return R_FAILURE;
 			}
 			if (outbuf_remain < runcount) {
 				warning("0x%02X: Output buffer overrun", in_ch);
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -654,6 +664,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x1F: // 31: Unusued?
 			if (thisf_len - readS->pos() < 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -665,6 +676,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x20: // Long compressed run
 			if (thisf_len - readS->pos() <= 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -681,6 +693,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 		case 0x2F: // End of row
 			if (thisf_len - readS->pos() <= 4) {
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -693,6 +706,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		case 0x30: // Reposition command
 			if (thisf_len - readS->pos() < 2) {
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -700,6 +714,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 			if (((x_vector > 0) && ((size_t) x_vector > outbuf_remain)) || (-x_vector > outbuf_p - decode_buf)) {
 				warning("0x30: Invalid x_vector");
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -733,6 +748,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0xC0: // Run of empty pixels
 			runcount = param_ch + 1;
 			if (outbuf_remain < runcount) {
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -743,6 +759,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x80: // Run of compressed data
 			runcount = param_ch + 1;
 			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() <= 1)) {
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -758,6 +775,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x40: // Uncompressed run
 			runcount = param_ch + 1;
 			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() < runcount)) {
+				delete readS;
 				return R_FAILURE;
 			}
 
@@ -778,6 +796,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		}
 	}
+	delete readS;
 
 	return R_SUCCESS;
 }
@@ -822,6 +841,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 		magic = readS->readByte();
 		if (magic != SAGA_FRAME_HEADER_MAGIC) {
 			// Frame sync failure. Magic Number not found
+			delete readS;
 			return R_FAILURE;
 		}
 
@@ -894,6 +914,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	}
 
 	*frame_offset_p = readS->pos();
+	delete readS;
 	return R_SUCCESS;
 }
 
