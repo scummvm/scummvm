@@ -277,7 +277,7 @@ void SkyDisk::fnCacheChip(uint32 list) {
 	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
 	uint16 fCnt = 0;
 	do {
-		_buildList[cnt + fCnt] = fList[fCnt];
+		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
 		fCnt++;
 	} while (fList[fCnt-1]);
 	fnCacheFiles();
@@ -311,8 +311,8 @@ void SkyDisk::fnCacheFiles(void) {
 			_loadedFilesList[targCnt] = _loadedFilesList[lCnt];
 			targCnt++;
 		} else {
-			free(SkyState::_itemList[_loadedFilesList[lCnt]]);
-			SkyState::_itemList[_loadedFilesList[lCnt]] = NULL;
+			free(SkyState::_itemList[_loadedFilesList[lCnt] & 2047]);
+			SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;
 		}
 		lCnt++;
 	}
@@ -335,7 +335,7 @@ void SkyDisk::fnCacheFiles(void) {
 			continue;
 		}
 		// ok, we really have to load the file.
-		_loadedFilesList[targCnt] = _buildList[bCnt];
+		_loadedFilesList[targCnt] = _buildList[bCnt] & 0x7FFFU;
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
 		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
