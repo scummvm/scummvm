@@ -667,14 +667,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 		FILE *test;
 
-		test = fopen("NoGameX", "r");
-		if (test) {
+		test = fopen("GameX", "r");
+		if (!test) 
 			noGAPI = 1;
-			fclose(test);
-		}
 		else
-		if (g_config->getBool("NoGameX", false, "wince"))
-			noGAPI = 1;
+			fclose(test);
 
 #endif
 
@@ -1908,4 +1905,15 @@ void operator delete(void *ptr) {
 	free(ptr);
 }
 
+const char* getBuildDate() {
+	static char buildDate[100];
+	int i;
 
+	strcpy(buildDate, __DATE__);
+	for (i=strlen(buildDate) - 1; buildDate[i] != ' '; i--)
+	buildDate[i] = '\0';
+	strcat(buildDate, __TIME__);
+	buildDate[strlen(buildDate) - 3] = '\0';
+
+	return buildDate;
+}
