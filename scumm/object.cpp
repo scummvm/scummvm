@@ -223,7 +223,9 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
  * Returns X, Y and direction in angles
  */
 void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
-	ObjectData &od = _objs[getObjectIndex(object)];
+	int idx = getObjectIndex(object);
+	assert(idx >= 0);
+	ObjectData &od = _objs[idx];
 	int state;
 	const byte *ptr;
 	const ImageHeader *imhd;
@@ -993,7 +995,7 @@ const byte *Scumm::getObjectImage(const byte *ptr, int state) {
 }
 
 void Scumm::addObjectToInventory(uint obj, uint room) {
-	int i, slot;
+	int idx, slot;
 	uint32 size;
 	const byte *ptr;
 	byte *dst;
@@ -1003,8 +1005,9 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 
 	CHECK_HEAP
 	if (whereIsObject(obj) == WIO_FLOBJECT) {
-		i = getObjectIndex(obj);
-		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
+		idx = getObjectIndex(obj);
+		assert(idx >= 0);
+		ptr = getResourceAddress(rtFlObject, _objs[idx].fl_object_index) + 8;
 		size = READ_BE_UINT32(ptr + 4);
 	} else {
 		findObjectInRoom(&foir, foCodeHeader, obj, room);
@@ -1399,6 +1402,7 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	}
 	
 	int idx = getObjectIndex(objectNumber);
+	assert(idx >= 0);
 
 	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
