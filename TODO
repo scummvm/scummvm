@@ -59,6 +59,36 @@ Documentation
   is the closest thing we have to a proper ScummVM manual. So either we just
   decide to turn it into a full blown manual, or maybe make a even shorter
   README, and a MANUAL with full details, examples, screen shots etc.
+* Restructure the contents of our README (our manual...) a bit. A rough and
+  incomplete draft of how that might look:
+  + Introduction
+    - What is ScummVM
+    - History
+    - Contacting the developers
+    - Reporting bugs
+  + Supported Platforms
+  + Supported Games
+    - Copy Protection
+    - Simon
+    - BS notes
+    - Using mac data files
+  + Getting started
+    - How to get ScummVM (binary, source)
+    - Compiling (with more detail than now)
+    - First steps (basic setup, getting a first game to run)
+  + Running ScummVM
+    - Command line options
+    - Hot Keys
+    - Savegames
+  + Configuration
+    - Using the launcher
+    - All config file switches in detail
+    - Graphics Filters
+    - Music and Sound (mostly like now; maybe under the 'Configuration' section)
+  + Glossary? (explaining abbreviations etc.)
+  + Credits
+  + Index? (would be nice, for example 'fullscreen' would link to the hotkey,
+     the config file setting, and the command line option)
 * Add more doxygen comments. However, quality is preferable over quantity
 
 GUI
