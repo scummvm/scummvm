@@ -502,7 +502,7 @@ int Scene::getDoorState(int doorNumber) {
 }
 
 void Scene::initDoorsState() {
-	memcpy(_sceneDoors, initSceneDoors, SCENE_DOORS_MAX);
+	memcpy(_sceneDoors, initSceneDoors, sizeof (_sceneDoors) );
 }
 
 int Scene::getInfo(SCENE_INFO *si) {

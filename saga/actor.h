@@ -157,7 +157,7 @@ struct ActorLocation {
 	}
 	void delta(const ActorLocation &location, ActorLocation &result) {
 		result.x = x - location.x;
-		result.y = x - location.y;
+		result.y = y - location.y;
 		result.z = z - location.z;
 	}
 	void add(const ActorLocation &location) {
@@ -298,10 +298,20 @@ private:
 	void findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
-	void setPathCell(const Point &testPoint, int value) {
+	bool validPathCellPoint(const Point &testPoint) {
+		return !((testPoint.x < 0) || (testPoint.x >= _xCellCount) ||
+			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
+	}
+	void setPathCell(const Point &testPoint, int value) {		
+		if (!validPathCellPoint(testPoint)) {
+			error("Actor::setPathCell wrong point");
+		}
 		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
 	}
 	int getPathCell(const Point &testPoint) {
+		if (!validPathCellPoint(testPoint)) {
+			error("Actor::getPathCell wrong point");
+		}
 		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);

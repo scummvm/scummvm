@@ -151,7 +151,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getPathYOffset();
-	_pathRect.bottom = _vm->getStatusYOffset() - _vm->getPathYOffset();
+	_pathRect.bottom = _vm->getStatusYOffset();
 
 	// Get actor resource file context
 	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -1191,6 +1191,10 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 				actor->walkStepIndex = 2;
 			}
 
+			if (actor->walkStepsCount == 0) {
+				actor->walkStepsCount = 2;
+			}
+
 			if (extraEndNode) {
 				actor->walkPath[actor->walkStepsCount - 2] = pointTo.x / (ACTOR_LMULT * 2);
 				actor->walkPath[actor->walkStepsCount - 1] = pointTo.y / ACTOR_LMULT;
@@ -1345,14 +1349,15 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		intersect.top = MAX(_pathRect.top, _barrierList[i].top);
 		intersect.right = MIN(_pathRect.right, _barrierList[i].right);
 		intersect.bottom = MIN(_pathRect.bottom, _barrierList[i].bottom);
-
+		
+		int16 w = intersect.width() >> 1;
 		intersect.left >>= 1;
 		intersect.top -= _vm->getPathYOffset();
-		intersect.right >>= 1;
+		intersect.right = intersect.left + w;
 		intersect.bottom -= _vm->getPathYOffset();
 
 		for (iteratorPoint.y = intersect.top; iteratorPoint.y < intersect.bottom; iteratorPoint.y++) {
-			for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
+			for (iteratorPoint.x = intersect.left; iteratorPoint.x < intersect.right; iteratorPoint.x++) {
 				setPathCell(iteratorPoint, kPathCellBarrier);
 			}
 		}
@@ -1428,8 +1433,11 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 
 		iteratorPoint.x = point.x >> 1;
 		iteratorPoint.y = point.y - _vm->getPathYOffset();
-		if (getPathCell(iteratorPoint) == kPathCellBarrier)
-			return false;	
+		if (validPathCellPoint(iteratorPoint)) {
+			if (getPathCell(iteratorPoint) == kPathCellBarrier) {
+				return false;
+			}
+		}
 	}
 	return true;
 }
@@ -1467,7 +1475,9 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		pathDirection->y = pathFromPoint.y;
 		pathDirection->direction = startDirection;
 	}
-	setPathCell(pathFromPoint, 0);
+	if (validPathCellPoint(pathFromPoint)) {
+		setPathCell(pathFromPoint, 0);
+	}
 	
 	pathDirectionIterator = pathDirectionList.begin();
 
