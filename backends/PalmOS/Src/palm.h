@@ -187,11 +187,13 @@ private:
 
 	WinHandle h_palm_screen;
 	WinHandle h_palm_offscreen;
-	WinHandle h_palm_tmpscreen;
+//	WinHandle h_palm_tmpscreen;
+	MemHandle tmpScreenHandle;
 	
 	byte *palm_screen;
 	byte *palm_offscreen;
-	byte *palm_tmpscreen;
+//	byte *palm_tmpscreen;
+	byte *tmpScreen;
 
 	bool _mouse_visible;
 	bool _mouse_drawn;
@@ -257,11 +259,7 @@ private:
 
 	void load_gfx_mode();
 	void unload_gfx_mode();
-/*
-	void hotswap_gfx_mode();
-
-	void get_320x200_image(byte *buf);
-*/	static void autosave();
+	static void autosave();
 
 	// PALM spec
 

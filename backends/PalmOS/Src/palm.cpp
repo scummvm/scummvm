@@ -20,46 +20,60 @@
  *
  */
 
-//##############################################################################
-//##############################################################################
 #include "stdafx.h"
 #include "scumm.h"
 #include "mididrv.h"
 #include "gameDetector.h"
 #include "common/scaler.h"
-//##############################################################################
+
 #include "palm.h"
 #include "starterrsc.h"
 #include "pa1lib.h"
 #include "sonychars.h"
-//extern UInt8 _indicatorColorOn,_indicatorColorOff;
 
 #define SAVEDELAY	(5 * 60 * 1000) // five minutes
-//#define EXITDELAY	(2 * 1000)		// delay to exit : calc button
 #define EXITDELAY	(100)		// delay to exit : calc button : double tap 1/500 sec
 
-//OSystem_PALMOS *g_palm = NULL;
-//##############################################################################
-//##############################################################################
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
-/*void OSystem_PALMOS::autosave()
-{
-	g_scumm->_doAutosave = true;
-}*/
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+#define SCREEN_OVERLAY 0
+
+static DmOpenRef gStgMemory = NULL;
+
+static void MemStgInit() {
+	if (!gStgMemory)
+	{
+		LocalID localID = DmFindDatabase(0, "Scumm-Memory");
+		if (localID) DmDeleteDatabase(0, localID);
+		
+		if (DmCreateDatabase (0, "Scumm-Memory", 'ScVM', 'DATA', false) != errNone)
+			return;
+
+		localID = DmFindDatabase(0, "Scumm-Memory");
+		gStgMemory = DmOpenDatabase(0, localID, dmModeReadWrite|dmModeExclusive);
+	}
+}
+
+static void MemStgCleanup() {
+	if (gStgMemory) {
+		DmCloseDatabase(gStgMemory);
+		LocalID localID = DmFindDatabase(0, "Scumm-Memory");
+		if (localID)
+			DmDeleteDatabase(0, localID);
+	}
+}
+
 OSystem *OSystem_PALMOS::create(UInt16 gfx_mode) {
 
 	OSystem_PALMOS *syst = new OSystem_PALMOS();
 	syst->_mode = gfx_mode;
 	syst->_vibrate = gVars->vibrator;
-//	g_palm = syst;
+
 	return syst;
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 OSystem *OSystem_PALMOS_create(int gfx_mode) {
 	return OSystem_PALMOS::create(gfx_mode);
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
@@ -77,7 +91,7 @@ void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
 	if (start + num > _paletteDirtyEnd)
 		_paletteDirtyEnd = start + num;
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::load_gfx_mode() {
 	Err e;
 	const byte startupPalette[] = {
@@ -101,6 +115,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 	
 	// palette for preload dialog
 	set_palette(startupPalette,0,16);
+	MemStgInit();
 
 	switch(_mode)
 	{
@@ -126,12 +141,15 @@ void OSystem_PALMOS::load_gfx_mode() {
 			break;
 	}
 
-	h_palm_tmpscreen= WinCreateOffscreenWindow(SCREEN_WIDTH, SCREEN_HEIGHT, screenFormat, &e);
-	palm_tmpscreen	= (byte *)(BmpGetBits(WinGetBitmap(h_palm_tmpscreen)));
+//	h_palm_tmpscreen = WinCreateOffscreenWindow(SCREEN_WIDTH, SCREEN_HEIGHT, screenFormat, &e);
+//	palm_tmpscreen	= (byte *)(BmpGetBits(WinGetBitmap(h_palm_tmpscreen)));
+	UInt16 index = SCREEN_OVERLAY;
+	tmpScreenHandle = DmNewRecord(gStgMemory, &index, SCREEN_WIDTH * SCREEN_HEIGHT);
+	tmpScreen = (byte *)MemHandleLock(tmpScreenHandle);
 	_overlaySaved = false;
 
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::unload_gfx_mode() {
 	switch (_mode)
 	{
@@ -143,9 +161,12 @@ void OSystem_PALMOS::unload_gfx_mode() {
 			break;
 	}
 
-	WinDeleteWindow(h_palm_tmpscreen,false);
+//	WinDeleteWindow(h_palm_tmpscreen,false);
+	if (tmpScreenHandle)
+		MemPtrUnlock(tmpScreen);
+	MemStgCleanup();
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::init_size(uint w, uint h) {
 
 	SCREEN_WIDTH = w;
@@ -165,7 +186,6 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 	load_gfx_mode();
 }
 
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
 void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 
 	byte *dst;
@@ -182,7 +202,7 @@ void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 		buf += pitch;
 	} while (--h);
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::update_screen__flipping()
 {
 	RectangleType r;
@@ -287,7 +307,7 @@ void OSystem_PALMOS::update_screen() {
 
 	((this)->*(_renderer_proc))();
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 bool OSystem_PALMOS::show_mouse(bool visible) {
 	if (_mouse_visible == visible)
 		return visible;
@@ -302,7 +322,7 @@ bool OSystem_PALMOS::show_mouse(bool visible) {
 
 	return last;
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::warp_mouse(int x, int y) {
 }
 
@@ -313,7 +333,7 @@ void OSystem_PALMOS::set_mouse_pos(int x, int y) {
 		undraw_mouse();
 	}
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 	_mouse_cur_state.w = w;
 	_mouse_cur_state.h = h;
@@ -325,7 +345,7 @@ void OSystem_PALMOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotsp
 
 	undraw_mouse();
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::set_shake_pos(int shake_pos) {
 	_new_shake_pos = shake_pos;
 	
@@ -335,18 +355,18 @@ void OSystem_PALMOS::set_shake_pos(int shake_pos) {
 		HwrVibrateAttributes(1, kHwrVibrateActive, &active);
 	}
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 uint32 OSystem_PALMOS::get_msecs() {
 	uint32 ticks = TimGetTicks();
 	ticks *= (1000/SysTicksPerSecond());
 	return ticks;
 
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::delay_msecs(uint msecs) {
 	SysTaskDelay((SysTicksPerSecond()*msecs)/1000);
 }
-//-- 02-12-17 --////////////////////////////////////////////////////////////////
+
 void *OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
 	_thread.active	= true;
 	_thread.proc	= proc;
@@ -354,7 +374,7 @@ void *OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
 	
 	return 0;
 }
-//-- 03-01-20 --////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
 {
 	if (callback != NULL) {
@@ -384,60 +404,7 @@ void OSystem_PALMOS::unlock_mutex(void *mutex)
 void OSystem_PALMOS::delete_mutex(void *mutex)
 {
 }
-////////////////////////////////////////////////////////////////////////////////
-/*
-static UInt32 GetOSFreeMem( UInt32* totalMemoryP, UInt32* dynamicMemoryP )
-{
-	#define		memoryBlockSize		(1024L)
-	UInt32		heapFree;
-	UInt32		max;
-	Int16		i;
-	Int16		nCards;
-	UInt16		cardNo;
-	UInt16		heapID;
-	UInt32		freeMemory = 0;
-	UInt32		totalMemory = 0;
-	UInt32		dynamicMemory = 0;
 
-	// Iterate through each card to support devices with multiple cards.
-	nCards = MemNumCards();		
-	for (cardNo = 0; cardNo < nCards; cardNo++)
-	{
-		// Iterate through the RAM heaps on a card (excludes ROM).
-		for (i=0; i< MemNumRAMHeaps(cardNo); i++)
-		{
-			// Obtain the ID of the heap.
-			heapID = MemHeapID(cardNo, i);
-			
-			// If the heap is dynamic, increment the dynamic memory total.
-			if (MemHeapDynamic(heapID))
-			{
-				dynamicMemory += MemHeapSize(heapID);
-			}
-			
-			// The heap is nondynamic.
-			else
-			{
-				// Calculate the total memory and free memory of the heap.
-				totalMemory += MemHeapSize(heapID);
-				MemHeapFreeBytes(heapID, &heapFree, &max);
-				freeMemory += heapFree;
-			}
-		}
-	}
-	
-	// Reduce the stats to KB.  Round the results.
-	freeMemory  = freeMemory / memoryBlockSize;
-	totalMemory = totalMemory  / memoryBlockSize;
-	dynamicMemory = dynamicMemory / memoryBlockSize;
-
-	if (totalMemoryP)	*totalMemoryP = totalMemory;
-	if (dynamicMemoryP)	*dynamicMemoryP = dynamicMemory;
-
-	return (freeMemory);
-}	// GetOSFreeMem
-
-*/
 void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
 	Int16 x = _mouse_cur_state.x;
 	Int16 y = _mouse_cur_state.y;
@@ -716,30 +683,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 ///////////////////////////////////////////////////////////////////////////////
 uint32 OSystem_PALMOS::property(int param, Property *value) {
 	switch(param) {
-/*
-	case PROP_TOGGLE_FULLSCREEN:
-		_full_screen ^= true;
-		g_scumm->_fullScreen = _full_screen;
 
-		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode //
-			hotswap_gfx_mode();
-		}
-		return 1;
-*/
 	case PROP_SET_WINDOW_CAPTION:
-/*		RectangleType r;
-		
-		RctSetRectangle(&r, 45, 60, 70 ,25);
-		WinEraseRectangle (&r,0);
-		RctSetRectangle(&r, 45 - 2, 60 - 2, 70 + 4 ,25 + 4);
-
-		WinSetForeColor (UIColorGetTableEntryIndex (UIFormFrame));
-		WinDrawRectangleFrame(dialogFrame, &r);
-		FntSetFont(boldFont);
-		WinSetForeColor (UIColorGetTableEntryIndex (UIObjectForeground));
-		WinDrawChars("Loading...", 10, 45 + 11, 60 + 7);
-*/		
 		if (StrCaselessCompare(value->caption,"ScummVM") == 0)
 			return 1;
 		
@@ -769,71 +714,19 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 			w1 = FntCharsWidth(caption,StrLen(caption));
 			w1 = (160 - w1) / 2;
 			WinDrawChars(caption,StrLen(caption),w1,40);
-//			WinSetScalingMode(kTextScalingOff);
-//			FntSetFont(stdFont);
-//			WinDrawChars(value->caption,StrLen(value->caption),0,0);
 		}
-/*
-		IndexedColorType newColor, oldColor;
-		
-		RectangleType r;
-		HRFntSetFont(gVars->HRrefNum,hrTinyFont);
-		UInt16 w0 = FntCharsWidth("Detected game :",StrLen("Detected game :"));
-		UInt16 w1 = FntCharsWidth(value->caption,StrLen(value->caption));
-		UInt16 h0 = FntLineHeight();
-		
-		if (w0>w1) w1 = w0;
-		w0 = (w1 + 20) / 2;
-
-		oldColor = WinSetBackColor (256);
-		RctSetRectangle(&r,(160-w0)/2-1, (100)/2-1,w0+2,25+2);
-		WinEraseRectangle (&r,0);
-		newColor = UIColorGetTableEntryIndex (UIFormFrame);
-		oldColor = WinSetForeColor (newColor);
-		RctSetRectangle(&r,(160-w0)/2, (100)/2,w0,25);
-		WinDrawRectangleFrame(dialogFrame, &r);
-
-		HRWinDrawChars(gVars->HRrefNum,"Detected game :",15,(320-w1)/2,105);
-		HRWinDrawChars(gVars->HRrefNum,value->caption,StrLen(value->caption),(320-w1)/2,105+h0);
-
-		HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
-		HRWinDrawChars(gVars->HRrefNum,"Initializing...",15,(320-w1)/2,110+h0*2);
-*/
 		return 1;
 
 	case PROP_OPEN_CD:
 		break;
-/*		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-			cdrom = NULL;
-		else {
-			cdrom = SDL_CDOpen(value->cd_num);
-			// Did if open? Check if cdrom is NULL //
-			if (!cdrom) {
-				warning("Couldn't open drive: %s\n", SDL_GetError());
-			}
-		}
-		break;
 
-	case PROP_SET_GFX_MODE:
-		if (value->gfx_mode >= 7)
-			return 0;
-
-		_mode = value->gfx_mode;
-		hotswap_gfx_mode();
-
-		return 1;
-
-	case PROP_SHOW_DEFAULT_CURSOR:
-		SDL_ShowCursor(value->show_cursor ? SDL_ENABLE : SDL_DISABLE);		
-		break;
-*/
 	case PROP_GET_SAMPLE_RATE:
 		return SAMPLES_PER_SEC;
 	}
 
 	return 0;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::quit() {
 	exit(1);
 
@@ -854,7 +747,7 @@ void OSystem_PALMOS::quit() {
 	_currentPalette = NULL;
 	_mouse_backup = NULL;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::draw_mouse() {
 	if (_mouse_drawn || !_mouse_visible || _quit)
 		return;
@@ -919,7 +812,7 @@ void OSystem_PALMOS::draw_mouse() {
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouse_drawn = true;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::undraw_mouse() {
 	if (!_mouse_drawn || _quit)
 		return;
@@ -942,27 +835,24 @@ void OSystem_PALMOS::undraw_mouse() {
 		}
 	}
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::stop_cdrom() {
 	return;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
 	return;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 bool OSystem_PALMOS::poll_cdrom() {
 	return false;
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::update_cdrom() {
 	return;
 }
-///////////////////////////////////////////////////////////////////////////////
-OSystem_PALMOS::OSystem_PALMOS()
-{
-	// cannot use memset beacuse of virtual ?
 
+OSystem_PALMOS::OSystem_PALMOS() {
 	_quit = false;
 	_current_shake_pos = 0;
 	_new_shake_pos = 0;
@@ -990,7 +880,7 @@ OSystem_PALMOS::OSystem_PALMOS()
 
 	_sndData = (UInt8 *)MemPtrNew(512);
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 
 	if ((dx == 0) && (dy == 0))
@@ -1077,163 +967,18 @@ void OSystem_PALMOS::addMessage(const Char *msg) {
 	_msg.color = RGBToColor(255,255,255);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-#define FRAG_SIZE 256
-///////////////////////////////////////////////////////////////////////////////
-/*
-void callback(UInt32 data) {
-	
-	Pa1Lib_adpcmStop(g_palm->_sndHandle);
-	Pa1Lib_adpcmClose(g_palm->_sndHandle);
-	g_palm->_isPlaying = false;
-	
-}
-*/
-////////////////////////////////////////////////////////////////////////////////
-/*
-
-UInt16 snd;
-
-Err SonySoundLibx(UInt16 *refNumP)
-{
-	SonySysFtrSysInfoP sonySysFtrSysInfoP;
-	Err error = errNone;
-
-	if ((error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
-		// Not CLIE: maybe not available //
-	} else {
-		if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrFm) {
-			// Sound-Lib available //
-			if ((error = SysLibFind(sonySysLibNameSound, refNumP))) {
-				if (error == sysErrLibNotFound) {
-				// couldn't find lib //
-					error = SysLibLoad( 'libr', sonySysFileCSoundLib, refNumP );
-				}
-			}
-
-			if ( error ) {
-				// Now we can use Sound-Lib //
-				FrmCustomAlert(FrmWarnAlert,"Sound Lib not found.",0,0);
-			}
-		}
-	}
-	
-	return error;
-}
-*/
-/*
-typedef struct t_sound {
-		bool active;	
-		OSystem::SoundProc *proc;
-		void *param;
-} t_sound;
-
-
-Err sound(void *userData, SndStreamRef stream, void *buffer, UInt32 frameCount) {
-	OSystem_PALMOS *s = (OSystem_PALMOS *)userData;
-
-	s->check_sound();
-	return 0;
-}
-*/
 bool OSystem_PALMOS::set_sound_proc(void *param, SoundProc *proc, byte format) {
-/*
-	_snd_format.formatTag = 0x0020;
-	_snd_format.numOfChan = 1;
-	_snd_format.samplePerSec = 8000;
-	_snd_format.bitPerSample = 4;
-	_snd_format.dataSize = FRAG_SIZE;
-
-	_snd_options.amplitude = 256;
-	_snd_options.dwStartMilliSec = 0;
-	_snd_options.dwEndMilliSec = 500;
-	_snd_options.interruptible = true;
-
-	_sound_proc_param = param;
-	_sound_proc = proc;
-
-	_sound = false;*/
-//	Pa1Lib_Open();
 
 	_sound.active = true;
 	_sound.proc = proc;
 	_sound.param = param;
-/*
-	SndStreamRef sndPref;
 
-	Err e = SndStreamCreate(	&sndPref,
-						sndOutput, 22050,
-						sndInt16Big, sndMono,
-						&sound,
-						this, 512,
-						false);
-
-	SndStreamStart(sndPref);*/
 	return true;
 }
 
-/*
-UInt32 ADPCM_encoder16bit(UInt16 *dataP, UInt8 *saveP, UInt32 dataLength);*/
 void OSystem_PALMOS::check_sound() {
-
-//	if (!Pa1Lib_sndEventProc()) {
-//if (!_isPlaying) {
-
-//		CallbackInfoType	callbackInfo;
-//		UInt8 buf[512];
-//		UInt8 *copy = _sndData;
-//		callbackInfo.funcP = callback;
-//		callbackInfo.dwUserData = 0;
-//		UInt16 buf[512];
-//		UInt16 *a = (UInt16 *)buf;
-
-//		MemSet(_sndData,4096,0);
-		_sound.proc(_sound.param, _sndData, 512);
-/*		int a = ADPCM_encoder16bit((UInt16 *)buf,_sndData, 512);
-
-//		_sound.proc(_sound.param, (UInt8 *)buf, 512);
-
-		MemSet(_sndData,4096,0);
-
-		for (int n=0;n<256;n++) {
-			*copy = (UInt8)((*a++ >> 12) | ((*a++ >> 12) << 4));
-			copy++;
-			//a++;
-		}
-		
-
-		if (_isPlaying) {
-			//Pa1Lib_adpcmStop(_sndHandle);
-			//Pa1Lib_adpcmClose(_sndHandle);
-			Pa1Lib_sndAdpcmStop();
-		}
-
-		//Pa1Lib_adpcmOpen(1, _sndData, 256, NULL, &_sndHandle);
-		//Pa1Lib_adpcmStart(_sndHandle,1);
-		Pa1Lib_sndAdpcmStart(1, _sndData, a, NULL);
-		_isPlaying = true;
-	}*/
-/*
-	e = SndPlayPcm(SndRefNum, NULL, cmd, sound_buffer, &_snd_format, &_snd_options, NULL, true);
-
-
-	switch (e) {
-	case errNone:
-		HRWinDrawChars(HRrefNum,"errNone",StrLen("errNone"),0,220);
-		break;
-	case sndErrBadParam:
-		HRWinDrawChars(HRrefNum,"sndErrBadParam",StrLen("sndErrBadParam"),0,220);
-		break;
-	case sndErrFormat:
-		HRWinDrawChars(HRrefNum,"sndErrFormat",StrLen("sndErrFormat"),0,220);
-		break;
-	case sndErrInterrupted:
-		HRWinDrawChars(HRrefNum,"sndErrInterrupted",StrLen("sndErrInterrupted"),0,220);
-		break;
-	default:
-		HRWinDrawChars(HRrefNum,"unknow",StrLen("unknow"),0,220);
-		break;
-	}*/
+	// currently not supported
+	_sound.proc(_sound.param, _sndData, 512);
 }
 
 void OSystem_PALMOS::show_overlay()
@@ -1252,7 +997,7 @@ void OSystem_PALMOS::hide_overlay()
 
 	_overlay_visible = false;
 	_overlaySaved = false;
-	memmove(palm_offscreen, palm_tmpscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
+	memmove(palm_offscreen, tmpScreen, SCREEN_WIDTH*SCREEN_HEIGHT);
 }
 
 void OSystem_PALMOS::clear_overlay()
@@ -1263,7 +1008,8 @@ void OSystem_PALMOS::clear_overlay()
 	// hide the mouse
 	undraw_mouse();
 	if (!_overlaySaved)
-	{	memmove(palm_tmpscreen, palm_offscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
+	{	//memmove(palm_tmpscreen, palm_offscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
+		DmWrite(tmpScreen, 0, palm_offscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
 		_overlaySaved = true;
 	}
 }
@@ -1276,7 +1022,7 @@ void OSystem_PALMOS::grab_overlay(byte *buf, int pitch)
 	// hide the mouse
 	undraw_mouse();
 
-	byte *src = palm_tmpscreen;
+	byte *src = tmpScreen;
 	int h = SCREEN_HEIGHT;
 
 	do {
