@@ -909,7 +909,7 @@ void Actor::drawActorCostume()
 		//
 		// Or it could mean that the actor really is in walkbox 0.
 
-		if (walkbox == 0) {
+		if (_vm->_gameId == GID_LOOM256 && walkbox == 0) {
 			int i;
 
 			cr._zbuf = 0;
