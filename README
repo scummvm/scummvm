@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-11-15
-Release version: 0.2.82 [CVS]
+Last updated:    2002-11-22
+Release version: 0.2.83 [CVS]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -100,7 +100,6 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
        Simon The Sorcerer:
-                - Music requires real midi support, adlib emulation isn't supported.
                 - Some minor graphical glitches may be present
 
        Indy 3 (The Last Crusade):
@@ -114,14 +113,8 @@ the section on Reporting Bugs.
                 - Keyboard fighting does not work. ScummVM now defaults to
                   using mouse fighting.
 
-
        Sam and Max:
                 - Subgames are not all fully functional.
-                - Conroy singing in Bumpusville may work incorrectly. E.g.
-                  music will overlap and Conroy will get stuck singing. Just
-                  hit escape to skip the cutscene. This is due to SNM using
-                  a different iMUSE implementation to previous games.
-
 
        Zak McKracken Fm Towns:
                 - The Fm Towns 256 color version of Zak McKracken is rare,
