@@ -332,6 +332,7 @@ sfxplay()					Sound::playSfx()
 -
 song[]						Sound::_song[]
 tunelist[]					Sound::_tune[]
+CURRSONG					Music::_currentSong
 SFXNAME						Sound::_sfxName
 VOLUME
 
