@@ -1004,6 +1004,11 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	args[0] = a;
 	args[1] = cmd;
 	args[2] = mode;
+	// All HE 72+ games but only some HE 71 games.
+	if (_heversion >= 71) {
+		args[3] = VAR(VAR_VIRT_MOUSE_X);
+		args[4] = VAR(VAR_VIRT_MOUSE_Y);
+	}
 	if (verbScript)
 		runScript(verbScript, 0, 0, args);
 }
