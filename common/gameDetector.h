@@ -34,6 +34,23 @@ enum {
 	kDefaultMusicVolume = 192
 };
 
+/* Languages
+ * note: values 0->8 are are _needed_ for scripts in comi please don't
+ * remove/change fixed numbers from this enum
+ */
+enum {
+	EN_USA = 0,
+	DE_DEU = 1,
+	FR_FRA = 2,
+	IT_ITA = 3,
+	PT_BRA = 4,
+	ES_ESP = 5,
+	JA_JPN = 6,
+	ZH_TWN = 7,
+	KO_KOR = 8,
+	HB_HEB = 20
+};
+
 enum GameId {
 	GID_SCUMM_FIRST = 1,
 	GID_SCUMM_LAST = GID_SCUMM_FIRST + 99,
