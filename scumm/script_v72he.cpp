@@ -558,13 +558,13 @@ void ScummEngine_v72he::copyScriptString(byte *dst) {
 
 void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	int args[31];
-	int num = 0, val = 0;
-	int len;
+	int num = 0, val;
+	int len, id;
 	byte chr, string[256];
 	memset(string, 0, sizeof(string));
 
-	getStackList(args, ARRAYSIZE(args));
-	int id = pop();
+	val = getStackList(args, ARRAYSIZE(args));
+	args[val] = id = pop();
 
 	if (scriptString) {
 		addMessageToStack(_scriptPointer, string, sizeof(string));
@@ -580,7 +580,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		if (chr == '%') {
 			chr = string[num++];
 			if (chr == 'd') {
-				dst += snprintf((char *)dst, 10, "%d", args[val++]);
+				dst += snprintf((char *)dst, 10, "%d", args[val--]);
 				continue;
 			} else if (chr == 's') {
 				dst += addStringToStack(dst, 512, id++);
