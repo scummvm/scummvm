@@ -876,7 +876,7 @@ void SmushPlayer::updateScreen() {
 	int width = MIN(_width, _scumm->_realWidth);
 	int height = MIN(_height, _scumm->_realHeight);
 
-	_scumm->parseEvents();
+//	_scumm->parseEvents();
 	_scumm->_system->copy_rect(_data, _width, 0, 0, width, height);
 	_scumm->_system->update_screen();
 }
@@ -887,7 +887,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 
 	while (true) {
 		_scumm->processKbd();
-		_scumm->_system->delay_msecs(10);
+		_scumm->waitForTimer(1);
 		if (_scumm->_videoFinished == true)
 			break;
 		if (_scumm->_saveLoadFlag)
