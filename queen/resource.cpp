@@ -24,11 +24,8 @@
 
 namespace Queen {
 
-#define	DEMO_JAS_VERSION_OFFSET	0x119A8
-#define JAS_VERSION_OFFSET	0x12484
 
-static const char *tableFilename = "queen.tbl";
-
+const char *Resource::_tableFilename = "queen.tbl";
 
 const GameVersion Resource::_gameVersions[] = {
 	{ "PEM10", true,  false, 0x00000008,  22677657 },
@@ -66,7 +63,7 @@ Resource::Resource(const Common::String &datafilePath, const char *datafileName,
 				_resourceEntries = 1076;
 				_resourceTable = _resourceTablePEM10;
 			} else {
-				error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), tableFilename);
+				error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), _tableFilename);
 			}
 		}
 	}
@@ -203,7 +200,7 @@ const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
 	//we try to verify that it is indeed the version we think it is later on
 	const GameVersion *pgv = _gameVersions;
 	int i;
-	for (i = 0; i < VER_NUMBER; ++i, ++pgv) {
+	for (i = 0; i < VER_COUNT; ++i, ++pgv) {
 		if (pgv->dataFileSize == dataFilesize) {
 			return pgv;
 		}
@@ -214,9 +211,9 @@ const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
 
 bool Resource::readTableFile() {
 	File tableFile;
-	tableFile.open(tableFilename, _datafilePath);
+	tableFile.open(_tableFilename, _datafilePath);
 	if (!tableFile.isOpen())	
-		tableFile.open(tableFilename, ""); //try current directory
+		tableFile.open(_tableFilename, ""); //try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
 		tableFile.seek(_gameVersion->tableOffset);
 		_resourceEntries = tableFile.readUint16BE();

@@ -41,7 +41,7 @@ enum Version {
 	VER_DEMO_PCGAMES = 9,
 	VER_DEMO         = 10,
 
-	VER_NUMBER       = 11
+	VER_COUNT        = 11
 };
 
 struct ResourceEntry {
@@ -80,6 +80,10 @@ public:
 	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
 	bool readSave(uint16 slot, byte *&ptr);
 
+	enum {
+		DEMO_JAS_VERSION_OFFSET	= 0x119A8,
+		JAS_VERSION_OFFSET	    = 0x12484
+	};
 
 protected:
 	File *_resourceFile;
@@ -91,6 +95,8 @@ protected:
 	const char *_savePath;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;
+
+	static const char *_tableFilename;
 	static const GameVersion _gameVersions[];
 	static ResourceEntry _resourceTablePEM10[];
 

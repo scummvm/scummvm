@@ -34,7 +34,6 @@ enum StateTalk {
 	STATE_TALK_MUTE
 };
 
-
 enum StateGrab {
 	STATE_GRAB_NONE,
 	STATE_GRAB_DOWN,
@@ -42,12 +41,10 @@ enum StateGrab {
 	STATE_GRAB_MID
 };
 
-
 enum StateOn {
 	STATE_ON_ON,
 	STATE_ON_OFF
 };
-
 
 enum StateUse {
 	STATE_USE,

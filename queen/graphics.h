@@ -233,7 +233,7 @@ private:
 	TextSlot _texts[GAME_SCREEN_HEIGHT];
 	uint8 _curTextColor;
 
-	int _cameraBob; // cambob
+	int _cameraBob;
 
 	BamData _bam;
 

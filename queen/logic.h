@@ -148,8 +148,6 @@ public:
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
-	uint16 numFrames() const { return _numFrames; }
-
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void zoneSet(uint16 screen, uint16 zone, const Box& box);
 	uint16 zoneIn(uint16 screen, uint16 x, uint16 y) const;
@@ -171,15 +169,17 @@ public:
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }
 
+	uint16 numFrames() const { return _numFrames; }
+
 	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp); // SET_PERSON_DATA
 	uint16 personSetup(uint16 noun, uint16 curImage); // SETUP_PERSON
 	uint16 personAllocate(uint16 noun, uint16 curImage); // ALLOCATE_PERSON
+	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
 
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
 	void animReset(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
-	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 

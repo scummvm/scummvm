@@ -714,8 +714,6 @@ void Logic::roomErase() {
 	_graphics->bankErase(10);
 	_graphics->bankErase(12);
 
-	// TODO: TALKHEAD=0;
-
 	if (_currentRoom >= 114) {
 		_display->palFadeOut(0, 255, _currentRoom);
 	}
