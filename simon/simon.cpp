@@ -8247,14 +8247,20 @@ void SimonState::initSound() {
 	/* only read voice file in windows game */
 	if (_game & GAME_WIN) {
 		const char *s = gss->wav_filename;
+		const char *s2 = gss->wav_filename2;
 		const char *e = gss->effects_filename;
 
 		_voice_offsets = NULL;
 
 		_voice_file = fopen_maybe_lowercase(s);
 		if (_voice_file == NULL) {
-			warning("Cannot open %s",s);
-			return;
+			warning("Cannot open voice file %s, trying %s",s,s2);
+
+			_voice_file = fopen_maybe_lowercase(s2);
+			if (_voice_file == NULL) {
+				warning("Cannot open voice file %s",s2);
+				return;
+			}
 		}
 
 		_voice_offsets = (uint32*)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
@@ -8328,13 +8334,12 @@ struct VocBlockHeader {
 
 
 void SimonState::playVoice(uint voice) {
-	WaveHeader wave_hdr;
-	uint32 data[2];
+	_mixer->stop(_voice_sound);
+	fseek(_voice_file, _voice_offsets[voice], SEEK_SET);
 
 	if (!_effects_offsets) {		/* WAVE audio */
-		_mixer->stop(_voice_sound);
-
-		fseek(_voice_file, _voice_offsets[voice], SEEK_SET);
+		WaveHeader wave_hdr;
+		uint32 data[2];				
 
 		if (fread(&wave_hdr, sizeof(wave_hdr), 1, _voice_file)!=1 ||
 			wave_hdr.riff!=MKID('RIFF') || wave_hdr.wave!=MKID('WAVE') || wave_hdr.fmt!=MKID('fmt ') ||
@@ -8346,15 +8351,18 @@ void SimonState::playVoice(uint voice) {
 
 		fseek(_voice_file, READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
 
-		data[ 0 ] = fileReadLE32(_voice_file);
-		data[ 1 ] = fileReadLE32(_voice_file);
+		data[0] = fileReadLE32(_voice_file);
+		data[1] = fileReadLE32(_voice_file);
 		if (//fread(data, sizeof(data), 1, _voice_file) != 1 ||
 			data[0] != 'atad' ) {
 				warning("playVoice(%d): cannot read data header",voice);
 				return;
 		}
-		_mixer->play_raw(&_voice_sound, _voice_file, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
-							SoundMixer::FLAG_FILE|SoundMixer::FLAG_UNSIGNED);
+
+		byte *buffer = (byte*)malloc(data[1]);
+		fread(buffer, data[1], 1, _voice_file);
+
+	    _mixer->play_raw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec), SoundMixer::FLAG_UNSIGNED);
 	} else {	/* VOC audio*/
 		VocHeader voc_hdr;
 		VocBlockHeader voc_block_hdr;
@@ -8373,8 +8381,11 @@ void SimonState::playVoice(uint voice) {
     
 		uint32 samples_per_sec = 1000000L/(256L-(long)voc_block_hdr.tc);
 
-	    _mixer->play_raw(&_voice_sound, _voice_file, size, samples_per_sec,
-			SoundMixer::FLAG_FILE|SoundMixer::FLAG_UNSIGNED);
+		byte *buffer = (byte*)malloc(size);
+		fread(buffer, size, 1, _effects_file);
+
+	    _mixer->play_raw(&_effects_sound, buffer, size, samples_per_sec,
+			SoundMixer::FLAG_UNSIGNED);
 	}
 }
 
@@ -8403,8 +8414,11 @@ void SimonState::playSound(uint sound) {
 			
 			uint32 samples_per_sec = 1000000L/(256L-(long)voc_block_hdr.tc);
 	
-			_mixer->play_raw(&_effects_sound, _effects_file, size, samples_per_sec,
-				SoundMixer::FLAG_FILE|SoundMixer::FLAG_UNSIGNED);
+			byte *buffer = (byte*)malloc(size);
+			fread(buffer, size, 1, _effects_file);
+
+		    _mixer->play_raw(&_effects_sound, buffer, size, samples_per_sec,
+				SoundMixer::FLAG_UNSIGNED);
 		} else {
 			byte *p;
 		
@@ -8444,7 +8458,7 @@ void SimonState::playMusic(uint music) {
 
 	/* FIXME: not properly implemented */
 	if (_game & GAME_WIN) {
-		fseek(_game_file, _game_offsets_ptr[gss->MUSIC_INDEX_BASE + music],SEEK_SET);
+		fseek(_game_file, _game_offsets_ptr[gss->MUSIC_INDEX_BASE + music] - 1,SEEK_SET);
 		f = _game_file;
 	
 		midi.read_all_songs(f);
