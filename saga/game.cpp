@@ -281,6 +281,11 @@ static GAME_MD5 game_md5[] = {
 	{ GID_IHNM_CD, "1f501ce4b72392bdd1d9ec38f6eec6da", "voices5.res" },
 	{ GID_IHNM_CD, "f580ed7568c7d6ef34e934ba20adf834", "voices6.res" },
 	{ GID_IHNM_CD, "54b1f2013a075338ceb0e258d97808bd", "voicess.res" },
+
+	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res" },
+	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res" },
+	{ GID_IHNM_DEMO, "1c610d543f32ec8b525e3f652536f269", "sfx.res" },
+	{ GID_IHNM_DEMO, "3bbc16a8f741dbb511da506c660a0b54", "voicesd.res" },
 };
 
 static GAMEDESC GameDescs[] = {
@@ -514,8 +519,8 @@ static GAMEDESC GameDescs[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFiles),
 		IHNMDEMO_GameFiles,
-		0,
-		NULL,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		GF_DEFAULT_TO_1X_SCALER
 	},

@@ -82,6 +82,11 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	ActorData *actor;
 	debug(9, "Actor::Actor()");
 
+	if (_vm->_gameType == GType_IHNM) {
+		warning("Actors aren't implemented for IHNM yet");
+		return;
+	}
+
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
