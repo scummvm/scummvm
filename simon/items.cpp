@@ -1551,11 +1551,11 @@ void SimonEngine::o_unk_120(uint a) {
 	}
 }
 
-void SimonEngine::o_play_sound(uint a) {
+void SimonEngine::o_play_sound(uint sound_id) {
 	if (_game == GAME_SIMON1DOS)
-		playSting(a);
+		playSting(sound_id);
 	else
-		_sound->playEffects(a);
+		_sound->playEffects(sound_id);
 }
 
 void SimonEngine::o_unk_160(uint a) {
