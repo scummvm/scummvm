@@ -399,11 +399,11 @@ void SkyScreen::stopSequence() {
 void SkyScreen::processSequence(void) {
 
 	uint32 screenPos = 0;
-	uint32 rectX, rectY, oldScreenPos;
 
 	_seqInfo.delay--;
 	if (_seqInfo.delay == 0) {
 		_seqInfo.delay = SEQ_DELAY;
+		memset(_seqGrid, 0, 12 * 20);
 
         uint8 nrToSkip, nrToDo, cnt;
 		do {
@@ -416,26 +416,41 @@ void SkyScreen::processSequence(void) {
 				nrToDo = _seqInfo.seqDataPos[0];
 				_seqInfo.seqDataPos++;
 
-				rectX = screenPos % GAME_SCREEN_WIDTH;
-				rectY = screenPos / GAME_SCREEN_WIDTH;
-				oldScreenPos = screenPos;
-
+				uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
+				uint8 gridEnd = (uint8)(((screenPos+nrToDo+15) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo+15) % GAME_SCREEN_WIDTH) >> 4));
+                for (cnt = gridSta; cnt <= gridEnd; cnt++)
+					_seqGrid[cnt] = 1;
 				for (cnt = 0; cnt < nrToDo; cnt++) {
 					_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
 					_seqInfo.seqDataPos++;
 					screenPos++;
 				}
-				if (nrToDo > 0) {
-					if (rectX + nrToDo <= GAME_SCREEN_WIDTH)
-	                    _system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, rectX, rectY, nrToDo, 1);
-					else {
-						_system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, rectX, rectY, 320 - rectX, 1);
-						oldScreenPos += 320 - rectX;
-						_system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, 0, rectY + 1, nrToDo - (320 - rectX), 1);
-					}
-				}
 			} while (nrToDo == 0xFF);
 		} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
+		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr;
+		uint8 rectWid = 0, rectX, rectY;
+		for (uint8 cnty = 0; cnty < 12; cnty++) {
+			for (uint8 cntx = 0; cntx < 20; cntx++) {
+				if (*gridPtr) {
+					if (!rectWid) {
+						rectX = cntx;
+						rectY = cnty;
+						rectPtr = scrPtr;
+					}
+					rectWid++;
+				} else if (rectWid) {
+					_system->copy_rect(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+					rectWid = 0;
+				}
+				scrPtr += 16;
+				gridPtr++;
+			}
+			if (rectWid) {
+				_system->copy_rect(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+				rectWid = 0;
+			}
+			scrPtr += 15 * GAME_SCREEN_WIDTH;
+		}
 		_system->update_screen();
 		_seqInfo.framesLeft--;
 	}

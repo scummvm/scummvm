@@ -87,6 +87,7 @@ private:
 	static uint8 _top16Colours[16*3];
 	uint8 _palette[1024];
 	uint32 _currentPalette;
+	uint8 _seqGrid[20 * 12];
 
 	bool volatile _gotTick;
 	void waitForTimer(void);
@@ -96,7 +97,6 @@ private:
 	uint8 *_currentScreen;
 	uint8 *_scrollScreen;
 	uint8 *_backScreen;
-	//uint32 *_scriptVariables;
 	struct {
 		uint32 framesLeft;
 		uint32 delay;
