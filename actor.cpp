@@ -480,7 +480,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 		
 		while(1) {
 			iterations++;
-			if (iterations > 3000000) return abr;	/* Safety net */
+                        if (iterations > 1000) return abr;   /* Safety net */
 			box = getNumBoxes() - 1;
 			best = (uint)0xFFFF;
 			b = 0;
