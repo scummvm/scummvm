@@ -64,7 +64,7 @@ simon/libsimon.a: $(SIMON_OBJS)
 	$(RANLIB) $@ 
 
 clean:
-	$(RM) $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) scummvm$(EXEEXT)
+	$(RM) $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) $(SMUSH_OBJS) scummvm$(EXEEXT)
 
 .PHONY: all clean dist distclean
 
