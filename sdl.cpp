@@ -26,6 +26,8 @@
 #include "SDL_thread.h"
 #include "gameDetector.h"
 
+#include "scummvm.xpm"
+
 #include <SDL.h>
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
@@ -180,6 +182,8 @@ private:
 
 	void get_320x200_image(byte *buf);
 	static uint32 autosave(uint32);
+
+	void setup_icon();
 };
 
 int Init_2xSaI (uint32 BitFormat);
@@ -216,6 +220,9 @@ OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetTimer(5 * 60 * 1000, (SDL_TimerCallback) autosave);
+
+	/* Setup the icon */
+	syst->setup_icon();
 
 	/* Clean up on exit */
  	atexit(atexit_proc);
@@ -1185,6 +1192,45 @@ void OSystem_SDL::update_cdrom() {
 		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
 		cd_end_time = SDL_GetTicks() + cdrom->track[cd_track].length * 1000 / CD_FPS;
 	}
+}
+
+void OSystem_SDL::setup_icon() {
+	int w, h, ncols, nbytes, i;
+	unsigned int rgba[256], icon[32 * 32];
+
+	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
+	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
+		return;
+	}
+	for (i = 0; i < ncols; i++) {
+		unsigned char code;
+		char color[32];
+		unsigned int col;
+		sscanf(scummvm_icon[1 + i], "%c c %s", &code, color);
+		if (!strcmp(color, "None"))
+			col = 0x00000000;
+		else if (!strcmp(color, "black"))
+			col = 0xFF000000;
+		else if (color[0] == '#') {
+			sscanf(color + 1, "%06x", &col);
+			col |= 0xFF000000;
+		} else {
+			warning("Could not load the icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			return;
+		}
+		
+		rgba[code] = col;
+	}
+	for (h = 0; h < 32; h++) {
+		char *line = scummvm_icon[1 + ncols + h];
+		for (w = 0; w < 32; w++) {
+			icon[w + 32 * h] = rgba[line[w]];
+		}
+	}
+
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	SDL_WM_SetIcon(sdl_surf, NULL);
 }
 
 #ifdef USE_NULL_DRIVER
