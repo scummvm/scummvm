@@ -132,6 +132,8 @@ General
   frequently gives the engine time to do these "other things".
 * Default to saving games in $HOME if in savepath is not defined maybe something
   like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
+* Eye candy: make console sliding down and up when activated. Similiar to current
+  SAGA engine console.
 
 Build System
 ============
@@ -286,20 +288,26 @@ SIMON
 SAGA
 ====
 * Remove use of yslib
+* Eliminate R_ prefix everywhere
 * Transition console to use ScummVM one
 * Remove any traces of the additional level of abstraction reinherit used
 * Change printf calls to warning/debug calls
 * Remove homerolled high level data structures like stacks that should
   be provided by ScummVM if they aren't already.
-* OO'ify (blah_mod.h contains public stuff, blah.h private stuff)
-* Rewrite actor code, so it works with isometric rooms
+* OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost done]
 * Implement unimplemented opcodes
-* Remove use of floating point, especially doubles. Particularly
-  rewrite path finder
-* IHNM intro is very uncomplete
-* Support various demo versions
+* Remove use of floating point, especially doubles.
 * Change SData so that its buffers point to the appropriate data.
   (eriktorbjorn)
+* Rewrite path finder (sev)
+* Make faery script skippable by ESC like in original
+* Fix graphics glitch when intro is skipped and faery script is run,
+  there should be fade out/in sequence. Now actors with wrong palette are drawn
+* Fix crashes in ISO rooms
+* Add sound/voices compression. Should _considerably_ save space.
+* Add support for music resources in Mac/Linux versions.
+* Support various demo versions
+* Support IHNM
 
 #######################################################################
 # Backends
