@@ -105,6 +105,12 @@
 			RelativePath="..\..\queen\defs.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\display.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\display.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\graphics.cpp">
 		</File>
 		<File
