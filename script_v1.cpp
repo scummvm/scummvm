@@ -1076,57 +1076,28 @@ void Scumm::o5_drawObject()
 	obj = getVarOrDirectWord(0x80);
 
 	if (_features & GF_SMALL_HEADER) {
-		int temp = getVarOrDirectWord(0x40);
-		int temp2 = getVarOrDirectWord(0x20);	// Room
-
-		idx = getObjectIndex(obj);
-		if (idx == -1)
-			return;
-		od = &_objs[idx];
-		xpos = ypos = 255;
-		if (temp != 0xFF) {
-
-			od->x_pos = temp << 3;
-
-			od->y_pos = temp2 << 3;
+		xpos = getVarOrDirectWord(0x40);
+		ypos = getVarOrDirectWord(0x20);
+	} else {
+		switch ((_opcode = fetchScriptByte()) & 0x1F) {
+		case 1:										/* draw at */
+			xpos = getVarOrDirectWord(0x80);
+			ypos = getVarOrDirectWord(0x40);
+			break;
+		case 2:										/* set state */
+			state = getVarOrDirectWord(0x80);
+			break;
+		case 0x1F:									/* neither */
+			break;
+		default:
+			error("o5_drawObject: default case");
 		}
-
-
-
-		addObjectToDrawQue(idx);
-
-		x = od->x_pos;
-		y = od->y_pos;
-		w = od->width;
-		h = od->height;
-
-		i = _numObjectsInRoom;
-		do {
-			if (_objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
-				putState(_objs[i].obj_nr, 0);
-		} while (--i);
-
-		putState(obj, state);
-		return;
-	}
-
-	switch ((_opcode = fetchScriptByte()) & 0x1F) {
-	case 1:											/* draw at */
-		xpos = getVarOrDirectWord(0x80);
-		ypos = getVarOrDirectWord(0x40);
-		break;
-	case 2:											/* set state */
-		state = getVarOrDirectWord(0x80);
-		break;
-	case 0x1F:										/* neither */
-		break;
-	default:
-		error("o5_drawObject: default case");
 	}
 
 	idx = getObjectIndex(obj);
 	if (idx == -1)
 		return;
+
 	od = &_objs[idx];
 	if (xpos != 0xFF) {
 		od->walk_x += (xpos << 3) - od->x_pos;
