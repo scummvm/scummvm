@@ -1280,7 +1280,6 @@ void Scumm_v8::o8_system()
 
 void Scumm_v8::o8_startVideo()
 {
-	char dirName[255];
 	int len = resStrLen((char*)_scriptPointer);
 	
 	warning("o8_startVideo(%s/%s)\n", getGameDataPath(), (char*)_scriptPointer);

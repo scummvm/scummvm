@@ -578,7 +578,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	int i, where;
 	Actor *at;
 
-	CHECK_HEAP debug(1, "Loading room %d", room);
+	CHECK_HEAP;
+	debug(1, "Loading room %d", room);
 
 	clearMsgQueue();
 
