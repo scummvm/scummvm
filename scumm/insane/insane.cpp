@@ -32,6 +32,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 
 #include "scumm/smush/smush_player.h"
+#include "scumm/smush/smush_font.h"
 #include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
 
@@ -39,7 +40,13 @@
 
 // TODO (in no particular order):
 // o Ben's velocity don't get zeroed after crash
-// o TRS file support. Everything is in place, I just need to figure out function parameters
+// o Mine road used to have correct behaviour with ESC but now is not.
+//   Instead of skipping portions of road it just restarts
+// o Road signs are not aligned properly
+// o With goggles on there is a seek error
+// o SAUD complaining again
+// o Insane::postCase16() has workaround. Cockpit is not transparent so it is
+//   disabled now
 // o Code review/cleanup
 // o DOS demo INSANE
 
@@ -76,9 +83,6 @@ Insane::Insane(ScummEngine_v6 *scumm) {
 	_smush_bensgoggNut->loadFont("bensgogg.nut", _vm->getGameDataPath());
 	_smush_bencutNut = new NutRenderer(_vm);
 	_smush_bencutNut->loadFont("bencut.nut", _vm->getGameDataPath());
-
-	// FIXME: implement
-	// openManyResource(0, 4, "specfnt.nut", "titlfnt.nut", "techfnt.nut", "scummfnt.nut");
 }
 
 Insane::~Insane(void) {
@@ -691,14 +695,6 @@ void Insane::readState(void) {
 	_enemy[EN_VULTF2].field_10 = readArray(339);
 }
 
-void Insane::setTrsFile(int file) {
-	// FIXME: we don't need it
-}
-
-void Insane::resetTrsFilePtr(void) {
-	// FIXME: we don't need it
-}
-
 void Insane::setupValues(void) {
 	_actor[0].x = 160;
 	_actor[0].y = 200;
@@ -844,7 +840,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 	_sceneProp[idx + 1].counter = 0;
 	_currScenePropSubIdx = 1;
 	if (_sceneProp[idx + 1].trsId)
-		_currTrsMsg = handleTrsTag(_trsFilePtr, _sceneProp[idx + 1].trsId);
+		_currTrsMsg = handleTrsTag(_sceneProp[idx + 1].trsId);
 	else
 		_currTrsMsg = 0;
 
@@ -1265,11 +1261,61 @@ void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
 }
 
 void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
-					   int32 x, int32 y, int32 arg_14, int32 arg_18, 
-					   int32 arg_1C, const char *formatString, char *str) {
-	// FIXME: implement
-	// SmushPlayer::handleTextResource does the thing
-	warning("stub Insane::smlayer_showStatusMsg(...)");
+					   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18, 
+					   int32 flags, const char *formatString, char *strng) {
+	SmushFont *sf = _player->_sf[0];
+	int color = 1, top = 0;
+	char *str = NULL, *string;
+	int len = strlen(formatString) + strlen(strng) + 16;
+
+	string = (char *)malloc(len);
+	str = string;
+
+	while (*strng == '/') {
+		strng++; // For text resources
+	}
+
+	snprintf(str, len, formatString, strng);
+
+	while (str[0] == '^') {
+		switch (str[1]) {
+		case 'f':
+			{
+				int id = str[3] - '0';
+				str += 4;
+				sf = _player->_sf[id]; 
+			}
+			break;
+		case 'c':
+			{
+				color = str[4] - '0' + 10 *(str[3] - '0');
+				str += 5;
+			}
+			break;
+		default:
+			error("invalid escape code in text string");
+		}
+	}
+
+	assert(sf != NULL);
+	sf->setColor(color);
+
+	// flags:
+	// bit 0 - center       1
+	// bit 1 - not used     2
+	// bit 2 - ???          4
+	// bit 3 - wrap around  8
+	switch (flags & 9) {
+	case 0: 
+		sf->drawStringAbsolute(str, renderBitmap, _player->_width, pos_x, pos_y);
+		break;
+	case 1:
+		sf->drawStringCentered(str, renderBitmap, _player->_width, _player->_height, pos_x, MAX(pos_y, top));
+		break;
+	default:
+		warning("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
+	}
+	free (string);
 }
 
 void Insane::procSKIP(Chunk &b) {
@@ -1320,11 +1366,8 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 	}
 }
 
-char *Insane::handleTrsTag(int32 trsFilePtr, int32 trsId) {
-	// FIXME: implement
-	warning("stub Insane::handleTrsTag(0, %d)", trsId);
-
-	return 0;
+char *Insane::handleTrsTag(int32 trsId) {
+	return _player->getString(trsId);;
 }
 
 bool Insane::smush_eitherNotStartNewFrame(void) {
@@ -1359,11 +1402,6 @@ bool Insane::smlayer_actorNeedRedraw(int actornum, int actnum) {
 	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_actorNeedRedraw");
 
 	return a->needRedraw;
-}
-
-void Insane::smush_setPaletteValue(int where, int r, int g, int b) {
-	// FIXME: implement
-	warning("stub Insane::smlayer_setPaletteValue(%d, %d, %d, %d)", where, r, g, b);
 }
 
 int32 Insane::readArray (int item) {

@@ -578,7 +578,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
-									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5000));
+									  2, 0, "%s", handleTrsTag(5000));
 			}
 			_val124_ = true;
 			break;
@@ -590,7 +590,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
-									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5001));
+									  2, 0, "%s", handleTrsTag(5001));
 			}
 			_val124_ = true;
 			_val123_ = true;

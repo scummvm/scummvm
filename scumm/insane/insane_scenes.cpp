@@ -34,11 +34,6 @@
 namespace Scumm {
 
 void Insane::runScene(int arraynum) {
-	//	  procPtr5 = &procPtr5Body;
-	//	  procPtr6 = &procPtr6Body;
-	//	  procIact = &handleIact;
-	//	  ptrMainLoop = &ptrMainLoopBody;
-
 	_insaneIsRunning = true;
 	_player = new SmushPlayer(_vm, _speed);
 	_player->insanity(true);
@@ -60,7 +55,6 @@ void Insane::runScene(int arraynum) {
 	smush_warpMouse(160, 100, -1);
 	putActors();
 	readState();
-	setTrsFile(_trsFilePtr); // FIXME: we don't need it
 
 	debug(0, "INSANE Arg: %d", readArray(0));
 
@@ -137,7 +131,6 @@ void Insane::runScene(int arraynum) {
 		break;
 	}
 
-	resetTrsFilePtr(); // FIXME: we don't need it
 	smush_proc39();
 	putActors();
 	smush_proc40();
@@ -1058,8 +1051,9 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	sprintf(buf, "^f01%02o", curFrame & 0xff);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 140, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
-	
-	smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
+
+	// FIXME: it should be transparent
+	//smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
 	
 	if (!_val124_)
 		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1, 
@@ -1440,8 +1434,9 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (!_actor[tsceneProp->actor].runningSound || ConfMan.getBool("subtitles")) {
 				if (_actor[tsceneProp->actor].act[3].state == 72 &&
 					_currTrsMsg) {
-					smush_setPaletteValue(1, tsceneProp->r, tsceneProp->g, tsceneProp->b);
-					smush_setPaletteValue(2, 0, 0, 0);
+					_player->setPaletteValue(0, tsceneProp->r, tsceneProp->g, tsceneProp->b);
+					_player->setPaletteValue(1, tsceneProp->r, tsceneProp->g, tsceneProp->b);
+					_player->setPaletteValue(0, 0, 0, 0);
 					smlayer_showStatusMsg(-1, renderBitmap, codecparam, 160, 20, 1, 2, 5,
 										  "^f00%s", _currTrsMsg);
 				}
@@ -1452,7 +1447,7 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				tsceneProp = &_sceneProp[_currScenePropIdx + _currScenePropSubIdx];
 				tsceneProp->counter = 0;
 				if (tsceneProp->trsId)
-					_currTrsMsg = handleTrsTag(_trsFilePtr, tsceneProp->trsId);
+					_currTrsMsg = handleTrsTag(tsceneProp->trsId);
 				else
 					_currTrsMsg = 0;
 

@@ -589,6 +589,10 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	}
 }
 
+const char *SmushPlayer::getString(int id) {
+	return _strings->get(id);
+}
+
 bool SmushPlayer::readString(const char *file, const char *directory) {
 	const char *i = strrchr(file, '.');
 	if (i == NULL) {
@@ -822,9 +826,13 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	if (_vm->_gameId == GID_FT) {
 		if (!(_vm->_features & GF_DEMO)) {
 			_sf[0] = new SmushFont(true, false);
+			_sf[1] = new SmushFont(true, false);
 			_sf[2] = new SmushFont(true, false);
+			_sf[3] = new SmushFont(true, false);
 			_sf[0]->loadFont("scummfnt.nut", directory);
+			_sf[1]->loadFont("techfnt.nut", directory);
 			_sf[2]->loadFont("titlfnt.nut", directory);
+			_sf[3]->loadFont("specfnt.nut", directory);
 		}
 	} else if (_vm->_gameId == GID_DIG) {
 		if (!(_vm->_features & GF_DEMO)) {
@@ -882,6 +890,14 @@ void SmushPlayer::setPalette(const byte *palette) {
 	}
 
 	_vm->_system->set_palette(palette_colors, 0, 256);
+}
+
+void SmushPlayer::setPaletteValue(int n, byte r, byte g, byte b) {
+	_pal[n * 3 + 0] = r;
+	_pal[n * 3 + 1] = g;
+	_pal[n * 3 + 2] = b;
+
+	_vm->_system->set_palette(_pal, n, 1);
 }
 
 void SmushPlayer::updateScreen() {

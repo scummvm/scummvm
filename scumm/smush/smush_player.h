@@ -45,7 +45,6 @@ private:
 	int16 _deltaPal[0x300];
 	byte _pal[0x300];
 	StringResource *_strings;
-	SmushFont *_sf[5];
 	Codec37Decoder _codec37;
 	Codec47Decoder _codec47;
 	FileChunk *_base;
@@ -65,7 +64,6 @@ private:
 	int _speed;
 	bool _outputSound;
 
-	int _width, _height;
 	byte *_dst;
 	bool _updateNeeded;
 	bool _insanity;
@@ -78,9 +76,14 @@ public:
 	void play(const char *filename, const char *directory);
 
 protected:
+	SmushFont *_sf[5];
+	int _width, _height;
+
 	void insanity(bool);
 	void setPalette(const byte *palette);
+	void setPaletteValue(int n, byte r, byte g, byte b);
 	void seekSan(const char *file, const char *directory, int32 pos, int32 contFrame);
+	const char *getString(int id);
 
 private:
 	void updatePalette(void);

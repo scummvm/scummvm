@@ -122,7 +122,6 @@ class Insane {
 	bool _kickEnemyProgress;
 	bool _weaponEnemyJustSwitched;
 	int32 _enHdlVar[9][9];
-	int32 _trsFilePtr; // FIXME: we don't need it
 	int32 _smlayer_room;
 	int32 _smlayer_room2;
 	byte *_smush_roadrashRip; // FIXME: combine them in array
@@ -278,8 +277,6 @@ class Insane {
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
 	void readState(void);
-	void setTrsFile(int file);	// FIXME: we don't need it
-	void resetTrsFilePtr(void);	 // FIXME: we don't need it
 	int initScene(int sceneId);
 	void stopSceneSounds(int sceneId);
 	void shutCurrentScene(void);
@@ -422,8 +419,7 @@ class Insane {
 	int32 setBenState(void);
 	bool smlayer_actorNeedRedraw(int actornum, int actnum);
 	void reinitActors(void);
-	void smush_setPaletteValue(int where, int r, int g, int b);
-	char *handleTrsTag(int32 trsFilePtr, int32 trsId);
+	char *handleTrsTag(int32 trsId);
 	void ouchSoundBen(void);
 	void smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
