@@ -25,6 +25,8 @@
 #include "stdafx.h"
 #include "base/engine.h"
 
+class GameDetector;
+
 struct SystemVars {
 	uint32 systemFlags;
 	uint32 gameVersion;
@@ -75,7 +77,7 @@ protected:
 
 	SkyMusicBase *_skyMusic;
 	SkyIntro *_skyIntro;
-	GameDetector *_detector; // necessary for music
+	int _midi; // necessary for music
 	
 public:
 	SkyEngine(GameDetector *detector, OSystem *syst);

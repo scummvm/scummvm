@@ -30,6 +30,8 @@
 #include "queen/resource.h"
 #include "queen/logic.h"
 
+class GameDetector;
+
 namespace Queen {
 
 class Graphics;
@@ -57,7 +59,7 @@ protected:
 	Display *_display;
 	Sound *_sound;
 	
-	GameDetector *_detector; // necessary for music
+	const char *_detectname; // necessary for music
 	
 public:
 	QueenEngine(GameDetector *detector, OSystem *syst);

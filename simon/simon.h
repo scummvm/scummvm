@@ -29,6 +29,8 @@
 #include "sound/mixer.h"
 #include "simon/sound.h"
 
+class GameDetector;
+
 namespace Simon {
 
 /* Various other settings */

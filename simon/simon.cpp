@@ -234,7 +234,7 @@ static const GameSpecificSettings simon2dos_settings = {
 
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst), midi (syst) {
+	: Engine(syst), midi (syst) {
 
 	_vc_ptr = 0;
 	_game_offsets_ptr = 0;
@@ -507,7 +507,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	set_volume(ConfMan.getInt("sfx_volume"));
 
 	// Setup midi driver
-	MidiDriver *driver = detector->createMidi(GameDetector::detectMusicDriver(detector->_game.midi));
+	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(detector->_game.midi));
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
 	else if (ConfMan.getBool("native_mt32"))

@@ -500,9 +500,11 @@ bool GameDetector::detectGame() {
 	_game = findGame(realGame, &_plugin);
 
 	if (_game.gameName) {
+		_gameName = _game.gameName;
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {
+		_gameName.clear();
 		printf("Failed game detection\n");
 		return false;
 	}

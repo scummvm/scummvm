@@ -30,9 +30,7 @@ extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"
 extern const char *gScummVMFullVersion;	// e.g. "ScummVM 0.4.1 (2003-06-24)"
 
 class SoundMixer;
-class GameDetector;
 class Timer;
-struct GameSettings;
 
 class Engine {
 public:
@@ -44,7 +42,7 @@ protected:
 	const Common::String _gameDataPath;
 
 public:
-	Engine(GameDetector *detector, OSystem *syst);
+	Engine(OSystem *syst);
 	virtual ~Engine();
 
 	// Invoke the main engine loop using this method

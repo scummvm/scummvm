@@ -113,7 +113,7 @@ void **SkyEngine::_itemList[300];
 SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst) {
+	: Engine(syst) {
 	
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");
@@ -122,7 +122,7 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
-	_detector = detector;
+	_midi = detector->_game.midi;
 
 	_floppyIntro = ConfMan.getBool("floppy_intro");
 
@@ -256,16 +256,16 @@ void SkyEngine::initialise(void) {
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	int midiDriver = GameDetector::detectMusicDriver(_detector->_game.midi);
+	int midiDriver = GameDetector::detectMusicDriver(_midi);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if (ConfMan.getBool("native_mt32"))
-			_skyMusic = new SkyMT32Music(_detector->createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new SkyMT32Music(GameDetector::createMidi(midiDriver), _skyDisk, _system);
 		else
-			_skyMusic = new SkyGmMusic(_detector->createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new SkyGmMusic(GameDetector::createMidi(midiDriver), _skyDisk, _system);
 	}
 
 	if (isCDVersion()) {
@@ -289,7 +289,7 @@ void SkyEngine::initialise(void) {
 	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 	
-	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
+	// initialize timer *after* _skyScreen has been initialized.
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
 	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());

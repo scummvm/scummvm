@@ -37,11 +37,13 @@
 #include "sword2/driver/d_sound.h"
 #include "sword2/driver/d_draw.h"
 
+class GameDetector;
+
+namespace Sword2 {
+
 enum {
 	GF_DEMO	= 1 << 0
 };
-
-namespace Sword2 {
 
 // Bodge for PCF76 version so that their demo CD can be labelled "PCF76"
 // rather than "RBSII1"
@@ -141,7 +143,6 @@ public:
 	void go(void);
 	void parseEvents(void);
 	int32 InitialiseGame(void);
-	GameDetector *_detector;
 	uint32 _features;
 	char *_targetName; // target name for saves
 

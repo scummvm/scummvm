@@ -88,7 +88,7 @@ REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_gameList, Engine_QUEE
 namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst) {
+	: Engine(syst) {
 
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");
@@ -97,7 +97,7 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
-	_detector = detector;
+	_detectname = detector->_game.detectname;
 
 	_fastMode = 0;
 
@@ -218,7 +218,7 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
-	_resource = new Resource(_gameDataPath, _detector->_game.detectname,  _system->get_savefile_manager(), getSavePath());
+	_resource = new Resource(_gameDataPath, _detectname,  _system->get_savefile_manager(), getSavePath());
 	_input = new Input(_resource->getLanguage(), _system);
 	_display = new Display(_system, _input);
 	_graphics = new Graphics(_display, _input, _resource);

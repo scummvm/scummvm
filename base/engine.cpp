@@ -32,10 +32,10 @@
 /* FIXME - BIG HACK for MidiEmu */
 Engine *g_engine = 0;
 
-Engine::Engine(GameDetector *detector, OSystem *syst)
+Engine::Engine(OSystem *syst)
 	: _system(syst), _gameDataPath(ConfMan.get("path")) {
 	g_engine = this;
-	_mixer = detector->createMixer();
+	_mixer = GameDetector::createMixer();
 
 	_timer = g_timer;
 

@@ -54,7 +54,7 @@ static const GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword II", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{"sword2alt", "Broken Sword II (alt)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
-	{"sword2demo", "Broken Sword II (Demo)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "players.clu" },
+	{"sword2demo", "Broken Sword II (Demo)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, MDT_NONE, 0, NULL}
 };
 
@@ -102,9 +102,8 @@ Sound *g_sound = NULL;
 Display *g_display = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst) {
+	: Engine(syst) {
 
-	_detector = detector;
 	g_sword2 = this;
 	_debugger = NULL;
 	_features = detector->_game.features;

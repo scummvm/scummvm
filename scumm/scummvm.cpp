@@ -285,7 +285,7 @@ static const ScummGameSettings scumm_settings[] = {
 };
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
-	: Engine(detector, syst),
+	: Engine(syst),
 	  _gameId(gs.id),
 	  _version(gs.version),
 	  _features(gs.features),
@@ -688,7 +688,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2) {
-		MidiDriver *driver = detector->createMidi(_midiDriver);
+		MidiDriver *driver = GameDetector::createMidi(_midiDriver);
 		if (driver && _native_mt32)
 			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		_musicEngine = _imuse = IMuse::create(syst, _mixer, driver);
@@ -2795,12 +2795,12 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	
 	const ScummGameSettings *g = scumm_settings;
 	while (g->gameName) {
-		if (!scumm_stricmp(detector->_game.gameName, g->gameName))
+		if (!scumm_stricmp(detector->_gameName.c_str(), g->gameName))
 			break;
 		g++;
 	}
 	if (!g->gameName)
-		error("Invalid game '%s'\n", detector->_game.gameName);
+		error("Invalid game '%s'\n", detector->_gameName.c_str());
 
 	ScummGameSettings game = *g;
 
