@@ -65,8 +65,6 @@ class SoundMixer;
 #define COMMAND_ID 1
 
 #define MDPG_TAG "MDpg"
-#define MDHD_TAG "MDhd"
-
 
 
 ////////////////////////////////////////
