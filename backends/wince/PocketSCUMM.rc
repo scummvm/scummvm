@@ -28,7 +28,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_POCKETSCUMM         ICON    DISCARDABLE     "scumm_icon.ico"
+IDI_POCKETSCUMM         ICON    DISCARDABLE     "icons/scumm_icon.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
