@@ -194,7 +194,7 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 //		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
 		glEnable(GL_LIGHT0 + lightId);
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type);
+		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
 	}
 }
 
