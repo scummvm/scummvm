@@ -1248,6 +1248,7 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
 	int i, color;
 	int args[31];
+	byte name[1024];
 
 	b = fetchScriptByte();
 
@@ -1300,24 +1301,21 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 
 		break;
 	case 194:		// HE 7.2
-		getStackList(args, ARRAYSIZE(args));
-		pop();
+		decodeScriptString(name, true);
 		switch (m) {
 		case 0:
-			actorTalk(_scriptPointer);
+			actorTalk(name);
 			break;
 		case 1:
-			drawString(1, _scriptPointer);
+			drawString(1, name);
 			break;
 		case 2:
-			unkMessage1(_scriptPointer);
+			unkMessage1(name);
 			break;
 		case 3:
-			unkMessage2(_scriptPointer);
+			unkMessage2(name);
 			break;
 		}
-		_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 		break;
 	case 0xF9:
 		color = pop();

@@ -623,7 +623,7 @@ protected:
 	void beginOverride();
 	void endOverride();
 
-	void copyScriptString(byte *dst, bool override = false);
+	int copyScriptString(byte *dst, bool override = false);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 

@@ -351,7 +351,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o72_readINI),
 		/* F4 */
-		OPCODE(o72_unknownF4),
+		OPCODE(o72_writeINI),
 		OPCODE(o6_invalid),
 		OPCODE(o72_unknownF6),
 		OPCODE(o6_invalid),
@@ -511,6 +511,42 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 		else
 			defineArray(num, kDwordArray, 0, a, 0, b);
 	}
+}
+
+void ScummEngine_v6he::decodeScriptString(byte *dst, bool scriptString) {
+	int args[31];
+	int num = 0, val = 0;
+	int len;
+	byte chr, name[256];
+
+	getStackList(args, ARRAYSIZE(args));
+	pop();
+
+	if (scriptString) {
+		addMessageToStack(_scriptPointer, name, sizeof(name));
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+	} else {
+		len = copyScriptString(name);
+	}
+
+	//FIXME Bad pop/push somewhere ?
+	if (len == -1)
+		return;
+
+	while (len--) {
+		chr = name[num++];
+		if (chr == 0x25) {
+			chr = name[num++];
+			if (chr == 0x64)
+				dst += snprintf((char *)dst, 5, "%d", args[val++]);
+			else if (chr == 0x73)
+				dst += addStringToStack(dst, 100, args[val++]);
+			continue;
+		}
+		*dst++ = chr;
+	}
+	*dst = 0;
 }
 
 void ScummEngine_v72he::o72_pushDWord() {
@@ -803,10 +839,8 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	case 194:			// SO_ASSIGN_STRING
 		array = fetchScriptWord();
-		len = getStackList(list, ARRAYSIZE(list));
-		pop();
-		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
-		copyScriptString(ah->data);
+		ah = defineArray(array, kStringArray, 0, 0, 0, 4096);
+		decodeScriptString(ah->data);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
 		array = fetchScriptWord();
@@ -1310,7 +1344,7 @@ void ScummEngine_v72he::o72_readINI() {
 	debug(1, "o72_readINI (%d) %s", type, name);
 }
 
-void ScummEngine_v72he::o72_unknownF4() {
+void ScummEngine_v72he::o72_writeINI() {
 	byte b;
 	byte name[256], name2[1024];
 
@@ -1321,11 +1355,11 @@ void ScummEngine_v72he::o72_unknownF4() {
 		pop();
 		copyScriptString(name);
 		break;
-		warning("o72_unknownF4 stub (%s)", name);
+		debug(1,"o72_writeINI stub (%s)", name);
 	case 7:
 		copyScriptString(name2);
 		copyScriptString(name);
-		warning("o72_unknownF4 stub (%s, %s)", name, name2);
+		debug(1,"o72_writeINI stub (%s, %s)", name, name2);
 		break;
 	}
 }
@@ -1380,13 +1414,15 @@ void ScummEngine_v72he::o72_unknownF8() {
 
 void ScummEngine_v72he::o72_unknownF9() {
 	// File related
-	warning("stub o72_unknownF9");
+	byte name[100];
+	//copyScriptString(name);
+	//debug(1,"o72_unknownF9: %s", name);
 }
 
 void ScummEngine_v72he::o72_unknownFA() {
 	byte name[100];
-	int id = fetchScriptByte();
 	copyScriptString(name);
+	int id = fetchScriptByte();
 
 	debug(1,"o72_unknownFA: (%d) %s", id, name);
 }

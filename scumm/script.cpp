@@ -1056,7 +1056,7 @@ bool ScummEngine::isRoomScriptRunning(int script) const {
 	return false;
 }
 
-void ScummEngine::copyScriptString(byte *dst, bool override) {
+int ScummEngine::copyScriptString(byte *dst, bool override) {
 	int len, i = 0;
 	if (_heversion >= 72 && (pop() == -1 || override)) {
 		len = resStrLen(_stringBuffer) + 1;
@@ -1069,6 +1069,7 @@ void ScummEngine::copyScriptString(byte *dst, bool override) {
 	}
 	*dst = 0;
 
+	return len;
 }
 
 //

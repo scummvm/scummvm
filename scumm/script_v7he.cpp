@@ -351,7 +351,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o7_readINI),
 		/* F4 */
-		OPCODE(o7_unknownF4),
+		OPCODE(o7_writeINI),
 		OPCODE(o7_unknownF5),
 		OPCODE(o7_unknownF6),
 		OPCODE(o6_invalid),
@@ -882,11 +882,10 @@ void ScummEngine_v7he::o7_readINI() {
 	}
 }
 
-void ScummEngine_v7he::o7_unknownF4() {
+void ScummEngine_v7he::o7_writeINI() {
 	int a, b;
 	byte filename1[256], filename2[256];
 	int len;
-
 	
 	b = pop();
 	a = pop();
@@ -897,7 +896,7 @@ void ScummEngine_v7he::o7_unknownF4() {
 
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o7_unknownF4(%d, %d, \"%s\")", a, b, filename1);
+		debug(1, "o7_writeINI(%d, %d, \"%s\")", a, b, filename1);
 		break;
 	case 2:
 		addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
@@ -909,10 +908,9 @@ void ScummEngine_v7he::o7_unknownF4() {
 
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o7_unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
+		debug(1, "o7_writeINI(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
 		break;
 	}
-	debug(1,"o7_unknownF4 stub");
 }
 
 void ScummEngine_v7he::o7_unknownF5() {

@@ -574,6 +574,8 @@ protected:
 	void seekFilePos(int slot, int offset, int mode);
 	virtual void decodeParseString(int a, int b);
 
+	void decodeScriptString(byte *dst, bool scriptString = false);
+
 	/* Version 6 script opcodes */
 	void o6_setState();
 	void o6_roomOps();
@@ -629,7 +631,7 @@ protected:
 	void o7_stringLen();
 	void o7_unknownEF();
 	void o7_readINI();
-	void o7_unknownF4();
+	void o7_writeINI();
 	void o7_unknownF5();
 	void o7_unknownF6();
 	void o7_unknownF9();
@@ -727,6 +729,7 @@ protected:
 	void o72_unknownEF();
 	void o72_unknownF1();
 	void o72_readINI();
+	void o72_writeINI();
 	void o72_unknownF4();
 	void o72_unknownF6();
 	void o72_unknownF8();
