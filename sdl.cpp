@@ -322,7 +322,10 @@ normal_mode:;
 			error("sdl_hwscreen failed");
 		
 		/* Need some extra bytes around when using 2XSAI */
-		Init_2xSaI(555);
+		if (sdl_hwscreen->format->Rmask == 0x7C00)	// HACK HACK HACK
+			Init_2xSaI(555);
+		else
+			Init_2xSaI(565);
 		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS,
 							320, 200, 16, 320*2,
 							sdl_hwscreen->format->Rmask,
