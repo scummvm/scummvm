@@ -159,12 +159,13 @@ void Sound::setOverrideFreq(int freq) {
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
+	byte *mallocedPtr = NULL;
 	byte *ptr;
 	char *sound;
 	int size = -1;
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-	
+
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debug(0, "playSound #%d", soundID);
 
@@ -233,6 +234,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_vm->_mixer->playRaw(NULL, ptr, size, 11025, flags, soundID);
 			return;
 		}
+
+		// This pointer needs to be freed
+		mallocedPtr = ptr;
 	} else {
 		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
 			_vm->getResourceRoomNr(rtSound, soundID));
@@ -248,7 +252,6 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
 	else if (READ_UINT32(ptr) == MKID('Mac1')) {
-
 		// Read info from the header
 		size = READ_BE_UINT32(ptr+0x60);
 		rate = READ_BE_UINT16(ptr+0x64);
@@ -372,9 +375,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		if ((_vm->_gameId == GID_MONKEY_SEGA) && (ptr[0] != 1))	{
 			for (int i = 0; i < size; i++)   {
 				ptr[i] ^= 0x16;
-				if (ptr[i] >= 0x7F)   {
-				  ptr[i] = 0xFE - ptr[i];
-				  ptr[i] ^= 0x80;
+				if (ptr[i] >= 0x7F) {
+					ptr[i] = 0xFE - ptr[i];
+					ptr[i] ^= 0x80;
 				}
 			}
 		}
@@ -457,9 +460,10 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		case 2: // CD track resource
 			ptr += 0x16;
 
-			if (soundID == _currentCDSound)
-				if (pollCD() == 1)
-					return;
+			if (soundID == _currentCDSound && pollCD() == 1) {
+				free(mallocedPtr);
+				return;
+			}
 
 			{
 				int track = ptr[0];
@@ -547,9 +551,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 	}
 
-
-	if (soundID > _vm->_numSounds)
-		delete ptr;
+	free(mallocedPtr);
 }
 
 void Sound::processSfxQueues() {
