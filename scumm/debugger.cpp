@@ -70,7 +70,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DVar_Register("scumm_room", &_vm->_currentRoom, DVAR_INT, 0);
 	DVar_Register("scumm_roomresource", &_vm->_roomResource, DVAR_INT, 0);
 	DVar_Register("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
-	printf("Registered debugger\n");
+
 	DVar_Register("scumm_gamename", &_vm->_targetName, DVAR_STRING, 0);
 	DVar_Register("scumm_exename", &_vm->_gameName, DVAR_STRING, 0);
 	DVar_Register("scumm_gameid", &_vm->_gameId, DVAR_INT, 0);
