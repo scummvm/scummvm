@@ -1537,17 +1537,6 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	// skip resource header
 	rgbs = RES_DATA(rgbs);
 
-	// FIXME!!! - Ender's hack to workaround a crash in Full Throttle.
-	//	      After touching the ladder at the Fuel Tower, memory 
-	//	      gets trashed when the police fly down to the tower.
-	//	      This seems to happen with an akpl 256 supposidly 256
-	//	      bytes long, but which in reality is less than 65 bytes?!?
-	//		Someone -please- fix this properly.
-	if (akpl_size > 255) {
-		warning("Actor palette for actor %d/costume %d is %d bytes - too big!", number, costume, akpl_size);
-		return;
-	}
-
 	for (i = 0; i < akpl_size; i++) {
 		r = *rgbs++;
 		g = *rgbs++;
