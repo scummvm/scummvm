@@ -1525,8 +1525,7 @@ void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 void Script::sfRand(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
-	thread->_returnValue = (_vm->_rnd.getRandomNumber(param));
-
+	thread->_returnValue = _vm->_rnd.getRandomNumber(param - 1);
 }
 
 // Script function #76 (0x4c)
