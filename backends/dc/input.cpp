@@ -170,7 +170,7 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   }
   event->kbd.ascii = event->kbd.keycode = 0;
   if(e<0) {
-    event->event_code = -e;
+    event->event_code = (EventCode)-e;
     return true;
   } else if(e>0) {
     event->event_code = ((e&(1<<30))? EVENT_KEYUP : EVENT_KEYDOWN);
@@ -185,7 +185,7 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     _ms_old_y = _ms_cur_y;
     return true;
   } else {
-    event->event_code = 0;
+    event->event_code = (EventCode)0;
     return false;
   }
 }
