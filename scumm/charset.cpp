@@ -1113,6 +1113,13 @@ void CharsetRendererClassic::printChar(int chr) {
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
+		// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
+		// right now -- we are copying stuff from "dst" to "back", but "dst" really
+		// only conatains charset data... 
+		// One way to fix this: don't copy etc.; rather simply render the char twice,
+		// once to each of the two buffers. That should hypothetically yield
+		// identical results, though I didn't try it and right now I don't know
+		// any spots where I can test this...
 		int h = height;
 		do {
 			memcpy(back, dst, width);
