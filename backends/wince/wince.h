@@ -43,7 +43,7 @@
 #include "screen.h"
 #include "gui/newgui.h"
 #include "sound/mididrv.h"
-#include "gameDetector.h"
+#include "base/engine.h"
 //#include "simon/simon.h"
 #include "gapi_keys.h"
 #include "config-file.h"
@@ -72,7 +72,7 @@ class OSystem_WINCE3;
 #include "pocketpc.h"
 #include "smartphone.h"
 
-#define MAX_NUMBER_OF_DIRTY_SQUARES 32
+#define MAX_NUMBER_OF_DIRTY_SQUARES 10 
 
 class OSystem_WINCE3 : public OSystem {
 public:
