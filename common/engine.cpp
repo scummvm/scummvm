@@ -83,7 +83,6 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
 		// Simon the Sorcerer
-		detector->_gameId -= GID_SIMON_FIRST;
 		engine = Engine_SIMON_create(detector, syst);
 	} else {
 		// Some kind of Scumm game

@@ -166,7 +166,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 		driver = MidiDriver_NULL_create();
 	midi.set_driver(driver);
 
-	_game = detector->_gameId;
+	_game = detector->_gameId - GID_SIMON_FIRST;
 
 	/* Setup mixer */
 	if (!_mixer->bindToSystem(syst))
