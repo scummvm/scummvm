@@ -666,10 +666,60 @@ void Scumm_v2::o2_drawObject() {
 }
 
 void Scumm_v2::o2_resourceRoutines() {
- int arg1 = getVarOrDirectByte(0x80);
- int arg2 = fetchScriptByte();
+	int resid = getVarOrDirectByte(0x80);
+	int opcode = fetchScriptByte();
 
- printf("o2_resourceRoutines(%d)\n", arg2);
+	if (((opcode & 0x0f) == 0) || ((opcode & 0x0f) == 1)) {
+		switch (opcode & 0xf1) {
+		case 96:
+			lock(rtSound, resid);
+			return;
+		case 97:
+			unlock(rtSound, resid);
+			return;
+		case 80:
+			lock(rtScript, resid);
+			return;
+		case 81:
+			unlock(rtScript, resid);
+			return;
+		case 32:
+			lock(rtCostume, resid);
+			return;
+		case 33:
+			unlock(rtCostume, resid);
+			return;
+		case 48:
+			lock(rtRoom, resid);
+			return;
+		case 49:
+			unlock(rtRoom, resid);
+			return;
+		default:
+			error("o2_resourceRoutines: unknown lock/unlock opcode");
+		}
+	} else {
+		switch (opcode & 0xf1) {
+		case 96:
+		case 80:
+		case 32:
+		case 48:
+			return;
+		case 97:
+			ensureResourceLoaded(rtSound, resid);
+			return;
+		case 81:
+			ensureResourceLoaded(rtScript, resid);
+			return;
+		case 33:
+			ensureResourceLoaded(rtCostume, resid);
+			return;
+		case 49:
+			ensureResourceLoaded(rtRoom, resid);
+		default:
+			error("o2_resourceRoutines: unknown load/nuke opcode");
+		}
+	}
 }
 
 void Scumm_v2::o2_verbOps() {
