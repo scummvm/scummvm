@@ -116,7 +116,7 @@ bool SmushMixer::handleFrame() {
 
 				_channels[i].chan->getParameters(rate, stereo, is_short);
 				int32 size = _channels[i].chan->availableSoundData();
-				int32 flags = stereo ? SoundMixer::FLAG_STEREO : 0;
+				byte flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
 				if (is_short) {
 					data = malloc(size * (stereo ? 2 : 1) * 4);
