@@ -556,6 +556,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('RNAM'):
+			// Names of rooms
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
 			debug(9, "found RNAM block, skipping");
 			break;
@@ -565,7 +566,6 @@ void ScummEngine::readIndexFile() {
 			_fileHandle.seek(-2, SEEK_CUR);
 			_HEV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
 			_fileHandle.read(_HEV7RoomOffsets, (2 + (i * 4)) );
-			debug(9, "found DLFL block, offsets read");
 			break;
 
 		case MKID('DIRM'):
@@ -583,12 +583,12 @@ void ScummEngine::readIndexFile() {
 
 		case MKID('DISK'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			warning("DISK index block not yet handled, skipping");
+			debug(9, "DISK index block not yet handled, skipping");
 			break;
 
 		case MKID('INIB'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			warning("INIB index block not yet handled, skipping");
+			debug(9, "INIB index block not yet handled, skipping");
 			break;
 
 		case MKID('DIRI'):
@@ -602,12 +602,9 @@ void ScummEngine::readIndexFile() {
 			_fileHandle.read(_audioNames, _numAudioNames * 9);
 			break;
 
+		case MKID('DIRR'):
 		case MKID('DROO'):
 			readResTypeList(rtRoom, MKID('ROOM'), "room");
-			break;
-
-		case MKID('DIRR'):
-			readResTypeList(rtRoom, MKID('RMDA'), "room");
 			break;
 
 		case MKID('DRSC'):					// FIXME: Verify
@@ -628,12 +625,9 @@ void ScummEngine::readIndexFile() {
 			readMAXS(itemsize);
 			break;
 
+		case MKID('DIRN'):
 		case MKID('DSOU'):
 			readResTypeList(rtSound, MKID('SOUN'), "sound");
-			break;
-
-		case MKID('DIRN'):
-			readResTypeList(rtSound, MKID('DIRN'), "sound");
 			break;
 
 		case MKID('AARY'):
@@ -2315,12 +2309,12 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numCostumes = _fileHandle.readUint16LE();
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // _numLocalScriptOffsets
-		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // unknown
-		_numTalkie = _fileHandle.readUint16LE();
+		_numSprites = _fileHandle.readUint16LE();
+		_numLocalScriptOffsets = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // heap related
+		_fileHandle.readUint16LE(); // _numPalettes?
+		_fileHandle.readUint16LE(); // _numSmacker?
+		_numTalkies = _fileHandle.readUint16LE();
 
 		/* TODO check these values */
 
@@ -2351,9 +2345,9 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numCostumes = _fileHandle.readUint16LE();
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // _numLocalScriptOffsets
-		_fileHandle.readUint16LE(); // unknown
+		_numSprites = _fileHandle.readUint16LE();
+		_numLocalScriptOffsets = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // heap releated
 
 		/* TODO check these values */
 
@@ -2490,7 +2484,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
 	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
-	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkie, "talkie", 1);
+	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkies, "talkie", 1);
 
 }
 

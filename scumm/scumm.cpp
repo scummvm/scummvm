@@ -522,7 +522,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numActors = 0;
 	_numCostumes = 0;
 	_numImages = 0;
-	_numTalkie = 0;
+	_numLocalScriptOffsets = 0;
+	_numSprites = 0;
+	_numTalkies = 0;
 	_audioNames = NULL;
 	_numAudioNames = 0;
 	_curActor = 0;
