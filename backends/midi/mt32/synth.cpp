@@ -1289,21 +1289,21 @@ void InitReverb(Bit32u newRevMode, Bit32u newRevTime, Bit32u sampRate) {
 
 	float t60;
 	switch(newRevMode) {
-		case 0:
-			t60 = .161f * REV_ROOMT60;
-			break;
-		case 1:
-			t60 = .161f * REV_HALLT60;
-			break;
-		case 2:
-			t60 = .161f * REV_PLATET60;
-			break;
-		case 3:
-			t60 = .161f * REV_TAPT60;
-			break;
-		default:
-			t60 = .161f * REV_ROOMT60;
-			break;
+	case 0:
+		t60 = .161f * REV_ROOMT60;
+		break;
+	case 1:
+		t60 = .161f * REV_HALLT60;
+		break;
+	case 2:
+		t60 = .161f * REV_PLATET60;
+		break;
+	case 3:
+		t60 = .161f * REV_TAPT60;
+		break;
+	default:
+		t60 = .161f * REV_ROOMT60;
+		break;
 	}
 
 	t60 = t60 * 0.625;
