@@ -31,6 +31,14 @@ struct ResHdr {
 	uint32 tag, size;
 } GCC_PACK;
 
+enum ArrayType {
+	kBitArray = 1,
+	kNibbleArray = 2,
+	kByteArray = 3,
+	kStringArray = 4,
+	kIntArray = 5
+};
+
 struct ArrayHeader {
 	int16 dim1;
 	int16 type;

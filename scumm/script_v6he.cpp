@@ -838,7 +838,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		// Fatty Bear's Birthday Surprise
 		// XXX gdi_virtScreen = 0;
 		writeVar(0, 0);
-		defineArray(0, rtCostume, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
 		retval = readVar(0);
 		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
 		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
@@ -1051,7 +1051,7 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 
 	writeVar(0, 0);
 
-	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	ArrayHeader *ah = defineArray(0, kByteArray, 0, size);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);

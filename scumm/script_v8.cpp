@@ -545,9 +545,9 @@ void ScummEngine_v8::readArrayFromIndexFile() {
 		b = _fileHandle.readUint32LE();
 		
 		if (b != 0)
-			defineArray(num, 5, b, a);
+			defineArray(num, kIntArray, b, a);
 		else
-			defineArray(num, 5, a, b);
+			defineArray(num, kIntArray, a, b);
 	}
 }
 
@@ -615,10 +615,10 @@ void ScummEngine_v8::o8_dimArray() {
 	
 	switch (subOp) {
 	case 0x0A:		// SO_ARRAY_SCUMMVAR
-		defineArray(array, 5, 0, pop());
+		defineArray(array, kIntArray, 0, pop());
 		break;
 	case 0x0B:		// SO_ARRAY_STRING
-		defineArray(array, 4, 0, pop());
+		defineArray(array, kStringArray, 0, pop());
 		break;
 	case 0x0C:		// SO_ARRAY_UNDIM
 		nukeArray(array);
@@ -636,12 +636,12 @@ void ScummEngine_v8::o8_dim2dimArray() {
 	case 0x0A:		// SO_ARRAY_SCUMMVAR
 		b = pop();
 		a = pop();
-		defineArray(array, 5, a, b);
+		defineArray(array, kIntArray, a, b);
 		break;
 	case 0x0B:		// SO_ARRAY_STRING
 		b = pop();
 		a = pop();
-		defineArray(array, 4, a, b);
+		defineArray(array, kStringArray, a, b);
 		break;
 	case 0x0C:		// SO_ARRAY_UNDIM
 		nukeArray(array);
@@ -662,7 +662,7 @@ void ScummEngine_v8::o8_arrayOps() {
 	case 0x14:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, 4, 0, len + 1);
+		ah = defineArray(array, kStringArray, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
@@ -670,7 +670,7 @@ void ScummEngine_v8::o8_arrayOps() {
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, 5, 0, b + len);
+			defineArray(array, kIntArray, 0, b + len);
 		}
 		while (--len >= 0) {
 			writeArray(array, 0, b + len, list[len]);

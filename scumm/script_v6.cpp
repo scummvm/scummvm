@@ -402,13 +402,23 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 	int id;
 	int size;
 	ArrayHeader *ah;
+	
+	assert(0 <= type && type <= 5);
 
+	
 	if (_heversion >= 60) {
-		if (type == rtScript || type == rtRoom)
-			type = rtCostume;
+		// FIXME: Fingolfin asks: What is this change good for? It doesn't hurt,
+		// but it also has no effect whatsoever...
+		if (type == 1 || type == 2)
+			type = 3;
 	} else {
-		if (type != rtSound)
-			type = rtInventory;
+		// The following code basically turn all arrays except string arrays 
+		// into integer arrays. There seems to be no purpose in this, and it
+		// wastes space. However, we can't just change this either, as that
+		// would break savegame compatibility. So do not touch this unless you
+		// are adding code which updated old savegames, too.
+		if (type != 4)
+			type = 5;
 	}
 
 	nukeArray(array);
@@ -423,7 +433,7 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 			error("Can't define bit variable as array pointer");
 		}
 
-		size = (type == 5) ? 32 : 8;
+		size = (type == kIntArray) ? 4 : 1;
 	} else {
 		if (array & 0x4000) {
 		}
@@ -432,14 +442,13 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 			error("Can't define bit variable as array pointer");
 		}
 
-		size = (type == 5) ? 16 : 8;
+		size = (type == kIntArray) ? 2 : 1;
 	}
 
 	writeVar(array, id);
 
 	size *= dim2 + 1;
 	size *= dim1 + 1;
-	size >>= 3;
 
 	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
 
@@ -543,10 +552,7 @@ void ScummEngine_v6::readArrayFromIndexFile() {
 		a = _fileHandle.readUint16LE();
 		b = _fileHandle.readUint16LE();
 		c = _fileHandle.readUint16LE();
-		if (c == 1)
-			defineArray(num, 1, a, b);
-		else
-			defineArray(num, 5, a, b);
+		defineArray(num, c, a, b);
 	}
 }
 
@@ -2073,7 +2079,7 @@ void ScummEngine_v6::o6_arrayOps() {
 	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, 4, 0, len + 1);
+		ah = defineArray(array, kStringArray, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
@@ -2081,7 +2087,7 @@ void ScummEngine_v6::o6_arrayOps() {
 		c = pop();
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, 5, 0, b + c);
+			defineArray(array, kIntArray, 0, b + c);
 		}
 		while (c--) {
 			writeArray(array, 0, b + c, pop());
@@ -2364,19 +2370,19 @@ void ScummEngine_v6::o6_dimArray() {
 
 	switch (fetchScriptByte()) {
 	case 199:		// SO_INT_ARRAY
-		data = 5;
+		data = kIntArray;
 		break;
 	case 200:		// SO_BIT_ARRAY
-		data = 1;
+		data = kBitArray;
 		break;
 	case 201:		// SO_NIBBLE_ARRAY
-		data = 2;
+		data = kNibbleArray;
 		break;
 	case 202:		// SO_BYTE_ARRAY
-		data = 3;
+		data = kByteArray;
 		break;
 	case 203:		// SO_STRING_ARRAY
-		data = 4;
+		data = kStringArray;
 		break;
 	case 204:		// SO_UNDIM_ARRAY
 		nukeArray(fetchScriptWord());
@@ -2396,19 +2402,19 @@ void ScummEngine_v6::o6_dim2dimArray() {
 	int a, b, data;
 	switch (fetchScriptByte()) {
 	case 199:		// SO_INT_ARRAY
-		data = 5;
+		data = kIntArray;
 		break;
 	case 200:		// SO_BIT_ARRAY
-		data = 1;
+		data = kBitArray;
 		break;
 	case 201:		// SO_NIBBLE_ARRAY
-		data = 2;
+		data = kNibbleArray;
 		break;
 	case 202:		// SO_BYTE_ARRAY
-		data = 3;
+		data = kByteArray;
 		break;
 	case 203:		// SO_STRING_ARRAY
-		data = 4;
+		data = kStringArray;
 		break;
 	default:
 		error("o6_dim2dimArray: default case");
@@ -2957,7 +2963,7 @@ void ScummEngine_v6::o6_findAllObjects() {
 	if (a != _currentRoom)
 		warning("o6_findAllObjects: current room is not %d", a);
 	writeVar(0, 0);
-	defineArray(0, 5, 0, _numLocalObjects + 1);
+	defineArray(0, kIntArray, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
 	while (i < _numLocalObjects) {
@@ -3001,7 +3007,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, 5, 0, num + 1);
+		defineArray(value, kIntArray, 0, num + 1);
 		if (num > 0) {
 			int16 counter = 0;
 			do {

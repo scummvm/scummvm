@@ -491,7 +491,7 @@ void ScummEngine_v7he::o7_readINI() {
 		push(0);
 		break;
 	case 2: // string
-		defineArray(0, 4, 0, 0);
+		defineArray(0, kStringArray, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
 		push(retval); // var ID string
