@@ -390,7 +390,8 @@ struct CreditsLine {
 	Memory *sprite;
 };
 
-#define CREDITS_FONT_HEIGHT 20
+#define CREDITS_FONT_HEIGHT 25
+#define CREDITS_LINE_SPACING 20
 
 int32 Logic::fnPlayCredits(int32 *params) {
 	// This function just quits the game if this is the playable demo, ie.
@@ -455,27 +456,34 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	f.open("credits.bmp");
 
-	if (!f.isOpen()) {
-		warning("Can't find credits.bmp");
-		return IR_CONT;
-	}
-
-	uint16 logoWidth = f.readUint16LE();
-	uint16 logoHeight = f.readUint16LE();
-
+	uint16 logoWidth = 0;
+	uint16 logoHeight = 0;
+	uint8 *logoData = NULL;
 	uint8 palette[1024];
 
-	for (i = 0; i < 256; i++) {
-		palette[i * 4 + 0] = f.readByte() << 2;
-		palette[i * 4 + 1] = f.readByte() << 2;
-		palette[i * 4 + 2] = f.readByte() << 2;
-		palette[i * 4 + 3] = 0;
+	if (f.isOpen()) {
+		logoWidth = f.readUint16LE();
+		logoHeight = f.readUint16LE();
+
+		for (i = 0; i < 256; i++) {
+			palette[i * 4 + 0] = f.readByte() << 2;
+			palette[i * 4 + 1] = f.readByte() << 2;
+			palette[i * 4 + 2] = f.readByte() << 2;
+			palette[i * 4 + 3] = 0;
+		}
+
+		logoData = (uint8 *) malloc(logoWidth * logoHeight);
+
+		f.read(logoData, logoWidth * logoHeight);
+		f.close();
+	} else {
+		warning("Can't find credits.bmp");
+		memset(palette, 0, sizeof(palette));
+		palette[14 * 4 + 0] = 252;
+		palette[14 * 4 + 1] = 252;
+		palette[14 * 4 + 2] = 252;
+		palette[14 * 4 + 3] = 0;
 	}
-
-	uint8 *logoData = (uint8 *) malloc(logoWidth * logoHeight);
-
-	f.read(logoData, logoWidth * logoHeight);
-	f.close();
 
 	_vm->_graphics->setPalette(0, 256, palette, RDPAL_INSTANT);
 
@@ -551,7 +559,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 				lineTop += logoHeight;
 			} else {
 				creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
-				lineTop += CREDITS_FONT_HEIGHT;
+				lineTop += CREDITS_LINE_SPACING;
 			}
 
 			if (strlen(textLine) > 0)
@@ -608,13 +616,16 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
 
+	int startLine = 0;
 	int scrollPos = 0;
 
 	while (scrollPos < lineTop + CREDITS_FONT_HEIGHT) {
+		bool foundStartLine = false;
+
 		_vm->_graphics->clearScene();
 		_vm->_graphics->setNeedFullRedraw();
 
-		for (i = 0; i < lineCount; i++) {
+		for (i = startLine; i < lineCount; i++) {
 			// Free any sprites that have scrolled off the screen
 
 			if (creditsLines[i].top + creditsLines[i].height < scrollPos) {
@@ -628,6 +639,11 @@ int32 Logic::fnPlayCredits(int32 *params) {
 					creditsLines[i].str = NULL;
 				}
 			} else if (creditsLines[i].top < scrollPos + 400) {
+				if (!foundStartLine) {
+					startLine = i;
+					foundStartLine = true;
+				}
+
 				if (!creditsLines[i].sprite) {
 					debug(2, "Creating sprite '%s'", creditsLines[i].str);
 					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((uint8 *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
@@ -658,8 +674,10 @@ int32 Logic::fnPlayCredits(int32 *params) {
 					break;
 				}
 
-				_vm->_graphics->drawSprite(&spriteInfo);
-			}
+				if (spriteInfo.data)
+					_vm->_graphics->drawSprite(&spriteInfo);
+			} else
+				break;
 		}
 
 		_vm->_graphics->updateDisplay();
