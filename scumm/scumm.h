@@ -846,7 +846,7 @@ public:
 	VirtScreen *findVirtScreen(int y);
 	void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
-	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
+	bool isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 
 	void drawFlashlight();
 	

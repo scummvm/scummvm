@@ -809,7 +809,7 @@ bool Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
 	return true;
 }
 
-byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
+bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w, h, i;
 
 	l >>= 3;
