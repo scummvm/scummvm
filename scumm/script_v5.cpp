@@ -1592,33 +1592,33 @@ void Scumm_v5::o5_resourceRoutines() {
 		loadFlObject(getVarOrDirectWord(0x40), resid);
 		break;
 
-	case 0x1F + 1:
+	case 32:
 		// TODO
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
-	case 0x20 + 1:
+	case 33:
 		// TODO
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
-	case 0x22 + 1:
+	case 35:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
-	case 0x23 + 1:
+	case 36:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
 		bar = fetchScriptByte();
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
-	case 0x24 + 1:
+	case 37:
 		// TODO
 		foo = getVarOrDirectByte(0x40);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode,  vm.slot[_currentScript].number);
+		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 
 	default:
-		warning("Unknown o5_resourceRoutines: %d", _opcode);
+		warning("Unknown o5_resourceRoutines: %d", _opcode & 0x3F);
 		break;
 	}
 }
