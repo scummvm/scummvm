@@ -277,7 +277,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
 			if ((track->stream2 && track->handle.isActive()) ||
-				(track->stream && track->used)) {
+				(track->stream && track->used && !track->readyToRemove)) {
 					return 1;
 			}
 		}
