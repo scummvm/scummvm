@@ -23,7 +23,7 @@
 
 namespace GUI {
 	class ConsoleDialog;
-};
+}
 
 namespace Common {
 
