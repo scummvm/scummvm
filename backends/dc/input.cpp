@@ -33,6 +33,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
   int lmb=0, rmb=0, newkey=0;
   static int lastkey = 0;
   static byte lastlmb = 0, lastrmb = 0;
+  static int8 mouse_wheel = 0, lastwheel = 0;
   shiftFlags = 0;
   for(int i=0; i<4; i++, pad++)
     if(pad->func & MAPLE_FUNC_CONTROLLER) {
@@ -68,12 +69,14 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
+      mouse_wheel += pad->cond.mouse.axis3;
 
       if(inter)
 	inter->mouse(mouse_x, mouse_y);
 
       pad->cond.mouse.axis1 = 0;
       pad->cond.mouse.axis2 = 0;
+      pad->cond.mouse.axis3 = 0;
     } else if(pad->func & MAPLE_FUNC_KEYBOARD) {
       for(int p=0; p<6; p++) {
 	int shift = pad->cond.kbd.shift;
@@ -151,6 +154,15 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
     lastrmb = 0;
     return -OSystem::EVENT_RBUTTONUP;
   }
+
+  if(mouse_wheel != lastwheel)
+    if(((int8)(mouse_wheel - lastwheel)) > 0) {
+      lastwheel++;
+      return -OSystem::EVENT_WHEELDOWN;
+    } else {
+      --lastwheel;
+      return -OSystem::EVENT_WHEELUP;
+    }
 
   if(newkey && inter && newkey != lastkey) {
     int transkey = inter->key(newkey, shiftFlags);
