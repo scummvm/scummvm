@@ -15,7 +15,6 @@ LIBS	= -L$(ronindir)/lib -lronin -lz -lm
 EXEEXT = .elf
 EXECUTABLE:= scummvm$(EXEEXT)
 MKDIR = mkdir -p
-CAT = cat
 RM = rm -f
 RM_REC = rm -rf
 AR = sh-elf-ar cru
