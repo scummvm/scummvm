@@ -69,7 +69,7 @@ Links to these ports can be found either on the ScummVM webpage or by a
 Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
-	Windows 	- SDL/GDI
+	Windows 	- SDL
 	Windows CE 	- SDL		(iPaq and other handheld devices)
 	Linux		- SDL/X11 	(includes iPaq devices running Linux)
 	Macintosh	- SDL/CUSTOM	(Including Classic and Mac OS X)
