@@ -941,8 +941,8 @@ void Scumm::akos_codec5(AkosRenderer * ar)
 	if(left > max_width)
 		left -= left - max_width;
 
-	ar->draw_top = top;
-	ar->draw_bottom = bottom;
+	ar->draw_top = 0;
+	ar->draw_bottom = 200;
 
 	updateDirtyRect(0, left, right+1, top, bottom+1, 1 << ar->dirty_id);
 
