@@ -137,13 +137,20 @@ int toolbar_available;
 
 UBYTE *toolbar = NULL;
 
-//UBYTE *noGAPI_video_buffer = NULL;
-//HDC noGAPI_compat;
+#ifndef NEW_GAPI_CODE
+
+UBYTE *noGAPI_video_buffer = NULL;
+HDC noGAPI_compat;
+
+#else
+
 
 UBYTE *noGAPI_buffer;
 HBITMAP noGAPI_bitmap;
 BITMAPINFOHEADER noGAPI_bitmap_header;
 HDC noGAPI_compat;
+
+#endif
 
 char noGAPI = 0;
 
@@ -429,35 +436,33 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 
 		toolbar_available = 1;
 
-		// Init GDI
-		//noGAPI_video_buffer = (UBYTE*)malloc(320 * 240 * 2);
-
 		hdc = GetDC(hWndMain);
 		noGAPI_compat = CreateCompatibleDC(hdc);
 		ReleaseDC(hWndMain, hdc);
 
+
+#ifndef NEW_GAPI_CODE
+		// Init GDI
+		noGAPI_video_buffer = (UBYTE*)malloc(320 * 240 * 2);
+#else
+	
 		memset(&noGAPI_bitmap_header, 0, sizeof(BITMAPINFOHEADER));
 		noGAPI_bitmap_header.biSize = sizeof(BITMAPINFOHEADER);
-		
-		/*
-		noGAPI_bitmap_header.biWidth = (currentScreenMode || wide_screen ? width : height);
-		noGAPI_bitmap_header.biHeight = -(currentScreenMode || wide_screen ? height : width);
-		*/
 
 		noGAPI_bitmap_header.biWidth = GetSystemMetrics(SM_CXSCREEN);
 		noGAPI_bitmap_header.biHeight = -GetSystemMetrics(SM_CYSCREEN); /* origin = top */
-
-		//noGAPI_bitmap_header.biWidth = 240;
-		//noGAPI_bitmap_header.biHeight = -320;
-
+		
 		noGAPI_bitmap_header.biPlanes = 1;
 		noGAPI_bitmap_header.biBitCount = 24;
 		noGAPI_bitmap_header.biCompression = BI_RGB; /* paletted fixme Jornada 820 ? */ 
 
+
 		noGAPI_bitmap = CreateDIBSection(noGAPI_compat, (BITMAPINFO*)&noGAPI_bitmap_header, DIB_RGB_COLORS, (void**)&noGAPI_buffer, NULL, 0);
 		if (!noGAPI_bitmap)
 			exit(1);
+
 		SelectObject(noGAPI_compat, noGAPI_bitmap);
+#endif
 
 		_gfx_device = DEVICE_GDI;
 		_gfx_option = VIDEO_DONT_CARE;
@@ -2591,6 +2596,146 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 
 /* ********************************* NO GAPI DISPLAY ********************************* */
 
+#ifndef NEW_GAPI_CODE
+
+void noGAPI_Cls() {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+
+	GetWindowRect(hWndMain, &rc);
+	memset(noGAPI_video_buffer, 0x00, sizeof(noGAPI_video_buffer));
+	if (currentScreenMode || wide_screen)
+		hb = CreateBitmap(320, 240, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(240, 320, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode || wide_screen)
+		BitBlt(hdc, 0, 0, 320, 240, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, 0, 0, 240, 320, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
+void noGAPI_Blt(UBYTE *src_ptr) {
+	noGAPI_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
+}
+
+void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+	UBYTE *work_buffer;
+	int i;
+	int j;
+	//long skipmask;
+
+	//skipmask = geom[useMode].xSkipMask;
+
+
+	GetWindowRect(hWndMain, &rc);
+
+	work_buffer = noGAPI_video_buffer;
+	unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
+	if (currentScreenMode && !wide_screen) {
+	
+		for (i=0; i<width; i++) {
+			for (j=0; j<height; j++) {
+				work_buffer_2[i * height + j] = 
+					buffer[(pitch ? pitch : width) * j + (width - i)];
+			}			
+		}
+	}
+	else {
+		for (i=0; i<height; i++) {
+			for (j=0; j<width; j++) {
+				*(unsigned short*)work_buffer = buffer[(pitch ? pitch : width) * i + j];
+				work_buffer += 2;
+			}
+		}
+	}
+
+	if (currentScreenMode && !wide_screen)
+		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode && !wide_screen)
+		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
+void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
+					 UBYTE * own_palette, int pitch) {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+	UBYTE *work_buffer;
+	int i;
+	int j;
+	//long skipmask;
+
+	//skipmask = geom[useMode].xSkipMask;
+
+
+	GetWindowRect(hWndMain, &rc);
+
+	work_buffer = noGAPI_video_buffer;
+	if (currentScreenMode && !wide_screen) {
+		unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
+		for (i=0; i<width; i++)
+			for (j=0; j<height; j++) 
+				if (!own_palette)
+					work_buffer_2[i * height + j] = 
+					pal[scr_ptr[(pitch ? pitch : width) * j + (width - i)]];
+				else
+					work_buffer_2[i * height + j] =
+						COLORCONV565(own_palette[3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]],
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]) + 1], 
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]) + 2]);
+	}
+	else {
+	for (i=0; i<height; i++) {
+		for (j=0; j<width; j++) {
+				if (!own_palette)
+					*(unsigned short*)work_buffer = 
+						pal[scr_ptr[(pitch ? pitch : width) * i + j]];	
+				else
+					*(unsigned short*)work_buffer =
+								COLORCONV565(own_palette[3 * scr_ptr[(pitch ? pitch : width) * i + j]],
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * i + j]) + 1], 
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * i + j]) + 2]);
+
+				work_buffer += 2;
+			}
+	}
+	}
+
+	if (currentScreenMode && !wide_screen)
+		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode && !wide_screen)
+		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
+#else
+
 void noGAPI_Cls() {
 	HBITMAP old;
 	RECT rc;
@@ -2748,6 +2893,7 @@ void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	ReleaseDC(hWndMain, hdc);
 }
 
+#endif
 
 /* ************************** STYLUS TRANSLATION ************************* */
 
