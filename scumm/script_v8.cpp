@@ -451,7 +451,6 @@ void Scumm_v8::writeVar(uint var, int value) {
 
 void Scumm_v8::decodeParseString(int m, int n) {
 	byte b;
-	bool containsSpeech;
 
 	b = fetchScriptByte();
 
@@ -500,14 +499,12 @@ void Scumm_v8::decodeParseString(int m, int n) {
 		break;
 	case 0xD1:
 		_messagePtr = _scriptPointer;
-		
-		containsSpeech = (_messagePtr[0] == '/');
+		_scriptPointer += resStrLen(_scriptPointer)+ 1;
 
-		if (containsSpeech) {
+		if (_messagePtr[0] == '/') {
 			char pointer[20];
 			int i, j;
 
-			_scriptPointer += resStrLen(_scriptPointer) + 1;
 			translateText(_messagePtr, _transText);
 			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 				if (_messagePtr[i] != '/')
@@ -547,9 +544,6 @@ void Scumm_v8::decodeParseString(int m, int n) {
 			}
 			break;
 		}
-
-		if (!containsSpeech)
-			_scriptPointer = _messagePtr;
 		break;
 //	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
 //		error("decodeParseString: SO_PRINT_MUMBLE");

@@ -3072,62 +3072,44 @@ void Scumm_v6::decodeParseString(int m, int n) {
 	case 74:
 		_string[m].no_talk_anim = true;
 		break;
-	case 75:{
-			_messagePtr = _scriptPointer;
+	case 75:
+		_messagePtr = _scriptPointer;
+		_scriptPointer += resStrLen(_scriptPointer)+ 1;
 
-			if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
-				char pointer[20];
-				int i, j;
+		if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
+			char pointer[20];
+			int i, j;
 
-				_scriptPointer += resStrLen(_scriptPointer)+ 1;
-				translateText(_messagePtr, _transText);
-				for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-					if (_messagePtr[i] != '/')
-						pointer[j++] = _messagePtr[i];
-				}
-				pointer[j] = 0;
-
-				// Stop any talking that's still going on
-				if (_sound->_talkChannel > -1)
-					_mixer->stop(_sound->_talkChannel);
-
-				_sound->_talkChannel = _sound->playBundleSound(pointer);
-				_messagePtr = _transText;
-
-				switch (m) {
-				case 0:
-					actorTalk();
-					break;
-				case 1:
-					drawString(1);
-					break;
-				case 2:
-					unkMessage1();
-					break;
-				case 3:
-					unkMessage2();
-					break;
-				}
-				return;
-			} else {
-				switch (m) {
-				case 0:
-					actorTalk();
-					break;
-				case 1:
-					drawString(1);
-					break;
-				case 2:
-					unkMessage1();
-					break;
-				case 3:
-					unkMessage2();
-					break;
-				}
-				_scriptPointer = _messagePtr;
-				return;
+			translateText(_messagePtr, _transText);
+			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+				if (_messagePtr[i] != '/')
+					pointer[j++] = _messagePtr[i];
 			}
+			pointer[j] = 0;
+
+			// Stop any talking that's still going on
+			if (_sound->_talkChannel > -1)
+				_mixer->stop(_sound->_talkChannel);
+
+			_sound->_talkChannel = _sound->playBundleSound(pointer);
+			_messagePtr = _transText;
 		}
+
+		switch (m) {
+		case 0:
+			actorTalk();
+			break;
+		case 1:
+			drawString(1);
+			break;
+		case 2:
+			unkMessage1();
+			break;
+		case 3:
+			unkMessage2();
+			break;
+		}
+		return;
 	case 0xFE:
 		setStringVars(m);
 		if (n)
