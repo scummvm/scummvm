@@ -1311,7 +1311,6 @@ void ScummEngine_v60he::scummInit() {
 void ScummEngine_v90he::scummInit() {
 	ScummEngine_v80he::scummInit();
 
-debug(0, "sizeof(_wiz) = %d", sizeof(_wiz));
 	_heObject = 0;
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
