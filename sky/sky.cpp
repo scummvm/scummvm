@@ -38,6 +38,19 @@ extern bool draw_keyboard;
 
 #endif
 
+/*
+ At the beginning the reverse engineers were happy, and did rejoice at their task, for the engine
+ before them did shineth and was full of promise. But then they did look closer and see'th the aweful
+ truth; it's code was assembly and messy (rareth was its comments). And so large were it's includes that did at
+ first seem small; queereth also was its compact(s). Then they did findeth another version, and this was slightly
+ different from the first. Then a third, and this was different again. All different, but not really better, for all
+ were not really compatible. But, eventualyl, it did come to pass that Steel Sky was implemented on a modern
+ platform. And the programmers looked and saw that it was indeed a miracle. But they were not joyous and instead did
+ weep for nobody knew just what had been done. Except people who read the source. Hello.
+
+ With apologies to the CD32 SteelSky file.
+*/
+
 static const VersionSettings sky_settings[] = {
 	/* Beneath a Steel Sky */
 	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, VersionSettings::ADLIB_DONT_CARE, 0, "sky.dsk" },
