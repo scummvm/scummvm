@@ -86,9 +86,8 @@ CLUInputStream::CLUInputStream(File *file, int size)
 	// Determine the end position.
 	_end_pos = file->pos() + size;
 
-	_prev = _file->readUint16LE();
-
 	// Read in initial data
+	_prev = _file->readUint16LE();
 	refill();
 }
 
@@ -359,16 +358,7 @@ void MusicHandle::fadeUp(void) {
 	}
 }
 
-int32 MusicHandle::play(const char *filename, uint32 musicId, bool looping) {
-	// The assumption here is that we are never playing music from two
-	// different files at the same time.
-
-	if (!fpMus.isOpen())
-		fpMus.open(filename);
-
-	if (!fpMus.isOpen())
-		return RDERR_INVALIDFILENAME;
-
+int32 MusicHandle::play(uint32 musicId, bool looping) {
 	fpMus.seek((musicId + 1) * 8, SEEK_SET);
 	_fileStart = fpMus.readUint32LE();
 
@@ -669,7 +659,7 @@ void Sound::waitForLeadOut(void) {
  * @return RD_OK or an error code
  */
 
-int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping) {
+int32 Sound::streamCompMusic(uint32 musicId, bool looping) {
 	Common::StackLock lock(_mutex);
 
 	int32 primaryStream = -1;
@@ -722,7 +712,19 @@ int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping)
 	if (secondaryStream != -1)
 		_music[secondaryStream].fadeDown();
 
-	return _music[primaryStream].play(filename, musicId, looping);
+	// The assumption here is that we are never playing music from two
+	// different files at the same time.
+
+	if (!fpMus.isOpen()) {
+		// TODO: We don't support compressed music yet. Patience.
+		if (openSoundFile(&fpMus, "music") != kCLUMode)
+			return RD_OK;
+	}
+
+	if (!fpMus.isOpen())
+		return RDERR_INVALIDFILENAME;
+
+	return _music[primaryStream].play(musicId, looping);
 }
 
 int32 Sound::dipMusic(void) {
@@ -938,7 +940,6 @@ int32 Sound::amISpeaking(void) {
  * This function loads and decompresses a list of speech from a cluster, but
  * does not play it. This is used for cutscene voice-overs, presumably to
  * avoid having to read from more than one file on the CD during playback.
- * @param filename the file name of the speech cluster file
  * @param speechid the text line id used to reference the speech
  * @param buf a pointer to the buffer that will be allocated for the sound
  */
@@ -973,7 +974,6 @@ uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
 /**
  * This function loads, decompresses and plays a line of speech. An error
  * occurs if speech is already playing.
- * @param filename the name of the speech cluster file
  * @param speechid the text line id used to reference the speech
  * @param vol volume, 0 (minimum) to 16 (maximum)
  * @param pan panning, -16 (full left) to 16 (full right)

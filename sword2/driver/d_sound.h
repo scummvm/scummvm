@@ -73,7 +73,7 @@ public:
 
 	void fadeDown(void);
 	void fadeUp(void);
-	int32 play(const char *filename, uint32 musicId, bool looping);
+	int32 play(uint32 musicId, bool looping);
 	void stop(void);
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData(void) const;
@@ -138,7 +138,7 @@ public:
 	void saveMusicState(void);
 	void restoreMusicState(void);
 	void waitForLeadOut(void);
-	int32 streamCompMusic(const char *filename, uint32 musicId, bool looping);
+	int32 streamCompMusic(uint32 musicId, bool looping);
 	int32 musicTimeRemaining(void);
 
 	void muteSpeech(bool mute);

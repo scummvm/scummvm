@@ -326,24 +326,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 		_vm->_loopingMusicId = 0;
 	}
 
-	// add the appropriate file extension & play it
-
-	if (_scriptVars[DEMO]) {
-		// The demo I found didn't come with any music file, but you
-		// could use the music from the first CD of the complete game,
-		// I suppose...
-		strcpy(filename, "music.clu");
-	} else {
-		File f;
-
-		sprintf(filename, "music%d.clu", _vm->_resman->whichCd());
-		if (f.open(filename))
-			f.close();
-		else
-			strcpy(filename, "music.clu");
-	}
-
-	rv = _vm->_sound->streamCompMusic(filename, params[0], loopFlag);
+	rv = _vm->_sound->streamCompMusic(params[0], loopFlag);
 
 	if (rv)
 		debug(5, "ERROR: streamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
