@@ -1790,12 +1790,14 @@ void SimonState::vc_62()
 
 	vc_29_stop_all_sounds();
 
-//  if (!_video_var_3) {
+	if (!_video_var_3) {
+		warning("vc_62: music stuff?");
+	}
+	
 	_video_var_3 = true;
 	_video_num_pal_colors = 256;
 	if (_video_palette_mode == 4)
 		_video_num_pal_colors = 208;
-//  }
 
 	memcpy(_video_buf_1, _palette_backup, _video_num_pal_colors * sizeof(uint32));
 	for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
@@ -1862,6 +1864,14 @@ void SimonState::vc_64()
 void SimonState::vc_65()
 {																// Simon2
 	warning("vc_65 unimplemented");
+	//_palette_color_count = 0x270;
+	//_video_num_pal_colors = 0x0D0;
+	//if (_video_palette_mode != 4) {
+		//_palette_color_count = 0x300;
+		//_video_num_pal_colors = 0x100;
+	//}
+	//_palette_color_count |= 0x8000;
+	//_video_var_3 = false;
 }
 
 void SimonState::vc_66()
