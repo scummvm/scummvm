@@ -806,8 +806,8 @@ inline int32 drawOrder (const Actor* x) { return (x)->y - ((x)->layer << 11); }
 
 int sortByDrawOrder (const void* a, const void* b)
 {
-	const Actor* actor1 = *(const Actor**)a;
-	const Actor* actor2 = *(const Actor**)b;
+	const Actor* actor1 = *(const Actor *const*)a;
+	const Actor* actor2 = *(const Actor *const*)b;
 	assert (DRAW_ORDER (actor1)==drawOrder (actor1) && DRAW_ORDER (actor1)==drawOrder (actor1));
 	return drawOrder (actor1)-drawOrder (actor2);
 }
