@@ -1251,7 +1251,7 @@ load_game:
 #else
 			char buf[1024];
 #endif
-			sprintf(buf, "Succesfully saved game state in file:\n\n%s", filename);
+			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 	
 			Dialog *dialog = new MessageDialog(_newgui, buf, 1500, false);
 			runDialog(dialog);
