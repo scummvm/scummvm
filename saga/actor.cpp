@@ -669,7 +669,7 @@ int LoadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p) {
 	debug(0, "Sprite resource contains %d sprite actions.", s_action_ct);
 	action_p = (R_ACTORACTION *)malloc(sizeof(R_ACTORACTION) * s_action_ct);
 
-	MemoryReadStream *readS = new MemoryReadStream(res_p, res_len);
+	MemoryReadStream readS(res_p, res_len);
 
 	if (action_p == NULL) {
 		warning("Couldn't allocate memory for sprite actions");
@@ -682,8 +682,8 @@ int LoadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p) {
 	for (i = 0; i < s_action_ct; i++) {
 		for (orient = 0; orient < 4; orient++) {
 			// Load all four orientations
-			action_p[i].dir[orient].frame_index = readS->readUint16LE();
-			action_p[i].dir[orient].frame_count = readS->readUint16LE();
+			action_p[i].dir[orient].frame_index = readS.readUint16LE();
+			action_p[i].dir[orient].frame_count = readS.readUint16LE();
 			if (action_p[i].dir[orient].frame_index > last_frame) {
 				last_frame = action_p[i].dir[orient].frame_index;
 			}

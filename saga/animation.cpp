@@ -363,20 +363,19 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(anim_resource, anim_resource_len);
+	MemoryReadStream readS(anim_resource, anim_resource_len);
 
-	ah.magic = readS->readUint16LE();
-	ah.screen_w = readS->readUint16LE();
-	ah.screen_h = readS->readUint16LE();
+	ah.magic = readS.readUint16LE();
+	ah.screen_w = readS.readUint16LE();
+	ah.screen_h = readS.readUint16LE();
 
-	ah.unknown06 = readS->readByte();
-	ah.unknown07 = readS->readByte();
-	ah.nframes = readS->readByte();
+	ah.unknown06 = readS.readByte();
+	ah.unknown07 = readS.readByte();
+	ah.nframes = readS.readByte();
 
 	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
 		*n_frames = ah.nframes;
 	}
-	delete readS;
 
 	if (ah.magic == 68) {
 		for (x = ah.nframes; x > 0; x--) {
@@ -426,22 +425,20 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(resdata, resdata_len);
+	MemoryReadStream headerReadS(resdata, resdata_len);
 	// Read animation header
-	ah.magic = readS->readUint16LE();
-	ah.screen_w = readS->readUint16LE();
-	ah.screen_h = readS->readUint16LE();
-	ah.unknown06 = readS->readByte();
-	ah.unknown07 = readS->readByte();
-	ah.nframes = readS->readByte();
-	ah.flags = readS->readByte();
-	ah.unknown10 = readS->readByte();
-	ah.unknown11 = readS->readByte();
+	ah.magic = headerReadS.readUint16LE();
+	ah.screen_w = headerReadS.readUint16LE();
+	ah.screen_h = headerReadS.readUint16LE();
+	ah.unknown06 = headerReadS.readByte();
+	ah.unknown07 = headerReadS.readByte();
+	ah.nframes = headerReadS.readByte();
+	ah.flags = headerReadS.readByte();
+	ah.unknown10 = headerReadS.readByte();
+	ah.unknown11 = headerReadS.readByte();
 
 	screen_w = ah.screen_w;
 	screen_h = ah.screen_h;
-
-	delete readS;
 
 	if ((screen_w * screen_h) > buf_len) {
 		// Buffer argument is too small to hold decoded frame, abort.
@@ -450,13 +447,12 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	}
 
 	// Read frame header
-	readS = new MemoryReadStream(resdata + frame_offset, resdata_len - frame_offset);
+	MemoryReadStream readS(resdata + frame_offset, resdata_len - frame_offset);
 
 	// Check for frame magic byte
-	magic = readS->readByte();
+	magic = readS.readByte();
 	if (magic != SAGA_FRAME_HEADER_MAGIC) {
 		warning("ITE_DecodeFrame: Invalid frame offset");
-		delete readS;
 		return R_FAILURE;
 	}
 
@@ -464,13 +460,13 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	// endian format, but the actual RLE encoded frame data, 
 	// including the frame header, is in big endian format.
 
-	fh.x_start = readS->readUint16BE();
-	fh.y_start = readS->readByte();
-	readS->readByte();		/* Skip pad byte */
-	fh.x_pos = readS->readUint16BE();
-	fh.y_pos = readS->readUint16BE();
-	fh.width = readS->readUint16BE();
-	fh.height = readS->readUint16BE();
+	fh.x_start = readS.readUint16BE();
+	fh.y_start = readS.readByte();
+	readS.readByte();		/* Skip pad byte */
+	fh.x_pos = readS.readUint16BE();
+	fh.y_pos = readS.readUint16BE();
+	fh.width = readS.readUint16BE();
+	fh.height = readS.readUint16BE();
 
 	x_start = fh.x_start;
 	y_start = fh.y_start;
@@ -480,12 +476,12 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 
 	// Begin RLE decompression to output buffer
 	do {
-		mark_byte = readS->readByte();
+		mark_byte = readS.readByte();
 		switch (mark_byte) {
 		case 0x10: // Long Unencoded Run
-			runcount = readS->readSint16BE();
+			runcount = readS.readSint16BE();
 			for (i = 0; i < runcount; i++) {
-				data_byte = readS->readByte();
+				data_byte = readS.readByte();
 				if (data_byte != 0) {
 					*write_p = data_byte;
 				}
@@ -494,27 +490,26 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 			continue;
 			break;
 		case 0x20: // Long encoded run
-			runcount = readS->readSint16BE();
-			data_byte = readS->readByte();
+			runcount = readS.readSint16BE();
+			data_byte = readS.readByte();
 			for (i = 0; i < runcount; i++) {
 				*write_p++ = data_byte;
 			}
 			continue;
 			break;
 		case 0x2F: // End of row
-			x_vector = readS->readSint16BE();
-			new_row = readS->readByte();
+			x_vector = readS.readSint16BE();
+			new_row = readS.readByte();
 			// Set write pointer to the new draw origin
 			write_p = buf + ((y_start + new_row) * screen_w) + x_start + x_vector;
 			continue;
 			break;
 		case 0x30: // Reposition command
-			x_vector = readS->readSint16BE();
+			x_vector = readS.readSint16BE();
 			write_p += x_vector;
 			continue;
 			break;
 		case 0x3F: // End of frame marker
-			delete readS;
 			return R_SUCCESS;
 			break;
 		default:
@@ -534,7 +529,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		case 0x80: // 1000 0000
 			// Run of compressed data
 			runcount = param_ch + 1;
-			data_byte = readS->readByte();
+			data_byte = readS.readByte();
 			for (i = 0; i < runcount; i++) {
 				*write_p++ = data_byte;
 			}
@@ -544,7 +539,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 			// Uncompressed run
 			runcount = param_ch + 1;
 			for (i = 0; i < runcount; i++) {
-				data_byte = readS->readByte();
+				data_byte = readS.readByte();
 				if (data_byte != 0) {
 					*write_p = data_byte;
 				}
@@ -555,13 +550,11 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		default:
 			// Unknown marker found - abort
 			warning("ITE_DecodeFrame: Invalid RLE marker encountered");
-			delete readS;
 			return R_FAILURE;
 			break;
 		}
 	} while (mark_byte != 63); // end of frame marker
 
-	delete readS;
 	return R_SUCCESS;
 }
 
@@ -583,7 +576,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 	size_t in_ch_offset;
 
-	MemoryReadStream *readS = new MemoryReadStream(thisf_p, thisf_len);
+	MemoryReadStream readS(thisf_p, thisf_len);
 
 	byte *outbuf_p = decode_buf;
 	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
@@ -596,8 +589,8 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 	*nextf_p = NULL;
 
 	for (; cont_flag; decoded_data = 1) {
-		in_ch_offset = readS->pos();
-		in_ch = readS->readByte();
+		in_ch_offset = readS.pos();
+		in_ch = readS.readByte();
 		switch (in_ch) {
 		case 0x0F: // 15: Frame header
 			{
@@ -608,18 +601,18 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 				int param5;
 				int param6;
 
-				if (thisf_len - readS->pos() < 13) {
+				if (thisf_len - readS.pos() < 13) {
 					warning("0x%02X: Input buffer underrun", in_ch);
 					return R_FAILURE;
 				}
 
-				param1 = readS->readUint16BE();
-				param2 = readS->readUint16BE();
-				readS->readByte(); // skip 1?
-				param3 = readS->readUint16BE();
-				param4 = readS->readUint16BE();
-				param5 = readS->readUint16BE();
-				param6 = readS->readUint16BE();
+				param1 = readS.readUint16BE();
+				param2 = readS.readUint16BE();
+				readS.readByte(); // skip 1?
+				param3 = readS.readUint16BE();
+				param4 = readS.readUint16BE();
+				param5 = readS.readUint16BE();
+				param6 = readS.readUint16BE();
 
 				x_origin = param1;
 				y_origin = param2;
@@ -629,7 +622,6 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 				if (outbuf_p > outbuf_endp) {
 					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
 							in_ch, in_ch_offset, x_origin, y_origin);
-					delete readS;
 					return R_FAILURE;
 				}
 
@@ -638,20 +630,18 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			}
 			break;
 		case 0x10: // Long Unencoded Run
-			runcount = readS->readSint16BE();
-			if (thisf_len - readS->pos() < runcount) {
+			runcount = readS.readSint16BE();
+			if (thisf_len - readS.pos() < runcount) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				delete readS;
 				return R_FAILURE;
 			}
 			if (outbuf_remain < runcount) {
 				warning("0x%02X: Output buffer overrun", in_ch);
-				delete readS;
 				return R_FAILURE;
 			}
 
 			for (c = 0; c < runcount; c++) {
-				data_pixel = readS->readByte();
+				data_pixel = readS.readByte();
 				if (data_pixel != 0) {
 					*outbuf_p = data_pixel;
 				}
@@ -662,26 +652,24 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			continue;
 			break;
 		case 0x1F: // 31: Unusued?
-			if (thisf_len - readS->pos() < 3) {
+			if (thisf_len - readS.pos() < 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				delete readS;
 				return R_FAILURE;
 			}
 
-			readS->readByte();
-			readS->readByte();
-			readS->readByte();
+			readS.readByte();
+			readS.readByte();
+			readS.readByte();
 			continue;
 			break;
 		case 0x20: // Long compressed run
-			if (thisf_len - readS->pos() <= 3) {
+			if (thisf_len - readS.pos() <= 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				delete readS;
 				return R_FAILURE;
 			}
 
-			runcount = readS->readSint16BE();
-			data_pixel = readS->readByte();
+			runcount = readS.readSint16BE();
+			data_pixel = readS.readByte();
 
 			for (c = 0; c < runcount; c++) {
 				*outbuf_p++ = data_pixel;
@@ -692,29 +680,26 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 
 		case 0x2F: // End of row
-			if (thisf_len - readS->pos() <= 4) {
-				delete readS;
+			if (thisf_len - readS.pos() <= 4) {
 				return R_FAILURE;
 			}
 
-			x_vector = readS->readSint16BE();
-			new_row = readS->readSint16BE();
+			x_vector = readS.readSint16BE();
+			new_row = readS.readSint16BE();
 
 			outbuf_p = decode_buf + ((y_origin + new_row) * di.logical_w) + x_origin + x_vector;
 			outbuf_remain = (outbuf_endp - outbuf_p) + 1;
 			continue;
 			break;
 		case 0x30: // Reposition command
-			if (thisf_len - readS->pos() < 2) {
-				delete readS;
+			if (thisf_len - readS.pos() < 2) {
 				return R_FAILURE;
 			}
 
-			x_vector = readS->readSint16BE();
+			x_vector = readS.readSint16BE();
 
 			if (((x_vector > 0) && ((size_t) x_vector > outbuf_remain)) || (-x_vector > outbuf_p - decode_buf)) {
 				warning("0x30: Invalid x_vector");
-				delete readS;
 				return R_FAILURE;
 			}
 
@@ -725,9 +710,9 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 		case 0x3F:	// 68: Frame end marker
 			debug(1, "0x3F: Frame end marker");
-			if (decoded_data && (thisf_len - readS->pos() > 0)) {
-				*nextf_p = thisf_p + readS->pos();
-				*nextf_len = thisf_len - readS->pos();
+			if (decoded_data && (thisf_len - readS.pos() > 0)) {
+				*nextf_p = thisf_p + readS.pos();
+				*nextf_len = thisf_len - readS.pos();
 			} else {
 				*nextf_p = NULL;
 				*nextf_len = 0;
@@ -748,7 +733,6 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0xC0: // Run of empty pixels
 			runcount = param_ch + 1;
 			if (outbuf_remain < runcount) {
-				delete readS;
 				return R_FAILURE;
 			}
 
@@ -758,12 +742,11 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		case 0x80: // Run of compressed data
 			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() <= 1)) {
-				delete readS;
+			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() <= 1)) {
 				return R_FAILURE;
 			}
 
-			data_pixel = readS->readByte();
+			data_pixel = readS.readByte();
 
 			for (c = 0; c < runcount; c++) {
 				*outbuf_p++ = data_pixel;
@@ -774,13 +757,12 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		case 0x40: // Uncompressed run
 			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() < runcount)) {
-				delete readS;
+			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() < runcount)) {
 				return R_FAILURE;
 			}
 
 			for (c = 0; c < runcount; c++) {
-				data_pixel = readS->readByte();
+				data_pixel = readS.readByte();
 				if (data_pixel != 0) {
 					*outbuf_p = data_pixel;
 				}
@@ -796,7 +778,6 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		}
 	}
-	delete readS;
 
 	return R_SUCCESS;
 }
@@ -818,18 +799,18 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(resdata, resdata_len);
+	MemoryReadStream readS(resdata, resdata_len);
 
 	// Read animation header
-	ah.magic = readS->readUint16LE();
-	ah.screen_w = readS->readUint16LE();
-	ah.screen_h = readS->readUint16LE();
-	ah.unknown06 = readS->readByte();
-	ah.unknown07 = readS->readByte();
-	ah.nframes = readS->readByte();
-	ah.flags = readS->readByte();
-	ah.unknown10 = readS->readByte();
-	ah.unknown11 = readS->readByte();
+	ah.magic = readS.readUint16LE();
+	ah.screen_w = readS.readUint16LE();
+	ah.screen_h = readS.readUint16LE();
+	ah.unknown06 = readS.readByte();
+	ah.unknown07 = readS.readByte();
+	ah.nframes = readS.readByte();
+	ah.flags = readS.readByte();
+	ah.unknown10 = readS.readByte();
+	ah.unknown11 = readS.readByte();
 
 	num_frames = ah.nframes;
 
@@ -838,48 +819,47 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	}
 
 	for (current_frame = 1; current_frame < find_frame; current_frame++) {
-		magic = readS->readByte();
+		magic = readS.readByte();
 		if (magic != SAGA_FRAME_HEADER_MAGIC) {
 			// Frame sync failure. Magic Number not found
-			delete readS;
 			return R_FAILURE;
 		}
 
 		// skip header
 		for (i = 0; i < SAGA_FRAME_HEADER_LEN; i++)
-			readS->readByte();
+			readS.readByte();
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data, 
 		// including the frame header, is in big endian format. */
 		do {
-			mark_byte = readS->readByte();
+			mark_byte = readS.readByte();
 			switch (mark_byte) {
 			case 0x3F: // End of frame marker
 				continue;
 				break;
 			case 0x30: // Reposition command
-				readS->readByte();
-				readS->readByte();
+				readS.readByte();
+				readS.readByte();
 				continue;
 				break;
 			case 0x2F: // End of row marker
-				readS->readByte();
-				readS->readByte();
-				readS->readByte();
+				readS.readByte();
+				readS.readByte();
+				readS.readByte();
 				continue;
 				break;
 			case 0x20: // Long compressed run marker
-				readS->readByte();
-				readS->readByte();
-				readS->readByte();
+				readS.readByte();
+				readS.readByte();
+				readS.readByte();
 				continue;
 				break;
 			case 0x10: // (16) 0001 0000
 				// Long Uncompressed Run
-				runcount = readS->readSint16BE();
+				runcount = readS.readSint16BE();
 				for (i = 0; i < runcount; i++)
-					readS->readByte();
+					readS.readByte();
 				continue;
 				break;
 			default:
@@ -895,14 +875,14 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 				break;
 			case 0x80:
 				// Run of compressed data
-				readS->readByte(); // Skip data byte
+				readS.readByte(); // Skip data byte
 				continue;
 				break;
 			case 0x40:
 				// Uncompressed run
 				runcount = (mark_byte & 0x3f) + 1;
 				for (i = 0; i < runcount; i++)
-					readS->readByte();
+					readS.readByte();
 				continue;
 				break;
 			default:
@@ -913,8 +893,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 		} while (mark_byte != 63);
 	}
 
-	*frame_offset_p = readS->pos();
-	delete readS;
+	*frame_offset_p = readS.pos();
 	return R_SUCCESS;
 }
 

@@ -66,10 +66,10 @@ int ActionMap::load(const byte * exmap_res, size_t exmap_res_len) {
 	assert(_initialized);
 	assert(exmap_res != NULL);
 
-	MemoryReadStream *readS = new MemoryReadStream(exmap_res, exmap_res_len);
+	MemoryReadStream readS(exmap_res, exmap_res_len);
 
 	// Load exits
-	exit_ct = readS->readSint16LE();
+	exit_ct = readS.readSint16LE();
 	if (exit_ct < 0) {
 		return R_FAILURE;
 	}
@@ -81,12 +81,12 @@ int ActionMap::load(const byte * exmap_res, size_t exmap_res_len) {
 	}
 
 	for (i = 0; i < exit_ct; i++) {
-		exmap_entry[i].unknown00 = readS->readSint16LE();
-		exmap_entry[i].unknown02 = readS->readSint16LE();
-		exmap_entry[i].exit_scene = readS->readSint16LE();
-		exmap_entry[i].unknown06 = readS->readSint16LE();
+		exmap_entry[i].unknown00 = readS.readSint16LE();
+		exmap_entry[i].unknown02 = readS.readSint16LE();
+		exmap_entry[i].exit_scene = readS.readSint16LE();
+		exmap_entry[i].unknown06 = readS.readSint16LE();
 
-		exmap_entry[i].pt_count = readS->readSint16LE();
+		exmap_entry[i].pt_count = readS.readSint16LE();
 		if (exmap_entry[i].pt_count < 0) {
 			free(exmap_entry);
 			return R_FAILURE;
@@ -99,8 +99,8 @@ int ActionMap::load(const byte * exmap_res, size_t exmap_res_len) {
 		}
 
 		for (pt = 0; pt < exmap_entry[i].pt_count; pt++) {
-			exmap_pt_tbl[pt].x = readS->readSint16LE();
-			exmap_pt_tbl[pt].y = readS->readSint16LE();
+			exmap_pt_tbl[pt].x = readS.readSint16LE();
+			exmap_pt_tbl[pt].y = readS.readSint16LE();
 		}
 
 		exmap_entry[i].pt_tbl = exmap_pt_tbl;

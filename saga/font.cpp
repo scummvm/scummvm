@@ -118,7 +118,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 		FontModule.err_str = "Invalid font length.";
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(fontres_p, fontres_len);
+	MemoryReadStream readS(fontres_p, fontres_len);
 
 	// Create new font structure
 	font = (R_FONT *)malloc(sizeof *font);
@@ -128,9 +128,9 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	}
 
 	// Read font header
-	fh.c_height = readS->readUint16LE();
-	fh.c_width = readS->readUint16LE();
-	fh.row_length = readS->readUint16LE();
+	fh.c_height = readS.readUint16LE();
+	fh.c_width = readS.readUint16LE();
+	fh.row_length = readS.readUint16LE();
 
 	debug(1, "FONT_Load(): Reading font resource...");
 
@@ -152,23 +152,23 @@ int FONT_Load(uint32 font_rn, int font_id) {
 	normal_font->hdr.row_length = fh.row_length;
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].index = readS->readUint16LE();
+		normal_font->fce[c].index = readS.readUint16LE();
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		nbits = normal_font->fce[c].width = readS->readByte();
+		nbits = normal_font->fce[c].width = readS.readByte();
 		normal_font->fce[c].byte_width = GetByteLen(nbits);
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].flag = readS->readByte();
+		normal_font->fce[c].flag = readS.readByte();
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].tracking = readS->readByte();
+		normal_font->fce[c].tracking = readS.readByte();
 	}
 
-	if (readS->pos() != R_FONT_DESCSIZE) {
+	if (readS.pos() != R_FONT_DESCSIZE) {
 		warning("Invalid font resource size.");
 		return R_FAILURE;
 	}

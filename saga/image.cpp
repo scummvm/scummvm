@@ -64,12 +64,12 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 		return R_FAILURE;
 	}
 
-	MemoryReadStream *readS = new MemoryReadStream(image_data, image_size);
+	MemoryReadStream readS(image_data, image_size);
 
-	hdr.width = readS->readUint16LE();
-	hdr.height = readS->readUint16LE();
-	hdr.unknown4 = readS->readUint16LE();
-	hdr.unknown6 = readS->readUint16LE();
+	hdr.width = readS.readUint16LE();
+	hdr.height = readS.readUint16LE();
+	hdr.unknown4 = readS.readUint16LE();
+	hdr.unknown6 = readS.readUint16LE();
 
 	RLE_data_ptr = image_data + SAGA_IMAGE_DATA_OFFSET;
 	RLE_data_len = image_size - SAGA_IMAGE_DATA_OFFSET;
