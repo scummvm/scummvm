@@ -349,22 +349,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 	
 	if (GetFadeStatus() != RDFADE_BLACK) {
 		FadeDown((float) 0.75);
-
-		do {
-			//--------------------------------------------------
-			// Service windows
-			while (!gotTheFocus)
-				if (ServiceWindows() == RDERR_APPCLOSED)
-					break;
-
-			// if we pressed Ctrl-Q
-			if (ServiceWindows() == RDERR_APPCLOSED) {
-				Close_game();	//close engine systems down
-				CloseAppWindow();
-				exit(0);	//quit the game
-			}
- 			//--------------------------------------------------
-		} while (GetFadeStatus() == RDFADE_DOWN);
+		WaitForFade();
 	}
 
 	Set_mouse(0);
@@ -416,21 +401,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 
 	Free_mem(text_spr);
 
-	do {
-		//--------------------------------------------------
-		// Service windows
-		while (!gotTheFocus)
-			if (ServiceWindows() == RDERR_APPCLOSED)
-				break;
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
-	} while (GetFadeStatus() == RDFADE_UP);
+	WaitForFade();
 
 	uint32 targetTime = SVM_timeGetTime() + (time * 1000);
 
@@ -473,22 +444,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 void RemoveMsg(void) {		// Chris 15May97
 	FadeDown((float) 0.75);
 
-	do {
-		//--------------------------------------------------
-		// Service windows
-		while (!gotTheFocus)
-			if (ServiceWindows() == RDERR_APPCLOSED)
-				break;
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED)
-		{
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
-	} while (GetFadeStatus() == RDFADE_DOWN);
+	WaitForFade();
 
 	EraseBackBuffer();		// for hardware rendering
 	EraseSoftwareScreenBuffer();	// for software rendering
@@ -1054,10 +1010,7 @@ void Start_new_palette(void) {	//Tony25Sept96
 
 	// if the screen is still fading down then wait for black - could
 	// happen when everythings cached into a large memory model
-
-	do {
-		ServiceWindows();
-	} while (GetFadeStatus() == RDFADE_DOWN);
+	WaitForFade();
 
 	// open the screen file
 	screenFile = res_man.Res_open(this_screen.background_layer_id);
@@ -1111,9 +1064,7 @@ int32 FN_fade_down(int32 *params) {	//Tony5Dec96
 }
 
 int32 FN_fade_up(int32 *params) {	//Chris 15May97
-	do {
-		ServiceWindows();
-	} while (GetFadeStatus() == RDFADE_DOWN);
+	WaitForFade();
 
 	if (GetFadeStatus() == RDFADE_BLACK)
 		FadeUp((float) 0.75);

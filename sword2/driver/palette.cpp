@@ -312,6 +312,13 @@ uint8 GetFadeStatus(void) {
 	return fadeStatus;
 }
 
+void WaitForFade(void) {
+	while (GetFadeStatus() != RDFADE_NONE && GetFadeStatus() != RDFADE_BLACK) {
+		ServiceWindows();
+		g_system->delay_msecs(20);
+	}
+}
+
 void FadeServer() {
 	static int32 previousTime = 0;
 	const byte *newPalette = (const byte *) fadePalette;

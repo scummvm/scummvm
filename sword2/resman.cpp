@@ -955,38 +955,11 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	char buf[1024];
 	sprintf(buf, "%sClusters\\%s", cdPath, resource_files[newCluster]);
 
-	uint8 fadeStat;
-
-	do {
-		fadeStat = GetFadeStatus();
-
-		//--------------------------------------------------
-		// Service windows
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
-	} while (fadeStat == RDFADE_UP || fadeStat == RDFADE_DOWN);
+	WaitForFade();
 
 	if (GetFadeStatus() != RDFADE_BLACK) {
 		FadeDown((float) 0.75);
-
-		do {
-			//--------------------------------------------------
-			// Service windows
-
-			// if we pressed Ctrl-Q
-			if (ServiceWindows() == RDERR_APPCLOSED) {
-				Close_game();	//close engine systems down
-				CloseAppWindow();
-				exit(0);	//quit the game
-			}
- 			//--------------------------------------------------
-		} while (GetFadeStatus() != RDFADE_BLACK);
+		WaitForFade();
 	}
 
 	EraseBackBuffer();
@@ -1083,18 +1056,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	CopyScreenBuffer();
 	FadeUp((float) 0.75);
 
-	do {
-		//--------------------------------------------------
-		// Service windows
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
-	} while (GetFadeStatus() == RDFADE_UP);
+	WaitForFade();
 
 	fseek(inFile, 0, SEEK_END);
 	uint32 size = ftell(inFile);
@@ -1167,22 +1129,9 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	EraseSoftwareScreenBuffer();	// for software rendering
 
 	FadeDown((float) 0.75);
-
-	do {
-		//--------------------------------------------------
-		// Service windows
-
-		// if we pressed Ctrl-Q
-		if (ServiceWindows() == RDERR_APPCLOSED) {
-			Close_game();	//close engine systems down
-			CloseAppWindow();
-			exit(0);	//quit the game
-		}
- 		//--------------------------------------------------
-	} while (GetFadeStatus() == RDFADE_DOWN);
-
+	WaitForFade();
 	CopyScreenBuffer();
-	FadeUp((float)0.75);
+	FadeUp((float) 0.75);
 
 	// Git rid of read-only status.
 	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);

@@ -102,13 +102,14 @@ void ExitWithReport(const char *format,...)	// (6dec96 JEL)
 	vsprintf(buf, format, arg_ptr);
 	Zdebug("%s",buf);		// send output to 'debug.txt' as well, just for the record
 
-	while (GetFadeStatus())	// wait for fade to finish before calling RestoreDisplay()
-		ServiceWindows();
+	// wait for fade to finish before calling RestoreDisplay()
+	WaitForFade();
 
 	ReportFatalError((const uint8 *)buf);	// display message box
 	CloseAppWindow();
-	while (ServiceWindows() != RDERR_APPCLOSED);
-
+	// This looks like a bad idea, since our ServiceWindows() never
+	// returns RDERR_APPCLOSED.
+	// while (ServiceWindows() != RDERR_APPCLOSED);
 	exit(0);
 }
 

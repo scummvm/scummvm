@@ -92,11 +92,8 @@ int32 FN_init_background(int32 *params)	//Tony11Sept96
 
 	//-------------------------------------------------------
 	// if the screen is still fading down then wait for black
-	do
-	{
-		ServiceWindows();
-	}
-	while(GetFadeStatus()==RDFADE_DOWN);
+	WaitForFade();
+
 	//-------------------------------------------------------
 
 	if (this_screen.mask_flag)	// if last screen was using a shading mask (see below) (James 08apr97)

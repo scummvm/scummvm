@@ -1421,6 +1421,7 @@ extern int32 FadeUp(float time);
 extern int32 FadeDown(float time);
 extern uint8 GetFadeStatus(void);
 extern int32 DimPalette(void);
+extern void WaitForFade(void);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
