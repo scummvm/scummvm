@@ -820,14 +820,14 @@ int Sound::isSoundRunning(int sound) const {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			if (_currentMusic)
-				sound = _currentMusic;
+				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
 		} else if (sound >= 10000) {
 			// TODO report sound ID on channel
 			// channel = sound - 10000
 			if (sound == 10000)
-				return _currentMusic;
+				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
 			else
 				return 0;
 		}
