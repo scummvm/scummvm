@@ -47,6 +47,10 @@ protected:
 	virtual void decodeParseString();
 	int getWordVararg(int *ptr);
 
+	virtual int getVar();
+	virtual int getVarOrDirectByte(byte mask);
+	virtual int getVarOrDirectWord(byte mask);
+
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
@@ -196,6 +200,8 @@ protected:
 
 	virtual void decodeParseString();
 
+	virtual int getVar();
+
 	void getResultPosIndirect();
 	virtual void getResultPos();
 	virtual int readVar(uint var);
@@ -243,13 +249,6 @@ protected:
 	void o2_walkActorTo();
 	void o2_putActor();
 	void o2_isEqual();
-	void o2_isGreater();
-	void o2_isGreaterEqual();
-	void o2_lessOrEqual();
-	void o2_isLess();
-	void o2_isNotEqual();
-	void o2_equalZero();
-	void o2_notEqualZero();
 	void o2_startScript();
 	void o2_panCameraTo();
 	void o2_setActorElevation();
@@ -262,7 +261,6 @@ protected:
 	void o2_getActorY();
 	void o2_loadRoomWithEgo();
 	void o2_setOwnerOf();
-	void o2_delayVariable();
 	void o2_matrixOps();
 	void o2_setCameraAt();
 	void o2_roomOps();

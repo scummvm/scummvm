@@ -330,24 +330,6 @@ int Scumm::fetchScriptWordSigned() {
 	return (int16)fetchScriptWord();
 }
 
-int Scumm::getVarOrDirectByte(byte mask) {
-	if (_opcode & mask)
-		if (_features & GF_AFTER_V2)
-			return readVar(fetchScriptByte());
-		else
-			return readVar(fetchScriptWord());
-	return fetchScriptByte();
-}
-
-int Scumm::getVarOrDirectWord(byte mask) {
-	if (_opcode & mask)
-		if (_features & GF_AFTER_V2)
-			return readVar(fetchScriptByte());
-		else
-			return readVar(fetchScriptWord());
-	return (int16)fetchScriptWord();
-}
-
 #ifndef BYPASS_COPY_PROT
 #define BYPASS_COPY_PROT
 #endif

@@ -366,6 +366,22 @@ const char *Scumm_v5::getOpcodeDesc(int i) {
 	return _opcodesV5[i].desc;
 }
 
+int Scumm_v5::getVar() {
+	return readVar(fetchScriptWord());
+}
+
+int Scumm_v5::getVarOrDirectByte(byte mask) {
+	if (_opcode & mask)
+		return getVar();
+	return fetchScriptByte();
+}
+
+int Scumm_v5::getVarOrDirectWord(byte mask) {
+	if (_opcode & mask)
+		return getVar();
+	return (int16)fetchScriptWord();
+}
+
 void Scumm_v5::o5_actorFollowCamera() {
 	actorFollowCamera(getVarOrDirectByte(0x80));
 }
@@ -697,7 +713,7 @@ void Scumm_v5::o5_delay() {
 }
 
 void Scumm_v5::o5_delayVariable() {
-	vm.slot[_currentScript].delay = readVar(fetchScriptWord());
+	vm.slot[_currentScript].delay = getVar();
 	vm.slot[_currentScript].status = 1;
 	o5_breakHere();
 }
@@ -1216,7 +1232,7 @@ void Scumm_v5::o5_isEqual() {
 }
 
 void Scumm_v5::o5_isGreater() {
-	int16 a = readVar(fetchScriptWord());
+	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
 	if (b > a)
 		ignoreScriptWord();
@@ -1225,7 +1241,7 @@ void Scumm_v5::o5_isGreater() {
 }
 
 void Scumm_v5::o5_isGreaterEqual() {
-	int16 a = readVar(fetchScriptWord());
+	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
 	if (b >= a)
 		ignoreScriptWord();
@@ -1234,7 +1250,7 @@ void Scumm_v5::o5_isGreaterEqual() {
 }
 
 void Scumm_v5::o5_isLess() {
-	int16 a = readVar(fetchScriptWord());
+	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b < a)
@@ -1244,7 +1260,7 @@ void Scumm_v5::o5_isLess() {
 }
 
 void Scumm_v5::o5_lessOrEqual() {
-	int16 a = readVar(fetchScriptWord());
+	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
 	if (b <= a)
 		ignoreScriptWord();
@@ -1253,7 +1269,7 @@ void Scumm_v5::o5_lessOrEqual() {
 }
 
 void Scumm_v5::o5_isNotEqual() {
-	int16 a = readVar(fetchScriptWord());
+	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
 	if (b != a)
 		ignoreScriptWord();
@@ -1262,7 +1278,7 @@ void Scumm_v5::o5_isNotEqual() {
 }
 
 void Scumm_v5::o5_notEqualZero() {
-	int a = readVar(fetchScriptWord());
+	int a = getVar();
 	if (a != 0)
 		ignoreScriptWord();
 	else
@@ -1270,7 +1286,7 @@ void Scumm_v5::o5_notEqualZero() {
 }
 
 void Scumm_v5::o5_equalZero() {
-	int a = readVar(fetchScriptWord());
+	int a = getVar();
 	if (a == 0)
 		ignoreScriptWord();
 	else
