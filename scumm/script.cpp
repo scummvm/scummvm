@@ -732,14 +732,12 @@ void Scumm::killScriptsAndResources()
 	}
 
 	/* Nuke FL objects */
-	// ENDERFIXME
-	/*
 	i = 0;
 	do {
 		if (_objs[i].fl_object_index)
 			nukeResource(rtFlObject, _objs[i].fl_object_index);
 	} while (++i <= _numObjectsInRoom);
-	*/
+
 	/* Nuke local object names */
 	if (_newNames) {
 		for (i = 0; i < _numNewNames; i++) {
