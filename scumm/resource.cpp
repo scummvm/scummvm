@@ -1482,8 +1482,10 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		_fileHandle.seek(wa_size - 2, SEEK_CUR);
 
 		//FIXME AD resources don't exist in Atari ST versions
-		ad_offs = _fileHandle.pos();
-		ad_size = _fileHandle.readUint16LE();
+		if (_midiDriver == MD_ADLIB) {
+			ad_offs = _fileHandle.pos();
+			ad_size = _fileHandle.readUint16LE();
+		}
 		_fileHandle.seek(4, SEEK_CUR);
 		total_size = wa_size + ad_size;
 	} else {
