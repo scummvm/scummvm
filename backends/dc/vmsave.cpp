@@ -302,7 +302,7 @@ VMSave::~VMSave()
 uint32 VMSave::read(void *buf, uint32 cnt)
 {
   if (issave)
-    return -1; 
+    return 0; 
 
   int nbyt = cnt;
   if (pos + nbyt > size) {
@@ -318,7 +318,7 @@ uint32 VMSave::read(void *buf, uint32 cnt)
 uint32 VMSave::write(const void *buf, uint32 cnt)
 {
   if (!issave)
-    return -1;
+    return 0;
 
   int nbyt = cnt;
   if (pos + nbyt > size) {
