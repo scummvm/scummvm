@@ -47,7 +47,7 @@
 // tovista2.san
 
 // TODO:
-// o Fix wrong enemy animation
+// o Check why ftmacdemo doesn't finish insane scene
 // o Proper SAN seeking/switching. Now it just crashes
 // o TRS file support. Everything is in place, I just need to figure out function parameters
 // o FLU files support
@@ -4790,7 +4790,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 	if (tmp != -1) {
 		_actor[tmp].field_54 = 1;
 		_actor[tmp].act[3].state = 117;
-		_actor[tmp].scenePropSubIdx = scenePropNum;
+		_actor[tmp].scenePropSubIdx = _currScenePropSubIdx;
 	}
 }
 
