@@ -320,6 +320,7 @@ static void WalkActorForward() {
 
 // FIXME
 static void WalkActorTo() {
+  warning("Stub function WalkActorTo called; substituting PutActorAt");
   PutActorAt();
 }
 
@@ -580,9 +581,12 @@ static void GetShrinkPos() {
   double x = luaL_check_number(1);
   double y = luaL_check_number(2);
   double z = luaL_check_number(3);
+  double r = luaL_check_number(4);
   lua_pushnumber(x);
   lua_pushnumber(y);
   lua_pushnumber(z);
+  warning("Stub function GetShrinkPos(%g,%g,%g,%g) called",
+	  x, y, z, r);
 }
 
 // Sound functions
