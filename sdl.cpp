@@ -919,9 +919,6 @@ int main(int argc, char* argv[]) {
 #endif
 
 
-	long i;
-
-
 	if(detector.detectMain(argc, argv))
 		return(-1);
 

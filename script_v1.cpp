@@ -274,7 +274,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_getActorX,
 	/* C4 */
 	&Scumm::o5_isLess,
-	&Scumm::o5_badOpcode,
+	&Scumm::o5_drawObject,
 	&Scumm::o5_decrement,
 	&Scumm::o5_setState,
 	/* C8 */
