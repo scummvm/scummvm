@@ -1011,39 +1011,42 @@ void ScummEngine_v7he::o7_unknownFA() {
 }
 
 void ScummEngine_v7he::o7_unknownFB() {
+	int a, b, c, d, e, f, g, h, i;
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 246:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		a = pop();
+		b = pop();
+		c = pop();
+		d = pop();
+		e = pop();
+		f = pop();
+		g = pop();
+		h = pop();
+		i = pop();
+		debug(1,"o7_unknownFB case 245 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, g, h, i);
 		break;
 	case 247:
-		pop();
-		pop();
+		a = pop();
+		b = pop();
+		debug(1,"o7_unknownFB case 247 stub (%d, %d)", a, b);
 		break;
 	case 248:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		a = pop();
+		b = pop();
+		c = pop();
+		d = pop();
+		e = pop();
+		f = pop();
+		g = pop();
+		h = pop();
+		i = pop();
+		debug(1,"o7_unknownFB case 248 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, g, h, i);
 		break;
 	default:
 		error("o7_unknownFB: default type %d", subOp);
 	}
-	debug(1,"o7_unknownFB stub");
 }
 
 void ScummEngine_v7he::o7_unknownFC() {
@@ -1052,7 +1055,8 @@ void ScummEngine_v7he::o7_unknownFC() {
 	int y = pop();
 	int x = pop();
 
-	push(0);
+	int r = findObject(x, y);
+	push(r);
 	debug(1,"o7_unknownFC (x %d, y %d) stub", x, y);
 }
 
