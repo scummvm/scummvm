@@ -62,7 +62,7 @@ void RncDecoder::initCrc() {
 }
 
 //calculate 16 bit crc of a block of memory
-uint16 RncDecoder::crcBlock(uint8 *block, uint32 size) {
+uint16 RncDecoder::crcBlock(const uint8 *block, uint32 size) {
 	uint16 crc = 0;
 	uint8 *crcTable8 = (uint8 *)_crcTable; //make a uint8* to crc_table
 	uint8 tmp;
@@ -164,9 +164,9 @@ uint16 RncDecoder::inputValue(uint16 *table) {
 	return value;
 }
 
-int32 RncDecoder::unpackM1(void *input, void *output, uint16 key) {
-	uint8 *inputHigh, *outputLow, *outputHigh;
-	uint8 *inputptr = (uint8 *)input;
+int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
+	uint8 *outputLow, *outputHigh;
+	const uint8 *inputHigh, *inputptr = (const uint8 *)input;
 
 	uint32 unpackLen = 0;
 	uint32 packLen = 0;
@@ -196,12 +196,12 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key) {
 	if (crcBlock(inputptr, packLen) != crcPacked)
 		return PACKED_CRC;
 
-	inputptr = (((uint8 *)input) + HEADER_LEN); 
+	inputptr = (((const uint8 *)input) + HEADER_LEN); 
 	_srcPtr = inputptr;
 	
-	inputHigh = ((uint8 *)input) + packLen + HEADER_LEN;;
+	inputHigh = ((const uint8 *)input) + packLen + HEADER_LEN;;
 	outputLow = (uint8 *)output;
-	outputHigh = *(((uint8 *)input) + 16) + unpackLen + outputLow;
+	outputHigh = *(((const uint8 *)input) + 16) + unpackLen + outputLow;
 
 	if (! ((inputHigh <= outputLow) || (outputHigh <= inputHigh)) ) {
 		_srcPtr = inputHigh;
