@@ -3276,6 +3276,7 @@ void SimonState::showmessage_helper_2()
 
 void SimonState::readSfxFile(const char *filename)
 {
+	uint num;
 	if (_game == GAME_SIMON1WIN) { 			/* simon 1 win */
 		uint32 size;
 
@@ -3294,6 +3295,8 @@ void SimonState::readSfxFile(const char *filename)
 		_effects_file->seek(4, SEEK_SET);
 		_effects_file->read(&size, sizeof(uint32));
 
+		num = size / sizeof(uint32);
+
 		_effects_offsets = (uint32 *)malloc(size);
 
 		_effects_file->seek(0, SEEK_SET);
@@ -3305,7 +3308,6 @@ void SimonState::readSfxFile(const char *filename)
 
 		int set;
 		uint32 offs;
-		int num;
 		int i;
 
 		vc_29_stop_all_sounds();
@@ -3332,7 +3334,7 @@ void SimonState::readSfxFile(const char *filename)
 #if defined(SCUMM_BIG_ENDIAN)
 	uint r;
 	if (_effects_offsets) {
-		for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
+		for (r = 0; r <= num; r++)
 			_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
 	}
 #endif
