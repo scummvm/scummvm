@@ -194,7 +194,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	// overlay is removed. And if there isn't an overlay, we don't want it
 	// to be visible during the cutscene. (Not all cutscenes cover the
 	// entire screen.)
-	anim->clearScreen();
+	_vm->_graphics->clearScene();
 	_vm->_graphics->updateDisplay();
 
 #ifndef SCUMM_BIG_ENDIAN
