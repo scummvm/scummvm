@@ -75,7 +75,7 @@ static const char USAGE_STRING[] =
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
-	"                           atari, fmtowns, mac, pc)\n"
+	"                           atari, fmtowns, mac, pc, windows)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
@@ -83,10 +83,11 @@ static const char USAGE_STRING[] =
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
-        "                           Steel Sky and Flight of the Amazon Queen\n"
+	"                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
 #ifndef DISABLE_SCUMM
-	"  --copy-protection        Enable the original copy protection in SCUMM games\n"
+	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
+	"                           ScummVM disables it by default.\n"
 	"  --demo-mode              Start demo mode of Maniac Mansion\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
