@@ -247,7 +247,10 @@ the section on Reporting Bugs.
                   version.
 
        Simon the Sorcerer 2:
-                - Only default language (English) in data files is supported in simon2mac
+                - Combined speech and subtitles will often cause speech to be 
+                  cut off early, this is limitation of original game.
+                - Only default language (English) in data files is supported 
+                  in simon2mac
                 - F10 key animation in simon2mac is different compared to
                   original game
 
