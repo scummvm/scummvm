@@ -376,7 +376,7 @@ void SoundMixer::setVolume(int volume) {
 }
 
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id)
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool /*isMusic*/, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(true),
 	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _converter(0), _input(NULL) {
@@ -384,10 +384,10 @@ Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, in
 }
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
-				bool autofreeStream, bool isMusic, bool reverseStereo, int id, bool permanent)
+				bool autofreeStream, bool /*isMusic*/, bool reverseStereo, int id, bool permanent)
 	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream),
-	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _converter(0), _input(input), _permanent(permanent) {
+	  _permanent(permanent), _volume(255), _balance(0), _paused(false), _id(id),
+	  _samplesConsumed(0), _samplesDecoded(0), _converter(0), _input(input) {
 	assert(mixer);
 	assert(input);
 

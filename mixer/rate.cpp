@@ -78,7 +78,7 @@ protected:
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
-	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	int drain(st_sample_t * /*obuf*/, st_size_t /*osamp*/, st_volume_t /*vol*/) {
 		return (ST_SUCCESS);
 	}
 };
@@ -235,7 +235,7 @@ public:
 		}
 		return (ST_SUCCESS);
 	}
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	virtual int drain(st_sample_t * /*obuf*/, st_size_t /*osamp*/, st_volume_t /*vol*/) {
 		return (ST_SUCCESS);
 	}
 };
