@@ -172,7 +172,10 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (_version == 1) {
 		setupC64Palette();
 	} else if (_features & GF_16COLOR) {
-		setupEGAPalette();
+		if (_features & GF_AMIGA)
+			setupAmigaPalette();
+		else
+			setupEGAPalette();
 	} else
 		setDirtyColors(0, 255);
 
