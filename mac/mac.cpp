@@ -569,6 +569,9 @@ void LaunchGame(int id)
 		case 19:
 			gameTitle = "ft";
 		break;
+		
+		case 20:
+			gameTitle = "dig";
 	}
 }
 

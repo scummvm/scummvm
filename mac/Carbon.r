@@ -80,6 +80,7 @@ resource 'MENU'(999) {
 		"Sam & Max", noIcon, noKey, noMark, plain,
 		"Sam & Max (Demo)", noIcon, noKey, noMark, plain,
 		"Full Throttle", noIcon, noKey, noMark, plain,
+		"The Dig", noIcon, noKey, noMark, plain,
 		"The Curse of Monkey Island", noIcon, noKey, noMark, plain
 	}		
 };
