@@ -1064,56 +1064,6 @@ void ScummEngine_v6he::o6_writeFile() {
 	warning("o6_writeFile(%d, %d)", slot, resID);
 }
 
-void ScummEngine_v6he::o6_findAllObjects() {
-	int a = pop();
-	int i = 1;
-
-	if (a != _currentRoom)
-		warning("o6_findAllObjects: current room is not %d", a);
-	writeVar(0, 0);
-	defineArray(0, 5, 0, _numLocalObjects + 1);
-	writeArray(0, 0, 0, _numLocalObjects);
-	
-	while (i < _numLocalObjects) {
-		writeArray(0, 0, i, _objs[i].obj_nr);
-		i++;
-	}
-	
-	push(readVar(0));
-}
-
-void ScummEngine_v6he::o6_unknownE1() {
-	// this opcode check ground area in minigame "Asteroid Lander" in the dig
-	int y = pop();
-	int x = pop();
-
-	if (x > _screenWidth - 1) {
-		push(-1);
-		return;
-	}
-	if (x < 0) {
-		push(-1);
-		return;
-	}
-
-	if (y < 0) {
-		push(-1);
-		return;
-	}
-	
-	VirtScreen *vs = findVirtScreen(y);
-
-	if (vs == NULL) {
-		push(-1);
-		return;
-	}
-
-	int offset = (y - vs->topline) * vs->width + x + _screenLeft;
-
-	byte area = *(vs->screenPtr + offset);
-	push(area);
-}
-
 void ScummEngine_v6he::o6_setVolume() {
 	byte subOp = fetchScriptByte();
 	int soundVolumeMaster;

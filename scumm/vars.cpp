@@ -161,25 +161,6 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 }
 
-void ScummEngine_v6he::setupScummVars() {
-	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
-	ScummEngine::setupScummVars();
-
-	VAR_V6_SCREEN_WIDTH = 41;
-	VAR_V6_SCREEN_HEIGHT = 54;
-	VAR_V6_EMSSPACE = 76;
-	VAR_RANDOM_NR = 118;
-	
-	VAR_V6_SOUNDMODE = 9;
-
-	VAR_TIMEDATE_YEAR = 119;
-	VAR_TIMEDATE_MONTH = 129;
-	VAR_TIMEDATE_DAY = 128;
-	VAR_TIMEDATE_HOUR = 125;
-	VAR_TIMEDATE_MINUTE = 126;
-}
-
-
 void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;

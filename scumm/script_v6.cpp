@@ -1887,30 +1887,6 @@ void ScummEngine_v6::o6_actorOps() {
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:		
-		{
-			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
-			warning("o6_actorOps():218 partially unimplemented");
-
-			int top_actor = a->top;
-			int bottom_actor = a->bottom;
-			a->forceClip = 1;
-			a->needRedraw = true;
-			a->drawActorCostume();
-			a->forceClip = 0;
-			a->needRedraw = true;
-			a->drawActorCostume();
-			a->needRedraw = false;
-
-			if (a->top > top_actor)
-				a->top = top_actor;
-			if (a->bottom < bottom_actor)
-				a->bottom = bottom_actor;
-
-			//FIXME Trigger redraw
-			a->bottom = top_actor;
-		}
-		break;
 	case 227:		// SO_ACTOR_DEPTH
 		a->layer = pop();
 		break;
