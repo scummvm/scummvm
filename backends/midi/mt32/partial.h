@@ -36,14 +36,14 @@ private:
 
 
 
-	Bit16s myBuffer[2048];
+	int16 myBuffer[2048];
 	// For temporary output of paired buffer
-	Bit16s pairBuffer[2048];
+	int16 pairBuffer[2048];
 
-	void mixBuffers(Bit16s * buf1, Bit16s * buf2, int len);
-	void mixBuffersRingMix(Bit16s * buf1, Bit16s * buf2, int len);
-	void mixBuffersRing(Bit16s * buf1, Bit16s * buf2, int len);
-	void mixBuffersStereo(Bit16s * buf1, Bit16s * buf2, Bit16s * outBuf, int len);
+	void mixBuffers(int16 * buf1, int16 * buf2, int len);
+	void mixBuffersRingMix(int16 * buf1, int16 * buf2, int len);
+	void mixBuffersRing(int16 * buf1, int16 * buf2, int len);
+	void mixBuffersStereo(int16 * buf1, int16 * buf2, int16 * outBuf, int len);
 
 
 public:
@@ -59,7 +59,7 @@ public:
 	bool isActive;
 	bool alreadyOutputed;
 	int ownerChan;
-	Bit64s age;
+	int64 age;
 	int timbreNum;
 	dpoly *tmppoly;
 
@@ -103,10 +103,10 @@ public:
 	// Returns true only if data written to buffer
 	// This function (unline the one below it) returns processed stereo samples
 	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(Bit16s * partialBuf, long length);
+	bool produceOutput(int16 * partialBuf, long length);
 
 	// This function produces mono sample output of the specific partial
-	void generateSamples(Bit16s * partialBuf, long length);
+	void generateSamples(int16 * partialBuf, long length);
 
 };
 

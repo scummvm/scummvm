@@ -103,32 +103,32 @@ typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, 
 extern iir_filter_type usefilter;
 
 extern partialFormat PCM[54];
-extern Bit16s romfile[262656];
-extern Bit32s divtable[256];
-extern Bit32s smalldivtable[256];
-extern Bit32u wavtabler[64][256];
-extern Bit32u looptabler[16][16][256];	
-extern Bit16s sintable[65536];
-extern Bit32s penvtable[16][128];		
-extern Bit32s pulsetable[101];
-extern Bit32s pulseoffset[101];
-extern Bit32s sawtable[128][128];
+extern int16 romfile[262656];
+extern int32 divtable[256];
+extern int32 smalldivtable[256];
+extern uint32 wavtabler[64][256];
+extern uint32 looptabler[16][16][256];	
+extern int16 sintable[65536];
+extern int32 penvtable[16][128];		
+extern int32 pulsetable[101];
+extern int32 pulseoffset[101];
+extern int32 sawtable[128][128];
 extern float filtcoeff[FILTERGRAN][32][16];	
-extern Bit32u lfoptable[101][128];
-extern Bit32s ampveltable[128][64];
-extern Bit32s amptable[129];
-extern Bit16s smallnoise[441];
-extern Bit32s samplepos;
-extern Bit16s* waveforms[4][256];
-extern Bit32u waveformsize[4][256];
-extern Bit8s LoopPatterns[16][16];
+extern uint32 lfoptable[101][128];
+extern int32 ampveltable[128][64];
+extern int32 amptable[129];
+extern int16 smallnoise[441];
+extern int32 samplepos;
+extern int16* waveforms[4][256];
+extern uint32 waveformsize[4][256];
+extern int8 LoopPatterns[16][16];
 extern int drumPan[30][2];
 extern float ResonFactor[32];
 extern float ResonInv[32];
 
-extern Bit32s getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
-extern Bit32s getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
-extern Bit32s getFiltEnvelope(Bit16s wg, dpoly::partialStatus *pStat, dpoly *poly);
+extern int32 getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
+extern int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
+extern int32 getFiltEnvelope(int16 wg, dpoly::partialStatus *pStat, dpoly *poly);
 
 class CSynthMT32  {
 private:
@@ -152,10 +152,10 @@ public:
 	void Close(void);
 
 	// Sends a 4-byte MIDI message to the MT-32 for immediate playback
-	void PlayMsg(Bit32u msg);
+	void PlayMsg(uint32 msg);
 
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
-        void PlaySysex(Bit8u * sysex, Bit32u len);
+        void PlaySysex(uint8 * sysex, uint32 len);
         
         // Save the system state to a sysex file specified by filename 
         int DumpSysex(char *filename);
@@ -163,7 +163,7 @@ public:
 	// This callback routine is used to have the MT-32 generate samples to the specified
 	// output stream.  The length is in whole samples, not bytes. (I.E. in 16-bit stereo,
 	// one sample is 4 bytes)
-	void MT32_CallBack(Bit8u * stream, Bit32u len, int volume);
+	void MT32_CallBack(uint8 * stream, uint32 len, int volume);
 
 };
 

@@ -25,7 +25,7 @@
 #include "backends/midi/mt32/synth.h"
 #include "backends/midi/mt32/partial.h"
 
-INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
+INLINE void CPartialMT32::generateSamples(int16 * partialBuf, long length) {
 	if (!isActive) return;
 	if (alreadyOutputed) return;
 	
@@ -36,11 +36,11 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 
 	int r;
 	int i;
-	Bit32s envval, ampval, filtval;
+	int32 envval, ampval, filtval;
 	soundaddr *pOff = &partCache->partialOff;
 	int noteval = partCache->keyedval;
 	for(i=0;i<length;i++) {
-		Bit32s ptemp = 0;
+		int32 ptemp = 0;
 
 		if(partCache->envs[AMPENV].sustaining) {
 			ampval = partCache->ampEnvCache;
@@ -135,7 +135,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 						rb = romfile[taddr+1];
 
 						dist = rb-ra;
-						r = (ra + ((dist * (Bit32s)(pOff->pcmoffs.pcmoffset>>8)) >>8));
+						r = (ra + ((dist * (int32)(pOff->pcmoffs.pcmoffset>>8)) >>8));
 
 					} else {
 						
@@ -189,7 +189,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 
 			divis = divtable[noteval]>>15;
 
-			if(pOff->pcmoffs.pcmplace>=divis) pOff->pcmoffs.pcmplace = (Bit16u)(pOff->pcmoffs.pcmplace-divis);
+			if(pOff->pcmoffs.pcmplace>=divis) pOff->pcmoffs.pcmplace = (uint16)(pOff->pcmoffs.pcmplace-divis);
 			
 			toff = pOff->pcmoffs.pcmplace;
 			minorplace = pOff->pcmoffs.pcmoffset >> 14;
@@ -198,7 +198,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 
 			if(ampval>0) {
 
-				filtval = getFiltEnvelope((Bit16s)ptemp,partCache,tmppoly);
+				filtval = getFiltEnvelope((int16)ptemp,partCache,tmppoly);
 
 				//LOG_MSG("Filtval: %d", filtval);
 				
@@ -282,7 +282,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 				//Very exact filter
 				//ptemp[t] = (int)iir_filter((float)ptemp[t],&partCache->history[t],filtcoeff[filtval][tcache->filtEnv.resonance]);
 				if(filtval>((FILTERGRAN*15)/16)) filtval = ((FILTERGRAN*15)/16);
-				ptemp = (Bit32s)(usefilter)((float)ptemp,&partCache->history[0],filtcoeff[filtval][(int)tcache->filtEnv.resonance], tcache->filtEnv.resonance);
+				ptemp = (int32)(usefilter)((float)ptemp,&partCache->history[0],filtcoeff[filtval][(int)tcache->filtEnv.resonance], tcache->filtEnv.resonance);
 			} else ptemp = 0;
 
 			//ptemp[t] = Moog1(ptemp[t],&partCache->history[t],(float)filtval/8192.0,tcache->filtEnv.resonance);
@@ -304,7 +304,7 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
                 */
 
 		// Fix delta code
-		__int64 tdelta = (__int64)delta;
+		int64 tdelta = (int64)delta;
 		tdelta = (tdelta * tcache->fineshift)>>12;
 		tdelta = (tdelta * pdep)>>12;
 		tdelta = (tdelta * lfoat)>>12;
@@ -321,23 +321,23 @@ INLINE void CPartialMT32::generateSamples(Bit16s * partialBuf, long length) {
 		partCache->envs[PITCHENV].envpos++;
 		partCache->envs[FILTENV].envpos++;
 	
-		*partialBuf++ = (Bit16s)ptemp;
+		*partialBuf++ = (int16)ptemp;
 	}
 
 
 }
 
-INLINE void CPartialMT32::mixBuffers(Bit16s * buf1, Bit16s *buf2, int len) {
+INLINE void CPartialMT32::mixBuffers(int16 * buf1, int16 *buf2, int len) {
 	// Early exit if no need to mix
 	if(tibrePair==NULL) return;
 
 #if USE_MMX == 0
 	int i;
 	for(i=0;i<len;i++) {
-		Bit32s tmp1 = buf1[i];
-		Bit32s tmp2 = buf2[i];
+		int32 tmp1 = buf1[i];
+		int32 tmp2 = buf2[i];
 		tmp1 += tmp2;
-		buf1[i] = (Bit16s)tmp1;
+		buf1[i] = (int16)tmp1;
 	}
 #else
 	len = (len>>2)+4;
@@ -366,7 +366,7 @@ mixloop1:
 #endif
 }
 
-INLINE void CPartialMT32::mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len) {
+INLINE void CPartialMT32::mixBuffersRingMix(int16 * buf1, int16 *buf2, int len) {
 #if USE_MMX != 2
 	int i;
 	for(i=0;i<len;i++) {
@@ -376,9 +376,9 @@ INLINE void CPartialMT32::mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len
 		a = (a * b) + a;
 		if(a>1.0) a = 1.0;
 		if(a<-1.0) a = -1.0;
-		buf1[i] = (Bit16s)(a * 8192.0);
+		buf1[i] = (int16)(a * 8192.0);
 
-		//buf1[i] = (Bit16s)(((Bit32s)buf1[i] * (Bit32s)buf2[i]) >> 10) + buf1[i];
+		//buf1[i] = (int16)(((int32)buf1[i] * (int32)buf2[i]) >> 10) + buf1[i];
         }
 #else
 	len = (len>>2)+4;
@@ -409,7 +409,7 @@ mixloop2:
 #endif
 }
 
-INLINE void CPartialMT32::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
+INLINE void CPartialMT32::mixBuffersRing(int16 * buf1, int16 *buf2, int len) {
 #if USE_MMX != 2
 	int i;
 	for(i=0;i<len;i++) {
@@ -419,8 +419,8 @@ INLINE void CPartialMT32::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
 		a *= b;
 		if(a>1.0) a = 1.0;
 		if(a<-1.0) a = -1.0;
-		buf1[i] = (Bit16s)(a * 8192.0);
-		//buf1[i] = (Bit16s)(((Bit32s)buf1[i] * (Bit32s)buf2[i]) >> 10);
+		buf1[i] = (int16)(a * 8192.0);
+		//buf1[i] = (int16)(((int32)buf1[i] * (int32)buf2[i]) >> 10);
 	}
 #else
 	len = (len>>2)+4;
@@ -449,7 +449,7 @@ mixloop3:
 #endif
 }
 
-INLINE void CPartialMT32::mixBuffersStereo(Bit16s *buf1, Bit16s *buf2, Bit16s *outBuf, int len) {
+INLINE void CPartialMT32::mixBuffersStereo(int16 *buf1, int16 *buf2, int16 *outBuf, int len) {
 	int i,m;
 	m=0;
 	for(i=0;i<len;i++) {
@@ -461,7 +461,7 @@ INLINE void CPartialMT32::mixBuffersStereo(Bit16s *buf1, Bit16s *buf2, Bit16s *o
 
 }
 
-bool CPartialMT32::produceOutput(Bit16s * partialBuf, long length) {
+bool CPartialMT32::produceOutput(int16 * partialBuf, long length) {
 	if (!isActive) return false;
 	if (alreadyOutputed) return false;
 	int i;
@@ -488,7 +488,7 @@ bool CPartialMT32::produceOutput(Bit16s * partialBuf, long length) {
 		fwrite(myBuffer + i, 1, 2, fo);
 	fclose(fo);
 */			
-	Bit16s * p1buf, * p2buf;
+	int16 * p1buf, * p2buf;
 
 	if((partNum==0) || ((partNum==1) && (tibrePair==NULL))) {
 		p1buf = &myBuffer[0];
@@ -526,20 +526,20 @@ bool CPartialMT32::produceOutput(Bit16s * partialBuf, long length) {
 	
 	int  m;
 	m = 0;	
-	Bit16s leftvol, rightvol;
+	int16 leftvol, rightvol;
 	if (!tmppoly->isRy) {
 		leftvol = tmppoly->pansetptr->leftvol;
 		rightvol = tmppoly->pansetptr->rightvol;
 	} else {
-		leftvol = (Bit16s)drumPan[tmppoly->pcmnum][0];
-		rightvol = (Bit16s)drumPan[tmppoly->pcmnum][1];
+		leftvol = (int16)drumPan[tmppoly->pcmnum][0];
+		rightvol = (int16)drumPan[tmppoly->pcmnum][1];
 	}
 
 #if USE_MMX == 0
 	for(i=0;i<length;i++) {
-		partialBuf[m] = (Bit16s)(((Bit32s)p1buf[i] * (Bit32s)leftvol) >> 16);
+		partialBuf[m] = (int16)(((int32)p1buf[i] * (int32)leftvol) >> 16);
 		m++;
-		partialBuf[m] = (Bit16s)(((Bit32s)p1buf[i] * (Bit32s)rightvol) >> 16);
+		partialBuf[m] = (int16)(((int32)p1buf[i] * (int32)rightvol) >> 16);
 		m++;
 	}
 #else

@@ -27,21 +27,12 @@
 #include "common/scummsys.h"
 
 #if defined(_MSC_VER)
-typedef unsigned __int64 Bit64u;
-typedef   signed __int64 Bit64s;
+typedef unsigned __int64 uint64;
+typedef   signed __int64 int64;
 #else
-typedef unsigned long long Bit64u;
-typedef   signed long long Bit64s;
+typedef unsigned long long uint64;
+typedef   signed long long int64;
 #endif
-typedef unsigned int       Bit32u;
-typedef   signed int       Bit32s;
-typedef unsigned short int Bit16u;
-typedef   signed short int Bit16s;
-typedef unsigned char      Bit8u;
-typedef   signed char      Bit8s;
-
-// The occurences of __int64 should be changed to Bit64s
-#define __int64  Bit64u
 
 #define INLINE
 
@@ -266,7 +257,7 @@ static inline float atti386_iir_filter_3dnow(float input,float *hist1_ptr, float
 	return 0;
 }
 
-static inline void atti386_produceOutput1(int tmplen, Bit16s myvolume, Bit16s *useBuf, Bit16s *snd)
+static inline void atti386_produceOutput1(int tmplen, int16 myvolume, int16 *useBuf, int16 *snd)
 {
 	__asm__ __volatile__(
 				"movl %0,  %%ecx	\n" \
@@ -298,7 +289,7 @@ static inline void atti386_produceOutput1(int tmplen, Bit16s myvolume, Bit16s *u
 }
 
 // FIXME: This is buggy
-static inline void atti386_produceOutput2(Bit32u len, Bit16s *snd, float *sndbufl, float *sndbufr, float *multFactor)
+static inline void atti386_produceOutput2(uint32 len, int16 *snd, float *sndbufl, float *sndbufr, float *multFactor)
 {
 	__asm__ __volatile__(
 			        "movl  %4, %%ecx		\n" \
@@ -339,7 +330,7 @@ static inline void atti386_produceOutput2(Bit32u len, Bit16s *snd, float *sndbuf
 			     : "eax", "ecx", "edi", "esi", "mm1", "mm2", "xmm1", "memory");
 }
 
-static inline void atti386_mixBuffers(Bit16s * buf1, Bit16s *buf2, int len)
+static inline void atti386_mixBuffers(int16 * buf1, int16 *buf2, int len)
 {
 	__asm__ __volatile__(
 			     "movl %0, %%ecx       \n" \
@@ -360,7 +351,7 @@ static inline void atti386_mixBuffers(Bit16s * buf1, Bit16s *buf2, int len)
 			     : "ecx", "edi", "esi", "mm1", "mm2", "memory");
 }
 
-static inline void atti386_mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len)
+static inline void atti386_mixBuffersRingMix(int16 * buf1, int16 *buf2, int len)
 {		
 	__asm__ __volatile__(
 			     "movl %0, %%ecx       \n" \
@@ -383,7 +374,7 @@ static inline void atti386_mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int le
 			     : "ecx", "edi", "esi", "mm1", "mm2", "mm3", "memory");	
 }
 
-static inline void atti386_mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len)
+static inline void atti386_mixBuffersRing(int16 * buf1, int16 *buf2, int len)
 {
 	__asm__ __volatile__(
 			     "movl %0, %%ecx       \n" \
@@ -404,8 +395,8 @@ static inline void atti386_mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len)
 			     : "ecx", "edi", "esi", "mm1", "mm2", "memory");
 }
 
-static inline void atti386_PartProductOutput(int quadlen, Bit16s leftvol, Bit16s rightvol,
-					     Bit16s *partialBuf, Bit16s *p1buf)
+static inline void atti386_PartProductOutput(int quadlen, int16 leftvol, int16 rightvol,
+					     int16 *partialBuf, int16 *p1buf)
 {
 	__asm__ __volatile__(
 			     "movl %0, %%ecx       \n"  \
@@ -583,43 +574,43 @@ struct memAbsolute {
 #pragma pack()
 
 struct partialFormat {
-	Bit32u addr;
-	Bit16u len;
+	uint32 addr;
+	uint16 len;
 	bool loop;
 	float tune;
-	Bit32s ampval;
+	int32 ampval;
 };
 
 struct partialTable {
-	Bit32u addr;
-	Bit32u len;
-	Bit32u pcmnum;
-	Bit32s ampval;
+	uint32 addr;
+	uint32 len;
+	uint32 pcmnum;
+	int32 ampval;
 	bool loop;
-	Bit32s aggSound; // This variable is for the last 9 PCM samples, which are actually loop combinations
+	int32 aggSound; // This variable is for the last 9 PCM samples, which are actually loop combinations
 };
 
 
 
 union soundaddr {
-	Bit32u pcmabs;
+	uint32 pcmabs;
 	struct offsets {
 #if defined(SCUMM_LITTLE_ENDIAN)
-		Bit16u pcmoffset;
-		Bit16u pcmplace;
+		uint16 pcmoffset;
+		uint16 pcmplace;
 #else
-		Bit16u pcmplace;
-		Bit16u pcmoffset;
+		uint16 pcmplace;
+		uint16 pcmoffset;
 #endif
 	} pcmoffs;
 };
 
 
 struct volset {
-	Bit16s leftvol;
-	Bit16s rightvol;
-	Bit16s leftvol2;
-	Bit16s rightvol2;
+	int16 leftvol;
+	int16 rightvol;
+	int16 leftvol2;
+	int16 rightvol2;
 };
 
 struct patchCache {
@@ -638,7 +629,7 @@ struct patchCache {
 
 	int lfodepth;
 	int lforate;
-	Bit32u lfoperiod;
+	uint32 lfoperiod;
 	int modsense;
 
 	int keydir;
@@ -668,13 +659,13 @@ struct patchCache {
 	timbreParam::partialParam::tvaParam ampEnv;
 	timbreParam::partialParam::tvfParam filtEnv;
 
-	Bit32s ampsustain;
-	Bit32s pitchsustain;
-	Bit32s filtsustain;
+	int32 ampsustain;
+	int32 pitchsustain;
+	int32 filtsustain;
 
-	Bit32u partCount;
+	uint32 partCount;
 
-	Bit8u padding[64]; //Used to pad the patch cache to 4096 bytes.  This replaces an imul with a shl 12
+	uint8 padding[64]; //Used to pad the patch cache to 4096 bytes.  This replaces an imul with a shl 12
 
 };
 
@@ -686,9 +677,9 @@ struct dpoly {
 	bool partActive[4];
 
 	bool isRy;
-	Bit32u *bendptr;
-	Bit32u drumbend;
-	Bit32s *volumeptr;
+	uint32 *bendptr;
+	uint32 drumbend;
+	int32 *volumeptr;
 	volset *pansetptr;
 
 	int pcmnum;
@@ -696,10 +687,10 @@ struct dpoly {
 	int freqnum;
 	int vel;
 
-	Bit32u partCount;
+	uint32 partCount;
 
 	soundaddr pcmoff;
-	Bit32u pcmdelta;
+	uint32 pcmdelta;
 
 
 	struct partialStatus {
@@ -716,29 +707,29 @@ struct dpoly {
 		int pulsewidth;
 
 		struct envstatus {
-			Bit32s envpos;
-			Bit32s envstat;
-			Bit32s envbase;
-			Bit32s envdist;
-			Bit32s envsize;
+			int32 envpos;
+			int32 envstat;
+			int32 envbase;
+			int32 envdist;
+			int32 envsize;
 
 			bool sustaining;
 			bool decaying;
 			bool notdecayed;
-			Bit32u decay;
-			Bit32s prevlevel;
+			uint32 decay;
+			int32 prevlevel;
 
-			Bit32s counter;
-			Bit32s count;
+			int32 counter;
+			int32 count;
 
 		} envs[4];
 
-		Bit32u lfopos;
+		uint32 lfopos;
 		soundaddr partialOff;
 		soundaddr wgOff;
 
-		Bit32u ampEnvCache;
-		Bit32u pitchEnvCache;
+		uint32 ampEnvCache;
+		uint32 pitchEnvCache;
 
 		bool isDecayed;
 		bool PCMDone;
@@ -772,8 +763,8 @@ struct dpoly {
 	bool pedalhold;
 	bool firstsamp;
 
-	Bit32u P1Mix;
-	Bit32u P2Mix;
+	uint32 P1Mix;
+	uint32 P2Mix;
 	bool sustain;
 };
 

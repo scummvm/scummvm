@@ -120,7 +120,7 @@ void MidiDriver_MT32::close() {
 }
 
 void MidiDriver_MT32::generate_samples(int16 *data, int len) {
-	_synth->MT32_CallBack((Bit8u *)data, len, _mixer->getMusicVolume());
+	_synth->MT32_CallBack((uint8 *)data, len, _mixer->getMusicVolume());
 }
 
 

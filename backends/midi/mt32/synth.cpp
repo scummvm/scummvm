@@ -372,7 +372,7 @@ bool Detect3DNow()
 #define SYSEX_SIZE 512
 
 // These are all the filters I tried without much success
-Bit16s Moog1(Bit16s wg, float *hist, float usefilt, float res) {
+int16 Moog1(int16 wg, float *hist, float usefilt, float res) {
 	float f, p, q;             //filter coefficients
 	float t1, t2;              //temporary buffers
 
@@ -404,10 +404,10 @@ Bit16s Moog1(Bit16s wg, float *hist, float usefilt, float res) {
 	hist[4] = hist[4] - hist[4] * hist[4] * hist[4] * 0.166667f;    //clipping
 	hist[0] = in;
 	//LOG_MSG("In %d Hist: %f", wg, hist[4]*32767);
-	return (Bit16s)(hist[4]*32767.0);
+	return (int16)(hist[4]*32767.0);
 }
 
-Bit16s Moog2(Bit16s wg, float *hist, float usefilt, float resonance) {
+int16 Moog2(int16 wg, float *hist, float usefilt, float resonance) {
 	
   float res = resonance / 30.0;
   double f = usefilt;
@@ -424,10 +424,10 @@ Bit16s Moog2(Bit16s wg, float *hist, float usefilt, float resonance) {
   hist[7]  = hist[2];
   hist[4] = hist[3] + 0.3 * hist[0] + (invf) * hist[4];  // Pole 4
   hist[0]  = hist[3];
-  return (Bit16s)(hist[4]*32767.0);
+  return (int16)(hist[4]*32767.0);
 }
 
-Bit16s simpleLowpass(Bit16s wg, float *hist, float usefilt, float resonance) {
+int16 simpleLowpass(int16 wg, float *hist, float usefilt, float resonance) {
 
 	float in = (float)wg/32767.0;
 	float res_lp = resonance / 31.0;
@@ -1012,11 +1012,11 @@ float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLe
 
 #if FILTER_64BIT == 1
 // 64-bit version
-long iir_filter(long input, __int64 *hist1_ptr, __int64 *coef_ptr)
+long iir_filter(long input, int64 *hist1_ptr, int64 *coef_ptr)
 {
     unsigned int i;
-    __int64 *hist2_ptr;
-	__int64 output,new_hist,history1,history2;
+    int64 *hist2_ptr;
+	int64 output,new_hist,history1,history2;
 
     hist2_ptr = hist1_ptr + 1;           // next history
 
@@ -1084,17 +1084,17 @@ long iir_filter(long input, signed long *hist1_ptr, signed long *coef_ptr)
 
 partialFormat PCM[54];
 partialTable PCMList[128];
-Bit32u PCMReassign[55];
-Bit32s PCMLoopTable[55];
+uint32 PCMReassign[55];
+int32 PCMLoopTable[55];
 
 timbreParam drums[30];
 
-Bit16s romfile[PCMSIZE+GRAN]; // 256K
-static Bit16s chantable[32]; // 64 bytes
-static Bit16s miditable[9]; // 18 bytes
+int16 romfile[PCMSIZE+GRAN]; // 256K
+static int16 chantable[32]; // 64 bytes
+static int16 miditable[9]; // 18 bytes
 
 static CPartialMT32 *partTable[MAXPARTIALS];
-static Bit32s PartialReserveTable[32];
+static int32 PartialReserveTable[32];
 
 // For debuging partial allocation
 //static FILE *pInfo;
@@ -1105,89 +1105,89 @@ struct partUsage {
 	int status[32];
 };
 
-static Bit32s activeChannels;
+static int32 activeChannels;
 
 // Some optimization stuff
-Bit32s divtable[256];			// 1K
-Bit32s smalldivtable[256];		// 1K
-static Bit16s freqtable[256];			// 512 bytes
-static Bit32u sqrtable[101];			// 404 bytes
-static Bit32s keytable[256];			// 1K
-static Bit32u wavtable[256];			// 1K
-Bit32u wavtabler[64][256];		// 64K
-Bit32u looptabler[16][16][256];	// 256K
-static Bit32u drumdelta[256];			// 1K
-Bit16s sintable[65536];			// 128K
-static Bit32s ptable[101];				// 404 bytes
-static Bit32s lfotable[101];			// 404 bytes
-Bit32s penvtable[16][128];		// 8K
-static Bit32s fildeptable[5][128];		// 3K
-static Bit32s timekeytable[5][128];		// 3K
-static Bit32s filveltable[128][128];	// 64K
-static Bit32s veltkeytable[5][128];		// 3K
-Bit32s pulsetable[101];			// 400 bytes
-Bit32s pulseoffset[101];			// 400 bytes
-Bit32s sawtable[128][128];		// 64K
-static Bit32s restable[201];			// 804 bytes
-//static Bit32s biastable[13];			// 56 bytes
-static Bit32s ampbiastable[16][128];	// 8K
-static Bit32s fbiastable[16][128];		// 8K
+int32 divtable[256];			// 1K
+int32 smalldivtable[256];		// 1K
+static int16 freqtable[256];			// 512 bytes
+static uint32 sqrtable[101];			// 404 bytes
+static int32 keytable[256];			// 1K
+static uint32 wavtable[256];			// 1K
+uint32 wavtabler[64][256];		// 64K
+uint32 looptabler[16][16][256];	// 256K
+static uint32 drumdelta[256];			// 1K
+int16 sintable[65536];			// 128K
+static int32 ptable[101];				// 404 bytes
+static int32 lfotable[101];			// 404 bytes
+int32 penvtable[16][128];		// 8K
+static int32 fildeptable[5][128];		// 3K
+static int32 timekeytable[5][128];		// 3K
+static int32 filveltable[128][128];	// 64K
+static int32 veltkeytable[5][128];		// 3K
+int32 pulsetable[101];			// 400 bytes
+int32 pulseoffset[101];			// 400 bytes
+int32 sawtable[128][128];		// 64K
+static int32 restable[201];			// 804 bytes
+//static int32 biastable[13];			// 56 bytes
+static int32 ampbiastable[16][128];	// 8K
+static int32 fbiastable[16][128];		// 8K
 static int filttable[2][128][256];		// 256K
 static int nfilttable[128][128][128];           // 64K
 float filtcoeff[FILTERGRAN][32][16];	// 512K - hmmm
 #if FILTER_64BIT == 1
-static __int64 filtcoefffix[FILTERGRAN][32][16];
+static int64 filtcoefffix[FILTERGRAN][32][16];
 #endif
 #if FILTER_INT == 1
-static Bit32s filtcoefffix[FILTERGRAN][32][16];
+static int32 filtcoefffix[FILTERGRAN][32][16];
 #endif
 static float revtable[8];				// 16 bytes
-static Bit32s finetable[201];			// 804 bytes
-Bit32u lfoptable[101][128];		// 32K
-Bit32s ampveltable[128][64];		// 32K
-Bit32s pwveltable[15][128];
-static Bit32s envtimetable[101];		// 404 bytes
-static Bit32s decaytimetable[101];		// 404 bytes
-static Bit32s lasttimetable[101];		// 404 bytes
-Bit32s amptable[129];			// 516 bytes
-static Bit32s voltable[129];			// 516 bytes
+static int32 finetable[201];			// 804 bytes
+uint32 lfoptable[101][128];		// 32K
+int32 ampveltable[128][64];		// 32K
+int32 pwveltable[15][128];
+static int32 envtimetable[101];		// 404 bytes
+static int32 decaytimetable[101];		// 404 bytes
+static int32 lasttimetable[101];		// 404 bytes
+int32 amptable[129];			// 516 bytes
+static int32 voltable[129];			// 516 bytes
 static float padjtable[51];				// 204 bytes
-static Bit32s bendtable[49];			// 195 bytes
+static int32 bendtable[49];			// 195 bytes
 float ResonFactor[32];
 float ResonInv[32];
 
-Bit16s smallnoise[441]; // 4410 bytes at 44Khz
-Bit32s samplepos = 0;
+int16 smallnoise[441]; // 4410 bytes at 44Khz
+int32 samplepos = 0;
 
-Bit16s* waveforms[4][256];		// 2K
-Bit32u  waveformsize[4][256];
-Bit16s tmpforms[4][65536];				// 128K
-Bit16s finalforms[4][8192];				// 64K
+int16* waveforms[4][256];		// 2K
+uint32  waveformsize[4][256];
+int16 tmpforms[4][65536];				// 128K
+int16 finalforms[4][8192];				// 64K
 
 // Corresponding drum patches as matched to keyboard
-Bit8s DrumTable[42] = {
+int8 DrumTable[42] = {
     0, 0, 10, 1, 11, 5, 4, 6, 4, 29, 3, 7, 3, 2, 8, 2, 9, -1, -1, 22,
 	-1, 12, -1, -1, -1, 18, 19, 13, 14, 15, 16, 17, 20, 21, 27, 24,
 	26, 25, 28, -1, 23, -1 };
 
 // Pan-pot position of drums
-Bit16s drmPanTable[42] = {
+int16 drmPanTable[42] = {
     64, 64, 72, 64,  48, 72, 24, 72, 24, 72, 48, 72, 48, 96, 72, 96, 48,  1,  1,  40,
 	1,  64,  1,  1,  1,  104, 88,  48,  40,  32,  64,  80, 104 ,  104,  40,  88,
     40,  40,  32,  1,  16,  1 };
 
-Bit8u PartialStruct[13] = {
+uint8 PartialStruct[13] = {
 	0, 0, 2, 2, 1, 3,
 	3, 0, 3, 0, 2, 1, 3 };
 
-Bit8u PartMixStruct[13] = {
+uint8 PartMixStruct[13] = {
 	0, 1, 0, 1, 1, 0,
 	1, 3, 3, 2, 2, 2, 2 };
 
-Bit8u InitInstr[8] = {
+uint8 InitInstr[8] = {
 	68, 48, 95, 78, 41, 3, 110, 122};
 
-Bit8s LoopPatterns[16][16] = {
+int8 LoopPatterns[16][16] = {
 	{ 2,3,4,5,6,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
 	{ 8,9,10,11,12,13,14,15,16,-1,-1,-1,-1,-1,-1,-1 },
 	{ 17,18,19,20,21,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
@@ -1207,7 +1207,7 @@ Bit8s LoopPatterns[16][16] = {
 };
 
 
-Bit32s LoopPatternTuning[16][16] = {
+int32 LoopPatternTuning[16][16] = {
 	{ 0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
 	{ 0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A, 0x1294A,-1,-1,-1,-1,-1,-1,-1 },
 	{ 0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A,0x1294A, 0x1294A,-1,-1,-1,-1,-1,-1,-1 },
@@ -1229,7 +1229,7 @@ Bit32s LoopPatternTuning[16][16] = {
 
 
 // These are division constants for the TVF depth key follow
-Bit32u depexp[5] = {3000,950,485,255,138};
+uint32 depexp[5] = {3000,950,485,255,138};
 
 //Amplitude time velocity follow exponential coefficients
 double tvcatconst[5] = {0.0, 0.002791309, 0.005942882, 0.012652792, 0.026938637};
@@ -1250,18 +1250,18 @@ Reverb *myReverb;
 revmodel *newReverb;
 bool usingSIMD;
 
-Bit16s mastervolume;
+int16 mastervolume;
 
-Bit32u curRevMode;
-Bit32u curRevTime;
-Bit32u curRevLevel;
+uint32 curRevMode;
+uint32 curRevTime;
+uint32 curRevLevel;
 
-Bit32u partialsPlayed; // Variable containing the whole count of partials played
-Bit32u avgPartials;	   // Tally of average number of partials a second
-Bit32s partialChan[9]; // The count of partials played per channel
+uint32 partialsPlayed; // Variable containing the whole count of partials played
+uint32 avgPartials;	   // Tally of average number of partials a second
+int32 partialChan[9]; // The count of partials played per channel
 
 #if SAVECUSTOM == 1
-Bit32u filenum = 0;
+uint32 filenum = 0;
 #endif
 
 /*
@@ -1280,7 +1280,7 @@ revstate =   running values for event reverb
 
 		
 
-void InitReverb(Bit32u newRevMode, Bit32u newRevTime, Bit32u sampRate) {
+void InitReverb(uint32 newRevMode, uint32 newRevTime, uint32 sampRate) {
 	if(newReverb != NULL) delete newReverb;
 	newReverb = new revmodel();
 	
@@ -1352,8 +1352,8 @@ public:
 
 	patchCache pcache[4];
 
-	Bit32u bend;
-	Bit32s volume;
+	uint32 bend;
+	int32 volume;
 
 	dpoly polyTable[MAXPOLY];
 
@@ -1378,8 +1378,8 @@ private:
 	bool sustain;
 	bool init;
 
-	Bit32u P1Mix;
-	Bit32u P2Mix;
+	uint32 P1Mix;
+	uint32 P2Mix;
 
 	bool holdpedal;
 
@@ -1406,11 +1406,11 @@ public:
 	int FixKeyfollow(int srckey, int *dir);
 	int FixBiaslevel(int srcpnt, int *dir);
 
-	//Bit32s getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
-	//Bit32s getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
-	//Bit32s getFiltEnvelope(Bit16s wg, dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
+	//int32 getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
+	//int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
+	//int32 getFiltEnvelope(int16 wg, dpoly::partialStatus *pStat, dpoly *poly, bool inDecay);
 
-	//void StartDecay(int envnum, Bit32s startval, dpoly::partialStatus *pStat, dpoly *poly);
+	//void StartDecay(int envnum, int32 startval, dpoly::partialStatus *pStat, dpoly *poly);
 
 };
 
@@ -1441,7 +1441,7 @@ void MidiChannel::SetModulation(int vol) {
 
 }
 
-INLINE void StartDecay(int envnum, Bit32s startval, dpoly::partialStatus *pStat, dpoly *poly) {
+INLINE void StartDecay(int envnum, int32 startval, dpoly::partialStatus *pStat, dpoly *poly) {
 
 	patchCache *tcache = pStat->tcache;
 	dpoly::partialStatus::envstatus *tStat  = &pStat->envs[envnum];
@@ -1476,8 +1476,8 @@ INLINE void StartDecay(int envnum, Bit32s startval, dpoly::partialStatus *pStat,
 
 
 
-INLINE Bit32s getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
-	Bit32s tc;
+INLINE int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
+	int32 tc;
 
 	patchCache *tcache = pStat->tcache;
 	dpoly::partialStatus::envstatus *tStat  = &pStat->envs[AMPENV];
@@ -1563,7 +1563,7 @@ INLINE Bit32s getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
 
 PastCalc:
 		
-		tc = (tc * (Bit32s)tcache->amplevel) >> 7;
+		tc = (tc * (int32)tcache->amplevel) >> 7;
 
 	}
 		
@@ -1619,11 +1619,11 @@ PastCalc:
 }
 
 
-INLINE Bit32s getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
+INLINE int32 getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
 	patchCache *tcache = pStat->tcache;
 	dpoly::partialStatus::envstatus *tStat  = &pStat->envs[PITCHENV];
 
-	Bit32s tc;
+	int32 tc;
 	pStat->pitchsustain = false;
 	if(tStat->decaying) {
 
@@ -1671,12 +1671,12 @@ INLINE Bit32s getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly) {
 }
 
 
-INLINE Bit32s getFiltEnvelope(Bit16s wg, dpoly::partialStatus *pStat, dpoly *poly) {
+INLINE int32 getFiltEnvelope(int16 wg, dpoly::partialStatus *pStat, dpoly *poly) {
 
 	int reshigh;
 
 	//float *hist = pStat->history;
-	//__int64 *hist = pStat->history;
+	//int64 *hist = pStat->history;
 	//long *hist = pStat->history;
 	int filt,cutoff,depth,keyfollow, realfollow;
 
@@ -1767,7 +1767,7 @@ INLINE Bit32s getFiltEnvelope(Bit16s wg, dpoly::partialStatus *pStat, dpoly *pol
 	reshigh = (reshigh * depth) >> 7;
 
 	
-	Bit32s tmp;
+	int32 tmp;
 	
 	cutoff *= keyfollow;
 	cutoff /= realfollow;
@@ -1980,9 +1980,9 @@ void MidiChannel::SetPatch(int patchnum,int drumNum) {
 
 		// Calculate and cache pitch stuff
 		pcache[t].pitchshift = (timSrc.partial[t].wg.coarse+mt32ram.params.pSettings[patchnum].keyShift);
-		Bit32s pFine, tFine, fShift;
-		pFine = (Bit32s)timSrc.partial[t].wg.fine;
-		tFine = (Bit32s)mt32ram.params.pSettings[patchnum].fineTune;
+		int32 pFine, tFine, fShift;
+		pFine = (int32)timSrc.partial[t].wg.fine;
+		tFine = (int32)mt32ram.params.pSettings[patchnum].fineTune;
 		fShift = ((pFine - 50) + (tFine - 50)) + 100;
 		pcache[t].fineshift = finetable[fShift];
 
@@ -2067,16 +2067,16 @@ void MidiChannel::SetPan(int pan) {
 	//LOG(LOG_ERROR|LOG_MISC,"Pan %d",panpot);
 }
 
-INLINE Bit16s RingMod(Bit16s p1, Bit16s p2, bool useFirst) {
+INLINE int16 RingMod(int16 p1, int16 p2, bool useFirst) {
 	if(useFirst) {
-		//return (Bit16s)( ( ((float)p1/32767.0) * ((float)p2/32767.0) ) * 32767);
-		return (Bit16s)( ((Bit32s)p1 * (Bit32s)p2) >> 15);
+		//return (int16)( ( ((float)p1/32767.0) * ((float)p2/32767.0) ) * 32767);
+		return (int16)( ((int32)p1 * (int32)p2) >> 15);
 
 	} else {
 		// An interesting undocumented feature of the MT-32
 		// Putting ring mod on a muted partial introduces noise to the ring modulator
 		// Dune 2 makes use of this
-		return (Bit16s)( ((Bit32s)smallnoise[samplepos/100] * (Bit32s)p2) >> 15);
+		return (int16)( ((int32)smallnoise[samplepos/100] * (int32)p2) >> 15);
 	}
 }
 
@@ -2522,7 +2522,7 @@ bool FreePartials(int needed, int chanNum) {
 	}*/
 	// Then kill those with the lowest channel priority --- oldest at the moment
 	bool found;
-	Bit64s prior, priornum;
+	int64 prior, priornum;
 	dpoly *killPoly;
 	found = true;
 	while(found) {
@@ -2562,7 +2562,7 @@ bool FreePartials(int needed, int chanNum) {
 
 
 	// Kill off the oldest partials within this channel
-	Bit64s oldest, oldlist;
+	int64 oldest, oldlist;
 
 	while(needed>0) {
 		oldest = -1;
@@ -2945,7 +2945,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 			square=0;
 			saw = 0;
 			bool odd = true;
-			for(Bit32s sinus=1;(sinus*freq)<(SETRATE);sinus++) {
+			for(int32 sinus=1;(sinus*freq)<(SETRATE);sinus++) {
 				float sinusval = (((1.0/((float)sinus))*(sin(((float)sinus)*sa))));
 				saw=saw + sinusval;
 			}
@@ -2977,7 +2977,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 		waveformsize[3][f] = fa*4;
 		
 		for (int i = 0; i < 4; ++i) {
-			waveforms[i][f] = (Bit16s *)malloc(waveformsize[i][f]);
+			waveforms[i][f] = (int16 *)malloc(waveformsize[i][f]);
 			memcpy(waveforms[i][f], &tmpforms[i][0],waveformsize[i][f]);
 			// TODO / FIXME: The following code is not endian safe!
 			out = fp.write(waveforms[i][f],waveformsize[i][f]);
@@ -2987,7 +2987,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 		waveformsize[3][f] = divtable[f]>>12;
 
 		for (int i = 0; i < 4; ++i) {
-			waveforms[i][f] = (Bit16s *)malloc(waveformsize[i][f]);
+			waveforms[i][f] = (int16 *)malloc(waveformsize[i][f]);
 			for (uint j = 0; j < waveformsize[i][f]/2; ++j)
 				waveforms[i][f][j] = fp.readSint16LE();
 		}
@@ -3086,7 +3086,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 			// 64-bit variant
 #if FILTER_64BIT == 1
 			for(int co=0;co<9;co++) {
-				filtcoefffix[j][res][co] = (__int64)(filtcoeff[j][res][co] * pow(2,20));
+				filtcoefffix[j][res][co] = (int64)(filtcoeff[j][res][co] * pow(2,20));
 
 			}
 #endif
@@ -3136,7 +3136,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 			float fldep = fabs((float)dep) / 7.0;
 			fldep = pow((float)fldep,(float)2.5);
 			if(dep<0)  fldep = fldep * -1.0;
-			pwveltable[dep+7][velt] = Bit32s((fldep * (float)velt * 100) / 128.0);
+			pwveltable[dep+7][velt] = int32((fldep * (float)velt * 100) / 128.0);
 		
 		}
 	}
@@ -3238,7 +3238,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 		int myRand;
 		myRand = rand();
 		myRand = ((myRand - 16383) * WGAMP) >> 18;
-		smallnoise[lf] = (Bit16s)myRand;
+		smallnoise[lf] = (int16)myRand;
 	}
 
 	for(lf=0;lf<=100;lf++) {
@@ -3284,7 +3284,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 
 		/*
 		// I am certain of this:  Verified by hand LFO log */
-			 lfotable[lf] = (Bit32s)(((float)SETRATE) / (pow((float)1.088883372,(float)lf) * 0.021236044));
+			 lfotable[lf] = (int32)(((float)SETRATE) / (pow((float)1.088883372,(float)lf) * 0.021236044));
 		
 		//LOG_MSG("lf %d = lfo %d pulsetable %d", lf, lfotable[lf], pulsetable[lf]);
 	}
@@ -3392,7 +3392,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 
 	// Benchmark 3DNow, Floating point, and SSE filters
 /*
-	Bit32u bench;
+	uint32 bench;
 	__time64_t start, end;
 	float histval[50];
 
@@ -3481,11 +3481,11 @@ BOOL RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack
 			dumbfire = sa /2 ;
 			
 			//This works pretty good
-			tmpforms[2][fa>>4] +=  (Bit16s)(cos(dumbfire) * -ampsize);
-			tmpforms[3][fa>>3] +=  (Bit16s)(cos(sa-PI) * -ampsize);
+			tmpforms[2][fa>>4] +=  (int16)(cos(dumbfire) * -ampsize);
+			tmpforms[3][fa>>3] +=  (int16)(cos(sa-PI) * -ampsize);
 			
-			tmpforms[0][fa>>4] +=  (Bit16s)(saw * -ampsize);
-			tmpforms[1][fa>>4] +=  (Bit16s)(saw * ampsize);
+			tmpforms[0][fa>>4] +=  (int16)(saw * -ampsize);
+			tmpforms[1][fa>>4] +=  (int16)(saw * ampsize);
 
 			fa++;
 			sa+=sd;
@@ -3526,13 +3526,13 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 	if (isOpen) return false;
 	int i;
 	// Initalize patch information
-	Bit8u sysexBuf[SYSEX_SIZE];
-	Bit16u syslen = 0;
+	uint8 sysexBuf[SYSEX_SIZE];
+	uint16 syslen = 0;
 	
 	bool inSys = false;
 
 	File fp;
-	Bit8u c;
+	uint8 c;
 
 	myProp = useProp;
 
@@ -3692,10 +3692,10 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		char tbuf[512];
 		char *cp;
 		fPatch.gets(tbuf,sizeof(tbuf));
-		Bit32u patchstart = 0; //axtoi(tbuf);
-		Bit32u patchend = 0;
-		Bit32u patchcount = 0;
-		//Bit16s *romaddr = &romfile[0];
+		uint32 patchstart = 0; //axtoi(tbuf);
+		uint32 patchend = 0;
+		uint32 patchcount = 0;
+		//int16 *romaddr = &romfile[0];
 		while (!fPatch.eof()) {
 			fPatch.gets(tbuf,sizeof(tbuf));
 			cp = strtok(tbuf," \n\r");
@@ -3836,9 +3836,9 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		//exit(0);
 	}
 	i=0;
-	//Bit32s maxamp = 0;
+	//int32 maxamp = 0;
 	while (!fIn.eof()) {
-		Bit16s s, c1;
+		int16 s, c1;
 		
 		s = fIn.readByte();
 		c1 = fIn.readByte();
@@ -3865,7 +3865,7 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		}
 
 		//if( (e & 0x1) != 0) printf("Last bit = %d\n", e & 0x1);
-		//Bit16s e = (  ((s & 0x7f) << 4) | ((c1 & 0x40) << 6) | ((s & 0x80) << 6) | ((c1 & 0x3f))) << 2;
+		//int16 e = (  ((s & 0x7f) << 4) | ((c1 & 0x40) << 6) | ((s & 0x80) << 6) | ((c1 & 0x3f))) << 2;
 		if(e<0) e = -32767 - e;
 		int ut = abs(e);
 		int dif = 0x7fff - ut;
@@ -3911,11 +3911,11 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		
 		if (e>0) vol = -vol;
 	
-		romfile[i] = (Bit16s)vol;
+		romfile[i] = (int16)vol;
 
 #ifdef MT32OUT
-		tmpc = (Bit16s)vol & 0xff; fOutb.write(&tmpc, 1);
-		tmpc = (Bit16s)vol >> 8; fOutb.write(&tmpc, 1);
+		tmpc = (int16)vol & 0xff; fOutb.write(&tmpc, 1);
+		tmpc = (int16)vol >> 8; fOutb.write(&tmpc, 1);
 #endif		
 
 		i++;
@@ -4005,7 +4005,7 @@ void CSynthMT32::Close(void) {
 
 }
 
-void CSynthMT32::PlayMsg(Bit32u msg) {
+void CSynthMT32::PlayMsg(uint32 msg) {
 
 #ifdef NOMANSLAND
 
@@ -4038,7 +4038,7 @@ void CSynthMT32::PlayMsg(Bit32u msg) {
 
 
 	int patch;
-	Bit32u bend;
+	uint32 bend;
 
 	//LOG_MSG("Midi code: 0x%x",msg);
 	switch (code) {
@@ -4125,23 +4125,23 @@ void CSynthMT32::PlayMsg(Bit32u msg) {
 	//midiOutShortMsg(m_out, msg);
 }
 
-void CSynthMT32::PlaySysex(Bit8u * sysex,Bit32u len) {
+void CSynthMT32::PlaySysex(uint8 * sysex,uint32 len) {
 
 #ifdef NOMANSLAND
 
-	Bit32u addr;
-	Bit32u *header;
+	uint32 addr;
+	uint32 *header;
 	unsigned int off;
 	int m;
-	header = (Bit32u *)(sysex+1);
+	header = (uint32 *)(sysex+1);
 	//int dummy = 0;                                                                  
-	Bit32s lens = len;                                                              
+	int32 lens = len;                                                              
 
 
 	// For some reason commands in IMuseInternal::initMT32 do not have prefix byte
 	if(READ_LE_UINT32(header) != 0x12161041) {
 		if(READ_LE_UINT32(sysex) == 0x12161041) {
-			header = (Bit32u *)sysex;
+			header = (uint32 *)sysex;
 			sysex--; // We don't access sysex[0], so it's safe
 		}
 	}
@@ -4250,7 +4250,7 @@ void CSynthMT32::PlaySysex(Bit8u * sysex,Bit32u len) {
 			//LOG_MSG("Reverb time: %d", mt32ram.params.system.reverbTime);
 			//LOG_MSG("Reverb level: %d", mt32ram.params.system.reverbLevel);
 			
-			if(((Bit32u)mt32ram.params.system.reverbMode != curRevMode) || ((Bit32u)mt32ram.params.system.reverbTime!=curRevTime)) {
+			if(((uint32)mt32ram.params.system.reverbMode != curRevMode) || ((uint32)mt32ram.params.system.reverbTime!=curRevTime)) {
 				if(myProp.UseDefault) {
 					InitReverb(mt32ram.params.system.reverbMode, mt32ram.params.system.reverbTime,SETRATE);
 					curRevLevel = mt32ram.params.system.reverbLevel;
@@ -4275,7 +4275,7 @@ void CSynthMT32::PlaySysex(Bit8u * sysex,Bit32u len) {
 			rset = mt32ram.params.system.chanAssign;
 			//LOG_MSG("Chan assign: 1=%d 2=%d 3=%d 4=%d 5=%d 6=%d 7=%d 8=%d 9=%d", rset[0], rset[1], rset[2], rset[3], rset[4], rset[5], rset[6], rset[7], rset[8]);
 			//LOG_MSG("Master volume: %d",mt32ram.params.system.masterVol);
-			Bit16s tv = (Bit16s)((float)mt32ram.params.system.masterVol * 327.0);
+			int16 tv = (int16)((float)mt32ram.params.system.masterVol * 327.0);
 			mastervolume = tv;
 			
 		}
@@ -4288,7 +4288,7 @@ void CSynthMT32::PlaySysex(Bit8u * sysex,Bit32u len) {
 		}
 		if ((addr & 0xff0000) == 0x7f0000) {
 			//LOG_MSG("MT-32 Reset");
-			for (Bit32u m1=0;m1<MAXPARTIALS;m1++) partTable[m1]->isActive = false;
+			for (uint32 m1=0;m1<MAXPARTIALS;m1++) partTable[m1]->isActive = false;
 
 			memcpy(&mt32ram, &mt32default, sizeof(mt32ram));
 			isEnabled = false;
@@ -4356,7 +4356,7 @@ int CSynthMT32::DumpSysex(char *filename) {
 
 
 
-static Bit16s tmpBuffer[4096];
+static int16 tmpBuffer[4096];
 static float sndbufl[4096];
 static float sndbufr[4096];
 static float outbufl[4096];
@@ -4366,13 +4366,13 @@ static float outbufr[4096];
 static float multFactor[4] = { 32767.0, 32767.0, 32767.0, 32767.0 };
 #endif
 
-void CSynthMT32::MT32_CallBack(Bit8u * stream,Bit32u len, int volume) {
+void CSynthMT32::MT32_CallBack(uint8 * stream,uint32 len, int volume) {
 
 #ifdef NOMANSLAND
-	Bit32s i,m;
-	Bit16s *snd, *useBuf;
-	Bit32u outlen;
-	snd = (Bit16s *)stream;
+	int32 i,m;
+	int16 *snd, *useBuf;
+	uint32 outlen;
+	snd = (int16 *)stream;
 	memset(stream,0,len*4);
 	if(!isEnabled) return;
 	useBuf = snd;
@@ -4399,12 +4399,12 @@ void CSynthMT32::MT32_CallBack(Bit8u * stream,Bit32u len, int volume) {
 
 		if(partTable[i]->produceOutput(tmpBuffer,outlen)==true) {
 #if USE_MMX == 0
-			Bit16s *tmpoff = snd;
+			int16 *tmpoff = snd;
 			int q = 0;
-			for(m=0;m<(Bit32s)outlen;m++) {
-				tmpoff[q] += (Bit16s)(((Bit32s)tmpBuffer[q] * (Bit32s)mastervolume)>>15);
+			for(m=0;m<(int32)outlen;m++) {
+				tmpoff[q] += (int16)(((int32)tmpBuffer[q] * (int32)mastervolume)>>15);
 				q++;
-				tmpoff[q] += (Bit16s)(((Bit32s)tmpBuffer[q] * (Bit32s)mastervolume)>>15);
+				tmpoff[q] += (int16)(((int32)tmpBuffer[q] * (int32)mastervolume)>>15);
 				q++;
 
 			}			
@@ -4449,7 +4449,7 @@ mixloop4:
 		if(!usingSIMD) {
 #endif
 			m=0;
-			for(i=0;i<(Bit32s)len;i++) {
+			for(i=0;i<(int32)len;i++) {
 				sndbufl[i] = (float)snd[m] / 32767.0;
 				m++;
 				sndbufr[i] = (float)snd[m] / 32767.0;
@@ -4457,10 +4457,10 @@ mixloop4:
 			}
 			newReverb->processreplace(sndbufl, sndbufr, outbufl, outbufr, len, 1);
 			m=0;
-			for(i=0;i<(Bit32s)len;i++) {
-				snd[m] = (Bit16s)(outbufl[i] * 32767.0);
+			for(i=0;i<(int32)len;i++) {
+				snd[m] = (int16)(outbufl[i] * 32767.0);
 				m++;
-				snd[m] = (Bit16s)(outbufr[i] * 32767.0);
+				snd[m] = (int16)(outbufr[i] * 32767.0);
 				m++;
 			}
 #if USE_MMX == 3
