@@ -1415,6 +1415,9 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 	if (bits == 8) {
 		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	} else if (bits == 16) {
+		// FIXME: For some weird reasons, sometimes we get an odd size, even though
+		// the data is supposed to be in 16 bit format... that makes no sense...
+		size &= ~1;
 		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
 	} else {
 		warning("Sound::playBundleSound() to do more options to playRaw...");
