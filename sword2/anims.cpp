@@ -841,7 +841,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	FN_stop_music(NULL);	// don't want to carry on streaming game music when smacker starts!
 	g_sword2->_sound->PauseFxForSequence();	// pause sfx during sequence, except the one used for lead-in music
 
-	if (sequenceTextLines)	// if we have some text to accompany this sequence
+	if (sequenceTextLines && g_sword2->_gameId == GID_SWORD2)	// if we have some text to accompany this sequence
 		rv = PlaySmacker(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = PlaySmacker(filename, NULL, leadOut);

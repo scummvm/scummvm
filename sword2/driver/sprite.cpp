@@ -1249,8 +1249,14 @@ void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect) {
 
 	srcPitch = s->w;
 
-	rd.top = rs.top + s->y - scrolly;
-	rd.left = rs.left + s->x - scrollx;
+	if (s->type & RDSPR_DISPLAYALIGN) {
+		rd.top = s->y;
+		rd.left = s->x;
+	} else {
+		rd.top = s->y - scrolly;
+		rd.left = s->x - scrollx;
+	}
+
 	rd.right = rd.left + rs.right;
 	rd.bottom = rd.top + rs.bottom;
 

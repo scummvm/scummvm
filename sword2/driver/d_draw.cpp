@@ -412,7 +412,8 @@ void CloseTextObject(_movieTextObject *obj) {
 }
 
 void DrawTextObject(_movieTextObject *obj) {
-	warning("stub DrawTextObject");
+	DrawSurface(obj->textSprite, textSurface);
+	
 /*
 	HRESULT				hr;
 	RECT				rd, rs;
@@ -529,9 +530,69 @@ void DrawTextObject(_movieTextObject *obj) {
 extern uint8 musicMuted;
 
 int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
-	warning("stub PlaySmacker %s", filename);
-	return(RD_OK);
+	warning("semi-stub PlaySmacker %s", filename);
 
+	// WORKAROUND: For now, we just do the voice-over parts of the
+	// movies, since they're separate from the actual smacker files.
+
+	// TODO: Play the voice-over sounds.
+
+	if (text) {
+		uint8 oldPal[1024];
+		uint8 tmpPal[1024];
+
+		EraseBackBuffer();
+
+		// In case the cutscene has a long lead-in, start just before
+		// the first line of text.
+
+		int frameCounter = text[0]->startFrame - 12;
+		int textCounter = 0;
+
+		// Fake a palette that will hopefully make the text visible.
+		// In the opening cutscene it seems to use colours 1 (black)
+		// and 255 (white).
+
+		memcpy(oldPal, palCopy, 1024);
+		memset(tmpPal, 0, 1024);
+		tmpPal[255 * 4 + 0] = 255;
+		tmpPal[255 * 4 + 1] = 255;
+		tmpPal[255 * 4 + 2] = 255;
+		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
+
+		while (1) {
+			if (frameCounter == text[textCounter]->startFrame) {
+				EraseBackBuffer();
+				OpenTextObject(text[textCounter]);
+				DrawTextObject(text[textCounter]);
+			}
+
+			if (frameCounter == text[textCounter]->endFrame) {
+				CloseTextObject(text[textCounter]);
+				EraseBackBuffer();
+				textCounter++;
+
+				if (text[textCounter] == NULL)
+					break;
+			}
+
+			frameCounter++;
+
+			ServiceWindows();
+
+			char key;
+
+			if (ReadKey(&key) == RD_OK && key == 27)
+				break;
+
+			// Simulate ~12 frames per second.
+			g_system->delay_msecs(80);
+		}
+
+		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
+	}
+
+	return(RD_OK);
 }
 
 void GetDrawStatus(_drvDrawStatus *s)
