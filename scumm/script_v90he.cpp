@@ -240,7 +240,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o70_resourceRoutines),
 		/* 9C */
-		OPCODE(o60_roomOps),
+		OPCODE(o72_roomOps),
 		OPCODE(o72_actorOps),
 		OPCODE(o90_unknown9E),
 		OPCODE(o6_getActorFromXY),

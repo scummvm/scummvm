@@ -240,7 +240,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o70_resourceRoutines),
 		/* 9C */
-		OPCODE(o60_roomOps),
+		OPCODE(o72_roomOps),
 		OPCODE(o72_actorOps),
 		OPCODE(o72_verbOps),
 		OPCODE(o6_getActorFromXY),
@@ -905,12 +905,111 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 	push (num);
 }
 
+void ScummEngine_v72he::o72_roomOps() {
+	int a, b, c, d, e;
+	byte op;
+	byte filename[100];
+
+	op = fetchScriptByte();
+
+	switch (op) {
+	case 172:		// SO_ROOM_SCROLL
+		b = pop();
+		a = pop();
+		if (a < (_screenWidth / 2))
+			a = (_screenWidth / 2);
+		if (b < (_screenWidth / 2))
+			b = (_screenWidth / 2);
+		if (a > _roomWidth - (_screenWidth / 2))
+			a = _roomWidth - (_screenWidth / 2);
+		if (b > _roomWidth - (_screenWidth / 2))
+			b = _roomWidth - (_screenWidth / 2);
+		VAR(VAR_CAMERA_MIN_X) = a;
+		VAR(VAR_CAMERA_MAX_X) = b;
+		break;
+
+	case 174:		// SO_ROOM_SCREEN
+		b = pop();
+		a = pop();
+		initScreens(a, _screenHeight);
+		break;
+
+	case 175:		// SO_ROOM_PALETTE
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		setPalColor(d, a, b, c);
+		break;
+
+	case 179:		// SO_ROOM_INTENSITY
+		c = pop();
+		b = pop();
+		a = pop();
+		darkenPalette(a, a, a, b, c);
+		break;
+
+	case 180:		// SO_ROOM_SAVEGAME
+		_saveTemporaryState = true;
+		_saveLoadSlot = pop();
+		_saveLoadFlag = pop();
+		break;
+
+	case 181:		// SO_ROOM_FADE
+		// Defaults to 1 but doesn't use fade effects
+		a = pop();
+		break;
+
+	case 182:		// SO_RGB_ROOM_INTENSITY
+		e = pop();
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		darkenPalette(a, b, c, d, e);
+		break;
+
+	case 213:		// SO_ROOM_NEW_PALETTE
+		a = pop();
+		setPalette(a);
+		break;
+
+	case 220:
+		a = pop();
+		b = pop();
+		copyPalColor(a, b);
+		break;
+
+	case 221:
+		copyScriptString(filename);
+		_saveLoadFlag = pop();
+		_saveLoadSlot = 1;
+		_saveTemporaryState = true;
+		break;
+
+	case 234:
+		b = pop();
+		a = pop();
+		swapObjects(a, b);
+		break;
+
+	case 236:
+		b = pop();
+		a = pop();
+		warning("o72_roomOps: case %d (%d, %d)", op, b, a);
+		break;
+
+	default:
+		error("o72_roomOps: default case %d", op);
+	}
+}
+
 void ScummEngine_v72he::o72_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[32];
 	byte b;
-	byte name[256];
+	byte string[256];
 
 	b = fetchScriptByte();
 	if (b == 197) {
@@ -1007,8 +1106,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		copyScriptString(name);
-		loadPtrToResource(rtActorName, a->number, name);
+		copyScriptString(string);
+		loadPtrToResource(rtActorName, a->number, string);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->_initFrame = pop();
@@ -1091,7 +1190,6 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 225:
 		{
-		byte string[128];
 		copyScriptString(string);
 		int slot = pop();
 
@@ -1737,12 +1835,12 @@ void ScummEngine_v72he::o72_openFile() {
 	mode = pop();
 	copyScriptString(filename);
 
-	debug(1,"File %s", filename);
-	
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')
 			break;
 	}
+	
+	debug(1,"File %s", filename + r);
 	
 	slot = -1;
 	for (l = 0; l < 17; l++) {
@@ -1758,7 +1856,7 @@ void ScummEngine_v72he::o72_openFile() {
 		else if (mode == 2)
 			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
 		else
-			error("o60_openFile(): wrong open file mode %d", mode);
+			error("o72_openFile(): wrong open file mode %d", mode);
 
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
@@ -1867,10 +1965,15 @@ void ScummEngine_v72he::o72_findAllObjects() {
 
 void ScummEngine_v72he::o72_deleteFile() {
 	byte filename[100];
+	int r;
 
 	copyScriptString(filename);
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
 
-	debug(1, "stub o72_deleteFile(%s)", filename);
+	debug(1, "stub o72_deleteFile(%s)", filename + r);
 }
 
 void ScummEngine_v72he::o72_getPixel() {

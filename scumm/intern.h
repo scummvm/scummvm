@@ -755,6 +755,7 @@ protected:
 	void o72_printWizImage();
 	void o72_getArrayDimSize();
 	void o72_getNumFreeArrays();
+	void o72_roomOps();
 	void o72_actorOps();
 	void o72_verbOps();
 	void o72_findObject();
