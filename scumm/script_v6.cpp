@@ -309,7 +309,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
 		/* D4 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_shuffle),
 		OPCODE(o6_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
@@ -326,7 +326,7 @@ void Scumm_v6::setupOpcodes()
 		/* E0 */
 		OPCODE(o6_unknownE0),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_invalid),
@@ -2972,6 +2972,10 @@ static void sub_FEE_7822(int num, int16 arg_1, int16 arg_2) {
 	};
 }
 
+void Scumm_v6::o6_shuffle() {
+	sub_FEE_7822(fetchScriptWord(), pop(), pop());
+}
+
 void Scumm_v6::o6_pickVarRandom() {
 	warning("void Scumm_v6::o6_pickVarRandom()");
 
@@ -3047,6 +3051,10 @@ void Scumm_v6::o6_unknownE0() {
         }
         pop();
         return;
+}
+
+void Scumm_v6::o6_localizeArray() {
+	warning("stub localizeArray(%d)", pop());
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
