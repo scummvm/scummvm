@@ -105,6 +105,19 @@ public:
 			assert(value);
 			memcpy(value, data_start, data_end - data_start);
 			value[data_end - data_start] = 0;
+			char * line_start = value;
+			char * line_end;
+			while (line_end = strchr(line_start, '\n')) {
+				line_start = line_end+1;
+				if (line_start[0] == '/' && line_start[1] == '/') {
+					line_start += 2;
+					if	(line_end[-1] == '\r')
+						line_end[-1] = ' ';
+					else
+						*line_end++ = ' ';
+					memmove(line_end, line_start, strlen(line_start)+1);
+				}
+			}
 #ifdef DEBUG
 			debug(9, "Inserting (%s)%d == \"%s\"", idstring, id, value);
 #endif				
