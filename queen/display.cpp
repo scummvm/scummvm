@@ -829,7 +829,7 @@ void Display::mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16
 	uint8 *p = buf;
 	while (size--) {
 		if (*p == 255) {
-			*p = 223;
+			*p = 254;
 		}
 		else if (*p == 0) {
 			*p = 255;
