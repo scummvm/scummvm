@@ -162,7 +162,7 @@ uint32 calc_cd_file_offset(int start_frame) {
 		//mad_timer_t timer;  - recode with timer
 
 		/* Constant bit rate - perhaps not fully accurate */
-		frame_size = (float)144 * _mad_header.bitrate / _mad_header.samplerate;
+		frame_size = 144 * _mad_header.bitrate / _mad_header.samplerate;
 		offset = (long)((float)start_frame / (float)CD_FPS * 1000 / 
 				 (float)((float)1152 / (float)_mad_header.samplerate * 1000) *
 				 (float)(frame_size + 0.5));			
