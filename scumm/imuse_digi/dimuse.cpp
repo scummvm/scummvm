@@ -148,7 +148,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
 			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1);
+			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1, false);
 		}
 	}
 }
