@@ -1407,10 +1407,11 @@ void Scumm::o5_ifClassOfIs()
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(0x80);
-		if (cls)
-			b = getClass(act, cls);
+
+		if (!cls) // FIXME: Ender can't remember why this is here,
+			b=false;  // but it fixes an oddball zak256 crash
 		else
-			error("FIXME! Ender forgot why he added this. Please report this as a bug code %d", cls);
+			b = getClass(act, cls);
 
 		if (cls & 0x80 && !b || !(cls & 0x80) && b)
 			cond = false;
