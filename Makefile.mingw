@@ -8,11 +8,11 @@ SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
 
 CC      = gcc
 CFLAGS  = -g -Wno-multichar
-DEFINES = -DUSE_ADLIB
+DEFINES = -DUSE_ADLIB -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lmingw32 $(SDL_LIBS) -mwindows -mconsole
+LIBS	= -lmingw32 $(SDL_LIBS) -lmad -mwindows -mconsole
 
 EXEC=scummvm.exe
 
