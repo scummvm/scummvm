@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	sound/midiparser_smf.o \
 	sound/midiparser_xmidi.o \
 	sound/midistreamer.o \
-	sound/midiparser_xmidi.o \
 	sound/mixer.o \
 	sound/mpu401.o
 
