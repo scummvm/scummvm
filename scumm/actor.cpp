@@ -1090,7 +1090,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
-	if (bcr->drawCostume(_vm->virtscr[0], this, drawToBackBuf) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], _vm->gdi._numStrips, this, drawToBackBuf) & 1) {
 		needRedraw = (_vm->_version <= 6);
 	}
 

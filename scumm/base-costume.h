@@ -132,7 +132,7 @@ public:
 	virtual void setCostume(int costume) = 0;
 
 
-	byte drawCostume(const VirtScreen &vs, const Actor *a, bool drawToBackBuf);
+	byte drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf);
 
 protected:
 

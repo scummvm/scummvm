@@ -25,7 +25,7 @@
 
 namespace Scumm {
 
-byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const Actor *a, bool drawToBackBuf) {
+byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf) {
 	int i;
 	byte result = 0;
 
@@ -36,7 +36,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const Actor *a, bool
 
 	_outwidth = vs.pitch;
 	_outheight = vs.h;
-	_numStrips = _outwidth / 8;
+	_numStrips = numStrips;
 
 	if (_vm->_version == 1) {
 		_xmove = 0;
