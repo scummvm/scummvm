@@ -245,9 +245,12 @@ static void runGame(GameDetector &detector, OSystem *system) {
 		}
 	}
 
+	// (De)activate aspect-ratio correction as determined by the config settings
+	system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+	
 	// (De)activate fullscreen mode as determined by the config settings 
 	system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	
+
 	// Create the game engine
 	Engine *engine = detector.createEngine(system);
 	assert(engine);
