@@ -245,6 +245,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 
 	if (slot != 3) {
 		vs->setDirtyRange(0, height);
+		updateDirtyScreen(slot);
 	}
 }
 
