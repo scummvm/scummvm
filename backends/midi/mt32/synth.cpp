@@ -117,7 +117,7 @@ Synth::Synth() {
 	isOpen = false;
 	reverbModel = NULL;
 	partialManager = NULL;
-	memset(waveforms, 0, sizeof(waveforms));
+	memset(noteLookups, 0, sizeof(noteLookups));
 	memset(parts, 0, sizeof(parts));
 }
 
@@ -690,11 +690,12 @@ void Synth::close(void) {
 	if (!isOpen)
 		return;
 
-	for (int t = 0; t < 4; t++) {
+	for (int t = 0; t < 3; t++) {
 		for (int m = 0; m < NUM_NOTES; m++) {
-			if (waveforms[t][m]!=NULL) {
-				delete[] waveforms[t][m];
-				waveforms[t][m] = NULL;
+			if (noteLookups[m].waveforms[t] != NULL) {
+				delete[] noteLookups[m].waveforms[t];
+				noteLookups[m].waveforms[t] = NULL;
+				noteLookups[m].waveformSize[t] = 0;
 			}
 		}
 	}

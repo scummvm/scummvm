@@ -42,7 +42,7 @@ const int MIDDLEA = 69; // By this I mean "A above middle C"
 // FIXME:KG: Keeping it at 440.0f for now, as in original. Check with CC
 const float TUNING = 440.0f;
 
-const int NUM_NOTES = 128; // MIDI supports 128 notes/keys
+const int NUM_NOTES = 128; // Number of slots for note LUT (we actually only use 12..108)
 
 // Amplitude of waveform generator
 const int WGAMP = 7168; // 8192?
@@ -55,17 +55,12 @@ extern Bit16s smallnoise[MAX_SAMPLE_OUTPUT];
 
 // Some optimization stuff
 extern Bit32s keytable[217];
-extern Bit32s divtable[NUM_NOTES];
-extern Bit32s smalldivtable[NUM_NOTES];
-extern Bit32u wavtabler[54][NUM_NOTES];
-extern Bit32u looptabler[9][10][NUM_NOTES];
 extern Bit16s sintable[65536];
 extern Bit32u lfotable[101];
 extern Bit32s penvtable[16][101];
 extern Bit32s filveltable[128][101];
 extern Bit32s veltkeytable[5][128];
 extern Bit32s pulsetable[101];
-extern Bit32s sawtable[NUM_NOTES][101];
 extern Bit32s ampbiastable[13][128];
 extern Bit32s fbiastable[15][128];
 extern float filtcoeff[FILTERGRAN][31][8];
@@ -79,23 +74,28 @@ extern Bit32s lasttimetable[101];
 extern Bit32s voltable[128];
 extern float ResonInv[31];
 
-extern Bit16s freqtable[NUM_NOTES];
-extern Bit32s fildeptable[5][NUM_NOTES];
-extern Bit32s timekeytable[5][NUM_NOTES];
-extern int filttable[2][NUM_NOTES][201];
-extern int nfilttable[NUM_NOTES][101][101];
+struct NoteLookup {
+	Bit32s div;
+	Bit32u wavTable[54];
+	Bit32u loopTable[9][10];
+	Bit32s sawTable[101];
+	Bit32s fildepTable[5];
+	Bit32s timekeyTable[5];
+	int filtTable[2][201];
+	int nfiltTable[101][101];
+	Bit16s *waveforms[3];
+	Bit32u waveformSize[3];
+};
 
-extern const Bit8s LoopPatterns[9][10];
-
-extern Bit16s *waveforms[4][NUM_NOTES];
-extern Bit32u waveformsize[4][NUM_NOTES];
+extern NoteLookup noteLookups[NUM_NOTES];
 
 class TableInitialiser {
 	static void initMT32ConstantTables(Synth *synth);
-	static void initWave(Synth *synth, File *file, bool reading, bool writing, int f, float freq, float rate, double ampsize, Bit32s div);
-	static void initNotes(Synth *synth, PCMWave pcms[54], float rate);
+	static File *initWave(Synth *synth, NoteLookup *noteLookup, float ampsize, float div, File *file);
+	static void initNotes(Synth *synth, PCMWave pcms[54], float rate, float tuning);
 public:
 	static bool initMT32Tables(Synth *synth, PCMWave pcms[54], float sampleRate);
+	static File *initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float tuning, PCMWave pcmWaves[54], File *file);
 };
 
 }

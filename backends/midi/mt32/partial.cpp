@@ -128,6 +128,12 @@ void Partial::startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPa
 
 	play = true;
 	initKeyFollow(poly->freqnum); // Initialises noteVal, filtVal and realVal
+	noteLookup = &noteLookups[noteVal];
+
+	// FIXME:KG: I think most places should refer to noteVal/noteLookup instead of these.
+	keyVal = poly->freqnum;
+	keyLookup = &noteLookups[poly->freqnum];
+
 	lfoPos = 0;
 	pulsewidth = patchCache->pulsewidth + pwveltable[patchCache->pwsens][poly->vel];
 	if (pulsewidth > 100) {
@@ -243,7 +249,7 @@ Bit16s *Partial::generateSamples(long length) {
 			pcmWave = &synth->PCMList[patchCache->pcm];
 
 			if (pcmWave->aggSound == -1) {
-				delta = wavtabler[pcmWave->pcmnum][noteVal];
+				delta = noteLookup->wavTable[pcmWave->pcmnum];
 				pcmAddr = pcmWave->addr;
 				len = pcmWave->len;
 				if (partialOff.pcmplace >= len) {
@@ -258,7 +264,7 @@ Bit16s *Partial::generateSamples(long length) {
 				}
 			} else {
 				int tmppcm = LoopPatterns[pcmWave->aggSound][loopPos];
-				delta = looptabler[pcmWave->aggSound][loopPos][noteVal];
+				delta = noteLookup->loopTable[pcmWave->aggSound][loopPos];
 				pcmAddr = synth->PCM[tmppcm].addr;
 				len = synth->PCM[tmppcm].len;
 				if (partialOff.pcmplace >= len) {
@@ -271,7 +277,7 @@ Bit16s *Partial::generateSamples(long length) {
 		} else {
 			// Synthesis partial
 			delta = 0x10707;
-			partialOff.pcmplace %= (Bit16u)(divtable[noteVal] >> 15);
+			partialOff.pcmplace %= (Bit16u)(noteLookup->div << 1);
 		}
 
 		// Build delta for position of next sample
@@ -291,10 +297,6 @@ Bit16s *Partial::generateSamples(long length) {
 				if (delta < 0x10000) {
 					// Linear sound interpolation
 					taddr = pcmAddr + partialOff.pcmplace;
-					if (taddr >= ROMSIZE) {
-						synth->printDebug("Overflow ROMSIZE!");
-						taddr = ROMSIZE - 1;
-					}
 					ra = synth->romfile[taddr];
 					//FIXME:KG: Deal with condition that taddr + 1 is past PCM length
 					rb = synth->romfile[taddr + 1];
@@ -313,7 +315,7 @@ Bit16s *Partial::generateSamples(long length) {
 				}
 			} else {
 				// Render synthesised sample
-				int divis = divtable[noteVal] >> 15;
+				int div = noteLookup->div;
 				int wf = patchCache->waveform;
 				int toff = partialOff.pcmplace;
 				int minorplace = partialOff.pcmoffset >> 14;
@@ -327,25 +329,21 @@ Bit16s *Partial::generateSamples(long length) {
 					// sawtooth waveforms
 					// Pulse width is not yet correct
 					int pa, pb;
-					int hdivis = divis >> 1;
-					int divmark = smalldivtable[noteVal];
+					int divmark = div << 8;
 
-					if (hdivis == 0) {
-						synth->printDebug("ERROR: hdivis=0 generating square wave, this should never happen!");
-						hdivis = 1;
+					if (div == 0) {
+						synth->printDebug("ERROR: div=0 generating square wave, this should never happen!");
+						div = 1;
 					}
-					int ofs = toff % hdivis;
-
-					int ofs3 = toff + ((divmark * pulsetable[pulsewidth]) >> 16);
-					ofs3 = ofs3 % (hdivis);
-
-					pa = waveforms[1][noteVal][(ofs << 2)+minorplace];
-					pb = waveforms[0][noteVal][(ofs3 << 2)+minorplace];
-					ptemp = (pa + pb) * 4;
-
+					int ofsA = toff % div;
+					int ofsB = toff + ((divmark * pulsetable[pulsewidth]) >> 16);
+					ofsB = ofsB % div;
+					pa = noteLookup->waveforms[0][(ofsA << 2) + minorplace];
+					pb = noteLookup->waveforms[0][(ofsB << 2) + minorplace];
+					ptemp = (pa - pb) * 4;
 					// Non-bandlimited squarewave
 					/*
-					ofs = (divis*pulsetable[patchCache->pulsewidth])>>8;
+					ofs = ((div << 1) * pulsetable[patchCache->pulsewidth]) >> 8;
 					if (toff < ofs)
 						ptemp = 1 * WGAMP;
 					else
@@ -356,27 +354,26 @@ Bit16s *Partial::generateSamples(long length) {
 					// to how it looks on the MT-32.  What it really does it takes the
 					// square wave and multiplies it by a full cosine
 					int waveoff = (toff << 2) + minorplace;
-					if (toff < sawtable[noteVal][pulsewidth])
-						ptemp = waveforms[2][noteVal][waveoff % waveformsize[2][noteVal]];
+					if (toff < noteLookup->sawTable[pulsewidth])
+						ptemp = noteLookup->waveforms[1][waveoff % noteLookup->waveformSize[1]];
 					else
-						ptemp = waveforms[3][noteVal][waveoff % waveformsize[3][noteVal]];
+						ptemp = noteLookup->waveforms[2][waveoff % noteLookup->waveformSize[2]];
 					ptemp = ptemp * 4;
 					// This is the correct way
 					// Seems slow to me (though bandlimited) -- doesn't seem to
 					// sound any better though
 					/*
-					hdivis = divis >> 1;
-					int divmark = smalldivtable[noteVal];
+					int divmark = noteLookup->div << 8;
 					//int pw = (patchCache->pulsewidth * pulsemod[filtval]) >> 8;
 
-					ofs = toff % (hdivis);
+					int ofs = toff % div;
 
-					ofs3 = toff + ((divmark*pulsetable[patchCache->pulsewidth])>>16);
-					ofs3 = ofs3 % (hdivis);
+					int ofs3 = toff + ((divmark * pulsetable[patchCache->pulsewidth]) >> 16);
+					ofs3 = ofs3 % div;
 
-					pa = waveforms[0][noteVal][ofs];
-					pb = waveforms[1][noteVal][ofs3];
-					ptemp = ((pa+pb) * waveforms[3][noteVal][toff]) / WGAMP;
+					pa = noteLookup->waveforms[0][ofs];
+					pb = noteLookup->waveforms[0][ofs3];
+					ptemp = ((pa - pb) * noteLookup->waveforms[2][toff]) / WGAMP;
 					ptemp = ptemp *4;
 					*/
 				}
@@ -632,8 +629,6 @@ Bit32s Partial::getFiltEnvelope() {
 	keyfollow = filtVal;
 	realfollow = realVal;
 
-	int fr = poly->freqnum;
-
 	if (tStat->decaying) {
 		reshigh = tStat->envbase;
 		reshigh = (reshigh + ((tStat->envdist * tStat->envpos) / tStat->envsize));
@@ -653,10 +648,11 @@ Bit32s Partial::getFiltEnvelope() {
 					tStat->envbase = patchCache->filtEnv.envlevel[tStat->envstat];
 				tStat->envstat++;
 				tStat->envpos = 0;
-				if (tStat->envstat == 3)
+				if (tStat->envstat == 3) {
 					tStat->envsize = lasttimetable[(int)patchCache->filtEnv.envtime[tStat->envstat]];
-				else
-					tStat->envsize = (envtimetable[(int)patchCache->filtEnv.envtime[tStat->envstat]] * timekeytable[(int)patchCache->filtEnv.envtkf][poly->freqnum]) >> 8;
+				} else {
+					tStat->envsize = (envtimetable[(int)patchCache->filtEnv.envtime[tStat->envstat]] * keyLookup->timekeyTable[(int)patchCache->filtEnv.envtkf]) >> 8;
+				}
 
 				tStat->envsize++;
 				tStat->envdist = patchCache->filtEnv.envlevel[tStat->envstat] - tStat->envbase;
@@ -684,14 +680,14 @@ Bit32s Partial::getFiltEnvelope() {
 	if (bias!=0) {
 		//synth->printDebug("Cutoff before %d", cutoff);
 		if (patchCache->tvfdir == 0) {
-			if (fr < bias) {
-				dist = bias - fr;
+			if (keyVal < bias) {
+				dist = bias - keyVal;
 				cutoff = (cutoff * fbiastable[patchCache->tvfblevel][dist]) >> 8;
 			}
 		} else {
 			// > Bias
-			if (fr > bias) {
-				dist = fr - bias;
+			if (keyVal > bias) {
+				dist = keyVal - bias;
 				cutoff = (cutoff * fbiastable[patchCache->tvfblevel][dist]) >> 8;
 			}
 
@@ -699,7 +695,7 @@ Bit32s Partial::getFiltEnvelope() {
 		//synth->printDebug("Cutoff after %d", cutoff);
 	}
 
-	depth = (depth * fildeptable[patchCache->tvfdepth][fr]) >> 8;
+	depth = (depth * keyLookup->fildepTable[patchCache->tvfdepth]) >> 8;
 	reshigh = (reshigh * depth) >> 7;
 
 	Bit32s tmp;
@@ -718,7 +714,7 @@ Bit32s Partial::getFiltEnvelope() {
 		reshigh = 100;
 	else if (reshigh<0)
 		reshigh = 0;
-	tmp = nfilttable[fr][cutoff][reshigh];
+	tmp = keyLookup->nfiltTable[cutoff][reshigh];
 	//tmp *= keyfollow;
 	//tmp /= realfollow;
 
@@ -784,7 +780,7 @@ Bit32s Partial::getAmpEnvelope() {
 			default:
 				//Spot for timekey follow
 				//Only used in subsquent envelope parameters, including the decay
-				tStat->envsize = (envtimetable[(int)patchCache->ampEnv.envtime[tStat->envstat]] * timekeytable[(int)patchCache->ampEnv.envtkf][poly->freqnum]) >> 8;
+				tStat->envsize = (envtimetable[(int)patchCache->ampEnv.envtime[tStat->envstat]] * keyLookup->timekeyTable[(int)patchCache->ampEnv.envtkf]) >> 8;
 
 				//synth->printDebug("Envstat %d, size %d", tStat->envstat, tStat->envsize);
 				break;
@@ -820,14 +816,14 @@ PastCalc:
 			bias = patchCache->ampbias[i];
 			if (patchCache->ampdir[i]==0) {
 				// < Bias
-				if (poly->freqnum < bias) {
-					dist = bias-poly->freqnum;
+				if (keyVal < bias) {
+					dist = bias - keyVal;
 					tc = (tc * ampbiastable[patchCache->ampblevel[i]][dist]) >> 8;
 				}
 			} else {
 				// > Bias
-				if (poly->freqnum > bias) {
-					dist = poly->freqnum-bias;
+				if (keyVal > bias) {
+					dist = keyVal - bias;
 					tc = (tc * ampbiastable[patchCache->ampblevel[i]][dist]) >> 8;
 				}
 			}
@@ -860,11 +856,11 @@ Bit32s Partial::getPitchEnvelope() {
 				tStat->envstat++;
 
 				tStat->envbase = patchCache->pitchEnv.level[tStat->envstat];
-				tStat->envsize = (envtimetable[(int)patchCache->pitchEnv.time[tStat->envstat]] * timekeytable[(int)patchCache->pitchEnv.timekeyfollow][poly->freqnum]) >> 8;
+				tStat->envsize = (envtimetable[(int)patchCache->pitchEnv.time[tStat->envstat]] * keyLookup->timekeyTable[(int)patchCache->pitchEnv.timekeyfollow]) >> 8;
 
 				tStat->envpos = 0;
 				tStat->envsize++;
-				tStat->envdist = patchCache->pitchEnv.level[tStat->envstat+1] - tStat->envbase;
+				tStat->envdist = patchCache->pitchEnv.level[tStat->envstat + 1] - tStat->envbase;
 			}
 			tc = tStat->envbase;
 			tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
@@ -891,15 +887,15 @@ void Partial::startDecay(EnvelopeType envnum, Bit32s startval) {
 
 	switch(envnum) {
 	case EnvelopeType_amp:
-		tStat->envsize = (decaytimetable[(int)patchCache->ampEnv.envtime[4]] * timekeytable[(int)patchCache->ampEnv.envtkf][poly->freqnum]) >> 8;
+		tStat->envsize = (decaytimetable[(int)patchCache->ampEnv.envtime[4]] * keyLookup->timekeyTable[(int)patchCache->ampEnv.envtkf]) >> 8;
 		tStat->envdist = -startval;
 		break;
 	case EnvelopeType_filt:
-		tStat->envsize = (decaytimetable[(int)patchCache->filtEnv.envtime[4]] * timekeytable[(int)patchCache->filtEnv.envtkf][poly->freqnum]) >> 8;
+		tStat->envsize = (decaytimetable[(int)patchCache->filtEnv.envtime[4]] * keyLookup->timekeyTable[(int)patchCache->filtEnv.envtkf]) >> 8;
 		tStat->envdist = -startval;
 		break;
 	case EnvelopeType_pitch:
-		tStat->envsize = (decaytimetable[(int)patchCache->pitchEnv.time[3]] * timekeytable[(int)patchCache->pitchEnv.timekeyfollow][poly->freqnum]) >> 8 ;
+		tStat->envsize = (decaytimetable[(int)patchCache->pitchEnv.time[3]] * keyLookup->timekeyTable[(int)patchCache->pitchEnv.timekeyfollow]) >> 8 ;
 		tStat->envdist = patchCache->pitchEnv.level[4] - startval;
 		break;
 	default:

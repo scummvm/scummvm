@@ -25,6 +25,7 @@
 namespace MT32Emu {
 
 class Synth;
+struct NoteLookup;
 
 enum EnvelopeType {
 	EnvelopeType_amp = 0,
@@ -63,6 +64,10 @@ private:
 
 	// Keyfollowed note value
 	int noteVal;
+	NoteLookup *noteLookup; // Lookup stuff for this noteVal
+
+	int keyVal;
+	NoteLookup *keyLookup;
 
 	// Keyfollowed filter values
 	int realVal;

@@ -89,24 +89,7 @@ Bit32s voltable[128];
 float ResonFactor[31];
 float ResonInv[31];
 
-// Per-note initialisation tables follow
-
-Bit16s freqtable[NUM_NOTES];
-Bit32s fildeptable[5][NUM_NOTES];
-Bit32s timekeytable[5][NUM_NOTES];
-int filttable[2][NUM_NOTES][201];
-int nfilttable[NUM_NOTES][101][101];
-
-Bit32s divtable[NUM_NOTES];
-Bit32s smalldivtable[NUM_NOTES];
-Bit32u wavtabler[54][NUM_NOTES];
-Bit32u looptabler[9][10][NUM_NOTES];
-Bit32s sawtable[NUM_NOTES][101];
-
-Bit16s *waveforms[4][NUM_NOTES];
-Bit32u waveformsize[4][NUM_NOTES];
-static Bit16s tmpforms[4][65536];
-
+NoteLookup noteLookups[NUM_NOTES];
 
 // Begin filter stuff
 
@@ -236,10 +219,10 @@ static void initEnvelopes(float samplerate) {
 		if (pt < 0)
 			pt = 0;
 
-		pulsetable[lf] = (int)((pt) * 215.04f) + 128;
+		pulsetable[lf] = (int)(pt * 215.04f) + 128;
 
 		// I am certain of this:  Verified by hand LFO log
-		lfotable[lf] = (Bit32u)(((float)samplerate) / (pow(1.088883372f,(float)lf) * 0.021236044f));
+		lfotable[lf] = (Bit32u)(((float)samplerate) / (powf(1.088883372f,(float)lf) * 0.021236044f));
 
 		//LOG(LOG_ERROR|LOG_MISC,"lf %d = lfo %d pulsetable %d", lf, lfotable[lf], pulsetable[lf]);
 	}
@@ -320,6 +303,9 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 	for (lf = 0; lf <= 200; lf++) {
 		//FIXME:KG: I'm fairly sure this is wrong... lf=100 should yield no fine-tuning (4096)?
 		finetable[lf] = (int)((powf(2.0f, (((float)lf / 200.0f) - 1.0f) / 12.0f)) * 4096.0f);
+
+		// FIXME:KG: This now gives a range of -1 .. 1 semitone. Should be correct, but check
+		//finetable[lf] = (int)((powf(2.0f, (((float)lf / 100.0f) - 1.0f) / 12.0f)) * 4096.0f);
 	}
 
 	float lff;
@@ -333,9 +319,9 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 
 	for (lf = 0; lf < 128; lf++) {
 		// Converts MIDI velocity to volume.
-		voltable[lf] = (int)(127.0 * pow((float)lf / 127.0, DOUBLE_LN));
+		voltable[lf] = (int)(127.0f * powf((float)lf / 127.0f, FLOAT_LN));
 	}
-	for (lf = 0; lf < MAX_SAMPLE_OUTPUT; lf++) {
+	for (unsigned int i = 0; i < MAX_SAMPLE_OUTPUT; i++) {
 		int myRand;
 		myRand = rand();
 		int origRand = myRand;
@@ -343,7 +329,7 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 		// This one is slower but works with all values of RAND_MAX
 		myRand = (int)((origRand - RAND_MAX / 2) / (float)RAND_MAX * (WGAMP / 2));
 		//FIXME:KG: Original ultimately set the lowest two bits to 0, for no obvious reason
-		smallnoise[lf] = (Bit16s)myRand;
+		smallnoise[i] = (Bit16s)myRand;
 	}
 
 	float tdist;
@@ -469,115 +455,94 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 
 // Per-note table initialisation follows
 
-static void initSaw(int f, Bit32s div) {
+static void initSaw(NoteLookup *noteLookup, Bit32s div) {
 	for (int rsaw = 0; rsaw <= 100; rsaw++) {
 		float fsaw;
 		if (rsaw < 50)
 			fsaw = 50.0f;
 		else
 			fsaw = (float)rsaw;
-		int tmpdiv = div << 1;
+		int tmpdiv = div << 17;
 
 		//(66 - (((A8 - 50) / 50) ^ 0.63) * 50) / 132
 		float sawfact = (66.0f - (powf((fsaw - 50.0f) / 50.0f, 0.63f) * 50.0f)) / 132.0f;
-		sawtable[f][rsaw] = (int)(sawfact * (float)tmpdiv) >> 16;
-		//synth->printDebug("F %d divtable %d saw %d sawtable %d", f, div>>16, rsaw, sawtable[f][rsaw]);
+		noteLookup->sawTable[rsaw] = (int)(sawfact * (float)tmpdiv) >> 16;
+		//synth->printDebug("F %d divtable %d saw %d sawtable %d", f, div, rsaw, sawtable[f][rsaw]);
 	}
 }
 
-static void initDep(int f) {
+static void initDep(NoteLookup *noteLookup, float f) {
 	for (int dep = 0; dep < 5; dep++) {
 		if (dep == 0) {
-			fildeptable[dep][f] = 256;
-			timekeytable[dep][f] = 256;
+			noteLookup->fildepTable[dep] = 256;
+			noteLookup->timekeyTable[dep] = 256;
 		} else {
 			float depfac = 3000.0f;
 			float ff, tempdep;
 			depfac = (float)depexp[dep];
 
-			ff = ((float)f - (float)MIDDLEC) / depfac;
+			ff = (f - (float)MIDDLEC) / depfac;
 			tempdep = powf(2, ff) * 256.0f;
-			fildeptable[dep][f] = (int)tempdep;
+			noteLookup->fildepTable[dep] = (int)tempdep;
 
-			ff = (float)(exp(tkcatconst[dep] * ((float)MIDDLEC-(float)f)) * tkcatmult[dep]);
-			timekeytable[dep][f] = (int)(ff * 256.0f);
+			ff = (float)(exp(tkcatconst[dep] * ((float)MIDDLEC - f)) * tkcatmult[dep]);
+			noteLookup->timekeyTable[dep] = (int)(ff * 256.0f);
 		}
 	}
-	//synth->printDebug("F %d d1 %x d2 %x d3 %x d4 %x d5 %x", f, fildeptable[0][f],fildeptable[1][f],fildeptable[2][f],fildeptable[3][f],fildeptable[4][f]);
+	//synth->printDebug("F %f d1 %x d2 %x d3 %x d4 %x d5 %x", f, noteLookup->fildepTable[0], noteLookup->fildepTable[1], noteLookup->fildepTable[2], noteLookup->fildepTable[3], noteLookup->fildepTable[4]);
 }
 
-void TableInitialiser::initWave(Synth *synth, File *file, bool reading, bool writing, int f, float freq, float rate, double ampsize, Bit32s div) {
-	double sd = (2.0 * DOUBLE_PI) / ((((float)div / 65536.0)) * 4.0);
-	waveformsize[0][f] = div >> 14;
-	waveformsize[1][f] = div >> 14;
-	waveformsize[2][f] = div >> 14;
-	waveformsize[3][f] = div >> 13;
-	for (int i = 0; i < 4; i++)
-		waveforms[i][f] = new Bit16s[waveformsize[i][f]];
-	if (reading) {
-		for (int i = 0; i < 4; i++) {
-			size_t len = waveformsize[i][f] * sizeof(Bit16s);
-			if (file->read(waveforms[i][f], len) != len) {
-				synth->printDebug("Error reading wave file cache!");
-				break;
-			}
+File *TableInitialiser::initWave(Synth *synth, NoteLookup *noteLookup, float ampsize, float div, File *file) {
+	int iDiv = (int)div;
+	noteLookup->waveformSize[0] = iDiv << 2;
+	noteLookup->waveformSize[1] = iDiv << 2;
+	noteLookup->waveformSize[2] = iDiv << 3;
+	for (int i = 0; i < 3; i++) {
+		if (noteLookup->waveforms[i] == NULL) {
+			noteLookup->waveforms[i] = new Bit16s[noteLookup->waveformSize[i]];
 		}
-	} else {
-		float dumbfire;
-		double saw = 0.0f;
-		double sa = 0.0;
-		int fa = 0;
-		memset(tmpforms, 0,sizeof(tmpforms));
-
-		while (sa <= (2.0 * DOUBLE_PI)) {
-			float sqp;
-
-			if (sa < DOUBLE_PI) {
-				sqp = -1;
-				sqp = (float)(sqp + (0.25 * (sa/DOUBLE_PI)));
-			} else {
-				sqp=1;
-				sqp = (float)(sqp - (0.25 * ((sa - DOUBLE_PI)/DOUBLE_PI)));
-			}
-
-			saw = 0;
-			for (int sinus = 1; sinus * freq < rate; sinus++) {
-				double fsinus = (double)sinus;
-				saw += (1 / fsinus) * sin(fsinus * sa);
-			}
-
-			dumbfire = (float)(sa / 2);
-
-			//This works pretty good
-			tmpforms[0][fa] = (Bit16s)(saw * -ampsize / 2);
-			tmpforms[1][fa] = (Bit16s)(saw * ampsize / 2);
-
-			tmpforms[2][fa] = (Bit16s)(cos(dumbfire) * -ampsize);
-			tmpforms[3][fa * 2] = (Bit16s)(cos(sa - DOUBLE_PI) * -ampsize);
-			tmpforms[3][fa * 2 + 1] = (Bit16s)(cos((sa + (sd / 2)) - DOUBLE_PI) * -ampsize);
-
-			fa++;
-			sa += sd;
-		}
-
-		//synth->printDebug("f num %d freq %f and fa %d, div>>13=%d", f, freq, fa, div>>13);
-
-		for (int i = 0; i < 4; i++)
-			memcpy(waveforms[i][f], tmpforms[i], waveformsize[i][f] * sizeof (Bit16s));
-
-		if (writing) {
-			for (int i = 0; i < 4; i++) {
-				int len = waveformsize[i][f] * sizeof(Bit16s);
-				if (!file->write(waveforms[i][f], len)) {
-					synth->printDebug("Error writing waveform cache file");
+	}
+	if (file != NULL) {
+		for (int i = 0; i < 3 && file != NULL; i++) {
+			size_t len = noteLookup->waveformSize[i];
+			for (unsigned int j = 0; j < len; j++) {
+				if (!file->readBit16u((Bit16u *)&noteLookup->waveforms[i][j])) {
+					synth->printDebug("Error reading wave file cache!");
+					file->close();
+					file = NULL;
 					break;
 				}
 			}
 		}
 	}
+	if (file == NULL) {
+		double sd = DOUBLE_PI / (div * 2.0);
+
+		for (int fa = 0; fa < (iDiv << 2); fa++) {
+			double sa = fa * sd;
+
+#if 0
+			//FIXME:KG: Credit Timo Strunk (bastardo on #scummvm) for help with this!
+			float saw = 0.5f * FLOAT_PI - sa / 2;
+#else
+			double saw = 0.0;
+			for (int sinus = 1; sinus < div; sinus++) {
+				double fsinus = (double)sinus;
+				saw += sin(fsinus * sa) / fsinus;
+			}
+#endif
+
+			// This works pretty well
+			noteLookup->waveforms[0][fa] = (Bit16s)(saw * -ampsize / 2);
+			noteLookup->waveforms[1][fa] = (Bit16s)(cos(sa / 2.0) * -ampsize);
+			noteLookup->waveforms[2][fa * 2] = (Bit16s)(cos(sa - DOUBLE_PI) * -ampsize);
+			noteLookup->waveforms[2][fa * 2 + 1] = (Bit16s)(cos((sa + (sd / 2)) - DOUBLE_PI) * -ampsize);
+		}
+	}
+	return file;
 }
 
-static void initFiltTable(int f, float freq, float rate) {
+static void initFiltTable(NoteLookup *noteLookup, float freq, float rate) {
 	for (int tr = 0; tr <= 200; tr++) {
 		float ftr = (float)tr;
 
@@ -587,18 +552,18 @@ static void initFiltTable(int f, float freq, float rate) {
 
 		// I think this is the one
 		float brsq = powf(10.0f, (tr / 50.0f) - 1.0f);
-		filttable[0][f][tr] = (int)((freq * brsq) / (rate / 2) * FILTERGRAN);
-		if (filttable[0][f][tr]>=((FILTERGRAN*15)/16))
-			filttable[0][f][tr] = ((FILTERGRAN*15)/16);
+		noteLookup->filtTable[0][tr] = (int)((freq * brsq) / (rate / 2) * FILTERGRAN);
+		if (noteLookup->filtTable[0][tr]>=((FILTERGRAN*15)/16))
+			noteLookup->filtTable[0][tr] = ((FILTERGRAN*15)/16);
 
 		float brsa = powf(10.0f, ((tr / 55.0f) - 1.0f)) / 2.0f;
-		filttable[1][f][tr] = (int)((freq * brsa) / (rate / 2) * FILTERGRAN);
-		if (filttable[1][f][tr]>=((FILTERGRAN*15)/16))
-			filttable[1][f][tr] = ((FILTERGRAN*15)/16);
+		noteLookup->filtTable[1][tr] = (int)((freq * brsa) / (rate / 2) * FILTERGRAN);
+		if (noteLookup->filtTable[1][tr]>=((FILTERGRAN*15)/16))
+			noteLookup->filtTable[1][tr] = ((FILTERGRAN*15)/16);
 	}
 }
 
-static void initNFiltTable(int f, float freq, float rate) {
+static void initNFiltTable(NoteLookup *noteLookup, float freq, float rate) {
 	for (int cf = 0; cf <= 100; cf++) {
 		float cfmult = (float)cf;
 
@@ -609,53 +574,127 @@ static void initNFiltTable(int f, float freq, float rate) {
 
 			float freqsum = expf((cfmult + tfadd) / 30.0f) / 4.0f;
 
-			nfilttable[f][cf][tf] = (int)((freq * freqsum) / (rate / 2)*FILTERGRAN);
-			if (nfilttable[f][cf][tf] >= ((FILTERGRAN * 15) / 16))
-				nfilttable[f][cf][tf] = ((FILTERGRAN * 15) / 16);
+			noteLookup->nfiltTable[cf][tf] = (int)((freq * freqsum) / (rate / 2) * FILTERGRAN);
+			if (noteLookup->nfiltTable[cf][tf] >= ((FILTERGRAN * 15) / 16))
+				noteLookup->nfiltTable[cf][tf] = ((FILTERGRAN * 15) / 16);
 		}
 	}
 }
 
-void TableInitialiser::initNotes(Synth *synth, PCMWave pcms[54], float rate) {
-	char filename[32];
+File *TableInitialiser::initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float tuning, PCMWave pcmWaves[54], File *file) {
+	float ampsize = WGAMP;
+	float freq = (float)(tuning * pow(2.0, ((double)note - MIDDLEA) / 12.0));
+	float div = rate / freq;
+	noteLookup->div = (int)div;
+
+	initSaw(noteLookup, noteLookup->div);
+	initDep(noteLookup, note);
+
+	//synth->printDebug("Note %f; freq=%f, div=%f", note, freq, rate / freq);
+	file = initWave(synth, noteLookup, ampsize, div, file);
+
+	// Create the pitch tables
+
+	float rateMult = 32000.0f / rate;
+	float tuner = rateMult * freq * 65536.0f;
+	for (int pc = 0; pc < 54; pc++) {
+		noteLookup->wavTable[pc] = (int)(tuner / pcmWaves[pc].tune);
+	}
+	for (int lp = 0; lp < 9; lp++) {
+		for (int ln = 0; ln < 10; ln++) {
+			// FIXME:KG: Surely this needs to be adjusted for the rate?
+			// If not, remove rateMult * from below
+			// (Note: I'm assuming the LoopPatternTuning constants were intended for 32k rate)
+			noteLookup->loopTable[lp][ln] = (int)(rateMult * (float)LoopPatternTuning[lp][ln] * (freq / 220.0f));
+		}
+	}
+
+	initFiltTable(noteLookup, freq, rate);
+	initNFiltTable(noteLookup, freq, rate);
+	return file;
+}
+
+void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate, float tuning) {
+	char filename[64];
 	int intRate = (int)rate;
-	sprintf(filename, "waveformcache-%d.raw", intRate);
+	char version[4] = {0, 0, 0, 1};
+	sprintf(filename, "waveformcache-%d-%.1f.raw", intRate, tuning);
 
 	File *file = NULL;
-	bool reading = false, writing = false;
-	char header[16];
+	char header[20];
 	strncpy(header, "MT32WAVE", 8);
 	int pos = 8;
 	// Version...
 	for (int i = 0; i < 4; i++)
-		header[pos++] = 0;
-	header[pos++] = (char)(intRate & 0xFF);
-	header[pos++] = (char)((intRate >> 8) & 0xFF);
+		header[pos++] = version[i];
+	header[pos++] = (char)((intRate >> 24) & 0xFF);
 	header[pos++] = (char)((intRate >> 16) & 0xFF);
-	header[pos] = (char)((intRate >> 24) & 0xFF);
+	header[pos++] = (char)((intRate >> 8) & 0xFF);
+	header[pos++] = (char)(intRate & 0xFF);
+	int intTuning = (int)tuning;
+	header[pos++] = (char)((intTuning >> 8) & 0xFF);
+	header[pos++] = (char)(intTuning & 0xFF);
+	header[pos++] = 0;
+	header[pos] = (char)((tuning - intTuning) * 10);
 #if MT32EMU_WAVECACHEMODE < 2
+	bool reading = false;
 	file = synth->openFile(filename, File::OpenMode_read);
 	if (file != NULL) {
 		char fileHeader[16];
 		if (file->read(fileHeader, 16) == 16) {
 			if (memcmp(fileHeader, header, 16) == 0) {
-				reading = true;
+				Bit16u endianCheck;
+				if (file->readBit16u(&endianCheck)) {
+					if (endianCheck == 1) {
+						reading = true;
+					} else {
+						synth->printDebug("Endian check in %s does not match expected - will generate", filename);
+					}
+				} else {
+					synth->printDebug("Unable to read endian check in %s - will generate", filename);
+				}
 			} else {
 				synth->printDebug("Header of %s does not match expected - will generate", filename);
 			}
 		} else {
 			synth->printDebug("Error reading 16 bytes of %s - will generate", filename);
 		}
+		if (!reading) {
+			file->close();
+			file = NULL;
+		}
 	} else {
 		synth->printDebug("Unable to open %s for reading - will generate", filename);
 	}
 #endif
+
+	//FIXME:KG: may only need to do 12 to 108
+	//12..108 is the range allowed by note on commands, but the key can be modified by pitch keyfollow
+	//and adjustment for timbre pitch, so the results can be outside that range. Do move it (by octave) into
+	// the 12..108 range, or keep it in 0..127 range, or something else altogether?
+	for (int f = 12; f < 109; f++) {
+		NoteLookup *noteLookup = &noteLookups[f];
+		file = initNote(synth, noteLookup, (float)f, rate, tuning, pcmWaves, file);
+	}
+
 #if MT32EMU_WAVECACHEMODE == 0 || MT32EMU_WAVECACHEMODE == 2
-	if (!reading) {
+	if (file == NULL) {
 		file = synth->openFile(filename, File::OpenMode_write);
 		if (file != NULL) {
-			if (file->write(header, 16) == 16) {
-				writing = true;
+			if (file->write(header, 16) == 16 && file->writeBit16u(1)) {
+				for (int f = 12; f < 109 && file != NULL; f++) {
+					for (int i = 0; i < 3 && file != NULL; i++) {
+						int len = noteLookups[f].waveformSize[i];
+						for (int j = 0; j < len; j++) {
+							if (!file->writeBit16u(noteLookups[f].waveforms[i][j])) {
+								synth->printDebug("Error writing waveform cache file");
+								file->close();
+								file = NULL;
+								break;
+							}
+						}
+					}
+				}
 			} else {
 				synth->printDebug("Error writing 16-byte header to %s - won't continue saving", filename);
 			}
@@ -665,35 +704,6 @@ void TableInitialiser::initNotes(Synth *synth, PCMWave pcms[54], float rate) {
 	}
 #endif
 
-	double ampsize = WGAMP;
-	for (int f = 12; f < 109; f++) {
-		float freq = (float)(TUNING * pow(2.0, ((double)f - 69.0) / 12.0));
-		freqtable[f] = (Bit16s)freq;
-		divtable[f] = (int)(rate / freq);
-		smalldivtable[f] = divtable[f] << 8;
-		divtable[f] = divtable[f] << 16;
-
-		initSaw(f, divtable[f]);
-		initDep(f);
-
-		//synth->printDebug("F %d sd %f div %d", f, sd, divtable[f]);
-		initWave(synth, file, reading, writing, f, freq, rate, ampsize, divtable[f]);
-
-		// Create the pitch tables
-
-		float tuner = (32000.0f / rate) * 65536.0f;
-		for (int pc = 0; pc < 54; pc++)
-			wavtabler[pc][f] = (int)(tuner * (freq / pcms[pc].tune));
-		for (int lp = 0; lp < 9; lp++) {
-			for (int ln = 0; ln < 10; ln++) {
-				// FIXME:KG: Surely this needs to be adjusted for the rate?
-				looptabler[lp][ln][f] = (int)((float)LoopPatternTuning[lp][ln] * (freq / 220.0f));
-			}
-		}
-
-		initFiltTable(f, freq, rate);
-		initNFiltTable(f, freq, rate);
-	}
 	if (file != NULL)
 		synth->closeFile(file);
 }
@@ -710,7 +720,7 @@ bool TableInitialiser::initMT32Tables(Synth *synth, PCMWave pcms[54], float samp
 		initialisedSampleRate = sampleRate;
 	}
 	// This always needs to be done, to allocate the waveforms
-	initNotes(synth, pcms, sampleRate);
+	initNotes(synth, pcms, sampleRate, TUNING);
 	return true;
 }
 
