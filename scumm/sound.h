@@ -26,7 +26,13 @@
 class DigitalTrackInfo;
 class File;
 class Scumm;
-struct MP3OffsetTable;
+
+struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
+	int org_offset;
+	int new_offset;
+	int num_tags;
+	int compressed_size;
+};
 
 class Sound {
 protected:
