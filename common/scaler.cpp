@@ -21,6 +21,7 @@
  */
 
 #include "common/scaler/intern.h"
+#include "common/util.h"
 
 
 int gBitFormat = 565;

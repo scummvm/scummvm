@@ -26,8 +26,6 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/scaler.h"
-#include "common/util.h"
 
 // HACK HACK HACK
 // Enable *experimental* AltiVec support.
