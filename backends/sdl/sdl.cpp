@@ -40,6 +40,13 @@ void OSystem_SDL::init_intern() {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
+#ifdef _WIN32_WCE
+	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
+		SDL_VideoInit("windib", 0);
+		sdlFlags ^= SDL_INIT_VIDEO;
+	}
+#endif
+
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
 
@@ -55,11 +62,17 @@ void OSystem_SDL::init_intern() {
 	SDL_EnableUNICODE(1); 
 
 	cksum_valid = false;
+#ifndef _WIN32_WCE
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
 	_scaler_proc = Normal2x;
 	_full_screen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
+#else
+	_mode = GFX_NORMAL;
+	_full_screen = true;
+	_adjustAspectRatio = false;
+#endif
 	_mode_flags = 0;
 
 
