@@ -68,6 +68,9 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
 	_detector = detector;
+
+	_introTextSpace = 0;
+	_introTextSave = 0;
 }
 
 SkyState::~SkyState() {
