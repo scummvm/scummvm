@@ -24,6 +24,7 @@
 #include "gui/newgui.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"
+#include "gui/TabWidget.h"
 
 #include "backends/fs/fs.h"
 #include "base/gameDetector.h"
@@ -62,12 +63,23 @@ enum {
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
-	: Dialog(10, 15, 320 - 2 * 10, 200 - 2 * 15) {
+	: Dialog(10, 20, 320 - 2 * 10, 200 - 2 * 20) {
+
+	const int vBorder = 5;
+
+	// The tab widget
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+
+	//
+	// 1) The graphics tab
+	//
+	tab->addTab("Graphics");
+
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
+	new StaticTextWidget(tab, vBorder, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(this, 105, 10, 180, kLineHeight);
+	gfxPopUp = new PopUpWidget(tab, 105, vBorder, 180, kLineHeight);
 	gfxPopUp->appendEntry("<default>");
 	gfxPopUp->appendEntry("");
 	gfxPopUp->appendEntry("Normal (no scaling)");
@@ -84,15 +96,23 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// FIXME - disable GFX popup for now
 	gfxPopUp->setEnabled(false);
 	
+	// TODO: Aspect ratio setting
+	// TODO: Fullscreen setting
+
+
+	//
+	// 2) The audio tab
+	//
+	tab->addTab("Audio");
 
 	// The MIDI mode popup & a label
-	new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
-	_midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
-	int midiSelected = 0, i = 0;;
+	new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Music driver: ", kTextAlignRight);
+	_midiPopUp = new PopUpWidget(tab, 105, vBorder, 180, kLineHeight);
 	
 	// Populate it
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
 	const int midiDriver = parseMusicDriver(ConfMan.get("music_driver"));
+	int midiSelected = 0, i = 0;
 	while (md->name) {
 		_midiPopUp->appendEntry(md->description, md->id);
 		if (md->id == midiDriver)
@@ -102,40 +122,45 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	}
 	_midiPopUp->setSelected(midiSelected);
 	
-	//
-	// Sound controllers
-	//
-	int yoffset = 48;
+	// Volume controllers
+	int yoffset = vBorder + 16;
 
-	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "Master volume: ", kTextAlignRight);
-	_masterVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "Master volume: ", kTextAlignRight);
+	_masterVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kMasterVolumeChanged);
+	_masterVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "Music volume: ", kTextAlignRight);
-	_musicVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "Music volume: ", kTextAlignRight);
+	_musicVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kMusicVolumeChanged);
+	_musicVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(this, 5, yoffset+2, 100, 16, "SFX volume: ", kTextAlignRight);
-	_sfxVolumeSlider = new SliderWidget(this, 105, yoffset, 85, 12, kSfxVolumeChanged);
-	_sfxVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "SFX volume: ", kTextAlignRight);
+	_sfxVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kSfxVolumeChanged);
+	_sfxVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
+	
+	// TODO: cd drive setting
+	// TODO: multi midi setting
+	// TODO: native mt32 setting
 
+
+	//
+	// 3) The miscellaneous tab
+	//
+	tab->addTab("Misc");
 
 #if !( defined(__DC__) || defined(__GP32__) )
-	//
 	// Save game path
-	//
-	new StaticTextWidget(this, 5, 106, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
-	_savePath = new StaticTextWidget(this, 105, 106, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
-	new ButtonWidget(this, 105, 120, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
+	new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
+	_savePath = new StaticTextWidget(tab, 105, vBorder+2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
+	new ButtonWidget(tab, 105, vBorder+14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
 	
 // TODO: set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath"));
@@ -148,6 +173,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 		_savePath->setLabel(buf);
 	}
 #endif
+	// TODO: joystick setting
+
 
 	//
 	// Add OK & Cancel buttons
@@ -157,6 +184,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory for savegames");
+	
+	
+	// Activate the first tab
+	tab->setActiveTab(0);
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {

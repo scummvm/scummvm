@@ -48,11 +48,10 @@ Documentation
 
 GUI
 ===
-* Implement "tabs" for multi-pane prefs dialog
-  -> could also be used by the Scumm help dialog in scumm/help.cpp
 * LAUNCHER: fix global options dialog to be properly persistent
 * LAUNCHER: add more options to global options dialog
 * LAUNCHER: add more options to game target options dialog 
+* Maybe make use of TabWidget in the Scumm help dialog?
 * Global & game target options dialogs probably could share some "panes"
   -> write code allowing this
   -> also, 'in game' option dialogs (for volume/scaler/etc. settings)

@@ -29,7 +29,6 @@
 #include "gui/options.h"
 #include "gui/EditTextWidget.h"
 #include "gui/ListWidget.h"
-#include "gui/TabWidget.h"
 
 #include "backends/fs/fs.h"
 
@@ -175,13 +174,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	new ButtonWidget(this, x, _h - 24, width, 16, "Start", kStartCmd, 'S'); x += space + width;
 
 	// Add list with game titles
-#if 0
-	// HACK HACK HACK FIXME
-	new TabWidget(this, 0, 76, 320, 64);
-	_list = new ListWidget(this, 10, 28, 300, 46);
-#else
 	_list = new ListWidget(this, 10, 28, 300, 112);
-#endif
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
