@@ -843,11 +843,11 @@ bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
-//		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
-		clear(true);
-
 		char nextCutaway[20];
 		memset(nextCutaway, 0, sizeof(nextCutaway));
+
+		clear(true); // clear as Talk::speak() can be called in a Cutaway
+
 		_logic->playCutaway(description, nextCutaway);
 		while (nextCutaway[0] != '\0') {
 			_logic->playCutaway(nextCutaway, nextCutaway);
@@ -861,13 +861,14 @@ bool Command::executeIfCutaway(const char *description) {
 bool Command::executeIfDialog(const char *description) {
 
 	if (strlen(description) > 4 && 
-			scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+
 		char cutaway[20];
+		memset(cutaway, 0, sizeof(cutaway));
 
-//		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		int person = _selCmd.noun;
 		clear(true);
-
-		_logic->dialogue(description, _selCmd.noun, cutaway);
+		_logic->dialogue(description, person, cutaway);
 
 		while (cutaway[0] != '\0') {
 			char currentCutaway[20];
@@ -893,7 +894,6 @@ bool Command::handleBadCommand(bool walk) {
 		if (_selCmd.action.isNone()) {
 			_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
-debug(0, "_walk->moveJoe(%d, %d)", _selPosX, _selPosY);
 		_walk->moveJoe(0, _selPosX, _selPosY, false); // XXX inCutaway parameter
 		return true;
 	}

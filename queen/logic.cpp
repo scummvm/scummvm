@@ -1858,7 +1858,6 @@ void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 		cutaway = cutawayFile;
 	}
 	_display->fullscreen(true);
-	_cmd->clear(false);
 	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
 	_display->fullscreen(false);
 }
