@@ -127,8 +127,6 @@ private:
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;
 	
-	Array<Domain *>	_searchOrder;
-
 	String			_activeDomain;
 	String			_filename;
 };
