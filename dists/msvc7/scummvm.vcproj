@@ -215,6 +215,12 @@
 				RelativePath="..\..\common\str.h">
 			</File>
 			<File
+				RelativePath="..\..\common\stream.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\stream.h">
+			</File>
+			<File
 				RelativePath="..\..\common\system.cpp">
 			</File>
 			<File

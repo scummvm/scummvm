@@ -219,9 +219,6 @@
 			RelativePath="..\..\sword2\maketext.h">
 		</File>
 		<File
-			RelativePath="..\..\sword2\mem_view.cpp">
-		</File>
-		<File
 			RelativePath="..\..\sword2\memory.cpp">
 		</File>
 		<File
