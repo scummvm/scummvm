@@ -399,11 +399,6 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		if (!msg)
 			return;
 
-		if ((_version == 8) && (msg[0] == '/')) {
-			translateText(msg, _transText);
-			msg = _transText;
-		}
-
 		tmp = _charset->_center;
 		_charset->_center = 0;
 		drawString(4, msg);
