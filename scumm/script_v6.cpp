@@ -1930,10 +1930,6 @@ void ScummEngine_v6::o6_verbOps() {
 	case 139:		// SO_VERB_IMAGE_IN_ROOM
 		b = pop();
 		a = pop();
-		// HACK Prevent puttmoon from loading non existant objects
-		if ((_gameId == GID_PUTTPUTT) && (a > 900))
-			break;
-
 		if (slot && a != vs->imgindex) {
 			setVerbObject(b, a, slot);
 			vs->type = kImageVerbType;

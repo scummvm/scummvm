@@ -664,10 +664,11 @@ void ScummEngine::runInventoryScript(int i) {
 	if (_version <= 2) {
 		redrawV2Inventory();
 	} else {
-		int tmp[16];
-		tmp[0] = i;
+		int args[16];
+		memset(args, 0, sizeof(args));
+		args[0] = i;
 		if (VAR(VAR_INVENTORY_SCRIPT)) {
-			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, tmp);
+			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 		}
 	}
 }
