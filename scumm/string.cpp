@@ -365,7 +365,11 @@ void Scumm::drawDescString(byte *msg) {
 
 	_talkDelay = 1;
 
-	restoreCharsetBg();
+	if (_string[0].ypos + _charset->getFontHeight() > 0)
+		restoreBG(0, _string[0].ypos, _realWidth - 1, _string[0].ypos + _charset->getFontHeight());
+
+	_charset->_nextLeft = _string[0].xpos;
+	_charset->_nextTop = _string[0].ypos;
 
 	do {
 		c = *buf++;
