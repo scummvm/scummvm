@@ -69,23 +69,23 @@ class QueenCutaway {
 
 		//! Data for a cutaway object
 		struct CutawayObject {
-			int objectNumber;    // 0 = JOE, -1 = MESSAGE
-			int moveToX;
-			int moveToY;
-			int bank;             // 0 = PBOB, 13 = Joe Bank, else BANK NAMEstr()
-			int animList;
-			int execute;          // 1 Yes, 0 No
-			int limitBobX1;
-			int limitBobY1;
-			int limitBobX2;
-			int limitBobY2;
-			int specialMove;
-			int animType;        // 0 - Packet, 1 - Amal, 2 - Unpack
-			int fromObject;
-			int bobStartX;
-			int bobStartY;
-			int room;
-			int scale;
+			int16 objectNumber;    // 0 = JOE, -1 = MESSAGE
+			int16 moveToX;
+			int16 moveToY;
+			int16 bank;             // 0 = PBOB, 13 = Joe Bank, else BANK NAMEstr()
+			int16 animList;
+			int16 execute;          // 1 Yes, 0 No
+			int16 limitBobX1;
+			int16 limitBobY1;
+			int16 limitBobX2;
+			int16 limitBobY2;
+			int16 specialMove;
+			int16 animType;        // 0 - Packet, 1 - Amal, 2 - Unpack
+			int16 fromObject;
+			int16 bobStartX;
+			int16 bobStartY;
+			int16 room;
+			int16 scale;
 
 			// Variables derived from the variables above
 			int song;
@@ -114,8 +114,8 @@ class QueenCutaway {
 
 		struct ObjectDataBackup {
 			int index;
-			int16 value0;
-			int16 value7;
+			int16 name;
+			int16 image;
 		};
 
 		QueenLogic 		*_queenLogic;
@@ -230,6 +230,9 @@ class QueenCutaway {
 		//! Prepare for talk after cutaway
 		void talk(char *nextFilename);
 
+		//! Get CutawayAnim data from ptr and return new ptr
+		byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
+
 		//! Read a string from ptr and return new ptr
 		static byte *getString(byte *ptr, char *str, int maxLength);
 
@@ -238,9 +241,6 @@ class QueenCutaway {
 
 		//! Dump a CutawayObject with debug()
 		static void dumpCutawayObject(int index, CutawayObject &object);
-
-		//! Get CutawayAnim data from ptr and return new ptr
-		static byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
 
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);

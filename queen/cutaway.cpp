@@ -30,8 +30,6 @@
 	 
 	 DISP_ROOM
 	 FACE_JOE
-	 FIND_BOB
-	 FIND_FRAME
 	 FIND_GRAPHIC
 	 FIND_SCALE
 	 MOVE_JOE
@@ -321,22 +319,33 @@ byte *QueenCutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
 
 void QueenCutaway::limitBob(CutawayObject &object) {
 	if (object.limitBobX1) {
-		warning("QueenCutaway::limitBob() not implemented");
-		// XXX FIND_BOB(object.objectNumber);
-		// K=Param;
-		// bobs[K].x1 = object.limitBobX1;
-		// bobs[K].y1 = object.limitBobY1;
-		// bobs[K].x2 = object.limitBobX2;
-		// bobs[K].y2 = object.limitBobY2;
+
+		if (object.objectNumber < 0) {
+			warning("QueenCutaway::limitBob called with objectNumber = %i", object.objectNumber);
+			return;
+		}	
+		
+		BobSlot *bob = 
+			_queenGraphics->bob( _queenLogic->findBob(object.objectNumber) );
+
+		if (!bob) {
+			warning("Failed to find bob");
+			return;
+		}
+
+		bob->box.x1 = object.limitBobX1;
+		bob->box.y1 = object.limitBobY1;
+		bob->box.x2 = object.limitBobX2;
+		bob->box.y2 = object.limitBobY2;
 	}
 }
 
 void QueenCutaway::restorePersonData() {
 	for (int i = 0; i < _personDataCount; i++) {
 		int index           = _personData[i].index;
-		int16 *objectData   = _queenLogic->objectData(index);
-		objectData[0]       = _personData[i].value0;
-		objectData[7]       = _personData[i].value7;
+		ObjectData *objectData  = _queenLogic->objectData(index);
+		objectData->name        = _personData[i].name;
+		objectData->image       = _personData[i].image;
 	}
 }
 
@@ -351,14 +360,14 @@ void QueenCutaway::changeRooms(CutawayObject &object) {
 		int lastObjectInRoom  = _queenLogic->roomData(object.room) + 0; // XXX _queenLogic->objMax(object.room);
 
 		for (int i = firstObjectInRoom; i <= lastObjectInRoom; i++) {
-			int16 *objectData  = _queenLogic->objectData(i);
+			ObjectData *objectData  = _queenLogic->objectData(i);
 			
-			if (objectData[7] == -3 || objectData[7] == -4) {
+			if (objectData->image == -3 || objectData->image == -4) {
 
 				//  The object is a person! So record the details...
 				_personData[_personDataCount].index = i;
-				_personData[_personDataCount].value0 = objectData[0];
-				_personData[_personDataCount].value7 = objectData[7];
+				_personData[_personDataCount].name  = objectData->name;
+				_personData[_personDataCount].image = objectData->image;
 				_personDataCount++;
 
 				// Now, check to see if(we need to keep the person on
@@ -372,11 +381,11 @@ void QueenCutaway::changeRooms(CutawayObject &object) {
 
 				if (on) {
 					// It is needed, so ensure it's ON
-					objectData[0] = abs(objectData[0]);
+					objectData->name = abs(objectData->name);
 				}
 				else {
 					// Not needed, so switch off!
-					objectData[0] = -abs(objectData[0]);
+					objectData->name = -abs(objectData->name);
 				}
 
 			}
@@ -432,9 +441,8 @@ QueenCutaway::ObjectType QueenCutaway::getObjectType(CutawayObject &object) {
 	if (object.objectNumber > 0) {
 		if (!object.animList) {
 			// No anim frames, so treat as a PERSON, ie. allow to speak/walk
-			int16* objectData = _queenLogic->objectData(object.objectNumber);
-
-			if (objectData[7] == -3 || objectData[7] == -4)
+			ObjectData *objectData = _queenLogic->objectData(object.objectNumber);
+			if (objectData->image == -3 || objectData->image == -4)
 				objectType = OBJECT_TYPE_PERSON;
 		}
 	}
@@ -454,8 +462,8 @@ QueenCutaway::ObjectType QueenCutaway::getObjectType(CutawayObject &object) {
 		}
 		else {
 			// Same object, so just turn it on!
-			int16* objectData = _queenLogic->objectData(object.objectNumber);
-			objectData[0] = abs(objectData[0]);
+			ObjectData *objectData = _queenLogic->objectData(object.objectNumber);
+			objectData->name = abs(objectData->name);
 		}
 		// XXX REDISP_OBJECT(OBJECT);
 
@@ -505,18 +513,15 @@ byte *QueenCutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	}
 	else {
 		warning("Stuff not yet implemented in QueenCutaway::handleAnimation()");
-		// XXX
-		// FIND_BOB(header);
-		// anim.object = Param;
+		
+		anim.object = _queenLogic->findBob(header);
 
-#if 0
 		// If fullscreen cutaway then clip to 199 down
 
 		// 21/9/94, Make sure that bobs are clipped on 150 screens
-		if(COMPANEL==2 && OBJ_CUT[6]<=0 && BDyres==200) bobs[Param].y2=199;
-		FIND_FRAME(J);
-		anim.originalFrame =Param;
-#endif
+		// XXX if(COMPANEL==2 && OBJ_CUT[6]<=0 && BDyres==200) bobs[Param].y2=199;
+
+		anim.originalFrame = _queenLogic->findFrame(header);
 	}
 
 	anim.unpackFrame = (int16)READ_BE_UINT16(ptr);
@@ -820,15 +825,15 @@ void QueenCutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 		 If COPY_FROM Object images are greater than COPY_TO Object
 		 images then swap the objects around. */
 
-	int16* dummyObject = _queenLogic->objectData(dummyObjectIndex);
-	int16* realObject  = _queenLogic->objectData(realObjectIndex);
+	ObjectData *dummyObject = _queenLogic->objectData(dummyObjectIndex);
+	ObjectData *realObject  = _queenLogic->objectData(realObjectIndex);
 	
-	int fromState = (dummyObject[0] < 0) ? -1 : 0;
+	int fromState = (dummyObject->name < 0) ? -1 : 0;
 
 	int frameCountReal = 1;
 	int frameCountDummy = 1;
 
-	int graphic = realObject[7];
+	int graphic = realObject->image;
 	if (graphic > 0) {
 		if (graphic > 5000)
 			graphic -= 5000;
@@ -836,7 +841,7 @@ void QueenCutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 		// XXX FIND_GRAPHIC(graphic)
 		// XXX if(EFRAME>0) frameCountReal=(EFRAME-SFRAME)+1;
 
-		graphic = dummyObject[7];
+		graphic = dummyObject->image;
 		if (graphic > 0) {
 			if (graphic > 5000)
 				graphic -= 5000;
@@ -847,18 +852,16 @@ void QueenCutaway::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 		}
 	}
 
-	for (int i = 0; i <= 7; i++) {
-		int16 temp = realObject[i];
-		realObject[i] = dummyObject[i];
-		
-		if (frameCountDummy > frameCountReal)
-			dummyObject[i] = temp;
-	}
+	ObjectData temp = *realObject;
+	*realObject = *dummyObject;
 
-	realObject[0] = abs(realObject[0]);
+	if (frameCountDummy > frameCountReal)
+		*dummyObject = temp;
+
+	realObject->name = abs(realObject->name);
 
 	if  (fromState == -1)
-		dummyObject[0] = -abs(dummyObject[0]);
+		dummyObject->name = -abs(dummyObject->name);
 
 	//  Make sure that WALK_OFF_DATA is copied too!
 
@@ -921,16 +924,15 @@ void QueenCutaway::goToFinalRoom() {
 			int16 room    = (int16)READ_BE_UINT16(ptr); ptr += 2;
 			/*int16 frame   = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
 
-			// XXX FIND_BOB(object)
-			// XXX int bob = Param;
+			// XXX int bob = _queenLogic->findBob(objectIndex);
 
 			if (from > 0) {
 				// XXX
 			}
 
-			int16* objectData = _queenLogic->objectData(objectIndex);
+			ObjectData *objectData = _queenLogic->objectData(objectIndex);
 
-			if (objectData[5] == room) {
+			if (objectData->room == room) {
 				// XXX
 			}
 		} // for()
@@ -984,16 +986,16 @@ void QueenCutaway::updateGameState() {
 			// Show or hide an object
 
 			if (objectIndex > 0) {                    // Show the object
-				int16* objectData  = _queenLogic->objectData(objectIndex);
-				objectData[0]      = abs(objectData[0]);
+				ObjectData *objectData  = _queenLogic->objectData(objectIndex);
+				objectData->name        = abs(objectData->name);
 				if (fromObject > 0)
 					objectCopy(fromObject, objectIndex);
 				// XXX REDISP_OBJECT(objectIndex);
 			}
 			else if (objectIndex < 0) {               // Hide the object
-				objectIndex        = -objectIndex;
-				int16* objectData  = _queenLogic->objectData(objectIndex);
-				objectData[0]      = -abs(objectData[0]);
+				objectIndex             = -objectIndex;
+				ObjectData *objectData  = _queenLogic->objectData(objectIndex);
+				objectData->name        = -abs(objectData->name);
 				// XXX REDISP_OBJECT(objectIndex);
 			}
 

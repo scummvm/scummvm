@@ -55,19 +55,13 @@ public:
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
 	void oldRoom(uint16 room);
-#ifdef USE_STRUCTS_JAS
 	ObjectData* objectData(int index);
-#else 
-	int16 *objectData(int index);
-#endif
 	uint16 roomData(int room);
 	uint16 objMax(int room);
 	GraphicData* findGraphic(int index);
 
-#ifdef USE_STRUCTS_JAS
 	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
 	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
-#endif
 
 	int16 *area(int index, int subIndex);
 	uint16 walkOffCount();
@@ -96,11 +90,7 @@ protected:
 	uint16 (*_objectBox)[4];
 	uint16 (*_itemData)[5];
 	GraphicData *_graphicData;
-#ifdef USE_STRUCTS_JAS
 	ObjectData *_objectData;
-#else
-	int16 (*_objectData)[8];
-#endif
 	uint16 (*_actorData)[12];
 	int16 (*_area)[11][8];
 	uint16 (*_walkOffData)[3];

@@ -50,7 +50,6 @@ void QueenLogic::initialise() {
 	
 
 	//Object data
-#ifdef USE_STRUCTS_JAS
 	_objectData = new ObjectData[_numObjects + 1];
 	//clear first object
 	_objectData[0].name = 0;
@@ -79,19 +78,6 @@ void QueenLogic::initialise() {
 		_objectData[i].image = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
-#else
-	_objectData = new int16[_numObjects + 1][8];
-		
-	//clear first object
-	for (uint16 j = 0; j < 8; j++)
-		_objectData[0][j] = 0;
-	
-	for (i = 1; i < (_numObjects + 1); i++)
-		for (uint16 j = 0; j < 8; j++) {
-			_objectData[i][j] = (int16)READ_BE_UINT16(ptr);
-			ptr += 2;
-		}
-#endif
 	
 	//Room data
 	_roomData = new uint16[_numRooms + 2];
@@ -194,15 +180,9 @@ void QueenLogic::oldRoom(uint16 room) {
 	_oldRoom = room;
 }
 
-#ifdef USE_STRUCTS_JAS
 ObjectData* QueenLogic::objectData(int index) {
   return &_objectData[index];
 }
-#else
-int16* QueenLogic::objectData(int index) {
-	return _objectData[index];
-}
-#endif
 
 uint16 QueenLogic::roomData(int room) {
 	return _roomData[room];
@@ -228,7 +208,6 @@ GraphicData* QueenLogic::findGraphic(int index) {
 	return &_graphicData[index];
 }
 
-#ifdef USE_STRUCTS_JAS
 uint16 QueenLogic::findBob(uint16 obj) {
 
 	uint16 i;
@@ -391,4 +370,3 @@ uint16 QueenLogic::findFrame(uint16 obj) {
 	}
 	return framenum;
 }
-#endif
