@@ -221,7 +221,7 @@ struct _layerHeader {
 	uint16 y;
 	uint16 width;
 	uint16 height;
-	uint32  maskSize;
+	uint32 maskSize;
 	uint32 offset;		// where to find mask data (from start of
 				// standard file header)
 } GCC_PACK;
