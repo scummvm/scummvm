@@ -56,6 +56,20 @@ public:
 	}
 };
 
+class CEConflictDialog : public Dialog {
+public:
+	CEConflictDialog::CEConflictDialog(const Common::String &name)
+	: Dialog(10, 60, 300, 77) {
+	
+		addButton((_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+
+		Common::String conflict("Too many matches for directory ");
+		conflict += name;
+		new StaticTextWidget(this, 0, 10, _w, kLineHeight, conflict, kTextAlignCenter);
+		new StaticTextWidget(this, 0, 20, _w, kLineHeight, "Please fix this :)", kTextAlignCenter);
+	}
+};
+
 
 CELauncherDialog::CELauncherDialog(GameDetector &detector) : GUI::LauncherDialog(detector) {
 }
@@ -87,8 +101,12 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 				if (scumm_stricmp(candidateName, candidates[i].name) == 0) {
 					idx = i;
 					break;
+				}
+			}	
+			if (idx == -1) {
+				CEConflictDialog conflict(candidateName);
+				conflict.runModal();
 			}
-		}		
 	}
 
 	if (idx < 0)
