@@ -169,7 +169,7 @@ void ImuseChannel::decode() {
 			_tbufferSize = remaining_size;
 			_sbufferSize -= remaining_size;
 		} else {
-			warning("impossible ! : %p, %d, %d, %p(%d), %p(%d, %d)",
+			debug(2, "impossible ! : %p, %d, %d, %p(%d), %p(%d, %d)",
 				this, _dataSize, _inData, _tbuffer, _tbufferSize, _sbuffer, _sbufferSize, _srbufferSize);
 			byte * old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
@@ -233,7 +233,7 @@ bool ImuseChannel::handleSubTags(int32 & offset) {
 						else reqsize = 3;
 					}
 					if((size % reqsize) != 0) {
-						warning("Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);
+						debug(2, "Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);
 						size += 3 - (size % reqsize);
 					}
 				}
