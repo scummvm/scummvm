@@ -403,6 +403,10 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 }
 
 void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
+#if 0
+	// FIXME - this whole function doesn't compile on OS X and contains obvious bugs.
+	// E.g. offs is read but never set, same for width.
+
 	int i;
 	uint32 offs;
 	byte *p2;
@@ -417,13 +421,17 @@ void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 		pal_load(pal, vga1, 5, 3);
 	}
 
-	
+#if 0	
 	{
 		char buf[255], buf2[255];
 		sprintf(buf, "bmp_%d", res);
-		mkdir(buf2);
+		mkdir(buf2);	// FIXME - WTF is this ???
+			// First off, mkdir() is not very portable. 
+			// Secondly, the Unix version of mkdir() has two arguments.
+			// Third, the buf2 is *never* set to anything.
+			// Fourth, why not use a sizeof 256 instead of 255?
 	}
-
+#endif
 
 	int width, height, flags;
 	
@@ -453,6 +461,7 @@ void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 			dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
 		}
 	}
+#endif
 }
 
 void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id)
