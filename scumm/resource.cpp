@@ -54,7 +54,7 @@ void Scumm::openRoom(int room)
 	}
 
 	/* Either xxx.lfl or monkey.xxx file name */
-	while (!_resFilePrefix) {
+	while (1) {
 		if (_features & GF_SMALL_NAMES)
 			roomlimit = 98;
 		else
@@ -64,7 +64,7 @@ void Scumm::openRoom(int room)
 		else
 			room_offs = room ? _roomFileOffsets[room] : 0;
 
-		if (room_offs == (int)0xFFFFFFFF)
+		if (room_offs == -1)
 			break;
 
 		if (room_offs != 0 && room != 0) {
@@ -96,10 +96,7 @@ void Scumm::openRoom(int room)
 			}
 		} else {
 			sprintf(buf, "%.2d.lfl", room);
-			if (_features & GF_OLD_BUNDLE)
-				_encbyte = 0xFF;
-			else
-				_encbyte = 0;
+			_encbyte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
 		if (openResourceFile(buf)) {

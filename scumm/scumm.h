@@ -533,7 +533,6 @@ public:
 	/* Should be in Resource class */
 	byte _encbyte;
 	File _fileHandle;
-	char *_resFilePrefix, *_resFilePath;
 	uint32 _fileOffset;
 	char *_exe_name;	// This is the name we use for opening resource files
 	char *_game_name;	// This is the game the user calls it, so use for saving
@@ -578,7 +577,6 @@ public:
 	void nukeCharset(int i);
 
 	int _lastLoadedRoom, _roomResource;
-	byte _resFilePathId, _fileReadFailed;
 	byte *findResourceData(uint32 tag, byte *ptr);
 	int getResourceDataSize(byte *ptr);
 	
@@ -952,6 +950,7 @@ public:
 #endif
 
 	/* Scumm Vars */
+	byte VAR_KEYPRESS;
 	byte VAR_EGO;
 	byte VAR_CAMERA_POS_X;
 	byte VAR_HAVE_MSG;

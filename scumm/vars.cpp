@@ -26,6 +26,7 @@
 
 void Scumm::setupScummVars()
 {
+	VAR_KEYPRESS = 0;
 	VAR_EGO = 1;
 	VAR_CAMERA_POS_X = 2;
 	VAR_HAVE_MSG = 3;

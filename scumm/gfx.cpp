@@ -410,7 +410,10 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	if (height > _vm->_realHeight)
 		height = _vm->_realHeight;
 
-	assert(_vm->_screenTop >= 0);
+	// Normally, _vm->_screenTop should always be >= 0, but for some old save games
+	// it is not, hence we check & correct it here.
+	if (_vm->_screenTop < 0)
+		_vm->_screenTop = 0;
 
 	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * _vm->_realWidth;
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x, vs->topline + t, w, height);

@@ -120,10 +120,8 @@ public:
 		{ close(); }
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		{
-			if (ascii == ' ')  // Close pause dialog if space key is pressed
-				close();
-			else
-				ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+			setResult(ascii);
+			close();
 		}
 protected:
 	void setInfoText (const String& message);
@@ -132,6 +130,13 @@ protected:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(NewGui *gui, Scumm *scumm);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
+		{
+			if (ascii == ' ')  // Close pause dialog if space key is pressed
+				close();
+			else
+				ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		}
 };
 
 #ifdef _WIN32_WCE
