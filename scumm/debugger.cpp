@@ -24,6 +24,7 @@
 #include "actor.h"
 #include "boxes.h"
 #include "imuse.h"
+#include "player_v2.h"
 #include "debugger.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -364,20 +365,24 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
-	if (!_s->_imuse) {
+	if (!_s->_imuse && !_s->_playerV2) {
 		Debug_Printf ("No iMuse engine is active.\n");
 		return true;
 	}
 
 	if (argc > 1) {
 		if (!strcmp (argv[1], "panic")) {
-			_s->_imuse->stop_all_sounds();
+			if (_s->_imuse)
+				_s->_imuse->stop_all_sounds();
+			if (_s->_playerV2)
+				_s->_playerV2->stopAllSounds();
 			Debug_Printf ("AAAIIIEEEEEE!\n");
 			Debug_Printf ("Shutting down all music tracks\n");
 			return true;
 		} else if (!strcmp (argv[1], "multimidi")) {
 			if (argc > 2 && (!strcmp (argv[2], "on") || !strcmp (argv[2], "off"))) {
-				_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[2], "on"));
+				if (_s->_imuse)
+					_s->_imuse->property (IMuse::PROP_MULTI_MIDI, !strcmp (argv[2], "on"));
 				Debug_Printf ("MultiMidi mode switched %s.\n", argv[2]);
 			} else {
 				Debug_Printf ("Specify \"on\" or \"off\" to switch.\n");
@@ -391,7 +396,14 @@ bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
 					sound = _s->_rnd.getRandomNumber (_s->getNumSounds());
 				}
 				_s->ensureResourceLoaded (rtSound, sound);
-				_s->_imuse->startSound (sound);
+				if (_s->_imuse)
+					_s->_imuse->startSound (sound);
+				if (_s->_playerV2) {
+					byte *ptr = _s->getResourceAddress(rtSound, sound);
+					if (ptr)
+						_s->_playerV2->startSound (sound, ptr);
+				}
+
 				Debug_Printf ("Attempted to start music %d.\n", sound);
 			} else {
 				Debug_Printf ("Specify a music resource # from 1-255.\n");
@@ -400,10 +412,16 @@ bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
 		} else if (!strcmp (argv[1], "stop")) {
 			if (argc > 2 && (!strcmp (argv[2], "all") || atoi (argv[2]) != 0)) {
 				if (!strcmp (argv[2], "all")) {
-					_s->_imuse->stop_all_sounds();
+					if (_s->_imuse)
+						_s->_imuse->stop_all_sounds();
+					if (_s->_playerV2)
+						_s->_playerV2->stopAllSounds();
 					Debug_Printf ("Shutting down all music tracks.\n");
 				} else {
-					_s->_imuse->stopSound (atoi (argv[2]));
+					if (_s->_imuse)
+						_s->_imuse->stopSound (atoi (argv[2]));
+					if (_s->_playerV2)
+						_s->_playerV2->stopSound (atoi (argv[2]));
 					Debug_Printf ("Attempted to stop music %d.\n", atoi (argv[2]));
 				}
 			} else {
