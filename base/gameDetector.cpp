@@ -89,14 +89,6 @@ static const char USAGE_STRING[] =
 	"  -y             - Set text speed (default: 60)\n"
 #endif
 	"\n"
-/* FIXME / TODO: config rewrite
-	"  -l<file>       - Load config file instead of default\n"
-#if defined(UNIX)
-	"  -w[file]       - Write to config file [~/.scummvmrc]\n"
-#else
-	"  -w[file]       - Write to config file [scummvm.ini]\n"
-#endif
-*/
 	"  -v             - Show version info and exit\n"
 	"  -h             - Display this text and exit\n"
 	"  -z             - Display list of supported games\n"
@@ -359,18 +351,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				HANDLE_OPT_OPTION();
 				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 				break;
-/* FIXME / TODO: config rewrite
-			case 'l':
-				HANDLE_OPTION();
-				{
-					Config *newconfig = new Config(option, "scummvm");
-					g_config->merge_config(*newconfig);
-					delete newconfig;
-					updateconfig();
-					break;
-				}
-				break;
-*/
 			case 'm':
 				HANDLE_OPTION();
 				ConfMan.set("music_volume", (int)strtol(option, 0, 10));
@@ -416,15 +396,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				printf("%s\n", gScummVMFullVersion);
 				exit(0);
 				break;
-/* FIXME / TODO: config rewrite
-			case 'w':
-				_saveconfig = true;
-				g_config->set_writing(true);
-				HANDLE_OPT_OPTION();
-				if (option != NULL)
-					g_config->set_filename(option);
-				break;
-*/
 			case 'x':
 				HANDLE_OPT_OPTION();
 				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
@@ -497,11 +468,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 		}
 	}
 	
-/* FIXME / TODO: config rewrite
-	if (!_gameFileName.isEmpty())
-		ConfMan.flushToDisk();
-*/
-
 	return;
 
 ShowHelpAndExit:

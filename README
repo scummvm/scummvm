@@ -335,8 +335,6 @@ arguments - see the next section.
         -t<num>         - Set music tempo. 50-200. Default is '100' (percent)
         -n              - Disable subtitles. Use with games that have voice.
         -y              - Set talk speed ('yak option'). Default is '60'
-        -l<file>        - Load alternate configuration file
-        -w[file]        - Write configuration file
         -v              - Show version information and exit
         -z              - Display list of games
         -b<num>         - Pass number to the boot script (boot param)
