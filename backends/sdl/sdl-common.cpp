@@ -666,7 +666,9 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			return true;
 			
 		case SDL_JOYAXISMOTION:
-			 if ( ev.jaxis.axis == 0) { 
+			event->event_code = EVENT_MOUSEMOVE;
+			
+			if ( ev.jaxis.axis == 0) { 
 				if (ev.jaxis.value < -3200) { 		// left
 					km.x_vel = -1;
 					km.x_down_count = 1;
