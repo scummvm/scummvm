@@ -231,11 +231,6 @@ void SagaEngine::go() {
 	/* System initialization
 	 * \*------------------------------------------------------------- */
 
-	if (SYSIO_Init() != R_SUCCESS) {
-
-		return;
-	}
-
 	/* Must initialize system timer module first */
 	if (SYSTIMER_InitMSCounter() != R_SUCCESS) {
 
@@ -328,8 +323,6 @@ void R_Shutdown(int param) {
 	/* Shutdown system modules */
 	SYSMUSIC_Shutdown();
 	SYSSOUND_Shutdown();
-
-	SYSIO_Shutdown();
 
 	/*  exit(param); */
 }

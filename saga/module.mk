@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	saga/interface.o \
 	saga/isomap.o \
 	saga/ite_introproc.o \
-	saga/math.o \
 	saga/objectmap.o \
 	saga/palanim.o \
 	saga/render.o \
@@ -36,7 +35,6 @@ MODULE_OBJS = \
 	saga/sthread.o \
 	saga/text.o \
 	saga/transitions.o \
-	saga/xmidi.o \
 	saga/ys_binread.o \
 	saga/ys_binwrite.o \
 	saga/ys_dl_list.o \
@@ -44,8 +42,7 @@ MODULE_OBJS = \
 	saga/sysinput.o \
 	saga/systimer.o \
 	saga/sysmusic.o \
-	saga/syssound.o \
-	saga/sysio.o
+	saga/syssound.o
 
 MODULE_DIRS += \
 	saga

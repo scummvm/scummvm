@@ -43,7 +43,6 @@
 #include "cvar_mod.h"
 #include "console_mod.h"
 #include "gfx_mod.h"
-#include "math_mod.h"
 #include "font_mod.h"
 
 /*
@@ -463,6 +462,39 @@ int OBJECTMAP_Draw(R_SURFACE * ds, R_POINT * imouse_pt, int color, int color2)
 	}
 
 	return R_SUCCESS;
+}
+
+static bool
+MATH_HitTestPoly(R_POINT * points, unsigned int npoints, R_POINT test_point)
+{
+	int yflag0;
+	int yflag1;
+	bool inside_flag = false;
+	unsigned int pt;
+
+	R_POINT *vtx0 = &points[npoints - 1];
+	R_POINT *vtx1 = &points[0];
+
+	yflag0 = (vtx0->y >= test_point.y);
+
+	for (pt = 0; pt < npoints; pt++, vtx1++) {
+
+		yflag1 = (vtx1->y >= test_point.y);
+
+		if (yflag0 != yflag1) {
+
+			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - test_point.x) * (vtx0->y -
+				    vtx1->y)) == yflag1) {
+
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+	}
+
+	return inside_flag;
 }
 
 int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num)
