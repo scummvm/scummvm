@@ -321,14 +321,12 @@ SAGA
 - bugs -
  * Make actor animation Event-driven. See FIXME in actor.cpp
  * Actor pops up with wrong palette at transition to faery scene. Again :)
- * Make sprite RLE decompressor work on Mac resources
- * Animation end is not detected properly with Mac. That leads to hang in intro
- * Sound/voice length calculation wrong
-
 
 - plans -
  * Implement unimplemented opcodes
  * Remove use of floating point, especially doubles.
+ * _scene->getMode() == SCENE_MODE_ISO -> _scene->getFlags() & kSceneFlagISO
+   and remove Scene::getMode() as well as Scene::_sceneMode
  * Rewrite path finder (h00ligan)
  * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
    e.g. a rectangle covering the entire ITE screen should have right=320 and
