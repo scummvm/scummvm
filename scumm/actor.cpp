@@ -302,7 +302,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	int dir;
 	bool shouldInterpolate;
 
-	if (ignoreTurns)
+	if ((_vm->_version == 6) && ignoreTurns)
 		return facing;
 
 	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(costume) : false;
@@ -723,7 +723,7 @@ void Actor::faceToObject(int obj) {
 }
 
 void Actor::turnToDirection(int newdir) {
-	if (newdir == -1)
+	if (newdir == -1 || ignoreTurns)
 		return;
 
 	moving &= ~MF_TURN;
