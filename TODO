@@ -127,6 +127,7 @@ Broken Sword 2
 * Support cutscenes in some kind of open video format.
 * Implement the credits. At the moment we only play the music. The original
   seems to use a separate program. Did we ever get the source code for that?
+* Compressed speech / music clusters. (Some work done, but not in CVS yet.)
 
 SIMON
 =====
