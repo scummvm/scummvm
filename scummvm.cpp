@@ -1280,7 +1280,7 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	/* Create a primary virtual screen */
-	_videoBuffer = (byte*)malloc(328*200);
+	_videoBuffer = (byte*)calloc(328*200, 1);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 0, 320, 200, false, false);
