@@ -197,12 +197,21 @@ const GuiWidget about_dialog[] = {
 };
 
 const GuiWidget options_dialog[] = {
+	// Only display the "Keys" options for WinCE
+#ifdef _WIN32_WCE
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 60, 0, 0},
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 'S'},	// Sound
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6, 'K'},	// Keys
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7, 'A'},	// About
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 'M'},	// Misc
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+#else
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 40, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 'S'},	// Sound
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 3, 7, 'A'},	// About
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 4, 18, 'M'},	// Misc
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+#endif
 };
 
 const GuiWidget misc_dialog[] = {
