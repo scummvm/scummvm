@@ -104,7 +104,7 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"flipping", "Page Flipping", GFX_FLIPPING},
 	{"dbuffer", "Double Buffer", GFX_DOUBLEBUFFER},
 #endif
-	{0, 0}
+	{0, 0, 0}
 };
 
 static const struct Language languages[] = {
@@ -579,18 +579,18 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 bool GameDetector::detectGame() {
 	const VersionSettings *gnl = version_settings;
-	char *realGame, *basename;
+	const char *realGame, *basename;
 	_gameId = 0;
 	_gameText.clear();
 
-	if (!(realGame = (char *)g_config->get("gameid")))
-		realGame = (char *)_gameFileName.c_str();
+	if (!(realGame = g_config->get("gameid")))
+		realGame = _gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
 
 	do {
 		if (!scumm_stricmp(realGame, gnl->filename)) {
 			_gameId = gnl->id;
-			if ((basename = (char *)g_config->get("basename")))
+			if ((basename = g_config->get("basename")))
 				_gameRealName = basename;
 			else
 				_gameRealName = gnl->filename;

@@ -295,7 +295,7 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 }
 
 #define ROL(a,n) a = (a << (n)) | (a >> (32 - (n)))
-#define DOLINE(x) a ^= ((uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
+#define DOLINE(x) a ^= ((const uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((const uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
 
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	uint32 *sums = _dirty_checksums;
@@ -471,15 +471,15 @@ void OSystem_SDL_Common::warp_mouse(int x, int y) {
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
-	assert(0 <= w && w <= MAX_MOUSE_W);
-	assert(0 <= h && h <= MAX_MOUSE_H);
+	assert(w <= MAX_MOUSE_W);
+	assert(h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseData = (byte *)buf;
+	_mouseData = buf;
 
 	undraw_mouse();
 }
@@ -827,7 +827,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	return false;
 }
 
-bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte format) {
+bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte /* format */) {
 	SDL_AudioSpec desired;
 
 	memset(&desired, 0, sizeof(desired));
@@ -897,7 +897,7 @@ void OSystem_SDL_Common::draw_mouse() {
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 	byte color;
-	byte *src = _mouseData;		// Image representing the mouse
+	const byte *src = _mouseData;		// Image representing the mouse
 
 	// clip the mouse rect, and addjust the src pointer accordingly
 	if (x < 0) {

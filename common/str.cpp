@@ -59,7 +59,7 @@ String::String(const ConstString &str) {
 	}
 }
 
-String::String(const String &str) {
+String::String(const String &str) : ConstString() {
 	++(*str._refCount);
 
 	_refCount = str._refCount;

@@ -62,7 +62,7 @@ extern "C" int main(int argc, char *argv[]);
 
 #ifndef SCUMM_NEED_ALIGNMENT
 static void handle_errors(int sig_num) {
-	error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT ");
+	error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT (signal %d)", sig_num);
 }
 #endif
 

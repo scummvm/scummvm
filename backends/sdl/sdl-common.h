@@ -190,7 +190,7 @@ protected:
 
 	bool _mouseVisible;
 	bool _mouseDrawn;
-	byte *_mouseData;
+	const byte *_mouseData;
 	byte *_mouseBackup;
 	MousePos _mouseCurState;
 	MousePos _mouseOldState;
