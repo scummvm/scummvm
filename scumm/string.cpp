@@ -631,7 +631,7 @@ void Scumm::drawString(int a)
 		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
 	}
 
-	if (!_features & GF_AFTER_V7)
+	if (!(_features & GF_AFTER_V7))
 		charset._ignoreCharsetMask = 1;
 
 

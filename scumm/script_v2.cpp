@@ -2822,10 +2822,10 @@ void Scumm::o6_miscOps()
 			} else { 
 				setStringVars(0);
 
-                		_string[0].charset = args[1];
-                		_string[0].color = args[2];
-                		_string[0].xpos = args[3];
-                		_string[0].ypos = args[4];
+				_string[0].charset = (byte)args[1];
+				_string[0].color = (byte)args[2];
+				_string[0].xpos = args[3];
+				_string[0].ypos = args[4];
 
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				drawDescString();
