@@ -28,10 +28,104 @@
 
 namespace Sword2 {
 
+AnimationState::AnimationState(Sword2Engine *vm)
+	: _vm(vm) {
+}
+
+AnimationState::~AnimationState() {
+#ifdef USE_MPEG2
+	_vm->_mixer->stopHandle(bgSound);
+	mpeg2_close(decoder);
+	delete mpgfile;
+	delete sndfile;
+#endif
+}
+
+bool AnimationState::init(const char *name) {
+#ifdef USE_MPEG2
+
+	char basename[512], tempFile[512];
+  	int i, p;
+
+	strcpy(basename, name);
+	basename[strlen(basename)-4] = 0;	// FIXME: hack to remove extension
+
+	// Load lookup palettes
+	// TODO: Binary format so we can use File class
+	sprintf(tempFile, "%s/%s.pal", _vm->getGameDataPath(), basename);
+	FILE *f = fopen(tempFile, "r");
+
+	if (!f) {
+		warning("Cutscene: %s.pal palette missing", basename);
+		return false;
+	}
+
+	p = 0;
+	while (!feof(f)) {
+		fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt);
+  		for (i = 0; i < palettes[p].cnt; i++) {
+  			int r, g, b;
+  			fscanf(f, "%i", &r);
+  			fscanf(f, "%i", &g);
+  			fscanf(f, "%i", &b);
+			palettes[p].pal[4 * i] = r;
+			palettes[p].pal[4 * i + 1] = g;
+			palettes[p].pal[4 * i + 2] = b;
+		}
+		p++;
+	}
+	fclose(f);
+
+	palnum = 0;
+	_vm->_graphics->setPalette(0, 256, palettes[palnum].pal, RDPAL_INSTANT);
+	lut = lut2 = lookup[0];
+	curpal = -1;
+	cr = 0;
+	buildLookup(palnum, 256);
+	lut2 = lookup[1];
+
+	// Open MPEG2 stream
+	mpgfile = new File();
+	sprintf(tempFile, "%s.mp2", basename);
+	if (!mpgfile->open(tempFile)) {
+		warning("Cutscene: Could not open %s", tempFile);
+		return false;
+	}
+
+	// Load and configure decoder
+	decoder = mpeg2_init();
+	if (decoder == NULL) {
+		warning("Cutscene: Could not allocate an MPEG2 decoder");
+		return false;
+	}
+
+	info = mpeg2_info(decoder);
+	framenum = 0;
+
+	// Load in palette data
+	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
+
+	/* Play audio - TODO: Sync with video?*/
+
+#ifdef USE_VORBIS
+	// Another TODO: There is no reason that this only allows OGG, and not
+	// MP3, or any other format the mixer might support one day... is
+	// there?
+	sndfile = new File;
+	sprintf(tempFile, "%s.ogg", basename);
+	if (sndfile->open(tempFile))
+		_vm->_mixer->playVorbis(&bgSound, sndfile, 100000000);	// FIXME: this size value is bogus
+#endif
+
+	return true;
+#else /* USE_MPEG2 */
+	return false;
+#endif
+}
+
 /**
  * Build 'Best-Match' RGB lookup table
  */
-
 void AnimationState::buildLookup(int p, int lines) {
 	int y, cb;
 	int r, g, b, ii;
@@ -76,6 +170,53 @@ void AnimationState::buildLookup(int p, int lines) {
 	}
 }
 
+void AnimationState::checkPaletteSwitch() {
+	// if we have reached the last image with this palette, switch to new one
+	if (framenum == palettes[palnum].end) {
+		unsigned char *l = lut2;
+		palnum++;
+		_vm->_graphics->setPalette(0, 256, palettes[palnum].pal, RDPAL_INSTANT);
+		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
+		lut2 = lut;
+		lut = l;
+	}
+}
+
+bool AnimationState::decodeFrame() {
+#ifdef USE_MPEG2
+	mpeg2_state_t state;
+	const mpeg2_sequence_t *sequence_i;
+	size_t size = (size_t) -1;
+
+	do {
+		state = mpeg2_parse(decoder);
+		sequence_i = info->sequence;
+
+		switch (state) {
+		case STATE_BUFFER:
+			size = mpgfile->read(buffer, BUFFER_SIZE);
+			mpeg2_buffer(decoder, buffer, buffer + size);
+			break;
+
+		case STATE_SLICE:
+		case STATE_END:
+			if (info->display_fbuf) {
+				checkPaletteSwitch();
+				_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+				framenum++;
+				buildLookup(palnum + 1, lutcalcnum);
+				return true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} while (size);
+#endif
+	return false;
+}
+
 void MoviePlayer::openTextObject(MovieTextObject *obj) {
 	if (obj->textSprite)
 		_vm->_graphics->createSurface(obj->textSprite, &_textSurface);
@@ -110,8 +251,10 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	uint8 oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 
-	AnimationState * anim = initAnimation(filename);
-	if (!anim) {
+	AnimationState *anim = new AnimationState(_vm);
+	
+	if (!anim->init(filename)) {
+		delete anim;
 		// Missing Files? Use the old 'Narration Only' hack
 		playDummy(filename, text, musicOut);
 		return RD_OK;
@@ -123,7 +266,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 #endif
 
-	while (decodeFrame(anim)) {
+	while (anim->decodeFrame()) {
 		_vm->_graphics->setNeedFullRedraw();
 
 		if (text && text[textCounter]) {                      
@@ -197,7 +340,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
-	doneAnimation(anim);
+	delete anim;
 
 	// Lead-in and lead-out music are, as far as I can tell, only used for
 	// the animated cut-scenes, so this seems like a good place to close
@@ -358,158 +501,5 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 
 	return RD_OK;
 }
-
-void MoviePlayer::checkPaletteSwitch(AnimationState * st) {
-	// if we have reached the last image with this palette, switch to new one
-	if (st->framenum == st->palettes[st->palnum].end) {
-		unsigned char *l = st->lut2;
-		st->palnum++;
-		_vm->_graphics->setPalette(0, 256, st->palettes[st->palnum].pal, RDPAL_INSTANT);
-		st->lutcalcnum = (BITDEPTH + st->palettes[st->palnum].end - (st->framenum + 1) + 2) / (st->palettes[st->palnum].end - (st->framenum + 1) + 2);
-		st->lut2 = st->lut;
-		st->lut = l;
-	}
-}
-
-#ifdef USE_MPEG2
-
-bool MoviePlayer::decodeFrame(AnimationState * st) {
-	mpeg2_state_t state;
-	const mpeg2_sequence_t *sequence_i;
-	size_t size = (size_t) -1;
-
-	do {
-		state = mpeg2_parse(st->decoder);
-		sequence_i = st->info->sequence;
-
-		switch (state) {
-		case STATE_BUFFER:
-			size = st->mpgfile->read(st->buffer, BUFFER_SIZE);
-			mpeg2_buffer(st->decoder, st->buffer, st->buffer + size);
-			break;
-
-		case STATE_SLICE:
-		case STATE_END:
-			if (st->info->display_fbuf) {
-				checkPaletteSwitch(st);
-				_vm->_graphics->plotYUV(st->lut, sequence_i->width, sequence_i->height, st->info->display_fbuf->buf);
-				st->framenum++;
-				st->buildLookup(st->palnum + 1, st->lutcalcnum);
-				return true;
-			}
-			break;
-
-		default:
-			break;
-		}
-	} while (size);
-
-	return false;
-}
-
-AnimationState *MoviePlayer::initAnimation(const char *name) {
-	char basename[512], tempFile[512];
-	AnimationState *st = new AnimationState;
-  	int i, p;
-
-	strcpy(basename, name);
-	basename[strlen(basename)-4] = 0;
-
-	// Load lookup palettes
-	// TODO: Binary format so we can use File class
-	sprintf(tempFile, "%s/%s.pal", _vm->getGameDataPath(), basename);
-	FILE *f = fopen(tempFile, "r");
-
-	if (!f) {
-		warning("Cutscene: %s.pal palette missing", basename);
-		return 0;
-	}
-
-	p = 0;
-	while (!feof(f)) {
-		fscanf(f, "%i %i", &st->palettes[p].end, &st->palettes[p].cnt);
-  		for (i = 0; i < st->palettes[p].cnt; i++) {
-  			int r, g, b;
-  			fscanf(f, "%i", &r);
-  			fscanf(f, "%i", &g);
-  			fscanf(f, "%i", &b);
-			st->palettes[p].pal[4 * i] = r;
-			st->palettes[p].pal[4 * i + 1] = g;
-			st->palettes[p].pal[4 * i + 2] = b;
-		}
-		p++;
-	}
-	fclose(f);
-
-	st->palnum = 0;
-	_vm->_graphics->setPalette(0, 256, st->palettes[st->palnum].pal, RDPAL_INSTANT);
-	st->lut = st->lut2 = st->lookup[0];
-	st->curpal = -1;
-	st->cr = 0;
-	st->buildLookup(st->palnum, 256);
-	st->lut2 = st->lookup[1];
-
-	// Open MPEG2 stream
-	st->mpgfile = new File();
-	sprintf(tempFile, "%s.mp2", basename);
-	if (!st->mpgfile->open(tempFile)) {
-		warning("Cutscene: Could not open %s", tempFile);
-		delete st;
-		return 0;
-	}
-
-	// Load and configure decoder
-	st->decoder = mpeg2_init();
-	if (st->decoder == NULL) {
-		warning("Cutscene: Could not allocate an MPEG2 decoder");
-		delete st;
-		return 0;
-	}
-
-	st->info = mpeg2_info(st->decoder);
-	st->framenum = 0;
-
-	// Load in palette data
-	st->lutcalcnum = (BITDEPTH + st->palettes[st->palnum].end + 2) / (st->palettes[st->palnum].end + 2);
-
-	/* Play audio - TODO: Sync with video?*/
-
-#ifdef USE_VORBIS
-	// Another TODO: There is no reason that this only allows OGG, and not
-	// MP3, or any other format the mixer might support one day... is
-	// there?
-	st->sndfile = new File;
-	sprintf(tempFile, "%s.ogg", basename);
-	if (st->sndfile->open(tempFile))
-		_vm->_mixer->playVorbis(&st->bgSound, st->sndfile, 100000000);
-#endif
-
-	return st;
-}
-
-void MoviePlayer::doneAnimation(AnimationState *st) {
-	_vm->_mixer->stopHandle(st->bgSound);
-	mpeg2_close(st->decoder);
-	st->mpgfile->close();
-	delete st->mpgfile;
-	delete st->sndfile;
-	delete st;
-}
-
-#else
-
-bool MoviePlayer::decodeFrame(AnimationState * st) {
-	// Dummy for MPEG2-less builds
-	return false;
-}
-
-AnimationState *MoviePlayer::initAnimation(const char *name) {
-	return 0;
-}
-
-void MoviePlayer::doneAnimation(AnimationState *st) {
-}
-
-#endif
 
 } // End of namespace Sword2

@@ -42,7 +42,9 @@ namespace Sword2 {
 #define BUFFER_SIZE 4096
 
 class AnimationState {
-public:
+private:
+	Sword2Engine *_vm;
+
 	int palnum;
 
 	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
@@ -75,7 +77,15 @@ public:
 	PlayingSoundHandle bgSound;
 
 public:
+	AnimationState(Sword2Engine *vm);
+	~AnimationState();
+
+	bool init(const char *name);
+	bool decodeFrame();
+
+private:
 	void buildLookup(int p, int lines);
+	void checkPaletteSwitch();
 };
 
 class MoviePlayer {
@@ -86,12 +96,6 @@ private:
 	void openTextObject(MovieTextObject *obj);
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(MovieTextObject *obj);
-
-	void checkPaletteSwitch(AnimationState *st);
-
-	AnimationState *initAnimation(const char *name);
-	void doneAnimation(AnimationState *st);
-	bool decodeFrame(AnimationState *st);
 
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
