@@ -122,7 +122,7 @@ public:
 	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 
-	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1);
+	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1, bool autofreeStream = true);
 
 
 	/** Start a new stream. */

@@ -43,6 +43,7 @@ class Channel {
 private:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
+	bool _autofreeStream;
 	const bool _isMusic;
 	byte _volume;
 	int8 _pan;
@@ -56,7 +57,7 @@ protected:
 public:
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1);
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
@@ -243,7 +244,7 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, false, volume, pan, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	Channel *chan = new Channel(this, handle, input, true, false, volume, pan, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
 	insertChannel(handle, chan);
 }
 
@@ -273,7 +274,7 @@ void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file,
 }
 #endif
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, int id) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, int id, bool autofreeStream) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -285,13 +286,14 @@ void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *i
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				delete input;
+				if (autofreeStream)
+					delete input;
 				return;
 			}
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, isMusic, volume, pan, false, id);
+	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, volume, pan, false, id);
 	insertChannel(handle, chan);
 }
 
@@ -470,13 +472,17 @@ void SoundMixer::setMusicVolume(int volume) {
 #pragma mark -
 
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id)
-	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(0) {
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic,
+				byte volume, int8 pan, int id)
+	: _mixer(mixer), _handle(handle), _autofreeStream(true), _isMusic(isMusic),
+	  _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(0) {
 	assert(mixer);
 }
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
-	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(input) {
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input,
+				bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
+	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
+	  _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(input) {
 	assert(mixer);
 	assert(input);
 
@@ -486,7 +492,8 @@ Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream
 
 Channel::~Channel() {
 	delete _converter;
-	delete _input;
+	if (_autofreeStream)
+		delete _input;
 	if (_handle)
 		_handle->resetIndex();
 }
