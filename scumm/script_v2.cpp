@@ -1134,8 +1134,8 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	x = (int16)fetchScriptByte() * 8;
-	y = (int16)fetchScriptByte() * 2;
+	x = (int8)fetchScriptByte() * 8;
+	y = (int8)fetchScriptByte() * 2;
 
 	startScene(a->room, a, obj);
 
@@ -1147,7 +1147,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 
 	resetSentence();
 
-	if (x != -1) {
+	if (x >= 0 && y >= 0) {
 		a->startWalkActor(x, y, -1);
 	}
 	runScript(5, 0, 0, 0);
@@ -1217,7 +1217,7 @@ void Scumm_v2::o2_cutscene() {
 	//warning("TODO o2_cutscene()");
 
 	vm.cutSceneData[0] = _userState;
-	vm.cutSceneData[1] = (int16) VAR(VAR_CURSORSTATE);
+	vm.cutSceneData[1] = (int16)VAR(VAR_CURSORSTATE);
 	vm.cutSceneData[2] = _currentRoom;
 	vm.cutSceneData[3] = camera._mode;
 	
