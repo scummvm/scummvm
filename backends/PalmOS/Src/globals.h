@@ -23,23 +23,38 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <VFSMgr.h>
+
+enum {
+	optNone				=	0,
+	optIsARMDevice		=	1 <<	0,
+	optIsOS5Device		=	1 <<	1,
+	optIsClieDevice		=	1 <<	2,
+	optIsZodiacDevice	=	1 <<	3,
+	optHasWideMode		=	1 <<	4,
+	optIsLandscapeMode	=	1 <<	5,
+	optHas16BitMode		=	1 <<	6,
+};
+
 typedef struct {
 	DmOpenRef globals[3];
+
+	UInt32 options;
 
 	UInt16 HRrefNum;
 	UInt16 volRefNum;
 	UInt16 slkRefNum;
 	UInt32 slkVersion;
+	Boolean skinSet;
 
 	FileRef	logFile;
 
-	
 	Boolean vibrator;
 	Boolean autoReset;
 	Boolean screenLocked;
 	Boolean stdPalette;
-	Coord screenWidth, screenHeight;	// with silkarea
-	Coord screenFullWidth, screenFullHeight;	// without silkarea
+	Coord screenWidth, screenHeight;			// silkarea shown
+	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
 
 	struct {
 		UInt8 on;
@@ -57,5 +72,6 @@ typedef struct {
 
 extern GlobalsDataPtr gVars;
 
+#define OPTIONS(x)	(gVars->options & (x))
 
 #endif
