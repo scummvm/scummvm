@@ -44,6 +44,7 @@
 IMuseInternal::IMuseInternal() :
 _old_adlib_instruments(false),
 _enable_multi_midi(false),
+_native_mt32(false),
 _midi_adlib(0),
 _midi_native(0),
 _base_sounds(0),
@@ -1084,6 +1085,7 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		break;
 
 	case IMuse::PROP_NATIVE_MT32:
+		_native_mt32 = (value > 0);
 		Instrument::nativeMT32(value > 0);
 		break;
 
@@ -1163,8 +1165,8 @@ void IMuseInternal::initMidiDriver(MidiDriver *midi) {
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
 
-	// In case we have an MT-32 attached.
-	initMT32(midi);
+	if (_native_mt32)
+		initMT32(midi);
 
 	// Connect to the driver's timer
 	midi->setTimerCallback(midi, &IMuseInternal::midiTimerCallback);
@@ -1175,15 +1177,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	char info[256] = "ScummVM ";
 	int len;
 	
-	// Compute version string(truncated to 20 chars max.)
+	// Reset the MT-32
+	memcpy(&buffer[4], "\x7f\x00\x00\x01\x00", 5);
+	midi->sysEx(buffer, 9);
+	g_system->delay_msecs (100);
+
+	// Compute version string (truncated to 20 chars max.)
 	strcat(info, gScummVMVersion);
 	len = strlen(info);
 	if (len > 20)
 		len = 20;
-
-	// Reset the MT-32
-	memcpy(&buffer[4], "\x7f\x00\x00\x01\x00", 5);
-	midi->sysEx(buffer, 9);
 
 	// Display a welcome message on MT-32 displays.
 	memcpy(&buffer[4], "\x20\x00\x00", 3);
@@ -1194,6 +1197,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 		checksum -= buffer[i];
 	buffer[27] = checksum;
 	midi->sysEx(buffer, 28);
+	g_system->delay_msecs (500);
+
+	// Set master volume to 100%
+	memcpy(&buffer[4], "\x10\x00\x16\x64\x76", 5);
+	midi->sysEx(buffer, 9);
+	g_system->delay_msecs (500);
+
+	// Set partial reserve equally for all channels
+	memcpy(&buffer[4], "\x10\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x48", 13);
+	midi->sysEx(buffer, 17);
 }
 
 void IMuseInternal::init_queue() {
