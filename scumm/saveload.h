@@ -22,6 +22,14 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
+#define OFFS(type,item) ((int)(&((type*)0)->type::item))
+#define SIZE(type,item) sizeof(((type*)0)->type::item)
+#define MKLINE(type,item,saveas) {OFFS(type,item),saveas,SIZE(type,item)}
+#define MKARRAY(type,item,saveas,num) {OFFS(type,item),128|saveas,SIZE(type,item)}, {num,0,0}
+#define MKEND() {0xFFFF,0xFF,0xFF}
+
+#define MKREF(type,item,refid) {OFFS(type,item),refid,0xFF}
+
 enum {
 	sleByte = 1,
 	sleUint8 = 1,

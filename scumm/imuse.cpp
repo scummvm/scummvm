@@ -2914,14 +2914,6 @@ void Player::sequencer_timer()
 
 /*******************************************************************/
 
-#define OFFS(type,item) ((int)(&((type*)0)->item))
-#define SIZE(type,item) sizeof(((type*)0)->item)
-#define MKLINE(type,item,saveas) {OFFS(type,item),saveas,SIZE(type,item)}
-#define MKARRAY(type,item,saveas,num) {OFFS(type,item),128|saveas,SIZE(type,item)}, {num,0,0}
-#define MKEND() {0xFFFF,0xFF,0xFF}
-
-#define MKREF(type,item,refid) {OFFS(type,item),refid,0xFF}
-
 enum {
 	TYPE_PART = 1,
 	TYPE_PLAYER = 2,
