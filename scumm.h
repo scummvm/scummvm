@@ -24,8 +24,8 @@
 #include "sound/mixer.h"
 #include "config-file.h"
 
-#define SCUMMVM_VERSION "0.2.0 devel"
-#define SCUMMVM_CVS "042002"
+#define SCUMMVM_VERSION "0.2.0 Release"
+#define SCUMMVM_CVS "051302"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
