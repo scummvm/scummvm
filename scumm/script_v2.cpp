@@ -1334,6 +1334,7 @@ void Scumm_v2::o2_roomOps() {
 		break;
 	case 2:											/* room color */
 		if (_version == 1) {
+			// V1 zak needs to know when room color is changed
 			_roomPalette[0] = 255;
 			_roomPalette[1] = a;
 			_roomPalette[2] = b;

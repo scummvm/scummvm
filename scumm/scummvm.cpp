@@ -1946,6 +1946,10 @@ void Scumm::initRoomSubBlocks() {
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
+	// Reset room color for V1 zak
+	if (_version == 1)
+		_roomPalette[0] = 0;
+
 	//
 	// Determine the room dimensions (width/height)
 	//

@@ -1346,11 +1346,12 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 	height >>= 3;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
+		// Check for room color change in V1 zak
 		if (_vm->_roomPalette[0] == 255) {
-			_vm->_roomPalette[0] = 0;
 			_C64Colors[2] = _vm->_roomPalette[2];
 			_C64Colors[1] = _vm->_roomPalette[1];
 		}
+
 		charIdx = _C64PicMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
 			byte c = _C64CharMap[charIdx + i];
