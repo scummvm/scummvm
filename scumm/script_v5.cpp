@@ -1507,6 +1507,8 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_version <= 4) {
+		if (whereIsObject(obj) != WIO_ROOM)
+			error("startScene: Object %d is not in room %d", obj, _currentRoom);
 		if (!_egoPositioned) {
 			getObjectXYPos(obj, x2, y2, dir);
 			a->putActor(x2, y2, _currentRoom);

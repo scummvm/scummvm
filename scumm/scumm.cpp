@@ -2245,11 +2245,11 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
-	if (a) {
+	if (_version >= 5 && a) {
 		where = whereIsObject(objectNr);
 		if (where != WIO_ROOM && where != WIO_FLOBJECT)
 			error("startScene: Object %d is not in room %d", objectNr,
-						_currentRoom);
+					_currentRoom);
 		int x, y, dir;
 		getObjectXYPos(objectNr, x, y, dir);
 		a->putActor(x, y, _currentRoom);
