@@ -189,18 +189,11 @@ struct INTRO_DIALOGUE {
 	char i_str[INTRO_STRMAX];
 };
 
-struct INTRO_CAPTION {
-	int res_n;
-	char *caption;
-};
-
 struct INTRO_CREDIT {
 	int game;
-	// int lang;	// TODO
 	int type;
 	const char *string;
 };
-
 
 enum SceneFlags {
 	kSceneFlagISO        = 1,

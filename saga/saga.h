@@ -33,6 +33,7 @@
 #include "common/stream.h"
 #include "common/rect.h"
 
+// TODO: These shouldn't be here!
 #include <limits.h>
 #include <stddef.h>
 
@@ -69,7 +70,6 @@ class PalAnim;
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
-#define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 #define MAXPATH 512
 
 #define IS_BIG_ENDIAN ((_vm->getFeatures() & GF_BIG_ENDIAN_DATA) != 0)
