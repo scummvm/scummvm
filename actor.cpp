@@ -465,7 +465,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	AdjustBoxResult abr,tmp;
 	uint threshold;
 	uint best;
-	int box;
+	int box, iterations;	/* Use inerations for those odd times we get stuck in the loop */
 	byte flags, b;
 	
 	abr.x = x;
@@ -479,6 +479,8 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
                        return abr;
 		
 		while(1) {
+			iterations++;
+			if (iterations > 1000) return abr;	/* Safety net */
 			box = getNumBoxes() - 1;
 			best = (uint)0xFFFF;
 			b = 0;

@@ -40,7 +40,9 @@ enum {
 	CMD_ACTOR,
 	CMD_SCRIPTS,
 	CMD_LOAD_ROOM,
-        CMD_DUMPBOX,
+    CMD_DUMPBOX,
+	CMD_VAR,	
+	CMD_WATCH,
 	CMD_EXIT
 };
 
@@ -117,6 +119,31 @@ bool ScummDebugger::do_command() {
 			}
 		}
 		return true;
+	case CMD_VAR:
+		if (!_parameters[0]) {
+			printf("Enter a variable\n");
+		} else {			
+			char *tok = strtok(_parameters, " ");
+			int var = atoi(tok);
+			tok = strtok(NULL, "");
+			if (tok) 
+				_s->writeVar(var, atoi(tok));		
+
+			printf("Var[%d] = %d\n", var, _s->readVar(var));
+		}			
+		return true;
+	case CMD_WATCH:
+		if (!_parameters[0]) {
+			printf("Clearing all watches..\n");
+			_s->_varwatch = -1;
+		} else {
+			_s->_varwatch = atoi(_parameters);
+			if (_s->_varwatch == 0) 
+				printf("Watching all variables\n");
+			else
+				printf("Watching vars[%d]\n", _s->_varwatch);
+		}
+		return true;
 	case CMD_EXIT:
 		exit(1);
 
@@ -161,7 +188,9 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
 	{ "r", 1, CMD_LOAD_ROOM },
-        { "b", 1, CMD_DUMPBOX},
+    { "b", 1, CMD_DUMPBOX},
+	{ "v", 1, CMD_VAR},
+	{ "w", 1, CMD_WATCH},
 	{ "e", 1, CMD_EXIT },
 	{ 0, 0, 0 },
 };

@@ -859,6 +859,7 @@ struct Scumm {
 	ObjectData *_objs;
 	uint16 *_newNames;
 	int16 *_vars;
+	int16 _varwatch;
 	byte *_bitVars;
 
 	const OpcodeProc *_opcodes;

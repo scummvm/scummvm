@@ -333,6 +333,9 @@ void Scumm::writeVar(uint var, int value) {
 	if (!(var&0xF000)) {
 		checkRange(_numVariables-1, 0, var, "Variable %d out of range(w)");
 		_vars[var] = value;
+
+		if ((_varwatch == var) || (_varwatch == 0))
+			printf("vars[%d] = %d (via script %d)\n", var, value, &vm.slot[_currentScript].number);
 		return;
 	}
 
@@ -729,12 +732,12 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 
 
 void Scumm::push(int a) {
-	assert(_scummStackPos >=0 && _scummStackPos < ARRAYSIZE(_scummStack)-1);
+	assert(_scummStackPos >=0 && _scummStackPos <= ARRAYSIZE(_scummStack)-1);
 	_scummStack[_scummStackPos++] = a;	
 }
 
 int Scumm::pop() {
-	assert(_scummStackPos >0 && _scummStackPos < ARRAYSIZE(_scummStack));
+	assert(_scummStackPos >0 && _scummStackPos <= ARRAYSIZE(_scummStack));
 	return _scummStack[--_scummStackPos];
 }
 

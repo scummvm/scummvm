@@ -262,7 +262,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_talkEgo,
 	/* BC */
 	&Scumm::o6_dim,
-	&Scumm::o6_invalid,
+	&Scumm::o5_dummy,
 	&Scumm::o6_runVerbCodeQuick,
 	&Scumm::o6_runScriptQuick,
 	/* C0 */
@@ -2365,7 +2365,7 @@ void Scumm::o6_dim() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o6_dim: default case");
+		error("o6_dim	: default case");
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
@@ -2634,7 +2634,7 @@ void Scumm::o6_miscOps() {
 			break;	
 
 		case 122:
-			error("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
+			warning("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
 				args[1],args[2],args[3],args[4],
 				args[5],args[6],args[7],args[8],
 				args[9],args[10],args[11],args[12]);

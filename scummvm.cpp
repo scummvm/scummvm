@@ -119,6 +119,7 @@ void Scumm::scummInit() {
 	charset._bufPos = 0;
 	_haveMsg = 0;
 
+	_varwatch = -1;
 	_screenStartStrip = 0;
 
 	_vars[VAR_TALK_ACTOR] = 0;
