@@ -70,15 +70,17 @@ public:
 	void swap_zoom_up();
 	void swap_zoom_down();
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 	// Smartphone actions
+	void loadSmartphoneConfigurationElement(String element, int &value, int defaultValue);
+	void loadSmartphoneConfiguration();
 	void add_left_click();
 	void move_cursor_up();
 	void move_cursor_down();
 	void move_cursor_left();
 	void move_cursor_right();
 	void switch_zone();
-#endif
+//#endif
 
 	static int getScreenWidth();
 	static int getScreenHeight();
@@ -154,15 +156,31 @@ private:
 	bool _zoomUp;				// zooming up mode
 	bool _zoomDown;				// zooming down mode
 
-	int _scaleFactorXm;
-	int _scaleFactorXd;
-	int _scaleFactorYm;
-	int _scaleFactorYd;
-	bool _scalersChanged;
+	int _scaleFactorXm;			// scaler X *
+	int _scaleFactorXd;			// scaler X /
+	int _scaleFactorYm;			// scaler Y *
+	int _scaleFactorYd;			// scaler Y /
+	bool _scalersChanged;		
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;
-	static bool _isOzone;
+	static bool _isOzone;		// true if running on Windows 2003 SE 
+
+	// Smartphone specific variables
+
+	int _lastKeyPressed;		// last key pressed
+	int _keyRepeat;				// number of time the last key was repeated
+	int _keyRepeatTime;			// elapsed time since the key was pressed
+	int _keyRepeatTrigger;		// minimum time to consider the key was repeated
+
+	int _repeatX;				// repeat trigger for left and right cursor moves
+	int _repeatY;				// repeat trigger for up and down cursor moves
+	int _stepX1;				// offset for left and right cursor moves (slowest)
+	int _stepX2;				// offset for left and right cursor moves (faster)
+	int _stepX3;				// offset for left and right cursor moves (fastest)
+	int _stepY1;				// offset for up and down cursor moves (slowest)
+	int _stepY2;				// offset for up and down cursor moves (faster)
+	int _stepY3;				// offset for up and down cursor moves (fastest)
 };
 
 #endif

@@ -75,6 +75,8 @@ static FILE *stderr_file;
 bool OSystem_WINCE3::_soundMaster = true;
 OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 
+bool _isSmartphone = false;
+
 // Graphics mode consts
 
 // Low end devices 240x320
@@ -106,6 +108,12 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 
 // ********************************************************************************************
 
+bool isSmartphone() {
+	return _isSmartphone;
+}
+
+// ********************************************************************************************
+
 // MAIN
 
 extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
@@ -113,29 +121,37 @@ extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 void handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	CEException::writeException(TEXT("\\scummvmCrash"), exceptionPointers);
 	drawError("Unrecoverable exception occurred - see crash dump in latest \\scummvmCrash file");
-	exit(1);
+	fclose(stdout_file);
+	fclose(stderr_file);
+	CEDevice::end();
+	SDL_Quit();
+	exit(0);
 }
 
 int SDL_main(int argc, char **argv) {
+	CEDevice::init();
 	OSystem_WINCE3::initScreenInfos();
 	/* Sanity check */
-#ifndef WIN32_PLATFORM_WFSP
-	if (CEDevice::hasSmartphoneResolution()) {
-		MessageBox(NULL, TEXT("This build was not compiled with Smartphone support"), TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
-		return 0;
-	}
-#endif
+//#ifndef WIN32_PLATFORM_WFSP
+//	if (CEDevice::hasSmartphoneResolution()) {
+//		MessageBox(NULL, TEXT("This build was not compiled with Smartphone support"), TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
+//		return 0;
+//	}
+//#endif
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	stderr_file = fopen("\\scummvm_stderr.txt", "w");
 	CEActions::init(_gameDetector);
+
 	__try {
 		return scummvm_main(_gameDetector, argc, argv);
 	}
 	__except (handleException(GetExceptionInformation())) {
 	}
+
+	return 0;
 }    
-   
+
 // ********************************************************************************************
 
 
@@ -155,10 +171,6 @@ void drawError(char *error) {
 	pumpMessages();
 	MessageBox(GetActiveWindow(), errorUnicode, TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
 	pumpMessages();
-}
-
-bool isSmartphone(void) {
-	return CEDevice::hasSmartphoneResolution();
 }
 
 // ********************************************************************************************
@@ -199,9 +211,23 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
 	_freeLook(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false)
+	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0)
 {
+	_isSmartphone = CEDevice::hasSmartphoneResolution();
+	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
+	if (_isSmartphone) {
+		_mouseCurState.x = 20;
+		_mouseCurState.y = 20;
+	}
 	create_toolbar();
+	// Initialize global key mapping for Smartphones
+	CEActions::Instance()->initInstanceMain(this);	
+	CEActions::Instance()->loadMapping();
+
+	if (_isSmartphone) {
+		loadSmartphoneConfiguration();
+	}
+
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
@@ -311,36 +337,117 @@ void OSystem_WINCE3::swap_zoom_down() {
 	internUpdateScreen();
 }
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 // Smartphone actions
 
+void OSystem_WINCE3::loadSmartphoneConfigurationElement(String element, int &value, int defaultValue) {
+	value = ConfMan.getInt(element, "smartphone");
+	if (!value) {
+		value = defaultValue;
+		ConfMan.set(element, value, "smartphone");
+	}
+}
+
+void OSystem_WINCE3::loadSmartphoneConfiguration() {
+	loadSmartphoneConfigurationElement("repeatTrigger", _keyRepeatTrigger, 200);
+	loadSmartphoneConfigurationElement("repeatX", _repeatX, 4);
+	loadSmartphoneConfigurationElement("repeatY", _repeatY, 4);
+	loadSmartphoneConfigurationElement("stepX1", _stepX1, 2);
+	loadSmartphoneConfigurationElement("stepX2", _stepX2, 10);
+	loadSmartphoneConfigurationElement("stepX3", _stepX3, 40);
+	loadSmartphoneConfigurationElement("stepY1", _stepY1, 2);
+	loadSmartphoneConfigurationElement("stepY2", _stepY2, 10);
+	loadSmartphoneConfigurationElement("stepY3", _stepY3, 20);
+	ConfMan.flushToDisk();
+}
+
 void OSystem_WINCE3::add_left_click() {
-	_addLeftClickDown = true;
+	int x, y;
+	retrieve_mouse_location(x, y);
+	EventsBuffer::simulateMouseLeftClick(x, y);
 }
 
 void OSystem_WINCE3::move_cursor_up() {
+	int x,y;
+	retrieve_mouse_location(x, y);
+	if (_keyRepeat > _repeatY)
+		y -= _stepY3;
+	else
+	if (_keyRepeat)
+		y -= _stepY2;
+	else
+		y -= _stepY1;
+
+	if (y < 0)
+		y = 0;
+
+	EventsBuffer::simulateMouseMove(x, y);
 }
 
 void OSystem_WINCE3::move_cursor_down() {
+	int x,y;
+	retrieve_mouse_location(x, y);
+	if (_keyRepeat > _repeatY)
+		y += _stepY3;
+	else
+	if (_keyRepeat)
+		y += _stepY2;
+	else
+		y += _stepY1;
+
+	if (y > 200)
+		y = 200;
+
+	EventsBuffer::simulateMouseMove(x, y);	
 }
 
 void OSystem_WINCE3::move_cursor_left() {
+	int x,y;
+	retrieve_mouse_location(x, y);
+	if (_keyRepeat > _repeatX)
+		x -= _stepX3;
+	else
+	if (_keyRepeat)
+		x -= _stepX2; 
+	else
+		x -= _stepX1;
+
+	if (x < 0)
+		x = 0;
+
+	EventsBuffer::simulateMouseMove(x, y);
 }
 
 void OSystem_WINCE3::move_cursor_right() {
+	int x,y;
+	retrieve_mouse_location(x, y);
+	if (_keyRepeat > _repeatX)
+		x += _stepX3;
+	else
+	if (_keyRepeat)
+		x += _stepX2;
+	else
+		x += _stepX1;
+
+	if (x > 320)
+		x = 320;
+
+	EventsBuffer::simulateMouseMove(x, y);
 }
 
 void OSystem_WINCE3::switch_zone() {
 }
-#endif
+//#endif
 
 
 void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
 
 	// Add the keyboard
-	keyboard = new PanelKeyboard(PANEL_KEYBOARD);
-	_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
+	if (!_isSmartphone) {
+		keyboard = new PanelKeyboard(PANEL_KEYBOARD);
+		_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
+	}
 
 }
 
@@ -428,6 +535,8 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 		case kFeatureFullscreenMode:
 			return;
 		case kFeatureVirtualKeyboard:
+			if (_isSmartphone)
+				return;
 			_toolbarHighDrawn = false;
 			if (enable) {
 				_panelStateForced = true;
@@ -498,13 +607,7 @@ void OSystem_WINCE3::check_mappings() {
 		if (!_gameDetector._targetName.size() || CEActions::Instance()->initialized())
 			return;
 
-		CEActions::Instance()->initInstance(this);
-		// Load key mapping
-		CEActions::Instance()->loadMapping();
-
-		if (CEDevice::hasSmartphoneResolution())
-			return;
-
+		CEActions::Instance()->initInstanceGame();
 		instance = (CEActionsPocket*)CEActions::Instance();
 
 		// Some games need to map the right click button, signal it here if it wasn't done
@@ -549,6 +652,7 @@ void OSystem_WINCE3::check_mappings() {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
 		}
+
 }
 
 void OSystem_WINCE3::update_game_settings() {
@@ -566,6 +670,7 @@ void OSystem_WINCE3::update_game_settings() {
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster)); 
 		// portrait/landscape - screen dependant
+		// FIXME : will still display the portrait/landscape icon when using a scaler (but will be disabled)
 		if (_screenWidth <= 320 && (isOzone() || !CEDevice::hasDesktopResolution())) {
 			_newOrientation = _orientationLandscape = (ConfMan.hasKey("landscape") ? ConfMan.getBool("landscape") : false);
 			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation));
@@ -573,7 +678,7 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 
-		// Keyboard is active for Monkey 1 or 2
+		// Keyboard is active for Monkey 1 or 2 initial copy-protection
 		if (strncmp(_gameDetector._targetName.c_str(), "monkey", 6) == 0) {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
@@ -583,19 +688,42 @@ void OSystem_WINCE3::update_game_settings() {
 			setGraphicsMode(GFX_NORMAL);
 			hotswapGFXMode();
 		}
+
+		if (_isSmartphone)
+			panel->setVisible(false);
 	}
  
 	get_sample_rate();
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {
-	if (w == 320 && h == 200)
+
+		if (_isSmartphone && h == 240)
+			h = 200;  // mainly for the launcher
+
+        switch (_transactionMode) {
+			case kTransactionActive:
+                _transactionDetails.w = w;
+                _transactionDetails.wChanged = true;
+                _transactionDetails.h = h;
+                _transactionDetails.hChanged = true;
+                return;
+                break;
+			case kTransactionCommit:
+                break;
+			default:
+                break;
+        }
+
+	if (w == 320 && h == 200 && !_isSmartphone)
 		h = 240; // use the extra 40 pixels height for the toolbar
 
-	if (h == 240)
-		_toolbarHandler.setOffset(200);
-	else
-		_toolbarHandler.setOffset(400);	
+	if (!_isSmartphone) {
+		if (h == 240)
+			_toolbarHandler.setOffset(200);
+		else
+			_toolbarHandler.setOffset(400);	
+	}
 
 	if (w != _screenWidth || h != _screenHeight)
 		_scalersChanged = false;
@@ -649,8 +777,8 @@ bool OSystem_WINCE3::update_scalers() {
 		return true;
 	}
 
-#ifdef WIN32_PLATFORM_WFSP
-	if (CEDevice::hasSmartphoneResolution()) {
+//#ifdef WIN32_PLATFORM_WFSP
+	if (_isSmartphone) {
 		if (_screenWidth > 320) 
 			error("Game resolution not supported on Smartphone");
 		_scaleFactorXm = 2;
@@ -661,12 +789,25 @@ bool OSystem_WINCE3::update_scalers() {
 		_modeFlags = 0;
 		return true;
 	}
-#endif
+//#endif
 
 	return false;
 }
 
 bool OSystem_WINCE3::setGraphicsMode(int mode) {
+
+    switch (_transactionMode) {
+			case kTransactionActive:
+                _transactionDetails.mode = mode;
+                _transactionDetails.modeChanged = true;
+                return true;
+                break;
+	        case kTransactionCommit:
+                break;
+		    default:
+                break;
+    }
+
 	Common::StackLock lock(_graphicsMutex);
 	int oldScaleFactorXm = _scaleFactorXm;
 	int oldScaleFactorXd = _scaleFactorXd;
@@ -775,6 +916,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	}
 	else
 		_scalersChanged = false;
+
 
 	return true;
 
@@ -1301,6 +1443,8 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	SDL_Event ev;
 	byte b = 0;
 	Event temp_event;
+	DWORD currentTime;
+	bool keyEvent = false;
 
 	memset(&temp_event, 0, sizeof(Event));
 	memset(&event, 0, sizeof(Event));
@@ -1314,9 +1458,21 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 		return true;
 	}
 
+	CEDevice::wakeUp();
+
+	if (isSmartphone)
+		currentTime = GetTickCount();
+
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
+			if (_isSmartphone) {
+				keyEvent = true;			
+				_lastKeyPressed = ev.key.keysym.sym;
+				_keyRepeatTime = currentTime;
+				_keyRepeat = 0;
+			}
+
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 				return true;
 
@@ -1330,6 +1486,11 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			return true;
 	
 		case SDL_KEYUP:			
+			if (_isSmartphone) {
+				keyEvent = true;
+				_lastKeyPressed = 0;
+			}
+
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 				return true;
 			
@@ -1361,7 +1522,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
 					internUpdateScreen();
-				if (_newOrientation != _orientationLandscape) {
+				if (_newOrientation != _orientationLandscape && _mode == GFX_NORMAL) {
 					_orientationLandscape = _newOrientation;
 					ConfMan.set("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
@@ -1406,6 +1567,22 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			return true;
 		}
 	}
+
+	// Simulate repeated key for Smartphones
+
+	if (!keyEvent) {
+		if (_isSmartphone) {
+
+			if (_lastKeyPressed) {
+				if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
+					_keyRepeatTime = currentTime;
+					_keyRepeat++;
+					CEActions::Instance()->performMapped(_lastKeyPressed, true);
+				}
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -1416,6 +1593,7 @@ void OSystem_WINCE3::quit() {
 		DeleteFile(TEXT("\\scummvm_stdout.txt"));
 		DeleteFile(TEXT("\\scummvm_stderr.txt"));
 	}
+	CEDevice::end();
 	OSystem_SDL::quit();
 }
 
