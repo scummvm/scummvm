@@ -690,7 +690,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 	switch(src[18]) {
 	case 0:
-#ifdef SYSTEM_BIG_ENDIAN
+#if defined(SYSTEM_BIG_ENDIAN) && defined(MACOSX)
 		for (int i = 0; i < _width * _height; i++) {
 			((uint16 *)_curBuf)[i] = READ_LE_UINT16(gfx_data + i * 2);
 		}
@@ -705,6 +705,13 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		if (seq_nb == _prevSeqNb + 1) {
 			decode2(_curBuf, gfx_data, _width, _height, src + 24, src + 40);
 		}
+
+#if defined(SYSTEM_BIG_ENDIAN) && !defined(MACOSX)
+	for (int i = 0; i < _width * _height; ++i) {
+		((uint16 *)_curBuf)[i] = SWAP_BYTES_16(((uint16 *)_curBuf)[i]);
+	}			
+#endif
+		
 		break;
 	case 3:
 		memcpy(_curBuf, _deltaBufs[1], _frameSize);
