@@ -52,7 +52,7 @@ uint16 bit_buffl = 0;
 uint16 bit_buffh = 0;
 uint8 bit_count = 0;
 
-uint8 *esiptr, *ediptr; //these need to be global because input_bits() uses them
+uint8 *srcPtr, *dstPtr; //these need to be global because input_bits() uses them
 
 void init_crc()
 {
@@ -111,8 +111,8 @@ uint16 input_bits(uint8 amount)
 		newBitBuffh >>= amount;
 		newBitBuffl >>= amount;
 		newBitBuffl |= remBits;	
-		esiptr += 2;
-		newBitBuffh = READ_LE_UINT16(esiptr);
+		srcPtr += 2;
+		newBitBuffh = READ_LE_UINT16(srcPtr);
 		XCHG(newBitCount, amount);
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
@@ -221,7 +221,7 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 			return PACKED_CRC;
 
 		inputptr = (((uint8 *)input) + HEADER_LEN); 
-		esiptr = inputptr;
+		srcPtr = inputptr;
 	}
 
 	// inputLow = *input
@@ -230,17 +230,17 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 	outputHigh = *(((uint8 *)input) + 16) + unpack_len + outputLow;
 
 	if (! ((inputHigh <= outputLow) || (outputHigh <= inputHigh)) ) {
-		esiptr = inputHigh;
-		ediptr = outputHigh;
-		memcpy((ediptr-pack_len), (esiptr-pack_len), pack_len);
-		esiptr = (ediptr-pack_len);
+		srcPtr = inputHigh;
+		dstPtr = outputHigh;
+		memcpy((dstPtr-pack_len), (srcPtr-pack_len), pack_len);
+		srcPtr = (dstPtr-pack_len);
 	}
 
 	//unpack3:
-	ediptr = (uint8 *)output;
+	dstPtr = (uint8 *)output;
 	bit_count = 0;
 
-	bit_buffl = READ_LE_UINT16(esiptr);
+	bit_buffl = READ_LE_UINT16(srcPtr);
 	input_bits(2);
 	
 	do {
@@ -254,16 +254,16 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 			uint32 input_bits = input_value(raw_table);
 
 			if (input_bits) {
-				memcpy(ediptr, esiptr, input_bits); //memcpy is allowed here
-				ediptr += input_bits;
-				esiptr += input_bits;
-				uint16 b = READ_LE_UINT16(esiptr);
+				memcpy(dstPtr, srcPtr, input_bits); //memcpy is allowed here
+				dstPtr += input_bits;
+				srcPtr += input_bits;
+				uint16 b = READ_LE_UINT16(srcPtr);
 				uint16 a = ROL(b, bit_count);
 				uint16 d = ((1 << bit_count) - 1);
 				bit_buffl &= d;
 				d &= a;
 
-				a = READ_LE_UINT16((esiptr + 2));
+				a = READ_LE_UINT16((srcPtr + 2));
 				b = (b << bit_count);
 				a = (a << bit_count);
 				a |= d;
@@ -275,14 +275,14 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 				uint32 input_offset = input_value(pos_table) + 1;
 				uint32 input_length = input_value(len_table) + MIN_LENGTH;
 
-				inputHigh = esiptr;
-				esiptr = (ediptr-input_offset);
+				inputHigh = srcPtr;
+				srcPtr = (dstPtr-input_offset);
 
 				//Don't use memcpy here! because input and output overlap	
 				while (input_length--)
-					*ediptr++ = *esiptr++;
+					*dstPtr++ = *srcPtr++;
 
-				esiptr = inputHigh;
+				srcPtr = inputHigh;
 			} else
 				break;
 
