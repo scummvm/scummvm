@@ -342,6 +342,8 @@ SAGA
  * In the dog's castle at guards' room (scene_change 177 ang go down) subtitles
    aren't shown. In floppy version there is complete silence both textual and
    audial.
+ * Sound in old Win demo is all wrong -- eithere there is some unique sound format
+   or I didn't guess it correctly
 
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
