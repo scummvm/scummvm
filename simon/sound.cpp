@@ -434,7 +434,6 @@ void SimonSound::playVoice(uint sound) {
 		if (file->isOpen() == false) {
 			warning("Can't open voice file %s", filename);
 		} else {
-			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
