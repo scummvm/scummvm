@@ -44,7 +44,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-	if (!(g_scumm->_debugFlags & channel) && (ConfMan.getInt("debuglevel") < 9))
+	if (!(g_scumm->_debugFlags & channel) && (gDebugLevel < 9))
 		return;
 
 	va_start(va, s);
@@ -596,6 +596,7 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 	} else { // set level
 		int level = atoi(argv[1]);
 		ConfMan.set("debuglevel", level, Common::ConfigManager::kTransientDomain);
+		gDebugLevel = ConfMan.getInt("debuglevel");
 		if (level > 0) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", level);

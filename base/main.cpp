@@ -119,7 +119,7 @@ const char *gScummVMFeatures = ""
 #ifdef USE_MPEG2
 	"MPEG2 "
 #endif
-	;	
+	;
 
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>
@@ -183,6 +183,9 @@ static void do_memory_test(void) {
 }
 
 #endif
+
+
+int gDebugLevel = 0;
 
 static bool launcherDialog(GameDetector &detector, OSystem *system) {
 
@@ -349,6 +352,8 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	else
 		ConfMan.loadDefaultConfigFile();
 
+	gDebugLevel = ConfMan.getInt("debuglevel");
+
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
@@ -416,6 +421,50 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #if defined(ALLEGRO_BACKEND)
 END_OF_MAIN();
 #endif
+
+static void debugHelper(char *buf) {
+#ifndef _WIN32_WCE
+	printf("%s\n", buf);
+#endif
+
+#if defined( USE_WINDBG )
+	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
+	OutputDebugString(buf);
+#endif
+#endif
+
+	fflush(stdout);
+}
+
+void CDECL debug(int level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > gDebugLevel)
+		return;
+
+	va_start(va, s);
+	vsprintf(buf, s, va);
+	va_end(va);
+	
+	debugHelper(buf);
+}
+
+void CDECL debug(const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, s);
+	vsprintf(buf, s, va);
+	va_end(va);
+
+	debugHelper(buf);
+}
 
 /*
 #if !defined(__PALM_OS__) && !defined(_WIN32_WCE)

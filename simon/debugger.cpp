@@ -91,6 +91,7 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	} else { // set level
 		int level = atoi(argv[1]);
 		ConfMan.set("debuglevel", level, Common::ConfigManager::kTransientDomain);
+		gDebugLevel = ConfMan.getInt("debuglevel");
 		if (level > 0 && level < 10) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", level);

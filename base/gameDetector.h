@@ -38,6 +38,8 @@ enum {
 	GF_DEFAULT_TO_1X_SCALER = 1 << 30
 };
 
+extern int gDebugLevel;
+
 struct GameSettings {
 	const char *name;
 	const char *description;

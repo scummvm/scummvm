@@ -333,9 +333,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			DO_OPTION_OPT('d', "debuglevel")
 				if (option != NULL)
 					ConfMan.set("debuglevel", (int)strtol(option, 0, 10), kTransientDomain);
-				int debuglevel = ConfMan.getInt("debuglevel");
-				if (debuglevel)
-					printf("Debuglevel (from command line): %d\n", debuglevel);
+				gDebugLevel = ConfMan.getInt("debuglevel");
+				if (gDebugLevel)
+					printf("Debuglevel (from command line): %d\n", gDebugLevel);
 				else
 					printf("Debuglevel (from command line): 0 - Game only\n");
 			END_OPTION
@@ -510,6 +510,7 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
+	gDebugLevel = ConfMan.getInt("debuglevel");
 }
 
 bool GameDetector::detectGame() {
