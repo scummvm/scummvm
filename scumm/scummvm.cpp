@@ -55,7 +55,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#ifndef __PALM_OS__
+#ifdef __PALM_OS__
 #include "globals.h"
 #endif
 
