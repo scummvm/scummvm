@@ -128,7 +128,8 @@ enum {
 	DEBUG_RESOURCE	=	1 << 5,		// Track resource loading / allocation
 	DEBUG_IMUSE	=	1 << 6,		// Track iMUSE events
 	DEBUG_SOUND	=	1 << 7,		// General Sound Debug
-	DEBUG_ACTORS	=	1 << 8		// General Actor Debug
+	DEBUG_ACTORS	=	1 << 8,		// General Actor Debug
+	DEBUG_INSANE	=	1 << 9		// Track INSANE
 };
 
 
@@ -139,7 +140,8 @@ static const dbgChannelDesc debugChannels[] = {
 	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
 	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
 	{"VARS", "Track variable changes", DEBUG_VARS},
-	{"ACTORS", "Actor-related debug", DEBUG_ACTORS}
+	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
+	{"INSANE", "Track INSANE", DEBUG_INSANE}
 };
 
 struct MemBlkHeader {
