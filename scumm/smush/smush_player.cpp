@@ -250,13 +250,12 @@ SmushPlayer::~SmushPlayer() {
 
 void SmushPlayer::init() {
 	_frame = 0;
+	_alreadyInit = false;
 	_vm->_videoFinished = false;
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
 	_smixer = new SmushMixer(_vm->_mixer);
 	g_timer->installTimerProc(&timerCallback, _speed, this);
-
-	_alreadyInit = false;
 }
 
 void SmushPlayer::release() {
