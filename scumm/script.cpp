@@ -640,6 +640,10 @@ void Scumm::runAllScripts()
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++)
 		vm.slot[i].didexec = 0;
 
+	// FIXME - why is _curExecScript?!? The only place it is ever set is here.
+	// The outer world will only see it as consequence of the calls made in the following
+	// for loop. But in that case, _curExecScript will be equal to _currentScript. Hence
+	// it would seem we can replace all occurances of _curExecScript by _currentScript.
 	_currentScript = 0xFF;
 	for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
 		if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
