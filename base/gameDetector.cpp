@@ -75,7 +75,7 @@ static const char USAGE_STRING[] =
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
-	"                           atari, mac, pc)\n"
+	"                           atari, fmtowns, mac, pc)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
