@@ -23,8 +23,8 @@
 
 // Console module
 
-#include "reinherit.h"
-
+#include "saga.h"
+#include "gfx_mod.h"
 #include "font_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"

@@ -21,7 +21,6 @@
  *
  */
 #include "saga.h"
-#include "reinherit.h"
 
 #include "music.h"
 #include "rscfile_mod.h"

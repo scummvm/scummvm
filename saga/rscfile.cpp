@@ -23,7 +23,6 @@
 
 // RSC Resource file management module
 #include "saga.h"
-#include "reinherit.h"
 
 #include "rscfile_mod.h"
 #include "rscfile.h"

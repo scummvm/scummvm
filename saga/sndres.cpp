@@ -24,7 +24,6 @@
 // Sound resource management class
 
 #include "saga.h"
-#include "reinherit.h"
 
 #include "game_mod.h"
 #include "rscfile_mod.h"

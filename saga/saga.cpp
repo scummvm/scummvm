@@ -32,10 +32,8 @@
 
 #include "saga.h"
 
-#include "reinherit.h"
-
 #include "timer.h"
-
+#include "gfx_mod.h"
 #include "rscfile_mod.h"
 #include "render.h"
 #include "actor_mod.h"

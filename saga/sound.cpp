@@ -21,7 +21,6 @@
  *
  */
 #include "saga.h"
-#include "reinherit.h"
 
 #include "sound.h"
 #include "game_mod.h"

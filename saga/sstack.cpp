@@ -23,8 +23,9 @@
 
 // Scripting engine stack component
 
-#include "reinherit.h"
+#include "saga.h"
 
+#include "gfx_mod.h"
 #include "console_mod.h"
 #include "text_mod.h"
 

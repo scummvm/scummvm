@@ -21,8 +21,7 @@
  *
  */
 
-#include "reinherit.h"
-
+#include "saga.h"
 #include "timer.h"
 
 // FIXME: replace calls to this with direct OSystem calls

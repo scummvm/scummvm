@@ -23,17 +23,15 @@
 
 // Scene management module
 #include "saga.h"
-#include "reinherit.h"
-
 #include "yslib.h"
 
+#include "gfx_mod.h"
 #include "game_mod.h"
 #include "animation.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
 #include "actionmap.h"
-#include "gfx_mod.h"
 #include "isomap_mod.h"
 #include "script_mod.h"
 #include "objectmap_mod.h"
@@ -574,7 +572,7 @@ int ProcessSceneResources() {
 		switch (SceneModule.reslist[i].res_type) {
 		case SAGA_BG_IMAGE: // Scene background resource
 			if (SceneModule.bg.loaded) {
-				warning("Error: Multiple background resources encountered");
+				warning("ProcessSceneResources: Multiple background resources encountered");
 				return R_FAILURE;
 			}
 
@@ -589,7 +587,7 @@ int ProcessSceneResources() {
 				&SceneModule.bg.buf_len,
 				&SceneModule.bg.w,
 				&SceneModule.bg.h) != R_SUCCESS) {
-				warning("Error loading background resource: %u", SceneModule.reslist[i].res_number);
+				warning("ProcessSceneResources: Error loading background resource: %u", SceneModule.reslist[i].res_number);
 				return R_FAILURE;
 			}
 
@@ -599,7 +597,7 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (SceneModule.bg_mask.loaded) {
-				warning("Error: Duplicate background mask resource encountered");
+				warning("ProcessSceneResources: Duplicate background mask resource encountered");
 			}
 			debug(0, "Loading BACKGROUND MASK resource.");
 			SceneModule.bg_mask.res_buf = SceneModule.reslist[i].res_data;
@@ -623,20 +621,20 @@ int ProcessSceneResources() {
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading exit map resource...");
 			if (_vm->_actionMap->load(res_data, res_data_len) != R_SUCCESS) {
-				warning("Error loading exit map resource");
+				warning("ProcessSceneResources: Error loading exit map resource");
 				return R_FAILURE;
 			}
 			break;
 		case SAGA_ISO_TILESET:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				warning("Isometric tileset incompatible with normal scene mode");
+				warning("ProcessSceneResources: Isometric tileset incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
 			debug(0, "Loading isometric tileset resource.");
 
 			if (ISOMAP_LoadTileset(res_data, res_data_len) != R_SUCCESS) {
-				warning("Error loading isometric tileset resource");
+				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
 
@@ -644,14 +642,14 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ISO_METAMAP:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				warning("Isometric metamap incompatible with normal scene mode");
+				warning("ProcessSceneResources: Isometric metamap incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
 			debug(0, "Loading isometric metamap resource.");
 
 			if (ISOMAP_LoadMetamap(res_data, res_data_len) != R_SUCCESS) {
-				warning("Error loading isometric metamap resource");
+				warning("ProcessSceneResources: Error loading isometric metamap resource");
 				return R_FAILURE;
 			}
 
@@ -659,14 +657,14 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_ISO_METATILESET:
 			if (SceneModule.scene_mode == R_SCENE_MODE_NORMAL) {
-				warning("Isometric metatileset incompatible with normal scene mode");
+				warning("ProcessSceneResources: Isometric metatileset incompatible with normal scene mode");
 				return R_FAILURE;
 			}
 
 			debug(0, "Loading isometric metatileset resource.");
 
 			if (ISOMAP_LoadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
-				warning("Error loading isometric tileset resource");
+				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
 
@@ -687,15 +685,13 @@ int ProcessSceneResources() {
 
 				new_animinfo = (SCENE_ANIMINFO *)malloc(sizeof *new_animinfo);
 				if (new_animinfo == NULL) {
-					warning("Memory allocation error");
+					warning("ProcessSceneResources: Memory allocation error");
 					return R_MEM;
 				}
 
 				if (_vm->_anim->load(SceneModule.reslist[i].res_data,
-					SceneModule.reslist[i].res_data_len,
-					&new_anim_id) == R_SUCCESS) {
-				} else {
-					warning("Error loading animation resource");
+					SceneModule.reslist[i].res_data_len, &new_anim_id) != R_SUCCESS) {
+					warning("ProcessSceneResources: Error loading animation resource");
 					return R_FAILURE;
 				}
 
@@ -710,11 +706,10 @@ int ProcessSceneResources() {
 			PALANIM_Load(SceneModule.reslist[i].res_data, SceneModule.reslist[i].res_data_len);
 			break;
 		default:
-			warning("Encountered unknown resource type: %d", SceneModule.reslist[i].res_type);
+			warning("ProcessSceneResources: Encountered unknown resource type: %d", SceneModule.reslist[i].res_type);
 			break;
 		}
 	}
-
 	return R_SUCCESS;
 }
 

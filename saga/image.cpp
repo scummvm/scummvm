@@ -23,7 +23,6 @@
 
 // SAGA Image resource management routines
 #include "saga.h"
-#include "reinherit.h"
 
 #include "game_mod.h"
 

@@ -27,11 +27,10 @@
 // appearing in Graphics Gems IV, "Point in Polygon Strategies."
 // p. 24-46, code: p. 34-45
 #include "saga.h"
-#include "reinherit.h"
 
+#include "gfx_mod.h"
 #include "cvar_mod.h"
 #include "console_mod.h"
-#include "gfx_mod.h"
 #include "font_mod.h"
 
 #include "objectmap_mod.h"

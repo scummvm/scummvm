@@ -23,11 +23,10 @@
 
 /* Action map module */
 #include "saga.h"
-#include "reinherit.h"
 
 #include "cvar_mod.h"
-#include "console_mod.h"
 #include "gfx_mod.h"
+#include "console_mod.h"
 
 #include "actionmap.h"
 

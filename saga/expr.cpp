@@ -25,8 +25,7 @@
 
 // EXPR_ParseArgs() lifted wholesale from SDL win32 initialization code by Sam Lantinga
 
-#include "reinherit.h"
-
+#include "saga.h"
 #include "cvar_mod.h"
 #include "expr.h"
 

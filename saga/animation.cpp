@@ -23,7 +23,7 @@
 
 // Background animation management module
 #include "saga.h"
-#include "reinherit.h"
+#include "gfx_mod.h"
 
 #include "cvar_mod.h"
 #include "console_mod.h"
@@ -65,6 +65,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	uint16 i;
 
 	if (!_initialized) {
+		warning("Anim::load not initialised");
 		return R_FAILURE;
 	}
 
@@ -77,12 +78,13 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	}
 
 	if (i == R_MAX_ANIMATIONS) {
+		warning("Anim::load could not find unused animation slot");
 		return R_FAILURE;
 	}
 
 	new_anim = (R_ANIMATION *)malloc(sizeof *new_anim);
 	if (new_anim == NULL) {
-		warning("Error: Allocation failure");
+		warning("Anim::load Allocation failure");
 		return R_MEM;
 	}
 
@@ -91,14 +93,14 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 
 	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
 		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
-			warning("Error: Couldn't get animation frame count");
+			warning("Anim::load Couldn't get animation frame count");
 			return R_FAILURE;
 		}
 
 		// Cache frame offsets
 		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof *new_anim->frame_offsets);
 		if (new_anim->frame_offsets == NULL) {
-			warning("Error: Allocation failure");
+			warning("Anim::load Allocation failure");
 			return R_MEM;
 		}
 

@@ -44,6 +44,33 @@ struct R_CLIPINFO {
 
 };
 
+struct PALENTRY {
+	byte red;
+	byte green;
+	byte blue;
+};
+
+struct R_COLOR {
+	int red;
+	int green;
+	int blue;
+	int alpha;
+};
+
+struct R_SURFACE {
+	byte *buf;
+	int buf_w;
+	int buf_h;
+	int buf_pitch;
+	R_RECT clip_rect;
+};
+
+#define R_PAL_ENTRIES 256
+
+#define R_RGB_RED   0x00FF0000UL
+#define R_RGB_GREEN 0x0000FF00UL
+#define R_RGB_BLUE  0x000000FFUL
+
 int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s);
 int GFX_DrawPalette(R_SURFACE *dst_s);
 int GFX_BufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
@@ -55,6 +82,17 @@ int GFX_DrawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color);
 int GFX_GetClipInfo(R_CLIPINFO *clipinfo);
 int GFX_ClipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, R_POINT *dst_p1, R_POINT *dst_p2);
 void GFX_DrawLine(R_SURFACE * ds, R_POINT *p1, R_POINT *p2, int color);
+
+int GFX_Init(OSystem *system, int width, int height);
+R_SURFACE *GFX_GetBackBuffer();
+int GFX_GetWhite();
+int GFX_GetBlack();
+int GFX_MatchColor(unsigned long colormask);
+int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal);
+int GFX_GetCurrentPal(PALENTRY *src_pal);
+int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+
 
 } // End of namespace Saga
 

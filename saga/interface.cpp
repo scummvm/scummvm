@@ -23,14 +23,13 @@
 
 // Game interface module
 #include "saga.h"
-#include "reinherit.h"
 
+#include "gfx_mod.h"
 #include "game_mod.h"
 #include "cvar_mod.h"
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "font_mod.h"
-#include "gfx_mod.h"
 #include "objectmap_mod.h"
 #include "rscfile_mod.h"
 #include "script_mod.h"

@@ -23,7 +23,6 @@
 
 //Background transition routines
 #include "saga.h"
-#include "reinherit.h"
 
 namespace Saga {
 

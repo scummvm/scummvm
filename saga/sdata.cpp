@@ -22,10 +22,9 @@
  */
 // Type SDataWord_T must be unpadded
 #include "saga.h"
-#include "reinherit.h"
 
+#include "gfx_mod.h"
 #include "text_mod.h"
-
 #include "script_mod.h"
 #include "script.h"
 #include "sdata.h"

@@ -23,10 +23,10 @@
 
 // Scripting module thread management component
 #include "saga.h"
-#include "reinherit.h"
 
 #include "yslib.h"
 
+#include "gfx_mod.h"
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "text_mod.h"

@@ -25,8 +25,7 @@
 
 #include "saga.h"
 #include "yslib.h"
-
-#include "reinherit.h"
+#include "gfx_mod.h"
 
 #include "animation.h"
 #include "cvar_mod.h"

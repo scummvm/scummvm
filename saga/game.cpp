@@ -23,8 +23,7 @@
 
 // Game detection, general game parameters
 
-#include "reinherit.h"
-
+#include "saga.h"
 #include "common/file.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"

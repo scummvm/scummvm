@@ -23,7 +23,6 @@
 
 // Sprite management module
 #include "saga.h"
-#include "reinherit.h"
 
 #include "game_mod.h"
 #include "gfx_mod.h"

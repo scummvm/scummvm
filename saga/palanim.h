@@ -26,8 +26,6 @@
 #ifndef SAGA_PALANIM_H
 #define SAGA_PALANIM_H
 
-#include "reinherit.h"
-
 namespace Saga {
 
 #define PALANIM_CYCLETIME 100

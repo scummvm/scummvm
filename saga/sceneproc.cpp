@@ -24,10 +24,9 @@
 // Initial and default scene procedures
 
 #include "saga.h"
-#include "reinherit.h"
-
 #include "yslib.h"
 
+#include "gfx_mod.h"
 #include "animation.h"
 #include "events_mod.h"
 #include "scene_mod.h"

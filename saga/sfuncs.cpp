@@ -23,15 +23,15 @@
 
 // Scripting module script function component
 
-#include "reinherit.h"
+#include "saga.h"
 
+#include "gfx_mod.h"
 #include "actor_mod.h"
 #include "animation.h"
 #include "console_mod.h"
 #include "interface_mod.h"
 #include "text_mod.h"
 
-#include "saga.h"
 #include "script.h"
 #include "sfuncs.h"
 

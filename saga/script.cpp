@@ -23,10 +23,9 @@
 
 // Scripting module: Script resource handling functions
 #include "saga.h"
-#include "reinherit.h"
-
 #include "yslib.h"
 
+#include "gfx_mod.h"
 #include "rscfile_mod.h"
 #include "game_mod.h"
 #include "text_mod.h"

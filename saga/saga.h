@@ -30,11 +30,10 @@
 #include "base/gameDetector.h"
 #include "common/util.h"
 #include "common/stream.h"
+#include "common/rect.h"
 
 #include <limits.h>
 #include <stddef.h>
-
-//#include "gamedesc.h"
 
 namespace Saga {
 
@@ -48,12 +47,31 @@ class ActionMap;
 using Common::MemoryReadStream;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_MAXPATH 512
+
+struct R_RSCFILE_CONTEXT;
+struct R_SEMAPHORE;
+
+typedef Common::Point R_POINT;
+typedef Common::Rect R_RECT;
+
+enum R_ERRORCODE {
+	R_MEM = -2,
+	R_FAILURE = -1,
+	R_SUCCESS = 0
+};
 
 enum SAGAGameId {
 	GID_ITE,
 	GID_ITECD,
 	GID_IHNM
 };
+
+int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
+	int dst_p, const byte *src_img, int src_p, int flags, double percent);
+
+int SYSINPUT_ProcessInput(void);
+R_POINT SYSINPUT_GetMousePos();
 
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);

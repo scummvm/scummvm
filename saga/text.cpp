@@ -23,10 +23,10 @@
 
 // Text / dialogue display management module
 
-#include "reinherit.h"
-
+#include "saga.h"
 #include "yslib.h"
 
+#include "gfx_mod.h"
 #include "font_mod.h"
 
 #include "text_mod.h"

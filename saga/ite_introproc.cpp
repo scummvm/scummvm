@@ -25,8 +25,7 @@
 // Intro sequence scene procedures
 
 #include "saga.h"
-#include "reinherit.h"
-
+#include "gfx_mod.h"
 #include "yslib.h"
 
 #include "animation.h"

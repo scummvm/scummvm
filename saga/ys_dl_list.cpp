@@ -20,8 +20,7 @@
  * $Header$
  *
  */
-#include "reinherit.h"
-
+#include "saga.h"
 #include "yslib.h"
 
 namespace Saga {
