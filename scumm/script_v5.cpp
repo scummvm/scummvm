@@ -1907,7 +1907,7 @@ void Scumm_v5::o5_setObjectName() {
 
 		objptr = getOBCDFromObject(obj);
 		if (_features & GF_OLD_BUNDLE)
-			offset = *(objptr + 20);
+			offset = *(objptr + 16);
 		else
 			offset = READ_LE_UINT16(objptr + 18);
 		size = READ_LE_UINT16(objptr) - offset;
