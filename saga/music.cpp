@@ -159,7 +159,7 @@ Music::~Music() {
 
 int Music::play(uint32 music_rn, uint16 flags) {
 	R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
-	const char *midi_file = NULL;
+	const char *midi_file;
 
 	byte *resource_data;
 	size_t resource_size;
@@ -218,27 +218,19 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		break;
 	case XXX:
 		midi_file = "exploreb";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "explorec";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "fvillage";
 		break;
 	case XXX:
 		midi_file = "humruinm";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 #endif
 	case 10:
 		midi_file = "intro";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 #if 0
 	case XXX:
@@ -249,43 +241,27 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		break;
 	case XXX:
 		midi_file = "nitstrlm";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "orbtempl";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "reset";
-		// Unfortunately, our MIDI parser won't handle the above file,
-		// but I'm not sure we need it anyway
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "shiala";
 		break;
 	case XXX:
 		midi_file = "spooky";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "sunstatm";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "sweet";
-		// Unfortunately, our MIDI parser won't handle the above file
-		midi_file = NULL;
 		break;
 	case XXX:
 		midi_file = "tychom";
-		// Unlike the other unhandled files, ScummVM won't crash on
-		// this one. But it won't play anything either.
-		midi_file = NULL;
 		break;
 #endif
 	default:
