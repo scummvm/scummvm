@@ -49,15 +49,17 @@ int Render::reg(void) {
 	return R_SUCCESS;
 }
 
-Render::Render(SagaEngine *vm, OSystem *system) : _vm(vm), _system(system), _initialized(false) {
+Render::Render(SagaEngine *vm, OSystem *system, Gfx *gfx) {
+	_vm = vm;
+	_system = system;
+	_gfx = gfx;
+	_initialized = false;
+
 	R_GAME_DISPLAYINFO disp_info;
 	int tmp_w, tmp_h, tmp_bytepp;
 
 	// Initialize system graphics
 	GAME_GetDisplayInfo(&disp_info);
-
-	_vm->_gfx = new Gfx(system, disp_info.logical_w, disp_info.logical_h);
-	_gfx = _vm->_gfx;
 
 	// Initialize FPS timer callback
 	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);

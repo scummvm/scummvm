@@ -52,7 +52,7 @@ struct R_BUFFER_INFO {
 class Render {
 public:
 	int reg(void);
-	Render(SagaEngine *vm, OSystem *system);
+	Render(SagaEngine *vm, OSystem *system, Gfx *gfx);
 	~Render(void);
 	bool initialized();
 	int drawScene(void);

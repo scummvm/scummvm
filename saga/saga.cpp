@@ -33,7 +33,7 @@
 #include "saga.h"
 
 #include "timer.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "rscfile_mod.h"
 #include "render.h"
 #include "actor_mod.h"
@@ -191,7 +191,11 @@ void SagaEngine::go() {
 	}
 
 	// Initialize graphics
-	_render = new Render(this, _system);
+	R_GAME_DISPLAYINFO disp_info;
+	GAME_GetDisplayInfo(&disp_info);
+	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
+
+	_render = new Render(this, _system, _gfx);
 	if (!_render->initialized()) {
 		return;
 	}
