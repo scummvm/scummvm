@@ -33,7 +33,8 @@
  */
 #define TICKS_PER_BEAT 480
 
-#define SYSEX_ID 0x7D
+#define IMUSE_SYSEX_ID 0x7D
+#define ROLAND_SYSEX_ID 0x41
 #define PERCUSSION_CHANNEL 9
 
 #define TRIGGER_ID 0
@@ -321,6 +322,7 @@ public:
 	virtual void part_changed(Part *part, uint16 what) = 0;
 	virtual void part_set_param(Part *part, byte param, int value) = 0;
 	virtual int part_update_active(Part *part, uint16 *active) = 0;
+	virtual byte get_channel_program (byte channel) = 0;
 };
 
 
@@ -439,6 +441,7 @@ public:
 	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
+	byte get_channel_program (byte channel) { return _driver->get_channel_program (channel); }
 	bool start_sound(int sound);
 	int stop_sound(int sound);
 	int stop_all_sounds();
@@ -585,6 +588,8 @@ public:
 	void part_changed(Part *part, uint16 what);
 	void part_off(Part *part);
 	int part_update_active(Part *part, uint16 *active);
+	byte get_channel_program (byte) { return 255; }
+
 	void adjust_priorities() {
 	}
 
@@ -610,6 +615,7 @@ class IMuseGM : public IMuseDriver {
 	MidiDriver *_md;
 	MidiChannelGM _midi_channels[16];
 
+	byte _midi_program_last[16];
 	int16 _midi_pitchbend_last[16];
 	byte _midi_pitchbend_factor_last[16];
 	uint8 _midi_volume_last[16];
@@ -650,6 +656,7 @@ public:
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part, uint16 what);
+	byte get_channel_program (byte channel) { return _midi_program_last [channel]; }
 
 	static int midi_driver_thread(void *param);
 
@@ -2164,8 +2171,7 @@ byte *Player::parse_midi(byte *s)
 	case 0xF:
 		if (chan == 0) {
 			uint size = get_delta_time(&s);
-			if (*s == SYSEX_ID)
-				parse_sysex(s, size);
+			parse_sysex(s, size);
 			s += size;
 		} else if (chan == 0xF) {
 			cmd = *s++;
@@ -2193,6 +2199,15 @@ byte *Player::parse_midi(byte *s)
 	return s;
 }
 
+struct {
+	char *name;
+	byte program;
+}
+roland_to_gm_map [] = {
+	// TODO: Construct this database.
+	{ "          ", 0 }
+};
+
 void Player::parse_sysex(byte *p, uint len)
 {
 	byte code;
@@ -2201,27 +2216,69 @@ void Player::parse_sysex(byte *p, uint len)
 	byte buf[128];
 	Part *part;
 
-	/* too big? */
+	// Check SysEx manufacturer.
+	// Roland is 0x41
+	a = *p++;
+	--len;
+	if (a != IMUSE_SYSEX_ID) {
+		if (a == ROLAND_SYSEX_ID) {
+			// Roland custom instrument definition.
+			part = get_part (p[0] & 0x0F);
+			if (part) {
+				memcpy (buf, p + 6, 10);
+				buf[10] = '\0';
+				// debug (0, "[%02d] Roland (model 0x%02X, cmd 0x%02X) Instrument: \"%8s\"", p[0], p[1], p[2], buf);
+				for (b = 0; b < ARRAYSIZE(roland_to_gm_map); ++b) {
+					if (!memcmp (roland_to_gm_map[b].name, buf, 10)) {
+						a = roland_to_gm_map[b].program;
+						for (b = 0; b < ARRAYSIZE(mt32_to_gmidi); ++b) {
+							if (mt32_to_gmidi [b] == a) {
+								part->set_program (b);
+								return;
+							}
+						}
+						warning ("Could not find appropriate MT-32 program for GM program %d", (int) a);
+						return;
+					}
+				}
+				warning ("Could not find appropriate GM program for MT-32 custom instrument \"%s\"", buf);
+			}
+		} else {
+			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
+			return;
+		}
+	}
+	--len;
+
+	// Too big?
 	if (len >= sizeof(buf) * 2)
 		return;
-
-	/* skip sysex manufacturer */
-	p++;
-	len -= 2;
 
 	switch (code = *p++) {
 	case 0:
 		if (g_scumm->_gameId != GID_SAMNMAX) {
-			// Part on/off?
-			// This seems to do the right thing for Monkey 2, at least.
-			a = *p++ & 0x0F;
-			part = get_part(a);
+			// There are 17 bytes of useful information beyond
+			// what we've read so far. All we know about them is
+			// as follows:
+			//   BYTE 00: Channel #
+			//   BYTE 02: BIT 01 (0x01): Part on? (1 = yes)
+			//   BYTE 05: Volume (upper 4 bits) [guessing]
+			//   BYTE 06: Volume (lower 4 bits) [guessing]
+			//   BYTE 09: BIT 04 (0x08): Percussion? (1 = yes)
+			part = get_part (p[0] & 0x0F);
 			if (part) {
-				debug(2, "%d => turning %s part %d", p[1], (p[1] == 2) ? "OFF" : "ON", a);
-				part->set_onoff(p[1] != 2);
+				part->set_onoff (p[2] & 0x01);
+				part->set_vol ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
+				part->_percussion = ((p[9] & 0x08) > 0);
+				if (part->_percussion) {
+					if (part->_mc)
+						part->off();
+				} else {
+					part->changed (IMuseDriver::pcAll);
+				}
 			}
 		} else {
-			// Jamieson630: Sam & Max seems to use this as a marker for
+			// Sam & Max seems to use this as a marker for
 			// ImSetTrigger. When a marker is encountered whose sound
 			// ID and (presumably) marker ID match what was set by
 			// ImSetTrigger, something magical is supposed to happen....
@@ -3344,7 +3401,7 @@ void Part::setup(Player *player)
 		player->_parts->_prev = this;
 	player->_parts = this;
 
-	_percussion = true;
+	_percussion = (player->_isGM && _chan == 9); // true;
 	_on = true;
 	_pri_eff = player->_priority;
 	_pri = 0;
@@ -3358,12 +3415,15 @@ void Part::setup(Player *player)
 	_pitchbend_factor = 2;
 	_pitchbend = 0;
 	_effect_level = 64;
-	_program = 255;
+	_program = player->_se->get_channel_program (_chan);
 	_chorus = 0;
 	_modwheel = 0;
 	_bank = 0;
 	_pedal = false;
 	_mc = NULL;
+
+	if (_program < 128)
+		changed (IMuseDriver::pcAll);
 }
 
 void Part::uninit()
@@ -4740,8 +4800,10 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 	_se = eng;
 	syst->create_thread(midi_driver_thread, this);
 
-	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++)
+	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++) {
 		mc->_chan = i;
+		_midi_program_last [i] = 255;
+	}
 }
 
 void IMuseGM::uninit()
@@ -4828,8 +4890,7 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 	MidiChannelGM *mc;
 
 	/* Mark for re-schedule if program changed when in pre-state */
-	if (what & pcProgram && part->_percussion) {
-		part->_percussion = false;
+	if (what & pcProgram && !part->_percussion && !part->_mc) {
 		update_pris();
 	}
 
@@ -4868,6 +4929,7 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 		midiEffectLevel(mc->_chan, part->_effect_level);
 
 	if (what & pcProgram) {
+		_midi_program_last [part->_chan] = part->_program;
 		if (part->_bank) {
 			midiControl0(mc->_chan, part->_bank);
 			midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
