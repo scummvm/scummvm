@@ -47,7 +47,7 @@ const GameVersion Resource::_gameVersions[] = {
 
 
 Resource::Resource(const Common::String &datafilePath, const char *datafileName, SaveFileManager *mgr, const char *savePath)
-	: _JAS2Pos(0), _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr), _savePath(savePath) {
+	: _JAS2Pos(0), _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
 
 	_resourceFile = new File();
 	_resourceFile->open(datafileName, _datafilePath);
