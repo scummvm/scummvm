@@ -867,7 +867,7 @@ void SimonState::playSting(uint a)
 
 	_mus_file->seek(0, SEEK_SET);
 	if (_mus_file->read(_mus_offsets, size) != size)
-		error("Cannot read offsets");
+		error("Can't read offsets");
 
 	midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
@@ -4530,8 +4530,6 @@ void SimonState::go()
 	allocTablesHeap();
 
 	setup_vga_file_buf_pointers();
-
-	_vk_t_toggle = true;
 
 	_sound = new SimonSound(_game, gss, _gameDataPath, _mixer);
 
