@@ -15,6 +15,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "bits.h"
+
 #ifndef DEBUG_H
 #define DEBUG_H
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
@@ -23,4 +25,6 @@ extern int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
 void warning(const char *fmt, ...);
 void error(const char *fmt, ...);
 
+const char *tag2str(uint32 tag);
+void hexdump(const byte * data, int len, int bytesPerLine);
 #endif

@@ -22,6 +22,65 @@
 #include <cstdlib>
 #include <SDL.h>
 
+const char *tag2str(uint32 tag) {
+  static char str[5];
+  str[0] = (char)(tag >> 24);
+  str[1] = (char)(tag >> 16);
+  str[2] = (char)(tag >> 8);
+  str[3] = (char)tag;
+  str[4] = '\0';
+  return str;
+}
+
+void hexdump(const byte * data, int len, int bytesPerLine) {
+        assert(1 <= bytesPerLine && bytesPerLine <= 32);
+        int i;
+        byte c;
+        int offset = 0;
+        while (len >= bytesPerLine) {
+                printf("%06x: ", offset);
+                for (i = 0; i < bytesPerLine; i++) {
+                        printf("%02x ", data[i]);
+                        if (i % 4 == 3)
+                                printf(" ");
+                }
+                printf(" |");
+                for (i = 0; i < bytesPerLine; i++) {
+                        c = data[i];
+                        if (c < 32 || c >= 127)
+                                c = '.';
+                        printf("%c", c);
+                }
+                printf("|\n");
+                data += bytesPerLine;
+                len -= bytesPerLine;
+                offset += bytesPerLine;
+        }
+
+        if (len <= 0)
+                return;
+
+        printf("%06x: ", offset);
+        for (i = 0; i < bytesPerLine; i++) {
+                if (i < len)
+                        printf("%02x ", data[i]);
+                else
+                        printf("   ");
+                if (i % 4 == 3)
+                        printf(" ");
+        }
+        printf(" |");
+        for (i = 0; i < len; i++) {
+                c = data[i];
+                if (c < 32 || c >= 127)
+                        c = '.';
+                printf("%c", c);
+        }
+        for (; i < bytesPerLine; i++)
+                printf(" ");
+        printf("|\n");
+}
+
 void warning(const char *fmt, ...) {
   std::fprintf(stderr, "WARNING: ");
 

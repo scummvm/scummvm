@@ -19,66 +19,15 @@
 #include "bits.h"
 #include "debug.h"
 #include <cstring>
+#include <zlib.h>
 #include "smush.h"
 #include "timer.h"
 #include "mixer/mixer.h"
 #include "driver_gl.h"
-
 #include "resource.h"
 
-#include <zlib.h>
 
 Smush *smush;
-
-void hexdump(const byte * data, int len, int bytesPerLine) {
-        assert(1 <= bytesPerLine && bytesPerLine <= 32);
-        int i;
-        byte c;
-        int offset = 0;
-        while (len >= bytesPerLine) {
-                printf("%06x: ", offset);
-                for (i = 0; i < bytesPerLine; i++) {
-                        printf("%02x ", data[i]);
-                        if (i % 4 == 3)
-                                printf(" ");
-                }
-                printf(" |");
-                for (i = 0; i < bytesPerLine; i++) {
-                        c = data[i];
-                        if (c < 32 || c >= 127)
-                                c = '.';
-                        printf("%c", c);
-                }
-                printf("|\n");
-                data += bytesPerLine;
-                len -= bytesPerLine;
-                offset += bytesPerLine;
-        }
-
-        if (len <= 0)
-                return;
-
-        printf("%06x: ", offset);
-        for (i = 0; i < bytesPerLine; i++) {
-                if (i < len)
-                        printf("%02x ", data[i]);
-                else
-                        printf("   ");
-                if (i % 4 == 3)
-                        printf(" ");
-        }
-        printf(" |");
-        for (i = 0; i < len; i++) {
-                c = data[i];
-                if (c < 32 || c >= 127)
-                        c = '.';
-                printf("%c", c);
-        }
-        for (; i < bytesPerLine; i++)
-                printf(" ");
-        printf("|\n");
-}
-
 
 void Smush::timerCallback(void *refCon) {
 	smush->handleFrame();
