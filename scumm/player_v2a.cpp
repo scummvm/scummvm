@@ -282,14 +282,14 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
-		memcpy(_data1, data + _offset, _size);
-		memcpy(_data2, data + _offset, _size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
 		int vol1 = (_vol1 << 1) | (_vol1 >> 5);
 		int vol2 = (_vol2 << 1) | (_vol2 >> 5);
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -308,14 +308,14 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
-		memcpy(_data1, data + _offset, _size);
-		memcpy(_data2, data + _offset, _size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
 		int vol1 = (_vol1 << 1) | (_vol1 >> 5);
 		int vol2 = (_vol2 << 1) | (_vol2 >> 5);
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
 		_ticks = 0;
 	}
 	virtual bool update() {
@@ -448,14 +448,14 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
-		memcpy(_data1, data + _offset, _size);
-		memcpy(_data2, data + _offset, _size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
 		_curvol = 1;
 		_dir = 0;
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, 1, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, 1, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, 1, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, 1, 0, _size, 127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -569,8 +569,8 @@ public:
 		_id = id;
 		char *tmp_data = (char *)malloc(_size);
 		memcpy(tmp_data, data + _offset, _size);
-		_curvol = 0x3F;
 		_curfreq = _freq1;
+		_curvol = 0x3F;
 		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _curfreq, (_curvol << 2) | (_curvol >> 4), 0, _size);
 	}
 	virtual bool update() {
@@ -632,14 +632,14 @@ private:
 	int _loop;
 
 	void soundon() {
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
-		memcpy(_data1, _data + _offset, _size);
-		memcpy(_data2, _data + _offset, _size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, _data + _offset, _size);
+		memcpy(tmp_data2, _data + _offset, _size);
 		int vol1 = (_vol1 << 1) | (_vol1 >> 5);
 		int vol2 = (_vol2 << 1) | (_vol2 >> 5);
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, vol1, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, vol2, 0, _size, 127);
 	}
 	void soundoff() {
 		_mod->stopChannel(_id | 0x000);
@@ -683,9 +683,9 @@ private:
 	int _loopctr;
 
 	void soundon() {
-		char *_data1 = (char *)malloc(_size);
-		memcpy(_data1, _data + _offset, _size);
-		_mod->startChannel(_id, _data1, _size, BASE_FREQUENCY / _freq, (_vol << 2) | (_vol >> 4), 0, 0);
+		char *tmp_data1 = (char *)malloc(_size);
+		memcpy(tmp_data1, _data + _offset, _size);
+		_mod->startChannel(_id, tmp_data1, _size, BASE_FREQUENCY / _freq, (_vol << 2) | (_vol >> 4), 0, 0);
 	}
 	void soundoff() {
 		_mod->stopChannel(_id);
@@ -694,8 +694,8 @@ private:
 
 class V2A_Sound_Special_SingleDurationMultiDurations : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations) { }
+	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
+		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations), _looped(looped) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -703,17 +703,21 @@ public:
 		memcpy(_data,data,READ_LE_UINT16(data));
 		soundon();
 		_curdur = 0;
-		_ticks = _durations[_curdur];
+		_ticks = _durations[_curdur++];
 	}
 	virtual bool update() {
 		assert(_id);
 		_ticks--;
 		if (!_ticks) {
+			if (_curdur == _numdurs) {
+				if (_looped)
+					_curdur = 0;
+				else
+					return false;
+			}
 			soundoff();
 			soundon();
 			_ticks = _durations[_curdur++];
-			if (_curdur == _numdurs)
-				_curdur = 0;
 		}
 		return true;
 	}
@@ -722,6 +726,7 @@ private:
 	const uint8 _vol;
 	const uint8 _numdurs;
 	const uint8 *_durations;
+	const bool _looped;
 
 	int _ticks;
 	int _curdur;
@@ -743,12 +748,12 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size1);
-		char *_data2 = (char *)malloc(_size2);
+		char *tmp_data1 = (char *)malloc(_size1);
+		char *tmp_data2 = (char *)malloc(_size2);
 		char *_data3 = (char *)malloc(_size1);
 		char *_data4 = (char *)malloc(_size2);
-		memcpy(_data1, data + _offset1, _size1);
-		memcpy(_data2, data + _offset2, _size2);
+		memcpy(tmp_data1, data + _offset1, _size1);
+		memcpy(tmp_data2, data + _offset2, _size2);
 		memcpy(_data3, data + _offset1, _size1);
 		memcpy(_data4, data + _offset2, _size2);
 
@@ -761,8 +766,8 @@ public:
 		_freq4 = 0x010E;
 		_step4 = 0x0007;
 
-		_mod->startChannel(_id | 0x000, _data1, _size1, BASE_FREQUENCY / _freq1, _vol, 0, _size1, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size2, BASE_FREQUENCY / _freq2, _vol, 0, _size2, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size1, BASE_FREQUENCY / _freq1, _vol, 0, _size1, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size2, BASE_FREQUENCY / _freq2, _vol, 0, _size2, 127);
 		_mod->startChannel(_id | 0x200, _data3, _size1, BASE_FREQUENCY / _freq3, _vol, 0, _size1, 127);
 		_mod->startChannel(_id | 0x300, _data4, _size2, BASE_FREQUENCY / _freq4, _vol, 0, _size2, -127);
 	}
@@ -818,18 +823,18 @@ public:
 		_data = (char *)malloc(READ_LE_UINT16(data));
 		memcpy(_data,data,READ_LE_UINT16(data));
 		
-		char *_data1 = (char *)malloc(_size1);
-		char *_data2 = (char *)malloc(_size1);
-		memcpy(_data1, _data + _offset1, _size1);
-		memcpy(_data2, _data + _offset1, _size1);
+		char *tmp_data1 = (char *)malloc(_size1);
+		char *tmp_data2 = (char *)malloc(_size1);
+		memcpy(tmp_data1, _data + _offset1, _size1);
+		memcpy(tmp_data2, _data + _offset1, _size1);
 
 		_loopnum = 1;
 		_step = 2;
 		_curfreq = _freq1;
 
 		int vol = (_vol << 1) | (_vol >> 5);
-		_mod->startChannel(_id | 0x000, _data1, _size1, BASE_FREQUENCY / _curfreq, vol, 0, _size1, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size1, BASE_FREQUENCY / (_curfreq + 3), vol, 0, _size1, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size1, BASE_FREQUENCY / _curfreq, vol, 0, _size1, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size1, BASE_FREQUENCY / (_curfreq + 3), vol, 0, _size1, 127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -850,13 +855,13 @@ public:
 		if (_loopnum == 7) {
 			_mod->stopChannel(_id | 0x000);
 			_mod->stopChannel(_id | 0x100);
-			char *_data1 = (char *)malloc(_size2);
-			char *_data2 = (char *)malloc(_size2);
-			memcpy(_data1, _data + _offset2, _size2);
-			memcpy(_data2, _data + _offset2, _size2);
+			char *tmp_data1 = (char *)malloc(_size2);
+			char *tmp_data2 = (char *)malloc(_size2);
+			memcpy(tmp_data1, _data + _offset2, _size2);
+			memcpy(tmp_data2, _data + _offset2, _size2);
 			int vol = (_vol << 1) | (_vol >> 5);
-			_mod->startChannel(_id | 0x000, _data1, _size2, BASE_FREQUENCY / _curfreq, vol, 0, _size2, -127);
-			_mod->startChannel(_id | 0x100, _data2, _size2, BASE_FREQUENCY / (_curfreq + 3), vol, 0, _size2, 127);
+			_mod->startChannel(_id | 0x000, tmp_data1, _size2, BASE_FREQUENCY / _curfreq, vol, 0, _size2, -127);
+			_mod->startChannel(_id | 0x100, tmp_data2, _size2, BASE_FREQUENCY / (_curfreq + 3), vol, 0, _size2, 127);
 		}
 		return true;
 	}
@@ -881,16 +886,16 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
 		char *_data3 = (char *)malloc(_size);
 		char *_data4 = (char *)malloc(_size);
-		memcpy(_data1, data + _offset, _size);
-		memcpy(_data2, data + _offset, _size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
 		memcpy(_data3, data + _offset, _size);
 		memcpy(_data4, data + _offset, _size);
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, _vol, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, _vol, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, _vol, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, _vol, 0, _size, 127);
 		_mod->startChannel(_id | 0x200, _data3, _size, BASE_FREQUENCY / _freq3, _vol, 0, _size, 127);
 		_mod->startChannel(_id | 0x300, _data4, _size, BASE_FREQUENCY / _freq4, _vol, 0, _size, -127);
 	}
@@ -913,16 +918,16 @@ public:
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
-		char *_data1 = (char *)malloc(_size);
-		char *_data2 = (char *)malloc(_size);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
 		char *_data3 = (char *)malloc(_size);
 		char *_data4 = (char *)malloc(_size);
-		memcpy(_data1, data + _offset, _size);
-		memcpy(_data2, data + _offset, _size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
 		memcpy(_data3, data + _offset, _size);
 		memcpy(_data4, data + _offset, _size);
-		_mod->startChannel(_id | 0x000, _data1, _size, BASE_FREQUENCY / _freq1, _vol, 0, _size, -127);
-		_mod->startChannel(_id | 0x100, _data2, _size, BASE_FREQUENCY / _freq2, _vol, 0, _size, 127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, _vol, 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, _vol, 0, _size, 127);
 		_mod->startChannel(_id | 0x200, _data3, _size, BASE_FREQUENCY / _freq3, _vol, 0, _size, 127);
 		_mod->startChannel(_id | 0x300, _data4, _size, BASE_FREQUENCY / _freq4, _vol, 0, _size, -127);
 		_ticks = _dur;
@@ -976,6 +981,50 @@ private:
 	int _curvol;
 };
 
+class V2A_Sound_Special_SlowPitchbendThenSlowFadeout : public V2A_Sound_Base<1> {
+public:
+	V2A_Sound_Special_SlowPitchbendThenSlowFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
+		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		char *tmp_data = (char *)malloc(_size);
+		memcpy(tmp_data, data + _offset, _size);
+		_curfreq = _freq1;
+		_curvol = 0x3F;
+		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _curfreq, (_curvol << 2) | (_curvol >> 4), 0, _size);
+		_ticks = 0;
+	}
+	virtual bool update() {
+		assert(_id);
+		_ticks++;
+		if (_ticks < 4)
+			return true;
+		_ticks = 0;
+		if (_curfreq == _freq2) {
+			_curvol--;
+			if (_curvol == 0)
+				return false;
+			_mod->setChannelVol(_id, (_curvol << 2) | (_curvol >> 4));
+		}
+		else {
+			if (_freq1 < _freq2)
+				_curfreq++;
+			else
+				_curfreq--;
+			_mod->setChannelFreq(_id, BASE_FREQUENCY / _curfreq);
+		}
+		return true;
+	}
+private:
+	const uint16 _freq1;
+	const uint16 _freq2;
+
+	uint16 _curfreq;
+	int _curvol;
+	int _ticks;
+};
+
 struct soundObj {
 	~soundObj() { delete sound; }
 	uint32 crc;
@@ -1017,7 +1066,7 @@ static soundObj sndobjs[] = {
 	{0xE1A91583,new V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x007C,0x3F,0x007B,0x3F,0x3C,5,6)},	// Maniac 23
 	{0x64816ED5,new V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x00BE,0x37,0x00BD,0x37,0x3C,5,6)},	// Maniac 24
 	{0x639D72C2,new V2A_Sound_Special_SingleDurationMulti(0x00D0,0x10A4,0x0080,0x3F,0x28,3)},	// Maniac 46
-	{0xE8826D92,new V2A_Sound_Special_SingleDurationMultiDurations(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07")},	// Maniac 45
+	{0xE8826D92,new V2A_Sound_Special_SingleDurationMultiDurations(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07", true)},	// Maniac 45
 	{0xEDFF3D41,new V2A_Sound_Single(0x00F8,0x2ADE,0x01F8,0x3F)},	// Maniac 42 (this should echo, but it's barely noticeable and I don't feel like doing it)
 	{0x15606D06,new V2A_Sound_Special_QuadSiren(0x0148,0x0020,0x0168,0x0020,0x3F)},	// Maniac 32
 	{0x753EAFE3,new V2A_Sound_Special_TwinSirenMulti(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F)},	// Maniac 44
@@ -1066,15 +1115,15 @@ static soundObj sndobjs[] = {
 	{0x627DFD92,new V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x008B,0x008A,8,1)},	// Zak 76
 	{0x703E05C1,new V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x007C,0x007B,8,1)},	// Zak 77
 	{0xB0F77006,new V2A_Sound_Unsupported()},	// Zak 52
-	{0x5AE9D6A7,new V2A_Sound_Unsupported()},	// Zak 109
-	{0xABE0D3B0,new V2A_Sound_Unsupported()},	// Zak 105
+	{0x5AE9D6A7,new V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CA,0x22A4,0x0113,0x0227)},	// Zak 109
+	{0xABE0D3B0,new V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CE,0x22A4,0x0227,0x0113)},	// Zak 105
 	{0x788CC749,new V2A_Sound_Unsupported()},	// Zak 71
 	{0x2E2AB1FA,new V2A_Sound_Unsupported()},	// Zak 99
-	{0x1304CF20,new V2A_Sound_Unsupported()},	// Zak 79
+	{0x1304CF20,new V2A_Sound_Special_SingleDurationMultiDurations(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false)},	// Zak 79
 	{0xAE68ED91,new V2A_Sound_Unsupported()},	// Zak 54
 	{0xA4F40F97,new V2A_Sound_Unsupported()},	// Zak 61
 	{0x348F85CE,new V2A_Sound_Unsupported()},	// Zak 62
-	{0xD473AB86,new V2A_Sound_Unsupported()},	// Zak 46
+	{0xD473AB86,new V2A_Sound_Special_SingleDurationMultiDurations(0x0122,0x03E8,0x00BE,0x3F,7,(const uint8 *)"\x0F\x0B\x04\x0F\x1E\x0F\x66",false)},	// Zak 46
 	{0x84A0BA90,new V2A_Sound_Unsupported()},	// Zak 110
 	{0x92680D9F,new V2A_Sound_Unsupported()},	// Zak 32
 	{0xABFFDB02,new V2A_Sound_Unsupported()},	// Zak 86

@@ -36,7 +36,7 @@ public:
 	virtual ~Player_MOD();
 	virtual void setMasterVolume(int vol);
 
-	virtual void startChannel(int id, char *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
+	virtual void startChannel(int id, void *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
 	virtual void stopChannel(int id);
 	virtual void setChannelVol(int id, uint8 vol);
 	virtual void setChannelPan(int id, int8 pan);
@@ -60,10 +60,11 @@ private:
 		uint8 vol;
 		int8 pan;
 		uint16 freq;
-		byte *ptr;
+		void *ptr;
 		RateConverter *converter;
 		AudioInputStream *input;
-	} _channels[MOD_MAXCHANS];
+	};
+	soundChan _channels[MOD_MAXCHANS];
 
 	uint8 _maxvol;
 

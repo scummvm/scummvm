@@ -56,7 +56,7 @@ Player_MOD::~Player_MOD() {
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (!_channels[i].id)
 			continue;
-		delete _channels[i].ptr;
+		free(_channels[i].ptr);
 		delete _channels[i].converter;
 		delete _channels[i].input;
 	}
@@ -77,7 +77,7 @@ void Player_MOD::clearUpdateProc() {
 	_mixamt = 0;
 }
 
-void Player_MOD::startChannel (int id, char *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
+void Player_MOD::startChannel (int id, void *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
 	int i;
 	if (id == 0)
 		error("player_mod - attempted to start channel id 0");
@@ -93,7 +93,7 @@ void Player_MOD::startChannel (int id, char *data, int size, int rate, uint8 vol
 	_channels[i].id = id;
 	_channels[i].vol = vol;
 	_channels[i].pan = pan;
-	_channels[i].ptr = (byte*) data;
+	_channels[i].ptr = data;
 	_channels[i].freq = rate;
 	_channels[i].input = makeLinearInputStream(SoundMixer::FLAG_AUTOFREE | (loopStart != loopEnd ? SoundMixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
 	_channels[i].converter = makeRateConverter(rate, _mixer->getOutputRate(), false, false);
