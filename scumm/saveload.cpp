@@ -135,6 +135,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	CHECK_HEAP
 	closeRoom();
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
+	memset(_newNames, 0, sizeof(_newNames[0]) * _numNewNames);
 
 	/* Nuke all resources */
 	for (i = rtFirst; i <= rtLast; i++)
@@ -728,6 +729,9 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 			if (type == rtInventory) {
 				ser->saveWord(_inventory[idx]);
 			}
+			if (type == rtObjectName && ser->getVersion() >= VER(25)) {
+				ser->saveWord(_newNames[idx]);
+			}
 		} else {
 			size = ser->loadUint32();
 			if (size) {
@@ -735,6 +739,9 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 				ser->loadBytes(getResourceAddress(type, idx), size);
 				if (type == rtInventory) {
 					_inventory[idx] = ser->loadWord();
+				}
+				if (type == rtObjectName && ser->getVersion() >= VER(25)) {
+					_newNames[idx] = ser->loadWord();
 				}
 			}
 		}
