@@ -758,7 +758,7 @@ void Graphics::loadPanel() {
 }
 
 
-void Graphics::useJournal(GameSettings *settings) {
+void Graphics::useJournal(GameConfig *cfg) {
 
 	bobClearAll();
 	loadBackdrop("journal.pcx", 160);
@@ -780,7 +780,7 @@ void Graphics::useJournal(GameSettings *settings) {
 
 	// XXX setup zones
 
-	journalBobPreDraw(settings);
+	journalBobPreDraw(cfg);
 	_display->palFadeIn(0, 255, 160);
 
 	// XXX l.1191-1509
@@ -798,22 +798,22 @@ void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frameNu
 }
 
 
-void Graphics::journalBobPreDraw(GameSettings *settings) {
+void Graphics::journalBobPreDraw(GameConfig *cfg) {
 
 	journalBobSetup(1, 32, 8, 1); // Review entry
 	journalBobSetup(2, 32, 56, 2); // Make entry
 	journalBobSetup(3, 32, 104, 1); // Close book
 	journalBobSetup(4, 32, 152, 3); // Give up
-	journalBobSetup(5, 136 + settings->talkSpeed * 4 - 4, 164, 18); // Text speed
+	journalBobSetup(5, 136 + cfg->talkSpeed * 4 - 4, 164, 18); // Text speed
 	journalBobSetup(6, 221, 155, 16); // SFX on/off
-	_bobs[6].active = settings->sfxToggle;
-	journalBobSetup(7, 136 + settings->musicVolume * 130 / 100 - 4, 177, 19); // Music volume
+	_bobs[6].active = cfg->sfxToggle;
+	journalBobSetup(7, 136 + cfg->musicVolume * 130 / 100 - 4, 177, 19); // Music volume
 	journalBobSetup(10, 158, 155, 16); // Voice on/off
-	_bobs[10].active = settings->speechToggle;
+	_bobs[10].active = cfg->speechToggle;
 	journalBobSetup(11, 125, 167, 16); // Text on/off
-	_bobs[11].active = settings->textToggle;
+	_bobs[11].active = cfg->textToggle;
 	journalBobSetup(12, 125, 181, 16); // Music on/off
-	_bobs[12].active = settings->musicToggle;
+	_bobs[12].active = cfg->musicToggle;
 }
 
 

@@ -41,7 +41,7 @@ struct ZoneSlot {
 	Box box;
 };
 
-struct GameSettings {
+struct GameConfig {
 	int musicVolume;
 	bool musicToggle;
 	bool sfxToggle;
@@ -393,7 +393,7 @@ protected:
 	//! Describe a string based animation (30 frames maximum, bob number must be < 17)
 	AnimFrame _newAnim[17][30];
 
-	GameSettings _settings;
+	GameConfig _settings;
 
 	//! Inventory items
 	int16 _inventoryItem[4];

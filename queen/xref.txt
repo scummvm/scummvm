@@ -103,14 +103,17 @@ AREAVAR						(boolean, if true display objects/areas boxes)
 
 GAME SETTINGS
 =============
+game_load()
+game_save()
 -
 config_request
-MUSICTOGGLE					GameSettings::musicToggle
-SFXTOGGLE					GameSettings::sfxToggle
-TALKSPD						GameSettings::talkSpeed
-TEXTTOGGLE					GameSettings::textToggle
+MUSICTOGGLE					GameConfig::musicToggle
+SFXTOGGLE					GameConfig::sfxToggle
+TALKSPD						GameConfig::talkSpeed
+TEXTTOGGLE					GameConfig::textToggle
 VersionStr					Logic::language (add more functions if needed)
-VOICETOGGLE					GameSettings::speechToggle
+VOICETOGGLE					GameConfig::speechToggle
+walkgameload
 
 
 GRAPHICS
@@ -287,14 +290,6 @@ RESOURCE
 tflen() 					Resource::fileSize
 topen()						Resource::loadFile
 tseek() 					*not needed*
-
-
-SAVE/LOAD SYSTEM
-================
-game_load()
-game_save()
--
-walkgameload
 
 
 SCREEN
