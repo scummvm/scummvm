@@ -4337,7 +4337,7 @@ void SimonState::shutdown()
 	}
 }
 
-void SimonState::delay(uint delay)
+void SimonState::delay(uint amount)
 {
 	OSystem::Event event;
 
@@ -4390,17 +4390,17 @@ void SimonState::delay(uint delay)
 			}
 		}
 
-		if (delay == 0)
+		if (amount == 0)
 			break;
 
 		{
 			uint this_delay = _fast_mode ? 1 : 20;
-			if (this_delay > delay)
-				this_delay = delay;
+			if (this_delay > amount)
+				this_delay = amount;
 			_system->delay_msecs(this_delay);
 		}
 		cur = _system->get_msecs();
-	} while (cur < start + delay);
+	} while (cur < start + amount);
 }
 
 
@@ -4467,7 +4467,6 @@ bool SimonState::save_game(uint slot, const char *caption)
 
 		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
 		if (child9) {
-			uint i;
 			for (i = 0; i != 4; i++) {
 				f.writeUint16BE(child9->array[i]);
 			}
@@ -4507,7 +4506,7 @@ bool SimonState::load_game(uint slot)
 {
 	char ident[18];
 	File f;
-	uint num, item_index, i;
+	uint num, item_index, i, j;
 
 	_lock_word |= 0x100;
 
@@ -4563,35 +4562,27 @@ bool SimonState::load_game(uint slot)
 		item->unk3 = f.readUint16BE();
 		item->unk4 = f.readUint16BE();
 
-		{
-			Child1 *child1 = findChildOfType1(item);
-			if (child1 != NULL) {
-				child1->fr2 = f.readUint16BE();
-			}
+		Child1 *child1 = findChildOfType1(item);
+		if (child1 != NULL) {
+			child1->fr2 = f.readUint16BE();
 		}
 
-		{
-			Child2 *child2 = findChildOfType2(item);
-			uint i, j;
-			if (child2 != NULL) {
-				child2->avail_props = f.readUint32BE();
-				i = child2->avail_props & 1;
+		Child2 *child2 = findChildOfType2(item);
+		if (child2 != NULL) {
+			child2->avail_props = f.readUint32BE();
+			i = child2->avail_props & 1;
 
-				for (j = 1; j < 16; j++) {
-					if ((1 << j) & child2->avail_props) {
-						child2->array[i++] = f.readUint16BE();
-					}
+			for (j = 1; j < 16; j++) {
+				if ((1 << j) & child2->avail_props) {
+					child2->array[i++] = f.readUint16BE();
 				}
 			}
 		}
 
-		{
-			Child9 *child9 = (Child9 *) findChildOfType(item, 9);
-			if (child9) {
-				uint i;
-				for (i = 0; i != 4; i++) {
-					child9->array[i] = f.readUint16BE();
-				}
+		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
+		if (child9) {
+			for (i = 0; i != 4; i++) {
+				child9->array[i] = f.readUint16BE();
 			}
 		}
 	}
@@ -4803,7 +4794,7 @@ void SimonState::playSound(uint sound)
 
 			_effects_file->read(&size, 4);
 			// FIXME - do we really want to read a block of 4 bytes, ignoring endian issues?
-			printf("FOO %08x 7 %d \n", size, size & 0xffffff);
+			printf("FOO %08lx 7 %ld \n", size, size & 0xffffff);
 			size = size & 0xffffff;
 			_effects_file->seek(-1, SEEK_CUR);
 			_effects_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
