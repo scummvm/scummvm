@@ -727,8 +727,8 @@ uint16 Control::toggleText(void) {
 		_statusBar->setToText(0x7000 + 35); // text only
 	}
 
-	ConfMan.set("subtitles", (bool)(flags & SF_ALLOW_TEXT));
-	
+	ConfMan.set("subtitles", (flags & SF_ALLOW_TEXT) != 0);
+
 	SkyEngine::_systemVars.systemFlags |= flags;
 
 	drawTextCross(flags);

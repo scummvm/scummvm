@@ -1863,7 +1863,7 @@ void Actor::setUserCondition(int slot, int set) {
 
 bool Actor::isUserConditionSet(int slot) {
 	assert(slot >= 1 && slot <= 0x20);
-	return condMask & (1 << (slot + 0xF));
+	return (condMask & (1 << (slot + 0xF))) != 0;
 }
 
 void Actor::setTalkCondition(int slot) {
@@ -1882,7 +1882,7 @@ void Actor::setTalkCondition(int slot) {
 
 bool Actor::isTalkConditionSet(int slot) {	
 	assert(slot >= 1 && slot <= 0x10);
-	return condMask & (1 << (slot - 1));
+	return (condMask & (1 << (slot - 1))) != 0;
 }
 
 void ScummEngine::preProcessAuxQueue() {

@@ -677,7 +677,7 @@ void Insane::readState(void) { // PATCH
 			error("Wrong INSANE parameters for EN_VULTM2 (%d %d). Please, report this", 
 				  _enemy[EN_VULTM2].isEmpty, readArray(7));
 
-		if (_enemy[EN_VULTF2].isEmpty != _actor[0].inventory[INV_CHAINSAW])
+		if (_enemy[EN_VULTF2].isEmpty != (_actor[0].inventory[INV_CHAINSAW] != 0))
 			error("Wrong INSANE parameters for EN_VULTF2 (%d %d). Please, report this", 
 				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
 
