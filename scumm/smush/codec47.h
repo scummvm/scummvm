@@ -29,12 +29,12 @@
 class Codec47Decoder : public Decoder {
 private:
 	int32 _deltaSize;
-	byte * _deltaBufs[2];
-	byte * _deltaBuf;
-	byte * _curBuf;
+	byte *_deltaBufs[2];
+	byte *_deltaBuf;
+	byte *_curBuf;
 	int32 _prevSeqNb;
 	int32 _lastTableWidth;
-	byte * _d_src, * _paramPtr;
+	byte *_d_src, *_paramPtr;
 	int32 _d_pitch;
 	int32 _offset1, _offset2;
 	byte _tableBig[99328];
@@ -44,10 +44,10 @@ private:
 	void makeTables47(int32 width);
 	void makeTables37(int32 param);
 	void bompDecode(byte *dst, byte *src, int32 len);
-	void level1(byte * d_dst);
-	void level2(byte * d_dst);
-	void level3(byte * d_dst);
-	void decode2(byte * dst, byte * src, int32 width, int32 height, byte * param_ptr);
+	void level1(byte *d_dst);
+	void level2(byte *d_dst);
+	void level3(byte *d_dst);
+	void decode2(byte *dst, byte *src, int32 width, int32 height, byte *param_ptr);
 
 public:
 	Codec47Decoder();

@@ -28,23 +28,23 @@
 #include <assert.h>
 #include <string.h>
 
-void SaudChannel::handleStrk(Chunk & b) {
+void SaudChannel::handleStrk(Chunk &b) {
 	int32 size = b.getSize();
 	if(size != 14 && size != 10) {
 		error("STRK has a invalid size : %d", size);
 	}
 }
 
-void SaudChannel::handleSmrk(Chunk & b) {
+void SaudChannel::handleSmrk(Chunk &b) {
 	_markReached = true;
 }
 
-void SaudChannel::handleShdr(Chunk & b) {
+void SaudChannel::handleShdr(Chunk &b) {
 	int32 size = b.getSize();
 	if(size != 4) warning("SMRK has a invalid size : %d", size);
 }
 
-bool SaudChannel::handleSubTags(int32 & offset) {
+bool SaudChannel::handleSubTags(int32 &offset) {
 	if(_tbufferSize - offset >= 8) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
@@ -147,7 +147,7 @@ bool SaudChannel::processBuffer() {
 			_tbufferSize = 0;
 		} else {
 			if(offset) { // maybe I should assert() this to avoid a lock...
-				unsigned char * old = _tbuffer;
+				unsigned char *old = _tbuffer;
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
 				if(!_tbuffer)  error("SaudChannel failed to allocate memory");
@@ -161,16 +161,16 @@ bool SaudChannel::processBuffer() {
 }
 
 SaudChannel::SaudChannel(int32 track, int32 freq) : 
-			_track(track), 
-			_nbframes(0),
-			_dataSize(-1),
-			_frequency(freq),
-			_inData(false),
-			_markReached(false),
-			_tbuffer(0),
-			_tbufferSize(0),
-			_sbuffer(0),
-			_sbufferSize(0)
+	_track(track), 
+	_nbframes(0),
+	_dataSize(-1),
+	_frequency(freq),
+	_inData(false),
+	_markReached(false),
+	_tbuffer(0),
+	_tbufferSize(0),
+	_sbuffer(0),
+	_sbufferSize(0)
 {
 }
 
@@ -231,7 +231,7 @@ bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volu
 	return true;
 }
 
-bool SaudChannel::appendData(Chunk & b, int32 size) {
+bool SaudChannel::appendData(Chunk &b, int32 size) {
 	if(_dataSize == -1) { // First call
 		assert(size > 8);
 		Chunk::type saud_type = b.getDword(); saud_type = SWAP_BYTES(saud_type);
@@ -241,7 +241,7 @@ bool SaudChannel::appendData(Chunk & b, int32 size) {
 		_dataSize = -2; // We don't get here again...
 	}
 	if(_tbuffer) {
-		byte * old = _tbuffer;
+		byte *old = _tbuffer;
 		_tbuffer = new byte[_tbufferSize + size];
 		if(!_tbuffer)  error("saud_channel failed to allocate memory");
 		memcpy(_tbuffer, old, _tbufferSize);
@@ -261,7 +261,7 @@ int32 SaudChannel::availableSoundData(void) const {
 	return _sbufferSize;
 }
 
-void SaudChannel::getSoundData(int16 * snd, int32 size) {
+void SaudChannel::getSoundData(int16 *snd, int32 size) {
 	for(int32 i = 0; i < size; i++) {
 		snd[2 * i] = _voltable[0][_sbuffer[i] ^ 0x80];
 		snd[2 * i + 1] = _voltable[1][_sbuffer[i] ^ 0x80];

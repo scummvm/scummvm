@@ -27,9 +27,9 @@
 class Codec37Decoder : public Decoder {
 private:
 	int32 _deltaSize;
-	byte * _deltaBufs[2];
-	byte * _deltaBuf;
-	int16 * _offsetTable;
+	byte *_deltaBufs[2];
+	byte *_deltaBuf;
+	int16 *_offsetTable;
 	int32 _curtable;
 	uint16 _prevSeqNb;
 	int32 _tableLastPitch;

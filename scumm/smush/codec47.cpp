@@ -228,8 +228,8 @@ void Codec47Decoder::makeTables37(int32 param) {
 	int32 b1, b2;
 	int32 value_table37_1_2, value_table37_1_1, value_table37_2_2, value_table37_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	int32 * table37_1 = 0, * table37_2 = 0, * ptr_small_big;
-	byte * ptr;
+	int32 *table37_1 = 0, *table37_2 = 0, *ptr_small_big;
+	byte *ptr;
 	int i, x, y;
 
 	if (param == 8) {
@@ -427,7 +427,7 @@ void Codec47Decoder::makeTables47(int32 width) {
 		c += 128;
 	} while (c < 32768);
 }
-	
+
 void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 	byte code;
 	byte color;
@@ -449,36 +449,36 @@ void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 	assert(len == 0);
 }
 
-void Codec47Decoder::level3(byte * d_dst) {
+void Codec47Decoder::level3(byte *d_dst) {
 	int32 tmp;
 	byte code = *_d_src++;
 
 	if (code < 0xF8) {
 		tmp = _table[code] + _offset1;
-		*(uint16*)(d_dst + (_d_pitch * 0)) = *(uint16*)(d_dst + (_d_pitch * 0) + tmp);
-		*(uint16*)(d_dst + (_d_pitch * 1)) = *(uint16*)(d_dst + (_d_pitch * 1) + tmp);
+		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(d_dst + (_d_pitch * 0) + tmp);
+		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(d_dst + (_d_pitch * 1) + tmp);
 	} else if (code == 0xFF) {
-		*(uint16*)(d_dst + (_d_pitch * 0)) = *(uint16*)(_d_src + 0);
-		*(uint16*)(d_dst + (_d_pitch * 1)) = *(uint16*)(_d_src + 2);
+		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(_d_src + 0);
+		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(_d_src + 2);
 		_d_src += 4;
 	} else if (code == 0xFE) {
 		byte t = *_d_src++;
 		tmp = t | t << 8;
-		*(uint16*)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
-		*(uint16*)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
+		*(uint16 *)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
+		*(uint16 *)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
 	} else if (code == 0xFC) {
 		tmp = _offset2;
-		*(uint16*)(d_dst + (_d_pitch * 0)) = *(uint16*)(d_dst + (_d_pitch * 0) + tmp);
-		*(uint16*)(d_dst + (_d_pitch * 1)) = *(uint16*)(d_dst + (_d_pitch * 1) + tmp);
+		*(uint16 *)(d_dst + (_d_pitch * 0)) = *(uint16 *)(d_dst + (_d_pitch * 0) + tmp);
+		*(uint16 *)(d_dst + (_d_pitch * 1)) = *(uint16 *)(d_dst + (_d_pitch * 1) + tmp);
 	} else {
 		byte t = _paramPtr[code];
 		tmp = t | t << 8;
-		*(uint16*)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
-		*(uint16*)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
+		*(uint16 *)(d_dst + (_d_pitch * 0)) = (uint16)tmp;
+		*(uint16 *)(d_dst + (_d_pitch * 1)) = (uint16)tmp;
 	}
 }
 
-void Codec47Decoder::level2(byte * d_dst) {
+void Codec47Decoder::level2(byte *d_dst) {
 	int32 tmp;
 	byte code = *_d_src++;
 	int i;
@@ -486,11 +486,11 @@ void Codec47Decoder::level2(byte * d_dst) {
 	if (code < 0xF8) {
 		tmp = _table[code] + _offset1;
 		for (i = 0; i < 4; i++) {
-			*(uint32*)(d_dst) = *(uint32*)(d_dst + tmp);
+			*(uint32 *)(d_dst) = *(uint32 *)(d_dst + tmp);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
-		byte * tmp_dst = d_dst;
+		byte *tmp_dst = d_dst;
 		level3(d_dst);
 		d_dst += 2;
 		level3(d_dst);
@@ -503,21 +503,21 @@ void Codec47Decoder::level2(byte * d_dst) {
 		byte t = *_d_src++;
 		uint32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 4; i++) {
-			*(uint32*)(d_dst) = val;
+			*(uint32 *)(d_dst) = val;
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFD) {
-		byte * tmp_ptr = _tableSmall + (*_d_src++ << 7);
+		byte *tmp_ptr = _tableSmall + (*_d_src++ << 7);
 		int32 l = tmp_ptr[96];
 		byte val = *_d_src++;
-		int16 * tmp_ptr2 = (int16*)tmp_ptr;
+		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[97];
 		val = *_d_src++;
-		tmp_ptr2 = (int16*)(tmp_ptr + 32);
+		tmp_ptr2 = (int16 *)(tmp_ptr + 32);
 		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
@@ -525,20 +525,20 @@ void Codec47Decoder::level2(byte * d_dst) {
 	} else if (code == 0xFC) {
 		tmp = _offset2;
 		for (i = 0; i < 4; i++) {
-			*(uint32*)(d_dst) = *(uint32*)(d_dst + tmp);
+			*(uint32 *)(d_dst) = *(uint32 *)(d_dst + tmp);
 			d_dst += _d_pitch;
 		}
 	} else {
 		byte t = _paramPtr[code];
 		uint32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 4; i++) {
-			*(uint32*)(d_dst) = val;
+			*(uint32 *)(d_dst) = val;
 			d_dst += _d_pitch;
 		}
 	}
 }
 
-void Codec47Decoder::level1(byte * d_dst) {
+void Codec47Decoder::level1(byte *d_dst) {
 	int32 tmp, tmp2;
 	byte code = *_d_src++;
 	int i;
@@ -546,12 +546,12 @@ void Codec47Decoder::level1(byte * d_dst) {
 	if (code < 0xF8) {
 		tmp2 = _table[code] + _offset1;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + 0) = *(uint32*)(d_dst + tmp2);
-			*(uint32*)(d_dst + 4) = *(uint32*)(d_dst + tmp2 + 4);
+			*(uint32 *)(d_dst + 0) = *(uint32 *)(d_dst + tmp2);
+			*(uint32 *)(d_dst + 4) = *(uint32 *)(d_dst + tmp2 + 4);
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFF) {
-		byte * tmp_dst = d_dst;
+		byte *tmp_dst = d_dst;
 		level2(d_dst);
 		d_dst += 4;
 		level2(d_dst);
@@ -564,23 +564,23 @@ void Codec47Decoder::level1(byte * d_dst) {
 		byte t = *_d_src++;
 		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst) = val;
-			*(uint32*)(d_dst + 4) = val;
+			*(uint32 *)(d_dst) = val;
+			*(uint32 *)(d_dst + 4) = val;
 			d_dst += _d_pitch;
 		}
 	} else if (code == 0xFD) {
 		tmp = *_d_src++;
-		byte * tmp_ptr = _tableBig + (tmp << 2) + (tmp << 7) + (tmp << 8);
+		byte *tmp_ptr = _tableBig + (tmp << 2) + (tmp << 7) + (tmp << 8);
 		byte l = tmp_ptr[384];
 		byte val = *_d_src++;
-		int16 * tmp_ptr2 = (int16*)tmp_ptr;
+		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[385];
 		val = *_d_src++;
-		tmp_ptr2 = (int16*)(tmp_ptr + 128);
+		tmp_ptr2 = (int16 *)(tmp_ptr + 128);
 		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
@@ -588,16 +588,16 @@ void Codec47Decoder::level1(byte * d_dst) {
 	} else if (code == 0xFC) {
 		tmp2 = _offset2;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst + 0) = *(uint32*)(d_dst + tmp2);
-			*(uint32*)(d_dst + 4) = *(uint32*)(d_dst + tmp2 + 4);
+			*(uint32 *)(d_dst + 0) = *(uint32 *)(d_dst + tmp2);
+			*(uint32 *)(d_dst + 4) = *(uint32 *)(d_dst + tmp2 + 4);
 			d_dst += _d_pitch;
 		}
 	} else {
 		byte t = _paramPtr[code];
 		int32 val = t << 24 | t << 16 | t << 8 | t;
 		for (i = 0; i < 8; i++) {
-			*(uint32*)(d_dst) = val;
-			*(uint32*)(d_dst + 4) = val;
+			*(uint32 *)(d_dst) = val;
+			*(uint32 *)(d_dst + 4) = val;
 			d_dst += _d_pitch;
 		}
 	}
@@ -621,7 +621,7 @@ void Codec47Decoder::decode2(byte *dst, byte *src, int32 width, int32 height, by
 	} while (--bh);
 }
 
-bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
+bool Codec47Decoder::initSize(const Point &p, const Rect &r) {
 	if(r.width() != getRect().width() && r.height() != getRect().height()) {
 		if(
 			(r.width() != 640 || r.height() != 480)
@@ -664,14 +664,14 @@ Codec47Decoder::~Codec47Decoder() {
 	clean();
 }
 
-bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
+bool Codec47Decoder::decode(Blitter &dst, Chunk &src) {
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	_offset1 = _deltaBufs[1] - _curBuf;
 	_offset2 = _deltaBufs[0] - _curBuf;
 
 	int32 chunk_size = src.getSize() - 14;
-	byte *chunk_buffer = (byte*)malloc(chunk_size);
+	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	src.read(chunk_buffer, chunk_size);
 
 	int32 seq_nb = READ_LE_UINT16(chunk_buffer + 0);
@@ -685,7 +685,7 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		memset(_deltaBufs[1], chunk_buffer[13], width * height);
 		_prevSeqNb = -1;
 	}
-	
+
 	if ((chunk_buffer[4] & 1) != 0) {
 		gfx_data += 32896;
 	}

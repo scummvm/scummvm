@@ -29,10 +29,10 @@ bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
 	int32 length = src.getSize() - 14;
 	int32 width = getRect().width();
 	int32 height = getRect().height();
-	byte * src2 = (byte*)malloc(length);
-	byte * org_src2 = src2;
+	byte *src2 = (byte *)malloc(length);
+	byte *org_src2 = src2;
 	src.read(src2, length);
-	byte * dst2 = _buffer;
+	byte *dst2 = _buffer;
 	byte val;
 
 	do {

@@ -46,14 +46,14 @@ class _Channel {
 public:
 	virtual ~_Channel() {};
 	// called by the smush_player
-	virtual bool appendData(Chunk & b, int32 size) = 0;
+	virtual bool appendData(Chunk &b, int32 size) = 0;
 	virtual bool setParameters(int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
 	// called by the mixer
 	virtual bool isTerminated() const = 0;
 	virtual int32 availableSoundData() const = 0;
-	virtual void getSoundData(int16 * sound_buffer, int32 size) = 0; // size is in sample 
-	virtual void getSoundData(int8 * sound_buffer, int32 size) = 0;
+	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0; // size is in sample 
+	virtual void getSoundData(int8 *sound_buffer, int32 size) = 0;
 	virtual int32 getRate() = 0;
 	virtual bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) = 0;
 	virtual int32 getTrackIdentifier() const = 0;
@@ -72,16 +72,16 @@ private:
 	int32 _balance;			//!< the current track balance
 	int32 _index;				//!< the current PSAD index (for coherency checking)
 	int16 _voltable[2][256];	//!< the precalculated volume table (stereo 16 bits)
-	byte * _tbuffer;	//!< data temporary buffer
+	byte *_tbuffer;	//!< data temporary buffer
 	int32 _tbufferSize;			//!< temporary buffer size
-	byte * _sbuffer;	//!< sound buffer
+	byte *_sbuffer;	//!< sound buffer
 	int32 _sbufferSize;			//!< sound buffer size
 
 protected:
-	void handleStrk(Chunk & c);
-	void handleSmrk(Chunk & c);
-	void handleShdr(Chunk & c);
-	bool handleSubTags(int32 & offset);
+	void handleStrk(Chunk &c);
+	void handleSmrk(Chunk &c);
+	void handleShdr(Chunk &c);
+	bool handleSubTags(int32 &offset);
 	bool processBuffer();
 	void recalcVolumeTable();
 
@@ -91,10 +91,10 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
-	bool appendData(Chunk & b, int32 size);
+	bool appendData(Chunk &b, int32 size);
 	int32 availableSoundData() const;
-	void getSoundData(int16 * sound_buffer, int32 size);
-	void getSoundData(int8 * sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
+	void getSoundData(int16 *sound_buffer, int32 size);
+	void getSoundData(int8 *sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
 	int32 getRate() { return _frequency; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) { 
 		rate = _frequency;
@@ -114,9 +114,9 @@ public:
 class ImuseChannel : public _Channel {
 private:
 	int32 _track;				//!< the track number
-	byte * _tbuffer;	//!< data temporary buffer
+	byte *_tbuffer;	//!< data temporary buffer
 	int32 _tbufferSize;			//!< temporary buffer size
-	byte * _sbuffer;	//!< sound buffer
+	byte *_sbuffer;	//!< sound buffer
 	int32 _sbufferSize;			//!< sound buffer size
 	int32 _srbufferSize;
 	int32 _frequency;			//!< the target frequency of the ::mixer
@@ -145,10 +145,10 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
-	bool appendData(Chunk & b, int32 size);
+	bool appendData(Chunk &b, int32 size);
 	int32 availableSoundData() const;
-	void getSoundData(int16 * sound_buffer, int32 size);
-	void getSoundData(int8 * sound_buffer, int32 size);
+	void getSoundData(int16 *sound_buffer, int32 size);
+	void getSoundData(int8 *sound_buffer, int32 size);
 	int32 getRate() { return _rate; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) {
 		rate = _frequency;

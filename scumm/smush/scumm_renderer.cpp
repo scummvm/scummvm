@@ -32,10 +32,10 @@
 
 class ScummMixer : public Mixer {
 private:
-	SoundMixer * _mixer; //!< pointer to the SoundMixer instance
+	SoundMixer *_mixer; //!< pointer to the SoundMixer instance
 	struct {
 		int id;
-		_Channel * chan;
+		_Channel *chan;
 		bool first;
 		int mixer_index;
 	} _channels[SoundMixer::NUM_CHANNELS];		//!< The map of track and channels
@@ -44,15 +44,15 @@ public:
 	ScummMixer(SoundMixer *);
 	virtual ~ScummMixer();
 	bool init();
-	_Channel * findChannel(int32 track);
-	bool addChannel(_Channel * c);
+	_Channel *findChannel(int32 track);
+	bool addChannel(_Channel *c);
 	bool handleFrame();
 	bool stop();
 	bool update();
 	bool _silentMixer;
 };
 
-ScummMixer::ScummMixer(SoundMixer * m) : _mixer(m), _nextIndex(_mixer->_beginSlots) {
+ScummMixer::ScummMixer(SoundMixer *m) : _mixer(m), _nextIndex(_mixer->_beginSlots) {
 	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = 0;
@@ -68,7 +68,7 @@ bool ScummMixer::init() {
 	return true;
 }
 
-_Channel * ScummMixer::findChannel(int32 track) {
+_Channel *ScummMixer::findChannel(int32 track) {
 	debug(9, "scumm_mixer::findChannel(%d)", track);
 	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id == track)
@@ -77,7 +77,7 @@ _Channel * ScummMixer::findChannel(int32 track) {
 	return 0;
 }
 
-bool ScummMixer::addChannel(_Channel * c) {
+bool ScummMixer::addChannel(_Channel *c) {
 	int32 track = c->getTrackIdentifier();
 	int i;
 
@@ -143,7 +143,7 @@ bool ScummMixer::handleFrame() {
 
 				if(is_short) {
 					// FIXME this is one more data copy... we could get rid of it...
-					short * data = new int16[size * (stereo ? 2 : 1) * 2];
+					short *data = new int16[size * (stereo ? 2 : 1) * 2];
 					_channels[i].chan->getSoundData(data, size);
 					if(_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 4 : 2;
@@ -161,7 +161,7 @@ bool ScummMixer::handleFrame() {
 
 					delete []data;
 				} else {
-					int8 * data = new int8[size * (stereo ? 2 : 1) * 2];
+					int8 *data = new int8[size * (stereo ? 2 : 1) * 2];
 					_channels[i].chan->getSoundData(data, size);
 					if(_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 2 : 1;
@@ -196,20 +196,20 @@ bool ScummMixer::stop() {
 	return true;
 }
 
-ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
+ScummRenderer::ScummRenderer(Scumm *scumm, uint32 speed) :
 	_scumm(scumm),
 	_smixer(0),
 	_insaneSpeed(speed),
 	_pending_updates(0) {
 }
 
-static ScummRenderer * s_renderer;
+static ScummRenderer *s_renderer;
 
-static void smush_handler(void * engine) {
+static void smush_handler(void *engine) {
 	s_renderer->update();
 }
 
-Mixer * ScummRenderer::getMixer() {
+Mixer *ScummRenderer::getMixer() {
 	if(_smixer == 0) {
 		_smixer = new ScummMixer(_scumm->_mixer);
 		if(!_smixer) error("unable to allocate a smush mixer");
@@ -254,7 +254,7 @@ bool ScummRenderer::wait(int32 ms) {
 	return true; 
 }
 
-bool ScummRenderer::startDecode(const char * fname, int32 version, int32 nbframes) {
+bool ScummRenderer::startDecode(const char *fname, int32 version, int32 nbframes) {
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->pause(true);
 	}
@@ -264,7 +264,7 @@ bool ScummRenderer::startDecode(const char * fname, int32 version, int32 nbframe
 	return true;
 }
 
-bool ScummRenderer::setPalette(const Palette & pal) {
+bool ScummRenderer::setPalette(const Palette &pal) {
 	int i;
 	byte palette_colors[1024];
 	byte *p = palette_colors;
@@ -284,7 +284,6 @@ bool ScummRenderer::setPalette(const Palette & pal) {
 void ScummRenderer::save(int32 frame) {
 	int width = MIN(getWidth(), _scumm->_realWidth); 
 	int height = MIN(getHeight(), _scumm->_realHeight);
-	
 
 	// In theory, this will always be true. In reality, there may be
 	// several pending updates because the computer wasn't fast enough to

@@ -98,19 +98,19 @@ public:
 */
 class ContChunk : public Chunk {
 private:
-	byte * _data;
+	byte *_data;
 	Chunk::type _type;
 	uint32 _size;
 	uint32 _curPos;
 public:
-	ContChunk(byte * data);
+	ContChunk(byte *data);
 	Chunk::type getType() const;
 	uint32 getSize() const;
-	Chunk * subBlock();
+	Chunk *subBlock();
 	bool eof() const;
 	uint32 tell() const;
 	bool seek(int32 delta, seek_type dir = seek_cur);
-	bool read(void * buffer, uint32 size);
+	bool read(void *buffer, uint32 size);
 	int8 getChar();
 	byte getByte();
 	int16 getShort();

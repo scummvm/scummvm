@@ -62,7 +62,7 @@ int32 FontRenderer::charHeight(int32 v) const {
 	return _chars[v].height;
 }
 
-int32 FontRenderer::stringWidth(const char * str) const {
+int32 FontRenderer::stringWidth(const char *str) const {
 	int32 ret = 0;
 
 	while(*str) {
@@ -72,7 +72,7 @@ int32 FontRenderer::stringWidth(const char * str) const {
 	return ret;
 }
 
-int32 FontRenderer::stringHeight(const char * str) const {
+int32 FontRenderer::stringHeight(const char *str) const {
 	int32 ret = 0;
 
 	for(int32 i = 0; str[i] != 0; i++) {
@@ -83,11 +83,11 @@ int32 FontRenderer::stringHeight(const char * str) const {
 	return ret;
 }
 
-int32 FontRenderer::drawChar(char * buffer, const Point & size, int32 x, int32 y, int32 chr) const {
+int32 FontRenderer::drawChar(char *buffer, const Point &size, int32 x, int32 y, int32 chr) const {
 	int32 w = _chars[chr].width;
 	int32 h = _chars[chr].height;
-	char * src = _chars[chr].chr;
-	char * dst = buffer + size.getX() * y + x;
+	char *src = _chars[chr].chr;
+	char *dst = buffer + size.getX() * y + x;
 
 	if(_original) {
 		for(int32 j = 0; j < h; j++) {
@@ -130,10 +130,10 @@ int32 FontRenderer::drawChar(char * buffer, const Point & size, int32 x, int32 y
 	return w;
 }
 
-static char * * split(const char * str, char sep) {
-	char * * ret = new char *[62];
+static char **split(const char *str, char sep) {
+	char **ret = new char *[62];
 	int32 n = 0;
-	const char * i = str, * j = strchr(i, sep);
+	const char *i = str, *j = strchr(i, sep);
 
 	while(j != NULL) {
 		assert(n < 60);
@@ -151,16 +151,16 @@ static char * * split(const char * str, char sep) {
 	return ret;
 }
 
-void FontRenderer::drawSubstring(const byte * str, char * buffer, const Point & size, int32 x, int32 y) const {
+void FontRenderer::drawSubstring(const byte *str, char *buffer, const Point &size, int32 x, int32 y) const {
 	for(int32 i = 0; str[i] != 0; i++)
 		x += drawChar(buffer, size, x, y, str[i]);
 }
 
-bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Point & size, int32 x, int32 y) const {
+bool FontRenderer::drawStringAbsolute(const char *str, char *buffer, const Point &size, int32 x, int32 y) const {
 	debug(9, "FontRenderer::drawStringAbsolute(%s, %d, %d)", str, x, y);
 	while(str) {
 		char line[256];
-		char * pos = strchr(str, '\n');
+		char *pos = strchr(str, '\n');
 		if(pos) {
 			memcpy(line, str, pos - str - 1);
 			line[pos - str - 1] = 0;
@@ -175,31 +175,31 @@ bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Poi
 	return true;
 }
 
-bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Point & size, int32 y, int32 xmin, int32 width, int32 offset) const {
+bool FontRenderer::drawStringCentered(const char *str, char *buffer, const Point &size, int32 y, int32 xmin, int32 width, int32 offset) const {
 	debug(9, "FontRenderer::drawStringCentered(%s, %d, %d)", str, xmin, y);
 	if ((strchr(str, '\n') != 0)) {
-		char * j = strchr(str, '\n');
+		char *j = strchr(str, '\n');
 		*j = 0;
 	}
-	char * * words = split(str, ' ');
+	char **words = split(str, ' ');
 	int32 nb_sub = 0;
 
 	while(words[nb_sub]) nb_sub++;
 
-	int32 * sizes = new int32[nb_sub];
+	int32 *sizes = new int32[nb_sub];
 	int32 i = 0, max_width = 0, height = 0, nb_subs = 0;
 
 	for(i = 0; i < nb_sub; i++)
 		sizes[i] = stringWidth(words[i]);
 
-	char * * substrings = new char *[nb_sub];
-	int32 * substr_widths = new int32[nb_sub];
+	char **substrings = new char *[nb_sub];
+	int32 *substr_widths = new int32[nb_sub];
 	int32 space_width = charWidth(' ');
 
 	i = 0;
 	while(i < nb_sub) {
 		int32 substr_width = sizes[i];
-		char * substr = new char[1000];
+		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int32 j = i + 1;
 
@@ -253,10 +253,10 @@ bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Poi
 	return true;
 }
 
-bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
+bool FontRenderer::drawStringWrap(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const {
 	debug(9, "FontRenderer::drawStringWrap(%s, %d, %d)", str, x, y);
 	if ((strchr(str, '\n') != 0)) {
-		char * j = strchr(str, '\n');
+		char *j = strchr(str, '\n');
 		*j = 0;
 	}
 	char * * words = split(str, ' ');
@@ -264,20 +264,20 @@ bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point &
 
 	while(words[nb_sub]) nb_sub++;
 
-	int32 * sizes = new int32[nb_sub];
+	int32 *sizes = new int32[nb_sub];
 	int32 i = 0, max_width = 0, height = 0, nb_subs = 0, left_x;
 
 	for(i = 0; i < nb_sub; i++)
 		sizes[i] = stringWidth(words[i]);
 
-	char * * substrings = new char *[nb_sub];
-	int32 * substr_widths = new int32[nb_sub];
+	char **substrings = new char *[nb_sub];
+	int32 *substr_widths = new int32[nb_sub];
 	int32 space_width = charWidth(' ');
 
 	i = 0;
 	while(i < nb_sub) {
 		int32 substr_width = sizes[i];
-		char * substr = new char[1000];
+		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int32 j = i + 1;
 
@@ -328,33 +328,33 @@ bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point &
 	return true;
 }
 
-bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
+bool FontRenderer::drawStringWrapCentered(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const {
 	int32 max_substr_width = 0;
 	debug(9, "FontRenderer::drawStringWrapCentered(%s, %d, %d)", str, x, y);
 	if ((strchr(str, '\n') != 0)) {
-		char * j = strchr(str, '\n');
+		char *j = strchr(str, '\n');
 		*j = 0;
 	}
-	char * * words = split(str, ' ');
+	char **words = split(str, ' ');
 	int32 nb_sub = 0;
 
 	while(words[nb_sub]) nb_sub++;
 
-	int32 * sizes = new int32[nb_sub];
+	int32 *sizes = new int32[nb_sub];
 	int32 i = 0, height = 0, nb_subs = 0;
 
 	for(i = 0; i < nb_sub; i++)
 		sizes[i] = stringWidth(words[i]);
 
-	char * * substrings = new char *[nb_sub];
-	int32 * substr_widths = new int32[nb_sub];
+	char **substrings = new char *[nb_sub];
+	int32 *substr_widths = new int32[nb_sub];
 	int32 space_width = charWidth(' ');
 
 	i = 0;
 	width = MIN(width, size.getX());
 	while(i < nb_sub) {
 		int32 substr_width = sizes[i];
-		char * substr = new char[1000];
+		char *substr = new char[1000];
 		strcpy(substr, words[i]);
 		int32 j = i + 1;
 

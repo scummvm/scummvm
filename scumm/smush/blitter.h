@@ -47,8 +47,8 @@ class Chunk;
 */
 class Blitter {
 private:
-	byte * _ptr;	//!< This is the pointer to the start of the frame buffer
-	byte * _offset;	//!< This is the current pointer in the frame buffer
+	byte *_ptr;	//!< This is the pointer to the start of the frame buffer
+	byte *_offset;	//!< This is the current pointer in the frame buffer
 	Point _clip;		//!<  This is the size of the frame buffer (width/height)
 	Rect _src; 		//!< This is the size and position of the destination rectangle
 	Point _cur; 		//!< This is the current position in the destination rectangle
@@ -77,7 +77,7 @@ public:
 	void putBlock(byte *); //!< This method allows to blit one block directly from a buffer
 	void putBlock(uint32, uint32, uint32, uint32); //!< This method allows to blit one block from a 4 int32 value
 	void blockCopy(int32); //!< This method allows to copy one block from another separated by the given offset
-	byte * getPtr() { return _ptr; }
+	byte *getPtr() { return _ptr; }
 };
 
 #endif

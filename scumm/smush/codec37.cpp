@@ -29,11 +29,11 @@
 #include <assert.h>
 #include <string.h>
 
-bool Codec37Decoder::initSize(const Point & p, const Rect & r) {
+bool Codec37Decoder::initSize(const Point &p, const Rect &r) {
 	if(r.width() != getRect().width() && r.height() != getRect().height()) {
 		if(
-			(r.width() != 320 || r.height() != 200) && 
-			(r.width() != 384 || r.height() != 242) && 
+			(r.width() != 320 || r.height() != 200) &&
+			(r.width() != 384 || r.height() != 242) &&
 			(r.width() != 640 || r.height() != 480)
 			)
 			return false;
@@ -280,7 +280,6 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 	assert(len == 0);
 }
 
-
 #if defined(SCUMM_NEED_ALIGNMENT)
 
 #define DECLARE_LITERAL_TEMP(v)			\
@@ -315,13 +314,12 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 	} while(0)
 
 #define WRITE_4X1_LINE(dst, v)			\
-	*(uint32*)(dst) = v
+	*(uint32 *)(dst) = v
 
 #define COPY_4X1_LINE(dst, src)			\
-	*(uint32*)(dst) = *(uint32*)(src)
+	*(uint32 *)(dst) = *(uint32 *)(src)
 
 #endif /* SCUMM_NEED_ALIGNMENT */
-
 
 /* Fill a 4x4 pixel block with a literal pixel value */
 
@@ -336,7 +334,6 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 		dst += 4;					\
 	} while(0)
 
-
 /* Fill four 4x1 pixel blocks with literal pixel values */
 
 #define LITERAL_4X1(src, dst, pitch)				\
@@ -350,7 +347,6 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 		dst += 4;					\
 	} while(0)
 
-
 /* Fill sixteen 1x1 pixel blocks with literal pixel values */
 
 #define LITERAL_1X1(src, dst, pitch)				\
@@ -363,7 +359,6 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 		dst += 4;					\
 	} while(0)
 
-
 /* Copy a 4x4 pixel block from a different place in the framebuffer */
 
 #define COPY_4X4(dst2, dst, pitch)					  \
@@ -374,7 +369,6 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 		}							  \
 		dst += 4;						  \
 	} while(0)
-
 
 void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
 	do {
@@ -487,7 +481,7 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 	int32 pitch = bw << 2;
 
 	int32 chunk_size = src.getSize() - 14;
-	byte * chunk_buffer = (byte*)malloc(chunk_size);
+	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	src.read(chunk_buffer, chunk_size);
 
 	int16 seq_nb = READ_LE_UINT16(chunk_buffer + 2);

@@ -43,17 +43,17 @@ class StringResource;
 */
 class SmushPlayer {
 private:
-	char * _fname;			//!< the name of the animation file being played
+	char *_fname;			//!< the name of the animation file being played
 	int32 _version;			//!< the version of the animation file being played
 	int32 _secondaryVersion;	//!< the secondary version number of the animation file being played
 	int32 _soundFrequency;		//!< the sound frequency of the animation file being played
 	int32 _nbframes;			//!< the number of frames in the animation file
-	Mixer * _mixer;			//!< the sound mixer
+	Mixer *_mixer;			//!< the sound mixer
 	Palette _pal;			//!< the current palette
 	int16 _deltaPal[768];		//!< the delta palette information set by an xpal
-	Renderer * _renderer;		//!< pointer to the ::renderer
-	StringResource * _strings;	//!< pointer to the string resources associated with the animation
-	FontRenderer * _fr[5];		//!< pointers to the fonts for the animation
+	Renderer *_renderer;		//!< pointer to the ::renderer
+	StringResource *_strings;	//!< pointer to the string resources associated with the animation
+	FontRenderer *_fr[5];		//!< pointers to the fonts for the animation
 	Codec1Decoder _codec1;	//!< the ::decoder for codec 1 and 3
 	Codec37Decoder _codec37;	//!< the ::decoder for codec 37
 	Codec47Decoder _codec47;	//!< the ::decoder for codec 47
@@ -69,7 +69,7 @@ private:
 	bool _bgmusic;			//!< should the player output the background music ?
 	bool _voices;			//!< should the player output the voice ?
 	bool _skips[37];			//!< mapping of frame object identifier to show or hide
-	char * _curBuffer;		//!< pointer to the current frame
+	char *_curBuffer;		//!< pointer to the current frame
 	int32 _IACTchannel;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
@@ -79,12 +79,12 @@ private:
 public:
 	SmushPlayer(Renderer *, bool wait = true, bool output_sound = true);
 	virtual ~SmushPlayer();
-	bool play(const char *, const char * directory);
+	bool play(const char *, const char *directory);
 	void updatePalette(void);
 	void show(const char *);
 	void hide(const char *);
 protected:
-	bool readString(const char * file, const char * directory, bool &);
+	bool readString(const char *file, const char *directory, bool &);
 	void clean();
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);

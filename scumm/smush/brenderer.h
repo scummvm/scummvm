@@ -35,21 +35,21 @@
 class BaseRenderer : public Renderer {
 private:
 	Palette _pal;		//!< The current palette
-	char * _data;		//!< The current frame buffer
+	char *_data;		//!< The current frame buffer
 	int32 _frame;			//!< The current frame number
 	int32 _nbframes;		//!< The number of frames in the animation
 	int32 _width;			//!< The current frame's width
 	int32 _height;		//!< The current frame's height
-	const char * _fname;	//!< The filename of the animation being played
+	const char *_fname;	//!< The filename of the animation being played
 protected:
 	virtual void save(int32 frame = -1) = 0;
 
 protected:
-	const char * getFilename() const { return _fname; };	//!< accessor for animation filename
+	const char *getFilename() const { return _fname; };	//!< accessor for animation filename
 	int32 getNbframes() const { return _nbframes; };	//!< accessor for number of frames
 	int32 getWidth() const { return _width; };	//!< accessor for current width
 	int32 getHeight() const { return _height; };	//!< accessor for current height
-	const char * data() const { return _data; };	//!< accessor for current frame buffer
+	const char *data() const { return _data; };	//!< accessor for current frame buffer
 	void clean();	//!< memory cleanup (deletes frame buffer)
 	void setFrame(int32 f) { _frame = f; };	//!< allows to change the frame number
 public:
@@ -57,13 +57,13 @@ public:
 	BaseRenderer();
 	virtual ~BaseRenderer();
 
-	virtual bool initFrame(const Point & size);
-	virtual char * lockFrame(int32 frame);
+	virtual bool initFrame(const Point &size);
+	virtual char *lockFrame(int32 frame);
 	virtual bool unlockFrame();
 	virtual bool flipFrame();
-	virtual bool setPalette(const Palette & pal);
-	virtual bool startDecode(const char * fname, int32 version, int32 nbframes) { _fname = fname; _nbframes = nbframes; return true; }
-	virtual Mixer * getMixer() { return 0; };
+	virtual bool setPalette(const Palette &pal);
+	virtual bool startDecode(const char *fname, int32 version, int32 nbframes) { _fname = fname; _nbframes = nbframes; return true; }
+	virtual Mixer *getMixer() { return 0; };
 	virtual bool prematureClose() { return false; };
 };
 

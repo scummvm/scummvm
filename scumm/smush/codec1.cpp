@@ -27,7 +27,7 @@
 Codec1Decoder::~Codec1Decoder() {
 }
 
-bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
+bool Codec1Decoder::decode(Blitter &dst, Chunk &src) {
 	byte val;
 	int32 size_line;
 	int32 code, length;

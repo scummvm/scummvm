@@ -50,7 +50,7 @@ public:
 		
 		@return true if initialisation was ok, false otherwise
 	*/
-	virtual bool startDecode(const char * fname, int32 version, int32 nbframes) = 0;
+	virtual bool startDecode(const char *fname, int32 version, int32 nbframes) = 0;
 	/*!	@brief start of animation output
 		
 		This is called by the animation player when the frame size is changing.
@@ -77,7 +77,7 @@ public:
 		
 		@return a pointer to the frame buffer to output data to.
 	*/
-	virtual char * lockFrame(int32 frame) = 0;
+	virtual char *lockFrame(int32 frame) = 0;
 	/*!	@brief unlock a frame buffer
 		
 		This is called by the animation player when a frame has been decoded.
@@ -114,7 +114,7 @@ public:
 		
 		@return a valid pointer to an uninitialized mixer instance, or null if none is available.
 	*/
-	virtual Mixer * getMixer() = 0;
+	virtual Mixer *getMixer() = 0;
 	/*!	@brief debugging function : do not use
 		
 		@return true if everything went fine, false otherwise

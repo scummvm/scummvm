@@ -42,20 +42,20 @@ class Mixer;
 
 class ScummRenderer : public BaseRenderer {
 private:
-	Scumm * _scumm;
-	ScummMixer * _smixer;
+	Scumm *_scumm;
+	ScummMixer *_smixer;
 	uint32 _insaneSpeed;
 	volatile int _pending_updates;
 public:
-	ScummRenderer(Scumm * scumm, uint32 speed);
+	ScummRenderer(Scumm *scumm, uint32 speed);
 	virtual ~ScummRenderer();
 	virtual bool wait(int32 ms);
 	bool update();
 protected:
-	virtual bool startDecode(const char * fname, int32 version, int32 nbframes);
+	virtual bool startDecode(const char *fname, int32 version, int32 nbframes);
 	virtual bool setPalette(const Palette & pal);
 	virtual void save(int32 frame = -1);
-	virtual Mixer * getMixer();
+	virtual Mixer *getMixer();
 	virtual bool prematureClose();
 };
 

@@ -49,11 +49,11 @@ class StringResource {
 private:
 	struct {
 		int32 id;
-		char * string;
+		char *string;
 	} _strings[MAX_STRINGS];
 	int32 _nbStrings;
 	int32 _lastId;
-	char * _lastString;
+	char *_lastString;
 public:
 	StringResource() : _nbStrings(0), _lastId(-1) {};
 	~StringResource() {
@@ -66,16 +66,16 @@ public:
 #ifdef DEBUG
 		debug(9, "parsing string resources...");
 #endif
-		char * def_start = strchr(buffer, '#');
+		char *def_start = strchr(buffer, '#');
 		while(def_start != NULL) {
-			char * def_end = strchr(def_start, '\n');
+			char *def_end = strchr(def_start, '\n');
 			assert(def_end != NULL);
-			char * id_end = def_end;
+			char *id_end = def_end;
 			while(id_end >= def_start && !isdigit(*(id_end-1))) { 
 				id_end--;
 			}
 			assert(id_end > def_start);
-			char * id_start = id_end;
+			char *id_start = id_end;
 			while(isdigit(*(id_start - 1))) {
 				id_start--;
 			}
@@ -83,12 +83,12 @@ public:
 			memcpy(idstring, id_start, id_end - id_start);
 			idstring[id_end - id_start] = 0;
 			int32 id = atoi(idstring);
-			char * data_start = def_end;
+			char *data_start = def_end;
 
 			while(*data_start == '\n' || *data_start == '\r') {
 				data_start++;
 			}
-			char * data_end = data_start;
+			char *data_end = data_start;
 
 			while(1) {
 				if(data_end[-2] == '\r' && data_end[1] == '\n' && data_end[-1] == '\n' && data_end[0] == '\r') {
@@ -103,12 +103,12 @@ public:
 
 			data_end -= 2;
 			assert(data_end > data_start);
-			char * value = new char[data_end - data_start + 1];
+			char *value = new char[data_end - data_start + 1];
 			assert(value);
 			memcpy(value, data_start, data_end - data_start);
 			value[data_end - data_start] = 0;
-			char * line_start = value;
-			char * line_end;
+			char *line_start = value;
+			char *line_end;
 
 			while ((line_end = strchr(line_start, '\n'))) {
 				line_start = line_end+1;
@@ -132,7 +132,7 @@ public:
 		return true;
 	}
 
-	const char * get(int32 id) {
+	const char *get(int32 id) {
 		if(id == _lastId) {
 			return _lastString;
 		}
@@ -150,14 +150,14 @@ public:
 	}
 };
 
-void SmushPlayer::show(const char * p) {
+void SmushPlayer::show(const char *p) {
 	if(strcmp(p, "subtitles") == 0) {
 		_subtitles = true;
 	} else if(strcmp(p, "bgmusic") == 0) {
 		_bgmusic = true;
 	} else if(strcmp(p, "voices") == 0) {
 		_voices = true;
-	}	else {
+	} else {
 		int id = atoi(p);
 		if(id < 0 || id > 36) {
 			error("invalid parameter to show");
@@ -166,7 +166,7 @@ void SmushPlayer::show(const char * p) {
 	}
 }
 
-void SmushPlayer::hide(const char * p) {
+void SmushPlayer::hide(const char *p) {
 	if(strcmp(p, "subtitles") == 0) {
 		_subtitles = false;
 	} else if(strcmp(p, "bgmusic") == 0) {
@@ -183,28 +183,28 @@ void SmushPlayer::hide(const char * p) {
 }
 
 SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
-							_version(-1),
-							_secondaryVersion(0),
-							_soundFrequency(0),
-							_nbframes(0),
-							_mixer(0),
-							_renderer(renderer),
-							_strings(0),
-							_frameSize(-1, -1),
-							_frame(0),
-							_outputSound(sound),
-							_wait(wait),
-							_alreadyInit(false),
-							_codec37Called(false),
-							_skipNext(false),
-							_subtitles(true),
-							_bgmusic(true),
-							_voices(true),
-							_curBuffer(0),
-							_IACTchannel(-1),
-							_IACTpos(0),
-							_storeFrame(false),
-							_frameBuffer(NULL) {
+	_version(-1),
+	_secondaryVersion(0),
+	_soundFrequency(0),
+	_nbframes(0),
+	_mixer(0),
+	_renderer(renderer),
+	_strings(0),
+	_frameSize(-1, -1),
+	_frame(0),
+	_outputSound(sound),
+	_wait(wait),
+	_alreadyInit(false),
+	_codec37Called(false),
+	_skipNext(false),
+	_subtitles(true),
+	_bgmusic(true),
+	_voices(true),
+	_curBuffer(0),
+	_IACTchannel(-1),
+	_IACTpos(0),
+	_storeFrame(false),
+	_frameBuffer(NULL) {
 	_fr[0] = _fr[1] = _fr[2] = _fr[3] = _fr[4] = 0;
 	assert(_renderer != 0);
 }
@@ -231,7 +231,7 @@ void SmushPlayer::clean() {
 	}
 }
 
-void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, uint32 min_size) {
+void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
 	if(type_expected != b.getType()) {
 		error("Chunk type is different from expected : %d != %d", b.getType(), type_expected);
 	}
@@ -240,7 +240,7 @@ void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, uint32 
 	}
 }
 
-void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk & b, int32 size) {
+void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk &b, int32 size) {
 	debug(6, "smush_player::handleSoundBuffer(%d)", track_id);
 	if(!_voices && (flags & 128) == 128) {
 		return;
@@ -248,7 +248,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 	if(!_bgmusic && (flags & 64) == 64) {
 		return;
 	}
-	_Channel * c = _mixer->findChannel(track_id);
+	_Channel *c = _mixer->findChannel(track_id);
 	if(c == 0) {
 		c = new SaudChannel(track_id, _soundFrequency);
 		_mixer->addChannel(c);
@@ -261,7 +261,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 	c->appendData(b, size);
 }
 
-void SmushPlayer::handleSoundFrame(Chunk & b) {
+void SmushPlayer::handleSoundFrame(Chunk &b) {
 	checkBlock(b, TYPE_PSAD);
 	debug(6, "SmushPlayer::handleSoundFrame()");
 	if(!_outputSound) {
@@ -282,7 +282,7 @@ void SmushPlayer::handleSoundFrame(Chunk & b) {
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, bal, b, size);
 }
 
-void SmushPlayer::handleSkip(Chunk & b) {
+void SmushPlayer::handleSkip(Chunk &b) {
 	checkBlock(b, TYPE_SKIP, 4);
 	int32 code = b.getDword();
 	debug(6, "SmushPlayer::handleSkip(%d)", code);
@@ -292,13 +292,13 @@ void SmushPlayer::handleSkip(Chunk & b) {
 		_skipNext = true;
 }
 
-void SmushPlayer::handleStore(Chunk & b) {
+void SmushPlayer::handleStore(Chunk &b) {
 	checkBlock(b, TYPE_STOR, 4);
 	_storeFrame = true;
 	debug(6, "SmushPlayer::handleStore()");
 }
 
-void SmushPlayer::handleFetch(Chunk & b) {
+void SmushPlayer::handleFetch(Chunk &b) {
 	checkBlock(b, TYPE_FTCH, 6);
 	debug(6, "SmushPlayer::handleFetch()");
 
@@ -311,10 +311,10 @@ void SmushPlayer::handleFetch(Chunk & b) {
 	}
 }
 
-void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk & b, int32 bsize) {
+void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk &b, int32 bsize) {
 	int32 track = (track_flags << 16) | track_id;
 
-	_Channel * c = _mixer->findChannel(track);
+	_Channel *c = _mixer->findChannel(track);
 	if(c == 0) {
 		c = new ImuseChannel(track, _soundFrequency);
 		_mixer->addChannel(c);
@@ -326,7 +326,7 @@ void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes,
 	c->appendData(b, bsize);
 }
 
-void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int32 track_flags) {
+void SmushPlayer::handleImuseAction8(Chunk &b, int32 flags, int32 unknown, int32 track_flags) {
 	assert(flags == 46 && unknown == 0);
 	int32 track_id = b.getWord();
 	int32 index = b.getWord();
@@ -337,9 +337,9 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 		handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
 	} else {
 		byte output_data[4096];
-		byte * src = (byte*)malloc(bsize);
+		byte *src = (byte *)malloc(bsize);
 		b.read(src, bsize);
-		byte * d_src = src;
+		byte *d_src = src;
 		byte value;
 
 		do {
@@ -354,8 +354,8 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 					bsize = 0;
 				} else {
 					memcpy(_IACToutput + _IACTpos, d_src, len);
-					byte * dst = output_data;
-					byte * d_src2 = _IACToutput;
+					byte *dst = output_data;
+					byte *d_src2 = _IACToutput;
 					d_src2 += 2;
 					int32 count = 1024;
 					byte variable1 = *d_src2++;
@@ -420,7 +420,7 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 	}
 }
 
-void SmushPlayer::handleImuseAction(Chunk & b) {
+void SmushPlayer::handleImuseAction(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 	if(!_outputSound) {
@@ -445,7 +445,7 @@ void SmushPlayer::handleImuseAction(Chunk & b) {
 	}
 }
 
-void SmushPlayer::handleTextResource(Chunk & b) {
+void SmushPlayer::handleTextResource(Chunk &b) {
 	int32 pos_x = b.getShort();
 	int32 pos_y = b.getShort();
 	int32 flags = b.getShort();
@@ -455,7 +455,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	/*int32 height =*/ b.getShort();
 	/*int32 unk2 =*/ b.getWord();
 
-	const char * str;
+	const char *str;
 	char *string = NULL;
 	char *string2 = NULL;
 	if (b.getType() == TYPE_TEXT) {
@@ -476,14 +476,14 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	if((!_subtitles) && ((flags & 8) == 8))
 		return;
 
-	FontRenderer * fr = _fr[0];
+	FontRenderer *fr = _fr[0];
 	int32 color = 15;
 	while(*str == '/') {
 		str++; // For Full Throttle text resources
 	}
 
 	if (g_scumm->_gameId == GID_CMI) {
-		g_scumm->translateText((byte*)str - 1, g_scumm->_transText);
+		g_scumm->translateText((byte *)str - 1, g_scumm->_transText);
 		while(*str++ != '/');
 		string2 = (char*)g_scumm->_transText;
 
@@ -520,14 +520,13 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	}
 
 	if (g_scumm->_gameId != GID_CMI) {
-		string2 = (char*)str;
+		string2 = (char *)str;
 	}
 	if (g_scumm->_gameId == GID_CMI) {
 		if (string2[0] == 0) {
-			string2 = (char*)str;
+			string2 = (char *)str;
 		}
 	}
-
 
 	// flags:
 	// bit 0 - center				1
@@ -568,13 +567,13 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	}
 }
 
-void SmushPlayer::readPalette(Palette & out, Chunk & in) {
+void SmushPlayer::readPalette(Palette &out, Chunk &in) {
 	byte buffer[768];
 	in.read(buffer, 768);
 	out = Palette(buffer);
 }
 
-void SmushPlayer::handleDeltaPalette(Chunk & b) {
+void SmushPlayer::handleDeltaPalette(Chunk &b) {
 	checkBlock(b, TYPE_XPAL);
 	debug(6, "SmushPlayer::handleDeltaPalette()");
 	if(b.getSize() == 768 * 3 + 4) {
@@ -600,29 +599,29 @@ void SmushPlayer::handleDeltaPalette(Chunk & b) {
 	}
 }
 
-void SmushPlayer::handleNewPalette(Chunk & b) {
+void SmushPlayer::handleNewPalette(Chunk &b) {
 	checkBlock(b, TYPE_NPAL, 768);
 	debug(6, "SmushPlayer::handleNewPalette()");
 	readPalette(_pal, b);
 	updatePalette();
 }
 
-void SmushPlayer::decodeCodec(Chunk & b, const Rect & r, Decoder & codec) {
+void SmushPlayer::decodeCodec(Chunk &b, const Rect &r, Decoder &codec) {
 	assert(_curBuffer);
-	Blitter blit((byte*)_curBuffer, _frameSize, r);
+	Blitter blit((byte *)_curBuffer, _frameSize, r);
 	codec.decode(blit, b);
 	if (_storeFrame == true) {
 		if (_frameBuffer == NULL) {
-			_frameBuffer = (byte*)malloc(_frameSize.getX() * _frameSize.getY());
+			_frameBuffer = (byte *)malloc(_frameSize.getX() * _frameSize.getY());
 		}
 		memcpy(_frameBuffer, _curBuffer, _frameSize.getX() * _frameSize.getY());
 		_storeFrame = false;
 	}
 }
 
-void SmushPlayer::initSize(const Rect & r, bool always, bool transparent) {
+void SmushPlayer::initSize(const Rect &r, bool always, bool transparent) {
 	if(_codec37Called) _alreadyInit = true;
-		
+
 	if(!_alreadyInit || _frameSize.getX() < r.right() || _frameSize.getY() < r.bottom() || always) {
 		if(_curBuffer) {
 			_renderer->unlockFrame();
@@ -639,7 +638,7 @@ void SmushPlayer::initSize(const Rect & r, bool always, bool transparent) {
 
 	_curBuffer = _renderer->lockFrame(_frame);
 	if(!_alreadyInit && transparent) {
-		memset(_curBuffer, 0, _frameSize.getX()*_frameSize.getY());
+		memset(_curBuffer, 0, _frameSize.getX() * _frameSize.getY());
 	}
 
 	_codec1.initSize(_frameSize, r);
@@ -696,14 +695,14 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 	}
 }
 
-void SmushPlayer::handleFrame(Chunk & b) {
+void SmushPlayer::handleFrame(Chunk &b) {
 	checkBlock(b, TYPE_FRME);
 	debug(6, "SmushPlayer::handleFrame(%d)", _frame);
 	_alreadyInit = false;
 	_skipNext = false;
 
 	while(!b.eof()) {
-		Chunk * sub = b.subBlock();
+		Chunk *sub = b.subBlock();
 		if(sub->getSize() & 1) b.seek(1);
 		switch(sub->getType()) {
 			case TYPE_NPAL:
@@ -756,7 +755,7 @@ void SmushPlayer::handleFrame(Chunk & b) {
 	_frame++;
 }
 
-void SmushPlayer::handleAnimHeader(Chunk & b) {
+void SmushPlayer::handleAnimHeader(Chunk &b) {
 	checkBlock(b, TYPE_AHDR, 774);
 	debug(6, "SmushPlayer::handleAnimHeader()");
 	_version = b.getWord();
@@ -785,7 +784,7 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 	}
 }
 
-static StringResource * getStrings(const char * file, const char * directory, bool is_encoded) {
+static StringResource *getStrings(const char *file, const char *directory, bool is_encoded) {
 	debug(7, "trying to read text ressources from %s", file);
 	File theFile;
 
@@ -794,7 +793,7 @@ static StringResource * getStrings(const char * file, const char * directory, bo
 		return 0;
 	}
 	int32 length = theFile.size();
-	char * filebuffer = new char [length + 1];
+	char *filebuffer = new char [length + 1];
 	assert(filebuffer);
 	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
@@ -809,7 +808,7 @@ static StringResource * getStrings(const char * file, const char * directory, bo
 			return getStrings(file, directory, false);
 		}
 
-		char * old = filebuffer;
+		char *old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH + 1];
 		for(int32 i = ETRS_HEADER_LENGTH; i < length; i++) {
 			filebuffer[i - ETRS_HEADER_LENGTH] = old[i] ^ 0xCC;
@@ -818,15 +817,15 @@ static StringResource * getStrings(const char * file, const char * directory, bo
 		delete []old;
 		length -= ETRS_HEADER_LENGTH;
 	}
-	StringResource * sr = new StringResource;
+	StringResource *sr = new StringResource;
 	assert(sr);
 	sr->init(filebuffer, length);
 	delete []filebuffer;
 	return sr;
 }
 
-bool SmushPlayer::readString(const char * file, const char * directory, bool & ft) {
-	const char * i = strrchr(file, '.');
+bool SmushPlayer::readString(const char *file, const char *directory, bool &ft) {
+	const char *i = strrchr(file, '.');
 	if(i == NULL) {
 		error("invalid filename : %s", file);
 	}
@@ -845,17 +844,17 @@ bool SmushPlayer::readString(const char * file, const char * directory, bool & f
 	return false;
 }
 
-static FontRenderer *loadFont(const char * file, const char * directory, bool original = false) {
+static FontRenderer *loadFont(const char *file, const char *directory, bool original = false) {
 #ifdef DEBUG
 	debug(5, "loading font from \"%s\"", file);
 #endif
-	FontRenderer * fr = new FontRenderer(original);
+	FontRenderer *fr = new FontRenderer(original);
 	SmushPlayer p(fr, false, false);
 	p.play(file, directory);
 	return fr;
 }
 
-bool SmushPlayer::play(const char * file, const char * directory) {
+bool SmushPlayer::play(const char *file, const char *directory) {
 #ifdef DEBUG
 	debug(5, "start of animation : %s", file);
 #endif	
@@ -875,7 +874,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 			} else {
 				for(int i = 0; i < 4; i++) {
 					char file_font[11];
-					sprintf((char*)&file_font, "font%d.nut", i);
+					sprintf((char *)&file_font, "font%d.nut", i);
 					_fr[i] = loadFont(file_font, directory, i != 0);
 				}
 			}
@@ -883,7 +882,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 		if(g_scumm->_gameId == GID_CMI) {
 			for(int i = 0; i < 5; i++) {
 				char file_font[11];
-				sprintf((char*)&file_font, "font%d.nut", i);
+				sprintf((char *)&file_font, "font%d.nut", i);
 				_fr[i] = loadFont(file_font, directory, false);
 			}
 		}
@@ -902,7 +901,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 	checkBlock(base, TYPE_ANIM); 
 
 	while(!base.eof()) {
-		Chunk * sub = base.subBlock();
+		Chunk *sub = base.subBlock();
 		switch(sub->getType()) {
 			case TYPE_AHDR:
 				handleAnimHeader(*sub);

@@ -28,7 +28,7 @@ class Codec44Decoder : public Decoder {
 	byte _buffer[1000];
 
 public:
-	bool decode(Blitter & dst, Chunk & src);
+	bool decode(Blitter &dst, Chunk &src);
 };
 
 #endif

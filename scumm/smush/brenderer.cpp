@@ -34,19 +34,19 @@ void BaseRenderer::clean() {
 	}
 }
 
-BaseRenderer::BaseRenderer() : 
-		_data(0), 
-		_frame(0), 
-		_nbframes(0), 
-		_width(0), 
-		_height(0) {
+BaseRenderer::BaseRenderer() :
+	_data(0),
+	_frame(0),
+	_nbframes(0),
+	_width(0), 
+	_height(0) {
 }
 
-BaseRenderer::~BaseRenderer() { 
-	clean(); 
+BaseRenderer::~BaseRenderer() {
+	clean();
 }
 
-bool BaseRenderer::initFrame(const Point & p) {
+bool BaseRenderer::initFrame(const Point &p) {
 	clean();
 	_width = p.getX();
 	_height = p.getY();
@@ -56,7 +56,7 @@ bool BaseRenderer::initFrame(const Point & p) {
 	return true;
 }
 
-char * BaseRenderer::lockFrame(int32 frame) {
+char *BaseRenderer::lockFrame(int32 frame) {
 	_frame = frame; 
 	if(!_data) error("no allocated image buffer in lock_frame");
 	return _data;
@@ -66,12 +66,12 @@ bool BaseRenderer::unlockFrame() {
 	return true;
 }
 
-bool BaseRenderer::flipFrame() { 
+bool BaseRenderer::flipFrame() {
 	save();
 	return true;
 }
 
-bool BaseRenderer::setPalette(const Palette & pal) { 
-	_pal = pal; 
+bool BaseRenderer::setPalette(const Palette & pal) {
+	_pal = pal;
 	return true;
 }
