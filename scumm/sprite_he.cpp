@@ -1088,7 +1088,6 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 }
 
 void ScummEngine_v90he::spritesUpdateImages() {
-	printf("spritesUpdateImages\n");
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (spi->dx || spi->dy) {
