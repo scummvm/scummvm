@@ -1,5 +1,6 @@
 #include <PalmOS.h>
 #include <SonyClie.h>
+#include <PalmNavigator.h>
 
 #include "StarterRsc.h"
 #include "start.h"
@@ -8,9 +9,13 @@
 #include "mathlib.h"
 #include "formCards.h"
 #include "games.h"
+#include "extend.h"
+
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif
 
 #define kOS5Version		sysMakeROMVersion(5,0,0,sysROMStageRelease,0)
-
 /***********************************************************************
  *
  * FUNCTION:     AppStart
@@ -28,7 +33,6 @@
 static Err AppStartCheckHRmode()
 {
 	SonySysFtrSysInfoP sonySysFtrSysInfoP;
-	UInt32 version;
 	Err error = errNone;
 
 	// test if sonyHR is present
@@ -41,17 +45,15 @@ static Err AppStartCheckHRmode()
 
 			if (!error) {	// Now we can use HR lib. Executes Open library.
 				error = HROpen(gVars->HRrefNum);
-				gVars->options |= optIsClieDevice;
+				OPTIONS_SET(kOptDeviceClie);
 			}
 		}
 	}
-	// if not Hi-Density ?
-	if (error && !(error = FtrGet(sysFtrCreator, sysFtrNumWinVersion, &version))) {
+	// if not, Hi-Density ?
+	if (error) {
 		gVars->HRrefNum = sysInvalidRefNum;	// Not sony HR
-		gVars->options &= ~optIsClieDevice;
-
-		if (version<4)
-			error = 1;
+		OPTIONS_RST(kOptDeviceClie);
+		error = (OPTIONS_TST(kOptModeHiDensity) == 0);
 	}
 
 	if (!error) { // Not, error processing
@@ -63,21 +65,24 @@ static Err AppStartCheckHRmode()
 		depth = 8;
 		color = true;
 
-		if (gVars->HRrefNum != sysInvalidRefNum)
-			error = HRWinScreenMode (gVars->HRrefNum, winScreenModeSet, &width, &height, &depth, &color );
-		else
-			error = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color );
+		if (gVars->HRrefNum != sysInvalidRefNum) {
+			error = HRWinScreenMode (gVars->HRrefNum, winScreenModeSet, &width, &height, &depth, &color);
+		} else {
+			error = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color);
+			// check if we are now in hi-density
+			if (!error) {
+				UInt32 attr;
+				WinScreenGetAttribute(winScreenDensity, &attr); 
+				error = (attr != kDensityDouble);
+			}
+		}
 
 		// high-resolution mode entered from here if no error
 		if (error != errNone)
-			FrmCustomAlert(FrmErrorAlert,"Your device doesn't seems to support 256 colors mode.",0,0);
-
-		// check for 16bit mode
-		if (!WinScreenMode(winScreenModeGetSupportedDepths, NULL, NULL, &depth, &color))
-			gVars->options |= ((depth & 0x8000) ? optHas16BitMode : 0);
+			FrmCustomAlert(FrmErrorAlert,"Your device doesn't seem to support Hi-Res or 256color mode.",0,0);
 	}
 	else
-		FrmCustomAlert(FrmErrorAlert,"This device doesn't seems to support\nHi-Res mode.",0,0);
+		FrmCustomAlert(FrmErrorAlert,"This device doesn't seem to support\nHi-Res mode.",0,0);
 
 	return error;
 }
@@ -137,7 +142,8 @@ static Err AppStartLoadSkin() {
 	}
 
 	if (err)
-		FrmCustomAlert(FrmErrorAlert,"No skin found.\nPlease install a skin and restart ScummVM.",0,0);
+		FrmCustomAlert(FrmWarnAlert,"No skin found.\nScummVM will start in direct mode.",0,0);
+		//FrmCustomAlert(FrmErrorAlert,"No skin found.\nPlease install a skin and restart ScummVM.",0,0);
 	
 	return err;
 }
@@ -176,10 +182,14 @@ static void AppStopMathLib() {
 // Set the screen pitch for direct screen access
 // avaliable only before a game start
 void WinScreenGetPitch() {
-	if (gVars->HRrefNum == sysInvalidRefNum) // TODO : better to check if Hi-Density feature is present (?)
-		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));		
-	else
+	if (OPTIONS_TST(kOptModeHiDensity)) {
+		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));
+		// FIXME : hack for TT3 simulator (and real ?) return 28 on landscape mode
+		if (gVars->screenPitch < gVars->screenFullWidth)
+			gVars->screenPitch = gVars->screenFullWidth;
+	} else {
 		gVars->screenPitch = gVars->screenFullWidth;
+	}
 }
 
 void PINGetScreenDimensions() {
@@ -187,18 +197,17 @@ void PINGetScreenDimensions() {
 
 	gVars->pinUpdate = false;
 
-	// if feature set, not set on Garmin iQue3600
+	// if feature set, not set on Garmin iQue3600 ???
 	if (!(FtrGet(sysFtrCreator, sysFtrNumInputAreaFlags, &ftr))) {
 		if (ftr & grfFtrInputAreaFlagCollapsible) {
 
 			RectangleType r;
 			UInt16 curOrientation = SysGetOrientation();
 
-			gVars->options |= optIsCollapsible;
+			OPTIONS_SET(kOptCollapsible);
 			// reset previous options if any
-			gVars->options &= ~optHasWideMode;
-			gVars->options &= ~optHasLandscapeMode;
-			gVars->options &= ~optIsLandscapeDisplay;
+			OPTIONS_RST(kOptModeWide);
+			OPTIONS_RST(kOptModeLandscape);
 
 			PINSetInputAreaState(pinInputAreaClosed);
 			StatHide();
@@ -207,12 +216,12 @@ void PINGetScreenDimensions() {
 			gVars->screenFullWidth = r.extent.x << 1;
 			gVars->screenFullHeight = r.extent.y << 1;
 
-			gVars->options |= optHasWideMode;
+			OPTIONS_SET(kOptModeWide);
 			
 			if (curOrientation == sysOrientationLandscape ||
 				curOrientation == sysOrientationReverseLandscape
 					)
-				gVars->options |= optHasLandscapeMode;
+				OPTIONS_SET(kOptModeLandscape);
 			
 			StatShow();
 			PINSetInputAreaState(pinInputAreaOpen);
@@ -260,11 +269,11 @@ static Err AppStartCheckScreenSize() {
 				 	error = VskOpen(gVars->slkRefNum);
 					if(!error) {
 						VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
-						gVars->options |= (gVars->slkVersion == vskVersionNum2 ? optHasLandscapeMode : 0);
 						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
 						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
 						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeMax);
 						VskSetState(gVars->slkRefNum, vskStateEnable, vskResizeDisable);
+						OPTIONS_SET((gVars->slkVersion == vskVersionNum3 ? kOptModeLandscape : kOptNone));
 					}
 				}
 			}
@@ -273,7 +282,7 @@ static Err AppStartCheckScreenSize() {
 		if (error)
 			gVars->slkRefNum = sysInvalidRefNum;
 		else
-			gVars->options |= optHasWideMode;
+			OPTIONS_SET(kOptModeWide);
 	}
 	// Tapwave Zodiac and other DIA API compatible devies
 	// get max screen size
@@ -291,7 +300,7 @@ static void AppStopSilk() {
 
 #define max(id,value)	gVars->memory[id] = (gVars->memory[id] < value ? value : gVars->memory[id])
 #define min(id,value)	gVars->memory[id] = (gVars->memory[id] > value ? value : gVars->memory[id])
-#define threshold 		500
+#define threshold 		700
 
 static void AppStartSetMemory() {
 	UInt32 mem, def;
@@ -324,8 +333,8 @@ static void AppStartSetMemory() {
 
 Err AppStart(void) {
 	UInt16 dataSize, checkSize = 0;
-	UInt32 ulProcessorType;
-	UInt32 romVersion;
+	UInt32 ulProcessorType, manufacturer, version, depth;
+	Boolean color;
 	Err error;
 
 	// allocate global variables space
@@ -339,16 +348,43 @@ Err AppStart(void) {
 	gVars->volRefNum = sysInvalidRefNum;
 	gVars->slkRefNum = sysInvalidRefNum;
 	gVars->skinSet = false;
-	gVars->options = optNone;
+	gVars->options = kOptNone;
 
+#ifndef DISABLE_TAPWAVE
+// Tapwave code will come here
+#endif
+
+	// Hi-Density present ?
+	if (!FtrGet(sysFtrCreator, sysFtrNumWinVersion, &version))
+		if (version >= 4)
+			OPTIONS_SET(kOptModeHiDensity);
 
 	// OS5 ?
-	if (!FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion))
-		gVars->options |= ((romVersion >= kOS5Version) ? optIsOS5Device : 0);
+	if (!FtrGet(sysFtrCreator, sysFtrNumROMVersion, &version))
+		if (version >= kOS5Version)
+			OPTIONS_SET(kOptDeviceOS5);
 
 	// ARM ?
+#ifndef DISABLE_ARM
  	if (!FtrGet(sysFileCSystem, sysFtrNumProcessorID, &ulProcessorType))
- 		gVars->options |= ((sysFtrNumProcessorIsARM(ulProcessorType)) ? optIsARMDevice : 0);
+ 		if (sysFtrNumProcessorIsARM(ulProcessorType))
+ 			OPTIONS_SET(kOptDeviceARM);
+ 		else if (ulProcessorType == sysFtrNumProcessorx86)
+ 			OPTIONS_SET(kOptDeviceProcX86);
+#endif
+	// 5Way Navigator
+	if (!FtrGet(navFtrCreator, navFtrVersion, &version))
+		if (version >= 1)
+	 		OPTIONS_SET(kOpt5WayNavigator);
+
+	// Sound API ?
+/*	if (!FtrGet(sysFileCSoundMgr, sndFtrIDVersion, &version))
+		if (version >= 1)
+			OPTIONS_SET(kOptPalmSoundAPI);
+*/
+	// check for 16bit mode
+	if (!WinScreenMode(winScreenModeGetSupportedDepths, NULL, NULL, &depth, &color))
+		OPTIONS_SET(((depth & 0x8000) ? kOptMode16Bit : kOptNone));
 
 	// allocate prefs space
 	dataSize = sizeof(GlobalsPreferenceType);
@@ -366,7 +402,7 @@ Err AppStart(void) {
 		gPrefs->vibrator = CheckVibratorExists();
 		gPrefs->debug = false;
 
-		gPrefs->stdPalette = (gVars->options & optIsOS5Device);
+		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
 		
 		gPrefs->volume.speaker = 16;
 		gPrefs->volume.headphone = 16;
@@ -389,8 +425,9 @@ Err AppStart(void) {
 	error = AppStartCheckHRmode();
 	if (error) return (error);
 	
-	error = AppStartLoadSkin();
-	if (error) return (error);
+//	error = AppStartLoadSkin();
+//	if (error) return (error);
+	bDirectMode = (AppStartLoadSkin() != errNone);
 
 	if (gPrefs->card.volRefNum != sysInvalidRefNum) {	// if volref previously defined, check if it's a valid one
 		VolumeInfoType volInfo;
@@ -405,9 +442,9 @@ Err AppStart(void) {
 	if (error) return (error);
 	GamImportDatabase();
 
-	AppStartCheckNotify(); // not fatal error if not avalaible
+	AppStartCheckNotify(); 		// not fatal error if not avalaible
 	AppStartCheckScreenSize();
-	AppStartSetMemory();	// set memory required by the differents engines
+	AppStartSetMemory();		// set memory required by the differents engines
 
 
 	return error;
