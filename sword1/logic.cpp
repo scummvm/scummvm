@@ -212,7 +212,7 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 }
 
 int SwordLogic::logicWaitTalk(BsObject *compact) {
-	BsObject *target = _objMan->fetchObject(compact->o_target);
+	BsObject *target = _objMan->fetchObject(compact->o_down_flag);
 	
 	if (target->o_status & STAT_TALK_WAIT) {
 		compact->o_logic = LOGIC_script;
