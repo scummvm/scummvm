@@ -750,9 +750,8 @@ int SimonState::runScript() {
 			break;
 
 		case 134:{
-				if (_debugMode)
-					warning("stopMidiMusic: not implemented");
 				_vc70_var2 = 0xFFFF;
+				midi.stop();
 				_last_music_played = 0xFFFF;
 				_vc72_var1 = 0xFFFF;
 			}
