@@ -916,12 +916,12 @@ int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 
 // Script function #48 (0x30)
 int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
-	GAME_DISPLAYINFO disp_info;
+	GAME_DISPLAYINFO disp;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
 
-	_vm->getDisplayInfo(&disp_info);
+	_vm->getDisplayInfo(&disp);
 
 	_vm->_gfx->showCursor(false);
 	_vm->_gfx->getCurrentPal(cur_pal);
@@ -929,13 +929,18 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	_vm->_interface->setStatusText("");
 
-	Rect rect(disp_info.logical_w, disp_info.scene_h);
+	Rect rect(disp.logical_w, disp.scene_h);
 	drawRect(back_buf, &rect, 138);
 
-	// TODO: Draw the text at the correct spot. This is (probably) just a
-	// close approximation.
+	// Put the text in the center of the viewport, assuming it will fit on
+	// one line. If we cannot make that assumption we'll need to extend
+	// the text drawing function so that it can center text around a point.
+	// It doesn't end up in exactly the same spot as the original did it,
+	// but it's close enough for now at least.
+
 	_vm->textDraw(MEDIUM_FONT_ID, back_buf, getString(thread->pop()),
-		disp_info.logical_w / 2, disp_info.scene_h / 2,
+		disp.logical_w / 2,
+		(disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2,
 		_vm->_gfx->getWhite(), _vm->_gfx->getBlack(),
 		FONT_OUTLINE | FONT_CENTERED);
 
