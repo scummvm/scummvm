@@ -987,16 +987,16 @@ void OSystem_WINCE3::loadGFXMode() {
 
 	// Always use full screen mode to have a "clean screen"
 	displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
-	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
+	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;  
 
 	// FIXME
 	if (!(displayWidth > GetSystemMetrics(SM_CXSCREEN))) { // no rotation
 		displayWidth = GetSystemMetrics(SM_CXSCREEN);
-		displayHeight = GetSystemMetrics(SM_CYSCREEN); 
+		displayHeight = GetSystemMetrics(SM_CYSCREEN);   
 	}
 	
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, SDL_FULLSCREEN | SDL_SWSURFACE);
-	if (_hwscreen == NULL) {
+	if (_hwscreen == NULL) { 
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwscreen is hosed.
 
@@ -1014,8 +1014,8 @@ void OSystem_WINCE3::loadGFXMode() {
 		// of a failure, rollback is trivial. Only if everything worked fine
 		// do we "commit" the changed values to the member vars.
 		warning("SDL_SetVideoMode says we can't switch to that mode");
-		quit();
-	}
+		quit(); 
+	} 
 
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
@@ -1534,7 +1534,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_keyRepeat = 0;
 				}
 
-				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
+				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
 			}
 
@@ -1555,7 +1555,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					_lastKeyPressed = 0;
 				}
 
-				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
+				if (!CEActions::Instance()->mappingActive() && CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
 			}
 			
