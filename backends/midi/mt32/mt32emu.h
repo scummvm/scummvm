@@ -28,7 +28,7 @@
 // Shows number of partials MT-32 is playing, and on which parts
 #define MT32EMU_MONITOR_PARTIALS 0
 // Dump drum patches to syx file for viewing
-#define MT32EMU_DRUMP_DRUMS 0
+#define MT32EMU_DUMP_DRUMS 0
 // Output benchmarks for the filter implementations
 #define MT32EMU_BENCHMARK_FILTERS 0
 // Determines how the waveform cache file is handled (must be regenerated after sampling rate change)
