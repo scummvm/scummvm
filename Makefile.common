@@ -17,13 +17,30 @@ GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
 
 SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/gfx.o scumm/imuse.o \
-	scumm/insane.o scumm/object.o scumm/resource.o scumm/resource_v3.o \
+	scumm/object.o scumm/resource.o scumm/resource_v3.o \
 	scumm/resource_v4.o scumm/saveload.o scumm/script.o \
 	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o scumm/string.o \
-	scumm/sys.o scumm/vars.o scumm/verbs.o
+	scumm/sys.o scumm/vars.o scumm/verbs.o \
+#	scumm/insane.o
 
 SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
 	simon/sys.o simon/verb.o simon/vga.o
+
+SMUSH_OBJS = scumm/smush/blitter.o \
+	scumm/smush/brenderer.o \
+	scumm/smush/chunck.o \
+	scumm/smush/codec1.o \
+	scumm/smush/codec37.o \
+	scumm/smush/codec44.o \
+	scumm/smush/codec47.o \
+	scumm/smush/color.o \
+	scumm/smush/frenderer.o \
+	scumm/smush/imuse_channel.o \
+	scumm/smush/palette.o \
+	scumm/smush/player.o \
+	scumm/smush/rect.o \
+	scumm/smush/saud_channel.o \
+	scumm/smush/scumm_renderer.o
 
 SOUND_OBJS = sound/fmopl.o sound/mididrv.o sound/mixer.o sound/sound.o
 
@@ -38,7 +55,7 @@ all: scummvm$(EXEEXT)
 scummvm$(EXEEXT): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
 
-scumm/libscumm.a: $(SCUMM_OBJS)
+scumm/libscumm.a: $(SCUMM_OBJS) $(SMUSH_OBJS)
 	$(AR) $@ $+
 	$(RANLIB) $@ 
 
