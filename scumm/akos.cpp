@@ -328,6 +328,7 @@ void AkosRenderer::codec1_genericDecode() {
 	uint y, color, height, pcolor;
 	const byte *scaleytab;
 	bool masked;
+	bool skip_column = false;
 
 	y = v1.y;
 	src = _srcptr;
@@ -354,7 +355,7 @@ void AkosRenderer::codec1_genericDecode() {
 			if (*scaleytab++ < _scaleY) {
 				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 
-				if (color && y < _outheight && !masked) {
+				if (color && y < _outheight && !masked && !skip_column) {
 					pcolor = palette[color];
 					if (_shadow_mode == 1) {
 						if (pcolor == 13)
@@ -387,7 +388,9 @@ void AkosRenderer::codec1_genericDecode() {
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
-				}
+					skip_column = false;
+				} else
+					skip_column = true;
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
 				mask = v1.mask_ptr + (v1.x >> 3);
