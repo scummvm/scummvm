@@ -210,6 +210,8 @@ protected:
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
 	virtual void clearStateCommon(byte type);
+	
+	void resetSentence();
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
@@ -278,6 +280,7 @@ protected:
 	byte VAR_SENTENCE_VERB;
 	byte VAR_SENTENCE_OBJECT1;
 	byte VAR_SENTENCE_OBJECT2;
+	byte VAR_BACKUP_VERB;
 };
 
 class Scumm_v4 : public Scumm_v3 {

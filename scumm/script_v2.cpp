@@ -829,11 +829,10 @@ void Scumm_v2::o2_doSentence() {
 	if (a == 0xFB) {
 		_sentenceNum = 0;
 		stopScriptNr(SENTENCE_SCRIPT);
-		clearClickedStatus();
 		return;
 	}
 	if (a == 0xFC) {
-		clearClickedStatus();
+		resetSentence();
 		return;
 	}
 
@@ -1065,6 +1064,8 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 
 	_fullRedraw = 1;
 
+	resetSentence();
+
 	if (x != -1) {
 		a->startWalkActor(x, y, -1);
 	}
@@ -1134,7 +1135,7 @@ void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
 	_sentenceNum = 0;
 	stopScriptNr(SENTENCE_SCRIPT);
-	clearClickedStatus();
+	resetSentence();
 }
 
 void Scumm_v2::o2_endCutscene() {
@@ -1213,6 +1214,10 @@ void Scumm_v2::o2_cursorCommand() {
 	int cmd = getVarOrDirectWord(0x80);
 	int a2 = cmd >> 8;
 
+	if (cmd & 0xFF) {
+		_scummVars[21] = cmd & 0xFF;
+		printf("Set cmd %d\n", cmd & 0xFF);
+	}
 	if (a2 & 4) {
 		_userPut = 1;
 		warning("TODO: o2_cursorCommand(userface)");
@@ -1249,3 +1254,9 @@ void Scumm_v2::o2_dummy() {
 	warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 
+void Scumm_v2::resetSentence() {
+	_scummVars[VAR_SENTENCE_VERB] = _scummVars[VAR_BACKUP_VERB];
+	_scummVars[VAR_SENTENCE_OBJECT1] = 0;
+	_scummVars[VAR_SENTENCE_OBJECT2] = 0;
+	_scummVars[29] = 0;
+}
