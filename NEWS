@@ -20,7 +20,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
 
  Sword1:
-   - ??? [TODO: Somebody of the Sword1 team please fill this in]
+   - Fixed a rare masking bug
+   - Made the save/load dialog is a bit more user-friendly
 
  Sword2:
    - Simplified the memory/resource management...
