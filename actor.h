@@ -24,6 +24,7 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
+#include <string.h>
 #include "scummsys.h"
 
 class Scumm;
@@ -93,8 +94,8 @@ protected:
 
 public:
 
-	// Constructor
-	//Actor(Scumm *scumm) : _scumm(scumm) {}
+	// Constructor, sets all data to 0
+	Actor() { memset(this, 0, sizeof(Actor)); }
     void initActorClass(Scumm *scumm) {_scumm = scumm;}
 //protected:
 	void hideActor();
