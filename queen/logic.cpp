@@ -1379,8 +1379,8 @@ uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 	}
 	
 	if (actor > 0) {
-		const char *animStr = _aAnim[_actorData[actor].actorFile];
-		if (animStr[0] != '\0') {
+		const char *animStr = _aAnim[_actorData[actor].anim];
+		if (animStr) {
 			bool allocatedFrames[256];
 			memset(allocatedFrames, 0, sizeof(allocatedFrames));
 			uint16 f1, f2;
