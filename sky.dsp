@@ -135,6 +135,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\sky\cd_intro.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\disk.cpp
 # End Source File
 # Begin Source File
@@ -168,6 +172,14 @@ SOURCE=.\sky\sky.h
 # Begin Source File
 
 SOURCE=.\sky\skydefs.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\sound.h
 # End Source File
 # Begin Source File
 
