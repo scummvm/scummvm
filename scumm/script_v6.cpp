@@ -1008,7 +1008,6 @@ void Scumm_v6::o6_actorFollowCamera()
 		setCameraFollows(derefActorSafe(pop(), "actorFollowCamera"));
 	else
 		actorFollowCamera(pop());
-
 }
 
 void Scumm_v6::o6_setCameraAt()
@@ -1085,7 +1084,9 @@ void Scumm_v6::o6_walkActorTo()
 	int x, y;
 	y = pop();
 	x = pop();
-	derefActorSafe(pop(), "o6_walkActorTo")->startWalkActor(x, y, -1);
+	Actor *a = derefActorSafe(pop(), "o6_walkActorTo");
+	assert(a);
+	a->startWalkActor(x, y, -1);
 }
 
 void Scumm_v6::o6_putActorInRoom()
@@ -1143,9 +1144,7 @@ void Scumm_v6::o6_faceActor()
 void Scumm_v6::o6_animateActor()
 {
 	int anim = pop();
-	int act = pop();
-
-	Actor *a = derefActorSafe(act, "o6_animateActor");
+	Actor *a = derefActorSafe(pop(), "o6_animateActor");
 	if (!a)
 		return;
 
@@ -1202,7 +1201,8 @@ void Scumm_v6::o6_loadRoomWithEgo()
 	obj = popRoomAndObj(&room);
 
 	a = derefActorSafe(_vars[VAR_EGO], "o6_loadRoomWithEgo");
-
+	assert(a);
+	
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
@@ -1241,15 +1241,6 @@ void Scumm_v6::o6_getRandomNumberRange()
 	push(rnd);
 }
 
-void Scumm_v6::o6_getActorMoving()
-{
-	Actor *a = derefActorSafe(pop(), "o6_getActorMoving");
-	if (a)
-		push(a->moving);
-	else
-		push(0);
-}
-
 void Scumm_v6::o6_isScriptRunning()
 {
 	push(isScriptRunning(pop()));
@@ -1260,6 +1251,15 @@ void Scumm_v6::o6_isRoomScriptRunning()
 	push(isRoomScriptRunning(pop()));
 }
 
+void Scumm_v6::o6_getActorMoving()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorMoving");
+	if (a)
+		push(a->moving);
+	else
+		push(0);
+}
+
 void Scumm_v6::o6_getActorRoom()
 {
 	Actor *a = derefActorSafe(pop(), "o6_getActorRoom");
@@ -1267,6 +1267,70 @@ void Scumm_v6::o6_getActorRoom()
 		push(a->room);
 	else
 		push(0);
+}
+
+void Scumm_v6::o6_getActorWalkBox()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorWalkBox");
+	assert(a);
+	push(a->ignoreBoxes ? 0 : a->walkbox);
+}
+
+void Scumm_v6::o6_getActorCostume()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorCostume");
+	assert(a);
+	push(a->costume);
+}
+
+void Scumm_v6::o6_getActorElevation()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorElevation");
+	assert(a);
+	push(a->elevation);
+}
+
+void Scumm_v6::o6_getActorWidth()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorWidth");
+	assert(a);
+	push(a->width);
+}
+
+void Scumm_v6::o6_getActorScaleX()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorScale");
+	assert(a);
+	push(a->scalex);
+}
+
+void Scumm_v6::o6_getActorAnimCounter1()
+{
+	Actor *a = derefActorSafe(pop(), "o6_getActorAnimCounter");
+	assert(a);
+	push(a->cost.animCounter1);
+}
+
+void Scumm_v6::o6_getAnimateVariable()
+{
+	int var = pop();
+	Actor *a = derefActorSafe(pop(), "o6_getAnimateVariable");
+	assert(a);
+	push(a->getAnimVar(var));
+}
+
+void Scumm_v6::o6_isActorInBox()
+{
+	int box = pop();
+	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
+	push(checkXYInBoxBounds(box, a->x, a->y));
+}
+
+void Scumm_v6::o6_getActorLayer()
+{
+	Actor *a = derefActorSafe(pop(), "getActorLayer");
+	assert(a);
+	push(a->layer);
 }
 
 void Scumm_v6::o6_getObjectX()
@@ -1287,17 +1351,6 @@ void Scumm_v6::o6_getObjectOldDir()
 void Scumm_v6::o6_getObjectNewDir()
 {
 	push(getObjNewDir(pop()));
-}
-
-void Scumm_v6::o6_getActorWalkBox()
-{
-	Actor *a = derefActorSafe(pop(), "o6_getActorWalkBox");
-	push(a->ignoreBoxes ? 0 : a->walkbox);
-}
-
-void Scumm_v6::o6_getActorCostume()
-{
-	push(derefActorSafe(pop(), "o6_getActorCostume")->costume);
 }
 
 void Scumm_v6::o6_findInventory()
@@ -1940,11 +1993,6 @@ void Scumm_v6::o6_pseudoRoom()
 	}
 }
 
-void Scumm_v6::o6_getActorElevation()
-{
-	push(derefActorSafe(pop(), "o6_getActorElevation")->elevation);
-}
-
 void Scumm_v6::o6_getVerbEntrypoint()
 {
 	int e = pop();
@@ -2060,11 +2108,6 @@ void Scumm_v6::o6_drawBox()
 	drawBox(x, y, x2, y2, color);
 }
 
-void Scumm_v6::o6_getActorWidth()
-{
-	push(derefActorSafe(pop(), "o6_getActorWidth")->width);
-}
-
 void Scumm_v6::o6_wait()
 {
 	switch (fetchScriptByte()) {
@@ -2139,22 +2182,6 @@ void Scumm_v6::o6_wait()
 	o6_breakHere();
 }
 
-void Scumm_v6::o6_getActorScaleX()
-{
-	push(derefActorSafe(pop(), "o6_getActorScale")->scalex);
-}
-
-void Scumm_v6::o6_getActorAnimCounter1()
-{
-	push(derefActorSafe(pop(), "o6_getActorAnimCounter")->cost.animCounter1);
-}
-
-void Scumm_v6::o6_getAnimateVariable()
-{
-	int var = pop();
-	push(derefActorSafe(pop(), "o6_getAnimateVariable")->getAnimVar(var));
-}
-
 void Scumm_v6::o6_soundKludge()
 {
 	int list[16];
@@ -2194,13 +2221,6 @@ void Scumm_v6::o6_quitPauseRestart()
 	default:
 		error("o6_quitPauseRestart: invalid case");
 	}
-}
-
-void Scumm_v6::o6_isActorInBox()
-{
-	int box = pop();
-	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
-	push(checkXYInBoxBounds(box, a->x, a->y));
 }
 
 void Scumm_v6::o6_delay()
@@ -2860,15 +2880,6 @@ void Scumm_v6::o6_pickOneOfDefault()
 	else
 		i = args[i];
 	push(i);
-}
-
-void Scumm_v6::o6_getActorLayer()
-{
-	Actor *a;
-
-	a = derefActorSafe(pop(), "getActorLayer");
-
-	push(a->layer);
 }
 
 void Scumm_v6::o6_unknownCD() {
