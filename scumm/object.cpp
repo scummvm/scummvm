@@ -433,7 +433,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		return;
 
 	ObjectData &od = _objs[obj];
-	int xpos, ypos, height, width;
+	int height, width;
 	const byte *ptr;
 	int x, a, numstrip;
 	int tmp;
@@ -446,8 +446,8 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	checkRange(_numGlobalObjects - 1, 0, od.obj_nr, "Object %d out of range in drawObject");
 
-	xpos = od.x_pos / 8;
-	ypos = od.y_pos;
+	const int xpos = od.x_pos / 8;
+	const int ypos = od.y_pos;
 
 	width = od.width / 8;
 	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
@@ -483,14 +483,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 	}
 
 	if (numstrip != 0) {
-		byte flags = od.flags;
+		byte flags = od.flags | Gdi::dbObjectMode;
 
-		gdi._objectMode = true;
 		if (_version == 1) {
 			if (_features & GF_NES) {
 				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
-			} else {
-				gdi.decodeC64Gfx(ptr, gdi._C64.objectMap, width * (height / 8) * 3);
 			}
 		}
 		// Sam & Max needs this to fix object-layering problems with

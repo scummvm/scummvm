@@ -540,10 +540,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	}
 
 	if (_renderMode == Common::kRenderCGA)
-		gdi.ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
+		ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
 
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		gdi.ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
+		ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
 		// center image on the screen
 		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
 			Common::kHercW, x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
@@ -575,7 +575,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 // CGA dithers 4x4 square with direct substitutes
 // Odd lines have colors swapped, so there will be checkered patterns.
 // But apparently there is a mistake for 10th color.
-void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
+void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
 	byte *ptr;
 	int idx1, idx2;
 	static const byte cgaDither[2][2][16] = {
@@ -589,7 +589,7 @@ void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height
 
 		idx1 = (y + y1) % 2;
 
-		if (_vm->_version == 2)
+		if (_version == 2)
 			idx1 = 0;
 
 		for (int x1 = 0; x1 < width; x1++) {
@@ -608,7 +608,7 @@ void Gdi::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height
 // dd      cccc0
 //         cccc1
 //         dddd0
-void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
+void ScummEngine::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
 	byte *srcptr, *dstptr;
 	int xo = *x, yo = *y, widtho = *width, heighto = *height;
 	int idx1, idx2, dsty = 0, y1;
@@ -813,9 +813,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
-	gdi._objectMode = false;
-	gdi.drawBitmap(room + _IM00_offs,
-					&virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
+	gdi.drawBitmap(room + _IM00_offs, &virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
 }
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
@@ -1339,6 +1337,16 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
+
+	_objectMode = (flag & dbObjectMode) == dbObjectMode;
+	
+	if (_objectMode && _vm->_version == 1) {
+		if (_vm->_features & GF_NES) {
+			// TODO: Maybe call decodeNESObject here?
+		} else {
+			decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
+		}
+	}
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER) {

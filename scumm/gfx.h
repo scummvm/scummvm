@@ -202,11 +202,11 @@ struct StripTable;
 #define CHARSET_MASK_TRANSPARENCY	253
 
 class Gdi {
-	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
+//	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
 	ScummEngine *_vm;
 
 public:
-
+	byte _transparentColor;
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
@@ -217,7 +217,6 @@ public:
 protected:
 	byte *_roomPalette;
 	byte _decomp_shr, _decomp_mask;
-	byte _transparentColor;
 	uint32 _vertStripNextInc;
 
 	bool _zbufferDisabled;
@@ -270,11 +269,8 @@ protected:
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 
 	/* Misc */
-	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
-	void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const;
+	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 
-	byte *getMaskBuffer(int x, int y, int z);
-	
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
@@ -288,7 +284,6 @@ public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
 
-	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 	void decodeNESGfx(const byte *room);
 	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
 
@@ -297,14 +292,16 @@ public:
 	
 	void copyVirtScreenBuffers(Common::Rect rect);
 
+	byte *getMaskBuffer(int x, int y, int z);
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }
 
 	void resetBackground(int top, int bottom, int strip);
 
 	enum DrawBitmapFlags {
-		dbAllowMaskOr = 1,
-		dbDrawMaskOnAll = 2
+		dbAllowMaskOr   = 1 << 0,
+		dbDrawMaskOnAll = 1 << 1,
+		dbObjectMode    = 2 << 2
 	};
 };
 

@@ -578,13 +578,9 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		imptr = getObjectImage(obim, 1);
 	}
 	assert(imptr);
-	if (_version == 1) {
-		gdi._objectMode = true;
-		gdi.decodeC64Gfx(imptr, gdi._C64.objectMap, imgw * imgh * 3);
-	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
-		gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr);
+		gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr | Gdi::dbObjectMode);
 	}
 
 	vst = &_verbs[verb];
