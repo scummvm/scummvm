@@ -1271,7 +1271,7 @@ int MidiDriver_MIDIEMU::midiemu_callback_thread(void *param) {
 
 			event = my_evs[i].event;
 			if ((event>>24) == ME_TEMPO) {
-				event = (MEVT_TEMPO << 24) | (event & 0xFFFFFF);
+				event = (ME_TEMPO << 24) | (event & 0xFFFFFF);
 			}
 			driver->send(event);			
 			if (my_evs[i].delta) {
