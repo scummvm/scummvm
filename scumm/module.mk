@@ -22,9 +22,11 @@ MODULE_OBJS := \
 	scumm/midiparser_eup.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
-	scumm/player_v1.o\
-	scumm/player_v2.o\
-	scumm/player_v3a.o\
+	scumm/player_mod.o \
+	scumm/player_v1.o \
+	scumm/player_v2.o \
+	scumm/player_v2a.o \
+	scumm/player_v3a.o \
 	scumm/resource.o \
 	scumm/resource_v2.o \
 	scumm/resource_v3.o \

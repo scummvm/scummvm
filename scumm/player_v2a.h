@@ -20,24 +20,25 @@
  *
  */
 
-#ifndef PLAYER_V3A_H
-#define PLAYER_V3A_H
+#ifndef PLAYER_V2A_H
+#define PLAYER_V2A_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
-#define	V3A_MAXMUS	8
-#define	V3A_MAXSFX	8
+#define	V2A_MAXSLOTS 8
 
 class Scumm;
 class SoundMixer;
 
-class Player_V3A : public MusicEngine {
+class V2A_Sound;
+
+class Player_V2A : public MusicEngine {
 public:
-	Player_V3A(Scumm *scumm);
-	virtual ~Player_V3A();
+	Player_V2A(Scumm *scumm);
+	virtual ~Player_V2A();
 
 	virtual void setMasterVolume(int vol);
 	virtual void startSound(int nr);
@@ -51,40 +52,15 @@ private:
 	Scumm *_scumm;
 	Player_MOD *_mod;
 
-	struct musChan
+	struct soundSlot
 	{
 		int id;
-		int dur;
-	} _mus[V3A_MAXMUS];
-	int getMusChan (int id = 0) const;
-
-	struct sfxChan
-	{
-		int id;
-		int dur;
-		// SFX will eventually have pitch bends
-	} _sfx[V3A_MAXSFX];
-	int getSfxChan (int id = 0) const;
-
-	int _curSong;
-	uint8 *_songData;
-	uint16 _songPtr;
-	uint16 _songDelay;
-	int _music_timer;
-	bool _isinit;
-
-	struct instData
-	{
-		char *_idat[6];
-		uint16 _ilen[6];
-		char *_ldat[6];
-		uint16 _llen[6];
-		uint16 _oct[6];
-		int16 _pitadjust;
-	} **_wavetable;
+		V2A_Sound *sound;
+	} _slot[V2A_MAXSLOTS];
+	int getSoundSlot (int id = 0) const;
 
 	static void update_proc(void *param);
-	void playMusic();
+	void updateSound();
 };
 
 #endif

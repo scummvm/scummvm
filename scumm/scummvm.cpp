@@ -44,6 +44,7 @@
 #include "scumm/object.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
+#include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -719,10 +720,13 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_playerV2 = NULL;
+	_playerV2A = NULL;
 	_playerV3A = NULL;
 	_musicEngine = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
+	} else if ((_features & GF_AMIGA) && (_version == 2)) {
+		_musicEngine = _playerV2A = new Player_V2A(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = _playerV3A = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
@@ -1329,6 +1333,8 @@ int Scumm::scummLoop(int delta) {
 		// Covered automatically by the Sound class
 	} else if (_playerV2) {
 		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
+	} else if (_playerV2A) {
+		VAR(VAR_MUSIC_TIMER) = _playerV2A->getMusicTimer();
 	} else if (_playerV3A) {
 		VAR(VAR_MUSIC_TIMER) = _playerV3A->getMusicTimer();
 	} else if (_imuse) {

@@ -135,8 +135,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib /nologo /subsystem:console /incremental:yes /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib scumm___mad_mp3_Release\scumm.lib simon___mad_mp3_Release\simon.lib sky___mad_mp3_Release\sky.lib bs2___mad_mp3_Release\bs2.lib /nologo /subsystem:console /pdb:none /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd"
+# SUBTRACT LINK32 /debug
 
 !ENDIF 
 

@@ -361,7 +361,7 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
-	if (!_s->_imuse && !_s->_playerV2) {
+	if (!_s->_imuse && !_s->_musicEngine) {
 		Debug_Printf("No iMuse engine is active.\n");
 		return true;
 	}

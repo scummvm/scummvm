@@ -24,8 +24,6 @@
 #include "base/engine.h"
 #include "player_v3a.h"
 #include "scumm.h"
-#include "sound/mixer.h"
-#include "common/timer.h"
 
 static const uint16 note_freqs[4][12] = {
 	{0x06B0,0x0650,0x05F4,0x05A0,0x054C,0x0500,0x04B8,0x0474,0x0434,0x03F8,0x03C0,0x0388},
@@ -44,13 +42,14 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 	int i;
 	_scumm = scumm;
 	_system = scumm->_system;
-	_mixer = scumm->_mixer;
-
-	for (i = 0; i < V3A_MAXSFX; i++)
-		_sfx[i].id = _sfx[i].dur = 0;
-
-	for (i = 0; i < V3A_MAXMUS; i++)
-		_mus[i].id = _mus[i].dur = 0;
+	for (i = 0; i < V3A_MAXMUS; i++) {
+		_mus[i].id = 0;
+		_mus[i].dur = 0;
+	}
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		_sfx[i].id = 0;
+		_sfx[i].dur = 0;
+	}
 
 	_curSong = 0;
 	_songData = NULL;
@@ -59,36 +58,63 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 
 	_music_timer = 0;
 
-	_maxvol = 255;
-
-	scumm->_timer->installProcedure(timerHandler, 16666, this);
-
 	_isinit = false;
+
+	_mod = new Player_MOD(scumm);
+	_mod->setUpdateProc(update_proc, this, 60);
 }
 
 Player_V3A::~Player_V3A() {
-	_scumm->_timer->releaseProcedure(timerHandler);
-	if (!_isinit)
-		return;
-	for (int i = 0; _wavetable[i] != NULL; i++) {
-		for (int j = 0; j < 6; j++) {
-			free(_wavetable[i]->_idat[j]);
-			free(_wavetable[i]->_ldat[j]);
+	int i;
+	delete _mod;
+	if (_isinit) {
+		for (i = 0; _wavetable[i] != NULL; i++) {
+			for (int j = 0; j < 6; j++) {
+				free(_wavetable[i]->_idat[j]);
+				free(_wavetable[i]->_ldat[j]);
+			}
+			free(_wavetable[i]);
 		}
-		free(_wavetable[i]);
+		free(_wavetable);
 	}
-	free(_wavetable);
 }
 
 void Player_V3A::setMasterVolume (int vol) {
-	_maxvol = vol;
+	_mod->setMasterVolume(vol);
+}
+
+int Player_V3A::getMusChan (int id) const {
+	int i;
+	for (i = 0; i < V3A_MAXMUS; i++) {
+		if (_mus[i].id == id)
+			break;
+	}
+	if (i == V3A_MAXMUS) {
+		if (id == 0)
+			warning("player_v3a - out of music channels");
+		return -1;
+	}
+	return i;
+}
+int Player_V3A::getSfxChan (int id) const {
+	int i;
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		if (_sfx[i].id == id)
+			break;
+	}
+	if (i == V3A_MAXSFX) {
+		if (id == 0)
+			warning("player_v3a - out of sfx channels");
+		return -1;
+	}
+	return i;
 }
 
 void Player_V3A::stopAllSounds() {
 	int i;
 	for (i = 0; i < V3A_MAXMUS; i++) {
 		if (_mus[i].id)
-			_mixer->stopID(V3A_MUS_BASEID + i);
+			_mod->stopChannel(_mus[i].id);
 		_mus[i].id = 0;
 		_mus[i].dur = 0;
 	}
@@ -98,7 +124,7 @@ void Player_V3A::stopAllSounds() {
 	_songData = NULL;
 	for (i = 0; i < V3A_MAXSFX; i++) {
 		if (_sfx[i].id)
-			_mixer->stopID(V3A_SFX_BASEID + i);
+			_mod->stopChannel(_sfx[i].id | 0x100);
 		_sfx[i].id = 0;
 		_sfx[i].dur = 0;
 	}
@@ -106,10 +132,14 @@ void Player_V3A::stopAllSounds() {
 
 void Player_V3A::stopSound(int nr) {
 	int i;
+	if (nr == 0) {	// Amiga Loom does this near the end, when Chaos casts SILENCE on Hetchel
+		stopAllSounds();
+		return;
+	}
 	if (nr == _curSong) {
 		for (i = 0; i < V3A_MAXMUS; i++) {
 			if (_mus[i].id)
-				_mixer->stopID(V3A_MUS_BASEID + i);
+				_mod->stopChannel(_mus[i].id);
 			_mus[i].id = 0;
 			_mus[i].dur = 0;
 		}
@@ -118,51 +148,13 @@ void Player_V3A::stopSound(int nr) {
 		_songDelay = 0;
 		_songData = NULL;
 	} else {
-		for (i = 0; i < V3A_MAXSFX; i++) {
-			if (_sfx[i].id == nr) {
-				_mixer->stopID(V3A_SFX_BASEID + i);
-				_sfx[i].id = 0;
-				_sfx[i].dur = 0;
-				break;
-			}
+		i = getSfxChan(nr);
+		if (i != -1) {
+			_mod->stopChannel(nr | 0x100);
+			_sfx[i].id = 0;
+			_sfx[i].dur = 0;
 		}
 	}
-}
-
-void Player_V3A::playSoundSFX (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart, int loopEnd) {
-	int i;
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		if (!_sfx[i].id)
-			break;
-	}
-	if (i == V3A_MAXSFX) {
-		warning("player_v3a - too many sound effects playing (%i max)",V3A_MAXSFX);
-		return;
-	}
-	_sfx[i].id = nr;
-	_sfx[i].dur = tl;
-
-	vol = (vol * _maxvol) / 255;
-	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | (looped ? SoundMixer::FLAG_LOOP : 0),
-		V3A_SFX_BASEID + i, vol, 0, loopStart, loopEnd);
-}
-
-void Player_V3A::playSoundMUS (char *data, int size, int rate, int vol, int tl, bool looped, int loopStart, int loopEnd) {
-	int i;
-	for (i = 0; i < V3A_MAXMUS; i++) {
-		if (!_mus[i].id)
-			break;
-	}
-	if (i == V3A_MAXMUS) {
-		warning("player_v3a - too many music channels playing (%i max)",V3A_MAXMUS);
-		return;
-	}
-	_mus[i].id = i + 1;
-	_mus[i].dur = tl;
-
-	vol = (vol * _maxvol) / 255;
-	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | (looped ? SoundMixer::FLAG_LOOP : 0),
-		V3A_MUS_BASEID + i, vol, 0, loopStart, loopEnd);
 }
 
 void Player_V3A::startSound(int nr) {
@@ -170,7 +162,7 @@ void Player_V3A::startSound(int nr) {
 	byte *data = _scumm->getResourceAddress(rtSound, nr);
 	assert(data);
 
-	if (_scumm->_gameId != GID_INDY3 && _scumm->_gameId != GID_LOOM)
+	if ((_scumm->_gameId != GID_INDY3) && (_scumm->_gameId != GID_LOOM))
 		error("player_v3a - unknown game!");
 
 	if (!_isinit) {
@@ -223,6 +215,8 @@ void Player_V3A::startSound(int nr) {
 		stopSound(nr);	// if a sound is playing, restart it
 	
 	if (data[26]) {
+		if (_curSong)
+			stopSound(_curSong);
 		_curSong = nr;
 		_songData = data;
 		_songPtr = 0x1C;
@@ -232,43 +226,49 @@ void Player_V3A::startSound(int nr) {
 		int size = READ_BE_UINT16(data + 12);
 		int rate = 3579545 / READ_BE_UINT16(data + 20);
 		char *sound = (char *)malloc(size);
-		int vol = (data[24] << 2) | (data[24] >> 4);
+		int vol = (data[24] << 1) | (data[24] >> 5);	// if I boost this to 0-255, it gets too loud and starts to clip
 		memcpy(sound,data + READ_BE_UINT16(data + 8),size);
+		int loopStart = 0, loopEnd = 0;
+		bool looped = false;
 		if ((READ_BE_UINT16(data + 16) || READ_BE_UINT16(data + 6))) {
-			// the first check is for complex (pitch-bending) looped sounds
-			// the second check is for simple looped sounds
-			int loopStart = READ_BE_UINT16(data + 10) - READ_BE_UINT16(data + 8);
-			int loopEnd = READ_BE_UINT16(data + 14);
-			int tl = -1;
-			if ((_scumm->_gameId == GID_INDY3) && (nr == 60))
-				tl = 240;	// the "airplane dive" sound needs to end on its own - the game won't stop it
-			playSoundSFX(nr, sound, size, rate, vol, tl, true, loopStart, loopEnd);
-		} else {
-			int tl = 1 + 60 * size / rate;
-			playSoundSFX(nr, sound, size, rate, vol, tl, false);
+			loopStart = READ_BE_UINT16(data + 10) - READ_BE_UINT16(data + 8);
+			loopEnd = READ_BE_UINT16(data + 14);
+			looped = true;
 		}
+		int i = getSfxChan();
+		_sfx[i].id = nr;
+		_sfx[i].dur = looped ? -1 : (1 + 60 * size / rate);
+		if ((_scumm->_gameId == GID_INDY3) && (nr == 60))
+			_sfx[i].dur = 240;
+		_mod->startChannel(nr | 0x100, sound, size, rate, vol, loopStart, loopEnd);
 	}
 }
 
-void Player_V3A::timerHandler(void *refCon) {
-	Player_V3A *player = (Player_V3A *)refCon;
-	assert(player);
-	player->playMusic();
+void Player_V3A::update_proc(void *param) {
+	((Player_V3A *)param)->playMusic();
 }
 
 void Player_V3A::playMusic() {
 	int i;
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		if ((_sfx[i].dur) && (!--_sfx[i].dur))
-			stopSound(_sfx[i].id);
-	}
 	for (i = 0; i < V3A_MAXMUS; i++) {
-		if ((_mus[i].dur) && (!--_mus[i].dur)) {
-			_scumm->_mixer->stopID(V3A_MUS_BASEID + i);
+		if (_mus[i].id) {
+			_mus[i].dur--;
+			if (_mus[i].dur)
+				continue;
+			_mod->stopChannel(_mus[i].id);
 			_mus[i].id = 0;
-			_mus[i].dur = 0;
 		}
 	}
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		if (_sfx[i].id) {
+			_sfx[i].dur--;
+			if (_sfx[i].dur)
+				continue;
+			_mod->stopChannel(_sfx[i].id | 0x100);
+			_sfx[i].id = 0;
+		}
+	}
+
 	_music_timer++;
 	if (!_curSong)
 		return;
@@ -295,8 +295,7 @@ void Player_V3A::playMusic() {
 		}
 		inst &= 0xF;
 		pit = _songData[_songPtr++];
-		vol = _songData[_songPtr++] & 0x7F;
-		vol = (vol << 1) | (vol >> 7);	// 7-bit volume (Amiga drops the bottom bit), convert to 8-bit
+		vol = _songData[_songPtr++] & 0x7F;	// if I boost this to 0-255, it gets too loud and starts to clip
 		dur = _songData[_songPtr++];
 		if (pit == 0) {
 			_songDelay = dur;
@@ -309,13 +308,18 @@ void Player_V3A::playMusic() {
 			oct = 0;
 		if (oct > 5)
 			oct = 5;
+		int rate = 3579545 / note_freqs[_wavetable[inst]->_oct[oct]][pit];
 		char *data = (char *)malloc(_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 		if (_wavetable[inst]->_idat[oct])
 			memcpy(data, _wavetable[inst]->_idat[oct], _wavetable[inst]->_ilen[oct]);
 		if (_wavetable[inst]->_ldat[oct])
 			memcpy(data + _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ldat[oct], _wavetable[inst]->_llen[oct]);
-		playSoundMUS(data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], 3579545 / note_freqs[_wavetable[inst]->_oct[oct]][pit], vol, dur,
-			(_wavetable[inst]->_ldat[oct] != NULL), _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
+
+		i = getMusChan();
+		_mus[i].id = i + 1;
+		_mus[i].dur = dur;
+		_mod->startChannel(_mus[i].id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], rate, vol,
+			_wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 	}
 }
 
@@ -326,8 +330,7 @@ int Player_V3A::getMusicTimer() const {
 int Player_V3A::getSoundStatus(int nr) const {
 	if (nr == _curSong)
 		return 1;
-	for (int i = 0; i < V3A_MAXSFX; i++)
-		if (_sfx[i].id == nr)
-			return 1;
+	if (getSfxChan(nr) != -1)
+		return 1;
 	return 0;
 }

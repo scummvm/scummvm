@@ -43,6 +43,7 @@ class IMuseDigital;
 class MusicEngine;
 class NewGui;
 class Player_V2;
+class Player_V2A;
 class Player_V3A;
 class Scumm;
 class ScummDebugger;
@@ -260,6 +261,7 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
+	Player_V2A *_playerV2A;
 	Player_V3A *_playerV3A;
 	MusicEngine *_musicEngine;
 	Sound *_sound;

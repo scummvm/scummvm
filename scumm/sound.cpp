@@ -25,8 +25,6 @@
 #include "bundle.h"
 #include "imuse.h"
 #include "imuse_digi.h"
-#include "player_v2.h"
-#include "player_v3a.h"
 #include "scumm.h"
 #include "sound.h"
 
@@ -437,28 +435,6 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-	}
-	else if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2) && READ_BE_UINT16(ptr + 14) == 0x0880) {
-		size = READ_BE_UINT16(ptr + 6);
-		int start = READ_BE_UINT16(ptr + 8);
-		start += 10;
-		rate = 11000;
-		int vol = 255;
-		int i = 0;
-
-		while (i < start) {
-			if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 6))
-				rate = 3579545 / READ_BE_UINT16(ptr + 2);
-
-			if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 8))
-				vol = READ_BE_UINT16(ptr + 2) * 4;
-			ptr += 2;
-			i += 2;
-		}
-
-		sound = (char *)malloc(size);
-		memcpy(sound, ptr, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
