@@ -30,15 +30,6 @@
 #include <zlib.h>
 #endif
 
-uint32 SaveFile::read(void *ptr, uint32 size) {
-	return fread(ptr, 1, size);
-}
-
-uint32 SaveFile::write(const void *ptr, uint32 size) {
-	return fwrite(ptr, 1, size);
-}
-
-
 class StdioSaveFile : public SaveFile {
 private:
 	FILE *fh;
@@ -50,11 +41,10 @@ public:
 
 	bool isOpen() const { return fh != 0; }
 
-protected:
-	int fread(void *buf, int size, int cnt)
-		{ return ::fread(buf, size, cnt, fh); }
-	int fwrite(const void *buf, int size, int cnt)
-		{ return ::fwrite(buf, size, cnt, fh); }
+	uint32 read(void *buf, uint32 cnt)
+		{ return ::fread(buf, 1, cnt, fh); }
+	uint32 write(const void *buf, uint32 cnt)
+		{ return ::fwrite(buf, 1, cnt, fh); }
 };
 
 
@@ -70,11 +60,10 @@ public:
 
 	bool isOpen() const { return fh != 0; }
 
-protected:
-	int fread(void *buf, int size, int cnt) {
-		return ::gzread(fh, buf, size * cnt);
+	uint32 read(void *buf, uint32 cnt) {
+		return ::gzread(fh, buf, cnt);
 	}
-	int fwrite(const void *buf, int size, int cnt) {
+	uint32 write(const void *buf, uint32 cnt) {
 		// Due to a "bug" in the zlib headers (or maybe I should say,
 		// a bug in the C++ spec? Whatever <g>) we have to be a bit
 		// hackish here and remove the const qualifier.
@@ -82,24 +71,13 @@ protected:
 		// which you might think is the same as "const void *" but it
 		// is not - rather it is equal to "void const *" which is the 
 		// same as "void *". Hrmpf
-		return ::gzwrite(fh, const_cast<void *>(buf), size * cnt);
+		return ::gzwrite(fh, const_cast<void *>(buf), cnt);
 	}
 };
 #endif
 
 
-SaveFile *SaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
-	char buf[256];
-	join_paths(filename, directory, buf, sizeof(buf));
-	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = 0;
-	}
-	return sf;
-}
-
-void SaveFileManager::join_paths(const char *filename, const char *directory,
+static void join_paths(const char *filename, const char *directory,
 								 char *buf, int bufsize) {
 	buf[bufsize-1] = '\0';
 	strncpy(buf, directory, bufsize-1);
@@ -125,7 +103,22 @@ void SaveFileManager::join_paths(const char *filename, const char *directory,
 	strncat(buf, filename, bufsize-1);
 }
 
-SaveFile *SaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+SaveFile *DefaultSaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
+	char buf[256];
+	join_paths(filename, directory, buf, sizeof(buf));
+	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
+	if (!sf->isOpen()) {
+		delete sf;
+		sf = 0;
+	}
+	return sf;
+}
+
+void DefaultSaveFileManager::list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) {
+	memset(marks, true, num * sizeof(bool));
+}
+
+SaveFile *DefaultSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 #ifdef USE_ZLIB
 	return new GzipSaveFile(filename, saveOrLoad);
 #else

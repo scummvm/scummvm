@@ -37,9 +37,9 @@ public:
 	~PalmSaveFile();
 	
 	bool isOpen() const { return file != NULL; }
-protected:
-	int fread(void *buf, int size, int cnt);
-	int fwrite(const void *buf, int size, int cnt);
+
+	uint32 read(void *buf, uint32 cnt);
+	uint32 write(const void *buf, uint32 cnt);
 
 private :
 	FILE *file;
@@ -67,12 +67,12 @@ PalmSaveFile::~PalmSaveFile() {
 	}
 }
 
-int PalmSaveFile::fread(void *buf, int size, int cnt) {
-	return ::fread(buf, size, cnt, file);
+uint32 PalmSaveFile::read(void *buf, uint32 cnt) {
+	return ::fread(buf, 1, cnt, file);
 }
 
-int PalmSaveFile::fwrite(const void *buf, int size, int cnt) {
-	UInt32 fullsize = size*cnt;
+uint32 PalmSaveFile::write(const void *buf, uint32 cnt) {
+	UInt32 fullsize = cnt;
 
 	if (fullsize <= MAX_BLOCK)
 	{
@@ -92,12 +92,12 @@ int PalmSaveFile::fwrite(const void *buf, int size, int cnt) {
 		return cnt;
 	}
 
-	return ::fwrite(buf, size, cnt, file);
+	return ::fwrite(buf, 1, cnt, file);
 }
 
 // SaveFileManager class
 
-class PalmSaveFileManager : public SaveFileManager {
+class PalmSaveFileManager : public DefaultSaveFileManager {
 public:
 	void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
 

@@ -24,10 +24,9 @@
 #define COMMON_SYSTEM_H
 
 #include "common/scummsys.h"
-#include "common/savefile.h"
 #include "common/util.h"
 #include "common/rect.h"
-
+#include "common/savefile.h"
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
@@ -623,9 +622,7 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	/** Savefile management. */
-	virtual SaveFileManager *get_savefile_manager() {
-		return new SaveFileManager();
-	}
+	virtual SaveFileManager *get_savefile_manager();
 
 	//@}
 };

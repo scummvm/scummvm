@@ -222,9 +222,8 @@ private:
   int pos, size;
   char filename[16];
 
-protected:
-  virtual int fread(void *buf, int size, int cnt);
-  virtual int fwrite(const void *buf, int size, int cnt);
+  uint32 read(void *buf, uint32 cnt);
+  uint32 write(const void *buf, uint32 cnt);
 
 public:
   VMSave(const char *_filename, bool _saveOrLoad) 
@@ -258,6 +257,7 @@ public:
 };
 
 class VMSaveManager : public SaveFileManager {
+public:
   virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
   virtual void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
 };
@@ -299,15 +299,15 @@ VMSave::~VMSave()
   delete buffer;
 }
 
-int VMSave::fread(void *buf, int sz, int cnt)
+uint32 VMSave::read(void *buf, uint32 cnt)
 {
   if (issave)
     return -1; 
 
-  int nbyt = sz*cnt;
+  int nbyt = cnt;
   if (pos + nbyt > size) {
-    cnt = (size - pos)/sz;
-    nbyt = sz*cnt;
+    cnt = (size - pos);
+    nbyt = cnt;
   }
   if (nbyt)
     memcpy(buf, buffer + pos, nbyt);
@@ -315,15 +315,15 @@ int VMSave::fread(void *buf, int sz, int cnt)
   return cnt;
 }
 
-int VMSave::fwrite(const void *buf, int sz, int cnt)
+uint32 VMSave::write(const void *buf, uint32 cnt)
 {
   if (!issave)
     return -1;
 
-  int nbyt = sz*cnt;
+  int nbyt = cnt;
   if (pos + nbyt > size) {
-    cnt = (size - pos)/sz;
-    nbyt = sz*cnt;
+    cnt = (size - pos);
+    nbyt = cnt;
   }
   if (nbyt)
     memcpy(buffer + pos, buf, nbyt);

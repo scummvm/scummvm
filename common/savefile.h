@@ -32,30 +32,30 @@ class SaveFile : public Common::ReadStream, public Common::WriteStream {
 public:
 	virtual ~SaveFile() {}
 
-	/* Compatible with File API */
-	uint32 read(void *ptr, uint32 size);
-	uint32 write(const void *ptr, uint32 size);
-
 	virtual bool isOpen() const = 0;
-
-protected:
-	/* Only for internal use, use File compatible API above instead */
-	virtual int fread(void *buf, int size, int cnt) = 0;
-	virtual int fwrite(const void *buf, int size, int cnt) = 0;
 };
 
 class SaveFileManager {
-
 public:
 	virtual ~SaveFileManager() {}
 
+	/**
+	 * Open the file with name filename in the given directory for saving or loading.
+	 * @param filename	the filename
+	 * @param directory	the directory
+	 * @param saveOrLoad	true for saving, false for loading
+	 * @return pointer to a SaveFile object
+	 */
+	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad) = 0;
+	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) = 0;
+};
+
+class DefaultSaveFileManager : public SaveFileManager {
+public:
 	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
-	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) {
-		memset(marks, true, num * sizeof(bool));
-	}
+	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num);
 
 protected:
-	void join_paths(const char *filename, const char *directory, char *buf, int bufsize);
 	virtual SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
