@@ -25,6 +25,8 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+namespace Simon {
+
 // Script opcodes to load into memory
 static const char *const opcode_arg_table_simon1win[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
@@ -343,3 +345,5 @@ byte *SimonEngine::readSingleOpcode(File *in, byte *ptr) {
 		}
 	}
 }
+
+} // End of namespace Simon

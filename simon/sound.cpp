@@ -23,6 +23,8 @@
 #include "simon/sound.h"
 #include "sound/voc.h"
 
+namespace Simon {
+
 #define SOUND_BIG_ENDIAN true
 
 class BaseSound {
@@ -482,3 +484,5 @@ void SimonSound::ambientPause(bool b) {
 		playAmbient(tmp);
 	}
 }
+
+} // End of namespace Simon

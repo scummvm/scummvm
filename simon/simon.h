@@ -29,6 +29,8 @@
 #include "sound/mixer.h"
 #include "simon/sound.h"
 
+namespace Simon {
+
 /* Various other settings */
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
@@ -799,5 +801,7 @@ protected:
 };
 
 void palette_fadeout(uint32 *pal_values, uint num);
+
+} // End of namespace Simon
 
 #endif

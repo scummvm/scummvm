@@ -17,8 +17,13 @@
  *
  */
 
+#ifndef SIMON_SOUND_H
+#define SIMON_SOUND_H
+
 #include "sound/mixer.h"
 #include "simon/intern.h"
+
+namespace Simon {
 
 class BaseSound;
 
@@ -67,3 +72,6 @@ public:
 	void ambientPause(bool b);
 };
 
+} // End of namespace Simon
+
+#endif

@@ -22,6 +22,8 @@
 #ifndef SIMON_INTERN_H
 #define SIMON_INTERN_H
 
+namespace Simon {
+
 struct Child {
 	Child *next;
 	uint16 type;
@@ -133,6 +135,8 @@ struct GameSpecificSettings {
 	const char *mp3_effects_filename;
  	const char *gamepc_filename;
 };
+
+} // End of namespace Simon
 
 enum {
 	GF_SIMON2 = 1 << 0,

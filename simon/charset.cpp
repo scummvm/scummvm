@@ -23,6 +23,8 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+namespace Simon {
+
 void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 	uint ind;
 
@@ -931,4 +933,4 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 	_lock_word &= ~0x8000;
 }
 
-
+} // End of namespace Simon

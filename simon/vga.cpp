@@ -25,6 +25,8 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 
+namespace Simon {
+
 typedef void (SimonEngine::*VgaOpcodeProc) ();
 static uint16 vc_get_out_of_code = 0;
 
@@ -1905,3 +1907,5 @@ void SimonEngine::vc_74_clear_op189_flag() {
 	vc_read_next_byte();
 	_op_189_flags &= ~(1 << vc_read_next_byte());
 }
+
+} // End of namespace Simon

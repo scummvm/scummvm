@@ -28,6 +28,8 @@
 class File;
 class OSystem;
 
+namespace Simon {
+
 struct MusicInfo {
 	MidiParser *parser;
 	byte * data;
@@ -115,5 +117,7 @@ public:
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
 };
+
+} // End of namespace Simon
 
 #endif

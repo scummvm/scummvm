@@ -27,11 +27,13 @@
 #include "sound/mixer.h"
 #include "simon/simon.h"
 
+namespace Simon {
+
+
 // MidiParser_S1D is not considered part of the standard
 // MidiParser suite, but we still try to mask its details
 // and just provide a factory function.
 extern MidiParser *MidiParser_createS1D();
-
 
 
 // Instrument mapping for MT32 tracks emulated under GM.
@@ -555,3 +557,5 @@ void MidiPlayer::loadS1D (File *in, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex(_mutex);
 }
+
+} // End of namespace Simon

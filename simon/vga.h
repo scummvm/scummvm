@@ -22,6 +22,8 @@
 #ifndef SIMON_VGA_H
 #define SIMON_VGA_H
 
+namespace Simon {
+
 struct VgaFile1Header {
 	uint16 x_1, x_2;
 	uint16 hdr2_start;
@@ -79,5 +81,6 @@ struct VC10_state {
 
 byte *vc_10_depack_column(VC10_state *vs);
 
+} // End of namespace Simon
 
 #endif

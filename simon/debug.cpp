@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #endif
 
+namespace Simon {
+
 byte *SimonEngine::dumpOpcode(byte *p) {
 	byte opcode;
 	const char *s, *st;
@@ -455,3 +457,4 @@ void SimonEngine::dump_vga_script(byte *ptr, uint res, uint sprite_id) {
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 
+} // End of namespace Simon

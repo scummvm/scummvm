@@ -17,6 +17,11 @@
  *
  */
 
+#ifndef SIMON_DEBUG_H
+#define SIMON_DEBUG_H
+
+namespace Simon {
+
 static const char *const simon1dos_opcode_name_table[256] = {
 	/* 0 */
 	"|INV_COND",
@@ -1156,4 +1161,8 @@ const char *const simon2_video_opcode_name_table[] = {
 	"bb|SET_OP189_FLAG",
 	"bb|CLEAR_OP189_FLAG",
 };
+
+} // End of namespace Simon
+
+#endif
 

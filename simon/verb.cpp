@@ -24,6 +24,8 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+namespace Simon {
+
 static const char *const verb_names[] = {
 	"Walk to",
 	"Look at",
@@ -455,3 +457,5 @@ bool SimonEngine::hitarea_proc_3(Item *item) {
 	
 	return true;
 }
+
+} // End of namespace Simon

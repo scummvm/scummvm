@@ -32,6 +32,8 @@ extern void force_keyboard(bool);
 
 #endif
 
+namespace Simon {
+
 int SimonEngine::runScript() {
 	byte opcode;
 	bool flag, condition;
@@ -1601,3 +1603,5 @@ void SimonEngine::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f,
 		showmessage_helper_3(_fcs_ptr_1->textLength, _fcs_ptr_1->textMaxLength);
 	}
 }
+
+} // End of namespace Simon

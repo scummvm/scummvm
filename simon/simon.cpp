@@ -67,10 +67,12 @@ const TargetSettings *Engine_SIMON_targetList() {
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	return new SimonEngine(detector, syst);
+	return new Simon::SimonEngine(detector, syst);
 }
 
 REGISTER_PLUGIN("Simon the Sorcerer", Engine_SIMON_targetList, Engine_SIMON_create);
+
+namespace Simon {
 
 static const GameSpecificSettings simon1_settings = {
 	1,										// VGA_DELAY_BASE
@@ -5064,3 +5066,5 @@ void SimonEngine::set_volume(byte volume) {
 byte SimonEngine::getByte() {
 	return *_code_ptr++;
 }
+
+} // End of namespace Simon
