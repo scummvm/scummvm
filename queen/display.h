@@ -43,8 +43,7 @@ enum JoePalette {
 
 
 struct Dynalum {
-	bool haveMsk;
-	bool haveLum;
+	bool valid;
 	uint8 msk[50 * 160];
 	int8 lum[8 * 3];
 	uint8 prevColMask;

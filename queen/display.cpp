@@ -143,18 +143,19 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 	debug(9, "Display::dynalumInit(%s, %d)", roomName, roomNum);
 	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
 	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
+	_dynalum.valid = false;
 	// FIXME: are these tests really needed ?
 	if (roomNum < 90 || ((roomNum > 94) && (roomNum < 114))) {
 		char filename[20];
 
 		sprintf(filename, "%s.msk", roomName);
-		_dynalum.haveMsk = resource->exists(filename);
-		if (_dynalum.haveMsk)
+		_dynalum.valid = resource->exists(filename);
+		if (_dynalum.valid)
 			resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
 
 		sprintf(filename, "%s.lum", roomName);
-		_dynalum.haveLum = resource->exists(filename);
-		if (_dynalum.haveLum)
+		_dynalum.valid = resource->exists(filename);
+		if (_dynalum.valid)
 			resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
 	}
 }
@@ -162,7 +163,7 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 
 void Display::dynalumUpdate(int x, int y) {
 
-	if (!_dynalum.haveMsk)
+	if (!_dynalum.valid)
 		return;
 
 	if (x >= _bdWidth) {
