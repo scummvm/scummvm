@@ -636,16 +636,16 @@ Credits:
         Lionel Ulmer       - X11/Linux port
 
  Contributors:
-        Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
         Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
+        Kovacs Endre Janos - Several fixes for Simon1
         Jeroen Janssen     - Numerous readability and bugfix patches
+        Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
         Gregory Montoir    - AdvanceMAME Scale-2X implementation
         Mikesch Nepomuk    - MI1 VGA Floppy patches.
         Edward Rudd        - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler    - Final MI1 CD music support
-        Tim 'realmz'       - Initial MI1 CD music support
         Andre Souza        - SDL-based OpenGL renderer
-        Kovacs Endre Janos - Several fixes for Simon1
+        Tim 'realmz'       - Initial MI1 CD music support
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
