@@ -436,8 +436,8 @@ void Sound::playSound(int soundID) {
 			size = READ_BE_UINT16(ptr + 12);
 			rate = 3579545 / READ_BE_UINT16(ptr + 20);
 			sound = (char *)malloc(size);
-			int vol = ptr[24] << 1;
-			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8),size);
+			int vol = ptr[24] * 4;
+			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
 			if ((_scumm->_features & GF_AMIGA) && (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6))) {
 				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
 				// the second check is for simple looped sounds
@@ -466,7 +466,7 @@ void Sound::playSound(int soundID) {
 					rate = 3579545 / READ_BE_UINT16(ptr + 2);
 
 				if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 8))
-					vol = READ_BE_UINT16(ptr + 2) * 2;
+					vol = READ_BE_UINT16(ptr + 2) * 4;
 				ptr += 2;
 				i += 2;
 			}
