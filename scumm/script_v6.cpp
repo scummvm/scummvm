@@ -2936,7 +2936,7 @@ void ScummEngine_v6::o6_stampObject() {
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
-		a->putActor(x, y, _currentRoom); // TODO
+		a->putActor(x, y, _currentRoom);
 		a->actorDrawVirScr = true;
 		a->drawActorCostume();
 		a->actorDrawVirScr = false;
