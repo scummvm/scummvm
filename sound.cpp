@@ -789,6 +789,9 @@ void Scumm::decompressBundleSound(int index) {
 	COMP_table table[50];
 	unsigned char *CompInput, *CompOutput, *CompFinal, *Final;
 	int outputSize, finalSize;
+	uint32 offset1, offset2, offset3, length, k, c, s, j, r;
+	byte * src, * t_table;
+	byte t_tmp1, t_tmp2;
 
 	fileSeek(_sfxFile, bundle_table[index].offset, SEEK_SET);
 
@@ -853,12 +856,120 @@ void Scumm::decompressBundleSound(int index) {
 					p[z] += p[z - 1];		  				
 			break;
 
+			case 10: 
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+				p = CompOutput;
+				for (z = 2; z < outputSize; z++)
+					p[z] += p[z - 1];
+				for (z = 1; z < outputSize; z++)
+					p[z] += p[z - 1];		  				
+
+				t_table = (byte*)malloc(outputSize);
+				memcpy (t_table, p, outputSize);
+
+				offset1 = outputSize / 3;
+				offset2 = offset1 * 2;
+				offset3 = offset2;
+				src = CompOutput;
+				do {
+					if (offset1 == 0) break;
+					offset1--;
+					offset2 -= 2;
+					offset3--;
+					*(t_table + offset2 + 0) = *(src + offset1);
+					*(t_table + offset2 + 1) = *(src + offset3);
+				} while(1);
+
+				src = CompOutput;
+				length = (outputSize * 8) / 12;
+				k = 0;
+				if (length > 0)
+				{
+					c = -12;
+					s = 0;
+					do {
+						j = length + (k / 2);
+						if (k & 1) {
+							r = c / 8;
+							t_tmp1 = *(t_table + k);
+							t_tmp2 = *(t_table + j + 1);
+							*(src + r + 2) = ((t_tmp1 & 0x0f) << 4) | ((t_tmp2 & 0xf0) >> 4);
+							*(src + r + 1) = (*(src + r + 1)) | (t_tmp1 & 0xf0);
+						} else {
+							r = s / 8;
+							t_tmp1 = *(t_table + k);
+							t_tmp2 = *(t_table + j);
+							*(src + r + 0) = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
+							*(src + r + 1) = ((t_tmp1 & 0xf0) >> 4);
+						}
+						s += 12;
+						k++;
+						c += 12;
+					} while (k < length);
+				}
+			break;
+
+			case 11:
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+				p = CompOutput;
+				for (z = 2; z < outputSize; z++)
+					p[z] += p[z - 1];
+				for (z = 1; z < outputSize; z++)
+					p[z] += p[z - 1];		  				
+
+				t_table = (byte*)malloc(outputSize);
+				memcpy (t_table, p, outputSize);
+
+				offset1 = outputSize / 3;
+				offset2 = offset1 * 2;
+				offset3 = offset2;
+				src = CompOutput;
+				do {
+					if (offset1 == 0) break;
+					offset1--;
+					offset2 -= 2;
+					offset3--;
+					*(t_table + offset2 + 0) = *(src + offset1);
+					*(t_table + offset2 + 1) = *(src + offset3);
+				} while(1);
+			
+				// completed soon
+
+			break;
+
+			case 12:
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+				p = CompOutput;
+				for (z = 2; z < outputSize; z++)
+					p[z] += p[z - 1];
+				for (z = 1; z < outputSize; z++)
+					p[z] += p[z - 1];		  				
+
+				t_table = (byte*)malloc(outputSize);
+				memcpy (t_table, p, outputSize);
+
+				offset1 = outputSize / 3;
+				offset2 = offset1 * 2;
+				offset3 = offset2;
+				src = CompOutput;
+				do {
+					if (offset1 == 0) break;
+					offset1--;
+					offset2 -= 2;
+					offset3--;
+					*(t_table + offset2 + 0) = *(src + offset1);
+					*(t_table + offset2 + 1) = *(src + offset3);
+				} while(1);
+
+				// completed soon
+
+			break;
+
 			default:
 				printf("Unknown codec %d!\n", table[i].codec);
 				outputSize = 0;
 			break;
 		}
-		
 		memcpy(&CompFinal[finalSize], &CompOutput[0], outputSize);
 		finalSize+=outputSize;
 
