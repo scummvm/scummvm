@@ -438,7 +438,9 @@ MovieInfo MoviePlayer::_movies[] = {
 	{ "shaman",   788 },
 	{ "stone1",    34 },
 	{ "stone2",   282 },
-	{ "stone3",    65 }
+	{ "stone3",    65 },
+	{ "demo",       0 },
+	{ "enddemo",    0 }
 };
 
 void MoviePlayer::openTextObject(MovieTextObject *obj) {

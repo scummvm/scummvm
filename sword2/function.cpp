@@ -398,7 +398,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	if (DEMO) {
 		_vm->closeGame();
-		return IR_CONT;
+		return IR_STOP;
 	}
 
 	// Prepare for the credits by fading down, stoping the music, etc.
