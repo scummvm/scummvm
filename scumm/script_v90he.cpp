@@ -768,6 +768,9 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 85: // HE99+
 		_wizParams.processFlags |= 0x1102;
 		_wizParams.processMode = 7;
+		pop();
+		pop();
+		_wizParams.compType = pop();
 		break;
 	case 87: // HE99+
 		_wizParams.processFlags |= 0x60000;
