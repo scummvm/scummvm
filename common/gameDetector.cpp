@@ -77,6 +77,7 @@ static const char USAGE_STRING[] =
 	"\t-w[<file>]     - write to config file [scummvm.ini]\n"
 #endif
 	"\t-v             - show version info and exit\n"
+	"\t-h             - display this text and exit\n"
 	"\t-z             - display list of games\n"
 	"\n"
 	"\t-b<num>        - start in room <num>\n"
