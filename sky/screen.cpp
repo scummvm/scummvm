@@ -602,7 +602,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		int32 botClip = GAME_SCREEN_HEIGHT - FROM_LE_16(sprDataFile->s_height) - spriteY;
 		if (botClip < 0) {
 			botClip = -botClip;
-			if (_sprHeight <= botClip) {
+			if (_sprHeight <= (uint32)botClip) {
 				_sprWidth = 0;
 				return ;
 			}
