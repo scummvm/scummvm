@@ -17,6 +17,9 @@
 # * generate a config.mak file for use in makefiles
 # * ....
 
+TMPC=scummvm-conf.cpp
+TMPO=scummvm-conf
+TMPLOG=config.log
 
 # default lib behaviour yes/no/auto
 _vorbis=auto
@@ -28,7 +31,22 @@ _build_simon=yes
 _build_sky=yes
 # binary names
 _ranlib=ranlib
+_ldd=ldd
 
+cc_check() {
+  echo >> "$TMPLOG"
+  cat "$TMPC" >> "$TMPLOG"
+  echo >> "$TMPLOG"
+  echo "$CXX $TMPC -o $TMPO $@" >> "$TMPLOG"
+  rm -f "$TMPO"
+  ( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
+  TMP="$?"
+  echo >> "$TMPLOG"
+  echo "ldd $TMPO" >> "$TMPLOG"
+  ( $_ldd "$TMPO" ) >> "$TMPLOG" 2>&1
+  echo >> "$TMPLOG"
+  return "$TMP"
+}
 
 echocheck () {
   echo -n "Checking for $@... "
@@ -275,12 +293,11 @@ echo "/* Libs */" >> config.h
 echocheck "Ogg Vorbis"
 if test "$_vorbis" = auto ; then
   _vorbis=no
-  cat > tmp_vorbis_check.cpp << EOF
+  cat > $TMPC << EOF
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-  $CXX -lvorbis -logg -lm -o tmp_vorbis_check tmp_vorbis_check.cpp && _vorbis=yes
-  rm tmp_vorbis_check tmp_vorbis_check.cpp 2> /dev/null
+  cc_check -lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
   echo "#define USE_VORBIS" >> config.h
@@ -293,12 +310,11 @@ echo "$_vorbis"
 echocheck "MAD"
 if test "$_mad" = auto ; then
   _mad=no
-  cat > tmp_mad.cpp << EOF
+  cat > $TMPC << EOF
 #include <mad.h>
 int main(void) {return 0; }
 EOF
-  $CXX tmp_mad.cpp -lmad && _mad=yes
-  rm tmp_mad.cpp tmp_mad 2> /dev/null
+  cc_check -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
   echo "#define USE_MAD" >> config.h
@@ -311,12 +327,11 @@ echo "$_mad"
 echocheck "ALSA 9"
 if test "$_alsa" = auto ; then
   _alsa=no
-  cat > tmp_alsa.cpp << EOF
+  cat > $TMPC << EOF
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-  $CXX -lasound -o tmp_alsa tmp_alsa.cpp && _alsa=yes
-  rm tmp_alsa tmp_alsa.cpp 2> /dev/null
+  cc_check -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
   echo "#define USE_ALSA" >> config.h
@@ -325,6 +340,8 @@ else
   echo "#undef USE_ALSA" >> config.h
 fi
 echo "$_alsa"
+
+rm -f $TMPC $TMPO
 
 #
 # End of config.h
