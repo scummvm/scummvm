@@ -105,7 +105,7 @@ void OSystem_PALMOS::getCoordinates(EventPtr event, Coord *x, Coord *y) {
 }
 
 bool OSystem_PALMOS::pollEvent(Event &event) {
-	EventType ev;
+	::EventType ev;
 	Boolean handled;
 	UInt32 keyCurrentState;
 	Coord x, y;
