@@ -313,16 +313,15 @@ with them alone
 		st_fail("resample: Can not handle this sample rate change. Nx not positive: %d", Nx);
 		return (ST_EOF);
 	}
-	
-	// Nx is the number of bytes we'd like to read, but of course that is limited
-	// by the number of bytes actually available...
-	if (Nx > (long)input.size())
-		Nx = (long)input.size();
+
+	// Read in up to Nx bytes
+	for (i = r->Xread; i < Nx + r->Xread && !input.eos(); i++) {
+		r->X[i] = (Float)input.read();
+	}
+	Nx = i - r->Xread;	// Compute how many samples we actually read
+
 	fprintf(stderr,"Nx %d\n",Nx);
 
-	// Read in Nx bytes
-	for (i = r->Xread; i < Nx + r->Xread ; i++)
-		r->X[i] = (Float)input.read();
 
 	last = Nx + r->Xread;	// 'last' is the idx after the last valid byte in X (i.e. number of bytes are in buffer X right now)
 	
@@ -409,20 +408,19 @@ printf("osamp = %ld, Nout = %ld\n", obufSize, Nout);
  */
 int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	resample_t r = (resample_t) effp->priv;
-	long isamp_res, osamp_res;
+	long osamp_res;
 	st_sample_t *Obuf;
 	int rc;
 
 	/*fprintf(stderr,"Xoff %d, Xt %d  <--- DRAIN\n",r->Xoff, r->Xt);*/
 
 	/* stuff end with Xoff zeros */
-	isamp_res = r->Xoff;
+	ZeroInputStream zero(r->Xoff);
 	osamp_res = *osamp;
 	Obuf = obuf;
-	while (isamp_res > 0 && osamp_res > 0) {
+	while (!zero.eos() && osamp_res > 0) {
 		st_sample_t Osamp;
 		Osamp = osamp_res;
-		ZeroInputStream zero(isamp_res);
 		rc = st_resample_flow(effp, zero, Obuf, (st_size_t *) & Osamp, vol);
 		if (rc)
 			return rc;
@@ -430,12 +428,11 @@ int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp, st_volume
 		    isamp_res,osamp_res,Isamp,Osamp);*/
 		Obuf += Osamp;
 		osamp_res -= Osamp;
-		isamp_res = zero.size();
 	}
 	*osamp -= osamp_res;
 	fprintf(stderr,"DRAIN osamp %d\n", *osamp);
-	if (isamp_res)
-		st_warn("drain overran obuf by %d\n", isamp_res);
+	if (!zero.eos())
+		st_warn("drain overran obuf\n");
 	fflush(stderr);
 	return (ST_SUCCESS);
 }
@@ -738,6 +735,17 @@ static void LpFilter(double *c, long N, double frq, double Beta, long Num) {
 #pragma mark -
 
 
+class ResampleRateConverter : public RateConverter {
+protected:
+	eff_struct effp;
+public:
+	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
+	~ResampleRateConverter();
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
+};
+
+
 ResampleRateConverter::ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality) {
 	// FIXME: quality is for now a nasty hack.
 	// Valid values are 0,1,2,3 (everything else is treated like 0 for now)
@@ -755,11 +763,11 @@ ResampleRateConverter::~ResampleRateConverter() {
 	st_resample_stop(&effp);
 }
 
-int ResampleRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-	return st_resample_flow(&effp, input, obuf, osamp, vol);
+int ResampleRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	return st_resample_flow(&effp, input, obuf, &osamp, vol);
 }
 
-int ResampleRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
-	return st_resample_drain(&effp, obuf, osamp, vol);
+int ResampleRateConverter::drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	return st_resample_drain(&effp, obuf, &osamp, vol);
 }
 

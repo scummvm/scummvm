@@ -72,18 +72,6 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
 };
 
-/*
-class ResampleRateConverter : public RateConverter {
-protected:
-	eff_struct effp;
-public:
-	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
-	~ResampleRateConverter();
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
-};
-*/
-
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
 
 #endif
