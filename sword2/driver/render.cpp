@@ -350,12 +350,138 @@ void Surface::upload(ScummVM::Rect *r) {
 	g_sword2->_system->copy_rect(_pixels + r->top * _width + r->left, _width, r->left, r->top, r->right - r->left, r->bottom - r->top);
 }
 
+#define SCALE_MAXWIDTH 512
+#define SCALE_MAXHEIGHT 512
+
+static uint16 xScale[SCALE_MAXWIDTH];
+static uint16 yScale[SCALE_MAXHEIGHT];
+
+// This is based on the "line doubling" scaler in the original sprite renderer.
+// I've made it into two separate functions because there were cases from
+// DrawSprite() where it wasn't obvious if the sprite should grow or shrink,
+// which caused crashes.
+//
+// The functions can probably be merged later, if/when we implement a better
+// scale function for it.
+
+void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+	int32 ince, incne, d;
+	int16 x, y;
+
+	// Work out the x-scale
+
+	ince = 2 * dstWidth;
+	incne = 2 * (dstWidth - srcWidth);
+	d = 2 * dstWidth - srcWidth;
+	x = y = 0;
+	xScale[y] = x;
+
+	while (x < srcWidth) {
+		if (d <= 0) {
+			d += ince;
+			x++;
+		} else {
+			d += incne;
+			x++;
+			y++;
+		}
+		xScale[y] = x;
+	}
+
+	// Work out the y-scale
+
+	ince = 2 * dstHeight;
+	incne = 2 * (dstHeight - srcHeight);
+	d = 2 * dstHeight - srcHeight;
+	x = y = 0;
+	yScale[y] = x;
+
+	while (x < srcHeight) {
+		if (d <= 0) {
+			d += ince;
+			x++;
+		} else {
+			d += incne;
+			x++;
+			y++;
+		}
+		yScale[y] = x;
+	}
+
+	// Copy the image
+
+	for (y = 0; y < dstHeight; y++) {
+		for (x = 0; x < dstWidth; x++) {
+			dst[x] = src[yScale[y] * srcPitch + xScale[x]];
+		}
+		dst += dstPitch;
+	}
+}
+
+void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+	int32 ince, incne, d;
+	int16 x, y, i, j, k;
+
+	// Work out the x-scale
+
+	ince = 2 * srcWidth;
+	incne = 2 * (srcWidth - dstWidth);
+	d = 2 * srcWidth - dstWidth;
+	x = y = 0;
+	xScale[y] = x;
+
+	while (x < dstWidth) {
+		if (d <= 0) {
+			d += ince;
+			x++;
+		} else {
+			d += incne;
+			x++;
+			y++;
+			xScale[y] = x;
+		}
+	}
+
+	// Work out the y-scale
+
+	ince = 2 * srcHeight;
+	incne = 2 * (srcHeight - dstHeight);
+	d = 2 * srcHeight - dstHeight;
+	x = y = 0;
+	yScale[y] = x;
+	while (x < dstHeight) {
+		if (d <= 0) {
+			d += ince;
+			x++;
+		} else {
+			d += incne;
+			x++;
+			y++;
+			yScale[y] = x;
+		}
+	}
+
+	// Copy the image
+
+	for (y = 0; y < srcHeight; y++) {
+		for (j = yScale[y]; j < yScale[y + 1]; j++) {
+			k = 0;
+			for (x = 0; x < srcWidth; x++) {
+				for (i = xScale[x]; i < xScale[x + 1]; i++) {
+					dst[k++] = src[y * srcPitch + x];
+				}
+			}
+			dst += dstPitch;
+		}
+	}
+}
+
 int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 {
 	int16 oldLayer = layer;
 	int16 i;
 
-	debug(0, "RestoreBackgroundLayer %d", l);
+	debug(2, "RestoreBackgroundLayer %d", l);
 
 	layer = l;
 	if (blockSurfaces[l]) {
@@ -368,25 +494,7 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 	}
 	InitialiseBackgroundLayer(p);
 	layer = oldLayer;
-
-/*
-	int16 oldLayer = layer;
-	int16 i;
-
-	layer = l;
-	if (blockSurfaces[l])
-	{
-		for (i=0; i<xblocks[l] * yblocks[l]; i++)
-			if (*(blockSurfaces[l]+i))
-				IDirectDrawSurface2_Release(*(blockSurfaces[l] + i));
-		free(blockSurfaces[l]);
-		blockSurfaces[l] = NULL;
-	}
-	InitialiseBackgroundLayer(p);
-	layer = oldLayer;
-*/
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
@@ -773,55 +881,38 @@ void LogMe(int32 in)
 */
 
 
-int32 InitialiseRenderCycle(void)
-
-{
-
+int32 InitialiseRenderCycle(void) {
 	initialTime = SVM_timeGetTime();
 	originTime = initialTime;
 	totalTime = initialTime + MILLISECSPERCYCLE;
-
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
 
-int32 StartRenderCycle(void)
-
-{
-
-
+int32 StartRenderCycle(void) {
 	scrollxOld = scrollx;
 	scrollyOld = scrolly;
 
 	startTime = SVM_timeGetTime();
 
-	if (startTime + renderAverageTime >= totalTime)
-	{
+	if (startTime + renderAverageTime >= totalTime)	{
 		scrollx = scrollxTarget;
 		scrolly = scrollyTarget;
 		renderTooSlow = 1;
-	}
-	else
-	{
+	} else {
 		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 		renderTooSlow = 0;
 	}
 
 	framesPerGameCycle = 0;
-
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
 
-int32 EndRenderCycle(BOOL *end)
-
-{
-
+int32 EndRenderCycle(BOOL *end) {
 	int32 time;
 
 	time = SVM_timeGetTime();
@@ -834,44 +925,31 @@ int32 EndRenderCycle(BOOL *end)
 	if (++renderCountIndex == RENDERAVERAGETOTAL)
 		renderCountIndex = 0;
 
-	if (renderTooSlow)
-	{
+	if (renderTooSlow) {
 		*end = TRUE;
 		InitialiseRenderCycle();
-	}
-	else if (startTime + renderAverageTime >= totalTime)
-	{
+	} else if (startTime + renderAverageTime >= totalTime) {
 		*end = TRUE;
 		originTime = totalTime;
 		totalTime += MILLISECSPERCYCLE;
 		initialTime = time;
-	}
-	else
-	{
+	} else {
 		*end = FALSE;
 		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
 	}
 
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 
-int32 SetScrollTarget(int16 sx, int16 sy)
-
-{
-
+int32 SetScrollTarget(int16 sx, int16 sy) {
 	scrollxTarget = sx;
 	scrollyTarget = sy;
-
-	return(RD_OK);
-
+	return RD_OK;
 }
 
-int32 CopyScreenBuffer(void)
-
-{
+int32 CopyScreenBuffer(void) {
 	debug(9, "CopyScreenBuffer");
 
 	// FIXME: The backend should keep track of dirty rects, but I have a
@@ -879,72 +957,8 @@ int32 CopyScreenBuffer(void)
 	// our own handling of them instead.
 
 	g_sword2->_system->update_screen();
-
-/*
-
-	uint8			*dst, *src;
-	int16			i;
-	DDSURFACEDESC	ddDescription;
-	HRESULT			hr;
-
-#if PROFILING == 1
-	static long int	endTime;
-	long int	startTime;
-	int32					lastEndTime, profileTotalTime;
-#endif
-
-
-#if PROFILING == 1
-	QueryPerformanceCounter(&startTime);
-//	time = timeGetTime();
-#endif
-
-
-	if (!(renderCaps & RDBLTFX_ALLHARDWARE))
-	{
-		ddDescription.dwSize = sizeof(ddDescription);
-		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		}
-		if (hr == DD_OK)
-		{
-			dst = (uint8 *) ddDescription.lpSurface + MENUDEEP * ddDescription.lPitch;
-			src = myScreenBuffer;
-			for (i=0; i<RENDERDEEP; i++)
-			{
-				memcpy(dst, src, screenWide);
-				src += RENDERWIDE;
-				dst += ddDescription.lPitch;
-			}
-			IDirectDrawSurface2_Unlock(lpBackBuffer, ddDescription.lpSurface);
-		}
-		else
-		{
-			return(RDERR_LOCKFAILED);
-		}
-	}
-
-#if PROFILING == 1
-	lastEndTime = endTime.LowPart;
-	QueryPerformanceCounter(&endTime);
-	profileCopyScreenBuffer = (int32) (endTime.LowPart - startTime.LowPart) / 1000;
-	profileTotalTime = (endTime.LowPart - lastEndTime) / 1000;
-	if ((profileTotalTime > 0) && (profileTotalTime < 5000))
-		PlotDots(0, 5, (int16) profileTotalTime);
-	PlotDots(0, 10, (int16) profileCopyScreenBuffer);
-	PlotDots(0, 15, (int16) (profileRenderLayers / 1000));
-	PlotDots(0, 20, (int16) (profileSpriteRender / 1000));
-	PlotDots(0, 25, (int16) (profileDecompression / 1000));
-	profileRenderLayers = 0;
-	profileSpriteRender = 0;
-	profileDecompression = 0;
-#endif
-*/
-	return(RD_OK);
+	return RD_OK;
 }
-
 
 
 int32 InitialiseBackgroundLayer(_parallax *p) {
@@ -958,7 +972,7 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 	uint8 *dst;
 	_parallaxLine *line;
 
-	debug(0, "InitialiseBackgroundLayer");
+	debug(2, "InitialiseBackgroundLayer");
 
 	// This function is called to re-initialise the layers if they have
 	// been lost. We know this if the layers have already been assigned.
@@ -1067,190 +1081,13 @@ bailout:
 	}
 	free(memchunk);
 	layer++;
-
-/*
-	uint8			*memchunk;
-	uint32			*quaddata;
-	uint8			zeros;
-	uint16			count;
-//	uint16			skip;
-	uint16			i, j, k;
-	uint16			x;
-	uint8			*data;
-	uint8			*dst;
-	_parallaxLine	*line;
-	HRESULT			hr;
-	DDSURFACEDESC	ddsd;
-
-
-	if ((renderCaps & RDBLTFX_ALLHARDWARE) || ((renderCaps & RDBLTFX_FGPARALLAX) && (layer > 2)))
-	{
-
-		//  This function is called to re-initialise the layers if they have been lost.
-		//	We know this if the layers have already been assigned.
-		if (layer == MAXLAYERS)
-		{
-			CloseBackgroundLayer();
-		}
-		
-
-		if (p == NULL)
-		{
-			layer += 1;
-			return(RD_OK);
-		}
-
-		xblocks[layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
-		yblocks[layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
-		blockSurfaces[layer] = (LPDIRECTDRAWSURFACE *) malloc(xblocks[layer] * yblocks[layer] * sizeof(LPDIRECTDRAWSURFACE));
-		if (blockSurfaces[layer] == NULL)
-			return(RDERR_OUTOFMEMORY);
-
-		// Decode the parallax layer into a large chunk of memory
-		memchunk = (uint8 *) malloc(xblocks[layer] * BLOCKWIDTH * yblocks[layer] * BLOCKHEIGHT);
-		if (memchunk == NULL)
-			return(RDERR_OUTOFMEMORY);
-		
-		memset(memchunk, 0, p->w * p->h);
-
-		for (i = 0; i < p->h; i++)
-		{
-			if (p->offset[i] == 0)
-				continue;
-
-			line = (_parallaxLine *) ((uint8 *) p + p->offset[i]);
-			data = (uint8 *) line + sizeof(_parallaxLine);
-			x = line->offset;
-			
-			dst = memchunk + i * p->w + x;
-
-			zeros = 0;
-			if (line->packets == 0)
-			{
-				memcpy(dst, data, p->w);
-				continue;
-			}
-
-			for (j=0; j<line->packets; j++)
-			{
-				if (zeros)
-				{
-					dst += *data;
-					x += *data;
-					data += 1;
-					zeros = 0;
-				}
-				else
-				{
-					if (*data == 0)
-					{
-						data ++;
-						zeros = 1;
-					}
-					else
-					{
-						count = *data++;
-						memcpy(dst, data, count);
-						data += count;
-						dst += count;
-						x += count;
-						zeros = 1;
-					}
-				}
-			}
-		}
-
-		// Now create the surfaces!
-		memset(&ddsd, 0, sizeof(DDSURFACEDESC));
-		ddsd.dwSize = sizeof(DDSURFACEDESC);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-		if (dxHalCaps & RDCAPS_SRCBLTCKEY)
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-		else
-			ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-
-		ddsd.dwWidth = BLOCKWIDTH;
-		ddsd.dwHeight = BLOCKHEIGHT;
-		for (i=0; i<xblocks[layer] * yblocks[layer]; i++)
-		{
-			//  Only assign a surface to the block if it contains data.
-			quaddata = (int32 *) (memchunk + (p->w * BLOCKHEIGHT * (i / xblocks[layer])) + BLOCKWIDTH * (i % xblocks[layer]));
-			for (j=0; j<BLOCKHEIGHT; j++)
-			{
-				for (k=0; k<BLOCKWIDTH / 4; k++)
-				{
-					if (*quaddata)
-						break;
-					quaddata++;
-				}
-				quaddata += ((p->w - BLOCKWIDTH) / 4);
-				if (k < BLOCKWIDTH / 4)
-					break;
-			}
-			
-			if (k < BLOCKWIDTH / 4)
-			{
-				hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, blockSurfaces[layer] + i, NULL);
-				if (hr != DD_OK)
-				{
-					if (hr == DDERR_OUTOFVIDEOMEMORY)
-					{
-						ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-						hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, blockSurfaces[layer] + i, NULL);
-					}
-					if (hr != DD_OK)
-					{
-						DirectDrawError("Cannot create parallax surface", hr);
-						return(hr);
-					}
-				}
-				//	Set the surface blt source colour key
-				hr = IDirectDrawSurface2_SetColorKey(*(blockSurfaces[layer] + i), DDCKEY_SRCBLT, &blackColorKey);
-
-				//  Copy the data into the surfaces.
-				memset(&ddsd, 0, sizeof(DDSURFACEDESC));
-				ddsd.dwSize = sizeof(DDSURFACEDESC);
-				hr = IDirectDrawSurface2_Lock(*(blockSurfaces[layer] + i), NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-				if (hr != DD_OK)
-				{
-					IDirectDrawSurface2_Restore(*(blockSurfaces[layer] + i));
-					hr = IDirectDrawSurface2_Lock(*(blockSurfaces[layer] + i), NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-					if (hr != DD_OK)
-					{
-						DirectDrawError("Cannot lock parallax surface", hr);
-						return(hr);
-					}
-				}
-
-				data = memchunk + (p->w * BLOCKHEIGHT * (i / xblocks[layer])) + BLOCKWIDTH * (i % xblocks[layer]);
-				dst = ddsd.lpSurface;
-				for (j=0; j<BLOCKHEIGHT; j++)
-				{
-					memcpy(dst, data, BLOCKWIDTH);
-					data += p->w;
-					dst += ddsd.lPitch;
-				}
-				IDirectDrawSurface2_Unlock(*(blockSurfaces[layer] + i), ddsd.lpSurface);
-			}
-			else
-			{
-				*(blockSurfaces[layer] + i) = NULL;
-			}
-		}
-		free(memchunk);
-	}
-	layer += 1;
-*/
-	return(RD_OK);
+	return RD_OK;
 
 }
 
 
-int32 CloseBackgroundLayer(void)
-
-{
-	debug(0, "CloseBackgroundLayer");
+int32 CloseBackgroundLayer(void) {
+	debug(2, "CloseBackgroundLayer");
 
 	int16 i, j;
 
@@ -1265,27 +1102,7 @@ int32 CloseBackgroundLayer(void)
 	}
 
 	layer = 0;
-/*
-	int16			i, j;
-
-//	if (renderCaps & RDBLTFX_ALLHARDWARE)
-//	{
-		for (j=0; j<MAXLAYERS; j++)
-		{
-			if (blockSurfaces[j])
-			{
-				for (i=0; i<xblocks[j] * yblocks[j]; i++)
-					if (*(blockSurfaces[j]+i))
-						IDirectDrawSurface2_Release(*(blockSurfaces[j] + i));
-				free(blockSurfaces[j]);
-				blockSurfaces[j] = NULL;
-			}
-		}
-		layer = 0;
-//	}
-*/
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 

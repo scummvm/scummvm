@@ -108,144 +108,147 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-//#include <windows.h>
-//#include <windowsx.h>
-//#include <mmsystem.h>
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "menu.h"
 #include "d_draw.h"
 #include "render.h"
-
+#include "common/rect.h"
 
 #define MENUDEEP 40
 #define MAXMENUANIMS 8
 
-
-
-static uint8 menuStatus[2] = 
-{
+static uint8 menuStatus[2] = {
 	RDMENU_HIDDEN, RDMENU_HIDDEN
 };
 
-static uint8 *icons[2][RDMENU_MAXPOCKETS] =
-{
+static uint8 *icons[2][RDMENU_MAXPOCKETS] = {
 	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, 
 	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
-// static LPDIRECTDRAWSURFACE lpIconSurface[2][RDMENU_MAXPOCKETS] = 
-static Surface *lpIconSurface[2][RDMENU_MAXPOCKETS] = 
-{
-	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, 
-	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
-};
-
-static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] =
-{
+static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-//static uint8 menuCounter[2];
-//static uint8 lastIcon[2];
 static uint8 iconCount = 0;
 
+int32 ProcessMenu(void) {
+	uint8	menu;
+	uint8	i;
+	uint8	complete;
+	uint8	frameCount;
+	int32	curx, xoff;
+	int32	cury, yoff;
+	ScummVM::Rect r;
+	int32	delta;
+	static	int32 lastTime = 0;
 
-
-
-int32 CreateIconSurface(uint8 menu, uint8 pocket)
-
-{
-	warning("stub CreatIconSurface( %d, %d )", menu, pocket);
-/*
-
-	HRESULT			hr;
-	DDSURFACEDESC	ddsd;
-
-
-	//	Set up the direct draw surface for the icon.
-	memset(&ddsd, 0, sizeof(DDSURFACEDESC));
-	ddsd.dwSize = sizeof(DDSURFACEDESC);
-	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-	if (dxHalCaps & RDCAPS_BLTSTRETCH)
-		ddsd.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-	else
-		ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-
-	ddsd.dwWidth = RDMENU_ICONWIDE;
-	ddsd.dwHeight = RDMENU_ICONDEEP;
-	hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &lpIconSurface[menu][pocket], NULL);
-	if ((dxHalCaps & RDCAPS_BLTSTRETCH) && (hr == DDERR_OUTOFVIDEOMEMORY))
-	{
-		ddsd.ddsCaps.dwCaps &= (0xffffffff - DDSCAPS_VIDEOMEMORY);
-		ddsd.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-		hr = IDirectDraw2_CreateSurface(lpDD2, &ddsd, &lpIconSurface[menu][pocket], NULL);
-	}
-	if (hr != DD_OK)
-	{
-		DirectDrawError("Unable to create icon surface", hr);
-		return(hr);
-	}
-*/
-	return(RD_OK);
-}
-
-		
-		
-int32 LoadIconSurface(int32 menu, int32 pocket)
-
-{
-	warning("stub LoadIconSurface( %d, %d )");
-/*
-
-	uint8			*src, *dst;
-	int32			i;
-	HRESULT			hr;
-	DDSURFACEDESC	ddsd;
-
-
-	memset(&ddsd, 0, sizeof(DDSURFACEDESC));
-	ddsd.dwSize = sizeof(DDSURFACEDESC);
-
-	hr = IDirectDrawSurface2_Lock(lpIconSurface[menu][pocket], NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-	if (hr != DD_OK)
-	{
-		IDirectDrawSurface2_Restore(lpIconSurface[menu][pocket]);
-		hr = IDirectDrawSurface2_Lock(lpIconSurface[menu][pocket], NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Unable to lock icon surface", hr);
-			return(hr);
+	if (lastTime == 0) {
+		lastTime = SVM_timeGetTime();
+		frameCount = 1;
+	} else {
+		delta = SVM_timeGetTime() - lastTime;
+		if (delta > 250) {
+			lastTime += delta;
+			delta = 250;
+			frameCount = 1;
+		} else {
+			frameCount = (uint8) ((iconCount + 8) * delta / 750);
+			lastTime += frameCount * 750 / (iconCount + 8);
 		}
 	}
 
-	src = icons[menu][pocket];
-	dst = ddsd.lpSurface;
-	for (i=0; i<RDMENU_ICONDEEP; i++)
-	{
-		memcpy(dst, src, RDMENU_ICONWIDE);
-		src += RDMENU_ICONWIDE;
-		dst += ddsd.lPitch;
+	while (frameCount-- > 0) {
+		for (menu = RDMENU_TOP; menu <= RDMENU_BOTTOM; menu++) {
+			if (menuStatus[menu] == RDMENU_OPENING) {
+				// The menu is opening, so process it here
+				complete = 1;
+
+				// Propagate the animation from the first icon.
+				for (i = RDMENU_MAXPOCKETS - 1; i > 0; i--) {
+					pocketStatus[menu][i] = pocketStatus[menu][i - 1];
+					if (pocketStatus[menu][i] != MAXMENUANIMS)
+						complete = 0;
+				}
+				if (pocketStatus[menu][i] != MAXMENUANIMS)
+					complete = 0;
+
+				// ... and animate the first icon
+				if (pocketStatus[menu][0] != MAXMENUANIMS)
+					pocketStatus[menu][0]++;
+
+				// Check to see if the menu is fully open
+				if (complete)
+					menuStatus[menu] = RDMENU_SHOWN;
+			} else if (menuStatus[menu] == RDMENU_CLOSING) {
+				// The menu is closing, so process it here
+				complete = 1;
+
+				// Propagate the animation from the first icon.
+				for (i = RDMENU_MAXPOCKETS - 1; i > 0; i--) {
+					pocketStatus[menu][i] = pocketStatus[menu][i - 1];
+					if (pocketStatus[menu][i] != 0)
+						complete = 0;
+				}
+				if (pocketStatus[menu][i] != 0)
+					complete = 0;
+
+				// ... and animate the first icon
+				if (pocketStatus[menu][0] != 0)
+					pocketStatus[menu][0]--;
+
+				// Check to see if the menu is fully open
+				if (complete)
+					menuStatus[menu] = RDMENU_HIDDEN;
+			}
+		}
 	}
+	
+	// Does the menu need to be drawn?
+	for (menu = RDMENU_TOP; menu <= RDMENU_BOTTOM; menu++) {
+		if (menuStatus[menu] != RDMENU_HIDDEN) {
+			// Draw the menu here.
+			curx = RDMENU_ICONSTART + RDMENU_ICONWIDE / 2;
+			cury = (MENUDEEP / 2) + (RENDERDEEP + MENUDEEP) * menu;
 
-	IDirectDrawSurface2_Unlock(lpIconSurface[menu][pocket], ddsd.lpSurface);
-*/
-	return(RD_OK);
+			for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
+				if (icons[menu][i]) {
+					if (pocketStatus[menu][i] == MAXMENUANIMS) {
+						xoff = (RDMENU_ICONWIDE / 2);
+						r.left = curx - xoff;
+						r.right = r.left + RDMENU_ICONWIDE;
+						yoff = (RDMENU_ICONDEEP / 2);
+						r.top = cury - yoff;
+						r.bottom = r.top + RDMENU_ICONDEEP;
+					} else {
+						xoff = (RDMENU_ICONWIDE / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
+						r.left = curx - xoff;
+						r.right = curx + xoff;
+						yoff = (RDMENU_ICONDEEP / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
+						r.top = cury - yoff;
+						r.bottom = cury + yoff;
+					}
 
-}
-
-
-
-
-int32 ProcessMenu(void)
-
-{
-	warning("stub ProcessMenu");
+					if ((xoff != 0) && (yoff != 0)) {
+						SquashImage(
+							lpBackBuffer->_pixels + r.top * lpBackBuffer->_width + r.left,
+							lpBackBuffer->_width,
+							r.right - r.left,
+							r.bottom - r.top,
+							icons[menu][i],
+							RDMENU_ICONWIDE,
+							RDMENU_ICONWIDE,
+							RDMENU_ICONDEEP);
+						lpBackBuffer->upload(&r);
+					}
+				}
+				curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
+			}
+		}
+	}
+	
 /*
 
 	uint8	menu;
@@ -465,44 +468,33 @@ int32 ProcessMenu(void)
 	return RD_OK;
 }
 
-
-int32 ShowMenu(uint8 menu)
-
-{
-
-	//	Check for invalid menu parameter
+int32 ShowMenu(uint8 menu) {
+	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
-		return(RDERR_INVALIDMENU);
+		return RDERR_INVALIDMENU;
 
-	//	Check that the menu is not currently shown, or in the process of being shown.
-	if ((menuStatus[menu] == RDMENU_SHOWN) || (menuStatus[menu] == RDMENU_OPENING))
-		return(RDERR_INVALIDCOMMAND);
+	// Check that the menu is not currently shown, or in the process of
+	// being shown.
+	if (menuStatus[menu] == RDMENU_SHOWN || menuStatus[menu] == RDMENU_OPENING)
+		return RDERR_INVALIDCOMMAND;
 
 	menuStatus[menu] = RDMENU_OPENING;
-
 	return RD_OK;
-
 }
 
-
-int32 HideMenu(uint8 menu)
-
-{
-
-	//	Check for invalid menu parameter
+int32 HideMenu(uint8 menu) {
+	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return(RDERR_INVALIDMENU);
 
-	//	Check that the menu is not currently hidden, or in the process of being hidden.
-	if ((menuStatus[menu] == RDMENU_HIDDEN) || (menuStatus[menu] == RDMENU_CLOSING))
-		return(RDERR_INVALIDCOMMAND);
+	// Check that the menu is not currently hidden, or in the process of
+	// being hidden.
+	if (menuStatus[menu] == RDMENU_HIDDEN || menuStatus[menu] == RDMENU_CLOSING)
+		return RDERR_INVALIDCOMMAND;
 
 	menuStatus[menu] = RDMENU_CLOSING;
-
 	return RD_OK;
-
 }
-
 
 int32 CloseMenuImmediately(void)
 {
@@ -512,66 +504,39 @@ int32 CloseMenuImmediately(void)
 	return (RD_OK);
 }
 
-int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
-
-{
+int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 	debug(5, "stub SetMenuIcon( %d, %d )", menu, pocket);
 
-
-//	HRESULT			hr;
-	int32 hr;
-
-
-	//	Check for invalid menu parameter.
+	// Check for invalid menu parameter.
 	if (menu > RDMENU_BOTTOM)
-		return(RDERR_INVALIDMENU);
+		return RDERR_INVALIDMENU;
 	
-	//	Check for invalid pocket parameter
+	// Check for invalid pocket parameter
 	if (pocket >= RDMENU_MAXPOCKETS)
-		return(RDERR_INVALIDPOCKET);
+		return RDERR_INVALIDPOCKET;
 
-	//	If there is an icon in the requested menu/pocket, clear it out.
-	if (icons[menu][pocket])
-	{
+	// If there is an icon in the requested menu/pocket, clear it out.
+	if (icons[menu][pocket]) {
 		iconCount--;
 		free(icons[menu][pocket]);
 		icons[menu][pocket] = NULL;
-//		IDirectDrawSurface2_Release(lpIconSurface[menu][pocket]);
-		delete lpIconSurface[menu][pocket];
-		lpIconSurface[menu][pocket] = NULL;
 	}
 
-	//	Only put the icon in the pocket if it is not NULL
-	if (icon != NULL)
-	{
+	// Only put the icon in the pocket if it is not NULL
+	if (icon != NULL) {
 		iconCount++;
 		icons[menu][pocket] = (uint8 *) malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 		if (icons[menu][pocket] == NULL)
-			return(RDERR_OUTOFMEMORY);
+			return RDERR_OUTOFMEMORY;
 		memcpy(icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);
-
-		hr = CreateIconSurface(menu, pocket);
-		//if (hr != DD_OK)
-		if (hr != RD_OK)
-			return(hr);
-
-		hr = LoadIconSurface(menu, pocket);
-		if (hr != RD_OK)
-			return(hr);
 	}
 	return RD_OK;
 }
 
-
-uint8 GetMenuStatus(uint8 menu)
-
-{
-
+uint8 GetMenuStatus(uint8 menu) {
 	if (menu > RDMENU_BOTTOM)
-		return(RDMENU_HIDDEN);
-
-	return(menuStatus[menu]);
-
+		return RDMENU_HIDDEN;
+	return menuStatus[menu];
 }
 
 

@@ -86,7 +86,10 @@ extern int16					parallaxScrolly;	// current y offset to link a sprite to the pa
 extern int16					locationWide;
 extern int16					locationDeep;
 
-extern uint8 myScreenBuffer[RENDERWIDE * RENDERDEEP];
+// extern uint8 myScreenBuffer[RENDERWIDE * RENDERDEEP];
+
+void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight);
+void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight);
 
 
 #endif

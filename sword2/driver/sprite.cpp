@@ -1584,9 +1584,6 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	if (scale != 256) {
-		int32 dx, dy, ince, incne, d;
-		int16 x, y;
-
 		if (s->scaledWidth > SCALE_MAXWIDTH || s->scaledHeight > SCALE_MAXHEIGHT) {
 			if (freeSprite)
 				free(sprite);
@@ -1600,133 +1597,15 @@ int32 DrawSprite(_spriteInfo *s) {
 			return RDERR_OUTOFMEMORY;
 		}
 
-		// This is based on the "line doubling" scaler in the original
-		// code.
-
 		if (scale < 256) {
-			// Work out the x-scale
-
-			dx = s->w;
-			dy = s->scaledWidth;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			d = 2 * dy - dx;
-
-			x = 0;
-			y = 0;
-			xScale[y] = x;
-
-			while (x < s->w) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-				xScale[y] = x;
-			}
-
-			// Work out the y-scale
-
-			dx = s->h;
-			dy = s->scaledHeight;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			d = 2 * dy - dx;
-
-			x = 0;
-			y = 0;
-			yScale[y] = x;
-
-			while (x < s->h) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-				}
-				yScale[y] = x;
-			}
-
-			// Copy the sprite
-
-			dst = newSprite;
-
-			for (y = 0; y < s->scaledHeight; y++) {
-				for (x = 0; x < s->scaledWidth; x++) {
-					*dst++ = *(sprite + yScale[y] * s->w + xScale[x]);
-				}
-			}
+			SquashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
 		} else {
 			if (s->scale > 512) {
 				if (freeSprite)
 					free(sprite);
 				return RDERR_INVALIDSCALING;
 			}
-
-			// Work out the x-scale
-
-			dy = s->w;
-			dx = s->scaledWidth;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			d = 2 * dy - dx;
-
-			x = 0;
-			y = 0;
-			xScale[y] = x;
-			while (x < s->scaledWidth) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-					xScale[y] = x;
-				}
-			}
-
-			// Work out the y-scale
-
-			dy = s->h;
-			dx = s->scaledHeight;
-			ince = 2 * dy;
-			incne = 2 * (dy - dx);
-			d = 2 * dy - dx;
-
-			x = 0;
-			y = 0;
-			yScale[y] = x;
-			while (x < s->scaledHeight) {
-				if (d <= 0) {
-					d += ince;
-					x++;
-				} else {
-					d += incne;
-					x++;
-					y++;
-					yScale[y] = x;
-				}
-			}
-
-			// Copy the sprite
-
-			dst = newSprite;
-
-			for (y = 0; y <s->h; y++) {
-				for (j = yScale[y]; j < yScale[y + 1]; j++) {
-					for (x = 0; x < s->w; x++) {
-						for (i = xScale[x]; i < xScale[x + 1]; i++) {
-							*dst++ = *(sprite + y * s->w + x);
-						}
-					}
-				}
-			}
+			StretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
 		}
 
 		if (freeSprite)
