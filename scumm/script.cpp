@@ -34,19 +34,18 @@ enum {
 };
 
 
-/* Start executing script 'script' with parameters 'a' and 'b' */
-void Scumm::runScript(int script, int a, int b, int *lvarptr) {
+/* Start executing script 'script' with the given parameters */
+void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
+	ScriptSlot *s;
 	byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot;
-	ScriptSlot *s;
 
-
-	if (script == 0)
+	if (!script)
 		return;
 
-	if (b == 0)
+	if (!recursive)
 		stopScriptNr(script);
 
 	if (script < _numGlobalScripts) {
@@ -67,10 +66,9 @@ void Scumm::runScript(int script, int a, int b, int *lvarptr) {
 	s->offs = scriptOffs;
 	s->status = ssRunning;
 	s->where = scriptType;
-	s->unk1 = a;
-	s->unk2 = b;
+	s->freezeResistant = freezeResistant;
+	s->recursive = recursive;
 	s->freezeCount = 0;
-
 	s->delayFrameCount = 0;
 
 	initializeLocals(slot, lvarptr);
@@ -550,7 +548,7 @@ void Scumm::freezeScripts(int flag) {
 	int i;
 
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
-		if (_currentScript != i && vm.slot[i].status != ssDead && (vm.slot[i].unk1 == 0 || flag >= 0x80)) {
+		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flag >= 0x80)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
 		}
@@ -611,8 +609,8 @@ void Scumm::runExitScript() {
 		vm.slot[slot].number = 10001;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _EXCD_offs;
-		vm.slot[slot].unk1 = 0;
-		vm.slot[slot].unk2 = 0;
+		vm.slot[slot].freezeResistant = false;
+		vm.slot[slot].recursive = false;
 		vm.slot[slot].freezeCount = 0;
 
 		vm.slot[slot].delayFrameCount = 0;
@@ -647,8 +645,8 @@ void Scumm::runEntryScript() {
 		vm.slot[slot].number = 10002;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _ENCD_offs;
-		vm.slot[slot].unk1 = 0;
-		vm.slot[slot].unk2 = 0;
+		vm.slot[slot].freezeResistant = false;
+		vm.slot[slot].recursive = false;
 		vm.slot[slot].freezeCount = 0;
 		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
@@ -805,13 +803,15 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
-void Scumm::runVerbCode(int object, int entry, int a, int b, int *vars) {
+void Scumm::runVerbCode(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
+	ScriptSlot *s;
 	uint32 obcd;
 	int slot, where, offs;
 
 	if (!object)
 		return;
-	if (!b)
+
+	if (!recursive)
 		stopObjectScript(object);
 
 	where = whereIsObject(object);
@@ -828,14 +828,15 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int *vars) {
 	if (offs == 0)
 		return;
 
-	vm.slot[slot].number = object;
-	vm.slot[slot].offs = obcd + offs;
-	vm.slot[slot].status = ssRunning;
-	vm.slot[slot].where = where;
-	vm.slot[slot].unk1 = a;
-	vm.slot[slot].unk2 = b;
-	vm.slot[slot].freezeCount = 0;
-	vm.slot[slot].delayFrameCount = 0;
+	s = &vm.slot[slot];
+	s->number = object;
+	s->offs = obcd + offs;
+	s->status = ssRunning;
+	s->where = where;
+	s->freezeResistant = freezeResistant;
+	s->recursive = recursive;
+	s->freezeCount = 0;
+	s->delayFrameCount = 0;
 
 	initializeLocals(slot, vars);
 

@@ -595,7 +595,7 @@ void Scumm_v5::o5_chainScript() {
 	vm.slot[cur].status = 0;
 	_currentScript = 0xFF;
 
-	runScript(data, vm.slot[cur].unk1, vm.slot[cur].unk2, vars);
+	runScript(data, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, vars);
 }
 
 void Scumm_v5::o5_cursorCommand() {

@@ -521,13 +521,13 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
 	ScriptSlot *ss = &_s->vm.slot[1];
-	Debug_Printf("+-----------------------------+\n");
-	Debug_Printf("|# |num|sta|typ|un1|un2|fc|cut|\n");
-	Debug_Printf("+--+---+---+---+---+--+---+---+\n");
+	Debug_Printf("+----------------------------+\n");
+	Debug_Printf("|# |num|sta|typ|fr|rec|fc|cut|\n");
+	Debug_Printf("+--+---+---+---+--+--+---+---+\n");
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->number) {
-			Debug_Printf("|%2d|%3d|%3d|%3d|%3d|%3d|%2d|%3d|\n",
-					i, ss->number, ss->status, ss->where, ss->unk1, ss->unk2,
+			Debug_Printf("|%2d|%3d|%3d|%3d|%2d|%3d|%2d|%3d|\n",
+					i, ss->number, ss->status, ss->where, ss->freezeResistant, ss->recursive,
 					ss->freezeCount, ss->cutsceneOverride);
 		}
 	}

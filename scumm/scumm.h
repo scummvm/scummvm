@@ -91,10 +91,11 @@ struct ScriptSlot {
 	int32 delay;
 	uint16 number;
 	uint16 delayFrameCount;
+	bool freezeResistant, recursive;
+	bool didexec;
 	byte status;
 	byte where;
-	byte unk1, unk2, freezeCount;
-	bool didexec;
+	byte freezeCount;
 	byte cutsceneOverride;
 };
 
@@ -495,7 +496,7 @@ protected:
 	void startManiac();
 
 public:
-	void runScript(int script, int a, int b, int *lvarptr);
+	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
 	void stopScriptNr(int script);
 
 protected:
@@ -698,7 +699,7 @@ protected:
 	int getVerbEntrypoint(int obj, int entry);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
-	void runVerbCode(int script, int entry, int a, int b, int *vars);
+	void runVerbCode(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
 public:
