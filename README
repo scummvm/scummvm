@@ -246,8 +246,9 @@ Command Line Options:
         -p<path>   - Path to where the game is installed. Default is Cwd.
         -b<num>    - Start in room <num>.
         -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
-        -s<num>    - Set the sfx volume, 0-255.    Default is '100'
-        -m<num>    - Set the music volume, 0-100.  Default is '60'
+        -o<num>    - Set the master volume, 0-255. Default is '192'
+        -s<num>    - Set the sfx volume, 0-255.    Default is '192'
+        -m<num>    - Set the music volume, 0-255.  Default is '192'
         -t<num>    - Set music tempo. Adlib default: 0x1F0000, Midi: 0x460000
         -e<mode>   - Select sound engine. See below.
         -g<mode>   - Select graphics scaler. See below.

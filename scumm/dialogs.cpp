@@ -506,9 +506,9 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	musicVolumeSlider  = new SliderWidget(this, 115, 24, 80, 12, "Volume2", kMusicVolumeChanged);
 	sfxVolumeSlider    = new SliderWidget(this, 115, 40, 80, 12, "Volume3", kSfxVolumeChanged);
 
-	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(256);
-	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(256);
-	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(256);
+	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
+	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
+	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
 
 	masterVolumeLabel = new StaticTextWidget(this, 200, 10, 60, 16, "Volume1", kTextAlignLeft);
 	musicVolumeLabel  = new StaticTextWidget(this, 200, 26, 60, 16, "Volume2", kTextAlignLeft);
