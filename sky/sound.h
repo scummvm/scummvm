@@ -58,7 +58,7 @@ protected:
 	int playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
-	SkySound(SoundMixer *mixer, SkyDisk *pDisk);
+	SkySound(SoundMixer *mixer, SkyDisk *pDisk, uint8 pVolume);
 	~SkySound(void);
 	int playVoice(byte *sound, uint32 size);
 	int playBgSound(byte *sound, uint32 size);
@@ -81,6 +81,7 @@ private:
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
+	uint8 _mainSfxVolume;
 
 	static uint16 _speechConvertTable[8];
 	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
