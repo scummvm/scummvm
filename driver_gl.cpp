@@ -100,8 +100,8 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 	for (int i = 0; i < face->_numVertices; i++) {
 		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
 
-//		if (face->_texVertices != NULL)
-//			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+		if (face->_texVertices != NULL)
+			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
 
 		glVertex3fv(vertices + 3 * face->_vertices[i]);
 	}
