@@ -434,7 +434,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   unsigned short *dst = (unsigned short *)mouse_tx[_mouse_buffer];
   int y=0;
 
-  if(visible && w<=MOUSE_W && h<=MOUSE_H)
+  if(visible && w && h && w<=MOUSE_W && h<=MOUSE_H)
     for(int y=0; y<h; y++) {
       int x;
       for(x=0; x<w; x++)
@@ -445,8 +445,10 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 	  *dst++ = palette[*buf++]|0x8000;
       dst += MOUSE_W-x;
     }
-  else
-    w = h = 0;
+  else {
+    commit_dummy_transpoly();
+    return;
+  }
   
   mypoly.cmd =
     TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
