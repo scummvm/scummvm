@@ -25,6 +25,8 @@
 #include "common/str.h"
 #include "common/list.h"
 
+namespace GUI {
+
 class TabWidget : public Widget {
 	typedef Common::String String;
 	struct Tab {
@@ -65,5 +67,7 @@ protected:
 
 	virtual Widget *findWidget(int x, int y);
 };
+
+} // End of namespace GUI
 
 #endif

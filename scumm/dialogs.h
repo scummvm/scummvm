@@ -30,7 +30,11 @@
 #include "scumm/help.h"
 #endif
 
-class ListWidget;
+namespace GUI {
+	class ListWidget;
+}
+using namespace GUI;	// FIXME: Bad style to use a using directive in a header
+
 
 namespace Scumm {
 
@@ -45,8 +49,6 @@ protected:
 	typedef Common::String String;
 
 	ScummEngine *_scumm;
-
-	void addResText(int x, int y, int w, int h, int resID);
 
 	// Query a string from the resources
 	const String queryResString(int stringno);

@@ -20,9 +20,11 @@
 
 #include "stdafx.h"
 #include "ScrollBarWidget.h"
-#include "dialog.h"
-#include "newgui.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
 
+
+namespace GUI {
 
 /*
  * TODO:
@@ -245,3 +247,5 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 		gui->hLine(_x + 2, y + 2, _x + _w-3, color);
 	}
 }
+
+} // End of namespace GUI

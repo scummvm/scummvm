@@ -24,6 +24,8 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
+namespace GUI {
+
 enum {
 	kTabHeight = 15,
 
@@ -148,3 +150,5 @@ Widget *TabWidget::findWidget(int x, int y) {
 		return Widget::findWidgetInChain(_firstWidget, x, y - kTabHeight);
 	}
 }
+
+} // End of namespace GUI

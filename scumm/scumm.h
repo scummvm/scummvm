@@ -32,7 +32,10 @@
 #include "scumm/gfx.h"
 #include "scumm/script.h"
 
-class Dialog;
+namespace GUI {
+	class Dialog;
+}
+using GUI::Dialog;
 class GameDetector;
 
 namespace Scumm {

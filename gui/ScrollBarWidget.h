@@ -21,7 +21,9 @@
 #ifndef SCROLLBARWIDGET_H
 #define SCROLLBARWIDGET_H
 
-#include "widget.h"
+#include "gui/widget.h"
+
+namespace GUI {
 
 enum {
 	kScrollBarWidth		= 9
@@ -77,5 +79,6 @@ protected:
 	void checkBounds(int old_pos);
 };
 
+} // End of namespace GUI
 
 #endif

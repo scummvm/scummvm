@@ -19,9 +19,12 @@
  */
 
 #include "stdafx.h"
-#include "EditTextWidget.h"
-#include "dialog.h"
-#include "newgui.h"
+#include "gui/EditTextWidget.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
+
+
+namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
 	: StaticTextWidget(boss, x, y - 1, w, h + 2, text, kTextAlignLeft), _backupString(text) {
@@ -214,3 +217,5 @@ bool EditTextWidget::adjustOffset() {
 
 	return false;
 }
+
+} // End of namespace GUI

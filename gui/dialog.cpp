@@ -25,6 +25,8 @@
 #include "dialog.h"
 #include "widget.h"
 
+namespace GUI {
+
 /*
  * TODO list
  * - add some sense of the window being "active" (i.e. in front) or not. If it 
@@ -269,3 +271,5 @@ Widget *Dialog::findWidget(int x, int y) {
 ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
 	return new ButtonWidget(this, x, y, kButtonWidth, 16, label, cmd, hotkey);
 }
+
+} // End of namespace GUI

@@ -25,11 +25,13 @@
 #include "common/str.h"
 #include "common/list.h"
 
-class ListWidget;
-class StaticTextWidget;
-
 class FilesystemNode;
 class FSList;
+
+namespace GUI {
+
+class ListWidget;
+class StaticTextWidget;
 
 class BrowserDialog : public Dialog {
 	typedef Common::String String;
@@ -53,5 +55,7 @@ protected:
 
 	void updateListing();
 };
+
+} // End of namespace GUI
 
 #endif

@@ -23,9 +23,13 @@
 
 #include "dialog.h"
 
+namespace GUI {
+
 class AboutDialog : public Dialog {
 public:
 	AboutDialog();
 };
+
+} // End of namespace GUI
 
 #endif

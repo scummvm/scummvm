@@ -136,12 +136,6 @@ static ResString string_map_table_v5[] = {
 #pragma mark -
 
 
-void ScummDialog::addResText(int x, int y, int w, int h, int resID) {
-	// Get the string
-	new StaticTextWidget(this, x, y, w, h, queryResString(resID), kTextAlignCenter);
-}
-
-
 const Common::String ScummDialog::queryResString(int stringno) {
 	byte *result;
 

@@ -25,9 +25,12 @@
 #include "common/str.h"
 #include "common/list.h"
 
+class GameDetector;
+
+namespace GUI {
+
 class BrowserDialog;
 class CheckboxWidget;
-class GameDetector;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
@@ -104,5 +107,7 @@ protected:
 	BrowserDialog *_browser;
 	StaticTextWidget *_savePath;
 };
+
+} // End of namespace GUI
 
 #endif

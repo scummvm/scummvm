@@ -25,6 +25,8 @@
 #include "gui/newgui.h"
 #include "gui/widget.h"
 
+namespace GUI {
+
 enum {
 	kOkCmd = 'OK  ',
 	kCancelCmd = 'CNCL'
@@ -162,3 +164,5 @@ void TimedMessageDialog::handleTickle() {
 	if (g_system->get_msecs() > _timer)
 		close();
 }
+
+} // End of namespace GUI

@@ -21,9 +21,11 @@
 #ifndef EDITTEXTWIDGET_H
 #define EDITTEXTWIDGET_H
 
-#include "widget.h"
+#include "gui/widget.h"
 #include "common/str.h"
 #include "common/list.h"
+
+namespace GUI {
 
 /* EditTextWidget */
 class EditTextWidget : public StaticTextWidget {
@@ -52,5 +54,7 @@ protected:
 	int getCaretPos();
 	bool adjustOffset();
 };
+
+} // End of namespace GUI
 
 #endif

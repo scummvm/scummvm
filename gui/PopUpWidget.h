@@ -21,9 +21,11 @@
 #ifndef POPUPWIDGET_H
 #define POPUPWIDGET_H
 
-#include "widget.h"
+#include "gui/widget.h"
 #include "common/str.h"
 #include "common/list.h"
+
+namespace GUI {
 
 enum {
 	kPopUpItemSelectedCmd	= 'POPs'
@@ -68,5 +70,7 @@ public:
 protected:
 	void drawWidget(bool hilite);
 };
+
+} // End of namespace GUI
 
 #endif

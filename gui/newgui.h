@@ -26,6 +26,8 @@
 #include "common/str.h"
 #include "common/system.h"	// For events
 
+namespace GUI {
+
 class Dialog;
 
 #define hLine(x, y, x2, color) line(x, y, x2, y, color);
@@ -146,5 +148,7 @@ public:
 
 	void addDirtyRect(int x, int y, int w, int h);
 };
+
+} // End of namespace GUI
 
 #endif

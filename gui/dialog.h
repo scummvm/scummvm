@@ -26,6 +26,8 @@
 
 #include "gui/object.h"
 
+namespace GUI {
+
 class NewGui;
 class ButtonWidget;
 
@@ -80,5 +82,7 @@ protected:
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
 };
+
+} // End of namespace GUI
 
 #endif

@@ -26,6 +26,8 @@
 
 #include <stdarg.h>
 
+namespace GUI {
+
 enum {
 	kBufferSize	= 32768,
 	kLineBufferSize = 256,
@@ -122,5 +124,7 @@ protected:
 	void addToHistory(const char *str);
 	void historyScroll(int direction);
 };
+
+} // End of namespace GUI
 
 #endif

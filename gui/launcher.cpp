@@ -46,6 +46,8 @@
 
 using Common::ConfigManager;
 
+namespace GUI {
+
 enum {
 	kStartCmd = 'STRT',
 	kAboutCmd = 'ABOU',
@@ -511,7 +513,7 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int item =  _list->getSelected();
+	int item = _list->getSelected();
 
 	switch (cmd) {
 	case kAddGameCmd:
@@ -569,3 +571,5 @@ void LauncherDialog::updateButtons() {
 		_removeButton->draw();
 	}
 }
+
+} // End of namespace GUI

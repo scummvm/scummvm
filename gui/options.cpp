@@ -36,6 +36,8 @@
 #include <unistd.h>
 #endif
 
+namespace GUI {
+
 // TODO - allow changing options for:
 // - the save path (use _browser!)
 // - music & graphics driver (but see also the comments on EditGameDialog
@@ -411,3 +413,5 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
+
+} // End of namespace GUI

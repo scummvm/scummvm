@@ -25,8 +25,11 @@
 #include "common/str.h"
 #include "common/list.h"
 
-class BrowserDialog;
 class GameDetector;
+
+namespace GUI {
+
+class BrowserDialog;
 class ListWidget;
 
 class LauncherDialog : public Dialog {
@@ -54,5 +57,7 @@ protected:
 	void removeGame(int item);
 	void editGame(int item);
 };
+
+} // End of namespace GUI
 
 #endif

@@ -19,9 +19,11 @@
  */
 
 #include "stdafx.h"
-#include "chooser.h"
-#include "newgui.h"
-#include "ListWidget.h"
+#include "gui/chooser.h"
+#include "gui/newgui.h"
+#include "gui/ListWidget.h"
+
+namespace GUI {
 
 enum {
 	kChooseCmd = 'Chos'
@@ -61,3 +63,5 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
+
+} // End of namespace GUI

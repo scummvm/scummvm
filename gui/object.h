@@ -21,6 +21,8 @@
 #ifndef GUI_OBJECT_H
 #define GUI_OBJECT_H
 
+namespace GUI {
+
 class CommandReceiver;
 class CommandSender;
 
@@ -75,5 +77,6 @@ protected:
 	virtual void	releaseFocus() = 0;
 };
 
+} // End of namespace GUI
 
 #endif

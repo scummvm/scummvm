@@ -19,11 +19,13 @@
  */
 
 #include "stdafx.h"
-#include "ListWidget.h"
-#include "ScrollBarWidget.h"
-#include "dialog.h"
-#include "newgui.h"
+#include "gui/ListWidget.h"
+#include "gui/ScrollBarWidget.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
 
+
+namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss) {
@@ -349,3 +351,5 @@ void ListWidget::abortEditMode() {
 		draw();
 	}
 }
+
+} // End of namespace GUI

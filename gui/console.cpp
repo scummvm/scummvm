@@ -20,10 +20,12 @@
 
 #include "stdafx.h"
 #include "gui/console.h"
-#include "ScrollBarWidget.h"
+#include "gui/ScrollBarWidget.h"
 
 #include "base/engine.h"
 
+
+namespace GUI {
 
 #define PROMPT	") "
 
@@ -528,3 +530,5 @@ void ConsoleDialog::scrollToCurrent() {
 		updateScrollBar();
 	}
 }
+
+} // End of namespace GUI

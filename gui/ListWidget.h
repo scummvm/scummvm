@@ -21,9 +21,11 @@
 #ifndef LISTWIDGET_H
 #define LISTWIDGET_H
 
-#include "widget.h"
+#include "gui/widget.h"
 #include "common/str.h"
 #include "common/list.h"
+
+namespace GUI {
 
 class ScrollBarWidget;
 
@@ -91,5 +93,7 @@ protected:
 	void lostFocusWidget();
 	void scrollToCurrent();
 };
+
+} // End of namespace GUI
 
 #endif

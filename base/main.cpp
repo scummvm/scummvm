@@ -183,7 +183,7 @@ static void launcherDialog(GameDetector &detector, OSystem *system) {
 
 	system->set_palette(dummy_palette, 0, 16);
 
-	LauncherDialog dlg(detector);
+	GUI::LauncherDialog dlg(detector);
 	dlg.runModal();
 }
 

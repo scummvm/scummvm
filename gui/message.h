@@ -28,6 +28,8 @@ namespace Common {
 	class StringList;
 }
 
+namespace GUI {
+
 /**
  * Simple message dialog ("alert box"): presents a text message in a dialog with up to two buttons.
  */
@@ -56,5 +58,6 @@ protected:
 	uint32 _timer;
 };
 
+} // End of namespace GUI
 
 #endif

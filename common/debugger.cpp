@@ -41,7 +41,7 @@ Debugger<T>::Debugger() {
 	_isAttached = false;
 	_errStr = NULL;
 	_firstTime = true;
-	_debuggerDialog = new ConsoleDialog(1.0, 0.67F);
+	_debuggerDialog = new GUI::ConsoleDialog(1.0, 0.67F);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
 }
@@ -339,7 +339,7 @@ void Debugger<T>::DCmd_Register(const char *cmdname, DebugProc pointer) {
 // Console handler
 #if USE_CONSOLE
 template <class T>
-bool Debugger<T>::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
+bool Debugger<T>::debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 
 	return debugger->RunCommand(input);
@@ -347,7 +347,7 @@ bool Debugger<T>::debuggerInputCallback(ConsoleDialog *console, const char *inpu
 
 
 template <class T>
-bool Debugger<T>::debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
+bool Debugger<T>::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 
 	return debugger->TabComplete(input, completion);

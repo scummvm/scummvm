@@ -25,6 +25,8 @@
 #include "common/str.h"
 #include "gui/object.h"
 
+namespace GUI {
+
 class Dialog;
 
 enum {
@@ -206,5 +208,6 @@ protected:
 	int posToValue(int pos);
 };
 
+} // End of namespace GUI
 
 #endif

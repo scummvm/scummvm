@@ -25,6 +25,8 @@
 
 #include "backends/fs/fs.h"
 
+namespace GUI {
+
 /* We want to use this as a general directory selector at some point... possible uses
  * - to select the data dir for a game
  * - to select the place where save games are stored
@@ -155,3 +157,4 @@ void BrowserDialog::updateListing() {
 	draw();
 }
 
+} // End of namespace GUI

@@ -21,7 +21,9 @@
 #ifndef COMMON_DEBUGGER_H
 #define COMMON_DEBUGGER_H
 
-class ConsoleDialog;
+namespace GUI {
+	class ConsoleDialog;
+};
 
 namespace Common {
 
@@ -71,7 +73,7 @@ private:
 	bool _isAttached;
 	char *_errStr;
 	bool _firstTime;
-	ConsoleDialog *_debuggerDialog;
+	GUI::ConsoleDialog *_debuggerDialog;
 
 protected:
 	void detach();
@@ -87,8 +89,8 @@ protected:
 	void DCmd_Register(const char *cmdname, DebugProc pointer);
 
 #if USE_CONSOLE
-	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
-	static bool debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon);
+	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
+	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon);
 #endif
 };
 

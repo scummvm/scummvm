@@ -25,6 +25,8 @@
 #include "gui/newgui.h"
 
 
+namespace GUI {
+
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
 	  _id(0), _flags(0), _hasFocus(false) {
@@ -260,3 +262,5 @@ int SliderWidget::valueToPos(int value) {
 int SliderWidget::posToValue(int pos) {
 	return (pos) * (_valueMax - _valueMin) / (_w - _labelWidth - 4) + _valueMin;
 }
+
+} // End of namespace GUI

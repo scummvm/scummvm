@@ -27,6 +27,8 @@
 #	include "palm.h"
 #endif
 
+namespace GUI {
+
 /*
  * TODO list
  * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)
@@ -573,6 +575,8 @@ void NewGui::animateCursor() {
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
 	}
 }
+
+} // End of namespace GUI
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"

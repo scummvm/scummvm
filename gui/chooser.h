@@ -25,6 +25,8 @@
 #include "common/list.h"
 #include "gui/dialog.h"
 
+namespace GUI {
+
 class ButtonWidget;
 class ListWidget;
 
@@ -44,5 +46,7 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };
+
+} // End of namespace GUI
 
 #endif

@@ -19,10 +19,12 @@
  */
 
 #include "stdafx.h"
-#include "PopUpWidget.h"
-#include "dialog.h"
-#include "newgui.h"
+#include "gui/PopUpWidget.h"
+#include "gui/dialog.h"
+#include "gui/newgui.h"
 #include "base/engine.h"
+
+namespace GUI {
 
 #define UP_DOWN_BOX_HEIGHT	10
 
@@ -337,3 +339,5 @@ void PopUpWidget::drawWidget(bool hilite) {
 		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }
+
+} // End of namespace GUI

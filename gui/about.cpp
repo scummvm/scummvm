@@ -24,6 +24,8 @@
 #include "gui/newgui.h"
 #include "gui/widget.h"
 
+namespace GUI {
+
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 144) {
 	addButton((_w - kButtonWidth) / 2, 120, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
@@ -48,3 +50,4 @@ AboutDialog::AboutDialog()
 	new StaticTextWidget(this, 10, 105, _w - 20, kLineHeight, "Broken Sword Games (C) Revolution", kTextAlignCenter);
 }
 
+} // End of namespace GUI
