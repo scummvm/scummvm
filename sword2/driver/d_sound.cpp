@@ -331,7 +331,7 @@ MusicInputStream::~MusicInputStream() {
 inline bool MusicInputStream::eosIntern() const {
 	if (_looping)
 		return false;
-	return _pos >= _bufferEnd;
+	return _remove || _pos >= _bufferEnd;
 }
 
 int MusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -409,12 +409,15 @@ void MusicInputStream::refill() {
 	if (_fading > 0) {
 		// Fade down
 		for (ptr = _buffer; ptr < buf; ptr++) {
-			if (--_fading <= 0) {
+			if (_fading > 0) {
+				_fading--;
+				*ptr = (*ptr * _fading) / _fadeSamples;
+			}
+			if (_fading == 0) {
 				_looping = false;
 				_remove = true;
-				break;
+				*ptr = 0;
 			}
-			*ptr = (*ptr * _fading) / _fadeSamples;
 		}
 	} else if (_fading < 0) {
 		// Fade up
