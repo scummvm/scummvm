@@ -1161,7 +1161,7 @@ void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
 
 	vm.cutSceneData[0] = _userState;
-	vm.cutSceneData[1] = VAR(VAR_CURSORSTATE);
+	vm.cutSceneData[1] = (int16) VAR(VAR_CURSORSTATE);
 	vm.cutSceneData[2] = _currentRoom;
 	vm.cutSceneData[3] = camera._mode;
 	
@@ -1190,7 +1190,7 @@ void Scumm_v2::o2_endCutscene() {
 	// TODO: some cursor command stuff (probably to reset it to the pre-cutscene state)
 	
 	if (_gameId == GID_MANIAC) {
-		camera._mode = vm.cutSceneData[3];
+		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == CM_FOLLOW_ACTOR) {
 			actorFollowCamera(VAR(VAR_EGO));
 		} else if (vm.cutSceneData[2] != _currentRoom) {
