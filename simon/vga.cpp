@@ -1009,6 +1009,7 @@ void SimonEngine::vc_11_clear_pathfind_array() {
 }
 
 void SimonEngine::vc_12_delay() {
+	VgaSprite *vsp = find_cur_sprite();
 	uint num;
 
 	if (!(_game & GF_SIMON2)) {
@@ -1017,10 +1018,14 @@ void SimonEngine::vc_12_delay() {
 		num = vc_read_next_byte() * _vga_base_delay;
 	}
 
-	if (_continous_vgascript)
-		fprintf(_dump_file, "; sleep_ex = %d\n", num + VGA_DELAY_BASE);
+	// Work around to allow inventory arrows to be
+	// shown in some versions of Simon the Sorcerer 1
+	if (!(_game & GF_SIMON2) && !(_game & GF_WIN) && vsp->id == 0x80)
+		num = 0;
+	else
+		num += VGA_DELAY_BASE;
 
-	add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
+	add_vga_timer(num, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
 
@@ -1202,13 +1207,6 @@ void SimonEngine::vc_24_set_sprite_xy() {
 
 void SimonEngine::vc_25_halt_sprite() {
 	VgaSprite *vsp = find_cur_sprite();
-	// Work around to allow inventory arrows to be
-	// showned in some versions of Simon the Sorcerer 1
-	if (vsp->id == 0x80 && _keep_arrows) {
-		_keep_arrows = 0;
-		return;
-	}
-
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
 		vsp++;
@@ -1596,9 +1594,6 @@ void SimonEngine::vc_55_offset_hit_area() {
 void SimonEngine::vc_56_delay() {
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
-
-		if (_continous_vgascript)
-			fprintf(_dump_file, "; sleep_ex = %d\n", num + VGA_DELAY_BASE);
 
 		add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;

@@ -362,7 +362,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vga_var5 = 0;
 	_vga_var7 = 0;
 	_vga_var8 = 0;
-	_keep_arrows = 0;
 
 	_script_cond_a = 0;
 	_script_cond_b = 0;
@@ -1765,8 +1764,6 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->unk3 = 1;
 
 		// Simon1 specific
-		if (!(_game & GF_WIN))
-			_keep_arrows = 1;
 		o_kill_sprite_simon1(0x80);
 		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
 	} else {
@@ -3001,9 +2998,6 @@ void SimonEngine::timer_vga_sprites() {
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
 
-	if (_continous_vgascript)
-		fprintf(_dump_file, "***\n");
-
 	if (_game & GF_SIMON2 && _vga_var3) {
 		timer_vga_sprites_helper();
 	}
@@ -3108,8 +3102,6 @@ void SimonEngine::timer_vga_sprites_2() {
 
 		vsp++;
 	}
-
-	fprintf(_dump_file, "***\n");
 
 	_video_var_8++;
 	_vc_ptr = vc_ptr_org;
@@ -3385,8 +3377,7 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 
 // ok
 void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
-	if (_game & GF_WIN)
-		o_kill_sprite_simon1(0x80);
+	o_kill_sprite_simon1(0x80);
 }
 
 void SimonEngine::delete_hitarea_by_index(uint index) {

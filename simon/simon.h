@@ -266,7 +266,6 @@ protected:
 	bool _exit_cutscene;
 	bool _skip_speech;
 	byte _video_var_9;
-	bool _keep_arrows;
 
 	uint _sound_file_id;
 	int16 _last_music_played;
