@@ -2264,3 +2264,4 @@ bool isSfxFinished();
 void waitForTimer(Scumm *s, int msec_delay);
 void setShakePos(Scumm *s, int shake_pos);
 uint16 newTag2Old(uint32 oldTag);
+void cd_playtrack(int track, int offset, int delay);

@@ -2433,10 +2433,14 @@ void Scumm::decodeParseString() {
 		case 7: /* overhead */
 			string[textSlot].overhead = true;
 			break;
-		case 8: /* ignore */
-			getVarOrDirectWord(0x80);
-			getVarOrDirectWord(0x40);
+                case 8: { /* play loom talkie sound - use in other games ? */
+                        int offset = getVarOrDirectWord(0x80);
+                        int delay = getVarOrDirectWord(0x40);
+
+                        if (_gameId == GID_LOOM256) 
+                                cd_playtrack(1, offset, delay);
 			break;
+                        }
 		case 15:
 			_messagePtr = _scriptPointer;
 			switch(textSlot) {

@@ -461,6 +461,10 @@ void fill_buffer(int16 *buf, int len) {
 	scumm.mixWaves(buf, len);
 }
 
+void cd_playtrack(int track, int offset, int delay) { // FIXME: Add for Win32
+;
+}
+
 void WndMan::prepare_header(WAVEHDR *wh, int i) {
 	memset(wh, 0, sizeof(WAVEHDR));
 	wh->lpData = (char*)malloc(BUFFER_SIZE);

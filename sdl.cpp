@@ -37,6 +37,7 @@ SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 static SDL_Surface *screen;
+static SDL_CD      *cdrom;
 
 static int current_shake_pos;
 
@@ -462,6 +463,11 @@ void fill_sound(void *userdata, Uint8 *stream, int len) {
 	scumm.mixWaves((int16*)stream, len>>1);
 }
 
+void cd_playtrack(int track, int offset, int delay) {
+        SDL_CDStatus(cdrom);
+        SDL_CDPlayTracks(cdrom, track, (offset * 7.5) - 22650, 0, delay * 7.5);
+}
+
 int music_thread(Scumm *s) {
 	int old_time, cur_time;
 
@@ -488,6 +494,11 @@ void initGraphics(Scumm *s, bool fullScreen) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	    exit(1);
 	}
+
+    if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
+        cdrom = NULL;
+    else
+        cdrom = SDL_CDOpen(0);
 
 	/* Clean up on exit */
  	atexit(SDL_Quit);
