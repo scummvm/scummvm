@@ -40,6 +40,7 @@ Sound::Sound(Scumm *parent) {
 	_nameBundleMusic = NULL;
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
+	_talkChannel = -1;
 }
 
 Sound::~Sound() {
