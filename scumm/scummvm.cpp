@@ -2145,7 +2145,7 @@ void Scumm::destroy() {
 	free(_exe_name);
 	free(_game_name);
 
-	if (_version <= 2)
+	if (_roomStrips)
 		free(_roomStrips);
 }
 
