@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "scumm___Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /G6 /MT /W3 /GX- /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /YX /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /YX /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -335,11 +335,6 @@ SOURCE=.\scumm\imuse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\insane.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\object.cpp
 # End Source File
 # Begin Source File
@@ -393,10 +388,6 @@ SOURCE=.\scumm\scumm.h
 # Begin Source File
 
 SOURCE=.\scumm\scummvm.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush.h
 # End Source File
 # Begin Source File
 

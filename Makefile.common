@@ -21,8 +21,7 @@ SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 	scumm/object.o scumm/resource.o scumm/resource_v2.o scumm/resource_v3.o \
 	scumm/resource_v4.o scumm/saveload.o scumm/script.o \
 	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o  scumm/sound.o \
-	scumm/string.o scumm/vars.o scumm/verbs.o scumm/dialogs.o \
-#	scumm/insane.o
+	scumm/string.o scumm/vars.o scumm/verbs.o scumm/dialogs.o
 
 SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
 	simon/verb.o simon/vga.o
