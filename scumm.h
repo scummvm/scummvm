@@ -1291,6 +1291,7 @@ public:
 	bool fileEof(void *handle);
 	uint32 filePos(void *handle);
 	bool checkFixedDisk();
+	int _cdrom;
 
 	int fileReadByte();
 	uint32 fileReadDwordLE();

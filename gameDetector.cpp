@@ -31,6 +31,7 @@
                                                 "\tscummvm [-v] [-d] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n" \
                                                 "Flags:\n" \
                                                 "\tv       - show version info and exit\n" \
+												"\tc<num>  - use cdrom <num> for cd audio\n" \
                                                 "\td       - enable debug output\n" \
                                                 "\tn       - no subtitles for speech\n" \
                                                 "\tb<num>  - start in room <num>\n" \
@@ -130,10 +131,16 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
                                         _midi_driver = atoi(s+1);
                                         goto NextArg;
                                 case 'g':
-                        if (*(s+1) == '\0')
-                                goto ShowHelpAndExit;
-                                        _videoMode = atoi(s+1);
-                                        goto NextArg;
+									if (*(s+1) == '\0')
+											goto ShowHelpAndExit;
+                                    _videoMode = atoi(s+1);
+                                    goto NextArg;
+
+                                case 'c':
+									if (*(s+1) == '\0')
+											goto ShowHelpAndExit;
+                                    _cdrom = atoi(s+1);
+                                    goto NextArg;
 
                                 default:
 ShowHelpAndExit:;

@@ -792,9 +792,13 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
     if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
         cdrom = NULL;
-    else
-        cdrom = SDL_CDOpen(0);
-
+    else {
+        cdrom = SDL_CDOpen(s->_cdrom);
+		/* Did if open? Check if cdrom is NULL */
+		if(!cdrom){
+			warning("Couldn't open drive: %s\n", SDL_GetError());
+		}
+	}
 	/* Clean up on exit */
  	atexit(SDL_Quit);
 	atexit(cd_shutdown);
@@ -963,6 +967,8 @@ int main(int argc, char* argv[]) {
 	scumm->_features = detector._features;
 	scumm->_soundCardType = detector._soundCardType;
 	scumm->_noSubtitles = detector._noSubtitles;
+	scumm->_midi_driver = detector._midi_driver;
+	scumm->_cdrom = detector._cdrom;
 
 	scumm->delta=6;
 	if (detector._restore) {
