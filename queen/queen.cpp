@@ -70,16 +70,20 @@ GameList Engine_QUEEN_gameList() {
 	return games;
 }
 
-bool isDemo(uint32 size) {
+uint8 whichTarget(uint32 size) {
+	uint8 target = 0;	
 	switch(size) {
-		case 1915913:	//interview
-		case 3724538:
+		case 3724538:	//regular demo
 		case 3732177:
-			return true;
-		default:
-			return false;
+			target = 1;
+			break;
+		case 1915913:   //interview demo
+			target = 2;
+			break;
+		default:	//non-demo
+			break;
 	}
-	return false;
+	return target;
 }
 
 DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
@@ -91,19 +95,12 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 			const char *gameName = file->displayName().c_str();
 
 			if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
-				// Match found, add to list of candidates, then abort loop.
-			
 				File dataFile;
 				dataFile.open(file->path().c_str());
 				assert(dataFile.isOpen());
 				
 				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file
-					if (isDemo(dataFile.size())) { //is it a demo?
-						uint8 whichDemo = dataFile.size() == 1915913 ? 2 : 1;
-						detectedGames.push_back(queen_setting[whichDemo]);
-					} else { //must be a full game then
-						detectedGames.push_back(queen_setting[0]);
-					}
+					detectedGames.push_back(queen_setting[whichTarget(dataFile.size())]);
 				} else if (0 == scumm_stricmp("queen.1c", gameName)) { //oh joy, it's a rebuilt file
 					char header[9];
 					dataFile.read(header, 9);
@@ -120,7 +117,6 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 				}
 
 				dataFile.close();
-				
 				break;
 			}
 		}
