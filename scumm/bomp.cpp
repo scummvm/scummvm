@@ -195,7 +195,6 @@ void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 siz
 void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	const byte *src;
 	byte *dst;
-	byte maskbit;
 	byte *mask = 0;
 	byte *charset_mask;
 	Common::Rect clip;
@@ -230,7 +229,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	src = bd.dataptr;
 	dst = bd.out + bd.y * bd.outwidth + bd.x + clip.left;
 
-	maskbit = revBitMask[(bd.x + clip.left) & 7];
+	const byte maskbit = revBitMask[(bd.x + clip.left) & 7];
 
 	// Always mask against the charset mask
 	charset_mask = getMaskBuffer(bd.x + clip.left, bd.y, 0);
