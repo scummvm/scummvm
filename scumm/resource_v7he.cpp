@@ -1464,17 +1464,25 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	Common::MemoryReadStream dis(data, datasize);
 	int i, b;
 	byte imageByte;
+	byte *iconData;
+	int numBytes;
+	int pixelsPerByte, bpp;
+	int ctSize;
+	byte *palette;
+	byte bitmask;
+	int iconRowBytes, iconBounds[4];
 	int ignored;
+	int iconDataSize;
 
-	ignored = dis.readUint16BE(); // type
-	ignored = dis.readUint32BE(); // offset to pixle map
-	ignored = dis.readUint32BE(); // offset to pixel data
-	ignored = dis.readUint32BE(); // expanded cursor data
-	ignored = dis.readUint16BE(); // expanded data depth
-	ignored = dis.readUint32BE(); // reserved
+	dis.readUint16BE(); // type
+	dis.readUint32BE(); // offset to pixel map
+	dis.readUint32BE(); // offset to pixel data
+	dis.readUint32BE(); // expanded cursor data
+	dis.readUint16BE(); // expanded data depth
+	dis.readUint32BE(); // reserved
 	  
-	// Grab icon data
-	*cursor = (byte *)malloc(256);
+	// Grab B/W icon data
+	*cursor = (byte *)malloc(16 * 16);
 	for (i = 0; i < 32; i++) {
 		imageByte = dis.readByte();
 		for (b = 0; b < 8; b++)
@@ -1482,7 +1490,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 									  (0x80 >> b)) > 0? 0x0F: 0x00);
 	}
 
-	// Grab mask data
+	// Apply mask data
 	for (i = 0; i < 32; i++) {
 		imageByte = dis.readByte();
 		for (b = 0; b < 8; b++)
@@ -1490,10 +1498,112 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 				cursor[0][i*8+b] = 0xff;
 	}
 
-	// Could use DataInputStream - but just 2 bytes
 	*hotspot_y = dis.readUint16BE();
 	*hotspot_x = dis.readUint16BE();
 	*w = *h = 16;
+
+	// FIXME
+	// Color cursors use their own palette. 
+	// So we can't use it for now and use B/W version
+	return;
+
+	dis.readUint32BE(); // reserved
+	dis.readUint32BE(); // cursorID
+	      
+	// Color version of cursor
+	dis.readUint32BE(); // baseAddr
+	
+	// Keep only lowbyte for now
+	dis.readByte();
+	iconRowBytes = dis.readByte();
+
+	if (!iconRowBytes)
+		return;
+
+	iconBounds[0] = dis.readUint16BE();
+	iconBounds[1] = dis.readUint16BE();
+	iconBounds[2] = dis.readUint16BE();
+	iconBounds[3] = dis.readUint16BE();
+
+	dis.readUint16BE(); // pmVersion
+	dis.readUint16BE(); // packType
+	dis.readUint32BE(); // packSize
+
+	dis.readUint32BE(); // hRes
+	dis.readUint32BE(); // vRes
+
+	dis.readUint16BE(); // pixelType
+	dis.readUint16BE(); // pixelSize
+	dis.readUint16BE(); // cmpCount
+	dis.readUint16BE(); // cmpSize
+
+	dis.readUint32BE(); // planeByte
+	dis.readUint32BE(); // pmTable
+	dis.readUint32BE(); // reserved
+
+	// Pixel data for cursor
+	iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
+	iconData = (byte *)malloc(iconDataSize);
+	dis.read(iconData, iconDataSize);
+
+	// Color table
+	dis.readUint32BE(); // ctSeed
+	dis.readUint16BE(); // ctFlag
+	ctSize = dis.readUint16BE() + 1;
+
+	palette = (byte *)malloc(ctSize * 4);
+
+	// Read just high byte of 16-bit color
+	for(int c = 0; c < ctSize; c++) {
+		// We just use indices 0..ctSize, so ignore color ID
+		dis.readUint16BE(); // colorID[c]
+
+		palette[c * 4 + 0] = dis.readByte();
+		ignored = dis.readByte();
+
+		palette[c * 4 + 1] = dis.readByte();
+		ignored = dis.readByte();
+
+		palette[c * 4 + 2] = dis.readByte();
+		ignored = dis.readByte();
+
+		palette[c * 4 + 3] = 0;
+	}
+
+	// TODO: Here we should set separate cursor palette.
+	// It requires cursor to be rendered on a different surface at
+	// least in SDL backend.
+	// HACK: now set global palett just to see if colors are correct.
+	// this affects subtitles colors
+	_vm->_system->setPalette(palette, 0, ctSize);
+
+	numBytes =
+         (iconBounds[2] - iconBounds[0]) *
+         (iconBounds[3] - iconBounds[1]);
+
+	pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
+	bpp           = 8 / pixelsPerByte;
+
+	// build a mask to make sure the pixels are properly shifted out
+	bitmask = 0;
+	for(int m = 0; m < bpp; m++) {
+		bitmask <<= 1;
+		bitmask  |= 1;
+	}
+
+	// Extract pixels from bytes
+	for (int j = 0; j < iconDataSize; j++)
+		for (b = 0; b < pixelsPerByte; b++) {
+			int idx = j * pixelsPerByte + (pixelsPerByte - 1 - b);
+
+			if (cursor[0][idx] != 0xff) // if mask is not there
+				cursor[0][idx] = (byte)((iconData[j] >> (b * bpp)) & bitmask);
+		}
+
+	free(iconData);
+	free(palette);
+
+	assert(datasize - dis.pos() == 0);
 }
 
 } // End of namespace Scumm
