@@ -128,3 +128,7 @@ void Timer::removeTimerProc(TimerProc procedure) {
 		}
 	}
 }
+
+MutexRef Timer::getMutex() {
+    return _mutex;
+}

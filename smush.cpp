@@ -50,6 +50,7 @@ Smush::Smush() {
 	_movieTime = 0;
 	_surface = NULL;
 	_bufSurface = NULL;
+	_timerMutex = g_timer->getMutex();
 }
 
 Smush::~Smush() {
@@ -67,17 +68,27 @@ void Smush::init() {
 	_videoFinished = false;
 	_videoPause = false;
 	_updateNeeded = false;
-	if (!_surface)
+	if (!_surface) {
 		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-	if (!_bufSurface)
-	 	_bufSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-	_dst = (byte *)_surface->pixels;
-	_buf = (byte *)_bufSurface->pixels;
-	g_timer->installTimerProc(&timerCallback, _speed, NULL);
+		_dst = (byte *)_surface->pixels;
+	}
+	if (!_bufSurface) {
+	    _bufSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	    _buf = (byte *)_bufSurface->pixels;
+	}
+
+	{
+	    StackLock lock(_timerMutex);
+	    g_timer->installTimerProc(&timerCallback, _speed, NULL);
+	}
 }
 
 void Smush::deinit() {
-	g_timer->removeTimerProc(&timerCallback);
+	{
+	    StackLock lock(_timerMutex);
+	    g_timer->removeTimerProc(&timerCallback);
+	}
+
 	_videoFinished = true;
 	_videoPause = true;
 	if (_stream) {

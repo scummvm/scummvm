@@ -56,7 +56,8 @@ private:
 	zlibFile _file;
 	PlayingSoundHandle _soundHandle;
 	AppendableAudioStream *_stream;
-	
+	MutexRef _timerMutex;
+
  	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
