@@ -1068,7 +1068,6 @@ void AkosRenderer::codec5()
 	}
 }
 
-static uint32 akos16_shadow_mode;
 static byte akos16_unk5;
 static int akos16_unk6;
 static byte akos16_mask;
