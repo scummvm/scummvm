@@ -1529,7 +1529,7 @@ void Logic::asmEndGame() {
 		_vm->update();
 	}
 	debug(0, "Game completed.");
-	OSystem::instance()->quit();
+	_vm->quitGame();
 }
 
 void Logic::asmPutCameraOnDino() {
@@ -1952,7 +1952,7 @@ void Logic::asmPanLeftToBomb() {
 
 void Logic::asmEndDemo() {
 	debug(0, "Flight of the Amazon Queen, released January 95.");
-	OSystem::instance()->quit();
+	_vm->quitGame();
 }
 
 void Logic::asmInterviewIntro() {
@@ -1997,7 +1997,7 @@ void Logic::asmInterviewIntro() {
 
 void Logic::asmEndInterview() {
 	debug(0, "Interactive Interview copyright (c) 1995, IBI.");
-	OSystem::instance()->quit();
+	_vm->quitGame();
 }
 
 void Logic::startCredits(const char *filename) {

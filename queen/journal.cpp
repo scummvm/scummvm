@@ -289,7 +289,9 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			}
 			break;
 		case ZN_GIVEUP:
-			OSystem::instance()->quit();
+			_quit = true;
+			_quitCleanly = false;
+			_vm->quitGame();
 			break;
 		}
 	} else if (zoneNum == ZN_NO) {

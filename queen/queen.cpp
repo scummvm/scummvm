@@ -304,7 +304,8 @@ void QueenEngine::go() {
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
 
-	for (;;) {
+	_quit = false;
+	while (!_quit) {
 		// queen.c lines 4080-4104
 		if (_logic->newRoom() > 0) {
 			_logic->update();
