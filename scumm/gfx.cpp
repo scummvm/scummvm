@@ -495,7 +495,7 @@ void ScummEngine::redrawBGAreas() {
 	int diff;
 
 	if (!(_features & GF_NEW_CAMERA))
-		if (camera._cur.x != camera._last.x && _charset->_hasMask && _version > 3)
+		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_version > 3 && _gameId != GID_PASS))
 			stopTalk();
 
 	val = 0;

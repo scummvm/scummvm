@@ -346,7 +346,7 @@ void ScummEngine::cameraMoved() {
 		// Fixes subtitle glitches during room scrolling in two cut scenes
 		// When talking to Rusty for first time
 		// When sleeping in straw at Blacksmith's Guild.
-		if (_gameId == GID_LOOM256 && dx)
+		if ((_gameId == GID_LOOM256 || _gameId == GID_PASS) && dx)
 			gdi._mask.left -= 8;
 		else if (dx || dy) {
 			gdi._mask.left -= dx;
