@@ -591,6 +591,7 @@ void Display::prepareUpdate() {
 
 
 void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
+	drawTexts();
 	if (_pal.scrollable && dynalum) {
 		dynalumUpdate(dynaX, dynaY);
 	}
@@ -845,6 +846,50 @@ void Display::initFont() {
 	}
 	_charWidth[(uint8)' '] = 4;
 	--_charWidth[(uint8)'^'];
+}
+
+
+void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
+	if (y < GAME_SCREEN_HEIGHT) {
+		if (x == 0) x = 1;
+		if (y == 0) y = 1;
+		TextSlot *pts = &_texts[y];
+
+		pts->x = x;
+		pts->color = _curTextColor;
+		pts->outlined = outlined;
+		pts->text = text;
+	}
+}
+
+
+void Display::setTextCentered(uint16 y, const char *text, bool outlined) {
+	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
+	setText(x, y, text, outlined);
+}
+
+
+void Display::drawTexts() {
+	int y;
+	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
+		const TextSlot *pts = &_texts[y];
+		if (!pts->text.isEmpty()) {
+			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
+		}
+	}
+}
+
+
+void Display::clearTexts(uint16 y1, uint16 y2) {
+	while (y1 <= y2) {
+		_texts[y1].text.clear();
+		++y1;
+	}
+}
+
+
+int Display::textCenterX(const char *text) const {
+	return 160 - textWidth(text) / 2;
 }
 
 

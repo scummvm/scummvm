@@ -242,7 +242,8 @@ void Logic::initialise() {
 	_scene = 0;
 	memset(_gameState, 0, sizeof(_gameState));
 	_vm->display()->setupPanel();
-	_vm->graphics()->bobSetupControl();
+	_vm->graphics()->unpackControlBank();
+	_vm->graphics()->setupMouseCursor();
 	setupJoe();
 	_vm->grid()->setupPanel();
 
@@ -458,8 +459,8 @@ void Logic::gameState(int index, int16 newValue) {
 }
 
 
-void Logic::roomErase() {
-	_vm->bankMan()->eraseAllFrames(false);
+void Logic::eraseRoom() {
+	_vm->bankMan()->eraseFrames(false);
 	_vm->bankMan()->close(15);
 	_vm->bankMan()->close(11);
 	_vm->bankMan()->close(10);
@@ -496,7 +497,7 @@ void Logic::roomErase() {
 }
 
 
-void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
+void Logic::setupRoom(const char *room, int comPanel, bool inCutaway) {
 	// load backdrop image, init dynalum, setup colors
 	_vm->display()->setupNewRoom(room, _currentRoom);
 
@@ -520,15 +521,15 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 }
 
 
-void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
-	debug(6, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
+void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
+	debug(6, "Logic::displayRoom(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
-	roomErase();
+	eraseRoom();
 
 	if (_credits)
 		_credits->nextRoom();
 
-	roomSetup(roomName(room), comPanel, inCutaway);
+	setupRoom(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
 		pod = setupJoeInRoom(mode != RDM_FADE_JOE_XY, scale);
@@ -588,7 +589,7 @@ bool Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person 
 		if (loadBank && pad->file != 0) {
 			_vm->bankMan()->load(_aFile[pad->file], pad->bankNum);
 			// if there is no valid actor file (ie pad->file is 0), the person 
-			// data is already loaded as it is contained in objects room bank (.bbk)
+			// data is already loaded as it is included in objects room bank (.bbk)
 		}
 		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
 	} 
@@ -890,7 +891,7 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 	if (next == NULL) {
 		next = nextFile;
 	}
-	_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+	_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 	Cutaway::run(cutFile, next, _vm);
 }
 
@@ -943,10 +944,10 @@ void Logic::inventoryRefresh() {
 			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
 			// unpack frame for object and draw it
 			_vm->bankMan()->unpack(_itemData[itemNum].frame, dstFrame, 14);
-			_vm->graphics()->bobDrawInventoryItem(dstFrame, x, 14);
+			_vm->graphics()->drawInventoryItem(dstFrame, x, 14);
 		} else {
 			// no object, clear the panel 
-			_vm->graphics()->bobDrawInventoryItem(0, x, 14);
+			_vm->graphics()->drawInventoryItem(0, x, 14);
 		}
 		x += 35;
 	}
@@ -1231,7 +1232,7 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 void Logic::handlePinnacleRoom() {
 	// camera does not follow Joe anymore
 	_vm->graphics()->putCameraOnBob(-1);
-	roomDisplay(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
+	displayRoom(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
 
 	BobSlot *joe   = _vm->graphics()->bob(6);
 	BobSlot *piton = _vm->graphics()->bob(7);
@@ -1252,7 +1253,7 @@ void Logic::handlePinnacleRoom() {
 
 	_vm->update();
 	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
-	_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
+	_vm->display()->textCurrentColor(INK_PINNACLE_ROOM);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
@@ -1269,7 +1270,7 @@ void Logic::handlePinnacleRoom() {
 		joe->x = piton->x = 3 * mx / 4 + 200;
 		joe->frameNum = mx / 36 + 43 + FRAMES_JOE_XTRA;
 
-		_vm->graphics()->textClear(5, 5);
+		_vm->display()->clearTexts(5, 5);
 
 		uint16 curObj = _vm->grid()->findObjectUnderCursor(mx, my);
 		if (curObj != 0 && curObj != prevObj) {
@@ -1280,7 +1281,7 @@ void Logic::handlePinnacleRoom() {
 				_entryObj = objData->entryObj;
 				char textCmd[CmdText::MAX_COMMAND_LEN];
 				sprintf(textCmd, "%s %s", verbName(VERB_WALK_TO), objectName(objData->name));
-				_vm->graphics()->textSetCentered(5, textCmd);
+				_vm->display()->setTextCentered(5, textCmd);
 			}
 			prevObj = curObj;
 		}
@@ -1319,7 +1320,7 @@ void Logic::handlePinnacleRoom() {
 	}
 
 	joe->active = piton->active = false;
-	_vm->graphics()->textClear(5, 5);
+	_vm->display()->clearTexts(5, 5);
 
 	// camera follows Joe again
 	_vm->graphics()->putCameraOnBob(0);
@@ -1533,7 +1534,7 @@ void Logic::sceneStop() {
 
 void Logic::changeRoom() {
 	if (!preChangeRoom()) 
-		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 1, false);
+		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	_vm->display()->showMouseCursor(true);
 }
 
@@ -2200,12 +2201,12 @@ void Logic::stopCredits() {
 bool LogicDemo::preChangeRoom() {
 	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		currentRoom(79);
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("clogo.cut");
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
-		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
+		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
 		playCutaway("c70d.cut");
 		gameState(VAR_INTRO_PLAYED, 1);
 		inventorySetup();
@@ -2219,7 +2220,7 @@ bool LogicDemo::preChangeRoom() {
 bool LogicInterview::preChangeRoom() {
 	if (currentRoom() == 2 && gameState(2) == 0) {
 		currentRoom(6);
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("start.cut");
 		gameState(2, 1);
 		inventorySetup();
@@ -2235,7 +2236,7 @@ bool LogicGame::preChangeRoom() {
 		handlePinnacleRoom();
 		return true;
 	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("copy.cut");
 		playCutaway("clogo.cut");
 
@@ -2252,7 +2253,7 @@ bool LogicGame::preChangeRoom() {
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
-		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
+		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
 		playCutaway("c70d.cut");
 		gameState(VAR_INTRO_PLAYED, 1);
 		inventorySetup();

@@ -89,7 +89,7 @@ void Journal::use() {
 
 	_vm->writeOptionSettings();
 
-	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->graphics()->putCameraOnBob(0);
 	if (_quitCleanly) {
 		restore();
@@ -102,10 +102,10 @@ void Journal::prepare() {
 	_vm->display()->fullscreen(true);
 
 	_vm->graphics()->putCameraOnBob(-1);
-	_vm->graphics()->bobClearAll();
-	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
-	_vm->bankMan()->eraseAllFrames(false);
-	_vm->graphics()->textCurrentColor(INK_JOURNAL);
+	_vm->graphics()->clearBobs();
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+	_vm->bankMan()->eraseFrames(false);
+	_vm->display()->textCurrentColor(INK_JOURNAL);
 
 	int i;
 	_vm->grid()->clear(GS_ROOM);
@@ -148,7 +148,7 @@ void Journal::restore() {
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
 
 	_vm->logic()->oldRoom(_vm->logic()->currentRoom());
-	_vm->logic()->roomDisplay(_vm->logic()->currentRoom(), RDM_FADE_JOE, 0, 0, false);
+	_vm->logic()->displayRoom(_vm->logic()->currentRoom(), RDM_FADE_JOE, 0, 0, false);
 }
 
 
@@ -214,8 +214,8 @@ void Journal::drawSaveDescriptions() {
 		char nb[4];
 		sprintf(nb, "%d", n + 1);
 		int y = 9 + i * 13;
-		_vm->graphics()->textSet(136, y, _saveDescriptions[n], false);
-		_vm->graphics()->textSet(109, y + 1, nb, false);
+		_vm->display()->setText(136, y, _saveDescriptions[n], false);
+		_vm->display()->setText(109, y + 1, nb, false);
 	}
 	// hightlight current page
 	showBob(BOB_SAVE_PAGE, 300, 3 + _currentSavePage * 15, 6 + _currentSavePage);
@@ -306,7 +306,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			if (_saveDescriptions[currentSlot][0]) {
 				_vm->display()->palFadeOut(0, 223, JOURNAL_ROOM);
 				loadState(currentSlot);
-				_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
+				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 				// XXX panelflag=1;
 				// XXX walkgameload=1;
 				_quit = true;
@@ -376,7 +376,7 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 void Journal::clearPanelTexts() {
 	int i;
 	for (i = 0; i < _panelTextCount; ++i) {
-		_vm->graphics()->textClear(_panelTextY[i], _panelTextY[i]);
+		_vm->display()->clearTexts(_panelTextY[i], _panelTextY[i]);
 	}
 }
 
@@ -386,8 +386,8 @@ void Journal::drawPanelText(int y, const char *text) {
 	strcpy(s, text);
 	char *p = strchr(s, ' ');
 	if (p == NULL) {
-		int x = (128 - _vm->graphics()->textWidth(s)) / 2;
-		_vm->graphics()->textSet(x, y, s, false);
+		int x = (128 - _vm->display()->textWidth(s)) / 2;
+		_vm->display()->setText(x, y, s, false);
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
@@ -461,49 +461,49 @@ void Journal::drawConfigPanel() {
 
 
 void Journal::showInformationBox() {
-	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	showBob(BOB_INFO_BOX, 72, 221, FRAME_INFO_BOX);
 
 	const char *ver = _vm->resource()->JASVersion();
 	switch (ver[0]) {
 	case 'P':
-		_vm->graphics()->textSetCentered(132, "PC Hard Drive", false);
+		_vm->display()->setTextCentered(132, "PC Hard Drive", false);
 		break;
 	case 'C':
-		_vm->graphics()->textSetCentered(132, "PC CD-ROM", false);
+		_vm->display()->setTextCentered(132, "PC CD-ROM", false);
 		break;
 	case 'a':
-		_vm->graphics()->textSetCentered(132, "Amiga A500/600", false);
+		_vm->display()->setTextCentered(132, "Amiga A500/600", false);
 		break;
 	case 'A':
-		_vm->graphics()->textSetCentered(132, "Amiga A1200", false);
+		_vm->display()->setTextCentered(132, "Amiga A1200", false);
 		break;
 	case 'c':
-		_vm->graphics()->textSetCentered(132, "Amiga CD-32", false);
+		_vm->display()->setTextCentered(132, "Amiga CD-32", false);
 		break;
 	}
 	switch (ver[1]) {
 	case 'E':
-		_vm->graphics()->textSetCentered(144, "English", false);
+		_vm->display()->setTextCentered(144, "English", false);
 		break;
 	case 'G':
-		_vm->graphics()->textSetCentered(144, "Deutsch", false);
+		_vm->display()->setTextCentered(144, "Deutsch", false);
 		break;
 	case 'I':
-		_vm->graphics()->textSetCentered(144, "Italiano", false);
+		_vm->display()->setTextCentered(144, "Italiano", false);
 		break;
 	case 'F' :
-		_vm->graphics()->textSetCentered(144, "Fran\x87""ais", false);
+		_vm->display()->setTextCentered(144, "Fran\x87""ais", false);
 		break;
 	}
 	char versionId[13];
 	sprintf(versionId, "Version %c.%c%c", ver[2], ver[3], ver[4]);
-	_vm->graphics()->textSetCentered(156, versionId, false);
+	_vm->display()->setTextCentered(156, versionId, false);
 }
 
 
 void Journal::hideInformationBox() {
-	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	hideBob(BOB_INFO_BOX);
 	redraw();
 }
@@ -511,7 +511,7 @@ void Journal::hideInformationBox() {
 
 void Journal::initEditBuffer(const char *desc) {
 	_edit.enable = true;
-	_edit.posCursor = _vm->graphics()->textWidth(desc);
+	_edit.posCursor = _vm->display()->textWidth(desc);
 	_edit.textCharsCount = strlen(desc);
 	memset(_edit.text, 0, sizeof(_edit.text));
 	strcpy(_edit.text, desc);
@@ -535,7 +535,7 @@ void Journal::updateEditBuffer(uint16 ascii, int keycode) {
 	default:
 		if (isprint((char)ascii) && 
 			_edit.textCharsCount < (sizeof(_edit.text) - 1) && 
-			_vm->graphics()->textWidth(_edit.text) < 146) {
+			_vm->display()->textWidth(_edit.text) < 146) {
 			_edit.text[_edit.textCharsCount] = (char)ascii;
 			++_edit.textCharsCount;
 			dirty = true;
@@ -543,8 +543,8 @@ void Journal::updateEditBuffer(uint16 ascii, int keycode) {
 		break;
 	}
 	if (dirty) {
-		_vm->graphics()->textSet(136, 9 + _currentSaveSlot * 13, _edit.text, false);
-		_edit.posCursor = _vm->graphics()->textWidth(_edit.text);
+		_vm->display()->setText(136, 9 + _currentSaveSlot * 13, _edit.text, false);
+		_edit.posCursor = _vm->display()->textWidth(_edit.text);
 		update();
 	}
 }

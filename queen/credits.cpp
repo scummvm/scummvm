@@ -22,7 +22,7 @@
 #include "stdafx.h"
 #include "queen/credits.h"
 
-#include "queen/graphics.h"
+#include "queen/display.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
 
@@ -35,14 +35,14 @@ Credits::Credits(QueenEngine *vm, const char* filename) :
 }
 
 Credits::~Credits() {
-	_vm->graphics()->textClear(0, 199);
+	_vm->display()->clearTexts(0, 199);
 	delete _credits;
 }
 
 void Credits::nextRoom() {
 	if (-1 == _pause) {
 		_pause = 0;
-		_vm->graphics()->textClear(0, 199);
+		_vm->display()->clearTexts(0, 199);
 	}
 }
 
@@ -53,7 +53,7 @@ void Credits::update() {
 	if (_pause > 0) {
 		_pause--;
 		if (!_pause)
-			_vm->graphics()->textClear(0, 199);
+			_vm->display()->clearTexts(0, 199);
 		return;
 	}
 
@@ -102,8 +102,8 @@ void Credits::update() {
 
 					for(i = 0; i < _count; i++)
 					{
-						_vm->graphics()->textCurrentColor(_list[i].color);
-						_vm->graphics()->textSet(_list[i].x, _list[i].y, _list[i].text);
+						_vm->display()->textCurrentColor(_list[i].color);
+						_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
 					}
 
 					_count = 0;
@@ -137,12 +137,12 @@ void Credits::update() {
 					_list[_count].x = (_zone % 3) * (320 / 3) + 8;
 					break;
 				case 1:
-					_list[_count].x = (_zone % 3) * (320 / 3) + 54 - _vm->graphics()->textWidth(line) / 2;
+					_list[_count].x = (_zone % 3) * (320 / 3) + 54 - _vm->display()->textWidth(line) / 2;
 					if (_list[_count].x < 8)
 						_list[_count].x = 8;
 					break;
 				case 2:
-					_list[_count].x = (_zone % 3) * (320 / 3) + 100 - _vm->graphics()->textWidth(line);
+					_list[_count].x = (_zone % 3) * (320 / 3) + 100 - _vm->display()->textWidth(line);
 					break;
 			}
 

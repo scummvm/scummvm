@@ -7,8 +7,8 @@ the ScummVM implementation.
 BANKS
 =====
 erase()						BankManager::close
-freeallframes()				BankManager::eraseAllFrames(true)
-freeframes()				BankManager::eraseAllFrames(false)
+freeallframes()				BankManager::eraseFrames(true)
+freeframes()				BankManager::eraseFrames(false)
 loadbank()					BankManager::load
 overpack()					BankManager::overpack
 unpack()					BankManager::unpack
@@ -119,24 +119,23 @@ VOLUME						? / ConfMan.("master_volume")
 
 GRAPHICS
 ========
-bob()						Graphics::bobDraw
-Box()						Display::drawBox
-CHECK_PARALLAX()			Graphics::bobCustomParallax
-clearallbobs()				Graphics::bobClearAll
-clearbob()					Graphics::bobClear
+bob()						Graphics::drawBob
+CHECK_PARALLAX()			Graphics::handleParallax
+clearallbobs()				Graphics::clearBobs
+clearbob()					Graphics::clearBob
 DISP_OBJECTS()				Graphics::setupRoomObjects
-drawbobs()					Graphics::bobDrawAll
-invbob()					Graphics::bobDrawInventoryItem
+drawbobs()					Graphics::drawBobs
+invbob()					Graphics::drawInventoryItem
 loadbackdrop()				*not needed* (included in Display::setupNewRoom)
 loadpanel()					Display::setupPanel
-MAKE_SPEAK_BOB()			Graphics::bobSetText
+MAKE_SPEAK_BOB()			Graphics::setBobText
 makeanim()					BobSlot::animNormal
 movebob()					BobSlot::move
-pastebob()					Graphics::bobPaste
+pastebob()					Graphics::pasteBob
 REDISP_OBJECT()				Graphics::refreshObject
 requestor()
-shrinkbob()					Graphics::bobShrink
-sortbobs()					Graphics::bobSortAll
+shrinkbob()					Graphics::shrinkFrame
+sortbobs()					Graphics::sortBobs
 stringanim()				BobSlot::animString
 -
 bobs						Graphics::_bobs
@@ -208,14 +207,14 @@ LOGIC
 =====
 CHECK_PLAYER()				QueenEngine::update
 CUTAWAY_SPECIAL()			Logic::removeHotelItemsFromInventory
-DISP_ROOM()					Logic::roomDisplay
+DISP_ROOM()					Logic::displayRoom
 FIND_BOB()					Logic::findBob
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 P3_COPY_FROM()				Logic::objectCopy
 R_MAP()						Logic::handlePinnacleRoom
 restart_game()
-SETUP_BOBS()				Graphics::bobSetupControl
+SETUP_BOBS()				Graphics::unpackControlBank / Graphics::setupMouseCursor
 SETUP_FURNITURE()			Graphics::setupRoomFurniture
 SETUP_ROOM()				Logic::changeRoom
 SETUP_SCREENS()				*not needed* (only calls Display::setupPanel)
@@ -290,6 +289,7 @@ tseek() 					*not needed*
 
 SCREEN
 ======
+Box()						Display::drawBox
 calc_screen_scroll()		Display::horizontalScrollUpdate
 changejoepal()				Display::palSetJoe*
 check_colors()				Display::palCustomColors
@@ -377,15 +377,15 @@ TALK_SELECTED				Logic::_talkSelected
 
 TEXTS
 =====
-blanktexts()				Graphics::textClear
-drawtext()					Graphics::textDrawAll
-Ink() 						Graphics::textCurrentColor
-MIDDLE() 					Graphics::textCenterX / Graphics::textSetCentered
-text()						Graphics::textSet
-textlen() 					Graphics::textWidth
+blanktexts()				Display::clearTexts
+drawtext()					Display::drawTexts
+Ink() 						Display::textCurrentColor
+MIDDLE() 					Display::textCenterX / Display::textSetCentered
+text()						Display::setText
+textlen() 					Display::textWidth
 -
-textcol						Graphics::_curTextColor
-texts						Graphics::_texts
+textcol						Display::_curTextColor
+texts						Display::_texts
 
 
 WALK

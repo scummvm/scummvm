@@ -42,8 +42,8 @@ void CmdText::clear() {
 
 
 void CmdText::display(uint8 color) {
-	_vm->graphics()->textCurrentColor(color);
-	_vm->graphics()->textSetCentered(COMMAND_Y_POS, _command, false);
+	_vm->display()->textCurrentColor(color);
+	_vm->display()->setTextCentered(COMMAND_Y_POS, _command, false);
 }
 
 
@@ -58,16 +58,16 @@ void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
 		strcat(temp, " ");
 		strcat(temp, name);
 	}
-	_vm->graphics()->textCurrentColor(color);
-	_vm->graphics()->textSetCentered(COMMAND_Y_POS, temp, false);
+	_vm->display()->textCurrentColor(color);
+	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
 }
 
 
 void CmdText::displayTemp(uint8 color, const char *name) {
 	char temp[MAX_COMMAND_LEN];
 	sprintf(temp, "%s %s", _command, name);
-	_vm->graphics()->textCurrentColor(color);
-	_vm->graphics()->textSetCentered(COMMAND_Y_POS, temp, false);
+	_vm->display()->textCurrentColor(color);
+	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
 }
 
 
@@ -113,7 +113,7 @@ Command::Command(QueenEngine *vm)
 void Command::clear(bool clearTexts) {
 	_cmdText.clear();
 	if (clearTexts) {
-		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 	}
 	_parse = false;
 	_state.init();
@@ -736,7 +736,7 @@ bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
-		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
 		char nextCutaway[20];
 		memset(nextCutaway, 0, sizeof(nextCutaway));
@@ -754,7 +754,7 @@ bool Command::executeIfDialog(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 
-		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
 		char cutaway[20];
 		memset(cutaway, 0, sizeof(cutaway));
@@ -780,7 +780,7 @@ bool Command::handleWrongAction() {
 	if ((_state.selAction == VERB_WALK_TO || _state.selAction == VERB_NONE) && 
 		(_state.selNoun > objMax || _state.selNoun == 0)) {
 		if (_state.selAction == VERB_NONE) {
-			_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+			_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
 		_vm->walk()->moveJoe(0, _selPosX, _selPosY, false);
 		return true;
@@ -1136,7 +1136,7 @@ void Command::setObjects(uint16 command) {
 					if (image1 != 0 && image2 == 0 && objData->room == _vm->logic()->currentRoom()) {
 						uint16 bobNum = _vm->logic()->findBob(dstObj);
 						if (bobNum != 0) {
-							_vm->graphics()->bobClear(bobNum);
+							_vm->graphics()->clearBob(bobNum);
 						}
 					}
 				}
@@ -1324,7 +1324,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	ObjectData *od = findObjectData(_state.noun);
 	if (od == NULL || od->name <= 0) {
 		_state.oldNoun = _state.noun;
-		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		if (_state.defaultVerb != VERB_NONE) {
 			_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb);
 		} else if (_state.action != VERB_NONE) {
@@ -1358,7 +1358,7 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 		if (_state.action == VERB_NONE) {
 			_cmdText.clear();
 		}
-		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
 		if (isVerbInv(_state.verb)) {
 			ItemData *id = findItemData(_state.verb);

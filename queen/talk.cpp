@@ -323,7 +323,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (_oldSelectedSentenceIndex > 0)
 			selectedValue(_oldSelectedSentenceIndex, _oldSelectedSentenceValue);
 		_vm->input()->talkQuitReset();
-		_vm->graphics()->textClear(0, 198);
+		_vm->display()->clearTexts(0, 198);
 		speak(_talkString[15], NULL, "JOE0015");
 	}
 	else {
@@ -1011,7 +1011,7 @@ void Talk::speakSegment(
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		_vm->graphics()->bobSetText(bob, segment, textX, textY, color, true);
+		_vm->graphics()->setBobText(bob, segment, textX, textY, color, true);
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
@@ -1066,7 +1066,7 @@ void Talk::speakSegment(
 			headStringAnimation(parameters, bobNum, bankNum);
 		}
 
-		_vm->graphics()->bobSetText(bob, segment, textX, textY, color, _talkHead);
+		_vm->graphics()->setBobText(bob, segment, textX, textY, color, _talkHead);
 
 		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
 			stringAnimation(parameters, startFrame, bankNum);
@@ -1108,7 +1108,7 @@ void Talk::speakSegment(
 	}
 
 	// Moved here so that Text is cleared when a Torso command done!
-	_vm->graphics()->textClear(0,198);
+	_vm->display()->clearTexts(0,198);
 
 	if (oracle) {
 		uint16 frameNum = _vm->graphics()->personFrames(bobNum);
@@ -1242,7 +1242,7 @@ int16 Talk::selectSentence() {
 
 	// Change NORMAL_INK -> TALK_NORMAL_INK
 
-	_vm->graphics()->textCurrentColor(INK_TALK_NORMAL);
+	_vm->display()->textCurrentColor(INK_TALK_NORMAL);
 
 	// These bobs are up and down arrows
 
@@ -1275,7 +1275,7 @@ int16 Talk::selectSentence() {
 			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
-		_vm->graphics()->textClear(151,199);
+		_vm->display()->clearTexts(151,199);
 
 		int sentenceCount = 0;
 		int yOffset = 1;
@@ -1304,7 +1304,7 @@ int16 Talk::selectSentence() {
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
 						//debug(6, "Draw text '%s'", optionText[j]);
-						_vm->graphics()->textSet(
+						_vm->display()->setText(
 								(j == 0) ? 0 : 24, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 
 								optionText[j]);
@@ -1355,13 +1355,13 @@ int16 Talk::selectSentence() {
 						if (zone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, zone);
 							for (y = b->y1; y < b->y2; y += 10)
-								_vm->graphics()->textColor(150 + y, INK_JOE);
+								_vm->display()->textColor(150 + y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, oldZone);
 							for (y = b->y1; y < b->y2; y += 10)
-								_vm->graphics()->textColor(150 + y, INK_TALK_NORMAL);
+								_vm->display()->textColor(150 + y, INK_TALK_NORMAL);
 						}
 
 						oldZone = zone;
@@ -1412,12 +1412,12 @@ int16 Talk::selectSentence() {
 	arrowBobDown->active  = false;
 
 	if (selectedSentence > 0) {
-		_vm->graphics()->textClear(0,198);
+		_vm->display()->clearTexts(0, 198);
 
 		speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
 	}
 	
-	_vm->graphics()->textClear(151,151);
+	_vm->display()->clearTexts(151, 151);
 
 	return selectedSentence;
 }

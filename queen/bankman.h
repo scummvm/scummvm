@@ -42,7 +42,7 @@ public:
 
 	BobFrame *fetchFrame(uint32 index);
 	void eraseFrame(uint32 index);
-	void eraseAllFrames(bool joe);
+	void eraseFrames(bool joe);
 
 	enum {
 		MAX_BANK_SIZE     = 110,

@@ -60,7 +60,7 @@ void Debugger::preEnter() {
 
 void Debugger::postEnter() {
 	// XXX un-mute all sounds
-	_vm->graphics()->bobSetupControl(); // re-init mouse cursor
+	_vm->graphics()->setupMouseCursor();
 }
 
 

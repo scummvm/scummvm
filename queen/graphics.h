@@ -22,7 +22,6 @@
 #ifndef QUEENGRAPHICS_H
 #define QUEENGRAPHICS_H
 
-#include "common/str.h"
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
@@ -85,13 +84,6 @@ struct BobSlot {
 	void clear();
 };
 
-struct TextSlot {
-	uint16 x;
-	uint8 color;
-	Common::String text;
-	bool outlined;
-};
-
 class QueenEngine;
 
 class Graphics {
@@ -100,30 +92,22 @@ public:
 	Graphics(QueenEngine *vm);
 	~Graphics();
 
-	void bobSetupControl();
-	void bobDraw(const BobSlot *bs, int16 x, int16 y);
-	void bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
-	void bobPaste(uint16 objNum, uint16 image);
-	void bobShrink(const BobFrame *bf, uint16 percentage);
-	void bobClear(uint32 bobNum);
-	void bobSortAll();
-	void bobDrawAll();
-	void bobClearAll();
-	void bobStopAll();
+	void unpackControlBank();
+	void setupMouseCursor();
+
+	void drawBob(const BobSlot *bs, int16 x, int16 y);
+	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
+	void pasteBob(uint16 objNum, uint16 image);
+	void shrinkFrame(const BobFrame *bf, uint16 percentage);
+	void clearBob(uint32 bobNum);
+	void sortBobs();
+	void drawBobs();
+	void clearBobs();
+	void stopBobs();
 	BobSlot *bob(int index);
+	void setBobText(BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
 
-	void bobCustomParallax(uint16 roomNum); // CHECK_PARALLAX()
-
-	void bobSetText(BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
-
-	void textCurrentColor(uint8 color) { _curTextColor = color; }
-	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
-	void textSetCentered(uint16 y, const char *text, bool outlined = true);
-	void textDrawAll(); // drawtext()
-	void textClear(uint16 y1, uint16 y2); // blanktexts()
-	uint16 textWidth(const char *text) const; // textlen()
-	int textCenterX(const char *text) const; // MIDDLE()
-	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
+	void handleParallax(uint16 roomNum);
 
 	void setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount);
 
@@ -175,9 +159,6 @@ private:
 
 	//! used to scale a BobFrame
 	BobFrame _shrinkBuffer;
-
-	TextSlot _texts[GAME_SCREEN_HEIGHT];
-	uint8 _curTextColor;
 
 	AnimFrame _newAnim[17][30];
 

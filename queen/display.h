@@ -22,6 +22,7 @@
 #ifndef QUEENDISPLAY_H
 #define QUEENDISPLAY_H
 
+#include "common/str.h"
 #include "common/util.h"
 #include "queen/defs.h"
 
@@ -89,6 +90,13 @@ public:
 
 	void initFont();
 
+	void setText(uint16 x, uint16 y, const char *text, bool outlined = true);
+	void setTextCentered(uint16 y, const char *text, bool outlined = true);
+	void drawTexts();
+	void clearTexts(uint16 y1, uint16 y2);
+	void textCurrentColor(uint8 color) { _curTextColor = color; }
+	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
+	int textCenterX(const char *text) const;
 	uint16 textWidth(const char *text) const;
 	void drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr);
 	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
@@ -132,6 +140,13 @@ private:
 		uint8 prevColMask;
 	};
 
+	struct TextSlot {
+		uint16 x;
+		uint8 color;
+		Common::String text;
+		bool outlined;
+	};
+
 	uint8 *_screenBuf;
 	uint8 *_panelBuf;
 	uint8 *_backdropBuf;
@@ -144,6 +159,9 @@ private:
 
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
+
+	TextSlot _texts[GAME_SCREEN_HEIGHT];
+	uint8 _curTextColor;
 
 	uint8 _charWidth[256];
 

@@ -38,7 +38,7 @@ BankManager::~BankManager() {
 	for(uint32 i = 0; i < MAX_BANKS_NUMBER; ++i) {
 		close(i);
 	}
-	eraseAllFrames(true);
+	eraseFrames(true);
 }
 
 
@@ -131,7 +131,7 @@ void BankManager::eraseFrame(uint32 index) {
 }
 
 
-void BankManager::eraseAllFrames(bool joe) {
+void BankManager::eraseFrames(bool joe) {
     uint32 i = 0;
 	if (!joe) {
 		i = FRAMES_JOE + FRAMES_JOE_XTRA;

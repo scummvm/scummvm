@@ -138,9 +138,9 @@ public:
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
-	void roomErase();
-	void roomSetup(const char *room, int comPanel, bool inCutaway);
-	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway);
+	void eraseRoom();
+	void setupRoom(const char *room, int comPanel, bool inCutaway);
+	void displayRoom(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway);
 
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }

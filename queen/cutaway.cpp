@@ -418,7 +418,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			mode = RDM_FADE_JOE_XY;
 	}
 
-	_vm->logic()->roomDisplay(_vm->logic()->currentRoom(), mode, object.scale, comPanel, true);
+	_vm->logic()->displayRoom(_vm->logic()->currentRoom(), mode, object.scale, comPanel, true);
 
 	_currentImage = _vm->graphics()->numFrames();
 
@@ -1078,7 +1078,7 @@ void Cutaway::stop() {
 		_vm->logic()->joePos(joeX, joeY);
 		_vm->logic()->currentRoom(joeRoom);
 		_vm->logic()->oldRoom(_initialRoom);
-		_vm->logic()->roomDisplay(_vm->logic()->currentRoom(), RDM_FADE_JOE_XY, 0, _comPanel, true);
+		_vm->logic()->displayRoom(_vm->logic()->currentRoom(), RDM_FADE_JOE_XY, 0, _comPanel, true);
 	}
 
 	if (_vm->input()->cutawayQuit()) {
@@ -1088,7 +1088,7 @@ void Cutaway::stop() {
 		// Stop the credits from running
 		_vm->logic()->stopCredits();
 		
-		_vm->graphics()->bobStopAll();
+		_vm->graphics()->stopBobs();
 
 		for (i = 1; i <= _personFaceCount; i++) {
 			int index =  _personFace[i].index;
@@ -1124,7 +1124,7 @@ void Cutaway::stop() {
 
 					ObjectData *from = _vm->logic()->objectData(fromIndex);
 					if (object->image && !from->image && bobIndex && _vm->logic()->currentRoom() == object->room)
-						_vm->graphics()->bobClear(bobIndex);
+						_vm->graphics()->clearBob(bobIndex);
 				}
 
 				if (_vm->logic()->currentRoom() == room)
@@ -1155,7 +1155,7 @@ void Cutaway::stop() {
 					int objectFrame = _vm->logic()->findFrame(objectIndex);
 
 					if (objectFrame == 1000) {
-						_vm->graphics()->bobClear(bobIndex);
+						_vm->graphics()->clearBob(bobIndex);
 					}
 					else if (objectFrame) {
 						_vm->bankMan()->unpack(ABS(frame), objectFrame, bank);
@@ -1341,7 +1341,7 @@ void Cutaway::handleText(
 	int flags;
 
 	if (OBJECT_TYPE_TEXT_DISPLAY == type) {
-		x = _vm->graphics()->textCenterX(sentence);
+		x = _vm->display()->textCenterX(sentence);
 		flags = 2;
 	}
 	else {
@@ -1352,7 +1352,7 @@ void Cutaway::handleText(
 	BobSlot *bob = 
 		_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
 
-	_vm->graphics()->bobSetText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
+	_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 
 	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
 		char voiceFileName[MAX_STRING_SIZE];
@@ -1378,7 +1378,7 @@ void Cutaway::handleText(
 		}
 	}
 
-	_vm->graphics()->textClear(0,198);
+	_vm->display()->clearTexts(0,198);
 	_vm->update();
 }
 		

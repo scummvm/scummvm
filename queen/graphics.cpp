@@ -196,25 +196,28 @@ Graphics::~Graphics() {
 }
 
 
-void Graphics::bobSetupControl() {
+void Graphics::unpackControlBank() {
 	_vm->bankMan()->load("control.BBK",17);
 	_vm->bankMan()->unpack(1, 1, 17); // Mouse pointer
 	_vm->bankMan()->unpack(3, 3, 17); // Up arrow dialogue
 	_vm->bankMan()->unpack(4, 4, 17); // Down arrow dialogue
 	_vm->bankMan()->close(17);
+}
 
+
+void Graphics::setupMouseCursor() {
 	BobFrame *bf = _vm->bankMan()->fetchFrame(1);
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
 }
 
 
-void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
-	debug(9, "Graphics::bobDraw(%d, %d, %d)", bs->frameNum, x, y);
+void Graphics::drawBob(const BobSlot *bs, int16 x, int16 y) {
+	debug(9, "Graphics::drawBob(%d, %d, %d)", bs->frameNum, x, y);
 
 	uint16 w, h;
 	BobFrame *pbf = _vm->bankMan()->fetchFrame(bs->frameNum);
 	if (bs->scale < 100) {
-		bobShrink(pbf, bs->scale);
+		shrinkFrame(pbf, bs->scale);
 		pbf = &_shrinkBuffer;
 	}
 	w = pbf->width;
@@ -262,7 +265,7 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 }
 
 
-void Graphics::bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
+void Graphics::drawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 	if (frameNum != 0) {
 		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
 		_vm->display()->drawInventoryItem(bf->data, x, y, bf->width, bf->height);
@@ -272,7 +275,7 @@ void Graphics::bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 }
 
 
-void Graphics::bobPaste(uint16 objNum, uint16 image) {
+void Graphics::pasteBob(uint16 objNum, uint16 image) {
 	GraphicData *pgd = _vm->logic()->graphicData(objNum);
 	_vm->bankMan()->unpack(pgd->firstFrame, image, 15);
 	BobFrame *bf = _vm->bankMan()->fetchFrame(image);
@@ -281,12 +284,12 @@ void Graphics::bobPaste(uint16 objNum, uint16 image) {
 }
 
 
-void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
+void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	// computing new size, rounding to upper value
 	uint16 new_w = (bf->width  * percentage + 50) / 100;
 	uint16 new_h = (bf->height * percentage + 50) / 100;
 
-	debug(9, "Graphics::bobShrink() - scale = %d, bufsize = %d", percentage, new_w * new_h);
+	debug(9, "Graphics::shrinkFrame() - scale = %d, bufsize = %d", percentage, new_w * new_h);
 
 	if (new_w != 0 && new_h != 0) {
 
@@ -326,7 +329,7 @@ void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 }
 
 
-void Graphics::bobClear(uint32 bobNum) {
+void Graphics::clearBob(uint32 bobNum) {
 	BobSlot *pbs = bob(bobNum);
 	pbs->clear();
 	if (_vm->display()->fullscreen()) {
@@ -335,7 +338,7 @@ void Graphics::bobClear(uint32 bobNum) {
 }
 
 
-void Graphics::bobSortAll() {
+void Graphics::sortBobs() {
 	_sortedBobsCount = 0;
 
 	// animate/move the bobs
@@ -378,7 +381,7 @@ void Graphics::bobSortAll() {
 }
 
 
-void Graphics::bobDrawAll() {
+void Graphics::drawBobs() {
 	int i;
 	for (i = 0; i < _sortedBobsCount; ++i) {
 		BobSlot *pbs = _sortedBobs[i];
@@ -404,20 +407,20 @@ void Graphics::bobDrawAll() {
 			x = pbs->x - xh - _vm->display()->horizontalScroll();
 			y = pbs->y - yh;
 
-			bobDraw(pbs, x, y);
+			drawBob(pbs, x, y);
 		}
 	}
 }
 
 
-void Graphics::bobClearAll() {
+void Graphics::clearBobs() {
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
-		bobClear(i);
+		clearBob(i);
 	}
 }
 
 
-void Graphics::bobStopAll() {
+void Graphics::stopBobs() {
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}
@@ -434,7 +437,122 @@ BobSlot *Graphics::bob(int index) {
 }
 
 
-void Graphics::bobCustomParallax(uint16 roomNum) {
+void Graphics::setBobText(
+		BobSlot *pbs, 
+		const char *text, 
+		int textX, int textY, 
+		int color, int flags) {
+	// function MAKE_SPEAK_BOB, lines 335-457 in talk.c
+
+	if (text[0] == '\0')
+		return;
+
+	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
+	//		text, bob->x, bob->y, textX, textY, color, flags);
+
+	// Duplicate string and append zero if needed
+
+	char textCopy[MAX_STRING_SIZE];
+
+	int length = strlen(text);
+	memcpy(textCopy, text, length);
+
+	if (textCopy[length - 1] >= 'A')
+		textCopy[length++] = '.';
+
+	textCopy[length] = '\0';
+
+	// Split text into lines
+
+	char lines[8][MAX_STRING_SIZE];
+	int lineCount = 0;
+	int wordCount = 0;
+	int lineLength = 0;
+	int i;
+
+	for (i = 0; i < length; i++) {
+		if (textCopy[i] == ' ')
+			wordCount++;
+
+		lineLength++;
+
+		if ((lineLength > 20 && textCopy[i] == ' ') || i == (length-1)) {
+			memcpy(lines[lineCount], textCopy + i + 1 - lineLength, lineLength);
+			lines[lineCount][lineLength] = '\0';
+			lineCount++;
+			lineLength = 0;
+		}
+	}
+
+
+	// Plan: write each line to Screen 2, put black outline around lines and
+	// pick them up as a BOB.
+
+
+	// Find width of widest line 
+
+	int maxLineWidth = 0;
+
+	for (i = 0; i < lineCount; i++) {
+		int width = _vm->display()->textWidth(lines[i]);
+		if (maxLineWidth < width)
+			maxLineWidth = width;
+	}
+
+	// Calc text position
+
+	short x, y, width, height;
+
+	if (flags) {
+		if (flags == 2)
+			x = 160 - maxLineWidth / 2;
+		else
+			x = textX;
+
+		y = textY;
+
+		width = 0;
+	} else {
+		x = pbs->x;
+		y = pbs->y;
+
+		BobFrame *pbf = _vm->bankMan()->fetchFrame(pbs->frameNum);
+
+		width  = (pbf->width  * pbs->scale) / 100;
+		height = (pbf->height * pbs->scale) / 100;
+
+		y = y - height - 16 - lineCount * 9;
+	}
+
+	x -= _vm->display()->horizontalScroll();
+
+	if (y < 0) {
+		y = 0;
+
+		if (x < 160)
+			x += width / 2;
+		else
+			x -= width / 2 + maxLineWidth;
+	} else if (!flags)
+		x -= maxLineWidth / 2;
+
+	if (x < 0)
+		x = 4;
+	else if ((x + maxLineWidth) > 320)
+		x = 320 - maxLineWidth - 4;
+
+	_vm->display()->textCurrentColor(color);
+
+	for (i = 0; i < lineCount; i++) {
+		int lineX = x + (maxLineWidth - _vm->display()->textWidth(lines[i])) / 2;
+
+		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
+		_vm->display()->setText(lineX, y + 9 * i, lines[i]);
+	}
+}
+
+
+void Graphics::handleParallax(uint16 roomNum) {
 	int i;
 	uint16 screenScroll = _vm->display()->horizontalScroll();
 	switch (roomNum) {
@@ -502,173 +620,9 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 }
 
 
-void Graphics::bobSetText(
-		BobSlot *pbs, 
-		const char *text, 
-		int textX, int textY, 
-		int color, int flags) {
-	// function MAKE_SPEAK_BOB, lines 335-457 in talk.c
-
-	if (text[0] == '\0')
-		return;
-
-	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
-	//		text, bob->x, bob->y, textX, textY, color, flags);
-
-	// Duplicate string and append zero if needed
-
-	char textCopy[MAX_STRING_SIZE];
-
-	int length = strlen(text);
-	memcpy(textCopy, text, length);
-
-	if (textCopy[length - 1] >= 'A')
-		textCopy[length++] = '.';
-
-	textCopy[length] = '\0';
-
-	// Split text into lines
-
-	char lines[8][MAX_STRING_SIZE];
-	int lineCount = 0;
-	int wordCount = 0;
-	int lineLength = 0;
-	int i;
-
-	for (i = 0; i < length; i++) {
-		if (textCopy[i] == ' ')
-			wordCount++;
-
-		lineLength++;
-
-		if ((lineLength > 20 && textCopy[i] == ' ') || i == (length-1)) {
-			memcpy(lines[lineCount], textCopy + i + 1 - lineLength, lineLength);
-			lines[lineCount][lineLength] = '\0';
-			lineCount++;
-			lineLength = 0;
-		}
-	}
-
-
-	// Plan: write each line to Screen 2, put black outline around lines and
-	// pick them up as a BOB.
-
-
-	// Find width of widest line 
-
-	int maxLineWidth = 0;
-
-	for (i = 0; i < lineCount; i++) {
-		int width = textWidth(lines[i]);
-		if (maxLineWidth < width)
-			maxLineWidth = width;
-	}
-
-	// Calc text position
-
-	short x, y, width, height;
-
-	if (flags) {
-		if (flags == 2)
-			x = 160 - maxLineWidth / 2;
-		else
-			x = textX;
-
-		y = textY;
-
-		width = 0;
-	} else {
-		x = pbs->x;
-		y = pbs->y;
-
-		BobFrame *pbf = _vm->bankMan()->fetchFrame(pbs->frameNum);
-
-		width  = (pbf->width  * pbs->scale) / 100;
-		height = (pbf->height * pbs->scale) / 100;
-
-		y = y - height - 16 - lineCount * 9;
-	}
-
-	x -= _vm->display()->horizontalScroll();
-
-	if (y < 0) {
-		y = 0;
-
-		if (x < 160)
-			x += width / 2;
-		else
-			x -= width / 2 + maxLineWidth;
-	} else if (!flags)
-		x -= maxLineWidth / 2;
-
-	if (x < 0)
-		x = 4;
-	else if ((x + maxLineWidth) > 320)
-		x = 320 - maxLineWidth - 4;
-
-	textCurrentColor(color);
-
-	for (i = 0; i < lineCount; i++) {
-		int lineX = x + (maxLineWidth - textWidth(lines[i])) / 2;
-
-		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
-		textSet(lineX, y + 9 * i, lines[i]);
-	}
-}
-
-
-void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
-	if (y < GAME_SCREEN_HEIGHT) {
-		if (x == 0) x = 1;
-		if (y == 0) y = 1;
-		TextSlot *pts = &_texts[y];
-
-		pts->x = x;
-		pts->color = _curTextColor;
-		pts->outlined = outlined;
-		pts->text = text;
-	}
-}
-
-
-void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
-	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
-	textSet(x, y, text, outlined);
-}
-
-
-void Graphics::textDrawAll() {
-	int y;
-	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
-		const TextSlot *pts = &_texts[y];
-		if (!pts->text.isEmpty()) {
-			_vm->display()->drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
-		}
-	}
-}
-
-
-void Graphics::textClear(uint16 y1, uint16 y2) {
-	while (y1 <= y2) {
-		_texts[y1].text.clear();
-		++y1;
-	}
-}
-
-
-uint16 Graphics::textWidth(const char* text) const {
-	return _vm->display()->textWidth(text);
-}
-
-
-int Graphics::textCenterX(const char *text) const {
-	return 160 - textWidth(text) / 2;
-}
-
-
 void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount) {
 	// reset sprites table (bounding box...)
-	bobClearAll();
+	clearBobs();
 
 	// load/setup objects associated to this room
 	char filename[20];	
@@ -885,7 +839,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 	if (pod->image == -3 || pod->image == -4) {
 		// a person object
 		if (pod->name <= 0) {
-			bobClear(curBob);
+			clearBob(curBob);
 		} else {
 			// find person number
 			uint16 pNum = _vm->logic()->findPersonNumber(obj);
@@ -903,7 +857,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 
 	if (pod->name < 0 || pod->image < 0) {
 		// object is hidden or disabled
-		bobClear(curBob);
+		clearBob(curBob);
 		return curImage;
 	}
 
@@ -1015,7 +969,7 @@ void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 	// unpack the paste downs
 	for  (i = 1; i <= furnitureCount; ++i) {
 		if (furniture[i] > 5000) {;
-			bobPaste(furniture[i] - 5000, curImage + 1);
+			pasteBob(furniture[i] - 5000, curImage + 1);
 		}
 	}
 }
@@ -1090,7 +1044,7 @@ void Graphics::setupRoomObjects() {
 				// static objects
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
-				bobClear(curBob);
+				clearBob(curBob);
 
 				// XXX if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
 
@@ -1126,7 +1080,7 @@ void Graphics::setupRoomObjects() {
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = _vm->logic()->objectData(i);
 		if (pod->name > 0 && pod->image > 5000) {
-			bobPaste(pod->image - 5000, curImage);
+			pasteBob(pod->image - 5000, curImage);
 		}
 	}
 }
@@ -1173,7 +1127,6 @@ uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
 	Person p;
 	if (_vm->logic()->initPerson(noun, "", false, &p) && p.anim != NULL) {
-		debug(0, "allocPerson() : anim=%s", p.anim);
 		curImage += countAnimFrames(p.anim);
 		_personFrames[p.actor->bobNum] = curImage + 1;
 	}
@@ -1182,14 +1135,13 @@ uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
 
 
 void Graphics::update(uint16 room) {
-	bobSortAll();
+	sortBobs();
 	if (_cameraBob >= 0) {
 		_vm->display()->horizontalScrollUpdate(_bobs[_cameraBob].x);
 	}
-	bobCustomParallax(room);
+	handleParallax(room);
 	_vm->display()->prepareUpdate();
-	bobDrawAll();
-	textDrawAll();
+	drawBobs();
 }
 
 
@@ -1201,15 +1153,15 @@ BamScene::BamScene(QueenEngine *vm)
 
 void BamScene::prepareAnimation() {
 	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
-	_vm->graphics()->bobClear(BOB_OBJ1);
+	_obj1->clear();
 	_obj1->active = true;
 
 	_obj2 = _vm->graphics()->bob(BOB_OBJ2);
-	_vm->graphics()->bobClear(BOB_OBJ2);
+	_obj2->clear();
 	_obj2->active = true;
 
 	_objfx = _vm->graphics()->bob(BOB_FX);
-	_vm->graphics()->bobClear(BOB_FX);
+	_objfx->clear();
 	_objfx->active = true;
 
 	_index = 0;

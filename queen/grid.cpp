@@ -41,17 +41,17 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 
 	_objMax  = new int16[numRooms + 1];
 	_areaMax = new int16[numRooms + 1];
-	_area    = new Area[numRooms + 1][MAX_AREAS];
+	_area    = new Area[numRooms + 1][MAX_AREAS_NUMBER];
 
 	_objMax[0] = 0;
 	_areaMax[0] = 0;
-	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS);
+	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
 	for (i = 1; i <= numRooms; i++) {
 		_objMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		_areaMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		memset(&_area[i][0], 0, sizeof(Area));
 		for (j = 1; j <= _areaMax[i]; j++) {
-			assert(j < MAX_AREAS);
+			assert(j < MAX_AREAS_NUMBER);
 			_area[i][j].readFromBE(ptr);
 		}
 	}
@@ -89,7 +89,7 @@ uint16 Grid::findZoneForPos(GridScreen screen, uint16 x, uint16 y) const {
 	if (screen == GS_PANEL) {
 		y -= ROOM_ZONE_HEIGHT;
 	}
-	for(i = 1; i < MAX_ZONES; ++i) {
+	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		const ZoneSlot *pzs = &_zones[screen][i];
 		if (pzs->valid && pzs->box.contains(x, y)) {
 			return i;
@@ -113,7 +113,7 @@ uint16 Grid::findAreaForPos(GridScreen screen, uint16 x, uint16 y) const {
 
 void Grid::clear(GridScreen screen) {
 	debug(9, "Grid::clear(%d)", screen);
-	for(int i = 1; i < MAX_ZONES; ++i) {
+	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		_zones[screen][i].valid = false;
 	}
 }
@@ -163,7 +163,7 @@ void Grid::setupPanel() {
 
 
 void Grid::drawZones() {
-	for(int i = 1; i < MAX_ZONES; ++i) {
+	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		const ZoneSlot *pzs = &_zones[GS_ROOM][i];
 		if (pzs->valid) {
 			const Box *b = &pzs->box;

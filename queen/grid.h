@@ -62,8 +62,8 @@ public:
 	uint16 objMax(int room) const { return _objMax[room]; } 
 
 	enum {
-		MAX_ZONES = 32,
-		MAX_AREAS = 11
+		MAX_ZONES_NUMBER = 32,
+		MAX_AREAS_NUMBER = 11
 	};
 
 
@@ -74,13 +74,13 @@ private:
 		Box box;
 	};
 
-	ZoneSlot _zones[GS_COUNT][MAX_ZONES];
+	ZoneSlot _zones[GS_COUNT][MAX_ZONES_NUMBER];
 	
 	int16 *_objMax;
 
 	int16 *_areaMax;
 
-	Area (*_area)[MAX_AREAS];
+	Area (*_area)[MAX_AREAS_NUMBER];
 
 	Box *_objectBox;
 
