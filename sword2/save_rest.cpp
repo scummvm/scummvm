@@ -131,6 +131,9 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 	convertHeaderEndian(_saveGameHeader);
 #endif
 
+	// Copy the header to the buffer, even though it isn't quite complete
+	memcpy(buffer, &_saveGameHeader, sizeof(_saveGameHeader));
+
 	// Get the global variables
 
 	byte *varsRes = _resman->openResource(1);
@@ -150,10 +153,9 @@ void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 
 	_saveGameHeader.checksum = TO_LE_32(calcChecksum(buffer + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum)));
 
-
 	// All done
 
-	memcpy(buffer, &_saveGameHeader, sizeof(_saveGameHeader));
+	memcpy(buffer, &_saveGameHeader.checksum, sizeof(_saveGameHeader.checksum));
 }
 
 uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
