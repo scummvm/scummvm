@@ -179,7 +179,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
-	  _value(0), _valueMin(0), _valueMax(100) {
+	  _value(0), _oldValue(0),_valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
 }
