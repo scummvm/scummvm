@@ -327,7 +327,7 @@ void AkosRenderer::setCostume(int costume) {
 	akct = _vm->findResourceData(MKID('AKCT'), akos);
 }
 
-void AkosRenderer::setFacing(Actor *a) {
+void AkosRenderer::setFacing(const Actor *a) {
 	_mirror = (newDirToOldDir(a->getFacing()) != 0 || akhd->flags & 1);
 	if (a->flip)
 		_mirror = !_mirror;

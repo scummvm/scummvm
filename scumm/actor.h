@@ -168,7 +168,7 @@ public:
 	void putActor(int x, int y, byte room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	int calcMovementFactor(Common::Point next);
+	int calcMovementFactor(const Common::Point& next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	void setupActorScale();

@@ -128,7 +128,7 @@ public:
 	}
 
 	virtual void setPalette(byte *palette) = 0;
-	virtual void setFacing(Actor *a) = 0;
+	virtual void setFacing(const Actor *a) = 0;
 	virtual void setCostume(int costume) = 0;
 
 

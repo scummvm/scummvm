@@ -991,7 +991,7 @@ protected:
 
 public:
 	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit = 0);
-	void markRectAsDirty(VirtScreenNumber virt, Common::Rect rect, int dirtybit = 0) {
+	void markRectAsDirty(VirtScreenNumber virt, const Common::Rect& rect, int dirtybit = 0) {
 		markRectAsDirty(virt, rect.left, rect.right, rect.top, rect.bottom, dirtybit);
 	}
 protected:

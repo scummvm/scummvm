@@ -65,7 +65,7 @@ public:
 	CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(byte *palette);
-	void setFacing(Actor *a);
+	void setFacing(const Actor *a);
 	void setCostume(int costume);
 
 protected:

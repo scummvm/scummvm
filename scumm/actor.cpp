@@ -178,7 +178,7 @@ int ScummEngine::getAngleFromPos(int x, int y) const {
 	}
 }
 
-int Actor::calcMovementFactor(Common::Point next) {
+int Actor::calcMovementFactor(const Common::Point& next) {
 	Common::Point actorPos(_pos);
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;

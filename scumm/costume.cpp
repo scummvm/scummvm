@@ -778,7 +778,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 	}
 }
 
-void CostumeRenderer::setFacing(Actor *a) {
+void CostumeRenderer::setFacing(const Actor *a) {
 	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 

@@ -84,7 +84,7 @@ public:
 	bool _actorHitResult;
 
 	void setPalette(byte *palette);
-	void setFacing(Actor *a);
+	void setFacing(const Actor *a);
 	void setCostume(int costume);
 
 protected:
