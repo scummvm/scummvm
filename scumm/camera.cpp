@@ -103,9 +103,9 @@ void ScummEngine::setCameraFollows(Actor *a) {
 		setCameraAt(camera._cur.x, 0);
 	}
 
-	t = a->_pos.x / 8;
+	t = a->_pos.x / 8 - _screenStartStrip;
 
-	if (t - _screenStartStrip < camera._leftTrigger || t - _screenStartStrip > camera._rightTrigger)
+	if (t < camera._leftTrigger || t  > camera._rightTrigger)
 		setCameraAt(a->_pos.x, 0);
 
 	for (i = 1; i < _numActors; i++) {
