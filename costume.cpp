@@ -107,7 +107,7 @@ public:
   void setKey(int val);
   void update();
   void reset();
-  void setColormap(Colormap *c);
+  void setColormap(CMap *c);
   void setMatrix(Matrix4 matrix) { matrix_ = matrix; };
   ~ModelComponent();
 
@@ -117,7 +117,7 @@ public:
 protected:
   std::string filename_;
   ResPtr<Model> obj_;
-  ResPtr<Colormap> cmap_;
+  ResPtr<CMap> cmap_;
   Model::HierNode *hier_;
   Matrix4 matrix_;
 };
@@ -226,7 +226,7 @@ void ModelComponent::reset() {
   hier_->hierVisible_ = false;
 }
 
-void ModelComponent::setColormap(Colormap *c) {
+void ModelComponent::setColormap(CMap *c) {
   cmap_ = c;
 }
 
@@ -287,7 +287,7 @@ public:
   ~ColormapComponent();
 
 private:
-  ResPtr<Colormap> cmap_;
+  ResPtr<CMap> cmap_;
 };
 
 ColormapComponent::ColormapComponent(Costume::Component *parent,

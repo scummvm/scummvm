@@ -29,7 +29,7 @@ class TextObject {
   TextObject(const char *text, const int x, const int y, const Color& fgColor);
   void setX(int x);
   void setY(int y);
-  void setColor(const Color& newColor);
+  void setColor(Color *newColor);
 
   const char *name() const { return textID_; }
   void draw();

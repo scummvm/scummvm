@@ -23,16 +23,16 @@
 #include "resource.h"
 #include <cstring>
 
-class Colormap;
+class CMap;
 class Material;
 class TextSplitter;
 
 class Model : public Resource {
 public:
   // Construct a 3D model from the given data.
-  Model(const char *filename, const char *data, int len, const Colormap &cmap);
-  void loadBinary(const char *data, const Colormap &cmap);
-  void loadText(TextSplitter &ts, const Colormap &cmap);
+  Model(const char *filename, const char *data, int len, const CMap &cmap);
+  void loadBinary(const char *data, const CMap &cmap);
+  void loadText(TextSplitter &ts, const CMap &cmap);
 
   void draw() const;
 

@@ -882,63 +882,70 @@ static void MakeTextObject() {
  }
 
  textObject = new TextObject((const char *)line, x, y, *fgColor);
+ lua_pushstring(line);	// FIXME: Register a LUA text object and pass that instead?
 }
 
 static void KillTextObject() {
- char *line;
+ char *textID;
 
  if (lua_isnil(lua_getparam(1))) { // FIXME: check this.. nil is kill all lines?
-  Engine::instance()->killTextObjects();
+  error("KillTextObject(NULL)");
+  //Engine::instance()->killTextObjects();
   return;
  }
 
-  line = lua_getstring(lua_getparam(1));
+ textID = lua_getstring(lua_getparam(1));
 
- error("killTextObject(%s)", line);
+ warning("killTextObject(%s)", textID);
  for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
       i != Engine::instance()->textsEnd(); i++) {
    TextObject *textO = *i;
-   const char *name = textO->name();
-   if (name==NULL)
-    error("Text object with null name!");
 
-   warning("Comparing **%s** to **%s**", line, name);
-   if (strstr(name, line)) {
-     error("Wanting to destroy text object %s ", line);
-     break;
+   if (strstr(textO->name(), textID)) {
+     Engine::instance()->killTextObject(textO);
+     delete textO;
+     return;
    }
  }
 }
 
 static void ChangeTextObject() {
- char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
- lua_Object table_obj = lua_getparam(2), key;
+ char *textID = lua_getstring(lua_getparam(1)), *keyText = NULL;
+ lua_Object tableObj = lua_getparam(2), tableKey;
+ TextObject *modifyObject = NULL;
 
- // FIXME: Disable this for now, as it seems to go into an infinite loop
- // when using Don's computer?!?
- warning("STUB: ChangeTextObject(%s)", line);
- return;
+ for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
+      i != Engine::instance()->textsEnd(); i++) {
+   TextObject *textO = *i;
 
- printf("STUB: ChangeTextObject(%s, ", line);
-
- while(1) {
-   lua_pushobject(table_obj);
-   if (key_text)
-    lua_pushobject(key);
-   else
-    lua_pushnil();
-
-   lua_call("next");
-   key=lua_getresult(1);
-   if (lua_isnil(key)) 
-    break;
-
-   key_text=lua_getstring(key);
-   val_text=lua_getstring(lua_getresult(2));
-   printf(" %s=%s ", key_text, val_text);
+   if (strstr(textO->name(), textID)) {
+     modifyObject = textO;
+     break;
+   }
  }
 
- printf(")\n");
+ if (!modifyObject)
+  error("ChangeTextObject(%s): Cannot find active text object", textID);
+
+ while(1) {
+   lua_pushobject(tableObj);
+   if (keyText) lua_pushobject(tableKey); else lua_pushnil();
+   lua_call("next");
+   tableKey=lua_getresult(1);
+   if (lua_isnil(tableKey)) 
+    break;
+
+   keyText=lua_getstring(tableKey);
+
+   if (strstr(keyText, "fgcolor"))
+    modifyObject->setColor(check_color(2));
+   else if (strstr(keyText, "x"))
+    ; // modifyObject->setX(atoi(lua_getstring(lua_getresult(2))));
+   else if (strstr(keyText, "y"))
+    ; // modifyObject->setY(atoi(lua_getstring(lua_getresult(2))));
+   else 
+    printf("ChangeTextObject(%s) - Unknown key %s\n", textID, keyText);
+ }
 }
 
 static void GetTextObjectDimensions() {

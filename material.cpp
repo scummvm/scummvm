@@ -22,7 +22,7 @@
 #include "debug.h"
 
 Material::Material(const char *filename, const char *data, int len,
-		   const Colormap &cmap) :
+		   const CMap &cmap) :
   Resource(filename)
 {
   if (len < 4 || memcmp(data, "MAT ", 4) != 0)

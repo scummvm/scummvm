@@ -35,7 +35,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 
   ts.expectString("section: colormaps");
   ts.scanString(" numcolormaps %d", 1, &numCmaps_);
-  cmaps_ = new ResPtr<Colormap>[numCmaps_];
+  cmaps_ = new ResPtr<CMap>[numCmaps_];
   char cmap_name[256];
   for (int i = 0; i < numCmaps_; i++) {
     ts.scanString(" colormap %256s", 1, cmap_name);

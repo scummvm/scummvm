@@ -149,18 +149,18 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
   return result;
 }
 
-Colormap *ResourceLoader::loadColormap(const char *filename) {
+CMap *ResourceLoader::loadColormap(const char *filename) {
   std::string fname = filename;
   makeLower(fname);
   cache_type::iterator i = cache_.find(fname);
   if (i != cache_.end()) {
-    return dynamic_cast<Colormap *>(i->second);
+    return dynamic_cast<CMap *>(i->second);
   }
 
   Block *b = getFileBlock(filename);
   if (b == NULL)
     error("Could not find colormap %s\n", filename);
-  Colormap *result = new Colormap(filename, b->data(), b->len());
+  CMap *result = new CMap(filename, b->data(), b->len());
   delete b;
   cache_[fname] = result;
   return result;
@@ -195,7 +195,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 }
 
 Material *ResourceLoader::loadMaterial(const char *filename,
-				       const Colormap &c) {
+				       const CMap &c) {
   std::string fname = filename;
   makeLower(fname);
   cache_type::iterator i = cache_.find(fname);
@@ -212,7 +212,7 @@ Material *ResourceLoader::loadMaterial(const char *filename,
   return result;
 }
 
-Model *ResourceLoader::loadModel(const char *filename, const Colormap &c) {
+Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
   std::string fname = filename;
   makeLower(fname);
   cache_type::iterator i = cache_.find(fname);

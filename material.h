@@ -23,13 +23,13 @@
 #include <SDL_opengl.h>
 #include <cstring>
 
-class Colormap;
+class CMap;
 
 class Material : public Resource {
 public:
   // Load a texture from the given data.
   Material(const char *filename, const char *data, int len,
-	   const Colormap &cmap);
+	   const CMap &cmap);
 
   // Load this texture into the GL context
   void select() const;

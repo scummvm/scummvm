@@ -28,7 +28,7 @@
 #include "screen.h"
 
 Model::Model(const char *filename, const char *data, int len,
-	     const Colormap &cmap) : Resource(filename)
+	     const CMap &cmap) : Resource(filename)
 {
   if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)
     loadBinary(data, cmap);
@@ -38,7 +38,7 @@ Model::Model(const char *filename, const char *data, int len,
   }
 }
 
-void Model::loadBinary(const char *data, const Colormap &cmap) {
+void Model::loadBinary(const char *data, const CMap &cmap) {
   numMaterials_ = get_LE_uint32(data + 4);
   data += 8;
   materials_ = new ResPtr<Material>[numMaterials_];
@@ -293,7 +293,7 @@ Model::HierNode *Model::copyHierarchy() {
   return result;
 }
 
-void Model::loadText(TextSplitter &ts, const Colormap &cmap) {
+void Model::loadText(TextSplitter &ts, const CMap &cmap) {
   ts.expectString("section: header");
   int major, minor;
   ts.scanString("3do %d.%d", 2, &major, &minor);
@@ -650,12 +650,11 @@ void Model::Mesh::draw() const {
   // Ender: HACK HACK HACK
   // Mannys head isn't computed correctly, so bail out to prevent memory corruption.
   // .. at least until it IS computed, or the DirtyScreen code has bounds checking :)
-  if (strstr(name_, "m_head_1"))
-        return;
+  //if (strstr(name_, "m_head_1"))
+    //    return;
 
 // Yaz: debug
 // this compute the dirty rect for the mesh
-
   glPushMatrix();
   glLoadIdentity();
 
@@ -712,8 +711,8 @@ void Model::Mesh::draw() const {
 	 if (SCREENBLOCKS_GLOBAL == 1)
 		 screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
   }
-
- /* glDisable(GL_DEPTH_TEST);
+/*
+  glDisable(GL_DEPTH_TEST);
   glPointSize( 3.f );
   glColor4f( 1.f, 1.f, 0.f, 1.f );
   glDisable(GL_TEXTURE_2D );
@@ -750,8 +749,9 @@ void Model::Mesh::draw() const {
 
   glEnd(); 
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_TEXTURE_2D ); */
+  glEnable(GL_TEXTURE_2D ); 
   glPopMatrix();
+*/
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals,

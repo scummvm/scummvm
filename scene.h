@@ -27,7 +27,7 @@
 #include <SDL_opengl.h>
 #include <string>
 
-class Colormap;
+class CMap;
 class TextSplitter;
 
 // The Lua code calls this a "set".
@@ -86,7 +86,7 @@ private:
 
   std::string name_;
   int numCmaps_;
-  ResPtr<Colormap> *cmaps_;
+  ResPtr<CMap> *cmaps_;
   int numSetups_, numLights_, numSectors_;
   Sector *sectors_;
   Light *lights_;

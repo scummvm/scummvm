@@ -24,7 +24,7 @@
 #include <string>
 
 class Bitmap;
-class Colormap;
+class CMap;
 class Costume;
 class KeyframeAnim;
 class Material;
@@ -94,11 +94,11 @@ public:
   }
 
   Bitmap *loadBitmap(const char *fname);
-  Colormap *loadColormap(const char *fname);
+  CMap *loadColormap(const char *fname);
   Costume *loadCostume(const char *fname, Costume *prevCost);
   KeyframeAnim *loadKeyframe(const char *fname);
-  Material *loadMaterial(const char *fname, const Colormap &c);
-  Model *loadModel(const char *fname, const Colormap &c);
+  Material *loadMaterial(const char *fname, const CMap &c);
+  Model *loadModel(const char *fname, const CMap &c);
   Sound *loadSound(const char *fname);
   void uncache(const char *fname);
 

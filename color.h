@@ -40,6 +40,11 @@ public:
     vals_[0] = c.vals_[0]; vals_[1] = c.vals_[1]; vals_[2] = c.vals_[2];
     return *this;
   }
+
+  Color& operator =(Color *c) {
+    vals_[0] = c->vals_[0]; vals_[1] = c->vals_[1]; vals_[2] = c->vals_[2];
+    return *this;
+  }
 };
 
 #endif

@@ -80,6 +80,8 @@ enum {
 
 class Engine {
 public:
+  GLuint font;	// FIXME: Temporary font drawing hack
+
   static Engine *instance() {
     if (instance_ == NULL)
       instance_ = new Engine;
@@ -120,12 +122,16 @@ public:
     return textObjects_.end();
   }
   void registerTextObject(TextObject *a) { textObjects_.push_back(a); }
+  void killTextObject(TextObject *a) {
+	textObjects_.remove(a);
+  }
   void killTextObjects() {
    while (!textObjects_.empty()) {
     delete textObjects_.back();
     textObjects_.pop_back();
    }
   }
+
 
 private:
   static Engine *instance_;

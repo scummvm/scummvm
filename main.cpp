@@ -30,6 +30,14 @@
 #include <unistd.h>
 #endif
 
+// Hacky includes for temporary font rendering
+#ifndef WIN32
+ #include <GL/glx.h>
+ #include <X11/Xlib.h>
+#else
+ #include <windows.h>
+#endif
+
 // Hacky global toggles for experimental/debug code
 int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
 
@@ -117,6 +125,19 @@ int main(int argc, char *argv[]) {
   lua_call("BOOT");
   lua_endblock();
 
+  // FIXME: Hacky temporary font renderer code
+  Engine::instance()->font = glGenLists(256);
+  #ifdef WIN32
+	#warning FIXME: Do Win32 code
+  #else
+  {
+        Display *dpy = XOpenDisplay(NULL);
+        XFontStruct *XFont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-20-*-*-*-*-*-*-*" );
+        glXUseXFont(XFont->fid, 0, 256, Engine::instance()->font);
+	XFreeFont(dpy, XFont);
+	XCloseDisplay(dpy);
+  }
+  #endif
   Engine::instance()->mainLoop();
 
   return 0;

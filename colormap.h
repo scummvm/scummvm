@@ -22,10 +22,10 @@
 #include "resource.h"
 #include <cstring>
 
-class Colormap : public Resource {
+class CMap : public Resource {
 public:
   // Load a colormap from the given data.
-  Colormap(const char *filename, const char *data, int len) :
+  CMap(const char *filename, const char *data, int len) :
     Resource(filename)
   {
     if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
