@@ -313,14 +313,14 @@ private:
 	int SF_takeObject(SCRIPTFUNC_PARAMS);
 	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
 	int sfStatusBar(SCRIPTFUNC_PARAMS);
-	int SF_commandMode(SCRIPTFUNC_PARAMS);
+	int SF_mainMode(SCRIPTFUNC_PARAMS);
 	int sfScriptWalkTo(SCRIPTFUNC_PARAMS);
 	int SF_doAction(SCRIPTFUNC_PARAMS);
 	int sfSetActorFacing(SCRIPTFUNC_PARAMS);
 	int sfStartBgdAnim(SCRIPTFUNC_PARAMS);
 	int sfStopBgdAnim(SCRIPTFUNC_PARAMS);
-	int SF_freezeInterface(SCRIPTFUNC_PARAMS);
-	int SF_dialogMode(SCRIPTFUNC_PARAMS);
+	int sfLockUser(SCRIPTFUNC_PARAMS);
+	int SF_preDialog(SCRIPTFUNC_PARAMS);
 	int SF_killActorThreads(SCRIPTFUNC_PARAMS);
 	int SF_faceTowards(SCRIPTFUNC_PARAMS);
 	int sfSetFollower(SCRIPTFUNC_PARAMS);

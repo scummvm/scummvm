@@ -27,6 +27,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/interface.h"
 
 #include "saga/script.h"
 
@@ -784,6 +785,10 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			break;
 			// (DLGX): Run dialogue interface
 		case 0x55:
+			if (0) {
+				_vm->_interface->activate();
+				_vm->_interface->setMode(kPanelConverse);
+			}
 			warning("dialog_end opcode: stub");
 			break;
 			// (DLGO): Add a dialogue option to interface

@@ -1046,6 +1046,8 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
 
+	_inGame = true;
+
 	switch (param) {
 	case SCENE_BEGIN:
 		_vm->_sound->stopVoice();

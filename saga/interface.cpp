@@ -238,7 +238,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_activeVerb = I_VERB_WALKTO;
 
 	_active = 0;
-	_panelMode = _savedMode = kPanelNull;
+	_panelMode = _savedMode = _lockedMode = kPanelNull;
+	_inMainMode = false;
 	*_statusText = 0;
 
 	_inventoryCount = 0;
@@ -274,6 +275,12 @@ int Interface::setMode(int mode) {
 	// TODO: Is this where we should hide/show the mouse cursor?
 
 	_panelMode = mode;
+
+	if (_panelMode == kPanelConverse)
+		_inMainMode = false;
+	//else if (_panelMode == kPanelInventory)
+	//	_inMainMode = true;
+
 	draw();
 
 	return SUCCESS;
@@ -355,16 +362,19 @@ int Interface::draw() {
 	lportrait.x = xbase + _iDesc.lportrait_x;
 	lportrait.y = ybase + _iDesc.lportrait_y;
 
-	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 256);
+	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
+		_lockedMode == kPanelMain || _lockedMode == kPanelConverse)
+		_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 256);
 
-	if (_panelMode == kPanelConverse && _iDesc.rportrait_x >= 0) {
+	if (!_inMainMode && _iDesc.rportrait_x >= 0) {
 		rportrait.x = xbase + _iDesc.rportrait_x;
 		rportrait.y = ybase + _iDesc.rportrait_y;
 
 		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait, 256);
 	}
 
-	drawInventory();
+	if (_inMainMode)
+		drawInventory();
 
 	return SUCCESS;
 }

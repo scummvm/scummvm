@@ -211,6 +211,9 @@ public:
 	int getMode(void) { return _panelMode; }
 	void rememberMode() { _savedMode = _panelMode; }
 	void restoreMode() { _panelMode = _savedMode; }
+	void lockMode() { _lockedMode = _panelMode; }
+	void unlockMode() { _panelMode = _lockedMode; }
+	bool isInMainMode() { return _inMainMode; }
 	int setStatusText(const char *new_txt);
 	int loadScenePortraits(int res);
 	int setLeftPortrait(int portrait);
@@ -240,6 +243,8 @@ private:
 	INTERFACE_DESC _iDesc;
 	int _panelMode;
 	int _savedMode;
+	int _lockedMode;
+	bool _inMainMode;
 	INTERFACE_PANEL _cPanel;
 	INTERFACE_PANEL _dPanel;
 	char _statusText[STATUS_TEXT_LEN];

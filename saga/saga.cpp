@@ -245,7 +245,11 @@ int SagaEngine::go() {
 			if (msec > MAX_TIME_DELTA) {
 				msec = MAX_TIME_DELTA;
 			}
-			_actor->direct(msec);
+            if (_vm->_interface->getMode() == kPanelMain ||
+						 _vm->_interface->getMode() == kPanelConverse ||
+						 _vm->_interface->getMode() == kPanelNull)
+				_actor->direct(msec);
+
 			_events->handleEvents(msec);
 			_script->executeThreads(msec);
 		}

@@ -52,14 +52,14 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_takeObject),
 		OPCODE(SF_objectIsCarried),
 		OPCODE(sfStatusBar),
-		OPCODE(SF_commandMode),
+		OPCODE(SF_mainMode),
 		OPCODE(sfScriptWalkTo),
 		OPCODE(SF_doAction),
 		OPCODE(sfSetActorFacing),
 		OPCODE(sfStartBgdAnim),
 		OPCODE(sfStopBgdAnim),
-		OPCODE(SF_freezeInterface),
-		OPCODE(SF_dialogMode),
+		OPCODE(sfLockUser),
+		OPCODE(SF_preDialog),
 		OPCODE(SF_killActorThreads),
 		OPCODE(SF_faceTowards),
 		OPCODE(sfSetFollower),
@@ -192,8 +192,14 @@ int Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #5 (0x05)
-int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(kPanelMain);
+int Script::SF_mainMode(SCRIPTFUNC_PARAMS) {
+	; // center actor
+	; // show verb
+	_vm->_interface->activate();
+	//_vm->_interface->setMode(kPanelInventory);
+	; // set pointer verb
+
+	return SUCCESS;
 }
 
 // Script function #6 (0x06) blocking
@@ -278,7 +284,7 @@ int Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
 // continues to run. If the parameter is false, the user interface is 
 // reenabled.
 // Param1: boolean
-int Script::SF_freezeInterface(SCRIPTFUNC_PARAMS) {
+int Script::sfLockUser(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord b_param;
 
 	b_param = thread->pop();
@@ -294,8 +300,16 @@ int Script::SF_freezeInterface(SCRIPTFUNC_PARAMS) {
 
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
-int Script::SF_dialogMode(SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(kPanelConverse);
+int Script::SF_preDialog(SCRIPTFUNC_PARAMS) {
+	_vm->_interface->deactivate();
+	; // clear converse text
+	if (_vm->_interface->isInMainMode())
+		_vm->_interface->setMode(kPanelConverse);
+	else
+		; // display zero text
+	_vm->_interface->setMode(kPanelNull);
+
+	debug(1, "stub: SF_preDialog()");
 }
 
 // Script function #13 (0x0D)
@@ -972,7 +986,6 @@ int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	PALENTRY *pal;
 
 	// Fade down
-	_vm->_gfx->showCursor(false);
 	_vm->_gfx->getCurrentPal(cur_pal);
 	_vm->_gfx->palToBlackWait(back_buf, cur_pal, kNormalFadeDuration);
 

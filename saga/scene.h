@@ -234,6 +234,7 @@ class Scene {
 	int draw(SURFACE *);
 	int getMode();
 	int getFlags() { return _desc.flags; }
+	bool isInDemo() { return !_inGame; }
 	
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
 	int isBGMaskPresent() {

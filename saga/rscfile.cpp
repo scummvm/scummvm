@@ -253,6 +253,9 @@ int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t 
 			break;
 		}
 
+	if (!(_vm->_features & GF_WYRMKEEP))
+		substnum = -1;
+
 	if (substnum != -1) {
 		File in;
 
