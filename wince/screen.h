@@ -7,6 +7,7 @@
 #define UBYTE unsigned char
 #endif
 
+void SetScreenGeometry(int w, int h);
 int GraphicsOn(HWND hWndMain);
 void GraphicsOff();
 void GraphicsSuspend();

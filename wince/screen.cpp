@@ -127,6 +127,17 @@ void GraphicsOff(void)
 	active = 0;
 }
 
+void SetScreenGeometry(int w, int h) {
+	// Complain (loudly) if w > 320 and h > 240 ...
+	if (w != 320 || h > 240) {
+		MessageBox(NULL, TEXT("Unsupported screen geometry !"), TEXT("Error"), MB_OK);
+		exit(1);
+	}
+	geom[0].lineLimit = w*h;
+	geom[1].lineLimit = w*h;
+	geom[2].lineLimit = w*h;
+}
+
 int GraphicsOn(HWND hWndMain_param)
 {
 	hWndMain = hWndMain_param;
