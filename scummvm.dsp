@@ -290,18 +290,6 @@ SOURCE=.\gui\dialog.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gui\gui.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\gui\gui.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gui\guimaps.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\gui\launcher.cpp
 # End Source File
 # Begin Source File
