@@ -1,4 +1,3 @@
-
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2004-2005 The ScummVM project
  *
