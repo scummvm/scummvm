@@ -353,8 +353,13 @@ void Journal::drawPanelText(int y, const char *text) {
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
-		drawPanelText(y - 5, s);
-		drawPanelText(y + 5, p);
+		if (_vm->resource()->getLanguage() == HEBREW) {
+			drawPanelText(y - 5, p);
+			drawPanelText(y + 5, s);
+		} else {
+			drawPanelText(y - 5, s);
+			drawPanelText(y + 5, p);
+		}
 	}
 }
 

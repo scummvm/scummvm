@@ -35,16 +35,21 @@
 
 namespace Queen {
 
+CmdText::CmdText(bool reversed, uint8 y, QueenEngine *vm)
+	: _isReversed(reversed), _y(y), _vm(vm) {
+	clear();
+}
+
 void CmdText::clear() {
 	memset(_command, 0, sizeof(_command));
 }
 
 void CmdText::display(uint8 color) {
 	_vm->display()->textCurrentColor(color);
-	_vm->display()->setTextCentered(COMMAND_Y_POS, _command, false);
+	_vm->display()->setTextCentered(_y, _command, false);
 }
 
-void CmdText::displayTemp(uint8 color, Verb v, const char *name) {
+void CmdText::displayTemp(uint8 color, Verb v, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN] = "";
 	if (_isReversed) {
 		if (name != NULL)
@@ -58,17 +63,17 @@ void CmdText::displayTemp(uint8 color, Verb v, const char *name) {
 		}
 	}
 	_vm->display()->textCurrentColor(color);
-	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
+	_vm->display()->setTextCentered(_y, temp, outlined);
 }
 
-void CmdText::displayTemp(uint8 color, const char *name) {
+void CmdText::displayTemp(uint8 color, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN];
 	if (_isReversed)
 		sprintf(temp, "%s %s", name, _command);
 	else
 		sprintf(temp, "%s %s", _command, name);
 	_vm->display()->textCurrentColor(color);
-	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
+	_vm->display()->setTextCentered(_y, temp, outlined);
 }
 
 void CmdText::setVerb(Verb v) {
@@ -117,9 +122,7 @@ void CmdState::init() {
 }
 
 Command::Command(QueenEngine *vm)
-	: _vm(vm) {
-	_cmdText._isReversed = (vm->resource()->getLanguage() == HEBREW);
-	_cmdText._vm = vm;
+	: _cmdText((vm->resource()->getLanguage() == HEBREW), CmdText::COMMAND_Y_POS, vm), _vm(vm) {
 }
 
 void Command::clear(bool clearTexts) {
