@@ -136,6 +136,16 @@ void find_script (void) {
 	  tfvalue(t->stack.stack) == tfvalue(f))
 	break;
     break;
+  case LUA_T_USERDATA:
+    if (f->value.ts->u.d.tag != task_tag)
+      lua_error("Bad argument to find_script");
+    /* Shortcut: just see whether it's still running */
+    t = f->value.ts->u.d.v;
+    if (t->Tstate == DONE)
+      lua_pushnil();
+    else
+      lua_pushusertag(t, task_tag);
+    return;
   default:
     lua_error("Bad argument to find_script");
   }
