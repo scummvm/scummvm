@@ -3018,7 +3018,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 
 	num = readArray(value, 0, 0);
 
-	byte *ptr = getResourceAddress(rtString, num);
+	byte *ptr = getResourceAddress(rtString, readVar(value));
 	if (_version >= 7 || _heversion >= 72) {
 		var_A = READ_LE_UINT32(ptr + 4);
 		var_C = READ_LE_UINT32(ptr + 8);

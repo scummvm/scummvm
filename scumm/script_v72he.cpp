@@ -1565,12 +1565,8 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 
 	num = readArray(value, 0, 0);
 
-	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, num);
-	// FIXME
-	if (!ah)
-		var_A = 0;
-	else
-		var_A = FROM_LE_32(ah->dim1end);
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
+	var_A = FROM_LE_32(ah->dim1end);
 
 	if (var_A-1 <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);
