@@ -30,6 +30,7 @@
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/state.h"
+#include "queen/walk.h"
 
 #include "common/file.h"
 
@@ -261,7 +262,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		// Check selected person to see if any Gamestates need setting
 
 		int16 index = _dialogueTree[level][0].gameStateIndex;
-
 		if (index > 0)
 			_vm->logic()->gameState(index, _dialogueTree[level][0].gameStateValue);
 
@@ -462,6 +462,7 @@ void Talk::load(const char *filename) {
 
 	ptr = dataPtr;
 
+	memset(&_dialogueTree[0], 0, sizeof(_dialogueTree[0]));
 	for (i = 1; i <= _levelMax; i++)
 		for (int j = 0; j <= 5; j++) {
 			ptr += 2;
@@ -521,10 +522,13 @@ void Talk::initialTalk() {
 
 }
 
-int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
+int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &index) {
 	// Lines 1299-1362 in talk.c
 	int commandCode = SPEAK_DEFAULT;
 
+	// cyx: what about something like:
+	// uint16 id = (sentence[index] << 8) | sentence[index + 1];
+	// switch(id) { case 'AO': ... }
 	switch (sentence[index]) {
 		case 'A':
 			if (sentence[index + 1] == 'O')
@@ -581,10 +585,13 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 				commandCode = atoi(sentence + index + 2);
 				int x = atoi(sentence + index + 5);
 				int y = atoi(sentence + index + 9);
-				debug(6, "Calling MOVE_SPEAK(person, %i, %i)",x, y);
-				// XXX MOVE_SPEAK(person, x, y)
+				if (0 == strcmp(person->name, "JOE"))
+					_vm->walk()->moveJoe(0, x, y, _vm->input()->cutawayRunning());
+				else
+					_vm->walk()->movePerson(person, x, y, _vm->logic()->numFrames(), 0);
 				index += 11;
-				/// XXX personWalking = true;
+				// if(JOEWALK==3) CUTQUIT=0;
+				// XXX personWalking = true;
 			}
 			else
 				warning("Unknown command string: '%2s'", sentence + index);
@@ -657,7 +664,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 			int segmentLength = i - segmentStart;
 
 			i++;
-			int command = getSpeakCommand(sentence, i);
+			int command = getSpeakCommand(person, sentence, i);
 
 			if (SPEAK_NONE != command) {
 				speakSegment(

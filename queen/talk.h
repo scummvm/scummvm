@@ -194,7 +194,7 @@ private:
 	bool speak(const char *sentence, Person *person, const char *voiceFilePrefix);
 
 	//! Convert command in sentence to command code
-	int getSpeakCommand(const char *sentence, unsigned &index);
+	int getSpeakCommand(const Person *person, const char *sentence, unsigned &index);
 
 	//! Speak a part of a sentence
 	void speakSegment(

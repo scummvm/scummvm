@@ -356,7 +356,7 @@ FIND_STATE()				State::findState*
 TALK
 ====
 FIND_SACTION()				Talk::findSpeechParameters
-MOVE_SPEAK()
+MOVE_SPEAK()				*included in Talk::getSpeakCommand*
 SPEAK()						Talk::speak
 SPEAK_SUB()					Talk::speakSegment
 talk()						Talk::talk
