@@ -1602,7 +1602,7 @@ void ScummEngine_v100he::o100_unknown27() {
 
 void ScummEngine_v100he::o100_unknown29() {
 	int state, resId;
-	uint32 w, h;
+	int32 w, h;
 	int16 x, y;
 
 	byte subOp = fetchScriptByte();

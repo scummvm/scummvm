@@ -1802,7 +1802,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	// For HE80+ games
 	for (i = 0; i < _numRoomVariables; i++)
 		_roomVars[i] = 0;
-	nukeArrays(0xFFFFFFFF);
+	nukeArrays((byte)0xFFFFFFFF);
 
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();

@@ -712,7 +712,7 @@ protected:
 	void writeFileFromArray(int slot, int resID);
 
 	void displayWizImage(const WizImage *pwi);
-	void getWizImageDim(int resnum, int state,  uint32 &w, uint32 &h);
+	void getWizImageDim(int resnum, int state,  int32 &w, int32 &h);
 	uint8 *drawWizImage(int restype, const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();

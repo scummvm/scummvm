@@ -425,14 +425,14 @@ void ScummEngine_v90he::o90_sqrt() {
 	if (i < 2) {
 		push(i);
 	} else {
-		push((int)sqrt(i + 1));
+		push((int)sqrt((double)(i + 1)));
 	}
 }
 
 void ScummEngine_v90he::o90_atan2() {
 	int y = pop();
 	int x = pop();
-	int a = (int)(atan2(y, x) * 180. / PI);
+	int a = (int)(atan2((double)y, (double)x) * 180. / PI);
 	if (a < 0) {
 		a += 360;
 	}
@@ -444,7 +444,7 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 	int x1 = pop();
 	int dy = y1 - pop();
 	int dx = x1 - pop();
-	int a = (int)(atan2(dy, dx) * 180. / PI);
+	int a = (int)(atan2((double)dy, (double)dx) * 180. / PI);
 	if (a < 0) {
 		a += 360;
 	}
@@ -478,7 +478,7 @@ void ScummEngine_v90he::o90_jumpToScriptUnk() {
 
 void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r) {
 	Common::Point pts[4];
-	uint32 w, h;
+	int32 w, h;
 	getWizImageDim(resnum, state, w, h);
 
 	pts[1].x = pts[2].x = w / 2 - 1;
@@ -1141,7 +1141,7 @@ int ScummEngine_v90he::getWizImageStates(int resnum) {
 
 void ScummEngine_v90he::o90_unknown29() {
 	int state, resId;
-	uint32 w, h;
+	int32 w, h;
 	int16 x, y;
 
 	byte subOp = fetchScriptByte();
@@ -1309,7 +1309,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			int dy = args2[1] - args1[1];
 			int dist = dx * dx + dy * dy;
 			if (dist >= 2) {
-				dist = (int)sqrt(dist + 1);
+				dist = (int)sqrt((double)(dist + 1));
 			}
 			push((dist > args1[2]) ? 1 : 0);
 		}
@@ -1327,7 +1327,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			int dy = args2[1] - args1[1];
 			int dist = dx * dx + dy * dy;
 			if (dist >= 2) {
-				dist = (int)sqrt(dist + 1);
+				dist = (int)sqrt((double)(dist + 1));
 			}
 			push((dist < args1[2] && dist < args2[2]) ? 1 : 0);
 		}

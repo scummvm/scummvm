@@ -440,7 +440,7 @@ void ScummEngine_v80he::o80_unknown49() {
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {
 	int slot = pop();
-	localizeArray(slot, 0xFFFFFFFF);
+	localizeArray(slot, (byte)0xFFFFFFFF);
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {
@@ -595,7 +595,7 @@ void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
 	wi.state = 0;
 	wi.flags = 0x20;	
 	uint8 *cursor = drawWizImage(rtImage, &wi);
-	uint32 cw, ch;	
+	int32 cw, ch;	
 	getWizImageDim(resId, 0, cw, ch);
 	setCursorFromBuffer(cursor, cw, ch, cw);
 	setCursorHotspot(x, y);
@@ -703,7 +703,7 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	if (readVar(value) == 0) {
 		defineArray(value, kDwordArray, 0, 0, 0, num);
 		if (value & 0x8000)
-			localizeArray(readVar(value), 0xFFFFFFFF);
+			localizeArray(readVar(value), (byte)0xFFFFFFFF);
 		else if (value & 0x4000)
 			localizeArray(readVar(value), vm.slot[_currentScript].number);
 

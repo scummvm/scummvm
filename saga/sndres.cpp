@@ -232,7 +232,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 
 int SndRes::getVoiceLength(uint32 voice_rn) {
 	int res_type = _snd_info.res_type;
-	uint32 length;
+	uint32 length = 0;
 
 	double ms_f;
 	int ms_i = -1;

@@ -1546,7 +1546,7 @@ void ScummEngine_v72he::displayWizImage(const WizImage *pwi) {
 	}
 }
 
-void ScummEngine_v72he::getWizImageDim(int resnum, int state, uint32 &w, uint32 &h) {
+void ScummEngine_v72he::getWizImageDim(int resnum, int state, int32 &w, int32 &h) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resnum);
 	if (dataPtr) {
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
@@ -1734,7 +1734,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 			error("Invalid coords polygon %d", wp->id);
 		}
 
-		uint32 wizW, wizH;
+		int32 wizW, wizH;
 		getWizImageDim(resnum, state, wizW, wizH);
 		Common::Point bbox[4];
 		bbox[0].x = 0;
@@ -1782,7 +1782,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 			int32 y_step = ((pia->y2 - pia->y1) << 0x10) / dx;
 			while (dx--) {
 				uint srcWizOff = (y_acc >> 0x10) * wizW + (x_acc >> 0x10);
-				assert(srcWizOff < wizW * wizH);
+				assert(srcWizOff < (uint32)(wizW * wizH));
 				x_acc += x_step;
 				y_acc += y_step;
 				*dstPtr++ = srcWizBuf[srcWizOff];
