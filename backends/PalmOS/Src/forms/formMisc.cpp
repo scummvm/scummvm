@@ -4,6 +4,9 @@
 #include "formTabs.h"
 #include "forms.h"
 
+#ifndef DISABLE_LIGHTSPEED
+#include "lightspeed_public.h"
+#endif
 /***********************************************************************
  *
  * FUNCTION:    MiscOptionsFormSave
@@ -18,30 +21,6 @@
  ***********************************************************************/
 static TabType *myTabP;
 static UInt16 lastTab = 0;
-
-static Boolean stackChanged = false;
-
-static UInt32 StackSize(UInt32 newSize) {
-	MemHandle pref = DmGetResource('pref',0);
-	UInt32 size = 0;
-	
-	if (pref) {
-		SysAppPrefsType *data = (SysAppPrefsType *)MemHandleLock(pref);
-		size = data->stackSize;
-
-		if (newSize) {
-			SysAppPrefsType newData;
-			MemMove(&newData, data, sizeof(SysAppPrefsType));
-			newData.stackSize = newSize;
-			DmWrite(data, 0, &newData, sizeof(SysAppPrefsType));
-		}
-
-		MemPtrUnlock(data);
-		DmReleaseResource(pref);
-	}
-
-	return size;
-}
 
 static Boolean ScummVMTabSave() {
 	FieldType *fld1P;
@@ -79,27 +58,34 @@ static void PalmOSTabSave() {
 	cckP[0] = (ControlType *)GetObjectPtr(TabPalmOSVibratorCheckbox);
 	cckP[1] = (ControlType *)GetObjectPtr(TabPalmOSNoAutoOffCheckbox);
 	cckP[2] = (ControlType *)GetObjectPtr(TabPalmOSStdPaletteCheckbox);
+	cckP[3] = (ControlType *)GetObjectPtr(TabPalmOSLightspeedCheckbox);
 	cckP[4] = (ControlType *)GetObjectPtr(TabPalmOSLargerStackCheckbox);
-	cckP[5] = (ControlType *)GetObjectPtr(TabPalmOSAutoResetCheckbox);
+	cckP[5] = (ControlType *)GetObjectPtr(TabPalmOSExitLauncherCheckbox);
 	cckP[10]= (ControlType *)GetObjectPtr(TabPalmOSARMCheckbox);
 
 	gPrefs->vibrator = CtlGetValue(cckP[0]);
 	gPrefs->autoOff = !CtlGetValue(cckP[1]);
 	gPrefs->stdPalette = CtlGetValue(cckP[2]);
-	gPrefs->autoReset = CtlGetValue(cckP[5]);
+	gPrefs->lightspeed.enable = CtlGetValue(cckP[3]);
+	gPrefs->setStack = CtlGetValue(cckP[4]);
+	gPrefs->exitLauncher = CtlGetValue(cckP[5]);
 	gPrefs->arm = CtlGetValue(cckP[10]);
 
-	// Larger stack is a global data init at start up
-	StackSize(CtlGetValue(cckP[4]) ? STACK_LARGER : STACK_DEFAULT);
-	if (stackChanged)
-		FrmCustomAlert(FrmInfoAlert,"You need to restart ScummVM in order for changes to take effect.",0,0);
+#ifndef DISABLE_LIGHTSPEED
+	if (LS_Installed()) {
+		ListType *list1P = (ListType *)GetObjectPtr(TabPalmOSLightspeedList);
+		cckP[6] = (ControlType *)GetObjectPtr(TabPalmOSLightspeedCheckbox);
+
+		gPrefs->lightspeed.enable = CtlGetValue(cckP[6]);
+		gPrefs->lightspeed.mode = LstGetSelection(list1P);
+	}
+#endif
 }
 
 static void ScummVMTabInit() {
 	FieldType *fld1P;
 	Char *levelP;
 	MemHandle levelH;
-
 
 	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDemoCheckbox), gPrefs->demoMode);
@@ -117,13 +103,22 @@ static void ScummVMTabInit() {
 }
 
 static void PalmOSTabInit() {
-	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSLargerStackCheckbox), (StackSize(STACK_GET) == STACK_LARGER));
+#ifndef DISABLE_LIGHTSPEED
+	if (LS_Installed()) {
+		ListType *list1P = (ListType *)GetObjectPtr(TabPalmOSLightspeedList);
+		LstSetSelection(list1P, gPrefs->lightspeed.mode);
+		CtlSetLabel((ControlType *)GetObjectPtr(TabPalmOSLightspeedPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+	}
+#endif
 
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSExitLauncherCheckbox), gPrefs->lightspeed.enable);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSExitLauncherCheckbox), gPrefs->exitLauncher);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSLargerStackCheckbox), gPrefs->setStack);
 	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSVibratorCheckbox), gPrefs->vibrator);
 	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSNoAutoOffCheckbox), !gPrefs->autoOff);
 	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSStdPaletteCheckbox), gPrefs->stdPalette);
-	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSAutoResetCheckbox), gPrefs->autoReset);
 	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSARMCheckbox), gPrefs->arm);
+	CtlSetValue((ControlType *)GetObjectPtr(TabPalmOSLightspeedCheckbox), gPrefs->lightspeed.enable);
 }
 
 static void MiscFormSave() {
@@ -148,6 +143,14 @@ static void MiscFormInit() {
 	FrmDrawForm(frmP);
 	TabSetActive(frmP, tabP, lastTab);
 
+#ifndef DISABLE_LIGHTSPEED
+	if (!LS_Installed())
+#endif
+	{
+		FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedCheckbox));
+		FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedPopTrigger));
+	}
+
 	myTabP = tabP;
 }
 
@@ -168,10 +171,19 @@ Boolean MiscFormHandleEvent(EventPtr eventP) {
 				case (MiscForm + 2) :
 					lastTab = (eventP->data.ctlSelect.controlID - MiscForm - 1);
 					TabSetActive(frmP, myTabP, lastTab);
+					
+#ifndef DISABLE_LIGHTSPEED
+					if (!LS_Installed())
+#endif
+					{
+						FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedCheckbox));
+						FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedPopTrigger));
+					}
 					break;
 
-				case TabPalmOSLargerStackCheckbox:
-					stackChanged = !stackChanged;
+				case TabPalmOSLightspeedPopTrigger:
+					FrmList(eventP, TabPalmOSLightspeedList);
+					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabPalmOSLightspeedList));
 					break;
 
 				case MiscOKButton:
