@@ -603,12 +603,19 @@ void SwordControl::doRestore(void) {
 	}
 	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
 	uint32 *playerRaw = (uint32*)_objMan->fetchObject(PLAYER);
+	BsObject *cpt = _objMan->fetchObject(PLAYER);
 	for (uint32 cnt = 0; cnt < playerSize; cnt++) {
 		*playerRaw = *(uint32*)bufPos;
 		playerRaw++;
 		bufPos += 4;
 	}
     free(_restoreBuf);
+	SwordLogic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
+	SwordLogic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
+	SwordLogic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
+	SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;
+	SwordLogic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
+	SwordEngine::_systemVars.justRestoredGame = 1;
 }
 
 void SwordControl::delay(uint32 msecs) {

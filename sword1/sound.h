@@ -57,6 +57,7 @@ class SwordSound {
 public:
 	SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
 	~SwordSound(void);
+	void newScreen(uint32 screen);
 	void quitScreen(void);
 
 	bool startSpeech(uint16 roomNo, uint16 localNo); // this should work more or less.
@@ -66,7 +67,6 @@ public:
 	bool amISpeaking(void); // this is supposed to return if the sounddata is near the ending or very silent...
 
 	void fnStopFx(int32 fxNo);
-	void clearAllFx(void);
 	int addToQueue(int32 fxNo);
 
 	void engine(void);
@@ -74,12 +74,13 @@ public:
 private:
 	void playSample(QueueElement *elem);
 	void initCowSystem(void);
-	void closeCowSysten(void);
+	void closeCowSystem(void);
 	uint32 uncompressedSize(uint8 *data);
 	uint32 expandSpeech(void *src, void *dest, uint32 srcSize);
 	File		 _cowFile;
 	uint32		 *_cowHeader;
 	uint32		 _cowHeaderSize;
+	uint8		 _currentCowFile;
 	PlayingSoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
 	

@@ -27,6 +27,176 @@
 #include "menu.h"
 #include "music.h"
 #include "sound.h"
+#include "sword1.h"
+
+const uint8 SwordEngine::_cdList[TOTAL_SECTIONS] = {
+	0,		// 0		inventory
+
+	1,		// 1		PARIS 1
+	1,		// 2
+	1,		// 3
+	1,		// 4
+	1,		// 5
+	1,		// 6
+	1,		// 7
+	1,		// 8
+
+	1,		// 9		PARIS 2
+	1,		// 10
+	1,		// 11
+	1,		// 12
+	1,		// 13
+	1,		// 14
+	1,		// 15
+	1,		// 16
+	1,		// 17
+	1,		// 18
+
+	2,		// 19		IRELAND
+	2,		// 20
+	2,		// 21
+	2,		// 22
+	2,		// 23
+	2,		// 24
+	2,		// 25
+	2,		// 26
+
+	1,		// 27		PARIS 3
+	1,		// 28
+	1,		// 29
+ 	1,		// 30 - Heart Monitor
+	1,		// 31
+	1,		// 32
+	1,		// 33
+	1,		// 34
+	1,		// 35
+
+	1,		// 36		PARIS 4
+	1,		// 37
+	1,		// 38
+	1,		// 39
+	1,		// 40
+	1,		// 41
+	1,		// 42
+	1,		// 43
+	0,		// 44	<NOT USED>
+
+	2,		// 45		SYRIA
+	1,		// 46		PARIS 4
+	2,		// 47
+	1,		// 48		PARIS 4
+	2,		// 49
+	2,		// 50
+	0,		// 51 <NOT USED>
+	0,		// 52 <NOT USED>
+	2,		// 53
+	2,		// 54
+	2,		// 55
+
+	2,		// 56		SPAIN
+	2,		// 57
+	2,		// 58
+	2,		// 59
+	2,		// 60
+	2,		// 61
+	2,		// 62
+
+	2,		// 63		NIGHT TRAIN
+	0,		// 64 <NOT USED>
+	2,		// 65
+	2,		// 66
+	2,		// 67
+	0,		// 68 <NOT USED>
+	2,		// 69
+	0,		// 70 <NOT USED>
+
+	2,		// 71		SCOTLAND
+	2,		// 72
+	2,	 	// 73
+	2,		// 74		END SEQUENCE IN SECRET_CRYPT
+	2,		// 75
+	2,		// 76
+	2,		// 77
+	2,		// 78
+	2,		// 79
+
+	1,		// 80		PARIS MAP
+
+	1,		// 81	Full-screen for "Asstair" in Paris2
+
+	2,		// 82	Full-screen BRITMAP in sc55 (Syrian Cave)
+	0,		// 83 <NOT USED>
+	0,		// 84 <NOT USED>
+	0,		// 85 <NOT USED>
+
+	1,		// 86		EUROPE MAP
+	1,		// 87		fudged in for normal window (sc48)
+	1,		// 88		fudged in for filtered window (sc48)
+	0,		// 89 <NOT USED>
+
+	0,		// 90		PHONE SCREEN
+	0,		// 91		ENVELOPE SCREEN
+	1,		// 92		fudged in for George close-up surprised in sc17 wardrobe
+	1,		// 93		fudged in for George close-up inquisitive in sc17 wardrobe
+	1,		// 94		fudged in for George close-up in sc29 sarcophagus
+	1,		// 95		fudged in for George close-up in sc29 sarcophagus
+	1,		// 96		fudged in for chalice close-up from sc42
+	0,		// 97 <NOT USED>
+	0,		// 98 <NOT USED>
+	0,		// 99		MESSAGE SCREEN (BLANK)
+
+	0,		// 100
+	0,		// 101
+	0,		// 102
+	0,		// 103
+	0,		// 104
+	0,		// 105
+	0,		// 106
+	0,		// 107
+	0,		// 108
+	0,		// 109
+
+	0,		// 110
+	0,		// 111
+	0,		// 112
+	0,		// 113
+	0,		// 114
+	0,		// 115
+	0,		// 116
+	0,		// 117
+	0,		// 118
+	0,		// 119
+
+	0,		// 120
+	0,		// 121
+	0,		// 122
+	0,		// 123
+	0,		// 124
+	0,		// 125
+	0,		// 126
+	0,		// 127
+	0,		// 128  GEORGE'S GAME SECTION
+	0,		// 129	NICO'S TEXT		- on both CD's
+
+	0,		// 130
+	1,		// 131	BENOIR'S TEXT - on CD1
+	0,		// 132
+	1,		// 133	ROSSO'S TEXT	- on CD1
+	0,		// 134
+	0,		// 135
+	0,		// 136
+	0,		// 137
+	0,		// 138
+	0,		// 139
+
+	0,		// 140
+	0,		// 141
+	0,		// 142
+	0,		// 143
+	0,		// 144
+	1,		// 145	MOUE'S TEXT		- on CD1
+	1,		// 146	ALBERT'S TEXT	- on CD1
+};
 
 const MenuObject SwordMenu::_objectDefs[TOTAL_pockets + 1] = {
 	{	// 0 can't use

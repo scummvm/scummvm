@@ -24,6 +24,7 @@
 #include "common/util.h"
 #include "resman.h"
 #include "logic.h"
+#include "sword1.h"
 
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN)
@@ -33,8 +34,8 @@ SwordSound::SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMa
 	_mixer = mixer;
 	_resMan = pResMan;
 	_cowHeader = NULL;
-	initCowSystem();
 	_endOfQueue = 0;
+	_currentCowFile = 0;
 }
 
 int SwordSound::addToQueue(int32 fxNo) {
@@ -107,25 +108,22 @@ bool SwordSound::amISpeaking(void) {
 	return true;
 }
 
-void SwordSound::clearAllFx(void) {
-	warning("Stub: SwordSound::clearAllFx()");
-}
-
-void SwordSound::closeCowSysten(void) {
-	warning("stub: SwordSound::closeCowSystem()");
-}
-
 bool SwordSound::speechFinished(void) {
-	//warning("stub: SwordSound::speechFinished()");
-	//return true;
 	return (_speechHandle == 0);
+}
+
+void SwordSound::newScreen(uint32 screen) {
+	if (_currentCowFile != SwordEngine::_systemVars.currentCD) {
+		if (_currentCowFile)
+			closeCowSystem();
+		initCowSystem();			
+	}
 }
 
 void SwordSound::quitScreen(void) {
 	// stop all running SFX
 	while (_endOfQueue)
 		fnStopFx(_fxQueue[0].id);
-	// I don't think that we even have to start SFX here.
 }
 
 void SwordSound::playSample(QueueElement *elem) {
@@ -216,9 +214,13 @@ void SwordSound::stopSpeech(void) {
 }
 
 void SwordSound::initCowSystem(void) {
-	_cowFile.open("SPEECH.CLU");
-	if (_cowFile.isOpen() == false)
-		_cowFile.open("speech/SPEECH.CLU");
+	char cowName[25];
+	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+	_cowFile.open(cowName);
+	if (!_cowFile.isOpen()) {
+		sprintf(cowName, "speech/SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+		_cowFile.open(cowName);
+	}
 	if (_cowFile.isOpen()) {
 		_cowHeaderSize = _cowFile.readUint32LE();
 		_cowHeader = (uint32*)malloc(_cowHeaderSize);
@@ -226,6 +228,17 @@ void SwordSound::initCowSystem(void) {
 			error("Unexpected cow header size %d", _cowHeaderSize);
 		for (uint32 cnt = 0; cnt < (_cowHeaderSize / 4) - 1; cnt++)
 			_cowHeader[cnt] = _cowFile.readUint32LE();
+		_currentCowFile = SwordEngine::_systemVars.currentCD;
 	} else
-		warning("SwordSound::initCowSystem: Can't open SPEECH.CLU");	
+		warning("SwordSound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);	
 }
+
+void SwordSound::closeCowSystem(void) {
+	if (_cowFile.isOpen())
+		_cowFile.close();
+	if (_cowHeader)
+		free(_cowHeader);
+	_cowHeader = NULL;
+	_currentCowFile = NULL;
+}
+

@@ -109,6 +109,8 @@ void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeU
 	if (fadeUp) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
+		memset(_currentPalette, 0, 256 * 4);
+		_system->set_palette(_currentPalette, 0, 256);
 	} else
 		_system->set_palette(_targetPalette, start, length);
 }
@@ -121,10 +123,8 @@ void SwordScreen::updateScreen(void) {
 	if (SwordLogic::_scriptVars[NEW_PALETTE]) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
-		memcpy(_targetPalette, _resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[0]), 184 * 3); // set colours 0-183 for background palette
-		_resMan->resClose(_roomDefTable[_currentScreen].palettes[0]);
-		memcpy(_targetPalette + 184 * 3, _resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[1]),  72 * 3); // set colours 184-255 for sprite palette - george, icons & menubar
-		_resMan->resClose(_roomDefTable[_currentScreen].palettes[1]);
+		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], true);
+		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], true);
 		SwordLogic::_scriptVars[NEW_PALETTE] = 0;
 	}
 	if (_fadingStep) {
@@ -223,7 +223,6 @@ void SwordScreen::updateScreen(void) {
 
 void SwordScreen::newScreen(uint32 screen) {
 	// set sizes and scrolling, initialize/load screengrid, force screen refresh
-	// force palette fadeup?
 	_currentScreen = screen;
 	_scrnSizeX = _roomDefTable[screen].sizeX;
 	_scrnSizeY = _roomDefTable[screen].sizeY;

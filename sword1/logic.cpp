@@ -856,8 +856,8 @@ int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 
 }
 
 int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("fnFadeUp speed = %d", speed);
-	_screen->fadeUpPalette();
+	//warning("fnFadeUp speed = %d", speed);
+	//_screen->fadeUpPalette();
 	return SCRIPT_CONT;
 }
 
@@ -878,10 +878,7 @@ int SwordLogic::fnSetWholePalette(BsObject *cpt, int32 id, int32 spritePal, int3
 }
 
 int SwordLogic::fnSetFadeTargetPalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	uint8 *pal = (uint8*)_resMan->openFetchRes(spritePal);
-	pal[0] = pal[1] = pal[2] = 0;
-	_resMan->resClose(spritePal);
-	warning("fnSetFadeTargetPalette(xx, %d, %X, %d)", id, spritePal, d);
+	_screen->fnSetPalette(0, 184, spritePal, true);
 	return SCRIPT_CONT;
 }
 

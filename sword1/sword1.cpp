@@ -1065,16 +1065,27 @@ void SwordEngine::go(void) {
 	} while (true);
 }
 
+void SwordEngine::checkCd(void) {
+	uint8 needCd = _cdList[SwordLogic::_scriptVars[NEW_SCREEN]];
+	if (needCd == 0) {
+		if (_systemVars.currentCD == 0)
+			_systemVars.currentCD = 1;
+	} else
+		_systemVars.currentCD = needCd;
+}
+
 void SwordEngine::mainLoop(void) {
 	uint32 newTime, frameTime;
 	bool wantControlPanel = false;
 	do {
 		// do we need the section45-hack from sword.c here?
-		// todo: ensure right cd is inserted
+		checkCd();
+
 		_screen->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		_logic->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
+		_sound->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		SwordLogic::_scriptVars[SCREEN] = SwordLogic::_scriptVars[NEW_SCREEN];
-		//		 let swordSound start room sfx
+		
 		do {
 			_music->stream();
 			frameTime = _system->get_msecs();

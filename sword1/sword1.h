@@ -24,6 +24,7 @@
 #include "common/util.h"
 #include "sound/mixer.h"
 #include "base/gameDetector.h"
+#include "sworddefs.h"
 
 class SwordScreen;
 class SwordSound;
@@ -41,26 +42,12 @@ struct SystemVars {
 	uint32	justRestoredGame;	// see main() in sword.c & New_screen() in gtm_core.c
 	uint32	gamePaused;			// 1 when paused
 	uint32	rate;				// game rate  => what's this for?
-	//uint32	textNumber;		// holds last text_no displayed => I think it was only for debugging
-	//uint32	endOfQ;				// next available slot in sound fx queue
-	//uint8	debug;				// toggles tdebug file
 
-	//uint8	saveGameFlag;		// controls save game loop							0=off 1=save game 2=restore game 3=restart 4=quit to dos
 	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
 	bool	forceRestart;
 	uint8	playSpeech;
 	uint8   showText;
-	//uint8   snrStatus;
-			// ^=> move into SwordControl... or whatever it will be.
-	//uint8	displayText;		// toggles debug text display						on "t"
-	//uint8	displayGrid;		// toggles debug grid display						on "g"
-	//uint8	displayMouse;		// toggles debug mouse display 					on "m"
-	//uint8	framesPerSecond;	// toggles one frame pre second mode		on "1"
-	//uint8	writingPCXs;		// writing a PCX every frame						on "f"
-	//int16	parallaxOn;			I think we don't need this.
     uint8	language;
-	//int32	currentMusic;
-	//uint32	gameCycle;
 };
 
 class SwordEngine : public Engine {
@@ -76,8 +63,8 @@ private:
 	void delay(uint amount);
 	void initialize(void);
 
+	void checkCd(void);
 	void mainLoop(void);
-	void fnCheckCd(uint32 newScreen);
 	void startPositions(int32 startNumber);
 
 	uint16 _mouseX, _mouseY, _mouseState;
@@ -95,4 +82,5 @@ private:
 	SwordSound	*_sound;
 	SwordMenu	*_menu;
 	SwordMusic  *_music;
+	static const uint8 _cdList[TOTAL_SECTIONS];
 };
