@@ -14,7 +14,8 @@ MODULE_OBJS := \
 	common/scaler/hq3x.o
 
 MODULE_DIRS += \
-	common
+	common \
+	common/scaler
 
 # Include common rules 
 include common.rules
