@@ -975,7 +975,7 @@ bool Sound::isSfxFinished() const {
 	return !_scumm->_mixer->hasActiveSFXChannel();
 }
 
-uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo = false) {
+uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo) {
 	uint32 s_size = (size / 3) * 4;
 	uint32 loop_size = s_size / 4;
 	if (stereo) {
@@ -1178,7 +1178,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	byte *buffer = NULL;
 	uint32 final_size;
 	if (_bundleMusicSampleBits == 12) {
-		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize);
+		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize, false);
 	} else if (_bundleMusicSampleBits == 16) {
 		buffer = (byte *)malloc(_outputMixerSize);
 		final_size = _outputMixerSize;

@@ -870,8 +870,10 @@ void IMuseDigital::startSound(int sound) {
 
 			if (READ_UINT32(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
+				// Always output stereo, because in IMuseDigital::handler the data is expected to be in stereo, and
+				// different volumes for the left and right channel are being applied.
+				// That might also be the justification for specifying FLAG_REVERSE_STEREO here. Not sure.
 				_channel[l]._channels = 2;
-				_channel[l]._mixerSize = (22050 / 5) * 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				byte * t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
 
@@ -880,10 +882,8 @@ void IMuseDigital::startSound(int sound) {
 				} else if (_channel[l]._freq == 10989) {
 					_channel[l]._freq = 11025;
 				}
-				
-				if (_channel[l]._freq == 11025) {
-					_channel[l]._mixerSize /= 2;
-				}
+				_channel[l]._mixerSize = (_channel[l]._freq / 5) * 2;
+
 				size *= 2;
 				_channel[l]._data = (byte *)malloc(size);
 				for (t = 0; t < size / 2; t++) {
@@ -971,14 +971,17 @@ void IMuseDigital::startSound(int sound) {
 						}
 					}
 				}
-				_channel[l]._mixerSize = (22050 / 5) * 2;
+
+				// Always output stereo, because in IMuseDigital::handler the data is expected to be in stereo, and
+				// different volumes for the left and right channel are being applied.
+				// That might also be the justification for specifying FLAG_REVERSE_STEREO here. Not sure.
 				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+				_channel[l]._mixerSize = (_channel[l]._freq / 5) * 2;
 				if (_channel[l]._bits == 12) {
 					_channel[l]._mixerSize *= 2;
 					_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
 					_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
-				}
-				if (_channel[l]._bits == 8) {
+				} else if (_channel[l]._bits == 8) {
 					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 					if (_channel[l]._channels == 1) {
 						size *= 2;
@@ -993,10 +996,8 @@ void IMuseDigital::startSound(int sound) {
 						memcpy(_channel[l]._data, ptr, size);
 					}
 					_channel[l]._size = size;
-				}
-				if (_channel[l]._freq == 11025) {
-					_channel[l]._mixerSize /= 2;
-				}
+				} else
+					error("Can't handle %d bit samples in iMuseDigital", _channel[l]._bits);
 			}
 			_channel[l]._toBeRemoved = false;
 			_channel[l]._used = true;
