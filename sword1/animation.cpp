@@ -213,8 +213,9 @@ bool MoviePlayer::initOverlays(uint32 id) {
 		for (uint16 cnt = 0; cnt < 256; cnt++)
 			_introPal[cnt] = _sys->RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2]);
 	}
-	return true;
 #endif
+
+	return true;
 }
 
 SplittedAudioStream::SplittedAudioStream(void) {
