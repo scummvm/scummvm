@@ -184,6 +184,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::proc62(void) {
+	debug(1, "Insane::proc62");
 	if (readArray(58) != 0)
 		_enemy[EN_TORQUE].field_10 = 1;
 
@@ -196,142 +197,83 @@ void Insane::proc62(void) {
 
 	proc63();
 
-	// FIXME: someone, please, untaint this mess
+	int32 count, i, j, en, en2;
+	bool notfound;
 
-	int32 en, edi, ebp, edx, esi, eax, ebx, ecx;
+	en = 0;
+	for (i = 0; i < 9; i++)
+		if (_enemy[i].field_10 == 0)
+			++en;
 
-	edx = eax = 0;
+	en -= 4;
+	assert(en >= 0);
 
-	for (eax = 0; eax < 9; eax++)
-		if (_enemy[eax].field_10 == 0)
-			edx++;
-	  
-	edx -= 4;
+	count = 0;
+	while (1) {
+		count++;
+		if (count < 14) {
+			en2 = _vm->_rnd.getRandomNumber(10);
+			if (en2 == 9)
+				en2 = 6;
+			else if (en2 > 9)
+				en2 = 7;
 
-	en = edx;
+			notfound = true;
 
-	ebp = 0;
-	edi = 0;
+			if (_enemy[en2].field_10 != 0)
+				continue;
 
-	_loop1:
-	edi++;
-	if (edi >= 14)
-		goto loc5;
-
-	edx = _vm->_rnd.getRandomNumber(10);
-
-	esi = edx;
-
-	if (edx == 9)
-		esi = 6;
-	else if (edx > 9)
-		esi = 7;
-
-	eax = esi;
-	ebx = 1;
-
-	if (_enemy[eax].field_10 != ebp)
-		goto _loop1;
-
-	if (ebp < _val215d) {
-		edx = _val215d;
-		eax = ebp;
-		if (ebx)
-			goto loc1;
-	}
-
-	goto loc4;
-
-	loc1:
-	if (esi == _val216d[eax + 1])
-		ebx = ebp;
-
-	eax++;
-
-	if (eax < edx) {
-		if (ebx)
-			goto loc1;
-	}
-
-	loc4:
-	if (ebx == 0)
-		goto loc15;
-
-	edx = _val215d;
-	edx++;
-	_val216d[edx] = esi;
-	_val215d = edx;
-	if (edx < en)
-		goto loc15;
-	goto loc14;
-
-	loc5:
-	ecx = ebp;
-
-	loc6:
-	ebx = 1;
-	esi = ecx;
-	if (ebp < _val215d)
-		goto loc9;
-	goto loc11;
-
-	loc7:
-	if (esi == _val216d[eax + 1])
-		ebx = ebp;
-
-	eax++;
-
-	if (eax < edx)
-		goto loc10;
-
-	goto loc11;
-
-	loc9:
-	edx = _val215d;
-	eax = ebp;
+			if (0 < _val215d) {
+				i = 0;
+				do {
+					if (en2 == _val216d[i + 1])
+						notfound = false;
+					i++;
+				} while (i < _val215d && notfound);
+			}
+			if (!notfound) {
+				continue;
+			}			
+		} else {
+			j = 0;
+			do {
+				notfound = true;
+				en2 = j;
+				if (0 < _val215d) {
+					i = 0;
+					do {
+						if (en2 == _val216d[i + 1])
+							notfound = false;
+						i++;
+					} while (i < _val215d && notfound);
+				}
+				j++;
+			} while (j < 9 && !notfound);
+			if (!notfound) {
+				_val215d = 0;
+				count = 0;				
+				continue;
+			}
+		}
 	
-	loc10:
-	if (ebx != 0)
-		goto loc7;
+		++_val215d;
+		assert(_val215d < ARRAYSIZE(_val216d));
+		_val216d[_val215d] = en2;
 
-	loc11:
-	ecx++;
-	if (ecx >= 9)
-		goto loc12;
+		if (_val215d >= en) {
+			proc64(0);
+		}
 
-	if (ebx == 0)
-		goto loc6;
-
-	loc12:
-	if (ebx == 0) {
-		_val215d = ebp;
-		edi = ebp;
-		goto _loop1;
+		if (notfound)
+			break;
 	}
 
-	edx = _val215d;
-	edx++;
-	_val216d[edx] = esi;
-	_val215d = edx;
-	
-	if (edx < en)
-		goto loc15;
-
-	loc14:
-	proc64(ebp);
-
-	loc15:
-	if (ebx == 0)
-		goto _loop1;
-
-	_currEnemy = esi;
+	_currEnemy = en2;
 }
 
 void Insane::proc63(void) {
-	int i;
-
 	if (_val215d > 0) {
-		for (i = 0; i < _val215d; i++)
+		for (int i = 0; i < _val215d; i++)
 			if (_enemy[i].field_10 == 1)
 				proc64(i);
 	}
@@ -341,10 +283,13 @@ void Insane::proc64(int32 enemy1) {
 	if (enemy1 >= _val215d)
 		return;
 
-	_val215d--;
-
-	for (int en = enemy1; en < _val215d; en++)
+	int en = enemy1;
+	do {
+		++en;
+		assert(en + 1 < ARRAYSIZE(_val216d));
 		_val216d[en] = _val216d[en + 1];
+	} while (en < _val215d);
+	_val215d--;
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
