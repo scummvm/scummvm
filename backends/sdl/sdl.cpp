@@ -65,14 +65,17 @@ void OSystem_SDL::init_intern() {
 #ifndef _WIN32_WCE
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
-	_scaler_proc = Normal2x;
+	_scalerProc = Normal2x;
 	_full_screen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 #else
 	_mode = GFX_NORMAL;
+	_scaleFactor = 1;
+	_scalerProc = Normal1x;
 	_full_screen = true;
 	_adjustAspectRatio = false;
 #endif
+	_scalerType = 0;
 	_mode_flags = 0;
 
 
@@ -96,7 +99,7 @@ OSystem_SDL::OSystem_SDL()
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _overlayVisible(false),
 	_samplesPerSec(0),
-	_cdrom(0), _scaler_proc(0), _modeChanged(false), _dirty_checksums(0),
+	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0),

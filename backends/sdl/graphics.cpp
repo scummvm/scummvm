@@ -112,10 +112,21 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	}
 
 	_mode = mode;
-	_scaler_proc = newScalerProc;
+	_scalerProc = newScalerProc;
 	if (newScaleFactor != _scaleFactor) {
 		_scaleFactor = newScaleFactor;
 		hotswap_gfx_mode();
+	}
+
+	// Determine the "scaler type", i.e. essentially an index into the
+	// s_gfxModeSwitchTable array defined in events.cpp.
+	if (_mode != GFX_NORMAL) {
+		for (int i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
+			if (s_gfxModeSwitchTable[i][1] == _mode || s_gfxModeSwitchTable[i][2] == _mode) {
+				_scalerType = i;
+				break;
+			}
+		}
 	}
 
 	if (!_screen)
@@ -380,7 +391,7 @@ void OSystem_SDL::internUpdateScreen() {
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 
-		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
+		if (_scalerProc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
 			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
@@ -428,7 +439,7 @@ void OSystem_SDL::internUpdateScreen() {
 						dst_y = real2Aspect(dst_y);
 					}
 
-					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+					_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
 

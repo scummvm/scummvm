@@ -39,17 +39,6 @@
 #define JOY_BUT_F5 5
 
 
-static const int s_gfxModeSwitchTable[][4] = {
-		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-	};
-
 
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
@@ -252,25 +241,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
-				// FIXME EVIL HACK: This shouldn't be a static int, rather it
-				// should be a member variable. Furthermore, it shouldn't be
-				// set in this code, rather it should be set by load_gfx_mode().
-				// But for now this quick&dirty hack works.
-				static int _scalerType = 0;
-				if (_mode != GFX_NORMAL) {
-					// Try to figure out which gfx mode "group" we are in
-					// This is just a temporary hack until the proper solution
-					// (i.e. code in load_gfx_mode()) is in effect.
-					for (int i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
-						if (s_gfxModeSwitchTable[i][1] == _mode || s_gfxModeSwitchTable[i][2] == _mode) {
-							_scalerType = i;
-							break;
-						}
-					}
-				}
 				
-				int factor = _scaleFactor - 1;
-
 				// Ctrl-Alt-a toggles aspect ratio correction
 				if (ev.key.keysym.sym == 'a') {
 					setFeatureState(kFeatureAspectRatioCorrection, !_adjustAspectRatio);
@@ -294,13 +265,13 @@ bool OSystem_SDL::pollEvent(Event &event) {
 
 
 				int newMode = -1;
+				int factor = _scaleFactor - 1;
 				
 				// Increase/decrease the scale factor
-				// TODO: Shall we 'wrap around' here?
 				if (ev.key.keysym.sym == SDLK_EQUALS || ev.key.keysym.sym == SDLK_PLUS || ev.key.keysym.sym == SDLK_MINUS ||
 					ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
 					factor += (ev.key.keysym.sym == SDLK_MINUS || ev.key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
-					if (0 <= factor && factor < 4 && s_gfxModeSwitchTable[_scalerType][factor] >= 0) {
+					if (0 <= factor && factor <= 3) {
 						newMode = s_gfxModeSwitchTable[_scalerType][factor];
 					}
 				}
