@@ -2247,8 +2247,7 @@ void Scumm::o5_stopScript()
 
 	script = getVarOrDirectByte(0x80);
 	if (!script)
-		// stopObjectCode(); // ENDER - wrong?
-		stopScriptNr(_currentScript);
+		stopObjectCode();		
 	else
 		stopScriptNr(script);
 }
