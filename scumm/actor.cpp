@@ -1902,11 +1902,11 @@ void ScummEngine::postProcessAuxQueue() {
 				assert(auxd);
 				const uint8 *frel = findResourceData(MKID('FREL'), auxd);
 				if (frel) {
-					warning("unhandled FREL block");
+					error("unhandled FREL block");
 				}
 				const uint8 *disp = findResourceData(MKID('DISP'), auxd);
 				if (disp) {
-					warning("unhandled DISP block");
+					error("unhandled DISP block");
 				}
 				const uint8 *axfd = findResourceData(MKID('AXFD'), auxd);
 				assert(axfd);
@@ -1925,7 +1925,7 @@ void ScummEngine::postProcessAuxQueue() {
 						Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h);
 						break;
 					default:
-						warning("unimplemented compression type %d", comp);
+						error("unimplemented compression type %d", comp);
 						break;
 					}
 				}
