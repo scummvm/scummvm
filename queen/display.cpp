@@ -27,6 +27,11 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
+#if defined(__PALM_OS__)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
+
 namespace Queen {
 
 #ifdef __PALM_OS__
@@ -582,6 +587,19 @@ void Display::prepareUpdate() {
 	}
 	uint8 *dst = _screenBuf;
 	const uint8 *src = _backdropBuf + _horizontalScroll;
+
+#ifdef __PALM_OS__
+	ARM_START(CopyRectangleType)
+		ARM_ADDM(dst)
+		ARM_ADDV(buf, src)
+		ARM_ADDV(pitch, BACKDROP_W)
+		ARM_ADDV(_offScreenPitch, SCREEN_W)
+		ARM_ADDV(w, SCREEN_W)
+		ARM_ADDM(h)
+		PNO_CALL(PNO_COPYRECT, ARM_DATA())
+	ARM_END()
+#endif
+
 	while (h--) {
 		memcpy(dst, src, SCREEN_W);
 		dst += SCREEN_W;
@@ -689,6 +707,23 @@ void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w,
 void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked) {
 	assert(w <= dstPitch);
 	dstBuf += dstPitch * y + x;
+
+#ifdef __PALM_OS__
+	ARM_CHECK_EXEC(w > 8 && h > 8)
+		ARM_START(BlitType)
+			ARM_ADDM(dstBuf)
+			ARM_ADDM(dstPitch)
+			ARM_ADDM(srcBuf)
+			ARM_ADDM(srcPitch)
+			ARM_ADDM(w)
+			ARM_ADDM(h)
+			ARM_ADDM(xflip)
+			ARM_ADDM(masked)
+			PNO_CALL(PNO_BLIT, ARM_DATA())
+		ARM_END()
+	ARM_CHECK_END()
+#endif
+
 	if (!masked) { // Unmasked always unflipped
 		while (h--) {
 			memcpy(dstBuf, srcBuf, w);
@@ -916,6 +951,7 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 	setDirtyBlock(xs - 1, y - 1, x - xs + 2, 8 + 2);
 }
 
+
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 	uint8 *p = _screenBuf;
 	int i;
@@ -995,7 +1031,7 @@ void Display::blankScreenEffect2() {
 			p += SCREEN_W;
 		}
 		_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
-		_system->updateScreen();
+			_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1024,7 +1060,7 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
 		}
-		_system->updateScreen();
+			_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
