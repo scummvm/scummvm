@@ -1330,7 +1330,9 @@ void ScummEngine::initScummVars() {
 				VAR(VAR_SOUNDCARD) = 3;
 		}
 		// Amiga versions of FOA and MI2 are only 32 colors.
-		if (!(_version == 5 && _features & GF_AMIGA))
+		if (_version == 5 && _features & GF_AMIGA)
+			VAR(VAR_VIDEOMODE) = 82;
+		else
 			VAR(VAR_VIDEOMODE) = 19;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
 			// Set number of sound resources
