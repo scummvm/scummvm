@@ -46,7 +46,7 @@ enum {
 class DigitalTrackInfo {
 public:
 	virtual bool error() = 0;
-	virtual int play(SoundMixer *mixer, int startFrame, int endFrame) = 0;
+	virtual int play(SoundMixer *mixer, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };
 
@@ -62,7 +62,7 @@ public:
 	MP3TrackInfo(File *file);
 	~MP3TrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, int startFrame, int endFrame);
+	int play(SoundMixer *mixer, int startFrame, int duration);
 };
 #endif
 
@@ -77,7 +77,7 @@ public:
 	VorbisTrackInfo(File *file);
 	~VorbisTrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, int startFrame, int endFrame);
+	int play(SoundMixer *mixer, int startFrame, int duration);
 };
 #endif
 
@@ -1559,9 +1559,9 @@ void Sound::stopCDTimer() {
 	_scumm->_timer->releaseProcedure(&cd_timer_handler);
 }
 
-void Sound::playCDTrack(int track, int numLoops, int startFrame, int endFrame) {
-	if (playMP3CDTrack(track, numLoops, startFrame, endFrame) == -1)
-		_scumm->_system->play_cdrom(track, numLoops, startFrame, endFrame);
+void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
+	if (playMP3CDTrack(track, numLoops, startFrame, duration) == -1)
+		_scumm->_system->play_cdrom(track, numLoops, startFrame, duration);
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
@@ -1649,7 +1649,7 @@ int Sound::getCachedTrack(int track) {
 	return -1;
 }
 
-int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int endFrame) {
+int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int duration) {
 	int index;
 	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 
@@ -1664,48 +1664,48 @@ int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int endFrame)
 	if (index < 0)
 		return -1;
 
-	if (_dig_cd_playing)
-		_scumm->_mixer->stop(_dig_cd_index);
-	_dig_cd_index = _track_info[index]->play(_scumm->_mixer, startFrame, endFrame);
-	_dig_cd_playing = true;
-	_dig_cd_track = track;
-	_dig_cd_num_loops = numLoops;
-	_dig_cd_start = startFrame;
-	_dig_cd_end = endFrame;
+	if (_dig_cd.playing)
+		_scumm->_mixer->stop(_dig_cd.index);
+	_dig_cd.index = _track_info[index]->play(_scumm->_mixer, startFrame, duration);
+	_dig_cd.playing = true;
+	_dig_cd.track = track;
+	_dig_cd.num_loops = numLoops;
+	_dig_cd.start = startFrame;
+	_dig_cd.duration = duration;
 	return 0;
 }
 
 int Sound::stopMP3CD() {
-	if (_dig_cd_playing) {
-		_scumm->_mixer->stop(_dig_cd_index);
-		_dig_cd_playing = false;
-		_dig_cd_track = 0;
-		_dig_cd_num_loops = 0;
-		_dig_cd_start = 0;
-		_dig_cd_end = 0;
+	if (_dig_cd.playing) {
+		_scumm->_mixer->stop(_dig_cd.index);
+		_dig_cd.playing = false;
+		_dig_cd.track = 0;
+		_dig_cd.num_loops = 0;
+		_dig_cd.start = 0;
+		_dig_cd.duration = 0;
 		return 0;
 	}
 	return -1;
 }
 
 int Sound::pollMP3CD() const {
-	if (_dig_cd_playing)
+	if (_dig_cd.playing)
 		return 1;
 	return 0;
 }
 
 int Sound::updateMP3CD() {
-	if (_dig_cd_playing == false)
+	if (_dig_cd.playing == false)
 		return -1;
 
-	if (_scumm->_mixer->_channels[_dig_cd_index] == NULL) {
+	if (_scumm->_mixer->_channels[_dig_cd.index] == NULL) {
 		warning("Error in MP3 decoding");
 		return -1;
 	}
 
-	if (!_scumm->_mixer->isActiveChannel(_dig_cd_index)) {
-		if (_dig_cd_num_loops == -1 || --_dig_cd_num_loops > 0)
-			playMP3CDTrack(_dig_cd_track, _dig_cd_num_loops, _dig_cd_start, _dig_cd_end);
+	if (!_scumm->_mixer->isActiveChannel(_dig_cd.index)) {
+		if (_dig_cd.num_loops == -1 || --_dig_cd.num_loops > 0)
+			playMP3CDTrack(_dig_cd.track, _dig_cd.num_loops, _dig_cd.start, _dig_cd.duration);
 		else
 			stopMP3CD();
 	}
@@ -1785,25 +1785,26 @@ error:
 	delete file;
 }
 
-int MP3TrackInfo::play(SoundMixer *mixer, int startFrame, int endFrame) {
+int MP3TrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
 	unsigned int offset;
-	mad_timer_t duration;
+	mad_timer_t durationTime;
 
 	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
 	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
 
 	// Calc delay
-	if (!endFrame) {
-		mad_timer_set(&duration, (_size * 8) / _mad_header.bitrate,
+	if (!duration) {
+		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
 		              (_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
 	} else {
-		mad_timer_set(&duration, endFrame / 75, endFrame % 75, 75);
+		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
 	}	
 
+printf("startFrame %d, duration %d\n", startFrame, duration);
 	// Go
 	_file->seek(offset, SEEK_SET);
 
-	return mixer->playMP3CDTrack(NULL, _file, duration);
+	return mixer->playMP3CDTrack(NULL, _file, durationTime);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {
@@ -1904,14 +1905,14 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 #define VORBIS_TREMOR
 #endif
 
-int VorbisTrackInfo::play(SoundMixer *mixer, int startFrame, int endFrame) {
+int VorbisTrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #else
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
 	return mixer->playVorbis(NULL, &_ov_file,
-				 endFrame * ov_info(&_ov_file, -1)->rate / 75,
+				 duration * ov_info(&_ov_file, -1)->rate / 75,
 				 true);
 }
 

@@ -86,12 +86,14 @@ protected:
 	int _currentCDSound;
 
 	int _cached_tracks[CACHE_TRACKS];
-	int _dig_cd_index;
-	int _dig_cd_track;
-	int _dig_cd_start;
-	int _dig_cd_end;
-	int _dig_cd_num_loops;
-	bool _dig_cd_playing;
+	struct {
+		int index;
+		int track;
+		int start;
+		int duration;
+		int num_loops;
+		bool playing;
+	} _dig_cd;
 
 	DigitalTrackInfo *_track_info[CACHE_TRACKS];
 	int _current_cache;
@@ -143,7 +145,7 @@ public:
 	void startCDTimer();
 	void stopCDTimer();
 
-	void playCDTrack(int track, int numLoops, int startFrame, int endFrame);
+	void playCDTrack(int track, int numLoops, int startFrame, int duration);
 	void stopCD();
 	int pollCD() const;
 	void updateCD();
@@ -161,7 +163,7 @@ protected:
 	void playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle);
 
 	int getCachedTrack(int track);
-	int playMP3CDTrack(int track, int numLoops, int startFrame, int endFrame);
+	int playMP3CDTrack(int track, int numLoops, int startFrame, int duration);
 	int stopMP3CD();
 	int pollMP3CD() const;
 	int updateMP3CD();
