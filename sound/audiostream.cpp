@@ -205,7 +205,7 @@ int16 VorbisInputStream::read() {
 int VorbisInputStream::size() const {
 	if (_eof_flag)
 		return 0;
-	return _end_pos - ov_pcm_tell(_ov_file);
+	return (_end_pos - ov_pcm_tell(_ov_file)) + (_buffer + ARRAYSIZE(_buffer) - _pos);
 }
 
 void VorbisInputStream::refill() {
