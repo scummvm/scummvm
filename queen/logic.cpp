@@ -917,7 +917,7 @@ void Logic::roomSetupFurniture() {
 				++_numFurnitureAnimated;
 				uint16 image = curImage + 1;
 				int k;
-				for (k = pgd->firstFrame; k <= pgd->lastFrame; ++k) {
+				for (k = pgd->firstFrame; k <= lastFrame; ++k) {
 					++curImage;
 					_graphics->bankUnpack(k, curImage, 15);
 					++_numFrames;
@@ -1342,6 +1342,8 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	pbs->y = pad->y;
 	pbs->frameNum = p.bobFrame;
 	pbs->xflip = xflip;
+
+	debug(0, "Logic::personSetup(%d, %d) - bob = %d", noun, curImage, pad->bobNum);
 
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
