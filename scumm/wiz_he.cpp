@@ -231,8 +231,6 @@ void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 }
 
 static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
-	srcRect = Common::Rect(0, 0, src_w, src_h);
-	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	Common::Rect r3;
 	int diff;
 
@@ -268,7 +266,7 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 		dstRect.bottom -= diff;
 	}
 
-	return true;
+	return srcRect.isValidRect() && dstRect.isValidRect();
 }
 
 void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
@@ -325,6 +323,9 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 }
 
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, const uint8 *imagePal) {
+	printf("SRC left %d right %d top %d bottom %d\n", srcRect.left, srcRect.right, srcRect.top, srcRect.bottom);
+	printf("DST left %d right %d top %d bottom %d\n", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
+
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
