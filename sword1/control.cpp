@@ -440,7 +440,7 @@ void SwordControl::writeSavegameDescriptions(void) {
 	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
 	// if the player accidently clicked the last slot and then deselected it again,
 	// we'd still have _saveFiles == 64, so get rid of the empty end.
-	while (strlen(_saveNames[_saveFiles] - 1) == 0)
+	while (strlen(_saveNames[_saveFiles - 1]) == 0)
 		_saveFiles--;
 	for (uint8 cnt = 0; cnt < _saveFiles; cnt++) {
 		outf->write(_saveNames[cnt], strlen(_saveNames[cnt]));
