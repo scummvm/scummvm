@@ -91,7 +91,7 @@ const bool true(1), false(0);
   #define START_PACK_STRUCTS pack (push,1)
   #define END_PACK_STRUCTS   pack(pop)
   
-#elif defined(UNIX) || defined(__APPLE__)
+#elif defined(UNIX)
   
   #define scumm_stricmp strcasecmp
   

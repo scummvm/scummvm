@@ -180,7 +180,6 @@ int main(int argc, char *argv[])
 	prop.caption = "ScummVM";
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
-
 	// Create the GUI manager
 	g_gui = new NewGui(system);
 
