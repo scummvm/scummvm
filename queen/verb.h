@@ -100,12 +100,6 @@ public:
 		return _verb == VERB_USE_JOURNAL;
 	}
 
-	bool isTwoLevelsCommand() const {
-		return 
-			 _verb == VERB_GIVE ||
-			 _verb == VERB_USE;
-	}
-
 	bool isDigit() const {
 		return
 			_verb >= VERB_DIGIT_FIRST && 

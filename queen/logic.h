@@ -41,6 +41,7 @@ struct ZoneSlot {
 	Box box;
 };
 
+// FIXME: get rid of that and use ConfigurationManager
 struct GameConfig {
 	int musicVolume;
 	bool textToggle;
@@ -199,7 +200,7 @@ public:
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
-	uint16 numFrames() { return _numFrames; }
+	uint16 numFrames() const { return _numFrames; }
 
 	int talkSpeed() const { return _settings.talkSpeed; }
 
@@ -236,19 +237,14 @@ public:
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 
-	//! SETUP_JOE(), loads the various bobs needed to animate Joe
+	//! Load the various bobs needed to animate Joe
 	void joeSetup();
 
-	//! SETUP_HERO(), places Joe at the right place when entering a room
+	//! Setup Joe at the right place when entering a room
 	ObjectData *joeSetupInRoom(bool autoPosition, uint16 scale);
 	
-	//! FACE_JOE()
 	uint16 joeFace();
-
-	//! GRAB_JOE()
 	void joeGrab(uint16 state, uint16 speed);
-
-	//! GRAB_DIR
 	void joeGrabDirection(StateGrab grab, uint16 speed);
 
 	void joeUseDress(bool showCut);
@@ -263,12 +259,6 @@ public:
 
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
-
-	Walk *walk() const { return _walk; }
-	Display *display() const { return _display; }
-	Command *command() const { return _cmd; }
-	Resource *resource() const { return _resource; }
-
 	uint16 findObjectRoomNumber(uint16 zoneNum) const;
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
 
@@ -307,6 +297,11 @@ public:
 
 	bool gameSave(uint16 slot, const char *desc);
 	bool gameLoad(uint16 slot);
+
+	Walk *walk() const { return _walk; }
+	Display *display() const { return _display; }
+	Command *command() const { return _cmd; }
+	Resource *resource() const { return _resource; }
 
 	enum {
 		MAX_ZONES_NUMBER   = 32,

@@ -188,7 +188,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
 
-			if (index < 0 && _logic->gameState(abs(index)) != _dialogueTree[level][i].gameStateValue)
+			if (index < 0 && _logic->gameState(ABS(index)) != _dialogueTree[level][i].gameStateValue)
 				_talkString[i][0] = '\0';
 
 			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
@@ -313,7 +313,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 				if (_itemNumber[i] > 0)
 					_logic->inventoryInsertItem(_itemNumber[i]);
 				else
-					_logic->inventoryDeleteItem(abs(_itemNumber[i]));
+					_logic->inventoryDeleteItem(ABS(_itemNumber[i]));
 			}
 		}
 	}

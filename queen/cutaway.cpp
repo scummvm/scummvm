@@ -258,7 +258,7 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 			objectNumberStr = "Joe";      break;
 		default:
 			if (object.objectNumber > 0)
-				objectNumberStr = _logic->objectName(abs(_logic->objectData(object.objectNumber)->name));
+				objectNumberStr = _logic->objectName(ABS(_logic->objectData(object.objectNumber)->name));
 			else
 				objectNumberStr = "Unknown!";
 		  break;
@@ -958,11 +958,11 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 				if (on) {
 					// It is needed, so ensure it's ON
-					objectData->name = abs(objectData->name);
+					objectData->name = ABS(objectData->name);
 				}
 				else {
 					// Not needed, so switch off!
-					objectData->name = -abs(objectData->name);
+					objectData->name = -ABS(objectData->name);
 				}
 
 			}
@@ -1035,7 +1035,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 		else {
 			// Same object, so just turn it on!
 			ObjectData *objectData = _logic->objectData(object.objectNumber);
-			objectData->name = abs(objectData->name);
+			objectData->name = ABS(objectData->name);
 		}
 
 		_logic->roomRefreshObject(object.objectNumber);
@@ -1719,7 +1719,7 @@ void Cutaway::stop() {
 			if (fromIndex > 0) {
 				if (fromIndex == objectIndex) {
 					// Enable object
-					object->name = abs(object->name);
+					object->name = ABS(object->name);
 				}
 				else {
 					_logic->objectCopy(fromIndex, objectIndex);
@@ -1760,7 +1760,7 @@ void Cutaway::stop() {
 						_graphics->bobClear(bobIndex);
 					}
 					else if (objectFrame) {
-						_graphics->bankUnpack(abs(frame), objectFrame, bank);
+						_graphics->bankUnpack(ABS(frame), objectFrame, bank);
 						pbs->frameNum = objectFrame;
 						if (frame < 0)
 							pbs->xflip = true;
@@ -1813,7 +1813,7 @@ void Cutaway::updateGameState() {
 				update = true;
 		}
 		else {
-			_logic->gameState(abs(stateIndex), stateValue);
+			_logic->gameState(ABS(stateIndex), stateValue);
 			update = true;
 		}
 
@@ -1823,7 +1823,7 @@ void Cutaway::updateGameState() {
 
 			if (objectIndex > 0) {                    // Show the object
 				ObjectData *objectData  = _logic->objectData(objectIndex);
-				objectData->name        = abs(objectData->name);
+				objectData->name        = ABS(objectData->name);
 				if (fromObject > 0)
 					_logic->objectCopy(fromObject, objectIndex);
 				_logic->roomRefreshObject(objectIndex);
@@ -1831,7 +1831,7 @@ void Cutaway::updateGameState() {
 			else if (objectIndex < 0) {               // Hide the object
 				objectIndex             = -objectIndex;
 				ObjectData *objectData  = _logic->objectData(objectIndex);
-				objectData->name        = -abs(objectData->name);
+				objectData->name        = -ABS(objectData->name);
 				_logic->roomRefreshObject(objectIndex);
 			}
 
@@ -1841,11 +1841,11 @@ void Cutaway::updateGameState() {
 
 				if (areaSubIndex > 0) {
 					Area *area = _logic->area(areaIndex, areaSubIndex);
-					area->mapNeighbours = abs(area->mapNeighbours);
+					area->mapNeighbours = ABS(area->mapNeighbours);
 				}
 				else {
-					Area *area = _logic->area(areaIndex, abs(areaSubIndex));
-					area->mapNeighbours = -abs(area->mapNeighbours);
+					Area *area = _logic->area(areaIndex, ABS(areaSubIndex));
+					area->mapNeighbours = -ABS(area->mapNeighbours);
 				}
 			}
 
@@ -1951,7 +1951,7 @@ void Cutaway::handleText(
 	}
 
 	BobSlot *bob = 
-		_graphics->bob( _logic->findBob(abs(object.objectNumber)) );
+		_graphics->bob( _logic->findBob(ABS(object.objectNumber)) );
 
 	_graphics->bobSetText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 

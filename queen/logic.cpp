@@ -400,7 +400,7 @@ void Logic::initialise() {
 
 
 ObjectData* Logic::objectData(int index) const {
-	index = abs(index); // cyx: is that really necessary ?
+	index = ABS(index); // cyx: is that really necessary ?
 	if (index <= _numObjects)
 		return &_objectData[index];
 	else
@@ -2062,7 +2062,7 @@ uint16 Logic::numItemsInventory() const {
 
 void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
 	int16 item = _inventoryItem[0] = (int16)itemNum; 
-	_itemData[itemNum].name = abs(_itemData[itemNum].name);	//set visible
+	_itemData[itemNum].name = ABS(_itemData[itemNum].name);	//set visible
 	for (int i = 1; i < 4; i++) {
 		item = nextInventoryItem(item);
 		_inventoryItem[i] = item;
@@ -2076,7 +2076,7 @@ void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
 
 void Logic::inventoryDeleteItem(uint16 itemNum, bool refresh) {
 	int16 item = (int16)itemNum;
-	_itemData[itemNum].name = -abs(_itemData[itemNum].name);	//set invisible
+	_itemData[itemNum].name = -ABS(_itemData[itemNum].name);	//set invisible
 	for (int i = 0; i < 4; i++) {
 		item = nextInventoryItem(item);
 		_inventoryItem[i] = item;
@@ -2148,10 +2148,10 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 	if (frameCountDummy > frameCountReal)
 		*dummyObject = temp;
 
-	realObject->name = abs(realObject->name);
+	realObject->name = ABS(realObject->name);
 
 	if  (fromState == -1)
-		dummyObject->name = -abs(dummyObject->name);
+		dummyObject->name = -ABS(dummyObject->name);
 
 	//  Make sure that WALK_OFF_DATA is copied too!
 
