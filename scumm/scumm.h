@@ -665,7 +665,6 @@ protected:
 	uint32 _allocatedSize;
 	byte _expire_counter;
 	byte *_heV7RoomOffsets;
-	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 	int _wizNumPolygons;
