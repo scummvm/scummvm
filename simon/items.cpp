@@ -1462,7 +1462,7 @@ void SimonState::o_unk_127() {
 	} else {
 		if (a != _last_music_played) {
 			_last_music_played = a;
-			playMusic(0, a);
+			playMusic(a);
 		}
 	}
 }

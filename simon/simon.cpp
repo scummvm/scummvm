@@ -3115,7 +3115,7 @@ void SimonState::processSpecialKeys() {
 				if (midi._midi_sfx_toggle)
 					midi.stop();
 				else
-					playMusic(0, _last_music_played);
+					playMusic(_last_music_played);
 			} else
 				_sound->effectsPause(_effects_paused ^= 1);
 			break;
@@ -5041,16 +5041,16 @@ void SimonState::midi_play(uint music) {
 	// FIXME What exactly should this function do?
 	if (music != 0) {
 		//_midi_cur_song_ptr = ((arg_0 & 0xFFFF) << 4) + midi_songs;
-		if (_vc72_var1 == 999)
+		if (_vc72_var1 == 999) {
 			//midi.initialize();
-
+		}
 		//_midi_var11 = 0;
 		//_midi_var12 = 1;
 	}
 }
 
 
-void SimonState::playMusic(uint music_unk, uint music) {
+void SimonState::playMusic(uint music) {
 	if (midi._midi_sfx_toggle)
 		return;
 
@@ -5063,7 +5063,7 @@ void SimonState::playMusic(uint music_unk, uint music) {
 			midi.playXMIDI (_game_file);
 		}
 		_last_music_played = music;
-		_vc72_var1 = music_unk;
+		_vc72_var1 = 999;
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
 		_next_music_to_play = 0xFFFF;

@@ -1693,7 +1693,7 @@ void SimonState::vc_62_palette_thing() {
 	if (!_video_var_3) {
 		if (_game & GF_SIMON2) {
 			if (_next_music_to_play != 0xFFFF)
-				playMusic(999, _next_music_to_play);
+				playMusic(_next_music_to_play);
 		}
 	} else
 		_video_var_3 = true;

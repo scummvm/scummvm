@@ -763,7 +763,7 @@ public:
 	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
 
 	void midi_play(uint music);
-	void playMusic(uint music, uint music_unk);
+	void playMusic(uint music);
 	void checkTimerCallback();
 	void delay(uint delay);
 
