@@ -706,7 +706,7 @@ public:
 	uint32 _IM00_offs, _PALS_offs;
 
 	//ender: fullscreen
-	bool _fullRedraw, _BgNeedsRedraw, _shakeEnabled, _verbRedraw;
+	bool _fullRedraw, _BgNeedsRedraw, _verbRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
 	struct {
@@ -771,8 +771,6 @@ public:
 	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 
-	void setShake(int mode);
-
 	void setCursor(int cursor);
 	void setCursorImg(uint img, uint room, uint imgindex);
 	void setCursorHotspot2(int x, int y);
@@ -827,8 +825,10 @@ public:
 	byte *_bompMaskPtr;
 	byte *_bompActorPalletePtr;
 
-
+	bool _shakeEnabled;
 	uint _shakeFrame;
+	void setShake(int mode);
+
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
 
