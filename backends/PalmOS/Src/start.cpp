@@ -212,16 +212,8 @@ static Boolean AppHandleEvent(EventPtr eventP)
 				FrmSetEventHandler(frmP, EditGameFormHandleEvent);
 				break;
 
-			case MiscOptionsForm:
-				FrmSetEventHandler(frmP, MiscOptionsFormHandleEvent);
-				break;
-
-			case VolumeForm:
-				FrmSetEventHandler(frmP, VolumeFormHandleEvent);
-				break;
-			
-			case SoundForm:
-				FrmSetEventHandler(frmP, SoundFormHandleEvent);
+			case MiscForm:
+				FrmSetEventHandler(frmP, MiscFormHandleEvent);
 				break;
 
 			case SystemInfoForm:
@@ -230,6 +222,10 @@ static Boolean AppHandleEvent(EventPtr eventP)
 
 			case CardSlotForm:
 				FrmSetEventHandler(frmP, CardSlotFormHandleEvent);
+				break;
+
+			case MusicForm:
+				FrmSetEventHandler(frmP, MusicFormHandleEvent);
 				break;
 
 			default:

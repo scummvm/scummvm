@@ -60,29 +60,29 @@ typedef	struct {
 	Boolean fullscreen;
 	Boolean aspectRatio;
 	Boolean copyProtection;
+	Boolean arm;
 
 	struct {
-		UInt16 speaker;
-		UInt16 headphone;
-		
 		UInt16 master;
 		UInt16 music;
 		UInt16 sfx;
+		UInt16 speech;
 	} volume;
 	
 	struct {
 		// midi
 		Boolean multiMidi;
 		Boolean music;
-		UInt8 driver;
+		UInt8 drvMusic;
 		UInt8 tempo;
+		// sound FX
+		Boolean sfx;
 		// CD audio
-		Boolean MP3;
+		Boolean CD;
+		UInt8 drvCD;
 		Boolean setDefaultTrackLength;
 		UInt16 defaultTrackLength;
 		UInt16 firstTrack;
-		// sound FX
-		Boolean sfx;
 	} sound;
 
 } GlobalsPreferenceType, *GlobalsPreferencePtr;
