@@ -40,13 +40,13 @@ byte MidiPlayer::read_byte_from_file() {
 uint32 MidiPlayer::read_uint32_from_file() {
 	uint32 num;
 	read_from_file(&num, 4);
-	return swap32(num);
+	return READ_BE_UINT32(&num);
 }
 
 uint16 MidiPlayer::read_uint16_from_file() {
 	uint16 num;
 	read_from_file(&num, 2);
-	return swap16(num);
+	return READ_BE_UINT16(&num);
 }
 
 void MidiPlayer::read_all_songs(FILE *in) {

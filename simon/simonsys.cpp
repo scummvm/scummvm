@@ -31,13 +31,13 @@
 #include <conio.h>
 #endif
 
-uint16 swap16(uint16 a) {
-	return (a>>8)|(a<<8);
-}
+//uint16 swap16(uint16 a) {
+//	return (a>>8)|(a<<8);
+//}
 
-uint32 swap32(uint32 a) {
-	return (a>>24)|(a>>8)&0xFF00|(a<<8)&0xFF0000|(a<<24);
-}
+//uint32 swap32(uint32 a) {
+//	return (a>>24)|(a>>8)&0xFF00|(a<<8)&0xFF0000|(a<<24);
+//}
 
 
 uint fileReadByte(FILE *in) {
@@ -72,12 +72,12 @@ uint32 fileReadLE32(FILE *in) {
 
 
 void fileWriteBE32(FILE *in, uint32 value) {
-	value = swap32(value);	
+	value = TO_BE_32(value);	
 	fwrite(&value, sizeof(value), 1, in);
 }
 
 void fileWriteBE16(FILE *in, uint16 value) {
-	value = swap16(value);
+	value = TO_BE_16(value);
 	fwrite(&value, sizeof(value), 1, in);
 }
 

@@ -1023,8 +1023,8 @@ public:
 void NORETURN CDECL error(const char *errmsg, ...);
 void CDECL warning(const char *errmsg, ...);
 
-uint16 swap16(uint16 a);
-uint32 swap32(uint32 a);
+//uint16 swap16(uint16 a);
+//uint32 swap32(uint32 a);
 
 
 void _2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);

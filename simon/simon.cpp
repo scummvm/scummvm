@@ -40,6 +40,7 @@ byte *sdl_buf_attached;
 
 SimonState *g_simon;
 
+
 static const GameSpecificSettings simon1_settings = {
 	1, /* VGA_DELAY_BASE */
 	1576/4, /* TABLE_INDEX_BASE */
@@ -3684,11 +3685,11 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 	/* ensure flipping complete */
 
 	bb = _cur_vga_file_1;
-	b = bb + swap16(((VgaFile1Header*)bb)->hdr2_start);
-	c = swap16(((VgaFile1Header2*)b)->unk1);
-	b = bb + swap16(((VgaFile1Header2*)b)->unk2_offs);
+	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)bb)->hdr2_start);
+	c = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)b)->unk1);
+	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)b)->unk2_offs);
 
-	while (swap16(((VgaFile1Struct0x8*)b)->id) != vga_res_id)
+	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->id) != vga_res_id)
 		b += sizeof(VgaFile1Struct0x8);
 
 	if (!(_game & GAME_SIMON2)) {
@@ -3708,7 +3709,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	vc_ptr_org = _vc_ptr;
 
-	_vc_ptr = _cur_vga_file_1 + swap16(((VgaFile1Struct0x8*)b)->script_offs);
+	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->script_offs);
 //	dump_vga_script(_vc_ptr, num, vga_res_id);
 	run_vga_script();
 	_vc_ptr = vc_ptr_org;
@@ -3879,7 +3880,7 @@ void SimonState::run_vga_script() {
 #endif
 
 		if (!(_game & GAME_SIMON2)) {
-			opcode = swap16(*(uint16*)_vc_ptr);
+			opcode = READ_BE_UINT16_UNALIGNED(_vc_ptr);
 			_vc_ptr += 2;
 		} else {
 			opcode = *_vc_ptr++;
@@ -3896,14 +3897,14 @@ void SimonState::run_vga_script() {
 }
 
 int SimonState::vc_read_var_or_word(void *ptr) {
-	int16 var = swap16(*(uint16*)ptr);
+	int16 var = READ_BE_UINT16_UNALIGNED(ptr);
 	if (var < 0)
 		var = vc_read_var(-var);
 	return var;
 }
 
 uint SimonState::vc_read_next_word() {
-	uint a = swap16(*(uint16*)_vc_ptr);
+	uint a = READ_BE_UINT16_UNALIGNED(_vc_ptr);
 	_vc_ptr += 2;
 	return a;
 }
@@ -3985,15 +3986,15 @@ void SimonState::vc_2() {
 
 	
 	bb = _cur_vga_file_1;
-	b = bb + swap16(((VgaFile1Header*)bb)->hdr2_start);
-	b = bb + swap16(((VgaFile1Header2*)b)->unk2_offs);
+	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)bb)->hdr2_start);
+	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)b)->unk2_offs);
 
-	while (swap16(((VgaFile1Struct0x8*)b)->id) != num)
+	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->id) != num)
 		b += sizeof(VgaFile1Struct0x8);
 
 	vc_ptr_org = _vc_ptr;
 
-	_vc_ptr = _cur_vga_file_1 + swap16(((VgaFile1Struct0x8*)b)->script_offs);
+	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->script_offs);
 	
 	
 //	dump_vga_script(_vc_ptr, res, num);
@@ -4057,10 +4058,10 @@ void SimonState::vc_3() {
 	}
 
 	pp = _cur_vga_file_1;
-	p = pp + swap16(((VgaFile1Header*)pp)->hdr2_start);
-	p = pp + swap16(((VgaFile1Header2*)p)->id_table);
+	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)pp)->hdr2_start);
+	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)p)->id_table);
 	
-	while (swap16(((VgaFile1Struct0x6*)p)->id) != b)
+	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->id) != b)
 		p += sizeof(VgaFile1Struct0x6);
 
 #ifdef DUMP_FILE_NR
@@ -4083,10 +4084,10 @@ void SimonState::vc_3() {
 }
 #endif
 
-	dump_vga_script(_cur_vga_file_1 + swap16(((VgaFile1Struct0x6*)p)->script_offs), res, b);
+	dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
 
 	add_vga_timer(gss->VGA_DELAY_BASE, 
-		_cur_vga_file_1 + swap16(((VgaFile1Struct0x6*)p)->script_offs),b , res);
+		_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs),b , res);
 }
 
 void SimonState::vc_4() {
@@ -4366,9 +4367,9 @@ void SimonState::vc_10() {
 		state.image = vc_read_var(-state.image);
 
 	p2 = _cur_vga_file_2 + state.image * 8;
-	state.depack_src = _cur_vga_file_2 + swap32(*(uint32*)p2);
+	state.depack_src = _cur_vga_file_2 + READ_BE_UINT32_UNALIGNED(&*(uint32*)p2);
 
-	width = swap16(*(uint16*)(p2+6))>>4;
+	width = READ_BE_UINT16_UNALIGNED(p2+6)>>4;
 	height = p2[5];
 	flags = p2[4];
 
@@ -4407,7 +4408,7 @@ void SimonState::vc_10() {
 		
 		w = 40;
 		do {
-			vc_10_helper_8(dst, src + swap32(*(uint32*)src));
+			vc_10_helper_8(dst, src + READ_BE_UINT32_UNALIGNED(&*(uint32*)src));
 			dst += 8;
 			src += 4;
 		} while (--w);
@@ -4775,7 +4776,7 @@ void SimonState::vc_16_setup_funkystruct() {
 void SimonState::vc_17_set_pathfind_item() {
 	uint a = vc_read_next_word();
 	_pathfind_array[a - 1] = (uint16*)_vc_ptr;
-	while ( *(uint16*)_vc_ptr != 0xE703) /* this is a byte swapped 999 */
+	while ( READ_BE_UINT16_UNALIGNED(_vc_ptr) != 999)
 		_vc_ptr += 4;
 	_vc_ptr += 2;
 }
@@ -4791,6 +4792,7 @@ void SimonState::vc_19() {
 	error("vc_19: chain to script not implemented");
 }
 
+/* FIXME: unaligned access */
 void SimonState::vc_20() {
 	/* no idea what's going on */
 	uint16 a = vc_read_next_word();
@@ -4798,6 +4800,7 @@ void SimonState::vc_20() {
 	_vc_ptr += 2;
 }
 
+/* FIXME: unaligned access */
 void SimonState::vc_21() {
 	if (!(_game & GAME_SIMON2)) {
 		int16 a = vc_read_next_word();
@@ -5206,11 +5209,11 @@ void SimonState::vc_48() {
 	vp = &_variableArray[20];
 
 	do{
-		y2 = swap16(*p);
+		y2 = READ_BE_UINT16_UNALIGNED(p);
 		p += step;
-		y1 = swap16(*p) - y2;
+		y1 = READ_BE_UINT16_UNALIGNED(p) - y2;
 
-//		assert(swap16(p[1]) != 999);
+//		assert(READ_BE_UINT16_UNALIGNED(&p[1]) != 999);
 
 		vp[0] = y1>>1;
 		vp[1] = y1 - (y1>>1);
@@ -5320,7 +5323,7 @@ void SimonState::vc_58() {
 	_vga_cur_file_id = vc_read_next_word();
 	_vga_cur_sprite_id = vc_read_next_word();
 
-	tmp = swap16(vc_read_next_word());
+	tmp = TO_BE_16(vc_read_next_word());
 	
 	vc_ptr = _vc_ptr;
 	_vc_ptr = (byte*)&tmp;
@@ -5451,11 +5454,11 @@ void SimonState::vc_62() {
 				_cur_vga_file_2 = vpe->vgaFile2;
 				_video_palette_mode = vsp->unk6;
 
-				params[0] = swap16(vsp->image);
-				params[1] = swap16(vsp->base_color);
-				params[2] = swap16(vsp->x);
-				params[3] = swap16(vsp->y);
-				params[4] = swap16(vsp->unk4);
+				params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
+				params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
+				params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
+				params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
+				params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
 				_vc_ptr = (byte*)params;
 				vc_10();
 
@@ -5698,7 +5701,7 @@ void SimonState::vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sp
 void SimonState::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
 
-//	assert( (uint)swap16(*(uint16*)code_ptr) <= 63);
+//	assert( (uint)READ_BE_UINT16_UNALIGNED(&*(uint16*)code_ptr) <= 63);
 
 	_lock_word |= 1;
 
@@ -5759,7 +5762,7 @@ void SimonState::o_unk_127() {
 }
 
 void SimonState::o_unk_120(uint a) {
-	uint16 id = swap16(a);
+	uint16 id = READ_BE_UINT16_UNALIGNED(&a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&id;
 	vc_15_start_funkystruct_by_id();
@@ -5818,15 +5821,15 @@ void SimonState::timer_vga_sprites() {
 		_video_palette_mode = vsp->unk6;
 		_vga_cur_sprite_id = vsp->id;
 
-		params[0] = swap16(vsp->image);
-		params[1] = swap16(vsp->base_color);
-		params[2] = swap16(vsp->x);
-		params[3] = swap16(vsp->y);
+		params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
+		params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
+		params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
+		params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
 
 		if(_game & GAME_SIMON2) {
 			*(byte*)(&params[4]) = (byte)vsp->unk4;
 		} else {
-			params[4] = swap16(vsp->unk4);
+			params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
 		}
 
 		_vc_ptr = (byte*)params;
@@ -5860,7 +5863,7 @@ void SimonState::timer_vga_sprites_helper() {
 	}
 
 	src = _vga_var7 + x*4;
-	vc_10_helper_8(dst,src+swap32(*((uint32*)src)));
+	vc_10_helper_8(dst,src+READ_BE_UINT32_UNALIGNED(&*((uint32*)src)));
 
 	dx_unlock_2();
 
@@ -5899,11 +5902,11 @@ void SimonState::timer_vga_sprites_2() {
 		if (vsp->image)
 			fprintf(_dump_file,"id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n", 
 				vsp->id, vsp->image, vsp->base_color, vsp->x, vsp->y, vsp->unk4 );
-		params[0] = swap16(vsp->image);
-		params[1] = swap16(vsp->base_color);
-		params[2] = swap16(vsp->x);
-		params[3] = swap16(vsp->y);
-		params[4] = swap16(vsp->unk4);
+		params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
+		params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
+		params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
+		params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
+		params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
 		_vc_ptr = (byte*)params;
 		vc_10();
 
@@ -6033,7 +6036,7 @@ void SimonState::o_vga_reset() {
 }
 
 void SimonState::o_unk_99_simon1(uint a) {
-	uint16 b = swap16(a);
+	uint16 b = READ_BE_UINT16_UNALIGNED(&a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&b;
 	vc_60();
@@ -6043,8 +6046,8 @@ void SimonState::o_unk_99_simon1(uint a) {
 void SimonState::o_unk_99_simon2(uint a, uint b) {
 	uint16 items[2];
 	
-	items[0] = swap16(a);
-	items[1] = swap16(b);
+	items[0] = READ_BE_UINT16_UNALIGNED(&a);
+	items[1] = READ_BE_UINT16_UNALIGNED(&b);
 
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte*)&items;
@@ -6182,8 +6185,8 @@ void SimonState::o_pathfind(int x,int y,uint var_1,uint var_2) {
 		if (!p)
 			continue;
 		for(j=0; p[0] != 0xE703; j++,p+=2) { /* 0xE703 = byteswapped 999 */
-			x_diff = abs(swap16(p[0]) - x);
-			y_diff = abs(swap16(p[1]) - 12 - y);
+			x_diff = abs(READ_BE_UINT16_UNALIGNED(&p[0]) - x);
+			y_diff = abs(READ_BE_UINT16_UNALIGNED(&p[1]) - 12 - y);
 
 			if (x_diff < y_diff) {
 				x_diff >>= 2;
@@ -6805,18 +6808,18 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id,
 	}
 	
 	pp = _cur_vga_file_1;
-	p = pp + swap16(((VgaFile1Header*)pp)->hdr2_start);
+	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)pp)->hdr2_start);
 
-	count = swap16(((VgaFile1Header2*)p)->id_count);
-	p = pp + swap16(((VgaFile1Header2*)p)->id_table);
+	count = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)p)->id_count);
+	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)p)->id_table);
 	
 	for(;;) {
-		if (swap16(((VgaFile1Struct0x6*)p)->id) == vga_struct_id) {
+		if (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->id) == vga_struct_id) {
 			
-			dump_vga_script(pp + swap16(((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
+			dump_vga_script(pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
 
 			add_vga_timer(gss->VGA_DELAY_BASE, 
-				pp + swap16(((VgaFile1Struct0x6*)p)->script_offs),
+				pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs),
 				vga_struct_id, vga_res);
 			break;
 		}
@@ -7155,9 +7158,9 @@ void SimonState::render_string(uint num_1, uint color, uint width, uint height, 
 
 	p = dst + num_1 * 8;
 
-	*(uint16*)(p+4) = swap16(height);
-	*(uint16*)(p+6) = swap16(width);
-	dst += swap32(*(uint32*)p);
+	*(uint16*)(p+4) = READ_BE_UINT16_UNALIGNED(&height);
+	*(uint16*)(p+6) = READ_BE_UINT16_UNALIGNED(&width);
+	dst += READ_BE_UINT32_UNALIGNED(&*(uint32*)p);
 
 	memset(dst, 0, count);
 
@@ -8569,7 +8572,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 
 	do {
 		if (!(_game & GAME_SIMON2)) {
-			opcode = swap16(*(uint16*)src);
+			opcode = READ_BE_UINT16_UNALIGNED(&*(uint16*)src);
 			src+=2;
 		} else {
 			opcode = *src++;
@@ -8588,12 +8591,12 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 			switch(*str) {
 			case 'x': fprintf(_dump_file,"\n"); return;
 			case 'b':	fprintf(_dump_file,"%d ", *src++); break;
-			case 'd':	fprintf(_dump_file,"%d ", swap16(*(uint16*)src)); src+=2; break;
-			case 'v':	fprintf(_dump_file,"[%d] ", swap16(*(uint16*)src)); src+=2; break;
-			case 'i':	fprintf(_dump_file,"%d ", (int16)swap16(*(uint16*)src)); src+=2; break;
+			case 'd':	fprintf(_dump_file,"%d ", READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
+			case 'v':	fprintf(_dump_file,"[%d] ", READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
+			case 'i':	fprintf(_dump_file,"%d ", (int16)READ_BE_UINT16_UNALIGNED(&*(uint16*)src)); src+=2; break;
 			case 'q': 
 				while (*(uint16*)src != 0xE703) {
-					fprintf(_dump_file,"(%d,%d) ", swap16(((uint16*)src)[0]), swap16(((uint16*)src)[1]));
+					fprintf(_dump_file,"(%d,%d) ", READ_BE_UINT16_UNALIGNED(&((uint16*)src)[0]), READ_BE_UINT16_UNALIGNED(&((uint16*)src)[1]));
 					src += 4;
 				}
 				src++;
@@ -8614,13 +8617,13 @@ void SimonState::dump_vga_file(byte *vga) {
 		int count;
 
 		pp = vga;
-		p = pp + swap16(((VgaFile1Header*)pp)->hdr2_start);
-		count = swap16(((VgaFile1Header2*)p)->id_count);
-		p = pp + swap16(((VgaFile1Header2*)p)->id_table);
+		p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)pp)->hdr2_start);
+		count = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)p)->id_count);
+		p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)p)->id_table);
 		while (--count >= 0) {
-			int id = swap16(((VgaFile1Struct0x6*)p)->id);
+			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->id);
 
-			dump_vga_script_always(vga + swap16(((VgaFile1Struct0x6*)p)->script_offs), id/100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), id/100, id);
 			p += sizeof(VgaFile1Struct0x6);
 		}
 	}
@@ -8630,14 +8633,14 @@ void SimonState::dump_vga_file(byte *vga) {
 		int c;
 
 		bb = vga;
-		b = bb + swap16(((VgaFile1Header*)bb)->hdr2_start);
-		c = swap16(((VgaFile1Header2*)b)->unk1);
-		b = bb + swap16(((VgaFile1Header2*)b)->unk2_offs);
+		b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header*)bb)->hdr2_start);
+		c = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)b)->unk1);
+		b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2*)b)->unk2_offs);
 
 		while (--c >= 0) {
-			int id = swap16(((VgaFile1Struct0x8*)b)->id);
+			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->id);
 
-			dump_vga_script_always(vga + swap16(((VgaFile1Struct0x8*)b)->script_offs), id/100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8*)b)->script_offs), id/100, id);
 			b += sizeof(VgaFile1Struct0x8);
 		}
 	}
