@@ -26,13 +26,13 @@
 // #define USE_MPEG2_0_3_1
 
 #ifdef _MSC_VER
-typedef signed char int8_t;
+typedef int8 int8_t;
 typedef signed short int16_t;
-typedef signed int int32_t;
+typedef int32 int32_t;
 
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t; 
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t; 
 #else
 #include <inttypes.h>
 #endif
@@ -104,9 +104,9 @@ private:
 		byte pal[4 * 256];
 	} palettes[50];
 #else
-        static NewGuiColor lookup2[BITDEPTH * BITDEPTH * 256];
-        NewGuiColor *overlay;
-        static bool lookupInit;
+	static NewGuiColor lookup2[BITDEPTH * BITDEPTH * 256];
+	NewGuiColor *overlay;
+	static bool lookupInit;
 
 #endif
 

@@ -37,10 +37,10 @@ AnimationState::~AnimationState() {
 	if (decoder)
 		mpeg2_close(decoder);
 	delete mpgfile;
-        delete sndfile;
+	delete sndfile;
 #ifndef BACKEND_8BIT
-        _sys->hide_overlay();
-        delete overlay;
+	_sys->hide_overlay();
+	delete overlay;
 #endif
 #endif
 }
@@ -57,7 +57,7 @@ bool AnimationState::init(const char *basename) {
 
 #ifdef BACKEND_8BIT
 
-        int i, p;
+	int i, p;
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -269,7 +269,7 @@ void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *cons
 			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
 			ptr[640 + linepos++] = lut[i + dat[0][width + ypos++]];
 
-                }
+		}
 		linepos += (2 * 640 - width);
 		ypos += width;
 	}
@@ -360,7 +360,7 @@ bool AnimationState::decodeFrame() {
 				framenum++;
 				return true;
 
-                        }
+			}
 			break;
 
 		default:
