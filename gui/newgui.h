@@ -128,10 +128,12 @@ public:
 	void fillRect(int x, int y, int w, int h, OverlayColor color);
 	void checkerRect(int x, int y, int w, int h, OverlayColor color);
 	void frameRect(int x, int y, int w, int h, OverlayColor color);
-	void drawChar(byte c, int x, int y, OverlayColor color);
+
+	void drawChar(byte c, int x, int y, OverlayColor color, const Graphics::Font *font = 0);
+	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	void drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h = 8);
 

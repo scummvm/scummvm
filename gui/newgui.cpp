@@ -373,8 +373,10 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	_system->copyRectToOverlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-	getFont().drawChar(&_screen, chr, xx, yy, color);
+void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
+	if (font == 0)
+		font = &getFont();
+	font->drawChar(&_screen, chr, xx, yy, color);
 }
 
 int NewGui::getStringWidth(const String &str) {
