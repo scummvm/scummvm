@@ -866,7 +866,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 					l++;
 				} while((tmp[l] != 0) && (tmp[l] != 9) && (l < 19));
 				tmp2[l] = 0;
-				if (stricmp(tmp2, name) == 0) {
+				if (scumm_stricmp(tmp2, name) == 0) {
 					strcpy((char*)trans_buff, &tmp[l + 1]);
 					return;
 				}
