@@ -39,8 +39,10 @@ MODULES += \
 # Include the build instructions for all modules
 -include $(patsubst %,%/module.mk,$(MODULES))
 
+# HACK temporary fix to get compilation on OS X (and possibly others) working again
+OBJS:=common/engine.o $(OBJS)
 
-scummvm$(EXEEXT): common/engine.o $(OBJS)
+scummvm$(EXEEXT):  $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
 
 clean:
