@@ -993,24 +993,6 @@ void ScummEngine::launch() {
 	_saveLoadFlag = 0;
 }
 
-void ScummEngine::setFeatures(uint32 newFeatures) {
-	bool amigaPalette = (_features & GF_AMIGA) != 0;
-	bool newAmigaPalette = (newFeatures & GF_AMIGA) != 0;
-
-	if ((_features ^ newFeatures) & ~GF_AMIGA) {
-		error("setFeatures may only be used to toggle GF_AMIGA flag!");
-	}
-
-	_features = newFeatures;
-	
-	if ((_features & GF_16COLOR) && amigaPalette != newAmigaPalette) {
-		if (_features & GF_AMIGA)
-			setupAmigaPalette();
-		else
-			setupEGAPalette();
-	}
-}
-
 void ScummEngine::scummInit() {
 	int i;
 
