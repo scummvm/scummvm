@@ -442,8 +442,9 @@ void ScummEngine::drawString(int a) {
 				// FIXME: The following code is a bit nasty. It is used for the
 				// Highway surfing game in Sam&Max; there, _blitAlso is set to
 				// true when writing the highscore numbers. It is also used for
-				// parts of the DOTT intro. Maybe it is also being used in
-				// other places.
+				// parts of the DOTT intro. It is also used for scores in bowling
+				// mini game in fbear and for names in load/save screen of all
+				// HE games. Maybe it is also being used in other places.
 				// A better name for _blitAlso might be _imprintOnBackground
 				if (_string[a].no_talk_anim == false) {
 					// Sam and Max seems to blitAlso 32 a lot, which does
