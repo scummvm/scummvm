@@ -1208,8 +1208,9 @@ void Talk::makeSpeakBob(
 	int line_count = 0;
 	int word_count = 0;
 	int line_length = 0;
+	int i;
 
-	for (int i = 0; i < length; i++) {
+	for (i = 0; i < length; i++) {
 		if (textCopy[i] == ' ')
 			word_count++;
 
