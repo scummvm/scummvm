@@ -484,21 +484,21 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	new StaticTextWidget(this, 15, 26, 95, 16, "Music volume:", kTextAlignRight);
 	new StaticTextWidget(this, 15, 42, 95, 16, "SFX volume:", kTextAlignRight);
 
-	masterVolumeSlider = new SliderWidget(this, 125, 8, 80, 12, "Volume1", kMasterVolumeChanged);
-	musicVolumeSlider  = new SliderWidget(this, 125, 24, 80, 12, "Volume2", kMusicVolumeChanged);
-	sfxVolumeSlider    = new SliderWidget(this, 125, 40, 80, 12, "Volume3", kSfxVolumeChanged);
+	_masterVolumeSlider = new SliderWidget(this, 125, 8, 80, 12, "Volume1", kMasterVolumeChanged);
+	_musicVolumeSlider  = new SliderWidget(this, 125, 24, 80, 12, "Volume2", kMusicVolumeChanged);
+	_sfxVolumeSlider    = new SliderWidget(this, 125, 40, 80, 12, "Volume3", kSfxVolumeChanged);
 
-	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
-	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
-	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
+	_masterVolumeSlider->setMinValue(0);	_masterVolumeSlider->setMaxValue(255);
+	_musicVolumeSlider->setMinValue(0);	_musicVolumeSlider->setMaxValue(255);
+	_sfxVolumeSlider->setMinValue(0);	_sfxVolumeSlider->setMaxValue(255);
 
-	masterVolumeLabel = new StaticTextWidget(this, 210, 10, 24, 16, "Volume1", kTextAlignLeft);
-	musicVolumeLabel  = new StaticTextWidget(this, 210, 26, 24, 16, "Volume2", kTextAlignLeft);
-	sfxVolumeLabel    = new StaticTextWidget(this, 210, 42, 24, 16, "Volume3", kTextAlignLeft);
+	_masterVolumeLabel = new StaticTextWidget(this, 210, 10, 24, 16, "Volume1", kTextAlignLeft);
+	_musicVolumeLabel  = new StaticTextWidget(this, 210, 26, 24, 16, "Volume2", kTextAlignLeft);
+	_sfxVolumeLabel    = new StaticTextWidget(this, 210, 42, 24, 16, "Volume3", kTextAlignLeft);
 	
-	masterVolumeLabel->setFlags(WIDGET_CLEARBG);
-	musicVolumeLabel->setFlags(WIDGET_CLEARBG);
-	sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	//
 	// Some misc options
@@ -530,13 +530,13 @@ void OptionsDialog::open() {
 	_soundVolumeMusic = _scumm->_sound->_sound_volume_music;
 	_soundVolumeSfx = _scumm->_sound->_sound_volume_sfx;
 
-	masterVolumeSlider->setValue(_soundVolumeMaster);
-	musicVolumeSlider->setValue(_soundVolumeMusic);
-	sfxVolumeSlider->setValue(_soundVolumeSfx);
+	_masterVolumeSlider->setValue(_soundVolumeMaster);
+	_musicVolumeSlider->setValue(_soundVolumeMusic);
+	_sfxVolumeSlider->setValue(_soundVolumeSfx);
 
-	masterVolumeLabel->setValue(_soundVolumeMaster);
-	musicVolumeLabel->setValue(_soundVolumeMusic);
-	sfxVolumeLabel->setValue(_soundVolumeSfx);
+	_masterVolumeLabel->setValue(_soundVolumeMaster);
+	_musicVolumeLabel->setValue(_soundVolumeMusic);
+	_sfxVolumeLabel->setValue(_soundVolumeSfx);
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
@@ -554,19 +554,19 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_aboutDialog->runModal();
 		break;
 	case kMasterVolumeChanged:
-		_soundVolumeMaster = masterVolumeSlider->getValue();
-		masterVolumeLabel->setValue(_soundVolumeMaster);
-		masterVolumeLabel->draw();
+		_soundVolumeMaster = _masterVolumeSlider->getValue();
+		_masterVolumeLabel->setValue(_soundVolumeMaster);
+		_masterVolumeLabel->draw();
 		break;
 	case kMusicVolumeChanged:
-		_soundVolumeMusic = musicVolumeSlider->getValue();
-		musicVolumeLabel->setValue(_soundVolumeMusic);
-		musicVolumeLabel->draw();
+		_soundVolumeMusic = _musicVolumeSlider->getValue();
+		_musicVolumeLabel->setValue(_soundVolumeMusic);
+		_musicVolumeLabel->draw();
 		break;
 	case kSfxVolumeChanged:
-		_soundVolumeSfx = sfxVolumeSlider->getValue();
-		sfxVolumeLabel->setValue(_soundVolumeSfx);
-		sfxVolumeLabel->draw();
+		_soundVolumeSfx = _sfxVolumeSlider->getValue();
+		_sfxVolumeLabel->setValue(_soundVolumeSfx);
+		_sfxVolumeLabel->draw();
 		break;
 	case kOKCmd: {
 		// Update the sound settings 

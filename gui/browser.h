@@ -35,7 +35,7 @@ class BrowserDialog : public Dialog {
 	typedef ScummVM::String String;
 	typedef ScummVM::StringList StringList;
 public:
-	BrowserDialog(NewGui *gui);
+	BrowserDialog(NewGui *gui, const char *title);
 	virtual ~BrowserDialog();
 
 	virtual void open();

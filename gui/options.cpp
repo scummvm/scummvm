@@ -25,9 +25,8 @@
 #include "options.h"
 #include "PopUpWidget.h"
 
-//#include "backends/fs/fs.h"
+#include "backends/fs/fs.h"
 #include "common/config-file.h"
-//#include "common/engine.h"
 #include "common/gameDetector.h"
 
 /*
@@ -49,11 +48,15 @@ This just looks like an option dialog, but it doesn't change any actual settings
 // - default volumes (sfx/master/music)
 
 enum {
-	kOKCmd = 'OK  '
+	kMasterVolumeChanged	= 'mavc',
+	kMusicVolumeChanged		= 'muvc',
+	kSfxVolumeChanged		= 'sfvc',
+	kChooseSaveDirCmd		= 'chos',
+	kOKCmd					= 'ok  '
 };
 
-GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
-	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15) {
+GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
+	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15), _detector(detector) {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
@@ -94,51 +97,103 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	new StaticTextWidget(this, 5, yoffset+26, 100, 16, "Music volume: ", kTextAlignRight);
 	new StaticTextWidget(this, 5, yoffset+42, 100, 16, "SFX volume: ", kTextAlignRight);
 
-	SliderWidget *masterVolumeSlider, *musicVolumeSlider, *sfxVolumeSlider;
+	_masterVolumeSlider = new SliderWidget(this, 105, yoffset+8, 85, 12, "Volume1", kMasterVolumeChanged);
+	_musicVolumeSlider  = new SliderWidget(this, 105, yoffset+24, 85, 12, "Volume2", kMusicVolumeChanged);
+	_sfxVolumeSlider    = new SliderWidget(this, 105, yoffset+40, 85, 12, "Volume3", kSfxVolumeChanged);
 
-	masterVolumeSlider = new SliderWidget(this, 105, yoffset+8, 85, 12, "Volume1", 0);
-	musicVolumeSlider  = new SliderWidget(this, 105, yoffset+24, 85, 12, "Volume2", 0);
-	sfxVolumeSlider    = new SliderWidget(this, 105, yoffset+40, 85, 12, "Volume3", 0);
+	_masterVolumeSlider->setMinValue(0);	_masterVolumeSlider->setMaxValue(255);
+	_musicVolumeSlider->setMinValue(0);	_musicVolumeSlider->setMaxValue(255);
+	_sfxVolumeSlider->setMinValue(0);	_sfxVolumeSlider->setMaxValue(255);
 
-	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
-	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
-	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
-
-	Widget *masterVolumeLabel, *musicVolumeLabel, *sfxVolumeLabel;
-
-	masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+10, 24, 16, "100%", kTextAlignLeft);
-	musicVolumeLabel  = new StaticTextWidget(this, 200, yoffset+26, 24, 16, "100%", kTextAlignLeft);
-	sfxVolumeLabel    = new StaticTextWidget(this, 200, yoffset+42, 24, 16, "100%", kTextAlignLeft);
+	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+10, 24, 16, "100%", kTextAlignLeft);
+	_musicVolumeLabel  = new StaticTextWidget(this, 200, yoffset+26, 24, 16, "100%", kTextAlignLeft);
+	_sfxVolumeLabel    = new StaticTextWidget(this, 200, yoffset+42, 24, 16, "100%", kTextAlignLeft);
 	
-	masterVolumeLabel->setFlags(WIDGET_CLEARBG);
-	musicVolumeLabel->setFlags(WIDGET_CLEARBG);
-	sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 
 	//
 	// Save game path
 	//
 	new StaticTextWidget(this, 5, 106, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
-	new StaticTextWidget(this, 105, 106, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
-	new ButtonWidget(this, 105, 120, 64, 16, "Choose...", 0, 0);
+	_savePath = new StaticTextWidget(this, 105, 106, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
+	new ButtonWidget(this, 105, 120, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
 	
+// TODO: set _savePath to the current save path, i.e. as obtained via
+	const char *dir = NULL;
+	dir = g_config->get("savepath", "scummvm");
+	if (dir) {
+		_savePath->setLabel(dir);
+	} else {
+		char buf[256];
+		getcwd(buf, sizeof(buf));
+		_savePath->setLabel(buf);
+	}
+// If that is NULL, we should use the current directory...
 
 	//
 	// Add OK & Cancel buttons
 	//
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
+
+	// Create file browser dialog
+	_browser = new BrowserDialog(_gui, "Select directory for savegames");
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
+	delete _browser;
+}
+
+void GlobalOptionsDialog::open() {
+	Dialog::open();
+
+	_soundVolumeMaster = _detector._master_volume;
+	_soundVolumeMusic = _detector._music_volume;
+	_soundVolumeSfx = _detector._sfx_volume;
+
+	_masterVolumeSlider->setValue(_soundVolumeMaster);
+	_musicVolumeSlider->setValue(_soundVolumeMusic);
+	_sfxVolumeSlider->setValue(_soundVolumeSfx);
+
+	_masterVolumeLabel->setValue(_soundVolumeMaster);
+	_musicVolumeLabel->setValue(_soundVolumeMusic);
+	_sfxVolumeLabel->setValue(_soundVolumeSfx);
 }
 
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd == kOKCmd) {
+	switch (cmd) {
+	case kChooseSaveDirCmd:
+		if (_browser->runModal()) {
+			// User made his choice...
+			FilesystemNode *dir = _browser->getResult();
+			_savePath->setLabel(dir->path());
+			// TODO - we should check if the director is writeable before accepting it
+		}
+		break;
+	case kMasterVolumeChanged:
+		_soundVolumeMaster = _masterVolumeSlider->getValue();
+		_masterVolumeLabel->setValue(_soundVolumeMaster);
+		_masterVolumeLabel->draw();
+		break;
+	case kMusicVolumeChanged:
+		_soundVolumeMusic = _musicVolumeSlider->getValue();
+		_musicVolumeLabel->setValue(_soundVolumeMusic);
+		_musicVolumeLabel->draw();
+		break;
+	case kSfxVolumeChanged:
+		_soundVolumeSfx = _sfxVolumeSlider->getValue();
+		_sfxVolumeLabel->setValue(_soundVolumeSfx);
+		_sfxVolumeLabel->draw();
+		break;
+	case kOKCmd:
 		// TODO Write back changes made to config object
 		setResult(1);
 		close();
-	} else {
+		break;
+	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }

@@ -205,7 +205,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog(_gui);
+	_browser = new BrowserDialog(_gui, "Select directory with game data");
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -328,7 +328,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		//    options for that game.
 		
 		if (_browser->runModal()) {
-			// User did make a choice...
+			// User made his choice...
 			FilesystemNode *dir = _browser->getResult();
 
 			// ...so let's determine a list of candidates, games that
@@ -431,7 +431,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// - music & graphics driver (but see also the comments on EditGameDialog
 		//   for some techincal difficulties with this)
 		// - default volumes (sfx/master/music)
-		GlobalOptionsDialog options(_gui);
+		GlobalOptionsDialog options(_gui, _detector);
 		options.runModal();
 		}
 		break;

@@ -25,18 +25,36 @@
 #include "common/str.h"
 #include "common/list.h"
 
+class BrowserDialog;
+class GameDetector;
 
 class GlobalOptionsDialog : public Dialog {
 	typedef ScummVM::String String;
 public:
-	GlobalOptionsDialog(NewGui *gui);
+	GlobalOptionsDialog(NewGui *gui, GameDetector &detector);
 	~GlobalOptionsDialog();
 
-//	void open();
+	void open();
 //	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	GameDetector 	&_detector;
+
+	BrowserDialog	*_browser;
+	StaticTextWidget*_savePath;
+
+	int _soundVolumeMaster;
+	int _soundVolumeMusic;
+	int _soundVolumeSfx;
+
+	SliderWidget *_masterVolumeSlider;
+	SliderWidget *_musicVolumeSlider;
+	SliderWidget *_sfxVolumeSlider;
+
+	StaticTextWidget *_masterVolumeLabel;
+	StaticTextWidget *_musicVolumeLabel;
+	StaticTextWidget *_sfxVolumeLabel;
 };
 
 #endif

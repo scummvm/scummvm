@@ -35,12 +35,11 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-BrowserDialog::BrowserDialog(NewGui *gui)
+BrowserDialog::BrowserDialog(NewGui *gui, const char *title)
 	: Dialog(gui, 40, 10, 320 -2 * 40, 200 - 2 * 10),
 	  _node(0), _nodeContent(0) {
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, 8, _w-2 * 10, kLineHeight,
-		"Select directory with game data", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 8, _w-2 * 10, kLineHeight, title, kTextAlignCenter);
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new StaticTextWidget(this, 10, 20, _w - 2 * 10, kLineHeight,

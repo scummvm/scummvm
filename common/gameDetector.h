@@ -142,9 +142,9 @@ public:
 
 	bool _use_adlib;
 
+	int _master_volume;
 	int _music_volume;
 	int _sfx_volume;
-	int _master_volume;
 	bool _amiga;
 	int _language;
 

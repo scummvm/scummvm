@@ -94,13 +94,13 @@ protected:
 	int _soundVolumeMusic;
 	int _soundVolumeSfx;
 
-	SliderWidget *masterVolumeSlider;
-	SliderWidget *musicVolumeSlider;
-	SliderWidget *sfxVolumeSlider;
+	SliderWidget *_masterVolumeSlider;
+	SliderWidget *_musicVolumeSlider;
+	SliderWidget *_sfxVolumeSlider;
 
-	StaticTextWidget *masterVolumeLabel;
-	StaticTextWidget *musicVolumeLabel;
-	StaticTextWidget *sfxVolumeLabel;
+	StaticTextWidget *_masterVolumeLabel;
+	StaticTextWidget *_musicVolumeLabel;
+	StaticTextWidget *_sfxVolumeLabel;
 	
 	CheckboxWidget *subtitlesCheckbox;
 	CheckboxWidget *amigaPalCheckbox;
