@@ -2154,7 +2154,7 @@ void Scumm_v5::o5_setVarRange() {
 
 void Scumm_v5::o5_startMusic() {
 	if (_features & GF_FMTOWNS) {
-		// In Zak256, this seems to be some kind of Audio CD status query function.
+		// In FM Towns games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
 		int b = getVarOrDirectByte(0x80);
