@@ -1434,7 +1434,6 @@ uint SimonState::item_get_icon_number(Item *item) {
 void SimonState::loadIconFile() {
 	File in;
 	if (_game & GF_AMIGAS)
-		// TODO Add support for decruncher
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -5070,7 +5069,7 @@ void SimonState::playMusic(uint music_unk, uint music) {
 			// TODO Add music support for simon1demo
 		} else {
 			midi.stop();
-			if (_game & GF_WIN || _game & GF_TALKIE) {	
+			if (_game & GF_TALKIE) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.playSMF (_game_file);
 			} else {
