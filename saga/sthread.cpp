@@ -181,7 +181,6 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	ScriptFunctionType scriptFunction;
 
 	uint16 data;
-	uint16 scriptRetVal = 0;
 	int debug_print = 0;
 	int n_buf;
 //	int bitstate;
@@ -338,21 +337,21 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				break;
 			}
 
-			if (operandChar == opCcall) // CALL function
+			if (operandChar == opCcall) {// CALL function
 				thread->push(thread->_returnValue);
+			}
 
 			if (thread->_flags & kTFlagAsleep)
 				instructionCount = instructionLimit;	// break out of loop!
 			break;
-		case opEnter: // Enter a function
+		CASEOP(opEnter)
 			thread->push(thread->_frameIndex);
 			thread->_frameIndex = thread->_stackTopIndex;
 			thread->_stackTopIndex -= (scriptS.readUint16LE() / 2);
 			break;
-		case opReturn: // Return with value
-			scriptRetVal = thread->pop();
-			// Fall through
-		case opReturnV: // Return with void
+		CASEOP(opReturn)
+			thread->_returnValue = thread->pop();
+		CASEOP(opReturnV)
 			thread->_stackTopIndex = thread->_frameIndex;
 			thread->_frameIndex = thread->pop();
 			if (thread->pushedSize() == 0) {
@@ -361,9 +360,15 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				return;
 			} else {
 				thread->_instructionOffset = thread->pop();
-				/* int n_args = */ thread->pop();
-				if (operandChar == opReturn)
-					thread->push(scriptRetVal);
+				param1 = thread->pop();
+				param1 +=param1;
+				while (param1--) {
+					thread->pop();
+				}
+
+				if (operandChar == opReturn) {
+					thread->push(thread->_returnValue);
+				}
 			}
 			break;
 
