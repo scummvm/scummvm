@@ -300,33 +300,30 @@ bool ConfigManager::getBool(const String &key, const String &dom) const {
 #pragma mark -
 
 
-void ConfigManager::set(const String &key, const String &value) {
-	// Remove the transient domain value
-	_transientDomain.remove(key);
-
-	if (_activeDomain.isEmpty())
-		_globalDomains[kApplicationDomain][key] = value;
-	else
-		_gameDomains[_activeDomain][key] = value;
-}
-
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
 	if (dom.isEmpty()) {
-		set(key, value);
-		return;
-	}
+		// Remove the transient domain value
+		_transientDomain.remove(key);
+	
+		if (_activeDomain.isEmpty())
+			_globalDomains[kApplicationDomain][key] = value;
+		else
+			_gameDomains[_activeDomain][key] = value;
 
-	if (dom == kTransientDomain)
-		_transientDomain[key] = value;
-	else {
-		if (_globalDomains.contains(dom)) {
-			_globalDomains[dom][key] = value;
-			if (_activeDomain.isEmpty() || !_gameDomains[_activeDomain].contains(key))
-				_transientDomain.remove(key);
-		} else {
-			_gameDomains[dom][key] = value;
-			if (dom == _activeDomain)
-				_transientDomain.remove(key);
+	} else {
+
+		if (dom == kTransientDomain)
+			_transientDomain[key] = value;
+		else {
+			if (_globalDomains.contains(dom)) {
+				_globalDomains[dom][key] = value;
+				if (_activeDomain.isEmpty() || !_gameDomains[_activeDomain].contains(key))
+					_transientDomain.remove(key);
+			} else {
+				_gameDomains[dom][key] = value;
+				if (dom == _activeDomain)
+					_transientDomain.remove(key);
+			}
 		}
 	}
 }

@@ -70,8 +70,7 @@ public:
 	int					getInt(const String &key, const String &dom = String::emptyString) const;
 	bool				getBool(const String &key, const String &dom = String::emptyString) const;
 
-	void				set(const String &key, const String &value);
-	void				set(const String &key, const String &value, const String &dom);
+	void				set(const String &key, const String &value, const String &dom = String::emptyString);
 	void				set(const String &key, const char *value, const String &dom = String::emptyString);
 	void				set(const String &key, int value, const String &dom = String::emptyString);
 	void				set(const String &key, bool value, const String &dom = String::emptyString);
