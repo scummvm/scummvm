@@ -203,7 +203,11 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	uint32 size = _offsets[sound+1] - _offsets[sound];
+	int i = 1;
+	while (_offsets[sound + i] == _offsets[sound])
+			i++;
+
+	uint32 size = _offsets[sound + i] - _offsets[sound];
 
 	_mixer->playMP3(handle, _file, size);
 }
@@ -223,7 +227,11 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	uint32 size = _offsets[sound+1] - _offsets[sound];
+	int i = 1;
+	while (_offsets[sound + i] == _offsets[sound])
+			i++;
+
+	uint32 size = _offsets[sound + i] - _offsets[sound];
 
 	_mixer->playVorbis(handle, _file, size);
 }
