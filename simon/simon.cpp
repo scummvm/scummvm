@@ -542,7 +542,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
-	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech") && ConfMan.getBool("speech") == 0)
+	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
 	if (!(_game & GF_SIMON2) && _language > 1) {
