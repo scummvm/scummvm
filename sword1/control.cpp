@@ -82,7 +82,7 @@ enum ButtonIds {
 	BUTTON_SAVE_SELECT7,
 	BUTTON_SAVE_SELECT8,
 	BUTTON_SAVE_RESTORE_OKAY,
-	BUTTON_SAVE_CANCEL,
+	BUTTON_SAVE_CANCEL
 };
 
 ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
