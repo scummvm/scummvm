@@ -45,7 +45,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 			if (file->isOpen() == false) {
 				warning("Cannot open voice file %s", s);
 			} else	{
-				_voice = new WavSound(_mixer, file, gss->NUM_VOICE_RESOURCES);
+				_voice = new WavSound(_mixer, file);
 			}
 		} else if (_game & GAME_TALKIE) {
 			s = gss->voc_filename;
@@ -53,12 +53,12 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 			if (file->isOpen() == false) {
 				warning("Cannot open voice file %s", s);
 			} else {
-				_voice = new VocSound(_mixer, file, gss->NUM_VOICE_RESOURCES);
+				_voice = new VocSound(_mixer, file);
 			}
 		}
 #ifdef USE_MAD
 	} else {
-		_voice = new MP3Sound(_mixer, file, gss->NUM_VOICE_RESOURCES);
+		_voice = new MP3Sound(_mixer, file);
 	}
 #endif
 
@@ -72,11 +72,11 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 			if (file2->isOpen() == false) {
 				warning("Cannot open effects file %s", s);
 			} else {
-				_effects = new VocSound(_mixer, file2, gss->NUM_VOICE_RESOURCES);
+				_effects = new VocSound(_mixer, file2);
 			}
 #ifdef USE_MAD
 		} else {
-			_effects = new MP3Sound(_mixer, file2, gss->NUM_VOICE_RESOURCES);
+			_effects = new MP3Sound(_mixer, file2);
 		}
 #endif
 	}
@@ -97,17 +97,14 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
 	_effects = new WavSound(_mixer, file);
 }
 
-void SimonSound::loadSfxTable(File *gameFile, uint32 offs, int set) 
+void SimonSound::loadSfxTable(File *gameFile, uint32 base) 
 {
-	if (!set)
-		return;
-
 	stopAll();
 
 	if (_game & GAME_WIN)
-		_effects = new WavSound(_mixer, gameFile, offs, set);
+		_effects = new WavSound(_mixer, gameFile, base);
 	else
-		_effects = new VocSound(_mixer, gameFile, offs, set);
+		_effects = new VocSound(_mixer, gameFile, base);
 }
 
 void SimonSound::playVoice(uint sound)
@@ -115,7 +112,7 @@ void SimonSound::playVoice(uint sound)
 	if (!_voice)
 		return;
 	
-	_voice->playSound(sound, &_voice_handle, 0);
+	_voice->playSound(sound, &_voice_handle);
 }
 
 void SimonSound::playEffects(uint sound)
@@ -126,7 +123,7 @@ void SimonSound::playEffects(uint sound)
 	if (_effects_paused)
 		return;
 
-	_effects->playSound(sound, &_effects_handle, 0);
+	_effects->playSound(sound, &_effects_handle);
 }
 
 void SimonSound::playAmbient(uint sound)
@@ -179,131 +176,37 @@ void SimonSound::ambientPause(bool b)
 
 /******************************************************************************/
 
-SimonSound::WavSound::WavSound(SoundMixer *mixer, File *file, uint resources)
-{
-	_mixer = mixer;
-	_file = file;
-	loadOffsets(resources);
-}
-
-SimonSound::WavSound::WavSound(SoundMixer *mixer, File *file) /* only used in simon1win */
-{
-	_mixer = mixer;
-	_file = file;
-	loadOffsets();
-}
-
-SimonSound::WavSound::WavSound(SoundMixer *mixer, File *file, uint32 offs, int set) /* only used in simon2 */
-{
-	_mixer = mixer;
-	_file = file;
-	loadOffsets(offs, set);
-}
-
-SimonSound::VocSound::VocSound(SoundMixer *mixer, File *file, uint resources)
-{
-	_mixer = mixer;
-	_file = file;
-	loadOffsets(resources);
-}
-
-SimonSound::VocSound::VocSound(SoundMixer *mixer, File *file, uint32 offs, int set) /* only used in simon2 */
-{
-	_mixer = mixer;
-	_file = file;
-	loadOffsets(offs, set);
-}
-
-#ifdef USE_MAD
-SimonSound::MP3Sound::MP3Sound(SoundMixer *mixer, File *file, uint resources)
+SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
 {
 	_mixer = mixer;
 	_file = file;
 
-	_offsets = (uint32 *)malloc((resources + 1) * sizeof(uint32));
-
-	if (_offsets == NULL)
-		error("Out of memory for voice offsets");
-	
-	if (_file->read(_offsets, resources * sizeof(uint32)) != resources * sizeof(uint32))
-		error("Cannot read offsets");
-
-#ifdef SCUMM_BIG_ENDIAN
-	for (uint i = 0; i < resources; i++)
-		_offsets[i] = FROM_LE_32(_offsets[i]);
-#endif
-	_file->seek(0, SEEK_END);
-	_offsets[resources] = _file->pos();
-}
-#endif
-
-/******************************************************************************/
-
-void SimonSound::Sound::loadOffsets(uint resources)
-{
-	_offsets = (uint32 *)malloc(resources * sizeof(uint32));
-
-	if (_offsets == NULL)
-		error("Out of memory for offsets");
-
-	if (_file->read(_offsets, resources * sizeof(uint32)) != resources * sizeof(uint32))
-		error("Cannot read offsets");
-
-#ifdef SCUMM_BIG_ENDIAN
-	for (uint i = 0; i < resources; i++)
-		_offsets[i] = FROM_LE_32(_offsets[i]);
-#endif
-}
-
-void SimonSound::Sound::loadOffsets()
-{
-	uint num = 0;
-
+	uint res = 0;
 	uint32 size;
 
-	_file->seek(4, SEEK_SET);
+	_file->seek(base + 4, SEEK_SET);
 	size = _file->readUint32LE();
 
-	num = size / sizeof(uint32);
+	res = size / sizeof(uint32);
 
-	_offsets = (uint32 *)malloc(size);
+	_offsets = (uint32 *)malloc(size + 1);
 
-	_file->seek(0, SEEK_SET);
-	_file->read(_offsets, size);
+	_file->seek(base, SEEK_SET);
 
-#if defined(SCUMM_BIG_ENDIAN)
-	for (uint r = 0; r < num; r++)
-		_offsets[r] = FROM_LE_32(_offsets[r]);
-#endif
-}
+	if (_file->read(_offsets, size) != size)
+		error("Cannot read offsets");
 
-void SimonSound::Sound::loadOffsets(uint32 offs, int set)
-{
-	int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
-			173, 176, 38, 205, 134, 213, 212, 167, 141};
-
-	uint num;
-	uint i;
-
-	num = num_per_set[set];
-
-	if (num == 0)
-		return;
-
-	_offsets = (uint32 *)malloc(num * sizeof(uint32));
-
-	_file->seek(offs, SEEK_SET);
-	_file->read(_offsets, num * sizeof(uint32));
-
-	for (i = 0; i < num; i++) {
+	for (uint i = 0; i < res; i++) {
 #if defined(SCUMM_BIG_ENDIAN)
 		_offsets[i] = FROM_LE_32(_offsets[i]);
 #endif
-		_offsets[i] += offs;
+		_offsets[i] += base;
 	}
-}
 
-/******************************************************************************/
+	/* only needed for mp3 */
+	_file->seek(0, SEEK_END);
+	_offsets[res] = _file->pos();
+}
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS

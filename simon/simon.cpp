@@ -818,8 +818,7 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 				if (_game == GAME_SIMON1WIN )
 					_sound->readSfxFile(filename, _gameDataPath);
 				else if (_game & GAME_SIMON2) {
-					int set = atoi(filename + 6) - 1;
-					_sound->loadSfxTable(_game_file, _game_offsets_ptr[set + gss->SOUND_INDEX_BASE], set);
+					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
 				}
 
 				alignTableMem();

@@ -9,36 +9,27 @@ private:
 		uint32 *_offsets;
 		SoundMixer *_mixer;
 
-		void loadOffsets(uint resources);
-		void loadOffsets();
-		void loadOffsets(uint32 offs, int set);
-
 	public:
-		virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags) = 0;
+		SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base = 0);
+		virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
 	};
-
 
 	class WavSound : public Sound {
 	public:
-		WavSound(SoundMixer *mixer, File *file, uint resources);
-		WavSound(SoundMixer *mixer, File *file);
-		WavSound(SoundMixer *mixer, File *file, uint32 offs, int set);
-
-		int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+		WavSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
 	class VocSound : public Sound {
 	public:
-		VocSound(SoundMixer *mixer, File *file, uint resources);
-		VocSound(SoundMixer *mixer, File *file, uint32 offs, int set);
-		
-		int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+		VocSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
 	class MP3Sound : public Sound {
 	public:
-		MP3Sound(SoundMixer *mixer, File *file, uint resources);
-		int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+		MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
 	byte _game;
@@ -61,7 +52,7 @@ public:
 	SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer);
 
 	void readSfxFile(const char *filename, const char *gameDataPath);
-	void loadSfxTable(File *gameFile, uint32 offs, int set);
+	void loadSfxTable(File *gameFile, uint32 base);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);
