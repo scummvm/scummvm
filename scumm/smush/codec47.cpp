@@ -838,6 +838,7 @@ static void codec47_subgfx_lev2() {
 		return;
 	}
 	if (code == 0xFF) {
+		d_src++;
 		byte * tmp_dst = d_dst;
 		codec47_subgfx_lev3();
 		d_dst += 4;
@@ -1044,7 +1045,6 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 
 	byte * ptr;
 	int32 r, l, count;
-	byte * ff = gfx_data;
 	if ((chunk_buffer[4] & 1) != 0) {
 		r = 0;
 		ptr = (byte*)smush_buffer;
@@ -1118,7 +1118,6 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 
 	if (_var104 != 0) {
 		dst.blit(_var104, width * height);
-//		dst.blit(_curBuf, width * height);
 	}
 
 	if ((first_word - _var100) == 1) {
