@@ -1762,7 +1762,7 @@ void Scumm::processKbd() {
 		if (_insaneState) {
 			_videoFinished = true;
 		} else
-			exitCutscene();
+			abortCutscene();
 	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);

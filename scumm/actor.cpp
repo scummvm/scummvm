@@ -99,7 +99,7 @@ void Actor::initActor(int mode) {
 }
 
 void Actor::stopActorMoving() {
-	_vm->stopScriptNr(walk_script);
+	_vm->stopScript(walk_script);
 	moving = 0;
 }
 

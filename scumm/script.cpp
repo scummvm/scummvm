@@ -46,7 +46,7 @@ void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lva
 		return;
 
 	if (!recursive)
-		stopScriptNr(script);
+		stopScript(script);
 
 	if (script < _numGlobalScripts) {
 		scriptPtr = getResourceAddress(rtScript, script);
@@ -76,7 +76,7 @@ void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lva
 	runScriptNested(slot);
 }
 
-void Scumm::runVerbCode(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
+void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
 	ScriptSlot *s;
 	uint32 obcd;
 	int slot, where, offs;
@@ -192,7 +192,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 }
 
 /* Stop script 'script' */
-void Scumm::stopScriptNr(int script) {
+void Scumm::stopScript(int script) {
 	ScriptSlot *ss;
 	NestedScript *nest;
 	int i, num;
@@ -259,7 +259,7 @@ void Scumm::stopObjectScript(int script) {
 
 	do {
 		if (nest->number == script &&
-				(nest->where == WIO_ROOM || nest->where == WIO_FLOBJECT || nest->where == WIO_INVENTORY)) {
+				(nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -620,7 +620,7 @@ void Scumm::stopObjectCode() {
 
 	if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
 		if (ss->cutsceneOverride) {
-			warning("Object %d ending with active cutscene/override", ss->number);
+			warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	} else {
@@ -633,19 +633,6 @@ void Scumm::stopObjectCode() {
 	ss->status = ssDead;
 	_currentScript = 0xFF;
 }
-
-bool Scumm::isScriptInUse(int script) {
-	ScriptSlot *ss;
-	int i;
-
-	ss = vm.slot;
-	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (ss->number == script)
-			return true;
-	}
-	return false;
-}
-
 
 void Scumm::runHook(int i) {
 	if (_features & GF_AFTER_V2) {
@@ -909,6 +896,15 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
+bool Scumm::isScriptInUse(int script) {
+	int i;
+	ScriptSlot *ss = vm.slot;
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
+		if (ss->number == script)
+			return true;
+	return false;
+}
+
 bool Scumm::isScriptRunning(int script) {
 	int i;
 	ScriptSlot *ss = vm.slot;
@@ -1037,7 +1033,7 @@ int Scumm::resStrLen(const byte *src) const {
 	return num;
 }
 
-void Scumm::cutscene(int *args) {
+void Scumm::beginCutscene(int *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 
@@ -1077,7 +1073,7 @@ void Scumm::endCutscene() {
 		runScript(VAR(VAR_CUTSCENE_END_SCRIPT), 0, 0, args);
 }
 
-void Scumm::exitCutscene() {
+void Scumm::abortCutscene() {
 	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
 	if (offs) {
 		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];

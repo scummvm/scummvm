@@ -724,7 +724,7 @@ void Scumm_v6::o6_startObjectEx() {
 	entryp = pop();
 	script = pop();
 	flags = pop();
-	runVerbCode(script, entryp, (flags & 1) != 0, (flags & 2) != 0, args);
+	runObjectScript(script, entryp, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
 void Scumm_v6::o6_startObjectQuick() {
@@ -733,7 +733,7 @@ void Scumm_v6::o6_startObjectQuick() {
 	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
 	script = pop();
-	runVerbCode(script, entryp, 0, 1, args);
+	runObjectScript(script, entryp, 0, 1, args);
 }
 
 void Scumm_v6::o6_setObjectState() {
@@ -765,7 +765,7 @@ void Scumm_v6::o6_endCutscene() {
 void Scumm_v6::o6_cutscene() {
 	int args[16];
 	getStackList(args, ARRAYSIZE(args));
-	cutscene(args);
+	beginCutscene(args);
 }
 
 void Scumm_v6::o6_stopMusic() {
@@ -983,7 +983,7 @@ void Scumm_v6::o6_stopScript() {
 	if (script == 0)
 		stopObjectCode();
 	else
-		stopScriptNr(script);
+		stopScript(script);
 }
 
 void Scumm_v6::o6_walkActorToObj() {
@@ -2165,7 +2165,7 @@ void Scumm_v6::o6_delayMinutes() {
 
 void Scumm_v6::o6_stopSentence() {
 	_sentenceNum = 0;
-	stopScriptNr(VAR(VAR_SENTENCE_SCRIPT));
+	stopScript(VAR(VAR_SENTENCE_SCRIPT));
 	clearClickedStatus();
 }
 

@@ -466,7 +466,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	//}
 	
 	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
-		_s->stopScriptNr(scriptnum);
+		_s->stopScript(scriptnum);
 	} else if ((!strcmp(argv[2], "run")) || (!strcmp(argv[2], "start"))) {
 		_s->runScript(scriptnum, 0, 0, 0);
 		return false;

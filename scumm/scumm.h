@@ -507,7 +507,7 @@ protected:
 
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
-	void stopScriptNr(int script);
+	void stopScript(int script);
 
 protected:
 	void runScriptNested(int script);
@@ -532,9 +532,9 @@ protected:
 	void freezeScripts(int scr);
 	void unfreezeScripts();
 	void runAllScripts();
-	void cutscene(int *args);
+	void beginCutscene(int *args);
 	void endCutscene();
-	void exitCutscene();
+	void abortCutscene();
 	void runExitScript();
 	void runEntryScript();
 
@@ -709,7 +709,7 @@ protected:
 	int getVerbEntrypoint(int obj, int entry);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
-	void runVerbCode(int script, int entry, bool freezeResistant, bool recursive, int *vars);
+	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
 public:

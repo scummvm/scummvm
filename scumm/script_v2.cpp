@@ -828,7 +828,7 @@ void Scumm_v2::o2_doSentence() {
 	a = getVarOrDirectByte(0x80);
 	if (a == 0xFB) {
 		_sentenceNum = 0;
-		stopScriptNr(SENTENCE_SCRIPT);
+		stopScript(SENTENCE_SCRIPT);
 		return;
 	}
 	if (a == 0xFC) {
@@ -855,7 +855,7 @@ void Scumm_v2::o2_doSentence() {
 		_scummVars[VAR_ACTIVE_VERB] = st->verb;
 		_scummVars[VAR_ACTIVE_OBJECT1] = st->objectA;
 		_scummVars[VAR_ACTIVE_OBJECT2] = st->objectB;
-		runVerbCode(st->objectA, st->verb, 0, 0, NULL);
+		runObjectScript(st->objectA, st->verb, 0, 0, NULL);
 
 		break;
 	case 2:
@@ -1134,7 +1134,7 @@ void Scumm_v2::o2_roomOps() {
 void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
 	_sentenceNum = 0;
-	stopScriptNr(SENTENCE_SCRIPT);
+	stopScript(SENTENCE_SCRIPT);
 	resetSentence();
 }
 

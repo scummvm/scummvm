@@ -274,7 +274,7 @@ void SmushPlayer::deinit() {
 	}
 
 	_scumm->_insaneState = false;
-	_scumm->exitCutscene();
+	_scumm->abortCutscene();
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->pause(false);
 	}

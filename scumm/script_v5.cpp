@@ -688,7 +688,7 @@ void Scumm_v5::o5_cursorCommand() {
 void Scumm_v5::o5_cutscene() {
 	int args[16];
 	getWordVararg(args);
-	cutscene(args);
+	beginCutscene(args);
 }
 
 void Scumm_v5::o5_endCutscene() {
@@ -738,7 +738,7 @@ void Scumm_v5::o5_doSentence() {
 	a = getVarOrDirectByte(0x80);
 	if (a == 0xFE) {
 		_sentenceNum = 0;
-		stopScriptNr(VAR(VAR_SENTENCE_SCRIPT));
+		stopScript(VAR(VAR_SENTENCE_SCRIPT));
 		clearClickedStatus();
 		return;
 	}
@@ -2057,7 +2057,7 @@ void Scumm_v5::o5_startObject() {
 	script = getVarOrDirectByte(0x40);
 
 	getWordVararg(data);
-	runVerbCode(obj, script, 0, 0, data);
+	runObjectScript(obj, script, 0, 0, data);
 }
 
 void Scumm_v5::o5_startScript() {
@@ -2094,7 +2094,7 @@ void Scumm_v5::o5_stopScript() {
 	if (!script)
 		stopObjectCode();
 	else
-		stopScriptNr(script);
+		stopScript(script);
 }
 
 void Scumm_v5::o5_stringOps() {
