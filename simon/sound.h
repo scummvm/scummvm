@@ -74,6 +74,7 @@ public:
 	PlayingSoundHandle _effects_handle;
 	PlayingSoundHandle _ambient_handle;
 
+	bool _voice_file;
 	uint _ambient_playing;
 
 	SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer);

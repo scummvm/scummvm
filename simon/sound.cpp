@@ -37,6 +37,8 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 
 	_ambient_playing = 0;
 
+	_voice_file = false;
+
 	File *file = new File();
 	File *file2 = new File();
 	const char *s;
@@ -44,15 +46,20 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	// for simon2 mac/amiga, only read index file
 	if (_game == GAME_SIMON2MAC) {
 		file->open("voices.idx", gameDataPath);
-		file->seek(0, SEEK_END);
-		int end = file->pos();
-		file->seek(0, SEEK_SET);
-		_filenums = (uint16 *)malloc(end / 3 + 1);
-		_offsets = (uint32 *)malloc((end / 6) * 4 + 1);
+		if (file->isOpen() == false) {
+			warning("Can't open voice index file 'voices.idx'");
+		} else {
+			file->seek(0, SEEK_END);
+			int end = file->pos();
+			file->seek(0, SEEK_SET);
+			_filenums = (uint16 *)malloc(end / 3 + 1);
+			_offsets = (uint32 *)malloc((end / 6) * 4 + 1);
 
-		for (int i = 1; i <= end / 6; i++) {
-			_filenums[i] = file->readUint16BE();
-			_offsets[i] = file->readUint32BE();
+			for (int i = 1; i <= end / 6; i++) {
+				_filenums[i] = file->readUint16BE();
+				_offsets[i] = file->readUint32BE();
+			}
+			_voice_file = true;
 		}
 	} else {
 #ifdef USE_MAD
@@ -63,21 +70,24 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 				s = gss->wav_filename;
 				file->open(s, gameDataPath);
 				if (file->isOpen() == false) {
-					warning("Cannot open voice file %s", s);
+					warning("Can't open voice file %s", s);
 				} else	{
+					_voice_file = true;
 					_voice = new WavSound(_mixer, file);
 				}
 			} else if (_game & GAME_TALKIE) {
 				s = gss->voc_filename;
 				file->open(s, gameDataPath);
 				if (file->isOpen() == false) {
-					warning("Cannot open voice file %s", s);
+					warning("Can't open voice file %s", s);
 				} else {
+					_voice_file = true;
 					_voice = new VocSound(_mixer, file);
 				}
 			}
 #ifdef USE_MAD
 		} else {
+			_voice_file = true;
 			_voice = new MP3Sound(_mixer, file);
 		}
 #endif
@@ -90,7 +100,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 				s = gss->voc_effects_filename;
 				file2->open(s, gameDataPath);
 				if (file2->isOpen() == false) {
-					warning("Cannot open effects file %s", s);
+					warning("Can't open effects file %s", s);
 				} else {
 					_effects = new VocSound(_mixer, file2);
 				}
@@ -119,7 +129,7 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath)
 		free(filename2);
 		if (file->isOpen() == false) {
 			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-			warning("readSfxFile: Cannot load sfx file %s", filename);
+			warning("readSfxFile: Can't load sfx file %s", filename);
 			return;
 		}
 	}
@@ -144,7 +154,11 @@ void SimonSound::playVoice(uint sound)
 		sprintf(filename, "voices%d.dat", _filenums[sound]);
 		File *file = new File();
 		file->open(filename, _gameDataPath);
-		_voice = new WavSound(_mixer, file, _offsets);
+		if (file->isOpen() == false) {
+			warning("Can't open voice file %s", filename);
+		} else {
+			_voice = new WavSound(_mixer, file, _offsets);
+		}
 	}
 
 	if (!_voice)
@@ -185,7 +199,7 @@ void SimonSound::playAmbient(uint sound)
 
 bool SimonSound::hasVoice()
 {
-	return _voice != NULL;
+	return _voice_file;
 }
 
 void SimonSound::stopVoice()
@@ -237,7 +251,7 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
 	_file->seek(base, SEEK_SET);
 
 	if (_file->read(_offsets, size) != size)
-		error("Cannot read offsets");
+		error("Can't read offsets");
 
 	for (uint i = 0; i < res; i++) {
 #if defined(SCUMM_BIG_ENDIAN)
@@ -331,7 +345,7 @@ int SimonSound::VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte
 
 	if (_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
 			strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
-		error("playVoc(%d): cannot read voc header", sound);
+		error("playVoc(%d): can't read voc header", sound);
 	}
 
 	_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
@@ -372,7 +386,7 @@ int SimonSound::WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte
 			|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
 			|| READ_LE_UINT16(&wave_hdr.channels) != 1
 			|| READ_LE_UINT16(&wave_hdr.bits_per_sample) != 8) {
-		error("playWav(%d): cannot read RIFF header", sound);
+		error("playWav(%d): can't read RIFF header", sound);
 	}
 
 	_file->seek(FROM_LE_32(wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
@@ -381,7 +395,7 @@ int SimonSound::WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte
 	data[1] = _file->readUint32LE();
 	if (//fread(data, sizeof(data), 1, sound_file) != 1 ||
 			 data[0] != 'atad') {
-		error("playWav(%d): cannot read data header", sound);
+		error("playWav(%d): can't read data header", sound);
 	}
 
 	byte *buffer = (byte *)malloc(data[1]);
