@@ -53,6 +53,7 @@ public:
 	virtual int getRate(void) const { return _rate; };
 private:
 	File	*_sourceFile;
+	uint8	*_sampleBuf;
 	uint32	 _rate;
 	bool	 _isStereo;
 	uint32   _samplesLeft;

@@ -27,6 +27,8 @@
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 
+#define SMP_BUFSIZE 8192
+
 namespace Sword1 {
 
 WaveAudioStream *makeWaveStream(File *source, uint32 size) {
@@ -38,6 +40,7 @@ WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
 	uint8 wavHeader[WAVEHEADERSIZE];
 
 	_sourceFile = source;
+	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 	_sourceFile->incRef();
 	if (_sourceFile->isOpen()) {
 		_sourceFile->read(wavHeader, WAVEHEADERSIZE);
@@ -58,41 +61,32 @@ WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
 }
 
 WaveAudioStream::~WaveAudioStream(void) {
+	free(_sampleBuf);
 	_sourceFile->decRef();
 }
 
 int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = ((int)_samplesLeft < numSamples) ? (int)_samplesLeft : numSamples;
+	int retVal = samples;
 
-#ifdef __PALM_OS__
-	int cnt = samples;
-	int size = (_bitsPerSample == 16 ? samples * 2 : samples);
-	void *sound = malloc(size);
-	
-	_sourceFile->read(sound, size);
-
-	if (_bitsPerSample == 16) {
-		int16 *src = (int16 *)sound;
-		while(cnt--)
-			*buffer++ = (int16)READ_LE_UINT16(src++);
-
-	} else {
-		int8 *src = (int8 *)sound;
-		while(cnt--)
-			*buffer++ = (int16)*src++ << 8;
+	while (samples > 0) {
+		int readBytes = (samples * (_bitsPerSample >> 3) > SMP_BUFSIZE) ? SMP_BUFSIZE : samples * (_bitsPerSample >> 3);
+		_sourceFile->read(_sampleBuf, readBytes);
+		if (_bitsPerSample == 16) {
+			readBytes >>= 1;
+			samples -= readBytes;
+			int16 *src = (int16*)_sampleBuf;
+			while (readBytes--)
+				*buffer++ = (int16)READ_LE_UINT16(src++);
+		} else {
+			samples -= readBytes;
+			int8 *src = (int8*)_sampleBuf;
+			while (readBytes--)
+				*buffer++ = (int16)*src++ << 8;
+		}
 	}
-
-	free(sound);
-#else
-	if (_bitsPerSample == 16)
-		for (int cnt = 0; cnt < samples; cnt++)
-			*buffer++ = (int16)_sourceFile->readUint16LE();
-	else
-		for (int cnt = 0; cnt < samples; cnt++)
-			*buffer++ = (int16)_sourceFile->readByte() << 8;
-#endif
-	_samplesLeft -= samples;
-	return samples;
+	_samplesLeft -= retVal;
+	return retVal;
 }
 
 bool WaveAudioStream::endOfData(void) const {
