@@ -390,7 +390,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
-	_languageStrCount = 0;
 	memset(_transText,0,sizeof(_transText));
 
 	//

@@ -766,6 +766,8 @@ void Scumm::loadLanguageBundle() {
 		_existLanguageFile = false;
 		return;
 	}
+	
+	_existLanguageFile = true;
 
 	size = file.size();
 	_languageBuffer = (char *)calloc(1, size+1);
@@ -775,48 +777,78 @@ void Scumm::loadLanguageBundle() {
 	// Create an index of the language file.
 	// FIXME: Extend this mechanism to also cover The Dig?
 
-	if (_gameId == GID_CMI) {
-		int32 i;
-		char *ptr = _languageBuffer;
+	int32 i;
+	char *ptr = _languageBuffer;
 
-		// Count the number of lines in the language file.
+	// Count the number of lines in the language file.
 
-		_languageStrCount = 0;
+	_languageIndexSize = 0;
 
-		for (;;) {
-			ptr = strpbrk(ptr, "\n\r");
-			if (ptr == NULL)
-				break;
-			while (*ptr == '\n' || *ptr == '\r')
-				ptr++;
-			_languageStrCount++;
-		}
-
-		// Fill the language file index. This is just an array of
-		// tags and offsets. I did consider using a balanced tree
-		// instead, but the extra overhead in the node structure would
-		// easily have doubled the memory consumption of the index.
-
-		_languageIndex = (LangIndexNode *)calloc(_languageStrCount, sizeof(LangIndexNode));
-
-		ptr = _languageBuffer;
-
-		for (i = 0; i < _languageStrCount; i++) {
-			int j;
-
-			// First 8 chars in the line give the string ID / 'tag'
-			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
-				_languageIndex[i].tag[j] = toupper(*ptr);
-			_languageIndex[i].tag[j] = 0;
-
-			// After that follows a single space which we skip
-			assert(isspace(*ptr));
+	for (;;) {
+		ptr = strpbrk(ptr, "\n\r");
+		if (ptr == NULL)
+			break;
+		while (*ptr == '\n' || *ptr == '\r')
 			ptr++;
-			
-			// Then comes the translated string: we record an offset to that.
-			_languageIndex[i].offset = ptr - _languageBuffer;
+		_languageIndexSize++;
+	}
 
-//skip:
+	// Fill the language file index. This is just an array of
+	// tags and offsets. I did consider using a balanced tree
+	// instead, but the extra overhead in the node structure would
+	// easily have doubled the memory consumption of the index.
+
+	_languageIndex = (LangIndexNode *)calloc(_languageIndexSize, sizeof(LangIndexNode));
+
+	ptr = _languageBuffer;
+
+	if (_gameId == GID_DIG) {
+		int lineCount = _languageIndexSize;
+		const char *baseTag = "";
+		byte enc = 0;	// Initially assume the language file is not encoded
+		
+		// We'll determine the real index size as we go.
+		_languageIndexSize = 0;
+		for (i = 0; i < lineCount; i++) {
+			if (*ptr == '!') {
+				// Don't know what a line with '!' means, just ignore it
+			} else if (*ptr == 'e') {
+				// File is encoded!
+				enc = 0x13;
+			} else if (*ptr == '@') {
+				// A new 'base tag'
+				baseTag = ptr + 1;
+			} else if (*ptr == '#') {
+				// Number of subtags following a given basetag. We don't need that
+				// information so we just skip it
+			} else if (isdigit(*ptr)) {
+				int idx = 0;
+				// A number (up to three digits)...
+				while (isdigit(*ptr)) {
+					idx = idx * 10 + (*ptr - '0');
+					ptr++;
+				}
+				
+				// ...followed by a slash...
+				assert(*ptr == '/');
+				ptr++;
+				
+				// ...and then the translated message, possibly encoded
+				_languageIndex[_languageIndexSize].offset = ptr - _languageBuffer;
+				
+				// Decode string if necessary.
+				if (enc) {
+					while (*ptr != '\n' && *ptr != '\r')
+						*ptr++ ^= enc;
+				}
+				
+				// The tag is the basetag, followed by a dot and then the index
+				sprintf(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
+				
+				// That was another index entry
+				_languageIndexSize++;
+			}
+
 			// Skip over newlines (and turn them into null bytes)
 			ptr = strpbrk(ptr, "\n\r");
 			if (ptr == NULL)
@@ -824,137 +856,58 @@ void Scumm::loadLanguageBundle() {
 			while (*ptr == '\n' || *ptr == '\r')
 				*ptr++ = 0;
 		}
-
-		// Conceptually, it may be more elegant to construct the
-		// index so that it is sorted, or otherwise ordered, from the
-		// start. However, this is less error-prone and likely to be
-		// much more optimized than anything I might implement.
-
-		qsort(_languageIndex, _languageStrCount, sizeof(LangIndexNode), indexCompare);
-	}
+	} else {
+		for (i = 0; i < _languageIndexSize; i++) {
+			// First 8 chars in the line give the string ID / 'tag'
+			for (int j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
+				_languageIndex[i].tag[j] = toupper(*ptr);
+			_languageIndex[i].tag[j] = 0;
 	
-	_existLanguageFile = true;
+			// After that follows a single space which we skip
+			assert(isspace(*ptr));
+			ptr++;
+			
+			// Then comes the translated string: we record an offset to that.
+			_languageIndex[i].offset = ptr - _languageBuffer;
+	
+			// Skip over newlines (and turn them into null bytes)
+			ptr = strpbrk(ptr, "\n\r");
+			if (ptr == NULL)
+				break;
+			while (*ptr == '\n' || *ptr == '\r')
+				*ptr++ = 0;
+		}
+	}
+
+	// Sort the index nodes. We'll later use bsearch on it, which is just as efficient
+	// as using a binary tree, speed wise.
+	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 }
 
 void Scumm::translateText(const byte *text, byte *trans_buff) {
 	int l;
 	
 	if ((text[0] == '/') && _existLanguageFile) {
-		if (_gameId == GID_CMI) {
-			LangIndexNode target;
-			LangIndexNode *found = NULL;
-	
-			// copy name from text /..../
-			for (l = 0; (l < 8) && (text[l + 1] != '/'); l++)
-				target.tag[l] = toupper(text[l + 1]);
-			target.tag[l] = 0;
-	
-			// HACK: These are used for the object line when
-			// using one object on another. I don't know if the
-			// text in the language file is a placeholder or if
-			// we're supposed to use it, but at least in the
-			// English version things will work so much better if
-			// we can't find translations for these.
-	
-			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
-				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(LangIndexNode), indexCompare);
-			if (found != NULL) {
-				strcpy((char *)trans_buff, _languageBuffer + found->offset);
-				return;
-			}
-		} else if (_gameId == GID_DIG) {
-			// FIXME: This code really could stand a rewrite
-			// It's rather inefficient and if a string isn't found it'll read past the
-			// end of the _languageBuffer.
-			char name[12+1], tmp[500], tmp2[20], num_s[20], number[4], enc;
-			int32 num, j, k, r, pos = 0;
-			char *buf = _languageBuffer;
-	
-			// copy name from text /..../
-			for (l = 0; (l < 12) && (text[l + 1] != '.'); l++) {
-				name[l] = text[l + 1];
-			}
-			name[l] = 0;
-			l++;
-			// get number from text /..../
-			number[0] = text[l + 1];
-			number[1] = text[l + 2];
-			number[2] = text[l + 3];
-			number[3] = 0;
-			num = atol(number);
-			sprintf(num_s, "%d", num);
-	
-			// determine is file encoded
-			if (buf[0] == 'e') {
-				enc = 0x13;
-				pos += 3;
-			} else if (buf[3] == 'e') {
-				enc = 0x13;
-				pos += 6;
-			} else {
-				enc = 0;
-			}
-	
-			// skip translation if flag 'h' exist
-			if (buf[pos] == 'h') {
-				pos += 3;
-				byte *pointer = (byte *)strchr((const char *)text + 1, '/');
-				if (pointer != NULL)
-					memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
-				else
-					trans_buff[0] = '\0';
-				return;
-			}
-	
-			for(;;) {
-				// search char @
-				if (buf[pos++] == '@') {
-					// copy name after @ to endline
-					l = 0;
-					do {
-						tmp[l++] = buf[pos++];
-					} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 19));
-					tmp[l] = 0;
-					pos += 2;
-					// compare 'name' with above name
-					if (strcmp(tmp, name) == 0) {
-						// get number lines of 'name' after '#'
-						l = 0;
-						if (buf[pos++] == '#') {
-							do {
-								tmp[l++] = buf[pos++];
-							} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a) && (l < 19));
-							tmp[l] = 0;
-							pos += 2;
-							l = atol(tmp);
-							// get number of line
-							for(r = 0; r < l; r++) {
-								j = 0;
-								do {
-									tmp2[j++] = buf[pos++];
-								} while(buf[pos] != '/');
-								tmp2[j] = 0;
-								// compare if is right line
-								if (strcmp(tmp2, num_s) == 0) {
-									k = 0;
-									pos++;
-									// copy translated text to tran_buffer
-									do {
-										trans_buff[k++] = (buf[pos++]) ^ enc;
-									} while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
-									trans_buff[k] = 0;
-									return;
-								}
-								// goto next line
-								do { 
-									pos++;
-								}	while((buf[pos] != 0x0d) && (buf[pos + 1] != 0x0a));
-								pos += 2;
-							}
-						}
-					}
-				}
-			}
+		LangIndexNode target;
+		LangIndexNode *found = NULL;
+
+		// copy name from text /..../
+		for (l = 0; (l < 12) && (text[l + 1] != '/'); l++)
+			target.tag[l] = toupper(text[l + 1]);
+		target.tag[l] = 0;
+
+		// HACK: These are used for the object line when
+		// using one object on another. I don't know if the
+		// text in the language file is a placeholder or if
+		// we're supposed to use it, but at least in the
+		// English version things will work so much better if
+		// we can't find translations for these.
+
+		if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
+			found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
+		if (found != NULL) {
+			strcpy((char *)trans_buff, _languageBuffer + found->offset);
+			return;
 		}
 	}
 	

@@ -255,7 +255,7 @@ enum MouseButtonStatus {
 };
 
 struct LangIndexNode {
-	char tag[9];
+	char tag[12+1];
 	int32 offset;
 };
 
@@ -1065,7 +1065,7 @@ protected:
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
-	int _languageStrCount;
+	int _languageIndexSize;
 	byte _transText[500];
 
 	void loadLanguageBundle();
