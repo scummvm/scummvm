@@ -952,15 +952,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-//if (numstrip > 5) return;
-//if (width != 320 || height != 128) return;
-//if (width != 40 || height != 48) return;
-//if (height == 128) return;
-
-
-//printf("x %d, y %d, width %d, height %d, stripnr %d, numstrip %d, vs->alloctwobuffers %d\n",
-//		x, y, width, height, stripnr, numstrip, vs->alloctwobuffers);
-
 		const int left = stripnr << 3;
 		const int right = left + numstrip << 3;
 		byte *dst = bgbak_ptr;
@@ -1007,7 +998,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 			}
 		}
 
-/*
 		// Draw mask (zplane) data
 		// TODO - this code is right now completely bogus, will implement it correctly later
 		theY = 0;
@@ -1025,12 +1015,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					}
 					theY++;
 					if (theY >= height) {
-						theX++;
-						if (theX >= (width >> 3))
-							goto finish_v2;
+						if (left <= theX && theX < right) {
+							_mask_ptr -= _numStrips * height;
+							_mask_ptr++;
+						}
 						theY = 0;
-						if (left <= theX && theX < right)
-							_mask_ptr -= _numStrips * height - 1;
+						theX += 8;
+						if (theX >= width)
+							goto finish_v2;
 					}
 				} while (--run);
 			} else {
@@ -1043,19 +1035,20 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					}
 					theY++;
 					if (theY >= height) {
-						theX++;
+						if (left <= theX && theX < right) {
+							_mask_ptr -= _numStrips * height;
+							_mask_ptr++;
+						}
+						theY = 0;
+						theX += 8;
 						if (theX >= width)
 							goto finish_v2;
-						theY = 0;
-						if (left <= theX && theX < right)
-							_mask_ptr -= _numStrips * height - 1;
 					}
 				} while (--run);
 			}
 		}
 
 finish_v2:
-*/
 		// Update tdirty / bdirty
 		while (numstrip--) {
 			if (sx < 0)
