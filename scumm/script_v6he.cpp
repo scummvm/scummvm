@@ -889,6 +889,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		break;
 	case 3:
 	case 4:
+	case 5:
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
 	default:
