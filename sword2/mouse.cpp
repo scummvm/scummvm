@@ -1321,10 +1321,10 @@ int32 FN_init_floor_mouse(int32 *params)	// James29nov96
 
 	ob_mouse->x1		= 0;
 	ob_mouse->y1		= 0;
-	ob_mouse->x2		= this_screen.screen_wide-1;
-	ob_mouse->y2		= this_screen.screen_deep-1;
-	ob_mouse->priority	= 9;				// floor is always lowest priority
-	ob_mouse->pointer	= NORMAL_MOUSE_ID;	// normal pointer
+	ob_mouse->x2		= TO_LE_32(this_screen.screen_wide-1);
+	ob_mouse->y2		= TO_LE_32(this_screen.screen_deep-1);
+	ob_mouse->priority	= TO_LE_32(9);				// floor is always lowest priority
+	ob_mouse->pointer	= TO_LE_32(NORMAL_MOUSE_ID);	// normal pointer
 
 
 	return(IR_CONT);	//	continue script
@@ -1342,12 +1342,12 @@ int32 FN_set_scroll_left_mouse(int32 *params)	// James13feb97
 
 	ob_mouse->x1		= 0;
 	ob_mouse->y1		= 0;
-	ob_mouse->x2		= this_screen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2		= this_screen.screen_deep-1;
+	ob_mouse->x2		= TO_LE_32(this_screen.scroll_offset_x + SCROLL_MOUSE_WIDTH);
+	ob_mouse->y2		= TO_LE_32(this_screen.screen_deep-1);
 	ob_mouse->priority	= 0;	// highest priority
 
 	if (this_screen.scroll_offset_x > 0)	// if not fully scrolled to the left
-		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
+		ob_mouse->pointer = TO_LE_32(SCROLL_LEFT_MOUSE_ID);
 	else
 		ob_mouse->pointer = 0;	// so the mouse area doesn't get registered
 
@@ -1362,14 +1362,14 @@ int32 FN_set_scroll_right_mouse(int32 *params)	// James13feb97
  	Object_mouse	*ob_mouse = (Object_mouse *) params[0];
 
 
-	ob_mouse->x1		= this_screen.scroll_offset_x + screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1		= TO_LE_32(this_screen.scroll_offset_x + screenWide - SCROLL_MOUSE_WIDTH);
 	ob_mouse->y1		= 0;
-	ob_mouse->x2		= this_screen.screen_wide-1;
-	ob_mouse->y2		= this_screen.screen_deep-1;
+	ob_mouse->x2		= TO_LE_32(this_screen.screen_wide-1);
+	ob_mouse->y2		= TO_LE_32(this_screen.screen_deep-1);
 	ob_mouse->priority	= 0;	// highest priority
 
 	if (this_screen.scroll_offset_x < this_screen.max_scroll_offset_x)	// if not fully scrolled to the right
-		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
+		ob_mouse->pointer = TO_LE_32(SCROLL_RIGHT_MOUSE_ID);
 	else
 		ob_mouse->pointer = 0;	// so the mouse area doesn't get registered
 
