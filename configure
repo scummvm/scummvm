@@ -316,8 +316,13 @@ int main(int argc, char **argv)
 {
 	int i;
 	unsigned char buf[20];
-	for (i = 0; i < 16; i++)
-		*(int *)(&buf[i]) = 0;
+	for (i = 0; i < 20; i++)
+		buf[i] = 0xE7;
+	for (i = 0; i < 16; i++) {
+		if (*(int *)(&buf[i]) != 0xE7E7E7E7)
+			return 1;
+		*(int *)(&buf[i]) = 0xE7E7E7E7;
+	}
 	return 0;
 }
 EOF
