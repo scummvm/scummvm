@@ -532,6 +532,9 @@ Costume::Costume(const char *filename, const char *data, int len) :
     chores_[which].load(this, ts);
   }
 
+  for (int i=0; i < MAX_TALK_CHORES; i++)
+    talkChores_[i] = -1;
+
 delete[] tags;
 }
 
@@ -716,10 +719,29 @@ int Costume::isChoring(bool excludeLooping) {
   return -1;
 }
 
+void Costume::playTalkChores() {
+ for (int i=0; i<MAX_TALK_CHORES; i++) {
+  if (talkChores_[i] > -1) {
+   printf("Running talk chore %d (%d)!\n", i, talkChores_[i], chores_[talkChores_[i]].name_);
+   chores_[talkChores_[i]].playLooping(); }
+   printf("Woo\n");
+  }
+}
+
+void Costume::stopTalkChores() {
+ for (int i=0; i<MAX_TALK_CHORES; i++) {
+  if ((talkChores_[i] > -1) && (chores_[i].playing_)) {
+   printf("Stopping talk chore %d!\n", i);
+   chores_[talkChores_[i]-1].stop();
+  }
+ }
+}
+
 void Costume::setTalkChore(int index, int chore) {
  if (index > MAX_TALK_CHORES)
   return;
 
+ printf("Setting chore %d(+1) to %d - %s\n", index, chore, chores_[chore].name_);
  talkChores_[index-1] = chore;
 }
 
@@ -736,3 +758,4 @@ void Costume::update() {
     if (components_[i] != NULL)
       components_[i]->update();
 }
+

@@ -70,12 +70,19 @@ void Actor::sayLine(const char *msg) {
   talkSound_ = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
   if (talkSound_ != NULL)
     Mixer::instance()->playVoice(talkSound_);
+
+  if (!costumeStack_.empty()) {
+    printf("Requesting talk chore\n");
+    costumeStack_.back()->playTalkChores();
+  }
 }
 
 bool Actor::talking() {
   if (talkSound_ == NULL)
     return false;
   if (talkSound_->done()) {
+    if (!costumeStack_.empty())
+      costumeStack_.back()->stopTalkChores();
     talkSound_ = NULL;
     return false;
   }
