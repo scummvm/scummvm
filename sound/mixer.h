@@ -109,7 +109,7 @@ public:
 	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
 
 	/** Append to an existing stream. */
-	void appendStream(int index, void * sound, uint32 size);
+	void appendStream(int index, void *sound, uint32 size);
 
 	/** Mark a stream as finished - it will play all its remaining data, then stop. */
 	void endStream(int index);
