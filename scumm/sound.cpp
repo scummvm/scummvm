@@ -461,7 +461,7 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle) {
 	int num = 0, i;
-	int size;
+	int size = 0;
 	byte *sound;
 	int id = -1;
 
@@ -502,79 +502,78 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			return;
 		}
 
-		startSfxSound(_sfxFile, 0, handle);
-		return;
-	}
+	} else {
 
-	if (_sfxFile->isOpen() == false) {
-		warning("startTalkSound: SFX file is not open");
-		return;
-	}
-
-	// FIXME hack until more is known
-	// the size of the data after the sample isn't known
-	// 64 is just a guess
-	if (_scumm->_features & GF_HUMONGOUS) {
-		// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
-		_sfxFile->seek(offset + 48, SEEK_SET);
-		sound = (byte *)malloc(b - 64);
-		_sfxFile->read(sound, b - 64);
-		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return;
-	}
-
-	// Some games frequently assume that starting one sound effect will
-	// automatically stop any other that may be playing at that time. So
-	// that is what we do here, but we make an exception for speech.
-	//
-	// Do any other games than these need this hack?
-	//
-	// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
-	// from being interrupted.
-
-	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
-		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
-		id = 777777;
-		_scumm->_mixer->stopID(id);
-	}
-
-	if (b > 8) {
-		num = (b - 8) >> 1;
-	}
-
-	if (offset_table != NULL) {
-		MP3OffsetTable *result = NULL, key;
-
-		key.org_offset = offset;
-		result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
-												sizeof(MP3OffsetTable), compareMP3OffsetTable);
-
-		if (result == NULL) {
-			warning("startTalkSound: did not find sound at offset %d !", offset);
+		if (!_sfxFile->isOpen()) {
+			warning("startTalkSound: SFX file is not open");
 			return;
 		}
-		if (2 * num != result->num_tags) {
-			warning("startTalkSound: number of tags do not match (%d - %d) !", b,
-							result->num_tags);
-			num = result->num_tags;
+	
+		// FIXME hack until more is known
+		// the size of the data after the sample isn't known
+		// 64 is just a guess
+		if (_scumm->_features & GF_HUMONGOUS) {
+			// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
+			_sfxFile->seek(offset + 48, SEEK_SET);
+			sound = (byte *)malloc(b - 64);
+			_sfxFile->read(sound, b - 64);
+			_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			return;
 		}
-		offset = result->new_offset;
-		size = result->compressed_size;
-	} else {
-		offset += 8;
-		size = -1;
+	
+		// Some games frequently assume that starting one sound effect will
+		// automatically stop any other that may be playing at that time. So
+		// that is what we do here, but we make an exception for speech.
+		//
+		// Do any other games than these need this hack?
+		//
+		// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
+		// from being interrupted.
+	
+		if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
+			|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
+			id = 777777;
+			_scumm->_mixer->stopID(id);
+		}
+	
+		if (b > 8) {
+			num = (b - 8) >> 1;
+		}
+	
+		if (offset_table != NULL) {
+			MP3OffsetTable *result = NULL, key;
+	
+			key.org_offset = offset;
+			result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
+													sizeof(MP3OffsetTable), compareMP3OffsetTable);
+	
+			if (result == NULL) {
+				warning("startTalkSound: did not find sound at offset %d !", offset);
+				return;
+			}
+			if (2 * num != result->num_tags) {
+				warning("startTalkSound: number of tags do not match (%d - %d) !", b,
+								result->num_tags);
+				num = result->num_tags;
+			}
+			offset = result->new_offset;
+			size = result->compressed_size;
+		} else {
+			offset += 8;
+			size = -1;
+		}
+	
+		_sfxFile->seek(offset, SEEK_SET);
+	
+		assert(num+1 < (int)ARRAYSIZE(_mouthSyncTimes));
+		for (i = 0; i < num; i++)
+			_mouthSyncTimes[i] = _sfxFile->readUint16BE();
+	
+		_mouthSyncTimes[i] = 0xFFFF;
+		_sfxMode |= mode;
+		_curSoundPos = 0;
+		_mouthSyncMode = true;
 	}
-
-	_sfxFile->seek(offset, SEEK_SET);
-
-	assert(num+1 < (int)ARRAYSIZE(_mouthSyncTimes));
-	for (i = 0; i < num; i++)
-		_mouthSyncTimes[i] = _sfxFile->readUint16BE();
-
-	_mouthSyncTimes[i] = 0xFFFF;
-	_sfxMode |= mode;
-	_curSoundPos = 0;
-	_mouthSyncMode = true;
 
 	startSfxSound(_sfxFile, size, handle, id);
 }
