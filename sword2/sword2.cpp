@@ -109,8 +109,11 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialization failed");
 
-	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
-	_mixer->setMusicVolume(kDefaultMusicVolume * kDefaultMasterVolume / 255);
+	// We have our own volume settings panel, so don't let ScummVM's mixer
+	// soften the sound in any way.
+
+	_mixer->setVolume(256);
+	_mixer->setMusicVolume(256);
 
 	g_sound = _sound = new Sword2Sound(_mixer);
 	
