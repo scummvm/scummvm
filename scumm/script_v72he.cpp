@@ -1826,19 +1826,14 @@ void ScummEngine_v72he::o72_drawWizImage() {
 }
 
 void ScummEngine_v72he::o72_unknownCF() {
-	//ArrayHeader *ah;
 	byte string[255];
 
 	copyScriptString(string);
-	int len = resStrLen(string) + 1;
-
 	writeVar(0, 0);
-	//ah = defineArray(0, kStringArray, 0, 0, 0, len);
-	defineArray(0, kStringArray, 0, 0, 0, len);
+	defineArray(0, kStringArray, 0, 0, 0, 0);
 	writeArray(0, 0, 0, 0);
-	//memcpy(ah->data, string, len);
-
 	push(readVar(0));
+	debug(1,"o72_unknownCF: String %s", string);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {

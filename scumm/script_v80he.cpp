@@ -302,7 +302,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_drawWizImage),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownCF),
 		/* D0 */
 		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),

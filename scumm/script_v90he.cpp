@@ -302,7 +302,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_pickOneOfDefault),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_drawWizImage),
-		OPCODE(o90_unknownCF),
+		OPCODE(o72_unknownCF),
 		/* D0 */
 		OPCODE(o6_getDateTime),
 		OPCODE(o6_stopTalking),
@@ -1185,16 +1185,6 @@ void ScummEngine_v90he::o90_unknownA5() {
 void ScummEngine_v90he::o90_getActorAnimProgress() {
 	Actor *a = derefActor(pop(), "o90_getActorAnimProgress");
 	push(a->getAnimProgress());
-}
-
-void ScummEngine_v90he::o90_unknownCF() {
-	byte name[255];
-
-	copyScriptString(name);
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, 0);
-	writeArray(0, 0, 0, 0);
-	push(readVar(0));
 }
 
 } // End of namespace Scumm
