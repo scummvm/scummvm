@@ -26,7 +26,7 @@ void TabDeleteTabs(TabType *tabP) {
 	delete tabP;
 }
 
-Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID, TabProc *preInit) {
+Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID, TabProc *drawFunc) {
 	FormType *srcP;
 	UInt16 cnt;
 	void *objP, **dstP;
@@ -38,10 +38,6 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	dstP = (void **)frmP;
 	srcP = FrmInitForm(rscID);
 
-	if (preInit) {
-		preInit(srcP);
-	}
-
 	objNum = FrmGetNumberOfObjects(srcP);
 
 	// save tab data
@@ -52,6 +48,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	tabP->tabs[tabP->count].srcP	= srcP;
 	tabP->tabs[tabP->count].first	= FrmGetObjectId(srcP, 0);
 	tabP->tabs[tabP->count].last	= FrmGetObjectId(srcP, objNum - 1);
+	tabP->tabs[tabP->count].drawFunc= drawFunc;
 	tabP->count++;
 	tabP->active = tabP->count;
 
@@ -169,6 +166,8 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 	WinSetForeColor(UIColorGetTableEntryIndex(UIFormFill));
 	WinDrawLine(1, 14, 154,14);
 	WinDrawLine(1, 15, 154,15);
+	RctSetRectangle(&r, 1, 30, 154, 100);
+	WinDrawRectangle(&r, 0);
 	WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
 	WinDrawLine(1, 28, 154,28);
 
@@ -199,6 +198,9 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 	}
 
 	// show objects
+	if (dataP->drawFunc)
+		(dataP->drawFunc)();
+
 	for (cnt = dataP->first; cnt <= dataP->last; cnt++) {
 		if ((idx = FrmGetObjectIndex(frmP, cnt)) != frmInvalidObjectId)
 			FrmShowObject(frmP, idx);
