@@ -45,7 +45,7 @@ public:
 //	void drawString(const char *string, int32 x, int32 y, byte color, int32 mode);
 	int32 getCharWidth(byte c);
 	int32 getCharHeight(byte c);
-	int32 getStringWidth(byte *string);
+	int32 getStringWidth(const byte *string);
 };
 
 

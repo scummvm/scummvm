@@ -68,9 +68,9 @@ void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 }
 
 bool NutRenderer::loadFont(const char *filename, const char *dir) {
-	debug(2,  "NutRenderer::loadFont() called");
+	debug(8, "NutRenderer::loadFont() called");
 	if (_loaded == true) {
-		debug(2, "NutRenderer::loadFont() Font already loaded, ok, loading...");
+		debug(8, "NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
 	
 	File file;
@@ -82,7 +82,7 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 
 	uint32 tag = file.readUint32BE();
 	if (tag != 'ANIM') {
-		debug(2, "NutRenderer::loadFont() there is no ANIM chunk in font header");
+		debug(8, "NutRenderer::loadFont() there is no ANIM chunk in font header");
 		return false;
 	}
 
@@ -97,7 +97,7 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	file.close();
 
 	if (READ_BE_UINT32(_dataSrc) != 'AHDR') {
-		debug(2, "NutRenderer::loadFont() there is no AHDR chunk in font header");
+		debug(8, "NutRenderer::loadFont() there is no AHDR chunk in font header");
 		free(_dataSrc);
 		_dataSrc = NULL;
 		return false;
@@ -113,11 +113,11 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 				_offsets[l] = offset + 8;
 				offset += READ_BE_UINT32(_dataSrc + offset + 4) + 8;
 			} else {
-				debug(2, "NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, dir, l, offset);
+				debug(8, "NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, dir, l, offset);
 				break;
 			}
 		} else {
-			debug(2, "NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, dir, l, offset);
+			debug(8, "NutRenderer::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, dir, l, offset);
 			break;
 		}
 	}
@@ -127,9 +127,9 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 }
 
 int32 NutRenderer::getCharWidth(byte c) {
-	debug(2,  "NutRenderer::getCharWidth() called");
+	debug(8, "NutRenderer::getCharWidth() called");
 	if (_loaded == false) {
-		debug(2, "NutRenderer::getCharWidth() Font is not loaded");
+		debug(8, "NutRenderer::getCharWidth() Font is not loaded");
 		return 0;
 	}
 
@@ -137,36 +137,34 @@ int32 NutRenderer::getCharWidth(byte c) {
 }
 
 int32 NutRenderer::getCharHeight(byte c) {
-	debug(2,  "NutRenderer::getCharHeight() called");
+	debug(8, "NutRenderer::getCharHeight() called");
 	if (_loaded == false) {
-		debug(2, "NutRenderer::getCharHeight() Font is not loaded");
+		debug(8, "NutRenderer::getCharHeight() Font is not loaded");
 		return 0;
 	}
 
 	return READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
 }
 
-int32 NutRenderer::getStringWidth(byte *string) {
-	debug(2,  "NutRenderer::getStringWidth() called");
+int32 NutRenderer::getStringWidth(const byte *string) {
+	debug(8, "NutRenderer::getStringWidth() called");
 	if (_loaded == false) {
-		debug(2, "NutRenderer::getStringWidth() Font is not loaded");
+		debug(8, "NutRenderer::getStringWidth() Font is not loaded");
 		return 0;
 	}
-	int32 length = 0;
-	int32 l = 0;
+	int32 width = 0;
 	
-	do {
-		length += getCharWidth(string[l]);
-		l++;
-	} while (string[l] != 0);
+	while (*string) {
+		width += getCharWidth(*string++);
+	}
 
-	return length;
+	return width;
 }
 
 void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
-	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
+	debug(8, "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
 	if (_loaded == false) {
-		debug(2, "NutRenderer::drawChar() Font is not loaded");
+		debug(8, "NutRenderer::drawChar() Font is not loaded");
 		return;
 	}
 
