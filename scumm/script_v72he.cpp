@@ -2095,8 +2095,8 @@ void ScummEngine_v72he::o72_deleteFile() {
 void ScummEngine_v72he::o72_getPixel() {
 	byte area;
 
-	int x = pop();
 	int y = pop();
+	int x = pop();
 	byte subOp = fetchScriptByte();
 
 	VirtScreen *vs = findVirtScreen(y);
