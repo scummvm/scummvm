@@ -53,7 +53,7 @@ static const char USAGE_STRING[] =
 	"Options:\n"
 	"\t-p<path>       - Look for game in <path>\n"
 	"\t-x[<num>]      - Load this savegame (default: 0 - autosave)\n"
-	"\t-f             - Fullscreen mode\n"
+	"\t-f             - Full-screen mode (-F forces window mode.)\n"
 	"\t-g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
 	"\t                 supereagle,advmame2x, advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>       - Set music engine (see README for details)\n"
@@ -86,6 +86,7 @@ static const char USAGE_STRING[] =
 	"\n"
 	"\t--multi-midi   - Enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - True Roland MT-32 (disable GM emulation)\n"
+	"\t--fullscreen   - Full-screen mode (same as -f)\n"
 	"\t--aspect-ratio - Enable aspect ratio correction\n"
 #ifndef DISABLE_SCUMM
 	"\t--demo-mode    - Start demo mode of Maniac Mansion (Classic version)\n"
