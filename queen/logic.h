@@ -29,7 +29,13 @@ class QueenLogic {
 public:
 	QueenLogic(QueenResource *resource);
 	~QueenLogic();
+
 	uint16 currentRoom();
+	void currentRoom(uint16 room);
+  
+	int16* objectData(int index);
+	uint16 roomData(int room);
+	uint16 objMax(int room);
 
 protected:
 	uint8 *_jas;
@@ -50,7 +56,7 @@ protected:
 	uint16 (*_objectBox)[4];
 	uint16 (*_itemData)[5];
 	uint16 (*_graphicData)[5];
-	uint16 (*_objectData)[8];
+	int16 (*_objectData)[8];
 	uint16 (*_actorData)[12];
 	
 	uint16 (*_area)[11][8];

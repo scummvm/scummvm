@@ -49,7 +49,7 @@ void QueenLogic::initialise() {
 	
 
 	//Object data
-	_objectData = new uint16[_numObjects + 1][8];
+	_objectData = new int16[_numObjects + 1][8];
 		
 	//clear first object
 	for (uint16 j = 0; j < 8; j++)
@@ -57,7 +57,7 @@ void QueenLogic::initialise() {
 	
 	for (i = 1; i < (_numObjects + 1); i++)
 		for (uint16 j = 0; j < 8; j++) {
-			_objectData[i][j] = READ_BE_UINT16(ptr);
+			_objectData[i][j] = (int16)READ_BE_UINT16(ptr);
 			ptr += 2;
 		}
 	
@@ -137,5 +137,21 @@ void QueenLogic::initialise() {
 
 uint16 QueenLogic::currentRoom() {
 	return _currentRoom;
+}
+
+void QueenLogic::currentRoom(uint16 room) {
+  _currentRoom = room;
+}
+
+int16* QueenLogic::objectData(int index) {
+  return _objectData[index];
+}
+
+uint16 QueenLogic::roomData(int room) {
+  return _roomData[room];
+}
+
+uint16 QueenLogic::objMax(int room) {
+  return _objMax[room];
 }
 
