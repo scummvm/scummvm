@@ -63,7 +63,7 @@ struct SimonGameSettings {
 
 static const SimonGameSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "GAMEBASE"},
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "DATA"},
 	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GAME_SIMON1DOS, "GAMEPC"},
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
