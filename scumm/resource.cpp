@@ -112,12 +112,19 @@ void ScummEngine::openRoom(int room) {
 			}
 		} else {
 			sprintf(buf, "%.2d.lfl", room);
+			// Maniac Mansion demo has .man instead of .lfl
+			if (_gameId == GID_MANIAC)
+				sprintf(buf2, "%.2d.man", room);
 			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
 		result = openResourceFile(buf, encByte);
-		if ((result == false) && (buf2[0]))
+		if ((result == false) && (buf2[0])) {
 			result = openResourceFile(buf2, encByte);
+			// We have .man files so set demo mode
+			if (_gameId == GID_MANIAC)
+				_demoMode = true;
+		}
 			
 		if (result) {
 			if (room == 0)
