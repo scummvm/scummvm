@@ -960,12 +960,12 @@ protected:
 	void clampCameraPos(Common::Point *pt);
 	void actorFollowCamera(int act);
 
-	const byte *getPalettePtr(int palindex);
+	const byte *getPalettePtr(int palindex, int room);
 	void setupAmigaPalette();
 	void setupEGAPalette();
 	void setupV1ManiacPalette();
 	void setupV1ZakPalette();
-	void setPalette(int pal);
+	void setPalette(int pal, int room);
 	void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);

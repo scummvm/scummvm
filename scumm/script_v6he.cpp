@@ -535,7 +535,7 @@ void ScummEngine_v60he::o60_roomOps() {
 
 	case 213:		// SO_ROOM_NEW_PALETTE
 		a = pop();
-		setPalette(a);
+		setPalette(a, _roomResource);
 		break;
 	case 220:
 		a = pop();
@@ -558,7 +558,7 @@ void ScummEngine_v60he::o60_roomOps() {
 	case 236:		// HE 7.2
 		b = pop();
 		a = pop();
-		warning("o60_roomOps: case %d (%d, %d)", op, b, a);
+		setPalette(a, b);
 		break;
 	default:
 		error("o60_roomOps: default case %d", op);

@@ -823,6 +823,7 @@ protected:
 	};
 
 	int _heObject, _heObjectNum;
+	int _hePaletteNum;
 
 	struct WizParameters {
 		byte filename[260];

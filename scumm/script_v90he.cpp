@@ -1238,16 +1238,23 @@ void ScummEngine_v90he::o90_getPaletteData() {
 }
 
 void ScummEngine_v90he::o90_paletteOps() {
-	int subOp = fetchScriptByte();
+	int idx, state;
+
+	byte subOp = fetchScriptByte();
 	subOp -= 57;
 
 	switch (subOp) {
 	case 0:
-		pop();
+		_hePaletteNum = pop();
 		break;
 	case 6:
-		pop();
-		pop();
+		{
+		state = pop();
+		idx = pop();
+		const uint8 *dataPtr = getResourceAddress(rtImage, idx);
+		const uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+		assert(pal);
+		}
 		break;
 	case 9:
 		pop();
@@ -1274,11 +1281,12 @@ void ScummEngine_v90he::o90_paletteOps() {
 	case 160:
 		break;
 	case 198:
+		_hePaletteNum = 0;
 		break;
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1,"o90_paletteOps stub (%d)", subOp);
+	debug(0,"o90_paletteOps stub (%d)", subOp);
 }
 
 

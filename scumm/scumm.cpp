@@ -2343,7 +2343,7 @@ void ScummEngine::initRoomSubBlocks() {
 	}
 
 	if (_PALS_offs || _CLUT_offs)
-		setPalette(0);
+		setPalette(0, _roomResource);
 
 	initBGBuffers(_roomHeight);
 }

@@ -867,7 +867,7 @@ void ScummEngine_v8::o8_roomOps() {
 		break;
 	case 0x5C:		// SO_ROOM_NEW_PALETTE New palette
 		a = pop();
-		setPalette(a);
+		setPalette(a, _roomResource);
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
 		_saveTemporaryState = true;

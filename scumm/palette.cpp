@@ -356,7 +356,7 @@ void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) 
 	const byte *new_pal;
 	int i;
 
-	new_pal = getPalettePtr(resID);
+	new_pal = getPalettePtr(resID, _roomResource);
 
 	new_pal += start*3;
 
@@ -447,7 +447,7 @@ static inline uint colorWeight(int red, int green, int blue) {
 
 
 void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
-	const byte *basepal = getPalettePtr(_curPalIndex);
+	const byte *basepal = getPalettePtr(_curPalIndex, _roomResource);
 	const byte *compareptr;
 	const byte *pal = basepal + start * 3;
 	byte *table = _shadowPalette + start;
@@ -533,7 +533,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr;
 		int color, idx, j;
 
-		palptr = getPalettePtr(_curPalIndex);
+		palptr = getPalettePtr(_curPalIndex, _roomResource);
 		for (j = startColor; j <= endColor; j++) {
 			idx = (_heversion == 70) ? _HEV7ActorPalette[j] : j;
 			cptr = palptr + idx * 3;
@@ -591,7 +591,7 @@ void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, 
 		byte *cur;
 		int j;
 
-		cptr = getPalettePtr(_curPalIndex) + startColor * 3;
+		cptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
 		cur = _currentPalette + startColor * 3;
 
 		for (j = startColor; j <= endColor; j++) {
@@ -757,11 +757,11 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	setDirtyColors(idx, idx);
 }
 
-void ScummEngine::setPalette(int palindex) {
+void ScummEngine::setPalette(int palindex, int room) {
 	const byte *pals;
 
 	_curPalIndex = palindex;
-	pals = getPalettePtr(_curPalIndex);
+	pals = getPalettePtr(_curPalIndex, room);
 	setPaletteFromPtr(pals);
 }
 
@@ -784,10 +784,10 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
-const byte *ScummEngine::getPalettePtr(int palindex) {
+const byte *ScummEngine::getPalettePtr(int palindex, int room) {
 	const byte *cptr;
 
-	cptr = getResourceAddress(rtRoom, _roomResource);
+	cptr = getResourceAddress(rtRoom, room);
 	assert(cptr);
 	if (_CLUT_offs) {
 		cptr += _CLUT_offs;
