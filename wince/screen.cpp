@@ -65,8 +65,12 @@ extern UBYTE item_monkeyLandscape[];
 extern UBYTE item_monkeyLandscape_colors[];
 extern UBYTE item_monkeyPortrait[];
 extern UBYTE item_monkeyPortrait_colors[];
+extern UBYTE item_loading[];
+extern UBYTE item_loading_colors[];
+
 
 extern bool sound_activated;
+extern bool hide_toolbar;
 bool toolbar_drawn;
 bool draw_keyboard;
 
@@ -125,6 +129,7 @@ static tBlt_part   pBlt_part   = NULL;
 
 static int _geometry_w;
 static int _geometry_h;  
+static int _saved_geometry_h;
 
 HWND hWndMain;
 
@@ -176,6 +181,7 @@ void SetScreenGeometry(int w, int h) {
 
 	_geometry_w = w;
 	_geometry_h = h;
+	_saved_geometry_h = h;
 	RestoreScreenGeometry();
 }
 
@@ -185,10 +191,12 @@ void LimitScreenGeometry() {
 		geom[0].lineLimit = _geometry_w*200;
 		geom[1].lineLimit = _geometry_w*200;
 		geom[1].lineLimit = _geometry_w*200;
+		_geometry_h = 200;
 	}
 }
 
 void RestoreScreenGeometry() {
+	_geometry_h = _saved_geometry_h;
 	geom[0].lineLimit = _geometry_w * _geometry_h;
 	geom[1].lineLimit = _geometry_w * _geometry_h;
 	geom[2].lineLimit = _geometry_w * _geometry_h;
@@ -506,6 +514,7 @@ void drawSoundItem(int x, int y) {
 
 void drawWait() {
 	pBlt_part(item_toolbar, 0, 0, 320, 40, item_toolbar_colors);
+	pBlt_part(item_loading, 28, 10, 100, 25, item_loading_colors);
 }
 
 void drawAllToolbar() {
@@ -598,7 +607,7 @@ void Blt(UBYTE * scr_ptr)
 	pBlt(scr_ptr);
 
 	//if (toolbar_available && currentScreenMode && !toolbar_drawn)
-	if (toolbar_available && !toolbar_drawn)
+	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
 
 }
@@ -628,7 +637,7 @@ void Blt(UBYTE * scr_ptr)
 
 
 void mono_Blt(UBYTE *src_ptr) {
-	mono_Blt_part(src_ptr, 0, 0, 320, 200, NULL);
+	mono_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
 }
 
 
@@ -1019,7 +1028,7 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 }
 
 void palette_Blt(UBYTE *src_ptr) {
-	palette_Blt_part(src_ptr, 0, 0, 320, 200, NULL);
+	palette_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
 }
 
 void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
@@ -1159,7 +1168,7 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 }
 
 void hicolor555_Blt(UBYTE *src_ptr) {
-	hicolor555_Blt_part(src_ptr, 0, 0, 320, 200, NULL);
+	hicolor555_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
 }
 
 
@@ -1356,7 +1365,7 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 }
 
 void hicolor565_Blt(UBYTE *src_ptr) {
-	hicolor565_Blt_part(src_ptr, 0, 0, 320, 200, NULL);
+	hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
 }
 
 void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
