@@ -2,7 +2,7 @@
 
 CC      = gcc
 CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
-DEFINES = -DUNIX -DUSE_ADLIB 
+DEFINES = -DUNIX
 LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
@@ -19,7 +19,7 @@ OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	sound/imuse.o sound/fmopl.o sound/adlib.o sound/gmidi.o debugrl.o \
         akos.o vars.o insane.o gameDetector.o init.o mp3_cd.o\
 	v3/resource_v3.o v4/resource_v4.o 2xsai.o main.o \
-	simon/midi.o simon/simon.o simon/simonsys.o
+	simon/midi.o simon/simon.o simon/simonsys.o sound/mididrv.o
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \
