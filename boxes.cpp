@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+	/* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
@@ -374,6 +374,7 @@ int Scumm::getPathToDestBox(byte from, byte to)
 {
 	byte *boxm;
 	byte i;
+	int dest = -1;
 
 	if (from == to)
 		return to;
@@ -390,10 +391,10 @@ int Scumm::getPathToDestBox(byte from, byte to)
 
 	while (boxm[0] != 0xFF) {
 		if (boxm[0] <= to && boxm[1] >= to)
-			return boxm[2];
+			dest = boxm[2];
 		boxm += 3;
 	}
-	return -1;
+	return dest;
 }
 
 int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr)
