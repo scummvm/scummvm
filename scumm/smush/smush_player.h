@@ -80,6 +80,8 @@ private:
 	bool _inTimer;
 #endif
 
+	Common::Mutex _mutex;
+
 public:
 	SmushPlayer(ScummEngine_v6 *scumm, int speed);
 	~SmushPlayer();

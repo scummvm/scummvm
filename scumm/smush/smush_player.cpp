@@ -1024,6 +1024,8 @@ void SmushPlayer::setupAnim(const char *file) {
 }
 
 void SmushPlayer::parseNextFrame() {
+	Common::StackLock lock(_mutex);
+
 	if (_vm->_smushPaused)
 		return;
 
@@ -1138,6 +1140,9 @@ void SmushPlayer::insanity(bool flag) {
 }
 
 void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
+
+	Common::StackLock lock(_mutex);
+
 	if(_smixer)
 		_smixer->stop();
 
