@@ -1197,7 +1197,11 @@ void ScummEngine::initScummVars() {
 			} else
 				VAR(VAR_SOUNDCARD) = 3;
 		}
-		VAR(VAR_VIDEOMODE) = 0x13;
+		// Amiga versions of FOA and MI2 are only 32 colors.
+		if (_version == 5 && _features & GF_AMIGA)
+			VAR(VAR_VIDEOMODE) = 82;
+		else
+			VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
 		if (_features & GF_HUMONGOUS) {
