@@ -369,6 +369,7 @@ protected:
 	void o6_openFile();
 	void o6_closeFile();
 	void o6_deleteFile();
+	void o6_findAllObjects();
 };
 
 class Scumm_v7 : public Scumm_v6

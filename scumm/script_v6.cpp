@@ -319,7 +319,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* DC */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_findAllObjects),
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_invalid),
 		/* E0 */
@@ -2902,7 +2902,7 @@ void Scumm_v6::o6_stampObject() {
 }
 
 void Scumm_v6::o6_stopTalking() {
-	warning("o6_stopTalking: stub");
+	stopTalk();
 }
 
 void Scumm_v6::o6_openFile() {
@@ -2925,6 +2925,28 @@ void Scumm_v6::o6_deleteFile() {
 	len = resStrLen(_scriptPointer);
 	warning("stub o6_deleteFile(\"%s\")", _scriptPointer);
 	_scriptPointer += len + 1;
+}
+
+void Scumm_v6::o6_findAllObjects() {
+	// FIXME is this even remotely correct?
+	// see http://users.bigpond.net.au/tgray2/findallobjects.txt
+	// for asm
+	int a = pop();
+	int i = 1;
+
+	warning("stub o6_findAllObjects(%d)", a);
+	if (a != _currentRoom)
+		warning("o6_findAllObjects: current room is not %d", a);
+	writeVar(0, 0);
+	defineArray(0, 5, 0, _numLocalObjects);
+	defineArray(0, 0, 0, _numLocalObjects);
+	
+	while(i < _numLocalObjects) {
+		writeArray(0, 0, i, _objs[i].obj_nr);
+		i++;
+	}
+	
+	push(readVar(0));
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
