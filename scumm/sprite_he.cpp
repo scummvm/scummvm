@@ -42,7 +42,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 	int code, classId, x, y;
 	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x_pos, y_pos, spriteGroupId, d, num);
 
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
+	for (int i = (_numSpritesToProcess - 1); i >= 0; i--) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!spi->cur_res_id)
 			continue;
