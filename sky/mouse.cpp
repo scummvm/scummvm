@@ -87,15 +87,16 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 	_maskHeight = 6;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
+	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
 	_mouseData2 = _miceData;
 
 	uint16 width = FROM_LE_16(((struct dataFileHeader *)_miceData)->s_width);
 	uint16 height = FROM_LE_16(((struct dataFileHeader *)_miceData)->s_height);
-
 	_savedData = (byte *)malloc((width * height) + sizeof(struct dataFileHeader));
 
 	//load in the object mouse file
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
+	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 	_mouseWidth = 1;
 	_mouseHeight = 1;
 	//_systemFlags |= SF_MOUSE;;
@@ -109,6 +110,7 @@ SkyMouse::~SkyMouse( ){
 
 void SkyMouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
+	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 }
 
 bool SkyMouse::fnAddHuman(void) {
@@ -170,13 +172,20 @@ void SkyMouse::drawNewMouse() {
 
 //original sky uses different colors for transparency than our backends do,
 //so we simply swap our "transparent"-white with another one.
-void SkyMouse::fixMouseTransparency(byte *mouseData) {
-	for (int i = 0; i < (_mouseWidth * _mouseHeight); i++) {
-		if (mouseData[i] == 255)
-			mouseData[i] = 242;
-		else
-			if (mouseData[i] == 0)
-				mouseData[i] = 255;
+void SkyMouse::fixMouseTransparency(byte *mouseData, uint32 size) {
+	uint32 curPos = sizeof(struct dataFileHeader);
+	uint32 cursorSize = ((struct dataFileHeader *)mouseData)->s_sp_size;
+
+	while (curPos < size) {
+		byte *cursor = mouseData + curPos;
+		for (uint32 i = 0; i < cursorSize; i++) {
+			if (cursor[i] == 255)
+				cursor[i] = 242;
+			else
+				if (cursor[i] == 0)
+					cursor[i] = 255;
+		}
+		curPos += cursorSize;
 	}
 }
 
@@ -194,7 +203,6 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 
 	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
 	// there's something wrong about the mouse's hotspot. using 0/0 works fine.
-	fixMouseTransparency(_mouseData2);
 	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 0, 0);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);
