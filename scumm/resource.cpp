@@ -1093,7 +1093,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	listed above.
 	*/
 
-#if 1
+#if 0
 	byte *ptr = createResource(type, idx, size);
 	memcpy(ptr, src_ptr, size);
 #else
@@ -1101,14 +1101,14 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	byte *ptr, *start_ptr;
 	
 	int total_size = 0;
-	total_size += kMIDIHeaderSize;	// Header
-	total_size += 5;				// end of song sysex
-	total_size += 3 * 2;			// Three programm change mesages
+	total_size += kMIDIHeaderSize; // Header
+	total_size += 7;               // Tempo META
+	total_size += 3 * 3;           // Three program change mesages
+	total_size += 22;              // Possible jump SysEx
+	total_size += 5;               // EOT META
 	
 	int i, len;
 	byte track_instr[3];
-	int  current_note[3];
-	int track_time[3];
 	byte *track_data[3];
 	int track_len[3];
 	bool looped = false;
@@ -1118,20 +1118,18 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 
 	// Parse the three channels
 	for (i = 0; i < 3; i++) {
-		assert(READ_BE_UINT32(src_ptr) == MKID('Chan'));
+		assert(*((uint32*)src_ptr) == MKID('Chan'));
 		len = READ_BE_UINT32(src_ptr + 4);
-		track_len[i] = (len - 24) / 4;
-		track_instr[i] = Mac0ToGMInstrument(READ_BE_UINT32(src_ptr + 8));
-		track_data[i] = src_ptr + 8;
-		current_note[i] = -1;
-		track_time[i] = -1;
+		track_len[i] = len - 24;
+		track_instr[i] = Mac0ToGMInstrument(*(uint32*)(src_ptr + 8));
+		track_data[i] = src_ptr + 12;
 		src_ptr += len;
-		looped = (READ_BE_UINT32(src_ptr - 8) == MKID('Loop'));
+		looped = (*((uint32*)(src_ptr - 8)) == MKID('Loop'));
 		
-		// For each note event, we need up to 3 bytes for the VLQ, and 3 bytes
-		// for the note on. Finally, up to 3 bytes for the note off.
-		// That means up to 9 bytes may be used for each note.
-		total_size += 9 * track_len[i];
+		// For each note event, we need up to 6 bytes for the
+		// Note On (3 VLQ, 3 event), and 6 bytes for the Note
+		// Off (3 VLQ, 3 event). So 12 bytes total.
+		total_size += 12 * track_len[i];
 	}
 	assert(*src_ptr == 0x09);
 	
@@ -1141,33 +1139,87 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	// Insert MIDI header
 	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
 
-/*
 	// Write a tempo change Meta event
 	// 473 / 4 Hz, convert to micro seconds.
-	// FIXME: This is copied from the SFX case in convertADResource()
-	// and probably is not the proper value, but for now it's
-	// sufficient to act as placeholder.
-	uint32 dw = 1000000 * ppqn * 4 / 473;
+	uint32 dw = 1000000 * 437 / 4 / ppqn; // 1000000 * ppqn * 4 / 473;
 	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
 	*ptr++ = (byte)((dw >> 16) & 0xFF);
 	*ptr++ = (byte)((dw >> 8) & 0xFF);
 	*ptr++ = (byte)(dw & 0xFF);
-*/
 
-	// Time 0
-//	ptr = writeVLQ(ptr, 0);
+	// Insert program change messages
+	*ptr++ = 0; // VLQ
+	*ptr++ = 0xC0;
+	*ptr++ = track_instr[0];
+	*ptr++ = 0; // VLQ
+	*ptr++ = 0xC1;
+	*ptr++ = track_instr[1];
+	*ptr++ = 0; // VLQ
+	*ptr++ = 0xC2;
+	*ptr++ = track_instr[2];
+	
+	// And now, the actual composition. Please turn all cell phones
+	// and pagers off during the performance. Thank you.
+	uint16 nextTime[3] = { 1, 1, 1 };
+	int stage[3] = { 0, 0, 0 };
 
-	// Insert programm change status messages
-	ptr[0] = 'C0'; ptr[1] = track_instr[0];
-	ptr[2] = 'C1'; ptr[3] = track_instr[1];
-	ptr[4] = 'C2'; ptr[5] = track_instr[2];
-	ptr += 6;
+	while (track_len[0] | track_len[1] | track_len[2]) {
+		int best = -1;
+		uint16 bestTime = 0xFFFF;
+		for (i = 0; i < 3; ++i) {
+			if (track_len[i] && nextTime[i] < bestTime) {
+				bestTime = nextTime[i];
+				best = i;
+			}
+		}
+		assert (best != -1);
 
-	// TODO: now use the information computed above, and create a MIDI track, 
-	// similiar to what is done in convertADResource
-	// ...
+		if (!stage[best]) {
+			// We are STARTING this event.
+			if (track_data[best][2] > 1) {
+				// Note On
+				ptr = writeVLQ(ptr, nextTime[best]);
+				*ptr++ = 0x90 | best;
+				*ptr++ = track_data[best][2];
+				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
+				for (i = 0; i < 3; ++i)
+					nextTime[i] -= bestTime;
+			}
+			nextTime[best] += READ_BE_UINT16 (track_data[best]);
+			stage[best] = 1;
+		} else {
+			// We are ENDING this event.
+			if (track_data[best][2] > 1) {
+				// There was a Note On, so do a Note Off
+				ptr = writeVLQ(ptr, nextTime[best]);
+				*ptr++ = 0x80 | best;
+				*ptr++ = track_data[best][2];
+				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
+				for (i = 0; i < 3; ++i)
+					nextTime[i] -= bestTime;
+			}
+			track_data[best] += 4;
+			track_len[best] -= 4;
+			stage[best] = 0;
+		}
+	}
 
-	// Insert end of song sysex
+	// Is this a looped song? If so, effect a loop by
+	// using the S&M maybe_jump SysEx command.
+	// FIXME: Jamieson630: The jump seems to be happening
+	// too quickly! There should maybe be a pause after
+	// the last Note Off? But I couldn't find one in the
+	// MI1 Lookout music, where I was hearing problems.
+	if (looped) {
+		memcpy(ptr, "\x00\xf0\x13\x7d\x30\00", 6); ptr += 6; // maybe_jump
+		memcpy(ptr, "\x00\x00", 2); ptr += 2;            // cmd -> 0 means always jump
+		memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;    // track -> 0 (only track)
+		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;    // beat -> 1 (first beat)
+		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;    // tick -> 1
+		memcpy(ptr, "\x00\xf7", 2); ptr += 2;            // SysEx end marker
+	}
+
+	// Insert end of song META
 	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
 	
 	assert(ptr <= start_ptr + total_size);
