@@ -898,10 +898,10 @@ bool Intro::escDelay(uint32 msecs) {
 	int32 nDelay = 0;
 	do {
 		while (_system->pollEvent(event)) {
-			if (event.event_code == OSystem::EVENT_KEYDOWN) {
+			if (event.type == OSystem::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
 					return false;
-			} else if (event.event_code == OSystem::EVENT_QUIT) {
+			} else if (event.type == OSystem::EVENT_QUIT) {
 				_quitProg = true;
 				return false;
 			}

@@ -255,7 +255,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 #ifndef BACKEND_8BIT
 			case OSystem::EVENT_SCREEN_CHANGED:
 				anim->invalidateLookup(true);

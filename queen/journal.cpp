@@ -63,7 +63,7 @@ void Journal::use() {
 	while (!_quit) {
 		OSystem::Event event;
 		while (system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);
 				break;

@@ -1303,7 +1303,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
-		event->event_code = EVENT_SCREEN_CHANGED;
+		event->type = EVENT_SCREEN_CHANGED;
 		return true;
 	}
 
@@ -1313,7 +1313,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
 				return true;
 
-			event->event_code = EVENT_KEYDOWN;
+			event->type = EVENT_KEYDOWN;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
@@ -1326,7 +1326,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 				return true;
 			
-			event->event_code = EVENT_KEYUP;
+			event->type = EVENT_KEYUP;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			
@@ -1336,16 +1336,16 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			return true;
 
 		case SDL_MOUSEMOTION:
-			event->event_code = EVENT_MOUSEMOVE;
+			event->type = EVENT_MOUSEMOVE;
 			fillMouseEvent(*event, ev.motion.x, ev.motion.y);
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.event_code = EVENT_LBUTTONDOWN;
+				temp_event.type = EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.event_code = EVENT_RBUTTONDOWN;
+				temp_event.type = EVENT_RBUTTONDOWN;
 			else
 				break;
 
@@ -1371,9 +1371,9 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 		case SDL_MOUSEBUTTONUP:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.event_code = EVENT_LBUTTONUP;
+				temp_event.type = EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.event_code = EVENT_RBUTTONUP;
+				temp_event.type = EVENT_RBUTTONUP;
 			else
 				break;
 
@@ -1395,7 +1395,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			break;
 
 		case SDL_QUIT:
-			event->event_code = EVENT_QUIT;
+			event->type = EVENT_QUIT;
 			return true;
 		}
 	}

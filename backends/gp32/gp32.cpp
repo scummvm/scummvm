@@ -842,7 +842,7 @@ bool OSystem_GP32::pollEvent(Event &event) { 	// fixme: make more user-friendly 
 	if (key == GPC_VK_NONE) {
 		if (lastevent==EVENT_LBUTTONDOWN) {
 			lastevent=0;
-			event.event_code = EVENT_LBUTTONUP;
+			event.type = EVENT_LBUTTONUP;
 			return true;
 		}
 		return false;
@@ -855,7 +855,7 @@ bool OSystem_GP32::pollEvent(Event &event) { 	// fixme: make more user-friendly 
 	oldkey=key;
 	eventcount=EVENT_COUNT;
 
-	event.event_code = EVENT_KEYDOWN;
+	event.type = EVENT_KEYDOWN;
 
 	if (key & GPC_VK_FL && key & GPC_VK_FR) { // L+R = save state
 		printf("Saving game, please wait...");
@@ -903,12 +903,12 @@ bool OSystem_GP32::pollEvent(Event &event) { 	// fixme: make more user-friendly 
 
 	if (key & GPC_VK_FA) {
 		lastevent=EVENT_LBUTTONDOWN;
-		event.event_code = EVENT_LBUTTONDOWN;
+		event.type = EVENT_LBUTTONDOWN;
 		return true;
 	}
 	if (key & GPC_VK_FB) {
 		lastevent=EVENT_RBUTTONDOWN;
-		event.event_code = EVENT_RBUTTONDOWN;
+		event.type = EVENT_RBUTTONDOWN;
 		return true;
 	}
 
@@ -932,7 +932,7 @@ bool OSystem_GP32::pollEvent(Event &event) { 	// fixme: make more user-friendly 
 		if (my>199) my=199;
 	}
 
-	event.event_code = EVENT_MOUSEMOVE;
+	event.type = EVENT_MOUSEMOVE;
 	km.x = event.mouse.x = mx;
 	km.y = event.mouse.y = my;
 

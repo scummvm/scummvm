@@ -203,13 +203,13 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
   }
   event.kbd.ascii = event.kbd.keycode = 0;
   if(e<0) {
-    event.event_code = (EventCode)-e;
+    event.type = (EventType)-e;
     return true;
   } else if(e>0) {
     bool processed = false, down = !(e&(1<<30));
     e &= ~(1<<30);
     if(e < 1000) {
-      event.event_code = (down? EVENT_KEYDOWN : EVENT_KEYUP);
+      event.type = (down? EVENT_KEYDOWN : EVENT_KEYUP);
       event.kbd.keycode = e;
       event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & KBD_SHIFT)?
 			  e &~ 0x20 : e);
@@ -221,12 +221,12 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
     }
     return processed;
   } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
-    event.event_code = EVENT_MOUSEMOVE;
+    event.type = EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;
     return true;
   } else {
-    event.event_code = (EventCode)0;
+    event.type = (EventType)0;
     return false;
   }
 }

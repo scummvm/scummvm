@@ -170,8 +170,8 @@ void Mouse::waitMouseNotPressed(void) {
 	while (mousePressed) {
 		_system->delayMillis(20);
 		while (_system->pollEvent(event)) {
-			if ((event.event_code == OSystem::EVENT_LBUTTONUP) ||
-				(event.event_code == OSystem::EVENT_QUIT))
+			if ((event.type == OSystem::EVENT_LBUTTONUP) ||
+				(event.type == OSystem::EVENT_QUIT))
 				mousePressed = false;
 		}
 	}

@@ -273,7 +273,7 @@ void CreditsPlayer::delay(int msecs) {
 	uint32 start = _system->getMillis();
 	do {
 		while (_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_QUIT:
 				SwordEngine::_systemVars.engineQuit = true;
 				break;

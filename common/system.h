@@ -394,10 +394,18 @@ public:
 	/**
 	 * The types of events backends may generate.
 	 * @see Event
+	 *
+	 * @todo Merge EVENT_LBUTTONDOWN, EVENT_RBUTTONDOWN and EVENT_WHEELDOWN;
+	 *       likewiese EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
+	 *       To do that, we just have to add a field to the Event which
+	 *       indicates which button was pressed.
 	 */
-	enum EventCode {
+	enum EventType {
+		/** A key was pressed, details in Event::kbd. */
 		EVENT_KEYDOWN = 1,
+		/** A key was released, details in Event::kbd. */
 		EVENT_KEYUP = 2,
+		/** The mouse moved, details in Event::mouse. */
 		EVENT_MOUSEMOVE = 3,
 		EVENT_LBUTTONDOWN = 4,
 		EVENT_LBUTTONUP = 5,
@@ -410,19 +418,46 @@ public:
 		EVENT_SCREEN_CHANGED = 11
 	};
 
+	/**
+	 * Keyboard modifier flags, used for Event::kbd::flags.
+	 */
 	enum {
-		KBD_CTRL = 1,
-		KBD_ALT = 2,
-		KBD_SHIFT = 4
+		KBD_CTRL  = 1 << 0,
+		KBD_ALT   = 1 << 1,
+		KBD_SHIFT = 1 << 2
 	};
 
 	/**
 	 * Data structure for an event. A pointer to an instance of Event
-	 * can be passed to pollEvent. 
+	 * can be passed to pollEvent.
+	 * @todo Rework/document this structure. It should be made 100% clear which
+	 *       field is valid for which event type.
+	 *       Implementation wise, we might want to use the classic
+	 *       union-of-structs trick. It goes roughly like this:
+	 *       struct BasicEvent {
+	 *       	EventType type;
+	 *       };
+	 *       struct MouseMovedEvent : BasicEvent {
+	 *       	Common::Point pos;
+	 *       };
+	 *       struct MouseButtonEvent : MouseMovedEvent {
+	 *       	int button;
+	 *       };
+	 *       struct KeyEvent : BasicEvent {
+	 *       	...
+	 *       };
+	 *       ...
+	 *       union Event {
+	 *          EventType type;
+	 *       	MouseMovedEvent mouse;
+	 *       	MouseButtonEvent button;
+	 *       	KeyEvent key;
+	 *       	...
+	 *       };
 	 */
 	struct Event {
 		/** The type of the event. */
-		EventCode event_code;
+		EventType type;
 		/**
 		  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 		  * EVENT_KEYUP). For all other event types, content is undefined.
@@ -521,7 +556,7 @@ public:
 	 * Create a new mutex.
 	 * @return the newly created mutex, or 0 if an error occured.
 	 */
-	virtual MutexRef createMutex(void) = 0;
+	virtual MutexRef createMutex() = 0;
 
 	/**
 	 * Lock the given mutex.

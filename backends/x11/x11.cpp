@@ -923,7 +923,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event.event_code = EVENT_KEYDOWN;
+					scumm_event.type = EVENT_KEYDOWN;
 					scumm_event.kbd.keycode = keycode;
 					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
 					scumm_event.kbd.flags = mode;
@@ -965,7 +965,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event.event_code = EVENT_KEYUP;
+					scumm_event.type = EVENT_KEYUP;
 					scumm_event.kbd.keycode = keycode;
 					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
 					scumm_event.kbd.flags = mode;
@@ -978,12 +978,12 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			if (report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (fake_right_mouse == 0) {
-						scumm_event.event_code = EVENT_LBUTTONDOWN;
+						scumm_event.type = EVENT_LBUTTONDOWN;
 					} else {
-						scumm_event.event_code = EVENT_RBUTTONDOWN;
+						scumm_event.type = EVENT_RBUTTONDOWN;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event.event_code = EVENT_RBUTTONDOWN;
+					scumm_event.type = EVENT_RBUTTONDOWN;
 				scumm_event.mouse.x = event.xbutton.x - scumm_x;
 				scumm_event.mouse.y = event.xbutton.y - scumm_y;
 				return true;
@@ -994,12 +994,12 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			if (report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (fake_right_mouse == 0) {
-						scumm_event.event_code = EVENT_LBUTTONUP;
+						scumm_event.type = EVENT_LBUTTONUP;
 					} else {
-						scumm_event.event_code = EVENT_RBUTTONUP;
+						scumm_event.type = EVENT_RBUTTONUP;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event.event_code = EVENT_RBUTTONUP;
+					scumm_event.type = EVENT_RBUTTONUP;
 				scumm_event.mouse.x = event.xbutton.x - scumm_x;
 				scumm_event.mouse.y = event.xbutton.y - scumm_y;
 				return true;
@@ -1007,7 +1007,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			break;
 
 		case MotionNotify:
-			scumm_event.event_code = EVENT_MOUSEMOVE;
+			scumm_event.type = EVENT_MOUSEMOVE;
 			scumm_event.mouse.x = event.xmotion.x - scumm_x;
 			scumm_event.mouse.y = event.xmotion.y - scumm_y;
 			set_mouse_pos(scumm_event.mouse.x, scumm_event.mouse.y);

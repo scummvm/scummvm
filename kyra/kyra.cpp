@@ -252,7 +252,7 @@ int KyraEngine::go() {
 		_font->drawStringToPlane("Nothing scripted!", _screen, 320, 200, 85, 189, 136);
 		updateScreen();
 		while (g_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 				case OSystem::EVENT_QUIT:
 					g_system->quit();
 					break;

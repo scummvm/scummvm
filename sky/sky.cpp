@@ -453,7 +453,7 @@ void SkyEngine::delay(uint amount) {
 
 	do {
 		while (_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f') {

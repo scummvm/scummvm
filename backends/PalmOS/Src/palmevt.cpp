@@ -56,7 +56,7 @@ void OSystem_PALMOS::SimulateArrowKeys(Event &event, Int8 iHoriz, Int8 iVert) {
 	y = (y < 0				) ? 0					: y;
 	y = (y >= _screenHeight	) ? _screenHeight - 1	: y;
 
-	event.event_code = EVENT_MOUSEMOVE;
+	event.type = EVENT_MOUSEMOVE;
 	event.mouse.x = x;
 	event.mouse.y = y;
 	set_mouse_pos(x, y);
@@ -126,7 +126,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 			Int8 sy = 0;
 
 			if (keyCurrentState & _keyMouse.bitButLeft) {
-				event.event_code = EVENT_LBUTTONDOWN;
+				event.type = EVENT_LBUTTONDOWN;
 				event.mouse.x = _mouseCurState.x;
 				event.mouse.y = _mouseCurState.y;
 				_lastKeyPressed = kLastKeyNone;
@@ -165,7 +165,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				// ESC key
 				case vchrLaunch:
 					_lastKeyPressed = kLastKeyNone;
-					event.event_code = EVENT_KEYDOWN;
+					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = 27;
 					event.kbd.ascii = 27;
 					event.kbd.flags = 0;
@@ -176,7 +176,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				case vchrMenu:
 				case vchrThumbWheelBack:	// Tapwave back button
 					_lastKeyPressed = kLastKeyNone;
-					event.event_code = EVENT_KEYDOWN;
+					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = 319;
 					event.kbd.ascii = 319;
 					event.kbd.flags = 0;
@@ -185,7 +185,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				case vchrCalc:
 					if (_lastKeyPressed & kLastKeyCalc)
 						if ((getMillis() - _exit_delay) <= (EXITDELAY))
-							event.event_code = EVENT_QUIT;
+							event.type = EVENT_QUIT;
 
 					_exit_delay = getMillis();
 					_lastKeyPressed = kLastKeyCalc;
@@ -197,7 +197,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 #ifndef DISABLE_TAPWAVE
 				case vchrActionRight:
 #endif
-					event.event_code = EVENT_RBUTTONDOWN;
+					event.type = EVENT_RBUTTONDOWN;
 					event.mouse.x = _mouseCurState.x;
 					event.mouse.y = _mouseCurState.y;
 					_lastKeyPressed = kLastKeyNone;
@@ -213,11 +213,11 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 
 				// wheel
 				case vchrJogUp:
-					event.event_code = EVENT_WHEELUP;
+					event.type = EVENT_WHEELUP;
 					return true;
 
 				case vchrJogDown:
-					event.event_code = EVENT_WHEELDOWN;
+					event.type = EVENT_WHEELDOWN;
 					return true;
 
 
@@ -260,7 +260,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					// ESC key
 					case vchrHard2:
 						_lastKeyPressed = kLastKeyNone;
-						event.event_code = EVENT_KEYDOWN;
+						event.type = EVENT_KEYDOWN;
 						event.kbd.keycode = 27;
 						event.kbd.ascii = 27;
 						event.kbd.flags = 0;
@@ -269,7 +269,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					// F5 = menu
 					case vchrHard3:
 						_lastKeyPressed = kLastKeyNone;
-						event.event_code = EVENT_KEYDOWN;
+						event.type = EVENT_KEYDOWN;
 						event.kbd.keycode = 319;
 						event.kbd.ascii = 319;
 						event.kbd.flags = 0;
@@ -321,7 +321,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 						b = 0;
 					
 					} else if  ((keycode == 'z' && b == KBD_CTRL) || (b == KBD_ALT && keycode == 'x')) {
-						event.event_code = EVENT_QUIT;
+						event.type = EVENT_QUIT;
 						return true;
 
 					} else if (keycode == 'n' && b == KBD_CTRL) {
@@ -344,7 +344,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 #endif
 					}
 					
-					event.event_code = EVENT_KEYDOWN;
+					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = keycode;
 					event.kbd.ascii = keycode; //(keycode>='a' && keycode<='z' && (event.kbd.flags & KBD_SHIFT) ? keycode &~ 0x20 : keycode);
 					event.kbd.flags = b;
@@ -367,7 +367,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 				return true;
 
 			_lastEvent = penMoveEvent;
-			event.event_code = EVENT_MOUSEMOVE;
+			event.type = EVENT_MOUSEMOVE;
 			event.mouse.x = x;
 			event.mouse.y = y;
 			set_mouse_pos(event.mouse.x, event.mouse.y);
@@ -387,7 +387,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 					_lastEvent = keyDownEvent;
 					_lastKeyPressed = kLastKeyNone;
 					
-					event.event_code = EVENT_KEYDOWN;
+					event.type = EVENT_KEYDOWN;
 					event.kbd.keycode = key;
 					event.kbd.ascii = key;
 					event.kbd.flags = 0;
@@ -399,7 +399,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return true;
 
-			event.event_code = EVENT_LBUTTONDOWN;
+			event.type = EVENT_LBUTTONDOWN;
 			event.mouse.x = x;
 			event.mouse.y = y;
 			set_mouse_pos(event.mouse.x, event.mouse.y);
@@ -407,7 +407,7 @@ bool OSystem_PALMOS::pollEvent(Event &event) {
 
 		case penUpEvent:
 			getCoordinates(&ev, &x, &y);
-			event.event_code = EVENT_LBUTTONUP;
+			event.type = EVENT_LBUTTONUP;
 
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return true;

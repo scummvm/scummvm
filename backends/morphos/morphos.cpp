@@ -825,7 +825,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 					qual |= KBD_CTRL;
 				event.kbd.flags = qual;
 
-				event.event_code = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
+				event.type = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
 				ScummMsg->Code &= ~IECODE_UP_PREFIX;
 
 				if (ScummMsg->Code >= RAWKEY_F1 && ScummMsg->Code <= RAWKEY_F10)
@@ -849,13 +849,13 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 					/*
 					 * Wheelmouse event
 					 */
-					event.event_code = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
+					event.type = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
 				}
 				else if (MapRawKey(&FakedIEvent, &charbuf, 1, NULL) == 1)
 				{
 					if (qual == KBD_CTRL && charbuf == 'z')
 					{
-						event.event_code = EVENT_QUIT;
+						event.type = EVENT_QUIT;
 						break;
 					}
 					else if (qual == KBD_ALT)
@@ -870,7 +870,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 						}
 						else if (charbuf == 'x')
 						{
-							event.event_code = EVENT_QUIT;
+							event.type = EVENT_QUIT;
 							break;
 						}
 						else if (charbuf == 0x0d)
@@ -915,7 +915,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 				else if (FullScreenMode)
 					newy = newy <? (ScummScrHeight >> ScummScale)-2;
 
-				event.event_code = EVENT_MOUSEMOVE;
+				event.type = EVENT_MOUSEMOVE;
 				event.mouse.x = newx;
 				event.mouse.y = newy;
 				set_mouse_pos(event.mouse.x, event.mouse.y);
@@ -932,19 +932,19 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 				switch (ScummMsg->Code)
 				{
 					case SELECTDOWN:
-						event.event_code = EVENT_LBUTTONDOWN;
+						event.type = EVENT_LBUTTONDOWN;
 						break;
 
 					case SELECTUP:
-						event.event_code = EVENT_LBUTTONUP;
+						event.type = EVENT_LBUTTONUP;
 						break;
 
 					case MENUDOWN:
-						event.event_code = EVENT_RBUTTONDOWN;
+						event.type = EVENT_RBUTTONDOWN;
 						break;
 
 					case MENUUP:
-						event.event_code = EVENT_RBUTTONUP;
+						event.type = EVENT_RBUTTONUP;
 						break;
 
 					default:
@@ -957,7 +957,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 			}
 
 			case IDCMP_CLOSEWINDOW:
-				event.event_code = EVENT_QUIT;
+				event.type = EVENT_QUIT;
 				break;
 		}
 

@@ -1292,7 +1292,7 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 
 	do {
 		while (_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 
 				// Make sure backspace works right (this fixes a small issue on OS X)

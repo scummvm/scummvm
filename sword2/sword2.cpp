@@ -419,7 +419,7 @@ void Sword2Engine::parseEvents() {
 	OSystem::Event event;
 	
 	while (_system->pollEvent(event)) {
-		switch (event.event_code) {
+		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
 			if (!(_eventFilter & RD_KEYDOWN)) {
 				_keyboardEvent.pending = true;

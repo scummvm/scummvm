@@ -4830,7 +4830,7 @@ void SimonEngine::delay(uint amount) {
 		}
 
 		while (_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
 					&& (event.kbd.flags == OSystem::KBD_ALT ||

@@ -110,7 +110,7 @@ void NewGui::runLoop() {
 		uint32 time = _system->getMillis();
 
 		while (_system->pollEvent(event)) {
-			switch (event.event_code) {
+			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 #if !defined(__PALM_OS__)
 				// init continuous event stream

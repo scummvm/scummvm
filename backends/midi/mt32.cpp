@@ -113,7 +113,7 @@ public:
 static int eatSystemEvents() {
 	OSystem::Event event;
 	while (g_system->pollEvent(event)) {
-		switch (event.event_code) {
+		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			return 1;
 		default:

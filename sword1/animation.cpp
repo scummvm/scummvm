@@ -141,7 +141,7 @@ void MoviePlayer::play(uint32 id) {
 			frameCount++;
 			OSystem::Event event;
 			while (_sys->pollEvent(event)) {
-				switch (event.event_code) {
+				switch (event.type) {
 #ifndef BACKEND_8BIT
 				case OSystem::EVENT_SCREEN_CHANGED:
 					anim->invalidateLookup(true);
