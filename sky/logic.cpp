@@ -47,7 +47,6 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-
 void SkyLogic::engine() {
 #define logic_list_no 141
 	Compact *compact2 = SkyState::fetchCompact(141); // logic list
@@ -70,15 +69,13 @@ void SkyLogic::engine() {
 		// ok, here we process the logic bit system
 
 		if (_compact->status & (1 << 7))
-			warning("remove_object_from_walk unimplemented");
-		//	remove_object_from_walk();
+			_grid->removeObjectFromWalk(_compact);
 
 		SkyDebug::logic(_compact->logic);
 		(this->*logicTable[_compact->logic]) ();
 
 		if (_compact->status & (1 << 7))
-			warning("object_to_walk unimplemented");
-		//	object_to_walk();
+			_grid->objectToWalk(_compact);
 
 		// a sync sent to the compact is available for one cycle
 		// only. that cycle has just ended so remove the sync.

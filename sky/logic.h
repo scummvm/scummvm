@@ -24,10 +24,11 @@
 
 #include "sky/sky.h"
 #include "sky/disk.h"
+#include "sky/grid.h"
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk) : _skyDisk(skyDisk) { initScriptVariables(); };
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *grid) : _skyDisk(skyDisk), _grid(grid) { initScriptVariables(); };
 	void engine();
 
 	void lreturn();
@@ -176,6 +177,7 @@ protected:
 	uint32 _scriptVariables[838];
 
 	SkyDisk *_skyDisk;
+	SkyGrid *_grid;
 };
 
 #endif
