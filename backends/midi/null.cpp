@@ -20,19 +20,13 @@
 
 #include "stdafx.h"
 #include "sound/mpu401.h"
-#include "common/engine.h"	// for warning/error/debug
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
-	int open();
+	int open() { return 0; }
 	void send(uint32 b) { }
 };
-
-int MidiDriver_NULL::open() {
-	warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
-	return 0;
-}
 
 MidiDriver *MidiDriver_NULL_create() {
 	return new MidiDriver_NULL();
