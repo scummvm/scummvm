@@ -195,9 +195,10 @@ bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
 		uint subroutine = atoi(argv[1]);
 		Subroutine *sub;
 		sub = _vm->getSubroutineByID(subroutine);
-		_vm->startSubroutine(sub);
+		if (sub != NULL)
+			_vm->startSubroutine(sub);
 	} else
-		DebugPrintf("Syntax: sub <subroutinenum>\n");
+		DebugPrintf("Subroutine %d\n", _vm->_subroutine);
 
 	return true;
 }
