@@ -84,10 +84,6 @@ void Input::delay(uint amount) {
 			_idleTime = 0;
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-					debug(1, "event.kbd.keycode = %i (%c)", 
-							event.kbd.keycode,
-							isprint(event.kbd.keycode) ? event.kbd.keycode : '.');
-
 					if (event.kbd.flags == OSystem::KBD_CTRL) {
 						if (event.kbd.keycode == 'd') {
 							_debugger = true;
