@@ -95,7 +95,8 @@ enum AkosOpcodes {
 	AKC_JumpLE = 0xC093,
 	AKC_JumpG = 0xC094,
 	AKC_JumpGE = 0xC095,
-	AKC_ClearFlag = 0xC09F
+	AKC_ClearFlag = 0xC09F,
+	AKC_EndSeq = 0xC0FF
 };
 
 bool Scumm::akos_hasManyDirections(Actor *a)
@@ -257,7 +258,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb)
 	if (code & 0x80)
 		code = (code << 8) | p[1];
 
-	if (code == AKC_Return)
+	if (code == AKC_Return || code == AKC_EndSeq)
 		return false;
 
 	if (code != AKC_ComplexChan) {
@@ -1424,6 +1425,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			case AKC_HideActor:
 			case AKC_CmdQue3Quick:
 			case AKC_Return:
+			case AKC_EndSeq:
 				curpos += 2;
 				break;
 			case AKC_JumpGE:
@@ -1561,6 +1563,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			break;
 
 		case AKC_Return:
+		case AKC_EndSeq:
 		case AKC_ComplexChan:
 			break;
 
@@ -1590,7 +1593,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq);
 
 	a->cost.curpos[chan] = curpos;
 
