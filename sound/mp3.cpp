@@ -114,8 +114,6 @@ MP3InputStream::~MP3InputStream() {
 }
 
 bool MP3InputStream::init() {
-	// TODO
-
 	// Read in the first chunk of the MP3 file
 	_size = _file->read(_ptr, _bufferSize);
 	if (_size <= 0) {
