@@ -326,13 +326,21 @@ void Surface::blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
 	// several times, as each new parallax layer is rendered, this may be
 	// a bit inefficient.
 
-	for (i = 0; i < r->bottom - r->top; i++) {
-		for (j = 0; j < r->right - r->left; j++) {
-			if (src[j])
-				dst[j] = src[j];
+	if (s->_colorKey >= 0) {
+		for (i = 0; i < r->bottom - r->top; i++) {
+			for (j = 0; j < r->right - r->left; j++) {
+				if (src[j] != s->_colorKey)
+					dst[j] = src[j];
+			}
+			src += s->_width;
+			dst += _width;
 		}
-		src += s->_width;
-		dst += _width;
+	} else {
+		for (i = 0; i < r->bottom - r->top; i++) {
+			memcpy(dst, src, r->right - r->left);
+			src += s->_width;
+			dst += _width;
+		}
 	}
 
 	g_sword2->_system->copy_rect(_pixels + r->top * _width + r->left, _width, r->left, r->top, r->right - r->left, r->bottom - r->top);
@@ -1292,6 +1300,7 @@ bailout:
 
 		if (block_has_data) {
 			blockSurfaces[layer][i] = new Surface(BLOCKWIDTH, BLOCKHEIGHT);
+			blockSurfaces[layer][i]->setColorKey(0);
 
 			//  Copy the data into the surfaces.
 			dst = blockSurfaces[layer][i]->_pixels;

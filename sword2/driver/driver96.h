@@ -1262,11 +1262,13 @@ public:
 	uint16 _width, _height;
 	uint16 _pitch;
 	byte *_pixels;
+	int _colorKey;
 
 	Surface(uint width, uint height) {
 		_width = width;
 		_height = height;
 		_pixels = (byte *) calloc(_width, _height);
+		_colorKey = -1;
 	};
 
 	~Surface() {
@@ -1276,6 +1278,9 @@ public:
 	void clear();
 	void blit(Surface *s, ScummVM::Rect *r);
 	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
+	void setColorKey(int colorKey) {
+		_colorKey = colorKey;
+	};
 };
 
 //
