@@ -60,7 +60,7 @@ class ResMan;
 
 class Sound {
 public:
-	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
+	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan, bool isDemo);
 	~Sound(void);
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; };
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; };
@@ -100,6 +100,7 @@ private:
 	uint8		 _endOfQueue;
 	SoundMixer *_mixer;
 	ResMan *_resMan;
+	bool _isDemo;
 	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];

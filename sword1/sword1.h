@@ -29,6 +29,10 @@
 
 namespace Sword1 {
 
+enum {
+	GF_DEMO = 1 << 0
+};
+
 class Screen;
 class Sound;
 class Logic;
@@ -61,6 +65,8 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
+
+	uint32 _features;
 protected:
 	void go();
 private:

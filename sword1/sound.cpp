@@ -31,7 +31,7 @@ namespace Sword1 {
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN)
 
-Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
+Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan, bool isDemo) {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;
@@ -39,6 +39,7 @@ Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
 	_endOfQueue = 0;
 	_currentCowFile = 0;
 	_speechVolL = _speechVolR = _sfxVolL = _sfxVolR = 192;
+	_isDemo = isDemo;
 }
 
 int Sound::addToQueue(int32 fxNo) {
@@ -185,13 +186,13 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
 		headerPos++;
 	if (headerPos < 100) {
-		uint32 resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
+		int32 resSize;
 		// Demo uses slightly different headers
-		if (resSize > cSize) {
+		if (_isDemo) {
 			resSize = READ_LE_UINT32(fBuf + headerPos + 6) >> 1;
 			headerPos += 2;
-		}
-
+		} else
+			resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
 		int16 *srcData = (int16*)(fBuf + headerPos + 8);
 		int16 *dstData = (int16*)malloc(resSize * 2);
 		uint32 srcPos = 0;
