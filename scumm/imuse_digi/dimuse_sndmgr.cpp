@@ -93,6 +93,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				}
 				_sounds[slot].region[_sounds[slot].numRegions].offset = READ_BE_UINT32(ptr); ptr += 4;
 				_sounds[slot].region[_sounds[slot].numRegions].length = READ_BE_UINT32(ptr); ptr += 4;
+//				if (_sounds[slot].soundId == 2311)
+//					printf("REGN: offset: %d, length: %d\n", _sounds[slot].region[_sounds[slot].numRegions].offset, _sounds[slot].region[_sounds[slot].numRegions].length);
 				_sounds[slot].numRegions++;
 				break;
 			case MKID_BE('STOP'):
@@ -110,6 +112,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				_sounds[slot].jump[_sounds[slot].numJumps].dest = READ_BE_UINT32(ptr); ptr += 4;
 				_sounds[slot].jump[_sounds[slot].numJumps].hookId = READ_BE_UINT32(ptr); ptr += 4;
 				_sounds[slot].jump[_sounds[slot].numJumps].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
+//				if (_sounds[slot].soundId == 2311)
+//					printf("JUMP: offset: %d, dest: %d, hookId: %d\n",  _sounds[slot].jump[_sounds[slot].numJumps].offset, _sounds[slot].jump[_sounds[slot].numJumps].dest, _sounds[slot].jump[_sounds[slot].numJumps].hookId);
 				_sounds[slot].numJumps++;
 				break;
 			case MKID_BE('SYNC'):
@@ -327,12 +331,13 @@ int ImuseDigiSndMgr::getNumMarkers(soundStruct *soundHandle) {
 	return soundHandle->numMarkers;
 }
 
-int ImuseDigiSndMgr::getJumpIdByRegionId(soundStruct *soundHandle, int number) {
+int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
-	assert(number >= 0 && number < soundHandle->numRegions);
+	assert(region >= 0 && region < soundHandle->numRegions);
 	for (int l = 0; l < soundHandle->numJumps; l++) {
-		if (soundHandle->jump[l].offset == soundHandle->region[number].offset) {
-			return l;
+		if (soundHandle->jump[l].offset == soundHandle->region[region].offset) {
+			if (soundHandle->jump[l].hookId == hookId)
+				return l;
 		}
 	}
 	
@@ -351,15 +356,12 @@ void ImuseDigiSndMgr::getSyncSizeAndPtrById(soundStruct *soundHandle, int number
 	}
 }
 
-int ImuseDigiSndMgr::getRegionIdByHookId(soundStruct *soundHandle, int number) {
+int ImuseDigiSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
-	for (int l = 0; l < soundHandle->numJumps; l++) {
-		if (soundHandle->jump[l].hookId == number) {
-			for (int r = 0; r < soundHandle->numRegions; r++) {
-				if (soundHandle->jump[l].dest == soundHandle->region[r].offset) {
-					return r;
-				}
-			}
+	assert(jumpId >= 0 && jumpId < soundHandle->numJumps);
+	for (int l = 0; l < soundHandle->numRegions; l++) {
+		if (soundHandle->jump[jumpId].dest == soundHandle->region[l].offset) {
+			return l;
 		}
 	}
 

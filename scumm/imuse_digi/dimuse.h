@@ -35,6 +35,8 @@ namespace Scumm {
 
 #define MAX_DIGITAL_TRACKS 16
 
+struct imuseComiTable;
+
 class IMuseDigital : public MusicEngine {
 private:
 
@@ -52,6 +54,7 @@ private:
 		bool started;
 		int32 regionOffset;
 		int32 trackOffset;
+		bool sequence;
 		int curRegion;
 		int curHookId;
 		int soundGroup;
@@ -72,16 +75,21 @@ private:
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
+
+	int _attributesState[97];
+	int _attributesSeq[91];
+	int _curSeqAtribPos;
+
 	int _curMusicState;
 	int _curMusicSeq;
 	int _curMusicCue;
-	
+
 	int _curMusicSoundId;
 
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input);
+	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
@@ -89,28 +97,32 @@ private:
 	void stopMusic();
 
 	int getSoundIdByName(const char *soundName);
-	void fadeOutMusic();
+	void fadeOutMusic(int fadeDelay);
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
-	void playFtMusic(const char *songName, int opcode, int volume);
+	void playFtMusic(const char *songName, int opcode, int volume, bool sequence);
+
+	void setComiMusicState(int stateId);
+	void setComiMusicSequence(int seqId);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
 	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input)
-		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input); }
+		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0); }
 	void startVoice(int soundId)
-		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
+		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0); }
 	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
-	void startMusic(int soundId)
-		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL); }
-	void startMusic(const char *soundName, int soundId)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
+		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0); }
+	void startMusic(int soundId, bool sequence)
+		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, sequence, 0); }
+	void startMusic(const char *soundName, int soundId, bool sequence, int hookId)
+		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, sequence, hookId); }
 	void startSfx(int soundId)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
+		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, false, 0); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
@@ -128,7 +140,16 @@ public:
 	int32 getCurMusicLipSyncHeight(int syncId);
 };
 
-struct imuse_music_table {
+struct imuse_music_map {
+	int room;
+	int table_index;
+	int unk1;
+	int unk2;
+	int unk3;
+	int unk4;
+};
+
+struct imuseDigtable {
 	int room;
 	int id;
 	int unk1;
@@ -140,14 +161,17 @@ struct imuse_music_table {
 	char filename[13];
 };
 
-struct imuse_music_map {
-	int room;
-	int table_index;
-	int unk1;
-	int unk2;
-	int unk3;
-	int unk4;
+struct imuseComiTable {
+	char title[30];
+	int opcode;
+	int soundId;
+	char name[24];
+	int param;
+	int hookId;
+	int fadeDelay;
+	char filename[13];
 };
+
 
 struct imuseFtNames {
 	char name[20];
@@ -168,19 +192,19 @@ struct imuseFtSeqTable {
 
 #ifdef __PALM_OS__
 extern imuse_music_map *_digStateMusicMap;
-extern const imuse_music_table *_digStateMusicTable;
-extern const imuse_music_table *_comiStateMusicTable;
-extern const imuse_music_table *_comiSeqMusicTable;
-extern const imuse_music_table *_digSeqMusicTable;
+extern const imuseDigtable *_digStateMusicTable;
+extern const imuseDigtable *_comiStateMusicTable;
+extern const imuseComiTable *_comiSeqMusicTable;
+extern const imuseComiTable *_digSeqMusicTable;
 extern const imuseFtStateTable *_ftStateMusicTable;
 extern const imuseFtSeqTable *_ftSeqMusicTable;
 extern const imuseFtNames *_ftSeqNames;
 #else
 extern imuse_music_map _digStateMusicMap[];
-extern const imuse_music_table _digStateMusicTable[];
-extern const imuse_music_table _digSeqMusicTable[];
-extern const imuse_music_table _comiStateMusicTable[];
-extern const imuse_music_table _comiSeqMusicTable[];
+extern const imuseDigtable _digStateMusicTable[];
+extern const imuseDigtable _digSeqMusicTable[];
+extern const imuseComiTable _comiStateMusicTable[];
+extern const imuseComiTable _comiSeqMusicTable[];
 extern const imuseFtStateTable _ftStateMusicTable[];
 extern const imuseFtSeqTable _ftSeqMusicTable[];
 extern const imuseFtNames _ftSeqNames[];

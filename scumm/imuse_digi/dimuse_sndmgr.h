@@ -124,8 +124,8 @@ public:
 	int getNumRegions(soundStruct *soundHandle);
 	int getNumJumps(soundStruct *soundHandle);
 	int getNumMarkers(soundStruct *soundHandle);
-	int getJumpIdByRegionId(soundStruct *soundHandle, int number);
-	int getRegionIdByHookId(soundStruct *soundHandle, int number);
+	int getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId);
+	int getRegionIdByJumpId(soundStruct *soundHandle, int jumpId);
 	int getJumpHookId(soundStruct *soundHandle, int number);
 	int getJumpFade(soundStruct *soundHandle, int number);
 	char *getMarker(soundStruct *soundHandle, int number);

@@ -46,9 +46,13 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
+
 	_curMusicState = 0;
 	_curMusicSeq = 0;
 	_curMusicCue = 0;
+	memset(_attributesSeq, 0, sizeof(_attributesSeq));
+	memset(_attributesState, 0, sizeof(_attributesState));
+	_curSeqAtribPos = 0;
 
 	_curMusicSoundId = -1;
 }
@@ -78,10 +82,10 @@ void IMuseDigital::callback() {
 			} else if (_track[l].stream) {
 				if ((!_track[l].locked) && (_track[l].toBeRemoved)) {
 					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].soundId);
-					if (_track[l].stream)
-						_track[l].stream->finish();
+					_track[l].stream->finish();
 					_track[l].stream = NULL;
 					_sound->closeSound(_track[l].soundHandle);
+					_curMusicSeq = 0;
 					_track[l].used = false;
 					continue;
 				}
@@ -215,21 +219,21 @@ void IMuseDigital::switchToNextRegion(int track) {
 		return;
 	}
 
-	int hookid = _sound->getJumpIdByRegionId(_track[track].soundHandle, _track[track].curRegion);
-	if (hookid == _track[track].curHookId) {
-		int region = _sound->getRegionIdByHookId(_track[track].soundHandle, hookid);
+	int jumpId = _sound->getJumpIdByRegionAndHookId(_track[track].soundHandle, _track[track].curRegion, _track[track].curHookId);
+	if (jumpId != -1) {
+		int region = _sound->getRegionIdByJumpId(_track[track].soundHandle, jumpId);
 		if (region != -1) {
 			_track[track].curRegion = region;
+			debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
 			_track[track].curHookId = 0;
-			debug(5, "switchToNextRegion-sound(%d) jump to %d region", _track[track].soundId, _track[track].curRegion);
 		}
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select %d region", _track[track].soundId, _track[track].curRegion);
+	debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
 	_track[track].regionOffset = 0;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId) {
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
 
@@ -244,12 +248,13 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l].soundId = soundId;
 			_track[l].started = false;
 			_track[l].soundGroup = soundGroup;
-			_track[l].curHookId = 0;
+			_track[l].curHookId = hookId;
 			_track[l].curRegion = -1;
 			_track[l].regionOffset = 0;
 			_track[l].trackOffset = 0;
 			_track[l].mod = 0;
 			_track[l].toBeRemoved = false;
+			_track[l].sequence = sequence;
 
 			int bits = 0, freq = 0, channels = 0, mixerFlags = 0;
 
@@ -260,7 +265,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				if (soundName == NULL)
 					_track[l].soundHandle = _sound->openSound(soundId, NULL, soundType, soundGroup);
 				else
-					_track[l].soundHandle = _sound->openSound(0, soundName, soundType, soundGroup);
+					_track[l].soundHandle = _sound->openSound(soundId, soundName, soundType, soundGroup);
 
 				if (_track[l].soundHandle == NULL)
 					return;
@@ -296,8 +301,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
-			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT)) {
-				stopMusic();
+			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT) && !((_vm->_gameId == GID_CMI) && (_vm->_features != GF_DEMO))) {
+				fadeOutMusic(120);
 				_curMusicSoundId = soundId;
 			}
 
@@ -462,6 +467,16 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			break;
 		}
 		break;
+	case 15: // ImuseSetHook
+		debug(5, "ImuseSetHookId (%d, %d)", sample, c);
+		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			_track[l].locked = true;
+			if ((_track[l].soundId == sample) && _track[l].used) {
+				_track[l].curHookId = c;
+			}
+			_track[l].locked = false;
+		}
+		break;
 	case 25: // ImuseStartStream
 		debug(5, "ImuseStartStream (%d, %d, %d)", sample, c, d);
 		break;
@@ -472,10 +487,10 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		debug(5, "ImuseSetState (%d)", b);
 		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 			if (b == 1)
-				startMusic(1);
+				startMusic(1, false);
 			else {
 				if (getSoundStatus(2) == 0)
-					startMusic(2);
+					startMusic(2, false);
 			}
 		} else if (_vm->_gameId == GID_DIG) {
 			if (b == 1000) {		// STATE_NULL
@@ -487,39 +502,27 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					int music = _digStateMusicMap[l].table_index;
 					debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 					if (_digStateMusicTable[music].filename[0] != 0) {
-						startMusic(_digStateMusicTable[music].filename, _digStateMusicTable[music].id);
+						startMusic(_digStateMusicTable[music].filename, _digStateMusicTable[music].id, false, 0);
 					}
 					break;
 				}
 			}
 		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
 			if (b == 2) {
-				startMusic("in1.imx", 2002);
+				startMusic("in1.imx", 2002, false, 0);
 			} else if (b == 4) {
-				startMusic("in2.imx", 2004);
+				startMusic("in2.imx", 2004, false, 0);
 			} else if (b == 8) {
-				startMusic("out1.imx", 2008);
+				startMusic("out1.imx", 2008, false, 0);
 			} else if (b == 9) {
-				startMusic("out2.imx", 2009);
+				startMusic("out2.imx", 2009, false, 0);
 			} else if (b == 16) {
-				startMusic("gun.imx", 2016);
+				startMusic("gun.imx", 2016, false, 0);
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_vm->_currentRoom);
 			}
 		} else if (_vm->_gameId == GID_CMI) {
-			if (b == 1000) {		// STATE_NULL
-				stopMusic();
-				return;
-			}
-			for (l = 0; _comiStateMusicTable[l].id != -1; l++) {
-				if ((_comiStateMusicTable[l].id == b)) {
-					debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
-					if (_comiStateMusicTable[l].filename[0] != 0) {
-						startMusic(_comiStateMusicTable[l].filename, b);
-					}
-					break;
-				}
-			}
+			setComiMusicState(b);
 		} else if (_vm->_gameId == GID_FT) {
 			setFtMusicState(b);
 		}
@@ -531,21 +534,13 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				if (_digSeqMusicTable[l].room == b) {
 					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
 					if (_digSeqMusicTable[l].filename[0] != 0) {
-						startMusic(_digSeqMusicTable[l].filename, b);
+						startMusic(_digSeqMusicTable[l].filename, b, false, 0);
 					}
 					break;
 				}
 			}
 		} else if (_vm->_gameId == GID_CMI) {
-			for (l = 0; _comiSeqMusicTable[l].id != -1; l++) {
-				if (_comiSeqMusicTable[l].id == b) {
-					debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
-					if (_comiSeqMusicTable[l].filename[0] != 0) {
-						startMusic(_comiSeqMusicTable[l].filename, b);
-					}
-					break;
-				}
-			}
+			setComiMusicSequence(b);
 		} else if (_vm->_gameId == GID_FT) {
 			setFtMusicSequence(b);
 		}
@@ -558,7 +553,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 0x1003: // ImuseSetAttribute
 		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
-		// TODO
+		if (_vm->_gameId == GID_DIG) {
+		}
 		break;
 	case 0x2000: // ImuseSetMasterSFXVolume
 		debug(5, "ImuseSetMasterSFXVolume (%d)", b);
@@ -637,11 +633,18 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 }
 
 int32 IMuseDigital::getCurMusicPosInMs() {
-	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", _curMusicSoundId);
+	int soundId = -1;
 
-//	return getPosInMs(_curMusicSoundId);
-//  hack for comi song scene to be completable
-	return 300000;
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
+		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC)) {
+			soundId = _track[l].soundId;
+		}
+		_track[l].locked = false;
+	}
+
+	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", soundId);
+	return getPosInMs(soundId);
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
