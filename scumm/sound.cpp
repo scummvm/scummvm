@@ -881,8 +881,8 @@ File *Sound::openSfxFile() {
 #ifdef USE_FLAC
 	if (!file->isOpen()) {
 		sprintf(buf, "%s.sof", _vm->getGameName());
-		if (!file->open(buf, _vm->getGameDataPath()))
-			file->open("monster.sof", _vm->getGameDataPath());
+		if (!file->open(buf))
+			file->open("monster.sof");
 		if (file->isOpen())
 			_sound_mode = kFlacMode;
 	}
@@ -891,8 +891,8 @@ File *Sound::openSfxFile() {
 #ifdef USE_MAD
 	if (!file->isOpen()) {
 		sprintf(buf, "%s.so3", _vm->getGameName());
-		if (!file->open(buf, _vm->getGameDataPath()))
-			file->open("monster.so3", _vm->getGameDataPath());
+		if (!file->open(buf))
+			file->open("monster.so3");
 		if (file->isOpen())
 			_sound_mode = kMP3Mode;
 	}
@@ -901,8 +901,8 @@ File *Sound::openSfxFile() {
 #ifdef USE_VORBIS
 	if (!file->isOpen()) {
 		sprintf(buf, "%s.sog", _vm->getGameName());
-		if (!file->open(buf, _vm->getGameDataPath()))
-			file->open("monster.sog", _vm->getGameDataPath());
+		if (!file->open(buf))
+			file->open("monster.sog");
 		if (file->isOpen())
 			_sound_mode = kVorbisMode;
 	}
@@ -943,8 +943,8 @@ File *Sound::openSfxFile() {
 	}
 
 	sprintf(buf, "%s.sou", _vm->getGameName());
-	if (!file->open(buf, _vm->getGameDataPath())) {
-		file->open("monster.sou", _vm->getGameDataPath());
+	if (!file->open(buf)) {
+		file->open("monster.sou");
 	}
 
 	if (!file->isOpen()) {

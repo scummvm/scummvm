@@ -719,9 +719,9 @@ void ScummEngine::loadLanguageBundle() {
 	int32 size;
 
 	if (_gameId == GID_DIG) {
-		file.open("language.bnd", getGameDataPath());
+		file.open("language.bnd");
 	} else if (_gameId == GID_CMI) {
-		file.open("language.tab", getGameDataPath());
+		file.open("language.tab");
 	} else {
 		return;
 	}
