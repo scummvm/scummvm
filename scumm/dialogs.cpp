@@ -55,6 +55,7 @@ using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;
 typedef GUI::ChooserDialog GUI_ChooserDialog;
+typedef GUI::Dialog GUI_Dialog;
 
 namespace Scumm {
 
@@ -656,9 +657,7 @@ void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 }
 
 void ValueDisplayDialog::open() {
-#ifndef _WIN32_WCE
-	GUI::Dialog::open();
-#endif
+	GUI_Dialog::open();
 	setResult(_value);
 	_timer = getMillis() + kDisplayDelay;
 }
