@@ -18,6 +18,7 @@
  * $Header$
  */
 
+#include "stdafx.h"
 #include "chooser.h"
 #include "newgui.h"
 #include "ListWidget.h"
