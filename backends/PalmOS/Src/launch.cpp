@@ -46,10 +46,7 @@ void ModDelete() {
 	LocalID del_dbID;
 
 	DELET_FILE("Glbs::Common");
-	DELET_FILE("Glbs::Scumm");
-	DELET_FILE("Glbs::Simon");
-	DELET_FILE("Glbs::Queen");
-	DELET_FILE("Glbs::Sword1");
+	DELET_FILE("Glbs::Engine");
 	DELET_FILE("ScummVM-Engine");
 }
 
@@ -84,21 +81,24 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine) {
 		{ "scumm" },
 		{ "simon" },
 		{ "queen" },
-		{ "sword1" }
+		{ "sword1" },
+		{ "sky" }
 	};
 	
 	char filename[256];
 	UInt16 dum1;
 	UInt32 dum2;
 	FileRef file;
-	Err e;
 	FormPtr ofmP, frmP;
+	Err e = errNone;
 
 	ofmP = FrmGetActiveForm();
 	frmP = FrmInitForm(ImportForm);
 	FrmSetActiveForm(frmP);
 	FrmDrawForm(frmP);
 
+#ifndef _DEBUG_ENGINE
+	// In debug mode, the engine files are directly uploaded to the simulator
 	BUILD_FILE(files[engine], ".engine");	// engine file ?
 	CHECK_FILE();
 	BUILD_FILE(files[engine], ".data");		// data file ?
@@ -112,7 +112,7 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine) {
 	e = (e) ? e : VFSImportDatabaseFromFile(volRefNum, filename, &dum1, &dum2);
 	BUILD_FILE(files[engine], ".engine");
 	e = (e) ? e : VFSImportDatabaseFromFile(volRefNum, filename, &dum1, &dum2);
-
+#endif
 	// if error, cleanup
 	if (e) ModDelete();
 
@@ -348,7 +348,7 @@ Boolean StartScummVM() {
 		ArgsAdd(&argvP[argc], "-d", num, &argc);
 	}
 	
-	if (engine == ENGINE_QUEEN) {
+	if (engine == ENGINE_QUEEN || engine == ENGINE_SKY) {
 		// alternative intro ?
 		if (gPrefs->altIntro)
 			ArgsAdd(&argvP[argc], "--alt-intro", NULL, &argc);
@@ -363,8 +363,8 @@ Boolean StartScummVM() {
 			ArgsAdd(&argvP[argc], "--demo-mode", NULL, &argc);
 	}
 
-//	if (argc > MAX_ARG)
-//		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
+	if (argc > MAX_ARG)
+		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
 
 	stackSize = (gPrefs->setStack ? STACK_LARGER : STACK_DEFAULT);
 	lightspeed= (gPrefs->lightspeed.enable ? gPrefs->lightspeed.mode : 255);
