@@ -1265,6 +1265,7 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
+	case 194:		// HE 7.2
 		switch (m) {
 		case 0:
 			actorTalk(_scriptPointer);

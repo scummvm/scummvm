@@ -318,7 +318,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* D4 */
 		OPCODE(o6_shuffle),
-		OPCODE(o6_jumpToScript),
+		OPCODE(o7_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
 		/* D8 */
@@ -496,15 +496,20 @@ void ScummEngine_v7he::o7_readINI() {
 	int retval;
 
 	// we pretend that we don't have .ini file
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-	type = pop();
+	if (_heversion <= 71) {
+		len = resStrLen(_scriptPointer);
+		_scriptPointer += len + 1;
+	}
+
+	type = fetchScriptByte();
 
 	switch (type) {
 	case 1: // number
+	case 6: // HE 7.2
 		push(0);
 		break;
 	case 2: // string
+	case 7: // HE 7.2
 		defineArray(0, kStringArray, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
@@ -749,6 +754,21 @@ void ScummEngine_v7he::o7_arrayOps() {
 	default:
 		error("o7_arrayOps: default case %d (array %d)", subOp, array);
 	}
+}
+
+void ScummEngine_v7he::o7_jumpToScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_jumpToScript();
+		return;
+	}
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 void ScummEngine_v7he::o7_startScript() {
