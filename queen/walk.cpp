@@ -249,6 +249,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 	uint16 i;
 	for (i = 1; i <= _walkDataCount; ++i) {
 		WalkData *pwd = &_walkData[i];
+
 		// unpack necessary frames for bob animation
 		uint16 dstFrame = image;
 		uint16 srcFrame = ABS(pwd->anim.firstFrame);
@@ -283,6 +284,9 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			}
 			else {
 				pbs->speed = scale * (mpd->moveSpeed / 2) / 100;
+			}
+			if (pbs->speed < 1) {
+				pbs->speed = 1;
 			}
 			// XXX if (cutQuit)
 		}
