@@ -35,7 +35,7 @@ extern const Char *SCUMMVM_SAVEPATH;
 #define DISABLE_QUEEN
 
 // PalmOS
-//#define DISABLE_TAPWAVE
+#define DISABLE_TAPWAVE
 #define DEBUG_ARM
 
 int main(int argc, char **argv);
