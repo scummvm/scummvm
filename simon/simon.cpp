@@ -4218,10 +4218,8 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 			sprintf(buf, "%.3d%d.VGA", vga_id >> 1, (vga_id & 1) + 1);
 
 		in.open(buf, _gameDataPath);
-		if (in.isOpen() == false) {
-			warning("read_vga_from_datfile_1: cannot open %s", buf);
-			return;
-		}
+		if (in.isOpen() == false)
+			error("read_vga_from_datfile_1: cannot open %s", buf);
 
 		size = in.size();
 
