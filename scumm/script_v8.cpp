@@ -1370,6 +1370,10 @@ void Scumm_v8::o8_startVideo()
 	
 	ScummRenderer * sr = new ScummRenderer(this, 83);
 	SmushPlayer * sp = new SmushPlayer(sr);
+
+	if (_noSubtitles)
+		sp->hide("subtitles");
+	
 	sp->play((char*)_scriptPointer, getGameDataPath());
 	
 	delete sp;
