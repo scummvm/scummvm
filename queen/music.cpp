@@ -290,6 +290,8 @@ static const byte mt32_to_gm[128] = {
 	}
 
 	uint16 MusicPlayer::nextValidSong() {
+		int i;
+
 		if (_randomLoop && validSongs() > 1) {
 			uint8 pos = randomQueuePos(); 
 			while(isBadSong(_songQueue[pos]))
@@ -301,13 +303,13 @@ static const byte mt32_to_gm[128] = {
 		if (!_looping && validSongs() < 2)
 			return 0;
 		
-		for (int i = _queuePos + 1; i < MUSIC_QUEUE_SIZE; i++)  
+		for (i = _queuePos + 1; i < MUSIC_QUEUE_SIZE; i++)  
 			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
 				_queuePos = i;
 				return _songQueue[i];
 			}
 
-		for (int i = 0; i < _queuePos; i++) 
+		for (i = 0; i < _queuePos; i++) 
 			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
 				_queuePos = i;
 				return _songQueue[i];	
