@@ -1617,7 +1617,7 @@ void Part::sendAll() {
 	_mc->effectLevel(_effect_level);
 	if (_instrument.isValid())
 		_instrument.send(_mc);
-	_mc->chorusLevel(_effect_level);
+	_mc->chorusLevel(_chorus);
 	_mc->priority(_pri_eff);
 }
 
