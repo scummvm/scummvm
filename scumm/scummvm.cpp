@@ -170,6 +170,9 @@ static const ScummGameSettings scumm_settings[] = {
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
+	{"putter", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttputt"},
+
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -2982,7 +2985,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		engine = new ScummEngine_v5(detector, syst, game);
 		break;
 	case 6:
-		engine = new ScummEngine_v6(detector, syst, game);
+		if (game.features & GF_HUMONGOUS)
+			engine = new ScummEngine_v6he(detector, syst, game);
+		else
+			engine = new ScummEngine_v6(detector, syst, game);
 		break;
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game);

@@ -552,6 +552,61 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
+class ScummEngine_v6he : public ScummEngine_v6 {
+protected:
+	typedef void (ScummEngine_v6he::*OpcodeProcV6he)();
+	struct OpcodeEntryV6he {
+		OpcodeProcV6he proc;
+		const char *desc;
+	};
+	
+	const OpcodeEntryV6he *_opcodesV6he;
+
+	File _hFileTable[17];
+	
+public:
+	ScummEngine_v6he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6(detector, syst, gs) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+
+	virtual void setupScummVars();
+	virtual void decodeParseString(int a, int b);
+
+	void unknownEA_func(int a, int b, int c, int d, int e);
+	int readFileToArray(int slot, int32 size);
+	void writeFileFromArray(int slot, int resID);
+
+	/* Version 6 script opcodes */
+	void o6_drawBlastObject();
+	void o6_setBlastObjectWindow();
+	void o6_roomOps();
+	void o6_actorOps();
+	void o6_verbOps();
+	void o6_wait();
+	void o6_soundKludge();
+	void o6_dummy();
+	void o6_kernelSetFunctions();
+	void o6_kernelGetFunctions();
+	void o6_stampObject();
+	void o6_openFile();
+	void o6_closeFile();
+	void o6_deleteFile();
+	void o6_readFile();
+	void o6_rename();
+	void o6_writeFile();
+	void o6_findAllObjects();
+	void o6_unknownE0();
+	void o6_unknownE1();
+	void o6_unknownE4();
+	void o6_localizeArray();
+	void o6_unknownFA();
+	void o6_unknownEA();
+	void o6_readINI();
+};
+
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
 	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6(detector, syst, gs) {}
