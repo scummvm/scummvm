@@ -4346,7 +4346,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		// allocate more space for text to cope with foreign languages that use
 		// up more space than english. I hope 6400 bytes are enough. This number
 		// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
-		if (id == 5)
+		if ((_game & GF_SIMON2) && id == 5)
 			size += 6400;
 
 		dst = setup_vga_destination(size);
