@@ -40,7 +40,7 @@ static const byte mt32_to_gm[128] = {
 };
 
 static struct {
-	char *name;
+	const char *name;
 	byte program;
 }
 
