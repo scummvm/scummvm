@@ -57,6 +57,8 @@ GUI
 * Maybe rearrange Launcher dialog, too, to look a bit like the current
   SCUMM in-game menu: instead of two button rows, have a single button
   column at the right side, and the target list on the left side.
+* Remove hardcoded 320x200 assumptions, use game screen size
+* Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
 
 Audio
 =====
@@ -162,3 +164,9 @@ SDL backend
   algorithm, this should solve many of the problems with some luck
 * OpenGL code: either fix it (see open bug tracker items and various hacks in the code),
   or remove it. Does anybody really need this???
+
+X11 backend
+===========
+* Verify that it still actually works
+* Make it work with multiple bitdepths
+* Add frills used by SDL backend like graphic filters usage and CD audio
