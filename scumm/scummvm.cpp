@@ -649,9 +649,20 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 	
 	if (md5_file(buf, md5sum)) {
+		// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
+		// It returns only 8 chars string in upper case so i need to use hex[],
+		// copy last 2 chars to md5str and convert result to lower case
 		char md5str[32+1];
-		for (int j = 0; j < 16; j++)
-			sprintf(md5str+j*2, "%02x", md5sum[j]);
+		char hex[8+1];
+		for (int j = 0; j < 16; j++) {
+			sprintf(hex, "%02x", (int)md5sum[j]);
+			memcpy(md5str+j*2, hex + strlen(hex) - 2, 2);
+		}
+
+		for (int j = 0; j < 32; j++)
+			md5str[j] = tolower(md5str[j]);
+		// --
+		
 		md5str[32] = 0;
 		printf("%s  %s\n", md5str, buf);
 		const MD5Table *elem;
