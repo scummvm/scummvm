@@ -34,6 +34,7 @@
 #include "saga/scene.h"
 #include "saga/text.h"
 
+#include "saga/actionmap.h"
 #include "saga/objectmap.h"
 
 #include "saga/render.h"
@@ -47,11 +48,9 @@ int Render::reg(void) {
 	return R_SUCCESS;
 }
 
-Render::Render(SagaEngine *vm, OSystem *system, Gfx *gfx, ObjectMap *omap) {
+Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
-	_gfx = gfx;
-	_omap = omap;
 	_initialized = false;
 
 	R_GAME_DISPLAYINFO disp_info;
@@ -87,7 +86,7 @@ Render::Render(SagaEngine *vm, OSystem *system, Gfx *gfx, ObjectMap *omap) {
 	_tmp_buf_w = tmp_w;
 	_tmp_buf_h = tmp_h;
 
-	_backbuf_surface = _gfx->getBackBuffer();
+	_backbuf_surface = _vm->_gfx->getBackBuffer();
 	_flags = 0;
 
 	_initialized = true;
@@ -135,8 +134,8 @@ int Render::drawScene() {
 
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
-		_omap->draw(backbuf_surface, &mouse_pt, _gfx->getWhite(), _gfx->getBlack());
-		_vm->_scene->drawActionMap(backbuf_surface, _gfx->matchColor(R_RGB_RED));
+		_vm->_scene->_objectMap->draw(backbuf_surface, &mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
+		_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(R_RGB_RED));
 	}
 
 	// Draw queued actors
@@ -155,7 +154,7 @@ int Render::drawScene() {
 		sprintf(txt_buf, "%d", _fps);
 		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
-					_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
+					_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
@@ -163,7 +162,7 @@ int Render::drawScene() {
 		int msg_len = strlen(R_PAUSEGAME_MSG);
 		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->buf_w - msg_w) / 2, 90, _gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
+				(backbuf_surface->buf_w - msg_w) / 2, 90, _vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -173,12 +172,12 @@ int Render::drawScene() {
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		_vm->textDraw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
-				_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE | FONT_CENTERED);
+				_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable
 	if (_flags & RF_PALETTE_TEST) {
-		_gfx->drawPalette(backbuf_surface);
+		_vm->_gfx->drawPalette(backbuf_surface);
 	}
 
 	// Draw console

@@ -49,6 +49,7 @@ namespace Saga {
 static void CF_scenechange(int argc, char *argv[], void *refCon);
 static void CF_sceneinfo(int argc, char *argv[], void *refCon);
 static void CF_actioninfo(int argc, char *argv[], void *refCon);
+static void CF_objectinfo(int argc, char *argv[], void *refCon);
 
 
 int Scene::reg() {
@@ -57,6 +58,7 @@ int Scene::reg() {
 	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, R_CVAR_NONE, 0, 0, this);
 	CVAR_RegisterFunc(CF_actioninfo,
 					  "action_info", NULL, R_CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_objectinfo, "object_info", NULL, R_CVAR_NONE, 0, 0, this);
 
 	return R_SUCCESS;
 }
@@ -627,6 +629,8 @@ int Scene::processSceneResources() {
 	const byte *pal_p;
 	int i;
 
+	_objectMap = new ObjectMap(_vm);
+
 	// Process the scene resource list
 	for (i = 0; i < _resListEntries; i++) {
 		res_data = _resList[i].res_data;
@@ -670,11 +674,11 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_OBJECT_NAME_LIST:
 			debug(0, "Loading object name list resource...");
-			_vm->_objectMap->loadNames(_resList[i].res_data, _resList[i].res_data_len);
+			_objectMap->loadNames(_resList[i].res_data, _resList[i].res_data_len);
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(0, "Loading object map resource...");
-			if (_vm->_objectMap->load(res_data,
+			if (_objectMap->load(res_data,
 				res_data_len) != R_SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading object map resource");
 				return R_FAILURE;
@@ -851,7 +855,7 @@ int Scene::endScene() {
 	_vm->_anim->reset();
 
 	_vm->_palanim->freePalAnim();
-	_vm->_objectMap->freeMem();
+	delete _objectMap;
 	delete _actionMap;
 
 	ys_dll_destroy(_animList);
@@ -923,6 +927,14 @@ static void CF_actioninfo(int argc, char *argv[], void *refCon) {
 
 	((Scene *)refCon)->_actionMap->info();
 }
+
+static void CF_objectinfo(int argc, char *argv[], void *refCon) {
+	(void)(argc);
+	(void)(argv);
+
+	((Scene *)refCon)->_objectMap->info();
+}
+
 
 int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;

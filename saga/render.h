@@ -52,7 +52,7 @@ struct R_BUFFER_INFO {
 class Render {
 public:
 	int reg(void);
-	Render(SagaEngine *vm, OSystem *system, Gfx *gfx, ObjectMap *omap);
+	Render(SagaEngine *vm, OSystem *system);
 	~Render(void);
 	bool initialized();
 	int drawScene(void);
@@ -70,8 +70,6 @@ private:
 	SagaEngine *_vm;
 	OSystem *_system;
 	bool _initialized;
-	Gfx *_gfx;
-	ObjectMap *_omap;
 
 	// Module data
 	R_SURFACE *_backbuf_surface;

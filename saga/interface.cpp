@@ -484,7 +484,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
 	int script_num;
 	Point iactor_pt;
 
-	hit_object = _vm->_objectMap->hitTest(imouse_pt, &object_num);
+	hit_object = _vm->_scene->_objectMap->hitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
 		// Player clicked on empty spot - walk here regardless of verb
@@ -493,10 +493,10 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	object_flags = _vm->_objectMap->getFlags(object_num);
+	object_flags = _vm->_scene->_objectMap->getFlags(object_num);
 
 	if (object_flags & R_OBJECT_NORMAL) {
-		if ((script_num = _vm->_objectMap->getEPNum(object_num)) != -1) {
+		if ((script_num = _vm->_scene->_objectMap->getEPNum(object_num)) != -1) {
 			// Set active verb in script module
 			_vm->_sdata->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
 
@@ -525,7 +525,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
 
 	new_status[0] = 0;
 
-	hit_object = _vm->_objectMap->hitTest(imouse_pt, &object_num);
+	hit_object = _vm->_scene->_objectMap->hitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
 		// Cursor over nothing - just display current verb
@@ -533,9 +533,9 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	object_flags = _vm->_objectMap->getFlags(object_num);
+	object_flags = _vm->_scene->_objectMap->getFlags(object_num);
 
-	object_name = _vm->_objectMap->getName(object_num);
+	object_name = _vm->_scene->_objectMap->getName(object_num);
 
 	if (object_flags & R_OBJECT_NORMAL) {
 		// Normal scene object - display as subject of verb

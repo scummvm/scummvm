@@ -50,7 +50,6 @@
 #include "saga/sdata.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
-#include "saga/objectmap.h"
 #include "saga/sound.h"
 #include "saga/music.h"
 #include "saga/game_mod.h"
@@ -184,9 +183,8 @@ void SagaEngine::go() {
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
 
 	_isoMap = new IsoMap(_gfx);
-	_objectMap = new ObjectMap(_gfx);
 	
-	_render = new Render(this, _system, _gfx, _objectMap);
+	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return;
 	}
@@ -205,7 +203,6 @@ void SagaEngine::go() {
 	_script->reg();
 	_render->reg();
 	_anim->reg();
-	_objectMap->reg();
 
 	_previousTicks = _system->getMillis();
 
@@ -254,7 +251,6 @@ void SagaEngine::shutdown() {
 	delete _interface;
 	delete _render;
 	delete _isoMap;
-	delete _objectMap;
 	delete _sndRes;
 	delete _sdata;
 	// Shutdown system modules */

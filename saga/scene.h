@@ -27,9 +27,11 @@
 #define SAGA_SCENE_H
 
 #include "saga/text.h"
-#include "saga/actionmap.h"
 
 namespace Saga {
+
+class ActionMap;
+class ObjectMap;
 
 enum R_SCENE_MODES {
 	R_SCENE_MODE_INVALID,
@@ -236,8 +238,6 @@ class Scene {
 	void sceneInfoCmd(int argc, char *argv[]);
 	void sceneChangeCmd(int argc, char *argv[]);
 
-	void drawActionMap(R_SURFACE *ds, int color) { _actionMap->draw(ds, color); }
-
  private:
 	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *, 
 				  int fadeIn);
@@ -276,6 +276,7 @@ class Scene {
 
  public:
 	ActionMap *_actionMap;
+	ObjectMap *_objectMap;
 
  private:
 	int IHNMStartProc();

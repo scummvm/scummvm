@@ -42,10 +42,10 @@ struct R_OBJECTMAP_ENTRY {
 	byte flags;
 	byte defaultVerb;
 
-	int object_num;
-	int script_num;
+	int objectNum;
+	int scriptNum;
 
-	int n_clickareas;
+	int nClickareas;
 	R_CLICKAREA *clickareas;
 };
 
@@ -54,7 +54,7 @@ class Gfx;
 class ObjectMap{
 public:
 	int reg(void);
-	ObjectMap(Gfx *gfx);
+	ObjectMap(SagaEngine *vm);
 	~ObjectMap(void);
 	int load(const byte *om_res, size_t om_res_len);
 	int freeMem(void);
@@ -63,20 +63,20 @@ public:
 	const char *getName(int object);
 	const uint16 getFlags(int object);
 	const int getEPNum(int object);
-	int draw(R_SURFACE *draw_surface, Point *imouse_pt, int color, int color2);
+	int draw(R_SURFACE *draw_surface, Point *imousePt, int color, int color2);
 	int hitTest(Point *imouse_pt, int *object_num);
-	void objectInfo(int argc, char *argv[]);
+	void info(void);
+
 private:
-	int _initialized;
 
-	int _objects_loaded;
-	int _n_objects;
-	R_OBJECTMAP_ENTRY *_object_maps;
+	bool _objectsLoaded;
+	int _nObjects;
+	R_OBJECTMAP_ENTRY *_objectMaps;
 
-	int _names_loaded;
-	int _n_names;
+	bool _namesLoaded;
+	int _nNames;
 	const char **_names;
-	Gfx *_gfx;
+	SagaEngine *_vm;
 };
 
 } // End of namespace Saga
