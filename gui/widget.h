@@ -113,7 +113,10 @@ protected:
 	
 	virtual Widget *findWidget(int x, int y) { return this; }
 
-	void releaseFocus() { _boss->releaseFocus(); }
+	void releaseFocus() { assert(_boss); _boss->releaseFocus(); }
+
+	// By default, delegate unhandled commands to the boss
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) { assert(_boss); _boss->handleCommand(sender, cmd, data); }
 };
 
 /* StaticTextWidget */
