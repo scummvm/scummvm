@@ -200,12 +200,12 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 		srcptr = akcd + READ_LE_UINT32(&off->akcd);
 		the_akci = (AkosCI *) (akci + READ_LE_UINT16(&off->akci));
 
-		move_x_cur = move_x + (int16) READ_LE_UINT16(&the_akci->rel_x);
-		move_y_cur = move_y + (int16) READ_LE_UINT16(&the_akci->rel_y);
+		move_x_cur = move_x + (int16)READ_LE_UINT16(&the_akci->rel_x);
+		move_y_cur = move_y + (int16)READ_LE_UINT16(&the_akci->rel_y);
 		width = READ_LE_UINT16(&the_akci->width);
 		height = READ_LE_UINT16(&the_akci->height);
-		move_x += (int16) READ_LE_UINT16(&the_akci->move_x);
-		move_y -= (int16) READ_LE_UINT16(&the_akci->move_y);
+		move_x += (int16)READ_LE_UINT16(&the_akci->move_x);
+		move_y -= (int16)READ_LE_UINT16(&the_akci->move_y);
 
 		switch (codec) {
 		case 1:
@@ -233,8 +233,8 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 			srcptr = akcd + READ_LE_UINT32(&off->akcd);
 			the_akci = (AkosCI *) (akci + READ_LE_UINT16(&off->akci));
 
-			move_x_cur = move_x + (int16) READ_LE_UINT16(p + 0);
-			move_y_cur = move_y + (int16) READ_LE_UINT16(p + 2);
+			move_x_cur = move_x + (int16)READ_LE_UINT16(p + 0);
+			move_y_cur = move_y + (int16)READ_LE_UINT16(p + 2);
 
 			p += (p[4] & 0x80) ? 6 : 5;
 
@@ -338,8 +338,7 @@ void akos_generic_decode(AkosRenderer * ar)
 		do {
 			if (*scaleytab++ < ar->scale_y) {
 				if (color && y < ar->outheight
-						&& (!ar->v1.mask_ptr
-								|| !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
+						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
 					*dst = ar->palette[color];
 				}
 				mask += 40;
@@ -404,11 +403,10 @@ void akos_c1_spec1(AkosRenderer * ar)
 		do {
 			if (*scaleytab++ < ar->scale_y) {
 				if (color && y < ar->outheight
-						&& (!ar->v1.mask_ptr
-								|| !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
+						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
 					pcolor = ar->palette[color];
 					if (pcolor == 13)
-						pcolor = ar->shadow_table[*dst];						
+						pcolor = ar->shadow_table[*dst];
 					*dst = pcolor;
 				}
 				mask += 40;
@@ -557,7 +555,7 @@ void AkosRenderer::codec1()
 
 
 
-	if(_vm->isGlobInMemory(rtString,_vm->_vars[_vm->VAR_CUSTOMSCALETABLE])) {
+	if (_vm->isGlobInMemory(rtString, _vm->_vars[_vm->VAR_CUSTOMSCALETABLE])) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	} else {
 		v1.scaletable = default_scale_table;
@@ -746,23 +744,21 @@ void AkosRenderer::codec1()
 		draw_bottom = y_bottom;
 
 	if (cur_x == -1)
-		cur_x = 0;											/* ?? */
+		cur_x = 0;									/* ?? */
 
 	v1.destptr = outptr + cur_x + cur_y * outwidth;
 
 	masking = false;
 	if (clipping) {
 		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
-														 _vm->getResourceAddress(rtBuffer, 9) +
-														 _vm->gdi._imgBufOffs[clipping] +
-														 _vm->_screenStartStrip) != 0;
+																	_vm->getResourceAddress(rtBuffer, 9) +
+																	_vm->gdi._imgBufOffs[clipping] + _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;
 
 	if (masking || charsetmask || shadow_mode) {
-		v1.mask_ptr =
-			_vm->getResourceAddress(rtBuffer, 9) + cur_y * 40 + _vm->_screenStartStrip;
+		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + cur_y * 40 + _vm->_screenStartStrip;
 		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
 		if (!charsetmask && masking) {
 			v1.mask_ptr += v1.imgbufoffs;
@@ -879,33 +875,33 @@ void AkosRenderer::codec5()
 
 	vs = &_vm->virtscr[0];
 	//setBlastObjectMode(shadow_mode); // not implemented yet
-	moveX=move_x_cur;
-	moveY=move_y_cur;
+	moveX = move_x_cur;
+	moveY = move_y_cur;
 
 	if (!mirror) {
 		left = (x - moveX - width) + 1;
 	} else {
-		left = x + moveX -1;
+		left = x + moveX - 1;
 	}
 
-	var_20=0;
+	var_20 = 0;
 	max_width = outwidth;
 
 	right = left + width - 1;
 	top = y + moveY;
 	bottom = top + height;
 
-	if(left < 0)
+	if (left < 0)
 		left = 0;
-	if(left > max_width)
+	if (left > max_width)
 		left -= left - max_width;
 
 	// Yazoo: this is not correct, but fix a lots of bugs for the momment
-	
+
 	draw_top = 0;
 	draw_bottom = vs->height;
 
-	_vm->updateDirtyRect(0, left, right+1, top, bottom+1, 1 << dirty_id);
+	_vm->updateDirtyRect(0, left, right + 1, top, bottom + 1, 1 << dirty_id);
 
 	bdd.dataptr = srcptr;
 	bdd.out = vs->screenPtr;
@@ -915,10 +911,10 @@ void AkosRenderer::codec5()
 	bdd.scale_y = 0xFF;
 	bdd.srcheight = height;
 	bdd.srcwidth = width;
-	bdd.x = left+1;
+	bdd.x = left + 1;
 	bdd.y = top;
 
-	_vm->drawBomp(&bdd,0,bdd.dataptr,0,0);
+	_vm->drawBomp(&bdd, 0, bdd.dataptr, 0, 0);
 }
 
 void AkosRenderer::codec16()
@@ -952,8 +948,7 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor * a)
 #define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
 #define GB(o) aksq[curpos+(o)]
 
-bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo,
-															int numakfo)
+bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo, int numakfo)
 {
 	byte active;
 	uint old_curpos, curpos, end;
@@ -1057,7 +1052,7 @@ bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo,
 		switch (code) {
 		case AKC_StartAnimInActor:
 			akos_queCommand(4, derefActorSafe(a->getAnimVar(GB(2)),
-							"akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
+																				"akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
 			continue;
 
 		case AKC_Random:
@@ -1099,8 +1094,7 @@ bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo,
 			akos_queCommand(4, a, a->getAnimVar(GB(2)), 0);
 			continue;
 		case AKC_SetVarInActor:
-			derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(
-								 GB(3), GW(4)
+			derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4)
 				);
 			continue;
 		case AKC_HideActor:
@@ -1174,8 +1168,7 @@ bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo,
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan
-				 || code2 == AKC_Return);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return);
 
 	a->cost.curpos[chan] = curpos;
 

@@ -37,14 +37,14 @@ enum MoveFlags {
 };
 
 struct ActorWalkData {
-	int16 destx,desty;			// Final destination
+	int16 destx, desty;						// Final destination
 	byte destbox;
 	int16 destdir;
 	byte curbox;
-	int16 x,y;					// Current position
-	int16 newx,newy;			// Next position on our way to the destination
+	int16 x, y;										// Current position
+	int16 newx, newy;							// Next position on our way to the destination
 	int32 XYFactor, YXFactor;
-	uint16 xfrac,yfrac;
+	uint16 xfrac, yfrac;
 	int point3x, point3y;
 };
 
@@ -57,16 +57,13 @@ struct CostumeData {
 	uint16 start[16];
 	uint16 end[16];
 	uint16 frame[16];
-	
-	void reset()
-	{
+
+	void reset() {
 		stopped = 0;
 		for (int i = 0; i < 16; i++) {
 			active[i] = 0;
 			curpos[i] = start[i] = end[i] = frame[i] = 0xFFFF;
-	}
-}
-};
+}}};
 
 class Actor {
 
@@ -79,7 +76,7 @@ public:
 	uint16 costume;
 	byte room;
 	byte talkColor;
-	byte scalex,scaley;
+	byte scalex, scaley;
 	byte charset;
 	int16 newDirection;
 	byte moving;
@@ -89,12 +86,12 @@ public:
 	bool needRedraw, needBgReset, costumeNeedsInit, visible;
 	byte shadow_mode;
 	bool flip;
-	uint speedx,speedy;
+	uint speedx, speedy;
 	byte frame;
 	byte walkbox;
 	byte mask;
 	byte animProgress, animSpeed;
-	int16 new_1,new_2;
+	int16 new_1, new_2;
 	uint16 talk_script, walk_script;
 	byte new_3;
 	int8 layer;
@@ -105,13 +102,16 @@ public:
 	byte palette[64];
 
 protected:
-	Scumm	*_vm;
+	Scumm *_vm;
 
 public:
 
 	// Constructor, sets all data to 0
-	Actor() { memset(this, 0, sizeof(Actor)); }
-    void initActorClass(Scumm *scumm) {_vm = scumm;}
+	  Actor() {
+		memset(this, 0, sizeof(Actor));
+	} void initActorClass(Scumm *scumm) {
+		_vm = scumm;
+	}
 //protected:
 	void hideActor();
 	void showActor();
@@ -131,7 +131,7 @@ public:
 	void setActorDirection(int direction);
 
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
-	void adjustActorPos();	
+	void adjustActorPos();
 	void turnToDirection(int newdir);
 	void walkActor();
 	void drawActorCostume();
@@ -139,17 +139,25 @@ public:
 	void setActorCostume(int c);
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
-	
+
 	void remapActor(int b, int c, int d, int e);
 	void walkActorOld();
 
 	void animateActor(int anim);
-	
-	bool isInCurrentRoom()					{ return room == _vm->_currentRoom; }
-	int getRoom()							{ return room; }
 
-	int getAnimVar(byte var)				{ return animVariable[var]; }
-	void setAnimVar(byte var, int value)	{ animVariable[var] = value; }
+	bool isInCurrentRoom() {
+		return room == _vm->_currentRoom;
+	}
+	int getRoom() {
+		return room;
+	}
+
+	int getAnimVar(byte var) {
+		return animVariable[var];
+	}
+	void setAnimVar(byte var, int value) {
+		animVariable[var] = value;
+	}
 
 };
 

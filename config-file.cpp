@@ -33,8 +33,7 @@
 
 static char *ltrim(char *t)
 {
-	for (; *t && (*t == ' '); t++)
-		;
+	for (; *t && (*t == ' '); t++);
 	return t;
 }
 
@@ -54,8 +53,8 @@ static char *rtrim(char *t)
 
 class hashconfig {
 public:
-	hashconfig(const char *);
-	~hashconfig();
+	hashconfig (const char *);
+	 ~hashconfig ();
 	bool is_domain(const char *) const;
 	const char *get(const char *) const;
 	const char *set(const char *, const char *);
@@ -69,13 +68,12 @@ private:
 	int nkeys;
 };
 
-hashconfig::hashconfig(const char *dom):domain(dom ? Scumm::Strdup(dom) : 0),
+hashconfig::hashconfig (const char *dom):domain(dom ? Scumm::Strdup(dom) : 0),
 keys(0), values(0), nkeys(0)
 {
 }
 
-hashconfig::~hashconfig()
-{
+hashconfig::~hashconfig () {
 	xfree(domain);
 }
 
@@ -120,7 +118,7 @@ const char *hashconfig::getdomain() const
 	return domain;
 }
 
-void hashconfig::flush(FILE * cfg_file) const
+void hashconfig::flush(FILE *cfg_file) const
 {
 	int i;
 
@@ -143,7 +141,7 @@ void hashconfig::rename(const char *d)
 	domain = d ? Scumm::Strdup(d) : 0;
 }
 
-void hashconfig::merge(const hashconfig * h)
+void hashconfig::merge(const hashconfig *h)
 {
 	int i;
 
@@ -154,8 +152,9 @@ void hashconfig::merge(const hashconfig * h)
 
 // The config-class itself.
 
-Config::Config(const char *cfg, const char *d)
- : filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0), willwrite(false)
+Config::Config (const char *cfg, const char *d)
+: filename(Scumm::Strdup(cfg)), domain(d ? Scumm::Strdup(d) : 0), hash(0), ndomains(0),
+willwrite(false)
 {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
@@ -171,8 +170,7 @@ Config::Config(const char *cfg, const char *d)
 					// It's a new domain which begins here.
 					char *p = strchr(t, ']');
 					if (!p) {
-						debug(1,
-									"Config file buggy: no ] at the end of the domain name.\n");
+						debug(1, "Config file buggy: no ] at the end of the domain name.\n");
 					} else {
 						*p = 0;
 						set_domain(t + 1);
@@ -180,8 +178,7 @@ Config::Config(const char *cfg, const char *d)
 				} else {
 					// It's a new key in the domain.
 					if (!domain) {
-						debug(1,
-									"Config file buggy: we have a key without a domain first.\n");
+						debug(1, "Config file buggy: we have a key without a domain first.\n");
 					}
 					char *p = strchr(t, '\n');
 					if (p)
@@ -208,8 +205,7 @@ Config::Config(const char *cfg, const char *d)
 	}
 }
 
-Config::~Config()
-{
+Config::~Config () {
 	int i;
 
 	xfree(filename);
@@ -251,9 +247,8 @@ const char *Config::set(const char *key, const char *value, const char *d)
 	}
 
 	ndomains++;
-	hash =
-		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig(d);
+	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
+	hash[ndomains - 1] = new hashconfig (d);
 
 	return hash[ndomains - 1]->set(key, value);
 }
@@ -275,9 +270,8 @@ const char *Config::set(const char *key, int value_i, const char *d)
 	}
 
 	ndomains++;
-	hash =
-		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig(d);
+	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
+	hash[ndomains - 1] = new hashconfig (d);
 
 	return hash[ndomains - 1]->set(key, value);
 }
@@ -293,18 +287,17 @@ void Config::set_domain(const char *d)
 			return;
 	}
 	ndomains++;
-	hash =
-		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig(domain);
+	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
+	hash[ndomains - 1] = new hashconfig (domain);
 }
 
 void Config::flush() const
 {
 	FILE *cfg_file;
 	int i;
-	
+
 	if (!willwrite)
-	    return;
+		return;
 
 	if (!(cfg_file = fopen(filename, "w"))) {
 		debug(1, "Unable to write configuration file: %s.\n", filename);
@@ -357,7 +350,7 @@ void Config::change_filename(const char *f)
 	filename = f ? Scumm::Strdup(f) : 0;
 }
 
-void Config::merge_config(const Config * c)
+void Config::merge_config(const Config *c)
 {
 	int i, j;
 	bool found;
@@ -373,14 +366,14 @@ void Config::merge_config(const Config * c)
 		}
 		if (!found) {
 			ndomains++;
-			hash =
-				(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
-			hash[ndomains - 1] = new hashconfig(domain);
+			hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
+			hash[ndomains - 1] = new hashconfig (domain);
 			hash[ndomains - 1]->merge(c->hash[i]);
 		}
 	}
 }
 
-void Config::set_writing(bool w) {
-    willwrite = w;
+void Config::set_writing(bool w)
+{
+	willwrite = w;
 }

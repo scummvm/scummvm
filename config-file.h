@@ -26,27 +26,27 @@
 class hashconfig;
 
 class Config {
-  public:
-      Config(const char * = "config.cfg", const char * = "default");
-      ~Config();
-    const char * get(const char *, const char * = 0) const;
-    const char * set(const char *, const char *, const char * = 0);
-    const char * set(const char *, int, const char * = 0);
-    void set_domain(const char *);
-    void flush() const;
-    void rename_domain(const char *);
-    void delete_domain(const char *);
-    void change_filename(const char *);
-    void merge_config(const Config *);
-    void set_writing(bool);
-  private:
-    char * filename, * domain;
-    hashconfig ** hash;
-    int ndomains;
-    bool willwrite;
+public:
+	Config (const char * = "config.cfg", const char * = "default");
+	 ~Config ();
+	const char *get(const char *, const char * = 0) const;
+	const char *set(const char *, const char *, const char * = 0);
+	const char *set(const char *, int, const char * = 0);
+	void set_domain(const char *);
+	void flush() const;
+	void rename_domain(const char *);
+	void delete_domain(const char *);
+	void change_filename(const char *);
+	void merge_config(const Config *);
+	void set_writing(bool);
+private:
+	char *filename, *domain;
+	hashconfig **hash;
+	int ndomains;
+	bool willwrite;
 };
 
 // The global config object
-extern Config * scummcfg;
+extern Config *scummcfg;
 
 #endif

@@ -180,7 +180,7 @@ int Actor::remapDirection(int dir)
 	byte flags;
 	bool flipX;
 	bool flipY;
-	
+
 	if (!ignoreBoxes) {
 		specdir = _vm->_extraBoxFlags[walkbox];
 		if (specdir) {
@@ -201,7 +201,6 @@ int Actor::remapDirection(int dir)
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
-
 		// Check for Y-Flip
 		if ((flags & 0x10) || _vm->getClass(number, 0x1D)) {
 			dir = 180 - dir;
@@ -210,14 +209,14 @@ int Actor::remapDirection(int dir)
 
 		switch (flags & 7) {
 		case 1:
-			if (moving&~MF_TURN)				// Actor is walking
+			if (moving & ~MF_TURN)		// Actor is walking
 				return flipX ? 90 : 270;
-			else								// Actor is standing/turning
+			else											// Actor is standing/turning
 				return (dir == 90) ? 90 : 270;
 		case 2:
-			if (moving&~MF_TURN)				// Actor is walking
+			if (moving & ~MF_TURN)		// Actor is walking
 				return flipY ? 180 : 0;
-			else								// Actor is standing/turning
+			else											// Actor is standing/turning
 				return (dir == 0) ? 0 : 180;
 		case 3:
 			return 270;
@@ -241,21 +240,21 @@ int Actor::updateActorDirection()
 	int dir;
 	int num;
 	bool shouldInterpolate;
-	
+
 	dirType = _vm->akos_hasManyDirections(this);
 
 	from = Scumm::toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection);
 	shouldInterpolate = (dir & 1024);
 	to = Scumm::toSimpleDir(dirType, dir & 1023);
-	diff = to - from;	
+	diff = to - from;
 	num = Scumm::numSimpleDirDirections(dirType);
 
 	if (shouldInterpolate) {
 		// Turn left or right, depending on which is shorter.
 		if (abs(diff) > (num >> 1))
 			diff = -diff;
-	
+
 		if (diff == 0) {
 		} else if (diff > 0) {
 			from++;
@@ -264,7 +263,7 @@ int Actor::updateActorDirection()
 		}
 	} else
 		from = to;
-	
+
 	dir = Scumm::fromSimpleDir(dirType, from & (num - 1));
 
 	return dir;
@@ -300,27 +299,23 @@ int Actor::actorWalkStep()
 	actorX = x;
 	actorY = y;
 
-	if (walkbox != walkdata.curbox &&
-			_vm->checkXYInBoxBounds(walkdata.curbox, actorX, actorY)) {
+	if (walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorX, actorY)) {
 		setActorBox(walkdata.curbox);
 	}
 
 	distX = abs(walkdata.newx - walkdata.x);
 	distY = abs(walkdata.newy - walkdata.y);
 
-	if (abs(actorX - walkdata.x) >= distX &&
-			abs(actorY - walkdata.y) >= distY) {
+	if (abs(actorX - walkdata.x) >= distX && abs(actorY - walkdata.y) >= distY) {
 		moving &= ~MF_IN_LEG;
 		return 0;
 	}
 
-	tmpX = ((actorX + 8000) << 16) + walkdata.xfrac +
-		(walkdata.XYFactor >> 8) * scalex;
+	tmpX = ((actorX + 8000) << 16) + walkdata.xfrac + (walkdata.XYFactor >> 8) * scalex;
 	walkdata.xfrac = (uint16)tmpX;
 	actorX = (tmpX >> 16) - 8000;
 
-	tmpY = (actorY << 16) + walkdata.yfrac +
-		(walkdata.YXFactor >> 8) * scalex;
+	tmpY = (actorY << 16) + walkdata.yfrac + (walkdata.YXFactor >> 8) * scalex;
 	walkdata.yfrac = (uint16)tmpY;
 	actorY = (tmpY >> 16);
 
@@ -344,8 +339,8 @@ void Actor::setupActorScale()
 	byte *resptr;
 
 	// FIXME: Special 'no scaling' class for MI1 VGA Floppy
-	//	      Not totally sure if this is correct.
-	if(_vm->_gameId == GID_MONKEY_VGA && _vm->getClass(number, 0x96)) 
+	//        Not totally sure if this is correct.
+	if (_vm->_gameId == GID_MONKEY_VGA && _vm->getClass(number, 0x96))
 		return;
 
 	if (_vm->_features & GF_NO_SCALLING) {
@@ -357,7 +352,7 @@ void Actor::setupActorScale()
 	if (ignoreBoxes != 0)
 		return;
 
-	if(_vm->getBoxFlags(walkbox) & 0x20)
+	if (_vm->getBoxFlags(walkbox) & 0x20)
 		return;
 
 	scale = _vm->getBoxScale(walkbox);
@@ -379,7 +374,7 @@ void Actor::setupActorScale()
 		warning("Actor %d at %d, scale %d out of range", number, y, scale);
 
 	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
-	if(scale == 1 && _vm->_currentRoom == 76)
+	if (scale == 1 && _vm->_currentRoom == 76)
 		scale = 0xFF;
 
 	scalex = (byte)scale;
@@ -388,7 +383,7 @@ void Actor::setupActorScale()
 
 void Actor::startAnimActor(int frame)
 {
-	if (_vm->_features & GF_NEW_COSTUMES) {		
+	if (_vm->_features & GF_NEW_COSTUMES) {
 		switch (frame) {
 		case 1001:
 			frame = initFrame;
@@ -522,8 +517,7 @@ void Actor::setActorDirection(int direction)
 
 void Scumm::putActor(Actor * a, int dstX, int dstY, byte room)
 {
-	if (a->visible && _currentRoom != room
-			&& _vars[VAR_TALK_ACTOR] == a->number) {
+	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
 		clearMsgQueue();
 	}
 
@@ -667,7 +661,7 @@ void Actor::adjustActorPos()
 	if (_vm->_features & GF_AFTER_V7) {
 		stopActorMoving();
 	}
-	
+
 	flags = _vm->getBoxFlags(walkbox);
 	if (flags & 7) {
 		turnToDirection(facing);
@@ -806,7 +800,7 @@ void Actor::startWalkAnim(int cmd, int angle)
  * find a proper fix
  * note: walk scripts aren't required to make the game
  * work as usual */
-	
+
 /*	int16 args[16];
 
 	if (walk_script != 0) {
@@ -814,7 +808,7 @@ void Actor::startWalkAnim(int cmd, int angle)
 		args[0] = number;
 		args[1] = cmd;
 		_vm->runScript(walk_script, 1, 0, args);
-	} else*/ {
+	} else*/  {
 		switch (cmd) {
 		case 1:										/* start walk */
 			setActorDirection(angle);
@@ -880,8 +874,7 @@ void Actor::walkActor()
 	}
 	j = getPathToDestBox(walkbox, walkdata.destbox);
 	if (j == -1) {
-		error("walkActor: no path found between %d and %d", walkbox,
-					walkdata.destbox);
+		error("walkActor: no path found between %d and %d", walkbox, walkdata.destbox);
 	}
 
 	walkdata.curbox = j;
@@ -959,17 +952,16 @@ void Scumm::processActors()
 	}
 	if (!numactors)
 		return;
-	
+
 	end = actors + numactors;
 
 	// Sort actors by position before we draw them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	for (ac = end-1; ac >= actors; --ac) {
-		for (ac2 = actors; ac2 != ac; ++ac2)
-		{
-			if (DRAW_ORDER(*ac2) > DRAW_ORDER(*(ac2+1))) {
-				tmp = *(ac2+1);
-				*(ac2+1) = *ac2;
+	for (ac = end - 1; ac >= actors; --ac) {
+		for (ac2 = actors; ac2 != ac; ++ac2) {
+			if (DRAW_ORDER(*ac2) > DRAW_ORDER(*(ac2 + 1))) {
+				tmp = *(ac2 + 1);
+				*(ac2 + 1) = *ac2;
 				*ac2 = tmp;
 			}
 		}
@@ -993,14 +985,14 @@ void Actor::drawActorCostume()
 
 		if (!needRedraw)
 			return;
-		
+
 		if (_vm->getClass(number, 20))
 			mask = 0;
 		else if (_vm->getClass(number, 21))
 			forceClip = 1;
 
 		// FIXME: ugly fix for samnmax inventory
-		if (_vm->_gameId==GID_SAMNMAX && _vm->getState(995))
+		if (_vm->_gameId == GID_SAMNMAX && _vm->getState(995))
 			return;
 
 		needRedraw = false;
@@ -1148,8 +1140,7 @@ int Scumm::getActorFromPos(int x, int y)
 		return 0;
 	for (i = 1; i < NUM_ACTORS; i++) {
 		Actor *a = derefActor(i);
-		if (drawbits & (1 << i) && !getClass(i, 32) && y >= a->top
-				&& y <= a->bottom) {
+		if (drawbits & (1 << i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
 		}
 	}
@@ -1163,8 +1154,7 @@ void Scumm::actorTalk()
 
 	_msgPtrToAdd = charset._buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
-	assert((int)(_msgPtrToAdd - charset._buffer) <
-				 (int)(sizeof(charset._buffer)));
+	assert((int)(_msgPtrToAdd - charset._buffer) < (int)(sizeof(charset._buffer)));
 
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText)
@@ -1245,8 +1235,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 		} else {
 			abr = adjustXYToBeInBox(abr.x, abr.y, walkbox);
 		}
-		if (moving && walkdata.destdir == dir
-				&& walkdata.destx == abr.x && walkdata.desty == abr.y)
+		if (moving && walkdata.destdir == dir && walkdata.destx == abr.x && walkdata.desty == abr.y)
 			return;
 	}
 
@@ -1273,8 +1262,7 @@ byte *Actor::getActorName()
 	return ptr;
 }
 
-void Actor::remapActor(int r_fact, int g_fact, int b_fact,
-											 int threshold)
+void Actor::remapActor(int r_fact, int g_fact, int b_fact, int threshold)
 {
 	byte *akos, *rgbs, *akpl;
 	int akpl_size, i;
@@ -1303,8 +1291,7 @@ void Actor::remapActor(int r_fact, int g_fact, int b_fact,
 	rgbs = findResource(MKID('RGBS'), akos);
 
 	if (!rgbs) {
-		warning("Can't remap actor %d costume %d doesn't contain an RGB block",
-						number, costume);
+		warning("Can't remap actor %d costume %d doesn't contain an RGB block", number, costume);
 		return;
 	}
 	// skip resource header
@@ -1440,7 +1427,7 @@ void Scumm::resetActorBgs()
 			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
 				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
 
-				if((a->bottom - a->top) >=0)
+				if ((a->bottom - a->top) >= 0)
 					gdi.resetBackground(a->top, a->bottom, i);
 			}
 			bitpos <<= 1;
