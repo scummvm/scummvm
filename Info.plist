@@ -12,6 +12,8 @@
 	<string>0.5.3cvs, Copyright 2001-2003 The ScummVM team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.scummvm.scummvm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
