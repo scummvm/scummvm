@@ -468,7 +468,7 @@ int Scumm::scummLoop(int delta)
 		makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
 		if (!success) {
 			displayError(errMsg, filename);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0) {
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveLoadCompatible) {
 			// Display "Save succesful" message, except for auto saves
 			char buf[1024];
 			sprintf(buf, errMsg, filename);
