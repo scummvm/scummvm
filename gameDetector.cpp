@@ -58,7 +58,7 @@ static const char USAGE_STRING[] =
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
 	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
 	"\t-v         - show version info and exit\n"
-#if defined(UNIX) || defined(UNIX_X11)
+#if defined(UNIX)
 	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
 #else
 	"\t-w[<file>] - write to config file [scummvm.ini]\n"
@@ -496,7 +496,7 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gfx_driver = GD_NULL;
 #elif defined(__DC__)
 	_gfx_driver = GD_DC;
-#elif defined(UNIX_X11)
+#elif defined(X11_BACKEND)
 	_gfx_driver = GD_X;
 #elif defined(__MORPHOS__)
 	_gfx_driver = GD_MORPHOS;

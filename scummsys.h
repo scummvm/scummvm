@@ -83,13 +83,13 @@ typedef signed long int32;
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
 
-#elif (defined(UNIX) || defined(__APPLE__) || defined(UNIX_X11))
+#elif defined(UNIX) || defined(__APPLE__)
 
 #define scumm_stricmp strcasecmp
 
 #define CHECK_HEAP
 
-#ifdef UNIX_X11
+#ifdef X11_BACKEND
 
 /* You need to set those manually */
 #define SCUMM_LITTLE_ENDIAN

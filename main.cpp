@@ -39,13 +39,18 @@ SoundMixer *g_mixer;
 Config * scummcfg;
 
 
-#if defined(MACOSX) && defined(UNIX)
+#if defined(QTOPIA)
+// FIXME - why exactly is this needed?
+extern "C" int main(int argc, char *argv[]);
+#endif
+
+#if defined(MACOSX) || defined(QTOPIA)
 #include <SDL.h>
 #elif !defined(__MORPHOS__)
 #undef main
 #endif
 
-#if defined(UNIX) || defined(UNIX_X11)
+#if defined(UNIX)
 #include <sys/param.h>
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 256
@@ -55,7 +60,7 @@ Config * scummcfg;
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
-#if defined(UNIX) || defined(UNIX_X11)
+#if defined(UNIX)
 #include <signal.h>
 
 #ifndef SCUMM_NEED_ALIGNMENT
@@ -144,7 +149,7 @@ game settings!
 	dc_init_hardware();
 #endif
 
-#if defined(UNIX) || defined(UNIX_X11)
+#if defined(UNIX)
 	char scummhome[MAXPATHLEN];
 	if(getenv("HOME") != NULL)
 		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);

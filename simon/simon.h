@@ -222,7 +222,7 @@ struct VgaFile1Struct0x6 {
 };
 
 /* dummy typedefs to make it compile in *nix */
-#if defined(UNIX) || defined(UNIX_X11) || defined(__MORPHOS__) || defined(__DC__) || defined(macintosh)
+#if defined(UNIX) || defined(__MORPHOS__) || defined(__DC__) || defined(macintosh)
 typedef void *HMIDISTRM;
 typedef void *HMIDIOUT;
 typedef uint32 UINT;
