@@ -53,7 +53,7 @@ void SimonState::defocusHitarea()
 	HitArea *last;
 	HitArea *ha;
 
-	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
+	if (_game & GAME_SIMON2) {
 		if (_bit_array[4] & 0x8000) {
 			o_unk_120(202);
 			_last_hitarea_2_ptr = NULL;
@@ -113,7 +113,7 @@ void SimonState::hitareaChangedHelper()
 {
 	FillOrCopyStruct *fcs;
 
-	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
+	if (_game & GAME_SIMON2) {
 		if (_bit_array[4] & 0x8000)
 			return;
 	}

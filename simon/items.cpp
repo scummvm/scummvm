@@ -1108,7 +1108,7 @@ int SimonState::runScript()
 
 		case 181:{
 				o_force_lock();
-				if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
+				if (_game & GAME_SIMON2) {
 					fcs_unk_2(1);
 					showMessageFormat("\xC");
 				}

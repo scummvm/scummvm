@@ -913,7 +913,7 @@ void SimonState::closeTablesFile_simon1(File *in)
 
 uint SimonState::loadTextFile(const char *filename, byte *dst)
 {
-	if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS))
+	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
@@ -921,7 +921,7 @@ uint SimonState::loadTextFile(const char *filename, byte *dst)
 
 File *SimonState::openTablesFile(const char *filename)
 {
-	if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS))
+	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
@@ -929,7 +929,7 @@ File *SimonState::openTablesFile(const char *filename)
 
 void SimonState::closeTablesFile(File *in)
 {
-	if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS))
+	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		closeTablesFile_simon1(in);
 	else
 		closeTablesFile_gme(in);
@@ -1071,7 +1071,7 @@ void SimonState::setup_cond_c_helper()
 {
 	HitArea *last;
 
-	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
+	if (_game & GAME_SIMON2) {
 		_mouse_cursor = 0;
 		if (_hitarea_unk_4 != 999) {
 			_mouse_cursor = 9;
@@ -4056,7 +4056,7 @@ void SimonState::print_char_helper_6(uint i)
 
 void SimonState::read_vga_from_datfile_1(uint vga_id)
 {
-	if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
+	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4088,7 +4088,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 
 byte *SimonState::read_vga_from_datfile_2(uint id)
 {
-	if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
+	if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4132,7 +4132,7 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 
 void SimonState::openGameFile()
 {
-	if ((_game != GAME_SIMON1DEMO) && (_game != GAME_SIMON1DOS)) {
+	if (_game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
