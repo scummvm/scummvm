@@ -1098,7 +1098,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 	} else {
-		dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
+		dst = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
 	}
 
 	back = dst;
@@ -1109,8 +1109,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	if (is2byte) {
 		drawBits1(vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		byte bpp = *_fontPtr;
-		drawBitsN(vs, dst, charPtr, bpp, drawTop, origWidth, origHeight);
+		drawBitsN(vs, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
