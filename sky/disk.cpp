@@ -161,7 +161,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		} else {
 #ifdef SCUMM_BIG_ENDIAN
 			// Convert dataFileHeader to BE (it only consists of 16 bit words)
-			uint16 *headPtr = (uint16 *)_fileDest;
+			uint16 *headPtr = (uint16 *)fileDest;
 			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 #endif
