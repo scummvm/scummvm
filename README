@@ -1097,9 +1097,10 @@ X.X Credits:
         Max Horn             - Lead developer
         Torbjorn Andersson   - Engine: SCUMM, Broken Sword II
         David Eriksson       - Engine: Flight of the Amazon Queen
-        Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
+        Robert Goeffringmann - Engine: Beneath a Steel Sky,
                                        Broken Sword I
         Jonathan Gray        - Engine: SCUMM, Broken Sword II
+        Travis Howell        - Engine: SCUMM, Simon the Sorcerer
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
         Gregory Montoir      - Engine: Flight of the Amazon Queen
@@ -1110,7 +1111,6 @@ X.X Credits:
         Nicolas Bacca        - Port: PocketPC/WinCE port
         Marcus Comstedt      - Port: Dreamcast
         Ruediger Hanke       - Port: MorphOS
-        Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
         Jamieson Christian   - iMUSE, MIDI, all things musical.

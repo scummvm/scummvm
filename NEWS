@@ -13,33 +13,38 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      Mac OS X unices (including Linux)
 
  SCUMM:
-   - Added graphics decoders for 3DO Humongous Entertainment games
-   - Rewrote parts of the text engine for improved subtitle support
-   - Many improvements made to iMuseDigital (used by The Dig, FT and COMI)
-   - Fixed several annoying bugs
-   - Fixed crash on 64 bit architectures (like AMD64)
    - Old zak256 target removed, use zakTowns instead
-   - Numerous Humongous Entertainment games fixes
-   - Fixed bug in Full Throttle, so battle difficulty matches original
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
-
- Sword1:
-   - Fixed a rare masking bug
-   - Made the save/load dialog is a bit more user-friendly
 
  Sword2:
    - Simplified the memory/resource management...
    - ...which led to simplified sound effects handling
    - Various minor bugfixes.
 
- BASS
-   - ???
+0.6.1 (2004-07-25)
+ General:
+   - Fixed sound glitch when streaming two or more Ogg Vorbis sounds from the
+     same file handle, e.g. in the Sam & Max intro when using monster.sog.
 
- Simon
+ SCUMM:
+   - Many SCUMM game engine fixes.
+   - Added graphics decoders for 3DO Humongous Entertainment games
+   - Numerous Humongous Entertainment games fixes
+   - Fixed bug in Full Throttle, so battle difficulty matches original
+   - Improved Digital iMUSE
+
+ Sword1:
+   - Warn the user if saving fails, instead of crashing.
+   - Slightly more user-friendly save/restore dialog.
+   - Fixed masking glitch outside Nico's apartment.
+
+ BASS:
+   - Warn the user if saving a game doesn't work.
+
+ Simon:
    - Fixed crashes in some international versions
- 
 
 0.6.0 (2004-03-14)
  New Games:
