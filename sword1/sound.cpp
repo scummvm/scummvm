@@ -143,6 +143,8 @@ void SwordSound::playSample(QueueElement *elem) {
 						flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
 					else
 						flags = SoundMixer::FLAG_UNSIGNED;
+					if (READ_LE_UINT16(sampleData + 0x16) == 2)
+						flags |= SoundMixer::FLAG_STEREO;
 					_mixer->playRaw(&elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
 			}
 		} else
