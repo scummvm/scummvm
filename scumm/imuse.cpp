@@ -3094,13 +3094,17 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
 
-	// Load/save the instrument definitions, which were revamped with V11.
-	if (ser->getVersion() >= VER_V11) {
+	{ // Load/save the instrument definitions, which were revamped with V11.
 		int i;
 		Part *part = &_parts[0];
-		for (i = ARRAYSIZE(_parts); i; --i, ++part) {
-			part->_program = 255;
-			part->_instrument.saveOrLoad (ser);
+		if (ser->getVersion() >= VER_V11) {
+			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
+				part->_program = 255;
+				part->_instrument.saveOrLoad (ser);
+			}
+		} else {
+			for (i = ARRAYSIZE(_parts); i; --i, ++part)
+				part->_instrument.clear();
 		}
 	}
 

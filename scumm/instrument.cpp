@@ -286,8 +286,8 @@ void Instrument::saveOrLoad (Serializer *s)
 			_instrument->saveOrLoad (s);
 	} else {
 		clear();
-		byte type = s->loadByte();
-		switch (type) {
+		_type = s->loadByte();
+		switch (_type) {
 		case itNone:
 			break;
 		case itProgram:
@@ -300,7 +300,8 @@ void Instrument::saveOrLoad (Serializer *s)
 			_instrument = new Instrument_Roland (s);
 			break;
 		default:
-			warning ("No known instrument classification #%d", (int) type);
+			warning ("No known instrument classification #%d", (int) _type);
+			_type = itNone;
 		}
 	}
 }
