@@ -70,27 +70,27 @@ int Scumm::getOwner(int obj)
 	return _objectOwnerTable[obj];
 }
 
-void Scumm::putOwner(int act, int owner)
+void Scumm::putOwner(int obj, int owner)
 {
-	checkRange(_numGlobalObjects - 1, 0, act,
+	checkRange(_numGlobalObjects - 1, 0, obj,
 						 "Object %d out of range in putOwner");
 	checkRange(0xFF, 0, owner, "Owner %d out of range in putOwner");
-	_objectOwnerTable[act] = owner;
+	_objectOwnerTable[obj] = owner;
 }
 
-int Scumm::getState(int act)
+int Scumm::getState(int obj)
 {
-	checkRange(_numGlobalObjects - 1, 0, act,
+	checkRange(_numGlobalObjects - 1, 0, obj,
 						 "Object %d out of range in getState");
-	return _objectStateTable[act];
+	return _objectStateTable[obj];
 }
 
-void Scumm::putState(int act, int state)
+void Scumm::putState(int obj, int state)
 {
-	checkRange(_numGlobalObjects - 1, 0, act,
+	checkRange(_numGlobalObjects - 1, 0, obj,
 						 "Object %d out of range in putState");
 	checkRange(0xFF, 0, state, "State %d out of range in putState");
-	_objectStateTable[act] = state;
+	_objectStateTable[obj] = state;
 }
 
 int Scumm::getObjectRoom(int obj)
