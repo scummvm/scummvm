@@ -55,6 +55,8 @@ public:
 
 protected:
 	FB2GL fb2gl;
+	SDL_Surface *glEnd; // Black rectangle at end of the GL screen
+	SDL_Rect blackrect2; // Needed for blitting the above surface
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
@@ -255,6 +257,19 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 						fb2gl.screen->format->Bmask,
 						fb2gl.screen->format->Amask);
 
+	glEnd = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
+						// 320x256 texture (black end)
+						256-_screenHeight-_screenStart,
+						16,
+						fb2gl.screen->format->Rmask,
+						fb2gl.screen->format->Gmask,
+						fb2gl.screen->format->Bmask,
+						fb2gl.screen->format->Amask);
+
+	blackrect2.x = 0;
+	blackrect2.y = 0;
+	blackrect2.w = _screenWidth;
+	blackrect2.h = 256-_screenHeight-_screenStart;
 	
 	if (sdl_tmpscreen == NULL)
 		error("sdl_tmpscreen failed");
@@ -286,7 +301,6 @@ void OSystem_SDL_Normal::unload_gfx_mode() {
 }
 
 void OSystem_SDL_Normal::update_screen() {
-	SDL_Rect blackrect2 = {0, _screenStart, _screenWidth, 15};
 	
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -347,9 +361,9 @@ void OSystem_SDL_Normal::update_screen() {
 		fb2gl.blit16(sdl_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
 		    _currentShakePos+_screenStart);
 
-
-		SDL_FillRect(sdl_tmpscreen, &blackrect2, 0);
-		fb2gl.blit16(sdl_tmpscreen,1,&blackrect2,0,_screenHeight);
+		
+		SDL_FillRect(glEnd, &blackrect2, 0);
+		fb2gl.blit16(glEnd,1,&blackrect2,0,_screenHeight+_screenStart);
 
 		fb2gl.display();
 	}
