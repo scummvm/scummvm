@@ -451,6 +451,10 @@ static void IsActorMoving() {
 	pushbool(act->isWalking());
 }
 
+static void Is3DHardwareEnabled() {
+	pushbool(true);
+}
+
 static void IsActorResting() {
 	Actor *act = check_actor(1);
 	pushbool(!(act->isWalking() || act->isTurning()));
@@ -1616,7 +1620,8 @@ struct luaL_reg builtins[] = {
 	{ "NewObjectState", NewObjectState }, 
 	{ "FreeObjectState", FreeObjectState },
 	{ "GetSpeechMode", GetSpeechMode },
-	{ "SetSpeechMode", SetSpeechMode }
+	{ "SetSpeechMode", SetSpeechMode },
+	{ "Is3DHardwareEnabled", Is3DHardwareEnabled }
 };
 
 void register_lua() {
