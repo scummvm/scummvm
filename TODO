@@ -127,8 +127,6 @@ Broken Sword 2
 * Support cutscenes in some kind of open video format.
 * Implement the credits. At the moment we only play the music. The original
   seems to use a separate program. Did we ever get the source code for that?
-* Is it possible to work around the dreaded "pyramid bug"? See
-  http://www.revgames.com/_display.php?id=9
 
 SIMON
 =====
