@@ -144,6 +144,30 @@ void OSystem_Dreamcast::delay_msecs(uint msecs)
   get_msecs();
 }
 
+void OSystem_Dreamcast::set_timer(int timer, int (*callback)(int))
+{
+  warning("Setting a timer! (not supported.)\n");  
+}
+
+/* Mutex handling */
+void *OSystem_Dreamcast::create_mutex(void)
+{
+  return NULL;
+}
+
+void OSystem_Dreamcast::lock_mutex(void *mutex)
+{
+}
+ 
+void OSystem_Dreamcast::unlock_mutex(void *mutex)
+{
+}
+
+void OSystem_Dreamcast::delete_mutex(void *mutex)
+{
+}
+
+
 /*
 void waitForTimer(Scumm *s, int time)
 {

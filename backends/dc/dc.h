@@ -1,3 +1,4 @@
+#include <common/system.h>
 #include <ronin/soundcommon.h>
 
 #define NUM_BUFFERS 4
@@ -66,6 +67,16 @@ class OSystem_Dreamcast : public OSystem {
 
   // Set a parameter
   uint32 property(int param, Property *value);
+
+  // Add a callback timer
+  virtual void set_timer(int timer, int (*callback)(int));
+
+  // Mutex handling
+  virtual void *create_mutex(void);
+  virtual void lock_mutex(void *mutex);
+  virtual void unlock_mutex(void *mutex);
+  virtual void delete_mutex(void *mutex);
+
 
   static OSystem *create();
 
