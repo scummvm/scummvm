@@ -735,14 +735,6 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			if (objAnim[i].song > 0)
 				_vm->sound()->playSong(objAnim[i].song);
 
-			// Load but don't play
-			if(objAnim[i].song < 0) {
-				// XXX loadnoplay=1;
-				// XXX playsong(abs(OBJ_ANIM[J][11]));
-				// XXX loadnoplay=0;
-				warning("Cutaway::handleAnimation() song %d not handled", ABS(objAnim[i].song));
-			}
-
 		} // for()
 	}
 
