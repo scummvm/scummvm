@@ -36,7 +36,7 @@ General
 * In OSystem, replace all the TOGGLE properties by GET/SET ones. E.g.
   instead of PROP_TOGGLE_FULLSCREEN have PROP_SET_FULLSCREEN and
   PROP_GET_FULLSCREEN.
-  Alternatively (my prefered solution) use plain methods for this:
+  Alternatively (my preferred solution) use plain methods for this:
     void OSystem::setFullscreen(bool)
   and
     bool OSystem::getFullscreen()
@@ -59,14 +59,16 @@ Build System
 	vpath %.cpp $(srcdir)
 	vpath %.h $(srcdir)
 	include $(srcdir)/Makefile
-* Add support in the configure script to choose between building ScummVM
-  with plugins or normal (see also comment in Makefile.common).
+* Allow automatic re-runs of configure (this would have to 'save' the values of
+  env vars like CXXFLAGS and also command line params)
 * It would be nice to get rid of Makefile.noconf (so that we can implement
    certain improvements which aren't possible as long as we have to maintain
    that). To this end, find out 
    1) Which platforms/systems require Makefile.noconf?
    2) What stops them from using 'configure' ? Document this!
    3) If possible fix all the issue listed in 2)
+* Add an install target to the Makefile. (Fingolfin asks: what for? It sounds
+  like a trivial task, you only have to copy the exe and the man page, no?)
 
 Documentation
 =============
@@ -120,6 +122,19 @@ Documentation
      the config file setting, and the command line option)
 * Add more doxygen comments. However, quality is preferable over quantity
 
+Web site
+========
+* Redo the screenshots. Mostly this means adding more (and maybe removing or
+  replacing a few). What I have in mind are that we follow these guidelines
+  (which aren't set in stone nor laws, just guidelines :-)
+  - for each unique game, provide 2-3 screenshots
+  - have at least one shot for each major variant of a game (with major variant
+    I mean visibly distinct versions, like Zak V1 vs. V2 vs. FM-TOWNS; or
+    Monkey Island EGA vs VGA vs CD).
+  If I am counting right, that should place us at about 2*(18+2+1+1+1)=46
+  screenshots, compared to the current 32 (and more if we start adding HE
+  games).
+
 GUI
 ===
 * LAUNCHER: add more options to global options dialog
@@ -162,7 +177,6 @@ Config Manager
 
 SCUMM
 =====
-* Add actor talkVolume to savegames
 * Fix C64 costume code
 * Make it possible to restart games properly
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a

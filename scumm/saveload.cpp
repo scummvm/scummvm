@@ -183,7 +183,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// scumm vars. We now know the proper locations. To be able to properly use
 	// old save games, we update the old (bad) variables to the new (correct)
 	// ones.
-	if (hdr.ver <= 27 && _version == 8) {
+	if (hdr.ver < 28 && _version == 8) {
 		_scummVars[VAR_CAMERA_MIN_X] = _scummVars[101];
 		_scummVars[VAR_CAMERA_MAX_X] = _scummVars[102];
 		_scummVars[VAR_CAMERA_MIN_Y] = _scummVars[103];
