@@ -23,12 +23,23 @@
 #include <PalmOS.h>
 #include "extend.h"
 #include "string.h"
-#include "palm.h"
+#include "globals.h"
+#include "starterrsc.h"
 
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 
-UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr)
-{
+void PalmFatalError(const Char *err) {
+	WinPalette(winPaletteSetToDefault,0,0,0);
+
+	if (gVars->screenLocked)
+		WinScreenUnlock();
+
+	WinEraseWindow();
+	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
+	SysReset();
+}
+
+UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr) {
 	Char *found;
 	Boolean quit = false;
 	UInt16 occurences = 0;
@@ -41,23 +52,20 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 	if (inParamStr)
 		l2 = StrLen(inParamStr); // can be null to know how many occur.
 	
-	while (((found = StrStr(ioStr+next, fndParamStr)) != NULL) && (!quit))
-	{
+	while (((found = StrStr(ioStr+next, fndParamStr)) != NULL) && (!quit)) {
 		occurences++;
 		newLength = (StrLen(ioStr) - l1 + l2);
 
-		if ( newLength > inMaxLen )
-		{
+		if ( newLength > inMaxLen ) {
 			quit = true;
 			occurences--;
-		}
-		else if (inParamStr)
-		{
+
+		} else if (inParamStr) {
 			MemMove(found + l2, found + l1, inMaxLen-(found-ioStr+l2));
 			MemMove(found, inParamStr, l2);
 			next = found - ioStr + l2;
-		}
-		else
+
+		} else
 			next = found - ioStr + l1;
 	}
 	
@@ -67,8 +75,7 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 	return occurences;
 }
 
-void WinDrawWarpChars(const Char *chars, Int16 len, Coord x, Coord y, Coord maxWidth)
-{
+void WinDrawWarpChars(const Char *chars, Int16 len, Coord x, Coord y, Coord maxWidth) {
 	Char *part = (Char *)chars;
 	Coord x2 = x;
 	Int16 next;
@@ -78,11 +85,9 @@ void WinDrawWarpChars(const Char *chars, Int16 len, Coord x, Coord y, Coord maxW
 
 	part = StrTok(part," ");
 
-	while ( part )
-	{
+	while ( part ) 	{
 		next = FntLineWidth (part, StrLen(part)) + FntLineWidth (" ",1);
-		if ((x2 + next - x) > maxWidth)
-		{
+		if ((x2 + next - x) > maxWidth) {
 			x2 = x;
 			y += FntLineHeight();
 		}

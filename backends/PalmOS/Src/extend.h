@@ -30,7 +30,8 @@ extern const Char *SCUMMVM_SAVEPATH;
 #define DISABLE_SIMON
 #define DISABLE_SWORD2
 
-#define appFileCreator			'ScVM'
+// PalmOS
+//#define DISABLE_TAPWAVE
 
 int main(int argc, char **argv);
 
