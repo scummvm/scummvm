@@ -102,7 +102,12 @@ public:
 			char *data_end = data_start;
 
 			while (1) {
-				if (data_end[-2] == '\r' && data_end[1] == '\n' && data_end[-1] == '\n' && data_end[0] == '\r') {
+				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '\r' && data_end[1] == '\n') {
+					break;
+				}
+				// In Russian Full Throttle strings are finished with
+				// just one pair of CR-LF
+				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '#') {
 					break;
 				}
 				data_end++;
@@ -144,6 +149,7 @@ public:
 		if (id == _lastId) {
 			return _lastString;
 		}
+		debug(9, "StringResource::get(%d)", id);
 		for (int i = 0; i < _nbStrings; i++) {
 			if (_strings[i].id == id) {
 				_lastId = id;

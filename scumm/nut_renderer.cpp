@@ -43,9 +43,10 @@ NutRenderer::~NutRenderer() {
 	}
 }
 
-void NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
+int32 NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
 	byte val;
 	uint16 size_line, num;
+	int16 decoded_length = 0;
 
 	do {
 		size_line = READ_LE_UINT16(src);
@@ -57,6 +58,7 @@ void NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
 			val = *src++;
 			memset(dst, val, num);
 			dst += num;
+			decoded_length += num;
 			length -= 2;
 			size_line -= 2;
 			if (size_line != 0) {
@@ -64,19 +66,22 @@ void NutRenderer::decodeCodec44(byte *dst, const byte *src, uint32 length) {
 				src += 2;
 				memcpy(dst, src, num);
 				dst += num;
+				decoded_length += num;
 				src += num;
 				length -= num + 2;
 				size_line -= num + 2;
 			}
 		}
 		dst--;
+		decoded_length--;
 
 	} while (length > 1);
+	return decoded_length;
 }
 
-static void codec1(byte *dst, byte *src, int height) {
+static int32 codec1(byte *dst, byte *src, int height) {
 	byte val, code;
-	int32 length;
+	int32 length, decoded_length = 0;
 	int h = height, size_line;
 
 	for (h = 0; h < height; h++) {
@@ -92,6 +97,7 @@ static void codec1(byte *dst, byte *src, int height) {
 				if (val)
 					memset(dst, val, length);
 				dst += length;
+				decoded_length += length;
 			} else {
 				size_line -= length;
 				while (length--) {
@@ -99,14 +105,16 @@ static void codec1(byte *dst, byte *src, int height) {
 					if (val)
 						*dst = val;
 					dst++;
+					decoded_length++;
 				}
 			}
 		}
 	}
+	return decoded_length;
 }
 
 bool NutRenderer::loadFont(const char *filename, const char *directory) {
-	debug(8, "NutRenderer::loadFont() called");
+	debug(8, "NutRenderer::loadFont(\"%s\", \"%s\") called", filename, directory);
 	if (_loaded) {
 		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
@@ -137,6 +145,7 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	
 	_nbChars = READ_LE_UINT16(dataSrc + 10);
 	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
+	int32 decoded_length;
 	for (int l = 0; l < _nbChars; l++) {
 		if ((READ_BE_UINT32(dataSrc + offset) == 'FRME') || (READ_BE_UINT32(dataSrc + offset + 1) == 'FRME')) {
 			if (READ_BE_UINT32(dataSrc + offset) == 'FRME')
@@ -149,13 +158,26 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 				_chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
 				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
-				_chars[l].src = new byte[_chars[l].width * _chars[l].height + 1000];
-				if ((codec == 44) || (codec == 21))
-					decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
+				_chars[l].src = new byte[(_chars[l].width + 2) * _chars[l].height + 1000];
+				if ((codec == 44) || (codec == 21)) 
+					decoded_length = decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
 				else if (codec == 1) {
-					codec1(_chars[l].src, dataSrc + offset + 22, _chars[l].height);
+					decoded_length = codec1(_chars[l].src, dataSrc + offset + 22, _chars[l].height);
 				} else
 					error("NutRenderer::loadFont: unknown codec: %d", codec);
+
+				// FIXME: This is used to work around wrong font file format in Russian 
+				// version of FT. Font files there contain wrong information about
+				// glyphs width. See patch #823031.
+				if (_vm->_language == Common::RU_RUS) {
+					// try to rely on length of returned data
+				  	if (l > 127)
+						_chars[l].width = decoded_length / _chars[l].height;
+					// but even this not always works
+					if (l == 134 && !strcmp(filename, "titlfnt.nut"))
+						_chars[l].width--;
+				}
+
 				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 			} else {
 				warning("NutRenderer::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);

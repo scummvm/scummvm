@@ -41,7 +41,7 @@ protected:
 		byte *src;
 	} _chars[256];
 
-	void decodeCodec44(byte *dst, const byte *src, uint32 length);
+	int32 decodeCodec44(byte *dst, const byte *src, uint32 length);
 
 	void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
 	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
