@@ -74,7 +74,7 @@ public:
 	SmushPlayer(ScummEngine_v6 *scumm, int speed);
 	~SmushPlayer();
 
-	void play(const char *filename, const char *directory);
+	void play(const char *filename, const char *directory, int32 offset = 0, int32 startFrame = 0);
 
 protected:
 	SmushFont *_sf[5];

@@ -1184,6 +1184,7 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				writeArray(1, _val57d);
 				smush_setToFinish();
 			} else {
+				writeArray(4, 1);
 				queueSceneSwitch(15, 0, "chasout.san", 64, 0, 0, 0);
 			}
 		}

@@ -271,7 +271,7 @@ class Insane {
 	void initvars(void);
 	void readFileToMem(const char *name, byte **buf);
 	void startVideo(const char *filename, int num, int argC, int frameRate, 
-					 int doMainLoop, byte *fluPtr = 0, int32 numFrames = 0);
+					 int doMainLoop, byte *fluPtr = 0, int32 startFrame = 0);
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
 	void readState(void);
@@ -418,7 +418,7 @@ class Insane {
 	void reinitActors(void);
 	const char *handleTrsTag(int32 trsId);
 	void ouchSoundBen(void);
-	void smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
+	int32 smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
 	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
 								 int32 step2, int32 setupsan1);

@@ -1012,7 +1012,7 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 	_frame = contFrame;
 }
 
-void SmushPlayer::play(const char *filename, const char *directory) {
+void SmushPlayer::play(const char *filename, const char *directory, int32 offset, int32 startFrame) {
 
 	// Verify the specified file exists
 	File f;
@@ -1031,6 +1031,12 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	// Load the video
 	setupAnim(filename, directory);
 	init();
+
+	if (offset) {
+		_base->seek(offset - 8, FileChunk::seek_start);
+		_frame = startFrame;
+		_middleAudio = true;
+	}
 
 	while (true) {
 		_vm->parseEvents();

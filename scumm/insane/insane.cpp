@@ -597,7 +597,9 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate, 
-						 int doMainLoop, byte *fluPtr, int32 numFrames) {
+						 int doMainLoop, byte *fluPtr, int32 startFrame) {
+	int32 offset = 0;
+
 	_smush_curFrame = 0;
 	_smush_isSanFileSetup = 0;
 	_smush_setupsan4 = 0;
@@ -605,14 +607,13 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 	_smush_setupsan1 = 0;
 	_smush_setupsan17 = 0;
 
-
 	if (fluPtr) {
-		smush_setupSanWithFlu(filename, 0, -1, -1, 0, fluPtr, numFrames);
+		offset = smush_setupSanWithFlu(filename, 0, -1, -1, 0, fluPtr, startFrame);
 	} else {
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	_player->play(filename, _vm->getGameDataPath());
+	_player->play(filename, _vm->getGameDataPath(), offset, startFrame);
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
@@ -1381,7 +1382,7 @@ void Insane::writeArray(int item, int value) {
 	_vm->writeArray(_numberArray, 0, item, value);
 }
 
-void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
+int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
 								   int32 step2, int32 setupsan1, byte *fluPtr, 
 								   int32 numFrames) {
 	byte *tmp = fluPtr;
@@ -1419,6 +1420,8 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 	_smush_curFrame = numFrames;
 	smush_setFrameSteps(step1, step2);
 	smush_warpMouse(160, 100, -1);
+
+	return offset;
 }
 
 void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
