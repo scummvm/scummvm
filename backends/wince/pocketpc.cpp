@@ -1818,35 +1818,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	return false;
 }
 
-//#define MAX_DEBUG_SOUND 10
-	
 void own_soundProc(void *buffer, byte *samples, int len) {
 
-/*
-	static int debug_sound_counter = 0;
-
-	static FILE *debug_sound = NULL;
-*/
-
 	(*real_soundproc)(buffer, samples, len);
-
-/*
-	if (debug_sound_counter < MAX_DEBUG_SOUND) {
-		int i;
-
-		for (i=0; i<len; i++)
-			if (samples[i])
-				break;
-		if (i != len) {
-			if (!debug_sound_counter)
-				debug_sound = fopen("\\Carte de stockage\\sound.dmp", "wb");
-			fwrite(samples, 1, len, debug_sound);
-			debug_sound_counter++;
-			if (debug_sound_counter == MAX_DEBUG_SOUND)
-				fclose(debug_sound);
-		}
-	}
-*/
 
 	if (!sound_activated)
 		memset(samples, 0, len);
