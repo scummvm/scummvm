@@ -908,9 +908,7 @@ void Scumm_v8::o8_resourceRoutines()
 		break;
 	case 0x3E:		// SO_HEAP_LOAD_OBJECT Load object to heap
 		{
-		// FIXME
 		int room = getObjectRoom(resid);
-		warning("o8_resourceRoutines: SO_HEAP_LOAD_OBJECT %d/%d", resid, room);
 		loadFlObject(resid, room);
 		}
 		break;
@@ -1473,7 +1471,6 @@ void Scumm_v8::o6_kernelGetFunctions()
 		break;
 	case 0xE0:		// readRegistryValue
 		{
-		printf("readRegistryValue(%d)\n", args[1]);
 		int array = args[1];
 		// FIXME - hack: for some reasons the wrong variable ID arrives here, compared to the
 		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.

@@ -398,7 +398,6 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 	for (int i = 0; i < 4; i++) {
 		char fontname[256];
 		sprintf(fontname, "font%d.nut", i);
-		warning("Loading charset %s\n", fontname);
 		_fr[i] = new NutRenderer(_vm);
 		if (!(_fr[i]->loadFont(fontname, _vm->getGameDataPath()))) {
 			delete _fr[i];
