@@ -68,7 +68,7 @@ void Scumm::fileSeek(void *file, long offs, int whence)
 
 void Scumm::fileRead(void *file, void *ptr, uint32 size)
 {
-	byte *ptr2 = (byte *)ptr, *src;
+	byte *ptr2 = (byte *)ptr;
 
 	if (size == 0)
 		return;
@@ -86,7 +86,6 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size)
 int Scumm::fileReadByte()
 {
 	byte b;
-	byte *src;
 
 	if (fread(&b, 1, 1, (FILE *)_fileHandle) != 1) {
 		clearerr((FILE *)_fileHandle);

@@ -904,7 +904,7 @@ void CostumeRenderer::proc3_ami()
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
 	uint y;
-	uint oldXpos, oldScaleIndexX;
+	int oldXpos, oldScaleIndexX;
 
 	mask = _mask_ptr_dest;
 	dst = _backbuff_ptr;
@@ -968,7 +968,7 @@ void CostumeRenderer::proc2_ami()
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
 	uint y;
-	uint oldXpos, oldScaleIndexX;
+	int oldXpos, oldScaleIndexX;
 
 	mask = _mask_ptr_dest;
 	dst = _backbuff_ptr;
@@ -1034,7 +1034,7 @@ void CostumeRenderer::proc1_ami()
 	uint y;
 	int color;
 	int t, x;
-	uint oldXpos, oldScaleIndexX;
+	int oldXpos, oldScaleIndexX;
 
 	mask = _mask_ptr = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos & 7];
