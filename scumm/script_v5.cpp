@@ -1917,12 +1917,12 @@ void Scumm_v5::o5_setObjectName() {
 	}
 
 	if (_features & GF_SMALL_HEADER) {
-		byte offset = 0;
+		int offset = 0;
 
 		if (_features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
 		else
-			offset = (byte) READ_LE_UINT16(objptr + 18);
+			offset = READ_LE_UINT16(objptr + 18);
 
 		size = READ_LE_UINT16(objptr) - offset;
 		name = objptr + offset;

@@ -926,14 +926,14 @@ const byte *Scumm::getObjOrActorName(int obj) {
 		return NULL;
 
 	if (_features & GF_SMALL_HEADER) {
-		byte offset = 0;
+		int offset = 0;
 
 		if (_version <= 2)
 			offset = *(objptr + 14);
 		else if (_features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
 		else
-			offset = (byte) READ_LE_UINT16(objptr + 18);
+			offset = READ_LE_UINT16(objptr + 18);
 
 		return (objptr + offset);
 	}
