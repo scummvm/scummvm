@@ -113,8 +113,8 @@ Web site
 * Redo the screenshots. Mostly this means adding more (and maybe removing or
   replacing a few). What I have in mind are that we follow these guidelines
   (which aren't set in stone nor laws, just guidelines :-)
-  - for each unique game, provide 2-3 screenshots
-  - have at least one shot for each major variant of a game (with major variant
+  - For each unique game, provide 2-3 screenshots
+  - Have at least one shot for each major variant of a game (with major variant
     I mean visibly distinct versions, like Zak V1 vs. V2 vs. FM-TOWNS; or
     Monkey Island EGA vs VGA vs CD).
   If I am counting right, that should place us at about 2*(18+2+1+1+1)=46
@@ -179,25 +179,28 @@ SCUMM
 * Figure out how to extract resources from Apple II and Commodore 64 versions
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Humongous Entertainment Games
-  - add proper handling of sound and speech in Humongous games
-  - add support for returning the correct music status for the digital music used 
-    in 3DO versions of Humongous games.
-  - add sound pitch support and fix missing sound effects for piano mini game in fbear
-  - add support kernelSetFunctions/kernelGetFunctions, used for displaying 
+  - Add proper handling of sound and speech in Humongous games
+  - Add support for returning the correct music status for the digital music
+    used in 3DO versions of Humongous games.
+  - Add sound pitch support and fix missing sound effects for piano mini game
+    in fbear
+  - Add support kernelSetFunctions/kernelGetFunctions, used for displaying 
     images on birthday cake in fbear and images in painting game of fbpack.
-  - add rename/delete file support, to make file opcodes function correctly
-  - fix akos asserts in puttmoon, caused by butterfly at start, robot near garage and 
-    rock animations near rocket.
-  - fix freezes when letting butterfly into fireworks factory and playing alien tag in puttmoon
-  - fix bugs in actorOps case 218 implementation, actor backgrounds should not be reset
-  - fix creature behind garage door disappearing in moondemo
-  - fix remaining masking issues, when cars come out of garages in puttputt and when Putt-Putt
-    gets off the chair in Cosmic Dust Diner of puttmoon
-  - fix missing sound effects in puttdemo
-  - fix 'costume x undefined x x' errors in veggie head mini game of fbear
-  - fix tangrams game on fbpack, only centre item can selected at the moment
-  - document and fix AKOS differences in Humongous Entertainment games
-  - support various newer Humongous Entertainment games
+  - Add rename/delete file support, to make file opcodes function correctly
+  - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
+    garage and rock animations near rocket.
+  - Fix freezes when letting butterfly into fireworks factory and playing alien
+    tag in puttmoon
+  - Fix bugs in actorOps case 218 implementation, actor backgrounds should not
+    be reset
+  - Fix creature behind garage door disappearing in moondemo
+  - Fix remaining masking issues, when cars come out of garages in puttputt and
+    when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
+  - Fix missing sound effects in puttdemo
+  - Fix 'costume x undefined x x' errors in veggie head mini game of fbear
+  - Fix tangrams game on fbpack, only centre item can selected at the moment
+  - Document and fix AKOS differences in Humongous Entertainment games
+  - Support various newer Humongous Entertainment games
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
@@ -223,34 +226,38 @@ SCUMM
   reused for this...
 * Add support for NES version of Maniac Mansion
 * Finish formating stuff in subtitles/translation code in the dig.
-* (maybe) In the very long distance future add translation stuff(hashing original and replacing with translation)
-* Add tool and support for encoding smush sequences into mpeg format to fit on small devices
-* Add tool and support for compress *.la* file resources (ex. sounds) to fit on small devices 
-* fix codec44 for nut fonts
-* Imuse Digital:
-  - fix continue playing 'state' music paused by 'sequence' music
-  - decrease number tracks to 8
-  - implement sounds priority in tracks for deleting lower priority sounds
-  - recheck music code
-  - add sound mixer procedure for pool method
-  - change code to new mixer pool method procedure
-  - check if VAR_SYNC if it's set to nonzero value
-  - add pool method for FT voc samples from resource
-  - add missing volume channels into sound mixer needed by imuse and add code into imuse
-  - implement tuning volume level or something(not sure yet what is)
-  - implement stuff for fadeParam in JUMP opcode and recheck 'next region' code 
-  - recheck original imuse stream stuff if match logicaly our code
-  - make struct sync, jump, regions use dynamic memory usage
-  - split startSound mess into more clear code
-  - fix akos sound related stuff
-  - add save/load code
-  - add code for mp3 and ogg
+* (maybe) In the very long distance future add translation stuff(hashing
+  original and replacing with translation)
+* Add tool and support for encoding smush sequences into mpeg format to fit
+  on small devices
+* Add tool and support for compress *.la* file resources (ex. sounds) to fit
+  on small devices 
+* Fix codec44 for nut fonts
+* iMUSE Digital:
+  - Fix continue playing 'state' music paused by 'sequence' music
+  - Decrease number tracks to 8
+  - Implement sounds priority in tracks for deleting lower priority sounds
+  - Recheck music code
+  - Add sound mixer procedure for pool method
+  - Change code to new mixer pool method procedure
+  - Check if VAR_SYNC if it's set to nonzero value
+  - Add pool method for FT voc samples from resource
+  - Add missing volume channels into sound mixer needed by imuse and add code
+    into imuse
+  - Implement tuning volume level or something(not sure yet what is)
+  - Implement stuff for fadeParam in JUMP opcode and recheck 'next region' code
+  - Recheck original imuse stream stuff if match logicaly our code
+  - Make struct sync, jump, regions use dynamic memory usage
+  - Split startSound mess into more clear code
+  - Fix AKOS sound related stuff
+  - Add save/load code
+  - Add code for MP3 and Ogg Vorbis compressed datafiles
  * SMUSH:
-  - add support for codec 37 opcode 1, for PC version of FT demo
-  - get rid smush mixer add code for imuse to handle smush tracks
-  - cleanup channel mess
-  - make code more clear in some places (subtiles code for ex.)
-  - add code for mp3/mad encoded sound tracks (distans future)
+  - Add support for codec 37 opcode 1, for PC version of FT demo
+  - Get rid smush mixer add code for imuse to handle smush tracks
+  - Cleanup channel mess
+  - Make code more clear in some places (subtiles code for ex.)
+  - Add code for MP3 encoded sound tracks (distant future)
 
 Broken Sword 1 & 2
 ==================
