@@ -270,6 +270,10 @@ SOURCE=.\sound\mididrv.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\midistreamer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\mixer.cpp
 # End Source File
 # Begin Source File
