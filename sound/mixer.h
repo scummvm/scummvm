@@ -105,19 +105,19 @@ public:
 
 	// start playing a raw sound
 	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
+				int id = -1, byte volume = 255, int8 balance = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
-	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
+	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 balance = 0, int id = -1);
 #endif
 #ifdef USE_VORBIS
-	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
+	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 balance = 0, int id = -1);
 #endif
 
-	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1, bool autofreeStream = true);
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true);
 
 
 	/** Start a new stream. */
-	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
+	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 balance = 0);
 
 	/** Append to an existing stream. */
 	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
@@ -151,8 +151,8 @@ public:
 	/** set the channel volume for the given handle (0 - 255) */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
-	/** set the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
-	void setChannelPan(PlayingSoundHandle handle, int8 pan);
+	/** set the channel balance for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
+	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
 
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();

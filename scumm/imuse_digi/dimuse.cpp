@@ -132,7 +132,7 @@ void IMuseDigital::callback() {
 						_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream2, true, _track[l].vol / 1000, _track[l].pan, -1, false);
 					} else {
 						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
-						_vm->_mixer->setChannelPan(_track[l].handle, pan);
+						_vm->_mixer->setChannelBalance(_track[l].handle, pan);
 					}
 					continue;
 				}
@@ -186,7 +186,7 @@ void IMuseDigital::callback() {
 
 					if (_vm->_mixer->isReady()) {
 						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
-						_vm->_mixer->setChannelPan(_track[l].handle, pan);
+						_vm->_mixer->setChannelBalance(_track[l].handle, pan);
 						_track[l].stream->append(data, result);
 						_track[l].regionOffset += result;
 						_track[l].trackOffset += result;

@@ -122,7 +122,7 @@ bool SmushMixer::handleFrame() {
 					if (!_channels[i].handle.isActive())
 						_mixer->newStream(&_channels[i].handle, rate, flags, 400000);
 					_mixer->setChannelVolume(_channels[i].handle, vol);
-					_mixer->setChannelPan(_channels[i].handle, pan);
+					_mixer->setChannelBalance(_channels[i].handle, pan);
 					_mixer->appendStream(_channels[i].handle, data, size);
 				}
 				free(data);

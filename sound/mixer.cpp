@@ -46,7 +46,7 @@ private:
 	bool _autofreeStream;
 	const bool _isMusic;
 	byte _volume;
-	int8 _pan;
+	int8 _balance;
 	bool _paused;
 	int _id;
 
@@ -56,8 +56,8 @@ protected:
 
 public:
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1);
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, bool reverseStereo = false, int id = -1);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
@@ -74,14 +74,11 @@ public:
 	bool isPaused() {
 		return _paused;
 	}
-	void setChannelVolume(const byte volume) {
+	void setVolume(const byte volume) {
 		_volume = volume;
 	}
-	void setChannelPan(const int8 pan) {
-		_pan = pan;
-	}
-	int getVolume() const {
-		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
+	void setBalance(const int8 balance) {
+		_balance = balance;
 	}
 	int getId() const {
 		return _id;
@@ -90,7 +87,7 @@ public:
 
 class ChannelStream : public Channel {
 public:
-	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
+	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size);
 	void append(void *sound, uint32 size);
 
 	void finish();
@@ -137,9 +134,13 @@ void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	_premixProc = proc;
 }
 
-void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
+void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 balance) {
 	Common::StackLock lock(_mutex);
-	insertChannel(handle, new ChannelStream(this, handle, rate, flags, buffer_size, volume, pan));
+
+	Channel *chan = new ChannelStream(this, handle, rate, flags, buffer_size);
+	chan->setVolume(volume);
+	chan->setBalance(balance);
+	insertChannel(handle, chan);
 }
 
 void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
@@ -215,7 +216,7 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 		handle->setIndex(index);
 }
 
-void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
+void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -242,27 +243,29 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, true, false, volume, pan, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	Channel *chan = new Channel(this, handle, input, true, false, (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0, id);
+	chan->setVolume(volume);
+	chan->setBalance(balance);
 	insertChannel(handle, chan);
 }
 
 #ifdef USE_MAD
-void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
+void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
 	// Create the input stream
 	AudioStream *input = makeMP3Stream(file, size);
-	playInputStream(handle, input, false, volume, pan, id);
+	playInputStream(handle, input, false, volume, balance, id);
 }
 #endif
 
 #ifdef USE_VORBIS
-void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
+void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
 	// Create the input stream
 	AudioStream *input = makeVorbisStream(file, size);
-	playInputStream(handle, input, false, volume, pan, id);
+	playInputStream(handle, input, false, volume, balance, id);
 }
 #endif
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 pan, int id, bool autofreeStream) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 balance, int id, bool autofreeStream) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -281,7 +284,9 @@ void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input,
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, volume, pan, false, id);
+	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, false, id);
+	chan->setVolume(volume);
+	chan->setBalance(balance);
 	insertChannel(handle, chan);
 }
 
@@ -368,10 +373,10 @@ void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
 	}
 
 	if (_channels[index])
-		_channels[index]->setChannelVolume(volume);
+		_channels[index]->setVolume(volume);
 }
 
-void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
+void SoundMixer::setChannelBalance(PlayingSoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
 	if (!handle.isActive())
@@ -380,12 +385,12 @@ void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::setChannelVolume has invalid index %d", index);
+		warning("soundMixer::setChannelBalance has invalid index %d", index);
 		return;
 	}
 
 	if (_channels[index])
-		_channels[index]->setChannelPan(pan);
+		_channels[index]->setBalance(balance);
 }
 
 void SoundMixer::pauseAll(bool paused) {
@@ -458,17 +463,16 @@ void SoundMixer::setMusicVolume(int volume) {
 #pragma mark -
 
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic,
-				byte volume, int8 pan, int id)
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(true), _isMusic(isMusic),
-	  _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(0) {
+	  _volume(255), _balance(0), _paused(false), _id(id), _converter(0), _input(0) {
 	assert(mixer);
 }
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
-				bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
+				bool autofreeStream, bool isMusic, bool reverseStereo, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
-	  _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(input) {
+	  _volume(255), _balance(0), _paused(false), _id(id), _converter(0), _input(input) {
 	assert(mixer);
 	assert(input);
 
@@ -496,26 +500,35 @@ void Channel::mix(int16 *data, uint len) {
 	} else {
 		assert(_converter);
 
-		// The pan value ranges from -127 to +127. That's 255 different values.
-		// From the channel pan/volume and the global volume, we compute the
-		// effective volume for the left and right channel.
-		// Note the slightly odd divisor: the 255 reflects the fact that
-		// the maximal value for _volume is 255, while the 254 is there
-		// because the maximal left/right pan value is 2*127 = 254.
-		// The value getVolume() returns is in the range 0 - 256.
+		// From the channel balance/volume and the global volume, we compute
+		// the effective volume for the left and right channel. Note the
+		// slightly odd divisor: the 255 reflects the fact that the maximal
+		// value for _volume is 255, while the 127 is there because the
+		// balance value ranges from -127 to 127.  The mixer (music/sound)
+		// volume is in the range 0 - 256.
 		// Hence, the vol_l/vol_r values will be in that range, too
 		
-		int vol = getVolume() * _volume;
-		st_volume_t vol_l = (127 - _pan) * vol / (255 * 254);
-		st_volume_t vol_r = (127 + _pan) * vol / (255 * 254);
+		int vol = (isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume()) * _volume;
+		st_volume_t vol_l, vol_r;
+
+		if (_balance == 0) {
+			vol_l = vol / 255;
+			vol_r = vol / 255;
+		} else if (_balance < 0) {
+			vol_l = vol / 255;
+			vol_r = ((127 + _balance) * vol) / (255 * 127);
+		} else {
+			vol_l = ((127 - _balance) * vol) / (255 * 127);
+			vol_r = vol / 255;
+		}
 
 		_converter->flow(*_input, data, len, vol_l, vol_r);
 	}
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
-							uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan)
-	: Channel(mixer, handle, true, volume, pan) {
+							uint rate, byte flags, uint32 buffer_size)
+	: Channel(mixer, handle, true) {
 	// Create the input stream
 	_input = makeAppendableAudioStream(rate, flags, buffer_size);
 

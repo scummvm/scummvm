@@ -952,7 +952,7 @@ int32 Sound::setFxIdVolumePan(int32 id, uint8 vol, int8 pan) {
 
 	if (!_fxMuted) {
 		_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
-		_vm->_mixer->setChannelPan(_fx[i]._handle, _panTable[pan + 16]);
+		_vm->_mixer->setChannelBalance(_fx[i]._handle, _panTable[pan + 16]);
 	}
 
 	return RD_OK;
