@@ -45,7 +45,7 @@ AdlibMusic::AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system)
 
 AdlibMusic::~AdlibMusic(void) {
 
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 //	YM3812Shutdown();
 }
 

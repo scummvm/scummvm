@@ -241,7 +241,7 @@ Music::Music(OSystem *system, SoundMixer *pMixer) {
 }
 
 Music::~Music() {
-	_mixer->setupPremix(0, 0);
+	_mixer->setupPremix(0);
 	delete _converter[0];
 	delete _converter[1];
 	if (_mutex)
