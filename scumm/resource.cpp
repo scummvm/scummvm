@@ -341,8 +341,8 @@ void Scumm::readIndexFile() {
 				}
 				if (_features & GF_AFTER_HEV7) {
 					// _objectRoomTable
-					//_fileHandle.seek(num * 4, SEEK_CUR);
-					_fileHandle.read(_objectRoomTable, num * 4);
+					_fileHandle.seek(num * 4, SEEK_CUR);
+					//_fileHandle.read(_objectRoomTable, num * 4);
 				}
 			}
 			
