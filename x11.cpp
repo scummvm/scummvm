@@ -25,7 +25,6 @@
 #include "scumm.h"
 #include "gui.h"
 #include "cdmusic.h"
-#include "mp3_cd.h"
 
 #include <sys/time.h>
 #include <unistd.h>

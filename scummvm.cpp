@@ -63,7 +63,6 @@ void Scumm::scummInit()
 	if (!(_features & GF_SMALL_NAMES))
 		loadCharset(1);
 
-	
 	initScreens(0, 16, 320, 144);
 
 	setShake(0);
@@ -167,6 +166,11 @@ void Scumm::scummInit()
 		_vars[VAR_V5_TALK_STRING_Y] = -0x50;
 
 	getGraphicsPerformance();
+
+#ifdef COMPRESSED_SOUND_FILE
+	_current_cache = 0;
+	_mp3_buffer = NULL;
+#endif
 }
 
 
@@ -238,14 +242,14 @@ int Scumm::scummLoop(int delta)
 	_vars[VAR_MOUSE_Y] = mouse.y;
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
-	if (_features & GF_AUDIOTRACKS) {
+	if (_features & GF_AUDIOTRACKS) {		
 		if (delta) {
 			if (++counter != 2)
 				_vars[VAR_MI1_TIMER] += 5;
 			else {
 				counter = 0;
 				_vars[VAR_MI1_TIMER] += 6;
-			}
+			}				
 		}
 	} else if (_features & GF_OLD256)
 		_vars[VAR_MUSIC_FLAG]++;		// ENDERFIX
@@ -902,8 +906,9 @@ void Scumm::convertKeysToClicks()
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 {
 	if (id < 1 || id >= NUM_ACTORS) {
-		if (_debugMode)
-			warning("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.", id, errmsg, vm.slot[_curExecScript].number, _opcode);
+		warning
+			("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
+			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
 		return NULL;
 	}
 	return derefActor(id);
@@ -1147,7 +1152,6 @@ void Scumm::waitForTimer(int msec_delay) {
 			}
 		}
 
-		_system->update_cdrom(); /* Loop CD Audio if needed */
 		if (_system->get_msecs() >= start_time + msec_delay)
 			break;
 		_system->delay_msecs(10);
@@ -1212,7 +1216,6 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	/* Create a primary virtual screen */
-	_videoBuffer = (byte*)malloc(328*200);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);
@@ -1288,15 +1291,7 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	/* bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
-	if (!scumm->_mixer->bind_to_system(syst)) {
-		warning("Sound initialization failed");
-		if (detector->_use_adlib) {
-			detector->_use_adlib = false;
-			detector->_midi_driver = MD_NULL;
-			warning("Adlib music was selected, switching to midi null driver");
-		}
-	}
-		
+	scumm->_mixer->bind_to_system(syst);
 	scumm->_mixer->set_volume(128);
 
 	scumm->_fullScreen = detector->_fullScreen;

@@ -4,7 +4,6 @@
 #include "SDL_thread.h"
 #include "gameDetector.h"
 
-#include "mp3_cd.h"
 #include <SDL.h>
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))

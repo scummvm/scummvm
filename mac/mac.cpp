@@ -32,7 +32,6 @@
 #include "scumm.h"
 #include "gui.h"
 #include "cdmusic.h"
-#include "mp3_cd.h"
 #include "gameDetector.h"
 
 #define SRC_WIDTH 320

@@ -504,6 +504,7 @@ void *Scumm::openSfxFile()
 			warning("Unable to open DIG voice bundle: %s", buf);
 		return file;
 	}
+
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
@@ -583,9 +584,134 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 
 void Scumm::playSfxSound_MP3(void *sound, uint32 size)
 {
+
 #ifdef COMPRESSED_SOUND_FILE
+
 	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
-#else
-	error("Should never happen !!!");
+
 #endif
 }
+
+#ifdef COMPRESSED_SOUND_FILE
+
+int Scumm::getCachedTrack(int track) {
+	int i;
+	char track_name[1024];
+	FILE* file;
+	int current_index;
+	struct mad_stream stream;
+	struct mad_frame frame;
+	unsigned char buffer[8192];
+	unsigned int buflen = 0;
+	int count = 0, result = 0;
+
+	// See if we find the track in the cache
+	for (i=0; i<CACHE_TRACKS; i++)
+		if (_cached_tracks[i] == track) {
+			if (_mp3_tracks[i])
+				return i;
+			else
+				return -1;
+		}
+	current_index = _current_cache++;
+	_current_cache %= CACHE_TRACKS;
+	// Not found, see if it exists
+	sprintf(track_name, "%strack%d.mp3", _gameDataPath, track);
+	file = fopen(track_name, "rb");
+	_cached_tracks[current_index] = track;
+	_mp3_tracks[current_index] = NULL;
+	if (!file) {
+		warning("Track %d not available in mp3 format", track);
+		return -1;
+	}
+	// Check the format and bitrate
+	mad_stream_init(&stream);
+	mad_frame_init(&frame);
+
+	while (1) {
+		if (buflen < sizeof(buffer)) {
+			uint16 bytes;
+
+			bytes = fread(buffer + buflen, 1, sizeof(buffer) - buflen, file);
+			if (bytes <= 0) {
+				if (bytes == -1) {
+					warning("Invalid format for track %d", track);
+					return -1;
+				}
+				break;
+			}
+
+			buflen += bytes;
+		}
+
+		mad_stream_buffer(&stream, buffer, buflen);
+
+		while (1) {
+			if (mad_frame_decode(&frame, &stream) == -1) {
+				if (!MAD_RECOVERABLE(stream.error))
+					break;
+
+				if (stream.error != MAD_ERROR_BADCRC)
+					continue;
+			}
+
+			if (count++)
+				break;
+		}
+
+		if (count || stream.error != MAD_ERROR_BUFLEN)
+			break;
+
+		memmove(buffer, stream.next_frame,
+						buflen = &buffer[buflen] - stream.next_frame);
+	}
+
+	if (count)
+		memcpy(&_mad_header[current_index], &frame.header, sizeof(mad_header));
+	else {
+		warning("Invalid format for track %d", track);
+		return -1;
+	}
+
+	mad_frame_finish(&frame);
+	mad_stream_finish(&stream);
+	// Get file size
+	fseek(file, 0, SEEK_END);
+	_mp3_size[current_index] = ftell(file);
+	_mp3_tracks[current_index] = file;
+	if (!_mp3_buffer)
+		_mp3_buffer = malloc(MP3_BUFFER_SIZE);
+	
+	return current_index;
+}
+		
+void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
+	int index;
+	long offset;
+	float frame_size;
+	mad_timer_t duration;
+
+	if (!start && !delay) {
+		_mixer->stop(_mp3_handle);
+		return;
+	}
+
+	index = getCachedTrack(track);
+	if (index < 0)
+		return;
+
+	// Calc offset
+	frame_size = 144 * _mad_header[index].bitrate / _mad_header[index].samplerate;
+	offset = (long)((float)start / (float)75 * 1000 /
+	       			(float)((float)1152 / (float)_mad_header[index].samplerate *
+									  	  1000) * (float)(frame_size + 0.5));
+	// Calc delay
+	mad_timer_set(&duration, 0, delay, 75);
+	// Go
+	fseek(_mp3_tracks[index], offset, SEEK_SET);
+
+	_mixer->play_mp3_cdtrack(&_mp3_handle, _mp3_tracks[index], _mp3_buffer, MP3_BUFFER_SIZE, duration);
+
+}
+
+#endif

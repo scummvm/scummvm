@@ -53,6 +53,26 @@ private:
 		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 	};
 
+	class Channel_MP3_CDMUSIC : public Channel {
+		SoundMixer *_mixer;
+		void *_ptr;
+        struct mad_stream _stream;
+        struct mad_frame _frame;
+        struct mad_synth _synth;
+        uint32 _pos_in_frame;
+        uint32 _size;
+        uint32 _buffer_size;
+        mad_timer_t _duration;
+        FILE   *_file;
+		bool _initialized;
+		byte _flags;
+	public:
+		void mix(int16 *data, uint len);
+		void destroy();		
+
+		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
+	};
+
 #endif
 
 	static void on_generate_samples(void *s, byte *samples, int len);
@@ -81,11 +101,12 @@ public:
 	enum {
 		FLAG_AUTOFREE = 1,
 		FLAG_UNSIGNED = 2, /* unsigned samples */
-		FLAG_FILE = 4,		 /* sound is a FILE * that's read from */
+		FLAG_FILE = 4,	   /* sound is a FILE * that's read from */
 	};
 	void play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	void play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
+	void play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */

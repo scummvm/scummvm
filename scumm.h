@@ -82,7 +82,7 @@ struct ResHdr {
 } GCC_PACK;
 
 #define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) ( READ_BE_UINT32_UNALIGNED(&((ResHdr*)x)->size) )
+#define RES_SIZE(x) ( READ_BE_UINT32(&((ResHdr*)x)->size) )
 
 
 struct RoomHeader {
@@ -595,7 +595,10 @@ public:
 	char *getGameName();
 	Scumm(); // constructor
 
-	byte *_videoBuffer;
+	/* video buffer */
+	byte _videoBuffer[328*200]; // main video buffer
+
+	/* system call object */
 
 	/* Scumm main loop */
 
@@ -952,6 +955,27 @@ public:
 	uint _curSoundPos;
 	int current_cd_sound;
 
+#ifdef COMPRESSED_SOUND_FILE
+
+	#define CACHE_TRACKS 10
+	#define MP3_BUFFER_SIZE 200000
+
+	/* used for mp3 CD music */
+
+	int	_current_cache;
+	int _cached_tracks[CACHE_TRACKS];
+	struct mad_header _mad_header[CACHE_TRACKS];
+	long _mp3_size[CACHE_TRACKS];
+	FILE* _mp3_tracks[CACHE_TRACKS];
+	void* _mp3_buffer;
+	PlayingSoundHandle _mp3_handle;
+
+	int getCachedTrack(int track);
+	void playMP3CDTrack(int track, int num_loops, int start, int delay);
+
+
+#endif
+
 	int16 _soundQuePos, _soundQue[0x100];
 	byte _soundQue2Pos, _soundQue2[10];
 	bool _soundsPaused, _soundsPaused2;
@@ -1120,6 +1144,7 @@ public:
 	void restoreBG(int left, int top, int right, int bottom);
 	void redrawBGStrip(int start, int num);	
 	void redrawBGAreas();
+	void redrawLines(int from, int to);	
 	
 	void moveCamera();
 	void cameraMoved();
@@ -1821,4 +1846,4 @@ byte *findResourceSmall(uint32 tag, byte *searchin);
 //void setShakePos(Scumm *s, int shake_pos);
 void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
-
+//void cd_playtrack(int track, int offset, int delay);
