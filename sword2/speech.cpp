@@ -1446,8 +1446,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 		local_text	= params[S_TEXT]&0xffff;
 
 		text = FetchTextLine( res_man.Res_open(text_res), local_text );	// open text file & get the line
-		//officialTextNumber = *(uint16*)text;	// 1st word of text line is the official line number (this doesn't work on PSX)
-		memcpy(&officialTextNumber, text, 2);	// this works on PSX & PC
+		officialTextNumber = READ_LE_UINT16(text);
 
 		res_man.Res_close(text_res);	// now ok to close the text file
 

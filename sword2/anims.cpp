@@ -557,7 +557,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 		local_text	= sequence_text_list[line].textNumber&0xffff;
 
 		text = FetchTextLine( res_man.Res_open(text_res), local_text );	// open text resource & get the line
-		memcpy(&wavId, text, 2);	// this works on PSX & PC
+		wavId = (int32)READ_LE_UINT16(text);
 
 		res_man.Res_close(text_res);	// now ok to close the text file
 

@@ -388,14 +388,14 @@ int32 Sword2Sound::GetCompSpeechSize(const char *filename, uint32 speechid) {
 		return (0);
 	}
 
-	if (!speechIndex[0] || !speechIndex[1]) {
+	if (!FROM_LE_32(speechIndex[0]) || !FROM_LE_32(speechIndex[1])) {
 		fp.close();
 		return (0);
 	}
 
 	fp.close();
 
-	i = (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
+	i = (FROM_LE_32(speechIndex[1]) - 1) * 2 + sizeof(_wavHeader) + 8;
 	
 	return(i);
 }
