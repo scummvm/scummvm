@@ -22,6 +22,40 @@
 #include "file.h"
 #include "engine.h"	// For debug/warning/error
 
+FILE *fopen_nocase(const char *path, const char *mode)
+{
+	FILE *file;
+
+	file = fopen(path, mode);
+	if (file)
+		return file;
+
+	char buf[256], *ptr;
+	int32 i = 0, pos = 0;
+
+	strcpy(buf, path);
+	while (buf[i] != 0) {
+		if ((buf[i] == '/') || (buf[i] == '\\')) {
+			pos = i + 1;
+		}
+		i++;
+	}
+	
+	ptr = buf + pos;
+	do
+		*ptr++ = toupper(*ptr);
+	while (*ptr);
+	file = fopen(buf, mode);
+	if (file)
+		return file;
+
+	ptr = buf + pos;
+	do
+		*ptr++ = tolower(*ptr);
+	while (*ptr);
+	return fopen(buf, mode);
+}
+
 File::File() {
 	_handle = NULL;
 	_ioFailed = false;
@@ -33,7 +67,7 @@ File::~File() {
 }
 
 bool File::open(const char *filename, int mode, byte encbyte) {
-	char buf[256], *ptr;
+
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
 		return false;
@@ -41,53 +75,15 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 
 	clearIOFailed();
 
-	int32 i = 0, pos = 0;
-
-	strcpy(buf, filename);
-	while (buf[i] != 0) {
-		if ((buf[i] == '/') || (buf[i] == '\\')) {
-			pos = i + 1;
-		}
-		i++;
-	}
-	
-	if (mode == 1) {
-		_handle = fopen(buf, "rb");
-		if (_handle == NULL) {
-			ptr = buf + pos;
-			do
-				*ptr++ = toupper(*ptr);
-			while (*ptr);
-			_handle = fopen(buf, "rb");
-		}
-		if (_handle == NULL) {
-			ptr = buf + pos;
-			do
-				*ptr++ = tolower(*ptr);
-			while (*ptr);
-			_handle = fopen(buf, "rb");
-		}
+	if (mode == kFileReadMode) {
+		_handle = fopen_nocase(filename, "rb");
 		if (_handle == NULL) {
 			debug(2, "File %s not found", filename);
 			return false;
 		}
 	}
-	else if (mode == 2) {
-		_handle = fopen(buf, "wb");
-		if (_handle == NULL) {
-			ptr = buf + pos;
-			do
-				*ptr++ = toupper(*ptr);
-			while (*ptr);
-			_handle = fopen(buf, "wb");
-		}
-		if (_handle == NULL) {
-			ptr = buf + pos;
-			do
-				*ptr++ = tolower(*ptr);
-			while (*ptr);
-			_handle = fopen(buf, "wb");
-		}
+	else if (mode == kFileWriteMode) {
+		_handle = fopen_nocase(filename, "wb");
 		if (_handle == NULL) {
 			debug(2, "File %s not opened", filename);
 			return false;
@@ -136,6 +132,20 @@ uint32 File::pos() {
 	}
 
 	return ftell(_handle);
+}
+
+uint32 File::size() {
+	if (_handle == NULL) {
+		error("File is not open!");
+		return 0;
+	}
+
+	uint32 oldPos = ftell(_handle);
+	fseek(_handle, 0, SEEK_END);
+	uint32 length = ftell(_handle);
+	fseek(_handle, oldPos, SEEK_SET);
+	
+	return length;
 }
 
 void File::seek(int32 offs, int whence) {

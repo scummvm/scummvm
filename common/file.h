@@ -26,6 +26,10 @@
 #include "stdafx.h"
 #include "scummsys.h"
 
+// fopen_nocase is like fopen only that it will try various variations
+// of the given filename (with different cases) if the initial one isn't found.
+FILE *fopen_nocase(const char *path, const char *mode);
+
 class File {
 private:
 
@@ -34,16 +38,21 @@ private:
 	byte _encbyte;
 
 public:
+	enum {
+		kFileReadMode = 1,
+		kFileWriteMode = 2
+	};
 
 	File();
 	~File();
-	bool open(const char *filename, int mode = 1, byte encbyte = 0);
+	bool open(const char *filename, int mode = kFileReadMode, byte encbyte = 0);
 	void close();
 	bool isOpen();
 	bool ioFailed();
 	void clearIOFailed();
 	bool eof();
 	uint32 pos();
+	uint32 size();
 	void seek(int32 offs, int whence);
 	uint32 read(void *ptr, uint32 size);
 	byte readByte();
