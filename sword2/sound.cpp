@@ -361,7 +361,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 	// add the appropriate file extension & play it
 
-	if (_vm->_features & GF_DEMO) {
+	if (DEMO) {
 		// The demo I found didn't come with any music file, but you
 		// could use the music from the first CD of the complete game,
 		// I suppose...

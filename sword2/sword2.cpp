@@ -247,10 +247,10 @@ int32 Sword2Engine::initialiseGame(void) {
 	initFxQueue();
 
 	// all demos (not just web)
-	if (_features & GF_DEMO) {
-		// set script variable
+	if (_features & GF_DEMO)
 		DEMO = 1;
-	}
+	else
+		DEMO = 0;
 
 	return 0;
 }
@@ -366,7 +366,7 @@ void Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!(_features & GF_DEMO))
+					if (!DEMO)
 						_logic->fnPlayCredits(NULL);
 					break;
 #ifdef _SWORD2_DEBUG
@@ -420,7 +420,7 @@ void Sword2Engine::startGame(void) {
 	debug(5, "startGame() STARTING:");
 
 	// all demos not just web
-	if (_features & GF_DEMO)
+	if (DEMO)
 		screen_manager_id = 19;		// DOCKS SECTION START
 	else
 		screen_manager_id = 949;	// INTRO & PARIS START

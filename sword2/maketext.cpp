@@ -576,7 +576,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 
 	// Get the text line - skip the 2 chars containing the wavId
 
-	if (_features & GF_DEMO)
+	if (DEMO)
 		textLine = fetchTextLine(textFile, 451) + 2;
 	else
 		textLine = fetchTextLine(textFile, 54) + 2;
