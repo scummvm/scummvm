@@ -1345,7 +1345,7 @@ void ScummEngine_v72he::o72_findObject() {
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	int b, c;
+	int b, c, offs;
 	int dim1end, dim1start, dim2end, dim2start;
 	int id, len, len2;
 	ArrayHeader *ah;
@@ -1408,11 +1408,13 @@ void ScummEngine_v72he::o72_arrayOps() {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
 		len2 = ((c - b) | dim2end) - dim2end + 1;
+		offs = (b >= c) ? 1 : -1;
 		while (dim2start < dim2end) {
 			len = len2;
 			while (--len >= 0) {
 				writeArray(array, dim2start, len, c);
 			}
+			c += offs;
 			dim2start++;
 		}
 		break;
