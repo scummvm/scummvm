@@ -5125,7 +5125,7 @@ void SimonEngine::loadMusic (uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		if (_game & GF_WIN && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))) {
+		if (_game & GF_WIN && !(ConfMan.getBool("native_mt32") && (_midiDriver != MD_MT32))) {
 			midi.loadMultipleSMF (_game_file);
 		} else {
 			midi.loadXMIDI (_game_file);
