@@ -81,6 +81,8 @@ public:
 		char name[15];
 		int16 soundId;
 		BundleMgr *bundle;
+		int type;
+		int volGroupId;
 	};
 
 private:
@@ -105,8 +107,9 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 
-	soundStruct * openSound(int32 soundId, const char *soundName, int soundType, int volGroupId);
+	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId);
 	void closeSound(soundStruct *soundHandle);
+	soundStruct *cloneSound(soundStruct *soundHandle);
 
 	int getFreq(soundStruct *soundHandle);
 	int getBits(soundStruct *soundHandle);

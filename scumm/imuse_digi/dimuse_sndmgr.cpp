@@ -286,7 +286,8 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 	bool result = false;
 	byte *ptr = NULL;
 
-	if (soundName == NULL) {
+	if (soundName[0] == 0) {
+		_sounds[slot].name[0] = 0;
 		if ((soundType == IMUSE_RESOURCE)) {
 			ptr = _vm->getResourceAddress(rtSound, soundId);
 			if (ptr == NULL) {
@@ -294,6 +295,9 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				return NULL;
 			}
 			_sounds[slot].resPtr = ptr;
+			_sounds[slot].soundId = soundId;
+			_sounds[slot].type = soundType;
+			_sounds[slot].volGroupId = volGroupId;
 			result = true;
 		} else if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
@@ -304,8 +308,9 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			_sounds[slot].bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside);
-			_sounds[slot].name[0] = 0;
 			_sounds[slot].soundId = soundId;
+			_sounds[slot].type = soundType;
+			_sounds[slot].volGroupId = volGroupId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 		}
@@ -321,6 +326,8 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			_sounds[slot].bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside);
 			strcpy(_sounds[slot].name, soundName);
 			_sounds[slot].soundId = soundId;
+			_sounds[slot].type = soundType;
+			_sounds[slot].volGroupId = volGroupId;
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %s", soundName);
 		}
@@ -348,6 +355,12 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 	free(soundHandle->jump);
 	free(soundHandle->sync);
 	memset(soundHandle, 0, sizeof(soundStruct));
+}
+
+ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::cloneSound(soundStruct *soundHandle) {
+	assert(soundHandle && checkForProperHandle(soundHandle));
+
+	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId);
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {

@@ -256,7 +256,6 @@ SCUMM
 * Fix codec44 for nut fonts
 * iMUSE Digital:
   - Fix music code (done, but not tested yet)
-  - Implement 'fade buffers' stuff, to handle fadeParam in JUMP opcode
   - Implement pool method data transfer between imuse and sound mixer
   - Add save/load code
   - Add code for MP3 and Ogg Vorbis compressed datafiles

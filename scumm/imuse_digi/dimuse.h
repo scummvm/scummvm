@@ -34,6 +34,7 @@
 namespace Scumm {
 
 #define MAX_DIGITAL_TRACKS 8
+#define MAX_DIGITAL_FADETRACKS 8
 
 struct imuseDigTable;
 struct imuseComiTable;
@@ -63,6 +64,8 @@ private:
 		int iteration;
 		int mod;
 		int32 pullSize;
+		int32 mixerFlags;
+
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
 		AppendableAudioStream *stream;
@@ -71,7 +74,7 @@ private:
 		Track();
 	};
 
-	Track _track[MAX_DIGITAL_TRACKS];
+	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	OSystem::MutexRef _mutex;
 	ScummEngine *_vm;
@@ -94,12 +97,14 @@ private:
 	void switchToNextRegion(int track);
 	void allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
+	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+	int cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTrack);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
@@ -139,7 +144,6 @@ public:
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
-	void selectVolumeGroup(int soundId, int volGroupId);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
 	void stopAllSounds() { stopAllSounds(false); }
