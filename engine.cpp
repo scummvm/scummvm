@@ -42,6 +42,9 @@ void Engine::mainLoop() {
 	movieTime_ = 0;
 	frameTime_ = 0;
 	frameStart_ = SDL_GetTicks();
+	unsigned int frameCounter = 0;
+	unsigned int timeAccum = 0;
+	char fps[8] = "";
 
 	for (;;) {
 		// Process events
@@ -152,6 +155,15 @@ void Engine::mainLoop() {
 				(*i)->draw();
 			}
 
+			if (SHOWFPS_GLOBAL) {
+				if (timeAccum > 1000) {
+					sprintf(fps, "%7.2f", (double)(frameCounter * 1000) / (double)timeAccum );
+					frameCounter = 0;
+					timeAccum = 0;
+				}
+				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+			}
+
 			currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 			
 			g_driver->flipBuffer();
@@ -164,6 +176,11 @@ void Engine::mainLoop() {
 		unsigned newStart = SDL_GetTicks();
 		frameTime_ = newStart - frameStart_;
 		frameStart_ = newStart;
+
+		if (SHOWFPS_GLOBAL) {
+			frameCounter++;
+			timeAccum += frameTime_;
+		}
 
 		lua_beginblock();
 		set_frameTime(frameTime_);

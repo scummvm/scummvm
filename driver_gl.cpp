@@ -240,7 +240,7 @@ void Driver::loadEmergFont() {
 }
 
 // Draw text string using emergency font
-void Driver::drawEmergString(int x, int y, const char *text, Color &fgColor) {
+void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();

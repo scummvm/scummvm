@@ -42,7 +42,7 @@ class Driver {
 		void drawDepthBitmap(int x, int y, int w, int h, char *data);
 		void drawBitmap();
 
-		void drawEmergString(int x, int y, const char *text, Color &fgColor);
+		void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 		void loadEmergFont();
 
 		void prepareSmushFrame(int width, int height, byte *bitmap);

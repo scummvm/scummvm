@@ -35,7 +35,7 @@
 #endif
 
 // Hacky global toggles for experimental/debug code
-bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
+bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;
 
 static void saveRegistry() {
 	Registry::instance()->save();
@@ -79,6 +79,7 @@ int main(int argc, char *argv[]) {
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(Registry::instance()->get("zbuffer"));
 	SCREENBLOCKS_GLOBAL = parseBoolStr(Registry::instance()->get("screenblocks"));
+	SHOWFPS_GLOBAL = parseBoolStr(Registry::instance()->get("showfps"));
 	for (i=1;i<argc;i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
@@ -88,12 +89,17 @@ int main(int argc, char *argv[]) {
 			SCREENBLOCKS_GLOBAL = true;
 		else if (strcmp(argv[i], "-noscreenblocks") == 0)
 			SCREENBLOCKS_GLOBAL = false;
+		else if (strcmp(argv[i], "-fps") == 0)
+			SHOWFPS_GLOBAL = true;
+		else if (strcmp(argv[i], "-nofps") == 0)
+			SHOWFPS_GLOBAL = false;
 		else {
 			printf("Residual CVS Version\n");
 			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]screenblocks\t\tEnable/disable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
+			printf("\t-[no]showfps\t\tEnable/disable fps display in upper right corner\n");
 			exit(-1);
 		}
 	}
