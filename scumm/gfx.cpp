@@ -2040,6 +2040,7 @@ void Scumm::actorFollowCamera(int act) {
 #pragma mark -
 
 void Scumm::fadeIn(int effect) {
+	updatePalette();
 	switch (effect) {
 	case 1:
 	case 2:
@@ -2072,6 +2073,8 @@ void Scumm::fadeIn(int effect) {
 
 void Scumm::fadeOut(int effect) {
 	VirtScreen *vs;
+
+	updatePalette();
 
 	setDirtyRange(0, 0, 0);
 	if (!(_features & GF_AFTER_V7))
@@ -2170,7 +2173,6 @@ void Scumm::transitionEffect(int a) {
 
 		// Draw the current state to the screen and wait half a sec so the user
 		// can watch the effect taking place.
-		updatePalette();
 		_system->update_screen();
 		waitForTimer(30);
 	}
@@ -2259,8 +2261,6 @@ void Scumm::dissolveEffect(int width, int height) {
 	// the whole update should take about a quarter of a second, assuming
 	// most of the time is spent in waitForTimer(). It looks good to me,
 	// but might still need some tuning.
-
-	updatePalette();
 
 	blits = 0;
 	blits_before_refresh = (3 * w * h) / 25;
