@@ -246,20 +246,24 @@ void IMuseDigital::switchToNextRegion(int track) {
 		int fadeDelay = (60 * _sound->getJumpFade(_track[track]->soundHandle, jumpId)) / 1000;
 		if (sampleHookId != 0) {
 			if (_track[track]->curHookId == sampleHookId) {
+				if (fadeDelay != 0) {
+					int fadeTrack = cloneToFadeOutTrack(track, fadeDelay, false);
+					_track[fadeTrack]->dataOffset = _sound->getRegionOffset(_track[fadeTrack]->soundHandle, _track[fadeTrack]->curRegion);
+					_track[fadeTrack]->regionOffset = 0;
+					debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[fadeTrack]->soundId, _track[fadeTrack]->curRegion, _track[fadeTrack]->curHookId);
+					_track[fadeTrack]->curHookId = 0;
+				}
+				_track[track]->curRegion = region;
+				debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track]->soundId, _track[track]->curRegion, _track[track]->curHookId);
+				_track[track]->curHookId = 0;
+			}
+		} else {
+			if (fadeDelay != 0) {
 				int fadeTrack = cloneToFadeOutTrack(track, fadeDelay, false);
 				_track[fadeTrack]->dataOffset = _sound->getRegionOffset(_track[fadeTrack]->soundHandle, _track[fadeTrack]->curRegion);
 				_track[fadeTrack]->regionOffset = 0;
 				debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[fadeTrack]->soundId, _track[fadeTrack]->curRegion, _track[fadeTrack]->curHookId);
-				_track[track]->curRegion = region;
-				debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track]->soundId, _track[track]->curRegion, _track[track]->curHookId);
-				_track[track]->curHookId = 0;
-				_track[fadeTrack]->curHookId = 0;
 			}
-		} else {
-			int fadeTrack = cloneToFadeOutTrack(track, fadeDelay, false);
-			_track[fadeTrack]->dataOffset = _sound->getRegionOffset(_track[fadeTrack]->soundHandle, _track[fadeTrack]->curRegion);
-			_track[fadeTrack]->regionOffset = 0;
-			debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[fadeTrack]->soundId, _track[fadeTrack]->curRegion, _track[fadeTrack]->curHookId);
 			_track[track]->curRegion = region;
 			debug(5, "switchToNextRegion-sound(%d) jump to %d region, curHookId: %d", _track[track]->soundId, _track[track]->curRegion, _track[track]->curHookId);
 		}
