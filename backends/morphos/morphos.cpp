@@ -836,6 +836,9 @@ bool OSystem_MorphOS::poll_event(Event *event)
 void OSystem_MorphOS::set_shake_pos(int shake_pos)
 {
 	ScummShakePos = shake_pos;
+	// FIXME - why does this hard code size/height? While right now the only game that
+	// is not 320x200 is Zak256, and Zak doesn't use shaking AFAIK, this is still not
+	// a good thing.
 	AddUpdateRect(0, 0, 320, 200);
 }
 
