@@ -754,7 +754,7 @@ void Scumm::decompressBundleSound(int index) {
 	/* FIXME: This is nasty. We are actually sending the whole
 			  decompressed packet to the mixer.. but the packet
 			  actually contains further subblocks! (eg, sync) */
-	_mixer->play_raw(NULL, CompFinal, finalSize,22050, SoundMixer::FLAG_AUTOFREE);
+	_mixer->play_raw(NULL, CompFinal, finalSize,22050, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 }
 
 void Scumm::playBundleSound(char *sound)
