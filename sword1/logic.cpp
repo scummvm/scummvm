@@ -80,17 +80,17 @@ void Logic::initialize(void) {
 void Logic::newScreen(uint32 screen) {
 	Object *compact = (Object*)_objMan->fetchObject(PLAYER);
 
-	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
-		// work around script bug #911508
-		if ((_scriptVars[SCREEN] == 25) && (_scriptVars[SAND_FLAG] == 4)) {
-			Object *cpt = _objMan->fetchObject(SAND_25);
-			Object *george = _objMan->fetchObject(PLAYER);
-			if (george->o_place == HOLDING_REPLICA_25) // is george holding the replica in his hands?
-				fnFullSetFrame(cpt, SAND_25, IMPFLRCDT, IMPFLR, 0, 0, 0, 0); // empty impression in floor			
-			else
-				fnFullSetFrame(cpt, SAND_25, IMPPLSCDT, IMPPLS, 0, 0, 0, 0); // impression filled with plaster
-		}
+	// work around script bug #911508
+	if (((screen == 25) || (_scriptVars[SCREEN] == 25)) && (_scriptVars[SAND_FLAG] == 4)) {
+		Object *cpt = _objMan->fetchObject(SAND_25);
+		Object *george = _objMan->fetchObject(PLAYER);
+		if (george->o_place == HOLDING_REPLICA_25) // is george holding the replica in his hands?
+			fnFullSetFrame(cpt, SAND_25, IMPFLRCDT, IMPFLR, 0, 0, 0, 0); // empty impression in floor			
+		else
+			fnFullSetFrame(cpt, SAND_25, IMPPLSCDT, IMPPLS, 0, 0, 0, 0); // impression filled with plaster
+	}
 
+	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
 		fnAddHuman(NULL, 0, 0, 0, 0, 0, 0, 0);
 		if (_scriptVars[GEORGE_WALKING]) { // except that if George was walking when we saveed the game
 			fnStandAt(compact, PLAYER, _scriptVars[CHANGE_X], _scriptVars[CHANGE_Y], _scriptVars[CHANGE_DIR], _scriptVars[CHANGE_STANCE], 0,0);
