@@ -32,10 +32,12 @@ class QueenEngine;
 
 struct CmdText {
 
+	CmdText(bool reversed, uint8 y, QueenEngine *vm);
+
 	void clear();
 	void display(uint8 color);
-	void displayTemp(uint8 color, Verb v, const char *name = NULL);
-	void displayTemp(uint8 color, const char *name);
+	void displayTemp(uint8 color, Verb v, const char *name = NULL, bool outlined = false);
+	void displayTemp(uint8 color, const char *name, bool outlined = false);
 	void setVerb(Verb v);
 	void addLinkWord(Verb v);
 	void addObject(const char *objName);
@@ -47,6 +49,7 @@ struct CmdText {
 	};
 
 	bool _isReversed;
+	uint8 _y;
 	char _command[MAX_COMMAND_LEN];
 	QueenEngine *_vm;
 };

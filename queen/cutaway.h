@@ -194,8 +194,6 @@ class Cutaway {
 
 		int16 _currentImage;
 
-		AnimFrame _cutAnim[21][30];
-
 		Cutaway(const char *filename, 
 				QueenEngine *vm);
 		~Cutaway();

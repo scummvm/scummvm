@@ -115,6 +115,7 @@ public:
 
 	void setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount);
 
+	void setBobCutawayAnim(uint16 bobNum, bool xflip, const AnimFrame *af, uint8 frameCount);
 	void fillAnimBuffer(const char *anim, AnimFrame *af);
 	uint16 countAnimFrames(const char *anim);
 	void setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
@@ -165,8 +166,12 @@ private:
 	//! used to scale a BobFrame
 	BobFrame _shrinkBuffer;
 
+	//! in-game objects/persons animations
 	AnimFrame _newAnim[17][30];
 
+	//! cutaway objects/persons animations
+	AnimFrame _cutAnim[21][30];
+	
 	uint16 _personFrames[4];
 
 	//! Number of animated furniture in current room

@@ -43,6 +43,17 @@
 
 namespace Queen {
 
+static char *trim(char *str) {
+	char *p = str + strlen(str) - 1;
+	while (p != str && *p == ' ') {
+		*p-- = '\0';
+	}
+	while (str != p && *str == ' ') {
+		++str;
+	}
+	return str;
+}
+
 Logic::Logic(QueenEngine *vm)
 	:  _queen2jas(NULL), _credits(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
@@ -204,6 +215,15 @@ void Logic::initialise() {
 	_joeResponse[0] = 0;
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
 		_joeResponse[i] = _queen2jas->nextLine();
+	
+	// FIXME - the spanish version adds some space characters (0x20) at the
+	// beginning and the end of the journal button captions. As we don't need
+	// that 'trick' to center horizontally the texts, we simply trim them.
+	if (_vm->resource()->getLanguage() == SPANISH) {
+		for (i = 30; i <= 35; i++) {
+			_joeResponse[i] = trim(_joeResponse[i]);
+		}
+	}
 
 	_aAnim = new char*[_numAAnim + 1];
 	_aAnim[0] = 0;
@@ -1176,10 +1196,11 @@ void Logic::handlePinnacleRoom() {
 
 	_vm->update();
 	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
-	_vm->display()->textCurrentColor(INK_PINNACLE_ROOM);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
+	CmdText cmdText((_vm->resource()->getLanguage() == HEBREW), 5, _vm);
+	cmdText.setVerb(VERB_WALK_TO);
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
 		_vm->update();
@@ -1202,9 +1223,7 @@ void Logic::handlePinnacleRoom() {
 			ObjectData *objData = objectData(curObj);
 			if (objData->name > 0) {
 				_entryObj = objData->entryObj;
-				char textCmd[CmdText::MAX_COMMAND_LEN];
-				sprintf(textCmd, "%s %s", verbName(VERB_WALK_TO), objectName(objData->name));
-				_vm->display()->setTextCentered(5, textCmd);
+				cmdText.displayTemp(INK_PINNACLE_ROOM, objectName(objData->name), true);
 			}
 			prevObj = curObj;
 		}

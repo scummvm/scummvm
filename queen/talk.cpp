@@ -1181,15 +1181,69 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	debug(6, "Talk::splitOption(%s)", str);
-	// Check to see if option fits on one line, and exit early
+	int lines;
+	memset(optionText, 0, 5 * MAX_STRING_SIZE);
 	if (_vm->resource()->getLanguage() == ENGLISH || 
 		_vm->display()->textWidth(str) <= MAX_TEXT_WIDTH) {
 		strcpy(optionText[0], str);
-		return 1;
+		lines = 1;
+	} else if (_vm->resource()->getLanguage() == HEBREW) {
+		lines = splitOptionHebrew(str, optionText);
+	} else {
+		lines = splitOptionDefault(str, optionText);
 	}
+	return lines;
+}
 
+int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]) {
+	char tmpString[MAX_STRING_SIZE] = "";
+	uint16 len = 0;
+	uint16 spaceCharWidth = _vm->display()->textWidth(" ");
+	uint16 width = 0;
+	uint16 optionLines = 0;
+	uint16 maxTextLen = MAX_TEXT_WIDTH;
+	char *p = strchr(str, '\0');
+	while (p != str - 1) {
+		while (*p != ' ' && p != str - 1) {
+			--p;
+			++len;
+		}
+		if (p != str - 1) {
+			uint16 wordWidth = _vm->display()->textWidth(p, len);
+			width += wordWidth;
+			if (width > maxTextLen) {
+				++optionLines;
+				strncpy(optionText[optionLines], p, len);
+				optionText[optionLines][len] = '\0';
+				width = wordWidth;
+				maxTextLen = MAX_TEXT_WIDTH - OPTION_TEXT_MARGIN;
+			} else {
+				strcpy(tmpString, optionText[optionLines]);
+				strncpy(optionText[optionLines], p, len);
+				optionText[optionLines][len] = '\0';
+				strcat(optionText[optionLines], tmpString);
+			}
+			--p;
+			len = 1;
+			width += spaceCharWidth;
+		} else {
+				if (len > 1) {
+				if (width + _vm->display()->textWidth(p + 1, len) > maxTextLen) {
+					++optionLines;
+				}
+				strcpy(tmpString, optionText[optionLines]);
+				strncpy(optionText[optionLines], p + 1, len);
+				optionText[optionLines][len] = '\0';
+				strcat(optionText[optionLines], tmpString);				
+			}
+			++optionLines;
+		}
+	}
+	return optionLines;
+}
+
+int Talk::splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	// Split up multiple line option at closest space character
-	memset(optionText, 0, 5 * MAX_STRING_SIZE);
 	uint16 spaceCharWidth = _vm->display()->textWidth(" ");
 	uint16 width = 0;
 	uint16 optionLines = 0;
@@ -1201,7 +1255,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 			uint16 len = p - str;
 			uint16 wordWidth = _vm->display()->textWidth(str, len);
 			width += wordWidth;
-			if (width> maxTextLen) {
+			if (width > maxTextLen) {
 				++optionLines;
 				strncpy(optionText[optionLines], str, len + 1);
 				width = wordWidth;

@@ -34,13 +34,11 @@
 
 namespace Queen {
 
-
 Journal::Journal(QueenEngine *vm)
 	: _vm(vm) {
 	_currentSavePage = 0;
 	_currentSaveSlot = 0;
 }
-
 
 void Journal::use() {
 	BobSlot *joe = _vm->graphics()->bob(0);
@@ -97,7 +95,6 @@ void Journal::use() {
 	}
 }
 
-
 void Journal::prepare() {
 	_vm->display()->horizontalScroll(0);
 	_vm->display()->fullscreen(true);
@@ -140,7 +137,6 @@ void Journal::prepare() {
 	_vm->bankMan()->close(JOURNAL_BANK);
 }
 
-
 void Journal::restore() {
 	_vm->display()->fullscreen(false);
 	_vm->display()->forceFullRefresh();
@@ -152,14 +148,12 @@ void Journal::restore() {
 	_vm->logic()->displayRoom(_vm->logic()->currentRoom(), RDM_FADE_JOE, 0, 0, false);
 }
 
-
 void Journal::redraw() {
 	drawNormalPanel();
 	drawConfigPanel();
 	drawSaveDescriptions();
 	drawSaveSlot();
 }
-
 
 void Journal::update() {
 	_vm->graphics()->update(JOURNAL_ROOM);
@@ -172,18 +166,15 @@ void Journal::update() {
 	_vm->display()->update();
 }
 
-
 void Journal::showBob(int bobNum, int16 x, int16 y, int frameNum) {
 	BobSlot *bob = _vm->graphics()->bob(bobNum);
 	bob->curPos(x, y);
 	bob->frameNum = JOURNAL_FRAMES + frameNum;
 }
 
-
 void Journal::hideBob(int bobNum) {
 	_vm->graphics()->bob(bobNum)->active = false;
 }
-
 
 void Journal::drawSaveDescriptions() {
 	int i;
@@ -199,18 +190,15 @@ void Journal::drawSaveDescriptions() {
 	showBob(BOB_SAVE_PAGE, 300, 3 + _currentSavePage * 15, 6 + _currentSavePage);
 }
 
-
 void Journal::drawSaveSlot() {
 	showBob(BOB_SAVE_DESC, 130, 6 + _currentSaveSlot * 13, 17);
 }
-
 
 void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
 	_mode = M_YES_NO;
 	_prevZoneNum = zoneNum;
 	drawYesNoPanel(titleNum);
 }
-
 
 void Journal::exitYesNoMode() {
 	_mode = M_NORMAL;
@@ -222,7 +210,6 @@ void Journal::exitYesNoMode() {
 	}
 	redraw();
 }
-
 
 void Journal::handleNormalMode(int16 zoneNum, int x) {
 	if (zoneNum == ZN_REVIEW_ENTRY) {
@@ -271,12 +258,10 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 	}
 }
 
-
 void Journal::handleInfoBoxMode(int16 zoneNum) {
 	hideInformationBox();
 	_mode = M_NORMAL;
 }
-
 
 void Journal::handleYesNoMode(int16 zoneNum) {
 	if (zoneNum == ZN_YES) {
@@ -316,7 +301,6 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 	}
 }
 
-
 void Journal::handleMouseWheel(int inc) {
 	if (_mode == M_NORMAL) {
 		int curSave = _currentSavePage * SAVE_PER_PAGE + _currentSaveSlot + inc;
@@ -330,7 +314,6 @@ void Journal::handleMouseWheel(int inc) {
 	}
 }
 
-
 void Journal::handleMouseDown(int x, int y) {
 	int16 zone = _vm->grid()->findZoneForPos(GS_ROOM, x, y);
 	if (_mode == M_INFO_BOX) {
@@ -342,7 +325,6 @@ void Journal::handleMouseDown(int x, int y) {
 	}
 	update();
 }
-
 
 void Journal::handleKeyDown(uint16 ascii, int keycode) {
 	if (_mode == M_YES_NO) {
@@ -356,7 +338,6 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 	}
 }
 
-
 void Journal::clearPanelTexts() {
 	int i;
 	for (i = 0; i < _panelTextCount; ++i) {
@@ -364,22 +345,27 @@ void Journal::clearPanelTexts() {
 	}
 }
 
-
 void Journal::drawPanelText(int y, const char *text) {
+	debug(5, "Journal::drawPanelText(%d, '%s')", y, text);	
 	char s[80];
 	strcpy(s, text);
 	char *p = strchr(s, ' ');
 	if (p == NULL) {
 		int x = (128 - _vm->display()->textWidth(s)) / 2;
 		_vm->display()->setText(x, y, s, false);
+		assert(_panelTextCount < MAX_PANEL_TEXTS);
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
-		drawPanelText(y - 5, s);
-		drawPanelText(y + 5, p);
+		if (_vm->resource()->getLanguage() == HEBREW) {
+			drawPanelText(y - 5, p);
+			drawPanelText(y + 5, s);
+		} else {
+			drawPanelText(y - 5, s);
+			drawPanelText(y + 5, p);
+		}
 	}
 }
-
 
 void Journal::drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameNum) {
 	if (active) {
@@ -389,11 +375,9 @@ void Journal::drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameN
 	}
 }
 
-
 void Journal::drawSlideBar(int value, int hi, int lo, int bobNum, int16 x, int16 y, int frameNum) {
 	showBob(bobNum, x + value * hi / lo, y, frameNum);
 }
-
 
 void Journal::drawPanel(const int *frames, const int *titles, int n) { 
 	clearPanelTexts();
@@ -407,13 +391,11 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 	}
 }
 
-
 void Journal::drawNormalPanel() {
 	int frames[] = { FRAME_BLUE_1, FRAME_BLUE_2, FRAME_BLUE_1, FRAME_ORANGE };
 	int titles[] = { TXT_REVIEW_ENTRY, TXT_MAKE_ENTRY, TXT_CLOSE, TXT_GIVE_UP };
 	drawPanel(frames, titles, 4);
 }
-
 
 void Journal::drawYesNoPanel(int titleNum) {
 	int frames[] = { FRAME_GREY, FRAME_BLUE_1, FRAME_BLUE_2 };
@@ -429,7 +411,6 @@ void Journal::drawYesNoPanel(int titleNum) {
 	hideBob(BOB_MUSIC_TOGGLE);
 }
 
-
 void Journal::drawConfigPanel() {
 	_vm->checkOptionSettings();
 
@@ -441,7 +422,6 @@ void Journal::drawConfigPanel() {
 	drawCheckBox(_vm->subtitles(), BOB_TEXT_TOGGLE, 125, 167, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->musicOn(), BOB_MUSIC_TOGGLE, 125, 181, FRAME_CHECK_BOX);
 }
-
 
 void Journal::showInformationBox() {
 	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
@@ -490,13 +470,11 @@ void Journal::showInformationBox() {
 	_vm->display()->setTextCentered(156, versionId, false);
 }
 
-
 void Journal::hideInformationBox() {
 	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	hideBob(BOB_INFO_BOX);
 	redraw();
 }
-
 
 void Journal::initEditBuffer(const char *desc) {
 	OSystem::Property prop;
@@ -508,7 +486,6 @@ void Journal::initEditBuffer(const char *desc) {
 	memset(_edit.text, 0, sizeof(_edit.text));
 	strcpy(_edit.text, desc);
 }
-
 
 void Journal::updateEditBuffer(uint16 ascii, int keycode) {
 	bool dirty = false;

@@ -593,6 +593,13 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 	}
 }
 
+void Graphics::setBobCutawayAnim(uint16 bobNum, bool xflip, const AnimFrame *af, uint8 frameCount) {
+	assert(bobNum < 21 && frameCount < 30);
+	memcpy(_cutAnim[bobNum], af, sizeof(AnimFrame) * frameCount);
+	_bobs[bobNum].xflip = xflip;
+	_bobs[bobNum].animString(_cutAnim[bobNum]);
+}
+
 void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
 	for (;;) {
 		// anim frame format is "%3hu,%3hu," (frame number, frame speed)

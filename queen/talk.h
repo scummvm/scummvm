@@ -224,7 +224,10 @@ private:
 			int faceDirection);
 
 	int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
+	
+	int splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
+	int splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 };
 
