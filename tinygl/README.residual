@@ -1,0 +1,5 @@
+This is a modified version of TinyGL 0.4 intended for use with Residual.
+The changes made from the original version of TinyGL 0.4 are:
+
+* Changed files extensions from *.c to *.cpp to compile as C++.
+* Included only files needed by Residual.
