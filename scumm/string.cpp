@@ -200,7 +200,6 @@ void ScummEngine::CHARSET_1() {
 
 	buffer = _charsetBuffer + _charsetBufPos;
 
-printf("Talking: '%s'\n", buffer);
 	if (_version > 3)
 		_charset->addLinebreaks(0, buffer, 0, t);
 
