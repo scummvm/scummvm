@@ -371,8 +371,15 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 
-	if (soundHandle->resPtr)
-		_vm->unlock(rtSound, soundHandle->soundId);
+	if (soundHandle->resPtr) {
+		bool found = false;
+		for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
+			if ((_sounds[l].soundId == soundHandle->soundId) && (&_sounds[l] != soundHandle))
+				found = true;
+		}
+		if (!found)
+			_vm->unlock(rtSound, soundHandle->soundId);
+	}
 
 	delete soundHandle->bundle;
 	for (int r = 0; r < soundHandle->numSyncs; r++)
