@@ -284,6 +284,9 @@ public:
 	const char *getGameDataPath() const {
 		if (_features & GF_AFTER_V8) {
 			static char resourcePath[256];
+			if (_gameDataPath[0] == '\0')
+				return "resource";
+
 			sprintf(resourcePath, "%s/resource", _gameDataPath);
 			return resourcePath;
 		}
