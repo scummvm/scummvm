@@ -55,8 +55,8 @@ enum {
 	NUM_SCRIPT_SLOT = 40,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
-    MAX_ACTORS = 30,
-    KEY_SET_OPTIONS = 3456 // WinCE
+	MAX_ACTORS = 30,
+	KEY_SET_OPTIONS = 3456 // WinCE
 };
 
 enum {
@@ -292,9 +292,9 @@ enum GameFeatures {
 	GF_DEFAULT = GF_USE_KEY,
 
 	GF_SMALL_HEADER = 32,
-    GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
-    GF_SMALL_NAMES = 64,
-    GF_OLD_BUNDLE = 128,
+	GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
+	GF_SMALL_NAMES = 64,
+	GF_OLD_BUNDLE = 128,
 	GF_16COLOR = 256,
 	GF_OLD256 = 512,
 	GF_AUDIOTRACKS = 1024,
@@ -833,8 +833,8 @@ public:
 	void unkScreenEffect3();
 	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
-	void unkScreenEffect6();
 	void transitionEffect(int a);		// former unkScreenEffect7
+	void dissolveEffect(int width, int height);	// former unkScreenEffect5(0) and unkScreenEffect6
 
 	void decompressBomp(byte *dst, byte *src, int w, int h);
 	uint _shakeFrame;

@@ -674,7 +674,7 @@ void Scumm::fadeIn(int effect)
 		transitionEffect(effect - 1);
 		break;
 	case 128:
-		unkScreenEffect6();
+		dissolveEffect(8, 8);
 		break;
 	case 130:
 		unkScreenEffect1();
@@ -689,7 +689,7 @@ void Scumm::fadeIn(int effect)
 		unkScreenEffect4();
 		break;
 	case 134:
-		unkScreenEffect5(0);
+		dissolveEffect(1, 1);
 		break;
 	case 135:
 		unkScreenEffect5(1);
@@ -731,7 +731,7 @@ void Scumm::fadeOut(int a)
 		transitionEffect(a - 1);
 		break;
 	case 128:
-		unkScreenEffect6();
+		dissolveEffect(8, 8);
 		break;
 	case 129:
 		// Just blit screen 0 to the display (i.e. display will be black)
@@ -739,7 +739,7 @@ void Scumm::fadeOut(int a)
 		updateDirtyScreen(0);
 		break;
 	case 134:
-		unkScreenEffect5(0);
+		dissolveEffect(1, 1);
 		break;
 	case 135:
 		unkScreenEffect5(1);
@@ -1979,16 +1979,124 @@ void Scumm::transitionEffect(int a)
 	}
 }
 
-void Scumm::unkScreenEffect6()
-{
-	/* XXX: not implemented */
-	warning("stub unkScreenEffect6");
+// Update width x height areas of the screen, in random order, until the whole
+// screen has been updated. For instance:
+//
+// dissolveEffect(1, 1) produces a pixel-by-pixel dissolve
+// dissolveEffect(8, 8) produces a square-by-square dissolve
+// dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
+
+void Scumm::dissolveEffect(int width, int height) {
+	VirtScreen *vs = &virtscr[0];
+	int *offsets;
+	int blits_before_refresh, blits;
+	int x, y;
+	int w, h;
+	int i;
+
+	// There's probably some less memory-hungry way of doing this. But
+	// since we're only dealing with relatively small images, it shouldn't
+	// be too bad.
+
+	w = vs->width / width;
+	h = vs->height / height;
+
+	// When used used correctly, vs->width % width and vs->height % height
+	// should both be zero, but just to be safe...
+
+	if (vs->width % width)
+		w++;
+
+	if (vs->height % height)
+		h++;
+
+	offsets = (int *) malloc(w * h * sizeof(int));
+	if (offsets == NULL) {
+		warning("dissolveEffect: out of memory");
+		return;
+	}
+
+	// Create a permutation of offsets into the frame buffer
+
+	if (width == 1 && height == 1) {
+		// Optimized case for pixel-by-pixel dissolve
+
+		for (i = 0; i < vs->size; i++)
+			offsets[i] = i;
+
+		for (i = 1; i < w * h; i++) {
+			int j;
+
+			j = getRandomNumber(i - 1);
+			offsets[i] = offsets[j];
+			offsets[j] = i;
+		}
+	} else {
+		int *offsets2;
+
+		for (i = 0, x = 0; x < vs->width; x += width)
+			for (y = 0; y < vs->height; y += height)
+				offsets[i++] = y * vs->width + x;
+
+		offsets2 = (int *) malloc(w * h * sizeof(int));
+		if (offsets2 == NULL) {
+			warning("dissolveEffect: out of memory");
+			free(offsets);
+			return;
+		}
+
+		memcpy(offsets2, offsets, w * h * sizeof(int));
+
+		for (i = 1; i < w * h; i++) {
+			int j;
+
+			j = getRandomNumber(i - 1);
+			offsets[i] = offsets[j];
+			offsets[j] = offsets2[i];
+		}
+
+		free(offsets2);
+	}
+
+	// Blit the image piece by piece to the screen. The idea here is that
+	// the whole update should take about a quarter of a second, assuming
+	// most of the time is spent in waitForTimer(). It looks good to me,
+	// but might still need some tuning.
+
+	updatePalette();
+
+	blits = 0;
+	blits_before_refresh = (3 * w * h) / 25;
+
+	for (i = 0; i < w * h; i++) {
+		x = offsets[i] % vs->width;
+		y = offsets[i] / vs->width;
+		_system->copy_rect(vs->screenPtr + vs->xstart + y * vs->width + x, vs->width, x, y, width, height);
+
+		if (++blits >= blits_before_refresh) {
+			blits = 0;
+			_system->update_screen();
+			waitForTimer(30);
+		}
+	}
+
+	free(offsets);
+
+	if (blits != 0) {
+		_system->update_screen();
+		waitForTimer(30);
+	}
 }
 
-void Scumm::unkScreenEffect5(int a)
-{
+void Scumm::unkScreenEffect5(int a) {
+	// unkScreenEffect5(0), which is used by FOA during the opening
+	// cutscene when Indy opens the small statue, has been replaced by
+	// dissolveEffect(1, 1).
+	//
+	// I still don't know what unkScreenEffect5(1) is supposed to do.
+
 	/* XXX: not implemented */
-	warning("stub unkScreenEffect5(%d)", a);
+	warning("stub unkScreenEffect(%d)", a);
 }
 
 void Scumm::setShake(int mode)
