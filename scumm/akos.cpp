@@ -237,6 +237,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	const CostumeInfo *costumeInfo;
 	uint i, extra;
 	byte result = 0;
+	int xmoveCur, ymoveCur;
 
 	if (!cost.active[limb] || cost.stopped & (1 << limb))
 		return 0;
@@ -261,20 +262,20 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 		_width = READ_LE_UINT16(&costumeInfo->width);
 		_height = READ_LE_UINT16(&costumeInfo->height);
-		_xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
-		_ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
+		xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
+		ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
 		_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
 		_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 
 		switch (codec) {
 		case 1:
-			result |= codec1();
+			result |= codec1(xmoveCur, ymoveCur);
 			break;
 		case 5:
-			result |= codec5();
+			result |= codec5(xmoveCur, ymoveCur);
 			break;
 		case 16:
-			result |= codec16();
+			result |= codec16(xmoveCur, ymoveCur);
 			break;
 		default:
 			error("akos_drawCostumeChannel: invalid codec %d", codec);
@@ -295,20 +296,20 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 			_width = READ_LE_UINT16(&costumeInfo->width);
 			_height = READ_LE_UINT16(&costumeInfo->height);
 
-			_xmoveCur = _xmove + (int16)READ_LE_UINT16(p + 0);
-			_ymoveCur = _ymove + (int16)READ_LE_UINT16(p + 2);
+			xmoveCur = _xmove + (int16)READ_LE_UINT16(p + 0);
+			ymoveCur = _ymove + (int16)READ_LE_UINT16(p + 2);
 
 			p += (p[4] & 0x80) ? 6 : 5;
 
 			switch (codec) {
 			case 1:
-				result |= codec1();
+				result |= codec1(xmoveCur, ymoveCur);
 				break;
 			case 5:
-				result |= codec5();
+				result |= codec5(xmoveCur, ymoveCur);
 				break;
 			case 16:
-				result |= codec16();
+				result |= codec16(xmoveCur, ymoveCur);
 				break;
 			default:
 				error("akos_drawCostumeChannel: invalid codec %d", codec);
@@ -625,7 +626,7 @@ const byte default_scale_table[768] = {
 };
 #endif
 
-byte AkosRenderer::codec1() {
+byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	int num_colors;
 	bool use_scaling;
 	int i, j;
@@ -668,16 +669,16 @@ byte AkosRenderer::codec1() {
 
 		/* Scale direction */
 		v1.scaleXstep = -1;
-		if (_xmoveCur < 0) {
-			_xmoveCur = -_xmoveCur;
+		if (xmoveCur < 0) {
+			xmoveCur = -xmoveCur;
 			v1.scaleXstep = 1;
 		}
 
 		if (_mirror) {
 			/* Adjust X position */
-			startScaleIndexX = 0x180 - _xmoveCur;
+			startScaleIndexX = 0x180 - xmoveCur;
 			j = startScaleIndexX;
-			for (i = 0; i < _xmoveCur; i++) {
+			for (i = 0; i < xmoveCur; i++) {
 				if (v1.scaletable[j++] < _scaleX)
 					cur_x -= v1.scaleXstep;
 			}
@@ -696,9 +697,9 @@ byte AkosRenderer::codec1() {
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			startScaleIndexX = 0x180 + _xmoveCur;
+			startScaleIndexX = 0x180 + xmoveCur;
 			j = startScaleIndexX;
-			for (i = 0; i < _xmoveCur; i++) {
+			for (i = 0; i < xmoveCur; i++) {
 				if (v1.scaletable[j++] < _scaleX)
 					cur_x += v1.scaleXstep;
 			}
@@ -720,31 +721,31 @@ byte AkosRenderer::codec1() {
 			skip--;
 
 		step = -1;
-		if (_ymoveCur < 0) {
-			_ymoveCur = -_ymoveCur;
+		if (ymoveCur < 0) {
+			ymoveCur = -ymoveCur;
 			step = -step;
 		}
 
-		tmp_y = 0x180 - _ymoveCur;
-		for (i = 0; i < _ymoveCur; i++) {
+		tmp_y = 0x180 - ymoveCur;
+		for (i = 0; i < ymoveCur; i++) {
 			if (v1.scaletable[tmp_y++] < _scaleY)
 				cur_y -= step;
 		}
 
 		y_top = y_bottom = cur_y;
-		tmp_y = 0x180 - _ymoveCur;
+		tmp_y = 0x180 - ymoveCur;
 		for (i = 0; i < _height; i++) {
 			if (v1.scaletable[tmp_y++] < _scaleY)
 				y_bottom++;
 		}
 
-		tmp_y = 0x180 - _ymoveCur;
+		tmp_y = 0x180 - ymoveCur;
 	} else {
 		if (!_mirror)
-			_xmoveCur = -_xmoveCur;
+			xmoveCur = -xmoveCur;
 
-		cur_x += _xmoveCur;
-		cur_y += _ymoveCur;
+		cur_x += xmoveCur;
+		cur_y += ymoveCur;
 
 		if (_mirror) {
 			x_left = cur_x;
@@ -896,17 +897,17 @@ void AkosRenderer::codec1_ignorePakCols(int num) {
 	} while (1);
 }
 
-byte AkosRenderer::codec5() {
+byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
 
 	if (!_mirror) {
-		clip_left = (_actorX - _xmoveCur - _width) + 1;
+		clip_left = (_actorX - xmoveCur - _width) + 1;
 	} else {
-		clip_left = _actorX + _xmoveCur - 1;
+		clip_left = _actorX + xmoveCur - 1;
 	}
 
 	clip_right = (clip_left + _width) - 1;
-	clip_top = _actorY + _ymoveCur;
+	clip_top = _actorY + ymoveCur;
 	clip_bottom = (clip_top + _height) - 1;
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
@@ -958,14 +959,14 @@ byte AkosRenderer::codec5() {
 	int decode_mode;
 
 	if (!_mirror) {
-		bdd.x = (_actorX - _xmoveCur - _width) + 1;
+		bdd.x = (_actorX - xmoveCur - _width) + 1;
 		decode_mode = 3;
 	} else {
-		bdd.x = _actorX + _xmoveCur;
+		bdd.x = _actorX + xmoveCur;
 		decode_mode = 1;
 	}
 
-	bdd.y = _actorY + _ymoveCur;
+	bdd.y = _actorY + ymoveCur;
 
 	if (_zbuf != 0) {
 		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
@@ -1177,16 +1178,16 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 	}
 }
 
-byte AkosRenderer::codec16() {
+byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 clip_left;
 
 	if(!_mirror) {
-		clip_left = (_actorX - _xmoveCur - _width) + 1;
+		clip_left = (_actorX - xmoveCur - _width) + 1;
 	} else {
-		clip_left = _actorX + _xmoveCur;
+		clip_left = _actorX + xmoveCur;
 	}
 
-	int32 clip_top = _ymoveCur + _actorY;
+	int32 clip_top = ymoveCur + _actorY;
 	int32 clip_right = (clip_left + _width) - 1;
 	int32 clip_bottom = (clip_top + _height) - 1;
 	int32 skip_x = 0;

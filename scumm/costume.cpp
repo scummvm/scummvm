@@ -78,7 +78,7 @@ const byte cost_scaleTable[256] = {
 };
 
 byte CostumeRenderer::mainRoutine() {
-	int xmove, ymove, i, skip;
+	int xmoveCur, ymoveCur, i, skip;
 	byte drawFlag = 1;
 	uint scal;
 	bool use_scaling;
@@ -104,8 +104,8 @@ byte CostumeRenderer::mainRoutine() {
 	costumeInfo = (const CostumeInfo *)_srcptr;
 	_width = _width2 = READ_LE_UINT16(&costumeInfo->width);
 	_height = READ_LE_UINT16(&costumeInfo->height);
-	xmove = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
-	ymove = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
+	xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
+	ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
 	_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
 	_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 	_srcptr += 12;
@@ -131,14 +131,14 @@ byte CostumeRenderer::mainRoutine() {
 
 	if (use_scaling) {
 		v1.scaleXstep = -1;
-		if (xmove < 0) {
-			xmove = -xmove;
+		if (xmoveCur < 0) {
+			xmoveCur = -xmoveCur;
 			v1.scaleXstep = 1;
 		}
 
 		if (_mirror) {
-			startScaleIndexX = _scaleIndexX = 128 - xmove;
-			for (i = 0; i < xmove; i++) {
+			startScaleIndexX = _scaleIndexX = 128 - xmoveCur;
+			for (i = 0; i < xmoveCur; i++) {
 				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
 					v1.x -= v1.scaleXstep;
 			}
@@ -154,8 +154,8 @@ byte CostumeRenderer::mainRoutine() {
 					x_right++;
 			}
 		} else {
-			startScaleIndexX = _scaleIndexX = xmove + 128;
-			for (i = 0; i < xmove; i++) {
+			startScaleIndexX = _scaleIndexX = xmoveCur + 128;
+			for (i = 0; i < xmoveCur; i++) {
 				scal = cost_scaleTable[_scaleIndexX--];
 				if (scal < _scaleX)
 					v1.x += v1.scaleXstep;
@@ -177,29 +177,29 @@ byte CostumeRenderer::mainRoutine() {
 			skip--;
 
 		step = -1;
-		if (ymove < 0) {
-			ymove = -ymove;
+		if (ymoveCur < 0) {
+			ymoveCur = -ymoveCur;
 			step = 1;
 		}
-		_scaleIndexY = 128 - ymove;
-		for (i = 0; i < ymove; i++) {
+		_scaleIndexY = 128 - ymoveCur;
+		for (i = 0; i < ymoveCur; i++) {
 			scal = cost_scaleTable[_scaleIndexY++];
 			if (scal < _scaleY)
 				v1.y -= step;
 		}
 		y_top = y_bottom = v1.y;
-		_scaleIndexY = 128 - ymove;
+		_scaleIndexY = 128 - ymoveCur;
 		for (i = 0; i < _height; i++) {
 			scal = cost_scaleTable[_scaleIndexY++];
 			if (scal < _scaleY)
 				y_bottom++;
 		}
-		_scaleIndexY = _scaleIndexYTop = 128 - ymove;
+		_scaleIndexY = _scaleIndexYTop = 128 - ymoveCur;
 	} else {
 		if (!_mirror)
-			xmove = -xmove;
-		v1.x += xmove;
-		v1.y += ymove;
+			xmoveCur = -xmoveCur;
+		v1.x += xmoveCur;
+		v1.y += ymoveCur;
 		if (_mirror) {
 			x_left = v1.x;
 			x_right = v1.x + _width;

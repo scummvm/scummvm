@@ -33,9 +33,6 @@ class AkosRenderer : public BaseCostumeRenderer {
 protected:
 	uint16 codec;
 
-	// movement of cel to decode
-	int _xmoveCur, _ymoveCur;
-
 	// actor palette
 	byte palette[256];
 
@@ -77,16 +74,16 @@ public:
 protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
-	byte codec1();
+	byte codec1(int _xmoveCur, int _ymoveCur);
 	void codec1_spec1();
 	void codec1_spec2();
 	void codec1_spec3();
 	void codec1_genericDecode();
 	void codec1_ignorePakCols(int num);
 
-	byte codec5();
+	byte codec5(int _xmoveCur, int _ymoveCur);
 
-	byte codec16();
+	byte codec16(int _xmoveCur, int _ymoveCur);
 	void akos16SetupBitReader(const byte *src);
 	void akos16PutOnScreen(byte *dest, const byte *src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
