@@ -350,9 +350,9 @@ void SkyControl::doLoadSavePanel(void) {
 		return; // I don't think this can even happen
 	initPanel();
 	_skyScreen->clearScreen();
-	if (SkyState::_systemVars.gameVersion < 368)
+	if ((!SkyState::isCDVersion()) && (SkyState::_systemVars.gameVersion != 348)) 
 		_skyScreen->setPalette(60509);
-	else 
+	else
 		_skyScreen->setPalette(60510);
 
 	_savedMouse = _skyMouse->giveCurrentMouseType();
@@ -380,9 +380,9 @@ void SkyControl::doControlPanel(void) {
 	initPanel();
 
 	_skyScreen->clearScreen();
-	if (SkyState::_systemVars.gameVersion < 368) 
+	if ((!SkyState::isCDVersion()) && (SkyState::_systemVars.gameVersion != 348)) 
 		_skyScreen->setPalette(60509);
-	else 
+	else
 		_skyScreen->setPalette(60510);
 	
 	drawMainPanel();
