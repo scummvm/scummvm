@@ -97,6 +97,9 @@ void MidiDriver_MPU401::close() {
 		g_system->unlock_mutex (_mutex);
 		g_system->delete_mutex (_mutex);
 	}
+	int i;
+	for (i = 0; i < 16; ++i)
+		send (0x7B << 8 | 0xB0 | i);
 }
 
 MidiChannel *MidiDriver_MPU401::allocateChannel() {
