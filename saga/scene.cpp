@@ -977,6 +977,7 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		_vm->_sound->stopVoice();
+		_vm->_sound->stopSound();
 
 		if (_desc.musicRN >= 0) {
 			event.type = ONESHOT_EVENT;
