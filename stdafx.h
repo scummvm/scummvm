@@ -1,3 +1,12 @@
+/*
+ * $Id$
+ *
+ * $Log$
+ * Revision 1.4  2001/11/03 06:40:51  cmatsuoka
+ * Not including unistd.h in BeOS (breaks cross-compilation).
+ *
+ */
+
 #if defined(WIN32)
 
 #if _MSC_VER > 1000
@@ -47,7 +56,9 @@
 #endif
 #include <sys/types.h>
 #include <sys/uio.h>
+#if !defined(__BEOS__)
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
