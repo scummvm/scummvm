@@ -21,32 +21,19 @@
 // BUILD_DISPLAY.CPP	like the old spr_engi but slightly more aptly named
 // ---------------------------------------------------------------------------
 
-#include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "stdafx.h"
-#include "driver/driver96.h"
 #include "build_display.h"
 #include "console.h"
-#include "debug.h"
 #include "defs.h"
-#include "events.h"
-#include "function.h"
-#include "header.h"
 #include "interpreter.h"
 #include "layers.h"
-#include "logic.h"
 #include "maketext.h"
-#include "memory.h"
 #include "mouse.h"
 #include "object.h"
 #include "protocol.h"
 #include "resman.h"
-#include "router.h"
-#include "save_rest.h"
-#include "scroll.h"
-#include "sword2.h"
 
 // ---------------------------------------------------------------------------
 
