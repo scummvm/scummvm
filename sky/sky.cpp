@@ -101,7 +101,8 @@ void SkyState::initialise(void) {
 
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_gameVersion = _skyDisk->determineGameVersion();
-
+	_skyText = getSkyText();
+	
 	initialiseScreen();
 	initVirgin();
 	//initMouse();
@@ -109,7 +110,6 @@ void SkyState::initialise(void) {
 	//initScript();
 	initialiseGrids();
 	//initialiseRouter();
-	_skyText = getSkyText();
 }
 
 void SkyState::initItemList() {
@@ -196,11 +196,11 @@ SkyText *SkyState::getSkyText() {
 		//floppy demo
 		return new SkyText_v00267(_skyDisk, _gameVersion);
 	case 288:
-		//floppy - old version
+		//floppy version
 		return new SkyText_v00288(_skyDisk, _gameVersion);
-	//case 331:
-		//floppy - new version
-		//return new SkyText_v00331(_skyDisk, _gameVersion);
+	case 331:
+		//floppy version
+		return new SkyText_v00331(_skyDisk, _gameVersion);
 	case 365:
 		//cd demo, uses a slightly modified version of v00372
 	case 368:
@@ -209,7 +209,7 @@ SkyText *SkyState::getSkyText() {
 		//cd version
 		return new SkyText_v00372(_skyDisk, _gameVersion);
 	default:
-		error("Unknown game version!");
+		error("Unknown game version");
 	}
 }
 
@@ -228,7 +228,7 @@ bool SkyState::isDemo(uint32 version) {
 	case 372:
 		return false;
 	default:
-		error("Unknown game version!");
+		error("Unknown game version");
 	}
 }
 
@@ -247,7 +247,7 @@ bool SkyState::isCDVersion(uint32 version) {
 	case 372:
 		return true;
 	default:
-		error("Unknown game version!");
+		error("Unknown game version");
 	}
 }
 
