@@ -410,7 +410,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (platform == Common::kPlatformUnknown)
 					goto ShowHelpAndExit;
 
-				ConfMan.set("platform", platform, kTransientDomain);
+				ConfMan.set("platform", option, kTransientDomain);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
