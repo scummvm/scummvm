@@ -659,9 +659,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (_features & GF_NES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
-	} else if (_features & GF_AFTER_HEV7) { // TODO: check with other HEV7 games
-		_screenWidth = 640;
-		_screenHeight = 480;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
