@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "driver/driver96.h"
+#include "driver/rdwin.h"
 #include "build_display.h"
 #include "credits.h"
 #include "debug.h"
@@ -425,8 +426,11 @@ int32 FN_play_credits(int32 *params) {
 
 		debug(0, "Credits music length: ~%d ms", music_length);
 
+		CloseMenuImmediately();
+
 		while (g_sound->MusicTimeRemaining()) {
 			EraseBackBuffer();
+			SetNeedRedraw();
 
 			// FIXME: Draw the credits text. The actual text
 			// messages are stored in credits.clu, and I'm guessing
@@ -452,8 +456,9 @@ int32 FN_play_credits(int32 *params) {
 			FN_stop_music(NULL);
 
 		BS2_SetPalette(0, 256, oldPal, RDPAL_FADE);
-
 		FadeUp(0.75);
+		ServiceWindows();
+		Build_display();
 		WaitForFade();
 
 		g_sound->MuteFx(0);
