@@ -1,3 +1,9 @@
+scummvm (0.2.0) unstable; urgency=low
+
+  * Release of ScummVM 0.2.0
+
+   -- James Brown <ender@enderboi.com>  Tue, 14 May 2002 18:16:02 +0800
+
 scummvm (0.1.0b-2) unstable; urgency=low
 
   * Moved the scummvm main bin under /usr/lib, the wrapper script under
