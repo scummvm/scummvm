@@ -32,7 +32,6 @@
 #include "backends/dialogs/amigaos/amigaos-dialogs.h"
 
 #include "common/config-manager.h"
-#include "common/encoding.h"
 
 #include <proto/asl.h>
 #include <proto/codesets.h>
@@ -74,7 +73,7 @@ char *AmigaOSDialogManager::utf8ToLocal(const char *in) {
 					IExec->DropInterface((struct Interface *)ICodesets);
 					return out;
 				}
-				free(out);	
+				free(out);
 			}
 		}
 	}
@@ -88,7 +87,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 
 	char pathBuffer[MAXPATHLEN];
 
-	Common::String utf8Title = title.encode();	
+	Common::String utf8Title = title.encode();
 
 	DialogResult result = kDialogCancel;
 
@@ -100,7 +99,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 		struct FileRequester *fr = nullptr;
 
 		if (ConfMan.hasKey("browser_lastpath")) {
-			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer)-1);
+			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer) - 1);
 		}
 
 		fr = (struct FileRequester *)IAsl->AllocAslRequestTags(ASL_FileRequest, TAG_DONE);
