@@ -136,7 +136,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_pickupObjectOld),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_actorSet),
+		OPCODE(o2_actorSet),
 		/* 54 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o5_actorFromPos),
@@ -216,7 +216,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_panCameraTo),
-		OPCODE(o5_actorSet),
+		OPCODE(o2_actorSet),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o5_actorFromPos),
@@ -296,7 +296,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_pickupObjectOld),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_actorSet),
+		OPCODE(o2_actorSet),
 		/* D4 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o5_actorFromPos),
@@ -560,28 +560,32 @@ void Scumm_v2::o2_waitForActor() {
 }
 
 void Scumm_v2::o2_actorSet() {
-	int arg1 = getVarOrDirectByte(0x80);
-	int arg2 = getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(0x80);
+	int arg = getVarOrDirectByte(0x40);
+	Actor *a = derefActorSafe(act, "actorSet");
+
+	if (!a)
+		return;
 
 	switch (fetchScriptByte()) {
-		case 1:
-			warning("o2_actorSet(%d, %d) - SoundThingy Not Implemented", arg1, arg2);
+		case 1: 	// Actor Sound
+			a->sound[0] = arg;
 			break;
 
-		case 2:
-			warning("o2_actorSet(%d, %d) - Init(?) Not Implemented", arg1, arg2);
+		case 2:		// Unknown - Init?
+			warning("o2_actorSet(%d, %d) - Init(?) Not Implemented", act, arg);
 			break;
 
-		case 3:
-			warning("o2_actorSet(%d, %d) - SetName Not Implemented", arg1, arg2);
+		case 3:		// Actor Name
+			loadPtrToResource(rtActorName, a->number, NULL);
 			break;
 
-		case 4:
-			warning("o2_actorSet(%d, %d) - Costume Not Implemented", arg1, arg2);
+		case 4:		// Actor Costume
+			a->setActorCostume(arg);
 			break;
 
-		case 5:
-			warning("o2_actorSet(%d, %d) - TextColor Not Implemented", arg1, arg2);
+		case 5:		// Talk Color
+			a->talkColor = arg;
 			break;
 	}
 }
