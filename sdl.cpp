@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/10 11:53:39  strigeus
+ * smoother mouse + bug fix
+ *
  * Revision 1.4  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -88,15 +91,23 @@ void waitForTimer(Scumm *s) {
 				}
 				
 				break;
-			case SDL_MOUSEMOTION:
+			case SDL_MOUSEMOTION: {
+				int newx,newy;
 #if !defined(SCALEUP_2x2)
-				s->mouse.x = event.motion.x;
-				s->mouse.y = event.motion.y;
+				newx = event.motion.x;
+				newy = event.motion.y;
 #else
-				s->mouse.x = event.motion.x>>1;
-				s->mouse.y = event.motion.y>>1;
+				newx = event.motion.x>>1;
+				newy = event.motion.y>>1;
 #endif
+				if (newx != s->mouse.x || newy != s->mouse.y) {
+					s->mouse.x = newx;
+					s->mouse.y = newy;
+					s->drawMouse();
+					updateScreen(s);
+				}
 				break;
+				}
 			case SDL_MOUSEBUTTONDOWN:
 				if (event.button.button==SDL_BUTTON_LEFT)
 					s->_leftBtnPressed |= 1;
@@ -149,7 +160,8 @@ void addDirtyRectClipped(int x, int y, int w, int h) {
 	if (y<0) { h += y; y=0; }
 	if (w >= 320-x) w = 320-x;
 	if (h >= 200-y) h = 200-y;
-	addDirtyRect(x,y,w,h);
+	if (w>0 && h>0)
+		addDirtyRect(x,y,w,h);
 }
 
 /* Copy part of bitmap */
@@ -255,13 +267,16 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
 			mask += 4;
 			if ((uint)(ydraw+y)<200) {
-				memcpy(bak,dst,48);
-				for (x=0; bits; x++,bits>>=1) {
-					if (bits&1 && (uint)(xdraw+x)<320) {
-						dst[x*2] = color;
-						dst[x*2+1] = color;
-						dst[x*2+640] = color;
-						dst[x*2+1+640] = color;
+				for (x=0; x<24; x++,bits>>=1) {
+					if ((uint)(xdraw+x)<320) {
+						bak[x*2] = dst[x*2];
+						bak[x*2+1] = dst[x*2+1];
+						if (bits&1) {
+							dst[x*2] = color;
+							dst[x*2+1] = color;
+							dst[x*2+640] = color;
+							dst[x*2+1+640] = color;
+						}
 					}
 				}
 			}
