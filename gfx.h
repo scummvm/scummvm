@@ -74,10 +74,10 @@ struct ColorCycle {		/* Palette cycles */
 };
 
 struct BlastObject {		/* BlastObjects to draw */
-	uint16 a,b,c,d,e;
-	int16 x,y;
+	uint16 number,areaX,areaY,areaWidth,areaHeight;
+	int16 posX,posY;
 	uint16 width,height;
-	uint16 j,k,l;
+	uint16 unk3,unk4,image;
 	uint16 mode;
 };
 

@@ -1161,13 +1161,13 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 		error("enqueueObject: overflow");
 
 	eo = &_enqueuedObjects[_enqueuePos++];
-	eo->a = objectNumber;
-	eo->b = _enqueue_b;
-	eo->c = _enqueue_c;
-	eo->d = _enqueue_d;
-	eo->e = _enqueue_e;
-	eo->x = objectX;
-	eo->y = objectY;
+	eo->number = objectNumber;
+	eo->areaX = _enqueue_b;
+	eo->areaY = _enqueue_c;
+	eo->areaWidth = _enqueue_d;
+	eo->areaHeight = _enqueue_e;
+	eo->posX = objectX;
+	eo->posY = objectY;
 	if (objectWidth == 0) {
 		od = &_objs[getObjectIndex(objectNumber)];
 		eo->width = od->width;
@@ -1181,9 +1181,9 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 		eo->height = objectHeight;
 	}
 
-	eo->j = f;
-	eo->k = g;
-	eo->l = image;
+	eo->unk3 = f;
+	eo->unk4 = g;
+	eo->image = image;
 	eo->mode = mode;
 }
 
@@ -1204,8 +1204,8 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	VirtScreen *vs;
 	byte *roomptr, *bomp;
 	byte *ptr;
+	byte *img;
 	int idx;
-	ObjectData *od;
 
 	BompDrawData bdd;
 
@@ -1213,30 +1213,34 @@ void Scumm::drawBlastObject(BlastObject * eo)
 
 	_lastXstart = vs->xstart;
 
-	if (eo->l == 0) {
-		roomptr = getResourceAddress(1, _roomResource);
-		idx = getObjectIndex(eo->a);
-		assert(idx != -1);
-		ptr = roomptr + _objs[idx].offs_obim_to_room;
-	} else if (eo->a != 0) {
-		od = &_objs[getObjectIndex(eo->a)];
-		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-		assert(ptr);
+	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");	
+
+	idx = _objs[getObjectIndex(eo->number)].fl_object_index;
+
+	if(idx)
+	{
+		ptr = getResourceAddress(rtFlObject, idx);
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
-		warning("drawEnqueuedObject: invalid");
-		return;
+		idx = getObjectIndex(eo->number);
+		assert(idx != -1);
+		ptr = getResourceAddress(1, _roomResource) + _objs[idx].offs_obim_to_room;
 	}
 
-	if (eo->l == 0)
-		eo->l = 1;
+	if(!ptr)
+		error("BlastObject object %d image not found",eo->number);
 
-	assert(ptr);
-	ptr = findResource(IMxx_tags[eo->l], ptr);
+	img = findResource(IMxx_tags[eo->image], ptr);
+	if(!img)
+		img = findResource(IMxx_tags[1], ptr); // Backward compatibility with samnmax blast objects
 
-	if (!ptr)											/* FIXME: Sam and Max highway subgame */
-		return;
-	bomp = findResourceData(MKID('BOMP'), ptr);
+	if(!img)
+		error("blast-object %d invalid image %d (1-x)",eo->number,eo->image);
+
+	bomp = findResourceData(MKID('BOMP'), img);
+
+	if(!bomp)
+		error("object %d is not a blast object",eo->number);
 
 	bdd.srcwidth = READ_LE_UINT16(&((BompHeader *)bomp)->width);
 	bdd.srcheight = READ_LE_UINT16(&((BompHeader *)bomp)->height);
@@ -1245,15 +1249,15 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	bdd.outwidth = 320;
 	bdd.outheight = vs->height;
 	bdd.dataptr = bomp + 10;
-	bdd.x = eo->x;
-	bdd.y = eo->y;
-	bdd.scale_x = (unsigned char)eo->j;
-	bdd.scale_y = (unsigned char)eo->k;
+	bdd.x = eo->posX;
+	bdd.y = eo->posY;
+	bdd.scale_x = (unsigned char)eo->unk3;
+	bdd.scale_y = (unsigned char)eo->unk4;
 
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y,
 									bdd.y + bdd.srcheight, 0);
 
-	if (eo->a) {
+	if (eo->number) {
 		drawBomp(&bdd);
 	}
 }
@@ -1273,7 +1277,7 @@ void Scumm::removeBlastObjects()
 
 void Scumm::removeBlastObject(BlastObject * eo)
 {
-	restoreBG(eo->x, eo->y, eo->x + eo->width, eo->y + eo->height);
+	restoreBG(eo->posX, eo->posY, eo->posX + eo->width, eo->posY + eo->height);
 }
 
 int Scumm::findFlObjectSlot()
