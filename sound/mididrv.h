@@ -154,7 +154,7 @@ public:
 	virtual void panPosition (byte value) { controlChange (10, value); }
 	virtual void pitchBendFactor (byte value) = 0;
 	virtual void detune (byte value) { controlChange (17, value); }
-	virtual void priority (byte value) { controlChange (18, value); }
+	virtual void priority (byte value) { }
 	virtual void sustain (bool value) { controlChange (64, value ? 1 : 0); }
 	virtual void effectLevel (byte value) { controlChange (91, value); }
 	virtual void chorusLevel (byte value) { controlChange (93, value); }
