@@ -139,6 +139,12 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (!_imuse || _saveSound || !_saveTemporaryState)
 		_sound->stopAllSounds();
 
+	if (_imuseDigital) {
+		_imuseDigital->stopAllSounds();
+		// temporary hack for initial state for imuse music
+		_imuseDigital->resetState();
+	}
+
 	_sound->stopCD();
 
 	_sound->pauseSounds(true);

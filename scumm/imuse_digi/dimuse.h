@@ -53,11 +53,9 @@ private:
 		bool used;
 		bool toBeRemoved;
 		bool started;
-		bool waitForEndSeq;
 		int32 regionOffset;
 		int32 trackOffset;
 		int32 dataOffset;
-		bool sequence;
 		int curRegion;
 		int curHookId;
 		int soundGroup;
@@ -79,7 +77,7 @@ private:
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
 
-	int _attributesTable[11];
+	int _attributesTable[12];
 	int _attributesState[97];
 	int _attributesSeq[91];
 	int _curSeqAtribPos;
@@ -91,7 +89,7 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId, int volume, bool wait);
+	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, int hookId, int volume);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
@@ -102,32 +100,41 @@ private:
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
-	void playFtMusic(const char *songName, int opcode, int volume, bool sequence, bool wait);
+	void playFtMusic(const char *songName, int opcode, int volume);
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence, bool wait);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
-	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence, bool wait);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
 	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input)
-		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, false, 0, 127, false); }
+		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, 0, 127); }
 	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, false, 0, 127, false); }
-	void startMusic(int soundId, bool sequence, int volume, bool wait)
-		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, sequence, 0, volume, wait); }
-	void startMusic(const char *soundName, int soundId, bool sequence, int hookId, int volume, bool wait)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, sequence, hookId, volume, wait); }
+		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, 0, 127); }
+	void startMusic(int soundId, int volume)
+		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, 0, volume); }
+	void startMusic(const char *soundName, int soundId, int hookId, int volume)
+		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, hookId, volume); }
 	void startSfx(int soundId)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, false, 0, 127, false); }
+		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, 0, 127); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
+	void resetState() {
+		_curMusicState = 0;
+		_curMusicSeq = 0;
+		_curMusicCue = 0;
+		memset(_attributesSeq, 0, sizeof(_attributesSeq));
+		memset(_attributesState, 0, sizeof(_attributesState));
+		memset(_attributesTable, 0, sizeof(_attributesTable));
+		_curSeqAtribPos = 0;
+	}
 
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
@@ -138,6 +145,7 @@ public:
 	void stopAllSounds(bool waitForStop);
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
+	void refreshScripts();
 	int getSoundStatus(int sound) const;
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
@@ -160,6 +168,7 @@ struct imuseDigTable {
 	int16 soundId;
 	char name[20];
 	byte param;
+	byte hookId;
 	char filename[13];
 };
 
