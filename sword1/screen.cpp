@@ -609,27 +609,26 @@ void SwordScreen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
 }
 
 void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest, uint16 width) {
-	// these are saved vertically flipped. *SIIIIIIIGH*
 	uint8 *srcBufEnd = src + compSize;
-	uint16 destX = width-1;
+	uint16 destX = 0;
 	while (src < srcBufEnd) {
 		uint8 color = *src++;
 		if (color) {
 			dest[destX] = color;
-			if (destX == 0) {
-				destX = width-1;
+			if (destX == width-1) {
+				destX = 0;
 				dest += width;
 			} else
-				destX--;
+				destX++;
 		} else {
 			uint8 skip = *src++;
 			for (uint16 cnt = 0; cnt < skip; cnt++) {
 				dest[destX] = 0;
-				if (destX == 0) {
-					destX = width-1;
+				if (destX == width-1) {
+					destX = 0;
 					dest += width;
 				} else
-					destX--;
+					destX++;
 			}
 		}
 	}
