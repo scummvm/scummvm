@@ -491,6 +491,8 @@ int Scumm::readVar(uint var) {
 			} else if (_gameId == GID_LOOM && var == 214 && bit == 15 && !copyprotbypassed) {
 				copyprotbypassed = true;
 				return 0;
+			} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
+				return 0;
 			}
 #endif
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
