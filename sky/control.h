@@ -174,6 +174,7 @@ public:
 	void showGameQuitMsg(bool useScreen = true);
 	void doAutoSave(void);
 	uint16 quickXRestore(uint16 slot);
+	bool loadSaveAllowed(void);
     
 private:
 	void initPanel(void);

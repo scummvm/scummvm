@@ -205,12 +205,11 @@ void SkyState::go() {
 		delay(_systemVars.gameSpeed);
 
 		if (_system->get_msecs() - _lastSaveTime > 5 * 60 * 1000) {
-			if (_systemVars.systemFlags & SF_CHOOSING)
-				_lastSaveTime += 30 * 1000;
-			else {
+			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->get_msecs();
 				_skyControl->doAutoSave();
-			}
+			} else
+				_lastSaveTime += 30 * 1000; // try again in 30 secs
 		}
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);

@@ -506,13 +506,13 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 			return 0;
 
 		case REST_GAME_PANEL:
-			if (SkyState::_systemVars.systemFlags & SF_CHOOSING)
+			if (!loadSaveAllowed())
 				return CANCEL_PRESSED; // can't save/restore while choosing
 			animClick(pButton);
 			return saveRestorePanel(false); // texts can't be edited
 
 		case SAVE_GAME_PANEL:
-			if (SkyState::_systemVars.systemFlags & SF_CHOOSING)
+			if (!loadSaveAllowed())
 				return CANCEL_PRESSED; // can't save/restore while choosing
 			animClick(pButton);
 			return saveRestorePanel(true); // texts can be edited
@@ -1035,6 +1035,20 @@ void SkyControl::loadDescriptions(uint8 *destBuf) {
 			destPos += MAX_TEXT_LEN;
 		}
 	}
+}
+
+bool SkyControl::loadSaveAllowed(void) {
+
+	if (SkyState::_systemVars.systemFlags & SF_CHOOSING)
+		return false; // texts get lost during load/save, so don't allow it during choosing
+	if (SkyLogic::_scriptVariables[SCREEN] >= 101)
+		return false; // same problem with LINC terminals
+	if ((SkyLogic::_scriptVariables[SCREEN] >= 82) && 
+		(SkyLogic::_scriptVariables[SCREEN] != 85) &&
+		(SkyLogic::_scriptVariables[SCREEN] < 90))
+		return false; // don't allow saving in final rooms
+
+	return true;
 }
 
 void SkyControl::saveDescriptions(uint8 *srcBuf) {
