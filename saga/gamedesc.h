@@ -118,7 +118,7 @@ typedef struct R_GAME_RESOURCEINFO_tag {
 	int detectGame();
 	bool openGame();
 
-} // end namespace 
+} // End of namespace Saga
 
 #endif
 

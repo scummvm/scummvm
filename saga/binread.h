@@ -25,6 +25,8 @@
 #include <stddef.h>
 #include "common/scummsys.h"
 
+namespace Saga {
+
 class BinReader {
 
 protected:
@@ -60,6 +62,7 @@ public:
 	int32        readSint32BE();
 };
 
+} // End of namespace Saga
 
 #endif
 

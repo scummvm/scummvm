@@ -111,7 +111,7 @@ bool verifyITECD();
 bool verifyIHNMDEMO();
 bool verifyIHNMCD();
 
-}
+} // End of namespace Saga
 
 #endif // SAGA_GAMEDESC_PRIV_H
 

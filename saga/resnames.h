@@ -22,6 +22,8 @@
 #ifndef SAGA_RESNAMES_H
 #define SAGA_RESNAMES_H
 
+namespace Saga {
+
 /* Lookup tables
 \*-----------------------------------------------------------------*/
 #define ITE_SCENE_LUT  1806
@@ -120,6 +122,7 @@
 #define MUSIC_25 33
 #define MUSIC_26 34
 
+} // End of namespace Saga
 
 #endif
 

@@ -159,4 +159,4 @@ void ResourceFile::freeResource(byte *res) {
 	delete[] res;
 }
 
-}
+} // End of namespace Saga

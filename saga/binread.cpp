@@ -148,4 +148,4 @@ int32 BinReader::readSint32BE() {
 	return u32_be;
 }
 
-}
+} // End of namespace Saga

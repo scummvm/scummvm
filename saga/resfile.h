@@ -33,6 +33,8 @@
  
 #include "common/file.h"
 
+namespace Saga {
+
 class ResourceFile : public File {
 
 public:
@@ -94,6 +96,7 @@ public:
 
 };
 
+} // End of namespace Saga
 
 
 #endif

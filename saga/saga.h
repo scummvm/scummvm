@@ -54,6 +54,6 @@ public:
 
 };
 
-}
+} // End of namespace Saga
 
 #endif

@@ -33,7 +33,6 @@
 
 #include "gamedesc.h"
 
-
 struct SAGAGameSettings {
 	const char *name;
 	const char *description;
@@ -132,4 +131,4 @@ void SagaEngine::shutdown() {
 	_system->quit();
 }
 
-}
+} // End of namespace Saga

@@ -446,4 +446,4 @@ bool verifyIHNMCD() {
 	return true;
 }
 
-}
+} // End of namespace Saga
