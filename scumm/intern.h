@@ -661,7 +661,7 @@ protected:
 	
 	virtual void redrawBGAreas();
 
-	int setupStringArray(int size);
+	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 
 	int findObject(int x, int y, int num, int *args);
@@ -737,7 +737,7 @@ protected:
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
-	int setupStringArray(int size);
+	virtual int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
