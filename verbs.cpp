@@ -150,6 +150,8 @@ void Scumm::drawVerb(int vrb, int mode)
 		*/
 
 		_messagePtr = getResourceAddress(rtVerb, vrb);
+		if (!_messagePtr)
+			return;
 		assert(_messagePtr);
 
 		tmp = charset._center;

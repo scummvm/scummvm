@@ -479,7 +479,8 @@ enum GameFeatures {
 	GF_AUDIOTRACKS = 1024,
 	GF_NO_SCALLING = 2048,
 	GF_ADLIB_DEFAULT = 4096,
-	GF_AMIGA = 8192
+	GF_AMIGA = 8192,
+	GF_HUMONGOUS = 16384
 };
 
 enum WhereIsObject {
