@@ -179,7 +179,7 @@ AudioStream *makeRAWStream(const char *filename, uint32 pos, int size, bool loop
 	return audioStream;
 }
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false)  {
+	MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
@@ -320,7 +320,6 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 		if (_musicContext != NULL) {
 			_hasDigiMusic = true;
 
-			debug(0, "DHFJKHDFKJLHDFKLJHDFKJHDASF");
 			_musicFname = RSC_FileName(_musicContext);
 
 			file.open(_musicFname);
@@ -475,7 +474,12 @@ int Music::play(uint32 music_rn, uint16 flags) {
 			return FAILURE;
 		}
 
-		_player->setGM(true);
+		// FIXME: This is weird, but this way Adlib sounds closer to original, 
+		// though instrument mapping is not correct
+		if (hasAdlib()) {
+			_player->setGM(false);
+		}
+
 		parser = MidiParser::createParser_XMIDI();
 	}
 
