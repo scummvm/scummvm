@@ -42,53 +42,54 @@ and Amiga versions of games may work with the 'Amiga' flag turned on - but
 this is not always true.
 
 SCUMM Games:
-        Maniac Mansion (Enhanced Version)            [Game: maniac]
-        Zak McKracken (Enhanced Version)             [Game: zak]
-        Indiana Jones & the Last Crusade (EGA)       [Game: indy3ega]
-        Indiana Jones & the Last Crusade (256)       [Game: indy3]
-        Loom (16 color floppy version)               [Game: loom]
-        Loom (256 color CD version)                  [Game: loomcd]
-        Zak McKracken (256 color, Towns English ver) [Game: zak256]
-        Monkey Island 1 (EGA version)                [Game: monkeyega]
-        Monkey Island 1 (VGA version)                [Game: monkeyvga]
-        Monkey Island 1 (CD version)                 [Game: monkey/monkey1]
-        Monkey Island 2                              [Game: monkey2]
-        Indiana Jones and the Fate of Atlantis       [Game: atlantis]
-        Day of the Tentacle                          [Game: tentacle]
-        Sam & Max                                    [Game: samnmax]
-        The Dig                                      [Game: dig]
-        Curse of Monkey Island                       [Game: comi]
+     Maniac Mansion (Enhanced Version)               [Game: maniac]
+     Zak McKracken (Enhanced Version)                [Game: zak]
+     Indiana Jones & the Last Crusade (EGA)          [Game: indy3ega]
+     Indiana Jones & the Last Crusade (256)          [Game: indy3]
+     Indiana Jones & the Last Crusade (256 FM Towns) [Game: indy3towns]
+     Loom (16 color floppy version)                  [Game: loom]
+     Loom (256 color CD version)                     [Game: loomcd]
+     Zak McKracken (256 FM Towns)                    [Game: zak256]
+     Monkey Island 1 (EGA version)                   [Game: monkeyega]
+     Monkey Island 1 (VGA version)                   [Game: monkeyvga]
+     Monkey Island 1 (CD version)                    [Game: monkey/monkey1]
+     Monkey Island 2                                 [Game: monkey2]
+     Indiana Jones and the Fate of Atlantis          [Game: atlantis]
+     Day of the Tentacle                             [Game: tentacle]
+     Sam & Max                                       [Game: samnmax]
+     The Dig                                         [Game: dig]
+     Curse of Monkey Island                          [Game: comi]
 
 Other Games:
-        Beneath a Steel Sky                          [Game: sky]
-        Simon the Sorcerer 1                         [Game: simon1dos/
+     Beneath a Steel Sky                             [Game: sky]
+     Simon the Sorcerer 1                            [Game: simon1dos/
                                                        simon1talkie/simon1win]
-        Simon the Sorcerer 2                         [Game: simon2dos/simon2talkie
-                                                       /simon2win/simon2mac]
+     Simon the Sorcerer 2                            [Game: simon2dos/simon2talkie
+                                                          /simon2win/simon2mac]
 
 The following games should be finishable, but have some criticial problems that
 prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
-        Full Throttle                              [Game: ft]
-        Zak McKracken (256 color, Towns Kanji ver) [Game: zak256]
+     Full Throttle                                 [Game: ft]
+     Zak McKracken (256 color, Towns Kanji ver)    [Game: zak256]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Maniac Mansion (Original)                  [Game: maniac]
-        Zak McKracken (Original)                   [Game: zak]
-        Putt-Putt Goes To The Moon                 [Game: puttmoon]
-        Putt-Putt's Fun Pack                       [Game: funpack]
-        Fatty Bear's Birthday Surprise             [Game: fbear]
-        Fatty Bear's Fun Pack                      [Game: fbpack]
+     Maniac Mansion (Original)                     [Game: maniac]
+     Zak McKracken (Original)                      [Game: zak]
+     Putt-Putt Goes To The Moon                    [Game: puttmoon]
+     Putt-Putt's Fun Pack                          [Game: funpack]
+     Fatty Bear's Birthday Surprise                [Game: fbear]
+     Fatty Bear's Fun Pack                         [Game: fbpack]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-        Putt-Putt Joins the Parade
-        Most other Humongous Entertainment titles
+     Putt-Putt Joins the Parade
+     Most other Humongous Entertainment titles
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
@@ -129,6 +130,7 @@ may have been cracked ScummVM will always have to bypass the copy protection.
 At the time of writing, that includes the following games:
 
 Indiana Jones & the Last Crusade (EGA)
+Indiana Jones & the Last Crusade (256 color FM Towns version)
 Loom (16 color floppy version)
 Maniac Mansion
 Monkey Island 1 (EGA version)
@@ -152,6 +154,7 @@ the section on Reporting Bugs.
        Beneath a Steel Sky:
                 - Floppy demo does not work at all
                 - Only versions 0.0288, 0.0368 and 0.0372 were tested
+                - Amiga versions aren't supported and probably never will be
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
@@ -162,11 +165,12 @@ the section on Reporting Bugs.
                 - In some rooms Indy may be able to walk to odd places
                 - There are some minor graphical glitches
 
-       Zak McKracken Fm Towns:
-                - The Fm Towns 256 color version of Zak McKracken is rare,
+       FM Towns versions:
+                - No support for Kanji versions
+                - All the FM Towns versions of games are extremely rare,
                   And as the ScummVM team does not encourage piracy in any
                   way, we do not know where to buy or download a copy of this
-                  game. Petition LucasArts to re-release it :)
+                  game. Petition LucasArts to re-release them :)
 
        Monkey Island (EGA & VGA versions):
                 - No sound effects
