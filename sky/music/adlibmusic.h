@@ -29,10 +29,10 @@ class SoundMixer;
 
 namespace Sky {
 
-class SkyAdlibMusic : public SkyMusicBase {
+class AdlibMusic : public MusicBase {
 public:
-	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *system);
-	~SkyAdlibMusic(void);
+	AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system);
+	~AdlibMusic(void);
 	virtual void setVolume(uint8 volume);
 private:
 	FM_OPL *_opl;

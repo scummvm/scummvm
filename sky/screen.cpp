@@ -30,7 +30,7 @@
 
 namespace Sky {
 
-uint8 SkyScreen::_top16Colours[16*3] = {
+uint8 Screen::_top16Colours[16*3] = {
 	0, 0, 0,
 	38, 38, 38,
 	63, 63, 63,
@@ -49,7 +49,7 @@ uint8 SkyScreen::_top16Colours[16*3] = {
 	63, 63, 63
 };
 
-SkyScreen::SkyScreen(OSystem *pSystem, SkyDisk *pDisk) {
+Screen::Screen(OSystem *pSystem, Disk *pDisk) {
 
 	_system = pSystem;
 	_skyDisk = pDisk;
@@ -84,13 +84,13 @@ SkyScreen::SkyScreen(OSystem *pSystem, SkyDisk *pDisk) {
 	_seqInfo.running = false;
 }
 
-SkyScreen::~SkyScreen(void) {
+Screen::~Screen(void) {
 
 	free(_gameGrid);
 	if (_currentScreen) free(_currentScreen);
 }
 
-void SkyScreen::clearScreen(void) {
+void Screen::clearScreen(void) {
 	 
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
@@ -98,14 +98,14 @@ void SkyScreen::clearScreen(void) {
 }
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
-void SkyScreen::setPalette(uint8 *pal) {
+void Screen::setPalette(uint8 *pal) {
 	
 	convertPalette(pal, _palette);
 	_system->set_palette(_palette, 0, GAME_COLOURS);
 	_system->update_screen();
 }
 
-void SkyScreen::setPaletteEndian(uint8 *pal) {
+void Screen::setPaletteEndian(uint8 *pal) {
 
 #ifdef SCUMM_BIG_ENDIAN
 	uint8 endPalette[256 * 3];
@@ -119,7 +119,7 @@ void SkyScreen::setPaletteEndian(uint8 *pal) {
 	_system->update_screen();
 }
 
-void SkyScreen::halvePalette(void) {
+void Screen::halvePalette(void) {
 
 	uint8 halfPalette[1024];
 	for (uint8 cnt = 0; cnt < GAME_COLOURS; cnt++) {
@@ -131,31 +131,31 @@ void SkyScreen::halvePalette(void) {
 	_system->set_palette(halfPalette, 0, GAME_COLOURS);
 }
 
-void SkyScreen::setPalette(uint16 fileNum) {
+void Screen::setPalette(uint16 fileNum) {
 
 	uint8 *tmpPal = _skyDisk->loadFile(fileNum, NULL);
 	if (tmpPal) {
 		setPalette(tmpPal);
 		free(tmpPal);
-	} else warning("SkyScreen::setPalette: can't load file nr. %d",fileNum);
+	} else warning("Screen::setPalette: can't load file nr. %d",fileNum);
 }
 
-void SkyScreen::showScreen(uint16 fileNum) {
+void Screen::showScreen(uint16 fileNum) {
 
 	if (_currentScreen) free(_currentScreen);
 	_currentScreen = _skyDisk->loadFile(fileNum, NULL);
 	
 	if (_currentScreen) showScreen(_currentScreen);
-	else warning("SkyScreen::showScreen: can't load file nr. %d",fileNum);
+	else warning("Screen::showScreen: can't load file nr. %d",fileNum);
 }
 
-void SkyScreen::showScreen(uint8 *pScreen) {
+void Screen::showScreen(uint8 *pScreen) {
 
 	_system->copy_rect(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->update_screen();
 }
 
-void SkyScreen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
+void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
 
 	int i;
 
@@ -167,14 +167,14 @@ void SkyScreen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0
 	}
 }
 
-void SkyScreen::recreate(void) {
+void Screen::recreate(void) {
 
 	// check the game grid for changed blocks
-	if (!SkyLogic::_scriptVariables[LAYER_0_ID]) return ;
+	if (!Logic::_scriptVariables[LAYER_0_ID]) return ;
 	uint8 *gridPos = _gameGrid;
-	uint8 *screenData = (uint8 *)SkyEngine::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID]);
+	uint8 *screenData = (uint8 *)SkyEngine::fetchItem(Logic::_scriptVariables[LAYER_0_ID]);
 	if (!screenData) {
-		error("SkyScreen::recreate():\nSkyEngine::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID](%X)) returned NULL",SkyLogic::_scriptVariables[LAYER_0_ID]);
+		error("Screen::recreate():\nSkyEngine::fetchItem(Logic::_scriptVariables[LAYER_0_ID](%X)) returned NULL",Logic::_scriptVariables[LAYER_0_ID]);
 	}
 	uint8 *screenPos = _currentScreen;
 
@@ -200,7 +200,7 @@ void SkyScreen::recreate(void) {
 	}
 }
 
-void SkyScreen::flip(bool doUpdate) {
+void Screen::flip(bool doUpdate) {
 
 	uint32 copyX, copyWidth;
 	copyX = copyWidth = 0;
@@ -224,7 +224,7 @@ void SkyScreen::flip(bool doUpdate) {
 		_system->update_screen();
 }
 
-void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
+void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
 
 	// set up the new screen
 	fnFadeDown(scroll);
@@ -235,7 +235,7 @@ void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
 	fnFadeUp(palette, scroll);
 }
 
-void SkyScreen::fnFadeDown(uint32 scroll) {
+void Screen::fnFadeDown(uint32 scroll) {
 
 	if (scroll && (!(SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL))) {
 		// scrolling is performed by fnFadeUp. It's just prepared here
@@ -254,7 +254,7 @@ void SkyScreen::fnFadeDown(uint32 scroll) {
 	}
 }
 
-void SkyScreen::palette_fadedown_helper(uint32 *pal, uint num) {
+void Screen::palette_fadedown_helper(uint32 *pal, uint num) {
 	byte *p = (byte *)pal;
 
 	do {
@@ -274,16 +274,16 @@ void SkyScreen::palette_fadedown_helper(uint32 *pal, uint num) {
 	} while (--num);
 }
 
-void SkyScreen::paletteFadeUp(uint16 fileNr) {
+void Screen::paletteFadeUp(uint16 fileNr) {
 
 	uint8 *pal = _skyDisk->loadFile(fileNr, NULL);
 	if (pal) {
 		paletteFadeUp(pal);
 		free(pal);
-	} else warning("SkyScreen::paletteFadeUp: Can't load palette #%d",fileNr);
+	} else warning("Screen::paletteFadeUp: Can't load palette #%d",fileNr);
 }
 
-void SkyScreen::paletteFadeUp(uint8 *pal) {
+void Screen::paletteFadeUp(uint8 *pal) {
 
 	byte tmpPal[1024];
 	
@@ -301,7 +301,7 @@ void SkyScreen::paletteFadeUp(uint8 *pal) {
 	}	
 }
 
-void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
+void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
@@ -312,7 +312,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	if ((scroll == 0) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint8 *palette = (uint8 *)SkyEngine::fetchCompact(palNum);
 		if (palette == NULL)
-			error("SkyScreen::fnFadeUp: can't fetch compact %X", palNum);
+			error("Screen::fnFadeUp: can't fetch compact %X", palNum);
 #ifdef SCUMM_BIG_ENDIAN
 		byte tmpPal[256 * 3];
 		for (uint16 cnt = 0; cnt < 256*3; cnt++)
@@ -323,8 +323,8 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 #endif
 	} else if (scroll == 123) {
 		// scroll left (going right)
-		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll L]: _currentScreen is NULL");
-		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll L]: _scrollScreen is NULL");
+		if (!_currentScreen) error("Screen::fnFadeUp[Scroll L]: _currentScreen is NULL");
+		if (!_scrollScreen) error("Screen::fnFadeUp[Scroll L]: _scrollScreen is NULL");
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + scrollCnt * SCROLL_JUMP;
@@ -342,8 +342,8 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		free(_scrollScreen);
 	} else if (scroll == 321) {
 		// scroll right (going left)
-		if (!_currentScreen) error("SkyScreen::fnFadeUp[Scroll R]: _currentScreen is NULL");
-		if (!_scrollScreen) error("SkyScreen::fnFadeUp[Scroll R]: _scrollScreen is NULL");
+		if (!_currentScreen) error("Screen::fnFadeUp[Scroll R]: _currentScreen is NULL");
+		if (!_scrollScreen) error("Screen::fnFadeUp[Scroll R]: _scrollScreen is NULL");
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + GAME_SCREEN_WIDTH - (scrollCnt + 1) * SCROLL_JUMP;
@@ -362,7 +362,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	}
 }
 
-void SkyScreen::waitForTimer(void) {
+void Screen::waitForTimer(void) {
 
 	_gotTick = false;
 	while (!_gotTick) {
@@ -373,7 +373,7 @@ void SkyScreen::waitForTimer(void) {
 	}
 }
 
-void SkyScreen::waitForSequence(void) {
+void Screen::waitForSequence(void) {
 	while (_seqInfo.running) {
 		OSystem::Event event;
 
@@ -382,14 +382,14 @@ void SkyScreen::waitForSequence(void) {
 	}
 }
 
-void SkyScreen::handleTimer(void) {
+void Screen::handleTimer(void) {
 
 	_gotTick = true;
 	if (_seqInfo.running)
 		processSequence();
 }
 
-void SkyScreen::startSequence(uint16 fileNum) {
+void Screen::startSequence(uint16 fileNum) {
 
 	_seqInfo.seqData = _skyDisk->loadFile(fileNum, NULL);
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
@@ -399,7 +399,7 @@ void SkyScreen::startSequence(uint16 fileNum) {
 	_seqInfo.runningItem = false;
 }
 
-void SkyScreen::startSequenceItem(uint16 itemNum) {
+void Screen::startSequenceItem(uint16 itemNum) {
 
 	_seqInfo.seqData = (uint8 *)SkyEngine::fetchItem(itemNum);
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
@@ -409,7 +409,7 @@ void SkyScreen::startSequenceItem(uint16 itemNum) {
 	_seqInfo.runningItem = true;
 }
 
-void SkyScreen::stopSequence() {
+void Screen::stopSequence() {
 
 	_seqInfo.running = false;
 	waitForTimer();
@@ -419,7 +419,7 @@ void SkyScreen::stopSequence() {
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 }
 
-void SkyScreen::processSequence(void) {
+void Screen::processSequence(void) {
 
 	uint32 screenPos = 0;
 
@@ -495,24 +495,24 @@ void SkyScreen::processSequence(void) {
 
 //- sprites.asm routines
 
-void SkyScreen::spriteEngine(void) {
+void Screen::spriteEngine(void) {
 
 	doSprites(BACK);
 	sortSprites();
 	doSprites(FORE);	
 }
 
-void SkyScreen::sortSprites(void) {
+void Screen::sortSprites(void) {
 
 	StSortList sortList[30];
 	uint32 currDrawList = DRAW_LIST_NO;
 	uint32 loadDrawList;
 
 	bool nextDrawList = false;
-	while (SkyLogic::_scriptVariables[currDrawList]) {
+	while (Logic::_scriptVariables[currDrawList]) {
 		// big_sort_loop
 		uint32 spriteCnt = 0;
-		loadDrawList = SkyLogic::_scriptVariables[currDrawList];
+		loadDrawList = Logic::_scriptVariables[currDrawList];
 		currDrawList++;
 
 		do { // a_new_draw_list:
@@ -526,7 +526,7 @@ void SkyScreen::sortSprites(void) {
 					// process_this_id:
 					Compact *spriteComp = SkyEngine::fetchCompact(drawListData[0]);
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
-						(spriteComp->screen == SkyLogic::_scriptVariables[SCREEN])) { // on current screen
+						(spriteComp->screen == Logic::_scriptVariables[SCREEN])) { // on current screen
 							dataFileHeader *spriteData = 
 								(dataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
@@ -569,13 +569,13 @@ void SkyScreen::sortSprites(void) {
 	}
 }
 
-void SkyScreen::doSprites(uint8 layer) {
+void Screen::doSprites(uint8 layer) {
 
 	uint16 drawListNum = DRAW_LIST_NO;
 	uint32 idNum;
 	uint16* drawList;
-	while (SkyLogic::_scriptVariables[drawListNum]) { // std sp loop
-		idNum = SkyLogic::_scriptVariables[drawListNum];
+	while (Logic::_scriptVariables[drawListNum]) { // std sp loop
+		idNum = Logic::_scriptVariables[drawListNum];
 		drawListNum++;
 
 		drawList = (uint16 *)SkyEngine::fetchCompact(idNum);
@@ -587,7 +587,7 @@ void SkyScreen::doSprites(uint8 layer) {
 				Compact *spriteData = SkyEngine::fetchCompact(drawList[0]);
 				drawList++;
 				if ((spriteData->status & (1 << layer)) && 
-						(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
+						(spriteData->screen == Logic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyEngine::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
 						debug(9, "Spritedata %d not loaded", spriteData->frame >> 6);
@@ -606,10 +606,10 @@ void SkyScreen::doSprites(uint8 layer) {
 	}
 }
 
-void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
+void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 
 	if (spriteInfo == NULL) {
-		warning("SkyScreen::drawSprite Can't draw sprite. Data %d was not loaded", sprCompact->frame >> 6);
+		warning("Screen::drawSprite Can't draw sprite. Data %d was not loaded", sprCompact->frame >> 6);
 		sprCompact->status = 0;
 		return ;
 	}
@@ -670,7 +670,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return;
 	}
 	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
-		warning("SkyScreen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d",_sprX, _sprY, _sprWidth, _sprHeight);
+		warning("Screen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d",_sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
 		return ;
 	}
@@ -694,7 +694,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	_sprHeight -= _sprY;
 }
 
-void SkyScreen::vectorToGame(uint8 gridVal) {
+void Screen::vectorToGame(uint8 gridVal) {
 
 	if (_sprWidth == 0) return ;
 	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX;
@@ -705,14 +705,14 @@ void SkyScreen::vectorToGame(uint8 gridVal) {
 	}
 }
 
-void SkyScreen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId) {
+void Screen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId) {
 
 	for (uint32 cntx = 0; cntx < _sprHeight; cntx++) { // start_x | block_loop
 		if (grid[gridOfs]) {
 			if (!(FROM_LE_16(grid[gridOfs]) & 0x8000)) {
 				uint32 gridVal = FROM_LE_16(grid[gridOfs]) - 1;
 				gridVal *= GRID_W * GRID_H;
-				uint8 *dataSrc = (uint8 *)SkyEngine::fetchItem(SkyLogic::_scriptVariables[layerId]) + gridVal;
+				uint8 *dataSrc = (uint8 *)SkyEngine::fetchItem(Logic::_scriptVariables[layerId]) + gridVal;
 				uint8 *dataTrg = screenPtr;
 				for (uint32 grdCntY = 0; grdCntY < GRID_H; grdCntY++) {
 					for (uint32 grdCntX = 0; grdCntX < GRID_W; grdCntX++)
@@ -727,7 +727,7 @@ void SkyScreen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint
 	} // next_x
 }
 
-void SkyScreen::verticalMask(void) {
+void Screen::verticalMask(void) {
 
 	if (_sprWidth == 0) return ;
 	uint32 startGridOfs = (_sprY + _sprHeight - 1) * GRID_X + _sprX;
@@ -738,9 +738,9 @@ void SkyScreen::verticalMask(void) {
 		uint8 *screenPtr = startScreenPtr;
 		for (uint32 widCnt = 0; widCnt < _sprWidth; widCnt++) { // x_loop
 			uint32 nLayerCnt = layerCnt;
-			while (SkyLogic::_scriptVariables[nLayerCnt + 3]) {
+			while (Logic::_scriptVariables[nLayerCnt + 3]) {
 				uint16 *scrGrid;
-				scrGrid = (uint16 *)SkyEngine::fetchItem(SkyLogic::_scriptVariables[layerCnt + 3]);
+				scrGrid = (uint16 *)SkyEngine::fetchItem(Logic::_scriptVariables[layerCnt + 3]);
 				if (scrGrid[gridOfs]) {
 					vertMaskSub(scrGrid, gridOfs, screenPtr, layerCnt);
 					break;
@@ -753,7 +753,7 @@ void SkyScreen::verticalMask(void) {
 	}
 }
 
-void SkyScreen::paintBox(uint16 x, uint16 y) {
+void Screen::paintBox(uint16 x, uint16 y) {
 
 	uint8 *screenPos = _currentScreen + y * GAME_SCREEN_WIDTH + x;
 	memset(screenPos, 255, 8);
@@ -764,7 +764,7 @@ void SkyScreen::paintBox(uint16 x, uint16 y) {
 	memset(screenPos + 7 * GAME_SCREEN_WIDTH, 255, 7);
 }
 
-void SkyScreen::showGrid(uint8 *gridBuf) {
+void Screen::showGrid(uint8 *gridBuf) {
 
 	uint32 gridData = 0;
 	uint8 bitsLeft = 0;

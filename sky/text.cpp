@@ -36,7 +36,7 @@ namespace Sky {
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-SkyText::SkyText(SkyDisk *skyDisk) {
+Text::Text(Disk *skyDisk) {
 	_skyDisk = skyDisk;
 
 	initHuffTree();
@@ -68,14 +68,14 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 		_preAfterTableArea = NULL;
 }
 
-SkyText::~SkyText(void) {
+Text::~Text(void) {
 
 	if (_controlCharacterSet.addr) free(_controlCharacterSet.addr);
 	if (_linkCharacterSet.addr) free(_linkCharacterSet.addr);
 	if (_preAfterTableArea) free(_preAfterTableArea);
 }
 
-void SkyText::patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data) {
+void Text::patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data) {
 	byte *ptr = charSetPtr + (CHAR_SET_HEADER + (height << 2) * c);
 
 	charSetPtr[c] = width;
@@ -88,7 +88,7 @@ void SkyText::patchChar(byte *charSetPtr, int width, int height, int c, const ui
 	}
 }
 
-void SkyText::patchLINCCharset() {
+void Text::patchLINCCharset() {
 	// The LINC terminal charset looks strange in some cases. This
 	// function attempts to patch up the worst blemishes.
 
@@ -220,7 +220,7 @@ void SkyText::patchLINCCharset() {
 	}
 }
 
-void SkyText::fnSetFont(uint32 fontNr) { 
+void Text::fnSetFont(uint32 fontNr) { 
 
 	struct charSet *newCharSet;
 
@@ -244,19 +244,19 @@ void SkyText::fnSetFont(uint32 fontNr) {
 	_dtCharSpacing = newCharSet->charSpacing;
 }
 
-void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
+void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 
 	fnSetFont(1);
 	uint16* msgData = (uint16 *)SkyEngine::fetchCompact(textInfoId);
 	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
-	SkyLogic::_scriptVariables[RESULT] = textId.compactNum;
+	Logic::_scriptVariables[RESULT] = textId.compactNum;
 	Compact *textCompact = SkyEngine::fetchCompact(textId.compactNum);
 	textCompact->xcood = msgData[3];
 	textCompact->ycood = msgData[4];
 	fnSetFont(0);
 }
 
-void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
+void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	if (patchMessage(textNr))
 		return ;
@@ -329,12 +329,12 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	} while(textChar);
 }
 
-void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
+void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 
 	Compact *ptrComp = SkyEngine::fetchCompact(pointedId);
 	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
-	SkyLogic::_scriptVariables[CURSOR_ID] = text.compactNum;
-	if (SkyLogic::_scriptVariables[MENU]) {
+	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
+	if (Logic::_scriptVariables[MENU]) {
 		_mouseOfsY = TOP_LEFT_Y - 2;
 		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 24;
 		else _mouseOfsX = TOP_LEFT_X  - 8 - _lowTextWidth;
@@ -347,14 +347,14 @@ void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 	logicCursor(textCompact, mouseX, mouseY);
 }
 
-void SkyText::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
+void Text::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
 
 	textCompact->xcood = (uint16)(mouseX + _mouseOfsX);
 	textCompact->ycood = (uint16)(mouseY + _mouseOfsY);
 	if (textCompact->ycood < TOP_LEFT_Y) textCompact->ycood = TOP_LEFT_Y;
 }
 
-bool SkyText::getTBit() {
+bool Text::getTBit() {
 
 	if (_shiftBits) {
 		(_shiftBits)--;
@@ -366,12 +366,12 @@ bool SkyText::getTBit() {
 	return (bool)(((_inputValue) >> (_shiftBits)) & 1);
 }
 
-displayText_t SkyText::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+displayText_t Text::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 	//Render text in _textBuffer in buffer *dest
 	return displayText(this->_textBuffer, dest, centre, pixelWidth, color);
 }
 
-displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 
 	//Render text pointed to by *textPtr in buffer *dest
 
@@ -489,7 +489,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 	return ret;
 }
 
-void SkyText::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
+void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
 
 	bool maskBit, dataBit;	
 	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
@@ -533,7 +533,7 @@ void SkyText::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest,
 
 }
 
-lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
+lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
 
 	getText(textNum);
 
@@ -561,7 +561,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	cpt->logic = logicNum; 
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
-	cpt->screen = (uint16) SkyLogic::_scriptVariables[SCREEN];
+	cpt->screen = (uint16) Logic::_scriptVariables[SCREEN];
 
 	struct lowTextManager_t ret;
 	ret.textData = _dtData;
@@ -570,7 +570,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 	return ret;
 }
 
-void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
+void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 
 	dataFileHeader *header = (dataFileHeader *)sprData;
 	sprData += sizeof(dataFileHeader);
@@ -578,7 +578,7 @@ void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 		if (sprData[cnt] >= 241) sprData[cnt] = newCol;
 }
 
-void SkyText::initHuffTree() {
+void Text::initHuffTree() {
 	switch (SkyEngine::_systemVars.gameVersion) {
 	case 109:
 		_huffTree = _huffTree_00109;
@@ -612,7 +612,7 @@ void SkyText::initHuffTree() {
 	}
 }
 
-char SkyText::getTextChar() {
+char Text::getTextChar() {
 	int pos = 0;
 	for (;;) {
 		if (getTBit() == 0)
@@ -625,7 +625,7 @@ char SkyText::getTextChar() {
 	}
 }
 
-bool SkyText::patchMessage(uint32 textNum) {
+bool Text::patchMessage(uint32 textNum) {
 
 	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars.language];
 	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars.language];
@@ -638,7 +638,7 @@ bool SkyText::patchMessage(uint32 textNum) {
 	return false;
 }
 
-const PatchMessage SkyText::_patchedMessages[NUM_PATCH_MSG] = {
+const PatchMessage Text::_patchedMessages[NUM_PATCH_MSG] = {
 	{ 28724, "Testo e Parlato" }, // - italian
 	{ 28707, "Solo Testo" },
 	{ 28693, "Solo Parlato" }, 
@@ -648,7 +648,7 @@ const PatchMessage SkyText::_patchedMessages[NUM_PATCH_MSG] = {
 	{ 28686, "Musikvolym" }
 };
 
-const uint16 SkyText::_patchLangIdx[8] = {
+const uint16 Text::_patchLangIdx[8] = {
 	0xFFFF, // SKY_ENGLISH
 	0xFFFF, // SKY_GERMAN
 	0xFFFF, // SKY_FRENCH
@@ -659,7 +659,7 @@ const uint16 SkyText::_patchLangIdx[8] = {
 	0xFFFF  // SKY_SPANISH
 };
 
-const uint16 SkyText::_patchLangNum[8] = {
+const uint16 Text::_patchLangNum[8] = {
 	0, // SKY_ENGLISH
 	0, // SKY_GERMAN
 	0, // SKY_FRENCH

@@ -42,15 +42,15 @@ struct SystemVars {
 };
 
 struct Compact;
-class SkySound;
-class SkyDisk;
-class SkyText;
-class SkyLogic;
-class SkyMouse;
-class SkyScreen;
-class SkyControl;
-class SkyMusicBase;
-class SkyIntro;
+class Sound;
+class Disk;
+class Text;
+class Logic;
+class Mouse;
+class Screen;
+class Control;
+class MusicBase;
+class Intro;
 
 class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -69,16 +69,16 @@ protected:
 
 	int _sdl_mouse_x, _sdl_mouse_y;
 
-	SkySound *_skySound;
-	SkyDisk *_skyDisk;
-	SkyText *_skyText;
-	SkyLogic *_skyLogic;
-	SkyMouse *_skyMouse;
-	SkyScreen *_skyScreen;
-	SkyControl *_skyControl;
+	Sound *_skySound;
+	Disk *_skyDisk;
+	Text *_skyText;
+	Logic *_skyLogic;
+	Mouse *_skyMouse;
+	Screen *_skyScreen;
+	Control *_skyControl;
 
-	SkyMusicBase *_skyMusic;
-	SkyIntro *_skyIntro;
+	MusicBase *_skyMusic;
+	Intro *_skyIntro;
 	
 public:
 	SkyEngine(GameDetector *detector, OSystem *syst);
@@ -105,7 +105,7 @@ protected:
 
 	uint32 _lastSaveTime;
 
-	SkyText *getSkyText();
+	Text *getText();
 	void initialise();
 	void initItemList();
 

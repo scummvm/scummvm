@@ -28,7 +28,7 @@ namespace Sky {
 
 #define	GRID_FILE_START	60000
 
-int8 SkyGrid::_gridConvertTable[] = {
+int8 Grid::_gridConvertTable[] = {
 
 	0,	//0
 	1,	//1
@@ -129,18 +129,18 @@ int8 SkyGrid::_gridConvertTable[] = {
 	69,	//96
 };
 
-SkyGrid::SkyGrid(SkyDisk *pDisk) {
+Grid::Grid(Disk *pDisk) {
 
 	_gameGrids = (uint8 *)malloc(TOT_NO_GRIDS * GRID_SIZE);
 	_skyDisk = pDisk;
 }
 
-SkyGrid::~SkyGrid(void) {
+Grid::~Grid(void) {
 
 	free(_gameGrids);
 }
 
-void SkyGrid::loadGrids(void) {
+void Grid::loadGrids(void) {
 
 	// no endian conversion necessary as I'm using uint8* instead of uint32*
 	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
@@ -148,18 +148,18 @@ void SkyGrid::loadGrids(void) {
 	if (!SkyEngine::isDemo()) { // single disk demos never get that far
 		// Reloading the grids can sometimes cause problems eg when reichs door is
 		// open the door grid bit gets replaced so you can't get back in (or out)
-		if (SkyLogic::_scriptVariables[REICH_DOOR_FLAG])
+		if (Logic::_scriptVariables[REICH_DOOR_FLAG])
 			removeGrid(256, 280, 1, &SkyCompact::reich_door_20);
 	}
 }
 
-bool SkyGrid::getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
+bool Grid::getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
 
 	uint16 width = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet)->gridWidth;
 	return getGridValues(cpt->xcood, cpt->ycood, width, cpt, resBitNum, resWidth);
 }
 
-bool SkyGrid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
+bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
 
 	uint32 bitPos;
 	if (y < TOP_LEFT_Y) return false; // off screen
@@ -194,14 +194,14 @@ bool SkyGrid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint
 	return true;
 }
 
-void SkyGrid::removeObjectFromWalk(Compact *cpt) {
+void Grid::removeObjectFromWalk(Compact *cpt) {
 
 	uint32 bitNum, width;
 	if (getGridValues(cpt, &bitNum, &width))
 		removeObjectFromWalk(bitNum, width);
 }
 
-void SkyGrid::removeObjectFromWalk(uint32 bitNum, uint32 width) {
+void Grid::removeObjectFromWalk(uint32 bitNum, uint32 width) {
 
 	for (uint32 cnt = 0; cnt < width; cnt++) {
 		_gameGrids[bitNum >> 3] &= ~(1 << (bitNum & 0x7));
@@ -211,14 +211,14 @@ void SkyGrid::removeObjectFromWalk(uint32 bitNum, uint32 width) {
 	}
 }
 
-void SkyGrid::objectToWalk(Compact *cpt) {
+void Grid::objectToWalk(Compact *cpt) {
 
 	uint32 bitNum, width;
 	if (getGridValues(cpt, &bitNum, &width))
 		objectToWalk(bitNum, width);
 }
 
-void SkyGrid::objectToWalk(uint32 bitNum, uint32 width) {
+void Grid::objectToWalk(uint32 bitNum, uint32 width) {
 
 	for (uint32 cnt = 0; cnt < width; cnt++) {
 		_gameGrids[bitNum >> 3] |= (1 << (bitNum & 0x7));
@@ -228,21 +228,21 @@ void SkyGrid::objectToWalk(uint32 bitNum, uint32 width) {
 	}
 }
 
-void SkyGrid::plotGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
+void Grid::plotGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
 
 	uint32 resBitPos, resWidth;
 	if (getGridValues(x, y, width-1, cpt, &resBitPos, &resWidth))
 		objectToWalk(resBitPos, resWidth);
 }
 
-void SkyGrid::removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
+void Grid::removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
 
 	uint32 resBitPos, resWidth;
 	if (getGridValues(x, y, width, cpt, &resBitPos, &resWidth))
 		removeObjectFromWalk(resBitPos, resWidth);
 }
 
-uint8 *SkyGrid::giveGrid(uint32 pScreen)
+uint8 *Grid::giveGrid(uint32 pScreen)
 {
 	return _gameGrids + GRID_SIZE * _gridConvertTable[pScreen];
 }

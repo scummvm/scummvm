@@ -229,7 +229,7 @@ namespace Sky {
 #define CD_105	60098
 
 
-uint16 SkyIntro::_mainIntroSeq[] = {
+uint16 Intro::_mainIntroSeq[] = {
 	DELAY,       3000, // keep virgin screen up
 	FADEDOWN,
 	SHOWSCREEN, 60112, // revo screen + palette
@@ -243,7 +243,7 @@ uint16 SkyIntro::_mainIntroSeq[] = {
 	SEQEND
 };
 
-uint16 SkyIntro::_cdIntroSeq[] = {
+uint16 Intro::_cdIntroSeq[] = {
 	PLAYVOICE,	59500,
 	LOADBG,		59499,
 	LOOPBG,
@@ -549,7 +549,7 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 	SEQEND
 };
 
-uint16 SkyIntro::_floppyIntroSeq[] = {
+uint16 Intro::_floppyIntroSeq[] = {
 	SHOWSCREEN,   60081,
 	FADEUP,       60080,
 	DOFLIRT,      60082,
@@ -610,7 +610,7 @@ uint16 SkyIntro::_floppyIntroSeq[] = {
 	SEQEND
 };
 
-SkyIntro::SkyIntro(SkyDisk *disk, SkyScreen *screen, SkyMusicBase *music, SkySound *sound, SkyText *text, SoundMixer *mixer, OSystem *system) {
+Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, SoundMixer *mixer, OSystem *system) {
 
 	_skyDisk = disk;
 	_skyScreen = screen;
@@ -625,7 +625,7 @@ SkyIntro::SkyIntro(SkyDisk *disk, SkyScreen *screen, SkyMusicBase *music, SkySou
 	_quitProg = false;
 }
 
-SkyIntro::~SkyIntro(void) {
+Intro::~Intro(void) {
 
 	_mixer->stopAll();
 	_skyDisk->flushPrefetched();
@@ -638,7 +638,7 @@ SkyIntro::~SkyIntro(void) {
 		free(_bgBuf);
 }
 
-bool SkyIntro::doIntro(bool floppyIntro) {
+bool Intro::doIntro(bool floppyIntro) {
 
 	if (!SkyEngine::isCDVersion())
 		floppyIntro = true;
@@ -670,7 +670,7 @@ bool SkyIntro::doIntro(bool floppyIntro) {
 	return true;
 }
 
-bool SkyIntro::nextPart(uint16 *&data) {
+bool Intro::nextPart(uint16 *&data) {
 
 	uint8 *vData = NULL;
 	// return false means cancel intro
@@ -760,7 +760,7 @@ bool SkyIntro::nextPart(uint16 *&data) {
 	return true;
 }
 
-bool SkyIntro::floppyScrollFlirt(void) {
+bool Intro::floppyScrollFlirt(void) {
 
 	uint8 *scrollScreen = (uint8*)malloc(FRAME_SIZE * 2);
 	memset(scrollScreen, 0, FRAME_SIZE);
@@ -804,7 +804,7 @@ bool SkyIntro::floppyScrollFlirt(void) {
 	return doContinue;
 }
 
-bool SkyIntro::commandFlirt(uint16 *&data) {
+bool Intro::commandFlirt(uint16 *&data) {
 
 	_skyScreen->startSequence(*data++);
 	while ((*data != COMMANDEND) || _skyScreen->sequenceRunning()) {
@@ -844,7 +844,7 @@ bool SkyIntro::commandFlirt(uint16 *&data) {
 	return true;
 }
 
-void SkyIntro::showTextBuf(void) {
+void Intro::showTextBuf(void) {
 
 	uint16 x = ((dataFileHeader*)_textBuf)->s_x;
 	uint16 y = ((dataFileHeader*)_textBuf)->s_y;
@@ -867,7 +867,7 @@ void SkyIntro::showTextBuf(void) {
 	_system->copy_rect(screenBuf, GAME_SCREEN_WIDTH, x, y, width, height);
 }
 
-void SkyIntro::restoreScreen(void) {
+void Intro::restoreScreen(void) {
 
 	uint16 x = ((dataFileHeader*)_saveBuf)->s_x;
 	uint16 y = ((dataFileHeader*)_saveBuf)->s_y;
@@ -883,7 +883,7 @@ void SkyIntro::restoreScreen(void) {
 	_system->copy_rect(_saveBuf + sizeof(dataFileHeader), width, x, y, width, height);
 }
 
-bool SkyIntro::escDelay(uint32 msecs) {
+bool Intro::escDelay(uint32 msecs) {
 
 	OSystem::Event event;
 	do {

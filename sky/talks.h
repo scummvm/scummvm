@@ -24,7 +24,7 @@
 
 namespace Sky {
 
-namespace SkyTalkAnims {
+namespace TalkAnims {
 
 uint16 show_mag[] = {
 	68*64,

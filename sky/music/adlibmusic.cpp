@@ -26,13 +26,13 @@
 
 namespace Sky {
 
-void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
+void AdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 
-	((SkyAdlibMusic*)param)->premixerCall(buf, len);
+	((AdlibMusic*)param)->premixerCall(buf, len);
 }
 
-SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *system)
-	: SkyMusicBase(pSkyDisk, system) {
+AdlibMusic::AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system)
+	: MusicBase(pDisk, system) {
 
 	_driverFileBase = 60202;
 	_mixer = pMixer;
@@ -46,20 +46,20 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 	_mixer->setupPremix(passMixerFunc, this);
 }
 
-SkyAdlibMusic::~SkyAdlibMusic(void) {
+AdlibMusic::~AdlibMusic(void) {
 
 	_mixer->setupPremix(0, 0);
 //	YM3812Shutdown();
 }
 
-void SkyAdlibMusic::setVolume(uint8 volume) {
+void AdlibMusic::setVolume(uint8 volume) {
 
 	_musicVolume = volume;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(volume | 128);
 }
 
-void SkyAdlibMusic::premixerCall(int16 *data, uint len) {
+void AdlibMusic::premixerCall(int16 *data, uint len) {
 
 	if (_musicData == NULL) {
 		// no music loaded
@@ -93,7 +93,7 @@ void SkyAdlibMusic::premixerCall(int16 *data, uint len) {
 	}
 }
 
-void SkyAdlibMusic::setupPointers(void) {
+void AdlibMusic::setupPointers(void) {
 
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		// disk demo uses a different adlib driver version, some offsets have changed
@@ -112,18 +112,18 @@ void SkyAdlibMusic::setupPointers(void) {
 	_nextMusicPoll = 0;
 }
 
-void SkyAdlibMusic::setupChannels(uint8 *channelData) {
+void AdlibMusic::setupChannels(uint8 *channelData) {
 
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyAdlibChannel(_opl, _musicData, chDataStart);
+		_channels[cnt] = new AdlibChannel(_opl, _musicData, chDataStart);
 		_channels[cnt]->updateVolume(_musicVolume | 128);
 	}
 }
 
-void SkyAdlibMusic::startDriver(void) {
+void AdlibMusic::startDriver(void) {
 
 	uint16 cnt = 0;
 	while (_initSequence[cnt] || _initSequence[cnt+1]) {

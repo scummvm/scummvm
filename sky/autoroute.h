@@ -28,12 +28,12 @@
 namespace Sky {
 
 struct Compact;
-class SkyGrid;
+class Grid;
 
-class SkyAutoRoute {
+class AutoRoute {
 public:
-	SkyAutoRoute(SkyGrid *pGrid);
-	~SkyAutoRoute(void);
+	AutoRoute(Grid *pGrid);
+	~AutoRoute(void);
 	uint16 autoRoute(Compact *cpt);
 private:
 	uint16 checkBlock(uint16 *blockPos);
@@ -43,7 +43,7 @@ private:
 	bool calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 destY);
 	uint16 *makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 destY);
 	uint16 *checkInitMove(uint16 *data, int16 initStaX);
-	SkyGrid *_grid;
+	Grid *_grid;
 	uint16 *_routeGrid;
 	uint16 *_routeBuf;
 	static const int16 _routeDirections[4];

@@ -33,7 +33,7 @@ namespace Sky {
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
-SkyDisk::SkyDisk(const Common::String &gameDataPath) {
+Disk::Disk(const Common::String &gameDataPath) {
 	_prefRoot = NULL;
 
 	_dataDiskHandle = new File();
@@ -64,7 +64,7 @@ SkyDisk::SkyDisk(const Common::String &gameDataPath) {
 	memset(_loadedFilesList, 0, 60 * 4);
 }
 
-SkyDisk::~SkyDisk(void) {
+Disk::~Disk(void) {
 
 	PrefFile *fEntry = _prefRoot;
 	while (fEntry) {
@@ -79,7 +79,7 @@ SkyDisk::~SkyDisk(void) {
 	delete _dataDiskHandle;
 }
 
-void SkyDisk::flushPrefetched(void) {
+void Disk::flushPrefetched(void) {
 
 	PrefFile *fEntry = _prefRoot;
 	while (fEntry) {
@@ -91,14 +91,14 @@ void SkyDisk::flushPrefetched(void) {
 	_prefRoot = NULL;
 }
 
-bool SkyDisk::fileExists(uint16 fileNr) {
+bool Disk::fileExists(uint16 fileNr) {
 	
 	return (getFileInfo(fileNr) != NULL);
 }
 
 //load in file file_nr to address dest
 //if dest == NULL, then allocate memory for this file
-uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
+uint8 *Disk::loadFile(uint16 fileNr, uint8 *dest) {
 	
 	uint8 cflag;
 	int32 bytesRead;
@@ -233,7 +233,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	return _compDest;
 }
 
-void SkyDisk::prefetchFile(uint16 fileNr) {
+void Disk::prefetchFile(uint16 fileNr) {
 
 	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
@@ -242,7 +242,7 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 		fEntry = &((*fEntry)->next);
 	}
 	if (found) {
-		debug(1,"SkyDisk::prefetchFile: File %d was already prefetched",fileNr);
+		debug(1,"Disk::prefetchFile: File %d was already prefetched",fileNr);
 		return ;
 	}
 	uint8 *temp = loadFile(fileNr, NULL);
@@ -253,7 +253,7 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 	(*fEntry)->next = NULL;
 }
 
-uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
+uint8 *Disk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 	
 	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
@@ -273,7 +273,7 @@ uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 	return retPtr;
 }
 
-uint8 *SkyDisk::getFileInfo(uint16 fileNr) {
+uint8 *Disk::getFileInfo(uint16 fileNr) {
 	
 	uint16 i;
 	uint16 *dnrTbl16Ptr = (uint16 *)_dinnerTableArea;
@@ -290,7 +290,7 @@ uint8 *SkyDisk::getFileInfo(uint16 fileNr) {
 	return 0;
 }
 
-void SkyDisk::fnCacheChip(uint32 list) {
+void Disk::fnCacheChip(uint32 list) {
 
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
@@ -304,7 +304,7 @@ void SkyDisk::fnCacheChip(uint32 list) {
 	fnCacheFiles();
 }
 
-void SkyDisk::fnCacheFast(uint32 list) {
+void Disk::fnCacheFast(uint32 list) {
 
 	if (list == 0) return;
 	uint8 cnt = 0;
@@ -315,7 +315,7 @@ void SkyDisk::fnCacheFast(uint32 list) {
 	} while (fList[cnt-1]);
 }
 
-void SkyDisk::fnCacheFiles(void) {
+void Disk::fnCacheFiles(void) {
 
 	uint16 lCnt, bCnt, targCnt;
 	targCnt = lCnt = 0;
@@ -360,13 +360,13 @@ void SkyDisk::fnCacheFiles(void) {
 		_loadedFilesList[targCnt] = 0;
 		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
 		if (!SkyEngine::_itemList[_buildList[bCnt] & 2047])
-			warning("fnCacheFiles: SkyDisk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
+			warning("fnCacheFiles: Disk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
 		bCnt++;
 	}
 	_buildList[0] = 0;
 }
 
-void SkyDisk::refreshFilesList(uint32 *list) {
+void Disk::refreshFilesList(uint32 *list) {
 
 	uint8 cnt = 0;
 	while (_loadedFilesList[cnt]) {
@@ -384,7 +384,7 @@ void SkyDisk::refreshFilesList(uint32 *list) {
 	_loadedFilesList[cnt] = 0;
 }
 
-void SkyDisk::fnMiniLoad(uint16 fileNum) {
+void Disk::fnMiniLoad(uint16 fileNum) {
 
 	uint16 cnt = 0;
 	while (_loadedFilesList[cnt]) {
@@ -396,7 +396,7 @@ void SkyDisk::fnMiniLoad(uint16 fileNum) {
 	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
 }
 
-void SkyDisk::fnFlushBuffers(void) {
+void Disk::fnFlushBuffers(void) {
 
 	// dump all loaded sprites
 	uint8 lCnt = 0;
@@ -408,7 +408,7 @@ void SkyDisk::fnFlushBuffers(void) {
 	_loadedFilesList[0] = 0;
 }
 
-void SkyDisk::dumpFile(uint16 fileNr) {
+void Disk::dumpFile(uint16 fileNr) {
 	char buf[128];
 	File out;
 	byte* filePtr;
@@ -427,7 +427,7 @@ void SkyDisk::dumpFile(uint16 fileNr) {
 	free(filePtr);
 }
 
-uint32 SkyDisk::determineGameVersion() {
+uint32 Disk::determineGameVersion() {
 	//determine game version based on number of entries in dinner table
 	switch (_dinnerTableEntries) {
 	case 243:

@@ -210,22 +210,22 @@ static const char *section_0_compacts[] = {
 
 static const char *logic_table_names[] = {
 	"return",
-	"SkyLogic::script",
-	"SkyLogic::auto_route",
-	"SkyLogic::ar_anim",
-	"SkyLogic::ar_turn",
-	"SkyLogic::alt",
-	"SkyLogic::anim",
-	"SkyLogic::turn",
-	"SkyLogic::cursor",
-	"SkyLogic::talk",
-	"SkyLogic::listen",
-	"SkyLogic::stopped",
-	"SkyLogic::choose",
-	"SkyLogic::frames",
-	"SkyLogic::pause",
-	"SkyLogic::wait_sync",
-	"SkyLogic::simple_anim",
+	"Logic::script",
+	"Logic::auto_route",
+	"Logic::ar_anim",
+	"Logic::ar_turn",
+	"Logic::alt",
+	"Logic::anim",
+	"Logic::turn",
+	"Logic::cursor",
+	"Logic::talk",
+	"Logic::listen",
+	"Logic::stopped",
+	"Logic::choose",
+	"Logic::frames",
+	"Logic::pause",
+	"Logic::wait_sync",
+	"Logic::simple_anim",
 };
 
 static const char opcode_par[] = {
@@ -1234,7 +1234,7 @@ static const char *scriptVars[] = {
 	"man_loc3",
 };
 
-void SkyDebug::fetchCompact(uint32 a) {
+void Debug::fetchCompact(uint32 a) {
 	uint32 sectionNum = (a & 0xf000) >> 12;
 	uint32 compactNum = (a & 0x0fff);
 
@@ -1244,11 +1244,11 @@ void SkyDebug::fetchCompact(uint32 a) {
 		debug(8, "Loading Compact %d from section %d", compactNum, sectionNum);
 }
 
-void SkyDebug::logic(uint32 logic) {
+void Debug::logic(uint32 logic) {
 	debug(6, "LOGIC: %s", logic_table_names[logic]);
 }
 
-void SkyDebug::script(uint32 command, uint16 *scriptData) {
+void Debug::script(uint32 command, uint16 *scriptData) {
 	debug(6, "SCRIPT: %s", opcodes[command]);
 	if (command == 0 || command == 6)
 		debug(6, " %s", scriptVars[READ_LE_UINT16(scriptData)/4]);
@@ -1261,7 +1261,7 @@ void SkyDebug::script(uint32 command, uint16 *scriptData) {
 	debug(6, "");
 }
 
-void SkyDebug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
+void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
 }
 

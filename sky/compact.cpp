@@ -50,7 +50,7 @@ namespace Sky {
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
 	MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
 
-namespace SkyTalkAnims {
+namespace TalkAnims {
 	extern bool animTalkTableIsPointer[];
 	extern uint16 animTalkTableVal[];
 	extern void *animTalkTablePtr[];
@@ -78,7 +78,7 @@ uint16 *getGrafixPtr(Compact *cpt) {
 			error("::getGrafixPtr: request for elem ptr %d. It's NULL.", cpt->grafixProg.ptrTarget);
 		return buf + cpt->grafixProg.pos;
 	case TALKTABLE:
-		buf = (uint16 *)SkyTalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
+		buf = (uint16 *)TalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
 		return buf + cpt->grafixProg.pos;
 	default:
 		error("::getGrafixPtr: unknown grafixProg type for Compact cpt");

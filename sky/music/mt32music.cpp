@@ -26,13 +26,13 @@
 
 namespace Sky {
 
-void SkyMT32Music::passTimerFunc(void *param) {
+void MT32Music::passTimerFunc(void *param) {
 
-	((SkyMT32Music*)param)->timerCall();
+	((MT32Music*)param)->timerCall();
 }
 
-SkyMT32Music::SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
-	: SkyMusicBase(pSkyDisk, system) {
+MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system)
+	: MusicBase(pDisk, system) {
 
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
@@ -46,14 +46,14 @@ SkyMT32Music::SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *sys
 		_dummyMap[cnt] = cnt;
 }
 
-SkyMT32Music::~SkyMT32Music(void) {
+MT32Music::~MT32Music(void) {
 
 	_midiDrv->close();
 	_midiDrv->setTimerCallback(NULL, NULL);
 	delete _midiDrv;
 }
 
-void SkyMT32Music::timerCall(void) {
+void MT32Music::timerCall(void) {
 
 	// midi driver polls hundred times per sec. We only want 50 times.
 	_ignoreNextPoll = !_ignoreNextPoll;
@@ -63,7 +63,7 @@ void SkyMT32Music::timerCall(void) {
 		pollMusic();
 }
 
-void SkyMT32Music::setVolume(uint8 volume) {
+void MT32Music::setVolume(uint8 volume) {
 	uint8 sysEx[10] = "\x41\x10\x16\x12\x10\x00\x16\x00\x00";
 	_musicVolume = volume;
 	sysEx[7] = (volume > 100) ? 100 : volume;
@@ -74,25 +74,25 @@ void SkyMT32Music::setVolume(uint8 volume) {
 	_midiDrv->sysEx(sysEx, 9);
 }
 
-void SkyMT32Music::setupPointers(void) {
+void MT32Music::setupPointers(void) {
 
 	_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
 	_sysExSequence = ((_musicData[0x7E1] << 8) | _musicData[0x7E0]) + _musicData;
 }
 
-void SkyMT32Music::setupChannels(uint8 *channelData) {
+void MT32Music::setupChannels(uint8 *channelData) {
 
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyGmChannel(_musicData, chDataStart, _midiDrv, _dummyMap, _dummyMap);
+		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, _dummyMap, _dummyMap);
 	}
 }
 
 #define MIDI_PACK(a,b,c,d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
-bool SkyMT32Music::processPatchSysEx(uint8 *sysExData) {
+bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 
 	uint8 sysExBuf[15];
 	uint8 crc = 0;
@@ -117,7 +117,7 @@ bool SkyMT32Music::processPatchSysEx(uint8 *sysExData) {
 	return true;
 }
 
-void SkyMT32Music::startDriver(void) {
+void MT32Music::startDriver(void) {
 
 	// setup timbres and patches using SysEx data
 	uint8* sysExData = _sysExSequence;

@@ -30,7 +30,7 @@ class OSystem;
 
 namespace Sky {
 
-class SkyDisk;
+class Disk;
 
 #define FILES_PER_SECTION 4
 
@@ -39,7 +39,7 @@ typedef struct {
 	uint8 musicToProcess;
 } Actions;
 
-class SkyChannelBase {
+class ChannelBase {
 public:
 	virtual void stopNote(void) = 0;
 	virtual uint8 process(uint16 aktTime) = 0;
@@ -48,10 +48,10 @@ public:
 private:
 };
 
-class SkyMusicBase {
+class MusicBase {
 public:
-	SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system);
-	virtual ~SkyMusicBase(void);
+	MusicBase(Disk *pDisk, OSystem *system);
+	virtual ~MusicBase(void);
 	void loadSection(uint8 pSection);
 	void musicCommand(uint16 command);
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
@@ -63,7 +63,7 @@ public:
 protected:
 
 	OSystem *_system;
-	SkyDisk *_skyDisk;
+	Disk *_skyDisk;
 	uint8 *_musicData;
 	uint8 _allowedCommands;
 	uint16 _musicDataLoc;
@@ -76,7 +76,7 @@ protected:
 	uint32 _tempo;      // calculated from musicTempo0 and musicTempo1
 	uint32 _aktTime;
 	Actions _onNextPoll;
-	SkyChannelBase *_channels[10];
+	ChannelBase *_channels[10];
 	OSystem::MutexRef _mutex;
 	
 	virtual void setupPointers(void) = 0;

@@ -26,7 +26,7 @@
 
 namespace Sky {
 
-SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
+AdlibChannel::AdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
 	_channelData.startOfData = startOfData;
@@ -77,12 +77,12 @@ SkyAdlibChannel::SkyAdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfD
 	_musicVolume = 0x100;
 }
 
-bool SkyAdlibChannel::isActive(void) {
+bool AdlibChannel::isActive(void) {
 
 	return _channelData.channelActive != 0;
 }
 
-void SkyAdlibChannel::updateVolume(uint16 pVolume) {
+void AdlibChannel::updateVolume(uint16 pVolume) {
 
 	_musicVolume = pVolume;
 }
@@ -91,7 +91,7 @@ void SkyAdlibChannel::updateVolume(uint16 pVolume) {
 	asm driver did (_musicData[0xF5F..0x105E]), so the cache is indeed shared
 	by all instances of the class.
 */
-void SkyAdlibChannel::setRegister(uint8 regNum, uint8 value) {
+void AdlibChannel::setRegister(uint8 regNum, uint8 value) {
 
 	if (_adlibRegMirror[regNum] != value) {
 		OPLWriteReg (_opl, regNum, value);
@@ -99,7 +99,7 @@ void SkyAdlibChannel::setRegister(uint8 regNum, uint8 value) {
 	}
 }
 
-void SkyAdlibChannel::stopNote(void) {
+void AdlibChannel::stopNote(void) {
 
 	if (_channelData.note & 0x20) {
 		_channelData.note &= ~0x20;
@@ -107,7 +107,7 @@ void SkyAdlibChannel::stopNote(void) {
 	}
 }
 
-int32 SkyAdlibChannel::getNextEventTime(void) {
+int32 AdlibChannel::getNextEventTime(void) {
 	int32 retV = 0; 
 	uint8 cnt, lVal;
 	for (cnt = 0; cnt < 4; cnt++) {
@@ -122,7 +122,7 @@ int32 SkyAdlibChannel::getNextEventTime(void) {
 
 }
 
-uint8 SkyAdlibChannel::process(uint16 aktTime) {
+uint8 AdlibChannel::process(uint16 aktTime) {
 
 	if (!_channelData.channelActive) {
 		return 0;
@@ -156,12 +156,12 @@ uint8 SkyAdlibChannel::process(uint16 aktTime) {
 				case 10: //com90_error();
 				case 11: //com90_doLodsb();
 				case 13: //com90_do_two_Lodsb();
-					error("SkyChannel: dummy music routine 0x%02X was called",opcode);
+					error("Channel: dummy music routine 0x%02X was called",opcode);
 					_channelData.channelActive = 0;
 					break;
 				default:
 					// these opcodes aren't implemented in original music driver
-					error("SkyChannel: Not existent routine 0x%02X was called",opcode);
+					error("Channel: Not existent routine 0x%02X was called",opcode);
 					_channelData.channelActive = 0;
 					break;
 				}
@@ -190,7 +190,7 @@ uint8 SkyAdlibChannel::process(uint16 aktTime) {
 	return returnVal;
 }
 
-void SkyAdlibChannel::setupInstrument(uint8 opcode) {
+void AdlibChannel::setupInstrument(uint8 opcode) {
 
 	uint16 nextNote;
 	if (_channelData.tremoVibro) {
@@ -211,7 +211,7 @@ void SkyAdlibChannel::setupInstrument(uint8 opcode) {
 	_channelData.note = (uint8)((nextNote >> 8) | 0x20);
 }
 
-void SkyAdlibChannel::setupChannelVolume(uint8 volume) {
+void AdlibChannel::setupChannelVolume(uint8 volume) {
 
 	uint8 resultOp;
 	uint32 resVol = ((volume + 1) * (_channelData.instrumentData->totOutLev_Op2 + 1)) << 1;
@@ -234,7 +234,7 @@ void SkyAdlibChannel::setupChannelVolume(uint8 volume) {
 	setRegister(0x40 | _channelData.adlibReg1, resultOp);
 }
 
-void SkyAdlibChannel::adlibSetupInstrument(void) {
+void AdlibChannel::adlibSetupInstrument(void) {
 
 	setRegister(0x60 | _channelData.adlibReg1, _channelData.instrumentData->ad_Op1);
 	setRegister(0x60 | _channelData.adlibReg2, _channelData.instrumentData->ad_Op2);
@@ -253,7 +253,7 @@ void SkyAdlibChannel::adlibSetupInstrument(void) {
 #define ENDIAN16(x) (x)
 #endif
 
-uint16 SkyAdlibChannel::getNextNote(uint8 param) {
+uint16 AdlibChannel::getNextNote(uint8 param) {
 
 	int16 freqIndex = ((int16)_channelData.freqOffset) - 0x40;
 	if (freqIndex >= 0x3F) freqIndex++;
@@ -270,20 +270,20 @@ uint16 SkyAdlibChannel::getNextNote(uint8 param) {
 
 //- command 90h routines
 
-void SkyAdlibChannel::com90_caseNoteOff(void) {
+void AdlibChannel::com90_caseNoteOff(void) {
 
 	if (_musicData[_channelData.eventDataPtr] == _channelData.lastCommand)
 		stopNote();
 	_channelData.eventDataPtr++;
 }
 
-void SkyAdlibChannel::com90_stopChannel(void) {
+void AdlibChannel::com90_stopChannel(void) {
 
 	stopNote();
 	_channelData.channelActive = 0;
 }
 
-void SkyAdlibChannel::com90_setupInstrument(void) {
+void AdlibChannel::com90_setupInstrument(void) {
 
 	_channelData.channelVolume = 0x7F;
 	_channelData.freqOffset = 0x40;
@@ -293,14 +293,14 @@ void SkyAdlibChannel::com90_setupInstrument(void) {
 	adlibSetupInstrument();
 }
 
-uint8 SkyAdlibChannel::com90_updateTempo(void) {
+uint8 AdlibChannel::com90_updateTempo(void) {
 
 	uint8 retV = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
 	return retV;
 }
 
-void SkyAdlibChannel::com90_getFreqOffset(void) {
+void AdlibChannel::com90_getFreqOffset(void) {
 
 	_channelData.freqOffset = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
@@ -313,29 +313,29 @@ void SkyAdlibChannel::com90_getFreqOffset(void) {
 	}
 }
 
-void SkyAdlibChannel::com90_getChannelVolume(void) {
+void AdlibChannel::com90_getChannelVolume(void) {
 
 	_channelData.channelVolume = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
 }
 
-void SkyAdlibChannel::com90_getTremoVibro(void) {
+void AdlibChannel::com90_getTremoVibro(void) {
 
 	_channelData.tremoVibro = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
 }
 
-void SkyAdlibChannel::com90_rewindMusic(void) {
+void AdlibChannel::com90_rewindMusic(void) {
 
 	_channelData.eventDataPtr = _channelData.startOfData;
 }
 
-void SkyAdlibChannel::com90_keyOff(void) {
+void AdlibChannel::com90_keyOff(void) {
 
 	stopNote();
 }
 
-void SkyAdlibChannel::com90_setStartOfData(void) {
+void AdlibChannel::com90_setStartOfData(void) {
 
 	_channelData.startOfData = _channelData.eventDataPtr;
 }

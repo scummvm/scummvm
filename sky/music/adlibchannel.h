@@ -58,9 +58,9 @@ typedef struct {
 	uint16 frequency;
 } AdlibChannelType;
 
-class SkyAdlibChannel : public SkyChannelBase {
+class AdlibChannel : public ChannelBase {
 public:
-	SkyAdlibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
+	AdlibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);

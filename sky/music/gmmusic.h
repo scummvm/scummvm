@@ -28,10 +28,10 @@ class MidiDriver;
 
 namespace Sky {
 
-class SkyGmMusic : public SkyMusicBase {
+class GmMusic : public MusicBase {
 public:
-	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
-	~SkyGmMusic(void);
+	GmMusic(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system);
+	~GmMusic(void);
 	virtual void setVolume(uint8 volume);
 private:
 	static void passTimerFunc(void *param);

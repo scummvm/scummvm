@@ -29,15 +29,15 @@ class OSystem;
 
 namespace Sky {
 
-class SkyDisk;
-class SkyLogic;
+class Disk;
+class Logic;
 
-class SkyMouse {
+class Mouse {
 
 public:
 
-	SkyMouse(OSystem *system, SkyDisk *skyDisk);
-	~SkyMouse(void);
+	Mouse(OSystem *system, Disk *skyDisk);
+	~Mouse(void);
 
 	void mouseEngine(uint16 mouseX, uint16 mouseY);
 	void replaceMouseCursors(uint16 fileNo);
@@ -50,7 +50,7 @@ public:
 	void restoreMouseData(uint16 frameNum);
 	void drawNewMouse(void);
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
-	void useLogicInstance(SkyLogic *skyLogic) { _skyLogic = skyLogic; };
+	void useLogicInstance(Logic *skyLogic) { _skyLogic = skyLogic; };
 	void buttonPressed(uint8 button);
 	void waitMouseNotPressed(void);
 	uint16 giveMouseX(void) { return _mouseX; };
@@ -80,8 +80,8 @@ protected:
 	static uint32 _mouseLincObjects[21];
 
 	OSystem *_system;
-	SkyDisk *_skyDisk;
-	SkyLogic *_skyLogic;
+	Disk *_skyDisk;
+	Logic *_skyLogic;
 };
 
 } // End of namespace Sky

@@ -30,7 +30,7 @@ class OSystem;
 
 namespace Sky {
 
-class SkyDisk;
+class Disk;
 class SkyEngine;
 struct Compact;
 struct dataFileHeader;
@@ -49,10 +49,10 @@ typedef struct {
 	dataFileHeader *sprite;
 } StSortList;
 
-class SkyScreen {
+class Screen {
 public:
-	SkyScreen(OSystem *pSystem, SkyDisk *pDisk);
-	~SkyScreen(void);
+	Screen(OSystem *pSystem, Disk *pDisk);
+	~Screen(void);
 	void setPalette(uint8 *pal);
 	void setPaletteEndian(uint8 *pal);
 	void setPalette(uint16 fileNum);
@@ -89,7 +89,7 @@ public:
 
 private:
 	OSystem *_system;
-	SkyDisk *_skyDisk;
+	Disk *_skyDisk;
 	static uint8 _top16Colours[16*3];
 	uint8 _palette[1024];
 	uint32 _currentPalette;

@@ -80,28 +80,28 @@ enum scriptVariableOffsets {
 	LINC_DIGIT_9 = 655
 };
 
-class SkyAutoRoute;
-class SkyControl;
-class SkyDisk;
-class SkyGrid;
-class SkyMouse;
-class SkyMusicBase;
-class SkyScreen;
-class SkySound;
-class SkyText;
+class AutoRoute;
+class Control;
+class Disk;
+class Grid;
+class Mouse;
+class MusicBase;
+class Screen;
+class Sound;
+class Text;
 
-class SkyLogic {
+class Logic {
 public:
-	SkyLogic(
-		SkyScreen *skyScreen,
-		SkyDisk *skyDisk,
-		SkyText *skyText,
-		SkyMusicBase *skyMusic,
-		SkyMouse *skyMouse,
-		SkySound *skySound);
+	Logic(
+		Screen *skyScreen,
+		Disk *skyDisk,
+		Text *skyText,
+		MusicBase *skyMusic,
+		Mouse *skyMouse,
+		Sound *skySound);
 	void engine();
 	bool checkProtection(void);
-	void useControlInstance(SkyControl *control) { _skyControl = control; };
+	void useControlInstance(Control *control) { _skyControl = control; };
 
 	void nop();
 	void logicScript();
@@ -242,7 +242,7 @@ public:
 	void stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base);
 	
 	static uint32 _scriptVariables[838];
-	SkyGrid *_skyGrid;
+	Grid *_skyGrid;
 	
 protected:
 	void push(uint32);
@@ -266,14 +266,14 @@ protected:
 
 	Common::RandomSource _rnd;
 	
-	SkyScreen *_skyScreen;
-	SkyDisk *_skyDisk;
-	SkyText *_skyText;
-	SkyMusicBase *_skyMusic;
-	SkySound *_skySound;
-	SkyAutoRoute *_skyAutoRoute;
-	SkyMouse *_skyMouse;
-	SkyControl *_skyControl;
+	Screen *_skyScreen;
+	Disk *_skyDisk;
+	Text *_skyText;
+	MusicBase *_skyMusic;
+	Sound *_skySound;
+	AutoRoute *_skyAutoRoute;
+	Mouse *_skyMouse;
+	Control *_skyControl;
 };
 
 } // End of namespace Sky

@@ -23,7 +23,7 @@
 
 namespace Sky {
 
-const HuffTree SkyText::_huffTree_00109[] = {
+const HuffTree Text::_huffTree_00109[] = {
 	{ 1, 22, 0 },
 	{ 2, 9, 0 },
 	{ 3, 6, 0 },
@@ -193,7 +193,7 @@ const HuffTree SkyText::_huffTree_00109[] = {
 	{ 0, 0, 0x7C }
 };
 
-const HuffTree SkyText::_huffTree_00267[] = {
+const HuffTree Text::_huffTree_00267[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 6, 0 },
@@ -383,7 +383,7 @@ const HuffTree SkyText::_huffTree_00267[] = {
 	{ 0, 0, 0x7c },
 };
 
-const HuffTree SkyText::_huffTree_00288[] = {
+const HuffTree Text::_huffTree_00288[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },
@@ -575,7 +575,7 @@ const HuffTree SkyText::_huffTree_00288[] = {
 	{ 0, 0, 0x7c },
 };
 
-const HuffTree SkyText::_huffTree_00303[] = {
+const HuffTree Text::_huffTree_00303[] = {
 	{ 1, 22, 0 },
 	{ 2, 9, 0 },
 	{ 3, 6, 0 },
@@ -777,7 +777,7 @@ const HuffTree SkyText::_huffTree_00303[] = {
 	{ 0, 0, 0x7c },
 };
 
-const HuffTree SkyText::_huffTree_00331[] = {
+const HuffTree Text::_huffTree_00331[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },
@@ -1009,7 +1009,7 @@ const HuffTree SkyText::_huffTree_00331[] = {
 	{ 0, 0, 0x7c },
 };
 
-const HuffTree SkyText::_huffTree_00348[] = {
+const HuffTree Text::_huffTree_00348[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },
@@ -1257,7 +1257,7 @@ const HuffTree SkyText::_huffTree_00348[] = {
 	{ 0, 0, 0x7C },
 };
 
-const HuffTree SkyText::_huffTree_00365[] = {
+const HuffTree Text::_huffTree_00365[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },
@@ -1505,7 +1505,7 @@ const HuffTree SkyText::_huffTree_00365[] = {
 	{ 0, 0, 0x7C },
 };
 
-const HuffTree SkyText::_huffTree_00368[] = {
+const HuffTree Text::_huffTree_00368[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },
@@ -1753,7 +1753,7 @@ const HuffTree SkyText::_huffTree_00368[] = {
 	{ 0, 0, 0x7C },
 };
 
-const HuffTree SkyText::_huffTree_00372[] = {
+const HuffTree Text::_huffTree_00372[] = {
 	{ 1, 20, 0 },
 	{ 2, 7, 0 },
 	{ 3, 4, 0 },

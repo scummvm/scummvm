@@ -27,7 +27,7 @@
 
 namespace Sky {
 
-class SkyDebug {
+class Debug {
 public:
 	static void fetchCompact(uint32 a);
 	static void logic(uint32 logic);

@@ -27,13 +27,13 @@
 
 namespace Sky {
 
-void SkyGmMusic::passTimerFunc(void *param) {
+void GmMusic::passTimerFunc(void *param) {
 
-	((SkyGmMusic*)param)->timerCall();
+	((GmMusic*)param)->timerCall();
 }
 
-SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
-	: SkyMusicBase(pSkyDisk, system) {
+GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system)
+	: MusicBase(pDisk, system) {
 
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
@@ -45,7 +45,7 @@ SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
 	_ignoreNextPoll = false;
 }
 
-SkyGmMusic::~SkyGmMusic(void) {
+GmMusic::~GmMusic(void) {
 
 	_midiDrv->setTimerCallback(NULL, NULL);
 	if (_currentMusic) stopMusic();
@@ -56,7 +56,7 @@ SkyGmMusic::~SkyGmMusic(void) {
 	delete _midiDrv;
 }
 
-void SkyGmMusic::setVolume(uint8 volume) {
+void GmMusic::setVolume(uint8 volume) {
 
 	uint8 sysEx[6];
 	_musicVolume = volume;
@@ -66,7 +66,7 @@ void SkyGmMusic::setVolume(uint8 volume) {
 	_midiDrv->sysEx(sysEx, 6);
 }
 
-void SkyGmMusic::timerCall(void) {
+void GmMusic::timerCall(void) {
 
 	// midi driver polls hundred times per sec. We only want 50 times.
 	_ignoreNextPoll = !_ignoreNextPoll;
@@ -76,7 +76,7 @@ void SkyGmMusic::timerCall(void) {
 		pollMusic();
 }
 
-void SkyGmMusic::setupPointers(void) {
+void GmMusic::setupPointers(void) {
 
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		_musicDataLoc = (_musicData[0x79C] << 8) | _musicData[0x79B];
@@ -87,24 +87,24 @@ void SkyGmMusic::setupPointers(void) {
 	}
 }
 
-void SkyGmMusic::setupChannels(uint8 *channelData) {
+void GmMusic::setupChannels(uint8 *channelData) {
 
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyGmChannel(_musicData, chDataStart, _midiDrv, _mt32_to_gm, _veloTab);
+		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, _mt32_to_gm, _veloTab);
 		_channels[cnt]->updateVolume(_musicVolume);
 	}
 }
 
-void SkyGmMusic::startDriver(void) {
+void GmMusic::startDriver(void) {
 
 	//_midiDrv->send(0xFF);  //ALSA can't handle this.
 	// skip all sysEx as it can't be handled anyways.
 }
 
-byte SkyGmMusic::_mt32_to_gm[128] = {
+byte GmMusic::_mt32_to_gm[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
 	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
@@ -116,7 +116,7 @@ byte SkyGmMusic::_mt32_to_gm[128] = {
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117, // 7x
 };
 
-uint8 SkyGmMusic::_veloTab[128] = {
+uint8 GmMusic::_veloTab[128] = {
 	0x00, 0x40, 0x41, 0x41, 0x42, 0x42, 0x43, 0x43, 0x44, 0x44,
 	0x45, 0x45, 0x46, 0x46, 0x47, 0x47, 0x48, 0x48, 0x49, 0x49,
 	0x4A, 0x4A, 0x4B, 0x4B, 0x4C, 0x4C, 0x4D, 0x4D, 0x4E, 0x4E,

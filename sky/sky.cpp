@@ -157,18 +157,18 @@ void SkyEngine::doCheat(uint8 num) {
 
 	switch(num) {
 	case 1: warning("executed cheat: get jammer");
-		SkyLogic::_scriptVariables[258] = 42; // got_jammer
-		SkyLogic::_scriptVariables[240] = 69; // got_sponsor
+		Logic::_scriptVariables[258] = 42; // got_jammer
+		Logic::_scriptVariables[240] = 69; // got_sponsor
 		break;
 	case 2: warning("executed cheat: computer room");
-		SkyLogic::_scriptVariables[479] = 2; // card_status
-		SkyLogic::_scriptVariables[480] = 1; // card_fix
+		Logic::_scriptVariables[479] = 2; // card_status
+		Logic::_scriptVariables[480] = 1; // card_fix
 		break;
 	case 3: warning("executed cheat: get to burke");
-		SkyLogic::_scriptVariables[190] = 42; // knows_port
+		Logic::_scriptVariables[190] = 42; // knows_port
 		break;
 	case 4: warning("executed cheat: get to reactor section");
-		SkyLogic::_scriptVariables[451] = 42; // foreman_friend
+		Logic::_scriptVariables[451] = 42; // foreman_friend
 		_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
 		_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
 		break;
@@ -208,7 +208,7 @@ void SkyEngine::go() {
 	bool introSkipped = false;
 	if (!_quickLaunch) {
 		if (_systemVars.gameVersion > 267) {// don't do intro for floppydemos
-			_skyIntro = new SkyIntro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
+			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
 			if (_skyIntro->_quitProg) {
 				delete _skyIntro;
@@ -253,21 +253,21 @@ void SkyEngine::go() {
 }
 
 void SkyEngine::initialise(void) {
-	_skyDisk = new SkyDisk(_gameDataPath);
-	_skySound = new SkySound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
+	_skyDisk = new Disk(_gameDataPath);
+	_skySound = new Sound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
 	int midiDriver = GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
-		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);
+		_skyMusic = new AdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if (ConfMan.getBool("native_mt32"))
-			_skyMusic = new SkyMT32Music(GameDetector::createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new MT32Music(GameDetector::createMidi(midiDriver), _skyDisk, _system);
 		else
-			_skyMusic = new SkyGmMusic(GameDetector::createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new GmMusic(GameDetector::createMidi(midiDriver), _skyDisk, _system);
 	}
 
 	if (isCDVersion()) {
@@ -286,20 +286,20 @@ void SkyEngine::initialise(void) {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 	_systemVars.gameSpeed = 50;
 
-	_skyText = new SkyText(_skyDisk);
-	_skyMouse = new SkyMouse(_system, _skyDisk);
-	_skyScreen = new SkyScreen(_system, _skyDisk);
+	_skyText = new Text(_skyDisk);
+	_skyMouse = new Mouse(_system, _skyDisk);
+	_skyScreen = new Screen(_system, _skyDisk);
 
 	initVirgin();
 	initItemList();
 	loadFixedItems();
-	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
+	_skyLogic = new Logic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 	
 	// initialize timer *after* _skyScreen has been initialized.
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
-	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
+	_skyControl = new Control(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);
 
 	if (_systemVars.gameVersion == 288)
@@ -427,7 +427,7 @@ void SkyEngine::gotTimerTick(void) {
 }
 
 Compact *SkyEngine::fetchCompact(uint32 a) {
-	SkyDebug::fetchCompact(a);
+	Debug::fetchCompact(a);
 	uint32 sectionNum = (a & 0xf000) >> 12;
 	uint32 compactNum = (a & 0x0fff);
 

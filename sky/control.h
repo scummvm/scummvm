@@ -29,13 +29,13 @@ class OSystem;
 
 namespace Sky {
 
-class SkyDisk;
-class SkyScreen;
-class SkyLogic;
-class SkyMouse;
-class SkyText;
-class SkyMusicBase;
-class SkySound;
+class Disk;
+class Screen;
+class Logic;
+class Mouse;
+class Text;
+class MusicBase;
+class Sound;
 struct Compact;
 struct dataFileHeader;
 struct MegaSet;
@@ -126,10 +126,10 @@ struct AllocedMem {
 	AllocedMem *next;
 };
 
-class SkyConResource {
+class ConResource {
 public:
-	SkyConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
-	virtual ~SkyConResource(void) {};
+	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
+	virtual ~ConResource(void) {};
 	void setSprite(void *pSpData) { _spriteData = (dataFileHeader*)pSpData; };
 	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; };
 	void setXY(uint16 x, uint16 y) { _x = x; _y = y; };
@@ -146,10 +146,10 @@ public:
 private:
 };
 
-class SkyTextResource : public SkyConResource {
+class TextResource : public ConResource {
 public:
-	SkyTextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
-	virtual ~SkyTextResource(void);
+	TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
+	virtual ~TextResource(void);
 	virtual void drawToScreen(bool doMask);
 	void flushForRedraw(void);
 private:
@@ -157,24 +157,24 @@ private:
 	uint8 *_oldScreen;
 };
 
-class SkyControlStatus {
+class ControlStatus {
 public:
-	SkyControlStatus(SkyText *skyText, OSystem *system, uint8 *scrBuf);
-	~SkyControlStatus(void);
+	ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf);
+	~ControlStatus(void);
 	void setToText(const char *newText);
 	void setToText(uint16 textNum);
 	void drawToScreen(void);
 private:
-	SkyTextResource *_statusText;
+	TextResource *_statusText;
 	dataFileHeader *_textData;
-	SkyText *_skyText;
+	Text *_skyText;
 	OSystem *_system;
 	uint8 *_screenBuf;
 };
 
-class SkyControl {
+class Control {
 public:
-	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath);
+	Control(Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system, const char *savePath);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
@@ -191,13 +191,13 @@ private:
 
 	void delay(unsigned int amount);
 	
-    void animClick(SkyConResource *pButton);
+    void animClick(ConResource *pButton);
 	bool getYesNo(char *text);
-	void buttonControl(SkyConResource *pButton);
-	uint16 handleClick(SkyConResource *pButton);
+	void buttonControl(ConResource *pButton);
+	uint16 handleClick(ConResource *pButton);
 	uint16 doMusicSlide(void);
 	uint16 doSpeedSlide(void);
-	uint16 toggleFx(SkyConResource *pButton);
+	uint16 toggleFx(ConResource *pButton);
 	uint16 toggleText(void);
 	void toggleMusic(void);
 	uint16 shiftDown(uint8 speed);
@@ -242,13 +242,13 @@ private:
 	void appendMemList(uint16 *pMem);
 	void freeMemList(void);
 
-	SkyScreen *_skyScreen;
-	SkyDisk *_skyDisk;
-	SkyMouse *_skyMouse;
-	SkyText *_skyText;
-	SkyMusicBase *_skyMusic;
-	SkyLogic *_skyLogic;
-	SkySound *_skySound;
+	Screen *_skyScreen;
+	Disk *_skyDisk;
+	Mouse *_skyMouse;
+	Text *_skyText;
+	MusicBase *_skyMusic;
+	Logic *_skyLogic;
+	Sound *_skySound;
 	OSystem *_system;
 	int _mouseX, _mouseY;
 	bool _mouseClicked;
@@ -275,25 +275,25 @@ private:
 	uint32 _savedCharSet;
 	uint16 _enteredTextWidth;
 
-	SkyConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
+	ConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
 
 	dataFileHeader *_textSprite;
-	SkyTextResource *_text;
+	TextResource *_text;
 
-	SkyConResource *_controlPanel, *_exitButton, *_slide, *_slide2, *_slode;
-	SkyConResource *_restorePanButton, *_savePanButton, *_dosPanButton, *_restartPanButton, *_fxPanButton, *_musicPanButton;
-	SkyConResource *_bodge, *_yesNo;
-	SkyConResource *_controlPanLookList[9];
+	ConResource *_controlPanel, *_exitButton, *_slide, *_slide2, *_slode;
+	ConResource *_restorePanButton, *_savePanButton, *_dosPanButton, *_restartPanButton, *_fxPanButton, *_musicPanButton;
+	ConResource *_bodge, *_yesNo;
+	ConResource *_controlPanLookList[9];
 
 	//- Save/restore panel
-	SkyConResource *_savePanel;
-	SkyConResource *_saveButton, *_downFastButton, *_downSlowButton;
-	SkyConResource *_upFastButton, *_upSlowButton, *_quitButton, *_restoreButton;
-	SkyConResource *_autoSaveButton;
+	ConResource *_savePanel;
+	ConResource *_saveButton, *_downFastButton, *_downSlowButton;
+	ConResource *_upFastButton, *_upSlowButton, *_quitButton, *_restoreButton;
+	ConResource *_autoSaveButton;
 
-	SkyConResource *_savePanLookList[6], *_restorePanLookList[7];
+	ConResource *_savePanLookList[6], *_restorePanLookList[7];
 
-	SkyControlStatus *_statusBar;
+	ControlStatus *_statusBar;
 
 	static char _quitTexts[16][35];
 	static uint8 _crossImg[594];

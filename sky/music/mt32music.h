@@ -28,10 +28,10 @@ class MidiDriver;
 
 namespace Sky {
 
-class SkyMT32Music : public SkyMusicBase {
+class MT32Music : public MusicBase {
 public:
-	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
-	~SkyMT32Music(void);
+	MT32Music(MidiDriver *pMidiDrv, Disk *pDisk, OSystem *system);
+	~MT32Music(void);
 private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);

@@ -28,7 +28,7 @@
 
 namespace Sky {
 
-class SkyDisk;
+class Disk;
 
 enum {
 	SOUND_CH0    = 0,
@@ -44,7 +44,7 @@ struct SfxQueue {
 
 #define MAX_QUEUED_FX 4
 
-class SkySound {
+class Sound {
 protected:
 
 public:
@@ -62,8 +62,8 @@ protected:
 	void playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
-	SkySound(SoundMixer *mixer, SkyDisk *pDisk, uint8 pVolume);
-	~SkySound(void);
+	Sound(SoundMixer *mixer, Disk *pDisk, uint8 pVolume);
+	~Sound(void);
 
 	void loadSection(uint8 pSection);
 	void playSound(uint16 sound, uint16 volume, uint8 channel);
@@ -79,7 +79,7 @@ public:
 	uint8 _soundsTotal;
 
 private:
-	SkyDisk *_skyDisk;
+	Disk *_skyDisk;
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;

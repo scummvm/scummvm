@@ -28,16 +28,16 @@
 
 namespace Sky {
 
-class SkyDisk;
-class SkyScreen;
-class SkyMusicBase;
-class SkySound;
-class SkyText;
+class Disk;
+class Screen;
+class MusicBase;
+class Sound;
+class Text;
 
-class SkyIntro {
+class Intro {
 public:
-	SkyIntro(SkyDisk *disk, SkyScreen *screen, SkyMusicBase *music, SkySound *sound, SkyText *text, SoundMixer *mixer, OSystem *system);
-	~SkyIntro(void);
+	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, SoundMixer *mixer, OSystem *system);
+	~Intro(void);
 	bool doIntro(bool floppyIntro);
 	bool _quitProg;
 private:
@@ -45,11 +45,11 @@ private:
 	static uint16 _floppyIntroSeq[];
 	static uint16 _cdIntroSeq[];
 
-	SkyDisk *_skyDisk;
-	SkyScreen *_skyScreen;
-	SkyMusicBase *_skyMusic;
-	SkySound *_skySound;
-	SkyText *_skyText;
+	Disk *_skyDisk;
+	Screen *_skyScreen;
+	MusicBase *_skyMusic;
+	Sound *_skySound;
+	Text *_skyText;
 	OSystem *_system;
 	SoundMixer *_mixer;
 

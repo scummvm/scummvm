@@ -25,7 +25,7 @@
 
 namespace Sky {
 
-SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
+GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
 
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
@@ -41,12 +41,12 @@ SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pM
 	_lastVolume = 0xFF;
 }
 
-bool SkyGmChannel::isActive(void) {
+bool GmChannel::isActive(void) {
 
 	return _channelData.channelActive != 0;
 }
 
-void SkyGmChannel::updateVolume(uint16 pVolume) {
+void GmChannel::updateVolume(uint16 pVolume) {
 
 	_musicVolume = pVolume;
 	if (_musicVolume > 0)
@@ -57,12 +57,12 @@ void SkyGmChannel::updateVolume(uint16 pVolume) {
 	}
 }
 
-void SkyGmChannel::stopNote(void) {
+void GmChannel::stopNote(void) {
 
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
 }
 
-int32 SkyGmChannel::getNextEventTime(void) {
+int32 GmChannel::getNextEventTime(void) {
 
 	int32 retV = 0; 
 	uint8 cnt, lVal;
@@ -78,7 +78,7 @@ int32 SkyGmChannel::getNextEventTime(void) {
 
 }
 
-uint8 SkyGmChannel::process(uint16 aktTime) {
+uint8 GmChannel::process(uint16 aktTime) {
 
 	if (!_channelData.channelActive)
 		return 0;
@@ -112,12 +112,12 @@ uint8 SkyGmChannel::process(uint16 aktTime) {
 				case 4: //com90_dummy();
 				case 7: //com90_skipTremoVibro();
 				case 10: //com90_error();
-					error("SkyChannel: dummy music routine 0x%02X was called",opcode);
+					error("Channel: dummy music routine 0x%02X was called",opcode);
 					_channelData.channelActive = 0;
 					break;
 				default:
 					// these opcodes aren't implemented in original music driver
-					error("SkyChannel: Not existent routine 0x%02X was called",opcode);
+					error("Channel: Not existent routine 0x%02X was called",opcode);
 					_channelData.channelActive = 0;
 					break;
 				}
@@ -139,66 +139,66 @@ uint8 SkyGmChannel::process(uint16 aktTime) {
 
 //- command 90h routines
 
-void SkyGmChannel::com90_caseNoteOff(void) {
+void GmChannel::com90_caseNoteOff(void) {
 
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_musicData[_channelData.eventDataPtr] << 8));
 	_channelData.eventDataPtr++;
 }
 
-void SkyGmChannel::com90_stopChannel(void) {
+void GmChannel::com90_stopChannel(void) {
 
 	stopNote();
 	_channelData.channelActive = 0;
 }
 
-void SkyGmChannel::com90_setupInstrument(void) {
+void GmChannel::com90_setupInstrument(void) {
 
 	_midiDrv->send((0xC0 | _channelData.midiChannelNumber) | (_mt32_to_gm[_musicData[_channelData.eventDataPtr]] << 8));
 	_channelData.eventDataPtr++;
 }
 
-uint8 SkyGmChannel::com90_updateTempo(void) {
+uint8 GmChannel::com90_updateTempo(void) {
 
 	uint8 retV = _musicData[_channelData.eventDataPtr];
 	_channelData.eventDataPtr++;
 	return retV;
 }
 
-void SkyGmChannel::com90_getPitch(void) {
+void GmChannel::com90_getPitch(void) {
 
 	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
-void SkyGmChannel::com90_getChannelVolume(void) {
+void GmChannel::com90_getChannelVolume(void) {
 
 	_lastVolume = _musicData[_channelData.eventDataPtr];
 	uint8 newVol = (uint8)((_musicData[_channelData.eventDataPtr++] * _musicVolume) >> 7);
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
-void SkyGmChannel::com90_rewindMusic(void) {
+void GmChannel::com90_rewindMusic(void) {
 
 	_channelData.eventDataPtr = _channelData.startOfData;
 }
 
-void SkyGmChannel::com90_keyOff(void) {
+void GmChannel::com90_keyOff(void) {
 
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_channelData.note << 8) | 0);
 }
 
-void SkyGmChannel::com90_setStartOfData(void) {
+void GmChannel::com90_setStartOfData(void) {
 
 	_channelData.startOfData = _channelData.eventDataPtr;
 }
 
-void SkyGmChannel::com90_getChannelPanValue(void) {
+void GmChannel::com90_getChannelPanValue(void) {
 
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x0A00 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
-void SkyGmChannel::com90_getChannelControl(void) {
+void GmChannel::com90_getChannelControl(void) {
 
 	uint8 conNum = _musicData[_channelData.eventDataPtr];
 	uint8 conDat = _musicData[_channelData.eventDataPtr + 1];

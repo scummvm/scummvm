@@ -34,7 +34,7 @@ namespace Sky {
 #define NO_MAIN_OBJECTS	24
 #define NO_LINC_OBJECTS	21
 
-uint32 SkyMouse::_mouseMainObjects[24] = {
+uint32 Mouse::_mouseMainObjects[24] = {
 	65,
 	9,
 	66,
@@ -61,7 +61,7 @@ uint32 SkyMouse::_mouseMainObjects[24] = {
 	38
 };
 
-uint32 SkyMouse::_mouseLincObjects[21] = {
+uint32 Mouse::_mouseLincObjects[21] = {
 	24625,
 	24649,
 	24827,
@@ -85,7 +85,7 @@ uint32 SkyMouse::_mouseLincObjects[21] = {
 	24829
 };
 
-SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
+Mouse::Mouse(OSystem *system, Disk *skyDisk) {
 
 	_skyDisk = skyDisk;
 	_system = system;
@@ -100,22 +100,22 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 }
 
-SkyMouse::~SkyMouse( ){
+Mouse::~Mouse( ){
 	free (_miceData);
 	free (_objectMouseData);
 }
 
-void SkyMouse::replaceMouseCursors(uint16 fileNo) {
+void Mouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
 	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 }
 
-bool SkyMouse::fnAddHuman(void) {
+bool Mouse::fnAddHuman(void) {
 	//reintroduce the mouse so that the human can control the player
 	//could still be switched out at high-level
 
-	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
-		SkyLogic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
+	if (!Logic::_scriptVariables[MOUSE_STOP]) {
+		Logic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
 
 		if (_mouseY < 2) //stop mouse activating top line
 			_mouseY = 2;
@@ -129,41 +129,41 @@ bool SkyMouse::fnAddHuman(void) {
 		//get off may contain script to remove mouse pointer text
 		//surely this script should be run just in case
 		//I am going to try it anyway
-		if (SkyLogic::_scriptVariables[GET_OFF])
-			_skyLogic->script((uint16)SkyLogic::_scriptVariables[GET_OFF],(uint16)(SkyLogic::_scriptVariables[GET_OFF] >> 16));
+		if (Logic::_scriptVariables[GET_OFF])
+			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
 	
-		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
-		SkyLogic::_scriptVariables[GET_OFF] = RESET_MOUSE;
+		Logic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
+		Logic::_scriptVariables[GET_OFF] = RESET_MOUSE;
 	}
 
 	return true;
 }
 
-void SkyMouse::fnSaveCoods(void) { 
-	SkyLogic::_scriptVariables[SAFEX] = _mouseX + TOP_LEFT_X;
-	SkyLogic::_scriptVariables[SAFEY] = _mouseY + TOP_LEFT_Y;
+void Mouse::fnSaveCoods(void) { 
+	Logic::_scriptVariables[SAFEX] = _mouseX + TOP_LEFT_X;
+	Logic::_scriptVariables[SAFEY] = _mouseY + TOP_LEFT_Y;
 }
 
-void SkyMouse::lockMouse(void) {
+void Mouse::lockMouse(void) {
 	SkyEngine::_systemVars.systemFlags |= SF_MOUSE_LOCKED;
 }
 
-void SkyMouse::unlockMouse(void) {
+void Mouse::unlockMouse(void) {
 	SkyEngine::_systemVars.systemFlags &= ~SF_MOUSE_LOCKED;
 }
 
-void SkyMouse::restoreMouseData(uint16 frameNum) {
-	warning("Stub: SkyMouse::restoreMouseData");
+void Mouse::restoreMouseData(uint16 frameNum) {
+	warning("Stub: Mouse::restoreMouseData");
 }
 
-void SkyMouse::drawNewMouse() {
-	warning("Stub: SkyMouse::drawNewMouse");
+void Mouse::drawNewMouse() {
+	warning("Stub: Mouse::drawNewMouse");
 	//calculateMouseValues();
 	//saveMouseData();
 	//drawMouse();
 }
 
-void SkyMouse::waitMouseNotPressed(void) {
+void Mouse::waitMouseNotPressed(void) {
 
 	bool mousePressed = true;
 	OSystem::Event event;
@@ -179,7 +179,7 @@ void SkyMouse::waitMouseNotPressed(void) {
 
 //original sky uses different colors for transparency than our backends do,
 //so we simply swap our "transparent"-white with another one.
-void SkyMouse::fixMouseTransparency(byte *mouseData, uint32 size) {
+void Mouse::fixMouseTransparency(byte *mouseData, uint32 size) {
 	uint32 curPos = sizeof(struct dataFileHeader);
 	uint32 cursorSize = ((struct dataFileHeader *)mouseData)->s_sp_size;
 
@@ -196,7 +196,7 @@ void SkyMouse::fixMouseTransparency(byte *mouseData, uint32 size) {
 	}
 }
 
-void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
+void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	
 	_currentCursor = frameNum;
 
@@ -212,24 +212,24 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	else _system->show_mouse(true);
 }
 
-void SkyMouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
+void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
 	_mouseX = mouseX;
 	_mouseY = mouseY;
 
-	_logicClick = (_mouseB > 0); // click signal is available for SkyLogic for one gamecycle
+	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
-	if (!SkyLogic::_scriptVariables[MOUSE_STOP]) {
-		if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
+	if (!Logic::_scriptVariables[MOUSE_STOP]) {
+		if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
 			pointerEngine(mouseX + TOP_LEFT_X, mouseY + TOP_LEFT_Y);
-			if (SkyLogic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
+			if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
 				buttonEngine1();
 		}
 	}	
 	_mouseB = 0;	//don't save up buttons
 }
 
-void SkyMouse::pointerEngine(uint16 xPos, uint16 yPos) {
-	uint32 currentListNum = SkyLogic::_scriptVariables[MOUSE_LIST_NO];
+void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
+	uint32 currentListNum = Logic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
 		currentList = (uint16 *)SkyEngine::fetchCompact(currentListNum);
@@ -237,18 +237,18 @@ void SkyMouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			uint16 itemNum = *currentList;
 			Compact *itemData = SkyEngine::fetchCompact(itemNum);
 			currentList++;
-			if ((itemData->screen == SkyLogic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
+			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
 				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
 				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
 				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;
 				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos) continue;
 				// we've hit the item
-				if (SkyLogic::_scriptVariables[SPECIAL_ITEM] == itemNum)
+				if (Logic::_scriptVariables[SPECIAL_ITEM] == itemNum)
 					return;
-				SkyLogic::_scriptVariables[SPECIAL_ITEM] = itemNum;
-				if (SkyLogic::_scriptVariables[GET_OFF])
-					_skyLogic->mouseScript(SkyLogic::_scriptVariables[GET_OFF], itemData);
-				SkyLogic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+				Logic::_scriptVariables[SPECIAL_ITEM] = itemNum;
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
 				if (itemData->mouseOn)
 					_skyLogic->mouseScript(itemData->mouseOn, itemData);
 				return;
@@ -257,35 +257,35 @@ void SkyMouse::pointerEngine(uint16 xPos, uint16 yPos) {
 		if (*currentList == 0xFFFF) currentListNum = currentList[1];
 
 	} while (*currentList != 0);
-	if (SkyLogic::_scriptVariables[SPECIAL_ITEM] != 0) {
-		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0;
+	if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
+		Logic::_scriptVariables[SPECIAL_ITEM] = 0;
 		
-		if (SkyLogic::_scriptVariables[GET_OFF])
-			_skyLogic->script((uint16)SkyLogic::_scriptVariables[GET_OFF],(uint16)(SkyLogic::_scriptVariables[GET_OFF] >> 16));
-		SkyLogic::_scriptVariables[GET_OFF] = 0;
+		if (Logic::_scriptVariables[GET_OFF])
+			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
+		Logic::_scriptVariables[GET_OFF] = 0;
 	}
 }
 
-void SkyMouse::buttonPressed(uint8 button) {
+void Mouse::buttonPressed(uint8 button) {
 	
 	_mouseB = button;
 }
 
-void SkyMouse::buttonEngine1(void) {
+void Mouse::buttonEngine1(void) {
 	//checks for clicking on special item
 	//"compare the size of this routine to S1 mouse_button"
 
 	if (_mouseB) {	//anything pressed?
-		SkyLogic::_scriptVariables[BUTTON] = _mouseB;
-		if (SkyLogic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
-			Compact *item = SkyEngine::fetchCompact(SkyLogic::_scriptVariables[SPECIAL_ITEM]);
+		Logic::_scriptVariables[BUTTON] = _mouseB;
+		if (Logic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
+			Compact *item = SkyEngine::fetchCompact(Logic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
 				_skyLogic->mouseScript(item->mouseClick, item);
 		}
 	}
 }
 
-uint16 SkyMouse::findMouseCursor(uint32 itemNum) {
+uint16 Mouse::findMouseCursor(uint32 itemNum) {
 
 	uint8 cnt;
 	for (cnt = 0; cnt < NO_MAIN_OBJECTS; cnt++) {
@@ -301,13 +301,13 @@ uint16 SkyMouse::findMouseCursor(uint32 itemNum) {
 	return 0;
 }
 
-void SkyMouse::fnOpenCloseHand(bool open) {
+void Mouse::fnOpenCloseHand(bool open) {
 
-	if ((!open) && (!SkyLogic::_scriptVariables[OBJECT_HELD])) {
+	if ((!open) && (!Logic::_scriptVariables[OBJECT_HELD])) {
 		spriteMouse(1, 0, 0);
 		return;
 	}
-	uint16 cursor = findMouseCursor(SkyLogic::_scriptVariables[OBJECT_HELD]) << 1;
+	uint16 cursor = findMouseCursor(Logic::_scriptVariables[OBJECT_HELD]) << 1;
 	if (open)
 		cursor++;
 
@@ -321,7 +321,7 @@ void SkyMouse::fnOpenCloseHand(bool open) {
 	spriteMouse(0, 5, 5);
 }
 
-bool SkyMouse::wasClicked(void) {
+bool Mouse::wasClicked(void) {
 
 	if (_logicClick) {
 		_logicClick = false;

@@ -39,10 +39,10 @@ struct PrefFile {
 	PrefFile *next;
 };
 
-class SkyDisk {
+class Disk {
 public:
-	SkyDisk(const Common::String &gameDataPath);
-	~SkyDisk(void);
+	Disk(const Common::String &gameDataPath);
+	~Disk(void);
 
 	uint8 *loadFile(uint16 fileNr, uint8 *dest);
 	bool fileExists(uint16 fileNr);

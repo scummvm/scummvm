@@ -34,23 +34,23 @@ namespace Sky {
 #define ROUTE_GRID_SIZE (ROUTE_GRID_WIDTH*ROUTE_GRID_HEIGHT*2)
 #define WALK_JUMP 8      // walk in blocks of 8
 
-const int16 SkyAutoRoute::_routeDirections[4] = {    -1,     1, -ROUTE_GRID_WIDTH, ROUTE_GRID_WIDTH };
-const uint16 SkyAutoRoute::_logicCommands[4] = { RIGHTY, LEFTY,             DOWNY,              UPY };
+const int16 AutoRoute::_routeDirections[4] = {    -1,     1, -ROUTE_GRID_WIDTH, ROUTE_GRID_WIDTH };
+const uint16 AutoRoute::_logicCommands[4] = { RIGHTY, LEFTY,             DOWNY,              UPY };
 
-SkyAutoRoute::SkyAutoRoute(SkyGrid *pGrid) {
+AutoRoute::AutoRoute(Grid *pGrid) {
 
 	_grid = pGrid;
 	_routeGrid = (uint16 *)malloc(ROUTE_GRID_SIZE);
 	_routeBuf = (uint16 *)malloc(ROUTE_SPACE);
 }
 
-SkyAutoRoute::~SkyAutoRoute(void) {
+AutoRoute::~AutoRoute(void) {
 
 	free(_routeGrid);
 	free(_routeBuf);
 }
 
-uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
+uint16 AutoRoute::checkBlock(uint16 *blockPos) {
 
 	uint16 retVal = 0xFFFF;
 
@@ -62,7 +62,7 @@ uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 	return retVal;
 }
 
-void SkyAutoRoute::clipCoordX(uint16 x, uint8 &blkX, int16 &initX) {
+void AutoRoute::clipCoordX(uint16 x, uint8 &blkX, int16 &initX) {
 	if (x < TOP_LEFT_X) {
 		blkX = 0;
 		initX = x - TOP_LEFT_X;
@@ -75,7 +75,7 @@ void SkyAutoRoute::clipCoordX(uint16 x, uint8 &blkX, int16 &initX) {
 	}
 }
 
-void SkyAutoRoute::clipCoordY(uint16 y, uint8 &blkY, int16 &initY) {
+void AutoRoute::clipCoordY(uint16 y, uint8 &blkY, int16 &initY) {
 	if (y < TOP_LEFT_Y) {
 		blkY = 0;
 		initY = y - TOP_LEFT_Y;
@@ -88,7 +88,7 @@ void SkyAutoRoute::clipCoordY(uint16 y, uint8 &blkY, int16 &initY) {
 	}
 }
 
-void SkyAutoRoute::initWalkGrid(uint8 screen, uint8 width) {
+void AutoRoute::initWalkGrid(uint8 screen, uint8 width) {
 
 	uint16 *wGridPos;
 	uint8 stretch = 0;
@@ -121,7 +121,7 @@ void SkyAutoRoute::initWalkGrid(uint8 screen, uint8 width) {
 	}
 }
 
-bool SkyAutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
+bool AutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
 
 	int16 directionX, directionY;
 	uint8 roiX, roiY; // Rectangle Of Interest in the walk grid
@@ -187,7 +187,7 @@ bool SkyAutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 d
 	return foundRoute;
 }
 
-uint16 *SkyAutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
+uint16 *AutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
 
 	memset(_routeBuf, 0, ROUTE_SPACE);
 
@@ -217,7 +217,7 @@ uint16 *SkyAutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uin
 	return dataTrg;
 }
 
-uint16 *SkyAutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
+uint16 *AutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
 	if (initStaX < 0) {
 		data -= 2;
 		*(data + 1) = RIGHTY;
@@ -230,7 +230,7 @@ uint16 *SkyAutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
 	return data;
 }
 
-uint16 SkyAutoRoute::autoRoute(Compact *cpt) {
+uint16 AutoRoute::autoRoute(Compact *cpt) {
 
 	uint8 cptScreen = (uint8)cpt->screen;
 	uint8 cptWidth = (uint8)SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet)->gridWidth;

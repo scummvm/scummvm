@@ -37,9 +37,9 @@ typedef struct {
 	uint8 channelActive;
 } MidiChannelType;
 
-class SkyGmChannel : public SkyChannelBase {
+class GmChannel : public ChannelBase {
 public:
-	SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab);
+	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);

@@ -25,11 +25,11 @@
 
 namespace Sky {
 
-SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
+MusicBase::MusicBase(Disk *pDisk, OSystem *system) {
 
 	_musicData = NULL;
 	_allowedCommands = 0;
-	_skyDisk = pSkyDisk;
+	_skyDisk = pDisk;
 	_currentMusic = 0;
 	_musicVolume = 127;
 	_system = system;
@@ -37,13 +37,13 @@ SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 	_mutex = _system->create_mutex();
 }
 
-SkyMusicBase::~SkyMusicBase(void) {
+MusicBase::~MusicBase(void) {
 
 	if (_musicData)
 		free(_musicData);
 }
 
-void SkyMusicBase::loadSection(uint8 pSection) {
+void MusicBase::loadSection(uint8 pSection) {
 
 	_system->lock_mutex(_mutex);
 	if (_currentMusic)
@@ -65,7 +65,7 @@ void SkyMusicBase::loadSection(uint8 pSection) {
 	_system->unlock_mutex(_mutex);
 }
 
-bool SkyMusicBase::musicIsPlaying(void) {
+bool MusicBase::musicIsPlaying(void) {
 
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		if (_channels[cnt]->isActive())
@@ -73,7 +73,7 @@ bool SkyMusicBase::musicIsPlaying(void) {
 	return false;
 }
 
-void SkyMusicBase::musicCommand(uint16 command) {
+void MusicBase::musicCommand(uint16 command) {
 
 	if (_musicData == NULL) {
 		debug(1,"Got music command but driver is not yet loaded");
@@ -85,16 +85,16 @@ void SkyMusicBase::musicCommand(uint16 command) {
 	}
 	switch(command >> 8) {
 	case 0: 
-		debug(1,"SkyMusic: got call to startAdlibDriver(). Not necessary in this implementation.");
+		debug(1,"Music: got call to startAdlibDriver(). Not necessary in this implementation.");
 		break;
 	case 1: 
-		debug(1,"SkyMusic: got call to stopDriver(). Not necessary in this implementation.");
+		debug(1,"Music: got call to stopDriver(). Not necessary in this implementation.");
 		break;
 	case 2:
-		debug(1,"SkyMusic: got call to SetTempo(). Tempo is fixed in this implementation.");
+		debug(1,"Music: got call to SetTempo(). Tempo is fixed in this implementation.");
 		break;
 	case 3: 
-		debug(1,"SkyMusic: ignored direct call to driverPoll().");
+		debug(1,"Music: ignored direct call to driverPoll().");
 		break;
 	case 4: 
 		startMusic(command & 0xFF);
@@ -113,14 +113,14 @@ void SkyMusicBase::musicCommand(uint16 command) {
 	}
 }
 
-void SkyMusicBase::setFMVolume(uint16 param) {
+void MusicBase::setFMVolume(uint16 param) {
 
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(_musicVolume);
 }
 
-void SkyMusicBase::stopMusic(void) {
+void MusicBase::stopMusic(void) {
 
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		_channels[cnt]->stopNote();
@@ -129,7 +129,7 @@ void SkyMusicBase::stopMusic(void) {
 	_numberOfChannels = 0;
 }
 
-void SkyMusicBase::updateTempo(void) {
+void MusicBase::updateTempo(void) {
 
 	uint16 tempoMul = _musicTempo0 * _musicTempo1;
 	uint16 divisor = 0x4446390/ 23864;
@@ -137,7 +137,7 @@ void SkyMusicBase::updateTempo(void) {
 	_tempo |= (((tempoMul%divisor) << 16) | (tempoMul / divisor)) / divisor;
 }
 
-void SkyMusicBase::loadNewMusic(void) {
+void MusicBase::loadNewMusic(void) {
 
 	uint16 musicPos;
 	if (_onNextPoll.musicToProcess > _musicData[_musicDataLoc]) {
@@ -163,7 +163,7 @@ void SkyMusicBase::loadNewMusic(void) {
 	}
 }
 
-void SkyMusicBase::pollMusic(void) {
+void MusicBase::pollMusic(void) {
 
 	_system->lock_mutex(_mutex);
 	uint8 newTempo;
