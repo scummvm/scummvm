@@ -249,7 +249,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"f3-mdemo", "Freddi Fish 3: Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
