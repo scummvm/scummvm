@@ -57,6 +57,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	if (file)
 		return file;
 
+	// FIXME this should probably be engine specific...
 	const char *dirs[] = {
 		"",
 		"video/",
@@ -66,7 +67,13 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"resource/",
 		"RESOURCE/",
 		"voices/",
-		"VOICES/"
+		"VOICES/",
+		// sword2 stuff if user just copied files without putting
+		// them all into the same dir like original installer did
+		"CLUSTERS/",
+		"clusters/",
+		"SWORD2/",
+		"sword2/"
 	};
 
 	for (int dirIdx = 0; dirIdx < ARRAYSIZE(dirs); dirIdx++) {
