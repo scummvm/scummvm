@@ -407,8 +407,10 @@ void ScummEngine::getScriptBaseAddress() {
 
 	case WIO_FLOBJECT:						/* flobject script */
 		idx = getObjectIndex(ss->number);
-		_scriptOrgPointer = getResourceAddress(rtFlObject, _objs[idx].fl_object_index);
-		assert(_objs[idx].fl_object_index < _numFlObject);
+		assert(idx != -1);
+		idx = _objs[idx].fl_object_index;
+		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
+		assert(idx < _numFlObject);
 		_lastCodePtr = &_baseFLObject[idx];
 		break;
 	default:
