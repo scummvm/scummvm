@@ -421,6 +421,7 @@ private:
 
 	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
 	int32 ImClearTrigger (int sound, int id);
+	int32 ImFireAllTriggers (int sound);
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
@@ -1526,6 +1527,25 @@ int32 IMuseInternal::ImClearTrigger (int sound, int id) {
 	return (count > 0) ? 0 : -1;
 }
 
+int32 IMuseInternal::ImFireAllTriggers (int sound) { 
+	if (!sound) return 0; 
+	int count = 0; 
+	int i; 
+	for (i = 0; i < 16; ++i) { 
+		if (_snm_triggers [i].sound == sound) 
+		{ 
+			_snm_triggers [i].sound = _snm_triggers [i].id = 0; 
+			doCommand (_snm_triggers [i].command [0], 
+			           _snm_triggers [i].command [1], 
+			           _snm_triggers [i].command [2], 
+			           _snm_triggers [i].command [3], 
+			           0, 0, 0, 0); 
+			++count; 
+		} 
+	} 
+	return (count > 0) ? 0 : -1; 
+} 
+
 int IMuseInternal::set_channel_volume(uint chan, uint vol)
 {
 	if (chan >= 8 || vol > 127)
@@ -1767,6 +1787,7 @@ void Player::clear() {
 	uninit_seq();
 	cancel_volume_fade();
 	uninit_parts();
+	_se->ImFireAllTriggers (_id);
 	_active = false;
 	_ticks_per_beat = TICKS_PER_BEAT;
 }
@@ -3527,7 +3548,7 @@ void IMuseDriver::part_changed(Part *part, uint16 what) {
 		mc->modulationWheel (part->_modwheel);
 
 	if (what & pcPan)
-		mc->panPosition (part->_pan_eff);
+		mc->panPosition (part->_pan_eff + 0x40);
 
 	if (what & pcEffectLevel)
 		mc->effectLevel (part->_effect_level);
