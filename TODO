@@ -260,13 +260,15 @@ SCUMM
   - Add support for song sync. in HE80+ games.
   - Add support for additional sound resources
   - Add support for sprites (Used by HE90+ games)
-  - Add support for additional drawWizImage flags
-  - Add support for WizPolygon rendering (cyx)
-  - Add support for aux animation code used by cut scenes (cyx)
-  - Add shadows support for akos codecs, uses XMAP resources.
-  - Add array sorting
+  - Add support for additional drawWizImage flags (cyx)
+  - Add support for additional aux animation resources (cyx)
+    (^ Need to find where they are used) 
+  - Add shadows support for akos codecs in HE90+ games, uses XMAP resources.
+  - Add addtional arrayOps cases (For smaller/lost).
+  - Add support for array sorting (Need to find where it is used).
+  - Fix actor glitches in HE90+ games
   - Fix array issues in Buzzy games (Kirben)
-  - Fix inventory disappearing in puttzoo/zoodemo/timedemo
+  - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
   - Add support for various new opcodes
 
 Broken Sword 2
