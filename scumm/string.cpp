@@ -73,6 +73,8 @@ void ScummEngine::unkMessage1() {
 }
 
 void ScummEngine::unkMessage2() {
+	// Original COMI used different code at this point.
+	// Seemed to use blastText for the messages
 	byte buf[100];
 	const byte *tmp;
 
@@ -82,8 +84,6 @@ void ScummEngine::unkMessage2() {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	// FIXME: I know this is the right thing to do for MI1 and MI2. For
-	// all other games it's just a guess.
 	InfoDialog dialog(this, (char*)buf);
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 
