@@ -169,7 +169,7 @@ OSystem_MorphOS::~OSystem_MorphOS()
 
 	if( ScummMusicThread )
 	{
-		Signal( (struct Task *)ScummMusicThread, SIGBREAKF_CTRL_F );
+		Signal( (struct Task *)ScummMusicThread, SIGBREAKF_CTRL_C );
 		ObtainSemaphore( &ScummMusicThreadRunning );		/* Wait for thread to finish */
 		ReleaseSemaphore( &ScummMusicThreadRunning );
 	}

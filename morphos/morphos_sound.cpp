@@ -21,12 +21,8 @@
  *
  */
 
-#include <devices/timer.h>
-
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
-#include "imuse.h"
 
 #include <dos/dos.h>
 #include <exec/memory.h>
