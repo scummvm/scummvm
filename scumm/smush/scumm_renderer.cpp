@@ -27,6 +27,7 @@
 #include "sound/mixer.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/actor.h"
 
 class ScummMixer : public Mixer {
 private:
@@ -223,6 +224,11 @@ ScummRenderer::~ScummRenderer() {
 		_smixer = 0;
 	}
 	_scumm->_sound->pauseBundleMusic(false);
+	_scumm->_fullRedraw = 1;
+	_scumm->redrawBGAreas();
+	for (int32 i = 0; i < _scumm->NUM_ACTORS; i++)
+		_scumm->derefActor(i)->needRedraw = true;
+	_scumm->processActors();
 }
 
 bool ScummRenderer::wait(int32 ms) {

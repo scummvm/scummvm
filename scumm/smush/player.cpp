@@ -712,7 +712,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 	if(_wait) {
 		bool isFullthrottle;
 		if(!readString(file, directory, isFullthrottle))
-			warning("unable to read text information for \"%s\"", file);
+			debug(2, "unable to read text information for \"%s\"", file);
 		if(_strings) {
 			if(isFullthrottle) {
 				_fr[0] = loadFont("scummfnt.nut", directory, true);
