@@ -1259,8 +1259,15 @@ void NORETURN CDECL error(const char *s, ...)
 #endif
 #endif
 	}
-	// Doesn't wait for any keypress!! Is it intended to?
+	
+	// Finally exit. quit() will terminate the program
 	g_scumm->_system->quit();
+	
+	
+	// This point should never be reached. However, since virtual methods (like quit() is)
+	// can't be marked as noreturn, gcc will complain at this point. Thus we add in this
+	// call to exit(0) even though it is never reached.
+	exit(0);
 }
 
 ScummDebugger g_debugger;
@@ -1501,7 +1508,7 @@ byte Scumm::getDefaultGUIColor(int color)
 void Scumm::setupGUIColors() {
 
 	/* FIXME: strange IF line? */
-	if (_gameId && !(_features & GF_SMALL_HEADER)	&& !(_features & GF_AFTER_V7)) {
+	if (_gameId && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V7)) {
 		_gui->_bgcolor = getDefaultGUIColor(0);
 		_gui->_color = getDefaultGUIColor(1);
 		_gui->_textcolor = getDefaultGUIColor(2);

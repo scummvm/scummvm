@@ -13,7 +13,7 @@ RM_REC = $(RM) -r
 ZIP = zip -q
 CP  = cp
 
-CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
+CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Werror
 DEFINES  =
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
