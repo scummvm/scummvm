@@ -326,9 +326,9 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 					GlobalToLocal(&mouse);
 					scumm->mouse.x = mouse.h/wm->scale;
 					scumm->mouse.y = mouse.v/wm->scale;
-					
-					//debug(1, "Mouse X:%i Y:%i", scumm.mouse.x, scumm.mouse.y);
 				}
+				Point offset = {0, 0};
+				ShieldCursor(&winRect, offset);
 			break;
 		}
 		break;
@@ -440,7 +440,6 @@ void WndMan::run()
 
 void WndMan::writeToScreen()
 {
-	//NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
 	CopyBits(GetPortBitMapForCopyBits(screenBuf),
 			GetPortBitMapForCopyBits(GetWindowPort(wPtr)), 
 			&srcRect, &dstRect, srcCopy, 0L);
@@ -499,8 +498,9 @@ void updateScreen(Scumm *s)
 		wm->setPalette(s->_currentPalette, 0, 256);	
 		s->_palDirtyMax = -1;
 	}
-
+	
 	wm->writeToScreen();
+	s->drawMouse();
 }
 
 
@@ -626,10 +626,7 @@ OSStatus dialogEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef eve
       {
         QuitAppModalLoopForWindow((WindowRef)userData);
         LaunchGame(GetControlValue(popUpControlRef));
-        if((Boolean)GetControlValue(checkBoxControlRef))
-        	wm->scale = 2;
-        else
-        	wm->scale = 3;
+        wm->scale = 2;
         
         DisposeWindow((WindowRef)userData);
         result = noErr;
@@ -658,6 +655,7 @@ void SelectGame()
 	EventTypeSpec dialogEvents[] = { kEventClassControl, kEventControlHit };
   	
 	osError = CreateNewWindow(kMovableModalWindowClass,kWindowStandardHandlerAttribute,&rect, &aboutWin);
+	SetWTitle(aboutWin, "\pPlease Select a Game…");
 	RepositionWindow(aboutWin,FrontWindow(),kWindowAlertPositionOnMainScreen);
 	SetThemeWindowBackground(aboutWin,kThemeBrushDialogBackgroundActive,false);
 	CreateRootControl(aboutWin,&controlRef);
@@ -674,11 +672,7 @@ void SelectGame()
     controlID.id = 'cncl';
     SetControlID(controlRef,&controlID);
     AutoEmbedControl(controlRef,aboutWin);
-    
-    CreateCheckBoxControl(aboutWin,&checkboxRect, CFSTR("Scaling"), 1,
-    				true, &checkBoxControlRef);
-    AutoEmbedControl(checkBoxControlRef,aboutWin);
-    
+            
     CreatePopupButtonControl(aboutWin, &popupRect, CFSTR("Game: "), 999, false, -1, 0, NULL, &popUpControlRef);
     SetWindowDefaultButton(aboutWin,popUpControlRef);
     controlID.id = 'game';
@@ -947,6 +941,51 @@ void BoxTest(int num) {
 
 void setShakePos(Scumm *s, int shake_pos) {}
 
+void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible)
+{
+	int x, y;
+	byte *mask, *src, *dst;
+	byte color;
+	Point mouse;
+	GrafPtr oldPort;
+	Rect r, r2;
+	
+	if(visible)
+	{
+		GWorldPtr gw, gw2;
+		
+		src = buf;
+		mask = (byte*)malloc(sizeof(byte) * w * h);
+		dst = mask;
+		for(y = 0; y < h; y++, dst += w, src += w)
+		{
+			if((uint)y < h)
+			{
+				for(x = 0; x < w; x++)
+				{
+					if((uint)x < w)
+					{
+						if(src[x] != 0xFF)
+							dst[x] = 0xFF;
+						else
+							dst[x] = 0x00;
+					}
+				}
+			}
+		}
+		
+		SetRect(&r, 0, 0, w, h);
+		
+		NewGWorldFromPtr(&gw, 8, &r, wm->pal, nil, 0, (char *)buf, w);
+		NewGWorldFromPtr(&gw2, 8, &r, NULL, nil, 0, (char *)mask, w);
+		SetRect(&r2, (s->mouse.x - w / 2) * s->_scale, (s->mouse.y - h / 2) * s->_scale,
+					(s->mouse.x + w / 2) * s->_scale, (s->mouse.y + h / 2) * s->_scale);
+		CopyMask(GetPortBitMapForCopyBits(gw), GetPortBitMapForCopyBits(gw2),
+			GetPortBitMapForCopyBits(GetWindowPort(wm->wPtr)), 
+			&r, &r, &r2);
+	}
+}
+
 void InitMacStuff()
 {
 	InitCursor();
@@ -1015,12 +1054,76 @@ void setWindowName(Scumm *scumm)
 	SetWTitle(wm->wPtr, gameText);
 }
 
+UInt8 *buffer[2];
+CmpSoundHeader header;
+SndChannelPtr channel;
+int size;
+
+void fill_sound(uint8 *stream, int len) {
+	scumm->mixWaves((int16*)stream, len>>1);
+}
+
+pascal void callBackProc (SndChannel *chan, SndCommand *cmd_passed)
+{
+	UInt32 fill_me, play_me;
+	SndCommand cmd;
+	
+	fill_me = cmd_passed->param2;
+	play_me = ! fill_me;
+	
+	header.samplePtr = (Ptr)buffer[play_me];
+	
+	cmd.cmd = bufferCmd;
+	cmd.param1 = 0;
+	cmd.param2 = (long)&header;
+	
+	SndDoCommand(chan, &cmd, 0);
+	
+	memset(buffer[fill_me], 0, size);
+	fill_sound(buffer[fill_me], size);
+	
+	cmd.cmd = callBackCmd;
+	cmd.param1 = 0;
+	cmd.param2 = play_me;
+	
+	SndDoCommand(chan, &cmd, 0);
+}
+
+void InitSound()
+{
+	SndCallBackUPP callback;
+	int sample_size;
+		
+	memset(&header, 0, sizeof(header));
+	callback = NewSndCallBackUPP(callBackProc);
+	size = ((0x9010 & 0xFF) / 8) * 2048;
+	sample_size = size / 2048 * 8;
+	header.numChannels = 1;
+	header.sampleSize = sample_size;
+	header.sampleRate = SAMPLES_PER_SEC << 16;
+	header.numFrames = 	2048;
+	header.encode = cmpSH;
+	
+	for(int i = 0; i < 2; i++)
+	{
+		buffer[i] = (UInt8*)malloc(sizeof(UInt8) * size);
+		memset(buffer[i], 0, size);
+	}
+	
+	channel = (SndChannelPtr)malloc(sizeof(*channel));
+	channel->qLength = 128;
+	SndNewChannel(&channel, sampledSynth, initMono, callback);
+	
+	SndCommand cmd;
+	cmd.cmd = callBackCmd;
+	cmd.param2 = 0;
+	SndDoCommand(channel, &cmd, 0);
+}
+
 void main(void)
 {
 	InitMacStuff();
 	SelectGame();
-	
-//	initGraphics(&scumm, wm->fullscreen, wm->scale);
 	
 	wm->_vgabuf = (byte*)calloc(320,200);
 	
@@ -1031,6 +1134,8 @@ void main(void)
 	gui.init(scumm);
 	
 	setWindowName(scumm);
+	
+	InitSound();
 	
 	RunApplicationEventLoop();
 	
@@ -1055,7 +1160,8 @@ int OSystem::waitTick(int delta)
 			gui.loop(scumm);
 			delta = 5;
 		}
+		sound.on_timer();
 	} while(gui._active);
-	
+		
 	return(delta);
 }

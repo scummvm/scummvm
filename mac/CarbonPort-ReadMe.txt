@@ -6,15 +6,26 @@ installed).
 HOW TO COMPILE?
 Launch the scummvm.mcp file in CodeWarrior and choose one of the Targets to compile. For just playing,
 you should choose "ScummVM Final", the Debug one is just for Developing.
-Also, when it runs stable, I will put some Binaries at our Site.
+Binaries will come up to the Website with the release 0.2.0, which will be hopefully soon.
+
+NOTES:
+Put the games in a folder in the same directory as ScummVM, which have the name of the Data Files, like this:
+
+-- - ScummVM
+  \- monkey2-
+             \- monkey2.000
+              - monkey2.001
+
+
+Hope this will help you :)
 
 CHANGES:
 - Thanks to Florent Boudet, QuickTime MIDI has been added, although it currently only works with DOTT
+- Added SFX Sound Support
+- Now draws the Games Cursors
 
 BUGS:
-- No SFX-Sound support at all
-- Music only works in DOTT
-- On OS X it got some Problems with KeyDown-Events (hope I get them fixed)
+- On OS X it got some Problems with KeyDown-Events (seems to work now, most of the time)
 - Bad behaviour of the Application towards other, will be fixed soon.
 - Some minor bugs
 
