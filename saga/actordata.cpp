@@ -34,10 +34,8 @@ int ActorOrientationLUT[] = { 2, 0, 0, 0, 3, 1, 1, 1 };
 
 //       namei                      sl_rn si_rn    col
 //       -----                      ----- -----    ---
-	{1, kProtagonist,  0,   1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0}, // map party
-	// original okk entry
-//  {1, kFollower,  1,   0,    0,    0,   0,   0,   0,  1, 132,  0, 0, 0},
-	{1, kFollower,  1,   0,    0,    0,   0,  45, 144,  1, 132,  0, 0, 0}, // Okk
+	{1, kProtagonist, 0, 1,    0,    0,   0,  37, 135,  0,   1,  0, 0, 0}, // map party
+	{1, kFollower,  1,   0,    0,    0,   0,   0,   0,  1, 132,  0, 0, 0}, // Okk
 	{1, kFollower,  2,   0,    0,    0,   0,  48, 143,  2, 161,  0, 0, 0}, // Eeah
 	{1, 0,  3,   0,  240,  480,   0, 115, 206,  0,  25,  0, 0, 0}, // albino ferret
 	{1, 0,  4,  17,  368,  400,   0, 115, 206,  4,  49,  0, 0, 0}, // moneychanger
