@@ -55,7 +55,8 @@ void Scumm::unkMessage1() {
 }
 
 void Scumm::unkMessage2() {
-	byte buf[100], *tmp;
+	byte buf[100];
+	const byte *tmp;
 
 	_msgPtrToAdd = buf;
 	tmp = _messagePtr = addMessageToStack(_messagePtr);
@@ -508,7 +509,7 @@ void Scumm::drawString(int a) {
 	} 
 }
 
-byte *Scumm::addMessageToStack(byte *msg) {
+const byte *Scumm::addMessageToStack(const byte *msg) {
 	int num, numorg;
 	unsigned char *ptr, chr;
 
@@ -835,7 +836,7 @@ void Scumm::loadLanguageBundle() {
 	_existLanguageFile = true;
 }
 
-void Scumm::translateText(byte *text, byte *trans_buff) {
+void Scumm::translateText(const byte *text, byte *trans_buff) {
 	char name[20], tmp[500], tmp2[20], num_s[20], number[4], enc;
 	int32 num, l, j, k, r, pos = 0;
 	char *buf = _languageBuffer;

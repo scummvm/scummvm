@@ -61,7 +61,7 @@ public:
 
 	virtual void printChar(int chr) = 0;
 
-	int getStringWidth(int a, byte *str);
+	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	
 	virtual void setCurID(byte id) = 0;

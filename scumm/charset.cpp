@@ -94,7 +94,7 @@ int CharsetRendererClassic::getCharWidth(byte chr) {
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, byte *text) {
+int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	int width = 1;
 	byte chr;
@@ -112,8 +112,8 @@ int CharsetRenderer::getStringWidth(int arg, byte *text) {
 			if (chr == 8) { // 'Verb on next line'
 				if (arg == 1)
 					break;
-				while (text[pos] == ' ')
-					text[pos++] = '@';
+				while (text[pos++] == ' ')
+					;
 				continue;
 			}
 			if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {

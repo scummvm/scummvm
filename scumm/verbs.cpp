@@ -79,14 +79,14 @@ void Scumm::redrawV2Inventory() {
 	if (curInventoryCount > 0) { // Draw Up Arrow
 		_string[1].xpos = 145;
 		_string[1].ypos = virtscr[2].topline + 32;
-		_messagePtr = (byte*)strdup("U");
+		_messagePtr = (const byte *)"U";
 		drawString(1);
 	}
 
 	if (items == 4) {     // Draw Down Arrow
 		_string[1].xpos = 145;
 		_string[1].ypos = virtscr[2].topline + 47;
-		_messagePtr = (byte*)strdup("D");
+		_messagePtr = (const byte *)"D";
 		drawString(1);
 	}
 }

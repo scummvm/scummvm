@@ -487,7 +487,7 @@ protected:
 
 	/* Script VM - should be in Script class */
 	uint32 _localScriptList[NUM_LOCALSCRIPT];
-	byte *_scriptPointer, *_scriptOrgPointer;
+	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _numNestedScripts, _currentScript;
 	uint16 _curExecScript;
 	byte **_lastCodePtr;
@@ -1017,7 +1017,7 @@ public:
 	void CHARSET_1();
 	void drawString(int a);
 	void drawDescString(byte *msg);
-	byte *addMessageToStack(byte *msg);
+	const byte *addMessageToStack(const byte *msg);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);
 	void addNameToStack(int var);
@@ -1028,7 +1028,7 @@ public:
 
 	int _numInMsgStack;
 	byte *_msgPtrToAdd;
-	byte *_messagePtr;
+	const byte *_messagePtr;
 	int16 _talkDelay;
 	bool _keepText;
 	uint16 _language;
@@ -1037,7 +1037,7 @@ public:
 	struct langIndexNode *_languageIndex;
 	int _languageStrCount;
 	void loadLanguageBundle();
-	void translateText(byte *text, byte *trans_buff);
+	void translateText(const byte *text, byte *trans_buff);
 	byte _transText[500];
 
 #if defined(SCUMM_LITTLE_ENDIAN)
