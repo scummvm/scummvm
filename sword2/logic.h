@@ -152,7 +152,7 @@ private:
 
 	StartUp _startList[MAX_starts];
 
-	uint32 initStartMenu(void);
+	bool initStartMenu(void);
 
 	int16 _standbyX;	// see fnSetStandbyCoords()
 	int16 _standbyY;

@@ -22,133 +22,135 @@
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
-#include "sword2/resman.h"
 
 namespace Sword2 {
 
-// max no of pixel allowed to scroll per cycle
+// Max no of pixel allowed to scroll per cycle
 #define MAX_SCROLL_DISTANCE 8
 
+/**
+ * If the room is larger than the physical screen, this function is called
+ * every game cycle to update the scroll offsets.
+ */
+
 void Sword2Engine::setScrolling(void) {
-	// normally we aim to get George's feet at (320,250) from top left
+	// Normally we aim to get George's feet at (320,250) from top left
 	// of screen window
 	// feet_x = 128 + 320
 	// feet_y = 128 + 250
 
-	// set scroll offsets according to the player's coords
+	// Set scroll offsets according to the player's coords
 
-	int16 offset_x;
-	int16 offset_y;
-	int16 dx, dy;
+	// If the scroll offsets are being forced in script, ensure that they
+	// are neither too far to the right nor too far down.
+
+	if (Logic::_scriptVars[SCROLL_X] || Logic::_scriptVars[SCROLL_Y]) {
+		_thisScreen.scroll_offset_x = MIN((uint16) Logic::_scriptVars[SCROLL_X], _thisScreen.max_scroll_offset_x);
+		_thisScreen.scroll_offset_y = MIN((uint16) Logic::_scriptVars[SCROLL_Y], _thisScreen.max_scroll_offset_y);
+		return;
+	}
+
+	// George's offset from the centre - the desired position for him
+
+	int16 offset_x = _thisScreen.player_feet_x - _thisScreen.feet_x;
+	int16 offset_y = _thisScreen.player_feet_y - _thisScreen.feet_y;
+
+	// Prevent scrolling too far left/right/up/down
+
+	if (offset_x < 0)
+		offset_x = 0;
+	else if (offset_x > _thisScreen.max_scroll_offset_x)
+		offset_x = _thisScreen.max_scroll_offset_x;
+
+	if (offset_y < 0)
+		offset_y = 0;
+	else if (offset_y > _thisScreen.max_scroll_offset_y)
+		offset_y = _thisScreen.max_scroll_offset_y;
+
+	// First time on this screen - need absolute scroll immediately!
+
+	if (_thisScreen.scroll_flag == 2) {
+		debug(5, "init scroll");
+		_thisScreen.scroll_offset_x = offset_x;
+		_thisScreen.scroll_offset_y = offset_y;
+		_thisScreen.scroll_flag = 1;
+		return;
+	}
+
+	// Catch up with required scroll offsets - speed depending on distance
+	// to catch up (dx and dy) and _scrollFraction used, but limit to
+	// certain number of pixels per cycle (MAX_SCROLL_DISTANCE)
+
+	int16 dx = _thisScreen.scroll_offset_x - offset_x;
+	int16 dy = _thisScreen.scroll_offset_y - offset_y;
+
 	uint16 scroll_distance_x;	// how much we want to scroll
 	uint16 scroll_distance_y;
 
-	// if the scroll offsets are being forced in script
-	if (Logic::_scriptVars[SCROLL_X] || Logic::_scriptVars[SCROLL_Y]) {
-		// ensure not too far right or too far down
-		_thisScreen.scroll_offset_x = MIN((uint16) Logic::_scriptVars[SCROLL_X], _thisScreen.max_scroll_offset_x);
-		_thisScreen.scroll_offset_y = MIN((uint16) Logic::_scriptVars[SCROLL_Y], _thisScreen.max_scroll_offset_y);
-	} else {
-		// George's offset from the centre - the desired position
-		// for him
+	if (dx < 0) {
+		// Current scroll_offset_x is less than the required value
 
-		offset_x = _thisScreen.player_feet_x - _thisScreen.feet_x;
-		offset_y = _thisScreen.player_feet_y - _thisScreen.feet_y;
+		// NB. I'm adding 1 to the result of dx / SCROLL_FRACTION,
+		// because it would otherwise not scroll at all when
+		// dx < SCROLL_FRACTION
 
-		// prevent scrolling too far left/right/up/down
+		// => inc by (fraction of the differnce) NB. dx is -ve, so we
+		// subtract dx / SCROLL_FRACTION
 
-		if (offset_x < 0)
-			offset_x = 0;
-		else if ((uint32) offset_x > _thisScreen.max_scroll_offset_x)
-			offset_x = _thisScreen.max_scroll_offset_x;
+		scroll_distance_x = 1 - dx / _scrollFraction;
 
-		if (offset_y < 0)
-			offset_y = 0;
-		else if ((uint32) offset_y > _thisScreen.max_scroll_offset_y)
-			offset_y = _thisScreen.max_scroll_offset_y;
+		if (scroll_distance_x > MAX_SCROLL_DISTANCE)
+			scroll_distance_x = MAX_SCROLL_DISTANCE;
 
-		// first time on this screen - need absolute scroll
-		// immediately!
+		_thisScreen.scroll_offset_x += scroll_distance_x;
+	} else if (dx > 0) {
+		// Current scroll_offset_x is greater than
+		// the required value
 
-		if (_thisScreen.scroll_flag == 2) {
-			debug(5, "init scroll");
-			_thisScreen.scroll_offset_x = offset_x;
-			_thisScreen.scroll_offset_y = offset_y;
-			_thisScreen.scroll_flag = 1;
-		} else {
-			// catch up with required scroll offsets - speed
-			// depending on distance to catch up (dx and dy) &
-			// 'SCROLL_FRACTION' used, but limit to certain
-			// number of pixels per cycle (MAX_SCROLL_DISTANCE)
+		// => dec by (fraction of the differnce)
 
-			dx = _thisScreen.scroll_offset_x - offset_x;
-			dy = _thisScreen.scroll_offset_y - offset_y;
+		scroll_distance_x = 1 + dx / _scrollFraction;
 
-			// current scroll_offset_x is less than the required
-			// value
+		if (scroll_distance_x > MAX_SCROLL_DISTANCE)
+			scroll_distance_x = MAX_SCROLL_DISTANCE;
 
-			// NB. I'm adding 1 to the result of
-			// dx / SCROLL_FRACTION, because it would otherwise
-			// not scroll at all when dx < SCROLL_FRACTION
+		_thisScreen.scroll_offset_x -= scroll_distance_x;
+	}
 
-			if (dx < 0) {
-				// => inc by (fraction of the differnce)
-				// NB. dx is -ve, so we subtract
-				// dx / SCROLL_FRACTION
+	if (dy < 0) {
+		scroll_distance_y = 1 - dy / _scrollFraction;
 
-				scroll_distance_x = 1 - dx / _scrollFraction;
+		if (scroll_distance_y > MAX_SCROLL_DISTANCE)
+			scroll_distance_y = MAX_SCROLL_DISTANCE;
 
-				if (scroll_distance_x > MAX_SCROLL_DISTANCE)
-					scroll_distance_x = MAX_SCROLL_DISTANCE;
+		_thisScreen.scroll_offset_y += scroll_distance_y;
+	} else if (dy > 0) {
+		scroll_distance_y = 1 + dy / _scrollFraction;
 
-				_thisScreen.scroll_offset_x += scroll_distance_x;
-			} else if (dx > 0) {
-				// current scroll_offset_x is greater than
-				// the required value
-				// => dec by (fraction of the differnce)
+		if (scroll_distance_y > MAX_SCROLL_DISTANCE)
+			scroll_distance_y = MAX_SCROLL_DISTANCE;
 
-				scroll_distance_x = 1 + dx / _scrollFraction;
-
-				if (scroll_distance_x > MAX_SCROLL_DISTANCE)
-					scroll_distance_x = MAX_SCROLL_DISTANCE;
-
-				_thisScreen.scroll_offset_x -= scroll_distance_x;
-			}
-
-			if (dy < 0) {
-				scroll_distance_y = 1 - dy / _scrollFraction;
-
-				if (scroll_distance_y > MAX_SCROLL_DISTANCE)
-					scroll_distance_y = MAX_SCROLL_DISTANCE;
-
-				_thisScreen.scroll_offset_y += scroll_distance_y;
-			} else if (dy > 0) {
-				scroll_distance_y = 1 + dy / _scrollFraction;
-
-				if (scroll_distance_y > MAX_SCROLL_DISTANCE)
-					scroll_distance_y = MAX_SCROLL_DISTANCE;
-
-				_thisScreen.scroll_offset_y -= scroll_distance_y;
-			}
-		}
+		_thisScreen.scroll_offset_y -= scroll_distance_y;
 	}
 }
 
+/**
+ * Set the special scroll offset variables
+ *
+ * Call when starting screens and to change the camera within screens
+ *
+ * call AFTER fnInitBackground() to override the defaults
+ */
+
 int32 Logic::fnSetScrollCoordinate(int32 *params) {
-	// set the special scroll offset variables
-
-	// call when starting screens and to change the camera within screens
-
-	// call AFTER fnInitBackground() to override the defaults
-
-	// called feet_x and feet_y to retain intelectual compatibility with
-	// Sword1 !
-
-	// feet_x & feet_y refer to the physical screen coords where the
-	// system will try to maintain George's feet
-
 	// params:	0 feet_x value
 	// 		1 feet_y value
+
+  	// Called feet_x and feet_y to retain intellectual compatibility with
+	// Sword1!
+	//
+	// feet_x & feet_y refer to the physical screen coords where the
+	// system will try to maintain George's feet
 
 	_vm->_thisScreen.feet_x = params[0];
 	_vm->_thisScreen.feet_y = params[1];
