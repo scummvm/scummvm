@@ -48,7 +48,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 00 */
 		OPCODE(o6_pushByte),
 		OPCODE(o6_pushWord),
-		OPCODE(o72_pushDWordVar),
+		OPCODE(o72_pushDWord),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
 		OPCODE(o72_addMessageToStack),
@@ -485,12 +485,15 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	case kByteArray:
 	case kStringArray:
 		ah->data[offset] = value;
+		break;
 
 	case kIntArray:
 		WRITE_LE_UINT16(ah->data + offset * 2, value);
+		break;
 
 	case kDwordArray:
 		WRITE_LE_UINT32(ah->data + offset * 4, value);
+		break;
 	}
 }
 
@@ -524,7 +527,7 @@ void ScummEngine_v72he::copyScriptString(byte *dst) {
 	}
 }
 
-void ScummEngine_v72he::o72_pushDWordVar() {
+void ScummEngine_v72he::o72_pushDWord() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
@@ -720,7 +723,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		array = fetchScriptWord();
-		ah = defineArray(array, kStringArray, 0, 0, 0, 100);
+		ah = defineArray(array, kStringArray, 0, 0, 0, 256);
 		copyScriptString(ah->data);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
@@ -852,11 +855,11 @@ void ScummEngine_v72he::o72_jumpToScript() {
 }
 
 void ScummEngine_v72he::o72_findAllObjects() {
-	int a = pop();
+	int room = pop();
 	int i = 1;
 
-	if (a != _currentRoom)
-		warning("o72_findAllObjects: current room is not %d", a);
+	if (room != _currentRoom)
+		warning("o72_findAllObjects: current room is not %d", room);
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);

@@ -679,7 +679,7 @@ protected:
 	void copyScriptString(byte *dst);
 
 	/* Version 7 script opcodes */
-	void o72_pushDWordVar();
+	void o72_pushDWord();
 	void o72_addMessageToStack();
 	void o72_wordArrayRead();
 	void o72_wordArrayIndexedRead();
