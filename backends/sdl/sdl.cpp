@@ -170,7 +170,7 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_SDL::getFeatureState(Feature f) {
-	assert (_transactionMode != kTransactionNone);
+	assert (_transactionMode == kTransactionNone);
 
 	switch (f) {
 	case kFeatureFullscreenMode:
