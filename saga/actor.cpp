@@ -323,6 +323,7 @@ void Actor::handleSpeech(int msec) {
 			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
 		}
 		_activeSpeech.stringsCount--;
+		_activeSpeech.playing = false;
 	}
 
 	if (!isSpeaking())
@@ -553,7 +554,7 @@ int Actor::direct(int msec) {
 	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
-	if (_lastTickMsec > ticksToMSec(6)) { // fixme
+	if (_lastTickMsec > ticksToMSec(5)) { // fixme
 		_lastTickMsec = 0;
 		//process actions
 		handleActions(msec, false);
