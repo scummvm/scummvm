@@ -63,56 +63,53 @@ typedef sequence_t mpeg2_sequence_t;
 
 #define BUFFER_SIZE 4096
 
-
 namespace Graphics {
 
 class BaseAnimationState {
 protected:
-	const int MOVIE_WIDTH;
-	const int MOVIE_HEIGHT;
+	const int _movieWidth;
+	const int _movieHeight;
 	
 	SoundMixer *_snd;
 	OSystem *_sys;
 
-	uint framenum;
-	uint frameskipped;
-	uint32 ticks;
+	uint _frameNum;
+	uint _frameSkipped;
+	uint32 _ticks;
 
 #ifdef USE_MPEG2
-	mpeg2dec_t *decoder;
-	const mpeg2_info_t *info;
+	mpeg2dec_t *_mpegDecoder;
+	const mpeg2_info_t *_mpegInfo;
 #endif
 
-	File *mpgfile;
+	File *_mpegFile;
 
-	byte buffer[BUFFER_SIZE];
-
-	PlayingSoundHandle bgSound;
-	AudioStream *bgSoundStream;
+	PlayingSoundHandle _bgSound;
+	AudioStream *_bgSoundStream;
 
 #ifdef BACKEND_8BIT
-	int palnum;
-	int maxPalnum;
+	int _palNum;
+	int _maxPalNum;
 
-	byte lookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
-	byte *lut;
-	byte *lut2;
-	int lutcalcnum;
+	byte _yuvLookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
+	byte *_lut;
+	byte *_lut2;
+	int _lutCalcNum;
 
-	int curpal;
-	int cr;
-	int pos;
+	int _curPal;
+	int _cr;
+	int _pos;
 
 	struct {
 		uint cnt;
 		uint end;
 		byte pal[4 * 256];
-	} palettes[50];
+	} _palettes[50];
 #else
-	OverlayColor *overlay;
-	int bitFormat;
-	int16 *colortab;
-	uint16 *rgb_2_pix;
+	OverlayColor *_overlay;
+	int _bitFormat;
+	int16 *_colorTab;
+	uint16 *_rgbToPix;
 #endif
 
 public:

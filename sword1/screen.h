@@ -95,8 +95,6 @@ public:
 	void plotYUV(byte *lut, int width, int height, byte *const *dat);
 #endif
 
-
-
 private:
 	// for router debugging
 	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2);

@@ -31,27 +31,27 @@
 namespace Graphics {
 
 BaseAnimationState::BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height) 
-	: MOVIE_WIDTH(width), MOVIE_HEIGHT(height), _snd(snd), _sys(sys) {
+	: _movieWidth(width), _movieHeight(height), _snd(snd), _sys(sys) {
 #ifndef BACKEND_8BIT
-	colortab = NULL;
-	rgb_2_pix = NULL;
-	bitFormat = 0;
+	_colorTab = NULL;
+	_rgbToPix = NULL;
+	_bitFormat = 0;
 #endif
 }
 
 BaseAnimationState::~BaseAnimationState() {
 #ifdef USE_MPEG2
-	_snd->stopHandle(bgSound);
-	if (decoder)
-		mpeg2_close(decoder);
-	delete mpgfile;
+	_snd->stopHandle(_bgSound);
+	if (_mpegDecoder)
+		mpeg2_close(_mpegDecoder);
+	delete _mpegFile;
 #ifndef BACKEND_8BIT
 	_sys->hideOverlay();
-	free(overlay);
-	free(colortab);
-	free(rgb_2_pix);
+	free(_overlay);
+	free(_colorTab);
+	free(_rgbToPix);
 #endif
-	delete bgSoundStream;
+	delete _bgSoundStream;
 #endif
 }
 
@@ -60,9 +60,9 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 #ifdef USE_MPEG2
 	char tempFile[512];
 
-	decoder = NULL;
-	mpgfile = NULL;
-	bgSoundStream = NULL;
+	_mpegDecoder = NULL;
+	_mpegFile = NULL;
+	_bgSoundStream = NULL;
 
 #ifdef BACKEND_8BIT
 
@@ -80,23 +80,23 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 
 	p = 0;
 	while (1) {
-		palettes[p].end = f.readUint16LE();
-		palettes[p].cnt = f.readUint16LE();
+		_palettes[p].end = f.readUint16LE();
+		_palettes[p].cnt = f.readUint16LE();
 
 		if (f.ioFailed())
 			break;
 
-		for (i = 0; i < palettes[p].cnt; i++) {
-			palettes[p].pal[4 * i] = f.readByte();
-			palettes[p].pal[4 * i + 1] = f.readByte();
-			palettes[p].pal[4 * i + 2] = f.readByte();
-			palettes[p].pal[4 * i + 3] = 0;
+		for (i = 0; i < _palettes[p].cnt; i++) {
+			_palettes[p].pal[4 * i] = f.readByte();
+			_palettes[p].pal[4 * i + 1] = f.readByte();
+			_palettes[p].pal[4 * i + 2] = f.readByte();
+			_palettes[p].pal[4 * i + 3] = 0;
 		}
 		for (; i < 256; i++) {
-			palettes[p].pal[4 * i] = 0;
-			palettes[p].pal[4 * i + 1] = 0;
-			palettes[p].pal[4 * i + 2] = 0;
-			palettes[p].pal[4 * i + 3] = 0;
+			_palettes[p].pal[4 * i] = 0;
+			_palettes[p].pal[4 * i + 1] = 0;
+			_palettes[p].pal[4 * i + 2] = 0;
+			_palettes[p].pal[4 * i + 3] = 0;
 		}
 
 		p++;
@@ -104,46 +104,46 @@ bool BaseAnimationState::init(const char *name, void *audioArg) {
 
 	f.close();
 
-	palnum = 0;
-	maxPalnum = p;
-	setPalette(palettes[palnum].pal);
-	lut = lut2 = lookup[0];
-	curpal = -1;
-	cr = 0;
-	buildLookup(palnum, 256);
-	lut2 = lookup[1];
-	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
+	_palNum = 0;
+	_maxPalNum = p;
+	setPalette(_palettes[_palNum].pal);
+	_lut = _lut2 = _yuvLookup[0];
+	_curPal = -1;
+	_cr = 0;
+	buildLookup(_palNum, 256);
+	_lut2 = _yuvLookup[1];
+	_lutCalcNum = (BITDEPTH + _palettes[_palNum].end + 2) / (_palettes[_palNum].end + 2);
 #else
 	buildLookup();
-	overlay = (OverlayColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(OverlayColor));
+	_overlay = (OverlayColor*)calloc(_movieWidth * _movieHeight, sizeof(OverlayColor));
 	_sys->showOverlay();
 #endif
 
 	// Open MPEG2 stream
-	mpgfile = new File();
+	_mpegFile = new File();
 	sprintf(tempFile, "%s.mp2", name);
-	if (!mpgfile->open(tempFile)) {
+	if (!_mpegFile->open(tempFile)) {
 		warning("Cutscene: Could not open %s", tempFile);
 		return false;
 	}
 
 	// Load and configure decoder
-	decoder = mpeg2_init();
-	if (decoder == NULL) {
+	_mpegDecoder = mpeg2_init();
+	if (_mpegDecoder == NULL) {
 		warning("Cutscene: Could not allocate an MPEG2 decoder");
 		return false;
 	}
 
-	info = mpeg2_info(decoder);
-	framenum = 0;
-	frameskipped = 0;
-	ticks = _sys->getMillis();
+	_mpegInfo = mpeg2_info(_mpegDecoder);
+	_frameNum = 0;
+	_frameSkipped = 0;
+	_ticks = _sys->getMillis();
 
 	// Play audio
-	bgSoundStream = createAudioStream(name, audioArg);
+	_bgSoundStream = createAudioStream(name, audioArg);
 
-	if (bgSoundStream != NULL) {
-		_snd->playInputStream(SoundMixer::kSFXSoundType, &bgSound, bgSoundStream, -1, 255, 0, false);
+	if (_bgSoundStream != NULL) {
+		_snd->playInputStream(SoundMixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, 255, 0, false);
 	} else {
 		warning("Cutscene: Could not open Audio Track for %s", name);
 	}
@@ -163,20 +163,21 @@ bool BaseAnimationState::decodeFrame() {
 	mpeg2_state_t state;
 	const mpeg2_sequence_t *sequence_i;
 	size_t size = (size_t) -1;
+	static byte buf[BUFFER_SIZE];
 
 	do {
-		state = mpeg2_parse(decoder);
-		sequence_i = info->sequence;
+		state = mpeg2_parse(_mpegDecoder);
+		sequence_i = _mpegInfo->sequence;
 
 		switch (state) {
 		case STATE_BUFFER:
-			size = mpgfile->read(buffer, BUFFER_SIZE);
-			mpeg2_buffer(decoder, buffer, buffer + size);
+			size = _mpegFile->read(buf, BUFFER_SIZE);
+			mpeg2_buffer(_mpegDecoder, buf, buf + size);
 			break;
 
 		case STATE_SLICE:
 		case STATE_END:
-			if (info->display_fbuf) {
+			if (_mpegInfo->display_fbuf) {
 				/* simple audio video sync code:
 				 * we calculate the actual frame by taking the elapsed audio time and try
 				 * to stay inside +- 1 frame of this calculated frame number by dropping
@@ -184,45 +185,37 @@ bool BaseAnimationState::decodeFrame() {
 				 */
 
 				/* Avoid deadlock is sound was too far ahead */
-				if (bgSoundStream && !bgSound.isActive())
+				if (_bgSoundStream && !_bgSound.isActive())
 					return false;
 
-				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					((_snd->getSoundElapsedTime(bgSound) * 12) / 1000 < framenum + 1) ||
-					frameskipped > 10) {
-					if (frameskipped > 10) {
-						warning("force frame %i redraw", framenum);
-						frameskipped = 0;
+				if (checkPaletteSwitch() || (_bgSoundStream == NULL) ||
+					((_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum + 1) ||
+					_frameSkipped > 10) {
+					if (_frameSkipped > 10) {
+						warning("force frame %i redraw", _frameNum);
+						_frameSkipped = 0;
 					}
-					drawYUV(sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+					drawYUV(sequence_i->width, sequence_i->height, _mpegInfo->display_fbuf->buf);
 
-					if (bgSoundStream) {
-						while ((_snd->getSoundElapsedTime(bgSound) * 12) / 1000 < framenum)
+					if (_bgSoundStream) {
+						while ((_snd->getSoundElapsedTime(_bgSound) * 12) / 1000 < _frameNum)
 							_sys->delayMillis(10);
 					} else {
-						ticks += 83;
-						while (_sys->getMillis() < ticks)
+						_ticks += 83;
+						while (_sys->getMillis() < _ticks)
 							_sys->delayMillis(10);
-						// FIXME: This used to be used for the Sword2 version of this
-						// method. I do not see any compelling reason why it should be
-						// used, but maybe I am wrong; so if you know more, either
-						// remove this comment, or change the implementation of the 
-						// method to use "sleepUntil" for BS2.
-						//_vm->sleepUntil(ticks);
 					}
-
 				} else {
-					warning("dropped frame %i", framenum);
-					frameskipped++;
+					warning("dropped frame %i", _frameNum);
+					_frameSkipped++;
 				}
 
 #ifdef BACKEND_8BIT
-				buildLookup(palnum + 1, lutcalcnum);
+				buildLookup(_palNum + 1, _lutCalcNum);
 #endif
 
-				framenum++;
+				_frameNum++;
 				return true;
-
 			}
 			break;
 
@@ -237,13 +230,13 @@ bool BaseAnimationState::decodeFrame() {
 bool BaseAnimationState::checkPaletteSwitch() {
 #ifdef BACKEND_8BIT
 	// if we have reached the last image with this palette, switch to new one
-	if (framenum == palettes[palnum].end) {
-		unsigned char *l = lut2;
-		palnum++;
-		setPalette(palettes[palnum].pal);
-		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
-		lut2 = lut;
-		lut = l;
+	if (_frameNum == _palettes[_palNum].end) {
+		unsigned char *l = _lut2;
+		_palNum++;
+		setPalette(_palettes[_palNum].pal);
+		_lutCalcNum = (BITDEPTH + _palettes[_palNum].end - (_frameNum + 1) + 2) / (_palettes[_palNum].end - (_frameNum + 1) + 2);
+		_lut2 = _lut;
+		_lut = l;
 		return true;
 	}
 #endif
@@ -260,45 +253,45 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 	int y, cb;
 	int r, g, b, ii;
 
-	if (p >= maxPalnum)
+	if (p >= _maxPalNum)
 		return;
   
-	if (p != curpal) {
-		curpal = p;
-		cr = 0;
-		pos = 0;
+	if (p != _curPal) {
+		_curPal = p;
+		_cr = 0;
+		_pos = 0;
 	}
 
-	if (cr > BITDEPTH)
+	if (_cr > BITDEPTH)
 		return;
 
 	for (ii = 0; ii < lines; ii++) {
-		r = (-16 * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+		r = (-16 * 256 + (int) (256 * 1.596) * ((_cr << SHIFT) - 128)) / 256;
 		for (cb = 0; cb <= BITDEPTH; cb++) {
-			g = (-16 * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+			g = (-16 * 256 - (int) (0.813 * 256) * ((_cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
 			b = (-16 * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
 
 			for (y = 0; y <= BITDEPTH; y++) {
 				int idx, bst = 0;
-				int dis = 2 * SQR(r - palettes[p].pal[0]) + 4 * SQR(g - palettes[p].pal[1]) + SQR(b - palettes[p].pal[2]);
+				int dis = 2 * SQR(r - _palettes[p].pal[0]) + 4 * SQR(g - _palettes[p].pal[1]) + SQR(b - _palettes[p].pal[2]);
 
 				for (idx = 1; idx < 256; idx++) {
-					long d2 = 2 * SQR(r - palettes[p].pal[4 * idx]) + 4 * SQR(g - palettes[p].pal[4 * idx + 1]) + SQR(b - palettes[p].pal[4 * idx + 2]);
+					long d2 = 2 * SQR(r - _palettes[p].pal[4 * idx]) + 4 * SQR(g - _palettes[p].pal[4 * idx + 1]) + SQR(b - _palettes[p].pal[4 * idx + 2]);
 					if (d2 < dis) {
 						bst = idx;
 						dis = d2;
 					}
 				}
-				lut2[pos++] = bst;
+				_lut2[_pos++] = bst;
 	
 				r += (1 << SHIFT);
 				g += (1 << SHIFT);
 				b += (1 << SHIFT);
 			}
-			r -= (BITDEPTH+1)*(1 << SHIFT);
+			r -= (BITDEPTH + 1) * (1 << SHIFT);
 		}
-		cr++;
-		if (cr > BITDEPTH)
+		_cr++;
+		if (_cr > BITDEPTH)
 			return;
 	}
 }
@@ -370,24 +363,24 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 
 void BaseAnimationState::buildLookup() {
 	// Do we already have lookup tables for this bit format?
-	if (gBitFormat == bitFormat && colortab && rgb_2_pix)
+	if (gBitFormat == _bitFormat && _colorTab && _rgbToPix)
 		return;
 
-	free(colortab);
-	free(rgb_2_pix);
+	free(_colorTab);
+	free(_rgbToPix);
 
-	colortab = (int16 *)malloc(4 * 256 * sizeof(int16));
+	_colorTab = (int16 *)malloc(4 * 256 * sizeof(int16));
 
-	int16 *Cr_r_tab = &colortab[0 * 256];
-	int16 *Cr_g_tab = &colortab[1 * 256];
-	int16 *Cb_g_tab = &colortab[2 * 256];
-	int16 *Cb_b_tab = &colortab[3 * 256];
+	int16 *Cr_r_tab = &_colorTab[0 * 256];
+	int16 *Cr_g_tab = &_colorTab[1 * 256];
+	int16 *Cb_g_tab = &_colorTab[2 * 256];
+	int16 *Cb_b_tab = &_colorTab[3 * 256];
 
-	rgb_2_pix = (uint16 *)malloc(3 * 768 * sizeof(uint16));
+	_rgbToPix = (uint16 *)malloc(3 * 768 * sizeof(uint16));
 
-	uint16 *r_2_pix_alloc = &rgb_2_pix[0 * 768];
-	uint16 *g_2_pix_alloc = &rgb_2_pix[1 * 768];
-	uint16 *b_2_pix_alloc = &rgb_2_pix[2 * 768];
+	uint16 *r_2_pix_alloc = &_rgbToPix[0 * 768];
+	uint16 *g_2_pix_alloc = &_rgbToPix[1 * 768];
+	uint16 *b_2_pix_alloc = &_rgbToPix[2 * 768];
 
 	int16 CR, CB;
 	int i;
@@ -441,11 +434,11 @@ void BaseAnimationState::buildLookup() {
 		b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
 	}
 
-	bitFormat = gBitFormat;
+	_bitFormat = gBitFormat;
 }
 
 void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
-	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
+	OverlayColor *ptr = _overlay + (_movieHeight - height) / 2 * _movieWidth + (_movieWidth - width) / 2;
 
 	byte *lum = dat[0];
 	byte *cr = dat[2];
@@ -458,7 +451,7 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 	int16 cb_b;
 
 	OverlayColor *row1 = ptr;
-	OverlayColor *row2 = ptr + MOVIE_WIDTH;
+	OverlayColor *row2 = ptr + _movieWidth;
 
 	int x, y;
 
@@ -466,23 +459,23 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 		for (x = 0; x < width; x += 2) {
 			register byte L;
 
-			cr_r  = 0 * 768 + 256 + colortab[*cr + 0 * 256];
-			crb_g = 1 * 768 + 256 + colortab[*cr + 1 * 256] + colortab[*cb + 2 * 256];
-			cb_b  = 2 * 768 + 256 + colortab[*cb + 3 * 256];
+			cr_r  = 0 * 768 + 256 + _colorTab[*cr + 0 * 256];
+			crb_g = 1 * 768 + 256 + _colorTab[*cr + 1 * 256] + _colorTab[*cb + 2 * 256];
+			cb_b  = 2 * 768 + 256 + _colorTab[*cb + 3 * 256];
 			++cr;
 			++cb;
 
 			L = *lum++;
-			*row1++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			*row1++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
 			L = *lum++;
-			*row1++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			*row1++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
 
 			// Now, do second row.
 
 			L = *lum2++;
-			*row2++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			*row2++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
 			L = *lum2++;
-			*row2++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			*row2++ = (_rgbToPix[L + cr_r] | _rgbToPix[L + crb_g] | _rgbToPix[L + cb_b]);
 		}
 
 		// These values are at the start of the next line, (due
@@ -491,8 +484,8 @@ void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 
 		lum  += width;
 		lum2 += width;
-		row1 += (2 * MOVIE_WIDTH - width);
-		row2 += (2 * MOVIE_WIDTH - width);
+		row1 += (2 * _movieWidth - width);
+		row2 += (2 * _movieWidth - width);
 	}
 }
 

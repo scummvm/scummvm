@@ -48,7 +48,7 @@ void AnimationState::setPalette(byte *pal) {
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
-	_scr->plotYUV(lut, width, height, dat);
+	_scr->plotYUV(_lut, width, height, dat);
 #else
 	plotYUV(width, height, dat);
 #endif
@@ -56,7 +56,7 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 
 void AnimationState::updateScreen(void) {
 #ifndef BACKEND_8BIT
-	_sys->copyRectToOverlay(overlay, MOVIE_WIDTH, 0, 40, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_sys->copyRectToOverlay(_overlay, _movieWidth, 0, 40, _movieWidth, _movieHeight);
 #endif
 	_sys->updateScreen();
 }
@@ -65,12 +65,12 @@ OverlayColor *AnimationState::giveRgbBuffer(void) {
 #ifdef BACKEND_8BIT
 	return NULL;
 #else
-	return overlay;
+	return _overlay;
 #endif
 }
 
 bool AnimationState::soundFinished(void) {
-	return !bgSound.isActive();
+	return !_bgSound.isActive();
 }
 
 AudioStream *AnimationState::createAudioStream(const char *name, void *arg) {

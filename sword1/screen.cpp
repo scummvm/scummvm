@@ -32,6 +32,10 @@
 #include "sword1/menu.h"
 #include "sword1/sword1.h"
 
+#ifdef BACKEND_8BIT
+#include "sword1/animation.h"
+#endif
+
 #if defined(__PALM_OS__)
 #include "arm/native.h"
 #include "arm/macros.h"

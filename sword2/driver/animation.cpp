@@ -51,7 +51,7 @@ void AnimationState::setPalette(byte *pal) {
 #else
 
 void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
-	OverlayColor *dst = overlay + RENDERWIDE * (s->y) + s->x;
+	OverlayColor *dst = _overlay + RENDERWIDE * s->y + s->x;
 
 	// FIXME: These aren't the "right" colours, but look good to me.
 
@@ -78,31 +78,31 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 
 #endif
 
-void AnimationState::clearScreen(void) {
+void AnimationState::clearScreen() {
 #ifdef BACKEND_8BIT
-	memset(_vm->_screen->getScreen(), 0, MOVIE_WIDTH * MOVIE_HEIGHT);
+	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
 #else
 	OverlayColor black = _sys->RGBToColor(0, 0, 0);
 
-	for (int i = 0; i < MOVIE_WIDTH * MOVIE_HEIGHT; i++)
-		overlay[i] = black;
+	for (int i = 0; i < _movieWidth * _movieHeight; i++)
+		_overlay[i] = black;
 #endif
 }
 
-void AnimationState::updateScreen(void) {
+void AnimationState::updateScreen() {
 #ifdef BACKEND_8BIT
-	byte *buf = _vm->_screen->getScreen() + ((480 - MOVIE_HEIGHT) / 2) * RENDERWIDE + (640 - MOVIE_WIDTH) / 2;
+	byte *buf = _vm->_screen->getScreen() + ((480 - _movieHeight) / 2) * RENDERWIDE + (640 - _movieWidth) / 2;
 
-	_vm->_system->copyRectToScreen(buf, MOVIE_WIDTH, (640 - MOVIE_WIDTH) / 2, (480 - MOVIE_HEIGHT) / 2, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_vm->_system->copyRectToScreen(buf, _movieWidth, (640 - _movieWidth) / 2, (480 - _movieHeight) / 2, _movieWidth, _movieHeight);
 #else
-	_sys->copyRectToOverlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_sys->copyRectToOverlay(_overlay, _movieWidth, 0, 0, _movieWidth, _movieHeight);
 #endif
 	_vm->_system->updateScreen();
 }
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
-	_vm->_screen->plotYUV(lut, width, height, dat);
+	_vm->_screen->plotYUV(_lut, width, height, dat);
 #else
 	plotYUV(width, height, dat);
 #endif
@@ -241,12 +241,12 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		return;
 	}
 
-#ifndef BACKEND_8BIT
 	// Clear the screen, because whatever is on it will be visible when the
-	// overlay is removed.
+	// overlay is removed. And if there isn't an overlay, we don't want it
+	// to be visible during the cutscene. (Not all cutscenes cover the
+	// entire screen.)
 	_vm->_screen->clearScene();
 	_vm->_screen->updateDisplay();
-#endif
 
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
