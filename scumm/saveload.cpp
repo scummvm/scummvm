@@ -824,10 +824,11 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 				}
 				if (type == rtObjectName && ser->getVersion() >= VER(25)) {
 					// Paranoia: We increased the possible number of new names
-					// for MI2 to fix bug #936323. The savegame format didn't
-					// change, but at least during the transition period there
-					// is a slight chance that we try to load more names than
-					// we have allocated space for. If so, discard them.
+					// to fix bugs #933610 and #936323. The savegame format
+					// didn't change, but at least during the transition
+					// period there is a slight chance that we try to load
+					// more names than we have allocated space for. If so,
+					// discard them.
 					if (idx < _numNewNames)
 						_newNames[idx] = ser->loadUint16();
 				}
