@@ -554,9 +554,10 @@ void *Scumm::openSfxFile()
 		for (int i=0; i < num_files; i++) {
 			char filename[13], c;
 			int z = 0;
+			int z2;
 			
 			/* Construct filename */
-			for (int z2=0;z2<8; z2++)
+			for (z2=0;z2<8; z2++)
 				if ((c = fileReadByte(file)) != 0)
 					filename[z++] = c;
 			filename[z++] = '.';
