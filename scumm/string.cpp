@@ -33,8 +33,9 @@ void Scumm::unkMessage1() {
 	_msgPtrToAdd = buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
-		warning("%s", buffer);
+//	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
+	if ((buffer[0] != 0xFF) && _debugMode) {
+		debug(0, "DEBUG: %s", buffer);
 		return;
 	}
 
