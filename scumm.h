@@ -1155,7 +1155,7 @@ public:
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
-	void drawBomp(BompDrawData *bd);
+	void drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3);
 
 	void restoreBG(int left, int top, int right, int bottom);
 	void redrawBGStrip(int start, int num);	

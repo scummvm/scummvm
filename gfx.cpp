@@ -2544,7 +2544,10 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
-void Scumm::drawBomp(BompDrawData * bd)
+// param3=clipping ?
+// param2=scalling or not ?
+// param1= never used ?
+void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3)
 {
 	byte *dest = bd->out + bd->y * bd->outwidth, *src;
 	int h = bd->srcheight;
@@ -2638,7 +2641,6 @@ void Scumm::drawBomp(BompDrawData * bd)
 
 CHECK_HEAP;
 }
-
 
 
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */

@@ -897,7 +897,26 @@ void Scumm::akos_codec1_ignorePakCols(AkosRenderer * ar, int num)
 
 void Scumm::akos_codec5(AkosRenderer * ar)
 {
-	warning("akos_codec5: not implemented");
+	VirtScreen *vs;
+	BompDrawData bdd;
+	
+	vs = &virtscr[1];
+
+	bdd.dataptr = ar->srcptr;
+	bdd.out = ar->outptr - (ar->width/2) - (ar->height * ar->outwidth);
+	bdd.outheight = ar->outheight;
+	bdd.outwidth = ar->outwidth;
+	bdd.scale_x = 0xFF;
+	bdd.scale_y = 0xFF;
+	bdd.srcheight = ar->height;
+	bdd.srcwidth = ar->width;
+	bdd.x = ar->x;
+	bdd.y = ar->y;
+
+	drawBomp(&bdd,0,bdd.dataptr,0,0);
+	updateDirtyRect(0, ar->x - ar->width /2, ar->x - ar->width/2+ar->width, ar->y -ar->height, ar->y, 0);
+
+
 }
 
 void Scumm::akos_codec16(AkosRenderer * ar)

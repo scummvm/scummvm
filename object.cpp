@@ -1246,7 +1246,7 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	bdd.srcheight = READ_LE_UINT16(&((BompHeader *)bomp)->height);
 
 	bdd.out = vs->screenPtr + vs->xstart;
-	bdd.outwidth = 320;
+	bdd.outwidth = vs->width;
 	bdd.outheight = vs->height;
 	bdd.dataptr = bomp + 10;
 	bdd.x = eo->posX;
@@ -1254,12 +1254,12 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	bdd.scale_x = (unsigned char)eo->unk3;
 	bdd.scale_y = (unsigned char)eo->unk4;
 
-	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y,
-									bdd.y + bdd.srcheight, 0);
+	drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
 
-	if (eo->number) {
-		drawBomp(&bdd);
-	}
+
+	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y,
+								bdd.y + bdd.srcheight, 0);
+
 }
 
 void Scumm::removeBlastObjects()
