@@ -532,11 +532,13 @@ Credits:
         Tim 'realmz'       - Initial MI1 CD music support
         Jonathan 'khalek'  - Expert weaver in the Loom
         Nicolas Noble      - Config file and ALSA support
-        Pawel Kolodziejski - Added missing Dig SMUSH codecs
+        Pawel Kolodziejski - Added missing Dig SMUSH codecs, iMuse work
         Felix Jakschitsc   - His hard work on Zak256
         Andre Souza        - SDL-based OpenGL renderer
         Kovacs Endre Janos - Several fixes for Simon1
         Ralph Brorsen      - Helped write the new GUI
+        Torbjšrn Andersson - Many different contributions
+        Jamieson Christian - Lots of work on iMuse/MIDI
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
