@@ -139,12 +139,10 @@ const bool Config::getBool(const String &key, bool def, const String &d) const
 
 void Config::set(const String &key, const String &value, const String &d)
 {
-	String domain;
+	String domain(d);
 
-	if (d.isEmpty())
+	if (domain.isEmpty())
 		domain = defaultDomain;
-	else
-		domain = d;
 
 	domain.toLowercase();
 	domains[domain][key] = value;
@@ -171,7 +169,7 @@ void Config::set_domain(const String &d)
 
 bool Config::has_domain(const String &d) const
 {
-	String temp = d;
+	String temp(d);
 	temp.toLowercase();
 	return domains.contains(temp);
 }
