@@ -201,6 +201,8 @@ void SoundMixer::setup_premix(void *param, PremixProc *proc)
 
 void SoundMixer::set_volume(int volume)
 {
+	int i;
+
 	// Check range
 	if (volume > 256)
 		volume = 256;
@@ -208,7 +210,7 @@ void SoundMixer::set_volume(int volume)
 		volume = 0;
 
 	// The volume table takes 8 bit unsigned data as index and returns 16 bit signed
-	for (int i = 0; i < 128; i++)
+	for (i = 0; i < 128; i++)
 		_volume_table[i] = i * volume ;
 
 	for (i = -128; i < 0; i++)
