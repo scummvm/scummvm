@@ -50,6 +50,7 @@
 #include "scumm/player_v3a.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm-md5.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
