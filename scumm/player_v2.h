@@ -85,14 +85,13 @@ public:
 	virtual int  getMusicTimer() const;
 	virtual int  getSoundStatus(int sound) const;
 
-
+	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
 		do_mix(buffer, numSamples / 2);
 		return numSamples;
 	}
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	
 	int getRate() const { return _sample_rate; }
 
 protected:

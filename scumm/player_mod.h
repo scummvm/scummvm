@@ -51,14 +51,13 @@ public:
 	virtual void setUpdateProc(ModUpdateProc *proc, void *param, int freq);
 	virtual void clearUpdateProc();
 
-
+	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
 		do_mix(buffer, numSamples / 2);
 		return numSamples;
 	}
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	
 	int getRate() const { return _samplerate; }
 
 private:
