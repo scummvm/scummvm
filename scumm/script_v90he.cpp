@@ -698,7 +698,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 
 void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
-	int eax, esi;
+	int spriteId, flags;
 	int32 a, b;
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
@@ -706,104 +706,104 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	debug(1,"o90_getSpriteInfo stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
-		eax = pop();
-		if (eax) {
-			spriteInfoGet_tx_ty(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_tx_ty(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
 		}
 	case 1:
-		eax = pop();
-		if (eax) {
-			spriteInfoGet_tx_ty(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_tx_ty(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
 		}
 	case 2:
-		eax = pop();
-		if (eax) {
-			getSpriteImageDim(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			getSpriteImageDim(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
 		}
 		break;
 	case 3:
-		eax = pop();
-		if (eax) {
-			getSpriteImageDim(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			getSpriteImageDim(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
 		}
 		break;
 	case 4:
-		eax = pop();
-		if (eax) {
-			spriteInfoGet_field_2C_30(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_field_2C_30(spriteId, a, b);
 			push(a);
 		} else {
 			push(0);
 		}
 		break;
 	case 5:
-		eax = pop();
-		if (eax) {
-			spriteInfoGet_field_2C_30(eax, a, b);
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_field_2C_30(spriteId, a, b);
 			push(b);
 		} else {
 			push(0);
 		}
 		break;
 	case 6:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_wizSize(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_wizSize(spriteId));
 		else
 			push(0);
 		break;
 	case 7:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_groupNum(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_groupNum(spriteId));
 		else
 			push(0);
 		break;
 	case 8:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_grp_tx(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_grp_tx(spriteId));
 		else
 			push(0);
 		break;
 	case 9:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_grp_ty(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_grp_ty(spriteId));
 		else
 			push(0);
 		break;
 	case 12:
-		esi = pop();
-		eax = pop();
-		if (eax) {
-			switch(esi) {
+		flags = pop();
+		spriteId = pop();
+		if (spriteId) {
+			switch(flags) {
 			case 0:
-				push(spriteInfoGet_flags_1(eax));
+				push(spriteInfoGet_flags_1(spriteId));
 				break;
 			case 1:
-				push(spriteInfoGet_flags_2(eax));
+				push(spriteInfoGet_flags_2(spriteId));
 				break;
 			case 2:
-				push(spriteInfoGet_flags_3(eax));
+				push(spriteInfoGet_flags_3(spriteId));
 				break;
 			case 3:
-				push(spriteInfoGet_flags_4(eax));
+				push(spriteInfoGet_flags_4(spriteId));
 				break;
 			case 4:
-				push(spriteInfoGet_flags_5(eax));
+				push(spriteInfoGet_flags_5(spriteId));
 				break;
 			default:
 				push(0);
@@ -813,9 +813,9 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		}
 		break;
 	case 13:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_field_18(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_18(spriteId));
 		else
 			push(0);
 		break;
@@ -838,58 +838,58 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		}
 		break;
 	case 22:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_resState(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_resState(spriteId));
 		else
 			push(0);
 		break;
 	case 33:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_resId(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_resId(spriteId));
 		else
 			push(0);
 		break;
 	case 38:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_flags_8(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_8(spriteId));
 		else
 			push(1);
 		break;
 	case 52:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_flags_6(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_6(spriteId));
 		else
 			push(0);
 		break;
 	case 62:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_zoom(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_zoom(spriteId));
 		else
 			push(0);
 		break;
 	case 67:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_field_78(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_78(spriteId));
 		else
 			push(0);
 		break;
 	case 68:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_field_54(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_54(spriteId));
 		else
 			push(0);
 		break;
 	case 94:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_flags_7(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_7(spriteId));
 		else
 			push(0);
 		break;
@@ -903,17 +903,17 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		push(0);
 		break;
 	case 110:
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_field_80(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_80(spriteId));
 		else
 			push(0);
 		break;
 	case 168:
 		pop();
-		eax = pop();
-		if (eax)
-			push(spriteInfoGet_field_44(eax));
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_44(spriteId));
 		else
 			push(0);
 		break;

@@ -35,181 +35,181 @@ void ScummEngine_v90he::allocateArrays() {
 	spritesAllocTables(_numSprites, 64, 64);
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_1: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_1: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF15) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF15) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_2(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_2: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_2(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_2: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF14) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF14) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_3(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_3: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_3(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_3: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF16) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF16) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_4(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_4: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_4(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_4: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF13) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF13) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_5(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_5: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_5(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_5: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF20) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF20) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_6: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_6: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].flags & kSF22;
+	return _spriteTable[spriteId].flags & kSF22;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_7(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_7: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_7(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_7: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF23) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF23) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_8: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "_spriteTableGet_flags_8: Invalid sprite %d");
 
-	return ((_spriteTable[spriteNum].flags & kSF31) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSF31) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_resId(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_resId: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_resId(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_resId: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].res_id;
+	return _spriteTable[spriteId].res_id;
 }
 
-int ScummEngine_v90he::spriteInfoGet_resState(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_resState: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_resState(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_resState: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].res_state;
+	return _spriteTable[spriteId].res_state;
 }
 
-int ScummEngine_v90he::spriteInfoGet_groupNum(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_groupNum: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_groupNum(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_groupNum: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].group_num;
+	return _spriteTable[spriteId].group_num;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_18(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_18: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_field_18(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_18: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].field_18;
+	return _spriteTable[spriteId].field_18;
 }
 
-int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_grp_tx: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_grp_tx: Invalid sprite %d");
 
-	if (_spriteTable[spriteNum].group_num)
-		return _spriteTable[spriteNum].tx + _spriteGroups[spriteNum].tx;
+	if (_spriteTable[spriteId].group_num)
+		return _spriteTable[spriteId].tx + _spriteGroups[spriteId].tx;
 	else
-		return _spriteTable[spriteNum].tx;
+		return _spriteTable[spriteId].tx;
 }
 
-int ScummEngine_v90he::spriteInfoGet_grp_ty(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_grp_ty: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_grp_ty(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_grp_ty: Invalid sprite %d");
 
-	if (_spriteTable[spriteNum].group_num)
-		return _spriteTable[spriteNum].ty + _spriteGroups[spriteNum].ty;
+	if (_spriteTable[spriteId].group_num)
+		return _spriteTable[spriteId].ty + _spriteGroups[spriteId].ty;
 	else
-		return _spriteTable[spriteNum].ty;
+		return _spriteTable[spriteId].ty;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_44(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_44: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_field_44(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_44: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].field_44;
+	return _spriteTable[spriteId].field_44;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_54(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_54: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_field_54(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_54: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].field_54;
+	return _spriteTable[spriteId].field_54;
 }
 
-int ScummEngine_v90he::spriteInfoGet_wizSize(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_wizSize: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_wizSize(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_wizSize: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].res_wiz_states;
+	return _spriteTable[spriteId].res_wiz_states;
 }
 
-int ScummEngine_v90he::spriteInfoGet_zoom(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_zoom: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_zoom(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_zoom: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].zoom;
+	return _spriteTable[spriteId].zoom;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_78(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_78: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_field_78(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_78: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].field_78;
+	return _spriteTable[spriteId].field_78;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_80(int spriteNum) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_80: Invalid sprite %d");
+int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_80: Invalid sprite %d");
 
-	return _spriteTable[spriteNum].field_80;
+	return _spriteTable[spriteId].field_80;
 }
 
-void ScummEngine_v90he::getSpriteImageDim(int spriteNum, int32 &w, int32 &h) {
-	checkRange(_numSprites, 1, spriteNum, "getSpriteImageDim: Invalid sprite %d");
+void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
+	checkRange(_numSprites, 1, spriteId, "getSpriteImageDim: Invalid sprite %d");
 
-	getWizImageDim(_spriteTable[spriteNum].res_id, _spriteTable[spriteNum].res_state, w, h);
+	getWizImageDim(_spriteTable[spriteId].res_id, _spriteTable[spriteId].res_state, w, h);
 }
 
-void ScummEngine_v90he::spriteInfoGet_tx_ty(int spriteNum, int32 &tx, int32 &ty) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_tx_ty: Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_tx_ty: Invalid sprite %d");
 
-	tx = _spriteTable[spriteNum].tx;
-	ty = _spriteTable[spriteNum].ty;
+	tx = _spriteTable[spriteId].tx;
+	ty = _spriteTable[spriteId].ty;
 }
 
-void ScummEngine_v90he::spriteInfoGet_field_2C_30(int spriteNum, int32 &field_2C, int32 &field_30) {
-	checkRange(_numSprites, 1, spriteNum, "spriteInfoGet_field_2C_30: Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30) {
+	checkRange(_numSprites, 1, spriteId, "spriteInfoGet_field_2C_30: Invalid sprite %d");
 
-	field_2C = _spriteTable[spriteNum].field_2C;
-	field_30 = _spriteTable[spriteNum].field_30;
+	field_2C = _spriteTable[spriteId].field_2C;
+	field_30 = _spriteTable[spriteId].field_30;
 }
 
 //
 // spriteInfoSet functions
 //
-void ScummEngine_v90he::spriteInfoSet_field_14(int spriteNum, int value) {
-	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoSet_field_14(int spriteId, int value) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteNum].field_14 != value) {
-		_spriteTable[spriteNum].field_14 = value;
-		_spriteTable[spriteNum].flags |= kSF01 | kSF02;
+	if (_spriteTable[spriteId].field_14 != value) {
+		_spriteTable[spriteId].field_14 = value;
+		_spriteTable[spriteId].flags |= kSF01 | kSF02;
 	}
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_7C(int spriteNum, int value) {
-	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoSet_field_7C(int spriteId, int value) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteNum].field_7C != value) {
-		_spriteTable[spriteNum].field_7C = value;
-		_spriteTable[spriteNum].flags |= kSF01 | kSF02;
+	if (_spriteTable[spriteId].field_7C != value) {
+		_spriteTable[spriteId].field_7C = value;
+		_spriteTable[spriteId].flags |= kSF01 | kSF02;
 	}
 }
 
-void ScummEngine_v90he::spriteInfoSet_field_80(int spriteNum, int value) {
-	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoSet_field_80(int spriteId, int value) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteNum].field_80 = value;
+	_spriteTable[spriteId].field_80 = value;
 }
 
-void ScummEngine_v90he::spriteInfoSet_case183(int spriteNum) {
-	checkRange(_varNumSprites, 1, spriteNum, "Invalid sprite %d");
+void ScummEngine_v90he::spriteInfoSet_case183(int spriteId) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	// TODO
 }
