@@ -566,13 +566,17 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
 	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
 	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
-	/* XXX: next time save game format changes, Fingolfin wants to revise StringTab - contact him */
 	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
 
 	if (savegameVersion >= VER_V13)
 		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
 
+	// Save all resource. Fingolfin doesn't like this part of the save/load code a bit.
+	// It is very fragile: e.g. if we change the num limit for one resource type, this
+	// code will break down. Worse, there is no way such a problem could easily be detected.
+	// We should at least store for each save resource it's type and ID. Then at least
+	// we can perform some integrety checks when loading.
 	for (i = rtFirst; i <= rtLast; i++)
 		if (res.mode[i] == 0)
 			for (j = 1; j < res.num[i]; j++)
