@@ -70,6 +70,12 @@ Audio
 * Add a command line/config file option for the output sample rate (to allow
   for output sample rates other than 22050 Hz, e.g. 44100). Code should do
   sanity checking (e.g. restrict to rates between 8000 - 65535 Hz)
+* Clean up the "premixer mess": instead of having a custome premixer hook, add
+  a "callback channel" or something like this. This removes special cases from
+  the code, and it also makes it possible to apply sound rate conversion to
+  premixers, which makes it easier to write and maintain a premixer proc.
+* Add "direct" support for little endian 16bit audio data (useful for Broken
+  Sword 1/2).
 
 Config
 ======
