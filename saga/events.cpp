@@ -603,7 +603,7 @@ static int ProcessEventTime(long msec)
 
 		if (event_count > R_EVENT_WARNINGCOUNT) {
 			R_printf(R_STDERR,
-			    "WARNING: Event list exceeds %u.\n");
+			    "WARNING: Event list exceeds %u.\n", R_EVENT_WARNINGCOUNT);
 		}
 	}
 
