@@ -29,6 +29,7 @@
 namespace Sword1 {
 
 #define MAX_LABEL_SIZE (31+1)
+#define MAX_OPEN_CLUS 8	// don't open more than 8 files at once
 
 struct Grp {
 	uint32 noRes;
@@ -38,14 +39,17 @@ struct Grp {
 };
 
 struct Clu {
+	uint32 refCount;
+	File *file;
 	char label[MAX_LABEL_SIZE];
 	uint32 noGrp;
-	Grp **grp;
+	Grp *grp;
+	Clu *nextOpen;
 };
 
 struct Prj {
 	uint32 noClu;
-	Clu **clu;
+	Clu *clu;
 };
 
 class ResMan {
@@ -63,20 +67,22 @@ public:
 	void unlockScript(uint32 scrID);
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);
 private:
-	uint32 filesInGroup(uint32 id);
-	uint32 resLength(uint32 id);
+	uint32	   resLength(uint32 id);
 	MemHandle *resHandle(uint32 id);
-	uint32 resOffset(uint32 id);
+	uint32     resOffset(uint32 id);
+	File      *resFile(uint32 id);
+
 	void openCptResourceBigEndian(uint32 id);
 	void openScriptResourceBigEndian(uint32 id);
 
-	File *openClusterFile(uint32 id);
 	void loadCluDescript(const char *fileName);
 	void freeCluDescript(void);
 	Prj _prj;
 	MemMan *_memMan;
 	static const uint32 _scriptList[TOTAL_SECTIONS];	//a table of resource tags
 	static uint32 _srIdList[29];
+	Clu *_openCluStart, *_openCluEnd;
+	int  _openClus;
 };
 
 } // End of namespace Sword1 

@@ -47,6 +47,8 @@ namespace Sword1 {
 #define MAX_PATH_LEN 260
 
 ResMan::ResMan(const char *resFile) {
+	_openCluStart = _openCluEnd = NULL;
+	_openClus = 0;
 	_memMan = new MemMan();
 	loadCluDescript(resFile);
 }
@@ -88,25 +90,29 @@ void ResMan::loadCluDescript(const char *fileName) {
 
 	
 	_prj.noClu = resFile.readUint32LE();
-	_prj.clu = new Clu*[_prj.noClu];
+	_prj.clu = new Clu[_prj.noClu];
+	memset(_prj.clu, 0, _prj.noClu * sizeof(Clu));
 
 	uint32 *cluIndex = (uint32*)malloc(_prj.noClu * 4);
 	resFile.read(cluIndex, _prj.noClu * 4);
 
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
 		if (cluIndex[clusCnt]) {
-			Clu *cluster = _prj.clu[clusCnt] = new Clu;
+			Clu *cluster = _prj.clu + clusCnt;
 			resFile.read(cluster->label, MAX_LABEL_SIZE);
 
+			cluster->file = NULL;
 			cluster->noGrp = resFile.readUint32LE();
-			cluster->grp = new Grp*[cluster->noGrp];
+			cluster->grp = new Grp[cluster->noGrp];
+			memset(cluster->grp, 0, cluster->noGrp * sizeof(Grp));
+			cluster->refCount = 0;
 
 			uint32 *grpIndex = (uint32*)malloc(cluster->noGrp * 4);
 			resFile.read(grpIndex, cluster->noGrp * 4);
 
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
 				if (grpIndex[grpCnt]) {
-					Grp *group = cluster->grp[grpCnt] = new Grp;
+					Grp *group = cluster->grp + grpCnt;
 					group->noRes = resFile.readUint32LE();
 					group->resHandle = new MemHandle[group->noRes];
 					group->offset = new uint32[group->noRes];
@@ -126,47 +132,59 @@ void ResMan::loadCluDescript(const char *fileName) {
 						}
 					}
 					free(resIdIdx);
-				} else
-					cluster->grp[grpCnt] = NULL;
+				}
 			free(grpIndex);
-		} else
-			_prj.clu[clusCnt] = NULL;
+		}
 	free(cluIndex);
 	
-	if (_prj.clu[3]->grp[5]->noRes == 29)
+	if (_prj.clu[3].grp[5].noRes == 29)
 		for (uint8 cnt = 0; cnt < 29; cnt++)
 			_srIdList[cnt] = 0x04050000 | cnt;
 }
 
 void ResMan::freeCluDescript(void) {
 	
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
-		if (Clu *cluster = _prj.clu[clusCnt]) {
-			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
-				if (Grp *group = cluster->grp[grpCnt]) {
-					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
-						_memMan->freeNow(group->resHandle + resCnt);
-					delete[] group->resHandle;
-					delete[] group->offset;
-					delete[] group->length;
-					delete group;
-				}
-			delete[] cluster->grp;
-			delete cluster;
+	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
+		Clu *cluster = _prj.clu + clusCnt;
+		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
+			Grp *group = cluster->grp + grpCnt;
+			if (group->resHandle != NULL) {
+				for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
+					_memMan->freeNow(group->resHandle + resCnt);
+
+				delete[] group->resHandle;
+				delete[] group->offset;
+				delete[] group->length;
+			}
 		}
+		delete[] cluster->grp;
+
+		if (cluster->file != NULL)
+			delete cluster->file;
+	}
 	delete[] _prj.clu;
 }
 
 void ResMan::flush(void) {
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
-		if (Clu *cluster = _prj.clu[clusCnt])
-			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
-				if (Grp *group = cluster->grp[grpCnt])
-					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
-						if (group->resHandle[resCnt].cond != MEM_FREED) {
-							_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
-							group->resHandle[resCnt].refCount = 0;
-						}
+	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
+		Clu *cluster = _prj.clu + clusCnt;
+		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
+			Grp *group = cluster->grp + grpCnt;
+			for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
+				if (group->resHandle[resCnt].cond != MEM_FREED) {
+					_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
+					group->resHandle[resCnt].refCount = 0;
+				}
+		}
+		if (cluster->file) {
+			cluster->file->close();
+			delete cluster->file;
+			cluster->file = NULL;
+			cluster->refCount = 0;
+		}
+	}
+	_openClus = 0;
+	_openCluStart = _openCluEnd = NULL;
 	// the memory manager cached the blocks we asked it to free, so explicitly make it free them
 	_memMan->flush();
 }
@@ -234,15 +252,15 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
-		File *clusFile = openClusterFile(id);
+		File *clusFile = resFile(id);
+		assert(clusFile);
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
 		if (clusFile->ioFailed())
 			error("Can't read %d bytes from cluster %d\n", size, id);
-		clusFile->close();
-		delete clusFile;
 	} else
 		_memMan->setCondition(memHandle, MEM_DONT_FREE);
+
 	memHandle->refCount++;
 	if (memHandle->refCount > 20) {
 		debug(1, "%d references to id %d. Guess there's something wrong.", memHandle->refCount, id);
@@ -269,19 +287,38 @@ FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 	return (FrameHeader*)frameFile;
 }
 
-File *ResMan::openClusterFile(uint32 id) {
-	File *clusFile = new File();
-	char fileName[15];
-	sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1]->label);
-	clusFile->open(fileName);
+File *ResMan::resFile(uint32 id) {
+	Clu *cluster = _prj.clu + ((id >> 24) - 1);
+	if (cluster->file == NULL) {
+		_openClus++;
+		if (_openCluEnd == NULL) {
+			_openCluStart = _openCluEnd = cluster;
+		} else {
+			_openCluEnd->nextOpen = cluster;
+			_openCluEnd = cluster;
+		}
+		cluster->file = new File();
+		char fileName[15];
+		sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1].label);
+		cluster->file->open(fileName);
 
-	if (!clusFile->isOpen()) {
-		char msg[512];
-		sprintf(msg, "Couldn't open game cluster file '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
-		guiFatalError(msg);
+		if (!cluster->file->isOpen()) {
+			char msg[512];
+			sprintf(msg, "Couldn't open game cluster file '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
+			guiFatalError(msg);
+		}
+		while (_openClus > MAX_OPEN_CLUS) {
+			assert(_openCluStart);
+			Clu *closeClu = _openCluStart;
+			_openCluStart = _openCluStart->nextOpen;
+			
+			closeClu->file->close();
+			delete closeClu->file;
+			closeClu->file = NULL;
+			closeClu->nextOpen = NULL;
+		}
 	}
-
-	return clusFile;
+	return cluster->file;
 }
 
 MemHandle *ResMan::resHandle(uint32 id) {
@@ -290,7 +327,7 @@ MemHandle *ResMan::resHandle(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
-	return &(_prj.clu[cluster]->grp[group]->resHandle[id & 0xFFFF]);
+	return &(_prj.clu[cluster].grp[group].resHandle[id & 0xFFFF]);
 }
 
 uint32 ResMan::resLength(uint32 id) {
@@ -299,7 +336,7 @@ uint32 ResMan::resLength(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
-	return _prj.clu[cluster]->grp[group]->length[id & 0xFFFF];
+	return _prj.clu[cluster].grp[group].length[id & 0xFFFF];
 }
 
 uint32 ResMan::resOffset(uint32 id) {
@@ -308,7 +345,7 @@ uint32 ResMan::resOffset(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
-	return _prj.clu[cluster]->grp[group]->offset[id & 0xFFFF];
+	return _prj.clu[cluster].grp[group].offset[id & 0xFFFF];
 }
 
 void ResMan::openCptResourceBigEndian(uint32 id) {
