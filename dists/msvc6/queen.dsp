@@ -165,10 +165,6 @@ SOURCE=..\..\queen\resource.h
 
 SOURCE=..\..\queen\restables.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=..\..\queen\version.cpp
-# End Source File
 # End Group
 # End Target
 # End Project
