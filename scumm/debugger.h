@@ -75,6 +75,7 @@ protected:
 
 	bool Cmd_PrintActor(int argc, const char **argv);
 	bool Cmd_PrintBox(int argc, const char **argv);
+	bool Cmd_Actor(int argc, const char **argv);
 	
 	void printBox(int box);
 	

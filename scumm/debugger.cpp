@@ -55,7 +55,8 @@ void ScummDebugger::attach(Scumm *s)
 		DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
 
-		DCmd_Register("actor", &ScummDebugger::Cmd_PrintActor);
+		DCmd_Register("actor", &ScummDebugger::Cmd_Actor);
+		DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
 		DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
 
@@ -264,7 +265,7 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 		_s->_fullRedraw = 1;
 		return false;
 	} else {
-		Debug_Printf("Current room: %d [%d]\n", _s->_currentRoom, _s->_roomResource);
+		Debug_Printf("Current room: %d [%d] - use 'room <roomnum>' to switch\n", _s->_currentRoom, _s->_roomResource);
 		return true;
 	}
 }
@@ -278,6 +279,8 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 		_s->_saveLoadCompatible = false;
 		
 		_detach_now = true;
+	} else {
+		Debug_Printf("Syntax: savegame <slotnum>\n");
 	}
 	return false;
 }
@@ -291,10 +294,39 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 		_s->_saveLoadCompatible = false;
 		
 		_detach_now = true;
+	} else {
+		Debug_Printf("Syntax: savegame <slotnum>\n");
 	}
 	return false;
 }
 
+bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
+	Actor *a;
+	int actnum;
+
+	if (argc < 3) {
+		Debug_Printf("Syntax: actor <actornum> <command> <parameter>\n");
+		return true;
+	}
+
+	actnum = atoi(argv[1]);
+	if (actnum >= _s->NUM_ACTORS) {
+		Debug_Printf("Actor %d is out of range (range: 1 - %d)\n", actnum, _s->NUM_ACTORS);
+		return true;
+	}
+
+	a = &_s->_actors[actnum];
+
+	if (!strcmp(argv[2], "ignoreboxes")) {
+			a->ignoreBoxes = atoi(argv[3]);
+			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+	} else {
+			Debug_Printf("Unknown actor command '%s'\n", argv[2]);
+	}
+
+	return true;
+	
+}
 bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
