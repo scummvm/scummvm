@@ -2934,7 +2934,7 @@ void ScummEngine_v6::o6_pickOneOfDefault() {
 
 void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
-	
+
 	// dummy opcode in tentacle
 	if (_version == 6)
 		return;
@@ -2948,7 +2948,7 @@ void ScummEngine_v6::o6_stampObject() {
 		if (state == 0) {
 			state = 255;
 		}
-		warning("o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
+		debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
@@ -3025,7 +3025,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, 5, 0, num);
+		defineArray(value, 5, 0, num + 1);
 		if (num > 0) {
 			int16 counter = 0;
 			do {
@@ -3033,7 +3033,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 			} while (++counter < num);
 		}
 
-		shuffleArray(value, 1, num);
+		shuffleArray(value, 1, num-1);
 		writeArray(value, 0, 0, 2);
 		push(readArray(value, 0, 1));
 		return;
@@ -3050,9 +3050,9 @@ void ScummEngine_v6::o6_pickVarRandom() {
 		var_C = READ_LE_UINT16(ptr + 4);
 	}
 
-	if (var_A <= num) {
+	if (var_A-1 <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);
-		shuffleArray(value, 1, var_A - 1);
+		shuffleArray(value, 1, num - 1);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {
@@ -3113,7 +3113,39 @@ void ScummEngine_v6::o6_unknownE1() {
 }
 
 void ScummEngine_v6::o6_unknownE4() {
-	warning("o6_unknownE4(%d) stub", pop());
+	int arg = pop();
+	const byte *room = getResourceAddress(rtRoom, _roomResource);
+	const byte *boxd = NULL, *boxm = NULL;
+	int32 dboxSize, mboxSize;
+
+	ResourceIterator boxds(room, false);
+	for (int i = 0; i < arg; i++)
+		boxd = boxds.findNext(MKID('BOXD'));
+
+	if (!boxd)
+		error("ScummEngine_v6::o6_unknownE4: Can't find dboxes for set %d", arg);
+
+	dboxSize = READ_BE_UINT32(boxd + 4);
+	byte *matrix = createResource(rtMatrix, 2, dboxSize);
+
+	assert(matrix);
+	memcpy(matrix, boxd, dboxSize);
+
+	ResourceIterator boxms(room, false);
+	for (int i = 0; i < arg; i++)
+		boxm = boxms.findNext(MKID('BOXM'));
+
+	if (!boxm)
+		error("ScummEngine_v6::o6_unknownE4: Can't find mboxes for set %d", arg);
+
+	mboxSize = READ_BE_UINT32(boxd + 4);
+	matrix = createResource(rtMatrix, 1, mboxSize);
+
+	assert(matrix);
+	memcpy(matrix, boxm, mboxSize);
+
+	if(!(_features & GF_HUMONGOUS))
+		showActors();
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
