@@ -350,9 +350,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 	do {
 		a = od->parentstate;
 		if (!od->parent) {
-			// Ignore FlObjects (they are drawn some other place)
-			if (od->fl_object_index == 0)
-				drawObject(i, arg);
+			drawObject(i, arg);
 			break;
 		}
 		od = &_objs[od->parent];
@@ -403,6 +401,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	if (_BgNeedsRedraw)
 		arg = 0;
+
+	if (od.obj_nr == 0)
+		return;
 
 	checkRange(_numGlobalObjects - 1, 0, od.obj_nr, "Object %d out of range in drawObject");
 
