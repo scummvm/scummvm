@@ -124,6 +124,8 @@ public:
 	
 	void remapActor(int b, int c, int d, int e);
 	void walkActorOld();
+	
+	bool isInCurrentRoom()	{ return room == _scumm->_currentRoom; }
 };
 
 #endif
