@@ -408,19 +408,22 @@ void Scumm::setupSound()
 	IMuse *se = _imuse;
 	if (se) {
 		se->setBase(res.address[rtSound]);
-		if (!_soundVolumePreset) {
-			if (se->get_music_volume() == 0)
-				se->set_music_volume(60);
-			se->set_master_volume(125);
-			_sound_volume_music = se->get_music_volume();
-			//_sound_volume_master = (se->get_master_volume() / 127);
-			_sound_volume_master = se->get_master_volume();
+		if (!scummcfg->get("music_volume", "scummvm"))
+			_sound_volume_music = 60;
+		else
+			_sound_volume_music = atoi(scummcfg->get("music_volume", "scummvm"));
+		if (!scummcfg->get("master_volume", "scummvm"))
+			_sound_volume_master = 125;
+		else
+			_sound_volume_master = atoi(scummcfg->get("master_volume", "scummvm"));			
+		if (!scummcfg->get("sfx_volume", "scummvm"))
+			_sound_volume_sfx = 100;
+		else
+			_sound_volume_sfx = atoi(scummcfg->get("sfx_volume", "scummvm"));
 
-		}
-		else {
-			se->set_music_volume(_sound_volume_music);
-			se->set_master_volume(_sound_volume_master);
-		}
+		se->set_master_volume(_sound_volume_master);
+		se->set_music_volume(_sound_volume_music);
+		_mixer->set_volume(_sound_volume_sfx);
 	}
 	_sfxFile = openSfxFile();
 }
@@ -431,6 +434,7 @@ void Scumm::pauseSounds(bool pause)
 	if (se)
 		se->pause(pause);
 	_soundsPaused = pause;
+	_mixer->pause(pause);	
 }
 
 enum {

@@ -124,6 +124,9 @@ int main(int argc, char *argv[])
 	} else {
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
+		g_scumm->_sound_volume_master = 0;
+		g_scumm->_sound_volume_music = detector._music_volume;
+		g_scumm->_sound_volume_sfx = detector._sfx_volume;
 
 		/* bind to Gui */
 		scumm->_gui = &gui;
