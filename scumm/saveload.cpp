@@ -326,14 +326,14 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	const SaveLoadEntry *actorEntries = Actor::getSaveLoadEntries();
 
 	const SaveLoadEntry verbEntries[] = {
-		MKLINE(VerbSlot, x, sleInt16, VER(8)),
-		MKLINE(VerbSlot, y, sleInt16, VER(8)),
-		MKLINE(VerbSlot, right, sleInt16, VER(8)),
-		MKLINE(VerbSlot, bottom, sleInt16, VER(8)),
-		MKLINE(VerbSlot, old.left, sleInt16, VER(8)),
-		MKLINE(VerbSlot, old.top, sleInt16, VER(8)),
-		MKLINE(VerbSlot, old.right, sleInt16, VER(8)),
-		MKLINE(VerbSlot, old.bottom, sleInt16, VER(8)),
+		MKLINE(VerbSlot, curRect.left, sleInt16, VER(8)),
+		MKLINE(VerbSlot, curRect.top, sleInt16, VER(8)),
+		MKLINE(VerbSlot, curRect.right, sleInt16, VER(8)),
+		MKLINE(VerbSlot, curRect.bottom, sleInt16, VER(8)),
+		MKLINE(VerbSlot, oldRect.left, sleInt16, VER(8)),
+		MKLINE(VerbSlot, oldRect.top, sleInt16, VER(8)),
+		MKLINE(VerbSlot, oldRect.right, sleInt16, VER(8)),
+		MKLINE(VerbSlot, oldRect.bottom, sleInt16, VER(8)),
 
 		MKLINE_OLD(VerbSlot, verbid, sleByte, VER(8), VER(11)),
 		MKLINE(VerbSlot, verbid, sleInt16, VER(12)),

@@ -844,8 +844,8 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->imgindex = 0;
 		vs->prep = prep;
 		
-		vs->x = x;
-		vs->y = y;
+		vs->curRect.left = x;
+		vs->curRect.top = y;
 		
 		// FIXME: again, this map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french

@@ -32,9 +32,8 @@ enum {
 };
 
 struct VerbSlot {
-	int16 x, y;
-	int16 right, bottom;
-	Common::Rect old;
+	Common::Rect curRect;
+	Common::Rect oldRect;
 	uint16 verbid;
 	uint8 color, hicolor, dimcolor, bkcolor, type;
 	uint8 charset_nr, curmode;

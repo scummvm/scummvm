@@ -1073,8 +1073,8 @@ void ScummEngine::scummInit() {
 
 	for (i = 0; i < _numVerbs; i++) {
 		_verbs[i].verbid = 0;
-		_verbs[i].right = _screenWidth - 1;
-		_verbs[i].old.left = -1;
+		_verbs[i].curRect.right = _screenWidth - 1;
+		_verbs[i].oldRect.left = -1;
 		_verbs[i].type = 0;
 		_verbs[i].color = 2;
 		_verbs[i].hicolor = 0;

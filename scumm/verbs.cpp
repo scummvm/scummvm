@@ -345,13 +345,13 @@ int ScummEngine::checkMouseOver(int x, int y) const {
 
 	vs = &_verbs[i];
 	do {
-		if (vs->curmode != 1 || !vs->verbid || vs->saveid || y < vs->y || y >= vs->bottom)
+		if (vs->curmode != 1 || !vs->verbid || vs->saveid || y < vs->curRect.top || y >= vs->curRect.bottom)
 			continue;
 		if (vs->center) {
-			if (x < -(vs->right - vs->x - vs->x) || x >= vs->right)
+			if (x < -(vs->curRect.right - 2 * vs->curRect.left) || x >= vs->curRect.right)
 				continue;
 		} else {
-			if (x < vs->x || x >= vs->right)
+			if (x < vs->curRect.left || x >= vs->curRect.right)
 				continue;
 		}
 
@@ -372,15 +372,15 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
 		if (vs->type == kImageVerbType) {
-			drawVerbBitmap(verb, vs->x, vs->y);
+			drawVerbBitmap(verb, vs->curRect.left, vs->curRect.top);
 			return;
 		}
 		
 		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
-		_string[4].xpos = vs->x;
-		_string[4].ypos = vs->y;
+		_string[4].xpos = vs->curRect.left;
+		_string[4].ypos = vs->curRect.top;
 		_string[4].right = _screenWidth - 1;
 		_string[4].center = vs->center;
 
@@ -412,9 +412,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		drawString(4);
 		_charset->_center = tmp;
 
-		vs->right = _charset->_str.right;
-		vs->bottom = _charset->_str.bottom;
-		vs->old = _charset->_str;
+		vs->curRect.right = _charset->_str.right;
+		vs->curRect.bottom = _charset->_str.bottom;
+		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
 	} else {
 		restoreVerbBG(verb);
@@ -426,9 +426,9 @@ void ScummEngine::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (vs->old.left != -1) {
-		restoreBG(vs->old, vs->bkcolor);
-		vs->old.left = -1;
+	if (vs->oldRect.left != -1) {
+		restoreBG(vs->oldRect, vs->bkcolor);
+		vs->oldRect.left = -1;
 	}
 }
 
@@ -490,12 +490,9 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	}
 
 	vst = &_verbs[verb];
-	vst->right = vst->x + imgw * 8;
-	vst->bottom = vst->y + imgh * 8;
-	vst->old.left = vst->x;
-	vst->old.right = vst->right;
-	vst->old.top = vst->y;
-	vst->old.bottom = vst->bottom;
+	vst->curRect.right = vst->curRect.left + imgw * 8;
+	vst->curRect.bottom = vst->curRect.right + imgh * 8;
+	vst->oldRect = vst->curRect;
 
 	gdi.enableZBuffer();
 

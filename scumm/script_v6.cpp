@@ -1867,8 +1867,8 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->hicolor = pop();
 		break;
 	case 128:		// SO_VERB_AT
-		vs->y = pop();
-		vs->x = pop();
+		vs->curRect.top = pop();
+		vs->curRect.left = pop();
 		break;
 	case 129:		// SO_VERB_ON
 		vs->curmode = 1;
@@ -2682,11 +2682,11 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		break;
 	case 213:
 		slot = getVerbSlot(args[1], 0);
-		push(_verbs[slot].x);
+		push(_verbs[slot].curRect.left);
 		break;
 	case 214:
 		slot = getVerbSlot(args[1], 0);
-		push(_verbs[slot].y);
+		push(_verbs[slot].curRect.top);
 		break;
 	case 215:
 		if ((_extraBoxFlags[args[1]] & 0x00FF) == 0x00C0) {

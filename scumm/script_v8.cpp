@@ -1155,8 +1155,8 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->imgindex = 0;
 		break;
 	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
-		vs->y = pop();
-		vs->x = pop();
+		vs->curRect.top = pop();
+		vs->curRect.left = pop();
 		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
 		vs->curmode = 1;

@@ -2421,8 +2421,8 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->hicolor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:		// SO_VERB_AT
-			vs->x = getVarOrDirectWord(PARAM_1);
-			vs->y = getVarOrDirectWord(PARAM_2);
+			vs->curRect.left = getVarOrDirectWord(PARAM_1);
+			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh verison of indy3ega used different interface, so adjust values.
 			if ((_features & GF_MACINTOSH) && (_gameId == GID_INDY3)) {
 				if ((verb > 0) && (verb < 14) || (verb > 31) && (verb < 35)) {
@@ -2430,23 +2430,23 @@ void ScummEngine_v5::o5_verbOps() {
 					case 1:
 					case 2:
 					case 9:
-						vs->x += 16;
+						vs->curRect.left += 16;
 						break;
 					case 10:
 					case 11:
 					case 12:
-						vs->x += 36;
+						vs->curRect.left += 36;
 						break;
 					case 4:
 					case 5:
 					case 8:
-						vs->x += 60;
+						vs->curRect.left += 60;
 						break;
 					case 13:
 					case 32:
 					case 33:
 					case 34:
-						vs->x += 90;
+						vs->curRect.left += 90;
 						break;
 					}
 				}
@@ -2456,22 +2456,22 @@ void ScummEngine_v5::o5_verbOps() {
 					switch (verb) {
 					case 90:
 					case 91:
-						vs->y -= 7;
+						vs->curRect.top -= 7;
 						break;
 					case 92:
-						vs->y -= 6;
+						vs->curRect.top -= 6;
 						break;
 					case 93:
-						vs->y -= 4;
+						vs->curRect.top -= 4;
 						break;
 					case 94:
-						vs->y -= 3;
+						vs->curRect.top -= 3;
 						break;
 					case 95:
-						vs->y -= 1;
+						vs->curRect.top -= 1;
 						break;
 					case 97:
-						vs->y -= 5;
+						vs->curRect.top -= 5;
 					}
 				}
 			}
