@@ -207,7 +207,9 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return NULL;
-	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
+	// stops pass to adventure loom demo from working properly
+	if (_gameId != GID_MONKEY_EGA)
+		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 	if (_features & GF_SMALL_HEADER) {
 		if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
 			return (Box *)(ptr + box * (SIZEOF_BOX - 2) + 1);
