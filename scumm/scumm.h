@@ -979,11 +979,6 @@ public:
 	bool _silentDigitalImuse, _noDigitalSamples;
 	int current_cd_sound;	// Used in class Sound
 
-protected:
-	/* Walkbox / Navigation class */
-	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
-	byte *_boxPathVertexHeap, *_boxMatrixPtr1, *_boxMatrixPtr3;	
-
 public:
 	uint16 _extraBoxFlags[65];
 

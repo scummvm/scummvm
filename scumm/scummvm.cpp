@@ -397,12 +397,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_noDigitalSamples = 0;
 	_saveSound = 1;
 	current_cd_sound = 0;
-	_maxBoxVertexHeap = 0;
-	_boxPathVertexHeapIndex = 0;
-	_boxMatrixItem = 0;
-	_boxPathVertexHeap = NULL;
-	_boxMatrixPtr1 = NULL;
-	_boxMatrixPtr3 = NULL;
 	memset(_extraBoxFlags,0,sizeof(_extraBoxFlags));
 	memset(_scaleSlots,0,sizeof(_scaleSlots));
 	_charset = NULL;

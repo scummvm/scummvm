@@ -88,7 +88,6 @@ struct PathVertex {		/* Linked list of walkpath nodes */
 
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
 static ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
-static PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 
 
 byte Scumm::getMaskFromBox(int box) {
@@ -751,41 +750,109 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 	return false;
 }
 
-#define BOX_DEBUG 0
 
-#if BOX_DEBUG
-static void printMatrix(byte *boxm, int num) {
-	int i;
-	for (i = 0; i < num; i++) {
-		printf("%d: ", i);
-		while (*boxm != 0xFF) {
-			printf("%d, ", *boxm);
-			boxm++;
-		}
-		boxm++;
-		printf("\n");
+class BoxHeap {
+	int heapSize, heapCurrentIndex;
+	byte *heapCurrent, *heapStart;
+	
+	void *getHeapBlock(int size) {
+		byte *ptr = heapCurrent;
+	
+		heapCurrent += size;
+		heapCurrentIndex += size;
+	
+		if (heapCurrentIndex >= heapSize)
+			error("Box path vertex heap overflow");
+	
+		return ptr;
 	}
-}
+	
+public:
+	BoxHeap() {
+		heapSize = 1000;
+		heapStart = heapCurrent = (byte *)calloc(heapSize, 1);
+		heapCurrentIndex = 0;
+	}
+	
+	~BoxHeap() {
+		free(heapStart);
+	}
 
-static void printMatrix2(byte *matrix, int num) {
-	int i, j;
-	printf("    ");
-	for (i = 0; i < num; i++)
-		printf("%2d ", i);
-	printf("\n");
-	for (i = 0; i < num; i++) {
-		printf("%2d: ", i);
-		for (j = 0; j < num; j++) {
-			int val = matrix[i * 64 + j];
-			if (val == 250)
-				printf(" ? ");
-			else
-				printf("%2d ", val);
+	PathNode *unkMatrixProc2(PathVertex *vtx, int i) {
+		PathNode *node;
+	
+		if (vtx == NULL)
+			return NULL;
+	
+		node = (PathNode *)getHeapBlock(sizeof(PathNode));
+		node->index = i;
+		node->left = 0;
+		node->right = 0;
+	
+		if (!vtx->right) {
+			vtx->left = node;
+		} else {
+			vtx->right->left = node;
+			node->right = vtx->right;
 		}
-		printf("\n");
+	
+		vtx->right = node;
+	
+		return vtx->right;
 	}
+	
+
+	PathVertex *newPathVertex() {
+		// Reset the heap
+		heapCurrent = heapStart;
+		heapCurrentIndex = 0;
+		
+		// Add a single new PathVertex to the heap
+		return (PathVertex *)getHeapBlock(sizeof(PathVertex));
+	}
+	
+};
+
+class BoxMatrix {
+	int matrixSize;
+	byte *matrixPtr;
+	
+public:
+	BoxMatrix(byte *matrix) {
+		assert(matrix);
+		matrixSize = 0;
+		matrixPtr = matrix;
+	}
+	
+	void add(byte b) {
+		if (++matrixSize > BOX_MATRIX_SIZE)
+			error("Box matrix overflow");
+		*matrixPtr++ = b;
+	}
+};
+
+
+PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node) {
+	if (node == NULL || vtx == NULL)
+		return NULL;
+
+	if (!node->right) {
+		vtx->left = node->left;
+	} else {
+		node->right->left = node->left;
+	}
+
+	if (!node->left) {
+		vtx->right = node->right;
+	} else {
+		node->left->right = node->right;
+	}
+
+	if (vtx->left)
+		return vtx;
+
+	return NULL;
 }
-#endif
 
 void Scumm::createBoxMatrix() {
 	int num, i, j;
@@ -793,38 +860,19 @@ void Scumm::createBoxMatrix() {
 	int table_1[66], table_2[66];
 	int counter, val;
 	int code;
+	byte *distanceMatrix;
 
 
 	// A heap (an optiimsation to avoid calling malloc/free extremly often)
-	_maxBoxVertexHeap = 1000;
-	createResource(rtMatrix, 4, _maxBoxVertexHeap);
-	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
-	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
+	BoxHeap heap;
 
 	// Temporary 64*65 distance matrix
-	createResource(rtMatrix, 3, 65 * 64);
-	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
+	distanceMatrix = (byte *)calloc(65, 64);
 
 	// The result "matrix" in the special format used by Scumm.
-	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
-	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
+	BoxMatrix boxMatrix(createResource(rtMatrix, 1, BOX_MATRIX_SIZE));
 
 	num = getNumBoxes();
-
-#if BOX_DEBUG
-printf("Creating box matrix...\n");
-	for (i = 0; i < num; i++) {
-		BoxCoords coords;
-		flags = getBoxFlags(i);
-		getBoxCoordinates(i, &coords);
-
-		printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n",
-								i,
-								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
-								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
-								flags);
-	}
-#endif
 
 	// Initialise the distance matrix: each box has distance 0 to itself,
 	// and distance 1 to its direct neighbors. Initially, it has distance
@@ -832,36 +880,31 @@ printf("Creating box matrix...\n");
 	for (i = 0; i < num; i++) {
 		for (j = 0; j < num; j++) {
 			if (i == j) {
-				_boxMatrixPtr3[i * 64 + j] = 0;
+				distanceMatrix[i * 64 + j] = 0;
 			} else if (areBoxesNeighbours(i, j)) {
-				_boxMatrixPtr3[i * 64 + j] = 1;
+				distanceMatrix[i * 64 + j] = 1;
 			} else {
-				_boxMatrixPtr3[i * 64 + j] = 250;
+				distanceMatrix[i * 64 + j] = 250;
 			}
 		}
 	}
 	
-#if BOX_DEBUG
-	printf("Initial matrix:\n");
-	printMatrix2(_boxMatrixPtr3, num);
-#endif
-
 	// Iterate over all boxes
 	for (j = 0; j < num; j++) {
 		flags = getBoxFlags(j);
 		if (flags & kBoxInvisible) {
 			// Locked/invisible boxes are only reachable from themselves.
-			addToBoxMatrix(0xFF);
-			addToBoxMatrix(j);
-			addToBoxMatrix(j);
-			addToBoxMatrix(j);
+			boxMatrix.add(0xFF);
+			boxMatrix.add(j);
+			boxMatrix.add(j);
+			boxMatrix.add(j);
 		} else {
 			PathNode *node, *node2 = NULL;
-			PathVertex *vtx = addPathVertex();
+			PathVertex *vtx = heap.newPathVertex();
 			for (i = 0; i < num; i++) {
 				flags = getBoxFlags(j);
 				if (!(flags & kBoxInvisible)) {
-					node = unkMatrixProc2(vtx, i);
+					node = heap.unkMatrixProc2(vtx, i);
 					if (i == j)
 						node2 = node;
 				}
@@ -873,7 +916,7 @@ printf("Creating box matrix...\n");
 
 			counter = 250;
 			while (node) {
-				val = _boxMatrixPtr3[j * 64 + node->index];
+				val = distanceMatrix[j * 64 + node->index];
 				table_1[node->index] = val;
 				if (val < counter)
 					counter = val;
@@ -900,7 +943,7 @@ printf("Creating box matrix...\n");
 				vtx = unkMatrixProc1(vtx, node2);
 				node = vtx ? vtx->left : NULL;
 				while (node) {
-					code = _boxMatrixPtr3[node2->index * 64 + node->index];
+					code = distanceMatrix[node2->index * 64 + node->index];
 					code += table_1[node2->index];
 					if (code < table_1[node->index]) {
 						table_1[node->index] = code;
@@ -910,85 +953,33 @@ printf("Creating box matrix...\n");
 				}
 			}
 
-			addToBoxMatrix(0xFF);
+			boxMatrix.add(0xFF);
 			for (i = 1; i < num; i++) {
 				if (table_2[i - 1] != -1) {
-					addToBoxMatrix(i - 1);	/* lo */
+					boxMatrix.add(i - 1);	/* lo */
 					while (table_2[i - 1] == table_2[i]) {
 						++i;
 						if (i == num)
 							break;
 					}
-					addToBoxMatrix(i - 1);	/* hi */
-					addToBoxMatrix(table_2[i - 1]);	/* dst */
+					boxMatrix.add(i - 1);	/* hi */
+					boxMatrix.add(table_2[i - 1]);	/* dst */
 				}
 			}
 			if (i == num && table_2[i - 1] != -1) {
-				addToBoxMatrix(i - 1);	/* lo */
-				addToBoxMatrix(i - 1);	/* hi */
-				addToBoxMatrix(table_2[i - 1]);	/* dest */
+				boxMatrix.add(i - 1);	/* lo */
+				boxMatrix.add(i - 1);	/* hi */
+				boxMatrix.add(table_2[i - 1]);	/* dest */
 			}
 		}
 	}
 
-	addToBoxMatrix(0xFF);
-	nukeResource(rtMatrix, 4);
-	nukeResource(rtMatrix, 3);
+	boxMatrix.add(0xFF);
 	
-#if BOX_DEBUG
-	printf("End result:\n");
-	printMatrix2(_boxMatrixPtr3, num);
-	printMatrix(getBoxMatrixBaseAddr(), num);
-#endif
+	free(distanceMatrix);
 }
 
-PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node) {
-	if (node == NULL || vtx == NULL)
-		return NULL;
-
-	if (!node->right) {
-		vtx->left = node->left;
-	} else {
-		node->right->left = node->left;
-	}
-
-	if (!node->left) {
-		vtx->right = node->right;
-	} else {
-		node->left->right = node->right;
-	}
-
-	if (vtx->left)
-		return vtx;
-
-	return NULL;
-}
-
-PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i) {
-	PathNode *node;
-
-	if (vtx == NULL)
-		return NULL;
-
-	node = (PathNode *)addToBoxVertexHeap(sizeof(PathNode));
-	node->index = i;
-	node->left = 0;
-	node->right = 0;
-
-	if (!vtx->right) {
-		vtx->left = node;
-	} else {
-		vtx->right->left = node;
-		node->right = vtx->right;
-	}
-
-	vtx->right = node;
-
-	return vtx->right;
-}
-
-
-/* Check if two boxes are neighbours */
+/** Check if two boxes are neighbours. */
 bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	int j, k, m, n;
 	int tmp_x, tmp_y;
@@ -1096,31 +1087,6 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	} while (--j);
 
 	return result;
-}
-
-void Scumm::addToBoxMatrix(byte b) {
-	if (++_boxMatrixItem > BOX_MATRIX_SIZE)
-		error("Box matrix overflow");
-	*_boxMatrixPtr1++ = b;
-}
-
-void *Scumm::addToBoxVertexHeap(int size) {
-	byte *ptr = _boxPathVertexHeap;
-
-	_boxPathVertexHeap += size;
-	_boxPathVertexHeapIndex += size;
-
-	if (_boxPathVertexHeapIndex >= _maxBoxVertexHeap)
-		error("Box path vertex heap overflow");
-
-	return ptr;
-}
-
-PathVertex *Scumm::addPathVertex() {
-	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
-	_boxPathVertexHeapIndex = 0;
-
-	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
 void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM::Point gateLoc[5]) {
