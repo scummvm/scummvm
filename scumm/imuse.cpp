@@ -2316,8 +2316,8 @@ void Player::parse_sysex(byte *p, uint len)
 			}
 		} else {
 			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
-			return;
 		}
+		return;
 	}
 	--len;
 
