@@ -117,7 +117,6 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_vm = this;
 
 	_walkthroughDialog->setGameName(detector->_game.name);
-	_walkthroughDialog->create();
 }
 
 SagaEngine::~SagaEngine() {
@@ -216,6 +215,8 @@ void SagaEngine::go() {
 	if (!_render->initialized()) {
 		return;
 	}
+
+	_walkthroughDialog->create();
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, _soundEnabled);
