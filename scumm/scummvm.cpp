@@ -1053,9 +1053,10 @@ void Scumm::initScummVars() {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
 		switch (_midiDriver) {
+		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
 		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
 		case MD_PCSPK:
-		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 0; break;
+		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
 		default:       
 			if (_features & GF_SMALL_HEADER)
 				VAR(VAR_SOUNDCARD) = 4;
