@@ -1,7 +1,7 @@
 # Common build rules, used by the sub modules and their module.mk files
 
 MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
-MODULE_LIB-$(MODULE) := $(MODULE)/lib$(MODULE).a
+MODULE_LIB-$(MODULE) := $(MODULE)/lib$(notdir $(MODULE)).a
 
 ifdef PLUGIN
 # Plugin build rule
