@@ -111,6 +111,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("master_volume", 192);
 	ConfMan.registerDefault("music_volume", 192);
 	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
