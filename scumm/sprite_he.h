@@ -27,7 +27,7 @@ namespace Scumm {
 
 enum SpriteFlags {
 	kSF01      = (1 << 0),
-	kSF02      = (1 << 1),
+	kSF02      = (1 << 1), // kSFNeedRedraw
 	kSF03      = (1 << 2),
 	kSF04      = (1 << 3),
 	kSFZoomed  = (1 << 4),
@@ -51,7 +51,7 @@ enum SpriteFlags {
 	kSF23      = (1 << 22),
 	kSF24      = (1 << 23),
 	kSF25      = (1 << 24),
-	kSF26      = (1 << 25),
+	kSF26      = (1 << 25), // kSFBlitDirectly
 	kSF27      = (1 << 26),
 	kSF28      = (1 << 27),
 	kSF29      = (1 << 28),

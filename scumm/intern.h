@@ -935,9 +935,9 @@ protected:
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);
-	void spriteGroupCheck(int sprGrpId);
-	void spriteMarkIfInGroup(int sprGrpId, uint32 flags);
-
+	void spriteGroupCheck(int spriteGroupId);
+	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
+	void spritesBlitToScreen();
 	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 	/* HE version 90 script opcodes */

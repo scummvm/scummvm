@@ -543,12 +543,63 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 	_numSpritesToProcess = 0;
 }
 
-void ScummEngine_v90he::spriteGroupCheck(int sprGrpId) {
-	// XXX
+void ScummEngine_v90he::spriteGroupCheck(int spriteGroupId) {
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 }
 
-void ScummEngine_v90he::spriteMarkIfInGroup(int sprGrpId, uint32 flags) {
-	// XXX
+void ScummEngine_v90he::spriteMarkIfInGroup(int spriteGroupId, uint32 flags) {
+	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->group_num == spriteGroupId) {
+			spi->flags |= flags;
+		}		
+	}
+}
+
+void ScummEngine_v90he::spritesBlitToScreen() {
+	int xmin, xmax, ymin, ymax;
+	xmin = ymin = 1234;
+	xmax = ymax = -1234; 
+	bool firstLoop = true;
+	bool refreshScreen = false;
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (!(spi->flags & kSF31) && (spi->flags & kSF01)) {
+			spi->flags &= ~kSF01;
+			if (spi->bbox_xmin <= spi->bbox_xmax && spi->bbox_ymin <= spi->bbox_ymax) {
+				if (spi->flags & kSF26) {
+					gdi.copyVirtScreenBuffers(Common::Rect(spi->bbox_xmin, spi->bbox_ymin, spi->bbox_ymin, spi->bbox_ymax)); // XXX 0, 0x40000000);
+				}
+			} else if (firstLoop) {
+				xmin = spi->bbox_xmin;
+				ymin = spi->bbox_ymin;
+				xmax = spi->bbox_xmax;
+				ymax = spi->bbox_ymax;
+				firstLoop = false;
+			} else {
+				if (xmin < spi->bbox_xmin) {
+					xmin = spi->bbox_xmin;
+				}
+				if (ymin < spi->bbox_ymin) {
+					ymin = spi->bbox_ymin;
+				}
+				if (xmax > spi->bbox_xmax) {
+					xmax = spi->bbox_xmax;
+				}
+				if (ymax > spi->bbox_ymax) {
+					ymax = spi->bbox_ymax;
+				}
+				refreshScreen = true;
+			}
+			if (!(spi->flags & (kSF02 | kSF30)) && (spi->res_id != 0)) {
+				spi->flags |= kSF02;
+			}			
+		}
+	}
+	if (refreshScreen) {
+		gdi.copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax)); // , 0, 0x40000000);
+	}
 }
 
 } // End of namespace Scumm
