@@ -757,7 +757,6 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len)
 {
 	mad_fixed_t const *ch;
 	const int16 *vol_tab = _mixer->_volume_table;
-//	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 
 	if (_to_be_destroyed) {
@@ -770,7 +769,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len)
 
 		/* Skip _silence_cut a the start */
 		if ((_pos_in_frame < _synth.pcm.length) && (_silence_cut > 0)) {
-			int diff = _synth.pcm.length - _pos_in_frame;
+			uint32 diff = _synth.pcm.length - _pos_in_frame;
 			
 			if (diff > _silence_cut)
 				diff = _silence_cut;
@@ -852,7 +851,6 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len)
 {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
-//	unsigned char volume = _mixer->_music_volume * 32 / 255;
 	unsigned char volume = _mixer->_music_volume / 8;
 
 	if (_to_be_destroyed) {
