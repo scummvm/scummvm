@@ -192,6 +192,7 @@ GameDetector::GameDetector() {
 	_save_slot = 0;
 	
 	_saveconfig = false;
+	_confirmExit = false;
 	
 #ifndef _WIN32_WCE
 	_gfx_mode = GFX_DOUBLESIZE;
@@ -300,6 +301,8 @@ void GameDetector::updateconfig() {
 		_gameTempo = strtol(val, NULL, 0);
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
+
+	_confirmExit = g_config->getBool("confirm_exit", _confirmExit ? true : false);
 
 	_multi_midi = g_config->getBool ("multi_midi", _multi_midi);
 	_native_mt32 = g_config->getBool ("native_mt32", _native_mt32);

@@ -148,6 +148,7 @@ public:
 	int _save_slot;
 	
 	bool _saveconfig;
+	bool _confirmExit;
 
 public:
 	OSystem *createSystem();

@@ -387,16 +387,23 @@ public:
 	// GUI
 	NewGui *_newgui;
 
+protected:
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
+	Dialog *_confirmExitDialog;
+public:
 	// Debugger access this one, too...
 	ConsoleDialog *_debuggerDialog;
 
+protected:
 	int runDialog(Dialog *dialog);
+	void confirmexitDialog();
 	void pauseDialog();
 	void saveloadDialog();
-	void optionsDialog();
+public:
+	void optionsDialog();	// Used by SaveLoadDialog::handleCommand()
+protected:
 	char displayError(bool showCancel, const char *message, ...);
 
 protected:
@@ -1060,6 +1067,7 @@ protected:
 
 public:
 	bool _noSubtitles;	// Whether to skip all subtitles
+	bool _confirmExit;
 protected:
 
 	void initCharset(int charset);

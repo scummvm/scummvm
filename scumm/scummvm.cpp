@@ -232,6 +232,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
 	_saveLoadDialog = NULL;
+	_confirmExitDialog = NULL;
 	_debuggerDialog = NULL;
 	_fastMode = 0;
 	memset(&_rnd, 0, sizeof(RandomSource));
@@ -394,6 +395,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
 	_noSubtitles = false;
+	_confirmExit = false;
 	_numInMsgStack = 0;
 	_msgPtrToAdd = NULL;
 	_messagePtr = NULL;
@@ -545,6 +547,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	setFeatures(detector->_game.features);
 
 	_noSubtitles = detector->_noSubtitles;
+	_confirmExit = detector->_confirmExit;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
 	_language = detector->_language;
@@ -709,6 +712,7 @@ Scumm::~Scumm () {
 	delete _pauseDialog;
 	delete _optionsDialog;
 	delete _saveLoadDialog;
+	delete _confirmExitDialog;
 
 	delete _sound;
 	delete _imuse;
@@ -1459,6 +1463,9 @@ void Scumm::parseEvents() {
 			break;
 	
 		case OSystem::EVENT_QUIT:
+			if(_confirmExit)
+				confirmexitDialog();
+			else
 			_quit = true;
 			break;
 	
@@ -2299,6 +2306,15 @@ void Scumm::optionsDialog() {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
 	runDialog(_optionsDialog);
+}
+
+void Scumm::confirmexitDialog() {
+	if (!_confirmExitDialog)
+		_confirmExitDialog = new ConfirmExitDialog(_newgui, this);
+
+	if (runDialog(_confirmExitDialog)) {
+		_quit = true;
+	}
 }
 
 char Scumm::displayError(bool showCancel, const char *message, ...) {

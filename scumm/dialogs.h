@@ -167,6 +167,12 @@ public:
 		}
 };
 
+class ConfirmExitDialog : public InfoDialog {
+public:
+	ConfirmExitDialog(NewGui *gui, Scumm *scumm);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+};
+
 #ifdef _WIN32_WCE
 
 class KeysDialog : public ScummDialog {
