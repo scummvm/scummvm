@@ -54,7 +54,8 @@ class MP3InputStream : public AudioStream {
 	void refill(bool first = false);
 	inline bool eosIntern() const;
 public:
-	MP3InputStream(File *file, mad_timer_t duration, uint size = 0);
+	MP3InputStream(File *file, mad_timer_t duration);
+	MP3InputStream(File *file, uint32 size);
 	~MP3InputStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -67,15 +68,13 @@ public:
 
 
 /**
- * Playback the MP3 data in the given file for the specified duration.
+ * Play the MP3 data in the given file for the specified duration.
  *
  * @param file		file containing the MP3 data
  * @param duration	playback duration in frames (1/75th of a second), 0 means
  *					playback until EOF
- * @param size		optional, if non-zero this limits playback based on the
- * 					number of input bytes rather then a duration
  */
-MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
+MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
 	// duration == 0 means: play everything till end of file
 
 	mad_stream_init(&_stream);
@@ -83,14 +82,32 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	mad_synth_init(&_synth);
 
 	_duration = duration;
+	_file = file;
+
+	_posInFrame = 0;
+	_bufferSize = 128 * 1024;	// Default buffer size is 128K
+
+	init();
+	_file->incRef();
+}
+
+/**
+ * Play the MP3 data in the given file, using at most the given number of bytes.
+ *
+ * @param file		file containing the MP3 data
+ * @param size		limits playback based on the number of input bytes, 0 means
+ *					playback until EOF
+ */
+MP3InputStream::MP3InputStream(File *file, uint size) {
+	mad_stream_init(&_stream);
+	mad_frame_init(&_frame);
+	mad_synth_init(&_synth);
+
+	_duration = mad_timer_zero;
+	_file = file;
 
 	_posInFrame = 0;
 	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
-
-	_isStereo = false;
-	_curChannel = 0;
-	_file = file;
-	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
 
 	init();
 
@@ -114,6 +131,10 @@ MP3InputStream::~MP3InputStream() {
 }
 
 bool MP3InputStream::init() {
+	_isStereo = false;
+	_curChannel = 0;
+	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
+
 	// Read in the first chunk of the MP3 file
 	_size = _file->read(_ptr, _bufferSize);
 	if (_size <= 0) {
@@ -188,13 +209,17 @@ void MP3InputStream::refill(bool first) {
 		}
 	}
 
-	// Subtract the duration of this frame from the time left to play
-	mad_timer_t frame_duration = _frame.header.duration;
-	mad_timer_negate(&frame_duration);
-	mad_timer_add(&_duration, frame_duration);
-
-	if (!first && _file && mad_timer_compare(_duration, mad_timer_zero) <= 0)
-		_size = -1;	// Mark for EOF
+	// If a time limit was specified (i.e. if _duration is non-zero),
+	// check the play back time to determine whether we have to stop now.
+	if (_file && mad_timer_compare(_duration, mad_timer_zero) > 0) {
+		// Subtract the duration of this frame from the time left to play
+		mad_timer_t frame_duration = _frame.header.duration;
+		mad_timer_negate(&frame_duration);
+		mad_timer_add(&_duration, frame_duration);
+	
+		if (!first && mad_timer_compare(_duration, mad_timer_zero) <= 0)
+			_size = -1;	// Mark for EOF
+	}
 
 	// Synthesise the frame into PCM samples and reset the buffer position
 	mad_synth_frame(&_synth, &_frame);
@@ -265,7 +290,7 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 AudioStream *makeMP3Stream(File *file, uint32 size) {
-	return new MP3InputStream(file, mad_timer_zero, size);
+	return new MP3InputStream(file, size);
 }
 
 
@@ -379,7 +404,7 @@ void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int start
 	}
 
 	// Play it
-	AudioStream *input = new MP3InputStream(_file, durationTime, 0);
+	AudioStream *input = new MP3InputStream(_file, durationTime);
 	mixer->playInputStream(handle, input, true);
 }
 
