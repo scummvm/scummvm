@@ -1046,7 +1046,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 		height = t_height;
 		dst = t_dst + x * 2;
 		do {
-			if (run == 0) {
+			if (--run == 0) {
 				data = *src++;
 				if (data & 0x80) {
 					run = data & 0x3f;
