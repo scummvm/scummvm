@@ -1680,12 +1680,11 @@ struct PolygonDrawData {
 		int32 x2;
 		int32 y2;
 	};
-	Common::Point pts[4];
+	Common::Point pto;
 	InterArea *ia;
 	int areasNum;
 	
 	PolygonDrawData(int n) {
-		memset(pts, 0, sizeof(pts));
 		areasNum = n;
 		ia = new InterArea[areasNum];
 		memset(ia, 0, sizeof(InterArea) * areasNum);
@@ -1704,7 +1703,7 @@ struct PolygonDrawData {
   		int32 x3_step = ((p4->x - p3->x) << 0x10) / dy;
   		int32 y3_step = ((p4->y - p3->y) << 0x10) / dy;
 
-  		int iaidx = p1->y - pts[0].y;
+  		int iaidx = p1->y - pto.y;
   		while (dy--) {
   			assert(iaidx >= 0 && iaidx < areasNum);
   			InterArea *pia = &ia[iaidx];
@@ -1799,21 +1798,15 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
   		ymax_b = wizH - 1;
 
 		PolygonDrawData pdd(ymax_p - ymin_p + 1);
-		pdd.pts[0].x = xmin_p;
-		pdd.pts[0].y = ymin_p;
-		pdd.pts[1].x = xmax_p;
-		pdd.pts[1].y = ymax_p;
-		pdd.pts[2].x = xmin_b;
-		pdd.pts[2].y = ymin_b;
-		pdd.pts[3].x = xmax_b;
-		pdd.pts[3].y = ymax_b;
+		pdd.pto.x = xmin_p;
+		pdd.pto.y = ymin_p;
 		
 		for (i = 0; i < 3; ++i) {
 			pdd.calcIntersection(&wp->vert[i], &wp->vert[i + 1], &bbox[i], &bbox[i + 1]);
 		}
 		pdd.calcIntersection(&wp->vert[3], &wp->vert[0], &bbox[3], &bbox[0]);
-		
-		uint yoff = pdd.pts[0].y * pvs->w;
+				
+		uint yoff = pdd.pto.y * pvs->w;
 		for (i = 0; i < pdd.areasNum; ++i) {
 			PolygonDrawData::InterArea *pia = &pdd.ia[i];
 			uint16 dx = pia->xmax - pia->xmin + 1;
@@ -1829,7 +1822,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 				y_acc += y_step;
 				*dstPtr++ = srcWizBuf[srcWizOff];
 			}
-			yoff += pvs->w;
+			yoff += pvs->pitch;
 		}
 
 		if (flags & 0x10) {

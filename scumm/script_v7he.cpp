@@ -942,41 +942,41 @@ void ScummEngine_v70he::o70_polygonOps() {
 
 void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, 
 							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
-	int i;
-
-	for (i = 0; i < _wizNumPolygons; i++)
-		if (_wizPolygons[i].id == 0)
+	WizPolygon *wp = NULL;
+	for (int i = 0; i < _wizNumPolygons; ++i) {
+		if (_wizPolygons[i].id == 0) {
+			wp = &_wizPolygons[i];
 			break;
-	
-	if (i == _wizNumPolygons) {
+		}
+	}
+	if (!wp) {
 		error("ScummEngine::polygonStore: out of polygon slot, max = %d", 
 			  _wizNumPolygons);
 	}
 
-	_wizPolygons[i].vert[0].x = vert1x;
-	_wizPolygons[i].vert[0].y = vert1y;
-	_wizPolygons[i].vert[1].x = vert2x;
-	_wizPolygons[i].vert[1].y = vert2y;
-	_wizPolygons[i].vert[2].x = vert3x;
-	_wizPolygons[i].vert[2].y = vert3y;
-	_wizPolygons[i].vert[3].x = vert4x;
-	_wizPolygons[i].vert[3].y = vert4y;
-	_wizPolygons[i].vert[4].x = vert1x;
-	_wizPolygons[i].vert[4].y = vert1y;
-	_wizPolygons[i].id = id;
-	_wizPolygons[i].numVerts = 5;
-	_wizPolygons[i].flag = flag;
+	wp->vert[0].x = vert1x;
+	wp->vert[0].y = vert1y;
+	wp->vert[1].x = vert2x;
+	wp->vert[1].y = vert2y;
+	wp->vert[2].x = vert3x;
+	wp->vert[2].y = vert3y;
+	wp->vert[3].x = vert4x;
+	wp->vert[3].y = vert4y;
+	wp->vert[4].x = vert1x;
+	wp->vert[4].y = vert1y;
+	wp->id = id;
+	wp->numVerts = 5;
+	wp->flag = flag;	
 
-	_wizPolygons[i].bound.left = 10000;
-	_wizPolygons[i].bound.top = 10000;
-	_wizPolygons[i].bound.right = -10000;
-	_wizPolygons[i].bound.bottom = -10000;
+	wp->bound.left = 10000;
+	wp->bound.top = 10000;
+	wp->bound.right = -10000;
+	wp->bound.bottom = -10000;
 
+	// compute bounding box
 	for (int j = 0; j < 5; j++) {
-		_wizPolygons[i].bound.left = MIN(_wizPolygons[i].bound.left, _wizPolygons[i].vert[j].x);
-		_wizPolygons[i].bound.top = MIN(_wizPolygons[i].bound.top, _wizPolygons[i].vert[j].y);
-		_wizPolygons[i].bound.right = MAX(_wizPolygons[i].bound.right, _wizPolygons[i].vert[j].x);
-		_wizPolygons[i].bound.bottom = MAX(_wizPolygons[i].bound.bottom, _wizPolygons[i].vert[j].y);
+		Common::Rect r(wp->vert[j].x, wp->vert[j].y, wp->vert[j].x + 1, wp->vert[j].y + 1);
+		wp->bound.extend(r);
 	}
 }
 
