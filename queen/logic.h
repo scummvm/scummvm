@@ -68,6 +68,8 @@ public:
 	uint16 walkOffCount();
 	uint16 *walkOffData(int index);
 
+	int16 gameState(int index);
+	void gameState(int index, int16 newValue);
 
 protected:
 	uint8 *_jas;
@@ -95,6 +97,13 @@ protected:
 	uint16 (*_actorData)[12];
 	int16 (*_area)[11][8];
 	uint16 (*_walkOffData)[3];
+
+	enum {
+		GAME_STATE_COUNT = 211
+	};
+
+	int16 _gameState[GAME_STATE_COUNT];
+	
 	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN
 
 	QueenResource *_resource;

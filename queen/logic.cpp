@@ -382,4 +382,19 @@ uint16 QueenLogic::findFrame(uint16 obj) {
 	return framenum;
 }
 
+int16 QueenLogic::gameState(int index) {
+	if (index >= 0 && index < GAME_STATE_COUNT)
+		return _gameState[index];
+	else
+		error("[QueenLogic::gameState] invalid index: %i", index);
+}
+
+void QueenLogic::gameState(int index, int16 newValue) {
+	if (index >= 0 && index < GAME_STATE_COUNT)
+		 _gameState[index] = newValue;
+	else
+		error("[QueenLogic::gameState] invalid index: %i", index);
+}
+
+
 } // End of namespace Queen

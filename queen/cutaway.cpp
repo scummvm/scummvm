@@ -966,7 +966,7 @@ void QueenCutaway::updateGameState() {
 
 	for (int i = 0; i < gameStateCount; i++) {
 		int16 stateIndex    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		/*int16 stateValue    = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+		int16 stateValue    = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		int16 objectIndex   = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		int16 areaIndex     = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		int16 areaSubIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -975,11 +975,11 @@ void QueenCutaway::updateGameState() {
 		bool update = false;
 
 		if (stateIndex > 0) {
-			// XXX if(GAMESTATE[stateIndex] == stateValue) 
-			// XXX 	update = true;
+			if(_queenLogic->gameState(stateIndex) == stateValue) 
+				update = true;
 		}
 		else {
-			// XXX GAMESTATE[abs(stateIndex)] = stateValue;
+			_queenLogic->gameState(abs(stateIndex), stateValue);
 			update = true;
 		}
 
