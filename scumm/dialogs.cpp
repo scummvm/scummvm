@@ -465,7 +465,7 @@ void ConfigDialog::close() {
 	
 	if (getResult()) {
 		// Subtitles
-		ConfMan.set("subtitles", !subtitlesCheckbox->getState(), _domain);
+		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
 	}
 
 	GUI_OptionsDialog::close();
