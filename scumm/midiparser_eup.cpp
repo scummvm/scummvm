@@ -145,7 +145,6 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 				info.length = 0;
 				info.ext.type = 0x2F;
 				info.ext.data = pos;
-				pos += 6;
 				break;
 			}
 		} else {
