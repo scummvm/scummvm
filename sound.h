@@ -17,21 +17,89 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2  2001/12/01 17:06:13  strigeus
+ * adlib sound support, use USE_ADLIB
+ *
  * Revision 1.1  2001/11/14 18:37:38  strigeus
  * music support,
  * fixed timing bugs
  *
  */
 
+int clamp(int val, int min, int max);
+
+struct FM_OPL;
 struct Part;
 struct MidiChannel;
+struct MidiChannelAdl;
+struct MidiChannelGM;
 struct VolumeFader;
 struct Player;
 struct HookDatas;
 struct SoundEngine;
+struct SoundDriver;
+struct Instrument;
+struct AdlibSoundDriver;
+struct MidiSoundDriver;
+
+#if defined(USE_ADLIB)
+#define SOUND_DRIVER_TYPE AdlibSoundDriver 
+#else
+#define SOUND_DRIVER_TYPE MidiSoundDriver
+#endif
+
+struct Struct10 {
+	byte active;
+	int16 cur_val;
+	int16 count;
+	uint16 param;
+	int16 start_value;
+	byte loop;
+	byte table_a[4];
+	byte table_b[4];
+	int8 unk3;
+	int8 modwheel;
+	int8 modwheel_last;
+	uint16 speed_lo_max;
+	uint16 num_steps;
+	int16 speed_hi;
+	int8 direction;
+	uint16 speed_lo;
+	uint16 speed_lo_counter;
+};
+
+struct Struct11 {
+	int16 modify_val;
+	byte param,flag0x40,flag0x10;
+	Struct10 *s10;
+};
+
+struct InstrumentExtra {
+	byte a,b,c,d,e,f,g,h;
+};
+
+struct Instrument {
+	byte flags_1;
+	byte oplvl_1;
+	byte atdec_1;
+	byte sustrel_1;
+	byte waveform_1;
+	byte flags_2;
+	byte oplvl_2;
+	byte atdec_2;
+	byte sustrel_2;
+	byte waveform_2;
+	byte feedback;
+	byte flags_a;
+	InstrumentExtra extra_a;
+	byte flags_b;
+	InstrumentExtra extra_b;
+	byte duration;
+};
 
 struct Part {
-	SoundEngine *_se;
+	int _slot;
+	SOUND_DRIVER_TYPE *_drv;
 	Part *_next, *_prev;
 	MidiChannel *_mc;
 	Player *_player;
@@ -50,24 +118,24 @@ struct Part {
 	byte _chan;
 	byte _effect_level;
 	byte _chorus;
-	byte _gmidi_5;
-	byte _gmidi_1;
+	byte _percussion;
+	byte _bank;
 
 	void key_on(byte note, byte velocity);
 	void key_off(byte note);
-	void set_param(int b, byte c) {}
-	void init(SoundEngine *se);
+	void set_param(byte param, int value);
+	void init(SoundDriver *_driver);
 	void setup(Player *player);
 	void uninit();
 	void off();
 	void silence();
 	void set_instrument(uint b);
-	void set_instrument(byte *data) {}
+	void set_instrument(Instrument *data);
 
 	void set_transpose(int8 transpose);
 	void set_vol(uint8 volume);
 	void set_detune(int8 detune);
-	void set_pri(int8 pri, bool recalc);
+	void set_pri(int8 pri);
 	void set_pan(int8 pan);
 	void set_modwheel(uint value);
 	void set_pedal(bool value);
@@ -76,28 +144,42 @@ struct Part {
 	void set_program(byte program);
 	void set_chorus(uint chorus);
 	void set_effect_level(uint level);
-	void set_chan_param(int b, int c) {}
-	void mod_changed();
-	void vol_changed();
-	void pedal_changed();
-	void modwheel_changed();
-	void pan_changed();
-	void effect_level_changed();
-	void program_changed();
-	void chorus_changed();
+	
 	int update_actives(uint16 *active);
 	void set_pitchbend_factor(uint8 value);
 	void set_onoff(bool on);
-
 	void fix_after_load();
+
+	void update_pris();
+
+	void changed(byte what);
 };
+
 
 struct MidiChannel {
 	Part *_part;
+	MidiChannelAdl *adl() { return (MidiChannelAdl*)this; }
+	MidiChannelGM *gm() { return (MidiChannelGM*)this; }
+};
+
+struct MidiChannelAdl : MidiChannel {
+	MidiChannelAdl *_next,*_prev;
+	byte _waitforpedal;
+	byte _note;
+	byte _channel;
+	byte _twochan;
+	byte _vol_1,_vol_2;
+	int16 _duration;
+
+	Struct10 _s10a;
+	Struct11 _s11a;
+	Struct10 _s10b;
+	Struct11 _s11b;
+};
+
+struct MidiChannelGM : MidiChannel {
 	byte _chan;
 	uint16 _actives[8];
-
-	void init(byte chan);
 };
 
 struct VolumeFader {
@@ -188,7 +270,7 @@ struct Player {
 	void set_priority(int pri);
 	void set_pan(int pan);
 	void set_detune(int detune);
-	void silence_parts();
+	void turn_off_parts();
 	void play_active_notes();
 	void cancel_volume_fade();
 
@@ -235,8 +317,133 @@ struct IsNoteCmdData {
 	byte vel;
 };
 
+struct SoundDriver {
+	enum {
+		pcMod = 1,
+		pcVolume = 2,
+		pcPedal = 4,
+		pcModwheel = 8,
+		pcPan = 16,
+		pcEffectLevel = 32,
+		pcProgram = 64,
+		pcChorus = 128,
+		pcAll = 255,
+	};
+};
+
+struct AdlibSoundDriver : SoundDriver {
+private:
+	FM_OPL *_opl;
+	byte *_adlib_reg_cache;
+	SoundEngine *_se;
+
+	int _adlib_timer_counter;
+
+	uint16 channel_table_2[9];
+	int _midichan_index;
+	int _next_tick;
+	uint16 curnote_table[9];
+	MidiChannelAdl _midi_channels[9];
+
+	Instrument _part_instr[32];
+	Instrument _glob_instr[32];
+
+	void adlib_key_off(int chan);
+	void adlib_note_on(int chan, byte note, int mod);
+	void adlib_note_on_ex(int chan, byte note, int mod);
+	int adlib_read_param(int chan, byte data);
+	void adlib_setup_channel(int chan, Instrument *instr, byte vol_1, byte vol_2);
+	byte adlib_read(byte port) { return _adlib_reg_cache[port]; }	
+	void adlib_set_param(int channel, byte param, int value);
+	void adlib_key_onoff(int channel);
+	void adlib_write(byte port, byte value);
+	void adlib_playnote(int channel, int note);
+
+	MidiChannelAdl *allocate_midichan(byte pri);
+
+	void reset_tick();
+	void mc_off(MidiChannel *mc);	
+
+	static void link_mc(Part *part, MidiChannelAdl *mc);
+	static void mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11);
+	static void mc_init_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11, byte flags, InstrumentExtra *ie);
+	static void struct10_init(Struct10 *s10, InstrumentExtra *ie);
+	static byte struct10_ontimer(Struct10 *s10, Struct11 *s11);
+	static void struct10_setup(Struct10 *s10);
+	static int random_nr(int a);
+	void mc_key_on(MidiChannel *mc, byte note, byte velocity);
+
+public:
+	void uninit();
+	void init(SoundEngine *eng);
+	void update_pris() { }
+	void generate_samples(int16 *buf, int len);
+	void on_timer();
+	void set_instrument(uint slot, byte *instr);
+	void part_set_instrument(Part *part, Instrument *instr);
+	void part_key_on(Part *part, byte note, byte velocity);
+	void part_key_off(Part *part, byte note);
+	void part_set_param(Part *part, byte param, int value);
+	void part_changed(Part *part,byte what);
+	void part_off(Part *part);
+	int part_update_active(Part *part,uint16 *active);
+	void adjust_priorities() {}
+
+	bool wave_based() { return true; }
+};
+
+struct MidiSoundDriver : SoundDriver {
+	HMIDIOUT *_mo;
+	bool _mt32emulate;
+	SoundEngine *_se;
+
+	MidiChannelGM _midi_channels[9];
+
+	int16 _midi_pitchbend_last[16];
+	uint8 _midi_volume_last[16];
+	bool _midi_pedal_last[16];
+	byte _midi_modwheel_last[16];
+	byte _midi_effectlevel_last[16];
+	byte _midi_chorus_last[16];
+	int8 _midi_pan_last[16];
+
+	void midiPitchBend(byte chan, int16 pitchbend);
+	void midiVolume(byte chan, byte volume);
+	void midiPedal(byte chan, bool pedal);
+	void midiModWheel(byte chan, byte modwheel);
+	void midiEffectLevel(byte chan, byte level);
+	void midiChorus(byte chan, byte chorus);
+	void midiControl0(byte chan, byte value);
+	void midiProgram(byte chan, byte program);
+	void midiPan(byte chan, int8 pan);
+	void midiNoteOn(byte chan, byte note, byte velocity);
+	void midiNoteOff(byte chan, byte note);
+	void midiSilence(byte chan);
+	void midiInit();
+
+public:
+	void uninit();
+	void init(SoundEngine *eng);
+	void update_pris();
+	void part_off(Part *part);
+	int part_update_active(Part *part,uint16 *active);
+
+	void generate_samples(int16 *buf, int len) {}
+	void on_timer() {}
+	void set_instrument(uint slot, byte *instr) {}
+	void part_set_instrument(Part *part, Instrument *instr) {}
+	void part_set_param(Part *part, byte param, int value) {}
+	void part_key_on(Part *part, byte note, byte velocity);
+	void part_key_off(Part *part, byte note);
+	void part_changed(Part *part,byte what);
+
+	bool wave_based() { return false; }
+};
+
 struct SoundEngine {
-	void *_mo; /* midi out */
+friend struct Player;
+private:
+	SOUND_DRIVER_TYPE *_driver;
 
 	byte **_base_sounds;
 
@@ -256,8 +463,6 @@ struct SoundEngine {
 	SustainingNotes *_sustain_notes_free;
 	SustainingNotes *_sustain_notes_head;
 
-	uint16 _timer_counter_1;
-
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume;
@@ -272,28 +477,11 @@ struct SoundEngine {
 	SustainingNotes _sustaining_notes[24];
 	VolumeFader _volume_fader[8];
 	Part _parts[32];
-	MidiChannel _midi_channels[9];
+	
 	uint16 _active_notes[128];
 	CommandQueue _cmd_queue[64];
 
-	int16 _midi_pitchbend_last[16];
-	uint8 _midi_volume_last[16];
-	bool _midi_pedal_last[16];
-	byte _midi_modwheel_last[16];
-	byte _midi_effectlevel_last[16];
-	byte _midi_chorus_last[16];
-	int8 _midi_pan_last[16];
-
 	byte *findTag(int sound, char *tag, int index);
-	int initialize(Scumm *scumm);
-	int terminate();
-	int save_or_load(Serializer *ser);
-	int set_master_volume(uint vol);
-	int get_master_volume();
-	bool start_sound(int sound);
-	int stop_sound(int sound);
-	int stop_all_sounds();
-	int get_sound_status(int sound);
 	int get_queue_sound_status(int sound);
 	Player *allocate_player(byte priority);
 	void handle_marker(uint id, byte data);
@@ -304,17 +492,12 @@ struct SoundEngine {
 	void init_sustaining_notes();
 	void init_queue();
 
-	void on_timer();
 	void sequencer_timers();
 	void expire_sustain_notes();
 	void expire_volume_faders();
 
-	void set_instrument(uint slot, byte *data) {}
-	
-	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
 	Part *allocate_part(byte pri);
 
-	int clear_queue();
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
 	int query_queue(int param);
@@ -329,22 +512,6 @@ struct SoundEngine {
 
 	int set_volchan(int sound, int volchan);
 
-	void midiPitchBend(byte chan, int16 pitchbend);
-	void midiVolume(byte chan, byte volume);
-	void midiPedal(byte chan, bool pedal);
-	void midiModWheel(byte chan, byte modwheel);
-	void midiEffectLevel(byte chan, byte level);
-	void midiChorus(byte chan, byte chorus);
-	void midiControl0(byte chan, byte value);
-	void midiProgram(byte chan, byte program);
-	void midiPan(byte chan, int8 pan);
-	void midiNoteOn(byte chan, byte note, byte velocity);
-	void midiNoteOff(byte chan, byte note);
-	void midiSilence(byte chan);
-	void midiInit();
-
-	void adjust_priorities();
-
 	void fix_parts_after_load();
 	void fix_players_after_load();
 
@@ -354,5 +521,24 @@ struct SoundEngine {
 	void lock();
 	void unlock();
 
+public:
+	void on_timer();
+	Part *parts_ptr() { return _parts; }
 	void pause(bool paused);
+	int initialize(Scumm *scumm, SoundDriver *driver);
+	int terminate();
+	int save_or_load(Serializer *ser);
+	int set_master_volume(uint vol);
+	int get_master_volume();
+	bool start_sound(int sound);
+	int stop_sound(int sound);
+	int stop_all_sounds();
+	int get_sound_status(int sound);
+	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
+	int clear_queue();
+	void setBase(byte **base) { _base_sounds = base; }
+
+	SOUND_DRIVER_TYPE *driver() { return _driver; }
 };
+
+

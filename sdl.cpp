@@ -35,6 +35,7 @@ ScummDebugger debugger;
 Gui gui;
 
 SoundEngine sound;
+SOUND_DRIVER_TYPE snd_driv;
 
 static SDL_Surface *screen;
 
@@ -479,7 +480,6 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 static uint32 midi_counter;
 
 void fill_sound(void *userdata, Uint8 *stream, int len) {
-	memset(stream, 0, len);
 	scumm.mixWaves((int16*)stream, len>>1);
 }
 
@@ -500,6 +500,7 @@ int music_thread(Scumm *s) {
 	
 	return 0;
 }
+
 
 void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_AudioSpec desired;
@@ -528,8 +529,10 @@ void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_WM_SetCaption(buf,buf);
 	SDL_ShowCursor(SDL_DISABLE);
 
-	/* Create Music Thread */
-	SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
+	if (!snd_driv.wave_based()) {
+		/* Create Music Thread */
+		SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
+	}
 
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
@@ -557,8 +560,7 @@ int main(int argc, char* argv[]) {
 	int delta,tmp;
 	int last_time, new_time;
 
-	sound.initialize(&scumm);
-	scumm._soundDriver = &sound;
+	sound.initialize(&scumm, &snd_driv);
 
 	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);

@@ -65,7 +65,7 @@ void Scumm::processSoundQues() {
 				data[j] = _soundQue[i+j];
 			i += num;
 
-			se = (SoundEngine*)_soundDriver;
+			se = (SoundEngine*)_soundEngine;
 #if 0
 			debug(1,"processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
 				data[0]>>8,
@@ -89,7 +89,7 @@ void Scumm::processSoundQues() {
 }
 
 void Scumm::playSound(int sound) {
-	SoundEngine *se = (SoundEngine*)_soundDriver;
+	SoundEngine *se = (SoundEngine*)_soundEngine;
 	if (se) {
 		getResourceAddress(rtSound, sound);
 		se->start_sound(sound);
@@ -202,7 +202,7 @@ int Scumm::isSoundRunning(int sound) {
 	if (!isResourceLoaded(rtSound, sound))
 		return 0;
 	
-	se = (SoundEngine*)_soundDriver;
+	se = (SoundEngine*)_soundEngine;
 	if (!se)
 		return 0;
 	return se->get_sound_status(sound);
@@ -232,7 +232,7 @@ void Scumm::stopSound(int a) {
 	SoundEngine *se;
 	int i;
 
-	se = (SoundEngine*)_soundDriver;
+	se = (SoundEngine*)_soundEngine;
 	if (se)
 		se->stop_sound(a);
 
@@ -242,7 +242,7 @@ void Scumm::stopSound(int a) {
 }
 
 void Scumm::stopAllSounds() {
-	SoundEngine *se = (SoundEngine*)_soundDriver;
+	SoundEngine *se = (SoundEngine*)_soundEngine;
 	if (se) {
 		se->stop_all_sounds();
 		se->clear_queue();
@@ -288,22 +288,16 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode) {
  * is needed.
  */
    
-static const uint32 sound_tags[] = {
-	MKID('GMD ')
-};
-
 void Scumm::setupSound() {
-	SoundEngine *se = (SoundEngine*)_soundDriver;
+	SoundEngine *se = (SoundEngine*)_soundEngine;
 	if (se)
-		se->_base_sounds = res.address[rtSound];
+		se->setBase(res.address[rtSound]);
 
-	_soundTagTable = (byte*)sound_tags;
-	_numSoundTags = 1;
 	_sfxFile = openSfxFile();
 }
 
 void Scumm::pauseSounds(bool pause) {
-	SoundEngine *se = (SoundEngine*)_soundDriver;
+	SoundEngine *se = (SoundEngine*)_soundEngine;
 	if (se)
 		se->pause(pause);
 	_soundsPaused = pause;
@@ -466,9 +460,16 @@ void MixerChannel::clear() {
 void Scumm::mixWaves(int16 *sounds, int len) {
 	int i;
 
+	memset(sounds, 0,len * sizeof(int16));
+
 	if (_soundsPaused)
 		return;
-
+	
+	SoundEngine *se = (SoundEngine*)_soundEngine;
+	if (se) {
+		se->driver()->generate_samples(sounds, len);
+	}
+	
 	for(i=NUM_MIXER-1; i>=0;i--) {
 		_mixer_channel[i].mix(sounds, len);
 	}

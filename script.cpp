@@ -293,6 +293,12 @@ int Scumm::readVar(uint var) {
 #endif
 	debug(9, "readvar=%d", var);
 	if (!(var&0xF000)) {
+#if defined(BYPASS_COPY_PROT)
+		if (var==490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
+			copyprotbypassed = true;
+			var = 518;
+		}
+#endif
 		checkRange(_numVariables-1, 0, var, "Variable %d out of range(r)");
 		return _vars[var];
 	}
@@ -317,13 +323,6 @@ int Scumm::readVar(uint var) {
 	if (var&0x4000) {
 		var &= 0xFFF;
 		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
-
-#if defined(BYPASS_COPY_PROT)
-		if (!copyprotbypassed && _currentScript==1 && _gameId==GID_MONKEY2 && var==0) {
-			copyprotbypassed=1;
-			return 1;
-		}
-#endif
 		return vm.localvar[_currentScript][var];
 	}
 

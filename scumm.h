@@ -22,6 +22,7 @@
 #include "scummsys.h"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
+#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
 struct Scumm;
 struct Actor;
@@ -936,7 +937,7 @@ struct Scumm {
 
 	int _keyPressed;
 
-	void *_soundDriver;
+	void *_soundEngine;
 
 	uint16 *_inventory;
 	byte *_arrays;
@@ -1128,8 +1129,8 @@ struct Scumm {
 
 	byte *_shadowPalette;
 	
-	int _numSoundTags;
-	byte *_soundTagTable;
+//	int _numSoundTags;
+//	byte *_soundTagTable;
 
 	int16 _bootParam;
 
@@ -1220,6 +1221,7 @@ struct Scumm {
 	void fileSeek(void *file, long offs, int whence);
 	void fileRead(void *handle, void *ptr, uint32 size);
 	bool fileEof(void *handle);
+	uint32 filePos(void *handle);
 
 	int fileReadByte();
 	uint32 fileReadDwordLE();

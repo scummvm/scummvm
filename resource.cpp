@@ -457,16 +457,17 @@ int Scumm::loadResource(int type, int index) {
 }
 
 int Scumm::readSoundResource(int type, int index) {
-	uint32 resStart, size, tag, size2, basetag;
-	byte *ptr;
+	uint32 pos, total_size, size, tag,basetag;
 	int i;
+	int pri, best_pri;
+	uint32 best_size, best_offs;
 
 	debug(9, "readSoundResource(%d,%d)", type, index);
 
-	resStart = 0;
+	pos = 0;
 
 	basetag = fileReadDwordLE();
-	size = fileReadDwordBE();
+	total_size = fileReadDwordBE();
 
 #if defined(SAMNMAX) || defined(FULL_THROTTLE)
 	if (basetag == MKID('MIDI')) {
@@ -475,23 +476,36 @@ int Scumm::readSoundResource(int type, int index) {
 		return 1;
 	}
 #else
-	while (size>resStart) {
+	while (pos < total_size) {
 		tag = fileReadDword();
-		size2 = fileReadDwordBE();
+		size = fileReadDwordBE() + 8;
+		pos += size;
 		
-		resStart += size2 + 8;
-		
-		for (i=0,ptr=_soundTagTable; i<_numSoundTags; i++,ptr+=4) {
-/* endian OK, tags are in native format */
-			if (READ_UINT32_UNALIGNED(ptr) == tag) {
-				fileSeek(_fileHandle, -8, SEEK_CUR);
-				fileRead(_fileHandle,createResource(type, index, size2+8), size2+8);
-				return 1;
-			}
+		switch(tag) {
+#ifdef USE_ADLIB
+		case MKID('ADL '): pri = 10; break;
+#else
+		case MKID('ROL '): pri = 1; break;
+		case MKID('GMD '): pri = 2; break;
+#endif
+		default:	pri = -1;
 		}
 
-		fileSeek(_fileHandle, size2, SEEK_CUR);
+		if (pri > best_pri) {
+			best_pri = pri;
+			best_size = size;
+			best_offs = filePos(_fileHandle);
+		}
+
+		fileSeek(_fileHandle, size - 8, SEEK_CUR);
 	}
+
+	if (best_pri != -1) {
+		fileSeek(_fileHandle, best_offs - 8, SEEK_SET);
+		fileRead(_fileHandle,createResource(type, index, best_size), best_size);
+		return 1;
+	}
+
 #endif
 	res.roomoffs[type][index] = 0xFFFFFFFF;
 	return 0;

@@ -132,6 +132,7 @@ Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
 SoundEngine sound;
+SOUND_DRIVER_TYPE snd_driv;
 
 WndMan wm[1];
 byte veryFastMode;
@@ -846,7 +847,6 @@ void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible) {
 }
 
 void fill_buffer(int16 *buf, int len) {
-	memset(buf, 0, len*2);
 	scumm.mixWaves(buf, len);
 }
 
@@ -891,10 +891,13 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 	int time = GetTickCount(), cur;
 
 	while (1) {
-		cur = GetTickCount();
-		while (time < cur) {
-			sound.on_timer();
-			time += 10;
+
+		if (!snd_driv.wave_based()) {
+			cur = GetTickCount();
+			while (time < cur) {
+				sound.on_timer();
+				time += 10;
+			}
 		}
 
 		signaled = WaitForSingleObject(wm->_event, time - cur) == WAIT_OBJECT_0;
@@ -917,12 +920,12 @@ int main(int argc, char* argv[]) {
 	int delta;
 
 	wm->init();
-	wm->sound_init();
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
-	
-	sound.initialize(&scumm);
-	scumm._soundDriver = &sound;
+
+	sound.initialize(&scumm,&snd_driv);
+
+	wm->sound_init();
 
 	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);

@@ -55,6 +55,10 @@ bool Scumm::fileEof(void *file) {
 	return feof((FILE*)file) != 0;
 }
 
+uint32 Scumm::filePos(void *handle) {
+	return ftell((FILE*)handle);
+}
+
 void Scumm::fileSeek(void *file, long offs, int whence) {
 	switch(_fileMode) {
 	case 1: case 2:

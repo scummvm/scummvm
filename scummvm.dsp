@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -86,6 +86,26 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "sound"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\sound\adlib.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\fmopl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\gmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\imuse.cpp
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\actor.cpp
@@ -149,10 +169,6 @@ SOURCE=.\gfx.cpp
 # Begin Source File
 
 SOURCE=.\gui.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\imuse.cpp
 # End Source File
 # Begin Source File
 
@@ -247,6 +263,10 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -312,14 +332,14 @@ SOURCE=.\verbs.cpp
 !ENDIF 
 
 # End Source File
-# Begin Source File
-
-SOURCE=.\windows.cpp
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\sound\fmopl.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\gui.h

@@ -499,8 +499,8 @@ void Scumm::saveOrLoad(Serializer *s) {
 		}
 	}
 
-	if (_soundDriver)
-		((SoundEngine*)_soundDriver)->save_or_load(s);
+	if (_soundEngine)
+		((SoundEngine*)_soundEngine)->save_or_load(s);
 
 }
 

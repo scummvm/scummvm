@@ -168,13 +168,9 @@ int Scumm::remapDirection(Actor *a, int dir) {
 
 		switch(flags & 7) {
 		case 1:
-			if (dir >= 180)
-				return 270;
-			return 90;
-		case 2:
-			if (dir <= 90 || dir>270)
-				return 0;
-			return 180;
+			return a->walkdata.XYFactor >0 ? 90 : 270;
+		case 2: 
+			return a->walkdata.YXFactor >0 ? 180 : 0;
 		case 3: return 270;
 		case 4: return 90;
 		case 5: return 0;

@@ -196,9 +196,9 @@ void Scumm::scummMain(int argc, char **argv) {
 		_bootParam = -7873;
 	}
 
-	if (_gameId==GID_MONKEY2 && _bootParam==0) {
-		_bootParam = 10001;
-	}
+//	if (_gameId==GID_MONKEY2 && _bootParam==0) {
+//		_bootParam = 10001;
+//	}
 
 	initGraphics(this, _fullScreen);
 
