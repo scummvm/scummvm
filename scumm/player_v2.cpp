@@ -31,8 +31,8 @@ namespace Scumm {
 
 #define FREQ_HZ 236 // Don't change!
 
-#define SPK_DECAY   0xfa00              /* Depends on sample rate */
-#define PCJR_DECAY  0xf600              /* Depends on sample rate */
+#define SPK_DECAY   0xa000              /* Depends on sample rate */
+#define PCJR_DECAY  0xa000              /* Depends on sample rate */
 
 #define FIXP_SHIFT  16
 #define MAX_OUTPUT 0x7fff
