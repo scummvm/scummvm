@@ -736,6 +736,72 @@ void Scumm::initCharset(int charsetno) {
 		_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 }
 
+void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
+	assert(_blastTextQueuePos <= 32);
+	
+	strcpy((char *)bt.text, (const char *)text);
+	bt.xpos = x;
+	bt.ypos = y;
+	bt.color = color;
+	bt.charset = charset;
+	bt.center = center;
+}
+
+void Scumm::drawBlastTexts() {
+	// FIXME
+
+	byte *buf;
+	byte c;
+	int i;
+
+	_charset->_ignoreCharsetMask = true;
+	for (i = 0; i < _blastTextQueuePos; i++) {
+
+		buf = _blastTextQueue[i].text;
+
+		_charset->_top = _blastTextQueue[i].ypos;
+		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
+		_charset->_right = _screenWidth - 1;
+		_charset->_center = _blastTextQueue[i].center;
+		_charset->setColor(_blastTextQueue[i].color);
+		_charset->_disableOffsX = _charset->_firstChar = true;
+		_charset->setCurID(_blastTextQueue[i].charset);
+		_charset->_nextLeft = _blastTextQueue[i].xpos;
+		_charset->_nextTop = _blastTextQueue[i].ypos;
+
+		// Center text if necessary
+		if (_charset->_center) {
+			_charset->_nextLeft -= _charset->getStringWidth(0, buf) >> 1;
+			if (_charset->_nextLeft < 0)
+				_charset->_nextLeft = 0;
+		}
+
+		do {
+			c = *buf++;
+			if (c != 0 && c != 0xFF) {
+				_charset->_left = _charset->_nextLeft;
+				_charset->_top = _charset->_nextTop;
+				_charset->printChar(c);
+				_charset->_nextLeft = _charset->_left;
+				_charset->_nextTop = _charset->_top;
+			}
+		} while (c);
+
+		_blastTextQueue[i].rect = _charset->_str;
+	}
+	_charset->_ignoreCharsetMask = false;
+}
+
+void Scumm::removeBlastTexts() {
+	int i;
+
+	for (i = 0; i < _blastTextQueuePos; i++) {
+		restoreBG(_blastTextQueue[i].rect);
+	}
+	_blastTextQueuePos = 0;
+}
+
 int indexCompare(const void *p1, const void *p2) {
 	const LangIndexNode *i1 = (const LangIndexNode *) p1;
 	const LangIndexNode *i2 = (const LangIndexNode *) p2;

@@ -2479,7 +2479,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 16:
 		case 17:{
-			byte *message = getStringAddressVar(VAR_STRING2DRAW);
+			const byte *message = getStringAddressVar(VAR_STRING2DRAW);
 			if (_gameId == GID_DIG) {
 				byte buf_input[300], buf_output[300], buf_trans[300], *ptr = buf_input;
 				char *t_ptr = (char *)ptr;

@@ -911,7 +911,7 @@ protected:
 	int _blastTextQueuePos;
 	BlastText _blastTextQueue[32];	// FIXME - how many blast texts can there be at once?
 
-	void enqueueText(byte *text, int x, int y, byte color, byte charset, bool center);
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center);
 	void drawBlastTexts();
 	void removeBlastTexts();
 
