@@ -903,7 +903,11 @@ void Scumm_v2::o2_drawSentence() {
 	if (!(_userState & 32))
 		return;
 
-	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
+	if (getResourceAddress(rtVerb, slot))
+		strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
+	else
+		return;
+
 	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
 		if (temp) {
