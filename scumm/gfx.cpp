@@ -586,7 +586,7 @@ void Scumm::drawFlashlight()
 	// Remove the flash light first if it was previously drawn
 	if (_flashlightIsDrawn) {
 		updateDirtyRect(0, _flashlight.x, _flashlight.x + _flashlight.w,
-		                   _flashlight.y, _flashlight.y + _flashlight.h, 0x80000000);
+		                   _flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 		
 		if (_flashlight.buffer) {
 			i = _flashlight.h;
