@@ -1363,6 +1363,7 @@ static char *stubFuncs[] = {
 	"DrawLine",
 	"pause_scripts",
 	"unpause_scripts",
+	"print_stack",
 };
 
 // Entries in the system.controls table
