@@ -45,6 +45,10 @@ private:
 	 * and you specialise makeInstance to return an instance of a subclass.
 	 */
 	//template <class T>
+#ifdef _WIN32_WCE
+//FIXME
+public:
+#endif
 	static T* makeInstance() {
 		return new T();
 	}
