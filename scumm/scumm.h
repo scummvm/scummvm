@@ -890,6 +890,8 @@ protected:
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
+
+	byte *_scrollBuffer;
 	
 	struct {
 		int x, y, w, h;

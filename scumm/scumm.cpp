@@ -598,6 +598,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_newEffect = 0;
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
+	_scrollBuffer = NULL;
 	_doEffect = false;
 	memset(&_flashlight, 0, sizeof(_flashlight));
 	_roomStrips = 0;
@@ -2260,6 +2261,26 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
 
 	runExitScript();
+
+	if (_switchRoomEffect >= 130 && _switchRoomEffect <= 133) {
+		// We're going to use scrollEffect(), so we'll need a copy of
+		// the current VirtScreen zero.
+
+		VirtScreen *vs = &virtscr[0];
+
+		free(_scrollBuffer);
+		_scrollBuffer = (byte *) malloc(vs->h * vs->w);
+
+		byte *src = vs->getPixels(0, 0);
+		byte *dst = _scrollBuffer;
+
+		for (int y = 0; y < vs->h; y++) {
+			memcpy(dst, src, vs->w);
+			src += vs->w;
+			dst += vs->pitch;
+		}
+	}
+
 	killScriptsAndResources();
 	clearEnqueue();
 	if (_version >= 4 && _heversion <= 60)

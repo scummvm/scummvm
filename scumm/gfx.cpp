@@ -2768,6 +2768,12 @@ void ScummEngine::dissolveEffect(int width, int height) {
 }
 
 void ScummEngine::scrollEffect(int dir) {
+	// It is at least technically possible that this function will be
+	// called without _scrollBuffer having been set up, but will it ever
+	// happen? I don't know.
+	if (!_scrollBuffer)
+		warning("scrollEffect: No scroll buffer. This may look bad");
+
 	VirtScreen *vs = &virtscr[0];
 
 	int x, y;
@@ -2789,6 +2795,11 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->pitch,
 				0, vs->h - y,
 				vs->w, y);
+			if (_scrollBuffer)
+				_system->copyRectToScreen(_scrollBuffer + y * vs->w,
+					vs->w,
+					0, 0,
+					vs->w, vs->h - y);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2803,6 +2814,11 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->pitch,
 				0, 0,
 				vs->w, y);
+			if (_scrollBuffer)
+				_system->copyRectToScreen(_scrollBuffer,
+					vs->w,
+					0, y,
+					vs->w, vs->h - y);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2817,6 +2833,11 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->pitch,
 				vs->w - x, 0,
 				x, vs->h);
+			if (_scrollBuffer)
+				_system->copyRectToScreen(_scrollBuffer + x,
+					vs->w,
+					0, 0,
+					vs->w - x, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2831,6 +2852,11 @@ void ScummEngine::scrollEffect(int dir) {
 				vs->pitch,
 				0, 0,
 				x, vs->h);
+			if (_scrollBuffer)
+				_system->copyRectToScreen(_scrollBuffer,
+					vs->w,
+					x, 0,
+					vs->w - x, vs->h);
 			_system->updateScreen();
 			waitForTimer(kPictureDelay);
 
@@ -2838,6 +2864,9 @@ void ScummEngine::scrollEffect(int dir) {
 		}
 		break;
 	}
+
+	free(_scrollBuffer);
+	_scrollBuffer = NULL;
 }
 
 void ScummEngine::unkScreenEffect6() {
