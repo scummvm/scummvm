@@ -1,0 +1,8 @@
+_PLUGIN_createEngine
+_PLUGIN_detectGames
+_PLUGIN_getSupportedGames
+_PLUGIN_name
+___plugin_ctors
+___plugin_ctors_end
+___plugin_dtors
+___plugin_dtors_end
