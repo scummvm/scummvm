@@ -106,7 +106,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY)
 int Scumm::getAngleFromPos(int x, int y)
 {
 	if (_gameId == GID_DIG) {
-		double temp = atan2(x, -y);
+		double temp = atan2((double)x, (double)-y);
 		return Scumm::normalizeAngle((int)(temp * 180 / 3.1415926535));
 	} else {
 		if (abs(y) * 2 < abs(x)) {

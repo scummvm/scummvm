@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+
 #include <math.h>
 
 byte Scumm::getMaskFromBox(int box)
@@ -967,9 +968,9 @@ void Scumm::GetGates(int trap1, int trap2)
 	Box2 = (Closest2 > 3);
 	Box3 = (Closest3 > 3);
 
-	Dist1 = (int)sqrt(Dist1);
-	Dist2 = (int)sqrt(Dist2);
-	Dist3 = (int)sqrt(Dist3);
+	Dist1 = (int)sqrt((double)Dist1);
+	Dist2 = (int)sqrt((double)Dist2);
+	Dist3 = (int)sqrt((double)Dist3);
 
 	if (Box1 == Box2 && abs(Dist1 - Dist2) < 4) {
 		SetGate(Closest1, Closest2, polyx, polyy);

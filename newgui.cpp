@@ -30,10 +30,12 @@
 
 /*
  * TODO list
+ * - implement the missing / incomplete dialogs
  * - add more widgets
+ * - add support for right/center aligned text
+ * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
- * - implement the missing / incomplete dialogs
  * - come up with a new look&feel / theme for the GUI
  * - ...
  */
