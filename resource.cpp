@@ -479,7 +479,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
         if (_features & GF_SMALL_HEADER) {
                 for (i=0; i<num; i++) {
                         res.roomno[id][i] = fileReadByte();
-                        res.roomoffs[id][i]= fileReadDwordLE();
+                        res.roomoffs[id][i]= fileReadDword();
                 }
         } else {
                 fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
@@ -531,7 +531,7 @@ void Scumm::loadCharset(int no) {
 				if (_features & GF_OLD256)
 					size = fileReadWordLE();
 				else
-					size = fileReadDword();
+					size = fileReadDwordLE();
                 fileRead(_fileHandle, createResource(6, no, size), size);
                 openRoom(-1);
         } else {
