@@ -3077,6 +3077,9 @@ void ScummEngine_v6::o6_unknownE1() {
 }
 
 void ScummEngine_v6::o6_setBoxSet() {
+	// Disable for now, crashes fbear.
+	return;
+
 	int arg = pop();
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
 	const byte *boxd = NULL, *boxm = NULL;
