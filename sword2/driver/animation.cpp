@@ -204,7 +204,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	playMPEG(filename, text, leadOut, leadOutLen);
 #else
 	// No MPEG2? Use the old 'Narration Only' hack
-	playDummy(filename, text, leadOut);
+	playDummy(filename, text, leadOut, leadOutLen);
 #endif
 
 	_vm->_mixer->stopHandle(leadInHandle);
