@@ -62,6 +62,7 @@ public:
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
 	bool exists(const char *filename);
 	bool isDemo();
+	uint32 fileSize(const char *filename);
 
 protected:
 	File *_resourceFile;
@@ -73,7 +74,6 @@ protected:
 	static ResourceEntry _resourceTablePEM10[];
 
 	int32 resourceIndex(const char *filename);
-	uint32 fileSize(const char *filename);
 	uint32 fileOffset(const char *filename);
 	const char *JASVersion();
 	bool readTableFile();

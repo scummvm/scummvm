@@ -20,6 +20,7 @@
  */
 
 #include "queen/logic.h"
+#include "queen/defs.h"
 
 namespace Queen {
 
@@ -36,7 +37,7 @@ Logic::~Logic() {
 }
 
 void Logic::initialise() {
-	int16 i, j, k;
+	int16 i, j;
 	uint8 *ptr = _jas;
 
 	//_display->loadFont();
@@ -144,7 +145,7 @@ void Logic::initialise() {
 	
 	_objMax   = new int16[_numRooms + 1];
 	_areaMax  = new int16[_numRooms + 1];
-	_area     = new int16[_numRooms + 1][11][8];
+	_area     = new Area[_numRooms + 1][11];
 
 	for (i = 1; i <= _numRooms; i++) {
 		_objMax[i] = (int16)READ_BE_UINT16(ptr);
@@ -152,12 +153,17 @@ void Logic::initialise() {
 		_areaMax[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		
-		for (j = 1; j <= _areaMax[i]; j++)
-			for (k = 0; k < 8; k++) {
-				assert(j < 11);
-				_area[i][j][k] = READ_BE_UINT16(ptr);
-				ptr += 2;
-			}
+		for (j = 1; j <= _areaMax[i]; j++) {
+			assert(j < 11);
+			_area[i][j].mapNeighbours = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].box.x1 = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].box.y1 = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].box.x2 = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].box.y2 = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].bottomScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].topScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
+			_area[i][j].object = READ_BE_UINT16(ptr); ptr += 2;
+		}
 	}
 
 	_objectBox = new Box[_numObjects + 1];
@@ -206,6 +212,8 @@ void Logic::initialise() {
 
 	//Command List Data
 
+
+	memset(_zones, 0, sizeof(_zones));
 }
 
 uint16 Logic::currentRoom() {
@@ -232,8 +240,8 @@ uint16 Logic::objMax(int room) {
 	return _objMax[room];
 }
 
-int16 *Logic::area(int index, int subIndex) {
-	return _area[index][subIndex];
+Area *Logic::area(int index, int subIndex) {
+	return &_area[index][subIndex];
 }
 
 uint16 Logic::walkOffCount() {
@@ -360,7 +368,7 @@ uint16 Logic::findFrame(uint16 obj) {
 			}
 		}
 		if(bobnum <= 3) {
-			framenum = 29 + FRAME_XTRA;
+			framenum = 29 + FRAMES_JOE_XTRA;
 		}
 	}
 	else {
@@ -414,7 +422,7 @@ uint16 Logic::findFrame(uint16 obj) {
 
 		// calculate only if there are person frames
 		if(idx > 0) {
-			framenum = 36 + _maxStaticFrame + _maxAnimatedFrameLen + idx + FRAME_XTRA;
+			framenum = 36 + _maxStaticFrame + _maxAnimatedFrameLen + idx + FRAMES_JOE_XTRA;
 		}
 	}
 	return framenum;
@@ -432,6 +440,10 @@ void Logic::joeY(uint16 y) {
 	_joe.y = y;
 }
 
+void Logic::joeWalk(uint16 walk) {
+	_joe.walk = walk;
+}
+
 int16 Logic::gameState(int index) {
 	if (index >= 0 && index < GAME_STATE_COUNT)
 		return _gameState[index];
@@ -444,6 +456,100 @@ void Logic::gameState(int index, int16 newValue) {
 		 _gameState[index] = newValue;
 	else
 		error("[QueenLogic::gameState] invalid index: %i", index);
+}
+
+
+void Logic::zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+
+	ZoneSlot *pzs = &_zones[screen][zone];
+	pzs->valid = true;
+	pzs->box.x1 = x1;
+	pzs->box.y1 = y1;
+	pzs->box.x2 = x2;
+	pzs->box.y2 = y2;
+}
+
+
+void Logic::zoneSet(uint16 screen, uint16 zone, const Box& box) {
+	
+	debug(9, "Logic::zoneSet(%d, %d, (%d,%d), (%d,%d))", screen, zone, box.x1, box.y1, box.x2, box.y2);
+
+	ZoneSlot *pzs = &_zones[screen][zone];
+	pzs->valid = true;
+	pzs->box = box;
+}
+
+
+uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) {
+
+	int i;
+	if (screen == ZONE_PANEL) {
+		y -= ROOM_ZONE_HEIGHT;
+	}
+	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
+		ZoneSlot *pzs = &_zones[screen][i];
+		if (pzs->valid && pzs->box.contains(x, y)) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+
+uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) {
+	uint16 zone = zoneIn(screen, x, y);
+	if (zone <= _objMax[_currentRoom]) {
+		zone = 0;
+	}
+	else {
+		zone -= _objMax[_currentRoom];
+	}
+	return zone;
+}
+
+
+void Logic::zoneClearAll(uint16 screen) {
+
+	int i;
+	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
+		_zones[screen][i].valid = false;
+	}
+}
+
+
+void Logic::zoneSetup() {
+
+	zoneClearAll(ZONE_ROOM);
+
+	int i;
+	int zoneNum;
+
+	// setup objects zones
+	uint16 maxObjRoom = _objMax[_currentRoom];
+	uint16 objRoomNum = _roomData[_currentRoom];
+	zoneNum = 1;
+	for (i = objRoomNum + 1; i <= objRoomNum + maxObjRoom; ++i) {
+		if (_objectData[i].name != 0) {
+			zoneSet(ZONE_ROOM, zoneNum, _objectBox[i]);
+		}
+		++zoneNum;
+	}
+
+	// setup room zones (areas)
+	uint16 maxAreaRoom = _areaMax[_currentRoom];
+	for (zoneNum = 1; zoneNum <= maxAreaRoom; ++zoneNum) {
+		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, _area[_currentRoom][zoneNum].box);
+	}
+}
+
+
+uint16 Logic::findScale(uint16 x, uint16 y) {
+	uint16 scale = 100;
+	uint16 areaNum = zoneInArea(ZONE_ROOM, x, y);
+	if(areaNum != 0) {
+		scale = _area[_currentRoom][areaNum].calcScale(y);
+	}
+	return scale;
 }
 
 

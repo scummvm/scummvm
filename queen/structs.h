@@ -28,8 +28,20 @@ namespace Queen {
 struct Box {
 	uint16 x1, y1, x2, y2;
 
+	int16 xDiff() const {
+		return (int16)(x1 - x2);
+	}
+
+	int16 yDiff() const {
+		return (int16)(y1 - y2);
+	}
+
 	bool intersects(uint16 x, uint16 y, uint16 w, uint16 h) const {
 		return (x + w > x1) && (y + h > y1) && (x <= x2) && (y <= y2);
+	}
+
+	bool contains(uint16 x, uint16 y) const {
+		return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
 	}
 };
 
@@ -40,6 +52,20 @@ struct Area {
 	uint16 bottomScaleFactor;
 	uint16 topScaleFactor;
 	uint16 object;
+
+	uint16 calcScale(int16 y) const {
+		uint16 dy = box.y2 - box.y1;
+		uint16 ds = topScaleFactor - bottomScaleFactor;
+		uint16 scale = ((((y - box.y1) * 100) / dy) * ds) / 100 + bottomScaleFactor;
+		if (scale == 0) {
+			scale = 100;
+		}
+		return scale;
+	}
+
+	int16 scaleDiff() const {
+		return (int16)(topScaleFactor - bottomScaleFactor);
+	}
 };
 
 

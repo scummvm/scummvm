@@ -276,7 +276,10 @@ Graphics::Graphics(Resource *resource)
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
 	_backdrop = new uint8[ BACKDROP_W * BACKDROP_H ];
 	_panel = new uint8[ PANEL_W * PANEL_H ];
-
+	_screen = new uint8[ SCREEN_W * SCREEN_H ];
+	_fullscreen = true;
+	_horizontalScroll = 0;
+	_palette = new uint8[ 256 * 4 ];
 }
 
 
@@ -285,10 +288,12 @@ Graphics::~Graphics() {
 	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
 		delete _banks[i].data;
 	}
-//	frameClearAll();
+	frameEraseAll(true);
 	delete[] _shrinkBuffer.data;
 	delete[] _backdrop;
 	delete[] _panel;
+	delete[] _screen;
+	delete[] _palette;
 }
 
 
@@ -369,6 +374,16 @@ void Graphics::bankErase(uint32 bankslot) {
 }
 
 
+void Graphics::bobSetupControl() {
+
+	bankLoad("control.BBK",17);
+	bankUnpack(1, 1, 17); // Mouse pointer
+    bankUnpack(3, 3, 17); // Up arrow dialogue
+    bankUnpack(4, 4, 17); // Down arrow dialogue
+    bankErase(17);
+}
+
+
 void Graphics::bobAnimString(uint32 bobnum, uint8* animBuf) {
 
 	BobSlot *pbs = &_bobs[bobnum];
@@ -400,6 +415,8 @@ void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame,
 
 void Graphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
 
+	debug(5, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
+
 	BobSlot *pbs = &_bobs[bobnum];
 
 	pbs->active = true;
@@ -408,7 +425,6 @@ void Graphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
 	pbs->endx = endx;
 	pbs->endy = endy;
 
-	// FIXME: can speed be negative or =0 ? the original sources does the check
 	pbs->speed = (speed < 1) ? 1 : speed;
 
 	int16 dx = endx - pbs->x;
@@ -513,23 +529,23 @@ void BobSlot::animOneStep() {
 					frameDir *= -1;
 				}
 				else {
-					frameNum = anim.normal.lastFrame - 1;
+					frameNum = anim.normal.firstFrame - 1;
 				}
-				frameNum += frameDir;
 			}
+			frameNum += frameDir;
 		}
 	}
 }
-            
+          
 
 void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box) {
 
 	uint16 w, h;
 
-	debug(5, "Preparing to draw frame %d, scale = %d", bobnum, scale);
+	debug(5, "Preparing to draw frame %d, scale = %d, coords = (%d,%d)", bobnum, scale, x, y);
 
 	BobFrame *pbf = &_frames[bobnum];
-	if (scale < 100) {  // Note: scale is unsigned, hence always >= 0
+	if (scale < 100) {
 		bobShrink(pbf, scale);
 		pbf = &_shrinkBuffer;
 	}
@@ -565,18 +581,15 @@ void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xfl
 			h_new = box.y2 - y + 1;
 		}
 
-//		_display->ulines(w_new / 16, h_new, 2);
-
-		// FIXME: original code blits to 'hidden' buffer
 		src += w * y_skip;
 		if (!xflip) {
 			src += x_skip;
-			displayBlit(_backdrop, x, y, BACKDROP_W, src, w_new, h_new, w, xflip, true);
+			displayBlit(_screen, x, y, SCREEN_W, src, w_new, h_new, w, xflip, true);
 		}
 		else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
-			displayBlit(_backdrop, x, y, BACKDROP_W, src, w_new, h_new, w, xflip, true);
+			displayBlit(_screen, x, y, SCREEN_W, src, w_new, h_new, w, xflip, true);
 		}
     }
 
@@ -836,8 +849,6 @@ void Graphics::frameEraseAll(bool joe) {
 
 void Graphics::backdropLoad(const char* name, uint16 room) {
 
-//	_display->ulines(2);
-
 	// init Dynalum
 	char roomPrefix[20];
 	strcpy(roomPrefix, name);
@@ -849,14 +860,14 @@ void Graphics::backdropLoad(const char* name, uint16 room) {
 		error("Unable to load backdrop : '%s'", name);
 	}
 
-//	uint32 size = _resource->fileSize(name);
-//	_display->setPal(pcxbuf + size - 768, 0, (room <= 144) ? 144 : 256);
+	uint32 size = _resource->fileSize(name);
+	displaySetPal(pcxbuf + size - 768, 0, (room <= 144) ? 144 : 256);
 
 	_backdropWidth  = READ_LE_UINT16(pcxbuf +  12);
 	_backdropHeight = READ_LE_UINT16(pcxbuf +  14);
 
 	if (_backdropHeight == 150) {
-//		_display->_fullscreen = 0;
+		_fullscreen = false;
 	}
 
 	if (room >= 90) {
@@ -868,16 +879,40 @@ void Graphics::backdropLoad(const char* name, uint16 room) {
 }
 
 
+void Graphics::backdropDraw() {
+
+	int n = 3;
+	if (_fullscreen) {
+		n = 4;
+	}
+	uint8 *dst = _screen;
+	uint8 *src = _backdrop + _horizontalScroll;
+	while (n--) {
+		int i;
+		for (i = 0; i < 50; ++i) {
+			memcpy(dst, src, SCREEN_W);
+			dst += SCREEN_W;
+			src += BACKDROP_W;
+		}
+	}
+}
+
+
 void Graphics::panelLoad() {
 
 	uint8 *pcxbuf = _resource->loadFile("panel.pcx");
 	if (pcxbuf == NULL) {
 		error("Unable to open panel file");
 	}
-//	uint32 size = _resource->fileSize("panel.pcx");
-//	_display->setPal(pcxbuf + size - 768, 144, 256);
+	uint32 size = _resource->fileSize("panel.pcx");
+	displaySetPal(pcxbuf + size - 768, 144, 256);
 	readPCX(pcxbuf + 128, _panel + PANEL_W * 10, PANEL_W, PANEL_W, PANEL_H - 10);
 	delete[] pcxbuf;
+}
+
+
+void Graphics::panelDraw() {
+	memcpy(_screen + SCREEN_W * ROOM_ZONE_HEIGHT, _panel, PANEL_W * PANEL_H);
 }
 
 
@@ -897,6 +932,21 @@ void Graphics::readPCX(const uint8 *src, uint8 *dst, uint16 dstPitch, uint16 w, 
 			}
 		}
 		dst += dstPitch;
+	}
+}
+
+
+void Graphics::boxDraw(const Box &b, uint8 color) {
+
+	int x, y;
+
+	for (y = b.y1; y <= b.y2; ++y) {
+		*(_backdrop + y * 640 + b.x1) = color;
+		*(_backdrop + y * 640 + b.x2) = color;
+	}
+	for (x = b.x1; x <= b.x2; ++x) {
+		*(_backdrop + b.y1 * 640 + x) = color;
+		*(_backdrop + b.y2 * 640 + x) = color;
 	}
 }
 
@@ -959,20 +1009,19 @@ void Graphics::journalBobPreDraw() { // GameSettings* pgs
 }
 
 
-
 void Graphics::update() {
 	// FIXME: incomplete !
 	bobSortAll();
-//	panelDraw();
-//	backdropDraw();
+	panelDraw();
+	backdropDraw();
 	bobDrawAll();
 	textDrawAll();
+	displayScreen();
 }
 
 
 void Graphics::displayText(const TextSlot *pts, uint16 y) {
 
-	// FIXME: original source uses hidden buffer (instead of _backdrop)
 	uint16 x = pts->x;
 	uint8 *str = (uint8*)pts->text;
 	while (*str && x < GAME_SCREEN_WIDTH) {
@@ -980,18 +1029,17 @@ void Graphics::displayText(const TextSlot *pts, uint16 y) {
 //		if (_resource->_gameVersion->versionString[1] == 'F' && *str == 150) {
 //			chr = 251;
 //		}
-//		_display->ulines(2);
 		if (pts->outlined) {
-			displayChar(_backdrop, BACKDROP_W, x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x    , y - 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x + 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x + 1, y    , INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x + 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x    , y + 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x - 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			displayChar(_backdrop, BACKDROP_W, x - 1, y    , INK_OUTLINED_TEXT, pchr);
+			displayChar(x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x    , y - 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x + 1, y - 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x + 1, y    , INK_OUTLINED_TEXT, pchr);
+			displayChar(x + 1, y + 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x    , y + 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x - 1, y + 1, INK_OUTLINED_TEXT, pchr);
+			displayChar(x - 1, y    , INK_OUTLINED_TEXT, pchr);
 		}
-		displayChar(_backdrop, BACKDROP_W, x, y, pts->color, pchr);
+		displayChar(x, y, pts->color, pchr);
 
 		x += FONT_SIZES[ *str ];
 		++str;
@@ -999,10 +1047,10 @@ void Graphics::displayText(const TextSlot *pts, uint16 y) {
 }
 
 
-void Graphics::displayChar(uint8 *dst, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr) {
+void Graphics::displayChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 
 	int i, j;
-	dst += y * dstPitch + x;
+	uint8 *dst = _screen + y * SCREEN_W + x;
 	for (j = 0; j < 8; ++j) {
 		uint8* p = dst;
 		uint8 c = *chr++;
@@ -1015,7 +1063,7 @@ void Graphics::displayChar(uint8 *dst, uint16 dstPitch, uint16 x, uint16 y, uint
 				c <<= 1;
 			}
 		}
-		dst += dstPitch;
+		dst += SCREEN_W;
 	}
 }
 
@@ -1056,6 +1104,27 @@ void Graphics::displayBlit(uint8 *dst_buf, uint16 dst_x, uint16 dst_y, uint16 ds
 			dst_buf += dst_pitch;   
 		}
 	}
+}
+
+
+void Graphics::displaySetPal(uint8 *pal, int start, int end) {
+	int i;
+	pal += start * 3;
+	for (i = start; i < end; ++i, pal += 3) {
+		_palette[i << 2 | 0] = *(pal + 0);
+		_palette[i << 2 | 1] = *(pal + 1);
+		_palette[i << 2 | 2] = *(pal + 2);
+		_palette[i << 2 | 3] = 0;
+	}
+}
+
+
+void Graphics::displayScreen() {
+	// FIXME: temporary code ; cleanup/move to Display class.
+	OSystem *psys =	g_engine->_system;
+	psys->set_palette(_palette, 0, 256);
+	psys->copy_rect(_screen, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+	psys->update_screen();
 }
 
 

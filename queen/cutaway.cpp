@@ -984,12 +984,12 @@ void Cutaway::updateGameState() {
 				// Turn area on or off
 
 				if (areaSubIndex > 0) {
-					int16 *area = _logic->area(areaIndex, areaSubIndex);
-					area[0] = abs(area[0]);
+					Area *area = _logic->area(areaIndex, areaSubIndex);
+					area->mapNeighbours = abs(area->mapNeighbours);
 				}
 				else {
-					int16 *area = _logic->area(areaIndex, abs(areaSubIndex));
-					area[0] = -abs(area[0]);
+					Area *area = _logic->area(areaIndex, abs(areaSubIndex));
+					area->mapNeighbours = -abs(area->mapNeighbours);
 				}
 			}
 

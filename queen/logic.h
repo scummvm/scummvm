@@ -27,17 +27,8 @@
 
 namespace Queen {
 
+#define MAX_ZONES_NUMBER 32
 
-enum {
-	FRAME_XTRA = 2
-};
-
-enum {
-	LEFT = 1,
-	RIGHT = 2,
-	FRONT = 3,
-	BACK = 4
-};
 
 enum Language {
 	ENGLISH  = 'E',
@@ -45,6 +36,14 @@ enum Language {
 	GERMAN   = 'G',
 	ITALIAN  = 'I'
 };
+
+struct ZoneSlot {
+	bool valid;
+	Box box;
+};
+
+
+class Graphics;
 
 class Logic {
 
@@ -63,22 +62,34 @@ public:
 	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
 	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
 
-	int16 *area(int index, int subIndex);
+	Area *area(int index, int subIndex);
 	uint16 walkOffCount();
 	WalkOffData *walkOffData(int index);
 
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
 	uint16 joeY()		{ return _joe.y; }
+	uint16 joeWalk()    { return _joe.walk; }
 
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
+	void joeWalk(uint16 walk);
 	
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
 	Language language() { return ENGLISH; } // FIXME: get from queen.jas
+
+	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void zoneSet(uint16 screen, uint16 zone, const Box& box);
+	uint16 zoneIn(uint16 screen, uint16 x, uint16 y);
+	uint16 zoneInArea(uint16 screen, uint16 x, uint16 y);
+	void zoneClearAll(uint16 screen);
+	void zoneSetup();
+
+	uint16 findScale(uint16 x, uint16 y);
+
 
 protected:
 	uint8 *_jas;
@@ -106,8 +117,9 @@ protected:
 	ObjectData *_objectData;
 	ObjectDescription *_objectDescription;
 	uint16 (*_actorData)[12]; // FIXME: ActorData *_actorData;
-	int16 (*_area)[11][8]; // FIXME: Area *_area[11];
+	Area (*_area)[11];
 	WalkOffData *_walkOffData;
+	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
 
 	enum {
 		GAME_STATE_COUNT = 211
@@ -116,6 +128,7 @@ protected:
 	struct {
 		uint16	x, y;
 		uint16	facing;
+		uint16  walk;
 	} _joe;
 	
 	int16 _gameState[GAME_STATE_COUNT];

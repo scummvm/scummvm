@@ -114,6 +114,7 @@ public:
 	void bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // overpackbank()
 	void bankErase(uint32 bankslot); // erase()
 
+	void bobSetupControl();
 	void bobAnimString(uint32 bobnum, uint8* animBuf); // stringanim()
 	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
 	void bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed); // movebob()
@@ -136,28 +137,33 @@ public:
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes
 
-	void backdropLoad(const char* name, uint16 room); // loadbackdrop
-//	void backdropDraw();
+	void backdropLoad(const char *name, uint16 room); // loadbackdrop
+	void backdropDraw();
 
 	void panelLoad(); // loadpanel
-//	void panelDraw();
+	void panelDraw();
+
+	void boxDraw(const Box &b, uint8 color);
 
 	void useJournal();
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
 	void journalBobPreDraw();
 
 	void update();
-
+ 
 	void displayText(const TextSlot *pts, uint16 y); // FIXME: move to Display class
-	void displayChar(uint8 *dst, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr); // FIXME: move to Display class
+	void displayChar(uint16 x, uint16 y, uint8 color, const uint8 *chr); // FIXME: move to Display class
 	static void displayBlit(uint8 *dst_buf, uint16 dst_x, uint16 dst_y, uint16 dst_pitch, const uint8 *src_buf, uint16 src_w, uint16 src_h, uint16 src_pitch, bool xflip, bool masked); // FIXME: move to Display class
-
+	void displaySetPal(uint8 *pal, int start, int end);
+	void displayScreen();
 
 private:
 
 	enum {
 		BACKDROP_W = 640,
 		BACKDROP_H = 200,
+		SCREEN_W = 320,
+		SCREEN_H = 200,
 		PANEL_W = 320,
 		PANEL_H = 50,
 		BOB_SHRINK_BUF_SIZE = 60000
@@ -194,6 +200,14 @@ private:
 
 	 //! current room bitmap
 	uint8 *_backdrop;
+
+	uint8 *_screen;
+
+	bool _fullscreen;
+
+	uint16 _horizontalScroll;
+
+	uint8 *_palette;
 
 	//! panel storage area
 	uint8 *_panel;
