@@ -27,7 +27,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-#define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+//#define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 #define MAX_STREAMER 10
 
 byte * SmushPlayer::loadTres()
@@ -62,6 +62,15 @@ byte * SmushPlayer::loadTres()
 		fread(_buffer_tres, tmp, 1, f_tres);
 		for (l = 0; l < tmp; l++) 
 			*(_buffer_tres + l) ^= 0xcc;
+		_buffer_tres[tmp] = 0;
+	}
+	else
+	{
+		fseek(f_tres, 0, SEEK_END); // assume file is unencrypted
+		tmp = ftell(f_tres);
+		fseek(f_tres, 0, SEEK_SET);
+		_buffer_tres = (byte*)malloc (tmp + 1);
+		fread(_buffer_tres, tmp, 1, f_tres);
 		_buffer_tres[tmp] = 0;
 	}
 	fclose (f_tres);
@@ -262,8 +271,8 @@ void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font
 	
 	codec44_depack (dst, src, length);
 
-	width = *(uint16*)(font + t_offset + 6);
-	height = *(uint16*)(font + t_offset + 8);
+	width = READ_LE_UINT16(font + t_offset + 6);
+	height = READ_LE_UINT16(font + t_offset + 8);
 
 	y += c_line * height;
 	for (uint32 ty = 0; ty < height; ty++) {
@@ -298,10 +307,10 @@ int _mixer_num;
 
 uint32 SmushPlayer::nextBE32()
 {
-	uint32 a = *((uint32 *)_cur);
+	uint32 a = READ_BE_UINT32(_cur);
 	_cur += sizeof(uint32);
 
-	return SWAP2(a);
+	return a;
 }
 
 void SmushPlayer::fileRead(void *mem, int len)
@@ -313,18 +322,16 @@ void SmushPlayer::fileRead(void *mem, int len)
 
 uint32 SmushPlayer::fileReadBE32()
 {
-	uint32 number;
-
-	fileRead(&number, sizeof(number));
-	return SWAP2(number);
+	byte b[4];
+	fread(b, sizeof(b), 1, _in);
+	return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
 }
 
 uint32 SmushPlayer::fileReadLE32()
 {
-	uint32 number;
-
-	fileRead(&number, sizeof(number));
-	return number;
+	byte b[4];
+	fread(b, sizeof(b), 1, _in);
+	return (b[3]<<24)|(b[2]<<16)|(b[1]<<8)|b[0];
 }
 
 void SmushPlayer::openFile(byte *fileName)
@@ -563,7 +570,7 @@ void codec1(CodecData * cd)
 		uint x;
 
 		if ((uint) y >= (uint) cd->outheight) {
-			src += *(uint16 *)(src) + 2;
+			src += READ_LE_UINT16(src)+2;
 			continue;
 		}
 
@@ -911,14 +918,14 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 	case 0:{
 			curbuf = pcd->deltaBufs[pcd->curtable];
 			memset(pcd->deltaBuf, 0, curbuf - pcd->deltaBuf);
-			size = *(uint32 *)(cd->src + 4);
+			size = READ_LE_UINT32(cd->src + 4);
 			memset(curbuf + size, 0, pcd->deltaBuf + pcd->deltaSize - curbuf - size);
 			memcpy(curbuf, cd->src + 16, size);
 			break;
 		}
 
 	case 2:{
-			size = *(uint32 *)(cd->src + 4);
+			size = READ_LE_UINT32(cd->src + 4);
 			curbuf = pcd->deltaBufs[pcd->curtable];
 			if (size == 64000)
 				codec37_bompdepack(curbuf, cd->src + 16, size);
@@ -931,7 +938,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 		}
 
 	case 3:{
-			uint16 number = *(uint16 *)(cd->src + 2);
+			uint16 number = READ_LE_UINT16(cd->src + 2);
 
 			if (number && pcd->flags + 1 != number)
 				break;
@@ -954,7 +961,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 
 		}
 	case 4:{
-			uint16 number = *(uint16 *)(cd->src + 2);
+			uint16 number = READ_LE_UINT16(cd->src + 2);
 
 			if (number && pcd->flags + 1 != number)
 				break;
@@ -984,7 +991,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 		error("codec37 default case");
 	}
 
-	pcd->flags = *(uint16 *)(cd->src + 2);
+	pcd->flags = READ_LE_UINT16(cd->src + 2);
 
 	if (result) {
 		pcd->curtable ^= 1;
@@ -1018,8 +1025,8 @@ void SmushPlayer::parseFOBJ()
 	cd.y = 0;
 	cd.x = 0;
 	cd.src = _cur + 0xE;
-	cd.w = *(uint16 *)(_cur + 6);
-	cd.h = *(uint16 *)(_cur + 8);
+	cd.w = READ_LE_UINT16(_cur + 6);
+	cd.h = READ_LE_UINT16(_cur + 8);
 	cd.flags = 0;
 
 	codec = _cur[0];
@@ -1145,14 +1152,14 @@ void SmushPlayer::parseXPAL()
 	int num;
 	int i;
 
-	num = *(uint16 *)(_cur + 2);
+	num = READ_LE_UINT16(_cur + 2);
 	if (num == 0 || num == 0x200) {
 		if (num == 0x200)
 			memcpy(_fluPalette, _cur + 0x604, 0x300);
 
 		for (i = 0; i < 0x300; i++) {
 			_fluPalMul129[i] = _fluPalette[i] * 129;
-			_fluPalWords[i] = *(uint16 *)(_cur + 4 + i * 2);
+			_fluPalWords[i] = READ_LE_UINT16(_cur + 4 + i * 2);
 		}
 		return;
 	}
@@ -1340,7 +1347,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 
 			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
 			sm->_system->update_screen();
-			sm->waitForTimer(60);
+			sm->waitForTimer(18);
 
 			//sm->delta = sm->_system->waitTick(sm->delta);
 		}
