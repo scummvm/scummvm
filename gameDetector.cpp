@@ -406,6 +406,9 @@ OSystem *GameDetector::createSystem() {
 #else
 	case GD_SDL:
 	case GD_AUTO:
+#ifdef _WIN32_WCE
+		return OSystem_WINCE3_create();
+#endif
 #if !defined(__MORPHOS__)
 		return OSystem_SDL_create(_gfx_mode, _fullScreen);
 #endif
@@ -435,7 +438,7 @@ OSystem *GameDetector::createSystem() {
 MidiDriver *GameDetector::createMidi() {
 	int drv = _midi_driver;
 
-#ifdef WIN32
+#if defined (WIN32) && !defined(_WIN32_WCE)
 	/* MD_WINDOWS is default MidiDriver on windows targets */
 	if (drv == MD_AUTO) drv = MD_WINDOWS;	
 #endif
@@ -443,7 +446,7 @@ MidiDriver *GameDetector::createMidi() {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:			return MidiDriver_NULL_create();
-#ifdef WIN32
+#if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif
 #ifdef __MORPHOS__

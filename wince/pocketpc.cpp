@@ -20,32 +20,28 @@
 #include "stdafx.h"
 #include <assert.h>
 
-#include <aygshell.h>
-#include "resource.h"
-
 #include "scumm.h"
 #include "screen.h"
-
-#include "sound.h"
-
 #include "gui.h"
+#include "mididrv.h"
+#include "gameDetector.h"
+#include "simon/simon.h"
+#include "gapi_keys.h"
+
 
 #include "commctrl.h"
-
 #include <Winuser.h>
-
 #include <Winnls.h>
 #include <sipapi.h>
 #include <Aygshell.h>
 #include <gx.h>
-
-#include "gapi_keys.h"
+#include <aygshell.h>
+#include "resource.h"
 
 #include "SDL.h"
 #include "SDL_audio.h"
 #include "SDL_timer.h"
 #include "SDL_thread.h"
-
 
 #define VERSION "(VM " SCUMMVM_CVS ")"
 
@@ -100,6 +96,12 @@ static int old_mouse_x, old_mouse_y;
 static int old_mouse_h, old_mouse_w;
 static bool has_mouse, hide_mouse;
 
+GameDetector detector;
+Gui gui;
+
+Scumm *g_scumm;
+
+
 #define BAK_WIDTH 40
 #define BAK_HEIGHT 40
 unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
@@ -114,34 +116,6 @@ unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
     num_of_dirty_square++;					\
   }
 
-// Practically identical to the one in windows.cpp
-class WndMan
-{
-	HMODULE hInst;
-	HWND hWnd;
-
-	bool terminated;	
-
-public:
-	byte *_vgabuf;
-	Scumm *_scumm;
-
-	HANDLE _event;
-	DWORD _threadId;
-	HWAVEOUT _handle;
-	WAVEHDR _hdr[2];
-
-
-public:
-	void init();
-
-	bool handleMessage();
-	void run();
-	void setPalette(byte *ctab, int first, int num);
-	void writeToScreen();
-
-};
-
 // Similar to Error in windows.cpp but has to take Unicode in account
 void Error(LPCTSTR msg)
 {
@@ -152,14 +126,10 @@ void Error(LPCTSTR msg)
 
 //{{
 Scumm scumm;
-ScummDebugger debugger;
-Gui gui;
 
-IMuse sound;
-SOUND_DRIVER_TYPE snd_driv;
+//IMuse sound;
+//SOUND_DRIVER_TYPE snd_driv;
 
-
-WndMan wm[1];
 byte veryFastMode;
 //}}
 
@@ -283,12 +253,14 @@ void registry_save() {
 
 /* Action functions */
 
+// FIX ACTIONS
+
 void action_right_click() {
-	wm->_scumm->_rightBtnPressed |= msDown|msClicked;
+	//wm->_scumm->_rightBtnPressed |= msDown|msClicked;
 }
 
 void action_pause() {
-	wm->_scumm->_keyPressed = mapKey(VK_SPACE);
+	//wm->_scumm->_keyPressed = mapKey(VK_SPACE);
 }
 
 void action_save() {
@@ -298,7 +270,7 @@ void action_save() {
 			toolbar_drawn = false;
 	}
 
-	wm->_scumm->_keyPressed = mapKey(VK_F5);
+	//wm->_scumm->_keyPressed = mapKey(VK_F5);
 }
 
 void action_quit() {
@@ -306,14 +278,14 @@ void action_quit() {
 }
 
 void action_skip() {
-	wm->_scumm->_keyPressed = mapKey(VK_ESCAPE);
+	//wm->_scumm->_keyPressed = mapKey(VK_ESCAPE);
 }
 
 void action_hide() {
 	hide_toolbar = !hide_toolbar;
 	Cls();
 	toolbar_drawn = hide_toolbar;
-	wm->writeToScreen();
+	//wm->writeToScreen();
 }
 
 void action_keyboard() {
@@ -326,7 +298,7 @@ void action_keyboard() {
 
 void action_sound() {
 	sound_activated = !sound_activated;
-	wm->_scumm->_soundsPaused2 = !sound_activated;
+	//wm->_scumm->_soundsPaused2 = !sound_activated;
 }
 
 /* Initialization */
@@ -344,371 +316,12 @@ void keypad_close() {
 	GXCloseInput();	
 }
 
-/* *************************************************************************** */
-/* SDL sound */
-/* *************************************************************************** */
-
-void fill_sound(void *userdata, Uint8 *stream, int len) {
-	scumm.mixWaves((int16*)stream, len>>1);
-}
-
-
-// TODO : check SIP state - menu seems to be not drawn on some devices
-
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	static		 SHACTIVATEINFO sai;
-
-	WndMan *wm = (WndMan*)GetWindowLong(hWnd, GWL_USERDATA);	
-
-	switch (message) 
-	{
-	case WM_CREATE:
-		memset(&sai, 0, sizeof(sai));
-		SHSipPreference(hWnd, SIP_FORCEDOWN);
-//		SHSipPreference(hWnd, SIP_INPUTDIALOG);
-
-		return 0;
-
-	case WM_DESTROY:
-	case WM_CLOSE:
-		GraphicsOff();
-		PostQuitMessage(0);
-		break;
-
-	case WM_ERASEBKGND:
-		{
-			RECT rc;
-			HDC hDC;
-			GetClientRect(hWnd, &rc);
-			rc.top = 200;
-			hDC = GetDC(hWnd);
-			if(rc.top < rc.bottom)
-				FillRect(hDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-			ReleaseDC(hWnd, hDC);			
-		}
-		return 1;
-
-	case WM_PAINT:
-		{
-			HDC hDC;
-			PAINTSTRUCT ps;
-			hDC = BeginPaint (hWnd, &ps);
-			EndPaint (hWnd, &ps);
-			if (!hide_toolbar)
-				toolbar_drawn = false;
-
-			/*
-			if(!GetScreenMode()) {
-				SHSipPreference(hWnd, SIP_UP);
-			} else {
-				SHSipPreference(hWnd, SIP_FORCEDOWN);
-			} 
-			*/
-		}
-//		SHSipPreference(hWnd, SIP_UP); /* Hack! */
-		/* It does not happen often but I don't want to see tooltip traces */
-		wm->writeToScreen();
-		return 0;
-
-	case WM_ACTIVATE:
-		GraphicsResume();
-		if (!hide_toolbar)
-			toolbar_drawn = false;
-//		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
-		return 0;
-
-	case WM_HIBERNATE:
-		GraphicsSuspend();
-		if (!hide_toolbar)
-			toolbar_drawn = false;
-		return 0;
-
-	case WM_SETTINGCHANGE:
-		SHHandleWMSettingChange(hWnd, wParam, lParam, &sai);
-		if (!hide_toolbar)
-			toolbar_drawn = false;
-		return 0;
-
-	case WM_COMMAND:
-		switch(wParam)
-		{
-		case IDC_OPTIONS:
-			wm->_scumm->_keyPressed = KEY_SET_OPTIONS;
-			break;
-		case IDC_EXIT:
-			DestroyWindow(hWnd);
-			do_quit();			
-			break;
-		case IDC_SKIP:
-			wParam = VK_ESCAPE;
-			wm->_scumm->_keyPressed = mapKey(wParam);
-			break;
-		case IDC_LOADSAVE:
-			if (GetScreenMode()) {
-				draw_keyboard = true;
-				if (!hide_toolbar)
-					toolbar_drawn = false;
-			}
-			wParam = VK_F5;
-			wm->_scumm->_keyPressed = mapKey(wParam);
-			break;
-		
-		case IDC_SOUND:
-			sound_activated = !sound_activated;
-			CheckMenuItem (
-				SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
-				IDC_SOUND, 
-				MF_BYCOMMAND | (sound_activated ? MF_CHECKED : MF_UNCHECKED));	
-			wm->_scumm->_soundsPaused2 = !sound_activated;
-			break;     
-		
-      break;
-
-		case IDC_LANDSCAPE:
-			SetScreenMode(!GetScreenMode());
-			SHSipPreference(hWnd,SIP_FORCEDOWN);
-			SetCapture(hWnd); // to prevent input panel from getting taps
-			SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-			InvalidateRect(HWND_DESKTOP, NULL, TRUE);
-			/*
-			SipShowIM(SIPF_OFF);
-			SHSipPreference(hWnd, SIP_FORCEDOWN);
-			*/
-			if (!hide_toolbar)
-				toolbar_drawn = false;
-			break;
-
-		}
-		return 0;
-	
-	case WM_KEYDOWN:
-		if(wParam) { // gets rid of zero that seems to preceed GAPI events.
-
-			unsigned char GAPI_key;
-
-			GAPI_key = getGAPIKeyMapping((short)wParam);
-			if (GAPI_key) {
-				if (get_key_mapping)
-					wm->_scumm->_keyPressed = GAPI_KEY_BASE + GAPI_key;
-				else
-					processAction((short)wParam);
-			}
-			else {
-				wm->_scumm->_keyPressed = mapKey(wParam);
-			}
-		}
-
-		break;
-
-	case WM_MOUSEMOVE:
-		{
-			int x = ((int16*)&lParam)[0];
-			int y = ((int16*)&lParam)[1];
-			Translate(&x, &y);
-			wm->_scumm->mouse.x = x;
-			wm->_scumm->mouse.y = y;
-		}
-		break;
-	case WM_LBUTTONDOWN:
-		{
-			ToolbarSelected toolbar_selection;
-			int x = ((int16*)&lParam)[0];
-			int y = ((int16*)&lParam)[1];
-			Translate(&x, &y);
-
-			if (draw_keyboard) {
-				// Handle keyboard selection
-
-				if (x<185 && y>=200) {
-					//Alpha selection
-					wm->_scumm->_keyPressed = 
-						(y <= 220 ? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
-									KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
-					break;
-				} 
-				else
-				if (x>=186 && y>=200 && x<=255) {
-				   // Numeric selection
-				   wm->_scumm->_keyPressed =
-					   (y <= 220 ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
-								   KEYBOARD_MAPPING_NUMERIC_LOW[((x - 187 + 10) / 14) - 1]);
-				   break;
-				}
-				else
-				if (x>=302 && x <= 316 && y >= 200 && y <= 220) {
-				  // Backspace
-				  wm->_scumm->_keyPressed = mapKey(VK_BACK);
-				  break;
-				}
-
-				wm->_scumm->mouse.x = x;
-				wm->_scumm->mouse.y = y;
-				wm->_scumm->_leftBtnPressed |= msClicked|msDown;
-				break;
-
-			}
-					
-
-			toolbar_selection = (hide_toolbar || get_key_mapping ? ToolbarNone : 
-									getToolbarSelection(x, y));
-			if (toolbar_selection == ToolbarNone) {				
-				wm->_scumm->mouse.x = x;
-				wm->_scumm->mouse.y = y;
-
-				wm->_scumm->_leftBtnPressed |= msClicked|msDown;
-			
-				if(y > 200 && !hide_toolbar)
-				{
-					if(x<160)
-						wm->_scumm->_keyPressed = VK_ESCAPE;				
-					else
-					{
-						SetScreenMode(0); // restore normal tap logic
-						SHSipPreference(hWnd,SIP_UP);
-						ReleaseCapture();
-						InvalidateRect(HWND_DESKTOP, NULL, TRUE);
-					}				
-				}			
-			}
-			else {
-				switch(toolbar_selection) {
-					case ToolbarSaveLoad:
-						if (GetScreenMode()) {
-							draw_keyboard = true;
-							if (!hide_toolbar)
-								toolbar_drawn = false;
-						}
-						wm->_scumm->_keyPressed = mapKey(VK_F5);
-						break;
-					case ToolbarExit:
-						wm->_scumm->_keyPressed = KEY_SET_OPTIONS;
-						break;
-					case ToolbarSkip:
-						wm->_scumm->_keyPressed = mapKey(VK_ESCAPE);				
-						break;
-					case ToolbarSound:
-						sound_activated = !sound_activated;
-						wm->_scumm->_soundsPaused2 = !sound_activated;
-						redrawSoundItem();
-						break;
-					default:
-						break;
-				}
-			}
-		}
-		break;
-	case WM_LBUTTONUP:
-		{
-			// pinched from the SDL code. Distinguishes between taps and not
-			wm->_scumm->_leftBtnPressed &= ~msDown;
-		}
-		break;
-	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
-		wm->_scumm->_rightBtnPressed |= msClicked | msDown;
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-   }
-   return 0;
-}
-
-// writeToScreen, setPalette and init are very port-specific
-void WndMan::writeToScreen()
-{
-	Blt(_vgabuf);
-}
-
-void WndMan::setPalette(byte *ctab, int first, int num) {
-	int i;
-
-	for (i=0; i<256; i++)
-		SetPalEntry(i, ctab[i*3+0], ctab[i*3+1], ctab[i*3+2]);
-
-	palette_update();
-}
-
-
-void WndMan::init()
-{
-	/* Retrieve the handle of this module */
-	hInst = GetModuleHandle(NULL);
-
-	/* Register the window class */
-	WNDCLASS wcex;
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC)WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInst;
-	wcex.hIcon			= 0;
-	wcex.hCursor		= NULL;
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName	= 0;	
-	wcex.lpszClassName	= TEXT("ScummVM");
-	if (!RegisterClass(&wcex))
-		Error(TEXT("Cannot register window class!"));
-
-	hWnd = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
-      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInst, NULL);
-	hWnd_Window = hWnd;
-	SetWindowLong(hWnd, GWL_USERDATA, (long)this);
-
-	ShowWindow(hWnd, SW_SHOW);
-
-	SHMENUBARINFO smbi;
-	smbi.cbSize = sizeof(smbi); 
-	smbi.hwndParent = hWnd; 
-	smbi.dwFlags = 0; 
-	smbi.nToolBarId = IDM_MENU; 
-	smbi.hInstRes = GetModuleHandle(NULL); 
-	smbi.nBmpId = 0; 
-	smbi.cBmpImages = 0; 
-	smbi.hwndMB = NULL;
-	BOOL res = SHCreateMenuBar(&smbi);
-	hWnd_MainMenu = smbi.hwndMB;
-
-	/* Sound is activated on default - initialize it in the menu */
-	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
-		IDC_SOUND, 
-		MF_BYCOMMAND | MF_CHECKED);
-
-	GraphicsOn(hWnd);
-
-	SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-	SetForegroundWindow(hWnd);
-//	SHFullScreen(hWnd, SHFS_SHOWSIPBUTTON);
-	SHFullScreen(hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-
-	Cls();
-}
-
-
-//{{
-bool WndMan::handleMessage() {
-	MSG msg;
-
-	if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		return false;
-
-	if (msg.message==WM_QUIT) {
-		terminated=true;
-		do_quit();
-		return true;
-	}
-
-	TranslateMessage(&msg);
-	DispatchMessage(&msg);
-
-	return true;
-}
-//}}
-
 // This function is very similar to the one in windows.cpp except for
 // one line removed.
 
 // TODO : use dirty rects
 
+/*
 void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	byte *dst;
 	//int i;
@@ -731,12 +344,14 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 	} while (--h);
 
 }
+*/
 
 //{{
 int clock;
 
 // TODO : use dirty rects for faster screen updates
 
+/*
 void updateScreen(Scumm *s) {
 
   if (hide_mouse) {
@@ -761,28 +376,12 @@ void waitForTimer(Scumm *s, int delay) {
 		Sleep(delay);
 	} 
 }
-
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
-	SDL_AudioSpec desired;
-
-	if(fullScreen)
-		warning("Use SDL for fullscreen support");
-
-	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
-	    exit(1);
-	}
-
-	desired.freq = 11025;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 1;
-	desired.samples = 128;               // seems correct
-	desired.callback = fill_sound;
-	SDL_OpenAudio(&desired, NULL);
-	SDL_PauseAudio(0);
-}
+*/
 
 // Copy/Paste from X11
 // Dirty rects not managed now
+
+/*
 
 void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
   unsigned char *dst,*bak;
@@ -874,7 +473,7 @@ void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
     }
   }
 }
-
+*/
 
 
 BOOL CALLBACK SelectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -947,14 +546,10 @@ char* GameSelector()
 // Directly corresponds to main in windows.cpp
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
 {
-	int delta;
-	int tmp;
-
+	
 	int argc = 3;
 	char* argv[3];
 	char argdir[MAX_PATH];
-	IMuse *se;
-
 	sound_activated = true;
 	hide_toolbar = false;
 
@@ -962,71 +557,613 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	argv[1] = GameSelector();
 	sprintf(argdir, "-p%s", _directory);
 	argv[2] = argdir;
-	scumm._savegame_dir = _directory;
-//	scumm._error_handler = error_handler;
 
-	if(argv[1] == NULL)
+	if (!argv[1])
 		return 0;
 
-	wm->init();
-	wm->_vgabuf = (byte*)calloc(320,200);
-	wm->_scumm = &scumm;
+	if (detector.detectMain(argc, argv))
+		return (-1);
+
+	OSystem *system = detector.createSystem();
 	
-	sound.initialize(&scumm, &snd_driv);
-	scumm._soundsPaused = false;
-	scumm._soundsPaused2 = false;
+	/* Simon the Sorcerer? */
+	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
+		/* Simon the Sorcerer. Completely different initialization */
+		MidiDriver *midi = detector.createMidi();
+		
+		SimonState *simon = SimonState::create(system, midi);
+		simon->_game = detector._gameId - GID_SIMON_FIRST;
+		simon->set_volume(detector._sfx_volume);
+		simon->_game_path = detector._gameDataPath;
+		simon->go();
 
-	scumm._gui = &gui;
+	} else {
+		Scumm *scumm = Scumm::createFromDetector(&detector, system);
+		g_scumm = scumm;
 
-	scumm.scummMain(argc, argv);
-	gui.init(&scumm);
-	
-	keypad_init();
-	registry_init();
+		/* bind to Gui */
+		scumm->_gui = &gui;
+		gui.init(scumm);	/* Reinit GUI after loading a game */
 
-	se = scumm._imuse;
-	se->set_music_volume(scumm._sound_volume_music);
-	se->set_master_volume(scumm._sound_volume_master);
-
-	delta = 0;
-	tmp = 0;
-	do
-	{
-		updateScreen(&scumm);
-
-		waitForTimer(&scumm, tmp*10);
-
-		if(gui._active)
-		{
-			gui.loop();
-			tmp = 5;
-		}
-		else
-		{
-			tmp = delta = scumm.scummLoop(delta);
-
-			tmp += tmp>>1;
-			
-			if(scumm._fastMode)
-				tmp=1;
-		}
+		scumm->go();
 	}
-	while(1);
+	
+	return 0;
+}
+
+class OSystem_WINCE3 : public OSystem {
+public:
+	// Set colors of the palette
+	void set_palette(const byte *colors, uint start, uint num);
+
+	// Set the size of the video bitmap.
+	// Typically, 320x200
+	void init_size(uint w, uint h);
+
+	// Draw a bitmap to screen.
+	// The screen will not be updated to reflect the new bitmap
+	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+
+	// Update the dirty areas of the screen
+	void update_screen();
+
+	// Either show or hide the mouse cursor
+	bool show_mouse(bool visible);
+	
+	// Set the position of the mouse cursor
+	void set_mouse_pos(int x, int y);
+	
+	// Set the bitmap that's used when drawing the cursor.
+	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	
+	// Shaking is used in SCUMM. Set current shake position.
+	void set_shake_pos(int shake_pos);
+		
+	// Get the number of milliseconds since the program was started.
+	uint32 get_msecs();
+	
+	// Delay for a specified amount of milliseconds
+	void delay_msecs(uint msecs);
+	
+	// Create a thread
+	void *create_thread(ThreadProc *proc, void *param);
+	
+	// Get the next event.
+	// Returns true if an event was retrieved.	
+	bool poll_event(Event *event);
+	
+	// Set function that generates samples 
+	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+		
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	bool poll_cdrom();
+
+	// Play cdrom audio track
+	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+
+	// Stop cdrom audio track
+	void stop_cdrom();
+
+	// Update cdrom audio status
+	void update_cdrom();
+
+	// Quit
+	void quit();
+
+	// Set a parameter
+	uint32 property(int param, uint32 value);
+
+	// Windows callbacks & stuff
+
+	bool handleMessage();
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	// Constructor
+
+	static OSystem *create();
+
+private:
+
+	byte *_vgabuf;
+	uint32 _start_time;
+	Event _event;
+	HMODULE hInst;
+	HWND hWnd;
+	bool terminated;	
+};
+
+// Create class
+
+	OSystem* OSystem_WINCE3_create() {
+	return OSystem_WINCE3::create();
+}
+
+// Constructor
+
+OSystem* OSystem_WINCE3::create() {
+
+	OSystem_WINCE3 *syst = new OSystem_WINCE3();
+
+	syst->_vgabuf = (byte*)calloc(320,200);
+	syst->_event.event_code = -1;
+
+	/* Retrieve the handle of this module */
+	syst->hInst = GetModuleHandle(NULL);
+
+	/* Register the window class */
+	WNDCLASS wcex;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= (WNDPROC)WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= syst->hInst;
+	wcex.hIcon			= 0;
+	wcex.hCursor		= NULL;
+	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName	= 0;	
+	wcex.lpszClassName	= TEXT("ScummVM");
+	if (!RegisterClass(&wcex))
+		Error(TEXT("Cannot register window class!"));
+
+	syst->hWnd = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
+      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, syst->hInst, NULL);
+	hWnd_Window = syst->hWnd;
+	SetWindowLong(syst->hWnd, GWL_USERDATA, (long)syst);
+
+	ShowWindow(syst->hWnd, SW_SHOW);
+
+	SHMENUBARINFO smbi;
+	smbi.cbSize = sizeof(smbi); 
+	smbi.hwndParent = syst->hWnd; 
+	smbi.dwFlags = 0; 
+	smbi.nToolBarId = IDM_MENU; 
+	smbi.hInstRes = GetModuleHandle(NULL); 
+	smbi.nBmpId = 0; 
+	smbi.cBmpImages = 0; 
+	smbi.hwndMB = NULL;
+	BOOL res = SHCreateMenuBar(&smbi);
+	hWnd_MainMenu = smbi.hwndMB;
+
+	/* Sound is activated on default - initialize it in the menu */
+	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
+		IDC_SOUND, 
+		MF_BYCOMMAND | MF_CHECKED);
+
+	GraphicsOn(syst->hWnd);
+
+	SetWindowPos(syst->hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+	SetForegroundWindow(syst->hWnd);
+//	SHFullScreen(hWnd, SHFS_SHOWSIPBUTTON);
+	SHFullScreen(syst->hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+
+	//Cls();
+
+// Mini SDL init
+
+	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
+	    exit(1);
+	}
+
+	return syst;
+}
+
+// Windows specific callbacks
+
+LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static		 SHACTIVATEINFO sai;
+
+	OSystem_WINCE3 *wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);	
+
+	switch (message) 
+	{
+	case WM_CREATE:
+		memset(&sai, 0, sizeof(sai));
+		SHSipPreference(hWnd, SIP_FORCEDOWN);
+//		SHSipPreference(hWnd, SIP_INPUTDIALOG);
+
+		return 0;
+
+	case WM_DESTROY:
+	case WM_CLOSE:
+		GraphicsOff();
+		PostQuitMessage(0);
+		break;
+
+	case WM_ERASEBKGND:
+		{
+			RECT rc;
+			HDC hDC;
+			GetClientRect(hWnd, &rc);
+			rc.top = 200;
+			hDC = GetDC(hWnd);
+			if(rc.top < rc.bottom)
+				FillRect(hDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+			ReleaseDC(hWnd, hDC);			
+		}
+		return 1;
+
+	case WM_PAINT:
+		{
+			HDC hDC;
+			PAINTSTRUCT ps;
+			hDC = BeginPaint (hWnd, &ps);
+			EndPaint (hWnd, &ps);
+			if (!hide_toolbar)
+				toolbar_drawn = false;
+
+			/*
+			if(!GetScreenMode()) {
+				SHSipPreference(hWnd, SIP_UP);
+			} else {
+				SHSipPreference(hWnd, SIP_FORCEDOWN);
+			} 
+			*/
+		}
+//		SHSipPreference(hWnd, SIP_UP); /* Hack! */
+		/* It does not happen often but I don't want to see tooltip traces */
+		wm->update_screen();
+		return 0;
+
+	case WM_ACTIVATE:
+		GraphicsResume();
+		if (!hide_toolbar)
+			toolbar_drawn = false;
+//		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
+		return 0;
+
+	case WM_HIBERNATE:
+		GraphicsSuspend();
+		if (!hide_toolbar)
+			toolbar_drawn = false;
+		return 0;
+
+	case WM_SETTINGCHANGE:
+		SHHandleWMSettingChange(hWnd, wParam, lParam, &sai);
+		if (!hide_toolbar)
+			toolbar_drawn = false;
+		return 0;
+
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case IDC_OPTIONS:			
+			wm->_event.kbd.ascii = KEY_SET_OPTIONS;
+			wm->_event.event_code = EVENT_KEYDOWN;
+			break;
+		case IDC_EXIT:
+			DestroyWindow(hWnd);
+			do_quit();			
+			break;
+		case IDC_SKIP:
+			wm->_event.kbd.ascii = mapKey(VK_ESCAPE);;
+			wm->_event.event_code = EVENT_KEYDOWN;
+			break;
+		case IDC_LOADSAVE:
+			if (GetScreenMode()) {
+				draw_keyboard = true;
+				if (!hide_toolbar)
+					toolbar_drawn = false;
+			}
+			wm->_event.kbd.ascii = mapKey(VK_F5);
+			wm->_event.event_code = EVENT_KEYDOWN;
+			break;
+		
+		case IDC_SOUND:
+			// FIXME
+			sound_activated = !sound_activated;
+			CheckMenuItem (
+				SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
+				IDC_SOUND, 
+				MF_BYCOMMAND | (sound_activated ? MF_CHECKED : MF_UNCHECKED));	
+			//wm->_scumm->_soundsPaused2 = !sound_activated;
+			break;     
+		
+      break;
+
+		case IDC_LANDSCAPE:
+			SetScreenMode(!GetScreenMode());
+			SHSipPreference(hWnd,SIP_FORCEDOWN);
+			SetCapture(hWnd); // to prevent input panel from getting taps
+			SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+			InvalidateRect(HWND_DESKTOP, NULL, TRUE);
+			/*
+			SipShowIM(SIPF_OFF);
+			SHSipPreference(hWnd, SIP_FORCEDOWN);
+			*/
+			if (!hide_toolbar)
+				toolbar_drawn = false;
+			break;
+
+		}
+		return 0;
+	
+	case WM_KEYDOWN:
+		if(wParam) { // gets rid of zero that seems to preceed GAPI events.
+
+			unsigned char GAPI_key;
+
+			GAPI_key = getGAPIKeyMapping((short)wParam);
+			if (GAPI_key) {
+				if (get_key_mapping) {
+					wm->_event.kbd.ascii = GAPI_KEY_BASE + GAPI_key;
+					wm->_event.event_code = EVENT_KEYDOWN;
+				}					
+				else
+					processAction((short)wParam);
+			}
+			else {
+				wm->_event.kbd.ascii = mapKey(wParam);
+				wm->_event.event_code = EVENT_KEYDOWN;								
+			}
+		}
+
+		break;
+
+	case WM_MOUSEMOVE:
+		{
+			int x = ((int16*)&lParam)[0];
+			int y = ((int16*)&lParam)[1];
+			Translate(&x, &y);
+			wm->_event.event_code = EVENT_MOUSEMOVE;
+			wm->_event.mouse.x = x;
+			wm->_event.mouse.y = y;
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		{
+			ToolbarSelected toolbar_selection;
+			int x = ((int16*)&lParam)[0];
+			int y = ((int16*)&lParam)[1];
+			Translate(&x, &y);
+
+			if (draw_keyboard) {
+				// Handle keyboard selection
+
+				if (x<185 && y>=200) {
+					//Alpha selection
+					wm->_event.event_code = EVENT_KEYDOWN;
+					wm->_event.kbd.ascii = 
+						(y <= 220 ? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
+									KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
+					break;
+				} 
+				else
+				if (x>=186 && y>=200 && x<=255) {
+				   // Numeric selection
+				   wm->_event.event_code = EVENT_KEYDOWN;
+				   wm->_event.kbd.ascii =
+					   (y <= 220 ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
+								   KEYBOARD_MAPPING_NUMERIC_LOW[((x - 187 + 10) / 14) - 1]);
+				   break;
+				}
+				else
+				if (x>=302 && x <= 316 && y >= 200 && y <= 220) {
+				  // Backspace
+				  wm->_event.event_code = EVENT_KEYDOWN;
+				  wm->_event.kbd.ascii = mapKey(VK_BACK);
+				  break;
+				}
+
+				wm->_event.event_code = EVENT_LBUTTONDOWN;
+				wm->_event.mouse.x = x;
+				wm->_event.mouse.y = y;
+				break;
+
+			}
+					
+
+			toolbar_selection = (hide_toolbar || get_key_mapping ? ToolbarNone : 
+									getToolbarSelection(x, y));
+			if (toolbar_selection == ToolbarNone) {				
+				wm->_event.event_code = EVENT_LBUTTONDOWN;
+				wm->_event.mouse.x = x;
+				wm->_event.mouse.y = y;
+			
+				if(y > 200 && !hide_toolbar)
+				{
+					if(x<160) {
+					   wm->_event.event_code = EVENT_KEYDOWN;
+					   wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
+					}
+					else
+					{
+						SetScreenMode(0); // restore normal tap logic
+						SHSipPreference(hWnd,SIP_UP);
+						ReleaseCapture();
+						InvalidateRect(HWND_DESKTOP, NULL, TRUE);
+					}				
+				}			
+			}
+			else {
+				switch(toolbar_selection) {
+					case ToolbarSaveLoad:
+						if (GetScreenMode()) {
+							draw_keyboard = true;
+							if (!hide_toolbar)
+								toolbar_drawn = false;
+						}
+						wm->_event.event_code = EVENT_KEYDOWN;
+						wm->_event.kbd.ascii = mapKey(VK_F5);
+						break;
+					case ToolbarExit:
+						wm->_event.event_code = EVENT_KEYDOWN;
+						wm->_event.kbd.ascii = KEY_SET_OPTIONS;
+						break;
+					case ToolbarSkip:
+						wm->_event.event_code = EVENT_KEYDOWN;
+						wm->_event.kbd.ascii = mapKey(VK_ESCAPE);				
+						break;
+					case ToolbarSound:
+						// FIXME !!!!!
+						sound_activated = !sound_activated;
+						//wm->_scumm->_soundsPaused2 = !sound_activated;
+						redrawSoundItem();
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		break;
+	case WM_LBUTTONUP:
+		{
+			// pinched from the SDL code. Distinguishes between taps and not
+			wm->_event.event_code = EVENT_LBUTTONUP;
+
+		}
+		break;
+	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
+		//wm->_scumm->_rightBtnPressed |= msClicked | msDown;
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+   }
+   return 0;
+}
+
+
+bool OSystem_WINCE3::handleMessage() {
+	MSG msg;
+
+	if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		return false;
+
+	if (msg.message==WM_QUIT) {
+		terminated=true;
+		do_quit();
+		return true;
+	}
+
+	TranslateMessage(&msg);
+	DispatchMessage(&msg);
+
+	return true;
+}
+
+void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
+	int i;
+
+	for (i=0; i<256; i++)
+		SetPalEntry(i, colors[i*3+0], colors[i*3+1], colors[i*3+2]);
+
+	palette_update();
+
+}
+
+void OSystem_WINCE3::init_size(uint w, uint h) {
+}
+
+void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+	byte *dst;
+
+	dst = _vgabuf + y * 320 + x;
+	do {
+		memcpy(dst, buf, w);
+		dst += 320;
+		buf += pitch;
+	} while (--h);
+		
+}
+
+void OSystem_WINCE3::update_screen() {
+	Blt(_vgabuf);
+}
+
+// FIXME : implement mouse functions
+
+bool OSystem_WINCE3::show_mouse(bool visible) {
+	return false;
+}
+	
+
+void OSystem_WINCE3::set_mouse_pos(int x, int y) {
+}
+	
+
+void OSystem_WINCE3::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+}
+	
+void OSystem_WINCE3::set_shake_pos(int shake_pos) {
+}
+		
+
+uint32 OSystem_WINCE3::get_msecs() {
+	return GetTickCount() - _start_time;
+}
+		
+void OSystem_WINCE3::delay_msecs(uint msecs) {
+	handleMessage();
+	Sleep(msecs);
+}
+	
+
+void* OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
+	// Implement if needed by Midi Music
+	return NULL;
+}
+	
+//FIXME : add a minimal queue (just testing here)
+
+bool OSystem_WINCE3::poll_event(Event *event) {
+	if (_event.event_code < 0)
+		return false;
+
+	*event = _event;
+	_event.event_code = -1;
+
+	return true;
+}
+	
+	
+bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte sound) {
+	SDL_AudioSpec desired;
+
+	desired.freq = 11025;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 1;
+	desired.samples = 128;               // seems correct
+	desired.callback = proc;
+	desired.userdata = param;
+	SDL_OpenAudio(&desired, NULL);
+	SDL_PauseAudio(0);
+	desired.userdata = param;
+
+	return true;
+}
+		
+// No CD functions to implement
+
+bool OSystem_WINCE3::poll_cdrom() {
+	return false;
+}
+
+void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+}
+
+void OSystem_WINCE3::stop_cdrom() {
+}
+
+void OSystem_WINCE3::update_cdrom() {
+}
+
+void OSystem_WINCE3::quit() {
+	do_quit();
+}
+
+uint32 OSystem_WINCE3::property(int param, uint32 value) {
+	switch(param) {
+		case PROP_GET_SAMPLE_RATE:
+			return 11025;
+	}
 
 	return 0;
 }
 
-/* Unsupported funcs */
+OSystem *OSystem_NULL_create() {
+	return NULL;
+}
 
-// TODO : implement
-void setShakePos(Scumm *s, int shake_pos) {}
-// TODO : switch to MP3 support
-void cd_playtrack(int track, int offset, int delay) {}
-
-// Never happening on Pocket version
-
-void launcherLoop() {;}
-void cd_playtrack(int track, int offset, int delay) {;}
-void cd_play(int track, int num_loops, int start_frame) {;}
-void cd_stop() {;}
-int cd_is_running() {return 0;}
+void ScummDebugger::attach(Scumm *s) {
+}

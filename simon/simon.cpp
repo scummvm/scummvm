@@ -27,7 +27,9 @@
 #include "simon.h"
 
 
+#ifndef _WIN32_WCE
 #include <errno.h>
+#endif
 #include <time.h>
 #ifdef WIN32
 #include <malloc.h>
@@ -601,7 +603,7 @@ bool SimonState::loadGamePcFile(const char *filename) {
 	_tbl_list = (byte*)malloc(file_size);
 	if (_tbl_list == NULL)
 		error("Out of memory for strip table list");
-	rewind(in);
+	fseek(in, 0, SEEK_SET);
 	fread(_tbl_list, file_size, 1, in);
 	fclose(in);
 
@@ -619,7 +621,7 @@ bool SimonState::loadGamePcFile(const char *filename) {
 	_stripped_txt_mem = (byte*)malloc(file_size);
 	if (_stripped_txt_mem == NULL)
 		error("Out of memory for strip text list");
-	rewind(in);
+	fseek(in, 0, SEEK_SET);
 	fread(_stripped_txt_mem, file_size, 1, in);
 	fclose(in);
 
@@ -2242,7 +2244,7 @@ uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
 
 	fseek(fo, 0, SEEK_END);
 	size = ftell(fo);
-	rewind(fo);
+	fseek(fo, 0, SEEK_SET);
 
 	if (fread(dst, size,1, fo) != 1)
 		error("loadTextFile: fread failed");
@@ -3185,7 +3187,7 @@ void SimonState::loadIconFile() {
 	if (_icon_file_ptr == NULL)
 		error("Out of icon memory");
 
-	rewind(in);
+	fseek(in, 0, SEEK_SET);
 
 	fread(_icon_file_ptr, size, 1, in);
 	fclose(in);
@@ -6896,7 +6898,7 @@ void SimonState::readSfxFile(const char *filename) {
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
 
-		rewind(in);
+		fseek(in, 0, SEEK_SET);
 		
 		/* stop all sounds */
 		_mixer->stop_all();
@@ -7631,7 +7633,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
-		rewind(in);
+		fseek(in, 0, SEEK_SET);
 
 		if (fread(_vga_buffer_pointers[11].vgaFile2, size, 1, in) != 1)
 			error("read_vga_from_datfile_1: read failed");
@@ -7660,7 +7662,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
-		rewind(in);
+		fseek(in, 0, SEEK_SET);
 
 		dst = setup_vga_destination(size);
 
@@ -7992,7 +7994,9 @@ bool SimonState::save_game(uint slot, const char *caption) {
 
 	_lock_word |= 0x100;
 	
+#ifndef _WIN32_WCE
 	errno = 0;
+#endif
 	
 	f = fopen(gen_savename(slot), "wb");
 	if (f==NULL)
@@ -8084,8 +8088,12 @@ char *SimonState::gen_savename(int slot) {
 	const char *dir;
 
 	/* perhaps getenv should be added to OSystem */
+#ifndef _WIN32_WCE
 	dir = getenv("SCUMMVM_SAVEPATH");
 	if (dir == NULL) dir = "";
+#else
+	dir = _game_path;
+#endif
 
 	sprintf(buf, "%sSAVE.%.3d", dir, slot);
 	return buf;
@@ -8098,7 +8106,9 @@ bool SimonState::load_game(uint slot) {
 	
 	_lock_word |= 0x100;
 
+#ifndef _WIN32_WCE
 	errno = 0;
+#endif
 
 	f = fopen(gen_savename(slot), "rb");
 	if (f==NULL)
@@ -8200,8 +8210,10 @@ bool SimonState::load_game(uint slot) {
 
 	_lock_word &= ~0x100;
 
+#ifndef _WIN32_WCE
 	if (errno != 0)
 		error("load failed");
+#endif
 
 	return true;
 }
