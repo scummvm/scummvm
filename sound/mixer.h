@@ -131,14 +131,14 @@ public:
 	/**
 	 * Start playing the given audio input stream.
 	 */
-	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true);
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true, bool permanent = false);
 
 
 
 	/**
 	 * Stop all currently playing sounds.
 	 */
-	void stopAll();
+	void stopAll(bool force = false);
 
 	/**
 	 * Stop playing the sound with given ID.

@@ -46,6 +46,7 @@ private:
 	PlayingSoundHandle *_handle;
 	bool _autofreeStream;
 	const bool _isMusic;
+	bool _permanent;
 	byte _volume;
 	int8 _balance;
 	bool _paused;
@@ -61,11 +62,14 @@ protected:
 public:
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, int id = -1);
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, bool reverseStereo = false, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, bool reverseStereo = false, int id = -1, bool permanent = false);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
 
+	bool isPermanent() const {
+		return _permanent;
+	}
 	bool isFinished() const {
 		return _input->endOfStream();
 	}
@@ -122,7 +126,7 @@ SoundMixer::SoundMixer() {
 
 SoundMixer::~SoundMixer() {
 	_syst->clearSoundCallback();
-	stopAll();
+	stopAll(true);
 
 	delete _premixChannel;
 	_premixChannel = 0;
@@ -200,7 +204,7 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	insertChannel(handle, chan);
 }
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 balance, int id, bool autofreeStream) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 balance, int id, bool autofreeStream, bool permanent) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -219,7 +223,7 @@ void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input,
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, false, id);
+	Channel *chan = new Channel(this, handle, input, autofreeStream, isMusic, false, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -255,12 +259,14 @@ void SoundMixer::mixCallback(void *s, byte *samples, int len) {
 	((SoundMixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-void SoundMixer::stopAll() {
+void SoundMixer::stopAll(bool force) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] != 0) {
-			delete _channels[i];
-			_channels[i] = 0;
+			if (force || !_channels[i]->isPermanent()) {
+				delete _channels[i];
+				_channels[i] = 0;
+			}
 		}
 }
 
@@ -431,10 +437,10 @@ Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, in
 }
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
-				bool autofreeStream, bool isMusic, bool reverseStereo, int id)
+				bool autofreeStream, bool isMusic, bool reverseStereo, int id, bool permanent)
 	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
 	  _volume(255), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input) {
+	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);
 
