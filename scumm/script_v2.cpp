@@ -826,12 +826,12 @@ void Scumm_v2::o2_doSentence() {
 	SentenceTab *st;
 
 	a = getVarOrDirectByte(0x80);
-	if (a == 0xFB) {
+	if (a == 0xFC) {
 		_sentenceNum = 0;
 		stopScript(SENTENCE_SCRIPT);
 		return;
 	}
-	if (a == 0xFC) {
+	if (a == 0xFB) {
 		resetSentence();
 		return;
 	}
