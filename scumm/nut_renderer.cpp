@@ -90,7 +90,7 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	File file;
 	file.open(filename, dir);
 	if (file.isOpen() == false) {
-		debug(2, "NutRenderer::loadFont() Can't open font file: %s", filename);
+		error("NutRenderer::loadFont() Can't open font file: %s/%s", dir, filename);
 		return false;
 	}
 
