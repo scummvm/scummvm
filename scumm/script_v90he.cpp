@@ -93,7 +93,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o90_unknown25),
 		OPCODE(o90_unknown26),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown27),
 		/* 28 */
 		OPCODE(o90_unknown28),
 		OPCODE(o6_invalid),
@@ -381,29 +381,79 @@ const char *ScummEngine_v90he::getOpcodeDesc(byte i) {
 void ScummEngine_v90he::o90_unknown1C() {
 	// For Pajame Sam 2 demo
 	// Incomplete
-	int value = fetchScriptByte();
-	value -= 46;
+	int subOp = fetchScriptByte();
+	subOp -= 46;
 
-	if (value == 10) {
-		int flags = pop();
-		pop();
-		int y1 = pop();
-		int x1 = pop();
-		int resnum = pop();
-		if (_fullRedraw) {
-			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
-			WizImage *pwi = &_wizImages[_wizImagesNum];
-			pwi->resnum = resnum;
-			pwi->x1 = x1;
-			pwi->y1 = y1;
-			pwi->flags = flags;
-			++_wizImagesNum;
-		} else {
-			drawWizImage(rtImage, resnum, x1, y1, flags);
+	switch (subOp) {
+		case 0:
+			pop();
+			break;
+		case 1:
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 2:
+			//Sets a variable to 1
+			break;
+		case 3:
+			//Gets a script string
+			break;
+		case 4:
+			//Gets a script string
+			pop();
+			break;
+		case 5:
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 6:
+			pop();
+			break;
+		case 7:
+			pop();
+			break;
+		case 8:
+			pop();
+			break;
+		case 10:
+		{
+			int flags = pop();
+			pop();
+			int y1 = pop();
+			int x1 = pop();
+			int resnum = pop();
+			if (_fullRedraw) {
+				assert(_wizImagesNum < ARRAYSIZE(_wizImages));
+				WizImage *pwi = &_wizImages[_wizImagesNum];
+				pwi->resnum = resnum;
+				pwi->x1 = x1;
+				pwi->y1 = y1;
+				pwi->flags = flags;
+				++_wizImagesNum;
+			} else {
+				drawWizImage(rtImage, resnum, x1, y1, flags);
+			}
 		}
+			break;
+		case 11:
+			pop();
+			break;
+		case 19:
+			pop();
+			pop();
+			break;
+		case 209:
+			break;
+		default:
+			warning("o90_unknown1C: unhandled case %d", subOp);
 	}
 
-	debug(1,"o90_unknown1C stub (%d)", value);
+	debug(1,"o90_unknown1C stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown25() {
@@ -466,6 +516,26 @@ void ScummEngine_v90he::o90_unknown26() {
 	}
 
 	debug(1,"o90_unknown26 stub (%d)", value);
+}
+
+void ScummEngine_v90he::o90_unknown27() {
+	int subOp = fetchScriptByte();
+	switch (subOp) {
+		case 30:
+			pop();
+			break;
+		case 31:
+			pop();
+			break;
+		case 43:
+			pop();
+			break;
+		default:
+			error("o90_unknown27: Unknown case %d", subOp);
+	}
+	push(0);
+
+	debug(1,"o90_unknown27 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown28() {

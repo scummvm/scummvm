@@ -805,6 +805,7 @@ protected:
 	void o90_unknown1C();
 	void o90_unknown25();
 	void o90_unknown26();
+	void o90_unknown27();
 	void o90_unknown28();
 };
 

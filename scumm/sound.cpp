@@ -661,7 +661,6 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			}
 
 			size = b - 40 - extra ;
-			printf("size %d extra %d\n", size, extra);
 			sound = (byte *)malloc(size);
 			_sfxFile->read(sound, size);
 			_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
