@@ -190,9 +190,9 @@ normal_mode:;
 	//
 	if (_usingOpenGL) {
 	  
-		_glFlags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
+		_glFlags = FB2GL_NO_320 | FB2GL_RGBA | FB2GL_16BIT;
 		if (_full_screen) {
-			_glFlags |= (FB2GL_FS);
+			_glFlags |= FB2GL_FS;
 			_glScreenStart = 0;
 		}
 		// _glWindow defines the resolution
@@ -303,12 +303,12 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 
 	// Release the HW screen surface
 	if (fb2gl.getScreen()) { // _usingOpenGL was true
-	  SDL_FreeSurface(fb2gl.getScreen());
-	  fb2gl.setScreen(NULL);
+		SDL_FreeSurface(fb2gl.getScreen());
+		fb2gl.setScreen(NULL);
 	}
 	if (_hwscreen) {
-	  SDL_FreeSurface(_hwscreen);
-	  _hwscreen = NULL;
+		SDL_FreeSurface(_hwscreen);
+		_hwscreen = NULL;
 	}
 
 	// Setup the new GFX mode

@@ -30,7 +30,7 @@
 // FLAGS 
 #define FB2GL_FS 1      // FULLSCREEN
 #define FB2GL_RGBA 2    // Use RGBA (else use palette)
-#define FB2GL_320 4     // 320x256 texture (else use 256x256)
+#define FB2GL_NO_320 4     // Don't use 320x256 texture, rather emulate with a 256x256 plus a 64x256 texture
 #define FB2GL_AUDIO 8   // Activate SDL Audio
 #define FB2GL_PITCH 16  // On fb2l_update, use pitch (else bytes per pixel)
 #define FB2GL_EXPAND 32 // Create a RGB fb with the color lookup table
@@ -45,14 +45,15 @@ class FB2GL {
 	private:
 		SDL_Surface *screen;
 		// Framebuffer for 8 bpp
-		unsigned char palettedFrameBuffer1[256][256];
-		unsigned char palettedFrameBuffer2[256][64];
+		unsigned char palettedFrameBuffer1[256*320];
+		unsigned char *palettedFrameBuffer2;
+//		unsigned char palettedFrameBuffer1[256][256];
+//		unsigned char palettedFrameBuffer2[256][64];
 		// Framebuffer for RGBA
-		unsigned char RGBAFrameBuffer1[256][256][4];
-		unsigned char RGBAFrameBuffer2[256][64][4];
-		// Framebuffer for the blit function (SDL Blitting)
-		unsigned char *blitFrameBuffer1;
-		unsigned char *blitFrameBuffer2;
+		unsigned char RGBAFrameBuffer1[256*320*4];
+		unsigned char *RGBAFrameBuffer2;
+//		unsigned char RGBAFrameBuffer1[256][256][4];
+//		unsigned char RGBAFrameBuffer2[256][64][4];
 		// Texture(s)
 		GLuint texture1;
 		GLuint texture2;
@@ -70,8 +71,9 @@ class FB2GL {
 		FB2GL() { 
 			flags = 0;
 			screen = NULL;
-			blitFrameBuffer1 = (unsigned char *)RGBAFrameBuffer1;
-			blitFrameBuffer2 = (unsigned char *)RGBAFrameBuffer2;
+			
+			palettedFrameBuffer2 = palettedFrameBuffer1 + 256*256;
+			RGBAFrameBuffer2 = RGBAFrameBuffer1 + 256*256*4;
 		}
 		
 		SDL_Surface *getScreen() {
@@ -97,7 +99,7 @@ void FB2GL::setBilinearMode(bool bilinear) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
 
-	if (flags & FB2GL_320) {
+	if (flags & FB2GL_NO_320) {
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
@@ -114,10 +116,6 @@ void FB2GL::makeTextures() {
 	// Bilinear filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-/*
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-*/
 
 	GLuint mode;
 	const GLvoid *buffer1, *buffer2;
@@ -132,9 +130,9 @@ void FB2GL::makeTextures() {
 		buffer2 = palettedFrameBuffer2;
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, 256, 256, 0, mode, GL_UNSIGNED_BYTE, buffer1);
+	if (flags & FB2GL_NO_320) {
+		glTexImage2D(GL_TEXTURE_2D, 0, mode, 256, 256, 0, mode, GL_UNSIGNED_BYTE, buffer1);
 
-	if (flags & FB2GL_320) {
 		glGenTextures(1, &texture2);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
@@ -144,14 +142,13 @@ void FB2GL::makeTextures() {
 		// Bilinear filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-/*
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-*/
 
 		glTexImage2D(GL_TEXTURE_2D, 0, mode, 64, 256, 0, mode, GL_UNSIGNED_BYTE, buffer2);
+	} else {
+		glTexImage2D(GL_TEXTURE_2D, 0, mode, 320, 256, 0, mode, GL_UNSIGNED_BYTE, buffer1);
 	}
 }
+
 
 void FB2GL::makeDisplayList(int xf, int yf) {
 	double xfix = (double)xf / 128; // 128 = 256/2 (half texture => 0.0 to 1.0)
@@ -159,7 +156,7 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 	// End of 256x256 (from -1.0 to 1.0)
 	double texend;
 
-	if (flags & FB2GL_320)
+	if (flags & FB2GL_NO_320)
 		texend = 96.0 / 160.0; // 160=320/2 (== 0.0), 256-160=96.
 	else
 		texend = 1.0;
@@ -185,7 +182,7 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 	glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
 	glEnd();
 
-	if (flags & FB2GL_320) {
+	if (flags & FB2GL_NO_320) {
 		// 64x256 
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
@@ -256,11 +253,12 @@ void FB2GL::display()
 
 void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 	unsigned char *tempFrameBuffer = (unsigned char *)fb;
-	int x, y, scr_pitch, byte = 0;
+	int x, y, scr_pitch, byte;
 
-	if (flags & FB2GL_PITCH)
+	if (flags & FB2GL_PITCH) {
 		scr_pitch = pitch;
-	else {
+		byte = 0;
+	} else {
 		scr_pitch = w * pitch;
 		byte = pitch; // Bytes perl pixel (for RGBA mode)
 	}
@@ -271,16 +269,21 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 	
 			for (y = yskip; y < h; y++) {
 				for (x = xskip; x < w; x++) {
-					if (x < 256) { 
-						RGBAFrameBuffer1[y][x][0] = colorTable[*(tempFrameBuffer+x)][0];
-						RGBAFrameBuffer1[y][x][1] = colorTable[*(tempFrameBuffer+x)][1]; 
-						RGBAFrameBuffer1[y][x][2] = colorTable[*(tempFrameBuffer+x)][2]; 
-						RGBAFrameBuffer1[y][x][3] = 255;
+					if (!(flags & FB2GL_NO_320)) {
+						RGBAFrameBuffer1[y*320*4 + x*4 + 0] = colorTable[*(tempFrameBuffer+x)][0];
+						RGBAFrameBuffer1[y*320*4 + x*4 + 1] = colorTable[*(tempFrameBuffer+x)][1]; 
+						RGBAFrameBuffer1[y*320*4 + x*4 + 2] = colorTable[*(tempFrameBuffer+x)][2]; 
+						RGBAFrameBuffer1[y*320*4 + x*4 + 3] = 255;
+					} else if (x < 256) { 
+						RGBAFrameBuffer1[y*256*4 + x*4 + 0] = colorTable[*(tempFrameBuffer+x)][0];
+						RGBAFrameBuffer1[y*256*4 + x*4 + 1] = colorTable[*(tempFrameBuffer+x)][1]; 
+						RGBAFrameBuffer1[y*256*4 + x*4 + 2] = colorTable[*(tempFrameBuffer+x)][2]; 
+						RGBAFrameBuffer1[y*256*4 + x*4 + 3] = 255;
 					} else {
-						RGBAFrameBuffer2[y][x-256][0] = colorTable[*(tempFrameBuffer+x)][0]; 
-						RGBAFrameBuffer2[y][x-256][1] = colorTable[*(tempFrameBuffer+x)][1]; 
-						RGBAFrameBuffer2[y][x-256][2] = colorTable[*(tempFrameBuffer+x)][2]; 
-						RGBAFrameBuffer2[y][x-256][3] = 255;
+						RGBAFrameBuffer2[y*64*4 + (x-256)*4 + 0] = colorTable[*(tempFrameBuffer+x)][0]; 
+						RGBAFrameBuffer2[y*64*4 + (x-256)*4 + 1] = colorTable[*(tempFrameBuffer+x)][1]; 
+						RGBAFrameBuffer2[y*64*4 + (x-256)*4 + 2] = colorTable[*(tempFrameBuffer+x)][2]; 
+						RGBAFrameBuffer2[y*64*4 + (x-256)*4 + 3] = 255;
 					}
 				}
 				tempFrameBuffer += scr_pitch; // Next row (like y++)
@@ -288,59 +291,78 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 		} else { // No expansion
 			for (y = yskip; y < h; y++) {
 				for (x = xskip; x < w; x++) {
-					if (x < 256) { 
-						RGBAFrameBuffer1[y-yskip][x-xskip][0] = *(tempFrameBuffer+(x*byte)); 
-						RGBAFrameBuffer1[y-yskip][x-xskip][1] = *(tempFrameBuffer+(x*byte)+1); 
-						RGBAFrameBuffer1[y-yskip][x-xskip][2] = *(tempFrameBuffer+(x*byte)+2); 
+					if (!(flags & FB2GL_NO_320)) {
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
+					} else if (x < 256) { 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
 					} else {
-						RGBAFrameBuffer2[y-yskip][x-256][0] = *(tempFrameBuffer+(x*byte)); 
-						RGBAFrameBuffer2[y-yskip][x-256][1] = *(tempFrameBuffer+(x*byte)+1); 
-						RGBAFrameBuffer2[y-yskip][x-256][2] = *(tempFrameBuffer+(x*byte)+2); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
 					}
 				}
 				tempFrameBuffer += scr_pitch; // Next row (like y++)
 			}
 		}
 
-		// Update 256x256 texture
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glFlush();
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
-		    256-xskip, 256-yskip, GL_RGBA,
-		    GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
+		if (flags & FB2GL_NO_320) {
+			// Update 256x256 texture
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glFlush();
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+				256-xskip, 256-yskip, GL_RGBA,
+				GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
 
-		if (flags & FB2GL_320) {
 			// Update 64x256 texture
 			glBindTexture(GL_TEXTURE_2D, texture2);
 			glFlush();
 			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip,
 			    64-xskip, 256-yskip, GL_RGBA,
 			    GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
+		} else {
+			// Update 320x256 texture
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glFlush();
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+			    320-xskip, 256-yskip, GL_RGBA,
+			    GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
 		}
 
 	} else { // non RGBA (paletted)
 
 		for (y=0; y<h; y++)
 			for (x=0; x<w; x++) {
-				if (x<256) { 
-					palettedFrameBuffer1[ y ][ x ] = *(tempFrameBuffer + (y)*scr_pitch + x);
+				if (!(flags & FB2GL_NO_320)) {
+					palettedFrameBuffer1[y * 320 + x] = *(tempFrameBuffer + y*scr_pitch + x);
+				} else if (x<256) { 
+					palettedFrameBuffer1[y * 256 + x] = *(tempFrameBuffer + y*scr_pitch + x);
 				} else { 
-					palettedFrameBuffer2[ y ][ x - 256 ] = *(tempFrameBuffer + y*scr_pitch + x);
+					palettedFrameBuffer2[y * 64 + (x - 256)] = *(tempFrameBuffer + y*scr_pitch + x);
 				}
 			}
 
-		// Update 256x256 texture
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
-		    256-xskip, 256-yskip, GL_COLOR_INDEX, 
-		    GL_UNSIGNED_BYTE, palettedFrameBuffer1);
-		
-		if (flags & FB2GL_320) {
+		if (flags & FB2GL_NO_320) {
+			// Update 256x256 texture
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+				256-xskip, 256-yskip, GL_COLOR_INDEX, 
+				GL_UNSIGNED_BYTE, palettedFrameBuffer1);
+			
 			// Update 64x256 texture
 			glBindTexture(GL_TEXTURE_2D, texture2);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
 			    64-xskip, 256-yskip, GL_COLOR_INDEX, 
 			    GL_UNSIGNED_BYTE, palettedFrameBuffer2);
+		} else {
+			// Update 320x256 texture
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+				329-xskip, 256-yskip, GL_COLOR_INDEX, 
+				GL_UNSIGNED_BYTE, palettedFrameBuffer1);
 		}
 
 	}
@@ -396,9 +418,9 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 					SDL_GetRGB(
 						((Uint16 *)fb->pixels)[x+y*(pitch)], 
 						fb->format,
-						&blitFrameBuffer1[pos],
-						&blitFrameBuffer1[pos+1],
-						&blitFrameBuffer1[pos+2]
+						&RGBAFrameBuffer1[pos],
+						&RGBAFrameBuffer1[pos+1],
+						&RGBAFrameBuffer1[pos+2]
 					);
 				} else if (x >= 256 && tex2_w) {
 					int rx2 = rx < 256? 256: rx;
@@ -406,9 +428,9 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 					SDL_GetRGB(
 						((Uint16 *)fb->pixels)[x+y*(pitch)], 
 						fb->format,
-						&blitFrameBuffer2[pos],
-						&blitFrameBuffer2[pos+1],
-						&blitFrameBuffer2[pos+2]
+						&RGBAFrameBuffer2[pos],
+						&RGBAFrameBuffer2[pos+1],
+						&RGBAFrameBuffer2[pos+2]
 					);
 				}
 			}
@@ -422,7 +444,7 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 			    rx + xskip,
 			    ry + yskip, 
 			    tex1_w, rh, GL_RGBA,
-			    GL_UNSIGNED_BYTE, blitFrameBuffer1);
+			    GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
 		}
 		if (tex2_w > 0) { // What was left for this texture
 			// Update 64x256 texture
@@ -432,7 +454,7 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 			    tex2_x + xskip, 
 			    ry + yskip, 
 			    tex2_w, rh, GL_RGBA,
-			    GL_UNSIGNED_BYTE,blitFrameBuffer2);
+			    GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
 		}
 	}
 }
@@ -472,7 +494,7 @@ void FB2GL::setPalette(int first, int n) {
 		glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, 
 		    GL_UNSIGNED_BYTE, &temp);
 
-		if (flags & FB2GL_320) {
+		if (flags & FB2GL_NO_320) {
 			glBindTexture(GL_TEXTURE_2D, texture2);
 			glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, 
 			    GL_UNSIGNED_BYTE, &temp);
