@@ -108,6 +108,8 @@ public:
 
 	int16 *_volume_table;
 
+	bool _paused;
+
 	enum {
 		NUM_CHANNELS = 16,
 	};
@@ -156,6 +158,9 @@ public:
 
 	/* set the volume, 0-256 */
 	void set_volume(int volume);
+
+	/* pause - unpause */
+	void pause(bool paused);
 
 };
 
