@@ -102,11 +102,11 @@ SCUMM Games:
      Zak McKracken (Enhanced Version)                [Game: zak]
      Indiana Jones & the Last Crusade (EGA)          [Game: indy3ega]
      Indiana Jones & the Last Crusade (256)          [Game: indy3]
-     Indiana Jones & the Last Crusade (256 FM Towns) [Game: indy3towns]
+     Indiana Jones & the Last Crusade (FM-TOWNS)     [Game: indy3towns]
      Loom (16 color floppy version)                  [Game: loom]
-     Loom (256 FM Towns)                             [Game: loomtowns]
+     Loom (FM-TOWNS)                                 [Game: loomtowns]
      Loom (256 color CD version)                     [Game: loomcd]
-     Zak McKracken (256 FM Towns)                    [Game: zaktowns]
+     Zak McKracken (FM-TOWNS)                        [Game: zaktowns]
      Monkey Island 1 (EGA)                           [Game: monkeyega]
      Monkey Island 1 (VGA)                           [Game: monkeyvga]
      Monkey Island 1 (CD)                            [Game: monkey/monkey1]
@@ -169,14 +169,14 @@ may have been cracked ScummVM will always have to bypass the copy protection.
 At the time of writing, that includes the following games:
 
 Indiana Jones & the Last Crusade (EGA)
-Indiana Jones & the Last Crusade (256 color FM Towns version)
+Indiana Jones & the Last Crusade (FM-TOWNS version)
 Loom (16 color floppy version)
 Maniac Mansion
 Monkey Island 1 (EGA)
 Monkey Island 1 (VGA)
 Monkey Island 2
 Zak McKracken (EGA)
-Zak McKracken (256 color FM Towns version)
+Zak McKracken (FM-TOWNS version)
 
 Beneath a Steel Sky (bypassed with permission from Revolution)
 
@@ -261,9 +261,9 @@ the section on Reporting Bugs.
                 - F10 key animation in simon2mac is different compared to
                   original game
 
-       FM Towns versions:
-                - Kanji versions require the FM Towns Font ROM
-                - All the FM Towns versions of games are extremely rare,
+       FM-TOWNS versions:
+                - Kanji versions require the FM-TOWNS Font ROM
+                - All the FM-TOWNS versions of games are extremely rare,
                   And as the ScummVM team does not encourage piracy in any
                   way, we don't know where to buy or download a copy of these
                   games. Petition LucasArts to re-release them :)
@@ -488,7 +488,7 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The Fm Towns version of Zak (zaktowns target) uses an original 
+Note #3: The FM-TOWNS version of Zak (zaktowns target) uses an original 
 resolution of 320x240 - hence for this game scalers will scale to 
 640x480 or 960x720.
 
@@ -617,7 +617,7 @@ choices of output, depending on your operating system and configuration.
         adlib     - Uses internal Adlib Emulation (default)
         pcjr      - Uses internal PCjr Emulation 
         pcspk     - Uses internal PC Speaker Emulation
-        towns     - Uses FM-Towns YM2612 Emulation
+        towns     - Uses FM-TOWNS YM2612 Emulation
         windows   - Windows MIDI. Uses built-in sequencer, for Windows users
         seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         qt        - Quicktime sound, for Macintosh users.
@@ -1033,7 +1033,7 @@ X.X Credits:
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
-        Jim Leiterman   - Various info on his Fm Towns/Marty SCUMM ports
+        Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Tony Warriner and everyone at Revolution Software Ltd. for sharing
