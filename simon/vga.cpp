@@ -1071,24 +1071,17 @@ void SimonEngine::vc_20_set_code_word() {
 
 /* FIXME: unaligned access */
 void SimonEngine::vc_21_jump_if_code_word() {
-	if (!(_game & GF_SIMON2)) {
-		int16 a = vc_read_next_word();
-		byte *tmp = _vc_ptr + a;
-		uint16 val = read_16_le(tmp + 4);
+	int16 a = vc_read_next_word();
+	byte *tmp = _vc_ptr + a;
+	if (_game & GF_SIMON2)
+		tmp += 3;
+	else
+		tmp += 4;
 
-		if (val != 0) {
-			write_16_le(tmp + 4, val - 1);
-			_vc_ptr = tmp + 6;
-		}
-	} else {
-		int16 a = vc_read_next_word();
-		byte *tmp = _vc_ptr + a;
-		uint16 val = read_16_le(tmp + 3);
-
-		if (val != 0) {
-			write_16_le(tmp + 3, val - 1);
-			_vc_ptr = tmp + 5;
-		}
+	uint16 val = read_16_le(tmp);
+	if (val != 0) {
+		write_16_le(tmp, val - 1);
+		_vc_ptr = tmp + 2;
 	}
 }
 
