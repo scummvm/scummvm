@@ -136,7 +136,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_wordArrayWrite),
 		/* 48 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown49),
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
@@ -376,6 +376,14 @@ void ScummEngine_v80he::executeOpcode(byte i) {
 
 const char *ScummEngine_v80he::getOpcodeDesc(byte i) {
 	return _opcodesV80he[i].desc;
+}
+
+void ScummEngine_v80he::o80_unknown49() {
+	int a = pop();
+	int b = pop();
+
+	push (0);
+	debug(1,"o80_unknown49 stub (%d, %d)", b, a);
 }
 
 void ScummEngine_v80he::o80_setState() {

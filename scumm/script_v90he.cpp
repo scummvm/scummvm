@@ -136,7 +136,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_wordArrayWrite),
 		/* 48 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown49),
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
@@ -185,7 +185,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
-		OPCODE(o6_setState),
+		OPCODE(o80_setState),
 		OPCODE(o6_setOwner),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
@@ -439,13 +439,17 @@ void ScummEngine_v90he::o90_unknown25() {
 	}
 	push(0);
 
-	debug(1,"o80_unknown25 stub (%d)", subOp);
+	debug(1,"o90_unknown25 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown26() {
 	// Incomplete
 	int value = fetchScriptByte();
 	value -= 34;
+
+	if (value == 23) {
+		pop();
+	}
 
 	debug(1,"o90_unknown26 stub (%d)", value);
 }
