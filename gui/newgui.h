@@ -132,13 +132,17 @@ public:
 	void fillRect(int x, int y, int w, int h, int16 color);
 	void checkerRect(int x, int y, int w, int h, int16 color);
 	void frameRect(int x, int y, int w, int h, int16 color);
-	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(byte c, int x, int y, int16 color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
 	void drawString(const String &str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
 
+	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
+	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);
+
 	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
+
+	void addDirtyRect(int x, int y, int w, int h);
 };
 
 #endif

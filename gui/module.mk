@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	gui/ListWidget.o \
 	gui/message.o \
 	gui/newgui.o \
+	gui/PopUpWidget.o \
 	gui/ScrollBarWidget.o \
 	gui/widget.o \
 

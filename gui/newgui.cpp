@@ -157,7 +157,7 @@ void NewGui::runLoop()
 					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
 					activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
 					break;
-				// We don'event distinguish between mousebuttons (for now at least)
+				// We don't distinguish between mousebuttons (for now at least)
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN: {
 					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
@@ -297,9 +297,6 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 	ptr = getBasePtr(x, y);
 
-	if (ptr == NULL)
-		return;
-
 	if (x == x2) {
 		/* vertical line */
 		while (y++ <= y2) {
@@ -320,8 +317,6 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 	int g = GREEN_FROM_16(color) * 3;
 	int b = BLUE_FROM_16(color) * 3;
 	int16 *ptr = getBasePtr(x, y);
-	if (ptr == NULL)
-		return;
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
@@ -337,8 +332,6 @@ void NewGui::fillRect(int x, int y, int w, int h, int16 color)
 {
 	int i;
 	int16 *ptr = getBasePtr(x, y);
-	if (ptr == NULL)
-		return;
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -352,8 +345,6 @@ void NewGui::checkerRect(int x, int y, int w, int h, int16 color)
 {
 	int i;
 	int16 *ptr = getBasePtr(x, y);
-	if (ptr == NULL)
-		return;
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -402,8 +393,6 @@ void NewGui::drawChar(const byte chr, int xx, int yy, int16 color)
 	tmp = guifont + 224 + (chr + 1) * 8;
 
 	int16 *ptr = getBasePtr(xx, yy);
-	if (ptr == NULL)
-		return;
 
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
@@ -454,13 +443,43 @@ void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int
 }
 
 //
+// Blit from a buffer to the display
+//
+void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch)
+{
+	int16 *ptr = getBasePtr(x, y);
+
+	assert(buf);
+	while (h--) {
+		memcpy(ptr, buf, w*2);
+		ptr += _screenPitch;
+		buf += pitch;
+	}
+}
+
+
+//
+// Blit from the display to a buffer
+//
+void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch)
+{
+	int16 *ptr = getBasePtr(x, y);
+
+	assert(buf);
+	while (h--) {
+		memcpy(buf, ptr, w*2);
+		ptr += _screenPitch;
+		buf += pitch;
+	}
+}
+
+
+//
 // Draw an 8x8 bitmap at location (x,y)
 //
 void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 {
 	int16 *ptr = getBasePtr(x, y);
-	if (ptr == NULL)
-		return;
 
 	for (int y2 = 0; y2 < 8; y2++) {
 		uint32 mask = 0xF0000000;

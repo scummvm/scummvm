@@ -48,7 +48,7 @@ static uint32 up_arrow[8] = {
 	0x00100010,
 };
 
-// Up arrow
+// Down arrow
 static uint32 down_arrow[8] = {
 	0x00000000,
 	0x00000000,
