@@ -149,4 +149,7 @@ Scumm::Scumm(void)
 		_saveLoadFlag = 0;
 		_completeScreenRedraw = false; /* Maybe it should be true to force a full redraw on start ? */
 		_expire_counter = 0; /* Start expired (0xFF) or not ? */
+		_leftBtnPressed = 0;
+		_rightBtnPressed = 0;
+		_lastKeyHit = 0;
 }
