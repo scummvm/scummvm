@@ -202,6 +202,8 @@ void SwordSound::stopSpeech(void) {
 
 void SwordSound::initCowSystem(void) {
 	_cowFile.open("SPEECH.CLU");
+	if (_cowFile.isOpen() == false)
+		_cowFile.open("speech/SPEECH.CLU");
 	if (_cowFile.isOpen()) {
 		_cowHeaderSize = _cowFile.readUint32LE();
 		_cowHeader = (uint32*)malloc(_cowHeaderSize);
