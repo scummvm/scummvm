@@ -48,11 +48,6 @@ Scumm *g_scumm = 0;
 
 extern NewGui *g_gui;
 
-void autosave(void * engine)
-{
-	g_scumm->_doAutosave = true;
-}
-
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
 {
 	Engine *engine;
@@ -342,7 +337,7 @@ void Scumm::scummInit()
 
 	_sound->_current_cache = 0;
 
-	_timer->installProcedure(&autosave, 5 * 60 * 1000);
+	_lastSaveTime = _system->get_msecs();
 }
 
 
@@ -443,16 +438,8 @@ int Scumm::scummLoop(int delta)
 		}
 	}
 
-	// TODO - A fixed 5 minutes autosave interval seems a bit odd, e.g. if the
-	// user just saved a second ago we should not autosave; i.e. the autosave
-	// timer should be reset after each save/load. In fact, we don't need *any*
-	// real timer object for autosave, we could just use a variable in which we
-	// put the system time, and then check here if that time already passed during
-	// every scummLoop iteration, resetting it whenever a save/load occurs. Of
-	// course, that still leaves a small glitch (which is present now, too):
-	// if you are in the GUI for 10 minutes, it'll autosave immediatly after you
-	// close the GUI. 
-	if (_doAutosave && !_saveLoadFlag) {
+	// Trigger autosave all 5 minutes.
+	if (!_saveLoadFlag && _system->get_msecs() > _lastSaveTime + 5 * 60 * 1000) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
@@ -486,7 +473,7 @@ int Scumm::scummLoop(int delta)
 			displayError(errMsg, filename);
 		}
 		_saveLoadFlag = 0;
-		_doAutosave = false;
+		_lastSaveTime = _system->get_msecs();
 	}
 
 	if (_completeScreenRedraw) {

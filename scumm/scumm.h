@@ -418,15 +418,13 @@ public:
 
 	/* Save/Load class - some of this may be GUI */
 	byte _saveLoadFlag, _saveLoadSlot;
-	bool _doAutosave;
+	uint32 _lastSaveTime;
 	bool _saveLoadCompatible;
 	char _saveLoadName[32];
 
-	uint32 _savegameVersion;
-
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
-	void saveOrLoad(Serializer *s);
+	void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	bool getSavegameName(int slot, char *desc);
 	void makeSavegameName(char *out, int slot, bool compatible);

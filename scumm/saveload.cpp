@@ -59,9 +59,7 @@ bool Scumm::saveState(int slot, bool compat)
 	out.fwrite(&hdr, sizeof(hdr), 1);
 
 	Serializer ser(out, true, CURRENT_VER);
-
-	_savegameVersion = CURRENT_VER;
-	saveOrLoad(&ser);
+	saveOrLoad(&ser, CURRENT_VER);
 
 	out.fclose();
 	debug(1, "State saved as '%s'", filename);
@@ -103,9 +101,6 @@ bool Scumm::loadState(int slot, bool compat)
 	if (hdr.ver == VER_V7)
 		hdr.ver = VER_V8;
 
-	// _savegameVersion is set so that the load code can know which data format to expect
-	_savegameVersion = hdr.ver;
-	
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	if (_imuseDigital) {
@@ -129,8 +124,8 @@ bool Scumm::loadState(int slot, bool compat)
 
 	initScummVars();
 
-	Serializer ser(out, false, _savegameVersion);
-	saveOrLoad(&ser);
+	Serializer ser(out, false, hdr.ver);
+	saveOrLoad(&ser, hdr.ver);
 	out.fclose();
 
 	sb = _screenB;
@@ -211,7 +206,7 @@ bool Scumm::getSavegameName(int slot, char *desc)
 	return true;
 }
 
-void Scumm::saveOrLoad(Serializer *s)
+void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, offs_obim_to_room, sleUint32, VER_V8),
@@ -544,7 +539,7 @@ void Scumm::saveOrLoad(Serializer *s)
 
 	s->saveLoadArrayOf(_actors, NUM_ACTORS, sizeof(_actors[0]), actorEntries);
 
-	if (_savegameVersion < VER_V9)
+	if (savegameVersion < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
@@ -571,7 +566,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 
 	// PalManip data was not saved before V10 save games
-	if (_savegameVersion < VER_V10)
+	if (savegameVersion < VER_V10)
 		_palManipCounter = 0;
 	if (_palManipCounter) {
 		if (!_palManipPalette)
