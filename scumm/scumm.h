@@ -195,21 +195,6 @@ enum ScummGameId {
 	GID_MONKEY_SEGA
 };
 
-#define _maxRooms res.num[rtRoom]
-#define _maxScripts res.num[rtScript]
-#define _maxCostumes res.num[rtCostume]
-#define _maxInventoryItems res.num[rtInventory]
-#define _maxCharsets res.num[rtCharset]
-#define _maxStrings res.num[rtString]
-#define _maxVerbs res.num[rtVerb]
-#define _maxActorNames res.num[rtActorName]
-#define _maxBuffer res.num[rtBuffer]
-#define _maxScaleTable res.num[rtScaleTable]
-#define _maxTemp res.num[rtTemp]
-#define _maxFLObject res.num[rtFlObject]
-#define _maxMatrixes res.num[rtMatrix]
-#define _maxBoxes res.num[rtBox]
-
 #define _baseRooms res.address[rtRoom]
 #define _baseScripts res.address[rtScript]
 #define _baseInventoryItems res.address[rtInventory]
@@ -286,6 +271,7 @@ public:
 	/** Graphics manager */
 	Gdi gdi;
 
+protected:
 	/** Central resource data. */
 	struct {
 		byte mode[rtNumTypes];
@@ -298,7 +284,6 @@ public:
 		uint32 *roomoffs[rtNumTypes];
 	} res;
 
-protected:
 	VirtualMachineState vm;
 
 public:
@@ -396,10 +381,11 @@ protected:
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory, _numRooms, _numScripts, _numSounds;
-	int _numCharsets, _numNewNames, _numGlobalScripts;
+	int _numNewNames, _numGlobalScripts;
 	int _numActors;
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
+	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
 	int getNumSounds() const { return _numSounds; }
 	BaseCostumeRenderer* _costumeRenderer;

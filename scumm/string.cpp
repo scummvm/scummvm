@@ -599,7 +599,7 @@ void ScummEngine::addVerbToStack(int var) {
 
 	num = readVar(var);
 	if (num) {
-		for (k = 1; k < _maxVerbs; k++) {
+		for (k = 1; k < _numVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
 				ptr = translateTextAndPlaySpeech(ptr);

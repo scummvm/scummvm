@@ -268,8 +268,8 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	scriptnum = atoi(argv[1]);
 
 	// FIXME: what is the max range on these?
-	// if (scriptnum >= _vm->_maxScripts) {
-	//	DebugPrintf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _vm->_maxScripts);
+	// if (scriptnum >= _vm->_numScripts) {
+	//	DebugPrintf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _vm->_numScripts);
 	//	return true;
 	//}
 
@@ -449,7 +449,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	}
 
 	if (!strcmp(argv[2], "pickup")) {
-		for (i = 0; i < _vm->_maxInventoryItems; i++) {
+		for (i = 0; i < _vm->_numInventory; i++) {
 			if (_vm->_inventory[i] == (uint16)obj) {
 				_vm->putOwner(obj, _vm->VAR(_vm->VAR_EGO));
 				_vm->runInventoryScript(obj);

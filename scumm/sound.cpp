@@ -762,12 +762,6 @@ void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
  */
 
 void Sound::setupSound() {
-	if (_scumm->_imuse) {
-		_scumm->_imuse->setBase(_scumm->res.address[rtSound]);
-
-		_scumm->_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
-		_scumm->_imuse->set_music_volume(ConfMan.getInt("music_volume"));
-	}
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 }

@@ -2395,7 +2395,7 @@ void ScummEngine_v5::o5_verbOps() {
 	verb = getVarOrDirectByte(PARAM_1);
 
 	slot = getVerbSlot(verb, 0);
-	checkRange(_maxVerbs - 1, 0, slot, "Illegal new verb slot %d");
+	checkRange(_numVerbs - 1, 0, slot, "Illegal new verb slot %d");
 
 	vs = &_verbs[slot];
 	vs->verbid = verb;
@@ -2490,11 +2490,11 @@ void ScummEngine_v5::o5_verbOps() {
 		case 9:		// SO_VERB_NEW
 			slot = getVerbSlot(verb, 0);
 			if (slot == 0) {
-				for (slot = 1; slot < _maxVerbs; slot++) {
+				for (slot = 1; slot < _numVerbs; slot++) {
 					if (_verbs[slot].verbid == 0)
 						break;
 				}
-				if (slot == _maxVerbs)
+				if (slot == _numVerbs)
 					error("Too many verbs");
 			}
 			vs = &_verbs[slot];

@@ -961,6 +961,12 @@ void ScummEngine::launch() {
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
 		_scummVars[74] = 1225;
 
+	if (_imuse) {
+		_imuse->setBase(res.address[rtSound]);
+
+		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
+		_imuse->set_music_volume(ConfMan.getInt("music_volume"));
+	}
 	_sound->setupSound();
 
 	// If requested, load a save game instead of running the boot script
@@ -1062,7 +1068,7 @@ void ScummEngine::scummInit() {
 	memset(vm.cutScenePtr, 0, sizeof(vm.cutScenePtr));
 	memset(vm.cutSceneData, 0, sizeof(vm.cutSceneData));
 
-	for (i = 0; i < _maxVerbs; i++) {
+	for (i = 0; i < _numVerbs; i++) {
 		_verbs[i].verbid = 0;
 		_verbs[i].right = _screenWidth - 1;
 		_verbs[i].old.left = -1;
@@ -1448,7 +1454,7 @@ load_game:
 			if (VAR(value) == 2)
 				runScript(restoreScript, 0, 0, &args);
 		} else if (_version > 3) {
-			for (int i = 0; i < _maxVerbs; i++)
+			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
 		} else {
 			redrawVerbs();
@@ -2141,7 +2147,7 @@ void ScummEngine::initRoomSubBlocks() {
 	nukeResource(rtMatrix, 1);
 	nukeResource(rtMatrix, 2);
 
-	for (i = 1; i < _maxScaleTable; i++)
+	for (i = 1; i < res.num[rtScaleTable]; i++)
 		nukeResource(rtScaleTable, i);
 
 	memset(_localScriptList, 0, sizeof(_localScriptList));
@@ -2316,7 +2322,7 @@ void ScummEngine::initRoomSubBlocks() {
 	if (ptr) {
 		int s1, s2, y1, y2;
 		if (_version == 8) {
-			for (i = 1; i < _maxScaleTable; i++, ptr += 16) {
+			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 16) {
 				s1 = READ_LE_UINT32(ptr);
 				y1 = READ_LE_UINT32(ptr + 4);
 				s2 = READ_LE_UINT32(ptr + 8);
@@ -2324,7 +2330,7 @@ void ScummEngine::initRoomSubBlocks() {
 				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 			}
 		} else {
-			for (i = 1; i < _maxScaleTable; i++, ptr += 8) {
+			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 8) {
 				s1 = READ_LE_UINT16(ptr);
 				y1 = READ_LE_UINT16(ptr + 2);
 				s2 = READ_LE_UINT16(ptr + 4);
@@ -2521,6 +2527,9 @@ void ScummEngine::restart() {
 	readIndexFile();                    // Reread index (reset objectstate etc)
 	createResource(rtTemp, 6, 500);     // Create temp buffer
 	initScummVars();                    // Reinit scumm variables
+	if (_imuse) {
+		_imuse->setBase(res.address[rtSound]);
+	}
 	_sound->setupSound();               // Reinit sound engine
 
 	// Re-run bootscript

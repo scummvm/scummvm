@@ -163,7 +163,7 @@ void ScummEngine::deleteRoomOffsets() {
 	if (!(_features & GF_SMALL_HEADER) && !_dynamicRoomOffsets)
 		return;
 
-	for (int i = 0; i < _maxRooms; i++) {
+	for (int i = 0; i < _numRooms; i++) {
 		if (_roomFileOffsets[i] != 0xFFFFFFFF)
 			_roomFileOffsets[i] = 0;
 	}
@@ -559,7 +559,7 @@ void ScummEngine::loadCharset(int no) {
 		no = 1;
 
 	assert(no < (int)sizeof(_charsetData) / 16);
-	checkRange(_maxCharsets - 1, 1, no, "Loading illegal charset %d");
+	checkRange(_numCharsets - 1, 1, no, "Loading illegal charset %d");
 
 //  ensureResourceLoaded(rtCharset, no);
 	ptr = getResourceAddress(rtCharset, no);
@@ -572,7 +572,7 @@ void ScummEngine::loadCharset(int no) {
 }
 
 void ScummEngine::nukeCharset(int i) {
-	checkRange(_maxCharsets - 1, 1, i, "Nuking illegal charset %d");
+	checkRange(_numCharsets - 1, 1, i, "Nuking illegal charset %d");
 	nukeResource(rtCharset, i);
 }
 

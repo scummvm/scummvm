@@ -267,7 +267,7 @@ void ScummEngine::redrawVerbs() {
 
 	int i;
 	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
-	for (i = _maxVerbs-1; i >= 0; i--) {
+	for (i = _numVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
 		else
@@ -286,7 +286,7 @@ void ScummEngine::checkExecVerbs() {
 	if (_mouseButStat < MBS_MAX_KEY) {
 		/* Check keypresses */
 		vs = &_verbs[1];
-		for (i = 1; i < _maxVerbs; i++, vs++) {
+		for (i = 1; i < _numVerbs; i++, vs++) {
 			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
 				if (_mouseButStat == vs->key) {
 					// Trigger verb as if the user clicked it
@@ -340,7 +340,7 @@ void ScummEngine::verbMouseOver(int verb) {
 
 int ScummEngine::checkMouseOver(int x, int y) const {
 	VerbSlot *vs;
-	int i = _maxVerbs - 1;
+	int i = _numVerbs - 1;
 
 	vs = &_verbs[i];
 	do {
@@ -503,7 +503,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 int ScummEngine::getVerbSlot(int id, int mode) const {
 	int i;
-	for (i = 1; i < _maxVerbs; i++) {
+	for (i = 1; i < _numVerbs; i++) {
 		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {
 			return i;
 		}

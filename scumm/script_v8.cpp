@@ -1114,12 +1114,12 @@ void ScummEngine_v8::o8_verbOps() {
 	if (subOp == 0x96) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
-		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
 		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}
 
-	assert(0 <= _curVerbSlot && _curVerbSlot < _maxVerbs);
+	assert(0 <= _curVerbSlot && _curVerbSlot < _numVerbs);
 	vs = &_verbs[_curVerbSlot];
 	assert(vs);
 
@@ -1129,11 +1129,11 @@ void ScummEngine_v8::o8_verbOps() {
 		break;
 	case 0x97:		// SO_VERB_NEW New verb
 		if (_curVerbSlot == 0) {
-			for (slot = 1; slot < _maxVerbs; slot++) {
+			for (slot = 1; slot < _numVerbs; slot++) {
 				if (_verbs[slot].verbid == 0)
 					break;
 			}
-			if (slot >= _maxVerbs) {
+			if (slot >= _numVerbs) {
 				error("Too many verbs");
 			}
 			_curVerbSlot = slot;

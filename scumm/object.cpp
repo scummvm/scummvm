@@ -178,7 +178,7 @@ int ScummEngine::whereIsObject(int object) const {
 		return WIO_NOT_FOUND;
 
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
-		for (i = 0; i < _maxInventoryItems; i++)
+		for (i = 0; i < _numInventory; i++)
 			if (_inventory[i] == object)
 				return WIO_INVENTORY;
 		return WIO_NOT_FOUND;
@@ -829,7 +829,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 		return;
 	}
 
-	for (i = 0; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _numInventory; i++) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
 			if (j == WIO_INVENTORY) {
@@ -837,7 +837,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_inventory[i] = 0;
 			}
 			a = _inventory;
-			for (i = 0; i < _maxInventoryItems - 1; i++, a++) {
+			for (i = 0; i < _numInventory - 1; i++, a++) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
@@ -941,7 +941,7 @@ byte *ScummEngine::getOBCDFromObject(int obj) {
 	byte *ptr;
 
 	if (_objectOwnerTable[obj] != OF_OWNER_ROOM) {
-		for (i = 0; i < _maxInventoryItems; i++) {
+		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj)
 				return getResourceAddress(rtInventory, i);
 		}
@@ -1180,11 +1180,11 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 
 int ScummEngine::getInventorySlot() {
 	int i;
-	for (i = 0; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _numInventory; i++) {
 		if (_inventory[i] == 0)
 			return i;
 	}
-	error("Inventory full, %d max items", _maxInventoryItems);
+	error("Inventory full, %d max items", _numInventory);
 	return -1;
 }
 
@@ -1269,7 +1269,7 @@ int ScummEngine::getObjNewDir(int obj) {
 
 int ScummEngine::findInventory(int owner, int idx) {
 	int count = 1, i, obj;
-	for (i = 0; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _numInventory; i++) {
 		obj = _inventory[i];
 		if (obj && getOwner(obj) == owner && count++ == idx)
 			return obj;
@@ -1280,7 +1280,7 @@ int ScummEngine::findInventory(int owner, int idx) {
 int ScummEngine::getInventoryCount(int owner) {
 	int i, obj;
 	int count = 0;
-	for (i = 0; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _numInventory; i++) {
 		obj = _inventory[i];
 		if (obj && getOwner(obj) == owner)
 			count++;
@@ -1587,7 +1587,7 @@ int ScummEngine::findLocalObjectSlot() {
 
 int ScummEngine::findFlObjectSlot() {
 	int i;
-	for (i = 1; i < _maxFLObject; i++) {
+	for (i = 1; i < _numFlObject; i++) {
 		if (_baseFLObject[i] == NULL)
 			return i;
 	}

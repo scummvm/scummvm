@@ -38,8 +38,10 @@
 #include "sound/mixer.h"
 
 #include "scumm/smush/insane.h"
+#ifndef INSANE
 #include "scumm/dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented
+#endif
 
 namespace Scumm {
 
@@ -1134,7 +1136,7 @@ void ScummEngine_v6::o6_pickupObject() {
 	if (room == 0)
 		room = _roomResource;
 
-	for (i = 0; i < _maxInventoryItems; i++) {
+	for (i = 0; i < _numInventory; i++) {
 		if (_inventory[i] == (uint16)obj) {
 			putOwner(obj, VAR(VAR_EGO));
 			runInventoryScript(obj);
@@ -1829,7 +1831,7 @@ void ScummEngine_v6::o6_verbOps() {
 	if (op == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
-		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
+		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
 		return;
 	}
 	vs = &_verbs[_curVerbSlot];
@@ -1873,11 +1875,11 @@ void ScummEngine_v6::o6_verbOps() {
 	case 132:		// SO_VERB_NEW
 		slot = getVerbSlot(_curVerb, 0);
 		if (slot == 0) {
-			for (slot = 1; slot < _maxVerbs; slot++) {
+			for (slot = 1; slot < _numVerbs; slot++) {
 				if (_verbs[slot].verbid == 0)
 					break;
 			}
-			if (slot == _maxVerbs)
+			if (slot == _numVerbs)
 				error("Too many verbs");
 			_curVerbSlot = slot;
 		}

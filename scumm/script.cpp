@@ -345,11 +345,11 @@ void ScummEngine::getScriptBaseAddress() {
 	ss = &vm.slot[_currentScript];
 	switch (ss->where) {
 	case WIO_INVENTORY:					/* inventory script * */
-		for (idx = 0; idx < _maxInventoryItems; idx++)
+		for (idx = 0; idx < _numInventory; idx++)
 			if (_inventory[idx] == ss->number)
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
-		assert(idx < _maxInventoryItems);
+		assert(idx < _numInventory);
 		_lastCodePtr = &_baseInventoryItems[idx];
 		break;
 
@@ -361,21 +361,21 @@ void ScummEngine::getScriptBaseAddress() {
 			_lastCodePtr = &res.address[rtRoomScripts][_roomResource];
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
-			assert(_roomResource < _maxRooms);
+			assert(_roomResource < _numRooms);
 			_lastCodePtr = &_baseRooms[_roomResource];
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
-		assert(ss->number < _maxScripts);
+		assert(ss->number < _numScripts);
 		_lastCodePtr = &_baseScripts[ss->number];
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
 		idx = getObjectIndex(ss->number);
 		_scriptOrgPointer = getResourceAddress(rtFlObject, _objs[idx].fl_object_index);
-		assert(idx < _maxFLObject);
+		assert(idx < _numFlObject);
 		_lastCodePtr = &_baseFLObject[idx];
 		break;
 	default:

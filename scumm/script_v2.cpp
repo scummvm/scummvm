@@ -789,7 +789,7 @@ void ScummEngine_v2::o2_verbOps() {
 	switch (verb) {
 	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
-		assert(0 < slot && slot < _maxVerbs);
+		assert(0 < slot && slot < _numVerbs);
 
 		//printf("o2_verbOps delete slot = %d\n", slot);
 		killVerb(slot);
@@ -819,7 +819,7 @@ void ScummEngine_v2::o2_verbOps() {
 		//		verb, slot, x, y, prep, _scriptPointer);
 
 		VerbSlot *vs;
-		assert(0 < slot && slot < _maxVerbs);
+		assert(0 < slot && slot < _numVerbs);
 
 		vs = &_verbs[slot];
 		vs->verbid = verb;
