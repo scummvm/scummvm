@@ -44,6 +44,7 @@ enum {
 	bool _soundVolumePreset;
 
 	char * _nameBundleMusic;
+	char * _newNameBundleMusic;
 	int32 _currentSampleBundleMusic;
 	int32 _numberSamplesBundleMusic;
 	int32 _offsetSampleBundleMusic;
@@ -52,6 +53,8 @@ enum {
 	byte * _musicBundleBufOutput;
 	bool _pauseBundleMusic;
 	int32 _bundleMusicTrack;
+	bool _musicBundleToBeChanged;
+	bool _musicBundleToBeRemoved;
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
 	File *_sfxFile;

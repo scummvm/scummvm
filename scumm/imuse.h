@@ -21,6 +21,7 @@
  */
 
 class IMuseInternal;
+class MidiDriver;
 
 class IMuse {
 public:
@@ -108,6 +109,7 @@ private:
 	} _channel[MAX_DIGITAL_CHANNELS];
 
 	Scumm * _scumm;
+	bool _pause;
 
 public:
 	IMuseDigital(Scumm *scumm);
@@ -116,6 +118,7 @@ public:
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAll();
+	void pause(bool pause);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound);
 };

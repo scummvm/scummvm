@@ -710,6 +710,12 @@ void Sound::pauseSounds(bool pause) {
 	_soundsPaused = pause;
 	_scumm->_mixer->pause(pause);	
 
+	_scumm->_sound->pauseBundleMusic(pause);
+
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->pause(pause);
+	}
+
 	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->_vars[_scumm->VAR_MI1_TIMER] > 0) {
 		if (pause)
 			stopCDTimer();
@@ -843,8 +849,9 @@ File * Sound::openSfxFile() {
 void Sound::stopSfxSound() {
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->stopAll();
+	} else {
+		_scumm->_mixer->stopAll();
 	}
-	_scumm->_mixer->stopAll();
 }
 
 
@@ -901,6 +908,8 @@ void Sound::playBundleMusic(char * song) {
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
 		_pauseBundleMusic = false;
+		_musicBundleToBeRemoved = false;
+		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = -1;
 		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
@@ -908,11 +917,9 @@ void Sound::playBundleMusic(char * song) {
 		return;
 	}
 	if (strcmp(_nameBundleMusic, song) != 0) {
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
-		_nameBundleMusic = song;
-		_currentSampleBundleMusic = 0;
-		_offsetSampleBundleMusic = 0;
-		_offsetBufBundleMusic = 0;
+		_newNameBundleMusic = song;
+		_musicBundleToBeRemoved = false;
+		_musicBundleToBeChanged = true;
 	}
 }
 
@@ -921,17 +928,7 @@ void Sound::pauseBundleMusic(bool state) {
 }
 
 void Sound::stopBundleMusic() {
-	_scumm->_timer->releaseProcedure(&music_handler);
-	_nameBundleMusic = NULL;
-	_bundleMusicTrack = -1;
-	if (_musicBundleBufFinal) {
-		free(_musicBundleBufFinal);
-		_musicBundleBufFinal = NULL;
-	}
-	if (_musicBundleBufOutput) {
-		free(_musicBundleBufOutput);
-		_musicBundleBufOutput = NULL;
-	}
+	_musicBundleToBeRemoved = true;
 }
 
 void Sound::bundleMusicHandler(Scumm * scumm) {
@@ -940,10 +937,35 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	int32 rate = 22050;
 	int32 tag, size = -1, header_size = 0;
 	
-	ptr = _musicBundleBufOutput;
-	
 	if (_pauseBundleMusic)
 		return;
+
+	if (_musicBundleToBeRemoved == true) {
+		_scumm->_timer->releaseProcedure(&music_handler);
+		_nameBundleMusic = NULL;
+		_scumm->_mixer->stopChannel(_bundleMusicTrack);
+		_bundleMusicTrack = -1;
+		if (_musicBundleBufFinal) {
+			free(_musicBundleBufFinal);
+			_musicBundleBufFinal = NULL;
+		}
+		if (_musicBundleBufOutput) {
+			free(_musicBundleBufOutput);
+			_musicBundleBufOutput = NULL;
+		}
+		return;
+	}
+
+	if (_musicBundleToBeChanged == true) {
+		_nameBundleMusic = _newNameBundleMusic;
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+		_musicBundleToBeChanged = false;
+	}
+
+	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
 		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
@@ -953,7 +975,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
 			if (tag != MKID_BE('iMUS')) {
 				warning("Decompression of bundle song failed");
-				_nameBundleMusic = NULL;
+				_musicBundleToBeRemoved = true;
 				return;
 			}
 
@@ -980,7 +1002,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 			}
 			if (size < 0) {
 				warning("Decompression sound failed (no size field)");
-				_nameBundleMusic = NULL;
+				_musicBundleToBeRemoved = true;
 				return;
 			}
 			header_size = (ptr - _musicBundleBufOutput);
@@ -998,17 +1020,21 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		}
 	}
 
-	if (_currentSampleBundleMusic == num)
+	if (_currentSampleBundleMusic == num) {
 		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+	}
 
 	size = OUTPUT_SIZE;
 	ptr = _musicBundleBufFinal;
 
 	byte * buffer = NULL;
 	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
+
 	if (_bundleMusicTrack == -1) {
 		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, -1, buffer, final_size, rate,
-															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1);
 	} else {
 		_scumm->_mixer->append(_bundleMusicTrack, buffer, final_size, rate,
 														SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);

@@ -115,6 +115,8 @@ bool Scumm::loadState(int slot, bool compat)
 		_imuseDigital->stopAll();
 	}
 
+	_sound->stopBundleMusic();
+
 	_sound->pauseSounds(true);
 
 	CHECK_HEAP openRoom(-1);
@@ -614,8 +616,13 @@ void Scumm::saveOrLoad(Serializer *s)
 	int var120Backup;
 	int var98Backup;
 
-	if (_mixer && !s->isSaving())
-		_mixer->stopAll();
+	if (_mixer && !s->isSaving()) {
+		if (_imuseDigital) {
+			_imuseDigital->stopAll();
+		} else {
+			_mixer->stopAll();
+		}
+	}
 
 	if (_current_version == VER_V9)
 		s->saveLoadEntries(this, mainEntriesV9);

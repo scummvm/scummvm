@@ -475,7 +475,9 @@ void Scumm::description()
 	charset._center = false;
 	charset._color = 15;
 	_bkColor = 0;
-	_talkDelay = 1;
+	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
+	// 0 - no display, correct ego actor talking
+	_talkDelay = 0;
 
 	restoreCharsetBg();
 

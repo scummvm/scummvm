@@ -4998,6 +4998,7 @@ IMuseDigital::IMuseDigital(Scumm *scumm) {
 	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
 	_scumm = scumm;
 	_scumm->_timer->installProcedure(imus_digital_handler, 200);
+	_pause = false;
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -5395,8 +5396,10 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 };
 
 void IMuseDigital::handler() {
-	bool new_mixer;
 	uint32 l = 0, i = 0;
+
+	if (_pause == true)
+		return;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
@@ -5449,11 +5452,9 @@ void IMuseDigital::handler() {
 			uint32 mixer_size = new_size;
 
 			if (_channel[l]._mixerTrack == -1) {
-				new_mixer = true;
 				mixer_size *= 2;
 				new_size *= 2;
 			} else {
-				new_mixer = false;
 			}
 
 			if (_channel[l]._isJump == false) {
@@ -5506,7 +5507,12 @@ void IMuseDigital::handler() {
 				}
 			}
 
-			if (new_mixer) {
+
+			if (_channel[l]._mixerTrack == -1) {
+				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, -1, buf, mixer_size,
+																				 _channel[l]._freq, _channel[l]._mixerFlags);
+				continue;
+			} else if (_scumm->_mixer->_channels[_channel[l]._mixerTrack] == NULL) {
 				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, -1, buf, mixer_size,
 																				 _channel[l]._freq, _channel[l]._mixerFlags);
 			} else {
@@ -5692,6 +5698,10 @@ void IMuseDigital::stopAll() {
 	}
 }
 
+void IMuseDigital::pause(bool pause) {
+	_pause = pause;
+}
+
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
@@ -5791,7 +5801,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	} else if (param == 16) {
 		switch (cmd) {
 		case 0: // play music (state)
-			debug(1, "IMuseDigital::doCommand 0x1000 (%d)", b);
+			debug(2, "IMuseDigital::doCommand 0x1000 (%d)", b);
 			if (_scumm->_gameId == GID_DIG) {
 				for(l = 0;; l++) {
 					if (_digStateMusicMap[l].room == -1) {
@@ -5799,7 +5809,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 					if (_digStateMusicMap[l].room == b) {
 						int16 music = _digStateMusicMap[l].table_index;
-						debug(1, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
+						debug(2, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 						if (_digStateMusicTable[music].filename[0] != 0) {
 							_scumm->_sound->playBundleMusic((char*)&_digStateMusicTable[music].filename);
 						}
@@ -5812,7 +5822,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 						return 1;
 					}
 					if (_ftStateMusicTable[l].index == b) {
-						debug(1, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
+						debug(2, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
 						if (_ftStateMusicTable[l].audioname[0] != 0) {
 							for(r = 0; r < _scumm->_numAudioNames; r++) {
 								if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
@@ -5826,14 +5836,14 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 			}
 			return 0;
 		case 1: // play music (seq)
-			debug(1, "IMuseDigital::doCommand 0x1001 (%d)", b);
+			debug(2, "IMuseDigital::doCommand 0x1001 (%d)", b);
 			if (_scumm->_gameId == GID_DIG) {
 				for(l = 0;; l++) {
 					if (_digSeqMusicTable[l].index == -1) {
 						return 1;
 					}
 					if ((_digSeqMusicTable[l].index == b)) {
-						debug(1, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
+						debug(2, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
 						if (_digSeqMusicTable[l].filename[0] != 0) {
 							_scumm->_sound->playBundleMusic((char*)&_digSeqMusicTable[l].filename);
 						}
@@ -5846,7 +5856,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 						return 1;
 					}
 					if (_ftSeqMusicTable[l].index == b) {
-						debug(1, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
+						debug(2, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
 						if (_ftSeqMusicTable[l].audioname[0] != 0) {
 							for(r = 0; r < _scumm->_numAudioNames; r++) {
 								if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {

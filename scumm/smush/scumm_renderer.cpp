@@ -27,8 +27,8 @@
 #include "sound/mixer.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/imuse.h"
 #include "scumm/actor.h"
-
 
 class ScummMixer : public Mixer {
 private:
@@ -188,7 +188,6 @@ bool ScummMixer::stop() {
 				_channels[i].chan = 0;
 		}
 	}
-//	_mixer->stopAll();
 	return true;
 }
 
@@ -196,7 +195,6 @@ ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
 	_scumm(scumm),
 	_smixer(0),
 	_insaneSpeed(speed) {
-//	scumm->_mixer->stopAll();
 }
 
 static ScummRenderer * s_renderer;
@@ -207,7 +205,6 @@ static void smush_handler(void * engine) {
 
 Mixer * ScummRenderer::getMixer() {
 	if(_smixer == 0) {
-		_scumm->_sound->pauseBundleMusic(true);
 		_smixer = new ScummMixer(_scumm->_mixer);
 		if(!_smixer) error("unable to allocate a smush mixer");
 		s_renderer = this;
@@ -223,6 +220,9 @@ ScummRenderer::~ScummRenderer() {
 		_scumm->_timer->releaseProcedure(&smush_handler);
 		delete _smixer;
 		_smixer = 0;
+	}
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->pause(false);
 	}
 	_scumm->_sound->pauseBundleMusic(false);
 	_scumm->_fullRedraw = 1;
@@ -240,6 +240,9 @@ bool ScummRenderer::wait(int32 ms) {
 }
 
 bool ScummRenderer::startDecode(const char * fname, int32 version, int32 nbframes) {
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->pause(true);
+	}
 	_scumm->_sound->pauseBundleMusic(true);
 	_scumm->_videoFinished = false;
 	_scumm->_insaneState = true;
