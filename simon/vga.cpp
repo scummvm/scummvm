@@ -1862,7 +1862,7 @@ void SimonState::vc_64()
 
 void SimonState::vc_65()
 {																// Simon2
-	error("vc_65 unimplemented");
+	warning("vc_65 unimplemented");
 }
 
 void SimonState::vc_66()
