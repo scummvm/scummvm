@@ -1218,7 +1218,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	}
 
 	// FIXME Still not been calculated correctly
-	while (numstrip && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
+	while (numstrip > 0 && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
 		CHECK_HEAP;
 
 		if (y < vs->tdirty[sx])
