@@ -128,7 +128,7 @@ void SkyState::initialise(void) {
 	}
 
 	_gameVersion = _skyDisk->determineGameVersion();
-	_skyText = getSkyText();
+	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
 	_skyMouse = new SkyMouse(_skyDisk);
 	
 	initialiseScreen();
@@ -256,33 +256,6 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 		}
 		cur = _system->get_msecs();
 	} while (cur < start + amount);
-}
-
-SkyText *SkyState::getSkyText() {
-
-	switch (_gameVersion) {
-	case 267:
-		//floppy demo
-		return new SkyText_v00267(_skyDisk, _gameVersion, _language);
-	case 288:
-		//floppy version
-		return new SkyText_v00288(_skyDisk, _gameVersion, _language);
-	case 303:
-		//floppy version
-		return new SkyText_v00303(_skyDisk, _gameVersion, _language);
-	case 331:
-		//floppy version
-		return new SkyText_v00331(_skyDisk, _gameVersion, _language);
-	case 365:
-		//cd demo, uses a slightly modified version of v00372
-	case 368:
-		//cd version, uses a slightly modified version of v00372
-	case 372:
-		//cd version
-		return new SkyText_v00372(_skyDisk, _gameVersion, _language);
-	default:
-		error("Unknown game version");
-	}
 }
 
 bool SkyState::isDemo(uint32 version) {

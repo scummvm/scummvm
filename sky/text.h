@@ -24,6 +24,12 @@
 
 #include "sky/disk.h"
 
+struct HuffTree {
+	char lChild;
+	char rChild;
+	char value;
+};
+
 class SkyText {
 public:
 	SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 _language);
@@ -36,7 +42,8 @@ public:
 protected:
 	bool getTBit();
 	void fnSetFont(uint32 fontNr);
-	virtual char getTextChar() = 0;
+	void initHuffTree();
+	char getTextChar();
 
 	SkyDisk *_skyDisk;
 	uint16 	_language;
@@ -44,6 +51,8 @@ protected:
 	uint8	_inputValue;
 	uint8	_shiftBits;
 	uint8	*_textItemPtr;
+
+	const HuffTree *_huffTree;
 
 	struct charSet {
 		uint8 *addr;
@@ -72,41 +81,6 @@ protected:
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
 	uint32	_lowTextWidth;
-};
-
-class SkyText_v00267 : public SkyText {
-public:
-	SkyText_v00267(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
-protected:
-	char getTextChar();
-};
-
-class SkyText_v00288 : public SkyText {
-public:
-	SkyText_v00288(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
-protected:
-	char getTextChar();
-};
-
-class SkyText_v00303 : public SkyText {
-public:
-	SkyText_v00303(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
-protected:
-	char getTextChar();
-};
-
-class SkyText_v00331 : public SkyText {
-public:
-	SkyText_v00331(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
-protected:
-	char getTextChar();
-};
-
-class SkyText_v00372 : public SkyText {
-public:
-	SkyText_v00372(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) : SkyText(skyDisk, gameVersion, language) {};
-protected:
-	char getTextChar();
 };
 
 #endif
