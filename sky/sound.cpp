@@ -1083,8 +1083,10 @@ void SkySound::loadSection(uint8 pSection) {
 
 	_sampleRates = _soundData + sRateTabOfs;
 	_sfxInfo = _soundData + _sfxBaseOfs;
-	for (uint8 cnt = 0; cnt < 4; cnt++)
-		_sfxQueue[cnt].count = 0;
+	// if we just restored a savegame, the sfxqueue holds the sound we need to restart
+	if (!(SkyState::_systemVars.systemFlags & SF_GAME_RESTORED))
+		for (uint8 cnt = 0; cnt < 4; cnt++)
+			_sfxQueue[cnt].count = 0;
 }
 
 void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
