@@ -726,8 +726,8 @@ Bit32u Partial::getAmpEnvelope() {
 	if (tStat->decaying) {
 		tc = tStat->envbase;
 		tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-		if (tc < 0)
-			tc = 0;
+		//if (tc < 0)	// tc is unsigned, so it will *never* be less than 0
+		//	tc = 0;
 		if ((tStat->envpos >= tStat->envsize) || (tc == 0)) {
 			play = false;
 			// Don't have to worry about prevlevel storage or anything, this partial's about to die
