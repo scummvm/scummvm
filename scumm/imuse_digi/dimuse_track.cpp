@@ -150,8 +150,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
+#ifdef SCUMM_LITTLE_ENDIAN
 		if (track->compressed)
 			track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
 	}
 
 	if (input) {
