@@ -28,8 +28,7 @@ namespace Queen {
 
 BankManager::BankManager(Resource *res) 
 	: _res(res) {
-	memset(_frames, 0, sizeof(_frames));
-	memset(_banks, 0, sizeof(_banks));
+	flush();
 }
 
 BankManager::~BankManager() {
@@ -40,29 +39,38 @@ BankManager::~BankManager() {
 }
 
 void BankManager::load(const char *bankname, uint32 bankslot) {
-	close(bankslot);
+	debug(9, "BankManager::load(%s, %d)", bankname, bankslot);
+	assert(bankslot < MAX_BANKS_NUMBER);
 
+	if (!scumm_stricmp(bankname, _loadedBanks[bankslot])) {
+		debug(9, "BankManager::load() bank '%s' already loaded", bankname);
+		return;
+	}
+
+	close(bankslot);
 	_banks[bankslot].data = _res->loadFile(bankname);
 
-	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
-	if (entries < 0 || entries >= MAX_BANK_SIZE) {
-		error("Maximum bank size exceeded or negative bank size : %d", entries);
-	}
-	debug(9, "BankManager::load(%s, %d) - entries = %d", bankname, bankslot, entries); 
+	uint16 entries = READ_LE_UINT16(_banks[bankslot].data);
+	assert(entries < MAX_BANK_SIZE);
+	debug(9, "BankManager::load() entries = %d", entries); 
 
 	uint32 offset = 2;
 	uint8 *p = _banks[bankslot].data;
-	for (int16 i = 1; i <= entries; ++i) {
+	for (uint16 i = 1; i <= entries; ++i) {
 		_banks[bankslot].indexes[i] = offset;
 		uint16 w = READ_LE_UINT16(p + offset + 0);
 		uint16 h = READ_LE_UINT16(p + offset + 2);
 		// jump to next entry, skipping data & header
 		offset += w * h + 8; 
 	}
+
+	// mark this bank as loaded
+	strcpy(_loadedBanks[bankslot], bankname);
 }
 
 void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::unpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+	assert(bankslot < MAX_BANKS_NUMBER);
 	assert(_banks[bankslot].data != NULL);
 		
 	BobFrame *pbf = &_frames[dstframe];
@@ -80,6 +88,7 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::overpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+	assert(bankslot < MAX_BANKS_NUMBER);
 	assert(_banks[bankslot].data != NULL);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
@@ -97,8 +106,16 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 void BankManager::close(uint32 bankslot) {
 	debug(9, "BankManager::close(%d)", bankslot);
+	assert(bankslot < MAX_BANKS_NUMBER);
 	delete[] _banks[bankslot].data;
-	memset(&_banks[bankslot], 0, sizeof(_banks[bankslot]));
+	memset(&_banks[bankslot], 0, sizeof(PackedBank));
+	_loadedBanks[bankslot][0] = '\0';
+}
+
+void BankManager::flush() {
+	memset(_frames, 0, sizeof(_frames));
+	memset(_banks, 0, sizeof(_banks));
+	memset(_loadedBanks, 0, sizeof(_loadedBanks));
 }
 
 BobFrame *BankManager::fetchFrame(uint32 index) {
@@ -122,7 +139,7 @@ void BankManager::eraseFrames(bool joe) {
 	if (!joe) {
 		i = FRAMES_JOE + FRAMES_JOE_XTRA;
 	}
-	while (i < 256) {
+	while (i < MAX_FRAMES_NUMBER) {
 		eraseFrame(i);
 		++i;
 	}

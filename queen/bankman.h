@@ -39,6 +39,7 @@ public:
 	void unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
 	void overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
 	void close(uint32 bankslot);
+	void flush();
 
 	BobFrame *fetchFrame(uint32 index);
 	void eraseFrame(uint32 index);
@@ -62,6 +63,9 @@ private:
 
 	 //! banked bob frames
 	PackedBank _banks[MAX_BANKS_NUMBER];
+
+	//! loaded banks names
+	char _loadedBanks[MAX_BANKS_NUMBER][20];
 
 	Resource *_res;
 };
