@@ -257,14 +257,17 @@ void resMan::Close_ResMan(void) { //Tony29May96
 
 #ifdef SCUMM_BIG_ENDIAN
 static void convertEndian(uint8 *file, uint32 len) {
+	int i;
 	_standardHeader *hdr = (_standardHeader *)file;
+	
+	file += sizeof(_standardHeader);
 
 	hdr->compSize = SWAP_BYTES_32(hdr->compSize);
 	hdr->decompSize = SWAP_BYTES_32(hdr->decompSize);
 
 	switch(hdr->fileType) {
 		case ANIMATION_FILE: {
-			_animHeader *animHead = (_animHeader *) (file + sizeof(_standardHeader));
+			_animHeader *animHead = (_animHeader *)file;
 
 			animHead->noAnimFrames = SWAP_BYTES_16(animHead->noAnimFrames);
 			animHead->feetStartX = SWAP_BYTES_16(animHead->feetStartX);
@@ -273,14 +276,13 @@ static void convertEndian(uint8 *file, uint32 len) {
 			animHead->feetEndY = SWAP_BYTES_16(animHead->feetEndY);
 			animHead->blend = SWAP_BYTES_16(animHead->blend);
 
-			int i;
 			for (i = 0; i < animHead->noAnimFrames; i++) {
 				_cdtEntry *cdtEntry = (_cdtEntry *) ( (uint8 *)animHead + sizeof(_animHeader) + i * sizeof(_cdtEntry) );
 				cdtEntry->x = (int16)SWAP_BYTES_16(cdtEntry->x);
 				cdtEntry->y = (int16)SWAP_BYTES_16(cdtEntry->y);
 				cdtEntry->frameOffset = SWAP_BYTES_32(cdtEntry->frameOffset);
 
-				_frameHeader *frameHeader = (_frameHeader *) (file + sizeof(_standardHeader) + cdtEntry->frameOffset);
+				_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
 				frameHeader->compSize = SWAP_BYTES_32(frameHeader->compSize);
 				frameHeader->width = SWAP_BYTES_16(frameHeader->width);
 				frameHeader->height = SWAP_BYTES_16(frameHeader->height);
@@ -288,7 +290,7 @@ static void convertEndian(uint8 *file, uint32 len) {
 			break;
 		}
 		case SCREEN_FILE: {
-			_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (file + sizeof(_standardHeader));
+			_multiScreenHeader *mscreenHeader = (_multiScreenHeader *)file;
 
 			mscreenHeader->palette = SWAP_BYTES_32(mscreenHeader->palette);
 			mscreenHeader->bg_parallax[0] = SWAP_BYTES_32(mscreenHeader->bg_parallax[0]);
@@ -309,7 +311,6 @@ static void convertEndian(uint8 *file, uint32 len) {
 
 			// layerHeader
 			_layerHeader *layerHeader;
-			int i;
 			for (i = 0; i < screenHeader->noLayers; i++) {
 				layerHeader = (_layerHeader *) ((uint8 *) mscreenHeader + mscreenHeader->layers + (i * sizeof(_layerHeader)));
 
@@ -320,8 +321,6 @@ static void convertEndian(uint8 *file, uint32 len) {
 				layerHeader->maskSize = SWAP_BYTES_32(layerHeader->maskSize);
 				layerHeader->offset = SWAP_BYTES_32(layerHeader->offset);
 			}
-
-			// FIXME: byte swapping should be done here instead of in protocol.cpp
 
 			// backgroundParallaxLayer
 			_parallax *parallax;
@@ -341,7 +340,7 @@ static void convertEndian(uint8 *file, uint32 len) {
 			}
 
 			// backgroundLayer
-			offset = mscreenHeader->screen + (int)sizeof(_screenHeader);
+			offset = mscreenHeader->screen + sizeof(_screenHeader);
 			if (offset > 0) {
 				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
 				parallax->w = SWAP_BYTES_16(parallax->w);
@@ -365,12 +364,11 @@ static void convertEndian(uint8 *file, uint32 len) {
 			break;
 		}
 		case GAME_OBJECT: {
-			_object_hub *objectHub = (_object_hub *) ((_standardHeader *)file+1);
+			_object_hub *objectHub = (_object_hub *)file;
 
 			objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
 			objectHub->logic_level = SWAP_BYTES_32(objectHub->logic_level);
 
-			int i;
 			for (i = 0; i < TREE_SIZE; i++) {
 				objectHub->logic[i] = SWAP_BYTES_32(objectHub->logic[i]);
 				objectHub->script_id[i] = SWAP_BYTES_32(objectHub->script_id[i]);
@@ -392,7 +390,7 @@ static void convertEndian(uint8 *file, uint32 len) {
 		case RUN_LIST:
 			break;
 		case TEXT_FILE: {
-			_textHeader *textHeader = (_textHeader *) (file + sizeof(_standardHeader));
+			_textHeader *textHeader = (_textHeader *)file;
 			textHeader->noOfLines = SWAP_BYTES_32(textHeader->noOfLines);
 			break;
 		}
