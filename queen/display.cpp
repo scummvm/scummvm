@@ -21,13 +21,12 @@
 
 #include "stdafx.h"
 #include "queen/display.h"
+
 #include "queen/input.h"
-#include "queen/logic.h" // For RandomSource
+#include "queen/queen.h"
 #include "queen/resource.h"
 
-
 namespace Queen {
-
 
 
 void TextRenderer::init() {
@@ -100,8 +99,8 @@ void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, 
 
 
 
-Display::Display(Language language, OSystem *system, Input *input)
-	: _system(system), _input(input) {
+Display::Display(QueenEngine *vm, Language language, OSystem *system)
+	: _system(system), _vm(vm) {
 
 	_dynalum.prevColMask = 0xFF;
 	_textRenderer._lang = language;
@@ -140,7 +139,7 @@ Display::~Display() {
 }
 
 
-void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomNum) {
+void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 
 	debug(9, "Display::dynalumInit(%s, %d)", roomName, roomNum);
 	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
@@ -151,14 +150,14 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 		char filename[20];
 
 		sprintf(filename, "%s.msk", roomName);
-		_dynalum.valid = resource->exists(filename);
+		_dynalum.valid = _vm->resource()->exists(filename);
 		if (_dynalum.valid)
-			resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
+			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.msk);
 
 		sprintf(filename, "%s.lum", roomName);
-		_dynalum.valid = resource->exists(filename);
+		_dynalum.valid = _vm->resource()->exists(filename);
 		if (_dynalum.valid)
-			resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
+			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.lum);
 	}
 }
 
@@ -419,7 +418,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 			j += jdir;
 			if(j <= 0 || j >= 14) {
 				jdir = -jdir;
-				if (Logic::randomizer.getRandomNumber(1)) {
+				if (_vm->randomizer.getRandomNumber(1)) {
 					if (ABS(jdir) == 1) {
 						jdir *= 2;
 					}
@@ -837,7 +836,7 @@ void Display::waitForTimer() {
 
 	_gotTick = false;
 	while (!_gotTick) {
-		_input->delay(10);
+		_vm->input()->delay(10);
 	}
 }
 

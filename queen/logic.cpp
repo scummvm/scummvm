@@ -20,8 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "common/config-manager.h"
 #include "queen/logic.h"
+
+#include "common/config-manager.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/defs.h"
@@ -30,6 +31,7 @@
 #include "queen/graphics.h"
 #include "queen/input.h"
 #include "queen/journal.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/state.h"
@@ -60,25 +62,18 @@ const VerbEnum Logic::PANEL_VERBS[] = {
 
 char* Verb::_verbName[13];
 
-Common::RandomSource Logic::randomizer;
 
-
-Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
-	: _resource(theResource), _graphics(graphics), _display(theDisplay), 
-	_input(input), _sound(sound) {
+Logic::Logic(QueenEngine *vm)
+	: _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
-	_walk = new Walk(this, _graphics);
-	_cmd = new Command(this, _graphics, _input, _walk, _sound);
-	_dbg = new Debug(_input, this, _graphics);
+	_dbg = new Debug(vm);
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	initialise();
 }
 
 Logic::~Logic() {
-	delete _walk;
-	delete _cmd;
 	delete _dbg;
 }
 
@@ -89,7 +84,7 @@ void Logic::initialise() {
 
 	// Step 1 : read queen.jas file and 'unserialize' some arrays
 
-	uint8 *jas = _resource->loadFile("QUEEN.JAS", 20);
+	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
 	uint8 *ptr = jas;
 
 	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
@@ -114,7 +109,7 @@ void Logic::initialise() {
 
 	// SFX Name
 	// the following table isn't available in demo version
-	if (_resource->isDemo()) {
+	if (_vm->resource()->isDemo()) {
 		_sfxName = NULL;
 	}
 	else {
@@ -184,7 +179,7 @@ void Logic::initialise() {
 		_objectDescription[i].readFrom(ptr);
 	}
 
-	_cmd->readCommandsFrom(ptr);
+	_vm->command()->readCommandsFrom(ptr);
 
 	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -220,7 +215,7 @@ void Logic::initialise() {
 	_currentRoom = _objectData[_entryObj].room;
 	_entryObj = 0;
 
-	if(memcmp(ptr, _resource->JASVersion(), 5) != 0) {
+	if(memcmp(ptr, _vm->resource()->JASVersion(), 5) != 0) {
 		warning("Unexpected queen.jas file format");
 	}
 
@@ -232,10 +227,10 @@ void Logic::initialise() {
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;
 	for (i = 1; i <= _numDescriptions; i++)
-		_objDescription[i] = _resource->getJAS2Line();
+		_objDescription[i] = _vm->resource()->getJAS2Line();
 
 	//Patch for German text bug
-	if (_resource->getLanguage() == GERMAN) {
+	if (_vm->resource()->getLanguage() == GERMAN) {
 		char *txt = new char[48];
 		strcpy(txt, "Es bringt nicht viel, das festzubinden.");
 		_objDescription[296] = txt;
@@ -244,44 +239,44 @@ void Logic::initialise() {
 	_objName = new char*[_numNames + 1];
 	_objName[0] = 0;
 	for (i = 1; i <= _numNames; i++)
-		_objName[i] = _resource->getJAS2Line();
+		_objName[i] = _vm->resource()->getJAS2Line();
 
 	_roomName = new char*[_numRooms + 1];
 	_roomName[0] = 0;
 	for (i = 1; i <= _numRooms; i++)
-		_roomName[i] = _resource->getJAS2Line();
+		_roomName[i] = _vm->resource()->getJAS2Line();
 
 	Verb::initName(0, NULL);
 	for (i = 1; i <= 12; i++)
-		Verb::initName(i, _resource->getJAS2Line());
+		Verb::initName(i, _vm->resource()->getJAS2Line());
 
 	_joeResponse[0] = 0;
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
-		_joeResponse[i] = _resource->getJAS2Line();
+		_joeResponse[i] = _vm->resource()->getJAS2Line();
 
 	_aAnim = new char*[_numAAnim + 1];
 	_aAnim[0] = 0;
 	for (i = 1; i <= _numAAnim; i++)
-		_aAnim[i] = _resource->getJAS2Line();
+		_aAnim[i] = _vm->resource()->getJAS2Line();
 
 	_aName = new char*[_numAName + 1];
 	_aName[0] = 0;
 	for (i = 1; i <= _numAName; i++)
-		_aName[i] = _resource->getJAS2Line();
+		_aName[i] = _vm->resource()->getJAS2Line();
 	
 	_aFile = new char*[_numAFile + 1];
 	_aFile[0] = 0;
 	for (i = 1; i <= _numAFile; i++)
-		_aFile[i] = _resource->getJAS2Line();
+		_aFile[i] = _vm->resource()->getJAS2Line();
 
 
 	// Step 3 : initialise game state / variables
 
-	_cmd->clear(false);
+	_vm->command()->clear(false);
 	_scene = 0;
 	memset(_gameState, 0, sizeof(_gameState));
-	_graphics->loadPanel();
-	_graphics->bobSetupControl();
+	_vm->graphics()->loadPanel();
+	_vm->graphics()->bobSetupControl();
 	joeSetup();
 	zoneSetupPanel();
 
@@ -564,7 +559,7 @@ void Logic::joeWalk(JoeWalkMode walking) {
 	_joe.walk = walking;
 
 	// Do this so that Input doesn't need to know the walk value
-	_input->dialogueRunning(JWM_SPEAK == walking);
+	_vm->input()->dialogueRunning(JWM_SPEAK == walking);
 }
 
 void Logic::joeScale(uint16 scale) {
@@ -708,17 +703,17 @@ void Logic::zoneSetupPanel() {
 
 void Logic::roomErase() {
 
-	_graphics->frameEraseAll(false);
-	_graphics->bankErase(15);
-	_graphics->bankErase(11);
-	_graphics->bankErase(10);
-	_graphics->bankErase(12);
+	_vm->graphics()->frameEraseAll(false);
+	_vm->graphics()->bankErase(15);
+	_vm->graphics()->bankErase(11);
+	_vm->graphics()->bankErase(10);
+	_vm->graphics()->bankErase(12);
 
 	if (_currentRoom >= 114) {
-		_display->palFadeOut(0, 255, _currentRoom);
+		_vm->display()->palFadeOut(0, 255, _currentRoom);
 	}
 	else {
-		_display->palFadeOut(0, 223, _currentRoom);
+		_vm->display()->palFadeOut(0, 223, _currentRoom);
 	}
 	
 	// TODO: credits system
@@ -790,9 +785,9 @@ void Logic::roomSetupFurniture() {
 			if (pgd->lastFrame == 0) {
 				++_numFurnitureStatic;
 				++curImage;
-				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
-				BobSlot *pbs = _graphics->bob(19 + _numFurnitureStatic);
+				BobSlot *pbs = _vm->graphics()->bob(19 + _numFurnitureStatic);
 				pbs->active = true;
 				pbs->x = pgd->x;
 				pbs->y = pgd->y;
@@ -822,10 +817,10 @@ void Logic::roomSetupFurniture() {
 				int k;
 				for (k = pgd->firstFrame; k <= lastFrame; ++k) {
 					++curImage;
-					_graphics->bankUnpack(k, curImage, 15);
+					_vm->graphics()->bankUnpack(k, curImage, 15);
 					++_numFrames;
 				}
-				BobSlot *pbs = _graphics->bob(5 + curBob);
+				BobSlot *pbs = _vm->graphics()->bob(5 + curBob);
 				pbs->animNormal(image, curImage, pgd->speed / 4, rebound, false);
 				pbs->x = pgd->x;
 				pbs->y = pgd->y;
@@ -841,8 +836,8 @@ void Logic::roomSetupFurniture() {
 		if (obj > 5000) {
 			obj -= 5000;
 			GraphicData *pgd = &_graphicData[obj];
-			_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
-			_graphics->bobPaste(curImage, pgd->x, pgd->y);
+			_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
+			_vm->graphics()->bobPaste(curImage, pgd->x, pgd->y);
 			// no need to increment curImage here, as bobPaste() destroys the 
 			// unpacked frame after blitting it
 		}
@@ -864,7 +859,7 @@ void Logic::roomSetupObjects() {
 
 	// invalidates all Bobs for persons (except Joe's one)
 	for (i = 1; i <= 3; ++i) {
-		_graphics->bob(i)->active = false;
+		_vm->graphics()->bob(i)->active = false;
 	}
 
 	// static/animated Bobs
@@ -906,12 +901,12 @@ void Logic::roomSetupObjects() {
 				uint16 firstFrame = curImage + 1;
 				for (j = pgd->firstFrame; j <= lastFrame; ++j) {
 					++curImage;
-					_graphics->bankUnpack(j, curImage, 15);
+					_vm->graphics()->bankUnpack(j, curImage, 15);
 					++_numFrames;
 				}
 				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
 				if (pod->name > 0) {
-					BobSlot *pbs = _graphics->bob(curBob);
+					BobSlot *pbs = _vm->graphics()->bob(curBob);
 					pbs->active = true;
 					pbs->x = pgd->x;
 					pbs->y = pgd->y;
@@ -926,14 +921,14 @@ void Logic::roomSetupObjects() {
 				// static objects
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
-				_graphics->bobClear(curBob);
+				_vm->graphics()->bobClear(curBob);
 
 				// FIXME: if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
 
-				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
 				if (pod->name > 0) {
-					BobSlot *pbs = _graphics->bob(curBob);
+					BobSlot *pbs = _vm->graphics()->bob(curBob);
 					pbs->active = true;
 					pbs->x = pgd->x;
 					pbs->y = pgd->y;
@@ -969,8 +964,8 @@ void Logic::roomSetupObjects() {
 			if (obj > 5000) {
 				obj -= 5000;
 				GraphicData *pgd = &_graphicData[obj];
-				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
-				_graphics->bobPaste(curImage, pgd->x, pgd->y);
+				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
+				_vm->graphics()->bobPaste(curImage, pgd->x, pgd->y);
 			}
 		}
 	}
@@ -1001,12 +996,12 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	// find bob for the object
 	uint16 curBob = findBob(obj);
-	BobSlot *pbs = _graphics->bob(curBob);
+	BobSlot *pbs = _vm->graphics()->bob(curBob);
 
 	if (pod->image == -3 || pod->image == -4) {
 		// a person object
 		if (pod->name <= 0) {
-			_graphics->bobClear(curBob);
+			_vm->graphics()->bobClear(curBob);
 		}
 		else {
 			// find person number
@@ -1033,7 +1028,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	if (pod->name < 0 || pod->image < 0) {
 		// object is hidden or disabled
-		_graphics->bobClear(curBob);
+		_vm->graphics()->bobClear(curBob);
 		return curImage;
 	}
 
@@ -1055,14 +1050,14 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	}
 	else if (lastFrame != 0) {
 		// turn on an animated bob
-		_graphics->bankUnpack(pgd->firstFrame, 2, 15);
+		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
 		pbs->animating = false;
 		uint16 firstImage = curImage;
 		--curImage;
 		uint16 j;
 		for (j = pgd->firstFrame; j <= lastFrame; ++j) {
 			++curImage;
-			_graphics->bankUnpack(j, curImage, 15);
+			_vm->graphics()->bankUnpack(j, curImage, 15);
 		}
 		pbs->active = true;
 		pbs->x = pgd->x;
@@ -1074,8 +1069,8 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	}
 	else {
 		// frame 2 is used as a buffer frame to prevent BOB flickering
-		_graphics->bankUnpack(pgd->firstFrame, 2, 15);
-		_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
+		_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
 		pbs->active = true;
 		pbs->x = pgd->x;
 		pbs->y = pgd->y;
@@ -1092,20 +1087,20 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 
 	// loads background image
 	sprintf(filename, "%s.PCX", room);
-	_graphics->loadBackdrop(filename, _currentRoom);
+	_vm->graphics()->loadBackdrop(filename, _currentRoom);
 
 	// custom colors
-	_display->palCustomColors(_currentRoom);
+	_vm->display()->palCustomColors(_currentRoom);
 
 	// setup graphics to enter fullscreen/panel mode
-	_display->screenMode(comPanel, inCutaway);
+	_vm->display()->screenMode(comPanel, inCutaway);
 
 	// reset sprites table (bounding box...)
-	_graphics->bobClearAll();
+	_vm->graphics()->bobClearAll();
 
 	// load/setup objects associated to this room
 	sprintf(filename, "%s.BBK", room);
-	_graphics->bankLoad(filename, 15);
+	_vm->graphics()->bankLoad(filename, 15);
 
 	zoneSetup();
 	_numFrames = 37 + FRAMES_JOE_XTRA;
@@ -1120,7 +1115,7 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 
 	roomErase();
 
-	// XXX _sound->loadSFX(SFXNAME[_currentRoom]);
+	// XXX _vm->sound()->loadSFX(SFXNAME[_currentRoom]);
 
 	roomSetup(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
@@ -1129,16 +1124,16 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	}
 	if (mode != RDM_NOFADE_JOE) {
 		update();
-		BobSlot *joe = _graphics->bob(0);
+		BobSlot *joe = _vm->graphics()->bob(0);
 		if (IS_CD_INTRO_ROOM(_currentRoom)) {
-			_display->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
+			_vm->display()->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
 		}
 		else {
-			_display->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
+			_vm->display()->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
 		}
 	}
 	if (pod != NULL) {
-		_walk->moveJoe(0, pod->x, pod->y, inCutaway);
+		_vm->walk()->moveJoe(0, pod->x, pod->y, inCutaway);
 	}
 }
 
@@ -1206,7 +1201,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 		if (loadBank) {
 			const char *actorFile = _aFile[pp->actor->actorFile];
 			if (actorFile) {
-				_graphics->bankLoad(actorFile, pp->actor->bankNum);
+				_vm->graphics()->bankLoad(actorFile, pp->actor->bankNum);
 			}
 			// if actorFile is null, the person data is already loaded as
 			// it is contained in objects room bank (.bbk)
@@ -1235,14 +1230,14 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 		return curImage;
 	}
 
-	_graphics->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
+	_vm->graphics()->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
 	bool xflip = false;
 	uint16 person = _roomData[_currentRoom] + noun;
 	if (_objectData[person].image == -3) {
 		// person is facing left
 		xflip = true;
 	}
-	BobSlot *pbs = _graphics->bob(pad->bobNum);
+	BobSlot *pbs = _vm->graphics()->bob(pad->bobNum);
 	pbs->active = true;
 	pbs->scale = scale;
 	pbs->x = pad->x;
@@ -1364,12 +1359,12 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 	for (i = 1; i <= 255; ++i) {
 		if (allocatedFrames[i] != 0) {
 			++curImage;
-			_graphics->bankUnpack(i, curImage, person->actor->bankNum);
+			_vm->graphics()->bankUnpack(i, curImage, person->actor->bankNum);
 		}
 	}
 
 	// start animation
-	_graphics->bob(person->actor->bobNum)->animString(animFrames);
+	_vm->graphics()->bob(person->actor->bobNum)->animString(animFrames);
 
 	return curImage;
 }
@@ -1378,7 +1373,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 void Logic::animErase(uint16 bobNum) {
 
 	_newAnim[bobNum][0].frame = 0;
-	BobSlot *pbs = _graphics->bob(bobNum);
+	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 	pbs->animating = false;
 	pbs->anim.string.buffer = NULL;
 }
@@ -1387,7 +1382,7 @@ void Logic::animErase(uint16 bobNum) {
 void Logic::animReset(uint16 bobNum) {
 
 	if (_newAnim[bobNum][0].frame != 0) {
-		_graphics->bob(bobNum)->animString(_newAnim[bobNum]);
+		_vm->graphics()->bob(bobNum)->animString(_newAnim[bobNum]);
 	}
 }
 
@@ -1434,9 +1429,9 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 
 	// queen.c l.962-980 / l.1269-1294
 	for (i = 0; i < gd->lastFrame; ++i) {
-		_graphics->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
+		_vm->graphics()->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
 	}
-	BobSlot *pbs = _graphics->bob(bobNum);
+	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 	pbs->animating = false;
 	if (visible) {
 		pbs->x = gd->x;
@@ -1474,16 +1469,16 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 
 	int i;
-	_graphics->bankLoad(animBank, 13);
+	_vm->graphics()->bankLoad(animBank, 13);
 	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
-		_graphics->bankUnpack(i - 10, i, 13);
+		_vm->graphics()->bankUnpack(i - 10, i, 13);
 	}
-	_graphics->bankErase(13);
+	_vm->graphics()->bankErase(13);
 
-	_graphics->bankLoad(standBank, 7);
-	_graphics->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
-	_graphics->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
-	_graphics->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
+	_vm->graphics()->bankLoad(standBank, 7);
+	_vm->graphics()->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
+	_vm->graphics()->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
+	_vm->graphics()->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
 }
 
 
@@ -1563,15 +1558,15 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	}
 	joePrevFacing(joeFacing());
 
-	BobSlot *pbs = _graphics->bob(0);
+	BobSlot *pbs = _vm->graphics()->bob(0);
 	pbs->scale = joeScale();
 
 	if (_currentRoom == 108) {
-		_graphics->cameraBob(-1);
-		_graphics->bankLoad("joe_e.act", 7);
-		_graphics->bankUnpack(2, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->graphics()->cameraBob(-1);
+		_vm->graphics()->bankLoad("joe_e.act", 7);
+		_vm->graphics()->bankUnpack(2, 29 + FRAMES_JOE_XTRA, 7);
 
-		_display->horizontalScroll(320);
+		_vm->display()->horizontalScroll(320);
 
 		joeFacing(DIR_RIGHT);
 		joeCutFacing(DIR_RIGHT);
@@ -1597,7 +1592,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 uint16 Logic::joeFace() {
 
 	debug(9, "Logic::joeFace() - curFace = %d, prevFace = %d", _joe.facing, _joe.prevFacing);
-	BobSlot *pbs = _graphics->bob(0);
+	BobSlot *pbs = _vm->graphics()->bob(0);
 	uint16 frame;
 	if (_currentRoom == 108) {
 		frame = 1;
@@ -1641,7 +1636,7 @@ uint16 Logic::joeFace() {
 		}
 	}
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	_graphics->bankUnpack(frame, pbs->frameNum, 7);
+	_vm->graphics()->bankUnpack(frame, pbs->frameNum, 7);
 	return frame;
 }
 
@@ -1649,7 +1644,7 @@ uint16 Logic::joeFace() {
 void Logic::joeGrab(int16 grabState) {
 
 	uint16 frame = 0;
-	BobSlot *bobJoe = _graphics->bob(0);
+	BobSlot *bobJoe = _vm->graphics()->bob(0);
 	
 	switch (grabState) {
 	case STATE_GRAB_NONE:
@@ -1678,12 +1673,12 @@ void Logic::joeGrab(int16 grabState) {
 
 	case STATE_GRAB_UP:
 		// turn back
-		_graphics->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->graphics()->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
 		// grab up
-		_graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->graphics()->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
@@ -1693,7 +1688,7 @@ void Logic::joeGrab(int16 grabState) {
 	}
 
 	if (frame != 0) {
-		_graphics->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->graphics()->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
@@ -1720,7 +1715,7 @@ void Logic::joeUseDress(bool showCut) {
 			playCutaway("cudrs.CUT");
 		}
 	}
-	_display->palSetJoe(JP_DRESS);
+	_vm->display()->palSetJoe(JP_DRESS);
 	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
 	inventoryDeleteItem(ITEM_DRESS);
 	gameState(VAR_DRESSING_MODE, 2);
@@ -1735,7 +1730,7 @@ void Logic::joeUseClothes(bool showCut) {
 		playCutaway("cdclo.CUT");
 		inventoryInsertItem(ITEM_DRESS);
 	}
-	_display->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoe(JP_CLOTHES);
 	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
 	inventoryDeleteItem(ITEM_CLOTHES);
 	gameState(VAR_DRESSING_MODE, 0);
@@ -1744,7 +1739,7 @@ void Logic::joeUseClothes(bool showCut) {
 
 void Logic::joeUseUnderwear() {
 
-	_display->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoe(JP_CLOTHES);
 	joeSetupFromBanks("JoeU_A.BBK", "JoeU_B.BBK");
 	gameState(VAR_DRESSING_MODE, 1);
 }
@@ -1752,8 +1747,8 @@ void Logic::joeUseUnderwear() {
 
 void Logic::makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix) {
 
-	_cmd->clear(false);
-	Talk::speak(sentence, person, voiceFilePrefix, _graphics, _input, this, _resource, _sound);
+	_vm->command()->clear(false);
+	Talk::speak(sentence, person, voiceFilePrefix, _vm);
 }
 
 
@@ -1763,10 +1758,10 @@ void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 	if (cutaway == NULL) {
 		cutaway = cutawayFile;
 	}
-	_display->fullscreen(true);
-	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
+	_vm->display()->fullscreen(true);
+	Talk::talk(dlgFile, personInRoom, cutaway, _vm);
 	if (!cutaway[0]) {
-		_display->fullscreen(false);
+		_vm->display()->fullscreen(false);
 	}
 }
 
@@ -1777,8 +1772,8 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 	if (next == NULL) {
 		next = nextFile;
 	}
-	_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
-	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
+	_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+	Cutaway::run(cutFile, next, _vm);
 }
 
 
@@ -1806,7 +1801,7 @@ uint16 Logic::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
 
 	uint16 roomObj = 0;
 	if (cursory < ROOM_ZONE_HEIGHT) {
-		int16 x = cursorx + _display->horizontalScroll();
+		int16 x = cursorx + _vm->display()->horizontalScroll();
 		roomObj = zoneIn(ZONE_ROOM, x, cursory);
 	}
 	return roomObj;
@@ -1848,7 +1843,7 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 
 void Logic::inventorySetup() {
 
-	_graphics->bankLoad("objects.BBK", 14);
+	_vm->graphics()->bankLoad("objects.BBK", 14);
 	_inventoryItem[0] = ITEM_BAT;
 	_inventoryItem[1] = ITEM_JOURNAL;
 	_inventoryItem[2] = ITEM_NONE;
@@ -1866,12 +1861,12 @@ void Logic::inventoryRefresh() {
 			// whereas 2nd, 3rd and 4th uses frame 9
 			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
 			// unpack frame for object and draw it
-			_graphics->bankUnpack(_itemData[itemNum].frame, dstFrame, 14);
-			_graphics->bobDrawInventoryItem(dstFrame, x, 14);
+			_vm->graphics()->bankUnpack(_itemData[itemNum].frame, dstFrame, 14);
+			_vm->graphics()->bobDrawInventoryItem(dstFrame, x, 14);
 		}
 		else {
 			// no object, clear the panel 
-			_graphics->bobDrawInventoryItem(0, x, 14);
+			_vm->graphics()->bobDrawInventoryItem(0, x, 14);
 		}
 		x += 35;
 	}
@@ -2027,7 +2022,7 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 void Logic::checkPlayer() {
 	update();
-	_cmd->updatePlayer();
+	_vm->command()->updatePlayer();
 }
 
 
@@ -2037,7 +2032,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 	debug(9, "customMoveJoe(%d, %d, %d)\n", facing, areaNum, walkDataNum);
 
 	// Stop animating Joe
-	_graphics->bob(0)->animating = false;
+	_vm->graphics()->bob(0)->animating = false;
 
 	// Make Joe face the right direction
 	joeFacing(facing);
@@ -2154,18 +2149,18 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 void Logic::handlePinnacleRoom() {
 
 	// camera does not follow Joe anymore
-	_graphics->cameraBob(-1);
+	_vm->graphics()->cameraBob(-1);
 	roomDisplay(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
 
-	BobSlot *joe   = _graphics->bob(6);
-	BobSlot *piton = _graphics->bob(7);
+	BobSlot *joe   = _vm->graphics()->bob(6);
+	BobSlot *piton = _vm->graphics()->bob(7);
 
 	// set scrolling value to mouse position to avoid glitch
-	_display->horizontalScroll(_input->mousePosX());
+	_vm->display()->horizontalScroll(_vm->input()->mousePosX());
 
-	joe->x = piton->x = 3 * _input->mousePosX() / 4 + 200;
+	joe->x = piton->x = 3 * _vm->input()->mousePosX() / 4 + 200;
 
-	joe->frameNum = _input->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
+	joe->frameNum = _vm->input()->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
 
 	// adjust bounding box for fullscreen
 	joe->box.y2 = piton->box.y2 = GAME_SCREEN_HEIGHT - 1;
@@ -2175,18 +2170,18 @@ void Logic::handlePinnacleRoom() {
 	joe->animating = piton->animating = false;
 
 	update();
-	_display->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
+	_vm->display()->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
-	while (_input->mouseButton() == 0 || _entryObj == 0) {
+	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
 		update();
-		int mx = _input->mousePosX();
-		int my = _input->mousePosY();
+		int mx = _vm->input()->mousePosX();
+		int my = _vm->input()->mousePosY();
 
 		// update screen scrolling
-		_display->horizontalScroll(_input->mousePosX());
+		_vm->display()->horizontalScroll(_vm->input()->mousePosX());
 
 		// update bobs position / frame
 		joe->x = piton->x = 3 * mx / 4 + 200;
@@ -2201,13 +2196,13 @@ void Logic::handlePinnacleRoom() {
 				_entryObj = objData->entryObj;
 				char textCmd[CmdText::MAX_COMMAND_LEN];
 				sprintf(textCmd, "%s %s", Verb(VERB_WALK_TO).name(), _objName[objData->name]);
-				_graphics->textCurrentColor(INK_PINNACLE_ROOM);
-				_graphics->textSetCentered(5, textCmd);
+				_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
+				_vm->graphics()->textSetCentered(5, textCmd);
 			}
 			prevObj = curObj;
 		}
 	}
-	_input->clearMouseButton();
+	_vm->input()->clearMouseButton();
 
 	_newRoom = _objectData[_entryObj].room;
 
@@ -2227,31 +2222,31 @@ void Logic::handlePinnacleRoom() {
 	// XXX if (com->song > 0) { playsong(com->song); }
 
 	joe->active = piton->active = false;
-	_graphics->textClear(5, 5);
+	_vm->graphics()->textClear(5, 5);
 
 	// camera follows Joe again
-	_graphics->cameraBob(0);
+	_vm->graphics()->cameraBob(0);
 
-	_display->palFadeOut(0, 223, ROOM_JUNGLE_PINNACLE);
+	_vm->display()->palFadeOut(0, 223, ROOM_JUNGLE_PINNACLE);
 }
 
 
 void Logic::update() {
-	_graphics->update(_currentRoom);
-	_input->delay();
-	_display->palCustomScroll(_currentRoom);
-	BobSlot *joe = _graphics->bob(0);
-	_display->update(joe->active, joe->x, joe->y);
-	_dbg->update(_input->checkKeys());
+	_vm->graphics()->update(_currentRoom);
+	_vm->input()->delay();
+	_vm->display()->palCustomScroll(_currentRoom);
+	BobSlot *joe = _vm->graphics()->bob(0);
+	_vm->display()->update(joe->active, joe->x, joe->y);
+	_dbg->update(_vm->input()->checkKeys());
 
-	if (_input->quickSave())
-		if (!_input->cutawayRunning()) {
-			_input->quickSaveReset();
+	if (_vm->input()->quickSave())
+		if (!_vm->input()->cutawayRunning()) {
+			_vm->input()->quickSaveReset();
 			gameSave(0, "Quicksave");
 		}
-	if (_input->quickLoad())
-		if (!_input->cutawayRunning()) {
-			_input->quickLoadReset();
+	if (_vm->input()->quickLoad())
+		if (!_vm->input()->cutawayRunning()) {
+			_vm->input()->quickLoadReset();
 			gameLoad(0);
 		}
 }
@@ -2274,17 +2269,17 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	
 	WRITE_BE_UINT16(ptr, _talkSpeed); ptr += 2;
 	WRITE_BE_UINT16(ptr, 0 /*_settings.musicVolume*/); ptr += 2;
-	WRITE_BE_UINT16(ptr, _sound->sfxOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _sound->speechOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _sound->musicOn() ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->sound()->sfxOn() ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->sound()->speechOn() ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->sound()->musicOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _subtitles ? 1 : 0); ptr += 2;
 	
 	for (i = 0; i < 4; i++) {
 		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
 	}
 	
-	WRITE_BE_UINT16(ptr, _graphics->bob(0)->x); ptr += 2;
-	WRITE_BE_UINT16(ptr, _graphics->bob(0)->y); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->x); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->y); ptr += 2;
 	WRITE_BE_UINT16(ptr, _currentRoom); ptr += 2;
 
 	for (i = 1; i <= _numObjects; i++)
@@ -2321,7 +2316,7 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 		return false;
 	}
 	
-	bool result = _resource->writeSave(slot, saveData, SAVEGAME_SIZE);
+	bool result = _vm->resource()->writeSave(slot, saveData, SAVEGAME_SIZE);
 	delete[] saveData;
 	
 	return result;	
@@ -2331,7 +2326,7 @@ bool Logic::gameLoad(uint16 slot) {
 	int i, j;
 	byte *saveData = new byte[SAVEGAME_SIZE];
 	byte *ptr = saveData;
-	if (!_resource->readSave(slot, saveData)) {
+	if (!_vm->resource()->readSave(slot, saveData)) {
 		warning("Couldn't load savegame from slot %d", slot);
 		delete[] saveData;
 		return false;
@@ -2339,11 +2334,11 @@ bool Logic::gameLoad(uint16 slot) {
 	
 	debug(3, "Loading game from slot %d", slot);
 	ptr += 32;	//skip description
-	_talkSpeed = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*_talkSpeed = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
 	/*_settings.musicVolume = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
-	_sound->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_sound->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_sound->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
+	_vm->sound()->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
+	_vm->sound()->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
+	_vm->sound()->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_subtitles = READ_BE_UINT16(ptr) != 0; ptr += 2;
 
 	for (i = 0; i < 4; i++) {
@@ -2378,7 +2373,7 @@ bool Logic::gameLoad(uint16 slot) {
 	joeFacing(READ_BE_UINT16(ptr));  ptr += 2;
 	READ_BE_UINT16(ptr); ptr += 2;	//TODO: tmpbamflag
 	READ_BE_UINT16(ptr); ptr += 2; //TODO: lastoverride
-	//_sound->playSound(_sound->lastOverride())
+	//_vm->sound()->playSound(_vm->sound()->lastOverride())
 	
 	//TODO: lastmerge, lastalter, altmrgpri
 	for (i = 0; i < 3; i++) {
@@ -2421,10 +2416,10 @@ void Logic::sceneStart() {
 	debug(0, "[Logic::sceneStart] _scene = %i", _scene);
 	_scene++;
 
-	_display->showMouseCursor(false);
+	_vm->display()->showMouseCursor(false);
 
-	if (1 == _scene) { // && _input->cutawayRunning()) { // sceneStart is always called when cutaway is running
-		_display->palFadePanel();
+	if (1 == _scene) { // && _vm->input()->cutawayRunning()) { // sceneStart is always called when cutaway is running
+		_vm->display()->palFadePanel();
 	}
 
 	update();
@@ -2437,8 +2432,8 @@ void Logic::sceneStop() {
 	if (_scene > 0)
 		return;
 
-	_display->palSetAllDirty();
-	_display->showMouseCursor(true);
+	_vm->display()->palSetAllDirty();
+	_vm->display()->showMouseCursor(true);
 	zoneSetupPanel();
 }
 
@@ -2450,14 +2445,14 @@ void Logic::changeRoom() {
 	}
 	else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		// FIXME: this should be rewritten in a more elegant way
-		bool pcGamesDemo = _resource->isDemo() && !_resource->exists("pclogo.cut");
+		bool pcGamesDemo = _vm->resource()->isDemo() && !_vm->resource()->exists("pclogo.cut");
 
 		if (pcGamesDemo) {
 			currentRoom(79);
 		}
 		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 
-		if (_resource->isDemo()) {
+		if (_vm->resource()->isDemo()) {
 			if (pcGamesDemo) {
 				playCutaway("clogo.cut");
 			}
@@ -2474,7 +2469,7 @@ void Logic::changeRoom() {
 			playCutaway("cdint.cut");
 
 			// restore palette colors ranging from 144 to 256
-			_graphics->loadPanel();
+			_vm->graphics()->loadPanel();
 			
 			playCutaway("cred.cut");
 		}
@@ -2496,13 +2491,13 @@ void Logic::changeRoom() {
 	else {
 		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	}
-	_display->showMouseCursor(true); // _drawMouseFlag = 1;
+	_vm->display()->showMouseCursor(true); // _drawMouseFlag = 1;
 }
 
 
 void Logic::useJournal() {
 
-	if (_resource->isDemo()) {
+	if (_vm->resource()->isDemo()) {
 		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
 	}
 	else {
@@ -2513,12 +2508,12 @@ void Logic::useJournal() {
 		// XXX bamflag=0;
 		// XXX in_journal=1;
 
-		_cmd->clear(false);
+		_vm->command()->clear(false);
 
-		Journal j(this, _graphics, _display, _sound);
+		Journal j(_vm);
 		j.use();
 
-		_walk->stopJoe();
+		_vm->walk()->stopJoe();
 
 		// XXX restore vars
 		// 
@@ -2536,7 +2531,7 @@ void Logic::registerDefaultSettings() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("talkspeed", DEFAULT_TALK_SPEED);
-	ConfMan.registerDefault("speech_mute", _resource->isFloppy());
+	ConfMan.registerDefault("speech_mute", _vm->resource()->isFloppy());
 	ConfMan.registerDefault("subtitles", true);
 }
 
@@ -2554,12 +2549,12 @@ void Logic::checkOptionSettings() {
 	// XXX check master_volume value
 
 	// only CD-ROM version has speech
-	if (_resource->JASVersion()[0] != 'C' && _sound->speechOn()) {
-		_sound->speechToggle(false);
+	if (_vm->resource()->JASVersion()[0] != 'C' && _vm->sound()->speechOn()) {
+		_vm->sound()->speechToggle(false);
 	}
 
 	// ensure text is always on when voice is off
-	if (!_sound->speechOn()) {
+	if (!_vm->sound()->speechOn()) {
 		_subtitles = true;
 	}
 }
@@ -2568,10 +2563,10 @@ void Logic::checkOptionSettings() {
 void Logic::readOptionSettings() {
 
 	// XXX master_volume
-	_sound->musicToggle(!ConfMan.getBool("music_mute"));
-	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
+	_vm->sound()->musicToggle(!ConfMan.getBool("music_mute"));
+	_vm->sound()->sfxToggle(!ConfMan.getBool("sfx_mute"));
 	_talkSpeed = ConfMan.getInt("talkspeed");
-	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
+	_vm->sound()->speechToggle(!ConfMan.getBool("speech_mute"));
 	_subtitles = ConfMan.getBool("subtitles");
 
 	checkOptionSettings();
@@ -2581,10 +2576,10 @@ void Logic::readOptionSettings() {
 void Logic::writeOptionSettings() {
 
 	// XXX master_volume
-	ConfMan.set("music_mute", !_sound->musicOn());
-	ConfMan.set("sfx_mute", !_sound->sfxOn());
+	ConfMan.set("music_mute", !_vm->sound()->musicOn());
+	ConfMan.set("sfx_mute", !_vm->sound()->sfxOn());
 	ConfMan.set("talkspeed", _talkSpeed);
-	ConfMan.set("speech_mute", !_sound->speechOn());
+	ConfMan.set("speech_mute", !_vm->sound()->speechOn());
 	ConfMan.set("subtitles", _subtitles);
 
 	ConfMan.flushToDisk();
@@ -2678,34 +2673,34 @@ void Logic::asmMakeJoeUseUnderwear() {
 
 void Logic::asmSwitchToDressPalette() {
 
-	_display->palSetJoe(JP_DRESS);
+	_vm->display()->palSetJoe(JP_DRESS);
 }
 
 
 void Logic::asmSwitchToNormalPalette() {
 
-	_display->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoe(JP_CLOTHES);
 }
 
 
 void Logic::asmStartCarAnimation() {
 
 	// Carbam background animation - room 74
-	_graphics->initCarBamScene();
+	_vm->graphics()->initCarBamScene();
 }
 
 
 void Logic::asmStopCarAnimation() {
 
 	// CR 2 - Turn off big oil splat and gun shots!
-	_graphics->cleanupCarBamScene(findBob(594)); // Oil object
+	_vm->graphics()->cleanupCarBamScene(findBob(594)); // Oil object
 }
 
 
 void Logic::asmStartFightAnimation() {
 	
 	// Fight1 background animation - room 69
-	_graphics->initFightBamScene();
+	_vm->graphics()->initFightBamScene();
 	gameState(148, 1);
 }
 
@@ -2713,8 +2708,8 @@ void Logic::asmStartFightAnimation() {
 void Logic::asmWaitForFrankPosition() {
 
 	// c69e.cut
-	_graphics->bamData()->flag = 2;
-	while (_graphics->bamData()->flag) {
+	_vm->graphics()->bamData()->flag = 2;
+	while (_vm->graphics()->bamData()->flag) {
 		update();
 	}
 }
@@ -2723,8 +2718,8 @@ void Logic::asmWaitForFrankPosition() {
 void Logic::asmMakeFrankGrowing() {
 
 	// c69z.cut
-	_graphics->bankUnpack(1, 38, 15);
-	BobSlot *bobFrank = _graphics->bob(5);
+	_vm->graphics()->bankUnpack(1, 38, 15);
+	BobSlot *bobFrank = _vm->graphics()->bob(5);
 	bobFrank->frameNum = 38;
 	bobFrank->curPos(160, 200);
 	bobFrank->box.y2 = GAME_SCREEN_HEIGHT - 1;
@@ -2750,8 +2745,8 @@ void Logic::asmMakeFrankGrowing() {
 void Logic::asmMakeRobotGrowing() { 
 
 	// c69z.cut
-	_graphics->bankUnpack(1, 38, 15);
-	BobSlot *bobRobot = _graphics->bob(5);
+	_vm->graphics()->bankUnpack(1, 38, 15);
+	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
 	bobRobot->curPos(160, 200);
 	bobRobot->box.y2 = GAME_SCREEN_HEIGHT - 1;
@@ -2774,7 +2769,7 @@ void Logic::asmShrinkRobot() {
 	
 	int i;
 	for (i = 100; i >= 35; i -= 5) {
-		_graphics->bob(6)->scale = i;
+		_vm->graphics()->bob(6)->scale = i;
 		update();
 	}
 }
@@ -2793,21 +2788,21 @@ void Logic::asmEndGame() {
 
 void Logic::asmPutCameraOnDino() {
 
-	_graphics->cameraBob(-1);
-	while (_display->horizontalScroll() < 320) {
-		_display->horizontalScroll(_display->horizontalScroll() + 16);
-		if (_display->horizontalScroll() > 320) {
-			_display->horizontalScroll(320);
+	_vm->graphics()->cameraBob(-1);
+	while (_vm->display()->horizontalScroll() < 320) {
+		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
+		if (_vm->display()->horizontalScroll() > 320) {
+			_vm->display()->horizontalScroll(320);
 		}
 		update();
 	}
-	_graphics->cameraBob(1);
+	_vm->graphics()->cameraBob(1);
 }
 
 
 void Logic::asmPutCameraOnJoe() {
 
-	_graphics->cameraBob(0);
+	_vm->graphics()->cameraBob(0);
 }
 
 
@@ -2819,11 +2814,11 @@ void Logic::asmSetAzuraInLove() {
 
 void Logic::asmPanRightFromJoe() {
 
-	_graphics->cameraBob(-1);
-	while (_display->horizontalScroll() < 320) {
-		_display->horizontalScroll(_display->horizontalScroll() + 16);
-		if (_display->horizontalScroll() > 320) {
-			_display->horizontalScroll(320);
+	_vm->graphics()->cameraBob(-1);
+	while (_vm->display()->horizontalScroll() < 320) {
+		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
+		if (_vm->display()->horizontalScroll() > 320) {
+			_vm->display()->horizontalScroll(320);
 		}
 		update();
 	}
@@ -2832,13 +2827,13 @@ void Logic::asmPanRightFromJoe() {
 
 void Logic::asmSetLightsOff() {
 
-	_display->palCustomLightsOff(currentRoom());
+	_vm->display()->palCustomLightsOff(currentRoom());
 }
 
 
 void Logic::asmSetLightsOn() {
 
-	_display->palCustomLightsOn(currentRoom());
+	_vm->display()->palCustomLightsOn(currentRoom());
 }
 
 
@@ -2850,33 +2845,33 @@ void Logic::asmSetManequinAreaOn() {
 
 void Logic::asmPanToJoe() {
 
-	int i = _graphics->bob(0)->x - 160;
+	int i = _vm->graphics()->bob(0)->x - 160;
 	if (i < 0) {
 		i = 0;
 	}
 	else if (i > 320) {
 		i = 320;
 	}
-	_graphics->cameraBob(-1);
-	if (i < _display->horizontalScroll()) {
-		while (_display->horizontalScroll() > i) {
-			_display->horizontalScroll(_display->horizontalScroll() - 16);
-			if (_display->horizontalScroll() < i) {
-				_display->horizontalScroll(i);
+	_vm->graphics()->cameraBob(-1);
+	if (i < _vm->display()->horizontalScroll()) {
+		while (_vm->display()->horizontalScroll() > i) {
+			_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() - 16);
+			if (_vm->display()->horizontalScroll() < i) {
+				_vm->display()->horizontalScroll(i);
 			}
 			update();
 		}
 	}
 	else {
-		while (_display->horizontalScroll() < i) {
-			_display->horizontalScroll(_display->horizontalScroll() + 16);
-			if (_display->horizontalScroll() > i ) {
-				_display->horizontalScroll(i);
+		while (_vm->display()->horizontalScroll() < i) {
+			_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
+			if (_vm->display()->horizontalScroll() > i ) {
+				_vm->display()->horizontalScroll(i);
 			}
 		}
 		update();
 	}
-	_graphics->cameraBob(0);
+	_vm->graphics()->cameraBob(0);
 }
 
 
@@ -2888,11 +2883,11 @@ void Logic::asmTurnGuardOn() {
 
 void Logic::asmPanLeft320To144() {
 	
-	_graphics->cameraBob(-1);
-	while (_display->horizontalScroll() > 144) {
-		_display->horizontalScroll(_display->horizontalScroll() - 8);
-		if (_display->horizontalScroll() < 144) {
-			_display->horizontalScroll(144);
+	_vm->graphics()->cameraBob(-1);
+	while (_vm->display()->horizontalScroll() > 144) {
+		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() - 8);
+		if (_vm->display()->horizontalScroll() < 144) {
+			_vm->display()->horizontalScroll(144);
 		}
 		update();
 	}
@@ -2901,11 +2896,11 @@ void Logic::asmPanLeft320To144() {
 
 void Logic::asmSmooch() {
 			
-	_graphics->cameraBob(-1);
-	BobSlot *bobAzura = _graphics->bob(5);
-	BobSlot *bobJoe = _graphics->bob(6);
-	while (_display->horizontalScroll() < 320) {
-		_display->horizontalScroll(_display->horizontalScroll() + 8);
+	_vm->graphics()->cameraBob(-1);
+	BobSlot *bobAzura = _vm->graphics()->bob(5);
+	BobSlot *bobJoe = _vm->graphics()->bob(6);
+	while (_vm->display()->horizontalScroll() < 320) {
+		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 8);
 		if (bobJoe->x - bobAzura->x > 128) {
 			bobAzura->x += 10;
 			bobJoe->x += 6;
@@ -2921,11 +2916,11 @@ void Logic::asmSmooch() {
 
 void Logic::asmMakeLightningHitPlane() {
 
-	_graphics->cameraBob(-1);
+	_vm->graphics()->cameraBob(-1);
 	short iy = 0, x, ydir = -1, j, k;
 				
-	BobSlot *planeBob     = _graphics->bob(5);
-	BobSlot *lightningBob = _graphics->bob(20);
+	BobSlot *planeBob     = _vm->graphics()->bob(5);
+	BobSlot *lightningBob = _vm->graphics()->bob(20);
 
 	planeBob->box.y2 = lightningBob->box.y2 = 199;
 	planeBob->y = 135;
@@ -2947,12 +2942,12 @@ void Logic::asmMakeLightningHitPlane() {
 		int scrollX = x - 163;
 		if (scrollX > 320)
 			scrollX = 320;
-		_display->horizontalScroll(scrollX);
+		_vm->display()->horizontalScroll(scrollX);
 		update();
 	}
 
 	planeBob->scale = 100;
-	_display->horizontalScroll(0);
+	_vm->display()->horizontalScroll(0);
 
 	planeBob->x -= -8;
 	planeBob->y += 6;
@@ -2963,17 +2958,17 @@ void Logic::asmMakeLightningHitPlane() {
 	// 23/2/95 - Play lightning SFX
 	// XXX sfxplay(NULLstr);
 
-	_graphics->bankUnpack(18, lightningBob->frameNum, 15);
-	_graphics->bankUnpack(4,  planeBob    ->frameNum, 15);
+	_vm->graphics()->bankUnpack(18, lightningBob->frameNum, 15);
+	_vm->graphics()->bankUnpack(4,  planeBob    ->frameNum, 15);
 
 	// Plane plunges into the jungle!
-	BobSlot *fireBob = _graphics->bob(6);
+	BobSlot *fireBob = _vm->graphics()->bob(6);
 
 	fireBob->animating = true;
 	fireBob->x = planeBob->x;
 	fireBob->y = planeBob->y + 10;
 				
-	_graphics->bankUnpack(19, fireBob->frameNum, 15);
+	_vm->graphics()->bankUnpack(19, fireBob->frameNum, 15);
 	update();
 
 	k = 20;
@@ -2985,8 +2980,8 @@ void Logic::asmMakeLightningHitPlane() {
 		planeBob->x = fireBob->x = x;
 
 		if (k < 40) {
-			_graphics->bankUnpack(j, planeBob->frameNum, 15);
-			_graphics->bankUnpack(k, fireBob ->frameNum, 15);
+			_vm->graphics()->bankUnpack(j, planeBob->frameNum, 15);
+			_vm->graphics()->bankUnpack(k, fireBob ->frameNum, 15);
 			k++;
 			j++;
 
@@ -2997,14 +2992,14 @@ void Logic::asmMakeLightningHitPlane() {
 		update();
 	}
 
-	_graphics->cameraBob(0);
+	_vm->graphics()->cameraBob(0);
 }
 
 
 void Logic::asmScaleBlimp() {
 
 	int16 z = 256;
-	BobSlot *bob = _graphics->bob(7);
+	BobSlot *bob = _vm->graphics()->bob(7);
 	int16 x = bob->x;
 	int16 y = bob->y;
 	while (bob->x > 150) {
@@ -3024,8 +3019,8 @@ void Logic::asmScaleBlimp() {
 
 void Logic::asmScaleEnding() {
 
-	_graphics->bob(7)->active = false; // Turn off blimp
-	BobSlot *b = _graphics->bob(20);
+	_vm->graphics()->bob(7)->active = false; // Turn off blimp
+	BobSlot *b = _vm->graphics()->bob(20);
 	b->x = 160;
 	b->y = 100;
 	int i;
@@ -3036,14 +3031,14 @@ void Logic::asmScaleEnding() {
 	for (i = 0; i < 50; ++i) {
 		update();
 	}
-	_display->palFadeOut(0, 255, currentRoom());
+	_vm->display()->palFadeOut(0, 255, currentRoom());
 }
 
 
 void Logic::asmWaitForCarPosition() {
 
 	// Wait for car to reach correct position before pouring oil
-	while (_graphics->bamData()->index != 60) {
+	while (_vm->graphics()->bamData()->index != 60) {
 		update();
 	}
 }
@@ -3070,7 +3065,7 @@ void Logic::asmAttemptPuzzle() {
 
 void Logic::asmScaleTitle() {
 
-	BobSlot *bob = _graphics->bob(5);
+	BobSlot *bob = _vm->graphics()->bob(5);
 	bob->animating = false;
 	bob->x = 161;
 	bob->y = 200;
@@ -3087,17 +3082,17 @@ void Logic::asmScaleTitle() {
 
 void Logic::asmPanRightToHugh() {
 	
-	BobSlot *bob_thugA1 = _graphics->bob(20);
-	BobSlot *bob_thugA2 = _graphics->bob(21);
-	BobSlot *bob_thugA3 = _graphics->bob(22);
-	BobSlot *bob_hugh1  = _graphics->bob(1);
-	BobSlot *bob_hugh2  = _graphics->bob(23);
-	BobSlot *bob_hugh3  = _graphics->bob(24);
-	BobSlot *bob_thugB1 = _graphics->bob(25);
-	BobSlot *bob_thugB2 = _graphics->bob(26);
+	BobSlot *bob_thugA1 = _vm->graphics()->bob(20);
+	BobSlot *bob_thugA2 = _vm->graphics()->bob(21);
+	BobSlot *bob_thugA3 = _vm->graphics()->bob(22);
+	BobSlot *bob_hugh1  = _vm->graphics()->bob(1);
+	BobSlot *bob_hugh2  = _vm->graphics()->bob(23);
+	BobSlot *bob_hugh3  = _vm->graphics()->bob(24);
+	BobSlot *bob_thugB1 = _vm->graphics()->bob(25);
+	BobSlot *bob_thugB2 = _vm->graphics()->bob(26);
 
-	_graphics->cameraBob(-1);
-	_input->fastMode(true);
+	_vm->graphics()->cameraBob(-1);
+	_vm->input()->fastMode(true);
 	update();
 				
 	int i = 4, k = 160;
@@ -3130,7 +3125,7 @@ void Logic::asmPanRightToHugh() {
 
 		//debug(0, "horizontalScroll = %i", horizontalScroll);
 
-		_display->horizontalScroll(horizontalScroll);
+		_vm->display()->horizontalScroll(horizontalScroll);
 
 		bob_thugA1->x -= i * 2; 
 		bob_thugA2->x -= i * 2; 
@@ -3145,30 +3140,30 @@ void Logic::asmPanRightToHugh() {
 
 		update();
 
-		if (_input->cutawayQuit())
+		if (_vm->input()->cutawayQuit())
 			return;
 	}
 
-	_input->fastMode(false);
+	_vm->input()->fastMode(false);
 }
 
 
 void Logic::asmMakeWhiteFlash() {
 
-	_display->palCustomFlash();
+	_vm->display()->palCustomFlash();
 }
 
 
 void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
-	BobSlot *bob_box   = _graphics->bob(20);
-	BobSlot *bob_beam  = _graphics->bob(21);
-	BobSlot *bob_crate = _graphics->bob(22);
-	BobSlot *bob_clock = _graphics->bob(23);
-	BobSlot *bob_hands = _graphics->bob(24);
+	BobSlot *bob_box   = _vm->graphics()->bob(20);
+	BobSlot *bob_beam  = _vm->graphics()->bob(21);
+	BobSlot *bob_crate = _vm->graphics()->bob(22);
+	BobSlot *bob_clock = _vm->graphics()->bob(23);
+	BobSlot *bob_hands = _vm->graphics()->bob(24);
 
-	_graphics->cameraBob(-1);
-	_input->fastMode(true);
+	_vm->graphics()->cameraBob(-1);
+	_vm->input()->fastMode(true);
 					
 	update();
 
@@ -3176,7 +3171,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 	bob_beam ->x += 30;
 	bob_crate->x += 180 * 3;
 
-	int horizontalScroll = _display->horizontalScroll();
+	int horizontalScroll = _vm->display()->horizontalScroll();
 
 	int i = 1;
 	while (horizontalScroll < 290) {
@@ -3187,7 +3182,7 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 		//debug(0, "horizontalScroll = %i", horizontalScroll);
 
-		_display->horizontalScroll(horizontalScroll);
+		_vm->display()->horizontalScroll(horizontalScroll);
 
 		bob_box  ->x -= i * 2;
 		bob_beam ->x -= i;
@@ -3197,22 +3192,22 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 		update();
 
-		if (_input->cutawayQuit())
+		if (_vm->input()->cutawayQuit())
 			return;
 	}
-	_input->fastMode(false);
+	_vm->input()->fastMode(false);
 }
 
 
 void Logic::asmPanLeftToBomb() { // cdint.cut
 		
-	BobSlot *bob21 = _graphics->bob(21);
-	BobSlot *bob22 = _graphics->bob(22);
+	BobSlot *bob21 = _vm->graphics()->bob(21);
+	BobSlot *bob22 = _vm->graphics()->bob(22);
 
-	_graphics->cameraBob(-1);
-	_input->fastMode(true);
+	_vm->graphics()->cameraBob(-1);
+	_vm->input()->fastMode(true);
 				
-	int horizontalScroll = _display->horizontalScroll();
+	int horizontalScroll = _vm->display()->horizontalScroll();
 
 	int i = 5;
 	while (horizontalScroll > 0 || bob21->x < 136) {
@@ -3222,7 +3217,7 @@ void Logic::asmPanLeftToBomb() { // cdint.cut
 			horizontalScroll = 0;
 
 		//debug(0, "horizontalScroll = %i", horizontalScroll);
-		_display->horizontalScroll(horizontalScroll);
+		_vm->display()->horizontalScroll(horizontalScroll);
 
 		if (horizontalScroll < 272 && bob21->x < 136)
 			bob21->x += (i/2);
@@ -3231,11 +3226,11 @@ void Logic::asmPanLeftToBomb() { // cdint.cut
 
 		update();
 
-		if (_input->cutawayQuit())
+		if (_vm->input()->cutawayQuit())
 			return;
 	}
 
-	_input->fastMode(false);
+	_vm->input()->fastMode(false);
 }
 
 

@@ -58,16 +58,15 @@ struct TextRenderer {
 	static const uint8 _font[];
 };
 
-class Input;
-class Resource;
+class QueenEngine;
 
 class Display {
 public:
 
-	Display(Language language, OSystem *system, Input *input);
+	Display(QueenEngine *vm, Language language, OSystem *system);
 	~Display();
 
-	void dynalumInit(Resource *resource, const char *roomName, uint16 roomNum);
+	void dynalumInit(const char *roomName, uint16 roomNum);
 	void dynalumUpdate(int16 x, int16 y);
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
@@ -150,7 +149,7 @@ private:
 
 	Dynalum _dynalum;
 	OSystem *_system;
-	Input *_input;
+	QueenEngine *_vm;
 
 	static const uint8 _palJoeClothes[];
 	static const uint8 _palJoeDress[];

@@ -21,10 +21,12 @@
 
 #include "stdafx.h"
 #include "queen/talk.h"
+
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/state.h"
@@ -42,12 +44,8 @@ void Talk::talk(
 		const char *filename, 
 		int personInRoom,
 		char *cutawayFilename,
-		Graphics *graphics,
-		Input *input,
-		Logic *logic,
-		Resource *resource,
-		Sound *sound) {
-	Talk *talk = new Talk(graphics, input, logic, resource, sound);
+		QueenEngine *vm) {
+	Talk *talk = new Talk(vm);
 	talk->talk(filename, personInRoom, cutawayFilename);
 	delete talk;
 }
@@ -56,12 +54,8 @@ bool Talk::speak(
 		const char *sentence, 
 		Person *person,
 		const char *voiceFilePrefix,
-		Graphics *graphics,
-		Input *input,
-		Logic *logic,
-		Resource *resource,
-		Sound *sound) {
-	Talk *talk = new Talk(graphics, input, logic, resource, sound);
+		QueenEngine *vm) {
+	Talk *talk = new Talk(vm);
 	bool result;
 	if (sentence)
 		result = talk->speak(sentence, person, voiceFilePrefix);
@@ -71,16 +65,9 @@ bool Talk::speak(
 	return result;
 }
 
-Talk::Talk(
-		Graphics *graphics,
-		Input *input,
-		Logic *logic,
-		Resource *resource,
-		Sound *sound) : 
-	_graphics(graphics), _input(input), _logic(logic), _resource(resource), 
-	_sound(sound), _fileData(NULL) {
-
-	_input->talkQuitReset();
+Talk::Talk(QueenEngine *vm)
+	: _vm(vm), _fileData(NULL) {
+	_vm->input()->talkQuitReset();
 }
 
 Talk::~Talk() {
@@ -98,8 +85,8 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	// XXX S=SUBJECT[1];
 
-	int roomStart = _logic->roomData(_logic->currentRoom());
-	ObjectData *data = _logic->objectData(roomStart + personInRoom);
+	int roomStart = _vm->logic()->currentRoomData();
+	ObjectData *data = _vm->logic()->objectData(roomStart + personInRoom);
 
 	if (data->name <= 0)	// disabled!
 		return;
@@ -109,7 +96,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	if (State::findTalk(data->state) == STATE_TALK_MUTE) {
 		// 'I can't talk to that'
-		_logic->joeSpeak(24 + Logic::randomizer.getRandomNumber(2));
+		_vm->logic()->joeSpeak(24 + _vm->randomizer.getRandomNumber(2));
 		return;
 	}
 
@@ -117,7 +104,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	Person person;
 	memset(&person, 0, sizeof(Person));
-	_logic->personSetData(personInRoom, "", false, &person);
+	_vm->logic()->personSetData(personInRoom, "", false, &person);
 
 	if (NULL == person.name) {
 		error("Invalid person object");
@@ -147,7 +134,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	initialTalk();
 
 	// Lines 906-? in talk.c
-	_logic->display()->showMouseCursor(true);
+	_vm->display()->showMouseCursor(true);
 	
 	int16 level=1, retval=0;
 	int16 head = _dialogueTree[level][0].head;
@@ -182,7 +169,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
 
-			if (index < 0 && _logic->gameState(ABS(index)) != _dialogueTree[level][i].gameStateValue)
+			if (index < 0 && _vm->logic()->gameState(ABS(index)) != _dialogueTree[level][i].gameStateValue)
 				_talkString[i][0] = '\0';
 
 			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
@@ -209,7 +196,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (speak(_talkString[0], &person, otherVoiceFilePrefix))
 				personWalking = true;
 
-			if (_input->talkQuit())
+			if (_vm->input()->talkQuit())
 				break;
 
 			speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
@@ -225,7 +212,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 
-		if (_input->talkQuit())
+		if (_vm->input()->talkQuit())
 			break;
 
 		retval   = _dialogueTree[level][selectedSentence].dialogueNodeValue1;
@@ -274,14 +261,14 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		int16 index = _dialogueTree[level][0].gameStateIndex;
 
 		if (index > 0)
-			_logic->gameState(index, _dialogueTree[level][0].gameStateValue);
+			_vm->logic()->gameState(index, _dialogueTree[level][0].gameStateValue);
 
 		// if the selected dialogue line has a POSITIVE game state value
 		// then set gamestate to Value = TALK(OLDLEVEL,S,3)
 		
 		index = _dialogueTree[oldLevel][selectedSentence].gameStateIndex;
 		if (index > 0)
-			_logic->gameState(index, _dialogueTree[oldLevel][selectedSentence].gameStateValue);
+			_vm->logic()->gameState(index, _dialogueTree[oldLevel][selectedSentence].gameStateValue);
 
 
 		// if(RETVAL = -1, then before we exit, check to see if(person
@@ -303,55 +290,55 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	for (i = 0; i < 2; i++) {
 		if (_gameState[i] > 0) {
-			if (_logic->gameState(_gameState[i]) == _testValue[i]) {
+			if (_vm->logic()->gameState(_gameState[i]) == _testValue[i]) {
 				if (_itemNumber[i] > 0)
-					_logic->inventoryInsertItem(_itemNumber[i]);
+					_vm->logic()->inventoryInsertItem(_itemNumber[i]);
 				else
-					_logic->inventoryDeleteItem(ABS(_itemNumber[i]));
+					_vm->logic()->inventoryDeleteItem(ABS(_itemNumber[i]));
 			}
 		}
 	}
 	
-	_logic->zoneSetupPanel();
+	_vm->logic()->zoneSetupPanel();
 
 	uint8 *ptr = _cutawayPtr;
 
 	int16 cutawayGameState = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	int16 cutawayTestValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-	if (_logic->gameState(cutawayGameState) == cutawayTestValue) {
+	if (_vm->logic()->gameState(cutawayGameState) == cutawayTestValue) {
 		getString(ptr, cutawayFilename, 20);
 
 		//CR 2 - 7/3/95, If we're executing a cutaway scene, then make sure
 		// Joe can talk, so set TALKQUIT to 0 just in case we exit on the
 		// line that set's the cutaway game states.
-		_input->talkQuitReset();
+		_vm->input()->talkQuitReset();
 	}
 
-	if (_input->talkQuit()) {
+	if (_vm->input()->talkQuit()) {
 		if (_oldSelectedSentenceIndex > 0)
 			selectedValue(_oldSelectedSentenceIndex, _oldSelectedSentenceValue);
-		_input->talkQuitReset();
-		_graphics->textClear(0, 198);
+		_vm->input()->talkQuitReset();
+		_vm->graphics()->textClear(0, 198);
 		speak(_talkString[15], NULL, "JOE0015");
 	}
 	else {
 		setHasTalkedTo();
 	}
 
-	_logic->joeFace();
+	_vm->logic()->joeFace();
 
 	if (cutawayFilename[0] == '\0') {
-		BobSlot *pbs = _graphics->bob(person.actor->bobNum);
+		BobSlot *pbs = _vm->graphics()->bob(person.actor->bobNum);
 
 		pbs->x = person.actor->x;
 		pbs->y = person.actor->y;
 		
 		// Better kick start the persons anim sequence
-		_logic->animReset(person.actor->bobNum);
+		_vm->logic()->animReset(person.actor->bobNum);
 	}
 
-	_logic->joeWalk(JWM_NORMAL);
+	_vm->logic()->joeWalk(JWM_NORMAL);
 }
 		
 void Talk::disableSentence(int oldLevel, int selectedSentence) {
@@ -394,7 +381,7 @@ void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 void Talk::load(const char *filename) {
 	int i;
 	
-	byte *ptr = _fileData = _resource->loadFile(filename, 20);
+	byte *ptr = _fileData = _vm->resource()->loadFile(filename, 20);
 	if (!_fileData) {
 		error("Failed to load resource data file '%s'", filename);
 	}
@@ -540,10 +527,10 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 		case 'G':
 			switch (sentence[index + 1]) {
 				case 'D':
-					_logic->joeGrab(STATE_GRAB_DOWN);
+					_vm->logic()->joeGrab(STATE_GRAB_DOWN);
 					break;
 				case 'M':
-					_logic->joeGrab(STATE_GRAB_MID);
+					_vm->logic()->joeGrab(STATE_GRAB_MID);
 					break; 
 				default:
 					warning("Unknown command string: '%2s'", sentence + index);
@@ -599,7 +586,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 	Person joe_person;
 	ActorData joe_actor;
 
-	_logic->joeWalk(JWM_SPEAK);
+	_vm->logic()->joeWalk(JWM_SPEAK);
 
 	if (!person) {
 		// Fill in values for use by speakSegment() etc.
@@ -627,9 +614,9 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		0 == strcmp(person->name, "FRANK-H") ||
 		0 == strcmp(person->name, "AZURA-H") ||
 		0 == strcmp(person->name, "X3_RITA") || 
-		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == FAYE_HEAD ) ||
-		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == AZURA_HEAD) ||
-		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == FRANK_HEAD))
+		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD ) ||
+		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == AZURA_HEAD) ||
+		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FRANK_HEAD))
 		_talkHead = true;
 	else
 		_talkHead = false;
@@ -660,7 +647,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		else
 			i++;
 
-		if (_input->cutawayQuit() || _input->talkQuit())
+		if (_vm->input()->cutawayQuit() || _vm->input()->talkQuit())
 			goto exit;
 	}
 
@@ -688,17 +675,17 @@ int Talk::countSpaces(const char *segment) {
 	if (tmp < 10)
 		tmp = 10;
 
-	return (tmp * 2) / (_logic->talkSpeed() / 3);
+	return (tmp * 2) / (_vm->logic()->talkSpeed() / 3);
 }
 
 void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum) {
 	// talk.c lines 1612-1635
-	BobSlot *bob2 = _graphics->bob(2);
+	BobSlot *bob2 = _vm->graphics()->bob(2);
 	
 	if (parameters->animation[0] == 'E') {
 		int offset = 1;
 	
-		BobSlot *bob  = _graphics->bob(bobNum);
+		BobSlot *bob  = _vm->graphics()->bob(bobNum);
 
 		int16 x = bob->x;
 		int16 y = bob->y;
@@ -712,15 +699,15 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 
 			offset += 4;
 
-			_graphics->bankUnpack(frame, _logic->numFrames(), bankNum);
+			_vm->graphics()->bankUnpack(frame, _vm->logic()->numFrames(), bankNum);
 
-			bob2->frameNum = _logic->numFrames();
+			bob2->frameNum = _vm->logic()->numFrames();
 			bob2->scale = 100;
 			bob2->active = true;
 			bob2->x = x;
 			bob2->y = y;
 
-			_logic->update();
+			_vm->logic()->update();
 		}
 	}
 	else
@@ -736,7 +723,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 	if (parameters->animation[0] == 'T') {
 		// Torso animation
 		torso = true;
-		_graphics->bankOverpack(parameters->body, startFrame, bankNum);
+		_vm->graphics()->bankOverpack(parameters->body, startFrame, bankNum);
 		offset++;
 	}
 	else if (parameters->animation[0] == 'E') {
@@ -768,14 +755,14 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 		}
 
 		if (torso) {
-			_graphics->bankOverpack(frame, startFrame, bankNum);
+			_vm->graphics()->bankOverpack(frame, startFrame, bankNum);
 		}
 		else {
-			_graphics->bankUnpack(frame, startFrame, bankNum);
+			_vm->graphics()->bankUnpack(frame, startFrame, bankNum);
 			// XXX bobs[BNUM].scale=SF;
 		}
 
-		_logic->update();
+		_vm->logic()->update();
 	}
 
 	// XXX #ifdef __DOS__
@@ -841,7 +828,7 @@ void Talk::defaultAnimation(
 
 				int head;
 				if (parameters->rf > 0)
-					head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
+					head = bf + _vm->randomizer.getRandomNumber(parameters->rf);
 				else
 					head = bf;
 
@@ -849,43 +836,43 @@ void Talk::defaultAnimation(
 					// Make the head move
 					qzx ^= 1;
 					if (parameters->af && qzx)
-						_graphics->bankOverpack(parameters->af + head, startFrame, bankNum);
+						_vm->graphics()->bankOverpack(parameters->af + head, startFrame, bankNum);
 					else {
-						_graphics->bankOverpack(head, startFrame, bankNum);
+						_vm->graphics()->bankOverpack(head, startFrame, bankNum);
 					}
 				}
 				else {
 					debug(0, "[Talk::defaultAnimation] Body action!");
 					// Just do a body action
-					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
+					_vm->graphics()->bankOverpack(parameters->body, startFrame, bankNum);
 				}
 
 				if (!_talkHead)
-					_logic->update();
+					_vm->logic()->update();
 			}
 			else { // (_talkHead && isJoe)
-				_logic->update();
+				_vm->logic()->update();
 			}
 
-			if (_logic->joeWalk() == JWM_SPEAK) {
-				if (_input->talkQuit())
+			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
+				if (_vm->input()->talkQuit())
 					break;
 
-				_logic->update();
+				_vm->logic()->update();
 			}
 			else {
-				if (_input->talkQuit())
+				if (_vm->input()->talkQuit())
 					break;
 
-				_logic->checkPlayer();
-				if (_logic->joeWalk() == JWM_EXECUTE)
+				_vm->logic()->checkPlayer();
+				if (_vm->logic()->joeWalk() == JWM_EXECUTE)
 					// Selected a command, so exit
 					break;
 			}
 
 			// Skip through text more quickly
-			if (_input->keyVerb().isSkipText()) {
-				_input->clearKeyVerb();
+			if (_vm->input()->keyVerb().isSkipText()) {
+				_vm->input()->clearKeyVerb();
 				break;
 			}
 		}
@@ -893,7 +880,7 @@ void Talk::defaultAnimation(
 
 	// Make sure that Person closes their mouths
 	if (!isJoe && parameters->ff > 0)
-		_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
+		_vm->graphics()->bankOverpack(parameters->ff, startFrame, bankNum);
 }
 
 
@@ -918,7 +905,7 @@ void Talk::speakSegment(
 	// debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
 
-	_sound->sfxPlay(voiceFileName);
+	_vm->sound()->sfxPlay(voiceFileName);
 	//debug(0, "Playing voice file '%s'", voiceFileName);
 
 	int faceDirectionCommand = 0;
@@ -926,9 +913,9 @@ void Talk::speakSegment(
 	switch (command) {
 		case SPEAK_PAUSE:
 			for (i = 0; i < 10; i++) {
-				if (_input->talkQuit())
+				if (_vm->input()->talkQuit())
 					break;
-				_logic->update();
+				_vm->logic()->update();
 			}
 			return;
 
@@ -947,7 +934,7 @@ void Talk::speakSegment(
 	uint16 color   = person->actor->color;
 	uint16 bankNum = person->actor->bankNum;
 
-	BobSlot *bob = _graphics->bob(bobNum);
+	BobSlot *bob = _vm->graphics()->bob(bobNum);
 
 	bool oracle = false;
 	int textX = 0;
@@ -959,9 +946,9 @@ void Talk::speakSegment(
 			// Dont turn AMAL animation off, and dont manually anim person
 			command = SPEAK_ORACLE;
 			oracle = true;
-			uint16 frameNum = _logic->personFrames(bobNum);
+			uint16 frameNum = _vm->logic()->personFrames(bobNum);
 			for (i = 5; i <= 8; ++i) {
-				_graphics->bankUnpack(i, frameNum, bankNum);
+				_vm->graphics()->bankUnpack(i, frameNum, bankNum);
 				++frameNum;
 			}
 		}
@@ -980,13 +967,13 @@ void Talk::speakSegment(
 		textY = bob->y;
 	}
 
-	//int SF = _logic->findScale(textX, textY);
+	//int SF = _vm->logic()->findScale(textX, textY);
 
 	const SpeechParameters *parameters = NULL;
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		_graphics->bobSetText(bob, segment, textX, textY, color, true);
+		_vm->graphics()->bobSetText(bob, segment, textX, textY, color, true);
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
@@ -994,10 +981,10 @@ void Talk::speakSegment(
 			return;
 
 		if (isJoe) {
-			if (_logic->currentRoom() == 108)
+			if (_vm->logic()->currentRoom() == 108)
 				parameters = findSpeechParameters("JOE-E", command, 0);
 			else
-				parameters = findSpeechParameters("JOE", command, _logic->joeFacing());
+				parameters = findSpeechParameters("JOE", command, _vm->logic()->joeFacing());
 		}
 		else
 			parameters = findSpeechParameters(person->name, command, 0);
@@ -1005,10 +992,10 @@ void Talk::speakSegment(
 		startFrame = 29 + bobNum + FRAMES_JOE_XTRA;
 		int faceDirection = 0;
 
-		if (isJoe && _logic->joeFacing() == DIR_LEFT)
+		if (isJoe && _vm->logic()->joeFacing() == DIR_LEFT)
 			faceDirection = DIR_LEFT;
 		else if (!isJoe) {
-			ObjectData *data = _logic->objectData(_logic->objectForPerson(bobNum));
+			ObjectData *data = _vm->logic()->objectData(_vm->logic()->objectForPerson(bobNum));
 
 			if (data->image == -3)
 				faceDirection = DIR_LEFT;
@@ -1027,7 +1014,7 @@ void Talk::speakSegment(
 				case SPEAK_FACE_BACK:  faceDirection = DIR_BACK;  break;
 			}
 			if (isJoe)
-				_logic->joeFacing(faceDirection);
+				_vm->logic()->joeFacing(faceDirection);
 		}
 
 		if (!isJoe) {
@@ -1041,17 +1028,17 @@ void Talk::speakSegment(
 			headStringAnimation(parameters, bobNum, bankNum);
 		}
 
-		_graphics->bobSetText(bob, segment, textX, textY, color, _talkHead);
+		_vm->graphics()->bobSetText(bob, segment, textX, textY, color, _talkHead);
 
 		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
 			stringAnimation(parameters, startFrame, bankNum);
 		}
 		else {
-			_graphics->bankUnpack(parameters->body, startFrame, bankNum);
+			_vm->graphics()->bankUnpack(parameters->body, startFrame, bankNum);
 
 			if (length == 0 && !isJoe && parameters->bf > 0) {
-				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
-				_logic->update();
+				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->logic()->update();
 			}
 
 			/* A12 = the frame pointer for the full body frame, well use this  */
@@ -1062,18 +1049,18 @@ void Talk::speakSegment(
 
 			if (-1 == parameters->rf) {
 				// Setup the Torso frames
-				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
 				if (isJoe)
-					parameters = findSpeechParameters(person->name, 0, _logic->joeFacing());
+					parameters = findSpeechParameters(person->name, 0, _vm->logic()->joeFacing());
 				else
 					parameters = findSpeechParameters(person->name, 0, 0);
 			}
 
 			if (-2 == parameters->rf) {
 				// Setup the Torso frames
-				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
 				if (isJoe)
-					parameters = findSpeechParameters(person->name, 14, _logic->joeFacing());
+					parameters = findSpeechParameters(person->name, 14, _vm->logic()->joeFacing());
 				else
 					parameters = findSpeechParameters(person->name, 14, 0);
 			}
@@ -1083,12 +1070,12 @@ void Talk::speakSegment(
 	}
 
 	// Moved here so that Text is cleared when a Torso command done!
-	_graphics->textClear(0,198);
+	_vm->graphics()->textClear(0,198);
 
 	if (oracle) {
-		uint16 frameNum = _logic->personFrames(bobNum);
+		uint16 frameNum = _vm->logic()->personFrames(bobNum);
 		for (i = 1; i <= 4; ++i) {
-			_graphics->bankUnpack(i, frameNum, bankNum);
+			_vm->graphics()->bankUnpack(i, frameNum, bankNum);
 			++frameNum;
 		}
 	}
@@ -1096,35 +1083,35 @@ void Talk::speakSegment(
 	// Ensure that the correct buffer frame is selected
 
 	if (isJoe && !_talkHead) {
-		if (_logic->joeFacing() == DIR_FRONT ||
-				_logic->joeFacing() == DIR_BACK) {
+		if (_vm->logic()->joeFacing() == DIR_FRONT ||
+				_vm->logic()->joeFacing() == DIR_BACK) {
 			// Joe is facing either Front or Back!
 			//  - Don't FACE_JOE in room 69, because Joe is probably
 			//       holding the Dino Ray gun.
-			if (_logic->currentRoom() != 69) 
-				_logic->joeFace();
+			if (_vm->logic()->currentRoom() != 69) 
+				_vm->logic()->joeFace();
 		}
 		else {
 			if (command == SPEAK_DEFAULT ||
 					command == 6 ||
 					command == 7) {
-				_logic->joeFace();
+				_vm->logic()->joeFace();
 			}
 			else if (command != 5) {
 				// 7/11/94, Ensure that correct mouth closed frame is used!
 				if (parameters->rf != -1)
 					// XXX should really be just "bf", but it is not always calculated... :-(
-					_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+					_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
 				
 				if (parameters->ff == 0)
-					_graphics->bankOverpack(10, startFrame, bankNum);
+					_vm->graphics()->bankOverpack(10, startFrame, bankNum);
 				else
-					_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
+					_vm->graphics()->bankOverpack(parameters->ff, startFrame, bankNum);
 			}
 		}
 	}
 
-	_logic->update();
+	_vm->logic()->update();
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
@@ -1171,7 +1158,7 @@ byte *Talk::getString(byte *ptr, char *str, int maxLength, int align) {
 }
 
 TalkSelected *Talk::talkSelected() {
-	return _logic->talkSelected(_uniqueKey);
+	return _vm->logic()->talkSelected(_uniqueKey);
 }
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
@@ -1180,7 +1167,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 
 	// Check to see if option fits on one line, and exit early
 
-	/* XXX if (_logic->language() == ENGLISH || textWidth(str) <= MAX_TEXT_WIDTH)*/ {
+	/* XXX if (_vm->logic()->language() == ENGLISH || textWidth(str) <= MAX_TEXT_WIDTH)*/ {
 		strcpy(optionText[0], str);
 		return 1;
 	}
@@ -1217,12 +1204,12 @@ int16 Talk::selectSentence() {
 
 	// Change NORMAL_INK -> TALK_NORMAL_INK
 
-	_graphics->textCurrentColor(INK_TALK_NORMAL);
+	_vm->graphics()->textCurrentColor(INK_TALK_NORMAL);
 
 	// These bobs are up and down arrows
 
-	BobSlot *arrowBobUp 	= _graphics->bob(ARROW_BOB_UP);
-	BobSlot *arrowBobDown = _graphics->bob(ARROW_BOB_DOWN);
+	BobSlot *arrowBobUp 	= _vm->graphics()->bob(ARROW_BOB_UP);
+	BobSlot *arrowBobDown = _vm->graphics()->bob(ARROW_BOB_DOWN);
 
 	arrowBobUp->x         = 303 + 8 + scrollX;
 	arrowBobUp->y         = 150 + 1;
@@ -1243,14 +1230,14 @@ int16 Talk::selectSentence() {
 
 		// Set zones for UP/DOWN text arrows when not English version
 
-		_logic->zoneClearAll(ZONE_PANEL);
+		_vm->logic()->zoneClearAll(ZONE_PANEL);
 
-		if (_logic->resource()->getLanguage() != ENGLISH) {
-			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
-			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
+		if (_vm->resource()->getLanguage() != ENGLISH) {
+			_vm->logic()->zoneSet(ZONE_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
+			_vm->logic()->zoneSet(ZONE_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
-		_graphics->textClear(151,199);
+		_vm->graphics()->textClear(151,199);
 
 		int sentenceCount = 0;
 		int yOffset = 1;
@@ -1266,12 +1253,12 @@ int16 Talk::selectSentence() {
 				optionLines = splitOption(removeStar(temp), optionText);
 
 				if (yOffset < 5) {
-					_logic->zoneSet(
+					_vm->logic()->zoneSet(
 							ZONE_PANEL,
 							i,
 							0,
 							yOffset * LINE_HEIGHT - PUSHUP,
-							(_logic->resource()->getLanguage() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
+							(_vm->resource()->getLanguage() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
 							(yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
 				}
 
@@ -1279,7 +1266,7 @@ int16 Talk::selectSentence() {
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
 						//debug(0, "Draw text '%s'", optionText[j]);
-						_graphics->textSet(
+						_vm->graphics()->textSet(
 								(j == 0) ? 0 : 24, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 
 								optionText[j]);
@@ -1295,12 +1282,12 @@ int16 Talk::selectSentence() {
 
 		// Up and down dialogue arrows
 
-		if (_logic->resource()->getLanguage() != ENGLISH) {
+		if (_vm->resource()->getLanguage() != ENGLISH) {
 			arrowBobUp->active    = (startOption > 1);
 			arrowBobDown->active  = (yOffset > 4);
 		}
 
-		_input->clearKeyVerb();
+		_vm->input()->clearKeyVerb();
 
 		if (sentenceCount > 0) {
 			int zone = 0;
@@ -1308,12 +1295,12 @@ int16 Talk::selectSentence() {
 
 			while (0 == selectedSentence) {
 
-				if (_input->talkQuit())
+				if (_vm->input()->talkQuit())
 					break;
 
-				_logic->update();
+				_vm->logic()->update();
 
-				zone = _logic->zoneIn(ZONE_PANEL, _input->mousePosX(), _input->mousePosY());
+				zone = _vm->logic()->zoneIn(ZONE_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
 
 				if (5 == zone || 6 == zone) {
 					// XXX Arrow zones
@@ -1328,13 +1315,13 @@ int16 Talk::selectSentence() {
 								oldZone, zone);*/
 
 						if (zone > 0) {
-							for (y = _logic->zoneBox(ZONE_PANEL, zone).y1; y < _logic->zoneBox(ZONE_PANEL, zone).y2; y += 10)
-								_graphics->textColor(150 + y, INK_JOE);
+							for (y = _vm->logic()->zoneBox(ZONE_PANEL, zone).y1; y < _vm->logic()->zoneBox(ZONE_PANEL, zone).y2; y += 10)
+								_vm->graphics()->textColor(150 + y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
-							for (y = _logic->zoneBox(ZONE_PANEL, oldZone).y1; y < _logic->zoneBox(ZONE_PANEL, oldZone).y2; y += 10)
-								_graphics->textColor(150 + y, INK_TALK_NORMAL);
+							for (y = _vm->logic()->zoneBox(ZONE_PANEL, oldZone).y1; y < _vm->logic()->zoneBox(ZONE_PANEL, oldZone).y2; y += 10)
+								_vm->graphics()->textColor(150 + y, INK_TALK_NORMAL);
 						}
 
 						oldZone = zone;
@@ -1342,20 +1329,20 @@ int16 Talk::selectSentence() {
 
 				}
 
-				int mouseButton = _input->mouseButton();
-				_input->clearMouseButton();
+				int mouseButton = _vm->input()->mouseButton();
+				_vm->input()->clearMouseButton();
 
-				if (_input->keyVerb().isDigit()) {
+				if (_vm->input()->keyVerb().isDigit()) {
 					for (i = 1; i <= 4; i++)
 					{
-						if (talkZone[i] == _input->keyVerb().digit())
+						if (talkZone[i] == _vm->input()->keyVerb().digit())
 						{
 							selectedSentence = i;
 							break;
 						}
 					}
 
-					_input->clearKeyVerb();
+					_vm->input()->clearKeyVerb();
 				}
 				else if (mouseButton) {
 					selectedSentence = zone;
@@ -1385,12 +1372,12 @@ int16 Talk::selectSentence() {
 	arrowBobDown->active  = false;
 
 	if (selectedSentence > 0) {
-		_graphics->textClear(0,198);
+		_vm->graphics()->textClear(0,198);
 
 		speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
 	}
 	
-	_graphics->textClear(151,151);
+	_vm->graphics()->textClear(151,151);
 
 	return selectedSentence;
 }

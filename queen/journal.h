@@ -26,16 +26,12 @@
 
 namespace Queen {
 
-class Logic;
-class Graphics;
-class Display;
-class Sound;
-struct GameConfig;
+class QueenEngine;
 
 class Journal {
 public:
 
-	Journal(Logic *, Graphics *, Display *, Sound *);
+	Journal(QueenEngine *vm);
 	void use();
   
 	enum {
@@ -180,11 +176,7 @@ private:
 	bool _quit;
 	bool _quitCleanly;
 
-	Logic *_logic;
-	Graphics *_graphics;
-	Display *_display;
-	Sound *_sound;
-	const char *_savePath;
+	QueenEngine *_vm;
 };
 
 

@@ -21,7 +21,9 @@
 
 #include "stdafx.h"
 #include "queen/sound.h"
+
 #include "queen/input.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 
 #define	SB_HEADER_SIZE	110
@@ -92,44 +94,44 @@ static ov_callbacks g_File_wrap = {
 };
 #endif
 
-Sound::Sound(SoundMixer *mixer, Input *input, Resource  *resource) : 
-	_mixer(mixer), _input(input), _resource(resource), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
+Sound::Sound(SoundMixer *mixer, QueenEngine *vm) : 
+	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
 }
 
 Sound::~Sound() {
 }
 
-Sound *Sound::giveSound(SoundMixer *mixer, Input *input, Resource *resource, uint8 compression) {
+Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 	switch(compression) {
 		case COMPRESSION_NONE:
-				return new SBSound(mixer, input, resource);
+				return new SBSound(mixer, vm);
 				break;
 		case COMPRESSION_MP3:
 				#ifndef USE_MAD
 					warning("Using MP3 compressed datafile, but MP3 support not compiled in");
-					return new SilentSound(mixer, input, resource);
+					return new SilentSound(mixer, vm);
 				#else
-					return new MP3Sound(mixer, input, resource);
+					return new MP3Sound(mixer, vm);
 
 				#endif
 				break;
 		case COMPRESSION_OGG:
 				#ifndef USE_VORBIS
 					warning("Using OGG compressed datafile, but OGG support not compiled in");
-					return new SilentSound(mixer, input, resource);
+					return new SilentSound(mixer, vm);
 				#else
-					return new OGGSound(mixer, input, resource);
+					return new OGGSound(mixer, vm);
 				#endif
 				break;
 		default:
 				warning("Unknown compression type");
-				return new SilentSound(mixer, input, resource);
+				return new SilentSound(mixer, vm);
 	}
 }
 
 void Sound::waitSfxFinished() {
 	while(_sfxHandle != 0)
-		_input->delay(10);
+		_vm->input()->delay(10);
 }
 
 void Sound::playSong(int16 songNum) {
@@ -157,8 +159,8 @@ void SBSound::sfxPlay(const char *base) {
 
 	waitSfxFinished();
 	
-	if (_resource->exists(name)) 
-		playSound(_resource->loadFileMalloc(name, SB_HEADER_SIZE), _resource->fileSize(name) - SB_HEADER_SIZE);
+	if (_vm->resource()->exists(name)) 
+		playSound(_vm->resource()->loadFileMalloc(name, SB_HEADER_SIZE), _vm->resource()->fileSize(name) - SB_HEADER_SIZE);
 }
 
 #ifdef USE_MAD
@@ -174,8 +176,8 @@ void MP3Sound::sfxPlay(const char *base) {
 	
 	waitSfxFinished();
 
-	if (_resource->exists(name)) 
-		_mixer->playMP3(&_sfxHandle, _resource->giveCompressedSound(name), _resource->fileSize(name));
+	if (_vm->resource()->exists(name)) 
+		_mixer->playMP3(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
 
@@ -192,13 +194,13 @@ void OGGSound::sfxPlay(const char *base) {
 
 	waitSfxFinished();
 	
-	if (_resource->exists(name)) {
+	if (_vm->resource()->exists(name)) {
 		OggVorbis_File *oggFile = new OggVorbis_File;
 		file_info *f = new file_info;
 
-		f->file = _resource->giveCompressedSound(name);
-		f->start = _resource->fileOffset(name);
-		f->len = _resource->fileSize(name);
+		f->file = _vm->resource()->giveCompressedSound(name);
+		f->start = _vm->resource()->fileOffset(name);
+		f->len = _vm->resource()->fileSize(name);
 		f->curr_pos = 0;
 
 		if (ov_open_callbacks((void *)f, oggFile, NULL, 0, g_File_wrap) < 0) {

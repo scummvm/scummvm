@@ -21,10 +21,11 @@
 
 #include "stdafx.h"
 #include "queen/graphics.h"
-#include "queen/logic.h"
-#include "queen/display.h"
-#include "queen/resource.h"
 
+#include "queen/display.h"
+#include "queen/logic.h"
+#include "queen/queen.h"
+#include "queen/resource.h"
 
 namespace Queen {
 
@@ -200,8 +201,8 @@ void BobSlot::clear() {
 }
 
 
-Graphics::Graphics(Display *display, Input *input, Resource *resource)
-	: _cameraBob(0), _display(display), _input(input), _resource(resource) {
+Graphics::Graphics(QueenEngine *vm)
+	: _cameraBob(0), _vm(vm) {
 		
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
@@ -226,7 +227,7 @@ Graphics::~Graphics() {
 void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 		
 	bankErase(bankslot);
-	_banks[bankslot].data = _resource->loadFile(bankname);
+	_banks[bankslot].data = _vm->resource()->loadFile(bankname);
 	if (!_banks[bankslot].data) {
 	  error("Unable to open bank '%s'", bankname);	
 	}
@@ -312,7 +313,7 @@ void Graphics::bobSetupControl() {
 	bankErase(17);
 
 	BobFrame *bf = &_frames[1];
-	_display->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
+	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
 }
 
 
@@ -364,12 +365,12 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 		src += w * y_skip;
 		if (!bs->xflip) {
 			src += x_skip;
-			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
+			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		}
 		else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
-			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
+			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
 		}
 	}
 
@@ -380,11 +381,11 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 
 	if (bobnum == 0) {
 		// clear panel area
-		_display->fill(RB_PANEL, x, y, 32, 32, INK_BG_PANEL);
+		_vm->display()->fill(RB_PANEL, x, y, 32, 32, INK_BG_PANEL);
 	}
 	else {
 		BobFrame *pbf = &_frames[bobnum];
-		_display->blit(RB_PANEL, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, false);
+		_vm->display()->blit(RB_PANEL, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, false);
 	}
 }
 
@@ -392,7 +393,7 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
 
 	BobFrame *pbf = &_frames[frameNum];
-	_display->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
+	_vm->display()->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
 	frameErase(frameNum);
 }
 
@@ -447,7 +448,7 @@ void Graphics::bobClear(uint32 bobnum) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->clear();
-	if (_display->fullscreen() || bobnum == 16) { // FIXME: does bob number 16 really used ?
+	if (_vm->display()->fullscreen() || bobnum == 16) { // FIXME: does bob number 16 really used ?
 		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
 	}
 }
@@ -517,7 +518,7 @@ void Graphics::bobDrawAll() {
 			}
 
 			// adjusts position to hot-spot and screen scroll
-			x = pbs->x - xh - _display->horizontalScroll();
+			x = pbs->x - xh - _vm->display()->horizontalScroll();
 			y = pbs->y - yh;
 
 			bobDraw(pbs, x, y);
@@ -556,7 +557,7 @@ BobSlot *Graphics::bob(int index) {
 void Graphics::bobCustomParallax(uint16 roomNum) {
 	
 	int i;
-	uint16 screenScroll = _display->horizontalScroll();
+	uint16 screenScroll = _vm->display()->horizontalScroll();
 	switch (roomNum) {
 	case ROOM_AMAZON_HIDEOUT:
 		_bobs[8].x = 250 - screenScroll / 2;
@@ -575,7 +576,7 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		_bobs[5].x = 600 - screenScroll / 2;
 		break;
 	case ROOM_HOTEL_LOBBY:
-		if(_display->fullscreen()) {
+		if(_vm->display()->fullscreen()) {
 			for(i = 1; i <= 3; ++i) {
 				_bobs[i].box.y2 = 199;
 			}
@@ -606,7 +607,7 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		_cameraBob = -1;
 		debug(9, "Graphics::bobCustomParallax() - %d", screenScroll);
 		if (screenScroll < 80) {
-			_display->horizontalScroll(screenScroll + 4);
+			_vm->display()->horizontalScroll(screenScroll + 4);
 			// Joe's body and head
 			_bobs[ 1].x += 4;
 			_bobs[20].x += 4;
@@ -657,7 +658,7 @@ void Graphics::textDrawAll() {
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
 		if (!pts->text.isEmpty()) {
-			_display->textDraw(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
+			_vm->display()->textDraw(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
 		}
 	}
 }
@@ -674,7 +675,7 @@ void Graphics::textClear(uint16 y1, uint16 y2) {
 
 uint16 Graphics::textWidth(const char* text) const {
 
-	return _display->textWidth(text);
+	return _vm->display()->textWidth(text);
 }
 
 
@@ -706,14 +707,14 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 	char roomPrefix[20];
 	strcpy(roomPrefix, name);
 	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
-	_display->dynalumInit(_resource, roomPrefix, room);
+	_vm->display()->dynalumInit(roomPrefix, room);
 
-	uint8 *pcxbuf = _resource->loadFile(name);
+	uint8 *pcxbuf = _vm->resource()->loadFile(name);
 	if (pcxbuf == NULL) {
 		error("Unable to load backdrop : '%s'", name);
 	}
-	uint32 size = _resource->fileSize(name);
-	_display->pcxReadBackdrop(pcxbuf, size, room > 114);
+	uint32 size = _vm->resource()->fileSize(name);
+	_vm->display()->pcxReadBackdrop(pcxbuf, size, room > 114);
 	delete[] pcxbuf;
 
 	if (room >= 90) {
@@ -724,12 +725,12 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 
 void Graphics::loadPanel() {
 
-	uint8 *pcxbuf = _resource->loadFile("panel.pcx");
+	uint8 *pcxbuf = _vm->resource()->loadFile("panel.pcx");
 	if (pcxbuf == NULL) {
 		error("Unable to open panel file");
 	}
-	uint32 size = _resource->fileSize("panel.pcx");
-	_display->pcxReadPanel(pcxbuf, size);
+	uint32 size = _vm->resource()->fileSize("panel.pcx");
+	_vm->display()->pcxReadPanel(pcxbuf, size);
 	delete[] pcxbuf;
 }
 
@@ -863,7 +864,7 @@ void Graphics::updateFightBamScene() {
 				_bam._fight2Data,
 				_bam._fight3Data
 			};
-			_bam._fightData = data[Logic::randomizer.getRandomNumber(2)];
+			_bam._fightData = data[_vm->randomizer.getRandomNumber(2)];
 			if (_bam.flag == 2) {
 				_bam.flag = 0;
 			}
@@ -877,10 +878,10 @@ void Graphics::update(uint16 room) {
 
 	bobSortAll();
 	if (_cameraBob >= 0) {
-		_display->horizontalScrollUpdate(_bobs[_cameraBob].x);
+		_vm->display()->horizontalScrollUpdate(_bobs[_cameraBob].x);
 	}
 	bobCustomParallax(room);
-	_display->prepareUpdate();
+	_vm->display()->prepareUpdate();
 	bobDrawAll();
 	textDrawAll();
 }

@@ -26,15 +26,13 @@
 
 namespace Queen {
 
-class Input;
-class Logic;
-class Graphics;
+class QueenEngine;
 
 class Debug {
 public:
 	typedef void (Debug::*DebugFunc)();
 
-	Debug(Input *, Logic *, Graphics *);
+	Debug(QueenEngine *vm);
 
 	void registerStub(const char *password, DebugFunc debugFunc);
 
@@ -71,10 +69,7 @@ private:
 	DebugStub _stub[MAX_STUB];
 	uint _stubCount;
 
-	Input *_input;
-	Logic *_logic;
-	Graphics *_graphics;
-
+	QueenEngine *_vm;
 };
 
 

@@ -27,13 +27,7 @@
 
 namespace Queen {
 
-class Graphics;
-class Input;
-class Logic;
-class Resource;
-class Sound;
-class Walk;
-
+class QueenEngine;
 
 class Cutaway {
 	public:
@@ -41,11 +35,7 @@ class Cutaway {
 		static void run(
 				const char *filename,
 				char *nextFilename,
-				Graphics *graphics,
-				Input *input,
-				Logic *logic,
-				Resource *resource,
-				Sound *sound);
+				QueenEngine *vm);
 
 	public:
 		//! Collection of constants used by QueenCutaway
@@ -137,12 +127,7 @@ class Cutaway {
 		  int16 image;
 		};
 
-		Graphics    *_graphics;
-		Input       *_input;
-		Logic       *_logic;
-		Resource    *_resource;
-		Sound       *_sound;
-		Walk        *_walk;
+		QueenEngine *_vm;
 
 		//! Raw .cut file data (without 20 byte header)
 		byte *_fileData;
@@ -211,13 +196,8 @@ class Cutaway {
 
 		AnimFrame _cutAnim[17][30];
 
-		Cutaway(
-				const char *filename, 
-				Graphics *graphics,
-				Input *input,
-				Logic *logic,
-				Resource *resource,
-				Sound *sound);
+		Cutaway(const char *filename, 
+				QueenEngine *vm);
 		~Cutaway();
 
 		//! Run this cutaway object 

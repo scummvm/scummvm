@@ -130,14 +130,12 @@ struct BamData {
 };
 
 
-class Display;
-class Input;
-class Resource;
+class QueenEngine;
 
 class Graphics {
 public:
 
-	Graphics(Display *display, Input *input, Resource *resource);
+	Graphics(QueenEngine *vm);
 	~Graphics();
 
 	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
@@ -237,10 +235,7 @@ private:
 
 	BamData _bam;
 
-	Display *_display;
-	Input *_input;
-	Resource *_resource;
-
+	QueenEngine *_vm;
 };
 
 } // End of namespace Queen

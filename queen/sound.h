@@ -47,12 +47,14 @@ struct tuneData {
 	int16 delay;
 };
 
+class QueenEngine;
+
 class Sound {
 public:
-	Sound(SoundMixer *mixer, Input *input, Resource *resource);
+	Sound(SoundMixer *mixer, QueenEngine *vm);
 	virtual ~Sound(); 
 	virtual void sfxPlay(const char *base) = 0;
-	static Sound *giveSound(SoundMixer *mixer, Input *input, Resource *resource, uint8 compression);
+	static Sound *giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression);
 	void waitSfxFinished();
 	void playSong(int16 songNum);
 
@@ -70,8 +72,7 @@ public:
 
 protected:
 	SoundMixer *_mixer;
-	Input *_input;
-	Resource *_resource;
+	QueenEngine *_vm;
 
 	static const songData _song[];
 	static const tuneData _tune[];
@@ -92,13 +93,13 @@ protected:
 
 class SilentSound : public Sound {
 public:
-	SilentSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
+	SilentSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *base) { }
 };
 
 class SBSound : public Sound {
 public:
-	SBSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
+	SBSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *base);
 protected:
 	int playSound(byte *sound, uint32 size);
@@ -107,7 +108,7 @@ protected:
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
-	MP3Sound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
+	MP3Sound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *base);
 };
 #endif
@@ -115,7 +116,7 @@ public:
 #ifdef USE_VORBIS
 class OGGSound : public Sound {
 public:
-	OGGSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
+	OGGSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
 	void sfxPlay(const char *base);
 };
 #endif

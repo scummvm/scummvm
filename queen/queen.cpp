@@ -112,10 +112,13 @@ QueenEngine::~QueenEngine() {
 
 	_timer->removeTimerProc(&timerHandler);
 	delete _resource;
+	delete _command;
 	delete _display;
-	delete _logic;
 	delete _graphics;
 	delete _input;
+	delete _logic;
+	delete _sound;
+	delete _walk;	
 }
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
@@ -149,11 +152,11 @@ void QueenEngine::go() {
 		else {
 			if (_logic->joeWalk() == JWM_EXECUTE) {
 				_logic->joeWalk(JWM_NORMAL);
-				_logic->command()->executeCurrentAction(true);
+				_command->executeCurrentAction(true);
 			}
 			else {
-				if (_logic->command()->parse()) {
-					_logic->command()->clear(true);
+				if (_command->parse()) {
+					_command->clear(true);
 				}
 				_logic->joeWalk(JWM_NORMAL);
 				_logic->checkPlayer();
@@ -165,11 +168,13 @@ void QueenEngine::go() {
 void QueenEngine::initialise(void) {
 
 	_resource = new Resource(_gameDataPath, _detectname,  _system->get_savefile_manager(), getSavePath());
+	_command = new Command(this);
+	_display = new Display(this, _resource->getLanguage(), _system);
+	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
-	_display = new Display(_resource->getLanguage(), _system, _input);
-	_graphics = new Graphics(_display, _input, _resource);
-	_sound = Sound::giveSound(_mixer, _input, _resource, _resource->compression());
-	_logic = new Logic(_resource, _graphics, _display, _input, _sound);
+	_logic = new Logic(this);
+	_sound = Sound::giveSound(_mixer, this, _resource->compression());
+	_walk = new Walk(this);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 }
 

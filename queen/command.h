@@ -28,11 +28,7 @@
 
 namespace Queen {
 
-class Logic;
-class Graphics;
-class Input;
-class Walk;
-class Sound;
+class QueenEngine;
 
 struct CmdText {
 
@@ -51,8 +47,7 @@ struct CmdText {
 	};
 
 	char _command[MAX_COMMAND_LEN];
-	Graphics *_graphics;
-	Logic *_logic;
+	QueenEngine *_vm;
 };
 
 
@@ -81,11 +76,10 @@ struct SelectedCmdState {
 	int16 noun;
 };
 
-
 class Command {
 public:
 	
-	Command(Logic *, Graphics *, Input *, Walk *, Sound *);
+	Command(QueenEngine *vm);
 	
 	//! initialise command construction
 	void clear(bool clearTexts);
@@ -186,12 +180,7 @@ private:
 	//! last user selection
 	int _mouseKey, _selPosX, _selPosY;
 
-	Logic *_logic;
-	Graphics *_graphics;
-	Input *_input;
-	Sound *_sound;
-	Walk *_walk;
-
+	QueenEngine *_vm;
 };
 
 } // End of namespace Queen

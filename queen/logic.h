@@ -53,19 +53,13 @@ struct ZoneSlot {
 	Box box;
 };
 
-class Command;
 class Debug;
-class Display;
-class Input;
-class Graphics;
-class Resource;
-class Sound;
-class Walk;
+class QueenEngine;
 
 class Logic {
 
 public:
-	Logic(Resource *resource, Graphics *graphics, Display *display, Input *input, Sound *sound);
+	Logic(QueenEngine *vm);
 	~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
@@ -293,11 +287,6 @@ public:
 	void asmPanRightToJoeAndRita();
 	void asmPanLeftToBomb();
 
-	Walk *walk() const { return _walk; }
-	Display *display() const { return _display; }
-	Command *command() const { return _cmd; }
-	Resource *resource() const { return _resource; }
-
 
 	typedef void (Logic::*SpecialMoveProc)();
 
@@ -309,8 +298,6 @@ public:
 		GAME_STATE_COUNT   = 211,
 		TALK_SELECTED_COUNT = 86
 	};
-
-	static Common::RandomSource randomizer;
 
 protected:
 
@@ -436,14 +423,8 @@ protected:
 
 	bool _subtitles;
 
-	Resource *_resource;
-	Graphics *_graphics;
 	Debug *_dbg;
-	Display *_display;
-	Input *_input;
-	Sound *_sound;
-	Walk *_walk;
-	Command *_cmd;
+	QueenEngine *_vm;
 
 	//! Verbs (in order) available in panel
 	static const VerbEnum PANEL_VERBS[];

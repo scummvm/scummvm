@@ -21,9 +21,11 @@
 
 #include "stdafx.h"
 #include "queen/walk.h"
+
+#include "queen/defs.h"
 #include "queen/logic.h"
 #include "queen/graphics.h"
-#include "queen/defs.h"
+#include "queen/queen.h"
 
 namespace Queen {
 
@@ -54,8 +56,8 @@ const MovePersonData Walk::_moveData[] = {
 
 
 
-Walk::Walk(Logic *logic, Graphics *graphics)
-	: _logic(logic), _graphics(graphics) {
+Walk::Walk(QueenEngine *vm)
+	: _vm(vm) {
 }
 
 
@@ -105,10 +107,10 @@ void Walk::animateJoe() {
 	// queen.c l.2789-2835
 	uint16 lastDirection = 0;
 	uint16 i;
-	BobSlot *pbs = _graphics->bob(0);
-	_logic->joeFacing(_walkData[1].anim.facing);
-	_logic->joeScale(_walkData[1].area->calcScale(pbs->y));
-	_logic->joeFace();
+	BobSlot *pbs = _vm->graphics()->bob(0);
+	_vm->logic()->joeFacing(_walkData[1].anim.facing);
+	_vm->logic()->joeScale(_walkData[1].area->calcScale(pbs->y));
+	_vm->logic()->joeFace();
 	for (i = 1; i <= _walkDataCount && !_joeInterrupted; ++i) {
 
 		WalkData *pwd = &_walkData[i];
@@ -116,7 +118,7 @@ void Walk::animateJoe() {
 		// area has been turned off, see if we should execute a cutaway
 		if (pwd->area->mapNeighbours < 0) {
 			// queen.c l.2838-2911
-			_logic->customMoveJoe(pwd->anim.facing, pwd->areaNum, i);
+			_vm->logic()->customMoveJoe(pwd->anim.facing, pwd->areaNum, i);
 			_joeMoveBlock = true;
 			return;
 		}
@@ -124,13 +126,13 @@ void Walk::animateJoe() {
 			pbs->animNormal(pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
 		}
 
-		uint16 moveSpeed = _logic->findScale(pbs->x, pbs->y) * 6 / 100;
+		uint16 moveSpeed = _vm->logic()->findScale(pbs->x, pbs->y) * 6 / 100;
 		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 		pbs->xflip = (pbs->xdir < 0);
 		while (pbs->moving) {
 			// adjust Joe's movespeed according to scale
 			pbs->scale = pwd->area->calcScale(pbs->y);
-			_logic->joeScale(pbs->scale);
+			_vm->logic()->joeScale(pbs->scale);
 			if (pbs->xmajor) {
 				pbs->speed = pbs->scale * 6 / 100;
 			}
@@ -140,10 +142,10 @@ void Walk::animateJoe() {
 			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
-			_logic->checkPlayer();
+			_vm->logic()->checkPlayer();
 			// FIXME it would nice to be able to get rid of these 3 lines
 			// as stopJoe() should be do the same...
-			if (_logic->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
+			if (_vm->logic()->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
 				// we are about to do something else, so stop walking
 				_joeInterrupted = true;
 				pbs->moving = false;
@@ -151,7 +153,7 @@ void Walk::animateJoe() {
 		}
 		lastDirection = pwd->anim.facing;
 	}
-	_logic->joeFacing(lastDirection);
+	_vm->logic()->joeFacing(lastDirection);
 }
 
 
@@ -235,7 +237,7 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction) {
 	// queen.c l.2572-2651
 
-	BobSlot *pbs = _graphics->bob(bobNum);
+	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 
 	// check to see which way person should be facing
 	if (mpd->walkLeft1 == mpd->walkRight1) {
@@ -254,7 +256,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		uint16 dstFrame = image;
 		uint16 srcFrame = ABS(pwd->anim.firstFrame);
 		while (srcFrame <= ABS(pwd->anim.lastFrame)) {
-			_graphics->bankUnpack(srcFrame, dstFrame, bankNum);
+			_vm->graphics()->bankUnpack(srcFrame, dstFrame, bankNum);
 			++dstFrame;
 			++srcFrame;
 		}
@@ -267,7 +269,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 
 		// move other actors at correct speed relative to scale
-		uint16 moveSpeed = _logic->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
+		uint16 moveSpeed = _vm->logic()->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
 		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 
 		// flip if one set of frames for actor
@@ -276,7 +278,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 
 		while (pbs->moving) {
-			_logic->update();
+			_vm->logic()->update();
 			uint16 scale = pwd->area->calcScale(pbs->y);
 			pbs->scale = scale;
 			if (pbs->xmajor) {
@@ -302,13 +304,13 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 	_joeInterrupted = false;
 
-	uint16 oldx = _graphics->bob(0)->x;
-	uint16 oldy = _graphics->bob(0)->y;
+	uint16 oldx = _vm->graphics()->bob(0)->x;
+	uint16 oldy = _vm->graphics()->bob(0)->y;
 
-	_logic->joeWalk(JWM_MOVE);
+	_vm->logic()->joeWalk(JWM_MOVE);
 
-	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
-	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
+	uint16 oldPos = _vm->logic()->zoneInArea(ZONE_ROOM, oldx, oldy);
+	uint16 newPos = _vm->logic()->zoneInArea(ZONE_ROOM, endx, endy);
 
 	debug(9, "Walk::moveJoe(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
@@ -328,12 +330,12 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 		}
 		else {
 			// path has been blocked, make Joe say so
-			_logic->joeSpeak(4);
+			_vm->logic()->joeSpeak(4);
 			can = -1;
 		}
 	}
 
-	_graphics->bob(0)->animating = false;
+	_vm->graphics()->bob(0)->animating = false;
 	// cyx: the NEW_ROOM = 0 is done in Command::grabCurrentSelection()
 	// XXX if ((CAN==-1) && (walkgameload==0)) NEW_ROOM=0;
 	// XXX walkgameload=0;
@@ -342,10 +344,10 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 		_joeMoveBlock = false;
 	}
 	else if (direction > 0) {
-		_logic->joeFacing(direction);
+		_vm->logic()->joeFacing(direction);
 	}
-	_logic->joePrevFacing(_logic->joeFacing());
-	_logic->joeFace();
+	_vm->logic()->joePrevFacing(_vm->logic()->joeFacing());
+	_vm->logic()->joeFace();
 	return can;
 }
 
@@ -363,11 +365,11 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	uint16 bobNum = pp->actor->bobNum;
 	uint16 bankNum = pp->actor->bankNum;
 
-	uint16 oldx = _graphics->bob(bobNum)->x;
-	uint16 oldy = _graphics->bob(bobNum)->y;
+	uint16 oldx = _vm->graphics()->bob(bobNum)->x;
+	uint16 oldy = _vm->graphics()->bob(bobNum)->y;
 
-	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
-	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
+	uint16 oldPos = _vm->logic()->zoneInArea(ZONE_ROOM, oldx, oldy);
+	uint16 newPos = _vm->logic()->zoneInArea(ZONE_ROOM, endx, endy);
 
 	debug(9, "Walk::movePerson(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
@@ -393,24 +395,24 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	uint16 standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
 
 	// make other person face the right direction
-	BobSlot *pbs = _graphics->bob(bobNum);
+	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 	pbs->endx = endx;
 	pbs->endy = endy;
 	pbs->animating = false;
 	pbs->scale = _walkData[_walkDataCount].area->calcScale(endy);
 	if (_walkData[_walkDataCount].anim.facing == DIR_BACK) {
-		_graphics->bankUnpack(mpd->backStandingFrame, standingFrame, bankNum);
+		_vm->graphics()->bankUnpack(mpd->backStandingFrame, standingFrame, bankNum);
 	}
 	else {
-		_graphics->bankUnpack(mpd->frontStandingFrame, standingFrame, bankNum);
+		_vm->graphics()->bankUnpack(mpd->frontStandingFrame, standingFrame, bankNum);
 	}
-	uint16 obj = _logic->objectForPerson(bobNum);
+	uint16 obj = _vm->logic()->objectForPerson(bobNum);
 	if (_walkData[_walkDataCount].dx < 0) {
-		_logic->objectData(obj)->image = -3;
+		_vm->logic()->objectData(obj)->image = -3;
 		pbs->xflip = true;
 	}
 	else {
-		_logic->objectData(obj)->image = -4;
+		_vm->logic()->objectData(obj)->image = -4;
 		pbs->xflip = false;
 	}
 	pbs->frameNum = standingFrame;
@@ -420,7 +422,7 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 
 void Walk::stopJoe() {
 
-	_graphics->bob(0)->moving = false;
+	_vm->graphics()->bob(0)->moving = false;
 	_joeInterrupted = true;
 }
 
@@ -449,8 +451,8 @@ bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 		for (i = 2; i <= _areaListCount; ++i) {
 			uint16 a1 = _areaList[i - 1];
 			uint16 a2 = _areaList[i];
-			const Area *pa1 = _logic->currentRoomArea(a1);
-			const Area *pa2 = _logic->currentRoomArea(a2);
+			const Area *pa1 = _vm->logic()->currentRoomArea(a1);
+			const Area *pa2 = _vm->logic()->currentRoomArea(a2);
 			uint16 x1 = calcC(pa1->box.x1, pa1->box.x2, pa2->box.x1, pa2->box.x2, px);
 			uint16 y1 = calcC(pa1->box.y1, pa1->box.y2, pa2->box.y1, pa2->box.y2, py);
 			incWalkData(px, py, x1, y1, a1);
@@ -490,10 +492,10 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	uint16 i;
 	uint16 pos = 1;
 	uint32 minDist = ~0;
-	const Box *b = &_logic->currentRoomArea(1)->box;
-	for (i = 1; i <= _logic->currentRoomAreaMax(); ++i) {
+	const Box *b = &_vm->logic()->currentRoomArea(1)->box;
+	for (i = 1; i <= _vm->logic()->currentRoomAreaMax(); ++i) {
 
-		b = &_logic->currentRoomArea(i)->box;
+		b = &_vm->logic()->currentRoomArea(i)->box;
 
 		uint16 dx1 = ABS(b->x1 - *x);
 		uint16 dx2 = ABS(b->x2 - *x);
@@ -524,7 +526,7 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
  	// we now have the closest area near X,Y, so we can recalibrate
  	// the X,Y coord to be in this area
 	if (recalibrate) {
-		b = &_logic->currentRoomArea(pos)->box;
+		b = &_vm->logic()->currentRoomArea(pos)->box;
 		if(*x < b->x1) *x = b->x1;
 		if(*x > b->x2) *x = b->x2;
 		if(*y < b->y1) *y = b->y1;
@@ -538,9 +540,9 @@ uint16 Walk::findFreeArea(uint16 area) const {
 
 	uint16 testArea;
 	uint16 freeArea = 0;
-	uint16 map = ABS(_logic->currentRoomArea(area)->mapNeighbours);
-	for (testArea = 1; testArea <= _logic->currentRoomAreaMax(); ++testArea) {
-		int b = _logic->currentRoomAreaMax() - testArea;
+	uint16 map = ABS(_vm->logic()->currentRoomArea(area)->mapNeighbours);
+	for (testArea = 1; testArea <= _vm->logic()->currentRoomAreaMax(); ++testArea) {
+		int b = _vm->logic()->currentRoomAreaMax() - testArea;
 		if (map & (1 << b)) {
 			// connecting area, check if it's been struck off
 			if(!isAreaStruck(testArea)) {
@@ -615,7 +617,7 @@ void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 		WalkData *pwd = &_walkData[_walkDataCount];
 		pwd->dx = x - px;
 		pwd->dy = y - py;
-		pwd->area = _logic->currentRoomArea(areaNum);
+		pwd->area = _vm->logic()->currentRoomArea(areaNum);
 		pwd->areaNum = areaNum;
 //		pwd->sign = ((pwd->dx < 0) ? -1 : ((pwd->dx > 0) ? 1 : 0)) ;
 	}

@@ -27,12 +27,7 @@
 
 namespace Queen {
 
-class Graphics;
-class Input;
-class Logic;
-class Resource;
-class Sound;
-struct BobSlot;
+class QueenEngine;
 
 class Talk {
   public:
@@ -42,22 +37,14 @@ class Talk {
 		const char *filename,
 		int personInRoom,
 		char *cutawayFilename, 
-		Graphics *graphics,
-		Input *input,
-		Logic *logic,
-		Resource *resource,
-		Sound *sound);
+		QueenEngine *vm);
 
 	//! Public interface to speak a sentence
 	static bool speak(
 		const char *sentence, 
 		Person *person, 
 		const char *voiceFilePrefix,
-		Graphics *graphics,
-		Input *input,
-		Logic *logic,
-		Resource *resource,
-		Sound *sound);
+		QueenEngine *vm);
 
 	//! Read a string from ptr and return new ptr
 	static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
@@ -105,11 +92,7 @@ private:
 		signed char ff;
 	};
 
-	Graphics  *_graphics;
-	Input     *_input;
-	Logic     *_logic;
-	Resource  *_resource;
-	Sound     *_sound;
+	QueenEngine *_vm;
 
 	bool _wasFullscren;
 
@@ -164,7 +147,7 @@ private:
 
 	static const SpeechParameters _speechParameters[];
 
-	Talk(Graphics *graphics, Input *input, Logic *logic, Resource *resource, Sound *sound);
+	Talk(QueenEngine *vm);
 	~Talk();
 
 	//! Perform talk in file and return a cutaway filename

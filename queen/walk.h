@@ -63,13 +63,12 @@ struct MovePersonData {
 };
 
 
-class Logic;
-class Graphics;
+class QueenEngine;
 
 class Walk {
 public:
 
-	Walk(Logic *logic, Graphics *graphics);
+	Walk(QueenEngine *vm);
 
 	int16 moveJoe(int direction, int16 endx, int16 endy, bool inCutaway);
 	int16 movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction);
@@ -128,9 +127,7 @@ private:
 	//! set if customMoveJoe() is called in joeAnimate()
 	bool _joeMoveBlock;
 
-	Logic *_logic;
-	Graphics *_graphics;
-
+	QueenEngine *_vm;
 
 	static const MovePersonData _moveData[];
 };

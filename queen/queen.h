@@ -28,18 +28,31 @@ class GameDetector;
 
 namespace Queen {
 
+class Command;
+class Display;
 class Graphics;
 class Input;
-class Resource;
 class Logic;
-class Display;
+class Resource;
 class Sound;
+class Walk;
 
 class QueenEngine : public Engine {
 public:
 
 	QueenEngine(GameDetector *detector, OSystem *syst);
 	virtual ~QueenEngine();
+
+	Command *command() const { return _command; }
+	Display *display() const { return _display; }
+	Graphics *graphics() const { return _graphics; }
+	Input *input() const { return _input; }
+	Logic *logic() const { return _logic; }
+	Resource *resource() const { return _resource; }
+	Sound *sound() const { return _sound; }
+	Walk *walk() const { return _walk; }
+
+	Common::RandomSource randomizer;
 
 protected:
 
@@ -52,12 +65,14 @@ protected:
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 
+	Command *_command;
+	Display *_display;
 	Graphics *_graphics;
 	Input *_input;
-	Resource *_resource;
 	Logic *_logic;
-	Display *_display;
+	Resource *_resource;
 	Sound *_sound;
+	Walk *_walk;
 	
 	const char *_detectname; // necessary for music
 };

@@ -21,17 +21,19 @@
 
 #include "stdafx.h"
 #include "queen/debug.h"
+
 #include "queen/defs.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/structs.h"
 
 namespace Queen {
 
-Debug::Debug(Input *input, Logic *logic, Graphics *graphics)
-:	_passwordCharCount(0), _stubCount(0), _input(input), _logic(logic), _graphics(graphics) {
+Debug::Debug(QueenEngine *vm)
+	: _passwordCharCount(0), _stubCount(0), _vm(vm) {
 
 	memset(_password, 0, sizeof(_password));
 
@@ -82,18 +84,18 @@ void Debug::jumpToRoom() {
 
 	debug(9, "Debug::jumpToRoom()");
 
-	_graphics->textCurrentColor(INK_JOE);
-	_graphics->textSet(0, 142, "Enter new room");
-	_logic->update();
+	_vm->graphics()->textCurrentColor(INK_JOE);
+	_vm->graphics()->textSet(0, 142, "Enter new room");
+	_vm->logic()->update();
 
 	int room;
 	_digitTextCount = 0;
-	if (_input->waitForNumber(room, digitKeyPressed, this)) {
-		_logic->joeX(0);
-		_logic->joeY(0);
-		_logic->newRoom(room);
-		_logic->entryObj(_logic->roomData(room) + 1);
-		_graphics->textClear(0, 199);
+	if (_vm->input()->waitForNumber(room, digitKeyPressed, this)) {
+		_vm->logic()->joeX(0);
+		_vm->logic()->joeY(0);
+		_vm->logic()->newRoom(room);
+		_vm->logic()->entryObj(_vm->logic()->roomData(room) + 1);
+		_vm->graphics()->textClear(0, 199);
 	}
 }
 
@@ -101,7 +103,7 @@ void Debug::jumpToRoom() {
 void Debug::toggleFastMode() {
 
 	debug(9, "Debug::toggleFastMode()");
-	_input->fastMode(!_input->fastMode());
+	_vm->input()->fastMode(!_vm->input()->fastMode());
 }
 
 
@@ -109,24 +111,24 @@ void Debug::printInfo() {
 
 	debug(9, "Debug::printInfo()");
 
-	_graphics->textClear(0, 199);
-	_graphics->textCurrentColor(INK_JOE);
+	_vm->graphics()->textClear(0, 199);
+	_vm->graphics()->textCurrentColor(INK_JOE);
 
 	char buf[100];
 
-	snprintf(buf, sizeof(buf), "Version : %s", _logic->resource()->JASVersion());
-	_graphics->textSet(110, 20, buf);
+	snprintf(buf, sizeof(buf), "Version : %s", _vm->resource()->JASVersion());
+	_vm->graphics()->textSet(110, 20, buf);
 
-	snprintf(buf, sizeof(buf), "Room number : %d", _logic->currentRoom());
-	_graphics->textSet(110, 40, buf);
+	snprintf(buf, sizeof(buf), "Room number : %d", _vm->logic()->currentRoom());
+	_vm->graphics()->textSet(110, 40, buf);
 
-	snprintf(buf, sizeof(buf), "Room name : %s", _logic->roomName(_logic->currentRoom()));
-	_graphics->textSet(110, 60, buf);
+	snprintf(buf, sizeof(buf), "Room name : %s", _vm->logic()->roomName(_vm->logic()->currentRoom()));
+	_vm->graphics()->textSet(110, 60, buf);
 
-	_logic->update();
+	_vm->logic()->update();
 
 	char c;
-	if (_input->waitForCharacter(c)) {
+	if (_vm->input()->waitForCharacter(c)) {
 		switch (c) {
 		case 'a':
 			toggleAreasDrawing();
@@ -142,7 +144,7 @@ void Debug::printInfo() {
             break;
 		}
 	}
-	_graphics->textClear(0, 199);
+	_vm->graphics()->textClear(0, 199);
 }
 
 
@@ -156,17 +158,17 @@ void Debug::toggleAreasDrawing() {
 void Debug::changeGameState() {
 
 	debug(9, "Debug::changeGameState()");
-	_graphics->textSet(0, 142, "Set GAMESTATE");
-	_logic->update();
+	_vm->graphics()->textSet(0, 142, "Set GAMESTATE");
+	_vm->logic()->update();
 	int slot, value;
 	_digitTextCount = 0;
-	if (_input->waitForNumber(slot, digitKeyPressed, this)) {
-		_graphics->textClear(0, 199);
-		_graphics->textSet(0, 142, "to");
-		_logic->update();
+	if (_vm->input()->waitForNumber(slot, digitKeyPressed, this)) {
+		_vm->graphics()->textClear(0, 199);
+		_vm->graphics()->textSet(0, 142, "to");
+		_vm->logic()->update();
 		_digitTextCount = 0;
-		if (_input->waitForNumber(value, digitKeyPressed, this)) {
-			_logic->gameState(slot, value);
+		if (_vm->input()->waitForNumber(value, digitKeyPressed, this)) {
+			_vm->logic()->gameState(slot, value);
 		}
 	}
 }
@@ -175,18 +177,18 @@ void Debug::changeGameState() {
 void Debug::printGameState() {
 
 	debug(9, "Debug::printGameState()");
-	_graphics->textSet(0, 142, "Show GAMESTATE");
-	_logic->update();
+	_vm->graphics()->textSet(0, 142, "Show GAMESTATE");
+	_vm->logic()->update();
 	int slot;
 	_digitTextCount = 0;
-	if (_input->waitForNumber(slot, digitKeyPressed, this)) {
-		_graphics->textClear(0, 199);
+	if (_vm->input()->waitForNumber(slot, digitKeyPressed, this)) {
+		_vm->graphics()->textClear(0, 199);
 		char buf[50];
-		snprintf(buf, sizeof(buf), "Currently - %d", _logic->gameState(slot));
-		_graphics->textSet(0, 142, buf);
-		_logic->update();
+		snprintf(buf, sizeof(buf), "Currently - %d", _vm->logic()->gameState(slot));
+		_vm->graphics()->textSet(0, 142, buf);
+		_vm->logic()->update();
 		char c;
-		_input->waitForCharacter(c);
+		_vm->input()->waitForCharacter(c);
 	}
 }
 
@@ -194,8 +196,8 @@ void Debug::printGameState() {
 void Debug::giveAllItems() {
 
 	debug(9, "Debug::giveAllItems()");
-	int n = _logic->itemDataCount();
-	ItemData *item = _logic->itemData(1);
+	int n = _vm->logic()->itemDataCount();
+	ItemData *item = _vm->logic()->itemData(1);
 	while (n--) {
 		item->name = ABS(item->name);
 		++item;
@@ -214,8 +216,8 @@ void Debug::digitKeyPressed(void *refCon, int key) {
 		--debug->_digitTextCount;
 	}
 	debug->_digitText[debug->_digitTextCount] = '\0';
-	debug->_graphics->textSet(0, 151, debug->_digitText);
-	debug->_logic->update();
+	debug->_vm->graphics()->textSet(0, 151, debug->_digitText);
+	debug->_vm->logic()->update();
 }
 
 
