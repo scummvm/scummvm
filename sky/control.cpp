@@ -142,7 +142,7 @@ SkyControlStatus::SkyControlStatus(SkyText *skyText, OSystem *system, uint8 *scr
 	_system = system;
 	_screenBuf = scrBuf;
 	_textData = NULL;
-	_statusText = new SkyTextResource(NULL, 2, 1, 64, 163, NULL, DO_NOTHING, _system, _screenBuf);
+	_statusText = new SkyTextResource(NULL, 2, 1, 64, 163, 0, DO_NOTHING, _system, _screenBuf);
 }
 
 SkyControlStatus::~SkyControlStatus(void) {
