@@ -28,11 +28,13 @@
 #include "sky/autoroute.h"
 #include "sky/musicbase.h"
 #include "sky/mouse.h"
+#include "sky/screen.h"
 
 enum scriptVariableOffsets {
 	RESULT = 0,
 	SCREEN = 1,
 	LOGIC_LIST_NO = 2,
+	DRAW_LIST_NO = 8,
 	CUR_ID = 12,
 	MOUSE_STATUS = 13,
 	MOUSE_STOP = 14,
@@ -42,6 +44,13 @@ enum scriptVariableOffsets {
 	PLAYER_MOOD = 29,
 	PLAYER_SCREEN = 30,
 	HIT_ID = 37,
+	LAYER_0_ID = 41,
+	LAYER_1_ID = 42,
+	LAYER_2_ID = 43,
+	LAYER_3_ID = 44,
+	GRID_1_ID = 45,
+	GRID_2_ID = 46,
+	GRID_3_ID = 47,
 	THE_CHOSEN_ONE = 51,
 	TEXT1 = 53,
 	MENU_LENGTH = 100,
@@ -50,9 +59,12 @@ enum scriptVariableOffsets {
 	CUR_SECTION = 143
 };
 
+class SkyAutoRoute;
+class SkyScreen;
+
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
+	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
 	void engine();
 
 	void nop();
@@ -216,6 +228,7 @@ protected:
 	
 	uint32 _gameVersion;
 	
+	SkyScreen *_skyScreen;
 	SkyDisk *_skyDisk;
 	SkyGrid *_skyGrid;
 	SkyText *_skyText;

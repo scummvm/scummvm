@@ -29,20 +29,31 @@
 #include "sky/disk.h"
 #include "sky/skydefs.h"
 #include "sky/sky.h"
+#include "sky/logic.h"
 
 #define SCROLL_JUMP		16
 #define VGA_COLOURS		256
 #define GAME_COLOURS		240
 #define SEQ_DELAY 3
 
+#define FORE 1
+#define BACK 0
+
+typedef struct {
+	uint16 yCood;
+	Compact *compact;
+	dataFileHeader *sprite;
+} StSortList;
+
+class SkyState;
+
 class SkyScreen {
 public:
 	SkyScreen(OSystem *pSystem, SkyDisk *pDisk);
 	~SkyScreen(void);
+//	void takeScriptVars(uint32 *pScriptVars) { _scriptVariables = pScriptVars; };
 	void setPalette(uint8 *pal);
 	void setPalette(uint16 fileNum);
-
-	void fnFadeDown(uint8 action);
 	void paletteFadeUp(uint8 *pal);
 	void paletteFadeUp(uint16 fileNr);
 
@@ -55,16 +66,31 @@ public:
 	bool sequenceRunning(void);
 	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; };
 	uint8 *giveCurrent(void) { return _currentScreen; };
+	void halvePalette(void);
+
+	//- regular screen.asm routines
+	void forceRefresh(void) { memset(_gameGrid, 0x80, GRID_X * GRID_Y); };
+	void fnFadeUp(uint32 palNum, uint32 scroll);
+	void fnFadeDown(uint32 scroll);
+	void fnDrawScreen(uint32 palette, uint32 scroll);
+	void clearScreen(void) { memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT); };
+
 private:
 	OSystem *_system;
 	SkyDisk *_skyDisk;
 	static uint8 _top16Colours[16*3];
 	uint8 _palette[1024];
+	uint32 _currentPalette;
 
 	bool volatile _gotTick;
-
 	void waitForTimer(void);
+	void processSequence(void);
 
+	uint8 *_gameGrid;
+	uint8 *_currentScreen;
+	uint8 *_scrollScreen;
+	uint8 *_backScreen;
+	//uint32 *_scriptVariables;
 	struct {
 		uint32 framesLeft;
 		uint32 delay;
@@ -72,21 +98,29 @@ private:
 		uint8 *seqDataPos;
 		bool running;
 	} _seqInfo;
-	void processSequence(void);
-
-	uint8 *_currentScreen;
-
 	//byte *_workScreen;
-	//byte *_backScreen;
 	//byte *_tempPal;
 	//byte *_workPalette;
 	//byte *_halfPalette;
 	//byte *_scrollAddr;
 	//byte *_lScreenBuf, *_lPaletteBuf;
-	byte *_gameGrid;
 
+    //- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
 	void palette_fadedown_helper(uint32 *pal, uint num);
+	void recreate(void);
+	void flip(void);
+
+	//- sprite.asm routines
+	// fixme: get rid of these globals
+	uint32 _sprWidth, _sprHeight, _sprX, _sprY, _maskX1, _maskX2;
+	void spriteEngine(void);
+    void doSprites(uint8 layer);
+	void sortSprites(void);
+	void drawSprite(uint8 *spriteData, Compact *sprCompact);
+	void verticalMask(void);
+	void vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId);
+	void vectorToGame(uint8 gridVal);
 };
 
 #endif //SKYSCREEN_H

@@ -48,7 +48,8 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion) {
+SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion) {
+	_skyScreen = skyScreen;
 	_skyDisk = skyDisk;
 	_skyGrid = skyGrid;
 	_skyText = skyText;
@@ -1113,7 +1114,8 @@ bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnDrawScreen");
+	printf("Call: fnDrawScreen(%X, %X)\n",a,b);
+	_skyScreen->fnDrawScreen(a, b);
 	return true;
 }
 
@@ -1995,20 +1997,30 @@ bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStartMusic");
+	_skyMusic->startMusic((uint16)a);
+	return true;
+	//error("Stub: fnStartMusic");
 }
 
 bool SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStopMusic");
+	_skyMusic->startMusic(0);
+	return true;
+	//error("Stub: fnStopMusic");
 }
 
 bool SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
+	printf("fnFadeDown(scroll = %d);\n",a);
+	_skyScreen->fnFadeDown(a);
+	return true;
 	// this is actually already implemented in SkyScreen
-	error("Stub: fnFadeDown");
+	//error("Stub: fnFadeDown");
 }
 
 bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFadeUp");
+	printf("fnFadeUp(scroll = %d, palette = %d);\n",a,b);
+	_skyScreen->fnFadeUp(a,b);
+	return true;
+	//error("Stub: fnFadeUp");
 }
 
 bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
@@ -2027,4 +2039,3 @@ bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 	printf("fnPrintf: %d\n", a);
 	return true;
 }
-

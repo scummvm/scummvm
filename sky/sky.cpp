@@ -73,8 +73,51 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_introTextSave = 0;
 }
 
+void SkyState::showQuitMsg(void) {
+
+	uint8 *textBuf1 = (uint8*)calloc(GAME_SCREEN_WIDTH * 14 + sizeof(struct dataFileHeader),1);
+	uint8 *textBuf2 = (uint8*)calloc(GAME_SCREEN_WIDTH * 14 + sizeof(struct dataFileHeader),1);
+	char *vText1, *vText2;
+	uint8 *screenData = _skyScreen->giveCurrent();
+	switch (_language) {
+		case DE_DEU: vText1 = VIG_DE1; vText2 = VIG_DE2; break;
+		case FR_FRA: vText1 = VIG_FR1; vText2 = VIG_FR2; break;
+		case IT_ITA: vText1 = VIG_IT1; vText2 = VIG_IT2; break;
+		case PT_BRA: vText1 = VIG_PT1; vText2 = VIG_PT2; break;
+		default: vText1 = VIG_EN1; vText2 = VIG_EN2; break;
+	}
+	_skyText->displayText(vText1, textBuf1, true, 320, 255);
+	_skyText->displayText(vText2, textBuf2, true, 320, 255);
+	uint8 *curLine1 = textBuf1 + sizeof(struct dataFileHeader);
+	uint8 *curLine2 = textBuf2 + sizeof(struct dataFileHeader);
+	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
+	for (uint8 cnty = 0; cnty < 14; cnty++) {
+		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH; cntx++) {
+			if (curLine1[cntx])
+				targetLine[cntx] = curLine1[cntx];
+			if (curLine2[cntx])
+				(targetLine + 24 * GAME_SCREEN_WIDTH)[cntx] = curLine2[cntx];
+		}
+		curLine1 += GAME_SCREEN_WIDTH;
+		curLine2 += GAME_SCREEN_WIDTH;
+		targetLine += GAME_SCREEN_WIDTH;
+	}
+	_skyScreen->halvePalette();
+	_skyScreen->showScreen(screenData);
+	free(textBuf1); free(textBuf2);
+}
+
 SkyState::~SkyState() {
-	
+
+	delete _skyLogic;
+	delete _skyGrid;
+	delete _skySound;
+	delete _skyMusic;
+    showQuitMsg();	
+	delete _skyText;
+	delete _skyMouse;
+	delete _skyScreen;
+	delay(1500);
 }
 
 void SkyState::errorString(const char *buf1, char *buf2) {
@@ -98,7 +141,7 @@ void SkyState::go() {
 		intro();
 
 	loadBase0();
-	
+
 	while (1) {
 		delay(100);
 		_skyLogic->engine();
@@ -121,8 +164,8 @@ void SkyState::initialise(void) {
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);
 	_skyMouse = new SkyMouse(_skyDisk);
-	
 	_skyScreen = new SkyScreen(_system, _skyDisk);
+
 	initVirgin();
 	//initMouse();
 	initItemList();
@@ -130,7 +173,7 @@ void SkyState::initialise(void) {
 	//initialiseRouter();
 	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound, _gameVersion);
+	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound, _gameVersion);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
@@ -188,6 +231,11 @@ void SkyState::loadFixedItems(void) {
 	_itemList[271] = (void **)_skyDisk->loadFile(271, NULL);
 	_itemList[272] = (void **)_skyDisk->loadFile(272, NULL);
 		
+}
+
+void **SkyState::fetchItem(uint32 num) {
+
+	return _itemList[num];
 }
 
 void SkyState::timerHandler(void *ptr) {

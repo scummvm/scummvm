@@ -94,6 +94,7 @@ public:
 	static bool isCDVersion(uint32 version);
 
 	static Compact *fetchCompact(uint32 a);
+	static void **fetchItem(uint32 num);
 	
 	static void **_itemList[300];
 
@@ -131,6 +132,8 @@ protected:
 	static int CDECL game_thread_proc(void *param);
 
 	void shutdown();
+
+	void showQuitMsg(void);
 
 	RandomSource _rnd;
 };
