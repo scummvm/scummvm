@@ -1086,7 +1086,7 @@ bool SkySound::fnStartFx(uint32 sound) {
 		return true;
 
 	uint8 screen = (uint8)(SkyLogic::_scriptVariables[SCREEN] & 0xff);
-	if (sound == 278 || screen == 25) // is this weld in room 25
+	if (sound == 278 && screen == 25) // is this weld in room 25
 		sound= 394;
 
 	sound &= ~(1 << 8);
