@@ -41,8 +41,8 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(int i);
-	virtual const char *getOpcodeDesc(int i);
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void decodeParseString();
 	int getWordVararg(int *ptr);
@@ -193,8 +193,8 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(int i);
-	virtual const char *getOpcodeDesc(int i);
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 
@@ -309,8 +309,8 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(int i);
-	virtual const char *getOpcodeDesc(int i);
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 
@@ -520,8 +520,8 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(int i);
-	virtual const char *getOpcodeDesc(int i);
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 

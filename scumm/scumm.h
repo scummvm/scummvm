@@ -497,8 +497,8 @@ protected:
 	int _keyScriptKey, _keyScriptNo;
 	
 	virtual void setupOpcodes() = 0;
-	virtual void executeOpcode(int i) = 0;
-	virtual const char *getOpcodeDesc(int i) = 0;
+	virtual void executeOpcode(byte i) = 0;
+	virtual const char *getOpcodeDesc(byte i) = 0;
 
 	void initializeLocals(int slot, int *vars);
 	int	getScriptSlot();

@@ -361,12 +361,12 @@ void Scumm_v8::setupOpcodes() {
 	_opcodesV8 = opcodes;
 }
 
-void Scumm_v8::executeOpcode(int i) {
+void Scumm_v8::executeOpcode(byte i) {
 	OpcodeProcV8 op = _opcodesV8[i].proc;
 	(this->*op) ();
 }
 
-const char *Scumm_v8::getOpcodeDesc(int i) {
+const char *Scumm_v8::getOpcodeDesc(byte i) {
 	return _opcodesV8[i].desc;
 }
 
