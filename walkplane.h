@@ -46,6 +46,15 @@ public:
 
 	Vector3d closestPoint(Vector3d point) const;
 
+	// Interface to trace a ray to its exit from the polygon
+	struct ExitInfo {
+		Vector3d exitPoint;
+		float angleWithEdge;
+		Vector3d edgeDir;
+	};
+	void getExitInfo(Vector3d start, Vector3d dir,
+			 struct ExitInfo *result);
+
 private:
 	int _numVertices, _id;
 

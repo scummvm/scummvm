@@ -34,6 +34,7 @@
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
+		_reflectionAngle(80),
 		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
@@ -98,16 +99,65 @@ void Actor::walkForward() {
 		std::sin(pitch_rad));
 	Vector3d destPos = _pos + forwardVec * dist;
 
-	if (!_constrain) {
-		_pos = destPos;
+	if (! _constrain) {
+		_pos += forwardVec * dist;
 		_walkedCur = true;
-	} else {
-		Sector *sector = g_engine->currScene()->findPointSector(destPos, 0x1000);
-		if (sector != NULL) {
-			_pos = sector->projectToPlane(destPos);
-			_walkedCur = true;
-		}
+		return;
 	}
+
+	if (dist < 0) {
+		dist = -dist;
+		forwardVec = -forwardVec;
+	}
+
+	Sector *currSector = NULL, *prevSector = NULL;
+	Sector::ExitInfo ei;
+
+	g_engine->currScene()->findClosestSector(_pos, &currSector, &_pos);
+	if (currSector == NULL) { // Shouldn't happen...
+		_pos += forwardVec * dist;
+		_walkedCur = true;
+		return;
+	}
+
+	while (currSector != NULL) {
+		prevSector = currSector;
+		Vector3d puckVector = currSector->projectToPuckVector(forwardVec);
+		puckVector /= puckVector.magnitude();
+		currSector->getExitInfo(_pos, puckVector, &ei);
+		float exitDist = (ei.exitPoint - _pos).magnitude();
+		if (dist < exitDist) {
+			_pos += puckVector * dist;
+			_walkedCur = true;
+			return;
+		}
+		_pos = ei.exitPoint;
+		dist -= exitDist;
+		if (exitDist > 0.0001)
+			_walkedCur = true;
+
+		// Check for an adjacent sector which can continue
+		// the path
+		currSector = g_engine->currScene()->findPointSector(ei.exitPoint + 0.0001 * puckVector, 0x1000);
+		if (currSector == prevSector)
+			break;
+	}
+
+	ei.angleWithEdge *= (180.0 / M_PI);
+	int turnDir = 1;
+	if (ei.angleWithEdge > 90) {
+		ei.angleWithEdge = 180 - ei.angleWithEdge;
+		ei.edgeDir = -ei.edgeDir;
+		turnDir = -1;
+	}
+	if (ei.angleWithEdge > _reflectionAngle)
+		return;
+
+	ei.angleWithEdge += 0.1;
+	float turnAmt = g_engine->perSecond(_turnRate);
+	if (turnAmt > ei.angleWithEdge)
+		turnAmt = ei.angleWithEdge;
+	_yaw += turnAmt * turnDir;
 }
 
 Vector3d Actor::puckVector() const {

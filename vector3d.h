@@ -125,6 +125,10 @@ inline Vector3d operator *(float s, const Vector3d& v) {
 	return result;
 }
 
+inline Vector3d operator -(const Vector3d& v) {
+	return (-1.0f) * v;
+}
+
 inline Vector3d operator *(const Vector3d& v, float s) {
 	return s * v;
 }

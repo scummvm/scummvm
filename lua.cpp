@@ -457,6 +457,12 @@ static void WalkActorForward() {
 	act->walkForward();
 }
 
+static void SetActorReflection() {
+	Actor *act = check_actor(1);
+	float angle = luaL_check_number(2);
+	act->setReflection(angle);
+}
+
 static void GetActorPuckVector() {
 	Actor *act = check_actor(1);
 	Vector3d result = act->puckVector();
@@ -1584,7 +1590,6 @@ STUB_FUNC(SetActorWalkDominate)
 STUB_FUNC(GetCameraActor)
 STUB_FUNC(DriveActorTo)
 STUB_FUNC(WalkActorVector)
-STUB_FUNC(SetActorReflection)
 STUB_FUNC(GetActorRect)
 STUB_FUNC(GetActorNodeLocation)
 STUB_FUNC(SetActorTimeScale)
@@ -1924,6 +1929,8 @@ struct luaL_reg mainOpcodes[] = {
 	{ "PutActorInSet", PutActorInSet },
 	{ "WalkActorVector", WalkActorVector },
 	{ "WalkActorForward", WalkActorForward },
+	{ "SetActorReflection", SetActorReflection },
+	{ "GetActorPuckVector", GetActorPuckVector },
 	{ "DriveActorTo", DriveActorTo },
 	{ "WalkActorTo", WalkActorTo },
 	{ "WalkActorToAvoiding", WalkActorToAvoiding },

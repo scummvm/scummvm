@@ -66,6 +66,7 @@ public:
 		return _setName == name;
 	}
 	void walkForward();
+	void setReflection(float angle) { _reflectionAngle = angle; }
 	Vector3d puckVector() const;
 	void turn(int dir);
 
@@ -125,6 +126,7 @@ private:
 	float _walkRate, _turnRate;
 
 	bool _constrain;	// Constrain to walkboxes
+	float _reflectionAngle;	// Maximum angle to turn by at walls
 	bool _visible;
 	bool _lookingMode;
 	std::string _talkSoundName;

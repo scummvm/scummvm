@@ -160,3 +160,38 @@ Vector3d Sector::closestPoint(Vector3d point) const {
 	}
 	return _vertices[index];
 }
+
+void Sector::getExitInfo(Vector3d start, Vector3d dir,
+			 struct ExitInfo *result) {
+	start = projectToPlane(start);
+	dir = projectToPuckVector(dir);
+
+	// First find the edge the ray exits through: this is where
+	// the z-component of (v_i - start) x dir changes sign from
+	// positive to negative.
+
+	// First find a vertex such that the cross product has
+	// positive z-component.
+	int i;
+	for (i = 0; i < _numVertices; i++) {
+		Vector3d delta = _vertices[i] - start;
+		if (delta.x() * dir.y() > delta.y() * dir.x())
+			break;
+	}
+
+	// Now continue until the cross product has negative
+	// z-component.
+	while (i < _numVertices) {
+		i++;
+		Vector3d delta = _vertices[i] - start;
+		if (delta.x() * dir.y() <= delta.y() * dir.x())
+			break;
+	}
+
+	result->edgeDir = _vertices[i] - _vertices[i - 1];
+	result->angleWithEdge = angle(dir, result->edgeDir);
+
+	Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
+	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) /
+				     dot(dir, edgeNormal)) * dir;
+}
