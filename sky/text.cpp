@@ -29,6 +29,8 @@
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
 #define MAX_SPEECH_SECTION	7 
+#define CHAR_SET_HEADER	128
+#define	MAX_NO_LINES	10
 
 SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
 	_skyDisk = skyDisk;
@@ -159,6 +161,161 @@ bool SkyText::getTBit() {
 	} 
 	
 	return (bool)(((_inputValue) >> (_shiftBits)) & 1);
+}
+
+void SkyText::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+	//Render text in _textBuffer in buffer *dest
+	displayText(this->_textBuffer, dest, centre, pixelWidth, color);
+}
+
+void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+	
+	//Render text pointed to by *textPtr in buffer *dest
+
+	char textChar;
+	char *curPos = textPtr;
+	char *lastSpace = curPos;
+	byte *centerTblPtr = _centreTable;
+	uint16 lineWidth = 0;  
+	
+	_dtCol = color;
+	_dtLineWidth = pixelWidth;  
+	_dtLines = 0;
+	_dtLetters = 1;
+	_dtData = dest;
+	_dtText = textPtr;
+	_dtCentre = centre;
+
+	textChar = *curPos++;
+	_dtLetters++;
+
+	while (textChar >= 0x20) {
+
+		textChar -= 0x20;
+		if (textChar == 0) {
+			lastSpace = curPos; //keep track of last space
+			*(uint32*)centerTblPtr = TO_LE_32(lineWidth);
+		}
+		
+		lineWidth += *(_characterSet+textChar);	//add character width
+		lineWidth += _dtCharSpacing;	//include character spacing
+	
+		if (pixelWidth <= lineWidth) {
+	
+			if (*(lastSpace-1) == 10)
+				warning("line width exceeded!");
+
+			*(lastSpace-1) = 10;
+			lineWidth = 0;
+			_dtLines++;
+			centerTblPtr += 4;	//get next space in centering table
+			curPos = lastSpace;	//go back for new count
+		}
+
+		textChar = *curPos++;
+		_dtLetters++;
+	}
+
+	_dtLastWidth = lineWidth;	//save width of last line
+	*(uint32 *)centerTblPtr = TO_LE_32(lineWidth);	//and update centering table
+	_dtLines++;
+
+	if (_dtLines > MAX_NO_LINES)
+		error("Maximum no. of lines exceeded!");
+
+	_dtLineSize = pixelWidth * _charHeight;
+	uint32 numBytes = (_dtLineSize * _dtLines) + sizeof(struct dataFileHeader) + 4;	
+
+	if (_dtData == NULL)
+		_dtData = (byte *)malloc(numBytes);
+
+	byte *curDest = dest;
+
+	uint32 bytesToClear = numBytes; //no of bytes to clear
+	bytesToClear -= sizeof(struct dataFileHeader);	//don't touch the header.
+	memset(curDest + sizeof(struct dataFileHeader), 0, bytesToClear);
+	curPos += bytesToClear;
+
+	//make the header
+	((struct dataFileHeader *)curDest)->s_width = TO_LE_16(_dtLineWidth);
+	((struct dataFileHeader *)curDest)->s_height = TO_LE_16(_charHeight * _dtLines);
+	((struct dataFileHeader *)curDest)->s_sp_size = TO_LE_16(_dtLineWidth * _charHeight * _dtLines);
+	((struct dataFileHeader *)curDest)->s_offset_x = TO_LE_16(0);
+	((struct dataFileHeader *)curDest)->s_offset_y = TO_LE_16(0);
+	
+	//reset position
+	curPos = textPtr;
+
+	curDest += sizeof(struct dataFileHeader);	//point to where pixels start
+	byte *prevDest = curDest;
+	centerTblPtr = _centreTable;
+
+	do {
+		if (_dtCentre) {
+		
+			uint32 width = _dtLineWidth;
+			width -= READ_LE_UINT32(centerTblPtr); 
+			centerTblPtr += 4;
+			width >>=1;
+			curDest += width;
+		}
+
+		textChar = *curPos++;
+		while (textChar >= 0x20) {
+			textChar -= 0x20;
+			makeGameCharacter(textChar, _characterSet, curDest, color);
+			textChar = *curPos++;
+		}
+
+		curDest = prevDest;	//start of last line
+		curDest += _dtLineSize;	//start of next
+		prevDest = curDest;
+
+	} while (textChar >= 10);
+			
+}
+
+void SkyText::makeGameCharacter(char textChar, uint8 *charSet, uint8 *&dest, uint8 color) {
+
+	bool maskBit, dataBit;	
+	uint8 charWidth = (*(charSet + textChar)) + 1 - _dtCharSpacing;
+	uint16 data, mask; 
+	byte *charSpritePtr = (charSet + CHAR_SET_HEADER + ((_charHeight << 2) * textChar));
+	byte *startPos = dest;
+	byte *curPos = startPos;
+
+	for (int i = 0; i < _charHeight; i++) {
+
+		byte *prevPos = curPos;
+	
+		data = READ_BE_UINT16(charSpritePtr);
+		mask = READ_BE_UINT16(charSpritePtr + 2);
+		charSpritePtr += 4;
+		
+		for (int j = 0; j < charWidth; j++) {
+	
+			maskBit = (bool)(mask & 0x8000); //check mask
+			mask <<= 1;
+			dataBit = (bool)(data & 0x8000); //check data
+			data <<= 1;
+
+			if (maskBit) 
+				if (dataBit) 
+					*curPos = color;
+				else
+					*curPos = 240; //transparent
+
+			curPos++;
+		}
+
+		//advance a line
+		curPos = prevPos;
+		curPos += _dtLineWidth;
+	}
+	
+	//update position
+	dest = startPos + charWidth + _dtCharSpacing*2 - 1; 
+
 }
 
 char SkyText_v00267::getTextChar() {

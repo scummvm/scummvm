@@ -28,6 +28,9 @@ class SkyText {
 public:
 	SkyText(SkyDisk *skyDisk, uint32 gameVersion);
 	void getText(uint32 textNr, void **itemList, uint16 language);
+	void displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
+	void displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
+	void makeGameCharacter(char textChar, uint8 *charSet, uint8 *&data, uint8 color);
 
 protected:
 	bool getTBit();
@@ -48,22 +51,23 @@ protected:
 	
 	uint32	_curCharSet;
 	uint8	*_characterSet;
-	uint32	_charHeight;
+	uint8	_charHeight;
 	uint8	*_preAfterTableArea;
 
-	uint8 _textBuffer[1024];
+	char _textBuffer[1024];
 	uint8 _centreTable[40];
 	
 	uint8	*_mouseTextData;	//space for the mouse text
-	uint8	_dlCol;
+	uint8	_dtCol;
 	uint16	_dtLineWidth;	//width of line in pixels
 	uint32	_dtLines;	//no of lines to do
 	uint32	_dtLineSize;	//size of one line in bytes
 	uint8	*_dtData;	//address of textdata
 	uint32	_dtLetters;	//no of chars in message
-	uint8	*_dtText;	//pointer to text
+	char	*_dtText;	//pointer to text
 	uint32	_dtCharSpacing;	//character seperation adjustment
 	uint32	_dtWidth;	//width of chars in last line (for editing (?))
+	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
 };
 
