@@ -50,7 +50,6 @@ struct R_SOUNDBUFFER {
 	size_t s_buf_len;
 };
 
-
 class Sound {
  public:
 
