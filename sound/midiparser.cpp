@@ -35,6 +35,7 @@
 //////////////////////////////////////////////////
 
 MidiParser::MidiParser() :
+_hanging_notes_count (0),
 _driver (0),
 _timer_rate (0x4A0000),
 _ppqn (96),
@@ -44,8 +45,7 @@ _autoLoop (false),
 _smartJump (false),
 _num_tracks (0),
 _active_track (255),
-_abort_parse (0),
-_hanging_notes_count (0)
+_abort_parse (0)
 {
 	memset (_active_notes, 0, sizeof(_active_notes));
 }
