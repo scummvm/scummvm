@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	scumm/resource_v2.o \
 	scumm/resource_v3.o \
 	scumm/resource_v4.o \
+	scumm/resource_v7he.o \
 	scumm/saveload.o \
 	scumm/script.o \
 	scumm/script_v2.o \

@@ -49,6 +49,7 @@
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/resource.h"
+#include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm-md5.h"
 #include "scumm/sound.h"
@@ -839,6 +840,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_insane = new Insane((ScummEngine_v6 *)this);
 	else
 		_insane = 0;
+
+	// HE v7.0+
+	if (_heversion >= 70) {
+		_Win32ResExtractor = new Win32ResExtractor(this);
+	} else {
+		_Win32ResExtractor = 0;
+	}
 }
 
 ScummEngine::~ScummEngine() {

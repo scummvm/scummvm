@@ -52,6 +52,7 @@ class ScummEngine;
 class ScummDebugger;
 class Serializer;
 class Sound;
+class Win32ResExtractor;
 
 struct Box;
 struct BoxCoords;
@@ -1043,6 +1044,9 @@ protected:
 	bool _confirmExit;
 
 	Insane *_insane;
+
+	// HE v7.0+ games
+	Win32ResExtractor *_Win32ResExtractor;
 
 public:
 	uint16 _extraBoxFlags[65];

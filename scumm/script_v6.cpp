@@ -33,6 +33,7 @@
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
+#include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
@@ -934,7 +935,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		{
 			if (_heversion >= 70) { // Windows titles
-				warning("cursorCommand 0x99 PC_SetCursorToID(%d) stub", pop());
+				_Win32ResExtractor->extractCursor(pop());
 				break;
 			}
 			int room, obj = popRoomAndObj(&room);
