@@ -308,7 +308,6 @@ void ScummEngine::makeCursorColorTransparent(int a) {
 
 void ScummEngine::grabCursorFromBuffer(byte *ptr, int width, int height) {
 	uint size;
-	byte *dst;
 
 	size = width * height;
 	if (size > sizeof(_grabbedCursor))
