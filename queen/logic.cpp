@@ -411,7 +411,7 @@ uint16 Logic::objectForPerson(uint16 bobNum) const {
 	return 0;
 }
 
-WalkOffData *Logic::walkOffPointForObject(uint16 obj) const {
+WalkOffData *Logic::walkOffPointForObject(int16 obj) const {
 	uint16 i;
 	for (i = 1; i <= _numWalkOffs; ++i) {
 		if (_walkOffData[i].entryObj == obj) {
@@ -511,9 +511,8 @@ void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 		_credits->nextRoom();
 
 	setupRoom(roomName(room), comPanel, inCutaway);
-	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
-		pod = setupJoeInRoom(mode != RDM_FADE_JOE_XY, scale);
+		setupJoeInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
 	if (mode != RDM_NOFADE_JOE) {
 		_vm->update();
@@ -521,8 +520,11 @@ void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 		int end = isIntroRoom(_currentRoom) ? 255 : 223;
 		_vm->display()->palFadeIn(0, end, _currentRoom, joe->active, joe->x, joe->y);
 	}
-	if (pod != NULL) {
-		_vm->walk()->moveJoe(0, pod->x, pod->y, inCutaway);
+	if (mode != RDM_FADE_NOJOE && joeX() != 0 && joeY() != 0) {
+		int16 jx = joeX();
+		int16 jy = joeY();
+		joePos(0, 0);
+		_vm->walk()->moveJoe(0, jx, jy, inCutaway);
 	}
 }
 
@@ -604,30 +606,34 @@ void Logic::setupJoe() {
 	joeFacing(DIR_FRONT);
 }
 
-ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
+void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	debug(9, "Logic::setupJoeInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
 	WalkOffData *pwo = NULL;
-	ObjectData *pod = objectData(_entryObj);
 
-	uint16 oldx, oldy;
+	int16 oldx, oldy;
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
 		oldx = joeX();
 		oldy = joeY();
+		joePos(0, 0);
 	} else {
+		ObjectData *pod = objectData(_entryObj);
 		// find the walk off point for the entry object and make 
 		// Joe walking to that point
 		pwo = walkOffPointForObject(_entryObj);
 		if (pwo != NULL) {
 			oldx = pwo->x;
 			oldy = pwo->y;
+			// entryObj has a walk off point, then walk from there to object x,y
+			joePos(pod->x, pod->y);
 		} else {
 			// no walk off point, use object position
 			oldx = pod->x;
 			oldy = pod->y;
+			joePos(0, 0);
 		}
 	}
 
-	debug(6, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
+	debug(6, "Logic::setupJoeInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
 
 	if (scale > 0 && scale < 100) {
 		joeScale(scale);
@@ -645,6 +651,7 @@ ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 		joeCutFacing(0);
 	} else {
 		// check to see which way Joe entered room
+		ObjectData *pod = objectData(_entryObj);
 		switch (State::findDirection(pod->state)) {
 		case DIR_BACK:
 			joeFacing(DIR_FRONT);
@@ -680,13 +687,6 @@ ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	joeFace();
 	pbs->curPos(oldx, oldy);
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	joePos(0, 0);
-
-	if (pwo != NULL) {
-		// entryObj has a walk off point, then walk from there to object x,y
-		return pod;
-	}
-	return NULL;
 }
 
 uint16 Logic::joeFace() {

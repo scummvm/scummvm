@@ -83,7 +83,7 @@ public:
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
 	uint16 objectForPerson(uint16 bobnum) const;
-	WalkOffData *walkOffPointForObject(uint16 obj) const;
+	WalkOffData *walkOffPointForObject(int16 obj) const;
 
 	uint16 walkOffCount() const { return _numWalkOffs; }
 	WalkOffData *walkOffData(int index) const { return &_walkOffData[index]; }
@@ -138,7 +138,7 @@ public:
 	void setupJoe();
 
 	//! Setup Joe at the right place when entering a room
-	ObjectData *setupJoeInRoom(bool autoPosition, uint16 scale);
+	void setupJoeInRoom(bool autoPosition, uint16 scale);
 	
 	uint16 joeFace();
 	void joeGrab(int16 grabState);
