@@ -9,6 +9,7 @@ Global
 		ConfigName.1 = Release
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
+		{44D38F29-303D-4E3D-AF45-B96523BF1F9F}.0 = {5930DA38-F3BC-41AB-BC48-FC1AB8ED75B0}
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{44D38F29-303D-4E3D-AF45-B96523BF1F9F}.Debug.ActiveCfg = Debug|Win32
