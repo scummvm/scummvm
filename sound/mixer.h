@@ -75,6 +75,7 @@ private:
 		byte _flags;
 
 	public:
+		virtual void append(void *sound, uint32 size) {}	// FIXME, FAKE
 		void mix(int16 *data, uint len);
 		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 		void real_destroy();
@@ -94,6 +95,7 @@ private:
 		FILE   *_file;
 		bool _initialized;
 	public:
+		virtual void append(void *sound, uint32 size) {}	// FIXME, FAKE
 		void mix(int16 *data, uint len);
 		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration);
 		void real_destroy();		
