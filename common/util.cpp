@@ -143,7 +143,7 @@ const LanguageDescription g_languages[] = {
 	{"hb", "Hebrew", HB_HEB},
 	{"ru", "Russian", RU_RUS},
 	{"cz", "Czech", CZ_CZE},
-	{"nl", "Norwegian", NL_NOR},
+	{"nl", "NederLanden", NL_NLD},
 	{0, 0, UNK_LANG}
 };
 
