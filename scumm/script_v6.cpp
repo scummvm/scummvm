@@ -1323,7 +1323,7 @@ void Scumm_v6::o6_setObjectName() {
 	if (!(_features & GF_AFTER_V7) && !getOBCDFromObject(obj))
 		error("Can't set name of object %d", obj);
 
-	for (i = 1; i < 50; i++) {
+	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
 			nukeResource(rtObjectName, i);
 			_newNames[i] = 0;
@@ -1331,7 +1331,7 @@ void Scumm_v6::o6_setObjectName() {
 		}
 	}
 
-	for (i = 1; i < 50; i++) {
+	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == 0) {
 			loadPtrToResource(rtObjectName, i, NULL);
 			_newNames[i] = obj;
