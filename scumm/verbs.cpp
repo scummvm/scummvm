@@ -38,11 +38,7 @@ void Scumm::initV2MouseOver() {
 	int arrow_color, color, hi_color;
 
 	if (_version == 1) {
-		 if (_gameId == GID_MANIAC)
-			color = 15;
-		else
-			color = 4;
-
+		color = 4;
 		hi_color = 7;
 		arrow_color = 6;
 	} else {

@@ -846,9 +846,9 @@ void Scumm_v2::o2_verbOps() {
 		vs->verbid = verb;
 		if (_version == 1) {
 			if (_gameId == GID_MANIAC && _demo_mode)
-					vs->color = 15;
-				else
-					vs->color = 5;
+				vs->color = 4;
+			else
+				vs->color = 5;
 
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
@@ -1010,14 +1010,10 @@ void Scumm_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
-	if(_version == 1) {
-		if (_gameId == GID_MANIAC) 
-			_string[2].color = 15;
-		else
-			_string[2].color = 4;
-	} else {
+	if (_version == 1)
+		_string[2].color = 4;
+	else 
 		_string[2].color = 13;
-	}
 
 	char *ptr = sentence;
 	int n = 0;
@@ -1337,7 +1333,6 @@ void Scumm_v2::o2_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 	case 2:											/* room color */
-		warning("Remapping color %d to color %d", b, a);
 		_shadowPalette[b] = a;
 		_fullRedraw = true;
 		break;
