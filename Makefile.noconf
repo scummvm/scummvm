@@ -80,6 +80,8 @@ DISABLE_SWORD2 = 1
 # Misc stuff - you should normally never have to edit this            #
 #######################################################################
 
+EXECUTABLE := scummvm$(EXEEXT)
+
 include Makefile.common
 
 dist:
