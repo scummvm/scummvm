@@ -37,6 +37,8 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
 namespace Common {
 
+class String;
+
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
@@ -44,7 +46,7 @@ namespace Common {
  * @param len	the lenght of that data
  * @param bytes_per_line	number of bytes to print per line (default: 16)
  */
-void hexdump(const byte * data, int len, int bytesPerLine = 16);
+extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
 
 /**
  * Simple random number generator. Although it is definitely not suitable for
@@ -85,6 +87,54 @@ public:
 	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0);
 	~StackLock();
 };
+
+/**
+ * List of language ids.
+ * @note The order and mappings of the values 0..8 are *required* to stay the
+ * way they are now, as scripts in COMI rely on them. So don't touch them.
+ * I am working on removing this restriction.
+ */
+enum Language {
+	UNK_LANG = -1,	// Use default language (i.e. none specified)
+	EN_USA = 0,
+	DE_DEU = 1,
+	FR_FRA = 2,
+	IT_ITA = 3,
+	PT_BRA = 4,
+	ES_ESP = 5,
+	JA_JPN = 6,
+	ZH_TWN = 7,
+	KO_KOR = 8,
+	SE_SWE = 9,
+	EN_GRB = 10,
+	HB_HEB = 20
+};
+
+/** Convert a string containing a language name into a Language enum value. */
+extern Language parseLanguage(const String &str);
+
+/**
+ * List of game platforms. Specifying a platform for a target can be used to
+ * give the game engines a hint for which platform the game data file are.
+ * This may be optional or required, depending on the game engine and the
+ * game in question.
+ */
+enum Platform {
+	kPlatformUnknown = -1,
+	kPlatformPC = 0,
+	kPlatformAmiga = 1,
+	kPlatformAtariST = 2,
+	kPlatformMacintosh = 3
+/*
+	kPlatformNES,
+	kPlatformSEGA,
+	kPlatformFMTowns,
+	kPlatformPCEngine
+*/
+};
+
+/** Convert a string containing a platform name into a Platform enum value. */
+extern Platform parsePlatform(const String &str);
 
 }	// End of namespace Common
 

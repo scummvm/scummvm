@@ -22,7 +22,6 @@
 #include "scumm/charset.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
-#include "base/gameDetector.h"
 
 namespace Scumm {
 
@@ -868,16 +867,16 @@ static byte spanishCharsetDataV2[] = {
 void CharsetRendererV2::setCurID(byte id) {
 
 	switch (_vm->_language) {
-	case DE_DEU:
+	case Common::DE_DEU:
 		_fontPtr = germanCharsetDataV2;
 		break;
-	case FR_FRA:
+	case Common::FR_FRA:
 		_fontPtr = frenchCharsetDataV2;
 		break;
-	case IT_ITA:
+	case Common::IT_ITA:
 		_fontPtr = italianCharsetDataV2;
 		break;
-	case ES_ESP:
+	case Common::ES_ESP:
 		_fontPtr = spanishCharsetDataV2;
 		break;
 	default:

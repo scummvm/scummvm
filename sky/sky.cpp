@@ -137,20 +137,6 @@ void SkyEngine::initVirgin() {
 	_skyScreen->showScreen(60110);
 }
 
-uint8 SkyEngine::_languageTable[11] = {
-	SKY_USA, // EN_USA
-	SKY_GERMAN, // DE_DEU
-	SKY_FRENCH, // FR_FRA
-	SKY_ITALIAN, // IT_ITA
-	SKY_PORTUGUESE, // PT_BRA
-	SKY_SPANISH, // ES_ESP
-	SKY_USA, // JA_JPN
-	SKY_USA, // ZH_TWN
-	SKY_USA, // KO_KOR
-	SKY_SWEDISH, // SE_SWE
-	SKY_ENGLISH  // EN_GRB
-};
-
 void SkyEngine::doCheat(uint8 num) {
 
 	switch(num) {
@@ -297,11 +283,32 @@ void SkyEngine::initialise(void) {
 	if (_systemVars.gameVersion == 288)
 		SkyCompact::patchFor288();
 
-	int language = GameDetector::parseLanguage(ConfMan.get("language"));
-	if (language < 0 || language > 10)
+	switch (Common::parseLanguage(ConfMan.get("language"))) {
+	case Common::DE_DEU:
+		_systemVars.language = SKY_GERMAN;
+		break;
+	case Common::FR_FRA:
+		_systemVars.language = SKY_FRENCH;
+		break;
+	case Common::IT_ITA:
+		_systemVars.language = SKY_ITALIAN;
+		break;
+	case Common::PT_BRA:
+		_systemVars.language = SKY_PORTUGUESE;
+		break;
+	case Common::ES_ESP:
+		_systemVars.language = SKY_SPANISH;
+		break;
+	case Common::SE_SWE:
+		_systemVars.language = SKY_SWEDISH;
+		break;
+	case Common::EN_GRB:
+		_systemVars.language = SKY_ENGLISH;
+		break;
+	default:
 		_systemVars.language = SKY_USA;
-	else
-		_systemVars.language = _languageTable[language];
+		break;
+	}
 
 	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
 		warning("The language you selected does not exist in your BASS version.");

@@ -38,27 +38,6 @@ enum {
 	GF_DEFAULT_TO_1X_SCALER = 1 << 31
 };
 
-/**
- * List of language ids.
- * @note The order and mappings of the values 0..8 are *required* to stay the
- * way they are now, as scripts in COMI rely on them. So don't touch them.
- */
-enum Language {
-	UNK_LANG = -1,	// Use default language (i.e. none specified)
-	EN_USA = 0,
-	DE_DEU = 1,
-	FR_FRA = 2,
-	IT_ITA = 3,
-	PT_BRA = 4,
-	ES_ESP = 5,
-	JA_JPN = 6,
-	ZH_TWN = 7,
-	KO_KOR = 8,
-	SE_SWE = 9,
-	EN_GRB = 10,
-	HB_HEB = 20
-};
-
 enum Platform {
 	kPlatformUnknown = -1,
 	kPlatformPC = 0,
@@ -115,8 +94,6 @@ public:
 
 	static int parseGraphicsMode(const String &s);	// Used in main()
 	static int parseMusicDriver(const String &s);
-	static Language parseLanguage(const String &s);
-	static Platform parsePlatform(const String &s);
 	
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 

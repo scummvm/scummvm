@@ -151,28 +151,6 @@ static const struct GraphicsMode gfx_modes[] = {
 	{0, 0, 0}
 };
 
-struct LanguageDescription {
-	const char *name;
-	const char *description;
-	Language id;
-};
-
-static const struct LanguageDescription languages[] = {
-	{"en", "English", EN_USA},
-	{"de", "German", DE_DEU},
-	{"fr", "French", FR_FRA},
-	{"it", "Italian", IT_ITA},
-	{"pt", "Portuguese", PT_BRA},
-	{"es", "Spanish", ES_ESP},
-	{"jp", "Japanese", JA_JPN},
-	{"zh", "Chinese (Taiwan)", ZH_TWN},
-	{"kr", "Korean", KO_KOR},
-	{"gb", "English", EN_GRB},
-	{"se", "Swedish", SE_SWE},
-	{"hb", "Hebrew", HB_HEB},
-	{0, 0, UNK_LANG}
-};
-
 GameDetector::GameDetector() {
 
 	// Graphics
@@ -365,7 +343,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				break;
 			case 'q':
 				HANDLE_OPTION();
-				if (parseLanguage(option) == UNK_LANG)
+				if (Common::parseLanguage(option) == Common::UNK_LANG)
 					goto ShowHelpAndExit;
 				ConfMan.set("language", option);
 				break;
@@ -409,7 +387,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// Long options. Let the fun begin!
 				if (!strncmp(s, "platform=", 9)) {
 					s += 9;
-					int platform = parsePlatform(s);
+					int platform = Common::parsePlatform(s);
 					if (platform == kPlatformUnknown)
 						goto ShowHelpAndExit;
 
@@ -489,38 +467,6 @@ int GameDetector::parseGraphicsMode(const String &str) {
 	}
 
 	return -1;
-}
-
-Language GameDetector::parseLanguage(const String &str) {
-	if (str.isEmpty())
-		return UNK_LANG;
-
-	const char *s = str.c_str();
-	const LanguageDescription *l = languages;
-	while (l->name) {
-		if (!scumm_stricmp(l->name, s))
-			return l->id;
-		l++;
-	}
-
-	return UNK_LANG;
-}
-
-Platform GameDetector::parsePlatform(const String &str) {
-	if (str.isEmpty())
-		return kPlatformUnknown;
-
-	const char *s = str.c_str();
-	if (!scumm_stricmp(s, "pc"))
-		return kPlatformPC;
-	else if (!scumm_stricmp(s, "amiga") || !scumm_stricmp(s, "1"))
-		return kPlatformAmiga;
-	else if (!scumm_stricmp(s, "atari-st") || !scumm_stricmp(s, "atari") || !scumm_stricmp(s, "2"))
-		return kPlatformAtariST;
-	else if (!scumm_stricmp(s, "macintosh") || !scumm_stricmp(s, "mac") || !scumm_stricmp(s, "3"))
-		return kPlatformMacintosh;
-	else
-		return kPlatformUnknown;
 }
 
 int GameDetector::parseMusicDriver(const String &str) {

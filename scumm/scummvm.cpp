@@ -609,7 +609,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_confirmExit = ConfMan.getBool("confirm_exit");
 	_defaultTalkDelay = ConfMan.getInt("talkspeed");
 	_native_mt32 = ConfMan.getBool("native_mt32");
-	_language = GameDetector::parseLanguage(ConfMan.get("language"));
+	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
+	// Rather we should explicitly translate them.
+	_language = Common::parseLanguage(ConfMan.get("language"));
 	memset(&res, 0, sizeof(res));
 	_hexdumpScripts = false;
 	_showStack = false;
@@ -707,19 +709,19 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 
 	// Load CJK font
 	_CJKMode = false;
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == KO_KOR || _language == JA_JPN || _language == ZH_TWN)) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		File fp;
 		const char *fontFile = NULL;
 		switch(_language) {
-		case KO_KOR:
+		case Common::KO_KOR:
 			_CJKMode = true;
 			fontFile = "korean.fnt";
 			break;
-		case JA_JPN:
+		case Common::JA_JPN:
 			_CJKMode = true;
 			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
 			break;
-		case ZH_TWN:
+		case Common::ZH_TWN:
 			if (_gameId == GID_CMI) {
 				_CJKMode = true;
 				fontFile = "chinese.fnt";
@@ -734,13 +736,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 
 			int numChar = 0;
 			switch(_language) {
-			case KO_KOR:
+			case Common::KO_KOR:
 				numChar = 2350;
 				break;
-			case JA_JPN:
+			case Common::JA_JPN:
 				numChar = (_gameId == GID_DIG) ? 1 : 1; //FIXME
 				break;
-			case ZH_TWN:
+			case Common::ZH_TWN:
 				numChar = 1; //FIXME
 				break;
 			}
@@ -2640,7 +2642,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			detector->_game.features |= GF_AMIGA;
 	}
 
-	switch (GameDetector::parsePlatform(ConfMan.get("platform"))) {
+	switch (Common::parsePlatform(ConfMan.get("platform"))) {
 	case kPlatformAmiga:
 		detector->_game.features |= GF_AMIGA;
 		break;

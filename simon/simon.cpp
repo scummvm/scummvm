@@ -489,7 +489,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
-	_language = GameDetector::parseLanguage(ConfMan.get("language"));
+	_language = Common::parseLanguage(ConfMan.get("language"));
 	_noSubtitles = ConfMan.getBool("nosubtitles");
 
 	_system->init_size(320, 200);
