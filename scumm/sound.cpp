@@ -757,9 +757,8 @@ int Sound::isSoundRunning(int sound) const {
 		return pollCD();
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == 10002) {
-			return !_talkChannelHandle.isActive();
-		} else if (sound == -2 || sound == 10001) {
+		if (sound == -2 || sound >= 10001) {
+			// Maybe checks sound channel?
 			return !isSfxFinished();
 		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
@@ -840,10 +839,8 @@ void Sound::stopSound(int sound) {
 	int i;
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == 10002) {
-			_vm->stopTalk();
-		} else if (sound == -2 || sound == 10001) {
-			// Stop current sfx
+		if (sound == -2 || sound >= 10001) {
+			// Maybe stops sound channel?
 		} else if (sound == -1 || sound == 10000) {
 			// Stop current music
 			if (_vm->_heversion >= 70  || _currentMusic)
