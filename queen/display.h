@@ -152,8 +152,6 @@ private:
 	uint8 *_panelBuf;
 	uint8 *_backdropBuf;
 
-	uint8 _mousePtr[14 * 14];
-
 	uint8 _fullRefresh;
 	uint8 *_dirtyBlocks;
 	uint16 _dirtyBlocksWidth, _dirtyBlocksHeight;
