@@ -952,8 +952,7 @@ void Scumm::runDialog(Dialog *dialog)
 	_sound->pauseSounds(true);
 
 	// Open & run the dialog
-	dialog->open();
-	_newgui->runLoop();
+	dialog->runModal();
 
 	// Restore old cursor
 	updateCursor();

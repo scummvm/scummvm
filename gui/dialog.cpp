@@ -50,6 +50,18 @@ Dialog::~Dialog()
 	_firstWidget = 0;
 }
 
+int Dialog::runModal()
+{
+	// Open up
+	open();
+	
+	// Start processing events
+	_gui->runLoop();
+	
+	// FIXME - for now always return 0....
+	return 0;
+}
+
 void Dialog::open()
 {
 	Widget *w = _firstWidget;

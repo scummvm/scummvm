@@ -81,6 +81,8 @@ protected:
 	bool		_needRedraw;
 	DialogStack	_dialogStack;
 	
+	bool		_stateIsSaved;
+	
 	// for continuous events (keyDown)
 	int			_currentKeyDown, _currentKeyDownFlags;
 	uint32		_keyRepeatTime;

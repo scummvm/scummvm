@@ -136,8 +136,7 @@ static void launcherDialog(GameDetector &detector, OSystem *system)
 	g_system = system;
 
 	Dialog *dlg = new LauncherDialog(g_gui, detector);
-	dlg->open();
-	g_gui->runLoop();
+	dlg->runModal();
 	delete dlg;
 }
 

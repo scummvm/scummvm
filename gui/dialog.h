@@ -49,7 +49,13 @@ public:
 		  _mouseWidget(0), _focusedWidget(0), _visible(false)
 		{}
 	virtual ~Dialog();
+	
+	virtual int runModal();
 
+	NewGui	*getGui()			{ return _gui; }
+	bool 	isVisible() const	{ return _visible; }
+
+protected:
 	virtual void open();
 	virtual void close();
 
@@ -63,11 +69,6 @@ public:
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	
-	NewGui	*getGui()	{ return _gui; }
-	
-	bool isVisible() const		{ return _visible; }
-
-protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
 
 	Widget* addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);

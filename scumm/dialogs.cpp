@@ -468,7 +468,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// TODO
 		break;
 	case kAboutCmd:
-		_aboutDialog->open();
+		_aboutDialog->runModal();
 		break;
 	case kMasterVolumeChanged:
 		_soundVolumeMaster = masterVolumeSlider->getValue();

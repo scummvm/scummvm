@@ -82,7 +82,7 @@ static byte guifont[] = {
 
 // Constructor
 NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
-	_currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
+	_stateIsSaved(false), _currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
 	// Setup some default GUI colors.
 	// TODO - either use nicer values, or maybe make this configurable?
@@ -98,23 +98,18 @@ NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false
 
 void NewGui::runLoop()
 {
-	if (!isActive())
+	Dialog *activeDialog = _dialogStack.top();
+	bool didSaveState = false;
+
+	if (activeDialog == 0)
 		return;
 	
-	Dialog *activeDialog;
-	int i;
-	OSystem::Event event;
+	if (!_stateIsSaved) {
+		saveState();
+		didSaveState = true;
+	}
 
-	saveState();
-
-	_currentKeyDown = 0;
-	
-	_lastClick.x = _lastClick.y = 0;
-	_lastClick.time = 0;
-	_lastClick.count = 0;
-
-	while (isActive()) {
-		activeDialog = _dialogStack.top();
+	while (activeDialog == _dialogStack.top()) {
 
 		activeDialog->handleTickle();
 	
@@ -123,15 +118,15 @@ void NewGui::runLoop()
 			// This is necessary to get the blending right.
 			_system->clear_overlay();
 			_system->grab_overlay(_screen, _screenPitch);
-			for (i = 0; i < _dialogStack.size(); i++)
+			for (int i = 0; i < _dialogStack.size(); i++)
 				_dialogStack[i]->draw();
 			_needRedraw = false;
 		}
 		
 		animateCursor();
-	
 		_system->update_screen();		
 
+		OSystem::Event event;
 		uint32 time = _system->get_msecs();
 
 		while (_system->poll_event(&event)) {
@@ -192,7 +187,8 @@ void NewGui::runLoop()
 		_system->delay_msecs(10);
 	}
 	
-	restoreState();
+	if (didSaveState)
+		restoreState();
 }
 
 #pragma mark -
@@ -209,6 +205,13 @@ void NewGui::saveState()
 //	_screen = new int16[_system->get_width() * _system->get_height()];
 //	_screenPitch = _system->get_width();
 	_system->grab_overlay(_screen, _screenPitch);
+
+	_currentKeyDown = 0;
+	_lastClick.x = _lastClick.y = 0;
+	_lastClick.time = 0;
+	_lastClick.count = 0;
+
+	_stateIsSaved = true;
 }
 
 void NewGui::restoreState()
@@ -221,7 +224,9 @@ void NewGui::restoreState()
 		_screen = 0;
 	}
 	
-	_system->update_screen();		
+	_system->update_screen();
+	
+	_stateIsSaved = false;
 }
 
 void NewGui::openDialog(Dialog *dialog)
