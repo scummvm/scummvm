@@ -120,9 +120,6 @@
 				RelativePath="..\..\sword2\driver\keyboard.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\language.cpp">
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\menu.cpp">
 			</File>
 			<File
