@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH SCUMMVM 6 "June 17, 2003"
+.TH SCUMMVM 6 "August 6, 2003"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -28,6 +28,9 @@ games using similar engines may be supported - for example
 \fBSimon The Sorcerer\fP
 .
 .P
+Note that this manpage is frequently outdated and you would be well advised to
+look at the README and the output of \fIscummvm -h\fP for more up to date information.
+.P
 Please be aware that the engine may contains bugs and non-implemented features
 that may make it impossible to finish the game. Check 
 .B http://www.scummvm.org/compatibility.php
@@ -42,8 +45,8 @@ game is then supplied on the command line.
 .B \-a
 Specify game is amiga version.
 .TP
-.BI \-\-aspect\-ratio
-Enable aspect ratio correction
+.BI \-\-[no\-]aspect\-ratio
+Enable/Disable aspect ratio correction
 .TP
 .BI \-b <param>
 Specify parameter to pass to first game script default is 0.
@@ -77,8 +80,8 @@ Specify music output where \fI<mode>\fP can be one of:
 .BI \-f
 Runs in full-screen mode.
 .TP
-.BI \-\-floppy\-intro
-Use floppy version intro for Beneath a Steel Sky CD version.
+.BI \-\-[no\-]floppy\-intro
+Enable/Disable floppy version intro for Beneath a Steel Sky CD version.
 .TP
 .BI \-g <mode>
 Graphics Filter. Note that resolutions listed assume the game was originally 320x200.
@@ -106,7 +109,7 @@ Graphics Filter. Note that resolutions listed assume the game was originally 320
 .br
 .TP
 .BI \-h
-Show options.
+Show help and exit.
 .TP
 .BI \-l <file>
 Load config file \fI<file>\fP instead of default.
@@ -114,14 +117,14 @@ Load config file \fI<file>\fP instead of default.
 .B \-m <num>
 Set music volume to number \fI<num>\fP (0-255)
 .TP
-.BI \-\-multi\-midi
-Enable combination Adlib and native MIDI.
+.BI \-\-[no\-]multi\-midi
+Enable/Disable combination Adlib and native MIDI.
 .TP
 .B \-n
 No subtitles for speech
 .TP
-.BI \-\-native\-mt32
-True Roland MT-32 (disable GM emulation)
+.BI \-\-[no\-]native\-mt32
+Enable/Disable true Roland MT-32 MIDI (disable GM emulation)
 .TP
 .BI \-o <num>
 Set master volume to number \fI<num>\fP (0-255)
@@ -132,25 +135,29 @@ Specify the path to the game.
 .BI \-q <lang>
 Specify language where \fI<lang>\fP can be one of:
 .br
-\fBen\fP English (default)
-.br
 \fBde\fP German
 .br
-\fBfr\fP French
-.br
-\fBit\fP Italian
-.br
-\fBpt\fP Portuguese
+\fBen\fP English (default for most games)
 .br
 \fBes\fP Spanish
 .br
-\fBjp\fP Japanese
+\fBfr\fP French
 .br
-\fBzh\fP Chinese
+\fBgb\fP English (Great Britain) (default for Beneath a Steel Sky)
+.br
+\fBhb\fP Hebrew
+.br
+\fBit\fP Italian
+.br
+\fBjp\fP Japanese
 .br
 \fBkr\fP Korean
 .br
-\fBhb\fP Hebrew
+\fBpt\fP Portuguese
+.br
+\fBse\fP Sweedish
+.br
+\fBzh\fP Chinese
 .br
 .TP
 .BI \-s <num>
@@ -193,8 +200,14 @@ resolution, which may look squashed on modern monitors. Aspect\-ratio
 correction stretches the image to use 320x240 pixels instead, or a multiple
 thereof.
 .TP
+.B Ctrl+Alt b
+Switch between bilinear and non-linear filtering [OpenGL backend]
+.TP
 .B Alt+0..9
 Save a game state.
+.TP
+.B Alt+Enter
+Toggles full screen/windowed
 .TP
 .B Ctrl+Z
 Quit the game.
@@ -293,6 +306,9 @@ Simon the Sorcerer 2 Talkie (DOS)
 .TP
 .B simon2mac
 Simon the Sorcerer 2 Talkie (Amiga or Mac)
+.TP
+.B sky
+Beneath a Steel Sky
 
 .SH FILES
 .TP
@@ -322,7 +338,7 @@ scummvm -q it -f maniac
 .SH AUTHOR
 This manual page was written by David Given <dg@cowlark.com>,
 for the Debian GNU/Linux system (but may be used by others).
-Heavily Updated and maintained by Jonathan Gray <khalek@scummvm.org>.
+Heavily updated by Jonathan Gray <khalek@scummvm.org>.
 .P
 \fBScummVM\fP was written by Ludvig Strigeus <strigeus@users.sourceforge.net>
 and the ScummVM team. See
