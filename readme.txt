@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-05-08
-Release version: 0.2.0 [CVS Build]
+Last updated:    2002-05-13
+Release version: 0.2.0 [Release]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -88,14 +88,15 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         BeOS            - SDL
         Acorn (RiscOS)  - ???
         Dreamcast       - ???
-
+        UNIX            - SDL           (SDL may work on Solaris, IRIX, *BSD)
 
 Known Bugs:
 -----------
 
 This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the web site, please see below.
+listed here, nor in the compatibility table on the web site, please see
+the section on Reporting Bugs.
 
        Indy 4 (Fate Of Atlantis):
                 - Keyboard fighting does not work. ScummVM now defaults to
@@ -104,7 +105,10 @@ listed here, nor in the compatibility table on the web site, please see below.
 
        Sam and Max:
                 - Subgames are not all fully functional.
-
+                - Conroy singing in Bumpusville may work incorrectly. Eg,
+                  music will overlap and Conroy will get stuck singing. Just
+                  hit escape to skip the cutscene. This is due to SNM using
+                  a different iMUSE implementation to previous games.
 
        Zak McKracken Fm Towns:
                 - The Fm Towns 256 color version of Zak McKracken is rare,
@@ -119,7 +123,7 @@ listed here, nor in the compatibility table on the web site, please see below.
                 - If you are having random crashes, this is a Windows bug.
                   Try copying the data files from CD to your hard disk.
 
-                - Bobbin may rarely appear to walk backwards.
+                - Bobbin may sometimes appear to walk backwards.
 
 
 Reporting Bugs:
@@ -128,6 +132,8 @@ To report a bug, please create a SourceForge account and follow the bugs
 link from our homepage. Please make sure the bug is reproducible, and 
 still exists in the latest daily build/current CVS version. Also check the
 compatibility listing for that game to ensure the issue is not already known.
+
+Do NOT report bugs listed as being completable above.
 
 Please include the following information:
         - Game version (PLEASE test the latest CVS/Daily build)
@@ -234,7 +240,7 @@ Command Line Options:
 
 In game Hot Keys:
 -----------------
-        Ctrl 0-9 and Shift 0-9   - load and save states.
+        Ctrl 0-9 and Shift 0-9   - load and save games
         Ctrl-Alt 1-7             - cycles between graphics filters
         Ctrl-z                   - quits
         Ctrl-f                   - runs in fast mode.
@@ -244,7 +250,8 @@ In game Hot Keys:
         [ and ]                  - master volume, down/up
         - and +                  - text speed, slower / faster
         F5                       - displays a save/load box.
-        Space                    - pauses.
+        Space                    - pauses
+        Period (.)               - skips current line of text in some games
         Alt-Enter                - toggles full screen/windowed
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
@@ -274,7 +281,8 @@ Autosaves:
 ----------
 
 Because ScummVM is still a beta product, it -can- crash and/or hang
-occasionally. As such, every five minutes it will save a game in Slot 0.
+occasionally. As such, every five minutes it will save a game in Slot 0. This
+game can be loaded via Ctrl-0, or the F5 menu.
 
 
 Savegames:
@@ -345,9 +353,9 @@ If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
 selects the port on the selected sequencer to use. Then start scummvm with the
 -eseq parameter. This should work on several cards, and may offer better
-performance and quality than Adlib emulation. For those systems where
-Sequencer support does not work, there is always MIDI emulation and Adlib
-emulation available.
+performance and quality than Adlib or MIDI emulation. However, for those
+systems where sequencer support does not work, you can always fall back on
+either of those methods.
 
 Using MP3 files for CD audio:
 -----------------------------
@@ -368,8 +376,9 @@ and ScummVM must be compiled with MAD support.
 Make a backup file of your MONSTER.SOU before attempting this. Copy your
 MONSTER.SOU file to a temporary folder. Then run:
   extract monster.sou
-In about 30 minutes or so, you will have a much smaller monster.so3 file, copy
-this file to your game dir. You can safely remove the monter.sou file.
+
+In about 30 minutes or so, you will have a much smaller monster.so3 file,
+copy this file to your game dir. You can safely remove the monter.sou file.
 
 
 Coding style:
@@ -398,7 +407,7 @@ Credits:
         Nicolas Bacca      - PocketPC/WinCE port
         Mutwin Kraus       - Macintosh port
         Max Horn           - Macintosh port
-        Marcus Comstedt    - DreamCast port
+        Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
 
  Contributors:
