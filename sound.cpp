@@ -216,6 +216,42 @@ void Sound::playSound(int sound) {
 		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
+	// Support for sampled sound effects in Monkey1 and Monkey2
+	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
+		debug(2, "Using SBL sound effect");
+
+		// TODO - Figuring out how the SBL chunk works. Here's an
+		// example:
+		//
+		// 53 42 4c 20 00 00 11 ae  |SBL ....|
+		// 41 55 68 64 00 00 00 03  |AUhd....|
+		// 00 00 80 41 55 64 74 00  |...AUdt.|
+		// 00 11 9b 01 96 11 00 a6  |........|
+		// 00 7f 7f 7e 7e 7e 7e 7e  |...~~~~~|
+		// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
+		// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
+		// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
+		// 7f 7f 7f 80 80 80 80 80  |........|
+		// 80 81 80 80 7f 7f 80 85  |........|
+		// 8b 8b 83 78 72 6d 6f 75  |...xrmou|
+		// 7a 78 77 7d 83 84 83 81  |zxw}....|
+		//
+		// The length of the AUhd chunk always seems to be 3 bytes.
+		// Let's skip that for now.
+		//
+		// The starting offset, length and sample rate is all pure
+		// guesswork. The result sounds reasonable to me, but I've
+		// never heard the original.
+
+		int size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
+		int rate = 8000;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		char *sound = (char*)malloc(size);
+		memcpy(sound, ptr + 33, size);
+		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
+	}
 
 	if ((_scumm->_features & GF_OLD256) && (ptr != NULL)) {
 		char *sound;

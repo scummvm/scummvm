@@ -605,6 +605,9 @@ int Scumm::readSoundResource(int type, int idx)
 			pri = -1;
 
 			switch (tag) {
+			case MKID('SBL '):
+				pri = 15;
+				break;
 			case MKID('ADL '):
 				if (_use_adlib)
 					pri = 10;
@@ -702,7 +705,7 @@ int Scumm::readSoundResource(int type, int idx)
 		   00 0F 00 40
 
 		   Maybe I am mistaken when I think it's four byte, some other parts
-		   seem to suggest it's 2 byte oriented, or even variable lenght...
+		   seem to suggest it's 2 byte oriented, or even variable length...
 		 */
 		fileSeek(_fileHandle, -12, SEEK_CUR);
 		total_size = fileReadDwordBE();
