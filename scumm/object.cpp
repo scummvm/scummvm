@@ -350,7 +350,8 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 	do {
 		a = od->parentstate;
 		if (!od->parent) {
-			drawObject(i, arg);
+			if ((_version <= 6 && !(_features & GF_HUMONGOUS)) || od->fl_object_index == 0)
+				drawObject(i, arg);
 			break;
 		}
 		od = &_objs[od->parent];
