@@ -233,13 +233,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						if (is_bass)
 							wm->_event.kbd.ascii = 63;
 						else
-						if (g_scumm->_version <= 2)
-							wm->_event.kbd.ascii = 5;
-						else
-						if ((g_scumm->_features & GF_OLD256) || (g_scumm->_gameId == GID_CMI) || (g_scumm->_features & GF_16COLOR))
-							wm->_event.kbd.ascii = 319;
-						else
-							wm->_event.kbd.ascii = g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY);
+							wm->_event.kbd.ascii = 319;	// "F5" key; opens up the save menu in Scumm games
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
