@@ -86,7 +86,7 @@
 const char *gScummVMVersion = "0.5.7cvs";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMFullVersion = "ScummVM 0.5.7cvs (" __DATE__ " " __TIME__ ")";
-const char *gScummVMFeatures = 
+const char *gScummVMFeatures = ""
 #ifdef USE_VORBIS
 	"Vorbis "
 #endif
