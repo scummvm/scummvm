@@ -186,10 +186,7 @@ void Scumm::drawVerb(int verb, int mode) {
 
 		vs->right = _charset->_str.right;
 		vs->bottom = _charset->_str.bottom;
-		vs->oldleft = _charset->_str.left;
-		vs->oldright = _charset->_str.right;
-		vs->oldtop = _charset->_str.top;
-		vs->oldbottom = _charset->_str.bottom;
+		vs->old = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
 	} else {
 		restoreVerbBG(verb);
@@ -201,9 +198,9 @@ void Scumm::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (vs->oldleft != -1) {
-		restoreBG(ScummVM::Rect(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom), vs->bkcolor);
-		vs->oldleft = -1;
+	if (vs->old.left != -1) {
+		restoreBG(vs->old, vs->bkcolor);
+		vs->old.left = -1;
 	}
 }
 
@@ -276,10 +273,10 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	vst = &_verbs[verb];
 	vst->right = vst->x + imgw * 8;
 	vst->bottom = vst->y + imgh * 8;
-	vst->oldleft = vst->x;
-	vst->oldright = vst->right;
-	vst->oldtop = vst->y;
-	vst->oldbottom = vst->bottom;
+	vst->old.left = vst->x;
+	vst->old.right = vst->right;
+	vst->old.top = vst->y;
+	vst->old.bottom = vst->bottom;
 
 	gdi.enableZBuffer();
 

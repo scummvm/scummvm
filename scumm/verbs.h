@@ -21,7 +21,8 @@
 #ifndef VERBS_H
 #define VERBS_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
 
 enum {
 	kTextVerbType = 0,
@@ -31,7 +32,7 @@ enum {
 struct VerbSlot {
 	int16 x, y;
 	int16 right, bottom;
-	int16 oldleft, oldtop, oldright, oldbottom;
+	ScummVM::Rect old;
 	uint16 verbid;
 	uint8 color, hicolor, dimcolor, bkcolor, type;
 	uint8 charset_nr, curmode;
