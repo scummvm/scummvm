@@ -147,7 +147,7 @@ int Actor::calcMovementFactor(int newX, int newY)
 		YXFactor = 0;
 	}
 
-	if ((uint) abs((double)(XYFactor >> 16)) > speedx) {
+	if ((uint) abs((int)(XYFactor >> 16)) > speedx) {
 		XYFactor = speedx << 16;
 		if (diffX < 0)
 			XYFactor = -XYFactor;
