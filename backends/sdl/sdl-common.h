@@ -136,8 +136,6 @@ protected:
 	int _tmpScreenWidth;
 	bool _overlayVisible;
 
-	bool _adjustAspectRatio;
-
 	// CD Audio
 	SDL_CD *_cdrom;
 	int cd_track, cd_num_loops, cd_start_frame, cd_duration;
@@ -155,6 +153,9 @@ protected:
 	uint32 _mode_flags;
 	bool _modeChanged;
 
+	/** True if aspect ratio correction is enabled. */
+	bool _adjustAspectRatio;
+
 	enum {
 		NUM_DIRTY_RECT = 100,
 
@@ -164,7 +165,7 @@ protected:
 	};
 
 	// Dirty rect managment
-	SDL_Rect _dirty_rect_list[100];
+	SDL_Rect _dirty_rect_list[NUM_DIRTY_RECT];
 	int _num_dirty_rects;
 	uint32 *_dirty_checksums;
 	bool cksum_valid;
