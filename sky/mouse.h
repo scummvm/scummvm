@@ -36,6 +36,7 @@ public:
 	void replaceMouseCursors(uint16 fileNo);
 	bool fnBlankMouse(void);
 	bool fnDiskMouse(void);
+	bool fnNormalMouse(void);
 	void lockMouse(void);
 	void unlockMouse(void);
 	void restoreMouseData(uint16 frameNum);

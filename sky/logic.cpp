@@ -1342,7 +1342,7 @@ bool SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNormalMouse");
+	return _skyMouse->fnNormalMouse();
 }
 
 bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {

@@ -103,51 +103,47 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 }
 
 SkyMouse::~SkyMouse( ){
-
 	free (_miceData);
 	free (_savedData);
 	free (_objectMouseData);
 }
 
 void SkyMouse::replaceMouseCursors(uint16 fileNo) {
-
 	_skyDisk->loadFile(fileNo, _objectMouseData);
 }
 
 bool SkyMouse::fnBlankMouse(void) {
-
 	_mouseXOff = 0;	//re-align mouse
 	spriteMouse(MOUSE_BLANK, 0, 0);
 	return true;
 }
 
 bool SkyMouse::fnDiskMouse(void) {
-
 	//turn the mouse into a disk mouse
 	spriteMouse(MOUSE_DISK, 11, 11);
 	return true;	//don't quit from the interpreter
-	
+}
+
+bool SkyMouse::fnNormalMouse(void) {
+	spriteMouse(MOUSE_NORMAL, 0, 0);
+	return true;
 }
 
 void SkyMouse::lockMouse(void) {
-
 	_lockMouseX = _aMouseX;
 	_lockMouseY = _aMouseY;
 }
 
 void SkyMouse::unlockMouse(void) {
-
 	_aMouseX = _lockMouseX;
 	_aMouseY = _lockMouseY;
 }
 
 void SkyMouse::restoreMouseData(uint16 frameNum) {
-
 	warning("Stub: SkyMouse::restoreMouseData");
 }
 
 void SkyMouse::drawNewMouse() {
-
 	warning("Stub: SkyMouse::drawNewMouse");
 	//calculateMouseValues();
 	//saveMouseData();
@@ -155,7 +151,6 @@ void SkyMouse::drawNewMouse() {
 }
 
 void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
-
 	//_mouseFlag |= MF_IN_INT;
 	_mouseType2 = frameNum;
 	_mouseOffsetX = mouseX;
