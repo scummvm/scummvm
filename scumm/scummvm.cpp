@@ -36,6 +36,7 @@
 #include "object.h"
 #include "resource.h"
 #include "string.h"
+#include "common/config-file.h"
 
 #ifdef _WIN32_WCE
 extern void drawError(char*);
@@ -143,6 +144,11 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	prop.cd_num = detector->_cdrom;
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
+
+	if (g_config->getBool("fullscreen", false)) {
+ 		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+        		_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+ 	}
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	
