@@ -22,6 +22,7 @@
 #include <stdafx.h>
 #include "common/util.h"
 #include "common/engine.h" // for debug, warning, error
+#include "scumm/scumm.h"
 
 #include "frenderer.h"
 
@@ -98,16 +99,32 @@ int32 FontRenderer::drawChar(char * buffer, const Point & size, int32 x, int32 y
 		}
 	} else {
 		char color = (_color != -1) ? _color : 1;
-		for(int32 j = 0; j < h; j++) {
-			for(int32 i = 0; i < w; i++) {
-				char value = *src++;
-				if(value == 1) {
-					dst[i] = color;
-				} else if(value) {
-					dst[i] = 0;
+		if (g_scumm->_gameId == GID_CMI) {
+			for(int32 j = 0; j < h; j++) {
+				for(int32 i = 0; i < w; i++) {
+					char value = *src++;
+					if(value == -color) {
+						dst[i] = -1;
+					} else if(value == -31) {
+						dst[i] = 0;
+					} else if(value) {
+						dst[i] = value;
+					}
 				}
+				dst += size.getX();
 			}
-			dst += size.getX();
+		} else {
+			for(int32 j = 0; j < h; j++) {
+				for(int32 i = 0; i < w; i++) {
+					char value = *src++;
+					if(value == 1) {
+						dst[i] = color;
+					} else if(value) {
+						dst[i] = 0;
+					}
+				}
+				dst += size.getX();
+			}
 		}
 	}
 	return w;

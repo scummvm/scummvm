@@ -843,7 +843,7 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 			for(int i = 0; i < 5; i++) {
 				char file_font[11];
 				sprintf((char*)&file_font, "font%d.nut", i);
-				_fr[i] = loadFont(file_font, directory, i != 0);
+				_fr[i] = loadFont(file_font, directory, false);
 			}
 		}
 	}
