@@ -801,7 +801,6 @@ void Scumm_v8::o8_cursorCommand()
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
-#if 1
 		{
 		int y = pop();
 		int x = pop();
@@ -809,18 +808,6 @@ void Scumm_v8::o8_cursorCommand()
 		_system->warp_mouse(x, y);
 		_system->update_screen();
 		}
-#else
-		_virtual_mouse_y = pop();
-		_virtual_mouse_x = pop();
-
-		mouse.x = _virtual_mouse_x - virtscr[0].xstart;
-		mouse.y = _virtual_mouse_y - camera._cur.y + (_realHeight / 2);
-		mouse.y += virtscr[0].topline;
-
-		_system->warp_mouse(mouse.x, mouse.y);
-		_system->update_screen();
-//		warning("warped mouse to (%d, %d) from %d-%d", _virtual_mouse_x, _virtual_mouse_y, _roomResource, vm.slot[_currentScript].number);
-#endif
 		break;
 	default:
 		error("o8_cursorCommand: default case 0x%x", subOp);
@@ -1379,7 +1366,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 		// The problem here is that args[4] is always 0, as it is computed from
 		// lipSyncWidth and lipSyncHeight, which we currently don't support. As a result,
 		// actors will currently not move their mouth at all!
-		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		a = derefActorSafe(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
 		assert(a);
 
