@@ -1391,6 +1391,10 @@ void Gdi::unkDecode11() {
 
 void Scumm::restoreCharsetBg() {
 	_bkColor = 0;
+	if (_features & GF_OLD256) {
+		restoreBG(0,0,320,16);
+		restoreBG(0,144,320,200);
+	}
 	if (gdi._mask_left != -1) {
 		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
 		charset._hasMask = false;
