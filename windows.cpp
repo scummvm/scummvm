@@ -125,7 +125,7 @@ int mapKey(int key) {
 
 // FIXME: CD Music Stubs
 void cd_playtrack(int track, int offset, int delay) {;}
-void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_play(Scumm *s, int track, int num_loops, int start_frame) {;}
 void cd_stop() {;}
 int cd_is_running() {return 0;}
 

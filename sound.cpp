@@ -105,7 +105,7 @@ void Scumm::playSound(int sound) {
 	ptr = getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
-		cd_play(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+		cd_play(this, ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 			(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 		current_cd_sound = sound;
 		return;
@@ -687,6 +687,7 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 	    clear();
 #ifdef COMPRESSED_SOUND_FILE
 	} else {
+	  if (type == MIXER_MP3) {
 	  mad_fixed_t const *ch;
 	  while (1) {
 	    ch = sound_data.mp3.synth.pcm.samples[0] + sound_data.mp3.pos_in_frame;
@@ -725,6 +726,145 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 	    sound_data.mp3.position = (unsigned char *) sound_data.mp3.stream.next_frame - (unsigned char *) _sfx_sound;
 	  }
 	}
+	else if (type == MIXER_MP3_CDMUSIC) {
+	  mad_fixed_t const *ch;
+	  mad_timer_t frame_duration;
+	  static long last_pos = 0;
+
+	  if (!sound_data.mp3_cdmusic.playing)
+		  return;
+
+	  while (1) {
+
+		// See if we just skipped
+		if (ftell(sound_data.mp3_cdmusic.file) != last_pos) {
+			int skip_loop;
+			
+			// Read the new data
+			memset(_sfx_sound, 0, sound_data.mp3_cdmusic.buffer_size + MAD_BUFFER_GUARD);
+			sound_data.mp3_cdmusic.size = 
+				fread(_sfx_sound, 1, sound_data.mp3_cdmusic.buffer_size, 
+					  sound_data.mp3_cdmusic.file);
+			if (!sound_data.mp3_cdmusic.size) {
+				sound_data.mp3_cdmusic.playing = FALSE;
+				return;
+			}
+			last_pos = ftell(sound_data.mp3_cdmusic.file);
+			// Resync
+			mad_stream_buffer(&sound_data.mp3_cdmusic.stream, 
+							  (unsigned char*)_sfx_sound,
+							  sound_data.mp3_cdmusic.size
+							 );
+			skip_loop = 2;
+			while (skip_loop != 0) {
+				if (mad_frame_decode(&sound_data.mp3_cdmusic.frame, 
+									 &sound_data.mp3_cdmusic.stream) == 0) {
+					/* Do not decrease duration - see if it's a problem */
+					skip_loop--;
+					if (skip_loop == 0) {
+						mad_synth_frame(&sound_data.mp3_cdmusic.synth,
+										&sound_data.mp3_cdmusic.frame);
+					}
+				}
+				else {
+					if (!MAD_RECOVERABLE(sound_data.mp3_cdmusic.stream.error)) {
+						debug(1, "Unrecoverable error while skipping !");
+						sound_data.mp3_cdmusic.playing = FALSE;
+						return;
+					}
+				}
+			}
+			// We are supposed to be in synch
+			mad_frame_mute(&sound_data.mp3_cdmusic.frame);
+			mad_synth_mute(&sound_data.mp3_cdmusic.synth);			
+			// Resume decoding
+			if (mad_frame_decode(&sound_data.mp3_cdmusic.frame,
+								 &sound_data.mp3_cdmusic.stream) == 0) {
+				sound_data.mp3_cdmusic.position = 
+				(unsigned char *)sound_data.mp3_cdmusic.stream.next_frame - 
+				(unsigned char *)_sfx_sound;
+				sound_data.mp3_cdmusic.pos_in_frame = 0;
+			}
+			else {
+				sound_data.mp3_cdmusic.playing = FALSE;
+				return;
+			}
+		}
+		// Get samples, play samples ... 
+
+	    ch = sound_data.mp3_cdmusic.synth.pcm.samples[0] + 
+				sound_data.mp3_cdmusic.pos_in_frame;
+	    while ((sound_data.mp3_cdmusic.pos_in_frame < 
+				sound_data.mp3_cdmusic.synth.pcm.length) && 
+		   (len > 0)) {			
+			*data++ += scale_sample(*ch++);
+			len--;
+	        sound_data.mp3_cdmusic.pos_in_frame++;
+		}
+		if (len == 0) {
+			return;
+		}
+
+		// See if we have finished
+		// May be incorrect to check the size at the end of a frame but I suppose
+		// they are short enough :)		
+
+		frame_duration = sound_data.mp3_cdmusic.frame.header.duration;
+
+		mad_timer_negate(&frame_duration);
+		mad_timer_add(&sound_data.mp3_cdmusic.duration, frame_duration);
+		if (mad_timer_compare(sound_data.mp3_cdmusic.duration, mad_timer_zero) < 0) {
+			sound_data.mp3_cdmusic.playing = FALSE;
+		}
+		
+	        if (mad_frame_decode(&sound_data.mp3_cdmusic.frame, 
+				&sound_data.mp3_cdmusic.stream) == -1) {
+	        
+			if (sound_data.mp3_cdmusic.stream.error == MAD_ERROR_BUFLEN) {
+			    int not_decoded;
+
+				if (!sound_data.mp3_cdmusic.stream.next_frame) {
+					memset(_sfx_sound, 0, sound_data.mp3_cdmusic.buffer_size + MAD_BUFFER_GUARD);
+					sound_data.mp3_cdmusic.size = 
+						fread(_sfx_sound, 1, sound_data.mp3_cdmusic.buffer_size,
+						  sound_data.mp3_cdmusic.file);					
+					sound_data.mp3_cdmusic.position = 0;
+					not_decoded = 0;
+				}
+				else {
+					 not_decoded = sound_data.mp3_cdmusic.stream.bufend -
+									  sound_data.mp3_cdmusic.stream.next_frame;
+					memcpy(_sfx_sound, sound_data.mp3_cdmusic.stream.next_frame,										
+							not_decoded);
+			
+					sound_data.mp3_cdmusic.size = 
+						fread((unsigned char*)_sfx_sound + not_decoded, 1, 
+							  sound_data.mp3_cdmusic.buffer_size - not_decoded,
+							  sound_data.mp3_cdmusic.file);
+				}
+				last_pos = ftell(sound_data.mp3_cdmusic.file);
+				sound_data.mp3_cdmusic.stream.error = MAD_ERROR_NONE;
+				// Restream
+				mad_stream_buffer(&sound_data.mp3_cdmusic.stream,
+								  (unsigned char*)_sfx_sound,
+								  sound_data.mp3_cdmusic.size + not_decoded
+								  );						
+				if (mad_frame_decode(&sound_data.mp3_cdmusic.frame, &sound_data.mp3_cdmusic.stream) == -1) {
+					debug(1, "Error decoding after restream %d !", sound_data.mp3.stream.error);
+				}				
+	      } else if (!MAD_RECOVERABLE(sound_data.mp3.stream.error)) {
+		error("MAD frame decode error in MP3 CDMUSIC !");
+	      }
+	    }		
+
+	    mad_synth_frame(&sound_data.mp3_cdmusic.synth, &sound_data.mp3_cdmusic.frame);
+	    sound_data.mp3_cdmusic.pos_in_frame = 0;
+		sound_data.mp3_cdmusic.position = 
+				(unsigned char *)sound_data.mp3_cdmusic.stream.next_frame - 
+				(unsigned char *)_sfx_sound;
+	  }
+	}
+  }
 #endif
 }
 

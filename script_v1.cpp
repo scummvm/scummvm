@@ -2476,7 +2476,7 @@ void Scumm::decodeParseString() {
 			int delay = (int)(getVarOrDirectWord(0x40) * 7.5) + 10;
 
 			if (_gameId == GID_LOOM256) 
-				cd_play(1, 0, offset, delay);
+				cd_play(this, 1, 0, offset, delay);
 			else
 				warning("parseString: 8");
 		}

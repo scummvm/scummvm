@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2002/04/04 22:47:03  arisme
+ * MP3 cd music patch - still WIP, VBR doesn't work, compress the audio track X to MP3 CBR and name them trackX.mp3 in the game directory - only tested with Loom
+ *
  * Revision 1.9  2002/03/21 16:12:02  ender
  * Move some box stuff from scumm.h to new boxes.h
  * Also move some sound-related items from scumm.h to sound.h
@@ -63,7 +66,8 @@ struct OffsetTable {	/* Compressed Sound (.SO3) */
 
 typedef enum {			/* Mixer types */
   MIXER_STANDARD,
-  MIXER_MP3
+  MIXER_MP3,
+  MIXER_MP3_CDMUSIC
 } MixerType;
 
 struct MixerChannel {	/* Mixer Channel */
@@ -86,6 +90,18 @@ struct MixerChannel {	/* Mixer Channel */
 	    uint32 position;
 	    uint32 size;
 	  } mp3;
+	  struct {
+            struct mad_stream stream;
+            struct mad_frame frame;
+            struct mad_synth synth;
+            uint32 pos_in_frame;
+            uint32 position;
+            uint32 size;
+            uint32 buffer_size;
+            mad_timer_t duration;
+            BOOL   playing;
+            FILE   *file;
+          } mp3_cdmusic;
 #endif
 	} sound_data;
 	void mix(int16 *data, uint32 len);

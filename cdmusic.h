@@ -22,7 +22,7 @@
 #define CD_MUSIC_H
 
 void cd_stop();
-void cd_play(int track, int num_loops, int start_frame, int end_track);
+void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_track);
 int cd_is_running();
 void cd_music_loop();
 
