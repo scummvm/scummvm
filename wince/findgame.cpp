@@ -8,6 +8,7 @@
 #include <Winnls.h>
 #include "resource.h"
 #include "scumm.h"
+#include "config-file.h"
 
 extern Config *scummcfg;
 

@@ -8,6 +8,7 @@
 #include "gameDetector.h"
 #include "simon/simon.h"
 #include "gapi_keys.h"
+#include "config-file.h"
 
 
 #include "commctrl.h"
@@ -27,7 +28,7 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "051302"
+#define POCKETSCUMM_BUILD "051502"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
