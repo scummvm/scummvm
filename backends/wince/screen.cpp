@@ -21,7 +21,7 @@
 
 #ifdef _WIN32_WCE
 
-#define POCKETSCUMM_VERSION "official build 0.3.0"
+#define POCKETSCUMM_VERSION "CVS build 0.3.1cvs"
 
 /* Original GFX code by Vasyl Tsvirkunov */
 
