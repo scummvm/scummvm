@@ -57,7 +57,7 @@ struct R_SCENE_INFO {
 	R_TEXTLIST *text_list;
 };
 
-typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *);
+typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *, void *);
 
 #define PALETTE_FADE_DURATION 1000
 
@@ -149,6 +149,62 @@ struct R_SCENE_QUEUE {
 	int fadeType;
 };
 
+///// IHNM-specific stuff
+#define R_IHNM_PALFADE_TIME    1000
+#define R_IHNM_INTRO_FRAMETIME 80
+#define R_IHNM_DGLOGO_TIME     8000
+#define R_IHNM_TITLE_TIME      16000
+
+///// ITE-specific stuff
+#define R_INTRO_STRMAX 256
+
+#define ITE_INTRO_FRAMETIME 90
+
+#define INTRO_CAPTION_Y 170
+#define VOICE_PAD 50
+#define VOICE_LETTERLEN 90
+
+#define PALETTE_FADE_DURATION 1000
+#define DISSOLVE_DURATION 3000
+#define LOGO_DISSOLVE_DURATION 1000
+
+#define CREDIT_DURATION1 4000
+
+enum R_INTRO_SCENE_DIALOGUE_INFO {
+	INTRO_CAVE1_START = 0,
+	INTRO_CAVE1_END = 4,
+
+	INTRO_CAVE2_START = 4,
+	INTRO_CAVE2_END = 7,
+
+	INTRO_CAVE3_START = 7,
+	INTRO_CAVE3_END = 10,
+
+	INTRO_CAVE4_START = 10,
+	INTRO_CAVE4_END = 14
+};
+
+struct R_INTRO_DIALOGUE {
+	uint32 i_voice_rn;
+	const char *i_cvar_name;
+	char i_str[R_INTRO_STRMAX];
+};
+
+struct INTRO_CAPTION {
+	int res_n;
+	char *caption;
+};
+
+struct INTRO_CREDIT {
+	int text_x;
+	int text_y;
+	int delta_time;
+	int duration;
+	const char *string;
+	int font_id;
+};
+
+
 class Scene {
  public:
 	Scene(SagaEngine *vm);
@@ -209,6 +265,49 @@ class Scene {
 	R_TEXTLIST *_textList;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
+
+	static int SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon);
+	int defaultScene(int param, R_SCENE_INFO *scene_info);
+
+ private:
+	int IHNMStartProc();
+	int ITEStartProc();
+
+ public:
+	static int SC_IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMHateProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+
+ private:
+	int IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info);
+	int IHNMHateProc(int param, R_SCENE_INFO *scene_info);
+
+ public:
+	int ITEIntroRegisterLang(void);
+	static int SC_ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+
+ private:
+	int ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
+
 };
 
 } // End of namespace Saga

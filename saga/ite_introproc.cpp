@@ -40,19 +40,8 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/ite_introproc.h"
 
 namespace Saga {
-
-int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
 
 static R_INTRO_DIALOGUE IntroDiag[] = {
 	{
@@ -123,18 +112,18 @@ static R_INTRO_DIALOGUE IntroDiag[] = {
 };
 
 R_SCENE_QUEUE ITE_IntroList[] = {
-	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, ITE_IntroAnimProc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, ITE_IntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
-	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, ITE_IntroCave2Proc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, ITE_IntroCave3Proc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, ITE_IntroCave4Proc, 0, SCENE_NOFADE},
-	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
-	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, ITE_IntroTreeHouseProc, 0, SCENE_NOFADE},
-	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, ITE_IntroFairePathProc, 0, SCENE_NOFADE},
-	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, ITE_IntroFaireTentProc, 0, SCENE_NOFADE}
+	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
+	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave2Proc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave3Proc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave4Proc, 0, SCENE_NOFADE},
+	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
+	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroTreeHouseProc, 0, SCENE_NOFADE},
+	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFairePathProc, 0, SCENE_NOFADE},
+	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFaireTentProc, 0, SCENE_NOFADE}
 };
 
-int ITE_StartProc() {
+int Scene::ITEStartProc() {
 	size_t n_introscenes;
 	size_t i;
 
@@ -160,7 +149,7 @@ int ITE_StartProc() {
 	return R_SUCCESS;
 }
 
-int ITE_IntroRegisterLang() {
+int Scene::ITEIntroRegisterLang() {
 	size_t i;
 
 	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
@@ -175,8 +164,12 @@ int ITE_IntroRegisterLang() {
 	return R_SUCCESS;
 }
 
+int Scene::SC_ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroAnimProc(param, scene_info);
+}
+
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
-int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 
 	switch (param) {
@@ -233,8 +226,12 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave1Proc(param, scene_info);
+}
+
 // Handles first introductory cave painting scene
-int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	int event_time = 0;
@@ -321,8 +318,12 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave2Proc(param, scene_info);
+}
+
 // Handles second introductory cave painting scene
-int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	int event_time = 0;
@@ -417,8 +418,12 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave3Proc(param, scene_info);
+}
+
 // Handles third introductory cave painting scene
-int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	int event_time = 0;
@@ -514,8 +519,12 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave4Proc(param, scene_info);
+}
+
 // Handles fourth introductory cave painting scene
-int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	int event_time = 0;
@@ -611,8 +620,12 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroValleyProc(param, scene_info);
+}
+
 // Handles intro title scene (valley overlook)
-int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 	R_EVENT event;
@@ -752,8 +765,12 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param, scene_info);
+}
+
 // Handles second intro credit screen (treehouse view)
-int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 	R_EVENT event;
@@ -858,8 +875,12 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroFairePathProc(param, scene_info);
+}
+
 // Handles third intro credit screen (path to puzzle tent)
-int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 	R_EVENT event;
@@ -967,8 +988,12 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
+int Scene::SC_ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroFaireTentProc(param, scene_info);
+}
+
 // Handles fourth intro credit screen (treehouse view)
-int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	R_EVENT *q_event_start;

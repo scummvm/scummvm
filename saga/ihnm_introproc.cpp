@@ -33,14 +33,8 @@
 #include "saga/rscfile_mod.h"
 
 #include "saga/scene.h"
-#include "saga/ihnm_introproc.h"
 
 namespace Saga {
-
-int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info);
-int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info);
-int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info);
-int IHNM_HateProc(int param, R_SCENE_INFO *scene_info);
 
 R_SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 	{30, SAGA_BG_IMAGE, 0, 0} ,
@@ -87,13 +81,13 @@ R_SCENE_DESC IHNM_IntroMovie4Desc = {
 };
 
 R_SCENE_QUEUE IHNM_IntroList[] = {
-	{0, &IHNM_IntroMovie1Desc, BY_DESC, IHNM_IntroMovieProc1, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie2Desc, BY_DESC, IHNM_IntroMovieProc2, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie3Desc, BY_DESC, IHNM_IntroMovieProc3, 0, SCENE_NOFADE},
-	{0, &IHNM_IntroMovie4Desc, BY_DESC, IHNM_HateProc, 0, SCENE_NOFADE}
+	{0, &IHNM_IntroMovie1Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc1, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie2Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc2, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie3Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc3, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie4Desc, BY_DESC, Scene::SC_IHNMHateProc, 0, SCENE_NOFADE}
 };
 
-int IHNM_StartProc() {
+int Scene::IHNMStartProc() {
 	size_t n_introscenes;
 	size_t i;
 
@@ -106,7 +100,11 @@ int IHNM_StartProc() {
 	return R_SUCCESS;
 }
 
-int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
+int Scene::SC_IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc1(param, scene_info);
+}
+
+int Scene::IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 
 	switch (param) {
@@ -130,7 +128,11 @@ int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
+int Scene::SC_IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc2(param, scene_info);
+}
+
+int Scene::IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	PALENTRY *pal;
@@ -191,7 +193,11 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
+int Scene::SC_IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->IHNMIntroMovieProc3(param, scene_info);
+}
+
+int Scene::IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	PALENTRY *pal;
@@ -250,7 +256,11 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int IHNM_HateProc(int param, R_SCENE_INFO *scene_info) {
+int Scene::SC_IHNMHateProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->IHNMHateProc(param, scene_info);
+}
+
+int Scene::IHNMHateProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 

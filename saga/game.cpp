@@ -31,8 +31,8 @@
 
 #include "saga/rscfile_mod.h"
 #include "saga/cvar_mod.h"
-#include "saga/ite_introproc_mod.h"
 #include "saga/interface.h"
+#include "saga/scene.h"
 
 #include "saga/game_mod.h"
 #include "saga/game.h"
@@ -364,7 +364,7 @@ int LoadLanguage() {
 			return R_FAILURE;
 		}
 
-		if (ITE_IntroRegisterLang() != R_SUCCESS) {
+		if (_vm->_scene->ITEIntroRegisterLang() != R_SUCCESS) {
 			warning("Error registering intro sequence language cvars");
 			return R_FAILURE;
 		}

@@ -44,16 +44,11 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/ite_introproc.h"
-#include "saga/ihnm_introproc.h"
 
 namespace Saga {
 
 static void CF_scenechange(int argc, char *argv[], void *refCon);
 static void CF_sceneinfo(int argc, char *argv[], void *refCon);
-
-int defaultScene(int param, R_SCENE_INFO *scene_info);
-
 
 int Scene::reg() {
 	CVAR_Register_I(&_sceneNumber, "scene", NULL, R_CVAR_READONLY, 0, 0);
@@ -186,10 +181,10 @@ int Scene::startScene() {
 
 	switch (GAME_GetGameType()) {
 	case R_GAMETYPE_ITE:
-		ITE_StartProc();
+		ITEStartProc();
 		break;
 	case R_GAMETYPE_IHNM:
-		IHNM_StartProc();
+		IHNMStartProc();
 		break;
 	default:
 		warning("Scene::start(): Error: Can't start game... gametype not supported");
@@ -321,7 +316,7 @@ int Scene::changeScene(int scene_num) {
 	}
 
 	endScene();
-	loadScene(scene_num, BY_SCENE, defaultScene, NULL, false);
+	loadScene(scene_num, BY_SCENE, SC_defaultScene, NULL, false);
 
 	return R_SUCCESS;
 }
@@ -540,14 +535,14 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 	}
 
 	if (scene_proc == NULL) {
-		_sceneProc = defaultScene;
+		_sceneProc = SC_defaultScene;
 	} else {
 		_sceneProc = scene_proc;
 	}
 
 	getInfo(&scene_info);
 
-	_sceneProc(SCENE_BEGIN, &scene_info);
+	_sceneProc(SCENE_BEGIN, &scene_info, this);
 
 	return R_SUCCESS;
 }
@@ -822,7 +817,7 @@ int Scene::endScene() {
 
 	getInfo(&scene_info);
 
-	_sceneProc(SCENE_END, &scene_info);
+	_sceneProc(SCENE_END, &scene_info, this);
 
 	if (_desc.scriptNum > 0) {
 		_vm->_script->freeScript();
@@ -912,7 +907,11 @@ static void CF_sceneinfo(int argc, char *argv[], void *refCon) {
 	((Scene *)refCon)->sceneInfoCmd(argc, argv);
 }
 
-int defaultScene(int param, R_SCENE_INFO *scene_info) {
+int Scene::SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon) {
+	return ((Scene *)refCon)->defaultScene(param, scene_info);
+}
+
+int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 
 	switch (param) {
@@ -948,6 +947,10 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		// Start scene animations
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);
+
+		if (_desc.startScriptNum > 0) {
+			debug(0, "Starting start script #%d", _desc.startScriptNum);
+		}
 
 		debug(0, "Scene started");
 		break;
