@@ -66,6 +66,8 @@ void Actor::sayLine(const char *msg) {
   const char *secondSlash = std::strchr(msg + 1, '/');
   if (secondSlash == NULL)
     return;
+  if (talkSound_)	// Only once line at a time, please :)
+    shutUp();
   std::string msgId(msg + 1, secondSlash);
   talkSound_ = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
   if (talkSound_ != NULL)
