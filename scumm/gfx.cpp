@@ -1037,7 +1037,7 @@ next_iter:
 
 
 void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
-	byte data, color, color2;
+	byte data, color = 0, color2 = 0;
 	int run = 1;
 	byte *t_dst = dst;
 	int t_height = height;
