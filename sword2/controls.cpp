@@ -1305,7 +1305,7 @@ public:
 				// FN_register_mouse and FN_register_frame)
 				Reset_mouse_list();
 
-				if (LLogic.Process_session())
+				if (LLogic.processSession())
 					Con_fatal_error("restore 1st cycle failed??");
 			}
 		}
@@ -1399,11 +1399,11 @@ void Restart_control(void) {
 
 	this_screen.scroll_flag = 2;
 
-	if (LLogic.Process_session())
+	if (LLogic.processSession())
 		Con_fatal_error("restart 1st cycle failed??");
 
-	// (JEL08oct97) so palette not restored immediately after control
-	// panel - we want to fade up instead!
+	// So palette not restored immediately after control panel - we want
+	// to fade up instead!
  	this_screen.new_palette = 99;
 }
 

@@ -213,7 +213,7 @@ int32 GameCycle(void) {
 	// do one game cycle
 
 	//got a screen to run?
-	if (LLogic.Return_run_list()) {
+	if (LLogic.getRunList()) {
 		//run the logic session UNTIL a full loop has been performed
 		do {
 			// reset the graphic 'buildit' list before a new
@@ -226,7 +226,7 @@ int32 GameCycle(void) {
 
 			// keep going as long as new lists keep getting put in
 			// - i.e. screen changes
-		} while (LLogic.Process_session());
+		} while (LLogic.processSession());
 	} else {
 		// start the console and print the start options perhaps?
 		StartConsole();

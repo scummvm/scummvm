@@ -54,7 +54,7 @@ int32 FN_gosub(int32 *params) {
 	// hurray, script subroutines
 	// param	0 id of script
 
-	LLogic.Logic_up(params[0]);
+	LLogic.logicUp(params[0]);
 
 	// logic goes up - pc is saved for current level
 	return IR_GOSUB;
@@ -70,7 +70,7 @@ int32 FN_new_script(int32 *params) {
 	// must clear this
 	PLAYER_ACTION = 0;
 
-	LLogic.Logic_replace(params[0]);
+	LLogic.logicReplace(params[0]);
 
 	//drop out no pc save - and around again
 	return IR_TERMINATE;
@@ -88,7 +88,7 @@ int32 FN_interact(int32 *params) {
 	PLAYER_ACTION = 0;
 
 	// 3rd script of clicked on id
-	LLogic.Logic_up((params[0] * 65536) + 2);
+	LLogic.logicUp((params[0] * 65536) + 2);
 
 	// out, up and around again - pc is saved for current level to be
 	// returned to

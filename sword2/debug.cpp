@@ -415,7 +415,7 @@ void Print_current_info(void) {
 		Print_to_console(" %d normal layers",
 			this_screen.number_of_layers);
 
-		LLogic.Examine_run_list();
+		LLogic.examineRunList();
 	} else
 		Print_to_console(" no screen");
 

@@ -346,10 +346,10 @@ int32 FN_end_conversation(int32 *params) {
 		debug(5, "   holding");
 	}
 
-	TALK_FLAG = 0;	//in-case DC forgets
+	TALK_FLAG = 0;	// in-case DC forgets
 
 	// restart george's base script
-	//	LLogic.Total_restart();
+	// LLogic.totalRestart();
 
 	//drop out without saving pc and go around again
 	return IR_CONT;

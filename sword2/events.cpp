@@ -214,7 +214,7 @@ int32 FN_check_for_event(int32 *params)	{
 		if (event_list[j].id == ID) {
 			// start the event
 			// run 3rd script of target object on level 1
-			LLogic.Logic_one(event_list[j].interact_id);
+			LLogic.logicOne(event_list[j].interact_id);
 			// clear the event slot
 			event_list[j].id = 0;
 			return IR_TERMINATE;
@@ -245,7 +245,7 @@ int32 FN_pause_for_event(int32 *params) {
 
 			// start the event
 			// run 3rd script of target object on level 1
-			LLogic.Logic_one(event_list[j].interact_id);
+			LLogic.logicOne(event_list[j].interact_id);
 
 			// clear the event slot
 			event_list[j].id = 0;
@@ -311,7 +311,7 @@ void Start_event(void) {
 	for (int j = 0; j < MAX_events; j++) {
 		if (event_list[j].id == ID) {
 			// run 3rd script of target object on level 1
-			LLogic.Logic_one( event_list[j].interact_id);
+			LLogic.logicOne(event_list[j].interact_id);
 
 			//clear the slot
 			event_list[j].id = 0;
@@ -327,7 +327,7 @@ int32 FN_start_event(int32 *params) {
 	for (int j = 0; j < MAX_events; j++)
 		if (event_list[j].id == ID) {
 			// run 3rd script of target object on level 1
-			LLogic.Logic_one(event_list[j].interact_id);
+			LLogic.logicOne(event_list[j].interact_id);
 
 			// clear the slot
 			event_list[j].id = 0;

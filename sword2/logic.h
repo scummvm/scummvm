@@ -30,37 +30,37 @@
 class logic {
 public:
 	//do one cycle of the current session
-	int Process_session(void);
+	int processSession(void);
 
 	// cause the logic loop to terminate and drop out
-	void Express_change_session(uint32 sesh_id);
+	void expressChangeSession(uint32 sesh_id);
 
 	// new logic begins next cycle
-	void Natural_change_session(uint32 sesh_id);
+	void naturalChangeSession(uint32 sesh_id);
 
-	uint32 Return_run_list(void);
+	uint32 getRunList(void);
 
-	// setup script_id and script_pc in cur_object_hub - called by
+	// setup script_id and script_pc in _curObjectHub - called by
 	// FN_gosub()
-	void Logic_up(uint32 new_script);
+	void logicUp(uint32 new_script);
 
-	void Logic_replace(uint32 new_script);
-	void Logic_one(uint32 new_script);
-	void Total_restart(void);
-	uint32 Examine_run_list(void);
-	void Reset_kill_list(void);
+	void logicReplace(uint32 new_script);
+	void logicOne(uint32 new_script);
+	void totalRestart(void);
+	uint32 examineRunList(void);
+	void resetKillList(void);
 
 private:
 	// denotes the res id of the game-object-list in current use
-  	uint32 current_run_list;
+	uint32 _currentRunList;
 
-	void Process_kill_list(void);
+	void processKillList(void);
 
 	//pc during logic loop
-	uint32 pc;
+	uint32 _pc;
 
 	// each object has one of these tacked onto the beginning
-	_object_hub *cur_object_hub;
+	_object_hub *_curObjectHub;
 };
 
 extern logic LLogic;

@@ -23,13 +23,13 @@
 #include "debug.h"
 #include "interpreter.h"
 #include "logic.h"
-#include "router.h"	// for ClearWalkGridList()
+#include "router.h"		// for ClearWalkGridList()
 #include "sound.h"
 #include "sync.h"
 
 logic LLogic;
 
-#define LEVEL			(cur_object_hub->logic_level)
+#define LEVEL (_curObjectHub->logic_level)
 
 // this must allow for the largest number of objects in a screen
 #define OBJECT_KILL_LIST_SIZE	50
@@ -39,7 +39,7 @@ uint32 object_kill_list[OBJECT_KILL_LIST_SIZE];
 // keeps note of no. of objects in the kill list
 uint32 kills = 0;
 
-int logic::Process_session(void) {
+int logic::processSession(void) {
 	// do one cycle of the current session
 
 	uint32 run_list;
@@ -53,15 +53,15 @@ int logic::Process_session(void) {
 	uint32 id;
 
 	// might change during the session, so take a copy here
-	run_list = current_run_list;
+	run_list = _currentRunList;
 
 	// point to first object in list
-	pc = 0;
+	_pc = 0;
 
 	// by minusing the pc we can cause an immediate cessation of logic
 	// processing on the current list
 
-	while (pc != 0xffffffff) {
+	while (_pc != 0xffffffff) {
 		head = (_standardHeader*) res_man.Res_open(run_list);
 
 		if (head->fileType != RUN_LIST)
@@ -70,7 +70,7 @@ int logic::Process_session(void) {
 		game_object_list = (uint32 *) (head + 1);
 
 		// read the next id
-		ID = game_object_list[pc++];
+		ID = game_object_list[_pc++];
 		id = ID;
 
 		// release the list again so it can float in memory - at this
@@ -91,12 +91,12 @@ int logic::Process_session(void) {
 		if (head->fileType != GAME_OBJECT)
 			Con_fatal_error("Logic_engine %d not an object", ID);
 
-		cur_object_hub = (_object_hub *) (head + 1);
+		_curObjectHub = (_object_hub *) (head + 1);
 
 		debug(5, " %d id(%d) pc(%d)",
-			cur_object_hub->logic_level,
-			cur_object_hub->script_id[cur_object_hub->logic_level],
-			cur_object_hub->script_pc[cur_object_hub->logic_level]);
+			LEVEL,
+			_curObjectHub->script_id[LEVEL],
+			_curObjectHub->script_pc[LEVEL]);
 
 		// do the logic for this object
 		// we keep going until a function says to stop - remember,
@@ -106,7 +106,7 @@ int logic::Process_session(void) {
 			// get the script id as we may be running a script
 			// from another object...
 
-			script = cur_object_hub->script_id[LEVEL];
+			script = _curObjectHub->script_id[LEVEL];
 
 			// there is a distinction between running one of our
 			// own scripts and that of another object
@@ -115,15 +115,15 @@ int logic::Process_session(void) {
 
 				debug(5, "run script %d pc%d",
 					script / SIZE,
-					cur_object_hub->script_pc[LEVEL]);
+					_curObjectHub->script_pc[LEVEL]);
 
 				// this is the script data
-				// raw_script_ad = (char *) (cur_object_hub + 1);
+				// raw_script_ad = (char *) (_curObjectHub + 1);
 
 				raw_script_ad = (char*) head;
 
 				// script and data object are us/same
-				ret = RunScript(raw_script_ad, raw_script_ad, &cur_object_hub->script_pc[LEVEL]);
+				ret = RunScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
 			} else {
 				// we're running the script of another game
 				// object - get our data object address
@@ -140,11 +140,11 @@ int logic::Process_session(void) {
 				// raw_script_ad = (char*) (head + 1) + sizeof(_standardHeader);
 
 				// get our objects data address
-				// raw_data_ad = (char*) (cur_object_hub + 1);
+				// raw_data_ad = (char*) (_curObjectHub + 1);
 
 				raw_script_ad = (char*) far_head;
 
-				ret = RunScript(raw_script_ad, raw_data_ad, &cur_object_hub->script_pc[LEVEL]);
+				ret = RunScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 
 				// close foreign object again
 				res_man.Res_close(script / SIZE);
@@ -157,8 +157,8 @@ int logic::Process_session(void) {
 
 			if (ret == 1) {
 				// check that it's not already on level 0 !
-				if (cur_object_hub->logic_level)
-					cur_object_hub->logic_level--;
+				if (LEVEL)
+					LEVEL--;
 				else {
 					// Hmmm, level 0 terminated :-| Let's
 					// be different this time and simply
@@ -167,13 +167,13 @@ int logic::Process_session(void) {
 					debug(5, "**WARNING object %d script 0 terminated!", id);
 
 					// reset to rerun
-					cur_object_hub->script_pc[LEVEL] = cur_object_hub->script_id[LEVEL] & 0xffff;
+					_curObjectHub->script_pc[LEVEL] = _curObjectHub->script_id[LEVEL] & 0xffff;
 
 					// cause us to drop out for a cycle
 					ret = 0;
 				}
 			} else if (ret > 2) {
-				Con_fatal_error("Process_session: illegal script return type %d", ret);
+				Con_fatal_error("processSession: illegal script return type %d", ret);
 			}
 
 			// if ret == 2 then we simply go around again - a new
@@ -189,7 +189,7 @@ int logic::Process_session(void) {
 
 		Clear_syncs(ID);
 
-		if (pc != 0xffffffff) {
+		if (_pc != 0xffffffff) {
 			// the session is still valid so run the service script
 			null_pc = 0;
 
@@ -207,7 +207,7 @@ int logic::Process_session(void) {
 	}
 
 	// leaving a room so remove all ids that must reboot correctly
-	Process_kill_list();
+	processKillList();
 
 	debug(5, "RESTART the loop");
 
@@ -215,15 +215,15 @@ int logic::Process_session(void) {
 	return 1;
 }
 
-void logic::Express_change_session(uint32 sesh_id) {
+void logic::expressChangeSession(uint32 sesh_id) {
 	// a game-object can bring an immediate halt to the session and cause
 	// a new one to start without a screen update
 
 	//set to new
-	current_run_list = sesh_id;
+	_currentRunList = sesh_id;
 
 	//causes session to quit
-	pc = 0xffffffff;
+	_pc = 0xffffffff;
 
 	// reset now in case we double-clicked an exit prior to changing screen
 	EXIT_FADING = 0;
@@ -244,29 +244,25 @@ void logic::Express_change_session(uint32 sesh_id) {
 	FreeAllRouteMem();
 }
 
-void logic::Natural_change_session(uint32 sesh_id) {
-	// a new session will begin next game cycle.
-	// the current cycle will conclude and build the screen and flip
-	// into view as normal
+void logic::naturalChangeSession(uint32 sesh_id) {
+	// FIXME: This function doesn't seem to be used anywhere
 
-	//set to new
-	current_run_list = sesh_id;
+	// A new session will begin next game cycle. The current cycle will
+	// conclude and build the screen and flip into view as normal
+
+	_currentRunList = sesh_id;
 }
 
-uint32 logic::Return_run_list(void) {
-	// pass back the private cur_object_list variable - not sure we need
-	// this
-
-	//return the id
-	return current_run_list;
+uint32 logic::getRunList(void) {
+	// pass back the private _currentRunList variable
+	return _currentRunList;
 }
 
 int32 FN_set_session(int32 *params) {
 	// used by player invoked start scripts
 	// param	0 id of new run list
 
-	//now!
-	LLogic.Express_change_session(*params);
+	LLogic.expressChangeSession(params[0]);
 	return IR_CONT;
 }
 
@@ -278,63 +274,63 @@ int32 FN_end_session(int32 *params) {
 	// param	0 id of new run-list
 
 	// terminate current and change to next run-list
-	LLogic.Express_change_session(*params);
+	LLogic.expressChangeSession(params[0]);
 
 	// stop the script - logic engine will now go around and the new
 	// screen will begin
 	return IR_STOP;
 }
 
-void logic::Logic_up(uint32 new_script)	{
+void logic::logicUp(uint32 new_script) {
 	// move the current object up a level
 	// called by FN_gosub command - remember, only the logic object has
-	// access to cur_object_hub
+	// access to _curObjectHub
 
 	// going up a level - and we'll keeping going this cycle
-	cur_object_hub->logic_level++;
+	LEVEL++;
 
 	// can be 0, 1, 2
-	if (cur_object_hub->logic_level == 3)
-		Con_fatal_error("Logic_up id %d has run off script tree! :-O", ID);
+	if (LEVEL == 3)
+		Con_fatal_error("logicUp id %d has run off script tree! :-O", ID);
 
 	// setup new script on next level (not the current level)
 
 	debug(5, "new pc = %d", new_script & 0xffff);
 
-	cur_object_hub->script_id[cur_object_hub->logic_level] = new_script;
-	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
+	_curObjectHub->script_id[LEVEL] = new_script;
+	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-void logic::Logic_one(uint32 new_script) {
+void logic::logicOne(uint32 new_script) {
 	// force to level one
 
-	cur_object_hub->logic_level = 1;
+	LEVEL = 1;
 
 	// setup new script on level 1
-	cur_object_hub->script_id[1] = new_script;
-	cur_object_hub->script_pc[1] = new_script & 0xffff;
+	_curObjectHub->script_id[1] = new_script;
+	_curObjectHub->script_pc[1] = new_script & 0xffff;
 }
 
-void logic::Logic_replace(uint32 new_script) {
+void logic::logicReplace(uint32 new_script) {
 	// change current logic - script must quit with a TERMINATE directive
 	// - which does not write to &pc
 
 	// setup new script on this level
-	cur_object_hub->script_id[cur_object_hub->logic_level] = new_script;
-	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
+	_curObjectHub->script_id[LEVEL] = new_script;
+	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-uint32 logic::Examine_run_list(void) {
+uint32 logic::examineRunList(void) {
 	uint32 *game_object_list;
 	_standardHeader *file_header;
 	int scrolls = 0;
 	_keyboardEvent ke;
 
-	if (current_run_list) {
+	if (_currentRunList) {
 		// open and lock in place
-		game_object_list = (uint32 *) (res_man.Res_open(current_run_list) + sizeof(_standardHeader));
+		game_object_list = (uint32 *) (res_man.Res_open(_currentRunList) + sizeof(_standardHeader));
 
-		Print_to_console("runlist number %d", current_run_list);
+		Print_to_console("runlist number %d", _currentRunList);
 
 		while(*(game_object_list)) {
 			file_header = (_standardHeader*) res_man.Res_open(*(game_object_list));
@@ -365,7 +361,7 @@ uint32 logic::Examine_run_list(void) {
 			}
 		}
 
-		res_man.Res_close(current_run_list);
+		res_man.Res_close(_currentRunList);
 	} else
 		Print_to_console("no run list set");
 
@@ -373,21 +369,21 @@ uint32 logic::Examine_run_list(void) {
 	return 1;
 }
 
-void logic::Total_restart(void) {
+void logic::totalRestart(void) {
 	// reset the object restart script 1 on level 0
 
-	cur_object_hub->logic_level = 0;
-	// cur_object_hub->script_id[0] = 1;
+	LEVEL = 0;
+	// _curObjectHub->script_id[0] = 1;
 
 	// reset to rerun
-	cur_object_hub->script_pc[0] = 1;
+	_curObjectHub->script_pc[0] = 1;
 }
 
 int32 FN_total_restart(int32 *params) {
 	// mega runs this to restart its base logic again - like being cached
 	// in again
 
-	LLogic.Total_restart();
+	LLogic.totalRestart();
 
 	// drop out without saving pc and go around again
 	return IR_TERMINATE;
@@ -409,14 +405,13 @@ int32 FN_add_to_kill_list(int32 *params) {
 	// DON'T EVER KILL GEORGE!
 	if (ID != 8) {
 		// first, scan list to see if this object is already included
-		// (05mar97 James)
 
 		entry = 0;
 		while (entry < kills && object_kill_list[entry] != ID)
 			entry++;
 
 		// if this ID isn't already in the list, then add it,
-		// (otherwise finish) (05mar97 James)
+		// (otherwise finish)
 
 		if (entry == kills) {
 #ifdef _SWORD2_DEBUG
@@ -443,13 +438,13 @@ int32 FN_add_to_kill_list(int32 *params) {
 	return IR_CONT;
 }
 
-void logic::Process_kill_list(void) {
+void logic::processKillList(void) {
 	for (uint32 j = 0; j < kills; j++)
 		res_man.Remove_res(object_kill_list[j]);
 
 	kills = 0;
 }
 
-void logic::Reset_kill_list(void) {
+void logic::resetKillList(void) {
 	kills = 0;
 }

@@ -183,7 +183,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	g_header.screenId = this_screen.background_layer_id;
 
 	// resource id of current run-list
-	g_header.runListId = LLogic.Return_run_list();
+	g_header.runListId = LLogic.getRunList();
 
 	// those scroll position control things
 	g_header.feet_x = this_screen.feet_x;
@@ -382,7 +382,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	res_man.Kill_all_res(0);
 
 	// clean out the system kill list (no more objects to kill)
-	LLogic.Reset_kill_list();
+	LLogic.resetKillList();
 	
 	// get player character data from savegame buffer
 
@@ -432,9 +432,8 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	this_screen.feet_y = g_header.feet_y;
 
 	// start the new run list
-	LLogic.Express_change_session(g_header.runListId);
+	LLogic.expressChangeSession(g_header.runListId);
 
-	// (James01aug97)
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
 
