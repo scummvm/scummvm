@@ -896,7 +896,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	assert(objptr);
 
 	if (_features & GF_OLD_BUNDLE)
-		verbptr = objptr + 21;
+		verbptr = objptr + 17;
 	else if (_features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
 	else
