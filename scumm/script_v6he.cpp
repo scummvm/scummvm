@@ -391,6 +391,8 @@ void ScummEngine_v6he::o6_setState() {
 	if (state & 0x8000) {
 		state = state & 0x7F00;
 		putState(obj, state);
+		if (_heversion >= 72)
+			removeObjectFromDrawQue(obj);
 		return;
 	}
 

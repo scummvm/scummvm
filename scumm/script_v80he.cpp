@@ -185,7 +185,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
-		OPCODE(o6_setState),
+		OPCODE(o80_setState),
 		OPCODE(o6_setOwner),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
@@ -376,6 +376,15 @@ void ScummEngine_v80he::executeOpcode(byte i) {
 
 const char *ScummEngine_v80he::getOpcodeDesc(byte i) {
 	return _opcodesV80he[i].desc;
+}
+
+void ScummEngine_v80he::o80_setState() {
+	int state = pop();
+	int obj = pop();
+
+	state = state & 0x7F00;
+	putState(obj, state);
+	removeObjectFromDrawQue(obj);
 }
 
 } // End of namespace Scumm

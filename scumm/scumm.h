@@ -758,6 +758,7 @@ protected:
 	void setObjectName(int obj);
 
 	void addObjectToDrawQue(int object);
+	void removeObjectFromDrawQue(int object);
 	void clearDrawObjectQueue();
 	void processDrawQue();
 

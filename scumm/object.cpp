@@ -851,6 +851,17 @@ void ScummEngine::addObjectToDrawQue(int object) {
 	_drawObjectQue[_drawObjectQueNr++] = object;
 }
 
+void ScummEngine::removeObjectFromDrawQue(int object) {
+	if (_drawObjectQue <= 0)
+		return;
+
+	int i;
+	for (i = 0; i < _drawObjectQueNr; i++) {
+		if (_drawObjectQue[i] = object)
+			_drawObjectQue[i] = 0;
+	}
+}
+
 void ScummEngine::clearDrawObjectQueue() {
 	_drawObjectQueNr = 0;
 }
