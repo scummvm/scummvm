@@ -1001,6 +1001,7 @@ protected:
 
 public:
 	byte _proc_special_palette[256];
+	byte *_roomPalette;
 	byte *_shadowPalette;
 	int _midiDriver; // Use the MD_ values from mididrv.h
 

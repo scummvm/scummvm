@@ -1666,8 +1666,12 @@ void Scumm_v5::o5_roomOps() {
 			// for GF_SMALL_HEADER games. Needs investigation.
 //			printf("copyPalColor(%d, %d)\n", a, b);
 //			copyPalColor(a, b);
-			_shadowPalette[b] = a;
-			setDirtyColors(b, b);
+			if (_features & GF_16COLOR) {
+				_roomPalette[b] = a;
+			} else {
+				_shadowPalette[b] = a;
+				setDirtyColors(b, b);
+			}
 		} else {
 			error("room-color is no longer a valid command");
 		}

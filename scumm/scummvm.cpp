@@ -376,6 +376,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
+	_roomPalette = NULL;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -723,6 +724,7 @@ Scumm::~Scumm () {
 
 	delete _costumeRenderer;
 
+	free(_roomPalette);
 	free(_shadowPalette);
 	
 	freeResources();
@@ -880,14 +882,16 @@ void Scumm::scummInit() {
 
 	if (_version == 1) {
 		for (i = 0; i < 16; i++)
-			_shadowPalette[i] = i;
+			_roomPalette[i] = i;
 		if (_gameId == GID_MANIAC)
 			setupV1ManiacPalette();
 		else
 			setupV1ZakPalette();
 	} else if (_features & GF_16COLOR) {
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < 16; i++) {
+			_roomPalette[i] = i;
 			_shadowPalette[i] = i;
+		}
 		if (_features & GF_AMIGA)
 			setupAmigaPalette();
 		else
@@ -1786,8 +1790,11 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	if (_version < 7) {
-		for (i = 0; i < 256; i++)
+		for (i = 0; i < 256; i++) {
+			if (_features & GF_SMALL_HEADER)
+				_roomPalette[i] = i;
 			_shadowPalette[i] = i;
+		}
 		if (_features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);
 	}

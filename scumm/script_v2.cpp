@@ -1334,11 +1334,11 @@ void Scumm_v2::o2_roomOps() {
 		break;
 	case 2:											/* room color */
 		if (_version == 1) {
-			_shadowPalette[0] = 255;
-			_shadowPalette[1] = a;
-			_shadowPalette[2] = b;
+			_roomPalette[0] = 255;
+			_roomPalette[1] = a;
+			_roomPalette[2] = b;
 		} else {
-			_shadowPalette[b] = a;
+			_roomPalette[b] = a;
 			_fullRedraw = true;
 		}
 		break;

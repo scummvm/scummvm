@@ -1050,7 +1050,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 						run = data >> 4;
 						dither = false;
 					}
-					color = data & 0x0f;
+					color = _vm->_roomPalette[data & 0x0f];
 					if (run == 0) {
 						run = *src++;
 					}
@@ -1346,10 +1346,10 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 	height >>= 3;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
-		if (_vm->_shadowPalette[0] == 255) {
-			_vm->_shadowPalette[0] = 0;
-			_C64Colors[2] = _vm->_shadowPalette[2];
-			_C64Colors[1] = _vm->_shadowPalette[1];
+		if (_vm->_roomPalette[0] == 255) {
+			_vm->_roomPalette[0] = 0;
+			_C64Colors[2] = _vm->_roomPalette[2];
+			_C64Colors[1] = _vm->_roomPalette[1];
 		}
 		charIdx = _C64PicMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
@@ -1448,7 +1448,7 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * _vm->_screenWidth + x) = (z&1) ? ((color & 0xf) + _palette_mod) : ((color >> 4) + _palette_mod);
+					*(dst + y * _vm->_screenWidth + x) = (z&1) ? _vm->_roomPalette[((color & 0xf) + _palette_mod)] : _vm->_roomPalette[((color >> 4) + _palette_mod)];
 
 					y++;
 					if (y >= height) {
@@ -1478,7 +1478,7 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 			}
 			
 			for (z = 0; z < run; z++) {
-				*(dst + y * _vm->_screenWidth + x) = (color & 0xf) + _palette_mod;
+				*(dst + y * _vm->_screenWidth + x) = _vm->_roomPalette[(color & 0xf) + _palette_mod];
 
 				y++;
 				if (y >= height) {
@@ -3344,7 +3344,7 @@ void Scumm::updatePalette() {
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 		byte *data;
 
-		if (_features & GF_SMALL_HEADER && _version > 1)
+		if (_features & GF_SMALL_HEADER && _version > 2)
 			data = _currentPalette + _shadowPalette[i] * 3;
 		else
 			data = _currentPalette + i * 3;
