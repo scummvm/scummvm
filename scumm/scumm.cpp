@@ -2812,7 +2812,7 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 
-	// Actor Palette in HE 7.0 games
+	// Actor Palette in HE 70 games
 	if (_heversion == 70) {
 		ptr = findResourceData(MKID('REMP'), roomptr);
 		if (ptr) {
@@ -2824,6 +2824,37 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 			
+	// Polygons in HE 80+ games
+	if (_heversion >= 80) {
+		ptr = findResourceData(MKID('POLD'), roomptr);
+		if (ptr) {
+			int slots = READ_LE_UINT32(ptr);
+			ptr += 4;
+			debug(1, "Loading %d polygon slots\n", slots);
+
+			bool flag = 1;
+			int id, points, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
+			while (slots--) {
+				id = READ_LE_UINT32(ptr);
+				points = READ_LE_UINT32(ptr + 4);
+				if (points != 4)
+					error("Illegal polygon with %d points", points);
+				vert1x = READ_LE_UINT32(ptr + 8);
+				vert1y = READ_LE_UINT32(ptr + 12);
+				vert2x = READ_LE_UINT32(ptr + 16);
+				vert2y = READ_LE_UINT32(ptr + 20);
+				vert3x = READ_LE_UINT32(ptr + 24);
+				vert3y = READ_LE_UINT32(ptr + 28);
+				vert4x = READ_LE_UINT32(ptr + 32);
+				vert4y = READ_LE_UINT32(ptr + 36);
+
+				ptr += 40;
+				polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+			}
+		}
+
+	}
+
 	// Transparent color
 	if (_features & GF_OLD_BUNDLE)
 		gdi._transparentColor = 255;

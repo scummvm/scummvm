@@ -701,6 +701,8 @@ protected:
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
 	void loadRoomObjectsOldBundle();
+	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, 
+					  int vert3x, int vert3y, int vert4x, int vert4y);
 
 	virtual void readArrayFromIndexFile();
 	virtual void readMAXS(int blockSize);

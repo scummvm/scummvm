@@ -246,7 +246,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o6_findObject),
+		OPCODE(o7_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
@@ -699,6 +699,43 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 	}
 }
 
+void ScummEngine_v7he::o7_findObject() {
+	int i, b;
+	byte a;
+	const int mask = 0xF;
+
+	int y = pop();
+	int x = pop();
+
+
+	for (i = 1; i < _numLocalObjects; i++) {
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
+			continue;
+
+		if (polygonDefined(_objs[i].obj_nr)) {
+			if (polygonHit(_objs[i].obj_nr, x, y) != 0) {
+				push(_objs[i].obj_nr);
+				return;
+			}
+		}
+
+		b = i;
+		do {
+			a = _objs[b].parentstate;
+			b = _objs[b].parent;
+			if (b == 0) {
+				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
+					push(_objs[i].obj_nr);
+					return;
+				}
+				break;
+			}
+		} while ((_objs[b].state & mask) == a);
+	}
+	push(0);;
+}
+
 void ScummEngine_v7he::o7_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	int par1;
@@ -1033,11 +1070,11 @@ void ScummEngine_v7he::o7_polygonOps() {
 	}
 }
 
-void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, 
+void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, 
 							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	int i;
 
-	debug(1, "polygonStore(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d", id, flag, vert1x,
+	debug(1, "polygonStore(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", id, flag, vert1x,
 		  vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 
 	for (i = 0; i < _WizNumPolygons; i++)
@@ -1045,7 +1082,7 @@ void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, i
 			break;
 	
 	if (i == _WizNumPolygons) {
-		error("ScummEngine_v7he::polygonStore: out of polygon slot, max = %d", 
+		error("ScummEngine::polygonStore: out of polygon slot, max = %d", 
 			  _WizNumPolygons);
 	}
 
@@ -1068,7 +1105,7 @@ void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, i
 	_WizPolygons[i].bound.right = -10000;
 	_WizPolygons[i].bound.bottom = -10000;
 
-	for (int j = 0; j < 4; j++) {
+	for (int j = 0; j < 5; j++) {
 		_WizPolygons[i].bound.left = MIN(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
 		_WizPolygons[i].bound.top = MIN(_WizPolygons[i].bound.top, _WizPolygons[i].vert[j].y);
 		_WizPolygons[i].bound.right = MAX(_WizPolygons[i].bound.right, _WizPolygons[i].vert[j].x);
@@ -1130,8 +1167,6 @@ bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
 		pi = i;
 		diry = curdir;
 	}
-
-	//r = true;
 
 	return r;
 }

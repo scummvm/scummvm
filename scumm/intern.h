@@ -620,13 +620,10 @@ protected:
 	int getCharsetOffsets(int chr);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
-	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, 
-					  int vert3x, int vert3y, int vert4x, int vert4y);
 	void polygonErase(int fromId, int toId);
 	bool polygonContains(WizPolygon &pol, int x, int y);
 	bool polygonDefined(int id);
 	int polygonHit(int id, int x, int y);
-
 
 	/* HE version 70 script opcodes */
 	void o7_cursorCommand();
@@ -634,6 +631,7 @@ protected:
 	void o7_pickupObject();
 	void o7_getActorRoom();
 	void o7_resourceRoutines();
+	void o7_findObject();
 	void o7_quitPauseRestart();
 	void o7_kernelSetFunctions();
 	void o7_unknownED();

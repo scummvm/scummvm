@@ -245,7 +245,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown9E),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o6_findObject),
+		OPCODE(o7_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
