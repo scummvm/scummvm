@@ -380,7 +380,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
 
-	if (g_scumm->_gameId != GID_CMI) {
+	if (_scumm->_gameId != GID_CMI) {
 		int32 track = track_id;
 		if (track_flags == 1) {
 			track = track_id + 100;

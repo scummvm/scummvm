@@ -1017,9 +1017,9 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	if (is2byte) {
 		_dropShadow = true;
-		charPtr = g_scumm->get2byteCharPtr(chr);
-		width = g_scumm->_2byteWidth;
-		height = g_scumm->_2byteHeight;
+		charPtr = _vm->get2byteCharPtr(chr);
+		width = _vm->_2byteWidth;
+		height = _vm->_2byteHeight;
 		offsX = offsY = 0;
 	} else {
 		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
