@@ -543,9 +543,11 @@ void ScummEngine::writeVar(uint var, int value) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
 		// FIXME: Find some better place to put this.
-		if (var == VAR_CHARINC)
-			VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
-		else
+		if (var == VAR_CHARINC && ConfMan.hasKey("talkspeed")) {
+			int talkspeed = ConfMan.getInt("talkspeed") / 20;
+			if (talkspeed >= 0 && talkspeed <= 180)
+				VAR(VAR_CHARINC) = talkspeed;
+		} else
 			_scummVars[var] = value;
 
 		// stay in sync with loom cd subtitle var
