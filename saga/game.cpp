@@ -54,7 +54,7 @@ GAME_FONTDESC ITEDEMO_GameFonts[] = {
 };
 
 GAME_SOUNDINFO ITEDEMO_GameSound = {
- GAME_SOUND_VOC, 0, 0, 0
+	GAME_SOUND_VOC, 0, 0, 0
 };
 
 // Inherit the Earth - win32 Wyrmkeep Demo version
