@@ -1,9 +1,15 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.4.1cvs (2003-??-??)
-- Curse of Monkey Island stability fixes
+??? (2003-??-??)
+- Curse of Monkey Island (COMI) stability fixes
+- COMI support for playing from CD improved on Mac OS X
+- Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
 - Music fixes (exp. Monkey Island 2)
+- Rewritten iMuse engine
+- Support for music in Humongous games and simon1dos (XMIDI format)
+- Initial, incomplete support for Maniac Mansion and Zak McKracken
+- Many other bug fixes and improvements
 
 0.4.0 (2003-05-11)
 - Curse of Monkey Island (comi) support (experimental)
