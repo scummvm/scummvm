@@ -587,7 +587,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 					int var = READ_LE_UINT16(ptr + num);
 					num += 2;
 					char c;
-					while ((c = (char) _scummVars[var])) {
+					while ((c = (char) _scummVars[var++])) {
 						if (c != '@')
 							*_msgPtrToAdd++ = c;
 					}
