@@ -689,7 +689,7 @@ void Scumm::fadeIn(int effect)
 	case 131:
 	case 132:
 	case 133:
-		scrollEffect(effect - 130);
+		scrollEffect(133 - effect);
 		break;
 	case 134:
 		dissolveEffect(1, 1);
