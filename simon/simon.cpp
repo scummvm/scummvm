@@ -4793,11 +4793,12 @@ void SimonEngine::delay(uint amount) {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
+/*
 			// First attempt at quick load/save keys support
 			// For some reason Simon often walks into a location when loading
 			// and sometimes Simon isn't shown until he is moved.
 
-/*				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
 					&& (event.kbd.flags == OSystem::KBD_ALT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
@@ -4825,6 +4826,7 @@ void SimonEngine::delay(uint amount) {
 						}
 						_saveLoadFlag = 0;
 					}
+				}
 */
 				if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f')
