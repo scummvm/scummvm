@@ -142,12 +142,13 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		_handle = fopenNoCase(filename, directory, modeStr);
 	} else {
 		Common::StringList::const_iterator x;
-		// First try the current directory
-		_handle = fopenNoCase(filename, "", modeStr);
-		// Next try all default directories
+		// Try all default directories
 		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
 			_handle = fopenNoCase(filename, x->c_str(), modeStr);
 		}
+		// Last resort: try the current directory
+		if (_handle == NULL)
+			_handle = fopenNoCase(filename, "", modeStr);
 	}
 
 	if (_handle == NULL) {
