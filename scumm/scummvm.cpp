@@ -619,7 +619,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 	} else if ((_features & GF_AMIGA) && (_features & GF_OLD_BUNDLE)) {
 		_playerV2 = NULL;
-	} else if (_features & GF_OLD_BUNDLE) {
+	} else if (_version <= 2) {
 		if ((_version == 1) && (_gameId == GID_MANIAC))
 			_playerV2 = NULL;
 		else

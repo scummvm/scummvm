@@ -618,7 +618,7 @@ private:
 	void mc_init_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11, byte flags,
 	                   InstrumentExtra * ie);
 
-	static void struct10_init(Struct10 * s10, InstrumentExtra * ie);
+	void struct10_init(Struct10 * s10, InstrumentExtra * ie);
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
 	static void struct10_setup(Struct10 * s10);
 	static int random_nr(int a);
@@ -644,10 +644,12 @@ void AdlibPart::send (uint32 b) {
 }
 
 void AdlibPart::noteOff(byte note) {
+  debug (4, "%10d: noteOff(%d)", tick, note);
 	_owner->part_key_off(this, note);
 }
 
 void AdlibPart::noteOn(byte note, byte velocity) {
+  debug (4, "%10d: noteOn(%d,%d)", tick, note, velocity);
 	_owner->part_key_on(this, &_part_instr, note, velocity);
 }
 
@@ -982,6 +984,7 @@ void MidiDriver_ADLIB::premix_proc(void *param, int16 *buf, uint len) {
 void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 	if (_adlib_reg_cache[port] == value)
 		return;
+  debug (4, "%10d: adlib_write[%x] = %x", tick, port, value);
 	_adlib_reg_cache[port] = value;
 
 	OPLWriteReg(_opl, port, value);
@@ -998,7 +1001,6 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 
 		_next_tick -= step;
 		if (!_next_tick) {
-			tick++;
 			if (_timer_proc)
 				(*_timer_proc)(_timer_param);
 			on_timer();
@@ -1021,6 +1023,7 @@ void MidiDriver_ADLIB::on_timer() {
 	while (_adlib_timer_counter >= 0x411B) {
 		_adlib_timer_counter -= 0x411B;
 		voice = _voices;
+		tick++;
 		for (i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
 			if (!voice->_part)
 				continue;
@@ -1064,13 +1067,17 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *
 		switch (s11->param) {
 		case 0:
 			voice->_vol_2 = s10->start_value + s11->modify_val;
-			adlib_set_param(voice->_channel, 0,
-											volume_table[lookup_table[voice->_vol_2]
-											[part->_vol_eff >> 2]]);
+			if (!_game_SmallHeader) {
+				adlib_set_param(voice->_channel, 0,
+												volume_table[lookup_table[voice->_vol_2]
+																		 [part->_vol_eff >> 2]]);
+			} else {
+				adlib_set_param(voice->_channel, 0, voice->_vol_2);
+			}
 			break;
 		case 13:
 			voice->_vol_1 = s10->start_value + s11->modify_val;
-			if (voice->_twochan) {
+			if (voice->_twochan && !_game_SmallHeader) {
 				adlib_set_param(voice->_channel, 13,
 												volume_table[lookup_table[voice->_vol_1]
 												[part->_vol_eff >> 2]]);
@@ -1352,21 +1359,29 @@ void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte
 	if (voice->_duration != 0)
 		voice->_duration *= 63;
 
-	vol_1 = (instr->oplvl_1 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_1 >> 2];
+	if (!_game_SmallHeader)
+		vol_1 = (instr->oplvl_1 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_1 >> 2];
+	else
+		vol_1 = 0x3f - (instr->oplvl_1 & 0x3F);
 	if (vol_1 > 0x3F)
 		vol_1 = 0x3F;
 	voice->_vol_1 = vol_1;
 
-	vol_2 = (instr->oplvl_2 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_2 >> 2];
+	if (!_game_SmallHeader)
+		vol_2 = (instr->oplvl_2 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_2 >> 2];
+	else
+		vol_2 = 0x3f - (instr->oplvl_2 & 0x3F);
 	if (vol_2 > 0x3F)
 		vol_2 = 0x3F;
 	voice->_vol_2 = vol_2;
 
 	c = part->_vol_eff >> 2;
 
-	vol_2 = volume_table[lookup_table[vol_2][c]];
-	if (voice->_twochan)
-		vol_1 = volume_table[lookup_table[vol_1][c]];
+	if (!_game_SmallHeader) {
+		vol_2 = volume_table[lookup_table[vol_2][c]];
+		if (voice->_twochan)
+			vol_1 = volume_table[lookup_table[vol_1][c]];
+	}
 
 	adlib_setup_channel(voice->_channel, instr, vol_1, vol_2);
 	adlib_note_on_ex(voice->_channel, part->_transpose_eff + note, part->_detune_eff + (part->_pitchbend * part->_pitchbend_factor >> 6));
@@ -1391,22 +1406,14 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument *instr, byt
 
 	port = channel_mappings[chan];
 	adlib_write(port + 0x20, instr->flags_1);
-
-	if (!_game_SmallHeader)
-		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
-	else
-		adlib_write(port + 0x40, instr->oplvl_1);
-
+	adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
 	adlib_write(port + 0x60, 0xff & (~instr->atdec_1));
 	adlib_write(port + 0x80, 0xff & (~instr->sustrel_1));
 	adlib_write(port + 0xE0, instr->waveform_1);
 
 	port = channel_mappings_2[chan];
 	adlib_write(port + 0x20, instr->flags_2);
-	if (!_game_SmallHeader)
-		adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
-	else
-		adlib_write(port + 0x40, instr->oplvl_2 );
+	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
 	adlib_write(port + 0x60, 0xff & (~instr->atdec_2));
 	adlib_write(port + 0x80, 0xff & (~instr->sustrel_2));
 	adlib_write(port + 0xE0, instr->waveform_2);
@@ -1464,7 +1471,12 @@ void MidiDriver_ADLIB::mc_init_stuff(AdlibVoice *voice, Struct10 * s10,
 
 void MidiDriver_ADLIB::struct10_init(Struct10 *s10, InstrumentExtra *ie) {
 	s10->active = 1;
-	s10->cur_val = 0;
+	if (!_game_SmallHeader) {
+		s10->cur_val = 0;
+	} else {
+		s10->cur_val = s10->start_value;
+		s10->start_value = 0;
+	}
 	s10->modwheel_last = 31;
 	s10->count = ie->a;
 	if (s10->count)

@@ -641,8 +641,12 @@ int Scumm::loadResource(int type, int idx) {
 	_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
 
 	if (_features & GF_OLD_BUNDLE) {
-		size = _fileHandle.readUint16LE();
-		_fileHandle.seek(-2, SEEK_CUR);
+		if ((_version == 3) && !(_features & GF_AMIGA) && (type == rtSound)) {
+			return readSoundResourceSmallHeader(type, idx);
+		} else {
+			size = _fileHandle.readUint16LE();
+			_fileHandle.seek(-2, SEEK_CUR);
+		}
 	} else if (_features & GF_SMALL_HEADER) {
 		if (!(_features & GF_SMALL_NAMES))
 			_fileHandle.seek(8, SEEK_CUR);
@@ -895,61 +899,127 @@ static byte ADLIB_INSTR_MIDI_HACK[95] = {
 	0x00, 0x00, 0x07, 0x0f, 0x00, 0x00, 0x08, 0x00, 
 	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xf7,
 	0x04, 0xf0, 0x41, 0x7d, 0x10,  // sysex 16: set instrument
-	0x00,                          // part/channel  (offset 28)
-	0x01, 0x06, 0x02, 0x0a, 0x08, 0x09, 0x0d, 0x08, 0x04, 0x04,
-	0x04, 0x06, 0x02, 0x02, 0x03, 0x07, 0x0f, 0x0d,
-	0x05, 0x04, 0x0c, 0x00, 0x03, 0x01, 0x01, 0x00,
-	0x00, 0x00, 0x01, 0x01, 0x0e, 0x00, 0x02, 0x02,
-	0x01, 0x00, 0x01, 0x00, 0x01, 0x02, 0x00, 0x01,
-	0x08, 0x00, 0x00, 0x00, 0x01, 0x02, 0x04, 0x00,
-	0x06, 0x02, 0x00, 0x00, 0x04, 0x00, 0x03, 0x02,
-	0x04, 0x00, 0x00, 0xf7,
+	0x00, 0x01,                    // part/channel  (offset 28)
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0xf7,
 	0x00, 0xb0, 0x07, 0x64        // Controller 7 = 100 (offset 92)
 };
 			
+static const byte map_param[7] = {
+	0, 2, 3, 4, 8, 9, 0,
+};
+
+static const byte freq2note[128] = {
+	/*128*/	6, 6, 6, 6,  
+	/*132*/ 7, 7, 7, 7, 7, 7, 7,
+	/*139*/ 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	/*148*/ 9, 9, 9, 9, 9, 9, 9, 9, 9,
+	/*157*/ 10, 10, 10, 10, 10, 10, 10, 10, 10,
+	/*166*/ 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+	/*176*/ 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+	/*186*/ 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
+	/*197*/ 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+	/*209*/ 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+	/*222*/ 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	/*235*/ 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+	/*249*/ 18, 18, 18, 18, 18, 18, 18
+};
+			
+static const uint16 num_steps_table[] = {
+	1, 2, 4, 5,
+	6, 7, 8, 9,
+	10, 12, 14, 16,
+	18, 21, 24, 30,
+	36, 50, 64, 82,
+	100, 136, 160, 192,
+	240, 276, 340, 460,
+	600, 860, 1200, 1600
+};
+int Scumm::convert_extraflags(byte * ptr, byte * src_ptr) {
+	int flags = src_ptr[0];
+
+	int t1, t2, t3, t4, time;
+	int v1, v2, v3;
+
+	if (!(flags & 0x80))
+		return -1;
+
+	t1 = (src_ptr[1] & 0xf0) >> 3;
+	t2 = (src_ptr[2] & 0xf0) >> 3;
+	t3 = (src_ptr[3] & 0xf0) >> 3 | (flags & 0x40 ? 0x80 : 0);
+	t4 = (src_ptr[3] & 0x0f) << 1;
+	v1 = (src_ptr[1] & 0x0f);
+	v2 = (src_ptr[2] & 0x0f);
+	v3 = 31;
+	if ((flags & 0x7) == 0) {
+	  v1 = v1 + 31 + 8;
+	  v2 = v2 + 31 + 8;
+	} else {
+	  v1 = v1 * 2 + 31;
+	  v2 = v2 * 2 + 31;
+	}
+	
+	/* flags a */
+	if ((flags & 0x7) == 6)
+		ptr[0] = 0;
+	else {
+		ptr[0] = (flags >> 4) & 0xb;
+		ptr[1] = map_param[flags & 0x7];
+	}
+
+	/* extra a */
+	ptr[2] = 0;
+	ptr[3] = 0;
+	ptr[4] = t1 >> 4;
+	ptr[5] = t1 & 0xf;
+	ptr[6] = v1 >> 4;
+	ptr[7] = v1 & 0xf;
+	ptr[8] = t2 >> 4;
+	ptr[9] = t2 & 0xf;
+	ptr[10] = v2 >> 4;
+	ptr[11] = v2 & 0xf;
+	ptr[12] = t3 >> 4;
+	ptr[13] = t3 & 0xf;
+	ptr[14] = t4 >> 4;
+	ptr[15] = t4 & 0xf;
+	ptr[16] = v3 >> 4;
+	ptr[17] = v3 & 0xf;
+
+	time = num_steps_table[t1] + num_steps_table[t2]
+		+ num_steps_table[t3 & 0x7f] + num_steps_table[t4];
+	if (flags & 0x20) {
+		int playtime = ((src_ptr[4] >> 4) & 0xf) * 118 + 
+			(src_ptr[4] & 0xf) * 8;
+		if (playtime > time)
+			time = playtime;
+	}
+	/*
+	time = ((src_ptr[4] >> 4) & 0xf) * 118 + 
+		(src_ptr[4] & 0xf) * 8;
+	*/
+	return time;
+}
+
 int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 	byte * ptr;
 	byte ticks, play_once;
-	byte music_type, num_instr;
+	byte num_instr;
 	byte *channel, *instr, *track;
+	byte *tracks[3];
+	int delay, delay2, olddelay;
 	int i, ch;
-	
-	src_ptr += 2;
-	size -= 2;
-	music_type = *(src_ptr);	// 0x80: is music; otherwise not.
-	if (music_type != 0x80) {
-		// It's an SFX; we don't know how to handle those yet
-		debug(4, "Sound %d not played, format not yet supported", idx);
-		res.roomoffs[type][idx] = 0xFFFFFFFF;
-		return 0;
-	}
-
-	// The "speed" of the song
-	ticks = *(src_ptr + 1);
-	
-	// Flag that tells us whether we should loop the song (0) or play it only once (1)
-	play_once = *(src_ptr + 2);
-	
-	// Number of instruments used
-	num_instr = *(src_ptr + 8);	// Normally 8
-	
-	// copy the pointer to instrument data
-	channel = src_ptr + 9;
-	instr   = src_ptr + 0x11;
-
-	// skip over the rest of the header and copy the MIDI data into a buffer
-	src_ptr  += 0x11 + 8 * 16;
-	size -= 0x11 + 8 * 16;
-
-	CHECK_HEAP 
-			
-	track = src_ptr;
-			
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
 	ptr = createResource(type, idx, total_size);
+	byte *start_ptr = ptr;
 	memcpy(ptr, "ADL ", 4); ptr += 4;
 	uint32 dw = READ_BE_UINT32(&total_size);
 	memcpy(ptr, &dw, 4); ptr += 4;
@@ -973,125 +1043,373 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	dw = READ_BE_UINT32(&total_size);
 	memcpy(ptr, &dw, 4); ptr += 4;
 
-	// Conver the ticks into a MIDI tempo. 
-	dw = (500000 * 256) / ticks;
-	debug(4, "  ticks = %d, speed = %ld", ticks, dw);
-	
-	// Write a tempo change SysEx
-	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-	*ptr++ = (byte)((dw >> 16) & 0xFF);
-	*ptr++ = (byte)((dw >> 8) & 0xFF);
-	*ptr++ = (byte)(dw & 0xFF);
-		
-	// Copy our hardcoded instrument table into it
-	// Then, convert the instrument table as given in this song resource
-	// And write it *over* the hardcoded table.
-	// Note: we deliberately.
+	src_ptr += 2;
+	size -= 2;
 
-	/* now fill in the instruments */
-	for (i = 0; i < num_instr; i++) {
-		ch = channel[i] - 1;
+	if (*src_ptr == 0x80) {
+		// 0x80: is music; otherwise not.
 
-		debug(4, "Sound %d: instrument %d on channel %d.", 
-			  idx, i, ch);
+		// The "speed" of the song
+		ticks = *(src_ptr + 1);
+		
+		// Flag that tells us whether we should loop the song (0) or play it only once (1)
+		play_once = *(src_ptr + 2);
+		
+		// Number of instruments used
+		num_instr = *(src_ptr + 8);	// Normally 8
+		
+		// copy the pointer to instrument data
+		channel = src_ptr + 9;
+		instr   = src_ptr + 0x11;
+		
+		// skip over the rest of the header and copy the MIDI data into a buffer
+		src_ptr  += 0x11 + 8 * 16;
+		size -= 0x11 + 8 * 16;
 
-	    memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
-			   sizeof(ADLIB_INSTR_MIDI_HACK));
+		CHECK_HEAP 
+			
+		track = src_ptr;
+		
+		// Conver the ticks into a MIDI tempo. 
+		dw = (500000 * 256) / ticks;
+		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
+			
+		// Write a tempo change SysEx
+		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
+		*ptr++ = (byte)((dw >> 16) & 0xFF);
+		*ptr++ = (byte)((dw >> 8) & 0xFF);
+		*ptr++ = (byte)(dw & 0xFF);
+		
+		// Copy our hardcoded instrument table into it
+		// Then, convert the instrument table as given in this song resource
+		// And write it *over* the hardcoded table.
+		// Note: we deliberately.
+		
+		/* now fill in the instruments */
+		for (i = 0; i < num_instr; i++) {
+			ch = channel[i] - 1;
+			
+			debug(4, "Sound %d: instrument %d on channel %d.", 
+				  idx, i, ch);
+			
+			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
+				   sizeof(ADLIB_INSTR_MIDI_HACK));
 
-		ptr[5]  += ch;
-		ptr[28] += ch;
-		ptr[92] += ch;
-	
-		/* flags_1 */
-		ptr[30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
-		ptr[30 + 1] = instr[i * 16 + 3] & 0xf;
-		
-		/* oplvl_1 */
-		ptr[30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
-		ptr[30 + 3] = instr[i * 16 + 4] & 0xf;
-		
-		/* atdec_1 */
-		ptr[30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
-		ptr[30 + 5] = (~instr[i * 16 + 5]) & 0xf;
-		
-		/* sustrel_1 */
-		ptr[30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
-		ptr[30 + 7] = (~instr[i * 16 + 6]) & 0xf;
-		
-		/* waveform_1 */
-		ptr[30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
-		ptr[30 + 9] = instr[i * 16 + 7] & 0xf;
-		
-		/* flags_2 */
-		ptr[30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
-		ptr[30 + 11] = instr[i * 16 + 8] & 0xf;
-		
-		/* oplvl_2 */
-		ptr[30 + 12] = (instr[i * 16 + 9] >> 4) & 0xf;
-		ptr[30 + 13] = instr[i * 16 + 9] & 0xf;
-		
-		/* atdec_2 */
-		ptr[30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
-		ptr[30 + 15] = (~instr[i * 16 + 10]) & 0xf;
-		
-		/* sustrel_2 */
-		ptr[30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
-		ptr[30 + 17] = (~instr[i * 16 + 11]) & 0xf;
-		
-		/* waveform_2 */
-		ptr[30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
-		ptr[30 + 19] = instr[i * 16 + 12] & 0xf;
-		
-		/* feedback */
-		ptr[30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
-		ptr[30 + 21] = instr[i * 16 + 2] & 0xf;
-		ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
-	}
-	
-	*ptr++ = 0;  // delay 0;
-	
-	// Now copy the actual music data 
-	memcpy(ptr, track, size);
-	ptr += size;
-	
-	if (!play_once) {
-		// The song is meant to be looped. We achieve this by inserting just
-		// before the song end a jump to the song start. More precisely we abuse
-		// a S&M sysex, "maybe_jump" to achieve this effect. We could also
-		// use a set_loop sysex, but it's a bit longer, a little more complicated,
-		// and has no advantage either.
-		
-		// First, find the track end
-		byte *end = ptr;
-		ptr -= size;
-		for (; ptr < end; ptr++) {
-			if (*ptr == 0xff && *(ptr + 1) == 0x2f)
-				break;
+			ptr[5]  += ch;
+			ptr[28] += ch;
+			ptr[92] += ch;
+			
+			/* flags_1 */
+			ptr[30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
+			ptr[30 + 1] = instr[i * 16 + 3] & 0xf;
+			
+			/* oplvl_1 */
+			ptr[30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
+			ptr[30 + 3] = instr[i * 16 + 4] & 0xf;
+			
+			/* atdec_1 */
+			ptr[30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
+			ptr[30 + 5] = (~instr[i * 16 + 5]) & 0xf;
+			
+			/* sustrel_1 */
+			ptr[30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
+			ptr[30 + 7] = (~instr[i * 16 + 6]) & 0xf;
+			
+			/* waveform_1 */
+			ptr[30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
+			ptr[30 + 9] = instr[i * 16 + 7] & 0xf;
+			
+			/* flags_2 */
+			ptr[30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
+			ptr[30 + 11] = instr[i * 16 + 8] & 0xf;
+			
+			/* oplvl_2 */
+			ptr[30 + 12] = (instr[i * 16 + 9] >> 4) & 0xf;
+			ptr[30 + 13] = instr[i * 16 + 9] & 0xf;
+			
+			/* atdec_2 */
+			ptr[30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
+			ptr[30 + 15] = (~instr[i * 16 + 10]) & 0xf;
+			
+			/* sustrel_2 */
+			ptr[30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
+			ptr[30 + 17] = (~instr[i * 16 + 11]) & 0xf;
+			
+			/* waveform_2 */
+			ptr[30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
+			ptr[30 + 19] = instr[i * 16 + 12] & 0xf;
+			
+			/* feedback */
+			ptr[30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
+			ptr[30 + 21] = instr[i * 16 + 2] & 0xf;
+			ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
 		}
-		assert(ptr < end);
 		
-		// Now insert the jump. The jump offset is measured in ticks, and 
-		// each instrument definition spans 4 ticks... so we jump to tick
-		// 8*4, although jumping to tick 0 would probably work fine, too.
-		// Note: it's possible that some musics don't loop from the start...
-		// in that case we'll have to figure out how the loop range is specified
-		// and then how to handle it appropriately (if it's specified in
-		// ticks, we are fine; but if it's a byte offset, it'll be nasty).
-		const int jump_offset = 8 * 4;
-		memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
-		memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
-		memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
-		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;	// beat -> for now, 1 (first beat)
-		// Ticks
-		*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
-		*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
-		*ptr++ = (byte)((jump_offset >> 4) & 0x0F);
-		*ptr++ = (byte)(jump_offset & 0x0F);
-		memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
+		*ptr++ = 0;  // delay 0;
+		
+		// Now copy the actual music data 
+		memcpy(ptr, track, size);
+		ptr += size;
+		
+		if (!play_once) {
+			// The song is meant to be looped. We achieve this by inserting just
+			// before the song end a jump to the song start. More precisely we abuse
+			// a S&M sysex, "maybe_jump" to achieve this effect. We could also
+			// use a set_loop sysex, but it's a bit longer, a little more complicated,
+			// and has no advantage either.
+			
+			// First, find the track end
+			byte *end = ptr;
+			ptr -= size;
+			for (; ptr < end; ptr++) {
+				if (*ptr == 0xff && *(ptr + 1) == 0x2f)
+					break;
+			}
+			assert(ptr < end);
+			
+			// Now insert the jump. The jump offset is measured in ticks, and 
+			// each instrument definition spans 4 ticks... so we jump to tick
+			// 8*4, although jumping to tick 0 would probably work fine, too.
+			// Note: it's possible that some musics don't loop from the start...
+			// in that case we'll have to figure out how the loop range is specified
+			// and then how to handle it appropriately (if it's specified in
+			// ticks, we are fine; but if it's a byte offset, it'll be nasty).
+			const int jump_offset = 8 * 4;
+			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
+			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
+			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
+			memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;	// beat -> for now, 1 (first beat)
+			// Ticks
+			*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
+			*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
+			*ptr++ = (byte)((jump_offset >> 4) & 0x0F);
+			*ptr++ = (byte)(jump_offset & 0x0F);
+			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
+		}
+		// Finally we reinsert the end of song sysex, just in case
+		memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
+		
+		return 1;
 	}
-	// Finally we reinsert the end of song sysex, just in case
-	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
+
+
+	/* This is a sfx resource.  First parse it quickly to find the parallel
+	 * tracks.
+	 */
+	byte current_instr[3][14];
+	int  current_note[3];
+	int track_time[3];
+
+	int track_ctr = 0;
+	byte chunk_type = 0;
+
+	for (i = 0; i < 3; i++) {
+		track_time[i] = -1;
+		current_note[i] = -1;
+	}
+	while (size > 0) {
+		tracks[track_ctr] = src_ptr;
+		track_time[track_ctr] = 0;
+		track_ctr++;
+		while (size > 0) {
+			chunk_type = *(src_ptr);
+			if (chunk_type == 1) {
+				src_ptr += 15;
+				size -= 15;
+			} else if (chunk_type == 2) {
+				src_ptr += 11;
+				size -= 11;
+			} else if (chunk_type == 0x80) {
+				src_ptr ++;
+				size --;
+			} else {
+				break;
+			}
+		}
+		if (chunk_type == 0xff)
+			break;
+		src_ptr++;
+	}
 	
+	int curtime = 0;
+	for (;;) {
+		int mintime = -1;
+		ch = -1;
+		for (i = 0; i < 3; i++) {
+			if (track_time[i] >= 0 && 
+				(mintime == -1 || mintime > track_time[i])) {
+				mintime = track_time[i];
+				ch = i;
+			}
+		}
+		if (mintime < 0)
+			break;
+
+		src_ptr = tracks[ch];
+		chunk_type = *(src_ptr);
+
+
+		if (current_note[ch] >= 0) {
+			delay = mintime - curtime;
+			curtime = mintime;
+			if (delay > 0x7f) {
+				if (delay > 0x3fff) {
+					*ptr++ = (delay >> 14) | 0x80;
+					delay &= 0x3fff;
+				}
+				*ptr++ = (delay >> 7) | 0x80;
+				delay &= 0x7f;
+			}
+			*ptr++ = delay;
+			*ptr++ = 0x80 + ch; // key off channel;
+			*ptr++ = current_note[ch];
+			*ptr++ = 0;
+			current_note[ch] = -1;
+		}
+		
+
+		switch (chunk_type) {
+		case 1:
+			/* Instrument definition */
+			memcpy(current_instr[ch], src_ptr+1, 14);
+			src_ptr += 15;
+			break;
+
+		case 2:
+			/* tone/parammodulation */
+			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
+				   sizeof(ADLIB_INSTR_MIDI_HACK));
+			
+			ptr[5]  += ch;
+			ptr[28] += ch;
+			ptr[92] += ch;
+
+			/* flags_1 */
+			ptr[30 + 0] = (current_instr[ch][3] >> 4) & 0xf;
+			ptr[30 + 1] = current_instr[ch][3] & 0xf;
+			
+			/* oplvl_1 */
+			ptr[30 + 2] = (current_instr[ch][4] >> 4) & 0xf;
+			ptr[30 + 3] = current_instr[ch][4] & 0xf;
+			
+			/* atdec_1 */
+			ptr[30 + 4] = ((~current_instr[ch][5]) >> 4) & 0xf;
+			ptr[30 + 5] = (~current_instr[ch][5]) & 0xf;
+			
+			/* sustrel_1 */
+			ptr[30 + 6] = ((~current_instr[ch][6]) >> 4) & 0xf;
+			ptr[30 + 7] = (~current_instr[ch][6]) & 0xf;
+				
+			/* waveform_1 */
+			ptr[30 + 8] = (current_instr[ch][7] >> 4) & 0xf;
+			ptr[30 + 9] = current_instr[ch][7] & 0xf;
+				
+			/* flags_2 */
+			ptr[30 + 10] = (current_instr[ch][8] >> 4) & 0xf;
+			ptr[30 + 11] = current_instr[ch][8] & 0xf;
+			
+			/* oplvl_2 */
+			ptr[30 + 12] = ((current_instr[ch][9]) >> 4) & 0xf;
+			ptr[30 + 13] = (current_instr[ch][9]) & 0xf;
+			
+			/* atdec_2 */
+			ptr[30 + 14] = ((~current_instr[ch][10]) >> 4) & 0xf;
+			ptr[30 + 15] = (~current_instr[ch][10]) & 0xf;
+			
+			/* sustrel_2 */
+			ptr[30 + 16] = ((~current_instr[ch][11]) >> 4) & 0xf;
+			ptr[30 + 17] = (~current_instr[ch][11]) & 0xf;
+			
+			/* waveform_2 */
+			ptr[30 + 18] = (current_instr[ch][12] >> 4) & 0xf;
+			ptr[30 + 19] = current_instr[ch][12] & 0xf;
+			
+			/* feedback */
+			ptr[30 + 20] = (current_instr[ch][2] >> 4) & 0xf;
+			ptr[30 + 21] = current_instr[ch][2] & 0xf;
+
+			delay = mintime - curtime;
+			curtime = mintime;
+
+
+			
+			{
+				delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
+				delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
+				debug(4, "delays: %d / %d", delay, delay2);
+				if (delay2 >= 0 && delay2 < delay)
+					delay = delay2;
+				if (delay == -1)
+					delay = 0;
+			}
+							
+			/* duration */
+			ptr[30 + 58] = 0; // ((delay * 17 / 63) >> 4) & 0xf;
+			ptr[30 + 59] = 0; // (delay * 17 / 63) & 0xf;
+				
+			ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
+
+			olddelay = mintime - curtime;
+			curtime = mintime;
+			if (olddelay > 0x7f) {
+				if (olddelay > 0x3fff) {
+					*ptr++ = (olddelay >> 14) | 0x80;
+					olddelay &= 0x3fff;
+				}
+				*ptr++ = (olddelay >> 7) | 0x80;
+				olddelay &= 0x7f;
+			}
+			*ptr++ = olddelay;
+
+
+			/* FIXME:  delay factor found by try and error */
+			delay = (delay + 1) * 240 / 13;
+			
+			{
+				int freq = ((current_instr[ch][1] & 3) << 8)
+					| current_instr[ch][0];
+				freq <<= ((current_instr[ch][1] >> 2) & 7) + 1;
+				int note = -11;
+				while (freq >= 0x100) {
+					note += 12;
+					freq >>= 1;
+				}
+				debug(4, "Freq: %d (%x) Note: %d", freq, freq, note);
+				if (freq < 0x80)
+					note = 0;
+				else
+					note += freq2note[freq - 0x80];
+
+				debug(4, "Note: %d", note);
+				if (note < 0)
+				    note = 0;
+				else if (note > 127)
+				    note = 127;
+				
+				// Insert a note on event 
+				*ptr++ = 0x90 + ch; // key on channel
+				*ptr++ = note;
+				*ptr++ = 63;
+				current_note[ch] = note;
+				track_time[ch] = curtime + delay;				
+			}
+			src_ptr += 11;
+			break;
+			
+		case 0x80:
+			track_time[ch] = -1;
+			src_ptr ++;
+			break;
+			
+		default:
+			track_time[ch] = -1;
+		}
+		tracks[ch] = src_ptr;
+	}
+
+	/* insert end of song sysex */
+	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
+
 	return 1;
 }
 

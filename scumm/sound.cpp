@@ -512,7 +512,7 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 
-	if (_scumm->_features & GF_OLD_BUNDLE) {
+	if (_scumm->_version <= 2) {
 		//TODO: support maniac v1 sounds
 		if ((_scumm->_version == 1) && (_scumm->_gameId == GID_MANIAC)) 
 			return;
