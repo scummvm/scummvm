@@ -783,7 +783,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 {
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
 	int i;
-	byte *zplane_list[6];
+	byte *zplane_list[9];
 
 	int bottom;
 	int numzbuf;
