@@ -24,5 +24,7 @@ HAVE_GCC3 = true
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o backends/fs/posix/posix-fs.o
 
+MODULE_DIRS += .
+
 include $(srcdir)/Makefile.common
 
