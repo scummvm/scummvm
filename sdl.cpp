@@ -564,9 +564,10 @@ void OSystem_SDL::update_screen() {
 
 		/* Call SDL update on the affected regions */
 		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
-
+#ifdef WIN32
 		if (GetAsyncKeyState(VK_SHIFT)<0)
 			printf("Update area %d pixels. %d%%\n", area, (area+(320*2)/2) / (320*2));
+#endif
 	} else {
 		/* Call SDL update on the affected regions */
 		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
