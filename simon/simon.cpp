@@ -4743,6 +4743,9 @@ struct VocBlockHeader {
 
 void SimonState::playVoice(uint voice)
 {
+	if (_voice_offsets == NULL)
+		return;
+	
 	_mixer->stop(_voice_sound);
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
@@ -4819,6 +4822,8 @@ void SimonState::playSound(uint sound)
 			}
 
 			_effects_file->read(&size, 4);
+			// FIXME - do we really want to read a block of 4 bytes, ignoring endian issues?
+			printf("FOO %08x 7 %d \n", size, size & 0xffffff);
 			size = size & 0xffffff;
 			_effects_file->seek(-1, SEEK_CUR);
 			_effects_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
