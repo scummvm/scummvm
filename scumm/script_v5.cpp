@@ -579,20 +579,31 @@ void Scumm_v5::o5_breakHere() {
 
 void Scumm_v5::o5_chainScript() {
 	int vars[16];
-	int data;
+	int script;
 	int cur;
 
-	data = getVarOrDirectByte(0x80);
+	script = getVarOrDirectByte(0x80);
 
 	getWordVararg(vars);
 
 	cur = _currentScript;
 
+	// FIXME: Work around a bug in script 33 in Indy3 VGA. That script is
+	// used for the fist fights in the Zeppeling. It uses Local[5], even
+	// though that is never set to any value. But script 33 is called
+	// via chainScript by script 32, and in there Local[5] is defined to
+	// the actor ID of the opposing soldier. So, we copy that value
+	// over to the Local[5] variable of script 33.
+	// See also bug #743314.
+	if (_gameId == GID_INDY3_256 && vm.slot[cur].number == 32 && script == 33) {
+		vars[5] = vm.localvar[cur][5];
+	}
+
 	vm.slot[cur].number = 0;
 	vm.slot[cur].status = 0;
 	_currentScript = 0xFF;
 
-	runScript(data, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, vars);
+	runScript(script, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, vars);
 }
 
 void Scumm_v5::o5_cursorCommand() {
