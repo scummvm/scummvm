@@ -140,10 +140,6 @@ SOURCE=.\debug.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\fmopl.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\gfx.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -154,10 +150,6 @@ SOURCE=.\gfx.cpp
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=.\midi2.cpp
 # End Source File
 # Begin Source File
 
@@ -252,6 +244,10 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -316,10 +312,6 @@ SOURCE=.\verbs.cpp
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=.\windows.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
