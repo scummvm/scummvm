@@ -104,16 +104,10 @@
 			RelativePath="..\..\saga\actionmap.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\actionmap_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\actor.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\actor.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\actor_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\actordata.cpp">
@@ -128,16 +122,10 @@
 			RelativePath="..\..\saga\animation.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\animation_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\console.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\console.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\console_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\cvar.cpp">
@@ -155,9 +143,6 @@
 			RelativePath="..\..\saga\events.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\events_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\expr.cpp">
 		</File>
 		<File
@@ -171,9 +156,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\font_map.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\font_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\game.cpp">
@@ -191,22 +173,13 @@
 			RelativePath="..\..\saga\gfx.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\gfx_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\ihnm_introproc.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\ihnm_introproc.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\image.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\image.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\image_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\input.cpp">
@@ -218,25 +191,13 @@
 			RelativePath="..\..\saga\interface.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\interface_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\isomap.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\isomap.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\isomap_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\ite_introproc.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\ite_introproc.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\ite_introproc_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\music.cpp">
@@ -251,16 +212,10 @@
 			RelativePath="..\..\saga\objectmap.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\objectmap_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\palanim.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\palanim.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\palanim_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\reinherit.h">
@@ -270,9 +225,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\render.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\render_mod.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\resnames.h">
@@ -299,9 +251,6 @@
 			RelativePath="..\..\saga\scene.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\scene_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\sceneproc.cpp">
 		</File>
 		<File
@@ -314,9 +263,6 @@
 			RelativePath="..\..\saga\script.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\script_mod.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\sdata.cpp">
 		</File>
 		<File
@@ -327,9 +273,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\sfuncs.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sfuncs.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\sndres.cpp">
@@ -350,34 +293,13 @@
 			RelativePath="..\..\saga\sprite.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\sprite_mod.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\sstack.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sstack.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\sthread.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sthread.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\text.cpp">
 		</File>
 		<File
 			RelativePath="..\..\saga\text.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\text_mod.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\timer.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\timer.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\transitions.cpp">
