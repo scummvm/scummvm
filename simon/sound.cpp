@@ -355,7 +355,7 @@ void SimonSound::readSfxFile(const char *filename, const Common::String &gameDat
 		free(filename2);
 		if (file->isOpen() == false) {
 			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-			warning("readSfxFile: Can't load sfx file %s", filename);
+				warning("readSfxFile: Can't load sfx file %s", filename);
 			return;
 		}
 	}
@@ -390,7 +390,6 @@ void SimonSound::readVoiceFile(const char *filename, const Common::String &gameD
 		file->open(filename2, gameDataPath);
 		free(filename2);
 		if (file->isOpen() == false) {
-			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
 			warning("readVoiceFile: Can't load voice file %s", filename);
 			return;
 		}
@@ -409,11 +408,13 @@ void SimonSound::playVoice(uint sound) {
 		File *file = new File();
 		file->open(filename, _gameDataPath);
 		if (file->isOpen() == false) {
-			warning("Can't open voice file %s", filename);
-		} else {
-			delete _voice;
-			_voice = new WavSound(_mixer, file, _offsets);
-		}
+			warning("playVoice: Can't load voice file %s", filename);
+			return;
+		} 
+		// FIXME freeing voice at this point causes frequent game crashes
+		// Maybe related to sound effects and speech using same sound format ?
+		// delete _voice;
+		_voice = new WavSound(_mixer, file, _offsets);
 	}
 
 	if (!_voice)
