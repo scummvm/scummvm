@@ -575,6 +575,8 @@ int Scumm::scummLoop(int delta)
 	_system->show_mouse(_cursor.state > 0);
 
 	_vars[VAR_TIMER] = 0;
+	if (_features & GF_AFTER_V8)
+		_vars[300] = 0;	// FIXME - this fixes an inventory crash. But is it correct this way?
 	return _vars[VAR_TIMER_NEXT];
 
 }
