@@ -1,60 +1,36 @@
+Here is a list of things we plan to do for the future. Note that we
+don't promise to do any of these, nor when we will do them. It's just a
+list  of what we hope to be able to do one day.
+
+If you want to dig in, this is the stuff where you might make the most
+useful contribution. Note that this list is never complete, and may be
+partially outdated, so just because you don't see something here doesn't
+mean it is not important.
+
+Before you start work on something, you might want to talk to somebody
+from the team. This will help us to prevent double work, i.e. several
+people working on the same stuff at once without knowing about each
+other.
+
+
+#######################################################################
+# Docs, Web site
+#######################################################################
+
 General
-=======
-* Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
-  we set when the application should be quit (e.g. when an EVENT_QUIT is
-  received). This is useful if multiple levels of event loops have to be ended
-* Fix the Map<> template, make it more robust; maybe use a red-black tree?
-* Fix engines so they clean up after themselves, to allow proper re-entry
-  to the launcher. See "FIXME: LAUNCHERHACK" in base/main.cpp
-* Make some generic "EventLoop" API/class which all backends and the GUI
-  use. Initially this would just call the backend poll_event() etc. methods.
-  But eventually the EventLoop object(s) could be made by the backend.
-  This may allow for more efficient CPU usage etc.
-  The current event handling model essentially is polling: the engines run
-  some kind of main loop, which, besides many other things, also polls and
-  dispatches events. The idea is to turn this around: the event loop
-  frequently gives the engine time to do these "other things".
-* Add a FilesystemManager or FileManager or so which should unify and/or
-  replace the current File/FilesystemNode classes (and maybe SaveFileManager).
-  The goal is to make these things as portable as possible while keeping it
-  easy to use for the coder. Some new functionality we need:
-  - check for existence of file/directory
-  - check whether given directory is readable/writeable
-  - convert FSNode into a string representation (for prefs file)
-  - convert said string representation back to FSNode
-  Of course that can be added w/o a FileManager class, too - but it might be
-  nice to have all of these integrated.
-* Get rid of the hardcoded (sub)directory list in the File class. At the very
-  least, that list should be set by the engine (since not all engines need all
-  of the subdirs). Better would be to introduce a somewhat higher level API,
-  a replacement for File::open() which (optionally) takes a list of subdirs.
-  E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
-* Default to saving games in $HOME if in savepath is not defined maybe something
-  like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
-
-Build System
-============
-* Add test(s) for backend usability in the configure script.
-* Enhance the Makefile-based build system to support VPATH and stuff, so that
-  one can compile scummvm in a directory tree separate from the source tree.
-  That would make it possible to build ScummVM with different build options,
-  e.g. have one debug build and one optimized build.
-  Fingolfin implemented most of this; the only thing missing is that configure
-  should detect when it is run in a directory outside the source tree, and in
-  that case generate a custom Makefile, with content like this:
-	srcdir = /path/to/source/dir
-	vpath %.cpp $(srcdir)
-	vpath %.h $(srcdir)
-	include $(srcdir)/Makefile
-* Allow automatic re-runs of configure (this would have to 'save' the values of
-  env vars like CXXFLAGS and also command line params)
-* Add an install target to the Makefile - Copy binary, install manpage, add
-  menu items, install README. See also patch #891909 (Gnome/KDE .desktop file)
-
-Documentation
-=============
-  [Ender is working on a new multi-format manual/readme]
+========
+* Add more doxygen comments. However, quality is preferable over quantity
+* Add port specific user documentation (dreamcast/palm especially). That
+  would include things like:
+  - How to use ScummVM on system XYZ
+  - Which Palm / WinCE devices will run ScummVM, which definitely will not
+    run it (or with which limitations)?
 * Update/enhance man page
+* Write a high level overview of how ScummVM and its engines work?
+
+README / Manual
+===============
+  [Ender is working on a new multi-format manual/readme]
 * Would be nice to have a HTML version of the README on the web page (and I
   don't just mean a big <pre> section; rather I mean "real" HTML with links
   and lists and tables etc.)
@@ -102,10 +78,10 @@ Documentation
   + Credits
   + Index? (would be nice, for example 'fullscreen' would link to the hotkey,
      the config file setting, and the command line option)
-* Add more doxygen comments. However, quality is preferable over quantity
 
 Web site
 ========
+* Add the "Manual" / README to the site
 * Redo the screenshots. Mostly this means adding more (and maybe removing or
   replacing a few). What I have in mind are that we follow these guidelines
   (which aren't set in stone nor laws, just guidelines :-)
@@ -117,27 +93,46 @@ Web site
   screenshots, compared to the current 32 (and more if we start adding HE
   games).
 
-GUI
-===
-* LAUNCHER: add more options to global options dialog
-* LAUNCHER: add more options to game target options dialog 
-* Remove hardcoded 320x200 assumptions, use game screen size
-* Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
-* Remove code duplication between EditTextWidget and ListWidget (i.e. text 
-  editing code; maybe we can factor that out into a common base or aggregate
-  class... not yet sure).
-* Fix EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
-  fonts (the current code overdraws chars partly, and relies on the fact that
-  our default built-in font has a seperation pixel column on the *left* side;
-  most other bitmap fonts have it on the right, though). To this end, we maybe
-  should backup the background before drawing the caret, and restore it when
-  erasing the caret.
 
-Game Detector
-=============
-* Improve the detector for games with all datafiles in subdirs (i.e.
-  Broken Sword 1 & 2). This could work by letting the detector proc recurse
-  into sub directories...
+#######################################################################
+# Common code, infrastructure
+#######################################################################
+
+General
+=======
+* Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
+  we set when the application should be quit (e.g. when an EVENT_QUIT is
+  received). This is useful if multiple levels of event loops have to be ended
+* Fix the Map<> template, make it more robust; maybe use a red-black tree?
+* Make some generic "EventLoop" API/class which all backends and the GUI
+  use. Initially this would just call the backend poll_event() etc. methods.
+  But eventually the EventLoop object(s) could be made by the backend.
+  This may allow for more efficient CPU usage etc.
+  The current event handling model essentially is polling: the engines run
+  some kind of main loop, which, besides many other things, also polls and
+  dispatches events. The idea is to turn this around: the event loop
+  frequently gives the engine time to do these "other things".
+* Default to saving games in $HOME if in savepath is not defined maybe something
+  like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
+
+Build System
+============
+* Add test(s) for backend usability in the configure script.
+* Enhance the Makefile-based build system to support VPATH and stuff, so that
+  one can compile scummvm in a directory tree separate from the source tree.
+  That would make it possible to build ScummVM with different build options,
+  e.g. have one debug build and one optimized build.
+  Fingolfin implemented most of this; the only thing missing is that configure
+  should detect when it is run in a directory outside the source tree, and in
+  that case generate a custom Makefile, with content like this:
+	srcdir = /path/to/source/dir
+	vpath %.cpp $(srcdir)
+	vpath %.h $(srcdir)
+	include $(srcdir)/Makefile
+* Allow automatic re-runs of configure (this would have to 'save' the values of
+  env vars like CXXFLAGS and also command line params)
+* Add an install target to the Makefile - Copy binary, install manpage, add
+  menu items, install README. See also patch #891909 (Gnome/KDE .desktop file)
 
 Audio
 =====
@@ -162,18 +157,78 @@ Config Manager
   setting is changed, the code doing so has to updated the SoundMixer etc.
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
-* Change backends to directly access the config manager
+
+Files
+=====
+* Add a FilesystemManager or FileManager or so which should unify and/or
+  replace the current File/FilesystemNode classes (and maybe SaveFileManager).
+  The goal is to make these things as portable as possible while keeping it
+  easy to use for the coder. Some new functionality we need:
+  - check for existence of file/directory
+  - check whether given directory is readable/writeable
+  - convert FSNode into a string representation (for prefs file)
+  - convert said string representation back to FSNode
+  Of course that can be added w/o a FileManager class, too - but it might be
+  nice to have all of these integrated.
+* Get rid of the hardcoded (sub)directory list in the File class. At the very
+  least, that list should be set by the engine (since not all engines need all
+  of the subdirs). Better would be to introduce a somewhat higher level API,
+  a replacement for File::open() which (optionally) takes a list of subdirs.
+  E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
+
+Game Detector
+=============
+* Improve the detector for games with all datafiles in subdirs (i.e.
+  Broken Sword 1 & 2). This could work by letting the detector proc recurse
+  into sub directories...
+
+GUI
+===
+* Remove hardcoded 320x200 assumptions, use game screen size
+* Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
+* Remove code duplication between EditTextWidget and ListWidget (i.e. text 
+  editing code; maybe we can factor that out into a common base or aggregate
+  class... not yet sure).
+* Fix EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
+  fonts (the current code overdraws chars partly, and relies on the fact that
+  our default built-in font has a seperation pixel column on the *left* side;
+  most other bitmap fonts have it on the right, though). To this end, we maybe
+  should backup the background before drawing the caret, and restore it when
+  erasing the caret.
+
+Launcher
+========
+* Add more options to global options dialog
+* Add more options to game target options dialog 
+
+
+#######################################################################
+# Engines / frontends
+#######################################################################
+
+General
+=======
+* Fix engines so they clean up after themselves, to allow proper re-entry
+  to the launcher. See "FIXME: LAUNCHERHACK" in base/main.cpp
 
 SCUMM
 =====
-* Fix C64 costume code
 * Make it possible to restart games properly
+* Add method of setting initial debug channels from command-line
+* Figure out how to extract resources from Apple II and Commodore 64 versions
+* Figure out how to extract resources from Turbografx/PC Engine version of Loom
+* Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
+* Loom EGA: Add support for Macintosh version
+* Support all Mac games without needing rescumm. These games being: dott,
+  samnmax, dig & ft. See above point.
+* Add support for sound effects format found in Sega CD version of Monkey
+  Island
+* Add support for NES version of Maniac Mansion
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
    would be preferable]
-* Figure out how to extract resources from Apple II and Commodore 64 versions
-* Figure out how to extract resources from Turbografx/PC Engine version of Loom
+* Fix C64 costume code
 * Humongous Entertainment Games
   - Add proper handling of sound and speech in Humongous games
   - Add support for returning the correct music status for the digital music
@@ -200,17 +255,12 @@ SCUMM
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* Add support for sound effects format found in Sega CD version of Monkey
-  Island
 * Possible implement a new resource manager, which then also could be shared
   by ScummEX. [Jamieson has some ideas about this and might work on it|
-* Support all Mac games without needing rescumm. These games being: dott,
-  samnmax, dig & ft. See above point.
 * COMI: Fix setActorChoreLimbFrame opcode (see bug #754419, "Wally's Fake
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
-* Add method of setting initial debug channels from command-line
 * COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
   In particular, when text is drawn via CHARSET_1 and then scrolling takes
   place, the text scrolls, too - but it really should stay fixed. There are
@@ -220,9 +270,8 @@ SCUMM
   Or constantly (well, at least whenever the camera moves) redraw the text.
   That would require buffering the text; maybe the blast text code could be
   reused for this...
-* Add support for NES version of Maniac Mansion
 * Finish formating stuff in subtitles/translation code in the dig.
-* (maybe) In the very long distance future add translation stuff(hashing
+* (maybe) In the very long distance future add translation stuff (hashing
   original and replacing with translation)
 * Add tool and support for encoding smush sequences into mpeg format to fit
   on small devices
@@ -248,7 +297,7 @@ SCUMM
   - Fix AKOS sound related stuff
   - Add save/load code
   - Add code for MP3 and Ogg Vorbis compressed datafiles
- * SMUSH:
+* SMUSH:
   - Add support for codec 37 opcode 1, for PC version of FT demo
   - Get rid smush mixer add code for imuse to handle smush tracks
   - Cleanup channel mess
@@ -280,6 +329,39 @@ SIMON
 * Add support for Protracker music format used in Amiga versions
 * Add support for drawing main graphics correctly in Amiga versions
 
+
+#######################################################################
+# Backends
+#######################################################################
+
+General
+=======
+* Several of the backend factory functions take config parameters. It should
+  be possible to get rid of those once the config system rewrite (see above)
+  has been done. In that case, the backends simply can query the config
+  manager for these parameters (or any others they might like :-).
+* Change backends to directly access the config manager
+* Add API to query backend for a list of available music engines
+  Useful for Options dialog
+* Sony PS2 Port
+* EPOC32/Symbian port. Might be able to start based on existing P800 port,
+  however that code seems to be old and would need extensive work to be
+  usable in post-0.6.0 ScummVM. Note: NGage uses Symbian OS, too...
+* MS DOS port using Allegro and DJGPP?
+* Intent port (already done by David Given, merge?)
+* Digita OS port? (play games on a select few digital cameras...)
+
+X11 backend
+===========
+* Update it to support the latest OSystem changes
+* Make it work with multiple bitdepths
+* Add frills used by SDL backend like graphic filters usage and CD audio
+
+
+#######################################################################
+# Tools
+#######################################################################
+
 Descumm
 =======
 * Turn it into a library, to be used by a command line frontend (like now),
@@ -292,17 +374,3 @@ Descumm
   second pass then tries to detect loops, break/continue statements etc.
 * Proper implementation of o6_startObjectQuick decompilation (see comment in
   descumm6.c). May requre rewrite of core program logic
-
-Backends
-========
-* Several of the backend factory functions take config parameters. It should
-  be possible to get rid of those once the config system rewrite (see above)
-  has been done. In that case, the backends simply can query the config
-  manager for these parameters (or any others they might like :-).
-* Add API to query backend for a list of available music engines
-  Useful for Options dialog
-
-X11 backend
-===========
-* Make it work with multiple bitdepths
-* Add frills used by SDL backend like graphic filters usage and CD audio
