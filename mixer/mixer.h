@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2005 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -252,5 +252,7 @@ private:
 	 */
 	static void mixCallback(void *s, byte *samples, int len);
 };
+
+extern SoundMixer *g_mixer;
 
 #endif

@@ -557,6 +557,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\font.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\keyframe.cpp"
 			>
 		</File>
