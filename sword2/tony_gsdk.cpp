@@ -27,7 +27,7 @@
 //general odds and ends
 
 #include <sys/stat.h>
-#include <fcntl.h>
+//#include <fcntl.h>
 //#include <io.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -118,22 +118,21 @@ int32	Direct_read_file(const char	*name,	char	*ad)	//Tony1May96
 int32	Direct_write_file(const char	*name,	char	*ad, uint32 total_bytes)	//Tony1May96
 {
 //load the file directly into the memory location passed
-	int	fh;
+	FILE	*fh;
 
-	//fh = open(name, _O_RDWR | _O_CREAT);	//open for reading
-	fh = open(name, O_RDWR | O_CREAT);	//open for reading
+	fh = fopen(name, "wb");	//open for writing
 
-	if	(fh==-1)
+	if	(fh==NULL)
 	{	Zdebug("Direct_write_file open fail %d", name);
 		return(-1);
 	}
 
-	if	(write( fh, ad, total_bytes)==-1)
+	if	(fwrite( ad, 1, total_bytes, fh)!=total_bytes)
 	{	Zdebug("Direct_write_file write fail %d", name);
 		return(-1);
 	}
 
-	close(fh);
+	fclose(fh);
 
 	return(0);	//ok, done it
 }
