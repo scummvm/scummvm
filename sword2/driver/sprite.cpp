@@ -505,6 +505,10 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
 		byte *lightMap;
 
+		// Make sure that we never apply the shadow to the original
+		// resource data. This could only ever happen in the
+		// RDSPR_NOCOMPRESSION case.
+
 		if (!freeSprite) {
 			newSprite = (byte *) malloc(s->w * s->h);
 			memcpy(newSprite, sprite, s->w * s->h);
