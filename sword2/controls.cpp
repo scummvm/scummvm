@@ -1892,19 +1892,22 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 	// byte 8 = subtitle state and byte 9 = object label state.
 
 	uint8 buff[10];
-	FILE *fp;
+	SaveFile *fp;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	if ((fp = fopen("Settings.dat","rb"))== NULL)
+	if (!(fp = mgr->open_savefile("Settings.dat", g_sword2->getSavePath(), false)))
 		return (1);
 
-	if (fread(buff,1,10,fp) != 10)
+	if (fp->read(buff, 10) != 10)
 	{
-		fclose(fp);
+		delete fp;
+		delete mgr;
 		return (2);
 	}
 
-	fclose(fp);
-
+	delete fp;
+	delete mgr;
+	
 	g_sword2->_sound->SetMusicVolume(buff[0]);
 	g_sword2->_sound->SetSpeechVolume(buff[1]);
 	g_sword2->_sound->SetFxVolume(buff[2]);
@@ -1930,7 +1933,9 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 int32	WriteOptionSettings(void)	//pete10Jun97
 {
 	uint8 buff[10];
-	FILE *fp;
+	SaveFile *fp;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
+	
 
 	buff[0] = g_sword2->_sound->GetMusicVolume();
 	buff[1] = g_sword2->_sound->GetSpeechVolume();
@@ -1943,17 +1948,19 @@ int32	WriteOptionSettings(void)	//pete10Jun97
 	buff[8] = pointerTextSelected;
 	buff[9] = stereoReversed;
 	
-	if ((fp = fopen("Settings.dat","wb"))== NULL)
+	if (!(fp = mgr->open_savefile("Settings.dat", g_sword2->getSavePath(), true)))
 		return (1);
 
-	if (fwrite(buff,1,10,fp) != 10)
+	if (fp->write(buff, 10) != 10)
 	{
-		fclose(fp);
+		delete fp;
+		delete mgr;
 		return (2);
 	}
 
-	fclose(fp);
-
+	delete fp;
+	delete mgr;
+	
 	return (0);
 }
 
