@@ -48,6 +48,17 @@ ListWidget::~ListWidget()
 {
 }
 
+void ListWidget::setList(const StringList& list)
+{
+	int size = list.size();
+	_list = list;
+	if (_currentPos >= size)
+		_currentPos = size - 1;
+	_selectedItem = -1;
+	_editMode = false;
+	scrollBarRecalc();
+}
+
 void ListWidget::scrollBarRecalc()
 {
 	_scrollBar->_numEntries = _list.size();
@@ -136,8 +147,8 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
 				if (_editable && (_currentKeyDown != '\n' && _currentKeyDown != '\r')) {
-					_editMode = true;
 					dirty = true;
+					_editMode = true;
 					_backupString = _list[_selectedItem];
 				}
 			}
@@ -270,4 +281,23 @@ void ListWidget::scrollToCurrent() {
 
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
+}
+
+void ListWidget::startEditMode()
+{
+	if (_editable && !_editMode && _selectedItem >= 0) {
+		_editMode = true;
+		_backupString = _list[_selectedItem];
+		_list[_selectedItem] += '_';
+		draw();
+	}
+}
+
+void ListWidget::abortEditMode()
+{
+	if (_editMode) {
+		_editMode = false;
+		_list[_selectedItem] = _backupString;
+		draw();
+	}
 }

@@ -87,7 +87,7 @@ NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false
 	// Setup some default GUI colors.
 	// TODO - either use nicer values, or maybe make this configurable?
 	_bgcolor = RGB_TO_16(0, 0, 0);
-	_color = RGB_TO_16(80, 80, 80);
+	_color = RGB_TO_16(96, 96, 96);
 	_shadowcolor = RGB_TO_16(64, 64, 64);
 	_textcolor = RGB_TO_16(32, 160, 32);
 	_textcolorhi = RGB_TO_16(0, 255, 0);
@@ -261,17 +261,20 @@ int16 *NewGui::getBasePtr(int x, int y)
 	return _screen + x + y * _screenPitch;
 }
 
-void NewGui::box(int x, int y, int width, int height)
+void NewGui::box(int x, int y, int width, int height, bool inverted)
 {
-	hline(x + 1, y, x + width - 2, _color);
-	hline(x, y + 1, x + width - 1, _color);
-	vline(x, y + 1, y + height - 2, _color);
-	vline(x + 1, y, y + height - 1, _color);
+	int16 colorA = inverted ? _shadowcolor : _color;
+	int16 colorB = inverted ? _color : _shadowcolor;
 
-	hline(x + 1, y + height - 2, x + width - 1, _shadowcolor);
-	hline(x + 1, y + height - 1, x + width - 2, _shadowcolor);
-	vline(x + width - 1, y + 1, y + height - 2, _shadowcolor);
-	vline(x + width - 2, y + 1, y + height - 1, _shadowcolor);
+	hline(x + 1, y, x + width - 2, colorA);
+	hline(x, y + 1, x + width - 1, colorA);
+	vline(x, y + 1, y + height - 2, colorA);
+	vline(x + 1, y, y + height - 1, colorA);
+
+	hline(x + 1, y + height - 2, x + width - 1, colorB);
+	hline(x + 1, y + height - 1, x + width - 2, colorB);
+	vline(x + width - 1, y + 1, y + height - 2, colorB);
+	vline(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
 void NewGui::line(int x, int y, int x2, int y2, int16 color)

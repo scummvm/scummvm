@@ -51,10 +51,21 @@ class SaveLoadDialog : public ScummDialog {
 public:
 	SaveLoadDialog(NewGui *gui, Scumm *scumm);
 
+	virtual void open();
+
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	ListWidget	*_savegameList;
+	ListWidget       *_savegameList;
+	
+	PushButtonWidget *_saveButton;
+	PushButtonWidget *_loadButton;
+	
+	bool			_saveMode;
+
+	void fillList();
+	void save();
+	void load();
 };
 
 

@@ -26,9 +26,7 @@
 
 
 #ifdef _MSC_VER
-
 #	pragma warning( disable : 4068 ) // unknown pragma
-
 #endif
 
 
@@ -59,7 +57,7 @@ void Widget::draw()
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		gui->box(_x, _y, _w, _h);
+		gui->box(_x, _y, _w, _h, (_flags & WIDGET_INV_BORDER) == WIDGET_INV_BORDER);
 		_x += 4;
 		_y += 4;
 		_w -= 8;
@@ -111,9 +109,10 @@ void StaticTextWidget::drawWidget(bool hilite)
 
 
 ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss), _cmd(cmd), _hotkey(hotkey)
+	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
+	  _cmd(cmd), _hotkey(hotkey)
 {
-	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
+	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
 	_type = kButtonWidget;
 }
 
@@ -131,6 +130,27 @@ void ButtonWidget::drawWidget(bool hilite)
 	                hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
+
+#pragma mark -
+
+
+PushButtonWidget::PushButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false)
+{
+	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
+	_type = kButtonWidget;
+}
+
+void PushButtonWidget::setState(bool state)
+{
+	if (_state != state) {
+		_state = state;
+		_flags ^= WIDGET_INV_BORDER;
+		draw();
+	}
+}
+
+
 #pragma mark -
 
 
@@ -147,17 +167,16 @@ static uint32 checked_img[8] = {
 };
 
 CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false)
+	: PushButtonWidget(boss, x, y, w, h, label, cmd, hotkey)
 {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
 
-void CheckboxWidget::handleMouseDown(int x, int y, int button, int clickCount)
+void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
-	if (isEnabled()) {
-		_state = !_state;
-		draw();
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+		toggleState();
 		sendCommand(_cmd, 0);
 	}
 }

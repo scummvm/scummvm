@@ -31,10 +31,11 @@ enum {
 	WIDGET_INVISIBLE	= 1 << 1,
 	WIDGET_HILITED		= 1 << 2,
 	WIDGET_BORDER		= 1 << 3,
-	WIDGET_CLEARBG		= 1 << 4,
-	WIDGET_WANT_TICKLE	= 1 << 5,
-	WIDGET_TRACK_MOUSE	= 1 << 6,
-	WIDGET_RETAIN_FOCUS	= 1 << 7		// Retain focus on mouse up. By default widgets lose focus on mouseup, but some widgets might want to retain it - widgets where you enter text, for instance
+	WIDGET_INV_BORDER	= 1 << 4,
+	WIDGET_CLEARBG		= 1 << 5,
+	WIDGET_WANT_TICKLE	= 1 << 7,
+	WIDGET_TRACK_MOUSE	= 1 << 8,
+	WIDGET_RETAIN_FOCUS	= 1 << 9		// Retain focus on mouse up. By default widgets lose focus on mouseup, but some widgets might want to retain it - widgets where you enter text, for instance
 
 };
 
@@ -152,8 +153,8 @@ protected:
 class ButtonWidget : public StaticTextWidget, public CommandSender {
 	friend class Dialog;	// Needed for the hotkey handling
 protected:
-	uint32			_cmd;
-	uint8			_hotkey;
+	uint32	_cmd;
+	uint8	_hotkey;
 public:
 	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
@@ -168,16 +169,25 @@ protected:
 	void drawWidget(bool hilite);
 };
 
-/* CheckboxWidget */
-class CheckboxWidget : public ButtonWidget {
+/* PushButtonWidget */
+class PushButtonWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	void setState(bool state)	{ _state = state; }
-	bool getState() const		{ return _state; }
+	PushButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
-	void handleMouseDown(int x, int y, int button, int clickCount);
+	void setState(bool state);
+	void toggleState()			{ setState(!_state); }
+	bool getState() const		{ return _state; }
+};
+
+/* CheckboxWidget */
+class CheckboxWidget : public PushButtonWidget {
+protected:
+public:
+	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+
+	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{}
 	virtual void handleMouseLeft(int button)	{}
 

@@ -58,7 +58,7 @@ public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
 	
-	void setList(const StringList& list)		{ _list = list; scrollBarRecalc(); }
+	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
 	const String& getSelectedString() const		{ return _list[_selectedItem]; }
@@ -76,6 +76,9 @@ public:
 	virtual bool wantsFocus() { return true; };
 
 	void scrollBarRecalc();
+	
+	void startEditMode();
+	void abortEditMode();
 
 protected:
 	void drawWidget(bool hilite);

@@ -307,47 +307,63 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 
-	addButton(200, 20, queryResString(4), kSaveCmd, 'S');	// Save
-	addButton(200, 40, queryResString(5), kLoadCmd, 'L');	// Load
+	_saveButton = (PushButtonWidget *)addPushButton(200, 20, queryResString(4), kSaveCmd, 'S');
+	_loadButton = (PushButtonWidget *)addPushButton(200, 40, queryResString(5), kLoadCmd, 'L');
 	addButton(200, 60, queryResString(6), kPlayCmd, 'P');	// Play
 	addButton(200, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
 	addButton(200, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
 	
 	_savegameList = new ListWidget(this, 10, 20, 180, 90);
-	_savegameList->setNumberingMode(kListNumberingZero);
-	
-	// Get savegame names
-	ScummVM::StringList l;
-	char name[32];
+}
 
-	for (int i = 0; i <= 80; i++) {		// 80 - got this value from the old GUI
-		_scumm->getSavegameName(i, name);
-		l.push_back(name);
-	}
+void SaveLoadDialog::open()
+{
+	_saveMode = false;
+	_saveButton->setState(false);
+	_loadButton->setState(true);
+	fillList();
 
-	_savegameList->setList(l);
+	ScummDialog::open();
 }
 
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
-	case kListItemActivatedCmd:
 	case kSaveCmd:
-		if (_savegameList->getSelected() >= 1 && !_savegameList->getSelectedString().isEmpty()) {
-			_scumm->_saveLoadSlot = _savegameList->getSelected();
-			_scumm->_saveLoadCompatible = false;
-			_scumm->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
-			strcpy(_scumm->_saveLoadName, _savegameList->getSelectedString().c_str());
-			close();
+		if (!_saveMode) {
+			_saveMode = true;
+			_saveButton->setState(true);
+			_loadButton->setState(false);
+			fillList();
+			draw();
+		}
+		break;
+	case kLoadCmd:
+		if (_saveMode) {
+			_saveMode = false;
+			_saveButton->setState(false);
+			_loadButton->setState(true);
+			fillList();
+			draw();
 		}
 		break;
 	case kListItemDoubleClickedCmd:
-	case kLoadCmd:
 		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
-			_scumm->_saveLoadSlot = _savegameList->getSelected();
-			_scumm->_saveLoadCompatible = false;
-			_scumm->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
-			close();
+			if (_saveMode) {
+				// Start editing the selected item, for saving
+				_savegameList->startEditMode();
+			} else {
+				load();
+			}
+		}
+		break;
+	case kListItemActivatedCmd:
+		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
+			if (_saveMode) {
+				save();
+			} else {
+				load();
+			}
 		}
 		break;
 	case kPlayCmd:
@@ -364,8 +380,44 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+void SaveLoadDialog::fillList()
+{
+	// Get savegame names
+	ScummVM::StringList l;
+	char name[32];
+	int i = _saveMode ? 1 : 0;
+
+	for (; i <= 80; i++) {		// 80 - got this value from the old GUI
+		_scumm->getSavegameName(i, name);
+		l.push_back(name);
+	}
+
+	_savegameList->setList(l);
+	_savegameList->setNumberingMode(_saveMode ? kListNumberingOne : kListNumberingZero);
+}
+
+void SaveLoadDialog::save()
+{
+	// Save the selected item
+	_scumm->_saveLoadSlot = _savegameList->getSelected() + 1;
+	_scumm->_saveLoadCompatible = false;
+	_scumm->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
+	strcpy(_scumm->_saveLoadName, _savegameList->getSelectedString().c_str());
+	close();
+}
+
+void SaveLoadDialog::load()
+{
+	// Load the selected item
+	_scumm->_saveLoadSlot = _savegameList->getSelected();
+	_scumm->_saveLoadCompatible = false;
+	_scumm->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
+	close();
+}
+
 
 #pragma mark -
+
 
 enum {
 	kMasterVolumeChanged	= 'mavc',
