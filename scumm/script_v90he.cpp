@@ -1619,6 +1619,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 
 
 void ScummEngine_v90he::o90_unknownA5() {
+	// Font related
 	byte string[80];
 	int a;
 
@@ -1627,18 +1628,24 @@ void ScummEngine_v90he::o90_unknownA5() {
 	switch (subOp) {
 	case 42:
 		a = pop();
-		if (a == 2)
+		if (a == 2) {
 			copyScriptString(string);
-		else if (a == 1)
+			push(-1);
+		} else if (a == 1) {
 			pop();
+			writeVar(0, 0);
+			defineArray(0, kStringArray, 0, 0, 0, 0);
+			writeArray(0, 0, 0, 0);
+			push(readVar(0));
+		}
 		break;
 	case 57:
+		push(1);
 		break;
 	default:
 		error("o90_unknownA5: Unknown case %d", subOp);
 	}
 
-	push(0);
 	debug(1,"o90_unknownA5 stub (%d)", subOp);
 }
 
