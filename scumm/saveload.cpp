@@ -183,6 +183,13 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 	
+	if (hdr.ver < VER(33) && _version >= 7) {
+		// For a long time, we didn't set these vars to default values.
+		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
+		if (_version == 7)
+			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+	}
+
 	if (hdr.ver < VER(32) && _heversion == 70) {
 		roomptr = getResourceAddress(rtRoom, _roomResource);
 		const byte *ptr = findResourceData(MKID('REMP'), roomptr);
