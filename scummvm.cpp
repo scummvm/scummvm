@@ -931,23 +931,23 @@ void Scumm::processKbd()
 		if (_sfxMode == 2)
 			stopTalk();
 		return;
-	} else if (_lastKeyHit == 91) { // [, eg volume down
+	} else if (_lastKeyHit == '[') { // [, eg volume down
 		_sound_volume_master-=5;
 		if (_sound_volume_master < 0)
 			_sound_volume_master = 0;
 		_imuse->set_master_volume(_sound_volume_master);
-	} else if (_lastKeyHit == 93) { // ], eg volume down
+	} else if (_lastKeyHit == ']') { // ], eg volume down
 		_sound_volume_master+=5;
 		if (_sound_volume_master > 128)
 			_sound_volume_master = 128;		
 		_imuse->set_master_volume(_sound_volume_master);
-	} else if (_lastKeyHit == 45) { // -, eg text speed down
+	} else if (_lastKeyHit == '-') { // -, eg text speed down
 		_defaultTalkDelay+=5;
 		if (_defaultTalkDelay > 90)
 			_defaultTalkDelay = 90;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == 61) { // +, eg text speed up
+	} else if (_lastKeyHit == '+') { // +, eg text speed up
 		_defaultTalkDelay-=5;
 		if (_defaultTalkDelay < 5)
 			_defaultTalkDelay = 5;
