@@ -1248,7 +1248,7 @@ bool Insane::smlayer_startSfx(int32 sound) {
 
 bool Insane::smlayer_startVoice(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startVoice(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
