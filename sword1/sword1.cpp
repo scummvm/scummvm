@@ -40,50 +40,30 @@
 #include "menu.h"
 #include "music.h"
 
-// taken from Sword2.cpp
-struct Sword1GameSettings {
-	const char *name;
-	const char *description;
-	uint32 features;
-	const char *detectname;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
-		return dummy;
-	}
-};
-
-static const Sword1GameSettings sword1_settings[] = {
-	/* Broken Sword 1 */
-	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER, "swordres.rif" },
-	{NULL, NULL, 0, NULL}
-};
+/* Broken Sword 1 */
+static const GameSettings sword1_setting =
+	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER};
 
 GameList Engine_SWORD1_gameList() {
-	const Sword1GameSettings *g = sword1_settings;
 	GameList games;
-	while (g->name) {
-		games.push_back(g->toGameSettings());
-		g++;
-	}
+	games.push_back(sword1_setting);
 	return games;
 }
 
 GameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	GameList detectedGames;
-	const Sword1GameSettings *g;
 
-	for (g = sword1_settings; g->name; ++g) {
-		// Iterate over all files in the given directory
-		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
+	// Iterate over all files in the given directory
+	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		const char *gameName = file->displayName().c_str();
 
-			if (0 == scumm_stricmp(g->detectname, gameName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameSettings());
-				break;
-			}
+		if (0 == scumm_stricmp("swordres.rif", gameName)) {
+			// Match found, add to list of candidates, then abort inner loop.
+			detectedGames.push_back(sword1_setting);
+			break;
 		}
 	}
+
 	return detectedGames;
 }
 
