@@ -72,7 +72,7 @@ OSystem_SDL_Common *OSystem_SDL_Common::create() {
 void OSystem_SDL_Normal::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
-	SDL_Color *base = _cur_pal + start;
+	SDL_Color *base = _currentPalette + start;
 	for(i = 0; i < num; i++) {
 		base[i].r = b[0];
 		base[i].g = b[1];
@@ -80,11 +80,11 @@ void OSystem_SDL_Normal::set_palette(const byte *colors, uint start, uint num) {
 		b += 4;
 	}
 
-	if (start < _palette_changed_first)
-		_palette_changed_first = start;
+	if (start < _paletteDirtyStart)
+		_paletteDirtyStart = start;
 
-	if (start + num > _palette_changed_last)
-		_palette_changed_last = start + num;
+	if (start + num > _paletteDirtyEnd)
+		_paletteDirtyEnd = start + num;
 }
 
 void OSystem_SDL_Normal::draw_mouse() {
@@ -92,17 +92,16 @@ void OSystem_SDL_Normal::draw_mouse() {
 		OSystem_SDL_Common::draw_mouse();
 	}
 
-
-	if (_mouse_drawn || !_mouse_visible)
+	if (_mouseDrawn || !_mouseVisible)
 		return;
 
-	int x = _mouse_cur_state.x - _mouse_hotspot_x;
-	int y = _mouse_cur_state.y - _mouse_hotspot_y;
+	int x = _mouse_cur_state.x - _mouseHotspotX;
+	int y = _mouse_cur_state.y - _mouseHotspotY;
 	int w = _mouse_cur_state.w;
 	int h = _mouse_cur_state.h;
 	byte color;
-	byte *src = _mouse_data;		// Image representing the mouse
-	uint16 *bak = (uint16*)_mouse_backup;	// Surface used to backup the area obscured by the mouse
+	byte *src = _mouseData;		// Image representing the mouse
+	uint16 *bak = (uint16*)_mouseBackup;	// Surface used to backup the area obscured by the mouse
 	uint16 *dst;					// Surface we are drawing into
 
 	// clip the mouse rect, and addjust the src pointer accordingly
@@ -116,14 +115,15 @@ void OSystem_SDL_Normal::draw_mouse() {
 		src -= y * _mouse_cur_state.w;
 		y = 0;
 	}
-	if (w > SCREEN_WIDTH - x)
-		w = SCREEN_WIDTH - x;
-	if (h > SCREEN_HEIGHT - y)
-		h = SCREEN_HEIGHT - y;
 
-	// Adjust for tmp_screen offset
-	x++;
-	y++;
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
+
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
 
 	// Store the bounding box so that undraw mouse can restore the area the
 	// mouse currently covers to its original content.
@@ -132,23 +132,19 @@ void OSystem_SDL_Normal::draw_mouse() {
 	_mouse_old_state.w = w;
 	_mouse_old_state.h = h;
 
-	// Quick check to see if anything has to be drawn at all
-	if (w <= 0 || h <= 0)
-		return;
-
 	// Draw the mouse cursor; backup the covered area in "bak"
 
 	if (SDL_LockSurface(sdl_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	dst = (uint16 *)sdl_tmpscreen->pixels + y * TMP_SCREEN_WIDTH + x;
+	dst = (uint16 *)sdl_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
 	while (h > 0) {
 		int width = w;
 		while (width > 0) {
 			*bak++ = *dst;
 			color = *src++;
 			if (color != 0xFF)	// 0xFF = transparent, don't draw
-				*dst = RGB_TO_16(_cur_pal[color].r, _cur_pal[color].g, _cur_pal[color].b);
+				*dst = RGB_TO_16(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 			dst++;
 			width--;
 		}
@@ -161,10 +157,10 @@ void OSystem_SDL_Normal::draw_mouse() {
 	SDL_UnlockSurface(sdl_tmpscreen);
 	
 	// Mark as dirty
-	add_dirty_rect(x-1, y-1, w, h);
+	add_dirty_rect(x, y, w, h);
 
 	// Finally, set the flag to indicate the mouse has been drawn
-	_mouse_drawn = true;
+	_mouseDrawn = true;
 }
 
 void OSystem_SDL_Normal::undraw_mouse() {
@@ -172,65 +168,64 @@ void OSystem_SDL_Normal::undraw_mouse() {
 		OSystem_SDL_Common::undraw_mouse();
 	}
 
-
-	if (!_mouse_drawn)
+	if (!_mouseDrawn)
 		return;
-	_mouse_drawn = false;
-
-	uint16 *dst, *bak = (uint16 *)_mouse_backup;
-	const int old_mouse_x = _mouse_old_state.x;
-	const int old_mouse_y = _mouse_old_state.y;
-	const int old_mouse_w = _mouse_old_state.w;
-	const int old_mouse_h = _mouse_old_state.h;
-	int x,y;
+	_mouseDrawn = false;
 
 	if (SDL_LockSurface(sdl_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
+	uint16 *dst, *bak = (uint16 *)_mouseBackup;
+	const int old_mouse_x = _mouse_old_state.x;
+	const int old_mouse_y = _mouse_old_state.y;
+	const int old_mouse_w = _mouse_old_state.w;
+	const int old_mouse_h = _mouse_old_state.h;
+	int x, y;
+
 	// No need to do clipping here, since draw_mouse() did that already
 
-	dst = (uint16 *)sdl_tmpscreen->pixels + old_mouse_y * TMP_SCREEN_WIDTH + old_mouse_x;
+	dst = (uint16 *)sdl_tmpscreen->pixels + (old_mouse_y+1) * TMP_SCREEN_WIDTH + (old_mouse_x+1);
 	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += TMP_SCREEN_WIDTH) {
 		for (x = 0; x < old_mouse_w; ++x) {
 			dst[x] = bak[x];
 		}
 	}
 
-	add_dirty_rect(old_mouse_x-1, old_mouse_y-1, old_mouse_w, old_mouse_h);
+	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
 	SDL_UnlockSurface(sdl_tmpscreen);
 }
 
 void OSystem_SDL_Normal::load_gfx_mode() {
-	force_full = true;
-	scaling = 1;
+	_forceFull = true;
+	_scaleFactor = 1;
 	_mode_flags = 0;
 	_overlay_visible = false;
 
 	_scaler_proc = NULL;
 	sdl_tmpscreen = NULL;
-	TMP_SCREEN_WIDTH = (SCREEN_WIDTH + 3);
+	TMP_SCREEN_WIDTH = (_screenWidth + 3);
 	
 	switch(_mode) {
 	case GFX_2XSAI:
-		scaling = 2;
+		_scaleFactor = 2;
 		_scaler_proc = _2xSaI;
 		break;
 	case GFX_SUPER2XSAI:
-		scaling = 2;
+		_scaleFactor = 2;
 		_scaler_proc = Super2xSaI;
 		break;
 	case GFX_SUPEREAGLE:
-		scaling = 2;
+		_scaleFactor = 2;
 		_scaler_proc = SuperEagle;
 		break;
 	case GFX_ADVMAME2X:
-		scaling = 2;
+		_scaleFactor = 2;
 		_scaler_proc = AdvMame2x;
 		break;
 
 	case GFX_DOUBLESIZE:
-		scaling = 2;
+		_scaleFactor = 2;
 		_scaler_proc = Normal2x;
 		break;
 
@@ -239,25 +234,25 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 			warning("full screen in useless in triplesize mode, reverting to normal mode");
 			goto normal_mode;
 		}
-		scaling = 3;
+		_scaleFactor = 3;
 		_scaler_proc = Normal3x;
 		break;
 
 	case GFX_NORMAL:
 normal_mode:;
-		scaling = 1;
+		_scaleFactor = 1;
 		_scaler_proc = Normal1x;
 		break;
 	}
 
-	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
-	if (sdl_screen == NULL)
-		error("sdl_screen failed failed");
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
+	if (_screen == NULL)
+		error("_screen failed failed");
 
-	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(SCREEN_HEIGHT+3),sizeof(uint16));
+	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3),sizeof(uint16));
 	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
 
-	sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 16, 
+	sdl_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (sdl_hwscreen == NULL)
@@ -269,7 +264,7 @@ normal_mode:;
 	else
 		Init_2xSaI(565);
 	sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						TMP_SCREEN_WIDTH, SCREEN_HEIGHT + 3, 16, TMP_SCREEN_WIDTH*2,
+						TMP_SCREEN_WIDTH, _screenHeight + 3, 16, TMP_SCREEN_WIDTH*2,
 						sdl_hwscreen->format->Rmask,
 						sdl_hwscreen->format->Gmask,
 						sdl_hwscreen->format->Bmask,
@@ -279,17 +274,17 @@ normal_mode:;
 		error("sdl_tmpscreen failed");
 	
 	// keyboard cursor control, some other better place for it?
-	km.x_max = SCREEN_WIDTH * scaling - 1;
-	km.y_max = SCREEN_HEIGHT * scaling - 1;
+	km.x_max = _screenWidth * _scaleFactor - 1;
+	km.y_max = _screenHeight * _scaleFactor - 1;
 	km.delay_time = 25;
 	km.last_time = 0;
 
 }
 
 void OSystem_SDL_Normal::unload_gfx_mode() {
-	if (sdl_screen) {
-		SDL_FreeSurface(sdl_screen);
-		sdl_screen = NULL; 
+	if (_screen) {
+		SDL_FreeSurface(_screen);
+		_screen = NULL; 
 	}
 
 	if (sdl_hwscreen) {
@@ -314,52 +309,52 @@ void OSystem_SDL_Normal::update_screen() {
 	
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
-	if (_palette_changed_last != 0) {
-		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
-			_palette_changed_first,
-			_palette_changed_last - _palette_changed_first);
+	if (_paletteDirtyEnd != 0) {
+		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart, 
+			_paletteDirtyStart,
+			_paletteDirtyEnd - _paletteDirtyStart);
 		
-		_palette_changed_last = 0;
+		_paletteDirtyEnd = 0;
 
-		force_full = true;
+		_forceFull = true;
 	}
 
 	
 	/* If the shake position changed, fill the dirty area with blackness */
-	if (_current_shake_pos != _new_shake_pos) {
-		SDL_Rect blackrect = {0, 0, SCREEN_WIDTH*scaling, _new_shake_pos*scaling};
+	if (_currentShakePos != _newShakePos) {
+		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
 		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
 
-		_current_shake_pos = _new_shake_pos;
+		_currentShakePos = _newShakePos;
 
-		force_full = true;
+		_forceFull = true;
 	}
 
 	// Force a full redraw if requested
-	if (force_full) {
-		num_dirty_rects = 1;
+	if (_forceFull) {
+		_num_dirty_rects = 1;
 
 		_dirty_rect_list[0].x = 0;
 		_dirty_rect_list[0].y = 0;
-		_dirty_rect_list[0].w = SCREEN_WIDTH;
-		_dirty_rect_list[0].h = SCREEN_HEIGHT;
+		_dirty_rect_list[0].w = _screenWidth;
+		_dirty_rect_list[0].h = _screenHeight;
 	}
 
 	// Only draw anything if necessary
-	if (num_dirty_rects > 0) {
+	if (_num_dirty_rects > 0) {
 	
 		SDL_Rect *r; 
 		uint32 srcPitch, dstPitch;
-		SDL_Rect *last_rect = _dirty_rect_list + num_dirty_rects;
+		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 	
 		// Convert appropriate parts of the 8bpp image into 16bpp
 		if (!_overlay_visible) {
 			SDL_Rect dst;
-			for(r=_dirty_rect_list; r!=last_rect; ++r) {
+			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
 				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-				if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, &dst) != 0)
+				if (SDL_BlitSurface(_screen, r, sdl_tmpscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		}
@@ -370,42 +365,35 @@ void OSystem_SDL_Normal::update_screen() {
 		srcPitch = sdl_tmpscreen->pitch;
 		dstPitch = sdl_hwscreen->pitch;
 	
-		for(r=_dirty_rect_list; r!=last_rect; ++r) {
-			register int dst_y = r->y + _current_shake_pos;
+		for(r = _dirty_rect_list; r != last_rect; ++r) {
+			register int dst_y = r->y + _currentShakePos;
 			register int dst_h = 0;
-			if (dst_y < SCREEN_HEIGHT) {
+			if (dst_y < _screenHeight) {
 				dst_h = r->h;
-				if (dst_h > SCREEN_HEIGHT - dst_y)
-					dst_h = SCREEN_HEIGHT - dst_y;
+				if (dst_h > _screenHeight - dst_y)
+					dst_h = _screenHeight - dst_y;
 				
-				dst_y *= scaling;
+				dst_y *= _scaleFactor;
 				
 				_scaler_proc((byte*)sdl_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
-					(byte*)sdl_hwscreen->pixels + r->x*2*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+					(byte*)sdl_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
 			}
 			
-			r->x *= scaling;
+			r->x *= _scaleFactor;
 			r->y = dst_y;
-			r->w *= scaling;
-			r->h = dst_h * scaling;
-		}
-	
-		if (force_full) {
-			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
+			r->w *= _scaleFactor;
+			r->h = dst_h * _scaleFactor;
 		}
 		
 		SDL_UnlockSurface(sdl_tmpscreen);
 		SDL_UnlockSurface(sdl_hwscreen);
-	}
-	
-	if (num_dirty_rects > 0) {
-		/* Finally, blit all our changes to the screen */
-		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, _dirty_rect_list);
+
+		// Finally, blit all our changes to the screen
+		SDL_UpdateRects(sdl_hwscreen, _num_dirty_rects, _dirty_rect_list);
 	}
 
-	num_dirty_rects = 0;
-	force_full = false;
+	_num_dirty_rects = 0;
+	_forceFull = false;
 }
 
 void OSystem_SDL_Normal::hotswap_gfx_mode() {
@@ -414,20 +402,20 @@ void OSystem_SDL_Normal::hotswap_gfx_mode() {
 	 * then draw that to the new screen right after it's setup.
 	 */
 	
-	byte *bak_mem = (byte*)malloc(SCREEN_WIDTH*SCREEN_HEIGHT);
+	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
 
 	get_320x200_image(bak_mem);
 
 	unload_gfx_mode();
 	load_gfx_mode();
 
-	force_full = true;
+	_forceFull = true;
 
 	// reset palette
-	SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
+	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// blit image
-	OSystem_SDL_Normal::copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	OSystem_SDL_Normal::copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	free(bak_mem);
 
 	OSystem_SDL_Normal::update_screen();
@@ -460,8 +448,11 @@ void OSystem_SDL_Normal::show_overlay()
 
 void OSystem_SDL_Normal::hide_overlay()
 {
+	// hide the mouse
+	undraw_mouse();
+
 	_overlay_visible = false;
-	force_full = true;
+	_forceFull = true;
 }
 
 void OSystem_SDL_Normal::clear_overlay()
@@ -476,12 +467,12 @@ void OSystem_SDL_Normal::clear_overlay()
 	SDL_Rect src, dst;
 	src.x = src.y = 0;
 	dst.x = dst.y = 1;
-	src.w = dst.w = SCREEN_WIDTH;
-	src.h = dst.h = SCREEN_HEIGHT;
-	if (SDL_BlitSurface(sdl_screen, &src, sdl_tmpscreen, &dst) != 0)
+	src.w = dst.w = _screenWidth;
+	src.h = dst.h = _screenHeight;
+	if (SDL_BlitSurface(_screen, &src, sdl_tmpscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
-	force_full = true;
+	_forceFull = true;
 }
 
 void OSystem_SDL_Normal::grab_overlay(int16 *buf, int pitch)
@@ -499,9 +490,9 @@ void OSystem_SDL_Normal::grab_overlay(int16 *buf, int pitch)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	int16 *src = (int16 *)sdl_tmpscreen->pixels + TMP_SCREEN_WIDTH + 1;
-	int h = SCREEN_HEIGHT;
+	int h = _screenHeight;
 	do {
-		memcpy(buf, src, SCREEN_WIDTH*2);
+		memcpy(buf, src, _screenWidth*2);
 		src += TMP_SCREEN_WIDTH;
 		buf += pitch;
 	} while (--h);
@@ -520,8 +511,8 @@ void OSystem_SDL_Normal::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	// Clip the coordinates
 	if (x < 0) { w+=x; buf-=x; x = 0; }
 	if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-	if (w > SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
-	if (h > SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+	if (w > _screenWidth-x) { w = _screenWidth - x; }
+	if (h > _screenHeight-y) { h = _screenHeight - y; }
 	if (w <= 0 || h <= 0)
 		return;
 	

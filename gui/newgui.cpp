@@ -75,8 +75,7 @@ static byte guifont[] = {
 };
 
 // Constructor
-NewGui::NewGui(OSystem *system) : _system(system), _screen(0),
-	_use_alpha_blending(true), _need_redraw(false),
+NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
 	_currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
 	// Setup some default GUI colors.
@@ -113,14 +112,14 @@ void NewGui::runLoop()
 
 		activeDialog->handleTickle();
 	
-		if (_need_redraw) {
+		if (_needRedraw) {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
 			_system->clear_overlay();
-			_system->grab_overlay(_screen, _screen_pitch);
+			_system->grab_overlay(_screen, _screenPitch);
 			for (i = 0; i < _dialogStack.size(); i++)
 				_dialogStack[i]->draw();
-			_need_redraw = false;
+			_needRedraw = false;
 		}
 		
 		animateCursor();
@@ -205,10 +204,10 @@ void NewGui::saveState()
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
 	_screen = new int16[320 * 240];
-	_screen_pitch = 320;
+	_screenPitch = 320;
 //	_screen = new int16[_system->get_width() * _system->get_height()];
-//	_screen_pitch = _system->get_width();
-	_system->grab_overlay(_screen, _screen_pitch);
+//	_screenPitch = _system->get_width();
+	_system->grab_overlay(_screen, _screenPitch);
 }
 
 void NewGui::restoreState()
@@ -227,7 +226,7 @@ void NewGui::restoreState()
 void NewGui::openDialog(Dialog *dialog)
 {
 	_dialogStack.push(dialog);
-	_need_redraw = true;
+	_needRedraw = true;
 }
 
 void NewGui::closeTopDialog()
@@ -238,7 +237,7 @@ void NewGui::closeTopDialog()
 	
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-	_need_redraw = true;
+	_needRedraw = true;
 }
 
 
@@ -247,7 +246,7 @@ void NewGui::closeTopDialog()
 
 int16 *NewGui::getBasePtr(int x, int y)
 {
-	return _screen + x + y * _screen_pitch;
+	return _screen + x + y * _screenPitch;
 }
 
 void NewGui::box(int x, int y, int width, int height)
@@ -282,7 +281,7 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 		/* vertical line */
 		while (y++ <= y2) {
 			*ptr = color;
-			ptr += _screen_pitch;
+			ptr += _screenPitch;
 		}
 	} else if (y == y2) {
 		/* horizontal line */
@@ -307,7 +306,7 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 			                   (GREEN_FROM_16(ptr[i])+g)/4,
 			                   (BLUE_FROM_16(ptr[i])+b)/4);
 		}
-		ptr += _screen_pitch;
+		ptr += _screenPitch;
 	}
 }
 
@@ -322,7 +321,7 @@ void NewGui::fillRect(int x, int y, int w, int h, int16 color)
 		for (i = 0; i < w; i++) {
 			ptr[i] = color;
 		}
-		ptr += _screen_pitch;
+		ptr += _screenPitch;
 	}
 }
 
@@ -338,7 +337,7 @@ void NewGui::checkerRect(int x, int y, int w, int h, int16 color)
 			if ((h ^ i) & 1)
 				ptr[i] = color;
 		}
-		ptr += _screen_pitch;
+		ptr += _screenPitch;
 	}
 }
 
@@ -353,12 +352,12 @@ void NewGui::frameRect(int x, int y, int w, int h, int16 color)
 	for (i = 0; i < w; i++, ptr++)
 		*ptr = color;
 	ptr--;
-	for (i = 0; i < h; i++, ptr += _screen_pitch)
+	for (i = 0; i < h; i++, ptr += _screenPitch)
 		*ptr = color;
 	ptr = basePtr;
-	for (i = 0; i < h; i++, ptr += _screen_pitch)
+	for (i = 0; i < h; i++, ptr += _screenPitch)
 		*ptr = color;
-	ptr -= _screen_pitch;
+	ptr -= _screenPitch;
 	for (i = 0; i < w; i++, ptr++)
 		*ptr = color;
 }
@@ -369,7 +368,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h)
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
 	int16 *buf = getBasePtr(x, y);
-	_system->copy_rect_overlay(buf, _screen_pitch, x, y, w, h);
+	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
 void NewGui::drawChar(const char chr, int xx, int yy, int16 color)
@@ -394,7 +393,7 @@ void NewGui::drawChar(const char chr, int xx, int yy, int16 color)
 			if (c)
 				ptr[x] = color;
 		}
-		ptr += _screen_pitch;
+		ptr += _screenPitch;
 	}
 }
 
@@ -442,7 +441,7 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 				ptr[x2] = color;
 			mask >>= 4;
 		}
-		ptr += _screen_pitch;
+		ptr += _screenPitch;
 	}
 }
 

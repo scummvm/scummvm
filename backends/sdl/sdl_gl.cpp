@@ -75,22 +75,22 @@ void OSystem_SDL_GL::set_palette(const byte *colors, uint start, uint num) {
 	    b += 4;
 	}
 
-	if (start < _palette_changed_first)
-		_palette_changed_first = start;
+	if (start < _paletteDirtyStart)
+		_paletteDirtyStart = start;
 
-	if (start + num > _palette_changed_last)
-		_palette_changed_last = start + num;
+	if (start + num > _paletteDirtyEnd)
+		_paletteDirtyEnd = start + num;
 }
 
 void OSystem_SDL_GL::load_gfx_mode() {
 	int gl_flags =  FB2GL_320 | FB2GL_PITCH; 
-	force_full = true;
-	scaling = 2;
+	_forceFull = true;
+	_scaleFactor = 2;
 	_mode_flags = 0;
 	
-	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
-	if (sdl_screen == NULL)
-		error("sdl_screen failed failed");
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
+	if (_screen == NULL)
+		error("_screen failed failed");
 
 	_mode_flags = DF_WANT_RECT_OPTIM;
 
@@ -111,9 +111,9 @@ void OSystem_SDL_GL::load_gfx_mode() {
 }
 
 void OSystem_SDL_GL::unload_gfx_mode() {
-	if (sdl_screen) {
-		SDL_FreeSurface(sdl_screen);
-		sdl_screen = NULL; 
+	if (_screen) {
+		SDL_FreeSurface(_screen);
+		_screen = NULL; 
 	}
 }
 
@@ -123,9 +123,9 @@ void OSystem_SDL_GL::update_screen() {
 	draw_mouse();
 	
 	/* If the shake position changed, fill the dirty area with blackness */
-	if (_current_shake_pos != _new_shake_pos) {
+	if (_currentShakePos != _newShakePos) {
 
-		_current_shake_pos = _new_shake_pos;
+		_currentShakePos = _newShakePos;
 
 	}
 
@@ -134,15 +134,15 @@ void OSystem_SDL_GL::update_screen() {
 	 * "real" 8bit mode, palatte changes may be visible immediatly,
 	 * and we want to avoid any ugly effects.
 	 */
-	if (_palette_changed_last != 0) {
-                fb2gl.setPalette(_palette_changed_first, 
-		    _palette_changed_last - _palette_changed_first);
+	if (_paletteDirtyEnd != 0) {
+                fb2gl.setPalette(_paletteDirtyStart, 
+		    _paletteDirtyEnd - _paletteDirtyStart);
 		
-		_palette_changed_last = 0;
+		_paletteDirtyEnd = 0;
 	}
 
 	// FIXME - this seems to be tied to 320x200 - what about Zak256 which needs 320x240 ?
-	fb2gl.update(sdl_screen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.update(_screen->pixels,320,200,320,0,_currentShakePos);
 
 }
 
@@ -152,7 +152,7 @@ void OSystem_SDL_GL::hotswap_gfx_mode() {
 	 * then draw that to the new screen right after it's setup.
 	 */
 	
-	byte *bak_mem = (byte*)malloc(SCREEN_WIDTH*SCREEN_HEIGHT);
+	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
 
 	get_320x200_image(bak_mem);
 
@@ -160,10 +160,10 @@ void OSystem_SDL_GL::hotswap_gfx_mode() {
 	load_gfx_mode();
 
 	fb2gl.setPalette(0,256);
-	fb2gl.update(sdl_screen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.update(_screen->pixels,320,200,320,0,_currentShakePos);
 
 	/* blit image */
-	copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	free(bak_mem);
 
 	update_screen();

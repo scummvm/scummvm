@@ -75,17 +75,17 @@ public:
 	// Set function that generates samples 
 	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
 		
-	// Poll cdrom status
+	// Poll CD status
 	// Returns true if cd audio is playing
 	bool poll_cdrom();
 
-	// Play cdrom audio track
+	// Play CD audio track
 	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
 
-	// Stop cdrom audio track
+	// Stop CD audio track
 	void stop_cdrom();
 
-	// Update cdrom audio status
+	// Update CD audio status
 	void update_cdrom();
 
 	// Quit
@@ -107,22 +107,28 @@ public:
 
 protected:
 
-	SDL_Surface *sdl_screen;      // unseen game screen
-	SDL_CD *cdrom;
+	OSystem_SDL_Common();
+	virtual ~OSystem_SDL_Common();
+
+	// unseen game screen
+	SDL_Surface *_screen;
+	int _screenWidth, _screenHeight;
+
+	// CD Audio
+	SDL_CD *_cdrom;
+	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
+	Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0,
 		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 3
 	};
 
+	bool _forceFull; // Force full redraw on next update_screen
+	int _scaleFactor;
 	int _mode;
 	bool _full_screen;
-	bool _mouse_visible;
-	bool _mouse_drawn;
 	uint32 _mode_flags;
-
-	bool force_full; //Force full redraw on next update_screen
-	bool cksum_valid;
 
 	enum {
 		NUM_DIRTY_RECT = 100,
@@ -132,18 +138,14 @@ protected:
 		MAX_SCALING = 3
 	};
 
-	int SCREEN_WIDTH, SCREEN_HEIGHT, CKSUM_NUM;
+	// Dirty rect managment
 	SDL_Rect _dirty_rect_list[100];
-	int num_dirty_rects;
+	int _num_dirty_rects;
 	uint32 *_dirty_checksums;
+	bool cksum_valid;
+	int CKSUM_NUM;
 
-	int scaling;
-
-	/* CD Audio */
-	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
-	Uint32 cd_end_time, cd_stop_time, cd_next_second;
-
-	/* Keyboard mouse emulation */
+	// Keyboard mouse emulation
 	struct KbdMouse {	
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
@@ -153,20 +155,23 @@ protected:
 		int16 x, y, w, h;
 	};
 
-	byte *_mouse_data;
-	byte *_mouse_backup;
+	bool _mouseVisible;
+	bool _mouseDrawn;
+	byte *_mouseData;
+	byte *_mouseBackup;
 	MousePos _mouse_cur_state;
 	MousePos _mouse_old_state;
-	int16 _mouse_hotspot_x;
-	int16 _mouse_hotspot_y;
-	int _current_shake_pos;
-	int _new_shake_pos;
-	SDL_Color *_cur_pal;
+	int16 _mouseHotspotX;
+	int16 _mouseHotspotY;
 
-	uint _palette_changed_first, _palette_changed_last;
+	// Shake mode
+	int _currentShakePos;
+	int _newShakePos;
 
-	OSystem_SDL_Common();
-	virtual ~OSystem_SDL_Common();
+	// Palette data
+	SDL_Color *_currentPalette;
+	uint _paletteDirtyStart, _paletteDirtyEnd;
+
 
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);

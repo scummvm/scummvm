@@ -70,33 +70,33 @@ void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
 }
 
 OSystem_SDL_Common::OSystem_SDL_Common()
-	: sdl_screen(0), cdrom(0), SCREEN_WIDTH(0), SCREEN_HEIGHT(0),
-	_dirty_checksums(0), _current_shake_pos(0), _new_shake_pos(0)
+	: _screen(0), _screenWidth(0), _screenHeight(0), _cdrom(0),
+	_dirty_checksums(0), _currentShakePos(0), _newShakePos(0)
 {
 	// allocate palette storage
-	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
+	_currentPalette = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
 
 	// allocate the dirty rect storage
-	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+	_mouseBackup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common()
 {
 	if (_dirty_checksums)
 		free(_dirty_checksums);
-	free(_cur_pal);
-	free(_mouse_backup);
+	free(_currentPalette);
+	free(_mouseBackup);
 }
 
 void OSystem_SDL_Common::init_size(uint w, uint h) {
 
 	// Avoid redundant res changes
-	if ((int)w == SCREEN_WIDTH && (int)h == SCREEN_HEIGHT)
+	if ((int)w == _screenWidth && (int)h == _screenHeight)
 		return;
 
-	SCREEN_WIDTH = w;
-	SCREEN_HEIGHT = h;
-	CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8));
+	_screenWidth = w;
+	_screenHeight = h;
+	CKSUM_NUM = (_screenWidth*_screenHeight/(8*8));
 	if (_dirty_checksums)
 		free(_dirty_checksums);
 	_dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
@@ -113,10 +113,10 @@ void OSystem_SDL_Common::init_size(uint w, uint h) {
 }
 
 void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
-	if (sdl_screen == NULL)
+	if (_screen == NULL)
 		return;
 
-	if (pitch == SCREEN_WIDTH && x==0 && y==0 && w==SCREEN_WIDTH && h==SCREEN_HEIGHT && _mode_flags&DF_WANT_RECT_OPTIM) {
+	if (pitch == _screenWidth && x==0 && y==0 && w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
@@ -125,8 +125,8 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 		/* Clip the coordinates */
 		if (x < 0) { w+=x; buf-=x; x = 0; }
 		if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-		if (w > SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
-		if (h > SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+		if (w > _screenWidth-x) { w = _screenWidth - x; }
+		if (h > _screenHeight-y) { h = _screenHeight - y; }
 			
 		if (w <= 0 || h <= 0)
 			return;
@@ -136,20 +136,20 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 	}
 
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	if (_mouse_drawn)
+	if (_mouseDrawn)
 		undraw_mouse();
 
-	if (SDL_LockSurface(sdl_screen) == -1)
+	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
+	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 	do {
 		memcpy(dst, buf, w);
-		dst += SCREEN_WIDTH;
+		dst += _screenWidth;
 		buf += pitch;
 	} while (--h);
 
-	SDL_UnlockSurface(sdl_screen);
+	SDL_UnlockSurface(_screen);
 }
 
 
@@ -164,25 +164,25 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect((byte *)sdl_screen->pixels + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect((byte *)sdl_screen->pixels + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
 		if (dx > 0) {
 			// move right
 			// copy from right to left
-			for (int x = SCREEN_WIDTH - 1; x >= dx; x--)
-				copy_rect((byte *)sdl_screen->pixels + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+			for (int x = _screenWidth - 1; x >= dx; x--)
+				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
-			for (int x = 0; x < SCREEN_WIDTH; x++)
-				copy_rect((byte *)sdl_screen->pixels + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+			for (int x = 0; x < _screenWidth; x++)
+				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 		}
 	} else {
 		// free movement
@@ -191,16 +191,16 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 }
 
 void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
-	if (force_full)
+	if (_forceFull)
 		return;
 
-	if (num_dirty_rects == NUM_DIRTY_RECT)
-		force_full = true;
+	if (_num_dirty_rects == NUM_DIRTY_RECT)
+		_forceFull = true;
 	else {
-		SDL_Rect *r = &_dirty_rect_list[num_dirty_rects++];
+		SDL_Rect *r = &_dirty_rect_list[_num_dirty_rects++];
 		
-		/* Update the dirty region by 1 pixel for graphics drivers
-		 * that "smear" the screen */
+		// Extend the dirty region by 1 pixel for scalers
+		// that "smear" the screen, e.g. 2xSAI
 		if (_mode_flags & DF_UPDATE_EXPAND_1_PIXEL) {
 			x--;
 			y--;
@@ -208,11 +208,11 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 			h+=2;
 		}
 
-		/* clip */
+		// clip
 		if (x < 0) { w+=x; x=0; }
 		if (y < 0) { h+=y; y=0; }
-		if (w > SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
-		if (h > SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+		if (w > _screenWidth-x) { w = _screenWidth - x; }
+		if (h > _screenHeight-y) { h = _screenHeight - y; }
 	
 		r->x = x;
 		r->y = y;
@@ -222,16 +222,16 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 }
 
 #define ROL(a,n) a = (a<<(n)) | (a>>(32-(n)))
-#define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(SCREEN_WIDTH/4)]; b ^= ((uint32*)buf)[1+(x)*(SCREEN_WIDTH/4)]
+#define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(_screenWidth/4)]; b ^= ((uint32*)buf)[1+(x)*(_screenWidth/4)]
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	uint32 *sums = _dirty_checksums;
 	uint x,y;
-	const uint last_x = (uint)SCREEN_WIDTH/8;
-	const uint last_y = (uint)SCREEN_HEIGHT/8;
+	const uint last_x = (uint)_screenWidth/8;
+	const uint last_y = (uint)_screenHeight/8;
 
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
-	for(y=0; y != last_y; y++, buf+=SCREEN_WIDTH*(8-1))
+	for(y=0; y != last_y; y++, buf+=_screenWidth*(8-1))
 		for(x=0; x != last_x; x++, buf+=8) {
 			uint32 a = x;
 			uint32 b = y;
@@ -264,19 +264,19 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 	mk_checksums(buf);
 
 	if (!cksum_valid) {
-		force_full = true;
+		_forceFull = true;
 		cksum_valid = true;
 	}
 
 	/* go through the checksum list, compare it with the previous checksums,
 		 and add all dirty rectangles to a list. try to combine small rectangles
 		 into bigger ones in a simple way */
-	if (!force_full) {
+	if (!_forceFull) {
 		int x,y,w;
 		uint32 *ck = _dirty_checksums;
 		
-		for(y=0; y!=SCREEN_HEIGHT/8; y++) {
-			for(x=0; x!=SCREEN_WIDTH/8; x++,ck++) {
+		for(y=0; y!=_screenHeight/8; y++) {
+			for(x=0; x!=_screenWidth/8; x++,ck++) {
 				if (ck[0] != ck[CKSUM_NUM]) {
 					/* found a dirty 8x8 block, now go as far to the right as possible,
 						 and at the same time, unmark the dirty status by setting old to new. */
@@ -284,11 +284,11 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 					do {
 						ck[w+CKSUM_NUM] = ck[w];
 						w++;
-					} while (x+w != SCREEN_WIDTH/8 && ck[w] != ck[w+CKSUM_NUM]);
+					} while (x+w != _screenWidth/8 && ck[w] != ck[w+CKSUM_NUM]);
 					
 					add_dirty_rect(x*8, y*8, w*8, 8);
 
-					if (force_full)
+					if (_forceFull)
 						goto get_out;
 				}
 			}
@@ -370,11 +370,11 @@ void OSystem_SDL_Common::kbd_mouse() {
 }
 
 bool OSystem_SDL_Common::show_mouse(bool visible) {
-	if (_mouse_visible == visible)
+	if (_mouseVisible == visible)
 		return visible;
 	
-	bool last = _mouse_visible;
-	_mouse_visible = visible;
+	bool last = _mouseVisible;
+	_mouseVisible = visible;
 
 	if (visible)
 		draw_mouse();
@@ -396,16 +396,16 @@ void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int h
 	_mouse_cur_state.w = w;
 	_mouse_cur_state.h = h;
 
-	_mouse_hotspot_x = hotspot_x;
-	_mouse_hotspot_y = hotspot_y;
+	_mouseHotspotX = hotspot_x;
+	_mouseHotspotY = hotspot_y;
 
-	_mouse_data = (byte*)buf;
+	_mouseData = (byte*)buf;
 
 	undraw_mouse();
 }
 	
 void OSystem_SDL_Common::set_shake_pos(int shake_pos) {
-	_new_shake_pos = shake_pos;
+	_newShakePos = shake_pos;
 }
 		
 uint32 OSystem_SDL_Common::get_msecs() {
@@ -581,8 +581,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			km.x = event->mouse.x = ev.motion.x;
 			km.y = event->mouse.y = ev.motion.y;
 
-			event->mouse.x /= scaling;
-			event->mouse.y /= scaling;
+			event->mouse.x /= _scaleFactor;
+			event->mouse.y /= _scaleFactor;
 
 			return true;
 
@@ -595,8 +595,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				break;
 			km.x = event->mouse.x = ev.motion.x;
 			km.y = event->mouse.y = ev.motion.y;
-			event->mouse.x /= scaling;
-			event->mouse.y /= scaling;
+			event->mouse.x /= _scaleFactor;
+			event->mouse.y /= _scaleFactor;
 
 			return true;
 
@@ -609,8 +609,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				break;
 			event->mouse.x = ev.button.x;
 			event->mouse.y = ev.button.y;
-			event->mouse.x /= scaling;
-			event->mouse.y /= scaling;
+			event->mouse.x /= _scaleFactor;
+			event->mouse.y /= _scaleFactor;
 			return true;
 
 		case SDL_QUIT:
@@ -643,12 +643,12 @@ void OSystem_SDL_Common::get_320x200_image(byte *buf) {
 	/* make sure the mouse is gone */
 	undraw_mouse();
 	
-	if (SDL_LockSurface(sdl_screen) == -1)
+	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	memcpy(buf, sdl_screen->pixels, SCREEN_WIDTH*SCREEN_HEIGHT);
+	memcpy(buf, _screen->pixels, _screenWidth*_screenHeight);
 
-	SDL_UnlockSurface(sdl_screen);
+	SDL_UnlockSurface(_screen);
 }
 
 uint32 OSystem_SDL_Common::property(int param, Property *value) {
@@ -663,11 +663,11 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 
 	case PROP_OPEN_CD:
 		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-			cdrom = NULL;
+			_cdrom = NULL;
 		else {
-			cdrom = SDL_CDOpen(value->cd_num);
-			/* Did if open? Check if cdrom is NULL */
-			if (!cdrom) {
+			_cdrom = SDL_CDOpen(value->cd_num);
+			/* Did if open? Check if _cdrom is NULL */
+			if (!_cdrom) {
 				warning("Couldn't open drive: %s\n", SDL_GetError());
 			}
 		}
@@ -694,25 +694,25 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 }
 		
 void OSystem_SDL_Common::quit() {
-	if(cdrom) {
-		SDL_CDStop(cdrom);
-		SDL_CDClose(cdrom);
+	if(_cdrom) {
+		SDL_CDStop(_cdrom);
+		SDL_CDClose(_cdrom);
 	}
 	unload_gfx_mode();		
 	exit(0);
 }
 
 void OSystem_SDL_Common::draw_mouse() {
-	if (_mouse_drawn || !_mouse_visible)
+	if (_mouseDrawn || !_mouseVisible)
 		return;
 
-	int x = _mouse_cur_state.x - _mouse_hotspot_x;
-	int y = _mouse_cur_state.y - _mouse_hotspot_y;
+	int x = _mouse_cur_state.x - _mouseHotspotX;
+	int y = _mouse_cur_state.y - _mouseHotspotY;
 	int w = _mouse_cur_state.w;
 	int h = _mouse_cur_state.h;
 	byte color;
-	byte *src = _mouse_data;		// Image representing the mouse
-	byte *bak = _mouse_backup;		// Surface used to backup the area obscured by the mouse
+	byte *src = _mouseData;		// Image representing the mouse
+	byte *bak = _mouseBackup;		// Surface used to backup the area obscured by the mouse
 	byte *dst;					// Surface we are drawing into
 
 	// clip the mouse rect, and addjust the src pointer accordingly
@@ -726,10 +726,14 @@ void OSystem_SDL_Common::draw_mouse() {
 		src -= y * _mouse_cur_state.w;
 		y = 0;
 	}
-	if (w > SCREEN_WIDTH - x)
-		w = SCREEN_WIDTH - x;
-	if (h > SCREEN_HEIGHT - y)
-		h = SCREEN_HEIGHT - y;
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
+
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
 
 	// Store the bounding box so that undraw mouse can restore the area the
 	// mouse currently covers to its original content.
@@ -738,16 +742,12 @@ void OSystem_SDL_Common::draw_mouse() {
 	_mouse_old_state.w = w;
 	_mouse_old_state.h = h;
 
-	// Quick check to see if anything has to be drawn at all
-	if (w <= 0 || h <= 0)
-		return;
-
 	// Draw the mouse cursor; backup the covered area in "bak"
 
-	if (SDL_LockSurface(sdl_screen) == -1)
+	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
+	dst = (byte *)_screen->pixels + y * _screenWidth + x;
 	while (h > 0) {
 		int width = w;
 		while (width > 0) {
@@ -760,38 +760,38 @@ void OSystem_SDL_Common::draw_mouse() {
 		}
 		src += _mouse_cur_state.w - w;
 		bak += MAX_MOUSE_W - w;
-		dst += SCREEN_WIDTH - w;
+		dst += _screenWidth - w;
 		h--;
 	}
 
-	SDL_UnlockSurface(sdl_screen);
+	SDL_UnlockSurface(_screen);
 	
 	// Mark as dirty
 	add_dirty_rect(x, y, w, h);
 
 	// Finally, set the flag to indicate the mouse has been drawn
-	_mouse_drawn = true;
+	_mouseDrawn = true;
 }
 
 void OSystem_SDL_Common::undraw_mouse() {
-	if (!_mouse_drawn)
+	if (!_mouseDrawn)
 		return;
-	_mouse_drawn = false;
+	_mouseDrawn = false;
 
-	if (SDL_LockSurface(sdl_screen) == -1)
+	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst, *bak = _mouse_backup;
+	byte *dst, *bak = _mouseBackup;
 	const int old_mouse_x = _mouse_old_state.x;
 	const int old_mouse_y = _mouse_old_state.y;
 	const int old_mouse_w = _mouse_old_state.w;
 	const int old_mouse_h = _mouse_old_state.h;
-	int x,y;
+	int x, y;
 
 	// No need to do clipping here, since draw_mouse() did that already
 
-	dst = (byte *)sdl_screen->pixels + old_mouse_y * SCREEN_WIDTH + old_mouse_x;
-	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += SCREEN_WIDTH) {
+	dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
+	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
 		for (x = 0; x < old_mouse_w; ++x) {
 			dst[x] = bak[x];
 		}
@@ -799,7 +799,7 @@ void OSystem_SDL_Common::undraw_mouse() {
 
 	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
-	SDL_UnlockSurface(sdl_screen);
+	SDL_UnlockSurface(_screen);
 }
 
 void OSystem_SDL_Common::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
@@ -812,7 +812,7 @@ void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, i
 	if (!num_loops && !start_frame)
 		return;
 
-	if (!cdrom)
+	if (!_cdrom)
 		return;
 	
 	if (end_frame > 0)
@@ -822,26 +822,26 @@ void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, i
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;
 
-	SDL_CDStatus(cdrom);	
-	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame);
+	SDL_CDStatus(_cdrom);	
+	SDL_CDPlayTracks(_cdrom, track, start_frame, 0, end_frame);
 	cd_end_frame = end_frame;
 	cd_stop_time = 0;
-	cd_end_time = SDL_GetTicks() + cdrom->track[track].length * 1000 / CD_FPS;
+	cd_end_time = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
 }
 
 bool OSystem_SDL_Common::poll_cdrom() {
-	if (!cdrom)
+	if (!_cdrom)
 		return false;
 
-	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(cdrom) != CD_STOPPED));
+	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(_cdrom) != CD_STOPPED));
 }
 
 void OSystem_SDL_Common::update_cdrom() {
-	if (!cdrom)
+	if (!_cdrom)
 		return;
 		
 	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
-		SDL_CDStop(cdrom);
+		SDL_CDStop(_cdrom);
 		cd_num_loops = 0;
 		cd_stop_time = 0;
 		return;
@@ -850,7 +850,7 @@ void OSystem_SDL_Common::update_cdrom() {
 	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
 		return;
 
-	if (cd_num_loops != 1 && SDL_CDStatus(cdrom) != CD_STOPPED) {
+	if (cd_num_loops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
 		// Wait another second for it to be done
 		cd_end_time += 1000;
 		return;
@@ -860,8 +860,8 @@ void OSystem_SDL_Common::update_cdrom() {
 		cd_num_loops--;
 
 	if (cd_num_loops != 0) {
-		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
-		cd_end_time = SDL_GetTicks() + cdrom->track[cd_track].length * 1000 / CD_FPS;
+		SDL_CDPlayTracks(_cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
+		cd_end_time = SDL_GetTicks() + _cdrom->track[cd_track].length * 1000 / CD_FPS;
 	}
 }
 

@@ -81,10 +81,9 @@ public:
 protected:
 	OSystem		*_system;
 	int16		*_screen;
-	int			_screen_pitch;
+	int			_screenPitch;
 	
-	bool		_use_alpha_blending;
-	bool		_need_redraw;
+	bool		_needRedraw;
 	DialogStack	_dialogStack;
 	
 	// for continuous events (keyDown)
