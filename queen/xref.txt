@@ -167,11 +167,11 @@ no_check_keys				Input::_noCheckKeys
 
 INVENTORY
 =========
-DEL_ITEM_NUM()				Logic::inventoryDeleteItem // TODO
-INS_ITEM_NUM()				Logic::inventoryInsertItem // TODO
-INVDWN()					Logic::inventoryScroll // TODO
+DEL_ITEM_NUM()				Logic::inventoryDeleteItem 
+INS_ITEM_NUM()				Logic::inventoryInsertItem
+INVDWN()					Logic::inventoryScroll
 INVENTORY()					Logic::inventoryRefresh
-INVUP()						Logic::inventoryScroll // TODO
+INVUP()						Logic::inventoryScroll
 SETUP_ITEMS()				Logic::inventorySetup
 -
 INV1,INV2,INV3,INV4			Logic::_inventoryItem

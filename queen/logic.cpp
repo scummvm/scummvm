@@ -2040,19 +2040,89 @@ void Logic::inventoryRefresh() {
 	update();
 }
 
+int16 Logic::previousInventoryItem(int16 start) const {
+	int i;
+	for (i = start - 1; i >= 1; i--)
+		if (_itemData[i].name > 0)
+			return i;
+	for (i = _numItems; i > start; i--)
+		if (_itemData[i].name > 0)
+			return i;
+
+	return 0;	//nothing found
+}
+
+int16 Logic::nextInventoryItem(int16 start) const {
+	int i;
+	for (i = start + 1; i < _numItems; i++)
+		if (_itemData[i].name > 0)
+			return i;
+	for (i = 1; i < start; i++)
+		if (_itemData[i].name > 0)
+			return i;
+
+	return 0;	//nothing found
+}
+
+void Logic::removeDuplicateItems() {
+	for (int i = 0; i < 4; i++)
+		for (int j = i + 1; j < 4; j++)
+			if (_inventoryItem[i] == _inventoryItem[j])
+				_inventoryItem[j] = 0;
+}
+
+uint16 Logic::numItemsInventory() const {
+	uint16 count = 0;
+	for (int i = 1; i < _numItems; i++)
+		if (_itemData[i].name > 0)
+			count++;
+
+	return count;
+}
 
 void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
-	warning("Logic::inventoryInsertItem() unimplemented");
+	int16 item = _inventoryItem[0] = (int16)itemNum; 
+	_itemData[itemNum].name = abs(_itemData[itemNum].name);	//set visible
+	for (int i = 1; i < 4; i++) {
+		item = nextInventoryItem(item);
+		_inventoryItem[i] = item;
+		removeDuplicateItems();
+	}
+	
+	if (refresh)
+		inventoryRefresh();
 }
 
 
 void Logic::inventoryDeleteItem(uint16 itemNum, bool refresh) {
-	warning("Logic::inventoryDeleteItem() unimplemented");
+	int16 item = (int16)itemNum;
+	_itemData[itemNum].name = -abs(_itemData[itemNum].name);	//set invisible
+	for (int i = 0; i < 4; i++) {
+		item = nextInventoryItem(item);
+		_inventoryItem[i] = item;
+		removeDuplicateItems();
+	}
+	
+	if (refresh)
+		inventoryRefresh();
 }
 
 
 void Logic::inventoryScroll(uint16 count, bool up) {
-	warning("Logic::inventoryScroll() unimplemented");
+	if (!(numItemsInventory() > 4))
+		return;
+
+	if (up) {
+		for (int i = 0; i < 3; i++)
+			_inventoryItem[i] = _inventoryItem[i + 1];
+		_inventoryItem[3] = nextInventoryItem(_inventoryItem[3]);
+	} else {
+		for (int i = 3; i > 0; i--)
+			_inventoryItem[i] = _inventoryItem[i - 1];
+		_inventoryItem[0] = previousInventoryItem(_inventoryItem[0]);
+	}
+
+	inventoryRefresh();
 }
 
 

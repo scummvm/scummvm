@@ -256,6 +256,10 @@ public:
 	void inventorySetup();
 	uint16 findInventoryItem(int invSlot) const;
 	void inventoryRefresh();
+	int16 previousInventoryItem(int16 start) const;
+	int16 nextInventoryItem(int16 start) const;
+	void removeDuplicateItems();
+	uint16 numItemsInventory() const;
 	void inventoryInsertItem(uint16 itemNum, bool refresh = true);
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
