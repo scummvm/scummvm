@@ -126,9 +126,8 @@ void Sound::addSoundToQueue(int sound) {
 }
 
 void Sound::addSoundToQueue2(int sound) {
-	if (_soundQue2Pos < 10) {
-		_soundQue2[_soundQue2Pos++] = sound;
-	}
+	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
+	_soundQue2[_soundQue2Pos++] = sound;
 }
 
 void Sound::processSoundQues() {
@@ -196,17 +195,6 @@ void Sound::playSound(int soundID) {
 		assert(_scumm->_musicEngine);
 		_scumm->_musicEngine->startSound(soundID);
 	}
-/*
-	// XMIDI 
-	else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
-		// Pass XMIDI on to IMuse unprocessed.
-		// IMuse can handle XMIDI resources now.
-	}
-	else if (READ_UINT32(ptr) == MKID('ADL ')) {
-		// played as MIDI, just to make perhaps the later use
-		// of WA possible (see "else if" with GF_OLD256 below)
-	}
-*/
 	else if (READ_UINT32(ptr) == MKID('SOUN')) {
 		ptr += 24;
 		int track = ptr[0];

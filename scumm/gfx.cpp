@@ -933,15 +933,15 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= ARRAYSIZE(zplane_list));
 		
-		if (_vm->_features & GF_OLD256) {
-			zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
-			if (0 == READ_LE_UINT32(zplane_list[1]))
-				zplane_list[1] = 0;
-		} else if (_vm->_features & GF_SMALL_HEADER) {
+		if (_vm->_features & GF_SMALL_HEADER) {
 			if (_vm->_features & GF_16COLOR)
 				zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
 			else
 				zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
+			if (_vm->_features & GF_OLD256) {
+				if (0 == READ_LE_UINT32(zplane_list[1]))
+					zplane_list[1] = 0;
+			}
 			for (i = 2; i < numzbuf; i++) {
 				zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
 			}
@@ -1198,7 +1198,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		} else {
 			for (i = 1; i < numzbuf; i++) {
-				uint16 offs;
+				uint32 offs;
 
 				if (!zplane_list[i])
 					continue;
@@ -1210,7 +1210,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				else if (_vm->_features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
 				else if (_vm->_version == 8)
-					offs = (uint16) READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
+					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
