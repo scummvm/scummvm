@@ -449,7 +449,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine, _roomResource, sleByte, VER(8)),
 		MKLINE(ScummEngine, _numObjectsInRoom, sleByte, VER(8)),
 		MKLINE(ScummEngine, _currentScript, sleByte, VER(8)),
-		MKARRAY(ScummEngine, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER(8)),
+		MKARRAY(ScummEngine, _localScriptList[0], sleUint32, _numLocalScripts, VER(8)),
 
 
 		// vm.localvar grew from 25 to 40 script entries and then from

@@ -537,7 +537,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numActors = 0;
 	_numCostumes = 0;
 	_numImages = 0;
-	_numLocalScripts = 0;
+	_numLocalScripts = 60;
 	_numSprites = 0;
 	_numTalkies = 0;
 	_audioNames = NULL;
@@ -2224,11 +2224,11 @@ void ScummEngine::initRoomSubBlocks() {
 
 			if (_version == 8) {
 				id = READ_LE_UINT32(ptr);
-				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 			} else if (_version == 7) {
 				id = READ_LE_UINT16(ptr);
-				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
 			} else {
 				id = ptr[0];

@@ -88,7 +88,6 @@ extern ScummEngine *g_scumm;
 
 /* System Wide Constants */
 enum {
-	NUM_LOCALSCRIPT = 60,
 	NUM_SENTENCE = 6,
 	NUM_SHADOW_PALETTE = 8,
 	KEY_ALL_SKIP = 3457   // WinCE
@@ -570,7 +569,7 @@ protected:
 	uint32 _maxHeapThreshold, _minHeapThreshold;
 
 	/* Script VM - should be in Script class */
-	uint32 _localScriptList[NUM_LOCALSCRIPT];
+	uint32 _localScriptList[256];
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
 	uint16 _curExecScript;
