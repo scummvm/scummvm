@@ -29,7 +29,7 @@
 #include "bundle.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
-#define SCUMMVM_CVS "2002-07-16"
+#define SCUMMVM_CVS "2002-08-03"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
@@ -771,7 +771,7 @@ public:
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
 	void decompressBundleSound(int index);
-	int playSfxSound(void *sound, uint32 size, uint rate);
+	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned = false);
  	int playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();
 

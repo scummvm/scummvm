@@ -678,16 +678,8 @@ int Scumm::startSfxSound(void *file, int file_size)
 		error("startSfxSound: cannot read %d bytes", size);
 		return -1;
 	}
-	// FIXME - why is this code here? playSfxSound Already should do the conversion
-	for (i = 0; i < size; i++) {
-		// Fixme: From WinCE port
-		if (_sound_volume_sfx != 256)
-			data[i] = _sound_volume_sfx * data[i] / 256;
 
-		data[i] ^= 0x80;
-	}
-
-	return playSfxSound(data, size, 1000000 / (256 - rate));
+	return playSfxSound(data, size, 1000000 / (256 - rate), true);
 }
 
 
@@ -837,11 +829,14 @@ void Scumm::playBundleSound(char *sound)
 	_mixer->play_raw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 }
 
-int Scumm::playSfxSound(void *sound, uint32 size, uint rate)
+int Scumm::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned)
 {
 	if (_soundsPaused)
 		return -1;
-	return _mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
+	byte flags = SoundMixer::FLAG_AUTOFREE;
+	if (isUnsigned)
+		flags |= SoundMixer::FLAG_UNSIGNED;
+	return _mixer->play_raw(NULL, sound, size, rate, flags);
 }
 
 int Scumm::playSfxSound_MP3(void *sound, uint32 size)
