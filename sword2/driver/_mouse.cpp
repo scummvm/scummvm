@@ -215,16 +215,26 @@ void LogMouseEvent(uint16 buttons)
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.
 
-int32 DecompressMouse(uint8 *decomp, uint8 *comp, int32 size) {
+int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch) {
+	int32 size = width * height;
 	int32 i = 0;
+	int x = 0;
+	int y = 0;
 
 	while (i < size) {
 		if (*comp > 183) {
-			*decomp++ = *comp++;
+			decomp[y * pitch + x] = *comp++;
+			if (++x >= width) {
+				x = 0;
+				y++;
+			}
 			i++;
 		} else {
-			memset(decomp, 0xFF, *comp);
-			decomp += *comp;
+			x += *comp;
+			while (x >= width) {
+				y++;
+				x -= width;
+			}
 			i += *comp++;
 		}
 	}
@@ -233,16 +243,57 @@ int32 DecompressMouse(uint8 *decomp, uint8 *comp, int32 size) {
 
 
 
-int32 DrawMouse(void) {
-	// FIXME: In the original code, luggage animations were decoded here
-	// as well. Luggage animations and mouse animations were not mutually
-	// exclusive. Was that a necessary feature?
+void DrawMouse(void) {
+	if (!mouseAnim && !luggageAnim)
+		return;
+
+	// When an object is used in the game, the mouse cursor should be a
+	// combination of a standard mouse cursor and a luggage cursor.
+	//
+	// However, judging by the original code luggage cursors can also
+	// appear on their own. I have no idea which cases though.
+
+	uint16 mouse_width = 0;
+	uint16 mouse_height = 0;
+	uint16 hotspot_x = 0;
+	uint16 hotspot_y = 0;
 
 	if (mouseAnim) {
-		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew * mouseAnim->mouseh);
-		g_sword2->_system->set_mouse_cursor(_mouseData, mouseAnim->mousew, mouseAnim->mouseh, mouseAnim->xHotSpot, mouseAnim->yHotSpot);
+		hotspot_x = mouseAnim->xHotSpot;
+		hotspot_y = mouseAnim->yHotSpot;
+		mouse_width = mouseAnim->mousew;
+		mouse_height = mouseAnim->mouseh;
 	}
-	return RD_OK;
+
+	// FIXME: The luggage's hotspot and the standard cursor's hotspot may
+	// not be the same. The luggage image should be offset to compensate
+	// for that.
+
+	if (luggageAnim) {
+		if (!mouseAnim) {
+			hotspot_x = luggageAnim->xHotSpot;
+			hotspot_y = luggageAnim->yHotSpot;
+		}
+		if (luggageAnim->mousew > mouse_width)
+			mouse_width = luggageAnim->mousew;
+		if (luggageAnim->mouseh > mouse_height)
+			mouse_height = luggageAnim->mouseh;
+	}
+
+	if (mouse_width * mouse_height > sizeof(_mouseData)) {
+		warning("Mouse cursor too large");
+		return;
+	}
+
+	memset(_mouseData, 0xFF, mouse_width * mouse_height);
+
+	if (luggageAnim)
+		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew, luggageAnim->mouseh, mouse_width);
+
+	if (mouseAnim)
+		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew, mouseAnim->mouseh, mouse_width);
+
+	g_sword2->_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
 
@@ -308,6 +359,7 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 
 		memcpy((uint8 *) mouseAnim, ma, size);
 		mouseOffsets = (int32 *) ((uint8 *) mouseAnim + sizeof(_mouseAnim));
+
 		AnimateMouse();
 		DrawMouse();
 
@@ -331,12 +383,9 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 		memcpy((uint8 *) luggageAnim, ma, size);
 		luggageOffset = (int32 *) ((uint8 *) luggageAnim + sizeof(_mouseAnim));
 
-		// The luggage animation is only one frame.
+		AnimateMouse();
+		DrawMouse();
 
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *mouseOffsets, luggageAnim->mousew * luggageAnim->mouseh);
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew * luggageAnim->mouseh);
-
-		g_sword2->_system->set_mouse_cursor(_mouseData, luggageAnim->mousew, luggageAnim->mouseh, luggageAnim->xHotSpot, luggageAnim->yHotSpot);
 		g_sword2->_system->show_mouse(true);
 	} else
 		g_sword2->_system->show_mouse(false);
