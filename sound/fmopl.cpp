@@ -38,6 +38,10 @@
 #include "common/config-manager.h"
 #endif
 
+
+static Common::RandomSource oplRnd;			/* OPL random number generator */
+
+
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
 #define OPL_ARRATE     141280  /* RATE 4 =  2826.24ms @ 3.6MHz */
