@@ -77,6 +77,9 @@ private:
 	bool _insanity;
 	bool _middleAudio;
 	bool _skipPalette;
+#ifdef _WIN32_WCE
+	bool _inTimer;
+#endif
 
 public:
 	SmushPlayer(ScummEngine_v6 *scumm, int speed);

@@ -216,6 +216,9 @@ static StringResource *getStrings(const char *file, bool is_encoded) {
 
 void SmushPlayer::timerCallback(void *refCon) {
 	((SmushPlayer *)refCon)->parseNextFrame();
+#ifdef _WIN32_WCE
+	((SmushPlayer *)refCon)->_inTimer = true;
+#endif
 }
 
 SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
@@ -247,6 +250,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_insanity = false;
 	_middleAudio = false;
 	_skipPalette = false;
+#ifdef _WIN32_WCE
+	_inTimer = false;
+#endif
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -931,7 +937,12 @@ void SmushPlayer::handleFrame(Chunk &b) {
 
 	end_time = _vm->_system->getMillis();
 
+#ifdef _WIN32_WCE
+	if (!_inTimer)
+		updateScreen();
+#else
 	updateScreen();
+#endif
 	_smixer->handleFrame();
 
 	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed / 1000);
@@ -1209,6 +1220,9 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			start_time = _vm->_system->getMillis();
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
+#ifdef _WIN32_WCE
+			_inTimer = false;
+#endif
 
 			end_time = _vm->_system->getMillis();
 
