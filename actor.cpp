@@ -163,6 +163,12 @@ void Actor::clearCostumes() {
   }
 }
 
+void Actor::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw ) {
+	if (!costumeStack_.empty()) {
+		costumeStack_.back()->setHead( joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
+	}
+}
+
 Costume *Actor::findCostume(const char *name) {
   for (std::list<Costume *>::iterator i = costumeStack_.begin();
        i != costumeStack_.end(); i++)

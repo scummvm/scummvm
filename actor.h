@@ -102,6 +102,10 @@ public:
   void setLookAtRate( float rate ) {
 	  lookAtRate_ = rate;
   }
+  float lookAtRate() {
+	  return(lookAtRate_);
+  }
+  void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw );
 
 private:
   std::string name_;

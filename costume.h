@@ -45,6 +45,8 @@ public:
   void stopTalkChores();
   void setTalkChore(int index, int chore);
 
+  void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw );
+
   void update();
   void draw();
 
@@ -84,6 +86,15 @@ private:
     int numKeys_;
     TrackKey *keys_;
   };
+
+  struct Head {
+	  int joint1;
+	  int joint2;
+	  int joint3;
+	  float maxRoll;
+	  float maxPitch;
+	  float maxYaw;
+  } head_;
 
   class Chore {
   public:

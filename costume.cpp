@@ -747,3 +747,12 @@ void Costume::update() {
       components_[i]->update();
 }
 
+void Costume::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw )
+{
+	head_.joint1 = joint1;
+	head_.joint2 = joint2;
+	head_.joint3 = joint3;
+	head_.maxRoll = maxRoll;
+	head_.maxPitch = maxPitch;
+	head_.maxYaw = maxYaw;
+}

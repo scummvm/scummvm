@@ -542,6 +542,31 @@ static void ActorLookAt() {
 	act->setLooking( true );
 }
 
+static void SetActorLookRate() {
+	Actor *act = check_actor(1);
+	float rate = luaL_check_number(2);
+
+	act->setLookAtRate( rate );
+}
+
+static void GetActorLookRate() {
+	Actor *act = check_actor(1);
+
+	lua_pushnumber( act->lookAtRate() );
+}
+
+static void SetActorHead() {
+	Actor *act = check_actor(1);
+	int joint1 = check_int(2);
+	int joint2 = check_int(3);
+	int joint3 = check_int(4);
+	float maxRoll = luaL_check_number(5); // Yaz: recheck to see if it's really roll
+	float maxPitch = luaL_check_number(6);
+	float maxYaw = luaL_check_number(7);
+
+	act->setHead( joint1, joint2, joint3, maxRoll, maxPitch, maxYaw );
+}
+
 static void GetVisibleThings() {
   lua_Object result = lua_createtable();
   Actor *sel = Engine::instance()->selectedActor();
@@ -1084,10 +1109,7 @@ static char *stubFuncs[] = {
   "IsPointInSector",
   "SetActorFrustrumCull",
   "SetActorFollowBoxes",
-  "SetActorHead",
   "GetCameraActor",
-  "GetActorLookRate",
-  "SetActorLookRate",
   "DriveActorTo",
   "WalkActorVector",
   "PutActorAtInterest",
@@ -1356,6 +1378,9 @@ struct luaL_reg builtins[] = {
   { "ShutUpActor", ShutUpActor },
   { "HardwareAccelerated", HardwareAccelerated },
   { "ActorLookAt", ActorLookAt },
+  { "SetActorLookRate", SetActorLookRate },
+  { "GetActorLookRate", GetActorLookRate },
+  { "SetActorHead", SetActorHead },
 };
 
 void register_lua() {
