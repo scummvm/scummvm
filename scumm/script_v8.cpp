@@ -1212,30 +1212,14 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	switch (args[0]) {
 	case 11: {	// lockObject
 		int objidx = getObjectIndex(args[1]);
-		if (objidx == -1) {
-			warning("Cannot find object %d to lock", args[1]);
-			break;
-		}
-
+		assert(objidx != -1);
 		lock(rtFlObject, objidx);
-
-//		if (ObjData.fl_object_index != 0) {
-//			ObjData.locked = 1;
-//		}
 		break;
 	}
 	case 12: {	// unlockObject
 		int objidx = getObjectIndex(args[1]);
-		if (objidx == -1) {
-			warning("Cannot find object %d to unlock", args[1]);
-			break;
-		}
-
+		assert(objidx != -1);
 		unlock(rtFlObject, objidx);
-
-//		if (ObjData.fl_object_index != 0) {
-//			ObjData.locked = 0;
-//		}
 		break;
 	}
 	case 13:	// remapCostume
@@ -1466,21 +1450,25 @@ void ScummEngine_v8::o8_getActorZPlane() {
 
 void ScummEngine_v8::o8_getObjectImageX() {
 	int i = getObjectIndex(pop());
+	assert(i);
 	push(_objs[i].x_pos);
 }
 
 void ScummEngine_v8::o8_getObjectImageY() {
 	int i = getObjectIndex(pop());
+	assert(i);
 	push(_objs[i].y_pos);
 }
 
 void ScummEngine_v8::o8_getObjectImageWidth() {
 	int i = getObjectIndex(pop());
+	assert(i);
 	push(_objs[i].width);
 }
 
 void ScummEngine_v8::o8_getObjectImageHeight() {
 	int i = getObjectIndex(pop());
+	assert(i);
 	push(_objs[i].height);
 }
 
@@ -1519,7 +1507,7 @@ void ScummEngine_v8::o8_drawObject() {
 	int imagecount;
 	ObjectData *od;
 
-	if (!objnum)
+	if (objnum == -1)
 		return;
 
 	od = &_objs[objnum];
@@ -1530,17 +1518,17 @@ void ScummEngine_v8::o8_drawObject() {
 
 	addObjectToDrawQue(objnum);
 
-	if (state == 255) {
+	if (state == 0xFF) {
 		state = getState(obj);
 		imagecount = getObjectImageCount(obj);
 
-		if (imagecount != state)
+		if (state < imagecount)
 			state++;
 		else
 			state = 1;
 	}
 
-	if (state == 254)
+	if (state == 0xFE)
 		state = _rnd.getRandomNumber(getObjectImageCount(obj));
 
 	putState(obj, state);
