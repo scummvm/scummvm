@@ -154,7 +154,9 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_voice_sound = 0;
 	_ambient_sound = 0;
 
-	_music_playing = false;
+	_effects_paused = false;
+	_ambient_paused = false;
+	_music_paused = false;
 }
 
 SimonState::~SimonState()
@@ -4615,7 +4617,18 @@ void SimonState::delay(uint amount)
 				} else if (event.kbd.keycode == '-') {
 					midi.set_volume(midi.get_volume() - 10);
 				} else if (event.kbd.keycode == 'm') {
-					midi.pause(_music_playing ^= 1);
+					midi.pause(_music_paused ^= 1);
+				} else if (event.kbd.keycode == 's') {
+					_effects_paused ^= 1;
+				} else if (event.kbd.keycode == 'b') {
+					_ambient_paused ^= 1;
+					if (_ambient_paused && _ambient_playing) {
+						_mixer->stop(_ambient_index);
+					} else if (_ambient_playing) {
+						uint tmp = _ambient_playing;
+						_ambient_playing = 0;
+						playAmbient(tmp);
+					}
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f') {
 						_fast_mode ^= 1;
@@ -5140,6 +5153,9 @@ void SimonState::playEffects(uint sound)
 	if (_effects_offsets == NULL)
 		return;
 
+	if (_effects_paused)
+		return;
+
 	if (_game == GAME_SIMON1TALKIE) {		/* simon 1 talkie */
 #ifdef USE_MAD
 		if (_effects_type == FORMAT_MP3) {
@@ -5164,6 +5180,9 @@ void SimonState::playEffects(uint sound)
 void SimonState::playAmbient(uint sound)
 {
 	if (_effects_offsets == NULL)
+		return;
+
+	if (_ambient_paused)
 		return;
 
 	if (sound == _ambient_playing)

@@ -341,7 +341,9 @@ public:
 	int _ambient_index;
 	uint _ambient_playing;
 
-	bool _music_playing;
+	bool _effects_paused;
+	bool _ambient_paused;
+	bool _music_paused;
 
 	int _timer_id;
 
