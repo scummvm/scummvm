@@ -530,7 +530,7 @@ int Scumm::loadResource(int type, int idx)
 			size = _fileHandle.readDwordLE();
 			tag = _fileHandle.readWordLE();
 			_fileHandle.seek(-6, SEEK_CUR);
-			if (type == rtSound)
+			if ((type == rtSound) && (_gameId != GID_ZAK256))
 				return readSoundResourceSmallHeader(type, idx);
 		} else {
 			if (type == rtSound) {
