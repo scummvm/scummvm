@@ -3989,7 +3989,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 	vsp->image = 0;
 	vsp->base_color = base_color;
 	vsp->id = vga_sprite_id;
-	if (!(_game & GF_SIMON2) && !(_game & GF_WIN))
+	if (!(_game & GF_SIMON2))
 		vsp->unk7 = vga_res = vga_sprite_id / 100;
 	else
 		vsp->unk7 = vga_res;
