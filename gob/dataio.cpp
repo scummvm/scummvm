@@ -232,7 +232,7 @@ void data_closeDataFile() {
 	int16 file;
 	for (file = MAX_DATA_FILES - 1; file >= 0; file--) {
 		if (dataFiles[file] != 0) {
-			free((char *)dataFiles[file]);
+			free(dataFiles[file]);
 			dataFiles[file] = 0;
 			file_getHandle(dataFileHandles[file])->close();
 			return;
@@ -269,13 +269,13 @@ char *data_getUnpackedData(const char *name) {
 	sizeLeft = packedSize;
 	ptr = packBuf;
 	while (sizeLeft > 0x4000) {
-		data_readChunk(chunk, (char *)ptr, 0x4000);
+		data_readChunk(chunk, ptr, 0x4000);
 		sizeLeft -= 0x4000;
 		ptr += 0x4000;
 	}
-	data_readChunk(chunk, (char *)ptr, sizeLeft);
+	data_readChunk(chunk, ptr, sizeLeft);
 	data_freeChunk(chunk);
-	unpackData((char *)packBuf, (char *)unpackBuf);
+	unpackData(packBuf, unpackBuf);
 	free(packBuf);
 	return unpackBuf;
 }
@@ -353,11 +353,11 @@ char *data_getData(const char *path) {
 
 	ptr = data;
 	while (size > 0x4000) {
-		data_readData(handle, (char *)ptr, 0x4000);
+		data_readData(handle, ptr, 0x4000);
 		size -= 0x4000;
 		ptr += 0x4000;
 	}
-	data_readData(handle, (char *)ptr, size);
+	data_readData(handle, ptr, size);
 	data_closeData(handle);
 	return data;
 

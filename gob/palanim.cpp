@@ -216,7 +216,7 @@ void pal_fade(PalDesc * palDesc, int16 fade, int16 allColors) {
 	}
 
 	if (tmpPalBuffer != 0) {
-		free((char *)tmpPalBuffer);
+		free(tmpPalBuffer);
 		tmpPalBuffer = 0;
 	}
 }

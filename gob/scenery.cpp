@@ -168,7 +168,7 @@ void scen_freeStatic(int16 index) {
 
 	for (i = 0; i < scen_staticPictCount[index]; i++) {
 		if (scen_staticFromExt[index] == 1)
-			free((char *)scen_statics[index].pieces[i]);
+			free(scen_statics[index].pieces[i]);
 
 		spr = scen_staticPictToSprite[index * 7 + i];
 		scen_spriteRefs[spr]--;
@@ -179,10 +179,10 @@ void scen_freeStatic(int16 index) {
 		}
 	}
 
-	free((char *)scen_statics[index].layers);
-	free((char *)scen_statics[index].pieces);
+	free(scen_statics[index].layers);
+	free(scen_statics[index].pieces);
 	if (scen_staticFromExt[index] == 1)
-		free((char *)scen_statics[index].dataPtr);
+		free(scen_statics[index].dataPtr);
 
 	scen_staticFromExt[index] = 0;
 	scen_staticPictCount[index] = -1;
@@ -672,7 +672,7 @@ void scen_freeAnim(int16 animation) {
 
 	for (i = 0; i < scen_animPictCount[animation]; i++) {
 		if (scen_animFromExt[animation] == 1)
-			free((char *)scen_animations[animation].pieces[i]);
+			free(scen_animations[animation].pieces[i]);
 
 		spr = scen_animPictToSprite[animation * 7 + i];
 		scen_spriteRefs[spr]--;
@@ -684,8 +684,8 @@ void scen_freeAnim(int16 animation) {
 		}
 	}
 
-	free((char *)scen_animations[animation].layers);
-	free((char *)scen_animations[animation].pieces);
+	free(scen_animations[animation].layers);
+	free(scen_animations[animation].pieces);
 	if (scen_animFromExt[animation] == 1)
 		free(scen_animations[animation].dataPtr);
 

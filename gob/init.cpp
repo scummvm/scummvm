@@ -273,10 +273,10 @@ memBlocks	= word ptr -2*/
 			free(game_totFileData);
 
 		if (game_totTextData != 0)
-			free((char *)game_totTextData);
+			free(game_totTextData);
 
 		if (game_totResourceTable != 0)
-			free((char *)game_totResourceTable);
+			free(game_totResourceTable);
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -284,7 +284,7 @@ memBlocks	= word ptr -2*/
 			util_freeFont(draw_fonts[i]);
 	}
 
-	free((char *)init_palDesc);
+	free(init_palDesc);
 	data_closeDataFile();
 	vid_initPrimary(-1);
 	init_cleanup();

@@ -463,10 +463,10 @@ void mult_freeMult(void) {
 		vid_freeSurfDesc(anim_underAnimSurf);
 
 	if (mult_objects != 0)
-		free((char *)mult_objects);
+		free(mult_objects);
 
 	if (mult_renderData != 0)
-		free((char *)mult_renderData);
+		free(mult_renderData);
 
 	mult_objects = 0;
 	mult_renderData = 0;
@@ -922,23 +922,23 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	if (stopNoClear == 0) {
 		if (mult_animDataAllocated) {
 			if (mult_objects)
-				free((char *)mult_objects);
+				free(mult_objects);
 			mult_objects = 0;
 
 			if (mult_renderData)
-				free((char *)mult_renderData);
+				free(mult_renderData);
 			mult_renderData = 0;
 
 			if (mult_animArrayX)
-				free((char *)mult_animArrayX);
+				free(mult_animArrayX);
 			mult_animArrayX = 0;
 
 			if (mult_animArrayY)
-				free((char *)mult_animArrayY);
+				free(mult_animArrayY);
 			mult_animArrayY = 0;
 
 			if (mult_animArrayData)
-				free((char *)mult_animArrayData);
+				free(mult_animArrayData);
 			mult_animArrayData = 0;
 
 			if (anim_underAnimSurf)
@@ -1150,42 +1150,42 @@ void mult_freeMultKeys(void) {
 			scen_freeAnim(mult_animIndices[i]);
 	}
 
-	free((char *)mult_staticKeys);
+	free(mult_staticKeys);
 
 	for (i = 0; i < 4; i++)
-		free((char *)mult_animKeys[i]);
+		free(mult_animKeys[i]);
 
-	free((char *)mult_palFadeKeys);
-	free((char *)mult_palKeys);
-	free((char *)mult_textKeys);
+	free(mult_palFadeKeys);
+	free(mult_palKeys);
+	free(mult_textKeys);
 
 	for (i = 0; i < mult_sndSlotsCount; i++) {
 		game_freeSoundSlot(19 - i);
 	}
 
-	free((char *)mult_sndKeys);
+	free(mult_sndKeys);
 
 	mult_multData = 0;
 
 	if (mult_animDataAllocated != 0) {
 		if (mult_objects)
-			free((char *)mult_objects);
+			free(mult_objects);
 		mult_objects = 0;
 
 		if (mult_renderData)
-			free((char *)mult_renderData);
+			free(mult_renderData);
 		mult_renderData = 0;
 
 		if (mult_animArrayX)
-			free((char *)mult_animArrayX);
+			free(mult_animArrayX);
 		mult_animArrayX = 0;
 
 		if (mult_animArrayY)
-			free((char *)mult_animArrayY);
+			free(mult_animArrayY);
 		mult_animArrayY = 0;
 
 		if (mult_animArrayData)
-			free((char *)mult_animArrayData);
+			free(mult_animArrayData);
 		mult_animArrayData = 0;
 
 		if (anim_underAnimSurf)

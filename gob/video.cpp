@@ -140,7 +140,7 @@ SurfaceDesc *vid_initSurfDesc(int16 vidMode, int16 width, int16 height, int16 fl
 void vid_freeSurfDesc(SurfaceDesc * surfDesc) {
 	sprAllocated--;
 	if (surfDesc != pPrimarySurfDesc)
-		free((char *)surfDesc);
+		free(surfDesc);
 	else 
 		free(surfDesc->vidPtr);
 }

@@ -1845,7 +1845,7 @@ void gob_freeObjects(void) {
 			for (col = 0; col < 6; col++) {
 
 				if (gob_goblins[i]->stateMach[state][col] != 0) {
-					free((char *)gob_goblins[i]->
+					free(gob_goblins[i]->
 					    stateMach[state][col]);
 					gob_goblins[i]->stateMach[state][col] =
 					    0;
@@ -1858,14 +1858,14 @@ void gob_freeObjects(void) {
 				if (gob_goblins[3]->stateMach[state][0] == 0)
 					continue;
 
-				free((char *)gob_goblins[3]->
+				free(gob_goblins[3]->
 				    stateMach[state][0]);
 				gob_goblins[3]->stateMach[state][0] = 0;
 			}
 		}
 
-		free((char *)gob_goblins[i]->stateMach);
-		free((char *)gob_goblins[i]);
+		free(gob_goblins[i]->stateMach);
+		free(gob_goblins[i]);
 		gob_goblins[i] = 0;
 	}
 
@@ -1880,14 +1880,14 @@ void gob_freeObjects(void) {
 				if (gob_objects[i]->stateMach[state][col] == 0)
 					continue;
 
-				free((char *)gob_objects[i]->
+				free(gob_objects[i]->
 				    stateMach[state][col]);
 				gob_objects[i]->stateMach[state][col] = 0;
 			}
 		}
 
-		free((char *)gob_objects[i]->stateMach);
-		free((char *)gob_objects[i]);
+		free(gob_objects[i]->stateMach);
+		free(gob_objects[i]);
 		gob_objects[i] = 0;
 	}
 }

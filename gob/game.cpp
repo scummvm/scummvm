@@ -254,7 +254,7 @@ void game_popCollisions(void) {
 	    game_collStackElemSizes[game_collStackSize] *
 	    sizeof(Game_Collision));
 
-	free((char *)game_collStack[game_collStackSize]);
+	free(game_collStack[game_collStackSize]);
 }
 
 int16 game_checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
@@ -378,7 +378,7 @@ char *game_loadTotResource(int16 id) {
 	itemPtr = &game_totResourceTable->items[id];
 	offset = itemPtr->offset;
 	if (offset >= 0) {
-		return (char *)((char *)game_totResourceTable) + szGame_TotResTable +
+		return ((char *)game_totResourceTable) + szGame_TotResTable +
 		    szGame_TotResItem * game_totResourceTable->itemsCount + offset;
 	} else {
 		return (char *)(game_imFileData +
@@ -438,7 +438,7 @@ void game_freeSoundSlot(int16 slot) {
 		game_soundFromExt[slot] = 0;
 	}
 
-	free((char *)game_soundSamples[slot]);
+	free(game_soundSamples[slot]);
 	game_soundSamples[slot] = 0;
 }
 
@@ -1852,13 +1852,13 @@ void game_playTot(int16 skipPlay) {
 			free(game_totFileData);
 			game_totFileData = 0;
 			if (game_totTextData != 0 && needTextFree != 0)
-				free((char *)game_totTextData);
+				free(game_totTextData);
 
 			game_totTextData = 0;
 
 			if (game_totResourceTable != 0
 			    && needFreeResTable != 0)
-				free((char *)game_totResourceTable);
+				free(game_totResourceTable);
 
 			game_totResourceTable = 0;
 
@@ -1868,7 +1868,7 @@ void game_playTot(int16 skipPlay) {
 			game_imFileData = 0;
 
 			if (game_extTable != 0)
-				free((char *)game_extTable);
+				free(game_extTable);
 
 			game_extTable = 0;
 			if (game_extHandle >= 0)
@@ -1912,7 +1912,7 @@ void game_start(void) {
 	game_prepareStart();
 	game_playTot(0);
 
-	free((char *)game_collisionAreas);
+	free(game_collisionAreas);
 
 	vid_freeSurfDesc(draw_cursorSprites);
 	vid_freeSurfDesc(draw_cursorBack);

@@ -238,7 +238,7 @@ FontDesc *util_loadFont(const char *path) {
 
 	data = data_getData(path);
 	if (data == 0) {
-		free((char *)fontDesc);
+		free(fontDesc);
 		return 0;
 	}
 
@@ -263,7 +263,7 @@ FontDesc *util_loadFont(const char *path) {
 
 void util_freeFont(FontDesc * fontDesc) {
 	free(fontDesc->dataPtr - 4);
-	free((char *)fontDesc);
+	free(fontDesc);
 }
 
 void util_clearPalette(void) {
@@ -388,12 +388,12 @@ void util_listInsertBack(Util_List * list, void *data) {
 
 void util_listDropFront(Util_List * list) {
 	if (list->pHead->pNext == 0) {
-		free((char *)(list->pHead));
+		free((list->pHead));
 		list->pHead = 0;
 		list->pTail = 0;
 	} else {
 		list->pHead = list->pHead->pNext;
-		free((char *)(list->pHead->pPrev));
+		free((list->pHead->pPrev));
 		list->pHead->pPrev = 0;
 	}
 }
@@ -403,7 +403,7 @@ void util_deleteList(Util_List * list) {
 		util_listDropFront(list);
 	}
 
-	free((char *)list);
+	free(list);
 }
 
 char util_str1[] =
