@@ -20,7 +20,7 @@
  *
  */
 
-#include "string.h"
+#include <string.h>
 
 void *memchr(const void *s, int c, UInt32 n) {
 	UInt32 chr;

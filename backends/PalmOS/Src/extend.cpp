@@ -21,9 +21,9 @@
  */
  
 #include <PalmOS.h>
+#include <string.h>
 
 #include "extend.h"
-#include "string.h"
 #include "globals.h"
 #include "starterrsc.h"
 
@@ -134,7 +134,7 @@ MemPtr _PnoInit(DmResID resID, PnoDescriptor *pnoP) {
 }
 
 UInt32 _PnoCall(PnoDescriptor *pnoP, void *userDataP) {
-	return PnoCall(pnoP, userDataP);;
+	return PnoCall(pnoP, userDataP);
 }
 
 void _PnoFree(PnoDescriptor *pnoP, MemPtr armP) {

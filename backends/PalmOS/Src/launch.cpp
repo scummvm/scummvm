@@ -2,9 +2,9 @@
 #include <Sonyclie.h>
 #include "StarterRsc.h"
 
-#include "stdio.h"
-#include "unistd.h"	
-#include "stdlib.h"
+#include <stdio.h>
+#include <unistd.h>	
+#include <stdlib.h>
 
 #include "games.h"
 #include "start.h"
@@ -38,9 +38,11 @@ static void initARM() {
 	ARM(PNO_COPYRECT	).pnoPtr = _PnoInit(RSC_COPYRECT, &ARM(PNO_COPYRECT).pnoDesc);
 	ARM(PNO_COSTUMEPROC3).pnoPtr = _PceInit(RSC_COSTUMEPROC3);
 	ARM(PNO_DRAWSTRIP	).pnoPtr = _PceInit(RSC_DRAWSTRIP);
+	ARM(PNO_BLIT		).pnoPtr = _PnoInit(RSC_BLIT, &ARM(PNO_BLIT).pnoDesc);
 }
 
 static void releaseARM() {
+	_PnoFree(&ARM(PNO_BLIT			).pnoDesc, ARM(PNO_BLIT).pnoPtr);
 	_PceFree(ARM(PNO_DRAWSTRIP		).pnoPtr);
 	_PceFree(ARM(PNO_COSTUMEPROC3	).pnoPtr);
 	_PnoFree(&ARM(PNO_COPYRECT		).pnoDesc, ARM(PNO_COPYRECT).pnoPtr);

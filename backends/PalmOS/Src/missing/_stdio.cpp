@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdio.h"
+#include <stdio.h>
 
 FileRef	gStdioOutput = 0;
 
