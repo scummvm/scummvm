@@ -217,7 +217,10 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	}
 
 	if (midi_type == 1) {
-		_buffer = (byte *) malloc (size);
+		// FIXME: Doubled the buffer size to prevent crashes with the
+		// Inherit the Earth MIDIs. Jamieson630 said something about a
+		// better fix, but this will have to do in the meantime.
+		_buffer = (byte *) malloc (size * 2);
 		compressToType0();
 		_num_tracks = 1;
 		_tracks[0] = _buffer;
