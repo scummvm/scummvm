@@ -77,6 +77,8 @@
 #define PIXEL22_5   *(q+2+nextlineDst2) = interpolate16_2<bitFormat,1,1>(w[6], w[8]);
 #define PIXEL22_C   *(q+2+nextlineDst2) = w[5];
 
+#define YUV(x)	RGBtoYUV[w[x]]
+
 /**
  * The HQ3x high quality 3x graphics filter.
  * Original author Maxim Stepin (see http://www.hiend3d.com/hq3x.html).
@@ -85,7 +87,6 @@
 template<int bitFormat>
 void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	int   w[10];
-	int  yuv[10];
   
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
@@ -119,42 +120,41 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	//	 +----+----+----+
 
 	while (height--) {
-		w[2] = *(p - 1 - nextlineSrc);  yuv[2] = RGBtoYUV[w[2]];
-		w[5] = *(p - 1);                yuv[5] = RGBtoYUV[w[5]];
-		w[8] = *(p - 1 + nextlineSrc);  yuv[8] = RGBtoYUV[w[8]];
+		w[2] = *(p - 1 - nextlineSrc);
+		w[5] = *(p - 1);
+		w[8] = *(p - 1 + nextlineSrc);
 
-		w[3] = *(p - nextlineSrc);      yuv[3] = RGBtoYUV[w[3]];
-		w[6] = *(p);                    yuv[6] = RGBtoYUV[w[6]];
-		w[9] = *(p + nextlineSrc);      yuv[9] = RGBtoYUV[w[9]];
+		w[3] = *(p - nextlineSrc);
+		w[6] = *(p);
+		w[9] = *(p + nextlineSrc);
 
 		int tmpWidth = width;
 		while (tmpWidth--) {
 			p++;
 
-			w[1] = w[2];                yuv[1] = yuv[2];
-			w[4] = w[5];                yuv[4] = yuv[5];
-			w[7] = w[8];                yuv[7] = yuv[8];
+			w[1] = w[2];
+			w[4] = w[5];
+			w[7] = w[8];
 
-			w[2] = w[3];                yuv[2] = yuv[3];
-			w[5] = w[6];                yuv[5] = yuv[6];
-			w[8] = w[9];                yuv[8] = yuv[9];
+			w[2] = w[3];
+			w[5] = w[6];
+			w[8] = w[9];
 
-			w[3] = *(p - nextlineSrc);	yuv[3] = RGBtoYUV[w[3]];
-			w[6] = *(p);				yuv[6] = RGBtoYUV[w[6]];
-			w[9] = *(p + nextlineSrc);	yuv[9] = RGBtoYUV[w[9]];
+			w[3] = *(p - nextlineSrc);
+			w[6] = *(p);
+			w[9] = *(p + nextlineSrc);
 
 			int pattern = 0;
-			int flag = 1;
+			const int yuv5 = YUV(5);
 
-			for (int k = 1; k <= 9; k++) {
-				if (k == 5) continue;
-
-				if (w[k] != w[5]) {
-					if (diffYUV(yuv[5], yuv[k]))
-						pattern |= flag;
-				}
-				flag <<= 1;
-			}
+			if (w[5] != w[1] && diffYUV(yuv5, YUV(1))) pattern |= 0x0001;
+			if (w[5] != w[2] && diffYUV(yuv5, YUV(2))) pattern |= 0x0002;
+			if (w[5] != w[3] && diffYUV(yuv5, YUV(3))) pattern |= 0x0004;
+			if (w[5] != w[4] && diffYUV(yuv5, YUV(4))) pattern |= 0x0008;
+			if (w[5] != w[6] && diffYUV(yuv5, YUV(6))) pattern |= 0x0010;
+			if (w[5] != w[7] && diffYUV(yuv5, YUV(7))) pattern |= 0x0020;
+			if (w[5] != w[8] && diffYUV(yuv5, YUV(8))) pattern |= 0x0040;
+			if (w[5] != w[9] && diffYUV(yuv5, YUV(9))) pattern |= 0x0080;
 
 			switch (pattern) {
 			case 0:
@@ -354,7 +354,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 18:
 			case 50:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_1M
 					PIXEL12_C
@@ -377,7 +377,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_1
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_1M
@@ -394,7 +394,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_2
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_1M
 					PIXEL21_C
@@ -407,7 +407,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 10:
 			case 138:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 					PIXEL01_C
 					PIXEL10_C
@@ -500,7 +500,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 22:
 			case 54:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -523,7 +523,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_1
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -540,7 +540,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_2
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -553,7 +553,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 11:
 			case 139:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -571,7 +571,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 19:
 			case 51:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL00_1L
 					PIXEL01_C
 					PIXEL02_1M
@@ -590,7 +590,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 146:
 			case 178:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_1M
 					PIXEL12_C
@@ -609,7 +609,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 84:
 			case 85:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL02_1U
 					PIXEL12_C
 					PIXEL21_C
@@ -628,7 +628,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 112:
 			case 113:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL20_1L
 					PIXEL21_C
@@ -647,7 +647,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 200:
 			case 204:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_1M
 					PIXEL21_C
@@ -666,7 +666,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 73:
 			case 77:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL00_1U
 					PIXEL10_C
 					PIXEL20_1M
@@ -685,7 +685,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 42:
 			case 170:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 					PIXEL01_C
 					PIXEL10_C
@@ -704,7 +704,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 14:
 			case 142:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 					PIXEL01_C
 					PIXEL02_1R
@@ -811,7 +811,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 26:
 			case 31:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL10_C
 				} else {
@@ -819,7 +819,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL10_3
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 					PIXEL12_C
 				} else {
@@ -834,7 +834,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 82:
 			case 214:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 				} else {
@@ -845,7 +845,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL11
 				PIXEL12_C
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL21_C
 					PIXEL22_C
 				} else {
@@ -859,7 +859,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL01_1
 				PIXEL02_1M
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 				} else {
@@ -867,7 +867,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_4
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL22_C
 				} else {
@@ -877,7 +877,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 74:
 			case 107:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 				} else {
@@ -888,7 +888,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 					PIXEL21_C
 				} else {
@@ -898,7 +898,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 27:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -916,7 +916,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 86:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -938,7 +938,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -954,7 +954,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -967,7 +967,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 30:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -989,7 +989,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_1
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1005,7 +1005,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1017,7 +1017,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 75:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1166,13 +1166,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1D
 				break;
 			case 58:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1187,7 +1187,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 83:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1197,7 +1197,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1M
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -1210,20 +1210,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 202:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
@@ -1233,7 +1233,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
@@ -1242,7 +1242,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1R
 				break;
 			case 78:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
@@ -1252,7 +1252,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
@@ -1261,13 +1261,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 154:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1282,7 +1282,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 114:
 				PIXEL00_1M
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1292,7 +1292,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -1305,26 +1305,26 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 90:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1332,13 +1332,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -1346,7 +1346,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 55:
 			case 23:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL00_1L
 					PIXEL01_C
 					PIXEL02_C
@@ -1365,7 +1365,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 182:
 			case 150:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1384,7 +1384,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 213:
 			case 212:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL02_1U
 					PIXEL12_C
 					PIXEL21_C
@@ -1403,7 +1403,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 241:
 			case 240:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL20_1L
 					PIXEL21_C
@@ -1422,7 +1422,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 236:
 			case 232:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1441,7 +1441,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 109:
 			case 105:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL00_1U
 					PIXEL10_C
 					PIXEL20_C
@@ -1460,7 +1460,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 171:
 			case 43:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1479,7 +1479,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 143:
 			case 15:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL02_1R
@@ -1502,7 +1502,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1U
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1514,7 +1514,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 203:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1532,7 +1532,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 62:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1554,7 +1554,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_1
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1566,7 +1566,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 118:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1588,7 +1588,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1604,7 +1604,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1R
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1616,7 +1616,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 155:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1726,12 +1726,12 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1U
 				PIXEL10_C
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1742,12 +1742,12 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 158:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1763,7 +1763,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1D
 				break;
 			case 234:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
@@ -1772,7 +1772,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1786,7 +1786,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 242:
 				PIXEL00_1M
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1794,7 +1794,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_1
 				PIXEL11
 				PIXEL20_1L
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1805,7 +1805,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 59:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1814,7 +1814,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL01_3
 					PIXEL10_3
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -1831,7 +1831,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1840,7 +1840,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_4
 					PIXEL21_3
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -1848,7 +1848,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 87:
 				PIXEL00_1L
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1861,14 +1861,14 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL11
 				PIXEL20_1M
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 79:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1880,7 +1880,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1R
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
@@ -1889,20 +1889,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 122:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
 				}
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -1911,19 +1911,19 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_4
 					PIXEL21_3
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 94:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -1934,38 +1934,38 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				PIXEL10_C
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 218:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
 				}
 				PIXEL10_C
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -1976,7 +1976,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 91:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -1985,20 +1985,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL01_3
 					PIXEL10_3
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
 				}
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -2049,13 +2049,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1D
 				break;
 			case 186:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -2070,7 +2070,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 115:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -2080,7 +2080,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -2093,20 +2093,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 206:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
@@ -2116,7 +2116,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
@@ -2132,7 +2132,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_1M
 				} else {
 					PIXEL20_2
@@ -2142,7 +2142,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 174:
 			case 46:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_1M
 				} else {
 					PIXEL00_2
@@ -2160,7 +2160,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 147:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_1M
 				} else {
 					PIXEL02_2
@@ -2182,7 +2182,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_1M
 				} else {
 					PIXEL22_2
@@ -2212,7 +2212,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 126:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -2222,7 +2222,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL12_3
 				}
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -2234,7 +2234,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 219:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -2246,7 +2246,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -2257,7 +2257,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 125:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL00_1U
 					PIXEL10_C
 					PIXEL20_C
@@ -2275,7 +2275,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 221:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL02_1U
 					PIXEL12_C
 					PIXEL21_C
@@ -2293,7 +2293,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL20_1M
 				break;
 			case 207:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL02_1R
@@ -2311,7 +2311,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1R
 				break;
 			case 238:
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -2329,7 +2329,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_1
 				break;
 			case 190:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -2347,7 +2347,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL21_1
 				break;
 			case 187:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -2365,7 +2365,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1D
 				break;
 			case 243:
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL20_1L
 					PIXEL21_C
@@ -2383,7 +2383,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL11
 				break;
 			case 119:
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL00_1L
 					PIXEL01_C
 					PIXEL02_C
@@ -2408,7 +2408,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
@@ -2418,7 +2418,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 175:
 			case 47:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
@@ -2436,7 +2436,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 151:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2458,7 +2458,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2
@@ -2469,7 +2469,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL01_C
 				PIXEL02_1M
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 				} else {
@@ -2477,7 +2477,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_4
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL22_C
 				} else {
@@ -2486,7 +2486,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 123:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 				} else {
@@ -2497,7 +2497,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 					PIXEL21_C
 				} else {
@@ -2507,7 +2507,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 95:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL10_C
 				} else {
@@ -2515,7 +2515,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL10_3
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 					PIXEL12_C
 				} else {
@@ -2529,7 +2529,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 222:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 				} else {
@@ -2540,7 +2540,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL11
 				PIXEL12_C
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL21_C
 					PIXEL22_C
 				} else {
@@ -2554,7 +2554,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1U
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 				} else {
@@ -2562,7 +2562,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_4
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2
@@ -2574,13 +2574,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL02_1M
 				PIXEL10_C
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL22_C
 				} else {
@@ -2589,7 +2589,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 235:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 				} else {
@@ -2600,7 +2600,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
@@ -2609,7 +2609,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1R
 				break;
 			case 111:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
@@ -2619,7 +2619,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 					PIXEL21_C
 				} else {
@@ -2629,13 +2629,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 63:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 					PIXEL12_C
 				} else {
@@ -2649,7 +2649,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 159:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL10_C
 				} else {
@@ -2657,7 +2657,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL10_3
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2671,7 +2671,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 215:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2680,7 +2680,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL11
 				PIXEL12_C
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL21_C
 					PIXEL22_C
 				} else {
@@ -2690,7 +2690,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 246:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 				} else {
@@ -2702,7 +2702,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2
@@ -2710,7 +2710,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			case 254:
 				PIXEL00_1M
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 				} else {
@@ -2718,14 +2718,14 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL02_4
 				}
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 				} else {
 					PIXEL10_3
 					PIXEL20_4
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL21_C
 					PIXEL22_C
@@ -2742,20 +2742,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 251:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 				} else {
@@ -2764,7 +2764,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				PIXEL02_1M
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL10_C
 					PIXEL20_C
 					PIXEL21_C
@@ -2773,7 +2773,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL20_2
 					PIXEL21_3
 				}
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL12_C
 					PIXEL22_C
 				} else {
@@ -2782,7 +2782,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			case 239:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
@@ -2792,7 +2792,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_1
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
@@ -2801,7 +2801,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1R
 				break;
 			case 127:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL01_C
 					PIXEL10_C
@@ -2810,7 +2810,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL01_3
 					PIXEL10_3
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 					PIXEL12_C
 				} else {
@@ -2818,7 +2818,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					PIXEL12_3
 				}
 				PIXEL11
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 					PIXEL21_C
 				} else {
@@ -2828,13 +2828,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1M
 				break;
 			case 191:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2847,14 +2847,14 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL22_1D
 				break;
 			case 223:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 					PIXEL10_C
 				} else {
 					PIXEL00_4
 					PIXEL10_3
 				}
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL01_C
 					PIXEL02_C
 					PIXEL12_C
@@ -2865,7 +2865,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				PIXEL11
 				PIXEL20_1M
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL21_C
 					PIXEL22_C
 				} else {
@@ -2876,7 +2876,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			case 247:
 				PIXEL00_1L
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2886,20 +2886,20 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL12_C
 				PIXEL20_1L
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2
 				}
 				break;
 			case 255:
-				if (diffYUV(yuv[4], yuv[2])) {
+				if (diffYUV(YUV(4), YUV(2))) {
 					PIXEL00_C
 				} else {
 					PIXEL00_2
 				}
 				PIXEL01_C
-				if (diffYUV(yuv[2], yuv[6])) {
+				if (diffYUV(YUV(2), YUV(6))) {
 					PIXEL02_C
 				} else {
 					PIXEL02_2
@@ -2907,13 +2907,13 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				PIXEL10_C
 				PIXEL11
 				PIXEL12_C
-				if (diffYUV(yuv[8], yuv[4])) {
+				if (diffYUV(YUV(8), YUV(4))) {
 					PIXEL20_C
 				} else {
 					PIXEL20_2
 				}
 				PIXEL21_C
-				if (diffYUV(yuv[6], yuv[8])) {
+				if (diffYUV(YUV(6), YUV(8))) {
 					PIXEL22_C
 				} else {
 					PIXEL22_2

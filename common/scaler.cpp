@@ -175,10 +175,9 @@ void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 			A = B; B = C; C = *(p - nextlineSrc);
 			D = E; E = F; F = *(p);
 			G = H; H = I; I = *(p + nextlineSrc);
-
-			*(q) = D == B && B != F && D != H ? D : E;
+			*(q + 0) = D == B && B != F && D != H ? D : E;
 			*(q + 1) = B == F && B != D && F != H ? F : E;
-			*(q + nextlineDst) = D == H && D != B && H != F ? D : E;
+			*(q + nextlineDst + 0) = D == H && D != B && H != F ? D : E;
 			*(q + nextlineDst + 1) = H == F && D != H && B != F ? F : E;
 			q += 2;
 		}

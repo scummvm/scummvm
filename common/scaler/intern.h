@@ -95,11 +95,28 @@ static inline bool diffYUV(int yuv1, int yuv2) {
 	static const int trY   = 0x00300000;
 	static const int trU   = 0x00000700;
 	static const int trV   = 0x00000006;
+	
+	int diff;
+	
+	diff = ((yuv1 & Ymask) - (yuv2 & Ymask));
+	if (diff < 0) diff = - diff;
+	if (diff > trY) return true;
 
+	diff = ((yuv1 & Umask) - (yuv2 & Umask));
+	if (diff < 0) diff = - diff;
+	if (diff > trU) return true;
+
+	diff = ((yuv1 & Vmask) - (yuv2 & Vmask));
+	if (diff < 0) diff = - diff;
+	if (diff > trV) return true;
+
+	return false;
+/*
 	return
 	  ( ( ABS((yuv1 & Ymask) - (yuv2 & Ymask)) > trY ) ||
 	    ( ABS((yuv1 & Umask) - (yuv2 & Umask)) > trU ) ||
 	    ( ABS((yuv1 & Vmask) - (yuv2 & Vmask)) > trV ) );
+*/
 }
 
 /**
