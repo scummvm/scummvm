@@ -415,16 +415,15 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	: GUI::OptionsDialog("", 40, 30, 240, 124), _scumm(scumm) {
 #else
 ConfigDialog::ConfigDialog(ScummEngine *scumm)
-	: GUI::OptionsDialog("", 40, 30, 240, 124 + kButtonHeight + 4), _scumm(scumm) {
+	: GUI::OptionsDialog("", 40, 30, 240, 124 + 4), _scumm(scumm) {
 #endif
 	//
 	// Add the buttons
 	//
 #ifdef _WIN32_WCE
-	addButton(_w - kButtonWidth - 8, _h - 24 - kButtonHeight - 4, "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - kButtonHeight - 4, "Cancel", kCloseCmd, 'C');
-
-	addButton(kButtonWidth+12, _h - 24, "Keys", kKeysCmd, 'K');
+	addButton(_w - kButtonWidth - 8, _h - 24 - 4, "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - 4, "Cancel", kCloseCmd, 'C');
+	addButton(_w - 3 * kButtonWidth - 16, _h - 24 - 4, "Keys", kKeysCmd, 'K');
 #else
 	addButton(_w - kButtonWidth-8, _h - 24, "OK", GUI::OptionsDialog::kOKCmd, 'O');
 	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCloseCmd, 'C');
@@ -625,6 +624,11 @@ void ConfirmExitDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) 
 #ifdef _WIN32_WCE
 
 #pragma mark -
+
+using GUI::ListWidget;
+using GUI::kListNumberingZero;
+using GUI::WIDGET_CLEARBG;
+using GUI::kListSelectionChangedCmd;
 
 enum {
 	kMapCmd					= 'map '
