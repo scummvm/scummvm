@@ -94,7 +94,7 @@ test_compiler ()
 {
 cat <<EOF >tmp_cxx_compiler.cpp
 class Foo {
-  int a;
+	int a;
 };
 int main(int argc, char **argv)
 {
@@ -105,10 +105,10 @@ int main(int argc, char **argv)
 EOF
 
 if test -n "$_host"; then
-    # In cross-compiling mode, we cannot run the result
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	# In cross-compiling mode, we cannot run the result
+	eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -122,23 +122,23 @@ find_sdlconfig()
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 	
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS=":"
 	
 	for path_dir in $_sdlpath; do
-	  for sdlconfig in $sdlconfigs; do
-	    if test -x "$path_dir/$sdlconfig" ; then
-	      _sdlconfig="$path_dir/$sdlconfig"
-	      echo $_sdlconfig
-	      break
-	    fi
-	  done
+		for sdlconfig in $sdlconfigs; do
+			if test -x "$path_dir/$sdlconfig" ; then
+				_sdlconfig="$path_dir/$sdlconfig"
+				echo $_sdlconfig
+				break
+			fi
+		done
 	done
 	
 	IFS="$ac_save_ifs"
 	
 	if test -z "$_sdlconfig"; then
-	  echo "none found!"
-	  exit 1
+		echo "none found!"
+		exit 1
 	fi
 }
 
@@ -177,11 +177,11 @@ int main(int argc, char **argv)
 }
 EOF
 if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
-  datatype=`./tmp_find_type_with_size $1`
-  if test "$datatype" = "unknown"; then
-	echo "couldn't find data type with $1 bytes"
-	exit 1
-  fi
+	datatype=`./tmp_find_type_with_size $1`
+	if test "$datatype" = "unknown"; then
+		echo "couldn't find data type with $1 bytes"
+		exit 1
+	fi
 fi
 rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
@@ -189,38 +189,38 @@ echo $datatype
 
 CheckNASM()
 {
-    echocheck "nasm"
-    if test "$_nasm" = no ; then
-	echo "disabled"
-	return;
-    fi
-
-    IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-	
-    for path_dir in $_nasmpath; do
-	if test -x "$path_dir/nasm" ; then
-	    NASM="$path_dir/nasm"
-	    echo $NASM
-	    break
+	echocheck "nasm"
+	if test "$_nasm" = no ; then
+		echo "disabled"
+		return;
 	fi
-    done
-	
-    IFS="$ac_save_ifs"
 
-    if test x$NASM = x -o x$NASM = x'"$NASM"'; then
-	echo "not found"
-	_nasm=no
-    else
-	case $_host_os in
-	    mingw* | cygwin*)
-		NASMFLAGS="-f win32"
-	    ;;
-            *)
-                NASMFLAGS="-f elf"
-            ;;
-	esac
-	_nasm=yes
-    fi
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+		
+	for path_dir in $_nasmpath; do
+		if test -x "$path_dir/nasm" ; then
+			NASM="$path_dir/nasm"
+			echo $NASM
+			break
+		fi
+	done
+		
+	IFS="$ac_save_ifs"
+
+	if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+		echo "not found"
+		_nasm=no
+	else
+		case $_host_os in
+			mingw* | cygwin*)
+				NASMFLAGS="-f win32"
+			;;
+			*)
+				NASMFLAGS="-f elf"
+			;;
+		esac
+		_nasm=yes
+	fi
 }
 
 #
@@ -314,98 +314,98 @@ DEBFLAGS="-g"
 
 for ac_option in $@; do
     case "$ac_option" in
-      --disable-scumm)		_build_scumm=no ;;
-      --disable-simon)		_build_simon=no ;;
-      --disable-sky)		_build_sky=no ;;
-      --disable-sword1)		_build_sword1=no ;;
-      --disable-sword2)		_build_sword2=no ;;
-      --disable-queen)		_build_queen=no ;;
-      --disable-saga)		_build_saga=no ;;
-      --enable-kyra)		_build_kyra=yes ;;
-      --enable-alsa)		_alsa=yes	;;
-      --disable-alsa)		_alsa=no	;;
-      --enable-vorbis)		_vorbis=yes	;;
-      --disable-vorbis)		_vorbis=no	;;
-      --enable-flac)		_flac=yes	;;
-      --disable-flac)		_flac=no	;;
-      --enable-mad)		_mad=yes	;;
-      --disable-mad)		_mad=no		;;
-      --enable-zlib)		_zlib=yes	;;
-      --disable-zlib)		_zlib=no	;;
-      --enable-nasm)		_nasm=yes	;;
-      --disable-nasm)		_nasm=no	;;
+      --disable-scumm)          _build_scumm=no ;;
+      --disable-simon)          _build_simon=no ;;
+      --disable-sky)            _build_sky=no ;;
+      --disable-sword1)         _build_sword1=no ;;
+      --disable-sword2)         _build_sword2=no ;;
+      --disable-queen)          _build_queen=no ;;
+      --disable-saga)           _build_saga=no ;;
+      --enable-kyra)            _build_kyra=yes ;;
+      --enable-alsa)            _alsa=yes       ;;
+      --disable-alsa)           _alsa=no        ;;
+      --enable-vorbis)          _vorbis=yes     ;;
+      --disable-vorbis)         _vorbis=no      ;;
+      --enable-flac)            _flac=yes       ;;
+      --disable-flac)           _flac=no        ;;
+      --enable-mad)             _mad=yes        ;;
+      --disable-mad)            _mad=no         ;;
+      --enable-zlib)            _zlib=yes       ;;
+      --disable-zlib)           _zlib=no        ;;
+      --enable-nasm)            _nasm=yes       ;;
+      --disable-nasm)           _nasm=no        ;;
       --disable-mpeg2)          _mpeg2=no       ;;
       --enable-plugins)         _build_plugins=yes ;;
       --enable-mt32emu)         _mt32emu=yes    ;;
       --disable-mt32emu)        _mt32emu=no     ;;
       --with-mpeg2-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	MPEG2_CFLAGS="-I$_prefix/include"
-	MPEG2_LIBS="-L$_prefix/lib"
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        MPEG2_CFLAGS="-I$_prefix/include"
+        MPEG2_LIBS="-L$_prefix/lib"
         ;;
       --with-alsa-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	ALSA_CFLAGS="-I$_prefix/include"
-	ALSA_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        ALSA_CFLAGS="-I$_prefix/include"
+        ALSA_LIBS="-L$_prefix/lib"
+        ;;
       --with-ogg-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	OGG_CFLAGS="-I$_prefix/include"
-	OGG_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        OGG_CFLAGS="-I$_prefix/include"
+        OGG_LIBS="-L$_prefix/lib"
+        ;;
       --with-vorbis-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	VORBIS_CFLAGS="-I$_prefix/include"
-	VORBIS_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        VORBIS_CFLAGS="-I$_prefix/include"
+        VORBIS_LIBS="-L$_prefix/lib"
+        ;;
       --with-flac-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	FLAC_CFLAGS="-I$_prefix/include"
-	FLAC_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        FLAC_CFLAGS="-I$_prefix/include"
+        FLAC_LIBS="-L$_prefix/lib"
+        ;;
       --with-mad-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	MAD_CFLAGS="-I$_prefix/include"
-	MAD_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        MAD_CFLAGS="-I$_prefix/include"
+        MAD_LIBS="-L$_prefix/lib"
+        ;;
       --with-zlib-prefix=*)
-	_prefix=`echo $ac_option | cut -d '=' -f 2`
-	ZLIB_CFLAGS="-I$_prefix/include"
-	ZLIB_LIBS="-L$_prefix/lib"
-	;;
+        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        ZLIB_CFLAGS="-I$_prefix/include"
+        ZLIB_LIBS="-L$_prefix/lib"
+        ;;
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
-	;;
+        ;;
       --disable-debug)
-	DEBFLAGS=""
+        DEBFLAGS=""
         ;;
       --enable-release)
-	DEBFLAGS="-O2"
+        DEBFLAGS="-O2"
         ;;
       --with-sdl-prefix=*)
-	arg=`echo $ac_option | cut -d '=' -f 2`
-	_sdlpath="$arg:$arg/bin"
-	;;
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        _sdlpath="$arg:$arg/bin"
+        ;;
       --with-nasm-prefix=*)
-	arg=`echo $ac_option | cut -d '=' -f 2`
-	_nasmpath="$arg:$arg/bin"
-	;;
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        _nasmpath="$arg:$arg/bin"
+        ;;
       --host=*)
-	_host=`echo $ac_option | cut -d '=' -f 2`
-	;;
+        _host=`echo $ac_option | cut -d '=' -f 2`
+        ;;
       --prefix=*)
         _prefix=`echo $ac_option | cut -d '=' -f 2`
-	;;
+        ;;
       --bindir=*)
         _bindir=`echo $ac_option | cut -d '=' -f 2`
-	;;
+        ;;
       --mandir=*)
         _mandir=`echo $ac_option | cut -d '=' -f 2`
-	;;
+        ;;
       *)
         echo "error: unrecognised option: $ac_option
 Try \`$0 --help' for more information." >&2
-	exit 1
+        exit 1
         ;;
     esac;
 done;
@@ -414,19 +414,19 @@ CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
 case $_host in
 linupy)
-    _host_os=linux
-    _host_cpu=arm
-    ;;
+	_host_os=linux
+	_host_cpu=arm
+	;;
 arm-riscos-aof)
-    _host_os=riscos
-    _host_cpu=arm
-    ;;
+	_host_os=riscos
+	_host_cpu=arm
+	;;
 *)
-    guessed_host=`$_srcdir/config.guess`
-    _host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
-    _host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
-    _host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
-    ;;
+	guessed_host=`$_srcdir/config.guess`
+	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+	_host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+	;;
 esac
 
 #
@@ -449,22 +449,22 @@ esac
 #
 echo_n "Looking for C++ compiler... "
 if test -n "$_host"; then
-    compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++"
+	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++"
 else
-    compilers="$CXX g++ c++"
+	compilers="$CXX g++ c++"
 fi
 
 CXX=
 for compiler in $compilers; do
-    if test_compiler $compiler; then
+	if test_compiler $compiler; then
 	CXX=$compiler
 	echo $CXX
 	break
-    fi
+	fi
 done
 if test -z $CXX; then
-    echo "none found!"
-    exit 1
+	echo "none found!"
+	exit 1
 fi
 
 #
@@ -519,15 +519,15 @@ fi
 #
 
 if test "$_cxx_major" -ge "3" ; then
-    case $_host_os in
+	case $_host_os in
 	mingw* | cygwin*)
-	CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-	    ;;
+		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+		;;
 	*)
-	CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-	    ;;
-    esac
-    _make_def_HAVE_GCC3='HAVE_GCC3 = 1'
+		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+		;;
+	esac
+	_make_def_HAVE_GCC3='HAVE_GCC3 = 1'
 fi;
 
 #
@@ -582,178 +582,178 @@ else
 fi
 
 if test -n "$_host"; then
-    # Cross-compiling mode - add your target here if needed
-    case "$_host" in
-	linupy|arm-riscos-aof)
-	    echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-	    DEFINES="$DEFINES -DUNIX"
-	    _def_endianness='#define SCUMM_LITTLE_ENDIAN'
-	    _def_align='#define SCUMM_NEED_ALIGNMENT'
-	    _def_linupy="#define DLINUPY"
-	    type_1_byte='char'
-	    type_2_byte='short'
-	    type_4_byte='int'
-	    ;;
-	*)
-	    echo "Cross-compiling to unknown target, please add your target to configure."
-	    exit 1
-	    ;;
-    esac
-	    
+	# Cross-compiling mode - add your target here if needed
+	case "$_host" in
+		linupy|arm-riscos-aof)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
+			_def_align='#define SCUMM_NEED_ALIGNMENT'
+			_def_linupy="#define DLINUPY"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			;;
+		*)
+			echo "Cross-compiling to unknown target, please add your target to configure."
+			exit 1
+			;;
+	esac
+	
 else
-    #
-    # Determine build settings
-    #
-    # TODO - also add an command line option to override this?!?
-    echo_n "Checking hosttype... "
-    echo $_host_os
-    case $_host_os in
-	linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
-	    DEFINES="$DEFINES -DUNIX"
-	    ;;
-	irix*)
-	    DEFINES="$DEFINES -DUNIX"
-	    _ranlib=:
-	    ;;
-	darwin*)
-	    DEFINES="$DEFINES -DUNIX -DMACOSX"
-	    LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon"
-	    # TODO: Add proper check for Altivec support in the compiler...
-	    DEFINES="$DEFINES -DHAS_ALTIVEC"
-	    CXXFLAGS="$CXXFLAGS -faltivec"
-	    ;;
-	mingw*)
-	    DEFINES="$DEFINES -DWIN32"
-	    LIBS="$LIBS -lmingw32 -lwinmm"
-	    OBJS="$OBJS scummvmico.o"
-	    ;;
-	cygwin*)
-	    DEFINES="$DEFINES -mno-cygwin -DWIN32"
-	    LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
-	    OBJS="$OBJS scummvmico.o"
-	    ;;
-	# given this is a shell script assume some type of unix
-	*)
-	    echo "WARNING: could not establish system type, assuming unix like"
-	    DEFINES="$DEFINES -DUNIX"
-	    ;;
-    esac
+	#
+	# Determine build settings
+	#
+	# TODO - also add an command line option to override this?!?
+	echo_n "Checking hosttype... "
+	echo $_host_os
+	case $_host_os in
+		linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
+			DEFINES="$DEFINES -DUNIX"
+			;;
+		irix*)
+			DEFINES="$DEFINES -DUNIX"
+			_ranlib=:
+			;;
+		darwin*)
+			DEFINES="$DEFINES -DUNIX -DMACOSX"
+			LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon"
+			# TODO: Add proper check for Altivec support in the compiler...
+			DEFINES="$DEFINES -DHAS_ALTIVEC"
+			CXXFLAGS="$CXXFLAGS -faltivec"
+			;;
+		mingw*)
+			DEFINES="$DEFINES -DWIN32"
+			LIBS="$LIBS -lmingw32 -lwinmm"
+			OBJS="$OBJS scummvmico.o"
+			;;
+		cygwin*)
+			DEFINES="$DEFINES -mno-cygwin -DWIN32"
+			LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
+			OBJS="$OBJS scummvmico.o"
+			;;
+		# given this is a shell script assume some type of unix
+		*)
+			echo "WARNING: could not establish system type, assuming unix like"
+			DEFINES="$DEFINES -DUNIX"
+			;;
+	esac
 
-    #
-    # Check for endianness
-    #
-    echo_n "Checking endianness... "
-    cat <<EOF >tmp_endianness_check.cpp
+	#
+	# Check for endianness
+	#
+	echo_n "Checking endianness... "
+	cat <<EOF >tmp_endianness_check.cpp
 #include <stdio.h>
 #include <stdlib.h>
 int main(int argc, char **argv)
 {
-    unsigned int data = 0x01234567;
-    char *ptr = (char *)&data;
-    if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
-	printf("big\n");
-    else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
-	printf("little\n");
-    else
-	printf("unknown\n");
-    return 0;
+	unsigned int data = 0x01234567;
+	char *ptr = (char *)&data;
+	if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
+		printf("big\n");
+	else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
+		printf("little\n");
+	else
+		printf("unknown\n");
+	return 0;
 }
 EOF
-    $CXX -o tmp_endianness_check tmp_endianness_check.cpp
-    endianness=`./tmp_endianness_check`
-    echo $endianness;
-    case $endianness in
-	big)
-	    _def_endianness='#define SCUMM_BIG_ENDIAN'
-	    ;;
-	little)
-	    _def_endianness='#define SCUMM_LITTLE_ENDIAN'
-	    ;;
-	*)
-	    exit 1
-	    ;;
-    esac
-    rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
+	$CXX -o tmp_endianness_check tmp_endianness_check.cpp
+	endianness=`./tmp_endianness_check`
+	echo $endianness;
+	case $endianness in
+		big)
+			_def_endianness='#define SCUMM_BIG_ENDIAN'
+			;;
+		little)
+			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
+			;;
+		*)
+			exit 1
+			;;
+	esac
+	rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 
-    #
-    # Check whether we can use x86 asm routines
-    #
-    echo_n "Running on x86... "
-    case $_host_cpu in
-	i386|i486|i586|i686)
-	    _have_x86=yes
-	    ;;
-	*)
-	    _have_x86=no
-	    ;;
-    esac
+	#
+	# Check whether we can use x86 asm routines
+	#
+	echo_n "Running on x86... "
+	case $_host_cpu in
+		i386|i486|i586|i686)
+			_have_x86=yes
+			;;
+		*)
+			_have_x86=no
+			;;
+	esac
 
-    if test "$_have_x86" = yes ; then
-	_def_x86='#define HAVE_X86'
-    else
-	_def_x86='#undef HAVE_X86'
-    fi
-    echo "$_have_x86"
+	if test "$_have_x86" = yes ; then
+		_def_x86='#define HAVE_X86'
+	else
+		_def_x86='#undef HAVE_X86'
+	fi
+	echo "$_have_x86"
 
-    #
-    # Check whether memory alignment is required
-    #
-    echo_n "Alignment required... "
-    case $_host_cpu in
-        alpha*)
-            # Hardcode alignment requirements for Alpha processsors
-            _need_memalign=yes
-            ;;
-        *)
-            # Try to auto-detect....
-            cat > $TMPC << EOF
+	#
+	# Check whether memory alignment is required
+	#
+	echo_n "Alignment required... "
+	case $_host_cpu in
+		alpha*)
+			# Hardcode alignment requirements for Alpha processsors
+			_need_memalign=yes
+			;;
+		*)
+			# Try to auto-detect....
+			cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
 int main(int argc, char **argv)
 {
-    unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-    signal(SIGBUS, exit);
-    signal(SIGABRT, exit);
-    signal(SIGSEGV, exit);
-    if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
-	return 1;
-    }
-    return 0;
+	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
+	signal(SIGBUS, exit);
+	signal(SIGABRT, exit);
+	signal(SIGSEGV, exit);
+	if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
+		return 1;
+	}
+	return 0;
 }
 EOF
-            _need_memalign=yes
-            cc_check && $TMPO && _need_memalign=no
-            ;;
-    esac
+ 		   _need_memalign=yes
+			cc_check && $TMPO && _need_memalign=no
+			;;
+	esac
 
-    if test "$_need_memalign" = yes ; then
-	_def_align='#define SCUMM_NEED_ALIGNMENT'
-    else
-	_def_align='#undef SCUMM_NEED_ALIGNMENT'
-    fi
-    echo "$_need_memalign"
+	if test "$_need_memalign" = yes ; then
+		_def_align='#define SCUMM_NEED_ALIGNMENT'
+	else
+		_def_align='#undef SCUMM_NEED_ALIGNMENT'
+	fi
+	echo "$_need_memalign"
 
-    #
-    # Determine data type sizes
-    # TODO: proper error checking
-    # TODO: Actually, we should check individually for both signed & unsigned
-    # data types - there are systems on which the size of an unsigned int
-    # differs from that of a signed int!
-    # However, so far we haven't encountered one of those, so we can live with
-    # the limited check for now.
-    #
-    echo_n "Type with 1 byte... "
-    type_1_byte=`find_type_with_size 1`
-    echo "$type_1_byte"
-    
-    echo_n "Type with 2 bytes... "
-    type_2_byte=`find_type_with_size 2`
-    echo "$type_2_byte"
-    
-    echo_n "Type with 4 bytes... "
-    type_4_byte=`find_type_with_size 4`
-    echo "$type_4_byte"
-    
+	#
+	# Determine data type sizes
+	# TODO: proper error checking
+	# TODO: Actually, we should check individually for both signed & unsigned
+	# data types - there are systems on which the size of an unsigned int
+	# differs from that of a signed int!
+	# However, so far we haven't encountered one of those, so we can live with
+	# the limited check for now.
+	#
+	echo_n "Type with 1 byte... "
+	type_1_byte=`find_type_with_size 1`
+	echo "$type_1_byte"
+	
+	echo_n "Type with 2 bytes... "
+	type_2_byte=`find_type_with_size 2`
+	echo "$type_2_byte"
+	
+	echo_n "Type with 4 bytes... "
+	type_4_byte=`find_type_with_size 4`
+	echo "$type_4_byte"
+	
 fi
 
 #
@@ -806,12 +806,12 @@ echo "$_build_plugins"
 # Check whether integrated MT-32 emulator support is requested
 #
 if test "$_mt32emu" = no ; then
-  _def_mt32emu='#undef USE_MT32EMU'
-  _mak_mt32emu='# USE_MT32EMU = 1'
+	_def_mt32emu='#undef USE_MT32EMU'
+	_mak_mt32emu='# USE_MT32EMU = 1'
 else
-  _def_mt32emu='#define USE_MT32EMU'
-  _mak_mt32emu='USE_MT32EMU = 1'
-  INCLUDES="$INCLUDES -I\$(srcdir)/backends/midi/mt32"
+	_def_mt32emu='#define USE_MT32EMU'
+	_mak_mt32emu='USE_MT32EMU = 1'
+	INCLUDES="$INCLUDES -I\$(srcdir)/backends/midi/mt32"
 fi
 
 #
@@ -819,39 +819,39 @@ fi
 #
 echocheck "Ogg Vorbis"
 if test "$_vorbis" = auto ; then
-  _vorbis=no
-  cat > $TMPC << EOF
+	_vorbis=no
+	cat > $TMPC << EOF
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-  -lvorbis -logg -lm && _vorbis=yes
+	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+	-lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
-  _def_vorbis='#define USE_VORBIS'
-  LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
-  INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
+	_def_vorbis='#define USE_VORBIS'
+	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
+	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
 else
-  _def_vorbis='#undef USE_VORBIS'
+	_def_vorbis='#undef USE_VORBIS'
 fi
 echo "$_vorbis"
 
 echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
-  _flac=no
-  cat > $TMPC << EOF
+	_flac=no
+	cat > $TMPC << EOF
 #include <FLAC/seekable_stream_decoder.h>
 int main(void) { FLAC__seekable_stream_decoder_init( 0 ); return 0; }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
-  -lFLAC -lm && _flac=yes
+	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
+	-lFLAC -lm && _flac=yes
 fi
 if test "$_flac" = yes ; then
-  _def_flac='#define USE_FLAC'
-  LIBS="$LIBS $FLAC_LIBS -lFLAC"
-  INCLUDES="$INCLUDES $FLAC_CFLAGS"
+	_def_flac='#define USE_FLAC'
+	LIBS="$LIBS $FLAC_LIBS -lFLAC"
+	INCLUDES="$INCLUDES $FLAC_CFLAGS"
 else
-  _def_flac='#undef USE_FLAC'
+	_def_flac='#undef USE_FLAC'
 fi
 echo "$_flac"
 
@@ -860,19 +860,19 @@ echo "$_flac"
 #
 echocheck "MAD"
 if test "$_mad" = auto ; then
-  _mad=no
-  cat > $TMPC << EOF
+	_mad=no
+	cat > $TMPC << EOF
 #include <mad.h>
 int main(void) {return 0; }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
+	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
-  _def_mad='#define USE_MAD'
-  LIBS="$LIBS $MAD_LIBS -lmad"
-  INCLUDES="$INCLUDES $MAD_CFLAGS"
+	_def_mad='#define USE_MAD'
+	LIBS="$LIBS $MAD_LIBS -lmad"
+	INCLUDES="$INCLUDES $MAD_CFLAGS"
 else
-  _def_mad='#undef USE_MAD'
+	_def_mad='#undef USE_MAD'
 fi
 echo "$_mad"
 
@@ -881,19 +881,19 @@ echo "$_mad"
 #
 echocheck "ALSA >= 0.9"
 if test "$_alsa" = auto ; then
-  _alsa=no
-  cat > $TMPC << EOF
+	_alsa=no
+	cat > $TMPC << EOF
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
-  _def_alsa='#define USE_ALSA'
-  LIBS="$LIBS $ALSA_LIBS -lasound"
-  INCLUDES="$INCLUDES $ALSA_CFLAGS"
+	_def_alsa='#define USE_ALSA'
+	LIBS="$LIBS $ALSA_LIBS -lasound"
+	INCLUDES="$INCLUDES $ALSA_CFLAGS"
 else
-  _def_alsa='#undef USE_ALSA'
+	_def_alsa='#undef USE_ALSA'
 fi
 echo "$_alsa"
 
@@ -902,20 +902,20 @@ echo "$_alsa"
 #
 echocheck "zlib"
 if test "$_zlib" = auto ; then
-  _zlib=no
-  cat > $TMPC << EOF
+	_zlib=no
+	cat > $TMPC << EOF
 #include <string.h>
 #include <zlib.h>
 int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+	cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
 fi
 if test "$_zlib" = yes ; then
-  _def_zlib='#define USE_ZLIB'
-  LIBS="$LIBS $ZLIB_LIBS -lz"
-  INCLUDES="$INCLUDES $ZLIB_CFLAGS"
+	_def_zlib='#define USE_ZLIB'
+	LIBS="$LIBS $ZLIB_LIBS -lz"
+	INCLUDES="$INCLUDES $ZLIB_CFLAGS"
 else
-  _def_zlib='#undef USE_ZLIB'
+	_def_zlib='#undef USE_ZLIB'
 fi
 echo "$_zlib"
 
@@ -924,8 +924,8 @@ echo "$_zlib"
 #
 echocheck "libmpeg2 >= 0.3.2"
 if test "$_mpeg2" = auto ; then
-  _mpeg2=no
-  cat > $TMPC << EOF
+	_mpeg2=no
+	cat > $TMPC << EOF
 typedef signed $type_1_byte int8_t;
 typedef signed $type_2_byte int16_t;
 typedef signed $type_4_byte int32_t;
@@ -946,14 +946,14 @@ int main(void) {
 	return 1;
 }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
+	cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
 fi
 if test "$_mpeg2" = yes ; then
-  _def_mpeg2='#define USE_MPEG2'
-  INCLUDES="$INCLUDES $MPEG2_CFLAGS"
-  LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
+	_def_mpeg2='#define USE_MPEG2'
+	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
+	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
 else
-  _def_mpeg2='#undef USE_MPEG2'
+	_def_mpeg2='#undef USE_MPEG2'
 fi
 echo "$_mpeg2"
 rm -f $TMPC $TMPO$EXEEXT
@@ -964,11 +964,11 @@ rm -f $TMPC $TMPO$EXEEXT
 CheckNASM
 
 if test "$_nasm" = yes ; then
-    _def_nasm='#define USE_NASM'
-    _make_def_HAVE_NASM='HAVE_NASM = 1'
+	_def_nasm='#define USE_NASM'
+	_make_def_HAVE_NASM='HAVE_NASM = 1'
 else
-    _def_nasm='#undef USE_NASM'
-    _make_def_HAVE_NASM='# HAVE_NASM = 1'
+	_def_nasm='#undef USE_NASM'
+	_make_def_HAVE_NASM='# HAVE_NASM = 1'
 fi
 
 #
@@ -983,38 +983,38 @@ test -z "$_mandir" && _mandir="$_prefix/man"
 echo
 echo "Engines:"
 if test "$_build_scumm" = yes ; then
-  echo "    SCUMM"
+	echo "    SCUMM"
 fi
 if test "$_build_simon" = yes ; then
-  echo "    Simon the Sorcerer"
+	echo "    Simon the Sorcerer"
 fi
 if test "$_build_sky" = yes ; then
-  echo "    Beneath a Steel Sky"
+	echo "    Beneath a Steel Sky"
 fi
 if test "$_build_sword1" = yes ; then
-  echo_n "    Broken Sword I"
-  if test "$_mpeg2" = yes ; then
-	echo " (w/ mpeg2 cutscenes)"
-  else
-	echo "  (without mpeg2 cutscenes)"
-  fi
+	echo_n "    Broken Sword I"
+	if test "$_mpeg2" = yes ; then
+		echo " (w/ mpeg2 cutscenes)"
+	else
+		echo "  (without mpeg2 cutscenes)"
+	fi
 fi
 if test "$_build_sword2" = yes ; then
-  echo_n "    Broken Sword II"
-  if test "$_mpeg2" = yes ; then
-	echo " (w/ mpeg2 cutscenes)"
-  else
-	echo " (without mpeg2 cutscenes)"
-  fi
+	echo_n "    Broken Sword II"
+	if test "$_mpeg2" = yes ; then
+		echo " (w/ mpeg2 cutscenes)"
+	else
+		echo " (without mpeg2 cutscenes)"
+	fi
 fi
 if test "$_build_queen" = yes ; then
-  echo "    Flight of the Amazon Queen"
+	echo "    Flight of the Amazon Queen"
 fi
 if test "$_build_saga" = yes ; then
-  echo "    SAGA"
+	echo "    SAGA"
 fi
 if test "$_build_kyra" = yes ; then
-  echo "    Legend of Kyrandia"
+	echo "    Legend of Kyrandia"
 fi
 
 echo
@@ -1023,38 +1023,38 @@ echo_n "Backend... "
 echo_n "$_backend"
 
 if test "$_nasm" = yes ; then
-    echo ", assembly routines"
+	echo ", assembly routines"
 else
-    echo
+	echo
 fi
 
 #
 # Backend related stuff
 #
 case $_backend in
-  null)
-    DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-    OBJS="$OBJS backends/null/null.o"
-    ;;
-  sdl)
-    find_sdlconfig
-    INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
-    LIBS="$LIBS `$_sdlconfig --libs`"
-    MODULES="$MODULES backends/sdl"
-    ;;
-  x11)
-    INCLUDES="$INCLUDES -I/usr/X11R6/include"
-    LIBS="$LIBS -lpthread -lXext -lX11"
-    LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -L/usr/local/lib"
-    OBJS="$OBJS backends/x11/x11.o"
-    DEFINES="$DEFINES -DX11_BACKEND"
-    MODULES="$MODULES backends/x11"
-    MODULE_DIRS="$MODULE_DIRS backends/x11"
-    ;;
-  *)
-    echo "support for $_backend backend not implemented in configure script yet"
-    exit 1
-  ;;
+	null)
+		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+		OBJS="$OBJS backends/null/null.o"
+		;;
+	sdl)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
+		LIBS="$LIBS `$_sdlconfig --libs`"
+		MODULES="$MODULES backends/sdl"
+		;;
+	x11)
+		INCLUDES="$INCLUDES -I/usr/X11R6/include"
+		LIBS="$LIBS -lpthread -lXext -lX11"
+		LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -L/usr/local/lib"
+		OBJS="$OBJS backends/x11/x11.o"
+		DEFINES="$DEFINES -DX11_BACKEND"
+		MODULES="$MODULES backends/x11"
+		MODULE_DIRS="$MODULE_DIRS backends/x11"
+		;;
+	*)
+		echo "support for $_backend backend not implemented in configure script yet"
+		exit 1
+		;;
 esac
 
 echo
