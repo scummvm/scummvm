@@ -1905,19 +1905,19 @@ void Insane::switchBenWeapon(void) {
 	case INV_CHAIN:
 		smlayer_setActorCostume(0, 2, readArray(20));
 		smlayer_setActorFacing(0, 2, 18, 180);
-		_actor[0].weaponClass = 0;
+		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_CHAINSAW:
 		smlayer_setActorCostume(0, 2, readArray(24));
 		smlayer_setActorFacing(0, 2, 18, 180);
-		_actor[0].weaponClass = 0;
+		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_MACE:
 		smlayer_setActorCostume(0, 2, readArray(23));
 		smlayer_setActorFacing(0, 2, 18, 180);
-		_actor[0].weaponClass = 0;
+		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_2X4:
@@ -1927,7 +1927,7 @@ void Insane::switchBenWeapon(void) {
 			smlayer_setActorCostume(0, 2, readArray(19));
 
 		smlayer_setActorFacing(0, 2, 18, 180);
-		_actor[0].weaponClass = 0;
+		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_WRENCH:
@@ -1936,7 +1936,7 @@ void Insane::switchBenWeapon(void) {
 		else
 			smlayer_setActorCostume(0, 2, readArray(25));
 		smlayer_setActorFacing(0, 2, 18, 180);
-		_actor[0].weaponClass = 0;
+		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_BOOT:
