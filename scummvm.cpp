@@ -409,8 +409,8 @@ NextArg:;
 
 
 struct VersionSettings {
-	char *filename;
-	char *gamename;
+	const char *filename;
+	const char *gamename;
 	byte id,major,middle,minor;
 };
 

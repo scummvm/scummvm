@@ -58,11 +58,9 @@ void Scumm::openRoom(int room) {
 			_fileOffset = _roomFileOffsets[room];
 			return;
 		}
-		if (room==0) {
-			sprintf(buf, "%s.000", _exe_name);
-		} else {
-			sprintf(buf, "%s.%.3d", _exe_name, res.roomno[1][room]);
-		}
+		sprintf(buf, "%s.%.3d", _exe_name, 
+			room==0 ? 0 : res.roomno[rtRoom][room]);
+
 		_encbyte = 0x69;
 		if (openResourceFile(buf)) {
 			if (room==0)
