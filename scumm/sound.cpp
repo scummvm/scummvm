@@ -812,7 +812,7 @@ int Sound::isSoundRunning(int sound) const {
 			// ID number of the first active music it finds.
 			if (_vm->_heversion >= 70 || _currentMusic)
 				sound = _currentMusic;
-			if (_vm->_imuse)
+			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
 		}
 	}
