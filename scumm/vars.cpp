@@ -226,7 +226,7 @@ void Scumm_v8::setupScummVars()
 	VAR_TALK_ACTOR = 14;
 	VAR_HAVE_MSG = 15;
 	VAR_MOUSE_BUTTONS = 16;
-	// TODO: what is var17 (used in room 10 script 2004) ?
+	VAR_RIGHTBTN_HOLD = 17; // TODO: Guess (used in room 10 script 2004, and ship-to-ship combat)
 	VAR_MOUSE_HOLD = 18;
 
 	VAR_TIMEDATE_YEAR = 24;

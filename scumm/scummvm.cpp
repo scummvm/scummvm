@@ -1251,17 +1251,22 @@ int Scumm::getKeyInput(int a)
 
 	if (_features & GF_AFTER_V8) {
 		_vars[VAR_MOUSE_BUTTONS] = 0;
+		_vars[VAR_MOUSE_HOLD] = 0;
+		_vars[VAR_RIGHTBTN_HOLD] = 0;
+
 		if (_leftBtnPressed & msClicked)
 			_vars[VAR_MOUSE_BUTTONS] += 1;
+
 		if (_rightBtnPressed & msClicked)
 			_vars[VAR_MOUSE_BUTTONS] += 2;
 
-		_vars[VAR_MOUSE_HOLD] = 0;
 		if (_leftBtnPressed & msDown)
 			_vars[VAR_MOUSE_HOLD] += 1;
-		if (_rightBtnPressed & msDown)
-			_vars[VAR_MOUSE_HOLD] += 2;
 
+		if (_rightBtnPressed & msDown) {
+			_vars[VAR_RIGHTBTN_HOLD] = 1;
+			_vars[VAR_MOUSE_HOLD] += 2;
+		}
 	} else if (_features & GF_AFTER_V7) {
 //    _vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
 		_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed & msDown) != 0;
