@@ -131,7 +131,6 @@ static void HotSwap16bitMode(Boolean swap) {
 
 	if (OPTIONS_TST(kOptMode16Bit)) {
 		WinScreenMode(winScreenModeSet, &width, &height, &depth, &color);
-		ClearScreen();
 		OPTIONS_SET(kOptDisableOnScrDisp);
 	}
 }
@@ -281,6 +280,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 #ifndef DISABLE_TAPWAVE
 				if (OPTIONS_TST(kOptDeviceZodiac)) {
 					HotSwap16bitMode(true);
+					clearScreen();
 					_twBmpV3 = (void *)WinGetBitmap(_offScreenH);
 
 					// TODO : change _screenP with the correct value (never used in this mode ?)
@@ -291,10 +291,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 				{
 					gVars->screenLocked = true;
 					_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
-					
-					if (OPTIONS_TST(kOptDeviceARM))
-						ARM(PNO_WIDE).pnoPtr = _PnoInit((OPTIONS_TST(kOptModeLandscape) ? RSC_WIDELANDSCAPE : RSC_WIDEPORTRAIT), &ARM(PNO_WIDE).pnoDesc);
-					
+									
 					_renderer_proc = (OPTIONS_TST(kOptModeLandscape)) ?
 						&OSystem_PALMOS::updateScreen_wideLandscape :
 						&OSystem_PALMOS::updateScreen_widePortrait;
@@ -350,14 +347,12 @@ void OSystem_PALMOS::unload_gfx_mode() {
 			if (OPTIONS_TST(kOptDeviceZodiac)) {
 				ZodiacRelease(ptrP);
 				HotSwap16bitMode(false);
+				clearScreen();
 			} else
 #endif
 			{
 				WinScreenUnlock();
 				gVars->screenLocked = false;
-
-				if (OPTIONS_TST(kOptDeviceARM) && ARM(PNO_WIDE).pnoPtr)
-					_PnoFree(&ARM(PNO_WIDE).pnoDesc, ARM(PNO_WIDE).pnoPtr);
 			}
 				// continue to GFX_BUFFERED
 
@@ -427,7 +422,7 @@ void OSystem_PALMOS::hotswap_gfx_mode(int mode) {
 	
 	// restore offscreen
 	WinPalette(winPaletteSet, 0, 256, _currentPalette);
-	ClearScreen();
+	clearScreen();
 	copyRectToScreen(_tmpHotSwapP, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_modeChanged = false;
 	
@@ -530,13 +525,14 @@ void OSystem_PALMOS::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	// if ARM
 	ARM_CHECK_EXEC(w > 8 && h > 8)
 		ARM_START(CopyRectangleType)
+			ARM_INIT(COMMON_COPYRECT)
 			ARM_ADDM(dst)
 			ARM_ADDM(buf)
 			ARM_ADDM(pitch)
 			ARM_ADDM(_offScreenPitch)
 			ARM_ADDM(w)
 			ARM_ADDM(h)
-			PNO_CALL(PNO_COPYRECT, ARM_DATA())
+			ARM_CALL(ARM_COMMON, PNO_DATA());
 		ARM_END()
 	ARM_CHECK_END()
 	// if no ARM
@@ -644,4 +640,15 @@ void OSystem_PALMOS::draw1BitGfx(UInt16 id, Int32 x, Int32 y, Boolean show) {
 		MemPtrUnlock(bmTemp);
 		DmReleaseResource(hTemp);
 	}
+}
+
+void OSystem_PALMOS::clearScreen() {
+	Coord w, h;
+	RectangleType r;
+
+	WinSetDrawWindow(WinGetDisplayWindow());
+	WinGetDisplayExtent(&w, &h);
+	RctSetRectangle(&r, 0, 0, w, h);
+	WinSetForeColor(RGBToColor(0,0,0));
+	WinDrawRectangle(&r,0);
 }

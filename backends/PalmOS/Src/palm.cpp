@@ -82,7 +82,7 @@ void OSystem_PALMOS::battery_handler() {
 	}
 
 	if (voltage <= criticalThreshold) {
-		EventType event;
+		::EventType event;
 		event.eType = keyDownEvent;
 		event.data.keyDown.chr = vchrAutoOff;
 		event.data.keyDown.modifiers = commandKeyMask;
@@ -187,7 +187,7 @@ void OSystem_PALMOS::setFeatureState(Feature f, bool enable) {
 		case kFeatureAspectRatioCorrection:
 			if (_mode == GFX_WIDE && OPTIONS_TST(kOptDeviceZodiac)) {
 				_adjustAspectRatio ^= true;
-				ClearScreen();
+				clearScreen();
 			}
 			break;
 	}
@@ -300,9 +300,3 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	memset(&_sound,0,sizeof(SoundDataType));
 }
 
-void ClearScreen() {
-	RGBColorType rgb	= {0, 0,0,0};
-	RectangleType r		= {0, 0, gVars->screenFullWidth, gVars->screenFullHeight};
-	WinSetForeColor(WinRGBToIndex(&rgb));
-	WinDrawRectangle(&r,0);
-}
