@@ -1100,7 +1100,7 @@ void OSystem_SDL::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
 	byte color;
-	int w, h;
+	int w, h, i, j;
   
 	if (!_mouseOrigSurface || !_mouseData)
  		return;
@@ -1111,9 +1111,9 @@ void OSystem_SDL::blitCursor() {
 	SDL_LockSurface(_mouseOrigSurface);
 
 	// Make whole surface transparent
-	for (int i = 0; i < h + 2; i++) {
+	for (i = 0; i < h + 2; i++) {
 		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
-		for (int j = 0; j < w + 2; j++) {
+		for (j = 0; j < w + 2; j++) {
 			*(uint16 *)dstPtr = kMouseColorKey;
 			dstPtr += 2;
 		}
@@ -1122,8 +1122,8 @@ void OSystem_SDL::blitCursor() {
 	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
 	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2;
 
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
 			color = *srcPtr;
 			if (color != _mouseKeyColor) {	// transparent, don't draw
 				if (_cursorHasOwnPalette && !_overlayVisible)
