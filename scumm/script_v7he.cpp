@@ -506,6 +506,9 @@ void ScummEngine_v7he::o7_startSound() {
 	case 23:
 		debug(1,"o7_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
 		break;
+	case 56:
+		_heSndLoop |= 2;
+		break;
 	case 164:
 		_heSndLoop |= 2;
 		break;
