@@ -2314,18 +2314,30 @@ void ScummEngine_v72he::o72_unknownF1() {
 	if (!addr)
 		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
 
-	while (*addr == *addr2) {
+	while(1) {
+		if (*addr != *addr2)
+			break;
 		if (*addr == 0) {
 			push(0);
 			return;
 		}
+
 		addr++;
 		addr2++;
-		i++;
+
+		if (*addr != *addr2)
+			break;
+		if (*addr == 0) {
+			push(0);
+			return;
+		}
+
+		addr++;
+		addr2++;
+		i += 2;
 	}
 
-	int r = (i) ? 1 : -1;
-	push (r);
+	push (i);
 	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
 }
 
