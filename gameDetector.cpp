@@ -310,7 +310,6 @@ bool GameDetector::parseMusicDriver(const char *s) {
 		{"auto",MD_AUTO},
 		{"null",MD_NULL},
 		{"windows",MD_WINDOWS},
-		{"timidity",MD_TIMIDITY},
 		{"seq",MD_SEQ},
 		{"qt",MD_QTMUSIC},
 		{"core",MD_COREAUDIO},
