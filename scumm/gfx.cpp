@@ -2210,8 +2210,8 @@ void Scumm::moveCamera() {
 		}
 
 		cameraMoved();
-
-		if (pos != camera._cur.x && VAR(VAR_SCROLL_SCRIPT)) {
+	
+		if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT) && pos != camera._cur.x) {
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 		}
@@ -2220,11 +2220,8 @@ void Scumm::moveCamera() {
 
 void Scumm::cameraMoved() {
 	if (_features & GF_AFTER_V7) {
-
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
-
 	} else {
-
 		if (camera._cur.x < (_realWidth / 2)) {
 			camera._cur.x = (_realWidth / 2);
 		} else if (camera._cur.x > _scrWidth - (_realWidth / 2)) {
