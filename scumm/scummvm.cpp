@@ -214,7 +214,7 @@ static const TargetSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"foxdemo", "Spyfox 1: Dry Cereal", GID_PJSDEMO, 6, MDT_NONE,
+	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
