@@ -895,7 +895,7 @@ const byte *Scumm::getObjOrActorName(int obj) {
 	if (_version >= 6) {
 		for (i = 0; i < _numNewNames; i++) {
 			if (_newNames[i] == obj) {
-				debug(5, "Found new name for object %d at _newNames[i]", obj, i);
+				debug(5, "Found new name for object %d at _newNames[%d]", obj, i);
 				return getResourceAddress(rtObjectName, i);
 				break;
 			}

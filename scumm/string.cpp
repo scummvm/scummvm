@@ -274,7 +274,7 @@ void Scumm::CHARSET_1() {
 					_charset->setColor(color);
 				break;
 			case 13:
-				warning("CHARSET_1: Unknown opcode 13\n", READ_LE_UINT16(buffer));
+				warning("CHARSET_1: Unknown opcode 13 %d\n", READ_LE_UINT16(buffer));
 				buffer += 2;
 				break;
 			case 14: {
