@@ -1932,11 +1932,12 @@ void Scumm::o5_soundKludge()
                 if (_sentenceNum) {
                         if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
                                 return;
-                } else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
+		} else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
                         	return;
-		}
 
+		_scriptPointer--;
 		o5_breakHere();
+		return;
 	}
 
 	for (i = 0; i < 15; i++)
