@@ -1281,8 +1281,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		a->animateLimb(args[3], args[4]);
 		break;
 	case 24:	// clearTextQueue
-		// TODO - clearTextQueue. Maybe this should just call removeBlastTexts() ?
-		warning("o8_kernelSetFunctions: clearTextQueue()");
+		removeBlastTexts();
 		break;
 	case 25: {	// saveGameReadName
 		char *address = (char*)getStringAddress(args[2]);
