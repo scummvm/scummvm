@@ -4003,7 +4003,8 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 	for (;;) {
 		if (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) == vga_sprite_id) {
 
-			//dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_sprite_id);
+			if (_start_vgascript)
+				dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_sprite_id);
 
 			add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, vga_res);
 			break;
