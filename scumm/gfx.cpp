@@ -2591,13 +2591,14 @@ void Scumm::setPaletteFromPtr(const byte *ptr) {
 		g = *ptr++;
 		b = *ptr++;
 
-		// This comparison might look wierd, but it's what the disassembly (DOTT) says!
+		// This comparison might look weird, but it's what the disassembly (DOTT) says!
 		// FIXME: Fingolfin still thinks it looks weird: the value 252 = 4*63 clearly comes from
 		// the days 6/6/6 palettes were used, OK. But it breaks MonkeyVGA, so I had to add a
 		// check for that. And somebody before me added a check for V7 games, turning this
 		// off there, too... I wonder if it hurts other games, too? What exactly is broken
 		// if we remove this patch?
-		if ((_gameId == GID_MONKEY_VGA) || (_version >= 7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
+		// Since it also causes problems in Zak256, I am turning it off for all V4 games and older.
+		if ((_version <= 4) || (_version >= 7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;
