@@ -26,7 +26,7 @@
 
 
 int getSampleRateFromVOCRate(int vocSR) {
-	if (vocSR == 0xa5 || vocSR == 0xa6) {
+	if (vocSR == 0xa5 || vocSR == 0xa6 || vocSR == 0x83) {
 		return 11025;
 	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
 		return 22050;
