@@ -180,45 +180,40 @@ void BobSlot::clear() {
 }
 
 
-Graphics::Graphics(QueenEngine *vm)
-	: _cameraBob(0), _vm(vm) {
+
+BankManager::BankManager(Resource *res) 
+	: _res(res) {
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
-	memset(_bobs, 0, sizeof(_bobs));
-	memset(_sortedBobs, 0, sizeof(_sortedBobs));
-	_sortedBobsCount = 0;
-	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
 }
 
 
-Graphics::~Graphics() {
-	uint32 i;
-	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
-		delete[] _banks[i].data;
+BankManager::~BankManager() {
+	for(uint32 i = 0; i < MAX_BANKS_NUMBER; ++i) {
+		close(i);
 	}
-	frameEraseAll(true);
-	delete[] _shrinkBuffer.data;
+	eraseAllFrames(true);
 }
 
 
-void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
-	bankErase(bankslot);
-	_banks[bankslot].data = _vm->resource()->loadFile(bankname);
+void BankManager::load(const char *bankname, uint32 bankslot) {
+	close(bankslot);
+
+	_banks[bankslot].data = _res->loadFile(bankname);
 	if (!_banks[bankslot].data) {
-	  error("Unable to open bank '%s'", bankname);	
+		error("Unable to open bank '%s'", bankname);	
 	}
 
 	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
 	if (entries < 0 || entries >= MAX_BANK_SIZE) {
-	  error("Maximum bank size exceeded or negative bank size : %d", entries);
+		error("Maximum bank size exceeded or negative bank size : %d", entries);
 	}
-	
-	debug(9, "Graphics::bankLoad(%s, %d) - entries = %d", bankname, bankslot, entries); 
+
+	debug(9, "BankManager::load(%s, %d) - entries = %d", bankname, bankslot, entries); 
 
 	uint32 offset = 2;
 	uint8 *p = _banks[bankslot].data;
-	int16 i;
-	for (i = 1; i <= entries; ++i) {
+	for (int16 i = 1; i <= entries; ++i) {
 		_banks[bankslot].indexes[i] = offset;
 		uint16 w = READ_LE_UINT16(p + offset + 0);
 		uint16 h = READ_LE_UINT16(p + offset + 2);
@@ -228,13 +223,13 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 }
 
 
-void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	debug(9, "Graphics::bankUnpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+	debug(9, "BankManager::unpack(%d, %d, %d)", srcframe, dstframe, bankslot);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 
 	if (!_banks[bankslot].data)
-		error("Graphics::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
+		error("BankManager::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
 				srcframe, dstframe, bankslot);
 		
 	BobFrame *pbf = &_frames[dstframe];
@@ -248,12 +243,11 @@ void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	uint32 size = pbf->width * pbf->height;
 	pbf->data = new uint8[ size ];
 	memcpy(pbf->data, p + 8, size);
-	
 }
 
 
-void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	debug(9, "Graphics::bankOverpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+	debug(9, "BankManager::overpack(%d, %d, %d)", srcframe, dstframe, bankslot);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
@@ -261,7 +255,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 	// unpack if destination frame is smaller than source one
 	if (_frames[dstframe].width < src_w || _frames[dstframe].height < src_h) {
-		bankUnpack(srcframe, dstframe, bankslot);
+		unpack(srcframe, dstframe, bankslot);
 	} else {
 		// copy data 'over' destination frame (without changing frame header)
 		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
@@ -269,31 +263,75 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 }
 
 
-void Graphics::bankErase(uint32 bankslot) {
-	debug(9, "Graphics::bankErase(%d)", bankslot);
+void BankManager::close(uint32 bankslot) {
+	debug(9, "BankManager::close(%d)", bankslot);
 	delete[] _banks[bankslot].data;
 	_banks[bankslot].data = 0;	
 }
 
 
-void Graphics::bobSetupControl() {
-	bankLoad("control.BBK",17);
-	bankUnpack(1, 1, 17); // Mouse pointer
-	bankUnpack(3, 3, 17); // Up arrow dialogue
-	bankUnpack(4, 4, 17); // Down arrow dialogue
-	bankErase(17);
+BobFrame *BankManager::fetchFrame(uint32 index) {
+	debug(9, "BankManager::fetchFrame(%d)", index);
+	if (index >= MAX_FRAMES_NUMBER) {
+		error("BankManager::fetchFrame() invalid frame index = %d", index);
+	}
+	return &_frames[index];
+}
 
-	BobFrame *bf = &_frames[1];
+
+void BankManager::eraseFrame(uint32 index) {
+	BobFrame *pbf = &_frames[index];
+	pbf->width  = 0;
+	pbf->height = 0;
+	delete[] pbf->data;
+	pbf->data = 0;
+}
+
+
+void BankManager::eraseAllFrames(bool joe) {
+    uint32 i = 0;
+	if (!joe) {
+		i = FRAMES_JOE + FRAMES_JOE_XTRA;
+	}
+	while (i < 256) {
+		eraseFrame(i);
+		++i;
+	}
+}
+
+
+
+Graphics::Graphics(QueenEngine *vm)
+	: _cameraBob(0), _vm(vm) {
+	memset(_bobs, 0, sizeof(_bobs));
+	memset(_sortedBobs, 0, sizeof(_sortedBobs));
+	_sortedBobsCount = 0;
+	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
+}
+
+
+Graphics::~Graphics() {
+	delete[] _shrinkBuffer.data;
+}
+
+
+void Graphics::bobSetupControl() {
+	_vm->bankMan()->load("control.BBK",17);
+	_vm->bankMan()->unpack(1, 1, 17); // Mouse pointer
+	_vm->bankMan()->unpack(3, 3, 17); // Up arrow dialogue
+	_vm->bankMan()->unpack(4, 4, 17); // Down arrow dialogue
+	_vm->bankMan()->close(17);
+
+	BobFrame *bf = _vm->bankMan()->fetchFrame(1);
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
 }
 
 
 void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
-	uint16 w, h;
-
 	debug(9, "Graphics::bobDraw(%d, %d, %d)", bs->frameNum, x, y);
 
-	BobFrame *pbf = &_frames[bs->frameNum];
+	uint16 w, h;
+	BobFrame *pbf = _vm->bankMan()->fetchFrame(bs->frameNum);
 	if (bs->scale < 100) {
 		bobShrink(pbf, bs->scale);
 		pbf = &_shrinkBuffer;
@@ -304,7 +342,6 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 	const Box *box = &bs->box;
 
 	if(w != 0 && h != 0 && box->intersects(x, y, w, h)) {
-
 		uint8 *src = pbf->data;
 		uint16 x_skip = 0;
 		uint16 y_skip = 0;
@@ -346,7 +383,7 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 
 void Graphics::bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 	if (frameNum != 0) {
-		BobFrame *bf = frame(frameNum);
+		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
 		_vm->display()->drawInventoryItem(bf->data, x, y, bf->width, bf->height);
 	} else {
 		_vm->display()->drawInventoryItem(NULL, x, y, 32, 32);
@@ -356,10 +393,10 @@ void Graphics::bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 
 void Graphics::bobPaste(uint16 objNum, uint16 image) {
 	GraphicData *pgd = _vm->logic()->graphicData(objNum);
-	_vm->graphics()->bankUnpack(pgd->firstFrame, image, 15);
-	BobFrame *bf = frame(image);
+	_vm->bankMan()->unpack(pgd->firstFrame, image, 15);
+	BobFrame *bf = _vm->bankMan()->fetchFrame(image);
 	_vm->display()->drawBobPasteDown(bf->data, pgd->x, pgd->y, bf->width, bf->height);
-	frameErase(image);
+	_vm->bankMan()->eraseFrame(image);
 }
 
 
@@ -466,7 +503,7 @@ void Graphics::bobDrawAll() {
 		BobSlot *pbs = _sortedBobs[i];
 		if (pbs->active) {
 
-			BobFrame *pbf = &_frames[ pbs->frameNum ];
+			BobFrame *pbf = _vm->bankMan()->fetchFrame(pbs->frameNum);
 			uint16 xh, yh, x, y;
 
 			xh = pbf->xhotspot;
@@ -630,27 +667,6 @@ void Graphics::textClear(uint16 y1, uint16 y2) {
 
 uint16 Graphics::textWidth(const char* text) const {
 	return _vm->display()->textWidth(text);
-}
-
-
-void Graphics::frameErase(uint32 fslot) {
-	BobFrame *pbf = &_frames[fslot];
-	pbf->width  = 0;
-	pbf->height = 0;
-	delete[] pbf->data;
-	pbf->data = 0;
-}
-
-
-void Graphics::frameEraseAll(bool joe) {
-    int i = 0;
-	if (!joe) {
-		i = FRAMES_JOE + FRAMES_JOE_XTRA;
-	}
-	while (i < 256) {
-		frameErase(i);
-		++i;
-	}
 }
 
 
@@ -869,7 +885,7 @@ void Graphics::bobSetText(
 		x = pbs->x;
 		y = pbs->y;
 
-		BobFrame *pbf = frame(pbs->frameNum);
+		BobFrame *pbf = _vm->bankMan()->fetchFrame(pbs->frameNum);
 
 		width  = (pbf->width  * pbs->scale) / 100;
 		height = (pbf->height * pbs->scale) / 100;

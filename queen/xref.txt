@@ -6,10 +6,12 @@ the ScummVM implementation.
 
 BANKS
 =====
-erase()						Graphics::bankErase
-loadbank()					Graphics::bankLoad
-overpack()					Graphics::bankOverpack
-unpack()					Graphics::bankUnpack
+erase()						BankManager::close
+freeallframes()				BankManager::eraseAllFrames(true)
+freeframes()				BankManager::eraseAllFrames(false)
+loadbank()					BankManager::load
+overpack()					BankManager::overpack
+unpack()					BankManager::unpack
 
 
 COMMAND
@@ -123,8 +125,6 @@ CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
 drawbobs()					Graphics::bobDrawAll
-freeallframes()				Graphics::frameEraseAll(true)
-freeframes()				Graphics::frameEraseAll(false)
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
 loadpanel()					Graphics::loadPanel

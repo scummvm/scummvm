@@ -611,11 +611,11 @@ void Logic::zoneSetupPanel() {
 
 
 void Logic::roomErase() {
-	_vm->graphics()->frameEraseAll(false);
-	_vm->graphics()->bankErase(15);
-	_vm->graphics()->bankErase(11);
-	_vm->graphics()->bankErase(10);
-	_vm->graphics()->bankErase(12);
+	_vm->bankMan()->eraseAllFrames(false);
+	_vm->bankMan()->close(15);
+	_vm->bankMan()->close(11);
+	_vm->bankMan()->close(10);
+	_vm->bankMan()->close(12);
 
 	if (_currentRoom >= 114) {
 		_vm->display()->palFadeOut(0, 255, _currentRoom);
@@ -689,7 +689,7 @@ void Logic::roomSetupFurniture() {
 			if (pgd->lastFrame == 0) {
 				++_numFurnitureStatic;
 				++curImage;
-				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
+				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
 				BobSlot *pbs = _vm->graphics()->bob(19 + _numFurnitureStatic);
 				pbs->curPos(pgd->x, pgd->y);
@@ -719,7 +719,7 @@ void Logic::roomSetupFurniture() {
 				int k;
 				for (k = pgd->firstFrame; k <= lastFrame; ++k) {
 					++curImage;
-					_vm->graphics()->bankUnpack(k, curImage, 15);
+					_vm->bankMan()->unpack(k, curImage, 15);
 					++_numFrames;
 				}
 				BobSlot *pbs = _vm->graphics()->bob(5 + curBob);
@@ -792,7 +792,7 @@ void Logic::roomSetupObjects() {
 				uint16 firstFrame = curImage + 1;
 				for (j = pgd->firstFrame; j <= lastFrame; ++j) {
 					++curImage;
-					_vm->graphics()->bankUnpack(j, curImage, 15);
+					_vm->bankMan()->unpack(j, curImage, 15);
 					++_numFrames;
 				}
 				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
@@ -813,7 +813,7 @@ void Logic::roomSetupObjects() {
 
 				// FIXME: if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
 
-				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
+				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
 				if (pod->name > 0) {
 					BobSlot *pbs = _vm->graphics()->bob(curBob);
@@ -926,14 +926,14 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		curImage += pgd->lastFrame - 1;
 	} else if (lastFrame != 0) {
 		// turn on an animated bob
-		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
+		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
 		pbs->animating = false;
 		uint16 firstImage = curImage;
 		--curImage;
 		uint16 j;
 		for (j = pgd->firstFrame; j <= lastFrame; ++j) {
 			++curImage;
-			_vm->graphics()->bankUnpack(j, curImage, 15);
+			_vm->bankMan()->unpack(j, curImage, 15);
 		}
 		pbs->curPos(pgd->x, pgd->y);
 		pbs->frameNum = firstImage;
@@ -942,8 +942,8 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		}
 	} else {
 		// frame 2 is used as a buffer frame to prevent BOB flickering
-		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
-		_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
+		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
+		_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 		pbs->curPos(pgd->x, pgd->y);
 		pbs->frameNum = curImage;
 	}
@@ -969,7 +969,7 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 
 	// load/setup objects associated to this room
 	sprintf(filename, "%s.BBK", room);
-	_vm->graphics()->bankLoad(filename, 15);
+	_vm->bankMan()->load(filename, 15);
 
 	zoneSetup();
 	_numFrames = 37 + FRAMES_JOE_XTRA;
@@ -1069,7 +1069,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 		if (loadBank) {
 			const char *actorFile = _aFile[pp->actor->actorFile];
 			if (actorFile) {
-				_vm->graphics()->bankLoad(actorFile, pp->actor->bankNum);
+				_vm->bankMan()->load(actorFile, pp->actor->bankNum);
 			}
 			// if actorFile is null, the person data is already loaded as
 			// it is contained in objects room bank (.bbk)
@@ -1097,7 +1097,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 		scale = currentRoomArea(a)->calcScale(pad->y);
 	}
 
-	_vm->graphics()->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
+	_vm->bankMan()->unpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
 	bool xflip = false;
 	uint16 person = currentRoomData() + noun;
 	if (_objectData[person].image == -3) {
@@ -1219,7 +1219,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 	for (i = 1; i <= 255; ++i) {
 		if (allocatedFrames[i] != 0) {
 			++curImage;
-			_vm->graphics()->bankUnpack(i, curImage, person->actor->bankNum);
+			_vm->bankMan()->unpack(i, curImage, person->actor->bankNum);
 		}
 	}
 
@@ -1286,7 +1286,7 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 
 	// queen.c l.962-980 / l.1269-1294
 	for (i = 0; i < gd->lastFrame; ++i) {
-		_vm->graphics()->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
+		_vm->bankMan()->unpack(ABS(tempFrames[i]), firstImage + i, 15);
 	}
 	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 	pbs->animating = false;
@@ -1323,16 +1323,16 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 
 void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 	int i;
-	_vm->graphics()->bankLoad(animBank, 13);
+	_vm->bankMan()->load(animBank, 13);
 	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
-		_vm->graphics()->bankUnpack(i - 10, i, 13);
+		_vm->bankMan()->unpack(i - 10, i, 13);
 	}
-	_vm->graphics()->bankErase(13);
+	_vm->bankMan()->close(13);
 
-	_vm->graphics()->bankLoad(standBank, 7);
-	_vm->graphics()->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
-	_vm->graphics()->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
-	_vm->graphics()->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
+	_vm->bankMan()->load(standBank, 7);
+	_vm->bankMan()->unpack(1, 33 + FRAMES_JOE_XTRA, 7);
+	_vm->bankMan()->unpack(3, 34 + FRAMES_JOE_XTRA, 7);
+	_vm->bankMan()->unpack(5, 35 + FRAMES_JOE_XTRA, 7);
 }
 
 
@@ -1410,8 +1410,8 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 
 	if (_currentRoom == 108) {
 		_vm->graphics()->cameraBob(-1);
-		_vm->graphics()->bankLoad("joe_e.act", 7);
-		_vm->graphics()->bankUnpack(2, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->load("joe_e.act", 7);
+		_vm->bankMan()->unpack(2, 29 + FRAMES_JOE_XTRA, 7);
 
 		_vm->display()->horizontalScroll(320);
 
@@ -1476,7 +1476,7 @@ uint16 Logic::joeFace() {
 		}
 	}
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	_vm->graphics()->bankUnpack(frame, pbs->frameNum, 7);
+	_vm->bankMan()->unpack(frame, pbs->frameNum, 7);
 	return frame;
 }
 
@@ -1509,12 +1509,12 @@ void Logic::joeGrab(int16 grabState) {
 
 	case STATE_GRAB_UP:
 		// turn back
-		_vm->graphics()->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(5, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
 		// grab up
-		_vm->graphics()->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(7, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
@@ -1524,7 +1524,7 @@ void Logic::joeGrab(int16 grabState) {
 	}
 
 	if (frame != 0) {
-		_vm->graphics()->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(frame, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		update();
@@ -1678,7 +1678,7 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 
 
 void Logic::inventorySetup() {
-	_vm->graphics()->bankLoad("objects.BBK", 14);
+	_vm->bankMan()->load("objects.BBK", 14);
 	if (_vm->resource()->isInterview()) {
 		_inventoryItem[0] = 1;
 		_inventoryItem[1] = 2;
@@ -1702,7 +1702,7 @@ void Logic::inventoryRefresh() {
 			// whereas 2nd, 3rd and 4th uses frame 9
 			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
 			// unpack frame for object and draw it
-			_vm->graphics()->bankUnpack(_itemData[itemNum].frame, dstFrame, 14);
+			_vm->bankMan()->unpack(_itemData[itemNum].frame, dstFrame, 14);
 			_vm->graphics()->bobDrawInventoryItem(dstFrame, x, 14);
 		} else {
 			// no object, clear the panel 
@@ -2620,7 +2620,7 @@ void Logic::asmWaitForFrankPosition() {
 
 
 void Logic::asmMakeFrankGrowing() {
-	_vm->graphics()->bankUnpack(1, 38, 15);
+	_vm->bankMan()->unpack(1, 38, 15);
 	BobSlot *bobFrank = _vm->graphics()->bob(5);
 	bobFrank->frameNum = 38;
 	bobFrank->curPos(160, 200);
@@ -2645,7 +2645,7 @@ void Logic::asmMakeFrankGrowing() {
 
 
 void Logic::asmMakeRobotGrowing() { 	
-	_vm->graphics()->bankUnpack(1, 38, 15);
+	_vm->bankMan()->unpack(1, 38, 15);
 	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
 	bobRobot->curPos(160, 200);
@@ -2888,8 +2888,8 @@ void Logic::asmMakeLightningHitPlane() {
 	// 23/2/95 - Play lightning SFX
 	_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 
-	_vm->graphics()->bankUnpack(18, lightningBob->frameNum, 15);
-	_vm->graphics()->bankUnpack(4,  planeBob    ->frameNum, 15);
+	_vm->bankMan()->unpack(18, lightningBob->frameNum, 15);
+	_vm->bankMan()->unpack(4,  planeBob    ->frameNum, 15);
 
 	// Plane plunges into the jungle!
 	BobSlot *fireBob = _vm->graphics()->bob(6);
@@ -2898,7 +2898,7 @@ void Logic::asmMakeLightningHitPlane() {
 	fireBob->x = planeBob->x;
 	fireBob->y = planeBob->y + 10;
 				
-	_vm->graphics()->bankUnpack(19, fireBob->frameNum, 15);
+	_vm->bankMan()->unpack(19, fireBob->frameNum, 15);
 	update();
 
 	k = 20;
@@ -2910,8 +2910,8 @@ void Logic::asmMakeLightningHitPlane() {
 		planeBob->x = fireBob->x = x;
 
 		if (k < 40) {
-			_vm->graphics()->bankUnpack(j, planeBob->frameNum, 15);
-			_vm->graphics()->bankUnpack(k, fireBob ->frameNum, 15);
+			_vm->bankMan()->unpack(j, planeBob->frameNum, 15);
+			_vm->bankMan()->unpack(k, fireBob ->frameNum, 15);
 			k++;
 			j++;
 

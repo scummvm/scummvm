@@ -735,7 +735,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 
 			offset += 4;
 
-			_vm->graphics()->bankUnpack(frame, _vm->logic()->numFrames(), bankNum);
+			_vm->bankMan()->unpack(frame, _vm->logic()->numFrames(), bankNum);
 
 			bob2->frameNum = _vm->logic()->numFrames();
 			bob2->scale = 100;
@@ -759,7 +759,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 	if (parameters->animation[0] == 'T') {
 		// Torso animation
 		torso = true;
-		_vm->graphics()->bankOverpack(parameters->body, startFrame, bankNum);
+		_vm->bankMan()->overpack(parameters->body, startFrame, bankNum);
 		offset++;
 	}
 	else if (parameters->animation[0] == 'E') {
@@ -788,10 +788,10 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 		}
 
 		if (torso) {
-			_vm->graphics()->bankOverpack(frame, startFrame, bankNum);
+			_vm->bankMan()->overpack(frame, startFrame, bankNum);
 		}
 		else {
-			_vm->graphics()->bankUnpack(frame, startFrame, bankNum);
+			_vm->bankMan()->unpack(frame, startFrame, bankNum);
 			// XXX bobs[BNUM].scale=SF;
 		}
 
@@ -869,15 +869,15 @@ void Talk::defaultAnimation(
 					// Make the head move
 					qzx ^= 1;
 					if (parameters->af && qzx)
-						_vm->graphics()->bankOverpack(parameters->af + head, startFrame, bankNum);
+						_vm->bankMan()->overpack(parameters->af + head, startFrame, bankNum);
 					else {
-						_vm->graphics()->bankOverpack(head, startFrame, bankNum);
+						_vm->bankMan()->overpack(head, startFrame, bankNum);
 					}
 				}
 				else {
 					debug(6, "[Talk::defaultAnimation] Body action!");
 					// Just do a body action
-					_vm->graphics()->bankOverpack(parameters->body, startFrame, bankNum);
+					_vm->bankMan()->overpack(parameters->body, startFrame, bankNum);
 				}
 
 				if (!_talkHead)
@@ -913,7 +913,7 @@ void Talk::defaultAnimation(
 
 	// Make sure that Person closes their mouths
 	if (!isJoe && parameters->ff > 0)
-		_vm->graphics()->bankOverpack(parameters->ff, startFrame, bankNum);
+		_vm->bankMan()->overpack(parameters->ff, startFrame, bankNum);
 }
 
 
@@ -984,7 +984,7 @@ void Talk::speakSegment(
 			oracle = true;
 			uint16 frameNum = _vm->logic()->personFrames(bobNum);
 			for (i = 5; i <= 8; ++i) {
-				_vm->graphics()->bankUnpack(i, frameNum, bankNum);
+				_vm->bankMan()->unpack(i, frameNum, bankNum);
 				++frameNum;
 			}
 		}
@@ -1070,10 +1070,10 @@ void Talk::speakSegment(
 			stringAnimation(parameters, startFrame, bankNum);
 		}
 		else {
-			_vm->graphics()->bankUnpack(parameters->body, startFrame, bankNum);
+			_vm->bankMan()->unpack(parameters->body, startFrame, bankNum);
 
 			if (length == 0 && !isJoe && parameters->bf > 0) {
-				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
 				_vm->logic()->update();
 			}
 
@@ -1085,7 +1085,7 @@ void Talk::speakSegment(
 
 			if (-1 == parameters->rf) {
 				// Setup the Torso frames
-				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
 				if (isJoe)
 					parameters = findSpeechParameters(person->name, 0, _vm->logic()->joeFacing());
 				else
@@ -1094,7 +1094,7 @@ void Talk::speakSegment(
 
 			if (-2 == parameters->rf) {
 				// Setup the Torso frames
-				_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
+				_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
 				if (isJoe)
 					parameters = findSpeechParameters(person->name, 14, _vm->logic()->joeFacing());
 				else
@@ -1111,7 +1111,7 @@ void Talk::speakSegment(
 	if (oracle) {
 		uint16 frameNum = _vm->logic()->personFrames(bobNum);
 		for (i = 1; i <= 4; ++i) {
-			_vm->graphics()->bankUnpack(i, frameNum, bankNum);
+			_vm->bankMan()->unpack(i, frameNum, bankNum);
 			++frameNum;
 		}
 	}
@@ -1137,12 +1137,12 @@ void Talk::speakSegment(
 				// 7/11/94, Ensure that correct mouth closed frame is used!
 				if (parameters->rf != -1)
 					// XXX should really be just "bf", but it is not always calculated... :-(
-					_vm->graphics()->bankOverpack(parameters->bf, startFrame, bankNum);
+					_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
 				
 				if (parameters->ff == 0)
-					_vm->graphics()->bankOverpack(10, startFrame, bankNum);
+					_vm->bankMan()->overpack(10, startFrame, bankNum);
 				else
-					_vm->graphics()->bankOverpack(parameters->ff, startFrame, bankNum);
+					_vm->bankMan()->overpack(parameters->ff, startFrame, bankNum);
 			}
 		}
 	}

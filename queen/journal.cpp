@@ -102,7 +102,7 @@ void Journal::prepare() {
 	_vm->graphics()->cameraBob(-1);
 	_vm->graphics()->bobClearAll();
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
-	_vm->graphics()->frameEraseAll(false);
+	_vm->bankMan()->eraseAllFrames(false);
 	_vm->graphics()->textCurrentColor(INK_JOURNAL);
 
 	int i;
@@ -123,18 +123,18 @@ void Journal::prepare() {
     _vm->logic()->zoneSet(ZONE_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
 
 	_vm->graphics()->loadBackdrop("journal.PCX", JOURNAL_ROOM);
-	_vm->graphics()->bankLoad("journal.BBK", JOURNAL_BANK);
+	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
 	for (i = 1; i <= 20; ++i) {
 		int frameNum = JOURNAL_FRAMES + i;
-		_vm->graphics()->bankUnpack(i, frameNum, JOURNAL_BANK);
-		BobFrame *bf = _vm->graphics()->frame(frameNum);
+		_vm->bankMan()->unpack(i, frameNum, JOURNAL_BANK);
+		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
 		bf->xhotspot = 0;
 		bf->yhotspot = 0;
 		if (i == FRAME_INFO_BOX) { // adjust info box hot spot to put it on top always
 			bf->yhotspot = 200;
 		}
 	}
-	_vm->graphics()->bankErase(JOURNAL_BANK);
+	_vm->bankMan()->close(JOURNAL_BANK);
 }
 
 

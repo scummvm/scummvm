@@ -101,6 +101,46 @@ struct TextSlot {
 	bool outlined;
 };
 
+class Resource;
+
+class BankManager {
+public:
+
+	BankManager(Resource *res);
+	~BankManager();
+
+	void load(const char *bankname, uint32 bankslot);
+	void unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
+	void overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
+	void close(uint32 bankslot);
+
+	BobFrame *fetchFrame(uint32 index);
+	void eraseFrame(uint32 index);
+	void eraseAllFrames(bool joe);
+
+	enum {
+		MAX_BANK_SIZE       = 110,
+		MAX_FRAMES_NUMBER   = 256,
+		MAX_BANKS_NUMBER    =  18
+	};
+
+
+private:
+
+	struct PackedBank {
+		uint32 indexes[MAX_BANK_SIZE];
+		uint8 *data;
+	};
+
+	//! unbanked bob frames
+	BobFrame _frames[MAX_FRAMES_NUMBER];
+
+	 //! banked bob frames
+	PackedBank _banks[MAX_BANKS_NUMBER];
+
+	Resource *_res;
+};
+
 
 class QueenEngine;
 
@@ -109,11 +149,6 @@ public:
 
 	Graphics(QueenEngine *vm);
 	~Graphics();
-
-	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
-	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // unpackbank()
-	void bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // overpackbank()
-	void bankErase(uint32 bankslot); // erase()
 
 	void bobSetupControl();
 	void bobDraw(const BobSlot *bs, int16 x, int16 y);
@@ -144,10 +179,6 @@ public:
 	int textCenterX(const char *text) const; // MIDDLE()
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
-	void frameErase(uint32 fslot);
-	void frameEraseAll(bool joe); // freeframes, freeallframes
-	BobFrame *frame(int index) { return _frames + index; }
-
 	void loadBackdrop(const char *name, uint16 room);
 	void loadPanel();
 
@@ -157,9 +188,6 @@ public:
 	void update(uint16 room);
 
 	enum {
-		MAX_BANK_SIZE       = 110,
-		MAX_FRAMES_NUMBER   = 256,
-		MAX_BANKS_NUMBER    =  18,
 		MAX_BOBS_NUMBER     =  64,
 		MAX_STRING_LENGTH   = 255,
 		MAX_STRING_SIZE     = (MAX_STRING_LENGTH + 1),
@@ -168,17 +196,6 @@ public:
 
 
 private:
-
-	struct PackedBank {
-		uint32 indexes[MAX_BANK_SIZE];
-		uint8 *data;
-	};
-
-	//! unbanked bob frames
-	BobFrame _frames[MAX_FRAMES_NUMBER];
-
-	 //! banked bob frames
-	PackedBank _banks[MAX_BANKS_NUMBER];
 
 	BobSlot _bobs[MAX_BOBS_NUMBER];
 

@@ -137,7 +137,7 @@ void Cutaway::load(const char *filename) {
 
 	if (_bankNames[0][0]) {
 		debug(6, "Loading bank '%s'", _bankNames[0]);
-		_vm->graphics()->bankLoad(_bankNames[0], CUTAWAY_BANK);
+		_vm->bankMan()->load(_bankNames[0], CUTAWAY_BANK);
 	}
 
 	char entryString[MAX_STRING_SIZE];
@@ -536,7 +536,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		if (anim.bank != 13) {
 			/* XXX if (OLDBANK != T) */ {
 				//debug(6, "Loading bank '%s'", _bankNames[anim.bank-1]);
-				_vm->graphics()->bankLoad(_bankNames[anim.bank-1], CUTAWAY_BANK);
+				_vm->bankMan()->load(_bankNames[anim.bank-1], CUTAWAY_BANK);
 				// XXX OLDBANK=T;
 			}
 
@@ -701,7 +701,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
 								objAnim[i].bank);*/
-						_vm->graphics()->bankUnpack(
+						_vm->bankMan()->unpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
 								objAnim[i].bank);
@@ -968,7 +968,7 @@ void Cutaway::run(char *nextFilename) {
 
 	updateGameState();
 
-	_vm->graphics()->bankErase(CUTAWAY_BANK);
+	_vm->bankMan()->close(CUTAWAY_BANK);
 
 	talk(nextFilename);
 
@@ -1156,7 +1156,7 @@ void Cutaway::stop() {
 						bank = 15;
 					else if (bank != 13) {
 						// XXX if(bank != oldBank) {
-						_vm->graphics()->bankLoad(_bankNames[bank-1], CUTAWAY_BANK);
+						_vm->bankMan()->load(_bankNames[bank-1], CUTAWAY_BANK);
 						// XXX	oldBank = bank;
 						// XXX }
 						bank = 8;
@@ -1168,7 +1168,7 @@ void Cutaway::stop() {
 						_vm->graphics()->bobClear(bobIndex);
 					}
 					else if (objectFrame) {
-						_vm->graphics()->bankUnpack(ABS(frame), objectFrame, bank);
+						_vm->bankMan()->unpack(ABS(frame), objectFrame, bank);
 						pbs->frameNum = objectFrame;
 						if (frame < 0)
 							pbs->xflip = true;
@@ -1327,7 +1327,7 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 		if (frameIndex[i]) {
 			currentImage++;
 			//debug(6, "bankUnpack(%i, %i, %i)", i, currentImage, objAnim[0].bank);
-			_vm->graphics()->bankUnpack(i, currentImage, objAnim[0].bank);
+			_vm->bankMan()->unpack(i, currentImage, objAnim[0].bank);
 		}
 	}
 

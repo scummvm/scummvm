@@ -238,7 +238,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		uint16 dstFrame = image;
 		uint16 srcFrame = ABS(pwd->anim.firstFrame);
 		while (srcFrame <= ABS(pwd->anim.lastFrame)) {
-			_vm->graphics()->bankUnpack(srcFrame, dstFrame, bankNum);
+			_vm->bankMan()->unpack(srcFrame, dstFrame, bankNum);
 			++dstFrame;
 			++srcFrame;
 		}
@@ -374,9 +374,9 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	pbs->animating = false;
 	pbs->scale = _walkData[_walkDataCount].area->calcScale(endy);
 	if (_walkData[_walkDataCount].anim.facing == DIR_BACK) {
-		_vm->graphics()->bankUnpack(mpd->backStandingFrame, standingFrame, bankNum);
+		_vm->bankMan()->unpack(mpd->backStandingFrame, standingFrame, bankNum);
 	} else {
-		_vm->graphics()->bankUnpack(mpd->frontStandingFrame, standingFrame, bankNum);
+		_vm->bankMan()->unpack(mpd->frontStandingFrame, standingFrame, bankNum);
 	}
 	uint16 obj = _vm->logic()->objectForPerson(bobNum);
 	if (_walkData[_walkDataCount].dx < 0) {

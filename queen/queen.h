@@ -29,6 +29,7 @@ class GameDetector;
 namespace Queen {
 
 class BamScene;
+class BankManager;
 class Command;
 class Debugger;
 class Display;
@@ -47,6 +48,7 @@ public:
 	virtual ~QueenEngine();
 
 	BamScene *bam() const { return _bam; }
+	BankManager *bankMan() const { return _bankMan; }
 	Command *command() const { return _command; }
 	Debugger *debugger() const { return _debugger; }
 	Display *display() const { return _display; }
@@ -72,6 +74,7 @@ protected:
 	void gotTimerTick();
 
 	BamScene *_bam;
+	BankManager *_bankMan;
 	Command *_command;
 	Debugger *_debugger;
 	Display *_display;

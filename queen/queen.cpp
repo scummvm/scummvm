@@ -102,6 +102,7 @@ QueenEngine::~QueenEngine() {
 	_timer->removeTimerProc(&timerHandler);
 	delete _bam;
 	delete _resource;
+	delete _bankMan;
 	delete _command;
 	delete _debugger;
 	delete _display;
@@ -120,7 +121,7 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 
 void QueenEngine::go() {
 	initialise();
-	
+
 	_logic->registerDefaultSettings();
 	_logic->readOptionSettings();
 
@@ -157,6 +158,7 @@ void QueenEngine::go() {
 void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
+	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);
 	_display = new Display(this, _system);
