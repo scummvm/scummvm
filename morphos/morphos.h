@@ -27,7 +27,7 @@
 class OSystem_MorphOS : public OSystem
 {
 	public:
-		typedef enum { ST_INVALID = 0, ST_NONE, ST_POINT, ST_SUPEREAGLE, ST_SUPER2XSAI } SCALERTYPE;
+		typedef enum { ST_INVALID = 0, ST_NONE, ST_POINT, ST_ADVMAME2X, ST_SUPEREAGLE, ST_SUPER2XSAI } SCALERTYPE;
 
 					OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_screen );
 		virtual ~OSystem_MorphOS();
@@ -115,6 +115,7 @@ class OSystem_MorphOS : public OSystem
 		void 	 		  SwitchScalerTo  ( SCALERTYPE newScaler );
 		void   		  Super2xSaI		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 		void   		  SuperEagle		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
+		void 			  AdvMame2xScaler ( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 		void   		  PointScaler		( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 
 		void   draw_mouse();

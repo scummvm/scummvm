@@ -65,9 +65,9 @@ static struct TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 
 OSystem_MorphOS::GfxScaler OSystem_MorphOS::ScummScalers[ 10 ] = { { "none", ST_NONE },
 																  { "Point", 		ST_POINT },
+																  { "AdvMame2x",  ST_ADVMAME2X },
 																  { "SuperEagle", ST_SUPEREAGLE },
 																  { "Super2xSaI", ST_SUPER2XSAI },
-																  { NULL, ST_INVALID },
 																  { NULL, ST_INVALID },
 																  { NULL, ST_INVALID },
 																  { NULL, ST_INVALID },
@@ -77,13 +77,11 @@ OSystem_MorphOS::GfxScaler OSystem_MorphOS::ScummScalers[ 10 ] = { { "none", ST_
 
 struct TagItem musicProcTags[] = { { NP_Entry, 	     0							     		},
 											  { NP_Name, 	     (ULONG)"ScummVM Music Thread" 	},
-											  { NP_StackSize,	  8192 									},
 											  { NP_Priority,    0  								      },
 											  { TAG_DONE,       0 						     			}
 											};
 struct TagItem soundProcTags[] = { { NP_Entry, 	     0							     		},
 											  { NP_Name, 	     (ULONG)"ScummVM Sound Thread" 	},
-											  { NP_StackSize,	  8192 									},
 											  { NP_Priority,    0  								      },
 											  { TAG_DONE,       0 						     			}
 											};
@@ -523,7 +521,7 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 		ULONG	RealDepth = GetBitMapAttr( &ScummScreen->BitMap, BMA_DEPTH );
 		if( RealDepth != ScummDepth )
 		{
-			warning( "Screen did not open in expected depth." );
+			warning( "Screen did not open in expected depth" );
 			ScummDepth = RealDepth;
 		}
 		ScummScreenBuffer[ 0 ] = AllocScreenBuffer( ScummScreen, NULL, SB_SCREEN_BITMAP );
@@ -1320,6 +1318,96 @@ void OSystem_MorphOS::SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uin
 	UnLockBitMap( handle );
 }
 
+void OSystem_MorphOS::AdvMame2xScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
+{
+	byte  *dest;
+	uint32 dest_bpp;
+	uint32 dest_pitch;
+	APTR handle;
+
+	if( (handle = LockBitMapTags( ScummRenderTo, LBMI_BYTESPERPIX, &dest_bpp, LBMI_BYTESPERROW, &dest_pitch, LBMI_BASEADDRESS, &dest, TAG_DONE )) == 0 )
+		return;
+
+	byte *src = (byte *)ScummBuffer+src_y*320+src_x;
+
+	src_line[0] = src;
+	src_line[1] = src;
+	src_line[2] = src + 320;
+
+	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
+	dst_line[1] = dst_line[0]+dest_pitch;
+
+	for( int y = 0; y < height; y++ )
+	{
+		for( int x = 0; x < width; x++ )
+		{
+			uint32 B, D, E, F, H;
+
+			if( PixelsPerMask == 2 )
+			{
+				// short A = *(src + i - nextlineSrc - 1);
+				B = ScummColors16[ src_line[ 0 ][ x ] ];
+				// short C = *(src + i - nextlineSrc + 1);
+				D = ScummColors16[ src_line[ 1 ][ x-1 ] ];
+				E = ScummColors16[ src_line[ 1 ][ x ] ];
+				F = ScummColors16[ src_line[ 1 ][ x+1 ] ];
+				// short G = *(src + i + nextlineSrc - 1);
+				H = ScummColors16[ src_line[ 2 ][ x ] ];
+				// short I = *(src + i + nextlineSrc + 1);
+			}
+			else
+			{
+				// short A = *(src + i - nextlineSrc - 1);
+				B = ScummColors[ src_line[ 0 ][ x ] ];
+				// short C = *(src + i - nextlineSrc + 1);
+				D = ScummColors[ src_line[ 1 ][ x-1 ] ];
+				E = ScummColors[ src_line[ 1 ][ x ] ];
+				F = ScummColors[ src_line[ 1 ][ x+1 ] ];
+				// short G = *(src + i + nextlineSrc - 1);
+				H = ScummColors[ src_line[ 2 ][ x ] ];
+				// short I = *(src + i + nextlineSrc + 1);
+			}
+
+
+			if (PixelsPerMask == 2)
+			{
+				if( ScummPCMode )
+				{
+					SWAP_WORD( B );
+					SWAP_WORD( D );
+					SWAP_WORD( E );
+					SWAP_WORD( F );
+					SWAP_WORD( H );
+				}
+				*((unsigned long *) (&dst_line[0][x * 4])) = ((D == B && B != F && D != H ? D : E) << 16) | (B == F && B != D && F != H ? F : E);
+				*((unsigned long *) (&dst_line[1][x * 4])) = ((D == H && D != B && H != F ? D : E) << 16) | (H == F && D != H && B != F ? F : E);
+			}
+			else
+			{
+				*((unsigned long *) (&dst_line[0][x * 8])) = D == B && B != F && D != H ? D : E;
+				*((unsigned long *) (&dst_line[0][x * 8 + 4])) = B == F && B != D && F != H ? F : E;
+				*((unsigned long *) (&dst_line[1][x * 8])) = D == H && D != B && H != F ? D : E;
+				*((unsigned long *) (&dst_line[1][x * 8 + 4])) = H == F && D != H && B != F ? F : E;
+			}
+		}
+
+		src_line[0] = src_line[1];
+		src_line[1] = src_line[2];
+		if (y + 2 >= height)
+			src_line[2] = src_line[1];
+		else
+			src_line[2] = src_line[1] + 320;
+
+		if( y < height - 1 )
+		{
+			dst_line[0] = dst_line[1]+dest_pitch;
+			dst_line[1] = dst_line[0]+dest_pitch;
+		}
+	}
+
+	UnLockBitMap( handle );
+}
+
 void OSystem_MorphOS::PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	byte *src;
@@ -1441,6 +1529,10 @@ void OSystem_MorphOS::update_screen()
 		{
 			case ST_POINT:
 				PointScaler( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+				break;
+
+			case ST_ADVMAME2X:
+				AdvMame2xScaler( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
 				break;
 
 			case ST_SUPEREAGLE:
