@@ -1809,6 +1809,10 @@ void Scumm::clearClickedStatus() {
 int Scumm::checkKeyHit() {
 	int a = _keyPressed;
 	_keyPressed = 0;
+	if (_version <= 2 && 315 <= a && a < 315+12) {
+		// Convert F-Keys
+		a -= 314;
+	}
 	return a;
 }
 
@@ -1921,8 +1925,10 @@ void Scumm::processKbd() {
 	int saveloadkey;
 	getKeyInput();
 
-	if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_OLD_BUNDLE)) /* FIXME: Support ingame screen */
-		saveloadkey = 319;
+	if (_version <= 2)
+		saveloadkey = 5;	// F5
+	else if ((_features & GF_OLD256) || (_gameId == GID_CMI)) /* FIXME: Support ingame screen ? */
+		saveloadkey = 319;	// F5
 	else
 		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
 
@@ -2015,6 +2021,16 @@ void Scumm::processKbd() {
 		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		g_debugger->attach(this, NULL);
+	} else if (_version <= 2) {
+		// Store the input type. So far we can't distinguish
+		// between 1, 3 and 5.
+		// 1) Verb	2) Scene	3) Inv.		4) Key
+		// 5) Sentence Bar
+
+		if (_lastKeyHit) {		// Key Input
+			VAR(VAR_KEYPRESS) = _lastKeyHit;
+			runInputScript(4, 0, 0);
+		}
 	}
 
 	_mouseButStat = _lastKeyHit;
@@ -2065,16 +2081,6 @@ int Scumm::getKeyInput() {
 	} else if (_version == 7) {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
-	} else if (_version <= 2) {
-		// Store the input type. So far we can't distinguish
-		// between 1, 3 and 5.
-		// 1) Verb	2) Scene	3) Inv.		4) Key
-		// 5) Sentence Bar
-
-		if (_lastKeyHit) {		// Key Input
-			VAR(VAR_KEYPRESS) = _lastKeyHit;
-			runInputScript(4, 0, 0);
-		}
 	}
 
 	_leftBtnPressed &= ~msClicked;
