@@ -536,10 +536,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		
 		if (_scumm->_imuse) {
 			_scumm->_imuse->set_music_volume(_soundVolumeMusic);
-			_scumm->_imuse->set_master_volume(_soundVolumeMaster);
+			_scumm->_imuse->setMasterVolume(_soundVolumeMaster);
 		}
 		if (_scumm->_playerV2) {
-			_scumm->_playerV2->set_master_volume(_soundVolumeMaster);
+			_scumm->_playerV2->setMasterVolume(_soundVolumeMaster);
 		}
 
 		_scumm->_mixer->setVolume(_soundVolumeSfx * _soundVolumeMaster / 255);

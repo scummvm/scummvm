@@ -208,7 +208,6 @@ void Sound::playSound(int soundID) {
 		int track = ptr[0];
 		int loops = ptr[1];
 		int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-		_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 		playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
 
 		_currentCDSound = soundID;
@@ -772,13 +771,16 @@ void Sound::stopAllSounds() {
 		_scumm->_playerV3A->stopAllSounds();
 	}
 
-	clearSoundQue();
-	stopSfxSound();
-}
-
-void Sound::clearSoundQue() {
+	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
+
+	// Stop all SFX
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->stopAllSounds();
+	} else {
+		_scumm->_mixer->stopAll();
+	}
 }
 
 void Sound::soundKludge(int *list, int num) {
@@ -831,7 +833,7 @@ void Sound::setupSound() {
 	if (_scumm->_imuse) {
 		_scumm->_imuse->setBase(_scumm->res.address[rtSound]);
 
-		_scumm->_imuse->set_master_volume(_sound_volume_master);
+		_scumm->_imuse->setMasterVolume(_sound_volume_master);
 		_scumm->_imuse->set_music_volume(_sound_volume_music);
 	}
 	_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);
@@ -1012,14 +1014,6 @@ File *Sound::openSfxFile() {
 		file->open(buf, _scumm->getGameDataPath(), 1, 0x69);
 	}
 	return file;
-}
-
-void Sound::stopSfxSound() {
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->stopAll();
-	} else {
-		_scumm->_mixer->stopAll();
-	}
 }
 
 bool Sound::isSfxFinished() const {
@@ -1625,9 +1619,9 @@ int Sound::updateMP3CD() {
 
 	if (!_dig_cd.handle) {
 		if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0)
-			playMP3CDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
+			playCDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
 		else
-			stopMP3CD();
+			stopCD();
 	}
 
 	return 0;

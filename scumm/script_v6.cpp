@@ -2390,7 +2390,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 		case 6: {
 //				if (_imuseDigital) {
-//					_imuseDigital->stopAll();
+//					_imuseDigital->stopAllSounds();
 //				}
 				uint32 speed;
 				assert(getStringAddressVar(VAR_VIDEONAME));

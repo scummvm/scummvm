@@ -588,7 +588,7 @@ int IMuseInternal::set_music_volume(uint vol) {
 	return 0;
 }
 
-int IMuseInternal::set_master_volume(uint vol) {
+int IMuseInternal::setMasterVolume(uint vol) {
 	if (vol > 255)
 		vol = 255;
 	if (_master_volume == vol)
@@ -689,7 +689,7 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 			if (a[1] > 127)
 				return -1;
 			else
-				return set_master_volume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
+				return setMasterVolume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
 		case 7:
 			return _master_volume >> 1; // Convert from 0-255 to 0-127
 		case 8:
@@ -1359,7 +1359,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
-		set_master_volume(_master_volume);
+		setMasterVolume(_master_volume);
 
 		if (_midi_native)
 			reallocateMidiChannels(_midi_native);
@@ -1752,11 +1752,11 @@ void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
 int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
 int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
-int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume(vol); out(); return ret; }
+int IMuse::setMasterVolume(uint vol) { in(); int ret = _target->setMasterVolume(vol); out(); return ret; }
 int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
 void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
 void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
-int IMuse::stopAllSounds() { in(); int ret = _target->stopAllSounds(); out(); return ret; }
+void IMuse::stopAllSounds() { in(); _target->stopAllSounds(); out(); }
 int IMuse::getSoundStatus(int sound) const { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
 bool IMuse::get_sound_active(int sound) const { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
 int IMuse::getMusicTimer() { in(); int ret = _target->getMusicTimer(); out(); return ret; }

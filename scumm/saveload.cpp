@@ -117,7 +117,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	if (_imuseDigital) {
-		_imuseDigital->stopAll();
+		_imuseDigital->stopAllSounds();
 	}
 
 	_sound->stopBundleMusic();
@@ -546,13 +546,6 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	if (!s->isSaving() && (_saveSound || !_saveLoadCompatible)) {
 		_sound->stopAllSounds();
-		if (_mixer) {
-			if (_imuseDigital) {
-				_imuseDigital->stopAll();
-			} else {
-				_mixer->stopAll();
-			}
-		}
 	}
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
@@ -667,8 +660,8 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	
 	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
 		_imuse->save_or_load(s, this);
-		_imuse->set_master_volume (_sound->_sound_volume_master);
-		_imuse->set_music_volume (_sound->_sound_volume_music);
+		_imuse->setMasterVolume(_sound->_sound_volume_master);
+		_imuse->set_music_volume(_sound->_sound_volume_music);
 	}
 }
 

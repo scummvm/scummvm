@@ -931,7 +931,7 @@ void IMuseDigital::stopSound(int sound) {
 	}
 }
 
-void IMuseDigital::stopAll() {
+void IMuseDigital::stopAllSounds() {
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (_channel[l]._used) {
 			_channel[l]._toBeRemoved = true;
@@ -956,7 +956,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	switch (cmd) {
 	case 10:
 		debug(5, "ImuseStopAllSounds()");
-		stopAll();
+		stopAllSounds();
 		return 0;
 	case 12: // ImuseSetParam
 		switch (sub_cmd) {

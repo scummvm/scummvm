@@ -70,7 +70,7 @@ Player_V3A::~Player_V3A() {
 	free(_wavetable);
 }
 
-void Player_V3A::set_master_volume (int vol) {
+void Player_V3A::setMasterVolume (int vol) {
 	_maxvol = vol;
 }
 
@@ -132,7 +132,8 @@ void Player_V3A::playSound (int nr, char *data, int size, int rate, int vol, int
 	vol = (vol * _maxvol) / 255;
 	if (looped)
 		_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, nr, vol, 0, loopStart, loopEnd);
-	else	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE, nr, vol, 0);
+	else
+		_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE, nr, vol, 0);
 }
 
 void Player_V3A::startSound(int nr) {
@@ -286,7 +287,8 @@ void Player_V3A::playMusic() {
 		if (!_lastSample)
 			_lastSample++;
 		int id = (_curSong << 8) | _lastSample++;
-		playSound(id,data,_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct],3579545 / _notefreqs[_wavetable[inst]->_oct[oct]][pit],255,dur,(_wavetable[inst]->_ldat[oct] != NULL),_wavetable[inst]->_ilen[oct],_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
+		playSound(id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], 3579545 / _notefreqs[_wavetable[inst]->_oct[oct]][pit], 255, dur,
+					(_wavetable[inst]->_ldat[oct] != NULL), _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 	}
 }
 

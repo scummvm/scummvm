@@ -76,7 +76,7 @@ public:
 	Player_V2(Scumm *scumm);
 	virtual ~Player_V2();
 
-	virtual void set_master_volume(int vol);
+	virtual void setMasterVolume(int vol);
 
 	virtual void startSound(int nr);
 	virtual void stopSound(int nr);

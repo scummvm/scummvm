@@ -364,7 +364,7 @@ Player_V2::Player_V2(Scumm *scumm) {
 	_RNG = NG_PRESET;
 
 	set_pcjr(scumm->_midiDriver != MD_PCSPK);
-	set_master_volume(255);
+	setMasterVolume(255);
 
 	_mixer->setupPremix(this, premix_proc);
 }
@@ -406,7 +406,7 @@ void Player_V2::set_pcjr(bool pcjr) {
 	mutex_down();
 }
 
-void Player_V2::set_master_volume (int vol) {
+void Player_V2::setMasterVolume (int vol) {
 	if (vol > 255)
 		vol = 255;
 

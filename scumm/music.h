@@ -29,11 +29,14 @@
 class MusicEngine {
 public:
 	virtual ~MusicEngine() {}
-	
+
+//	virtual void setMasterVolume(int vol) = 0;
+
 	virtual void startSound(int sound) = 0;
 	virtual void stopSound(int sound) = 0;
-//	virtual void stopAllSounds() = 0;
-	virtual int getSoundStatus(int sound) const = 0;
+	virtual void stopAllSounds() = 0;
+	virtual int  getSoundStatus(int sound) const = 0;
+//	virtual int  getMusicTimer() const = 0;
 };
 
 #endif
