@@ -50,7 +50,7 @@ class ABoxFilesystemNode : public FilesystemNode {
 		virtual bool isDirectory() const { return _isDirectory; }
 		virtual String path() const { return _path; }
 
-		virtual FSList *listDir() const;
+		virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const;
 		static  FSList *listRoot();
 		virtual FilesystemNode *parent() const;
 		virtual FilesystemNode *clone() const { return new ABoxFilesystemNode(this); }
@@ -137,10 +137,10 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 	}
 }
 
-FSList *ABoxFilesystemNode::listDir() const
+FSList *ABoxFilesystemNode::listDir(ListMode mode) const
 {
 	FSList *myList = new FSList();
-	
+        
 	if (!_isValid)
 		error("listDir() called on invalid node");
 
@@ -170,19 +170,23 @@ FSList *ABoxFilesystemNode::listDir() const
 			String full_path;
 			BPTR lock;
 
-			full_path = _path;
-			full_path += fib->fib_FileName;
-			lock = Lock(full_path.c_str(), SHARED_LOCK);
-			if (lock)
+			if ((fib->fib_EntryType > 0 && (mode & kListDirectoriesOnly)) ||
+				 (fib->fib_EntryType < 0 && (mode & kListFilesOnly)))
 			{
-				entry = new ABoxFilesystemNode(lock);
-				if (entry)
+				full_path = _path;
+				full_path += fib->fib_FileName;
+				lock = Lock(full_path.c_str(), SHARED_LOCK);
+				if (lock)
 				{
-					if (entry->isValid())
-						myList->push_back(*entry);
-					delete entry;
+					entry = new ABoxFilesystemNode(lock);
+					if (entry)
+					{
+						if (entry->isValid())
+							myList->push_back(*entry);
+						delete entry;
+					}
+					UnLock(lock);
 				}
-				UnLock(lock);
 			}
 		}
 
@@ -237,9 +241,9 @@ FSList *ABoxFilesystemNode::listRoot()
 	dosList = NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList)
 	{
-		if (dosList->dol_Type == DLT_VOLUME &&	// Should always be true, but ...
-			 dosList->dol_Name &&					// Same here
-			 dosList->dol_Task						// Will be NULL if volume is removed from drive but still in use by some program
+		if (dosList->dol_Type == DLT_VOLUME &&  // Should always be true, but ...
+			 dosList->dol_Name &&                                   // Same here
+			 dosList->dol_Task                                              // Will be NULL if volume is removed from drive but still in use by some program
 			)
 		{
 			ABoxFilesystemNode *entry;
@@ -272,4 +276,5 @@ FSList *ABoxFilesystemNode::listRoot()
 }
 
 #endif // defined(__MORPHOS__)
+
 
