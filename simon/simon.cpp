@@ -4269,7 +4269,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	}
 
 	// while_8_end
-	if (num_of_rows == 4) {
+	if (num_of_rows >= 4) {
 		while (strlen(string_ptr) > letters_per_row) {
 			m = letters_per_row;
 			string_ptr_2 += m;
