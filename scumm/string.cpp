@@ -712,29 +712,29 @@ void Scumm::addIntToStack(int var)
 
 void Scumm::addVerbToStack(int var)
 {
-	int num, i;
+	int num, k;
 
 	num = readVar(var);
 	if (num) {
-		for (i = 1; i < _maxVerbs; i++) {
-			if (num == _verbs[i].verbid && !_verbs[i].type && !_verbs[i].saveid) {
-				byte *ptr = getResourceAddress(rtVerb, i);
-                        	if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
-                                	char pointer[20];
-                                	int i, j;
+		for (k = 1; k < _maxVerbs; k++) {
+			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
+				byte *ptr = getResourceAddress(rtVerb, k);
+				if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+					char pointer[20];
+					int i, j;
 
-                                	translateText(ptr, _transText);
+					translateText(ptr, _transText);
 
-                                	for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-                                        	if (ptr[i] != '/')
-                                        	pointer[j++] = ptr[i];
-                                	}
-                                	pointer[j] = 0;
-                                	_sound->_talkChannel = _sound->playBundleSound(pointer);
-                                	addMessageToStack(_transText);
-                        	} else {
-                                	addMessageToStack(ptr);
-                        	}
+					for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
+							if (ptr[i] != '/')
+							pointer[j++] = ptr[i];
+					}
+					pointer[j] = 0;
+					_sound->_talkChannel = _sound->playBundleSound(pointer);
+					addMessageToStack(_transText);
+				} else {
+					addMessageToStack(ptr);
+				}
 				break;
 			}
 		}
@@ -765,26 +765,25 @@ void Scumm::addStringToStack(int var)
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-	                if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
-                        	char pointer[20];
-                        	int i, j;
+			if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+				char pointer[20];
+				int i, j;
 
-                        	translateText(ptr, _transText);
+				translateText(ptr, _transText);
 
-                        	for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-                                	if (ptr[i] != '/')
-                                        	pointer[j++] = ptr[i];
-                        	}
-                        	pointer[j] = 0;
+				for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
+						if (ptr[i] != '/')
+								pointer[j++] = ptr[i];
+				}
+				pointer[j] = 0;
 				_sound->_talkChannel = _sound->playBundleSound(pointer);
 				addMessageToStack(_transText);
-                	} else {
+			} else {
 				addMessageToStack(ptr);
 			}
-			return;
 		}
-	}
-	addMessageToStack((byte *)"");
+	} else
+		addMessageToStack((byte *)"");
 }
 
 void Scumm::initCharset(int charsetno)
