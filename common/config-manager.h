@@ -38,6 +38,14 @@ namespace Common {
  * @todo Implement the callback based notification system (outline below)
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
+ * @todo Store comments and write them back out to disk. A simple approach for
+ *       that would be to store comments which come before a section, and
+ *       comments which comes before a specific config key. While this is
+ *       limited, it is at least much better than not saving any comments, and
+ *       it shouldn't be hard to implement either.
+ * @todo Allow preserving the order of the entries in the config file. Maybe
+ *       even add an API to query/modify that order, which could be used by the
+ *       launcher to allow arranging the game targets.
  */
 class ConfigManager : public Singleton<ConfigManager> {
 	struct IgnoreCaseComparator {
@@ -98,8 +106,8 @@ public:
 	TODO: Callback/change notification system
 	typedef void (*ConfigCallback)(const ConstString &key, void *refCon);
 
-	void   registerCallback(const ConstString &key, ConfigCallback cfgc, void *refCon)
-	void unregisterCallback(const ConstString &key, ConfigCallback cfgc)
+	void   registerCallback(ConfigCallback cfgc, void *refCon, const ConstString &key = String::emptyString)
+	void unregisterCallback(ConfigCallback cfgc, const ConstString &key = String::emptyString)
 */
 
 private:
