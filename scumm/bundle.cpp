@@ -224,6 +224,11 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
 int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final) {
 	int32 final_size = 0, i;
 
+	if (!name) {
+		warning("Bundle: decompressMusicSampleByName called with no name!");
+		return 0;
+	}
+
 	if (_musicFile.isOpen() == false) {
 		warning("Bundle: music file is not open!");
 		return 0;
