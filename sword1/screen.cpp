@@ -206,7 +206,7 @@ void SwordScreen::updateScreen(void) {
 			uint16 cpWidth = 0;
 			uint16 cpHeight = SCRNGRID_Y;
 			if (cnty == gridH - 1)
-				cpHeight = diffY;
+				cpHeight = SCRNGRID_Y - diffY;
 			for (uint16 cntx = 0; cntx < gridW; cntx++)
 				if (gridPos[cntx]) {
 					gridPos[cntx] >>= 1;
