@@ -321,8 +321,8 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
-int v1_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
-int v1_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
+int v1_mm_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
+int v1_mm_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
 
 void CostumeRenderer::procC64(int actor) {
 	const byte *src;
@@ -342,12 +342,14 @@ void CostumeRenderer::procC64(int actor) {
 	// TODO:
 	// * test masking (once we implement any masking for V1 games)
 
-	byte palette[4];
+	byte palette[4] = { 0, 8, 0, 0 };
 
-	palette[0] = 0;
-	palette[1] = v1_actor_palatte_1[actor];
-	palette[2] = v1_actor_palatte_2[actor];
-	palette[3] = 0;
+	if (_vm->_gameId == GID_MANIAC) {
+		palette[1] = v1_mm_actor_palatte_1[actor];
+		palette[2] = v1_mm_actor_palatte_2[actor];
+	} else {
+		palette[2] = _palette[0];
+	}
 
 	v1.skip_width >>= 3;
 
@@ -725,8 +727,10 @@ void CostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
-	if (_loaded._format == 0x57)
+	if (_loaded._format == 0x57) {
+		_palette[0] = palette[0];
 		return;
+	}
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
