@@ -98,3 +98,21 @@ Descumm
 * Rewrite code to use 2 passes; first pass builds an intermediate graph, the
   second pass then tries to detect loops, break/continue statements etc.
 
+SDL backend
+===========
+* Maybe change the shortcuts? One idea (add ctrl-alt in all cases):
+	1-3: select scale factor
+	2-4: normal, advmame, hq filters (all available as 2x and 3x)
+	5-9,0: the other scalers
+  Justification: We have so many scalers now, we are running out of keys
+  for them - and this way, we need a few less. Of course, the question remains
+  what happens if you press ctrl-alt-3 while 2xSai is scaler, what happens?
+  So maybe (again add ctrl-alt):
+    '+' / '-':
+         increase/decrease scale factor, cycling over the possible range.
+         So for a 2x-only scaler, it does nothing; for a scaler supporting
+         all scales from 1x to 4x, it works as usual (and pressing '+' in
+         4x mode goes to 1x)
+    1-9: switch between the "base" scalers: normal (point) scaler, advmame,
+         hq (high quality), 2xsai, super2xsai, supereagle, tv2x, dotmatrix, ...
+    
