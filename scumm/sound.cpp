@@ -96,6 +96,7 @@ void Sound::processSoundQues() {
 			i += num;
 
 			se = _scumm->_imuse;
+
 #if 0
 			debug(1, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
 						data[0] >> 8,
@@ -113,8 +114,12 @@ void Sound::processSoundQues() {
 					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
 						(short)se->do_command(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
+			} else {
+				if (_scumm->_imuseDigital)
+					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
+						(short)_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
+																										data[5], data[6], data[7]);
 			}
-
 		}
 	}
 	_soundQuePos = 0;
@@ -179,7 +184,12 @@ void Sound::playSound(int sound) {
 		sound, _scumm->getResourceRoomNr(rtSound, sound));
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr) {
-		if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
+		if ((READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) && (_scumm->_imuseDigital)){
+			if (_scumm->_imuseDigital) {
+				_scumm->_imuseDigital->startSound(sound);
+			}
+		}
+		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 			ptr += 8;
 			_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
@@ -541,6 +551,9 @@ int Sound::isSoundRunning(int sound) {
 	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return 0;
 
+	if (_scumm->_imuseDigital) {
+		return _scumm->_imuseDigital->getSoundStatus(sound);
+	}
 	se = _scumm->_imuse;
 	if (!se)
 		return 0;
@@ -576,9 +589,13 @@ void Sound::stopSound(int a) {
 		stopCD();
 	}
 
-	se = _scumm->_imuse;
-	if (se)
-		se->stop_sound(a);
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->stopSound(a);
+	} else {
+		se = _scumm->_imuse;
+		if (se)
+			se->stop_sound(a);
+	}
 
 	for (i = 0; i < 10; i++)
 		if (_soundQue2[i] == (byte)a)

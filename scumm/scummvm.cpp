@@ -133,16 +133,21 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(kDefaultSFXVolume);
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
-
 	// Init iMuse
-	if (detector->_use_adlib) {
-		_imuse = IMuse::create_adlib(syst, _mixer);
+	if (_gameId == GID_DIG) {
+		_imuseDigital = new IMuseDigital(_mixer, _timer);
+		_imuse = NULL;
 	} else {
-		_imuse = IMuse::create_midi(syst, detector->createMidi());
+		if (detector->_use_adlib) {
+			_imuse = IMuse::create_adlib(syst, _mixer);
+		} else {
+			_imuse = IMuse::create_midi(syst, detector->createMidi());
+		}
+		_imuseDigital = NULL;
+		if (detector->_gameTempo != 0)
+			_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+		_imuse->set_music_volume(_sound->_sound_volume_music);
 	}
-	if (detector->_gameTempo != 0)
-		_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
-	_imuse->set_music_volume(_sound->_sound_volume_music);
 
 
 	// Load game from specified slot, if any
@@ -169,7 +174,10 @@ Scumm::~Scumm ()
 
 	delete _bundle;
 	delete _sound;
-	delete _imuse;
+	if (_imuse)
+		delete _imuse;
+	if (_imuseDigital)
+		delete _imuseDigital;
 	if (_existLanguageFile)
 		delete _languageBuffer;
 }

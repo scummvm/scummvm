@@ -4715,3 +4715,29 @@ IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 	i->_imuse = IMuseInternal::create(syst, midi, mixer);
 	return i;
 }
+
+IMuseDigital::IMuseDigital(SoundMixer *mixer, Timer * timer) {
+	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
+}
+
+IMuseDigital::~IMuseDigital() {
+}
+
+void IMuseDigital::startSound(int sound) {
+	debug(1, "IMuseDigital::startSound(%d)", sound);
+}
+
+void IMuseDigital::stopSound(int sound) {
+	debug(1, "IMuseDigital::stopSound(%d)", sound);
+}
+
+int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
+	debug(1, "IMuseDigital::doCommand(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
+						a >> 8, a & 0xFF, b, c, d, e, f, g, h);
+	return 0;
+}
+
+int IMuseDigital::getSoundStatus(int sound) {
+	warning("IMuseDigital::getSoundStatus(%d) stub", sound);
+	return 0;
+}

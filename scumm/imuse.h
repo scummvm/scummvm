@@ -59,3 +59,37 @@ public:
 private:
 	IMuseInternal *_imuse;				// Pointer to the real imuse object
 };
+
+#define MAX_DIGITAL_CHANNELS 10
+
+class IMuseDigital {
+private:
+
+	struct channel {
+		int8 _volumeLeft;
+		int8 _volumeRight;
+		bool _isLoop;
+		uint32 _offsetEnd;
+		uint32 _offsetJump;
+		uint32 _offsetRegion;
+		uint32 _offset;
+		byte *_data;
+		uint32 _freq;
+		byte _channels;
+		bool _stereo;
+		byte _bits;
+		uint32 _size;
+		uint32 _idSound;
+		bool _used;
+		uint32 _mixerTrack;
+	} _channel[MAX_DIGITAL_CHANNELS];
+
+public:
+	IMuseDigital(SoundMixer *mixer, Timer * timer);
+	~IMuseDigital();
+	void startSound(int sound);
+	void stopSound(int sound);
+	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
+	int getSoundStatus(int sound);
+};
+

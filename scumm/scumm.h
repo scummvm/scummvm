@@ -33,6 +33,7 @@ class NewGui;
 class Dialog;
 class Scumm;
 class IMuse;
+class IMuseDigital;
 class Actor;
 class Sound;
 class Bundle;
@@ -329,6 +330,7 @@ public:
 	 * That results in a shorter form of the opcode
 	 * on some architectures. */
 	IMuse *_imuse;
+	IMuseDigital *_imuseDigital;
 	uint32 _features;
 	VerbSlot *_verbs;
 	ObjectData *_objs;
