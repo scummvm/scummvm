@@ -41,8 +41,10 @@ CXXFLAGS+= -Wno-reorder -Wwrite-strings -fcheck-new -Wctor-dtor-privacy
 
 include Makefile.common
 
-config.mak:
+# check if configure has been run or has been changed since last run
+config.mak: configure
 	@echo "you need to run ./configure before you can run make"
+	@echo "either you haven't run it before or it has changed"
 	@exit 1
 
 dist:
