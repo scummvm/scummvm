@@ -935,6 +935,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		memset(_ptr, 0, _bufferSize);
 		_size = _file->read(_ptr, _bufferSize);
 		if (!_size) {
+			debug(1, "Failed to read MP3 data during channel initialisation !");
 			destroy();
 			return;
 		}
@@ -1001,6 +1002,9 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 					not_decoded = _stream.bufend - _stream.next_frame;
 					memcpy(_ptr, _stream.next_frame, not_decoded);
 					_size = _file->read(_ptr + not_decoded, _bufferSize - not_decoded);
+				}
+				if (_size <= 0) {
+					return;
 				}
 				_stream.error = (enum mad_error)0;
 				// Restream
