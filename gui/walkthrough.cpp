@@ -51,7 +51,7 @@ static int getNextWordLength(byte *src, int maxLength) {
 
 	for (l = 0; l < maxLength; l++) {
 		byte tmp = src[l];
-		if ((tmp >= 0) && (tmp <= ' '))
+		if (tmp <= ' ')
 			break;
 	}
 
@@ -84,7 +84,7 @@ bool WalkthroughDialog::loadWalkthroughText() {
 		int wordLength = getNextWordLength(currentBuffer, _lineWidth);
 		if (((currentLinePos + wordLength) < _lineWidth) && 
 				((*currentBuffer != 0x0a) && (*currentBuffer != 0x0d))) {
-			if ((*currentBuffer >= 0) && (*currentBuffer <= ' ')) {
+			if (*currentBuffer <= ' ') {
 				lineBuffer[currentLinePos++] = ' ';
 				currentBuffer++;
 			} else {
