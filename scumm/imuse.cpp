@@ -1534,7 +1534,7 @@ void Part::key_on(byte note, byte velocity) {
 		if (!mc)
 			return;
 		mc->volume(_vol_eff);
-		mc->programChange(_bank);
+//		mc->programChange(_bank);
 		mc->noteOn(note, velocity);
 	}
 }
@@ -1658,6 +1658,8 @@ void Part::set_program(byte program) {
 
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
+	if (_bank)
+		warning ("Non-zero instrument bank selection. Please report this");
 	_instrument.program((byte) b, _player->isMT32());
 	if (clearToTransmit())
 		_instrument.send(_mc);
