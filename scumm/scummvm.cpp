@@ -316,7 +316,7 @@ void Scumm::scummInit() {
 		initScreens(0, 16, _realWidth, 144);
 	}
 
-	if (((_features & GF_AFTER_V2) || (_features & GF_AFTER_V3) || (_gameId == GID_MONKEY_EGA)) && !(_features & GF_OLD256)) {
+	if (_features & GF_16COLOR) {
 		byte pal16[16 * 4] = {
 			0,   0,  0,  0,   0,   0,  168, 0,   0,   168, 0,  0,   0,   168, 168, 0,
 			168, 0,  0,  0,   168, 0,  168, 0,   168, 84,  0,  0,   168, 168, 168, 0,
@@ -547,7 +547,7 @@ int Scumm::scummLoop(int delta) {
 		}
 	} else if (_features & GF_AUDIOTRACKS) {
 		_vars[VAR_MI1_TIMER] = _sound->readCDTimer();
-	} else if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_EGA)) {
+	} else if ((_features & GF_OLD256) || (_features & GF_16COLOR)) {
 
 		if(tempMusic == 3) {
 			tempMusic = 0;

@@ -842,6 +842,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	bool lightsOn;
 	bool useOrDecompress;
 
+printf("drawBitmap (%d, %d, %d)\n", x, y, h);
+hexdump(ptr, 0x40);
+
 	// Check whether lights are turned on or not
 	lightsOn = (_vm->_features & GF_AFTER_V6) || (vs->number != 0) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen);
 
@@ -858,7 +861,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 	assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
 
-	if (_vm->_gameId == GID_MONKEY_EGA) {
+	if (_vm->_features & GF_16COLOR) {
 		byte *ptr_z = smap_ptr;
 		for (i = 0; i < numzbuf; i++) {
 			int off = READ_LE_UINT16(ptr_z);
@@ -947,7 +950,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		if (_vm->_features & GF_SMALL_HEADER) {
-			if (_vm->_gameId == GID_MONKEY_EGA) {
+			if (_vm->_features & GF_16COLOR) {
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
 			} else {
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
@@ -1111,7 +1114,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
 	assert(numLinesToProcess);
 
-	if ((_vm->_gameId == GID_MONKEY_EGA) || (_vm->_gameId == GID_LOOM)) {
+	if (_vm->_features & GF_16COLOR) {
 		decodeStripEGA(bgbak_ptr, smap_ptr, numLinesToProcess);
 		return false;
 	}
