@@ -168,8 +168,8 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_drawBlastObject),
 		/* 64 */
 		OPCODE(o6_setBlastObjectWindow),
-		OPCODE(o6_stopObjectCode),
-		OPCODE(o6_stopObjectCode),
+		OPCODE(o6_stopObjectCode),	// FIXME - are 0x65 and 0x66 really the same?
+		OPCODE(o6_stopObjectCode),	// FIXME - are 0x65 and 0x66 really the same?
 		OPCODE(o6_endCutscene),
 		/* 68 */
 		OPCODE(o6_cutscene),
@@ -238,7 +238,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_resourceRoutines),
 		/* 9C */
 		OPCODE(o6_roomOps),
-		OPCODE(o6_actorSet),
+		OPCODE(o6_actorOps),
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
@@ -375,19 +375,6 @@ void Scumm_v6::executeOpcode(int i)
 const char *Scumm_v6::getOpcodeDesc(int i)
 {
 	return _opcodesV6[i].desc;
-}
-
-void Scumm_v6::o6_setBlastObjectWindow()
-{																// Set BOMP processing window
-	int a, b, c, d;
-
-	d = pop();
-	c = pop();
-	b = pop();
-	a = pop();
-
-	warning("o6_bompWindow(%d, %d, %d, %d)", a, b, c, d);
-	// sub_274EF(a, b, c, d);
 }
 
 int Scumm_v6::popRoomAndObj(int *room)
@@ -1023,15 +1010,7 @@ void Scumm_v6::o6_setCameraAt()
 
 void Scumm_v6::o6_loadRoom()
 {
-	int room;
-	/* Begin: Autosave 
-	   _saveLoadSlot = 0;
-	   sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
-	   _saveLoadFlag = 1;
-	   _saveLoadCompatible = false;
-	   End: Autosave */
-
-	room = pop();
+	int room = pop();
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -1617,7 +1596,7 @@ void Scumm_v6::o6_roomOps()
 	}
 }
 
-void Scumm_v6::o6_actorSet()
+void Scumm_v6::o6_actorOps()
 {
 	Actor *a;
 	int i, j, k;
@@ -1630,7 +1609,7 @@ void Scumm_v6::o6_actorSet()
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o6_actorSet");
+	a = derefActorSafe(_curActor, "o6_actorOps");
 	if (!a)
 		return;
 
@@ -1778,7 +1757,7 @@ void Scumm_v6::o6_actorSet()
 		a->talk_script = pop();
 		break;
 	default:
-		error("o6_actorset: default case %d", b);
+		error("o6_actorOps: default case %d", b);
 	}
 }
 
@@ -2222,33 +2201,33 @@ void Scumm_v6::o6_stopSentence()
 void Scumm_v6::o6_print_0()
 {
 	_actorToPrintStrFor = 0xFF;
-	decodeParseString2(0, 0);
+	decodeParseString(0, 0);
 }
 
 void Scumm_v6::o6_print_1()
 {
-	decodeParseString2(1, 0);
+	decodeParseString(1, 0);
 }
 
 void Scumm_v6::o6_print_2()
 {
-	decodeParseString2(2, 0);
+	decodeParseString(2, 0);
 }
 
 void Scumm_v6::o6_print_3()
 {
-	decodeParseString2(3, 0);
+	decodeParseString(3, 0);
 }
 
 void Scumm_v6::o6_printActor()
 {
-	decodeParseString2(0, 1);
+	decodeParseString(0, 1);
 }
 
 void Scumm_v6::o6_printEgo()
 {
 	push(_vars[VAR_EGO]);
-	decodeParseString2(0, 1);
+	decodeParseString(0, 1);
 }
 
 void Scumm_v6::o6_talkActor()
@@ -2442,6 +2421,21 @@ void Scumm_v6::o6_drawBlastObject()
 	b = pop();
 	a = pop();
 	enqueueObject(a, b, c, d, e, 0xFF, 0xFF, 1, 0);
+}
+
+// Set BOMP processing window
+void Scumm_v6::o6_setBlastObjectWindow()
+{
+	// TODO - implement this
+	int a, b, c, d;
+
+	d = pop();
+	c = pop();
+	b = pop();
+	a = pop();
+
+	warning("o6_bompWindow(%d, %d, %d, %d)", a, b, c, d);
+	// sub_274EF(a, b, c, d);
 }
 
 void Scumm_v6::o6_miscOps()
@@ -2891,7 +2885,7 @@ void Scumm_v6::o6_unknownCD() {
 	warning("o6_unknownCD: stub(%d, %d, %d, %d)", a, b, c, d);
 }
 
-void Scumm_v6::decodeParseString2(int m, int n)
+void Scumm_v6::decodeParseString(int m, int n)
 {
 	byte b;
 
@@ -2922,7 +2916,7 @@ void Scumm_v6::decodeParseString2(int m, int n)
 		_string[m].no_talk_anim = false;
 		break;
 	case 73:
-		error("decodeParseString2: case 73");
+		error("decodeParseString: case 73");
 		break;
 	case 74:
 		_string[m].no_talk_anim = true;

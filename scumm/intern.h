@@ -209,7 +209,7 @@ protected:
 
 	int popRoomAndObj(int *room);
 
-	void decodeParseString2(int a, int b);
+	void decodeParseString(int a, int b);
 	int getStackList(int16 *args, uint maxnum);
 
 	/* Version 6 script opcodes */
@@ -313,7 +313,7 @@ protected:
 	void o6_createBoxMatrix();
 	void o6_resourceRoutines();
 	void o6_roomOps();
-	void o6_actorSet();
+	void o6_actorOps();
 	void o6_verbOps();
 	void o6_getActorFromXY();
 	void o6_findObject();
@@ -396,6 +396,8 @@ protected:
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
+	virtual void setupScummVars();
+
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
 
@@ -405,12 +407,24 @@ protected:
 
 	void o8_mod();
 	void o8_wait();
+
+	void o8_dim();
+	void o8_dim2();
+	void o8_arrayAssign();
+	void o8_printLine();
+	void o8_printCursor();
+	void o8_printDebug();
+	void o8_printSystem();
+
 	void o8_cursorCommand();
 	void o8_resourceRoutines();
 	void o8_roomOps();
-	void o8_actorSet();
-	void o8_cameraStuff();
+	void o8_actorOps();
+	void o8_cameraOps();
 	void o8_verbOps();
+	
+	void o8_system();
+	void o8_kludge();
 };
 
 

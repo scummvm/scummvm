@@ -1214,7 +1214,8 @@ void Actor::startWalkAnim(int cmd, int angle)
 	 * Note: walk scripts aren't required to make the game
 	 * work as usual
 	 */
-#if 0
+#if 1
+	printf("ignoreTurns = %d\n", ignoreTurns);
 	if (walk_script != 0) {
 		int16 args[16];
 		args[0] = number;

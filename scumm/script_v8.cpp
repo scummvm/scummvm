@@ -176,23 +176,23 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_wordVarInc),
 		OPCODE(o6_wordVarDec),
 		/* 70 */
-		OPCODE(o6_dim),
+		OPCODE(o8_dim),
 		OPCODE(o6_wordArrayWrite),
 		OPCODE(o6_wordArrayInc),
 		OPCODE(o6_wordArrayDec),
 		/* 74 */
-		OPCODE(o6_dim2),
+		OPCODE(o8_dim2),
 		OPCODE(o6_wordArrayIndexedWrite),
-		OPCODE(o8_unknown),
+		OPCODE(o8_arrayAssign),
 		OPCODE(o8_unknown),
 		/* 78 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_startScript),
+		OPCODE(o6_startScriptQuick),
+		OPCODE(o6_stopObjectCode),
 		/* 7C */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_jumpToScript),	// FIXME - is this right? "O_CHAIN_SCRIPT"
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 80 */
@@ -207,7 +207,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* 88 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_setClass),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 8C */
@@ -219,11 +219,11 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_printLine),
 		/* 94 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_printCursor),
+		OPCODE(o8_printDebug),
+		OPCODE(o8_printSystem),
 		OPCODE(o8_unknown),
 		/* 98 */
 		OPCODE(o8_unknown),
@@ -232,18 +232,18 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* 9C */
 		OPCODE(o8_cursorCommand),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_loadRoom),
+		OPCODE(o6_loadRoomWithEgo),	// FIXME - this is a pure guess
+		OPCODE(o6_walkActorToObj),
 		/* A0 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_walkActorTo),
+		OPCODE(o6_putActorInRoom),
+		OPCODE(o6_putActorAtObject),
+		OPCODE(o6_faceActor),
 		/* A4 */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_animateActor),
+		OPCODE(o6_doSentence),
+		OPCODE(o6_pickupObject),
 		OPCODE(o8_unknown),
 		/* A8 */
 		OPCODE(o8_unknown),
@@ -251,15 +251,15 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
 		/* AC */
-		OPCODE(o8_actorSet),
-		OPCODE(o8_cameraStuff),
+		OPCODE(o8_actorOps),
+		OPCODE(o8_cameraOps),
 		OPCODE(o8_verbOps),
 		OPCODE(o8_unknown),
 		/* B0 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_system),
 		/* B4 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
@@ -268,7 +268,7 @@ void Scumm_v8::setupOpcodes()
 		/* B8 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_kludge),
 		OPCODE(o8_unknown),
 		/* BC */
 		OPCODE(o8_unknown),
@@ -292,18 +292,18 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* CC */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_isAnyOf),
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		/* D0 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_isScriptRunning),
 		/* D4 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o6_isSoundRunning),
+		OPCODE(o6_abs),
 		OPCODE(o8_unknown),
 		/* D8 */
 		OPCODE(o8_unknown),
@@ -422,6 +422,34 @@ void Scumm_v8::o8_wait()
 	}
 }
 
+void Scumm_v8::o8_dim()
+{
+}
+
+void Scumm_v8::o8_dim2()
+{
+}
+
+void Scumm_v8::o8_arrayAssign()
+{
+}
+
+void Scumm_v8::o8_printLine()
+{
+}
+
+void Scumm_v8::o8_printCursor()
+{
+}
+
+void Scumm_v8::o8_printDebug()
+{
+}
+
+void Scumm_v8::o8_printSystem()
+{
+}
+
 void Scumm_v8::o8_cursorCommand()
 {
 	// TODO
@@ -498,13 +526,13 @@ void Scumm_v8::o8_roomOps()
 	}
 }
 
-void Scumm_v8::o8_actorSet()
+void Scumm_v8::o8_actorOps()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
 	Actor *a;
 
-	a = derefActorSafe(_curActor, "o8_actorSet");
+	a = derefActorSafe(_curActor, "o8_actorOps");
 	if (!a)
 		return;
 
@@ -548,11 +576,11 @@ void Scumm_v8::o8_actorSet()
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
 	case 0x89:		// SO_ACTOR_PAN
 	default:
-		error("o8_actorset: default case %d", subOp);
+		error("o8_actorOps: default case %d", subOp);
 	}
 }
 
-void Scumm_v8::o8_cameraStuff()
+void Scumm_v8::o8_cameraOps()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
@@ -560,7 +588,7 @@ void Scumm_v8::o8_cameraStuff()
 	case 0x32:		// SO_CAMERA_PAUSE
 	case 0x33:		// SO_CAMERA_RESUME
 	default:
-		error("o8_cameraStuff: default case %d", subOp);
+		error("o8_cameraOps: default case %d", subOp);
 	}
 }
 
@@ -590,6 +618,15 @@ void Scumm_v8::o8_verbOps()
 	default:
 		error("o8_verbops: default case %d", subOp);
 	}
+}
+
+
+void Scumm_v8::o8_system()
+{
+}
+
+void Scumm_v8::o8_kludge()
+{
 }
 
 /*
