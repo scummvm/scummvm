@@ -56,7 +56,7 @@ enum SpriteFlags {
 	kSF28           = (1 << 27),
 	kSF29           = (1 << 28),
 	kSF30           = (1 << 29),
-	kSF31           = (1 << 30), // kSFHasImage ?
+	kSFImageless    = (1 << 30),
 	kSF32           = (1 << 31)
 };
 

@@ -205,10 +205,10 @@ int ScummEngine_v90he::spriteInfoGet_flagXFlipped(int spriteId) {
 	return ((_spriteTable[spriteId].flags & kSFXFlipped) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_31(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagHasImage(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return ((_spriteTable[spriteId].flags & kSF31) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSFImageless) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_resId(int spriteId) {
@@ -604,14 +604,14 @@ void ScummEngine_v90he::spriteInfoSet_flagXFlipped(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSFChanged | kSFXFlipped | kSFBlitDirectly);
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag31(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_flagHasImage(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	// Note that condition is inverted
 	if (!value)
-		_spriteTable[spriteId].flags |= kSF31;
+		_spriteTable[spriteId].flags |= kSFImageless;
 	else
-		_spriteTable[spriteId].flags &= ~(kSFChanged | kSF31);
+		_spriteTable[spriteId].flags &= ~(kSFChanged | kSFImageless);
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_78_64(int spriteId, int value) {
@@ -739,7 +739,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	} else {
-		_spriteTable[spriteId].flags &= ~(kSF31);
+		_spriteTable[spriteId].flags &= ~(kSFImageless);
 		_spriteTable[spriteId].flags |= kSFChanged | kSFBlitDirectly;
 		_spriteTable[spriteId].field_4C = 0;
 		_spriteTable[spriteId].field_48 = 0;
@@ -1080,7 +1080,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!(spi->flags & kSF31) && (spi->flags & kSFChanged)) {
+		if (!(spi->flags & kSFImageless) && (spi->flags & kSFChanged)) {
 			spi->flags &= ~kSFChanged;
 			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
@@ -1219,7 +1219,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 			if (!spi->flags & kSFXFlipped) {
 				if (!(spi->flags & kSF30))
 					spi->flags |= kSFNeedRedraw;
-				if (!(spi->flags & kSF31))
+				if (!(spi->flags & kSFImageless))
 					spi->flags |= kSFChanged;
 			}
 			if (spi->group_num)
