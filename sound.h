@@ -20,6 +20,7 @@
 
 #include "bits.h"
 #include "resource.h"
+#include <list>
 
 class Sound : public Resource {
 public:
@@ -38,6 +39,36 @@ private:
   void mix(int16 *data, int samples);
 
   friend class Mixer;
+};
+
+class Mixer {
+public:
+  static Mixer *instance();
+
+  void start();
+
+  void playVoice(Sound *s);
+  void playSfx(Sound *s);
+  void stopSfx(Sound *s);
+  void stopVoice(Sound *s);
+  void setImuseState(int state);
+  void setImuseSeq(int seq);
+
+  Sound *findSfx(const char *filename);
+  bool voicePlaying() const;
+
+  void getAudio(int16 *data, int numSamples);
+
+private:
+  Mixer();
+  ~Mixer();
+
+  static Mixer *instance_;
+  typedef std::list<ResPtr<Sound> > sound_list;
+  sound_list voiceSounds_, sfxSounds_;
+  ResPtr<Sound> musicSound_, seqSound_;
+
+  friend void mixerCallback(void *userdata, uint8 *stream, int len);
 };
 
 #endif

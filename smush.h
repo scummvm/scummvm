@@ -22,7 +22,7 @@
 #include "debug.h"
 #include <cstring>
 #include "blocky16.h"
-//#include "mixer.h"
+#include "mixer/mixer.h"
 
 class File {
 private:
@@ -65,8 +65,7 @@ private:
 	int32 _nbframes;
 	Blocky16 _blocky16;
 	File _file;
-//	SoundMixer *_mixer;
-//	PlayingSoundHandle _soundHandle;
+	PlayingSoundHandle _soundHandle;
 
 	int32 _frame;
 	bool _alreadyInit;

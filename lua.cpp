@@ -25,7 +25,6 @@
 #include "color.h"
 #include "costume.h"
 #include "engine.h"
-#include "mixer.h"
 #include "sound.h"
 #include "smush.h"
 #include "textobject.h"
@@ -1023,12 +1022,14 @@ static void GetTextObjectDimensions() {
 
 static void StartMovie() {
 	Smush player;
-	player.play("intro.snm", "");
+	char *filename = lua_getstring(lua_getparam(1));
+	player.play(filename, "");
 }
 
 static void StartFullscreenMovie() {
 	Smush player;
-	player.play("intro.snm", "");
+	char *filename = lua_getstring(lua_getparam(1));
+	player.play(filename, "");
 }
 
 // Stub function for builtin functions not yet implemented

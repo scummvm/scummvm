@@ -19,10 +19,8 @@
 #include "bits.h"
 #include "debug.h"
 #include <cstring>
-//#include "file.h"
-//#include "util.h"
 #include "smush.h"
-//#include "system.h"
+#include "mixer/mixer.h"
 #include <SDL.h>
 
 Smush::Smush() {
@@ -33,18 +31,11 @@ Smush::Smush() {
 	_speed = 0;
 	_channels = -1;
 	_freq = 0;
-//	g_system = new OSystem();
-//	_mixer = new SoundMixer();
-//	_mixer->bindToSystem(g_system);
-//	_mixer->setVolume(100);
-//	_mixer->setMusicVolume(100);
-//	_soundHandle = 0;
+	_soundHandle = 0;
 }
 
 Smush::~Smush() {
 	deinit();
-//	delete g_system;
-//	delete _mixer;
 }
 
 void Smush::init() {
@@ -68,23 +59,24 @@ void Smush::handleBlocky16(byte *src) {
 void decompressVima(const char *src, int16 *dest, int destLen);
 void vimaInit();
 
+extern SoundMixer *g_mixer;
+
 void Smush::handleWave(const byte *src, uint32 size) {
     
 	int16 *dst = new int16[size * _channels];
-	decompressVima((char *)src, dst, size * _channels * 2); delete dst;
-/*	// convert our LE ones to BE
-	for (uint32_t j = 0; j < size * _channels; j++)
+	decompressVima((char *)src, dst, size * _channels * 2);
+	// convert our LE ones to BE
+	for (uint32 j = 0; j < size * _channels; j++)
 		dst[j] = SWAP_BYTES_16(dst[j]);
 
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 	if (_soundHandle == 0)
-		_mixer->newStream(&_soundHandle, (byte *)dst, size * _channels * 2, _freq,
+		g_mixer->newStream(&_soundHandle, (byte *)dst, size * _channels * 2, _freq,
 							flags, 300000);
 	else
-		_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
-*/
+		g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
 }
 
 void Smush::handleFrame() {
@@ -196,7 +188,7 @@ void Smush::play(const char *filename, const char *directory) {
 
 //		SDL_BlitSurface(image, &src, screen, NULL);
 //		SDL_UpdateRect(screen, 0, 0, 0, 0);
-//		SDL_Delay(_speed / 1000);
+		SDL_Delay(_speed / 1000);
 	}
 }
 

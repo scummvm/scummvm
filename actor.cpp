@@ -20,7 +20,6 @@
 #include "engine.h"
 #include "costume.h"
 #include "sound.h"
-#include "mixer.h"
 #include <cmath>
 #include <cstring>
 #include <SDL.h>

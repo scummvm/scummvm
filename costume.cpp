@@ -25,7 +25,6 @@
 #include "model.h"
 #include "lua.h"
 #include "sound.h"
-#include "mixer.h"
 #include <string>
 #include <cstdio>
 #include <map>

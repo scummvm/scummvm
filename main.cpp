@@ -25,7 +25,8 @@
 #include "lua.h"
 #include "registry.h"
 #include "engine.h"
-#include "mixer.h"
+#include "sound.h"
+#include "mixer/mixer.h"
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
@@ -51,6 +52,8 @@ static void saveRegistry() {
 	return main(0, NULL);
 }
 #endif
+
+extern SoundMixer *g_mixer;
 
 int main(int argc, char *argv[]) {
   char 	GLDriver[1024];
@@ -102,6 +105,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  g_mixer = new SoundMixer();
   Mixer::instance()->start();
 
   lua_open();
@@ -153,6 +157,8 @@ int main(int argc, char *argv[]) {
   }
   #endif
   Engine::instance()->mainLoop();
+
+  delete g_mixer;
 
   return 0;
 }

@@ -192,12 +192,6 @@
 				RelativePath="material.h">
 			</File>
 			<File
-				RelativePath="mixer.cpp">
-			</File>
-			<File
-				RelativePath="mixer.h">
-			</File>
-			<File
 				RelativePath="model.cpp">
 			</File>
 			<File
@@ -280,6 +274,40 @@
 				</File>
 				<File
 					RelativePath="vector3d.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="mixer"
+				Filter="">
+				<File
+					RelativePath="mixer\audiostream.cpp">
+				</File>
+				<File
+					RelativePath="mixer\audiostream.h">
+				</File>
+				<File
+					RelativePath="mixer\mixer.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="mixer\mixer.h">
+				</File>
+				<File
+					RelativePath="mixer\rate.cpp">
+				</File>
+				<File
+					RelativePath="mixer\rate.h">
 				</File>
 			</Filter>
 		</Filter>
