@@ -24,6 +24,7 @@
 /* Original GFX code by Vasyl Tsvirkunov */
 
 #include "wince.h"
+#include "gui/newgui.h"
 
 //#include <windows.h>
 //#include <Aygshell.h>
@@ -33,6 +34,8 @@
 //#include "dynamic_imports.h"
 
 #include <tlhelp32.h>
+
+using namespace GUI;
 
 #define COLORCONV565(r,g,b) \
 (((r&0xf8)<<(11-3))|((g&0xfc)<<(5-2))|((b&0xf8)>>3))
@@ -90,7 +93,7 @@ extern bool hide_toolbar;
 extern bool is_simon;
 extern bool smartphone;
 extern bool high_res;
-extern NewGui *g_gui;
+//extern NewGui *g_gui;
 bool toolbar_drawn;
 bool draw_keyboard;
 bool wide_screen;
@@ -3018,7 +3021,7 @@ void Translate(int* px, int* py)
 		return;
 
 	if (wide_screen && high_res) {
-		if (!g_gui->isActive()) {
+		if (!g_gui.isActive()) {
 			*px = *px * 2;
 			*py = *py * 2;
 		}
@@ -3028,7 +3031,7 @@ void Translate(int* px, int* py)
 	if (high_res) {
 		x = 320 - *py;
 		y = *px;
-		if (!g_gui->isActive()) {
+		if (!g_gui.isActive()) {
 			*px = x * 2;
 			*py = y * 2;
 		}
