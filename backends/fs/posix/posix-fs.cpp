@@ -25,6 +25,7 @@
 #ifdef MACOSX
 #include <sys/types.h>
 #endif
+#include <sys/stat.h>
 #include <dirent.h>
 
 /*
@@ -86,6 +87,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const POSIXFilesystemNode *node) {
 FSList *POSIXFilesystemNode::listDir() const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
+	struct stat st;
 	assert(dirp != 0);
 
 	struct dirent *dp;
@@ -99,13 +101,16 @@ FSList *POSIXFilesystemNode::listDir() const {
 		
 		POSIXFilesystemNode entry;
 		entry._displayName = dp->d_name;
-		entry._isDirectory = (dp->d_type == DT_DIR);	// TODO - add support for symlinks to dirs?
+		entry._path = _path;
+		entry._path += dp->d_name;
+
+		if (stat(entry._path.c_str(), &st))
+			continue;
+		entry._isDirectory = S_ISDIR(st.st_mode);
 
 		// FIXME - skip any non-directories for now
 		if (!entry._isDirectory) continue;
 
-		entry._path = _path;
-		entry._path += dp->d_name;
 		if (entry._isDirectory)
 			entry._path += "/";
 		myList->push_back(entry);
