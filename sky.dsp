@@ -44,7 +44,6 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD CPP /nologo /G6 /MT /W3 /WX /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# SUBTRACT CPP /Z<none>
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -145,6 +144,10 @@ SOURCE=.\sky\intro.cpp
 # Begin Source File
 
 SOURCE=.\sky\rnc_deco.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\rnc_deco.h
 # End Source File
 # Begin Source File
 
