@@ -200,7 +200,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_version == 1)
-		//HACK: it fix gfx glitches leaved by actor costume in V1 games, when actor moving to left
+		//HACK: it fix gfx glitches left by actor costume in V1 games, when actor moving to left
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
@@ -254,8 +254,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (rect.left < 0)
 		rect.left = 0;
 
-	if (rect.top > _outheight)
+	if (rect.top < 0)
 		rect.top = 0;
+
+	if (rect.top > _outheight)
+		rect.top = _outheight;
 
 	if (rect.bottom > _outheight)
 		rect.bottom = _outheight;
@@ -394,7 +397,7 @@ void CostumeRenderer::procC64(int actor) {
 			if (!rep)
 				color = *src++;
 			
-			if (y < _outheight) {
+			if (0 <= y && y < _outheight) {
 				if (!_mirror) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
@@ -455,9 +458,9 @@ void CostumeRenderer::proc3() {
 
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
-				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
 				
-				if (color && y < _outheight && !masked) {
+				if (color && !masked) {
 					// FIXME: Fully implement _shadow_mode.
 					// For now, it's enough for Sam & Max
 					// transparency.
@@ -525,7 +528,7 @@ void CostumeRenderer::proc3_ami() {
 			len = *src++;
 		do {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
-				masked = (y >= _outheight) || v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
 				
 				if (color && v1.x >= 0 && v1.x < _outwidth && !masked) {
 					*dst = _palette[color];
