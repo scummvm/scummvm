@@ -82,7 +82,7 @@ static const char *credits_intro[] = {
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0), _modifiers(0) {
+	_scrollPos(0), _scrollTime(0), _modifiers(0), _willClose(false) {
 	
 	int i;
 	
@@ -116,6 +116,8 @@ AboutDialog::AboutDialog()
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
 	_scrollPos = 0;
+	_modifiers = 0;
+	_willClose = false;
 
 	Dialog::open();
 }
@@ -222,11 +224,13 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void AboutDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	_modifiers = modifiers;
+	if (ascii)
+		_willClose = true;
 }
 
 void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	_modifiers = modifiers;
-	if (ascii)
+	if (ascii && _willClose)
 		close();
 }
 

@@ -34,6 +34,7 @@ protected:
 	StringList	_lines;
 	uint32		_lineHeight;
 	byte		_modifiers;
+	bool		_willClose;
 
 public:
 	AboutDialog();
