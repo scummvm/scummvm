@@ -1655,7 +1655,7 @@ void ScummEngine::parseEvents() {
 			}
 
 			if (_keyPressed >= 512)
-				warning("_keyPressed > 512 (%d)", _keyPressed);
+				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed);
 			else
 				_keyDownMap[_keyPressed] = true;
 			break;
@@ -1664,7 +1664,7 @@ void ScummEngine::parseEvents() {
 			// FIXME: for some reason OSystem::KBD_ALT is set sometimes
 			// possible to a bug in sdl-common.cpp
 			if (event.kbd.ascii >= 512)
-				warning("keyPressed > 512 (%d)", event.kbd.ascii);
+				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 			else
 				_keyDownMap[event.kbd.ascii] = false;
 			break;
