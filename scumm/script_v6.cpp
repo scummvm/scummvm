@@ -411,7 +411,7 @@ int ScummEngine::readArray(int array, int idx, int base) {
 	// FIX THE FIXME: fixing an assert by commenting out is bad. It's evil.
 	// It's wrong. Find the proper cause, or at least, silently return
 	// from the function, but don't just go on overwriting memory!
-	assert(base >= 0 && base <= ah->dim1_size * ah->dim2_size);
+	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
 
 	if (ah->type == 4) {
 		return ah->data[base];
@@ -428,7 +428,7 @@ void ScummEngine::writeArray(int array, int idx, int base, int value) {
 		return;
 	base += idx * ah->dim1_size;
 
-	assert(base >= 0 && base <= ah->dim1_size * ah->dim2_size);
+	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
 
 	if (ah->type == 4) {
 		ah->data[base] = value;

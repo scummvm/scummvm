@@ -1252,7 +1252,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			if (akfo == NULL)
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
-			if (tmp < 0 || tmp > numakfo - 1)
+			if (tmp < 0 || tmp >= numakfo - 1)
 				error("akos_increaseAnim: invalid jump value %d", tmp);
 			curpos = READ_LE_UINT16(&akfo[tmp]);
 			break;
