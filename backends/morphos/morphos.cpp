@@ -1567,12 +1567,12 @@ void OSystem_MorphOS::initSize(uint w, uint h)
 	CreateScreen(CSDSPTYPE_KEEP);
 }
 
-int16 OSystem_MorphOS::get_width()
+int16 OSystem_MorphOS::getWidth()
 {
 	return ScummScrWidth;
 }
 
-int16 OSystem_MorphOS::get_height()
+int16 OSystem_MorphOS::getHeight()
 {
 	return ScummScrHeight;
 }

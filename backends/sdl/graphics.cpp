@@ -45,6 +45,10 @@ const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
+int OSystem_SDL::getDefaultGraphicsMode() const {
+	return GFX_DOUBLESIZE;
+}
+
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex, this);
 
@@ -715,11 +719,11 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 	}
 }
 
-int16 OSystem_SDL::get_height() {
+int16 OSystem_SDL::getHeight() {
 	return _screenHeight;
 }
 
-int16 OSystem_SDL::get_width() {
+int16 OSystem_SDL::getWidth() {
 	return _screenWidth;
 }
 

@@ -137,8 +137,8 @@ public:
 	void clear_overlay();
 	void grab_overlay(int16 *, int);
 	void copy_rect_overlay(const int16 *, int, int, int, int, int);
-	virtual int16 get_height();
-	virtual int16 get_width();
+	virtual int16 getHeight();
+	virtual int16 getWidth();
 
 
 	static OSystem *create(int gfx_mode, bool full_screen);
@@ -1106,11 +1106,11 @@ void OSystem_X11::copy_rect_overlay(const int16 *src, int pitch, int x, int y, i
 	}
 }
 
-int16 OSystem_X11::get_height() {
+int16 OSystem_X11::getHeight() {
 	return fb_height;
 }
 
-int16 OSystem_X11::get_width() {
+int16 OSystem_X11::getWidth() {
 	return fb_width;
 }
 

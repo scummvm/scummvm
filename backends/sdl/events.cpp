@@ -192,7 +192,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 			// Alt-Return toggles full screen mode				
 			if (b == KBD_ALT && ev.key.keysym.sym == SDLK_RETURN) {
-				setFeatureState(kFeatureFullscreenMode, !_full_screen);
+				setFullscreenMode(!_full_screen);
 				break;
 			}
 

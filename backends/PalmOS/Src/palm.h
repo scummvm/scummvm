@@ -146,8 +146,8 @@ public:
 	void grab_overlay(byte *buf, int pitch);
 	void copy_rect_overlay(const byte *buf, int pitch, int x, int y, int w, int h);
 
-	int16 get_width();
-	int16 get_height();
+	int16 getWidth();
+	int16 getHeight();
 	byte RGBToColor(uint8 r, uint8 g, uint8 b);
 	void ColorToRGB(byte color, uint8 &r, uint8 &g, uint8 &b);
 	// Set a parameter

@@ -116,8 +116,8 @@ public:
 	virtual void clear_overlay();
 	virtual void grab_overlay(OverlayColor *buf, int pitch);
 	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 get_height();
-	virtual int16 get_width();
+	virtual int16 getHeight();
+	virtual int16 getWidth();
 
 	// Methods that convert RGB to/from colors suitable for the overlay.
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
@@ -125,6 +125,7 @@ public:
 
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	

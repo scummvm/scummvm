@@ -75,8 +75,8 @@ class OSystem_MorphOS : public OSystem
 		virtual void clear_overlay();
 		virtual void grab_overlay(int16 *buf, int pitch);
 		virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
-		virtual int16 get_height();
-		virtual int16 get_width();
+		virtual int16 getHeight();
+		virtual int16 getWidth();
 
 		// Get the number of milliseconds since the program was started.
 		virtual uint32 get_msecs();

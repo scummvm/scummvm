@@ -40,8 +40,8 @@ public:
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void initSize(uint w, uint h);
-	int16 get_height() { return _screenHeight; }
-	int16 get_width() { return _screenWidth; }
+	int16 getHeight() { return _screenHeight; }
+	int16 getWidth() { return _screenWidth; }
 	
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap

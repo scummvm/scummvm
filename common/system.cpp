@@ -67,16 +67,12 @@ bool OSystem::setGraphicsMode(const char *name) {
 	if (!name)
 		return false;
 
-	const GraphicsMode *gm = getSupportedGraphicsModes();
-
 	// Sepcial case for the 'default' filter
 	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
-#ifdef _WIN32_WCE
-		name = "1x";
-#else
-		name = "2x";
-#endif
+		return setGraphicsMode(getDefaultGraphicsMode());
 	}
+
+	const GraphicsMode *gm = getSupportedGraphicsModes();
 
 	while (gm->name) {
 		if (!scumm_stricmp(gm->name, name)) {

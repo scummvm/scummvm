@@ -649,10 +649,10 @@ void OSystem_PALMOS::updateScreen() {
 		if (oldCol != gVars->indicator.on) {	
 			// redraw if needed
 			if (_lastKeyModifier)
-				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, get_height() + 2, true);
+				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, getHeight() + 2, true);
 			
 			if(_useNumPad)
-				draw1BitGfx(kDrawNumPad, (get_width() >> 1) - 32, get_height() + 2, true);
+				draw1BitGfx(kDrawNumPad, (getWidth() >> 1) - 32, getHeight() + 2, true);
 		}
 	}
 
@@ -1058,9 +1058,9 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					_lastKeyModifier %= 4;
 					
 					if (_lastKeyModifier)
-						draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, get_height() + 2, true);
+						draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, getHeight() + 2, true);
 					else
-						draw1BitGfx(kDrawKeyState, 2, get_height() + 2, false);
+						draw1BitGfx(kDrawKeyState, 2, getHeight() + 2, false);
 
 				} else {
 					byte b = 0;
@@ -1075,7 +1075,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
 						UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2);
 						_useNumPad = !_useNumPad;
-						draw1BitGfx(kDrawNumPad, (get_width() >> 1) - 32, get_height() + 2, _useNumPad);
+						draw1BitGfx(kDrawNumPad, (getWidth() >> 1) - 32, getHeight() + 2, _useNumPad);
 
 					} else if (ev.data.keyDown.chr == 'a' && b == (KBD_CTRL|KBD_ALT)) {
 						property(PROP_TOGGLE_ASPECT_RATIO, NULL);
@@ -1089,7 +1089,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					
 					if (_lastKeyModifier) {
 						_lastKeyModifier = MD_NONE;
-						draw1BitGfx(kDrawKeyState, 2, get_height() + 2, false);
+						draw1BitGfx(kDrawKeyState, 2, getHeight() + 2, false);
 					}
 				}
 				return true;
@@ -1773,11 +1773,11 @@ void OSystem_PALMOS::copy_rect_overlay(const byte *buf, int pitch, int x, int y,
 }
 
 
-int16 OSystem_PALMOS::get_height() {
+int16 OSystem_PALMOS::getHeight() {
 	return _screenHeight;
 }
 
-int16 OSystem_PALMOS::get_width() {
+int16 OSystem_PALMOS::getWidth() {
 	return _screenWidth;
 }
 

@@ -40,19 +40,20 @@
 class OSystem {
 public:
 	/**
-	 * Return a pointer to the (singleton) OSystem instance, i.e. the backend.
+	 * Returns a pointer to the (singleton) OSystem instance, i.e. the backend.
 	 * This is not a proper singleton, since OSystem is an interface, not
 	 * a real class.
+	 * @return	the pointer to the singleton) OSystem instance
 	 */
 	static OSystem *instance();
 
 public:
 
-	/** Virtual destructor */
+	/** Empty virtual destructor. DO NOT REMOVE! */
 	virtual ~OSystem() {}
 
 	
-	/** @name Graphics */
+	/** @name Feature flags */
 	//@{
 	
 	/**
@@ -127,9 +128,26 @@ public:
 	/** @name Graphics */
 	//@{
 
+	/**
+	 * Description of a graphics mode.
+	 */
 	struct GraphicsMode {
+		/**
+		 * The 'name' of the graphics mode. This name is matched when selecting
+		 * a mode via the command line, or via the config file.
+		 * Examples: "1x", "advmame2x", "hq3x"
+		 */
 		const char *name;
+		/**
+		 * Human readable description of the scaler.
+		 * Examples: "Normal (no scaling)", "AdvMAME2x", "HQ3x"
+		 */
 		const char *description;
+		/**
+		 * ID of the graphics mode. How to use this is completely up to the
+		 * backend. This value will be passed to the setGraphicsMode(int)
+		 * method by client code.
+		 */
 		int id;
 	};
 
@@ -144,6 +162,15 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
 	
 	/**
+	 * Return the ID of the 'default' graphics mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom graphics mode is selected via
+	 * the command line or a config file).
+	 * @return the ID of the 'default' graphics mode
+	 */
+	virtual int getDefaultGraphicsMode() const = 0;
+	
+	/**
 	 * Switch to the specified graphics mode. If switching to the new mode
 	 * failed, this method returns false.
 	 * @param mode	the ID of the new graphics mode
@@ -156,8 +183,11 @@ public:
 	 * or if switching to the new mode failed, this method returns false.
 	 * @param mode	the name of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setGraphicsMode(int) method, as well
+	 *       as getSupportedGraphicsModes() and getDefaultGraphicsMode().
+	 *       In particular, backends do not have to overload this!
 	 */
-	virtual bool setGraphicsMode(const char *name);
+	bool setGraphicsMode(const char *name);
 
 	/**
 	 * Determine which graphics mode is currently active.
@@ -166,34 +196,59 @@ public:
 	virtual int getGraphicsMode() const = 0;
 
 	/**
-	 * Set the size of the video bitmap. Typical sizes include:
+	 * Set the size of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
 	 *  - 640x480 (e.g. for Curse of Monkey Island)
+	 * This is the resolution for which the client code generates data;
+	 * this is not necessarily equal to the actual display size. For example,
+	 * a backend my magnify the graphics to fit on screen (see also the
+	 * GraphicsMode); stretch the data to perform aspect ratio correction;
+	 * or shrink it to fit on small screens (in cell phones).
+	 * @param width		the new virtual screen width
+	 * @param height	the new virtual screen height
 	 */
-	virtual void initSize(uint w, uint h) = 0;
+	virtual void initSize(uint width, uint height) = 0;
 
 	/**
-	 * Returns the currently set screen height.
+	 * Returns the currently set virtual screen height.
 	 * @see initSize
-	 * @return the currently set screen height
+	 * @return the currently set virtual screen height
 	 */
-	virtual int16 get_height() = 0;
+	virtual int16 getHeight() = 0;
 
 	/**
-	 * Returns the currently set screen width.
+	 * Returns the currently set virtual screen width.
 	 * @see initSize
-	 * @return the currently set screen width
+	 * @return the currently set virtual screen width
 	 */
-	virtual int16 get_width() = 0;
+	virtual int16 getWidth() = 0;
 
-	/** Set colors of the palette. */
+	/**
+	 * Replace the specified range of the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is acomplished via start=0, num=256.
+	 * The palette data is specified in interleaved RGB format. That is, the
+	 * first byte of the memory block 'colors' points at is the red component
+	 * of the first new color; the second byte the blue component of the first
+	 * new color; the third byte the green compont. Then the second color
+	 * starts, and so on. So memory looks like this: R1-G1-B1-R2-G2-B2-R3-...
+	 *
+	 * @param colors	the new colors, in interleaved RGB format
+	 * @param start		the first palette entry to be updated
+	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note It is an error if start+num exceeds 256, behaviour is undefined
+	 *       in that case (the backend may ignore it silently or assert).
+	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
 	/**
-	 * Draw a bitmap to screen.
-	 * The screen will not be updated to reflect the new bitmap, you have
-	 * to call updateScreen to do that.
+	 * Blit a bitmap to the virtual screen.
+	 * The real screen will not immediately be updated to reflect the changes.
+	 * Client code has to to call updateScreen to ensure any changes are
+	 * visible to the user. This can be used to optimize drawing and reduce
+	 * flicker.
 	 * @see updateScreen
 	 */
 	virtual void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
@@ -240,7 +295,7 @@ public:
 	virtual bool show_mouse(bool visible) = 0;
 
 	/** 
-	 * Move ("warp) the mouse cursor to the specified position.
+	 * Move ("warp") the mouse cursor to the specified position.
 	 */
 	virtual void warp_mouse(int x, int y) = 0;
 
@@ -255,7 +310,7 @@ public:
 	typedef int (*TimerProc)(int interval);
 
 	/**
-	 * The types of events backends can generate.
+	 * The types of events backends may generate.
 	 * @see Event
 	 */
 	enum EventCode {
@@ -285,25 +340,35 @@ public:
 	 */
 	struct Event {
 		EventCode event_code;
+		/**
+		  * Keyboard data; only valid for keyboard events (i.e. EVENT_KEYDOWN
+		  * and EVENT_KEYUP). For all other event types, content is undefined.
+		  */
 		struct {
+			/**
+			 * Abstract key code (will be the same for any given key regardless
+			 * of modifiers being held at the same time.
+			 * @todo Document which values are to be used for non-ASCII keys
+			 * like F1-F10.
+			 * For example, this is the same for both 'A' and Shift-'A'.
+			 */
 			int keycode;
+			/**
+			 * ASCII-value of the pressed key (if any). 
+			 * This depends on modifiers, i.e. pressing the 'A' key results in
+			 * different values here depending on the status of shift, alt and
+			 * caps lock.
+			 */
 			uint16 ascii;
+			/**
+			 * Status of the modifier keys. Bits are set in this for each 
+			 * pressed modifier
+			 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
+			 */
 			byte flags;
 		} kbd;
-		struct {
-			int x;
-			int y;
-		} mouse;
+		Common::Point mouse;
 	};
-
-	/** Get the number of milliseconds since the program was started. */
-	virtual uint32 get_msecs() = 0;
-
-	/** Delay/sleep for the specified amount of milliseconds. */
-	virtual void delay_msecs(uint msecs) = 0;
-
-	/** Set the timer callback. */
-	virtual void set_timer(TimerProc callback, int interval) = 0;
 
 	/**
 	 * Get the next event in the event queue.
@@ -311,6 +376,18 @@ public:
 	 * @return true if an event was retrieved.
 	 */
 	virtual bool poll_event(Event *event) = 0;
+
+	/** Get the number of milliseconds since the program was started. */
+	virtual uint32 get_msecs() = 0;
+
+	/** Delay/sleep for the specified amount of milliseconds. */
+	virtual void delay_msecs(uint msecs) = 0;
+
+	/**
+	 * Set the timer callback.
+	 * @see Common::Timer
+	 */
+	virtual void set_timer(TimerProc callback, int interval) = 0;
 
 	//@}
 
@@ -427,8 +504,8 @@ public:
 	virtual void clear_overlay() = 0;
 	virtual void grab_overlay(OverlayColor *buf, int pitch) = 0;
 	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
-	virtual int16 get_overlay_height()	{ return get_height(); }
-	virtual int16 get_overlay_width()	{ return get_width(); }
+	virtual int16 get_overlay_height()	{ return getHeight(); }
+	virtual int16 get_overlay_width()	{ return getWidth(); }
 
 	/** Convert the given RGB triplet into a OverlayColor. A OverlayColor can be
 	 * 8bit, 16bit or 32bit, depending on the target system. The default
