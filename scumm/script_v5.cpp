@@ -2677,7 +2677,7 @@ void Scumm_v5::decodeParseString() {
 		case 6:										/* left */
 			// FIXME: not sure if GF_OLD_BUNDLE is the right thing to check...
 			// but Loom needs this, for sure.
-			if (_features & GF_OLD_BUNDLE) {
+			if (_version == 3) {
 				// FIXME: this value seems to be some kind of override
 				// for text spacing?!?
 				/* int a = */ getVarOrDirectWord(0x80);
