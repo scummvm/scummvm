@@ -20,40 +20,25 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Object map / Object click-area module 
 
- Notes: 
+// Object map / Object click-area module 
 
-    Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
-     appearing in Graphics Gems IV, "Point in Polygon Strategies."
-     p. 24-46, code: p. 34-45
-*/
+// Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
+// appearing in Graphics Gems IV, "Point in Polygon Strategies."
+// p. 24-46, code: p. 34-45
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "cvar_mod.h"
 #include "console_mod.h"
 #include "gfx_mod.h"
 #include "font_mod.h"
 
-/*
- * Module options
-\*--------------------------------------------------------------------------*/
-
 #define R_OBJECTMAP_DEBUG R_DEBUG_INFO
 
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "objectmap_mod.h"
 #include "objectmap.h"
 
@@ -61,31 +46,22 @@ namespace Saga {
 
 static R_OBJECTMAP_INFO OMInfo;
 
-int OBJECTMAP_Register(void)
-{
-
-	CVAR_RegisterFunc(CF_object_info,
-	    "object_info", NULL, R_CVAR_NONE, 0, 0);
+int OBJECTMAP_Register() {
+	CVAR_RegisterFunc(CF_object_info, "object_info", NULL, R_CVAR_NONE, 0, 0);
 
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_Init(void)
-/*--------------------------------------------------------------------------*\
- * Initializes the object map module, creates module allocation context
-\*--------------------------------------------------------------------------*/
-{
+// Initializes the object map module, creates module allocation context
+int OBJECTMAP_Init() {
 	R_printf(R_STDOUT, "OBJECTMAP Module: Initializing...\n");
 
 	OMInfo.initialized = 1;
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_Shutdown(void)
-/*--------------------------------------------------------------------------*\
- * Shuts down the object map module, destroys module allocation context
-\*--------------------------------------------------------------------------*/
-{
+// Shuts down the object map module, destroys module allocation context
+int OBJECTMAP_Shutdown() {
 	if (!OMInfo.initialized) {
 		return R_FAILURE;
 	}
@@ -101,11 +77,8 @@ int OBJECTMAP_Shutdown(void)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_Load(const byte * om_res, size_t om_res_len)
-/*--------------------------------------------------------------------------*\
- * Loads an object map resource ( objects ( clickareas ( points ) ) ) 
-\*--------------------------------------------------------------------------*/
-{
+// Loads an object map resource ( objects ( clickareas ( points ) ) ) 
+int OBJECTMAP_Load(const byte *om_res, size_t om_res_len) {
 	const unsigned char *read_p = om_res;
 
 	R_OBJECTMAP_ENTRY *object_map;
@@ -117,8 +90,7 @@ int OBJECTMAP_Load(const byte * om_res, size_t om_res_len)
 	YS_IGNORE_PARAM(om_res_len);
 
 	if (!OMInfo.initialized) {
-		R_printf(R_STDERR,
-		    "Error: Object map module not initialized!\n");
+		R_printf(R_STDERR, "Error: Object map module not initialized!\n");
 		return R_FAILURE;
 	}
 
@@ -126,83 +98,63 @@ int OBJECTMAP_Load(const byte * om_res, size_t om_res_len)
 		OBJECTMAP_Free();
 	}
 
-	/* Obtain object count N and allocate space for N objects
-	 * \*------------------------------------------------------------- */
+	// Obtain object count N and allocate space for N objects
 	OMInfo.n_objects = ys_read_u16_le(read_p, &read_p);
 
-	OMInfo.object_maps =
-	  (R_OBJECTMAP_ENTRY *)malloc(OMInfo.n_objects * sizeof *OMInfo.object_maps);
+	OMInfo.object_maps = (R_OBJECTMAP_ENTRY *)malloc(OMInfo.n_objects * sizeof *OMInfo.object_maps);
 
 	if (OMInfo.object_maps == NULL) {
 		R_printf(R_STDERR, "Error: Memory allocation failed.\n");
 		return R_MEM;
 	}
 
-	/* Load all N objects
-	 * \*------------------------------------------------------------- */
+	// Load all N objects
 	for (i = 0; i < OMInfo.n_objects; i++) {
-
 		object_map = &OMInfo.object_maps[i];
 		object_map->unknown0 = ys_read_u8(read_p, &read_p);
 		object_map->n_clickareas = ys_read_u8(read_p, &read_p);
 		object_map->flags = ys_read_u16_le(read_p, &read_p);
 		object_map->object_num = ys_read_u16_le(read_p, &read_p);
 		object_map->script_num = ys_read_u16_le(read_p, &read_p);
-
-		object_map->clickareas =
-			(R_CLICKAREA *)malloc(object_map->n_clickareas *
-		    sizeof *(object_map->clickareas));
+		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->n_clickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
-			R_printf(R_STDERR,
-			    "Error: Memory allocation failed.\n");
+			R_printf(R_STDERR, "Error: Memory allocation failed.\n");
 			return R_MEM;
 		}
 
-		/* Load all clickareas for this object */
+		// Load all clickareas for this object
 		for (k = 0; k < object_map->n_clickareas; k++) {
-
 			clickarea = &object_map->clickareas[k];
 			clickarea->n_points = ys_read_u16_le(read_p, &read_p);
 			assert(clickarea->n_points != 0);
 
-			clickarea->points =
-			    (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
-
+			clickarea->points = (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
 			if (clickarea->points == NULL) {
-				R_printf(R_STDERR,
-				    "Error: Memory allocation failed.\n");
+				R_printf(R_STDERR, "Error: Memory allocation failed.\n");
 				return R_MEM;
 			}
 
-			/* Load all points for this clickarea */
+			// Load all points for this clickarea
 			for (m = 0; m < clickarea->n_points; m++) {
-
 				point = &clickarea->points[m];
 				point->x = ys_read_s16_le(read_p, &read_p);
 				point->y = ys_read_s16_le(read_p, &read_p);
 			}
+#if R_OBJECTMAP_DEBUG >= R_DEBUG_PARANOID
+			R_printf(R_STDOUT, "OBJECTMAP_Load(): Read %d points for clickarea %d in object %d.\n",
+					clickarea->n_points, k, object_map->object_num);
+#endif
+		}
+	}
 
-#           if R_OBJECTMAP_DEBUG >= R_DEBUG_PARANOID
-			R_printf(R_STDOUT,
-			    "OBJECTMAP_Load(): "
-			    "Read %d points for clickarea %d in object %d.\n",
-			    clickarea->n_points, k, object_map->object_num);
-#           endif
-		}		/* End load all clickareas */
-	}			/* End load all objects */
-
-    /*-------------------------------------------------------------*/
 	OMInfo.objects_loaded = 1;
 
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_Free(void)
-/*--------------------------------------------------------------------------*\
- * Frees all storage allocated for the current object map data
-\*--------------------------------------------------------------------------*/
-{
+// Frees all storage allocated for the current object map data
+int OBJECTMAP_Free() {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 
@@ -214,7 +166,6 @@ int OBJECTMAP_Free(void)
 
 	for (i = 0; i < OMInfo.n_objects; i++) {
 		object_map = &OMInfo.object_maps[i];
-
 		for (k = 0; k < object_map->n_clickareas; k++) {
 			clickarea = &object_map->clickareas[k];
 			free(clickarea->points);
@@ -231,11 +182,8 @@ int OBJECTMAP_Free(void)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
-/*--------------------------------------------------------------------------*\
- * Loads an object name list resource
-\*--------------------------------------------------------------------------*/
-{
+// Loads an object name list resource
+int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	const unsigned char *read_p = onl_res;
 
 	int table_len;
@@ -256,9 +204,9 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 	OMInfo.n_names = n_names;
 
 #if 0
-#   if R_OBJECTMAP_DEBUG >= R_DEBUG_INFO
+#if R_OBJECTMAP_DEBUG >= R_DEBUG_INFO
 	R_printf(R_STDOUT, "OBJECTMAP_LoadNames: Loading %d object names.\n", n_names);
-#   endif
+#endif
 #endif
 	OMInfo.names = (const char **)malloc(n_names * sizeof *OMInfo.names);
 
@@ -271,10 +219,9 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 		name_offset = ys_read_u16_le(read_p, &read_p);
 		OMInfo.names[i] = (const char *)(onl_res + name_offset);
 
-#       if R_OBJECTMAP_DEBUG >= R_DEBUG_VERBOSE
-		R_printf(R_STDOUT,
-		    "Loaded object name string: %s\n", OMInfo.names[i]);
-#       endif
+#if R_OBJECTMAP_DEBUG >= R_DEBUG_VERBOSE
+		R_printf(R_STDOUT, "Loaded object name string: %s\n", OMInfo.names[i]);
+#endif
 	}
 
 	OMInfo.names_loaded = 1;
@@ -282,11 +229,8 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_FreeNames(void)
-/*--------------------------------------------------------------------------*\
- * Frees all storage allocated for the current object name list data
-\*--------------------------------------------------------------------------*/
-{
+// Frees all storage allocated for the current object name list data
+int OBJECTMAP_FreeNames() {
 	if (!OMInfo.names_loaded) {
 		return R_FAILURE;
 	}
@@ -299,14 +243,11 @@ int OBJECTMAP_FreeNames(void)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_GetName(int object, const char **name)
-/*--------------------------------------------------------------------------*\
- * If 'object' is a valid object number in the currently loaded object 
- *  name list resource, the funciton sets '*name' to the descriptive string
- *  corresponding to 'object' and returns R_SUCCESS. Otherwise it returns
- *  R_FAILURE.
-\*--------------------------------------------------------------------------*/
-{
+// If 'object' is a valid object number in the currently loaded object 
+// name list resource, the funciton sets '*name' to the descriptive string
+// corresponding to 'object' and returns R_SUCCESS. Otherwise it returns
+// R_FAILURE.
+int OBJECTMAP_GetName(int object, const char **name) {
 	if (!OMInfo.names_loaded) {
 		return R_FAILURE;
 	}
@@ -320,8 +261,7 @@ int OBJECTMAP_GetName(int object, const char **name)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_GetFlags(int object, uint16 * flags)
-{
+int OBJECTMAP_GetFlags(int object, uint16 *flags) {
 	int i;
 
 	if (!OMInfo.names_loaded) {
@@ -333,9 +273,7 @@ int OBJECTMAP_GetFlags(int object, uint16 * flags)
 	}
 
 	for (i = 0; i < OMInfo.n_objects; i++) {
-
 		if (OMInfo.object_maps[i].object_num == object) {
-
 			*flags = OMInfo.object_maps[i].flags;
 			return R_SUCCESS;
 		}
@@ -344,14 +282,11 @@ int OBJECTMAP_GetFlags(int object, uint16 * flags)
 	return R_FAILURE;
 }
 
-int OBJECTMAP_GetEPNum(int object, int *ep_num)
-/*--------------------------------------------------------------------------*\
- * If 'object' is a valid object number in the currently loaded object 
- *  name list resource, the funciton sets '*ep_num' to the entrypoint number
- *  corresponding to 'object' and returns R_SUCCESS. Otherwise, it returns
- *  R_FAILURE.
-\*--------------------------------------------------------------------------*/
-{
+// If 'object' is a valid object number in the currently loaded object 
+// name list resource, the funciton sets '*ep_num' to the entrypoint number
+// corresponding to 'object' and returns R_SUCCESS. Otherwise, it returns
+// R_FAILURE.
+int OBJECTMAP_GetEPNum(int object, int *ep_num) {
 	int i;
 
 	if (!OMInfo.names_loaded) {
@@ -374,13 +309,9 @@ int OBJECTMAP_GetEPNum(int object, int *ep_num)
 	return R_FAILURE;
 }
 
-int OBJECTMAP_Draw(R_SURFACE * ds, R_POINT * imouse_pt, int color, int color2)
-/*--------------------------------------------------------------------------*\
- * Uses GFX_DrawLine to display all clickareas for each object in the 
- *  currently loaded object map resource.
-\*--------------------------------------------------------------------------*/
-{
-
+// Uses GFX_DrawLine to display all clickareas for each object in the 
+// currently loaded object map resource.
+int OBJECTMAP_Draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 
@@ -402,26 +333,18 @@ int OBJECTMAP_Draw(R_SURFACE * ds, R_POINT * imouse_pt, int color, int color2)
 	}
 
 	if (imouse_pt != NULL) {
-
 		if (OBJECTMAP_HitTest(imouse_pt, &object_num) == R_SUCCESS) {
 			hit_object = 1;
 		}
 	}
 
 	for (i = 0; i < OMInfo.n_objects; i++) {
-
 		draw_color = color;
-
-		if (hit_object &&
-		    (object_num == OMInfo.object_maps[i].object_num)) {
-
-			snprintf(txt_buf,
-			    sizeof txt_buf,
-			    "obj %d: ? %d, f %X",
-			    OMInfo.object_maps[i].object_num,
-			    OMInfo.object_maps[i].unknown0,
-			    OMInfo.object_maps[i].flags);
-
+		if (hit_object && (object_num == OMInfo.object_maps[i].object_num)) {
+			snprintf(txt_buf, sizeof txt_buf, "obj %d: ? %d, f %X",
+					OMInfo.object_maps[i].object_num,
+					OMInfo.object_maps[i].unknown0,
+					OMInfo.object_maps[i].flags);
 			draw_txt = 1;
 			draw_color = color2;
 		}
@@ -429,44 +352,26 @@ int OBJECTMAP_Draw(R_SURFACE * ds, R_POINT * imouse_pt, int color, int color2)
 		object_map = &OMInfo.object_maps[i];
 
 		for (k = 0; k < object_map->n_clickareas; k++) {
-
 			clickarea = &object_map->clickareas[k];
 			pointcount = 0;
-
 			if (clickarea->n_points == 2) {
-
-				/* 2 points represent a box */
-				GFX_DrawFrame(ds,
-				    &clickarea->points[0],
-				    &clickarea->points[1], draw_color);
+				// 2 points represent a box
+				GFX_DrawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
 			} else if (clickarea->n_points > 2) {
-
-				/* Otherwise draw a polyline */
-
-				GFX_DrawPolyLine(ds,
-				    clickarea->points,
-				    clickarea->n_points, draw_color);
-
+				// Otherwise draw a polyline
+				GFX_DrawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
 			}
-
-		}		/* end for() clickareas */
-	}			/* end for() objects */
+		}
+	}
 
 	if (draw_txt) {
-
-		FONT_Draw(SMALL_FONT_ID,
-		    ds,
-		    txt_buf,
-		    0,
-		    2, 2, SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
+		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2, SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
 	}
 
 	return R_SUCCESS;
 }
 
-static bool
-MATH_HitTestPoly(R_POINT * points, unsigned int npoints, R_POINT test_point)
-{
+static bool MATH_HitTestPoly(R_POINT *points, unsigned int npoints, R_POINT test_point) {
 	int yflag0;
 	int yflag1;
 	bool inside_flag = false;
@@ -476,17 +381,11 @@ MATH_HitTestPoly(R_POINT * points, unsigned int npoints, R_POINT test_point)
 	R_POINT *vtx1 = &points[0];
 
 	yflag0 = (vtx0->y >= test_point.y);
-
 	for (pt = 0; pt < npoints; pt++, vtx1++) {
-
 		yflag1 = (vtx1->y >= test_point.y);
-
 		if (yflag0 != yflag1) {
-
 			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - test_point.x) * (vtx0->y -
-				    vtx1->y)) == yflag1) {
-
+				(vtx1->x - test_point.x) * (vtx0->y - vtx1->y)) == yflag1) {
 				inside_flag = !inside_flag;
 			}
 		}
@@ -497,9 +396,7 @@ MATH_HitTestPoly(R_POINT * points, unsigned int npoints, R_POINT test_point)
 	return inside_flag;
 }
 
-int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num)
-{
-
+int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num) {
 	R_POINT imouse;
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
@@ -513,50 +410,40 @@ int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num)
 	imouse.x = imouse_pt->x;
 	imouse.y = imouse_pt->y;
 
-	/* Loop through all scene objects */
+	// Loop through all scene objects
 	for (i = 0; i < OMInfo.n_objects; i++) {
-
 		object_map = &OMInfo.object_maps[i];
 
-		/* Hit-test all clickareas for this object */
+		// Hit-test all clickareas for this object
 		for (k = 0; k < object_map->n_clickareas; k++) {
-
 			clickarea = &object_map->clickareas[k];
-
 			n_points = clickarea->n_points;
 			points = clickarea->points;
 
 			if (n_points == 2) {
-				/* Hit-test a box region */
-				if ((imouse.x > points[0].x) &&
-				    (imouse.x <= points[1].x) &&
-				    (imouse.y > points[0].y) &&
-				    (imouse.y <= points[1].y)) {
-
-					*object_num = object_map->object_num;
-
-					return R_SUCCESS;
+				// Hit-test a box region
+				if ((imouse.x > points[0].x) && (imouse.x <= points[1].x) &&
+					(imouse.y > points[0].y) &&
+					(imouse.y <= points[1].y)) {
+						*object_num = object_map->object_num;
+						return R_SUCCESS;
 				}
 			} else if (n_points > 2) {
-				/* Hit-test a polygon */
+				// Hit-test a polygon
 				if (MATH_HitTestPoly(points, n_points, imouse)) {
-
 					*object_num = object_map->object_num;
-
 					return R_SUCCESS;
 				}
 			}
-
-		}		/* end for() clickareas */
-	}			/* end for() objects */
+		}
+	}
 
 	*object_num = 0;
 
 	return R_FAILURE;
 }
 
-static void CF_object_info(int argc, char *argv[])
-{
+static void CF_object_info(int argc, char *argv[]) {
 	int i;
 
 	YS_IGNORE_PARAM(argc);
@@ -569,16 +456,12 @@ static void CF_object_info(int argc, char *argv[])
 	CON_Print("%d objects loaded.", OMInfo.n_objects);
 
 	for (i = 0; i < OMInfo.n_objects; i++) {
-
 		CON_Print("%s:", OMInfo.names[i]);
-		CON_Print
-		    ("%d. Unk1: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d",
-		    i, OMInfo.object_maps[i].unknown0,
-		    OMInfo.object_maps[i].flags,
-		    OMInfo.object_maps[i].object_num,
-		    OMInfo.object_maps[i].script_num,
-		    OMInfo.object_maps[i].n_clickareas);
-
+		CON_Print("%d. Unk1: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d", i, OMInfo.object_maps[i].unknown0,
+					OMInfo.object_maps[i].flags,
+					OMInfo.object_maps[i].object_num,
+					OMInfo.object_maps[i].script_num,
+					OMInfo.object_maps[i].n_clickareas);
 	}
 
 	return;

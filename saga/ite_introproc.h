@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Intro sequence scene procedures header file
 
- Notes: 
-*/
+// Intro sequence scene procedures header file
 
 #ifndef SAGA_ITE_INTRO_H_
 #define SAGA_ITE_INTRO_H_
@@ -47,7 +42,6 @@ namespace Saga {
 #define CREDIT_DURATION1 4000
 
 enum R_INTRO_SCENE_DIALOGUE_INFO {
-
 	INTRO_CAVE1_START = 0,
 	INTRO_CAVE1_END = 4,
 
@@ -62,29 +56,23 @@ enum R_INTRO_SCENE_DIALOGUE_INFO {
 };
 
 struct R_INTRO_DIALOGUE {
-
 	uint32 i_voice_rn;
 	const char *i_cvar_name;
 	char i_str[R_INTRO_STRMAX];
-
 };
 
 struct INTRO_CAPTION {
-
 	int res_n;
 	char *caption;
-
 };
 
 struct INTRO_CREDIT {
-
 	int text_x;
 	int text_y;
 	int delta_time;
 	int duration;
 	const char *string;
 	int font_id;
-
 };
 
 } // End of namespace Saga

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Object map / Object click-area module header file
-
- Notes: 
-*/
+// Object map / Object click-area module header file
 
 #ifndef SAGA_OBJECTMAP_H_
 #define SAGA_OBJECTMAP_H_
@@ -35,14 +29,11 @@
 namespace Saga {
 
 struct R_CLICKAREA {
-
 	int n_points;
 	R_POINT *points;
-
 };
 
 struct R_OBJECTMAP_ENTRY {
-
 	int unknown0;
 	uint16 flags;
 
@@ -51,11 +42,9 @@ struct R_OBJECTMAP_ENTRY {
 
 	int n_clickareas;
 	R_CLICKAREA *clickareas;
-
 };
 
 struct R_OBJECTMAP_INFO {
-
 	int initialized;
 
 	int objects_loaded;
@@ -65,11 +54,10 @@ struct R_OBJECTMAP_INFO {
 	int names_loaded;
 	int n_names;
 	const char **names;
-
 };
 
 static void CF_object_info(int argc, char *argv[]);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_OBJECTMAP_H_ */
+#endif

@@ -20,21 +20,15 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Intro sequence scene procedures
 
- Notes: 
-*/
+
+// Intro sequence scene procedures
+
 #include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "animation_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
@@ -47,70 +41,77 @@
 #include "palanim_mod.h"
 #include "music.h"
 
-/*
- * Begin module:
-\*--------------------------------------------------------------------------*/
 #include "scene.h"
 #include "ite_introproc.h"
 
 namespace Saga {
 
 static R_INTRO_DIALOGUE IntroDiag[] = {
-
 	{
-		    CAVE_VOICE_0, "intro1a",
-	    "We see the sky, we see the land, we see the water, "
-		    "and we wonder: Are we the only ones?"},
+		CAVE_VOICE_0, "intro1a",
+		"We see the sky, we see the land, we see the water, "
+		"and we wonder: Are we the only ones?"
+	},
 	{
-		    CAVE_VOICE_1, "intro2a",
-	    "Long before we came to exist, the humans ruled "
-		    "the Earth."},
+		CAVE_VOICE_1, "intro2a",
+		"Long before we came to exist, the humans ruled "
+		"the Earth."
+	},
 	{
-		    CAVE_VOICE_2, "intro3a",
-	    "They made marvelous things, and moved whole " "mountains."},
+		CAVE_VOICE_2, "intro3a",
+		"They made marvelous things, and moved whole " "mountains."
+	},
 	{
-		    CAVE_VOICE_3, "intro4a",
-	    "They knew the Secret of Flight, the Secret of "
-		    "Happiness, and other secrets beyond our imagining."},
+		CAVE_VOICE_3, "intro4a",
+		"They knew the Secret of Flight, the Secret of "
+		"Happiness, and other secrets beyond our imagining."
+	},
 	{
-		    CAVE_VOICE_4, "intro1b",
-	    "The humans also knew the Secret of Life, "
-		    "and used it to give us the Four Great Gifts:"},
+		CAVE_VOICE_4, "intro1b",
+		"The humans also knew the Secret of Life, "
+		"and used it to give us the Four Great Gifts:"
+	},
 	{
-		    CAVE_VOICE_5, "intro2b",
-	    "Thinking minds, feeling hearts, speaking "
-		    "mouths, and reaching hands."},
+		CAVE_VOICE_5, "intro2b",
+		"Thinking minds, feeling hearts, speaking "
+		"mouths, and reaching hands."
+	},
 	{
-		    CAVE_VOICE_6, "intro3b",
-	    "We are their children."},
+		CAVE_VOICE_6, "intro3b",
+		"We are their children."
+	},
 	{
-		    CAVE_VOICE_7, "intro1c",
-	    "They taught us how to use our hands, and how " "to speak."},
+		CAVE_VOICE_7, "intro1c",
+		"They taught us how to use our hands, and how " "to speak."
+	},
 	{
-		    CAVE_VOICE_8, "intro2c",
-	    "They showed us the joy of using our minds."},
+		CAVE_VOICE_8, "intro2c",
+		"They showed us the joy of using our minds."
+	},
 	{
-		    CAVE_VOICE_9, "intro3c",
-	    "They loved us, and when we were ready, they "
-		    "surely would have given us the Secret of Happiness."},
-
+		CAVE_VOICE_9, "intro3c",
+		"They loved us, and when we were ready, they "
+		"surely would have given us the Secret of Happiness."
+	},
 	{
-		    CAVE_VOICE_10, "intro1d",
-	    "And now we see the sky, the land, and the water "
-		    "that we are heirs to, and we wonder: why did "
-		    "they leave?"},
-
+		CAVE_VOICE_10, "intro1d",
+		"And now we see the sky, the land, and the water "
+		"that we are heirs to, and we wonder: why did "
+		"they leave?"
+	},
 	{
-		    CAVE_VOICE_11, "intro2d",
-	    "Do they live still, in the stars? In the oceans "
-		    "depths? In the wind?"},
+		CAVE_VOICE_11, "intro2d",
+		"Do they live still, in the stars? In the oceans "
+		"depths? In the wind?"
+	},
 	{
-		    CAVE_VOICE_12, "intro3d",
-	    "We wonder, was their fate good or evil?"},
-
+		CAVE_VOICE_12, "intro3d",
+		"We wonder, was their fate good or evil?"
+	},
 	{
-		    CAVE_VOICE_13, "intro4d",
-	    "And will we also share the same fate one day?"},
+		CAVE_VOICE_13, "intro4d",
+		"And will we also share the same fate one day?"
+	},
 };
 
 R_SCENE_QUEUE ITE_IntroList[] = {
@@ -125,8 +126,7 @@ R_SCENE_QUEUE ITE_IntroList[] = {
 	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, ITE_IntroFaireTentProc, 0}
 };
 
-int ITE_StartProc(void)
-{
+int ITE_StartProc() {
 	size_t n_introscenes;
 	size_t i;
 
@@ -136,7 +136,6 @@ int ITE_StartProc(void)
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
-
 		SCENE_Queue(&ITE_IntroList[i]);
 	}
 
@@ -152,20 +151,14 @@ int ITE_StartProc(void)
 	return R_SUCCESS;
 }
 
-int ITE_IntroRegisterLang(void)
-{
-
+int ITE_IntroRegisterLang() {
 	size_t i;
 
 	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
-
 		if (CVAR_Register_S(IntroDiag[i].i_str,
 			IntroDiag[i].i_cvar_name,
 			NULL, R_CVAR_CFG, R_INTRO_STRMAX) != R_SUCCESS) {
-
-			R_printf(R_STDERR,
-			    "Error registering intro text cvars.");
-
+			R_printf(R_STDERR, "Error registering intro text cvars.");
 			return R_FAILURE;
 		}
 	}
@@ -173,22 +166,16 @@ int ITE_IntroRegisterLang(void)
 	return R_SUCCESS;
 }
 
-int ITE_IntroAnimProc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles the introductory Dreamer's Guild / NWC logo animation scene.
-\*--------------------------------------------------------------------------*/
-{
+// Handles the introductory Dreamer's Guild / NWC logo animation scene.
+int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
-
 	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
-
 	case SCENE_BEGIN:
 
-		/* Background for intro scene is the first frame of the
-		 * intro animation; display it and set the palette
-		 \*-----------------------------------------------------*/
+		// Background for intro scene is the first frame of the
+		// intro animation; display it and set the palette
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
@@ -202,9 +189,8 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO * scene_info)
 
 		ANIM_SetFrameTime(0, ITE_INTRO_FRAMETIME);
 
-		/* Link this scene's animation resources for continuous
-		 * playback
-		 \*-----------------------------------------------------*/
+		// Link this scene's animation resources for continuous
+		// playback
 		ANIM_Link(0, 1);
 		ANIM_Link(1, 2);
 		ANIM_Link(2, 3);
@@ -212,16 +198,14 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO * scene_info)
 		ANIM_Link(4, 5);
 		ANIM_Link(5, 6);
 
-		/* Scene should end on display of last animation frame
-		 * \*----------------------------------------------------- */
+		// Scene should end on display of last animation frame
 		ANIM_SetFlag(6, ANIM_ENDSCENE);
 
 		R_printf(R_STDOUT, "Beginning animation playback.\n");
 
 		ANIM_Play(0, 0);
 
-		/* Queue intro music playback
-		 * \*----------------------------------------------------- */
+		// Queue intro music playback
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_MUSIC_EVENT;
 		event.param = MUSIC_1;
@@ -231,73 +215,52 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO * scene_info)
 
 		EVENT_Queue(&event);
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles first introductory cave painting scene
-\*--------------------------------------------------------------------------*/
-{
+// Handles first introductory cave painting scene
+int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	PALENTRY *pal;
-
 	static PALENTRY current_pal[R_PAL_ENTRIES];
-
 	int i;
-
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Fade to black out of the intro DG/NWC logo animation
-		 * \*----------------------------------------------------- */
+		// Fade to black out of the intro DG/NWC logo animation
 		SYSGFX_GetCurrentPal(current_pal);
-
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;
 		event.time = 0;
 		event.duration = PALETTE_FADE_DURATION;
 		event.data = current_pal;
-
 		q_event = EVENT_Queue(&event);
 
-		/* Display scene background, but stay with black palette
-		 * \*----------------------------------------------------- */
+		// Display scene background, but stay with black palette
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
-
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Fade in from black to the scene background palette
-		 * \*----------------------------------------------------- */
+		// Fade in from black to the scene background palette
 		SCENE_GetBGPal(&pal);
-
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
@@ -307,8 +270,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Begin palette cycling animation for candles
-		 * \*----------------------------------------------------- */
+		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
@@ -316,8 +278,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Queue narrator dialogue list
-		 * \*----------------------------------------------------- */
+		// Queue narrator dialogue list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
@@ -326,13 +287,10 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE1_START; i < INTRO_CAVE1_END; i++) {
-
 			text_entry.string = IntroDiag[i].i_str;
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
-
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -341,7 +299,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			/* Play voice */
+			// Play voice
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_VOICE_EVENT;
 			event.op = EVENT_PLAY;
@@ -350,14 +308,12 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			voice_len =
-			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) *
-				    VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
 			}
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -367,58 +323,42 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			event_time = voice_pad;
-
 		}
 
-		/* End scene after last dialogue over
-		 * \*----------------------------------------------------- */
+		// End scene after last dialogue over
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 0;
 
 		q_event = EVENT_Chain(q_event, &event);
-
 		break;
-
 	case SCENE_END:
 		break;
 
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles second introductory cave painting scene
-\*--------------------------------------------------------------------------*/
-{
-
+// Handles second introductory cave painting scene
+int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	int i;
-
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -427,8 +367,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Queue(&event);
 
-		/* Begin palette cycling animation for candles
-		 * \*----------------------------------------------------- */
+		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
@@ -436,8 +375,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Queue narrator dialogue list
-		 * \*----------------------------------------------------- */
+		// Queue narrator dialogue list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
@@ -446,13 +384,10 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE2_START; i < INTRO_CAVE2_END; i++) {
-
 			text_entry.string = IntroDiag[i].i_str;
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
-
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -461,7 +396,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			/* Play voice */
+			// Play voice
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_VOICE_EVENT;
 			event.op = EVENT_PLAY;
@@ -470,14 +405,12 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			voice_len =
-			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) *
-				    VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
 			}
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -489,54 +422,39 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 			event_time = voice_pad;
 		}
 
-		/* End scene after last dialogue over
-		 * \*----------------------------------------------------- */
+		// End scene after last dialogue over
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = event_time;
 
 		q_event = EVENT_Chain(q_event, &event);
-
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles third introductory cave painting scene
-\*--------------------------------------------------------------------------*/
-{
+// Handles third introductory cave painting scene
+int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	int i;
-
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -545,8 +463,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Queue(&event);
 
-		/* Begin palette cycling animation for candles
-		 * \*----------------------------------------------------- */
+		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
@@ -554,8 +471,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Queue narrator dialogue list
-		 * \*----------------------------------------------------- */
+		// Queue narrator dialogue list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
@@ -564,13 +480,10 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE3_START; i < INTRO_CAVE3_END; i++) {
-
 			text_entry.string = IntroDiag[i].i_str;
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
-
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -579,7 +492,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			/* Play voice */
+			// Play voice
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_VOICE_EVENT;
 			event.op = EVENT_PLAY;
@@ -588,14 +501,12 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			voice_len =
-			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) *
-				    VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
 			}
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -607,8 +518,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 			event_time = voice_pad;
 		}
 
-		/* End scene after last dialogue over
-		 * \*----------------------------------------------------- */
+		// End scene after last dialogue over
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
@@ -617,44 +527,31 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 		q_event = EVENT_Chain(q_event, &event);
 
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles fourth introductory cave painting scene
-\*--------------------------------------------------------------------------*/
-{
+// Handles fourth introductory cave painting scene
+int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	int i;
-
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -663,8 +560,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Queue(&event);
 
-		/* Begin palette cycling animation for candles
-		 * \*----------------------------------------------------- */
+		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
@@ -672,8 +568,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Queue narrator dialogue list
-		 * \*----------------------------------------------------- */
+		// Queue narrator dialogue list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
@@ -682,12 +577,10 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE4_START; i < INTRO_CAVE4_END; i++) {
-
 			text_entry.string = IntroDiag[i].i_str;
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -696,7 +589,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			/* Play voice */
+			// Play voice
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_VOICE_EVENT;
 			event.op = EVENT_PLAY;
@@ -705,14 +598,12 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Chain(q_event, &event);
 
-			voice_len =
-			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) *
-				    VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
 			}
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -722,11 +613,9 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			event_time = voice_pad;
-
 		}
 
-		/* End scene after last dialogue over
-		 * \*----------------------------------------------------- */
+		// End scene after last dialogue over
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
@@ -735,58 +624,46 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 		q_event = EVENT_Chain(q_event, &event);
 
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure paramater.\n");
 		break;
-
 	}
 
 	return 0;
-
 }
 
-int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles intro title scene (valley overlook)
-\*--------------------------------------------------------------------------*/
-{
+// Handles intro title scene (valley overlook)
+int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	int i;
 
 	const INTRO_CREDIT credits[] = {
 		{160, 44, 9000, CREDIT_DURATION1,
-		    "Producer", SMALL_FONT_ID},
+		"Producer", SMALL_FONT_ID},
 		{160, 56, 0, CREDIT_DURATION1,
-		    "Walter Hochbrueckner", MEDIUM_FONT_ID},
+		"Walter Hochbrueckner", MEDIUM_FONT_ID},
 		{160, 88, 0, CREDIT_DURATION1,
-		    "Executive Producer", SMALL_FONT_ID},
+		"Executive Producer", SMALL_FONT_ID},
 		{160, 100, 0, CREDIT_DURATION1,
-		    "Robert McNally", MEDIUM_FONT_ID},
+		"Robert McNally", MEDIUM_FONT_ID},
 		{160, 132, 0, CREDIT_DURATION1,
-		    "Publisher", SMALL_FONT_ID},
+		"Publisher", SMALL_FONT_ID},
 		{160, 144, 0, CREDIT_DURATION1,
-		    "Jon Van Caneghem", MEDIUM_FONT_ID}
+		"Jon Van Caneghem", MEDIUM_FONT_ID}
 	};
 
 	int n_credits = sizeof credits / sizeof credits[0];
-
 	int event_delay = 0;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
 
-		/* Display ITE title screen background
-		 * \*----------------------------------------------------- */
+		// Display ITE title screen background
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
 		event.op = EVENT_DISPLAY;
@@ -797,13 +674,11 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 
 		R_printf(R_STDOUT, "Beginning animation playback.\n");
 
-		/* Begin title screen background animation 
-		 * \*----------------------------------------------------- */
+		// Begin title screen background animation 
 		ANIM_SetFlag(0, ANIM_LOOP);
 		ANIM_Play(0, 0);
 
-		/* Begin ITE title theme music
-		 * \*----------------------------------------------------- */
+		// Begin ITE title theme music
 		_vm->_music->stop();
 
 		event.type = R_ONESHOT_EVENT;
@@ -814,23 +689,20 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 
-		/* Queue game credits list
-		 * \*----------------------------------------------------- */
+		// Queue game credits list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 
 		for (i = 0; i < n_credits; i++) {
-
 			text_entry.string = credits[i].string;
 			text_entry.font_id = credits[i].font_id;
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -839,7 +711,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Queue(&event);
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -849,8 +721,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 		}
 
-		/* End scene after credit display
-		 * \*----------------------------------------------------- */
+		// End scene after credit display
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
@@ -858,27 +729,20 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event = EVENT_Chain(q_event, &event);
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles second intro credit screen (treehouse view)
-\*--------------------------------------------------------------------------*/
-{
+// Handles second intro credit screen (treehouse view)
+int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	R_EVENT event;
 	R_EVENT *q_event;
 
@@ -886,41 +750,37 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
 
 	const INTRO_CREDIT credits[] = {
 		{160, 58, 2000, CREDIT_DURATION1,
-		    "Game Design", SMALL_FONT_ID},
+		"Game Design", SMALL_FONT_ID},
 		{160, 70, 0, CREDIT_DURATION1,
-		    "Talin, Joe Pearce, Robert McNally", MEDIUM_FONT_ID},
+		"Talin, Joe Pearce, Robert McNally", MEDIUM_FONT_ID},
 		{160, 80, 0, CREDIT_DURATION1,
-		    "and Carolly Hauksdottir", MEDIUM_FONT_ID},
+		"and Carolly Hauksdottir", MEDIUM_FONT_ID},
 		{160, 119, 0, CREDIT_DURATION1,
-		    "Screenplay and Dialog", SMALL_FONT_ID},
+		"Screenplay and Dialog", SMALL_FONT_ID},
 		{160, 131, 0, CREDIT_DURATION1,
-		    "Robert Leh, Len Wein, and Bill Rotsler",
-			    MEDIUM_FONT_ID},
+		"Robert Leh, Len Wein, and Bill Rotsler",
+		MEDIUM_FONT_ID},
 		{160, 54, 5000, CREDIT_DURATION1,
-		    "Art", SMALL_FONT_ID},
+		"Art", SMALL_FONT_ID},
 		{160, 66, 0, CREDIT_DURATION1,
-		    "Edward Lacabanne, Glenn Price, April Lee,",
-			    MEDIUM_FONT_ID},
+		"Edward Lacabanne, Glenn Price, April Lee,",
+		MEDIUM_FONT_ID},
 		{160, 76, 0, CREDIT_DURATION1,
-		    "Lisa Iennaco, Brian Dowrick, Reed", MEDIUM_FONT_ID},
+		"Lisa Iennaco, Brian Dowrick, Reed", MEDIUM_FONT_ID},
 		{160, 86, 0, CREDIT_DURATION1,
-		    "Waller, Allison Hershey and Talin", MEDIUM_FONT_ID},
+		"Waller, Allison Hershey and Talin", MEDIUM_FONT_ID},
 		{160, 123, 0, CREDIT_DURATION1,
-		    "Art Direction", SMALL_FONT_ID},
+		"Art Direction", SMALL_FONT_ID},
 		{160, 135, 0, CREDIT_DURATION1,
-		    "Allison Hershey", MEDIUM_FONT_ID}
+		"Allison Hershey", MEDIUM_FONT_ID}
 	};
 
 	int n_credits = ARRAYSIZE(credits);
-
 	int event_delay = 0;
 
 	switch (param) {
-
 	case SCENE_BEGIN:
-
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -931,28 +791,24 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
 
 		event_delay = DISSOLVE_DURATION;
 
-		/* Begin title screen background animation 
-		 * \*----------------------------------------------------- */
+		// Begin title screen background animation 
 		ANIM_SetFrameTime(0, 100);
 		ANIM_Play(0, event_delay);
 
-		/* Queue game credits list
-		 * \*----------------------------------------------------- */
+		// Queue game credits list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 
 		for (i = 0; i < n_credits; i++) {
-
 			text_entry.string = credits[i].string;
 			text_entry.font_id = credits[i].font_id;
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -961,7 +817,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Queue(&event);
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -971,84 +827,69 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 		}
 
-		/* End scene after credit display
-		 * \*----------------------------------------------------- */
+		// End scene after credit display
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 1000;
 
 		q_event = EVENT_Chain(q_event, &event);
-
 		break;
-
 	case SCENE_END:
-
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;
-
 }
 
-int ITE_IntroFairePathProc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles third intro credit screen (path to puzzle tent)
-\*--------------------------------------------------------------------------*/
-{
+// Handles third intro credit screen (path to puzzle tent)
+int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-
 	R_EVENT event;
 	R_EVENT *q_event;
-
 	long event_delay = 0;
-
 	int i;
 
 	INTRO_CREDIT credits[] = {
 		{160, 58, 2000, CREDIT_DURATION1,
-		    "Original Game Engine Programming", SMALL_FONT_ID},
+		"Original Game Engine Programming", SMALL_FONT_ID},
 
 		{160, 70, 0, CREDIT_DURATION1,
-		    "Talin, Walter Hochbrueckner,", MEDIUM_FONT_ID},
+		"Talin, Walter Hochbrueckner,", MEDIUM_FONT_ID},
 
 		{160, 80, 0, CREDIT_DURATION1,
-		    "Joe Burks and Robert Wiggins", MEDIUM_FONT_ID},
+		"Joe Burks and Robert Wiggins", MEDIUM_FONT_ID},
 
 		{160, 119, 0, CREDIT_DURATION1,
-		    "Music and Sound", SMALL_FONT_ID},
+		"Music and Sound", SMALL_FONT_ID},
 
 		{160, 131, 0, CREDIT_DURATION1,
-		    "Matt Nathan", MEDIUM_FONT_ID},
+		"Matt Nathan", MEDIUM_FONT_ID},
 
 		{160, 58, 5000, CREDIT_DURATION1,
-		    "Directed by", SMALL_FONT_ID},
+		"Directed by", SMALL_FONT_ID},
 
 		{160, 70, 0, CREDIT_DURATION1,
-		    "Talin", MEDIUM_FONT_ID},
+		"Talin", MEDIUM_FONT_ID},
 
 		{160, 119, 0, CREDIT_DURATION1,
-		    "Game Engine Reconstruction", SMALL_FONT_ID},
+		"Game Engine Reconstruction", SMALL_FONT_ID},
 
 		{160, 131, 0, CREDIT_DURATION1,
-		    "Alpha software - Use at your own risk.",
-			    MEDIUM_FONT_ID}
+		"Alpha software - Use at your own risk.",
+		MEDIUM_FONT_ID}
 	};
 
 	int n_credits = sizeof credits / sizeof credits[0];
 
 	switch (param) {
-
 	case SCENE_BEGIN:
 
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -1059,28 +900,24 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO * scene_info)
 
 		event_delay = DISSOLVE_DURATION;
 
-		/* Begin title screen background animation 
-		 * \*----------------------------------------------------- */
+		// Begin title screen background animation 
 		ANIM_SetFlag(0, ANIM_LOOP);
 		ANIM_Play(0, event_delay);
 
-		/* Queue game credits list
-		 * \*----------------------------------------------------- */
+		// Queue game credits list
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
 
 		for (i = 0; i < n_credits; i++) {
-
 			text_entry.string = credits[i].string;
 			text_entry.font_id = credits[i].font_id;
 			text_entry.text_x = credits[i].text_x;
 			text_entry.text_y = credits[i].text_y;
 
-			entry_p = TEXT_AddEntry(scene_info->text_list,
-			    &text_entry);
+			entry_p = TEXT_AddEntry(scene_info->text_list, &text_entry);
 
-			/* Display text */
+			// Display text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
@@ -1089,7 +926,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO * scene_info)
 
 			q_event = EVENT_Queue(&event);
 
-			/* Remove text */
+			// Remove text
 			event.type = R_ONESHOT_EVENT;
 			event.code = R_TEXT_EVENT;
 			event.op = EVENT_REMOVE;
@@ -1099,46 +936,35 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 		}
 
-		/* End scene after credit display
-		 * \*----------------------------------------------------- */
+		// End scene after credit display
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 1000;
 
 		q_event = EVENT_Chain(q_event, &event);
-
 		break;
-
 	case SCENE_END:
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;
 }
 
-int ITE_IntroFaireTentProc(int param, R_SCENE_INFO * scene_info)
-/*--------------------------------------------------------------------------*\
- * Handles fourth intro credit screen (treehouse view)
-\*--------------------------------------------------------------------------*/
-{
+// Handles fourth intro credit screen (treehouse view)
+int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	R_EVENT *q_event_start;
-
 	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
-
 	case SCENE_BEGIN:
 
-		/* Start 'dissolve' transition to new scene background
-		 * \*----------------------------------------------------- */
+		// Start 'dissolve' transition to new scene background
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
@@ -1147,25 +973,18 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO * scene_info)
 
 		q_event_start = EVENT_Queue(&event);
 
-		/* End scene after momentary pause
-		 * \*----------------------------------------------------- */
+		// End scene after momentary pause
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 5000;
-
 		q_event = EVENT_Chain(q_event_start, &event);
-
 		break;
-
 	case SCENE_END:
-
 		break;
-
 	default:
 		R_printf(R_STDERR, "Illegal scene procedure parameter.\n");
 		break;
-
 	}
 
 	return 0;

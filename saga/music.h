@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Music class
 
- Notes: 
-*/
+// Music class
 
 #ifndef SAGA_MUSIC_H_
 #define SAGA_MUSIC_H_
@@ -39,7 +34,6 @@
 
 namespace Saga {
 enum MUSIC_FLAGS {
-
 	R_MUSIC_LOOP = 0x01
 };
 
@@ -48,25 +42,25 @@ public:
 	MusicPlayer(MidiDriver *driver);
 	~MusicPlayer();
 	void setVolume(int volume);
-	int getVolume()			{ return _masterVolume; }
-	
-	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
+	int getVolume() { return _masterVolume; }
+
+	void hasNativeMT32(bool b) { _nativeMT32 = b; }
 	void playMusic();
 	void stopMusic();
-	void setLoop(bool loop)		{ _looping = loop; }
+	void setLoop(bool loop) { _looping = loop; }
 
-	void setGM(bool isGM)		{ _isGM = isGM; }
-	
+	void setGM(bool isGM) { _isGM = isGM; }
+
 	//MidiDriver interface implementation
 	int open();
 	void close();
 	void send(uint32 b);
-	
+
 	void metaEvent(byte type, byte *data, uint16 length);
-	
+
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
 	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
-	
+
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
@@ -82,19 +76,19 @@ protected:
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
-	
+
 	bool _isPlaying;
 	bool _looping;
 	bool _randomLoop;
 	byte _masterVolume;
-	
+
 	byte *_musicData;
 	uint16 *_buf;
 	uint32 _musicDataSize;
 };
 
 class Music {
- public:
+public:
 
 	Music(MidiDriver *driver, int enabled);
 	~Music(void);
@@ -105,7 +99,7 @@ class Music {
 	int resume(void);
 	int stop(void);
 
- private:
+private:
 
 	SagaEngine *_vm;
 	SoundMixer *_mixer;
@@ -114,9 +108,8 @@ class Music {
 
 	int _musicInitialized;
 	int _enabled;
-
- };
+};
 
 } // End of namespace Saga
 
-#endif				/* SAGA_MUSIC_H_ */
+#endif

@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Isometric level module - private header
 
- Notes: 
-*/
+// Isometric level module - private header
 
 #ifndef SAGA_ISOMAP_H_
 #define SAGA_ISOMAP_H_
@@ -34,7 +29,6 @@
 namespace Saga {
 
 struct R_ISOTILE_ENTRY {
-
 	int tile_h;
 	int unknown01;
 	size_t tile_offset;
@@ -56,22 +50,17 @@ struct R_ISOTILE_ENTRY {
 #define SAGA_METAMAP_SIZE 256
 
 struct R_ISO_METATILE_ENTRY {
-
 	int mtile_n;
 	int unknown02;
 	int unknown04;
 	int unknown06;
-
 	int tile_tbl[SAGA_METATILE_SIZE];
-
 };
 
 #define SAGA_METATILE_ENTRY_LEN 136
 
 struct R_ISOMAP_MODULE {
-
 	int init;
-
 	int tiles_loaded;
 	const byte *tileres_p;
 	size_t tileres_len;
@@ -89,16 +78,12 @@ struct R_ISOMAP_MODULE {
 	uint16 metamap_tbl[SAGA_METAMAP_SIZE];
 	const byte *mm_res_p;
 	size_t mm_res_len;
-
 };
 
-int ISOMAP_DrawTile(R_SURFACE * dst_s, uint16 tile_i, int tile_x, int tile_y);
-
-int
-ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
-
-int ISOMAP_DrawMetamap(R_SURFACE * dst_s, int map_x, int map_y);
+int ISOMAP_DrawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
+int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
+int ISOMAP_DrawMetamap(R_SURFACE *dst_s, int map_x, int map_y);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_ISOMAP_H_ */
+#endif

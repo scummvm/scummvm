@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Isometric level module - public module header
 
- Notes: 
-*/
+// Isometric level module - public module header
 
 #ifndef SAGA_ISOMAP_MOD_H_
 #define SAGA_ISOMAP_MOD_H_
@@ -34,15 +29,11 @@
 namespace Saga {
 
 int ISOMAP_Init(void);
-
 int ISOMAP_LoadTileset(const byte *, size_t);
-
 int ISOMAP_LoadMetaTileset(const byte *, size_t);
-
-int ISOMAP_LoadMetamap(const byte * mm_res_p, size_t mm_res_len);
-
-int ISOMAP_Draw(R_SURFACE * dst_s);
+int ISOMAP_LoadMetamap(const byte *mm_res_p, size_t mm_res_len);
+int ISOMAP_Draw(R_SURFACE *dst_s);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_ISOMAP_MOD_H_ */
+#endif

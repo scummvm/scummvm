@@ -28,7 +28,7 @@
 #include "music.h"
 #include "rscfile_mod.h"
 #include "game_mod.h"
-#include "sound/mididrv.h"                                                      
+#include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -52,22 +52,22 @@ MusicPlayer::MusicPlayer(MidiDriver *driver) : _driver(driver), _looping(false),
 	memset(_channel, 0, sizeof(_channel));
 	this->open();
 }
-	
+
 MusicPlayer::~MusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	_parser->unloadMusic();
 	this->close();
- }
-	
+}
+
 void MusicPlayer::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
 		volume = 255;
-	
+
 	if (_masterVolume == volume)
 		return;
-			
+
 	_masterVolume = volume;
 
 	for (int i = 0; i < 16; ++i) {
@@ -76,12 +76,12 @@ void MusicPlayer::setVolume(int volume) {
 		}
 	}
 }
-	
+
 int MusicPlayer::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
-			
+
 	int ret = _driver->open();
 	if (ret)
 		return ret;
@@ -89,14 +89,14 @@ int MusicPlayer::open() {
 	_driver->setTimerCallback(this, &onTimer);
 	return 0;
 }
-	
+
 void MusicPlayer::close() {
 	stopMusic();
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
-	
+
 void MusicPlayer::send(uint32 b) {
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
@@ -107,47 +107,46 @@ void MusicPlayer::send(uint32 b) {
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | mt32_to_gm[(b >> 8) & 0xFF] << 8;
-	} 
+	}
 	else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
 		//has currently been allocated
 		if (_channel[b & 0x0F])
 			return;
 	}
-		
+
 	if (!_channel[channel])
 		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 
 	if (_channel[channel])
 		_channel[channel]->send(b);
 }
-	
+
 void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	//Only thing we care about is End of Track.
 	if (type != 0x2F)
 		return;
-		
-	if (_looping) 
+
+	if (_looping)
 		_parser->jumpToTick(0);
 	else
 		stopMusic();
 }
-	
+
 void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
 	if (music->_isPlaying)
 		music->_parser->onTimer();
 }
-	
+
 void MusicPlayer::playMusic() {
 	_isPlaying = true;
 }
-	
+
 void MusicPlayer::stopMusic() {
 	_isPlaying = false;
 	_parser->unloadMusic();
 }
-
 
 Music::Music(MidiDriver *driver, int enabled) : _enabled(enabled) {
 	_player = new MusicPlayer(driver);
@@ -319,7 +318,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		/* Load XMI resource data */
 		GAME_GetFileContext(&rsc_ctxt, R_GAME_RESOURCEFILE, 0);
-        
+
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
 				&resource_size) != R_SUCCESS ) {
 			R_printf(R_STDERR, "SYSMUSIC_Play(): Resource load failed: %u",

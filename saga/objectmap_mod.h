@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Object map module public header file
-
- Notes: 
-*/
+// Object map module public header file
 
 #ifndef SAGA_OBJECTMAP_MOD_H__
 #define SAGA_OBJECTMAP_MOD_H__
@@ -35,36 +29,22 @@
 namespace Saga {
 
 enum R_OBJECT_FLAGS {
-
 	R_OBJECT_NORMAL = 0x02
 };
 
-int OBJECTMAP_Register(void);
-
-int OBJECTMAP_Init(void);
-
-int OBJECTMAP_Shutdown(void);
-
-int OBJECTMAP_Load(const byte * om_res, size_t om_res_len);
-
-int OBJECTMAP_Free(void);
-
-int OBJECTMAP_LoadNames(const byte * onl_res, size_t onl_res_len);
-
-int OBJECTMAP_FreeNames(void);
-
+int OBJECTMAP_Register();
+int OBJECTMAP_Init();
+int OBJECTMAP_Shutdown();
+int OBJECTMAP_Load(const byte *om_res, size_t om_res_len);
+int OBJECTMAP_Free();
+int OBJECTMAP_LoadNames(const byte *onl_res, size_t onl_res_len);
+int OBJECTMAP_FreeNames();
 int OBJECTMAP_GetName(int object, const char **name);
-
-int OBJECTMAP_GetFlags(int object, uint16 * flags);
-
+int OBJECTMAP_GetFlags(int object, uint16 *flags);
 int OBJECTMAP_GetEPNum(int object, int *ep_num);
-
-int
-OBJECTMAP_Draw(R_SURFACE * draw_surface,
-    R_POINT * imouse_pt, int color, int color2);
-
-int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num);
+int OBJECTMAP_Draw(R_SURFACE *draw_surface, R_POINT *imouse_pt, int color, int color2);
+int OBJECTMAP_HitTest(R_POINT *imouse_pt, int *object_num);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_OBJECTMAP_MOD_H__ */
+#endif

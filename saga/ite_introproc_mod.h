@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Intro sequence scene procedures - public header file
 
- Notes: 
-*/
+// Intro sequence scene procedures - public header file
 
 #ifndef SAGA_ITE_INTROPROC_MOD_H_
 #define SAGA_ITE_INTROPROC_MOD_H_
@@ -37,4 +32,4 @@ int ITE_IntroRegisterLang(void);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_ITE_INTROPROC_MOD_H_ */
+#endif
