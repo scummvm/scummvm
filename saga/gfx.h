@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Graphics maniuplation routines - private header file
 
- Notes: 
-*/
+// Graphics maniuplation routines - private header file
 
 #ifndef SAGA_GFX_H_
 #define SAGA_GFX_H_
@@ -41,5 +36,4 @@ namespace Saga {
 
 } // End of namespace Saga
 
-#endif				/* R_GFX_H_ */
-/* end "r_gfx_h_ */
+#endif
