@@ -4943,7 +4943,7 @@ void SimonState::playMusic(uint music)
 	/* Simon 1 dos talkie music doesn't detect correct size of music data */
 	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
-	const char *s2 = gss->voc_filename;
+	const char *s2 = gss->wav_filename;
 	File music_file;
 	music_file.open(s2, _gameDataPath);
 	if (music_file.isOpen() == true) {	
