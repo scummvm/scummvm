@@ -1508,6 +1508,14 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	case 7:
 		unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
+	// FIXME implement these codecs...
+	// 8/9 used in 3do version of puttputt joins the parade maybe others
+	case 8:
+	case 9:
+	// used in amiga version of Monkey Island
+	case 10:
+		error("decompressBitmap: Graphics codec %d not yet supported\n", code);
+		break;
 
 	case 14:
 	case 15:
