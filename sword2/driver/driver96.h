@@ -1231,6 +1231,10 @@ typedef int BOOL;
 //	---------------------
 //
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
 typedef struct
 {
 	uint16 buttons;
@@ -1241,7 +1245,7 @@ typedef struct
 	uint16	w;
 	uint16	h;
 	uint32	offset[2];	// 2 is arbitrary
-} _parallax;
+} GCC_PACK _parallax;
 
 //	The _spriteInfo structure is used to tell the driver96 code what attributes
 //	are linked to a sprite for drawing.  These include position, scaling and
@@ -1366,6 +1370,11 @@ typedef struct {
     uint32 dwTotalVirtual;
     uint32 dwAvailVirtual;
 } GCC_PACK SVM_MEMORYSTATUS;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
 
 //
 //	Function Prototypes
