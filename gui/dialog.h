@@ -54,6 +54,9 @@ public:
 		{}
 	virtual ~Dialog();
 
+	virtual void open();
+	virtual void close();
+
 	virtual void draw();
 
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
@@ -71,7 +74,6 @@ public:
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
-	void close();
 
 	void addResText(int x, int y, int w, int h, int resID);
 	void addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey);

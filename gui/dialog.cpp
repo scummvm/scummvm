@@ -57,6 +57,24 @@ void Dialog::teardownScreenBuf()
 	}
 }
 
+void Dialog::open()
+{
+	_gui->openDialog(this);
+}
+
+void Dialog::close()
+{
+	if (_mouseWidget) {
+		_mouseWidget->handleMouseLeft(0);
+		_mouseWidget = 0;
+	}
+	if (_focusedWidget) {
+		_focusedWidget->lostFocus();
+		_focusedWidget = 0;
+	}
+	_gui->closeTopDialog();
+}
+
 void Dialog::draw()
 {
 	Widget *w = _firstWidget;
@@ -218,13 +236,6 @@ Widget *Dialog::findWidget(int x, int y)
 		w = w->_next;
 	}
 	return w;
-}
-
-void Dialog::close()
-{
-	_mouseWidget = 0;
-	_focusedWidget = 0;
-	_gui->closeTopDialog();
 }
 
 void Dialog::addResText(int x, int y, int w, int h, int resID)

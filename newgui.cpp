@@ -48,35 +48,35 @@ void NewGui::pauseDialog()
 {
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(this);
-	openDialog(_pauseDialog);
+	_pauseDialog->open();
 }
 
 void NewGui::saveloadDialog()
 {
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(this);
-	openDialog(_saveLoadDialog);
+	_saveLoadDialog->open();
 }
 
 void NewGui::aboutDialog()
 {
 	if (!_aboutDialog)
 		_aboutDialog = new AboutDialog(this);
-	openDialog(_aboutDialog);
+	_aboutDialog->open();
 }
 
 void NewGui::optionsDialog()
 {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(this);
-	openDialog(_optionsDialog);
+	_optionsDialog->open();
 }
 
 void NewGui::soundDialog()
 {
 	if (!_soundDialog)
 		_soundDialog = new SoundDialog(this);
-	openDialog(_soundDialog);
+	_soundDialog->open();
 }
 
 void NewGui::loop()
