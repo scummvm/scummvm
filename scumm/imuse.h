@@ -23,6 +23,8 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
+#include "imuse_digi.h"
+
 class IMuseInternal;
 class MidiDriver;
 class OSystem;
@@ -67,68 +69,6 @@ public:
 	// Factory methods
 	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) { return create(syst, midi, NULL); }
-};
-
-#define MAX_DIGITAL_CHANNELS 8
-#define MAX_IMUSE_JUMPS 1
-#define MAX_IMUSE_REGIONS 3
-
-class IMuseDigital {
-private:
-
-	struct region {
-		uint32 _offset;		// begin of region
-		uint32 _length;		// lenght of region
-	};
-
-	struct jump {
-		uint32 _offset;		// jump position
-		uint32 _dest;			// jump to 
-		uint32 _id;				// id of jump
-		uint32 _numLoops;	// allmost 500 except one value: 2
-	};
-
-	struct channel {
-		int8 _volumeRight;
-		int8 _volume;
-		int8 _volumeFade;
-		int8 _volumeFadeParam;
-		int8 _volumeFadeStep;
-		uint32 _delay;
-		bool _isJump;
-		uint32 _numLoops;
-		uint32 _offsetStop;
-		jump _jump[MAX_IMUSE_JUMPS];
-		uint32 _numJumps;
-		region _region[MAX_IMUSE_REGIONS];
-		uint32 _numRegions;
-		uint32 _offset;
-		byte *_data;
-		uint32 _freq;
-		uint32 _channels;
-		uint32 _bits;
-		uint32 _size;
-		int32 _idSound;
-		uint32 _mixerSize;
-		uint8 _mixerFlags;
-		bool _used;
-		bool _toBeRemoved;
-		bool _initialized;
-	} _channel[MAX_DIGITAL_CHANNELS];
-
-	Scumm *_scumm;
-	bool _pause;
-
-public:
-	IMuseDigital(Scumm *scumm);
-	~IMuseDigital();
-	void handler();
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAll();
-	void pause(bool pause);
-	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
-	int getSoundStatus(int sound);
 };
 
 #endif

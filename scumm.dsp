@@ -351,6 +351,14 @@ SOURCE=.\scumm\imuse.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\imuse_digi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\imuse_digi.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\instrument.cpp
 # End Source File
 # Begin Source File
@@ -456,3 +464,4 @@ SOURCE=.\scumm\verbs.h
 # End Group
 # End Target
 # End Project
+
