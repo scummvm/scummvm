@@ -49,8 +49,10 @@ static const GameSpecificSettings simon1_settings = {
 	0,														/* SOUND_INDEX_BASE */
 	"SIMON.GME",									/* gme_filename */
 	"SIMON.WAV",									/* wav_filename */
-	"SIMON.VOC",									/* wav_filename2 */
-	"EFFECTS.VOC",									/* effects_filename */
+	"SIMON.VOC",									/* voc_filename */
+	"SIMON.MP3",									/* mp3_filename */
+	"EFFECTS.VOC",									/* voc_effects_filename */
+	"EFFECTS.MP3",									/* mp3_effects_filename */
 	"GAMEPC",											/* gamepc_filename */
 };
 
@@ -68,8 +70,10 @@ static const GameSpecificSettings simon1demo_settings = {
 	0,														/* SOUND_INDEX_BASE */
 	"",									/* gme_filename */
 	"",									/* wav_filename */
-	"",									/* wav_filename2 */
-	"",									/* effects_filename */
+	"",									/* voc_filename */
+	"",									/* mp3_filename */
+	"",									/* voc_effects_filename */
+	"",									/* mp3_effects_filename */
 	"GDEMO",											/* gamepc_filename */
 };
 
@@ -87,8 +91,10 @@ static const GameSpecificSettings simon2win_settings = {
 	1660 / 4,											/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
 	"SIMON2.WAV",									/* wav_filename */
-	"SIMON2.VOC",									/* wav_filename2 */
-	"",
+	"SIMON2.VOC",									/* voc_filename */
+	"SIMON2.MP3",									/* mp3_filename */
+	"",										/* voc_effects_filename */
+	"",										/* mp3_effects_filename */
 	"GSPTR30",										/* gamepc_filename */
 };
 
@@ -106,8 +112,10 @@ static const GameSpecificSettings simon2dos_settings = {
 	1660 / 4,											/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
 	"",										/* wav_filename */
-	"",
-	"",
+	"",										/* voc_filename */
+	"",										/* mp3_filename */
+	"",										/* voc_effects_filename */
+	"",										/* mp3_effects_filename */
 	"GAME32",											/* gamepc_filename */
 };
 
@@ -4649,25 +4657,37 @@ void SimonState::initSound()
 {
 	/* only read voice file in windows game */
 	if (_game & GAME_WIN) {
+		const char *m = gss->mp3_filename;
 		const char *s = gss->wav_filename;
-		const char *s2 = gss->wav_filename2;
-		const char *e = gss->effects_filename;
+		const char *s2 = gss->voc_filename;
+		const char *e = gss->voc_effects_filename;
+		const char *me = gss->mp3_effects_filename;
 
 		_voice_offsets = NULL;
 
 		_voice_file = new File();
-		_voice_file->open(s, _gameDataPath);
+#ifdef USE_MAD
+		_voice_file->open(m, _gameDataPath);
 		if (_voice_file->isOpen() == false) {
-			warning("Cannot open voice file %s, trying %s", s, s2);
-			if (s2) {
-				_voice_file->open(s2, _gameDataPath);
-				if (_voice_file->isOpen() == false) {
-					warning("Cannot open voice file %s", s2);
+#endif
+			_voice_file->open(s, _gameDataPath);
+			if (_voice_file->isOpen() == false) {
+				warning("Cannot open voice file %s, trying %s", s, s2);
+				if (s2) {
+					_voice_file->open(s2, _gameDataPath);
+					if (_voice_file->isOpen() == false) {
+						warning("Cannot open voice file %s", s2);
+						return;
+					}
+				} else
+
 					return;
-				}
-			} else
+			}
+#ifdef USE_MAD
+			else
 				return;
 		}
+#endif
 
 		_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
 		if (_voice_offsets == NULL)
@@ -4678,7 +4698,15 @@ void SimonState::initSound()
 
 		_effects_offsets = NULL;
 		_effects_file = new File();
-		_effects_file->open(e, _gameDataPath);
+
+#ifdef USE_MAD
+		_effects_file->open(me, _gameDataPath);
+		if (_effects_file->isOpen() == false ) {
+#endif
+			_effects_file->open(e, _gameDataPath);
+#ifdef USE_MAD
+		}
+#endif
 		if (_effects_file->isOpen() == true)
 		{
 			_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
@@ -4750,9 +4778,24 @@ void SimonState::playVoice(uint voice)
 	_mixer->stop(_voice_sound);
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
-	const char *s2 = gss->wav_filename2;
+#ifdef USE_MAD
+	const char *m = gss->mp3_filename;
+	File music_file;
+	music_file.open(m, _gameDataPath);
+	if (music_file.isOpen() == true) {
+
+		uint32 size = _voice_offsets[voice+1] - _voice_offsets[voice];
+
+		byte *sound = (byte *)malloc(size);
+		_voice_file->read(sound, size);
+
+		_mixer->playMP3(&_voice_sound, sound, size, SoundMixer::FLAG_AUTOFREE);
+	} else {
+#endif	
+	const char *s2 = gss->voc_filename;
 	File music_file;
 	music_file.open(s2, _gameDataPath);
+
 	if (music_file.isOpen() == false) {			/* WAVE audio */
 		WaveHeader wave_hdr;
 		uint32 data[2];
@@ -4802,6 +4845,9 @@ void SimonState::playVoice(uint voice)
 
 		_mixer->playRaw(&_voice_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 	}
+#ifdef USE_MAD
+	}
+#endif
 }
 
 
@@ -4809,6 +4855,20 @@ void SimonState::playSound(uint sound)
 {
 	if (_game & GAME_WIN) {
 		if (_effects_offsets) {			/* VOC sound file */
+#ifdef USE_MAD
+			const char *m = gss->mp3_filename;
+			File music_file;
+			music_file.open(m, _gameDataPath);
+			if (music_file.isOpen() == true) {
+				_effects_file->seek(_effects_offsets[sound], SEEK_SET);
+				uint32 size = _effects_offsets[sound+1] - _effects_offsets[sound];
+
+				byte *buffer = (byte *)malloc(size);
+				_effects_file->read(buffer, size);
+
+				_mixer->playMP3(&_effects_sound, buffer, size, SoundMixer::FLAG_AUTOFREE);
+			} else {
+#endif
 			VocHeader voc_hdr;
 			VocBlockHeader voc_block_hdr;
 			uint32 size;
@@ -4832,11 +4892,14 @@ void SimonState::playSound(uint sound)
 			_effects_file->read(buffer, size);
 
 			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
+#ifdef USE_MAD
+			}
+#endif
 		} else {
 		/* FIXME: not properly implemented */
 		/* Simon 2 dos talkie sfx aren't supported */
 		/* Simon 2 dos sfx isn't supported */
-		const char *s2 = gss->wav_filename2;
+		const char *s2 = gss->voc_filename;
 		File music_file;
 		music_file.open(s2, _gameDataPath);
 		if (music_file.isOpen() == false) {
@@ -4877,35 +4940,42 @@ void SimonState::playSound(uint sound)
 void SimonState::playMusic(uint music)
 {
 	/* FIXME: not properly implemented */
+	/* Simon 1 dos talkie music doesn't detect correct size of music data */
 	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
-	const char *s2 = gss->wav_filename2;
+	const char *s2 = gss->voc_filename;
 	File music_file;
 	music_file.open(s2, _gameDataPath);
-	if (music_file.isOpen() == false) {
-	
+	if (music_file.isOpen() == true) {	
 		midi.shutdown();
 		
 		if (_game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			File *f = _game_file;
 			midi.read_all_songs(f);
-		} else {
-			char buf[50];
-			File *f = new File();
-			sprintf(buf, "MOD%d.MUS", music);
-			f->open(buf, _gameDataPath);
-			if (f->isOpen() == false) {
-				warning("Cannot load music from '%s'", buf);
-				return;
-			}
-			midi.read_all_songs_old(f);
-			delete f;
 		}
 	
 		midi.initialize();
 		midi.play();
 	} else {
+		if (_game == GAME_SIMON1DOS) {
+
+		midi.shutdown();
+
+		char buf[50];
+		File *f = new File();
+		sprintf(buf, "MOD%d.MUS", music);
+		f->open(buf, _gameDataPath);
+		if (f->isOpen() == false) {
+			warning("Cannot load music from '%s'", buf);
+			return;
+		}
+		midi.read_all_songs_old(f);
+		delete f;
+
+		midi.initialize();
+		midi.play();
+		}
 		if (_game == GAME_SIMON1WIN) {
 
 		midi.shutdown();

@@ -131,9 +131,11 @@ struct GameSpecificSettings {
 	uint SOUND_INDEX_BASE;
 	const char *gme_filename;
 	const char *wav_filename;
-	const char *wav_filename2;
-	const char *effects_filename;
-	const char *gamepc_filename;
+	const char *voc_filename;
+	const char *mp3_filename;
+	const char *voc_effects_filename;
+	const char *mp3_effects_filename;
+ 	const char *gamepc_filename;
 };
 
 #endif
