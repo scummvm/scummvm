@@ -382,6 +382,9 @@ void Sound::playSound(int soundID) {
 		}
 	
 	}
+	
+	if (_scumm->_features & GF_OLD_BUNDLE)
+		return;	// FIXME
 
 	if (_scumm->_imuse) {
 		_scumm->getResourceAddress(rtSound, soundID);
