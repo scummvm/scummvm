@@ -586,22 +586,22 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
-	int32 pos = getPosInMs(kTalkSoundID);
+//	int32 pos = getPosInMs(kTalkSoundID);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
-	int32 pos = getPosInMs(kTalkSoundID);
+//	int32 pos = getPosInMs(kTalkSoundID);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth() {
-	int32 pos = getPosInMs(_curMusicId);
+//	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight() {
-	int32 pos = getPosInMs(_curMusicId);
+//	int32 pos = getPosInMs(_curMusicId);
 	return _scumm->_rnd.getRandomNumber(255);
 }
 
