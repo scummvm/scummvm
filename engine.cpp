@@ -184,6 +184,8 @@ void Engine::mainLoop() {
 
 		}
 
+		g_imuse->refreshScripts();
+
 		g_driver->flipBuffer();
 
 		// don't kill CPU
