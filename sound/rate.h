@@ -42,14 +42,23 @@ typedef uint32 st_rate_t;
 #define ST_SUCCESS (0)
 
 static inline void clampedAdd(int16& a, int b) {
-	register int val = a + b;
+	register int val;
+#ifdef OUTPUT_UNSIGNED_AUDIO
+	val = (a ^ 0x8000) + b;
+#else
+	val = a + b;
+#endif
 
 	if (val > ST_SAMPLE_MAX)
 		val = ST_SAMPLE_MAX;
 	else if (val < ST_SAMPLE_MIN)
 		val = ST_SAMPLE_MIN;
 
+#ifdef OUTPUT_UNSIGNED_AUDIO
+	a = ((int16)val) ^ 0x8000;
+#else
 	a = val;
+#endif
 }
 
 // Q&D hack to get this SOX stuff to work
