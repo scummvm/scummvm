@@ -74,7 +74,7 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	Serializer ser(out, true, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
 #ifdef __PALM_OS__
-	if (_imuse) {	// moved here to prevent stack overflow on palmos
+	if (_imuse && _saveSound) {	// moved here to prevent stack overflow on palmos
 		_imuse->save_or_load(&ser, this);
 		_imuse->set_master_volume (_sound->_sound_volume_master);
 		_imuse->set_music_volume (_sound->_sound_volume_music);
@@ -136,7 +136,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	/* Nuke all resources */
 	for (i = rtFirst; i <= rtLast; i++)
-		if (i != rtTemp && i != rtBuffer)
+		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound))
 			for (j = 0; j < res.num[i]; j++) {
 				nukeResource(i, j);
 				res.flags[i][j] = 0;
@@ -150,7 +150,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	Serializer ser(out, false, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
 #ifdef __PALM_OS__
-	if (_imuse) {	// moved here to prevent stack overflow on palmos
+	if (_imuse && _saveSound) {	// moved here to prevent stack overflow on palmos
 		_imuse->save_or_load(&ser, this);
 		_imuse->set_master_volume (_sound->_sound_volume_master);
 		_imuse->set_music_volume (_sound->_sound_volume_music);
@@ -586,7 +586,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	int var120Backup;
 	int var98Backup;
 
-	if (!s->isSaving()) {
+	if (!s->isSaving() && _saveSound) {
 		_sound->stopAllSounds();
 		if (_mixer) {
 			if (_imuseDigital) {
@@ -693,7 +693,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 	
 #ifndef __PALM_OS__// moved to ::loadState/saveState to prevent stack overflow on palmos
-	if (_imuse) {
+	if (_imuse && _saveSound) {
 		_imuse->save_or_load(s, this);
 		_imuse->set_master_volume (_sound->_sound_volume_master);
 		_imuse->set_music_volume (_sound->_sound_volume_music);

@@ -367,7 +367,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	tempMusic = 0;
 	_silentDigitalImuse = 0;
 	_noDigitalSamples = 0;
-	_saveSound = 0;
+	_saveSound = 1;
 	current_cd_sound = 0;
 	_maxBoxVertexHeap = 0;
 	_boxPathVertexHeapIndex = 0;
