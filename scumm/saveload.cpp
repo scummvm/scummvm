@@ -305,11 +305,10 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 
 		// vm.localvar grew from 25 to 40 script entries and then from
-		// 16 to 32 bit variables (but that wasn't reflect hered)... and
-		// THEN from 16 to 25 variables. However, this was incorrectly implemented
-		// here. But now we support two dimensional arrays properly here.
+		// 16 to 32 bit variables (but that wasn't reflect here)... and
+		// THEN from 16 to 25 variables.
 		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V8, VER_V8),
-		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V9, VER_V14),
+		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V9, VER_V14),
 
 		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
 		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
@@ -318,7 +317,11 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V15, VER_V17),
 		MK_OBSOLETE_ARRAY(Scumm, vm.localvar[39][0], sleUint16, 12, VER_V15, VER_V17),
 
-		MKARRAY2(Scumm, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V18),
+		// This was the first proper multi dimensional version of the localvars, with 32 bit values
+		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint32, 26, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V18, VER_V19),
+
+		// Then we doubled the script slots again, from 40 to 80
+		MKARRAY2(Scumm, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V20),
 
 
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER_V8),
@@ -373,6 +376,15 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(Scumm, _cursor.state, sleByte, VER_V8),
 		MKLINE(Scumm, gdi._cursorActive, sleByte, VER_V8),
 		MKLINE(Scumm, _currentCursor, sleByte, VER_V8),
+		MKARRAY(Scumm, _grabbedCursor[0], sleByte, 8192, VER_V20),
+		MKLINE(Scumm, _cursor.width, sleInt16, VER_V20),
+		MKLINE(Scumm, _cursor.height, sleInt16, VER_V20),
+		MKLINE(Scumm, _cursor.hotspotX, sleInt16, VER_V20),
+		MKLINE(Scumm, _cursor.hotspotY, sleInt16, VER_V20),
+		MKLINE(Scumm, _cursor.animate, sleByte, VER_V20),
+		MKLINE(Scumm, _cursor.animateIndex, sleByte, VER_V20),
+		MKLINE(Scumm, _mouse.x, sleInt16, VER_V20),
+		MKLINE(Scumm, _mouse.y, sleInt16, VER_V20),
 
 		MKLINE(Scumm, _doEffect, sleByte, VER_V8),
 		MKLINE(Scumm, _switchRoomEffect, sleByte, VER_V8),
@@ -529,10 +541,17 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (!s->isSaving() && savegameVersion < VER_V14)
 		upgradeGfxUsageBits();
 
+	if (!s->isSaving() && savegameVersion >= VER_V20) {
+		updateCursor();
+		_system->warp_mouse(_mouse.x, _mouse.y);
+	}
+
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
 
 	if (savegameVersion < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
+	else if (savegameVersion < VER_V20)
+		s->saveLoadArrayOf(vm.slot, 40, sizeof(vm.slot[0]), scriptSlotEntries);
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 

@@ -55,7 +55,7 @@ extern Scumm *g_scumm;
 
 /* System Wide Constants */
 enum {
-	NUM_SCRIPT_SLOT = 40,
+	NUM_SCRIPT_SLOT = 80,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SENTENCE = 6,
 	NUM_SHADOW_PALETTE = 8,
