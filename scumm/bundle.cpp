@@ -94,10 +94,17 @@ Bundle::Bundle()
 {
 	_lastSong = -1;
 	_initializedImcTables = false;
+
+	_bundleVoiceTable = NULL;
+	_bundleMusicTable = NULL;
 }
 
 Bundle::~Bundle()
 {
+ if (_bundleVoiceTable)
+	free(_bundleVoiceTable);
+ if (_bundleMusicTable)
+	free(_bundleMusicTable);
 }
 
 void Bundle::initializeImcTables()
