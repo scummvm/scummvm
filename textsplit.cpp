@@ -77,7 +77,7 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
   #ifdef WIN32
   if (residual_vsscanf(currentLine(), field_count, fmt, va) < field_count)
   #else
-  if (std::vsscanf(currentLine(), fmt, va) < field_count)
+  if (vsscanf(currentLine(), fmt, va) < field_count)
   #endif
     error("Expected line of format `%s', got `%s'\n", fmt, currentLine());
   va_end(va);
