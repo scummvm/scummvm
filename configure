@@ -52,7 +52,7 @@ cc_check() {
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
 	echo "$CXX $TMPC -o $TMPO $@" >> "$TMPLOG"
-	rm -f "$TMPO"
+	rm -f "$TMPO$EXEEXT"
 	( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
@@ -701,7 +701,7 @@ else
   _def_mpeg2='#undef USE_MPEG2'
 fi
 echo "$_mpeg2"
-rm -f $TMPC $TMPO
+rm -f $TMPC $TMPO$EXEEXT
 
 #
 # Check which engines ("frontends") are to be built
