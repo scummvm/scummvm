@@ -160,6 +160,10 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	saveOrLoad(&ser, hdr.ver);
 	delete in;
 	
+	// Normally, _vm->_screenTop should always be >= 0, but for some old save games
+	// it is not, hence we check & correct it here.
+	if (_screenTop < 0)
+		_screenTop = 0;
 
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games

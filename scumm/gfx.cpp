@@ -373,21 +373,12 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 			vs->tdirty[i] = vs->height;
 			vs->bdirty[i] = 0;
 			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
-				// Simple optimizations: if two or more neighbouring strips form one bigger rectangle,
-				// blit them all at once.
+				// Simple optimizations: if two or more neighbouring strips
+				// form one bigger rectangle, coalesce them.
 				w += 8;
 				continue;
 			}
-			// handle vertically scrolling rooms
-			// FIXME: This is an evil hack; it cures some of the symptoms, but
-			// doesn't solve the core problem. Apparently some other parts of the
-			// code aren't properly aware of vertical scrolling. As a result,
-			// this hack is needed, but also sometimes actors leave traces when
-			// scrolling occurs, and other bad things happen.
-			if (_vm->_features & GF_NEW_CAMERA)
-				drawStripToScreen(vs, start * 8, w, 0, vs->height);
-			else
-				drawStripToScreen(vs, start * 8, w, top, bottom);
+			drawStripToScreen(vs, start * 8, w, top, bottom);
 			w = 8;
 		}
 		start = i + 1;
@@ -396,31 +387,28 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 
 /**
  * Blit the specified rectangle from the given virtual screen to the display.
+ * Note: t and b are in *virtual screen* coordinates, while x is relative to
+ * the *real screen*. This is due to the way tdirty/vdirty work: they are
+ * arrays which map 'strips' (sections of the real screen) to dirty areas as
+ * specified by top/bottom coordinate in the virtual screen.
  */
-void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
+void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
 	byte *ptr;
 	int height;
 
-	if (b <= t)
+	if (bottom <= top)
 		return;
 
-	if (t > vs->height)
-		t = 0;
+	if (top >= vs->height)
+		return;
 
-	if (b > vs->height)
-		b = vs->height;
+	assert(top >= 0 && bottom <= vs->height);	// Paranoia checks
 
-	height = b - t;
-	if (height > _vm->_screenHeight)
-		height = _vm->_screenHeight;
-
-	// Normally, _vm->_screenTop should always be >= 0, but for some old save games
-	// it is not, hence we check & correct it here.
-	if (_vm->_screenTop < 0)
-		_vm->_screenTop = 0;
-
-	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * vs->width;
-	_vm->_system->copy_rect(ptr, vs->width, x, vs->topline + t, w, height);
+	height = bottom - top;
+	// We don't clip height and width here, rather we rely on the backend to
+	// perform any needed clipping.
+	ptr = vs->screenPtr + (x + vs->xstart) + top * vs->width;
+	_vm->_system->copy_rect(ptr, vs->width, x, vs->topline + top - _vm->_screenTop, width, height);
 }
 
 #pragma mark -
@@ -1222,7 +1210,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * _numStrips + _vm->_screenStartStrip + strip) * 8;
+	offs = top * vs->width + vs->xstart + strip * 8;
 	byte *mask_ptr = _vm->getMaskBuffer(strip * 8, top, 0);
 	bgbak_ptr = vs->backBuf + offs;
 	backbuff_ptr = vs->screenPtr + offs;
@@ -2253,16 +2241,17 @@ void ScummEngine::transitionEffect(int a) {
 	int i, j;
 	int bottom;
 	int l, t, r, b;
+	const int height = MIN((int)virtscr[0].height, _screenHeight);
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
 		j = transitionEffects[a].stripTable[i];
 		if (j == 24)
-			j = virtscr[0].height / 8 - 1;
+			j = height / 8 - 1;
 		tab_2[i] = j;
 	}
 
-	bottom = virtscr[0].height / 8;
+	bottom = height / 8;
 	for (j = 0; j < transitionEffects[a].numOfIterations; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
