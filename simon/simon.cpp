@@ -8080,8 +8080,14 @@ bool SimonState::save_game(uint slot, const char *caption) {
 }
 
 char *SimonState::gen_savename(int slot) {
-	static char buf[128];
-	sprintf(buf, "SAVE.%.3d", slot);
+	static char buf[256];
+	const char *dir;
+
+	/* perhaps getenv should be added to OSystem */
+	dir = getenv("SCUMMVM_SAVEPATH");
+	if (dir == NULL) dir = "";
+
+	sprintf(buf, "%sSAVE.%.3d", dir, slot);
 	return buf;
 }
 
@@ -8094,7 +8100,7 @@ bool SimonState::load_game(uint slot) {
 
 	errno = 0;
 
-	f = fopen_maybe_lowercase(gen_savename(slot));
+	f = fopen(gen_savename(slot), "rb");
 	if (f==NULL)
 		return false;
 
