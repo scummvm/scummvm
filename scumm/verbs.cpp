@@ -202,7 +202,7 @@ void Scumm::restoreVerbBG(int verb) {
 void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	VirtScreen *vs;
 	VerbSlot *vst;
-	byte twobufs, *imptr;
+	byte twobufs, *imptr = 0;
 	int ydiff, xstrip;
 	int imgw, imgh;
 	int i, tmp;
@@ -223,8 +223,23 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 
 	obim = getResourceAddress(rtVerb, verb);
 	if (_features & GF_SMALL_HEADER) {
-		int obj;
-		obj = READ_LE_UINT16(obim + 6);
+		int room = READ_LE_UINT32(obim);
+		int object = READ_LE_UINT32(obim + 4);
+		byte *roomptr = getResourceAddress(rtRoom, room);
+		
+		assert(room == _roomResource);
+		
+		for (i = (_numLocalObjects-1); i > 0; i--) {
+			if (_objs[i].obj_nr == object) {
+				break;
+			}
+		}
+		assert(_objs[i].obj_nr == object);
+
+		imgw = (*(roomptr + _objs[i].OBCDoffset + 11));
+		imgh = (*(roomptr + _objs[i].OBCDoffset + 17)) >> 3;
+		imptr = (roomptr + _objs[i].OBIMoffset + 8);
+	} else if (_features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
 		imgw = (*(obim + size + 11));
@@ -255,6 +270,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 		if (!imptr)
 			error("No image for verb %d", verb);
 	}
+	assert(imptr);
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
 		if (tmp < gdi._numStrips)
@@ -313,7 +329,11 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_OLD_BUNDLE) {
+		uint32 *ptr = (uint32 *)createResource(rtVerb, verb, 8);
+		ptr[0] = TO_LE_32(room);
+		ptr[1] = TO_LE_32(object);
+	} else if (_features & GF_SMALL_HEADER) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
@@ -325,6 +345,7 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 				memcpy(getResourceAddress(rtVerb, verb) + size, obcdptr, size2);
+				return;
 			}
 		}
 	} else {
