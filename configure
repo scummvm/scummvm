@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# THIS SCRIPT DOESN'T DO ANYTHING YET!
+#
+# Some things this script could/should do when finished
+#
+# * detect the compiler name (g++/c++/...)
+# * detect whether its a GNU compiler or not (for compiler settings)
+# * detect the host platform and base settings on this:
+#   - #defines like -DUNIX and -DMACOSX
+#   - required libs like -lmingw32
+# * command line options to...
+#   - override the host settings (for cross compiles
+#   - select the desired backend (sdl, x11, ...)
+#   - whether to dump scripts (sets -DDUMP_SCRIPTS)
+#   - whether mad should be used (--enabled-mad) -> set LIBS/DEFINES
+# * detect whether the chose backend is available (e.g. call sdl-config)
+# * detect whether mad/ALSA/... are available
+# * detect endianess and write that into config.h
+# * detect size of data types and write that into config.h
+# * ....
+
+echo "Implement me!"
+
+
