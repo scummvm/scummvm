@@ -43,7 +43,8 @@ static const char USAGE_STRING[] = "NoUsageString"; // save more data segment sp
 #else
 static const char USAGE_STRING[] = 
 	"ScummVM - Graphical Adventure Game Interpreter\n"
-	"Syntax:\n"
+	"New USAGE_STRING is missing here!\n" 
+/*	"Syntax:\n"
 	"  scummvm [OPTIONS] [game]\n"
 	"Options:\n"
 	"  -p<path>       - Look for game in <path>\n"
@@ -90,6 +91,7 @@ static const char USAGE_STRING[] =
 	"\n"
 	"The meaning of long options can be inverted by prefixing them with \"no-\",\n"
 	"e.g. \"--no-aspect-ratio\".\n"
+*/
 ;
 #endif
 
@@ -411,7 +413,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
 			END_OPTION
 	
-			DO_LONG_OPTION("joystick")
+			DO_LONG_OPTION_OPT("joystick")
 				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 			END_OPTION
 			
@@ -565,7 +567,7 @@ bool GameDetector::detectMain() {
 	}
 
 	if (!detectGame()) {
-		warning("%s is an invalid target. Use the -z parameter to list targets", _targetName.c_str());
+		warning("%s is an invalid target. Use the --list-targets option to list targets", _targetName.c_str());
 		return false;
 	}
 

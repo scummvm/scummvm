@@ -315,6 +315,8 @@ arguments - see the next section.
 
 5.1) Command Line Options:
 ---- ---------------------
+
+THIS NEEDS TO BE UPDATED
         scummvm [OPTIONS] [GAME]
 
         [GAME]           - Short name of game to load. For example, 'monkey' for
