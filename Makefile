@@ -53,7 +53,6 @@ include $(srcdir)/Makefile.common
 config.mak: $(srcdir)/configure
 	@echo "You need to run ./configure before you can run make"
 	@echo "Either you haven't run it before or it has changed."
-	@echo "If you cannot run configure, use 'make -f Makefile.noconf'"
 	@exit 1
 
 scummvmico.o: scummvm.ico
