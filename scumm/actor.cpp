@@ -1117,6 +1117,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 				for (j = 1; j < NUM_ACTORS; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						Actor *a = derefActor(j);
+						assert(a->number == j);
 						if (fg)
 							a->needRedraw = true;
 						if (bg)
@@ -1136,6 +1137,7 @@ int Scumm::getActorFromPos(int x, int y)
 		return 0;
 	for (i = 1; i < NUM_ACTORS; i++) {
 		Actor *a = derefActor(i);
+		assert(a->number == i);
 		if (testGfxUsageBit(x >> 3, i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
 		}
@@ -1554,7 +1556,7 @@ void Scumm::resetActorBgs()
 	}
 
 	for (i = 1; i < NUM_ACTORS; i++) {
-		a = derefActor(j);
+		a = derefActor(i);
 		a->needBgReset = false;
 	}
 }

@@ -39,17 +39,23 @@ void Scumm::upgradeGfxUsageBits()
 
 void Scumm::setGfxUsageBit(int strip, int bit)
 {
-	gfxUsageBits[3 * strip + bit / 32] |= (1 << ((bit - 1) % 32));
+	assert(1 <= bit && bit <= 96);
+	bit--;
+	gfxUsageBits[3 * strip + bit / 32] |= (1 << (bit % 32));
 }
 
 void Scumm::clearGfxUsageBit(int strip, int bit)
 {
-	gfxUsageBits[3 * strip + bit / 32] &= ~(1 << ((bit - 1) % 32));
+	assert(1 <= bit && bit <= 96);
+	bit--;
+	gfxUsageBits[3 * strip + bit / 32] &= ~(1 << (bit % 32));
 }
 
 bool Scumm::testGfxUsageBit(int strip, int bit)
 {
-	return (gfxUsageBits[3 * strip + bit / 32] & (1 << ((bit - 1) % 32))) != 0;
+	assert(1 <= bit && bit <= 96);
+	bit--;
+	return (gfxUsageBits[3 * strip + bit / 32] & (1 << (bit % 32))) != 0;
 }
 
 bool Scumm::testGfxAnyUsageBits(int strip)
@@ -71,7 +77,9 @@ bool Scumm::testGfxOtherUsageBits(int strip, int bit)
 	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
 	int i;
 
-	bitmask[bit / 32] &= ~(1 << ((bit - 1) % 32));
+	assert(1 <= bit && bit <= 96);
+	bit--;
+	bitmask[bit / 32] &= ~(1 << (bit % 32));
 
 	for (i = 0; i < 3; i++)
 		if (gfxUsageBits[3 * strip + i] & bitmask[i])

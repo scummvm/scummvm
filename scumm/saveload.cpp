@@ -580,8 +580,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 	if (!s->isSaving() && savegameVersion < VER_V13) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit
 		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
-			if (_objs[i].fl_object_index == 0)
-				_objs[i].obj_nr = 0;
+			_objs[i].obj_nr = 0;
 		}
 
 	}
