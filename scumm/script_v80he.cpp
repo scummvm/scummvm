@@ -358,7 +358,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_unknownF8),
 		OPCODE(o72_unknownF9),
 		OPCODE(o72_unknownFA),
-		OPCODE(o72_unknownFB),
+		OPCODE(o7_unknownFB),
 		/* FC */
 		OPCODE(o7_unknownFC),
 		OPCODE(o6_invalid),

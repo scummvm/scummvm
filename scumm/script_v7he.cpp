@@ -1005,12 +1005,10 @@ void ScummEngine_v7he::o7_unknownFA() {
 }
 
 void ScummEngine_v7he::o7_unknownFB() {
-	byte b;
-	b = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (b) {
+	switch (subOp) {
 	case 246:
-	case 248:
 		pop();
 		pop();
 		pop();
@@ -1025,6 +1023,19 @@ void ScummEngine_v7he::o7_unknownFB() {
 		pop();
 		pop();
 		break;
+	case 248:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o7_unknownFB: default type %d", subOp);
 	}
 	debug(1,"o7_unknownFB stub");
 }

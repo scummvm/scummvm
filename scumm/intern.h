@@ -762,7 +762,6 @@ protected:
 	void o72_unknownF8();
 	void o72_unknownF9();
 	void o72_unknownFA();
-	void o72_unknownFB();
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {

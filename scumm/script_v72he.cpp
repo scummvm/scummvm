@@ -358,7 +358,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknownF8),
 		OPCODE(o72_unknownF9),
 		OPCODE(o72_unknownFA),
-		OPCODE(o72_unknownFB),
+		OPCODE(o7_unknownFB),
 		/* FC */
 		OPCODE(o7_unknownFC),
 		OPCODE(o6_invalid),
@@ -1939,31 +1939,6 @@ void ScummEngine_v72he::o72_unknownFA() {
 	int id = fetchScriptByte();
 
 	debug(1,"o72_unknownFA: (%d) %s", id, name);
-}
-
-void ScummEngine_v72he::o72_unknownFB() {
-	byte b;
-	b = fetchScriptByte();
-
-	switch (b) {
-	case 246:
-	case 248:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		break;
-	case 247:
-		pop();
-		pop();
-		break;
-	}
-	debug(1, "o72_unknownFB stub");
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
