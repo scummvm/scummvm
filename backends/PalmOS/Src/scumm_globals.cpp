@@ -42,9 +42,15 @@ static void GlbInitAll() {
 		CALL_INIT(PlayerV2)
 	}
 #endif
+#ifndef DISABLE_SIMON
+	if (gVars->globals[GBVARS_SIMON]) {
+		CALL_INIT(Simon_Simon)
+		CALL_INIT(Simon_Charset)
+	}
+#endif
 #ifndef DISABLE_QUEEN
 	if (gVars->globals[GBVARS_QUEEN]) {
-		CALL_INIT(Restables)
+		CALL_INIT(Queen_Restables)
 	}
 #endif
 }
@@ -64,9 +70,15 @@ static void GlbReleaseAll() {
 		CALL_RELEASE(PlayerV2)
 	}
 #endif
+#ifndef DISABLE_SIMON
+	if (gVars->globals[GBVARS_SIMON]) {
+		CALL_RELEASE(Simon_Simon)
+		CALL_RELEASE(Simon_Charset)
+	}
+#endif
 #ifndef DISABLE_QUEEN
 	if (gVars->globals[GBVARS_QUEEN]) {
-		CALL_RELEASE(Restables)
+		CALL_RELEASE(Queen_Restables)
 	}
 #endif
 }
