@@ -2676,15 +2676,27 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			fcs->textLength++;
-			fcs->textColumnOffset += 6;
-			if (name[name_len] == 'i' || name[name_len] == 'l')
-				fcs->textColumnOffset -= 2;
-			if (fcs->textColumnOffset >= 8) {
-				fcs->textColumnOffset -= 8;
-				fcs->textColumn++;
+			if (_language == 20) {
+				byte width = 6;
+				if (name[name_len] >= 64 && name[name_len] < 91)
+					width = _hebrew_char_widths [name[name_len]-64];
+				fcs->textLength++;
+				fcs->textColumnOffset -= width;
+				if (fcs->textColumnOffset >= width) {
+					fcs->textColumnOffset += 8;
+					fcs->textColumn++;
+				}
+			} else {
+				fcs->textLength++;
+				fcs->textColumnOffset += 6;
+				if (name[name_len] == 'i' || name[name_len] == 'l')
+					fcs->textColumnOffset -= 2;
+				if (fcs->textColumnOffset >= 8) {
+					fcs->textColumnOffset -= 8;
+					fcs->textColumn++;
+				}
+				name_len++;
 			}
-			name_len++;
 		}
 		// while_1_end
 

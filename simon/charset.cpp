@@ -244,7 +244,6 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 		if (_language == 20) { //Hebrew
 			if (c >= 64 && c < 91)
 				width = _hebrew_char_widths [c-64];
-
 			fcs->textColumnOffset  -= width;
 			if (fcs->textColumnOffset >= width) {
 				++fcs->textColumn;
