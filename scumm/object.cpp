@@ -785,7 +785,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
 		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
 		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
-		od->flag = READ_LE_UINT32(&imhd->v8.flag);
+		od->flag = (byte) READ_LE_UINT32(&imhd->v8.flag);
 
 	} else if (_version == 7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
