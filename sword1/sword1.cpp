@@ -1085,16 +1085,24 @@ void SwordEngine::go(void) {
 
 void SwordEngine::checkCd(void) {
 	uint8 needCd = _cdList[SwordLogic::_scriptVars[NEW_SCREEN]];
-	if ((needCd == 0) && (_systemVars.currentCD == 0))
-		needCd = 1;
-	if (needCd != _systemVars.currentCD) {
-		_systemVars.currentCD = needCd;
-		if (_systemVars.runningFromCd) {
+	if (needCd == 0) {
+		if (_systemVars.currentCD == 0)
+			needCd = 1;
+		else
+			needCd = _systemVars.currentCD;
+	}
+	if (_systemVars.runningFromCd) {
+		if (!_systemVars.currentCD) {
+			_systemVars.currentCD = needCd;
+			_control->askForCd();
+		} else if (_systemVars.currentCD != needCd) {
 			_music->startMusic(0, 0);
 			_sound->closeCowSystem();
+			_systemVars.currentCD = needCd;
 			_control->askForCd();
 		}
-	}
+	} else
+		_systemVars.currentCD = needCd;
 }
 
 uint8 SwordEngine::mainLoop(void) {
