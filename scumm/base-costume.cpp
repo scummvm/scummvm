@@ -28,7 +28,10 @@ byte BaseCostumeRenderer::drawCostume(const CostumeData &cost) {
 	int i;
 	byte result = 0;
 
-	if (_vm->_features & GF_OLD_BUNDLE) {
+	if (_vm->_version == 1) {
+		_xmove = 0;
+		_ymove = 0;
+	} else if (_vm->_features & GF_OLD_BUNDLE) {
 		_xmove = -72;
 		_ymove = -100;
 	} else {

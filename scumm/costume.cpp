@@ -304,51 +304,48 @@ warning("c64_ignorePakCols(%d) - this needs testing", num);
 void CostumeRenderer::procC64() {
 	const byte *src;
 	byte *dst;
+	byte len;
+	int y;
 	byte color;
-	byte len = 0;
 
-	int y = 0;
+	y = 0;
 	src = _srcptr;
 	dst = v1.destptr;
 	len = v1.replen;
 	color = v1.repcolor;
 
-	for (int x = 0; x < (_width >> 3); x++) {
+	for (int x = 0; x < _width; x += 8) {
 		color = *src++;
 		if (color & 0x80) {
 			len = color & 0x7f;
 			color = *src++;
 			while (len--) {
-//				for (int i = 0; i < 8; i++)
-				{
-					dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
-					dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
-					dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
-					dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
-					dst += _outwidth;
-					y++;
-				}
+				if ((color >> 6) & 3) dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
+				if ((color >> 4) & 3) dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
+				if ((color >> 2) & 3) dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
+				if ((color >> 0) & 3) dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
+				dst += _outwidth;
+				y++;
 				if (y >= _height) {
 					y = 0;
-					dst = v1.destptr + (x << 3);
+					v1.destptr += 8;
+					dst = v1.destptr;
 				}
 			}
 		} else {
 			len = color;
 			while (len--) {
 				color = *src++;
-//				for (int i = 0; i < 8; i++)
-				{
-					dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
-					dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
-					dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
-					dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
-					dst += _outwidth;
-					y++;
-				}
+				if ((color >> 6) & 3) dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
+				if ((color >> 4) & 3) dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
+				if ((color >> 2) & 3) dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
+				if ((color >> 0) & 3) dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
+				dst += _outwidth;
+				y++;
 				if (y >= _height) {
 					y = 0;
-					dst = v1.destptr + (x << 3);
+					v1.destptr += 8;
+					dst = v1.destptr;
 				}
 			}
 		}
@@ -583,10 +580,10 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 			if (_vm->_version == 1) {
 				_width = _srcptr[0] * 8;
 				_height = _srcptr[1];
-				xmoveCur = _xmove + _srcptr[2] * 8;
-				ymoveCur = _ymove + _srcptr[3];
-				_xmove += _srcptr[4] * 8;
-				_ymove -= _srcptr[5];
+				xmoveCur = _xmove + (int8)_srcptr[2] * 8;
+				ymoveCur = _ymove - (int8)_srcptr[3];
+				_xmove += (int8)_srcptr[4] * 8;
+				_ymove -= (int8)_srcptr[5];
 				_srcptr += 6;
 			} else {
 				costumeInfo = (const CostumeInfo *)_srcptr;
