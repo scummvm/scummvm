@@ -677,7 +677,7 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), (flags & SoundMixer::FLAG_STEREO) != 0);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -768,7 +768,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), (flags & SoundMixer::FLAG_STEREO) != 0);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo());
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -1123,7 +1123,7 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggV
 	// Get a rate converter instance
 	vi = ov_info(ov_file, -1);
 	assert(vi->channels == 1 || vi->channels == 2);
-	_converter = makeRateConverter(vi->rate, mixer->getOutputRate(), vi->channels >= 2);
+	_converter = makeRateConverter(vi->rate, mixer->getOutputRate(), _input->isStereo());
 #else
 	_ov_file = ov_file;
 
