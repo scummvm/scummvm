@@ -623,8 +623,11 @@ void Scumm_v5::o5_cursorCommand() {
 	case 10:											/* set cursor img */
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
-		if (_gameId != GID_LOOM256)
+		// cursor image in both Looms is based on image from charset
+		// omit for now
+		if ((_gameId != GID_LOOM256) && (_gameId != GID_LOOM)) {
 			setCursorImg(i, j, 1);
+		}
 		break;
 	case 11:											/* set cursor hotspot */
 		i = getVarOrDirectByte(0x80);
