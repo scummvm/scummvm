@@ -419,7 +419,15 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	}
 #endif
 
+FORCEINLINE uint32 READ_LE_UINT24(const void *ptr) {
+	const byte *b = (const byte *)ptr;
+	return (b[2] << 16) + (b[1] << 8) + (b[0]);
+}
 
+FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
+	const byte *b = (const byte*)ptr;
+	return (b[0] << 16) + (b[1] << 8) + (b[2]);
+}
 	
 #if defined(NEWGUI_256)
 	// 256 color only on PalmOS
