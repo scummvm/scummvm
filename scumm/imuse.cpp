@@ -2402,7 +2402,7 @@ bool Player::jump(uint track, uint beat, uint tick) {
 
 	topos = (beat - 1) * _ticks_per_beat + tick;
 
-	if (track == _track_index && topos >= _cur_pos) {
+	if (track == _track_index && topos >= _next_pos) {
 		scanpos = _song_offset + mtrk;
 		curpos = _next_pos;
 	} else {
@@ -2427,7 +2427,7 @@ bool Player::jump(uint track, uint beat, uint tick) {
 
 	_beat_index = beat;
 	_tick_index = tick;
-	_cur_pos = curpos; // topos;
+	_cur_pos = topos;
 	_next_pos = curpos;
 	_timer_counter = 0;
 	_song_offset = track_offs;
@@ -2840,8 +2840,8 @@ void Player::sequencer_timer() {
 				if (!song_ptr || _abort)
 					return;
 				_next_pos += get_delta_time(&song_ptr);
+				_song_offset = song_ptr - mtrk;
 			}
-			_song_offset = song_ptr - mtrk;
 		}
 	}
 }
