@@ -30,27 +30,15 @@ namespace ScummVM {
 
 	This small class is an helper for position and size values.
 */
-class Point {
-	friend class Rect;
-private:
-	int32 _x;	//!< The horizontal part of the point
-	int32 _y;	//!< The vertical part of the point
-public:
-	Point() : _x(0), _y(0) {};
-	Point(const Point & p) : _x(p._x), _y(p._y) {};
-	explicit Point(int32 x, int32 y) : _x(x), _y(y) {};
-	Point & operator=(const Point & p) { _x = p._x; _y = p._y; return *this; };
-	bool operator==(const Point & p) const { return _x == p._x && _y == p._y; };
-	const int32 & getX() const { return _x; };
-	const int32 & getY() const { return _y; };
-	int32 & getX() { return _x; };
-	int32 & getY() { return _y; };
-	Point operator+(const Point & p) const { return Point(_x + p._x, _y+p._y); };
-	Point operator-(const Point & p) const { return Point(_x - p._x, _y-p._y); };
-	Point & operator+=(const Point & p) { _x += p._x; _y += p._y; return *this; };
-	Point & operator-=(const Point & p) { _x -= p._x; _y -= p._y; return *this; };
-	bool isOrigin() const { return _x == 0 && _y == 0; };
-	void set(int32 x, int32 y) { _x = x; _y = y; }
+struct Point {
+	int x;	//!< The horizontal part of the point
+	int y;	//!< The vertical part of the point
+
+	Point() : x(0), y(0) {};
+	Point(const Point & p) : x(p.x), y(p.y) {};
+	explicit Point(int x, int y) : x(x), y(y) {};
+	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
+	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
 };
 
 /*! 	@brief simple class for handling a rectangular zone.
@@ -58,23 +46,16 @@ public:
 	This small class is an helper for rectangles.
 	It is mostly used by the blitter class.
 */
-class Rect {
-private:
-	Point _topLeft;		//!< The point at the top left of the rectangle
-	Point _bottomRight;	//!< The point at the bottom right of the rectangle
-public:
-	Rect() : _topLeft(0, 0), _bottomRight(0,0) {}
-	Rect(int32 x, int32 y) : _topLeft(0, 0), _bottomRight(x, y) {}
-	Rect(int32 x1, int32 y1, int32 x2, int32 y2) : _topLeft(x1, y1), _bottomRight(x2, y2) {}
+struct Rect {
+	int top, left;		//!< The point at the top left of the rectangle (part of the rect).
+	int bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
+
+	Rect() : top(0), left(0), bottom(0), right(0) {}
+	Rect(int x, int y) : _topLeft(0, 0), _bottomRight(x, y) {}
+	Rect(int x1, int y1, int x2, int y2) : top(x1), left(y1), bottom(x2), right(y2) {}
 	Point size() const { return (_bottomRight - _topLeft); };
-	int32 width() const { return size()._x; }
-	int32 height() const { return size()._y; }
-	int32 left() const { return _topLeft._x; }
-	int32 right() const { return _bottomRight._x; }
-	int32 top() const { return _topLeft._y; }
-	int32 bottom() const { return _bottomRight._y; }
-	const Point & topLeft() const { return _topLeft; }
-	const Point & bottomRight() const { return _bottomRight; }
+	int width() const { return right - left; }
+	int height() const { return top - bottom; }
 
 	/*!	@brief check if given position is inside the rectangle
 		
@@ -83,8 +64,8 @@ public:
 		
 		@return true if the given position is inside the rectangle, false otherwise
 	*/
-	bool isInside(int32 x, int32 y) const {
-		return (_topLeft._x <= x) && (_bottomRight._x > x) && (_topLeft._y <= y) && (_bottomRight._y > y);
+	bool isInside(int x, int y) const {
+		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 	/*!	@brief check if given point is inside the rectangle
 		
@@ -93,10 +74,8 @@ public:
 		@return true if the given point is inside the rectangle, false otherwise
 	*/
 	bool isInside(const Point & p) const {
-		return (_topLeft._x <= p._x) && (_bottomRight._x > p._x) && (_topLeft._y <= p._y) && (_bottomRight._y > p._y);
+		return (left <= p.x) && (p.x < right) && (top <= p.y) && (p.y < bottom);
 	}
-
-	bool clip(Rect & r) const;
 };
 
 };	// End of namespace ScummVM
