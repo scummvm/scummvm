@@ -935,7 +935,7 @@ int SimonState::runScript()
 			}
 			break;
 
-		case 162:{
+		case 162:{									/* print string */
 				o_print_str();
 			}
 			break;
@@ -1649,7 +1649,7 @@ void SimonState::o_unk_120(uint a)
 	uint16 id = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&id;
-	vc_15_start_funkystruct_by_id();
+	vc_15_wakeup_id();
 	_lock_word &= ~0x4000;
 }
 

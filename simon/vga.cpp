@@ -36,17 +36,17 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_3_new_thread,
 	&SimonState::vc_4_dummy_op,
 	&SimonState::vc_5_skip_if_neq,
-	&SimonState::vc_6_maybe_skip_3_inv,
-	&SimonState::vc_7_maybe_skip_3,
-	&SimonState::vc_8_maybe_skip_2,
-	&SimonState::vc_9_maybe_skip,
+	&SimonState::vc_6_skip_ifn_sib_with_a,
+	&SimonState::vc_7_skip_if_sib_with_a,
+	&SimonState::vc_8_skip_if_parent_is,
+	&SimonState::vc_9_skip_if_unk3_is,
 	&SimonState::vc_10_draw,
 	&SimonState::vc_11_clear_pathfind_array,
-	&SimonState::vc_12_sleep_variable,
+	&SimonState::vc_12_delay,
 	&SimonState::vc_13_offset_x,
 	&SimonState::vc_14_offset_y,
-	&SimonState::vc_15_start_funkystruct_by_id,
-	&SimonState::vc_16_setup_funkystruct,
+	&SimonState::vc_15_wakeup_id,
+	&SimonState::vc_16_sleep_on_id,
 	&SimonState::vc_17_set_pathfind_item,
 	&SimonState::vc_18_jump_rel,
 	&SimonState::vc_19_chain_to_script,
@@ -55,7 +55,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_22_set_pal,
 	&SimonState::vc_23_set_pri,
 	&SimonState::vc_24_set_image_xy,
-	&SimonState::vc_25_del_sprite_and_get_out,
+	&SimonState::vc_25_halt_thread,
 	&SimonState::vc_26_set_window,
 	&SimonState::vc_27_reset,
 	&SimonState::vc_28_dummy_op,
@@ -66,7 +66,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_33_force_unlock,
 	&SimonState::vc_34_force_lock,
 	&SimonState::vc_35,
-	&SimonState::vc_36,
+	&SimonState::vc_36_saveload_thing,
 	&SimonState::vc_37_sprite_unk3_add,
 	&SimonState::vc_38_skip_if_var_zero,
 	&SimonState::vc_39_set_var,
@@ -376,19 +376,19 @@ void SimonState::vc_5_skip_if_neq()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_6_maybe_skip_3_inv()
+void SimonState::vc_6_skip_ifn_sib_with_a()			// vc_6_maybe_skip_3_inv
 {
 	if (!vc_maybe_skip_proc_3(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_7_maybe_skip_3()
+void SimonState::vc_7_skip_if_sib_with_a()			// vc_7_maybe_skip_3
 {
 	if (vc_maybe_skip_proc_3(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_8_maybe_skip_2()
+void SimonState::vc_8_skip_if_parent_is()			// vc_8_maybe_skip_2			
 {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -396,7 +396,7 @@ void SimonState::vc_8_maybe_skip_2()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_9_maybe_skip()
+void SimonState::vc_9_skip_if_unk3_is()				// vc_9_maybe_skip
 {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -997,7 +997,7 @@ void SimonState::vc_11_clear_pathfind_array()
 	memset(&_pathfind_array, 0, sizeof(_pathfind_array));
 }
 
-void SimonState::vc_12_sleep_variable()
+void SimonState::vc_12_delay()					//vc_12_sleep_variable
 {
 	uint num;
 
@@ -1027,8 +1027,7 @@ void SimonState::vc_14_offset_y()
 	_vga_sprite_changed++;
 }
 
-/* wakeup_id */
-void SimonState::vc_15_start_funkystruct_by_id()
+void SimonState::vc_15_wakeup_id()				//vc_15_start_funkystruct_by_id
 {
 	VgaSleepStruct *vfs = _vga_sleep_structs, *vfs_tmp;
 	uint16 id = vc_read_next_word();
@@ -1051,8 +1050,7 @@ void SimonState::vc_15_start_funkystruct_by_id()
 }
 
 
-/* sleep_on_id */
-void SimonState::vc_16_setup_funkystruct()
+void SimonState::vc_16_sleep_on_id()				//vc_16_setup_funkystruct
 {
 	VgaSleepStruct *vfs = _vga_sleep_structs;
 	while (vfs->ident)
@@ -1220,7 +1218,7 @@ void SimonState::vc_24_set_image_xy()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_25_del_sprite_and_get_out()
+void SimonState::vc_25_halt_thread()				//vc_25_del_sprite_and_get_out
 {
 	VgaSprite *vsp = find_cur_sprite();
 	while (vsp->id != 0) {
@@ -1392,7 +1390,7 @@ void SimonState::vc_35()
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_36()
+void SimonState::vc_36_saveload_thing()
 {
 	uint vga_res = vc_read_next_word();
 	uint mode = vc_read_next_word();
@@ -1731,7 +1729,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite)
 
 	vsp = find_cur_sprite();
 	if (vsp->id) {
-		vc_25_del_sprite_and_get_out();
+		vc_25_halt_thread();
 
 		vte = _vga_timer_list;
 		while (vte->delay != 0) {

@@ -2513,16 +2513,11 @@ void SimonState::o_wait_for_vga(uint a)
 
 		delay(10);
 
-		if (_game  & GAME_SIMON2)
-			if (_timer_1 > 1000) {
-				warning("wait timed out");
-				break;
-			} else {
-			if (_timer_1 > 500) {
-				warning("wait timed out");
-				break;
-			}
-		}
+//		if (_timer_1 >= 500) {
+//			warning("wait timed out");
+//			break;
+//		}
+
 	}
 //  warning("waiting on %d done", a);
 	_system->show_mouse(true);

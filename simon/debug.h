@@ -1012,7 +1012,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
-	"vd|SLEEP_UNTIL_SET",
+	"vd|DELAY_IF_NOT_EQ",
 	"d|SKIP_IF_BIT_CLEAR",
 	/* 44 */
 	"d|SKIP_IF_BIT_SET",
@@ -1096,7 +1096,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	/* 40 */
 	"vd|ADD_VAR",
 	"vd|SUB_VAR",
-	"vd|SLEEP_UNTIL_SET",
+	"vd|DELAY_IF_NOT_EQ",
 	"d|SKIP_IF_BIT_CLEAR",
 	/* 44 */
 	"d|SKIP_IF_BIT_SET",
