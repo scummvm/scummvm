@@ -21,6 +21,10 @@
 #ifndef __SCALE3X_H
 #define __SCALE3X_H
 
+#if defined(_MSC_VER)
+#define __restrict__
+#endif
+
 typedef unsigned char scale3x_uint8;
 typedef unsigned short scale3x_uint16;
 typedef unsigned scale3x_uint32;

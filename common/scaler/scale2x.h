@@ -21,6 +21,10 @@
 #ifndef __SCALE2X_H
 #define __SCALE2X_H
 
+#if defined(_MSC_VER)
+#define __restrict__
+#endif
+
 typedef unsigned char scale2x_uint8;
 typedef unsigned short scale2x_uint16;
 typedef unsigned scale2x_uint32;
