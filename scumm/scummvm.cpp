@@ -1209,11 +1209,13 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
-		if (_features & GF_HUMONGOUS)
+		if (_features & GF_HUMONGOUS) {
 			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-		else
+			VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
+		} else {
 			VAR(VAR_SOUNDPARAM) = 0;
-		VAR(VAR_SOUNDPARAM2) = 0;
+			VAR(VAR_SOUNDPARAM2) = 0;
+		}
 		VAR(VAR_SOUNDPARAM3) = 0;
 		if (_version >= 6 && VAR_V6_EMSSPACE != 0xFF)
 			VAR(VAR_V6_EMSSPACE) = 10000;
