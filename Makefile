@@ -29,7 +29,7 @@ LIBS    += `sdl-config --libs`
 # DEFINES += -DUNIX_X11
 # LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib
 # INCLUDES+= -I/usr/X11R6/include
-# LIBS    += -lpthread
+# LIBS    += -lpthread -lXext -lX11
 
 
 CPPFLAGS= $(DEFINES) $(INCLUDES)
