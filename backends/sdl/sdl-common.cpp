@@ -780,6 +780,10 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				}
 #endif
 			}
+			event->mouse.x = km.x;
+			event->mouse.y = km.y;
+			event->mouse.x /= _scaleFactor;
+			event->mouse.y /= _scaleFactor;
 			return true;
 
 		case SDL_VIDEOEXPOSE:
