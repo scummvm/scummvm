@@ -197,11 +197,17 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
-	do {
-		memcpy(dst, buf, w);
-		dst += _screenWidth;
-		buf += pitch;
-	} while (--h);
+
+	if (_screenWidth==pitch && pitch==w)
+		memcpy (dst, buf, h*w);
+	else
+	{
+		do {
+			memcpy(dst, buf, w);
+			dst += _screenWidth;
+			buf += pitch;
+		} while (--h);
+	}
 
 	SDL_UnlockSurface(_screen);
 }
