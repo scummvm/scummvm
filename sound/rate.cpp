@@ -89,7 +89,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 	}
 
 	opos_frac = 0;
-	opos = 0;
+	opos = 1;
 
 	/* increment */
 	incr = (inrate << FRAC_BITS) / outrate;
@@ -119,7 +119,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 	while (obuf < oend) {
 
 		// read enough input samples so that ipos > opos
-		while (ipos <= opos + 1) {
+		while (ipos <= opos) {
 
 			// Abort if we reached the end of the input buffer
 			if (input.eof())
@@ -136,7 +136,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (ipos > opos + 1) {
+		while (ipos > opos) {
 
 			// interpolate
 			tmpOut = (st_sample_t)(ilast[0] + (((icur[0] - ilast[0]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
