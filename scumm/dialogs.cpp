@@ -314,19 +314,22 @@ enum {
  */
 
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 124)
+	: ScummDialog(gui, scumm, 30, 18, 260, 162)
 {
-	addResText(0, 7, 260, 16, 1);
-//  addResText(10, 7, 240, 16, 2);
-//  addResText(10, 7, 240, 16, 3);
+	const int x = 196;
 
-	_saveButton = (PushButtonWidget *)addPushButton(200, 20, queryResString(4), kSaveCmd, 'S');
-	_loadButton = (PushButtonWidget *)addPushButton(200, 40, queryResString(5), kLoadCmd, 'L');
-	addButton(200, 60, queryResString(6), kPlayCmd, 'P');	// Play
-	addButton(200, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
-	addButton(200, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
+	// The headline
+	addResText(0, 7, 260, 16, 1);
 	
-	_savegameList = new ListWidget(this, 10, 20, 180, 90);
+	// The five buttons on the side
+	_saveButton = addPushButton(x, 20, queryResString(4), kSaveCmd, 'S');
+	_loadButton = addPushButton(x, 40, queryResString(5), kLoadCmd, 'L');
+	addButton(x, 60, queryResString(6), kPlayCmd, 'P');	// Play
+	addButton(x, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
+	addButton(x, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
+	
+	// The save game list
+	_savegameList = new ListWidget(this, 8, 20, 182, 134);
 }
 
 void SaveLoadDialog::open()
