@@ -77,7 +77,6 @@ protected:
 
 	SkyMusicBase *_skyMusic;
 	SkyIntro *_skyIntro;
-	int _midi; // necessary for music
 	
 public:
 	SkyEngine(GameDetector *detector, OSystem *syst);

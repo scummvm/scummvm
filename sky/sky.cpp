@@ -122,7 +122,6 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
-	_midi = detector->_game.midi;
 
 	_floppyIntro = ConfMan.getBool("floppy_intro");
 
@@ -256,7 +255,7 @@ void SkyEngine::initialise(void) {
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	int midiDriver = GameDetector::detectMusicDriver(_midi);
+	int midiDriver = GameDetector::detectMusicDriver(skySetting.midi);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);
