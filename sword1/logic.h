@@ -56,7 +56,7 @@ public:
 	int fnAddObject		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnEnterSection	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnPlaySequence	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-
+	int fnMegaSet		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
 private:
 	ObjectMan *_objMan;
@@ -94,7 +94,6 @@ private:
 	int fnForeground	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSort			(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnNoSprite		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnMegaSet		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnAnim			(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetFrame		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnFullAnim		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);

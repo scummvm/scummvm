@@ -215,6 +215,357 @@ void SwordEngine::startPositions(int32 startNumber) {
 		SwordLogic::_scriptVars[POCKET_28] = 1;
 		SwordLogic::_scriptVars[POCKET_29] = 1;
 	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==3)	// cafe
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 660;
+		SwordLogic::_scriptVars[CHANGE_Y] = 368;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_3;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==4)	// ready to use phone
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 463;
+		SwordLogic::_scriptVars[CHANGE_Y] = 391;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_4;
+
+		SwordLogic::_scriptVars[MOUE_TEXT] = 1;		// stop moue from entering ("Freeze...")
+		SwordLogic::_scriptVars[MOUE_NICO_FLAG] = 1;			// Moue gave George her number
+//		paris_flag=2;					// for Nico's phone script
+		SwordLogic::_scriptVars[PARIS_FLAG] = 5;	// to access room8 (cafe_repaired)
+		SwordLogic::_scriptVars[NICO_PHONE_FLAG] = 1;	// Nico's number is on envelope
+		SwordLogic::_scriptVars[TAILOR_PHONE_FLAG] = 1;	// Todryk's number is on envelope
+		SwordLogic::_scriptVars[WORKMAN_GONE_FLAG] = 1;	// Workman not here
+		SwordLogic::_scriptVars[ALBERT_INFO_FLAG] = 1;	// Albert has told us the tailor's number (for Nico's phone script)
+		SwordLogic::_scriptVars[SEEN_SEWERS_FLAG] = 1;
+
+		SwordLogic::_scriptVars[POCKET_30] = 1;
+		SwordLogic::_scriptVars[POCKET_31] = 1;
+		SwordLogic::_scriptVars[POCKET_32] = 1;
+		SwordLogic::_scriptVars[POCKET_33] = 1;
+		SwordLogic::_scriptVars[POCKET_34] = 1;
+		SwordLogic::_scriptVars[POCKET_35] = 1;
+		SwordLogic::_scriptVars[POCKET_36] = 1;
+		SwordLogic::_scriptVars[POCKET_37] = 1;
+		SwordLogic::_scriptVars[POCKET_38] = 1;
+		SwordLogic::_scriptVars[POCKET_39] = 1;
+
+		SwordLogic::_scriptVars[POCKET_40] = 1;
+		SwordLogic::_scriptVars[POCKET_41] = 1;
+		SwordLogic::_scriptVars[POCKET_42] = 1;
+		SwordLogic::_scriptVars[POCKET_43] = 1;
+		SwordLogic::_scriptVars[POCKET_44] = 1;
+		SwordLogic::_scriptVars[POCKET_45] = 1;
+		SwordLogic::_scriptVars[POCKET_46] = 1;
+		SwordLogic::_scriptVars[POCKET_47] = 1;
+		SwordLogic::_scriptVars[POCKET_48] = 1;
+		SwordLogic::_scriptVars[POCKET_49] = 1;
+
+		SwordLogic::_scriptVars[POCKET_50] = 1;
+		SwordLogic::_scriptVars[POCKET_51] = 1;
+		SwordLogic::_scriptVars[POCKET_52] = 1;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==5)	// court_yard
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 400;
+		SwordLogic::_scriptVars[CHANGE_Y] = 400;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_5;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==7)	// sewer_two
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 520;
+		SwordLogic::_scriptVars[CHANGE_Y] = 310;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_7;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==8)	// cafe_repaired
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 481;
+		SwordLogic::_scriptVars[CHANGE_Y] = 413;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_8;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==11)	// costumier
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 264;
+		SwordLogic::_scriptVars[CHANGE_Y] = 436;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_11;
+
+		_logic->fnAddObject(0,0,TISSUE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// HOTEL SECTION
+	else if (startNumber==12)	// hotel_street
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 730;
+		SwordLogic::_scriptVars[CHANGE_Y] = 460;
+		SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_12;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 6;
+
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+
+		SwordLogic::_scriptVars[NICO_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[NICO_PHONE_FLAG] = 1;
+		SwordLogic::_scriptVars[COSTUMES_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[HOTEL_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[AEROPORT_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[TAILOR_PHONE_FLAG] = 1;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==14)	// hotel_corridor
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 528;
+		SwordLogic::_scriptVars[CHANGE_Y] = 484;
+		SwordLogic::_scriptVars[CHANGE_DIR] = UP;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_14;
+
+		_logic->fnAddObject(0,0,HOTEL_KEY,0,0,0,0,0);
+		_logic->fnAddObject(0,0,MANUSCRIPT,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==17)	// hotel_assassin
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 714;
+		SwordLogic::_scriptVars[CHANGE_Y] = 484;
+		SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_17;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==18)	// gendarmerie
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 446;
+		SwordLogic::_scriptVars[CHANGE_Y] = 408;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_18;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 5;	// for Moue & Rosso
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// MUSEUM RAID
+	else if (startNumber==27)	// museum_street
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 300;
+		SwordLogic::_scriptVars[CHANGE_Y] = 510;
+		SwordLogic::_scriptVars[CHANGE_DIR] = UP_RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_27;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 12;	// for Lobineau in Museum
+		SwordLogic::_scriptVars[MANUSCRIPT_ON_TABLE_10_FLAG] = 1;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	// HOSPITAL SECTION
+	else if (startNumber==31)	// hospital_street
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 400;
+		SwordLogic::_scriptVars[CHANGE_Y] = 500;
+		SwordLogic::_scriptVars[CHANGE_DIR] = UP_RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_31;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 11;
+
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==32)	// hospital_desk (after we've found out where Marquet is)
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 405;
+		SwordLogic::_scriptVars[CHANGE_Y] = 446;
+		SwordLogic::_scriptVars[CHANGE_DIR] = UP_RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_32;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 11;
+
+		SwordLogic::_scriptVars[EVA_TEXT] = 1;		// talked to eva
+		SwordLogic::_scriptVars[EVA_MARQUET_FLAG] = 2;
+		SwordLogic::_scriptVars[EVA_NURSE_FLAG] = 4;
+		SwordLogic::_scriptVars[FOUND_WARD_FLAG] = 1;
+		SwordLogic::_scriptVars[CONSULTANT_HERE] = 1;
+
+		compact = (BsObject*)_objectMan->fetchObject(PLAYER);
+		_logic->fnMegaSet(compact,PLAYER,GEORGE_WLK,MEGA_WHITE,0,0,0,0);
+
+		SwordLogic::_scriptVars[GEORGE_CDT_FLAG] = WHT_TLK_TABLE;
+		SwordLogic::_scriptVars[GEORGE_TALK_FLAG] = 0;
+		SwordLogic::_scriptVars[WHITE_COAT_FLAG] = 1;
+		SwordLogic::_scriptVars[GEORGE_ALLOWED_REST_ANIMS] = 0;		// because wearing white coat now
+		
+		SwordLogic::_scriptVars[GOT_BENOIR_FLAG] = 1;
+
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==35)	// hospital_jacques
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 640;
+		SwordLogic::_scriptVars[CHANGE_Y] = 500;
+		SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_35;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 11;
+
+		SwordLogic::_scriptVars[EVA_TEXT] = 1;		// talked to eva
+		SwordLogic::_scriptVars[EVA_MARQUET_FLAG] = 2;
+		SwordLogic::_scriptVars[EVA_NURSE_FLAG] = 4;
+		SwordLogic::_scriptVars[FOUND_WARD_FLAG] = 1;
+		SwordLogic::_scriptVars[CONSULTANT_HERE] = 1;
+
+		compact = (BsObject*)_objectMan->fetchObject(PLAYER);
+		_logic->fnMegaSet(compact,PLAYER,GEORGE_WLK,MEGA_WHITE,0,0,0,0);
+
+		SwordLogic::_scriptVars[GEORGE_CDT_FLAG] = WHT_TLK_TABLE;
+		SwordLogic::_scriptVars[GEORGE_TALK_FLAG] = 0;
+		SwordLogic::_scriptVars[WHITE_COAT_FLAG] = 1;
+		SwordLogic::_scriptVars[GEORGE_ALLOWED_REST_ANIMS] = 0;		// because wearing white coat now
+		SwordLogic::_scriptVars[DOOR_34_OPEN] = 1;
+		
+		SwordLogic::_scriptVars[GOT_BENOIR_FLAG] = 2;
+		SwordLogic::_scriptVars[HOS_POS_FLAG] = 26;
+		SwordLogic::_scriptVars[BENOIR_FLAG] = 24;	// for 'george_enters_ward' script
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==36)	// montfaucon
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 300;
+		SwordLogic::_scriptVars[CHANGE_Y] = 480;
+		SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_36;
+
+		_logic->fnAddObject(0,0,LENS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		
+		SwordLogic::_scriptVars[MONTFAUCON_CONTROL_FLAG] = 1;
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==37)	// catacomb_sewer
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 592;
+		SwordLogic::_scriptVars[CHANGE_Y] = 386;
+		SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_37;
+
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,TRIPOD,0,0,0,0,0);
+		_logic->fnAddObject(0,0,GEM,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==38)	// catacomb_room
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 200;
+		SwordLogic::_scriptVars[CHANGE_Y] = 390;
+		SwordLogic::_scriptVars[CHANGE_DIR] = RIGHT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_38;
+
+		_logic->fnAddObject(0,0,TRIPOD,0,0,0,0,0);
+		_logic->fnAddObject(0,0,GEM,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==39)	// catacomb_meeting
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 636;
+		SwordLogic::_scriptVars[CHANGE_Y] = 413;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_39;
+
+		SwordLogic::_scriptVars[MEETING_FLAG] = 3;	// meeting finished
+
+		_logic->fnAddObject(0,0,TRIPOD,0,0,0,0,0);
+		_logic->fnAddObject(0,0,GEM,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==40)	// excavation_exterior
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 648;
+		SwordLogic::_scriptVars[CHANGE_Y] = 492;
+		SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_40;
+
+		SwordLogic::_scriptVars[NICO_PHONE_FLAG] = 1;
+		SwordLogic::_scriptVars[PARIS_FLAG] = 16;
+
+		_logic->fnAddObject(0,0,PLASTER,0,0,0,0,0);
+		_logic->fnAddObject(0,0,POLISHED_CHALICE,0,0,0,0,0);
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==48)	// templar_church
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 315;
+		SwordLogic::_scriptVars[CHANGE_Y] = 392;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_48;
+
+		_logic->fnAddObject(0,0,CHALICE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LENS,0,0,0,0,0);
+
+		SwordLogic::_scriptVars[CHALICE_FLAG] = 2;	// from end of Spain1, when George gets chalice
+		SwordLogic::_scriptVars[NEJO_TEXT] = 1;		// so priest is there
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==99)	// test text+speech on blank screen (sc99)
+	{
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_99;
+
+		// if (testingText)
+		if (1)
+		{
+//			lastLineNo = testTextSection*65536 + LastTextNumber(testTextSection);
+			SwordLogic::_scriptVars[LASTLINENO] = 146*65536 + _objectMan->lastTextNumber(146);	// don't finished until at last line in last section
+		}
+	}
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==80)	// Paris Map
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 645;
+		SwordLogic::_scriptVars[CHANGE_Y] = 160;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_80;
+
+		SwordLogic::_scriptVars[PARIS_FLAG] = 3;	// for Nico's appartment
+		SwordLogic::_scriptVars[NICO_CLOWN_FLAG] = 3;
+
+		SwordLogic::_scriptVars[NICO_DOOR_FLAG] = 2;	// for instant access to Nico's appartment
+
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PLASTER,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);	// for hospital
+
+		SwordLogic::_scriptVars[MANUSCRIPT_FLAG] = 1;
+
+		SwordLogic::_scriptVars[NICO_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[NICO_PHONE_FLAG] = 1;
+		SwordLogic::_scriptVars[COSTUMES_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[HOTEL_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[MUSEUM_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[HOSPITAL_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[MONTFACN_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[AEROPORT_ADDRESS_FLAG] = 1;
+		SwordLogic::_scriptVars[NERVAL_ADDRESS_FLAG] = 1;
+
+		SwordLogic::_scriptVars[IRELAND_MAP_FLAG] = 1;
+		SwordLogic::_scriptVars[SPAIN_MAP_FLAG] = 1;
+		SwordLogic::_scriptVars[SYRIA_FLAG] = 2;
+
+		SwordLogic::_scriptVars[TAILOR_PHONE_FLAG] = 1;
+	}
+	else
+	{
+		error("Can't start in location %d", startNumber);
+	}
+
 
 	compact = (BsObject*)_objectMan->fetchObject(PLAYER);
 	_logic->fnEnterSection(compact, PLAYER, startNumber, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
