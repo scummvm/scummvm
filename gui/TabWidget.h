@@ -40,6 +40,8 @@ protected:
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	
+	virtual int16	getChildY() const;
+
 // use Dialog::releaseFocus() when changing to another tab
 
 // Problem: how to add items to a tab?

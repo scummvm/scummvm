@@ -38,10 +38,12 @@ void Widget::draw() {
 
 	if (!isVisible() || !_boss->isVisible())
 		return;
+	
+	int oldX = _x, oldY = _y;
 
 	// Account for our relative position in the dialog
-	_x += _boss->getAbsX();
-	_y += _boss->getAbsY();
+	_x = getAbsX();
+	_y = getAbsY();
 
 	// Clear background (unless alpha blending is enabled)
 	if (_flags & WIDGET_CLEARBG)
@@ -74,8 +76,15 @@ void Widget::draw() {
 	// Flag the draw area as dirty
 	gui->addDirtyRect(_x, _y, _w, _h);
 
-	_x -= _boss->getAbsX();
-	_y -= _boss->getAbsY();
+	_x = oldX;
+	_y = oldY;
+
+	// Draw all children
+	Widget *w = _firstWidget;
+	while (w) {
+		w->draw();
+		w = w->_next;
+	}
 }
 
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {

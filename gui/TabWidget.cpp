@@ -42,16 +42,23 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	
 	// TODO: Dummy for now
 	addTab("Tab 1");
+	new ButtonWidget(this, 10, 20, kButtonWidth, 16, "Foo", 0, 0);
 	addTab("Tab 2");
+	new ButtonWidget(this, 20, 30, kButtonWidth, 16, "Bar", 0, 0);
 	addTab("Tab 3");
-	setActiveTab(1);
+	new PushButtonWidget(this, 30, 10, kButtonWidth, 16, "Qux", 0, 0);
+}
+
+int16 TabWidget::getChildY() const {
+	return getAbsY() + kTabHeight;
 }
 
 int TabWidget::addTab(const String &title) {
 	// TODO
 	Tab newTab = { title, NULL };
 	_tabs.push_back(newTab);
-	return _tabs.size() - 1;
+	setActiveTab(_tabs.size() - 1);
+	return _activeTab;
 }
 
 /*
@@ -63,9 +70,12 @@ void TabWidget::removeTab(int tabID) {
 void TabWidget::setActiveTab(int tabID) {
 	assert(0 <= tabID && tabID < _tabs.size());
 	if (_activeTab != tabID) {
+		// Exchange the widget lists, and switch to the new tab
+		if (_activeTab != -1)
+			_tabs[_activeTab].firstWidget = _firstWidget;
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
-		draw();
+		_boss->draw();
 	}
 }
 
@@ -94,7 +104,6 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	// like that.
 	return Widget::handleKeyDown(ascii, keycode, modifiers);
 }
-
 
 void TabWidget::drawWidget(bool hilite) {
 	// TODO
@@ -126,6 +135,6 @@ Widget *TabWidget::findWidget(int x, int y) {
 		return this;
 	} else {
 		// Iterate over all child widgets and find the one which was clicked
-		return Widget::findWidgetInChain(_firstWidget, x, y);
+		return Widget::findWidgetInChain(_firstWidget, x, y - kTabHeight);
 	}
 }

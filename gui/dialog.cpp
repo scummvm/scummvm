@@ -97,7 +97,6 @@ void Dialog::draw() {
 }
 
 void Dialog::drawDialog() {
-	Widget *w = _firstWidget;
 	
 	if (!isVisible())
 		return;
@@ -105,11 +104,14 @@ void Dialog::drawDialog() {
 	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
 	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
 
+	// Draw all children
+	Widget *w = _firstWidget;
 	while (w) {
 		w->draw();
 		w = w->_next;
 	}
 
+	// Flag the draw area as dirty
 	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 

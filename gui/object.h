@@ -60,12 +60,16 @@ protected:
 public:
 	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(0) { }
 
-	virtual bool 	isVisible() const = 0;
-
 	virtual int16	getAbsX() const		{ return _x; }
 	virtual int16	getAbsY() const		{ return _y; }
+	virtual int16	getChildX() const	{ return getAbsX(); }
+	virtual int16	getChildY() const	{ return getAbsY(); }
 	virtual uint16	getWidth() const	{ return _w; }
 	virtual uint16	getHeight() const	{ return _h; }
+
+	virtual bool 	isVisible() const = 0;
+
+	virtual void	draw() = 0;
 
 protected:
 	virtual void	releaseFocus() = 0;
