@@ -89,81 +89,19 @@ void AnimationState::updateDisplay(void) {
 
 #endif
 
-bool AnimationState::decodeFrame() {
-#ifdef USE_MPEG2
-	mpeg2_state_t state;
-	const mpeg2_sequence_t *sequence_i;
-	size_t size = (size_t) -1;
-
-	do {
-		state = mpeg2_parse(decoder);
-		sequence_i = info->sequence;
-
-		switch (state) {
-		case STATE_BUFFER:
-			size = mpgfile->read(buffer, BUFFER_SIZE);
-			mpeg2_buffer(decoder, buffer, buffer + size);
-			break;
-
-		case STATE_SLICE:
-		case STATE_END:
-			if (info->display_fbuf) {
-				/* simple audio video sync code:
-				 * we calculate the actual frame by taking the elapsed audio time and try
-				 * to stay inside +- 1 frame of this calculated frame number by dropping
-				 * frames if we run behind and delaying if we are too fast
-				 */
-
-				/* Avoid deadlock is sound was too far ahead */
-				if (bgSoundStream && !bgSound.isActive())
-					return false;
-
-				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) ||
-					frameskipped > 10) {
-					if (frameskipped > 10) {
-						warning("force frame %i redraw", framenum);
-						frameskipped = 0;
-					}
+void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
-					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+	_vm->_graphics->plotYUV(lut, width, height, dat);
+	// FIXME: We used to call setNeedFullRedraw() a bit later (that is,
+	// it was called by decodeFrame(), after the 'delay_msecs' calls, so
+	// after the syncing code. Not sure if moving it here causes any
+	// problems, and I have no way to test it. However I do not see why
+	// it should cause problems... of course that doesn't mean anything,
+	// only that I can't see that far :-)
+	_vm->_graphics->setNeedFullRedraw();
 #else
-					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+	plotYUV(lookup, width, height, dat);
 #endif
-
-					if (bgSoundStream) {
-						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
-							_sys->delay_msecs(10);
-					} else {
-						ticks += 83;
-						_vm->sleepUntil(ticks);
-					}
-
-#ifdef BACKEND_8BIT
-					_vm->_graphics->setNeedFullRedraw();
-#endif
-
-				} else {
-					warning("dropped frame %i", framenum);
-					frameskipped++;
-				}
-
-#ifdef BACKEND_8BIT
-				buildLookup(palnum + 1, lutcalcnum);
-#endif
-
-				framenum++;
-				return true;
-
-			}
-			break;
-
-		default:
-			break;
-		}
-	} while (size);
-#endif
-	return false;
 }
 
 MovieInfo MoviePlayer::_movies[] = {

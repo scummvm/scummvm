@@ -39,9 +39,8 @@ public:
 	AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys);
 	~AnimationState();
 
-	bool decodeFrame();
-
 private:
+	void drawYUV(int width, int height, byte *const *dat);
 
 #ifdef BACKEND_8BIT
 	void setPalette(byte *pal);

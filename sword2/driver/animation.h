@@ -37,8 +37,6 @@ public:
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();
 
-	bool decodeFrame();
-
 #ifndef BACKEND_8BIT
 	void drawTextObject(SpriteInfo *s, uint8 *src);
 	void clearDisplay();
@@ -46,6 +44,7 @@ public:
 #endif
 
 private:
+	void drawYUV(int width, int height, byte *const *dat);
 
 #ifdef BACKEND_8BIT
 	void setPalette(byte *pal);

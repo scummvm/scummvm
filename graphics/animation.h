@@ -123,8 +123,12 @@ public:
 	virtual ~BaseAnimationState();
 
 	bool init(const char *name);
+	bool decodeFrame();
+
 protected:
 	bool checkPaletteSwitch();
+	virtual void drawYUV(int width, int height, byte *const *dat) = 0;
+
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);
 	virtual void setPalette(byte *pal) = 0;
