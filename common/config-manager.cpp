@@ -282,15 +282,17 @@ int ConfigManager::getInt(const String &key, const String &dom) const {
 	String value(get(key, dom));
 	// Convert the string to an integer.
 	// TODO: We should perform some error checking.
-	long v = strtol(value.c_str(), 0, 10);
-	return (int)v;
+	if (value.c_str())
+		return (int)strtol(value.c_str(), 0, 10);
+	else
+		return 0;
 }
 
 bool ConfigManager::getBool(const String &key, const String &dom) const {
 	String value(get(key, dom));
 	// '1', 'true' and 'yes' are accepted as true values; everything else
 	// maps to value 'false'.
-	return (value == "true") || (value == "yes") || (value == "1");
+	return (value == trueStr) || (value == "yes") || (value == "1");
 }
 
 
