@@ -103,7 +103,7 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 #pragma mark -
 
 
-StackLock::StackLock(OSystem::MutexRef mutex, OSystem *syst, char *mutexName)
+StackLock::StackLock(OSystem::MutexRef mutex, OSystem *syst, const char *mutexName)
 	: _mutex(mutex), _syst(syst), _mutexName(mutexName) {
 	if (syst == 0)
 		_syst = g_system;

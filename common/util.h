@@ -81,12 +81,12 @@ public:
 class StackLock {
 	OSystem::MutexRef _mutex;
 	OSystem *_syst;
-	char *_mutexName;
+	const char *_mutexName;
 
 	void lock();
 	void unlock();
 public:
-	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0, char *mutexName = NULL);
+	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0, const char *mutexName = NULL);
 	~StackLock();
 };
 
