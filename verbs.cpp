@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 19:02:28  strigeus
+ * command line parameter support
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -54,7 +58,7 @@ void Scumm::checkExecVerbs() {
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat&0xC000) {
 		byte code = _mouseButStat&0x8000 ? 1 : 2;
-		if (virtscr[0].topline <= mouse.y || virtscr[0].topline + virtscr[0].height > mouse.y) {
+		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {
 				runInputScript(1,verbs[over].verbid,code);

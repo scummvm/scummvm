@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/09 19:02:28  strigeus
+ * command line parameter support
+ *
  * Revision 1.2  2001/10/09 18:35:02  strigeus
  * fixed object parent bug
  * fixed some signed/unsigned comparisons
@@ -45,22 +48,9 @@ void Scumm::initThings() {
 	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
 
 	readIndexFile(2);
-	
-	initVideoMode();
-	initKbdAndMouse();
-	detectSound();
-
 	initRandSeeds();
 }
 
-void Scumm::initVideoMode() {
-}
-
-void Scumm::initKbdAndMouse() {
-}
-
-void Scumm::detectSound() {
-}
 
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
@@ -203,7 +193,7 @@ void Scumm::checkRange(int max, int min, int no, const char *str) {
 	}
 }
 
-void Scumm::scummMain() {
+void Scumm::scummMain(int argc, char **argv) {
 	int tmr, i;
 	Actor *a;
 
@@ -214,10 +204,14 @@ void Scumm::scummMain() {
 
 	_fileHandle = NULL;
 	
-	_bootParam = 29;
+	_bootParam = 0;
 	_debugMode = 1;
 
-	initThings();
+	parseCommandLine(argc, argv);
+	
+	initGraphics(this);
+
+ 	initThings();
 	scummInit();
 
 	vm.vars[VAR_VERSION] = 21; 
@@ -333,6 +327,41 @@ void Scumm::scummMain() {
 		camera._lastPos = camera._curPos;
 	} while (1);
 }
+
+void Scumm::parseCommandLine(int argc, char **argv) {
+	int i;
+	char *s;
+
+	/* Parse the arguments */
+	for (i=1; i < argc; i++) {
+		s = argv[i];
+		
+		if (s && s[0]=='-') {
+			s++;
+			while (*s) {
+				switch(tolower(*s)) {
+				case 'b': 
+					_bootParam = atoi(s+1);
+					goto NextArg;
+				default:
+				  goto ShowHelpAndExit;
+				}
+				s++;
+			}
+NextArg:;
+		} else {
+ShowHelpAndExit:;
+			printf(
+				"ScummVM - Scumm Interpreter\n"
+				"Syntax:\n"
+				"\tscummvm [-b<num>]\n"
+				"Flags:\n"
+				"\tb<num> - start in that room\n");
+			exit(1);
+		}
+	}
+}
+
 
 void Scumm::startScene(int room, Actor *a, int objectNr) {
 	int i;

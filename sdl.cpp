@@ -17,13 +17,14 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/09 19:02:28  strigeus
+ * command line parameter support
+ *
  * Revision 1.2  2001/10/09 17:38:20  strigeus
  * Autodetection of endianness.
  *
  * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
  * initial revision
- *
  *
  */
 
@@ -187,13 +188,21 @@ void updateScreen(Scumm *s) {
 	numDirtyRects = 0;
 }
 
-#undef main
-int main(int argc, char* argv[]) {
+void initGraphics(Scumm *s) {
 	if (SDL_Init(SDL_INIT_VIDEO)==-1) {
-		printf("Could not initialize SDL: %s.\n", SDL_GetError());
-        return -1;
+		error("Could not initialize SDL: %s.\n", SDL_GetError());
+    exit(1);
 	}
-	
+
+	/* Clean up on exit */
+  atexit(SDL_Quit);
+
+#if !defined(SCALEUP_2x2)
+	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
+#else
+	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
+#endif
+
 	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 
 		sizeof(int8), sizeof(uint8),
 		sizeof(int16), sizeof(uint16),
@@ -204,16 +213,12 @@ int main(int argc, char* argv[]) {
 		&((CodeHeader*)0)->unk4
 	);
 
-	/* Clean up on exit */
-    atexit(SDL_Quit);
 
-#if !defined(SCALEUP_2x2)
-	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
-#else
-	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
-#endif
+}
+
+#undef main
+int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
-	scumm.scummMain();
-
+	scumm.scummMain(argc, argv);
 	return 0;
 }

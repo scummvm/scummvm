@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 19:02:28  strigeus
+ * command line parameter support
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -772,6 +776,10 @@ void waitForTimer(Scumm *s) {
 	wm->handleMessage();
 }
 
+void initGraphics(Scumm *s) {
+
+}
+
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
@@ -780,7 +788,7 @@ int main(int argc, char* argv[]) {
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
 	
-	scumm.scummMain();
+	scumm.scummMain(argc, argv);
 
 	return 0;
 }

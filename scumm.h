@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/09 19:02:28  strigeus
+ * command line parameter support
+ *
  * Revision 1.3  2001/10/09 18:35:02  strigeus
  * fixed object parent bug
  * fixed some signed/unsigned comparisons
@@ -779,9 +782,6 @@ struct Scumm {
 
 	void initThings();
 
-	void initVideoMode();
-	void initKbdAndMouse();
-	void detectSound();
 	void initRandSeeds();
 
 	uint getRandomNumber(uint max);
@@ -863,7 +863,7 @@ struct Scumm {
 	void decodeCostData(Actor *a, int frame, uint mask);
 
 	void scummInit();
-	void scummMain();
+	void scummMain(int argc, char **argv);
 
 	void runScript(int script, int a, int b, int16 *lvarptr);
 	void stopScriptNr(int script);
@@ -1220,6 +1220,10 @@ struct Scumm {
 	void addToBoxMatrix(byte b);
 	PathVertex *addPathVertex();
 	void *addToBoxVertexHeap(int size);
+
+	void parseCommandLine(int argc, char **argv);
+
+	void showHelpAndExit();
 };
 
 void waitForTimer(Scumm *s);
@@ -1231,5 +1235,5 @@ void NORETURN CDECL error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-
+void initGraphics(Scumm *s);
 void updateScreen(Scumm *s);
