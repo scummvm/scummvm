@@ -366,7 +366,7 @@ void Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!DEMO)
+					if (!DEMO && !_logic->_choosing)
 						_logic->fnPlayCredits(NULL);
 					break;
 #ifdef _SWORD2_DEBUG
