@@ -577,8 +577,11 @@ bool GameDetector::detectGame()
 			_gameRealName = gnl->filename;
 			_features = gnl->features;
 			_gameText = gnl->gamename;
-			debug(1, "Trying to start game '%s', version %d.%d.%d",
-						gnl->gamename, gnl->major, gnl->middle, gnl->minor);
+			if (gnl->major != 99)
+				debug(1, "Trying to start game '%s', version %d.%d.%d",
+							gnl->gamename, gnl->major, gnl->middle, gnl->minor);
+			else
+				debug(1, "Trying to start game '%s'",gnl->gamename);
 			return true;
 		}
 	} while ((++gnl)->filename);
