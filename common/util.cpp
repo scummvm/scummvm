@@ -103,8 +103,8 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 #pragma mark -
 
 
-StackLock::StackLock(OSystem::MutexRef mutex, OSystem *syst)
-	: _mutex(mutex), _syst(syst) {
+StackLock::StackLock(OSystem::MutexRef mutex, OSystem *syst, char *mutexName)
+	: _mutex(mutex), _syst(syst), _mutexName(mutexName) {
 	if (syst == 0)
 		_syst = g_system;
 	lock();
@@ -116,11 +116,17 @@ StackLock::~StackLock() {
 
 void StackLock::lock() {
 	assert(_syst);
+	if (_mutexName != NULL)
+		debug(5, "Locking mutex %s", _mutexName);
+	
 	_syst->lock_mutex(_mutex);
 }
 
 void StackLock::unlock() {
 	assert(_syst);
+	if (_mutexName != NULL)
+		debug(5, "Unlocking mutex %s", _mutexName);
+
 	_syst->unlock_mutex(_mutex);
 }
 
