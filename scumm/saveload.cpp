@@ -614,7 +614,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
-		if (savegameVersion >= VER(21))
+		if (savegameVersion >= VER(21) & _version < 5)
 			s->saveLoadArrayOf (_roomPalette, _shadowPaletteSize, 1, sleByte);
 	}
 
