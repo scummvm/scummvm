@@ -842,9 +842,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	bool lightsOn;
 	bool useOrDecompress;
 
-printf("drawBitmap (%d, %d, %d)\n", x, y, h);
-hexdump(ptr, 0x40);
-
 	// Check whether lights are turned on or not
 	lightsOn = (_vm->_features & GF_AFTER_V6) || (vs->number != 0) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen);
 
