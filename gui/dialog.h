@@ -129,4 +129,28 @@ public:
 
 };
 
+
+class SoundDialog : public Dialog {
+public:
+	SoundDialog(NewGui *gui);
+
+	enum {
+		kMasterVolumeChanged	= 'mavc',
+		kMusicVolumeChanged		= 'muvc',
+		kSfxVolumeChanged		= 'sfvc',
+	};
+
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+protected:
+	int _soundVolumeMaster;
+	int _soundVolumeMusic;
+	int _soundVolumeSfx;
+
+	SliderWidget *widgetMasterVolume;
+	SliderWidget *widgetMusicVolume;
+	SliderWidget *widgetSfxVolume;
+};
+
+
 #endif

@@ -219,18 +219,18 @@ void SliderWidget::drawWidget(bool hilite)
 	
 	// Remove old 'bar' if necessary
 	if (_value != _old_value) {
-		gui->fillRect(_x + 2 + ((_w - 5) * _old_value / 100), _y + 2, 2, _h - 4, gui->_bgcolor);
+		gui->fillRect(_x + 2 + ((_w - 5) * (_old_value - _valueMin) / _valueDelta), _y + 2, 2, _h - 4, gui->_bgcolor);
 		_old_value = _value;
 	}
 
 	// Draw the 'bar'
-	gui->fillRect(_x + 2 + ((_w - 5) * _value / 100), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->fillRect(_x + 2 + ((_w - 5) * (_value - _valueMin) / _valueDelta), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 void SliderWidget::handleMouseDown(int x, int y, int button) {
 	int barx;
 
-	barx = 2 + ((_w - 5) * _old_value / 100);
+	barx = 2 + ((_w - 5) * (_value - _valueMin) / _valueDelta);
 	
 	// only start dragging if mouse is over bar
 	if (x > (barx - 3) && x < (barx + 3))
@@ -238,5 +238,11 @@ void SliderWidget::handleMouseDown(int x, int y, int button) {
 }
 
 void SliderWidget::handleMouseUp(int x, int y, int button) {
+
+	if (_isDragging) {
+		if (_flags & WIDGET_ENABLED)
+			sendCommand(_cmd, 0);
+	}
+
 	_isDragging = false;
 }

@@ -624,9 +624,11 @@ void Gui::handleSoundDialogCommand(int cmd)
 		// (s)he is at it, HiFi equipment uses logarithmic volume controls
 		// (not linear ones as we do) since they match the human ear better.
 
-		_s->_sound_volume_master = _gui_variables[0];	// Master
-		_s->_sound_volume_music = _gui_variables[1];	// Music
-		_s->_sound_volume_sfx = _gui_variables[2];	// SFX
+		// The * 256 / 100 is a quick recalibration hack, it will go
+		// away when we move to newgui
+		_s->_sound_volume_master = _gui_variables[0] * 255 / 100;	// Master
+		_s->_sound_volume_music = _gui_variables[1] * 255 / 100;	// Music
+		_s->_sound_volume_sfx = _gui_variables[2] * 255 / 100;		// SFX
 
 		_s->_imuse->set_music_volume(_s->_sound_volume_music);
 		_s->_imuse->set_master_volume(_s->_sound_volume_master);

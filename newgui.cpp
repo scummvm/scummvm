@@ -72,6 +72,13 @@ void NewGui::optionsDialog()
 	openDialog(_optionsDialog);
 }
 
+void NewGui::soundDialog()
+{
+	if (!_soundDialog)
+		_soundDialog = new SoundDialog(this);
+	openDialog(_soundDialog);
+}
+
 void NewGui::loop()
 {
 	Dialog *activeDialog = _dialogStack.top();

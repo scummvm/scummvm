@@ -170,12 +170,18 @@ protected:
 /* SliderWidget */
 class SliderWidget : public ButtonWidget {
 protected:
-	uint8	_value, _old_value;
+	int		_value, _old_value;
+	int		_valueMin, _valueMax, _valueDelta;
 	bool	_isDragging;
 public:
 	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(uint8 value)	{ _value = value; }
 	uint8 getValue() const		{ return _value; }
+
+	void setMinValue(int value)	{ _valueMin = value; _valueDelta = _valueMax - _valueMin; }
+	int getMinValue() const		{ return _valueMin; }
+	void setMaxValue(int value)	{ _valueMax = value; _valueDelta = _valueMax - _valueMin; }
+	int getMaxValue() const		{ return _valueMax; }
 
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseDown(int x, int y, int button);

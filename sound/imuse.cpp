@@ -1255,6 +1255,9 @@ int IMuseInternal::get_music_volume()
 
 int IMuseInternal::set_music_volume(uint vol)
 {
+	// recalibrate from 0-255 range
+	vol = vol * 100 / 255;
+
 	if (vol > 100)
 		vol = 100;
 	else if (vol < 1)
@@ -1267,6 +1270,10 @@ int IMuseInternal::set_music_volume(uint vol)
 int IMuseInternal::set_master_volume(uint vol)
 {
 	int i;
+
+	// recalibrate from 0-255 range
+	vol = vol * 127 / 255;
+
 	if (vol > 127)
 		return -1;
 

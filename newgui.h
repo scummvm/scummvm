@@ -61,6 +61,7 @@ public:
 	void saveloadDialog();
 	void aboutDialog();
 	void optionsDialog();
+	void soundDialog();
 
 	void loop();
 
@@ -83,6 +84,7 @@ protected:
 	Dialog		*_saveLoadDialog;
 	Dialog		*_aboutDialog;
 	Dialog		*_optionsDialog;
+	Dialog		*_soundDialog;
 
 	// for continuous events (keyDown)
 	int			_currentKeyDown, _currentKeyDownFlags;
