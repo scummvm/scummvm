@@ -177,6 +177,11 @@ The short game name you see at the end of the command line is very
 important. You can get the current list of games and game names at:
 http://scummvm.sourceforge.net/compatibility.php
 
+For the adventurous, who like to live on the edge... you can download daily
+builds of Win32, Redhat, Debian and other packages here:
+        Daily builds - http://scummvm.sourceforge.net/daily/
+
+
 Command Line Options:
 ---------------------
 
