@@ -43,6 +43,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  Sword1:
    - Added support for compressed speech and music.
+   - Added support for the demo.
+   - Better support for the Czech version.
+   - Added workarounds for script and subtitle bugs in some game versions.
 
  Sword2:
    - Simplified memory/resource management
