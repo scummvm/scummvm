@@ -2,11 +2,6 @@
 
 IDI_ICON               ICON    DISCARDABLE     "scummvm.ico"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 0,5,7,0
  PRODUCTVERSION 0,5,7,0
