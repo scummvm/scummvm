@@ -1522,10 +1522,6 @@ void Sound::stopCD() {
 	if (_dig_cd.playing) {
 		_scumm->_mixer->stopHandle(_dig_cd.handle);
 		_dig_cd.playing = false;
-		_dig_cd.track = 0;
-		_dig_cd.numLoops = 0;
-		_dig_cd.start = 0;
-		_dig_cd.duration = 0;
 	} else {
 		_scumm->_system->stop_cdrom();
 	}
@@ -1544,8 +1540,10 @@ void Sound::updateCD() {
 			// the CD explicitly
 			if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0)
 				playCDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
-			else
-				stopCD();
+			else {
+				_scumm->_mixer->stopHandle(_dig_cd.handle);
+				_dig_cd.playing = false;
+			}
 		}
 	} else {
 		_scumm->_system->update_cdrom();
