@@ -56,12 +56,20 @@ config.mak: $(srcdir)/configure
 	@exit 1
 
 install: all
-	$(INSTALL) -m 755 scummvm$(EXEEXT) $(BINDIR)/scummvm$(EXEEXT)
-	$(INSTALL) -m 644 scummvm.6 $(MANDIR)/man6/scummvm.6
+	$(INSTALL) -d "$(BINDIR)"
+	$(INSTALL) -c -s -m 755 "$(srcdir)/scummvm$(EXEEXT)" "$(BINDIR)/scummvm$(EXEEXT)"
+	$(INSTALL) -d "$(MANDIR)/man6/"
+	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.6" "$(MANDIR)/man6/scummvm.6"
+	$(INSTALL) -d "$(PREFIX)/share/pixmaps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.xpm" "$(PREFIX)/share/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -c -m 644 "$(srcdir)/README" "$(srcdir)/NEWS" "$(srcdir)/COPYING" "$(PREFIX)/share/doc/scummvm/"
 
 uninstall:
-	rm -f $(BINDIR)/scummvm$(EXEEXT)
-	rm -f $(MANDIR)/man6/scummvm.6
+	rm -f "$(BINDIR)/scummvm$(EXEEXT)"
+	rm -f "$(MANDIR)/man6/scummvm.6"
+	rm -f "$(PREFIX)/share/pixmaps/scummvm.xpm"
+	rm -rf "$(PREFIX)/share/doc/scummvm/"
 
 scummvmico.o: scummvm.ico
 	windres scummvm.rc scummvmico.o
