@@ -116,7 +116,6 @@ FilesystemNode *FilesystemNode::getRoot() {
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode() {
-	_displayName = "Root";
 	_isDirectory = true;
 #ifndef _WIN32_WCE
 	// Create a virtual root directory for standard Windows system
@@ -124,6 +123,7 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 	_path = "";
 	_isPseudoRoot = true;
 #else
+	_displayName = "Root";
 	// No need to create a pseudo root directory on Windows CE
 	_isValid = true;
 	_path = "\\";
