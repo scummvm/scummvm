@@ -413,7 +413,7 @@ void CostumeRenderer::procC64(int actor) {
 				dst = v1.destptr;
 			}
 		}
-	} while(1);
+	} while (1);
 }
 
 #undef LINE
