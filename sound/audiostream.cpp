@@ -150,7 +150,6 @@ inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readIntern() {
 template<bool stereo, bool is16Bit, bool isUnsigned>
 int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
 	int samples = 0;
-#if 1
 	while (samples < numSamples && !eosIntern()) {
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, (endMarker - _pos) / (is16Bit ? 2 : 1));
@@ -163,11 +162,6 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 		if (_pos >= _bufferEnd)
 			_pos = _pos - (_bufferEnd - _bufferStart);
 	}
-#else
-	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
-		*buffer++ = readIntern();
-	}
-#endif
 	return samples;
 }
 
@@ -414,9 +408,7 @@ inline int16 MP3InputStream::readIntern() {
 
 int MP3InputStream::readBuffer(int16 *buffer, int numSamples) {
 	int samples = 0;
-#if 1
-	if (_isStereo)
-		assert(_curChannel == 0);
+	assert(_curChannel == 0);	// Paranoia check
 	while (samples < numSamples && !eosIntern()) {
 		const int len = MIN(numSamples, (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
 		while (samples < len) {
@@ -432,11 +424,6 @@ int MP3InputStream::readBuffer(int16 *buffer, int numSamples) {
 			refill();
 		}
 	}
-#else
-	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
-		*buffer++ = readIntern();
-	}
-#endif
 	return samples;
 }
 
@@ -460,7 +447,8 @@ class VorbisInputStream : public MusicStream {
 	bool _eofFlag;
 	int _numChannels;
 	int16 _buffer[4096];
-	int16 *_pos;
+	const int16 * const _bufferEnd;
+	const int16 *_pos;
 	
 	void refill();
 	inline int16 readIntern();
@@ -483,8 +471,8 @@ public:
 
 
 VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
-	: _ov_file(file) {
-	_pos = _buffer + ARRAYSIZE(_buffer);
+	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
+	_pos = _bufferEnd;
 	_numChannels = ov_info(_ov_file, -1)->channels;
 
 	if (duration)
@@ -496,7 +484,7 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 }
 
 inline int16 VorbisInputStream::readIntern() {
-	if (_pos >= _buffer + ARRAYSIZE(_buffer)) {
+	if (_pos >= _bufferEnd) {
 		refill();
 	}
 	return *_pos++;
@@ -505,30 +493,23 @@ inline int16 VorbisInputStream::readIntern() {
 inline bool VorbisInputStream::eosIntern() const {
 	if (_eofFlag)
 		return true;
-	if (_pos < _buffer + ARRAYSIZE(_buffer))
+	if (_pos < _bufferEnd)
 		return false;
 	return (_end_pos <= ov_pcm_tell(_ov_file));
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, int numSamples) {
 	int samples = 0;
-#if 1
-	const int16 * const bufferEnd = _buffer + ARRAYSIZE(_buffer);
 	while (samples < numSamples && !eosIntern()) {
-		if (_pos >= bufferEnd) {
+		if (_pos >= _bufferEnd) {
 			refill();
 		}
-		const int len = MIN(numSamples, bufferEnd - _pos);
+		const int len = MIN(numSamples, _bufferEnd - _pos);
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
 		samples += len;
 	}
-#else
-	for (; samples < numSamples && !eosIntern(); samples++) {
-		*buffer++ = readIntern();
-	}
-#endif
 	return samples;
 }
 
