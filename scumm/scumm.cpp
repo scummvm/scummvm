@@ -1963,7 +1963,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	CHECK_HEAP;
 	debugC(DEBUG_GENERAL, "Loading room %d", room);
 
-	clearMsgQueue();
+	stopTalk();
 
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;

@@ -1071,8 +1071,6 @@ protected:
 	void addStringToStack(int var);
 	void unkMessage1(const byte *msg);
 	void unkMessage2(const byte *msg);
-public:
-	void clearMsgQueue();	// Used by Actor::putActor
 protected:
 	byte *_msgPtrToAdd;
 	bool _keepText;

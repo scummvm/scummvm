@@ -568,7 +568,7 @@ void Actor::setDirection(int direction) {
 
 void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	if (visible && _vm->_currentRoom != newRoom && _vm->talkingActor() == number) {
-		_vm->clearMsgQueue();
+		_vm->stopTalk();
 	}
 
 	// HACK: The green transparency of the tank in the Hall of Oddities is
@@ -1222,10 +1222,6 @@ void ScummEngine::stopTalk() {
 		talkingActor(0);
 	_keepText = false;
 	_charset->restoreCharsetBg();
-}
-
-void ScummEngine::clearMsgQueue() {
-	stopTalk();
 }
 
 void Actor::setActorCostume(int c) {

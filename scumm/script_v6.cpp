@@ -1162,7 +1162,7 @@ void ScummEngine_v6::o6_putActorAtXY() {
 		room = a->room;
 	} else {
 		if (a->visible && _currentRoom != room && talkingActor() == a->number) {
-			clearMsgQueue();
+			stopTalk();
 		}
 		if (room != 0)
 			a->room = room;
