@@ -113,7 +113,7 @@ echo $datatype
 #
 
 echo "Running ScummVM configure..."
-
+echo "Configure run on" `date` > $TMPLOG
 
 #
 # Check any parameters we received
@@ -310,25 +310,23 @@ rm -f tmp_endianess_check tmp_endianess_check.cpp
 #
 # Check whether memory alignment is required
 #
-echo -n "Alignment required (don't worry if this shows a 'Bus error')... "
+echo -n "Alignment required... "
 cat > $TMPC << EOF
+#include <stdlib.h>
+#include <signal.h>
 int main(int argc, char **argv)
 {
-	int i;
-	unsigned char buf[20];
-	for (i = 0; i < 20; i++)
-		buf[i] = 0xE7;
-	for (i = 0; i < 16; i++) {
-		if (*(int *)(&buf[i]) != 0xE7E7E7E7)
-			return 1;
-		*(int *)(&buf[i]) = 0xE7E7E7E7;
+	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
+	signal(SIGBUS, exit);
+	signal(SIGABRT, exit);
+	signal(SIGSEGV, exit);
+	if (*((unsigned int *)(test + 1)) != 0x55443322 && *((unsigned int *)(test + 1)) != 0x22334455) {
+		return 1;
 	}
 	return 0;
 }
 EOF
 _need_memalign=yes
-# TODO: Hide the "Bus error" message, if possible...
-trap true BUS
 cc_check && ./$TMPO && _need_memalign=no
 if test "$_need_memalign" = yes ; then
   _def_align='#define SCUMM_NEED_ALIGNMENT'
@@ -405,7 +403,7 @@ else
 fi
 echo "$_alsa"
 
-rm -f $TMPC $TMPO $TMPLOG
+rm -f $TMPC $TMPO
 
 
 echo
