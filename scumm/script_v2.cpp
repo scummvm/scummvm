@@ -1320,20 +1320,20 @@ void Scumm_v2::o2_setObjectName() {
 	if (name == NULL)
 		return;	// Silently abort
 
-  while(name[size++])
-    ;
+	while(name[size++])
+		;
 
 	if (i > size) {
 		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
 		i = size;
 	}
 
-  while (i < size) {
-    work[i-1] = '@';
-    i++;
-  }
-  work[i-1] = 0;
-
+	while (i < size) {
+		work[i-1] = '@';
+		i++;
+	}
+	work[i-1] = 0;
+	
 	memcpy(name, work, i);
 	redrawV2Inventory();
 }
