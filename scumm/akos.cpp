@@ -1217,7 +1217,10 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-			tmp = GB(2) - 1;
+			if (_features & GF_HUMONGOUS)
+				tmp = GB(2);
+			else
+				tmp = GB(2) - 1;
 			if ((uint) tmp < 8)
 				akos_queCommand(3, a, a->sound[tmp], 0);
 			continue;
@@ -1240,6 +1243,8 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(5, a, GB(2), 0);
 			continue;
 		case AKC_SoundStuff:
+			if (_features & GF_HUMONGOUS)
+				continue;
 			tmp = GB(2) - 1;
 			if (tmp >= 8)
 				continue;

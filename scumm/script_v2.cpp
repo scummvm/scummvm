@@ -771,6 +771,10 @@ void ScummEngine_v2::o2_resourceRoutines() {
 	if ((opcode & 0x0f) == 0 || type == rtNumTypes)
 		return;
 
+	// HACK V2 Maniac Mansion tries to load an invalid sound resource in demo script.
+	if (_gameId == GID_MANIAC && _version == 2 && vm.slot[_currentScript].number == 9 && type == rtSound && resid == 1)
+		return;
+
 	if ((opcode & 0x0f) == 1) {
 		ensureResourceLoaded(type, resid);
 	} else {
@@ -1091,10 +1095,6 @@ void ScummEngine_v2::o2_putActor() {
 
 	a->putActor(x, y, a->room);
 }
-
-#ifndef BYPASS_COPY_PROT
-#define BYPASS_COPY_PROT
-#endif
 
 void ScummEngine_v2::o2_startScript() {
 	int script = getVarOrDirectByte(PARAM_1);
