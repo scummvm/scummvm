@@ -232,11 +232,16 @@ ScummRenderer::~ScummRenderer() {
 		_scumm->_imuseDigital->pause(false);
 	}
 	_scumm->_sound->pauseBundleMusic(false);
+#if 0
+	// FIXME - enabling this breaks the COMI demo. OTOH I am not aware
+	// what disabling this breaks... if anybody knows of any regressions
+	// turning this off causes, please tell me.
 	_scumm->_fullRedraw = 1;
 	_scumm->redrawBGAreas();
 	for (int32 i = 0; i < _scumm->NUM_ACTORS; i++)
 		_scumm->derefActor(i)->needRedraw = true;
 	_scumm->processActors();
+#endif
 }
 
 bool ScummRenderer::wait(int32 ms) {
