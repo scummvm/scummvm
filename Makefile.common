@@ -39,15 +39,15 @@ scummvm$(EXEEXT): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
 
 scumm/libscumm.a: $(SCUMM_OBJS)
-	ar cru $@ $+
-	ranlib $@ 
+	$(AR) $@ $+
+	$(RANLIB) $@ 
 
 simon/libsimon.a: $(SIMON_OBJS)
-	ar cru $@ $+
-	ranlib $@ 
+	$(AR) $@ $+
+	$(RANLIB) $@ 
 
 clean:
-	rm -f $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) scummvm$(EXEEXT)
+	$(RM) $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) scummvm$(EXEEXT)
 
 .PHONY: all clean dist distclean
 
@@ -64,13 +64,13 @@ DEPDIRS = $(patsubst %,%/$(DEPDIR),$(MODULES))
 DEPFILES = $(wildcard $(patsubst %,%/$(DEPDIR)/*.d,$(MODULES)))
 
 .cpp.o:
-	mkdir -p $(*D)/$(DEPDIR)
+	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	echo -n "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	cat "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	rm -f "$(*D)/$(DEPDIR)/$(*F).d2"
+	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 
 -include $(DEPFILES) /dev/null
 
 distclean: clean
-	rm -rf $(DEPDIRS)
+	$(RM_REC) $(DEPDIRS)

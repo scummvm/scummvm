@@ -1,6 +1,18 @@
 # $Header$
 
 CXX      = c++
+AR        = ar cru
+RANLIB = ranlib
+RM      = rm -f
+MKDIR = mkdir -p
+ECHO  = echo -n
+CAT    = cat
+RM      = rm -f
+# recursive version of RM
+RM_REC = $(RM) -r
+ZIP = zip -q
+CP  = cp
+
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
 DEFINES  =
 LDFLAGS :=
@@ -29,9 +41,9 @@ CPPFLAGS= $(DEFINES) $(INCLUDES)
 include Makefile.common
 
 dist:
-	rm -f $(ZIPFILE)
-	zip -q $(ZIPFILE) $(DISTFILES)
+	$(RM) $(ZIPFILE)
+	$(ZIP) $(ZIPFILE) $(DISTFILES)
 
 # Until we add a nice configure tool, default to the SDL build rules
 build.rules:
-	cp backends/sdl/build.rules build.rules
+	$(CP) backends/sdl/build.rules build.rules
