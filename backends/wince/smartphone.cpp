@@ -29,7 +29,7 @@
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SMARTFON_VERSION "Smartphone build 03.02.09/1"
+#define SMARTFON_VERSION "Smartphone build 04.22.03/test"
 
 #define SCAN_LOCATION "\\Storage Card"
 
@@ -53,7 +53,7 @@ extern void startFindGame(BOOL display, TCHAR *path);
 extern bool loadGameSettings(BOOL display);
 extern void sortFoundGames(void);
 extern int getTotalGames(void);
-extern void getSelectedGame(int result, char *id, TCHAR *directory);
+extern void getSelectedGame(int result, char *id, TCHAR *directory, char* is_demo);
 extern TCHAR* getGameName(int);
 extern Engine *engine;
 extern bool is_simon;
@@ -81,6 +81,8 @@ int mouseXZone[TOTAL_ZONES];
 int mouseYZone[TOTAL_ZONES];
 int currentZone = 0;
 
+extern char is_demo;
+
 zoneDesc ZONES[TOTAL_ZONES] = {
 	{ 0, 0, 320, 145 },
 	{ 0, 145, 150, 55 },
@@ -100,6 +102,38 @@ const char* SMARTFON_KEYS_MAPPING[TOTAL_KEYS] = {
 	"Boss"
 };
 
+#define HELP1 \
+	"USAGE\r\n\r\n" \
+	\
+	"Copy your games on your storage card, then do a scan\r\n" \
+	"Some games must be put in a specific directory\r\n" \
+	\
+	"* loomcd for Loom VGA\r\n" \
+	"* zak256 for Zak Mc Kracken FMTOWNS\r\n" \
+	"* indy3 for Indiana Jones 3 VGA\r\n" \
+	"* monkeyvga for Monkey Island 1 VGA floppy\r\n" \
+	"* monkeyega for Monkey Island 1 EGA\r\n" \
+	\
+	"\r\nKEYS MAPPING\r\n\r\n" \
+	\
+	"Map some actions to the keys you'd like\r\n" \
+	"* Up, Down, Left, Right : mouse cursor movement - keeping the key pressed makes the cursor move faster\r\n" \
+	"* Left click, Right click : mouse click\r\n" \
+	"* Zone : jump cursor to game/verbs/inventory - VERY useful :)\r\n" \
+	"* Options : open options dialog, to save/load/quit\r\n" \
+	"* Skip : skip the current non-interactive sequence or dialog\r\n" \
+	"* Boss : save and exit quickly :)\r\n"
+
+#define HELP2 \
+	"\r\nMORE INFORMATION  HELP \r\n\r\n" \
+	"* http://scummvm.sf.net : official ScummVM site\r\n" \
+	"* http://arisme.free.fr/PocketScumm : latest version of this port\r\n" \
+	"* http://www.pocketmatrix.com : PocketMatrix forums (preferred help forums for PocketPC & Smartphone versions)\r\n" \
+	"* http://www.smartphony.org : Smartphony news & forums (french help forum for Smartphone version)\r\n" \
+	"* http://www.modaco.com : MoDaCo forums (english help forum for Smartphone version)\r\n" \
+	"\r\nHAPPY ADVENTURING :)\r\n"
+
+#define HELP HELP1 HELP2
 
 void SmartfonUp(OSystem_WINCE3 *wm, BOOL repeat);
 void SmartfonDown(OSystem_WINCE3 *wm, BOOL repeat);
@@ -501,9 +535,13 @@ int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR
 	if (loadGameSettings(FALSE))
 		addGames();
 
+	// See if sound is activated
+	if (g_config->getBool("Sound", true, "wince"))
+		CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_CHECKED);
+	else
+		CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_UNCHECKED);
+
 	game_chosen = -1;
-
-
 
 	for (;game_chosen < 0;) {
 		MSG msg;
@@ -515,7 +553,7 @@ int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR
 		DispatchMessage(&msg);
 	}
 
-	getSelectedGame(game_chosen, game_name, directory);
+	getSelectedGame(game_chosen, game_name, directory, &is_demo);
 
 	return 0;
 }
@@ -637,6 +675,25 @@ BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OS
 					break;
 				case IDM_SMARTFON_SCAN:
 					doSmartphoneScan();
+					break;
+				case IDM_SMARTFON_HELP:
+					TCHAR *help;
+					help = (TCHAR*)malloc((strlen(HELP) + 1) * sizeof(TCHAR));
+					MultiByteToWideChar(CP_ACP, 0, HELP, strlen(HELP) + 1, help, (strlen(HELP) + 1) * sizeof(TCHAR));
+					MessageBox(hWnd, help, TEXT("PocketScumm help"), MB_OK | MB_ICONINFORMATION);
+					free(help);
+					break;
+				case IDM_SMARTFON_SOUND:
+					if (g_config->getBool("Sound", true, "wince")) {
+						sound_activated = false;
+						g_config->setBool("Sound", false, "wince");
+						CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_UNCHECKED);
+					}
+					else {
+						sound_activated = true;
+						g_config->setBool("Sound", true, "wince");
+						CheckMenuItem(optionsMenu, IDM_SMARTFON_SOUND, MF_BYCOMMAND | MF_CHECKED);
+					}
 					break;
 				default:
 					return FALSE;
