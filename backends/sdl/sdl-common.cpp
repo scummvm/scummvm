@@ -1124,8 +1124,8 @@ void OSystem_SDL_Common::setup_icon() {
 	for (h = 0; h < 32; h++) {
 		char *line = scummvm_icon[1 + ncols + h];
 		for (w = 0; w < 32; w++) {
-			icon[w + 32 * h] = rgba[line[w]];
-			if (rgba[line[w]] & 0xFF000000) {
+			icon[w + 32 * h] = rgba[(int)line[w]];
+			if (rgba[(int)line[w]] & 0xFF000000) {
 				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
 			}
 		}
