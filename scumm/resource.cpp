@@ -229,13 +229,13 @@ void ScummEngine::openRoom(int room) {
 		if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 			room_offs = 0;
 		else
-			room_offs = room ? _roomFileOffsets[room] : 0;
+			room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
 		if (room_offs == -1)
 			break;
 
 		if (room_offs != 0 && room != 0) {
-			_fileOffset = _roomFileOffsets[room];
+			_fileOffset = res.roomoffs[rtRoom][room];
 			return;
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
@@ -296,7 +296,7 @@ void ScummEngine::openRoom(int room) {
 			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 				return;
 			readRoomsOffsets();
-			_fileOffset = _roomFileOffsets[room];
+			_fileOffset = res.roomoffs[rtRoom][room];
 
 			if (_fileOffset != 8)
 				return;
@@ -333,8 +333,8 @@ void ScummEngine::deleteRoomOffsets() {
 		return;
 
 	for (int i = 0; i < _numRooms; i++) {
-		if (_roomFileOffsets[i] != 0xFFFFFFFF)
-			_roomFileOffsets[i] = 0;
+		if (res.roomoffs[rtRoom][i] != 0xFFFFFFFF)
+			res.roomoffs[rtRoom][i] = 0;
 	}
 }
 
@@ -353,7 +353,7 @@ void ScummEngine::readRoomsOffsets() {
 		num = READ_LE_UINT16(_heV7RoomOffsets);
 		ptr = _heV7RoomOffsets + 2;
 		for (i = 0; i < num; i++) {
-			_roomFileOffsets[i] = READ_LE_UINT32(ptr);	
+			res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);	
 			ptr += 4;
 		}
 		return;
@@ -371,8 +371,8 @@ void ScummEngine::readRoomsOffsets() {
 	num = _fileHandle.readByte();
 	while (num--) {
 		room = _fileHandle.readByte();
-		if (_roomFileOffsets[room] != 0xFFFFFFFF) {
-			_roomFileOffsets[room] = _fileHandle.readUint32LE();
+		if (res.roomoffs[rtRoom][room] != 0xFFFFFFFF) {
+			res.roomoffs[rtRoom][room] = _fileHandle.readUint32LE();
 		} else {
 			_fileHandle.readUint32LE();
 		}

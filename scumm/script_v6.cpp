@@ -474,7 +474,7 @@ void ScummEngine_v6::nukeArray(int a) {
 }
 
 int ScummEngine_v6::findFreeArrayId() {
-	byte **addr = _baseArrays;
+	byte **addr = res.address[rtString];
 	int i;
 
 	for (i = 1; i < _numArray; i++) {

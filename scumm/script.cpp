@@ -382,7 +382,7 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &_baseInventoryItems[idx];
+		_lastCodePtr = &res.address[rtInventory][idx];
 		break;
 
 	case WIO_LOCAL:
@@ -394,14 +394,14 @@ void ScummEngine::getScriptBaseAddress() {
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &_baseRooms[_roomResource];
+			_lastCodePtr = &res.address[rtRoom][_roomResource];
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &_baseScripts[ss->number];
+		_lastCodePtr = &res.address[rtScript][ss->number];
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -410,7 +410,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &_baseFLObject[idx];
+		_lastCodePtr = &res.address[rtFlObject][idx];
 		break;
 	default:
 		error("Bad type while getting base address");

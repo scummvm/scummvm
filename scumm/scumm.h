@@ -260,14 +260,6 @@ enum ScummGameId {
 	GID_FREDDI4
 };
 
-#define _baseRooms res.address[rtRoom]
-#define _baseScripts res.address[rtScript]
-#define _baseInventoryItems res.address[rtInventory]
-#define _baseFLObject res.address[rtFlObject]
-#define _baseArrays res.address[rtString]
-
-#define _roomFileOffsets res.roomoffs[rtRoom]
-
 struct SentenceTab {
 	byte verb;
 	byte preposition;

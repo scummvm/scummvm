@@ -875,7 +875,7 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 }
 
 void ScummEngine_v72he::o72_getNumFreeArrays() {
-	byte **addr = _baseArrays;
+	byte **addr = res.address[rtString];
 	int i, num = 0;
 
 	for (i = 1; i < _numArray; i++) {

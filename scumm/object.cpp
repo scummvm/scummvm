@@ -898,8 +898,8 @@ void ScummEngine::clearOwnerOf(int obj) {
 				if (!a[0] && a[1]) {
 					a[0] = a[1];
 					a[1] = 0;
-					_baseInventoryItems[i] = _baseInventoryItems[i + 1];
-					_baseInventoryItems[i + 1] = NULL;
+					res.address[rtInventory][i] = res.address[rtInventory][i + 1];
+					res.address[rtInventory][i + 1] = NULL;
 				}
 			}
 			return;
@@ -1597,7 +1597,7 @@ int ScummEngine::findLocalObjectSlot() {
 int ScummEngine::findFlObjectSlot() {
 	int i;
 	for (i = 1; i < _numFlObject; i++) {
-		if (_baseFLObject[i] == NULL)
+		if (res.address[rtFlObject][i] == NULL)
 			return i;
 	}
 	error("findFlObjectSlot: Out of FLObject slots");
