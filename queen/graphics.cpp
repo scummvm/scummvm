@@ -170,7 +170,7 @@ void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame,
 }
 
 
-void Graphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
+void Graphics::bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed) {
 
 	debug(9, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
 
@@ -296,7 +296,7 @@ void BobSlot::animOneStep() {
 }
           
 
-void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box) {
+void Graphics::bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box) {
 
 	uint16 w, h;
 
@@ -366,7 +366,7 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 }
 
 
-void Graphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
+void Graphics::bobPaste(uint32 bobnum, int16 x, int16 y) {
 
 	BobFrame *pbf = &_frames[bobnum];
 	_display->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);

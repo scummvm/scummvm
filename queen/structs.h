@@ -26,28 +26,28 @@ namespace Queen {
 
 
 struct Box {
-	uint16 x1, y1, x2, y2;
+	int16 x1, y1, x2, y2;
 
 	void readFrom(byte *&ptr) {
-		x1 = READ_BE_UINT16(ptr); ptr += 2;
-		y1 = READ_BE_UINT16(ptr); ptr += 2;
-		x2 = READ_BE_UINT16(ptr); ptr += 2;
-		y2 = READ_BE_UINT16(ptr); ptr += 2;
+		x1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		y1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		x2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		y2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
 	int16 xDiff() const {
-		return (int16)(x2 - x1);
+		return x2 - x1;
 	}
 
 	int16 yDiff() const {
-		return (int16)(y2 - y1);
+		return y2 - y1;
 	}
 
-	bool intersects(uint16 x, uint16 y, uint16 w, uint16 h) const {
+	bool intersects(int16 x, int16 y, uint16 w, uint16 h) const {
 		return (x + w > x1) && (y + h > y1) && (x <= x2) && (y <= y2);
 	}
 
-	bool contains(uint16 x, uint16 y) const {
+	bool contains(int16 x, int16 y) const {
 		return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
 	}
 };
