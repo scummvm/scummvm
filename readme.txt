@@ -242,6 +242,8 @@ In game Hot Keys:
         Ctrl-f                   - runs in fast mode.
         Ctrl-d                   - starts the debugger.
         Ctrl-s                   - shows memory consumption.
+        [ and ]                  - master volume, down/up
+        - and +                  - text speed, slower / faster
         F5                       - displays a save/load box.
         Space                    - pauses.
         Alt-Enter                - toggles full screen/windowed
