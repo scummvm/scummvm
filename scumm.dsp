@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "scumm___Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /YX /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -112,7 +112,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "scumm___MP3_Enabled_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /D "BYPASS_COPY_PROT" /YX /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -243,10 +243,6 @@ SOURCE=.\scumm\smush\player.cpp
 # Begin Source File
 
 SOURCE=.\scumm\smush\player.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\rect.h
 # End Source File
 # Begin Source File
 

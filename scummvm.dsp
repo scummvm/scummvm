@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /fo"scummvm.res" /d "NDEBUG"
@@ -126,7 +126,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
 # SUBTRACT BASE CPP /YX /Yc /Yu
-# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -186,7 +186,15 @@ SOURCE=.\common\gameDetector.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\list.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\main.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\rect.h
 # End Source File
 # Begin Source File
 
@@ -207,6 +215,14 @@ SOURCE=.\common\stdafx.cpp
 # Begin Source File
 
 SOURCE=.\common\stdafx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\str.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\str.h
 # End Source File
 # Begin Source File
 
