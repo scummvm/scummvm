@@ -407,10 +407,11 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	
 	scriptnum = atoi(argv[1]);
 	
-	if (scriptnum >= _s->_maxScripts) {
-		Debug_Printf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _s->_maxScripts);
-		return true;
-	}
+	// FIXME: what is the max range on these?
+	// if (scriptnum >= _s->_maxScripts) {
+	//	Debug_Printf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _s->_maxScripts);
+	//	return true;
+	//}
 	
 	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
 		_s->stopScriptNr(scriptnum);
