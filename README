@@ -47,7 +47,8 @@ be playable to the end:
         Day Of The Tentacle                       [Game: tentacle]
         Sam & Max                                 [Game: samnmax]
         The Dig                                   [Game: dig]
-        Simon The Sorcerer                        [Game: simon1talkie/simon1win]
+        Simon The Sorcerer                        [Game: simon1dos/simon1talkie/simon1win]
+        Simon the Sorcerer II                     [Game: simon2dos/simon2talkie/simon2win]
 
 
 The following games should load, but are not yet fully playable. Play these at
@@ -56,8 +57,6 @@ the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
         Full Throttle                            [Game: ft]
-        Simon The Sorcerer                       [Game: simon1dos]
-        Simon the Sorcerer II                    [Game: simon2dos/simon2talkie/simon2win]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -100,7 +99,21 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
        Simon The Sorcerer:
-                - Some minor graphical glitches may be present
+		- No sound effects in simon1dos
+                - No inventory scrolling arrows shown in simon1dos and simon1talkie,
+                  can still move around inventory though. 
+                - simon1dos freezes briefly after Swampling leaves his house and when
+                  talking to demons in Sordid's Tower
+                - Some minor graphical glitches
+
+       Simon The Sorcerer:II
+		- No music in simon2talkie and simon2win
+		- Part of title sequence is skipped
+                - May freeze briefly after arriving in Goblin's Camp and been thrown in 
+                  prison,
+                - simon2dos freezes briefly during sequence when Simon breaks chains
+                  and tries to escape from pirate ship.
+                - Some graphical glitches
 
        Indy 3 (The Last Crusade):
                 - Music and Sound may not play
@@ -293,7 +306,7 @@ In game Hot Keys:
         Ctrl-Alt 1               - (OpenGL) Switch beetwen using Bilinear Filtering and non-linear filtering 
         Ctrl-Alt 2               - (OpenGL) Don't fit the game in the whole screen (black borders) 
         Ctrl-Alt 3               - (OpenGL) Fit the game in the whole screen (no black borders) 
-	Ctrl-Alt 4-7             - (OpenGL) Zoom
+        Ctrl-Alt 4-7             - (OpenGL) Zoom
         Ctrl-z OR Alt-x          - quits
         Ctrl-f                   - runs in fast mode.
         Ctrl-g                   - runs in really REALLY fast mode.
