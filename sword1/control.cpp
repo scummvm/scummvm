@@ -478,7 +478,7 @@ void Control::handleVolumeClicks(void) {
 			uint8 clickDest = 0;
 			int16 mouseDiffX = _mouseX - (_volumeButtons[clickedId].x + 48);
 			int16 mouseDiffY = _mouseY - (_volumeButtons[clickedId].y + 48);
-			int16 mouseOffs = (int16)sqrt(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY);
+			int16 mouseOffs = (int16)sqrt((double)(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY));
 			// check if the player really hit the button (but not the center).
 			if ((mouseOffs <= 42) && (mouseOffs >= 8)) {
 				if (mouseDiffX > 8) { // right part
