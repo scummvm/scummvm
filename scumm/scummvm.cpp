@@ -2643,13 +2643,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 	switch (Common::parsePlatform(ConfMan.get("platform"))) {
-	case kPlatformAmiga:
+	case Common::kPlatformAmiga:
 		detector->_game.features |= GF_AMIGA;
 		break;
-	case kPlatformAtariST:
+	case Common::kPlatformAtariST:
 		detector->_game.features |= GF_ATARI_ST;
 		break;
-	case kPlatformMacintosh:
+	case Common::kPlatformMacintosh:
 		detector->_game.features |= GF_MACINTOSH;
 		break;
 	default:

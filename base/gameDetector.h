@@ -38,14 +38,6 @@ enum {
 	GF_DEFAULT_TO_1X_SCALER = 1 << 31
 };
 
-enum Platform {
-	kPlatformUnknown = -1,
-	kPlatformPC = 0,
-	kPlatformAmiga = 1,
-	kPlatformAtariST = 2,
-	kPlatformMacintosh = 3
-};
-
 enum MidiDriverType {
 	MDT_NONE   = 0,
 	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR

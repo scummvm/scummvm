@@ -177,7 +177,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("path", "");
 
 //	ConfMan.registerDefault("amiga", false);
-	ConfMan.registerDefault("platform", kPlatformPC);
+	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("nosubtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
@@ -388,7 +388,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (!strncmp(s, "platform=", 9)) {
 					s += 9;
 					int platform = Common::parsePlatform(s);
-					if (platform == kPlatformUnknown)
+					if (platform == Common::kPlatformUnknown)
 						goto ShowHelpAndExit;
 
 					ConfMan.set("platform", platform);
