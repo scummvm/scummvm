@@ -1312,7 +1312,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		drawTop = _top - _vm->_screenTop;
 	}
 
-	if (_vm->_heversion >= 71 && charUnk >= 8) {
+	if ((_vm->_heversion >= 71 && charUnk >= 8) || (_vm->_heversion >= 90 && charUnk == 0)) {
 		Common::Rect clip, src, dst;
 
 		clip.top = clip.left = 0;
