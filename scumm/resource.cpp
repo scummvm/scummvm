@@ -992,7 +992,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
-	} else if (basetag == MKID('HDHS')) {
+	} else if (basetag == MKID('HSHD')) {
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
@@ -2321,6 +2321,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
 		_numNewNames = 10;
+		_numRoomVariables = 64;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
 

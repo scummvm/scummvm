@@ -81,7 +81,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pop),
 		OPCODE(o72_compareStackList),
 		/* 1C */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown1C),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -171,7 +171,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknown62),
 		OPCODE(o72_getArrayDimSize),
 		/* 64 */
-		OPCODE(o6_invalid),
+		OPCODE(o72_getNumFreeArrays),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_endCutscene),
@@ -334,7 +334,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownEF),
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_seekFilePos),
@@ -383,7 +383,7 @@ static int arrayDataSizes[] = {0, 1, 4, 8, 8, 16, 32};
 
 ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
 											int dim1start, int dim1end) {
-	debug(1,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", array, dim2start, dim2end, dim1start, dim1end);
+	debug(5,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", array, dim2start, dim2end, dim1start, dim1end);
 
 	int id;
 	int size;
@@ -425,7 +425,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 }
 
 int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
-	debug(1, "readArray (array %d, idx2 %d, idx1 %d)", array, idx2, idx1);
+	debug(5, "readArray (array %d, idx2 %d, idx1 %d)", array, idx2, idx1);
 
 	if (readVar(array) == 0)
 		error("readArray: Reference to zeroed array pointer");
@@ -461,7 +461,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 }
 
 void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
-	debug(1, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", array, idx2, idx1, value);
+	debug(5, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", array, idx2, idx1, value);
 
 	if (readVar(array) == 0)
 		error("writeArray: Reference to zeroed array pointer");
@@ -529,7 +529,7 @@ void ScummEngine_v72he::o72_addMessageToStack() {
 	_stringLength = resStrLen(_scriptPointer) + 1;
 	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
 
-	debug(1,"o72_addMessageToStack(\"%s\")", _scriptPointer);
+	debug(0,"o72_addMessageToStack(\"%s\")", _scriptPointer);
 
 	_scriptPointer += _stringLength;
 }
@@ -560,6 +560,24 @@ void ScummEngine_v72he::o72_compareStackList() {
 	} else {
 		push(0);
 	}
+}
+
+void ScummEngine_v72he::o72_unknown1C() {
+	// For Pajame Sam 2
+	// Maybe HE 7.3?
+	// Incomplete
+	int value = fetchScriptByte();
+	value -= 46;
+
+	if (value == 10) {
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+	}
+
+	warning("o72_unknown1C stub (%d)", value);
 }
 
 void ScummEngine_v72he::o72_wordArrayWrite() {
@@ -734,6 +752,18 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 			push(val1 - val2 + 1);
 			break;
 	}
+}
+
+void ScummEngine_v72he::o72_getNumFreeArrays() {
+	byte **addr = _baseArrays;
+	int i, num = 0;
+
+	for (i = 1; i < _numArray; i++) {
+		if (!addr[i])
+			num++;
+	}
+
+	push (num);
 }
 
 void ScummEngine_v72he::o72_arrayOps() {

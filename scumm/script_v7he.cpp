@@ -342,9 +342,9 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownED),
 		OPCODE(o7_stringLen),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownEF),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -353,7 +353,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* F4 */
 		OPCODE(o7_unknownF4),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
@@ -416,12 +416,7 @@ void ScummEngine_v7he::o7_cursorCommand() {
 	case 0x13:		// HE 7.2 (Not all games)
 	case 0x14:
 		// Loads cursors from another resource
-		// Use old cursors for now
 		a = pop();
-		if (a == 2)
-			_Win32ResExtractor->setCursor(102);
-		else if (a == 5)
-			_Win32ResExtractor->setCursor(103);
 		debug(1, "o7_cursorCommand: case %x (%d)", subOp, a);
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
@@ -716,6 +711,15 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 	}
 }
 
+void ScummEngine_v7he::o7_unknownED() {
+	int a, b, c;
+	a = pop();
+	b = pop();
+	c = pop();
+	push(-1);
+	warning("stub o7_unknownED (%d, %d, %d)", c, b, a);
+}
+
 void ScummEngine_v7he::o7_stringLen() {
 	int id, len;
 	byte *addr;
@@ -728,6 +732,15 @@ void ScummEngine_v7he::o7_stringLen() {
 
 	len = strlen((char *)getStringAddress(id));
 	push(len);
+}
+
+void ScummEngine_v7he::o7_unknownEF() {
+	int a, b, c;
+	a = pop();
+	b = pop();
+	c = pop();
+	push(1);
+	warning("stub o7_unknownEF (%d, %d, %d)", c, b, a);
 }
 
 void ScummEngine_v7he::o7_readINI() {
@@ -785,6 +798,16 @@ void ScummEngine_v7he::o7_unknownF4() {
 		break;
 	}
 	warning("o7_unknownF4 stub");
+}
+
+void ScummEngine_v7he::o7_unknownF6() {
+	int a, b, c, d;
+	a = pop();
+	b = pop();
+	c = pop();
+	d = pop();
+	push(0);
+	warning("stub o7_unknownF6 (%d, %d, %d, %d)", d, c, b, a);
 }
 
 void ScummEngine_v7he::o7_unknownF9() {

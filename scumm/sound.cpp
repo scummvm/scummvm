@@ -180,8 +180,8 @@ void Sound::playSound(int soundID, int offset) {
 
 		musicFile.seek(+40, SEEK_CUR);
 		if (musicFile.readUint32LE() == MKID('SGEN')) {
-			// Skip to correct music header
-			skip = (soundID - 8001) * 21;
+			// TODO Work out skpi calcution
+			//skip = (soundID - 8001) * 21;
 			musicFile.seek(+skip, SEEK_CUR);
 
 			// Skip to offsets
@@ -260,12 +260,15 @@ void Sound::playSound(int soundID, int offset) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
-	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK')) {
+	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
+		// Later game start have 8 less
+		int diff = (READ_UINT32(ptr) == MKID('HSHD')) ? 8 : 0;
+
 		// TODO - discover what data the first chunk, HSHD, contains
 		// it might be useful here.
-		rate = READ_LE_UINT16(ptr + 22);
+		rate = READ_LE_UINT16(ptr + 22 - diff);
 
-		ptr += 8 + READ_BE_UINT32(ptr+12);
+		ptr += 8 + READ_BE_UINT32(ptr + 12 - diff);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 

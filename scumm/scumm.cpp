@@ -296,9 +296,9 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 90, MDT_NONE,
+	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
