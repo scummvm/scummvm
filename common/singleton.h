@@ -31,6 +31,12 @@ namespace Common {
 template <class T>
 class Singleton
 {
+private:
+	Singleton<T>(const Singleton<T>&);
+	Singleton<T>& operator= (const Singleton<T>&);
+	
+	static T* _singleton;
+
 public:
 	static T& instance() {
 		// TODO: We aren't thread safe. For now we ignore it since the
@@ -40,17 +46,17 @@ public:
 		// semi-random. If we use multiple singletons, the destruction
 		// order might become an issue. There are various approaches
 		// to solve that problem, but for now this is sufficient
-		static T singleton;
-		return singleton;
+		if (!_singleton)
+			_singleton = new T;
+		return *_singleton;
 	}
 protected:
 	Singleton<T>()		{ }
 	~Singleton<T>()		{ }
-
-private:
-	Singleton<T>(const Singleton<T>&);
-	Singleton<T>& operator= (const Singleton<T>&);
 }; 
+
+template <class T>
+T* Singleton<T>::_singleton=0;
 
 }	// End of namespace Common
 
