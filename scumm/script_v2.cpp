@@ -31,6 +31,8 @@
 #include "scumm/sound.h"
 #include "scumm/imuse.h"
 
+#include "dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
+				// Remove when INSANE is implemented
 void Scumm::setupOpcodes2()
 {
 	static const OpcodeProc opcode_list[256] = {
@@ -2776,17 +2778,24 @@ void Scumm::o6_miscOps()
  						sp->play("tovista1.san", getGameDataPath());
 						break;
 					 case 3: {
-						warning("FT-INSANE: Mine Fight scene not implemented. Just skipping it and giving you everything you need");
-						writeArray(233, 0, 50, 1); // INSANE callback: Chain
-						writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
-						writeArray(233, 0, 52, 1); // INSANE callback: Mace
-						writeArray(233, 0, 53, 1); // INSANE callback: 2x4
-						writeArray(233, 0, 54, 1); // INSANE callback: Wrench
-						writeArray(233, 0, 55, 1); // INSANE callback: Dust
-						writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
+						if (readArray(233,0,50) == 0) {
+						        InfoDialog* dialog = new InfoDialog(_newgui, this, "Set MineRoad - You can now jump the gorge.");
+							runDialog (dialog);
+ 							delete dialog;
 
-						writeArray(233, 0, 3, 45);
-						//writeArray(233, 0, 1, 130);
+							writeArray(233, 0, 50, 1); // INSANE callback: Chain
+							writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
+							writeArray(233, 0, 52, 1); // INSANE callback: Mace
+							writeArray(233, 0, 53, 1); // INSANE callback: 2x4
+							writeArray(233, 0, 54, 1); // INSANE callback: Wrench
+							writeArray(233, 0, 55, 1); // INSANE callback: Dust
+
+							writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
+							writeArray(233, 0, 7, 1);  // INSANE callback: Give nitro fuel
+
+							putState(235, 1);	   // Cheat and activate Ramp
+							writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)
+						}
 // 						sp->play("minefite.san", getGameDataPath());
 					 }
 						break;
