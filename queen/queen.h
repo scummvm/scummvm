@@ -120,7 +120,11 @@ public:
 		SAVESTATE_CUR_VER = 1,
 		SAVESTATE_MAX     = 100,
 		AUTOSAVE_INTERVAL = 5 * 60 * 1000,
-		AUTOSAVE_SLOT     = 0xFF
+		AUTOSAVE_SLOT     = 0xFF,
+		
+		MIN_TEXT_SPEED    = 4,
+		MAX_TEXT_SPEED    = 100,
+		MAX_MUSIC_VOLUME  = 255
 	};
 
 protected:

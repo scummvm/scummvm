@@ -876,6 +876,7 @@ void Display::drawTexts() {
 }
 
 void Display::clearTexts(uint16 y1, uint16 y2) {
+	assert(y1 <= y2 <= GAME_SCREEN_HEIGHT);
 	while (y1 <= y2) {
 		_texts[y1].text.clear();
 		++y1;
@@ -920,7 +921,7 @@ void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 	static const int dx[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
 	static const int dy[] = { -1, -1, -1, 0, 1, 1, 1, 0 };	
-	const uint8 *str = (const uint8*)text;
+	const uint8 *str = (const uint8 *)text;
 	uint16 xs = x;
 	while (*str && x < SCREEN_W) {
 		uint8 c = (_vm->resource()->getLanguage() == FRENCH && *str == 0x96) ? 0xFB : *str;
@@ -932,7 +933,7 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 			}
 		}
 		drawChar(x, y, color, pchr);
-		x += _charWidth[ c ];
+		x += _charWidth[c];
 		++str;
 	}
 	setDirtyBlock(xs - 1, y - 1, x - xs + 2, 8 + 2);

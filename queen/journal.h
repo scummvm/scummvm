@@ -24,6 +24,8 @@
 
 #include "common/util.h"
 
+class OSystem;
+
 namespace Queen {
 
 class QueenEngine;
@@ -49,10 +51,26 @@ public:
 		ZN_TEXT_SPEED   = 5,
 		ZN_SFX_TOGGLE   = 6,
 		ZN_MUSIC_VOLUME = 7,
-		ZN_DESC_FIRST   = 8,
-		ZN_DESC_LAST    = 17,
-		ZN_PAGE_FIRST   = 18,
-		ZN_PAGE_LAST    = 27,
+		ZN_DESC_1       = 8,
+		ZN_DESC_2       = 9,
+		ZN_DESC_3       = 10,
+		ZN_DESC_4       = 11,
+		ZN_DESC_5       = 12,
+		ZN_DESC_6       = 13,
+		ZN_DESC_7       = 14,
+		ZN_DESC_8       = 15,
+		ZN_DESC_9       = 16,
+		ZN_DESC_10      = 17,
+		ZN_PAGE_A       = 18,
+		ZN_PAGE_B       = 19,
+		ZN_PAGE_C       = 20,
+		ZN_PAGE_D       = 21,
+		ZN_PAGE_E       = 22,
+		ZN_PAGE_F       = 23,
+		ZN_PAGE_G       = 24,
+		ZN_PAGE_H       = 25,
+		ZN_PAGE_I       = 26,
+		ZN_PAGE_J       = 27,
 		ZN_INFO_BOX     = 28,
 		ZN_MUSIC_TOGGLE = 29,
 		ZN_VOICE_TOGGLE = 30,
@@ -96,22 +114,29 @@ public:
 	};
 
 	enum {
-		SAVE_PER_PAGE     = 10,
-		MAX_PANEL_TEXTS   = 4 * 2
+		NUM_SAVES_PER_PAGE = 10,
+		MAX_PANEL_TEXTS    = 8,
+		MAX_ZONES          = 31
 	};
 
-	enum Mode {
-		M_NORMAL,
-		M_INFO_BOX,
-		M_YES_NO
+	enum PanelMode {
+		PM_NORMAL,
+		PM_INFO_BOX,
+		PM_YES_NO
+	};
+	
+	enum QuitMode {
+		QM_LOOP,
+		QM_RESTORE,
+		QM_CONTINUE
 	};
 
 
 private:
 
-	void prepare();
-	void restore();
-	
+	void continueGame();
+
+	void setup();
 	void redraw();
 	void update();
 
@@ -121,38 +146,44 @@ private:
 	void drawSaveDescriptions();
 	void drawSaveSlot();
 
-	void enterYesNoMode(int16 zoneNum, int titleNum);
-	void exitYesNoMode();
-
-	void handleNormalMode(int16 zoneNum, int mousex);
-	void handleInfoBoxMode(int16 zoneNum);
-	void handleYesNoMode(int16 zoneNum);
+	void enterYesNoPanelMode(int16 prevZoneNum, int titleNum);
+	void exitYesNoPanelMode();
+	void enterInfoPanelMode();
+	void exitInfoPanelMode();
 
 	void handleMouseWheel(int inc);
 	void handleMouseDown(int x, int y);
 	void handleKeyDown(uint16 ascii, int keycode);
 
-	void clearPanelTexts();
 	void drawPanelText(int y, const char *text);
 	void drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameNum);
-	void drawSlideBar(int value, int hi, int lo, int bobNum, int16 x, int16 y, int frameNum);
+	void drawSlideBar(int value, int maxValue, int bobNum, int16 y, int frameNum);
 	void drawPanel(const int *frames, const int *titles, int n);
 	void drawNormalPanel();
 	void drawYesNoPanel(int titleNum);
 	void drawConfigPanel();
-	
-	void showInformationBox();
-	void hideInformationBox();
+	void drawInfoPanel();
 
-	void initEditBuffer(const char *desc);
-	void updateEditBuffer(uint16 ascii, int keycode);
+	void initTextField(const char *desc);
+	void updateTextField(uint16 ascii, int keycode);
+	void closeTextField();
 
-	struct {
-		bool enable;
+	struct TextField {
+		bool enabled;
 		int posCursor;
 		uint textCharsCount;
 		char text[32];
-	} _edit;
+		int x, y;
+		int w, h;
+	};
+
+	struct Zone {
+		int num;
+		int16 x1, y1, x2, y2;
+	};
+
+	PanelMode _panelMode;
+	QuitMode _quitMode;
 
 	int _currentSavePage;
 	int _currentSaveSlot;
@@ -161,16 +192,15 @@ private:
 
 	int _panelTextCount;
 	int _panelTextY[MAX_PANEL_TEXTS];
-
+	TextField _textField;
 	uint16 _prevZoneNum;
 	char _saveDescriptions[100][32];
-	Mode _mode;
-	bool _quit;
-	bool _quitCleanly;
-
+	
+	OSystem *_system;
 	QueenEngine *_vm;
+	
+	static const Zone _zones[MAX_ZONES];
 };
-
 
 } // End of namespace Queen
 

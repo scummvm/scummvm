@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "queen/journal.h"
 
 #include "queen/bankman.h"
@@ -33,7 +34,7 @@
 #include "queen/sound.h"
 
 namespace Queen {
-
+	
 Journal::Journal(QueenEngine *vm)
 	: _vm(vm) {
 	_currentSavePage = 0;
@@ -44,25 +45,26 @@ void Journal::use() {
 	BobSlot *joe = _vm->graphics()->bob(0);
 	_prevJoeX = joe->x;
 	_prevJoeY = joe->y;
+	
+	_panelMode = PM_NORMAL;
+	_system = OSystem::instance();
 
-	_edit.enable = false;
-	_mode = M_NORMAL;
-
+	_panelTextCount = 0;
+	memset(_panelTextY, 0, sizeof(_panelTextY));
+	memset(&_textField, 0, sizeof(_textField));
+	
 	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
 	_vm->findGameStateDescriptions(_saveDescriptions);
-	_panelTextCount = 0;
-	_vm->display()->palFadeOut(_vm->logic()->currentRoom());
-	prepare();
+
+	setup();
 	redraw();
 	update();
 	_vm->display()->palFadeIn(ROOM_JOURNAL);
 
-	_quitCleanly = true;
-	_quit = false;
-	OSystem *system = OSystem::instance();
-	while (!_quit) {
+	_quitMode = QM_LOOP;
+	while (_quitMode == QM_LOOP) {
 		OSystem::Event event;
-		while (system->pollEvent(event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);
@@ -77,68 +79,25 @@ void Journal::use() {
 				handleMouseWheel(1);
 				break;
 			case OSystem::EVENT_QUIT:
-				system->quit();
+				_system->quit();
 				break;
 			default:
 				break;
 			}
 		}
-		system->delayMillis(20);
-		system->updateScreen();
+		_system->delayMillis(20);
 	}
 
 	_vm->writeOptionSettings();
 
 	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->graphics()->putCameraOnBob(0);
-	if (_quitCleanly) {
-		restore();
+	if (_quitMode == QM_CONTINUE) {
+		continueGame();
 	}
 }
 
-void Journal::prepare() {
-	_vm->display()->horizontalScroll(0);
-	_vm->display()->fullscreen(true);
-
-	_vm->graphics()->putCameraOnBob(-1);
-	_vm->graphics()->clearBobs();
-	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
-	_vm->bankMan()->eraseFrames(false);
-	_vm->display()->textCurrentColor(INK_JOURNAL);
-
-	int i;
-	_vm->grid()->clear(GS_ROOM);
-	for (i = 0; i < 4; ++i) { // left panel
-		_vm->grid()->setZone(GS_ROOM, i + 1, 32, 8 + i * 48, 96, 40 + i * 48);
-	}
-	_vm->grid()->setZone(GS_ROOM, ZN_TEXT_SPEED, 136, 169, 265, 176);
-	_vm->grid()->setZone(GS_ROOM, ZN_SFX_TOGGLE, 221 - 24, 155, 231, 164);
-	_vm->grid()->setZone(GS_ROOM, ZN_MUSIC_VOLUME, 136, 182, 265, 189);
-	for (i = 0; i < 10; ++i) { // right panel
-		_vm->grid()->setZone(GS_ROOM, ZN_DESC_FIRST + i, 131, 7 + i * 13, 290, 18 + i * 13);
-		_vm->grid()->setZone(GS_ROOM, ZN_PAGE_FIRST + i, 300, 4 + i * 15, 319, 17 + i * 15);
-	}
-	_vm->grid()->setZone(GS_ROOM, ZN_INFO_BOX, 273, 146, 295, 189);
-	_vm->grid()->setZone(GS_ROOM, ZN_MUSIC_TOGGLE, 125 - 16, 181, 135, 190);
-	_vm->grid()->setZone(GS_ROOM, ZN_VOICE_TOGGLE, 158 - 24, 155, 168, 164);
-	_vm->grid()->setZone(GS_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
-
-	_vm->display()->setupNewRoom("journal", ROOM_JOURNAL);
-	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
-	for (i = 1; i <= 20; ++i) {
-		int frameNum = JOURNAL_FRAMES + i;
-		_vm->bankMan()->unpack(i, frameNum, JOURNAL_BANK);
-		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
-		bf->xhotspot = 0;
-		bf->yhotspot = 0;
-		if (i == FRAME_INFO_BOX) { // adjust info box hot spot to put it on top always
-			bf->yhotspot = 200;
-		}
-	}
-	_vm->bankMan()->close(JOURNAL_BANK);
-}
-
-void Journal::restore() {
+void Journal::continueGame() {
 	_vm->display()->fullscreen(false);
 	_vm->display()->forceFullRefresh();
 	
@@ -149,6 +108,41 @@ void Journal::restore() {
 	_vm->logic()->displayRoom(_vm->logic()->currentRoom(), RDM_FADE_JOE, 0, 0, false);
 }
 
+void Journal::setup() {
+	_vm->display()->palFadeOut(_vm->logic()->currentRoom());
+	_vm->display()->horizontalScroll(0);
+	_vm->display()->fullscreen(true);
+	_vm->graphics()->clearBobs();
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+	_vm->bankMan()->eraseFrames(false);
+	_vm->display()->textCurrentColor(INK_JOURNAL);
+
+	_vm->grid()->clear(GS_ROOM);
+	for (int i = 0; i < MAX_ZONES; ++i) {
+		const Zone *zn = &_zones[i];
+		_vm->grid()->setZone(GS_ROOM, zn->num, zn->x1, zn->y1, zn->x2, zn->y2);
+	}
+
+	_vm->display()->setupNewRoom("journal", ROOM_JOURNAL);
+	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
+	for (int f = 1; f <= 20; ++f) {
+		int frameNum = JOURNAL_FRAMES + f;
+		_vm->bankMan()->unpack(f, frameNum, JOURNAL_BANK);
+		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
+		bf->xhotspot = 0;
+		bf->yhotspot = 0;
+		if (f == FRAME_INFO_BOX) { // adjust info box hot spot to put it always on top
+			bf->yhotspot = 200;
+		}
+	}
+	_vm->bankMan()->close(JOURNAL_BANK);
+
+	_textField.x = 136;
+	_textField.y = 9;
+	_textField.w = 146;
+	_textField.h = 13;
+}
+
 void Journal::redraw() {
 	drawNormalPanel();
 	drawConfigPanel();
@@ -157,14 +151,17 @@ void Journal::redraw() {
 }
 
 void Journal::update() {
-	_vm->graphics()->update(ROOM_JOURNAL);
-	if (_edit.enable) {
-		int16 x = 136 + _edit.posCursor;
-		int16 y = 9 + _currentSaveSlot * 13 + 8;
+	_vm->graphics()->sortBobs();
+	_vm->display()->prepareUpdate();
+	_vm->graphics()->drawBobs();	
+	if (_textField.enabled) {
+		int16 x = _textField.x + _textField.posCursor;
+		int16 y = _textField.y + _currentSaveSlot * _textField.h + 8;
 		_vm->display()->drawBox(x, y, x + 6, y, INK_JOURNAL);
 	}
 	_vm->display()->forceFullRefresh();
 	_vm->display()->update();
+	_system->updateScreen();
 }
 
 void Journal::showBob(int bobNum, int16 x, int16 y, int frameNum) {
@@ -178,13 +175,13 @@ void Journal::hideBob(int bobNum) {
 }
 
 void Journal::drawSaveDescriptions() {
-	for (int i = 0; i < SAVE_PER_PAGE; ++i) {
+	for (int i = 0; i < NUM_SAVES_PER_PAGE; ++i) {
 		int n = _currentSavePage * 10 + i;
 		char nb[4];
 		sprintf(nb, "%d", n + 1);
-		int y = 9 + i * 13;
-		_vm->display()->setText(136, y, _saveDescriptions[n], false);
-		_vm->display()->setText(109, y + 1, nb, false);
+		int y = _textField.y + i * _textField.h;
+		_vm->display()->setText(_textField.x, y, _saveDescriptions[n], false);
+		_vm->display()->setText(_textField.x - 27, y + 1, nb, false);
 	}
 	// highlight current page
 	showBob(BOB_SAVE_PAGE, 300, 3 + _currentSavePage * 15, 6 + _currentSavePage);
@@ -194,116 +191,58 @@ void Journal::drawSaveSlot() {
 	showBob(BOB_SAVE_DESC, 130, 6 + _currentSaveSlot * 13, 17);
 }
 
-void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
-	_mode = M_YES_NO;
-	_prevZoneNum = zoneNum;
+void Journal::enterYesNoPanelMode(int16 prevZoneNum, int titleNum) {
+	_panelMode = PM_YES_NO;
+	_prevZoneNum = prevZoneNum;
 	drawYesNoPanel(titleNum);
 }
 
-void Journal::exitYesNoMode() {
-	_mode = M_NORMAL;
+void Journal::exitYesNoPanelMode() {
+	_panelMode = PM_NORMAL;
 	if (_prevZoneNum == ZN_MAKE_ENTRY) {
-		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		_edit.enable = false;
+		closeTextField();
 	}
 	redraw();
 }
 
-void Journal::handleNormalMode(int16 zoneNum, int x) {
-	if (zoneNum == ZN_REVIEW_ENTRY) {
-		enterYesNoMode(zoneNum, TXT_REVIEW_ENTRY);
-	} else if (zoneNum == ZN_MAKE_ENTRY) {
-		initEditBuffer(_saveDescriptions[_currentSavePage * 10 + _currentSaveSlot]);
-		enterYesNoMode(zoneNum, TXT_MAKE_ENTRY);
-	} else if (zoneNum == ZN_CLOSE) {
-		_quit = true;
-	} else if (zoneNum == ZN_GIVEUP) {
-		enterYesNoMode(zoneNum, TXT_GIVE_UP);
-	} else if (zoneNum == ZN_TEXT_SPEED) {
-		_vm->talkSpeed((x - 136) * 100 / 130);
-		drawConfigPanel();
-	} else if (zoneNum == ZN_SFX_TOGGLE) {
-		_vm->sound()->toggleSfx();
-		drawConfigPanel();
-	} else if (zoneNum == ZN_MUSIC_VOLUME) {
-		int val = (x - 136) * 255 / 130;
-		_vm->music()->setVolume(val);
-		drawConfigPanel();
-	} else if (zoneNum >= ZN_DESC_FIRST && zoneNum <= ZN_DESC_LAST) {
-		_currentSaveSlot = zoneNum - ZN_DESC_FIRST;
-		drawSaveSlot();
-	} else if (zoneNum >= ZN_PAGE_FIRST && zoneNum <= ZN_PAGE_LAST) {
-		_currentSavePage = zoneNum - ZN_PAGE_FIRST;
-		drawSaveDescriptions();
-	} else if (zoneNum == ZN_INFO_BOX) {
-		_mode = M_INFO_BOX;
-		showInformationBox();
-	} else if (zoneNum == ZN_MUSIC_TOGGLE) {
-		_vm->sound()->toggleMusic();
-		if (_vm->sound()->musicOn()) {
-			_vm->sound()->playLastSong();
-		} else {
-			_vm->music()->stopSong();
-		}
-		drawConfigPanel();
-	} else if (zoneNum == ZN_VOICE_TOGGLE) {
-		_vm->sound()->toggleSpeech();
-		drawConfigPanel();
-	} else if (zoneNum == ZN_TEXT_TOGGLE) {
-		_vm->subtitles(!_vm->subtitles());
-		drawConfigPanel();
-	}
+void Journal::enterInfoPanelMode() {
+	_panelMode = PM_INFO_BOX;
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+	drawInfoPanel();
 }
 
-void Journal::handleInfoBoxMode(int16 zoneNum) {
-	hideInformationBox();
-	_mode = M_NORMAL;
+void Journal::exitInfoPanelMode() {
+	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+	hideBob(BOB_INFO_BOX);
+	redraw();
+	_panelMode = PM_NORMAL;	
 }
 
-void Journal::handleYesNoMode(int16 zoneNum) {
-	if (zoneNum == ZN_YES) {
-		_mode = M_NORMAL;
-		int currentSlot = _currentSavePage * 10 + _currentSaveSlot;
-		switch (_prevZoneNum) {
-		case ZN_REVIEW_ENTRY:
-			if (_saveDescriptions[currentSlot][0]) {
-				_vm->graphics()->clearBobs();
-				_vm->display()->palFadeOut(ROOM_JOURNAL);
-				_vm->music()->stopSong();
-				_vm->loadGameState(currentSlot);
-				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
-				_quit = true;
-				_quitCleanly = false;
-			} else {
-				exitYesNoMode();
-			}
-			break;
-		case ZN_MAKE_ENTRY:
-			if (_edit.text[0]) {
-				_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-				_vm->saveGameState(currentSlot, _edit.text);
-				_quit = true;
-			} else {
-				exitYesNoMode();
-			}
-			break;
-		case ZN_GIVEUP:
-			_quit = true;
-			_quitCleanly = false;
-			_vm->quitGame();
-			break;
+void Journal::handleKeyDown(uint16 ascii, int keycode) {
+	switch (_panelMode) {
+	case PM_INFO_BOX:
+		break;
+	case PM_YES_NO:
+		if (keycode == 27) {
+			exitYesNoPanelMode();
+		} else if (_textField.enabled) {
+			updateTextField(ascii, keycode);
 		}
-	} else if (zoneNum == ZN_NO) {
-		exitYesNoMode();
+		break;
+	case PM_NORMAL:
+		if (keycode == 27) {
+			_quitMode = QM_CONTINUE;
+		}
+		break;
 	}
 }
 
 void Journal::handleMouseWheel(int inc) {
-	if (_mode == M_NORMAL) {
-		int curSave = _currentSavePage * SAVE_PER_PAGE + _currentSaveSlot + inc;
-		if (curSave >= 0 && curSave < SAVE_PER_PAGE * 10) {
-			_currentSavePage = curSave / SAVE_PER_PAGE;
-			_currentSaveSlot = curSave % SAVE_PER_PAGE;
+	if (_panelMode == PM_NORMAL) {
+		int curSave = _currentSavePage * NUM_SAVES_PER_PAGE + _currentSaveSlot + inc;
+		if (curSave >= 0 && curSave < NUM_SAVES_PER_PAGE * 10) {
+			_currentSavePage = curSave / NUM_SAVES_PER_PAGE;
+			_currentSaveSlot = curSave % NUM_SAVES_PER_PAGE;
 			drawSaveDescriptions();
 			drawSaveSlot();
 			update();
@@ -312,38 +251,130 @@ void Journal::handleMouseWheel(int inc) {
 }
 
 void Journal::handleMouseDown(int x, int y) {
-	int16 zone = _vm->grid()->findZoneForPos(GS_ROOM, x, y);
-	if (_mode == M_INFO_BOX) {
-		handleInfoBoxMode(_mode);
-	} else if (_mode == M_YES_NO) {
-		handleYesNoMode(zone);
-	} else if (_mode == M_NORMAL) {
-		handleNormalMode(zone, x);
+	int val;
+	int16 zoneNum = _vm->grid()->findZoneForPos(GS_ROOM, x, y);
+	switch (_panelMode) {
+	case PM_INFO_BOX:
+		exitInfoPanelMode();
+		break;
+	case PM_YES_NO:
+		if (zoneNum == ZN_YES) {
+			_panelMode = PM_NORMAL;
+			int currentSlot = _currentSavePage * 10 + _currentSaveSlot;
+			switch (_prevZoneNum) {
+			case ZN_REVIEW_ENTRY:
+				if (_saveDescriptions[currentSlot][0]) {
+					_vm->graphics()->clearBobs();
+					_vm->display()->palFadeOut(ROOM_JOURNAL);
+					_vm->music()->stopSong();
+					_vm->loadGameState(currentSlot);
+					_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+					_quitMode = QM_RESTORE;
+				} else {
+					exitYesNoPanelMode();
+				}
+				break;
+			case ZN_MAKE_ENTRY:
+				if (_textField.text[0]) {
+					closeTextField();
+					_vm->saveGameState(currentSlot, _textField.text);
+					_quitMode = QM_CONTINUE;
+				} else {
+					exitYesNoPanelMode();
+				}
+				break;
+			case ZN_GIVEUP:
+				_quitMode = QM_CONTINUE;
+				_vm->quitGame();
+				break;
+			}		
+		} else if (zoneNum == ZN_NO) {
+			exitYesNoPanelMode();
+		}
+		break;
+	case PM_NORMAL:
+		switch (zoneNum) {
+		case ZN_REVIEW_ENTRY:
+			enterYesNoPanelMode(zoneNum, TXT_REVIEW_ENTRY);
+			break;
+		case ZN_MAKE_ENTRY:
+			initTextField(_saveDescriptions[_currentSavePage * 10 + _currentSaveSlot]);
+			enterYesNoPanelMode(zoneNum, TXT_MAKE_ENTRY);
+			break;
+		case ZN_CLOSE:
+			_quitMode = QM_CONTINUE;
+			break;
+		case ZN_GIVEUP:
+			enterYesNoPanelMode(zoneNum, TXT_GIVE_UP);
+			break;
+		case ZN_TEXT_SPEED:
+			 val = (x - 136) * QueenEngine::MAX_TEXT_SPEED / (266 - 136);
+			_vm->talkSpeed(val);
+			drawConfigPanel();
+			break;
+		case ZN_SFX_TOGGLE:
+			_vm->sound()->toggleSfx();
+			drawConfigPanel();
+			break;
+		case ZN_MUSIC_VOLUME:
+			val = (x - 136) * QueenEngine::MAX_MUSIC_VOLUME / (266 - 136);
+			_vm->music()->setVolume(val);
+			drawConfigPanel();
+			break;
+		case ZN_DESC_1:
+		case ZN_DESC_2:
+		case ZN_DESC_3:
+		case ZN_DESC_4:
+		case ZN_DESC_5:
+		case ZN_DESC_6:
+		case ZN_DESC_7:
+		case ZN_DESC_8:
+		case ZN_DESC_9:
+		case ZN_DESC_10:
+			_currentSaveSlot = zoneNum - ZN_DESC_1;
+			drawSaveSlot();
+			break;
+		case ZN_PAGE_A:
+		case ZN_PAGE_B:
+		case ZN_PAGE_C:
+		case ZN_PAGE_D:
+		case ZN_PAGE_E:
+		case ZN_PAGE_F:
+		case ZN_PAGE_G:
+		case ZN_PAGE_H:
+		case ZN_PAGE_I:
+		case ZN_PAGE_J:
+			_currentSavePage = zoneNum - ZN_PAGE_A;
+			drawSaveDescriptions();
+			break;
+		case ZN_INFO_BOX:
+			enterInfoPanelMode();
+			break;
+		case ZN_MUSIC_TOGGLE:
+			_vm->sound()->toggleMusic();
+			if (_vm->sound()->musicOn()) {
+				_vm->sound()->playLastSong();
+			} else {
+				_vm->music()->stopSong();
+			}
+			drawConfigPanel();
+			break;
+		case ZN_VOICE_TOGGLE:
+			_vm->sound()->toggleSpeech();
+			drawConfigPanel();
+			break;
+		case ZN_TEXT_TOGGLE:
+			_vm->subtitles(!_vm->subtitles());
+			drawConfigPanel();
+			break;
+		}
+		break;
 	}
 	update();
 }
 
-void Journal::handleKeyDown(uint16 ascii, int keycode) {
-	if (_mode == M_YES_NO) {
-		if (keycode == 27) { // escape
-			handleYesNoMode(ZN_NO);
-		} else if (_edit.enable) {
-			updateEditBuffer(ascii, keycode);
-		}
-	} else if (_mode == M_NORMAL) {
-		handleNormalMode(ZN_CLOSE, 0);
-	}
-}
-
-void Journal::clearPanelTexts() {
-	int i;
-	for (i = 0; i < _panelTextCount; ++i) {
-		_vm->display()->clearTexts(_panelTextY[i], _panelTextY[i]);
-	}
-}
-
 void Journal::drawPanelText(int y, const char *text) {
-	debug(5, "Journal::drawPanelText(%d, '%s')", y, text);	
+	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);	
 	char s[80];
 	strcpy(s, text);
 	char *p = strchr(s, ' ');
@@ -372,12 +403,14 @@ void Journal::drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameN
 	}
 }
 
-void Journal::drawSlideBar(int value, int hi, int lo, int bobNum, int16 x, int16 y, int frameNum) {
-	showBob(bobNum, x + value * hi / lo, y, frameNum);
+void Journal::drawSlideBar(int value, int maxValue, int bobNum, int16 y, int frameNum) {
+	showBob(bobNum, 136 + value * (266 - 136) / maxValue, y, frameNum);
 }
 
 void Journal::drawPanel(const int *frames, const int *titles, int n) { 
-	clearPanelTexts();
+	for (int i = 0; i < _panelTextCount; ++i) {
+		_vm->display()->clearTexts(_panelTextY[i], _panelTextY[i]);
+	}
 	_panelTextCount = 0;
 	int bobNum = 1;
 	int y = 8;
@@ -411,8 +444,8 @@ void Journal::drawYesNoPanel(int titleNum) {
 void Journal::drawConfigPanel() {
 	_vm->checkOptionSettings();
 
-	drawSlideBar(_vm->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
-	drawSlideBar(_vm->music()->volume(), 130, 255, BOB_MUSIC_VOLUME, 136 - 4, 177, FRAME_GREEN_PIN);
+	drawSlideBar(_vm->talkSpeed(), QueenEngine::MAX_TEXT_SPEED, BOB_TALK_SPEED, 164, FRAME_BLUE_PIN);
+	drawSlideBar(_vm->music()->volume(), QueenEngine::MAX_MUSIC_VOLUME, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
 	
 	drawCheckBox(_vm->sound()->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);
@@ -420,10 +453,8 @@ void Journal::drawConfigPanel() {
 	drawCheckBox(_vm->sound()->musicOn(), BOB_MUSIC_TOGGLE, 125, 181, FRAME_CHECK_BOX);
 }
 
-void Journal::showInformationBox() {
-	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
+void Journal::drawInfoPanel() {
 	showBob(BOB_INFO_BOX, 72, 221, FRAME_INFO_BOX);
-
 	const char *ver = _vm->resource()->JASVersion();
 	switch (ver[0]) {
 	case 'P':
@@ -467,50 +498,88 @@ void Journal::showInformationBox() {
 	_vm->display()->setTextCentered(156, versionId, false);
 }
 
-void Journal::hideInformationBox() {
-	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
-	hideBob(BOB_INFO_BOX);
-	redraw();
+void Journal::initTextField(const char *desc) {
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	_textField.enabled = true;
+	_textField.posCursor = _vm->display()->textWidth(desc);
+	_textField.textCharsCount = strlen(desc);
+	memset(_textField.text, 0, sizeof(_textField.text));
+	strcpy(_textField.text, desc);
 }
 
-void Journal::initEditBuffer(const char *desc) {
-	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	_edit.enable = true;
-	_edit.posCursor = _vm->display()->textWidth(desc);
-	_edit.textCharsCount = strlen(desc);
-	memset(_edit.text, 0, sizeof(_edit.text));
-	strcpy(_edit.text, desc);
-}
-
-void Journal::updateEditBuffer(uint16 ascii, int keycode) {
+void Journal::updateTextField(uint16 ascii, int keycode) {
 	bool dirty = false;
 	switch (keycode) {
 	case 8: // backspace
-		if (_edit.textCharsCount > 0) {
-			--_edit.textCharsCount;
-			_edit.text[_edit.textCharsCount] = '\0';
+		if (_textField.textCharsCount > 0) {
+			--_textField.textCharsCount;
+			_textField.text[_textField.textCharsCount] = '\0';
 			dirty = true;
 		}
 		break;
 	case '\n':
 	case '\r':
-		handleYesNoMode(ZN_MAKE_ENTRY);
+		if (_textField.text[0]) {
+			closeTextField();
+			int currentSlot = _currentSavePage * 10 + _currentSaveSlot;
+			_vm->saveGameState(currentSlot, _textField.text);
+			_quitMode = QM_CONTINUE;
+		}
 		break;
 	default:
 		if (isprint((char)ascii) && 
-			_edit.textCharsCount < (sizeof(_edit.text) - 1) && 
-			_vm->display()->textWidth(_edit.text) < 146) {
-			_edit.text[_edit.textCharsCount] = (char)ascii;
-			++_edit.textCharsCount;
+			_textField.textCharsCount < (sizeof(_textField.text) - 1) && 
+			_vm->display()->textWidth(_textField.text) < _textField.w) {
+			_textField.text[_textField.textCharsCount] = (char)ascii;
+			++_textField.textCharsCount;
 			dirty = true;
 		}
 		break;
 	}
 	if (dirty) {
-		_vm->display()->setText(136, 9 + _currentSaveSlot * 13, _edit.text, false);
-		_edit.posCursor = _vm->display()->textWidth(_edit.text);
+		_vm->display()->setText(_textField.x, _textField.y + _currentSaveSlot * _textField.h, _textField.text, false);
+		_textField.posCursor = _vm->display()->textWidth(_textField.text);
 		update();
 	}
 }
+
+void Journal::closeTextField() {
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	_textField.enabled = false;
+}
+
+const Journal::Zone Journal::_zones[] = {
+	{ ZN_REVIEW_ENTRY,  32,   8,  96,  40 },
+	{ ZN_MAKE_ENTRY,    32,  56,  96,  88 }, // == ZN_YES
+	{ ZN_CLOSE,         32, 104,  96, 136 }, // == ZN_NO
+	{ ZN_GIVEUP,        32, 152,  96, 184 },
+	{ ZN_TEXT_SPEED,   136, 169, 265, 176 },
+	{ ZN_SFX_TOGGLE,   197, 155, 231, 164 },
+	{ ZN_MUSIC_VOLUME, 136, 182, 265, 189 },
+	{ ZN_DESC_1,       131,   7, 290,  18 },
+	{ ZN_DESC_2,       131,  20, 290,  31 },
+	{ ZN_DESC_3,       131,  33, 290,  44 },
+	{ ZN_DESC_4,       131,  46, 290,  57 },
+	{ ZN_DESC_5,       131,  59, 290,  70 },
+	{ ZN_DESC_6,       131,  72, 290,  83 },
+	{ ZN_DESC_7,       131,  85, 290,  96 },
+	{ ZN_DESC_8,       131,  98, 290, 109 },
+	{ ZN_DESC_9,       131, 111, 290, 122 },
+	{ ZN_DESC_10,      131, 124, 290, 135 },
+	{ ZN_PAGE_A,       300,   4, 319,  17 },
+	{ ZN_PAGE_B,       300,  19, 319,  32 },
+	{ ZN_PAGE_C,       300,  34, 319,  47 },
+	{ ZN_PAGE_D,       300,  49, 319,  62 },
+	{ ZN_PAGE_E,       300,  64, 319,  77 },
+	{ ZN_PAGE_F,       300,  79, 319,  92 },
+	{ ZN_PAGE_G,       300,  94, 319, 107 },
+	{ ZN_PAGE_H,       300, 109, 319, 122 },
+	{ ZN_PAGE_I,       300, 124, 319, 137 },
+	{ ZN_PAGE_J,       300, 139, 319, 152 },
+	{ ZN_INFO_BOX,     273, 146, 295, 189 },
+	{ ZN_MUSIC_TOGGLE, 109, 181, 135, 190 },
+	{ ZN_VOICE_TOGGLE, 134, 155, 168, 164 },
+	{ ZN_TEXT_TOGGLE,  109, 168, 135, 177 }
+};
 
 } // End of namespace Queen

@@ -115,10 +115,10 @@ void QueenEngine::registerDefaultSettings() {
 
 void QueenEngine::checkOptionSettings() {
 	// check talkspeed value
-	if (_talkSpeed < 4) {
-		_talkSpeed = 4;
-	} else if (_talkSpeed > 95) {
-		_talkSpeed = 100;
+	if (_talkSpeed < MIN_TEXT_SPEED) {
+		_talkSpeed = MIN_TEXT_SPEED;
+	} else if (_talkSpeed > MAX_TEXT_SPEED) {
+		_talkSpeed = MAX_TEXT_SPEED;
 	}
 
 	// ensure text is always on when voice is off
