@@ -2709,18 +2709,22 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		break;
 	case 207:
 		i = getObjectIndex(args[1]);
+		assert(i);
 		push(_objs[i].x_pos);
 		break;
 	case 208:
 		i = getObjectIndex(args[1]);
+		assert(i);
 		push(_objs[i].y_pos);
 		break;
 	case 209:
 		i = getObjectIndex(args[1]);
+		assert(i);
 		push(_objs[i].width);
 		break;
 	case 210:
 		i = getObjectIndex(args[1]);
+		assert(i);
 		push(_objs[i].height);
 		break;
 	case 211:
@@ -2931,7 +2935,7 @@ void ScummEngine_v6::o6_stampObject() {
 		state = 1;
 
 	int objnum = getObjectIndex(object);
-	if (objnum == 0)
+	if (objnum == -1)
 		return;
 
 	if (x != -1) {
