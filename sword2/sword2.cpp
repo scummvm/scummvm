@@ -253,9 +253,7 @@ int32 Sword2Engine::initialiseGame(void) {
 }
 
 void Sword2Engine::closeGame(void) {
-	// Stop music instantly!
-	killMusic();
-	_system->quit();
+	_quit = true;
 }
 
 void Sword2Engine::gameCycle(void) {
@@ -299,10 +297,8 @@ void Sword2Engine::go() {
 	_gui->readOptionSettings();
 
 	debug(5, "CALLING: initialiseGame");
-	if (initialiseGame()) {
-		closeGame();
+	if (initialiseGame())
 		return;
-	}
 
 	if (_saveSlot != -1) {
 		if (saveExists(_saveSlot))
@@ -322,6 +318,7 @@ void Sword2Engine::go() {
 					// 1 in 4 frames, to speed up game
 
 	_gameCycle = 0;
+	_quit = false;
 
 	while (1) {
 		if (_debugger->isAttached())
@@ -387,6 +384,13 @@ void Sword2Engine::go() {
 			gameCycle();
 		}
 
+		// We can't use this as termination condition for the looop,
+		// because we want the break to happen before updating the
+		// screen again.
+
+		if (_quit)
+			break;
+
 		// creates the debug text blocks
 		_debugger->buildDebugText();
 
@@ -402,7 +406,8 @@ void Sword2Engine::go() {
 #endif
 	}
 
-	closeGame();		// close engine systems down
+	// Stop music instantly!
+	killMusic();
 }
 
 void Sword2Engine::startGame(void) {
