@@ -5141,8 +5141,8 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 12:
 			switch (sub_cmd) {
-			case 5:
-				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+			case 5: // seem always before setting volume, but never before fading command
+				debug(1, "IMuseDigital::doCommand 12,5 sample(%d), param(%d)", sample, d);
 				return 0;
 			case 6: // volume control (0-127)
 				debug(1, "IMuseDigital::doCommand setting volume sample(%d), volume(%d)", sample, d);
@@ -5153,14 +5153,14 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (channel == -1) {
-					warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
+					warning("IMuseDigital::doCommand 12,6 sample(%d) not exist in channels", sample);
 					return 1;
 				}
 				_channel[channel]._volume = d;
 				_channel[channel]._volumeRight = d;
 				return 0;
 			case 7: // right volume control (0-127) i think
-				debug(1, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
+				debug(1, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, e);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
 						channel = l;
@@ -5168,19 +5168,19 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (channel == -1) {
-					warning("IMuseDigital::doCommand Sample %d not exist in channels", sample);
+					warning("IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volumeRight = d;
+				_channel[channel]._volumeRight = e;
 				return 0;
 			default:
-				warning("IMuseDigital::doCommand (param=0, cmd=12) default sub command %d", sub_cmd);
+				warning("IMuseDigital::doCommand 12 DEFAULT sub command %d", sub_cmd);
 				return 1;
 			}
 		case 14:
 			switch (sub_cmd) {
 			case 6: // fade volume control
-				debug(1, "IMuseDigital::doCommand fading right volume sample(%d),volume(%d)", sample, e);
+				debug(1, "IMuseDigital::doCommand fading volume sample(%d),fade(%d, %d)", sample, d, e);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
 						channel = l;
@@ -5194,26 +5194,29 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				_channel[channel]._volumeFade = e;
 				return 0;
 			default:
-				warning("IMuseDigital::doCommand (param=0, cmd=14) default sub command %d", sub_cmd);
+				warning("IMuseDigital::doCommand 14 DEFAULT sub command %d", sub_cmd);
 				return 1;
 			}
 		default:
-			warning("IMuseDigital::doCommand (param=0) default command %d", cmd);
+			warning("IMuseDigital::doCommand DEFAULT command %d", cmd);
 			return 1;
 		}
 	} else if (param == 16) {
 		switch (cmd) {
-		case 0:
-			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+		case 0: // it looks be play music (DIG/CMI) (state) (0, 1 ,2, 4, 6, 8, 9, 10, 12, 14, 15, 17, 18, 79, ...)
+			debug(1, "IMuseDigital::doCommand 0x1000 (%d)", b);
 			return 0;
-		case 1:
-			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+		case 1: // it looks be play music (DIG/CMI) (seq) (2020, 2022, 2023, 2045, 2046, 2050, 2060, 2070, ...)
+			debug(1, "IMuseDigital::doCommand 0x1001 (%d)", b);
 			return 0;
-		case 3:
-			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+		case 2: // dummy in DIG and CMI,     FT - ?
+			debug(1, "IMuseDigital::doCommand 0x1002 (%d)", b);
+			return 0;
+		case 3: // ??? (stream related) (1, 2, 8),(1)
+			debug(1, "IMuseDigital::doCommand 0x1003 (%d,%d)", b, c);
 			return 0;
 		default:
-			warning("IMuseDigital::doCommand (param=16) default command %d", cmd);
+			warning("IMuseDigital::doCommand (0x1xxx) DEFAULT command %d", cmd);
 			return 1;
 		}
 	}
