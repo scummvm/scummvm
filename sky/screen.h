@@ -100,7 +100,6 @@ private:
 	uint8 *_gameGrid;
 	uint8 *_currentScreen;
 	uint8 *_scrollScreen;
-	uint8 *_backScreen;
 	struct {
 		uint32 framesLeft;
 		uint32 delay;

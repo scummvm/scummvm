@@ -2288,7 +2288,10 @@ bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 	lowTextManager_t creditText = _skyText->lowTextManager(a , 240, 0, 248, true);
 	Compact *credCompact = SkyState::fetchCompact(creditText.compactNum);
 	credCompact->xcood = 168;
-	credCompact->ycood = (uint16)c;
+	if ((a == 558) && (c == 215))
+		credCompact->ycood = 211;
+	else
+		credCompact->ycood = (uint16)c;
 	_scriptVariables[RESULT] = creditText.compactNum;
 	return true;
 }

@@ -51,7 +51,6 @@ SkyScreen::SkyScreen(OSystem *pSystem, SkyDisk *pDisk) {
 
 	_system->init_size(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
-	_backScreen = (uint8 *)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 	forceRefresh();
 
 	_currentScreen = NULL;
@@ -81,7 +80,6 @@ SkyScreen::~SkyScreen(void) {
 
 	free(_gameGrid);
 	if (_currentScreen) free(_currentScreen);
-	if (_backScreen) free(_backScreen);
 }
 
 void SkyScreen::clearScreen(void) {
@@ -170,7 +168,7 @@ void SkyScreen::recreate(void) {
 	if (!screenData) {
 		error("SkyScreen::recreate():\nSkyState::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID](%X)) returned NULL",SkyLogic::_scriptVariables[LAYER_0_ID]);
 	}
-	uint8 *screenPos = _backScreen;
+	uint8 *screenPos = _currentScreen;
 
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
@@ -196,9 +194,6 @@ void SkyScreen::recreate(void) {
 
 void SkyScreen::flip(bool doUpdate) {
 
-	SkyState::_systemVars.mouseFlag |= MF_NO_UPDATE;
-	uint8 *screenPos = _currentScreen;
-	uint8 *backPos = _backScreen;
 	uint32 copyX, copyWidth;
 	copyX = copyWidth = 0;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
@@ -207,28 +202,16 @@ void SkyScreen::flip(bool doUpdate) {
 				_gameGrid[cnty * GRID_X + cntx] &= ~1;
 				if (!copyWidth) copyX = cntx * GRID_W;
 				copyWidth += GRID_W;
-				uint8 *copySrc = backPos;
-				uint8 *copyDest = screenPos;
-				for (uint8 gridLineCnt = 0; gridLineCnt < GRID_H; gridLineCnt++) {
-					memcpy(copyDest, copySrc, GRID_W);
-					copySrc += GAME_SCREEN_WIDTH;
-					copyDest += GAME_SCREEN_WIDTH;
-				}
 			} else if (copyWidth) {
 				_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
 				copyWidth = 0;
 			}
-			backPos += GRID_W;
-			screenPos += GRID_W;
 		}
 		if (copyWidth) {
 			_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
 			copyWidth = 0;
 		}
-		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
-		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
-	SkyState::_systemVars.mouseFlag &= ~MF_NO_UPDATE;
 	if (doUpdate)
 		_system->update_screen();
 }
@@ -663,7 +646,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		}
 	}
 	_sprX = (uint32)spriteX;
-	uint8 *screenPtr = _backScreen + _sprY * GAME_SCREEN_WIDTH + _sprX;
+	uint8 *screenPtr = _currentScreen + _sprY * GAME_SCREEN_WIDTH + _sprX;
 	if ((_sprHeight > 192) || (_sprY > 192)) {
 		_sprWidth = 0;
 		return;
@@ -730,7 +713,7 @@ void SkyScreen::verticalMask(void) {
 
 	if (_sprWidth == 0) return ;
 	uint32 startGridOfs = (_sprY + _sprHeight - 1) * GRID_X + _sprX;
-	uint8 *startScreenPtr = (_sprY + _sprHeight - 1) * GRID_H * GAME_SCREEN_WIDTH + _sprX * GRID_W + _backScreen;
+	uint8 *startScreenPtr = (_sprY + _sprHeight - 1) * GRID_H * GAME_SCREEN_WIDTH + _sprX * GRID_W + _currentScreen;
 
 	for (uint32 layerCnt = LAYER_1_ID; layerCnt <= LAYER_3_ID; layerCnt++) {
 		uint32 gridOfs = startGridOfs;
