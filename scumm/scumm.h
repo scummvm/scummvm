@@ -199,10 +199,9 @@ struct CharsetRenderer {
 	int _xpos2, _ypos2;
 	
 	int _bufPos;
-	byte _unk12, _disableOffsX;
-	byte *_ptr;	// FIXME: This field is *NOT* used - remove next time save game format changes
-	byte _unk2, _bpp;
-	byte _invNumBits;
+	bool _firstChar;
+	bool _disableOffsX;
+	byte _bpp;
 	uint32 _charOffs;
 	byte *_charPtr;
 	int _width, _height;

@@ -322,7 +322,7 @@ void Scumm::CHARSET_1()
 			charset._xpos2 = 0;
 	}
 
-	charset._disableOffsX = charset._unk12 = !_keepText;
+	charset._disableOffsX = charset._firstChar = !_keepText;
 
 	do {
 		c = *buffer++;
@@ -348,7 +348,7 @@ void Scumm::CHARSET_1()
 					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30 - 12];
 				else
 					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30];
-				charset._disableOffsX = 1;
+				charset._disableOffsX = true;
 				continue;
 			}
 		}
@@ -481,7 +481,7 @@ void Scumm::description()
 	charset._right = _realWidth - 1;
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
-	charset._disableOffsX = charset._unk12 = 1;
+	charset._disableOffsX = charset._firstChar = true;
 	charset._curId = 3;
 	charset._center = false;
 	charset._color = 15;
@@ -539,7 +539,7 @@ void Scumm::drawDescString(byte *msg)
 	if (charset._xpos2 < 0)
 		charset._xpos2 = 0;
 
-	charset._disableOffsX = charset._unk12 = 1;
+	charset._disableOffsX = charset._firstChar = true;
 	_bkColor = 0;
 	_talkDelay = 1;
 
@@ -585,8 +585,7 @@ void Scumm::drawString(int a)
 	charset._right = _string[a].right;
 	charset._color = _string[a].color;
 	_bkColor = 0;
-	charset._unk12 = 1;
-	charset._disableOffsX = 1;
+	charset._disableOffsX = charset._firstChar = true;
 
 	if (!(_features & GF_OLD256)) {
 		charsetptr = getResourceAddress(rtCharset, charset._curId);
@@ -654,7 +653,7 @@ void Scumm::drawString(int a)
 			case 1:
 			case 8:
 				if (charset._center) {
-					charset._left = charset._left2 - charset.getStringWidth(a, buf, i);
+					charset._left = charset._left2 - charset.getStringWidth(a, buf, i);	// FIXME - shouldn't this be getStringWidth() / 2 ?!?
 				} else {
 					charset._left = charset._left2;
 				}
@@ -900,18 +899,16 @@ void CharsetRenderer::printCharOld(int chr)
 	if (chr == '@')
 		return;
 
-	byte *ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
-	if (_vm->_features & GF_SMALL_HEADER)
-		ptr -= 12;
+	byte *ptr = _vm->getResourceAddress(rtCharset, _curId);
 
-	if (_unk12) {
+	if (_firstChar) {
 		_strLeft = _left;
 		_strTop = _top;
 		_strRight = _left;
 		_strBottom = _top;
-		_unk12 = 0;
+		_firstChar = false;
 	}
-	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1) * 8;
+	char_ptr = ptr + 224 + (chr + 1) * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
@@ -928,7 +925,7 @@ void CharsetRenderer::printCharOld(int chr)
 	}
 
 	// FIXME
-	_left += getSpacing(chr, ptr);
+	_left += getSpacing(chr, ptr + 29 - 12);
 
 	if (_left > _strRight)
 		_strRight = _left;
@@ -956,8 +953,7 @@ void CharsetRenderer::printChar(int chr)
 	if (_vm->_features & GF_SMALL_HEADER)
 		ptr -= 12;
 
-	_bpp = _unk2 = *ptr;
-	_invNumBits = 8 - _bpp;
+	_bpp = *ptr;
 	_colorMap[1] = _color;
 
 	_charOffs = READ_LE_UINT32(ptr + chr * 4 + 4);
@@ -971,7 +967,7 @@ void CharsetRenderer::printChar(int chr)
 
 	_width = _charPtr[0];
 	_height = _charPtr[1];
-	if (_unk12) {
+	if (_firstChar) {
 		_strLeft = 0;
 		_strTop = 0;
 		_strRight = 0;
@@ -1003,14 +999,14 @@ void CharsetRenderer::printChar(int chr)
 		return;
 	}
 
-	_disableOffsX = 0;
+	_disableOffsX = true;
 
-	if (_unk12) {
+	if (_firstChar) {
 		_strLeft = _left;
 		_strTop = _top;
 		_strRight = _left;
 		_strBottom = _top;
-		_unk12 = 0;
+		_firstChar = false;
 	}
 
 	if (_left < _strLeft)
@@ -1083,7 +1079,7 @@ void CharsetRenderer::drawBits()
 		maskpos = 0;
 
 		for (x = 0; x < _width; x++) {
-			color = (bits >> _invNumBits) & 0xFF;
+			color = (bits >> (8 - _bpp)) & 0xFF;
 			if (color) {
 				if (usemask) {
 					mask[maskpos] |= maskmask;
