@@ -1958,35 +1958,20 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 }
 
 byte *ScummEngine::getStringAddress(int i) {
-	byte *b = getResourceAddress(rtString, i);
-	if (!b)
+	byte *addr = getResourceAddress(rtString, i);
+	if (addr == NULL)
 		return NULL;
 
 	if (_heversion >= 72)
-		return (b + 0x14); // ArrayHeader->data
+		return (addr + 0x14);	// ArrayHeader->data
 
 	if (_features & GF_NEW_OPCODES)
-		return ((ArrayHeader *)b)->data;
-	return b;
+		return (addr + 0x6);	// ArrayHeader->data
+	return addr;
 }
 
 byte *ScummEngine::getStringAddressVar(int i) {
-	byte *addr;
-
-	addr = getResourceAddress(rtString, _scummVars[i]);
-	if (addr == NULL)
-		// as this is used for string mapping in the gui
-		// it must be allowed to return NULL
-		// error("NULL string var %d slot %d", i, _scummVars[i]);
-		return NULL;
-
-	if (_heversion >= 72)
-		return (addr + 0x14); // ArrayHeader->data
-
-	if (_features & GF_NEW_OPCODES)
-		return ((ArrayHeader *)addr)->data;
-
-	return (addr);
+	return getStringAddress(_scummVars[i]);
 }
 
 void ScummEngine::setResourceCounter(int type, int idx, byte flag) {
