@@ -379,8 +379,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			return;
 		}
 		
-		if (_gameId != GID_FT)
-			restoreVerbBG(verb);
+		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->curRect.left;
@@ -414,12 +413,15 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
-	} else if (_gameId != GID_FT) {
+	} else {
 		restoreVerbBG(verb);
 	}
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
+	if (_gameId == GID_FT)
+		return;
+
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
