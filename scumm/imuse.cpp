@@ -1296,17 +1296,19 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		case 13:
 			return getSoundStatus(b);
 		case 14:
-			// Sam and Max: Volume Fader?
-			// Prevent instantaneous volume fades.
-			// Fixes a Ball of Twine issue, but might not be the right long-term solution.
-			if (f != 0) {
-				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-					if (player->_active && player->_id == (uint16)b) {
-						player->fade_vol(e, f);
-						return 0;
-					}
-				}
+			// Sam and Max: Parameter transition
+			switch (d) {
+			case 1:
+				// Volume fade
+				player = this->get_player_byid (b);
+				if (player)
+					player->fade_vol (e, f);
+				return 0;
+
+			default:
+				warning ("[%02d] doCommand (14): Unknown transition %d to value %d over %d ticks", b, d, e, f);
 			}
+
 			return -1;
 		case 15:
 			// Sam & Max: Set hook for a "maybe" jump
@@ -1586,8 +1588,10 @@ int HookDatas::query_param(int param, byte chan) {
 int HookDatas::set(byte cls, byte value, byte chan) {
 	switch (cls) {
 	case 0:
-		_jump[1] = _jump[0];
-		_jump[0] = value;
+		if (value != _jump[0]) {
+			_jump[1] = _jump[0];
+			_jump[0] = value;
+		}
 		break;
 	case 1:
 		_transpose = value;
@@ -2107,7 +2111,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		return;
 
 #ifdef IMUSE_DEBUG
-	for (a = 0; a < len + 1 && a < 20; ++a) {
+	for (a = 0; a < len + 1 && a < 19; ++a) {
 		sprintf ((char *)&buf[a*3], " %02X", p[a]);
 	} // next for
 	if (a < len + 1) {
@@ -2115,7 +2119,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		++a;
 	} // end if
 	buf[a*3] = '\0';
-	debug (0, "SysEx:%s", buf);
+	debug (0, "[%02d] SysEx:%s", _id, buf);
 #endif
 
 	switch (code = *p++) {
