@@ -698,14 +698,10 @@ command line with the value after q specifying the desired quality from 0 to 10:
 You need LAME, and our extract util from the scummvm-tools package to perform
 this task, and ScummVM must be compiled with MAD support.
 
-Make a backup file of your MONSTER.SOU before attempting this. Copy your
-MONSTER.SOU file to a temporary folder. Then run:
-
   extract monster.sou
 
-In about 30 minutes or so, you will have a much smaller monster.so3 file,
-copy this file to your game directory. You can safely remove the monster.sou
-file.
+Eventually you will have a much smaller monster.so3 file, copy this file
+to your game directory. You can safely remove the monster.sou file.
 
 
 7.5.3) Compressing MONSTER.SOU with Ogg Vorbis:
@@ -721,11 +717,8 @@ than MP3, so have a good book handy.
 
 7.5.4) Compressing sfx/speech in Simon the Sorcerer 1 and 2
 ------ ----------------------------------------------------
-You need LAME, and our simon2mp3 util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD support.
-
-Make a backup of the file before attempting this. Copy the file to a
-temporary folder. Then run:
+Use our simon2mp3 util from the scummvm-tools package to perform
+this task, and ScummVM must be compiled with MAD or VORBIS support.
 
   simon2mp3 effects     (For simon1acorn)
   simon2mp3 simon       (For simon1acorn)
@@ -735,8 +728,11 @@ temporary folder. Then run:
   simon2mp3 simon2.voc  (For simon2talkie)
   simon2mp3 simon2.wav  (For simon2win) 
 
+For Ogg Vorbis add --vorbis, ie
 
-In about 30 minutes or so, you will have a much smaller *.mp3 file, copy this
+  simon2mp3 --vorbis
+
+Eventually you will have a much smaller *.mp3 or *.ogg file, copy this
 file to your game dir. You can safely remove the old file.
 
 
