@@ -420,15 +420,15 @@ SPRITE_DrawOccluded(R_SURFACE * ds,
 
 	SCENE_GetBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
 
-	spr_src_rect.x1 = 0;
-	spr_src_rect.y1 = 0;
-	spr_src_rect.x2 = s_width - 1;
-	spr_src_rect.y2 = s_height - 1;
+	spr_src_rect.left = 0;
+	spr_src_rect.top = 0;
+	spr_src_rect.right = s_width - 1;
+	spr_src_rect.bottom = s_height - 1;
 
-	spr_dst_rect.x1 = 0;
-	spr_dst_rect.y1 = 0;
-	spr_dst_rect.x2 = ds->clip_rect.x2;
-	spr_dst_rect.y2 = MIN(ds->clip_rect.y2, mask_h - 1);
+	spr_dst_rect.left = 0;
+	spr_dst_rect.top = 0;
+	spr_dst_rect.right = ds->clip_rect.right;
+	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)(mask_h - 1));
 
 	spr_pt.x = spr_x + x_align;
 	spr_pt.y = spr_y + y_align;

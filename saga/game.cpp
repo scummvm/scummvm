@@ -234,10 +234,10 @@ R_GAMEDESC GameDescs[] = {
 
 		    &ITE_Resources,
 
-		    YS_NELEMS(ITEDEMO_GameFiles),	/* Game datafiles */
+		    ARRAYSIZE(ITEDEMO_GameFiles),	/* Game datafiles */
 		    ITEDEMO_GameFiles,
 
-		    YS_NELEMS(ITEDEMO_GameFonts),
+		    ARRAYSIZE(ITEDEMO_GameFonts),
 		    ITEDEMO_GameFonts,
 
 		    &ITEDEMO_GameSound,
@@ -260,10 +260,10 @@ R_GAMEDESC GameDescs[] = {
 
 		    &ITE_Resources,
 
-		    YS_NELEMS(ITEDISK_GameFiles),
+		    ARRAYSIZE(ITEDISK_GameFiles),
 		    ITEDISK_GameFiles,
 
-		    YS_NELEMS(ITEDISK_GameFonts),
+		    ARRAYSIZE(ITEDISK_GameFonts),
 		    ITEDISK_GameFonts,
 
 		    &ITE_GameSound,
@@ -285,10 +285,10 @@ R_GAMEDESC GameDescs[] = {
 
 		    &ITE_Resources,
 
-		    YS_NELEMS(ITECD_GameFiles),
+		    ARRAYSIZE(ITECD_GameFiles),
 		    ITECD_GameFiles,
 
-		    YS_NELEMS(ITECD_GameFonts),
+		    ARRAYSIZE(ITECD_GameFonts),
 		    ITECD_GameFonts,
 
 		    &ITECD_GameSound,
@@ -310,7 +310,7 @@ R_GAMEDESC GameDescs[] = {
 
 		    IHNM_Resources,
 
-		    YS_NELEMS(IHNMDEMO_GameFiles),
+		    ARRAYSIZE(IHNMDEMO_GameFiles),
 		    IHNMDEMO_GameFiles,
 
 		    0,
@@ -335,10 +335,10 @@ R_GAMEDESC GameDescs[] = {
 
 		    IHNM_Resources,
 
-		    YS_NELEMS(IHNMCD_GameFiles),
+		    ARRAYSIZE(IHNMCD_GameFiles),
 		    IHNMCD_GameFiles,
 
-		    YS_NELEMS(IHNMCD_GameFonts),
+		    ARRAYSIZE(IHNMCD_GameFonts),
 		    IHNMCD_GameFonts,
 
 		    &IHNM_GameSound,
@@ -542,7 +542,7 @@ int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param)
 
 int DetectGame(const char *game_dir, uint * game_n_p)
 {
-	uint game_count = YS_NELEMS(GameDescs);
+	uint game_count = ARRAYSIZE(GameDescs);
 	uint game_n;
 
 	uint file_count;
@@ -609,7 +609,7 @@ int LoadGame(const char *game_dir, uint game_n)
 
 	R_RSCFILE_CONTEXT *load_ctxt;
 
-	uint game_count = YS_NELEMS(GameDescs);
+	uint game_count = ARRAYSIZE(GameDescs);
 
 	const char *game_fname;
 	uint game_filect;

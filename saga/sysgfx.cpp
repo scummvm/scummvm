@@ -96,10 +96,10 @@ int SYSGFX_Init(R_SYSGFX_INIT * gfx_init)
 	r_screen.buf_pitch = sdl_screen->pitch;
 	r_screen.bpp = gfx_init->screen_bpp;
 
-	r_screen.clip_rect.x1 = 0;
-	r_screen.clip_rect.y1 = 0;
-	r_screen.clip_rect.x2 = sdl_screen->w - 1;
-	r_screen.clip_rect.y2 = sdl_screen->h - 1;
+	r_screen.clip_rect.left = 0;
+	r_screen.clip_rect.top = 0;
+	r_screen.clip_rect.right = sdl_screen->w - 1;
+	r_screen.clip_rect.bottom = sdl_screen->h - 1;
 
 	r_screen.impl_src = sdl_screen;
 
@@ -128,10 +128,10 @@ int SYSGFX_Init(R_SYSGFX_INIT * gfx_init)
 	r_back_buf.buf_pitch = sdl_back_buf->pitch;
 	r_back_buf.bpp = gfx_init->backbuf_bpp;
 
-	r_back_buf.clip_rect.x1 = 0;
-	r_back_buf.clip_rect.y1 = 0;
-	r_back_buf.clip_rect.x2 = sdl_back_buf->w - 1;
-	r_back_buf.clip_rect.y2 = sdl_back_buf->h - 1;
+	r_back_buf.clip_rect.left = 0;
+	r_back_buf.clip_rect.top = 0;
+	r_back_buf.clip_rect.right = sdl_back_buf->w - 1;
+	r_back_buf.clip_rect.bottom = sdl_back_buf->h - 1;
 
 	r_back_buf.impl_src = sdl_back_buf;
 
@@ -199,10 +199,10 @@ R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE * surface)
 	new_r_surface->buf_pitch = new_sdl_surface->pitch;
 	new_r_surface->bpp = new_sdl_surface->format->BitsPerPixel;
 
-	new_r_surface->clip_rect.x1 = 0;
-	new_r_surface->clip_rect.y1 = 0;
-	new_r_surface->clip_rect.x2 = new_sdl_surface->w - 1;
-	new_r_surface->clip_rect.y2 = new_sdl_surface->h - 1;
+	new_r_surface->clip_rect.left = 0;
+	new_r_surface->clip_rect.top = 0;
+	new_r_surface->clip_rect.right = new_sdl_surface->w - 1;
+	new_r_surface->clip_rect.bottom = new_sdl_surface->h - 1;
 
 	new_r_surface->impl_src = new_sdl_surface;
 
@@ -235,10 +235,10 @@ R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp)
 	new_surface->buf_pitch = new_sdl_surface->pitch;
 	new_surface->bpp = new_sdl_surface->format->BitsPerPixel;
 
-	new_surface->clip_rect.x1 = 0;
-	new_surface->clip_rect.y1 = 0;
-	new_surface->clip_rect.x2 = w - 1;
-	new_surface->clip_rect.y2 = h - 1;
+	new_surface->clip_rect.left = 0;
+	new_surface->clip_rect.top = 0;
+	new_surface->clip_rect.right = w - 1;
+	new_surface->clip_rect.bottom = h - 1;
 
 	new_surface->impl_src = new_sdl_surface;
 

@@ -48,17 +48,6 @@ typedef int (YS_COMPARE_FUNC) (const void *, const void *);
 /* Ignore a parameter (Supress warnings) */
 #define YS_IGNORE_PARAM( param ) ( void )( param )
 
-/* Calculate the number of elements in an array */
-#define YS_NELEMS( arr ) (( sizeof arr ) / ( sizeof *arr ))
-
-#define YS_DUMMY_DECL		/* C99 permits statements before declarations */
-
-#define YS_REG_FUNC( arr ) YS_DUMMY_DECL
-#define YS_FUNC __func__
-
-#define YS_FLEX_ARRAY
-#define YS_FLEX_ARRAY_MOD 0
-
 /* ys_binread.c : Binary input functions (buffer oriented)
 \*------------------------------------------------------------------*/
 

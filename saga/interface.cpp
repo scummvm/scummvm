@@ -141,7 +141,7 @@ int INTERFACE_RegisterLang(void)
 {
 	size_t i;
 
-	for (i = 0; i < YS_NELEMS(I_VerbData); i++) {
+	for (i = 0; i < ARRAYSIZE(I_VerbData); i++) {
 
 		if (CVAR_Register_S(I_VerbData[i].verb_str,
 			I_VerbData[i].verb_cvar,
@@ -196,14 +196,14 @@ int INTERFACE_Init(void)
 		/* Load Inherit the Earth interface desc */
 
 		IfModule.c_panel.buttons = ITE_c_buttons;
-		IfModule.c_panel.nbuttons = YS_NELEMS(ITE_c_buttons);
+		IfModule.c_panel.nbuttons = ARRAYSIZE(ITE_c_buttons);
 
 		IfModule.i_desc = ITE_interface;
 	} else if (game_type == R_GAMETYPE_IHNM) {
 
 		/* Load I Have No Mouth interface desc */
 		IfModule.c_panel.buttons = IHNM_c_buttons;
-		IfModule.c_panel.nbuttons = YS_NELEMS(IHNM_c_buttons);
+		IfModule.c_panel.nbuttons = ARRAYSIZE(IHNM_c_buttons);
 
 		IfModule.i_desc = IHNM_interface;
 	} else {
@@ -318,11 +318,11 @@ int INTERFACE_Draw(void)
 
 	/* Erase background of status bar
 	 * \*------------------------------------------------------------- */
-	rect.x1 = 0;
-	rect.y1 = IfModule.i_desc.status_y;
+	rect.left = 0;
+	rect.top = IfModule.i_desc.status_y;
 
-	rect.x2 = g_di.logical_w - 1;
-	rect.y2 = IfModule.i_desc.status_h - 1;
+	rect.right = g_di.logical_w - 1;
+	rect.bottom = IfModule.i_desc.status_h - 1;
 
 	GFX_DrawRect(back_buf, &rect, IfModule.i_desc.status_bgcol);
 
@@ -435,10 +435,10 @@ int DrawStatusBar(R_SURFACE * ds)
 
 	/* Erase background of status bar
 	 * \*------------------------------------------------------------- */
-	rect.x1 = 0;
-	rect.y1 = IfModule.i_desc.status_y;
-	rect.x2 = g_di.logical_w - 1;
-	rect.y2 = IfModule.i_desc.status_y + IfModule.i_desc.status_h - 1;
+	rect.left = 0;
+	rect.top = IfModule.i_desc.status_y;
+	rect.right = g_di.logical_w - 1;
+	rect.bottom = IfModule.i_desc.status_y + IfModule.i_desc.status_h - 1;
 
 	GFX_DrawRect(ds, &rect, IfModule.i_desc.status_bgcol);
 

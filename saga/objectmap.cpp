@@ -237,7 +237,6 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
  * Loads an object name list resource
 \*--------------------------------------------------------------------------*/
 {
-	YS_REG_FUNC(OBJECTMAP_LoadNames);
 	const unsigned char *read_p = onl_res;
 
 	int table_len;
@@ -259,7 +258,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 
 #if 0
 #   if R_OBJECTMAP_DEBUG >= R_DEBUG_INFO
-	R_printf(R_STDOUT, "%s: Loading %d object names.\n", YS_FUNC, n_names);
+	R_printf(R_STDOUT, "OBJECTMAP_LoadNames: Loading %d object names.\n", n_names);
 #   endif
 #endif
 	OMInfo.names = (const char **)malloc(n_names * sizeof *OMInfo.names);

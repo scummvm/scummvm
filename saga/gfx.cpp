@@ -87,13 +87,13 @@ int GFX_DrawPalette(R_SURFACE * dst_s)
 
 	for (y = 0; y < 16; y++) {
 
-		pal_rect.y1 = (y * 8) + 4;
-		pal_rect.y2 = pal_rect.y1 + 8;
+		pal_rect.top = (y * 8) + 4;
+		pal_rect.bottom = pal_rect.top + 8;
 
 		for (x = 0; x < 16; x++) {
 
-			pal_rect.x1 = (x * 8) + 4;
-			pal_rect.x2 = pal_rect.x1 + 8;
+			pal_rect.left = (x * 8) + 4;
+			pal_rect.right = pal_rect.left + 8;
 
 			GFX_DrawRect(dst_s, &pal_rect, color);
 			color++;
@@ -267,12 +267,12 @@ GFX_BufToSurface(R_SURFACE * ds,
 	 * \*------------------------------------------------------------- */
 	if (src_rect != NULL) {
 
-		R_CLAMP_RECT(src_rect, 0, (src_w - 1), 0, (src_h - 1));
+		src_rect->clip(src_w - 1, src_h - 1);
 
-		s_x1 = src_rect->x1;
-		s_y1 = src_rect->y1;
-		s_x2 = src_rect->x2;
-		s_y2 = src_rect->y2;
+		s_x1 = src_rect->left;
+		s_y1 = src_rect->top;
+		s_x2 = src_rect->right;
+		s_y2 = src_rect->bottom;
 
 		if ((s_x1 >= s_x2) || (s_y1 >= s_y2)) {
 			/* Empty or negative region */
@@ -295,10 +295,10 @@ GFX_BufToSurface(R_SURFACE * ds,
 		d_y = 0;
 	}
 
-	clip_x1 = ds->clip_rect.x1;
-	clip_y1 = ds->clip_rect.y1;
-	clip_x2 = ds->clip_rect.x2;
-	clip_y2 = ds->clip_rect.y2;
+	clip_x1 = ds->clip_rect.left;
+	clip_y1 = ds->clip_rect.top;
+	clip_x2 = ds->clip_rect.right;
+	clip_y2 = ds->clip_rect.bottom;
 
 	if (clip_x1 == clip_x2) {
 		clip_x1 = 0;
@@ -413,12 +413,12 @@ GFX_BufToBuffer(uchar * dst_buf,
 	 * \*------------------------------------------------------------- */
 	if (src_rect != NULL) {
 
-		R_CLAMP_RECT(src_rect, 0, (src_w - 1), 0, (src_h - 1));
+		src_rect->clip(src_w - 1, src_h - 1);
 
-		s_x1 = src_rect->x1;
-		s_y1 = src_rect->y1;
-		s_x2 = src_rect->x2;
-		s_y2 = src_rect->y2;
+		s_x1 = src_rect->left;
+		s_y1 = src_rect->top;
+		s_x2 = src_rect->right;
+		s_y2 = src_rect->bottom;
 
 		if ((s_x1 >= s_x2) || (s_y1 >= s_y2)) {
 			/* Empty or negative region */
@@ -546,21 +546,21 @@ int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1)
 	R_RECT cur_rect;
 
 	/* Clamp point to surface */
-	cur_pt.x = MAX(p1->x, 0);
-	cur_pt.y = MAX(p1->y, 0);
+	cur_pt.x = MAX(p1->x, (int16)0);
+	cur_pt.y = MAX(p1->y, (int16)0);
 
-	cur_pt.x = MIN(p1->x, ds->buf_w - 1);
-	cur_pt.y = MIN(p1->y, ds->buf_h - 1);
+	cur_pt.x = MIN(p1->x, (int16)(ds->buf_w - 1));
+	cur_pt.y = MIN(p1->y, (int16)(ds->buf_h - 1));
 
 	cur_pt.x -= R_CURSOR_ORIGIN_X;
 	cur_pt.y -= R_CURSOR_ORIGIN_Y;
 
 	/* Clip cursor to surface */
 
-	cur_rect.x1 = 0;
-	cur_rect.y1 = 0;
-	cur_rect.x2 = R_CURSOR_W - 1;
-	cur_rect.y2 = R_CURSOR_H - 1;
+	cur_rect.left = 0;
+	cur_rect.top = 0;
+	cur_rect.right = R_CURSOR_W - 1;
+	cur_rect.bottom = R_CURSOR_H - 1;
 
 	ci.dst_rect = &ds->clip_rect;
 	ci.src_rect = &cur_rect;
@@ -606,32 +606,32 @@ int GFX_DrawRect(R_SURFACE * ds, R_RECT * dst_rect, int color)
 	int h;
 	int row;
 
-	int x1, y1, x2, y2;
+	int left, top, right, bottom;
 
 	if (dst_rect != NULL) {
 
-		R_CLAMP_RECT(dst_rect, 0, (ds->buf_w - 1), 0, (ds->buf_h - 1));
+		dst_rect->clip(ds->buf_w - 1, ds->buf_h - 1);
 
-		x1 = dst_rect->x1;
-		y1 = dst_rect->y1;
-		x2 = dst_rect->x2;
-		y2 = dst_rect->y2;
+		left = dst_rect->left;
+		top = dst_rect->top;
+		right = dst_rect->right;
+		bottom = dst_rect->bottom;
 
-		if ((x1 >= x2) || (y1 >= y2)) {
+		if ((left >= right) || (top >= bottom)) {
 			/* Empty or negative region */
 			return R_FAILURE;
 		}
 	} else {
-		x1 = 0;
-		y1 = 0;
-		x2 = ds->buf_w - 1;
-		y2 = ds->buf_h - 1;
+		left = 0;
+		top = 0;
+		right = ds->buf_w - 1;
+		bottom = ds->buf_h - 1;
 	}
 
-	w = (x2 - x1) + 1;
-	h = (y2 - y1) + 1;
+	w = (right - left) + 1;
+	h = (bottom - top) + 1;
 
-	write_p = ds->buf + (ds->buf_pitch * y1) + x1;
+	write_p = ds->buf + (ds->buf_pitch * top) + left;
 
 	for (row = 0; row < h; row++) {
 		memset(write_p, color, w);
@@ -643,7 +643,7 @@ int GFX_DrawRect(R_SURFACE * ds, R_RECT * dst_rect, int color)
 
 int GFX_DrawFrame(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 {
-	int x1, y1, x2, y2;
+	int left, top, right, bottom;
 
 	int min_x;
 	int max_x;
@@ -657,15 +657,15 @@ int GFX_DrawFrame(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 
 	assert((ds != NULL) && (p1 != NULL) && (p2 != NULL));
 
-	x1 = p1->x;
-	y1 = p1->y;
-	x2 = p2->x;
-	y2 = p2->y;
+	left = p1->x;
+	top = p1->y;
+	right = p2->x;
+	bottom = p2->y;
 
-	min_x = MIN(x1, x2);
-	min_y = MIN(y1, y2);
-	max_x = MAX(x1, x2);
-	max_y = MAX(y1, y2);
+	min_x = MIN(left, right);
+	min_y = MIN(top, bottom);
+	max_x = MAX(left, right);
+	max_y = MAX(top, bottom);
 
 	n_p1.x = min_x;
 	n_p1.y = min_y;
@@ -728,15 +728,15 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 		d_y = 0;
 	}
 
-	s_x1 = clipinfo->src_rect->x1;
-	s_y1 = clipinfo->src_rect->y1;
-	s_x2 = clipinfo->src_rect->x2;
-	s_y2 = clipinfo->src_rect->y2;
+	s_x1 = clipinfo->src_rect->left;
+	s_y1 = clipinfo->src_rect->top;
+	s_x2 = clipinfo->src_rect->right;
+	s_y2 = clipinfo->src_rect->bottom;
 
-	clip_x1 = clipinfo->dst_rect->x1;
-	clip_y1 = clipinfo->dst_rect->y1;
-	clip_x2 = clipinfo->dst_rect->x2;
-	clip_y2 = clipinfo->dst_rect->y2;
+	clip_x1 = clipinfo->dst_rect->left;
+	clip_y1 = clipinfo->dst_rect->top;
+	clip_x2 = clipinfo->dst_rect->right;
+	clip_y2 = clipinfo->dst_rect->bottom;
 
 	/* Clip source rectangle to destination surface
 	 * \*------------------------------------------------------------- */
@@ -820,16 +820,16 @@ GFX_ClipLine(R_SURFACE * ds,
 	const R_POINT *n_p2;
 
 	int clip_x1, clip_y1, clip_x2, clip_y2;
-	int x1, y1, x2, y2;
+	int left, top, right, bottom;
 	int dx, dy;
 
 	float m;
 	int y_icpt_l, y_icpt_r;
 
-	clip_x1 = ds->clip_rect.x1;
-	clip_y1 = ds->clip_rect.y1;
-	clip_x2 = ds->clip_rect.x2;
-	clip_y2 = ds->clip_rect.y2;
+	clip_x1 = ds->clip_rect.left;
+	clip_y1 = ds->clip_rect.top;
+	clip_x2 = ds->clip_rect.right;
+	clip_y2 = ds->clip_rect.bottom;
 
 	/* Normalize points by x */
 	if (src_p1->x < src_p2->x) {
@@ -846,40 +846,40 @@ GFX_ClipLine(R_SURFACE * ds,
 	dst_p2->x = n_p2->x;
 	dst_p2->y = n_p2->y;
 
-	x1 = n_p1->x;
-	y1 = n_p1->y;
+	left = n_p1->x;
+	top = n_p1->y;
 
-	x2 = n_p2->x;
-	y2 = n_p2->y;
+	right = n_p2->x;
+	bottom = n_p2->y;
 
-	dx = x2 - x1;
-	dy = y2 - y1;
+	dx = right - left;
+	dy = bottom - top;
 
-	if (x1 < 0) {
+	if (left < 0) {
 
-		if (x2 < 0) {
+		if (right < 0) {
 			/* Line completely off left edge */
 			return -1;
 		}
 
 		/* Clip to left edge */
-		m = ((float)y2 - y1) / (x2 - x1);
-		y_icpt_l = (int)(y1 - (x1 * m) + 0.5f);
+		m = ((float)bottom - top) / (right - left);
+		y_icpt_l = (int)(top - (left * m) + 0.5f);
 
 		dst_p1->x = 0;
 		dst_p1->y = y_icpt_l;
 	}
 
-	if (y2 > clip_x2) {
+	if (bottom > clip_x2) {
 
-		if (x1 > clip_x2) {
+		if (left > clip_x2) {
 			/* Line completely off right edge */
 			return -1;
 		}
 
 		/* Clip to right edge */
-		m = ((float)y1 - y2) / (x2 - x1);
-		y_icpt_r = (int)(y1 - ((clip_x2 - x1) * m) + 0.5f);
+		m = ((float)top - bottom) / (right - left);
+		y_icpt_r = (int)(top - ((clip_x2 - left) * m) + 0.5f);
 
 		dst_p1->y = y_icpt_r;
 		dst_p2->x = clip_x2;
@@ -916,7 +916,7 @@ void GFX_DrawLine(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 	int end_run;
 
 	R_POINT clip_p1, clip_p2;
-	int x1, y1, x2, y2;
+	int left, top, right, bottom;
 	int i, k;
 
 	clip_result = GFX_ClipLine(ds, p1, p2, &clip_p1, &clip_p2);
@@ -925,38 +925,38 @@ void GFX_DrawLine(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 		return;
 	}
 
-	x1 = clip_p1.x;
-	y1 = clip_p1.y;
+	left = clip_p1.x;
+	top = clip_p1.y;
 
-	x2 = clip_p2.x;
-	y2 = clip_p2.y;
+	right = clip_p2.x;
+	bottom = clip_p2.y;
 
-	if ((x1 < ds->clip_rect.x1) || (x2 < ds->clip_rect.x1) ||
-	    (x1 > ds->clip_rect.x2) || (x2 > ds->clip_rect.x2)) {
-
-		return;
-	}
-
-	if ((y1 < ds->clip_rect.y1) || (y2 < ds->clip_rect.y1) ||
-	    (y1 > ds->clip_rect.y2) || (y2 > ds->clip_rect.y2)) {
+	if ((left < ds->clip_rect.left) || (right < ds->clip_rect.left) ||
+	    (left > ds->clip_rect.right) || (right > ds->clip_rect.right)) {
 
 		return;
 	}
 
-	if (y1 > y2) {
+	if ((top < ds->clip_rect.top) || (bottom < ds->clip_rect.top) ||
+	    (top > ds->clip_rect.bottom) || (bottom > ds->clip_rect.bottom)) {
 
-		temp = y1;
-		y1 = y2;
-		y2 = temp;
-
-		temp = x1;
-		x1 = x2;
-		x2 = temp;
+		return;
 	}
 
-	write_p = ds->buf + (y1 * ds->buf_pitch) + x1;
+	if (top > bottom) {
 
-	dx = x2 - x1;
+		temp = top;
+		top = bottom;
+		bottom = temp;
+
+		temp = left;
+		left = right;
+		right = temp;
+	}
+
+	write_p = ds->buf + (top * ds->buf_pitch) + left;
+
+	dx = right - left;
 
 	if (dx < 0) {
 		x_vector = -1;
@@ -965,7 +965,7 @@ void GFX_DrawLine(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 		x_vector = 1;
 	}
 
-	dy = y2 - y1;
+	dy = bottom - top;
 
 	if (dx == 0) {
 		for (i = 0; i <= dy; i++) {

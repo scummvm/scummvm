@@ -39,15 +39,6 @@ namespace Saga {
 #define R_CURSOR_ORIGIN_X 4
 #define R_CURSOR_ORIGIN_Y 4
 
-#define R_CLAMP(a, min, max) \
-    (a = (a < (min)) ? (min) : ((a > max) ? (max) : a ))
-
-#define R_CLAMP_RECT( rect, xmin, xmax, ymin, ymax ) \
-            R_CLAMP( rect->x1, xmin, xmax ); \
-            R_CLAMP( rect->x2, xmin, xmax ); \
-            R_CLAMP( rect->y1, ymin, ymax ); \
-            R_CLAMP( rect->y2, ymin, ymax )
-
 } // End of namespace Saga
 
 #endif				/* R_GFX_H_ */

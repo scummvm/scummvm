@@ -258,11 +258,11 @@ int CON_Draw(R_SURFACE * ds)
 		ConInfo.y_pos = CV_ConResize;
 	}
 
-	fill_rect.x1 = 0;
-	fill_rect.y1 = 0;
+	fill_rect.top = 0;
+	fill_rect.left = 0;
 
-	fill_rect.x2 = ds->buf_w - 1;
-	fill_rect.y2 = ConInfo.y_pos;
+	fill_rect.bottom = ConInfo.y_pos;
+	fill_rect.right = ds->buf_w - 1;
 
 	GFX_DrawRect(ds, &fill_rect, SYSGFX_MatchColor(R_CONSOLE_BGCOLOR));
 

@@ -33,6 +33,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 #include "base/engine.h"
 
@@ -78,24 +79,9 @@ typedef unsigned long ulong;
 typedef unsigned int uint;
 #endif
 
-struct R_POINT {
+typedef Common::Point R_POINT;
+typedef Common::Rect R_RECT;
 
-	int x;
-	int y;
-
-};
-
-struct R_RECT {
-
-	int x1;
-	int y1;
-	int x2;
-	int y2;
-
-};
-
-#define R_MAKERECT( rect, x1, y1, x2, y2 ) \
-    ( rect.x1 = x1, rect.y1 = y1, rect.x2 = x2, rect.y2 = y2, &rect )
 
 struct R_COLOR {
 
@@ -171,7 +157,6 @@ enum R_ERRORCODE {
 /*
  * r_main.c
 \*--------------------------------------------------------------------------*/
-int main(int argc, char *argv[]);
 
 void R_Shutdown(int param);
 

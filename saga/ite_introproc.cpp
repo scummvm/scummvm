@@ -136,7 +136,7 @@ int ITE_StartProc(void)
 	R_SCENE_QUEUE first_scene;
 	R_GAME_SCENEDESC gs_desc;
 
-	n_introscenes = YS_NELEMS(ITE_IntroList);
+	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
 
@@ -160,7 +160,7 @@ int ITE_IntroRegisterLang(void)
 
 	size_t i;
 
-	for (i = 0; i < YS_NELEMS(IntroDiag); i++) {
+	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
 
 		if (CVAR_Register_S(IntroDiag[i].i_str,
 			IntroDiag[i].i_cvar_name,
@@ -914,7 +914,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
 		    "Allison Hershey", MEDIUM_FONT_ID}
 	};
 
-	int n_credits = YS_NELEMS(credits);
+	int n_credits = ARRAYSIZE(credits);
 
 	int event_delay = 0;
 

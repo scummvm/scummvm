@@ -67,7 +67,7 @@ R_SCENE_DESC IHNM_IntroMovie1Desc = {
 
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie1RL,
-	YS_NELEMS(IHNM_IntroMovie1RL)
+	ARRAYSIZE(IHNM_IntroMovie1RL)
 
 };
 
@@ -82,7 +82,7 @@ R_SCENE_DESC IHNM_IntroMovie2Desc = {
 
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie2RL,
-	YS_NELEMS(IHNM_IntroMovie2RL)
+	ARRAYSIZE(IHNM_IntroMovie2RL)
 
 };
 
@@ -97,7 +97,7 @@ R_SCENE_DESC IHNM_IntroMovie3Desc = {
 
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie3RL,
-	YS_NELEMS(IHNM_IntroMovie3RL)
+	ARRAYSIZE(IHNM_IntroMovie3RL)
 
 };
 
@@ -112,7 +112,7 @@ R_SCENE_DESC IHNM_IntroMovie4Desc = {
 
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie4RL,
-	YS_NELEMS(IHNM_IntroMovie4RL)
+	ARRAYSIZE(IHNM_IntroMovie4RL)
 
 };
 
@@ -131,7 +131,7 @@ int IHNM_StartProc(void)
 	size_t n_introscenes;
 	size_t i;
 
-	n_introscenes = YS_NELEMS(IHNM_IntroList);
+	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
 

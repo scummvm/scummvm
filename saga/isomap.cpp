@@ -176,14 +176,10 @@ int ISOMAP_Draw(R_SURFACE * dst_s)
 {
 
 	R_GAME_DISPLAYINFO disp_info;
-	R_RECT iso_rect;
 
 	GAME_GetDisplayInfo(&disp_info);
 
-	iso_rect.x1 = 0;
-	iso_rect.y1 = 0;
-	iso_rect.x2 = disp_info.logical_w - 1;
-	iso_rect.y2 = disp_info.scene_h - 1;
+	R_RECT iso_rect(disp_info.logical_w - 1, disp_info.scene_h - 1);
 
 	GFX_DrawRect(dst_s, &iso_rect, 0);
 
