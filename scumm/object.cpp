@@ -143,6 +143,13 @@ int ScummEngine::getState(int obj) {
 
 	if (_gameId == GID_MANIAC && (obj == 182 || obj == 193))
 		_objectStateTable[obj] |= 0x08;
+
+	// The Enchanced version of Zak McKracken included in the
+	// SelectWare Classic Collection bundle has no copy protection 
+	// and doesn't include the codes.
+
+	if (_gameId == GID_ZAK && obj == 213)
+		_objectStateTable[obj] |= 0x08;
 #endif
 
 	return _objectStateTable[obj];
