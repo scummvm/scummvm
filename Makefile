@@ -47,9 +47,6 @@ LIBS    += -lmad
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
-# Uncomment this to activate extended debugging support in Simon
-DEFINES += -DSIMONDEBUG
-
 # Uncomment this for stricter compile time code verification
 # CFLAGS  += -Wshadow -Werror
 

@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef SIMONDEBUG
-
 byte *SimonState::dumpOpcode(byte *p)
 {
 	byte opcode;
@@ -477,5 +475,3 @@ void SimonState::dump_vga_script(byte *ptr, uint res, uint sprite_id)
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 
-
-#endif

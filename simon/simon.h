@@ -462,8 +462,7 @@ public:
 	void set_hitarea_x_y(uint hitarea, int x, int y);
 	bool is_hitarea_0x40_clear(uint hitarea);
 	void delete_hitarea(uint hitarea);
-	void addNewHitArea(int id, int x, int y, int width, int height,
-										 int flags, int unk3, Item *item_ptr);
+	void addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr);
 	HitArea *findEmptyHitArea();
 	void hitarea_proc_1();
 	void handle_verb_hitarea(HitArea * ha);
@@ -587,8 +586,7 @@ public:
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint num_1);
 	void talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint a, int b, uint c);
-	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
-															uint unk4);
+	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
 
 	void render_string(uint num_1, uint color, uint width, uint height, const char *txt);
 
@@ -744,14 +742,12 @@ public:
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
 
-#ifdef SIMONDEBUG
 	void dump_video_script(byte *src, bool one_opcode_only);
 	void dump_vga_file(byte *vga);
 	void dump_vga_script(byte *ptr, uint res, uint sprite_id);
 	void dump_vga_script_always(byte *ptr, uint res, uint sprite_id);
 	void dump_vga_bitmaps(byte *vga, byte *vga1, int res);
 	void dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base);
-#endif
 
 	void dx_clear_attached_from_top(uint lines);
 	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);
