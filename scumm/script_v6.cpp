@@ -1008,7 +1008,7 @@ void Scumm_v6::o6_walkActorToObj() {
 			// FIXME: This is a hack to work around bug #742676 SAM: Fish Farm.
 			// Note quite sure why it happens, though, if it's normal or due to
 			// a bug in the ScummVM code.
-			warning("o6_walkActorToObj: invalid actor %d\n", obj);
+			warning("o6_walkActorToObj: invalid actor %d", obj);
 			return;
 		}
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
