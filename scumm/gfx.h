@@ -80,7 +80,7 @@ enum VirtScreenNumber {
  */
 struct VirtScreen {
 	/**
-	 * The unique id of this screen (correponds to its position in the
+	 * The unique id of this screen (corresponds to its position in the
 	 * ScummEngine:virtscr array).
 	 */
 	VirtScreenNumber number;
