@@ -270,12 +270,12 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
 		if (tmp < gdi._numStrips)
-			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw << 3, imgh << 3, i, 1, Gdi::dbAllowMaskOr);
+			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr);
 	}
 
 	vst = &_verbs[verb];
-	vst->right = vst->x + imgw << 3;
-	vst->bottom = vst->y + imgh << 3;
+	vst->right = vst->x + imgw * 8;
+	vst->bottom = vst->y + imgh * 8;
 	vst->oldleft = vst->x;
 	vst->oldright = vst->right;
 	vst->oldtop = vst->y;
