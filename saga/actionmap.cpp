@@ -123,8 +123,9 @@ int ActionMap::freeMap(void) {
 	for (i = 0; i < _n_exits; i++) {
 		exmap_entry = &_exits_tbl[i];
 
-		if (exmap_entry->pt_tbl)
-			free(exmap_entry->pt_tbl);
+		if (_exits_tbl[i])
+			if (exmap_entry->pt_tbl)
+				free(exmap_entry->pt_tbl);
 	}
 
 	if (_exits_tbl)
