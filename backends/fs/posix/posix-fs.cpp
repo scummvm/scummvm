@@ -24,10 +24,12 @@
 
 #ifdef MACOSX
 #include <sys/types.h>
+#include <sys/param.h>
 #endif
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #ifdef __GP32__ //ph0x FIXME: implement and move to portdefs.h
 #define opendir(x) (0)
@@ -62,15 +64,35 @@ public:
 };
 
 
+static const char *lastPathComponent(const ScummVM::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+	
+	while (cur > start && *cur != '/') {
+		--cur;
+	}
+	
+	return cur+1;
+}
+
 FilesystemNode *FilesystemNode::getRoot() {
 	return new POSIXFilesystemNode();
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
-	_displayName = "/";
+#if 1
+	char buf[MAXPATHLEN];
+	getwd(buf);
+	
+	_path = buf;
+	_displayName = lastPathComponent(_path);
+	_path += '/';
+#else
+	_path = "/";
+	_displayName = _path;
+#endif
 	_isValid = true;
 	_isDirectory = true;
-	_path = "/";
 }
 
 /*
@@ -127,17 +149,6 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 	}
 	closedir(dirp);
 	return myList;
-}
-
-const char *lastPathComponent(const ScummVM::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-	
-	while (cur > start && *cur != '/') {
-		--cur;
-	}
-	
-	return cur+1;
 }
 
 FilesystemNode *POSIXFilesystemNode::parent() const {
