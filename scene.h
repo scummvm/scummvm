@@ -38,14 +38,12 @@ public:
   ~Scene();
 
   void drawBackground() const {
-    if (currSetup_->bkgnd_bm_ == NULL) {
+    if ((currSetup_->bkgnd_bm_ == NULL) || (currSetup_->bkgnd_zbm_ == NULL)) {
       error("Null background for setup %s in %s", currSetup_->name_.c_str(), name_.c_str());
       return;
     }
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    currSetup_->bkgnd_zbm_->draw();
     currSetup_->bkgnd_bm_->draw();
-    glDepthMask(GL_TRUE);
   }
   void setupCamera() {
     currSetup_->setupCamera();

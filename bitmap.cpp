@@ -95,6 +95,9 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   } else {
+    for (int i = 0; i < (width_ * height_); i++) {
+      ((unsigned short int *) (data_[curr_image_]))[i] = 0xFFFF - (((unsigned short int *) (data_[curr_image_]))[i]) / 64;
+    }
     tex_ids_ = NULL;
   }
 }
@@ -109,7 +112,6 @@ void Bitmap::prepareGL() {
   glLoadIdentity();
   // A lot more may need to be put there : disabling Alpha test, blending, ...
   // For now, just keep this here :-)
-  glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);
 }
@@ -120,6 +122,8 @@ void Bitmap::draw() const {
     if (curr_image_ != 0) {
       warning("Animation not handled yet in GL texture path !\n");
     }
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
     glEnable(GL_SCISSOR_TEST);
     int cur_tex_idx = 0;
     for (int y = y_; y < (y_ + height_); y += BITMAP_TEXTURE_SIZE) {
@@ -143,10 +147,26 @@ void Bitmap::draw() const {
     }
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_TEXTURE_2D);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
   } else if (format_ == 5) {
+    if (curr_image_ != 0) {
+      warning("Animation not handled yet in GL texture path !\n");
+    }
     glRasterPos2i(x_, y_);
-    printf("format2\n");
-    glDrawPixels(width_, height_, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_]);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
+    glDepthMask(GL_TRUE);
+    /* This loop here is to prevent using PixelZoom that may be unoptimized for the 1.0 / -1.0 case
+       in some drivers...
+    */
+    for (int row = 0; row < height_; row++) {
+      glRasterPos2i(x_, y_ + row + 1);
+      glDrawPixels(width_, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_] + (2 * row * width_));
+    }
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
+    glDepthFunc(GL_LESS);
   }
 }
 
