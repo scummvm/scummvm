@@ -4850,7 +4850,6 @@ void SimonEngine::delay(uint amount) {
 					// We should only allow a load or save when it was possible in original
 					// This stops load/save during cutscenes
 					// But can still load/save during converstation
-					// TODO: Add dialog to confirm game was saved.
 					if (!_lock_counter)
 						quick_load_or_save();
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
