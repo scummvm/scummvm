@@ -1941,7 +1941,7 @@ void Scumm_v5::o5_setVarRange() {
 }
 
 void Scumm_v5::o5_soundKludge() {
-	int items[15];
+	int items[16];
 	int i;
 
 	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
@@ -1956,7 +1956,7 @@ void Scumm_v5::o5_soundKludge() {
 		return;
 	}
 
-	for (i = 0; i < 15; i++)
+	for (i = 0; i < 16; i++)
 		items[i] = 0;
 
 	int num = getWordVararg(items);
