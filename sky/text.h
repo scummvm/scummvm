@@ -30,7 +30,7 @@ public:
 	void getText(uint32 textNr, void **itemList, uint16 language);
 	void displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	void displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
-	void makeGameCharacter(char textChar, uint8 *charSet, uint8 *&data, uint8 color);
+	void makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
 
 protected:
 	bool getTBit();

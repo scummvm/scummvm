@@ -275,12 +275,12 @@ void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelW
 			
 }
 
-void SkyText::makeGameCharacter(char textChar, uint8 *charSet, uint8 *&dest, uint8 color) {
+void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
 
 	bool maskBit, dataBit;	
-	uint8 charWidth = (uint8)((*(charSet + textChar)) + 1 - _dtCharSpacing);
+	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
 	uint16 data, mask; 
-	byte *charSpritePtr = (charSet + CHAR_SET_HEADER + ((_charHeight << 2) * textChar));
+	byte *charSpritePtr = charSetPtr + (CHAR_SET_HEADER + ((_charHeight << 2) * textChar));
 	byte *startPos = dest;
 	byte *curPos = startPos;
 
