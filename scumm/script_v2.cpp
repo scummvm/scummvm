@@ -818,8 +818,8 @@ void Scumm_v2::o2_verbOps() {
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
-		/* int unk = */ fetchScriptByte(); // ?
-
+		int prep = fetchScriptByte(); // Only used in V1?
+		printf("Setting prep %d for slot %d\n", prep, slot);
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if ((_gameId == GID_MANIAC) && (_version == 1))
 			y+=8;
@@ -848,6 +848,7 @@ void Scumm_v2::o2_verbOps() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
+		vs->prep = prep;
 		
 		vs->x = x;
 		vs->y = y;
@@ -912,7 +913,7 @@ void Scumm_v2::o2_doSentence() {
 
 			runObjectScript(st->objectA, st->verb, false, false, NULL);
 		} else
-			runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
+				runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
 		break;
 	case 2:
 		// Print the sentence
@@ -933,7 +934,7 @@ void Scumm_v2::o2_drawSentence() {
 	static char sentence[256];
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
-
+	printf("slot is %d\n");
 	if (!(_userState & 32))
 		return;
 
@@ -948,6 +949,14 @@ void Scumm_v2::o2_drawSentence() {
 			strcat(sentence, " ");
 			strcat(sentence, (const char*)temp);
 		}
+	
+		if ((_version == 1) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
+        	        byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1)) + 12;
+			VerbSlot *vs = &_verbs[slot];
+
+			if (ptr && (vs->prep == 0xFF))
+				VAR(VAR_SENTENCE_PREPOSITION) = (*ptr >> 5);
+        	}
 	}
 
 	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {

@@ -39,7 +39,7 @@ struct VerbSlot {
 	uint16 saveid;
 	uint8 key;
 	bool center;
-	uint8 field_1B;
+	uint8 prep;
 	uint16 imgindex;
 };
 

@@ -312,7 +312,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(VerbSlot, saveid, sleByte, VER_V8),
 		MKLINE(VerbSlot, key, sleByte, VER_V8),
 		MKLINE(VerbSlot, center, sleByte, VER_V8),
-		MKLINE(VerbSlot, field_1B, sleByte, VER_V8),
+		MKLINE(VerbSlot, prep, sleByte, VER_V8),
 		MKLINE(VerbSlot, imgindex, sleUint16, VER_V8),
 		MKEND()
 	};
