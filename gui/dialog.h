@@ -70,7 +70,7 @@ public:
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
 
-	void addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey);
+	void addButton(int x, int y, int w, int h, const ScummVM::String &label, uint32 cmd, char hotkey);
 };
 
 #endif

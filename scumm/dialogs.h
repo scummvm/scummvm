@@ -21,13 +21,11 @@
 #ifndef SCUMM_DIALOGS_H
 #define SCUMM_DIALOGS_H
 
+#include "common/str.h"
 #include "gui/dialog.h"
 
 class ListWidget;
 class Scumm;
-
-#define RES_STRING(id)		queryResString(id)
-#define CUSTOM_STRING(id)	queryCustomString(id)
 
 class ScummDialog : public Dialog {
 public:
@@ -35,12 +33,14 @@ public:
 		: Dialog(gui, x, y, w, h), _scumm(scumm) {}
 	
 protected:
+	typedef ScummVM::String String;
+
 	Scumm *_scumm;
 
 	void addResText(int x, int y, int w, int h, int resID);
 
 	// Query a string from the resources
-	const char *queryResString(int stringno);
+	const String queryResString(int stringno);
 	
 	// Query a custom string. This is in a seperate method so that we
 	// can easily localize the messages in the future if we want to.

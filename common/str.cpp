@@ -20,13 +20,10 @@
 
 #include "stdafx.h"
 #include "str.h"
-#include "util.h"
 
 
 #ifdef _MSC_VER
-
 #	pragma warning( disable : 4068 ) // unknown pragmas
-
 #endif
 
 
@@ -39,7 +36,7 @@ String::String(const char *str, int len)
 		if (len > 0)
 			_capacity = _len = len;
 		else
-			_capacity = _len = resStrLen(str);
+			_capacity = _len = strlen(str);
 		_str = (char *)calloc(1, _capacity+1);
 		memcpy(_str, str, _len);
 		_str[_len] = 0;
@@ -54,7 +51,7 @@ String::String(const ConstString &str)
 	printf("String::String(const ConstString &str)\n");
 	_refCount = new int(1);
 	if (str._str) {		
-		_capacity = _len = resStrLen(str._str);
+		_capacity = _len = strlen(str._str);
 		_str = (char *)calloc(1, _capacity+1);
 		memcpy(_str, str._str, _len+1);
 	} else {
@@ -90,7 +87,7 @@ void String::decRefCount()
 
 String& String::operator  =(const char* str)
 {	
-	int len = resStrLen(str);
+	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(len, false);
 		
@@ -123,7 +120,7 @@ String& String::operator  =(const String& str)
 
 String& String::operator +=(const char* str)
 {
-	int len = resStrLen(str);
+	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(_len + len, true);
 

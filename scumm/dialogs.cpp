@@ -30,14 +30,9 @@
 #include "common/config-file.h"
 
 
-
 #ifdef _MSC_VER
-
 #	pragma warning( disable : 4068 )
-
 #endif
-
-
 
 
 struct ResString {
@@ -153,20 +148,17 @@ static ResString string_map_table_v5[] = {
 void ScummDialog::addResText(int x, int y, int w, int h, int resID)
 {
 	// Get the string
-	const char *str = queryResString(resID);
-	if (!str)
-		str = "Dummy!";
-	new StaticTextWidget(this, x, y, w, h, str, kTextAlignCenter);
+	new StaticTextWidget(this, x, y, w, h, queryResString(resID), kTextAlignCenter);
 }
 
 
-const char *ScummDialog::queryResString(int stringno)
+const ScummVM::String ScummDialog::queryResString(int stringno)
 {
 	char *result;
 	int string;
 
 	if (stringno == 0)
-		return NULL;
+		return String();
 
 	if (_scumm->_features & GF_AFTER_V7)
 		string = _scumm->_vars[string_map_table_v7[stringno - 1].num];
@@ -183,12 +175,105 @@ const char *ScummDialog::queryResString(int stringno)
 
 	if (!result) {								// Gracelessly degrade to english :)
 		if (_scumm->_features & GF_AFTER_V6)
-			return string_map_table_v6[stringno - 1].string;
+			result = string_map_table_v6[stringno - 1].string;
 		else
-			return string_map_table_v5[stringno - 1].string;
+			result = string_map_table_v5[stringno - 1].string;
 	}
 
-	return result;
+	// Convert to a proper string (take care of FF codes)
+	int value;
+	byte chr;
+	String tmp;
+
+	while ((chr = *result++)) {		
+		if (chr == 0xFF) {
+			chr = *result++;			
+			switch (chr) {
+			case 4: { // add value
+				value = _scumm->readVar(READ_LE_UINT16(result));
+				if (value < 0) {
+					tmp += '-';
+					value = -value;
+				}
+
+				int flag = 0;
+				int max = 10000;
+				do {
+					if (value >= max || flag) {
+						tmp += value / max + '0';
+						value %= max;
+						flag = 1;
+					}
+					max /= 10;
+					if (max == 1)
+						flag = 1;
+				} while (max);
+				result += 2;
+				break;
+			}
+
+			case 5: { //add verb
+				value = _scumm->readVar(READ_LE_UINT16(result));
+				int i;
+				if (!value)
+					break;
+				
+				for (i = 1; i < _scumm->_maxVerbs; i++) {
+					if (value == _scumm->_verbs[i].verbid && !_scumm->_verbs[i].type && !_scumm->_verbs[i].saveid) {
+						char* verb = (char*)_scumm->getResourceAddress(rtVerb, i);
+						if (verb) {
+							tmp += verb;
+						}
+						break;
+					}
+				}
+				result += 2;
+				break;
+			}
+
+			case 6: { // add object or actor name
+				value = _scumm->readVar(READ_LE_UINT16(result));
+				if (!value)
+					break;
+
+				char* name = (char*)_scumm->getObjOrActorName(value);
+				if (name) {
+					tmp += name;
+				}
+				result += 2;
+				break;
+			}
+			case 7: { // add string
+				value = READ_LE_UINT16(result);
+				if (_scumm->_features & GF_AFTER_V6 || _scumm->_gameId == GID_INDY3_256)			
+					value = _scumm->readVar(value);
+
+				if (value) {
+					char *str = (char*)_scumm->getStringAddress(value);
+					if (str) {
+						tmp += str;
+					}
+				}
+				result += 2;
+				break;
+			}
+				// Do these ever occur in the Gui?
+			case 9:
+			case 10:
+			case 12:
+			case 13:
+			case 14:				
+				result += 2;				
+			default:
+				warning("Ignoring unknown resource string of type %d", (int)chr);
+			}
+		} else {
+			if (chr != '@') {
+				tmp += chr;
+			}
+		}
+	}
+	return tmp;
 }
 
 const char *ScummDialog::queryCustomString(int stringno)
@@ -224,11 +309,11 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 
-	addButton(200, 20, 54, 16, RES_STRING(4), kSaveCmd, 'S');	// Save
-	addButton(200, 40, 54, 16, RES_STRING(5), kLoadCmd, 'L');	// Load
-	addButton(200, 60, 54, 16, RES_STRING(6), kPlayCmd, 'P');	// Play
-	addButton(200, 80, 54, 16, CUSTOM_STRING(17), kOptionsCmd, 'O');	// Options
-	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
+	addButton(200, 20, 54, 16, queryResString(4), kSaveCmd, 'S');	// Save
+	addButton(200, 40, 54, 16, queryResString(5), kLoadCmd, 'L');	// Load
+	addButton(200, 60, 54, 16, queryResString(6), kPlayCmd, 'P');	// Play
+	addButton(200, 80, 54, 16, queryCustomString(17), kOptionsCmd, 'O');	// Options
+	addButton(200, 100, 54, 16, queryResString(8), kQuitCmd, 'Q');	// Quit
 	
 	_savegameList = new ListWidget(this, 10, 20, 180, 90);
 	_savegameList->setNumberingMode(kListNumberingZero);
@@ -294,11 +379,11 @@ enum {
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 50, 80, 210, 60)
 {
-	addButton( 10, 10, 40, 16, CUSTOM_STRING(5), kSoundCmd, 'S');	// Sound
-	addButton( 80, 10, 40, 16, CUSTOM_STRING(6), kKeysCmd, 'K');	// Keys
-	addButton(150, 10, 40, 16, CUSTOM_STRING(7), kAboutCmd, 'A');	// About
-	addButton( 10, 35, 40, 16, CUSTOM_STRING(18), kMiscCmd, 'M');	// Misc
-	addButton(150, 35, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	addButton( 10, 10, 40, 16, queryCustomString(5), kSoundCmd, 'S');	// Sound
+	addButton( 80, 10, 40, 16, queryCustomString(6), kKeysCmd, 'K');	// Keys
+	addButton(150, 10, 40, 16, queryCustomString(7), kAboutCmd, 'A');	// About
+	addButton( 10, 35, 40, 16, queryCustomString(18), kMiscCmd, 'M');	// Misc
+	addButton(150, 35, 40, 16, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
 
 	_aboutDialog = new AboutDialog(gui, scumm);
 	_soundDialog = new SoundDialog(gui, scumm);
@@ -333,7 +418,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 124)
 {
-	addButton(110, 100, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	addButton(110, 100, 40, 16, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
 	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 30, 240, 16, "http://scummvm.sourceforge.net", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
