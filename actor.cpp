@@ -69,35 +69,24 @@ void Actor::walkTo(Vector3d p) {
 	}
 }
 
-bool Actor::validBoxVector(Vector3d forwardVec, float dist) {
-	// TODO: Verify if any other sector flags allow walking
-	// Possibly use a box-aware TraceLine function instead of just checking
-	// dest point
-	Vector3d tempVec = pos_ + (forwardVec * dist);
-	int numSectors = Engine::instance()->currScene()->getSectorCount();
-
-	if (constrain_ == false)
-		return true;
-
-	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
-		if ((sector->type() & 0x1000) && sector->visible()) {
-			if (sector->isPointInSector(tempVec))
-				return true;
-		}
-	}
-	return false;
-}
-
 void Actor::walkForward() {
 	float dist = Engine::instance()->perSecond(walkRate_);
 	float yaw_rad = yaw_ * (M_PI / 180), pitch_rad = pitch_ * (M_PI / 180);
 	Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
 		std::cos(yaw_rad) * std::cos(pitch_rad),
 		std::sin(pitch_rad));
-	if (validBoxVector(forwardVec, dist)) {
-		pos_ += forwardVec * dist;
+	Vector3d destPos = pos_ + forwardVec * dist;
+
+	if (! constrain_) {
+		pos_ = destPos;
 		lastWalkTime_ = Engine::instance()->frameStart();
+	}
+	else {
+		Sector *sector = Engine::instance()->currScene()->findPointSector(destPos, 0x1000);
+		if (sector != NULL) {
+			pos_ = sector->projectToPlane(destPos);
+			lastWalkTime_ = Engine::instance()->frameStart();
+		}
 	}
 }
 

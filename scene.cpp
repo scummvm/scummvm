@@ -171,6 +171,16 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 	}
 }
 
+Sector *Scene::findPointSector(Vector3d p, int flags) {
+	for (int i = 0; i < numSectors_; i++) {
+		Sector *sector = sectors_ + i;
+		if ((sector->type() & flags) && sector->visible() &&
+		    sector->isPointInSector(p))
+			return sector;
+	}
+	return NULL;
+}
+
 ObjectState *Scene::findState(const char *filename) {
 	for (StateList::iterator i = states_.begin(); i != states_.end();
 	     i++) {

@@ -66,6 +66,7 @@ public:
 		else
 			return NULL;
 	}
+	Sector *findPointSector(Vector3d p, int flags);
 
 	void addObjectState(ObjectState *s) {
 		states_.push_back(s);

@@ -39,6 +39,8 @@ public:
 	bool visible() const { return visible_; }
 	bool isPointInSector(Vector3d point) const;
 
+	Vector3d projectToPlane(Vector3d point) const;
+
 private:
 	int numVertices_, id_;
 
@@ -47,5 +49,7 @@ private:
 	bool visible_;
 	Vector3d *vertices_;
 	float height_;
+
+	Vector3d normal_;
 };
 #endif

@@ -79,6 +79,12 @@ void Sector::load0(TextSplitter &ts, char *name, int id) {
 
 	// Repeat the last vertex for convenience
 	vertices_[numVertices_] = vertices_[0];
+
+	normal_ = cross(vertices_[1] - vertices_[0],
+			vertices_[numVertices_ - 1] - vertices_[0]);
+	float length = normal_.magnitude();
+	if (length > 0)
+		normal_ /= length;
 }
 
 void Sector::setVisible(bool visible) {
@@ -102,4 +108,14 @@ bool Sector::isPointInSector(Vector3d point) const {
 			return false;
 	}
 	return true;
+}
+
+Vector3d Sector::projectToPlane(Vector3d point) const {
+	if (normal_.z() == 0)
+		error("Trying to walk along vertical plane\n");
+
+	// Formula: return p - (n . (p - v_0))/(n . k) k
+	Vector3d result = point;
+	result.z() -= dot(normal_, point - vertices_[0]) / normal_.z();
+	return result;
 }
