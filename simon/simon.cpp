@@ -3463,7 +3463,9 @@ void SimonEngine::processSpecialKeys() {
 			_sound->effectsPause(_effects_paused ^= 1);
 		break;
 	case 'b':
-		_sound->ambientPause(_ambient_paused ^= 1);
+		_ambient_paused ^= 1;
+		_sound->ambientPause(_ambient_paused);
+		vc_set_bit_to(99, _ambient_paused);
 		break;
 	case 'r':
 		if (_debugMode)
