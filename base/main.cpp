@@ -297,11 +297,11 @@ void operator delete(void *ptr) {
 
 #undef free
 void free_check(void *ptr) {
-	if ((uint)ptr == 0xE7E7E7E7UL) {
+	if ((unsigned long)ptr == 0xE7E7E7E7UL) {
 		printf("ERROR: freeing 0xE7E7E7E7\n");
 		exit(1);
 	}
-	if ((int)ptr & 1) {
+	if ((unsigned long)ptr & 1) {
 		warning("Freeing odd address 0x%x", ptr);
 	}
 	free(ptr);
