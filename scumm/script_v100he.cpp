@@ -2430,16 +2430,20 @@ void ScummEngine_v100he::o100_getWizData() {
 }
 
 void ScummEngine_v100he::o100_getPaletteData() {
+	int palSlot, color;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 13:
 		pop();
 		pop();
+		push(0);
 		break;
 	case 20:
-		pop();
-		pop();
+		color = pop();
+		palSlot = pop();
+		push(getHEPaletteColor(palSlot, color));
 		break;
 	case 33:
 		pop();
@@ -2448,21 +2452,23 @@ void ScummEngine_v100he::o100_getPaletteData() {
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 53:
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 73:
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	default:
 		error("o100_getPaletteData: Unknown case %d", subOp);
 	}
-	push(0);
 	debug(0, "o100_getPaletteData stub (%d)", subOp);
 }
 

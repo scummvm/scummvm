@@ -2139,6 +2139,13 @@ uint8 *ScummEngine_v90he::getHEPalette(int palSlot) {
 	}
 }
 
+int ScummEngine_v90he::getHEPaletteColor(int palSlot, int color) {
+	assert(palSlot >= 1 && palSlot <= _numPalettes);
+	assert(color >= 1 && color <= 255);
+
+	return _hePalettes[palSlot * 1024 + 768 + color];
+}
+
 void ScummEngine_v90he::setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
 	uint8 *p = _hePalettes + palSlot * 1024 + color * 3;
@@ -2211,6 +2218,8 @@ void ScummEngine_v90he::copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 sr
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
+	int palSlot, color;
+
 	byte subOp = fetchScriptByte();
 	subOp -= 45;
 
@@ -2221,24 +2230,27 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 21:
-		pop();
-		pop();
+		color = pop();
+		palSlot = pop();
+		push(getHEPaletteColor(palSlot, color));
 		break;
 	case 87:
 		pop();
 		pop();
+		push(0);
 		break;
 	case 172:
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);
 	}
-	push(0);
 	debug(1,"o90_getPaletteData stub (%d)", subOp);
 }
 
