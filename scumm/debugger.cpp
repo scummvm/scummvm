@@ -24,6 +24,7 @@
 #include "actor.h"
 #include "debugger.h"
 #include "common/util.h"
+#include "common/file.h"
 
 // The new debugger doesn't actually have the guts for text console coded yet ;)
 
@@ -86,7 +87,9 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
 		DCmd_Register("object", &ScummDebugger::Cmd_Object);
 		DCmd_Register("script", &ScummDebugger::Cmd_Script);
+		DCmd_Register("scr", &ScummDebugger::Cmd_Script);
 		DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
+		DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
@@ -415,10 +418,53 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	
 	if ((!strcmp(argv[2], "kill")) || (!strcmp(argv[2], "stop"))) {
 		_s->stopScriptNr(scriptnum);
+	} else if ((!strcmp(argv[2], "run")) || (!strcmp(argv[2], "start"))) {
+		_s->runScript(scriptnum, 0, 0, 0);
 	} else {
 		Debug_Printf("Unknown script command '%s'\n", argv[2]);
 	}
 
+	return true;
+}
+
+bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
+	File file;
+	uint32 size;
+	int resnum;
+	
+	if (argc < 3) {
+		Debug_Printf("Syntax: importres <restype> <filename> <resnum>\n");
+		return true;
+	}
+
+	resnum = atoi(argv[3]);
+	// FIXME add bounds check
+	
+	if (!strncmp(argv[1], "scr", 3)) {
+		file.open(argv[2], "");
+		if (file.isOpen() == false) {
+			Debug_Printf("Could not open file %s\n", argv[2]);
+			return true;
+		}
+		if (_s->_features & GF_SMALL_HEADER) {
+			size = file.readUint16LE();
+			file.seek(-2, SEEK_CUR);
+		} else if (_s->_features & GF_SMALL_HEADER) {
+			if (!(_s->_features & GF_SMALL_NAMES))
+				file.seek(8, SEEK_CUR);
+			size = file.readUint32LE();
+			file.readUint16LE();
+			file.seek(-6, SEEK_CUR);
+		} else {
+			file.readUint32BE();
+			size = file.readUint32BE();
+			file.seek(-8, SEEK_CUR);
+		}
+		
+		file.read(_s->createResource(rtScript, resnum, size), size);
+	
+	} else
+		Debug_Printf("Unknown importres type '%s'\n", argv[1]);
 	return true;
 }
 			
