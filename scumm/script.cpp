@@ -695,7 +695,8 @@ void ScummEngine::stopObjectCode() {
 			ss->cutsceneOverride = 0;
 		}
 	}
-	nukeArrays(ss->number);
+	// FIXME Sometimes nukes the incorrect array in HE games
+	// nukeArrays(ss->number);
 	ss->number = 0;
 	ss->status = ssDead;
 	_currentScript = 0xFF;

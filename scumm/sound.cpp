@@ -767,6 +767,8 @@ int Sound::isSoundRunning(int sound) const {
 				return (_musicChannelHandle.isActive()) ? 1 : 0;
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
+		} else if (sound > _vm->_numSounds) {
+			return _vm->_mixer->isSoundIDActive(sound);
 		}
 	}
 
