@@ -95,52 +95,52 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 };
 
 void SimonEngine::loadGamePcFile(const char *filename) {
-	File * in = new File();
+	File in;
 	int num_inited_objects;
 	int i, file_size;
 
 	/* read main gamepc file */
-	in->open(filename, _gameDataPath);
-	if (in->isOpen() == false) {
+	in.open(filename, _gameDataPath);
+	if (in.isOpen() == false) {
 		char *filename2;
 		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
-		in->open(filename2, _gameDataPath);
+		in.open(filename2, _gameDataPath);
 		free(filename2);
-		if (in->isOpen() == false)
+		if (in.isOpen() == false)
 			error("Can't open gamepc file '%s' or '%s.'", gss->gamepc_filename, gss->gamepc_filename);
 	}
 
-	num_inited_objects = allocGamePcVars(in);
+	num_inited_objects = allocGamePcVars(&in);
 
 	allocItem1();
 	loginPlayer();
-	readGamePcText(in);
+	readGamePcText(&in);
 
 	for (i = 2; i < num_inited_objects; i++) {
-		readItemFromGamePc(in, _itemarray_ptr[i]);
+		readItemFromGamePc(&in, _itemarray_ptr[i]);
 	}
 
-	readSubroutineBlock(in);
+	readSubroutineBlock(&in);
 
-	in->close();
+	in.close();
 
 	/* Read list of TABLE resources */
-	in->open("TBLLIST", _gameDataPath);
-	if (in->isOpen() == false) {
-		in->open("TBLLIST.", _gameDataPath);
-		if (in->isOpen() == false)
+	in.open("TBLLIST", _gameDataPath);
+	if (in.isOpen() == false) {
+		in.open("TBLLIST.", _gameDataPath);
+		if (in.isOpen() == false)
 			error("Can't open table resources file 'TBLLIST' or 'TBLLIST.'");
 	}
 
-	file_size = in->size();
+	file_size = in.size();
 
 	_tbl_list = (byte *)malloc(file_size);
 	if (_tbl_list == NULL)
 		error("Out of memory for strip table list");
-	in->read(_tbl_list, file_size);
-	in->close();
+	in.read(_tbl_list, file_size);
+	in.close();
 
 	/* Remember the current state */
 	_subroutine_list_org = _subroutine_list;
@@ -148,16 +148,16 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	_tablesheap_curpos_org = _tablesheap_curpos;
 
 	/* Read list of TEXT resources */
-	in->open("STRIPPED.TXT", _gameDataPath);
-	if (in->isOpen() == false)
+	in.open("STRIPPED.TXT", _gameDataPath);
+	if (in.isOpen() == false)
 		error("Can't open text resources file 'STRIPPED.TXT'");
 
-	file_size = in->size();
+	file_size = in.size();
 	_stripped_txt_mem = (byte *)malloc(file_size);
 	if (_stripped_txt_mem == NULL)
 		error("Out of memory for strip text list");
-	in->read(_stripped_txt_mem, file_size);
-	in->close();
+	in.read(_stripped_txt_mem, file_size);
+	in.close();
 }
 
 void SimonEngine::readGamePcText(File *in) {

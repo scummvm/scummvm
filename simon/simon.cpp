@@ -4764,18 +4764,17 @@ void SimonEngine::loadMusic (uint music) {
 				midi.loadSMF (_game_file, music);
 			} else {
 				char buf[50];
-				File *f = new File();
+				File f;
 				sprintf(buf, "MOD%d.MUS", music);
-				f->open(buf, _gameDataPath);
-				if (f->isOpen() == false) {
+				f.open(buf, _gameDataPath);
+				if (f.isOpen() == false) {
 					warning("Can't load music from '%s'", buf);
 					return;
 				}
 				if (_game & GF_DEMO)
-					midi.loadS1D (f);
+					midi.loadS1D (&f);
 				else
-					midi.loadSMF (f, music);
-				delete f;
+					midi.loadSMF (&f, music);
 			}
 
 			midi.startTrack (0);
