@@ -122,11 +122,9 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_silentMixer == false) {
-					if (_channels[i].handle == 0) {
-						_mixer->newStream(&_channels[i].handle, data, size, rate, flags, 500000, 255, 0);
-					} else {
-						_mixer->appendStream(_channels[i].handle, data, size);
-					}
+					if (_channels[i].handle == 0)
+						_mixer->newStream(&_channels[i].handle, rate, flags, 500000);
+					_mixer->appendStream(_channels[i].handle, data, size);
 				}
 				free(data);
 			}

@@ -1193,12 +1193,9 @@ void Sound::bundleMusicHandler(ScummEngine *scumm) {
 
 	_bundleSongPosInMs = (_bundleMusicPosition * 5) / (_outputMixerSize / 200);
 	_bundleMusicPosition += final_size;
-	if (_bundleMusicTrack == 0) {
-		_scumm->_mixer->newStream(&_bundleMusicTrack, buffer, final_size, rate,
-															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
-	} else {
-		_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
-	}
+	if (_bundleMusicTrack == 0)
+		_scumm->_mixer->newStream(&_bundleMusicTrack, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
+	_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
 	free(buffer);
 }
 

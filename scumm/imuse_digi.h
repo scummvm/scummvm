@@ -58,7 +58,7 @@ private:
 		int _idSound;
 		int32 _mixerSize;
 		int _mixerFlags;
-		PlayingSoundHandle _mixerChannel;
+		PlayingSoundHandle _handle;
 		bool _used;
 		bool _toBeRemoved;
 	};

@@ -693,7 +693,7 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_channel[l]._mixerChannel = 0;
+		_channel[l]._handle = 0;
 	}
 	_scumm->_timer->installTimerProc(timer_handler, 200000, this);
 	_pause = false;
@@ -703,7 +703,7 @@ IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->removeTimerProc(timer_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_scumm->_mixer->stopHandle(_channel[l]._mixerChannel);
+		_scumm->_mixer->stopHandle(_channel[l]._handle);
 	}
 }
 
@@ -716,7 +716,7 @@ void IMuseDigital::musicTimer() {
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
 			if (_channel[l]._toBeRemoved) {
-				_scumm->_mixer->endStream(_channel[l]._mixerChannel);
+				_scumm->_mixer->endStream(_channel[l]._handle);
 
 				free(_channel[l]._data);
 				_channel[l]._used = false;
@@ -760,7 +760,7 @@ void IMuseDigital::musicTimer() {
 			int32 new_size = _channel[l]._mixerSize;
 			int32 mixer_size = new_size;
 
-			if (_channel[l]._mixerChannel == 0) {
+			if (_channel[l]._handle == 0) {
 				mixer_size *= 2;
 				new_size *= 2;
 			}
@@ -780,15 +780,13 @@ void IMuseDigital::musicTimer() {
 			_channel[l]._offset += mixer_size;
 
 			if (_scumm->_silentDigitalImuse == false) {
-				int8	pan = _channel[l]._volumeRight - _channel[l]._volume;
-				if (_channel[l]._mixerChannel == 0) {
-					_scumm->_mixer->newStream(&_channel[l]._mixerChannel, buf, mixer_size,
-											_channel[l]._freq, _channel[l]._mixerFlags, 100000, _channel[l]._volume, pan);
-				} else {
-					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
-					_scumm->_mixer->setChannelVolume(_channel[l]._mixerChannel, _channel[l]._volume);
-					_scumm->_mixer->setChannelPan(_channel[l]._mixerChannel, pan);
-				}
+				if (_channel[l]._handle == 0)
+					_scumm->_mixer->newStream(&_channel[l]._handle,
+											_channel[l]._freq, _channel[l]._mixerFlags, 100000);
+
+				_scumm->_mixer->setChannelVolume(_channel[l]._handle, _channel[l]._volume);
+				_scumm->_mixer->setChannelPan(_channel[l]._handle, _channel[l]._volumeRight - _channel[l]._volume);
+				_scumm->_mixer->appendStream(_channel[l]._handle, buf, mixer_size);
 			}
 			free(buf);
 		}

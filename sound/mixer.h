@@ -111,7 +111,7 @@ public:
 
 
 	/** Start a new stream. */
-	void newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
+	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
 
 	/** Append to an existing stream. */
 	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);

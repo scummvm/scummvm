@@ -94,7 +94,7 @@ public:
 
 class ChannelStream : public Channel {
 public:
-	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
+	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
 	void append(void *sound, uint32 size);
 
 	void finish();
@@ -149,9 +149,9 @@ void SoundMixer::setupPremix(PremixProc *proc, void *param) {
 	_premixProc = proc;
 }
 
-void SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
+void SoundMixer::newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
 	Common::StackLock lock(_mutex);
-	insertChannel(handle, new ChannelStream(this, handle, sound, size, rate, flags, buffer_size, volume, pan));
+	insertChannel(handle, new ChannelStream(this, handle, rate, flags, buffer_size, volume, pan));
 }
 
 void SoundMixer::appendStream(PlayingSoundHandle handle, void *sound, uint32 size) {
@@ -496,16 +496,10 @@ void Channel::mix(int16 *data, uint len) {
 }
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
-							void *sound, uint32 size, uint rate,
-							byte flags, uint32 buffer_size, byte volume, int8 pan)
+							uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan)
 	: Channel(mixer, handle, true, volume, pan) {
-	assert(size <= buffer_size);
-
 	// Create the input stream
 	_input = makeWrappedInputStream(rate, flags, buffer_size);
-	
-	// Append the initial data
-	append(sound, size);
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
