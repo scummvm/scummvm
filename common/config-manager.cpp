@@ -52,6 +52,13 @@ static char *rtrim(char *t) {
 	return t;
 }
 
+static bool isValidDomainName(const Common::String &domain) {
+	const char *p = domain.c_str();
+	while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+		p++;
+	return *p == 0;
+}
+
 namespace Common {
 
 const String ConfigManager::kApplicationDomain("scummvm");
@@ -293,6 +300,7 @@ bool ConfigManager::hasKey(const String &key) const {
 
 bool ConfigManager::hasKey(const String &key, const String &dom) const {
 	assert(!dom.isEmpty());
+	assert(isValidDomainName(dom));
 
 	if (dom == kTransientDomain)
 		return _transientDomain.contains(key);
@@ -306,6 +314,7 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 
 void ConfigManager::removeKey(const String &key, const String &dom) {
 	assert(!dom.isEmpty());
+	assert(isValidDomainName(dom));
 
 	if (dom == kTransientDomain)
 		_transientDomain.remove(key);
@@ -322,6 +331,8 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 
 
 const String & ConfigManager::get(const String &key, const String &domain) const {
+	assert(isValidDomainName(domain));
+
 	// Search the domains in the following order:
 	// 1) Transient domain
 	// 2) Active game domain (if any)
@@ -379,6 +390,7 @@ bool ConfigManager::getBool(const String &key, const String &dom) const {
 
 
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
+	assert(isValidDomainName(dom));
 	if (dom.isEmpty()) {
 		// Remove the transient domain value
 		_transientDomain.remove(key);
@@ -448,12 +460,14 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 
 void ConfigManager::setActiveDomain(const String &domain) {
 	assert(!domain.isEmpty());
+	assert(isValidDomainName(domain));
 	_activeDomain = domain;
 	_gameDomains.addKey(domain);
 }
 
 void ConfigManager::removeGameDomain(const String &domain) {
 	assert(!domain.isEmpty());
+	assert(isValidDomainName(domain));
 	_gameDomains.remove(domain);
 }
 
@@ -463,6 +477,8 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 
 	assert(!oldName.isEmpty());
 	assert(!newName.isEmpty());
+	assert(isValidDomainName(oldName));
+	assert(isValidDomainName(newName));
 
 	_gameDomains[newName].merge(_gameDomains[oldName]);
 	
@@ -471,6 +487,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 
 bool ConfigManager::hasGameDomain(const String &domain) const {
 	assert(!domain.isEmpty());
+	assert(isValidDomainName(domain));
 	return _gameDomains.contains(domain);
 }
 
