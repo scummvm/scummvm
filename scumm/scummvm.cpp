@@ -2066,6 +2066,8 @@ void Scumm::launch() {
 		NUM_ACTORS = 80;
 	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
 		NUM_ACTORS = 30;
+	else if (_gameId == GID_MANIAC)
+		NUM_ACTORS = 24;	// Temporary (?) hack to get to the character selection screen
 	else
 		NUM_ACTORS = 13;
 
