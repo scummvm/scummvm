@@ -698,7 +698,7 @@ void Scumm::o5_actorSet() {
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
                if(_features & GF_SMALL_HEADER)
                        _opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
-if (!a) return;
+		if (!a) return;
 		switch(_opcode&0x1F) {
 		case 0: /* dummy case */
 			getVarOrDirectByte(0x80);
@@ -2038,7 +2038,10 @@ void Scumm::o5_setVarRange() {
 void Scumm::o5_soundKludge() {
 	int16 items[15];
 	int i;
-	
+
+	if (_features & GF_SMALL_HEADER)	// Is dummy function in
+		return;							// SCUMM V3
+
 	for (i=0; i<15; i++)
 		items[i] = 0;
 
