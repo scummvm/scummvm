@@ -609,7 +609,7 @@ private:
 	uint8 _curvol;
 };
 
-// intermittently plays two looped waveforms for a specific duration\
+// intermittently plays two looped waveforms for a specific duration
 // used for ringing telephones
 class V2A_Sound_Special_ManiacPhone : public V2A_Sound_Base<2> {
 public:
