@@ -28,7 +28,6 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/md5.h"
 
 #include "gui/about.h"
 #include "gui/message.h"
@@ -522,19 +521,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vc_10_base_ptr_old = 0;
 	memcpy (_hebrew_char_widths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
-
-	char buf[50];
-	uint8 md5sum[16];
-
-	if (_game & GF_OLD_BUNDLE) 
-		sprintf(buf, gss->gamepc_filename);
-	else
-		sprintf(buf, gss->gme_filename);
-	if (md5_file(buf, md5sum)) {
-	  	for (int j = 0; j < 16; j++)
-			printf("%02x", md5sum[j]);
-			printf("  %s\n", buf);
-	}
 
 	// Setup mixer
 	if (!_mixer->isReady())
