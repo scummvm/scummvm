@@ -61,37 +61,37 @@ static const char USAGE_STRING[] =
 
 void GameDetector::updateconfig()
 {
-        const char * val;
+	const char * val;
 
-        if ((val = scummcfg->get("amiga")))
-                if (!scumm_stricmp(val, "true"))
-                        _amiga = true;
-                else
-                        _amiga = false;
+	if ((val = scummcfg->get("amiga")))
+		if (!scumm_stricmp(val, "true"))
+			_amiga = true;
+		else
+			_amiga = false;
 
-        if ((val = scummcfg->get("fullscreen", "scummvm")))
-                if (!scumm_stricmp(val, "true"))
-                        _fullScreen = true;
-                else
-                        _fullScreen = false;
+	if ((val = scummcfg->get("fullscreen", "scummvm")))
+		if (!scumm_stricmp(val, "true"))
+			_fullScreen = true;
+		else
+			_fullScreen = false;
 
-        if ((val = scummcfg->get("path")))
-                _gameDataPath = Scumm::Strdup(val);
+	if ((val = scummcfg->get("path")))
+		_gameDataPath = Scumm::Strdup(val);
 
-        if ((val = scummcfg->get("tempo")))
-                _gameTempo = strtol(val, 0, 0);
+	if ((val = scummcfg->get("tempo")))
+		_gameTempo = strtol(val, 0, 0);
 
-        if ((val = scummcfg->get("music_volume")))
-                _music_volume = atoi(val);
+	if ((val = scummcfg->get("music_volume")))
+		_music_volume = atoi(val);
 
-        if ((val = scummcfg->get("sfx_volume")))
-                _sfx_volume = atoi(val);
+	if ((val = scummcfg->get("sfx_volume")))
+		_sfx_volume = atoi(val);
 
-        if ((val = scummcfg->get("mt32emulate")))
-                if (!scumm_stricmp(val, "true"))
-                        _mt32emulate = true;
-                else
-                        _mt32emulate = false;
+	if ((val = scummcfg->get("mt32emulate")))
+		if (!scumm_stricmp(val, "true"))
+			_mt32emulate = true;
+		else
+			_mt32emulate = false;
 	
 	if ((val = scummcfg->get("nosubtitles")))
 		if (!scumm_stricmp(val, "true"))
@@ -99,22 +99,22 @@ void GameDetector::updateconfig()
 		else
 			_noSubtitles = false;
 
-        if ((val = scummcfg->get("music_driver")))
-                if (!parseMusicDriver(val)) {
-			printf("Error in the config file: invalid music_driver.\n");
-                        printf(USAGE_STRING);
-                        exit(-1);
-                }
+	if ((val = scummcfg->get("music_driver")))
+			if (!parseMusicDriver(val)) {
+		printf("Error in the config file: invalid music_driver.\n");
+					printf(USAGE_STRING);
+					exit(-1);
+			}
 
-        if ((val = scummcfg->get("gfx_mode")))
-                if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
-		    printf("Error in the config file: invalid gfx_mode.\n");
-                    printf(USAGE_STRING);
-                    exit(-1);
-                }
+	if ((val = scummcfg->get("gfx_mode")))
+			if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
+		printf("Error in the config file: invalid gfx_mode.\n");
+				printf(USAGE_STRING);
+				exit(-1);
+			}
 
-        if ((val = scummcfg->get("cdrom")))
-                _cdrom = atoi(val);
+	if ((val = scummcfg->get("cdrom")))
+			_cdrom = atoi(val);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -206,7 +206,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 						goto ShowHelpAndExit;
 					_gameDataPath = s;
 					scummcfg->set("path", _gameDataPath);
- 					goto NextArg;
+					goto NextArg;
 				case 'r':
 					_mt32emulate = true;
 					scummcfg->set("mt32emulate", "true");
@@ -260,7 +260,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	if (_saveconfig)
 		scummcfg->flush();
 #else
-	_midi_driver = 4; /* FIXME: don't use numerics */
+	_midi_driver = MD_QTMUSIC;
 	_exe_name = *argv;
 	_gameDataPath = (char *)malloc(strlen(_exe_name) + 3);
 	sprintf(_gameDataPath, ":%s:", _exe_name);
