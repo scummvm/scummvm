@@ -440,7 +440,6 @@ protected:
 
 public:
 	IMuseInternal();
-	~IMuseInternal();
 
 	int initialize(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 	void reallocateMidiChannels(MidiDriver *midi);

@@ -824,7 +824,10 @@ Scumm::~Scumm () {
 	delete _confirmExitDialog;
 
 	delete _sound;
-	delete _musicEngine;
+	if (_musicEngine) {
+		_musicEngine->terminate();
+		delete _musicEngine;
+	}
 	free(_languageBuffer);
 	free(_audioNames);
 

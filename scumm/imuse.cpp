@@ -69,10 +69,6 @@ _snm_trigger_index(0)
 	memset(_active_notes,0,sizeof(_active_notes));
 }
 
-IMuseInternal::~IMuseInternal() {
-	terminate();
-}
-
 byte *IMuseInternal::findStartOfSound(int sound) {
 	byte *ptr = NULL;
 	int32 size, pos;
@@ -1783,6 +1779,7 @@ int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->do
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
+void IMuse::terminate() { in(); _target->terminate(); out(); }
 
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
