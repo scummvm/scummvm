@@ -337,11 +337,9 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	int32 flags = b.getWord();
 	int32 vol = b.getByte();
 	int32 bal = b.getChar();
-#ifdef DEBUG
 	if (index == 0) {
 		debug(5, "track_id == %d, max_frames == %d, %d, %d, %d", track_id, max_frames, flags, vol, bal);
 	}
-#endif
 	int32 size = b.getSize() - 10;
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, bal, b, size);
 }
@@ -371,28 +369,11 @@ void SmushPlayer::handleFetch(Chunk &b) {
 	}
 }
 
-void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk &b, int32 bsize) {
-	int32 track = (track_flags << 16) | track_id;
-	debug(6, "SmushPlayer::handleImuseBuffer(%d, %d)", track_id, index);
-
-	SmushChannel *c = _smixer->findChannel(track);
-	if (c == 0) {
-		c = new ImuseChannel(track, _soundFrequency);
-		_smixer->addChannel(c);
-	}
-	if (index == 0)
-		c->setParameters(nbframes, size, track_flags, unk1);
-	else
-		c->checkParameters(index, nbframes, size, track_flags, unk1);
-	c->appendData(b, bsize);
-}
-
-void SmushPlayer::handleImuseAction(Chunk &b) {
+void SmushPlayer::handleIACT(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 
-	int code;
-	code = b.getWord();
+	int code = b.getWord();
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();
@@ -407,7 +388,34 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 	int32 bsize = b.getSize() - 18;
 
 	if (g_scumm->_gameId != GID_CMI) {
-		handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
+		int32 track = track_id;
+		if (track_flags == 1) {
+			track = track_id + 100;
+		} else if (track_flags == 2) {
+			track = track_id + 200;
+		} else if (track_flags == 3) {
+			track = track_id + 300;
+		} else if ((track_flags >= 100) && (track_flags <= 163)) {
+			track = track_id + 400;
+		} else if ((track_flags >= 200) && (track_flags <= 263)) {
+			track = track_id + 500;
+		} else if ((track_flags >= 300) && (track_flags <= 363)) {
+			track = track_id + 600;
+		} else {
+			error("ImuseChannel::handleIACT(): bad track_flags: %d", track_flags);
+		}
+		debug(6, "SmushPlayer::handleIACT(): %d, %d, %d", track, index, track_flags);
+
+		SmushChannel *c = _smixer->findChannel(track);
+		if (c == 0) {
+			c = new ImuseChannel(track, _soundFrequency);
+			_smixer->addChannel(c);
+		}
+		if (index == 0)
+			c->setParameters(nbframes, size, track_flags, unknown);
+		else
+			c->checkParameters(index, nbframes, size, track_flags, unknown);
+		c->appendData(b, bsize);
 	} else {
 		byte output_data[4096];
 		byte *src = (byte *)malloc(bsize);
@@ -769,9 +777,9 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			if (_insanity)
 				_scumm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
 			else
-				handleImuseAction(*sub);
+				handleIACT(*sub);
 #else
-			handleImuseAction(*sub);
+			handleIACT(*sub);
 #endif
 			break;
 		case TYPE_STOR:

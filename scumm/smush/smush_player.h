@@ -95,12 +95,11 @@ private:
 	void handleNewPalette(Chunk &);
 	void handleFrameObject(Chunk &);
 	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
-	void handleImuseBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
 	void handleSoundFrame(Chunk &);
 	void handleSkip(Chunk &);
 	void handleStore(Chunk &);
 	void handleFetch(Chunk &);
-	void handleImuseAction(Chunk &);
+	void handleIACT(Chunk &);
 	void handleTextResource(Chunk &);
 	void handleDeltaPalette(Chunk &);
 	void readPalette(byte *, Chunk &);

@@ -52,17 +52,16 @@ bool ImuseChannel::isTerminated() const {
 }
 
 bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1) {
-	// flags: 0 - 8 bits
-	// values:
-	// 1 - Voice
-	// 2 - Background music
-	// 0, 3-511 - SFX and volume
-	// FIXME: this should be better
-	if ((flags != 1) && (flags != 2) && ((flags / 4) != 0)) {
-		_volume = 300 - ((flags / 8) * 4);
-	}
-	else {
+	if ((flags == 1) || (flags == 2) || (flags == 3)) {
 		_volume = 127;
+	} else if ((flags >= 100) && (flags <= 163)) {
+		_volume = flags * 2 - 200;
+	} else if ((flags >= 200) && (flags <= 263)) {
+		_volume = flags * 2 - 400;
+	} else if ((flags >= 300) && (flags <= 363)) {
+		_volume = flags * 2 - 600;
+	} else {
+		error("ImuseChannel::setParameters(): bad flags: %d", flags);
 	}
 	return true;
 }
