@@ -31,8 +31,10 @@
 
 #include <SDL.h>
 
+#ifndef _WIN32_WCE
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
+#endif
 
 class OSystem_SDL : public OSystem {
 public:
@@ -245,7 +247,7 @@ protected:
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
-	void add_dirty_rect(int x, int y, int w, int h);
+	virtual void add_dirty_rect(int x, int y, int w, int h);
 
 	void draw_mouse();
 	void undraw_mouse();
@@ -257,9 +259,9 @@ protected:
 
 	virtual void internUpdateScreen();
 
-	void load_gfx_mode();
-	void unload_gfx_mode();
-	void hotswap_gfx_mode();
+	virtual void load_gfx_mode();
+	virtual void unload_gfx_mode();
+	virtual void hotswap_gfx_mode();
 	
 	void setFullscreenMode(bool enable);
 
