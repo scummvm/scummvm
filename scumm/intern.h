@@ -239,6 +239,7 @@ protected:
 	void o2_drawObject();
 	void o2_resourceRoutines();
 	void o2_verbOps();
+	void o2_doSentence();
 
 	void o2_isEqual();
 	void o2_isGreater();

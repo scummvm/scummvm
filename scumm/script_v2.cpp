@@ -824,6 +824,39 @@ void Scumm_v2::o2_equalZero() {
 		o5_jumpRelative();
 }
 
+void Scumm_v2::o2_doSentence() {
+	int a;
+	SentenceTab *st;
+
+	a = getVarOrDirectByte(0x80);
+	if (a == 0xFB) {
+		_sentenceNum = 0;
+		stopScriptNr(2);
+		clearClickedStatus();
+		return;
+	}
+	if (a == 0xFC) {
+		_sentenceNum--;
+		clearClickedStatus();
+		return;
+	}
+
+	st = &_sentence[_sentenceNum++];
+
+	st->unk5 = a;
+	st->unk4 = getVarOrDirectWord(0x40);
+	st->unk3 = getVarOrDirectWord(0x20);
+	st->freezeCount = 0;
+	
+	// TODO
+	switch(fetchScriptByte()) {
+	case 1:
+		break;
+	case 2:
+		break;
+	}
+}
+
 void Scumm_v2::o2_printEgo() {
 	//_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	//_messagePtr = _scriptPointer;
