@@ -71,7 +71,7 @@ int32 Logic::fnInteract(int32 *params) {
 	//		  reference
 
 	_scriptVars[PLAYER_ACTION] = 0;		// must clear this
-	logicUp((params[0] < 16) + 2);		// 3rd script of clicked on id
+	logicUp((params[0] << 16) | 2);		// 3rd script of clicked on id
 
 	// Out, up and around again - pc is saved for current level to be
 	// returned to.
