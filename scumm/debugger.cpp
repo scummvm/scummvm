@@ -813,6 +813,8 @@ bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 	int i, j;
 
 	Debug_Printf("Walk matrix:\n");
+	if (_s->_version <= 2)
+		boxm += num;
 	for (i = 0; i < num; i++) {
 		Debug_Printf("%d: ", i);
 		if (_s->_version <= 2) {
