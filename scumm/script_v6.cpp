@@ -1698,8 +1698,8 @@ void Scumm_v6::o6_actorOps() {
 		a->shadow_mode = pop();
 		break;
 	case 99:
-		a->talkPosX = pop();
 		a->talkPosY = pop();
+		a->talkPosX = pop();
 		break;
 	case 198:										/* set anim variable */
 		i = pop();									/* value */

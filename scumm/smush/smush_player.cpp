@@ -615,8 +615,7 @@ void SmushPlayer::readPalette(byte *out, Chunk &in) {
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
-	int16 t;
-	t = (((int32)(org_color) << 7) + org_color + delta_color) >> 7;
+	int t = ((org_color << 7) + org_color + delta_color) >> 7;
 	if (t > 255)
 		t = 255;
 	if (t < 0)

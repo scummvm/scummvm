@@ -1121,8 +1121,8 @@ void Scumm_v8::o8_actorOps() {
 		a->shadow_mode = pop();
 		break;
 	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
-		a->talkPosX = pop();
 		a->talkPosY = pop();
+		a->talkPosX = pop();
 		break;
 //	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable

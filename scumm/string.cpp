@@ -108,29 +108,25 @@ void Scumm::CHARSET_1() {
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
-			if (_string[0].ypos < 1)
-				_string[0].ypos = 1;
 
-			if (_string[0].xpos < 80)
-				_string[0].xpos = 80;
-			if (_string[0].xpos > _screenWidth - 80)
-				_string[0].xpos = _screenWidth - 80;
 		} else {
-			s = a->scaley * a->talkPosX / 0xFF;
-			_string[0].ypos = ((a->talkPosX - s) >> 1) + s - a->elevation + a->y;
-			if (_string[0].ypos < 1)
-				_string[0].ypos = 1;
+			s = a->scaley * a->talkPosY / 0xFF;
+			_string[0].ypos = ((a->talkPosY - s) >> 1) + s - a->elevation + a->y;
 
 			if (_string[0].ypos < camera._cur.y - (_screenHeight / 2))
 				_string[0].ypos = camera._cur.y - (_screenHeight / 2);
 
-			s = a->scalex * a->talkPosY / 0xFF;
-			_string[0].xpos = ((a->talkPosY - s) >> 1) + s + a->x - camera._cur.x + (_screenWidth / 2);
-			if (_string[0].xpos < 80)
-				_string[0].xpos = 80;
-			if (_string[0].xpos > _screenWidth - 80)
-				_string[0].xpos = _screenWidth - 80;
+			s = a->scalex * a->talkPosX / 0xFF;
+			_string[0].xpos = ((a->talkPosX - s) >> 1) + s + a->x - camera._cur.x + (_screenWidth / 2);
 		}
+
+		if (_string[0].ypos < 1)
+			_string[0].ypos = 1;
+
+		if (_string[0].xpos < 80)
+			_string[0].xpos = 80;
+		if (_string[0].xpos > _screenWidth - 80)
+			_string[0].xpos = _screenWidth - 80;
 	}
 
 	_charset->_top = _string[0].ypos;
