@@ -146,11 +146,15 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 	// FIXME: are these tests really needed ?
 	if (roomNum < 90 || ((roomNum > 94) && (roomNum < 114))) {
 		char filename[20];
+
 		sprintf(filename, "%s.msk", roomName);
-		if (resource->exists(filename))
+		_dynalum.haveMsk = resource->exists(filename);
+		if (_dynalum.haveMsk)
 			resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
+
 		sprintf(filename, "%s.lum", roomName);
-		if (resource->exists(filename))
+		_dynalum.haveLum = resource->exists(filename);
+		if (_dynalum.haveLum)
 			resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
 	}
 }
@@ -158,13 +162,23 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 
 void Display::dynalumUpdate(int x, int y) {
 
+	if (!_dynalum.haveMsk)
+		return;
+
 	if (x >= _bdWidth) {
 		x = _bdWidth;
 	}
 	if (y >= ROOM_ZONE_HEIGHT - 1) {
 		y = ROOM_ZONE_HEIGHT - 1;
 	}
-	uint8 colMask = _dynalum.msk[(y / 4) * 160 + (x / 4)];
+
+	unsigned offset = (y / 4) * 160 + (x / 4);
+	if (offset >= sizeof(_dynalum.msk)) {
+		debug(0, "Graphics::dynalumUpdate(%d, %d) - invalid offset: %08x", x, y, offset);
+		return;
+	}
+
+	uint8 colMask = _dynalum.msk[offset];
 	debug(9, "Graphics::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
 
 	if (colMask != _dynalum.prevColMask) {
