@@ -45,7 +45,7 @@ This code is not finished, so please don't complain :-)
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(NewGui *gui)
-	: Dialog(gui, 5, 0, 320-2*5, 5*kLineHeight+2)
+	: Dialog(gui, 0, 0, 320, 6*kLineHeight+2)
 {
 	_lineWidth = (_w - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;
@@ -63,12 +63,11 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 
 void ConsoleDialog::drawDialog()
 {
-	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
+	// Blend over the background
+	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor, 2);
 	
-	// Draw a border (might want to use different colors :-)
-	_gui->vline(_x, _y, _y+_h-1, _gui->_textcolorhi);
-	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_textcolor);
-	_gui->vline(_x+_w-1, _y, _y+_h-1, _gui->_textcolor);
+	// Draw a border
+	_gui->hline(_x, _y+_h-1, _x+_w-1, _gui->_color);
 
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
@@ -86,6 +85,7 @@ void ConsoleDialog::drawDialog()
 		y += kLineHeight;
 	}
 
+	// Finally blit it all to the screen
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
