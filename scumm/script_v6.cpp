@@ -1134,9 +1134,11 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	VAR(VAR_WALKTO_OBJ) = obj;
+	if (VAR_WALKTO_OBJ != 0xFF)
+		VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->room, a, obj);
-	VAR(VAR_WALKTO_OBJ) = 0;
+	if (VAR_WALKTO_OBJ != 0xFF)
+		VAR(VAR_WALKTO_OBJ) = 0;
 
 	/* startScene maybe modifies VAR_EGO, i hope not */
 
