@@ -70,7 +70,7 @@
 				AdditionalIncludeDirectories="lua\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
@@ -81,6 +81,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
+/NODEFAULTLIB:LIBCMTD"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
