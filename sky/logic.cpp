@@ -24,6 +24,7 @@
 #include "sky/debug.h"
 #include "sky/compact.h"
 #include "sky/skydefs.h"
+#include "sky/talks.h"
 
 uint32 SkyLogic::_scriptVariables[838];
 
