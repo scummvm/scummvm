@@ -101,14 +101,6 @@ struct TextSlot {
 };
 
 
-//struct Dynalum {
-//	uint8 msk[50 * 160]; // mask
-//	int8 lum[8 * 3]; // rgb
-//	int8 oldColMask;
-//	Dynalum(): oldColMask(-1) {}
-//};
-
-
 class Display;
 
 class Graphics {

@@ -109,6 +109,26 @@ struct GraphicData {
 	//! coordinates of object
 	uint16 x, y;
 	//! bank bobframes
+	/*!
+		<table>
+			<tr>
+				<td>lastFrame == 0</td>
+				<td>non-animated bob (one frame)</td>
+			</tr>
+			<tr>
+				<td>lastFrame < 0</td>
+				<td>rebound animation</td>
+			</tr>
+			<tr>
+				<td>firstFrame < 0</td>
+				<td>bobAnimString (animation is described by a string)</td>
+			</tr>
+			<tr>
+				<td>firstFrame > 0</td>
+				<td>bobAnimNormal (animation is a sequence of frames)</td>
+			</tr>
+		</table>
+	*/
 	int16 firstFrame, lastFrame;
 	//! moving speed of object
 	uint16 speed;
@@ -414,7 +434,23 @@ struct CmdGameState {
 struct FurnitureData {
 	//! room in which the furniture are
 	int16 room;
-	//! value to store in GAMESTATE
+	//! type of furniture (stored in GAMESTATE) 
+	/*!
+		<table>
+			<tr>
+				<td>value</td>
+				<td>description</td>
+			</tr>
+			<tr>
+				<td>]0..5000]</td>
+				<td>static or animated</td>
+			</tr>
+			<tr>
+				<td>]5000..[</td>
+				<td>paste down</td>
+			</tr>
+		</table>
+	*/
 	int16 gameStateValue;
 
 	void readFrom(byte *&ptr) {

@@ -225,13 +225,22 @@ protected:
 	
 	int16 _gameState[GAME_STATE_COUNT];
 	
-	uint16 _numFurnitureAnimated; // FMAXA
+	//! Number of animated furniture in current room (FMAXA)
+	uint16 _numFurnitureAnimated;
+
+	//! Number of static furniture in current room (FMAX)
 	uint16 _numFurnitureStatic; // FMAX
-	uint16 _numFurnitureAnimatedLen; // FMAXLEN
-	uint16 _numFrames; // FRAMES
+
+	//! Total number of frames for the animated furniture (FMAXLEN)
+	uint16 _numFurnitureAnimatedLen;
+
+	//! Current number of frames unpacked (FRAMES)
+	uint16 _numFrames;
+
+	//! Last frame number used for person animation
 	uint16 _personFrames[4];
 
-	//! contains the animation frames (max 30) to use for a bob (whose number must be < 17)
+	//! Describe an string based animation (30 frames maximum, bob number must be < 17)
 	AnimFrame _newAnim[17][30];
 
 	Resource *_resource;

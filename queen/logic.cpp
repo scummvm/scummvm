@@ -855,7 +855,6 @@ void Logic::roomSetupFurniture() {
 
 
 void Logic::roomSetupObjects() {
-	warning("Logic::roomSetupObjects() not fully implemented");
 
 	uint16 i;
 	// furniture frames are reserved in ::roomSetupFurniture(), we append objects 
@@ -997,7 +996,7 @@ void Logic::roomSetupObjects() {
 
 
 uint16 Logic::roomRefreshObject(uint16 obj) {
-	warning("Logic::roomRefreshObject() not fully implemented");
+
 	uint16 curImage = _numFrames;
 
 	ObjectData *pod = &_objectData[obj];
@@ -1452,20 +1451,18 @@ int16 Logic::animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *pa
 		_graphics->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
 	}
 	if (paf != NULL) {
-		uint16 frameNr = 0;
 		for (i = 1; i <= _numGraphicAnim; ++i) {
 			const GraphicAnim *pga = &_graphicAnim[i];
 			if (pga->keyFrame == gd->firstFrame) {
+				uint16 frameNr = 0;
 				for (j = 1; j <= gd->lastFrame; ++j) {
-					int16 f = pga->frame;
-					if (f > 500) {
-						f -= 500;
-					}
-					if (f == tempFrames[j - 1]) {
-						frameNr = j + firstImage - 1;
-					}
 					if (pga->frame > 500) {
-						frameNr += 500;
+						if (pga->frame - 500 == tempFrames[j - 1]) {
+							frameNr = j + firstImage - 1 + 500;
+						}
+					}
+					else if (pga->frame == tempFrames[j - 1]) {
+						frameNr = j + firstImage - 1;
 					}
 				}
 				paf->frame = frameNr;
