@@ -428,8 +428,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		return 0;
 
 	// No default toolbar for zak256
+	/*
 	if (strcmp(game_name, "zak256") == 0)
 		hide_toolbar = true;
+	*/
 
 	// Keyboard activated for Monkey Island 2
 	if (strcmp(game_name, "monkey2") == 0) {
@@ -1028,6 +1030,12 @@ void action_quit() {
 }
 
 void action_boss() {
+	SHELLEXECUTEINFO se;    
+
+	scummcfg->set("Sound", sound_activated, "wince");
+	scummcfg->set("DisplayMode", GetScreenMode(), "wince");
+	scummcfg->flush();
+	sound_activated = false;
 	toolbar_drawn = false;
 	hide_toolbar = true;
 	Cls();
@@ -1036,7 +1044,17 @@ void action_boss() {
 	g_scumm->_saveLoadFlag = 1;
 	strcpy(g_scumm->_saveLoadName, "BOSS");
 	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
-	do_quit();
+	GXCloseInput();
+	GXCloseDisplay();
+	SDL_AudioQuit();
+	memset(&se, 0, sizeof(se));
+	se.cbSize = sizeof(se);
+	se.hwnd = NULL;
+	se.lpFile = TEXT("tasks.exe");
+	se.lpVerb = TEXT("open");
+	se.lpDirectory = TEXT("\\windows");
+	ShellExecuteEx(&se);
+	exit(1);
 }
 
 void action_skip() {
