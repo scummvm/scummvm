@@ -44,7 +44,7 @@ OSystem *OSystem_PALMOS::create() {
 
 uint32 OSystem_PALMOS::getMillis() {
 	uint32 ticks = TimGetTicks();
-	ticks *= (1000/SysTicksPerSecond());
+	ticks = ticks * 1000 / SysTicksPerSecond();
 	return ticks;
 
 }
