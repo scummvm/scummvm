@@ -82,9 +82,9 @@ void Scumm::initV1MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.bottom = 6;
+	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = 4;
+	v2_mouseover_boxes[kSentenceLine].color = 5;
 	v2_mouseover_boxes[kSentenceLine].hicolor = 7;
 }
 
