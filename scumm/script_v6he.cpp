@@ -40,6 +40,15 @@
 
 namespace Scumm {
 
+// Compatibility notes:
+//
+// FBEAR (fbear, fbeardemo)
+//     transparency in akos.cpp
+//     negative size in file read/write
+// PUTTDEMO (puttdemo)
+//     startSound issue -- check
+//     actorOps sub 86 -- check
+
 #define OPCODE(x)	{ &ScummEngine_v6he::x, #x }
 
 void ScummEngine_v6he::setupOpcodes() {

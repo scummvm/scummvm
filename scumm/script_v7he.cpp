@@ -40,6 +40,12 @@
 
 namespace Scumm {
 
+// Compatibility notes:
+//
+// FREDDEMO (freddemo)
+//     stringLen is completely different
+//     unknownF4 is completely different
+
 #define OPCODE(x)	{ &ScummEngine_v7he::x, #x }
 
 void ScummEngine_v7he::setupOpcodes() {
@@ -426,7 +432,7 @@ void ScummEngine_v7he::o7_stringLen() {
 		return;
 	}
 
-	if (_heversion >= 60) {
+	if (_gameId == GID_FREDDEMO) {
 		len = strlen((char *)getStringAddress(a));
 	} else { // FREDDI, PUTTMOON
 		len = stringLen(addr);
@@ -473,7 +479,7 @@ void ScummEngine_v7he::o7_readINI() {
 }
 
 void ScummEngine_v7he::o7_unknownF4() {
-	if (_heversion >= 60) {
+	if (_gameId == GID_FREDDEMO) {
 		byte b;
 		int len;
 		b = fetchScriptByte();
