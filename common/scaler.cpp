@@ -21,6 +21,7 @@
  */
 
 #include "common/scaler/intern.h"
+#include "common/scaler/scalebit.h"
 #include "common/util.h"
 
 
@@ -172,46 +173,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
  */
 void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
-	const uint16 *p = (const uint16 *)srcPtr;
-
-	const uint32 nextlineDst = dstPitch / sizeof(uint16);
-	uint16 *q = (uint16 *)dstPtr;
-	
-	uint16 A, B, C;
-	uint16 D, E, F;
-	uint16 G, H, I;
-
-	while (height--) {
-		B = *(p - 1 - nextlineSrc);
-		E = *(p - 1);
-		H = *(p - 1 + nextlineSrc);
-		C = *(p - nextlineSrc);
-		F = *(p);
-		I = *(p + nextlineSrc);
-		int tmpWidth = width;
-		while (tmpWidth--) {
-			p++;
-			A = B; B = C; C = *(p - nextlineSrc);
-			D = E; E = F; F = *(p);
-			G = H; H = I; I = *(p + nextlineSrc);
-
-			if (B != H && D != F) {
-				*(q + 0) = D == B ? D : E;
-				*(q + 1) = B == F ? F : E;
-				*(q + nextlineDst + 0) = D == H ? D : E;
-				*(q + nextlineDst + 1) = H == F ? F : E;
-			} else {
-				*(q + 0) = E;
-				*(q + 1) = E;
-				*(q + nextlineDst + 0) = E;
-				*(q + nextlineDst + 1) = E;
-			}
-			q += 2;
-		}
-		p += nextlineSrc - width;
-		q += (nextlineDst - width) << 1;
-	}
+	scale(2, dstPtr, dstPitch, srcPtr, srcPitch, 2, width, height);
 }
 
 /**
@@ -220,57 +182,7 @@ void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
  */
 void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
-	const uint16 *p = (const uint16 *)srcPtr;
-
-	const uint32 nextlineDst = dstPitch / sizeof(uint16);
-	uint16 *q = (uint16 *)dstPtr;
-	
-	uint16 A, B, C;
-	uint16 D, E, F;
-	uint16 G, H, I;
-
-	while (height--) {
-		B = *(p - 1 - nextlineSrc);
-		E = *(p - 1);
-		H = *(p - 1 + nextlineSrc);
-		C = *(p - nextlineSrc);
-		F = *(p);
-		I = *(p + nextlineSrc);
-		int tmpWidth = width;
-		while (tmpWidth--) {
-			p++;
-			A = B; B = C; C = *(p - nextlineSrc);
-			D = E; E = F; F = *(p);
-			G = H; H = I; I = *(p + nextlineSrc);
-		
-			if (B != H && D != F) {
-				*(q + 0) = D == B ? D : E;
-				*(q + 1) = (D == B && E != C) || (B == F && E != A) ? B : E;
-				*(q + 2) = B == F ? F : E;
-				*(q + nextlineDst + 0) = (D == B && E != G) || (D == B && E != A) ? D : E;
-				*(q + nextlineDst + 1) = E;
-				*(q + nextlineDst + 2) = (B == F && E != I) || (H == F && E != C) ? F : E;
-				*(q + 2 * nextlineDst + 0) = D == H ? D : E;
-				*(q + 2 * nextlineDst + 1) = (D == H && E != I) || (H == F && E != G) ? H : E;
-				*(q + 2 * nextlineDst + 2) = H == F ? F : E;
-			} else {
-				*(q + 0) = E;
-				*(q + 1) = E;
-				*(q + 2) = E;
-				*(q + nextlineDst + 0) = E;
-				*(q + nextlineDst + 1) = E;
-				*(q + nextlineDst + 2) = E;
-				*(q + 2 * nextlineDst + 0) = E;
-				*(q + 2 * nextlineDst + 1) = E;
-				*(q + 2 * nextlineDst + 2) = E;
-			}
-
-			q += 3;
-		}
-		p += nextlineSrc - width;
-		q += (nextlineDst - width) * 3;
-	}
+	scale(3, dstPtr, dstPitch, srcPtr, srcPitch, 2, width, height);
 }
 
 template<int bitFormat>

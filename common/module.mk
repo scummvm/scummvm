@@ -14,7 +14,10 @@ MODULE_OBJS := \
 	common/scaler/2xsai.o \
 	common/scaler/aspect.o \
 	common/scaler/hq2x.o \
-	common/scaler/hq3x.o
+	common/scaler/hq3x.o \
+	common/scaler/scale2x.o \
+	common/scaler/scale3x.o \
+	common/scaler/scalebit.o
 
 ifdef HAVE_NASM
 MODULE_OBJS += \
