@@ -2417,12 +2417,6 @@ void Scumm::o6_soundKludge()
 	int16 list[16];
 	getStackList(list, sizeof(list) / sizeof(list[0]));
 
-	/* (yazoo): I don't know enought about the sound code to
-	 * fix the looping sound bug. FIXME !*/
-
-	if (list[1] == 163 && _gameId == GID_DIG)
-		return;
-
 	_sound->soundKludge(list);
 }
 
