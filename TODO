@@ -270,8 +270,6 @@ SCUMM
   - Add insane support
 * Humongous Entertainment Games
   - Add proper handling of sound and speech in Humongous games
-  - Add support for returning the correct music status for the digital music
-    used in 3DO versions of Humongous games.
   - Add sound pitch support and fix missing sound effects for piano mini game
     in fbear
   - Add rename/delete file support, to make file opcodes function correctly
@@ -285,7 +283,6 @@ SCUMM
   - Document and fix AKOS differences in Humongous Entertainment games
   - Support various newer Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
-  - Add support for PCM music
   - Add variables for _heversion > 72
   - Add support for Scummsys.9x and C++ engine MAXS blocks
   
