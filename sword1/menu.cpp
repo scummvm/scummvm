@@ -109,7 +109,7 @@ Menu::~Menu(void) {
 		delete _objects[i];
 		_objects[i] = NULL;
 	}
-	for (int i = 0; i < TOTAL_subjects; i++) {
+	for (int i = 0; i < 16; i++) {
 		delete _subjects[i];
 		_subjects[i] = NULL;
 	}
