@@ -614,7 +614,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	// credits. Note that musicTimeRemaining() will return 0 if the music
 	// is muted, so we need a sensible fallback for that case.
 
-	uint32 musicLength = MAX(1000 * (_vm->_sound->musicTimeRemaining() - 3), 25 * scrollSteps);
+	uint32 musicLength = MAX(1000 * (_vm->_sound->musicTimeRemaining() - 3), 25 * (int32)scrollSteps);
 
 	while (scrollPos < scrollSteps && !_vm->_quit) {
 		bool foundStartLine = false;
