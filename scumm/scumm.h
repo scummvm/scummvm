@@ -477,11 +477,11 @@ protected:
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
-	int _numInventory, _numRooms, _numScripts;
+	int _numInventory;
 	int _numNewNames, _numGlobalScripts;
-	int _numActors, _numImages, _numRoomVariables;
+	int _numActors, _numRoomVariables;
 public:
-	int _numSounds;
+	int _numImages, _numRooms, _numScripts, _numSounds;	// Used by VARS in HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
@@ -1293,9 +1293,16 @@ public:
 
 	byte VAR_BLAST_ABOVE_TEXT;
 	byte VAR_VOICE_MODE;
-	byte VAR_NUM_GLOBAL_OBJS;
 	byte VAR_MUSIC_BUNDLE_LOADED;
 	byte VAR_VOICE_BUNDLE_LOADED;
+
+	byte VAR_NUM_ROOMS;
+	byte VAR_NUM_SCRIPTS;
+	byte VAR_NUM_SOUNDS;
+	byte VAR_NUM_COSTUMES;
+	byte VAR_NUM_IMAGES;
+	byte VAR_NUM_CHARSETS;
+	byte VAR_NUM_GLOBAL_OBJS;
 };
 
 // This is a constant lookup table of reverse bit masks

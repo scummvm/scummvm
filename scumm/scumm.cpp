@@ -802,9 +802,16 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
-	VAR_NUM_GLOBAL_OBJS = 0xFF;
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
+
+	VAR_NUM_ROOMS = 0xFF;
+	VAR_NUM_SCRIPTS = 0xFF;
+	VAR_NUM_SOUNDS = 0xFF;
+	VAR_NUM_COSTUMES = 0xFF;
+	VAR_NUM_IMAGES = 0xFF;
+	VAR_NUM_CHARSETS = 0xFF;
+	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -1392,6 +1399,15 @@ void ScummEngine::initScummVars() {
 
 		// Set amount of sound channels
 		VAR(9) = 8;
+		if (_heversion >= 72) {
+			VAR(VAR_NUM_ROOMS) = _numRooms - 1;
+			VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
+			VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
+			VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
+			VAR(VAR_NUM_IMAGES) = _numImages - 1;
+			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
+			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+		}
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		switch (_midiDriver) {

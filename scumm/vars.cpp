@@ -241,6 +241,14 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_TIMEDATE_MONTH = 66;
 	VAR_TIMEDATE_YEAR = 67;
 
+	VAR_NUM_ROOMS = 68;
+	VAR_NUM_SCRIPTS = 69;
+	VAR_NUM_SOUNDS = 70;
+	VAR_NUM_COSTUMES = 71;
+	VAR_NUM_IMAGES = 72;
+	VAR_NUM_CHARSETS = 73;
+	VAR_NUM_GLOBAL_OBJS = 74;
+
 }
 
 void ScummEngine_v7::setupScummVars() {
