@@ -2371,11 +2371,12 @@ void ScummEngine_v72he::o72_unknownEC() {
 
 void ScummEngine_v72he::o72_unknownEF() {
 	int dst, size;
-	int b = pop();
-	int a = pop();
+
+	int len = pop();
+	int srcOffs = pop();
 	int src = pop();
 
-	size = b - a + 2;
+	size = len - srcOffs + 2;
 
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, 0, 0, size);
@@ -2383,7 +2384,7 @@ void ScummEngine_v72he::o72_unknownEF() {
 
 	dst = readVar(0);
 
-	arrrays_unk2(dst, src, a, b);
+	arrrays_unk2(dst, src, srcOffs, len);
 
 	push(dst);
 	debug(1,"stub o72_unknownEF");
