@@ -412,23 +412,20 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 	//
 	int yoffset = 8;
 
-	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "Master volume:", kTextAlignRight);
-	_masterVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_masterVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "Master volume: ", 100, kMasterVolumeChanged);
+	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "Music volume:", kTextAlignRight);
-	_musicVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_musicVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
+	_musicVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(this, 15, yoffset+2, 95, 16, "SFX volume:", kTextAlignRight);
-	_sfxVolumeSlider = new SliderWidget(this, 125, yoffset, 80, 12, kSfxVolumeChanged);
-	_sfxVolumeLabel  = new StaticTextWidget(this, 210, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_sfxVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
+	_sfxVolumeLabel  = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;

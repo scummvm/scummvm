@@ -125,22 +125,19 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// Volume controllers
 	int yoffset = vBorder + 16;
 
-	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "Master volume: ", kTextAlignRight);
-	_masterVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kMasterVolumeChanged);
+	_masterVolumeSlider = new SliderWidget(tab, 5, yoffset, 185, 12,  "Master volume: ", 100, kMasterVolumeChanged);
 	_masterVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "Music volume: ", kTextAlignRight);
-	_musicVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kMusicVolumeChanged);
+	_musicVolumeSlider = new SliderWidget(tab, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 
-	new StaticTextWidget(tab, 5, yoffset+2, 100, 16, "SFX volume: ", kTextAlignRight);
-	_sfxVolumeSlider = new SliderWidget(tab, 105, yoffset, 85, 12, kSfxVolumeChanged);
+	_sfxVolumeSlider = new SliderWidget(tab, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
