@@ -62,31 +62,101 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
 	0, 1 * 2, 2 * 2, 1 * 2, 0 * 2, 2 * 2, 3 * 2, 1 * 2
 };
 
-static const int8 screen_eff7_table1[4][16] = {
-	{ 1,  1, -1,  1, -1,  1, -1, -1,
-	  1, -1, -1, -1,  1,  1,  1, -1},
-	{ 0,  1,  2,  1,  2,  0,  2,  1,
-	  2,  0,  2,  1,  0,  0,  0,  0},
-	{-2, -1,  0, -1, -2, -1, -2,  0, -2, -1, -2, 0, 0, 0, 0, 0},
-	{ 0, -1, -2, -1, -2,  0, -2, -1, -2, 0, -2, -1, 0, 0, 0, 0}
+/*
+ * The following structs define four basic fades/transitions used by 
+ * transitionEffect(), each looking differently to the user.
+ * Note that the stripTables contain strip numbers, and they assume
+ * that the screen has 40 vertical strips (i.e. 320 pixel), and 25 horizontal
+ * strips (i.e. 200 pixel). There is a hack in transitionEffect that
+ * makes it work correctly in games which have a different screen height
+ * (for example, 240 pixel), but nothing is done regarding the width, so this
+ * code won't work correctly in COMI. Also, the number of iteration depends
+ * on min(vertStrips, horizStrips}. So the 13 is derived from 25/2, rounded up.
+ * And the 25 = min(25,40). Hence for Zak256 instead of 13 and 25, the values
+ * 15 and 30 should be used, and for COMI probably 30 and 60. 
+ */
+
+struct TransitionEffect {
+	byte numOfIterations;
+	int8 deltaTable[16];	// four times l / t / r / b
+	byte stripTable[16];	// ditto
 };
 
-static const byte screen_eff7_table2[4][16] = {
-	{ 0,  0, 39,  0,  39,  0, 39, 24,
-	  0, 24, 39, 24,   0,  0,  0, 24},
-	{ 0,  0,  0,  0,   0,  0,  0,  0,
-	  1,  0,  1,  0, 255,  0,  0,  0},
-	{39, 24, 39, 24,  39, 24, 39, 24,
-	 38, 24, 38, 24, 255,  0,  0,  0},
-	{ 0, 24, 39, 24,  39,  0, 39, 24,
-	 38,  0, 38, 24, 255,  0,  0,  0}
+static const TransitionEffect transitionEffects[4] = {
+	// Iris effect (looks like an opening/closing camera iris)
+	{
+		13,		// Number of iterations
+		{
+			1,  1, -1,  1,
+		   -1,  1, -1, -1,
+			1, -1, -1, -1,
+			1,  1,  1, -1
+		},
+		{
+			0,  0, 39,  0,
+		   39,  0, 39, 24,
+			0, 24, 39, 24,
+			0,  0,  0, 24
+		}
+	},
+	
+	// Box wipe (a box expands from the upper-left corner to the lower-right corner)
+	{
+		25,		// Number of iterations
+		{
+			0,  1,  2,  1,
+			2,  0,  2,  1,
+			2,  0,  2,  1,
+			0,  0,  0,  0
+		},
+		{
+			0,  0,  0,  0,
+			0,  0,  0,  0,
+			1,  0,  1,  0,
+		  255,  0,  0,  0
+		}
+	},
+	
+	
+	// Box wipe (a box expands from the lower-right corner to the upper-left corner)
+	{
+		25,		// Number of iterations
+		{
+		   -2, -1,  0, -1,
+		   -2, -1, -2,  0,
+		   -2, -1, -2,  0,
+			0,  0,  0,  0
+		},
+		{
+		   39, 24, 39, 24,
+		   39, 24, 39, 24,
+		   38, 24, 38, 24,
+		  255,  0,  0,  0
+		}
+	},
+	
+	// Inverse box wipe
+	{
+		25,		// Number of iterations
+		{
+			0, -1, -2, -1,
+		   -2,  0, -2, -1,
+		   -2,  0, -2, -1,
+		    0,  0,  0,  0
+		},
+		{
+			0, 24, 39, 24,
+		   39,  0, 39, 24,
+		   38,  0, 38, 24,
+		  255,  0,  0,  0
+		}
+	}
 };
 
-static const byte transition_num_of_iterations[4] = {
-	13, 25, 25, 25
-};
 
-
+/*
+ * Mouse cursor cycle colors (for the default crosshair).
+ */
 static const byte default_cursor_colors[4] = {
 	15, 15, 7, 8
 };
@@ -2101,12 +2171,11 @@ void Scumm::fadeOut(int effect)
 /* Transition effect. There are four different effects possible,
  * indicated by the value of a:
  * 0: Iris effect
- * 1: ?
- * 2: ?
- * 3: ?
- * All effects basically operate on 8x8 blocks of the screen. These blocks
- * are updated in a certain order; the exact order determines how the
- * effect appears to the user.
+ * 1: Box wipe (a black box expands from the upper-left corner to the lower-right corner)
+ * 2: Box wipe (a black box expands from the lower-right corner to the upper-left corner)
+ * 3: Inverse box wipe
+ * All effects operate on 8x8 blocks of the screen. These blocks are updated
+ * in a certain order; the exact order determines how the effect appears to the user.
  */
 void Scumm::transitionEffect(int a)
 {
@@ -2117,15 +2186,15 @@ void Scumm::transitionEffect(int a)
 	int l, t, r, b;
 
 	for (i = 0; i < 16; i++) {
-		delta[i] = screen_eff7_table1[a][i];
-		j = screen_eff7_table2[a][i];
+		delta[i] = transitionEffects[a].deltaTable[i];
+		j = transitionEffects[a].stripTable[i];
 		if (j == 24)
 			j = (virtscr[0].height >> 3) - 1;
 		tab_2[i] = j;
 	}
 
 	bottom = virtscr[0].height >> 3;
-	for (j = 0; j < transition_num_of_iterations[a]; j++) {
+	for (j = 0; j < transitionEffects[a].numOfIterations; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
 			t = tab_2[i * 4 + 1];
