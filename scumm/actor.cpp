@@ -1484,7 +1484,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 }
 
 void Scumm::resetActorBgs() {
-	Actor *a;
+//	Actor *a;
 	int i, j;
 
 	for (i = 0; i < gdi._numStrips; i++) {
