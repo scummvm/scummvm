@@ -1248,7 +1248,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 }
 
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
-	debug(1, "ScummEngine_v90he::processWizImage()");
+	debug(1, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 1:
 		displayWizComplexImage(params);
