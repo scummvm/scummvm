@@ -27,8 +27,9 @@
 
 class Engine;
 class GameDetector;
-class OSystem;
 class MidiDriver;
+class OSystem;
+class SoundMixer;
 
 /** Default sound/music volumes.
  * @todo move this to a better place.
@@ -183,6 +184,7 @@ public:
 	OSystem *createSystem();
 	Engine *createEngine(OSystem *system);
 
+	SoundMixer *createMixer();
 	MidiDriver *createMidi();
 	int getMidiDriverType();
 

@@ -28,6 +28,7 @@
 #include "common/plugins.h"
 #include "common/scaler.h"	// Only for gfx_modes
 #include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
@@ -799,6 +800,10 @@ int GameDetector::getMidiDriverType() {
 	return MD_ADLIB;
 #endif
     return MD_NULL;
+}
+
+SoundMixer *GameDetector::createMixer() {
+	return new SoundMixer();
 }
 
 MidiDriver *GameDetector::createMidi() {

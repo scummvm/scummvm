@@ -71,10 +71,10 @@ endif
 
 # After the game specific modules follow the shared modules
 MODULES += \
-	common \
 	gui \
 	backends \
 	sound \
+	common \
 	backends/fs/posix \
 	backends/fs/morphos \
 	backends/fs/windows \
@@ -98,7 +98,7 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 common/engine.o: $(OBJS)
 
 # HACK temporary fix to get compilation on OS X (and possibly others) working again
-OBJS:=common/engine.o $(OBJS)
+OBJS:=common/main.o common/gameDetector.o $(OBJS)
 
 scummvm$(EXEEXT):  $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)

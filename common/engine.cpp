@@ -78,7 +78,7 @@ Engine *g_engine = 0;
 Engine::Engine(GameDetector *detector, OSystem *syst)
 	: _system(syst) {
 	g_engine = this;
-	_mixer = new SoundMixer();
+	_mixer = detector->createMixer();
 
 	_gameDataPath = detector->_gameDataPath;
 
@@ -240,25 +240,3 @@ void checkHeap() {
 	}
 #endif
 }
-
-//
-// HACK: The following is done to pull in symbols from all the engine modules here.
-// If we don't do this, all sorts of linker problems may occur.
-//
-EngineFactory _factories[] =
-	{
-#ifndef DISABLE_SCUMM
-		Engine_SCUMM_create,
-#endif
-#ifndef DISABLE_SCUMM
-		Engine_SIMON_create,
-#endif
-#ifndef DISABLE_SCUMM
-		Engine_SKY_create,
-#endif
-#ifndef DISABLE_SCUMM
-		Engine_SWORD2_create,
-#endif
-		0
-	};
-
