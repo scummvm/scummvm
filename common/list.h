@@ -47,11 +47,13 @@ protected:
 	};
 
 	template <class T2>
-	struct Iterator {
+	class Iterator {
+		friend class List<T>;
 		NodeBase *_node;
 		
+		explicit Iterator<T2>(NodeBase *node) : _node(node) {}
+	public:
 		Iterator<T2>() : _node(0) {}
-		Iterator<T2>(NodeBase *node) : _node(node) {}
 
 		// Prefix inc
 		Iterator<T2> &operator++() {
@@ -61,7 +63,7 @@ protected:
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
-			Iterator<T2> tmp = *this;
+			Iterator<T2> tmp(*this);
 			if (_node)
 				_node = _node->_next;
 			return tmp;
@@ -74,7 +76,7 @@ protected:
 		}
 		// Postfix dec
 		Iterator<T2> operator--(int) {
-			Iterator<T2> tmp = *this;
+			Iterator<T2> tmp(*this);
 			if (_node)
 				_node = _node->_prev;
 			return tmp;
@@ -153,7 +155,7 @@ public:
 		prev->_next = next;
 		next->_prev = prev;
 		delete node;
-		return next;
+		return iterator(next);
 	}
 
 	iterator erase(iterator first, iterator last) {
@@ -195,19 +197,19 @@ public:
 
 
 	iterator		begin() {
-		return _anchor->_next;
+		return iterator(_anchor->_next);
 	}
 
 	iterator		end() {
-		return _anchor;
+		return iterator(_anchor);
 	}
 
 	const_iterator	begin() const {
-		return _anchor->_next;
+		return const_iterator(_anchor->_next);
 	}
 
 	const_iterator	end() const {
-		return _anchor;
+		return const_iterator(_anchor);
 	}
 };
 
