@@ -255,7 +255,7 @@ uint32	Con_start(uint8 *input)	//Tony15Oct96
 
 
 
-	if (*input == NULL)		// so that typing 'S' then <enter> works on NT (James26feb97)
+	if (*input == 0)		// so that typing 'S' then <enter> works on NT (James26feb97)
 	{
 		Con_print_start_menu();
 		return(1);

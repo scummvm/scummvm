@@ -1256,6 +1256,8 @@ typedef int BOOL;
 #define FALSE 0
 
 #ifndef WIN32
+#undef DWORD
+#undef LARGE_INTEGER
 typedef uint32 DWORD;
 typedef long int LARGE_INTEGER;
 #endif

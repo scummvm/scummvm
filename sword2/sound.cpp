@@ -200,7 +200,7 @@ int32 FN_play_fx(int32 *params)		// called from script only
 		Zdebug("SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
 
-	#endif	_DEBUG
+	#endif	//_DEBUG
 	//----------------------------------
 
 	while ((j < FXQ_LENGTH) && (fxq[j].resource != 0))

@@ -291,7 +291,7 @@ int32 FN_choose(int32 *params)	//Tony19Nov96
 
 					IN_SUBJECT=0;
 
-					Set_mouse(NULL);	//blank mouse again
+					Set_mouse(0);	//blank mouse again
 
 //					Zdebug("hit %d - ref %d  ref*8 %d", hit, subject_list[hit].ref, subject_list[hit].ref*8);
 

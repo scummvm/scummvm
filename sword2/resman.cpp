@@ -1091,7 +1091,7 @@ void resMan::CacheNewCluster(uint32 newCluster)
 
 
 
-	Set_mouse(NULL);
+	Set_mouse(0);
 	Set_luggage(0);	//tw28Aug
 
 	uint8 *bgfile;

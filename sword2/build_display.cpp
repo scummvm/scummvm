@@ -358,7 +358,7 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 		while(GetFadeStatus()==RDFADE_DOWN);
 	}
 
-	Set_mouse(NULL);
+	Set_mouse(0);
 	Set_luggage(0);	//tw28Aug
 
 	EraseBackBuffer();				// for hardware rendering

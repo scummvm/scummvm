@@ -520,8 +520,8 @@ void PauseGame(void)		// James17jun97
 //make a normal mouse
 	ClearPointerText();
 //	mouse_mode=MOUSE_normal;
-	SetLuggageAnim(NULL, NULL);	//this is the only place allowed to do it this way
-	Set_mouse(NULL);			// blank cursor
+	SetLuggageAnim(NULL, 0);	//this is the only place allowed to do it this way
+	Set_mouse(0);			// blank cursor
 	mouse_touching=1;	//forces engine to choose a cursor
 
 	if (current_graphics_level==3)	// if level at max

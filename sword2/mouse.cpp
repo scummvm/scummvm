@@ -775,7 +775,7 @@ void	Mouse_on_off(void)	//Tony30Sept96
 	{														// flip to a blank cursor for a cycle
 		mouse_touching=0;			// ignore the new id this cycle - should hit next cycle
 		old_mouse_touching=0;		// we've moved off
-		Set_mouse(NULL);			// blank cursor
+		Set_mouse(0);			// blank cursor
 		mouse_flicked_off=1;		// so we know to set the mouse pointer back to normal if 2nd hot-spot doesn't register because mouse pulled away quickly (onto nothing)
 		
 		// reset luggage only when necessary
@@ -1131,8 +1131,8 @@ int32 FN_no_human(int32 *params)	//Tony30Sept96
 
 	mouse_status=1;	//human/mouse off
 
-	Set_mouse(NULL);			// blank cursor
-	Set_luggage(NULL);			// blank cursor
+	Set_mouse(0);			// blank cursor
+	Set_luggage(0);			// blank cursor
 
 
 //must be normal mouse situation or a largely neutral situation - special menus use No_human
@@ -1163,8 +1163,8 @@ void	No_human(void)	//Tony4June97
 
 	mouse_status=1;	//human/mouse off
 
-	Set_mouse(NULL);			// blank cursor
-	Set_luggage(NULL);			// blank cursor
+	Set_mouse(0);			// blank cursor
+	Set_luggage(0);			// blank cursor
 }
 //------------------------------------------------------------------------------------
 int32 FN_add_human(int32 *params)	//Tony30Sept96
@@ -1199,7 +1199,7 @@ int32 FN_add_human(int32 *params)	//Tony30Sept96
 		COMBINE_BASE=0;			// - just in case
 
 
-		Set_luggage(NULL);			// blank cursor
+		Set_luggage(0);			// blank cursor
 	}
 
 
@@ -1309,7 +1309,7 @@ int32 FN_blank_mouse(int32 *params)	//Tony29Oct96
 //no params
 
 
-	Set_mouse(NULL);
+	Set_mouse(0);
 
 	if (params);
 
