@@ -197,6 +197,8 @@ protected:
 
 	virtual void decodeParseString();
 
+	void getResultPosIndirect();
+	virtual void getResultPos();
 	virtual int readVar(uint var);
 
 	virtual void ifStateCommon(byte type);
@@ -213,16 +215,16 @@ protected:
 	void o2_clearState02();
 	void o2_setState01();
 	void o2_clearState01();
-	void o2_assignVarByteDirect();
-	void o2_assignVarWordDirect();
+	void o2_assignVarByteIndirect();
+	void o2_assignVarWordIndirect();
 	void o2_assignVarByte();
 	void o2_assignVarWord();
 	void o2_setObjY();
 	void o2_getObjY();
 	void o2_setBitVar();
 	void o2_getBitVar();
-	void o2_addDirect();
-	void o2_subDirect();
+	void o2_addIndirect();
+	void o2_subIndirect();
 	void o2_ifState08();
 	void o2_ifNotState08();
 	void o2_ifState04();

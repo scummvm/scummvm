@@ -45,7 +45,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 08 */
 		OPCODE(o2_isNotEqual),
 		OPCODE(o5_faceActor),
-		OPCODE(o2_assignVarWordDirect),
+		OPCODE(o2_assignVarWordIndirect),
 		OPCODE(o2_setObjY),
 		/* 0C */
 		OPCODE(o2_resourceRoutines),
@@ -85,7 +85,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 28 */
 		OPCODE(o2_equalZero),
 		OPCODE(o2_setOwnerOf),
-		OPCODE(o2_addDirect),
+		OPCODE(o2_addIndirect),
 		OPCODE(o2_delayVariable),
 		/* 2C */
 		OPCODE(o2_assignVarByte),
@@ -165,7 +165,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 68 */
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
-		OPCODE(o2_subDirect),
+		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* 6C */
 		OPCODE(o2_getObjY),
@@ -205,7 +205,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 88 */
 		OPCODE(o2_isNotEqual),
 		OPCODE(o5_faceActor),
-		OPCODE(o2_assignVarWordDirect),
+		OPCODE(o2_assignVarWordIndirect),
 		OPCODE(o2_setObjY),
 		/* 8C */
 		OPCODE(o2_resourceRoutines),
@@ -245,7 +245,7 @@ void Scumm_v2::setupOpcodes() {
 		/* A8 */
 		OPCODE(o2_notEqualZero),
 		OPCODE(o2_setOwnerOf),
-		OPCODE(o2_addDirect),
+		OPCODE(o2_addIndirect),
 		OPCODE(o2_dummy),
 		/* AC */
 		OPCODE(o2_drawSentence),
@@ -325,7 +325,7 @@ void Scumm_v2::setupOpcodes() {
 		/* E8 */
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
-		OPCODE(o2_subDirect),
+		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* EC */
 		OPCODE(o2_getObjY),
@@ -394,12 +394,20 @@ void Scumm_v2::decodeParseString() {
 }
 
 int Scumm_v2::readVar(uint var) {
-	debug(6, "readvar=%d", var);
+	debug(6, "readvar(%d)", var);
 	if (var >= 14 && var <= 16)
 		var = _vars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	return _vars[var];
+}
+
+void Scumm_v2::getResultPosIndirect() {
+	_resultVarNumber = _vars[fetchScriptByte()];
+}
+
+void Scumm_v2::getResultPos() {
+	_resultVarNumber = fetchScriptByte();
 }
 
 void Scumm_v2::setStateCommon(byte type) {
@@ -450,13 +458,13 @@ void Scumm_v2::o2_clearState01() {
 	clearStateCommon(0x01);
 }
 
-void Scumm_v2::o2_assignVarByteDirect() {
-	getResultPosDirect();
+void Scumm_v2::o2_assignVarByteIndirect() {
+	getResultPosIndirect();
 	setResult(fetchScriptByte());
 }
 
-void Scumm_v2::o2_assignVarWordDirect() {
-	getResultPosDirect();
+void Scumm_v2::o2_assignVarWordIndirect() {
+	getResultPosIndirect();
 	setResult(fetchScriptWord());
 }
 
@@ -570,16 +578,16 @@ void Scumm_v2::o2_ifNotState01() {
 	ifNotStateCommon(0x01);
 }
 
-void Scumm_v2::o2_addDirect() {
+void Scumm_v2::o2_addIndirect() {
 	int a;
-	getResultPosDirect();
+	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
 	_vars[_resultVarNumber] += a;
 }
 
-void Scumm_v2::o2_subDirect() {
+void Scumm_v2::o2_subIndirect() {
 	int a;
-	getResultPosDirect();
+	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
 	_vars[_resultVarNumber] -= a;
 }
@@ -902,11 +910,11 @@ void Scumm_v2::o2_putActor() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActor");
-	if (!a)
-		return;
 	x = getVarOrDirectByte(0x40);
 	y = getVarOrDirectByte(0x20);
 
+	if (!a)
+		return;
 	a->putActor(x, y, a->room);
 }
 

@@ -357,7 +357,7 @@ int Scumm::readVar(uint var) {
 #ifdef BYPASS_COPY_PROT
 	static byte copyprotbypassed;
 #endif
-	debug(9, "readvar=%d", var);
+	debug(9, "readvar(%d)", var);
 	if (!(var & 0xF000)) {
 #if defined(BYPASS_COPY_PROT)
 		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
@@ -486,17 +486,8 @@ void Scumm::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
-void Scumm::getResultPosDirect() {
-	_resultVarNumber = _vars[fetchScriptByte()];
-}
-
 void Scumm::getResultPos() {
 	int a;
-
-	if (_features & GF_AFTER_V2) {
-		_resultVarNumber = fetchScriptByte();
-		return;
-	}
 
 	_resultVarNumber = fetchScriptWord();
 	if (_resultVarNumber & 0x2000) {

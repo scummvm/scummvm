@@ -514,8 +514,7 @@ protected:
 	virtual int fetchScriptWordSigned();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
-	void getResultPos();
-	void getResultPosDirect();
+	virtual void getResultPos();
 	void setResult(int result);
 	void push(int a);
 	int pop();
