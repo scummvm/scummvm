@@ -126,9 +126,12 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
     return -OSystem::EVENT_RBUTTONUP;
   }
 
-  if(!newkey)
+  if(!newkey || (lastkey && newkey != lastkey)) {
+    int upkey = lastkey;
     lastkey = 0;
-  else if(newkey != lastkey)
+    if(upkey)
+      return upkey | (1<<30);
+  } else if(!lastkey)
     return lastkey = newkey;
 
   return 0;
@@ -157,7 +160,8 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     event->event_code = -e;
     return true;
   } else if(e>0) {
-    event->event_code = EVENT_KEYDOWN;
+    event->event_code = ((e&(1<<30))? EVENT_KEYUP : EVENT_KEYDOWN);
+    e &= ~(1<<30);
     event->kbd.keycode = e;
     event->kbd.ascii = (e>='a' && e<='z' && (event->kbd.flags & KBD_SHIFT)?
 			e &~ 0x20 : e);
