@@ -24,6 +24,7 @@
 #define IMUSE_DIGI_H
 
 #include "common/scummsys.h"
+#include "sound/mixer.h"
 
 #define MAX_DIGITAL_CHANNELS 8
 #define MAX_IMUSE_JUMPS 1
@@ -69,7 +70,7 @@ private:
 		int _idSound;
 		int32 _mixerSize;
 		int _mixerFlags;
-		int _mixerChannel;
+		PlayingSoundHandle _mixerChannel;
 		bool _used;
 		bool _toBeRemoved;
 	};

@@ -302,7 +302,7 @@ void Sword2Sound::FxServer(void) {
 	if (fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
 			if ((fxId[i] == (int32) 0xfffffffe) || (fxId[i] == (int32) 0xffffffff)) {
-				if (!g_engine->_mixer->isChannelActive(soundHandleFx[i])) {
+				if (!soundHandleFx[i]) {
 					fxId[i] = 0;
 					if (bufferFx[i] != NULL) {
 						free(bufferFx[i]);
@@ -318,7 +318,7 @@ void Sword2Sound::FxServer(void) {
 
 	for (i = 0; i < MAXFX; i++) {
 		if (fxId[i]) {
-			if (!g_engine->_mixer->isChannelActive(soundHandleFx[i])) {
+			if (!soundHandleFx[i]) {
 				fxId[i] = 0;
 				if (bufferFx[i] != NULL) {
 					free(bufferFx[i]);
@@ -363,8 +363,7 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 
 int32 Sword2Sound::AmISpeaking() {
 	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != 0)) {
-		if (g_engine->_mixer->isChannelActive(soundHandleSpeech))
-			return (RDSE_SPEAKING);
+		return (RDSE_SPEAKING);
 	}
 	return (RDSE_QUIET);
 }
@@ -566,7 +565,6 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		for (uint j = 0; j < (bufferSize / 2); j++)
 			data16[j] = TO_BE_16(data16[j]);
 
-		soundHandleSpeech = 0;
 		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, volume, pan);
 
 		speechStatus = 1;
@@ -582,7 +580,6 @@ int32 Sword2Sound::StopSpeechSword2(void) {
   
 	if (speechStatus) {
 		g_engine->_mixer->stopHandle(soundHandleSpeech);
-		soundHandleSpeech = 0;
 		speechStatus = 0;
 		return(RD_OK);
 	}
@@ -596,9 +593,8 @@ int32 Sword2Sound::GetSpeechStatus(void) {
 	if (speechPaused)
 		return(RDSE_SAMPLEPLAYING);
 
-	if (g_engine->_mixer->isChannelActive(soundHandleSpeech) == false) {
+	if (!soundHandleSpeech) {
 		speechStatus = 0;
-		soundHandleSpeech = 0;
 		return(RDSE_SAMPLEFINISHED);
 	}
 	return(RDSE_SAMPLEPLAYING);
@@ -1213,7 +1209,6 @@ void Sword2Sound::StartMusicFadeDown(int i) {
 	musFading[i] = -16;
 	musStreaming[i] = 0;
 	fpMus.close();
-	soundHandleMusic[i] = 0;
 }
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
@@ -1238,7 +1233,6 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		musFading[primaryStream] = 0;
 		g_engine->_mixer->stop(soundHandleMusic[primaryStream]);
 		musStreaming[primaryStream] = 0;
-		soundHandleMusic[primaryStream] = 0;
 	}
 
 	// Pick the available music stream. If no music is playing it doesn't
@@ -1370,9 +1364,14 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		data16[i] = TO_BE_16(data16[i]);
 	}
 
-	assert(!soundHandleMusic[primaryStream]);
-	soundHandleMusic[primaryStream] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
+	if (soundHandleMusic[primaryStream] == 0) {
+		warning("play music newStream(): this shouldn't happen");
+//		assert(!soundHandleMusic[primaryStream]);
+		g_engine->_mixer->newStream(&soundHandleMusic[primaryStream], data16, bufferSizeMusic, 22050,
 					SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
+	} else {
+		g_engine->_mixer->appendStream(soundHandleMusic[primaryStream], data16, bufferSizeMusic);
+	}
 
 	// Recorder some last variables
 	musStreaming[primaryStream] = 1;
@@ -1802,7 +1801,6 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 						g_engine->_mixer->stop(soundHandleMusic[i]);
 						musStreaming[i] = 0;
 						musLooping[i] = 0;
-						soundHandleMusic[i] = 0;
 					} else {
 	    			//  Modify the volume according to the master volume and music mute state
 						if (musicMuted)
@@ -1903,10 +1901,10 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					
 					if (soundHandleMusic[i] == 0) {
 						warning("play music appendStream(): this shouldn't happen");
-						assert(soundHandleMusic[i]);
-//						int volume = musicVolTable[volMusic[i]];
-//						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
-//										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
+//						assert(soundHandleMusic[i]);
+						int volume = musicVolTable[volMusic[i]];
+						g_engine->_mixer->newStream(&soundHandleMusic[i], data16, bufferSizeMusic, 22050,
+										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
 					} else {
 						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
 					}
@@ -1919,7 +1917,6 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					// End of the music so we need to start fading and start the music again
 					if (fade) {
 						g_engine->_mixer->stop(soundHandleMusic[i]);
-						soundHandleMusic[i] = 0;
 						musFading[i] = -16;		// Fade the old music
 
 						// Close the music cluster if it's open

@@ -51,7 +51,7 @@ private:
 	bool _skips[37];
 	int32 _frame;
 
-	int _IACTchannel;
+	PlayingSoundHandle _IACTchannel;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 	bool _storeFrame;

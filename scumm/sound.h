@@ -57,7 +57,7 @@ protected:
 	byte *_musicBundleBufFinal;
 	byte *_musicBundleBufOutput;
 	bool _pauseBundleMusic;
-	int32 _bundleMusicTrack;
+	PlayingSoundHandle _bundleMusicTrack;
 	bool _musicBundleToBeChanged;
 	bool _musicBundleToBeRemoved;
 	int32 _bundleMusicSampleBits;

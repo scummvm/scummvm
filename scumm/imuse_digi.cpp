@@ -699,7 +699,7 @@ IMuseDigital::IMuseDigital(Scumm *scumm)
 	: _scumm(scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		_channel[l]._mixerChannel = -1;
+		_channel[l]._mixerChannel = 0;
 	}
 	_scumm->_timer->installProcedure(imus_digital_handler, 200000);
 	_pause = false;
@@ -709,10 +709,7 @@ IMuseDigital::~IMuseDigital() {
 	_scumm->_timer->releaseProcedure(imus_digital_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if (_channel[l]._mixerChannel != -1) {
-			_scumm->_mixer->stop(_channel[l]._mixerChannel);
-			_channel[l]._mixerChannel = -1;
-		}
+		_scumm->_mixer->stop(_channel[l]._mixerChannel);
 	}
 }
 
@@ -725,10 +722,7 @@ void IMuseDigital::handler() {
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
 			if (_channel[l]._toBeRemoved) {
-				if (_channel[l]._mixerChannel != -1) {
-					_scumm->_mixer->endStream(_channel[l]._mixerChannel);
-					_channel[l]._mixerChannel = -1;
-				}
+				_scumm->_mixer->endStream(_channel[l]._mixerChannel);
 
 				free(_channel[l]._data);
 				_channel[l]._used = false;
@@ -772,7 +766,7 @@ void IMuseDigital::handler() {
 			int32 new_size = _channel[l]._mixerSize;
 			int32 mixer_size = new_size;
 
-			if (_channel[l]._mixerChannel == -1) {
+			if (_channel[l]._mixerChannel == 0) {
 				mixer_size *= 2;
 				new_size *= 2;
 			}
@@ -810,8 +804,8 @@ void IMuseDigital::handler() {
 			}
 
 			if (_scumm->_silentDigitalImuse == false) {
-				if (_channel[l]._mixerChannel == -1) {
-					_channel[l]._mixerChannel = _scumm->_mixer->newStream(buf, mixer_size,
+				if (_channel[l]._mixerChannel == 0) {
+					_scumm->_mixer->newStream(&_channel[l]._mixerChannel, buf, mixer_size,
 					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000, 127, 0);
 				} else {
 					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
