@@ -165,6 +165,7 @@ int Script::SThreadDebugStep() {
 }
 
 void Script::runThread(ScriptThread *thread, uint instructionLimit) {
+	const char*operandName;
 	uint instructionCount;
 	uint16 savedInstructionOffset;
 
@@ -182,7 +183,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 	uint16 data;
 	int debug_print = 0;
-	int n_buf;
+//	int n_buf;
 //	int bitstate;
 	int operandChar;
 	int i;
@@ -213,14 +214,11 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 
 #define CASEOP(opName)	case opName:									\
 							if (operandChar == opName) {				\
-								debug(8, #opName);						\
-								_vm->_console->DebugPrintf(#opName);	\
+								operandName = #opName;					\
 							}
 						
-//		debug print (opCode name etc) should be placed here
-//		SDebugPrintInstr(thread)
-
 		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
+		operandName="";
 		switch (operandChar) {
 		CASEOP(opNextBlock)
 			// Some sort of "jump to the start of the next memory
@@ -243,8 +241,8 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opConstint)
 		CASEOP(opStrlit)
-			param1 = scriptS.readUint16LE();
-			thread->push(param1);
+			iparam1 = scriptS.readSint16LE();
+			thread->push(iparam1);
 			break;
 
 // DATA INSTRUCTIONS  
@@ -257,8 +255,8 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opGetInt)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += param1;
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
 			thread->push(*((uint16*)addr));
 			break;
 		CASEOP(opPutFlag)
@@ -274,8 +272,8 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opPutInt)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += param1;
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
 			*(uint16*)addr =  thread->stackTop();
 			break;
 		CASEOP(opPutFlagV)
@@ -291,13 +289,12 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 		CASEOP(opPutIntV)
 			addr = thread->baseAddress(scriptS.readByte());
-			param1 = scriptS.readUint16LE();
-			addr += param1;
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
 			*(uint16*)addr =  thread->pop();
 			break;
 
 // CONTROL INSTRUCTIONS    
-
 		CASEOP(opCall)
 			argumentsCount = scriptS.readByte();
 			param1 = scriptS.readByte();
@@ -305,8 +302,8 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				error("Script::runThread param1 != kAddressModule");
 			}
 			addr = thread->baseAddress(param1);
-			param1 = scriptS.readUint16LE();
-			addr += param1;
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
 			thread->push(argumentsCount);
 
 			param2 = scriptS.pos();
@@ -314,7 +311,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			// counter as a pointer here. But I don't think
 			// we will have to do that.
 			thread->push(param2);
-			thread->_instructionOffset = param1;
+			thread->_instructionOffset = iparam1;
 			
 			break;
 		CASEOP(opCcall)
@@ -328,7 +325,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			debug(8, "Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
-			if (scriptFunctionReturnValue != SUCCESS) {
+			if (scriptFunctionReturnValue != SUCCESS) {		// TODO: scriptFunctionReturnValue should be ignored & removed
 				_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->_instructionOffset, scriptFunctionReturnValue);
 			}
 
@@ -347,7 +344,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opEnter)
 			thread->push(thread->_frameIndex);
 			thread->_frameIndex = thread->_stackTopIndex;
-			thread->_stackTopIndex -= (scriptS.readUint16LE() / 2);
+			thread->_stackTopIndex -= (scriptS.readSint16LE() / 2);
 			break;
 		CASEOP(opReturn)
 			thread->_returnValue = thread->pop();
@@ -355,14 +352,13 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->_stackTopIndex = thread->_frameIndex;
 			thread->_frameIndex = thread->pop();
 			if (thread->pushedSize() == 0) {
-				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->_flags |= kTFlagFinished;
-				return;
+				break;
 			} else {
 				thread->_instructionOffset = thread->pop();
-				param1 = thread->pop();
-				param1 +=param1;
-				while (param1--) {
+				iparam1 = thread->pop();
+				iparam1 += iparam1;
+				while (iparam1--) {
 					thread->pop();
 				}
 
@@ -373,139 +369,101 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 
 // BRANCH INSTRUCTIONS    
-
-			// (JMP): Unconditional jump
-		case 0x1D:
+		CASEOP(opJmp)
 			param1 = scriptS.readUint16LE();
-			thread->_instructionOffset = (unsigned long)param1;
+			thread->_instructionOffset = param1;
 			break;
-			// (JNZP): Jump if nonzero + POP
-		case 0x1E:
+		CASEOP(opJmpTrueV)
 			param1 = scriptS.readUint16LE();
-			data = thread->pop();
-			if (data) {
-				thread->_instructionOffset = (unsigned long)param1;
+			if (thread->pop()) {
+				thread->_instructionOffset = param1;
 			}
 			break;
-			// (JZP): Jump if zero + POP
-		case 0x1F:
+		CASEOP(opJmpFalseV)
 			param1 = scriptS.readUint16LE();
-			data = thread->pop();
-			if (!data) {
-				thread->_instructionOffset = (unsigned long)param1;
+			if (!thread->pop()) {
+				thread->_instructionOffset = param1;
 			}
 			break;
-			// (JNZ): Jump if nonzero
-		case 0x20:
+		CASEOP(opJmpTrue)
 			param1 = scriptS.readUint16LE();
-			data = thread->stackTop();
-			if (data) {
-				thread->_instructionOffset = (unsigned long)param1;
+			if (thread->stackTop()) {
+				thread->_instructionOffset = param1;
 			}
 			break;
-			// (JZ): Jump if zero
-		case 0x21:
+		CASEOP(opJmpFalse)
 			param1 = scriptS.readUint16LE();
-			data = thread->stackTop();
-			if (!data) {
-				thread->_instructionOffset = (unsigned long)param1;
+			if (!thread->stackTop()) {
+				thread->_instructionOffset = param1;
 			}
 			break;
-			// (SWCH): Switch
-		case 0x22:
-			{
-				int n_switch;
-				uint16 switch_num;
-				unsigned int switch_jmp;
-				unsigned int default_jmp;
-				int case_found = 0;
-
-				data = thread->pop();
-				n_switch = scriptS.readUint16LE();
-
-				for (i = 0; i < n_switch; i++) {
-					switch_num = scriptS.readUint16LE();
-					switch_jmp = scriptS.readUint16LE();
-					// Found the specified case
-					if (data == switch_num) {
-						thread->_instructionOffset = switch_jmp;
-						case_found = 1;
-						break;
-					}
-				}
-
-				// Jump to default case
-				if (!case_found) {
-					default_jmp = scriptS.readUint16LE();
-					thread->_instructionOffset = default_jmp;
+		CASEOP(opJmpSwitch)
+			iparam1 = scriptS.readSint16LE();
+			param1 = thread->pop();
+			while (iparam1--) {
+				param2 = scriptS.readUint16LE();
+				thread->_instructionOffset = scriptS.readUint16LE();
+				if (param2 == param1) {
+					break;
 				}
 			}
+			if (iparam1 < 0) {
+				thread->_instructionOffset = scriptS.readUint16LE();
+			}
 			break;
-			// (RJMP): Random branch
-		case 0x24:
-			{
-				// Supposedly the number of possible branches.
-				// The original interpreter ignores it.
-				scriptS.readUint16LE();
-
-				uint16 probability = _vm->_rnd.getRandomNumber(scriptS.readUint16LE() - 1);
-
-				while (1) {
-					uint16 branch_probability = scriptS.readUint16LE();
-					uint16 offset = scriptS.readUint16LE();
-
-					if (branch_probability > probability) {
-						thread->_instructionOffset = offset;
-						break;
-					}
-
-					probability -= branch_probability;
+		CASEOP(opJmpRandom)
+			// Supposedly the number of possible branches.
+			// The original interpreter ignores it.
+			scriptS.readUint16LE();
+			iparam1 = scriptS.readSint16LE();
+			iparam1 = _vm->_rnd.getRandomNumber(iparam1 - 1);
+			while (1) {
+				iparam2 = scriptS.readSint16LE();
+				thread->_instructionOffset = scriptS.readUint16LE();
+				
+				iparam1 -= iparam2;
+				if (iparam1 < 0) {
+					break;
 				}
 			}
 			break;
 
 // UNARY INSTRUCTIONS
+		CASEOP(opNegate)
+			thread->push(-thread->pop());
+			break;
+		CASEOP(opNot)
+			thread->push(!thread->pop());
+			break;
+		CASEOP(opCompl)
+			thread->push(~thread->pop());
+			break;
 
-			// (NEG) Negate stack by 2's complement
-		case 0x25:
-			data = thread->pop();
-			thread->push(-(int)data);
+		CASEOP(opIncV)
+			addr = thread->baseAddress(scriptS.readByte());
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
+			*(uint16*)addr += 1;
 			break;
-			// (TSTZ) Test for zero
-		case 0x26:
-			data = thread->pop();
-			thread->push(!data);
+		CASEOP(opDecV)
+			addr = thread->baseAddress(scriptS.readByte());
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
+			*(uint16*)addr -= 1;
 			break;
-			// (NOT) Binary not
-		case 0x27:
-			data = thread->pop();
-			thread->push(~data);
+		CASEOP(opPostInc)
+			addr = thread->baseAddress(scriptS.readByte());
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
+			thread->push(*(int16*)addr);
+			*(uint16*)addr += 1;
 			break;
-		case 0x28: // inc_v increment, don't push
-			n_buf = scriptS.readByte();
-			param1 = scriptS.readUint16LE();
-			//getWord(n_buf, param1, &data);
-			//putWord(n_buf, param1, data + 1);
-			break;
-		case 0x29: // dec_v decrement, don't push
-			n_buf = scriptS.readByte();
-			param1 = scriptS.readUint16LE();
-			//getWord(n_buf, param1, &data);
-			//putWord(n_buf, param1, data - 1);
-			break;
-		case 0x2A: // postinc
-			n_buf = scriptS.readByte();
-			param1 = scriptS.readUint16LE();
-			//getWord(n_buf, param1, &data);
-//			thread->push(data);
-			//putWord(n_buf, param1, data + 1);
-			break;
-		case 0x2B: // postdec
-			n_buf = scriptS.readByte();
-			param1 = scriptS.readUint16LE();
-			//getWord(n_buf, param1, &data);
-//			thread->push(data);
-			//putWord(n_buf, param1, data - 1);
+		CASEOP(opPostDec)
+			addr = thread->baseAddress(scriptS.readByte());
+			iparam1 = scriptS.readSint16LE();
+			addr += iparam1;
+			thread->push(*(int16*)addr);
+			*(uint16*)addr -= 1;
 			break;
 
 // ARITHMETIC INSTRUCTIONS    
@@ -778,18 +736,28 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			scriptError(thread, "Invalid opcode encountered");
 			return;
 		}
+		debug(8, operandName);
+		_vm->_console->DebugPrintf("%s\n", operandName);
 
-		// Set instruction offset only if a previous instruction didn't branch
-		if (savedInstructionOffset == thread->_instructionOffset) {
-			thread->_instructionOffset = scriptS.pos();
+		
+		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
+			_vm->_console->DebugPrintf("Script finished\n");			
+			break;
 		} else {
-			if (thread->_instructionOffset >= scriptS.size()) {
-				scriptError(thread, "Out of range script execution");
-				return;
-			}
 
-			scriptS.seek(thread->_instructionOffset);
+			// Set instruction offset only if a previous instruction didn't branch
+			if (savedInstructionOffset == thread->_instructionOffset) {
+				thread->_instructionOffset = scriptS.pos();
+			} else {
+				if (thread->_instructionOffset >= scriptS.size()) {
+					scriptError(thread, "Out of range script execution");
+					return;
+				}
+
+				scriptS.seek(thread->_instructionOffset);
+			}
 		}
+
 
 		if (unhandled) { // TODO: remove it
 			scriptError(thread, "Unhandled opcode");

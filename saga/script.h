@@ -137,6 +137,22 @@ enum OpCodes {
 	opEnter = 0x1A,
 	opReturn = 0x1B,
 	opReturnV = 0x1C,
+	opJmp = 0x1D,
+	opJmpTrueV = 0x1E,
+	opJmpFalseV = 0x1F,
+	opJmpTrue = 0x20,
+	opJmpFalse = 0x21,
+	opJmpSwitch = 0x22,
+//...
+	opJmpRandom = 0x24,
+	opNegate = 0x25,
+	opNot = 0x26,
+	opCompl = 0x27,
+	opIncV = 0x28,
+	opDecV = 0x29,
+	opPostInc = 0x2A,
+	opPostDec = 0x2B,
+
 //...
 	opSpeak = 0x53,
 	opDialogBegin = 0x54,
@@ -226,7 +242,7 @@ public:
 	uint _sleepTime;
 	void *_threadObj;					// which object we're handling
 
-	uint16 _returnValue;
+	int16 _returnValue;
 
 	uint16 _instructionOffset;			// Instruction offset
 
