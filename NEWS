@@ -48,6 +48,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for compressed speech and music.
    - Fixed various minor bugs.
 
+ BASS:
+   - Added workarounds for some rare scripting bugs that could render the game
+     unwinnable.
+
 0.6.1b (2004-08-03)
  General:
    - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
