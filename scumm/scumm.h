@@ -191,6 +191,8 @@ enum ScummGameId {
 	GID_ZAK,
 	GID_PUTTPUTT,
 	GID_PUTTDEMO,
+	GID_PUTTMOON,
+	GID_FBEAR,
 	GID_PJSDEMO,
 	GID_MONKEY_SEGA
 };
@@ -911,7 +913,7 @@ protected:
 	void removeBlastObject(BlastObject *eo);
 
 	int _drawObjectQueNr;
-	byte _drawObjectQue[200];
+	byte _drawObjectQue[700];
 	byte _palManipStart, _palManipEnd;
 	uint16 _palManipCounter;
 	byte *_palManipPalette;
