@@ -1364,7 +1364,7 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 
 	// Play it
 	if (!_soundsPaused)
-		AudioCD.playCDTrack(track, numLoops, startFrame, duration);
+		AudioCD.play(track, numLoops, startFrame, duration);
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
@@ -1373,11 +1373,11 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 }
 
 void Sound::stopCD() {
-	AudioCD.stopCD();
+	AudioCD.stop();
 }
 
 int Sound::pollCD() const {
-	return AudioCD.pollCD();
+	return AudioCD.isPlaying();
 }
 
 void Sound::updateCD() {

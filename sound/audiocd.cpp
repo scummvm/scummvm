@@ -33,19 +33,21 @@ AudioCDManager::AudioCDManager() {
 	_current_cache = 0;
 }
 
-void AudioCDManager::playCDTrack(int track, int numLoops, int startFrame, int duration) {
+void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
 	if (numLoops != 0 || startFrame != 0) {
 		// Try to load the track from a .mp3/.ogg file, and if found, use
 		// that. If not found, attempt to do regular Audio CD playback of
 		// the requested track.
 		int index = getCachedTrack(track);
+
+		_cd.track = track;
+		_cd.numLoops = numLoops;
+		_cd.start = startFrame;
+		_cd.duration = duration;
+
 		if (index >= 0) {
 			g_engine->_mixer->stopHandle(_cd.handle);
 			_cd.playing = true;
-			_cd.track = track;
-			_cd.numLoops = numLoops;
-			_cd.start = startFrame;
-			_cd.duration = duration;
 			_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 		} else {
 			g_system->play_cdrom(track, numLoops, startFrame, duration);
@@ -53,7 +55,7 @@ void AudioCDManager::playCDTrack(int track, int numLoops, int startFrame, int du
 	}
 }
 
-void AudioCDManager::stopCD() {
+void AudioCDManager::stop() {
 	if (_cd.playing) {
 		g_engine->_mixer->stopHandle(_cd.handle);
 		_cd.playing = false;
@@ -62,7 +64,7 @@ void AudioCDManager::stopCD() {
 	}
 }
 
-int AudioCDManager::pollCD() const {
+int AudioCDManager::isPlaying() const {
 	return _cd.playing || g_system->poll_cdrom();
 }
 
@@ -74,12 +76,9 @@ void AudioCDManager::updateCD() {
 			// to be repeated, and if that's the case, play it again. Else, stop
 			// the CD explicitly.
 			if (_cd.numLoops == -1 || --_cd.numLoops > 0) {
-//FIXME				_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
-//FIXME				if (!_soundsPaused) {
-					int index = getCachedTrack(_cd.track);
-					assert(index >= 0);
-					_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
-//FIXME				}
+				int index = getCachedTrack(_cd.track);
+				assert(index >= 0);
+				_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 			} else {
 				g_engine->_mixer->stopHandle(_cd.handle);
 				_cd.playing = false;
@@ -88,6 +87,14 @@ void AudioCDManager::updateCD() {
 	} else {
 		g_system->update_cdrom();
 	}
+}
+
+AudioCDManager::Status AudioCDManager::getStatus() const {
+	// TODO: This could be improved for "real" CD playback.
+	// But to do that, we have to extend the OSystem interface.
+	Status info = _cd;
+	info.playing = isPlaying();
+	return info;
 }
 
 int AudioCDManager::getCachedTrack(int track) {

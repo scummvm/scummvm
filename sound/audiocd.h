@@ -37,10 +37,21 @@ public:
 
 class AudioCDManager : public Common::Singleton<AudioCDManager> {
 public:
-	void playCDTrack(int track, int numLoops, int startFrame, int duration);
-	void stopCD();
-	int pollCD() const;
+	struct Status {
+		bool playing;
+		int track;
+		int start;
+		int duration;
+		int numLoops;
+	};
+
+	void play(int track, int numLoops, int startFrame, int duration);
+	void stop();
+	int isPlaying() const;
+
 	void updateCD();
+
+	Status getStatus() const;
 
 private:
 	friend class Common::Singleton<AudioCDManager>;
@@ -50,21 +61,17 @@ private:
 
 private:
 	/* used for emulated CD music */
+	struct ExtStatus : Status {
+		PlayingSoundHandle handle;
+	};
+	ExtStatus _cd;
+
 	enum {
 		CACHE_TRACKS = 10
 	};
 	int _cached_tracks[CACHE_TRACKS];
 	DigitalTrackInfo *_track_info[CACHE_TRACKS];
 	int _current_cache;
-
-	struct {
-		PlayingSoundHandle handle;
-		int track;
-		int start;
-		int duration;
-		int numLoops;
-		bool playing;
-	} _cd;
 
 };
 
