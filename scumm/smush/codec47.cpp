@@ -772,6 +772,8 @@ static void codec47_subgfx_lev3() {
 		return;
 	}
 	if (code == 0xFD) {
+		d_src += 4;
+		return;
 		byte * tmp_ptr = (*(d_src + 1) << 7) + (byte*)codec47_decode2_buf2;
 		int32 l = *(tmp_ptr + 96);
 		byte val = *(d_src + 2);
@@ -870,6 +872,8 @@ static void codec47_subgfx_lev2() {
 		return;
 	}
 	if (code == 0xFD) {
+		d_src += 4;
+		return;
 		tmp = *(d_src + 1);
 		tmp2 = tmp * 4;
 		tmp <<= 7;
@@ -987,7 +991,7 @@ bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
 
 		int32 frame_size = getRect().width() * getRect().height();
 		_deltaSize = frame_size * 3;
-		_deltaBuf = new byte[_deltaSize];
+		_deltaBuf = new byte[_deltaSize + 1000000];
 		_deltaBufs[0] = _deltaBuf;
 		_deltaBufs[1] = _deltaBuf + frame_size;
 		_curBuf = _deltaBuf + frame_size * 2;
