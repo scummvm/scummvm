@@ -23,9 +23,7 @@
 
 
 #if !defined(__GNUC__)
-
 	#pragma START_PACK_STRUCTS
-
 #endif	
 
 
@@ -48,6 +46,10 @@ struct AkosCI {
 	int16 rel_x, rel_y;
 	int16 move_x, move_y;
 } GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif	
 
 struct AkosRenderer {
 	CostumeData *cd;

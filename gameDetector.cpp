@@ -427,8 +427,10 @@ OSystem *GameDetector::createSystem() {
 #endif
 		break;
 
+#ifdef USE_NULL_DRIVER
 	case GD_NULL:
 		return OSystem_NULL_create();
+#endif
 #endif
 	}
 

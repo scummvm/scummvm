@@ -1,22 +1,3 @@
-// ScummVM - Scumm Interpreter
-// PocketSCUMM - PocketPC port of ScummVM. Based on the original Win32
-// implementation by Ludvig Strigeus.
-// Ported by Vasyl Tsvirkunov (vasyl@pacbell.net).
-// Note: this is the very first version, implementing only basic functionality.
-//       Keyboard is not implemented, there is no way to access save/load game
-//       and the interpreter is hardcoded to one game (MI1 in this case). Later
-//       versions will get these limitations removed. Right now you should
-//       consider this port a proof of concept.
-// To run PocketSCUMM, put PocketSCUMM.exe and game resources (MONKEY.000, MONKEY.001)
-// in one folder (can be on storage card) and run the executable. Unused part of
-// the screen below the image is split to two halves - tap on the left to press
-// Escape (skip intro, etc.), tap on the right to change screen rotation.
-// Another note: This file is very similar to windows.cpp in the core project. I was
-//       even thinking about integrating WinCE code there, I still may do it later.
-//       For ease of updating, non-trivial blocks identical to windows.cpp are marked
-//       with //{{ and //}} comments
-// Consistent with 1.18
-
 #include "stdafx.h"
 #include <assert.h>
 
@@ -43,23 +24,178 @@
 #include "SDL_timer.h"
 #include "SDL_thread.h"
 
+
+#define MAX(a,b) (((a)<(b)) ? (b) : (a))
+#define MIN(a,b) (((a)>(b)) ? (b) : (a))
+#define SAMPLES_PER_SEC 11025
 #define VERSION "(VM " SCUMMVM_CVS ")"
 
-#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
+GameDetector detector;
+Gui gui;
+Scumm *g_scumm;
 
-#define SDL_INIT_AUDIO          0x00000010
-extern "C" DECLSPEC int SDL_Init(Uint32 flags);
+class OSystem_WINCE3 : public OSystem {
+public:
+	// Set colors of the palette
+	void set_palette(const byte *colors, uint start, uint num);
 
-#define SAMPLES_PER_SEC 22050
-#define BUFFER_SIZE (8192)
-#define BITS_PER_SAMPLE 16
+	// Set the size of the video bitmap.
+	// Typically, 320x200
+	void init_size(uint w, uint h);
+
+	// Draw a bitmap to screen.
+	// The screen will not be updated to reflect the new bitmap
+	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+
+	// Update the dirty areas of the screen
+	void update_screen();
+
+	// Either show or hide the mouse cursor
+	bool show_mouse(bool visible);
+	
+	// Set the position of the mouse cursor
+	void set_mouse_pos(int x, int y);
+	
+	// Set the bitmap that's used when drawing the cursor.
+	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	
+	// Shaking is used in SCUMM. Set current shake position.
+	void set_shake_pos(int shake_pos);
+		
+	// Get the number of milliseconds since the program was started.
+	uint32 get_msecs();
+	
+	// Delay for a specified amount of milliseconds
+	void delay_msecs(uint msecs);
+	
+	// Create a thread
+	void *create_thread(ThreadProc *proc, void *param);
+	
+	// Get the next event.
+	// Returns true if an event was retrieved.	
+	bool poll_event(Event *event);
+	
+	// Set function that generates samples 
+	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+		
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	bool poll_cdrom();
+
+	// Play cdrom audio track
+	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
+
+	// Stop cdrom audio track
+	void stop_cdrom();
+
+	// Update cdrom audio status
+	void update_cdrom();
+
+	// Quit
+	void quit();
+
+	// Set a parameter
+	uint32 property(int param, uint32 value);
+
+	static OSystem *create(int gfx_mode, bool full_screen);
+
+private:
+	// Windows callbacks & stuff
+	bool handleMessage();
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	
+	byte *_gfx_buf;
+	uint32 _start_time;
+	Event _event;
+	HMODULE hInst;
+	HWND hWnd;
+
+
+	enum {
+		DF_FORCE_FULL_ON_PALETTE = 1,
+		DF_WANT_RECT_OPTIM = 2,
+		DF_2xSAI = 4,
+		DF_SEPARATE_HWSCREEN = 8,
+		DF_UPDATE_EXPAND_1_PIXEL = 16,
+	};
+
+	int _mode;
+	bool _full_screen;
+	bool _mouse_visible;
+	bool _mouse_drawn;
+	uint32 _mode_flags;
+
+	byte _internal_scaling;
+
+	bool force_full; //Force full redraw on next update_screen
+	bool cksum_valid;
+
+	enum {
+		NUM_DIRTY_RECT = 100,
+		SCREEN_WIDTH = 320,
+		SCREEN_HEIGHT = 200,
+		CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8)),
+
+		MAX_MOUSE_W = 40,
+		MAX_MOUSE_H = 40,
+		MAX_SCALING = 3,
+
+		TMP_SCREEN_OFFS = 320*2 + 8,
+	};
+
+	/* CD Audio */
+	int cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
+	Uint32 cd_end_time, cd_stop_time, cd_next_second;
+
+	struct MousePos {
+		int16 x,y,w,h;
+	};
+
+	byte *_ms_buf;
+	byte *_ms_backup;
+	MousePos _ms_cur;
+	MousePos _ms_old;
+	int16 _ms_hotspot_x;
+	int16 _ms_hotspot_y;
+	int _current_shake_pos;
+
+	
+	static void fill_sound(void *userdata, Uint8 * stream, int len);
+	
+
+	void draw_mouse();
+	void undraw_mouse();
+
+	void load_gfx_mode();
+	void unload_gfx_mode();
+
+	void hotswap_gfx_mode();
+
+	void get_320x200_image(byte *buf);
+};
+
+/************* WinCE Specifics *****************/
+byte veryFastMode;
+
+bool sound_activated, terminated;
+HWND hWnd_MainMenu;
+HWND hWnd_Window;
 
 void drawAllToolbar(bool);
 void redrawSoundItem();
 ToolbarSelected getToolbarSelection(int, int);
 
-extern void palette_update();
-extern void Cls();
+extern bool toolbar_drawn;
+extern bool draw_keyboard;
+bool hide_toolbar;
+
+bool get_key_mapping;
+static char _directory[MAX_PATH];
+
+const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {"ABCDEFGHIJKLM"};
+const char KEYBOARD_MAPPING_NUMERIC_HIGH[] = {"12345"};
+const char KEYBOARD_MAPPING_ALPHA_LOW[] = {"NOPQRSTUVWXYZ"};
+const char KEYBOARD_MAPPING_NUMERIC_LOW[] = {"67890"};
 
 extern void startFindGame();
 extern void displayGameInfo();
@@ -67,105 +203,8 @@ extern bool loadGameSettings(void);
 extern void setFindGameDlgHandle(HWND);
 extern void getSelectedGame(int, char*, TCHAR*);
 
-const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {
-	"ABCDEFGHIJKLM"
-};
-
-const char KEYBOARD_MAPPING_NUMERIC_HIGH[] = {
-	"12345"
-};
-
-const char KEYBOARD_MAPPING_ALPHA_LOW[] = {
-	"NOPQRSTUVWXYZ"
-};
-
-const char KEYBOARD_MAPPING_NUMERIC_LOW[] = {
-	"67890"
-};
-
-/* Added from generic X-Win port - not used right now */
-
-#define MAX_NUMBER_OF_DIRTY_SQUARES 32
-typedef struct {
-  int x, y, w, h;
-} dirty_square;
-static dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
-static int num_of_dirty_square;
-
-static int old_mouse_x, old_mouse_y;
-static int old_mouse_h, old_mouse_w;
-static bool has_mouse, hide_mouse;
-
-GameDetector detector;
-Gui gui;
-
-Scumm *g_scumm;
-
-
-#define BAK_WIDTH 40
-#define BAK_HEIGHT 40
-unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
-
-
-#define AddDirtyRec(xi,yi,wi,hi) 				\
-  if (num_of_dirty_square < MAX_NUMBER_OF_DIRTY_SQUARES) {	\
-    ds[num_of_dirty_square].x = xi;				\
-    ds[num_of_dirty_square].y = yi;				\
-    ds[num_of_dirty_square].w = wi;				\
-    ds[num_of_dirty_square].h = hi;				\
-    num_of_dirty_square++;					\
-  }
-
-// Similar to Error in windows.cpp but has to take Unicode in account
-void Error(LPCTSTR msg)
-{
-	OutputDebugString(msg);
-	MessageBox(HWND_DESKTOP, msg, TEXT("Error"), MB_ICONSTOP);
-	exit(1);
-}
-
-//{{
-Scumm scumm;
-
-//IMuse sound;
-//SOUND_DRIVER_TYPE snd_driv;
-
-byte veryFastMode;
-//}}
-
-bool sound_activated;
-HWND hWnd_MainMenu;
-HWND hWnd_Window;
-
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
-bool hide_toolbar;
-
-bool get_key_mapping;
-
-//long TEMPO_BASE;
-
-static char _directory[MAX_PATH];
-
-// WndProc is significantly port-specific
-int mapKey(int key) {
-	if (key>=VK_F1 && key<=VK_F9) {
-		return key - VK_F1 + 315;
-	}
-	return key;
-}
-
-void error_handler(char *text, char is_error) {
-	if (is_error) {
-		TCHAR	error[1024];
-		GXCloseInput();
-		GXCloseDisplay();
-		ShowWindow(hWnd_Window, SW_HIDE);		
-		MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, error, sizeof(error));
-		MessageBox(GetForegroundWindow(), error, TEXT("ScummVM error"), MB_OK);
-	}
-}
-
+extern void palette_update();
+#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
 void do_quit() {
 	GXCloseInput();
@@ -174,307 +213,25 @@ void do_quit() {
 	exit(1);
 }
 
-/* Registry support */
-
-void registry_init() {
-	 HKEY	hkey;
-	 DWORD	disposition;
-	 DWORD  keyType, keySize, dummy;
-	 unsigned char actions[NUMBER_ACTIONS];
-
-	 memset(actions, 0, NUMBER_ACTIONS);
-
-	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
-
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 if (RegQueryValueEx(hkey, TEXT("VolumeMaster"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					scumm._sound_volume_master = (uint16)dummy;
-		 else
-					scumm._sound_volume_master = 100;
-		 
-		 if (RegQueryValueEx(hkey, TEXT("VolumeMusic"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					scumm._sound_volume_music = (uint16)dummy;
-		 else
-					scumm._sound_volume_music = 60;		 
-		 if (RegQueryValueEx(hkey, TEXT("VolumeSfx"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					scumm._sound_volume_sfx = (uint16)dummy;
-		 else
-					scumm._sound_volume_sfx = 100;		 
-		 keyType = REG_BINARY;
-		 keySize = NUMBER_ACTIONS;
-		 memset(actions, 0, sizeof(actions));
-		 RegQueryValueEx(hkey, TEXT("ActionsKeys"), NULL, &keyType, 
-						 actions, &keySize);
-		 setActionKeys(actions);		 
-		 actions[0] = ACTION_PAUSE;
-		 actions[1] = ACTION_SAVE;
-		 actions[2] = ACTION_QUIT;
-		 actions[3] = ACTION_SKIP;
-		 actions[4] = ACTION_HIDE;
-		 RegQueryValueEx(hkey, TEXT("ActionsTypes"), NULL, &keyType,
-						 actions, &keySize);
-		 setActionTypes(actions);
-
-		 RegCloseKey(hkey);
-	 }
-}
-					
-void registry_save() {
-	 HKEY	hkey;
-	 DWORD	disposition;
-	 DWORD  keyType, keySize, dummy;
-
-	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
-
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 dummy = scumm._sound_volume_master;
-		 RegSetValueEx(hkey, TEXT("VolumeMaster"), 0, keyType, (unsigned char*)&dummy, keySize);
-		 dummy = scumm._sound_volume_music;
-		 RegSetValueEx(hkey, TEXT("VolumeMusic"), 0, keyType, (unsigned char*)&dummy, keySize);		 
-		 dummy = scumm._sound_volume_sfx;
-		 RegSetValueEx(hkey, TEXT("VolumeSfx"), 0, keyType, (unsigned char*)&dummy, keySize);		 
-		 keyType = REG_BINARY;
-		 keySize = NUMBER_ACTIONS;
-		 RegSetValueEx(hkey, TEXT("ActionsKeys"), 0, keyType, getActionKeys(), 
-						keySize);	
-		 RegSetValueEx(hkey, TEXT("ActionsTypes"), 0, keyType, getActionTypes(),
-						keySize);
-
-		 RegCloseKey(hkey);
-	 }
+void Error(LPCTSTR msg)
+{
+	OutputDebugString(msg);
+	MessageBox(HWND_DESKTOP, msg, TEXT("Error"), MB_ICONSTOP);
+	exit(1);
 }
 
-/* Action functions */
-
-// FIX ACTIONS
-
-void action_right_click() {
-	//wm->_scumm->_rightBtnPressed |= msDown|msClicked;
+void Warning(LPCTSTR msg)
+{
+	OutputDebugString(msg);
+	MessageBox(HWND_DESKTOP, msg, TEXT("Error"), MB_ICONSTOP);	
 }
 
-void action_pause() {
-	//wm->_scumm->_keyPressed = mapKey(VK_SPACE);
-}
-
-void action_save() {
-	if (GetScreenMode()) {
-		draw_keyboard = true;
-		if (!hide_toolbar)
-			toolbar_drawn = false;
+int mapKey(int key) {
+	if (key>=VK_F1 && key<=VK_F9) {
+		return key - VK_F1 + 315;
 	}
-
-	//wm->_scumm->_keyPressed = mapKey(VK_F5);
+	return key;
 }
-
-void action_quit() {
-	do_quit();
-}
-
-void action_skip() {
-	//wm->_scumm->_keyPressed = mapKey(VK_ESCAPE);
-}
-
-void action_hide() {
-	hide_toolbar = !hide_toolbar;
-	Cls();
-	toolbar_drawn = hide_toolbar;
-	//wm->writeToScreen();
-}
-
-void action_keyboard() {
-	if (GetScreenMode()) {
-		draw_keyboard = !draw_keyboard;
-		if (!hide_toolbar)
-			toolbar_drawn = false;
-	}
-}
-
-void action_sound() {
-	sound_activated = !sound_activated;
-	//wm->_scumm->_soundsPaused2 = !sound_activated;
-}
-
-/* Initialization */
-
-void keypad_init() {
-	static pAction actions[TOTAL_ACTIONS] =
-	{ action_pause, action_save, action_quit, action_skip, action_hide, 
-	  action_keyboard, action_sound, action_right_click };
-	
-	GAPIKeysInit(actions);
-	
-}
-
-void keypad_close() {
-	GXCloseInput();	
-}
-
-// This function is very similar to the one in windows.cpp except for
-// one line removed.
-
-// TODO : use dirty rects
-
-/*
-void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
-	byte *dst;
-	//int i;
-
-	dst = (byte*)wm->_vgabuf + y*320 + x;
-
-	if (h<=0)	return;
-
-	hide_mouse = true;
-	if (has_mouse) {
-	 s->drawMouse();
-	}
-  
-	AddDirtyRec(x, y, w, h);
-
-	do {
-		memcpy(dst, src, w);
-		dst += 320;
-		src += 320;
-	} while (--h);
-
-}
-*/
-
-//{{
-int clock;
-
-// TODO : use dirty rects for faster screen updates
-
-/*
-void updateScreen(Scumm *s) {
-
-  if (hide_mouse) {
-    hide_mouse = false;
-    s->drawMouse();
-  }
-
-	if (s->_palDirtyMax != -1) {
-		wm->setPalette(s->_currentPalette, 0, 256);	
-		s->_palDirtyMax = -1;
-	}
-
-	wm->writeToScreen();
-}
-
-void waitForTimer(Scumm *s, int delay) {
-	wm->handleMessage();
-	if (!veryFastMode) {
-		assert(delay<5000);
-		if(!delay)
-			delay++;
-		Sleep(delay);
-	} 
-}
-*/
-
-// Copy/Paste from X11
-// Dirty rects not managed now
-
-/*
-
-void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
-  unsigned char *dst,*bak;
-
-  if ((xdraw >= 320) || ((xdraw + w) <= 0) ||
-      (ydraw >= 200) || ((ydraw + h) <= 0)) {
-    if (hide_mouse) visible = false;
-    if (has_mouse) has_mouse = false;
-    if (visible) has_mouse = true;
-    return;
-  }
-
-  if (hide_mouse)
-    visible = false;
-  
-  assert(w<=BAK_WIDTH && h<=BAK_HEIGHT);
-
-  if (has_mouse) {
-    int old_h = old_mouse_h;
-
-    has_mouse = false;
-    AddDirtyRec(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
-
-    dst = wm->_vgabuf + (old_mouse_y * 320) + old_mouse_x;
-    bak = old_backup;
-    
-    while (old_h > 0) {
-      memcpy(dst, bak, old_mouse_w);
-      bak += BAK_WIDTH;
-      dst += 320;
-      old_h--;
-    }
-  }
-
-  if (visible) {
-    int real_w;
-    int real_h;
-    int real_h_2;
-    unsigned char *dst2;
-
-    if (ydraw < 0) {
-      real_h = h + ydraw;
-      buf += (-ydraw) * w;
-      ydraw = 0;
-    } else {
-      real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
-    }
-    if (xdraw < 0) {
-      real_w = w + xdraw;
-      buf += (-xdraw);
-      xdraw = 0;
-    } else {
-      real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
-    }
-    
-    dst =  wm->_vgabuf + (ydraw * 320) + xdraw;
-    dst2 = dst;
-    bak = old_backup;
-        
-    has_mouse = true;
-
-    AddDirtyRec(xdraw, ydraw, real_w, real_h);
-    old_mouse_x = xdraw;
-    old_mouse_y = ydraw;
-    old_mouse_w = real_w;
-    old_mouse_h = real_h;
-    
-    real_h_2 = real_h;
-    while (real_h_2 > 0) {
-      memcpy(bak, dst, real_w);
-      bak += BAK_WIDTH;
-      dst += 320;
-      real_h_2--;
-    }
-    while (real_h > 0) {
-      int width = real_w;
-      while (width > 0) {
-	unsigned char color = *buf;
-	if (color != 0xFF) {
-	  *dst2 = color;
-	}
-	buf++;
-	dst2++;
-	width--;
-      }
-      buf += w - real_w;
-      dst2 += 320 - real_w;
-      real_h--;
-    }
-  }
-}
-*/
-
 
 BOOL CALLBACK SelectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -543,7 +300,6 @@ char* GameSelector()
 	
 }
 
-// Directly corresponds to main in windows.cpp
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
 {
 	
@@ -583,172 +339,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 		/* bind to Gui */
 		scumm->_gui = &gui;
+		//Warning(TEXT("Initing GUI"));
 		gui.init(scumm);	/* Reinit GUI after loading a game */
-
+		//Warning(TEXT("ScummGO"));
 		scumm->go();
 	}
 	
 	return 0;
 }
 
-class OSystem_WINCE3 : public OSystem {
-public:
-	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
 
-	// Set the size of the video bitmap.
-	// Typically, 320x200
-	void init_size(uint w, uint h);
-
-	// Draw a bitmap to screen.
-	// The screen will not be updated to reflect the new bitmap
-	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
-
-	// Update the dirty areas of the screen
-	void update_screen();
-
-	// Either show or hide the mouse cursor
-	bool show_mouse(bool visible);
-	
-	// Set the position of the mouse cursor
-	void set_mouse_pos(int x, int y);
-	
-	// Set the bitmap that's used when drawing the cursor.
-	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
-	
-	// Shaking is used in SCUMM. Set current shake position.
-	void set_shake_pos(int shake_pos);
-		
-	// Get the number of milliseconds since the program was started.
-	uint32 get_msecs();
-	
-	// Delay for a specified amount of milliseconds
-	void delay_msecs(uint msecs);
-	
-	// Create a thread
-	void *create_thread(ThreadProc *proc, void *param);
-	
-	// Get the next event.
-	// Returns true if an event was retrieved.	
-	bool poll_event(Event *event);
-	
-	// Set function that generates samples 
-	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
-		
-	// Poll cdrom status
-	// Returns true if cd audio is playing
-	bool poll_cdrom();
-
-	// Play cdrom audio track
-	void play_cdrom(int track, int num_loops, int start_frame, int end_frame);
-
-	// Stop cdrom audio track
-	void stop_cdrom();
-
-	// Update cdrom audio status
-	void update_cdrom();
-
-	// Quit
-	void quit();
-
-	// Set a parameter
-	uint32 property(int param, uint32 value);
-
-	// Windows callbacks & stuff
-
-	bool handleMessage();
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-	// Constructor
-
-	static OSystem *create();
-
-private:
-
-	byte *_vgabuf;
-	uint32 _start_time;
-	Event _event;
-	HMODULE hInst;
-	HWND hWnd;
-	bool terminated;	
-};
-
-// Create class
-
-	OSystem* OSystem_WINCE3_create() {
-	return OSystem_WINCE3::create();
-}
-
-// Constructor
-
-OSystem* OSystem_WINCE3::create() {
-
-	OSystem_WINCE3 *syst = new OSystem_WINCE3();
-
-	syst->_vgabuf = (byte*)calloc(320,200);
-	syst->_event.event_code = -1;
-
-	/* Retrieve the handle of this module */
-	syst->hInst = GetModuleHandle(NULL);
-
-	/* Register the window class */
-	WNDCLASS wcex;
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC)WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= syst->hInst;
-	wcex.hIcon			= 0;
-	wcex.hCursor		= NULL;
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName	= 0;	
-	wcex.lpszClassName	= TEXT("ScummVM");
-	if (!RegisterClass(&wcex))
-		Error(TEXT("Cannot register window class!"));
-
-	syst->hWnd = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
-      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, syst->hInst, NULL);
-	hWnd_Window = syst->hWnd;
-	SetWindowLong(syst->hWnd, GWL_USERDATA, (long)syst);
-
-	ShowWindow(syst->hWnd, SW_SHOW);
-
-	SHMENUBARINFO smbi;
-	smbi.cbSize = sizeof(smbi); 
-	smbi.hwndParent = syst->hWnd; 
-	smbi.dwFlags = 0; 
-	smbi.nToolBarId = IDM_MENU; 
-	smbi.hInstRes = GetModuleHandle(NULL); 
-	smbi.nBmpId = 0; 
-	smbi.cBmpImages = 0; 
-	smbi.hwndMB = NULL;
-	BOOL res = SHCreateMenuBar(&smbi);
-	hWnd_MainMenu = smbi.hwndMB;
-
-	/* Sound is activated on default - initialize it in the menu */
-	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
-		IDC_SOUND, 
-		MF_BYCOMMAND | MF_CHECKED);
-
-	GraphicsOn(syst->hWnd);
-
-	SetWindowPos(syst->hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-	SetForegroundWindow(syst->hWnd);
-//	SHFullScreen(hWnd, SHFS_SHOWSIPBUTTON);
-	SHFullScreen(syst->hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-
-	//Cls();
-
-// Mini SDL init
-
-	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
-	    exit(1);
-	}
-
-	return syst;
-}
-
-// Windows specific callbacks
 
 LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -1042,6 +642,153 @@ bool OSystem_WINCE3::handleMessage() {
 	return true;
 }
 
+
+/*************** Registry support ***********/
+
+void registry_init() {
+	 HKEY	hkey;
+	 DWORD	disposition;
+	 DWORD  keyType, keySize, dummy;
+	 unsigned char actions[NUMBER_ACTIONS];
+
+	 memset(actions, 0, NUMBER_ACTIONS);
+
+	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
+		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
+
+		 keyType = REG_DWORD;
+		 keySize = sizeof(DWORD);
+		 if (RegQueryValueEx(hkey, TEXT("VolumeMaster"), NULL, &keyType, 
+						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
+					g_scumm->_sound_volume_master = (uint16)dummy;
+		 else
+					g_scumm->_sound_volume_master = 100;
+		 
+		 if (RegQueryValueEx(hkey, TEXT("VolumeMusic"), NULL, &keyType, 
+						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
+					g_scumm->_sound_volume_music = (uint16)dummy;
+		 else
+					g_scumm->_sound_volume_music = 60;		 
+		 if (RegQueryValueEx(hkey, TEXT("VolumeSfx"), NULL, &keyType, 
+						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
+					g_scumm->_sound_volume_sfx = (uint16)dummy;
+		 else
+					g_scumm->_sound_volume_sfx = 100;		 
+		 keyType = REG_BINARY;
+		 keySize = NUMBER_ACTIONS;
+		 memset(actions, 0, sizeof(actions));
+		 RegQueryValueEx(hkey, TEXT("ActionsKeys"), NULL, &keyType, 
+						 actions, &keySize);
+		 setActionKeys(actions);		 
+		 actions[0] = ACTION_PAUSE;
+		 actions[1] = ACTION_SAVE;
+		 actions[2] = ACTION_QUIT;
+		 actions[3] = ACTION_SKIP;
+		 actions[4] = ACTION_HIDE;
+		 RegQueryValueEx(hkey, TEXT("ActionsTypes"), NULL, &keyType,
+						 actions, &keySize);
+		 setActionTypes(actions);
+
+		 RegCloseKey(hkey);
+	 }
+}
+					
+void registry_save() {
+	 HKEY	hkey;
+	 DWORD	disposition;
+	 DWORD  keyType, keySize, dummy;
+
+	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
+		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
+
+		 keyType = REG_DWORD;
+		 keySize = sizeof(DWORD);
+		 dummy = g_scumm->_sound_volume_master;
+		 RegSetValueEx(hkey, TEXT("VolumeMaster"), 0, keyType, (unsigned char*)&dummy, keySize);
+		 dummy = g_scumm->_sound_volume_music;
+		 RegSetValueEx(hkey, TEXT("VolumeMusic"), 0, keyType, (unsigned char*)&dummy, keySize);		 
+		 dummy = g_scumm->_sound_volume_sfx;
+		 RegSetValueEx(hkey, TEXT("VolumeSfx"), 0, keyType, (unsigned char*)&dummy, keySize);		 
+		 keyType = REG_BINARY;
+		 keySize = NUMBER_ACTIONS;
+		 RegSetValueEx(hkey, TEXT("ActionsKeys"), 0, keyType, getActionKeys(), 
+						keySize);	
+		 RegSetValueEx(hkey, TEXT("ActionsTypes"), 0, keyType, getActionTypes(),
+						keySize);
+
+		 RegCloseKey(hkey);
+	 }
+}
+
+
+/************* OSystem Main **********************/
+OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
+	OSystem_WINCE3 *syst = new OSystem_WINCE3();
+	syst->_mode = gfx_mode;
+	syst->_full_screen = full_screen;
+	syst->_event.event_code = -1;
+
+	/* Retrieve the handle of this module */
+	syst->hInst = GetModuleHandle(NULL);
+
+	/* Register the window class */
+	WNDCLASS wcex;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= (WNDPROC)WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= syst->hInst;
+	wcex.hIcon			= 0;
+	wcex.hCursor		= NULL;
+	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName	= 0;	
+	wcex.lpszClassName	= TEXT("ScummVM");
+	if (!RegisterClass(&wcex))
+		Error(TEXT("Cannot register window class!"));
+
+	syst->hWnd = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
+      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, syst->hInst, NULL);
+	hWnd_Window = syst->hWnd;
+	SetWindowLong(syst->hWnd, GWL_USERDATA, (long)syst);
+
+	ShowWindow(syst->hWnd, SW_SHOW);
+
+	SHMENUBARINFO smbi;
+	smbi.cbSize = sizeof(smbi); 
+	smbi.hwndParent = syst->hWnd; 
+	smbi.dwFlags = 0; 
+	smbi.nToolBarId = IDM_MENU; 
+	smbi.hInstRes = GetModuleHandle(NULL); 
+	smbi.nBmpId = 0; 
+	smbi.cBmpImages = 0; 
+	smbi.hwndMB = NULL;
+	BOOL res = SHCreateMenuBar(&smbi);
+	hWnd_MainMenu = smbi.hwndMB;
+
+	/* Sound is activated on default - initialize it in the menu */
+	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
+		IDC_SOUND, MF_BYCOMMAND | MF_CHECKED);
+
+	GraphicsOn(syst->hWnd);
+
+	SetWindowPos(syst->hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+	SetForegroundWindow(syst->hWnd);
+	SHFullScreen(syst->hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+
+	
+	// Mini SDL init
+
+	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
+	    exit(1);
+	}
+
+	return syst;
+}
+
+OSystem *OSystem_WINCE3_create() {
+	return OSystem_WINCE3::create(0, 0);
+}
+
 void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 	int i;
 
@@ -1049,63 +796,89 @@ void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 		SetPalEntry(i, colors[i*3+0], colors[i*3+1], colors[i*3+2]);
 
 	palette_update();
+}
 
+void OSystem_WINCE3::load_gfx_mode() {
+	force_full = true;
+
+	_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
+}
+
+void OSystem_WINCE3::unload_gfx_mode() {
+ // FIXME: Free the _gfx_buf here
 }
 
 void OSystem_WINCE3::init_size(uint w, uint h) {
+	load_gfx_mode();
 }
 
 void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	byte *dst;
 
-	dst = _vgabuf + y * 320 + x;
+	dst = _gfx_buf + y * 320 + x;
 	do {
 		memcpy(dst, buf, w);
 		dst += 320;
 		buf += pitch;
 	} while (--h);
-		
 }
+
+
 
 void OSystem_WINCE3::update_screen() {
-	Blt(_vgabuf);
+	Blt(_gfx_buf);
 }
-
-// FIXME : implement mouse functions
 
 bool OSystem_WINCE3::show_mouse(bool visible) {
-	return false;
+	if (_mouse_visible == visible)
+		return visible;
+	
+	bool last = _mouse_visible;
+	_mouse_visible = visible;
+
+	return last;
 }
 	
-
 void OSystem_WINCE3::set_mouse_pos(int x, int y) {
+	if (x != _ms_cur.x || y != _ms_cur.y) {
+		_ms_cur.x = x;
+		_ms_cur.y = y;
+	}
 }
 	
-
 void OSystem_WINCE3::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+	_ms_cur.w = w;
+	_ms_cur.h = h;
+
+	_ms_hotspot_x = hotspot_x;
+	_ms_hotspot_y = hotspot_y;
+
+	_ms_buf = (byte*)buf;
 }
 	
-void OSystem_WINCE3::set_shake_pos(int shake_pos) {
-}
+void OSystem_WINCE3::set_shake_pos(int shake_pos) {;}
 		
-
 uint32 OSystem_WINCE3::get_msecs() {
 	return GetTickCount() - _start_time;
 }
-		
+	
 void OSystem_WINCE3::delay_msecs(uint msecs) {
 	handleMessage();
 	Sleep(msecs);
 }
 	
-
-void* OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
-	// Implement if needed by Midi Music
+void *OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
 	return NULL;
 }
-	
-//FIXME : add a minimal queue (just testing here)
 
+int mapKey(int key, byte mod)
+{
+	if (key>=VK_F1 && key<=VK_F9) {
+		return key - VK_F1 + 315;
+	}
+	return key;
+}
+	
 bool OSystem_WINCE3::poll_event(Event *event) {
 	if (_event.event_code < 0)
 		return false;
@@ -1116,54 +889,66 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	return true;
 }
 	
-	
-bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte sound) {
+bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	SDL_AudioSpec desired;
 
-	desired.freq = 11025;
+	/* only one format supported at the moment */
+
+	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 1;
-	desired.samples = 128;               // seems correct
+	desired.samples = 128;
 	desired.callback = proc;
 	desired.userdata = param;
-	SDL_OpenAudio(&desired, NULL);
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
+		return false;
+	}
 	SDL_PauseAudio(0);
-	desired.userdata = param;
-
 	return true;
 }
-		
-// No CD functions to implement
 
-bool OSystem_WINCE3::poll_cdrom() {
-	return false;
-}
-
-void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
-}
-
-void OSystem_WINCE3::stop_cdrom() {
-}
-
-void OSystem_WINCE3::update_cdrom() {
-}
-
-void OSystem_WINCE3::quit() {
-	do_quit();
-}
-
+/* Hotswap graphics modes */
+void OSystem_WINCE3::get_320x200_image(byte *buf) {;}
+void OSystem_WINCE3::hotswap_gfx_mode() {;}
 uint32 OSystem_WINCE3::property(int param, uint32 value) {
 	switch(param) {
-		case PROP_GET_SAMPLE_RATE:
-			return 11025;
+
+	case PROP_TOGGLE_FULLSCREEN:
+		return 1;
+
+	case PROP_SET_WINDOW_CAPTION:
+		return 1;
+
+	case PROP_OPEN_CD:		
+		break;
+
+	case PROP_SET_GFX_MODE:
+		return 1;
+
+	case PROP_SHOW_DEFAULT_CURSOR:
+		break;
+
+	case PROP_GET_SAMPLE_RATE:
+		return SAMPLES_PER_SEC;
 	}
 
 	return 0;
 }
-
-OSystem *OSystem_NULL_create() {
-	return NULL;
+		
+void OSystem_WINCE3::quit() {
+	unload_gfx_mode();		
+	exit(1);
 }
 
-void ScummDebugger::attach(Scumm *s) {
+
+/* CDRom Audio */
+void OSystem_WINCE3::stop_cdrom() {;}
+void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
+	/* Reset sync count */
+	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
 }
+
+bool OSystem_WINCE3::poll_cdrom() {return 0;}
+void OSystem_WINCE3::update_cdrom() {;}
+
+void ScummDebugger::attach(Scumm *s) {;}

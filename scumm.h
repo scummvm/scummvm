@@ -938,7 +938,11 @@ public:
 	void setVerbObject(uint room, uint object, uint verb);
 
 	/* Should be in Sound class */
-	SoundMixer _mixer[1];
+	union {
+		SoundMixer _mixer[1];
+		uint32 xxxx_1;
+	};
+	//SoundMixer _mixer[1];
 
 //	MixerChannel _mixer_channel[NUM_MIXER];
 	byte _sfxMode;
@@ -1134,6 +1138,7 @@ public:
 	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
 	void initBGBuffers();
 	void initCycl(byte *ptr);	// Color cycle
+
 	void createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
 
 	void drawObject(int obj, int arg);	
@@ -1224,6 +1229,7 @@ public:
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
 	byte _currentPalette[0x300];
+
 	byte _proc_special_palette[256];
 	int _palDirtyMin, _palDirtyMax;
 	byte _bkColor;

@@ -6,7 +6,6 @@
 #endif
 
 typedef uint32 PlayingSoundHandle;
-
 class SoundMixer {
 private:	
 	class Channel {
@@ -189,6 +188,5 @@ struct MixerChannel {	/* Mixer Channel */
 	void clear();
 };
 #endif
-
 
 #endif /* _mixer_h_included */
