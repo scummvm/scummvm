@@ -106,7 +106,6 @@ void Scumm_v2::readClassicIndexFile() {
 
 void Scumm_v2::readEnhancedIndexFile() {
 
-	//FIXME the music driver was previously been set before detection of classic/enchanced version.
 	if (!(_features & GF_AMIGA))
 		_playerV2 = new Player_V2(this);
 
@@ -201,6 +200,5 @@ void Scumm_v2::readMAXS() {
 }
 
 void Scumm_v2::loadCharset(int num) {
-	// Stub, V2 font resources are hardcoded into the engine. Possibly do some
-	// kind of language detection here in the future for multiple fonts...
+	// Stub, V2 font resources are hardcoded into the engine.
 }
