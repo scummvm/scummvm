@@ -215,7 +215,7 @@ void LogMouseEvent(uint16 buttons)
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.
 
-int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch) {
+int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0) {
 	int32 size = width * height;
 	int32 i = 0;
 	int x = 0;
@@ -223,7 +223,7 @@ int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pit
 
 	while (i < size) {
 		if (*comp > 183) {
-			decomp[y * pitch + x] = *comp++;
+			decomp[(y + yOff) * pitch + x + xOff] = *comp++;
 			if (++x >= width) {
 				x = 0;
 				y++;
@@ -257,6 +257,8 @@ void DrawMouse(void) {
 	uint16 mouse_height = 0;
 	uint16 hotspot_x = 0;
 	uint16 hotspot_y = 0;
+	int deltaX = 0;
+	int deltaY = 0;
 
 	if (mouseAnim) {
 		hotspot_x = mouseAnim->xHotSpot;
@@ -264,10 +266,6 @@ void DrawMouse(void) {
 		mouse_width = mouseAnim->mousew;
 		mouse_height = mouseAnim->mouseh;
 	}
-
-	// FIXME: The luggage's hotspot and the standard cursor's hotspot may
-	// not be the same. The luggage image should be offset to compensate
-	// for that.
 
 	if (luggageAnim) {
 		if (!mouseAnim) {
@@ -280,6 +278,23 @@ void DrawMouse(void) {
 			mouse_height = luggageAnim->mouseh;
 	}
 
+	if (mouseAnim && luggageAnim) {
+		deltaX = mouseAnim->xHotSpot - luggageAnim->xHotSpot;
+		deltaY = mouseAnim->yHotSpot - luggageAnim->yHotSpot;
+	}
+
+	assert(deltaX >= 0);
+	assert(deltaY >= 0);
+
+	// HACK for maximum cursor size
+	if (mouse_width + deltaX > 80)
+		deltaX = 80 - mouse_width;
+	if (mouse_height + deltaY > 80)
+		deltaY = 80 - mouse_height;
+
+	mouse_width += deltaX;
+	mouse_height += deltaY;
+
 	if (mouse_width * mouse_height > sizeof(_mouseData)) {
 		warning("Mouse cursor too large");
 		return;
@@ -288,7 +303,8 @@ void DrawMouse(void) {
 	memset(_mouseData, 0xFF, mouse_width * mouse_height);
 
 	if (luggageAnim)
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew, luggageAnim->mouseh, mouse_width);
+		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew,
+				luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (mouseAnim)
 		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew, mouseAnim->mouseh, mouse_width);
