@@ -159,7 +159,6 @@ SkyCompact::SkyCompact(void) {
 	_cptFile->read(_asciiBuf, asciiSize);
 
 	// and fill them with the compact data
-	uint32 debcnt = 0;
 	for (uint32 lcnt = 0; lcnt < _numDataLists; lcnt++) {
 		for (uint32 ecnt = 0; ecnt < _dataListLen[lcnt]; ecnt++) {
 			_cptSizes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);

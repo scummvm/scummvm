@@ -1169,8 +1169,8 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 	for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
 		uint16 numElems;
 		uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
-		for (uint16 cnt = 0; cnt < numElems; cnt++)
-			STOSW(destPos, rawCpt[cnt]);
+		for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
+			STOSW(destPos, rawCpt[elemCnt]);
 	}
 
 	*(uint32 *)destBuf = TO_LE_32(destPos - destBuf); // save size
@@ -1204,21 +1204,21 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 	if ((saveType & SAVE_MEGA3) && (numElems < 54 + 13 + 13 + 13))
 		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
 	if (saveType & SAVE_GRAFX) {
-		uint16 type, target, pos;
-		LODSW(*srcPos, type);
+		uint16 graphType, target, pos;
+		LODSW(*srcPos, graphType);
 		LODSW(*srcPos, target);
 		LODSW(*srcPos, pos);
 		// convert to new compact system..
 		destCpt->grafixProgPos = pos;
-		if (type == OG_PTR_NULL)
+		if (graphType == OG_PTR_NULL)
 			destCpt->grafixProgId = 0;
-		else if (type == OG_AUTOROUTE)
+		else if (graphType == OG_AUTOROUTE)
 			destCpt->grafixProgId = destCpt->animScratchId;
-		else if (type == OG_COMPACT)
+		else if (graphType == OG_COMPACT)
 			destCpt->grafixProgId = target;
-		else if (type == OG_TALKTABLE)
+		else if (graphType == OG_TALKTABLE)
 			destCpt->grafixProgId = TALKTABLE_LIST_ID | target;
-		else if (type == OG_COMPACTELEM)
+		else if (graphType == OG_COMPACTELEM)
 			destCpt->grafixProgId = *(uint16*)_skyCompact->getCompactElem(destCpt, target);
 		else 
 			error("Illegal GrafixProg type encountered for compact %s", name);
