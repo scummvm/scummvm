@@ -485,7 +485,6 @@ public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
-	int getNumSounds() const { return _numSounds; }
 	BaseCostumeRenderer* _costumeRenderer;
 	
 	char *_audioNames;

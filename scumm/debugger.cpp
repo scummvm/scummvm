@@ -161,8 +161,8 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 			if (argc > 2 && (!strcmp(argv[2], "random") || atoi(argv[2]) != 0)) {
 				int sound = atoi(argv[2]);
 				if (!strcmp(argv[2], "random")) {
-					DebugPrintf("Selecting from %d songs...\n", _vm->getNumSounds());
-					sound = _vm->_rnd.getRandomNumber(_vm->getNumSounds());
+					DebugPrintf("Selecting from %d songs...\n", _vm->_numSounds);
+					sound = _vm->_rnd.getRandomNumber(_vm->_numSounds);
 				}
 				_vm->ensureResourceLoaded(rtSound, sound);
 				_vm->_musicEngine->startSound(sound);
