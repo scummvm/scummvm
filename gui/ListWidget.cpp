@@ -118,7 +118,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	// If this was a double click and the mouse is still over the selected item,
 	// send the double click command
-	if (clickCount > 1 && (_selectedItem == (y - 1) / kLineHeight + _currentPos)) {
+	if (clickCount == 2 && (_selectedItem == (y - 1) / kLineHeight + _currentPos)) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 }
