@@ -28,26 +28,29 @@
 #include "gameDetector.h"
 
 
+#define GET_VALUE()		\
+	((*s == '\0' && i+1 < argc && argv[i+1] && argv[i+1][0] != '-' && argv[i+1][0] != '\0') ? argv[++i] : s)
+
 
 static const char USAGE_STRING[] = 
 	"ScummVM - Scumm Interpreter\n"
 	"Syntax:\n"
 	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
-	"\tv       - show version info and exit\n"
-	"\tc<num>  - use cdrom <num> for cd audio\n"
-	"\td[<num>]- enable debug output (level <num>)\n"
-	"\tn       - no subtitles for speech\n"
-	"\tb<num>  - start in room <num>\n"
-	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
-	"\tp<path> - look for game in <path>\n"
-	"\tm<num>  - set music volume to <num> (0-100)\n"
-	"\ts<num>  - set sfx volume to <num> (0-255)\n"
-	"\te<mode> - set music engine. see readme.txt for details\n"
-	"\tr       - emulate roland mt32 instruments\n"
-	"\tf       - fullscreen mode\n"
-	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle.advmame2x\n"
-	"\ta       - specify game is amiga version\n"
+	"\t-v       - show version info and exit\n"
+	"\t-c<num>  - use cdrom <num> for cd audio\n"
+	"\t-d[<num>]- enable debug output (level <num>)\n"
+	"\t-n       - no subtitles for speech\n"
+	"\t-b<num>  - start in room <num>\n"
+	"\t-t<num>  - set music tempo. Suggested: 1F0000\n"
+	"\t-p<path> - look for game in <path>\n"
+	"\t-m<num>  - set music volume to <num> (0-100)\n"
+	"\t-s<num>  - set sfx volume to <num> (0-255)\n"
+	"\t-e<mode> - set music engine. see readme.txt for details\n"
+	"\t-r       - emulate roland mt32 instruments\n"
+	"\t-f       - fullscreen mode\n"
+	"\t-g<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle.advmame2x\n"
+	"\t-a       - specify game is amiga version\n"
 ;
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -69,27 +72,78 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 		if (s && s[0] == '-') {
 			s++;
 			while (*s) {
-				switch (tolower(*s)) {
+				switch (tolower(*s++)) {
 				case 'a':
 					_amiga = true;
 					break;
 				case 'b':
-					if (*(s + 1) == '\0')
+					s = GET_VALUE();
+					if (*s == '\0')
 						goto ShowHelpAndExit;
-					_bootParam = atoi(s + 1);
+					_bootParam = atoi(s);
+					goto NextArg;
+				case 'c':
+					s = GET_VALUE();
+					if (*s == '\0')
+						goto ShowHelpAndExit;
+					_cdrom = atoi(s);
+					goto NextArg;
+				case 'd':
+					_debugMode = true;
+					s = GET_VALUE();
+					if (*s != '\0')
+						_debugLevel = atoi(s);
+					debug(1,"Debugmode (level %d) on", _debugLevel);
+					goto NextArg;
+				case 'e':
+					s = GET_VALUE();
+					if (!parseMusicDriver(s))
+						goto ShowHelpAndExit;
 					goto NextArg;
 				case 'f':
 					_fullScreen = true;
 					break;
-				case 'd':
-					_debugMode = true;
-					if (*(s+1) != '\0')
-						_debugLevel = atoi(s+1);
-					debug(1,"Debugmode (level %d) on", _debugLevel);
+				case 'g': {
+						s = GET_VALUE();
+						int gfx_mode = parseGraphicsMode(s);
+						if (gfx_mode == -1)
+							goto ShowHelpAndExit;
+						_gfx_mode = gfx_mode;
+					}
 					goto NextArg;
+				case 'm':{
+						s = GET_VALUE();
+						if (*s == '\0')
+							goto ShowHelpAndExit;
+						_music_volume = atoi(s);
+						goto NextArg;
+					}
 				case 'n':
 					_noSubtitles = true;
 					break;
+				case 'p':
+					s = GET_VALUE();
+					if (*s == '\0')
+						goto ShowHelpAndExit;
+					_gameDataPath = s;
+ 					goto NextArg;
+				case 'r':{
+						_mt32emulate = true;
+						break;
+					}
+				case 's':{
+						s = GET_VALUE();
+						if (*s == '\0')
+							goto ShowHelpAndExit;
+						_sfx_volume = atoi(s);
+						goto NextArg;
+					}
+				case 't':
+					s = GET_VALUE();
+					if (*s == '\0')
+						goto ShowHelpAndExit;
+					_gameTempo = atoi(s);
+					goto NextArg;
 				case 'v':
 					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
 								 __TIME__ "\n");
@@ -97,60 +151,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 					printf("    " SCUMMVM_PLATFORM_VERSION "\n");
 #endif
 					exit(1);
-				case 'p':
-					if (*(s + 1) == '\0') {
-						if (i+1 < argc && argv[i+1] && argv[i+1][0] != '-' && argv[i+1][0] != '\0') {
-							i++;
-							_gameDataPath = argv[i];
-						} else
-							goto ShowHelpAndExit;
-					} else
-						_gameDataPath = s + 1;
- 					goto NextArg; 				
-				case 't':
-					if (*(s + 1) == '\0')
-						goto ShowHelpAndExit;
-					_gameTempo = atoi(s + 1);
-					goto NextArg;
-				case 'm':{
-						if (*(s + 1) == '\0')
-							goto ShowHelpAndExit;
-						_music_volume = atoi(s + 1);
-						goto NextArg;
-					}
-				case 's':{
-						if (*(s + 1) == '\0')
-							goto ShowHelpAndExit;
-						_sfx_volume = atoi(s + 1);
-						goto NextArg;
-					}
-				case 'r':{
-						_mt32emulate = true;
-						break;
-					}
-				case 'e':
-					if (!parseMusicDriver(s+1))
-						goto ShowHelpAndExit;
-					goto NextArg;
-				case 'g': {
-						int gfx_mode = parseGraphicsMode(s+1);
-						if (gfx_mode == -1)
-							goto ShowHelpAndExit;
-						_gfx_mode = gfx_mode;
-					}
-					goto NextArg;
-				case 'c':
-					if (*(s + 1) == '\0')
-						goto ShowHelpAndExit;
-					_cdrom = atoi(s + 1);
-					goto NextArg;
 
 				default:
 				ShowHelpAndExit:;
 					printf(USAGE_STRING);
 					exit(1);
 				}
-				s++;
 			}
 		NextArg:;
 		} else {
@@ -305,7 +311,7 @@ static const VersionSettings version_settings[] = {
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0},
 	{"simon1win", "Simon the Sorcerer 1 for Windows", GID_SIMON_FIRST+2, 99, 99, 99, 0},
 	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
-	
+
 	/* Scumm Version 8 */
 //    {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
 	{NULL, NULL}
@@ -349,7 +355,7 @@ int GameDetector::detectMain(int argc, char **argv)
 {
 	_debugMode = 0;								// off by default...
 
-	_noSubtitles = 0;							// use by default - should this depend on soundtrack?        
+	_noSubtitles = 0;							// use by default - should this depend on soundtrack?
 
 	_gfx_mode = GFX_DOUBLESIZE;
 	_sfx_volume = 100;
@@ -373,7 +379,7 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gameTempo = 0;
 	_soundCardType = 3;
 
-	
+
 
 	_midi_driver = MD_AUTO;
 
@@ -449,12 +455,12 @@ MidiDriver *GameDetector::createMidi() {
 
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	/* MD_WINDOWS is default MidiDriver on windows targets */
-	if (drv == MD_AUTO) drv = MD_WINDOWS;	
+	if (drv == MD_AUTO) drv = MD_WINDOWS;
 #elif defined(__APPLE__)
 	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
-	if (drv == MD_AUTO) drv = MD_QTMUSIC;	
+	if (drv == MD_AUTO) drv = MD_QTMUSIC;
 #endif
-	
+
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
