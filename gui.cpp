@@ -191,18 +191,18 @@ const GuiWidget about_dialog[] = {
 
 const GuiWidget options_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 60, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 83},	// Sound
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6, 75},	// Keys
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7, 65},	// About
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 77}, // Misc
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 'S'},	// Sound
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6, 'K'},	// Keys
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7, 'A'},	// About
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 'M'}, // Misc
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 const GuiWidget misc_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 65, 0, 0},
-	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6, 14, 14, 1, 0, 83}, // checkbox for subtitles
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6, 14, 14, 1, 0, 'S'}, // checkbox for subtitles
 	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10, 140, 15, 0, 19}, // "Show speech subtitles"
-	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6 + 16, 14, 14, 5, 0, 65}, // checkbox for amiga pallete
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6 + 16, 14, 14, 5, 0, 'A'}, // checkbox for amiga pallete
 	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10 + 15, 140, 15, 0, 20}, // "Amiga pallete conversion"
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20, 80 + 10 + 15 + 20, 54, 16, 3, 9, 13}, // ok
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20 + 80, 80 + 10 + 15 + 20, 54, 16, 4, 7}, // cancel
@@ -247,11 +247,11 @@ const GuiWidget save_load_dialog[] = {
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 94, 160, 10, 27, 0},
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 104, 160, 10, 28, 0},
 
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4, 83},	/* Save */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5, 76},	/* Load */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6, 80},	/* Play */
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17, 79},	/* Options */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8, 81},	/* Quit */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4, 'S'},	/* Save */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5, 'L'},	/* Load */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6, 'P'},	/* Play */
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17, 'O'},	/* Options */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8, 'Q'},	/* Quit */
 
 	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
 
