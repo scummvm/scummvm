@@ -707,7 +707,9 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	va_end(va);
 
 	GUI::MessageDialog dialog(buf, "OK", altButton);
-	return dialog.runModal();
+	int result = dialog.runModal();
+	_mouse->setPointer(MSE_POINTER, 0);
+	return result;
 }
 
 void Control::writeSavegameDescriptions(void) {
