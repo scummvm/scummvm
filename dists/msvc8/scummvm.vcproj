@@ -644,11 +644,11 @@
 					Name="mt32"
 					>
 					<File
-						RelativePath="..\..\backends\midi\mt32\file_.cpp"
+						RelativePath="..\..\backends\midi\mt32\mt32_file.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\file.h"
+						RelativePath="..\..\backends\midi\mt32\mt32_file.h"
 						>
 					</File>
 					<File

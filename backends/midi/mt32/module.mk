@@ -1,7 +1,7 @@
 MODULE := backends/midi/mt32
 
 MODULE_OBJS := \
-	backends/midi/mt32/file.o \
+	backends/midi/mt32/mt32_file.o \
 	backends/midi/mt32/i386.o \
 	backends/midi/mt32/part.o \
 	backends/midi/mt32/partial.o \
