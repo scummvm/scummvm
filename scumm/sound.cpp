@@ -1046,8 +1046,9 @@ uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 	return s_size;
 }
 
-static void music_handler (void *engine) {
-	g_scumm->_sound->bundleMusicHandler(g_scumm);
+static void music_handler(void *refCon) {
+	Sound *sound = (Sound *)refCon;
+	sound->bundleMusicHandler(g_scumm);
 }
 
 void Sound::playBundleMusic(const char *song) {
@@ -1088,7 +1089,7 @@ void Sound::playBundleMusic(const char *song) {
 		_bundleMusicTrack = 0;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
-		_scumm->_timer->installProcedure(&music_handler, 1000000);
+		_scumm->_timer->installProcedure(&music_handler, 1000000, this);
 		return;
 	}
 	if (strcmp(_nameBundleMusic, song) != 0) {
@@ -1443,8 +1444,8 @@ void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *ha
 // We use a real timer in an attempt to get better sync with CD tracks. This is
 // necessary for games like Loom CD.
 
-static void cd_timer_handler(void *ptr) {
-	Scumm *scumm = (Scumm *) ptr;
+static void cd_timer_handler(void *refCon) {
+	Scumm *scumm = (Scumm *)refCon;
 
 	// FIXME: Turn off the timer when it's no longer needed. In theory, it
 	// should be possible to check with pollCD(), but since CD sound isn't
@@ -1467,7 +1468,7 @@ void Sound::startCDTimer() {
 		timer_interval = 101;
 
 	_scumm->_timer->releaseProcedure(&cd_timer_handler);
-	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval);
+	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval, _scumm);
 }
 
 void Sound::stopCDTimer() {

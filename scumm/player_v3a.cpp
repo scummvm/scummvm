@@ -56,7 +56,7 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 
 	_maxvol = 255;
 
-	scumm->_timer->installProcedure(timerHandler, 16666);
+	scumm->_timer->installProcedure(timerHandler, 16666, this);
 
 	_isinit = false;
 }
@@ -143,6 +143,7 @@ void Player_V3A::playSound (int nr, char *data, int size, int rate, int vol, int
 }
 
 void Player_V3A::startSound(int nr) {
+	assert(_scumm);
 	byte *data = _scumm->getResourceAddress(rtSound, nr);
 	assert(data);
 
@@ -228,10 +229,10 @@ void Player_V3A::startSound(int nr) {
 	}
 }
 
-void Player_V3A::timerHandler(void *engine) {
-	Scumm *scumm = (Scumm *)engine;
-	if (scumm && scumm->_playerV3A)
-		scumm->_playerV3A->playMusic();
+void Player_V3A::timerHandler(void *refCon) {
+	Player_V3A *player = (Player_V3A *)refCon;
+	assert(player);
+	player->playMusic();
 }
 
 void Player_V3A::playMusic() {

@@ -22,11 +22,11 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
-#include "common/engine.h"
+#include "common/system.h"
 
 #define MAX_TIMERS 5
 
-typedef void (*TimerProc)(void *);
+typedef void (*TimerProc)(void *refCon);
 
 #ifdef __MORPHOS__
 #include "morphos_timer.h"
@@ -35,7 +35,7 @@ typedef void (*TimerProc)(void *);
 class Timer {
 
 private:
-	Engine *_engine;
+	OSystem *_system;
 	OSystem::MutexRef _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
@@ -45,13 +45,14 @@ private:
 		TimerProc procedure;
 		int32 interval;
 		int32 counter;
+		void *refCon;
 	} _timerSlots[MAX_TIMERS];
 
 public:
-	Timer(Engine *engine);
+	Timer(OSystem *system);
 	~Timer();
 
-	bool installProcedure(TimerProc procedure, int32 interval);
+	bool installProcedure(TimerProc procedure, int32 interval, void *refCon);
 	void releaseProcedure(TimerProc procedure);
 
 protected:

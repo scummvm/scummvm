@@ -41,7 +41,7 @@
 #include "sound/mixer.h"
 #include "common/file.h"
 
-void sword2_sound_handler (void *engine);
+extern void sword2_sound_handler(void *refCon);
 
 class Sword2Sound {
 	public:

@@ -203,8 +203,9 @@ int32 musicVolTable[17] = {
   -200, -100, -50, 0
 };
 */
-void sword2_sound_handler (void *engine) {
-	g_sword2->_sound->FxServer();
+void sword2_sound_handler(void *refCon) {
+	Sword2Sound *sound = (Sword2Sound *)refCon;
+	sound->FxServer();
 }
 
 Sword2Sound::Sword2Sound(SoundMixer *mixer) {
@@ -246,7 +247,7 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	memset(bufferSizeFx, 0, sizeof(bufferSizeFx));
 
 	soundOn = 1;
-	g_engine->_timer->installProcedure(sword2_sound_handler, 100000);
+	g_engine->_timer->installProcedure(sword2_sound_handler, 100000, this);
 }
 
 Sword2Sound::~Sword2Sound() {

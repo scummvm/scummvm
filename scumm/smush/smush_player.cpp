@@ -195,8 +195,8 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 
 SmushPlayer *player;
 
-void SmushPlayer::timerCallback(void *ptr) {
-	Scumm *scumm = (Scumm *)ptr;
+void SmushPlayer::timerCallback(void *refCon) {
+	Scumm *scumm = (Scumm *)refCon;
 	if (!scumm->_smushPlay)
 		return;
 
@@ -255,7 +255,7 @@ void SmushPlayer::init() {
 	_smixer->_silentMixer = _scumm->_silentDigitalImuse;
 	_scumm->_smushPlay = true;
 	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
-	_scumm->_timer->installProcedure(&timerCallback, _speed);
+	_scumm->_timer->installProcedure(&timerCallback, _speed, _scumm);
 
 	_alreadyInit = false;
 }

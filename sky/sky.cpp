@@ -284,7 +284,7 @@ void SkyState::initialise(void) {
 	_skyMouse->useLogicInstance(_skyLogic);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
-	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
+	_timer->installProcedure(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
 	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);
@@ -381,9 +381,9 @@ void **SkyState::fetchItem(uint32 num) {
 	return _itemList[num];
 }
 
-void SkyState::timerHandler(void *ptr) {
+void SkyState::timerHandler(void *refCon) {
 
-	((SkyState *)ptr)->gotTimerTick();
+	((SkyState *)refCon)->gotTimerTick();
 }
 
 void SkyState::gotTimerTick(void) {
