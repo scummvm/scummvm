@@ -57,8 +57,7 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	memset(_buffer, ' ', kBufferSize);
 	_linesInBuffer = kBufferSize / _lineWidth;
 	
-	_currentColumn = 0;
-	_currentLine = 0;
+	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
 	
 	_caretVisible = false;
@@ -73,8 +72,7 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	print("Console is ready\n");
 	
 	print(PROMPT);
-	_promptLine = _currentLine;
-
+	_promptStartPos = _promptEndPos = _currentPos;
 }
 
 void ConsoleDialog::drawDialog()
@@ -124,14 +122,14 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction)
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-
+void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
+{
 	switch (keycode) {
 		case '\n':	// enter/return
 		case '\r':
 			nextLine();
 			print(PROMPT);
-			_promptLine = _currentLine;
+			_promptStartPos = _promptEndPos = _currentPos;
 			
 			if (_caretVisible)
 				drawCaret(true);
@@ -141,15 +139,13 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			close();
 			break;
 		case 8:		// backspace
-			if (_currentColumn == 0 && _currentLine > _promptLine) {
-				_currentColumn = _lineWidth - 1;
-				_currentLine--;
-			} else if (_currentColumn > 0) {
-				if (_currentLine > _promptLine || _currentColumn >= (int)sizeof(PROMPT))
-					_currentColumn--;
+			if (_currentPos > _promptStartPos) {
+				_currentPos--;
+				for (int i = _currentPos; i < _promptEndPos; i++)
+					_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
+				_buffer[_promptEndPos % kBufferSize] = ' ';
+				_promptEndPos--;
 			}
-			_buffer[(_currentLine % _linesInBuffer) * _lineWidth + _currentColumn] = ' ';
-
 			if (_caretVisible)
 				drawCaret(true);
 			draw();	// FIXME - not nice to redraw the full console just for one char!
@@ -172,15 +168,37 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			draw();
 			break;
 		case 256+23:	// end
-			_scrollLine = _currentLine;
+			_scrollLine = _currentPos / _lineWidth;
 			updateScrollBar();
 			draw();
 			break;
+		case 275:	// cursor right
+			if (_currentPos < _promptEndPos)
+				_currentPos++;
+			draw();
+			break;
+		case 276:	// cursor left
+			if (_currentPos > _promptStartPos)
+				_currentPos--;
+			draw();
+			break;
+
 		default:
 			if (ascii == '~' || ascii == '#') {
 				close();
+			} else if (modifiers == OSystem::KBD_CTRL) { // CTRL
+				specialKeys(keycode);
 			} else if (isprint((char)ascii)) {
-				putchar(ascii);
+				for (int i = _promptEndPos-1; i >= _currentPos; i--)
+					_buffer[(i+1) % kBufferSize] = _buffer[i % kBufferSize];
+				_buffer[_currentPos % kBufferSize] = (char)ascii;
+				_currentPos++;
+				_promptEndPos++;
+				if ((_scrollLine + 1) * _lineWidth == _currentPos) {
+					_scrollLine++;
+					updateScrollBar();
+				}
+				draw();	// FIXME - not nice to redraw the full console just for one char!
 			}
 	}
 }
@@ -198,25 +216,63 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
+void ConsoleDialog::specialKeys(int keycode)
+{
+	switch (keycode) {
+		case 'a':
+			_currentPos = _promptStartPos;
+			draw();
+			break;
+		case 'e':
+			_currentPos = _promptEndPos;
+			draw();
+			break;
+		case 'k':
+			killLine();
+			draw();
+			break;
+		case 'w':
+			killLastWord();
+			draw();
+			break;
+	}
+}
+
+void ConsoleDialog::killLine()
+{
+	for (int i = _currentPos; i < _promptEndPos; i++)
+		_buffer[i % kBufferSize] = ' ';
+	_promptEndPos = _currentPos;
+}
+
+void ConsoleDialog::killLastWord()
+{
+	int pos;
+	while (_currentPos > _promptStartPos) {
+		_currentPos--;
+		pos = getBufferPos();
+		if (_buffer[pos] != ' ')
+			_buffer[pos] = ' ';
+		else
+			break;
+	}
+}
+
 void ConsoleDialog::nextLine()
 {
-	_currentColumn = 0;
-	if (_currentLine == _scrollLine)
+	int line = _currentPos / _lineWidth;
+	if (line == _scrollLine)
 		_scrollLine++;
-	_currentLine++;
+	_currentPos = (line + 1) * _lineWidth;
 	
 	updateScrollBar();
 }
 
 void ConsoleDialog::updateScrollBar()
 {
-	if (_currentLine < _linesInBuffer) {
-		_scrollBar->_numEntries = _currentLine + 1;
-		_scrollBar->_currentPos = _scrollLine - _linesPerPage + 1;
-	} else {
-		_scrollBar->_numEntries = _linesInBuffer;
-		_scrollBar->_currentPos = _scrollLine - _linesPerPage + 1 - (_currentLine - _linesInBuffer);
-	}
+	int line = _currentPos / _lineWidth;
+	_scrollBar->_numEntries = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
+	_scrollBar->_currentPos = _scrollBar->_numEntries - (line - _scrollLine + _linesPerPage);
 	_scrollBar->_entriesPerPage = _linesPerPage;
 	_scrollBar->recalc();
 }
@@ -245,32 +301,20 @@ void ConsoleDialog::putchar(int c)
 	if (c == '\n')
 		nextLine();
 	else {
-		int pos = (_currentLine % _linesInBuffer) * _lineWidth + _currentColumn;
-		_buffer[pos] = (char)c;
-		_currentColumn++;
-		if (_currentColumn >= _lineWidth)
-			nextLine();
+		_buffer[getBufferPos()] = (char)c;
+		_currentPos++;
+		if ((_scrollLine + 1) * _lineWidth == _currentPos) {
+			_scrollLine++;
+			updateScrollBar();
+		}
 	}
 	draw();	// FIXME - not nice to redraw the full console just for one char!
 }
 
 void ConsoleDialog::print(const char *str)
 {
-	int pos = (_currentLine % _linesInBuffer) * _lineWidth + _currentColumn;
-	while (*str) {
-		if (*str == '\n') {
-			nextLine();
-			pos += _lineWidth - _currentColumn;
-		} else {
-			_buffer[pos++] = *str;
-			_currentColumn++;
-			if (_currentColumn >= _lineWidth)
-				nextLine();
-		}
-		pos %= kBufferSize;
-		str++;
-	}
-	draw();
+	while (*str)
+		putchar(*str++);
 }
 
 void ConsoleDialog::drawCaret(bool erase)
@@ -279,12 +323,13 @@ void ConsoleDialog::drawCaret(bool erase)
 	if (!isVisible())
 		return;
 	
-	int displayLine = _currentLine - _scrollLine + _linesPerPage - 1;
+	int line = _currentPos / _lineWidth;
+	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
 	if (displayLine < 0 || displayLine >= _linesPerPage)
 		return;
 
-	int x = _x + 1 + _currentColumn * kCharWidth;
+	int x = _x + 1 + (_currentPos % _lineWidth) * kCharWidth;
 	int y = _y + displayLine * kLineHeight;
 
 	_gui->fillRect(x, y, kCharWidth, kLineHeight, erase ? _gui->_bgcolor : _gui->_textcolor);

@@ -44,12 +44,11 @@ protected:
 	int		_lineWidth;
 	int		_linesPerPage;
 	
-	int 	_currentColumn;
-	int		_currentLine;
+	int		_currentPos;
 	int		_scrollLine;
 	
-//	char	_lineBuffer[kLineBufferSize];
-	int		_promptLine;
+	int		_promptStartPos;
+	int 	_promptEndPos;
 
 	bool	_caretVisible;
 	uint32	_caretTime;
@@ -58,9 +57,6 @@ protected:
 
 public:
 	ConsoleDialog(NewGui *gui);
-
-//	void open();
-//	void close();
 
 	void drawDialog();
 
@@ -79,6 +75,12 @@ protected:
 	void print(const char *str);
 	void nextLine();
 	void updateScrollBar();
+	inline int getBufferPos() const { return _currentPos % kBufferSize; }
+
+	// Line editing
+	void specialKeys(int keycode);
+	void killLine();
+	void killLastWord();
 };
 
 #endif
