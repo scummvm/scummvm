@@ -151,6 +151,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_fullscreenCheckbox = new CheckboxWidget(tab, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
+        // Activate the first tab
+        tab->setActiveTab(0);
 
 	// GUI:  Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
