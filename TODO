@@ -122,6 +122,19 @@ Documentation
      the config file setting, and the command line option)
 * Add more doxygen comments. However, quality is preferable over quantity
 
+Web site
+========
+* Redo the screenshots. Mostly this means adding more (and maybe removing or
+  replacing a few). What I have in mind are that we follow these guidelines
+  (which aren't set in stone nor laws, just guidelines :-)
+  - for each unique game, provide 2-3 screenshots
+  - have at least one shot for each major variant of a game (with major variant
+    I mean visibly distinct versions, like Zak V1 vs. V2 vs. FM-TOWNS; or
+    Monkey Island EGA vs VGA vs CD).
+  If I am counting right, that should place us at about 2*(18+2+1+1+1)=46
+  screenshots, compared to the current 32 (and more if we start adding HE
+  games).
+
 GUI
 ===
 * LAUNCHER: add more options to global options dialog
