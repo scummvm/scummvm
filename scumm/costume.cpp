@@ -78,11 +78,13 @@ const byte cost_scaleTable[256] = {
 };
 
 byte CostumeRenderer::mainRoutine(int slot, int frame) {
-	int xmove, ymove, i, b, s;
+	int xmove, ymove, i, s;
+	byte drawFlag = 1;
 	uint scal;
-	bool scaling;
+	bool use_scaling;
 	byte startScaleIndexX;
 	int ex1, ex2;
+	const CostumeInfo *costumeInfo;
 	
 	CHECK_HEAP
 	_maskval = 0xF;
@@ -92,14 +94,17 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		_shrval = 3;
 	}
 
-	_width2 = _srcptr[0];
-	_width = _width2;
-	_height2 = _srcptr[2];
-	_height = _height2;
-	xmove = (int16)READ_LE_UINT16(_srcptr + 4) + _xmove;
-	ymove = (int16)READ_LE_UINT16(_srcptr + 6) + _ymove;
-	_xmove += (int16)READ_LE_UINT16(_srcptr + 8);
-	_ymove -= (int16)READ_LE_UINT16(_srcptr + 10);
+	// FIXME: those are here just in case... you never now...
+	assert(_srcptr[1] == 0);
+	assert(_srcptr[3] == 0);
+
+	costumeInfo = (const CostumeInfo *)_srcptr;
+	_width = _width2 = READ_LE_UINT16(&costumeInfo->width);
+	_height = _height2 = READ_LE_UINT16(&costumeInfo->height);
+	xmove = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
+	ymove = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
+	_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
+	_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 	_srcptr += 12;
 
 	switch (_loaded._ptr[7] & 0x7F) {
@@ -117,10 +122,11 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	_xpos = _actorX;
 	_ypos = _actorY;
 
-	scaling = _scaleX == 255 && _scaleY == 255 ? 0 : 1;
+	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
+
 	s = 0;
 
-	if (scaling) {
+	if (use_scaling) {
 		_scaleIndexXStep = -1;
 		if (xmove < 0) {
 			xmove = -xmove;
@@ -130,8 +136,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		if (_mirror) {
 			startScaleIndexX = _scaleIndexX = 128 - xmove;
 			for (i = 0; i < xmove; i++) {
-				scal = cost_scaleTable[_scaleIndexX++];
-				if (scal < _scaleX)
+				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
 					_xpos -= _scaleIndexXStep;
 			}
 			_right = _left = _xpos;
@@ -214,12 +219,12 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 
 	_ypitch = _height * _vm->_screenWidth;
 	_docontinue = 0;
-	b = 1;
 	if (_left >= _vm->_screenWidth || _right <= 0)
 		return 1;
+
 	if (_mirror) {
 		_ypitch--;
-		if (scaling == 0)
+		if (use_scaling == 0)
 			s = -_xpos;
 		if (s > 0) {
 			_width2 -= s;
@@ -229,14 +234,14 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		} else {
 			s = _right - _vm->_screenWidth;
 			if (s <= 0) {
-				b = 2;
+				drawFlag = 2;
 			} else {
 				_width2 -= s;
 			}
 		}
 	} else {
 		_ypitch++;
-		if (scaling == 0)
+		if (use_scaling == 0)
 			s = _right - _vm->_screenWidth;
 		if (s > 0) {
 			_width2 -= s;
@@ -246,7 +251,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		} else {
 			s = -1 - _left;
 			if (s <= 0)
-				b = 2;
+				drawFlag = 2;
 			else
 				_width2 -= s;
 		}
@@ -302,7 +307,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		proc3();
 
 	CHECK_HEAP
-	return b;
+	return drawFlag;
 }
 
 void CostumeRenderer::proc3() {
@@ -360,7 +365,7 @@ void CostumeRenderer::proc3() {
 				y = _ypostop;
 				_scaleIndexY = _scaleIndexYTop;
 				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
+				_scaleIndexX += _scaleIndexXStep;
 				if (_scaleX == 255 || cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
 					if (_xpos < 0 || _xpos >= _vm->_screenWidth)

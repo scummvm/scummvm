@@ -23,9 +23,27 @@
 #ifndef BASE_COSTUME_H
 #define BASE_COSTUME_H
 
+#include "scummsys.h"
+
+#if !defined(__GNUC__)
+#pragma START_PACK_STRUCTS
+#endif
+
+struct CostumeInfo {
+	uint16 width, height;
+	int16 rel_x, rel_y;
+	int16 move_x, move_y;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+#pragma END_PACK_STRUCTS
+#endif
+
 class Scumm;
 
-
+/*
+ * Base class for both CostumeRenderer and AkosRenderer
+ */
 struct BaseCostumeRenderer {
 public:
 	byte _dirty_id;

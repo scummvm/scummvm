@@ -55,7 +55,7 @@ protected:
 	struct {
 		/* codec stuff */
 		const byte *scaletable;
-		byte mask, shl;
+		byte mask, shr;
 		bool doContinue;
 		byte repcolor;
 		byte replen;
@@ -101,16 +101,16 @@ public:
 protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
-	void codec1();
+	byte codec1();
 	void codec1_spec1();
 	void codec1_spec2();
 	void codec1_spec3();
 	void codec1_genericDecode();
 	void codec1_ignorePakCols(int num);
 
-	void codec5();
+	byte codec5();
 
-	void codec16();
+	byte codec16();
 	void akos16SetupBitReader(const byte *src);
 	void akos16PutOnScreen(byte *dest, const byte *src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
