@@ -207,7 +207,7 @@ void ScummEngine::CHARSET_1() {
 	if (_charset->_center) {
 		if (t > _charset->_nextLeft)
 			t = _charset->_nextLeft;
-		t /= 2;
+		t *= 2;
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;

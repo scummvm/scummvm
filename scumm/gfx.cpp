@@ -865,7 +865,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 			byte *mask;
 			// Note: At first sight it may look as if this could
 			// be optimized to (rect.right - rect.left) / 8 and
-			// thus to width * 8, but that's not the case since
+			// thus to width / 8, but that's not the case since
 			// we are dealing with integer math here.
 			int mask_width = (rect.right / 8) - (rect.left / 8);
 
