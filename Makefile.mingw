@@ -7,7 +7,7 @@ SDL_CFLAGS=-I$(SRC)/sdl/include
 SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
 
 CC      = gcc
-CFLAGS  = -g -Wno-multichar
+CFLAGS  = -g -Wall -Wstrict-prototypes -Wno-long-long -Wno-multichar
 DEFINES = -DUSE_ADLIB -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
