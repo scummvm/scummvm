@@ -1439,6 +1439,7 @@ int newDirToOldDir(int dir) {
 // Convert an new style (angle) direction to an old style one.
 //
 int oldDirToNewDir(int dir) {
+	assert(0 <= dir && dir <= 3);
 	const int new_dir_table[4] = { 270, 90, 180, 0 };
 	return new_dir_table[dir];
 }
