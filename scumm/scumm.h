@@ -526,7 +526,7 @@ protected:
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
 	uint16 _curExecScript;
-	byte **_lastCodePtr;
+	const byte * const *_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];
 	int _keyScriptKey, _keyScriptNo;
