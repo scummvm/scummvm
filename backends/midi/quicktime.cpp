@@ -149,8 +149,7 @@ void MidiDriver_QT::send(uint32 b) {
 	case 0xB0:										// Effect
 		switch (midiCmd[1]) {
 		case 0x01:									// Modulation
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID],
-											kControllerModulationWheel, midiCmd[2] << 8);
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerModulationWheel, midiCmd[2] << 8);
 			break;
 
 		case 0x07:									// Volume
@@ -158,8 +157,7 @@ void MidiDriver_QT::send(uint32 b) {
 			break;
 
 		case 0x0A:									// Pan
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan,
-											(midiCmd[2] << 1) + 0xFF);
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan, (midiCmd[2] << 1) + 0xFF);
 			break;
 
 		case 0x40:									// Sustain on/off
@@ -188,12 +186,12 @@ void MidiDriver_QT::send(uint32 b) {
 			break;
 
 		case 0x12:	// Occurs in Scumm games
+		case 0x77:	// Occurs in Simon2
 		case 0x79:	// Occurs in Simon1
 			// What are these ?!? Ignore it for now
 			break;
 
 		default:
-			// Error: Unknown MIDI effect: 007f76b3
 			warning("Unknown MIDI effect: %08x", (int)b);
 			break;
 		}
