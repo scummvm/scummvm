@@ -2089,6 +2089,7 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 16: // Adlib instrument definition (Part)
 		a = *p++ & 0x0F;
+		++p; // Skip hardware type
 		part = get_part(a);
 		if (part) {
 			if (len == 63) {
@@ -2102,7 +2103,7 @@ void Player::parse_sysex(byte *p, uint len) {
 		break;
 
 	case 17: // Adlib instrument definition (Global)
-		p++;
+		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
 		_se->setGlobalAdlibInstrument (a, buf);
@@ -2110,6 +2111,7 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 33: // Parameter adjust
 		a = *p++ & 0x0F;
+		++p; // Skip hardware type
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
 		if (part)
@@ -3202,9 +3204,6 @@ void Part::setup(Player *player) {
 	_bank = 0;
 	_pedal = false;
 	_mc = NULL;
-
-	if (_instrument.isValid())
-		sendAll();
 }
 
 void Part::uninit() {
@@ -3235,8 +3234,7 @@ void Part::off() {
 
 bool Part::clearToTransmit() {
 	if (_mc) return true;
-	_player->_se->reallocateMidiChannels (_player->_midi);
-	if (_mc) sendAll();
+	if (_instrument.isValid()) _player->_se->reallocateMidiChannels (_player->_midi);
 	return false;
 }
 
@@ -3251,9 +3249,8 @@ void Part::sendAll() {
 	_mc->modulationWheel (_modwheel);
 	_mc->panPosition (_pan_eff + 0x40);
 	_mc->effectLevel (_effect_level);
-	if (_instrument.isValid()) {
+	if (_instrument.isValid())
 		_instrument.send (_mc);
-	}
 	_mc->chorusLevel (_effect_level);
 	_mc->priority (_pri_eff);
 }
