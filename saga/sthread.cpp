@@ -177,6 +177,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	long iresult;
 
 	SDataWord_T data;
+	SDataWord_T scriptRetVal = 0;
 	int debug_print = 0;
 	int n_buf;
 	int bitstate;
@@ -296,8 +297,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 // CONTROL INSTRUCTIONS    
 
-			// (GOSB): Call subscript ?
-		case 0x17:
+		case 0x17: // (GOSB): Call subscript
 			{
 				int n_args;
 				int temp;
@@ -316,13 +316,12 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				thread->i_offset = (unsigned long)param1;
 			}
 			break;
-			// (CALL): Call function
-		case 0x19:
-		case 0x18:
+		case 0x18: // (CALL): Call function
+		case 0x19: // (CALL_V): Call function and discard return value
 			{
 				int n_args;
 				uint16 func_num;
-				int FIXME_SHADOWED_result;
+				int sfuncRetVal;
 				SFunc_T sfunc;
 
 				n_args = scriptS.readByte();
@@ -342,30 +341,36 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 						thread->pop();
 					}
 				} else {
-					FIXME_SHADOWED_result = (this->*sfunc)(thread);
-					if (FIXME_SHADOWED_result != R_SUCCESS) {
+					sfuncRetVal = (this->*sfunc)(thread);
+					if (sfuncRetVal != R_SUCCESS) {
 						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 					}
+
+					if (in_char == 0x18)
+						thread->push(thread->retVal);
 				}
 			}
 			break;
 		case 0x1A: // (ENTR) Enter the dragon
-			//data = scriptS.pos();
-			//thread->push(data);
-			
+			thread->push(thread->framePtr);
+			thread->framePtr = thread->stackPtr;
 			param1 = scriptS.readUint16LE();
+			thread->stackPtr -= (param1 / 2);
 			break;
 		case 0x1B: // Return with value
-			unhandled = 1;
-			break;
+			scriptRetVal = thread->pop();
+			// FALL THROUGH
 		case 0x1C: // Return with void
+			thread->stackPtr = thread->framePtr;
+			thread->framePtr = thread->pop();
 			if (thread->stackSize() == 0) {
 				_vm->_console->print("Script execution complete.");
 				thread->executing = 0;
 			} else {
-				data = thread->pop();
+				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
-				thread->i_offset = data;
+				if (in_char == 0x1B)
+					thread->push(scriptRetVal);
 			}
 			break;
 
@@ -724,18 +729,14 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// (DLGO): Add a dialogue option to interface
 		case 0x56:
 			{
-				int FIXME_SHADOWED_param1;
-				int FIXME_SHADOWED_param2;
-				int FIXME_SHADOWED_param3;
-
 				printf("DLGO | ");
-				FIXME_SHADOWED_param1 = scriptS.readByte();
-				FIXME_SHADOWED_param2 = scriptS.readByte();
-				printf("%02X %02X ", FIXME_SHADOWED_param1, FIXME_SHADOWED_param2);
+				param1 = scriptS.readByte();
+				param2 = scriptS.readByte();
+				printf("%02X %02X ", param1, param2);
 
-				if (FIXME_SHADOWED_param2 > 0) {
-					FIXME_SHADOWED_param3 = scriptS.readUint16LE();
-					printf("%04X", FIXME_SHADOWED_param3);
+				if (param2 > 0) {
+					SDataWord_T param3 = scriptS.readUint16LE();
+					printf("%04X", param3);
 				}
 			}
 			break;

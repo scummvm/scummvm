@@ -87,6 +87,8 @@ struct R_SCRIPT_THREAD {
 	int stackPtr;
 	int framePtr;
 
+	SDataWord_T retVal;
+
 	SDataWord_T stackTop() {
 		return stackBuf[stackPtr];
 	}

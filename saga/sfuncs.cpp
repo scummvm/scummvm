@@ -149,8 +149,11 @@ int Script::SF_objectIsCarried(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T param1;
 	param1 = thread->pop();
-	thread->push(0);	// push for now to allow intro faire 
-									// setup to run completely
+
+	// FIXME: Incomplete, but returning 0 assures that the fair start
+	// script will run completely.
+
+	thread->retVal = 0;
 
 	return R_SUCCESS;
 }
@@ -637,7 +640,7 @@ int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
 int Script::SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
-	thread->push(0);
+	thread->retVal = 0;
 
 	// INCOMPLETE
 
