@@ -18,6 +18,7 @@ MKDIR = mkdir -p
 ECHO = /usr/ucb/echo -n
 CAT = cat
 RM = rm -f
+RM_REC = rm -rf
 AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 
