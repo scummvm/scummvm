@@ -419,7 +419,7 @@ void Actor::setupActorScale() {
 	// For some boxes, we ignore the scaling and use whatever values the
 	// scripts set. This is used e.g. in the Mystery Vortex in Sam&Max.
 	// Older games used the flag 0x20 differently, though.
-	if (_vm->_version >= 6 && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
+	if (_vm->_gameId = GID_SAMNMAX && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
 		return;
 
 	boxscale = _vm->getBoxScale(walkbox);
