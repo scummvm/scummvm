@@ -55,15 +55,15 @@ CFG=sky - Win32 (WCE emulator) Debug
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
-# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+# ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE emulator) Debug"
 
@@ -81,15 +81,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
-# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+# ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Release"
 
@@ -107,15 +107,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /O2 /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /YX /O2 /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
 
@@ -133,15 +133,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{ECBEA43D-CD7B-4852-AD55-D4227B5D624B}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
 
@@ -161,7 +161,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -187,7 +187,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -239,7 +239,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -291,7 +291,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /Oxs /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -643,12 +643,16 @@ DEP_CPP_SAVED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -656,7 +660,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_SAVED=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -667,12 +670,15 @@ DEP_CPP_SAVED=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -703,10 +709,10 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -716,21 +722,23 @@ DEP_CPP_SAVED=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -751,10 +759,10 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -775,10 +783,10 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -799,10 +807,10 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -823,10 +831,10 @@ DEP_CPP_SAVED=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -868,20 +876,22 @@ DEP_CPP_ADLIB=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	
 NODEP_CPP_ADLIB=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -892,11 +902,13 @@ DEP_CPP_ADLIB=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -928,10 +940,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -941,6 +953,7 @@ DEP_CPP_ADLIB=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -952,10 +965,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -976,10 +989,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -1000,10 +1013,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1024,10 +1037,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -1048,10 +1061,10 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1089,12 +1102,16 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1103,7 +1120,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_ADLIBM=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -1114,12 +1130,15 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
@@ -1152,10 +1171,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -1165,11 +1184,13 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
@@ -1177,10 +1198,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1202,10 +1223,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -1227,10 +1248,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1252,10 +1273,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -1277,10 +1298,10 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1321,18 +1342,20 @@ NODEP_CPP_GMCHA=\
 DEP_CPP_GMCHA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
 	
 NODEP_CPP_GMCHA=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -1343,9 +1366,11 @@ NODEP_CPP_GMCHA=\
 DEP_CPP_GMCHA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
@@ -1374,12 +1399,24 @@ NODEP_CPP_GMCHA=\
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
 
 DEP_CPP_GMCHA=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
+	"..\..\..\sky\music\musicbase.h"\
+	"..\..\..\sound\mididrv.h"\
 	
 NODEP_CPP_GMCHA=\
-	"..\..\..\sky\music\common\util.h"\
-	"..\..\..\sky\music\sky\music\musicbase.h"\
-	"..\..\..\sky\music\sound\mididrv.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1463,14 +1500,17 @@ DEP_CPP_GMMUS=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1478,7 +1518,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sound\mididrv.h"\
 	
 NODEP_CPP_GMMUS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -1490,11 +1529,13 @@ DEP_CPP_GMMUS=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
@@ -1531,11 +1572,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -1545,6 +1586,7 @@ DEP_CPP_GMMUS=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -1558,11 +1600,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1585,11 +1627,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -1612,11 +1654,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1639,11 +1681,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -1666,11 +1708,11 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1707,19 +1749,21 @@ NODEP_CPP_MT32M=\
 DEP_CPP_MT32M=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
 	
 NODEP_CPP_MT32M=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -1730,9 +1774,11 @@ NODEP_CPP_MT32M=\
 DEP_CPP_MT32M=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
@@ -1764,11 +1810,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -1776,6 +1822,7 @@ NODEP_CPP_MT32M=\
 DEP_CPP_MT32M=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -1787,11 +1834,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -1810,11 +1857,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -1833,11 +1880,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -1856,11 +1903,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -1879,11 +1926,11 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1918,18 +1965,20 @@ NODEP_CPP_MUSIC=\
 DEP_CPP_MUSIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -1939,11 +1988,13 @@ NODEP_CPP_MUSIC=\
 DEP_CPP_MUSIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -1970,10 +2021,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -1982,6 +2033,7 @@ DEP_CPP_MUSIC=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -1991,10 +2043,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2012,10 +2064,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -2033,10 +2085,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2054,10 +2106,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -2075,10 +2127,10 @@ DEP_CPP_MUSIC=\
 	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2123,13 +2175,16 @@ DEP_CPP_AUTOR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2138,7 +2193,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_AUTOR=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -2149,11 +2203,13 @@ DEP_CPP_AUTOR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -2189,10 +2245,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -2202,6 +2258,7 @@ DEP_CPP_AUTOR=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2215,10 +2272,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2241,10 +2298,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -2267,10 +2324,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -2293,10 +2350,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -2319,10 +2376,10 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2386,13 +2443,16 @@ DEP_CPP_COMPA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2475,7 +2535,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_COMPA=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -2486,11 +2545,13 @@ DEP_CPP_COMPA=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -2674,10 +2735,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -2687,6 +2748,7 @@ DEP_CPP_COMPA=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2774,10 +2836,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -2874,10 +2936,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -2974,10 +3036,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3074,10 +3136,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -3174,10 +3236,10 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3237,14 +3299,17 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3260,7 +3325,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_CONTR=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3271,12 +3335,14 @@ DEP_CPP_CONTR=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -3327,10 +3393,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -3341,6 +3407,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -3361,10 +3428,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -3395,10 +3462,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -3429,10 +3496,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3463,10 +3530,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -3497,10 +3564,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3535,15 +3602,13 @@ NODEP_CPP_DEBUG=\
 DEP_CPP_DEBUG=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3553,10 +3618,8 @@ NODEP_CPP_DEBUG=\
 DEP_CPP_DEBUG=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
@@ -3578,10 +3641,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -3589,17 +3652,15 @@ NODEP_CPP_DEBUG=\
 DEP_CPP_DEBUG=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -3614,10 +3675,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -3632,10 +3693,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3650,10 +3711,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -3668,10 +3729,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3717,21 +3778,23 @@ DEP_CPP_DISK_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_DISK_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3742,12 +3805,14 @@ DEP_CPP_DISK_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -3780,10 +3845,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -3794,6 +3859,7 @@ DEP_CPP_DISK_=\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -3805,10 +3871,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -3830,10 +3896,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -3855,10 +3921,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -3880,10 +3946,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -3905,10 +3971,10 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3946,13 +4012,16 @@ DEP_CPP_GRID_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -3962,7 +4031,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_GRID_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -3973,11 +4041,13 @@ DEP_CPP_GRID_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -4015,10 +4085,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -4028,6 +4098,7 @@ DEP_CPP_GRID_=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -4042,10 +4113,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -4069,10 +4140,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -4096,10 +4167,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -4123,10 +4194,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -4150,10 +4221,10 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4194,10 +4265,10 @@ DEP_CPP_HUFFT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_HUFFT=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4230,11 +4301,16 @@ NODEP_CPP_HUFFT=\
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
 
 DEP_CPP_HUFFT=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_HUFFT=\
-	"..\..\..\sky\common\scummsys.h"\
-	"..\..\..\sky\stdafx.h"\
+	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -4320,13 +4396,16 @@ DEP_CPP_INTRO=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4339,7 +4418,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_INTRO=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4350,11 +4428,13 @@ DEP_CPP_INTRO=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -4398,10 +4478,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -4411,6 +4491,7 @@ DEP_CPP_INTRO=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -4428,10 +4509,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -4458,10 +4539,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -4488,10 +4569,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -4518,10 +4599,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -4548,10 +4629,10 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4618,14 +4699,16 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4645,7 +4728,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_LOGIC=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4657,12 +4739,13 @@ DEP_CPP_LOGIC=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -4722,10 +4805,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -4736,8 +4819,8 @@ DEP_CPP_LOGIC=\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
@@ -4761,10 +4844,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -4800,10 +4883,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -4839,10 +4922,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -4878,10 +4961,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -4917,10 +5000,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4966,13 +5049,16 @@ DEP_CPP_MOUSE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -4981,7 +5067,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_MOUSE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -4992,11 +5077,13 @@ DEP_CPP_MOUSE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -5032,10 +5119,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -5045,6 +5132,7 @@ DEP_CPP_MOUSE=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -5058,10 +5146,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -5084,10 +5172,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -5110,10 +5198,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -5136,10 +5224,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -5162,10 +5250,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5202,10 +5290,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -5234,10 +5322,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -5249,10 +5337,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -5264,10 +5352,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -5279,10 +5367,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -5294,10 +5382,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -5309,10 +5397,10 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5358,13 +5446,16 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5373,7 +5464,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\struc.h"\
 	
 NODEP_CPP_SCREE=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -5384,11 +5474,13 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -5424,10 +5516,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -5437,6 +5529,7 @@ DEP_CPP_SCREE=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -5450,10 +5543,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -5476,10 +5569,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -5502,10 +5595,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -5528,10 +5621,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -5554,10 +5647,10 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5640,19 +5733,21 @@ DEP_CPP_SKY_C=\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -5675,7 +5770,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SKY_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	".\DL_byteorder.h"\
@@ -5690,16 +5784,17 @@ DEP_CPP_SKY_C=\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
@@ -5774,11 +5869,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -5794,8 +5889,8 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
@@ -5824,11 +5919,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -5874,11 +5969,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -5924,11 +6019,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -5974,11 +6069,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -6024,11 +6119,11 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6076,13 +6171,16 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6092,7 +6190,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -6103,11 +6200,13 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -6145,10 +6244,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -6158,6 +6257,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -6172,10 +6272,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -6199,10 +6299,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -6226,10 +6326,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -6253,10 +6353,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -6280,10 +6380,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6333,13 +6433,16 @@ DEP_CPP_TEXT_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6348,7 +6451,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_TEXT_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	".\DL_byteorder.h"\
 	
@@ -6359,11 +6461,13 @@ DEP_CPP_TEXT_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\common\list.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
@@ -6399,10 +6503,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
@@ -6412,6 +6516,7 @@ DEP_CPP_TEXT_=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -6425,10 +6530,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
@@ -6451,10 +6556,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
@@ -6477,10 +6582,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
@@ -6503,10 +6608,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Release"
@@ -6529,10 +6634,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
