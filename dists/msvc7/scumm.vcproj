@@ -158,6 +158,34 @@
 				RelativePath="..\..\scumm\smush\smush_player.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="imuse_digi"
+			Filter="">
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse.h">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_bndmgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_bndmgr.h">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_codecs.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_sndmgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_sndmgr.h">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_tables.cpp">
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\scumm\actor.cpp">
 		</File>
@@ -187,12 +215,6 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\boxes.h">
-		</File>
-		<File
-			RelativePath="..\..\scumm\bundle.cpp">
-		</File>
-		<File
-			RelativePath="..\..\scumm\bundle.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\camera.cpp">
@@ -241,12 +263,6 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\imuse.h">
-		</File>
-		<File
-			RelativePath="..\..\scumm\imuse_digi.cpp">
-		</File>
-		<File
-			RelativePath="..\..\scumm\imuse_digi.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\imuse_internal.h">
