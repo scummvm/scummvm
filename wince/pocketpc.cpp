@@ -57,7 +57,6 @@ typedef int (*tTimeCallback)(int);
 typedef void SoundProc(void *param, byte *buf, int len);
 
 GameDetector detector;
-SimonState *g_simon;
 Config *scummcfg;
 tTimeCallback timer_callback;
 int timer_interval;
@@ -173,7 +172,6 @@ private:
 	byte *_gfx_buf;
 	uint32 _start_time;
 	Event _event;
-	Event _last_mouse_event;
 	HMODULE hInst;
 	HWND hWnd;
 	bool _display_cursor;	
@@ -687,7 +685,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			wm->_event.event_code = EVENT_MOUSEMOVE;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
-			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDOWN:
@@ -761,7 +758,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
-				wm->_last_mouse_event = wm->_event;
 				break;
 
 			}
@@ -775,7 +771,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
-				wm->_last_mouse_event = wm->_event;
 			
 				/*
 				if(y > 200 && !hide_toolbar)
@@ -826,8 +821,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							toolbar_drawn = false;
 						break;
 					case ToolbarSkip:
-						if (detector._gameId >= GID_SIMON_FIRST) {
-							g_simon->_exit_cutscene = true;
+						if (detector._gameId >= GID_SIMON_FIRST &&
+							detector._gameId <= GID_SIMON_LAST) {							
+							// Fake a right click to abort the current cut scene
+							wm->_event.event_code = EVENT_RBUTTONDOWN;
+							wm->_event.mouse.x = x;
+							wm->_event.mouse.y = y;
 							break;
 						}
 						wm->_event.event_code = EVENT_KEYDOWN;
@@ -855,7 +854,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			wm->_event.event_code = EVENT_LBUTTONUP;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
-			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
