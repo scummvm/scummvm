@@ -32,10 +32,14 @@ public:
 
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
-  
-	int16* objectData(int index);
+
+	int16 *objectData(int index);
 	uint16 roomData(int room);
 	uint16 objMax(int room);
+
+	uint16 walkOffCount();
+	uint16 *walkOffData(int index);
+
 
 protected:
 	uint8 *_jas;
@@ -48,7 +52,10 @@ protected:
 	uint16 _numDescriptions;
 	uint16 _numItems;
 	uint16 _numGraphics;
-	
+
+	uint16 _numObjectBoxes;
+	uint16 _numWalkOffs;
+
 	uint16 *_roomData;
 	uint16 *_sfxName;
 	uint16 *_objMax;
@@ -58,9 +65,11 @@ protected:
 	uint16 (*_graphicData)[5];
 	int16 (*_objectData)[8];
 	uint16 (*_actorData)[12];
-	
+
 	uint16 (*_area)[11][8];
-	
+
+	uint16 (*_walkOffData)[3];
+
 	QueenResource *_resource;
 
 	void initialise();

@@ -133,6 +133,7 @@ void QueenLogic::initialise() {
 
 */	
 
+	_numWalkOffs = 0;
 }
 
 uint16 QueenLogic::currentRoom() {
@@ -140,18 +141,28 @@ uint16 QueenLogic::currentRoom() {
 }
 
 void QueenLogic::currentRoom(uint16 room) {
-  _currentRoom = room;
+	_currentRoom = room;
 }
 
 int16* QueenLogic::objectData(int index) {
-  return _objectData[index];
+	return _objectData[index];
 }
 
 uint16 QueenLogic::roomData(int room) {
-  return _roomData[room];
+	return _roomData[room];
 }
 
 uint16 QueenLogic::objMax(int room) {
-  return _objMax[room];
+	return _objMax[room];
 }
+
+uint16 QueenLogic::walkOffCount() {
+	return _numWalkOffs;
+}
+
+uint16 *QueenLogic::walkOffData(int index) {
+	return _walkOffData[index];
+}
+
+
 
