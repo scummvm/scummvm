@@ -67,7 +67,7 @@ struct CostumeData {
 	}
 };
 
-class SaveLoadEntry;
+struct SaveLoadEntry;
 
 class Actor {
 
