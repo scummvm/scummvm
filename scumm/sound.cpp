@@ -388,56 +388,77 @@ void Sound::playSound(int soundID) {
 			rate = 11000;
 			int type = *(ptr + 0x0D);
 
-			// Check if it is a CD playback resource
-			if (type == 2) {
-				ptr += 0x16;
-				int track = ptr[0];
-				int loops = ptr[1];
-				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
+			switch(type) {
+				case 0:	{ // Sound effect
+					int waveSize = READ_LE_UINT32(ptr + 0x22);
+					int loopStart = READ_LE_UINT32(ptr + 0x26);
+					int loopEnd = READ_LE_UINT32(ptr + 0x2A);
 
-				if (soundID == _currentCDSound)
-					if (pollCD() == 1)
-						return;
-
-				playCDTrack(track, loops == 0xff ? -1 : loops, start, end);
-				_currentCDSound = soundID;
-				return;
-			}
-			// Check if it is sound effect
-			// FIXME: Remove " || type == 1" when the kazoo tune format is supported
-			if (type == 0 || type == 1) {
-				int waveSize = READ_LE_UINT32(ptr + 0x22);
-				int loopStart = READ_LE_UINT32(ptr + 0x26);
-				int loopEnd = READ_LE_UINT32(ptr + 0x2A);
-
-				if (size - 0x36 < waveSize) {
-					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-					waveSize = size - 0x36;
-				}
-				ptr += 0x36;
-				sound = (char *)malloc(waveSize);
-				for (int x = 0; x < waveSize; x++) {
-					int bit = *ptr++;
-					if (bit < 0x80)
-						sound[x] = 0x7F - bit;
-					else
-						sound[x] = bit;
-				}
-				// FIXME: Remove " && type == 0" when the kazoo tune format is supported
-				if (loopEnd > 0 && type == 0) {
-					flags |= SoundMixer::FLAG_LOOP;
-					if ((loopEnd < waveSize) || (loopStart > 0)) {
-						// FIXME: Implement partial loops
-						warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+					if (size - 0x36 < waveSize) {
+						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+						waveSize = size - 0x36;
 					}
+					ptr += 0x36;
+					sound = (char *)malloc(waveSize);
+					for (int x = 0; x < waveSize; x++) {
+						int bit = *ptr++;
+						if (bit < 0x80)
+							sound[x] = 0x7F - bit;
+						else
+							sound[x] = bit;
+					}
+	
+					if (loopEnd > 0) {
+						flags |= SoundMixer::FLAG_LOOP;
+						if ((loopEnd < waveSize) || (loopStart > 0)) {
+							// FIXME: Implement partial loops
+							warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loopStart, loopEnd);
+						}
+					}
+
+					_scumm->_mixer->playRaw(NULL, sound, waveSize, 11000, flags, soundID);
+					break;
 				}
-				_scumm->_mixer->playRaw(NULL, sound, waveSize, 11000, flags, soundID);
-				return;
+
+				case 1: { // Music (Euphony format)
+					int numInstruments = *(ptr + 0x14);
+					int tuneSize = 0, tempo = 0;
+					int startPtr = ptr;
+
+					ptr += (0x16 + (numInstruments * 48));	// Skip instrument definitions
+					ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
+					ptr += 8;	// (Unknown)
+					
+					ptr += numInstruments;	// Instrument channel's
+
+					tuneSize = READ_LE_UINT32(ptr);
+					ptr += 5;
+
+					tempo = *ptr++;
+					ptr += 2;
+					// Music data begins here
+
+					warning("Euphony tune #%d unsupported", soundID);
+					break;
+				}
+			
+				case 2: { // CD track resource
+					ptr += 0x16;
+					int track = ptr[0];
+					int loops = ptr[1];
+					int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+					int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
+
+					if (soundID == _currentCDSound)
+						if (pollCD() == 1)
+							return;
+
+					playCDTrack(track, loops == 0xff ? -1 : loops, start, end);
+					_currentCDSound = soundID;
+					break;
+				}			
 			}
-			// TODO: Kazoo tune
-//  			if (type == 1) {
-//  			}
+			return;
 		}
 	
 	}
