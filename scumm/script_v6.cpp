@@ -1629,12 +1629,12 @@ void ScummEngine_v6::o6_roomOps() {
 		else
 			setPalette(a);
 		break;
-	case 220:		// SO_DRAW_OBJECT_AT
+	case 220:
 		a = pop();
 		b = pop();
 		warning("o6_roomops:220 (%d, %d): unimplemented", a, b);
 		break;
-	case 221:		// SO_DRAW_OBJECT_IMAGE
+	case 221:
 		int len;
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
