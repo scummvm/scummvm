@@ -624,6 +624,8 @@ void ScummEngine_v90he::o90_unknown28() {
 			pop();
 			pop();
 			break;
+		case 180:
+			break;
 		default:
 			error("o90_unknown28: Unknown case %d", subOp);
 	}
