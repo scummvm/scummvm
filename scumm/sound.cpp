@@ -225,7 +225,8 @@ void Sound::playSound(int soundID) {
 				return;	// abort
 	
 			size = READ_BE_UINT32_UNALIGNED(ptr+4);
-			rate = 8000;	// FIXME - what value here ?!? 8000 is just a guess
+			// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
+			rate = 11025;
 			
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char*)malloc(size);
