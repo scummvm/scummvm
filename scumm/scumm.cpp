@@ -233,6 +233,10 @@ static const ScummGameSettings scumm_settings[] = {
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	/* needs the MAXS reading code for >= 72 but is still 320x200? */
+	// There is also a Scummsys.90 version of puttzoo
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
@@ -256,9 +260,6 @@ static const ScummGameSettings scumm_settings[] = {
 
 #ifdef HEGAMES
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	/* needs the MAXS reading code for >= 72 but is still 320x200? */
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"1grademo", "Big Thinkers First Grade (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
