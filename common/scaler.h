@@ -23,14 +23,18 @@
 
 extern int Init_2xSaI (uint32 BitFormat);
 
+typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
 #define DECLARE_SCALER(x)	\
-	extern void x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
+	extern void x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
 					uint32 dstPitch, int width, int height)
 
 DECLARE_SCALER(_2xSaI);
 DECLARE_SCALER(Super2xSaI);
 DECLARE_SCALER(SuperEagle);
 DECLARE_SCALER(AdvMame2x);
+DECLARE_SCALER(AdvMame3x);
 DECLARE_SCALER(Normal1x);
 DECLARE_SCALER(Normal2x);
 DECLARE_SCALER(Normal3x);
@@ -46,8 +50,9 @@ enum {
 	GFX_SUPER2XSAI = 4,
 	GFX_SUPEREAGLE = 5,
 	GFX_ADVMAME2X = 6,
-	GFX_TV2X = 7,
-	GFX_DOTMATRIX = 8,
+	GFX_ADVMAME3X = 7,
+	GFX_TV2X = 8,
+	GFX_DOTMATRIX = 9,
 	
 	GFX_FLIPPING = 100,	// Palmos
 	GFX_DOUBLEBUFFER = 101	// Palmos

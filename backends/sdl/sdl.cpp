@@ -48,7 +48,7 @@ protected:
 	void hotswap_gfx_mode();
 };
 
-OSystem_SDL_Common *OSystem_SDL_Common::create() {
+OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
 	return new OSystem_SDL();
 }
 
@@ -98,6 +98,10 @@ void OSystem_SDL::load_gfx_mode() {
 	case GFX_ADVMAME2X:
 		_scaleFactor = 2;
 		_scaler_proc = AdvMame2x;
+		break;
+	case GFX_ADVMAME3X:
+		_scaleFactor = 3;
+		_scaler_proc = AdvMame3x;
 		break;
 	case GFX_TV2X:
 		_scaleFactor = 2;
@@ -360,7 +364,7 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 #endif
 		return 1;
 	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode >= 9)
+		if (value->gfx_mode >= 10)
 			return 0;
 
 		_mode = value->gfx_mode;

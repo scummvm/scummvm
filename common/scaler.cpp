@@ -155,8 +155,8 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
 #define RED_MASK555 0x7C007C00
 #define GREEN_MASK555 0x03E003E0
 
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint16 *bP;
+void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	const uint16 *bP;
 	uint8 *dP;
 	uint32 inc_bP;
 
@@ -165,7 +165,7 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 		inc_bP = 1;
 
 		while (height--) {
-			bP = (uint16 *)srcPtr;
+			bP = (const uint16 *)srcPtr;
 			dP = (uint8 *)dstPtr;
 
 			for (uint32 finish = width; finish; finish -= inc_bP) {
@@ -271,9 +271,9 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	}
 }
 
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
-	uint16 *bP;
+	const uint16 *bP;
 	uint32 inc_bP;
 
 	{
@@ -282,7 +282,7 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 		uint32 Nextline = srcPitch >> 1;
 
 		while (height--) {
-			bP = (uint16 *)srcPtr;
+			bP = (const uint16 *)srcPtr;
 			dP = dstPtr;
 			for (uint32 finish = width; finish; finish -= inc_bP) {
 				uint32 color4, color5, color6;
@@ -388,9 +388,9 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	}
 }
 
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
-	uint16 *bP;
+	const uint16 *bP;
 	uint32 inc_bP;
 
 	{
@@ -399,7 +399,7 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int 
 		uint32 Nextline = srcPitch >> 1;
 
 		while (height--) {
-			bP = (uint16 *)srcPtr;
+			bP = (const uint16 *)srcPtr;
 			dP = dstPtr;
 
 			for (uint32 finish = width; finish; finish -= inc_bP) {
@@ -582,10 +582,10 @@ static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32
 // FIXME: Scale_2xSaI is not used anywhere; however, contrary to the _2xSaI function,
 // it seems to allow for arbitrary scale factors, not just 2x... hence I leave this in
 // for now, as that seems to be a very useful feature
-void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void Scale_2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 								 uint32 dstWidth, uint32 dstHeight, int width, int height) {
 	uint8 *dP;
-	uint16 *bP;
+	const uint16 *bP;
 
 	uint32 w;
 	uint32 h;
@@ -605,7 +605,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 		uint32 y1, y2;
 
 		y1 = h & 0xffff;						// fraction part of fixed point
-		bP = (uint16 *)(srcPtr + ((h >> 16) * srcPitch));
+		bP = (const uint16 *)(srcPtr + ((h >> 16) * srcPitch));
 		dP = dstPtr;
 		y2 = 0x10000 - y1;
 
@@ -713,10 +713,10 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
-	uint16 *p = (uint16 *)srcPtr;
+	const uint16 *p = (const uint16 *)srcPtr;
 
 	unsigned int nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
@@ -726,9 +726,12 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	uint16 G, H, I;
 
 	while (height--) {
-		B = C = *(p - nextlineSrc);
-		E = F = *(p);
-		H = I = *(p + nextlineSrc);
+		B = *(p - 1 - nextlineSrc);
+		E = *(p - 1);
+		H = *(p - 1 + nextlineSrc);
+		C = *(p - nextlineSrc);
+		F = *(p);
+		I = *(p + nextlineSrc);
 		for (int i = 0; i < width; ++i) {
 			p++;
 			A = B; B = C; C = *(p - nextlineSrc);
@@ -746,7 +749,48 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+							 int width, int height) {
+	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint16 *p = (const uint16 *)srcPtr;
+
+	unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	uint16 *q = (uint16 *)dstPtr;
+	
+	uint16 A, B, C;
+	uint16 D, E, F;
+	uint16 G, H, I;
+
+	while (height--) {
+		B = *(p - 1 - nextlineSrc);
+		E = *(p - 1);
+		H = *(p - 1 + nextlineSrc);
+		C = *(p - nextlineSrc);
+		F = *(p);
+		I = *(p + nextlineSrc);
+		for (int i = 0; i < width; ++i) {
+			p++;
+			A = B; B = C; C = *(p - nextlineSrc);
+			D = E; E = F; F = *(p);
+			G = H; H = I; I = *(p + nextlineSrc);
+
+			*(q) = D == B && B != F && D != H ? D : E;
+			*(q + 1) = E;
+			*(q + 2) = B == F && B != D && F != H ? F : E;
+			*(q + nextlineDst) = E;
+			*(q + nextlineDst + 1) = E;
+			*(q + nextlineDst + 2) = E;
+			*(q + 2 * nextlineDst) = D == H && D != B && H != F ? D : E;
+			*(q + 2 * nextlineDst + 1) = E;
+			*(q + 2 * nextlineDst + 2) = H == F && D != H && B != F ? F : E;
+			q += 3;
+		}
+		p += nextlineSrc - width;
+		q += (nextlineDst - width) * 3;
+	}
+}
+
+void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	while (height--) {
 		memcpy(dstPtr, srcPtr, 2 * width);
@@ -755,14 +799,14 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
-			uint16 color = *(((uint16 *)srcPtr) + i);
+			uint16 color = *(((const uint16 *)srcPtr) + i);
 
 			*(uint16 *)(r + 0) = color;
 			*(uint16 *)(r + 2) = color;
@@ -774,7 +818,7 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	uint32 dstPitch2 = dstPitch * 2;
@@ -783,7 +827,7 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 6) {
-			uint16 color = *(((uint16 *)srcPtr) + i);
+			uint16 color = *(((const uint16 *)srcPtr) + i);
 
 			*(uint16 *)(r + 0) = color;
 			*(uint16 *)(r + 2) = color;
@@ -800,10 +844,10 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 	}
 }
 
-void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
+void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
-	uint16 *p = (uint16 *)srcPtr;
+	const uint16 *p = (const uint16 *)srcPtr;
 
 	unsigned int nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
@@ -830,11 +874,11 @@ static inline uint16 DOT_16(uint16 c, int j, int i) {
   return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
 }
 
-void DotMatrix(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height)
 {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
-	uint16 *p = (uint16 *)srcPtr;
+	const uint16 *p = (const uint16 *)srcPtr;
 
 	unsigned int nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;

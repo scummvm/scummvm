@@ -124,11 +124,12 @@ public:
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 protected:
-	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-
 	OSystem_SDL_Common();
 	virtual ~OSystem_SDL_Common();
+
+	static OSystem_SDL_Common *create_intern();
+
+	void init_intern(int gfx_mode, bool full_screen);
 
 	// unseen game screen
 	SDL_Surface *_screen;
@@ -186,7 +187,7 @@ protected:
 
 	bool _mouseVisible;
 	bool _mouseDrawn;
-	byte *_mouseData;
+	const byte *_mouseData;
 	byte *_mouseBackup;
 	MousePos _mouseCurState;
 	MousePos _mouseOldState;
@@ -222,8 +223,6 @@ protected:
 	void setup_icon();
 	void kbd_mouse();
 	void init_joystick() { _joystick = SDL_JoystickOpen(0); }
-
-	static OSystem_SDL_Common *create();
 };
 
 // Auxillary class to (un)lock a mutex on the stack

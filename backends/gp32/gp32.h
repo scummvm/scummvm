@@ -118,10 +118,8 @@ public:
 	void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
-private:
-	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
+private:
 	SDL_Surface *sdl_tmpscreen;   // temporary screen (for scalers/overlay)
 	SDL_Surface *sdl_hwscreen;    // hardware screen
 	bool _overlay_visible;

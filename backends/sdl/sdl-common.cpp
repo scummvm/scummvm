@@ -52,13 +52,23 @@ OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 }
 
 OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
-	OSystem_SDL_Common *syst = OSystem_SDL_Common::create();
-	syst->_mode = gfx_mode;
-	syst->_full_screen = full_screen;
+	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
+
+	syst->init_intern(gfx_mode, full_screen);
+
+	return syst;
+}
+
+void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen) {
+
+	_mode = gfx_mode;
+	_full_screen = full_screen;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
+
+	_mutex = SDL_CreateMutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
 	
@@ -67,7 +77,7 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
-	syst->setup_icon();
+	setup_icon();
 #endif
 
 #ifndef MACOSX		// Work around a bug in OS X
@@ -79,10 +89,8 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 	// enable joystick
 	if (SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		syst->init_joystick();
+		init_joystick();
 	}
-
-	return syst;
 }
 
 void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
@@ -95,7 +103,10 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	_cdrom(0), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
-	_currentShakePos(0), _newShakePos(0) {
+	_currentShakePos(0), _newShakePos(0),
+	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_mutex(0) {
+
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
@@ -104,8 +115,6 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
-	
-	_mutex = SDL_CreateMutex();
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {
@@ -286,7 +295,7 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 }
 
 #define ROL(a,n) a = (a << (n)) | (a >> (32 - (n)))
-#define DOLINE(x) a ^= ((uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
+#define DOLINE(x) a ^= ((const uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((const uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
 
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	uint32 *sums = _dirty_checksums;
@@ -462,15 +471,15 @@ void OSystem_SDL_Common::warp_mouse(int x, int y) {
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
-	assert(0 <= w && w <= MAX_MOUSE_W);
-	assert(0 <= h && h <= MAX_MOUSE_H);
+	assert(w <= MAX_MOUSE_W);
+	assert(h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseData = (byte *)buf;
+	_mouseData = buf;
 
 	undraw_mouse();
 }
@@ -546,13 +555,19 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				break;
 			}
 #endif
-			// Ctr-Alt-1 till Ctrl-Alt-9 will change the GFX mode
-			if (b == (KBD_CTRL|KBD_ALT) && 
-				(ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='9')) {
-				Property prop;
-				prop.gfx_mode = ev.key.keysym.sym - '1';
-				property(PROP_SET_GFX_MODE, &prop);
-				break;
+			// Ctr-Alt-<key> will change the GFX mode
+			if (b == (KBD_CTRL|KBD_ALT)) {
+				char keys[] = "1234567890";
+				char *ptr;
+
+				ptr = strchr(keys, ev.key.keysym.sym);
+				if (ptr != NULL) {
+					Property prop;
+
+					prop.gfx_mode = ptr - keys;
+					property(PROP_SET_GFX_MODE, &prop);
+					break;
+				}
 			}
 
 #ifdef QTOPIA
@@ -812,7 +827,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	return false;
 }
 
-bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte format) {
+bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte /* format */) {
 	SDL_AudioSpec desired;
 
 	memset(&desired, 0, sizeof(desired));
@@ -882,7 +897,7 @@ void OSystem_SDL_Common::draw_mouse() {
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 	byte color;
-	byte *src = _mouseData;		// Image representing the mouse
+	const byte *src = _mouseData;		// Image representing the mouse
 
 	// clip the mouse rect, and addjust the src pointer accordingly
 	if (x < 0) {
@@ -1112,8 +1127,8 @@ void OSystem_SDL_Common::setup_icon() {
 	for (h = 0; h < 32; h++) {
 		char *line = scummvm_icon[1 + ncols + h];
 		for (w = 0; w < 32; w++) {
-			icon[w + 32 * h] = rgba[line[w]];
-			if (rgba[line[w]] & 0xFF000000) {
+			icon[w + 32 * h] = rgba[(int)line[w]];
+			if (rgba[(int)line[w]] & 0xFF000000) {
 				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
 			}
 		}

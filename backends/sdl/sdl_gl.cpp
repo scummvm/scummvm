@@ -69,7 +69,7 @@ protected:
 	void hotswap_gfx_mode();
 };
 
-OSystem_SDL_Common *OSystem_SDL_Common::create() {
+OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
 	return new OSystem_SDL_OpenGL();
 }
 
@@ -134,6 +134,10 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	case GFX_ADVMAME2X:
 		_scaleFactor = 2;
 		_scaler_proc = AdvMame2x;
+		break;
+	case GFX_ADVMAME3X:
+		_scaleFactor = 3;
+		_scaler_proc = AdvMame3x;
 		break;
 	case GFX_TV2X:
 		_scaleFactor = 2;
@@ -570,7 +574,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				_glScreenStart = 0;
 				break;
 			default: // SDL backend
-				if (value->gfx_mode >= 9)
+				if (value->gfx_mode >= 10)
 				  return 0;
 
 				_mode = value->gfx_mode;
