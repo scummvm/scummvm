@@ -48,12 +48,6 @@ public:
 	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 };
 
-class MP3Sound : public BaseSound {
-public:
-	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
-};
-
 BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base) {
 	_mixer = mixer;
 	_file = file;
@@ -208,6 +202,12 @@ int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 }
 
 #ifdef USE_MAD
+class MP3Sound : public BaseSound {
+public:
+	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
+};
+
 int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
