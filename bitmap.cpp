@@ -142,6 +142,7 @@ void Bitmap::draw() const {
       }
     }
     glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_TEXTURE_2D);
   } else if (format_ == 5) {
     glRasterPos2i(x_, y_);
     printf("format2\n");
