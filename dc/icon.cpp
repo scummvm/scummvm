@@ -68,7 +68,8 @@ void Icon::set_palette(int pal)
     (*hwpal)[pal][n] = palette[n];
 }
 
-void Icon::draw(float x1, float y1, float x2, float y2, int pal)
+void Icon::draw(float x1, float y1, float x2, float y2, int pal,
+		unsigned int argb)
 {
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
@@ -80,7 +81,8 @@ void Icon::draw(float x1, float y1, float x2, float y2, int pal)
   mypoly.mode2 =
     TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
     TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA|
-    TA_POLYMODE2_TEXTURE_REPLACE|TA_POLYMODE2_U_SIZE_32|TA_POLYMODE2_V_SIZE_32;
+    TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|TA_POLYMODE2_U_SIZE_32|
+    TA_POLYMODE2_V_SIZE_32;
   mypoly.texture = TA_TEXTUREMODE_CLUT4|TA_TEXTUREMODE_CLUTBANK4(pal)|
     TA_TEXTUREMODE_ADDRESS(texture);
 
@@ -90,7 +92,7 @@ void Icon::draw(float x1, float y1, float x2, float y2, int pal)
 
   myvertex.cmd = TA_CMD_VERTEX;
   myvertex.ocolour = 0;
-  myvertex.colour = 0;
+  myvertex.colour = argb;
   myvertex.z = 0.5;
   myvertex.u = 0.0;
   myvertex.v = 1.0;

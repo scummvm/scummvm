@@ -82,7 +82,7 @@ void Label::create_texture(const char *text)
   texture = tex;
 }
 
-void Label::draw(float x, float y, unsigned int argb)
+void Label::draw(float x, float y, unsigned int argb, float scale)
 {
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
@@ -94,7 +94,7 @@ void Label::draw(float x, float y, unsigned int argb)
   mypoly.mode2 =
     TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
     TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA|
-    TA_POLYMODE2_TEXTURE_MODULATE|TA_POLYMODE2_V_SIZE_32|tex_u;
+    TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|TA_POLYMODE2_V_SIZE_32|tex_u;
   mypoly.texture = TA_TEXTUREMODE_ARGB1555|TA_TEXTUREMODE_NON_TWIDDLED|
     TA_TEXTUREMODE_ADDRESS(texture);
 
@@ -113,17 +113,17 @@ void Label::draw(float x, float y, unsigned int argb)
   myvertex.y = y;
   ta_commit_list(&myvertex);
 
-  myvertex.x = x+u;
+  myvertex.x = x+u*scale;
   myvertex.u = 1.0;
   ta_commit_list(&myvertex);
 
   myvertex.x = x;
-  myvertex.y = y+25.0;
+  myvertex.y = y+25.0*scale;
   myvertex.u = 0.0;
   myvertex.v = 25.0/32.0;
   ta_commit_list(&myvertex);
 
-  myvertex.x = x+u;
+  myvertex.x = x+u*scale;
   myvertex.u = 1.0;
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
   ta_commit_list(&myvertex);  

@@ -15,6 +15,7 @@ class Icon
   bool load(const char *filename);
   void create_texture();
   void set_palette(int pal);
-  void draw(float x1, float y1, float x2, float y2, int pal);
+  void draw(float x1, float y1, float x2, float y2, int pal,
+	    unsigned argb = 0xffffffff);
   void create_vmicon(void *buffer);
 };

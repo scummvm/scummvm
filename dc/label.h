@@ -6,5 +6,6 @@ class Label
 
  public:
   void create_texture(const char *text);
-  void draw(float x, float y, unsigned int argb = 0xffffffff);
+  void draw(float x, float y, unsigned int argb = 0xffffffff,
+	    float scale = 1.0);
 };
