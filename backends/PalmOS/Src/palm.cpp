@@ -226,17 +226,45 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 }
 
 void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+	/* Clip the coordinates */
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _screenWidth - x) {
+		w = _screenWidth - x;
+	}
+
+	if (h > _screenHeight - y) {
+		h = _screenHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
 	if (_mouseDrawn)
 		undraw_mouse();
 
 	byte *dst = _offScreenP + y * _screenWidth + x;
 
-	do {
-		memcpy(dst, buf, w);
-		dst += _screenWidth;
-		buf += pitch;
-	} while (--h);
+	if (_screenWidth == pitch && pitch == w) {
+		memcpy (dst, buf, h * w);
+	} else {
+		do {
+			memcpy(dst, buf, w);
+			dst += _screenWidth;
+			buf += pitch;
+		} while (--h);
+	}
 }
 
 void OSystem_PALMOS::update_screen__wide() {
@@ -264,7 +292,7 @@ void OSystem_PALMOS::update_screen__wide() {
 	}
 	
 	WinScreenUnlock();
-	_screenP = WinScreenLock(winLockErase) + _screeny;
+	_screenP = WinScreenLock(winLockCopy) + _screeny;
 }
 
 void OSystem_PALMOS::update_screen__flipping() {
@@ -428,6 +456,8 @@ void OSystem_PALMOS::update_screen() {
 	// Make sure the mouse is drawn, if it should be drawn.
 	draw_mouse();
 
+	((this)->*(_renderer_proc))();
+
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
@@ -452,8 +482,6 @@ void OSystem_PALMOS::update_screen() {
 				drawNumPad(this, gVars->indicator.on);
 		}
 	}
-
-	((this)->*(_renderer_proc))();
 }
 
 bool OSystem_PALMOS::show_mouse(bool visible) {
@@ -631,6 +659,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					event->kbd.flags = 0;
 					return true;
 
+				case vchrJogPushRepeat:
 				case vchrMenu:
 					_lastKeyPressed = -1;
 					event->event_code = EVENT_KEYDOWN;
@@ -655,6 +684,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					return true;
 
 				// mouse emulation
+				case vchrJogPush:
 				case vchrHard1: // left button
 					event->event_code = EVENT_LBUTTONDOWN;
 					event->mouse.x = _mouseCurState.x;
@@ -682,6 +712,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					_lastKeyPressed = vchrHard3;
 					return true;
 
+				case vchrJogBack:
 				case vchrHard4: // right button
 					event->event_code = EVENT_RBUTTONDOWN;
 					event->mouse.x = _mouseCurState.x;
@@ -889,6 +920,9 @@ void OSystem_PALMOS::quit() {
 	if (_sndDataP)
 		MemPtrFree(_sndDataP);
 
+	if (_msaRefNum != sysInvalidRefNum)
+		MsaLibClose(_msaRefNum, msaLibOpenModeAlbum);
+
 	unload_gfx_mode();
 	_quit = true;
 }
@@ -981,20 +1015,179 @@ void OSystem_PALMOS::undraw_mouse() {
 	}
 }
 
-void OSystem_PALMOS::stop_cdrom() {
+
+// TODO : unify lib check functions
+static UInt16 checkMSA() {
+	SonySysFtrSysInfoP sonySysFtrSysInfoP;
+	Err error = errNone;
+	UInt16 refNum = sysInvalidRefNum;
+
+	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
+		// not found with audio adapter ?!
+		//if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrMsa) {		
+			if ((error = SysLibFind(sonySysLibNameMsa, &refNum)))
+				if (error == sysErrLibNotFound)
+					error = SysLibLoad(sonySysFileTMsaLib, sonySysFileCMsaLib, &refNum);
+
+			if (!error)
+				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);
+		//}
+	}
+
+	if (error)
+		refNum = sysInvalidRefNum;
+	
+	return refNum;
+}
+
+void OSystem_PALMOS::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
+	_msaStopTime = get_msecs() + 100;
+	_msaLoops = 0;
 	return;
 }
 
+// frames are 1/75 sec
+#define TO_MSECS(frame)	((UInt32)((frame) * 1000 / 75))
+// consider frame at 1/1000 sec
+#define TO_SEC(msecs)	((UInt16)((msecs) / 1000))
+#define TO_MIN(msecs)	((UInt16)(TO_SEC((msecs)) / 60))
+#define FROM_MIN(mins)	((UInt32)((mins) * 60 * 1000))
+#define FROM_SEC(secs)	((UInt32)((secs) * 1000))
+
 void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
-	return;
+	if (!_isCDRomAvalaible /*&& gVars->msaAlwaysOpen*/)
+		return;
+
+	if (!num_loops && !start_frame)
+		return;
+	
+	// open MSA lib if needed
+	if (_msaRefNum == sysInvalidRefNum) {
+		_msaRefNum = checkMSA();
+
+		// if not found disable CD-Rom
+		if (_msaRefNum == sysInvalidRefNum) {
+			_isCDRomAvalaible = false;
+			return;
+		}
+
+	//	Char *nameP = (Char *)MemPtrNew(256);
+		UInt32 dummy, albumIterater = albumIteratorStart;
+		Char nameP[256];
+		MemSet(&_msaAlbum, sizeof(_msaAlbum), 0);
+		_msaAlbum.maskflag = msa_INF_ALBUM;
+		_msaAlbum.code = msa_LANG_CODE_ASCII;
+		_msaAlbum.nameP = nameP;
+		_msaAlbum.fileNameLength = 256;
+
+		MsaAlbumEnumerate(_msaRefNum, &albumIterater, &_msaAlbum);
+		MsaSetAlbum(_msaRefNum, _msaAlbum.albumRefNum, &dummy);
+		MsaGetPBRate(_msaRefNum, &_msaPBRate);
+		// TODO : use RMC to control volume
+		MsaOutSetVolume(_msaRefNum, 20, 20);
+		
+	}
+
+	if (end_frame > 0)
+		end_frame +=5;
+
+	_msaLoops = num_loops;
+	_msaTrack = track + 1;	// first track = 1, not 0 (0=album)
+	_msaStartFrame = TO_MSECS(start_frame);
+	_msaEndFrame = TO_MSECS(end_frame);
+
+	// if gVars->MP3 audio track
+	Err e;
+	MemHandle trackH;
+	
+	e = MsaGetTrackInfo(_msaRefNum, _msaTrack, 0, msa_LANG_CODE_ASCII, &trackH);
+	// track exists
+	if (!e && trackH) {
+		MsaTime tTime;
+		UInt32 SU, fullLength;
+		
+		MsaTrackInfo *tiP = (MsaTrackInfo *)MemHandleLock(trackH);	
+		MsaSuToTime(_msaRefNum, tiP->totalsu, &tTime);
+		SU = tiP->totalsu;
+		MemPtrUnlock(tiP);
+		MemHandleFree(trackH);
+
+		_msaStopTime = 0;
+		fullLength = FROM_MIN(tTime.minute) + FROM_SEC(tTime.second) + tTime.frame;
+		
+		if (_msaEndFrame > 0) {
+			_msaTrackLength = _msaEndFrame - _msaStartFrame;
+		} else if (_msaStartFrame > 0) {
+			_msaTrackLength = fullLength;
+			_msaTrackLength -= _msaStartFrame;
+		} else {
+			_msaTrackLength = fullLength;
+		}
+		_msaEndTime = get_msecs() + _msaTrackLength - 2000; // 2sec less ...
+
+		// stop current play if any
+		MsaStop(_msaRefNum, true);
+		// try to play the track
+		if (start_frame == 0 && end_frame == 0) {
+			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
+		} else {
+			_msaTrackStart = (UInt32) ((float)_msaStartFrame / ((float)fullLength / (float)SU));
+			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
+		}
+	}
 }
 
 bool OSystem_PALMOS::poll_cdrom() {
-	return false;
+	if (!_isCDRomAvalaible)
+		return false;
+
+	if (_msaRefNum == sysInvalidRefNum)
+		return false;
+
+	MsaPBStatus pb;
+	MsaGetPBStatus(_msaRefNum, &pb);
+	return (_msaLoops != 0 && (get_msecs() < _msaEndTime || pb.status != msa_STOPSTATUS));
 }
 
 void OSystem_PALMOS::update_cdrom() {
-	return;
+	if (!_isCDRomAvalaible)
+		return;
+
+	if (_msaRefNum == sysInvalidRefNum)
+		return;
+
+	if (_msaStopTime != 0 && get_msecs() >= _msaStopTime) {
+		MsaStop(_msaRefNum, true);
+		_msaLoops = 0;
+		_msaStopTime = 0;
+		return;
+	}
+
+	if (_msaLoops == 0 || get_msecs() < _msaEndTime)
+		return;
+	
+	if (_msaLoops != 1) {
+		MsaPBStatus pb;
+		MsaGetPBStatus(_msaRefNum, &pb);
+	 	if (pb.status != msa_STOPSTATUS) {
+			MsaStop(_msaRefNum, true);
+			return;
+		}
+	}
+
+	if (_msaLoops > 0) {
+		MsaStop(_msaRefNum, true);
+		_msaLoops--;
+	}
+	
+	if (_msaLoops != 0) {
+		_msaEndTime = get_msecs() + _msaTrackLength;
+		MsaStop(_msaRefNum, true);
+		if (_msaStartFrame == 0 && _msaEndFrame == 0)
+			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
+		else
+			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
+	}
 }
 
 OSystem_PALMOS::OSystem_PALMOS() {
@@ -1024,6 +1217,10 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	// HiRes+
 	_useHRmode	= (gVars->HRrefNum != sysInvalidRefNum);
 	_wideRefNum = sysInvalidRefNum;
+	
+	// cd-rom
+	_isCDRomAvalaible = true;	// true by default, set to false if MSA not avalaible
+	_msaRefNum = sysInvalidRefNum;
 	
 	// sound
 	_isSndPlaying = false;
@@ -1117,6 +1314,7 @@ bool OSystem_PALMOS::set_sound_proc(SoundProc *proc, void *param, SoundFormat fo
 	_sound.active = true;
 	_sound.proc = proc;
 	_sound.param = param;
+	_sound.format = format;
 //	_sound.active = false;
 
 	return _sound.active;

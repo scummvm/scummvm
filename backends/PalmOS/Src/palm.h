@@ -210,6 +210,7 @@ private:
 		bool active;	
 		SoundProc *proc;
 		void *param;
+		SoundFormat format;
 	} _sound;
 
 	// Palette data
@@ -224,6 +225,20 @@ private:
 	void load_gfx_mode();
 	void unload_gfx_mode();
 	static void autosave();
+
+	// cdrom
+	Boolean _isCDRomAvalaible;
+	UInt16 _msaRefNum;
+	AlbumInfoType _msaAlbum;
+	UInt16 _msaLoops;
+	UInt32 _msaPBRate;
+	UInt16 _msaTrack;
+	UInt32 _msaStopTime;
+	UInt32 _msaEndTime;
+	UInt32 _msaStartFrame;
+	UInt32 _msaEndFrame;
+	UInt32 _msaTrackStart;
+	UInt32 _msaTrackLength;
 
 	// PALM spec
 
