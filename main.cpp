@@ -104,14 +104,13 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(UNIX)
+	/* On Unix, do a quick endian / alignement check before starting */
+	do_memory_test();
+
 	char scummhome[MAXPATHLEN];
 	if(getenv("HOME") != NULL)
 		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
 	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
-	scummcfg = new Config(scummhome, "scummvm");
-
-	/* On Unix, do a quick endian / alignement check before starting */
-	do_memory_test();
 #else
     char scummhome[255];
 	#if defined (WIN32) && !defined(_WIN32_WCE)
@@ -121,8 +120,9 @@ int main(int argc, char *argv[])
 	#else	
 		strcpy(scummhome,DEFAULT_CONFIG_FILE);
 	#endif
-	scummcfg = new Config(scummhome, "scummvm");
 #endif
+
+	scummcfg = new Config(scummhome, "scummvm");
 	scummcfg->set("versioninfo", SCUMMVM_VERSION);
 	if (detector.detectMain(argc, argv))
 		return (-1);
