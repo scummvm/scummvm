@@ -502,6 +502,7 @@ simon games.
         Tab                    - Simulate right mouse button press
 
     Simon:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
         F1 - F3                - Text speed, faster - slower
         F10                    - Shows all characters and objects you can 
                                  interact with
@@ -516,6 +517,7 @@ simon games.
                                  [Simon the Sorcerer 2 only]
 
     Beneath a Steel Sky:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-g                 - Runs in really REALLY fast mode.
         F5                     - Displays a save/load box.
         Escape                 - Skips the game intro.
