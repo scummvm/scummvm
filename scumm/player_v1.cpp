@@ -63,7 +63,10 @@ void Player_V1::chainSound(int nr, byte *data) {
 		parseSpeakerChunk();
 }
 
-void Player_V1::startSound(int nr, byte *data) {
+void Player_V1::startSound(int nr) {
+	byte *data = _scumm->getResourceAddress(rtSound, nr);
+	assert(data);
+
 	mutex_up();
 
 	int offset = _pcjr ? READ_LE_UINT16(data+4) : 6;

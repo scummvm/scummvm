@@ -335,6 +335,7 @@ Player_V2::Player_V2(Scumm *scumm) {
 	// by the 8253 (square wave generator) and a low-band filter.
 	
 	_isV3Game = (scumm->_version >= 3);
+	_scumm = scumm;
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
@@ -479,8 +480,10 @@ void Player_V2::stopSound(int nr) {
 	mutex_down();
 }
 
-void Player_V2::startSound(int nr, byte *data) {
+void Player_V2::startSound(int nr) {
+	byte *data = _scumm->getResourceAddress(rtSound, nr);
 	assert(data);
+
 	mutex_up();
 
 	int cprio = _current_data ? *(_current_data + _header_len) : 0;

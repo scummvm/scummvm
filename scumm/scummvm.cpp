@@ -692,16 +692,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_imuseDigital = NULL;
 	_playerV2 = NULL;
 	_playerV3A = NULL;
+	_musicEngine = NULL;
 	if (_features & GF_DIGI_IMUSE) {
-		_imuseDigital = new IMuseDigital(this);
+		_musicEngine = _imuseDigital = new IMuseDigital(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
-		_playerV3A = new Player_V3A(this);
+		_musicEngine = _playerV3A = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_playerV2 = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
-		_playerV2 = new Player_V2(this);
+		_musicEngine = _playerV2 = new Player_V2(this);
 	} else if (_version > 2) {
-		_imuse = IMuse::create (syst, _mixer, detector->createMidi());
+		_musicEngine = _imuse = IMuse::create(syst, _mixer, detector->createMidi());
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);

@@ -47,7 +47,7 @@ public:
 	Player_V1(Scumm *scumm);
 	~Player_V1();
 
-	void startSound(int nr, byte *data);
+	void startSound(int nr);
 	void stopAllSounds();
 	void stopSound(int nr);
 	int  getMusicTimer() const;

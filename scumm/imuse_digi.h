@@ -24,6 +24,7 @@
 #define IMUSE_DIGI_H
 
 #include "common/scummsys.h"
+#include "scumm/music.h"
 #include "sound/mixer.h"
 
 #define MAX_DIGITAL_CHANNELS 8
@@ -32,7 +33,7 @@
 
 class Scumm;
 
-class IMuseDigital {
+class IMuseDigital : public MusicEngine {
 private:
 
 	struct Channel {

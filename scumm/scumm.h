@@ -29,7 +29,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "gfx.h"
+#include "scumm/gfx.h"
 
 class Actor;
 class BaseCostumeRenderer;
@@ -39,6 +39,7 @@ class Dialog;
 class GameDetector;
 class IMuse;
 class IMuseDigital;
+class MusicEngine;
 class NewGui;
 class Player_V2;
 class Player_V3A;
@@ -307,6 +308,7 @@ public:
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
 	Player_V3A *_playerV3A;
+	MusicEngine *_musicEngine;
 	Sound *_sound;
 
 	VerbSlot *_verbs;

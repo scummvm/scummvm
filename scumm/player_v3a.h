@@ -25,20 +25,21 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "scumm/music.h"
 
 #define V3A_MAXCHANS 8
 
 class Scumm;
 class SoundMixer;
 
-class Player_V3A {
+class Player_V3A : public MusicEngine  {
 public:
 	Player_V3A(Scumm *scumm);
 	virtual ~Player_V3A();
 
 	virtual void set_master_volume(int vol);
 
-	virtual void startSound(int nr, byte *data);
+	virtual void startSound(int nr);
 	virtual void stopSound(int nr);
 	virtual void stopAllSounds();
 	virtual int  getMusicTimer() const;

@@ -461,7 +461,7 @@ public:
 	int get_master_volume();
 	bool startSound(int sound);
 	int stopSound(int sound);
-	int stop_all_sounds();
+	int stopAllSounds();
 	int getSoundStatus(int sound, bool ignoreFadeouts = true);
 	int getMusicTimer();
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);

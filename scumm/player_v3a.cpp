@@ -79,12 +79,13 @@ void Player_V3A::stopAllSounds() {
 	_songData = NULL;
 	_songPtr = 0;
 	_songDelay = 0;
-	for (int i = 0; i < V3A_MAXCHANS; i++)
+	for (int i = 0; i < V3A_MAXCHANS; i++) {
 		if (_soundID[i]) {
 			_mixer->stopID(_soundID[i]);
 			_soundID[i] = 0;
 			_timeleft[i] = 0;
 		}
+	}
 }
 
 void Player_V3A::stopSound(int nr) {
@@ -134,7 +135,10 @@ void Player_V3A::playSound (int nr, char *data, int size, int rate, int vol, int
 	else	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE, nr, vol, 0);
 }
 
-void Player_V3A::startSound(int nr, byte *data) {
+void Player_V3A::startSound(int nr) {
+	byte *data = _scumm->getResourceAddress(rtSound, nr);
+	assert(data);
+
 	if (!_isinit) {
 		int i;
 		if (_scumm->_gameId == GID_INDY3) {
@@ -191,7 +195,8 @@ void Player_V3A::startSound(int nr, byte *data) {
 			}
 			_wavetable[i] = NULL;
 		}
-		else	error("player_v3a - unknown game!");
+		else
+			error("player_v3a - unknown game!");
 		_isinit = true;
 	}
 	

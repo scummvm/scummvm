@@ -182,6 +182,7 @@ void Sound::playSound(int soundID) {
 		// FIXME: Should we replace this by an assert, and/or print an error message?
 		return;
 	}
+
 	if (READ_UINT32(ptr) == MKID('iMUS')){
 		assert(_scumm->_imuseDigital);
 		_scumm->_imuseDigital->startSound(soundID);
@@ -478,16 +479,16 @@ void Sound::playSound(int soundID) {
 		// automatically stop the old song.
 		if (_scumm->_imuse) {
 			if (READ_UINT32(ptr) != MKID('ASFX'))
-				_scumm->_imuse->stop_all_sounds();
+				_scumm->_imuse->stopAllSounds();
 		}
 	}
 
 	if (_scumm->_playerV2) {
-		_scumm->_playerV2->startSound(soundID, ptr);
+		_scumm->_playerV2->startSound(soundID);
 	}
 
 	if (_scumm->_playerV3A)
-		_scumm->_playerV3A->startSound(soundID, ptr);
+		_scumm->_playerV3A->startSound(soundID);
 
 	if (_scumm->_imuse) {
 		_scumm->_imuse->startSound(soundID);
@@ -780,7 +781,7 @@ void Sound::stopAllSounds() {
 	}
 
 	if (_scumm->_imuse) {
-		_scumm->_imuse->stop_all_sounds();
+		_scumm->_imuse->stopAllSounds();
 		_scumm->_imuse->clear_queue();
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopAllSounds();

@@ -373,7 +373,7 @@ bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
 	if (argc > 1) {
 		if (!strcmp (argv[1], "panic")) {
 			if (_s->_imuse)
-				_s->_imuse->stop_all_sounds();
+				_s->_imuse->stopAllSounds();
 			if (_s->_playerV2)
 				_s->_playerV2->stopAllSounds();
 			Debug_Printf ("AAAIIIEEEEEE!\n");
@@ -395,13 +395,11 @@ bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
 					Debug_Printf ("Selecting from %d songs...\n", _s->getNumSounds());
 					sound = _s->_rnd.getRandomNumber (_s->getNumSounds());
 				}
-				_s->ensureResourceLoaded (rtSound, sound);
+				_s->ensureResourceLoaded(rtSound, sound);
 				if (_s->_imuse)
-					_s->_imuse->startSound (sound);
+					_s->_imuse->startSound(sound);
 				if (_s->_playerV2) {
-					byte *ptr = _s->getResourceAddress(rtSound, sound);
-					if (ptr)
-						_s->_playerV2->startSound (sound, ptr);
+					_s->_playerV2->startSound(sound);
 				}
 
 				Debug_Printf ("Attempted to start music %d.\n", sound);
@@ -413,15 +411,15 @@ bool ScummDebugger::Cmd_IMuse (int argc, const char **argv) {
 			if (argc > 2 && (!strcmp (argv[2], "all") || atoi (argv[2]) != 0)) {
 				if (!strcmp (argv[2], "all")) {
 					if (_s->_imuse)
-						_s->_imuse->stop_all_sounds();
+						_s->_imuse->stopAllSounds();
 					if (_s->_playerV2)
 						_s->_playerV2->stopAllSounds();
 					Debug_Printf ("Shutting down all music tracks.\n");
 				} else {
 					if (_s->_imuse)
-						_s->_imuse->stopSound (atoi (argv[2]));
+						_s->_imuse->stopSound(atoi (argv[2]));
 					if (_s->_playerV2)
-						_s->_playerV2->stopSound (atoi (argv[2]));
+						_s->_playerV2->stopSound(atoi (argv[2]));
 					Debug_Printf ("Attempted to stop music %d.\n", atoi (argv[2]));
 				}
 			} else {

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "scumm/music.h"
 
 class IMuseInternal;
 class MidiDriver;
@@ -33,7 +34,7 @@ class Scumm;
 class Serializer;
 class SoundMixer;
 
-class IMuse {
+class IMuse : public MusicEngine {
 private:
 	OSystem *_system;
 	IMuseInternal *_target;
@@ -62,9 +63,9 @@ public:
 	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
-	bool startSound(int sound);
-	int stopSound(int sound);
-	int stop_all_sounds();
+	void startSound(int sound);
+	void stopSound(int sound);
+	int stopAllSounds();
 	int getSoundStatus(int sound);
 	bool get_sound_active(int sound);
 	int getMusicTimer();

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "scumm/music.h"
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -70,14 +71,14 @@ class Scumm;
 class SoundMixer;
 
 
-class Player_V2 {
+class Player_V2 : public MusicEngine {
 public:
 	Player_V2(Scumm *scumm);
 	virtual ~Player_V2();
 
 	virtual void set_master_volume(int vol);
 
-	virtual void startSound(int nr, byte *data);
+	virtual void startSound(int nr);
 	virtual void stopSound(int nr);
 	virtual void stopAllSounds();
 	virtual bool getSoundStatus(int nr) const;
@@ -87,6 +88,7 @@ protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;
 	OSystem *_system;
+	Scumm *_scumm;
 
 	bool _pcjr;
 	int _header_len;

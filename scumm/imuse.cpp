@@ -299,7 +299,7 @@ int IMuseInternal::stopSound(int sound) {
 	return r;
 }
 
-int IMuseInternal::stop_all_sounds() {
+int IMuseInternal::stopAllSounds() {
 	Player *player = _players;
 	int i;
 
@@ -610,7 +610,7 @@ int IMuseInternal::get_master_volume() {
 }
 
 int IMuseInternal::terminate() {
-	stop_all_sounds();
+	stopAllSounds();
 
 	if (_midi_adlib) {
 		_midi_adlib->close();
@@ -699,9 +699,9 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 		case 9:
 			return stopSound(a[1]);
 		case 10: // FIXME: Sam and Max - Not sure if this is correct
-			return stop_all_sounds();
+			return stopAllSounds();
 		case 11:
-			return stop_all_sounds();
+			return stopAllSounds();
 		case 12:
 			// Sam & Max: Player-scope commands
 			player = findActivePlayer(a[1]);
@@ -1756,9 +1756,9 @@ int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volum
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
 int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume(vol); out(); return ret; }
 int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
-bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound(sound); out(); return ret; }
-int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound(sound); out(); return ret; }
-int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
+void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
+void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
+int IMuse::stopAllSounds() { in(); int ret = _target->stopAllSounds(); out(); return ret; }
 int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
 bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
 int IMuse::getMusicTimer() { in(); int ret = _target->getMusicTimer(); out(); return ret; }
