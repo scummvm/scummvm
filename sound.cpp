@@ -367,7 +367,18 @@ void Scumm::startSfxSound(void *file) {
 }
 
 void *Scumm::openSfxFile() {
-	return fopen("monster.sou", "rb");
+	char buf[50];
+	FILE *file;
+
+	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
+	 * That way, you can keep .sou files for multiple games in the
+	 * same directory */
+
+	sprintf(buf, "%s.sou", _exe_name);
+	file = fopen(buf, "rb");
+	if (!file)
+		file = fopen("monster.sou", "rb");
+	return file;
 }
 
 #define NUM_MIXER 4
