@@ -538,7 +538,11 @@ void Scumm::loadRoomObjectsOldBundle() {
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	ptr = room + 29;
+	if (_features & GF_AFTER_V2)
+		ptr = room + 28;
+	else
+		ptr = room + 29;
+
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
@@ -980,7 +984,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
 	if (_features & GF_OLD_BUNDLE) {
-		searchptr = roomptr + 29;
+		if (_features & GF_AFTER_V2)
+			searchptr = roomptr + 28;
+		else
+			searchptr = roomptr + 29;
+
 		for (i = 0; i < numobj; i++) {
 			obimptr = roomptr + READ_LE_UINT16(searchptr);
 			obcdptr = roomptr + READ_LE_UINT16(searchptr + 2 * _numObjectsInRoom);

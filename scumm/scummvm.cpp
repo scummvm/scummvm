@@ -1096,7 +1096,7 @@ void Scumm::initRoomSubBlocks() {
 					// HACK: to determine the sizes of the local scripts, we assume that
 					// a) their order in the data file is the same as in the index
 					// b) the last script at the same time is the last item in the room "header"
-					int len = - _localScriptList[id - _numGlobalScripts] + _resourceHeaderSize;
+					int len = - (int)_localScriptList[id - _numGlobalScripts] + _resourceHeaderSize;
 					if (*ptr)
 						len += READ_LE_UINT16(ptr + 1);
 					else

@@ -478,7 +478,9 @@ void SkyState::showIntroText(uint32 *&cmdPtr) {
 	//save current screen contents
 	byte *savePtr = (byte *)_workScreen + startPos;
 
-	for (unsigned int i = 0; i < height; i++) {
+	uint i, j;
+
+	for (i = 0; i < height; i++) {
 		memcpy(saveBuf, savePtr, width);
 		saveBuf += width;
 		savePtr += GAME_SCREEN_WIDTH;
@@ -489,11 +491,11 @@ void SkyState::showIntroText(uint32 *&cmdPtr) {
 	byte *textBuf = _introTextSpace + sizeof(struct dataFileHeader);
 	byte *curPos = (byte *)_workScreen + startPos;
 
-	for (unsigned int i = 0; i < height; i++) {
+	for (i = 0; i < height; i++) {
 
 		byte *prevPos = curPos;
 
-		for (unsigned int j = 0; j < width; j++) {
+		for (j = 0; j < width; j++) {
 
 			uint8 pixel = *textBuf++;
 			if (pixel) 
