@@ -2924,8 +2924,8 @@ void Scumm_v6::o6_getDateTime() {
 
 void Scumm_v6::o6_unknownE1() {
 	// this opcode check ground area in minigame "Asteroid Lander" in the dig
-	int x = pop();
 	int y = pop();
+	int x = pop();
 
 	if (x > _realWidth - 1) {
 		push(-1);
@@ -2948,7 +2948,6 @@ void Scumm_v6::o6_unknownE1() {
 		return;
 	}
 
-	// FIXME: something is wrong, it take wrong position or wrong buffer check
 	int offset = (y - vs->topline) * _realWidth + x + _screenLeft;
 
 	byte area = *(getResourceAddress(rtBuffer, vs->number + 1) + offset);
