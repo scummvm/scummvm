@@ -497,7 +497,7 @@ simon games.
 
     Simon:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
-        Ctrl-f                 - Toggle slow mode
+        Ctrl-s                 - Toggle slow mode
         F1 - F3                - Text speed, faster - slower
         F10                    - Shows all characters and objects you can 
                                  interact with
