@@ -2054,7 +2054,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 	case GAME_SIMON2MAC:
-		if (speech_id != 0 && num_1 == 1)
+		if (speech_id != 0 && num_1 == 1 && !_subtitles)
 			talk_with_speech(speech_id, num_1);
 
 		if (speech_id != 0 && !_subtitles)

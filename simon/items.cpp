@@ -995,10 +995,17 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) 
 					d = _array_4[a];
 
-				if (d != 0)
-					talk_with_speech(d, b);
-				if (s != NULL && (d == 0 || _subtitles))
-					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
+				if (_game & GF_SIMON2) {
+					if (d != 0 && !_subtitles)
+						talk_with_speech(d, b);
+					else if (s != NULL)
+						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
+				} else {
+					if (d != 0)
+						talk_with_speech(d, b);
+					if (s != NULL && _subtitles)
+						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
+				}
 			}
 			break;
 
@@ -1286,7 +1293,8 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			talk_with_speech(var200, a);
+			if (!_subtitles)
+				talk_with_speech(var200, a);
 		}
 
 	}
