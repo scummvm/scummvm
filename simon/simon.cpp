@@ -3979,7 +3979,11 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 	vsp->image = 0;
 	vsp->base_color = base_color;
 	vsp->id = vga_sprite_id;
-	vsp->unk7 = vga_res;
+	if (!(_game & GF_SIMON2) &!(_game & GF_TALKIE))
+		vsp->unk7 = vga_res = vga_sprite_id / 100;
+	else
+		vsp->unk7 = vga_res;
+
 
 	for (;;) {
 		vpe = &_vga_buffer_pointers[vga_res];
@@ -4067,10 +4071,6 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	uint letters_per_row, len_div_3, num_of_rows;
 	uint m, n;
 	uint height;
-
-	// FIXME: Shows Dwarf Song subtitles in Dwarf Mine under simon1dos
-	if (!(_game & GF_SIMON2) && !(_game & GF_TALKIE) && (vga_sprite_id >= 100))
-		vga_sprite_id -= 100;
 
 	char_buf = print_str_buf;
 	string_ptr_3 = string_ptr_2 = string_ptr;
