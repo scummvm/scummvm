@@ -727,7 +727,7 @@ Scumm::~Scumm () {
 	delete _imuseDigital;
 	delete _playerV2;
 	delete _languageBuffer;
-	delete _audioNames;
+	free(_audioNames);
 
 	delete _costumeRenderer;
 
