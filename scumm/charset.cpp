@@ -197,6 +197,10 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 }
 
 // German Zak font (should work for US version too).
+#ifdef __PALM_OS__
+static byte *germanCharsetDataV2;
+static byte *frenchCharsetDataV2;
+#else
 static byte germanCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x03, 0x06, 0x0c, 0x18, 0x3e, 0x03, 0x00, 
@@ -459,7 +463,7 @@ static byte frenchCharsetDataV2[] = {
 	0x18, 0x24, 0x00, 0x66, 0x66, 0x66, 0x3e, 0x00, 
 	0x08, 0x0c, 0x0e, 0xff, 0xff, 0x0e, 0x0c, 0x08, 
 };
-
+#endif
 
 void CharsetRendererV2::setCurID(byte id) {
 
@@ -851,3 +855,14 @@ void CharsetRendererNut::printChar(int chr) {
 		_str.bottom = _top + height;
 }
 
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void Charset_initGlobals()		{	
+	GSETPTR(germanCharsetDataV2, GBVARS_GERMANCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
+	GSETPTR(frenchCharsetDataV2, GBVARS_FRENCHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
+}
+void Charset_releaseGlobals()	{
+	GRELEASEPTR(GBVARS_GERMANCHARSETDATAV2_INDEX, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_FRENCHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
+}
+#endif
