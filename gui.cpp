@@ -185,14 +185,14 @@ const GuiWidget keys_dialog[] = {
 };
 
 const GuiWidget about_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 135, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 240, 15, 0, 10},	// ScummVM Url
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 110, 20 + 10 + 15 + 5 + 15 + 15 + 15 + 15, 40, 15, 0, 21},	// Except:
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 25, 20 + 100, 210, 15, 0, 22},	// Adventuresoft
-	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 100, 20 + 112, 54, 16, 40, 9},
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 134, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 10 + 20, 160, 15, 0, 9},	// Build
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 10 + 35, 240, 15, 0, 10},	// ScummVM Url
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 10 + 65, 150, 15, 0, 11},	// Lucasarts
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 110, 10 + 80, 40, 15, 0, 21},	// Except:
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 25, 10 + 95, 210, 15, 0, 22},	// Adventuresoft
+	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 10 + 10, 100, 15, 0},
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 100, 10 + 112, 54, 16, 40, 9},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
