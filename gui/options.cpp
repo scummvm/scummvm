@@ -438,7 +438,7 @@ void GlobalOptionsDialog::close() {
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseSaveDirCmd:
-		if (_browser->runModal()) {
+		if (_browser->runModal() > 0) {
 			// User made his choice...
 			FilesystemNode *dir = _browser->getResult();
 			_savePath->setLabel(dir->path());

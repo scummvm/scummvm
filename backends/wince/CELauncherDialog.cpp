@@ -138,7 +138,7 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode *node) {
 
 void CELauncherDialog::addGame() {
 	MessageDialog alert("Do you want to perform an automatic scan ?", "Yes", "No");
-	if (alert.runModal() == 1 && _browser->runModal()) {
+	if (alert.runModal() == 1 && _browser->runModal() > 0) {
 			// Clear existing domains
 			ConfigManager::DomainMap &domains = (ConfigManager::DomainMap&)ConfMan.getGameDomains();
 			domains.clear();
