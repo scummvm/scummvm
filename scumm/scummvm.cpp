@@ -682,6 +682,10 @@ void Scumm::scummInit() {
 
 	if (_features & GF_AFTER_V2) {
 		initV2MouseOver();
+		// Seems in V2 there was only a single room effect (iris),
+		// so we set that here.
+		_switchRoomEffect2 = 1;
+		_switchRoomEffect = 1;
 	}
 	
 	if (_features & GF_AFTER_V2)
