@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.14  2002/04/18 21:40:23  tomjoad
+ * Reenable MorphOS Midi driver, small updates to CD open code (only when CD audio is requested) and start options
+ *
  * Revision 1.13  2002/04/12 21:26:34  strigeus
  * new video engine (expect broken non-sdl builds),
  * simon the sorcerer 1 & 2 support (non SCUMM games)
@@ -92,6 +95,10 @@
 
 #else
 
+#if defined(__MORPHOS__)
+#include <devices/timer.h>
+#undef CMD_INVALID
+#endif
 #if !defined(__APPLE__CW) && !(defined(__MWERKS__) && defined(macintosh))
 #include <sys/types.h>
 #include <sys/uio.h>

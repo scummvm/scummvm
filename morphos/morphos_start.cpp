@@ -40,13 +40,14 @@
 extern "C" struct WBStartup *_WBenchMsg;
 
 // For command line parsing
-static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,MIDIUNIT/K/N,NOMUSIC/S,VOLUME/K/N,TEMPO/K/N,ROLANDEMU/S,NOSUBTITLES=NST/S";
-typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_MIDIUNIT,	USG_NOMUSIC,	USG_VOLUME,		USG_TEMPO,	 USG_ROLANDEMU, USG_NOSUBTITLES } usageFields;
-static LONG	  args[ 10 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	 (ULONG)NULL, 	 false,			 (ULONG)NULL,	 (ULONG)NULL, false, false };
+static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,VOLUME/K/N,TEMPO/K/N,ROLANDEMU/S,NOSUBTITLES=NST/S";
+typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_VOLUME,	 USG_TEMPO,	  USG_ROLANDEMU, USG_NOSUBTITLES } usageFields;
+static LONG	  args[ 11 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL,	 (ULONG)NULL, false, false };
 static struct RDArgs *ScummArgs = NULL;
 
 static char*ScummStory = NULL;
 static char*ScummPath = NULL;
+static STRPTR ScummMusicDriver = NULL;
 static LONG ScummMidiUnit = 0;
 static LONG ScummMidiVolume = 0;
 static LONG ScummMidiTempo = 0;
@@ -108,7 +109,17 @@ void close_resources()
 		CloseLibrary( CyberGfxBase );
 }
 
-void ReadToolTypes( struct WBArg *OfFile )
+static STRPTR FindMusicDriver( STRPTR argval )
+{
+	if( !stricmp( argval, "off" ) )   return "-enull";
+	if( !stricmp( argval, "midi" ) )	 return "-eamidi";
+	if( !stricmp( argval, "adlib" ) ) return "-eadlib";
+
+	error( "No such music driver supported. Possible values are off, Midi and Adlib." );
+	return NULL;
+}
+
+static void ReadToolTypes( struct WBArg *OfFile )
 {
 	struct DiskObject *dobj;
 	char 	*ToolValue;
@@ -157,10 +168,12 @@ void ReadToolTypes( struct WBArg *OfFile )
 
 	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MUSIC" ) )
 	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_NOMUSIC ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_NOMUSIC ] = TRUE;
+		if( !(ScummMusicDriver = FindMusicDriver( ToolValue )) )
+		{
+			FreeDiskObject( dobj );
+			exit( 1 );
+		}
+		args[ USG_MUSIC ] = (ULONG)&ScummMusicDriver;
 	}
 
 	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MIDIUNIT" ) )
@@ -198,6 +211,14 @@ void ReadToolTypes( struct WBArg *OfFile )
 			args[ USG_NOSUBTITLES ] = TRUE;
 	}
 
+	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "AMIGA" ) )
+	{
+		if( MatchToolValue( ToolValue, "YES" ) )
+			args[ USG_AMIGA ] = FALSE;
+		else if( MatchToolValue( ToolValue, "NO" ) )
+			args[ USG_AMIGA ] = TRUE;
+	}
+
 	FreeDiskObject( dobj );
 }
 
@@ -207,7 +228,7 @@ int main()
 {
 	int delta;
 	int last_time, new_time;
-	char *argv[ 10 ];
+	char *argv[ 15 ];
 	char volume[ 6 ], tempo[ 12 ], scaler[ 14 ];
 	char *SVMScalers[] = { "", "normal", "2x", "supereagle", "super2xsai" };
 	int argc = 0;
@@ -253,6 +274,12 @@ int main()
 				exit( 1 );
 		}
 
+		if( args[ USG_MUSIC ] )
+		{
+			if( !(ScummMusicDriver = FindMusicDriver( (char *)args[ USG_MUSIC ] )) )
+				exit( 1 );
+		}
+
 		if( args[ USG_MIDIUNIT ] )
 			ScummMidiUnit = *((LONG *)args[ USG_MIDIUNIT ]);
 
@@ -286,6 +313,8 @@ int main()
 	if( !args[ USG_WBWINDOW ]   ) argv[ argc++ ] = "-f";
 	if( args[ USG_NOSUBTITLES ] ) argv[ argc++ ] = "-n";
 	if( args[ USG_ROLANDEMU ] 	 ) argv[ argc++ ] = "-r";
+	if( args[ USG_AMIGA ]		 ) argv[ argc++ ] = "-a";
+	if( args[ USG_MUSIC ]	    ) argv[ argc++ ] = ScummMusicDriver;
 	if( ScummGfxScaler != OSystem_MorphOS::ST_INVALID )
 	{
 		sprintf( scaler, "-g%s", SVMScalers[ (int)ScummGfxScaler ] );

@@ -4219,6 +4219,7 @@ void IMuseGM::part_key_off(Part *part, byte note)
 	}
 }
 
+#if !defined(__MORPHOS__)
 int IMuseGM::midi_driver_thread(void *param) {
 	IMuseGM *mid = (IMuseGM*) param;
 	int old_time, cur_time;
@@ -4235,6 +4236,53 @@ int IMuseGM::midi_driver_thread(void *param) {
 		}
 	}
 }
+#else
+#include <exec/semaphores.h>
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include "../morphos/morphos.h"
+int IMuseGM::midi_driver_thread( void *param )
+{
+	IMuseGM *mid = (IMuseGM*) param;
+	int old_time, cur_time;
+	bool initialized;
+
+	ObtainSemaphore( &ScummMusicThreadRunning );
+
+	initialized = init_morphos_music( 0 );
+
+	old_time = mid->_system->get_msecs();
+
+	if( !initialized )
+		Wait( SIGBREAKF_CTRL_C );
+	else
+	{
+		for(;;)
+		{
+			MusicTimerIORequest->tr_time.tv_micro = 10000;
+			MusicTimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
+			MusicTimerIORequest->tr_time.tv_secs  = 0;
+			DoIO( (struct IORequest *)MusicTimerIORequest );
+
+			if( CheckSignal( SIGBREAKF_CTRL_C ) )
+				break;
+
+			cur_time = mid->_system->get_msecs();
+			while (old_time < cur_time)
+			{
+				old_time += 10;
+				mid->_se->on_timer();
+			}
+		}
+	}
+
+	exit_morphos_music();
+
+	ReleaseSemaphore( &ScummMusicThreadRunning );
+	RemTask( NULL );
+	return 0;
+}
+#endif
 
 void IMuseGM::init(IMuse *eng, OSystem *syst)
 {

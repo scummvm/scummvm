@@ -446,6 +446,9 @@ MidiDriver *GameDetector::createMidi() {
 #ifdef WIN32
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif
+#ifdef __MORPHOS__
+	case MD_AMIDI:		return MidiDriver_AMIDI_create();
+#endif
 	}
 
 	error("Invalid midi driver selected");

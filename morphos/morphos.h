@@ -188,10 +188,15 @@ class OSystem_MorphOS : public OSystem
 };
 
 int morphos_sound_thread( OSystem_MorphOS *syst, ULONG SampleType );
+bool init_morphos_music( ULONG MidiUnit );
+void exit_morphos_music();
 
 int morphos_main( int argc, char *argv[] );
 
 extern OSystem_MorphOS *TheSystem;
 extern struct SignalSemaphore ScummMusicThreadRunning;
 extern struct SignalSemaphore ScummSoundThreadRunning;
+
+extern struct IOMidiRequest *ScummMidiRequest;
+extern struct timerequest   *MusicTimerIORequest;
 

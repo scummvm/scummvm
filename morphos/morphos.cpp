@@ -220,15 +220,16 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
 
 void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 {
-/*	  MyEmulFunc.Trap      = TRAP_FUNC;
-	MyEmulFunc.Address	= (ULONG)proc;
-	MyEmulFunc.StackSize	= 8192;
-	MyEmulFunc.Extension	= 0;
-	MyEmulFunc.Arg1	   = (ULONG)param;
-	MyEmulFunc.Arg2	   = (ULONG)ScummMidiUnit;
-	MyEmulFunc.Arg3	   = (ULONG)args[ USG_NOMUSIC ];
-	ScummMusicThread = CreateNewProc( musicProcTags );*/
-	return NULL;
+	static EmulFunc ThreadEmulFunc;
+
+	ThreadEmulFunc.Trap      = TRAP_FUNC;
+	ThreadEmulFunc.Address	 = (ULONG)proc;
+	ThreadEmulFunc.StackSize = 16000;
+	ThreadEmulFunc.Extension = 0;
+	ThreadEmulFunc.Arg1	    = (ULONG)param;
+	musicProcTags[ 0 ].ti_Data = (ULONG)&ThreadEmulFunc;
+	ScummMusicThread = CreateNewProc( musicProcTags );
+	return ScummMusicThread;
 }
 
 uint32 OSystem_MorphOS::property(int param, uint32 value)
@@ -246,32 +247,35 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 			return 1;
 
 		case PROP_OPEN_CD:
-			FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
-			if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
-			if( CDDABase )
+			if( value )
 			{
-				CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
-				if( CDrive )
+				FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
+				if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
+				if( CDDABase )
 				{
-					if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
+					CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
+					if( CDrive )
 					{
-						CDrive = NULL;
-						warning( "Failed to obtain CD drive - music will not play" );
-					}
-					else if( GameID == GID_LOOM256 )
-					{
-						// Offset correction *may* be required
-						struct CDS_TrackInfo ti;
+						if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
+						{
+							CDrive = NULL;
+							warning( "Failed to obtain CD drive - music will not play" );
+						}
+						else if( GameID == GID_LOOM256 )
+						{
+							// Offset correction *may* be required
+							struct CDS_TrackInfo ti;
 
-						if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
-							CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
+							if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
+								CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
+						}
 					}
+					else
+						warning( "Could not find game CD inserted in CD-ROM drive - cd audio will not play" );
 				}
 				else
-					warning( "Could not find game CD inserted in CD-ROM drive - cd audio will not play" );
+					warning( "Failed to open cdda.library - cd audio will not play" );
 			}
-			else
-				warning( "Failed to open cdda.library - cd audio will not play" );
 			break;
 
 		case PROP_SHOW_DEFAULT_CURSOR:

@@ -26,10 +26,6 @@
  * MorphOS support by Ruediger Hanke 
  */
 
-#ifdef __MORPHOS__
-#include <devices/timer.h>
-#endif
-
 #include "stdafx.h"
 #include "scumm.h"
 #include "mididrv.h"
@@ -268,6 +264,88 @@ MidiDriver *MidiDriver_WIN_create() {
 }
 
 #endif // WIN32
+
+#ifdef __MORPHOS__
+#include <exec/types.h>
+#include <devices/amidi.h>
+
+#include <clib/alib_protos.h>
+#include <proto/exec.h>
+
+extern struct IOMidiRequest *ScummMidiRequest;
+
+/* MorphOS MIDI driver */
+class MidiDriver_AMIDI : public MidiDriver {
+public:
+	void destroy();
+	int open(int mode);
+	void close();
+	void send(uint32 b);
+	void pause(bool pause);
+	void set_stream_callback(void *param, StreamCallback *sc);
+
+private:
+	StreamCallback *_stream_proc;
+	void  *_stream_param;
+	int 	 _mode;
+	uint16 _time_div;
+
+	uint32 property(int prop, uint32 param);
+};
+
+void MidiDriver_AMIDI::set_stream_callback(void *param, StreamCallback *sc) {
+	_stream_param = param;
+	_stream_proc = sc;
+}
+
+void MidiDriver_AMIDI::destroy() {
+	close();
+	delete this;
+}
+
+int MidiDriver_AMIDI::open(int mode) {
+	_mode = mode;
+	return 0;
+}
+
+void MidiDriver_AMIDI::close() {
+	_mode = 0;
+}
+
+void MidiDriver_AMIDI::send(uint32 b) {
+	if (_mode != MO_SIMPLE)
+		error("MidiDriver_AMIDI:send called but driver is not in simple mode");
+
+	if (ScummMidiRequest) {
+		ULONG midi_data = b;				// you never know about an int's size ;-)
+		ScummMidiRequest->amr_Std.io_Command = CMD_WRITE;
+		ScummMidiRequest->amr_Std.io_Data = &midi_data;
+		ScummMidiRequest->amr_Std.io_Length = 4;
+		DoIO((struct IORequest *)ScummMidiRequest);
+	}
+}
+
+void MidiDriver_AMIDI::pause(bool pause) {
+	if (_mode == MO_STREAMING) {
+	}
+}
+
+uint32 MidiDriver_AMIDI::property(int prop, uint32 param) {
+	switch(prop) {
+	/* 16-bit time division according to standard midi specification */
+	case PROP_TIMEDIV:
+		_time_div = (uint16)param;
+		return 1;
+	}
+
+	return 0;
+}
+
+MidiDriver *MidiDriver_AMIDI_create() {
+	return new MidiDriver_AMIDI();
+}
+
+#endif // __MORPHOS__
 
 
 /* NULL driver */

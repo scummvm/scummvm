@@ -25,6 +25,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "imuse.h"
 
 #include <dos/dos.h>
 #include <exec/memory.h>
@@ -53,38 +55,64 @@ static char					  *ahiBuf[ 2 ]		 = { NULL, NULL };
 
 static struct MsgPort 		 *ScummMidiPort = NULL;
 		 struct IOMidiRequest *ScummMidiRequest = NULL;
+static struct MsgPort       *MusicTimerMsgPort = NULL;
+		 struct timerequest   *MusicTimerIORequest = NULL;
 
-bool init_morphos_music( ULONG MidiUnit, bool NoMusic )
+bool init_morphos_music( ULONG MidiUnit )
 {
-	if( !NoMusic )
+	ScummMidiPort = CreateMsgPort();
+	if( ScummMidiPort )
 	{
-		ScummMidiPort = CreateMsgPort();
-		if( ScummMidiPort )
+		ScummMidiRequest = (struct IOMidiRequest *)CreateIORequest( ScummMidiPort, sizeof( struct IOMidiRequest ) );
+		if( ScummMidiRequest )
 		{
-			ScummMidiRequest = (struct IOMidiRequest *)CreateIORequest( ScummMidiPort, sizeof( struct IOMidiRequest ) );
-			if( ScummMidiRequest )
+			ScummMidiRequest->amr_Version = 2;
+			if( OpenDevice( "amidi.device", MidiUnit, (struct IORequest *)ScummMidiRequest, AMIDIF_MIDISERVER ) )
 			{
-				ScummMidiRequest->amr_Version = 2;
-				if( OpenDevice( "amidi.device", MidiUnit, (struct IORequest *)ScummMidiRequest, AMIDIF_MIDISERVER ) )
-				{
-					DeleteIORequest( (struct IORequest *)ScummMidiRequest );
-					DeleteMsgPort( ScummMidiPort );
-					ScummMidiRequest = NULL;
-					ScummMidiPort = NULL;
-				}
-			}
-			else
-			{
+				DeleteIORequest( (struct IORequest *)ScummMidiRequest );
 				DeleteMsgPort( ScummMidiPort );
+				ScummMidiRequest = NULL;
 				ScummMidiPort = NULL;
 			}
 		}
-
-		if( !ScummMidiRequest )
+		else
 		{
-			warning( "Could not open AMidi - music will not play" );
-			return false;
+			DeleteMsgPort( ScummMidiPort );
+			ScummMidiPort = NULL;
 		}
+	}
+
+	if( !ScummMidiRequest )
+	{
+		warning( "Could not open AMidi - music will not play" );
+		return false;
+	}
+
+	MusicTimerMsgPort = CreateMsgPort();
+	if( MusicTimerMsgPort )
+	{
+		MusicTimerIORequest = (struct timerequest *)CreateIORequest( MusicTimerMsgPort, sizeof( struct timerequest ) );
+		if( MusicTimerIORequest )
+		{
+			if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)MusicTimerIORequest, 0 ) )
+			{
+				DeleteIORequest( (struct IORequest *)MusicTimerIORequest );
+				DeleteMsgPort( MusicTimerMsgPort );
+				MusicTimerIORequest = NULL;
+				MusicTimerMsgPort = NULL;
+			}
+		}
+		else
+		{
+			DeleteMsgPort( MusicTimerMsgPort );
+			MusicTimerMsgPort = NULL;
+		}
+	}
+
+	if( !MusicTimerIORequest )
+	{
+		warning( "Could not open timer device - music will not play" );
+		return false;
 	}
 
 	return true;
@@ -98,6 +126,13 @@ void exit_morphos_music()
 		CloseDevice( (struct IORequest *)ScummMidiRequest );
 		DeleteIORequest( (struct IORequest *)ScummMidiRequest );
 		DeleteMsgPort( ScummMidiPort );
+	}
+
+	if( MusicTimerIORequest )
+	{
+		CloseDevice( (struct IORequest *)MusicTimerIORequest );
+		DeleteIORequest( (struct IORequest *)MusicTimerIORequest );
+		DeleteMsgPort( MusicTimerMsgPort );
 	}
 }
 
@@ -176,91 +211,6 @@ static void exit_morphos_sound()
 	if( ahiPort )
 		DeleteMsgPort( ahiPort );
 }
-
-
-int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
-{
-#if 0
-	int  old_time, cur_time;
-	bool initialized;
-   bool TimerAvailable = false;
-	struct MsgPort     *TimerMsgPort;
-	struct timerequest *TimerIORequest;
-
-	ObtainSemaphore( &ScummMusicThreadRunning );
-
-	initialized = init_morphos_music( MidiUnit, NoMusic );
-	if( !initialized )
-		warning( "Sound could not be initialized" );
-
-	TimerMsgPort = CreateMsgPort();
-	if( TimerMsgPort )
-	{
-		TimerIORequest = (struct timerequest *)CreateIORequest( TimerMsgPort, sizeof( struct timerequest ) );
-		if( TimerIORequest )
-		{
-			if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)TimerIORequest, 0 ) == 0 )
-				TimerAvailable = true;
-			else
-			{
-				DeleteIORequest( (struct IORequest *)TimerIORequest );
-				DeleteMsgPort( TimerMsgPort );
-			}
-		}
-		else
-			DeleteMsgPort( TimerMsgPort );
-	}
-
-	if( !TimerAvailable )
-	{
-		warning( "ScummVM Music Thread: no timer available! Sound and music will be disabled" );
-		Wait( SIGBREAKF_CTRL_F );
-	}
-	else
-	{
-		old_time = 0;//GetTicks();
-
-		for(;;)
-		{
-			if( CheckSignal( SIGBREAKF_CTRL_F ) )
-				break;
-
-/*			  if( !snd_driv.wave_based() )
-			{
-				cur_time = GetTicks();
-				while( old_time < cur_time )
-				{
-					old_time += 10;
-					sound.on_timer();
-				}*/
-/*				  TimerIORequest->tr_time.tv_micro = (old_time-cur_time)*1000;
-				if( TimerIORequest->tr_time.tv_micro == 0 )
-					TimerIORequest->tr_time.tv_micro = 100;*/
-/*				  TimerIORequest->tr_time.tv_micro = 10000;
-			}
-			else
-				TimerIORequest->tr_time.tv_micro = 10000;*/
-
-			TimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
-			TimerIORequest->tr_time.tv_secs  = 0;
-			DoIO( (struct IORequest *)TimerIORequest );
-		}
-	}
-
-	if( TimerAvailable )
-	{
-		CloseDevice( (struct IORequest *)TimerIORequest );
-		DeleteIORequest( (struct IORequest *)TimerIORequest );
-		DeleteMsgPort( TimerMsgPort );
-	}
-
-	exit_morphos_music();
-
-	ReleaseSemaphore( &ScummMusicThreadRunning );
-	return 0;
-#endif
-}
-
 
 int morphos_sound_thread( OSystem_MorphOS *syst, ULONG SampleType )
 {
