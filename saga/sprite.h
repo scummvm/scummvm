@@ -40,21 +40,21 @@ namespace Saga {
 
 #define R_DECODE_BUF_LEN 64000
 
-typedef struct R_SPRITELIST_ENTRY_tag {
+struct R_SPRITELIST_ENTRY {
 
 	int x_align;
 	int y_align;
 	int width;
 	int height;
 
-} R_SPRITELIST_ENTRY;
+};
 
-typedef struct R_SPRITELIST_OFFSET_tag {
+struct R_SPRITELIST_OFFSET {
 
 	uint data_idx;
 	size_t offset;
 
-} R_SPRITELIST_OFFSET;
+};
 
 struct R_SPRITELIST_tag {
 
@@ -68,7 +68,7 @@ struct R_SPRITELIST_tag {
 
 };
 
-typedef struct R_SPRITE_MODULE_tag {
+struct R_SPRITE_MODULE {
 
 	int init;
 
@@ -77,7 +77,7 @@ typedef struct R_SPRITE_MODULE_tag {
 	uchar *decode_buf;
 	size_t decode_buf_len;
 
-} R_SPRITE_MODULE;
+};
 
 int
 DecodeRLESprite(const uchar * inbuf,

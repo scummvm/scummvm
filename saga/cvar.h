@@ -35,45 +35,45 @@ namespace Saga {
 
 #define R_CVAR_HASHLEN 32
 
-typedef struct R_SUBCVAR_INT_tag {
+struct R_SUBCVAR_INT {
 
 	cv_int_t *var_p;
 	cv_int_t ubound;
 	cv_int_t lbound;
 
-} R_SUBCVAR_INT;
+};
 
-typedef struct R_SUBCVAR_UINT_tag {
+struct R_SUBCVAR_UINT {
 
 	cv_uint_t *var_p;
 	cv_uint_t ubound;
 	cv_uint_t lbound;
 
-} R_SUBCVAR_UINT;
+};
 
-typedef struct R_SUBCVAR_FLOAT_tag {
+struct R_SUBCVAR_FLOAT {
 
 	cv_float_t *var_p;
 	cv_float_t ubound;
 	cv_float_t lbound;
 
-} R_SUBCVAR_FLOAT;
+};
 
-typedef struct R_SUBCVAR_STRING_tag {
+struct R_SUBCVAR_STRING {
 
 	cv_char_t *var_str;
 	int ubound;
 
-} R_SUBCVAR_STRING;
+};
 
-typedef struct R_SUBCVAR_FUNC_tag {
+struct R_SUBCVAR_FUNC {
 
 	cv_func_t func_p;
 	const char *func_argstr;
 	int min_args;
 	int max_args;
 
-} R_SUBCVAR_FUNC;
+};
 
 typedef struct R_CVAR_tag {
 

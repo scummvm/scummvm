@@ -34,8 +34,8 @@
 
 namespace Saga {
 
-#define R_SCRIPT_DATABUF_NUM 5U
-#define R_SCRIPT_DATABUF_LEN 1024U
+#define R_SCRIPT_DATABUF_NUM 5
+#define R_SCRIPT_DATABUF_LEN 1024
 
 int SDATA_Init(void);
 

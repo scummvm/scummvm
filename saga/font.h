@@ -55,15 +55,15 @@ namespace Saga {
 
 #define SAGA_FONT_HEADER_LEN 6
 
-typedef struct R_FONT_HEADER_tag {
+struct R_FONT_HEADER {
 
 	int c_height;
 	int c_width;
 	int row_length;
 
-} R_FONT_HEADER;
+};
 
-typedef struct FONT_CHAR_ENTRY_TAG {
+struct FONT_CHAR_ENTRY {
 
 	int index;
 	int byte_width;
@@ -71,9 +71,9 @@ typedef struct FONT_CHAR_ENTRY_TAG {
 	int flag;
 	int tracking;
 
-} FONT_CHAR_ENTRY;
+};
 
-typedef struct R_FONT_STYLE_tag {
+struct R_FONT_STYLE {
 
 	R_FONT_HEADER hdr;
 	FONT_CHAR_ENTRY fce[256];
@@ -81,9 +81,9 @@ typedef struct R_FONT_STYLE_tag {
 	uchar *font_free_p;
 	uchar *font_p;
 
-} R_FONT_STYLE;
+};
 
-typedef struct R_FONT_tag {
+struct R_FONT {
 
 	ulong font_rn;
 	int font_id;
@@ -96,9 +96,9 @@ typedef struct R_FONT_tag {
 	uchar *res_data;
 	size_t res_len;
 
-} R_FONT;
+};
 
-typedef struct R_FONT_MODULE_tag {
+struct R_FONT_MODULE {
 
 	int init;
 
@@ -110,7 +110,7 @@ typedef struct R_FONT_MODULE_tag {
 	int err_n;
 	const char *err_str;
 
-} R_FONT_MODULE;
+};
 
 int FONT_Load(ulong font_rn, int font_id);
 

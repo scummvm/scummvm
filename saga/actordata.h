@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-typedef struct R_ACTORTABLE_tag {
+struct R_ACTORTABLE {
 
 	int name_index;
 	int unknown1;
@@ -48,7 +48,7 @@ typedef struct R_ACTORTABLE_tag {
 	unsigned char unknown7;
 	unsigned char unknown8;
 
-} R_ACTORTABLE;
+};
 
 #define R_ACTORCOUNT 181
 

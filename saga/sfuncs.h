@@ -43,13 +43,13 @@ namespace Saga {
 
 typedef int (*SFunc_T) (R_SCRIPTFUNC_PARAMS);
 
-typedef struct R_SFUNC_ENTRY_tag {
+struct R_SFUNC_ENTRY {
 
 	int sfunc_num;
 	int sfunc_argc;
 	SFunc_T sfunc_fp;
 
-} R_SFUNC_ENTRY;
+};
 
 extern R_SFUNC_ENTRY SFuncList[];
 

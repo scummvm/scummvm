@@ -52,14 +52,14 @@ namespace Saga {
 #define S_ERROR_PREFIX "SError: "
 #define S_WARN_PREFIX "SWarning: "
 
-typedef struct R_PROC_TBLENTRY_tag {
+struct R_PROC_TBLENTRY {
 
 	size_t name_offset;
 	size_t offset;
 
-} R_PROC_TBLENTRY;
+};
 
-typedef struct R_SCRIPT_BYTECODE_tag {
+struct R_SCRIPT_BYTECODE {
 
 	unsigned char *bytecode_p;
 	size_t bytecode_len;
@@ -68,48 +68,48 @@ typedef struct R_SCRIPT_BYTECODE_tag {
 	unsigned long n_entrypoints;
 	R_PROC_TBLENTRY *entrypoints;
 
-} R_SCRIPT_BYTECODE;
+};
 
-typedef struct R_DIALOGUE_LIST_tag {
+struct R_DIALOGUE_LIST {
 
 	unsigned int n_dialogue;
-	char **str;
+	const char **str;
 	size_t *str_off;
 
-} R_DIALOGUE_LIST;
+};
 
-typedef struct R_VOICE_LUT_tag {
+struct R_VOICE_LUT {
 
 	int n_voices;
 	int *voices;
 
-} R_VOICE_LUT;
+};
 
-typedef struct R_SCRIPTDATA_tag {
+struct R_SCRIPTDATA {
 
 	int loaded;
 	R_SCRIPT_BYTECODE *bytecode;
 	R_DIALOGUE_LIST *diag;
 	R_VOICE_LUT *voice;
 
-} R_SCRIPTDATA;
+};
 
-typedef struct R_SCRIPT_LUT_ENTRY_tag {
+struct R_SCRIPT_LUT_ENTRY {
 
 	int script_rn;
 	int diag_list_rn;
 	int voice_lut_rn;
 
-} R_SCRIPT_LUT_ENTRY;
+};
 
-typedef struct R_SCRIPT_DATABUF_tag {
+struct R_SCRIPT_DATABUF {
 
 	SDataWord_T *data;
 	int len;
 
-} R_SCRIPT_DATABUF;
+};
 
-typedef struct R_SCRIPT_MODULE_tag {
+struct R_SCRIPT_MODULE {
 
 	int initialized;
 
@@ -129,11 +129,11 @@ typedef struct R_SCRIPT_MODULE_tag {
 	R_SCRIPT_THREAD *dbg_thread;
 	R_TEXTLIST_ENTRY *dbg_txtentry;
 
-} R_SCRIPT_MODULE;
+};
 
 extern R_SCRIPT_MODULE ScriptModule;
 
-R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(const uchar * bytecode_p,
+R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
     size_t bytecode_len);
 
 R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,

@@ -48,7 +48,7 @@ namespace Saga {
 
 R_CVAR *CVHashTbl[R_CVAR_HASHLEN];
 
-char *CVAR_ErrMsg[] = {
+static const char *CVAR_ErrMsg[] = {
 
 	"No Error",
 	"Not implememented.",
@@ -82,7 +82,7 @@ enum CVAR_Errors {
 
 static enum CVAR_Errors CVAR_ErrorState;
 
-int CVAR_GetError(char **err_str)
+int CVAR_GetError(const char **err_str)
 /****************************************************************************\
  Returns the appropriate cvar error string
 \****************************************************************************/

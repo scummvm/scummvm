@@ -59,16 +59,6 @@ typedef int (YS_COMPARE_FUNC) (const void *, const void *);
 #define YS_FLEX_ARRAY
 #define YS_FLEX_ARRAY_MOD 0
 
-/* Minimum and maximum of two values */
-#define YS_MIN(a,b) (((a) < (b)) ? (a) : (b))
-#define YS_MAX(a,b) (((a) > (b)) ? (a) : (b))
-
-/* Minimum and maximum of two objects, convert to lvalue */
-#define YS_LV_MIN(a,b) (*((a) < (b)) ? &(a) : &(b))
-#define YS_LV_MAX(a,b) (*((a) < (b)) ? &(a) : &(b))
-
-#define YS_ABS(n) ((n < 0) ? -n : n)
-
 /* ys_binread.c : Binary input functions (buffer oriented)
 \*------------------------------------------------------------------*/
 
@@ -162,10 +152,6 @@ void ys_write_s32_be(long, unsigned char *, unsigned char **);
 /* Write 32 bit signed integer, 2's complement, little-endian */
 void ys_write_s32_le(long, unsigned char *, unsigned char **);
 
-
-/* ys_file.c     : File management functions
-\*------------------------------------------------------------------*/
-int ys_get_filesize(FILE *, unsigned long *, int *);
 
 /* Shared declarations for list modules
 \*------------------------------------------------------------------*/

@@ -55,20 +55,20 @@ enum R_ACTOR_INTENTS {
 	INTENT_SPEAK = 2
 };
 
-typedef struct R_ACTORACTIONITEM_tag {
+struct R_ACTORACTIONITEM {
 
 	int frame_index;
 	int frame_count;
 
-} R_ACTORACTIONITEM;
+};
 
-typedef struct R_ACTORACTION_tag {
+struct R_ACTORACTION {
 
 	R_ACTORACTIONITEM dir[4];
 
-} R_ACTORACTION;
+};
 
-typedef struct R_WALKINTENT_tag {
+struct R_WALKINTENT {
 
 	int wi_active;
 	uint wi_flags;
@@ -85,17 +85,19 @@ typedef struct R_WALKINTENT_tag {
 
 	int sem_held;
 	R_SEMAPHORE *sem;
+	
+	R_WALKINTENT() { memset(this, 0, sizeof(*this)); }
 
-} R_WALKINTENT;
+};
 
-typedef struct R_WALKNODE_tag {
+struct R_WALKNODE {
 
 	int calc_flag;
 	R_POINT node_pt;
 
-} R_WALKNODE;
+};
 
-typedef struct R_SPEAKINTENT_tag {
+struct R_SPEAKINTENT {
 
 	int si_init;
 	uint si_flags;
@@ -103,19 +105,21 @@ typedef struct R_SPEAKINTENT_tag {
 
 	YS_DL_LIST *si_diaglist;	/* Actor dialogue list */
 
-} R_SPEAKINTENT;
+};
 
-typedef struct R_ACTORINTENT_tag {
+struct R_ACTORINTENT {
 
 	int a_itype;
 	uint a_iflags;
 	int a_idone;
 
 	void *a_data;
+	
+	R_ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 
-} R_ACTORINTENT;
+};
 
-typedef struct R_ACTOR_tag {
+struct R_ACTOR {
 
 	int id;			/* Actor id */
 	int name_i;		/* Actor's index in actor name string list */
@@ -157,29 +161,33 @@ typedef struct R_ACTOR_tag {
 	int action_ct;		/* Number of actions in the action LUT */
 
 	YS_DL_NODE *node;	/* Actor's node in the actor list */
+	
+	R_ACTOR() { memset(this, 0, sizeof(*this)); }
 
-} R_ACTOR;
+};
 
-typedef struct R_ACTORDIALOGUE_tag {
+struct R_ACTORDIALOGUE {
 
 	int d_playing;
-	char *d_string;
+	const char *d_string;
 	uint d_voice_rn;
 
 	long d_time;
 	int d_sem_held;
 	R_SEMAPHORE *d_sem;
+	
+	R_ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
 
-} R_ACTORDIALOGUE;
+};
 
-typedef struct R_ACTIONTIMES_tag {
+struct R_ACTIONTIMES {
 
 	int action;
 	int time;
 
-} R_ACTIONTIMES;
+};
 
-typedef struct R_ACTOR_MODULE_tag {
+struct R_ACTOR_MODULE {
 
 	int init;
 
@@ -194,7 +202,7 @@ typedef struct R_ACTOR_MODULE_tag {
 	int err_n;
 	const char *err_str;
 
-} R_ACTOR_MODULE;
+};
 
 R_ACTOR *LookupActor(int index);
 

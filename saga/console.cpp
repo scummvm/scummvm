@@ -51,10 +51,15 @@ static R_CONSOLEINFO ConInfo = {
 	0,
 	R_CON_DEFAULTPOS,
 	R_CON_DEFAULTLINES,
-	R_CON_DEFAULTCMDS
+	R_CON_DEFAULTCMDS,
+	0,
+	0,
+	0,
+	0,
+	0,
+	"",
+	0
 };
-
-static char InputBuf[R_CON_INPUTBUF_LEN];
 
 static R_CON_SCROLLBACK ConScrollback;
 static R_CON_SCROLLBACK ConHistory;
@@ -158,8 +163,8 @@ int CON_Type(int in_char)
 	char *rvalue = NULL;
 	R_CVAR_P con_cvar = NULL;
 
-	char *expr_err;
-	char *err_str;
+	const char *expr_err;
+	const char *err_str;
 
 	if (ConInfo.y_pos != ConInfo.y_max) {
 		/* Ignore keypress until console fully down */

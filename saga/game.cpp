@@ -73,7 +73,7 @@ R_GAME_FONTDESC ITEDEMO_GameFonts[] = {
 
 R_GAME_SOUNDINFO ITEDEMO_GameSound = {
 
-	R_GAME_SOUND_VOC
+	R_GAME_SOUND_VOC, 0, 0, 0
 };
 
 /*--------------------------------------------------------------------------*\
@@ -108,7 +108,7 @@ R_GAME_RESOURCEDESC ITE_Resources = {
 
 R_GAME_SOUNDINFO ITE_GameSound = {
 
-	R_GAME_SOUND_VOC
+	R_GAME_SOUND_VOC, 0, 0, 0
 };
 
 /*--------------------------------------------------------------------------*\
@@ -216,7 +216,7 @@ R_GAME_RESOURCEDESC IHNM_Resources[] = {
 
 R_GAME_SOUNDINFO IHNM_GameSound = {
 
-	R_GAME_SOUND_WAV
+	R_GAME_SOUND_WAV, 0, 0, 0
 };
 
 R_GAMEDESC GameDescs[] = {
@@ -542,8 +542,6 @@ int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param)
 
 int DetectGame(const char *game_dir, uint * game_n_p)
 {
-	char game_fpath[R_GAME_PATH_LIMIT] = { 0 };
-
 	uint game_count = YS_NELEMS(GameDescs);
 	uint game_n;
 
@@ -554,7 +552,6 @@ int DetectGame(const char *game_dir, uint * game_n_p)
 
 	int file_missing = 0;
 	int found_game = 0;
-	int error;
 
 	if ((game_dir == NULL) || (game_n_p == NULL)) {
 
@@ -614,7 +611,6 @@ int LoadGame(const char *game_dir, uint game_n)
 
 	uint game_count = YS_NELEMS(GameDescs);
 
-	char game_fpath[R_GAME_PATH_LIMIT] = { 0 };
 	const char *game_fname;
 	uint game_filect;
 
@@ -758,8 +754,6 @@ int Verify_ITEDISK(const char *game_dir)
 {
 
 	R_RSCFILE_CONTEXT *test_ctx;
-
-	char fpath[R_GAME_PATH_LIMIT] = { 0 };
 
 	ulong script_lut_len;
 	ulong script_lut_rn;

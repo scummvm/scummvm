@@ -58,9 +58,9 @@ namespace Saga {
 
 R_SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 
-	{30, SAGA_BG_IMAGE}
+	{30, SAGA_BG_IMAGE, 0, 0}
 	,
-	{31, SAGA_ANIM_1}
+	{31, SAGA_ANIM_1, 0, 0}
 };
 
 R_SCENE_DESC IHNM_IntroMovie1Desc = {
@@ -73,9 +73,9 @@ R_SCENE_DESC IHNM_IntroMovie1Desc = {
 
 R_SCENE_RESLIST IHNM_IntroMovie2RL[] = {
 
-	{32, SAGA_BG_IMAGE}
+	{32, SAGA_BG_IMAGE, 0, 0}
 	,
-	{33, SAGA_ANIM_1}
+	{33, SAGA_ANIM_1, 0, 0}
 };
 
 R_SCENE_DESC IHNM_IntroMovie2Desc = {
@@ -88,9 +88,9 @@ R_SCENE_DESC IHNM_IntroMovie2Desc = {
 
 R_SCENE_RESLIST IHNM_IntroMovie3RL[] = {
 
-	{34, SAGA_BG_IMAGE}
+	{34, SAGA_BG_IMAGE, 0, 0}
 	,
-	{35, SAGA_ANIM_1}
+	{35, SAGA_ANIM_1, 0, 0}
 };
 
 R_SCENE_DESC IHNM_IntroMovie3Desc = {
@@ -103,9 +103,9 @@ R_SCENE_DESC IHNM_IntroMovie3Desc = {
 
 R_SCENE_RESLIST IHNM_IntroMovie4RL[] = {
 
-	{1227, SAGA_BG_IMAGE}
+	{1227, SAGA_BG_IMAGE, 0, 0}
 	,
-	{1226, SAGA_ANIM_1}
+	{1226, SAGA_ANIM_1, 0, 0}
 };
 
 R_SCENE_DESC IHNM_IntroMovie4Desc = {
@@ -144,7 +144,7 @@ int IHNM_StartProc(void)
 int IHNM_IntroMovieProc1(int param, R_SCENE_INFO * scene_info)
 {
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 
 	YS_IGNORE_PARAM(scene_info);
 
@@ -178,7 +178,7 @@ int IHNM_IntroMovieProc1(int param, R_SCENE_INFO * scene_info)
 int IHNM_IntroMovieProc2(int param, R_SCENE_INFO * scene_info)
 {
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	PALENTRY *pal;
@@ -252,7 +252,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO * scene_info)
 int IHNM_IntroMovieProc3(int param, R_SCENE_INFO * scene_info)
 {
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	PALENTRY *pal;
@@ -325,7 +325,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO * scene_info)
 int IHNM_HateProc(int param, R_SCENE_INFO * scene_info)
 {
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	YS_IGNORE_PARAM(scene_info);

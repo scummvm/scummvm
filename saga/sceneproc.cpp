@@ -54,7 +54,7 @@ namespace Saga {
 
 int InitialSceneProc(int param, R_SCENE_INFO * scene_info)
 {
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int delay_time = 0;

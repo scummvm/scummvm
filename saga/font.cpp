@@ -100,7 +100,7 @@ int FONT_Init(void)
 int FONT_Shutdown(void)
 {
 
-	int i;
+//	int i;
 
 	R_printf(R_STDOUT, "FONT_Shutdown(): Freeing fonts.\n");
 /*
@@ -498,7 +498,7 @@ FONT_GetStringWidth(int font_id,
 	size_t ct;
 	int width = 0;
 	int ch;
-	uchar *txt_p;
+	const uchar *txt_p;
 
 	if (!FontModule.init) {
 		return R_FAILURE;
@@ -516,7 +516,7 @@ FONT_GetStringWidth(int font_id,
 	font = FontModule.fonts[font_id];
 	assert(font != NULL);
 
-	txt_p = (uchar *) test_str;
+	txt_p = (const uchar *) test_str;
 
 	for (ct = test_str_ct;
 	    *txt_p && (!test_str_ct || ct > 0); txt_p++, ct--) {
@@ -623,7 +623,7 @@ FONT_Out(R_FONT_STYLE * draw_font,
 		return R_SUCCESS;
 	}
 
-	draw_str_p = (uchar *) draw_str;
+	draw_str_p = (const uchar *) draw_str;
 	ct = draw_str_ct;
 
 	/* Draw string one character at a time, maximum of 'draw_str'_ct 

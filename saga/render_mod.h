@@ -53,7 +53,7 @@ enum RENDER_MODES {
 	RM_BILINEAR
 };
 
-typedef struct R_BUFFER_INFO_tag {
+struct R_BUFFER_INFO {
 
 	uchar *r_bg_buf;
 	int r_bg_buf_w;
@@ -63,7 +63,7 @@ typedef struct R_BUFFER_INFO_tag {
 	int r_tmp_buf_w;
 	int r_tmp_buf_h;
 
-} R_BUFFER_INFO;
+};
 
 int RENDER_Register(void);
 

@@ -449,7 +449,7 @@ int STHREAD_Run(R_SCRIPT_THREAD * thread, int instr_limit, int msec)
 			{
 				int n_args;
 				uint func_num;
-				int result;
+				int FIXME_SHADOWED_result;
 
 				SFunc_T sfunc;
 
@@ -485,9 +485,9 @@ int STHREAD_Run(R_SCRIPT_THREAD * thread, int instr_limit, int msec)
 					}
 				} else {
 
-					result = sfunc(thread);
+					FIXME_SHADOWED_result = sfunc(thread);
 
-					if (result != R_SUCCESS) {
+					if (FIXME_SHADOWED_result != R_SUCCESS) {
 						CON_Print(S_WARN_PREFIX
 						    "%X: Script function %d failed.\n",
 						    thread->i_offset,
@@ -1059,21 +1059,21 @@ int STHREAD_Run(R_SCRIPT_THREAD * thread, int instr_limit, int msec)
 			/* (DLGO): Add a dialogue option to interface */
 		case 0x56:
 			{
-				int param1;
-				int param2;
-				int param3;
+				int FIXME_SHADOWED_param1;
+				int FIXME_SHADOWED_param2;
+				int FIXME_SHADOWED_param3;
 
 				printf("DLGO | ");
-				param1 = *read_p++;
-				param2 = *read_p++;
+				FIXME_SHADOWED_param1 = *read_p++;
+				FIXME_SHADOWED_param2 = *read_p++;
 
-				printf("%02X %02X ", param1, param2);
+				printf("%02X %02X ", FIXME_SHADOWED_param1, FIXME_SHADOWED_param2);
 
-				if (param2 > 0) {
-					param3 =
+				if (FIXME_SHADOWED_param2 > 0) {
+					FIXME_SHADOWED_param3 =
 					    ys_read_u16_le(read_p, &read_p);
 
-					printf("%04X", param3);
+					printf("%04X", FIXME_SHADOWED_param3);
 				}
 			}
 			break;

@@ -67,9 +67,21 @@ enum SAGA_RESOURCE_TYPES {
 	SAGA_PAL_ANIM = 23
 };
 
+#define SAGA_RESLIST_ENTRY_LEN 4
+
+struct R_SCENE_RESLIST {
+
+	ulong res_number;
+	int res_type;
+
+	uchar *res_data;
+	size_t res_data_len;
+
+};
+
 #define SAGA_SCENE_DESC_LEN 16
 
-typedef struct R_SCENE_DESC_tag {
+struct R_SCENE_DESC {
 
 	int unknown0;
 	int res_list_rn;
@@ -80,24 +92,12 @@ typedef struct R_SCENE_DESC_tag {
 	int start_scriptnum;
 	int music_rn;
 
-	struct R_SCENE_RESLIST_tag *res_list;
+	R_SCENE_RESLIST *res_list;
 	size_t res_list_ct;
 
-} R_SCENE_DESC;
+};
 
-#define SAGA_RESLIST_ENTRY_LEN 4
-
-typedef struct R_SCENE_RESLIST_tag {
-
-	ulong res_number;
-	int res_type;
-
-	uchar *res_data;
-	size_t res_data_len;
-
-} R_SCENE_RESLIST;
-
-typedef struct SCENE_IMAGE_tag {
+struct SCENE_IMAGE {
 
 	int loaded;
 
@@ -113,18 +113,18 @@ typedef struct SCENE_IMAGE_tag {
 
 	PALENTRY pal[256];
 
-} SCENE_IMAGE;
+};
 
-typedef struct SCENE_ANIMINFO_tag {
+struct SCENE_ANIMINFO {
 
 	int anim_res_number;
 	int anim_handle;
 
-	struct SCENE_ANIMINFO_tag *next;
+	SCENE_ANIMINFO *next;
 
-} SCENE_ANIMINFO;
+};
 
-typedef struct R_SCENE_QUEUE_tag {
+struct R_SCENE_QUEUE {
 
 	ulong scene_n;
 	R_SCENE_DESC *scene_desc;
@@ -133,9 +133,9 @@ typedef struct R_SCENE_QUEUE_tag {
 	R_SCENE_PROC *scene_proc;
 	int scene_skiptarget;
 
-} R_SCENE_QUEUE;
+};
 
-typedef struct R_SCENE_MODULE_tag {
+struct R_SCENE_MODULE {
 
 	int init;
 
@@ -172,14 +172,14 @@ typedef struct R_SCENE_MODULE_tag {
 	SCENE_IMAGE bg;
 	SCENE_IMAGE bg_mask;
 
-} R_SCENE_MODULE;
+};
 
 int SCENE_Queue(R_SCENE_QUEUE * scene_queue);
 int SCENE_ClearQueue(void);
 
 int
 SCENE_Load(int scene,
-    int load_flag, R_SCENE_PROC scene_proc, struct R_SCENE_DESC_tag *);
+    int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *);
 
 int LoadSceneDescriptor(ulong res_number);
 

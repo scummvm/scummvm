@@ -39,7 +39,7 @@ namespace Saga {
 #define R_CONSOLE_TXTCOLOR  0x00FFFFFFUL
 #define R_CONSOLE_TXTSHADOW 0x00202020UL
 
-typedef struct R_CONSOLEINFO_tag {
+struct R_CONSOLEINFO {
 
 	int active;
 	int y_max;
@@ -53,24 +53,24 @@ typedef struct R_CONSOLEINFO_tag {
 	char input_buf[R_CON_INPUTBUF_LEN + 1];
 	int input_pos;
 
-} R_CONSOLEINFO;
+};
 
-typedef struct R_CONSOLE_LINE_tag {
+struct R_CONSOLE_LINE {
 
-	struct R_CONSOLE_LINE_tag *next;
-	struct R_CONSOLE_LINE_tag *prev;
+	R_CONSOLE_LINE *next;
+	R_CONSOLE_LINE *prev;
 	char *str_p;
 	int str_len;
 
-} R_CONSOLE_LINE;
+};
 
-typedef struct R_CON_SCROLLBACK_tag {
+struct R_CON_SCROLLBACK {
 
-	struct R_CONSOLE_LINE_tag *head;
-	struct R_CONSOLE_LINE_tag *tail;
+	R_CONSOLE_LINE *head;
+	R_CONSOLE_LINE *tail;
 	int lines;
 
-} R_CON_SCROLLBACK;
+};
 
 static int
 CON_AddLine(R_CON_SCROLLBACK * scroll, int line_max, const char *constr_p);

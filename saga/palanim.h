@@ -37,7 +37,7 @@ namespace Saga {
 
 #define PALANIM_CYCLETIME 100
 
-typedef struct PALANIM_ENTRY_tag {
+struct PALANIM_ENTRY {
 
 	uint pal_count;
 	uint color_count;
@@ -46,16 +46,16 @@ typedef struct PALANIM_ENTRY_tag {
 	uchar *pal_index;
 	R_COLOR *colors;
 
-} PALANIM_ENTRY;
+};
 
-typedef struct PALANIM_DATA_tag {
+struct PALANIM_DATA {
 
 	int loaded;
 	uint entry_count;
 
 	PALANIM_ENTRY *entries;
 
-} PALANIM_DATA;
+};
 
 } // End of namespace Saga
 

@@ -39,14 +39,14 @@ namespace Saga {
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
-typedef struct R_IMAGE_HEADER_tag {
+struct R_IMAGE_HEADER {
 
 	int width;
 	int height;
 	int unknown4;
 	int unknown6;
 
-} R_IMAGE_HEADER;
+};
 
 int
 DecodeBGImageRLE(const uchar * inbuf,

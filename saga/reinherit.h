@@ -31,14 +31,10 @@
 #ifndef SAGA_REINHERIT_H_
 #define SAGA_REINHERIT_H_
 
-#include "stdafx.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 #include "base/engine.h"
-
-/*
- * Architecture conditionals
-\*--------------------------------------------------------------------------*/
-#include "x86_32.h"
 
 /*
  * Implementation conditionals
@@ -82,35 +78,35 @@ typedef unsigned long ulong;
 typedef unsigned int uint;
 #endif
 
-typedef struct R_POINT_tag {
+struct R_POINT {
 
 	int x;
 	int y;
 
-} R_POINT;
+};
 
-typedef struct R_RECT_tag {
+struct R_RECT {
 
 	int x1;
 	int y1;
 	int x2;
 	int y2;
 
-} R_RECT;
+};
 
 #define R_MAKERECT( rect, x1, y1, x2, y2 ) \
     ( rect.x1 = x1, rect.y1 = y1, rect.x2 = x2, rect.y2 = y2, &rect )
 
-typedef struct R_COLOR_tag {
+struct R_COLOR {
 
 	int red;
 	int green;
 	int blue;
 	int alpha;
 
-} R_COLOR;
+};
 
-typedef struct R_SURFACE_tag {
+struct R_SURFACE {
 
 	uchar *buf;
 	int buf_w;
@@ -123,11 +119,11 @@ typedef struct R_SURFACE_tag {
 
 	void *impl_src;
 
-} R_SURFACE;
+};
 
-typedef struct R_SOUNDBUFFER_tag {
+struct R_SOUNDBUFFER {
 
-	uchar *res_data;
+	const uchar *res_data;
 	size_t res_len;
 
 	long s_freq;
@@ -135,32 +131,32 @@ typedef struct R_SOUNDBUFFER_tag {
 	int s_stereo;
 	int s_signed;
 
-	uchar *s_buf;
+	const uchar *s_buf;
 	size_t s_buf_len;
 
-} R_SOUNDBUFFER;
+};
 
 #define R_RGB_RED   0x00FF0000UL
 #define R_RGB_GREEN 0x0000FF00UL
 #define R_RGB_BLUE  0x000000FFUL
 
-typedef struct SAGA_COLOR_tag {
+struct SAGA_COLOR {
 
-	R_UINT8 r;
-	R_UINT8 g;
-	R_UINT8 b;
+	byte r;
+	byte g;
+	byte b;
 
-} SAGA_COLOR;
+};
 
 #define SAGA_COLOR_LEN 3
 
-typedef struct PALENTRY_TAG {
+struct PALENTRY {
 
-	R_UINT8 red;
-	R_UINT8 green;
-	R_UINT8 blue;
+	byte red;
+	byte green;
+	byte blue;
 
-} PALENTRY;
+};
 
 enum R_ERRORCODE {
 
@@ -248,7 +244,7 @@ int SYSMUSIC_Stop(void);
 \*--------------------------------------------------------------------------*/
 #define R_PAL_ENTRIES 256
 
-typedef struct R_SYSGFX_INIT_tag {
+struct R_SYSGFX_INIT {
 
 	int backbuf_w;
 	int backbuf_h;
@@ -260,7 +256,7 @@ typedef struct R_SYSGFX_INIT_tag {
 
 	int fullscreen;
 
-} R_SYSGFX_INIT;
+};
 
 int SYSGFX_Init(R_SYSGFX_INIT *);
 

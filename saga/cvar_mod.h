@@ -73,7 +73,7 @@ int CVAR_Shutdown(void);
 R_CVAR_P CVAR_Find(const char *var_str);
 int CVAR_SetValue(R_CVAR_P cvar, char *r_value);
 int CVAR_Print(R_CVAR_P con_cvar);
-int CVAR_GetError(char **err_str);
+int CVAR_GetError(const char **err_str);
 int CVAR_IsFunc(R_CVAR_P cvar_func);
 int CVAR_Exec(R_CVAR_P cvar_func, char *r_value);
 
@@ -102,7 +102,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar,
 
 char *EXPR_ReadString(const char **string_p, int *len, int term_char);
 
-int EXPR_GetError(char **err_str);
+int EXPR_GetError(const char **err_str);
 
 int EXPR_GetArgs(char *cmd_str, char ***expr_argv);
 

@@ -76,45 +76,45 @@ enum R_GAME_FONT_IDS {
 	R_GAME_FONT_LARGE3
 };
 
-typedef struct R_GAME_DISPLAYINFO_tag {
+struct R_GAME_DISPLAYINFO {
 
 	int logical_w;
 	int logical_h;
 	int scene_h;
 
-} R_GAME_DISPLAYINFO;
+};
 
-typedef struct R_GAMESOUND_INFO_tag {
+struct R_GAME_SOUNDINFO {
 
 	int res_type;
 	long freq;
 	int sample_size;
 	int stereo;
 
-} R_GAME_SOUNDINFO;
+};
 
-typedef struct R_GAMEFONT_DESC_tag {
+struct R_GAME_FONTDESC {
 
 	uint font_id;
 	ulong font_rn;
 
-} R_GAME_FONTDESC;
+};
 
-typedef struct R_GAMESCENE_DESC_tag {
+struct R_GAME_SCENEDESC {
 
 	ulong scene_lut_rn;
 	ulong first_scene;
 
-} R_GAME_SCENEDESC;
+};
 
-typedef struct R_GAMERESOURCE_DESC_tag {
+struct R_GAME_RESOURCEDESC {
 
 	ulong scene_lut_rn;
 	ulong script_lut_rn;
 	ulong command_panel_rn;
 	ulong dialogue_panel_rn;
 
-} R_GAME_RESOURCEDESC;
+};
 
 int GAME_Register(void);
 

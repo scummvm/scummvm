@@ -118,12 +118,12 @@ namespace Saga {
 
 #define R_MAX_TIME_DELTA 100
 
-typedef struct R_MAIN_DATA_tag {
+struct R_MAIN_DATA {
 
 	int sound_enabled;
 	int music_enabled;
 
-} R_MAIN_DATA;
+};
 
 static void CF_quitfunc(int argc, char *argv[]);
 static void CF_testfunc(int argc, char *argv[]);

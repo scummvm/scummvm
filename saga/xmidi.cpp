@@ -229,7 +229,7 @@ int WriteVLQ_DW(char *write_ptr, DWORD value)
 
 	int vlq_len = 1;
 	DWORD pack = value & 0x7F;
-	int x;
+	uint x;
 
 	while (value >>= 7) {
 		pack <<= 8;
@@ -471,7 +471,7 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 
 	while (event_bytes_left > 0) {
 
-		vlq_len = ReadVLQ2_DW((char *)event_data_ptr,
+		vlq_len = ReadVLQ2_DW(event_data_ptr,
 							  (DWORD)event_bytes_left, (DWORD *)&new_event_time);
 
 		event_time += new_event_time;
@@ -504,7 +504,7 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 			    event_time, event, channel, 0, op1, op2, 0, 0);
 
 			vlq_len =
-			    ReadVLQ_DW((char *)event_data_ptr, (DWORD)event_bytes_left,
+			    ReadVLQ_DW(event_data_ptr, (DWORD)event_bytes_left,
 						   (DWORD *)&event_len);
 			AddEventToList(event_list, MIDI_NOTE_OFF_LEN,
 			    event_time + event_len, MIDI_NOTE_OFF, channel, 0,
@@ -675,7 +675,7 @@ int GetLengthAsVLQ(DWORD data)
 
 }
 
-DWORD ReadVLQ_DW(char *data, DWORD bytes_left, DWORD * value)
+DWORD ReadVLQ_DW(const uchar *data, DWORD bytes_left, DWORD * value)
 {
 	BYTE byte;
 	DWORD vlq_len = 0;
@@ -693,7 +693,7 @@ DWORD ReadVLQ_DW(char *data, DWORD bytes_left, DWORD * value)
 	return vlq_len;
 }
 
-DWORD ReadVLQ2_DW(char *data, DWORD bytes_left, DWORD * value)
+DWORD ReadVLQ2_DW(const uchar *data, DWORD bytes_left, DWORD * value)
 {
 
 	BYTE byte;

@@ -45,14 +45,14 @@ namespace Saga {
 
 typedef int (*R_GAME_VERIFYFUNC) (const char *);
 
-typedef struct R_GAME_FILEDESC_tag {
+struct R_GAME_FILEDESC {
 
 	const char *gf_fname;
 	uint gf_type;
 
-} R_GAME_FILEDESC;
+};
 
-typedef struct R_GAMEDESC_tag {
+struct R_GAMEDESC {
 
 	int gd_game_type;
 	int gd_game_id;
@@ -79,18 +79,18 @@ typedef struct R_GAMEDESC_tag {
 
 	int gd_supported;
 
-} R_GAMEDESC;
+};
 
-typedef struct R_GAME_FILEDATA_tag {
+struct R_GAME_FILEDATA {
 
 	R_RSCFILE_CONTEXT *file_ctxt;
 
 	uint file_types;
 	uint file_flags;
 
-} R_GAME_FILEDATA;
+};
 
-typedef struct R_GAMEMODULE_tag {
+struct R_GAMEMODULE {
 
 	int game_init;
 	int game_number;
@@ -113,7 +113,7 @@ typedef struct R_GAMEMODULE_tag {
 	int err_n;
 	const char *err_str;
 
-} R_GAMEMODULE;
+};
 
 int LoadLanguage(void);
 

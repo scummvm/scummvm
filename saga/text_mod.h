@@ -37,7 +37,7 @@ enum R_TEXT_FLAGS {
 	TEXT_TIMEOUT = 0x01
 };
 
-typedef struct R_TEXTLIST_ENTRY_tag {
+struct R_TEXTLIST_ENTRY {
 	struct R_TEXTLIST_ENTRY_tag *next;
 	struct R_TEXTLIST_ENTRY_tag *prev;
 	int display;
@@ -49,8 +49,10 @@ typedef struct R_TEXTLIST_ENTRY_tag {
 	int flags;
 	int font_id;
 	long time;
-	char *string;
-} R_TEXTLIST_ENTRY;
+	const char *string;
+	
+	R_TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
+};
 
 typedef struct R_TEXTLIST_tag R_TEXTLIST;
 

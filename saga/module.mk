@@ -42,7 +42,6 @@ MODULE_OBJS = \
 	saga/ys_binread.o \
 	saga/ys_binwrite.o \
 	saga/ys_dl_list.o \
-	saga/ys_file.o \
 	saga/sysgfx.o \
 	saga/sysinput.o \
 	saga/systimer.o \

@@ -34,7 +34,7 @@
 
 namespace Saga {
 
-typedef struct R_ACTIONMAP_ENTRY_tag {
+struct R_ACTIONMAP_ENTRY {
 
 	int unknown00;
 	int unknown02;
@@ -44,9 +44,9 @@ typedef struct R_ACTIONMAP_ENTRY_tag {
 	int pt_count;
 	R_POINT *pt_tbl;
 
-} R_ACTIONMAP_ENTRY;
+};
 
-typedef struct R_ACTIONMAP_INFO_tag {
+struct R_ACTIONMAP_INFO {
 
 	int init;
 
@@ -57,7 +57,7 @@ typedef struct R_ACTIONMAP_INFO_tag {
 	const uchar *exmap_res;
 	size_t exmap_res_len;
 
-} R_ACTIONMAP_INFO;
+};
 
 void CF_action_info(int argc, char *argv[]);
 

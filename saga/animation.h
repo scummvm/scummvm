@@ -43,7 +43,7 @@ namespace Saga {
  * at 0x00, followed by a RLE code stream
 \*--------------------------------------------------------------------------*/
 
-typedef struct R_ANIMATION_HEADER_tag {
+struct R_ANIMATION_HEADER {
 
 	uint magic;
 
@@ -59,13 +59,13 @@ typedef struct R_ANIMATION_HEADER_tag {
 	uint unknown10;
 	uint unknown11;
 
-} R_ANIMATION_HEADER;
+};
 
 /* A byte from the code stream of FRAME_HEADER_MAGIC signifies that a
  * FRAME_HEADER structure follows
 \*--------------------------------------------------------------------------*/
 
-typedef struct R_FRAME_HEADER_tag {
+struct R_FRAME_HEADER {
 
 	int x_start;
 	int y_start;
@@ -76,10 +76,10 @@ typedef struct R_FRAME_HEADER_tag {
 	int width;
 	int height;
 
-} R_FRAME_HEADER;
+};
 
 /* Animation info array member */
-typedef struct R_ANIMATION_tag {
+struct R_ANIMATION {
 
 	const uchar *resdata;
 	size_t resdata_len;
@@ -102,9 +102,9 @@ typedef struct R_ANIMATION_tag {
 
 	uint flags;
 
-} R_ANIMATION;
+};
 
-typedef struct R_ANIMINFO_tag {
+struct R_ANIMINFO {
 
 	int initialized;
 
@@ -113,7 +113,7 @@ typedef struct R_ANIMINFO_tag {
 
 	R_ANIMATION *anim_tbl[R_MAX_ANIMATIONS];
 
-} R_ANIMINFO;
+};
 
 int ANIM_GetNumFrames(const uchar * anim_resource, uint * n_frames);
 

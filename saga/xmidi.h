@@ -52,29 +52,29 @@ namespace Saga {
 /* IFF/XMI Data structures
 \*--------------------------------------------------------------------------*/
 
-typedef struct IFF_ID_CHUNK_tag {
+struct IFF_ID_CHUNK {
 	char id_4cc[4];	/* 4cc */
 	ulong chunk_len;	/* u32_be */
 	char desc_4cc[4];	/* 4cc */
-} IFF_ID_CHUNK;
+};
 
 #define IFF_ID_CHUNK_HEADERLEN 12
 
-typedef struct XMI_INFO_CHUNK_tag {
+struct XMI_INFO_CHUNK {
 	char id_4cc[4];	/* 4cc */
 	ulong chunk_len;	/* u32_be */
 	uint n_tracks;	/* u16_le */
-} XMI_INFO_CHUNK;
+};
 
-typedef struct XMI_TIMB_CHUNK_tag {
+struct XMI_TIMB_CHUNK {
 	char id_4cc[4];	/* 4cc */
 	ulong chunk_len;	/* u32_be */
-} XMI_TIMB_CHUNK;
+};
 
-typedef struct XMI_EVENT_CHUNK_tag {
+struct XMI_EVENT_CHUNK {
 	char id_4cc[4];	/* 4cc */
 	ulong chunk_len;	/* u32_be */
-} XMI_EVENT_CHUNK;
+};
 
 typedef struct SMF_HEADER_CHUNK_tag {
 	char smf_id[4];	/* u8 */
@@ -87,10 +87,10 @@ typedef struct SMF_HEADER_CHUNK_tag {
 	} time_division;
 } SMF_HEADER_CHUNK;
 
-typedef struct SMF_TRACK_CHUNK_tag {
+struct SMF_TRACK_CHUNK {
 	char smf_track_id[4];
 	unsigned int smf_track_len;
-} SMF_TRACK_CHUNK;
+};
 
 #define MIDI_HEADER_LEN 14
 #define MIDI_HEADER_CHUNK_LEN 6
@@ -105,8 +105,8 @@ int Print4CC(char *fourcc);
 int XMIDI_ReadEvents(XMIDIEVENT_LIST *event_list, const uchar *event_data, 
 					 size_t event_data_len, uint n_tracks);
 int WriteVLQ_DW(char *write_ptr, DWORD value);
-DWORD ReadVLQ_DW(char *data, DWORD bytes_left, DWORD *value);
-DWORD ReadVLQ2_DW(char *data, DWORD bytes_left, DWORD *value);
+DWORD ReadVLQ_DW(const uchar *data, DWORD bytes_left, DWORD *value);
+DWORD ReadVLQ2_DW(const uchar *data, DWORD bytes_left, DWORD *value);
 int GetLengthAsVLQ(DWORD data);
 int AddEventToList(XMIDIEVENT_LIST *event_list, int smf_size, int time,
 	    int event, int channel, int sysex_op, int op1, int op2, int op3, int op4);

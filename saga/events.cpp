@@ -518,8 +518,8 @@ int EVENT_ClearList(void)
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 
-	struct R_EVENT_tag *chain_walk;
-	struct R_EVENT_tag *next_chain;
+	R_EVENT *chain_walk;
+	R_EVENT *next_chain;
 
 	R_EVENT *event_p;
 
@@ -556,8 +556,8 @@ int EVENT_FreeList(void)
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 
-	struct R_EVENT_tag *chain_walk;
-	struct R_EVENT_tag *next_chain;
+	R_EVENT *chain_walk;
+	R_EVENT *next_chain;
 
 	R_EVENT *event_p;
 

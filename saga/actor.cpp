@@ -424,7 +424,7 @@ int ACTOR_SkipDialogue(void)
 
 int ACTOR_Create(int actor_id, int x, int y)
 {
-	R_ACTOR actor = { 0 };
+	R_ACTOR actor;
 
 	if (actor_id == 1) {
 		actor_id = 0;
@@ -554,7 +554,7 @@ int ACTOR_ActorExists(uint actor_id)
 	return 1;
 }
 
-int ACTOR_Speak(int index, char *d_string, uint d_voice_rn, R_SEMAPHORE * sem)
+int ACTOR_Speak(int index, const char *d_string, uint d_voice_rn, R_SEMAPHORE * sem)
 {
 
 	YS_DL_NODE *node;
@@ -568,7 +568,7 @@ int ACTOR_Speak(int index, char *d_string, uint d_voice_rn, R_SEMAPHORE * sem)
 
 	int use_existing_ai = 0;
 
-	R_ACTORDIALOGUE a_dialogue = { 0 };
+	R_ACTORDIALOGUE a_dialogue;
 
 	a_dialogue.d_string = d_string;
 	a_dialogue.d_voice_rn = d_voice_rn;
@@ -952,10 +952,10 @@ int ACTOR_WalkTo(int id, R_POINT * walk_pt, uint flags, R_SEMAPHORE * sem)
 /*--------------------------------------------------------------------------*\
 \*--------------------------------------------------------------------------*/
 {
-	R_ACTORINTENT actor_intent = { 0 };
+	R_ACTORINTENT actor_intent;
 
 	R_WALKINTENT *walk_intent;
-	R_WALKINTENT zero_intent = { 0 };
+	R_WALKINTENT zero_intent;
 
 	YS_DL_NODE *node;
 	R_ACTOR *actor;
@@ -1302,8 +1302,8 @@ int ACTOR_MoveRelative(int index, R_POINT * move_pt)
 int Z_Compare(const void *elem1, const void *elem2)
 {
 
-	R_ACTOR *actor1 = (R_ACTOR *) elem1;
-	R_ACTOR *actor2 = (R_ACTOR *) elem2;
+	const R_ACTOR *actor1 = (const R_ACTOR *) elem1;
+	const R_ACTOR *actor2 = (const R_ACTOR *) elem2;
 
 	if (actor1->a_pt.y == actor2->a_pt.y) {
 		return 0;
@@ -1334,7 +1334,7 @@ int ACTOR_StoA(R_POINT * actor, const R_POINT * screen)
 
 static void CF_actor_add(int argc, char *argv[])
 {
-	R_ACTOR actor = { 0 };
+	R_ACTOR actor;
 
 	if (argc < 3)
 		return;

@@ -43,7 +43,7 @@ namespace Saga {
 
 #define R_PAUSEGAME_MSG "PAWS GAME"
 
-typedef struct R_RENDER_MODULE_tag {
+struct R_RENDER_MODULE {
 
 	int initialized;
 
@@ -75,7 +75,7 @@ typedef struct R_RENDER_MODULE_tag {
 	unsigned int r_flags;
 	int r_mode;
 
-} R_RENDER_MODULE;
+};
 
 void RENDER_FpsTimer(unsigned long interval, void *param);
 

@@ -25,7 +25,7 @@
 
 namespace Saga {
 
-typedef struct R_SYSTIMER_DATA_tag {
+struct R_SYSTIMER_DATA {
 
 	int initialized;
 
@@ -34,7 +34,7 @@ typedef struct R_SYSTIMER_DATA_tag {
 	Uint32 t_current_ticks;
 	Uint32 t_previous_ticks;
 
-} R_SYSTIMER_DATA;
+};
 
 struct R_SYSTIMER_tag {
 

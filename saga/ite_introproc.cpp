@@ -252,14 +252,14 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
  * Handles first introductory cave painting scene
 \*--------------------------------------------------------------------------*/
 {
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
 
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
 	PALENTRY *pal;
@@ -402,14 +402,14 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 \*--------------------------------------------------------------------------*/
 {
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
 
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
 	int i;
@@ -520,14 +520,14 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
  * Handles third introductory cave painting scene
 \*--------------------------------------------------------------------------*/
 {
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
 
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
 	int i;
@@ -638,14 +638,14 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
  * Handles fourth introductory cave painting scene
 \*--------------------------------------------------------------------------*/
 {
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
 
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
 	int i;
@@ -757,7 +757,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO * scene_info)
  * Handles intro title scene (valley overlook)
 \*--------------------------------------------------------------------------*/
 {
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
 	R_EVENT event;
@@ -879,10 +879,10 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO * scene_info)
  * Handles second intro credit screen (treehouse view)
 \*--------------------------------------------------------------------------*/
 {
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	int i;
@@ -1004,10 +1004,10 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO * scene_info)
  * Handles third intro credit screen (path to puzzle tent)
 \*--------------------------------------------------------------------------*/
 {
-	R_TEXTLIST_ENTRY text_entry = { 0 };
+	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
 
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 
 	long event_delay = 0;
@@ -1130,7 +1130,7 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO * scene_info)
  * Handles fourth intro credit screen (treehouse view)
 \*--------------------------------------------------------------------------*/
 {
-	R_EVENT event = { 0 };
+	R_EVENT event;
 	R_EVENT *q_event;
 	R_EVENT *q_event_start;
 

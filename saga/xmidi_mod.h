@@ -83,9 +83,9 @@ enum MIDI_EVENT_LENGTHS {
 	MIDI_SYSEX_TIMESIG_LEN = 7
 };
 
-typedef struct XMIDIEVENT_tag {
-	struct XMIDIEVENT_tag *prev_event;
-	struct XMIDIEVENT_tag *next_event;
+struct XMIDIEVENT {
+	XMIDIEVENT *prev_event;
+	XMIDIEVENT *next_event;
 
 	size_t smf_size;	/* Size of event in SMF format */
 
@@ -99,13 +99,13 @@ typedef struct XMIDIEVENT_tag {
 	uchar op3;
 	uchar op4;
 	uchar pad;
-} XMIDIEVENT;
+};
 
-typedef struct XMIDIEVENT_LIST_tag {
+struct XMIDIEVENT_LIST {
 	XMIDIEVENT *head;
 	XMIDIEVENT *tail;
 	int smf_size;
-} XMIDIEVENT_LIST;
+};
 
 int XMIDI_Read(const uchar *XMI_img, XMIDIEVENT_LIST *event_list);
 int XMIDI_Free(XMIDIEVENT_LIST *event_list);

@@ -113,8 +113,8 @@ int RENDER_Register(void)
 int RENDER_Init(void)
 {
 
-	R_GAME_DISPLAYINFO disp_info = { 0 };
-	R_SYSGFX_INIT gfx_init = { 0 };
+	R_GAME_DISPLAYINFO disp_info;
+	R_SYSGFX_INIT gfx_init;
 
 	int result;
 
@@ -223,7 +223,7 @@ int RENDER_DrawScene(void)
 	R_SURFACE *backbuf_surface;
 	R_SURFACE *display_surface;
 
-	R_GAME_DISPLAYINFO disp_info = { 0 };
+	R_GAME_DISPLAYINFO disp_info;
 	R_SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
 

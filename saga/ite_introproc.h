@@ -61,31 +61,31 @@ enum R_INTRO_SCENE_DIALOGUE_INFO {
 	INTRO_CAVE4_END = 14
 };
 
-typedef struct R_INTRO_DIALOGUE_tag {
+struct R_INTRO_DIALOGUE {
 
 	ulong i_voice_rn;
-	char *i_cvar_name;
+	const char *i_cvar_name;
 	char i_str[R_INTRO_STRMAX];
 
-} R_INTRO_DIALOGUE;
+};
 
-typedef struct INTRO_CAPTION_tag {
+struct INTRO_CAPTION {
 
 	int res_n;
 	char *caption;
 
-} INTRO_CAPTION;
+};
 
-typedef struct INTRO_CREDIT_tag {
+struct INTRO_CREDIT {
 
 	int text_x;
 	int text_y;
 	int delta_time;
 	int duration;
-	char *string;
+	const char *string;
 	int font_id;
 
-} INTRO_CREDIT;
+};
 
 } // End of namespace Saga
 

@@ -90,21 +90,21 @@ typedef enum R_BUTTON_FLAGS_tag {
 
 #define BUTTON_VERB ( BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET )
 
-typedef struct R_INTERFACE_BUTTON_tag {
+struct R_INTERFACE_BUTTON {
 
 	int x1;
 	int y1;
 	int x2;
 	int y2;
-	char *label;
+	const char *label;
 	int inactive_sprite;
 	int active_sprite;
 	int flags;
 	int data;
 
-} R_INTERFACE_BUTTON;
+};
 
-typedef struct R_INTERFACE_PANEL_tag {
+struct R_INTERFACE_PANEL {
 
 	uchar *res;
 	size_t res_len;
@@ -119,9 +119,9 @@ typedef struct R_INTERFACE_PANEL_tag {
 	R_INTERFACE_BUTTON *buttons;
 	R_SPRITELIST *sprites;
 
-} R_INTERFACE_PANEL;
+};
 
-typedef struct R_INTERFACE_DESC_tag {
+struct R_INTERFACE_DESC {
 
 	int status_y;
 	int status_w;
@@ -138,9 +138,9 @@ typedef struct R_INTERFACE_DESC_tag {
 	int lportrait_x;
 	int lportrait_y;
 
-} R_INTERFACE_DESC;
+};
 
-typedef struct R_INTERFACE_MODULE_tag {
+struct R_INTERFACE_MODULE {
 
 	int init;
 	int active;
@@ -161,7 +161,7 @@ typedef struct R_INTERFACE_MODULE_tag {
 
 	R_SCRIPT_THREAD *i_thread;
 
-} R_INTERFACE_MODULE;
+};
 
 enum INTERFACE_VERBS {
 
@@ -175,14 +175,14 @@ enum INTERFACE_VERBS {
 	I_VERB_GIVE
 };
 
-typedef struct R_VERB_DATA_tag {
+struct R_VERB_DATA {
 
 	int i_verb;
 	const char *verb_cvar;
 	char verb_str[R_VERB_STRLIMIT];
 	int s_verb;
 
-} R_VERB_DATA;
+};
 
 int INTERFACE_HitTest(R_POINT * imouse_pt, int *ibutton);
 

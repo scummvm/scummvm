@@ -45,14 +45,14 @@ enum R_SCENE_MODES {
 	R_SCENE_MODE_ISO
 };
 
-typedef struct SCENE_ZINFO_tag {
+struct SCENE_ZINFO {
 
 	int begin_slope;
 	int end_slope;
 
-} SCENE_ZINFO;
+};
 
-typedef struct SCENE_BGINFO_tag {
+struct SCENE_BGINFO {
 
 	int bg_x;
 	int bg_y;
@@ -64,16 +64,16 @@ typedef struct SCENE_BGINFO_tag {
 	uchar *bg_buf;
 	size_t bg_buflen;
 
-} SCENE_BGINFO;
+};
 
-typedef struct R_SCENE_INFO_tag {
+struct R_SCENE_INFO {
 
 	SCENE_ZINFO z_info;
 	SCENE_BGINFO bg_info;
 
 	R_TEXTLIST *text_list;
 
-} R_SCENE_INFO;
+};
 
 typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *);
 

@@ -104,7 +104,7 @@ enum R_EVENT_PARAMS {
 	SET_PALETTE
 };
 
-typedef struct R_EVENT_tag {
+struct R_EVENT {
 
 	unsigned int type;
 	unsigned int code;	/* Event operation category & flags */
@@ -119,10 +119,12 @@ typedef struct R_EVENT_tag {
 	long duration;		/* Duration of event */
 	long d_reserved;
 
-	struct R_EVENT_tag *chain;	/* Event chain 
+	R_EVENT *chain;	/* Event chain 
 					 * (For consecutive events) */
 
-} R_EVENT;
+	R_EVENT() { memset(this, 0, sizeof(*this)); }
+
+};
 
 int EVENT_Init(void);
 

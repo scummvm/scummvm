@@ -41,14 +41,14 @@ namespace Saga {
 
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
 
-typedef struct R_RSCFILE_RESOURCE_tag {
+struct R_RSCFILE_RESOURCE {
 
 	int res_type;
 
 	size_t res_offset;
 	size_t res_size;
 
-} R_RSCFILE_RESOURCE;
+};
 
 struct R_RSCFILE_CONTEXT_tag {
 

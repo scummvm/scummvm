@@ -546,11 +546,11 @@ int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1)
 	R_RECT cur_rect;
 
 	/* Clamp point to surface */
-	cur_pt.x = YS_MAX(p1->x, 0);
-	cur_pt.y = YS_MAX(p1->y, 0);
+	cur_pt.x = MAX(p1->x, 0);
+	cur_pt.y = MAX(p1->y, 0);
 
-	cur_pt.x = YS_MIN(p1->x, ds->buf_w - 1);
-	cur_pt.y = YS_MIN(p1->y, ds->buf_h - 1);
+	cur_pt.x = MIN(p1->x, ds->buf_w - 1);
+	cur_pt.y = MIN(p1->y, ds->buf_h - 1);
 
 	cur_pt.x -= R_CURSOR_ORIGIN_X;
 	cur_pt.y -= R_CURSOR_ORIGIN_Y;
@@ -662,10 +662,10 @@ int GFX_DrawFrame(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 	x2 = p2->x;
 	y2 = p2->y;
 
-	min_x = YS_MIN(x1, x2);
-	min_y = YS_MIN(y1, y2);
-	max_x = YS_MAX(x1, x2);
-	max_y = YS_MAX(y1, y2);
+	min_x = MIN(x1, x2);
+	min_y = MIN(y1, y2);
+	max_x = MAX(x1, x2);
+	max_y = MAX(y1, y2);
 
 	n_p1.x = min_x;
 	n_p1.y = min_y;

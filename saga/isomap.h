@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-typedef struct R_ISOTILE_ENTRY_tag {
+struct R_ISOTILE_ENTRY {
 
 	int tile_h;
 	int unknown01;
@@ -41,7 +41,7 @@ typedef struct R_ISOTILE_ENTRY_tag {
 	int unknown04;
 	int unknown06;
 
-} R_ISOTILE_ENTRY;
+};
 
 #define SAGA_ISOTILE_ENTRY_LEN 8
 #define SAGA_ISOTILE_WIDTH 32
@@ -55,7 +55,7 @@ typedef struct R_ISOTILE_ENTRY_tag {
 #define SAGA_METAMAP_H 16
 #define SAGA_METAMAP_SIZE 256
 
-typedef struct R_ISO_METATILE_ENTRY_tag {
+struct R_ISO_METATILE_ENTRY {
 
 	int mtile_n;
 	int unknown02;
@@ -64,11 +64,11 @@ typedef struct R_ISO_METATILE_ENTRY_tag {
 
 	int tile_tbl[SAGA_METATILE_SIZE];
 
-} R_ISO_METATILE_ENTRY;
+};
 
 #define SAGA_METATILE_ENTRY_LEN 136
 
-typedef struct R_ISOMAP_MODULE_tag {
+struct R_ISOMAP_MODULE {
 
 	int init;
 
@@ -90,7 +90,7 @@ typedef struct R_ISOMAP_MODULE_tag {
 	const uchar *mm_res_p;
 	size_t mm_res_len;
 
-} R_ISOMAP_MODULE;
+};
 
 int ISOMAP_DrawTile(R_SURFACE * dst_s, uint tile_i, int tile_x, int tile_y);
 

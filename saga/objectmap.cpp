@@ -262,7 +262,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 	R_printf(R_STDOUT, "%s: Loading %d object names.\n", YS_FUNC, n_names);
 #   endif
 #endif
-	OMInfo.names = (char **)malloc(n_names * sizeof *OMInfo.names);
+	OMInfo.names = (const char **)malloc(n_names * sizeof *OMInfo.names);
 
 	if (OMInfo.names == NULL) {
 		R_printf(R_STDERR, "Error: Memory allocation failed.\n");
@@ -271,7 +271,7 @@ int OBJECTMAP_LoadNames(const unsigned char *onl_res, size_t onl_res_len)
 
 	for (i = 0; i < n_names; i++) {
 		name_offset = ys_read_u16_le(read_p, &read_p);
-		OMInfo.names[i] = (char *)(onl_res + name_offset);
+		OMInfo.names[i] = (const char *)(onl_res + name_offset);
 
 #       if R_OBJECTMAP_DEBUG >= R_DEBUG_VERBOSE
 		R_printf(R_STDOUT,

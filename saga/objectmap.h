@@ -34,14 +34,14 @@
 
 namespace Saga {
 
-typedef struct R_CLICKAREA_tag {
+struct R_CLICKAREA {
 
 	int n_points;
 	R_POINT *points;
 
-} R_CLICKAREA;
+};
 
-typedef struct R_OBJECTMAP_ENTRY_tag {
+struct R_OBJECTMAP_ENTRY {
 
 	int unknown0;
 	uint flags;
@@ -52,9 +52,9 @@ typedef struct R_OBJECTMAP_ENTRY_tag {
 	int n_clickareas;
 	R_CLICKAREA *clickareas;
 
-} R_OBJECTMAP_ENTRY;
+};
 
-typedef struct R_OBJECTMAP_INFO_tag {
+struct R_OBJECTMAP_INFO {
 
 	int initialized;
 
@@ -64,9 +64,9 @@ typedef struct R_OBJECTMAP_INFO_tag {
 
 	int names_loaded;
 	int n_names;
-	char **names;
+	const char **names;
 
-} R_OBJECTMAP_INFO;
+};
 
 static void CF_object_info(int argc, char *argv[]);
 

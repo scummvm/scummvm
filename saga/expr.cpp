@@ -45,7 +45,7 @@
 
 namespace Saga {
 
-char *EXPR_ErrMsg[] = {
+static const char *EXPR_ErrMsg[] = {
 
 	"Invalid error state.",
 	"No Error",
@@ -81,7 +81,7 @@ enum EXPR_Errors {
 
 static enum EXPR_Errors EXPR_ErrorState;
 
-int EXPR_GetError(char **err_str)
+int EXPR_GetError(const char **err_str)
 /*--------------------------------------------------------------------------*\
  Returns the appropriate expression parser error string given an error code.
 \*--------------------------------------------------------------------------*/

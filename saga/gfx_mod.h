@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-typedef struct R_CLIPINFO_tag {
+struct R_CLIPINFO {
 
 	/* input members */
 	const R_RECT *src_rect;
@@ -49,7 +49,7 @@ typedef struct R_CLIPINFO_tag {
 	int draw_w;
 	int draw_h;
 
-} R_CLIPINFO;
+};
 
 int GFX_SimpleBlit(R_SURFACE * dst_s, R_SURFACE * src_s);
 

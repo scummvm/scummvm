@@ -85,7 +85,7 @@ int ACTOR_WalkTo(int index, R_POINT * walk_pt, uint flags, R_SEMAPHORE * sem);
 
 int ACTOR_GetActorIndex(uint actor_id);
 
-int ACTOR_Speak(int index, char *d_string, uint d_voice_rn, R_SEMAPHORE * sem);
+int ACTOR_Speak(int index, const char *d_string, uint d_voice_rn, R_SEMAPHORE * sem);
 
 int ACTOR_SkipDialogue(void);
 

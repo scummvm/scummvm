@@ -94,7 +94,7 @@ ys_read_u16_be(const unsigned char *data_p, const unsigned char **data_pp)
 	unsigned int u16_be = ((unsigned int)data_p[0] << 8) | data_p[1];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 2);
+		*data_pp = data_p + 2;
 	}
 
 	return u16_be;
@@ -111,7 +111,7 @@ ys_read_u16_le(const unsigned char *data_p, const unsigned char **data_pp)
 	unsigned int u16_le = ((unsigned int)data_p[1] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 2);
+		*data_pp = data_p + 2;
 	}
 
 	return u16_le;
@@ -136,7 +136,7 @@ int ys_read_s16_be(const unsigned char *data_p, const unsigned char **data_pp)
 		s16_be = u16_be;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 2);
+		*data_pp = data_p + 2;
 	}
 
 	return s16_be;
@@ -161,7 +161,7 @@ int ys_read_s16_le(const unsigned char *data_p, const unsigned char **data_pp)
 		s16_le = u16_le;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 2);
+		*data_pp = data_p + 2;
 	}
 
 	return s16_le;
@@ -179,7 +179,7 @@ ys_read_u24_be(const unsigned char *data_p, const unsigned char **data_pp)
 	    ((unsigned long)data_p[1] << 8) | data_p[2];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 3);
+		*data_pp = data_p + 3;
 	}
 
 	return u24_be;
@@ -197,7 +197,7 @@ ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp)
 	    ((unsigned long)data_p[2] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 3);
+		*data_pp = data_p + 3;
 	}
 
 	return u24_le;
@@ -223,7 +223,7 @@ long ys_read_s24_be(const unsigned char *data_p, const unsigned char **data_pp)
 		s24_be = u24_be;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 3);
+		*data_pp = data_p + 3;
 	}
 
 	return s24_be;
@@ -249,7 +249,7 @@ long ys_read_s24_le(const unsigned char *data_p, const unsigned char **data_pp)
 		s24_be = u24_be;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 3);
+		*data_pp = data_p + 3;
 	}
 
 	return s24_be;
@@ -268,7 +268,7 @@ ys_read_u32_be(const unsigned char *data_p, const unsigned char **data_pp)
 	    ((unsigned long)data_p[2] << 8) | data_p[3];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 4);
+		*data_pp = data_p + 4;
 	}
 
 	return u32_be;
@@ -287,7 +287,7 @@ ys_read_u32_le(const unsigned char *data_p, const unsigned char **data_pp)
 	    ((unsigned long)data_p[1] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 4);
+		*data_pp = data_p + 4;
 	}
 
 	return u32_le;
@@ -314,7 +314,7 @@ long ys_read_s32_be(const unsigned char *data_p, const unsigned char **data_pp)
 		s32_be = u32_be;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 4);
+		*data_pp = data_p + 4;
 	}
 
 	return s32_be;
@@ -341,7 +341,7 @@ long ys_read_s32_le(const unsigned char *data_p, const unsigned char **data_pp)
 		s32_le = u32_le;
 
 	if (data_pp != NULL) {
-		*data_pp = (unsigned char *)(data_p + 4);
+		*data_pp = data_p + 4;
 	}
 
 	return s32_le;

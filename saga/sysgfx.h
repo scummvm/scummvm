@@ -31,7 +31,7 @@ namespace Saga {
 #define R_GREEN_WEIGHT 0.587
 #define R_BLUE_WEIGHT 0.114
 
-typedef struct R_SYSGFX_MODULE_tag {
+struct R_SYSGFX_MODULE {
 
 	int init;
 
@@ -44,7 +44,7 @@ typedef struct R_SYSGFX_MODULE_tag {
 	int white_index;
 	int black_index;
 
-} R_SYSGFX_MODULE;
+};
 
 } // End of namespace Saga
 

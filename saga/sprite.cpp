@@ -51,7 +51,7 @@
 
 namespace Saga {
 
-R_SPRITE_MODULE SpriteModule = { 0 };
+static R_SPRITE_MODULE SpriteModule = { 0, 0, 0, 0 };
 
 int SPRITE_Init(void)
 {
@@ -428,7 +428,7 @@ SPRITE_DrawOccluded(R_SURFACE * ds,
 	spr_dst_rect.x1 = 0;
 	spr_dst_rect.y1 = 0;
 	spr_dst_rect.x2 = ds->clip_rect.x2;
-	spr_dst_rect.y2 = YS_MIN(ds->clip_rect.y2, mask_h - 1);
+	spr_dst_rect.y2 = MIN(ds->clip_rect.y2, mask_h - 1);
 
 	spr_pt.x = spr_x + x_align;
 	spr_pt.y = spr_y + y_align;

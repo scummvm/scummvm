@@ -415,7 +415,7 @@ int SCRIPT_Free(void)
 	return R_SUCCESS;
 }
 
-R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(const uchar * bytecode_p,
+R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
     size_t bytecode_len)
 /*--------------------------------------------------------------------------*\
  * Reads the entrypoint table from a script bytecode resource in memory. 
@@ -539,7 +539,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,
 	dialogue_list->n_dialogue = n_dialogue;
 
 	/* Allocate table of string pointers */
-	dialogue_list->str = (char **)malloc(n_dialogue * sizeof(char *));
+	dialogue_list->str = (const char **)malloc(n_dialogue * sizeof(const char *));
 	if (dialogue_list->str == NULL) {
 		free(dialogue_list);
 		return NULL;
@@ -565,7 +565,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,
 			free(dialogue_list);
 			return NULL;
 		}
-		dialogue_list->str[i] = (char *)dialogue_p + offset;
+		dialogue_list->str[i] = (const char *)dialogue_p + offset;
 		dialogue_list->str_off[i] = offset;
 	}
 

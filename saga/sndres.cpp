@@ -230,10 +230,10 @@ LoadVocSound(const uchar * snd_res,
 			snd_buf_i->s_samplebits = 8;
 			snd_buf_i->s_freq = byte_rate;
 
-			snd_buf_i->res_data = (uchar *) snd_res;
+			snd_buf_i->res_data = snd_res;
 			snd_buf_i->res_len = snd_res_len;
 
-			snd_buf_i->s_buf = (uchar *) read_p;
+			snd_buf_i->s_buf = read_p;
 			snd_buf_i->s_buf_len = read_len - 1;	/* -1 for end block */
 
 			snd_buf_i->s_signed = 0;

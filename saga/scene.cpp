@@ -1029,7 +1029,7 @@ int SCENE_Draw(R_SURFACE * dst_s)
 		GFX_BufToSurface(dst_s,
 		    buf_info.r_bg_buf,
 		    disp_info.logical_w,
-		    YS_MAX(disp_info.scene_h, SceneModule.bg.h), NULL, &bg_pt);
+		    MAX(disp_info.scene_h, SceneModule.bg.h), NULL, &bg_pt);
 		break;
 
 	case R_SCENE_MODE_ISO:
