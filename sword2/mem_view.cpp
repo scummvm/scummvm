@@ -29,7 +29,7 @@ namespace Sword2 {
 // has to be global because a local in Fetch_mem_owner is destroyed on exit
 char buf[50];
 
-void Sword2MemoryManager::displayMemory(void) {
+void MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
 	_standardHeader	*file_header;
 	int scrolls = 0;
@@ -122,7 +122,7 @@ void Sword2MemoryManager::displayMemory(void) {
 		(free * 100) / _totalFreeMemory);
 }
 
-const char *Sword2MemoryManager::fetchOwner(uint32 uid) {
+const char *MemoryManager::fetchOwner(uint32 uid) {
 	switch (uid) {
 	case UID_memman:
 		return "MEMMAN";
@@ -148,7 +148,7 @@ const char *Sword2MemoryManager::fetchOwner(uint32 uid) {
 	}
 }
 
-void Sword2MemoryManager::memoryString(char *string) {
+void MemoryManager::memoryString(char *string) {
 	int blockNo = _baseMemBlock;
 	int blocksUsed = 0;
 	int mem_free = 0;

@@ -45,17 +45,17 @@
 
 namespace Sword2 {
 
-Sword2MemoryManager memory;
+MemoryManager memory;
 
 #define MEMORY_POOL (1024 * 12000)
 
 // #define MEMDEBUG 1
 
-void Sword2MemoryManager::exit(void) {
+void MemoryManager::exit(void) {
 	free(_freeMemman);
 }
 
-void Sword2MemoryManager::init(void) {
+void MemoryManager::init(void) {
 	uint32 j;
 	uint8 *memory_base;
 
@@ -91,7 +91,7 @@ void Sword2MemoryManager::init(void) {
 	_baseMemBlock = 0;			// for now
 }
 
-mem *Sword2MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
+mem *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
 	// allocate a block of memory - locked or float
 
 	// returns 0 if fails to allocate the memory
@@ -225,7 +225,7 @@ mem *Sword2MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_
 	return &_memList[nu_block];
 }
 
-void Sword2MemoryManager::freeMemory(mem *block) {
+void MemoryManager::freeMemory(mem *block) {
 	// kill a block of memory - which was presumably floating or locked
 	// once you've done this the memory may be recycled
 
@@ -237,7 +237,7 @@ void Sword2MemoryManager::freeMemory(mem *block) {
 #endif
 }
 
-void Sword2MemoryManager::floatMemory(mem *block) {
+void MemoryManager::floatMemory(mem *block) {
 	// set a block to float
 	// wont be trashed but will move around in memory
 
@@ -248,7 +248,7 @@ void Sword2MemoryManager::floatMemory(mem *block) {
 #endif
 }
 
-void Sword2MemoryManager::lockMemory(mem *block) {
+void MemoryManager::lockMemory(mem *block) {
 	// set a block to lock
 	// wont be moved - don't lock memory for any longer than necessary
 	// unless you know the locked memory is at the bottom of the heap
@@ -263,7 +263,7 @@ void Sword2MemoryManager::lockMemory(mem *block) {
 #endif
 }
 
-int32 Sword2MemoryManager::defragMemory(uint32 req_size) {
+int32 MemoryManager::defragMemory(uint32 req_size) {
 	// moves floating blocks down and/or merges free blocks until a large
 	// enough space is found or there is nothing left to do and a big
 	// enough block cannot be found we stop when we find/create a large
@@ -422,7 +422,7 @@ int32 Sword2MemoryManager::defragMemory(uint32 req_size) {
 	return -1;	//no luck, couldn't find a big enough block
 }
 
-void Sword2MemoryManager::debugMemory(void) {
+void MemoryManager::debugMemory(void) {
 	// gets called with lowLevelAlloc, Mem_free, Mem_lock & Mem_float if
 	// MEMDEBUG has been #defined otherwise can be called at any time
 	// anywhere else
@@ -460,7 +460,7 @@ void Sword2MemoryManager::debugMemory(void) {
 	} while (j != -1);
 }
 
-mem *Sword2MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
+mem *MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
 	// the high level allocator
 
 	// can ask the resman to remove old resources to make space - will
@@ -499,7 +499,7 @@ mem *Sword2MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id
 // Maximum allowed wasted memory.
 #define MAX_WASTAGE 51200
 
-int32 Sword2MemoryManager::virtualDefrag(uint32 size) {
+int32 MemoryManager::virtualDefrag(uint32 size) {
 	// Virutually defrags memory...
 	//
 	// Used to determine if there is potentially are large enough free

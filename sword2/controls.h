@@ -22,7 +22,7 @@
 
 namespace Sword2 {
 
-class Sword2Gui {
+class Gui {
 public:
 	int _baseSlot;
 	uint8 _currentGraphicsLevel;
@@ -32,7 +32,7 @@ public:
 	uint8 _stereoReversed;
 	uint8 _pointerTextSelected;
 
-	Sword2Gui() : _baseSlot(0), _stereoReversed(0),
+	Gui() : _baseSlot(0), _stereoReversed(0),
 		_pointerTextSelected(0) {}
 
 	uint32 restoreControl(void);
@@ -44,7 +44,7 @@ public:
 	void updateGraphicsLevel(uint8 newLevel);
 };
 
-extern Sword2Gui gui;
+extern Gui gui;
 
 } // End of namespace Sword2
 

@@ -64,7 +64,7 @@ const TargetSettings *Engine_SWORD2_targetList() {
 }
 
 Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
-	return new Sword2::Sword2State(detector, syst);
+	return new Sword2::Sword2Engine(detector, syst);
 }
 
 REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_targetList, Engine_SWORD2_create);
@@ -97,10 +97,10 @@ uint8 gamePaused = 0;
 uint8 graphics_level_fudged = 0;
 uint8 stepOneCycle = 0;			// for use while game paused
 
-Sword2State *g_sword2 = NULL;
-Sword2Sound *g_sound = NULL;
+Sword2Engine *g_sword2 = NULL;
+Sound *g_sound = NULL;
 
-Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
+Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 	
 	_detector = detector;
@@ -122,16 +122,16 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(256);
 	_mixer->setMusicVolume(256);
 
-	g_sound = _sound = new Sword2Sound(_mixer);
+	g_sound = _sound = new Sound(_mixer);
 	
 	File::setDefaultDirectory(_gameDataPath);
 }
 
-void Sword2State::errorString(const char *buf1, char *buf2) {
+void Sword2Engine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int32 Sword2State::InitialiseGame(void) {
+int32 Sword2Engine::InitialiseGame(void) {
 	// init engine drivers
 
 	uint8 *file;
@@ -254,7 +254,7 @@ int32 GameCycle(void) {
 	return 0;
 }
 
-void Sword2State::go() {
+void Sword2Engine::go() {
 	OSystem::Property prop;
 	uint32 rv;
 	uint8 breakOut = 0;
@@ -433,7 +433,7 @@ void Sword2State::go() {
 	return;			//quit the game
 }
 
-void Sword2State::Start_game(void) {
+void Sword2Engine::Start_game(void) {
 	// boot the game straight into a start script
 
 	int screen_manager_id;

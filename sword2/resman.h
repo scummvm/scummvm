@@ -26,7 +26,7 @@ namespace Sword2 {
 
 #define	MAX_res_files	20
 
-class Sword2ResourceManager {
+class ResourceManager {
 public:
 	void init(void);		// read in the config file
 	void exit(void);
@@ -105,7 +105,7 @@ private:
 	char _cdDrives[24];
 };							
 
-extern Sword2ResourceManager res_man;	//declare the object global
+extern ResourceManager res_man;	//declare the object global
 
 } // End of namespace Sword2
 

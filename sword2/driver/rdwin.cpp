@@ -41,7 +41,7 @@ namespace Sword2 {
 // OSystem Event Handler. Full of cross platform goodness and 99% fat free!
 // ---------------------------------------------------------------------------
 
-void Sword2State::parseEvents() {
+void Sword2Engine::parseEvents() {
 	OSystem::Event event;
 	
 	while (_system->poll_event(&event)) {

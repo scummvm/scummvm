@@ -44,7 +44,7 @@ namespace Sword2 {
 // our fonts start on SPACE character (32)
 #define SIZE_OF_CHAR_SET (256 - 32)
 
-Sword2Gui gui;
+Gui gui;
 
 enum {
 	kAlignLeft,
@@ -52,7 +52,7 @@ enum {
 	kAlignCenter
 };
 
-class Sword2FontRenderer {
+class FontRenderer {
 private:
 	struct Glyph {
 		uint8 *_data;
@@ -62,7 +62,7 @@ private:
 	int _fontId;
 
 public:
-	Sword2FontRenderer(int fontId) : _fontId(fontId) {
+	FontRenderer(int fontId) : _fontId(fontId) {
 		uint8 *font = res_man.open(fontId);
 		_frameHeader *head;
 		_spriteInfo sprite;
@@ -82,7 +82,7 @@ public:
 		res_man.close(fontId);
 	}
 
-	~Sword2FontRenderer() {
+	~FontRenderer() {
 		for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
 			DeleteSurface(_glyph[i]._data);
 	}
@@ -119,7 +119,7 @@ public:
 	void drawText(int textId, int x, int y, int alignment = kAlignLeft);
 };
 
-void Sword2FontRenderer::drawText(char *text, int x, int y, int alignment) {
+void FontRenderer::drawText(char *text, int x, int y, int alignment) {
 	_spriteInfo sprite;
 	int i;
 
@@ -149,23 +149,23 @@ void Sword2FontRenderer::drawText(char *text, int x, int y, int alignment) {
 	}
 }
 
-void Sword2FontRenderer::drawText(int textId, int x, int y, int alignment) {
+void FontRenderer::drawText(int textId, int x, int y, int alignment) {
 	char text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
 	drawText(text, x, y, alignment);
 }
 
-class Sword2Dialog;
+class Dialog;
 
 typedef struct Surface {
 	uint8 *_surface;
 	bool _original;
 } WidgetSurface;
 
-class Sword2Widget {
+class Widget {
 protected:
-	Sword2Dialog *_parent;
+	Dialog *_parent;
 
 	_spriteInfo *_sprites;
 	WidgetSurface *_surfaces;
@@ -175,7 +175,7 @@ protected:
 	Common::Rect _hitRect;
 
 public:
-	Sword2Widget(Sword2Dialog *parent, int states) :
+	Widget(Dialog *parent, int states) :
 			_parent(parent), _numStates(states), _state(0) {
 		_sprites = (_spriteInfo *) calloc(states, sizeof(_spriteInfo));
 		_surfaces = (WidgetSurface *) calloc(states, sizeof(WidgetSurface));
@@ -183,7 +183,7 @@ public:
 		_hitRect.left = _hitRect.right = _hitRect.top = _hitRect.bottom = -1;
 	}
 
-	virtual ~Sword2Widget() {
+	virtual ~Widget() {
 		for (int i = 0; i < _numStates; i++) {
 			if (_surfaces[i]._original)
 				DeleteSurface(_surfaces[i]._surface);
@@ -193,14 +193,14 @@ public:
 	}
 
 	void createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc);
-	void linkSurfaceImage(Sword2Widget *from, int state, int x, int y);
+	void linkSurfaceImage(Widget *from, int state, int x, int y);
 
 	void createSurfaceImages(uint32 res, int x, int y) {
 		for (int i = 0; i < _numStates; i++)
 			createSurfaceImage(i, res, x, y, i);
 	}
 
-	void linkSurfaceImages(Sword2Widget *from, int x, int y) {
+	void linkSurfaceImages(Widget *from, int x, int y) {
 		for (int i = 0; i < from->_numStates; i++)
 			linkSurfaceImage(from, i, x, y);
 	}
@@ -242,7 +242,7 @@ public:
 	virtual void releaseMouse(int x, int y) {}
 };
 
-void Sword2Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
+void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
 	uint8 *file, *colTablePtr = NULL;
 	_animHeader *anim_head;
 	_frameHeader *frame_head;
@@ -298,7 +298,7 @@ void Sword2Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint3
 	res_man.close(res);
 };
 
-void Sword2Widget::linkSurfaceImage(Sword2Widget *from, int state, int x, int y) {
+void Widget::linkSurfaceImage(Widget *from, int state, int x, int y) {
 	_sprites[state].x = x;
 	_sprites[state].y = y;
 	_sprites[state].w = from->_sprites[state].w;
@@ -313,30 +313,30 @@ void Sword2Widget::linkSurfaceImage(Sword2Widget *from, int state, int x, int y)
 
 #define MAX_WIDGETS 25
 
-class Sword2Dialog {
+class Dialog {
 private:
 	int _numWidgets;
-	Sword2Widget *_widgets[MAX_WIDGETS];
+	Widget *_widgets[MAX_WIDGETS];
 	bool _finish;
 	int _result;
 
 public:
-	Sword2Dialog() : _numWidgets(0), _finish(false), _result(0) {
+	Dialog() : _numWidgets(0), _finish(false), _result(0) {
 		SetFullPalette(CONTROL_PANEL_PALETTE);
 	}
 
-	virtual ~Sword2Dialog() {
+	virtual ~Dialog() {
 		for (int i = 0; i < _numWidgets; i++)
 			delete _widgets[i];
 	}
 
-	void registerWidget(Sword2Widget *widget) {
+	void registerWidget(Widget *widget) {
 		if (_numWidgets < MAX_WIDGETS) {
 			_widgets[_numWidgets++] = widget;
 		}
 	}
 
-	virtual void onAction(Sword2Widget *widget, int result = 0) {}
+	virtual void onAction(Widget *widget, int result = 0) {}
 
 	virtual void paint() {
 		EraseBackBuffer();
@@ -352,7 +352,7 @@ public:
 	int run();
 };
 
-int Sword2Dialog::run() {
+int Dialog::run() {
 	int i;
 
 	paint();
@@ -424,10 +424,10 @@ int Sword2Dialog::run() {
 	return _result;
 }
 
-class Sword2Button : public Sword2Widget {
+class Button : public Widget {
 public:
-	Sword2Button(Sword2Dialog *parent, int x, int y, int w, int h) :
-			Sword2Widget(parent, 2) {
+	Button(Dialog *parent, int x, int y, int w, int h) :
+			Widget(parent, 2) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -447,13 +447,13 @@ public:
 	}
 };
 
-class Sword2ScrollButton : public Sword2Widget {
+class ScrollButton : public Widget {
 private:
 	uint32 _holdCounter;
 
 public:
-	Sword2ScrollButton(Sword2Dialog *parent, int x, int y, int w, int h) :
-			Sword2Widget(parent, 2), _holdCounter(0) {
+	ScrollButton(Dialog *parent, int x, int y, int w, int h) :
+			Widget(parent, 2), _holdCounter(0) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -480,14 +480,14 @@ public:
 	}
 };
 
-class Sword2Switch : public Sword2Widget {
+class Switch : public Widget {
 private:
 	bool _holding, _value;
 	int _upState, _downState;
 
 public:
-	Sword2Switch(Sword2Dialog *parent, int x, int y, int w, int h) :
-			Sword2Widget(parent, 2), _holding(false),
+	Switch(Dialog *parent, int x, int y, int w, int h) :
+			Widget(parent, 2), _holding(false),
 			_value(false), _upState(0), _downState(1) {
 		setHitRect(x, y, w, h);
 	}
@@ -537,9 +537,9 @@ public:
 	}
 };
 
-class Sword2Slider : public Sword2Widget {
+class Slider : public Widget {
 private:
-	Sword2Widget *_background;
+	Widget *_background;
 	bool _dragging;
 	int _value, _targetValue;
 	int _maxValue;
@@ -554,9 +554,9 @@ private:
 	}
 
 public:
-	Sword2Slider(Sword2Dialog *parent, Sword2Widget *background, int max,
-		int x, int y, int w, int h, Sword2Widget *base = NULL) :
-			Sword2Widget(parent, 1), _background(background),
+	Slider(Dialog *parent, Widget *background, int max,
+		int x, int y, int w, int h, Widget *base = NULL) :
+			Widget(parent, 1), _background(background),
 			_dragging(false), _value(0), _targetValue(0),
 			_maxValue(max) {
 		setHitRect(x, y, w, h);
@@ -572,7 +572,7 @@ public:
 		// but I doubt that will make any noticeable difference.
 
 		_background->paint(&_hitRect);
-		Sword2Widget::paint(clipRect);
+		Widget::paint(clipRect);
 	}
 
 	void setValue(int value) {
@@ -654,25 +654,25 @@ public:
 	}
 };
 
-class Sword2MiniDialog : public Sword2Dialog {
+class MiniDialog : public Dialog {
 private:
 	int _textId;
-	Sword2FontRenderer *_fontRenderer;
-	Sword2Widget *_panel;
-	Sword2Button *_okButton;
-	Sword2Button *_cancelButton;
+	FontRenderer *_fontRenderer;
+	Widget *_panel;
+	Button *_okButton;
+	Button *_cancelButton;
 
 public:
-	Sword2MiniDialog(uint32 textId) : _textId(textId) {
-		_fontRenderer = new Sword2FontRenderer(controls_font_id);
+	MiniDialog(uint32 textId) : _textId(textId) {
+		_fontRenderer = new FontRenderer(controls_font_id);
 
-		_panel = new Sword2Widget(this, 1);
+		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(1996, 203, 104);
 
-		_okButton = new Sword2Button(this, 243, 214, 24, 24);
+		_okButton = new Button(this, 243, 214, 24, 24);
 		_okButton->createSurfaceImages(2002, 243, 214);
 
-		_cancelButton = new Sword2Button(this, 243, 276, 24, 24);
+		_cancelButton = new Button(this, 243, 276, 24, 24);
 		_cancelButton->linkSurfaceImages(_okButton, 243, 276);
 
 		registerWidget(_panel);
@@ -680,19 +680,19 @@ public:
 		registerWidget(_cancelButton);
 	}
 
-	~Sword2MiniDialog() {
+	~MiniDialog() {
 		delete _fontRenderer;
 	}
 
 	virtual void paint() {
-		Sword2Dialog::paint();
+		Dialog::paint();
 
 		_fontRenderer->drawText(_textId, 310, 134, kAlignCenter);
 		_fontRenderer->drawText(149618688, 270, 214);	// ok
 		_fontRenderer->drawText(149618689, 270, 276);	// cancel
 	}
 
-	virtual void onAction(Sword2Widget *widget, int result = 0) {
+	virtual void onAction(Widget *widget, int result = 0) {
 		if (widget == _okButton)
 			setResult(1);
 		else if (widget == _cancelButton)
@@ -700,66 +700,66 @@ public:
 	}
 };
 
-class Sword2OptionsDialog : public Sword2Dialog {
+class OptionsDialog : public Dialog {
 private:
-	Sword2FontRenderer *_fontRenderer;
-	Sword2Widget *_panel;
-	Sword2Switch *_objectLabelsSwitch;
-	Sword2Switch *_subtitlesSwitch;
-	Sword2Switch *_reverseStereoSwitch;
-	Sword2Switch *_musicSwitch;
-	Sword2Switch *_speechSwitch;
-	Sword2Switch *_fxSwitch;
-	Sword2Slider *_musicSlider;
-	Sword2Slider *_speechSlider;
-	Sword2Slider *_fxSlider;
-	Sword2Slider *_gfxSlider;
-	Sword2Widget *_gfxPreview;
-	Sword2Button *_okButton;
-	Sword2Button *_cancelButton;
+	FontRenderer *_fontRenderer;
+	Widget *_panel;
+	Switch *_objectLabelsSwitch;
+	Switch *_subtitlesSwitch;
+	Switch *_reverseStereoSwitch;
+	Switch *_musicSwitch;
+	Switch *_speechSwitch;
+	Switch *_fxSwitch;
+	Slider *_musicSlider;
+	Slider *_speechSlider;
+	Slider *_fxSlider;
+	Slider *_gfxSlider;
+	Widget *_gfxPreview;
+	Button *_okButton;
+	Button *_cancelButton;
 
 	int32 writeOptionSettings(void);
 
 public:
-	Sword2OptionsDialog() {
-		_fontRenderer = new Sword2FontRenderer(controls_font_id);
+	OptionsDialog() {
+		_fontRenderer = new FontRenderer(controls_font_id);
 
-		_panel = new Sword2Widget(this, 1);
+		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(3405, 0, 40);
 
-		_objectLabelsSwitch = new Sword2Switch(this, 304, 100, 53, 32);
+		_objectLabelsSwitch = new Switch(this, 304, 100, 53, 32);
 		_objectLabelsSwitch->createSurfaceImages(3687, 304, 100);
 
-		_subtitlesSwitch = new Sword2Switch(this, 510, 100, 53, 32);
+		_subtitlesSwitch = new Switch(this, 510, 100, 53, 32);
 		_subtitlesSwitch->linkSurfaceImages(_objectLabelsSwitch, 510, 100);
 
-		_reverseStereoSwitch = new Sword2Switch(this, 304, 293, 53, 32);
+		_reverseStereoSwitch = new Switch(this, 304, 293, 53, 32);
 		_reverseStereoSwitch->linkSurfaceImages(_objectLabelsSwitch, 304, 293);
 
-		_musicSwitch = new Sword2Switch(this, 516, 157, 40, 32);
+		_musicSwitch = new Switch(this, 516, 157, 40, 32);
 		_musicSwitch->createSurfaceImages(3315, 516, 157);
 		_musicSwitch->reverseStates();
 
-		_speechSwitch = new Sword2Switch(this, 516, 205, 40, 32);
+		_speechSwitch = new Switch(this, 516, 205, 40, 32);
 		_speechSwitch->linkSurfaceImages(_musicSwitch, 516, 205);
 		_speechSwitch->reverseStates();
 
-		_fxSwitch = new Sword2Switch(this, 516, 250, 40, 32);
+		_fxSwitch = new Switch(this, 516, 250, 40, 32);
 		_fxSwitch->linkSurfaceImages(_musicSwitch, 516, 250);
 		_fxSwitch->reverseStates();
 
-		_musicSlider = new Sword2Slider(this, _panel, 16, 309, 161, 170, 27);
-		_speechSlider = new Sword2Slider(this, _panel, 14, 309, 208, 170, 27, _musicSlider);
-		_fxSlider = new Sword2Slider(this, _panel, 14, 309, 254, 170, 27, _musicSlider);
-		_gfxSlider = new Sword2Slider(this, _panel, 3, 309, 341, 170, 27, _musicSlider);
+		_musicSlider = new Slider(this, _panel, 16, 309, 161, 170, 27);
+		_speechSlider = new Slider(this, _panel, 14, 309, 208, 170, 27, _musicSlider);
+		_fxSlider = new Slider(this, _panel, 14, 309, 254, 170, 27, _musicSlider);
+		_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, _musicSlider);
 
-		_gfxPreview = new Sword2Widget(this, 4);
+		_gfxPreview = new Widget(this, 4);
 		_gfxPreview->createSurfaceImages(256, 495, 310);
 
-		_okButton = new Sword2Button(this, 203, 382, 53, 32);
+		_okButton = new Button(this, 203, 382, 53, 32);
 		_okButton->createSurfaceImages(901, 203, 382);
 
-		_cancelButton = new Sword2Button(this, 395, 382, 53, 32);
+		_cancelButton = new Button(this, 395, 382, 53, 32);
 		_cancelButton->linkSurfaceImages(_okButton, 395, 382);
 
 		registerWidget(_panel);
@@ -792,12 +792,12 @@ public:
 		_gfxPreview->setState(GetRenderType());
 	}
 
-	~Sword2OptionsDialog() {
+	~OptionsDialog() {
 		delete _fontRenderer;
 	}
 
 	virtual void paint() {
-		Sword2Dialog::paint();
+		Dialog::paint();
 
 		int maxWidth = 0;
 		int width;
@@ -839,7 +839,7 @@ public:
 		_fontRenderer->drawText(149618689, 385, 382, kAlignRight);
 	}
 
-	virtual void onAction(Sword2Widget *widget, int result = 0) {
+	virtual void onAction(Widget *widget, int result = 0) {
 		// Since there is music playing while the dialog is displayed
 		// we need to update music volume immediately. Everything else
 		// is handled when the dialog is terminated.
@@ -887,7 +887,7 @@ public:
 	}
 };
 
-int32 Sword2OptionsDialog::writeOptionSettings(void) {
+int32 OptionsDialog::writeOptionSettings(void) {
 	uint8 buff[10];
 	char filename[256];
 	SaveFile *fp;
@@ -932,17 +932,17 @@ enum {
 	kCursorTick = 1
 };
 
-class Sword2Slot : public Sword2Widget {
+class Slot : public Widget {
 private:
 	int _mode;
-	Sword2FontRenderer *_fr;
+	FontRenderer *_fr;
 	char _text[SAVE_DESCRIPTION_LEN];
 	bool _clickable;
 	bool _editable;
 
 public:
-	Sword2Slot(Sword2Dialog *parent, int x, int y, int w, int h) :
-			Sword2Widget(parent, 2), _clickable(false),
+	Slot(Dialog *parent, int x, int y, int w, int h) :
+			Widget(parent, 2), _clickable(false),
 			_editable(false) {
 		setHitRect(x, y, w, h);
 		_text[0] = 0;
@@ -964,7 +964,7 @@ public:
 		return _editable;
 	}
 
-	void setText(Sword2FontRenderer *fr, int slot, char *text) {
+	void setText(FontRenderer *fr, int slot, char *text) {
 		_fr = fr;
 		if (text)
 			sprintf(_text, "%d.  %s", slot, text);
@@ -977,7 +977,7 @@ public:
 	}
 
 	virtual void paint(Common::Rect *clipRect = NULL) {
-		Sword2Widget::paint();
+		Widget::paint();
 
 		// HACK: The main dialog is responsible for drawing the text
 		// when in editing mode.
@@ -1025,66 +1025,66 @@ public:
 	}
 };
 
-class Sword2SaveLoadDialog : public Sword2Dialog {
+class SaveLoadDialog : public Dialog {
 private:
 	int _mode, _selectedSlot;
 	char _editBuffer[SAVE_DESCRIPTION_LEN];
 	int _editPos, _firstPos;
 	int _cursorTick;
 
-	Sword2FontRenderer *_fontRenderer1;
-	Sword2FontRenderer *_fontRenderer2;
-	Sword2Widget *_panel;
-	Sword2Slot *_slotButton[8];
-	Sword2ScrollButton *_zupButton;
-	Sword2ScrollButton *_upButton;
-	Sword2ScrollButton *_downButton;
-	Sword2ScrollButton *_zdownButton;
-	Sword2Button *_okButton;
-	Sword2Button *_cancelButton;
+	FontRenderer *_fontRenderer1;
+	FontRenderer *_fontRenderer2;
+	Widget *_panel;
+	Slot *_slotButton[8];
+	ScrollButton *_zupButton;
+	ScrollButton *_upButton;
+	ScrollButton *_downButton;
+	ScrollButton *_zdownButton;
+	Button *_okButton;
+	Button *_cancelButton;
 
 	void saveLoadError(char *text);
 
 public:
-	Sword2SaveLoadDialog(int mode) : _mode(mode), _selectedSlot(-1) {
+	SaveLoadDialog(int mode) : _mode(mode), _selectedSlot(-1) {
 		int i;
 
 		// FIXME: The "control font" and the "red font" are currently
 		// always the same font, so one should be eliminated.
 
-		_fontRenderer1 = new Sword2FontRenderer(controls_font_id);
-		_fontRenderer2 = new Sword2FontRenderer(red_font_id);
+		_fontRenderer1 = new FontRenderer(controls_font_id);
+		_fontRenderer2 = new FontRenderer(red_font_id);
 
-		_panel = new Sword2Widget(this, 1);
+		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(2016, 0, 40);
 
 		for (i = 0; i < 4; i++) {
-			_slotButton[i] = new Sword2Slot(this, 114, 0, 384, 36);
+			_slotButton[i] = new Slot(this, 114, 0, 384, 36);
 			_slotButton[i]->createSurfaceImages(2006 + i, 114, 0);
 			_slotButton[i]->setMode(mode);
-			_slotButton[i + 4] = new Sword2Slot(this, 114, 0, 384, 36);
+			_slotButton[i + 4] = new Slot(this, 114, 0, 384, 36);
 			_slotButton[i + 4]->linkSurfaceImages(_slotButton[i], 114, 0);
 			_slotButton[i + 4]->setMode(mode);
 		}
 
 		updateSlots();
 
-		_zupButton = new Sword2ScrollButton(this, 516, 65, 17, 17);
+		_zupButton = new ScrollButton(this, 516, 65, 17, 17);
 		_zupButton->createSurfaceImages(1982, 516, 65);
 
-		_upButton = new Sword2ScrollButton(this, 516, 85, 17, 17);
+		_upButton = new ScrollButton(this, 516, 85, 17, 17);
 		_upButton->createSurfaceImages(2067, 516, 85);
 
-		_downButton = new Sword2ScrollButton(this, 516, 329, 17, 17);
+		_downButton = new ScrollButton(this, 516, 329, 17, 17);
 		_downButton->createSurfaceImages(1986, 516, 329);
 
-		_zdownButton = new Sword2ScrollButton(this, 516, 350, 17, 17);
+		_zdownButton = new ScrollButton(this, 516, 350, 17, 17);
 		_zdownButton->createSurfaceImages(1988, 516, 350);
 
-		_okButton = new Sword2Button(this, 130, 377, 24, 24);
+		_okButton = new Button(this, 130, 377, 24, 24);
 		_okButton->createSurfaceImages(2002, 130, 377);
 
-		_cancelButton = new Sword2Button(this, 350, 377, 24, 24);
+		_cancelButton = new Button(this, 350, 377, 24, 24);
 		_cancelButton->linkSurfaceImages(_okButton, 350, 377);
 
 		registerWidget(_panel);
@@ -1100,7 +1100,7 @@ public:
 		registerWidget(_cancelButton);
 	}
 
-	~Sword2SaveLoadDialog() {
+	~SaveLoadDialog() {
 		delete _fontRenderer1;
 		delete _fontRenderer2;
 	}
@@ -1110,8 +1110,8 @@ public:
 
 	void updateSlots() {
 		for (int i = 0; i < 8; i++) {
-			Sword2Slot *slot = _slotButton[(gui._baseSlot + i) % 8];
-			Sword2FontRenderer *fr;
+			Slot *slot = _slotButton[(gui._baseSlot + i) % 8];
+			FontRenderer *fr;
 			uint8 description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
@@ -1141,7 +1141,7 @@ public:
 		}
 	}
 
-	virtual void onAction(Sword2Widget *widget, int result = 0) {
+	virtual void onAction(Widget *widget, int result = 0) {
 		if (widget == _zupButton) {
 			if (gui._baseSlot > 0) {
 				if (gui._baseSlot >= 8)
@@ -1173,7 +1173,7 @@ public:
 		} else if (widget == _cancelButton) {
 			setResult(0);
 		} else {
-			Sword2Slot *slot = (Sword2Slot *) widget;
+			Slot *slot = (Slot *) widget;
 
 			if (result >= kStartEditing) {
 				if (result == kStartEditing) {
@@ -1243,7 +1243,7 @@ public:
 		}
 	}
 
-	void drawEditBuffer(Sword2Slot *slot) {
+	void drawEditBuffer(Slot *slot) {
 		if (_selectedSlot == -1)
 			return;
 
@@ -1255,7 +1255,7 @@ public:
 	}
 
 	virtual void paint() {
-		Sword2Dialog::paint();
+		Dialog::paint();
 
 		if (_mode == kLoadDialog) {
 			// Restore
@@ -1272,7 +1272,7 @@ public:
 		// Cancel
 
 		if (result == 0) {
-			Sword2Dialog::setResult(result);
+			Dialog::setResult(result);
 			return;
 		}
 
@@ -1340,11 +1340,11 @@ public:
 			}
 		}
 
-		Sword2Dialog::setResult(result);
+		Dialog::setResult(result);
 	}
 };
 
-void Sword2SaveLoadDialog::saveLoadError(char* text) {
+void SaveLoadDialog::saveLoadError(char* text) {
 	// Print a message on screen. Second parameter is duration.
 	DisplayMsg((uint8 *) text, 0);
 
@@ -1373,21 +1373,21 @@ void Sword2SaveLoadDialog::saveLoadError(char* text) {
 	RemoveMsg();
 }
 
-uint32 Sword2Gui::restoreControl(void) {
+uint32 Gui::restoreControl(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
 
-	Sword2SaveLoadDialog loadDialog(kLoadDialog);
+	SaveLoadDialog loadDialog(kLoadDialog);
 	return loadDialog.run();
 }
 
-void Sword2Gui::saveControl(void) {
-	Sword2SaveLoadDialog saveDialog(kSaveDialog);
+void Gui::saveControl(void) {
+	SaveLoadDialog saveDialog(kSaveDialog);
 	saveDialog.run();
 }
 
-void Sword2Gui::quitControl(void) {
-	Sword2MiniDialog quitDialog(149618692);	// quit text
+void Gui::quitControl(void) {
+	MiniDialog quitDialog(149618692);	// quit text
 
 	if (!quitDialog.run()) {
 		// just return to game
@@ -1400,10 +1400,10 @@ void Sword2Gui::quitControl(void) {
 	exit(0);
 }
 
-void Sword2Gui::restartControl(void) {
+void Gui::restartControl(void) {
 	uint32 temp_demo_flag;
 
-	Sword2MiniDialog restartDialog(149618693);	// restart text
+	MiniDialog restartDialog(149618693);	// restart text
 
 	if (!restartDialog.run()) {
 		// just return to game
@@ -1466,7 +1466,7 @@ void Sword2Gui::restartControl(void) {
  	this_screen.new_palette = 99;
 }
 
-int32 Sword2Gui::readOptionSettings(void) {
+int32 Gui::readOptionSettings(void) {
 	// settings file is 9 bytes long:
 	//   1 music volume
 	//   2 speech volume
@@ -1517,14 +1517,14 @@ int32 Sword2Gui::readOptionSettings(void) {
 	return 0;
 }
 
-void Sword2Gui::optionControl(void) {
-	Sword2OptionsDialog optionsDialog;
+void Gui::optionControl(void) {
+	OptionsDialog optionsDialog;
 
 	optionsDialog.run();
 	return;
 }
 
-void Sword2Gui::updateGraphicsLevel(uint8 newLevel) {
+void Gui::updateGraphicsLevel(uint8 newLevel) {
 	switch (newLevel) {
 	case 0:
 		// Lowest setting: no graphics fx

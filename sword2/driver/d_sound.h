@@ -38,9 +38,9 @@ typedef struct {
 	uint16 *_buf;
 	int32 _bufSize;
 	PlayingSoundHandle _handle;
-} Sword2FxHandle;
+} FxHandle;
 
-class Sword2MusicHandle : public MusicStream {
+class MusicHandle : public MusicStream {
 public:
 	uint32 _id;
 	bool _firstTime;
@@ -59,21 +59,21 @@ public:
 	int16 read();
 	bool eos() const;
 
-	Sword2MusicHandle() : MusicStream(), _firstTime(false),
+	MusicHandle() : MusicStream(), _firstTime(false),
 			_streaming(false), _paused(false), _looping(false),
 			_fading(0), _fileStart(0), _filePos(0), _fileEnd(0),
 			_lastSample(0) {}
 };
 
-class Sword2Sound {
+class Sound {
 private:
 	SoundMixer *_mixer;
 
 	OSystem::MutexRef _mutex;
 	RateConverter *_converter;
 
-	Sword2FxHandle _fx[MAXFX];
-	Sword2MusicHandle _music[MAXMUS + 1];
+	FxHandle _fx[MAXFX];
+	MusicHandle _music[MAXMUS + 1];
 
 	uint8 _musicVol;
 
@@ -95,8 +95,8 @@ private:
 	void updateCompSampleStreaming(int16 *data, uint len);
 
 public:
-	Sword2Sound(SoundMixer *mixer);
-	~Sword2Sound();
+	Sound(SoundMixer *mixer);
+	~Sound();
 	void fxServer(int16 *data, uint len);
 	int32 playCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
 	uint32 preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);

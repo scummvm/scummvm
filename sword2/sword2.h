@@ -52,9 +52,9 @@ extern uint8 unencoded_name[];
 
 // TODO move stuff into class
 
-class Sword2State : public Engine {
+class Sword2Engine : public Engine {
 public:
-	Sword2State(GameDetector *detector, OSystem *syst);
+	Sword2Engine(GameDetector *detector, OSystem *syst);
 	void go(void);
 	void parseEvents(void);
 	void Start_game(void);
@@ -63,7 +63,7 @@ public:
 	uint32 _features;
 	byte _gameId;
 	char *_game_name; // target name for saves
-	Sword2Sound *_sound;
+	Sound *_sound;
 
 private:
 	bool _quit;
@@ -74,8 +74,8 @@ public:
 	void errorString(const char *buf_input, char *buf_output);
 };
 
-extern Sword2State *g_sword2;
-extern Sword2Sound *g_sound;
+extern Sword2Engine *g_sword2;
+extern Sound *g_sound;
 
 } // End of namespace Sword2
 
