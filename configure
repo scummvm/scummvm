@@ -307,13 +307,24 @@ case $endianess in
 esac
 rm -f tmp_endianess_check tmp_endianess_check.cpp
 
-echo -n "Alignment required... "
+#
+# Check whether memory alignment is required
+#
+echo -n "Alignment required (don't worry if this shows a 'Bus error')... "
 cat > $TMPC << EOF
-#include <malloc.h>
-int main (void) { (void) memalign(64, sizeof(char)); return 0; }
+int main(int argc, char **argv)
+{
+	int i;
+	unsigned char buf[20];
+	for (i = 0; i < 16; i++)
+		*(int *)(&buf[i]) = 0;
+	return 0;
+}
 EOF
 _need_memalign=yes
-cc_check && _need_memalign=no
+# TODO: Hide the "Bus error" message, if possible...
+trap true BUS
+cc_check && ./$TMPO && _need_memalign=no
 if test "$_need_memalign" = yes ; then
   _def_align='#define SCUMM_NEED_ALIGNMENT'
 else
