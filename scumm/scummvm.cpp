@@ -92,6 +92,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_realWidth = 320;
 		_realHeight = 240;
 	} else {
+	if (_gameId == GID_CMI) {
+		_realWidth = 640;
+		_realHeight = 480;
+	} else {
 		_realWidth = 320;
 		_realHeight = 200;
 	}
@@ -176,7 +180,7 @@ void Scumm::scummInit()
 	if (!(_features & GF_SMALL_NAMES))
 		loadCharset(1);
 
-	initScreens(0, 16, 320, 144);
+	initScreens(0, 16, _realWidth, 144);
 
 	setShake(0);
 	setupCursor();
@@ -201,7 +205,7 @@ void Scumm::scummInit()
 
 	for (i = 0; i < _maxVerbs; i++) {
 		_verbs[i].verbid = 0;
-		_verbs[i].right = 319;
+		_verbs[i].right = _realWidth - 1;
 		_verbs[i].oldleft = -1;
 		_verbs[i].type = 0;
 		_verbs[i].color = 2;
@@ -272,7 +276,7 @@ void Scumm::scummInit()
 			string[i].t_xpos = 2;
 			string[i].t_ypos = 5;
 		}
-		string[i].t_right = 319;
+		string[i].t_right = _realWidth - 1;
 		string[i].t_color = 0xF;
 		string[i].t_center = 0;
 		string[i].t_charset = 0;
@@ -566,8 +570,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
-		camera._cur.x = camera._dest.x = 160;
-		camera._cur.y = camera._dest.y = 100;
+		camera._cur.x = camera._dest.x = _realWidth / 2;
+		camera._cur.y = camera._dest.y = _realHeight / 2;
 	}
 
 	if (_features & GF_AFTER_V6) {
@@ -576,14 +580,14 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	}
 
 	if (_features & GF_AFTER_V7) {
-		_vars[VAR_CAMERA_MIN_X] = 160;
-		_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
-		_vars[VAR_CAMERA_MIN_Y] = 100;
-		_vars[VAR_CAMERA_MAX_Y] = _scrHeight - 100;
-		setCameraAt(160, 100);
+		_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
+		_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
+		_vars[VAR_CAMERA_MIN_Y] = _realHeight / 2;
+		_vars[VAR_CAMERA_MAX_Y] = _scrHeight - (_realHeight / 2);
+		setCameraAt(_realWidth / 2, _realHeight / 2);
 	} else {
-		_vars[VAR_CAMERA_MAX_X] = _scrWidth - 160;
-		_vars[VAR_CAMERA_MIN_X] = 160;
+		_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
+		_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
 	}
 
 	if (_roomResource == 0)
@@ -1465,10 +1469,10 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	// Create a primary virtual screen
-	_videoBuffer = (byte *)calloc(328*200, 1);
+	_videoBuffer = (byte *)calloc((_realWidth + 8) * _realHeight, 1);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-	initVirtScreen(0, 0, 0, 320, 200, false, false);
+	initVirtScreen(0, 0, 0, _realWidth, _realHeight, false, false);
 
 	if (_features & GF_AFTER_V7)
 		setupScummVarsNew();

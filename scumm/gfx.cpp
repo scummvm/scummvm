@@ -85,7 +85,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 
 	vs->number = slot;
 	vs->unk1 = 0;
-	vs->width = 320;
+	vs->width = _realWidth;
 	vs->topline = top;
 	vs->height = height;
 	vs->alloctwobuffers = twobufs;
@@ -96,7 +96,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->backBuf = NULL;
 
 	if (vs->scrollable)
-		size += 320 * 4;
+		size += _realWidth * 4;
 
 	createResource(rtBuffer, slot + 1, size);
 	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
@@ -148,7 +148,7 @@ void Scumm::drawDirtyScreenParts()
 		vs = &virtscr[0];
 
 		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - 100;
-		_system->copy_rect(src, 320, 0, vs->topline, 320, vs->height);
+		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height);
 
 		for (i = 0; i < NUM_STRIPS; i++) {
 			vs->tdirty[i] = (byte)vs->height;
@@ -225,15 +225,15 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 		b = vs->height;
 
 	height = b - t;
-	if (height > 200)
-		height = 200;
+	if (height > _realHeight)
+		height = _realHeight;
 
-	scrollY = _vm->camera._cur.y - 100;
-	if (scrollY == -100)
+	scrollY = _vm->camera._cur.y - (_realHeight / 2);
+	if (scrollY == -(_realHeight / 2))
 		scrollY = 0;
 
-	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * 320;
-	_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t, w, height);
+	ptr = vs->screenPtr + (t * NUM_STRIPS + x) * 8 + _readOffs + scrollY * _realWidth;
+	_vm->_system->copy_rect(ptr, _realWidth, x * 8, vs->topline + t, w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
@@ -269,7 +269,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 
 		camera._dest = camera._cur;
 
-		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
+		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
 		if ((camera._cur.x != old.x || camera._cur.y != old.y)
 				&& _vars[VAR_SCROLL_SCRIPT]) {
@@ -280,7 +280,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 	} else {
 		int t;
 
-		if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > 160) {
+		if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > (_realWidth / 2)) {
 			camera._cur.x = pos_x;
 		}
 		camera._dest.x = pos_x;
@@ -318,7 +318,7 @@ void Scumm::setCameraFollows(Actor *a)
 		ax = abs(a->x - camera._cur.x);
 		ay = abs(a->y - camera._cur.y);
 
-		if (ax > _vars[VAR_CAMERA_THRESHOLD_X] || ay > _vars[VAR_CAMERA_THRESHOLD_Y] || ax > 160 || ay > 100) {
+		if (ax > _vars[VAR_CAMERA_THRESHOLD_X] || ay > _vars[VAR_CAMERA_THRESHOLD_Y] || ax > (_realWidth / 2) || ay > (_realHeight / 2)) {
 			setCameraAt(a->x, a->y);
 		}
 
@@ -357,7 +357,7 @@ void Scumm::initBGBuffers(int height)
 	byte *room;
 
 	if (_features & GF_AFTER_V7) {
-		initVirtScreen(0, 0, virtscr[0].topline, 200, height, 1, 1);
+		initVirtScreen(0, 0, virtscr[0].topline, _realHeight, height, 1, 1);
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
@@ -598,7 +598,7 @@ void Scumm::drawFlashlight()
 		
 		if (flashBuffer) {
 
-			offset = 320 - flashW*8;
+			offset = _realWidth - flashW*8;
 			i = flashH;
 			do {
 				j = flashW*2;
@@ -641,7 +641,7 @@ void Scumm::drawFlashlight()
 	}
 
 	byte *bgbak;
-	offset = (flashY - topline) * 320 + virtscr[0].xstart + flashX*8;
+	offset = (flashY - topline) * _realWidth + virtscr[0].xstart + flashX * 8;
 	flashBuffer = virtscr[0].screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, 5) + offset;
 
@@ -652,9 +652,9 @@ void Scumm::drawFlashlight()
 	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
 	int maxcol = flashW * 8 - 1;
-	int maxrow = (flashH - 1) * 320;
+	int maxrow = (flashH - 1) * _realWidth;
 
-	for (i = 0; i < 8; i++, minrow += 320, maxrow -= 320) {
+	for (i = 0; i < 8; i++, minrow += _realWidth, maxrow -= _realWidth) {
 		int d = corner_data[i];
 
 		for (j = 0; j < d; j++) {
@@ -872,7 +872,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 
 	twobufs = vs->alloctwobuffers;
 
-	_vertStripNextInc = h * 320 - 1;
+	_vertStripNextInc = h * _realWidth - 1;
 
 	_numLinesToProcess = h;
 
@@ -1138,8 +1138,8 @@ void Gdi::draw8ColWithMasking()
 			((uint32 *)dst)[0] = ((uint32 *)src)[0];
 			((uint32 *)dst)[1] = ((uint32 *)src)[1];
 		}
-		src += 320;
-		dst += 320;
+		src += _realWidth;
+		dst += _realWidth;
 		mask += NUM_STRIPS;
 	} while (--height);
 }
@@ -1187,7 +1187,7 @@ void Gdi::clear8Col()
 	do {
 		((uint32 *)dst)[0] = 0;
 		((uint32 *)dst)[1] = 0;
-		dst += 320;
+		dst += _realWidth;
 	} while (--height);
 }
 
@@ -1508,7 +1508,7 @@ void Gdi::unkDecode6()
 		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS *dst = color + _palette_mod;
-			dst += 320;
+			dst += _realWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS color = bits & _decomp_mask;
@@ -1532,7 +1532,7 @@ void Gdi::unkDecode6()
  bits = ((buffer & mask) != 0);
 
 #define NEXT_ROW                                               \
-                dst += 320;                                     \
+                dst += _realWidth;                              \
                 if (--h == 0) {                                 \
                         if (!--_currentX)                       \
                                 return;                         \
@@ -1565,7 +1565,7 @@ void Gdi::unkDecode7()
 		((uint32 *)dst)[0] = ((uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((uint32 *)src)[1];
 #endif
-		dst += 320;
+		dst += _realWidth;
 		src += 8;
 	} while (--height);
 }
@@ -1756,16 +1756,16 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 		left = 0;
 	if (right < 0)
 		right = 0;
-	if (left > 320)
+	if (left > _realWidth)
 		return;
-	if (right > 320)
-		right = 320;
+	if (right > _realWidth)
+		right = _realWidth;
 	if (bottom >= height)
 		bottom = height;
 
 	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, 0x40000000);
 
-	height = (top - topline) * 320 + vs->xstart + left;
+	height = (top - topline) * _realWidth + vs->xstart + left;
 
 	backbuff = vs->screenPtr + height;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
@@ -1820,8 +1820,8 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
-		if (rp >= 200)
-			rp = 200;
+		if (rp >= _realHeight)
+			rp = _realHeight;
 		if (lp <= rp) {
 			num = rp - lp + 1;
 			sp = &gfxUsageBits[lp];
@@ -2161,7 +2161,7 @@ void Scumm::moveCamera()
 			camera._dest.y = a->y;
 		}
 
-		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
+		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
 		clampCameraPos(&camera._dest);
 
@@ -2311,14 +2311,14 @@ void Scumm::cameraMoved()
 		_screenEndStrip = _screenStartStrip + NUM_STRIPS - 1;
 		virtscr[0].xstart = _screenStartStrip << 3;
 
-		_screenLeft = camera._cur.x - 160;
-		_screenTop = camera._cur.y - 100;
+		_screenLeft = camera._cur.x - (_realWidth / 2);
+		_screenTop = camera._cur.y - (_realHeight / 2);
 	} else {
 
-		if (camera._cur.x < 160) {
-			camera._cur.x = 160;
-		} else if (camera._cur.x + 160 >= _scrWidth) {
-			camera._cur.x = _scrWidth - 160;
+		if (camera._cur.x < (_realWidth / 2)) {
+			camera._cur.x = (_realWidth / 2);
+		} else if (camera._cur.x + (_realWidth / 2) >= _scrWidth) {
+			camera._cur.x = _scrWidth - (_realWidth / 2);
 		}
 
 		_screenStartStrip = (camera._cur.x >> 3) - 20;
@@ -2832,7 +2832,7 @@ void Scumm::grabCursor(byte *ptr, int width, int height)
 	for (; height; height--) {
 		memcpy(dst, ptr, width);
 		dst += width;
-		ptr += 320;
+		ptr += _realWidth;
 	}
 
 	updateCursor();

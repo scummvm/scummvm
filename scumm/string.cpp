@@ -240,12 +240,12 @@ void Scumm::CHARSET_1()
 			if (string[0].ypos < 1)
 				string[0].ypos = 1;
 
-			if (string[0].ypos < camera._cur.y - 100)
+			if (string[0].ypos < camera._cur.y - (_realHeight / 2))
 
-				string[0].ypos = camera._cur.y - 100;
+				string[0].ypos = camera._cur.y - (_realHeight / 2);
 
 			s = a->scalex * a->new_2 / 0xFF;
-			string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + 160;
+			string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
 			if (string[0].xpos < 80)
 				string[0].xpos = 80;
 			if (string[0].xpos > 240)
@@ -301,7 +301,7 @@ void Scumm::CHARSET_1()
 			gdi._mask_left = string[0].xpos;
 			gdi._mask_top = string[0].ypos;
 			gdi._mask_bottom = string[0].ypos + 8;
-			gdi._mask_right = 320;
+			gdi._mask_right = _realWidth;
 			if (string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
 				gdi._mask_bottom = 16;
 		}
@@ -458,7 +458,7 @@ void Scumm::description()
 	charset._top = string[0].ypos;
 	charset._left = string[0].xpos;
 	charset._left2 = string[0].xpos;
-	charset._right = 319;
+	charset._right = _realWidth - 1;
 	charset._xpos2 = string[0].xpos;
 	charset._ypos2 = string[0].ypos;
 	charset._disableOffsX = charset._unk12 = 1;
@@ -813,7 +813,7 @@ void CharsetRenderer::printCharOld(int chr)
 		_unk12 = 0;
 	}
 	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1) * 8;
-	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * 320 + _left;
+	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _realWidth + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
 	for (y = 0; y < 8; y++) {
@@ -824,7 +824,7 @@ void CharsetRenderer::printCharOld(int chr)
 			}
 			color = ((buffer & mask) != 0);
 			if (color)
-				*(dest_ptr + y * 320 + x) = _color;
+				*(dest_ptr + y * _realWidth + x) = _color;
 		}
 	}
 
@@ -937,7 +937,7 @@ void CharsetRenderer::printChar(int chr)
 		_hasMask = true;
 #endif
 
-	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * 320 + _left;
+	_dest_ptr = _backbuff_ptr = vs->screenPtr + vs->xstart + _drawTop * _realWidth + _left;
 
 #if !defined(OLD)
 	if (_blitAlso) {
@@ -945,7 +945,7 @@ void CharsetRenderer::printChar(int chr)
 	if (1) {
 #endif
 		_dest_ptr = _bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + _drawTop * 320 + _left;
+			+ vs->xstart + _drawTop * _realWidth + _left;
 	}
 
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
@@ -1012,7 +1012,7 @@ void CharsetRenderer::drawBits()
 				maskpos++;
 			}
 		}
-		dst = (_dest_ptr += 320);
+		dst = (_dest_ptr += _realWidth);
 		mask += 40;
 		y++;
 	}
