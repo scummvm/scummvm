@@ -968,6 +968,10 @@ void MidiDriver_QT::send(uint32 b)
 			// pitch bend changes - ignore those for now
 			break;
 
+		case 0x12:
+			// What is this ?!? Ignore it for now
+			break;
+
 		default:
 			// Error: Unknown MIDI effect: 007f76b3
 			warning("Unknown MIDI effect: %08x", (int)b);
