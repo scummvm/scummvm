@@ -188,13 +188,30 @@ void IMuseDigital::callback() {
 	}
 }
 
+int IMuseDigital::checkJumpByRegion(int track, int region) {
+	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
+	for (int l = 0; l < num_jumps; l++) {
+		return _sound->getJumpDestRegionId(_track[track].soundHandle, l);
+	}
+	return -1;
+}
+
 void IMuseDigital::switchToNextRegion(int track) {
-	// TODO - finish
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
+	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
+	if ((_scumm->_gameId == GID_FT) && (num_jumps != 0)) {
+		_track[track].regionOffset = 0;
+		return;
+	}
+
 	if (++_track[track].curRegion == num_regions) {
 		_track[track].toBeRemoved = true;
 		return;
 	}
+
+	int region = checkJumpByRegion(track, _track[track].curRegion);
+	if (region != -1)
+		_track[track].curRegion = region;
 	_track[track].regionOffset = 0;
 }
 
@@ -503,8 +520,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					if (_ftSeqMusicTable[l].audioname[0] != 0) {
 						for (r = 0; r < _scumm->_numAudioNames; r++) {
 							if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
-								startMusic(r);
-								parseScriptCmds(12, r, 0x600, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
+//								startMusic(r);
+//								parseScriptCmds(12, r, 0x600, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
 							}
 						}
 					}

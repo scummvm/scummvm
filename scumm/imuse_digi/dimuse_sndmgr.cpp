@@ -46,7 +46,7 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 	if (READ_UINT32(ptr) == MKID('Crea')) {
-		int size, rate, loops;
+		int size = 0, rate = 0, loops = 0;
 		_sounds[slot].resPtr = readVOCFromMemory(ptr, size, rate, loops);
 		_sounds[slot].freeResPtr = true;
 		_sounds[slot].bits = 8;
@@ -54,7 +54,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 		_sounds[slot].channels = 1;
 		_sounds[slot].region[0].length = size;
 		_sounds[slot].numRegions++;
-		_sounds[slot].numJumps++;
+		if (loops != 0)
+			_sounds[slot].numJumps++;
 	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 		uint32 tag;
 		int32 size = 0;

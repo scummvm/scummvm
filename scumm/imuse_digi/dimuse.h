@@ -76,6 +76,7 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
+	int checkJumpByRegion(int track, int region);
 	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input);
 
 public:
