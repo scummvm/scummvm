@@ -1,0 +1,674 @@
+TODO
+* hfs data on puttputt
+* hfs data on spyfox
+* extract & md5sum from farm cd hfs
+    - Fatty Bear Demo.sea
+    - Putt-Putt Moon Demo.sea
+    - Putt-Putt's Demo.sea
+* misc other bits
+
+1997-09-03 14:21 1grademo.w32
+D:\Scummsys.90\sputm.90\*.c
+5d4a7c36dee1a11ed50d260f8413c27a  1grademo.w32
+0f5935bd5e88ba6f09e558d64459746d  1grademo.he0
+e41b3ba697f00251fdefd7d64a8cf125  1grademo.he1
+007961d43ada4cca6f15b2dcedcb695e  1grademo.he2
+ae77dc6ff68d6fdfb23e5f792f91ab2d  1grademo.he4
+
+(puttputt cd)
+7.0.0 (Feb  8 1995 16:33:47)
+a16fc5d8c29efffb65f84f3a42b154f1  airdemo.w32
+86c9902b7bec1a17926d4dae85beaa45  airdemo.he0
+e5ce3f8cddd5d54aaf2b040c831dcc96  airdemo.he1
+858db51aa87dd51df99c00c0bab31d65  airdemo.he2
+c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
+42161ad979949daf67924b5227b94f2d  airdemo.he4
+765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
+
+(farm cd)
+7.0.0 (Jun 22 1995 14:06:25)
+3d43af3f3ecc18744dda721d951e2a2f  airdemo.w32
+8ffd618a776a4c0d8922bb28b09f8ce8  airdemo.he0
+64fb30a7c26d119216cdadaff1b4e1bd  airdemo.he1
+858db51aa87dd51df99c00c0bab31d65  airdemo.he2
+c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
+42161ad979949daf67924b5227b94f2d  airdemo.he4
+765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
+
+(freddi cd)
+7.0.0 (Jul  5 1995 14:46:05)
+a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
+8ffd618a776a4c0d8922bb28b09f8ce8  airdemo.he0
+64fb30a7c26d119216cdadaff1b4e1bd  airdemo.he1
+858db51aa87dd51df99c00c0bab31d65  airdemo.he2
+c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
+42161ad979949daf67924b5227b94f2d  airdemo.he4
+765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
+
+(spyfox cd/pjs cd/puttzoo cd)
+7.0.0 (Jul  5 1995 14:46:05)
+a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
+e144f5f49d9241d2a9dee2576b3d09cb  airdemo.he0
+855ecd2da58317064d2e01263d6ca493  airdemo.he1
+858db51aa87dd51df99c00c0bab31d65  airdemo.he2
+c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
+42161ad979949daf67924b5227b94f2d  airdemo.he4
+765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
+
+(farm cd hfs/freddi cd hfs/he classics hfs)
+1995-09-14 17:20 Airport Demo
+af4f7ee28b83c0ba471459a779a34043  Airport Demo
+7ea2da67ebabea4ac20cee9f4f9d2934  Airport Demo (0)
+608f6b919b663642be7104c14440434f  Airport Demo (1)
+858db51aa87dd51df99c00c0bab31d65  Airport Demo (2)
+42161ad979949daf67924b5227b94f2d  Airport Demo (4)
+765492059d83bc0ae8c30a4feef50a6a  Airport Demo (9)
+
+1998-07-26 13:36 BLUESABCTIMEDEMO.W32
+D:\scummsys.98\sputm.98\*.c
+f67221ca7890906f29ab38aedafb0802  BLUESABCTIMEDEMO.W32
+7ddeaf52c8b9a50551ce0aa2ac811d07  BLUESABCTIMEDEMO.HE0
+06fee308ab288ece9b2ab18f9c7b9f41  BluesABCTimeDemo.(a)
+e4a7e95b00feb1a3e13b542c164c7ff3  BLUESABCTIMEDEMO.HE2
+de94e921f02e3b4c6e061aab0f4cc339  BLUESABCTIMEDEMO.HE4
+
+2000-05-01 16:09 bb2demo.W32
+C:\Dev\Project\SPUTM\Src\*.cpp
+04770d822d0e78cf13bbf1870de3528b  bb2demo.W32
+a194f15f51ee62badab74b9e7da97693  bb2demo.HE0
+0b38fda342fdaa5e206b2a82c8ab6b9b  bb2demo.(a)
+04862d3b91c49585400f1021bdb9faa1  bb2demo.he2
+0b3a9ff634f2fabb695358aa591154b3  bb2demo.he4
+17255b19a57a1ba0c35802b1b01792f7  BB2demo.HE9
+
+2001-09-11 14:22 football2002.exe
+C:\SRC_RELEASE\SPUTM\Src\SrcPWin\*.cpp
+2234bbc4d12a09fadf8540343eb1c00e  football2002.exe
+2e85f7aa054930c692a5b1bed1dfc295  Football2002.HE0
+20aca400df5f580e4d3c019c3386d361  Football2002.(b)
+
+(puttputt cd)
+7.0.0 (Feb  8 1995 16:33:26)
+1978944e3e597362d3f4f13606ab2264  catalog.w32
+11e6e244078ff09b0f3832e35420e0a7  catalog.he0
+0cb65eb736529221b9269b15a7fd1914  catalog.he1
+c0e6ea1d47493cca09fc674c3d097836  catalog.he2
+c0e6ea1d47493cca09fc674c3d097836  catalog.he3
+
+(farm cd)
+7.0.0 (Jun 22 1995 14:01:50)
+d33843ac942167d564ae5682e2b381c3  catalog2.w32
+037385a953789190298494d92b89b3d0  catalog2.he0
+d43e75c3e71f3668727f436b4c777334  catalog2.he1
+c0e6ea1d47493cca09fc674c3d097836  catalog2.he2
+c0e6ea1d47493cca09fc674c3d097836  catalog2.he3
+
+(farm cd hfs)
+1995-09-16 14:11 The Farm
+f4f88abc0635e80a4fc8c605ce9d0db3  The Farm
+fbbbb38a81fc9d6a61d509278390a290  The Farm (0)
+3941f75ccb280e7c73890833f2a09514  The Farm (1)
+e778f5f5bbc457966f6ac90ec8f3d9ee  The Farm (2)
+449029f90e778a4504de146ca9d0963b  The Farm (4)
+3d29c1d665dcb4e4b036dfc7752b990b  The Farm (9)
+
+(farm cd)
+7.0.0 (Jun 11 1996 19:12:56)
+fa49452f871e506a6930cc8697db6181  farm.w32
+a85856675429fe88051744f755b72f93  farm.he0
+3e1111db20b879a482814b4a06122672  farm.he1
+e778f5f5bbc457966f6ac90ec8f3d9ee  farm.he2
+c0e6ea1d47493cca09fc674c3d097836  farm.he3
+449029f90e778a4504de146ca9d0963b  farm.he4
+3d29c1d665dcb4e4b036dfc7752b990b  farm.he9
+
+(puttputt cd)
+7.0.0 (Oct 13 1994 19:15:16)
+cdadbf8daf9c8f811dac28d348ff8825  farmdemo.w32
+bf8b52fdd9a69c67f34e8e9fec72661c  farmdemo.he0
+6f5d57f1fdc449424792d840a9c85acc  farmdemo.he1
+706d44b32f7c74e98ff4fe88d625826d  farmdemo.he2
+1c26d0c926e9c31d1b77c0611a643dc9  farmdemo.he3
+
+(farm cd)
+7.0.0 (Jun 22 1995 14:05:27)
+daca65342b60a86a8ba5fbbd5d8b71d4  farmdemo.w32
+8d479e36f35e80257dfc102cf4b8a912  farmdemo.he0
+4d4cb9fdb5a0f3b651bbf0f80735cbe2  farmdemo.he1
+706d44b32f7c74e98ff4fe88d625826d  farmdemo.he2
+c0e6ea1d47493cca09fc674c3d097836  farmdemo.he3
+ad6a4dea7b696a28b99d40ea1d685788  farmdemo.he4
+
+(he classics cd)
+6.1.1 (Jun 23 1993 15:31:14)
+9f5ada54fef54f1602bb1b642d0fe412  FBEAR.EXE
+3824e60cdf639d22f6df92a03dc4b131  FBEAR.HE0
+c75f511786a4e0c474660d074c9a421a  FBEAR.HE1
+d05d89374e5e459067603cd075dd3134  FBEAR.SNG
+c542564fc561aca36626259455738126  FBEAR.TLK
+
+(he classics cd)
+7.0.0 (Feb  7 1995 13:27:40)
+564d213162f0375b62a8fc5a3a9ef94d  FBEAR.W32
+179879b6e35c1ead0d93aab26db0951b  FBEAR.HE0
+7f733155adcb049e887fef942e81602a  FBEAR.HE1
+fc3885128832fcb876ccd79124ba36fe  FBEAR.HE2
+58dfc09f344a9dec565bb914920800d3  FBEAR.HE3
+a6b0d9c55f747f906142ed60c7d780e8  FBEAR.HE4
+d05d89374e5e459067603cd075dd3134  FBEAR.SNG
+
+(he classics cd hfs)
+3df6ead57930488bc61e6e41901d0e97  Fatty Bear 0
+93cdebdbf8f1ec8c3f05dff0c8fedc82  Fatty Bear 1
+fc3885128832fcb876ccd79124ba36fe  Fatty Bear 2
+d05d89374e5e459067603cd075dd3134  Fatty Bear Songs
+
+6.1.1 (Apr  6 1993 20:48:56)
+59c820951585b7dfb0307992bbb275c7  fbdemo.exe
+47e75b1bdcb44c78cb94883d1731ccf8  fbdemo.he0
+7c61c90ec5ceb812698d40b29f356559  fbdemo.he1
+f054dd0158bafd59570794397727c882  fbdemo.tlk
+
+(puttputt cd)
+7.0.0 (Feb  7 1995 13:27:40)
+564d213162f0375b62a8fc5a3a9ef94d  fbdemo.w32
+22c9eb04455440131ffc157aeb8d40a8  fbdemo.he0
+5293d81516126086766540ab12a9c499  fbdemo.he1
+f054dd0158bafd59570794397727c882  fbdemo.he2
+58dfc09f344a9dec565bb914920800d3  fbdemo.he3
+76954add1f2c5bd9d967746ab4137d3a  fbdemo.he4
+
+(puttputt cd)
+7.0.0 (Oct 20 1994 10:00:19)
+0ebc6a8cc24babc41dbfbfb07ee6456f  freddemo.w32
+084ed0fa98a6d1e9368d67fe9cfbd417  freddemo.he0
+273e622b5fdf60859b549fee08384a33  freddemo.he1
+faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
+6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
+a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
+
+(farm cd)
+7.0.0 (Jun 22 1995 14:06:25)
+3d43af3f3ecc18744dda721d951e2a2f  freddemo.w32
+0855496dde35356b1a9691e22ba84cdc  freddemo.he0
+5374aef0d7c547a95dc779f4ea51e20f  freddemo.he1
+faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
+6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
+a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
+
+(spyfox cd/pjs cd/puttzoo cd)
+7.0.0 (Jul  5 1995 14:46:05)
+25003798cd5f4b51bc1f4d02c6a2e218  freddemo.w32
+566165a7338fa11029e7c14d94fa70d0  freddemo.he0
+649724a605cb66fef3fac73297ef4259  freddemo.he1
+faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
+6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
+a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
+
+7.0.0 (Jul  5 1995 14:46:05)
+a5459bfe36183cf1f4ced00fe325aa90  freddemo.w32
+566165a7338fa11029e7c14d94fa70d0  freddemo.he0
+649724a605cb66fef3fac73297ef4259  freddemo.he1
+faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
+6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
+a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
+
+(farm cd hfs)
+1995-09-14 17:35 Freddi Demo
+42f4a55732734e3c54c0b198f2615970  Freddi Demo
+c8aac5e3e701874e2fa4117896f9e1b1  Freddi Demo (0)
+b4805ccd0841854d6b2f596f0efb5551  Freddi Demo (1)
+faca7509c38beabb37b2347b8b6bb1ea  Freddi Demo (2)
+a8c3ced34ecb16ad1b0eed5b464ad61e  Freddi Demo (4)
+
+(freddi cd)
+1998-01-21 02:13 freddi.w32
+D:\Scummsys.90\sputm.90\*.c
+0d6f0f65403bd23afb78c143587d11a8  freddi.w32
+df047cc4792150f601290357566d36a6  freddi.he0
+d30fb13dd3baa94a4cabe4cc1a6228d1  freddi.he1
+f2f1e70bd9388c98c0ef38b1ef286ae2  freddi.he2
+cb0fb189e08144bbc713b8df739ba9fc  freddi.he4
+
+(freddi cd hfs)
+1998-02-18 16:06 Freddi Fish
+560da18bc11f6cf7b068a96dd928ae7e  Freddi Fish
+df047cc4792150f601290357566d36a6  Freddi Fish (0)
+d30fb13dd3baa94a4cabe4cc1a6228d1  Freddi Fish (1)
+f2f1e70bd9388c98c0ef38b1ef286ae2  Freddi Fish (2)
+cb0fb189e08144bbc713b8df739ba9fc  Freddi Fish (4)
+d41d8cd98f00b204e9800998ecf8427e  Freddi Fish (r)
+
+(he classics cd hfs/pjs cd hfs/puttzoo cd hfs)
+1996-11-17 13:28 Freddi Demo
+42f4a55732734e3c54c0b198f2615970  Freddi Demo
+c8aac5e3e701874e2fa4117896f9e1b1  Freddi Demo (0)
+b4805ccd0841854d6b2f596f0efb5551  Freddi Demo (1)
+faca7509c38beabb37b2347b8b6bb1ea  Freddi Demo (2)
+a8c3ced34ecb16ad1b0eed5b464ad61e  Freddi Demo (4)
+
+(spyfox cd/pjs cd/puttzoo cd)
+1996-10-17 03:54 ff2-demo.w32
+D:\Scummsrc.80\Sputm\*.c
+21935da87e116e29f558145b0c491770  ff2-demo.w32
+fc8d197a22146e74766e9cb0cfcaf1da  ff2-demo.he0
+203cf83989f6410ec19edb9bd1455512  ff2-demo.he1
+f96261232a8a7ae6bc7478d8c1c5a49c  ff2-demo.he2
+a97bf54bcae67fabb8d6e4a1e506efef  ff2-demo.he4
+
+(freddi cd hfs/he classics hfs/pjs cd hfs/puttzoo cd hfs)
+1997-10-28 17:16 Freddi Fish 2 Demo
+d7e1af5d819c98b2f0ec8150f54ad51f  Freddi Fish 2 Demo
+fc8d197a22146e74766e9cb0cfcaf1da  Freddi Fish 2 Demo (0)
+203cf83989f6410ec19edb9bd1455512  Freddi Fish 2 Demo (1)
+f96261232a8a7ae6bc7478d8c1c5a49c  Freddi Fish 2 Demo (2)
+a97bf54bcae67fabb8d6e4a1e506efef  Freddi Fish 2 Demo (4)
+
+1997-10-28 12:42 f3-mdemo.w32
+D:\Scummsys.90\sputm.90\*.c
+3ff95314abdeebe0b2d11f4417efa449  f3-mdemo.w32
+cb1559e8405d17a5a278a6b5ad9338d1  f3-mdemo.he0
+a2fde75fcbd2376f057f4a40f9893cbe  f3-mdemo.he1
+30e3f97a2290f0683ccedf8b08a6ba55  f3-mdemo.he2
+b90004518ba5bb4dc473170f5c975568  f3-mdemo.he4
+
+(freddi cd hfs)
+1997-12-04 18:25 F3-Mdemo
+e711a6fb0b7330782c6b5ae0e1283084  F3-Mdemo
+cb1559e8405d17a5a278a6b5ad9338d1  F3-Mdemo (0)
+a2fde75fcbd2376f057f4a40f9893cbe  F3-Mdemo (1)
+30e3f97a2290f0683ccedf8b08a6ba55  F3-Mdemo (2)
+b90004518ba5bb4dc473170f5c975568  F3-Mdemo (4)
+d41d8cd98f00b204e9800998ecf8427e  F3-Mdemo (r)
+
+1999-02-08 19:21 F4-demo.w32
+D:\scummsys.98\sputm.98\*.c
+24b409ff575c52d385cdc6b7e91b5b79  F4-demo.w32
+7c2e76087027eeee9c8f8985f93a1cc5  f4-demo.HE0
+53b0e5c820bd264684df59231dbdc031  f4-demo.(a)
+23632be3c8c4e77c3917148c5f8e56ef  f4-demo.he2
+0453fdf42a9aa750ed198bca1d9f8e91  f4-demo.he4
+
+2002-06-05 15:23 ffhsdemo.exe
+c:\Build\SRC\SPUTM\Src\*.cpp
+874613bc4b14dba444b43e31d843e622  ffhsdemo.exe
+d37c55388294b66e53e7ced3af88fa68  ffhsdemo.he0
+d0a925e6d57938021ce5b1260731ec7d  FFHSDemo.(a)
+d0a925e6d57938021ce5b1260731ec7d  ffhsdemo.he1
+7480dfa29b4df0002d23c72bb4932dde  ffhsdemo.he2
+a97bf54bcae67fabb8d6e4a1e506efef  ffhsdemo.he4
+
+6.1.1 (Feb 15 1993 20:31:55)
+f90f40b9702cfd3e2f6c9af76c743e41  funpack.exe
+46b53fd430adcfbed791b48a0d4b079f  funpack.he0
+af6283c82fb6a867f91f28039b716036  funpack.he1
+7d6dec34833328722665c1e5a64e735f  funpack.tlk
+
+(funpack patch)
+6.1.1 (Nov 20 1993 12:20:32)
+091d066c93e751504e4b18c6748b97e0  FUNPACK.EXE
+
+1997-09-03 18:32 kinddemo.w32
+D:\Scummsys.90\sputm.90\*.c
+b10981a0805c37cda1420f29745d6537  kinddemo.w32
+695fe0b3963333b7e15b37514db3c745  kinddemo.HE0
+d3af0fb2011b158a28c43480fb59c588  kinddemo.HE1
+e5da782a19575d12ff98feb74f7602e3  kinddemo.he2
+ba7a9148040e2421c4129b1d32c40627  kinddemo.he4
+
+(freddi cd hfs)
+1997-12-09 19:59 Kinddemo
+9c445edf28ee4a2a7b3ff36ea1f75c05  Kinddemo
+695fe0b3963333b7e15b37514db3c745  Kinddemo (0)
+d3af0fb2011b158a28c43480fb59c588  Kinddemo (1)
+e5da782a19575d12ff98feb74f7602e3  Kinddemo (2)
+ba7a9148040e2421c4129b1d32c40627  Kinddemo (4)
+d41d8cd98f00b204e9800998ecf8427e  Kinddemo (r)
+
+(he classics cd)
+6.1.1 (Nov  4 1993 11:12:57)
+c6adfe1876ac936ff19546f0cd1e2b5b  PUTTMOON.EXE
+780e4a0ae2ff17dc296f4a79543b44f8  PUTTMOON.HE0
+f02f36270d684e0c245d0fd0519b5e7b  PUTTMOON.HE1
+19113cc2ecc1dc24c70c46ae015abd78  PUTTMOON.BRS
+bfecc91f0bf7b86acd7f82a3dfb53ca5  PUTTMOON.TLK
+
+(he classics cd)
+7.0.0 (Feb  7 1995 13:27:20)
+56c8455570af6106931818e19344b46a  PUTTMOON.W32
+9c92eeaf517a31b7221ec2546ab669fd  PUTTMOON.HE0
+cfe6d4059c4c5edb9f9f2351efb32a7b  PUTTMOON.HE1
+965c113b3978682530e121ba8af7419b  PUTTMOON.HE2
+58dfc09f344a9dec565bb914920800d3  PUTTMOON.HE3
+05d387396aabba20e7e3b8778bc0cf09  PUTTMOON.HE4
+19113cc2ecc1dc24c70c46ae015abd78  PUTTMOON.BRS
+
+(he classics cd hfs)
+9dc02577bf50d4cfaf3de3fbac06fbe2  Putt-Putt Moon 0
+e4e07a2763824a7646e11b6d9ad795c8  Putt-Putt Moon 1
+bfecc91f0bf7b86acd7f82a3dfb53ca5  Putt-Putt Moon 2
+19113cc2ecc1dc24c70c46ae015abd78  PUTTMOON.BRS
+
+6.1.1 (Sep 29 1993 17:18:45)
+ef2d93dd02bcdabc7a1a59101e31f8be  MOONDEMO.EXE
+aa6a91b7f6f119d1b7b1f2a4c9e24d59  MOONDEMO.HE0
+086b6835bbb924109a31e50f0b5c9e9a  MOONDEMO.HE1
+0d06e43d5b5460375575a74d15d6bf07  MOONDEMO.TLK
+
+(puttputt cd)
+7.0.0 (Feb  7 1995 13:27:20)
+56c8455570af6106931818e19344b46a  moondemo.w32
+9c143c5905055d5df7a0f014ab379aee  moondemo.he0
+ec82bd61eff3218216fb145004d2b005  moondemo.he1
+0d06e43d5b5460375575a74d15d6bf07  moondemo.he2
+7cf09a515cb499890e3faeab3a2aa491  moondemo.he3
+c182763838b5d06581cc9fb1c1bb1cfd  moondemo.he4
+
+(pjs cd)
+1996-09-14 00:28 pajama.w32
+D:\Scummsrc.80\Sputm\*.c
+8e0e6d39728cc6a87b32f5e71f602b20  pajama.w32
+672dec94b82f7f0877ebb5b5cf7f4bc1  pajama.he0
+2e83592ae635f53d1cc94c3d98da6335  pajama.he1
+048a2cb8baad19ca90a4510783ab032b  pajama.he2
+4417ea03a6d1b0b7522526f41d1097f6  pajama.he3
+147be86929b5969224c72edac30896fd  pajama.he4
+2546d42491fa61ac8e2d20d68d264fce  pajama.he7
+
+(pjs cd hfs)
+1996-09-12 20:55 Pajama Sam
+57fab7dc46bb7d9450970d95cf14e8fc  Pajama Sam
+672dec94b82f7f0877ebb5b5cf7f4bc1  Pajama Sam (0)
+2e83592ae635f53d1cc94c3d98da6335  Pajama Sam (1)
+048a2cb8baad19ca90a4510783ab032b  Pajama Sam (2)
+147be86929b5969224c72edac30896fd  Pajama Sam (4)
+2546d42491fa61ac8e2d20d68d264fce  Pajama Sam (7)
+
+(puttzoo cd hfs)
+1996-11-17 13:28 Pajama Sam Demo
+3b032e02ccbc5d65c7397cfb32f65f1d  Pajama Sam Demo
+f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
+5c12305ff68ed053daba74a700a56ad2  Pajama Sam Demo (1)
+4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
+6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
+
+(spyfox cd/puttzoo cd)
+1996-10-31 22:34 pjs-demo.w32
+D:\Scummsrc.80\Sputm\*.c
+0c7e0d0ef005f289e9ca06bbbf5e8839  pjs-demo.w32
+f237bf8a5ef9af78b2a6a4f3901da341  pjs-demo.he0
+5c12305ff68ed053daba74a700a56ad2  pjs-demo.he1
+4ccd03ca710a9053c42292cae09a6471  pjs-demo.he2
+6e0fdfcf13e37b659b7155cf5969965f  pjs-demo.he4
+
+(freddi cd hfs/he classics hfs)
+1997-10-28 17:16 Pajama Sam Demo
+3b032e02ccbc5d65c7397cfb32f65f1d  Pajama Sam Demo
+f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
+5c12305ff68ed053daba74a700a56ad2  Pajama Sam Demo (1)
+4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
+6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
+
+1999-07-08 08:46 SMALLER.EXE
+D:\(vss)scummsys.99\SPUTM\Src\SrcPWin\*.cpp
+7d2b945c2afb05a370da690c36b22bdd  SMALLER.EXE
+a2bb6aa0537402c1b3c2ea899ccef64b  SMALLER.HE0
+070702d4a191580455acee3d38d5ca9e  smaller.(a)
+7fe73db8981467a6d0abdd92105f8618  data/world-1/levels/level-10.ot1
+b988a3d95f638bb342135d9bd04e0137  data/world-1/levels/level-10.ot2
+ce60d91581be1cde2d0619a85647b1a9  data/world-1/levels/level-11.ot1
+8cd6dea0b18593c8d1aaa12daff10cc7  data/world-1/levels/level-11.ot2
+7bfa53f7aa0b06372472b7fa475254cb  data/world-1/levels/level-12.ot1
+ad2e8c62013a1aee64e3af638d7fac3a  data/world-1/levels/level-12.ot2
+0dda1de323c63baa645863259937cfaa  data/world-1/levels/level-13.ot1
+0832514ef1b2206b119054e838003241  data/world-1/levels/level-13.ot2
+08b28bfae2169083bdaf2635faf75213  data/world-1/levels/level-14.ot1
+510121696a26e6410766d3d414a4a1ed  data/world-1/levels/level-14.ot2
+459027319d6db400bbb60acd37dd31a0  data/world-1/levels/level-15.ot1
+7c73fcd8abcb837bbcb72457eb71da44  data/world-1/levels/level-15.ot2
+ec75f20929d3ab9ad7b68b650e55b713  data/world-1/levels/level-16.ot1
+f90cd5c12b9dc3777b3371460bb6da1f  data/world-1/levels/level-16.ot2
+085feba2672c7dc41570726e098d0d02  data/world-1/levels/level-17.ot1
+4a85080de411c54dcfd42b9929e1c0c3  data/world-1/levels/level-17.ot2
+37dacba43a2407c31d8a69dd302991a7  data/world-1/levels/level-18.ot1
+0dbc99bedd086e11dcf78794e1a21d50  data/world-1/levels/level-18.ot2
+67d9d144436e57215212bf65c6665395  data/world-1/levels/level-19.ot1
+679c0c4cdb9781ca9fe73d1f4314fc50  data/world-1/levels/level-19.ot2
+c60abc377414f72a16341901c4895b41  data/world-1/levels/level-1.ot1
+b69f642322a618c2c122e40f9533dd86  data/world-1/levels/level-1.ot2
+93de8918e2d6d35d04f21f067203b8f7  data/world-1/levels/level-20.ot1
+f5da057f3408613b5b8ed0bcd876833f  data/world-1/levels/level-20.ot2
+8b175a1cb5722fccd2c649ff15e85e39  data/world-1/levels/level-2.ot1
+f958fbf2de135bcfdffd9e8d0cbfcaa4  data/world-1/levels/level-2.ot2
+453569e6100e194b2e40e52ea13a1747  data/world-1/levels/level-3.ot1
+388bb8ae5805a87ec6a9af5ffef67b65  data/world-1/levels/level-3.ot2
+a6719d4797937bc1501015d8ba02faf3  data/world-1/levels/level-4.ot1
+69946a0c1fded7a1cd1fd7e5da5bc716  data/world-1/levels/level-4.ot2
+170121ca31f889039771cf76a01fd60b  data/world-1/levels/level-5.ot1
+9cd61c833f3342b881c280dd7c746db8  data/world-1/levels/level-5.ot2
+cfe953b525b530f144ba322f8969e9b8  data/world-1/levels/level-6.ot1
+650563fd608cc5f6418a20bdb3e3f6eb  data/world-1/levels/level-6.ot2
+dd1d60970ff90ffe00f6a201b125ddd1  data/world-1/levels/level-7.ot1
+e5598a32e874f7451581c2fcc8118e8a  data/world-1/levels/level-7.ot2
+8d9b7d1e209aa6103b5440d098e005ee  data/world-1/levels/level-8.ot1
+f69c2ce78a6f2a70bf43f0cf665ac075  data/world-1/levels/level-8.ot2
+049b95a44520347dabf1d14b1cd9b9f4  data/world-1/levels/level-9.ot1
+b6087413d0aac4078203a1ef5fd88cb8  data/world-1/levels/level-9.ot2
+
+1998-05-09 20:27 PJ2DEMO.W32
+D:\scummsys.95\sputm.95\*.c
+44a282944b6392ad883a48fc03f37146  PJ2DEMO.W32
+36a6750e03fb505fc19fc2bf3e4dbe91  PJ2DEMO.HE0
+6b1f2b0359d146fda362f1b81892fc76  PJ2DEMO.HE1
+0c8b86610f358f9a6b45cdd45cb70a58  PJ2DEMO.HE2
+0f28e36711b55cc139921ddaaff6b341  PJ2DEMO.HE4
+
+2002-10-19 11:37 pj3-demo.w32
+C:\Dev\Project\SPUTM\Src\*.cpp
+7c4127882d847866cafd474b914da595  pj3-demo.w32
+cf90b4db5486ef798db78fe6fbf897e5  pj3-demo.he0
+a2fe82b76e0e3db5d8e2f44ec9772548  pj3-demo.(a)
+e923a8f282ad6900b24beb562894661f  pj3-demo.he2
+d5b1d81d25d3d4850184fdb0ab627bea  pj3-demo.he4
+
+2002-05-20 15:11 PjSamDemo.exe
+c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
+2c380ca1224d0c83a9de178546028cb5  PjSamDemo.exe
+d7ab7cd6105546016e6a0d46fb36b964  PjSamDemo.he0
+1f5564cba5d070703c85fe8eda1f6236  PjSamDemo.(a)
+5207295bb0b0e0b3f71b7593dd7c3a81  PjSamDemo.he2
+6e0fdfcf13e37b659b7155cf5969965f  PjSamDemo.he4
+
+6.1.1 (Mar  9 1993 21:19:14)
+57cbe80e524afa5330a77d04316d2bf6  puttdemo.exe
+31aa57f460a3d12429f0552a46a90b39  puttdemo.he0
+282a5503b45ddc15c7fb83c8e911b091  puttdemo.he1
+a49e0880f7c0638fbf7adf88894da3df  puttdemo.tlk
+
+(puttputt cd)
+7.0.0 (Feb  7 1995 13:26:59)
+71e615a8493f357e4de824a1e4632a80  puttdemo.w32
+37ff1b308999c4cca7319edfcc1280a0  puttdemo.he0
+9be0197fa0dac01ca3d72cf060826045  puttdemo.he1
+a49e0880f7c0638fbf7adf88894da3df  puttdemo.he2
+58dfc09f344a9dec565bb914920800d3  puttdemo.he3
+cd26452706d7e66a3f4ba13975fe5c68  puttdemo.he4
+
+(puttputt patch)
+6.1.1 (Nov 20 1993 12:42:10)
+868b739deaf9319825137e5e55d4aee1  PUTTPUTT.EXE
+
+(puttputt cd/he classics cd)
+6.1.1 (Jan 18 1994 09:32:55)
+7564ee82886b8c75b3b1bd895c98fcb4  puttputt.exe
+9708cf716ed8bcc9ff3fcfc69413b746  puttputt.he0
+d109f3215ca2d5cd38c2efd83da5a51c  puttputt.he1
+5f5a783f29c3da080d3bddbef0e2f01d  puttputt.tlk
+
+(puttputt 3do cd)
+c817613033ceb12eb4c31ea6c336808f  BREEZY.DMU
+fa14bc146cc6086ab44c906a320699c9  CALLIOPE.DMU
+67f93260bf6519d9a47fe987f46d286b  CARWASH.DMU
+60fe949efb311eb660c1516fcc20edd2  CONGA.DMU
+667d5c394b63381f309d8c85085748d8  GASTASHN.DMU
+ed39e74166eb60b6d93ab5a26790dcac  GROCER2.DMU
+a06560553d188e1dc5886c7633ee602a  HAPPY.DMU
+01fd3afbc1b0f8b6e01a18232181cc39  HONEYBEE.DMU
+6bedd1f644ff35d55f2dd4e818f662ed  MARSEILL.DMU
+ba59b9918a11a3f366719bb6dbb02426  MICE.DMU
+3031ecf1f94e9712ec9e2d192af5adaa  MISCHIEF.DMU
+5b45f41c5e02ea737f64b8fb306346fa  MONKEYS.DMU
+6beb885fb7fae9a4dc0a7b66b8e31e27  PAINTING.DMU
+725518498492603428a4b481a74f0ecd  PARADE.DMU
+9d166dc6e1e55f78bfac5ede2e9c2daa  PAUSE.CEL
+1748c190e7df232fabe70130f6636c9f  PERFORM.CEL
+cbcf447cb91de76b6d034d41601bd148  PLAYFUL.DMU
+d8051a79de027921c27d08a67fb5fc09  POPWEASL.DMU
+8296845e881ba14f6c3e76e51220896c  PUPPY.DMU
+7e151c17adf624f1966c8fc5827c95e9  PUTTPUTT.HE0
+3c985277e56fda01c1ef3d6da6817fd2  PUTTPUTT.HE1
+46f5aae1faea566f0e21b34572563e40  PUTTPUTT.TLK
+e4978c237ab8b7eb7820048a90a3161e  PUTTSONG.DMU
+79e68c29627a5ba3514b87edacb57232  SHORTOCK.DMU
+87ffadb9e4d62e60fa2f8b16b672677a  STARTUP.CEL
+d9b9d645a4f7949f127b32eb152e343b  SUNNYDAY.DMU
+66d7b0f5c5b9bf0cf57a96b7fa457569  TICKTOCK.DMU
+b274a80fde5aaf92123972a4f3aabaa9  TOYSHOP.DMU
+cefbc7824935e5377bf25b3e461effdd  WADDLE.DMU
+8f4c6d28938fb3a532d6038ebaadf234  WAITING.DMU
+a7914691959037a5a4f25fc5a6a138d2  WALTZ.DMU
+3caac70fd907c450ad8f4cd2d75ab576  WANDRING.DMU
+cf7150acba9df96c16a9e20d2345941d  WHISTLIN.DMU
+
+(puttputt cd/he classics cd)
+7.0.0 (Feb  7 1995 13:26:59)
+71e615a8493f357e4de824a1e4632a80  puttputt.w32
+6a30a07f353a75cdc602db27d73e1b42  puttputt.he0
+ce76be89bcace9527f457cab9d8231a6  puttputt.he1
+328b11537db07809864d8b2f536d07ae  puttputt.he2
+58dfc09f344a9dec565bb914920800d3  puttputt.he3
+6cb903fb3d4d726fe0229affb1d22525  puttputt.he4
+
+(he classics cd hfs)
+684732efb5799c0f78804c99d8de9aba  Putt-Putt Parade 0
+dc086db2e995aff8b2336147ccbd75d6  Putt-Putt Parade 1
+5f5a783f29c3da080d3bddbef0e2f01d  Putt-Putt Parade 2
+
+2002-05-07 02:53 RACEDEMO.W32
+D:\scummsys.98\sputm.98\*.c
+a030210d465ed001953df89e3df1e558  RACEDEMO.W32
+0ac41e2e3d2174e5a042a6b565328dba  RACEDEMO.HE0
+36590dcf019a0fa78de77354cf4db342  RACEDEMO.(A)
+07e92dfae14eb6ef3afc6d40ba98fcd2  RACEDEMO.HE2
+e80168dc9bfca4577b4e2bbdd70db60b  RACEDEMO.HE4
+
+2002-06-10 20:14 TimeDemo.exe
+c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
+a64bde414f464ef8522fa0ffeea36d9c  TimeDemo.exe
+0ab19be9e2a3f6938226638b2a3744fe  TimeDemo.HE0
+1691e37409d7f0593c1aa1449f882058  TimeDemo.(a)
+63adb23ead513d5fcf657ed555e525ee  TimeDemo.he2
+72339e5cf3f2902ad78e58c05bfcf7bb  TimeDemo.he4
+
+(freddi cd hfs)
+1997-12-09 19:59 TimeDemo
+f2ece54cc9ca9621217c71cfd1ea594e  TimeDemo
+4e5867848ee61bc30d157e2c94eee9b4  TimeDemo (0)
+5c58da43055710e93cfedd45bb14b03c  TimeDemo (1)
+42df84a2b73a3d2ee461b89474ee2f57  TimeDemo (2)
+72339e5cf3f2902ad78e58c05bfcf7bb  TimeDemo (4)
+d41d8cd98f00b204e9800998ecf8427e  TimeDemo (r)
+
+(puttzoo cd)
+7.0.0 (Jul 13 1995 18:45:07)
+f6cc3beae345e71055efb143a342983c  puttzoo.w32
+1005456bfe351c1b679e1ff2dc2849e9  puttzoo.he0
+1399aaabdfc340203ac63aff57abf8a0  puttzoo.he1
+225991e6f8d3d6ac5e519413392c34f3  puttzoo.he2
+4417ea03a6d1b0b7522526f41d1097f6  puttzoo.he3
+d3235443d88751acd3412c1b0c6cec35  puttzoo.he4
+
+(puttzoo cd hfs)
+1995-09-14 17:11 Putt-Putt Saves the Zoo
+2f328b89b4404eaefb9bd18045dddd06  Putt-Putt Saves the Zoo
+58fdf4c7ad13540a734e18f8584cad89  Putt-Putt Saves the Zoo (0)
+8cffc74555fed521cc2008ed6a119118  Putt-Putt Saves the Zoo (1)
+225991e6f8d3d6ac5e519413392c34f3  Putt-Putt Saves the Zoo (2)
+d3235443d88751acd3412c1b0c6cec35  Putt-Putt Saves the Zoo (4)
+
+(spyfox cd/pjs cd)
+7.0.0 (Jun  4 1995 15:47:12)
+f3324cfe3dec0288fd38197cf88962af  zoodemo.w32
+de4efb910210736813c9a1185384bace  zoodemo.he0
+8ad56037c37b1c84efc2fa00bf4c59d5  zoodemo.he1
+c9b8363220ea094d2da8cc24635d8d48  zoodemo.he2
+47539950e6e6f656db4c1cc963bf9a8f  zoodemo.he3
+86dc7e6f520dbabe79b324ae64456686  zoodemo.he4
+
+(he classics hfs/pjs cd hfs)
+1996-11-17 13:28 Puttzoo Demo
+34727db5bde5a2f78a1ec84f75d0810c  Puttzoo Demo
+3486ede0f904789267d4bcc5537a46d4  Puttzoo Demo (0)
+e0cde64b0c37a188c97a0bc93225cce9  Puttzoo Demo (1)
+a0cd041eb6c1a289a23549ef8740ff17  Puttzoo Demo (2)
+86dc7e6f520dbabe79b324ae64456686  Puttzoo Demo (4)
+
+(farm cd)
+7.0.0 (Jun 22 1995 14:03:05)
+37e4b9463ead881fd53bf401aa62d0bf  zoodemo.w32
+de4efb910210736813c9a1185384bace  zoodemo.he0
+8ad56037c37b1c84efc2fa00bf4c59d5  zoodemo.he1
+c9b8363220ea094d2da8cc24635d8d48  zoodemo.he2
+47539950e6e6f656db4c1cc963bf9a8f  zoodemo.he3
+86dc7e6f520dbabe79b324ae64456686  zoodemo.he4
+
+1999-05-17 12:21 spydemo.w32
+D:\Scummsys.90\sputm.90\*.c
+b7aa3c76d463137a8a09c68d9a1045d1  spydemo.w32
+fbdd947d21e8f5bac6d6f7a316af1c5a  spydemo.he0
+820bceab2a1ab02254c33e6e3fc81628  spydemo.he1
+bc8ed64e6a101f6646b80aa294fa5bdc  spydemo.he2
+88867a804055334db8485d7da5d2c51f  spydemo.he4
+
+(farm cd hfs)
+1997-12-09 19:59 FoxDemo
+09507650b60e891e9c1ed5e0a7aa0152  FoxDemo
+53e94115b55dd51d4b8ff0871aa1df1e  FoxDemo (0)
+81fef80fadf4cd3ad0e04ac619f6eaed  FoxDemo (1)
+1229ed0135d97aac8b50224a74ee4f34  FoxDemo (2)
+6f7993e15da433b58ea63e59e3666cea  FoxDemo (4)
+d41d8cd98f00b204e9800998ecf8427e  FoxDemo (r)
+
+2002-05-21 13:29 Spydemo.exe
+c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
+4d34bf8f8ec20f2e653b19aa283da352  Spydemo.exe
+9d4ab3e0e1d1ebc6ba8a6a4c470ed184  Spydemo.HE0
+f5207b882c9015a4e4a9599460be6294  Spydemo.(a)
+b34d614a23a7dac2be1407bbb51c6b24  Spydemo.he2
+88867a804055334db8485d7da5d2c51f  Spydemo.he4
+
+(spyfox cd)
+1997-08-10 03:41 spyfox.w32
+D:\Scummsys.90\sputm.90\*.c
+b7aa3c76d463137a8a09c68d9a1045d1  spyfox.w32
+6bf70eee5de3d24d2403e0dd3d267e8a  spyfox.he0
+e01f959bdd49d5b0c8660fd8a14d4799  spyfox.he1
+0a7f78543f30138effbe593d9d09e720  spyfox.he2
+9fbab8bb60448f30ce7508dbf277ab05  spyfox.he4
+
+7.0.0 (Jul  5 1995 14:45:19)
+d30c3ce43992a116be1a28a4edccf597  zoodemo.w32
+f3d55aea441e260e9e9c7d2a187097e0  zoodemo.he0
+92722a557c952ff5178eb32964a12061  zoodemo.he1
+a0cd041eb6c1a289a23549ef8740ff17  zoodemo.he2
+47539950e6e6f656db4c1cc963bf9a8f  zoodemo.he3
+86dc7e6f520dbabe79b324ae64456686  zoodemo.he4
+
+(farm cd hfs)
+1995-09-14 17:43 Zoo Demo
+34727db5bde5a2f78a1ec84f75d0810c  Zoo Demo
+3486ede0f904789267d4bcc5537a46d4  Zoo Demo (0)
+e0cde64b0c37a188c97a0bc93225cce9  Zoo Demo (1)
+a0cd041eb6c1a289a23549ef8740ff17  Zoo Demo (2)
+86dc7e6f520dbabe79b324ae64456686  Zoo Demo (4)
+
