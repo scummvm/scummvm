@@ -149,8 +149,8 @@ void Scumm::setupScummVarsNew() {
 	VAR_UNK_SCRIPT = 60;
 	VAR_UNK_SCRIPT_2 = 61;
 	
-	VAR_PAUSE_KEY = 63;
-	VAR_RESTART_KEY = 64; /* ?? */
+	VAR_PAUSE_KEY = 64;
+	VAR_RESTART_KEY = 63; /* ?? */
 	VAR_TALKSTOP_KEY = 66; /* ?? */
 	VAR_SAVELOADDIALOG_KEY = 65; /* ?? */
 	VAR_CUTSCENEEXIT_KEY = 62;
