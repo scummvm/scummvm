@@ -4393,13 +4393,19 @@ void SimonEngine::go() {
 	if (_debugLevel == 4)
 		_start_mainscript = true;
 
-	if (_game & GF_TALKIE)
-		if (_noSubtitles)
+	if (_game & GF_TALKIE) {
+		// Always default to voice only on Simon the Sorcerer 2
+		if (_game & GF_SIMON2) {
 			_subtitles = false;
-
-	// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-	if (!(_game & GF_SIMON2) && _language < 2)
-		_subtitles = false;
+		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
+		} else if (_language < 2) {
+			_subtitles = false;
+		// Allow choose in other versions of Simon the Sorcerer 1
+		} else {
+			if (_noSubtitles)
+				_subtitles = false;
+		}
+	}
 
 	if (_language == 4 || (_language > 5 && _language < 20))
 		error("The only known versions are English, French, German, Hebrew, Italian and Spanish");
