@@ -689,7 +689,7 @@ void ScummEngine_v7he::o7_startSound() {
 		// so don't attempt to play them.
  		if (_staticVar4 < 4000)
 			_sound->addSoundToQueue(_staticVar4);
-		warning("o7_startSound stub (%d, %d, %d, %d)", _staticVar4, _staticVar3, _staticVar2, _staticVar5);
+		debug(1, "o7_startSound stub (%d, %d, %d, %d)", _staticVar4, _staticVar3, _staticVar2, _staticVar5);
 		_staticVar5 = 0;
 		break;
 
