@@ -3093,72 +3093,6 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
-static int blend_cache[3][256];
-
-static void clear_blend_cache()
-{
-	int i, j;
-
-	for (i = 0; i < 3; i++)
-		for (j = 0; j < 256; j++)
-			blend_cache[i][j] = -1;
-}
-
-static byte blend(byte *pal, byte method, int dest_color)
-{
-	int val = 0;
-	int cache = 0;
-
-	// FIXME: Check if this gives the correct blending for the Dig
-	// inventory box and conversation menus. For now, I have deliberately
-	// selected them so that the subsequent multiplication and shift could
-	// be replaced by just a shift.
-
-	switch (method) {
-		case 1:
-			cache = 0;
-			val = 128;
-			break;
-
-		case 2:
-			cache = 1;
-			val = 64;
-			break;
-
-		case 3:
-			cache = 2;
-			val = 256;
-			break;
-
-		case 255:
-			return dest_color;
-
-		default:
-			return method;
-	}
-
-	if (blend_cache[cache][dest_color] == -1) {
-		byte r = *(pal + 3 * dest_color + 0);
-		byte g = *(pal + 3 * dest_color + 1);
-		byte b = *(pal + 3 * dest_color + 2);
-
-		int new_r = (val * r) >> 8;
-		int new_g = (val * g) >> 8;
-		int new_b = (val * b) >> 8;
-
-		if (new_r > 255)
-			new_r = 255;
-		if (new_g > 255)
-			new_g = 255;
-		if (new_b > 255)
-			new_g = 255;
-
-		blend_cache[cache][dest_color] = RGBMatch(pal, new_r, new_g, new_b);
-	}
-
-	return blend_cache[cache][dest_color];
-}
-
 int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
 	if (size <= 0)
 		return size;
@@ -3313,10 +3247,12 @@ void Scumm::bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip,
 }
 
 void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_mode, int mask) {
-	byte skip_y = 128, skip_y_new;
-	byte bits, tmp;
+	byte skip_y = 128;
+	byte skip_y_new = 0;	// FIXME - is this a sensible default value?
+	byte bits = 0;	// FIXME - is this a sensible default value?
+	byte tmp;
 	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y;
-	byte * mask_out;
+	byte *mask_out = 0;	// FIXME - is this a sensible default value?
 
 	if (bd->x < 0) {
 		clip_left = -bd->x;
@@ -3371,25 +3307,21 @@ void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_
 
 	byte line_buffer[1024];
 
-	byte * line_ptr = (byte*)&line_buffer + clip_left;
+	byte *line_ptr = line_buffer + clip_left;
 
 	while(1) {
 		switch(decode_mode) {
 		case 0:
-			{
-				src += bompDecodeLineMode0(src, (byte*)&line_buffer, bd->srcwidth);
-				break;
-			}
+			src += bompDecodeLineMode0(src, line_buffer, bd->srcwidth);
+			break;
 		case 1:
-			{
-				src += bompDecodeLineMode1(src, (byte*)&line_buffer, bd->srcwidth);
-				break;
-			}
+			src += bompDecodeLineMode1(src, line_buffer, bd->srcwidth);
+			break;
 		case 3:
-			{
-				src += bompDecodeLineMode3(src, (byte*)&line_buffer, bd->srcwidth);
-				break;
-			}
+			src += bompDecodeLineMode3(src, line_buffer, bd->srcwidth);
+			break;
+		default:
+			error("Unknown bomp decode_mode %d", decode_mode);
 		}
 
 		if (mask == 3) {
@@ -3406,7 +3338,7 @@ void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_
 			}
 
 			if (bd->scale_x != 255) {
-				bompScaleFuncX((byte*)&line_buffer, _bompScallingXPtr, 128, bd->srcwidth);
+				bompScaleFuncX(line_buffer, _bompScallingXPtr, 128, bd->srcwidth);
 			}
 		}
 
@@ -3421,20 +3353,16 @@ void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_
 
 		switch(_bompShadowMode) {
 		case 0:
-			{
-				bompApplyShadow0(line_ptr, dst, clip_right);
-				break;
-			}
+			bompApplyShadow0(line_ptr, dst, clip_right);
+			break;
 		case 1:
-			{
-				bompApplyShadow1(line_ptr, dst, clip_right);
-				break;
-			}
+			bompApplyShadow1(line_ptr, dst, clip_right);
+			break;
 		case 3:
-			{
-				bompApplyShadow3(line_ptr, dst, clip_right);
-				break;
-			}
+			bompApplyShadow3(line_ptr, dst, clip_right);
+			break;
+		default:
+			error("Unknown _bompShadowMode %d", _bompShadowMode);
 		}
 
 labelBompSkip:
