@@ -71,6 +71,7 @@ private:
 	Sword2Engine *_vm;
 
 	uint framenum;
+	uint frameskipped;
 	int ticks;
 
 #ifdef USE_MPEG2

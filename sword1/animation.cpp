@@ -134,6 +134,7 @@ bool AnimationState::init(const char *basename) {
 
 	info = mpeg2_info(decoder);
 	framenum = 0;
+	frameskipped = 0;
 	ticks = _sys->get_msecs();
 
 	/* Play audio - TODO: Sync with video?*/
@@ -324,7 +325,11 @@ bool AnimationState::decodeFrame() {
 
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-                                    ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
+                                    ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
+					if (frameskipped > 10) {
+						warning("force frame %i redraw", framenum);
+						frameskipped = 0;
+					}
 					_scr->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
@@ -336,14 +341,20 @@ bool AnimationState::decodeFrame() {
 							_sys->delay_msecs(10);
 					}
 
-				} else
+				} else {
 					warning("dropped frame %i", framenum);
+					frameskipped++;
+				}
 
 				buildLookup(palnum + 1, lutcalcnum);
 
 #else
 
-				if ((bgSoundStream == NULL) || ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
+				if ((bgSoundStream == NULL) || ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
+					if (frameskipped > 10) {
+						warning("force frame %i redraw", framenum);
+						frameskipped = 0;
+					}
 					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
@@ -355,8 +366,10 @@ bool AnimationState::decodeFrame() {
 							_sys->delay_msecs(10);
 					}
 
-				} else
+				} else {
 					warning("dropped frame %i", framenum);
+					frameskipped++;
+				}
 
 #endif
 

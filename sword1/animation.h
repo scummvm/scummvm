@@ -77,6 +77,7 @@ private:
 	OSystem *_sys;
 
 	uint framenum;
+	uint frameskipped;
 	uint32 ticks;
 
 #ifdef USE_MPEG2
