@@ -4,7 +4,7 @@ CC       = g++
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
 DEFINES  =
 LDFLAGS :=
-INCLUDES:= `sdl-config --cflags` -I./ -I./sound
+INCLUDES:= -I./ -I./sound
 LIBS	 = -lncurses
 
 # Uncomment this to activate the MAD lib for compressed sound files
