@@ -37,7 +37,7 @@ struct ObjectData {
 	byte parentstate;
 	byte state;
 	byte fl_object_index;
-	byte flag;
+	byte flags;
 };
 
 #if !defined(__GNUC__)
@@ -105,7 +105,7 @@ struct ImageHeader { /* file format */
 			uint16 obj_id;
 			uint16 image_count;
 			uint16 unk[1];
-			byte flag;
+			byte flags;
 			byte unk1;
 			uint16 unk2[2];
 			uint16 width;
@@ -140,7 +140,7 @@ struct ImageHeader { /* file format */
 			uint32 width;
 			uint32 height;
 			uint32 actordir;
-			uint32 flag;	// This field is missing in the COMI demo (version == 800) !
+			uint32 flags;	// This field is missing in the COMI demo (version == 800) !
 			struct {
 				int32 x, y;
 			} GCC_PACK hotspot[15];

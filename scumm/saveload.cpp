@@ -400,6 +400,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ObjectData, parent, sleByte, VER(8)),
 		MKLINE(ObjectData, state, sleByte, VER(8)),
 		MKLINE(ObjectData, fl_object_index, sleByte, VER(8)),
+		// TODO
+		//MKLINE(ObjectData, flag, sleByte, VER(XXX)),
 		MKEND()
 	};
 

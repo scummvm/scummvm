@@ -471,13 +471,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	}
 
 	if (numstrip != 0) {
-		byte flags;
-		if ((_gameId == GID_CMI) && !(_features & GF_DEMO))
-			flags = ((od.flag & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
-		else if (_features & GF_HUMONGOUS)
-			flags = ((od.flag & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
-		else
-			flags = Gdi::dbAllowMaskOr;
+		byte flags = od.flags;
 
 		if (_version == 1) {
 			gdi._C64ObjectMode = true;
@@ -768,6 +762,8 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		error("Room %d missing CDHD blocks(s)", _roomResource);
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 
+	od->flags = Gdi::dbAllowMaskOr;
+
 	if (_version == 8) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
@@ -780,8 +776,8 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
 		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
 		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
-		if (!(_features & GF_DEMO))
-			od->flag = (byte)READ_LE_UINT32(&imhd->v8.flag);
+		if (FROM_LE_32(imhd->v8.version) == 801)
+			od->flags = ((((byte)READ_LE_UINT32(&imhd->v8.flags)) & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else if (_version == 7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
@@ -809,7 +805,9 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		}
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
-		od->flag = imhd->old.flag;
+
+		if (_features & GF_HUMONGOUS)
+			od->flags = ((imhd->old.flags & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
