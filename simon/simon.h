@@ -192,6 +192,7 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _language;
+	bool _pause;
 	bool _start_mainscript;
 	bool _continous_mainscript;
 	bool _continous_vgascript;
@@ -778,6 +779,7 @@ protected:
 	void loadMusic(uint music);
 	void checkTimerCallback();
 	void delay(uint delay);
+	void pause();
 
 	void o_83_helper();
 	void o_190_helper(uint i);

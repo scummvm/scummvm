@@ -313,6 +313,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugMode = 0;
 	_debugLevel = 0;
 	_language = 0;
+	_pause = 0;
 	_start_mainscript = 0;
 	_continous_mainscript = 0;
 	_continous_vgascript = 0;
@@ -3447,6 +3448,9 @@ void SimonEngine::processSpecialKeys() {
 		if (_game & GF_SIMON2)
 			_exit_cutscene = true;
 		break;
+	case 'p':
+		pause();
+		break;
 	case 't':
 		if ((_game & GF_SIMON2 && _game & GF_TALKIE) || ( _game & GF_TALKIE && _language > 1))
 			if (_speech)
@@ -3493,6 +3497,18 @@ void SimonEngine::processSpecialKeys() {
 	}
 	
 	_key_pressed = 0;
+}
+
+void SimonEngine::pause() {
+	_key_pressed = 0;
+	_pause = 1;
+	for (;;) {
+		delay(1);
+		if (_key_pressed == 'p')
+			goto get_out;
+	}
+get_out:;
+	_pause = 0;
 }
 
 #ifdef __PALM_OS__
@@ -4741,7 +4757,7 @@ void SimonEngine::delay(uint amount) {
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	uint vga_period;
+	uint this_delay, vga_period;
 
 	if (_fast_mode)
 	 	vga_period = 10;
@@ -4753,7 +4769,7 @@ void SimonEngine::delay(uint amount) {
 	_rnd.getRandomNumber(2);
 
 	do {
-		while (!_in_callback && cur >= _last_vga_tick + vga_period) {
+		while (!_in_callback && cur >= _last_vga_tick + vga_period && !_pause) {
 			_last_vga_tick += vga_period;
 
 			// don't get too many frames behind
@@ -4808,7 +4824,7 @@ void SimonEngine::delay(uint amount) {
 			break;
 
 		{
-			uint this_delay = _fast_mode ? 1 : 20;
+			this_delay = _fast_mode ? 1 : 20;
 			if (this_delay > amount)
 				this_delay = amount;
 			_system->delay_msecs(this_delay);
