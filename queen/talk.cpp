@@ -850,7 +850,7 @@ void Talk::speakSegment(
 		}
 		else {
 			bob->animating = false;
-			bob->frameNum = 29 + bobNum + FRAMES_JOE_XTRA;
+			bob->frameNum = 31 + bobNum;
 		}
 	}
 
@@ -913,7 +913,7 @@ void Talk::speakSegment(
 		else
 			parameters = findSpeechParameters(person->name, command, 0);
 
-		startFrame = 29 + bobNum + FRAMES_JOE_XTRA;
+		startFrame = 31 + bobNum;
 		int faceDirection = 0;
 
 		if (isJoe && _vm->logic()->joeFacing() == DIR_LEFT)

@@ -137,7 +137,7 @@ void BankManager::eraseFrame(uint32 index) {
 void BankManager::eraseFrames(bool joe) {
 	uint32 i = 0;
 	if (!joe) {
-		i = FRAMES_JOE + FRAMES_JOE_XTRA;
+		i = FRAMES_JOE;
 	}
 	while (i < MAX_FRAMES_NUMBER) {
 		eraseFrame(i);

@@ -42,8 +42,7 @@ enum {
 
 
 enum {
-	FRAMES_JOE      = 36,
-	FRAMES_JOE_XTRA = 2,
+	FRAMES_JOE      = 38,
 	FRAMES_JOURNAL  = 40
 };
 

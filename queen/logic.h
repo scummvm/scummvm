@@ -80,8 +80,8 @@ public:
 	ItemData *itemData(int index) const { return &_itemData[index]; }
 	uint16 itemDataCount() const { return _numItems; }
 
-	uint16 findBob(uint16 obj);
-	uint16 findFrame(uint16 obj);
+	uint16 findBob(uint16 obj) const;
+	uint16 findFrame(uint16 obj) const;
 	uint16 objectForPerson(uint16 bobnum) const;
 	WalkOffData *walkOffPointForObject(int16 obj) const;
 

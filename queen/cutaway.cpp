@@ -481,7 +481,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 
 	if (0 == header) {
 		anim.object = 0;
-		anim.originalFrame = 29 + FRAMES_JOE_XTRA;
+		anim.originalFrame = 31;
 	}
 	else {
 		anim.object = _vm->logic()->findBob(header);
@@ -649,7 +649,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 			}
 
 			if (objAnim[i].object < 4)
-				bob->frameNum = 29 + objAnim[i].object + FRAMES_JOE_XTRA;
+				bob->frameNum = 31 + objAnim[i].object;
 
 			if (objAnim[i].unpackFrame == 0) {
 				// Turn off the bob

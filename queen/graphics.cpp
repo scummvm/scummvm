@@ -583,7 +583,7 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 	sprintf(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
-	_numFrames = 37 + FRAMES_JOE_XTRA;
+	_numFrames = FRAMES_JOE + 1;
 	setupRoomFurniture(furniture, furnitureCount);
 	setupRoomObjects();
 
@@ -858,7 +858,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 
 void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 	uint16 i;
-	uint16 curImage = 36 + FRAMES_JOE_XTRA;
+	uint16 curImage = FRAMES_JOE;
 
 	// unpack the static bobs
 	_numFurnitureStatic = 0;
@@ -924,7 +924,7 @@ void Graphics::setupRoomObjects() {
 	uint16 i;
 	// furniture frames are reserved in ::setupRoomFurniture(), we append objects 
 	// frames after the furniture ones.
-	uint16 curImage = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen;
+	uint16 curImage = FRAMES_JOE + _numFurnitureStatic + _numFurnitureAnimatedLen;
 	uint16 firstRoomObj = _vm->logic()->currentRoomData() + 1;
 	uint16 lastRoomObj = _vm->logic()->roomData(_vm->logic()->currentRoom() + 1);
 	uint16 numObjectStatic = 0;

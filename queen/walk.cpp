@@ -67,9 +67,9 @@ void Walk::animateJoePrepare() {
 		WalkData *pwd = &_walkData[i];
 
 		if (pwd->dx < 0) {
-			pwd->anim.set(11, 16 + FRAMES_JOE_XTRA, DIR_LEFT);
+			pwd->anim.set(11, 18, DIR_LEFT);
 		} else {
-			pwd->anim.set(11, 16 + FRAMES_JOE_XTRA, DIR_RIGHT);
+			pwd->anim.set(11, 18, DIR_RIGHT);
 		}
 
 		int16 k = ABS(pwd->dy);
@@ -81,15 +81,15 @@ void Walk::animateJoePrepare() {
 		if (ABS(pwd->dx) < k) {
 			if (pwd->dy < 0) {
 				if (ds < 0) {
-					pwd->anim.set(17 + FRAMES_JOE_XTRA, 22 + FRAMES_JOE_XTRA, DIR_FRONT);
+					pwd->anim.set(19, 24, DIR_FRONT);
 				} else {
-					pwd->anim.set(23 + FRAMES_JOE_XTRA, 28 + FRAMES_JOE_XTRA, DIR_BACK);
+					pwd->anim.set(25, 30, DIR_BACK);
 				}
 			} else if (pwd->dy > 0) {
 				if (ds < 0) {
-					pwd->anim.set(23 + FRAMES_JOE_XTRA, 28 + FRAMES_JOE_XTRA, DIR_BACK);
+					pwd->anim.set(25, 30, DIR_BACK);
 				} else {
-					pwd->anim.set(17 + FRAMES_JOE_XTRA, 22 + FRAMES_JOE_XTRA, DIR_FRONT);
+					pwd->anim.set(19, 24, DIR_FRONT);
 				}
 			}
 		}	
@@ -340,7 +340,7 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 		can = -1;
 	}
 
-	uint16 standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
+	uint16 standingFrame = 31 + bobNum;
 
 	// make other person face the right direction
 	BobSlot *pbs = _vm->graphics()->bob(bobNum);

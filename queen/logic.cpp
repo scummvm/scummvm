@@ -256,7 +256,7 @@ ObjectData* Logic::objectData(int index) const {
 	return &_objectData[index];
 }
 
-uint16 Logic::findBob(uint16 obj) {	
+uint16 Logic::findBob(uint16 obj) const {	
 	assert(obj <= _numObjects);
 
 	uint16 room = _objectData[obj].room;
@@ -330,7 +330,7 @@ uint16 Logic::findBob(uint16 obj) {
 	return bobnum;
 }
 
-uint16 Logic::findFrame(uint16 obj) {
+uint16 Logic::findFrame(uint16 obj) const {
 	uint16 i;
 	uint16 framenum = 0;
 
@@ -339,14 +339,14 @@ uint16 Logic::findFrame(uint16 obj) {
 	if(img == -3 || img == -4) {
 		uint16 bobnum = findPersonNumber(obj, room);
 		if(bobnum <= 3) {
-			framenum = 29 + FRAMES_JOE_XTRA + bobnum;
+			framenum = 31 + bobnum;
 		}
 	} else {
 		uint16 idx = 0;
 		for(i = _roomData[room] + 1; i < obj; ++i) {
 			img = _objectData[i].image;
 			if(img <= -10) {
-				GraphicData* pgd = &_graphicData[-(img + 10)];
+				const GraphicData* pgd = &_graphicData[-(img + 10)];
 				if(pgd->lastFrame != 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
@@ -360,7 +360,7 @@ uint16 Logic::findFrame(uint16 obj) {
 				if(img > 5000) {
 					img -= 5000;
 				}
-				GraphicData* pgd = &_graphicData[img];
+				const GraphicData* pgd = &_graphicData[img];
 				uint16 lastFrame = ABS(pgd->lastFrame);
 				if(pgd->firstFrame < 0) {
 					idx += lastFrame;
@@ -374,7 +374,7 @@ uint16 Logic::findFrame(uint16 obj) {
 
 		img = _objectData[obj].image;
 		if(img <= -10) {
-			GraphicData* pgd = &_graphicData[-(img + 10)];
+			const GraphicData* pgd = &_graphicData[-(img + 10)];
 			if(pgd->lastFrame != 0) {
 				idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 			} else {
@@ -386,7 +386,7 @@ uint16 Logic::findFrame(uint16 obj) {
 
 		// calculate only if there are person frames
 		if(idx > 0) {
-			framenum = 36 + FRAMES_JOE_XTRA + _vm->graphics()->numFurnitureFrames() + idx;
+			framenum = FRAMES_JOE + _vm->graphics()->numFurnitureFrames() + idx;
 		}
 	}
 	return framenum;
@@ -570,7 +570,7 @@ bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person
 			// if there is no valid actor file (ie pad->file is 0), the person 
 			// data is already loaded as it is included in objects room bank (.bbk)
 		}
-		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
+		pp->bobFrame = 31 + pp->actor->bobNum;
 	} 
 	return pad != NULL;
 }
@@ -590,15 +590,15 @@ uint16 Logic::findPersonNumber(uint16 obj, uint16 room) const {
 void Logic::loadJoeBanks(const char *animBank, const char *standBank) {
 	int i;
 	_vm->bankMan()->load(animBank, 13);
-	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
+	for (i = 11; i < 31; ++i) {
 		_vm->bankMan()->unpack(i - 10, i, 13);
 	}
 	_vm->bankMan()->close(13);
 
 	_vm->bankMan()->load(standBank, 7);
-	_vm->bankMan()->unpack(1, 33 + FRAMES_JOE_XTRA, 7);
-	_vm->bankMan()->unpack(3, 34 + FRAMES_JOE_XTRA, 7);
-	_vm->bankMan()->unpack(5, 35 + FRAMES_JOE_XTRA, 7);
+	_vm->bankMan()->unpack(1, 35, 7);
+	_vm->bankMan()->unpack(3, 36, 7);
+	_vm->bankMan()->unpack(5, 37, 7);
 }
 
 void Logic::setupJoe() {
@@ -676,7 +676,7 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	if (_currentRoom == 108) {
 		_vm->graphics()->putCameraOnBob(-1);
 		_vm->bankMan()->load("joe_e.act", 7);
-		_vm->bankMan()->unpack(2, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(2, 31, 7);
 
 		_vm->display()->horizontalScroll(320);
 
@@ -687,7 +687,7 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 
 	joeFace();
 	pbs->curPos(oldx, oldy);
-	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
+	pbs->frameNum = 31;
 }
 
 uint16 Logic::joeFace() {
@@ -697,42 +697,42 @@ uint16 Logic::joeFace() {
 	if (_currentRoom == 108) {
 		frame = 1;
 	} else {
-		frame = 33;
+		frame = 35;
 		if (joeFacing() == DIR_FRONT) {
 			if (joePrevFacing() == DIR_BACK) {
-				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
+				pbs->frameNum = 35;
 				_vm->update();
 			}
-			frame = 34;
+			frame = 36;
 		} else if (joeFacing() == DIR_BACK) {
 			if (joePrevFacing() == DIR_FRONT) {
-				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
+				pbs->frameNum = 35;
 				_vm->update();
 			}
-			frame = 35;
+			frame = 37;
 		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
 			|| 	(joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
-			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
+			pbs->frameNum = 36;
 			_vm->update();
 		}
-		pbs->frameNum = frame + FRAMES_JOE_XTRA;
+		pbs->frameNum = frame;
 		pbs->scale = joeScale();
 		pbs->xflip = (joeFacing() == DIR_LEFT);
 		_vm->update();
 		joePrevFacing(joeFacing());
 		switch (frame) {
-		case 33:
+		case 35:
 			frame = 1;
 			break;
-		case 34:
+		case 36:
 			frame = 3;
 			break;
-		case 35:
+		case 37:
 			frame = 5;
 			break;
 		}
 	}
-	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
+	pbs->frameNum = 31;
 	_vm->bankMan()->unpack(frame, pbs->frameNum, 7);
 	return frame;
 }
@@ -765,12 +765,12 @@ void Logic::joeGrab(int16 grabState) {
 
 	case STATE_GRAB_UP:
 		// turn back
-		_vm->bankMan()->unpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(5, 31, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		_vm->update();
 		// grab up
-		_vm->bankMan()->unpack(7, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(7, 31, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		_vm->update();
@@ -780,7 +780,7 @@ void Logic::joeGrab(int16 grabState) {
 	}
 
 	if (frame != 0) {
-		_vm->bankMan()->unpack(frame, 29 + FRAMES_JOE_XTRA, 7);
+		_vm->bankMan()->unpack(frame, 31, 7);
 		bobJoe->xflip = (joeFacing() == DIR_LEFT);
 		bobJoe->scale = joeScale();
 		_vm->update();
@@ -1193,7 +1193,7 @@ void Logic::handlePinnacleRoom() {
 	_vm->display()->horizontalScroll(_vm->input()->mousePosX());
 
 	joe->x = piton->x = 3 * _vm->input()->mousePosX() / 4 + 200;
-	joe->frameNum = _vm->input()->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
+	joe->frameNum = _vm->input()->mousePosX() / 36 + 45;
 
 	// bobs have been unpacked from animating objects, we don't need them
 	// to animate anymore ; so turn animating off
@@ -1217,7 +1217,7 @@ void Logic::handlePinnacleRoom() {
 
 		// update bobs position / frame
 		joe->x = piton->x = 3 * mx / 4 + 200;
-		joe->frameNum = mx / 36 + 43 + FRAMES_JOE_XTRA;
+		joe->frameNum = mx / 36 + 45;
 
 		_vm->display()->clearTexts(5, 5);
 
@@ -1381,16 +1381,16 @@ void Logic::setupRestoredGame() {
 	joeCutFacing(joeFacing());
 	switch (joeFacing()) {
 	case DIR_FRONT:
-		pbs->frameNum = 34 + FRAMES_JOE_XTRA;
-		_vm->bankMan()->unpack(3, 29 + FRAMES_JOE_XTRA, 7);
+		pbs->frameNum = 36;
+		_vm->bankMan()->unpack(3, 31, 7);
 		break;
 	case DIR_BACK:
-		pbs->frameNum = 35 + FRAMES_JOE_XTRA;
-		_vm->bankMan()->unpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		pbs->frameNum = 37;
+		_vm->bankMan()->unpack(5, 31, 7);
 		break;
 	default:
-		pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-		_vm->bankMan()->unpack(1, 29 + FRAMES_JOE_XTRA, 7);
+		pbs->frameNum = 35;
+		_vm->bankMan()->unpack(1, 31, 7);
 		break;
 	}	
 
