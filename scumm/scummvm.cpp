@@ -1841,7 +1841,8 @@ void ScummEngine::processKbd() {
 	}
 #endif
 
-	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
+	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
+	   (_version <= 2 && _lastKeyHit == 8)) {
 		confirmrestartDialog();
 		return;
 	}
