@@ -1832,6 +1832,7 @@ int Scumm::runDialog(Dialog *dialog) {
 	_sound->pauseSounds(true);
 
 	// Pause playing smush movie
+	bool oldSmushPlay = _smushPlay;
 	_smushPlay = false;
 
 	// Open & run the dialog
@@ -1840,8 +1841,8 @@ int Scumm::runDialog(Dialog *dialog) {
 	// Restore old cursor
 	updateCursor();
 
-	// Restore playing smush movie
-	_smushPlay = true;
+	// Resume playing smush movie, if any
+	_smushPlay = oldSmushPlay;
 
 	// Resume sound output
 	_sound->pauseSounds(old_soundsPaused);

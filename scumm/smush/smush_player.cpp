@@ -842,7 +842,7 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 			_sf[i]->loadFont(file_font, directory);
 		}
 	} else {
-		error("SmushPlayer::init() Unknown font setup for game");
+		error("SmushPlayer::setupAnim() Unknown font setup for game");
 	}	
 
 	delete sub;
