@@ -1138,18 +1138,21 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 	}
 
 	// search for a matching actor
-	uint16 actor = 1;
+	uint16 actor = 0;
 	for (i = 1; i <= _numActors; ++i) {
 		ActorData *pad = &_actorData[i];
 		if (pad->room == _currentRoom) {
 			if (_gameState[pad->gameStateSlot] == pad->gameStateValue) {
-				if ((bobNum > 0 && bobNum == pad->bobNum) || strcmp(pp->name, actorName) == 0) {
+				if ((bobNum > 0 && bobNum == pad->bobNum) || strcmp(_aName[pad->name], actorName) == 0) {
 					actor = i;
 					break;
 				}
 			}
 		}
 	}
+
+	if (!actor)
+		error ("Actor '%s' not found", actorName);
 
 	pp->actor = &_actorData[actor];
 	pp->bankNum = pp->actor->bankNum;
