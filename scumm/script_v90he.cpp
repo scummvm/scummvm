@@ -643,7 +643,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 
 void ScummEngine_v90he::o90_wizImageOps() {
 	int a, b;
-	byte subOp = fetchScriptByte();
+	int subOp = fetchScriptByte();
 	subOp -= 46;
 
 	switch (subOp) {
