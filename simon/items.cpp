@@ -1524,11 +1524,6 @@ void SimonState::o_unk_127()
 		uint a = getVarOrWord();
 		/*uint b = */ getVarOrWord();
 
-		//FIXME music track 12 isn't be read correctly and produce high pitched noise
-		// Using music in next area as temporary work around
-		if (a == 12)
-			a=0;
-
 		//FIXME simon 1 attempts repeat music track 35 in ending sequences when it should only be played once
 		if ((a != _last_music_played)  && (a < 35)) {
 			_last_music_played = a;
