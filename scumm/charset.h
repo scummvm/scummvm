@@ -92,6 +92,7 @@ public:
 
 	void restoreCharsetBg();
 	void clearCharsetMask();
+	void clearTextSurface();
 
 	virtual void printChar(int chr) = 0;
 	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}

@@ -887,13 +887,17 @@ void CharsetRenderer::restoreCharsetBg() {
 
 		if (vs->hasTwoBuffers) {
 			// Clean out the charset mask
-			memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _textSurface.pitch * _textSurface.h);
+			clearTextSurface();
 		}
 	}
 }
 
 void CharsetRenderer::clearCharsetMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->gdi._imgBufOffs[1]);
+}
+
+void CharsetRenderer::clearTextSurface() {
+	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _textSurface.pitch * _textSurface.h);
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {

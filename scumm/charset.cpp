@@ -208,11 +208,11 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
 	const int size = _vm->_screenWidth * _vm->_screenHeight;
 	_textSurface.pixels = malloc(size);
-	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
 	_textSurface.w = _vm->_screenWidth;
 	_textSurface.h = _vm->_screenHeight;
 	_textSurface.pitch = _vm->_screenWidth;
 	_textSurface.bytesPerPixel = 1;
+	clearTextSurface();
 }
 
 CharsetRenderer::~CharsetRenderer() {
