@@ -91,7 +91,6 @@ class Sword2Sound {
 	private:
 		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, int32 looping);
 		int32 GetFxIndex(int32 id);
-		void StartMusicFadeDown(int i);
 		int32 DipMusic();
 
 		OSystem::MutexRef _mutex;

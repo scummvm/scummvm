@@ -990,16 +990,6 @@ uint8 Sword2Sound::IsFxMute(void) {
 	return (fxMuted);
 }
 
-void Sword2Sound::StartMusicFadeDown(int i) {
-	StackLock lock(_mutex);
-
-	g_engine->_mixer->stopHandle(soundHandleMusic[i]);
-	musFading[i] = -16;
-	musStreaming[i] = 0;
-	if (fpMus.isOpen())
-		fpMus.close();
-}
-
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
 	StackLock lock(_mutex);
 	return StreamCompMusicFromLock(filename, musicId, looping);
