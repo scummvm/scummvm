@@ -836,7 +836,7 @@ void Scumm_v5::o5_getStringWidth() {
 		width = _charset->getStringWidth(0, ptr);
 	
 	setResult(width);
-	warning("o5_getStringWidth, result %d\n", width);
+	warning("o5_getStringWidth, result %d", width);
 }
 
 void Scumm_v5::o5_saveLoadVars() {
@@ -2464,7 +2464,7 @@ void Scumm_v5::decodeParseString() {
 			{
 			int a = getVarOrDirectWord(0x80);
 			int b = getVarOrDirectWord(0x40);
-			warning("Scumm_v5::decodeParseString: Unhandled case 3: %d, %d\n", a, b);
+			warning("Scumm_v5::decodeParseString: Unhandled case 3: %d, %d", a, b);
 			}
 			break;
 		case 4:										/* center */

@@ -2886,7 +2886,7 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	num = end - start;
 
 	if (!endptr) {
-		warning("moveMemInPalRes(%d,%d): Bad end pointer\n", start, end);
+		warning("moveMemInPalRes(%d,%d): Bad end pointer", start, end);
 		return;
 	}
 
@@ -2916,7 +2916,7 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time) {
 	string2 = getStringAddress(string_id + 1);
 	string3 = getStringAddress(string_id + 2);
 	if (!string1 || !string2 || !string3) {
-		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d\n",
+		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
 		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
 		return;
 	}

@@ -413,7 +413,7 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
 			return number;
 		}
 	}
-	warning("Couldn't find numsample %s\n", name);
+	warning("Couldn't find numsample %s", name);
 	return number;
 }
 

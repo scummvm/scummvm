@@ -1361,7 +1361,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 	case 11: {	// lockObject
 		int objidx = getObjectIndex(args[1]);
 		if (objidx == -1) {
-			warning("Cannot find object %d to lock\n", args[1]);
+			warning("Cannot find object %d to lock", args[1]);
 			break;
 		}
 
@@ -1375,7 +1375,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 	case 12: {	// unlockObject
 		int objidx = getObjectIndex(args[1]);
 		if (objidx == -1) {
-			warning("Cannot find object %d to unlock\n", args[1]);
+			warning("Cannot find object %d to unlock", args[1]);
 			break;
 		}
 
@@ -1452,7 +1452,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 		_saveLoadSlot = args[1];
 		_saveLoadFlag = 2;
 		_saveLoadCompatible = false;
-		warning("Sgl: %d\n", args[1]);
+		warning("Sgl: %d", args[1]);
 		break;
 	}
 	case 28:	// saveGameStampScreenshot
@@ -1520,7 +1520,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 				push(0);
 				break;
 			default:
-				warning("getKeyState(0x%X)\n", args[1]);
+				warning("getKeyState(0x%X)", args[1]);
 				push(0);
 				break;
 		}
@@ -1636,7 +1636,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xE1:		// imGetMusicPosition
-		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)\n");
+		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)");
 		// FIXME - get this stuff to be properly implemented
 		push(_sound->_bundleMusicPosition);
 		break;

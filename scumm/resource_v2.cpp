@@ -34,7 +34,7 @@ void Scumm_v2::readIndexFile() {
 
 	magic = _fileHandle.readUint16LE();
 	if (magic != 0x0100)
-		warning("The magic id doesn't match (0x%X)\n", magic);
+		warning("The magic id doesn't match (0x%X)", magic);
 
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags

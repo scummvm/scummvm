@@ -59,7 +59,7 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 
 	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id == track)
-			warning("SmushMixer::addChannel(%d) : channel already exist !", track);
+			warning("SmushMixer::addChannel(%d) : channel already exists", track);
 	}
 	if(_nextIndex >= SoundMixer::NUM_CHANNELS)
 		_nextIndex = _mixer->_beginSlots;
@@ -84,10 +84,10 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 		}
 	}
 
-	warning("_nextIndex == %d\n", _nextIndex);
+	warning("_nextIndex == %d", _nextIndex);
 
 	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		warning("channel %d : %p(%d, %d) %d %d\n", i, (void *)_channels[i].chan, 
+		warning("channel %d : %p(%d, %d) %d %d", i, (void *)_channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
 			_channels[i].first, _channels[i].mixer_index);

@@ -584,7 +584,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			sf->drawStringWrapCentered(string2, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		default:
-			warning("SmushPlayer::handleTextResource. Not handled flags: %d\n", flags);
+			warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
 	}
 
 	if (string != NULL) {
