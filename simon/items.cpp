@@ -1501,13 +1501,12 @@ void SimonState::o_quit_if_user_presses_y()
 	for (;;) {
 		_system->poll_event(&event);
 		if (event.event_code == OSystem::EVENT_KEYDOWN) {
-			event.kbd.keycode = toupper(event.kbd.keycode);
 			// FIXME Arisme : better than being blocked ?
-			if (event.kbd.keycode == 'Y' ||
-				event.kbd.keycode == 'O' || /* french */
-				event.kbd.keycode == 'J' /* german I guess :) */)
+			if (event.kbd.keycode == 'y' ||
+				event.kbd.keycode == 'o' || /* french */
+				event.kbd.keycode == 'j' /* german I guess :) */)
 				_system->quit();
-			else if (event.kbd.keycode == 'N')
+			else if (event.kbd.keycode == 'n')
 				break;
 		}
 		delay(10);
