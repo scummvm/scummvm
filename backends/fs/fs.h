@@ -179,7 +179,14 @@ public:
 		_data[i] = element.clone();
 		_size++;
 	}
-	
+
+	const FilesystemNode& operator [](int idx) const {
+		assert(idx >= 0 && idx < _size);
+		return *_data[idx];
+	}
+
+	int size() const	{ return _size; }
+
 	const_iterator	begin() const {
 		return const_iterator(_data);
 	}
