@@ -64,8 +64,9 @@ Other Games:
      Beneath a Steel Sky                             [Game: sky]
      Simon the Sorcerer 1                            [Game: simon1dos/
                                                        simon1talkie/simon1win]
-     Simon the Sorcerer 2                            [Game: simon2dos/simon2talkie
-                                                          /simon2win/simon2mac]
+     Simon the Sorcerer 2                            [Game: simon2dos/
+                                                            simon2talkie/
+                                                            simon2win/simon2mac]
 
 The following games should be finishable, but have some criticial problems that
 prevent them from being fully supported at this time. Please do not file bug
@@ -271,6 +272,7 @@ On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     GCC:
+        * Type ./configure
         * Type make (or gmake if that's what GNU make is called on your
           system) and hopefully ScummVM will compile for you.
 
