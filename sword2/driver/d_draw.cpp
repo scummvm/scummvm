@@ -140,7 +140,7 @@ void MoviePlayer::drawTextObject(MovieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
 #ifdef USE_MPEG2
 	int frameCounter = 0, textCounter = 0;
 	PlayingSoundHandle handle;
@@ -150,7 +150,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 	uint8 oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 
-	AnimationState * anim = initanimation(filename);
+	AnimationState * anim = initAnimation(filename);
 	if (!anim) {
 		// Missing Files? Use the old 'Narration Only' hack
 		playDummy(filename, text, musicOut);
@@ -166,7 +166,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 #endif
 
 	while (1) {
-		if (!pic(anim)) break;
+		if (!decodeFrame(anim)) break;
 		_vm->_graphics->setNeedFullRedraw();
 
 		if (text && text[textCounter]) {                      
@@ -240,7 +240,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 
 	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
-	doneanimation(anim);
+	doneAnimation(anim);
 
 	// Lead-in and lead-out music are, as far as I can tell, only used for
 	// the animated cut-scenes, so this seems like a good place to close
@@ -258,7 +258,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 }
 
 // This just plays the cutscene with voiceovers / subtitles, in case the files are missing
-int32 MoviePlayer::playDummy(char *filename, MovieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
 	int frameCounter = 0, textCounter = 0;
 	if (text) {
 		uint8 oldPal[1024];
@@ -310,7 +310,7 @@ int32 MoviePlayer::playDummy(char *filename, MovieTextObject *text[], uint8 *mus
 		tmpPal[255 * 4 + 2] = 255;
 		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
-PlayingSoundHandle handle;
+		PlayingSoundHandle handle;
 
 		bool skipCutscene = false;
 

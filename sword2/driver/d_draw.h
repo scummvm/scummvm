@@ -68,23 +68,22 @@ struct MouseAnim {
 class MoviePlayer {
 private:
 	Sword2Engine *_vm;
-
 	uint8 *_textSurface;
+
 	void openTextObject(MovieTextObject *obj);
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(MovieTextObject *obj);
 
-	void buildlookup(AnimationState * st, int p, int lines);
 	void checkPaletteSwitch(AnimationState * st);
 
-	AnimationState * initanimation(char *name);
-	void doneanimation(AnimationState * st);
-	bool pic(AnimationState * st);
+	AnimationState * initAnimation(const char *name);
+	void doneAnimation(AnimationState * st);
+	bool decodeFrame(AnimationState * st);
 
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
-	int32 play(char *filename, MovieTextObject *text[], uint8 *musicOut);
-	int32 playDummy(char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 
 struct BlockSurface {
