@@ -250,7 +250,7 @@ uint32	Tconsole(uint32	mode)	//Tony9Oct96
 
 	StartConsole();
 
-	while (TRUE)
+	while (1)
 	{
 		ServiceWindows();
 

@@ -94,7 +94,6 @@ _subject_unit subject_list[MAX_SUBJECT_LIST];
 int32 FN_i_speak(int32 *params);
 void LocateTalker(int32	*params);
 void Form_text(int32 *params);
-BOOL Is_anim_boxed(uint32 res);
 uint8 WantSpeechForLine(uint32 wavId);
 
 #ifdef _SWORD2_DEBUG
@@ -105,7 +104,7 @@ int32 FN_add_subject(int32 *params) {	// James12nov96 / Tony18Nov96
 	// params:	0 id
 	//		1 daves reference number
 
-	if (IN_SUBJECT==0) {
+	if (IN_SUBJECT == 0) {
 		// This is the start of the new subject list (James 07may97)
 		// Set the default repsonse id to zero in case we're never
 		// passed one

@@ -877,7 +877,7 @@ int32 SlidyPath() {
 		stepX = stepX >> 19;	// quarter a step minimum
 		stepY = stepY >> 19;
 
-		if (abs(deltaX) >= abs(stepX) && abs(deltaY) >= abs(stepY)) {
+		if (ABS(deltaX) >= ABS(stepX) && ABS(deltaY) >= ABS(stepY)) {
 	 		modularPath[slidy].x = smoothPath[smooth].x;
 			modularPath[slidy].y = smoothPath[smooth].y;
 			modularPath[slidy].dir = smoothPath[smooth].dir;
@@ -1288,7 +1288,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 					lastErrorY = modularPath[p].y - walkAnim[stepCount - 7].y;
 
 					if (stepX == 0) {
-						if (3 * abs(lastErrorY) < abs(errorY)) {
+						if (3 * ABS(lastErrorY) < ABS(errorY)) {
 							// the last stop was
 							// closest
 							stepCount -= framesPerStep;
@@ -1298,7 +1298,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 							 	left = 0;
 						}
 					} else {
-						if (3 * abs(lastErrorX) < abs(errorX)) {
+						if (3 * ABS(lastErrorX) < ABS(errorX)) {
 							//the last stop was
 							// closest
 							stepCount -= framesPerStep;
@@ -1560,7 +1560,7 @@ int32 SolidPath() {
 		stepX = stepX >> 16;
 		stepY = stepY >> 16;
 
-		if (abs(deltaX) >= abs(stepX) && abs(deltaY) >= abs(stepY)) {
+		if (ABS(deltaX) >= ABS(stepX) && ABS(deltaY) >= ABS(stepY)) {
 			modularPath[solid].x = smoothPath[smooth].x;
 			modularPath[solid].y = smoothPath[smooth].y;
 			modularPath[solid].dir = smoothPath[smooth].dir;
@@ -1954,10 +1954,10 @@ int32 Scan(int32 level) {
 					x2 = node[k].x;
 					y2 = node[k].y;
 
-					if (abs(x2 - x1) > 4.5 * abs(y2-y1))
-						distance = (8 * abs(x2 - x1) + 18 * abs(y2 - y1)) / (54 * 8) + 1;
+					if (ABS(x2 - x1) > 4.5 * ABS(y2-y1))
+						distance = (8 * ABS(x2 - x1) + 18 * ABS(y2 - y1)) / (54 * 8) + 1;
 					else
-						distance = (6 * abs(x2 - x1) + 36 * abs(y2 - y1)) / (36 * 14) + 1;
+						distance = (6 * ABS(x2 - x1) + 36 * ABS(y2 - y1)) / (36 * 14) + 1;
 
 					if (distance + node[i].dist < node[nnodes].dist && distance + node[i].dist < node[k].dist) {
 						if (NewCheck(0, x1, y1, x2, y2)) {

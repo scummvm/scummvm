@@ -809,8 +809,6 @@ int32 SetLocationMetrics(uint16 w, uint16 h)
 
 }
 
-
-
 int32 RenderParallax(_parallax *p, int16 l) {
 	int16 x, y;
 	int16 i, j;
@@ -852,10 +850,6 @@ int32 RenderParallax(_parallax *p, int16 l) {
 
 	return RD_OK;
 }
-
-
-
-
 
 
 /*
@@ -902,8 +896,6 @@ int32 InitialiseRenderCycle(void) {
 	return RD_OK;
 }
 
-
-
 int32 StartRenderCycle(void) {
 	scrollxOld = scrollx;
 	scrollyOld = scrolly;
@@ -924,7 +916,6 @@ int32 StartRenderCycle(void) {
 	return RD_OK;
 }
 
-
 // FIXME: Move this to some better place?
 
 void sleepUntil(int32 time) {
@@ -939,7 +930,7 @@ void sleepUntil(int32 time) {
 	}
 }
 
-int32 EndRenderCycle(BOOL *end) {
+int32 EndRenderCycle(bool *end) {
 	int32 time;
 
 	time = SVM_timeGetTime();
@@ -953,23 +944,23 @@ int32 EndRenderCycle(BOOL *end) {
 		renderCountIndex = 0;
 
 	if (renderTooSlow) {
-		*end = TRUE;
+		*end = true;
 		InitialiseRenderCycle();
 	} else if (startTime + renderAverageTime >= totalTime) {
-		*end = TRUE;
+		*end = true;
 		totalTime += MILLISECSPERCYCLE;
 		initialTime = time;
 #ifdef LIMIT_FRAME_RATE
 	} else if (scrollxTarget == scrollx && scrollyTarget == scrolly) {
 		// If we have already reached the scroll target sleep for the
 		// rest of the render cycle.
-		*end = TRUE;
+		*end = true;
 		sleepUntil(totalTime);
 		initialTime = SVM_timeGetTime();
 		totalTime += MILLISECSPERCYCLE;
 #endif
 	} else {
-		*end = FALSE;
+		*end = false;
 
 		// This is an attempt to ensure that we always reach the scroll
 		// target. Otherwise the game frequently tries to pump out new
@@ -987,7 +978,6 @@ int32 EndRenderCycle(BOOL *end) {
 	return RD_OK;
 }
 
-
 int32 SetScrollTarget(int16 sx, int16 sy) {
 	scrollxTarget = sx;
 	scrollyTarget = sy;
@@ -999,7 +989,6 @@ int32 CopyScreenBuffer(void) {
 	// back buffer to the screen in ServiceWindows() instead.
 	return RD_OK;
 }
-
 
 int32 InitialiseBackgroundLayer(_parallax *p) {
 	uint8 *memchunk;
@@ -1121,7 +1110,6 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 
 }
 
-
 int32 CloseBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
@@ -1139,11 +1127,4 @@ int32 CloseBackgroundLayer(void) {
 
 	layer = 0;
 	return RD_OK;
-}
-
-
-int32 EraseSoftwareScreenBuffer(void)
-{
-	// memset(myScreenBuffer, 0, RENDERWIDE * RENDERDEEP);
-	return(RD_OK);
 }

@@ -524,12 +524,12 @@ int What_target(int startX, int startY, int destX, int destY) {		// S2.1(20Jul95
 
 	// Flat route
 
-	if (abs(deltaY) * diagonalx < abs(deltaX) * diagonaly / 2)
+	if (ABS(deltaY) * diagonalx < ABS(deltaX) * diagonaly / 2)
 		return (deltaX > 0) ? 2 : 6;
 
 	// Vertical route
 
-	if (abs(deltaY) * diagonalx / 2 > abs(deltaX) * diagonaly)
+	if (ABS(deltaY) * diagonalx / 2 > ABS(deltaX) * diagonaly)
 		return (deltaY > 0) ? 4 : 0;
 
 	// Diagonal route

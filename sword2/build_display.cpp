@@ -107,7 +107,7 @@ void Send_fore_par1_frames(void);				//James23Jan97
 // ---------------------------------------------------------------------------
 
 void Build_display(void) {	//Tony21Sept96
-	BOOL end;
+	bool end;
 #ifdef _SWORD2_DEBUG
 	uint8 pal[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0 };
 #endif

@@ -67,11 +67,10 @@ int32 GetLanguageVersion(uint8 *version) {
 	} else {
 		versionFromFile = 1;
 		languageVersion = AMERICAN;
-		return(RDERR_OPENVERSIONFILE);
+		return RDERR_OPENVERSIONFILE;
 	}
 	return RD_OK;
 }
-
 
 int32 SetLanguageVersion(uint8 version) {
 	languageVersion = version;
@@ -86,17 +85,17 @@ int32 GetGameName(uint8 *name) {
 
 	switch (version) {
 	case ENGLISH:
-		strcpy((char *)name, "Broken Sword II");
+		strcpy((char *) name, "Broken Sword II");
 		break;
 	case AMERICAN:
-		strcpy((char *)name, "Circle of Blood II");
+		strcpy((char *) name, "Circle of Blood II");
 		break;
 	case GERMAN:
-		strcpy((char *)name, "Baphomet's Fluch II");
+		strcpy((char *) name, "Baphomet's Fluch II");
 		break;
 	default:
 		strcpy((char *)name, "Some game or other, part 86");
-		return(RDERR_INVALIDVERSION);
+		return RDERR_INVALIDVERSION;
 	}
 
 	return rv;

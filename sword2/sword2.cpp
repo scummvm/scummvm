@@ -323,7 +323,7 @@ void Sword2State::go() {
 	InitialiseRenderCycle();
 	// Zdebug("RETURNED.");
 
-	while (TRUE) {
+	while (1) {
 		ServiceWindows();
 
 #ifdef _SWORD2_DEBUG

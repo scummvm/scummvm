@@ -152,9 +152,10 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 }
 
 uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineInfo *line) {
-	uint16 pos = 0, wordWidth, wordLength, spaceNeeded, firstWord = TRUE;
+	uint16 pos = 0, wordWidth, wordLength, spaceNeeded;
 	uint16 lineNo = 0;
 	uint8 ch;
+	bool firstWord = true;
 
 	// joinWidth = how much extra space is needed to append a word to a
 	// line. NB. SPACE requires TWICE the 'char_spacing' to join a word
@@ -192,7 +193,7 @@ uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineIn
 
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
-			firstWord = FALSE;
+			firstWord = false;
 		} else {
 			// see how much extra space this word will need to
 			// fit on current line (with a separating space

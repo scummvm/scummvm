@@ -1438,7 +1438,7 @@ void resMan::GetCd(int cd) {
 
 	do {
 		if (offNetwork == 1)
-			done = TRUE;
+			done = true;
 		else {
 			index = 0;
 			while (cdDrives[index] != 0 && !done && index < 24) {
@@ -1450,10 +1450,10 @@ void resMan::GetCd(int cd) {
 
 				if (!scumm_stricmp(sCDName,CD1_LABEL)) {
 					if (cd == CD1)
-						done = TRUE;
+						done = true;
 				} else if (!scumm_stricmp(sCDName,CD2_LABEL)) {
 					if (cd == CD2)
-						done = TRUE;
+						done = true;
 				}
 				index++;
 			}

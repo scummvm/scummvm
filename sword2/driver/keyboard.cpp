@@ -70,11 +70,8 @@ void WriteKey(uint16 ascii, int keycode, int modifiers) {
 	}
 }
 
-BOOL KeyWaiting(void) {
-	if (keyBacklog)
-		return TRUE;
-
-	return FALSE;
+bool KeyWaiting(void) {
+	return keyBacklog != 0;
 }
 
 int32 ReadKey(_keyboardEvent *ev) {

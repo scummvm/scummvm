@@ -424,7 +424,7 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 				*offset = ip;
 				return 2;
 			default:
-				ASSERT(FALSE);
+				ASSERT(false);
 			}
 			parameterReturnedFromMcodeFunction = retVal >> 3;
 			break;

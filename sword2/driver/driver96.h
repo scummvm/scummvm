@@ -898,10 +898,6 @@ extern "C" {
 // Key buffer size
 #define MAX_KEY_BUFFER 32
 
-typedef int BOOL;
-#define TRUE 1
-#define FALSE 0
-
 //
 //	Structure definitions
 //	---------------------
@@ -921,11 +917,10 @@ typedef struct {
 	#pragma START_PACK_STRUCTS
 #endif
 
-typedef struct
-{
-	uint16	w;
-	uint16	h;
-	uint32	offset[2];	// 2 is arbitrary
+typedef struct {
+	uint16 w;
+	uint16 h;
+	uint32 offset[2];	// 2 is arbitrary
 } GCC_PACK _parallax;
 
 #if !defined(__GNUC__)
@@ -933,30 +928,29 @@ typedef struct
 #endif
 
 
-//	The _spriteInfo structure is used to tell the driver96 code what attributes
-//	are linked to a sprite for drawing.  These include position, scaling and
-//	compression.
-typedef struct
-{
-	int16	x;				// coords for top-left of sprite
-	int16	y;
-	uint16	w;				// dimensions of sprite (before scaling)
-	uint16	h;
-	uint16	scale;			// scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
-	uint16	scaledWidth;	// new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
-	uint16	scaledHeight;	//
-	uint16	type;			// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
-	uint16	blend;			// holds the blending values.
-	uint8	*data;			// pointer to the sprite data
-	uint8	*colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
+// The _spriteInfo structure is used to tell the driver96 code what attributes
+// are linked to a sprite for drawing.  These include position, scaling and
+// compression.
+
+typedef struct {
+	int16 x;		// coords for top-left of sprite
+	int16 y;
+	uint16 w;		// dimensions of sprite (before scaling)
+	uint16 h;
+	uint16 scale;		// scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
+	uint16 scaledWidth;	// new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
+	uint16 scaledHeight;	//
+	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
+	uint16 blend;		// holds the blending values.
+	uint8 *data;		// pointer to the sprite data
+	uint8 *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
 } _spriteInfo;
 
 
 // This is the format of a .WAV file.  Somewhere after this header is the string
 // 'DATA' followed by an int32 size which is the size of the data.  Following
 // the size of the data is the data itself.
-typedef struct
-{
+typedef struct {
 	uint32 riff;
 	uint32 fileLength;
 	uint32 wavID;
@@ -977,33 +971,13 @@ typedef struct
 //	It includes the smack to play, and any text lines which are
 //	to be displayed over the top of the sequence.
 
-typedef struct
-{
+typedef struct {
 	uint16 startFrame;
 	uint16 endFrame;
 	_spriteInfo *textSprite;
 	uint32 speechBufferSize;
 	uint16 *speech;
 } _movieTextObject;
-
-
-
-typedef	struct
-{	uint8	manufacturer;
-	uint8	version;
-	uint8	encoding;
-	uint8	bitsPerPixel;
-	int16	xmin,ymin;
-	int16	xmax,ymax;
-	int16	hres;
-	int16	vres;
-	char	palette[48];
-	char	reserved;
-	uint8	colourPlanes;
-	int16	bytesPerLine;
-	int16	paletteType;
-	char	filler[58];
-} _pcxHeader;
 
 //
 //	Function Prototypes
@@ -1068,7 +1042,7 @@ extern void ResetRenderEngine(void);
 //-----------------------------------------------------------------------------
 //	Keyboard functions - from keyboard.c
 //-----------------------------------------------------------------------------
-extern BOOL  KeyWaiting(void);
+extern bool KeyWaiting(void);
 extern int32 ReadKey(_keyboardEvent *ke);
 //-----------------------------------------------------------------------------
 
@@ -1089,7 +1063,7 @@ extern int32 CloseLightMask(void);
 extern int32 SetScrollTarget(int16 sx, int16 sy);
 extern int32 InitialiseRenderCycle(void);
 extern int32 StartRenderCycle(void);
-extern int32 EndRenderCycle(BOOL *end);
+extern int32 EndRenderCycle(bool *end);
 extern int32 RenderParallax(_parallax *p, int16 layer);
 extern int32 SetLocationMetrics(uint16 w, uint16 h);
 extern int32 CopyScreenBuffer(void);
@@ -1110,7 +1084,6 @@ extern int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon);
 extern uint8 GetMenuStatus(uint8 menu);
 extern int32 CloseMenuImmediately(void);
 
-
 //-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
@@ -1121,18 +1094,13 @@ extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPat
 extern void scumm_mkdir(const char *pathname);
 extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
-
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-extern int16	screenWide;			// Width of the screen display
-extern int16	screenDeep;			// Height of the screen display
-extern int16	mousex;				// Mouse screen x coordinate
-extern int16	mousey;				// Mouse screen y coordinate
-extern int32	renderCaps;			// Flags which determine how to render the scene.
-extern uint8	palCopy[256][4];	// Current palette.
-//-----------------------------------------------------------------------------
-
-extern long int myTimers[10][2];
+extern int16 screenWide;	// Width of the screen display
+extern int16 screenDeep;	// Height of the screen display
+extern int16 mousex;		// Mouse screen x coordinate
+extern int16 mousey;		// Mouse screen y coordinate
+extern int32 renderCaps;	// Flags which determine how to render the scene.
+extern uint8 palCopy[256][4];	// Current palette.
 
 #ifdef __cplusplus
 }
