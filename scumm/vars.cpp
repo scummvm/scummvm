@@ -226,6 +226,7 @@ void Scumm_v8::setupScummVars()
 	VAR_TALK_ACTOR = 14;
 	VAR_HAVE_MSG = 15;
 	VAR_MOUSE_BUTTONS = 16;
+	// TODO: what is var17 (used in room 10 script 2004) ?
 	VAR_MOUSE_HOLD = 18;
 
 	VAR_TIMEDATE_YEAR = 24;
@@ -287,7 +288,4 @@ void Scumm_v8::setupScummVars()
 	VAR_KEYPRESS = 132;
 	
 	VAR_CHARINC = 221;
-	
-	// var 266, 290 and 301 have something to do with cursor images, since various scripts
-	// have setCursorImg(var290,2) or setCursorImg(var266,1) or setCursorImg(var301,1)
 }
