@@ -398,7 +398,6 @@ void SimonSound::readVoiceFile(const char *filename, const Common::String &gameD
 void SimonSound::playVoice(uint sound) {
 	if (_game == GAME_SIMON2MAC && _filenums) {
 		if (_last_voice_file != _filenums[sound]) {
-			warning("Loading voice file %d", _filenums[sound]);
 			stopAll();
 
 			char filename[16];
