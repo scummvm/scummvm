@@ -180,86 +180,96 @@ bool Smush::setupAnim(const char *file, const char *directory) {
 }
 
 void Smush::play(const char *filename, const char *directory) {
-	char tmpOut[256];
-	FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
-	FILE *outFile = NULL;
-	sprintf(tmpOut, "smush.temp");
+	// Tempfile version of decompression code
+	#ifdef ZLIB_MEMORY
+		// zlibFile version of code. Experimental.
+		// Load the video
+		if (!setupAnim(filename, directory))
+			return;
+	#else
+		char tmpOut[256];
+		FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
+		FILE *outFile = NULL;
+		sprintf(tmpOut, "smush.temp");
 	
-	if (tmp != NULL) {
-		z_stream z;
-		char inBuf[1024], outBuf[1024], flags;
-		int status = 0;
+		if (tmp != NULL) {
+			z_stream z;
+			char inBuf[1024], outBuf[1024], flags;
+			int status = 0;
 
-		warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
-		fread(inBuf, 4, sizeof(byte), tmp);		//	Header, Method, Flags
-		flags = inBuf[3];
-		fread(inBuf, 6, sizeof(byte), tmp);		// 	XFlags
+			warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
+			fread(inBuf, 4, sizeof(byte), tmp);		//	Header, Method, Flags
+			flags = inBuf[3];
+			fread(inBuf, 6, sizeof(byte), tmp);		// 	XFlags
 
-		if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
-			error("Unsupported header flag");
-
-		if ((flags & 0x08) != 0) {				// Name
-			do {
-				fread(inBuf, 1, sizeof(byte), tmp);
-				printf("%c", inBuf[0]);
-			} while(inBuf[0] != 0);
-
-		}
-
-		if ((flags & 0x02) != 0)				// CRC
-			fread(inBuf, 2, sizeof(byte), tmp);
-
-		z.zalloc = NULL;
-		z.zfree = NULL;
-		z.opaque = Z_NULL;
-
-		if (inflateInit2(&z, -15) != Z_OK)
-			error("Smush::play() - inflateInit error");
-
-		z.next_in = (Bytef *)inBuf;
-		z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
-		z.next_out = (Bytef *)outBuf;
-		z.avail_out = sizeof(outBuf);
-
-		for (;;) {
-			if (z.avail_in == 0) {
-				z.next_in = (Bytef *)inBuf;
-				z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
+			if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
+				error("Unsupported header flag");
+	
+			if ((flags & 0x08) != 0) {				// Name
+				printf("Decompressing ");
+				do {
+					fread(inBuf, 1, sizeof(char), tmp);
+					printf("%c", inBuf[0]);
+				} while(inBuf[0] != 0);
+				printf("\n");
 			}
 
-			status = inflate(&z, Z_NO_FLUSH);
-			if (status == Z_STREAM_END) {
-				if (sizeof(outBuf) - z.avail_out) {
+			if ((flags & 0x02) != 0)				// CRC
+				fread(inBuf, 2, sizeof(byte), tmp);
+
+			z.zalloc = NULL;
+			z.zfree = NULL;
+			z.opaque = Z_NULL;
+
+			if (inflateInit2(&z, -15) != Z_OK)
+			error("Smush::play() - inflateInit error");
+	
+			z.next_in = (Bytef *)inBuf;
+			z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
+			z.next_out = (Bytef *)outBuf;
+			z.avail_out = sizeof(outBuf);
+
+			for (;;) {
+				if (z.avail_in == 0) {
+					z.next_in = (Bytef *)inBuf;
+					z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
+				}
+
+				status = inflate(&z, Z_NO_FLUSH);
+				if (status == Z_STREAM_END) {
+					if (sizeof(outBuf) - z.avail_out) {
+						if (outFile == NULL)
+							outFile = fopen(tmpOut, "wb");
+						fwrite(outBuf, 1, sizeof(outBuf) - z.avail_out, outFile);
+					}
+					break;
+				}
+
+				if (status != Z_OK) {
+					warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
+					return;
+				}
+
+				if (z.avail_out == 0) {
 					if (outFile == NULL)
 						outFile = fopen(tmpOut, "wb");
-					fwrite(outBuf, 1, sizeof(outBuf) - z.avail_out, outFile);
+
+					fwrite(outBuf, 1, sizeof(outBuf), outFile);
+					z.next_out = (Bytef *)outBuf;
+					z.avail_out = sizeof(outBuf);
 				}
-				break;
 			}
 
-			if (status != Z_OK) {
-				warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
-				return;
-			}
-
-			if (z.avail_out == 0) {
-				if (outFile == NULL)
-					outFile = fopen(tmpOut, "wb");
-
-				fwrite(outBuf, 1, sizeof(outBuf), outFile);
-				z.next_out = (Bytef *)outBuf;
-				z.avail_out = sizeof(outBuf);
-			}
+			inflateEnd(&z);
+			fclose(outFile);
+			warning("Smush::play() Open okay for %s!\n", filename);
 		}
 
-		inflateEnd(&z);
-		fclose(outFile);
-		warning("Smush::play() Open okay for %s!\n", filename);
-	}
+		// Load the video
+		if (!setupAnim(tmpOut, directory))
+			return;
+	#endif
 
-	// Load the video
-	if (!setupAnim(tmpOut, directory))
-		return;
 	handleFramesHeader();
 
 	SDL_Surface* image;
@@ -556,16 +566,19 @@ bool zlibFile::open(const char *filename) {
 
 	// Read in the GZ header
 	fread(inBuf, 4, sizeof(char), _handle);				// Header, Method, Flags
-	flags = inBuf[4];
+	flags = inBuf[3];
 	fread(inBuf, 6, sizeof(char), _handle);				// XFlags
 
 	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Misc
 		error("Unsupported header flag");
 
 	if ((flags & 0x08) != 0) {                                              // Name
+		printf("Decompressing ");
 		do {
 			fread(inBuf, 1, sizeof(char), _handle);
+			printf("%c", inBuf[0]);
 		} while(inBuf[0] != 0);
+		printf("\n");
         }
 
 	if ((flags & 0x02 != 0))                                // CRC
@@ -583,10 +596,12 @@ bool zlibFile::open(const char *filename) {
 	stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
 	stream.next_out = (Bytef *)outBuf;
 	stream.avail_out = sizeof(outBuf);
-	fillZlibBuffer();
+	if (!fillZlibBuffer()) {
+		warning("Error during initial zlib decompression for %s", filename);
+		return false;
+	}
 
 	warning("zlibFile %s opened!", filename);
-
 	return true;
 }
 
@@ -660,7 +675,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	return len;
 }
  
-void zlibFile::fillZlibBuffer() {
+bool zlibFile::fillZlibBuffer() {
 	int status = 0;
  
 	if (stream.avail_in == 0) {
@@ -672,12 +687,12 @@ void zlibFile::fillZlibBuffer() {
 	if (status == Z_STREAM_END) {
 		if (sizeof(outBuf) - stream.avail_out)
 			warning("fillZlibBuffer: End of buffer");
-		return;
+		return true;
  	}
  
 	if (status != Z_OK) {
 		warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
-		return;
+		return false;
 	}
 
 
@@ -686,6 +701,8 @@ void zlibFile::fillZlibBuffer() {
 		stream.avail_out = sizeof(outBuf);
 	}
 	usedBuffer = 0;
+
+	return true;
 }
 
 byte zlibFile::readByte() {

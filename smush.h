@@ -18,6 +18,10 @@
 #ifndef SMUSH_PLAYER_H
 #define SMUSH_PLAYER_H
 
+// Use experimental (probably non-functional) in-memory zlib decompression.
+// Leave undefined to use WORKING tempfile version.
+//#define ZLIB_MEMORY
+
 #include "bits.h"
 #include "debug.h"
 #include <cstring>
@@ -68,7 +72,7 @@ private:
 	z_stream stream;	// zlib stream
 	uint32 usedBuffer;	// how much of outBuf has been processed by ::read*()
 	char inBuf[1024], outBuf[1024]; // Buffers for decompression
-	void fillZlibBuffer();
+	bool fillZlibBuffer();
 
 public:
 	zlibFile();
@@ -93,8 +97,11 @@ class Smush {
 private:
 	int32 _nbframes;
 	Blocky16 _blocky16;
-	File _file;
-	// zlibFile _file;
+	#ifdef ZLIB_MEMORY
+		zlibFile _file;
+	#else
+		File _file;
+	#endif
 	PlayingSoundHandle _soundHandle;
 
 	int32 _frame;
