@@ -75,9 +75,9 @@ int main(int /* argc */, char ** /* argv */) {
   lua_open();
 
   lua_beginblock();
-  lua_iolibopen();
-  lua_strlibopen();
-  lua_mathlibopen();
+  //lua_iolibopen();
+  //lua_strlibopen();
+  //lua_mathlibopen();
   lua_endblock();
 
   lua_beginblock();

@@ -33,6 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
+/NODEFAULTLIB:LIBCMTD"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
