@@ -387,17 +387,28 @@ int GameDetector::detectMain(int argc, char **argv)
 }
 
 OSystem *GameDetector::createSystem() {
+#ifdef __MORPHOS__
+	_gfx_driver = GD_MORPHOS;
+#endif
 	/* auto is to use SDL */
 	switch(_gfx_driver) {
 	case GD_SDL:
 	case GD_AUTO:
+#if !defined(__MORPHOS__)
 		return OSystem_SDL_create(_gfx_mode, _fullScreen);
+#endif
 	case GD_WIN32:
 		/* not implemented yet */
 		break;
 
 	case GD_X:
 		/* not implemented yet */
+		break;
+
+	case GD_MORPHOS:
+#if defined(__MORPHOS__)
+		return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
+#endif
 		break;
 
 	case GD_NULL:

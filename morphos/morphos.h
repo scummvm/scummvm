@@ -77,6 +77,19 @@ class OSystem_MorphOS : public OSystem
 
 		virtual uint32 property(int param, uint32 value);
 
+		// Poll cdrom status
+		// Returns true if cd audio is playing
+		virtual bool poll_cdrom();
+
+		// Play cdrom audio track
+		virtual void play_cdrom(int track, int num_loops, int start_frame, int length);
+
+		// Stop cdrom audio track
+		virtual void stop_cdrom();
+
+		// Update cdrom audio status
+		virtual void update_cdrom();
+
 		// Quit
 		virtual void quit();
 
@@ -149,6 +162,8 @@ class OSystem_MorphOS : public OSystem
 		/* CD-ROM related attributes */
 		CDRIVEPTR 		 CDrive;
 		ULONG 			 CDDATrackOffset;
+		int 				 cd_track, cd_num_loops, cd_start_frame, cd_end_frame;
+		uint32 			 cd_end_time, cd_stop_time, cd_next_second;
 
 		/* Scaling-related attributes */
 		SCALERTYPE ScummScaler;

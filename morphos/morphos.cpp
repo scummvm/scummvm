@@ -288,9 +288,9 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 	return 0;
 }
 
-void cd_play( Scumm *s, int track, int num_loops, int start_frame, int length )
+void OSystem_MorphOS::play_cdrom( int track, int num_loops, int start_frame, int length )
 {
-/*	  if( CDrive && start_frame >= 0 )
+	if( CDrive && start_frame >= 0 )
 	{
 		struct CDS_TrackInfo ti;
 
@@ -309,42 +309,41 @@ void cd_play( Scumm *s, int track, int num_loops, int start_frame, int length )
 		cd_stop_time = 0;
 		
 		CDDA_GetTrackInfo( CDrive, track, 0, &ti );
-		cd_end_time = GetTicks() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
-	}*/
+		cd_end_time = get_msecs() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
+	}
 }
 
 // Schedule the music to be stopped after 1/10 sec, unless another
 // track is started in the meantime.
-void cd_stop()
+void OSystem_MorphOS::stop_cdrom()
 {
-/*	  cd_stop_time = GetTicks() + 100;
-	cd_num_loops = 0;*/
+	cd_stop_time = get_msecs() + 100;
+	cd_num_loops = 0;
 }
 
-int cd_is_running()
+bool OSystem_MorphOS::poll_cdrom()
 {
-/*	  ULONG status;
+	ULONG status;
 
 	if( CDrive == NULL )
-		return 0;
+		return false;
 
 	CDDA_GetAttr( CDDA_Status, CDrive, &status );
-	return (cd_num_loops != 0 && (GetTicks() < cd_end_time || status != CDDA_Status_Ready));*/
-	return FALSE;
+	return (cd_num_loops != 0 && (get_msecs() < cd_end_time || status != CDDA_Status_Ready));
 }
 
-void cd_music_loop()
+void OSystem_MorphOS::update_cdrom()
 {
-/*	  if( CDrive )
+	if( CDrive )
 	{
-		if( cd_stop_time != 0 && GetTicks() >= cd_stop_time )
+		if( cd_stop_time != 0 && get_msecs() >= cd_stop_time )
 		{
 			CDDA_Stop( CDrive );
 			cd_num_loops = 0;
 			cd_stop_time = 0;
 			return;
 		}
-		if( cd_num_loops == 0 || GetTicks() < cd_end_time )
+		if( cd_num_loops == 0 || get_msecs() < cd_end_time )
 			return;
 
 		ULONG status;
@@ -368,9 +367,9 @@ void cd_music_loop()
 			CDDA_Play( CDrive, PlayTags );
 		
 			CDDA_GetTrackInfo( CDrive, cd_track, 0, &ti );
-			cd_end_time = GetTicks() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
+			cd_end_time = get_msecs() + ti.ti_TrackLength.tm_Format.tm_Frame * 1000 / 75;
 		}
-	}*/
+	}
 }
 
 void OSystem_MorphOS::quit()

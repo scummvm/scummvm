@@ -138,6 +138,7 @@ enum {
 	GD_WIN32 = 2,
 	GD_X = 3,
 	GD_NULL = 4,
+	GD_MORPHOS = 5,
 };
 
 
