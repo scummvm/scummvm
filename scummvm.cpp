@@ -63,6 +63,7 @@ void Scumm::scummInit()
 	if (!(_features & GF_SMALL_NAMES))
 		loadCharset(1);
 
+	
 	initScreens(0, 16, 320, 144);
 
 	setShake(0);
@@ -1211,6 +1212,7 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	/* Create a primary virtual screen */
+	_videoBuffer = (byte*)malloc(328*200);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);
@@ -1286,7 +1288,15 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	/* bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
-	scumm->_mixer->bind_to_system(syst);
+	if (!scumm->_mixer->bind_to_system(syst)) {
+		warning("Sound initialization failed");
+		if (detector->_use_adlib) {
+			detector->_use_adlib = false;
+			detector->_midi_driver = MD_NULL;
+			warning("Adlib music was selected, switching to midi null driver");
+		}
+	}
+		
 	scumm->_mixer->set_volume(128);
 
 	scumm->_fullScreen = detector->_fullScreen;

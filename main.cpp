@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
 		SimonState *simon = SimonState::create(system, midi);
 		simon->_game = detector._gameId - GID_SIMON_FIRST;
 		simon->set_volume(detector._sfx_volume);
+		simon->_game_path = detector._gameDataPath;
 		simon->go();
 
 	} else {

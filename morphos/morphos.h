@@ -72,7 +72,7 @@ class OSystem_MorphOS : public OSystem
 		virtual bool poll_event(Event *event);
 
 		// Set the function to be invoked whenever samples need to be generated
-		virtual void set_sound_proc(void *param, SoundProc *proc, byte format);
+		virtual bool set_sound_proc(void *param, SoundProc *proc, byte format);
 				  void fill_sound    (byte * stream, int len);
 
 		virtual uint32 property(int param, uint32 value);

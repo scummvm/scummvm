@@ -737,7 +737,7 @@ int Scumm::getResourceDataSize(byte *ptr)
 	if (_features & GF_SMALL_HEADER)
 		return READ_LE_UINT32(ptr) - 6;
 	else
-		return READ_BE_UINT32(ptr - 4) - 8;
+		return READ_BE_UINT32_UNALIGNED(ptr - 4) - 8;
 }
 
 struct FindResourceState {

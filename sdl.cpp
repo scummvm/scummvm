@@ -52,7 +52,7 @@ public:
 	bool poll_event(Event *event);
 	
 	// Set function that generates samples 
-	void set_sound_proc(void *param, SoundProc *proc, byte sound);
+	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
 		
 	// Quit
 	void quit();
@@ -458,6 +458,8 @@ void OSystem_SDL::mk_checksums(const byte *buf) {
 
 
 void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
+	assert( ((uint32)buf & 3) == 0);
+	
 	/* generate a table of the checksums */
 	mk_checksums(buf);
 
@@ -713,7 +715,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 	}
 }
 	
-void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
+bool OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	SDL_AudioSpec desired;
 
 	/* only one format supported at the moment */
@@ -724,8 +726,11 @@ void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	desired.samples = 2048;
 	desired.callback = proc;
 	desired.userdata = param;
-	SDL_OpenAudio(&desired, NULL);
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
+		return false;
+	}
 	SDL_PauseAudio(0);
+	return true;
 }
 
 
@@ -1031,7 +1036,7 @@ public:
 	void delay_msecs(uint msecs);
 	void *create_thread(ThreadProc *proc, void *param) { return NULL; }
 	bool poll_event(Event *event) { return false; }
-	void set_sound_proc(void *param, SoundProc *proc, byte sound) {}
+	bool set_sound_proc(void *param, SoundProc *proc, byte sound) {}
 	void quit() { exit(1); }
 	uint32 property(int param, uint32 value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);

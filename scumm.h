@@ -82,7 +82,7 @@ struct ResHdr {
 } GCC_PACK;
 
 #define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) ( READ_BE_UINT32(&((ResHdr*)x)->size) )
+#define RES_SIZE(x) ( READ_BE_UINT32_UNALIGNED(&((ResHdr*)x)->size) )
 
 
 struct RoomHeader {
@@ -594,10 +594,7 @@ public:
 	char *getGameName();
 	Scumm(); // constructor
 
-	/* video buffer */
-	byte _videoBuffer[328*200]; // main video buffer
-
-	/* system call object */
+	byte *_videoBuffer;
 
 	/* Scumm main loop */
 
@@ -1122,7 +1119,6 @@ public:
 	void restoreBG(int left, int top, int right, int bottom);
 	void redrawBGStrip(int start, int num);	
 	void redrawBGAreas();
-	void redrawLines(int from, int to);	
 	
 	void moveCamera();
 	void cameraMoved();

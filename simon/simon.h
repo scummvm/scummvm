@@ -350,6 +350,8 @@ class SimonState {
 public:
 	OSystem *_system;
 
+	char *_game_path;
+
 	byte *_vc_ptr; /* video code ptr */
 
 	uint32 *_game_offsets_ptr;
@@ -357,6 +359,7 @@ public:
 	const GameSpecificSettings *gss;
 
 	byte _game;
+	byte _key_pressed;
 
 	enum {
 		GAME_SIMON2 = 1,
@@ -391,6 +394,7 @@ public:
 	byte *_tbl_list;
 
 	byte *_code_ptr;
+	
 
 	byte **_local_stringtable;
 	uint _string_id_local_min, _string_id_local_max;
@@ -592,6 +596,14 @@ public:
 	int _timer_id;
 
 	FILE *_dump_file;
+
+	int _number_of_savegames;
+
+	int _saveload_row_curpos;
+	int _num_savegame_rows;
+	bool _savedialog_flag;
+	bool _save_or_load;
+	bool _saveload_flag;
 
 	int allocGamePcVars(FILE *in);
 	Item *allocItem1();
@@ -983,6 +995,7 @@ public:
 	void dx_clear_attached_from_top(uint lines);
 	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);
 	void dx_copy_from_attached_to_3(uint lines);
+	void dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h);
 
 	void print_char_helper_1(const byte *src, uint len);
 	void print_char_helper_5(FillOrCopyStruct *fcs);
@@ -1036,6 +1049,20 @@ public:
 	void set_dummy_cursor();
 
 	void set_volume(byte volume);
+
+	FILE *fopen_maybe_lowercase(const char *filename);
+
+	void save_or_load_dialog(bool load);
+	void o_unk_132_helper_3();
+	int o_unk_132_helper(bool *b, char *buf);
+	void o_unk_132_helper_2(FillOrCopyStruct *fcs, int x);
+	void savegame_dialog(char *buf);
+
+	int display_savegame_list(int curpos, bool load, char *dst);
+
+	void show_it(void *buf);
+
+	char *gen_savename(int slot);
 };
 
 	

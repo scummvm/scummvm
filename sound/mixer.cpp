@@ -55,7 +55,7 @@ void SoundMixer::on_generate_samples(void *s, byte *samples, int len) {
 	((SoundMixer*)s)->mix((int16*)samples, len>>1);
 }
 
-void SoundMixer::bind_to_system(OSystem *syst) {
+bool SoundMixer::bind_to_system(OSystem *syst) {
 	_volume_table = (int16*)calloc(256*sizeof(int16),1);
 		
 	uint rate = (uint)syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
@@ -65,7 +65,7 @@ void SoundMixer::bind_to_system(OSystem *syst) {
 	if (rate == 0)
 		error("OSystem returned invalid sample rate");
 	
-	syst->set_sound_proc(this, on_generate_samples, OSystem::SOUND_16BIT);
+	return syst->set_sound_proc(this, on_generate_samples, OSystem::SOUND_16BIT);
 }
 
 void SoundMixer::stop_all() {

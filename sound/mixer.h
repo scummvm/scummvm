@@ -90,7 +90,7 @@ public:
 	/* bind to the OSystem object => mixer will be
 	 * invoked automatically when samples need
 	 * to be generated */
-	void bind_to_system(OSystem *syst);
+	bool bind_to_system(OSystem *syst);
 
 	/* set the volume, 0-256 */
 	void set_volume(int volume);

@@ -380,8 +380,7 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming that data file are in the current directory");
-		_gameDataPath = (char *)malloc(sizeof(char) * 2);
-		strcpy(_gameDataPath, "");
+		_gameDataPath = strdup("");
 	}
 
 	return (0);

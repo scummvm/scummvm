@@ -111,20 +111,33 @@ uint fileReadItemID(FILE *in) {
 	return val + 2;
 }
 
-FILE *fopen_maybe_lowercase(const char *filename) {
+
+/* debug code */
+void SimonState::show_it(void *buf) {
+	_system->copy_rect((byte*)buf, 320, 0, 0, 320, 200);
+	_system->update_screen();
+}
+
+FILE *SimonState::fopen_maybe_lowercase(const char *filename) {
+	char buf[256], *e;
+
+	const char *s = _game_path;
+
+	strcpy(buf, s);
+	e = strchr(buf, 0);
+	strcpy(e, filename);
+
 #ifdef WIN32
 	/* win32 is not case sensitive */
-	return fopen(filename, "rb");
+	return fopen(buf, "rb");
 #else
 	/* first try with the original filename */
-	FILE *in = fopen(filename, "rb");
-	char buf[50], *s;
+	FILE *in = fopen(buf, "rb");
 
 	if (in) return in;
 	/* if that fails, convert the filename into lowercase and retry */
-	
-	s=buf;
-	do *s++ = tolower(*filename++); while (filename[-1]);
+
+	do *e = tolower(*e); while(*e++);
 
 	return fopen(buf, "rb");
 #endif
@@ -5762,14 +5775,299 @@ void SimonState::o_force_lock() {
 }
 
 void SimonState::o_save_game() {
-	if (!save_game(123, "TEST"))
-		error("save failed");
-//	error("o_save_game: not implemented yet");
+	save_or_load_dialog(false);
 }
 
 void SimonState::o_load_game() {
-	if (!load_game(123))
-		error("load failed");
+	save_or_load_dialog(true);
+}
+
+
+int SimonState::o_unk_132_helper(bool *b, char *buf) {
+	HitArea *ha;
+	
+	*b = true;
+
+	
+	if (!_saveload_flag) {
+strange_jump:;
+		_saveload_flag = false;
+		savegame_dialog(buf);
+	}	
+
+start_over:;
+	_key_pressed = 0;
+
+start_over_2:;
+	_last_hitarea = _last_hitarea_3 = 0;
+
+	do {
+		if (_key_pressed != 0) {
+			if (_saveload_flag) {
+				*b = false;	
+				return _key_pressed;
+			}
+			goto start_over;
+		}
+		delay(100);
+	} while (_last_hitarea_3 == 0);
+
+	ha = _last_hitarea;
+
+	if (ha == NULL || ha->id < 205) goto start_over_2;
+
+	if (ha->id == 205) return ha->id;
+
+	if (ha->id == 206) {
+		if (_saveload_row_curpos == 1) goto start_over_2;
+		if (_saveload_row_curpos < 7) _saveload_row_curpos = 1;
+		else _saveload_row_curpos -= 6;
+
+		goto strange_jump;
+	}
+	
+	if (ha->id == 207) {
+		if (!_savedialog_flag) goto start_over_2;
+		_saveload_row_curpos += 6;
+//		if (_saveload_row_curpos >= _num_savegame_rows)
+//			_saveload_row_curpos = _num_savegame_rows;
+		goto strange_jump;
+	}
+	
+	if (ha->id >= 214) goto start_over_2;
+	return ha->id - 208;
+}
+
+void SimonState::o_unk_132_helper_3() {
+	for(int i=208; i!=208+6; i++)
+		set_hitarea_bit_0x40(i);
+}
+
+
+int SimonState::display_savegame_list(int curpos, bool load, char *dst) {
+	int slot, last_slot;
+	FILE *in;
+
+	showMessageFormat("\xC");
+	
+	memset(dst, 0, 18*6);
+
+	slot = curpos;
+
+	while (curpos + 6 > slot) {
+		in = fopen(gen_savename(slot), "rb");
+		if (!in) break;
+
+		fread(dst, 1, 18, in);
+		fclose(in);
+		last_slot = slot;
+		if (slot < 10)
+			showMessageFormat(" ");
+		showMessageFormat("%d", slot);
+		showMessageFormat(".%s\n", dst);
+		dst+=18	;
+		slot++;
+	}
+	/* while_break */
+	if (!load) {
+		if (curpos + 6 == slot)
+			slot++;
+		else {
+			if (slot < 10)
+				showMessageFormat(" ");
+			showMessageFormat("%d.\n", slot);
+		}
+	} else {
+		if (curpos +6 == slot) {
+			in = fopen(gen_savename(slot), "rb");
+			if (in != NULL) {
+				slot++;
+				fclose(in);
+			}
+		}
+	}
+
+	return slot - curpos;
+}
+
+
+void SimonState::savegame_dialog(char *buf) {
+	int i;
+
+	o_unk_132_helper_3();
+	
+	i = display_savegame_list(_saveload_row_curpos, _save_or_load, buf);
+
+	_savedialog_flag = true;
+
+	if (i != 7) {
+		i++;
+		if (!_save_or_load)
+			i++;
+		_savedialog_flag = false;
+	}
+
+	if (!--i)
+		return;
+
+	do {
+		clear_hitarea_bit_0x40(0xd0 + i - 1);
+	} while (--i);
+}
+
+void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
+	byte old_text;
+
+	video_putchar(fcs, x);
+	old_text = fcs->text_color;
+	fcs->text_color = fcs->fill_color;
+	
+	x += 120;
+	if (x != 128) x=129;
+	video_putchar(fcs, x);
+
+	fcs->text_color = old_text;
+	video_putchar(fcs, 8);
+}
+
+void SimonState::save_or_load_dialog(bool load) {
+	time_t save_time;
+	int num = _number_of_savegames;
+	int i;
+	int unk132_result;
+	FillOrCopyStruct *fcs;
+	char *name;
+	int name_len;
+	bool b;
+	char buf[108];
+
+	_save_or_load = load;
+
+	save_time = time(NULL);
+
+	_copy_partial_mode = 1;
+	
+	num = _number_of_savegames;
+	if (!load) num++;
+	num -= 6;
+	if (num<0) num = 0;
+	num++;
+	_num_savegame_rows = num;
+
+	_saveload_row_curpos = 1;
+	if (!load)
+		_saveload_row_curpos = num;
+	
+	_saveload_flag = false;
+
+restart:;
+	do {
+		i = o_unk_132_helper(&b, buf);
+	} while (!b);
+
+	if (i == 205) goto get_out;
+	if (!load) {
+		/* if_1 */
+if_1:;
+		unk132_result = i;
+
+		set_hitarea_bit_0x40(0xd0 + i);
+		leaveHitAreaById(0xd0 + i);
+
+		/* some code here */
+
+		fcs = _fcs_ptr_array_3[5];
+
+		fcs->unk2 = unk132_result;
+		fcs->unk1 = 2;
+		fcs->unk3 = 2;
+		fcs->unk6 = 3;
+
+		name = buf + i * 18;
+
+		name_len = 0;
+		while (name[name_len]) {
+			fcs->unk6++;
+			fcs->unk3 += 4;
+			if (name[name_len] == 'i' || name[name_len] == 'l')
+				fcs->unk3 += 2;
+			if (fcs->unk3 >= 8) {
+				fcs->unk3 -= 8;
+				fcs->unk1++;
+			}
+			name_len++;
+		}
+		/* while_1_end */
+
+		/* do_3_start */
+		for(;;) {
+			video_putchar(fcs, 0x7f);
+
+			_saveload_flag = true;
+
+			/* do_2 */
+			do {
+				i = o_unk_132_helper(&b, buf);
+
+				if (b) {
+					if (i == 205) goto get_out;
+					clear_hitarea_bit_0x40(0xd0 + unk132_result);
+					if (_saveload_flag) {
+						o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
+						/* move code */
+					} goto if_1;
+				}
+
+				/* is_not_b */
+				if (!_saveload_flag) {
+					clear_hitarea_bit_0x40(0xd0 + unk132_result);
+					goto restart;
+				}
+			}	while (i >= 0x80 || i == 0);
+
+			/* after_do_2 */
+			o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
+			if (i==10 || i==13) break;
+			if (i==8) {
+				/* do_backspace */
+				if (name_len != 0) {
+					int x;
+
+					name_len--;
+					
+					x = (name[name_len] == 'i' || name[name_len]=='l') ? 1 : 8;
+					name[name_len] = 0;
+
+					o_unk_132_helper_2(_fcs_ptr_array_3[5], x);
+				}
+			} else if (i>=32 && name_len!=17) {
+				name[name_len++] = i;
+
+				video_putchar(_fcs_ptr_array_3[5], i);
+			}
+		}
+
+		/* do_save */
+		if (!save_game(_saveload_row_curpos + unk132_result, buf + unk132_result * 18))
+			warning("Save failed");
+	} else {
+		if (!load_game(_saveload_row_curpos + i))
+			warning("Load failed");
+	}
+
+get_out:;
+	o_unk_132_helper_3();
+//			clear_keydowns();
+
+	_base_time = time(NULL) - save_time + _base_time;
+	_copy_partial_mode = 0;
+	
+	dx_copy_rgn_from_3_to_2(94, 208, 46, 80);
+
+	i = _timer_4;
+	do {
+		delay(10);
+	} while (i == _timer_4);
 }
 
 void SimonState::o_unk_127() {
@@ -5998,10 +6296,16 @@ void SimonState::timer_proc1() {
 	timer_vga_sprites_2();
 #endif
 
-	if (!(_game&GAME_SIMON2) && _copy_partial_mode==2) {
-		/* copy partial from attached to 2 */
-		dx_copy_from_attached_to_2(176, 61, 320-176, 134-61);
-		_copy_partial_mode = 0;
+	if (!(_game&GAME_SIMON2)) {
+		if (_copy_partial_mode == 1) {
+			dx_copy_from_2_to_attached(80, 46, 208-80, 94-46);
+		}
+
+		if (_copy_partial_mode==2) {
+			/* copy partial from attached to 2 */
+			dx_copy_from_attached_to_2(176, 61, 320-176, 134-61);
+			_copy_partial_mode = 0;
+		}
 	}
 
 	/* XXX: more stuff here */
@@ -6212,6 +6516,10 @@ void SimonState::o_pathfind(int x,int y,uint var_1,uint var_2) {
 	uint prev_i;
 	uint x_diff, y_diff;
 	uint best_i=0, best_j=0, best_dist = 0xFFFFFFFF;
+
+	if (_game & GAME_SIMON2) {
+		x += _x_scroll * 8;
+	}
 
 	prev_i = 21 - _variableArray[12];
 	for(i=20; i!=0; --i) {
@@ -6798,6 +7106,7 @@ void SimonState::video_putchar_helper_2(FillOrCopyStruct *fcs, uint x, uint y, b
 	} while (--h);
 
 	dx_unlock_2();
+
 	_lock_word &= ~0x8000;
 }
 
@@ -7504,6 +7813,19 @@ void SimonState::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
 	} while(--h);
 }
 
+void SimonState::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
+	uint offs = x + y*320;
+	byte *s = sdl_buf + offs;
+	byte *d = sdl_buf_attached + offs;
+	
+	do {
+		memcpy(d,s,w);
+		d+=320;
+		s+=320;
+	} while(--h);
+}
+
+
 
 void SimonState::dx_copy_from_attached_to_3(uint lines) {
 	memcpy(sdl_buf_3, sdl_buf_attached, lines*320);
@@ -7633,6 +7955,7 @@ void SimonState::delay(uint delay) {
 						_fast_mode^=1;
 					}
 				}
+				_key_pressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				sdl_mouse_x = event.mouse.x;
@@ -7663,18 +7986,15 @@ void SimonState::delay(uint delay) {
 
 
 bool SimonState::save_game(uint slot, const char *caption) {
-	char filename[32];
 	FILE *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
 
 	_lock_word |= 0x100;
-
-	sprintf(filename, "SAVE.%.3d", slot);
 	
 	errno = 0;
 	
-	f = fopen(filename, "wb");
+	f = fopen(gen_savename(slot), "wb");
 	if (f==NULL)
 		return false;
 
@@ -7759,19 +8079,22 @@ bool SimonState::save_game(uint slot, const char *caption) {
 	return true;
 }
 
+char *SimonState::gen_savename(int slot) {
+	static char buf[128];
+	sprintf(buf, "SAVE.%.3d", slot);
+	return buf;
+}
+
 bool SimonState::load_game(uint slot) {
-	char filename[32];
 	char ident[18];
 	FILE *f;
 	uint num, item_index, i;
 	
 	_lock_word |= 0x100;
-		
-	sprintf(filename, "SAVE.%.3d", slot);
 
 	errno = 0;
 
-	f = fopen_maybe_lowercase(filename);
+	f = fopen_maybe_lowercase(gen_savename(slot));
 	if (f==NULL)
 		return false;
 
@@ -8785,7 +9108,9 @@ SimonState *SimonState::create(OSystem *syst, MidiDriver *driver) {
 	s->midi.set_driver(driver);
 	
 	/* Setup mixer */
-	s->_mixer->bind_to_system(syst);
+	if (!s->_mixer->bind_to_system(syst))
+		warning("Sound initialization failed. "
+		        "Features of the game that depend on sound synchronization will most likely break");
 
 	return s;
 

@@ -157,31 +157,6 @@ void Scumm::drawDirtyScreenParts()
 	}
 }
 
-void Scumm::redrawLines(int from, int to)
-{
-	VirtScreen *vs = virtscr;
-	int i, j;
-
-	if (to <= from)
-		return;
-
-	for (i = 0; i != ARRAYSIZE(virtscr); i++, vs++) {
-		if (to > vs->topline && from < vs->topline + vs->height) {
-			int min = from - vs->topline;
-			int max = to - vs->topline;
-			if (min < 0)
-				min = 0;
-			if (max > vs->height)
-				max = vs->height;
-			for (j = 0; j != 40; j++) {
-				vs->tdirty[j] = min;
-				vs->bdirty[j] = max;
-			}
-			gdi.updateDirtyScreen(vs);
-		}
-	}
-}
-
 void Scumm::updateDirtyScreen(int slot)
 {
 	gdi.updateDirtyScreen(&virtscr[slot]);

@@ -1562,7 +1562,7 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 	undraw_mouse();
 }
 
-void OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byte format )
+bool OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byte format )
 {
 	static EmulFunc MySoundEmulFunc;
 
@@ -1587,6 +1587,8 @@ void OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byt
 		puts( "Failed to create sound thread" );
 		exit( 1 );
 	}
+
+	return true;
 }
 
 void OSystem_MorphOS::fill_sound( byte *stream, int len )
