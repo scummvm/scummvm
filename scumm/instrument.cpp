@@ -404,7 +404,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 		memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 		_instrument_name[10] = '\0';
 		if (!NATIVE_MT32 && getEquivalentGM() >= 128) {
-			warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
+			debug (2, "MT-32 custom instrument \"%s\" not supported", _instrument_name);
 			_instrument_name[0] = '\0';
 		}
 	} // end if
