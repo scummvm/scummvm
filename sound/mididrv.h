@@ -99,7 +99,13 @@ public:
 	static const char *get_error_name(int error_code);
 
 	// HIGH-LEVEL SEMANTIC METHODS
-	virtual void setPitchBendRange (byte channel, uint range) = 0;
+	virtual void setPitchBendRange (byte channel, uint range)
+	{
+		send((  0   << 16) | (101 << 8) | (0xB0 | channel));
+		send((  0   << 16) | (100 << 8) | (0xB0 | channel));
+		send((range << 16) | (  6 << 8) | (0xB0 | channel));
+		send((  0   << 16) | ( 38 << 8) | (0xB0 | channel));
+	}
 };
 
 

@@ -961,21 +961,6 @@ int MidiDriver_CORE::open(int mode)
 	// start the output
 	AudioOutputUnitStart(au_output);
 
-#if 1
-	// Send initial pitch bend sensitivity values for +/- 12 semitones.
-	// For information on control change registered parameters,
-	// which includes the Pitch Bend sensitivity settings,
-	// visit http://www.midi.org/about-midi/table3.htm,
-	// Table 3a.
-	int chan;
-	for (chan = 0; chan < 16; ++chan) {
-		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan), 101,  0, 0);
-		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan), 100,  0, 0);
-		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan),   6, 12, 0);
-		MusicDeviceMIDIEvent(au_MusicDevice, (0xB0 | chan),  38,  0, 0);
-	} // next for
-#endif
-
 	return 0;
 }
 

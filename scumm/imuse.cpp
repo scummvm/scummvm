@@ -608,7 +608,7 @@ class IMuseGM : public IMuseDriver {
 	IMuseInternal *_se;
 	OSystem *_system;
 	MidiDriver *_md;
-	MidiChannelGM _midi_channels[9];
+	MidiChannelGM _midi_channels[16];
 
 	int16 _midi_pitchbend_last[16];
 	byte _midi_pitchbend_factor_last[16];
@@ -4550,11 +4550,7 @@ void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 void IMuseGM::midiPitchBendFactor (byte chan, byte factor) {
 	if (_midi_pitchbend_factor_last[chan] != factor) {
 		_midi_pitchbend_factor_last[chan] = factor;
-		_md->setPitchBendRange (chan, factor); // For high-level semantic drivers (such as QTMA)
-		_md->send((   0   << 16) | (101 << 8) | (0xB0 | chan));
-		_md->send((   0   << 16) | (100 << 8) | (0xB0 | chan));
-		_md->send((factor << 16) | (  6 << 8) | (0xB0 | chan));
-		_md->send((   0   << 16) | ( 38 << 8) | (0xB0 | chan));
+		_md->setPitchBendRange (chan, factor);
 	}
 }
 
@@ -4776,13 +4772,15 @@ void IMuseGM::update_pris()
 		lopri = 255;
 		lomc = NULL;
 		for (i = ARRAYSIZE(_midi_channels), mc = _midi_channels;; mc++) {
-			if (!mc->_part) {
-				lomc = mc;
-				break;
-			}
-			if (mc->_part->_pri_eff <= lopri) {
-				lopri = mc->_part->_pri_eff;
-				lomc = mc;
+			if (mc->_chan != 9) {
+				if (!mc->_part) {
+					lomc = mc;
+					break;
+				}
+				if (mc->_part->_pri_eff <= lopri) {
+					lopri = mc->_part->_pri_eff;
+					lomc = mc;
+				}
 			}
 
 			if (!--i) {
