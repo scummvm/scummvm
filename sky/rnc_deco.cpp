@@ -248,13 +248,14 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 
 		counts = inputBits(16);
 
-		for (;;) {
-			uint32 inputBytes = inputValue(_rawTable);
+		do {
+			uint32 inputLength = inputValue(_rawTable);
+			uint32 inputOffset;
 
-			if (inputBytes) {
-				memcpy(_dstPtr, _srcPtr, inputBytes); //memcpy is allowed here
-				_dstPtr += inputBytes;
-				_srcPtr += inputBytes;
+			if (inputLength) {
+				memcpy(_dstPtr, _srcPtr, inputLength); //memcpy is allowed here
+				_dstPtr += inputLength;
+				_srcPtr += inputLength;
 				uint16 b = READ_LE_UINT16(_srcPtr);
 				uint16 a = ROL(b, _bitCount);
 				uint16 d = ((1 << _bitCount) - 1);
@@ -269,22 +270,16 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 				_bitBuffh = a;
 			}
 
-			if (--counts) {
-				uint32 inputOffset = inputValue(_posTable) + 1;
-				uint32 inputLength = inputValue(_lenTable) + MIN_LENGTH;
-
-				inputHigh = _srcPtr;
-				_srcPtr = (_dstPtr-inputOffset);
-
-				//Don't use memcpy here! because input and output overlap	
+			if (counts > 1) {
+				inputOffset = inputValue(_posTable) + 1;
+				inputLength = inputValue(_lenTable) + MIN_LENGTH;
+	
+				// Don't use memcpy here! because input and output overlap.
+				uint8 *tmpPtr = (_dstPtr-inputOffset);
 				while (inputLength--)
-					*_dstPtr++ = *_srcPtr++;
-
-				_srcPtr = inputHigh;
-			} else
-				break;
-
-		}
+					*_dstPtr++ = *tmpPtr++;
+			}
+		} while (--counts);
 	} while (--blocks);
 
 	if (CHECKSUMS) {
