@@ -200,12 +200,12 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 	_fp_pos = 0;
 	_fp_speed = (1 << 16) * rate / mixer->_output_rate;
 	_to_be_destroyed = false;
+	_realsize = size;
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
 		size >>= 1, rate = (rate>>1) + 1;
 
-	_realsize = size;
 	_rate = rate;
 	_size = size * mixer->_output_rate / rate;
 	if (_flags & FLAG_16BITS) _size = _size >> 1;
