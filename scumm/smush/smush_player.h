@@ -26,8 +26,7 @@
 #include "scumm/smush/chunk.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "scumm/sound.h"
 
 namespace Scumm {
 

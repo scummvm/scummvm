@@ -28,18 +28,6 @@
 #include "sound/vorbis.h"
 #include "sound/flac.h"
 
-// This used to be an inline template function, but
-// buggy template function handling in MSVC6 forced
-// us to go with the macro approach. So far this is
-// the only template function that MSVC6 seemed to
-// compile incorrectly. Knock on wood.
-#define READSAMPLE(is16Bit, isUnsigned, ptr) \
-	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
-
-#define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
-	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
-
-
 struct StreamFileFormat {
 	/** Decodername */
 	const char* decoderName;
@@ -176,123 +164,7 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 
 
 #pragma mark -
-#pragma mark --- AppendableMemoryStream ---
-#pragma mark -
-
-
-/**
- * Wrapped memory stream.
- */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class AppendableMemoryStream : public AppendableAudioStream {
-protected:
-	OSystem::MutexRef _mutex;
-
-	byte *_bufferStart;
-	byte *_bufferEnd;
-	byte *_pos;
-	byte *_end;
-	bool _finalized;
-	const int _rate;
-
-	inline bool eosIntern() const { return _end == _pos; };
-public:
-	AppendableMemoryStream(int rate, uint bufferSize);
-	~AppendableMemoryStream();
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const		{ return stereo; }
-	bool endOfStream() const	{ return _finalized && eosIntern(); }
-	bool endOfData() const		{ return eosIntern(); }
-
-	int getRate() const			{ return _rate; }
-
-	void append(const byte *data, uint32 len);
-	void finish()				{ _finalized = true; }
-};
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate, uint bufferSize)
- : _finalized(false), _rate(rate) {
-
-	// Verify the buffer size is sane
-	if (is16Bit && stereo)
-		assert((bufferSize & 3) == 0);
-	else if (is16Bit || stereo)
-		assert((bufferSize & 1) == 0);
-
-	_bufferStart = (byte *)malloc(bufferSize);
-	_pos = _end = _bufferStart;
-	_bufferEnd = _bufferStart + bufferSize;
-
-	_mutex = g_system->createMutex();
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
-	free(_bufferStart);
-	g_system->deleteMutex(_mutex);
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-
-	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
-		// Wrap around?
-		if (_pos >= _bufferEnd)
-			_pos = _pos - (_bufferEnd - _bufferStart);
-
-		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
-		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
-		while (samples < len) {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
-			_pos += (is16Bit ? 2 : 1);
-			samples++;
-		}
-	}
-
-	return samples;
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byte *data, uint32 len) {
-	Common::StackLock lock(_mutex);
-
-	// Verify the buffer size is sane
-	if (is16Bit && stereo)
-		assert((len & 3) == 0);
-	else if (is16Bit || stereo)
-		assert((len & 1) == 0);
-	
-	// Verify that the stream has not yet been finalized (by a call to finish())
-	assert(!_finalized);
-
-	if (_end + len > _bufferEnd) {
-		// Wrap-around case
-		uint32 size_to_end_of_buffer = _bufferEnd - _end;
-		len -= size_to_end_of_buffer;
-		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			debug(2, "AppendableMemoryStream: buffer overflow (A)");
-			return;
-		}
-		memcpy(_end, data, size_to_end_of_buffer);
-		memcpy(_bufferStart, data + size_to_end_of_buffer, len);
-		_end = _bufferStart + len;
-	} else {
-		if ((_end < _pos) && (_end + len >= _pos)) {
-			debug(2, "AppendableMemoryStream: buffer overflow (B)");
-			return;
-		}
-		memcpy(_end, data, len);
-		_end += len;
-	}
-}
-
-
-#pragma mark -
-#pragma mark --- Input stream factories ---
+#pragma mark --- Input stream factory ---
 #pragma mark -
 
 /* In the following, we use preprocessor / macro tricks to simplify the code
@@ -331,36 +203,6 @@ AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint3
 			MAKE_LINEAR(false, true);
 		} else {
 			MAKE_LINEAR(false, false);
-		}
-	}
-}
-
-#define MAKE_WRAPPED(STEREO, UNSIGNED) \
-		if (is16Bit) { \
-			if (isLE) \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate, len); \
-			else  \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate, len); \
-		} else \
-			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate, len)
-
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
-	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
-	
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_WRAPPED(true, true);
-		} else {
-			MAKE_WRAPPED(true, false);
-		}
-	} else {
-		if (isUnsigned) {
-			MAKE_WRAPPED(false, true);
-		} else {
-			MAKE_WRAPPED(false, false);
 		}
 	}
 }

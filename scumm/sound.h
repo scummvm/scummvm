@@ -22,6 +22,7 @@
 #define SOUND_H
 
 #include "common/scummsys.h"
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 class File;
@@ -128,6 +129,19 @@ protected:
 
 	bool isSoundInQueue(int sound) const;
 };
+
+/**
+ * An audio stream to which additional data can be appended on-the-fly.
+ * Used by SMUSH and iMuseDigital.
+ */
+class AppendableAudioStream : public AudioStream {
+public:
+	virtual void append(const byte *data, uint32 len) = 0;
+	virtual void finish() = 0;
+};
+
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
+
 
 } // End of namespace Scumm
 

@@ -23,8 +23,7 @@
 #define SMUSH_MIXER_H
 
 #include "stdafx.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "scumm/sound.h"
 
 namespace Scumm {
 
