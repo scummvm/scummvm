@@ -510,7 +510,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		_string[m].no_talk_anim = false;
 		break;
 	case 0xD0:		// SO_PRINT_MUMBLE
-		error("decodeParseString: SO_PRINT_MUMBLE");
+		_string[m].no_talk_anim = true;
 		break;
 	case 0xD1:
 		_messagePtr = _scriptPointer;
