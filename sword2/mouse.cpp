@@ -246,20 +246,15 @@ void Sword2Engine::systemMenuMouse(void) {
 	_sound->unpauseFx();
 
 	// If there was looping music before coming into the control panels
-	// then restart it! NB. This will also start music required when a game
-	// has been restored
+	// then restart it! NB. If a game has been restored the music will be
+	// restarted twice, but this shouldn't cause any harm.
 
 	if (_loopingMusicId) {
 		pars[0] = _loopingMusicId;
 		pars[1] = FX_LOOP;
 		_logic->fnPlayMusic(pars);
-
-		// cross-fades into the required music: either a restored game
-		// tune, or music playing prior to entering control panels
-	} else {
-		// stop the control panel music
+	} else
 		_logic->fnStopMusic(NULL);
-	}
 }
 
 void Sword2Engine::dragMouse(void) {

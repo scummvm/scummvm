@@ -320,7 +320,10 @@ void Sword2Engine::go() {
 		setMouse(NORMAL_MOUSE_ID);
 		_logic->fnPlayMusic(pars);
 		result = _gui->startControl();
-		_logic->fnStopMusic(NULL);
+
+		// If the game is started from the beginning, the cutscene
+		// player will kill the music for us. Otherwise, the restore
+		// will either have killed the music, or done a crossfade.
 
 		if (_quit)
 			return;

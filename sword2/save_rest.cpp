@@ -404,6 +404,17 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 
 	_loopingMusicId = _saveGameHeader.music_id;
 
+	// Restart any looping music. Originally this was - and still is - done
+	// in systemMenuMouse(), but with ScummVM we have other ways of
+	// restoring savegames so it's easier to put it here as well.
+
+	if (_loopingMusicId) {
+		pars[0] = _loopingMusicId;
+		pars[1] = FX_LOOP;
+		_logic->fnPlayMusic(pars);
+	} else
+		_logic->fnStopMusic(NULL);
+
 	// Write to walkthrough file (zebug0.txt)
 
 	debug(5, "RESTORED GAME \"%s\"", _saveGameHeader.description);
