@@ -280,7 +280,6 @@ void Scumm::setCursor(int cursor)
 
 void Scumm::setCameraAt(int pos_x, int pos_y)
 {
-
 	if (_features & GF_AFTER_V7) {
 		ScummPoint old;
 
@@ -390,31 +389,15 @@ void Scumm::initBGBuffers(int height)
 		// for GF_SMALL_HEADER already.
 		gdi._numZBuffer = 2;
 	} else if (_features & GF_SMALL_HEADER) {
-
-//#define DEBUG_ZPLANE_CODE
-		
-		ptr = findResourceData(MKID('SMAP'), room);
-#ifdef DEBUG_ZPLANE_CODE
-		printf("Trying to determine room zplanes:\n");
-		hexdump(ptr-6, 0x20);
-#endif
-
 		int off;
-		gdi._numZBuffer = 0;
+		ptr = findResourceData(MKID('SMAP'), room);
 		off = READ_LE_UINT32(ptr);
+		gdi._numZBuffer = 0;
 		for (i = 0; off && (i < 4); i++) {
-#ifdef DEBUG_ZPLANE_CODE
-			printf("Plane %d\n", i);
-			hexdump(ptr, 0x20);
-#endif
-
 			gdi._numZBuffer++;
 			ptr += off;
 			off = READ_LE_UINT16(ptr);
 		}
-#ifdef DEBUG_ZPLANE_CODE
-		printf("Real plane count = %d\n", gdi._numZBuffer);
-#endif
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
@@ -1798,7 +1781,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 		right += _lastXstart - vs->xstart;
 	}
 
-	right++;
+	right++;		// FIXME - why do we increment right here?!? (add comment)
 	if (left < 0)
 		left = 0;
 	if (right < 0)
@@ -1812,10 +1795,9 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 
 	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, 0x40000000);
 
-	height = (top - topline) * _realWidth + vs->xstart + left;
-
-	backbuff = vs->screenPtr + height;
-	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
+	int offset = (top - topline) * _realWidth + vs->xstart + left;
+	backbuff = vs->screenPtr + offset;
+	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + offset;
 
 	height = bottom - top;
 	width = right - left;
@@ -1839,11 +1821,9 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 			} while (--height);
 		}
 	} else {
-		if (height) {
-			do {
-				memset(backbuff, _bkColor, width);
-				backbuff += _realWidth;
-			} while (--height);
+		while (height--) {
+			memset(backbuff, _bkColor, width);
+			backbuff += _realWidth;
 		}
 	}
 }

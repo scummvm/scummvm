@@ -308,8 +308,6 @@ void Scumm::CHARSET_1()
 				gdi._mask_bottom = 16;
 		}
 		restoreCharsetBg();
-		charset._xpos2 = _string[0].xpos;
-		charset._ypos2 = _string[0].ypos;
 	}
 
 	t = charset._right - _string[0].xpos - 1;
@@ -515,7 +513,6 @@ void Scumm::description()
 			charset._ypos2 = charset._top;
 			continue;
 		}
-
 	} while (1);
 
 	gdi._mask_left = charset._strLeft;
