@@ -4876,7 +4876,17 @@ void SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	sound_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 
 	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-	uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
+	uint32 samples_per_sec;
+
+	/* workaround for voc weakness */
+	if (voc_block_hdr.sr == 0xa6) {
+		samples_per_sec = 11025;
+	} else if (voc_block_hdr.sr == 0xd2) {
+		samples_per_sec = 22050;
+	} else {
+		samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
+		warning("inexact sample rate used: %i", samples_per_sec);
+	}
 
 	byte *buffer = (byte *)malloc(size);
 	sound_file->read(buffer, size);
