@@ -375,6 +375,15 @@ a1a7f76f9de6b74031f4d6c9b8cbb130 FREDDI2.W32
 53f72ce417e28af51e3b8a60cd6ca5ef FREDDI2.HE2
 52494431dd3f658a8dc1d4348e677e48 FREDDI2.HE4
 
+(russian freddi2 updated)
+sev
+c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
+c40f2b3cf5b82d34afc222779b3f0a7c FreddiCHSH.(a)
+b92b53d360319b1e0fa93d353503fbfd FreddiCHSH.exe
+e41de1c2a15abbcdbf9977e2d7e8a340 FreddiCHSH.he0
+83619bbe6b084ebf1ae53b5a56442719 FreddiCHSH.he2
+c366efa1e6b3d4406b5f3123c2247d8f FreddiCHSH.he4
+
 (russian freddi3)
 sev
 D:\Scummsys.90\sputm.90\*.c
@@ -731,6 +740,15 @@ f7b0ad01b6a78bcd3854edd0ee9694df PAJAMA3.(A)
 978c86a8313b66d3b254c3b43e034460 PAJAMA3.HE2
 87938c64ef72195231d58fec4f5add88 PAJAMA3.HE4
 ccca9a823d117afb1a882fd707586bf0 Pajama3.d32
+
+(russian pajama2 updated)
+sev
+d:\dev\SPUTM\Src\*.cpp
+486b48e4ae421cdbecfcc1431c7e801f PajamaTAL.(a)
+738be524db140dc1c7fd6ddfab647c0b PajamaTAL.exe
+32709cbeeb3044b34129950860a83f14 PajamaTAL.he0
+f71fe00306d8246bd5f7ee99703aaaff PajamaTAL.he2
+297787a960f2b591bb98add9b0689e9f PajamaTAL.he4
 
 (russian socks)
 sev
@@ -1180,6 +1198,15 @@ f1b79e1dcb5f57b8d91aac8487a284d7 SPYFOX.HE1
 9fbab8bb60448f30ce7508dbf277ab05 SPYFOX.HE4
 1355eb775fa71d6df9d506fb906a51db SPYFOX.HLP
 b7aa3c76d463137a8a09c68d9a1045d1 SPYFOX.W32
+
+(russian spyfox updated)
+sev
+d:\dev\SPUTM\Src\*.cpp
+51ac439f04951d0910bc423e2825dab8 SPYFoxDC.(a)
+72ac6bc980d5101c2142189d746bd62f SPYFoxDC.he0
+10b638ee633558d528d7be0376175065 SPYFoxDC.he2
+f8029f33e2bc3da6fe38f6bda58c1f31 SPYFoxDC.he4
+b185cdec4ea6bc218afe08325af787a4 spyfoxdc.w32
 
 (spyfox2 cd)
 sev
