@@ -64,10 +64,10 @@ static const VersionSettings scumm_settings[] = {
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 //	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
 //	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-//	{"indy3EGA",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
-//	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
 	/* Scumm Version 3 */
+	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, 0,
+	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_SMALL_NAMES | GF_OLD256 | GF_NO_SCALLING | GF_ADLIB_DEFAULT, "00.LFL"},
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, 0, 0,
@@ -76,7 +76,7 @@ static const VersionSettings scumm_settings[] = {
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR | GF_NO_SCALLING, "00.LFL"},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 67,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 62,
 	 GF_AFTER_V4 | GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0},
 
 	/* Scumm version 5 */
