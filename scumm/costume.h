@@ -28,10 +28,16 @@ protected:
 	Scumm *_vm;
 
 public:
+	int _id;
 	const byte *_ptr;
 	const byte *_baseptr;
 	const byte *_dataptr;
 	byte _numColors;
+	byte _numAnim;
+	byte _format;
+	bool _mirror;
+	const byte *_palette;
+	const byte *_frameOffsets;
 
 	LoadedCostume(Scumm *vm) : _vm(vm), _ptr(0), _dataptr(0), _numColors(0) {}
 

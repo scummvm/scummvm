@@ -86,15 +86,16 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		v1.shr = 4;
 	}
 
-	switch (_loaded._ptr[7] & 0x7F) {
+	switch (_loaded._format) {
 	case 0x60:
 	case 0x61:
 		ex1 = _srcptr[0];
 		ex2 = _srcptr[1];
 		_srcptr += 2;
 		if (ex1 != 0xFF || ex2 != 0xFF) {
-			ex1 = READ_LE_UINT16(_loaded._ptr + _loaded._numColors + 10 + ex1 * 2);
-			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + ex1 + ex2 * 2) + 14;
+printf("Funky!\n");
+			ex1 = READ_LE_UINT16(_loaded._frameOffsets + ex1 * 2);
+			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr-8 + ex1 + ex2 * 2) + 14;
 		}
 	}
 
@@ -281,11 +282,14 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 // FIXME: Call this something sensible, make sure it works
 void CostumeRenderer::c64_ignorePakCols(int num) {
-	int n = _height;
-	warning("Attempting C64 column skip. We don't even make it here, yet.");
-	if (num > 1)
-		n *= num;
 
+#if 1
+	// Fingolfin seez: this code is equivalent to codec1_ignorePakCols.
+	// And I wonder if that can be true, considering the different
+	// compressor used in procC64 vs. proc3 ?
+	codec1_ignorePakCols(num);
+#else
+	int n = _height * num;
 	do {
 		v1.repcolor = *_srcptr >> 4;
 		v1.replen = *_srcptr++ & 0x0F;
@@ -297,6 +301,7 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 			if (!--n) return;
 		} while (--v1.replen);
 	} while (1);
+#endif
 }
 
 void CostumeRenderer::procC64() {
@@ -308,6 +313,8 @@ void CostumeRenderer::procC64() {
 	int y = 0;
 	src = _srcptr;
 	dst = v1.destptr;
+	len = v1.replen;
+	color = v1.repcolor;
 
 	for (int x = 0; x < (_width >> 3); x++) {
 		color = *src++;
@@ -483,6 +490,7 @@ void CostumeRenderer::proc3_ami() {
 }
 
 void LoadedCostume::loadCostume(int id) {
+	_id = id;
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
 	if (_vm->_version >= 6)
@@ -496,7 +504,12 @@ void LoadedCostume::loadCostume(int id) {
 
 	_baseptr = _ptr;
 
-	switch (_ptr[7] & 0x7F) {
+	_numAnim = _ptr[6];
+	_format = _ptr[7] & 0x7F;
+	_mirror = (_ptr[7] & 0x80) != 0;
+	_ptr += 8;
+	_palette = _ptr;
+	switch (_format) {
 	case 0x57:				// Only used in V1 games
 		_numColors = 0;
 		break;
@@ -520,13 +533,19 @@ void LoadedCostume::loadCostume(int id) {
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a seperate
 	// _baseptr value (instead of adding tons of if's throughout the code).
-	if (_vm->_version == 1)
+	if (_vm->_version == 1) {
 		_baseptr += 2;
-	else if (_vm->_features & GF_OLD_BUNDLE) {
-		_numColors = 1;
-		_baseptr += 2;
+		_frameOffsets = _ptr + 2;
+		_dataptr = _baseptr + READ_LE_UINT16(_ptr);
+	} else {
+		if (_vm->_features & GF_OLD_BUNDLE) {
+			_numColors = 1;
+			_baseptr += 2;
+		}
+		_frameOffsets = _ptr + _numColors + 2;
+		_dataptr = _baseptr + READ_LE_UINT16(_ptr + _numColors);
 	}
-	_dataptr = _baseptr + READ_LE_UINT16(_ptr + _numColors + 8);
+	
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -541,8 +560,8 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
 	
-	// Get the base pointer for that limb
-	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
+	// Get the frame pointer for that limb
+	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
 	
 	// Determine the offset to the costume data for the limb at position i
 	code = _loaded._dataptr[i] & 0x7F;
@@ -576,6 +595,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 				_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 				_srcptr += 12;
 			}
+//printf("costume %d, limb %d: _width %d, _height %d, xmoveCur %d, ymoveCur %d, _xmove %d, _ymove, %d\n", _loaded._id, limb, _width, _height, xmoveCur, ymoveCur, _xmove, _ymove);
 			return mainRoutine(xmoveCur, ymoveCur);
 		}
 	}
@@ -601,7 +621,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 
 	anim = cost_frameToAnim(a, frame);
 
-	if (anim > lc._ptr[6]) {
+	if (anim > lc._numAnim) {
 		return;
 	}
 
@@ -612,10 +632,12 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		// there are 3 bytes / entry (i.e. the offsets) increase in steps of 3)
 		// But for V2 there are 10 bytes / entry. That makes me wonder if the
 		// following decoder is correct *at all* for the C64 data
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 30);
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 22);
 	} else {
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 34);
 	}
+//printf("actor %d, frame %d, anim %d:\n", a->number, frame, anim);
+//hexdump(r, 0x20);
 
 	if (r == lc._baseptr) {
 		return;
@@ -680,13 +702,13 @@ void CostumeRenderer::setPalette(byte *palette) {
 		}
 		if (_vm->_version == 1)
 			return;
-		_palette[_loaded._ptr[8]] = _palette[0];
+		_palette[_loaded._palette[0]] = _palette[0];
 	} else {
 		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			for (i = 0; i < _loaded._numColors; i++) {
 				color = palette[i];
 				if (color == 255)
-					color = _loaded._ptr[8 + i];
+					color = _loaded._palette[i];
 				_palette[i] = color;
 			}
 		} else {
@@ -697,7 +719,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 }
 
 void CostumeRenderer::setFacing(Actor *a) {
-	_mirror = newDirToOldDir(a->facing) != 0 || (_loaded._ptr[7] & 0x80);
+	_mirror = newDirToOldDir(a->facing) != 0 || (_loaded._mirror);
 }
 
 void CostumeRenderer::setCostume(int costume) {

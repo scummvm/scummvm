@@ -40,11 +40,7 @@ byte BaseCostumeRenderer::drawCostume(const CostumeData &cost) {
 }
 
 void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
-	int n;
-
-	n = _height;
-	if (num > 1)
-		n *= num;
+	int n = _height * num;
 
 	do {
 		v1.repcolor = *_srcptr++;
