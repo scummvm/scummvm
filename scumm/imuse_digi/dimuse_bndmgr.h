@@ -27,6 +27,13 @@
 namespace Scumm {
 
 class BundleMgr {
+public:
+
+	struct AudioTable {
+		char filename[13];
+		int32 size;
+		int32 offset;
+	};
 
 private:
 
@@ -36,19 +43,19 @@ private:
 		int32 codec;
 	};
 
-	struct AudioTable {
-		char filename[13];
-		int32 size;
-		int32 offset;
-	};
-
-	CompTable *_compTable;
 	AudioTable *_bundleTable;
+	CompTable *_compTable;
 	int32 _numFiles;
 	int32 _curSample;
 	File _file;
+	bool _compTableLoaded;
+	int _fileBundleId;
+	byte _blockChache[0x2000];
+	int32 _lastCacheOutputSize;
+	int32 _lastBlock;
 
 public:
+
 	BundleMgr();
 	~BundleMgr();
 

@@ -25,16 +25,23 @@
 
 namespace Scumm {
 
+struct FileDirChache {
+	char fileName[20];
+	BundleMgr::AudioTable *bundleTable;
+	int32 numFiles;
+	int32 instance;
+} budleDirChache[4];
+
 BundleMgr::BundleMgr() {
-	_compTable = NULL;
 	_bundleTable = NULL;
+	_compTable = NULL;
 	_numFiles = 0;
 	_curSample = -1;
+	_fileBundleId = -1;
 }
 
 BundleMgr::~BundleMgr() {
-	free(_bundleTable);
-	free(_compTable);
+	closeFile();
 }
 
 bool BundleMgr::openFile(const char *filename, const char *directory) {
@@ -48,42 +55,62 @@ bool BundleMgr::openFile(const char *filename, const char *directory) {
 		return false;
 	}
 
-/*
- TODO / FIXME
-This is another spot were lots and lots of time is wasted, because the same data is read over
-and over again from the disk. Disk I/O is *slooow*.
-This function by itself actually isn't what is really slow - normally we would call
-it once and then be done with it.
-However, for whatever strange reasons, the higher level code constantly keeps creating
-new BundleMgr, uses them to open a file, play a piece of sound, then delete the BundleMgr.
-Repeat ad infinitum -> extremly slow.
-*/
+	bool found = false;
+	int freeSlot = -1;
+	int fileId;
 
-	tag = _file.readUint32BE();
-	offset = _file.readUint32BE();
-	_numFiles = _file.readUint32BE();
-
-	_bundleTable = (AudioTable *) malloc(_numFiles * sizeof(AudioTable));
-
-	_file.seek(offset, SEEK_SET);
-
-	for (int32 i = 0; i < _numFiles; i++) {
-		char name[13], c;
-		int32 z = 0;
-		int32 z2;
-
-		for (z2 = 0; z2 < 8; z2++)
-			if ((c = _file.readByte()) != 0)
-				name[z++] = c;
-		name[z++] = '.';
-		for (z2 = 0; z2 < 4; z2++)
-			if ((c = _file.readByte()) != 0)
-				name[z++] = c;
-		name[z] = '\0';
-		strcpy(_bundleTable[i].filename, name);
-		_bundleTable[i].offset = _file.readUint32BE();
-		_bundleTable[i].size = _file.readUint32BE();
+	for (fileId = 0; fileId < ARRAYSIZE(budleDirChache); fileId++) {
+		if ((budleDirChache[fileId].instance == 0) && (freeSlot == -1)) {
+			freeSlot = fileId;
+		}
+		if (scumm_stricmp(filename, budleDirChache[fileId].fileName) == 0) {
+			found = true;
+		}
 	}
+
+	if (!found) {
+		if (freeSlot == -1)
+			error("BundleMgr::openFile() Can't find free slot for file bundle dir cache");
+
+		tag = _file.readUint32BE();
+		offset = _file.readUint32BE();
+		
+		strcpy(budleDirChache[freeSlot].fileName, filename);
+		budleDirChache[freeSlot].numFiles = _numFiles = _file.readUint32BE();
+		budleDirChache[freeSlot].bundleTable = _bundleTable = (AudioTable *) malloc(_numFiles * sizeof(AudioTable));
+
+		_file.seek(offset, SEEK_SET);
+
+		for (int32 i = 0; i < _numFiles; i++) {
+			char name[13], c;
+			int32 z = 0;
+			int32 z2;
+
+			for (z2 = 0; z2 < 8; z2++)
+				if ((c = _file.readByte()) != 0)
+					name[z++] = c;
+			name[z++] = '.';
+			for (z2 = 0; z2 < 4; z2++)
+				if ((c = _file.readByte()) != 0)
+					name[z++] = c;
+
+			name[z] = '\0';
+			strcpy(_bundleTable[i].filename, name);
+			_bundleTable[i].offset = _file.readUint32BE();
+			_bundleTable[i].size = _file.readUint32BE();
+		}
+		budleDirChache[freeSlot].instance++;
+		_fileBundleId = freeSlot;
+	} else {
+		_fileBundleId = fileId;
+		_numFiles = budleDirChache[fileId].numFiles;
+		_bundleTable = budleDirChache[fileId].bundleTable;
+		budleDirChache[fileId].instance++;
+	}
+
+	_compTableLoaded = false;
+	_lastCacheOutputSize = 0;
+	_lastBlock = -1;
 
 	return true;
 }
@@ -91,8 +118,20 @@ Repeat ad infinitum -> extremly slow.
 void BundleMgr::closeFile() {
 	if (_file.isOpen()) {
 		_file.close();
-		free(_bundleTable);
+		if (--budleDirChache[_fileBundleId].instance <= 0) {
+			free (budleDirChache[_fileBundleId].bundleTable);
+			budleDirChache[_fileBundleId].instance = 0;
+			budleDirChache[_fileBundleId].fileName[0] = 0;
+			budleDirChache[_fileBundleId].numFiles = 0;
+		}
 		_bundleTable = NULL;
+		_numFiles = 0;
+		_compTableLoaded = false;
+		_lastBlock = -1;
+		_lastCacheOutputSize = 0;
+		_curSample = -1;
+		free(_compTable);
+		_compTable = NULL;
 	}
 }
 
@@ -112,31 +151,26 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		return 0;
 	}
 
-/*
-FIXME / TODO
- This function is a major speed hog. It re-reads the same data over and over and over again.
- Disk I/O is about the slowest thing on any modern computer. We used to cache all this data,
- with good reason... this will have to be done again.
-*/
-
-	_file.seek(_bundleTable[index].offset, SEEK_SET);
-	tag = _file.readUint32BE();
-	num = _file.readUint32BE();
-	_file.readUint32BE();
-	_file.readUint32BE();
-
-	if (tag != MKID_BE('COMP')) {
-		warning("BundleMgr::decompressSampleByIndex() Compressed sound %d invalid (%s)", index, tag2str(tag));
-		return 0;
-	}
-
-	free(_compTable);
-	_compTable = (CompTable *)malloc(sizeof(CompTable) * num);
-	for (i = 0; i < num; i++) {
-		_compTable[i].offset = _file.readUint32BE();
-		_compTable[i].size = _file.readUint32BE();
-		_compTable[i].codec = _file.readUint32BE();
+	if (!_compTableLoaded) {
+		_file.seek(_bundleTable[index].offset, SEEK_SET);
+		tag = _file.readUint32BE();
+		num = _file.readUint32BE();
 		_file.readUint32BE();
+		_file.readUint32BE();
+
+		if (tag != MKID_BE('COMP')) {
+			warning("BundleMgr::decompressSampleByIndex() Compressed sound %d invalid (%s)", index, tag2str(tag));
+			return 0;
+		}
+
+		_compTable = (CompTable *)malloc(sizeof(CompTable) * num);
+		for (i = 0; i < num; i++) {
+			_compTable[i].offset = _file.readUint32BE();
+			_compTable[i].size = _file.readUint32BE();
+			_compTable[i].codec = _file.readUint32BE();
+			_file.readUint32BE();
+		}
+		_compTableLoaded = true;
 	}
 
 	int first_block = (offset + header_size) / 0x2000;
@@ -154,20 +188,29 @@ FIXME / TODO
 		comp_input = (byte *)malloc(_compTable[i].size + 1);
 		comp_input[_compTable[i].size] = 0;
 
-		_file.seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
-		_file.read(comp_input, _compTable[i].size);
+		if (_lastBlock != i) {
+			_file.seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
+			_file.read(comp_input, _compTable[i].size);
 
-		output_size = BundleCodecs::decompressCodec(_compTable[i].codec, comp_input, comp_output, _compTable[i].size);
-		assert(output_size <= 0x2000);
+			output_size = BundleCodecs::decompressCodec(_compTable[i].codec, comp_input, comp_output, _compTable[i].size);
+			assert(output_size <= 0x2000);
+			_lastBlock = i;
+			_lastCacheOutputSize = output_size;
+			memcpy(&_blockChache, comp_output, output_size);
+		} else {
+			output_size = _lastCacheOutputSize;
+			memcpy(comp_output, &_blockChache, output_size);
+		}
+
 		if ((header_size != 0) && (skip > header_size))
 			output_size -= skip;
 		if (output_size > size)
 			output_size = size;
+
 		memcpy(*comp_final + final_size, comp_output + skip, output_size);
 		final_size += output_size;
 		size -= output_size;
-		if (skip > 0)
-			skip = 0;
+		skip = 0;
 
 		free(comp_input);
 	}
