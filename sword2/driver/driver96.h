@@ -1255,12 +1255,13 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
-#ifndef WIN32
+#ifdef WIN32
 #undef DWORD
 #undef LARGE_INTEGER
+#endif
+
 typedef uint32 DWORD;
 typedef long int LARGE_INTEGER;
-#endif
 
 //
 //	Structure definitions
