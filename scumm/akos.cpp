@@ -524,6 +524,9 @@ void AkosRenderer::codec1_spec3() {
 	} while (1);
 }
 
+#ifdef __PALM_OS__
+const byte *default_scale_table;
+#else
 const byte default_scale_table[768] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -624,6 +627,7 @@ const byte default_scale_table[768] = {
 	0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF,
 	0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF,
 };
+#endif
 
 void AkosRenderer::codec1() {
 	int num_colors;
@@ -1378,6 +1382,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			case AKC_SkipG:
 			case AKC_SkipLE:
 			case AKC_SkipL:
+
 			case AKC_SkipNE:
 			case AKC_SkipE:
 				curpos += 5;
@@ -1650,3 +1655,13 @@ bool Scumm::akos_compare(int a, int b, byte cmd) {
 		return a >= b;
 	}
 }
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void Akos_initGlobals()		{	
+	GSETPTR(default_scale_table, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+}
+void Akos_releaseGlobals()	{
+	GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
+}
+#endif

@@ -81,6 +81,11 @@ static const char* string_map_table_custom[] = {
 	"Please select an action"							//27
 };
 
+#ifdef __PALM_OS__
+static ResString *string_map_table_v7;
+static ResString *string_map_table_v6;
+static ResString *string_map_table_v5;
+#else
 static ResString string_map_table_v7[] = {
 	{96, "game name and version"}, //that's how it's supposed to be
 	{77, "Select a game to LOAD"},
@@ -153,7 +158,7 @@ static ResString string_map_table_v5[] = {
 	{12, "Ok"},
 	{4, "Game paused"}
 };
-
+#endif
 
 #pragma mark -
 
@@ -757,4 +762,18 @@ void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 }
 
+#endif
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void Dialogs_initGlobals()		{
+	GSETPTR(string_map_table_v7, GBVARS_STRINGMAPTABLEV7_INDEX, ResString, GBVARS_SCUMM)
+	GSETPTR(string_map_table_v6, GBVARS_STRINGMAPTABLEV6_INDEX, ResString, GBVARS_SCUMM)
+	GSETPTR(string_map_table_v5, GBVARS_STRINGMAPTABLEV5_INDEX, ResString, GBVARS_SCUMM)
+}
+void Dialogs_releaseGlobals()	{
+	GRELEASEPTR(GBVARS_STRINGMAPTABLEV7_INDEX, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_STRINGMAPTABLEV6_INDEX, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_STRINGMAPTABLEV5_INDEX, GBVARS_SCUMM)
+}
 #endif
