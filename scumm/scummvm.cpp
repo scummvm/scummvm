@@ -1353,12 +1353,7 @@ int ScummEngine::scummLoop(int delta) {
 		// The music engine generates the timer data for us.
 		VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
 	} else if (_features & GF_SMALL_HEADER) {
-		// FIXME: Is this code here really still necessary? It used to be there to sync
-		// MonkeyVGA, back before we used iMuse for it, too. Right now, I can't find
-		// anything which would need this... so I put an aggressive error in here,
-		// if there is something needing this, I am guranteed a report :-)
-		error("Fingolfin asks: when is this ever triggered anyway? %s:%d", __FILE__, __LINE__);
-
+		// Used for Money Island 1 (Amiga)
 		// TODO: The music delay (given in milliseconds) might have to be tuned a little
 		// to get it correct for all games. Without the ability to watch/listen to the
 		// original games, I can't do that myself.
