@@ -6,11 +6,11 @@ CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX \
 LDFLAGS = -g -W -Wall # -O2
 LIBS =  -Llua/lib -llua -llualib `sdl-config --libs` -lz 
 
+# Comment this out for Mac OS X ...
 LIBS += -lGL -lGLU
 
-# For OSX use these instead of -lGL and -lGLU
-#LIBS += -framework OpenGL -framework GLUT 
-#CXXFLAGS += -DOSX
+# ... and instead uncomment this if you are on Mac OS X
+#CXXFLAGS += -DMACOSX
 
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \

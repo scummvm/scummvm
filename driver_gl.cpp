@@ -21,7 +21,9 @@
 Driver *g_driver;
 
 // Hacky includes for temporary font rendering
-#ifndef WIN32
+#if defined(MACOSX)
+	// TODO
+#elif defined(WIN32)
 	#include <GL/glx.h>
 	#include <X11/Xlib.h>
 #else
@@ -47,7 +49,9 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 
 	// FIXME: Hacky temporary font renderer code
 	hackFont = glGenLists(256);
-#ifdef WIN32
+#if defined(MACOSX)
+	// TODO
+#elif defined(WIN32)
 	{
 		HDC   hDC;
 		HFONT font;

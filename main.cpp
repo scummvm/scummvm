@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 	
 // For some reason we don't get the SDL_VIDEOEXPOSE event on OSX, so just don't wait for it.
-#ifndef OSX
+#ifndef MACOSX
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_VIDEOEXPOSE) {
 #else
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
 			splash_bm->draw();
 
 			g_driver->flipBuffer();
-#ifndef OSX
+#ifndef MACOSX
 		}
 	}
 #endif
