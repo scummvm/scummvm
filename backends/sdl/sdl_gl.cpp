@@ -103,6 +103,7 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	case GFX_BILINEAR:
 		_usingOpenGL = true;
 		_mode = GFX_NORMAL;
+		// FIXME: shouldn't _scaleFactor be set here?
 		break;
 
 	case GFX_NORMAL:

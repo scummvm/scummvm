@@ -62,6 +62,19 @@ void OSystem_SDL::load_gfx_mode() {
 	_tmpScreenWidth = (_screenWidth + 3);
 	
 	switch(_mode) {
+	case GFX_NORMAL:
+		_scaleFactor = 1;
+		_scaler_proc = Normal1x;
+		break;
+	case GFX_DOUBLESIZE:
+		_scaleFactor = 2;
+		_scaler_proc = Normal2x;
+		break;
+	case GFX_TRIPLESIZE:
+		_scaleFactor = 3;
+		_scaler_proc = Normal3x;
+		break;
+
 	case GFX_2XSAI:
 		_scaleFactor = 2;
 		_scaler_proc = _2xSaI;
@@ -99,25 +112,8 @@ void OSystem_SDL::load_gfx_mode() {
 		_scaler_proc = DotMatrix;
 		break;
 
-	case GFX_BILINEAR:
-	case GFX_DOUBLESIZE:
-		_scaleFactor = 2;
-		_scaler_proc = Normal2x;
-		break;
-
-	case GFX_TRIPLESIZE:
-		_scaleFactor = 3;
-		_scaler_proc = Normal3x;
-		break;
-
-	case GFX_NORMAL:
-		_scaleFactor = 1;
-		_scaler_proc = Normal1x;
-		break;
 	default:
 		error("unknown gfx mode %d", _mode);
-		_scaleFactor = 1;
-		_scaler_proc = NULL;
 	}
 
 	//
