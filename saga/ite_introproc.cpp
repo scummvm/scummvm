@@ -359,42 +359,42 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 
 	static const INTRO_DIALOGUE dialogue[][4] = {
 		{ { // English
-			RID_CAVE_VOICE_0, "intro1a",
+			RID_CAVE_VOICE_0,
 			"We see the sky, we see the land, we see the water, "
 			"and we wonder: Are we the only ones?"
 		},
 		{
-			RID_CAVE_VOICE_1, "intro2a",
+			RID_CAVE_VOICE_1,
 			"Long before we came to exist, the humans ruled the"
 			"Earth."
 		},
 		{
-			RID_CAVE_VOICE_2, "intro3a",
+			RID_CAVE_VOICE_2,
 			"They made marvelous things, and moved whole "
 			"mountains."
 		},
 		{
-			RID_CAVE_VOICE_3, "intro4a",
+			RID_CAVE_VOICE_3,
 			"They knew the Secret of Flight, the Secret of "
 			"Happiness, and other secrets beyond our imagining."
 		} },
 		{ { // German
-			RID_CAVE_VOICE_0, "intro1a",
+			RID_CAVE_VOICE_0,
 			"Um uns sind der Himmel, das Land und die Seen; und "
 			"wir fragen uns - sind wir die einzigen?"
 		},
 		{
-			RID_CAVE_VOICE_1, "intro2a",
+			RID_CAVE_VOICE_1,
 			"Lange vor unserer Zeit herrschten die Menschen "
 			"\201ber die Erde."
 		},
 		{
-			RID_CAVE_VOICE_2, "intro3a",
+			RID_CAVE_VOICE_2,
 			"Sie taten wundersame Dinge und versetzten ganze "
 			"Berge."
 		},
 		{
-			RID_CAVE_VOICE_3, "intro4a",
+			RID_CAVE_VOICE_3,
 			"Sie kannten das Geheimnis des Fluges, das Geheimnis "
 			"der Fr\224hlichkeit und andere Geheimnisse, die "
 			"unsere Vorstellungskraft \201bersteigen."
@@ -447,32 +447,32 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 
 	static const INTRO_DIALOGUE dialogue[][3] = {
 		{ { // English
-			RID_CAVE_VOICE_4, "intro1b",
+			RID_CAVE_VOICE_4,
 			"The humans also knew the Secret of Life, and they "
 			"used it to give us the Four Great Gifts:"
 		},
 		{
-			RID_CAVE_VOICE_5, "intro2b",
+			RID_CAVE_VOICE_5,
 			"Thinking minds, feeling hearts, speaking mouths, and "
 			"reaching hands."
 		},
 		{
-			RID_CAVE_VOICE_6, "intro3b",
+			RID_CAVE_VOICE_6,
 			"We are their children."
 		} },
 		{ { // German
-			RID_CAVE_VOICE_4, "intro1b",
+			RID_CAVE_VOICE_4,
 			"Au$erdem kannten die Menschen das Geheimnis des "
 			"Lebens. Und sie nutzten es, um uns die vier gro$en "
 			"Geschenke zu geben -"
 		},
 		{
-			RID_CAVE_VOICE_5, "intro2b",
+			RID_CAVE_VOICE_5,
 			"den denkenden Geist, das f\201hlende Herz, den "
 			"sprechenden Mund und die greifende Hand."
 		},
 		{
-			RID_CAVE_VOICE_6, "intro3b",
+			RID_CAVE_VOICE_6,
 			"Wir sind ihre Kinder."
 		} }
 	};
@@ -531,30 +531,30 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 
 	static const INTRO_DIALOGUE dialogue[][3] = {
 		{ { // English
-			RID_CAVE_VOICE_7, "intro1c",
+			RID_CAVE_VOICE_7,
 			"They taught us how to use our hands, and how to "
 			"speak."
 		},
 		{
-			RID_CAVE_VOICE_8, "intro2c",
+			RID_CAVE_VOICE_8,
 			"They showed us the joy of using our minds."
 		},
 		{
-			RID_CAVE_VOICE_9, "intro3c",
+			RID_CAVE_VOICE_9,
 			"They loved us, and when we were ready, they surely "
 			"would have given us the Secret of Happiness."
 		} },
 		{ { // German
-			RID_CAVE_VOICE_7, "intro1c",
+			RID_CAVE_VOICE_7,
 			"Sie lehrten uns zu sprechen und unsere H\204nde zu "
 			"benutzen."
 		},
 		{
-			RID_CAVE_VOICE_8, "intro2c",
+			RID_CAVE_VOICE_8,
 			"Sie zeigten uns die Freude am Denken."
 		},
 		{
-			RID_CAVE_VOICE_9, "intro3c",
+			RID_CAVE_VOICE_9,
 			"Sie liebten uns, und w\204ren wir bereit gewesen, "
 			"h\204tten sie uns sicherlich das Geheimnis der "
 			"Fr\224hlichkeit offenbart."
@@ -615,40 +615,40 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 
 	static const INTRO_DIALOGUE dialogue[][4] = {
 		{ { // English
-			RID_CAVE_VOICE_10, "intro1d",
+			RID_CAVE_VOICE_10,
 			"And now we see the sky, the land, and the water that "
 			"we are heirs to, and we wonder: why did they leave?"
 		},
 		{
-			RID_CAVE_VOICE_11, "intro2d",
+			RID_CAVE_VOICE_11,
 			"Do they live still, in the stars? In the oceans "
 			"depths? In the wind?"
 		},
 		{
-			RID_CAVE_VOICE_12, "intro3d",
+			RID_CAVE_VOICE_12,
 			"We wonder, was their fate good or evil?"
 		},
 		{
-			RID_CAVE_VOICE_13, "intro4d",
+			RID_CAVE_VOICE_13,
 			"And will we also share the same fate one day?"
 		} },
 		{ { // German
-			RID_CAVE_VOICE_10, "intro1d",
+			RID_CAVE_VOICE_10,
 			"Und nun sehen wir den Himmel, das Land und die "
 			"Seen - unser Erbe. Und wir fragen uns - warum "
 			"verschwanden sie?"
 		},
 		{
-			RID_CAVE_VOICE_11, "intro2d",
+			RID_CAVE_VOICE_11,
 			"Leben sie noch in den Sternen? In den Tiefen des "
 			"Ozeans? Im Wind?"
 		},
 		{
-			RID_CAVE_VOICE_12, "intro3d",
+			RID_CAVE_VOICE_12,
 			"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
 		},
 		{
-			RID_CAVE_VOICE_13, "intro4d",
+			RID_CAVE_VOICE_13,
 			"Und wird uns eines Tages das gleiche Schicksal "
 			"ereilen?"
 		} }

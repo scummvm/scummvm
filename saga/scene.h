@@ -156,7 +156,6 @@ typedef Common::List<SCENE_QUEUE> SceneQueueList;
 #define IHNM_TITLE_TIME_FM   19500
 
 ///// ITE-specific stuff
-#define INTRO_STRMAX 256
 #define ITE_INTRO_FRAMETIME 90
 
 #define INTRO_CAPTION_Y 170
@@ -172,8 +171,7 @@ typedef Common::List<SCENE_QUEUE> SceneQueueList;
 
 struct INTRO_DIALOGUE {
 	uint32 i_voice_rn;
-	const char *i_cvar_name;
-	char i_str[INTRO_STRMAX];
+	const char *i_str;
 };
 
 struct INTRO_CREDIT {
