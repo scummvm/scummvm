@@ -822,7 +822,7 @@ void Scumm::scummInit() {
 		
 		// this is from IDB
 		if (_version == 1)
-			_actors[i].costume = i;
+			_actors[i].setActorCostume(i);
 	}
 
 	_numNestedScripts = 0;
