@@ -1245,7 +1245,7 @@ void ScummEngine_v6he::o6_stringLen() {
 		return;
 	}
 
-	if (_gameId == GID_FREDDEMO) {
+	if (_heversion >= 60) {
 		len = strlen((char *)getStringAddress(a));
 	} else { // FREDDI, PUTTMOON
 		len = stringLen(addr);
@@ -1302,7 +1302,7 @@ void ScummEngine_v6he::o6_localizeArray() {
 }
 
 void ScummEngine_v6he::o6_unknownF4() {
-	if (_gameId == GID_FREDDEMO) {
+	if (_heversion >= 60) {
 		byte b;
 		int len;
 		b = fetchScriptByte();
