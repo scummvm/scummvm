@@ -331,6 +331,13 @@ void ConsoleDialog::historyScroll(int direction)
 {
 	if (_historySize == 0)
 		return;
+
+	if (_historyLine == 0 && direction > 0) {
+		int i;
+		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
+			_history[_historyIndex][i] = _buffer[_promptStartPos + i];
+		_history[_historyIndex][i] = '\0';
+	}
 	
 	// Advance to the next line in the history
 	int line = _historyLine + direction;
@@ -350,17 +357,17 @@ void ConsoleDialog::historyScroll(int direction)
 	scrollToCurrent();
 
 	// Print the text from the history
-	if (_historyLine > 0) {
-		int idx = (_historyIndex - _historyLine + _historySize) % _historySize;
-		for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
-			putcharIntern(_history[idx][i]);
-		_promptEndPos = _currentPos;
+	int idx;
+	if (_historyLine > 0)
+		idx = (_historyIndex - _historyLine + _historySize) % _historySize;
+	else
+		idx = _historyIndex;
+	for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
+		putcharIntern(_history[idx][i]);
+	_promptEndPos = _currentPos;
 	
-		// Ensure once more the caret is visible (in case of very long history entries)
-		scrollToCurrent();
-	} else {
-		// TODO print the text which the user had typed before using the history
-	}
+	// Ensure once more the caret is visible (in case of very long history entries)
+	scrollToCurrent();
 	
 	draw();
 }
