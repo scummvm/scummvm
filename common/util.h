@@ -80,10 +80,11 @@ public:
  */
 class StackLock {
 	OSystem::MutexRef _mutex;
+	OSystem *_syst;
 	void lock();
 	void unlock();
 public:
-	StackLock(OSystem::MutexRef mutex);
+	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0);
 	~StackLock();
 };
 
