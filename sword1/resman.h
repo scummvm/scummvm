@@ -54,7 +54,7 @@ struct Prj {
 
 class ResMan {
 public:
-	ResMan(const char *resFile);
+	ResMan(const char *fileName);
 	~ResMan(void);
 	void flush(void);
 	void resClose(uint32 id);

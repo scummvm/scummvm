@@ -46,11 +46,11 @@ namespace Sword1 {
 
 #define MAX_PATH_LEN 260
 
-ResMan::ResMan(const char *resFile) {
+ResMan::ResMan(const char *fileName) {
 	_openCluStart = _openCluEnd = NULL;
 	_openClus = 0;
 	_memMan = new MemMan();
-	loadCluDescript(resFile);
+	loadCluDescript(fileName);
 }
 
 ResMan::~ResMan(void) {
@@ -79,51 +79,51 @@ ResMan::~ResMan(void) {
 }
 
 void ResMan::loadCluDescript(const char *fileName) {
-	File resFile;
-	resFile.open(fileName);
+	File file;
+	file.open(fileName);
 
-	if (!resFile.isOpen()) {
+	if (!file.isOpen()) {
 		char msg[512];
 		sprintf(msg, "Couldn't open CLU description '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
 		guiFatalError(msg);
 	}
 
 	
-	_prj.noClu = resFile.readUint32LE();
+	_prj.noClu = file.readUint32LE();
 	_prj.clu = new Clu[_prj.noClu];
 	memset(_prj.clu, 0, _prj.noClu * sizeof(Clu));
 
 	uint32 *cluIndex = (uint32*)malloc(_prj.noClu * 4);
-	resFile.read(cluIndex, _prj.noClu * 4);
+	file.read(cluIndex, _prj.noClu * 4);
 
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
 		if (cluIndex[clusCnt]) {
 			Clu *cluster = _prj.clu + clusCnt;
-			resFile.read(cluster->label, MAX_LABEL_SIZE);
+			file.read(cluster->label, MAX_LABEL_SIZE);
 
 			cluster->file = NULL;
-			cluster->noGrp = resFile.readUint32LE();
+			cluster->noGrp = file.readUint32LE();
 			cluster->grp = new Grp[cluster->noGrp];
 			memset(cluster->grp, 0, cluster->noGrp * sizeof(Grp));
 			cluster->refCount = 0;
 
 			uint32 *grpIndex = (uint32*)malloc(cluster->noGrp * 4);
-			resFile.read(grpIndex, cluster->noGrp * 4);
+			file.read(grpIndex, cluster->noGrp * 4);
 
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
 				if (grpIndex[grpCnt]) {
 					Grp *group = cluster->grp + grpCnt;
-					group->noRes = resFile.readUint32LE();
+					group->noRes = file.readUint32LE();
 					group->resHandle = new MemHandle[group->noRes];
 					group->offset = new uint32[group->noRes];
 					group->length = new uint32[group->noRes];
 					uint32 *resIdIdx = (uint32*)malloc(group->noRes * 4);
-					resFile.read(resIdIdx, group->noRes * 4);
+					file.read(resIdIdx, group->noRes * 4);
 
 					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++) {
 						if (resIdIdx[resCnt]) {
-							group->offset[resCnt] = resFile.readUint32LE();
-							group->length[resCnt] = resFile.readUint32LE();
+							group->offset[resCnt] = file.readUint32LE();
+							group->length[resCnt] = file.readUint32LE();
 							_memMan->initHandle(group->resHandle + resCnt);
 						} else {
 							group->offset[resCnt] = 0xFFFFFFFF;
