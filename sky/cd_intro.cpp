@@ -194,8 +194,9 @@
 #define START_BG	( _skySound->playBgSound(bgVocBuffer, bgVocSize) )
 #define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = _skyDisk->loadFile(num, NULL), loadedVocSize = _skyDisk->_lastLoadedFileSize ) 
 #define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = _skyDisk->loadFile(num, NULL), bgVocSize = _skyDisk->_lastLoadedFileSize )
-#define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); }
-#define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); }
+#define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); CHECK_ESC }
+#define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); CHECK_ESC }
+#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; return; }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
 #define COPY_SCREEN	( memcpy(_workScreen, workScreen2, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT) )
 

@@ -156,7 +156,8 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-
+	_key_pressed = 0;	//reset
+	
 	_rnd.getRandomNumber(2);
 
 	do {

@@ -25,7 +25,8 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-#define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); }
+#define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); CHECK_ESC }
+#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; return; }
 
 #define INTRO_TEXT_WIDTH    128
 
@@ -209,11 +210,13 @@ void SkyState::intro(void) {
 	_skyMusic->loadSectionMusic(0);
 	
 	delay(3000); //keep virgin screen up for 3 seconds
-
+	CHECK_ESC
+	
 	if (!isCDVersion(_gameVersion))
 		_skyMusic->startMusic(1);
 	
 	delay(3000); //and another 3 seconds.
+	CHECK_ESC
 	fnFadeDown(0); //remove virgin screen
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -230,7 +233,8 @@ void SkyState::intro(void) {
 	_skyText->getText(77);
 	
 	delay(8000); // keep revolution up for 8 seconds
-
+	CHECK_ESC
+	
 	fnFadeDown(0);
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -248,6 +252,7 @@ void SkyState::intro(void) {
 
 		//keep gibbo up for 2 seconds
 		delay(2000);
+		CHECK_ESC
 		fnFadeDown(0);
 		showScreen();
 		paletteFadeUp(_tempPal);
