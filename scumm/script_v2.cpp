@@ -767,11 +767,11 @@ void Scumm_v2::o2_drawObject() {
 
 void Scumm_v2::o2_resourceRoutines() {
 	const ResTypes resTypes[] = {
-			rtNumTypes,	// Unknown / invalid
-			rtNumTypes,	// Unknown / invalid
+			rtNumTypes,	// Invalid
+			rtNumTypes,	// Invalid
 			rtCostume,
 			rtRoom,
-			rtNumTypes,	// Unknown / invalid
+			rtNumTypes,	// Invalid
 			rtScript,
 			rtSound
 		};
@@ -782,24 +782,16 @@ void Scumm_v2::o2_resourceRoutines() {
 	if (0 <= (opcode >> 4) && (opcode >> 4) < (int)ARRAYSIZE(resTypes))
 		type = resTypes[opcode >> 4];
 
-	if (type == rtNumTypes) {
-		warning("o2_resourceRoutines: unknown restype %d", (opcode >> 4));
+	if (type == rtNumTypes)
 		return;
-	}
 
-	if (((opcode & 0x0f) == 0) || ((opcode & 0x0f) == 1)) {
-		if (opcode & 1) {
-			ensureResourceLoaded(type, resid);
-		} else {
-			// Seems the nuke opcodes do nothing?
-			warning("o2_resourceRoutines: nuking resType %d, id %d does nothing", type, resid);
-		}
+	if ((opcode & 0x0f) == 1) {
+		ensureResourceLoaded(type, resid);
 	} else {
-		if (opcode & 1) {
+		if (opcode & 1)
 			lock(type, resid);
-		} else {
+		else
 			unlock(type, resid);
-		}
 	}
 }
 
