@@ -906,22 +906,22 @@ int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 	// there is only one cursor image.
 
 	if (GfxModule.white_index != best_windex) {
+		int white = (best_windex == 255) ? 254 : best_windex;
+
 		// Set up the mouse cursor
 		static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
-			0,   0,   0,   255, 0,   0,   0,
-			0,   0,   0,   255, 0,   0,   0,
-			0,   0,   0,   0,   0,   0,   0,
-			255, 255, 0,   0,   0,   255, 255,
-			0,   0,   0,   0,   0,   0,   0,
-			0,   0,   0,   255, 0,   0,   0,
-			0,   0,   0,   255, 0,   0,   0
+			255, 255, 255, 0,   255, 255, 255,
+			255, 255, 255, 0,   255, 255, 255,
+			255, 255, 255, 255, 255, 255, 255,
+			0,   0,   255, 255, 255, 0,   0,
+			255, 255, 255, 255, 255, 255, 255,
+			255, 255, 255, 0,   255, 255, 255,
+			255, 255, 255, 0,   255, 255, 255,
 		};
 
 		for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
-			if (cursor_img[i] == 0)
-				cursor_img[i] = 255;
-			else if (cursor_img[i] == 255)
-				cursor_img[i] = best_windex;
+			if (cursor_img[i] != 255)
+				cursor_img[i] = white;
 		}
 
 		_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4);
