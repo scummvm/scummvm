@@ -2292,6 +2292,7 @@ bool SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
+	SkyState::_systemVars.currentPalette = a;
 	_skyScreen->fnFadeUp(a,b);
 	return true;
 }

@@ -1101,7 +1101,7 @@ void SkySound::fnPauseFx(void) {
 }
 
 bool SkySound::fnStartFx(uint32 sound) {
-	if (sound < 256 || sound > MAX_FX_NUMBER || _sfxPaused)
+	if (sound < 256 || sound > MAX_FX_NUMBER || _sfxPaused || (SkyState::_systemVars.systemFlags & SF_FX_OFF))
 		return true;
 
 	uint8 screen = (uint8)(SkyLogic::_scriptVariables[SCREEN] & 0xff);

@@ -37,6 +37,8 @@
 #include "sky/music/gmmusic.h"
 #include "sky/music/mt32music.h"
 #include "sky/mouse.h"
+#include "sky/control.h"
+#include "common/config-file.h"
 
 struct SystemVars {
 	uint32 systemFlags;
@@ -51,6 +53,7 @@ struct SystemVars {
 
 class SkyLogic;
 class SkyScreen;
+class SkyControl;
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -82,6 +85,7 @@ protected:
 	SkyLogic *_skyLogic;
 	SkyMouse *_skyMouse;
 	SkyScreen *_skyScreen;
+	SkyControl *_skyControl;
 
 	SkyMusicBase *_skyMusic;
 	GameDetector *_detector; // necessary for music

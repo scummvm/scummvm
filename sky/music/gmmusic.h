@@ -32,6 +32,7 @@ class SkyGmMusic : public SkyMusicBase {
 public:
 	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk);
 	~SkyGmMusic(void);
+	virtual void setVolume(uint8 volume);
 private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);

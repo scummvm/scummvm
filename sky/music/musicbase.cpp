@@ -43,7 +43,7 @@ void SkyMusicBase::loadSection(uint8 pSection)
 	_allowedCommands = 0;
 	_musicTempo0 = 0x78; // init constants taken from idb file, area ~0x1060
 	_musicTempo1 = 0xC0;
-	_musicVolume = 0x100;
+	_musicVolume = 127;
 	_onNextPoll.doReInit = false;
 	_onNextPoll.doStopMusic = false;
 	_onNextPoll.musicToProcess = 0;

@@ -44,6 +44,12 @@ SkyAdlibMusic::~SkyAdlibMusic(void) {
 	YM3812Shutdown();
 }
 
+void SkyAdlibMusic::setVolume(uint8 volume) {
+
+	_musicVolume = volume;
+	_mixer->setMusicVolume(_musicVolume << 1);
+}
+
 void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
 
 	if (_musicData == NULL) {

@@ -16,10 +16,12 @@ MODULE_OBJS = \
 	sky/sound.o \
 	sky/text.o \
 	sky/introimg.o \
+	sky/control.o \
 	sky/music/adlibchannel.o \
 	sky/music/adlibmusic.o \
 	sky/music/gmchannel.o \
 	sky/music/gmmusic.o \
+	sky/music/mt32music.o \
 	sky/music/musicbase.o \
 
 # Include common rules 

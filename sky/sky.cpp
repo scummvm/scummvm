@@ -141,6 +141,10 @@ void SkyState::go() {
 
 	while (1) {
 		delay(50);
+		if ((_key_pressed == 27) || (_key_pressed == 63)) { // 27 = escape, 63 = F5
+			_key_pressed = 0;
+			_skyControl->doControlPanel();
+		}
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
 		_skyScreen->recreate();
@@ -152,8 +156,6 @@ void SkyState::go() {
 
 void SkyState::initialise(void) {
 
-	//initialise_memory();
-
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk);
 	
@@ -164,7 +166,10 @@ void SkyState::initialise(void) {
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
-		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
+		if (_detector->_native_mt32)
+			_skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk);
+		else
+			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 
@@ -174,14 +179,14 @@ void SkyState::initialise(void) {
 
 	initVirgin();
 	initItemList();
-	//initScript();
-	//initialiseRouter();
 	loadFixedItems();
 	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
+
+	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _system, getSavePath());
 }
 
 void SkyState::initItemList() {

@@ -58,6 +58,15 @@ void SkyMT32Music::timerCall(void) {
 		pollMusic();
 }
 
+void SkyMT32Music::setVolume(uint8 volume) {
+
+	uint8 sysEx[6];
+	_musicVolume = volume;
+	sysEx[0] = 0x7F; sysEx[1] = 0x7F; sysEx[2] = 0x04; sysEx[3] = 0x01;
+	sysEx[4] = 0; sysEx[5] = volume & 0x7F;
+	_midiDrv->sysEx(sysEx, 6);
+}
+
 void SkyMT32Music::setupPointers(void) {
 
 	_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
@@ -78,70 +87,50 @@ void SkyMT32Music::setupChannels(uint8 *channelData) {
 
 bool SkyMT32Music::processPatchSysEx(uint8 *sysExData) {
 
+	uint8 sysExBuf[15];
 	uint8 crc = 0;
 	if (sysExData[0] & 0x80) return false;
-	uint8 patchNum = sysExData[0];
-	sysExData++;
 
-	uint8 timbreGroup = sysExData[0] >> 6;
-	uint8 timbreNumber = sysExData[0] & 0x3F;
-	uint8 keyShift = sysExData[1] & 0x3F;
-	uint8 fineTune = sysExData[2] & 0x7F;
-	uint8 benderRange = sysExData[3] & 0x7F;
-	uint8 assignMode = sysExData[1] >> 6;
-	uint8 reverbSwitch = sysExData[2] >> 7;
-	
-	_midiDrv->send(MIDI_PACK(0xF0, 0x41, 0x10, 0x16));
-	_midiDrv->send(MIDI_PACK(0x12, 5, patchNum >> 4, (patchNum & 0xF) << 3));
-
-	crc -= 5 + (patchNum >> 4) + ((patchNum & 0xF) << 3);
-	crc -= timbreGroup + timbreNumber + keyShift + fineTune;
-	crc -= benderRange + assignMode + reverbSwitch;
-
-	_midiDrv->send(MIDI_PACK(timbreGroup, timbreNumber, keyShift, fineTune));
-	_midiDrv->send(MIDI_PACK(benderRange, assignMode, reverbSwitch, crc));
-	_midiDrv->send(0xF7);
-
-	debug(3," Patch %02X:\n",patchNum);
-	debug(3," Timbre Group:  %d\n",timbreGroup);
-	debug(3," Timbre Number: %d\n",timbreNumber);
-	debug(3," Key Shift:     %d\n",keyShift);
-	debug(3," Fine Tune:     %d\n",fineTune);
-	debug(3," Bender Range:  %d\n",benderRange);
-	debug(3," Assign Mode:   %d\n",assignMode);
-	debug(3," Reverb Switch: %d\n\n",reverbSwitch);
+	// decompress data from stream
+	sysExBuf[0]  = 0x41; sysExBuf[1] = 0x10; sysExBuf[2] = 0x16; sysExBuf[3] = 0x12; sysExBuf[4] = 0x5;
+	sysExBuf[5]  = sysExData[0] >> 4;			// patch offset part 1
+	sysExBuf[6]  = (sysExData[0] & 0xF) << 3;	// patch offset part 2
+	sysExBuf[7]  = sysExData[1] >> 6;			// timbre group
+	sysExBuf[8]  = sysExData[1] & 0x3F;			// timbre num
+	sysExBuf[9]  = sysExData[2] & 0x3F;			// key shift
+	sysExBuf[10] = sysExData[3] & 0x7F;			// fine tune
+	sysExBuf[11] = sysExData[4] & 0x7F;         // bender range
+	sysExBuf[12] = sysExData[2] >> 6;			// assign mode
+	sysExBuf[13] = sysExData[3] >> 7;			// reverb switch
+	for (uint8 cnt = 4; cnt < 14; cnt++)
+		crc -= sysExBuf[cnt];
+	sysExBuf[14] = crc;							// crc
+	_midiDrv->sysEx(sysExBuf, 15);
 	return true;
 }
 
 void SkyMT32Music::startDriver(void) {
 
-	_midiDrv->send(0xFF); // reset midi device
-	
 	// setup timbres and patches using SysEx data
 	uint8* sysExData = _sysExSequence;
 	uint8 timbreNum = sysExData[0];
 	uint8 cnt, crc;
-	uint32 sysComb;
 	sysExData++;
+	uint8 sendBuf[256];
+	uint8 len;
+	sendBuf[0] = 0x41; sendBuf[1] = 0x10; sendBuf[2] = 0x16; sendBuf[3] = 0x12;
 	for (cnt = 0; cnt < timbreNum; cnt++) {
+		len = 7;
 		crc = 0;
-		_midiDrv->send(MIDI_PACK(0xF0, 0x41, 0x10, 0x16));
-		//- sendTimbreAddress
-		sysComb = (0x2 << 16) | (sysExData[0] << 8) | 0xA;
+		// Timbre address
+		sendBuf[4] = 0x8 | (sysExData[0] >> 6);
+		sendBuf[5] = (sysExData[0] & 0x3F) << 1;
+		sendBuf[6] = 0xA;
 		sysExData++;
-		uint8 sysByte1 = (uint8)(sysComb >> 14);
-		uint8 sysByte2 = (uint8)((sysComb & 0x3FFF) >> 7);
-		uint8 sysByte3 = (uint8)(sysComb & 0x7F);
-		_midiDrv->send(MIDI_PACK(0x12, sysByte1, sysByte2, sysByte3));
-		debug(3,"InitBySysEx: Timbre address: %02X:%02X:%02X (%02X)\n",sysByte1,sysByte2,sysByte3,(sysExData-1)[0]);
-		crc -= sysByte1 + sysByte2 + sysByte3;
-		//- sendTimbreData
+		crc -= sendBuf[4] + sendBuf[5] + sendBuf[6];
 		uint8 dataLen = sysExData[0];
-		debug(3,"[%02X]",dataLen);
 		sysExData++;
-		uint32 nextSend = 0; 
-		uint8 bytesInSend = 0;
-		debug(3,"         Timbre Data:");
+		// Timbre data:
 		do {
 			uint8 rlVal = 1;
 			uint8 codeVal = sysExData[0];
@@ -154,27 +143,15 @@ void SkyMT32Music::startDriver(void) {
 				dataLen--;
 			}
 			for (uint8 cnt = 0; cnt < rlVal; cnt++) {
-				nextSend |= codeVal << (bytesInSend << 3);
+				sendBuf[len] = codeVal;
+				len++;
 				crc -= codeVal;
-				debug(3," %02X",codeVal);
-				bytesInSend++;
-				if (bytesInSend == 4) {
-					_midiDrv->send(nextSend);
-					nextSend = bytesInSend = 0;
-				}
 			}
 			dataLen--;
 		} while (dataLen > 0);
-		crc &= 0x7F;
-		debug(3," %02X F7\n",crc);
-		nextSend |= crc << (bytesInSend << 3);
-		bytesInSend++;
-		if (bytesInSend == 4) {
-			_midiDrv->send(nextSend);
-			nextSend = bytesInSend = 0;
-		}
-		nextSend |= 0xF7 << (bytesInSend << 3);
-		_midiDrv->send(nextSend);
+		sendBuf[len] = crc & 0x7F;
+		len++;
+		_midiDrv->sysEx(sendBuf, len);
 	}
 
 	while (processPatchSysEx(sysExData))

@@ -36,6 +36,7 @@ private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);
 	bool processPatchSysEx(uint8 *sysExData);
+	virtual void setVolume(uint8 volume);
 
 	bool _ignoreNextPoll;
 	uint8 *_sysExSequence;

@@ -33,6 +33,7 @@ class SkyAdlibMusic : public SkyMusicBase {
 public:
 	SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk);
 	~SkyAdlibMusic(void);
+	virtual void setVolume(uint8 volume);
 private:
 	SoundMixer *_mixer;
 	uint8 *_initSequence;
