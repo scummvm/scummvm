@@ -45,6 +45,10 @@
 #include "backends/wince/CELauncherDialog.h" 
 #endif
 
+#ifdef __DC__
+#include "backends/dc/DCLauncherDialog.h"
+#endif
+
 /*
  * Version string and build date string. These can be used by anything that
  * wants to display this information to the user (e.g. about dialog).
@@ -214,10 +218,12 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 
 	system->setPalette(dummy_palette, 0, 16);
 
-#ifndef _WIN32_WCE
-	GUI::LauncherDialog dlg(detector);
-#else
+#if defined(_WIN32_WCE)
 	CELauncherDialog dlg(detector);
+#elif defined(__DC__)
+	DCLauncherDialog dlg(detector);
+#else
+	GUI::LauncherDialog dlg(detector);
 #endif
 	return dlg.runModal();
 }

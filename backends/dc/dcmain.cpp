@@ -30,6 +30,7 @@
 #include <base/plugins.h>
 #include "dc.h"
 #include "icon.h"
+#include "DCLauncherDialog.h"
 
 
 Icon icon;
@@ -202,20 +203,27 @@ void dc_init_hardware()
 extern "C" int scummvm_main(int argc, char *argv[]);
 int main()
 {
-  static char *argv[] = { "scummvm", NULL, NULL, NULL };
-  static int argc = 3;
+  static char *argv[] = { "scummvm", NULL, };
+  static int argc = 1;
 
   dc_init_hardware();
   initSound();
-
-  PluginManager::instance().loadPlugins();
-
-  if(!selectGame(argv[2], argv[1], icon))
-    exit(0);
-
-  PluginManager::instance().unloadPlugins();
 
   scummvm_main(argc, argv);
 
   exit(0);
 }
+
+int DCLauncherDialog::runModal()
+{
+  static char *argv[] = { "scummvm", NULL, NULL, NULL };
+  static int argc = 3;
+
+  if(!selectGame(argv[2], argv[1], icon))
+    exit(0);
+
+  _detector.parseCommandLine(argc, argv);
+
+  return 0;
+}
+
