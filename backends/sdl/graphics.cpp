@@ -70,24 +70,39 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionDetails.hChanged = false;
 	_transactionDetails.arChanged = false;
 	_transactionDetails.fsChanged = false;
+
+	_transactionDetails.needHotswap = false;
+	_transactionDetails.needUpdatescreen = false;
+	_transactionDetails.needUnload = false;
 }
 
 void OSystem_SDL::endGFXTransaction(void) {
 	assert (_transactionMode == kTransactionActive);
 
 	_transactionMode = kTransactionCommit;
-	if (_transactionDetails.modeChanged) {
+	if (_transactionDetails.modeChanged)
 		setGraphicsMode(_transactionDetails.mode);
-	}
-	if (_transactionDetails.wChanged || _transactionDetails.hChanged) {
+
+	if (_transactionDetails.wChanged || _transactionDetails.hChanged)
 		initSize(_transactionDetails.w, _transactionDetails.h);
-	}
-	if (_transactionDetails.arChanged) {
+
+	if (_transactionDetails.arChanged)
 		setAspectRatioCorrection(_transactionDetails.ar);
+
+	if (_transactionDetails.needUnload) {
+		unloadGFXMode();
+		loadGFXMode();
+	} else {
+		if (!_transactionDetails.fsChanged)
+			if (_transactionDetails.needHotswap)
+				hotswapGFXMode();
+			else if (_transactionDetails.needUpdatescreen)
+				internUpdateScreen();
 	}
-	if (_transactionDetails.fsChanged) {
+
+	if (_transactionDetails.fsChanged)
 		setFullscreenMode(_transactionDetails.fs);
-	}
+
 	_transactionMode = kTransactionNone;
 }
 
@@ -96,18 +111,6 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	int newScaleFactor = 1;
 	ScalerProc *newScalerProc;
-
-	switch (_transactionMode) {
-	case kTransactionActive:
-		_transactionDetails.mode = mode;
-		_transactionDetails.modeChanged = true;
-		return true;
-		break;
-	case kTransactionCommit:
-		break;
-	default:
-		break;
-	} 
 
 	switch(mode) {
 	case GFX_NORMAL:
@@ -167,7 +170,27 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	_mode = mode;
 	_scalerProc = newScalerProc;
+
+	if (_transactionMode == kTransactionActive) {
+		_transactionDetails.mode = mode;
+		_transactionDetails.modeChanged = true;
+
+		if (newScaleFactor != _scaleFactor) {
+			_transactionDetails.needHotswap = true;
+			_scaleFactor = newScaleFactor;
+		}
+
+		_transactionDetails.needUpdatescreen = true;
+
+		return true;
+	}
+
+	// NOTE: This should not be executed at transaction commit
+	//   Otherwise there is some unsolicited setGraphicsMode() call
+	//   which should be properly removed
 	if (newScaleFactor != _scaleFactor) {
+		assert(_transactionMode != kTransactionCommit);
+
 		_scaleFactor = newScaleFactor;
 		hotswapGFXMode();
 	}
@@ -188,7 +211,9 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	// Blit everything to the screen
 	_forceFull = true;
-	internUpdateScreen();
+
+	if (_transactionMode != kTransactionCommit)
+		internUpdateScreen();
 	
 	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
@@ -202,22 +227,9 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::initSize(uint w, uint h) {
-	switch (_transactionMode) {
-	case kTransactionActive:
-		_transactionDetails.w = w;
-		_transactionDetails.wChanged = true;
-		_transactionDetails.h = h;
-		_transactionDetails.hChanged = true;
-		return;
-		break;
-	case kTransactionCommit:
-		break;
-	default:
-		break;
-	} 
-
 	// Avoid redundant res changes
-	if ((int)w == _screenWidth && (int)h == _screenHeight)
+	if ((int)w == _screenWidth && (int)h == _screenHeight &&
+		_transactionMode != kTransactionCommit)
 		return;
 
 	_screenWidth = w;
@@ -228,13 +240,24 @@ void OSystem_SDL::initSize(uint w, uint h) {
 
 	_cksumNum = (_screenWidth * _screenHeight / (8 * 8));
 
+	if (_transactionMode == kTransactionActive) {
+		_transactionDetails.w = w;
+		_transactionDetails.wChanged = true;
+		_transactionDetails.h = h;
+		_transactionDetails.hChanged = true;
+
+		_transactionDetails.needUnload = true;
+
+		return;
+	}
+
 	free(_dirtyChecksums);
 	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 
-	_mouseData = NULL;
-
-	unloadGFXMode();
-	loadGFXMode();
+	if (_transactionMode != kTransactionCommit) {
+		unloadGFXMode();
+		loadGFXMode();
+	}
 }
 
 void OSystem_SDL::loadGFXMode() {
@@ -562,23 +585,20 @@ bool OSystem_SDL::saveScreenshot(const char *filename) {
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
-	switch (_transactionMode) {
-	case kTransactionActive:
-		_transactionDetails.fs = enable;
-		_transactionDetails.fsChanged = true;
-		return;
-		break;
-	case kTransactionCommit:
-		break;
-	default:
-		break;
-	} 
-
 	Common::StackLock lock(_graphicsMutex);
 
-	if (_fullscreen != enable) {
+	if (_fullscreen != enable || _transactionMode == kTransactionCommit) {
 		assert(_hwscreen != 0);
-		_fullscreen ^= true;
+		_fullscreen = enable;
+
+		if (_transactionMode == kTransactionActive) {
+			_transactionDetails.fs = enable;
+			_transactionDetails.fsChanged = true;
+
+			_transactionDetails.needHotswap = true;
+
+			return;
+		}
 		
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
@@ -602,27 +622,24 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 }
 
 void OSystem_SDL::setAspectRatioCorrection(bool enable) {
-	switch (_transactionMode) {
-	case kTransactionActive:
-		_transactionDetails.ar = enable;
-		_transactionDetails.arChanged = true;
-		return;
-		break;
-	case kTransactionCommit:
-		break;
-	default:
-		break;
-	} 
-
-	if (_screenHeight == 200 && _adjustAspectRatio != enable) {
+	if ((_screenHeight == 200 && _adjustAspectRatio != enable) || 
+		_transactionMode == kTransactionCommit) {
 		Common::StackLock lock(_graphicsMutex);
 
 		//assert(_hwscreen != 0);
-		_adjustAspectRatio ^= true;
-		hotswapGFXMode();
-			
-		// Blit everything to the screen
-		internUpdateScreen();
+		_adjustAspectRatio = enable;
+
+		if (_transactionMode == kTransactionActive) {
+			_transactionDetails.ar = enable;
+			_transactionDetails.arChanged = true;
+
+			_transactionDetails.needHotswap = true;
+
+			return;
+		} else {
+			if (_transactionMode != kTransactionCommit)
+				hotswapGFXMode();
+		}
 			
 		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
 		_modeChanged = true;

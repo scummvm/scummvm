@@ -221,6 +221,10 @@ protected:
 		bool fsChanged;
 		bool ar;
 		bool arChanged;
+		bool needHotswap;
+		bool needUpdatescreen;
+		bool needUnload;
+		bool needToggle;
 	};
 	TransactionDetails _transactionDetails;
 
