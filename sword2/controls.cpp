@@ -1892,10 +1892,13 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 	// byte 8 = subtitle state and byte 9 = object label state.
 
 	uint8 buff[10];
+	char filename[256];
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	if (!(fp = mgr->open_savefile("Settings.dat", g_sword2->getSavePath(), false)))
+	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
+
+	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false)))
 		return (1);
 
 	if (fp->read(buff, 10) != 10)
@@ -1933,9 +1936,11 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 int32	WriteOptionSettings(void)	//pete10Jun97
 {
 	uint8 buff[10];
+	char filename[256];
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
+	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
 
 	buff[0] = g_sword2->_sound->GetMusicVolume();
 	buff[1] = g_sword2->_sound->GetSpeechVolume();
@@ -1948,7 +1953,7 @@ int32	WriteOptionSettings(void)	//pete10Jun97
 	buff[8] = pointerTextSelected;
 	buff[9] = stereoReversed;
 	
-	if (!(fp = mgr->open_savefile("Settings.dat", g_sword2->getSavePath(), true)))
+	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true)))
 		return (1);
 
 	if (fp->write(buff, 10) != 10)
