@@ -1224,7 +1224,15 @@ void Scumm::o6_setCameraAt() {
 }
 
 void Scumm::o6_loadRoom() {
-	int room = pop();
+	int room;
+	/* Begin: Autosave 
+	_saveLoadSlot = 0;
+	sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
+	_saveLoadFlag = 1;
+	_saveLoadCompatible = false;
+	End: Autosave */
+
+	room = pop();
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -1380,6 +1388,13 @@ void Scumm::o6_pickupObject() {
 void Scumm::o6_loadRoomWithEgo() {
 	Actor *a;
 	int room,obj,x,y;
+
+	/* Begin: Autosave 
+	_saveLoadSlot = 0;
+	sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
+	_saveLoadFlag = 1;
+	_saveLoadCompatible = false;
+	End: Autosave */
 
 	y = pop();
 	x = pop();

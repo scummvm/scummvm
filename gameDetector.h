@@ -44,5 +44,6 @@ public:
 	uint16 _soundCardType;
 
 	int _scummVersion;
+	bool _restore;
 
 };

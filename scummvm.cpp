@@ -863,7 +863,7 @@ void Scumm::convertKeysToClicks() {
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 	if (id<1 || id>=NUM_ACTORS) {				
-                warning("Invalid actor %d in %s (script %d) - This is potentially a BIG problem.", id, errmsg, vm.slot[_curExecScript].number);
+                warning("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.", id, errmsg, vm.slot[_curExecScript].number, _opcode);
 				return NULL;
 	}
 	return derefActor(id);
@@ -1064,6 +1064,10 @@ void Scumm::launch()
 	
 //	if (_gameId==GID_MONKEY2 && _bootParam == 0)
 //		_bootParam = 10001;
+
+	if (_gameId==GID_INDY4 && _bootParam==0) {
+		_bootParam = -7873;
+	}
 	
 	readIndexFile();
 

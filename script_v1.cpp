@@ -692,13 +692,20 @@ void Scumm::o5_actorFromPos() {
 void Scumm::o5_actorSet() {
     byte convertTable[20] = {1,0,0,2,0,4,5,6,7,8,9,10,11,12,13,14,15,16,17,20};
 	int act = getVarOrDirectByte(0x80);
-	Actor *a = derefActorSafe(act, "actorSet");
+	Actor *a;
 	int i,j;
 
+	if (act == 0) 
+		act = 1;
+
+	a = derefActorSafe(act, "actorSet");
+	
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
-               if(_features & GF_SMALL_HEADER)
-                       _opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
+        if(_features & GF_SMALL_HEADER)
+			_opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
+		
 		if (!a) return;
+		
 		switch(_opcode&0x1F) {
 		case 0: /* dummy case */
 			getVarOrDirectByte(0x80);
@@ -1242,8 +1249,10 @@ void Scumm::o5_getActorWidth() {
 }
 
 void Scumm::o5_getActorX() {
+	int actor;
 	getResultPos();
-	setResult(getObjX(getVarOrDirectWord(0x80)));
+	actor = getVarOrDirectWord(0x80);
+	setResult(getObjX(actor));
 }
 
 void Scumm::o5_getActorY() {
@@ -1259,23 +1268,23 @@ void Scumm::o5_getAnimCounter() {
 void Scumm::o5_getClosestObjActor() {
 	int obj;
 	int act;
-	int closobj=-1, closnum=-1;
+	int closest_obj=0xFF, closest_dist=0xFF;
 	int dist;
 
 	getResultPos();
 
 	act = getVarOrDirectWord(0x80);
 	obj = _vars[VAR_V5_OBJECT_HI];
-
-	do {
-		dist = getObjActToObjActDist(obj,act);
-		if (dist < closnum) {
-			closnum = dist;
-			closobj = obj;
+	
+	do {		
+		dist = getObjActToObjActDist(act,obj);		
+		if (dist < closest_dist) {
+			closest_dist = dist;
+			closest_obj = obj;
 		}
 	} while (--obj >= _vars[VAR_V5_OBJECT_LO]);
-
-	setResult(closnum);
+	
+	setResult(closest_dist);
 }
 
 void Scumm::o5_getDist() {
@@ -1305,10 +1314,13 @@ void Scumm::o5_getObjectOwner() {
 
 void Scumm::o5_getObjectState() {
 	if(_features & GF_SMALL_HEADER) {
-		if((getState(getVarOrDirectWord(0x80)) &0xF0 >>4) != (int)getVarOrDirectByte(0x40))
+		int a = getVarOrDirectWord(0x80);
+		int b = getVarOrDirectByte(0x40);
+		
+		if((getState(a) &0xF0 >>4) != b)
 			o5_jumpRelative();
 		else
-			ignoreScriptWord();
+			ignoreScriptWord();			
 	} else {
 		getResultPos();
 		setResult(getState(getVarOrDirectWord(0x80)));
@@ -1402,6 +1414,7 @@ void Scumm::o5_isGreaterEqual() {
 void Scumm::o5_isLess() {
 	int16 a = readVar(fetchScriptWord());
 	int16 b = getVarOrDirectWord(0x80);
+
 	if (b < a) ignoreScriptWord();
 	else o5_jumpRelative();
 }
@@ -1461,7 +1474,16 @@ void Scumm::o5_lights() {
 }
 
 void Scumm::o5_loadRoom() {
-	int room = getVarOrDirectByte(0x80);
+	int room;
+	
+	/* Begin: Autosave 
+	_saveLoadSlot = 0;
+	sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
+	_saveLoadFlag = 1;
+	_saveLoadCompatible = false;
+	End: Autosave */
+
+	room = getVarOrDirectByte(0x80);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
@@ -1470,6 +1492,13 @@ void Scumm::o5_loadRoomWithEgo() {
 	int obj, room, x,y;
 	Actor *a;
 
+	/* Begin: Autosave 
+	_saveLoadSlot = 0;
+	sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
+	_saveLoadFlag = 1;
+	_saveLoadCompatible = false;
+	End: Autosave */
+	
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
@@ -2394,7 +2423,7 @@ void Scumm::o5_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	warning("walk object to object");
+	// warning("walk object to object");
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
@@ -2534,6 +2563,9 @@ void Scumm::o5_pickupObjectOld() {
 	
 	if(getObjectIndex(obj) == -1)
 		return;
+
+	if(whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
+		return;								/* object twice */
 
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
 	addObjectToInventory(obj,_currentRoom);

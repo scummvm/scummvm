@@ -41,7 +41,8 @@
                                                 "\te<num>  - set music engine. see readme.txt for details\n" \
                                                 "\tr       - emulate roland mt32 instruments\n" \
                                                 "\tf       - fullscreen mode\n" \
-                                                "\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
+                                                "\tg       - graphics mode. 1 for 2xSai anti-aliasing\n" \
+												"\ta       - load autosave game (for recovering from crashes)\n"
 
 void GameDetector::parseCommandLine(int argc, char **argv) {
         #if !defined(__APPLE__CW)
@@ -63,11 +64,14 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
                         s++;
                         while (*s) {
                                 switch(tolower(*s)) {
+								case 'a':
+										_restore = true;
+										break;
                                 case 'b':
-                        if (*(s+1) == '\0')
-                                goto ShowHelpAndExit;
-                                        _bootParam = atoi(s+1);
-                                        goto NextArg;
+										if (*(s+1) == '\0')
+											goto ShowHelpAndExit;
+										_bootParam = atoi(s+1);
+										goto NextArg;
                                 case 'f':
                                         _fullScreen = true;
                                         break;

@@ -965,7 +965,12 @@ int main(int argc, char* argv[]) {
 	scumm->_noSubtitles = detector._noSubtitles;
 
 	scumm->delta=6;
-	
+	if (detector._restore) {
+		scumm->_saveLoadSlot = 0;
+		scumm->_saveLoadFlag = 2;
+		scumm->_saveLoadCompatible = false;
+	}
+
 	scumm->_gui = &gui;
 //	gui.init(scumm);
 	sound.initialize(scumm, &snd_driv);

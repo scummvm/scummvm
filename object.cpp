@@ -130,14 +130,17 @@ int Scumm::whereIsObject(int object) {
 }
 
 int Scumm::getObjectOrActorXY(int object) {
-	if (object < NUM_ACTORS) {
+	if (object < NUM_ACTORS)
 		return getActorXYPos(derefActorSafe(object, "getObjectOrActorXY"));
-	}
+	
 	switch(whereIsObject(object)) {
 	case WIO_NOT_FOUND:
 		return -1;
-	case WIO_INVENTORY:
-		return getActorXYPos(derefActorSafe(_objectOwnerTable[object],"getObjectOrActorXY(2)"));
+	case WIO_INVENTORY:		
+		if (_objectOwnerTable[object] < NUM_ACTORS)
+			return getActorXYPos(derefActorSafe(_objectOwnerTable[object],"getObjectOrActorXY(2)"));
+		else
+			return 0xFF;
 	}
 	getObjectXYPos(object);
 	return 0;
@@ -205,7 +208,7 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 
 	if (acta && actb && acta->room==actb->room && acta->room &&
 		acta->room != _currentRoom)
-			return 0xFF;
+			return 0;
 
 	if (getObjectOrActorXY(a)==-1)
 		return 0xFF;

@@ -261,8 +261,8 @@ void Scumm::executeScript() {
 	while (_currentScript != 0xFF) {
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
-		vm.slot[_currentScript].didexec = 1;
-		//debug(1, "[%X] %s()", _opcode, _opcodes_lookup[_opcode]);
+		vm.slot[_currentScript].didexec = 1;		
+		//debug(1, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op)();
 	}
@@ -678,7 +678,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	slot = getScriptSlot();
 
 	offs = getVerbEntrypoint(object, entry);
-        if (offs==0)
+    if (offs==0)
 		return;
 
 	vm.slot[slot].number = object;
