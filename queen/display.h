@@ -36,6 +36,12 @@ enum RenderingBuffer {
 };
 
 
+enum JoePalette {
+	JP_CLOTHES = 0,
+	JP_DRESS   = 1
+};
+
+
 struct Dynalum {
 	uint8 msk[50 * 160];
 	int8 lum[8 * 3];
@@ -64,12 +70,14 @@ public:
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
+	void palSetJoe(JoePalette pal); // changejoepal
 	void palFadeIn(int start, int end, uint16 roomNum);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
 	void palScroll(int start, int end);
 	void palCustomColors(uint16 roomNum); // check_colors
 	void palCustomScroll(uint16 roomNum); // check_pal_scroll
+	void palCustomFlash(); // flashspecial()
 
 	void screenMode(int comPanel, bool inCutaway);
 
@@ -132,6 +140,8 @@ private:
 	Dynalum _dynalum;
 	OSystem *_system;
 
+	static const uint8 PAL_JOE_CLOTHES[];
+	static const uint8 PAL_JOE_DRESS[];
 };
 
 

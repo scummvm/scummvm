@@ -256,11 +256,12 @@ tseek() 					*not needed*
 
 SCREEN
 ======
-changejoepal()
+changejoepal()				Display::palSetJoe
 check_colors()				Display::palCustomColors
 dynalum()					Display::dynalumUpdate
 fadein()					Display::palFadeIn
 fadeout()					Display::palFadeOut
+flashspecial()				Display::palCustomFlash
 palscroll()					Display::palScroll
 putcharacter()				TextRenderer::drawChar
 setpal()					Display::palSet
