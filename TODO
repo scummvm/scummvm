@@ -59,9 +59,10 @@ GUI
 * Maybe rearrange SCUMM in-game menu: essentially, only keep the headline
   ("How may I serve you?") and the buttons in it (maybe rename "Play"
   to "Resume" or so). I.e. remove the savegame list. Then, turn
-  "Save" and "Load" intro real buttons, which when clicked pop up a
+  "Save" and "Load" into real buttons, which when clicked pop up a
   new save or load dialog. That way we avoid all the confusing parts of the
-  current scheme in an elegant fashion. Drawback: Loading a game
+  current scheme in an elegant fashion. A similar approach is used by
+  StarCraft/WarCraft/Diablo/NWN/many others. Drawback: Loading a game
   would now require one click more.
 * Maybe rearrange Launcher dialog, too, to look a bit like the current
   SCUMM in-game menu: instead of two button rows, have a single button
