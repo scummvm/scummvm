@@ -319,18 +319,18 @@ void SimonState::handle_unk_hitarea(FillOrCopyStruct *fcs)
 
 void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode)
 {
+	HitArea *best_ha;
+	HitArea *ha = _hit_areas;
+	uint count = ARRAYSIZE(_hit_areas);
+	uint16 layer = 0;
+	uint16 x_ = x;
+	const uint16 y_ = y;
+
 	if (_game & GAME_SIMON2) {
 		if (_bit_array[4] & 0x8000 || y < 134) {
 			x += _x_scroll * 8;
 		}
 	}
-
-	HitArea *best_ha;
-	HitArea *ha = _hit_areas;
-	uint count = ARRAYSIZE(_hit_areas);
-	uint16 layer = 0;
-	const uint16 x_ = x;
-	const uint16 y_ = y;
 
 	best_ha = NULL;
 

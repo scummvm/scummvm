@@ -2883,8 +2883,6 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2)
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
-/* FIXME */
-/* Causes movement problems in Simon 2 games, often unable to move left */
 	if (_game & GAME_SIMON2) {
 		x += _x_scroll * 8;
 	}
