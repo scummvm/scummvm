@@ -1292,15 +1292,6 @@ void Scumm_v5::o5_equalZero() {
 		o5_jumpRelative();
 }
 
-void Scumm_v5::o5_isSoundRunning() {
-	int snd;
-	getResultPos();
-	snd = getVarOrDirectByte(0x80);
-	if (snd)
-		snd = _sound->isSoundRunning(snd);
-	setResult(snd);
-}
-
 void Scumm_v5::o5_jumpRelative() {
 	_scriptPointer += (int16)fetchScriptWord();
 }
@@ -1996,6 +1987,32 @@ void Scumm_v5::o5_setVarRange() {
 	} while (--a);
 }
 
+void Scumm_v5::o5_startMusic() {
+	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
+}
+
+void Scumm_v5::o5_startSound() {
+	_vars[VAR_MUSIC_TIMER] = 0;
+	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
+}
+
+void Scumm_v5::o5_stopMusic() {
+	_sound->stopAllSounds();
+}
+
+void Scumm_v5::o5_stopSound() {
+	_sound->stopSound(getVarOrDirectByte(0x80));
+}
+
+void Scumm_v5::o5_isSoundRunning() {
+	int snd;
+	getResultPos();
+	snd = getVarOrDirectByte(0x80);
+	if (snd)
+		snd = _sound->isSoundRunning(snd);
+	setResult(snd);
+}
+
 void Scumm_v5::o5_soundKludge() {
 	int items[16];
 	int i;
@@ -2018,10 +2035,6 @@ void Scumm_v5::o5_soundKludge() {
 	int num = getWordVararg(items);
 
 	_sound->soundKludge(items, num);
-}
-
-void Scumm_v5::o5_startMusic() {
-	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
 void Scumm_v5::o5_startObject() {
@@ -2054,15 +2067,6 @@ void Scumm_v5::o5_startScript() {
 	runScript(script, a, b, data);
 }
 
-void Scumm_v5::o5_startSound() {
-	_vars[VAR_MUSIC_TIMER] = 0;
-	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
-}
-
-void Scumm_v5::o5_stopMusic() {
-	_sound->stopAllSounds();
-}
-
 void Scumm_v5::o5_stopObjectCode() {
 	stopObjectCode();
 }
@@ -2079,10 +2083,6 @@ void Scumm_v5::o5_stopScript() {
 		stopObjectCode();
 	else
 		stopScriptNr(script);
-}
-
-void Scumm_v5::o5_stopSound() {
-	_sound->stopSound(getVarOrDirectByte(0x80));
 }
 
 void Scumm_v5::o5_stringOps() {
