@@ -120,6 +120,7 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_numCompItems = 0;
 	_curSample = -1;
 	_fileBundleId = -1;
+	_compInput = NULL;
 }
 
 BundleMgr::~BundleMgr() {
