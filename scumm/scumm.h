@@ -61,7 +61,8 @@ enum {
 	NUM_LOCALSCRIPT = 60,
 	NUM_SENTENCE = 6,
 	NUM_SHADOW_PALETTE = 8,
-	KEY_SET_OPTIONS = 3456 // WinCE
+	KEY_SET_OPTIONS = 3456, // WinCE
+	KEY_ALL_SKIP = 3457   // WinCE
 };
 
 /** SCUMM feature flags. */

@@ -1997,6 +1997,24 @@ void Scumm::processKbd() {
 		return;
 	}
 
+	if (_lastKeyHit == KEY_ALL_SKIP) {
+		// Skip cutscene
+		if (_insaneState) {
+			_videoFinished = true;
+			return;
+		}
+		else
+		if (vm.cutScenePtr[vm.cutSceneStackPointer])
+			_lastKeyHit = (uint16)VAR(VAR_CUTSCENEEXIT_KEY);
+		else 
+		// Skip talk 
+		if (_talkDelay > 0) 
+			_lastKeyHit = (uint16)VAR(VAR_TALKSTOP_KEY);
+		else
+		// Escape
+			_lastKeyHit = 27;
+	}
+
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
 		warning("Restart not implemented");
 		//restart();
