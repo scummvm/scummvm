@@ -171,18 +171,14 @@ int ScummEngine::getObjectIndex(int object) const {
 int ScummEngine::getObjectImageCount(int object) {
 	const byte *ptr;
 	const ImageHeader *imhd;
-	int count, objnum;
+	int objnum;
 
 	objnum = getObjectIndex(object);
-	if (objnum == -1)
-		error("getObjectImageCount: object %d not in memory", object);
+	assert(objnum != -1);
 
 	ptr = getOBIMFromObject(_objs[objnum]);
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
-
-	count = READ_LE_UINT32(&imhd->v8.image_count);
-	warning("getObjectImageCount: image count %d", count);
-	return count;
+	return (READ_LE_UINT32(&imhd->v8.image_count));
 }
 
 int ScummEngine::whereIsObject(int object) const {
@@ -476,7 +472,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	if (numstrip != 0) {
 		byte flags;
-		if (_version == 8) 
+		if ((_gameId == GID_CMI) && !(_features & GF_DEMO))
 			flags = ((od.flag & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 		else if (_features & GF_HUMONGOUS)
 			flags = ((od.flag & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
@@ -784,7 +780,8 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
 		// HACK: This is done sinec an angle doesn't fit into a byte (360 > 256)
 		od->actordir = toSimpleDir(1, READ_LE_UINT32(&imhd->v8.actordir));
-		od->flag = (byte) READ_LE_UINT32(&imhd->v8.flag);
+		if (!(_features & GF_DEMO))
+			od->flag = (byte)READ_LE_UINT32(&imhd->v8.flag);
 
 	} else if (_version == 7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
@@ -796,7 +793,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
 		od->width = READ_LE_UINT16(&imhd->v7.width);
 		od->height = READ_LE_UINT16(&imhd->v7.height);
-		od->actordir = (byte) READ_LE_UINT16(&imhd->v7.actordir);
+		od->actordir = (byte)READ_LE_UINT16(&imhd->v7.actordir);
 
 	} else if (_version == 6) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));

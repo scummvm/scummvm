@@ -1406,11 +1406,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
-	const byte *bmap_ptr;
-
-	warning("drawBMAPObject() called");
-
-	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
