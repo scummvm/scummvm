@@ -1304,6 +1304,13 @@ static void BlastText() {
 }
 
 #define STUB_FUNC(name) static void name() { stubWarning(#name); }
+STUB_FUNC(EnginePause)
+STUB_FUNC(EngineResume)
+STUB_FUNC(GetActorScale)
+STUB_FUNC(GetActorTurnRate)
+STUB_FUNC(SetActorOffsetYaw)
+STUB_FUNC(PutActorAtOrigin)
+STUB_FUNC(GetClippedPos)
 STUB_FUNC(RestoreIMuse)
 STUB_FUNC(SaveIMuse)
 STUB_FUNC(SetActorInvClipNode)
