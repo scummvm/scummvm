@@ -91,8 +91,8 @@ int MidiPlayer::open() {
 }
 
 void MidiPlayer::close() {
-	_system->lock_mutex (_mutex);
 	stop();
+	_system->lock_mutex (_mutex);
 	if (_driver)
 		_driver->close();
 	_driver = NULL;
