@@ -36,42 +36,24 @@
 
 byte *lpBackBuffer;
 
-/*
-static LPDIRECTDRAW		lpDraw;				// DirectDraw object
-LPDIRECTDRAW2			lpDD2;				// DirectDraw2 object
-LPDIRECTDRAWSURFACE		lpBackBuffer;		// DirectDraw back surface
-LPDIRECTDRAWPALETTE		lpPalette = NULL;	// DirectDraw palette
-*/
-
-
 // Game screen metrics
 int16			screenDeep;
 int16			screenWide;
 
 
 // Set to 1 if vertical blank status cannot be checked.
-static BOOL		noVbl = 0;
 BOOL			bFullScreen = 0;
 
 
 
 // Scroll variables.  scrollx and scrolly hold the current scroll position, 
-//	and scrollxTarget and scrollyTarget are the target position for the end
-//	of the game cycle.
 
 int16			scrollx;
 int16			scrolly;
-static	int16	scrollxTarget;
-static	int16	scrollyTarget;
-static	int16	scrollxOld;
-static	int16	scrollyOld;
-static	int16	failCount = 0;
-//static	DDCAPS	driverCaps;
 
 int32			renderCaps = 0;
 int32			dxHalCaps = 0;
 int32			dxHelCaps = 0;
-//DDCOLORKEY		blackColorKey;
 
 void FatalDirectDrawError(char *str, int32 code, char *filename, int32 line) {
 	char string[256];
@@ -180,35 +162,6 @@ int32 GetRenderType(void)
 	}
 }
 
-int32 WaitForVbl(void)
-{
-	warning("stub WaitForVbl");
-/*
-	BOOL		vbl;
-	HRESULT		hr;
-	uint32		counter = 0;
-
-
-	while(1)
-	{
-		hr = IDirectDraw2_GetVerticalBlankStatus(lpDD2, &vbl);
-		
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Cannot get vertical blank status", hr);
-			return(hr);
-		}
-
-		if (vbl || noVbl)
-			break;
-		
-		if (++counter == 250000)
-			noVbl = 1;
-	}
-*/	
-	return(RD_OK);
-
-}
 
 int32 EraseBackBuffer( void ) {
 	memset(lpBackBuffer + MENUDEEP * screenWide, 0, screenWide * RENDERDEEP);
@@ -422,121 +375,7 @@ void CloseTextObject(_movieTextObject *obj) {
 void DrawTextObject(_movieTextObject *obj) {
 	if (obj->textSprite && textSurface)
 		DrawSurface(obj->textSprite, textSurface);
-	
-/*
-	HRESULT				hr;
-	RECT				rd, rs;
-	LPDIRECTDRAWSURFACE	dds;
-	_spriteInfo *s = obj->textSprite;
-	char myString[256];
-
-
-	dds = (LPDIRECTDRAWSURFACE) textSurface;
-
-	// Set startx and starty for the screen buffer		ADDED THIS!
-	if (s->type & RDSPR_DISPLAYALIGN)
-		rd.top = s->y;
-	else
-		rd.top = s->y - scrolly;
-		
-	if (s->type & RDSPR_DISPLAYALIGN)
-		rd.left = s->x;
-	else
-		rd.left = s->x - scrollx;
-
-	rs.left = 0;
-	rs.right = s->w;
-	rs.top = 0;
-	rs.bottom = s->h;
-	if (s->scale & 0xff)
-	{
-		rd.right = rd.left + s->scaledWidth;
-		rd.bottom = rd.top + s->scaledHeight;
-		// Do clipping
-		if (rd.top < 40)
-		{
-			rs.top = (40 - rd.top) * 256 / s->scale;
-			rd.top = 40;
-		}
-		if (rd.bottom > 440)
-		{
-			rs.bottom -= ((rd.bottom - 440) * 256 / s->scale);
-			rd.bottom = 440;
-		}
-		if (rd.left < 0)
-		{
-			rs.left = (0 - rd.left) * 256 / s->scale;
-			rd.left = 0;
-		}
-		if (rd.right > 640)
-		{
-			rs.right -= ((rd.right - 640) * 256 / s->scale);
-			rd.right = 640;
-		}
-	}
-	else
-	{
-		rd.right = rd.left + s->w;
-		rd.bottom = rd.top + s->h;
-
-		// Do clipping
-		if (rd.top < 40)
-		{
-			rs.top = 40 - rd.top;
-			rd.top = 40;
-		}
-		if (rd.bottom > 440)
-		{
-			rs.bottom -= (rd.bottom - 440);
-			rd.bottom = 440;
-		}
-		if (rd.left < 0)
-		{
-			rs.left = 0 - rd.left;
-			rd.left = 0;
-		}
-		if (rd.right > 640)
-		{
-			rs.right -= (rd.right - 640);
-			rd.right = 640;
-		}
-	}
-
-	if (s->type & RDSPR_TRANS)
-	{
-		hr = IDirectDrawSurface2_Blt(lpPrimarySurface, &rd, dds, &rs, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
-		if (hr)
-		{
-			if (hr == DDERR_SURFACELOST)
-				hr = RDERR_SURFACELOST;
-			else if (dxHalCaps & RDCAPS_BLTSTRETCH)
-				dxHalCaps -= RDCAPS_BLTSTRETCH;
-			else
-			{
-				sprintf(myString, "Cannot print smacker text x%d y%d w%d h%d s%d t%d\n", s->x, s->y, s->w, s->h, s->scale, s->type);
-				DirectDrawError(myString, hr);
-			}
-		}
-	}
-	else
-	{
-		hr = IDirectDrawSurface2_Blt(lpPrimarySurface, &rd, dds, &rs, DDBLT_WAIT, NULL);
-		if (hr)
-		{
-			if (hr == DDERR_SURFACELOST)
-				hr = RDERR_SURFACELOST;
-			else
-			{
-				sprintf(myString, "Cannot print smacker text x%d y%d w%d h%d s%d t%d\n", s->x, s->y, s->w, s->h, s->scale, s->type);
-				DirectDrawError(myString, hr);
-			}
-		}
-	}
-*/
 }
-
-
-extern uint8 musicMuted;
 
 int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 	warning("semi-stub PlaySmacker %s", filename);
@@ -651,61 +490,5 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		UploadRect(&r);
 	}
 
-	return(RD_OK);
-}
-
-void GetDrawStatus(_drvDrawStatus *s)
-{
-//	s->hwnd				= hwnd;
-//	s->lpDraw			= lpDraw;
-//	s->lpDD2			= lpDD2;
-//	s->lpPrimarySurface = lpPrimarySurface;
-	s->lpBackBuffer		= lpBackBuffer;
-//	s->lpPalette		= lpPalette;
-	s->screenDeep		= screenDeep;
-	s->screenWide		= screenWide;
-	s->scrollx			= scrollx;
-	s->scrolly			= scrolly;
-	s->scrollxTarget	= scrollxTarget;
-	s->scrollyTarget	= scrollyTarget;
-	s->scrollxOld		= scrollxOld;
-	s->scrollyOld		= scrollyOld;
-	s->failCount		= failCount;
-	s->renderCaps		= renderCaps;
-	s->dxHalCaps		= dxHalCaps;
-	s->dxHelCaps		= dxHelCaps;
-	s->noVbl			= noVbl;
-	s->bFullScreen		= bFullScreen;
-	
-//	memcpy(&s->driverCaps,	 &driverCaps,	sizeof(DDCAPS));
-//	memset(&blackColorKey, 0, sizeof(DDCOLORKEY));
-}
-
-
-
-void SetDrawStatus(_drvDrawStatus *s)
-{
-//	hwnd			= s->hwnd;
-//	lpDraw			= s->lpDraw;
-//	lpDD2			= s->lpDD2;
-//	lpPrimarySurface= s->lpPrimarySurface;
-//	lpBackBuffer	= s->lpBackBuffer;
-//	lpPalette		= s->lpPalette;
-	screenDeep		= s->screenDeep;
-	screenWide		= s->screenWide;
-	scrollx			= s->scrollx;
-	scrolly			= s->scrolly;
-	scrollxTarget	= s->scrollxTarget;
-	scrollyTarget	= s->scrollyTarget;
-	scrollxOld		= s->scrollxOld;
-	scrollyOld		= s->scrollyOld;
-	failCount		= s->failCount;
-//	renderCaps		= s->renderCaps;
-	dxHalCaps		= s->dxHalCaps;
-	dxHelCaps		= s->dxHelCaps;
-	noVbl			= s->noVbl;
-	bFullScreen		= s->bFullScreen;
-	
-//	memcpy(&driverCaps,	 &s->driverCaps,	sizeof(DDCAPS));
-//	memset(&blackColorKey, 0, sizeof(DDCOLORKEY));
+	return RD_OK;
 }

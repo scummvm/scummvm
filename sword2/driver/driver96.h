@@ -309,12 +309,6 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 WaitForVbl(void)
-//
-//	This function returns when the video hardware is in vertical retrace.
-//
-//	---------------------------------------------------------------------------
-//
 //	void InterpretDirectDrawError(int32 error)
 //
 //	This function is passed the pointer to a direct draw error code, and
@@ -1004,12 +998,7 @@
 #ifndef DRIVER96_H
 #define DRIVER96_H
 
-//#define DIRECTDRAW_VERSION 0x0300
-
-//#include <windows.h>
-//#include <windowsx.h>
 #include <limits.h>
-//#include <mmsystem.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -1017,15 +1006,10 @@
 #include "base/engine.h" // for warning()
 #include "common/system.h"
 #include "common/rect.h"
-//#include "ddraw.h"
-//#include "dsound.h"
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
 
 //
 //	Defines
@@ -1316,47 +1300,6 @@ typedef	struct
 	char	filler[58];
 } _pcxHeader;
 
-
-//  This is the structure which is used to set and
-//  retrieve the direct draw drivers global variables.
-
-typedef struct
-{	
-//	HWND				hwnd;
-//	LPDIRECTDRAW		lpDraw;
-//	LPDIRECTDRAW2		lpDD2;
-//	Surface				*lpPrimarySurface;
-	byte				*lpBackBuffer;
-//	LPDIRECTDRAWPALETTE	lpPalette;
-	int16				screenDeep;
-	int16				screenWide;
-	int16				scrollx;
-	int16				scrolly;
-	int16				scrollxTarget;
-	int16				scrollyTarget;
-	int16				scrollxOld;
-	int16				scrollyOld;
-	int16				failCount;
-	int32				renderCaps;
-	int32				dxHalCaps;
-	int32				dxHelCaps;
-	BOOL				noVbl;
-	BOOL				bFullScreen;
-//	DDCAPS				driverCaps;
-//	DDCOLORKEY			blackColorKey;
-} _drvDrawStatus;
-
-//  This is the structure which is used to retrieve
-//  the keyboard driver bits.
-
-typedef struct
-{
-	uint8 *pBacklog;
-	uint8 *pPointer;
-	char  *pBuffer;
-} _drvKeyStatus;
-
-
 //
 //	Function Prototypes
 //	-------------------
@@ -1366,7 +1309,6 @@ typedef struct
 //  Display functions - from d_draw.c
 //-----------------------------------------------------------------------------
 extern int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType);
-extern int32 WaitForVbl(void);
 extern int32 EraseBackBuffer(void);
 extern void SetTransFx(void);
 extern void ClearTransFx(void);
@@ -1376,8 +1318,6 @@ extern void ClearShadowFx(void);
 extern void SetShadowFx(void);
 extern int32 GetRenderType(void);
 extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 *musicOut);
-extern void  GetDrawStatus(_drvDrawStatus *s);
-extern void  SetDrawStatus(_drvDrawStatus *s);
 extern int32 GrabScreenShot(void);
 //-----------------------------------------------------------------------------
 
@@ -1430,7 +1370,6 @@ extern void ResetRenderEngine(void);
 //-----------------------------------------------------------------------------
 extern BOOL  KeyWaiting(void);
 extern int32 ReadKey(char *key);
-extern void  GetKeyStatus(_drvKeyStatus *s);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -1519,10 +1458,8 @@ extern uint8	palCopy[256][4];	// Current palette.
 
 extern long int myTimers[10][2];
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif
