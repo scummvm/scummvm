@@ -49,6 +49,8 @@ public:
 
 private:
 	SkyDisk *_skyDisk;
+	uint8 _soundsTotal;
+	uint16 _sfxBaseOfs;
     uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
 };

@@ -24,7 +24,6 @@
 #include "sky/struc.h"
 
 #define SOUND_FILE_BASE 60203
-#define SFX_BASE 0xA60
 
 SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_skyDisk = pDisk;
@@ -71,8 +70,14 @@ void SkySound::loadSection(uint8 pSection) {
 	_ingameSound = 0;
 	if (_soundData) free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);
-	_sampleRates = _soundData + 0xA4E;
-	_sfxInfo = _soundData + 0xA60;
+	if ((_soundData[0x7E] != 0x3C) || (_soundData[0xA5] != 0x8D) || (_soundData[0xA6] != 0x1E) ||
+		(_soundData[0xAD] != 0x8D) || (_soundData[0xAE] != 0x36))
+		error("Unknown sounddriver version!\n");
+	_soundsTotal = _soundData[0x7F];
+	uint16 sRateTabOfs = (_soundData[0xA8] << 8) | _soundData[0xA7];
+	_sfxBaseOfs = (_soundData[0xB0] << 8) | _soundData[0xAF];
+	_sampleRates = _soundData + sRateTabOfs;
+	_sfxInfo = _soundData + _sfxBaseOfs;
 }
 
 void SkySound::playSound(uint16 sound, uint16 volume) {
@@ -82,7 +87,7 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 		return;
 	}
 	
-	if (sound > 2) {
+	if (sound > _soundsTotal) {
 		if (sound & 0x80) warning("SkySound::playSound(%04X, %04X) not implemented.\n", sound, volume);
 		else warning("SkySound::playSound(%04X, %04X) ignored.\n", sound, volume);
 		return ;
@@ -94,7 +99,7 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	// note: all those tables are big endian. Don't ask me why. *sigh*
 	uint16 sampleRate = (_sampleRates[sound << 2] << 8) | _sampleRates[(sound << 2) | 1];
 	uint16 dataOfs = ((_sfxInfo[sound << 3] << 8) | _sfxInfo[(sound << 3) | 1]) << 4;
-	dataOfs += SFX_BASE;
+	dataOfs += _sfxBaseOfs;
 	uint16 dataSize = (_sfxInfo[(sound << 3) | 2] << 8) | _sfxInfo[(sound << 3) | 3];
 	uint16 dataLoop = (_sfxInfo[(sound << 3) | 6] << 8) | _sfxInfo[(sound << 3) | 7];
 
