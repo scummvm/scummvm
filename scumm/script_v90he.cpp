@@ -1218,15 +1218,15 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				int code = *p;
 				if (code == 0) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_classFlags_2(i);					
+						spriteInfoSet_resetClassFlags(i);					
 					}
 				} else if (code & 0x80) {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_classFlags_1(i, code & 0x7F, 1);
+						spriteInfoSet_setClassFlags(i, code & 0x7F, 1);
 					}
 				} else {
 					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						spriteInfoSet_classFlags_1(i, code & 0x7F, 0);
+						spriteInfoSet_setClassFlags(i, code & 0x7F, 0);
 					}
 				}
 				--p;
