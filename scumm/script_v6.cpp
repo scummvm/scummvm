@@ -2498,7 +2498,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			_messagePtr = getStringAddressVar(VAR_STRING2DRAW);
 			message = _msgPtrToAdd = buf_input;
 			addMessageToStack(_messagePtr);
-			if (_gameId == GID_DIG) {
+			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
 				byte buf_trans[300];
 				char *t_ptr = (char *)buf_input;
 				buf_output[0] = 0;
