@@ -22,9 +22,11 @@
 
 /* The bare pure X11 port done by Lionel 'BBrox' Ulmer */
 
-#include "stdafx.h"
-#include "scumm.h"
-#include "gameDetector.h"
+#include "common/util.h"
+#include "common/engine.h"	// Only #included for error() and warning()
+
+#include <stdio.h>
+#include <assert.h>
 
 #include <sys/time.h>
 #include <unistd.h>
@@ -35,10 +37,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
-#ifdef USE_XV_SCALING
-#include <X11/extensions/Xv.h>
-#include <X11/extensions/Xvlib.h>
-#endif
 #include <linux/soundcard.h>
 
 #include <sched.h>
@@ -123,6 +121,14 @@ public:
 	void unlock_mutex(void *mutex);
 	void delete_mutex(void *mutex);
 
+        // Overlay handling for the new menu system
+	void show_overlay();
+	void hide_overlay();
+	void clear_overlay();
+	void grab_overlay(int16 *, int);
+	void copy_rect_overlay(const int16 *, int, int, int, int, int);
+
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
@@ -133,31 +139,26 @@ private:
 	} dirty_square;
 
 	void create_empty_cursor();
+	void draw_mouse(dirty_square *dout);
 	void undraw_mouse();
-	void draw_mouse();
 	void update_screen_helper(const dirty_square * d, dirty_square * dout);
+	void blit_convert(const dirty_square * d, uint16 *dst, int pitch);
 
-	unsigned char *local_fb;
+	uint8 *local_fb;
+	uint16 *local_fb_overlay;
+	bool _overlay_visible;
 
 	int window_width, window_height;
 	int fb_width, fb_height;
 	int scumm_x, scumm_y;
 
-#ifdef USE_XV_SCALING
-	unsigned int *palette;
-#else
-	unsigned short *palette;
-#endif
+	uint16 *palette;
 	bool _palette_changed;
 	Display *display;
 	int screen;
 	Window window;
 	GC black_gc;
-#ifdef USE_XV_SCALING
-	XvImage *image;
-#else
 	XImage *image;
-#endif
 	pthread_t sound_thread;
 
 	int fake_right_mouse;
@@ -167,9 +168,7 @@ private:
 	struct timeval start_time;
 
 	enum {
-		MAX_NUMBER_OF_DIRTY_SQUARES = 32,
-		BAK_WIDTH = 40,
-		BAK_HEIGHT = 40
+		MAX_NUMBER_OF_DIRTY_SQUARES = 32
 	};
 	dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
 	int num_of_dirty_square;
@@ -181,11 +180,10 @@ private:
 	} mouse_state;
 	mouse_state old_state, cur_state;
 	const byte *_ms_buf;
-	byte _ms_backup[BAK_WIDTH * BAK_HEIGHT];
-	bool _mouse_drawn;
 	bool _mouse_visible;
+	bool _mouse_state_changed;
 
-	unsigned int _timer_duration, _timer_next_expiry;
+	uint32 _timer_duration, _timer_next_expiry;
 	bool _timer_active;
 	int (*_timer_callback) (int);
 };
@@ -203,7 +201,7 @@ static void *sound_and_music_thread(void *params)
 {
 	/* Init sound */
 	int sound_fd, param, frag_size;
-	unsigned char sound_buffer[FRAG_SIZE];
+	uint8 sound_buffer[FRAG_SIZE];
 	OSystem::SoundProc *sound_proc = ((THREAD_PARAM *) params)->sound_proc;
 	void *proc_param = ((THREAD_PARAM *) params)->param;
 
@@ -263,7 +261,7 @@ static void *sound_and_music_thread(void *params)
 
 	sched_yield();
 	while (1) {
-		unsigned char *buf = (unsigned char *)sound_buffer;
+		uint8 *buf = (uint8 *)sound_buffer;
 		int size, written;
 
 		sound_proc(proc_param, (byte *)sound_buffer, FRAG_SIZE);
@@ -325,7 +323,9 @@ OSystem_X11::OSystem_X11()
 	new_shake_pos = 0;
 	_palette_changed = false;
 	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
-
+	_overlay_visible = false;
+	_mouse_state_changed = true;
+	
 	/* For the window title */
 	sprintf(buf, "ScummVM");
 
@@ -351,13 +351,13 @@ OSystem_X11::OSystem_X11()
 	wm_hints->initial_state = NormalState;
 	XStringListToTextProperty(&name, 1, &window_name);
 	XSetWMProperties(display, window, &window_name, &window_name,
-									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
-									 wm_hints, NULL /* class hints */ );
+	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+	                 wm_hints, NULL /* class hints */ );
 	XFree(wm_hints);
 
 	XSelectInput(display, window,
-							 ExposureMask | KeyPressMask | KeyReleaseMask |
-							 PointerMotionMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
+	             ExposureMask | KeyPressMask | KeyReleaseMask |
+	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
 
 	values.foreground = BlackPixel(display, screen);
 	black_gc = XCreateGC(display, window, GCForeground, &values);
@@ -388,7 +388,7 @@ uint32 OSystem_X11::get_msecs()
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 	return (uint32)(((current_time.tv_sec - start_time.tv_sec) * 1000) +
-									((current_time.tv_usec - start_time.tv_usec) / 1000));
+	                ((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
 void OSystem_X11::init_size(uint w, uint h)
@@ -407,15 +407,8 @@ void OSystem_X11::init_size(uint w, uint h)
 
 		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
 	}
-#ifdef USE_XV_SCALING
-	image = XvShmCreateImage(display, 65, 0x03, 0, fb_width, fb_height, &shminfo);
-	shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0700);
-#else
-	image =
-		XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width,
-										fb_height);
+	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width, fb_height);
 	shminfo.shmid = shmget(IPC_PRIVATE, fb_width * fb_height * 2, IPC_CREAT | 0700);
-#endif
 	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
 	image->data = shminfo.shmaddr;
 	shminfo.readOnly = False;
@@ -426,12 +419,9 @@ void OSystem_X11::init_size(uint w, uint h)
 	shmctl(shminfo.shmid, IPC_RMID, 0);
 
 	/* Initialize the 'local' frame buffer and the palette */
-	local_fb = (unsigned char *)calloc(fb_width * fb_height, sizeof(unsigned char));
-#ifdef USE_XV_SCALING
-	palette = (unsigned int *)calloc(256, sizeof(unsigned int));
-#else
-	palette = (unsigned short *)calloc(256, sizeof(unsigned short));
-#endif
+	local_fb = (uint8 *)calloc(fb_width * fb_height, sizeof(uint8));
+	local_fb_overlay = (uint16 *)calloc(fb_width * fb_height, sizeof(uint16));
+	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
 bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format)
@@ -454,18 +444,10 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format)
 void OSystem_X11::set_palette(const byte *colors, uint start, uint num)
 {
 	const byte *data = colors;
-#ifdef USE_XV_SCALING
-	unsigned int *pal = &(palette[start]);
-#else
-	unsigned short *pal = &(palette[start]);
-#endif
+	uint16 *pal = &(palette[start]);
 
 	do {
-#ifdef USE_XV_SCALING
-		*pal++ = (data[0] << 16) | (data[1] << 8) | data[2];
-#else
 		*pal++ = ((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
-#endif
 		data += 4;
 		num--;
 	} while (num > 0);
@@ -484,7 +466,7 @@ void OSystem_X11::set_palette(const byte *colors, uint start, uint num)
 
 void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h)
 {
-	unsigned char *dst;
+	uint8 *dst;
 
 	if (y < 0) {
 		h += y;
@@ -499,9 +481,6 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 
 	if (h <= 0)
 		return;
-
-	if (_mouse_drawn)
-		undraw_mouse();
 
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
@@ -548,23 +527,35 @@ void OSystem_X11::move_screen(int dx, int dy, int height) {
 	}
 }
 
-
-void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout)
+void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch)
 {
+	uint8 *ptr_src  = local_fb + (fb_width * d->y) + d->x;
+	uint16 *ptr_dst = dst + (fb_width * d->y) + d->x;
 	int x, y;
-	unsigned char *ptr_src = local_fb + (fb_width * d->y) + d->x;
-#ifdef USE_XV_SCALING
-	unsigned int *ptr_dst = ((unsigned int *)image->data) + (fb_width * d->y) + d->x;
-#else
-	unsigned short *ptr_dst = ((unsigned short *)image->data) + (fb_width * d->y) + d->x;
-#endif
 
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
 		}
-		ptr_dst += fb_width - d->w;
+		ptr_dst += pitch - d->w;
 		ptr_src += fb_width - d->w;
+	}
+}
+
+void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout)
+{
+	if (_overlay_visible == false) {
+		blit_convert(d, (uint16 *) image->data, fb_width);
+	} else {
+		uint16 *ptr_src = local_fb_overlay + (fb_width * d->y) + d->x;
+		uint16 *ptr_dst = ((uint16 *)image->data) + (fb_width * d->y) + d->x;
+		int y;
+		
+		for (y = 0; y < d->h; y++) {
+			memcpy(ptr_dst, ptr_src, d->w * sizeof(uint16));
+			ptr_dst += fb_width;
+			ptr_src += fb_width;
+		}	
 	}
 	if (d->x < dout->x)
 		dout->x = d->x;
@@ -582,10 +573,7 @@ void OSystem_X11::update_screen()
 	bool need_redraw = false;
 	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
 	dirty_square dout = { fb_width, fb_height, 0, 0 };
-
-	/* First make sure the mouse is drawn, if it should be drawn. */
-	draw_mouse();
-
+	
 	if (_palette_changed) {
 		full_redraw = true;
 		num_of_dirty_square = 0;
@@ -598,7 +586,7 @@ void OSystem_X11::update_screen()
 	if (full_redraw) {
 		update_screen_helper(&ds_full, &dout);
 		need_redraw = true;
-	} else if (num_of_dirty_square > 0) {
+	} else if ((num_of_dirty_square > 0) || (_mouse_state_changed == true)) {
 		need_redraw = true;
 		while (num_of_dirty_square > 0) {
 			num_of_dirty_square--;
@@ -606,27 +594,23 @@ void OSystem_X11::update_screen()
 		}
 	}
 
+	/* Then 'overlay' the mouse on the image */
+	draw_mouse(&dout);
+
 	if (current_shake_pos != new_shake_pos) {
 		/* Redraw first the 'black borders' in case of resize */
 		if (current_shake_pos < new_shake_pos)
 			XFillRectangle(display, window, black_gc, 0, current_shake_pos, window_width, new_shake_pos);
 		else
 			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos,
-										 window_width, window_height - new_shake_pos);
-#ifndef USE_XV_SCALING
+			               window_width, window_height - new_shake_pos);
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-								 0, 0, scumm_x, scumm_y + new_shake_pos, fb_width, fb_height, 0);
-#endif
+		             0, 0, scumm_x, scumm_y + new_shake_pos, fb_width, fb_height, 0);
 		current_shake_pos = new_shake_pos;
 	} else if (need_redraw == true) {
-#ifdef USE_XV_SCALING
-		XvShmPutImage(display, 65, window, DefaultGC(display, screen), image,
-									0, 0, fb_width, fb_height, 0, 0, window_width, window_height, 0);
-#else
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-								 dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
-								 dout.w - dout.x, dout.h - dout.y, 0);
-#endif
+		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
+		             dout.w - dout.x, dout.h - dout.y, 0);
 		XFlush(display);
 	}
 }
@@ -639,10 +623,10 @@ bool OSystem_X11::show_mouse(bool visible)
 	bool last = _mouse_visible;
 	_mouse_visible = visible;
 
-	if (visible)
-		draw_mouse();
-	else
+	if ((visible == false) && (_mouse_state_changed == false)) {
 		undraw_mouse();
+	}
+	_mouse_state_changed = true;
 
 	return last;
 }
@@ -652,11 +636,17 @@ void OSystem_X11::quit()
 	exit(0);
 }
 
-void OSystem_X11::draw_mouse()
+void OSystem_X11::undraw_mouse()
 {
-	if (_mouse_drawn || !_mouse_visible)
+	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
+}
+
+void OSystem_X11::draw_mouse(dirty_square *dout)
+{
+	_mouse_state_changed = false;
+
+	if (_mouse_visible == false)
 		return;
-	_mouse_drawn = true;
 
 	int xdraw = cur_state.x - cur_state.hot_x;
 	int ydraw = cur_state.y - cur_state.hot_y;
@@ -664,14 +654,9 @@ void OSystem_X11::draw_mouse()
 	int h = cur_state.h;
 	int real_w;
 	int real_h;
-	int real_h_2;
 
-	byte *dst;
-	byte *dst2;
+	uint16 *dst;
 	const byte *buf = _ms_buf;
-	byte *bak = _ms_backup;
-
-	assert(w <= BAK_WIDTH && h <= BAK_HEIGHT);
 
 	if (ydraw < 0) {
 		real_h = h + ydraw;
@@ -688,62 +673,41 @@ void OSystem_X11::draw_mouse()
 		real_w = (xdraw + w) > fb_width ? (fb_width - xdraw) : w;
 	}
 
-	dst = local_fb + (ydraw * fb_width) + xdraw;
-	dst2 = dst;
+	dst = ((uint16 *) image->data) + (ydraw * fb_width) + xdraw;
 
 	if ((real_h == 0) || (real_w == 0)) {
-		_mouse_drawn = false;
 		return;
 	}
 
-	AddDirtyRec(xdraw, ydraw, real_w, real_h);
+	
+	if (xdraw < dout->x)
+		dout->x = xdraw;
+	if (ydraw < dout->y)
+		dout->y = ydraw;
+	if ((xdraw + real_w) > dout->w)
+		dout->w = xdraw + real_w;
+	if ((ydraw + real_h) > dout->h)
+		dout->h = ydraw + real_h;
+
 	old_state.x = xdraw;
 	old_state.y = ydraw;
 	old_state.w = real_w;
 	old_state.h = real_h;
 
-	real_h_2 = real_h;
-	while (real_h_2 > 0) {
-		memcpy(bak, dst, real_w);
-		bak += BAK_WIDTH;
-		dst += fb_width;
-		real_h_2--;
-	}
 	while (real_h > 0) {
 		int width = real_w;
 		while (width > 0) {
 			byte color = *buf;
 			if (color != 0xFF) {
-				*dst2 = color;
+				*dst = palette[color];
 			}
 			buf++;
-			dst2++;
+			dst++;
 			width--;
 		}
 		buf += w - real_w;
-		dst2 += fb_width - real_w;
+		dst += fb_width - real_w;
 		real_h--;
-	}
-}
-
-void OSystem_X11::undraw_mouse()
-{
-	if (!_mouse_drawn)
-		return;
-	_mouse_drawn = false;
-
-	int old_h = old_state.h;
-
-	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
-
-	byte *dst = local_fb + (old_state.y * fb_width) + old_state.x;
-	byte *bak = _ms_backup;
-
-	while (old_h > 0) {
-		memcpy(dst, bak, old_state.w);
-		bak += BAK_WIDTH;
-		dst += fb_width;
-		old_h--;
 	}
 }
 
@@ -752,7 +716,10 @@ void OSystem_X11::set_mouse_pos(int x, int y)
 	if ((x != cur_state.x) || (y != cur_state.y)) {
 		cur_state.x = x;
 		cur_state.y = y;
-		undraw_mouse();
+		if (_mouse_state_changed == false) {
+			undraw_mouse();
+		}
+		_mouse_state_changed = true;
 	}
 }
 
@@ -764,11 +731,20 @@ void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 	cur_state.hot_y = hotspot_y;
 	_ms_buf = (byte *)buf;
 
-	undraw_mouse();
+	if (_mouse_state_changed == false) {
+		undraw_mouse();
+	}
+	_mouse_state_changed = true;
 }
 
 void OSystem_X11::set_shake_pos(int shake_pos)
 {
+	if (new_shake_pos != shake_pos) {
+		if (_mouse_state_changed == false) {
+			undraw_mouse();
+		}
+		_mouse_state_changed = true;
+	}
 	new_shake_pos = shake_pos;
 }
 
@@ -1026,4 +1002,42 @@ void OSystem_X11::delete_mutex(void *mutex)
 {
 	pthread_mutex_destroy((pthread_mutex_t *) mutex);
 	free(mutex);
+}
+
+void OSystem_X11::show_overlay() {
+	_overlay_visible = true;
+}
+
+void OSystem_X11::hide_overlay() {
+	_overlay_visible = false;
+	_palette_changed = true; // This is to force a full redraw to hide the overlay
+}
+
+void OSystem_X11::clear_overlay() {
+	if (_overlay_visible == false)
+		return;
+	dirty_square d = { 0, 0, fb_width, fb_height };
+	AddDirtyRec(0, 0, fb_width, fb_height);
+	blit_convert(&d, local_fb_overlay, fb_width);
+}
+
+void OSystem_X11::grab_overlay(int16 *dest, int pitch) {
+	if (_overlay_visible == false)
+		return;
+	
+	dirty_square d = { 0, 0, fb_width, fb_height };
+	blit_convert(&d, (uint16 *) dest, pitch);
+}
+
+void OSystem_X11::copy_rect_overlay(const int16 *src, int pitch, int x, int y, int w, int h) {
+	if (_overlay_visible == false)
+		return;
+	uint16 *dst = local_fb_overlay + x + (y * fb_width);
+	AddDirtyRec(x, y, w, h);
+	while (h > 0) {
+		memcpy(dst, src, w * sizeof(*dst));
+		dst += fb_width;
+		src += pitch;
+		h--;
+	}
 }
