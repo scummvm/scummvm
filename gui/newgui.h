@@ -56,7 +56,7 @@ using Graphics::kTextAlignRight;
 
 // Simple dialog stack class
 // Anybody nesting dialogs deeper than 4 is mad anyway
-typedef Common::Stack<Dialog *> DialogStack;
+typedef Common::FixedStack<Dialog *> DialogStack;
 
 
 /**

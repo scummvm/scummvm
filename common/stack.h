@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include <assert.h>
+#include "common/array.h"
 
 namespace Common {
 
@@ -30,17 +31,20 @@ namespace Common {
  * Extremly simple fixed size stack class.
  */
 template <class T, int MAX_SIZE = 10>
-class Stack {
+class FixedStack {
 protected:
 	T	_stack[MAX_SIZE];
 	int	_size;
 public:
-	Stack<T, MAX_SIZE>() : _size(0) {}
+	FixedStack<T, MAX_SIZE>() : _size(0) {}
 	
 	bool empty() const {
 		return _size <= 0;
 	}
-	void push(T x) {
+	void clear() {
+		_size = 0;
+	}
+	void push(const T& x) {
 		assert(_size < MAX_SIZE);
 		_stack[_size++] = x;
 	}
@@ -59,6 +63,44 @@ public:
 	}
 	T operator [](int i) {
 		assert(0 <= i && i < MAX_SIZE);
+		return _stack[i];
+	}
+};
+
+
+/**
+ * Variable size stack class, implemented using our Array class.
+ */
+template <class T>
+class Stack {
+protected:
+	Array<T>	_stack;
+public:
+	Stack<T>() {}
+	
+	bool empty() const {
+		return _stack.isEmpty();
+	}
+	void clear() {
+		_stack.clear();
+	}
+	void push(const T& x) {
+		_stack.push_back(x);
+	}
+	T top() const {
+		const int s = size();
+		if (s > 0)
+			return _stack[s - 1];
+		else
+			return 0;
+	}
+	void pop() {
+		_stack.remove_at(size() - 1);
+	}
+	int size() const {
+		return _stack.size();
+	}
+	T operator [](int i) {
 		return _stack[i];
 	}
 };
