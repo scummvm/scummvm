@@ -160,6 +160,9 @@ void ScummEngine_v6::setupScummVars() {
 	if (!(_features & GF_HUMONGOUS)) {
 		VAR_SAVELOAD_SCRIPT = 61;
 		VAR_SAVELOAD_SCRIPT2 = 62;
+		VAR_LEFTBTN_DOWN = 74;
+		VAR_RIGHTBTN_DOWN = 75;
+
 	}
 
 	VAR_V6_EMSSPACE = 76;
