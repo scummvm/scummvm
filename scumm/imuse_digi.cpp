@@ -1047,7 +1047,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
-		} else if (_scumm->_gameId == GID_CMIDEMO) {
+		} else if ((_scumm->_gameId == GID_CMI) && (_scumm->_features & GF_DEMO)) {
 			if (b == 1000) {		// STATE_NULL
 				_scumm->_sound->stopBundleMusic();
 				return 0;
@@ -1082,7 +1082,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT || _scumm->_gameId == GID_FTDEMO) {
+		} else if (_scumm->_gameId == GID_FT) {
 			for (l = 0;; l++) {
 				if (_ftStateMusicTable[l].index == -1) {
 					return 1;
@@ -1129,7 +1129,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT || _scumm->_gameId == GID_FTDEMO) {
+		} else if (_scumm->_gameId == GID_FT) {
 			for (l = 0;; l++) {
 				if (_ftSeqMusicTable[l].index == -1) {
 					return 1;

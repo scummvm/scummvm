@@ -152,8 +152,8 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 6 */
 	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS},
+	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_DEMO | GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS},
 	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
@@ -186,23 +186,21 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
-	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
-	{"ftpcdemo", "Full Throttle (Demo)", GID_FTDEMO, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	{"ftdemo", "Full Throttle (PC Demo)", GID_FT, 7, MDT_NONE,
+	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
 
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
-	{"digdemo", "The Dig", GID_DIGDEMO, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	{"digdemo", "The Dig (Demo)", GID_DIG, 7, MDT_NONE,
+	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
 
 #ifndef __PALM_OS__ // these are SVGA games not supported under PalmOS
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
-	{"comidemo", "The Curse of Monkey Island", GID_CMIDEMO, 8, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
-	
+	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, MDT_NONE,
+	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
+
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 /*	 
@@ -1488,7 +1486,7 @@ load_game:
 		// texts have to be drawn before the blast objects. Unless
 		// someone can think of a better way to achieve this effect.
 
-		if (_gameId == GID_FT || _gameId == GID_FTDEMO) {
+		if (_gameId == GID_FT) {
 			drawBlastTexts();
 			drawBlastObjects();
 		} else {
@@ -2775,10 +2773,14 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcpy(detectName2, g->gameName);
 			if (g->features & GF_HUMONGOUS) {
 				strcat(detectName2, ".he0");
-			} else if (g->id == GID_FTDEMO) {
+			} else if ((g->id == GID_FT) && (g->features & GF_DEMO)) {
 				// FIXME: Now it is not possible to have target file and
 				// main resource file named differently
 				strcpy(detectName, "ft.000");
+			} else if ((g->id == GID_DIG) && (g->features & GF_DEMO)) {
+				strcpy(detectName, "dig.la0");
+			} else if ((g->id == GID_CMI) && (g->features & GF_DEMO)) {
+				strcpy(detectName, "comi.la0");
 			} else if (g->version >= 7) {
 				strcat(detectName2, ".la0");
 			} else

@@ -927,7 +927,7 @@ void ScummEngine_v6::o6_getOwner() {
 }
 
 void ScummEngine_v6::o6_startSound() {
-	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTPUTT) && (!(_features & GF_DEMO)))
 		pop(); // offset which seems to always be zero
 	_sound->addSoundToQueue(pop());
 }
@@ -1814,7 +1814,7 @@ void ScummEngine_v6::o6_verbOps() {
 	// Full Throttle implements conversation by creating new verbs, one
 	// for each option, but it never tells when to actually draw them.
 
-	if (_gameId == GID_FT || _gameId == GID_FTDEMO)
+	if (_gameId == GID_FT)
 		_verbRedraw = true;
 
 	op = fetchScriptByte();
@@ -2411,11 +2411,11 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
-				} else if (_gameId == GID_FT || _gameId == GID_FTDEMO) {
+				} else if (_gameId == GID_FT) {
 					int insaneVarNum;
 					int insaneMode;
 
-					if (_gameId == GID_FTDEMO)
+					if ((_gameId == GID_FT) && (_features & GF_DEMO))
 						insaneVarNum = 232;
 					else
 						insaneVarNum = 233;

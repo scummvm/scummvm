@@ -90,8 +90,12 @@ void ScummEngine::openRoom(int room) {
 
 				// FIXME: Now it is not possible to have target file and
 				// main resource file named differently
-				if (_gameId == GID_FTDEMO)
+				if ((_gameId == GID_FT) && (_features & GF_DEMO))
 					sprintf(buf2, "ft.%.3d", room == 0 ? 0 : res.roomno[rtRoom][room]);
+				else if ((_gameId == GID_DIG) && (_features & GF_DEMO))
+					sprintf(buf2, "dig.la%d", room == 0 ? 0 : res.roomno[rtRoom][room]);
+				else if ((_gameId == GID_CMI) && (_features & GF_DEMO))
+					sprintf(buf2, "comi.la%d", room == 0 ? 0 : res.roomno[rtRoom][room]);
 				else
 					sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
@@ -2076,7 +2080,7 @@ void ScummEngine::readMAXS() {
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-		if (_gameId == GID_FTDEMO)
+		if ((_gameId == GID_FT) && (_features & GF_DEMO))
 			_numGlobalScripts = 300;
 		else
 			_numGlobalScripts = 2000;

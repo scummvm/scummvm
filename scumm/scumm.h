@@ -94,6 +94,7 @@ enum GameFeatures {
 	GF_NES                 = 1 << 18,
 	GF_ATARI_ST            = 1 << 19,
 	GF_MACINTOSH           = 1 << 20,
+	GF_DEMO			       = 1 << 21,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
@@ -186,13 +187,9 @@ enum ScummGameId {
 	GID_CMI,
 	GID_MANIAC,
 	GID_ZAK,
-	GID_PUTTDEMO,
 	GID_PUTTPUTT,
 	GID_PJSDEMO,
-	GID_MONKEY_SEGA,
-	GID_FTDEMO,
-	GID_CMIDEMO,
-	GID_DIGDEMO
+	GID_MONKEY_SEGA
 };
 
 #define _maxRooms res.num[rtRoom]
