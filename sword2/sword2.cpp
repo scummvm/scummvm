@@ -209,7 +209,7 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 
 	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
 	// exit out normally.
-	if (!_debugger->isAttached()) {
+	if (_debugger && !_debugger->isAttached()) {
 		printf("%s\n", buf2);	// (Print it again in case debugger segfaults)
 		_debugger->attach(buf2);
 		_debugger->onFrame();

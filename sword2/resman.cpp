@@ -191,7 +191,6 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 			_cdTab[j] = cdInf[i].cd;
 	}
 
-
 	debug(5, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (j = 0; j < _totalClusters; j++)
 		debug(5, "filename of cluster %d: -%s", j, _resourceFiles[j]);
@@ -210,30 +209,6 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	_resTime = 1;	//cannot start at 0
 	memory->freeMemory(temp);	//get that memory back
-
-	// FIXME: Is this really needed?
-
-	if (!file.open("revcd1.id")) {
-		int index = 0;
-/*
-		// Scan for CD drives.
-		for (char c = 'C'; c <= 'Z'; c++) {
-			sprintf(_cdPath, "%c:\\", c);
-			if (GetDriveType(_cdPath) == DRIVE_CDROM)
-				_cdDrives[index++] = c;
-		}
-*/
-		_cdDrives[index++] = 'C';
-		
-		if (index == 0) {
-			error("init, cannot find CD drive");
-		}
-
-		while (index < 24)
-			_cdDrives[index++] = 0;
-	}
-	else
-		file.close();
 }
 
 ResourceManager::~ResourceManager(void) {
@@ -470,45 +445,27 @@ uint8 *ResourceManager::openResource(uint32 res) {
 
 		debug(5, "resOpen %s res %d", _resourceFiles[parent_res_file], res);
 
-		// ** at this point here we start to think about where the
-		// ** file is and prompt the user for the right CD to be
-		// ** inserted
-		// **
-		// ** we need to know the position that we're at within the
-		// ** game - LINC should write this someplace.
-
-/* these probably aren't necessary - khalek
-		if (!(_cdTab[parent_res_file] & LOCAL_CACHE) && !(_cdTab[parent_res_file] & LOCAL_PERM)) {
-			// This cluster is on a CD, we need to cache a new one.
-			cacheNewCluster(parent_res_file);
-		} else if (!(_cdTab[parent_res_file] & LOCAL_PERM)) {
-			// Makes sure that the correct CD is in the drive.
-			getCd(_cdTab[parent_res_file] & 3);
-		}
-*/
-
-		// This part of the cluster caching is pretty useful though:
-		//
 		// If we're loading a cluster that's only available from one
 		// of the CDs, remember which one so that we can play the
 		// correct music.
-		//
-		// The code to ask for the correct CD will probably be needed
-		// later, too.
-		//
-		// And there's some music / FX stuff in cacheNewCluster() that
-		// might be needed as well.
-		//
-		// But this will do for now.
 
 		if (!(_cdTab[parent_res_file] & LOCAL_PERM)) {
 			_curCd = _cdTab[parent_res_file] & 3;
 		}
 
-		// open the cluster file
-		if (!file.open(_resourceFiles[parent_res_file]))
-			error("open cannot *OPEN* %s", _resourceFiles[parent_res_file]);
+		// Actually, as long as the file can be found we don't really
+		// care which CD it's on. But if we can't find it, keep asking
+		// for the CD until we do.
 
+		while (!file.open(_resourceFiles[parent_res_file])) {
+			// Is the file supposed to be on the hard disk? Then
+			// we're in trouble if we can't find it!
+
+			if (_cdTab[parent_res_file] & LOCAL_PERM)
+				error("Could not find '%s'", _resourceFiles[parent_res_file]);
+
+			getCd(_cdTab[parent_res_file] & 3);
+		}
 
 		// 1st DWORD of a cluster is an offset to the look-up table
 		table_offset = file.readUint32LE();
@@ -522,7 +479,7 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		// read the length
 		len = file.readUint32LE();
 
-		// ** get to position in file of our particular resource
+		// get to position in file of our particular resource
 		file.seek(pos, SEEK_SET);
 
 		debug(5, "res len %d", len);
@@ -988,255 +945,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 		Debug_Printf("Expelled %d object resource(s)\n", nuked);
 }
 
-void ResourceManager::cacheNewCluster(uint32 newCluster) {
-	// Stop any music from streaming off the CD before we start the
-	// cluster-copy!
-	//
-	// eg. the looping restore-panel music will still be playing if we
-	// restored a game to a different cluster on the same CD - and music
-	// streaming would interfere with cluster copying, slowing it right
-	// down - but if we restored to a different CD the music is stopped
-	// in getCd() when it asks for the CD
-
-	g_logic->fnStopMusic(NULL);
-
-	_vm->clearFxQueue();	// stops all fx & clears the queue
-	getCd(_cdTab[newCluster] & 3);
-
-	// Kick out old cached cluster and load the new one.
-	uint32 i = 0;
-	while (!(_cdTab[i] & LOCAL_CACHE) && i < _totalClusters)
-		i++;
-
-	if (i < _totalClusters)	{
-		SVM_SetFileAttributes(_resourceFiles[i], FILE_ATTRIBUTE_NORMAL);
-		SVM_DeleteFile(_resourceFiles[i]);
-		_cdTab[i] &= (0xff - LOCAL_CACHE);
-		FILE *file;
-		file = fopen("cd.inf", "r+b");
-
-		if (file == NULL) {
-			error("init cannot *OPEN* cd.inf");
-		}	
-
-		_cd_inf cdInf;
-		
-		do {
-			fread(&cdInf, 1, sizeof(_cd_inf), file);
-		} while ((scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[i]) != 0) && !feof(file));
-
-		if (feof(file)) {
-			error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[i]);
-		}
-
-		fseek(file, -1, SEEK_CUR);
-		fwrite(&_cdTab[i], 1, 1, file);
-		fclose(file);
-	}
-
-	char buf[1024];
-	sprintf(buf, "%sClusters\\%s", _cdPath, _resourceFiles[newCluster]);
-
-	g_graphics->waitForFade();
-
-	if (g_graphics->getFadeStatus() != RDFADE_BLACK) {
-		g_graphics->fadeDown();
-		g_graphics->waitForFade();
-	}
-
-	g_graphics->clearScene();
-
-	_vm->setMouse(0);
-	_vm->setLuggage(0);
-
-	uint8 *bgfile;
-	bgfile = openResource(2950);	// open the screen resource
-	g_graphics->initialiseBackgroundLayer(NULL);
-	g_graphics->initialiseBackgroundLayer(NULL);
-	g_graphics->initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
-	g_graphics->initialiseBackgroundLayer(NULL);
-	g_graphics->initialiseBackgroundLayer(NULL);
-	g_graphics->setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
-
-	g_graphics->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
-	closeResource(2950);		// release the screen resource
-
-	// Git rid of read-only status, if it is set.
-	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
-
-	File inFile, outFile;
-	
-	inFile.open(buf);
-	outFile.open(_resourceFiles[newCluster], NULL, File::kFileWriteMode);
-
-	if (!inFile.isOpen() || !outFile.isOpen()) {
-		error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
-	}
-
-	_spriteInfo textSprite;
-	_spriteInfo barSprite;
-	mem *text_spr;
-	_frameHeader *frame;
-	uint8 *loadingBar;
-	_cdtEntry *cdt;
-
-	text_spr = fontRenderer->makeTextSprite(_vm->fetchTextLine(openResource(2283), 8) + 2, 640, 187, _vm->_speechFontId);
-
-	frame = (_frameHeader*) text_spr->ad;
-
-	textSprite.x = g_graphics->_screenWide /2 - frame->width / 2;
-	textSprite.y = g_graphics->_screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
-	textSprite.w = frame->width;
-	textSprite.h = frame->height;
-	textSprite.scale = 0;
-	textSprite.scaledWidth	= 0;
-	textSprite.scaledHeight	= 0;
-	textSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
-	textSprite.blend = 0;
-	textSprite.colourTable	= 0;
-
-	closeResource(2283);
-
-	loadingBar = openResource(2951);
-
-	frame = _vm->fetchFrameHeader(loadingBar, 0);
-	cdt   = _vm->fetchCdtEntry(loadingBar, 0);
-
-	barSprite.x = cdt->x;
-	barSprite.y = cdt->y;
-	barSprite.w = frame->width;
-	barSprite.h = frame->height;
-	barSprite.scale = 0;
-	barSprite.scaledWidth = 0;
-	barSprite.scaledHeight = 0;
-	barSprite.type = RDSPR_RLE256FAST | RDSPR_TRANS;
-	barSprite.blend = 0;
-	barSprite.colourTable = 0;
-
-	closeResource(2951);
-
-	loadingBar = openResource(2951);
-	frame = _vm->fetchFrameHeader(loadingBar, 0);
-	barSprite.data = (uint8 *) (frame + 1);
-	closeResource(2951);
-
-	int16 barX = barSprite.x;
-	int16 barY = barSprite.y;
-	int16 textX = textSprite.x;
-	int16 textY = textSprite.y;
-
-	g_graphics->drawSprite(&barSprite);
-	barSprite.x = barX;
-	barSprite.y = barY;
-
-	textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-	g_graphics->drawSprite(&textSprite);
-	textSprite.x = textX;
-	textSprite.y = textY;
-
-	g_graphics->fadeUp();
-	g_graphics->waitForFade();
-
-	uint32 size = inFile.size();
-
-	char buffer[BUFFERSIZE];
-	int stepSize = (size / BUFFERSIZE) / 100;
-	uint32  read = 0;
-	int step = stepSize;
-	int fr = 0;
-	uint32 realRead = 0;
-
-	do {
-		realRead = inFile.read(buffer, BUFFERSIZE);
-		read += realRead;
-		if (outFile.write(buffer, realRead) != realRead) {
-			error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
-		}
-
-		if (step == stepSize) {
-			step = 0;
-			// open the screen resource
-			bgfile = openResource(2950);
-			g_graphics->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
-			// release the screen resource
-			closeResource(2950);
-			loadingBar = openResource(2951);
-			frame = _vm->fetchFrameHeader(loadingBar, fr);
-			barSprite.data = (uint8 *) (frame + 1);
-			closeResource(2951);
-			g_graphics->drawSprite(&barSprite);
-			barSprite.x = barX;
-			barSprite.y = barY;
-
-			textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-			g_graphics->drawSprite(&textSprite);
-			textSprite.x = textX;
-			textSprite.y = textY;
-
-			fr++;
-		} else
-			step++;
-
-		g_graphics->updateDisplay();
-	} while ((read % BUFFERSIZE) == 0);
-
-	if (read != size) {
-		error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
-	}
-
-	inFile.close();
-	outFile.close();
-	memory->freeMemory(text_spr);
-
-	g_graphics->clearScene();
-
-	g_graphics->fadeDown();
-	g_graphics->waitForFade();
-	g_graphics->fadeUp();
-
-	// Git rid of read-only status.
-	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
-
-	// Update cd.inf and _cdTab
-	_cdTab[newCluster] |= LOCAL_CACHE;
-
-	FILE *file;
-	file = fopen("cd.inf", "r+b");
-
-	if (file == NULL) {
-		error("init cannot *OPEN* cd.inf");
-	}
-
-	_cd_inf cdInf;
-	
-	do {
-		fread(&cdInf, 1, sizeof(_cd_inf), file);
-	} while (scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[newCluster]) != 0 && !feof(file));
-
-	if (feof(file)) {
-		error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[newCluster]);
-	}
-
-	fseek(file, -1, SEEK_CUR);
-	fwrite(&_cdTab[newCluster], 1, 1, file);
-	fclose(file);
-}
-
 void ResourceManager::getCd(int cd) {
-	// TODO support a separate path for cd data?
-	
-	bool done = false;
-	char sCDName[_MAX_PATH];
-	uint32 dwMaxCompLength, dwFSFlags;
-	mem *text_spr;
-	_frameHeader *frame;
-	_spriteInfo spriteInfo;
-	int16 oldY;
-	int16 oldX;
-	FILE *file;
-	char name[16];
-	int offNetwork = 0;
-	int index = 0;
 	uint8 *textRes;
 
 	// don't ask for CD's in the playable demo downloaded from our
@@ -1249,54 +958,6 @@ void ResourceManager::getCd(int cd) {
 	return;
 #endif
 
-	sprintf(name, "revcd%d.id", cd);
-	file = fopen(name, "r");
-
-	if (file == NULL) {
-		// Determine what CD is in the drive, and either use it or ask
-		// the user to insert the correct CD.
-		// Scan all CD drives for our CD as well.
-		while(_cdDrives[index] != 0 && index < 24) {
-			sprintf(_cdPath, "%c:\\", _cdDrives[index]);
-
-			if (!SVM_GetVolumeInformation(_cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
-				// Force the following code to ask for the correct CD.
-				sCDName[0] = 0;
-			}
-
-			_curCd = cd;
-		
-			if (!scumm_stricmp(sCDName,CD1_LABEL)) {
-				if (cd == CD1)
-					return;
-			} else if (!scumm_stricmp(sCDName,CD2_LABEL)) {
-				if (cd == CD2)
-					return;
-			}
-
-			index++;
-		}
-	} else {
-		// must be running off the network, but still want to see
-		// CD-requests to show where they would occur when playing
-		// from CD
-		debug(5, "RUNNING OFF NETWORK");
-
-		fscanf(file, "%s", _cdPath);
-		fclose(file);
-
-		if (_curCd == cd)
-			return;
-		else
-			_curCd = cd;
-
-		// don't show CD-requests if testing anims or text/speech
-		if (SYSTEM_TESTING_ANIMS || SYSTEM_TESTING_TEXT)
-			return;
-
-		offNetwork = 1;
-	}
-
 	// stop any music from playing - so the system no longer needs the
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
@@ -1305,58 +966,28 @@ void ResourceManager::getCd(int cd) {
 
 	textRes = openResource(2283);
 	_vm->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);
-	text_spr = fontRenderer->makeTextSprite(_vm->fetchTextLine(textRes, 5 + cd) + 2, 640, 187, _vm->_speechFontId);
-
-	frame = (_frameHeader*) text_spr->ad;
-
-	spriteInfo.x = g_graphics->_screenWide / 2 - frame->width / 2;
-	spriteInfo.y = g_graphics->_screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
-	spriteInfo.w = frame->width;
-	spriteInfo.h = frame->height;
-	spriteInfo.scale = 0;
-	spriteInfo.scaledWidth	= 0;
-	spriteInfo.scaledHeight	= 0;
-	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
-	spriteInfo.blend = 0;
-	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
-	spriteInfo.colourTable	= 0;
-	oldY = spriteInfo.y;
-	oldX = spriteInfo.x;
-
 	closeResource(2283);
 
-	do {
-		if (offNetwork == 1)
-			done = true;
-		else {
-			index = 0;
-			while (_cdDrives[index] != 0 && !done && index < 24) {
-				sprintf(_cdPath, "%c:\\", _cdDrives[index]);
+	// The original code probably determined automagically when the correct
+	// CD had been inserted, but our backend doesn't support that, and
+	// anyway I don't know if all systems allow that sort of thing. So we
+	// wait for the user to press any key instead, or click the mouse.
 
-				if (!SVM_GetVolumeInformation(_cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0)) {
-					sCDName[0] = 0;
-				}
+	while (1) {
+		_keyboardEvent ke;
+		_mouseEvent *me;
 
-				if (!scumm_stricmp(sCDName, CD1_LABEL)) {
-					if (cd == CD1)
-						done = true;
-				} else if (!scumm_stricmp(sCDName, CD2_LABEL)) {
-					if (cd == CD2)
-						done = true;
-				}
-				index++;
-			}
-		}
-		
+		me = g_input->mouseEvent();
+		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
+			break;
+
+		if (g_input->readKey(&ke) == RD_OK)
+			break;
+
 		g_graphics->updateDisplay();
+		g_system->delay_msecs(50);
+	}
 
-		g_graphics->clearScene();
-		g_graphics->drawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
-		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
-		spriteInfo.x = oldX;
-	} while (!done);
-
-	memory->freeMemory(text_spr);
 	_vm->removeMsg();
 }
 

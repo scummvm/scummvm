@@ -32,15 +32,6 @@ namespace Sword2 {
 //	-------
 //
 
-#ifndef WIN32
-
-// FIXME: Get rid of these
-
-#define FILE_ATTRIBUTE_NORMAL 0x80
-#define _MAX_PATH 260
-
-#endif
-
 enum {
 	// Generic error codes
 
@@ -284,13 +275,6 @@ typedef struct {
 extern int32 GetLanguageVersion(uint8 *version);
 extern int32 SetLanguageVersion(uint8 version);
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-//	Misc functions - from misc.cpp
-//-----------------------------------------------------------------------------
-extern void SVM_SetFileAttributes(char *file, uint32 atrib);
-extern void SVM_DeleteFile(char *file);
-extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
 
 #define MAX_MOUSE_EVENTS 16
 

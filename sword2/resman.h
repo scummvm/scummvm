@@ -100,13 +100,6 @@ private:
 	uint16 *_count;
 	char _resourceFiles[MAX_res_files][20];
 	uint8 _cdTab[MAX_res_files];		// Location of each cluster.
-
-	// Drive letter of the CD-ROM drive or false CD path.
-
-	char _cdPath[256];
-
-	void cacheNewCluster(uint32 newCluster);
-	char _cdDrives[24];
 };							
 
 extern ResourceManager *res_man;	// declare the object global

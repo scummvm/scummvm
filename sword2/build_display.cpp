@@ -257,11 +257,6 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 
 	uint32 targetTime = _system->get_msecs() + (time * 1000);
 
-	// Keep the message there even when the user task swaps.
-	rv = g_graphics->drawSprite(&spriteInfo);
-	if (rv)
-		error("Driver Error %.8x (in DisplayMsg)", rv);
-
 	sleepUntil(targetTime);
 
 	g_graphics->setPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);

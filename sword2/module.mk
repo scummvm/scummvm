@@ -33,7 +33,6 @@ MODULE_OBJS := \
 	sword2/driver/keyboard.o \
 	sword2/driver/language.o \
 	sword2/driver/menu.o \
-	sword2/driver/misc.o \
 	sword2/driver/_mouse.o \
 	sword2/driver/palette.o \
 	sword2/driver/rdwin.o \
