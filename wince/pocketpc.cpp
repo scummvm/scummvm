@@ -59,7 +59,7 @@ typedef void SoundProc(void *param, byte *buf, int len);
 GameDetector detector;
 Gui gui;
 Scumm *g_scumm;
-extern SimonState *g_simon;
+SimonState *g_simon;
 OSystem *g_system;
 SoundMixer *g_mixer;
 Config *scummcfg;

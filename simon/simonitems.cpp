@@ -22,6 +22,7 @@
 // Item script opcodes for Simon1/Simon2
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 
 #ifdef _WIN32_WCE
 
@@ -372,7 +373,7 @@ int SimonState::runScript()
 				int h = getVarOrWord();
 				int number = getVarOrByte();
 				if (number < 20)
-					addNewHitArea(id, x, y, w, h, (number << 8) + 129, 0xD0, &_dummy_item_2);
+					addNewHitArea(id, x, y, w, h, (number << 8) + 129, 0xD0, _dummy_item_2);
 			}
 			break;
 

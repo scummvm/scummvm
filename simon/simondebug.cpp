@@ -22,6 +22,7 @@
 // Simon debug functions
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 
 #ifdef SIMONDEBUG
 #define SIMON2

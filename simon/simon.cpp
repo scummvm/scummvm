@@ -21,15 +21,8 @@
 
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 #include <errno.h>
-
-int sdl_mouse_x, sdl_mouse_y;
-
-byte *sdl_buf_3;
-byte *sdl_buf;
-byte *sdl_buf_attached;
-
-SimonState *g_simon;
 
 #ifdef _WIN32_WCE
 
@@ -38,6 +31,101 @@ extern bool draw_keyboard;
 
 #endif
 
+
+static const GameSpecificSettings simon1_settings = {
+	1,														/* VGA_DELAY_BASE */
+	1576 / 4,											/* TABLE_INDEX_BASE */
+	1460 / 4,											/* TEXT_INDEX_BASE */
+	1700 / 4,											/* NUM_GAME_OFFSETS */
+	64,														/* NUM_VIDEO_OP_CODES */
+	1000000,											/* VGA_MEM_SIZE */
+	50000,												/* TABLES_MEM_SIZE */
+	3624,													/* NUM_VOICE_RESOURCES */
+	141,													/* NUM_EFFECT_RESOURCES */
+	1316 / 4,											/* MUSIC_INDEX_BASE */
+	0,														/* SOUND_INDEX_BASE */
+	"SIMON.GME",									/* gme_filename */
+	"SIMON.WAV",									/* wav_filename */
+	"SIMON.VOC",									/* wav_filename2 */
+	"EFFECTS.VOC",								/* effects_filename */
+	"GAMEPC",											/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2_settings = {
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
+	0,
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
+	NULL,
+	"",
+	"GSPTR30",										/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2win_settings = {
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
+	0,
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
+	NULL,
+	"",
+	"GSPTR30",										/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2dos_settings = {
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
+	0,
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
+	NULL,
+	"",
+	"GAME32",											/* gamepc_filename */
+};
+
+
+SimonState::SimonState()
+{
+	_dummy_item_1 = new Item();
+	_dummy_item_2 = new Item();
+	_dummy_item_3 = new Item();
+	
+	_fcs_list = new FillOrCopyStruct[16];
+}
+
+SimonState::~SimonState()
+{
+	delete _dummy_item_1;
+	delete _dummy_item_2;
+	delete _dummy_item_3;
+	
+	delete [] _fcs_list;
+}
 
 SimonState *SimonState::create(OSystem *syst, MidiDriver *driver)
 {
@@ -440,11 +528,11 @@ Item *SimonState::getNextItemPtrStrange()
 	case -3:
 		return _object_item;
 	case -5:
-		return &_dummy_item_2;
+		return _dummy_item_2;
 	case -7:
 		return NULL;
 	case -9:
-		return &_dummy_item_3;
+		return _dummy_item_3;
 	default:
 		return derefItem(a);
 	}
@@ -474,7 +562,7 @@ Item *SimonState::getItem1Ptr()
 {
 	if (_item_1_ptr)
 		return _item_1_ptr;
-	return &_dummy_item_1;
+	return _dummy_item_1;
 }
 
 Item *SimonState::getItemPtrB()
@@ -482,7 +570,7 @@ Item *SimonState::getItemPtrB()
 	error("getItemPtrB: is this code ever used?");
 	if (_item_ptr_B)
 		return _item_ptr_B;
-	return &_dummy_item_1;
+	return _dummy_item_1;
 }
 
 uint SimonState::getNextVarContents()
@@ -967,10 +1055,10 @@ void SimonState::o_setup_cond_c()
 	_item_1_ptr = item;
 	_object_item = _hitarea_object_item;
 
-	if (_object_item == &_dummy_item_2)
+	if (_object_item == _dummy_item_2)
 		_object_item = getItem1Ptr();
 
-	if (_object_item == &_dummy_item_3)
+	if (_object_item == _dummy_item_3)
 		_object_item = derefItem(getItem1Ptr()->parent);
 
 	if (_object_item != NULL) {
@@ -1007,7 +1095,11 @@ void SimonState::setup_cond_c_helper()
 		_left_button_down = 0;
 
 		do {
+#ifdef WIN32
 			if (GetAsyncKeyState(VK_F5) != 0 && _bit_array[0] & 0x200) {
+#else
+			if (_bit_array[0] & 0x200) {
+#endif
 				startSubroutine170();
 				goto out_of_here;
 			}
@@ -1071,7 +1163,9 @@ void SimonState::unlock()
 
 	if (_lock_counter != 0) {
 		if (_lock_counter == 1) {
+#ifdef WIN32
 			GetAsyncKeyState(VK_LBUTTON);
+#endif
 		}
 		_lock_counter--;
 	}
@@ -1550,8 +1644,8 @@ void SimonState::showmessage_helper_3(uint a, uint b)
 
 void SimonState::pollMouseXY()
 {
-	_mouse_x = sdl_mouse_x;
-	_mouse_y = sdl_mouse_y;
+	_mouse_x = _sdl_mouse_x;
+	_mouse_y = _sdl_mouse_y;
 }
 
 void SimonState::handle_verb_clicked(uint verb)
@@ -1562,18 +1656,18 @@ void SimonState::handle_verb_clicked(uint verb)
 	_item_1_ptr = _item_1;
 
 	_object_item = _hitarea_object_item;
-	if (_object_item == &_dummy_item_2) {
+	if (_object_item == _dummy_item_2) {
 		_object_item = getItem1Ptr();
 	}
-	if (_object_item == &_dummy_item_3) {
+	if (_object_item == _dummy_item_3) {
 		_object_item = derefItem(getItem1Ptr()->parent);
 	}
 
 	_subject_item = _hitarea_subject_item;
-	if (_subject_item == &_dummy_item_2) {
+	if (_subject_item == _dummy_item_2) {
 		_subject_item = getItem1Ptr();
 	}
-	if (_subject_item == &_dummy_item_3) {
+	if (_subject_item == _dummy_item_3) {
 		_subject_item = derefItem(getItem1Ptr()->parent);
 	}
 
@@ -2487,7 +2581,7 @@ void SimonState::timer_vga_sprites()
 	}
 
 #ifdef DRAW_IMAGES_DEBUG
-	memset(sdl_buf_attached, 0, 320 * 200);
+	memset(_sdl_buf_attached, 0, 320 * 200);
 #endif
 	_video_var_8++;
 	_vc_ptr = vc_ptr_org;
@@ -2517,7 +2611,7 @@ void SimonState::timer_vga_sprites_helper()
 	dx_unlock_2();
 
 
-	memcpy(sdl_buf_attached, sdl_buf, 320 * 200);
+	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 	dx_copy_from_attached_to_3(_vga_var5);
 
 
@@ -4111,7 +4205,7 @@ void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x)
 	uint i;
 
 	dst = dx_lock_2();
-	src = sdl_buf_3;
+	src = _sdl_buf_3;
 
 	dst += y * _dx_surface_pitch;
 	src += y * _dx_surface_pitch;
@@ -4129,26 +4223,26 @@ void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x)
 
 void SimonState::dx_clear_surfaces(uint num_lines)
 {
-	memset(sdl_buf_attached, 0, num_lines * 320);
+	memset(_sdl_buf_attached, 0, num_lines * 320);
 
-	_system->copy_rect(sdl_buf_attached, 320, 0, 0, 320, 200);
+	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
 
 	if (_dx_use_3_or_4_for_lock) {
-		memset(sdl_buf, 0, num_lines * 320);
-		memset(sdl_buf_3, 0, num_lines * 320);
+		memset(_sdl_buf, 0, num_lines * 320);
+		memset(_sdl_buf_3, 0, num_lines * 320);
 	}
 }
 
 void SimonState::dx_clear_attached_from_top(uint lines)
 {
-	memset(sdl_buf_attached, 0, lines * 320);
+	memset(_sdl_buf_attached, 0, lines * 320);
 }
 
 void SimonState::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h)
 {
 	uint offs = x + y * 320;
-	byte *s = sdl_buf_attached + offs;
-	byte *d = sdl_buf + offs;
+	byte *s = _sdl_buf_attached + offs;
+	byte *d = _sdl_buf + offs;
 
 	do {
 		memcpy(d, s, w);
@@ -4160,8 +4254,8 @@ void SimonState::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h)
 void SimonState::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h)
 {
 	uint offs = x + y * 320;
-	byte *s = sdl_buf + offs;
-	byte *d = sdl_buf_attached + offs;
+	byte *s = _sdl_buf + offs;
+	byte *d = _sdl_buf_attached + offs;
 
 	do {
 		memcpy(d, s, w);
@@ -4174,7 +4268,7 @@ void SimonState::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h)
 
 void SimonState::dx_copy_from_attached_to_3(uint lines)
 {
-	memcpy(sdl_buf_3, sdl_buf_attached, lines * 320);
+	memcpy(_sdl_buf_3, _sdl_buf_attached, lines * 320);
 }
 
 void SimonState::dx_update_screen_and_palette()
@@ -4193,13 +4287,13 @@ void SimonState::dx_update_screen_and_palette()
 
 		if (_mouse_pos_changed) {
 			_mouse_pos_changed = false;
-			_system->set_mouse_pos(sdl_mouse_x, sdl_mouse_y);
+			_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
 		}
-		_system->copy_rect(sdl_buf_attached, 320, 0, 0, 320, 200);
+		_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
 		_system->update_screen();
 	}
 
-	memcpy(sdl_buf_attached, sdl_buf, 320 * 200);
+	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 
 	if (_palette_color_count != 0) {
 		if (!(_game & GAME_SIMON2) && _use_palette_delay) {
@@ -4233,9 +4327,9 @@ void SimonState::go()
 		_dump_file = stdout;
 
 	/* allocate buffers */
-	sdl_buf_3 = (byte *)calloc(320 * 200, 1);
-	sdl_buf = (byte *)calloc(320 * 200, 1);
-	sdl_buf_attached = (byte *)calloc(320 * 200, 1);
+	_sdl_buf_3 = (byte *)calloc(320 * 200, 1);
+	_sdl_buf = (byte *)calloc(320 * 200, 1);
+	_sdl_buf_attached = (byte *)calloc(320 * 200, 1);
 
 	if (_game == GAME_SIMON2WIN) {
 		gss = &simon2win_settings;
@@ -4304,7 +4398,8 @@ void SimonState::delay(uint delay)
 
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
-				case OSystem::EVENT_KEYDOWN:if (event.kbd.keycode == 't') {
+				case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode == 't') {
 					_vk_t_toggle ^= 1;
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f') {
@@ -4313,19 +4408,22 @@ void SimonState::delay(uint delay)
 				}
 				_key_pressed = (byte)event.kbd.ascii;
 				break;
-				case OSystem::EVENT_MOUSEMOVE:sdl_mouse_x = event.mouse.x;
-				sdl_mouse_y = event.mouse.y;
+				case OSystem::EVENT_MOUSEMOVE:
+				_sdl_mouse_x = event.mouse.x;
+				_sdl_mouse_y = event.mouse.y;
 				_mouse_pos_changed = true;
 				break;
 
-				case OSystem::EVENT_LBUTTONDOWN:_left_button_down++;
+				case OSystem::EVENT_LBUTTONDOWN:
+				_left_button_down++;
 #ifdef _WIN32_WCE
-				sdl_mouse_x = event.mouse.x;
-				sdl_mouse_y = event.mouse.y;
+				_sdl_mouse_x = event.mouse.x;
+				_sdl_mouse_y = event.mouse.y;
 #endif
 				break;
 
-				case OSystem::EVENT_RBUTTONDOWN:_exit_cutscene = true;
+				case OSystem::EVENT_RBUTTONDOWN:
+				_exit_cutscene = true;
 				break;
 			}
 		}
@@ -4824,7 +4922,7 @@ void SimonState::playMusic(uint music)
 byte *SimonState::dx_lock_2()
 {
 	_dx_surface_pitch = 320;
-	return sdl_buf;
+	return _sdl_buf;
 }
 
 void SimonState::dx_unlock_2()
@@ -4834,7 +4932,7 @@ void SimonState::dx_unlock_2()
 byte *SimonState::dx_lock_attached()
 {
 	_dx_surface_pitch = 320;
-	return _dx_use_3_or_4_for_lock ? sdl_buf_3 : sdl_buf_attached;
+	return _dx_use_3_or_4_for_lock ? _sdl_buf_3 : _sdl_buf_attached;
 }
 
 void SimonState::dx_unlock_attached()

@@ -19,9 +19,13 @@
  *
  */
 
+#ifndef SIMON_H
+#define SIMON_H
+
 #include <time.h>
 #include <sys/stat.h>
 #include "engine.h"
+#include "simon/midi.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
@@ -48,109 +52,19 @@ uint fileReadItemID(FILE *in);
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
 #define NUM_PALETTE_FADEOUT 32
 
-struct Child {
-	Child *next;
-	uint16 type;
-};
+struct Child;
+struct Child1;
+struct Child2;
+struct Child3;
 
-struct Child2 {
-	Child hdr;
-
-	uint16 string_id;
-	uint32 avail_props;
-	int16 array[1];
-};
-
-struct Child1 {
-	Child hdr;
-
-	uint16 subroutine_id;
-	uint16 fr2;
-	uint16 array[1];
-};
-
-struct Child9 {
-	Child hdr;
-
-	uint16 array[4];
-};
-
-struct Child3 {
-	Child hdr;
-};
+struct Item;
+struct FillOrCopyStruct;
+struct Subroutine;
+struct SubroutineLine;
+struct TimeEvent;
 
 struct ThreeValues {
 	int16 a, b, c;
-};
-
-enum {
-	CHILD1_SIZE = sizeof(Child1) - sizeof(uint16),
-	CHILD2_SIZE = sizeof(Child2) - sizeof(int16)
-};
-
-struct Item {
-	uint16 parent;
-	uint16 child;
-	uint16 sibling;
-	int16 unk1;
-	int16 unk2;
-	int16 unk3;										/* signed int */
-	uint16 unk4;
-	uint16 xxx_1;									/* unused? */
-	Child *children;
-};
-
-struct Subroutine {
-	uint16 id;										/* subroutine ID */
-	uint16 first;									/* offset from subroutine start to first subroutine line */
-	Subroutine *next;							/* next subroutine in linked list */
-};
-
-struct FillOrCopyDataEntry {
-	Item *item;
-	uint16 hit_area;
-	uint16 xxx_1;
-};
-
-struct FillOrCopyData {
-	int16 unk1;
-	Item *item_ptr;
-	FillOrCopyDataEntry e[64];
-	int16 unk3, unk4;
-	uint16 unk2;
-};
-
-struct FillOrCopyStruct {
-	byte mode;
-	byte flags;
-	uint16 x, y;
-	uint16 width, height;
-	uint16 textColumn, textRow;
-	uint8 textColumnOffset, textLength, textMaxLength;
-    uint8 fill_color, text_color, unk5;
-	FillOrCopyData *fcs_data;
-};
-// note on text offset: 
-// the actual x-coordinate is: textColumn * 8 + textColumnOffset
-// the actual y-coordinate is: textRow * 8
-
-
-enum {
-	SUBROUTINE_LINE_SMALL_SIZE = 2,
-	SUBROUTINE_LINE_BIG_SIZE = 8,
-};
-
-struct SubroutineLine {
-	uint16 next;
-	int16 cond_a;
-	int16 cond_b;
-	int16 cond_c;
-};
-
-struct TimeEvent {
-	uint32 time;
-	uint16 subroutine_id;
-	TimeEvent *next;
 };
 
 struct HitArea {
@@ -192,165 +106,7 @@ struct VgaTimerEntry {
 	uint16 cur_vga_file;
 };
 
-struct VgaFile1Header {
-	uint16 x_1, x_2;
-	uint16 hdr2_start;
-	uint16 x_3, x_4;
-};
-
-struct VgaFile1Header2 {
-	uint16 x_1;
-	uint16 unk1;
-	uint16 x_2;
-	uint16 id_count;
-	uint16 x_3;
-	uint16 unk2_offs;
-	uint16 x_4;
-	uint16 id_table;
-	uint16 x_5;
-};
-
-struct VgaFile1Struct0x8 {
-	uint16 id;
-	uint16 x_1;
-	uint16 x_2;
-	uint16 script_offs;
-};
-
-struct VgaFile1Struct0x6 {
-	uint16 id;
-	uint16 x_2;
-	uint16 script_offs;
-};
-
-/* dummy typedefs to make it compile in *nix */
-#if defined(UNIX) || defined(__MORPHOS__) || defined(__DC__) || defined(macintosh)
-typedef void *HMIDISTRM;
-typedef void *HMIDIOUT;
-typedef uint32 UINT;
-typedef void *MIDIHDR;
-typedef uint32 MMRESULT;
-#define CALLBACK
-typedef uint32 DWORD;
-
-enum {
-	VK_F5 = 1,
-	VK_LBUTTON = 2,
-	VK_SHIFT = 3,
-
-};
-
-int GetAsyncKeyState(int key);
-#endif
-
-class MidiDriver;
-struct MidiEvent;
-
-class MidiPlayer {
-public:
-	void read_all_songs(FILE *in);
-	void read_all_songs_old(FILE *in);
-	void initialize();
-	void shutdown();
-	void play();
-	void set_driver(MidiDriver *md);
-
-private:
-	struct Track {
-		uint32 a;
-		uint32 data_size;
-		uint32 data_cur_size;
-		byte *data_ptr;
-		byte *data_cur_ptr;
-		uint32 delay;
-		byte last_cmd;
-	};
-
-	struct Song {
-		uint ppqn;
-		uint midi_format;
-		uint num_tracks;
-		Track *tracks;
-	};
-
-	struct NoteRec {
-		uint32 delay;
-		byte cmd;
-		byte param_1;
-		byte param_2;
-		uint cmd_length;
-		byte *sysex_data;
-	};
-
-	MidiDriver *_md;
-
-	FILE *_input;
-
-	uint _midi_var10, _midi_5;
-	bool _midi_var9;
-	byte _midi_var1;
-	bool _shutting_down;
-	uint _midi_var8;
-
-	uint _midi_var11;
-
-	uint32 _midi_tempo;
-
-	Track *_midi_tick_track_ptr;
-	Track *_midi_track_ptr;
-	int16 _midi_song_id;
-	int16 _midi_song_id_2;
-	int16 _midi_var2;
-
-	Song *_midi_cur_song_ptr;
-
-	uint32 _midi_volume_table[16];
-
-	Song _midi_songs[8];
-
-	void read_mthd(Song *s, bool old);
-
-	void read_from_file(void *dst, uint size);
-	void read_one_song(Song *s);
-	byte read_byte_from_file();
-	uint32 read_uint32_from_file();
-	uint16 read_uint16_from_file();
-
-	static uint32 track_read_gamma(Track *t);
-	static byte track_read_byte(Track *t);
-
-	int fill(MidiEvent *me, int num_event);
-	bool fill_helper(NoteRec *nr, MidiEvent *me);
-
-	void reset_tracks();
-	void read_next_note(Track *t, NoteRec *nr);
-
-	void unload();
-
-	static int on_fill(void *param, MidiEvent *ev, int num);
-
-};
-
-
-struct GameSpecificSettings {
-	uint VGA_DELAY_BASE;
-	uint TABLE_INDEX_BASE;
-	uint TEXT_INDEX_BASE;
-	uint NUM_GAME_OFFSETS;
-	uint NUM_VIDEO_OP_CODES;
-	uint VGA_MEM_SIZE;
-	uint TABLES_MEM_SIZE;
-	uint NUM_VOICE_RESOURCES;
-	uint NUM_EFFECTS_RESOURCES;
-	uint MUSIC_INDEX_BASE;
-	uint SOUND_INDEX_BASE;
-	const char *gme_filename;
-	const char *wav_filename;
-	const char *wav_filename2;
-	const char *effects_filename;
-	const char *gamepc_filename;
-};
-
+struct GameSpecificSettings;
 
 class SimonState : public Engine {
 public:
@@ -487,9 +243,9 @@ public:
 	uint _mouse_x, _mouse_y;
 	uint _mouse_x_old, _mouse_y_old;
 
-	Item _dummy_item_1;
-	Item _dummy_item_2;
-	Item _dummy_item_3;
+	Item *_dummy_item_1;
+	Item *_dummy_item_2;
+	Item *_dummy_item_3;
 
 	uint16 _lock_word;
 	uint16 _scroll_up_hit_area;
@@ -569,7 +325,7 @@ public:
 
 	VgaTimerEntry _vga_timer_list[95];
 
-	FillOrCopyStruct _fcs_list[16];
+	FillOrCopyStruct *_fcs_list;
 
 	byte _letters_to_print_buf[80];
 
@@ -593,6 +349,15 @@ public:
 	bool _savedialog_flag;
 	bool _save_or_load;
 	bool _saveload_flag;
+
+	int _sdl_mouse_x, _sdl_mouse_y;
+	
+	byte *_sdl_buf_3;
+	byte *_sdl_buf;
+	byte *_sdl_buf_attached;
+
+	SimonState();
+	virtual ~SimonState();
 
 	int allocGamePcVars(FILE *in);
 	Item *allocItem1();
@@ -1064,78 +829,4 @@ void initializeHardware();
 void dx_set_palette(uint32 *colors, uint num);
 void palette_fadeout(uint32 *pal_values, uint num);
 
-static const GameSpecificSettings simon1_settings = {
-	1,														/* VGA_DELAY_BASE */
-	1576 / 4,											/* TABLE_INDEX_BASE */
-	1460 / 4,											/* TEXT_INDEX_BASE */
-	1700 / 4,											/* NUM_GAME_OFFSETS */
-	64,														/* NUM_VIDEO_OP_CODES */
-	1000000,											/* VGA_MEM_SIZE */
-	50000,												/* TABLES_MEM_SIZE */
-	3624,													/* NUM_VOICE_RESOURCES */
-	141,													/* NUM_EFFECT_RESOURCES */
-	1316 / 4,											/* MUSIC_INDEX_BASE */
-	0,														/* SOUND_INDEX_BASE */
-	"SIMON.GME",									/* gme_filename */
-	"SIMON.WAV",									/* wav_filename */
-	"SIMON.VOC",									/* wav_filename2 */
-	"EFFECTS.VOC",								/* effects_filename */
-	"GAMEPC",											/* gamepc_filename */
-};
-
-static const GameSpecificSettings simon2_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
-	NULL,
-	"",
-	"GSPTR30",										/* gamepc_filename */
-};
-
-static const GameSpecificSettings simon2win_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
-	NULL,
-	"",
-	"GSPTR30",										/* gamepc_filename */
-};
-
-static const GameSpecificSettings simon2dos_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
-	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
-	NULL,
-	"",
-	"GAME32",											/* gamepc_filename */
-};
+#endif

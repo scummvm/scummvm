@@ -22,6 +22,7 @@
 // Verb and hitarea handling
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 
 void SimonState::defocusHitarea()
 {
@@ -430,7 +431,7 @@ bool SimonState::hitarea_proc_3(Item *item)
 	uint x;
 	const byte *string_ptr;
 
-	if (item == 0 || item == &_dummy_item_2 || item == &_dummy_item_3)
+	if (item == 0 || item == _dummy_item_2 || item == _dummy_item_3)
 		return false;
 
 	child2 = findChildOfType2(item);

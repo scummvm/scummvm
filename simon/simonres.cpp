@@ -22,6 +22,7 @@
 // Resource file routines for Simon1/Simon2
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 
 // Script opcodes to load into memory
 static const char *const opcode_arg_table_simon1win[256] = {

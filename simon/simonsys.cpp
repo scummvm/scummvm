@@ -69,11 +69,3 @@ void fileWriteBE16(FILE *in, uint16 value)
 	value = TO_BE_16(value);
 	fwrite(&value, sizeof(value), 1, in);
 }
-
-#ifndef WIN32
-/* GetAsyncKeyState for unix */
-int GetAsyncKeyState(int key)
-{
-	return 0;
-}
-#endif

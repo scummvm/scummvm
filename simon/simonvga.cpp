@@ -22,6 +22,7 @@
 // Video script opcodes for Simon1/Simon2
 #include "stdafx.h"
 #include "simon.h"
+#include "simonintern.h"
 
 typedef void (SimonState::*VgaOpcodeProc) ();
 static const uint16 vc_get_out_of_code = 0;
