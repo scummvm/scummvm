@@ -795,7 +795,7 @@ void Scumm::walkActor(Actor *a) {
 		if (a->walkbox == a->walkdata.destbox)
 			break;
 		j = getPathToDestBox(a->walkbox,a->walkdata.destbox);
-		if (j==-1) {
+		if (j==-1 || j>0xF0) {
 			a->walkdata.destbox = a->walkbox;
 			a->moving |= 8;
 			return;

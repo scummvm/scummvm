@@ -1022,7 +1022,7 @@ void Scumm::o5_doSentence() {
 
 void Scumm::o5_drawBox() {
 	int x,y,x2,y2,color;
-
+	
 	x = getVarOrDirectWord(0x80);
 	y = getVarOrDirectWord(0x40);
 
@@ -2351,6 +2351,9 @@ void Scumm::o5_walkActorToActor() {
 	int nr;
 	int nr2 = getVarOrDirectByte(0x80);
 	a = derefActorSafe(nr2, "o5_walkActorToActor");
+	if (!a)
+		return;
+
 	if (a->room != _currentRoom) {
 		getVarOrDirectByte(0x40);
 		fetchScriptByte();
@@ -2365,6 +2368,9 @@ void Scumm::o5_walkActorToActor() {
 	}
 	// warning("walk actor %d to actor %d", nr, nr2);
 	a2 = derefActorSafe(nr, "o5_walkActorToActor(2)");
+	if (!a2)
+		return;
+
 	if (a2->room != _currentRoom) {
 		fetchScriptByte();
 		return;

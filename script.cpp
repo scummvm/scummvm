@@ -408,6 +408,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 	if (x>319) return;
 	if (x<0) x=0;
+	if (y<0) y=0;
 	if (x2<0) return;
 	if (x2>320) x2=320;
 	if (y2 > bottom) y2=bottom;
@@ -442,11 +443,15 @@ void Scumm::stopObjectCode() {
 	}
 
 	if (ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL) {
-		if (ss->cutsceneOverride)
-			error("Object %d ending with active cutscene/override", ss->number);
+		if (ss->cutsceneOverride) {
+			warning("Object %d ending with active cutscene/override", ss->number);
+			ss->cutsceneOverride = 0;
+		}
 	} else {
-		if (ss->cutsceneOverride) 
-			error("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
+		if (ss->cutsceneOverride) {
+			warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
+			ss->cutsceneOverride = 0;
+		}
 	}
 	ss->number = 0;
 	ss->status = 0;
