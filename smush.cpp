@@ -581,7 +581,7 @@ bool zlibFile::open(const char *filename) {
 		printf("\n");
         }
 
-	if ((flags & 0x02 != 0))                                // CRC
+	if ((flags & 0x02) != 0)                                // CRC
 		fread(inBuf, 2, sizeof(char), _handle);
 
 	stream.zalloc = NULL;
@@ -617,14 +617,17 @@ bool zlibFile::isOpen() {
 
 bool zlibFile::eof() {
 	error("zlibFile::eof() - Not implemented");
+	return false;
 }
 
 uint32 zlibFile::pos() {
 	error("zlibFile::pos() - Not implemented");
+	return false;
 }
 
 uint32 zlibFile::size() {
 	error("zlibFile::size() - Not implemented");
+	return false;
 }
 
 void zlibFile::seek(int32 offs, int whence) {
