@@ -30,8 +30,8 @@ CXXFLAGS:= -g -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknow
 DEFINES +=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)
-LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm -lopengl32
-OBJS	:= scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl_gl.o 
+LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm
+OBJS	:= scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl.o 
 EXEEXT	:=.exe
 
 #######################################################################

@@ -69,8 +69,6 @@ enum {
 	GFX_TV2X = 10,
 	GFX_DOTMATRIX = 11,
 
-	GFX_BILINEAR = 12,    // OpenGL backend
-
 	GFX_FLIPPING = 100,	// Palmos
 	GFX_DOUBLEBUFFER = 101,	// Palmos
 	GFX_WIDE = 102 // palmos

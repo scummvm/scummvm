@@ -120,7 +120,6 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"hq3x", "HQ3x", GFX_HQ3X},
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-	{"opengl", "OpenGL", GFX_BILINEAR},
 #else
 	{"flipping", "Page Flipping", GFX_FLIPPING},
 	{"dbuffer", "Double Buffer", GFX_DOUBLEBUFFER},
