@@ -129,7 +129,7 @@ int AudioCDManager::getCachedTrack(int track) {
 
 #ifdef USE_MAD
 	sprintf(track_name, "track%d.mp3", track);
-	file->open(track_name, g_engine->getGameDataPath());
+	file->open(track_name);
 
 	if (file->isOpen()) {
 		_track_info[current_index] = makeMP3TrackInfo(file);
@@ -144,7 +144,7 @@ int AudioCDManager::getCachedTrack(int track) {
 
 #ifdef USE_VORBIS
 	sprintf(track_name, "track%d.ogg", track);
-	file->open(track_name, g_engine->getGameDataPath());
+	file->open(track_name);
 
 	if (file->isOpen()) {
 		_track_info[current_index] = makeVorbisTrackInfo(file);
