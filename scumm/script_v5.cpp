@@ -599,7 +599,8 @@ void Scumm_v5::o5_chainScript() {
 	// the actor ID of the opposing soldier. So, we copy that value
 	// over to the Local[5] variable of script 33.
 	// See also bug #743314.
-	if ((_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) && vm.slot[cur].number == 32 && script == 33) {
+	if ((_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3)
+		  && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 
@@ -975,7 +976,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if ((_gameId == GID_INDY3_TOWNS) || (_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
 		if (a->moving) {
@@ -2341,7 +2342,7 @@ void Scumm_v5::o5_verbOps() {
 void Scumm_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3_TOWNS) || (_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
