@@ -2563,9 +2563,8 @@ void SimonState::timer_vga_sprites() {
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
 
-#ifdef DRAW_THREE_STARS
-	fprintf(_dump_file, "***\n");
-#endif
+	if (_continous_vgascript)
+		fprintf(_dump_file, "***\n");
 
 	if (_game & GF_SIMON2 && _vga_var3) {
 		timer_vga_sprites_helper();
@@ -2598,9 +2597,9 @@ void SimonState::timer_vga_sprites() {
 		vsp++;
 	}
 
-#ifdef DRAW_IMAGES_DEBUG
-	memset(_sdl_buf_attached, 0, 320 * 200);
-#endif
+	if (_draw_images_debug)
+		memset(_sdl_buf_attached, 0, 320 * 200);
+
 	_video_var_8++;
 	_vc_ptr = vc_ptr_org;
 }
@@ -2639,7 +2638,6 @@ void SimonState::timer_vga_sprites_helper() {
 	_vga_var3 = 0;
 }
 
-#ifdef DRAW_IMAGES_DEBUG
 void SimonState::timer_vga_sprites_2() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
@@ -2673,14 +2671,11 @@ void SimonState::timer_vga_sprites_2() {
 		vsp++;
 	}
 
-#ifdef DRAW_THREE_STARS
 	fprintf(_dump_file, "***\n");
-#endif
 
 	_video_var_8++;
 	_vc_ptr = vc_ptr_org;
 }
-#endif
 
 void SimonState::timer_proc1() {
 	_timer_4++;
@@ -2723,9 +2718,8 @@ void SimonState::timer_proc1() {
 
 	/* XXX: more stuff here */
 	timer_vga_sprites();
-#ifdef DRAW_IMAGES_DEBUG
-	timer_vga_sprites_2();
-#endif
+	if (_draw_images_debug)
+		timer_vga_sprites_2();
 
 	if (_copy_partial_mode == 1) {
 		dx_copy_from_2_to_attached(80, 46, 208 - 80, 94 - 46);
@@ -3142,6 +3136,10 @@ void SimonState::processSpecialKeys() {
 		case 'v':
 			if (_debugMode)
 				_continous_vgascript ^= 1;
+			break;
+		case 'i':
+			if (_debugMode)
+				_draw_images_debug ^= 1;
 	}
 	
 	_key_pressed = 0;
@@ -4614,6 +4612,7 @@ void SimonState::go() {
 	_start_mainscript = false;
 	_continous_mainscript = false;
 	_continous_vgascript = false;
+	_draw_images_debug=false;
 
 	if (_debugLevel == 2)
 		_continous_mainscript = true;

@@ -30,8 +30,6 @@
 #include "simon/sound.h"
 
 /* Various other settings */
-//#define DRAW_IMAGES_DEBUG
-//#define DRAW_THREE_STARS
 //#define DUMP_FILE_NR 8
 //#define DUMP_BITMAPS_FILE_NR 8
 //#define DUMP_DRAWN_BITMAPS
@@ -184,6 +182,7 @@ public:
 	bool _start_mainscript;
 	bool _continous_mainscript;
 	bool _continous_vgascript;
+	bool _draw_images_debug;
 	bool _subtitles;
 	byte _mouse_cursor;
 	bool _vga_var9;
@@ -398,9 +397,8 @@ public:
 
 	Item *getNextItemPtr();
 	uint getNextItemID();
-	uint getItem1ID() {
-		return 1;
-	} Item *getItem1Ptr();
+	uint getItem1ID() {return 1;}
+	Item *getItem1Ptr();
 	Item *getItemPtrB();
 
 	byte getByte();
