@@ -933,11 +933,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	_vertStripNextInc = h * _vm->_realWidth - 1;
 
+	sx = x;
+	if (vs->scrollable)
+		sx -= vs->xstart >> 3;
+
 	do {
 		CHECK_HEAP;
-		sx = x;
-		if (vs->scrollable)
-			sx -= vs->xstart >> 3;
 
 		if (sx < 0)
 			goto next_iter;
@@ -959,14 +960,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-		if (_vm->_features & GF_SMALL_HEADER) {
-			if (_vm->_features & GF_AFTER_V2) {
-				decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], h, stripnr);
-			} else if (_vm->_features & GF_16COLOR) {
-				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
-			} else {
-				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
-			}
+		if (_vm->_features & GF_AFTER_V2) {
+			decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], h, stripnr);
+		} else if (_vm->_features & GF_16COLOR) {
+			decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
+		} else if (_vm->_features & GF_SMALL_HEADER) {
+			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
 		} else {
 			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), h);
 		}
@@ -1061,6 +1060,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 next_iter:
 		CHECK_HEAP;
 		x++;
+		sx++;
 		stripnr++;
 	} while (--numstrip);
 }
@@ -1158,6 +1158,10 @@ void Scumm::buildStripOffsets() {
 		}
 	}
 
+	// Note - at this point, "bitmap" will be equal to "zplane"
+	// This is true for any V2 bitmap data. We can make use of that fact to write
+	// a generic drawBitmapV2, which will work for objects, too, and not need this
+	// function and the tables it computes at all.
 	x = 0;
 	y = 128;
 	
