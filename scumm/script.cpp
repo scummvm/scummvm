@@ -508,10 +508,10 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 		y = 0;
 	if (x2 < 0)
 		return;
-	if (x2 > _realWidth)
-		x2 = _realWidth;
-	if (y2 > bottom)
-		y2 = bottom;
+	if (x2 > _realWidth - 1)
+		x2 = _realWidth - 1;
+	if (y2 > bottom - 1)
+		y2 = bottom - 1;
 
 	updateDirtyRect(vs->number, x, x2, y - top, y2 - top, 0);
 
