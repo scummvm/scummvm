@@ -23,6 +23,8 @@
 
 #if _WIN32_WCE < 300
 
+#define _HEAPOK 0
+
 void *calloc(size_t n, size_t s);
 int isdigit(int c);
 int isprint(int c);
@@ -35,4 +37,29 @@ void assert( void* expression );
 void assert( int expression );
 long int strtol(const char *nptr, char **endptr, int base);
 char *strdup( const char *s);
+int _heapchk();
+
+#endif
+
+#ifdef _WIN32_WCE
+
+void *bsearch(const void *, const void *, size_t,
+										 size_t, int (*x) (const void *, const void *));
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <io.h>
+#include <stdarg.h>
+#include <fcntl.h>
+#include <conio.h>
+#include <malloc.h>
+#include <assert.h>
+#include <mmsystem.h>
+#include <ctype.h>
+#include <Winuser.h>
+#include <direct.h>
+
+void drawError(char*);
+
 #endif

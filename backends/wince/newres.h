@@ -41,7 +41,9 @@
 #ifndef _INC_WINDOWS
 #define _INC_WINDOWS
 	#include "winuser.h"           // extract from windows header
+#if _WIN32_WCE >= 300
 	#include "winver.h"   
+#endif
 #endif
 #endif
 

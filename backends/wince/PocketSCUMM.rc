@@ -7,6 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+
 #include "newres.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,11 +42,15 @@ BEGIN
     "resource.h\0"
 END
 
+#if _WIN32_WCE >= 300
+
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
     "#include ""newres.h""\r\n"
     "\0"
 END
+
+#endif
 
 3 TEXTINCLUDE DISCARDABLE 
 BEGIN
@@ -55,6 +60,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+#if _WIN32_WCE >= 300
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -99,6 +105,7 @@ BEGIN
     TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_CAP_OPTIONS, 0, 1,
 END
 
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
