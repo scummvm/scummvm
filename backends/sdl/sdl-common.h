@@ -144,10 +144,10 @@ public:
 	virtual int16 getWidth();
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }
 	virtual int16 getOverlayWidth()   { return _overlayWidth; }
-	virtual int ScreenToOverlayX(int x) { return x * _overlayScale; }
-	virtual int ScreenToOverlayY(int y) { return y * _overlayScale; }
-	virtual int OverlayToScreenX(int x) { return x / _overlayScale; }
-	virtual int OverlayToScreenY(int y) { return y / _overlayScale; }
+	virtual int screenToOverlayX(int x) { return x * _overlayScale; }
+	virtual int screenToOverlayY(int y) { return y * _overlayScale; }
+	virtual int overlayToScreenX(int x) { return x / _overlayScale; }
+	virtual int overlayToScreenY(int y) { return y / _overlayScale; }
 
 	// Methods that convert RGB to/from colors suitable for the overlay.
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);

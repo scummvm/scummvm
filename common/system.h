@@ -327,10 +327,10 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight()  { return getHeight(); }
 	virtual int16 getOverlayWidth()   { return getWidth(); }
-	virtual int ScreenToOverlayX(int x) { return x; }
-	virtual int ScreenToOverlayY(int y) { return y; }
-	virtual int OverlayToScreenX(int x) { return x; }
-	virtual int OverlayToScreenY(int y) { return y; }
+	virtual int screenToOverlayX(int x) { return x; }
+	virtual int screenToOverlayY(int y) { return y; }
+	virtual int overlayToScreenX(int x) { return x; }
+	virtual int overlayToScreenY(int y) { return y; }
 
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
