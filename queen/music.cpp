@@ -166,7 +166,8 @@ static const byte mt32_to_gm[128] = {
 			return;
 		}
 		
-		switch (Sound::_tune[tuneList].mode) {
+		int mode = (_numSongs == 40) ? Sound::_tuneDemo[tuneList].mode : Sound::_tune[tuneList].mode;
+		switch (mode) {
 			//Random loop
 			case  0:
 				_randomLoop = true;
@@ -187,8 +188,13 @@ static const byte mt32_to_gm[128] = {
 		}
 		
 		int i = 0;
-		while(Sound::_tune[tuneList].tuneNum[i])
-			queueSong(Sound::_tune[tuneList].tuneNum[i++] - 1);
+		if (_numSongs == 40) {
+			while(Sound::_tuneDemo[tuneList].tuneNum[i])
+				queueSong(Sound::_tuneDemo[tuneList].tuneNum[i++] - 1);
+		} else {
+			while(Sound::_tune[tuneList].tuneNum[i])
+				queueSong(Sound::_tune[tuneList].tuneNum[i++] - 1);
+		}
 			
 		if (_randomLoop)
 			_queuePos = randomQueuePos();
