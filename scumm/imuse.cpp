@@ -4550,6 +4550,7 @@ void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 void IMuseGM::midiPitchBendFactor (byte chan, byte factor) {
 	if (_midi_pitchbend_factor_last[chan] != factor) {
 		_midi_pitchbend_factor_last[chan] = factor;
+		_md->setPitchBendRange (factor); // For high-level semantic drivers (such as QTMA)
 		_md->send((   0   << 16) | (101 << 8) | (0xB0 | chan));
 		_md->send((   0   << 16) | (100 << 8) | (0xB0 | chan));
 		_md->send((factor << 16) | (  6 << 8) | (0xB0 | chan));

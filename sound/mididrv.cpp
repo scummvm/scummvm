@@ -45,6 +45,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range) { }
 
 private:
 	struct MyMidiHdr {
@@ -304,6 +305,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range) { }
 
 private:
 	enum {
@@ -515,6 +517,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range) { }
 
 private:
 	StreamCallback *_stream_proc;
@@ -650,8 +653,9 @@ public:
 	int open(int mode);
 	void close();
 	void send(uint32 b);
-	void pause(bool pause);
+	void pause(bool pause) { }
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range);
 
 private:
 	NoteAllocator qtNoteAllocator;
@@ -661,6 +665,11 @@ private:
 	StreamCallback *_stream_proc;
 	void *_stream_param;
 	int _mode;
+
+	// Pitch bend tracking. Necessary since QTMA handles
+	// pitch bending so differently from MPU401.
+	uint16 _pitchbend [16];
+	byte _pitchbend_range [16];
 };
 
 void MidiDriver_QT::set_stream_callback(void *param, StreamCallback *sc)
@@ -808,8 +817,9 @@ void MidiDriver_QT::send(uint32 b)
 			// multiply it by a factor. If all was right, the factor would be 3/8, but for
 			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
 			// Maybe the QT docs are right, and 
-			long theBend = (long)midiCmd[1] | (long)(midiCmd[2] << 7);
-			theBend = (theBend - 0x2000) * 2 / 64;
+			long theBend = ((long)midiCmd[1] | (long)(midiCmd[2] << 7));
+			_pitchbend[chanID] = theBend;
+			theBend = (theBend - 0x2000) * _pitchbend_range[channel] / 32;
 
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
 		}
@@ -822,8 +832,15 @@ void MidiDriver_QT::send(uint32 b)
 	}
 }
 
-void MidiDriver_QT::pause(bool)
+void MidiDriver_QT::setPitchBendRange (channel, range)
 {
+	if (_pitchbend_range[channel] == range)
+		return;
+	_pitchbend_range[channel] = range;
+
+	long theBend = _pitchbend[channel];
+	theBend = (theBend - 0x2000) * range / 32;
+	NASetController(qtNoteAllocator, qtNoteChannel[channel], kControllerPitchBend, theBend);
 }
 
 MidiDriver *MidiDriver_QT_create()
@@ -848,6 +865,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range) { }
 
 private:
 	AudioUnit au_MusicDevice;
@@ -966,10 +984,11 @@ MidiDriver *MidiDriver_CORE_create()
 class MidiDriver_NULL:public MidiDriver {
 public:
 	int open(int mode);
-	void close();
-	void send(uint32 b);
-	void pause(bool pause);
-	void set_stream_callback(void *param, StreamCallback *sc);
+	void close() { }
+	void send(uint32 b) { }
+	void pause(bool pause) { }
+	void set_stream_callback(void *param, StreamCallback *sc) { }
+	void setPitchBendRange (uint range) { }
 private:
 };
 
@@ -977,18 +996,6 @@ int MidiDriver_NULL::open(int mode)
 {
 	warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
 	return 0;
-}
-void MidiDriver_NULL::close()
-{
-}
-void MidiDriver_NULL::send(uint32 b)
-{
-}
-void MidiDriver_NULL::pause(bool pause)
-{
-}
-void MidiDriver_NULL::set_stream_callback(void *param, StreamCallback *sc)
-{
 }
 
 MidiDriver *MidiDriver_NULL_create()
@@ -1054,6 +1061,7 @@ public:
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
+	void setPitchBendRange (uint range) { }
 
 private:
 	void send_event(int do_flush);
@@ -1205,7 +1213,7 @@ void MidiDriver_ALSA::send(uint32 b)
 		break;
 
 	case 0xE0:{
-			long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
+			long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
 			snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
 			send_event(1);
 		}
