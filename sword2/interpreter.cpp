@@ -396,8 +396,8 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 
 			case CP_PUSH_LOCAL_VAR32:		// 1	Push the contents of a local variable
 				Read16ip(parameter)
-				DEBUG2("Push local var %d (%d)",parameter,(int32)READ_LE_UINT32(variables+parameter));
-				PUSHONSTACK ( (int32)READ_LE_UINT32(variables+parameter) );
+				DEBUG2("Push local var %d (%d)",parameter,*(int32 *)(variables+parameter));
+				PUSHONSTACK ( *(int32 *)(variables+parameter) );
 				break;
 
 
@@ -417,7 +417,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
 				DEBUG2("Pop %d into var %d",value,parameter);
-				*((int *)(variables+parameter)) = TO_LE_32(value);
+				*((int *)(variables+parameter)) = value;
 				break;
 
 			case CP_CALL_MCODE:			// 4	Call an mcode routine
@@ -518,15 +518,15 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 			case CP_ADDNPOP_LOCAL_VAR32:						// 10
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) = TO_LE_32((int32)READ_LE_UINT32(variables+parameter) + value);
-				DEBUG3("+= %d into var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
+				*((int *)(variables+parameter)) = *(int32 *)(variables+parameter) + value;
+				DEBUG3("+= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 				break;
 
 			case CP_SUBNPOP_LOCAL_VAR32:						// 11
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) = TO_LE_32((int32)READ_LE_UINT32(variables+parameter) - value);
-				DEBUG3("-= %d into var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
+				*((int *)(variables+parameter)) = *(int32 *)(variables+parameter) - value;
+				DEBUG3("-= %d into var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 				break;
 
 			case CP_SKIPONTRUE:									//	12	Skip if the value on the stack is TRUE
@@ -574,7 +574,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 										VS_COL_GREY);
 #else
 				globalInterpreterVariables2[parameter] += value;
-				DEBUG3("+= %d into global var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
+				DEBUG3("+= %d into global var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 #endif
 				break;
 			}
@@ -593,7 +593,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 										VS_COL_GREY);
 #else
 				globalInterpreterVariables2[parameter] -= value;
-				DEBUG3("-= %d into global var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
+				DEBUG3("-= %d into global var %d->%d",value,parameter,*(int32 *)(variables+parameter));
 #endif
 				break;
 			}
