@@ -32,8 +32,6 @@
 /* FIXME - BIG HACK for MidiEmu */
 Engine *g_engine = 0;
 
-uint16 g_debugLevel = 0;
-
 Engine::Engine(OSystem *syst)
 	: _system(syst), _gameDataPath(ConfMan.get("path")) {
 	g_engine = this;
@@ -43,8 +41,6 @@ Engine::Engine(OSystem *syst)
 
 	// Add default file directory
 	File::addDefaultDirectory(_gameDataPath);
-
-	g_debugLevel = ConfMan.getInt("debuglevel");
 
 	_saveFileMan = _system->getSavefileManager();
 }
@@ -162,16 +158,7 @@ void CDECL warning(const char *s, ...) {
 #endif
 }
 
-void CDECL debug(int level, const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	if (level > g_debugLevel)
-		return;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
+static void debugHelper(const char *buf) {
 #ifndef _WIN32_WCE
 	printf("%s\n", buf);
 #endif
@@ -190,6 +177,20 @@ void CDECL debug(int level, const char *s, ...) {
 	fflush(stdout);
 }
 
+void CDECL debug(int level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > ConfMan.getInt("debuglevel"))
+		return;
+
+	va_start(va, s);
+	vsprintf(buf, s, va);
+	va_end(va);
+	
+	debugHelper(buf);
+}
+
 void CDECL debug(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
@@ -197,20 +198,8 @@ void CDECL debug(const char *s, ...) {
 	va_start(va, s);
 	vsprintf(buf, s, va);
 	va_end(va);
-	printf("%s\n", buf);
 
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-
-	fflush(stdout);
+	debugHelper(buf);
 }
 
 void checkHeap() {

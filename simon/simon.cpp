@@ -45,8 +45,6 @@
 #include "globals.h"
 #endif
 
-extern uint16 g_debugLevel;
-
 struct SimonGameSettings {
 	const char *name;
 	const char *description;
@@ -4004,13 +4002,13 @@ int SimonEngine::go() {
 	_continous_vgascript = false;
 	_draw_images_debug=false;
 
-	if (g_debugLevel == 2)
+	if (ConfMan.getInt("debuglevel") == 2)
 		_continous_mainscript = true;
-	if (g_debugLevel == 3)
+	if (ConfMan.getInt("debuglevel") == 3)
 		_continous_vgascript = true;
-	if (g_debugLevel == 4)
+	if (ConfMan.getInt("debuglevel") == 4)
 		_start_mainscript = true;
-	if (g_debugLevel == 5)
+	if (ConfMan.getInt("debuglevel") == 5)
 		_start_vgascript = true;
 
 	if (_game & GF_TALKIE) {

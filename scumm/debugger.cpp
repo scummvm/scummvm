@@ -20,6 +20,7 @@
  */
 #include "stdafx.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/util.h"
@@ -35,8 +36,6 @@
 
 #include "common/debugger.cpp"
 
-extern uint16 g_debugLevel;
-
 namespace Scumm {
 
 void CDECL debugC(int channel, const char *s, ...) {
@@ -45,7 +44,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-	if (!(g_scumm->_debugFlags & channel) && (g_debugLevel < 9))
+	if (!(g_scumm->_debugFlags & channel) && (ConfMan.getInt("debuglevel") < 9))
 		return;
 
 	va_start(va, s);
@@ -593,10 +592,10 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 		if (_vm->_debugMode == false)
 			DebugPrintf("Debugging is not enabled at this time\n");
 		else
-			DebugPrintf("Debugging is currently set at level %d\n", g_debugLevel);
+			DebugPrintf("Debugging is currently set at level %d\n", ConfMan.getInt("debuglevel"));
 	} else { // set level
 		int level = atoi(argv[1]);
-		g_debugLevel = level;
+		ConfMan.set("debuglevel", level, Common::ConfigManager::kTransientDomain);
 		if (level > 0) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", level);

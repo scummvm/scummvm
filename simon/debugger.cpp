@@ -20,11 +20,10 @@
  */
 
 #include "stdafx.h"
+#include "common/config-manager.h"
 #include "common/debugger.cpp"
 #include "simon/debugger.h"
 #include "simon/simon.h"
-
-extern uint16 g_debugLevel;
 
 namespace Simon {
 
@@ -88,10 +87,10 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 		if (_vm->_debugMode == false)
 			DebugPrintf("Debugging is not enabled at this time\n");
 		else
-			DebugPrintf("Debugging is currently set at level %d\n", g_debugLevel);
+			DebugPrintf("Debugging is currently set at level %d\n", ConfMan.getInt("debuglevel"));
 	} else { // set level
 		int level = atoi(argv[1]);
-		g_debugLevel = level;
+		ConfMan.set("debuglevel", level, Common::ConfigManager::kTransientDomain);
 		if (level > 0 && level < 10) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", level);
