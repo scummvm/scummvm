@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/16 10:01:44  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.4  2001/10/10 17:18:33  strigeus
  * fixed swapped parameters in o_walkActorToActor
  *
@@ -38,26 +41,43 @@
 #include "scumm.h"
 
 void Scumm::initActor(Actor *a, int mode) {
-	if (mode) {
-		a->facing = 2;
+	if (mode==1) {
 		a->costume = 0;
 		a->room = 0;
 		a->x = 0;
 		a->y = 0;
+		a->facing = 2;
+	} else if (mode==2) {
+		a->facing = 2;
 	}
 
 	a->elevation = 0;
 	a->width = 0x18;
 	a->talkColor = 0xF;
+#if defined(DOTT)
+	a->new_2 = 0;
+	a->new_1 = -80;
+#endif
 	a->scaley = a->scalex = 0xFF;
 	a->charset = 0;
-	a->sound = 0;
+	a->sound[0] = 0;
+	a->sound[1] = 0;
+	a->sound[2] = 0;
+	a->sound[3] = 0;
+	a->sound[4] = 0;
+	a->sound[5] = 0;
+	a->sound[6] = 0;
+	a->sound[7] = 0;
+	a->newDirection = 0;
 	a->moving = 0;
 
 	setActorWalkSpeed(a, 8, 2);
 
 	a->ignoreBoxes = 0;
 	a->neverZClip = 0;
+#if defined(DOTT)
+	a->new_3 = 0;
+#endif
 	a->initFrame = 1;
 	a->walkFrame = 2;
 	a->standFrame = 3;
@@ -415,7 +435,7 @@ void Scumm::decodeCostData(Actor *a, int frame, uint usemask) {
 }
 
 void Scumm::putActor(Actor *a, int x, int y, byte room) {
-	if (a->visible && _currentRoom!=room && vm.vars[VAR_TALK_ACTOR]==a->number) {
+	if (a->visible && _currentRoom!=room && _vars[VAR_TALK_ACTOR]==a->number) {
 		clearMsgQueue();
 	}
 
@@ -425,7 +445,7 @@ void Scumm::putActor(Actor *a, int x, int y, byte room) {
 	a->needRedraw = true;
 	a->needBgReset = true;
 
-	if (vm.vars[VAR_UNK_ACTOR]==a->number) {
+	if (_vars[VAR_UNK_ACTOR]==a->number) {
 		dseg_3A76 = 1;
 	}
 
@@ -589,13 +609,13 @@ void Scumm::stopTalk() {
 	_haveMsg = 0;
 	_talkDelay = 0;
 
-	act = vm.vars[VAR_TALK_ACTOR];
+	act = _vars[VAR_TALK_ACTOR];
 	if (act && act<0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
 		if (_currentRoom == a->room) {
 			startAnimActor(a, a->talkFrame2, a->facing);			
 		}
-		vm.vars[VAR_TALK_ACTOR] = 0xFF;
+		_vars[VAR_TALK_ACTOR] = 0xFF;
 	}
 	_keepText = false;
 	restoreCharsetBg();
@@ -616,6 +636,7 @@ void Scumm::walkActors() {
 	}
 }
 
+#if !defined(DOTT)
 void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
@@ -624,7 +645,7 @@ void Scumm::playActorSounds() {
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->room==_currentRoom && a->sound) {
 			_currentScript = 0xFF;
-			addSoundToQueue(a->sound);
+			addSoundToQueue(a->sound[0]);
 			for (i=1; i<13; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;
@@ -633,6 +654,7 @@ void Scumm::playActorSounds() {
 		}
 	}
 }
+#endif
 
 void Scumm::walkActor(Actor *a) {
 	int j;
@@ -741,9 +763,9 @@ void Scumm::processActors() {
 			setupActorScale(a);
 			setupCostumeRenderer(&cost, a);
 			setActorCostPalette(a);
-			checkHeap();
+			CHECK_HEAP
 			drawActorCostume(a);
-			checkHeap();
+			CHECK_HEAP
 			actorAnimate(a);
 		}
 	} while (ac++,--cnt);
@@ -851,7 +873,7 @@ void Scumm::actorTalk() {
 	if (_actorToPrintStrFor==0xFF) {
 		if (!_keepText)
 			stopTalk();
-		vm.vars[VAR_TALK_ACTOR] = 0xFF;
+		_vars[VAR_TALK_ACTOR] = 0xFF;
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
@@ -860,24 +882,24 @@ void Scumm::actorTalk() {
 		} else {
 			if (!_keepText)
 				stopTalk();
-			vm.vars[VAR_TALK_ACTOR] = a->number;
+			_vars[VAR_TALK_ACTOR] = a->number;
 			startAnimActor(a,a->talkFrame1,a->facing);
-			oldact = vm.vars[VAR_TALK_ACTOR];
+			oldact = _vars[VAR_TALK_ACTOR];
 		}
 	}
 	if (oldact>=0x80)
 		return;
 	
-	if (vm.vars[VAR_TALK_ACTOR]>0x7F) {
-		_charsetColor = (byte)_stringColor[0];
+	if (_vars[VAR_TALK_ACTOR]>0x7F) {
+		_charsetColor = (byte)string[0].color;
 	} else {
-		a = derefActorSafe(vm.vars[VAR_TALK_ACTOR], "actorTalk(2)");
+		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
 	charset._bufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	vm.vars[VAR_HAVE_MSG] = 0xFF;
+	_vars[VAR_HAVE_MSG] = 0xFF;
 	CHARSET_1();
 }
 

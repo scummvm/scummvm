@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/16 10:01:47  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.3  2001/10/09 18:35:02  strigeus
  * fixed object parent bug
  * fixed some signed/unsigned comparisons
@@ -35,6 +38,13 @@
 #pragma warning (disable: 4244)
 #pragma warning (disable: 4101)
 
+
+#if defined(CHECK_HEAP)
+#undef CHECK_HEAP
+#define CHECK_HEAP checkHeap();
+#else
+#define CHECK_HEAP
+#endif
 
 #define SCUMM_LITTLE_ENDIAN
 
@@ -55,8 +65,9 @@ typedef signed long int32;
 
 #elif defined(UNIX)
 
-/* need this for the SDL_BYTEORDER define */
+#define CHECK_HEAP
 
+/* need this for the SDL_BYTEORDER define */
 #include <SDL_byteorder.h>
 
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
@@ -122,6 +133,9 @@ uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 #define FROM_LE_32(__a__) __a__
 #define FROM_LE_16(__a__) __a__
 
+#define TO_LE_32(__a__) __a__
+#define TO_LE_16(__a__) __a__
+
 #define TO_BE_32(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
 #elif defined(SCUMM_BIG_ENDIAN)
@@ -135,6 +149,9 @@ uint32 FORCEINLINE FROM_LE_32(uint32 a) {
 uint16 FORCEINLINE FROM_LE_16(uint16 a) {
 	return ((a>>8)&0xFF) + ((a<<8)&0xFF00);
 }
+
+#define TO_LE_32 FROM_LE_32
+#define TO_LE_16 FROM_LE_16
 
 uint32 FORCEINLINE READ_LE_UINT32(void *ptr) {
 	byte *b = (byte*)ptr;
@@ -157,7 +174,6 @@ int FORCEINLINE READ_BE_UINT16(void *ptr) {
 int FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
-
 
 uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(void *ptr) {
 	byte *b = (byte*)ptr;

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.4  2001/10/12 07:24:06  strigeus
  * fast mode support
  *
@@ -124,8 +127,7 @@ void Error(const char *msg) {
 int sel;
 Scumm scumm;
 WndMan wm[1];
-
-
+byte veryFastMode;
 
 void modifyslot(int sel, int what);
 
@@ -154,6 +156,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 			if (wParam=='F') {
 				wm->_scumm->_fastMode ^= 1;
+			}
+
+			if (wParam=='G') {
+				veryFastMode ^= 1;
 			}
 
 			break;
@@ -711,7 +717,6 @@ int _declspec(naked) endpentiumtest() {
 
 
 
-#ifdef _DEBUG
 
 void decompressMask(byte *d, byte *s) {
 	int x,y;
@@ -732,12 +737,19 @@ void decompressMask(byte *d, byte *s) {
 
 void outputdisplay2(Scumm *s, int disp) {
 	byte *old = wm->_vgabuf;
+
+	byte buf[64000];
+
 	switch(disp) {
 	case 0:
-		wm->_vgabuf = s->getResourceAddress(0xA, 5);
+		wm->_vgabuf = buf;
+		memcpy(buf, wm->_vgabuf, 64000);
+		memcpy(buf+320*144,s->getResourceAddress(0xA, 7),320*56);
 		break;
 	case 1:
-		wm->_vgabuf = s->getResourceAddress(0xA, 1);
+		wm->_vgabuf = buf;
+		memcpy(buf, wm->_vgabuf, 64000);
+		memcpy(buf+320*144,s->getResourceAddress(0xA, 3),320*56);
 		break;
 	case 2:
 		wm->_vgabuf = NULL;
@@ -759,7 +771,7 @@ void outputdisplay2(Scumm *s, int disp) {
 	wm->writeToScreen();	
 	wm->_vgabuf = old;
 }
-#endif
+
 
 #if 0
 void outputdisplay(Scumm *s) {
@@ -783,6 +795,8 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 
 }
 
+int clock;
+
 void updateScreen(Scumm *s) {
 	if (s->_palDirtyMax != -1) {
 		wm->setPalette(s->_currentPalette, 0, 256);	
@@ -792,8 +806,12 @@ void updateScreen(Scumm *s) {
 	wm->writeToScreen();
 }
 
+
+
 void waitForTimer(Scumm *s) {
-	Sleep(10);
+	if (!veryFastMode) {
+		Sleep(5);
+	} 
 	s->_scummTimer+=2;
 	wm->handleMessage();
 }
@@ -808,7 +826,12 @@ void drawMouse(Scumm *s, int, int, int, byte*, bool) {
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
+
+#if defined(DOTT)
+	scumm._exe_name = "tentacle";
+#else
 	scumm._exe_name = "monkey2";
+#endif
 
 	wm->init();
 	wm->_vgabuf = (byte*)calloc(320,200);

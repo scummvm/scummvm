@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/16 10:01:47  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.7  2001/10/11 12:07:35  strigeus
  * Determine caption from file name.
  *
@@ -129,6 +132,7 @@ struct ScriptSlot {
 	uint32 offs;
 	int32 delay;
 	uint16 number;
+	uint16 newfield;
 	byte status;
 	byte type;
 	byte unk1,unk2,freezeCount,didexec;
@@ -146,6 +150,25 @@ struct ResHeader {
 	uint32 size;
 };
 
+#if defined(DOTT)
+class ObjectData {
+public:
+	uint32 offs_obim_to_room;
+	uint32 offs_obcd_to_room;
+	uint16 cdhd_10, cdhd_12;
+	uint16 obj_nr;
+	int16 x_pos;
+	int16 y_pos;
+	uint16 numstrips;
+	uint16 height;
+	byte actordir;
+	byte parent;
+	byte parentstate;
+	byte ownerstate;
+	byte fl_object_index;
+	byte unk_3;
+};
+#else
 class ObjectData {
 public:
 	uint32 offs_obim_to_room;
@@ -154,15 +177,16 @@ public:
 	uint16 obj_nr;
 	byte x_pos;
 	byte y_pos;
-	byte numstrips;
-	byte height;
+	uint16 numstrips;
+	uint16 height;
 	byte actordir;
-	byte parentstate;
 	byte parent;
+	byte parentstate;
 	byte ownerstate;
 	byte fl_object_index;
 	byte unk_3;
 };
+#endif
 
 struct RoomHeader {
 	uint32 tag, size;
@@ -170,22 +194,43 @@ struct RoomHeader {
 	uint16 numObjects;
 };
 
+#if !defined(DOTT)
 struct CodeHeader { /* file format */
 	uint32 id;
 	uint32 size;
 	uint16 obj_id;
 	byte x,y,w,h;
 	byte flags;
-	byte unk1;
+	byte parent;
 	uint16 unk2;
 	uint16 unk3;
-	byte unk4;
+	byte actordir;
 };
+#else
+struct CodeHeader { /* file format */
+	uint32 id;
+	uint32 size;
+	uint16 obj_id;
+	int16 x, y;
+	uint16 w,h;
+	byte flags, parent;
+	uint16 unk2;
+	uint16 unk3;
+	byte actordir;
+};
+#endif
 
 struct ImageHeader { /* file format */
 	uint32 id;
 	uint32 size;
 	uint16 obj_id;
+	uint16 unk[5];
+	uint16 img_w;
+	uint16 img_h;
+	uint16 unk_2;
+	struct {
+		int16 x,y;
+	} hotspot[15];
 };
 
 #pragma END_PACK_STRUCTS
@@ -208,6 +253,7 @@ struct SaveLoadEntry {
 
 enum {
 	sleByte = 1,
+	sleUint8 = 1,
 	sleInt16 = 2,
 	sleUint16 = 3,
 	sleInt32 = 4,
@@ -287,6 +333,10 @@ enum ScummVars {
 	VAR_CUTSCENEEXIT_KEY = 24,
 	VAR_TALKSTOP_KEY = 57,
 	VAR_SAVELOADDIALOG_KEY = 50,
+
+#if defined(DOTT)
+	VAR_RANDOM_NR = 118,
+#endif
 };
 
 #define _maxRooms res.num[1]
@@ -308,6 +358,7 @@ enum ScummVars {
 #define _baseScripts res.address[2]
 #define _baseInventoryItems res.address[5]
 #define _baseFLObject res.address[13]
+#define _baseArrays res.address[7]
 
 #define _roomFileOffsets res.roomoffs[1]
 
@@ -322,7 +373,7 @@ struct CharsetRenderer {
 	bool _hasMask;
 	
 	int _strLeft, _strRight, _strTop, _strBottom;
-	int _mask_bottom, _mask_right, _mask_top, _mask_left;
+//	int _mask_bottom, _mask_right, _mask_top, _mask_left;
 	byte _curId;
 	
 	byte _bufPos;
@@ -413,11 +464,11 @@ struct Actor {
 	uint width;
 	byte number;
 	byte facing;
-	byte costume;
+	uint16 costume;
 	byte room;
 	byte talkColor;
 	byte scalex,scaley;
-	byte charset,sound;
+	byte charset;
 	byte newDirection;
 	byte moving;
 	byte ignoreBoxes;
@@ -430,6 +481,9 @@ struct Actor {
 	byte walkbox;
 	byte mask;
 	byte animProgress, animSpeed;
+	int16 new_1,new_2;
+	byte new_3;
+	byte sound[8];
 	ActorWalkData walkdata;
 	CostumeData cost;
 	byte palette[32];
@@ -440,6 +494,34 @@ struct CameraData {
 	int16 _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	uint16 _movingToActor;
+};
+
+#define ARRAY_HDR_SIZE 6
+struct ArrayHeader {
+	int16 dim1_size;
+	int16 type;
+	int16 dim2_size;
+	byte data[1];
+};
+
+struct SentenceTab {
+		byte unk5;
+		byte unk2;
+		uint16 unk4;
+		uint16 unk3;
+		byte unk;
+		byte pad;
+};
+
+struct StringTab {
+	int16 t_xpos, t_ypos, t_center, t_overhead;
+	int16 t_new3, t_right, t_color, t_charset;
+	int16 xpos, ypos;
+	int16 xpos2,ypos2;
+	int16 center, overhead;
+	int16 new_3, right;
+	int16 color,charset;
+	int16 mask_top, mask_bottom, mask_right, mask_left;
 };
 
 struct Scumm {
@@ -459,13 +541,41 @@ struct Scumm {
 
 	int _keyPressed;
 
+	uint16 *_inventory;
+	byte *_arrays;
+	VerbSlot *_verbs;
+	ObjectData *_objs;
+	uint16 *_newNames;
+	int16 *_vars;
+	byte *_bitVars;
+
+	const OpcodeProc *_opcodes;
+
+	byte _curActor;
+	int _curVerb;
+	int _curVerbSlot;
+
+	int _curPalIndex;
+
+	int _numVariables;
+	int _numBitVariables;
+	int _numLocalObjects;
+	int _numGlobalObjects;
+	int _numArray;
+	int _numVerbs;
+	int _numFlObject;
+	int _numInventory;
+	int _numRooms;
+	int _numScripts;
+	int _numSounds;
+	int _numCharsets;
+	int _numCostumes;
+	
 	uint8 *_roomFileIndexes;
 	byte *_objectFlagTable;
 	uint32 *_classData;
 
-	byte _numGlobalScriptsUsed;
-	
-	uint16 _maxNrObjects;
+	byte _numGlobalScripts;
 	
 	uint16 _numZBuffer;
 	
@@ -509,8 +619,6 @@ struct Scumm {
 
 	uint32 _localScriptList[0x39];
 
-	uint16 _inventory[0x50];
-
 	uint16 _debugMode;
 
 	byte *_messagePtr;
@@ -543,12 +651,13 @@ struct Scumm {
 
 	int _numInMsgStack;
 
-	VerbSlot verbs[102];
+//	VerbSlot verbs[102];
 	VirtScreen virtscr[4];
 
 	uint32 _ENCD_offs, _EXCD_offs;
 	uint32 _CLUT_offs, _EPAL_offs;
 	uint32 _IM00_offs;
+	uint32 _PALS_offs;
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[0xC8];
@@ -556,7 +665,6 @@ struct Scumm {
 	uint16 _currentDrive;
 	uint16 _soundCardType;
 	uint16 _videoMode;
-	uint16 _heapSpace;
 	byte _mousePresent;
 
 	int16 _palManipStart;
@@ -564,19 +672,17 @@ struct Scumm {
 	int16 _palManipCounter;
 
 	struct {
-		byte mode[16];
-		uint16 num[16];
-		uint32 tags[16];
-		const char *name[16];
-		byte **address[16];
-		byte *flags[16];
-		byte *roomno[16];
-		uint32 *roomoffs[16];
+		byte mode[17];
+		uint16 num[17];
+		uint32 tags[17];
+		const char *name[17];
+		byte **address[17];
+		byte *flags[17];
+		byte *roomno[17];
+		uint32 *roomoffs[17];
 	} res;
 
 	struct {
-		int16 vars[801];
-		byte bitvars[256];
 		uint32 cutScenePtr[5];
 		byte cutSceneScript[5];
 		int16 cutSceneData[5];
@@ -590,16 +696,6 @@ struct Scumm {
 	struct {
 		int16 x,y;
 	} mouse;
-
-	struct {
-		int16 x[6];
-		int16 y[6];
-		int16 center[6];
-		int16 overhead[6];
-		int16 right[6];
-		int16 color[6];
-		int16 charset[6];
-	} textslot;
 
 	struct {
 		byte *readPtr;
@@ -644,7 +740,7 @@ struct Scumm {
 
 	Actor actor[13];
 
-	uint16 actorDrawBits[160];
+	uint16 actorDrawBits[200];
 
 	struct {
 		int upperLeftX;
@@ -691,12 +787,21 @@ struct Scumm {
 	uint16 _imgBufOffs[4];
 
 	byte _sentenceIndex;
+	SentenceTab sentence[6];
+
+
+#if 0	
 	byte _sentenceTab[6];
 	byte _sentenceTab2[6];
 	uint16 _sentenceTab3[6];
 	uint16 _sentenceTab4[6];
 	byte _sentenceTab5[6];
+#endif
 
+	StringTab string[6];
+
+#if 0
+//	int _stringXPos[4], _stringYPos[4];
 	uint16 _stringOverhead[6];
 	uint16 _stringCenter[6];
 	uint16 _stringRight[6];
@@ -708,10 +813,11 @@ struct Scumm {
 
 	int16 _stringXpos2[6];
 	int16 _stringYpos2[6];
+#endif
 
 	CostumeRenderer cost;
 
-	ObjectData objs[184];
+//	ObjectData objs[184];
 
 	int16 _soundQuePos;
 	int16 _soundQue[0x100];
@@ -748,7 +854,7 @@ struct Scumm {
 
 	bool _BgNeedsRedraw;
 
-	int _stringXPos[4], _stringYPos[4];
+
 
 	int16 _localParamList[16];
 
@@ -760,7 +866,7 @@ struct Scumm {
 	uint16 _lastKeyHit;
 
 	int _scummStackPos;
-	int16 _scummStack[0x15];
+	int16 _scummStack[100];
 
 	int _maxBoxVertexHeap;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
@@ -769,12 +875,14 @@ struct Scumm {
 	
 	byte *_msgPtrToAdd;
 
+	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
+
 	void openRoom(int room);
 	void deleteRoomOffsets();
 	void readRoomsOffsets();
 	void askForDisk();
 
-	void readIndexFile(int i);
+	
 	bool openResourceFile(const char *filename);
 	
 	void fileClose(void *file);
@@ -897,6 +1005,7 @@ struct Scumm {
 	int getVarOrDirectWord(byte mask);
 	int getVarOrDirectByte(byte mask);
 	int readVar(uint var);
+	void writeVar(uint var, int value);
 	void getResultPos();
 	void setResult(int result);
 	
@@ -1003,6 +1112,150 @@ struct Scumm {
 	void o_walkActorTo();
 	void o_walkActorToActor();
 	void o_walkActorToObject();
+
+	void o2_pushByte();
+	void o2_pushWord();
+	void o2_pushByteVar();
+	void o2_pushWordVar();
+	void o2_invalid();
+	void o2_byteArrayRead();
+	void o2_wordArrayRead();
+	void o2_byteArrayIndexedRead();
+	void o2_wordArrayIndexedRead();
+	void o2_dup();
+	void o2_zero();
+	void o2_eq();
+	void o2_neq();
+	void o2_gt();
+	void o2_lt();
+	void o2_le();
+	void o2_ge();
+	void o2_add();
+	void o2_sub();
+	void o2_mul();
+	void o2_div();
+	void o2_land();
+	void o2_lor();
+	void o2_kill();
+	void o2_writeByteVar();
+	void o2_writeWordVar();
+	void o2_byteArrayWrite();
+	void o2_wordArrayWrite();
+	void o2_byteArrayIndexedWrite();
+	void o2_wordArrayIndexedWrite();
+	void o2_byteVarInc();
+	void o2_wordVarInc();
+	void o2_byteArrayInc();
+	void o2_wordArrayInc();
+	void o2_byteVarDec();
+	void o2_wordVarDec();
+	void o2_byteArrayDec();
+	void o2_wordArrayDec();
+	void o2_jumpTrue();
+	void o2_jumpFalse();
+	void o2_jump();
+	void o2_startScriptEx();
+	void o2_startScript();
+	void o2_startObject();
+	void o2_setObjectState();
+	void o2_setObjectXY();
+	void o2_stopObjectCode();
+	void o2_endCutscene();
+	void o2_cutScene();
+	void o2_stopMusic();
+	void o2_freezeUnfreeze();
+	void o2_cursorCommand();
+	void o2_breakHere();
+	void o2_ifClassOfIs();
+	void o2_setClass();
+	void o2_getState();
+	void o2_setState();
+	void o2_setOwner();
+	void o2_getOwner();
+	void o2_startSound();
+	void o2_stopSound();
+	void o2_startMusic();
+	void o2_stopObjectScript();
+	void o2_panCameraTo();
+	void o2_actorFollowCamera();
+	void o2_setCameraAt();
+	void o2_loadRoom();
+	void o2_stopScript();
+	void o2_walkActorToObj();
+	void o2_walkActorTo();
+	void o2_putActorInRoom();
+	void o2_putActorAtObject();
+	void o2_faceActor();
+	void o2_animateActor();
+	void o2_doSentence();
+	void o2_pickupObject();
+	void o2_loadRoomWithEgo();
+	void o2_getRandomNumber();
+	void o2_getRandomNumberRange();
+	void o2_getActorMoving();
+	void o2_getScriptRunning();
+	void o2_getActorRoom();
+	void o2_getObjectX();
+	void o2_getObjectY();
+	void o2_getObjectDir();
+	void o2_getActorWalkBox();
+	void o2_getActorCostume();
+	void o2_findInventory();
+	void o2_getInventoryCount();
+	void o2_getVerbFromXY();
+	void o2_beginOverride();
+	void o2_endOverride();
+	void o2_setObjectName();
+	void o2_isSoundRunning();
+	void o2_setBoxFlags();
+	void o2_createBoxMatrix();
+	void o2_resourceRoutines();
+	void o2_roomOps();
+	void o2_actorSet();
+	void o2_verbOps();
+	void o2_getActorFromXY();
+	void o2_findObject();
+	void o2_pseudoRoom();
+	void o2_getActorElevation();
+	void o2_getVerbEntrypoint();
+	void o2_arrayOps();
+	void o2_saveRestoreVerbs();
+	void o2_drawBox();
+	void o2_getActorWidth();
+	void o2_wait();
+	void o2_getActorScaleX();
+	void o2_getActorAnimCounter1();
+	void o2_soundKludge();
+	void o2_isAnyOf();
+	void o2_quitPauseRestart();
+	void o2_isActorInBox();
+	void o2_delay();
+	void o2_delayLonger();
+	void o2_delayVeryLong();
+	void o2_stopSentence();
+	void o2_print_0();
+	void o2_print_1();
+	void o2_print_2();
+	void o2_print_3();
+	void o2_printActor();
+	void o2_printEgo();
+	void o2_talkActor();
+	void o2_talkEgo();
+	void o2_dim();
+	void o2_runVerbCodeQuick();
+	void o2_runScriptQuick();
+	void o2_dim2();
+	void o2_abs();
+	void o2_distObjectObject();
+	void o2_distObjectPt();
+	void o2_distPtPt();
+	void o2_dummy_stacklist();
+	void o2_miscOps();
+	void o2_breakMaybe();
+	void o2_pickOneOf();
+	void o2_pickOneOfDefault();
+
+	void soundKludge(int16 *list);
 
 	void stopObjectCode();
 	void stopObjectScript(int script);
@@ -1148,8 +1401,8 @@ struct Scumm {
 	void setActorCostume(Actor *a, int c);
 	void loadPtrToResource(int type, int i, byte *ptr);
 
-	void stackPush(int a);
-	int stackPop();
+	void push(int a);
+	int pop();
 
 	void walkActorTo(Actor *a, int x, int y, int direction);
 
@@ -1182,7 +1435,7 @@ struct Scumm {
 	byte *getObjectAddress(int obj);
 	byte *getObjOrActorName(int obj);
 	void clearOwnerOf(int obj);
-	void runVERBCode(int script, int entry, int a, int b, int16 *vars);
+	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
 	void unkSoundProc1(int a);
 	void setVerbObject(int room, int object, int verb);
 	void unkMessage1();
@@ -1207,8 +1460,6 @@ struct Scumm {
 	int getKeyInput(int a);
 	void convertKeysToClicks();
 
-	OpcodeProc getOpcode(int i);
-
 	void drawBox(int x, int y, int x2, int y2, int color);
 
 	void drawMouse();
@@ -1226,6 +1477,7 @@ struct Scumm {
 	void saveLoadBytes(void *b, int len);
 	void saveLoadResource(int type, int index);
 	bool isResourceLoaded(int type, int index);
+	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 
 	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
 
@@ -1256,6 +1508,67 @@ struct Scumm {
 	void showHelpAndExit();
 	
 	char *getGameName();
+
+	void setupOpcodes();
+	void setupOpcodes2();
+	void endCutscene();
+	void cutscene(int16 *args);
+
+	void setOwnerOf(int obj, int owner);
+	void panCameraTo(int x);
+	void actorFollowCamera(int act);
+	void setCameraAtEx(int at);
+
+	void setCursorHotspot2(int x,int y);
+
+	void new_unk_1(int a);
+
+	void faceActorToObj(int act, int obj);
+	void animateActor(int act, int anim);
+	int getScriptRunning(int script);
+	int getObjX(int obj);
+	int getObjY(int obj);
+	int getObjDir(int obj);
+	int findInventory(int owner, int index);
+	int getInventoryCount(int owner);
+
+	void beginOverride();
+	void endOverride();
+
+	void setPalette(int pal);
+	void setPaletteFromPtr(byte *ptr);
+	byte *findPalInPals(byte *pal, int index);
+
+	int getStringLen(byte *ptr);
+
+#if defined(DOTT)
+	void readArrayFromIndexFile();
+	void readMAXS();
+	void readIndexFile();
+
+	int readArray(int array, int index, int base);
+	void writeArray(int array, int index, int base, int value);
+	
+	int getStackList(int16 *args, uint maxnum);
+	void setObjectState(int obj, int state, int x, int y);
+
+	void setStringVars(int i);
+	void decodeParseString2(int a, int b);
+
+	void arrayop_1(int a, byte *ptr);
+	
+	void copyString(byte *dst, byte *src, int len);
+	int getArrayId();
+
+	void nukeArray(int a);
+	int defineArray(int a, int b, int c, int d);
+	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
+	void unkMiscOp4(int a, int b, int c, int d);
+	void unkMiscOp9();
+	void startManiac();
+#else
+	void readIndexFile(int i);
+#endif
 };
 
 void waitForTimer(Scumm *s);

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.6  2001/10/11 11:49:51  strigeus
  * Determine caption from file name.
  *
@@ -44,8 +47,19 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+#if !defined(DOTT)
 void Scumm::initThings() {
 	readIndexFile(1);
+
+	_numVariables = 800;
+	_numBitVariables = 2048;
+	_numLocalObjects = 200;
+	
+	_inventory = (uint16*)alloc(0x50 * sizeof(uint16));
+	_verbs = (VerbSlot*)alloc(102 * sizeof(VerbSlot));
+	_objs = (ObjectData*)alloc(200 * sizeof(ObjectData));
+	_vars = (int16*)alloc(800 * sizeof(int16));
+	_bitVars = (byte*)alloc(2048 >> 3);
 
 	allocResTypeData(5, MKID('NONE'),	0x50, "inventory", 0);
 	allocResTypeData(12,MKID('NONE'),10, "temp", 0);
@@ -56,11 +70,19 @@ void Scumm::initThings() {
 	allocResTypeData(7, MKID('NONE'),0x32,"string", 0);
 	allocResTypeData(13, MKID('NONE'),0x32,"flobject", 0);
 	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
-
 	readIndexFile(2);
 	initRandSeeds();
+
+	setupOpcodes();
+}
+#else
+
+void Scumm::initThings() {
+	setupOpcodes2();
+	readIndexFile();
 }
 
+#endif
 
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
@@ -71,7 +93,7 @@ uint Scumm::getRandomNumber(uint max) {
 	/* TODO: my own random number generator */
 	_randSeed1 = 0xDEADBEEF * (_randSeed1 + 1);
 	_randSeed1 = (_randSeed1>>13) | (_randSeed1<<19);
-	return _randSeed1%(max+1);
+	return _randSeed1%max;
 }
 
 void Scumm::scummInit() {
@@ -79,7 +101,7 @@ void Scumm::scummInit() {
 	Actor *a;
 
 	debug(9, "scummInit");
-	readIndexFile(3);
+//	readIndexFile(3);
 	loadCharset(1);
 	initScreens(0, 16, 320, 144);
 
@@ -91,11 +113,11 @@ void Scumm::scummInit() {
 		initActor(a, 1);
 	}
 
-	memset(vm.vars, 0, sizeof(vm.vars));
-	memset(vm.bitvars, 0, sizeof(vm.bitvars));
+//	memset(vm.vars, 0, sizeof(vm.vars));
+//	memset(vm.bitvars, 0, sizeof(vm.bitvars));
 
 	_defaultTalkDelay = 60;
-	vm.vars[37] = 4;
+	_vars[VAR_CHARINC] = 4;
 
 	_numNestedScripts = 0;
 	vm.cutSceneStackPointer = 0;
@@ -104,17 +126,17 @@ void Scumm::scummInit() {
 	memset(vm.cutSceneData, 0, sizeof(vm.cutSceneData));
 
 	for (i=0; i<_maxVerbs; i++) {
-		verbs[i].verbid = 0;
-		verbs[i].right = 319;
-		verbs[i].oldleft = -1;
-		verbs[i].type = 0;
-		verbs[i].color = 2;
-		verbs[i].hicolor = 0;
-		verbs[i].charset_nr = 1;
-		verbs[i].curmode = 0;
-		verbs[i].saveid = 0;
-		verbs[i].center=0;
-		verbs[i].key = 0;
+		_verbs[i].verbid = 0;
+		_verbs[i].right = 319;
+		_verbs[i].oldleft = -1;
+		_verbs[i].type = 0;
+		_verbs[i].color = 2;
+		_verbs[i].hicolor = 0;
+		_verbs[i].charset_nr = 1;
+		_verbs[i].curmode = 0;
+		_verbs[i].saveid = 0;
+		_verbs[i].center=0;
+		_verbs[i].key = 0;
 	}
 
 	camera._leftTrigger = 10;
@@ -122,14 +144,13 @@ void Scumm::scummInit() {
 	camera._mode = 0;
 	camera._follows = 0;
 
-
 	virtscr[0].xstart = 0;
 
-	vm.vars[9] = 11;
+	_vars[9] = 11;
 
 	_lightsValueA = _lightsValueB = 7;
 
-	vm.vars[59] = 3;
+	_vars[59] = 3;
 
 	mouse.x = 104;
 	mouse.y = 56;
@@ -149,7 +170,7 @@ void Scumm::scummInit() {
 
 	_screenStartStrip = 0;
 
-	vm.vars[25] = 0;
+	_vars[25] = 0;
 
 	_talkDelay = 0;
 	_keepText = false;
@@ -163,12 +184,12 @@ void Scumm::scummInit() {
 	clearDrawObjectQueue();
 
 	for (i=0; i<6; i++) {
-		textslot.x[i] = 2;
-		textslot.y[i] = 5;
-		textslot.right[i] = 319;
-		textslot.color[i] = 0xF;
-		textslot.center[i] = 0;
-		textslot.charset[i] = 0;
+		string[i].t_xpos = 2;
+		string[i].t_ypos = 5;
+		string[i].t_right = 319;
+		string[i].t_color = 0xF;
+		string[i].t_center = 0;
+		string[i].t_charset = 0;
 	}
 
 	_numInMsgStack = 0;
@@ -177,22 +198,22 @@ void Scumm::scummInit() {
 
 	initScummVars();
 
-	vm.vars[54] = -0x50;
+	_vars[54] = -0x50;
 
 	getGraphicsPerformance();	
 }
 
 
 void Scumm::initScummVars() {
-	vm.vars[VAR_CURRENTDRIVE] = _currentDrive;
-	vm.vars[VAR_FIXEDDISK] = checkFixedDisk();
-	vm.vars[VAR_SOUNDCARD] = _soundCardType;
-	vm.vars[VAR_VIDEOMODE] = _videoMode;
-	vm.vars[VAR_HEAPSPACE] = _heapSpace;
-	vm.vars[VAR_MOUSEPRESENT] = _mousePresent;
-	vm.vars[VAR_SOUNDPARAM] = _soundParam;
-	vm.vars[VAR_SOUNDPARAM2] = _soundParam2;
-	vm.vars[VAR_SOUNDPARAM3] = _soundParam3;
+	_vars[VAR_CURRENTDRIVE] = _currentDrive;
+	_vars[VAR_FIXEDDISK] = checkFixedDisk();
+	_vars[VAR_SOUNDCARD] = _soundCardType;
+	_vars[VAR_VIDEOMODE] = _videoMode;
+	_vars[VAR_HEAPSPACE] = 600;
+	_vars[VAR_MOUSEPRESENT] = _mousePresent;
+	_vars[VAR_SOUNDPARAM] = _soundParam;
+	_vars[VAR_SOUNDPARAM2] = _soundParam2;
+	_vars[VAR_SOUNDPARAM3] = _soundParam3;
 }
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {
@@ -220,33 +241,34 @@ void Scumm::scummMain(int argc, char **argv) {
  	initThings();
 	scummInit();
 
-	vm.vars[VAR_VERSION] = 21; 
-	vm.vars[VAR_DEBUGMODE] = _debugMode;
+	_vars[VAR_VERSION] = 21; 
+	_vars[VAR_DEBUGMODE] = _debugMode;
 
 	runScript(1,0,0,&_bootParam);
 	_scummTimer = 0;
 
 	do {
 		if (_playBackFile) {
-			while ((_scummTimer>>2) < vm.vars[VAR_PLAYBACKTIMER]) {}
-			_scummTimer = vm.vars[VAR_PLAYBACKTIMER] << 2;
+			while ((_scummTimer>>2) < _vars[VAR_PLAYBACKTIMER]) {}
+			_scummTimer = _vars[VAR_PLAYBACKTIMER] << 2;
 		}
 		
+		CHECK_HEAP
 		updateScreen(this);
 
-		vm.vars[VAR_TIMER] = _scummTimer >> 2;
+		_vars[VAR_TIMER] = _scummTimer >> 2;
 		do {
 			waitForTimer(this);
 			tmr = _scummTimer >> 2;
 			if (_fastMode)
 				tmr += 15;
-		} while (tmr < vm.vars[VAR_TIMER_NEXT]);
+		} while (tmr < _vars[VAR_TIMER_NEXT]);
 		_scummTimer = 0;
 
-		vm.vars[VAR_TMR_1] += tmr;
-		vm.vars[VAR_TMR_2] += tmr;
-		vm.vars[VAR_TMR_3] += tmr;
-		vm.vars[VAR_TMR_4] += tmr;
+		_vars[VAR_TMR_1] += tmr;
+		_vars[VAR_TMR_2] += tmr;
+		_vars[VAR_TMR_3] += tmr;
+		_vars[VAR_TMR_4] += tmr;
 
 		if (tmr > 15)
 			tmr = 15;
@@ -259,13 +281,13 @@ void Scumm::scummMain(int argc, char **argv) {
 		processKbd();
 
 		/* XXX: memory low check skipped */
-		vm.vars[VAR_CAMERA_CUR_POS] = camera._curPos;
-		vm.vars[VAR_HAVE_MSG] = _haveMsg;
-		vm.vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
-		vm.vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
-		vm.vars[VAR_MOUSE_X] = mouse.x;
-		vm.vars[VAR_MOUSE_Y] = mouse.y;
-		vm.vars[VAR_DEBUGMODE] = _debugMode;
+		_vars[VAR_CAMERA_CUR_POS] = camera._curPos;
+		_vars[VAR_HAVE_MSG] = _haveMsg;
+		_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
+		_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
+		_vars[VAR_MOUSE_X] = mouse.x;
+		_vars[VAR_MOUSE_Y] = mouse.y;
+		_vars[VAR_DEBUGMODE] = _debugMode;
 
 		if (_saveLoadFlag) {
 			char buf[256];
@@ -288,13 +310,9 @@ void Scumm::scummMain(int argc, char **argv) {
 				a->needRedraw = 1;
 		}
 
-		checkHeap();
 		runAllScripts();
-		checkHeap();
 		checkExecVerbs();
-		checkHeap();
 		checkAndRunVar33();
-		checkHeap();
 
 		if (_currentRoom==0) {
 			gdi.unk4 = 0;
@@ -305,38 +323,25 @@ void Scumm::scummMain(int argc, char **argv) {
 			continue;
 		}
 
-		checkHeap();
 		walkActors();
-		checkHeap();
 		moveCamera();
-		checkHeap();
 		fixObjectFlags();
-		checkHeap();
 		CHARSET_1();
-		checkHeap();
 		if (camera._curPos != camera._lastPos || _BgNeedsRedraw || _fullRedraw) {
 			redrawBGAreas();
-			checkHeap();
 		}
 		processDrawQue();
-		checkHeap();
 		setActorRedrawFlags();
-		checkHeap();
 		resetActorBgs();
-		checkHeap();
 
-		if (!(vm.vars[VAR_DRAWFLAGS]&2) && vm.vars[VAR_DRAWFLAGS]&4) {
+		if (!(_vars[VAR_DRAWFLAGS]&2) && _vars[VAR_DRAWFLAGS]&4) {
 			error("Flashlight not implemented in this version");
 		}
 
 		processActors(); /* process actors makes the heap invalid */
-		checkHeap();
 		clear_fullRedraw();
-		checkHeap();
 		cyclePalette();
-		checkHeap();
 		palManipulate();
-		checkHeap();
 		
 		if (dseg_4F8A) {
 			screenEffect(_newEffect);
@@ -352,7 +357,9 @@ void Scumm::scummMain(int argc, char **argv) {
 
 		unkVirtScreen2();
 
+#if !defined(DOTT)
 		playActorSounds();
+#endif
 		unkSoundProc22();
 		camera._lastPos = camera._curPos;
 	} while (1);
@@ -420,7 +427,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	int i;
 	Actor *at;
 
-	checkHeap();
+	CHECK_HEAP
 
 	clearMsgQueue();
 
@@ -439,7 +446,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 		}
 	}
 
-	vm.vars[VAR_NEW_ROOM] = room;
+	_vars[VAR_NEW_ROOM] = room;
 	runExitScript();
 	killScriptsAndResources();
 	stopCycle(0);
@@ -454,7 +461,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	clearDrawObjectQueue();
 
-	vm.vars[VAR_ROOM] = room;
+	_vars[VAR_ROOM] = room;
 	_fullRedraw = 1;
 
 	_roomResource = _currentRoom = 0xFF;
@@ -462,14 +469,14 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	unkResourceProc();
 
 	_currentRoom = room;
-	vm.vars[VAR_ROOM] = room;
+	_vars[VAR_ROOM] = room;
 
 	if (room >= 0x80)
 		_roomResource = _resourceMapper[room&0x7F];
 	else
 		_roomResource = room;
 
-	vm.vars[VAR_ROOM_RESOURCE] = _roomResource;
+	_vars[VAR_ROOM_RESOURCE] = _roomResource;
 
 	if (room!=0)
 		ensureResourceLoaded(1, room);
@@ -490,8 +497,8 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	if (_roomResource == 0)
 		return;
 
-	vm.vars[VAR_CAMERA_MAX] = (_scrWidthIn8Unit<<3) - 160;
-	vm.vars[VAR_CAMERA_MIN] = 160;
+	_vars[VAR_CAMERA_MAX] = (_scrWidthIn8Unit<<3) - 160;
+	_vars[VAR_CAMERA_MIN] = 160;
 
 	memset(actorDrawBits, 0, sizeof(actorDrawBits));
 
@@ -518,7 +525,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	dseg_4F8A = 1;
 
-	checkHeap();
+	CHECK_HEAP
 }
 
 void Scumm::initRoomSubBlocks() {
@@ -528,6 +535,8 @@ void Scumm::initRoomSubBlocks() {
 
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
+	_CLUT_offs = 0;
+	_PALS_offs = 0;
 
 	nukeResource(0xE, 1);
 	nukeResource(0xE, 2);
@@ -592,12 +601,12 @@ void Scumm::initRoomSubBlocks() {
 			}
 		}
 	}
-	memset(_localScriptList, 0, (0x100 - _numGlobalScriptsUsed) * 4);
+	memset(_localScriptList, 0, (0x100 - _numGlobalScripts) * 4);
 
 	roomptr = getResourceAddress(1, _roomResource);
 	ptr = findResource(MKID('LSCR'), roomptr);
 	while (ptr) {
-		_localScriptList[ptr[8] - _numGlobalScriptsUsed] = ptr - roomptr;
+		_localScriptList[ptr[8] - _numGlobalScripts] = ptr - roomptr;
 
 #ifdef DUMP_SCRIPTS
 		do {
@@ -610,12 +619,24 @@ void Scumm::initRoomSubBlocks() {
 		ptr = findResource(MKID('LSCR'), NULL);
 	}
 
-	_CLUT_offs = findResource(MKID('CLUT'), roomptr) - roomptr;
 	ptr = findResource(MKID('EPAL'), roomptr);
 	if (ptr)
 		_EPAL_offs = ptr - roomptr;
+	
+	ptr = findResource(MKID('CLUT'), roomptr);
+	if (ptr) {
+		_CLUT_offs = ptr - roomptr;
+		setPaletteFromRes();
+	}
 
-	setPaletteFromRes();
+#if defined(DOTT)
+	ptr = findResource(MKID('PALS'), roomptr);
+	if (ptr) {
+		_PALS_offs = ptr - roomptr;
+		setPalette(0);
+	}
+#endif
+	
 	initCycl(findResource(MKID('CYCL'), roomptr) + 8);
 
 	ptr = findResource(MKID('TRNS'), roomptr);
@@ -651,11 +672,10 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
 void Scumm::dumpResource(char *tag, int index, byte *ptr) {
 	char buf[256];
 	FILE *out;
-
 	
 	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 
-	sprintf(buf, "f:\\descumm\\%s%d.dmp", tag,index);
+	sprintf(buf, "dumps\\%s%d.dmp", tag,index);
 
 	out = fopen(buf,"rb");
 	if (!out) {
@@ -699,7 +719,13 @@ void Scumm::unkRoomFunc2(int a, int b, int c, int d, int e) {
 	}
 
 	if (_videoMode==0x13) {
-		cptr = getResourceAddress(1, _roomResource) + _CLUT_offs + 8 + a*3;
+		cptr = getResourceAddress(1, _roomResource);
+		if (_CLUT_offs) {
+			cptr += _CLUT_offs;
+		} else {
+			cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
+		}
+		cptr += 8 + a*3;
 		cur = _currentPalette + a*3;
 		if (a <= b) {
 			num = b - a + 1;
@@ -764,19 +790,19 @@ void Scumm::processKbd() {
 	if (!_lastKeyHit)
 		return;
 
-	if (_lastKeyHit==vm.vars[VAR_RESTART_KEY]) {
+	if (_lastKeyHit==_vars[VAR_RESTART_KEY]) {
 		warning("Restart not implemented");
 		pauseGame(1);
 		return;
 	}
 
-	if (_lastKeyHit==vm.vars[VAR_PAUSE_KEY]) {
+	if (_lastKeyHit==_vars[VAR_PAUSE_KEY]) {
 		warning("Pause not implemented");
 		/* pause */
 		return;
 	}
 
-	if (_lastKeyHit==vm.vars[VAR_CUTSCENEEXIT_KEY]) {
+	if (_lastKeyHit==_vars[VAR_CUTSCENEEXIT_KEY]) {
 		uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
 		if (offs) {
 			ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
@@ -784,12 +810,12 @@ void Scumm::processKbd() {
 			ss->status = 2;
 			ss->freezeCount = 0;
 			ss->cutsceneOverride--;
-			vm.vars[VAR_OVERRIDE] = 1;
+			_vars[VAR_OVERRIDE] = 1;
 			vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 		}
 	}
 
-	if (_lastKeyHit==vm.vars[VAR_TALKSTOP_KEY]) {
+	if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
 		return;
 	}
@@ -811,7 +837,7 @@ int Scumm::getKeyInput(int a) {
 
 	if (_leftBtnPressed&1 && _rightBtnPressed&1) {
 		_mouseButStat = 0;
-		_lastKeyHit = vm.vars[VAR_CUTSCENEEXIT_KEY];
+		_lastKeyHit = _vars[VAR_CUTSCENEEXIT_KEY];
 	} else if (_leftBtnPressed&1) {
 		_mouseButStat = 0x8000;
 	} else if (_rightBtnPressed&1) {
@@ -841,6 +867,51 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 		error("Invalid actor %d in %s", id, errmsg);
 	return derefActor(id);
 }
+
+#if defined(DOTT)
+void Scumm::new_unk_1(int a) {
+	error("stub new_unk_1(%d)", a);
+}
+
+void Scumm::setCursorHotspot2(int x,int y) {
+	warning("stub setCursorHotspot2(%d,%d)", x,y);
+}
+
+void Scumm::setStringVars(int slot) {
+	string[slot].xpos = string[slot].t_xpos;
+	string[slot].ypos = string[slot].t_ypos;
+	string[slot].center = string[slot].t_center;
+	string[slot].overhead = string[slot].t_overhead;
+	string[slot].new_3 = string[slot].t_new3;
+	string[slot].right = string[slot].t_right;
+	string[slot].color = string[slot].t_color;
+	string[slot].charset = string[slot].t_charset;
+}
+
+void Scumm::arrayop_1(int a, byte *ptr) {
+	ArrayHeader *ah;
+	int r;
+	int len = getStringLen(ptr);
+			
+	r = defineArray(a, 4, 0, len);
+	ah = (ArrayHeader*)getResourceAddress(7,r);
+	copyString(ah->data,ptr,len);
+}
+
+
+void Scumm::unkMiscOp4(int a, int b, int c, int d) {
+	warning("stub unkMiscOp4(%d,%d,%d,%d)", a,b,c,d);
+}
+
+void Scumm::unkMiscOp9() {
+	warning("stub unkMiscOp9()");
+}
+
+void Scumm::startManiac() {
+	warning("stub startManiac()");
+}
+
+#endif
 
 extern Scumm scumm;
 
@@ -886,11 +957,8 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void checkHeap() {
-#if 1
-
-//if (_heapchk() != _HEAPOK) {
-//		error("Heap is invalid!");
-//	}
-#endif
+	if (_heapchk() != _HEAPOK) {
+		error("Heap is invalid!");
+	}
 }
 

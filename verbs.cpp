@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.2  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -46,7 +49,7 @@ void Scumm::checkExecVerbs() {
 
 	if (_mouseButStat < 0x200) {
 		/* Check keypresses */
-		vs = &verbs[1];
+		vs = &_verbs[1];
 		for (i=1; i<_maxVerbs; i++,vs++) {
 			if (vs->verbid && vs->saveid && vs->curmode==1) {
 				if (_mouseButStat == vs->key) {
@@ -61,13 +64,13 @@ void Scumm::checkExecVerbs() {
 		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {
-				runInputScript(1,verbs[over].verbid,code);
+				runInputScript(1,_verbs[over].verbid,code);
 				return;
 			}
 			runInputScript(2, 0, code);
 		} else {
 			over=checkMouseOver(mouse.x, mouse.y);
-			runInputScript(1, over!=0 ? verbs[over].verbid : 0, code);
+			runInputScript(1, over!=0 ? _verbs[over].verbid : 0, code);
 		}
 	}
 }
@@ -76,12 +79,12 @@ void Scumm::verbMouseOver(int verb) {
 	if (_verbMouseOver==verb)
 		return;
 
-	if (verbs[_verbMouseOver].type!=1) {
+	if (_verbs[_verbMouseOver].type!=1) {
 		drawVerb(_verbMouseOver, 0);
 		_verbMouseOver = verb;
 	}
 
-	if (verbs[verb].type!=1 && verbs[verb].hicolor) {
+	if (_verbs[verb].type!=1 && _verbs[verb].hicolor) {
 		drawVerb(verb, 1);
 		_verbMouseOver = verb;
 	}
@@ -89,9 +92,9 @@ void Scumm::verbMouseOver(int verb) {
 
 int Scumm::checkMouseOver(int x, int y) {
 	VerbSlot *vs;
-	int i = _maxVerbs;
+	int i = _maxVerbs-1;
 
-	vs = &verbs[i];
+	vs = &_verbs[i];
 	do {
 		if (vs->curmode!=1 || !vs->verbid || vs->saveid ||
 				y < vs->y || y >= vs->bottom)
@@ -104,7 +107,7 @@ int Scumm::checkMouseOver(int x, int y) {
 				continue;
 		}
 		return i;
-	} while (--vs, i--);
+	} while (--vs,--i);
 	return 0;
 }
 
@@ -116,7 +119,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 	if (!vrb)
 		return;
 
-	vs = &verbs[vrb];
+	vs = &_verbs[vrb];
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
 		if (vs->type==1) {
@@ -125,18 +128,18 @@ void Scumm::drawVerb(int vrb, int mode) {
 		}
 		restoreVerbBG(vrb);
 
-		_stringCharset[4] = vs->charset_nr;
-		_stringXpos[4] = vs->x;
-		_stringYpos[4] = vs->y;
-		_stringRight[4] = 319;
-		_stringCenter[4] = vs->center;
+		string[4].charset = vs->charset_nr;
+		string[4].xpos = vs->x;
+		string[4].ypos = vs->y;
+		string[4].right = 319;
+		string[4].center = vs->center;
 		if (mode && vs->hicolor)
 			color = vs->hicolor;
 		else
 			color = vs->color;
-		_stringColor[4] = color;
+		string[4].color = color;
 		if (vs->curmode==2)
-			_stringColor[4] = vs->dimcolor;
+			string[4].color = vs->dimcolor;
 		_messagePtr = getResourceAddress(8, vrb);
 		assert(_messagePtr);
 		tmp = charset._center;
@@ -158,7 +161,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 void Scumm::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
-	vs = &verbs[verb];
+	vs = &_verbs[verb];
 
 	if (vs->oldleft != -1) {
 		dseg_4E3C = vs->bkcolor;
@@ -210,7 +213,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 		}
 	}
 
-	vst = &verbs[vrb];
+	vst = &_verbs[vrb];
 	vst->right = vst->x + imgw*8;
 	vst->bottom = vst->y + imgh*8;
 	vst->oldleft = vst->x;
@@ -225,7 +228,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 int Scumm::getVerbSlot(int id, int mode) {
 	int i;
 	for (i=1; i<_maxVerbs; i++) {
-		if (verbs[i].verbid == id && verbs[i].saveid == mode) {
+		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {
 			return i;
 		}
 	}
@@ -238,7 +241,7 @@ void Scumm::killVerb(int slot) {
 	if (slot==0)
 		return;
 
-	vs = &verbs[slot];
+	vs = &_verbs[slot];
 	vs->verbid = 0;
 	vs->curmode = 0;
 

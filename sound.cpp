@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -27,7 +31,7 @@
 #include "scumm.h"
 
 void Scumm::addSoundToQueue(int sound) {
-	vm.vars[VAR_LAST_SOUND] = sound;
+	_vars[VAR_LAST_SOUND] = sound;
 	ensureResourceLoaded(4, sound);
 	addSoundToQueue2(sound);
 }
@@ -71,16 +75,35 @@ void Scumm::unkSoundProc22() {
 void Scumm::playSound(int sound) {
 	getResourceAddress(4, sound);
 	/* XXX: not implemented */
-	warning("stub playSound(%d)", sound);
+//	warning("stub playSound(%d)", sound);
 }
 
 int Scumm::unkSoundProc23(int a) {
 	/* TODO: implement this */
-	warning("unkSoundProc23: not implemented");
+//	warning("unkSoundProc23: not implemented");
 	return 0;
 }
 
 void Scumm::unkSoundProc1(int a) {
 	/* TODO: implement this */
-	warning("unkSoundProc: not implemented");
+//	warning("unkSoundProc: not implemented");
+}
+
+void Scumm::soundKludge(int16 *list) {
+	int16 *ptr;
+	int i;
+
+	if (list[0]==-1) {
+		unkSoundProc22();
+		return;
+	}
+	_soundQue[_soundQuePos++] = 8;
+
+	ptr = _soundQue + _soundQuePos;
+	_soundQuePos += 8;
+
+	for (i=0; i<8; i++)
+		*ptr++ = list[i];
+	if (_soundQuePos > 0x100)
+		error("Sound que buffer overflow");
 }

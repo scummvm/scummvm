@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.7  2001/10/11 11:49:51  strigeus
  * Determine caption from file name.
  *
@@ -328,14 +331,13 @@ void initGraphics(Scumm *s) {
 	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
 #endif
 
-	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d %d\n", 
+	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 
 		sizeof(int8), sizeof(uint8),
 		sizeof(int16), sizeof(uint16),
 		sizeof(int32), sizeof(uint32),
 		sizeof(void*),
 		sizeof(Box), sizeof(MouseCursor),sizeof(CodeHeader),
 		sizeof(ImageHeader),
-		&((CodeHeader*)0)->unk4,
 		sizeof(Scumm)
 	);
 

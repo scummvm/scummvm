@@ -10,7 +10,7 @@ INCS	= scumm.h scummsys.h stdafx.h
 
 OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	  saveload.o script.o scummvm.o sound.o string.o \
-	  sys.o verbs.o sdl.o
+	  sys.o verbs.o sdl.o script_v1.o script_v2.o
 
 DISTFILES=actor.cpp boxes.cpp costume.cpp gfx.cpp object.cpp resource.cpp \
 	  saveload.cpp script.cpp scummvm.cpp sound.cpp string.cpp \

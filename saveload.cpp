@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/16 10:01:47  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.2  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -31,10 +34,25 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+struct SaveGameHeader {
+	uint32 type;
+	uint32 size;
+	uint32 ver;
+};
+
 bool Scumm::saveState(const char *filename) {
 	FILE *out = fopen(filename,"wb");
+	SaveGameHeader hdr;
+	
 	if (out==NULL)
 		return false;
+
+	hdr.type = MKID('SCVM');
+	hdr.size = 0;
+	hdr.ver = 1;
+	
+	fwrite(&hdr, sizeof(hdr), 1, out);
+
 	saveOrLoad(out,true);
 	fclose(out);
 	debug(1,"State saved as '%s'", filename);
@@ -44,11 +62,25 @@ bool Scumm::saveState(const char *filename) {
 bool Scumm::loadState(const char *filename) {
 	FILE *out = fopen(filename,"rb");
 	int i,j;
+	SaveGameHeader hdr;
 
 	if (out==NULL)
 		return false;
+
+	fread(&hdr, sizeof(hdr), 1, out);
+	if (hdr.type != MKID('SCVM')) {
+		warning("Invalid savegame '%s'", filename);
+		fclose(out);
+		return false;
+	}
+
+	if (hdr.ver != 1) {
+		warning("Invalid version of '%s'", filename);
+		fclose(out);
+		return false;
+	}
 	
-	checkHeap();
+	CHECK_HEAP
 
 	openRoom(-1);
 	memset(_inventory, 0, sizeof(_inventory));
@@ -74,7 +106,7 @@ bool Scumm::loadState(const char *filename) {
 
 	initBGBuffers();
 
-	checkHeap();
+	CHECK_HEAP
 
 	debug(1,"State loaded from '%s'", filename);
 
@@ -95,10 +127,10 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(ObjectData,cdhd_10,sleUint16),
 		MKLINE(ObjectData,cdhd_12,sleUint16),
 		MKLINE(ObjectData,obj_nr,sleUint16),
-		MKLINE(ObjectData,x_pos,sleByte),
-		MKLINE(ObjectData,y_pos,sleByte),
-		MKLINE(ObjectData,numstrips,sleByte),
-		MKLINE(ObjectData,height,sleByte),
+		MKLINE(ObjectData,x_pos,sleInt16),
+		MKLINE(ObjectData,y_pos,sleInt16),
+		MKLINE(ObjectData,numstrips,sleUint16),
+		MKLINE(ObjectData,height,sleUint16),
 		MKLINE(ObjectData,actordir,sleByte),
 		MKLINE(ObjectData,parentstate,sleByte),
 		MKLINE(ObjectData,parent,sleByte),
@@ -116,13 +148,13 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Actor,elevation,sleInt16),
 		MKLINE(Actor,width,sleUint16),
 		MKLINE(Actor,facing,sleByte),
-		MKLINE(Actor,costume,sleByte),
+		MKLINE(Actor,costume,sleUint16),
 		MKLINE(Actor,room,sleByte),
 		MKLINE(Actor,talkColor,sleByte),
 		MKLINE(Actor,scalex,sleByte),
 		MKLINE(Actor,scaley,sleByte),
 		MKLINE(Actor,charset,sleByte),
-		MKLINE(Actor,sound,sleByte),
+		MKARRAY(Actor,sound[0],sleByte, 8),
 		MKLINE(Actor,newDirection,sleByte),
 		MKLINE(Actor,moving,sleByte),
 		MKLINE(Actor,ignoreBoxes,sleByte),
@@ -146,6 +178,10 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Actor,needRedraw,sleByte),
 		MKLINE(Actor,needBgReset,sleByte),
 		MKLINE(Actor,costumeNeedsInit,sleByte),
+
+		MKLINE(Actor,new_1,sleInt16),
+		MKLINE(Actor,new_2,sleInt16),
+		MKLINE(Actor,new_3,sleByte),
 
 		MKLINE(Actor,walkdata.destx,sleInt16),
 		MKLINE(Actor,walkdata.desty,sleInt16),
@@ -203,14 +239,14 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_IM00_offs,sleUint32),
 		MKLINE(Scumm,_CLUT_offs,sleUint32),
 		MKLINE(Scumm,_EPAL_offs,sleUint32),
+		MKLINE(Scumm,_PALS_offs,sleUint32),
+		MKLINE(Scumm,_curPalIndex,sleByte),
 		MKLINE(Scumm,_currentRoom,sleByte),
 		MKLINE(Scumm,_roomResource,sleByte),
 		MKLINE(Scumm,_numObjectsInRoom,sleByte),
 		MKLINE(Scumm,_currentScript,sleByte),
 		MKARRAY(Scumm,_localScriptList[0],sleUint32,0x39),
-		MKARRAY(Scumm,vm.vars[0],sleUint16,801),
 		MKARRAY(Scumm,vm.localvar[0],sleUint16,20*17),
-		MKARRAY(Scumm,vm.bitvars[0],sleByte,256),
 		MKARRAY(Scumm,_resourceMapper[0],sleByte,128),
 		MKARRAY(Scumm,charset._colorMap[0],sleByte,16),
 		MKARRAY(Scumm,_charsetData[0][0],sleByte,10*16),
@@ -238,12 +274,6 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_numInMsgStack,sleInt16),
 		MKLINE(Scumm,_sentenceIndex,sleByte),
 
-		MKARRAY(Scumm,_sentenceTab[0],sleByte,6),
-		MKARRAY(Scumm,_sentenceTab2[0],sleByte,6),
-		MKARRAY(Scumm,_sentenceTab3[0],sleUint16,6),
-		MKARRAY(Scumm,_sentenceTab4[0],sleUint16,6),
-		MKARRAY(Scumm,_sentenceTab5[0],sleByte,6),
-
 		MKLINE(Scumm,vm.cutSceneStackPointer,sleByte),
 		MKARRAY(Scumm,vm.cutScenePtr[0],sleUint32,5),
 		MKARRAY(Scumm,vm.cutSceneScript[0],sleByte,5),
@@ -256,7 +286,6 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_cursorState,sleByte),
 		MKLINE(Scumm,gdi.unk4,sleByte),
 		MKLINE(Scumm,gdi.currentCursor,sleByte),
-//		MKLINE(Scumm,gdi.unk3,sleByte),
 
 		MKLINE(Scumm,dseg_4F8A,sleUint16),
 		MKLINE(Scumm,_switchRoomEffect,sleByte),
@@ -264,36 +293,12 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,_switchRoomEffect2,sleByte),
 		MKLINE(Scumm,_BgNeedsRedraw,sleByte),
 
-		MKARRAY(Scumm,actorDrawBits[0],sleUint16,160),
+		MKARRAY(Scumm,actorDrawBits[0],sleUint16,200),
 		MKLINE(Scumm,gdi.transparency,sleByte),
 		MKARRAY(Scumm,_currentPalette[0],sleByte,768),
-
 		/* virtscr */
 
 		MKARRAY(Scumm,charset._buffer[0],sleByte,256),
-
-		MKARRAY(Scumm,textslot.x[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.y[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.center[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.overhead[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.right[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.color[0],sleInt16,6),
-		MKARRAY(Scumm,textslot.charset[0],sleInt16,6),
-
-		MKARRAY(Scumm,_stringXpos[0],sleInt16,6),
-		MKARRAY(Scumm,_stringYpos[0],sleInt16,6),
-		MKARRAY(Scumm,_stringXpos2[0],sleInt16,6),
-		MKARRAY(Scumm,_stringYpos2[0],sleInt16,6),
-		MKARRAY(Scumm,_stringCenter[0],sleInt16,6),
-		MKARRAY(Scumm,_stringOverhead[0],sleUint16,6),
-		MKARRAY(Scumm,_stringRight[0],sleUint16,6),
-		MKARRAY(Scumm,_stringColor[0],sleUint16,6),
-		MKARRAY(Scumm,_stringCharset[0],sleUint16,6),
-
-		MKLINE(Scumm,charset._mask_left,sleInt16),
-		MKLINE(Scumm,charset._mask_top,sleInt16),
-		MKLINE(Scumm,charset._mask_right,sleInt16),
-		MKLINE(Scumm,charset._mask_bottom,sleInt16),
 
 		MKLINE(Scumm,dseg_3A76,sleUint16),
 
@@ -327,6 +332,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(ScriptSlot,offs,sleUint32),
 		MKLINE(ScriptSlot,delay,sleInt32),
 		MKLINE(ScriptSlot,number,sleUint16),
+		MKLINE(ScriptSlot,newfield,sleUint16),
 		MKLINE(ScriptSlot,status,sleByte),
 		MKLINE(ScriptSlot,type,sleByte),
 		MKLINE(ScriptSlot,unk1,sleByte),
@@ -345,6 +351,39 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKEND()
 	};
 
+	const SaveLoadEntry sentenceTabEntries[] = {
+		MKLINE(SentenceTab,unk5,sleUint8),
+		MKLINE(SentenceTab,unk2,sleUint8),
+		MKLINE(SentenceTab,unk4,sleUint16),
+		MKLINE(SentenceTab,unk3,sleUint16),
+		MKLINE(SentenceTab,unk,sleUint8),
+		MKEND()
+	};
+
+	const SaveLoadEntry stringTabEntries[] = {
+		MKLINE(StringTab,t_xpos,sleInt16),
+		MKLINE(StringTab,t_ypos,sleInt16),
+		MKLINE(StringTab,t_center,sleInt16),
+		MKLINE(StringTab,t_overhead,sleInt16),
+		MKLINE(StringTab,t_new3,sleInt16),
+		MKLINE(StringTab,t_right,sleInt16),
+		MKLINE(StringTab,t_color,sleInt16),
+		MKLINE(StringTab,t_charset,sleInt16),
+		MKLINE(StringTab,xpos,sleInt16),
+		MKLINE(StringTab,ypos,sleInt16),
+		MKLINE(StringTab,xpos2,sleInt16),
+		MKLINE(StringTab,ypos2,sleInt16),
+		MKLINE(StringTab,center,sleInt16),
+		MKLINE(StringTab,overhead,sleInt16),
+		MKLINE(StringTab,new_3,sleInt16),
+		MKLINE(StringTab,right,sleInt16),
+		MKLINE(StringTab,mask_top,sleInt16),
+		MKLINE(StringTab,mask_bottom,sleInt16),
+		MKLINE(StringTab,mask_right,sleInt16),
+		MKLINE(StringTab,mask_left,sleInt16),
+		MKEND()
+	};
+
 	int i,j;
 
 	_saveLoadStream = inout;
@@ -355,29 +394,26 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		saveLoadEntries(&actor[i],actorEntries);
 	for (i=0; i<20; i++)
 		saveLoadEntries(&vm.slot[i],scriptSlotEntries);
-	for (i=0; i<184; i++)
-		saveLoadEntries(&objs[i],objectEntries);
-	for (i=0; i<102; i++)
-		saveLoadEntries(&verbs[i],verbEntries);
+	for (i=0; i<_numLocalObjects; i++)
+		saveLoadEntries(&_objs[i],objectEntries);
+	for (i=0; i<_numVerbs; i++)
+		saveLoadEntries(&_verbs[i],verbEntries);
 	for (i=0; i<16; i++)
 		saveLoadEntries(&vm.nest[i],nestedScriptEntries);
+	for (i=0; i<6; i++)
+		saveLoadEntries(&sentence[i],sentenceTabEntries);
+	for (i=0; i<6; i++)
+		saveLoadEntries(&string[i],stringTabEntries);
 
 	for (i=1; i<16; i++)
 		if (res.mode[i]==0)
 			for(j=1; j<res.num[i]; j++)
 				saveLoadResource(i,j);
 
-	if (_saveOrLoad) {
-		for (i=0; i<_maxNrObjects; i++) {
-			saveByte(_objectFlagTable[i]);
-			saveUint32(_classData[i]);
-		}
-	} else {
-		for (i=0; i<_maxNrObjects; i++) {
-			_objectFlagTable[i] = loadByte();
-			_classData[i] = loadUint32();
-		}
-	}
+	saveLoadArrayOf(_objectFlagTable, _numGlobalObjects, sizeof(_objectFlagTable[0]), sleByte);
+	saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
+	saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
+	saveLoadArrayOf(_bitVars, _numBitVariables>>8, 1, sleByte);
 }
 
 void Scumm::saveLoadResource(int type, int index) {
@@ -454,6 +490,61 @@ byte Scumm::loadByte() {
 	return e;
 }
 
+void Scumm::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) {
+	byte *at = (byte*)b;
+	uint32 data;
+
+	while (--len>=0) {
+		if (_saveOrLoad) {
+			/* saving */
+			if (datasize==1) {
+				data = *(byte*)at;
+				at += 1;
+			} else if (datasize==2) {
+				data = *(uint16*)at;
+				at += 2;
+			} else if (datasize==4) {
+				data = *(uint32*)at;
+				at += 4;
+			} else {
+				error("saveLoadArrayOf: invalid size %d", datasize);
+			}
+			switch(filetype) {
+			case sleByte: saveByte(data); break;
+			case sleUint16:
+			case sleInt16:saveWord(data); break;
+			case sleInt32:
+			case sleUint32:saveUint32(data); break;
+			default:
+				error("saveLoadArrayOf: invalid filetype %d", filetype);
+			}
+		} else {
+			/* loading */
+			switch(filetype) {
+			case sleByte: data = loadByte(); break;
+			case sleUint16: data = loadWord(); break;
+			case sleInt16: data = (int16)loadWord(); break;
+			case sleUint32: data = loadUint32(); break;
+			case sleInt32: data = (int32)loadUint32(); break;
+			default:
+				error("saveLoadArrayOf: invalid filetype %d", filetype);
+			}
+			if (datasize==1) {
+				*(byte*)at = data;
+				at += 1;
+			} else if (datasize==2) {
+				*(uint16*)at = data;
+				at += 2;
+			} else if (datasize==4) {
+				*(uint32*)at = data;
+				at += 4;
+			} else {
+				error("saveLoadArrayOf: invalid size %d", datasize);
+			}
+		}
+	}
+}
+
 
 void Scumm::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 	int replen;
@@ -461,7 +552,6 @@ void Scumm::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 	byte *at;
 	int size;
 	int value;
-	uint32 data;
 	
 	while(sle->offs != 0xFFFF) {
 		at = (byte*)d + sle->offs;
@@ -474,56 +564,7 @@ void Scumm::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 			type&=~128;
 		}
 		sle++;
-
-		do {
-			if (_saveOrLoad) {
-				/* saving */
-				if (size==1) {
-					data = *(byte*)at;
-					at += 1;
-				} else if (size==2) {
-					data = *(uint16*)at;
-					at += 2;
-				} else if (size==4) {
-					data = *(uint32*)at;
-					at += 4;
-				} else {
-					warning("invalid size %d", size);
-				}
-				switch(type) {
-				case sleByte: saveByte(data); break;
-				case sleUint16:
-				case sleInt16:saveWord(data); break;
-				case sleInt32:
-				case sleUint32:saveUint32(data); break;
-				default:
-					warning("invalid type %d", type);
-				}
-			} else {
-				/* loading */
-				switch(type) {
-				case sleByte: data = loadByte(); break;
-				case sleUint16: data = loadWord(); break;
-				case sleInt16: data = (int16)loadWord(); break;
-				case sleUint32: data = loadUint32(); break;
-				case sleInt32: data = (int32)loadUint32(); break;
-				default:
-					warning("invalid type %d", type);
-				}
-				if (size==1) {
-					*(byte*)at = data;
-					at += 1;
-				} else if (size==2) {
-					*(uint16*)at = data;
-					at += 2;
-				} else if (size==4) {
-					*(uint32*)at = data;
-					at += 4;
-				} else {
-					warning("invalid size %d", size);
-				}
-			}
-		} while (--replen);
+		saveLoadArrayOf(at, replen, size, type);
 	}
 }
 
