@@ -106,6 +106,8 @@ private:
 
 	MusicPlayer *_player;
 
+	static const char *_midiTableITECD[26];
+
 	int _musicInitialized;
 	int _enabled;
 };

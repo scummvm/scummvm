@@ -157,9 +157,43 @@ Music::~Music() {
 	delete _player;
 }
 
+// The Wyrmkeep release of Inherit The Earth features external MIDI files, so
+// we need a mapping from resource number to filename. This lookup table is
+// based on experimenting and guessing, so it may very well contain errors.
+//
+// There is also a reset.mid, but I don't think we'll ever need that one.
+
+const char *Music::_midiTableITECD[26] = {
+	"cave",		// 9
+	"intro",	// 10
+	"fvillage",	// 11
+	"elkhall",	// 12
+	"mouse",	// 13
+	"darkclaw",	// 14
+	"birdchrp",	// 15
+	"orbtempl",	// 16
+	"spooky",	// 17
+	"catfest",	// 18
+	"elkfanfare",	// 19
+	"bcexpl",	// 20
+	"boargtnt",	// 21
+	"boarking",	// 22
+	"explorea",	// 23
+	"exploreb",	// 24
+	"explorec",	// 25
+	"sunstatm",	// 26
+	"nitstrlm",	// 27
+	"humruinm",	// 28
+	"damexplm",	// 29
+	"tychom",	// 30
+	"kitten",	// 31
+	"sweet",	// 32
+	"brutalmt",	// 33
+	"shiala",	// 34
+};
+
 int Music::play(uint32 music_rn, uint16 flags) {
 	R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
-	const char *midi_file;
 
 	byte *resource_data;
 	size_t resource_size;
@@ -172,118 +206,21 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		return R_SUCCESS;
 	}
 
-	// The Wyrmkeep release of Inherit The Earth uses external MIDI files
-
-	// FIXME: This mapping is incomplete
-
-	switch (music_rn) {
-#if 0
-	case XXX:
-		midi_file = "bcexpl";
-		break;
-	case XXX:
-		midi_file = "birdchrp";
-		break;
-	case XXX:
-		midi_file = "boargtnt";
-		break;
-	case XXX:
-		midi_file = "boarking";
-		break;
-	case XXX:
-		midi_file = "brutalmt";
-		break;
-	case XXX:
-		midi_file = "catfest";
-		break;
-#endif
-	case 9:
-		midi_file = "cave";
-		break;
-#if 0
-	case XXX:
-		midi_file = "damexplm";
-		break;
-	case XXX:
-		midi_file = "darkclaw";
-		break;
-	case XXX:
-		midi_file = "elkfanfare";
-		break;
-	case XXX:
-		midi_file = "elkhall";
-		break;
-	case XXX:
-		midi_file = "explorea";
-		break;
-	case XXX:
-		midi_file = "exploreb";
-		break;
-	case XXX:
-		midi_file = "explorec";
-		break;
-	case XXX:
-		midi_file = "fvillage";
-		break;
-	case XXX:
-		midi_file = "humruinm";
-		break;
-#endif
-	case 10:
-		midi_file = "intro";
-		break;
-#if 0
-	case XXX:
-		midi_file = "kitten";
-		break;
-	case XXX:
-		midi_file = "mouse";
-		break;
-	case XXX:
-		midi_file = "nitstrlm";
-		break;
-	case XXX:
-		midi_file = "orbtempl";
-		break;
-	case XXX:
-		midi_file = "reset";
-		break;
-	case XXX:
-		midi_file = "shiala";
-		break;
-	case XXX:
-		midi_file = "spooky";
-		break;
-	case XXX:
-		midi_file = "sunstatm";
-		break;
-	case XXX:
-		midi_file = "sweet";
-		break;
-	case XXX:
-		midi_file = "tychom";
-		break;
-#endif
-	default:
-		midi_file = NULL;
-		break;
-	}
-
 	File f_midi;
 	MidiParser *parser;
 
-	if (midi_file) {
-		char file_name[20];
-
-		sprintf(file_name, "music/%s.mid", midi_file);
-		if (!f_midi.open(file_name))
-			midi_file = NULL;
+	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
+		if (music_rn >= 9 && music_rn <= 34) {
+			char file_name[20];
+			sprintf(file_name, "music/%s.mid", _midiTableITECD[music_rn - 9]);
+			f_midi.open(file_name);
+		}
 	}
 
 	// FIXME: Is resource_data ever freed?
 
-	if (midi_file) {
-		debug(0, "Using external MIDI file: %s.mid", midi_file);
+	if (f_midi.isOpen()) {
+		debug(0, "Using external MIDI file: %s", f_midi.name());
 		resource_size = f_midi.size();
 		resource_data = (byte *) malloc(resource_size);
 		f_midi.read(resource_data, resource_size);
@@ -297,7 +234,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
 				&resource_size) != R_SUCCESS ) {
-			warning("SYSMUSIC_Play(): Resource load failed: %u", music_rn);
+			warning("Music::play(): Resource load failed: %u", music_rn);
 			return R_FAILURE;
 		}
 
