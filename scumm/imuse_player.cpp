@@ -698,8 +698,8 @@ void Player::key_off(uint8 chan, byte note) {
 bool Player::jump(uint track, uint beat, uint tick) {
 	if (!_parser)
 		return false;
-	_track_index = track;
-	_parser->setTrack (track);
+	if (_parser->setTrack (track))
+		_track_index = track;
 	if (!_parser->jumpToTick ((beat - 1) * TICKS_PER_BEAT + tick))
 		return false;
 	turn_off_pedals();
