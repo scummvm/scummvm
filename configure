@@ -83,7 +83,7 @@ echo $datatype
 # Greet user
 #
 echo "Running ScummVM configure..."
-echo -n > config.h
+printf "" > config.h
 
 
 #
@@ -111,7 +111,7 @@ done;
 #
 # Determine the C++ compiler
 #
-echo -n "Looking for C++ compiler... "
+printf "Looking for C++ compiler... "
 compilers="$CXX g++ c++"
 CXX=
 for compiler in $compilers; do
@@ -130,7 +130,7 @@ fi
 # Determine hosttype
 #
 # TODO - also add an command line option to override this
-echo -n "Checking hosttype... "
+printf "Checking hosttype... "
 hosttype=`uname -s`
 echo $hosttype
 case $hosttype in
@@ -146,7 +146,7 @@ esac
 #
 # Check for endianess
 #
-echo -n "Checking endianess... "
+printf "Checking endianess... "
 cat <<EOF >tmp_endianess_check.cpp
 #include <stdio.h>
 #include <stdlib.h>
@@ -183,15 +183,15 @@ rm tmp_endianess_check tmp_endianess_check.cpp
 # Determine data type sizes
 # TODO: proper error checking
 #
-echo -n "Type with 1 byte... "
+printf "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
 echo "$type_1_byte"
 
-echo -n "Type with 2 bytes... "
+printf "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
 echo "$type_2_byte"
 
-echo -n "Type with 4 bytes... "
+printf "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
 echo "$type_4_byte"
 
