@@ -19,7 +19,12 @@
 #include "textobject.h"
 #include "engine.h"
 #include "localize.h"
+
+#ifdef DIRECT3D_DRIVER
+#include "driver_d3d.h"
+#else
 #include "driver_gl.h"
+#endif
 
 TextObject::TextObject(const char *text, const int x, const int y, const Color& fgColor) :
 		fgColor_(fgColor), x_(x), y_(y) {

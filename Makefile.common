@@ -21,7 +21,7 @@ OBJS =\
 	lua/ltm.o \
 	lua/lundump.o \
 	lua/lvm.o \
-	lua/lzio.o
+	lua/lzio.o \
 	mixer/mixer.o \
 	mixer/rate.o \
 	mixer/audiostream.o \
@@ -53,7 +53,7 @@ OBJS =\
 	textsplit.o \
 	timer.o \
 	vima.o \
-	walkplane.o \
+	walkplane.o
 
 DEPS = $(OBJS:.o=.d)
 
