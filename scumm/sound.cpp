@@ -31,11 +31,6 @@
 #include "common/config-file.h"
 #include "common/util.h"
 
-#ifdef _WIN32_WCE
-extern void *bsearch(const void *, const void *, size_t,
-										 size_t, int (*x) (const void *, const void *));
-#endif
-
 Sound::Sound(Scumm *parent) {
 	_scumm = parent;
 	_nameBundleMusic = NULL;
@@ -1732,9 +1727,16 @@ Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
 	}
 }
 
+#ifdef CHUNKSIZE
+#define VORBIS_TREMOR
+#endif
+
 int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
-	// fixme tremor handles delay differently
-	ov_time_seek(&_ov_file, start / 75.0);
+#ifdef VORBIS_TREMOR
+	ov_time_seek(&_ov_file, (int)(start / 75.0) * 1000);
+#else
+	ov_time_seek(&_ov_file, (int)(start / 75.0));
+#endif
 	return mixer->playVorbis(NULL, &_ov_file,
 				 delay * ov_info(&_ov_file, -1)->rate / 75,
 				 true);
