@@ -82,7 +82,8 @@ uint8 stepOneCycle=0;	// for use while game paused
 
 static const VersionSettings bs2_settings[] = {
 	/* Broken Sword 2 */
-	{"bs2", "Broken Sword II", GID_BS2_FIRST, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"bs2", "Broken Sword II", GID_BS2, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"bs2demo", "Broken Sword II (Demo)", GID_BS2_DEMO, 99, VersionSettings::ADLIB_DONT_CARE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{NULL, NULL, 0, 0, VersionSettings::ADLIB_DONT_CARE, 0, NULL}
 };
 
@@ -102,6 +103,8 @@ BS2State::BS2State(GameDetector *detector, OSystem *syst)
 	_detector = detector;
 	_syst = syst;
 	g_bs2 = this;
+	_features = detector->_game.features;
+	_gameId = detector->_game.id;
 }
 
 
@@ -109,7 +112,7 @@ void BS2State::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int32 InitialiseGame(void)
+int32 BS2State::InitialiseGame(void)
 {
 //init engine drivers
 
@@ -167,9 +170,9 @@ int32 InitialiseGame(void)
 	Init_fx_queue();			// initialise the sound fx queue
 	Zdebug("RETURNED.");
 
-#ifdef _DEMO	// demo only
-	DEMO=1;		// set script variable
-#endif
+	// all demos (not just web)
+	if (_gameId == GID_BS2_DEMO)
+		DEMO=1;		// set script variable
 
 	return(0);
 }
@@ -473,28 +476,29 @@ int RunningFromCd()
 
 
 //------------------------------------------------------------------------------------
-void	Start_game(void)	//Tony29May97
+void	BS2State::Start_game(void)	//Tony29May97
 {
 //boot the game straight into a start script
+	int screen_manager_id;
 
 	Zdebug("Start_game() STARTING:");
 
-#ifdef _DEMO
-	#define SCREEN_MANAGER_ID	19	// DOCKS SECTION START
-#else
-	#define SCREEN_MANAGER_ID	949	// INTRO & PARIS START
-#endif
+	// all demos not just web
+	if (_gameId == GID_BS2_DEMO)
+		screen_manager_id = 19;		// DOCKS SECTION START
+	else
+		screen_manager_id = 949;	// INTRO & PARIS START
 
 	char	*raw_script;
 	char	*raw_data_ad;
 	uint32	null_pc=1;	// the required start-scripts are both script #1 in the respective ScreenManager objects
 
 	raw_data_ad	= (char*) (res_man.Res_open(8));					// open george object, ready for start script to reference
-	raw_script	= (char*) (res_man.Res_open(SCREEN_MANAGER_ID));	// open the ScreenManager object
+	raw_script	= (char*) (res_man.Res_open(screen_manager_id));	// open the ScreenManager object
 
 	RunScript ( raw_script, raw_data_ad, &null_pc );			// run the start script now (because no console)
 
-	res_man.Res_close(SCREEN_MANAGER_ID);						// close the ScreenManager object
+	res_man.Res_close(screen_manager_id);						// close the ScreenManager object
 	res_man.Res_close(8);										// close george
 
 	Zdebug("Start_game() DONE.");

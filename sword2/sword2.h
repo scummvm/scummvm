@@ -36,23 +36,30 @@ void	Close_game();	//Tony11Oct96
 
 void PauseGame(void);		// James17jun97
 void UnpauseGame(void);		// James17jun97
-void Start_game(void);		// James13aug97
 
 #define HEAD_LEN 8
 
 extern uint8 version_string[];		// for displaying from the console
 extern uint8 unencoded_name[];
 
+enum BSGameId {
+	GID_BS2 = GID_BS2_FIRST,
+	GID_BS2_DEMO
+};
 
 // TODO move stuff into class
 class BS2State : public Engine {
 		void errorString(const char *buf_input, char *buf_output);
 	public:
 		BS2State(GameDetector *detector, OSystem *syst);
-		void go();
-		void parseEvents();
+		void go(void);
+		void parseEvents(void);
+		void Start_game(void);
+		int32 InitialiseGame(void);
 		OSystem *_syst;
 		GameDetector *_detector;
+		uint32 _features;
+		byte _gameId;
 	private:
 		bool _quit;
 };

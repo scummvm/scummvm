@@ -37,6 +37,7 @@
 #include "protocol.h"	// for FetchObjectName() for debugging FN_play_fx
 #include "resman.h"
 #include "sound.h"
+#include "sword2.h"
 
 //--------------------------------------------------------------------------------------
 typedef struct
@@ -409,11 +410,10 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 
 	// add the appropriate file extension & play it
 
-	#ifdef _WEBDEMO		// (James 01oct97)
+	if (g_bs2->_gameId == GID_BS2_DEMO)
 		sprintf(filename,"MUSIC.CLU");
-	#else
+	else
 		sprintf(filename,"%sCLUSTERS\\MUSIC.CLU", res_man.GetCdPath());
-	#endif	// _WEBDEMO
 
 	rv = StreamCompMusic(filename, params[0], loopFlag);
 

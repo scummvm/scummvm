@@ -1566,7 +1566,7 @@ void	Restart_control(void)	//Tony4Apr97
 
 	FreeAllRouteMem();	// free all the route memory blocks from previous game
 
-	Start_game();	// call the same function that first started us up
+	g_bs2->Start_game();	// call the same function that first started us up
 
 
 //prime system with a game cycle

@@ -579,9 +579,9 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
 
-			#ifdef _WEBDEMO		// (James 03oct97)
+			if (g_bs2->_gameId == GID_BS2_DEMO) {
 				strcpy(speechFile,"SPEECH.CLU");
-			#else
+			} else {
 
 				#ifdef _DEBUG
 					if ((res_man.WhichCd()==1) && (!access("speech1.clu",0)))	// if 0 ie. if it's there
@@ -598,8 +598,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 						strcpy(speechFile,res_man.GetCdPath());
 						strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
 					}
-
-			#endif	// _WEBDEMO
+			}
 			//------------------------------
 
 			wavSize = GetCompSpeechSize(speechFile, wavId);		// returns size of decompressed wav, or 0 if wav not found
@@ -802,11 +801,10 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	//--------------------------------------------------
 	// add the appropriate file extension & play it
 
-	#ifdef _WEBDEMO		// (James 01oct97)
+	if (g_bs2->_gameId == GID_BS2_DEMO)
 		sprintf(filename,"%s.smk", (char *)params[0]);
-	#else
+	else
 		sprintf(filename,"%sSMACKS\\%s.smk", res_man.GetCdPath(), (char *)params[0]);
-	#endif	// _WEBDEMO
 
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)

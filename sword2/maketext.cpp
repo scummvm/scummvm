@@ -64,6 +64,7 @@
 #include "memory.h"
 #include "protocol.h"			// for FetchFrameHeader()
 #include "resman.h"
+#include "sword2.h"
 
 extern uint32 sequenceTextLines;	// see anims.cpp
 
@@ -624,12 +625,6 @@ void InitialiseFontResourceFlags(void)	// (James31july97)
 	#define TEXT_RES		3258	// resource 3258 contains text from location script for 152 (install, save & restore text, etc)
 	#define SAVE_LINE_NO	1		// local line number of "save" (actor no. 1826)
 
-#ifndef _DEMO	// normal game
-	#define NAME_LINE_NO	54		// local line number of game name (actor no. 3550)
-#else
-	#define NAME_LINE_NO	451		// local line number of demo game name
-#endif	// _DEMO
-
 	//---------------------------------------------------------------------------------
 	textFile = res_man.Res_open(TEXT_RES);					// open the text resource
 	//---------------------------------------------------------------------------------
@@ -649,7 +644,11 @@ void InitialiseFontResourceFlags(void)	// (James31july97)
 	//---------------------------------------------------------------------------------
 	// Get the game name for the windows application
 
-	textLine = FetchTextLine(textFile, NAME_LINE_NO )+2;	// get the text line (& skip the 2 chars containing the wavId)
+	if (g_bs2->_gameId == GID_BS2_DEMO)
+		textLine = FetchTextLine(textFile, 451 )+2;	// get the text line (& skip the 2 chars containing the wavId)
+	else
+		textLine = FetchTextLine(textFile, 54 )+2;	// get the text line (& skip the 2 chars containing the wavId)
+
 	SetWindowName((char*)textLine);							// driver function
 	//---------------------------------------------------------------------------------
 	res_man.Res_close(TEXT_RES);					// now ok to close the text file

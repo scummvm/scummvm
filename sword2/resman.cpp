@@ -1370,9 +1370,8 @@ void resMan::GetCd(int cd)
 	uint8		 *textRes;
 
 	//----------------------------------------------------------------------------------------
-	#ifdef _WEBDEMO		// (James 01oct97)
+	if (g_bs2->_gameId == GID_BS2_DEMO)
 		return;		// don't ask for CD's in the playable demo downloaded from our web-site!
-	#endif	// _WEBDEMO
 
 	#ifdef _PCGUIDE
 		return;		// don't ask for CD in the patch for the demo on "PC Guide" magazine

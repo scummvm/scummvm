@@ -40,6 +40,7 @@
 #include "resman.h"
 #include "sound.h"
 #include "speech.h"
+#include "sword2.h"
 #include "walker.h"
 //------------------------------------------------------------------------------------
 
@@ -1564,27 +1565,22 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
 
-#ifdef _WEBDEMO		// (James 01oct97)
-			strcpy(speechFile,"SPEECH.CLU");
-#else
-
+			if (g_bs2->_gameId == GID_BS2_DEMO)
+				strcpy(speechFile,"SPEECH.CLU");
+			else {
 
 #ifdef _DEBUG
-			if ((res_man.WhichCd()==1) && (!access("speech1.clu",0)))	// if 0 ie. if it's there
-			{
+				if ((res_man.WhichCd()==1) && (!access("speech1.clu",0))) {	// if 0 ie. if it's there
 				strcpy(speechFile,"speech1.clu");
-			}
-			else if ((res_man.WhichCd()==2) && (!access("speech2.clu",0)))	// if 0 ie. if it's there
-			{
-				strcpy(speechFile,"speech2.clu");
-			}
-			else
+				} else if ((res_man.WhichCd()==2) && (!access("speech2.clu",0))) {	// if 0 ie. if it's there
+					strcpy(speechFile,"speech2.clu");
+				} else
 #endif	// _DEBUG
-			{
-				strcpy(speechFile,res_man.GetCdPath());
-				strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
+				{
+					strcpy(speechFile,res_man.GetCdPath());
+					strcat(speechFile,"CLUSTERS\\SPEECH.CLU");
+				}
 			}
-#endif	// _WEBDEMO
  			//------------------------------
 
 
