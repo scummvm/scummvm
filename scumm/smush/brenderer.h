@@ -26,7 +26,6 @@
 
 #include "renderer.h"
 #include "palette.h"
-#include "rect.h"
 
 /*! 	@brief base class for easily creating ::renderer instances
 

@@ -23,6 +23,7 @@
 #include "common/util.h"
 #include "scumm_renderer.h"
 #include "channel.h"
+#include "mixer.h"
 
 class scumm_mixer : public Mixer {
 private:

@@ -35,11 +35,10 @@
 #endif
 
 #include "brenderer.h"
-#include "mixer.h"
-#include "rect.h"
-#include "blitter.h"
 
 class scumm_mixer;
+class Scumm;
+class Mixer;
 
 class ScummRenderer : public BaseRenderer {
 private:

@@ -24,9 +24,9 @@
 
 #include "config.h"
 
+#include "palette.h"
 #include "rect.h"
 
-class Palette;
 class Mixer;
 	
 /*! 	@brief interface for general output (rendering)

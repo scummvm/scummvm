@@ -25,17 +25,16 @@
 #include "config.h"
 
 #include "rect.h"
-#include "mixer.h"
 #include "chunk.h"
 #include "palette.h"
 #include "codec1.h"
 #include "codec37.h"
 #include "codec44.h"
 #include "codec47.h"
-#include "frenderer.h"
 
+class FontRenderer;
+class Mixer;
 class Renderer;
-
 class StringResource;
 
 /*!	@brief the SMUSH player class

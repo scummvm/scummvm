@@ -23,7 +23,9 @@
 #include "common/util.h"
 #include "player.h"
 
+#include "mixer.h"
 #include "renderer.h"
+#include "frenderer.h"
 #include "channel.h"
 #include "chunk_type.h"
 #include "rect.h"
@@ -107,7 +109,7 @@ public:
 			value[data_end - data_start] = 0;
 			char * line_start = value;
 			char * line_end;
-			while (line_end = strchr(line_start, '\n')) {
+			while ((line_end = strchr(line_start, '\n'))) {
 				line_start = line_end+1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
 					line_start += 2;
