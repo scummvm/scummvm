@@ -23,47 +23,55 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void *Scumm::fileOpen(const char *filename, int mode) {
+void *Scumm::fileOpen(const char *filename, int mode)
+{
 	_fileMode = mode;
-	_whereInResToRead = 0;	
+	_whereInResToRead = 0;
 	clearFileReadFailed(_fileHandle);
 
-	if (mode==1)
+	if (mode == 1)
 		return fopen(filename, "rb");
-	
-	if (mode==2) {
+
+	if (mode == 2) {
 		error("fileOpen: write not supported");
 	}
-	
+
 	return NULL;
 }
 
-void Scumm::fileClose(void *file) {
-	if (_fileMode==1 || _fileMode==2)
-		fclose((FILE*)file);
+void Scumm::fileClose(void *file)
+{
+	if (_fileMode == 1 || _fileMode == 2)
+		fclose((FILE *) file);
 }
 
-bool Scumm::fileReadFailed(void *file) {
+bool Scumm::fileReadFailed(void *file)
+{
 	return _fileReadFailed != 0;
 }
 
-void Scumm::clearFileReadFailed(void *file) {
+void Scumm::clearFileReadFailed(void *file)
+{
 	_fileReadFailed = false;
 }
 
-bool Scumm::fileEof(void *file) {
-	return feof((FILE*)file) != 0;
+bool Scumm::fileEof(void *file)
+{
+	return feof((FILE *) file) != 0;
 }
 
-uint32 Scumm::filePos(void *handle) {
-	return ftell((FILE*)handle);
+uint32 Scumm::filePos(void *handle)
+{
+	return ftell((FILE *) handle);
 }
 
-void Scumm::fileSeek(void *file, long offs, int whence) {
-	switch(_fileMode) {
-	case 1: case 2:
-		if (fseek((FILE*)file, offs, whence)!=0)
-			clearerr((FILE*)file);
+void Scumm::fileSeek(void *file, long offs, int whence)
+{
+	switch (_fileMode) {
+	case 1:
+	case 2:
+		if (fseek((FILE *) file, offs, whence) != 0)
+			clearerr((FILE *) file);
 		return;
 	case 3:
 		_whereInResToRead = offs;
@@ -71,27 +79,28 @@ void Scumm::fileSeek(void *file, long offs, int whence) {
 	}
 }
 
-void Scumm::fileRead(void *file, void *ptr, uint32 size) {
-	byte *ptr2 = (byte*)ptr, *src;
+void Scumm::fileRead(void *file, void *ptr, uint32 size)
+{
+	byte *ptr2 = (byte *)ptr, *src;
 
-	switch(_fileMode) {
+	switch (_fileMode) {
 	case 1:
-		if (size==0)
+		if (size == 0)
 			return;
 
-		if ((uint32)fread(ptr2, size, 1, (FILE*)file) != 1) {
-			clearerr((FILE*)file);
+		if ((uint32)fread(ptr2, size, 1, (FILE *) file) != 1) {
+			clearerr((FILE *) file);
 			_fileReadFailed = true;
 		}
 
 		do {
-			*ptr2++	^= _encbyte;
-		} while(--size);
+			*ptr2++ ^= _encbyte;
+		} while (--size);
 
 		return;
 
 	case 3:
-		if (size==0)
+		if (size == 0)
 			return;
 
 		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
@@ -103,14 +112,15 @@ void Scumm::fileRead(void *file, void *ptr, uint32 size) {
 	}
 }
 
-int Scumm::fileReadByte() {
+int Scumm::fileReadByte()
+{
 	byte b;
 	byte *src;
 
-	switch(_fileMode) {
+	switch (_fileMode) {
 	case 1:
-		if (fread(&b,1,1,(FILE*)_fileHandle) != 1) {
-			clearerr((FILE*)_fileHandle);
+		if (fread(&b, 1, 1, (FILE *) _fileHandle) != 1) {
+			clearerr((FILE *) _fileHandle);
 			_fileReadFailed = true;
 		}
 		return b ^ _encbyte;
@@ -123,66 +133,76 @@ int Scumm::fileReadByte() {
 	return 0;
 }
 
-uint Scumm::fileReadWordLE() {
+uint Scumm::fileReadWordLE()
+{
 	uint a = fileReadByte();
 	uint b = fileReadByte();
-	return a|(b<<8);
+	return a | (b << 8);
 }
 
-uint32 Scumm::fileReadDwordLE() {
+uint32 Scumm::fileReadDwordLE()
+{
 	uint a = fileReadWordLE();
 	uint b = fileReadWordLE();
-	return (b<<16)|a;
+	return (b << 16) | a;
 }
 
-uint Scumm::fileReadWordBE() {
+uint Scumm::fileReadWordBE()
+{
 	uint b = fileReadByte();
 	uint a = fileReadByte();
-	return a|(b<<8);
+	return a | (b << 8);
 }
 
-uint32 Scumm::fileReadDwordBE() {
+uint32 Scumm::fileReadDwordBE()
+{
 	uint b = fileReadWordBE();
 	uint a = fileReadWordBE();
-	return (b<<16)|a;
+	return (b << 16) | a;
 }
 
-byte *Scumm::alloc(int size) {
-	byte *me = (byte*)::calloc(size+4,1);
-	if (me==NULL)
+byte *Scumm::alloc(int size)
+{
+	byte *me = (byte *)::calloc(size + 4, 1);
+	if (me == NULL)
 		return NULL;
 
-	*((uint32*)me) = 0xDEADBEEF;
+	*((uint32 *)me) = 0xDEADBEEF;
 	return me + 4;
 }
 
-void Scumm::free(void *mem) {
+void Scumm::free(void *mem)
+{
 	if (mem) {
-		byte *me = (byte*)mem - 4;
-		if ( *((uint32*)me) != 0xDEADBEEF) {
+		byte *me = (byte *)mem - 4;
+		if (*((uint32 *)me) != 0xDEADBEEF) {
 			error("Freeing invalid block.");
 		}
 
-		*((uint32*)me) = 0xC007CAFE;
+		*((uint32 *)me) = 0xC007CAFE;
 		::free(me);
 	}
 }
 
-bool Scumm::checkFixedDisk() {
+bool Scumm::checkFixedDisk()
+{
 	return true;
 }
 
 
 #ifdef NEED_STRDUP
-char *strdup(const char *s) {
+char *strdup(const char *s)
+{
 	int len = strlen(s) + 1;
-	char *d = (char*)malloc(len);
-	if (d) memcpy(d, s, len);
+	char *d = (char *)malloc(len);
+	if (d)
+		memcpy(d, s, len);
 	return d;
 }
 #endif /* NEED_STRDUP */
 
 
-void *operator new(size_t size) {
-	return calloc(size,1);
+void *operator new(size_t size)
+{
+	return calloc(size, 1);
 }

@@ -24,7 +24,8 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void Scumm::setupScummVarsOld(){
+void Scumm::setupScummVarsOld()
+{
 
 	VAR_EGO = 1;
 	VAR_CAMERA_POS_X = 2;
@@ -81,7 +82,7 @@ void Scumm::setupScummVarsOld(){
 	VAR_SOUNDRESULT = 56;
 	VAR_TALKSTOP_KEY = 57;
 	VAR_59 = 59;
-	
+
 	VAR_SOUNDPARAM = 64;
 	VAR_SOUNDPARAM2 = 65;
 	VAR_SOUNDPARAM3 = 66;
@@ -97,12 +98,12 @@ void Scumm::setupScummVarsOld(){
 	VAR_MI1_TIMER = 14;
 
 	//if (_features & GF_OLD256) {
-		VAR_V5_OBJECT_LO = 15;
-		VAR_V5_OBJECT_HI = 16;
+	VAR_V5_OBJECT_LO = 15;
+	VAR_V5_OBJECT_HI = 16;
 	/*} else {
-		VAR_V5_OBJECT_LO = 16;
-		VAR_V5_OBJECT_HI = 15;
-	} */
+	   VAR_V5_OBJECT_LO = 16;
+	   VAR_V5_OBJECT_HI = 15;
+	   } */
 
 	VAR_V5_TALK_STRING_Y = 54;
 	VAR_V5_CHARFLAG = 60;
@@ -114,7 +115,8 @@ void Scumm::setupScummVarsOld(){
 }
 
 
-void Scumm::setupScummVarsNew() {
+void Scumm::setupScummVarsNew()
+{
 
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;
@@ -155,11 +157,11 @@ void Scumm::setupScummVarsNew() {
 	VAR_CUTSCENE_END_SCRIPT = 59;
 	VAR_UNK_SCRIPT = 60;
 	VAR_UNK_SCRIPT_2 = 61;
-	
+
 	VAR_PAUSE_KEY = 64;
-	VAR_RESTART_KEY = 63; /* ?? */
-	VAR_TALKSTOP_KEY = 66; /* ?? */
-	VAR_SAVELOADDIALOG_KEY = 65; /* ?? */
+	VAR_RESTART_KEY = 63;					/* ?? */
+	VAR_TALKSTOP_KEY = 66;				/* ?? */
+	VAR_SAVELOADDIALOG_KEY = 65;	/* ?? */
 	VAR_CUTSCENEEXIT_KEY = 62;
 
 	VAR_TIMER_NEXT = 97;
@@ -177,7 +179,7 @@ void Scumm::setupScummVarsNew() {
 	VAR_CAMERA_SPEED_Y = 108;
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
-		
+
 	VAR_EGO = 111;
 
 	VAR_CURSORSTATE = 112;
@@ -187,7 +189,7 @@ void Scumm::setupScummVarsNew() {
 	VAR_DEBUGMODE = 116;
 
 	VAR_CHARSET_MASK = 119;
-	
+
 	//VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
 	VAR_V5_OBJECT_LO = 15;

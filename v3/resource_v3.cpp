@@ -24,7 +24,8 @@
 #include "scumm.h"
 
 
-void Scumm_v3::readIndexFile() {
+void Scumm_v3::readIndexFile()
+{
 	uint16 blocktype;
 	uint32 itemsize;
 	int numblock = 0;
@@ -37,122 +38,124 @@ void Scumm_v3::readIndexFile() {
 
 	while (!fileEof(_fileHandle)) {
 		itemsize = fileReadDwordLE();
-			blocktype = fileReadWordLE();
-			if (fileReadFailed(_fileHandle))
-				break;
+		blocktype = fileReadWordLE();
+		if (fileReadFailed(_fileHandle))
+			break;
 
-			switch(blocktype) {
-				case 0x4E52:
-					fileReadWordLE();
-					break;
-				case 0x5230:
-					_numRooms = fileReadWordLE();
-					break;
-				case 0x5330:
-					_numScripts = fileReadWordLE();
-					break;
-				case 0x4E30:
-					_numSounds = fileReadWordLE();
-					break;
-				case 0x4330:
-					_numCostumes = fileReadWordLE();
-					break;
-				case 0x4F30:
-					_numGlobalObjects = fileReadWordLE();
-					break;
-			}
-		fileSeek(_fileHandle, itemsize-8,SEEK_CUR);
+		switch (blocktype) {
+		case 0x4E52:
+			fileReadWordLE();
+			break;
+		case 0x5230:
+			_numRooms = fileReadWordLE();
+			break;
+		case 0x5330:
+			_numScripts = fileReadWordLE();
+			break;
+		case 0x4E30:
+			_numSounds = fileReadWordLE();
+			break;
+		case 0x4330:
+			_numCostumes = fileReadWordLE();
+			break;
+		case 0x4F30:
+			_numGlobalObjects = fileReadWordLE();
+			break;
+		}
+		fileSeek(_fileHandle, itemsize - 8, SEEK_CUR);
 	}
-	
+
 	clearFileReadFailed(_fileHandle);
 	fileSeek(_fileHandle, 0, SEEK_SET);
 
-       /* I'm not sure for those values yet, they will have to be rechecked */
+	/* I'm not sure for those values yet, they will have to be rechecked */
 
-       _numVariables = 800; /* 800 */
-       _numBitVariables = 4096; /* 2048 */
-       _numLocalObjects = 200; /* 200 */
-       _numArray = 50;
-       _numVerbs = 100;
-       _numNewNames = 0;
-       _objectRoomTable = NULL;
-       _numCharsets = 9; /* 9 */
-       _numInventory = 80; /* 80 */
-       _numGlobalScripts = 200;
+	_numVariables = 800;					/* 800 */
+	_numBitVariables = 4096;			/* 2048 */
+	_numLocalObjects = 200;				/* 200 */
+	_numArray = 50;
+	_numVerbs = 100;
+	_numNewNames = 0;
+	_objectRoomTable = NULL;
+	_numCharsets = 9;							/* 9 */
+	_numInventory = 80;						/* 80 */
+	_numGlobalScripts = 200;
 
-       _shadowPaletteSize = 256;
-       _shadowPalette = (byte*)alloc(_shadowPaletteSize); // stupid for now. Need to be removed later
-       _numFlObject = 50;
-       allocateArrays();
+	_shadowPaletteSize = 256;
+	_shadowPalette = (byte *)alloc(_shadowPaletteSize);	// stupid for now. Need to be removed later
+	_numFlObject = 50;
+	allocateArrays();
 
-       while (1) {
-               itemsize = fileReadDwordLE();
+	while (1) {
+		itemsize = fileReadDwordLE();
 
-               if (fileReadFailed(_fileHandle))
-                       break;
+		if (fileReadFailed(_fileHandle))
+			break;
 
-               blocktype = fileReadWordLE();
+		blocktype = fileReadWordLE();
 
-               numblock++;
+		numblock++;
 
-               switch(blocktype) {
+		switch (blocktype) {
 
-               case 0x4E52:
-                       fileSeek(_fileHandle, itemsize-6,SEEK_CUR);
-                       break;
+		case 0x4E52:
+			fileSeek(_fileHandle, itemsize - 6, SEEK_CUR);
+			break;
 
-               case 0x5230:
-                       readResTypeList(rtRoom,MKID('ROOM'),"room");
-                       break;
+		case 0x5230:
+			readResTypeList(rtRoom, MKID('ROOM'), "room");
+			break;
 
-               case 0x5330:
-                       readResTypeList(rtScript,MKID('SCRP'),"script");
-                       break;
+		case 0x5330:
+			readResTypeList(rtScript, MKID('SCRP'), "script");
+			break;
 
-               case 0x4E30:
-                       readResTypeList(rtSound,MKID('SOUN'),"sound");
-                       break;
+		case 0x4E30:
+			readResTypeList(rtSound, MKID('SOUN'), "sound");
+			break;
 
-               case 0x4330:
-                       readResTypeList(rtCostume,MKID('COST'),"costume");
-                       break;
+		case 0x4330:
+			readResTypeList(rtCostume, MKID('COST'), "costume");
+			break;
 
-               case 0x4F30:
-                       num = fileReadWordLE();
-                       assert(num == _numGlobalObjects);
-                       for (i=0; i!=num; i++) {
-                                uint32 bits = fileReadByte();
-																byte tmp;
-																bits |= fileReadByte() << 8;
-																bits |= fileReadByte() << 16;
-																_classData[i] = bits;
-                                tmp = fileReadByte();
-																_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-																_objectStateTable[i] = tmp >> OF_STATE_SHL;
-                       }
+		case 0x4F30:
+			num = fileReadWordLE();
+			assert(num == _numGlobalObjects);
+			for (i = 0; i != num; i++) {
+				uint32 bits = fileReadByte();
+				byte tmp;
+				bits |= fileReadByte() << 8;
+				bits |= fileReadByte() << 16;
+				_classData[i] = bits;
+				tmp = fileReadByte();
+				_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+				_objectStateTable[i] = tmp >> OF_STATE_SHL;
+			}
 
-                       break;
+			break;
 
-               default:
-                       error("Bad ID %c%c found in directory!", blocktype&0xFF, blocktype>>8);
-                       return;
-               }
-       }
+		default:
+			error("Bad ID %c%c found in directory!", blocktype & 0xFF,
+						blocktype >> 8);
+			return;
+		}
+	}
 
-       openRoom(-1);
+	openRoom(-1);
 }
 
-void Scumm_v3::loadCharset(int no){
-	uint32 size;		
+void Scumm_v3::loadCharset(int no)
+{
+	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 
-        checkRange(4 ,0 ,no , "Loading illegal charset %d");
-        openRoom(-1);
-        
-      	openRoom(98+no);
+	checkRange(4, 0, no, "Loading illegal charset %d");
+	openRoom(-1);
 
-       	size = fileReadWordLE();
-        
+	openRoom(98 + no);
+
+	size = fileReadWordLE();
+
 	fileRead(_fileHandle, createResource(6, no, size), size);
-        openRoom(-1);
+	openRoom(-1);
 }

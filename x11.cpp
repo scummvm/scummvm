@@ -75,303 +75,319 @@ static int current_shake_pos = 0;
 
 #define MAX_NUMBER_OF_DIRTY_SQUARES 32
 typedef struct {
-  int x, y, w, h;
+	int x, y, w, h;
 } dirty_square;
 static dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
 static int num_of_dirty_square;
 
 /* Milisecond-based timer management */
 static struct timeval start_time;
-static void init_timer(void) {
-  gettimeofday(&start_time, NULL);
+static void init_timer(void)
+{
+	gettimeofday(&start_time, NULL);
 }
-static unsigned int get_ms_from_start(void) {
-  struct timeval current_time;
-  gettimeofday(&current_time, NULL);
-  return (((current_time.tv_sec  - start_time.tv_sec ) * 1000) + 
-	  ((current_time.tv_usec - start_time.tv_usec) / 1000));
+static unsigned int get_ms_from_start(void)
+{
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+	return (((current_time.tv_sec - start_time.tv_sec) * 1000) +
+					((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
 #define FRAG_SIZE 4096
-static void *sound_and_music_thread(void *params) {
-  /* Init sound */
-  int sound_fd, param, frag_size;
-  unsigned char sound_buffer[FRAG_SIZE];
+static void *sound_and_music_thread(void *params)
+{
+	/* Init sound */
+	int sound_fd, param, frag_size;
+	unsigned char sound_buffer[FRAG_SIZE];
 
-  sound_fd = open("/dev/dsp", O_WRONLY);
-  audio_buf_info info;
-  if (sound_fd < 0) {
-    error("Error opening sound device !\n");
-    exit(1);
-  }
-  param = 0;
-  frag_size = FRAG_SIZE /* audio fragment size */;
-  while (frag_size) {
-    frag_size >>= 1;
-    param++;
-  }
-  param--;
-  param |= /* audio_fragment_num */ 3 << 16;
-  if (ioctl(sound_fd, SNDCTL_DSP_SETFRAGMENT, &param) != 0) {
-    error("Error in the SNDCTL_DSP_SETFRAGMENT ioctl !\n");
-    exit(1);
-  }
-  param = AFMT_S16_LE;
-  if (ioctl(sound_fd, SNDCTL_DSP_SETFMT, &param) == -1) {
-    perror("Error in the SNDCTL_DSP_SETFMT ioctl !\n");
-    exit(1);
-  }
-  if (param != AFMT_S16_LE) {
-    error("AFMT_S16_LE not supported !\n");
-    exit(1);
-  }
-  param = 2;
-  if (ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &param) == -1) {
-    error("Error in the SNDCTL_DSP_CHANNELS ioctl !\n");
-    exit(1);
-  }
-  if (param != 2) {
-    error("Stereo mode not supported !\n");
-    exit(1);
-  }
-  param = 22050;
-  if (ioctl(sound_fd, SNDCTL_DSP_SPEED, &param) == -1) {
-    perror("Error in the SNDCTL_DSP_SPEED ioctl !\n");
-    exit(1);
-  }
-  if (param != 22050) {
-    error("22050 kHz not supported !\n");
-    exit(1);
-  }
-  if (ioctl(sound_fd, SNDCTL_DSP_GETOSPACE, &info) != 0) {
-    perror("SNDCTL_DSP_GETOSPACE");
-    exit(-1);
-  }
+	sound_fd = open("/dev/dsp", O_WRONLY);
+	audio_buf_info info;
+	if (sound_fd < 0) {
+		error("Error opening sound device !\n");
+		exit(1);
+	}
+	param = 0;
+	frag_size = FRAG_SIZE /* audio fragment size */ ;
+	while (frag_size) {
+		frag_size >>= 1;
+		param++;
+	}
+	param--;
+	param |= /* audio_fragment_num */ 3 << 16;
+	if (ioctl(sound_fd, SNDCTL_DSP_SETFRAGMENT, &param) != 0) {
+		error("Error in the SNDCTL_DSP_SETFRAGMENT ioctl !\n");
+		exit(1);
+	}
+	param = AFMT_S16_LE;
+	if (ioctl(sound_fd, SNDCTL_DSP_SETFMT, &param) == -1) {
+		perror("Error in the SNDCTL_DSP_SETFMT ioctl !\n");
+		exit(1);
+	}
+	if (param != AFMT_S16_LE) {
+		error("AFMT_S16_LE not supported !\n");
+		exit(1);
+	}
+	param = 2;
+	if (ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &param) == -1) {
+		error("Error in the SNDCTL_DSP_CHANNELS ioctl !\n");
+		exit(1);
+	}
+	if (param != 2) {
+		error("Stereo mode not supported !\n");
+		exit(1);
+	}
+	param = 22050;
+	if (ioctl(sound_fd, SNDCTL_DSP_SPEED, &param) == -1) {
+		perror("Error in the SNDCTL_DSP_SPEED ioctl !\n");
+		exit(1);
+	}
+	if (param != 22050) {
+		error("22050 kHz not supported !\n");
+		exit(1);
+	}
+	if (ioctl(sound_fd, SNDCTL_DSP_GETOSPACE, &info) != 0) {
+		perror("SNDCTL_DSP_GETOSPACE");
+		exit(-1);
+	}
 
-  while (1) {
-    unsigned short *buf = (unsigned short *) sound_buffer;
-    int size, written;
+	while (1) {
+		unsigned short *buf = (unsigned short *)sound_buffer;
+		int size, written;
 
-    scumm.mixWaves((short *) sound_buffer, FRAG_SIZE >> 2);
-    /* Now convert to stereo */
-    for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
-      buf[2 * i + 1] = buf[2 * i] = buf[i];
-    }
-    size = FRAG_SIZE;
-    while (size > 0) {
-      written = write(sound_fd, sound_buffer, size);
-      size -= written;
-    }
-  }
+		scumm.mixWaves((short *)sound_buffer, FRAG_SIZE >> 2);
+		/* Now convert to stereo */
+		for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
+			buf[2 * i + 1] = buf[2 * i] = buf[i];
+		}
+		size = FRAG_SIZE;
+		while (size > 0) {
+			written = write(sound_fd, sound_buffer, size);
+			size -= written;
+		}
+	}
 
-  return NULL;
+	return NULL;
 }
 
 /* Function used to hide the mouse cursor */
-static void create_empty_cursor(Display *display,
-				int screen,
-				Window window) {
-  XColor bg;
-  Pixmap pixmapBits;
-  Cursor cursor = None;
-  static const char data[] = { 0 };
+static void create_empty_cursor(Display * display, int screen, Window window)
+{
+	XColor bg;
+	Pixmap pixmapBits;
+	Cursor cursor = None;
+	static const char data[] = { 0 };
 
-  bg.red = bg.green = bg.blue = 0x0000;
-  pixmapBits = XCreateBitmapFromData(display, XRootWindow(display, screen), data, 1, 1);
-  if (pixmapBits) {
-    cursor = XCreatePixmapCursor(display, pixmapBits, pixmapBits,
-				 &bg, &bg, 0, 0 );
-    XFreePixmap(display, pixmapBits);
-  } 
-  XDefineCursor(display, window, cursor);
+	bg.red = bg.green = bg.blue = 0x0000;
+	pixmapBits =
+		XCreateBitmapFromData(display, XRootWindow(display, screen), data, 1, 1);
+	if (pixmapBits) {
+		cursor = XCreatePixmapCursor(display, pixmapBits, pixmapBits,
+																 &bg, &bg, 0, 0);
+		XFreePixmap(display, pixmapBits);
+	}
+	XDefineCursor(display, window, cursor);
 }
 
 /* No CD on the iPAQ => stub functions */
-void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
+void cd_play(Scumm *s, int track, int num_loops, int start_frame,
+						 int end_frame)
+{
 
 #ifdef COMPRESSED_SOUND_FILE
 	mp3_cd_play(s, track, num_loops, start_frame, end_frame);
 #endif
 }
-int cd_is_running(void) {
-  return 1;
+int cd_is_running(void)
+{
+	return 1;
 }
-void cd_stop(void) {
+void cd_stop(void)
+{
 }
 
 /* No debugger on the iPAQ => stub function */
-void BoxTest(int num) {
+void BoxTest(int num)
+{
 }
 
 /* Initialize the graphics sub-system */
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
-  char buf[512], *gameName;
-  static XShmSegmentInfo shminfo;
-  XWMHints *wm_hints;
-  XGCValues values;
-  XTextProperty window_name;
-  char *name = (char *) &buf;
-  
-  scale = scaleFactor;  // not implemented yet! ignored.
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
+{
+	char buf[512], *gameName;
+	static XShmSegmentInfo shminfo;
+	XWMHints *wm_hints;
+	XGCValues values;
+	XTextProperty window_name;
+	char *name = (char *)&buf;
 
-  /* For the window title */
-  sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
-  free(gameName);
+	scale = scaleFactor;					// not implemented yet! ignored.
 
-  display = XOpenDisplay(NULL);
-  if (display == NULL) {
-    error("Could not open display !\n");
-    exit(1);
-  }
-  screen = DefaultScreen(display);
-  x11_socket = ConnectionNumber(display);
+	/* For the window title */
+	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+	free(gameName);
 
-  window_width = 320;
-  window_height = 200;
-  scumm_x = 0;
-  scumm_y = 0;
-  window = XCreateSimpleWindow(display, XRootWindow(display, screen), 0, 0,
-			       320, 200, 0, 0, 0);
-  wm_hints = XAllocWMHints();
-  if (wm_hints == NULL) {
-    error("Not enough memory to allocate Hints !\n");
-    exit(1);
-  }
-  wm_hints->flags = InputHint | StateHint;
-  wm_hints->input = True;
-  wm_hints->initial_state = NormalState;
-  XStringListToTextProperty( &name, 1, &window_name );
-  XSetWMProperties(display, window, &window_name, &window_name,
-		   NULL /* argv */, 0 /* argc */, NULL /* size hints */, wm_hints, NULL /* class hints */ );
+	display = XOpenDisplay(NULL);
+	if (display == NULL) {
+		error("Could not open display !\n");
+		exit(1);
+	}
+	screen = DefaultScreen(display);
+	x11_socket = ConnectionNumber(display);
 
-  XSelectInput(display, window,
-	       ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask |
-	       ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
-  image = XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, 320, 200);
-  shminfo.shmid = shmget(IPC_PRIVATE, 320 * 200 * 2, IPC_CREAT | 0700);
-  shminfo.shmaddr = (char *) shmat(shminfo.shmid, 0, 0);
-  image->data = shminfo.shmaddr;
-  shminfo.readOnly = False;
-  if (XShmAttach(display, &shminfo) == 0) {
-    error("Could not attach shared memory segment !\n");
-    exit(1);
-  }
-  shmctl(shminfo.shmid, IPC_RMID, 0);
+	window_width = 320;
+	window_height = 200;
+	scumm_x = 0;
+	scumm_y = 0;
+	window = XCreateSimpleWindow(display, XRootWindow(display, screen), 0, 0,
+															 320, 200, 0, 0, 0);
+	wm_hints = XAllocWMHints();
+	if (wm_hints == NULL) {
+		error("Not enough memory to allocate Hints !\n");
+		exit(1);
+	}
+	wm_hints->flags = InputHint | StateHint;
+	wm_hints->input = True;
+	wm_hints->initial_state = NormalState;
+	XStringListToTextProperty(&name, 1, &window_name);
+	XSetWMProperties(display, window, &window_name, &window_name,
+									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+									 wm_hints, NULL /* class hints */ );
 
-  values.foreground = BlackPixel(display, screen);
-  black_gc = XCreateGC(display, window, GCForeground, &values);
+	XSelectInput(display, window,
+							 ExposureMask | KeyPressMask | KeyReleaseMask |
+							 PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
+							 StructureNotifyMask);
+	image =
+		XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap,
+										NULL, &shminfo, 320, 200);
+	shminfo.shmid = shmget(IPC_PRIVATE, 320 * 200 * 2, IPC_CREAT | 0700);
+	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
+	image->data = shminfo.shmaddr;
+	shminfo.readOnly = False;
+	if (XShmAttach(display, &shminfo) == 0) {
+		error("Could not attach shared memory segment !\n");
+		exit(1);
+	}
+	shmctl(shminfo.shmid, IPC_RMID, 0);
 
-  XMapWindow(display, window);
-  XFlush(display);
+	values.foreground = BlackPixel(display, screen);
+	black_gc = XCreateGC(display, window, GCForeground, &values);
 
-  while (1) {
-    XEvent event;
-    XNextEvent(display, &event);
-    switch (event.type) {
-    case Expose:
-      goto out_of_loop;
-    }
-  }
- out_of_loop:
-  create_empty_cursor(display, screen, window);
+	XMapWindow(display, window);
+	XFlush(display);
 
-  /* And finally start the music thread */
-  pthread_create(&sound_thread, NULL, sound_and_music_thread, NULL);
+	while (1) {
+		XEvent event;
+		XNextEvent(display, &event);
+		switch (event.type) {
+		case Expose:
+			goto out_of_loop;
+		}
+	}
+out_of_loop:
+	create_empty_cursor(display, screen, window);
 
-  /* Initialize the 'local' frame buffer */
-  local_fb = (unsigned char *) malloc(320 * 200 * sizeof(unsigned char));
+	/* And finally start the music thread */
+	pthread_create(&sound_thread, NULL, sound_and_music_thread, NULL);
+
+	/* Initialize the 'local' frame buffer */
+	local_fb = (unsigned char *)malloc(320 * 200 * sizeof(unsigned char));
 }
 
-void setWindowName(Scumm *s) {
-  char buf[512], *gameName;
-  XTextProperty window_name;
-  char *name = (char *) &buf;
-    
-  /* For the window title */
-  sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
-  free(gameName);
-  
-  XStringListToTextProperty( &name, 1, &window_name );
-  XSetWMProperties(display, window, &window_name, &window_name,
-		   NULL /* argv */, 0 /* argc */, NULL /* size hints */, NULL /* WM hints */, NULL /* class hints */ );  
+void setWindowName(Scumm *s)
+{
+	char buf[512], *gameName;
+	XTextProperty window_name;
+	char *name = (char *)&buf;
+
+	/* For the window title */
+	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+	free(gameName);
+
+	XStringListToTextProperty(&name, 1, &window_name);
+	XSetWMProperties(display, window, &window_name, &window_name,
+									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+									 NULL /* WM hints */ , NULL /* class hints */ );
 }
 
 /* This simply shifts up or down the screen by 'shake pos' */
-void setShakePos(Scumm *s, int shake_pos) {
-  if (shake_pos != current_shake_pos) {
-    int dirty_top = 0, dirty_height = 0;
-    int line;
+void setShakePos(Scumm *s, int shake_pos)
+{
+	if (shake_pos != current_shake_pos) {
+		int dirty_top = 0, dirty_height = 0;
+		int line;
 
-    /* This is to provoke a full redraw */
-    num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
+		/* This is to provoke a full redraw */
+		num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 
-    /* Update the mouse to prevent 'mouse droppings' */
-    old_mouse_y += shake_pos - current_shake_pos;
-		
-    /* Handle the 'dirty part' of the screen */
-    if (shake_pos > current_shake_pos) {
-      for (line = 199 + shake_pos; line >= -shake_pos; line--) {
-	int cur_pos, new_pos;
-	int cur_OK, new_OK;
-	
-	cur_pos = line + current_shake_pos;
-	new_pos = line + shake_pos;
-	
-	cur_OK = (cur_pos >= 0) && (cur_pos < 200);
-	new_OK = (new_pos >= 0) && (new_pos < 200);
-	if (cur_OK && new_OK)
-	  memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
-	else if (cur_OK)
-	  memset(local_fb + cur_pos * 320, 0, 320);
-	else if (new_OK)
-	  memset(local_fb + new_pos * 320, 0, 320);
-      }
-      
-      if (current_shake_pos < 0) {
-	dirty_top = -shake_pos;
-	dirty_height = shake_pos - current_shake_pos;
-	if (dirty_top < 0) {
-	  dirty_height += dirty_top;
-	  dirty_top = 0;
+		/* Update the mouse to prevent 'mouse droppings' */
+		old_mouse_y += shake_pos - current_shake_pos;
+
+		/* Handle the 'dirty part' of the screen */
+		if (shake_pos > current_shake_pos) {
+			for (line = 199 + shake_pos; line >= -shake_pos; line--) {
+				int cur_pos, new_pos;
+				int cur_OK, new_OK;
+
+				cur_pos = line + current_shake_pos;
+				new_pos = line + shake_pos;
+
+				cur_OK = (cur_pos >= 0) && (cur_pos < 200);
+				new_OK = (new_pos >= 0) && (new_pos < 200);
+				if (cur_OK && new_OK)
+					memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
+				else if (cur_OK)
+					memset(local_fb + cur_pos * 320, 0, 320);
+				else if (new_OK)
+					memset(local_fb + new_pos * 320, 0, 320);
+			}
+
+			if (current_shake_pos < 0) {
+				dirty_top = -shake_pos;
+				dirty_height = shake_pos - current_shake_pos;
+				if (dirty_top < 0) {
+					dirty_height += dirty_top;
+					dirty_top = 0;
+				}
+				if ((dirty_height + dirty_top) > 200)
+					dirty_height = 200 - dirty_top;
+			} else {
+				dirty_height = 0;
+			}
+		} else {
+			for (line = -current_shake_pos; line < 200 + current_shake_pos; line++) {
+				int cur_pos, new_pos;
+				int cur_OK, new_OK;
+
+				cur_pos = line + current_shake_pos;
+				new_pos = line + shake_pos;
+				cur_OK = (cur_pos >= 0) && (cur_pos < 200);
+				new_OK = (new_pos >= 0) && (new_pos < 200);
+
+				if (cur_OK && new_OK)
+					memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
+				else if (cur_OK)
+					memset(local_fb + cur_pos * 320, 0, 320);
+				else if (new_OK)
+					memset(local_fb + new_pos * 320, 0, 320);
+			}
+
+			if (current_shake_pos <= 0) {
+				dirty_height = 0;
+			} else {
+				dirty_top = 200 - current_shake_pos;
+				dirty_height = current_shake_pos - shake_pos;
+				if ((dirty_height + dirty_top) > 200)
+					dirty_height = 200 - dirty_top;
+			}
+		}
+
+		/* And save the new shake position */
+		current_shake_pos = shake_pos;
+		if (dirty_height > 0)
+			s->redrawLines(dirty_top, dirty_top + dirty_height);
 	}
-	if ((dirty_height + dirty_top) > 200)
-	  dirty_height = 200 - dirty_top;
-      } else {
-	dirty_height = 0;
-      }
-    } else {
-      for (line = -current_shake_pos; line < 200 + current_shake_pos; line++) {
-	int cur_pos, new_pos;
-	int cur_OK, new_OK;
-	
-	cur_pos = line + current_shake_pos;
-	new_pos = line + shake_pos;
-	cur_OK = (cur_pos >= 0) && (cur_pos < 200);
-	new_OK = (new_pos >= 0) && (new_pos < 200);
-	
-	if (cur_OK && new_OK)
-	  memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
-	else if (cur_OK)
-	  memset(local_fb + cur_pos * 320, 0, 320);
-	else if (new_OK)
-	  memset(local_fb + new_pos * 320, 0, 320);
-      }
-
-      if (current_shake_pos <= 0) {
-	dirty_height = 0;
-      } else {
-	dirty_top = 200 - current_shake_pos;
-	dirty_height = current_shake_pos - shake_pos;
-	if ((dirty_height + dirty_top) > 200)
-	  dirty_height = 200 - dirty_top;
-      }
-    }
-
-    /* And save the new shake position */
-    current_shake_pos = shake_pos;
-    if (dirty_height > 0)
-      s->redrawLines(dirty_top, dirty_top + dirty_height);
-  }
 }
 
 #define AddDirtyRec(xi,yi,wi,hi) 				\
@@ -382,400 +398,425 @@ void setShakePos(Scumm *s, int shake_pos) {
     ds[num_of_dirty_square].h = hi;				\
     num_of_dirty_square++;					\
   }
-void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h) {
-  unsigned char *dst;
+void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
+{
+	unsigned char *dst;
 
-  y += current_shake_pos;
-  if (y < 0) {	
-    h += y;
-    src -= y * 320;
-    y = 0; 
-  }
-  if (h > (200 - y)) { 
-    h = 200 - y; 
-  }
+	y += current_shake_pos;
+	if (y < 0) {
+		h += y;
+		src -= y * 320;
+		y = 0;
+	}
+	if (h > (200 - y)) {
+		h = 200 - y;
+	}
 
-  dst = local_fb + 320 * y + x;
+	dst = local_fb + 320 * y + x;
 
-  if (h<=0)	return;
+	if (h <= 0)
+		return;
 
-  hide_mouse = true;
-  if (has_mouse) {
-    s->drawMouse();
-  }
-  
-  AddDirtyRec(x, y, w, h);
-  while (h-- > 0) {
-    memcpy(dst, src, w);
-    dst += 320;
-    src += 320;
-  }
+	hide_mouse = true;
+	if (has_mouse) {
+		s->drawMouse();
+	}
+
+	AddDirtyRec(x, y, w, h);
+	while (h-- > 0) {
+		memcpy(dst, src, w);
+		dst += 320;
+		src += 320;
+	}
 }
 
 #define BAK_WIDTH 40
 #define BAK_HEIGHT 40
 unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
 
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
-  unsigned char *dst,*bak;
+void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf,
+							 bool visible)
+{
+	unsigned char *dst, *bak;
 
-  ydraw += current_shake_pos;
+	ydraw += current_shake_pos;
 
-  if ((xdraw >= 320) || ((xdraw + w) <= 0) ||
-      (ydraw >= 200) || ((ydraw + h) <= 0)) {
-    if (hide_mouse) visible = false;
-    if (has_mouse) has_mouse = false;
-    if (visible) has_mouse = true;
-    return;
-  }
-
-  if (hide_mouse)
-    visible = false;
-  
-  assert(w<=BAK_WIDTH && h<=BAK_HEIGHT);
-
-  if (has_mouse) {
-    int old_h = old_mouse_h;
-
-    has_mouse = false;
-    AddDirtyRec(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
-
-    dst = local_fb + (old_mouse_y * 320) + old_mouse_x;
-    bak = old_backup;
-    
-    while (old_h > 0) {
-      memcpy(dst, bak, old_mouse_w);
-      bak += BAK_WIDTH;
-      dst += 320;
-      old_h--;
-    }
-  }
-
-  if (visible) {
-    int real_w;
-    int real_h;
-    int real_h_2;
-    unsigned char *dst2;
-
-    if (ydraw < 0) {
-      real_h = h + ydraw;
-      buf += (-ydraw) * w;
-      ydraw = 0;
-    } else {
-      real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
-    }
-    if (xdraw < 0) {
-      real_w = w + xdraw;
-      buf += (-xdraw);
-      xdraw = 0;
-    } else {
-      real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
-    }
-    
-    dst = local_fb + (ydraw * 320) + xdraw;
-    dst2 = dst;
-    bak = old_backup;
-        
-    has_mouse = true;
-
-    AddDirtyRec(xdraw, ydraw, real_w, real_h);
-    old_mouse_x = xdraw;
-    old_mouse_y = ydraw;
-    old_mouse_w = real_w;
-    old_mouse_h = real_h;
-    
-    real_h_2 = real_h;
-    while (real_h_2 > 0) {
-      memcpy(bak, dst, real_w);
-      bak += BAK_WIDTH;
-      dst += 320;
-      real_h_2--;
-    }
-    while (real_h > 0) {
-      int width = real_w;
-      while (width > 0) {
-	unsigned char color = *buf;
-	if (color != 0xFF) {
-	  *dst2 = color;
+	if ((xdraw >= 320) || ((xdraw + w) <= 0) ||
+			(ydraw >= 200) || ((ydraw + h) <= 0)) {
+		if (hide_mouse)
+			visible = false;
+		if (has_mouse)
+			has_mouse = false;
+		if (visible)
+			has_mouse = true;
+		return;
 	}
-	buf++;
-	dst2++;
-	width--;
-      }
-      buf += w - real_w;
-      dst2 += 320 - real_w;
-      real_h--;
-    }
-  }
+
+	if (hide_mouse)
+		visible = false;
+
+	assert(w <= BAK_WIDTH && h <= BAK_HEIGHT);
+
+	if (has_mouse) {
+		int old_h = old_mouse_h;
+
+		has_mouse = false;
+		AddDirtyRec(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+
+		dst = local_fb + (old_mouse_y * 320) + old_mouse_x;
+		bak = old_backup;
+
+		while (old_h > 0) {
+			memcpy(dst, bak, old_mouse_w);
+			bak += BAK_WIDTH;
+			dst += 320;
+			old_h--;
+		}
+	}
+
+	if (visible) {
+		int real_w;
+		int real_h;
+		int real_h_2;
+		unsigned char *dst2;
+
+		if (ydraw < 0) {
+			real_h = h + ydraw;
+			buf += (-ydraw) * w;
+			ydraw = 0;
+		} else {
+			real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
+		}
+		if (xdraw < 0) {
+			real_w = w + xdraw;
+			buf += (-xdraw);
+			xdraw = 0;
+		} else {
+			real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
+		}
+
+		dst = local_fb + (ydraw * 320) + xdraw;
+		dst2 = dst;
+		bak = old_backup;
+
+		has_mouse = true;
+
+		AddDirtyRec(xdraw, ydraw, real_w, real_h);
+		old_mouse_x = xdraw;
+		old_mouse_y = ydraw;
+		old_mouse_w = real_w;
+		old_mouse_h = real_h;
+
+		real_h_2 = real_h;
+		while (real_h_2 > 0) {
+			memcpy(bak, dst, real_w);
+			bak += BAK_WIDTH;
+			dst += 320;
+			real_h_2--;
+		}
+		while (real_h > 0) {
+			int width = real_w;
+			while (width > 0) {
+				unsigned char color = *buf;
+				if (color != 0xFF) {
+					*dst2 = color;
+				}
+				buf++;
+				dst2++;
+				width--;
+			}
+			buf += w - real_w;
+			dst2 += 320 - real_w;
+			real_h--;
+		}
+	}
 }
 
 static unsigned short palette[256];
-static void update_palette(Scumm *s) {
-  int first = s->_palDirtyMin;
-  int num = s->_palDirtyMax - first + 1;
-  int i;
-  unsigned char *data = s->_currentPalette;
-  unsigned short *pal = &(palette[first]);
+static void update_palette(Scumm *s)
+{
+	int first = s->_palDirtyMin;
+	int num = s->_palDirtyMax - first + 1;
+	int i;
+	unsigned char *data = s->_currentPalette;
+	unsigned short *pal = &(palette[first]);
 
-  data += first*3;
-  for (i = 0; i < num; i++, data += 3) {
-    *pal++ = ((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
-  }
-  s->_palDirtyMax = -1;
-  s->_palDirtyMin = 0x3E8; 
+	data += first * 3;
+	for (i = 0; i < num; i++, data += 3) {
+		*pal++ =
+			((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
+	}
+	s->_palDirtyMax = -1;
+	s->_palDirtyMin = 0x3E8;
 }
 
-static void update_screen(Scumm *s, const dirty_square *d, dirty_square *dout) {
-  int x, y;
-  unsigned char *ptr_src = local_fb + (320 * d->y) + d->x;
-  unsigned short *ptr_dst = ((unsigned short *) image->data) + (320 * d->y) + d->x;
-  for (y = 0; y < d->h; y++) {
-    for (x = 0; x < d->w; x++) {
-      *ptr_dst++ = palette[*ptr_src++];
-    }
-    ptr_dst += 320 - d->w;
-    ptr_src += 320 - d->w;
-  }
-  if (d->x < dout->x) dout->x = d->x;
-  if (d->y < dout->y) dout->y = d->y;
-  if ((d->x + d->w) > dout->w) dout->w = d->x + d->w;
-  if ((d->y + d->h) > dout->h) dout->h = d->y + d->h;
+static void update_screen(Scumm *s, const dirty_square * d,
+													dirty_square * dout)
+{
+	int x, y;
+	unsigned char *ptr_src = local_fb + (320 * d->y) + d->x;
+	unsigned short *ptr_dst =
+		((unsigned short *)image->data) + (320 * d->y) + d->x;
+	for (y = 0; y < d->h; y++) {
+		for (x = 0; x < d->w; x++) {
+			*ptr_dst++ = palette[*ptr_src++];
+		}
+		ptr_dst += 320 - d->w;
+		ptr_src += 320 - d->w;
+	}
+	if (d->x < dout->x)
+		dout->x = d->x;
+	if (d->y < dout->y)
+		dout->y = d->y;
+	if ((d->x + d->w) > dout->w)
+		dout->w = d->x + d->w;
+	if ((d->y + d->h) > dout->h)
+		dout->h = d->y + d->h;
 }
 
-void updateScreen(Scumm *s) {
-  bool full_redraw = false;
-  bool need_redraw = false;
-  static const dirty_square ds_full = { 0, 0, 320, 200 };
-  dirty_square dout = {320, 200, 0, 0 };
-  
-  if (s->_fastMode&2)
-    return;
-  
-  if (hide_mouse) {
-    hide_mouse = false;
-    s->drawMouse();
-  }
+void updateScreen(Scumm *s)
+{
+	bool full_redraw = false;
+	bool need_redraw = false;
+	static const dirty_square ds_full = { 0, 0, 320, 200 };
+	dirty_square dout = { 320, 200, 0, 0 };
 
-  if (s->_palDirtyMax != -1) {
-    update_palette(s);
-    full_redraw = true;
-    num_of_dirty_square = 0;
-  } else if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
-    full_redraw = true;
-    num_of_dirty_square = 0;
-  }
+	if (s->_fastMode & 2)
+		return;
 
-  if (full_redraw) {
-    update_screen(s, &ds_full, &dout);
-    need_redraw = true;
-  } else if (num_of_dirty_square > 0) {
-    need_redraw = true;
-    while (num_of_dirty_square > 0) {
-      num_of_dirty_square--;
-      update_screen(s, &(ds[num_of_dirty_square]), &dout);
-    }
-  }
-  if (need_redraw == true) {
-    XShmPutImage(display, window, DefaultGC(display, screen), image, 
-		 dout.x, dout.y, 
-		 scumm_x + dout.x, scumm_y + dout.y, 
-		 dout.w - dout.x, dout.h - dout.y, 
-		 0);
-    XFlush(display);
-  }
+	if (hide_mouse) {
+		hide_mouse = false;
+		s->drawMouse();
+	}
+
+	if (s->_palDirtyMax != -1) {
+		update_palette(s);
+		full_redraw = true;
+		num_of_dirty_square = 0;
+	} else if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
+		full_redraw = true;
+		num_of_dirty_square = 0;
+	}
+
+	if (full_redraw) {
+		update_screen(s, &ds_full, &dout);
+		need_redraw = true;
+	} else if (num_of_dirty_square > 0) {
+		need_redraw = true;
+		while (num_of_dirty_square > 0) {
+			num_of_dirty_square--;
+			update_screen(s, &(ds[num_of_dirty_square]), &dout);
+		}
+	}
+	if (need_redraw == true) {
+		XShmPutImage(display, window, DefaultGC(display, screen), image,
+								 dout.x, dout.y,
+								 scumm_x + dout.x, scumm_y + dout.y,
+								 dout.w - dout.x, dout.h - dout.y, 0);
+		XFlush(display);
+	}
 }
 
-void launcherLoop() {
-  int last_time, new_time;
-  int delta = 0;
-  last_time = get_ms_from_start();
-  
-  gui.launcher();
-  while (1) {
-    updateScreen(&scumm);
-    
-    new_time = get_ms_from_start();
-    waitForTimer(&scumm, delta * 15 + last_time - new_time);
-    last_time = get_ms_from_start();
-    
-    if (gui._active) {
-      gui.loop();
-      delta = 5;
-    } else {
-      error("gui closed!");
-    }
-  }
+void launcherLoop()
+{
+	int last_time, new_time;
+	int delta = 0;
+	last_time = get_ms_from_start();
+
+	gui.launcher();
+	while (1) {
+		updateScreen(&scumm);
+
+		new_time = get_ms_from_start();
+		waitForTimer(&scumm, delta * 15 + last_time - new_time);
+		last_time = get_ms_from_start();
+
+		if (gui._active) {
+			gui.loop();
+			delta = 5;
+		} else {
+			error("gui closed!");
+		}
+	}
 }
 
 /* This function waits for 'msec_delay' miliseconds and handles external events */
-void waitForTimer(Scumm *s, int msec_delay) {
-  int start_time = get_ms_from_start();
-  int end_time;
-  fd_set rfds;
-  struct timeval tv;
-  XEvent event;
+void waitForTimer(Scumm *s, int msec_delay)
+{
+	int start_time = get_ms_from_start();
+	int end_time;
+	fd_set rfds;
+	struct timeval tv;
+	XEvent event;
 
-  if (s->_fastMode&2)
-    msec_delay = 0;
-  else if (s->_fastMode&1)
-    msec_delay = 10;
-  end_time = start_time + msec_delay;
+	if (s->_fastMode & 2)
+		msec_delay = 0;
+	else if (s->_fastMode & 1)
+		msec_delay = 10;
+	end_time = start_time + msec_delay;
 
 
-  while (1) {
-    FD_ZERO(&rfds);
-    FD_SET(x11_socket, &rfds);
+	while (1) {
+		FD_ZERO(&rfds);
+		FD_SET(x11_socket, &rfds);
 
-    msec_delay = end_time - get_ms_from_start();
-    tv.tv_sec = 0;
-    if (msec_delay <= 0) {
-      tv.tv_usec = 0;
-    } else {
-      tv.tv_usec = msec_delay * 1000;
-    }    
-    if (select(x11_socket + 1, &rfds, NULL, NULL, &tv) == 0)
-      break; /* This is the timeout */
-    while (XPending(display)) {
-      XNextEvent(display,&event);
-      switch (event.type) {
-      case Expose: {
-	int real_w, real_h;
-	int real_x, real_y;
-	real_x = event.xexpose.x;
-	real_y = event.xexpose.y;
-	real_w = event.xexpose.width;
-	real_h = event.xexpose.height;
+		msec_delay = end_time - get_ms_from_start();
+		tv.tv_sec = 0;
+		if (msec_delay <= 0) {
+			tv.tv_usec = 0;
+		} else {
+			tv.tv_usec = msec_delay * 1000;
+		}
+		if (select(x11_socket + 1, &rfds, NULL, NULL, &tv) == 0)
+			break;										/* This is the timeout */
+		while (XPending(display)) {
+			XNextEvent(display, &event);
+			switch (event.type) {
+			case Expose:{
+					int real_w, real_h;
+					int real_x, real_y;
+					real_x = event.xexpose.x;
+					real_y = event.xexpose.y;
+					real_w = event.xexpose.width;
+					real_h = event.xexpose.height;
 
-	if (real_x < scumm_x) {
-	  real_w -= scumm_x - real_x;
-	  real_x = 0;
-	} else {
-	  real_x -= scumm_x;
+					if (real_x < scumm_x) {
+						real_w -= scumm_x - real_x;
+						real_x = 0;
+					} else {
+						real_x -= scumm_x;
+					}
+					if (real_y < scumm_y) {
+						real_h -= scumm_y - real_y;
+						real_y = 0;
+					} else {
+						real_y -= scumm_y;
+					}
+					if ((real_h <= 0) || (real_w <= 0))
+						break;
+					if ((real_x >= 320) || (real_y >= 200))
+						break;
+
+					if ((real_x + real_w) >= 320) {
+						real_w = 320 - real_x;
+					}
+					if ((real_y + real_h) >= 200) {
+						real_h = 200 - real_y;
+					}
+
+					/* Compute the intersection of the expose event with the real ScummVM display zone */
+					AddDirtyRec(real_x, real_y, real_w, real_h);
+				}
+				break;
+
+			case KeyPress:
+				switch (event.xkey.keycode) {
+				case 132:
+					report_presses = 0;
+					break;
+
+				case 133:
+					fake_right_mouse = 1;
+					break;
+				}
+				break;
+
+			case KeyRelease:
+				/* I am using keycodes here and NOT keysyms to be sure that even if the user
+				   remaps his iPAQ's keyboard, it will still work.
+				 */
+				switch (event.xkey.keycode) {
+				case 9:								/* Escape on my PC */
+				case 130:							/* Calendar on the iPAQ */
+					s->_keyPressed = 27;
+					break;
+
+				case 71:								/* F5 on my PC */
+				case 128:							/* Record on the iPAQ */
+					s->_keyPressed = 319;
+					break;
+
+				case 65:								/* Space on my PC */
+				case 131:							/* Schedule on the iPAQ */
+					s->_keyPressed = 32;
+					break;
+
+				case 132:							/* 'Q' on the iPAQ */
+					report_presses = 1;
+					break;
+
+				case 133:							/* Arrow on the iPAQ */
+					fake_right_mouse = 0;
+					break;
+
+				default:{
+						KeySym xsym;
+						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
+							xsym &= ~0x20;		/* Handle shifted keys */
+						s->_keyPressed = xsym;
+					}
+				}
+				break;
+
+			case ButtonPress:
+				if (report_presses != 0) {
+					if (event.xbutton.button == 1) {
+						if (fake_right_mouse == 0) {
+							s->_leftBtnPressed |= msClicked | msDown;
+						} else {
+							s->_rightBtnPressed |= msClicked | msDown;
+						}
+					} else if (event.xbutton.button == 3)
+						s->_rightBtnPressed |= msClicked | msDown;
+				}
+				break;
+
+			case ButtonRelease:
+				if (report_presses != 0) {
+					if (event.xbutton.button == 1) {
+						if (fake_right_mouse == 0) {
+							s->_leftBtnPressed &= ~msDown;
+						} else {
+							s->_rightBtnPressed &= ~msDown;
+						}
+					} else if (event.xbutton.button == 3)
+						s->_rightBtnPressed &= ~msDown;
+				}
+				break;
+
+			case MotionNotify:{
+					int newx, newy;
+					newx = event.xmotion.x - scumm_x;
+					newy = event.xmotion.y - scumm_y;
+					if ((newx != s->mouse.x) || (newy != s->mouse.y)) {
+						s->mouse.x = newx;
+						s->mouse.y = newy;
+						s->drawMouse();
+						updateScreen(s);
+					}
+				}
+				break;
+
+			case ConfigureNotify:{
+					if ((window_width != event.xconfigure.width) ||
+							(window_height != event.xconfigure.height)) {
+						window_width = event.xconfigure.width;
+						window_height = event.xconfigure.height;
+						scumm_x = (window_width - 320) / 2;
+						scumm_y = (window_height - 200) / 2;
+						XFillRectangle(display, window, black_gc, 0, 0, window_width,
+													 window_height);
+					}
+				}
+				break;
+
+			default:
+				printf("%d\n", event.type);
+				break;
+			}
+		}
 	}
-	if (real_y < scumm_y) {
-	  real_h -= scumm_y - real_y;
-	  real_y = 0;
-	} else {
-	  real_y -= scumm_y;
-	}
-	if ((real_h <= 0) || (real_w <= 0)) break;
-	if ((real_x >= 320) || (real_y >= 200)) break;
-	
-	if ((real_x + real_w) >= 320) {
-	  real_w = 320 - real_x;
-	}
-	if ((real_y + real_h) >= 200) {
-	  real_h = 200 - real_y;
-	}
-
-	/* Compute the intersection of the expose event with the real ScummVM display zone */
-	AddDirtyRec(real_x, real_y, real_w, real_h);
-      } break;
-
-      case KeyPress:
-	switch (event.xkey.keycode) {
-	case 132:
-	  report_presses = 0;
-	  break;
-	  
-	case 133:
-	  fake_right_mouse = 1;
-	  break;
-	}
-	break;
-
-      case KeyRelease:
-	/* I am using keycodes here and NOT keysyms to be sure that even if the user
-	   remaps his iPAQ's keyboard, it will still work.
-	*/
-	switch (event.xkey.keycode) {
-	case 9: /* Escape on my PC */
-	case 130: /* Calendar on the iPAQ */
-	  s->_keyPressed = 27;
-	  break;
-
-	case 71: /* F5 on my PC */
-	case 128: /* Record on the iPAQ */
-	  s->_keyPressed = 319;
-	  break;
-	  
-	case 65: /* Space on my PC */
-	case 131: /* Schedule on the iPAQ */
-	  s->_keyPressed = 32;
-	  break;
-
-	case 132: /* 'Q' on the iPAQ */
-	  report_presses = 1;
-	  break;
-	  
-	case 133: /* Arrow on the iPAQ */
-	  fake_right_mouse = 0;
-	  break;
-
-	default: {
-	    KeySym xsym;
-	    xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
-	    if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01)) xsym &= ~0x20; /* Handle shifted keys */
-	    s->_keyPressed = xsym;
-	  }
-	}
-	break;
-	
-      case ButtonPress:
-	if (report_presses != 0) {
-	  if (event.xbutton.button == 1) {
-	    if (fake_right_mouse == 0) {
-	      s->_leftBtnPressed |= msClicked|msDown;
-	    } else {
-	      s->_rightBtnPressed |= msClicked|msDown;
-	    }
-	  } else if (event.xbutton.button == 3)
-	    s->_rightBtnPressed |= msClicked|msDown;
-	}
-	break;
-
-      case ButtonRelease:
-	if (report_presses != 0) {
-	  if (event.xbutton.button == 1) {
-	    if (fake_right_mouse == 0) {
-	      s->_leftBtnPressed &= ~msDown;
-	    } else {
-	      s->_rightBtnPressed &= ~msDown;
-	    }
-	  } else if (event.xbutton.button == 3)
-	    s->_rightBtnPressed &= ~msDown;
-	}
-	break;	
-
-      case MotionNotify: {
-	int newx,newy;
-	newx = event.xmotion.x - scumm_x;
-	newy = event.xmotion.y - scumm_y;
-	if ((newx != s->mouse.x) || (newy != s->mouse.y)) {
-	  s->mouse.x = newx;
-	  s->mouse.y = newy;
-	  s->drawMouse();
-	  updateScreen(s);
-	}
-      } break;
-
-      case ConfigureNotify: {
-	if ((window_width != event.xconfigure.width) ||
-	    (window_height != event.xconfigure.height)) {
-	  window_width = event.xconfigure.width;
-	  window_height = event.xconfigure.height;
-	  scumm_x = (window_width - 320) / 2;
-	  scumm_y = (window_height - 200) / 2;
-	  XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
-	}
-      } break;
-
-      default:
-	printf("%d\n", event.type);
-	break;
-      }
-    }
-  }
 }
 
 /* Main function for the system-dependent part. Needs to handle :
@@ -783,36 +824,37 @@ void waitForTimer(Scumm *s, int msec_delay) {
     - initialize all the 'globals' (sound driver, Scumm object, ...)
     - do the main loop of the game
 */
-int main(int argc, char* argv[]) {
-  int delta;
-  int last_time, new_time;
-  
-  scumm._gui = &gui;
-  gui.init(&scumm);
-  sound.initialize(&scumm, &snd_driv);  
-  scumm.scummMain(argc, argv);
-  gui.init(&scumm);  /* Reinit GUI after loading a game */
-  
-  num_of_dirty_square = 0;
+int main(int argc, char *argv[])
+{
+	int delta;
+	int last_time, new_time;
 
-  /* Start the milisecond counter */
-  init_timer();
-  last_time = 0;
-  delta = 0;
-  while (1) {
-    updateScreen(&scumm);
-    
-    new_time = get_ms_from_start();
-    waitForTimer(&scumm, delta * 15 + last_time - new_time);
-    last_time = get_ms_from_start();
-    
-    if (gui._active) {
-      gui.loop();
-      delta = 5;
-    } else {
-      delta = scumm.scummLoop(delta);
-    }
-  }
-  
-  return 0;
+	scumm._gui = &gui;
+	gui.init(&scumm);
+	sound.initialize(&scumm, &snd_driv);
+	scumm.scummMain(argc, argv);
+	gui.init(&scumm);							/* Reinit GUI after loading a game */
+
+	num_of_dirty_square = 0;
+
+	/* Start the milisecond counter */
+	init_timer();
+	last_time = 0;
+	delta = 0;
+	while (1) {
+		updateScreen(&scumm);
+
+		new_time = get_ms_from_start();
+		waitForTimer(&scumm, delta * 15 + last_time - new_time);
+		last_time = get_ms_from_start();
+
+		if (gui._active) {
+			gui.loop();
+			delta = 5;
+		} else {
+			delta = scumm.scummLoop(delta);
+		}
+	}
+
+	return 0;
 }

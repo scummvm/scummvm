@@ -23,15 +23,17 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void Scumm_v4::loadCharset(int no) {
+void Scumm_v4::loadCharset(int no)
+{
 	uint32 size;
+	
 
-	memset(_charsetData, 0, sizeof(_charsetData));
+memset(_charsetData, 0, sizeof(_charsetData));
 
-	checkRange(4 ,0 ,no , "Loading illegal charset %d");
+	checkRange(4, 0, no, "Loading illegal charset %d");
 	openRoom(-1);
 
-	openRoom(900+no);
+	openRoom(900 + no);
 
 	size = fileReadDwordLE();
 

@@ -23,7 +23,6 @@
 #include"stdafx.h"
 #include"scumm.h"
 
-Scumm::Scumm(void)
-{	
-	/* No need to put anything here yet :) */	
+Scumm::Scumm (void) {
+	/* No need to put anything here yet :) */
 }
