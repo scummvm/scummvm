@@ -274,6 +274,11 @@ void SmushPlayer::deinit() {
 		_smixer = NULL;
 	}
 
+	if (_base) {
+		delete _base;
+		_base = NULL;
+	}
+
 	_scumm->_insaneState = false;
 	_scumm->abortCutscene();
 	if (_scumm->_imuseDigital) {
