@@ -251,12 +251,6 @@ File *ResMan::openClusterFile(uint32 id) {
 	char fileName[15];
 	sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1]->label);
 	clusFile->open(fileName);
-	if (!clusFile->isOpen()) {
-		// Uh-uh, file not found. Perhaps we're playing straight from CD2,
-		// and its looking for something like SCRIPTS.CLU. Check the Extra Path.
-		const Common::String ePath = ConfMan.get("extrapath");
-		clusFile->open(fileName, File::kFileReadMode, ePath.c_str());
-	}
 
 	if (!clusFile->isOpen()) {
 		char msg[512];
