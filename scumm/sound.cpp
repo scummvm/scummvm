@@ -815,7 +815,7 @@ void Sound::pauseSounds(bool pause) {
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
 
-	AudioStream *input;
+	AudioStream *input = 0;
 	
 	if (file_size > 0) {
 		if (_vorbis_mode) {
