@@ -37,8 +37,11 @@ public:
 	int _right;
 	int _nbChars;
 
+protected:
 	byte _color;
+	bool _dropShadow;
 
+public:
 	bool _center;
 	bool _hasMask;
 	bool _ignoreCharsetMask;
@@ -53,7 +56,7 @@ protected:
 	virtual int getCharWidth(byte chr) = 0;
 
 public:
-	CharsetRenderer(Scumm *vm) : _vm(vm) {}
+	CharsetRenderer(Scumm *vm) : _vm(vm) { _dropShadow = false; }
 	virtual ~CharsetRenderer() {}
 
 	virtual void printChar(int chr) = 0;
@@ -65,6 +68,8 @@ public:
 	int getCurID() { return _curId; }
 	
 	virtual int getFontHeight() = 0;
+	
+	virtual void setColor(byte color) { _color = color; }
 };
 
 class CharsetRendererCommon : public CharsetRenderer {
@@ -101,6 +106,8 @@ public:
 	CharsetRendererOld256(Scumm *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
+	
+	void setColor(byte color);
 };
 
 class CharsetRendererNut : public CharsetRenderer {

@@ -173,6 +173,15 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	setCurID(oldID);
 }
 
+void CharsetRendererOld256::setColor(byte color)
+{
+	_color = color;
+	if (_vm->_features & GF_16COLOR) {
+		_dropShadow = ((_color & 0xF0) != 0);
+		_color &= 0x0f;
+	} else
+		_dropShadow = false;
+}
 
 void CharsetRendererOld256::printChar(int chr) {
 	// Indy3 / Zak256
@@ -181,13 +190,9 @@ void CharsetRendererOld256::printChar(int chr) {
 	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
 	unsigned char color;
 
-	// FIXME: When playing with the original interpreter, Much of the
-	// text in Loom is drawn with a drop-shadow. But is it all of it, or
-	// just some? It's hard to tell with a black background.
-	bool drop_shadow = (_vm->_gameId == GID_LOOM);
 	int w, h;
 
-	if (!drop_shadow) {
+	if (!_dropShadow) {
 		w = h = 8;
 	} else {
 		w = h = 9;
@@ -221,7 +226,7 @@ void CharsetRendererOld256::printChar(int chr) {
 			}
 			color = ((buffer & mask) != 0);
 			if (color) {
-				if (drop_shadow)
+				if (_dropShadow)
 					*(dest_ptr + (y + 1) * _vm->_realWidth + x + 1) = 0;
 				*(dest_ptr + y * _vm->_realWidth + x) = _color;
 			}
@@ -236,7 +241,7 @@ void CharsetRendererOld256::printChar(int chr) {
 
 	if (_left > _strRight) {
 		_strRight = _left;
-		if (drop_shadow)
+		if (_dropShadow)
 			_strRight++;
 	}
 

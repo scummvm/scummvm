@@ -143,7 +143,7 @@ void Scumm::CHARSET_1() {
 
 	_charset->_center = _string[0].center;
 	_charset->_right = _string[0].right;
-	_charset->_color = _charsetColor;
+	_charset->setColor(_charsetColor);
 
 	if (!(_features & GF_AFTER_V3))	// FIXME
 		for (i = 0; i < 4; i++)
@@ -301,9 +301,9 @@ void Scumm::CHARSET_1() {
 			color = *buffer++;
 			color |= *buffer++ << 8;
 			if (color == 0xFF)
-				_charset->_color = _charsetColor;
+				_charset->setColor(_charsetColor);
 			else
-				_charset->_color = color;
+				_charset->setColor(color);
 			break;
 		case 13:
 			buffer += 2;
@@ -356,7 +356,7 @@ void Scumm::drawDescString(byte *msg) {
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _realWidth - 1;
 	_charset->_center = _string[0].center;
-	_charset->_color = _string[0].color;
+	_charset->setColor(_string[0].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[0].charset);
 	_charset->_nextLeft = _string[0].xpos;
@@ -410,7 +410,7 @@ void Scumm::drawString(int a) {
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
 	_charset->_center = _string[a].center;
-	_charset->_color = _string[a].color;
+	_charset->setColor(_string[a].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
@@ -479,9 +479,9 @@ void Scumm::drawString(int a) {
 				color = buf[i] + (buf[i + 1] << 8);
 				i += 2;
 				if (color == 0xFF)
-					_charset->_color = _string[a].color;
+					_charset->setColor(_string[a].color);
 				else
-					_charset->_color = color;
+					_charset->setColor(color);
 				break;
 			}
 		} else {

@@ -587,7 +587,7 @@ void Scumm::drawBlastTexts() {
 		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
 		_charset->_right = _realWidth - 1;
 		_charset->_center = _blastTextQueue[i].center;
-		_charset->_color = _blastTextQueue[i].color;
+		_charset->setColor(_blastTextQueue[i].color);
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
 		_charset->_nextLeft = _blastTextQueue[i].xpos;

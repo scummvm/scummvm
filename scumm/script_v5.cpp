@@ -451,8 +451,6 @@ void Scumm_v5::o5_actorSet() {
 			break;
 		case 12:										/* talk color */
 			a->talkColor = getVarOrDirectByte(0x80);
-			if (_features & GF_16COLOR)
-				a->talkColor &= 0x0f;	// FIXME
 			break;
 		case 13:										/* name */
 			loadPtrToResource(rtActorName, a->number, NULL);
@@ -2405,8 +2403,6 @@ void Scumm_v5::decodeParseString() {
 			break;
 		case 1:										/* color */
 			_string[textSlot].color = getVarOrDirectByte(0x80);
-			if (_features & GF_16COLOR)
-				_string[textSlot].color &= 0x0f;	// FIXME
 			break;
 		case 2:										/* clipping */
 			_string[textSlot].right = getVarOrDirectWord(0x80);
