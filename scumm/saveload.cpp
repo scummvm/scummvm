@@ -535,7 +535,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(ScriptSlot, offs, sleUint32),
 		MKLINE(ScriptSlot, delay, sleInt32),
 		MKLINE(ScriptSlot, number, sleUint16),
-		MKLINE(ScriptSlot, newfield, sleUint16),
+		MKLINE(ScriptSlot, delayFrameCount, sleUint16),
 		MKLINE(ScriptSlot, status, sleByte),
 		MKLINE(ScriptSlot, where, sleByte),
 		MKLINE(ScriptSlot, unk1, sleByte),

@@ -70,6 +70,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr)
 	s->unk1 = a;
 	s->unk2 = b;
 	s->freezeCount = 0;
+	s->delayFrameCount = 0;
 
 	initializeLocals(slot, lvarptr);
 
@@ -620,6 +621,7 @@ void Scumm::runExitScript()
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
+		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
 	}
 	if (_vars[VAR_EXIT_SCRIPT2])
@@ -639,6 +641,7 @@ void Scumm::runEntryScript()
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
 		vm.slot[slot].freezeCount = 0;
+		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
 	}
 	if (_vars[VAR_ENTRY_SCRIPT2])
@@ -770,7 +773,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars)
 	vm.slot[slot].unk1 = a;
 	vm.slot[slot].unk2 = b;
 	vm.slot[slot].freezeCount = 0;
-	vm.slot[slot].newfield = 0;
+	vm.slot[slot].delayFrameCount = 0;
 
 	initializeLocals(slot, vars);
 

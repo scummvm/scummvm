@@ -108,7 +108,7 @@ struct ScriptSlot {
 	uint32 offs;
 	int32 delay;
 	uint16 number;
-	uint16 newfield;
+	uint16 delayFrameCount;
 	byte status;
 	byte where;
 	byte unk1, unk2, freezeCount, didexec;
@@ -1213,7 +1213,7 @@ public:
 	void o6_distPtPt();
 	void o6_dummy_stacklist();
 	void o6_miscOps();
-	void o6_breakMaybe();
+	void o6_delayFrames();
 	void o6_pickOneOf();
 	void o6_pickOneOfDefault();
 	void o6_jumpToScript();

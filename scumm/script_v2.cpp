@@ -286,7 +286,7 @@ void Scumm::setupOpcodes2()
 		/* C8 */
 		&Scumm::o6_kernelFunction,
 		&Scumm::o6_miscOps,
-		&Scumm::o6_breakMaybe,
+		&Scumm::o6_delayFrames,
 		&Scumm::o6_pickOneOf,
 		/* CC */
 		&Scumm::o6_pickOneOfDefault,
@@ -2984,15 +2984,15 @@ void Scumm::o6_kernelFunction()
 	}
 }
 
-void Scumm::o6_breakMaybe()
+void Scumm::o6_delayFrames()
 {
 	ScriptSlot *ss = &vm.slot[_currentScript];
-	if (ss->newfield == 0) {
-		ss->newfield = pop();
+	if (ss->delayFrameCount== 0) {
+		ss->delayFrameCount = pop();
 	} else {
-		ss->newfield--;
+		ss->delayFrameCount--;
 	}
-	if (ss->newfield) {
+	if (ss->delayFrameCount) {
 		_scriptPointer--;
 		o6_breakHere();
 	}
