@@ -49,6 +49,15 @@ SkyText::SkyText(SkyDisk *skyDisk) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
 		_controlCharacterSet.charHeight = 12;
 		_controlCharacterSet.charSpacing = 0;
+
+		// In version 0.0288, decrease the character width for the
+		// LINC terminal font by one for every character, except
+		// space which has to be one pixel wider instead.
+		if (SkyState::_systemVars.gameVersion == 288) {
+			for (int i = 1; i < CHAR_SET_HEADER; i++)
+				_controlCharacterSet.addr[i]--;
+			_controlCharacterSet.addr[0]++;
+		}
 		
 		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
 		_linkCharacterSet.charHeight = 12;
