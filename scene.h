@@ -70,6 +70,7 @@ public:
 	void addObjectState(ObjectState *s) {
 		states_.push_back(s);
 	}
+	ObjectState *findState(const char *filename);
 
 private:
 	struct Setup {		// Camera setup data

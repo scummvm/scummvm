@@ -39,7 +39,7 @@ class Driver {
 		void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
 		void finishActorDraw();
 
-		void drawDepthBitmap(int num, int x, int y, int w, int h, char **data);
+		void drawDepthBitmap(int x, int y, int w, int h, char *data);
 		void drawBitmap();
 
 		void drawHackFont(int x, int y, const char *text, Color &fgColor);

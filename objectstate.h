@@ -18,7 +18,7 @@ class ObjectState {
 
 	ObjectState(int setupID, ObjectState::Position pos,
 		    const char *bitmap, const char *zbitmap,
-		    bool unk1, bool unk2);
+		    bool visible);
 
 	int setupID() const { return setupID_; }
 	Position pos() const { return pos_; }
@@ -26,6 +26,11 @@ class ObjectState {
 		return bitmap_->filename();
 	}
 
+	void setNumber(int val) {
+		bitmap_->setNumber(val);
+		if (zbitmap_)
+			zbitmap_->setNumber(val);
+	}
 	void draw() {
 		bitmap_->draw();
 		if (zbitmap_)
@@ -36,7 +41,6 @@ class ObjectState {
 	int setupID_;
 	Position pos_;
 	ResPtr<Bitmap> bitmap_, zbitmap_;
-	bool unk1_, unk2_;
 };
 
 

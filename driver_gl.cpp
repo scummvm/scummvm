@@ -123,24 +123,26 @@ void Driver::finishActorDraw() {
 	glPopMatrix();
 }
 
-void Driver::drawDepthBitmap(int num, int x, int y, int w, int h, char **data) {
-	if (num != 0) {
-		warning("Animation not handled yet in GL texture path !\n");
-	}
+void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+	//	if (num != 0) {
+	//		warning("Animation not handled yet in GL texture path !\n");
+	//	}
 
-	glRasterPos2i(x, y);
+	if (y + h == 480) {
+		glRasterPos2i(x, 479);
+		glBitmap(0, 0, 0, 0, 0, -1, NULL);
+	}
+	else
+		glRasterPos2i(x, y + h);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_TRUE);
 
-	// This loop here is to prevent using PixelZoom that may be unoptimized for the 1.0 / -1.0 case
-	// in some drivers...
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glDrawPixels(w, h, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-	for (int row = 0; row < h; row++) {
-		glRasterPos2i(x, y + row + 1);
-		//glDrawPixels(w, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data[num] + (2 * row * w));
-	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthFunc(GL_LESS);
 }

@@ -41,7 +41,7 @@ Resource(filename) {
 	format_ = READ_LE_UINT32(data + 32);
 	width_ = READ_LE_UINT32(data + 128);
 	height_ = READ_LE_UINT32(data + 132);
-	curr_image_ = 0;
+	curr_image_ = 1;
 
 	data_ = new char*[num_images_];
 	int pos = 0x88;
@@ -65,76 +65,98 @@ Resource(filename) {
 	
 	if (format_ == 1) {
 		hasTransparency_ = false;
-
-		// Convert data to 32-bit RGBA format
-		char *texData = new char[4 * width_ * height_];
-		char *texDataPtr = texData;
-		uint16 *bitmapData = reinterpret_cast<uint16 *>(data_[0]);
-		for (int i = 0; i < width_ * height_;
-		     i++, texDataPtr += 4, bitmapData++) {
-			uint16 pixel = *bitmapData;
-			int r = pixel >> 11;
-			texDataPtr[0] = (r << 3) | (r >> 2);
-			int g = (pixel >> 5) & 0x3f;
-			texDataPtr[1] = (g << 2) | (g >> 4);
-			int b = pixel & 0x1f;
-			texDataPtr[2] = (b << 3) | (b >> 2);
-			if (pixel == 0xf81f) { // transparent
-				texDataPtr[3] = 0;
-				hasTransparency_ = true;
-			}
-			else
-				texDataPtr[3] = 255;
-		}
-
 		num_tex_ = ((width_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((height_ + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-		tex_ids_ = new GLuint[num_tex_];
-		glGenTextures(num_tex_, tex_ids_);
-		for (int i = 0; i < num_tex_; i++) {
-			glBindTexture(GL_TEXTURE_2D, tex_ids_[i]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-				BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
-				GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		}
+		tex_ids_ = new GLuint[num_tex_ * num_images_];
+		glGenTextures(num_tex_ * num_images_, tex_ids_);
 
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, width_);
+		char *texData = new char[4 * width_ * height_];
 
-		int cur_tex_idx = 0;
-		for (int y = 0; y < height_; y += BITMAP_TEXTURE_SIZE) {
-			for (int x = 0; x < width_; x += BITMAP_TEXTURE_SIZE) {
-				int width  = (x + BITMAP_TEXTURE_SIZE >= width_)  ? (width_  - x) : BITMAP_TEXTURE_SIZE;
-				int height = (y + BITMAP_TEXTURE_SIZE >= height_) ? (height_ - y) : BITMAP_TEXTURE_SIZE;
-				glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
-				glTexSubImage2D(GL_TEXTURE_2D,
-					0,
-					0, 0,
-					width, height,
-					GL_RGBA,
-					GL_UNSIGNED_BYTE,
-					texData + (y * 4 * width_) + (4 * x));
-				cur_tex_idx++;
+		for (int pic = 0; pic < num_images_; pic++) {
+			// Convert data to 32-bit RGBA format
+			char *texDataPtr = texData;
+			uint16 *bitmapData = reinterpret_cast<uint16 *>(data_[pic]);
+			for (int i = 0; i < width_ * height_;
+			     i++, texDataPtr += 4, bitmapData++) {
+				uint16 pixel = *bitmapData;
+				int r = pixel >> 11;
+				texDataPtr[0] = (r << 3) | (r >> 2);
+				int g = (pixel >> 5) & 0x3f;
+				texDataPtr[1] = (g << 2) | (g >> 4);
+				int b = pixel & 0x1f;
+				texDataPtr[2] = (b << 3) | (b >> 2);
+				if (pixel == 0xf81f) { // transparent
+					texDataPtr[3] = 0;
+					hasTransparency_ = true;
+				}
+				else
+					texDataPtr[3] = 255;
+			}
+
+			for (int i = 0; i < num_tex_; i++) {
+				glBindTexture(GL_TEXTURE_2D, tex_ids_[num_tex_ * pic + i]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+					     BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
+					     GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+			}
+
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, width_);
+
+			int cur_tex_idx = num_tex_ * pic;
+
+			for (int y = 0; y < height_; y += BITMAP_TEXTURE_SIZE) {
+				for (int x = 0; x < width_; x += BITMAP_TEXTURE_SIZE) {
+					int width  = (x + BITMAP_TEXTURE_SIZE >= width_)  ? (width_  - x) : BITMAP_TEXTURE_SIZE;
+					int height = (y + BITMAP_TEXTURE_SIZE >= height_) ? (height_ - y) : BITMAP_TEXTURE_SIZE;
+					glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+					glTexSubImage2D(GL_TEXTURE_2D,
+							0,
+							0, 0,
+							width, height,
+							GL_RGBA,
+							GL_UNSIGNED_BYTE,
+							texData + (y * 4 * width_) + (4 * x));
+					cur_tex_idx++;
+				}
 			}
 		}
+
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		delete [] texData;
 	} else {
-		for (int i = 0; i < (width_ * height_); i++) {
-			uint16 val = READ_LE_UINT16(data_[curr_image_] + 2 * i);
-			((uint16 *) data_[curr_image_])[i] =
-				0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
+		for (int pic = 0; pic < num_images_; pic++) {
+			uint16 *zbufPtr = reinterpret_cast<uint16*>(data_[pic]);
+			for (int i = 0; i < (width_ * height_); i++) {
+				uint16 val = READ_LE_UINT16(data_[pic] + 2 * i);
+				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
+			}
+
+			// Flip the zbuffer image to match what GL expects
+			for (int y = 0; y < height_ / 2; y++) {
+				uint16 *ptr1 = zbufPtr + y * width_;
+				uint16 *ptr2 = zbufPtr + (height_ - 1 - y) * width_;
+				for (int x = 0; x < width_; x++, ptr1++, ptr2++) {
+					uint16 tmp = *ptr1;
+					*ptr1 = *ptr2;
+					*ptr2 = tmp;
+				}
+			}
 		}
+
 		tex_ids_ = NULL;
 	}
 }
 
 void Bitmap::draw() const {
+	if (curr_image_ == 0)
+		return;
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 640, 480, 0, 0, 1);
@@ -153,18 +175,13 @@ void Bitmap::draw() const {
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	if (format_ == 1) {		// Normal image
-		if (curr_image_ != 0) {
-			warning("Animation not handled yet in GL texture path !\n");
-		}
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(x_, 480 - (y_ + height_), width_, height_);
-		int cur_tex_idx = 0;
+		int cur_tex_idx = num_tex_ * (curr_image_ - 1);
 		for (int y = y_; y < (y_ + height_); y += BITMAP_TEXTURE_SIZE) {
 			for (int x = x_; x < (x_ + width_); x += BITMAP_TEXTURE_SIZE) {
-				int width  = (x + BITMAP_TEXTURE_SIZE >= (x_ + width_))  ? ((x_ + width_)  - x) : BITMAP_TEXTURE_SIZE;
-				int height = (y + BITMAP_TEXTURE_SIZE >= (y_ + height_)) ? ((y_ + height_) - y) : BITMAP_TEXTURE_SIZE;
 				glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0, 0.0);
@@ -190,7 +207,7 @@ void Bitmap::draw() const {
 		if ((ZBUFFER_GLOBAL == 0) || (SCREENBLOCKS_GLOBAL == 1))
 			return;
 
-		g_driver->drawDepthBitmap(curr_image_, x_, y_, width_, height_, data_);
+		g_driver->drawDepthBitmap(x_, y_, width_, height_, data_[curr_image_ - 1]);
 	}
 }
 
@@ -199,7 +216,7 @@ Bitmap::~Bitmap() {
 		delete[] data_[i];
 	delete[] data_;
 	if (tex_ids_) {
-		glDeleteTextures(num_tex_, tex_ids_);
+		glDeleteTextures(num_tex_ * num_images_, tex_ids_);
 		delete[] tex_ids_;
 	}
 }

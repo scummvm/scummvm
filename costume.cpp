@@ -91,8 +91,6 @@ public:
 
 private:
 	std::string filename_;
-	std::string zbuf_filename_;
-	ResPtr<Bitmap> bitmap_;
 };
 
 class ModelComponent : public Costume::Component {
@@ -154,13 +152,16 @@ private:
 BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
 								const char *filename) :
 		Costume::Component(parent, parentID), filename_(filename) {
-
-	bitmap_ = ResourceLoader::instance()->loadBitmap(filename);
-	warning("Instanced BitmapComponenet from Costume renderer with filename %s: NOT IMPLEMENTED YET", filename);
 }
 
 void BitmapComponent::setKey(int val) {
-	//	bitmap_->setNumber(val);
+	ObjectState *state =
+		Engine::instance()->currScene()->findState(filename_.c_str());
+	if (state != NULL)
+		state->setNumber(val);
+	else
+		warning("Couldn't find bitmap %s in current scene\n",
+			filename_.c_str());
 }
 
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID,

@@ -169,3 +169,12 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 			(*i)->draw();
 	}
 }
+
+ObjectState *Scene::findState(const char *filename) {
+	for (StateList::iterator i = states_.begin(); i != states_.end();
+	     i++) {
+		if (strcmp((*i)->bitmapFilename(), filename) == 0)
+			return *i;
+	}
+	return NULL;
+}

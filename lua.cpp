@@ -1095,18 +1095,12 @@ static void NewObjectState() {
 	ObjectState::Position pos = check_objstate_pos(2); // When to draw
 	char *bitmap = luaL_check_string(3);	// Bitmap
 	char *zbitmap = NULL;			// Zbuffer Bitmap
-	bool unk1 = getbool(5);			// ?
-	bool unk2 = getbool(6);
+	bool visible = getbool(5);		// Starts visible?
 
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = luaL_check_string(4);
 
-#ifndef OSX
-	warning("Stub: newObjectState(%d, %d, %s, %s)", setupID, pos, bitmap, zbitmap);
-#endif
-
-	object = new ObjectState(setupID, pos, bitmap, zbitmap,
-				 unk1, unk2);
+	object = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
 	Engine::instance()->currScene()->addObjectState(object);
 	lua_pushusertag(object, object_tag);
 }
