@@ -42,19 +42,19 @@ public:
 
 	/**
 	 * Set the output volume.
-	 * @param the new output volume
+	 * @param vol		the new output volume
 	 */
 	virtual void setMasterVolume(int vol) = 0;
 
 	/**
 	 * Start playing the sound with the given id.
-	 * @param sound	the sound to start
+	 * @param sound		the sound to start
 	 */
 	virtual void startSound(int sound) = 0;
 
 	/**
 	 * Stop playing the sound with the given id.
-	 * @param sound	the sound to stop
+	 * @param sound		the sound to stop
 	 */
 	virtual void stopSound(int sound) = 0;
 
@@ -66,7 +66,7 @@ public:
 	/**
 	 * Query the status of the sound with the given id. Usually this is just
 	 * a boolean telling us whether the sound is playing or not.
-	 * @param sound	the sound to for which we want the status
+	 * @param sound		the sound to for which we want the status
 	 * @return the status of the specified sound
 	 */
 	virtual int  getSoundStatus(int sound) const = 0;
