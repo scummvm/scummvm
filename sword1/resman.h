@@ -61,9 +61,9 @@ public:
 	Header *lockScript(uint32 scrID);
 	void unlockScript(uint32 scrID);
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);
-	uint32 resLength(uint32 id); // this should be private. it's used in SwordSound for endian conversion, though 
-							     // make it private again when the mixer supports little endian data.
 private:
+	uint32 filesInGroup(uint32 id);
+	uint32 resLength(uint32 id);
 	BsMemHandle *resHandle(uint32 id);
 	uint32 resOffset(uint32 id);
 	void openCptResourceBigEndian(uint32 id);
@@ -76,6 +76,7 @@ private:
 	BsPrj _prj;
 	MemMan *_memMan;
 	static const uint32 _scriptList[TOTAL_SECTIONS];	//a table of resource tags
+	static uint32 _srIdList[29];
 };
 
 #endif //RESMAN_H

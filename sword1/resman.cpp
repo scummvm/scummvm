@@ -92,6 +92,10 @@ void ResMan::loadCluDescript(const char *fileName) {
 		} else
 			_prj.clu[clusCnt] = NULL;
 	free(cluIndex);
+	
+	if (_prj.clu[3]->grp[5]->noRes == 29)
+        for (uint8 cnt = 0; cnt < 29; cnt++)
+			_srIdList[cnt] = 0x04050000 | cnt;
 }
 
 void ResMan::freeCluDescript(void) {
@@ -236,6 +240,8 @@ File *ResMan::openClusterFile(uint32 id) {
 BsMemHandle *ResMan::resHandle(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
+	if ((id >> 16) == 0x0405)
+		id = _srIdList[id & 0xFFFF];
 
 	return &(_prj.clu[cluster]->grp[group]->resHandle[id & 0xFFFF]);
 }
@@ -243,6 +249,8 @@ BsMemHandle *ResMan::resHandle(uint32 id) {
 uint32 ResMan::resLength(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
+	if ((id >> 16) == 0x0405)
+		id = _srIdList[id & 0xFFFF];
 
 	return _prj.clu[cluster]->grp[group]->length[id & 0xFFFF];
 }
@@ -250,6 +258,8 @@ uint32 ResMan::resLength(uint32 id) {
 uint32 ResMan::resOffset(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
+	if ((id >> 16) == 0x0405)
+		id = _srIdList[id & 0xFFFF];
 
 	return _prj.clu[cluster]->grp[group]->offset[id & 0xFFFF];
 }
@@ -313,3 +323,35 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 		data++;
 	}
 }
+
+uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control panel file IDs, so we need this array
+	0,
+	0x04050000,
+	0,
+	0x04050001,
+	0x04050002,
+	0x04050003,
+	0x04050004,
+	0x04050005,
+	0x04050006,
+	0x04050007,
+	0x04050000,
+	0x04050009,
+	0x0405000A,
+	0x0405000B,
+	0x0405000C,
+	0x0405000D,
+	0x0405000E,
+	0x0405000F,
+	0x04050010,
+	0x04050011,
+	0x04050012,
+	0x04050013,
+	0x04050014,
+	0x04050015,
+	0x04050016,
+	0x04050017,
+	0x04050018,
+	0x04050019,
+	0,
+};
