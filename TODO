@@ -293,6 +293,7 @@ SCUMM
   - Fix inventory flashing at times
   - Add support for PCM music
   - Add variables for _heversion > 70
+  - Add support for cursor resources / opcodes
 
 Broken Sword 1 & 2
 ==================
