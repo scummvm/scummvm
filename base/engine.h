@@ -25,6 +25,8 @@
 #include "common/str.h"
 #include "common/system.h"
 
+#include "gui/walkthrough.h"
+
 class SoundMixer;
 class Timer;
 
@@ -37,6 +39,7 @@ public:
 protected:
 	const Common::String _gameDataPath;
 	SaveFileManager *_saveFileMan;
+	GUI::WalkthroughDialog *_walkthroughDialog;
 
 public:
 	Engine(OSystem *syst);

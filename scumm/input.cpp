@@ -65,6 +65,8 @@ void ScummEngine::parseEvents() {
 					_debugger->attach();
 				else if (event.kbd.keycode == 's')
 					resourceStats();
+				else if (event.kbd.keycode == 'w')
+					_walkthroughDialog->runModal();
 				else
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			} else if (event.kbd.flags & OSystem::KBD_ALT) {

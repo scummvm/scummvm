@@ -897,6 +897,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	_midi = gs.midi;
+
+	_walkthroughDialog->setGameName(detector->_game.name);
 }
 
 ScummEngine::~ScummEngine() {
@@ -943,6 +945,8 @@ ScummEngine::~ScummEngine() {
 	free(_languageIndex);
 
 	delete _debugger;
+
+	_walkthroughDialog->destroy();
 }
 
 ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
@@ -985,6 +989,8 @@ void ScummEngine::mainInit() {
 
 	// Initialize backend
 	_system->initSize(_screenWidth, _screenHeight);
+
+	_walkthroughDialog->create();
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))

@@ -180,6 +180,8 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	_gameCycle = 0;
 
 	_quit = false;
+
+	_walkthroughDialog->setGameName(detector->_game.name);
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -193,6 +195,8 @@ Sword2Engine::~Sword2Engine() {
 	delete _logic;
 	delete _resman;
 	delete _memory;
+
+	_walkthroughDialog->destroy();
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
@@ -296,6 +300,8 @@ void Sword2Engine::mainInit() {
 		startGame();
 
 	_graphics->initialiseRenderCycle();
+
+	_walkthroughDialog->create();
 }
 
 void Sword2Engine::mainRun() {
@@ -315,6 +321,8 @@ void Sword2Engine::mainRun() {
 		if (ke) {
 			if ((ke->modifiers == OSystem::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
 				_debugger->attach();
+			} else if ((ke->modifiers == OSystem::KBD_SHIFT) && (ke->keycode == 'w')) {
+				_walkthroughDialog->runModal();
 			} else if (ke->modifiers == 0 || ke->modifiers == OSystem::KBD_SHIFT) {
 				switch (ke->keycode) {
 				case 'p':
@@ -511,7 +519,7 @@ void Sword2Engine::startGame() {
 	// script #1, but with different ScreenManager objects depending on
 	// if it's the demo or the full game, or if we're using a boot param.
 
-	int screen_manager_id;
+	int screen_manager_id = 0;
 
 	debug(5, "startGame() STARTING:");
 

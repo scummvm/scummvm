@@ -42,6 +42,8 @@ int SagaEngine::processInput() {
 
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
+			if (event.kbd.keycode == 'w')
+				_walkthroughDialog->runModal();
 			if (_vm->_console->isActive()) {
 				in_char = event.kbd.ascii;
 				switch (event.kbd.keycode) {

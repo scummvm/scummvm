@@ -169,6 +169,9 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 	
 	assert(_npcScript);
 	assert(_currentScript);
+
+	_walkthroughDialog->setGameName(detector->_game.name);
+	_walkthroughDialog->create();
 }
 
 KyraEngine::~KyraEngine() {
@@ -179,6 +182,8 @@ KyraEngine::~KyraEngine() {
 	delete _npcScript;
 	delete _currentScript;
 	delete _font;
+
+	_walkthroughDialog->destroy();
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {

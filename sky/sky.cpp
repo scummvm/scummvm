@@ -116,6 +116,8 @@ SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), _fastMode(0) {
+	_walkthroughDialog->setGameName(detector->_game.name);
+	_walkthroughDialog->create();
 }
 
 SkyEngine::~SkyEngine() {
@@ -127,6 +129,8 @@ SkyEngine::~SkyEngine() {
 	delete _skyMouse;
 	delete _skyScreen;
 	delete _debugger;
+
+	_walkthroughDialog->destroy();
 }
 
 void SkyEngine::errorString(const char *buf1, char *buf2) {
@@ -460,6 +464,9 @@ void SkyEngine::delay(uint amount) {
 					}
 					if (event.kbd.keycode == 'd') {
 						_debugger->attach();
+					}
+					if (event.kbd.keycode == 'w') {
+						_walkthroughDialog->runModal();
 					}
 				}
 
