@@ -5300,7 +5300,19 @@ void SimonState::loadMusic (uint music) {
 			// TODO Add Protracker support for simon1amiga/cd32
 			warning("playMusic - Load %dtune attempt", music);
 		} else if (_game & GF_DEMO) {
-			// TODO Add music support for simon1demo
+			midi.stop();
+			midi.setLoop (true);
+			char buf[50];
+			File *f = new File();
+			sprintf(buf, "MOD%d.MUS", music);
+			f->open(buf, _gameDataPath);
+			if (f->isOpen() == false) {
+				warning("Can't load music from '%s'", buf);
+				return;
+			}
+			midi.loadS1D (f);
+			delete f;
+			midi.startTrack (0);
 		} else {
 			midi.stop();
 			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)

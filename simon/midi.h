@@ -80,6 +80,7 @@ public:
 	void loadSMF (File *in, int song, bool sfx = false);
 	void loadMultipleSMF (File *in, bool sfx = false);
 	void loadXMIDI (File *in, bool sfx = false);
+	void loadS1D (File *in, bool sfx = false);
 
 	void setLoop (bool loop);
 	void startTrack(int track);

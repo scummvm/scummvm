@@ -27,6 +27,13 @@
 #include "sound/mixer.h"
 #include "simon/simon.h"
 
+// MidiParser_S1D is not considered part of the standard
+// MidiParser suite, but we still try to mask its details
+// and just provide a factory function.
+extern MidiParser *MidiParser_createS1D();
+
+
+
 MidiPlayer::MidiPlayer (OSystem *system) {
 	// Since initialize() is called every time the music changes,
 	// this is where we'll initialize stuff that must persist
@@ -433,6 +440,38 @@ void MidiPlayer::loadXMIDI (File *in, bool sfx) {
 	}
 
 	MidiParser *parser = MidiParser::createParser_XMIDI();
+	parser->setMidiDriver (this);
+	parser->setTimerRate (_driver->getBaseTempo());
+	if (!parser->loadMusic (p->data, size)) {
+		printf ("Error reading track!\n");
+		delete parser;
+		parser = 0;
+	}
+
+	if (!sfx) {
+		_currentTrack = 255;
+		memset(_volumeTable, 127, sizeof(_volumeTable));
+	}
+	p->parser = parser; // That plugs the power cord into the wall
+	_system->unlock_mutex (_mutex);
+}
+
+void MidiPlayer::loadS1D (File *in, bool sfx) {
+	_system->lock_mutex (_mutex);
+	MusicInfo *p = sfx ? &_sfx : &_music;
+	clearConstructs (*p);
+
+	uint32 size = in->readByte() | (in->readByte() << 8);
+	if (size != in->size() - 2) {
+		printf ("ERROR! Size mismatch in simon1demo MUS file (%ld versus reported %d)\n", (long) in->size() - 2, (long) size);
+		_system->unlock_mutex (_mutex);
+		return;
+	}
+
+	p->data = (byte *) calloc (size, 1);
+	in->read (p->data, size);
+
+	MidiParser *parser = MidiParser_createS1D();
 	parser->setMidiDriver (this);
 	parser->setTimerRate (_driver->getBaseTempo());
 	if (!parser->loadMusic (p->data, size)) {
