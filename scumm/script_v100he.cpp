@@ -65,7 +65,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_panCameraTo),
 		/* 10 */
 		OPCODE(o6_invalid),
-		OPCODE(o72_jumpToScript),
+		OPCODE(o100_jumpToScript),
 		OPCODE(o6_setClass),
 		OPCODE(o60_closeFile),
 		/* 14 */
@@ -199,7 +199,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_stampObject),
 		OPCODE(o72_startObject),
 		/* 7C */
-		OPCODE(o72_startScript),
+		OPCODE(o100_startScript),
 		OPCODE(o6_startScriptQuick),
 		OPCODE(o80_setState),
 		OPCODE(o6_stopObjectScript),
@@ -325,9 +325,9 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_getState),
 		/* E0 */
 		OPCODE(o70_compareString),
-		OPCODE(o72_copyString),
-		OPCODE(o72_appendString),
-		OPCODE(o72_concatString),
+		OPCODE(o70_copyString),
+		OPCODE(o70_appendString),
+		OPCODE(o70_concatString),
 		/* E4 */
 		OPCODE(o70_getStringLen),
 		OPCODE(o70_getStringLenForWidth),
@@ -699,6 +699,18 @@ void ScummEngine_v100he::o100_arrayOps() {
 	default:
 		error("o100_arrayOps: default case %d (array %d)", subOp, array);
 	}
+}
+
+void ScummEngine_v100he::o100_jumpToScript() {
+	int args[25];
+	int script;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
 }
 
 void ScummEngine_v100he::o100_dim2dimArray() {
@@ -1405,19 +1417,31 @@ void ScummEngine_v100he::o100_unknown26() {
 	debug(1,"o100_unknown26 stub (%d)", subOp);
 }
 
+void ScummEngine_v100he::o100_startScript() {
+	int args[25];
+	int script;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
+}
+
 void ScummEngine_v100he::o100_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	subOp -= 61;
 
 	switch (subOp) {
+	case 0:		// SO_RESTART
+		restart();
+		break;
 	case 67:
 		clearDrawObjectQueue();
 		break;
+	case 71:
 	case 72:
 		shutDown();
-		break;
-	case 73:		// SO_RESTART
-		restart();
 		break;
 	case 75:
 		// Clear screen

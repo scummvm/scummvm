@@ -339,12 +339,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_copyString),
+		OPCODE(o70_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_appendString),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_concatString),
+		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
@@ -383,17 +383,20 @@ void ScummEngine_v80he::o80_loadSBNG() {
 
 	switch (subOp) {
 	case 27:
-		pop();
 		//loadSBNG(_heSBNGId, pop();
+		pop();
 		break;
 	case 217:
 		//loadSBNG(_heSBNGId, -1);
 		break;
 	case 232:
-		//_heSBNGId = pop();
+		_heSBNGId = pop();
+		break;
+	case 255:
+		// dummy case
 		break;
 	default:
-		warning("o80_loadSBNG: default case %d", subOp);
+		error("o80_loadSBNG: default case %d", subOp);
 	}
 	debug(1,"o80_loadSBNG stub (%d)",subOp);
 }

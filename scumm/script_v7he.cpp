@@ -341,12 +341,12 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o60_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o6_invalid),
+		OPCODE(o70_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
 		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o6_invalid),
+		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
 		OPCODE(o6_invalid),
 		OPCODE(o70_readINI),
@@ -377,6 +377,31 @@ void ScummEngine_v70he::executeOpcode(byte i) {
 
 const char *ScummEngine_v70he::getOpcodeDesc(byte i) {
 	return _opcodesv70he[i].desc;
+}
+
+int ScummEngine_v70he::getStringCharWidth(byte chr) {
+	int charset = _string[0]._default.charset;
+
+	byte *ptr = getResourceAddress(rtCharset, charset);
+	if (ptr == 0)
+		error("getStringCharWidth::charset %d not found!", charset);
+	ptr += 29;
+
+	int spacing = 0;
+
+	int offs = READ_LE_UINT32(ptr + chr * 4 + 4);
+	if (offs) {
+		spacing = ptr[offs] + (signed char)ptr[offs + 2];
+	}
+	
+	return spacing;
+}
+
+int ScummEngine_v70he::setupStringArray(int size) {
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, size + 1);
+	writeArray(0, 0, 0, 0);
+	return readVar(0);
 }
 
 void ScummEngine_v70he::appendSubstring(int dst, int src, int srcOffs, int len) {
@@ -718,6 +743,19 @@ void ScummEngine_v70he::o70_quitPauseRestart() {
 	}
 }
 
+void ScummEngine_v70he::o70_copyString() {
+	int dst, size;
+	int src = pop();
+
+	size = resStrLen(getStringAddress(src)) + 1;
+	dst = setupStringArray(size);
+
+	appendSubstring(dst, src, -1, -1);
+
+	push(dst);
+	debug(1,"o70_copyString");
+}
+
 void ScummEngine_v70he::o70_getStringWidth() {
 	int array, pos, len;
 	int chr, width = 0;
@@ -736,7 +774,7 @@ void ScummEngine_v70he::o70_getStringWidth() {
 		chr = readArray(0, 0, pos);
 		if (chr == 0)
 			break;
-		width += _charset->getCharWidth(chr);
+		width += getStringCharWidth(chr);
 		pos++;
 	}
 
@@ -821,17 +859,29 @@ void ScummEngine_v70he::o70_appendString() {
 	int src = pop();
 
 	size = len - srcOffs + 2;
-
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, size);
-	writeArray(0, 0, 0, 0);
-
-	dst = readVar(0);
+	dst = setupStringArray(size);
 
 	appendSubstring(dst, src, srcOffs, len);
 
 	push(dst);
 	debug(1,"o70_appendString");
+}
+
+void ScummEngine_v70he::o70_concatString() {
+	int dst, size;
+
+	int src2 = pop();
+	int src1 = pop();
+
+	size = resStrLen(getStringAddress(src1));
+	size += resStrLen(getStringAddress(src2)) + 1;
+	dst = setupStringArray(size);
+
+	appendSubstring(dst, src1, 0, -1);
+	appendSubstring(dst, src2, 0, -1);
+
+	push(dst);
+	debug(1,"o70_concatString");
 }
 
 void ScummEngine_v70he::o70_compareString() {
@@ -934,7 +984,7 @@ void ScummEngine_v70he::o70_getStringLenForWidth() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		width += _charset->getCharWidth(chr);
+		width += getStringCharWidth(chr);
 		if (width >= max) {
 			push(pos);
 			return;

@@ -644,7 +644,7 @@ protected:
 
 	Win32ResExtractor *_win32ResExtractor;
 
-	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags;
+	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags, _heSBNGId;
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
@@ -656,6 +656,8 @@ protected:
 	
 	virtual void redrawBGAreas();
 
+	int getStringCharWidth(byte chr);
+	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 
 	int findObject(int x, int y, int num, int *args);
@@ -670,9 +672,11 @@ protected:
 	void o70_findObject();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
+	void o70_copyString();
 	void o70_getStringWidth();
 	void o70_getStringLen();
 	void o70_appendString();
+	void o70_concatString();
 	void o70_compareString();
 	void o70_readINI();
 	void o70_writeINI();
@@ -729,6 +733,7 @@ protected:
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
+	virtual int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
@@ -782,14 +787,9 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_copyString();
-	void o72_appendString();
-	void o72_concatString();
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
-	void o72_unknownF5();
-	void o72_unknownF6();
 	void o72_getResourceSize();
 	void o72_setFilePath();
 	void o72_setWindowCaption();
@@ -928,12 +928,14 @@ protected:
 	void o100_unknown28();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();
+	void o100_jumpToScript();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_startSound();
 	void o100_unknown26();
+	void o100_startScript();
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
