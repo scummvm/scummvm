@@ -242,10 +242,11 @@ void Smush::play(const char *filename, const char *directory) {
 			error("Unsupported header flag");
 
 		if ((flags & 0x08) != 0) {				// Name
-			while(inBuf[0] != 0) {
+			do {
 				fread(inBuf, 1, sizeof(byte), tmp);
 				printf("%c", inBuf[0]);
-			}
+			} while(inBuf[0] != 0);
+
 		}
 
 		if ((flags & 0x02) != 0)				// CRC

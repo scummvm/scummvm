@@ -30,6 +30,7 @@ Actor::Actor(const char *name) :
   visible_(true), talkSound_(NULL), turning_(false), walking_(false), walkChore_(-1)
 {
   Engine::instance()->registerActor(this);
+  lookingMode_ = false;
 }
 
 void Actor::turnTo(float pitch, float yaw, float roll) {
