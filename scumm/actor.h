@@ -90,6 +90,7 @@ public:
 	byte room;
 	byte talkColor;
 	int talkFrequency;
+	byte talkPan;
 	byte scalex, scaley;
 	byte charset;
 	byte moving;

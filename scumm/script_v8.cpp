@@ -1070,9 +1070,18 @@ void Scumm_v8::o8_actorOps() {
 		a->talkFrequency = pop();
 		break;
 	case 0x89:		// SO_ACTOR_PAN
-		// TODO - implement this!
-		i = pop();
-		warning("o8_actorOps: setActorPan(%d) not implemented", i);
+		// FIXME: This should be stored in savegames.
+		// 0 = left, 64 = middle, 127 = right.
+		a->talkPan = pop();
+
+		// If the actor is talking at the moment, adjust the panning
+		// on the current talk channel handle. (If the handle is 0,
+		// setChannelPan() won't do anything.)
+
+		if (_actorToPrintStrFor == a->number)
+			_mixer->setChannelPan(_sound->_talkChannelHandle,
+				(a->talkPan != 64) ? 2 * a->talkPan - 127 : 0);
+
 		break;
 	default:
 		error("o8_actorOps: default case 0x%x", subOp);

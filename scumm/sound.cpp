@@ -1290,7 +1290,7 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 	if (!result)
 		return;
 
-	int32 rate = 22050, channels, output_size = 0;
+	int32 rate = 22050, pan = 0, channels, output_size = 0;
 	int32 tag, size = -1, bits = 0;
 
 	if (_scumm->_gameId == GID_CMI) {
@@ -1356,6 +1356,10 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 		Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
 		rate = (rate * a->talkFrequency) / 256;
+
+		// Adjust to fit the mixer's notion of panning.
+		if (pan != 64)
+			pan = 2 * a->talkPan - 127;
 	}
 	
 	// Stop any sound currently playing on the given handle
@@ -1363,12 +1367,12 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 		_scumm->_mixer->stopHandle(*handle);
 
 	if (bits == 8) {
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 127, 0);
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 127, pan);
 	} else if (bits == 16) {
 		// FIXME: For some weird reasons, sometimes we get an odd size, even though
 		// the data is supposed to be in 16 bit format... that makes no sense...
 		size &= ~1;
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 127, 0);
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 127, pan);
 	} else {
 		warning("Sound::playBundleSound() to do more options to playRaw...");
 	}

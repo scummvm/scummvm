@@ -101,6 +101,7 @@ void Actor::initActor(int mode) {
 	ignoreTurns = false;
 	
 	talkFrequency = 256;
+	talkPan = 64;
 	
 	if (_vm->_version <= 2) {
 		initFrame = 2;
