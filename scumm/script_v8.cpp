@@ -195,7 +195,7 @@ void Scumm_v8::setupOpcodes()
 		/* 78 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_startScriptEx),
-		OPCODE(o6_startScriptQuick),
+		OPCODE(o6_startScript),
 		OPCODE(o6_stopObjectCode),
 		/* 7C */
 		OPCODE(o6_stopScript),
@@ -293,8 +293,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScript),	// FIXME - this function returns something in V8 !
-		OPCODE(o6_startObjectEx),
+		OPCODE(o6_startScriptQuick),	// FIXME - this function returns something in V8 !
+		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
 		/* CC */
