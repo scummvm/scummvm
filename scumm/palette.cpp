@@ -49,61 +49,61 @@ void ScummEngine::setupAmigaPalette() {
 
 void ScummEngine::setupEGAPalette() {
 	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1,   0,   0, 168);
-	setPalColor( 2,   0, 168,   0);
-	setPalColor( 3,   0, 168, 168);
-	setPalColor( 4, 168,   0,   0);
-	setPalColor( 5, 168,   0, 168);
-	setPalColor( 6, 168,  84,   0);
-	setPalColor( 7, 168, 168, 168);
-	setPalColor( 8,  84,  84,  84);
-	setPalColor( 9,  84,  84, 252);
-	setPalColor(10,  84, 252,  84);
-	setPalColor(11,  84, 252, 252);
-	setPalColor(12, 252,  84,  84);
-	setPalColor(13, 252,  84, 252);
-	setPalColor(14, 252, 252,  84);
-	setPalColor(15, 252, 252, 252);
+	setPalColor( 1,   0,   0, 170);
+	setPalColor( 2,   0, 170,   0);
+	setPalColor( 3,   0, 170, 170);
+	setPalColor( 4, 170,   0,   0);
+	setPalColor( 5, 170,   0, 170);
+	setPalColor( 6, 170,  85,   0);
+	setPalColor( 7, 170, 170, 170);
+	setPalColor( 8,  85,  85,  85);
+	setPalColor( 9,  85,  85, 255);
+	setPalColor(10,  85, 255,  85);
+	setPalColor(11,  85, 255, 255);
+	setPalColor(12, 255,  85,  85);
+	setPalColor(13, 255,  85, 255);
+	setPalColor(14, 255, 255,  85);
+	setPalColor(15, 255, 255, 255);
 }
 
 void ScummEngine::setupV1ManiacPalette() {
 	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1, 252, 252, 252);
-	setPalColor( 2, 168,   0,   0);
-	setPalColor( 3,   0, 168, 168);
-	setPalColor( 4, 168,   0, 168);
-	setPalColor( 5,   0, 168,   0);
-	setPalColor( 6,   0,   0, 168);
-	setPalColor( 7, 252, 252,  84);
-	setPalColor( 8, 252,  84,  84);
-	setPalColor( 9, 168,  84,   0);
-	setPalColor(10, 252,  84,  84);
-	setPalColor(11,  84,  84,  84);
-	setPalColor(12, 168, 168, 168);
-	setPalColor(13,  84, 252,  84);
-	setPalColor(14,  84,  84, 252);
-	setPalColor(15,  84,  84,  84);
-	setPalColor(16, 252,  84, 252);
+	setPalColor( 1, 255, 255, 255);
+	setPalColor( 2, 170,   0,   0);
+	setPalColor( 3,   0, 170, 170);
+	setPalColor( 4, 170,   0, 170);
+	setPalColor( 5,   0, 170,   0);
+	setPalColor( 6,   0,   0, 170);
+	setPalColor( 7, 255, 255,  85);
+	setPalColor( 8, 255,  85,  85);
+	setPalColor( 9, 170,  85,   0);
+	setPalColor(10, 255,  85,  85);
+	setPalColor(11,  85,  85,  85);
+	setPalColor(12, 170, 170, 170);
+	setPalColor(13,  85, 255,  85);
+	setPalColor(14,  85,  85, 255);
+	setPalColor(15,  85,  85,  85);
+	setPalColor(16, 255,  85, 255);
 }
 
 void ScummEngine::setupV1ZakPalette() {
 	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1, 252, 252, 252);
-	setPalColor( 2, 168,   0,   0);
-	setPalColor( 3,   0, 168, 168);
-	setPalColor( 4, 168,   0, 168);
-	setPalColor( 5,   0, 168,   0);
-	setPalColor( 6,   0,   0, 168);
-	setPalColor( 7, 252, 252,  84);
-	setPalColor( 8, 252,  84,  84);
-	setPalColor( 9, 168,  84,   0);
-	setPalColor(10, 252,  84,  84);
-	setPalColor(11,  84,  84,  84);
-	setPalColor(12, 168, 168, 168);
-	setPalColor(13,  84, 252,  84);
-	setPalColor(14,  84,  84, 252);
-	setPalColor(15, 168, 168, 168);
-	setPalColor(16, 252,  84, 252);
+	setPalColor( 1, 255, 255, 255);
+	setPalColor( 2, 170,   0,   0);
+	setPalColor( 3,   0, 170, 170);
+	setPalColor( 4, 170,   0, 170);
+	setPalColor( 5,   0, 170,   0);
+	setPalColor( 6,   0,   0, 170);
+	setPalColor( 7, 255, 255,  85);
+	setPalColor( 8, 255,  85,  85);
+	setPalColor( 9, 170,  85,   0);
+	setPalColor(10, 255,  85,  85);
+	setPalColor(11,  85,  85,  85);
+	setPalColor(12, 170, 170, 170);
+	setPalColor(13,  85, 255,  85);
+	setPalColor(14,  85,  85, 255);
+	setPalColor(15, 170, 170, 170);
+	setPalColor(16, 255,  85, 255);
 }
 
 void ScummEngine::setPaletteFromPtr(const byte *ptr) {
