@@ -57,7 +57,7 @@ void CDECL debugC(int channel, const char *s, ...) {
 	va_end(va);
 
 	debug(buf);
-};
+}
 	
 ScummDebugger::ScummDebugger(ScummEngine *s)
 	: Common::Debugger<ScummDebugger>() {
@@ -592,7 +592,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 
 	DebugPrintf("Unknown flag. Type 'Debug ?' for syntax\n");
 	return true;
-};
+}
 
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {
