@@ -28,6 +28,8 @@ class ObjectState {
 
 	void draw() {
 		bitmap_->draw();
+		if (zbitmap_)
+			zbitmap_->draw();
 	}
 
 	private:
