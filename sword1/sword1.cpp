@@ -123,7 +123,7 @@ SwordEngine::~SwordEngine() {
 	delete _resMan;
 }
 
-void SwordEngine::initialize(void) {
+int SwordEngine::init() {
 
 	// Add default file directories
 	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
@@ -198,6 +198,8 @@ void SwordEngine::initialize(void) {
 	_objectMan->initialize();
 	_mouse->initialize();
 	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, getSavePath());
+	
+	return 0;
 }
 
 void SwordEngine::reinitialize(void) {
@@ -1129,9 +1131,8 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	}
 }
 
-void SwordEngine::go(void) {
+int SwordEngine::go() {
 	
-	initialize();
 	checkCdFiles();
 
 	uint8 startPos = ConfMan.getInt("boot_param");
@@ -1163,6 +1164,8 @@ void SwordEngine::go(void) {
 			_systemVars.controlPanelMode = CP_NORMAL;
 		}
 	}
+	
+	return 0;
 }
 
 void SwordEngine::checkCd(void) {

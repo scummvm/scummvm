@@ -67,7 +67,8 @@ public:
 	uint8 game(void) { return _game; }
 
 protected:
-	void go();
+	int go();
+	int init();
 	void shutdown();
 	Resourcemanager* _resMgr;
 	MusicPlayer* _midiDriver;

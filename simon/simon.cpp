@@ -659,7 +659,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vc_10_base_ptr_old = 0;
 	memcpy (_hebrew_char_widths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
+}
 
+int SimonEngine::init() {
 	// Setup mixer
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
@@ -718,6 +720,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+	
+	return 0;
 }
 
 SimonEngine::~SimonEngine() {
@@ -4668,7 +4672,7 @@ void SimonEngine::fadeUpPalette() {
  	} while (!done);
 }
 
-void SimonEngine::go() {
+int SimonEngine::go() {
 	if (!_dump_file)
 		_dump_file = stdout;
 
@@ -4728,6 +4732,8 @@ void SimonEngine::go() {
 		handle_verb_clicked(_verb_hitarea);
 		delay(100);
 	}
+	
+	return 0;
 }
 
 void SimonEngine::shutdown() {

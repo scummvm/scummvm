@@ -170,9 +170,8 @@ private:
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
-	void go();
-	void mainInit();
-	void mainRun();
+	int go();
+	int init();
 
 	void setupPersistentResources();
 

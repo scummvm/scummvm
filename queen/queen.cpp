@@ -288,12 +288,7 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void QueenEngine::go() {
-	initialise();
-
-	registerDefaultSettings();
-	readOptionSettings();
-
+int QueenEngine::go() {
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
 
@@ -319,9 +314,11 @@ void QueenEngine::go() {
 			}
 		}
 	}
+	
+	return 0;
 }
 
-void QueenEngine::initialise(void) {
+int QueenEngine::init() {
 	_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
 	_bam = new BamScene(this);
@@ -361,6 +358,11 @@ void QueenEngine::initialise(void) {
 	
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
+
+	registerDefaultSettings();
+	readOptionSettings();
+
+	return 0;
 }
 
 } // End of namespace Queen

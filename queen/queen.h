@@ -123,9 +123,8 @@ protected:
 
 	void errorString(const char *buf_input, char *buf_output);
 
-	void go();
-
-	void initialise();
+	int go();
+	int init();
 
 
 	int _talkSpeed;

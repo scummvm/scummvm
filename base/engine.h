@@ -41,9 +41,20 @@ protected:
 public:
 	Engine(OSystem *syst);
 	virtual ~Engine();
+	
+	/**
+	 * Init the engine.
+	 * @return 0 for success, else an error code.
+	 */
+	virtual int init() = 0;
 
-	/** Start the main engine loop. */ 
-	virtual void go() = 0;
+	/**
+	 * Start the main engine loop.
+	 * The return value is not yet used, but could indicate whether the user
+	 * wants to return to the launch or to fully quit ScummVM. 
+	 * @return a result code
+	 */
+	virtual int go() = 0;
 
 	/** Get the path to the save game directory. */
 	virtual const char *getSavePath() const;

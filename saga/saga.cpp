@@ -124,9 +124,7 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void SagaEngine::go() {
-	int msec = 0;
-
+int SagaEngine::init() {
 	_soundEnabled = 1;
 	_musicEnabled = 1;
 
@@ -156,7 +154,7 @@ void SagaEngine::go() {
 
 	// Detect game and open resource files
 	if (GAME_Init() != SUCCESS) {
-		return;
+		return -1;
 	}
 
 	// Initialize engine modules
@@ -174,7 +172,8 @@ void SagaEngine::go() {
 
 	if (!_scene->initialized()) {
 		warning("Couldn't initialize scene module");
-		return;
+		// TODO/FIXME: We are leaking here
+		return -1;
 	}
 
 	// System initialization
@@ -214,7 +213,8 @@ void SagaEngine::go() {
 	
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
-		return;
+		// TODO/FIXME: We are leaking here
+		return -1;
 	}
 
 	// Initialize system specific sound
@@ -231,6 +231,12 @@ void SagaEngine::go() {
 	_script->reg();
 	_render->reg();
 	_anim->reg();
+
+	return 0;
+}
+
+int SagaEngine::go() {
+	int msec = 0;
 
 	_previousTicks = _system->getMillis();
 
@@ -265,6 +271,8 @@ void SagaEngine::go() {
 		_render->drawScene();
 		_system->delayMillis(10);
 	}
+	
+	return 0;
 }
 
 void SagaEngine::shutdown() {

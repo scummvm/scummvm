@@ -190,11 +190,7 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 		// Set the user specified graphics mode (if any).
 		system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 	
-		// FIXME - we need to call initSize() here so that we can display for example
-		// the launcher dialog. But the Engine object will also call it again (possibly
-		// with a different widht/height!9 However, this method is not for all OSystem 
-		// implementations reentrant (it is so now for the SDL backend). Thus we need
-		// to fix all backends to support it, if they don't already.
+		// GUI is (currently) always running at 320x200
 		system->initSize(320, 200);
 	system->endGFXTransaction();
 
@@ -239,7 +235,7 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 	return dlg.runModal();
 }
 
-static void runGame(GameDetector &detector, OSystem *system) {
+static int runGame(GameDetector &detector, OSystem *system) {
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
@@ -256,6 +252,20 @@ static void runGame(GameDetector &detector, OSystem *system) {
 		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
 		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default");
 
+	// Create the game engine
+	Engine *engine = detector.createEngine(system);
+	assert(engine);
+
+	// Add extrapath (if any) to the directory search list
+	if (ConfMan.hasKey("extrapath"))
+		File::addDefaultDirectory(ConfMan.get("extrapath"));
+
+	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
+		File::addDefaultDirectory(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
+
+	int result;
+
+	// Start GFX transaction
 	system->beginGFXTransaction();
 
 		// See if the game should default to 1x scaler
@@ -274,39 +284,23 @@ static void runGame(GameDetector &detector, OSystem *system) {
 		// (De)activate fullscreen mode as determined by the config settings 
 		system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 		
-		// TODO / FIXME: this transaction sould also contain the initial call to initSize
-		// which all engines perform. However, as long as that is contained within 
-		// the "engine->go()", this is not possible.
-		// Multiple solutions come to mind, including these:
-		// * Don't let the engine invoke initSize(); rather, add a method to them which we can
-		//   use to query their desired res, then we set it for them
-		// * Move the setGraphicsMode/setFeatureState calls here to the Engine class, which the
-		//   engines invoke (in other words: move this transaction into the engines
-		// * Add an explicit Engine::init() method, which all engines have to implement,
-		//   and into which they should put their call to initSize. Then, make sure this transaction
-		//   surrounds the call to engine->init();
+		// Init the engine (this might change the screen parameters
+		result = engine->init();
 
 	system->endGFXTransaction();
 
-	// Create the game engine
-	Engine *engine = detector.createEngine(system);
-	assert(engine);
-
-	// Add extrapath (if any) to the directory search list
-	if (ConfMan.hasKey("extrapath"))
-		File::addDefaultDirectory(ConfMan.get("extrapath"));
-
-	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
-		File::addDefaultDirectory(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
-
-	// Run the game engine
-	engine->go();
+	// Run the game engine if the initialization was successful.
+	if (result == 0) {
+		result = engine->go();
+	}
 
 	// Free up memory
 	delete engine;
 
 	// Stop all sound processing now (this prevents some race conditions later on)
 	system->clearSoundCallback();
+	
+	return result;
 }
 
 #ifndef _WIN32_WCE
@@ -419,7 +413,12 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(detector._plugin);
 
-			runGame(detector, system);
+			int result = runGame(detector, system);
+			// TODO: for now, return code 0 (which is currently the only return
+			// code anyway) is interpreted to mean "return to launcher". This is
+			// *not* fixed, we could (and probably will) change the meaning etc.
+			if (result != 0)
+				running = false;
 
 			// There are some command-line options that it's
 			// unlikely that we want to preserve now that we're

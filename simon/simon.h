@@ -740,7 +740,8 @@ protected:
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
-	void go();
+	int init();
+	int go();
 	void openGameFile();
 
 	static int CDECL game_thread_proc(void *param);

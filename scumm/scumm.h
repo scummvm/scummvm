@@ -385,10 +385,10 @@ public:
 	virtual ~ScummEngine();
 
 	/** Startup function: Calls mainInit and then mainRun. */
-	void go();
+	int go();
 
 	// Init functions
-	void mainInit();
+	int init();
 
 	virtual void setupScummVars();
 	void initScummVars();
@@ -399,7 +399,6 @@ public:
 	void setupMusic(int midi);
 
 	// Scumm main loop
-	void mainRun();
 	int scummLoop(int delta);
 
 	// Event handling

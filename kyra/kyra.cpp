@@ -121,6 +121,9 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 	} else {
 		error("unknown game");
 	}
+}
+
+int KyraEngine::init() {
 
 	// Initialize backen
 	syst->initSize(320, 200);
@@ -169,6 +172,8 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 	
 	assert(_npcScript);
 	assert(_currentScript);
+	
+	return 0;
 }
 
 KyraEngine::~KyraEngine() {
@@ -185,7 +190,7 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void KyraEngine::go() {
+int KyraEngine::go() {
 	warning("Kyrandia Engine ::go()");
 	// starts the init script
 /*	if (!_currentScript->startScript(kSetupScene)) {
@@ -259,6 +264,8 @@ void KyraEngine::go() {
 	delete movie;
 	delete image;
 	delete [] _buffer;
+	
+	return 0;
 }
 
 void KyraEngine::shutdown() {

@@ -223,7 +223,7 @@ void Sword2Engine::setupPersistentResources() {
 	_resman->openResource(CUR_PLAYER_ID);
 }
     
-void Sword2Engine::mainInit() {
+int Sword2Engine::init() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
@@ -288,7 +288,7 @@ void Sword2Engine::mainInit() {
 		// will either have killed the music, or done a crossfade.
 
 		if (_quit)
-			return;
+			return 0;
 
 		if (result)
 			startGame();
@@ -296,9 +296,11 @@ void Sword2Engine::mainInit() {
 		startGame();
 
 	_graphics->initialiseRenderCycle();
+	
+	return 0;
 }
 
-void Sword2Engine::mainRun() {
+int Sword2Engine::go() {
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -370,11 +372,8 @@ void Sword2Engine::mainRun() {
 		buildDisplay();
 #endif
 	}
-}
-
-void Sword2Engine::go() {
-	mainInit();
-	mainRun();
+	
+	return 0;
 }
 
 void Sword2Engine::closeGame() {

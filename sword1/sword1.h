@@ -75,10 +75,10 @@ public:
 
 	uint32 _features;
 protected:
-	void go();
+	int go();
+	int init();
 private:
 	void delay(uint amount);
-	void initialize(void);
 
 	void checkCdFiles(void);
 	void checkCd(void);

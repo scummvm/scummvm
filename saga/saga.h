@@ -88,7 +88,8 @@ class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
 protected:
-	void go();
+	int go();
+	int init();
 
 public:
 	SagaEngine(GameDetector * detector, OSystem * syst);

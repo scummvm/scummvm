@@ -93,14 +93,14 @@ protected:
 
 	void logic_engine();
 	void delay(uint amount);
-	void go();
+	int go();
 	void doCheat(uint8 num);
 	void handleKey(void);
 
 	uint32 _lastSaveTime;
 
 	Text *getText();
-	void initialise();
+	int init();
 	void initItemList();
 
 	void initVirgin();

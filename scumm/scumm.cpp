@@ -972,16 +972,11 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndSoundFreq = 0;
 }
 
-void ScummEngine::go() {
-	mainInit();
-	mainRun();
-}
-
 #pragma mark -
 #pragma mark --- Initialization ---
 #pragma mark -
 
-void ScummEngine::mainInit() {
+int ScummEngine::init() {
 
 	// Initialize backend
 	_system->initSize(_screenWidth, _screenHeight);
@@ -1119,6 +1114,8 @@ void ScummEngine::mainInit() {
 	} else {
 		_saveLoadFlag = 0;
 	}
+
+	return 0;
 }
 
 void ScummEngine::scummInit() {
@@ -1397,7 +1394,7 @@ void ScummEngine::setupMusic(int midi) {
 #pragma mark --- Main loop ---
 #pragma mark -
 
-void ScummEngine::mainRun() {
+int ScummEngine::go() {
 	int delta = 0;
 	int diff = _system->getMillis();
 
@@ -1418,6 +1415,8 @@ void ScummEngine::mainRun() {
 			// TODO: Maybe perform an autosave on exit?
 		}
 	}
+	
+	return 0;
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {

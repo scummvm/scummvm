@@ -183,9 +183,7 @@ void SkyEngine::handleKey(void) {
 	_key_pressed = 0;
 }
 
-void SkyEngine::go() {
-
-	initialise();
+int SkyEngine::go() {
 
 	_sdl_mouse_x = GAME_SCREEN_WIDTH / 2;
 	_sdl_mouse_y = GAME_SCREEN_HEIGHT / 2;
@@ -243,9 +241,11 @@ void SkyEngine::go() {
 			_skyScreen->flip();
 		}
 	}
+	
+	return 0;
 }
 
-void SkyEngine::initialise(void) {
+int SkyEngine::init() {
 	_system->initSize(320, 200);
 
 	if (!_mixer->isReady())
@@ -359,6 +359,8 @@ void SkyEngine::initialise(void) {
 	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen);
+	
+	return 0;
 }
 
 void SkyEngine::initItemList() {
