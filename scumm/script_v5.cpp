@@ -2411,21 +2411,25 @@ void Scumm_v5::decodeParseString() {
 		case 7:										/* overhead */
 			_string[textSlot].overhead = true;
 			break;
-		case 8:{										/* play loom talkie sound - use in other games ? */
-				int x = getVarOrDirectWord(0x80);
-				int offset;
-				int delay;
+		case 8:{									/* play loom talkie sound - used in other games ? */
+				int offset = (uint16)getVarOrDirectWord(0x80);
+				int delay = (uint16)getVarOrDirectWord(0x40);
 
-				if (x != 0)
-					offset = (int)((x & 0xffff) * 7.5 - 22650);
-				else
-					offset = 0;
-				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
 				if (_gameId == GID_LOOM256) {
 					_vars[VAR_MI1_TIMER] = 0;
 					if (offset == 0 && delay == 0) {
 						_sound->stopCD();
 					} else {
+						// Loom specified the offset from the start of the CD;
+						// thus we have to subtract the lenght of the first track
+						// (22500 frames) plus the 2 second = 150 frame leadin.
+						// I.e. in total 22650 frames.
+						offset = (int)(offset * 7.5 - 22650);
+
+						// Slightly increase the delay (5 frames = 1/25 of a second).
+						// This noticably improves the experience in Loom CD.
+						delay = (int)(delay * 7.5 + 5);
+						
 						_sound->playCDTrack(1, 0, offset, delay);
 					}
 				} else {
