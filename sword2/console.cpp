@@ -328,7 +328,7 @@ void	Clear_console_line(void)	//Tony13Aug96
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-void	Print_to_console(char *format,...)	//Tony13Aug96
+void	Print_to_console(const char *format,...)	//Tony13Aug96
 {
 //print a NULL terminated string of ascii to the next console line
 //we can assume that the user has just entered a command by pressing return - which means we're on a clean line
@@ -345,7 +345,7 @@ void	Print_to_console(char *format,...)	//Tony13Aug96
 
 }
 //-----------------------------------------------------------------------------------------------------------------------
-void	Temp_print_to_console(char *format,...)	//Tony13Aug96
+void	Temp_print_to_console(const char *format,...)	//Tony13Aug96
 {
 //print a NULL terminated string of ascii to the next console line
 //we can assume that the user has just entered a command by pressing return - which means we're on a clean line
@@ -1002,7 +1002,7 @@ void	Con_colour_block(int	x,	int width, int height, uint32 pen, uint32 paper, ui
 
 
 //-----------------------------------------------------------------------------------------------------------------------
-void Con_fatal_error(char *format,...)	//Tony17Oct96
+void Con_fatal_error(const char *format,...)	//Tony17Oct96
 {
 //use this to alert the user of a major problem from which we cannot allow the game to continue
 //while in console mode the user will still be ble to use the console commands - which may be useful
@@ -1332,8 +1332,8 @@ void Con_display_events()	// (James11july97)
 
 #else // not debug
 
-void	Print_to_console(char *format,...) {};
-void	Temp_print_to_console(char *format,...) {};
+void	Print_to_console(const char *format,...) {};
+void	Temp_print_to_console(const char *format,...) {};
 void	Clear_console_line(void) {};
 void	Scroll_console(void) {};
 void	Init_console(void) {};

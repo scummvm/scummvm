@@ -62,7 +62,7 @@ BOOL			gotTheFocus = TRUE;
 
 //-----------------------------------------------------------------------------
 
-void Zdebug(char *format,...) {
+void Zdebug(const char *format,...) {
 #ifdef __PALM_OS__
 	char buf[256]; // 1024 is too big overflow the stack
 #else
