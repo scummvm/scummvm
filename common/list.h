@@ -164,9 +164,14 @@ public:
 		return last;
 	}
 
-//	void remove(const T &val) {
-//		...
-//	}
+	void remove(const T &val) {
+		iterator i = begin();
+		while (i != end())
+			if (val == i.operator*())
+				i = erase(i);
+			else
+				++i;
+	}
 
 
 	List<T>& operator  =(const List<T>& list) {
