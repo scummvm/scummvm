@@ -79,7 +79,7 @@ void Scumm::initScreens(int a, int b, int w, int h)
 }
 
 void Scumm::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
-													 bool fourextra)
+													 bool scrollable)
 {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
@@ -100,7 +100,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->topline = top;
 	vs->height = height;
 	vs->alloctwobuffers = twobufs;
-	vs->scrollable = fourextra;
+	vs->scrollable = scrollable;
 	vs->xstart = 0;
 	size = vs->width * vs->height;
 	vs->size = size;
@@ -158,7 +158,7 @@ void Scumm::drawDirtyScreenParts()
 	} else {
 		vs = &virtscr[0];
 
-		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - (_realHeight / 2);
+		src = vs->screenPtr + _screenStartStrip * 8 + _screenTop * _realWidth;
 		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height);
 
 		for (i = 0; i < NUM_STRIPS; i++) {
@@ -184,9 +184,6 @@ void Scumm::updateDirtyScreen(int slot)
 
 void Gdi::updateDirtyScreen(VirtScreen *vs)
 {
-	int i;
-	int start, w, top, bottom;
-
 	if (vs->height == 0)
 		return;
 
@@ -194,29 +191,34 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 	if (vs->scrollable)
 		_readOffs = vs->xstart;
 
-	w = 8;
-	start = 0;
+	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
+		drawStripToScreen(vs, 0, NUM_STRIPS << 3, 0, vs->height);
+	else {
+		int i;
+		int start, w, top, bottom;
+	
+		w = 8;
+		start = 0;
 
-	for (i = 0; i < NUM_STRIPS; i++) {
-		bottom = vs->bdirty[i];
-
-		if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
-			drawStripToScreen(vs, start, w, 0, vs->height);
-		else if (bottom) {
-			top = vs->tdirty[i];
-			vs->tdirty[i] = (byte)vs->height;
-			vs->bdirty[i] = 0;
-			if (i != (NUM_STRIPS-1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
-				w += 8;
-				continue;
+		for (i = 0; i < NUM_STRIPS; i++) {
+			bottom = vs->bdirty[i];
+	
+			if (bottom) {
+				top = vs->tdirty[i];
+				vs->tdirty[i] = (byte)vs->height;
+				vs->bdirty[i] = 0;
+				if (i != (NUM_STRIPS-1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
+					w += 8;
+					continue;
+				}
+				if (_vm->_features & GF_AFTER_V7)
+					drawStripToScreen(vs, start, w, 0, vs->height);
+				else
+					drawStripToScreen(vs, start, w, top, bottom);
+				w = 8;
 			}
-			if (_vm->_features & GF_AFTER_V7)
-				drawStripToScreen(vs, start, w, 0, vs->height);
-			else
-				drawStripToScreen(vs, start, w, top, bottom);
-			w = 8;
+			start = i + 1;
 		}
-		start = i + 1;
 	}
 }
 

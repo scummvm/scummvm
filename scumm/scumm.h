@@ -774,7 +774,7 @@ public:
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);
-	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool fourextra);
+	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
 	void initCycl(byte *ptr);	// Color cycle
 
