@@ -358,7 +358,7 @@ int SwordLogic::fullAnimDriver(BsObject *compact) {
 	compact->o_frame = FROM_LE_32(animPtr->animFrame);
 
 	compact->o_anim_pc++;
-	if (compact->o_anim_pc == numFrames)
+	if (compact->o_anim_pc == (int)numFrames)
 		compact->o_logic = LOGIC_script;
 
 	_resMan->resClose(compact->o_anim_resource);
@@ -381,7 +381,7 @@ int SwordLogic::animDriver(BsObject *compact) {
 
 	compact->o_frame = FROM_LE_32(animPtr->animFrame);
 	compact->o_anim_pc++;
-	if (compact->o_anim_pc == numFrames)
+	if (compact->o_anim_pc == (int)numFrames)
 		compact->o_logic = LOGIC_script;
 
 	_resMan->resClose(compact->o_anim_resource);
