@@ -1,349 +1,272 @@
-.\"                                      Hey, EMACS: -*- nroff -*-
-.\" First parameter, NAME, should be all caps
-.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
-.\" other parameters are allowed: see man(7), man(1)
-.TH SCUMMVM 6 "August 11, 2004"
-.\" Please adjust this date whenever revising the manpage.
-.\"
-.\" Some roff macros, for reference:
-.\" .nh        disable hyphenation
-.\" .hy        enable hyphenation
-.\" .ad l      left justify
-.\" .ad b      justify to both left and right margins
-.\" .nf        disable filling
-.\" .fi        enable filling
-.\" .br        insert line break
-.\" .sp <n>    insert n+1 empty lines
-.\" for manpage-specific macros, see man(7)
-.SH NAME
-scummvm \- graphic adventure game interpreter
-.SH SYNOPSIS
-.B scummvm
-[\fIoptions\fR] [\fIgame\fR]
-.SH DESCRIPTION
-.PP
-\fBscummvm\fP is an interpreter that will play graphic adventure games 
-written for LucasArts' SCUMM virtual machine. Some other adventure
-games using similar engines may be supported - for example
-\fBSimon The Sorcerer\fP
-.
-.P
-Note that this manpage is frequently outdated and you would be well advised to
-look at the README and the output of \fIscummvm -h\fP for more up to date information.
-.P
-Please be aware that the engine may contains bugs and non-implemented features
-that may make it impossible to finish the game. Check 
-.B http://www.scummvm.org/compatibility.php
-for the latest compatibility information.
-.SS OPTIONS
-If you don't pass ScummVM options it will start the graphical game launcher,
-which allows game selection from, and addition to, the config file.
-.P
-The interpreter expects to find the game's data files in the current directory,
-if a path isn't specified in a config file.
-You may supply a different path using -p on the command line. The name of the
-game is then supplied on the command line.
-.TP
-.BI \-\-[no\-]aspect\-ratio
-Enable/Disable aspect ratio correction
-.TP
-.BI \-b <param>
-Specify parameter to pass to first game script default is 0.
-.TP
-.BI \-\-cdrom=NUM
-CD drive to play audio from (default: 0 = first drive)
-.TP
-.BI \-d [num]
-Set debug level (default level 1)
-.TP
-.BI \-e <mode>
-Specify music output where \fI<mode>\fP can be one of:
-.br
-.br
-\fBadlib\fP      Uses internal Adlib Emulation (default)
-.br
-\fBmt32\fP       Uses internal MT-32 Emulation
-.br
-\fBwindows\fP    Windows MIDI. Uses built-in sequencer.
-.br
-\fBseq\fP        Uses /dev/sequencer for MIDI, *nix users.
-.br
-\fBqt\fP         Quicktime sound, for Macintosh users.
-.br
-\fBcore\fP       CoreAudio sound, for MacOS X users.
-.br
-\fBamidi\fP      Uses the MorphOS MIDI system, for MorphOS users
-.br
-\fBalsa\fP       Output using ALSA sequencer device.
-.br
-\fBnull\fP       Null output. Don't play any music.
-.TP
-.BI \-f
-Runs in full-screen mode.
-.TP
-.BI \-\-[no\-]floppy\-intro
-Enable/Disable floppy version intro for Beneath a Steel Sky CD version.
-.TP
-.BI \-g <mode>
-Set graphics filter.
-\fI<mode>\fP can be one of:
-.br
-\fBnormal\fP     No filtering, no scaling. Fastest.
-.br
-\fB2x\fP         No filtering, factor 2x (default for non 640x480 games).
-.br
-\fB3x\fP         No filtering, factor 3x.
-.br
-\fB2xsai\fP      2xsai filter, factor 2x.
-.br
-\fBsuper2xsai\fP Enhanced 2xsai filtering. factor 2x.
-.br
-\fBsupereagle\fP Less blurry than 2xsai, but slower. Factor 2x.
-.br
-\fBadvmame2x\fP  Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
-.br
-\fBadvmame3x\fP  Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
-.br
-\fBhq2x\fP       Very nice high quality filter but slow. Factor 2x.
-.br
-\fBhq3x\fP       Very nice high quality filter but slow. Factor 3x.
-.br
-\fBtv2x\fP       Horizontal scanlines. Factor 2x.
-.br
-\fBdotmatrix\fP  Dot matrix effect. Factor 2x.
-.br
-.TP
-.BI \-h
-Show help and exit.
-.TP
-.BI \-\-joystick[=NUM]
-Enable input with joystick (default: 0 = first joystick)
-.TP
-.B \-m <num>
-Set music volume to number \fI<num>\fP (0-255)
-.TP
-.BI \-\-[no\-]multi\-midi
-Enable/Disable combination Adlib and native MIDI.
-.TP
-.B \-n
-Enable subtitles
-.TP
-.BI \-\-[no\-]native\-mt32
-Enable/Disable true Roland MT-32 MIDI (disable GM emulation)
-.TP
-.BI \-o <num>
-Set master volume to number \fI<num>\fP (0-255)
-.TP
-.BI \-p <path>
-Specify the path to the game.
-.TP
-.BI \-\-platform=WORD
-Specify version of game where \fIWORD\fP can be one of amiga, atari, fmtowns, mac, pc or windows.
-.TP
-.BI \-q <lang>
-Specify language where \fI<lang>\fP can be one of:
-.br
-\fBcz\fP Czech
-.br
-\fBde\fP German
-.br
-\fBen\fP English (default for most games)
-.br
-\fBes\fP Spanish
-.br
-\fBfr\fP French
-.br
-\fBgb\fP English (Great Britain) (default for Beneath a Steel Sky)
-.br
-\fBhb\fP Hebrew
-.br
-\fBit\fP Italian
-.br
-\fBjp\fP Japanese
-.br
-\fBkr\fP Korean
-.br
-\fBpt\fP Portuguese
-.br
-\fBru\fP Russian
-.br
-\fBse\fP Sweedish
-.br
-\fBzh\fP Chinese
-.br
-.TP
-.BI \-s <num>
-set sfx volume to number num (0-255)
-.TP
-.BI \-t
-Display list of configured targets and exit
-.TP
-.BI \-u
-Dump scripts if a dumps directory is in the current directory.
-.TP
-.BI \-v
-Show version information and exit.
-.TP
-.BI \-x [num]
-Load savegame slot number num (default: 0 - autosave)
-.TP
-.BI \-z
+.\"	$Id$
+.Dd December 15, 2004
+.Dt SCUMMVM 6
+.Os
+.Sh NAME
+.Nm scummvm
+.Nd graphic adventure game interpreter
+.Sh SYNOPSIS
+.Nm scummvm
+.Op Ar options 
+.Op Ar game
+.Sh DESCRIPTION
+.Nm
+is an interpreter that will play graphic adventure games
+based an a variety of game engines.
+.Bl -tag -width Ds
+.It Fl F
+Force windowed mode.
+.It Fl b Ar param 
+Pass number to the boot script (boot param).
+.It Fl c Ar config
+Use
+.Ar config
+as alternate configuration file.
+.It Fl d Ar level
+Set debug verbosity to
+.Ar level .
+.It Fl e Ar driver
+Music
+.Ar driver
+to use:
+.Bl -tag -width Ds
+.It Em adlib
+Adlib emulation (default)
+.It Em alsa
+Output using ALSA sequencer device
+.It Em amidi
+Use the MorphOS MIDI system, for MorphOS users
+.It Em core
+CoreAudio sound, for MacOS X users
+.It Em mt32
+MT-32 emulation
+.It Em null
+Null output.
+Don't play any music.
+.It Em pcjr
+PCjr emulation
+.It Em pcspk
+PC Speaker emulation
+.It Em qt
+Quicktime sound, for Macintosh users
+.It Em seq
+Use /dev/sequencer for MIDI output
+.It Em towns
+FM-TOWNS YM2612 emulation
+.It Em windows
+Windows built in MIDI sequencer for Windows users
+.El
+.It Fl f
+Force full-screen mode.
+.It Fl g Ar scaler
+Select graphics 
+.Ar scaler :
+.Bl -tag -width Ds
+.It Em 2x
+No filtering, factor 2x (default for non 640x480 games).
+.It Em 3x
+No filtering, factor 3x.
+.It Em 2xsai
+2xsai filter, factor 2x.
+.It Em advmame2x
+Doesn't rely on blurring like 2xSAI, fast.
+Factor 2x.
+.It Em advmame3x
+Doesn't rely on blurring like 2xSAI, fast.
+Factor 3x.
+.It Em dotmatrix
+Dot matrix effect.
+Factor 2x.
+.It Em hq2x
+Very nice high quality filter but slow.
+Factor 2x.
+.It Em hq3x
+Very nice high quality filter but slow.
+Factor 3x.
+.It Em normal
+No filtering, no scaling.
+Fastest.
+.It Em super2xsai
+Enhanced 2xsai filtering, factor 2x.
+.It Em supereagle
+Less blurry than 2xsai, but slower.
+Factor 2x.
+.It Em tv2x
+Interlace filter, tries to emulate a TV.
+Factor 2x.
+.El
+.It Fl h
+Display a brief help text and exit.
+.It Fl m Ar vol
+Set the music volume to
+.Ar vol
+range 0-255 (default: 192).
+.It Fl n
+Enable subtitles (use with games that have voice).
+.It Fl o Ar vol
+Set the master volume to
+.Ar vol
+range 0-255 (default: 192).
+.It Fl p Ar path
+Path to where the game is installed.
+.It Fl q Ar language
+Select game language:
+.Bl -tag -width Ds
+.It Em cz
+Czech
+.It Em en
+English (USA) (default)
+.It Em de
+German
+.It Em es
+Spanish
+.It Em fr
+French
+.It Em gb
+English (Great Britain) (default for BASS)
+.It Em hb
+Hebrew
+.It Em it
+Italian
+.It Em jp
+Japanese
+.It Em kr
+Korean
+.It Em pt
+Portuguese
+.It Em ru
+Russian
+.It Em se
+Swedish
+.It Em zh
+Chinese
+.El
+.It Fl r Ar vol
+Set the speech volume to
+.Ar vol
+range 0-255 (default: 192).
+.It Fl s Ar vol
+Set the sfx volume to
+.Ar vol
+range 0-255 (default: 192).
+.It Fl t
+Display list of configured targets and exit.
+.It Fl u
+Enable script dumping if a directory called
+.Ol dumps
+exists in the current directory.
+.It Fl v
+Display ScummVM version information and exit.
+.It Fl x Ar slot
+Save game
+.Ar slot
+number to load (default: autosave).
+.It Fl z
 Display list of supported games and exit.
-
-.SH "INGAME KEYS"
-While the game is running, the following keys can be used (in addition to any
-keys used by the game):
-.TP
-.B F5
-Access the in-game save/load/options dialog
-.TP
-.B Ctrl+0..9
-Load a previously saved game state.
-.TP
-.B Ctrl+Alt a
-Toggle aspect\-ratio correction on/off. Most of the games use a 320x200 pixel
-resolution, which may look squashed on modern monitors. Aspect\-ratio
-correction stretches the image to use 320x240 pixels instead, or a multiple
-thereof.
-.TP
-.B Alt+0..9
-Save a game state.
-.TP
-.B Alt+Enter
-Toggles full screen/windowed
-.TP
-.B Ctrl+Q
-Quit the game.
-.TP
-.B Ctrl+F
-Run in fast mode (process frames faster).
-.TP
-.B Ctrl+G
-Run in REALLY fast mode
-.TP
-.B Ctrl+D
-Starts the debugger.
-.TP
-.B Ctrl+S
-Shows memory consumption.
-.P
-
-.SH SUPPORTED GAMES
-.P
-The following games should be finishable with ScummVM, for a complete list
-of all supported targets use the \fB\-z\fP option.
-
-.TP
-.B maniac
-Maniac Mansion (enhanced version)
-.TP
-.B zak
-Zak McKracken and the Alien Mindbenders (enhanced version)
-.TP
-.B indy3ega
-Indiana Jones and the Last Crusade (16 colour)
-.TP
-.B indy3
-Indiana Jones and the Last Crusade (256 colour)
-.TP
-.B zaktowns
-Zak McKracken and the Alien Mindbenders (FM Towns)
-.TP
-.B loom
-Loom (16 colour)
-.TP
-.B loomcd
-Loom CD Talkie
-.TP
-.B monkeyega
-The Secret of Monkey Island (16 colour)
-.TP
-.B monkeyvga
-The Secret of Monkey Island (256 colour, disk version)
-.TP
-.B monkey/monkey1
-The Secret of Monkey Island (256 colour, cd version)
-.TP
-.B monkey2
-Monkey Island 2: LeChuck's revenge
-.TP
-.B atlantis
-Indiana Jones and the Fate of Atlantis
-.TP
-.B playfate
-Indiana Jones and the Fate of Atlantis (demo)
-.TP
-.B tentacle
-Day of the Tentacle
-.TP
-.B samnmax
-Sam & Max Hit the Road
-.TP
-.B ft
-Full Throttle
-.TP
-.B dig
-The Dig
-.TP
-.B comi
-The Curse of Monkey Island
-.P
-.TP
-.B simon1dos
-Simon the Sorcerer (DOS floppy)
-.TP
-.B simon1talkie
-Simon the Sorcerer Talkie (DOS/WIN)
-.TP
-.B simon2dos
-Simon the Sorcerer 2 (DOS floppy)
-.TP
-.B simon2talkie
-Simon the Sorcerer 2 Talkie (DOS/WIN/Amiga/Mac)
-.TP
-.B sky
-Beneath a Steel Sky
-.TP
-.B sword1
-Broken Sword I: Shadow of the Templars
-.TP
-.B sword2
-Broken Sword II: The Smoking Mirror
-
-.SH FILES
-.TP
-~/.scummvmrc
-ScummVM config file on Unix
-.TP
-~/Library/Preferences/ScummVM Preferences
-ScummVM config file on Mac OS X
-.TP
-<windows dir>\\scummvm.ini
-ScummVM config file on Windows
-.TP
-scummvm.ini in the current directory
-Others.
-
-.SH EXAMPLES
-.TP
-.B Running the builtin game launcher
-scummvm
-.TP
-.B Running Day of the Tentacle specifying the path
-scummvm -p /usr/local/share/games/tentacle/ tentacle
-.TP
-.B Running The Dig with advmame2x graphics filter with subtitles
-scummvm -g advmame2x -n dig
-.TP
-.B Running The Italian version of Maniac Mansion fullscreen
-scummvm -q it -f maniac
-
-.SH AUTHOR
-This manual page was written by David Given <dg@cowlark.com>,
-for the Debian GNU/Linux system (but may be used by others).
-Heavily updated by Jonathan Gray <khalek@scummvm.org>.
-.P
-\fBScummVM\fP was written by Ludvig Strigeus <strigeus@users.sourceforge.net>
-and the ScummVM team. See
-.B http://www.scummvm.org
+.\" FIXME better way to do long options?
+.It Fl -alt-intro
+Use alternative intro for CD versions of Beneath a Steel Sky and
+Flight of the Amazon Queen.
+.It Fl -aspect-ratio
+Enable aspect ratio correction.
+.It Fl -cdrom= Ns Ar num
+CD drive to play CD audio from (default: 0 = first drive).
+.It Fl -copy-protection
+Enable copy protection in SCUMM games, when ScummVM disables it
+by default.
+.It Fl -demo-mode
+Start demo mode of Maniac Mansion.
+.It Fl -joystick= Ns Ar num
+Enable input with joystick (default: 0 = first joystick).
+.It Fl -multi-midi
+Enable combination Adlib and native MIDI.
+.It Fl -native-mt32
+True Roland MT-32 MIDI (disable GM emulation).
+.It Fl -output-rate= Ns Ar rate
+Set output sample rate in Hz to
+.Ar rate
+(e.g. 22050).
+.It Fl -platform= Ns Ar plat
+Specify original platform of game.
+.It Fl -savepath= Ns Ar path
+Look for savegames in
+.Ar path .
+.It Fl -talkspeed= Ns Ar speed
+Set talk speed to
+.Ar speed
+for SCUMM games (default: 60).
+.It Fl -tempo= Ns Ar tempo
+Set music tempo to
+.Ar tempo
+(in percent, 50-200) for SCUMM games (default: 100).
+.El
+.Sh INGAME KEYS
+.Bl -tag -width Ds
+.It Cmd-q
+Quit (Mac OS X)
+.It Ctrl-q
+Quit (Most platforms) 
+.It Ctrl-f
+Toggle fast mode
+.It Ctrl-m
+Toggle mouse capture
+.It Ctrl-Alt 1-8
+Switch between graphics filters
+.It Ctrl-Alt +
+Increase scale factor
+.It Ctrl-Alt -
+Decrease scale factor
+.It Ctrl-Alt a
+Toggle aspect-ratio correction
+.It Alt-Enter
+Toggle full screen/windowed
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width SCUMMVM
+.It Ev SCUMMVM_SAVEPATH
+A writeable directory to read and write save games to and from.
+.It Ev SCUMMVM_MIDI
+The sequencer device to use with the
+.Ql seq
+MIDI driver.
+.It Ev SCUMMVM_MIDIPORT
+The number of the sequencer to use when using the
+.Ql seq
+MIDI driver.
+.It Ev SCUMMVM_PORT
+The ALSA port to open for output when using the
+.Ql alsa
+MIDI driver.
+.El
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa $HOME/.scummvmrc
+Configuration file on UNIX.
+.It Pa "$HOME/Library/Preferences/ScummVM Preferences"
+Configuration file on Mac OS X.
+.El
+.Sh EXAMPLES
+Running the builtin game launcher:
+.Pp
+.Dl $ scummvm
+.Pp
+Running Day of the Tentacle specifying the path:
+.Pp
+.Dl $ scummvm -p /usr/local/share/games/tentacle tentacle
+.Pp
+Running The Dig with advmame2x filter with subtitles:
+.Pp
+.Dl $ scummvm -g advmame2x -n dig
+.Pp
+Running the Italian version of Maniac Mansion fullscreen:
+.Pp
+.Dl $ scummvm -q it -f maniac
+.Sh SEE ALSO
+More information can be found in the README and on the website
+.Pa http://www.scummvm.org .
+.Sh AUTHORS
+This manual page written by Jonathan Gray <khalek at scummvm.org>.
+ScummVM was written by the ScummVM team.
+See 
+.Pa http://www.scummvm.org
 for more information.
