@@ -182,6 +182,12 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	initBGBuffers(_roomHeight);
 
+	if (_features & GF_OLD_BUNDLE) {
+		// Generate strip table
+		_roomStrips = gdi.generateStripTable(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
+		                                     _roomWidth, _roomHeight, _roomStrips);
+	}
+
 	if ((_features & GF_AUDIOTRACKS) && VAR(VAR_MUSIC_TIMER) > 0)
 		_sound->startCDTimer();
 
