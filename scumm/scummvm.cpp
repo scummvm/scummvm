@@ -1143,15 +1143,9 @@ void Scumm::destroy()
 	free(_classData);
 }
 
-const int new_dir_table[4] = {
-	270,
-	90,
-	180,
-	0,
-};
-
-const int16 many_direction_tab[16] = {71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
-
+//
+// Convert an old style direction to a new style one (angle),
+//
 int newDirToOldDir(int dir)
 {
 	if (dir >= 71 && dir <= 109)
@@ -1163,21 +1157,24 @@ int newDirToOldDir(int dir)
 	return 3;
 }
 
+//
+// Convert an new style (angle) direction to an old style one.
+//
 int oldDirToNewDir(int dir)
 {
+	const int new_dir_table[4] = { 270, 90, 180, 0 };
 	return new_dir_table[dir];
 }
 
-
-int numSimpleDirDirections(int dirType)
-{
-	return dirType ? 8 : 4;
-}
-
-
-/* Convert an angle to a simple direction */
+//
+// Convert an angle to a simple direction.
+//
 int toSimpleDir(int dirType, int dir)
 {
+	const int16 many_direction_tab[16] = {
+		71, 109, 251, 289,  -1,  -1,  -1,  -1,
+		22,  72, 107, 157, 202, 252, 287, 337
+	};
 	int num = dirType ? 8 : 4;
 	const int16 *dirtab = &many_direction_tab[dirType * 8];
 	for (int i = 1; i < num; i++, dirtab++) {
@@ -1188,16 +1185,22 @@ int toSimpleDir(int dirType, int dir)
 
 }
 
-/* Convert a simple direction to an angle */
+//
+// Convert a simple direction to an angle
+//
 int fromSimpleDir(int dirType, int dir)
 {
-	if (!dirType)
-		return dir * 90;
-	else
+	if (dirType)
 		return dir * 45;
+	else
+		return dir * 90;
 }
 
 
+//
+// Normalize the given angle - that means, ensure it is positive, and
+// change it to the closest multiple of 45 degree by abusing toSimpleDir.
+//
 int normalizeAngle(int angle)
 {
 	int temp;

@@ -1384,7 +1384,6 @@ int oldDirToNewDir(int dir);
 int normalizeAngle(int angle);
 int fromSimpleDir(int dirtype, int dir);
 int toSimpleDir(int dirtype, int dir);
-int numSimpleDirDirections(int dirType);
 
 
 #endif

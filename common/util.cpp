@@ -21,9 +21,15 @@
 #include "stdafx.h"
 #include "util.h"
 
+//
 // 8-bit alpha blending routines
-int BlendCache[256][256];
+//
+static int BlendCache[256][256];
 
+//
+// Find the entry in the given palette which matches the color defined by
+// the tripel (r,b,g) most closely.
+//
 int RGBMatch(byte *palette, int r, int g, int b)
 {
 	int i, bestidx = 0, besterr = 0xFFFFFF;
@@ -45,6 +51,9 @@ int RGBMatch(byte *palette, int r, int g, int b)
 	return bestidx;
 }
 
+//
+// Blend two 8 bit colors into a third, all colors being defined by palette indices.
+//
 int Blend(int src, int dst, byte *palette)
 {
 	int r, g, b;
@@ -70,6 +79,9 @@ int Blend(int src, int dst, byte *palette)
 	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
 }
 
+//
+// Reset the blending cache
+//
 void ClearBlendCache(byte *palette, int weight)
 {
 	for (int i = 0; i < 256; i++)
@@ -80,9 +92,9 @@ void ClearBlendCache(byte *palette, int weight)
 }
 
 
-/*
- * Print hexdump of the data passed in, 8 bytes a row
- */
+//
+// Print hexdump of the data passed in, 8 bytes a row
+//
 void hexdump(const byte * data, int len)
 {
 	int i;
@@ -121,7 +133,12 @@ void hexdump(const byte * data, int len)
 	printf("|\n");
 }
 
-// Resource string length, supports special chars starting with FF
+//
+// Given a pointer to a Scumm resource, this function returns the length
+// of the (string) data in that resource. To do so it understands certain
+// special chars starting with FF. The reason for this function is that
+// sometimes resource data will contain 0 bytes, thus we can't just use strlen.
+//
 int resStrLen(const char *src)
 {
 	int num = 0;

@@ -258,7 +258,7 @@ int Actor::updateActorDirection(bool is_walking)
 	dir = remapDirection(newDirection, is_walking);
 	shouldInterpolate = (dir & 1024);
 	to = toSimpleDir(dirType, dir & 1023);
-	num = numSimpleDirDirections(dirType);
+	num = dirType ? 8 : 4;
 
 	if (shouldInterpolate) {
 		// Turn left or right, depending on which is shorter.
