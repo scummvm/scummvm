@@ -326,7 +326,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
 	_musicFile.read(comp_input, _compMusicTable[number].size);
 
-	// FIXME - if _lastSon == index then i will be 0 - is the right / the desired behaviour?!?
+	// FIXME - if _lastSong == index then i will be 0 - is the right / the desired behaviour?!?
 	final_size =
 		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, i, channels);
 
