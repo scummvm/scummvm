@@ -109,7 +109,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /D "USE_FLAC" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_FLAC" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -159,15 +159,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Release"
 
@@ -185,15 +185,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Debug"
 
@@ -211,15 +211,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE MIPS) Release"
 
@@ -237,15 +237,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE SH3) Debug"
 
@@ -290,8 +290,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD BASE CPP /nologo /W3 /Oxs /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /Oxs /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -652,7 +652,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -661,6 +660,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -679,7 +679,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -690,6 +689,7 @@ NODEP_CPP_SAVED=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -705,7 +705,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -714,6 +713,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -731,7 +731,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -740,6 +739,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -755,7 +755,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -764,6 +763,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -779,7 +779,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -788,6 +787,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -803,7 +803,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -812,6 +811,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -827,7 +827,6 @@ DEP_CPP_SAVED=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\sky.h"\
@@ -836,6 +835,7 @@ DEP_CPP_SAVED=\
 	
 NODEP_CPP_SAVED=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -887,7 +887,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -895,6 +894,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -913,7 +913,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -923,6 +922,7 @@ NODEP_CPP_ADLIB=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -939,7 +939,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -947,6 +946,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -964,7 +964,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -972,6 +971,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -988,7 +988,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -996,6 +995,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1012,7 +1012,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -1020,6 +1019,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1036,7 +1036,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -1044,6 +1043,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1060,7 +1060,6 @@ DEP_CPP_ADLIB=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
@@ -1068,6 +1067,7 @@ DEP_CPP_ADLIB=\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1115,7 +1115,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1125,6 +1124,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1143,7 +1143,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1155,6 +1154,7 @@ NODEP_CPP_ADLIBM=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1170,7 +1170,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1180,6 +1179,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1197,7 +1197,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1207,6 +1206,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1222,7 +1222,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1232,6 +1231,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1247,7 +1247,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1257,6 +1256,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1272,7 +1272,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1282,6 +1281,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1297,7 +1297,6 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\adlibchannel.h"\
 	"..\..\..\sky\music\adlibmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1307,6 +1306,7 @@ DEP_CPP_ADLIBM=\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1356,7 +1356,6 @@ DEP_CPP_GMCHA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
@@ -1364,6 +1363,7 @@ DEP_CPP_GMCHA=\
 NODEP_CPP_GMCHA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1380,7 +1380,6 @@ DEP_CPP_GMCHA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
@@ -1390,6 +1389,7 @@ NODEP_CPP_GMCHA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1416,7 +1416,6 @@ DEP_CPP_GMCHA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
@@ -1424,6 +1423,7 @@ DEP_CPP_GMCHA=\
 NODEP_CPP_GMCHA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1518,7 +1518,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1528,6 +1527,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1547,7 +1547,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1559,6 +1558,7 @@ NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1576,7 +1576,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1586,6 +1585,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1604,7 +1604,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1614,6 +1613,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1631,7 +1631,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1641,6 +1640,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1658,7 +1658,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1668,6 +1667,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1685,7 +1685,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1695,6 +1694,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1712,7 +1712,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\gmmusic.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1722,6 +1721,7 @@ DEP_CPP_GMMUS=\
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1767,7 +1767,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1776,6 +1775,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1792,7 +1792,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1803,6 +1802,7 @@ NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1817,7 +1817,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1826,6 +1825,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1841,7 +1841,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1850,6 +1849,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1864,7 +1864,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1873,6 +1872,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1887,7 +1887,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1896,6 +1895,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1910,7 +1910,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1919,6 +1918,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1933,7 +1933,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -1942,6 +1941,7 @@ DEP_CPP_MT32M=\
 NODEP_CPP_MT32M=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1986,12 +1986,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2009,7 +2009,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
@@ -2017,6 +2016,7 @@ NODEP_CPP_MUSIC=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2032,12 +2032,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2054,12 +2054,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2075,12 +2075,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2096,12 +2096,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2117,12 +2117,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2138,12 +2138,12 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2198,7 +2198,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2208,6 +2207,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2226,7 +2226,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2238,6 +2237,7 @@ NODEP_CPP_AUTOR=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2254,7 +2254,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2264,6 +2263,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2281,7 +2281,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2291,6 +2290,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2307,7 +2307,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2317,6 +2316,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2333,7 +2333,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2343,6 +2342,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2359,7 +2359,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2369,6 +2368,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2385,7 +2385,6 @@ DEP_CPP_AUTOR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\grid.h"\
@@ -2395,6 +2394,7 @@ DEP_CPP_AUTOR=\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2468,7 +2468,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2552,6 +2551,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2570,7 +2570,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2656,6 +2655,7 @@ NODEP_CPP_COMPA=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2672,7 +2672,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2756,6 +2755,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2773,7 +2773,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2857,6 +2856,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2873,7 +2873,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -2957,6 +2956,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2973,7 +2973,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -3057,6 +3056,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3073,7 +3073,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -3157,6 +3156,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3173,7 +3173,6 @@ DEP_CPP_COMPA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\compacts\0compact.h"\
 	"..\..\..\sky\compacts\101comp.h"\
@@ -3257,6 +3256,7 @@ DEP_CPP_COMPA=\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3274,9 +3274,11 @@ SOURCE=..\..\..\sky\control.cpp
 !IF  "$(CFG)" == "sky - Win32 (WCE emulator) Release"
 
 NODEP_CPP_CONTR=\
+	"..\..\..\sky\common\config-manager.h"\
 	"..\..\..\sky\common\file.h"\
 	"..\..\..\sky\common\system.h"\
 	"..\..\..\sky\common\util.h"\
+	"..\..\..\sky\gui\message.h"\
 	"..\..\..\sky\sky\compact.h"\
 	"..\..\..\sky\sky\control.h"\
 	"..\..\..\sky\sky\disk.h"\
@@ -3294,9 +3296,11 @@ NODEP_CPP_CONTR=\
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_CONTR=\
+	"..\..\..\sky\common\config-manager.h"\
 	"..\..\..\sky\common\file.h"\
 	"..\..\..\sky\common\system.h"\
 	"..\..\..\sky\common\util.h"\
+	"..\..\..\sky\gui\message.h"\
 	"..\..\..\sky\sky\compact.h"\
 	"..\..\..\sky\sky\control.h"\
 	"..\..\..\sky\sky\disk.h"\
@@ -3327,7 +3331,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3344,6 +3347,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3363,7 +3367,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3382,6 +3385,7 @@ NODEP_CPP_CONTR=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3399,7 +3403,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3416,6 +3419,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3434,7 +3438,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3451,6 +3454,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3468,7 +3472,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3485,6 +3488,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3502,7 +3506,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3519,6 +3522,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3536,7 +3540,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3553,6 +3556,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3570,7 +3574,6 @@ DEP_CPP_CONTR=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\disk.h"\
@@ -3587,6 +3590,7 @@ DEP_CPP_CONTR=\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3604,16 +3608,30 @@ SOURCE=..\..\..\sky\debug.cpp
 !IF  "$(CFG)" == "sky - Win32 (WCE emulator) Release"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\sky\common\debugger.cpp"\
 	"..\..\..\sky\common\util.h"\
 	"..\..\..\sky\sky\debug.h"\
+	"..\..\..\sky\sky\grid.h"\
+	"..\..\..\sky\sky\logic.h"\
+	"..\..\..\sky\sky\mouse.h"\
+	"..\..\..\sky\sky\screen.h"\
+	"..\..\..\sky\sky\sky.h"\
+	"..\..\..\sky\sky\struc.h"\
 	"..\..\..\sky\stdafx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_DEBUG=\
+	"..\..\..\sky\common\debugger.cpp"\
 	"..\..\..\sky\common\util.h"\
 	"..\..\..\sky\sky\debug.h"\
+	"..\..\..\sky\sky\grid.h"\
+	"..\..\..\sky\sky\logic.h"\
+	"..\..\..\sky\sky\mouse.h"\
+	"..\..\..\sky\sky\screen.h"\
+	"..\..\..\sky\sky\sky.h"\
+	"..\..\..\sky\sky\struc.h"\
 	"..\..\..\sky\stdafx.h"\
 	
 
@@ -3625,11 +3643,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3641,13 +3659,13 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3661,11 +3679,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3677,11 +3695,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3695,11 +3713,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3713,11 +3731,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3731,11 +3749,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3749,11 +3767,11 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\debug.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3810,7 +3828,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3818,6 +3835,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3837,7 +3855,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3847,6 +3864,7 @@ NODEP_CPP_DISK_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3864,7 +3882,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3872,6 +3889,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3890,7 +3908,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3898,6 +3915,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3915,7 +3933,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3923,6 +3940,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3940,7 +3958,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3948,6 +3965,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3965,7 +3983,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3973,6 +3990,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3990,7 +4008,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
@@ -3998,6 +4015,7 @@ DEP_CPP_DISK_=\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4045,7 +4063,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4056,6 +4073,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4074,7 +4092,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4087,6 +4104,7 @@ NODEP_CPP_GRID_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4103,7 +4121,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4114,6 +4131,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4131,7 +4149,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4142,6 +4159,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4158,7 +4176,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4169,6 +4186,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4185,7 +4203,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4196,6 +4213,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4212,7 +4230,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4223,6 +4240,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4239,7 +4257,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\grid.h"\
@@ -4250,6 +4267,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4291,11 +4309,11 @@ DEP_CPP_HUFFT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_HUFFT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4306,13 +4324,13 @@ DEP_CPP_HUFFT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_HUFFT=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4333,11 +4351,11 @@ DEP_CPP_HUFFT=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\text.h"\
 	
 NODEP_CPP_HUFFT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4433,7 +4451,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4447,6 +4464,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4465,7 +4483,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4481,6 +4498,7 @@ NODEP_CPP_INTRO=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4497,7 +4515,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4511,6 +4528,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4528,7 +4546,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4542,6 +4559,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4558,7 +4576,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4572,6 +4589,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4588,7 +4606,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4602,6 +4619,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4618,7 +4636,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4632,6 +4649,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4648,7 +4666,6 @@ DEP_CPP_INTRO=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\intro.h"\
 	"..\..\..\sky\music\musicbase.h"\
@@ -4662,6 +4679,7 @@ DEP_CPP_INTRO=\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4738,7 +4756,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4759,6 +4776,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4778,7 +4796,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4801,6 +4818,7 @@ NODEP_CPP_LOGIC=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4819,7 +4837,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4840,6 +4857,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4858,7 +4876,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4879,6 +4896,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4897,7 +4915,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4918,6 +4935,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4936,7 +4954,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4957,6 +4974,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4975,7 +4993,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -4996,6 +5013,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5014,7 +5032,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\autoroute.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
@@ -5035,6 +5052,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5090,7 +5108,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5100,6 +5117,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5118,7 +5136,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5130,6 +5147,7 @@ NODEP_CPP_MOUSE=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5146,7 +5164,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5156,6 +5173,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5173,7 +5191,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5183,6 +5200,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5199,7 +5217,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5209,6 +5226,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5225,7 +5243,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5235,6 +5252,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5251,7 +5269,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5261,6 +5278,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5277,7 +5295,6 @@ DEP_CPP_MOUSE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\mouse.h"\
@@ -5287,6 +5304,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5324,11 +5342,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5339,13 +5357,13 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5356,11 +5374,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5371,11 +5389,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5386,11 +5404,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5401,11 +5419,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5416,11 +5434,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5431,11 +5449,11 @@ DEP_CPP_RNC_D=\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\rnc_deco.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5491,7 +5509,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5501,6 +5518,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5519,7 +5537,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5531,6 +5548,7 @@ NODEP_CPP_SCREE=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5547,7 +5565,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5557,6 +5574,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5574,7 +5592,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5584,6 +5601,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5600,7 +5618,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5610,6 +5627,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5626,7 +5644,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5636,6 +5653,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5652,7 +5670,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5662,6 +5679,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5678,7 +5696,6 @@ DEP_CPP_SCREE=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\screen.h"\
@@ -5688,6 +5705,7 @@ DEP_CPP_SCREE=\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5715,6 +5733,7 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\sky\sky\control.h"\
 	"..\..\..\sky\sky\debug.h"\
 	"..\..\..\sky\sky\disk.h"\
+	"..\..\..\sky\sky\grid.h"\
 	"..\..\..\sky\sky\intro.h"\
 	"..\..\..\sky\sky\logic.h"\
 	"..\..\..\sky\sky\mouse.h"\
@@ -5745,6 +5764,7 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\sky\sky\control.h"\
 	"..\..\..\sky\sky\debug.h"\
 	"..\..\..\sky\sky\disk.h"\
+	"..\..\..\sky\sky\grid.h"\
 	"..\..\..\sky\sky\intro.h"\
 	"..\..\..\sky\sky\logic.h"\
 	"..\..\..\sky\sky\mouse.h"\
@@ -5785,7 +5805,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -5810,6 +5829,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5836,7 +5856,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -5863,6 +5882,7 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5888,7 +5908,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -5913,6 +5932,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5938,7 +5958,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -5963,6 +5982,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5988,7 +6008,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -6013,6 +6032,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6038,7 +6058,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -6063,6 +6082,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6088,7 +6108,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -6113,6 +6132,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6138,7 +6158,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\compact.h"\
 	"..\..\..\sky\control.h"\
 	"..\..\..\sky\debug.h"\
@@ -6163,6 +6182,7 @@ DEP_CPP_SKY_C=\
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6220,7 +6240,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6231,6 +6250,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6249,7 +6269,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6262,6 +6281,7 @@ NODEP_CPP_SOUND=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6278,7 +6298,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6289,6 +6308,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6306,7 +6326,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6317,6 +6336,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6333,7 +6353,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6344,6 +6363,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6360,7 +6380,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6371,6 +6390,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6387,7 +6407,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6398,6 +6417,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6414,7 +6434,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6425,6 +6444,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6484,7 +6504,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6494,6 +6513,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6512,7 +6532,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6524,6 +6543,7 @@ NODEP_CPP_TEXT_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6540,7 +6560,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6550,6 +6569,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6567,7 +6587,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6577,6 +6596,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6593,7 +6613,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6603,6 +6622,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6619,7 +6639,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6629,6 +6648,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6645,7 +6665,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6655,6 +6674,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6671,7 +6691,6 @@ DEP_CPP_TEXT_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\logic.h"\
 	"..\..\..\sky\sky.h"\
@@ -6681,6 +6700,7 @@ DEP_CPP_TEXT_=\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 

@@ -109,7 +109,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /D "USE_FLAC" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DISABLE_SWORD1" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_FLAC" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -159,15 +159,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE ARM) Release"
 
@@ -185,15 +185,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE MIPS) Debug"
 
@@ -211,15 +211,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Debug"
 
@@ -263,15 +263,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE SH3) Release"
 
@@ -290,8 +290,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
+# ADD BASE CPP /nologo /W3 /Oxs /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /Oxs /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -348,7 +348,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -356,6 +355,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -371,7 +371,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -381,6 +380,7 @@ NODEP_CPP_BANKM=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -397,7 +397,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -405,6 +404,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -419,7 +419,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -427,6 +426,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -443,7 +443,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -451,6 +450,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -467,7 +467,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -475,6 +474,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -491,7 +491,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -499,6 +498,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -515,7 +515,6 @@ DEP_CPP_BANKM=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
@@ -523,6 +522,7 @@ DEP_CPP_BANKM=\
 	
 NODEP_CPP_BANKM=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -547,9 +547,9 @@ NODEP_CPP_COMMA=\
 	"..\..\..\queen\queen\input.h"\
 	"..\..\..\queen\queen\logic.h"\
 	"..\..\..\queen\queen\queen.h"\
+	"..\..\..\queen\queen\resource.h"\
 	"..\..\..\queen\queen\sound.h"\
 	"..\..\..\queen\queen\state.h"\
-	"..\..\..\queen\queen\talk.h"\
 	"..\..\..\queen\queen\walk.h"\
 	"..\..\..\queen\stdafx.h"\
 	
@@ -564,9 +564,9 @@ NODEP_CPP_COMMA=\
 	"..\..\..\queen\queen\input.h"\
 	"..\..\..\queen\queen\logic.h"\
 	"..\..\..\queen\queen\queen.h"\
+	"..\..\..\queen\queen\resource.h"\
 	"..\..\..\queen\queen\sound.h"\
 	"..\..\..\queen\queen\state.h"\
-	"..\..\..\queen\queen\talk.h"\
 	"..\..\..\queen\queen\walk.h"\
 	"..\..\..\queen\stdafx.h"\
 	
@@ -587,7 +587,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -606,6 +605,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -625,7 +625,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -646,6 +645,7 @@ NODEP_CPP_COMMA=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -663,7 +663,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -682,6 +681,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -700,7 +700,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -719,6 +718,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -736,7 +736,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -755,6 +754,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -772,7 +772,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -791,6 +790,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -808,7 +808,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -827,6 +826,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -844,7 +844,6 @@ DEP_CPP_COMMA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -863,6 +862,7 @@ DEP_CPP_COMMA=\
 	
 NODEP_CPP_COMMA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -913,7 +913,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -922,6 +921,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -941,7 +941,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -952,6 +951,7 @@ NODEP_CPP_CREDI=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -969,7 +969,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -978,6 +977,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -996,7 +996,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -1005,6 +1004,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1022,7 +1022,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -1031,6 +1030,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1048,7 +1048,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -1057,6 +1056,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1074,7 +1074,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -1083,6 +1082,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1100,7 +1100,6 @@ DEP_CPP_CREDI=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\credits.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -1109,6 +1108,7 @@ DEP_CPP_CREDI=\
 	
 NODEP_CPP_CREDI=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1175,7 +1175,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1194,6 +1193,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1213,7 +1213,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1234,6 +1233,7 @@ NODEP_CPP_CUTAW=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1251,7 +1251,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1270,6 +1269,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1288,7 +1288,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1307,6 +1306,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1324,7 +1324,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1343,6 +1342,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1360,7 +1360,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1379,6 +1378,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1396,7 +1396,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1415,6 +1414,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1432,7 +1432,6 @@ DEP_CPP_CUTAW=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\cutaway.h"\
 	"..\..\..\queen\defs.h"\
@@ -1451,6 +1450,7 @@ DEP_CPP_CUTAW=\
 	
 NODEP_CPP_CUTAW=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1517,7 +1517,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
 	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\console.h"\
@@ -1537,6 +1536,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1560,7 +1560,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
 	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\console.h"\
@@ -1582,6 +1581,7 @@ NODEP_CPP_DEBUG=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1602,7 +1602,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1620,6 +1619,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1642,7 +1642,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1660,6 +1659,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1681,7 +1681,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1699,6 +1698,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1720,7 +1720,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1738,6 +1737,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1759,7 +1759,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1777,6 +1776,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1798,7 +1798,6 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\gui\console.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
@@ -1816,6 +1815,7 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\font.h"\
 	".\DL_byteorder.h"\
 	
@@ -1838,6 +1838,9 @@ SOURCE=..\..\..\queen\display.cpp
 !IF  "$(CFG)" == "queen - Win32 (WCE emulator) Release"
 
 NODEP_CPP_DISPL=\
+	"..\..\..\queen\arm\macros.h"\
+	"..\..\..\queen\arm\native.h"\
+	"..\..\..\queen\init_arm.h"\
 	"..\..\..\queen\queen\display.h"\
 	"..\..\..\queen\queen\input.h"\
 	"..\..\..\queen\queen\logic.h"\
@@ -1850,6 +1853,9 @@ NODEP_CPP_DISPL=\
 !ELSEIF  "$(CFG)" == "queen - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_DISPL=\
+	"..\..\..\queen\arm\macros.h"\
+	"..\..\..\queen\arm\native.h"\
+	"..\..\..\queen\init_arm.h"\
 	"..\..\..\queen\queen\display.h"\
 	"..\..\..\queen\queen\input.h"\
 	"..\..\..\queen\queen\logic.h"\
@@ -1875,7 +1881,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1886,6 +1891,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -1906,7 +1912,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1919,6 +1924,7 @@ NODEP_CPP_DISPL=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -1937,7 +1943,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1948,6 +1953,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1966,7 +1972,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -1977,6 +1982,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -1994,7 +2000,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2005,6 +2010,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2022,7 +2028,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2033,6 +2038,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2050,7 +2056,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2061,6 +2066,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2078,7 +2084,6 @@ DEP_CPP_DISPL=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\input.h"\
@@ -2089,6 +2094,7 @@ DEP_CPP_DISPL=\
 	
 NODEP_CPP_DISPL=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2149,7 +2155,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2164,6 +2169,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -2184,7 +2190,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2201,6 +2206,7 @@ NODEP_CPP_GRAPH=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -2219,7 +2225,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2234,6 +2239,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2252,7 +2258,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2267,6 +2272,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2284,7 +2290,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2299,6 +2304,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2316,7 +2322,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2331,6 +2336,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2348,7 +2354,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2363,6 +2368,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2380,7 +2386,6 @@ DEP_CPP_GRAPH=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2395,6 +2400,7 @@ DEP_CPP_GRAPH=\
 	
 NODEP_CPP_GRAPH=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2445,7 +2451,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2456,6 +2461,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2475,7 +2481,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2488,6 +2493,7 @@ NODEP_CPP_GRID_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2505,7 +2511,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2516,6 +2521,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2534,7 +2540,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2545,6 +2550,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2562,7 +2568,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2573,6 +2578,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2590,7 +2596,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2601,6 +2606,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2618,7 +2624,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2629,6 +2634,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2646,7 +2652,6 @@ DEP_CPP_GRID_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
 	"..\..\..\queen\grid.h"\
@@ -2657,6 +2662,7 @@ DEP_CPP_GRID_=\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2699,12 +2705,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2720,7 +2726,6 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
@@ -2728,6 +2733,7 @@ NODEP_CPP_INPUT=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2741,12 +2747,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2761,12 +2767,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2780,12 +2786,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2799,12 +2805,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2818,12 +2824,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2837,12 +2843,12 @@ DEP_CPP_INPUT=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	
 NODEP_CPP_INPUT=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2906,7 +2912,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2925,6 +2930,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2945,7 +2951,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -2966,6 +2971,7 @@ NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -2984,7 +2990,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3003,6 +3008,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3022,7 +3028,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3041,6 +3046,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3059,7 +3065,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3078,6 +3083,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3096,7 +3102,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3115,6 +3120,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3133,7 +3139,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3152,6 +3157,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3170,7 +3176,6 @@ DEP_CPP_JOURN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -3189,6 +3194,7 @@ DEP_CPP_JOURN=\
 NODEP_CPP_JOURN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3273,7 +3279,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3297,6 +3302,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3320,7 +3326,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3346,6 +3351,7 @@ NODEP_CPP_LOGIC=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3367,7 +3373,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3391,6 +3396,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3413,7 +3419,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3437,6 +3442,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3458,7 +3464,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3482,6 +3487,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3503,7 +3509,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3527,6 +3532,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3548,7 +3554,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3572,6 +3577,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3593,7 +3599,6 @@ DEP_CPP_LOGIC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\credits.h"\
@@ -3617,6 +3622,7 @@ DEP_CPP_LOGIC=\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3670,7 +3676,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3683,6 +3688,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3703,7 +3709,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3718,6 +3723,7 @@ NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3736,7 +3742,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3749,6 +3754,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3768,7 +3774,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3781,6 +3786,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3799,7 +3805,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3812,6 +3817,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3830,7 +3836,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3843,6 +3848,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3861,7 +3867,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3874,6 +3879,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3892,7 +3898,6 @@ DEP_CPP_MUSIC=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\music.h"\
 	"..\..\..\queen\queen.h"\
@@ -3905,6 +3910,7 @@ DEP_CPP_MUSIC=\
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -3947,13 +3953,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -3970,7 +3976,6 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
@@ -3979,6 +3984,7 @@ NODEP_CPP_MUSICD=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -3993,13 +3999,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4014,13 +4020,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4034,13 +4040,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4054,13 +4060,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4074,13 +4080,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4094,13 +4100,13 @@ DEP_CPP_MUSICD=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\sound.h"\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_MUSICD=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4191,7 +4197,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4215,6 +4220,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4242,7 +4248,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4268,6 +4273,7 @@ NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4294,7 +4300,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4318,6 +4323,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4344,7 +4350,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4368,6 +4373,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4394,7 +4400,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4418,6 +4423,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4444,7 +4450,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4468,6 +4473,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4494,7 +4500,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4518,6 +4523,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4544,7 +4550,6 @@ DEP_CPP_QUEEN=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\command.h"\
 	"..\..\..\queen\cutaway.h"\
@@ -4568,6 +4573,7 @@ DEP_CPP_QUEEN=\
 NODEP_CPP_QUEEN=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4610,12 +4616,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -4632,7 +4638,6 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
@@ -4640,6 +4645,7 @@ NODEP_CPP_RESOU=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -4657,12 +4663,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4677,12 +4683,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4699,12 +4705,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4721,12 +4727,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4743,12 +4749,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4765,12 +4771,12 @@ DEP_CPP_RESOU=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4809,12 +4815,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4830,7 +4836,6 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
@@ -4838,6 +4843,7 @@ NODEP_CPP_RESTA=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4854,12 +4860,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4874,12 +4880,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4896,12 +4902,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4918,12 +4924,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4940,12 +4946,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4962,12 +4968,12 @@ DEP_CPP_RESTA=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\resource.h"\
 	
 NODEP_CPP_RESTA=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -4986,6 +4992,9 @@ NODEP_CPP_SOUND=\
 	"..\..\..\queen\queen\queen.h"\
 	"..\..\..\queen\queen\resource.h"\
 	"..\..\..\queen\queen\sound.h"\
+	"..\..\..\queen\sound\flac.h"\
+	"..\..\..\queen\sound\mp3.h"\
+	"..\..\..\queen\sound\vorbis.h"\
 	"..\..\..\queen\stdafx.h"\
 	
 
@@ -4997,6 +5006,9 @@ NODEP_CPP_SOUND=\
 	"..\..\..\queen\queen\queen.h"\
 	"..\..\..\queen\queen\resource.h"\
 	"..\..\..\queen\queen\sound.h"\
+	"..\..\..\queen\sound\flac.h"\
+	"..\..\..\queen\sound\mp3.h"\
+	"..\..\..\queen\sound\vorbis.h"\
 	"..\..\..\queen\stdafx.h"\
 	
 
@@ -5017,7 +5029,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5030,6 +5041,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5050,7 +5062,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5065,6 +5076,7 @@ NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5083,7 +5095,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5096,6 +5107,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5115,7 +5127,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5128,6 +5139,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5146,7 +5158,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5159,6 +5170,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5177,7 +5189,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5190,6 +5201,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5208,7 +5220,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5221,6 +5232,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5239,7 +5251,6 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\input.h"\
 	"..\..\..\queen\music.h"\
@@ -5252,6 +5263,7 @@ DEP_CPP_SOUND=\
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5288,12 +5300,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5305,7 +5317,6 @@ DEP_CPP_STATE=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
@@ -5313,6 +5324,7 @@ NODEP_CPP_STATE=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5326,12 +5338,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5343,12 +5355,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5362,12 +5374,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5381,12 +5393,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5400,12 +5412,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5419,12 +5431,12 @@ DEP_CPP_STATE=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\state.h"\
 	
 NODEP_CPP_STATE=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5499,7 +5511,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5518,6 +5529,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -5538,7 +5550,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5559,6 +5570,7 @@ NODEP_CPP_TALK_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	"..\..\..\queen\scumm_globals.h"\
 	".\DL_byteorder.h"\
 	
@@ -5577,7 +5589,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5596,6 +5607,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5614,7 +5626,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5633,6 +5644,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5650,7 +5662,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5669,6 +5680,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5686,7 +5698,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5705,6 +5716,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5722,7 +5734,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5741,6 +5752,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5758,7 +5770,6 @@ DEP_CPP_TALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\display.h"\
@@ -5777,6 +5788,7 @@ DEP_CPP_TALK_=\
 	
 NODEP_CPP_TALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5833,7 +5845,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5847,6 +5858,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5866,7 +5878,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5882,6 +5893,7 @@ NODEP_CPP_WALK_=\
 	"..\..\..\common\compile.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5899,7 +5911,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5913,6 +5924,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5931,7 +5943,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5945,6 +5956,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5962,7 +5974,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -5976,6 +5987,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -5993,7 +6005,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -6007,6 +6018,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6024,7 +6036,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -6038,6 +6049,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
@@ -6055,7 +6067,6 @@ DEP_CPP_WALK_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\queen\bankman.h"\
 	"..\..\..\queen\defs.h"\
 	"..\..\..\queen\graphics.h"\
@@ -6069,6 +6080,7 @@ DEP_CPP_WALK_=\
 	
 NODEP_CPP_WALK_=\
 	"..\..\..\common\extend.h"\
+	"..\..\..\config.h"\
 	".\DL_byteorder.h"\
 	
 
