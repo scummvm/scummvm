@@ -208,13 +208,9 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = -v1.x;
 		if (skip > 0) {
-			if (!newAmiCost) {
+			if (!newAmiCost && _vm->_version > 1) {
 				v1.skip_width -= skip;
-
-				if (_loaded._format == 0x57)
-					c64_ignorePakCols(skip);
-				else
-					codec1_ignorePakCols(skip);
+				codec1_ignorePakCols(skip);
 				v1.x = 0;
 			}
 		} else {
@@ -229,13 +225,9 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
-			if (!newAmiCost) {
+			if (!newAmiCost && _vm->_version > 1) {
 				v1.skip_width -= skip;
-
-				if (_loaded._format == 0x57)
-					c64_ignorePakCols(skip);
-				else
-					codec1_ignorePakCols(skip);
+				codec1_ignorePakCols(skip);
 				v1.x = _vm->_screenWidth - 1;
 			}
 		} else {
