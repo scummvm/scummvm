@@ -51,7 +51,7 @@ Engine::~Engine() {
 const char *Engine::getSavePath() const {
 
 #ifdef _WIN32_WCE
-	return _gameDataPath;
+	return _gameDataPath.c_str();
 #elif defined(__PALM_OS__)
 	return SCUMMVM_SAVEPATH;
 #else
