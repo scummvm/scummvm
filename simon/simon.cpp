@@ -4089,10 +4089,8 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	if (!(_bit_array[8] & 0x20))
 		num_of_rows = 3;
 
-
 	if (threeval_b < 2)
-		threeval_b = 2;							// Fixme (pos): look at mine
-	// ladder, look at gorge, etc
+		threeval_b = 2;
 
 	if (!(_game & GAME_SIMON2)) {
 		start_vga_code(num_of_rows, 2, 199 + num_1, threeval_a >> 3, threeval_b, 12);
