@@ -11,7 +11,8 @@ MODULE_DIRS += \
 
 # Some of the base files depend on the values of the DISABLE_* flags defined
 # in config.mak. Hence we add an explicit make dependency on that file.
-base/gameDetector.o base/plugins.o: config.mak
+# Temporarily disabled since it causes troubles for MinGW
+#base/gameDetector.o base/plugins.o: config.mak
 
 # Include common rules 
 include common.rules
