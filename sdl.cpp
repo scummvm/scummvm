@@ -119,12 +119,11 @@ private:
 	MousePos _ms_old;
 	int16 _ms_hotspot_x;
 	int16 _ms_hotspot_y;
-
 	int _current_shake_pos;
-
 	TwoXSaiProc *_sai_func;
-
 	SDL_Color *_cur_pal;
+
+	uint _palette_changed_first, _palette_changed_last;
 
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
@@ -190,9 +189,11 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 		b += 4;
 	}
 
-	if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
-		force_full = true;
-	SDL_SetColors(sdl_screen, base, start, num);
+	if (start < _palette_changed_first)
+		_palette_changed_first = start;
+
+	if (start + num > _palette_changed_last)
+		_palette_changed_last = start + num;
 }
 
 void OSystem_SDL::load_gfx_mode() {
@@ -214,15 +215,13 @@ void OSystem_SDL::load_gfx_mode() {
 		break;
 
 	case GFX_DOUBLESIZE:
-		if (_full_screen) {
-			warning("full screen in useless in doublesize mode, reverting to normal mode");
-			goto normal_mode;
-		}
 		scaling = 2;
 		_internal_scaling = 2;
 		_mode_flags = DF_WANT_RECT_OPTIM;
 		
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(640, 400, 8, 
+			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
 		if (sdl_screen == NULL)
 			error("sdl_screen failed");
 		break;
@@ -320,7 +319,6 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
-	
 		add_dirty_rgn_auto(buf);
 	} else {
 		/* Clip the coordinates */
@@ -332,14 +330,13 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		if (w<=0 || h<=0)
 			return;
 
-		/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-		if (_mouse_drawn)
-			undraw_mouse();
-			
 		cksum_valid = false;
-
 		add_dirty_rect(x, y, w, h);
 	}
+
+	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+	if (_mouse_drawn)
+		undraw_mouse();
 
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
@@ -461,9 +458,6 @@ void OSystem_SDL::mk_checksums(const byte *buf) {
 
 
 void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
-	if (_mouse_drawn)
-		undraw_mouse();
-
 	/* generate a table of the checksums */
 	mk_checksums(buf);
 
@@ -508,6 +502,18 @@ void OSystem_SDL::update_screen() {
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
 	
+
+	if (_palette_changed_last != 0) {
+		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
+			_palette_changed_first,
+			_palette_changed_last - _palette_changed_first);
+		
+		_palette_changed_last = 0;
+
+		if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
+			force_full = true;
+	}
+
 	/* force a full redraw, accomplish that by adding one big rect to the dirty
 	 * rect list */
 	if (force_full) {
@@ -516,9 +522,10 @@ void OSystem_SDL::update_screen() {
 		add_dirty_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
+
 	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
 		return;
-		
+
 	if (_mode_flags & DF_2xSAI) {
 		SDL_Rect *r;
 		uint32 area = 0;
@@ -552,16 +559,13 @@ void OSystem_SDL::update_screen() {
 		SDL_UnlockSurface(sdl_tmpscreen);
 		SDL_UnlockSurface(sdl_hwscreen);
 
-		/* Call SDL update on the affected regions */
-		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
 #ifdef WIN32
 		if (GetAsyncKeyState(VK_SHIFT)<0)
 			printf("Update area %d pixels. %d%%\n", area, (area+(320*2)/2) / (320*2));
 #endif
-	} else {
-		/* Call SDL update on the affected regions */
-		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
 	}
+
+	SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
 	
 	num_dirty_rects = 0;
 }

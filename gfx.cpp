@@ -2419,12 +2419,12 @@ void Scumm::updateCursor() {
 
 void Scumm::animateCursor() {
 	if (_cursorAnimate) {
-		if (!(_cursorAnimateIndex & 0x3))
+		if (!(_cursorAnimateIndex & 0x3)) {
 			decompressDefaultCursor((_cursorAnimateIndex >> 2) & 3);
+		}
 		_cursorAnimateIndex++;
 	}
 
-	updateCursor();
 }
 
 void Scumm::useBompCursor(byte *im, int width, int height)
