@@ -13,8 +13,8 @@ class Driver {
 	public:
 		Driver(int screenW, int screenH, int screenBPP);
 
-		void setupCamera(float fov, float nclip, float fclip);
-		void positionCamera(float roll, Vector3d pos, Vector3d interest);
+		void setupCamera(float fov, float nclip, float fclip, float roll);
+		void positionCamera(Vector3d pos, Vector3d interest);
 
 		void clearScreen(); 
 		void flipBuffer();

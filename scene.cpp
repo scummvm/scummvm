@@ -144,8 +144,8 @@ void Scene::Light::load(TextSplitter &ts) {
 }
 
 void Scene::Setup::setupCamera() const {
-  g_driver->setupCamera(fov_, nclip_, fclip_);
-  g_driver->positionCamera(roll_, pos_, interest_);
+  g_driver->setupCamera(fov_, nclip_, fclip_, roll_);
+  g_driver->positionCamera(pos_, interest_);
 }
 
 void Scene::setSetup(int num)

@@ -333,7 +333,11 @@ void Smush::play(const char *filename, const char *directory) {
 		
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-	    }
+			// Skip cutscene?
+			if (event.type == SDL_KEYDOWN)
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+					_videoFinished = true;
+		}
 		SDL_Delay(10);
 	};
 	deinit();
