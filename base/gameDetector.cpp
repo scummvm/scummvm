@@ -221,7 +221,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 
-	_debugMode = (ConfMan.getInt("debuglevel") > 0);
+	_debugMode = (ConfMan.getInt("debuglevel") >= 0);
 	_dumpScripts = false;
 	_midi_driver = MD_AUTO;
 
@@ -318,7 +318,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (ConfMan.getInt("debuglevel")) {
 					printf("Debuglevel (from command line): %d\n", ConfMan.getInt("debuglevel"));
 				} else {
-					printf("Debuglevel (from command line): 0 - Engine only\n");
+					printf("Debuglevel (from command line): 0 - Game only\n");
 				}
 				break;
 			case 'e':
@@ -478,7 +478,7 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
-	_debugMode = (ConfMan.getInt("debuglevel") > 0);
+	_debugMode = (ConfMan.getInt("debuglevel") >= 0);
 }
 
 int GameDetector::parseGraphicsMode(const String &str) {
