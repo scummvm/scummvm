@@ -1653,7 +1653,7 @@ void Scumm::o5_roomOps()
 				b = getVarOrDirectWord(0x40);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-			_currentPalette[a] = b;
+			copyPalColor(a, b);
 			_fullRedraw = 1;
 		} else {
 			error("room-color is no longer a valid command");
