@@ -335,6 +335,14 @@ SOURCE=.\scumm\object.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\player_v2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\player_v2.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\resource.cpp
 # End Source File
 # Begin Source File
