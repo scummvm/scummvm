@@ -98,14 +98,19 @@ bundle: scummvm-static
 	cp $(srcdir)/scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	strip $(bundle_name)/Contents/MacOS/scummvm
 
+# location of additional libs for OS X usually /sw/ for fink or
+# /opt/local/ for darwinports
+OSXOPT=/sw
 # Special target to create a static linked binary for Mac OS X
 scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
 		`sdl-config --static-libs` \
-		/sw/lib/libmad.a \
-		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
-		/sw/lib/libmpeg2.a \
-		/sw/lib/libFLAC.a \
+		$(OSXOPT)/lib/libmad.a \
+		$(OSXOPT)/lib/libvorbisfile.a \
+		$(OSXOPT)/lib/libvorbis.a \
+		$(OSXOPT)/lib/libogg.a \
+		$(OSXOPT)/lib/libmpeg2.a \
+		$(OSXOPT)/lib/libFLAC.a \
 		-lz
 
 # Special target to create a win32 snapshot binary
