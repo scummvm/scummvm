@@ -258,6 +258,14 @@ void Engine::savegameRestore() {
 	g_smush->stop();
 	//  free all resource
 	//  lock resources
+
+	uint32 tag;
+	uint32 version;
+	savegameGzread(&tag, 4);
+	assert(tag == 'RSAV');
+	savegameGzread(&version, 4);
+	assert(version == 1);
+
 	//Chore_Restore(savegameGzread);
 	//Resource_Restore(savegameGzread);
 	//Text_Restore(savegameGzread);
@@ -266,6 +274,7 @@ void Engine::savegameRestore() {
 	//Render_Restore(savegameGzread);
 	//Primitive_Restore(savegameGzread);
 	//Smush_Restore(savegameGzread);
+	g_imuse->restoreState(savegameGzread);
 	lua_Restore(savegameGzread);
 	//  unlock resources
 	gzclose(_savegameFileHandle);
@@ -324,6 +333,11 @@ void Engine::savegameSave() {
 		return;
 	}
 
+	uint32 tag = 'RSAV';
+	uint32 version = 1;
+	savegameGzwrite(&tag, 4);
+	savegameGzwrite(&version, 4);
+
 	savegameCallback(savegameGzwrite);
 	//Chore_Save(savegameGzwrite);
 	//Resource_Save(savegameGzwrite);
@@ -333,6 +347,7 @@ void Engine::savegameSave() {
 	//Render_Save(savegameGzwrite);
 	//Primitive_Save(savegameGzwrite);
 	//Smush_Save(savegameGzwrite);
+	g_imuse->saveState(savegameGzread);
 	lua_Save(savegameGzwrite);
 
 	gzclose(_savegameFileHandle);

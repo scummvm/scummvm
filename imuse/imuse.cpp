@@ -80,8 +80,11 @@ void Imuse::resetState() {
 	memset(_attributes, 0, sizeof(_attributes));
 }
 
-//void Imuse::saveOrLoad(Serializer *ser) {
-//}
+void Imuse::restoreState(SaveRestoreFunc) {
+}
+
+void Imuse::saveState(SaveRestoreFunc) {
+}
 
 void Imuse::callback() {
 	StackLock lock(_mutex);
