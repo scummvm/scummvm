@@ -795,8 +795,8 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 	int32	y;   
 	int32	x2;   
 	int32	y2;   
-	int32	dx;   
-	int32	dy;   
+	int32	ldx;   
+	int32	ldy;   
 	int32	dsx;
 	int32	dsy;
 	int32	ddx;
@@ -820,28 +820,28 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 	y = route[p].y;
 	x2 = route[p + 1].x;
 	y2 = route[p + 1].y;
-	dx = x2 - x;
-	dy = y2 - y;
+	ldx = x2 - x;
+	ldy = y2 - y;
 	dirX = 1;
 	dirY = 1;
-	if (dx < 0)
+	if (ldx < 0)
 	{
-		dx = -dx;
+		ldx = -ldx;
 		dirX = -1;
 	}
 
-	if (dy < 0)
+	if (ldy < 0)
 	{
-		dy = -dy;
+		ldy = -ldy;
 		dirY = -1;
 	}
 
 // set up sd0-ss2 to reflect possible movement in each direction
 		if ((dirS == 0)	|| (dirS == 4))// vert and diag
 		{
-		  ddx = dx;
-			ddy = (dx*diagonaly)/diagonalx;
-			dsy = dy - ddy;
+		  ddx = ldx;
+			ddy = (ldx*diagonaly)/diagonalx;
+			dsy = ldy - ddy;
 			ddx = ddx * dirX;
 			ddy = ddy * dirY;
 			dsy = dsy * dirY;
@@ -856,9 +856,9 @@ int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 		}
 		else
 		{
-		  ddy = dy;
-			ddx = (dy*diagonalx)/diagonaly;
-			dsx = dx - ddx;
+		  ddy = ldy;
+			ddx = (ldy*diagonalx)/diagonaly;
+			dsx = ldx - ddx;
 			ddy = ddy * dirY;
 			ddx = ddx * dirX;
 			dsx = dsx * dirX;
@@ -2074,8 +2074,8 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
  * Note Bars array must be properly calculated ie min max dx dy co
  *******************************************************************************/
 {
-  int32   dx;
-  int32   dy;
+  int32   ldx;
+  int32   ldy;
   int32   dlx;
   int32   dly;
   int32   dirX;
@@ -2088,39 +2088,39 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 
 	steps = 0;
 	options = 0;
-  dx = x2 - x1;
-  dy = y2 - y1;
+  ldx = x2 - x1;
+  ldy = y2 - y1;
 	dirX = 1;
 	dirY = 1;
-	if (dx < 0)
+	if (ldx < 0)
 	{
-		dx = -dx;
+		ldx = -ldx;
 		dirX = -1;
 	}
 
-	if (dy < 0)
+	if (ldy < 0)
 	{
-		dy = -dy;
+		ldy = -ldy;
 		dirY = -1;
 	}
 
 	//make the route options
-	if ((diagonaly * dx) > (diagonalx * dy))	// dir  = 1,2 or 2,3 or 5,6 or 6,7
+	if ((diagonaly * ldx) > (diagonalx * ldy))	// dir  = 1,2 or 2,3 or 5,6 or 6,7
 	{
-	  dly = dy;
-		dlx = (dy*diagonalx)/diagonaly;
-		dx = dx - dlx;
+	  dly = ldy;
+		dlx = (ldy*diagonalx)/diagonaly;
+		ldx = ldx - dlx;
 		dlx = dlx * dirX;
 		dly = dly * dirY;
-		dx = dx * dirX;
-		dy = 0;
+		ldx = ldx * dirX;
+		ldy = 0;
 
 	 	//options are
 		//square, diagonal a code 1 route
-		step1 = Check(x1, y1, x1+dx, y1);
+		step1 = Check(x1, y1, x1+ldx, y1);
 		if (step1 != 0)
 		{
-			step2 = Check(x1+dx, y1, x2, y2);
+			step2 = Check(x1+ldx, y1, x2, y2);
 			if (step2 != 0)
 			{
 				steps = step1 + step2;	// yes
@@ -2128,8 +2128,8 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		#ifdef PLOT_PATHS
 		if (status == 1)
 		{
-			RouteLine(x1, y1, x1+dx, y1, 231);
-			RouteLine(x1+dx, y1, x2, y2, 231);
+			RouteLine(x1, y1, x1+ldx, y1, 231);
+			RouteLine(x1+ldx, y1, x2, y2, 231);
 		}
     #endif   
 			}
@@ -2158,13 +2158,13 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		//halfsquare, diagonal, halfsquare a code 0 route
 		if ((steps == 0) || (status == 1))
 		{
-			step1 = Check(x1, y1, x1+dx/2, y1);
+			step1 = Check(x1, y1, x1+ldx/2, y1);
 			if (step1 != 0)
 			{
-				step2 = Check(x1+dx/2, y1, x1+dx/2+dlx, y2);
+				step2 = Check(x1+ldx/2, y1, x1+ldx/2+dlx, y2);
 				if (step2 != 0)
 				{
-					step3 = Check(x1+dx/2+dlx, y2, x2, y2);
+					step3 = Check(x1+ldx/2+dlx, y2, x2, y2);
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
@@ -2172,9 +2172,9 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		#ifdef PLOT_PATHS
 		if (status == 1)
 		{
-			RouteLine(x1, y1, x1+dx/2, y1, 231);
-			RouteLine(x1+dx/2, y1, x1+dx/2+dlx, y2, 231);
-			RouteLine(x1+dx/2+dlx, y2, x2, y2, 231);
+			RouteLine(x1, y1, x1+ldx/2, y1, 231);
+			RouteLine(x1+ldx/2, y1, x1+ldx/2+dlx, y2, 231);
+			RouteLine(x1+ldx/2+dlx, y2, x2, y2, 231);
 		}
     #endif   
 					}
@@ -2187,10 +2187,10 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 			step1 = Check(x1, y1, x1+dlx/2, y1+dly/2);
 			if (step1 != 0)
 			{
-				step2 = Check(x1+dlx/2, y1+dly/2, x1+dx+dlx/2, y1+dly/2);
+				step2 = Check(x1+dlx/2, y1+dly/2, x1+ldx+dlx/2, y1+dly/2);
 				if (step2 != 0)
 				{
-					step3 = Check(x1+dx+dlx/2, y1+dly/2, x2, y2);
+					step3 = Check(x1+ldx+dlx/2, y1+dly/2, x2, y2);
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
@@ -2198,8 +2198,8 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		if (status == 1)
 		{
 			RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-			RouteLine(x1+dlx/2, y1+dly/2, x1+dx+dlx/2, y1+dly/2, 231);
-			RouteLine(x1+dx+dlx/2, y1+dly/2, x2, y2, 231);
+			RouteLine(x1+dlx/2, y1+dly/2, x1+ldx+dlx/2, y1+dly/2, 231);
+			RouteLine(x1+ldx+dlx/2, y1+dly/2, x2, y2, 231);
 		}
     #endif   
 						options = options + 8;
@@ -2210,28 +2210,28 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 	}
 	else // dir  = 7,0 or 0,1 or 3,4 or 4,5
 	{
-	  dlx = dx;
-		dly = (dx*diagonaly)/diagonalx;
-		dy = dy - dly;
+	  dlx = ldx;
+		dly = (ldx*diagonaly)/diagonalx;
+		ldy = ldy - dly;
 		dlx = dlx * dirX;
 		dly = dly * dirY;
-		dy = dy * dirY;
-		dx = 0;
+		ldy = ldy * dirY;
+		ldx = 0;
 
 	 	//options are
 		//square, diagonal a code 1 route
-		step1 = Check(x1 ,y1 ,x1 ,y1+dy );
+		step1 = Check(x1 ,y1 ,x1 ,y1+ldy );
 		if (step1 != 0)
 		{
-			step2 = Check(x1 ,y1+dy ,x2,y2);
+			step2 = Check(x1 ,y1+ldy ,x2,y2);
 			if (step2 != 0)
 			{
 				steps = step1 + step2;	// yes
 		#ifdef PLOT_PATHS
 		if (status == 1)
 		{
-			RouteLine(x1 ,y1 ,x1 ,y1+dy, 231);
-			RouteLine(x1 ,y1+dy ,x2, y2, 231);
+			RouteLine(x1 ,y1 ,x1 ,y1+ldy, 231);
+			RouteLine(x1 ,y1+ldy ,x2, y2, 231);
 		}
     #endif   
 				options = options + 2;
@@ -2261,22 +2261,22 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		//halfsquare, diagonal, halfsquare a code 0 route
 		if ((steps == 0) || (status == 1))
 		{
-			step1 = Check(x1, y1, x1, y1+dy/2);
+			step1 = Check(x1, y1, x1, y1+ldy/2);
 			if (step1 != 0)
 			{
-				step2 = Check(x1, y1+dy/2, x2, y1+dy/2+dly);
+				step2 = Check(x1, y1+ldy/2, x2, y1+ldy/2+dly);
 				if (step2 != 0)
 				{
-					step3 = Check(x2, y1+dy/2+dly, x2, y2);
+					step3 = Check(x2, y1+ldy/2+dly, x2, y2);
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
 		#ifdef PLOT_PATHS
 		if (status == 1)
 		{
-			RouteLine(x1, y1, x1, y1+dy/2, 231);
-			RouteLine(x1, y1+dy/2, x2, y1+dy/2+dly, 231);
-			RouteLine(x2, y1+dy/2+dly, x2, y2, 231);
+			RouteLine(x1, y1, x1, y1+ldy/2, 231);
+			RouteLine(x1, y1+ldy/2, x2, y1+ldy/2+dly, 231);
+			RouteLine(x2, y1+ldy/2+dly, x2, y2, 231);
 		}
     #endif   
 						options = options + 1;
@@ -2290,10 +2290,10 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 			step1 = Check(x1, y1, x1+dlx/2, y1+dly/2);
 			if (step1 != 0)
 			{
-				step2 = Check(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+dy+dly/2);
+				step2 = Check(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+ldy+dly/2);
 				if (step2 != 0)
 				{
-					step3 = Check(x1+dlx/2, y1+dy+dly/2, x2, y2);
+					step3 = Check(x1+dlx/2, y1+ldy+dly/2, x2, y2);
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
@@ -2302,8 +2302,8 @@ int32 NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 		if (status == 1)
 		{
 			RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-			RouteLine(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+dy+dly/2, 231);
-			RouteLine(x1+dlx/2, y1+dy+dly/2, x2, y2, 231);
+			RouteLine(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+ldy+dly/2, 231);
+			RouteLine(x1+dlx/2, y1+ldy+dly/2, x2, y2, 231);
 		}
     #endif   
 					}
@@ -2444,7 +2444,7 @@ int32 LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 
 int32 HorizCheck(int32 x1 , int32 y , int32 x2)
 {
-  int32   dy;
+  int32   ldy;
   int32   i;
   int32   xc;
   int32   xmin;
@@ -2480,8 +2480,8 @@ int32 HorizCheck(int32 x1 , int32 y , int32 x2)
 		    }
 				else
 				{
-					dy = y-bars[i].y1;
-					xc = bars[i].x1 + (bars[i].dx * dy)/bars[i].dy;
+					ldy = y-bars[i].y1;
+					xc = bars[i].x1 + (bars[i].dx * ldy)/bars[i].dy;
 		    	if ((xc >= xmin-1) && (xc <= xmax+1))   //skip if not on module 
 		    	{
 				    linesCrossed = 0;          
@@ -2499,7 +2499,7 @@ int32 HorizCheck(int32 x1 , int32 y , int32 x2)
 
 int32 VertCheck(int32 x, int32 y1, int32 y2)
 {
-  int32   dx;
+  int32   ldx;
   int32   i;
   int32   yc;
   int32   ymin;
@@ -2533,8 +2533,8 @@ int32 VertCheck(int32 x, int32 y1, int32 y2)
 		    }
 				else
 				{
-			 		dx = x-bars[i].x1;
-					yc = bars[i].y1 + (bars[i].dy * dx)/bars[i].dx;
+			 		ldx = x-bars[i].x1;
+					yc = bars[i].y1 + (bars[i].dy * ldx)/bars[i].dx;
 			    if ((yc >= ymin-1) && (yc <= ymax+1))   //the intersept overlaps 
 			    {
 				    linesCrossed = 0;
@@ -2553,8 +2553,8 @@ int32 CheckTarget(int32 x , int32 y)
 /*******************************************************************************
  *******************************************************************************/
 {
-  int32   dx;
-  int32   dy;
+  int32   ldx;
+  int32   ldy;
   int32   i;
   int32   xc;
   int32   yc;
@@ -2591,8 +2591,8 @@ int32 CheckTarget(int32 x , int32 y)
 		    }
 				else
 				{
-					dx = x-bars[i].x1;
-					yc = bars[i].y1 + (bars[i].dy * dx)/bars[i].dx;
+					ldx = x-bars[i].x1;
+					yc = bars[i].y1 + (bars[i].dy * ldx)/bars[i].dx;
 				}
 
 		    if ((yc >= ymin) && (yc <= ymax))   //overlapping point for y 
@@ -2608,8 +2608,8 @@ int32 CheckTarget(int32 x , int32 y)
 					}
 					else
 					{
-						dy = y-bars[i].y1;
-						xc = bars[i].x1 + (bars[i].dx * dy)/bars[i].dy;
+						ldy = y-bars[i].y1;
+						xc = bars[i].x1 + (bars[i].dx * ldy)/bars[i].dy;
 					}
 
 				  if ((xc >= xmin) && (xc <= xmax))   //skip if not on module 
@@ -2769,8 +2769,8 @@ void	ExtractRoute()
 	int32	dirx;
 	int32	diry;
 	int32	dir;
-	int32	dx;
-	int32	dy;
+	int32	ldx;
+	int32	ldy;
 
 
  	// extract the route from the node data
@@ -2810,22 +2810,22 @@ void	ExtractRoute()
 		#ifdef PLOT_PATHS
 			BresenhamLine(route[p+1].x-128,route[p+1].y-128, route[p].x-128,route[p].y-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, ROUTE_END_FLAG);
     #endif   
-		dx = route[p+1].x - route[p].x;
-		dy = route[p+1].y - route[p].y;
+		ldx = route[p+1].x - route[p].x;
+		ldy = route[p+1].y - route[p].y;
 		dirx = 1;
 		diry = 1;
-		if (dx < 0)
+		if (ldx < 0)
 		{
-			dx = -dx;
+			ldx = -ldx;
 			dirx = -1;
 		}
-		if (dy < 0)
+		if (ldy < 0)
 		{
-			dy = -dy;
+			ldy = -ldy;
 			diry = -1;
 		}
 
-		if ((diagonaly * dx) > (diagonalx * dy))	// dir  = 1,2 or 2,3 or 5,6 or 6,7
+		if ((diagonaly * ldx) > (diagonalx * ldy))	// dir  = 1,2 or 2,3 or 5,6 or 6,7
 		{
 			dir = 4 - 2 * dirx;	 // 2 or 6
 			route[p].dirS = dir;
