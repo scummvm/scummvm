@@ -1283,7 +1283,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 
 	if (_features & GF_OLD_BUNDLE)
 		dataptr = p + *(p + 11);
-	if (_features & GF_OLD256)
+	else if (_features & GF_OLD256)
 		dataptr = p + *(p + lc._numColors + 8);
 	else
 		dataptr = p + READ_LE_UINT16(p + lc._numColors + 8);
