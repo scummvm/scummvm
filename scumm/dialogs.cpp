@@ -454,12 +454,7 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::open() {
-	// MSVC6 FIX (Jamieson630):
-	// Simple notation would be GUI::OptionsDialog::open(), but
-	// MSVC6 has a problem with any notation that involves
-	// more than one set of double colons ::
-	// Hence the more convoluted notation.
-	((GUI::OptionsDialog *) this)->open();
+	GUI::OptionsDialog::open();
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
@@ -472,12 +467,7 @@ void OptionsDialog::close() {
 		ConfMan.set("nosubtitles", !subtitlesCheckbox->getState(), _domain);
 	}
 
-	// MSVC6 FIX (Jamieson630):
-	// Simple notation would be GUI::OptionsDialog::close(), but
-	// MSVC6 has a problem with any notation that involves
-	// more than one set of double colons ::
-	// Hence the more convoluted notation.
-	((GUI::OptionsDialog *) this)->close();
+	GUI::OptionsDialog::close();
 
 
 	// Sync the engine with the config manager
@@ -508,12 +498,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 #endif
 		break;
 	default:
-		// MSVC6 FIX (Jamieson630):
-		// Simple notation would be GUI::OptionsDialog::handleCommand(), but
-		// MSVC6 has a problem with any notation that involves
-		// more than one set of double colons ::
-		// Hence the more convoluted notation.
-		((GUI::OptionsDialog *) this)->handleCommand(sender, cmd, data);
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 
