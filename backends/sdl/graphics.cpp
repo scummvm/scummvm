@@ -49,11 +49,54 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 	return GFX_DOUBLESIZE;
 }
 
+void OSystem_SDL::beginGFXTransaction(void) {
+	assert (_transactionMode == kTransactionNone);
+
+	_transactionMode = kTransactionActive;
+
+	_transactionDetails.modeChanged = false;
+	_transactionDetails.wChanged = false;
+	_transactionDetails.hChanged = false;
+	_transactionDetails.arChanged = false;
+	_transactionDetails.fsChanged = false;
+}
+
+void OSystem_SDL::endGFXTransaction(void) {
+	assert (_transactionMode == kTransactionActive);
+
+	_transactionMode = kTransactionCommit;
+	if (_transactionDetails.modeChanged) {
+		setGraphicsMode(_transactionDetails.mode);
+	}
+	if (_transactionDetails.wChanged || _transactionDetails.hChanged) {
+		initSize(_transactionDetails.w, _transactionDetails.h);
+	}
+	if (_transactionDetails.arChanged) {
+		setAspectRatioCorrection(_transactionDetails.ar);
+	}
+	if (_transactionDetails.fsChanged) {
+		setFullscreenMode(_transactionDetails.fs);
+	}
+	_transactionMode = kTransactionNone;
+}
+
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	int newScaleFactor = 1;
 	ScalerProc *newScalerProc;
+
+	switch (_transactionMode) {
+	case kTransactionActive:
+		_transactionDetails.mode = mode;
+		_transactionDetails.modeChanged = true;
+		return true;
+		break;
+	case kTransactionCommit:
+		break;
+	default:
+		break;
+	} 
 
 	switch(mode) {
 	case GFX_NORMAL:
@@ -143,10 +186,25 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 }
 
 int OSystem_SDL::getGraphicsMode() const {
+	assert (_transactionMode == kTransactionNone);
 	return _mode;
 }
 
 void OSystem_SDL::initSize(uint w, uint h) {
+	switch (_transactionMode) {
+	case kTransactionActive:
+		_transactionDetails.w = w;
+		_transactionDetails.wChanged = true;
+		_transactionDetails.h = h;
+		_transactionDetails.hChanged = true;
+		return;
+		break;
+	case kTransactionCommit:
+		break;
+	default:
+		break;
+	} 
+
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight)
 		return;
@@ -316,6 +374,8 @@ void OSystem_SDL::hotswap_gfx_mode() {
 }
 
 void OSystem_SDL::updateScreen() {
+	assert (_transactionMode == kTransactionNone);
+
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	internUpdateScreen();
@@ -485,6 +545,18 @@ bool OSystem_SDL::save_screenshot(const char *filename) {
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
+	switch (_transactionMode) {
+	case kTransactionActive:
+		_transactionDetails.fs = enable;
+		_transactionDetails.fsChanged = true;
+		return;
+		break;
+	case kTransactionCommit:
+		break;
+	default:
+		break;
+	} 
+
 	Common::StackLock lock(_graphicsMutex);
 
 	if (_full_screen != enable) {
@@ -514,7 +586,37 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	}
 }
 
+void OSystem_SDL::setAspectRatioCorrection(bool enable) {
+	switch (_transactionMode) {
+	case kTransactionActive:
+		_transactionDetails.ar = enable;
+		_transactionDetails.arChanged = true;
+		return;
+		break;
+	case kTransactionCommit:
+		break;
+	default:
+		break;
+	} 
+
+	if (_screenHeight == 200 && _adjustAspectRatio != enable) {
+		Common::StackLock lock(_graphicsMutex);
+
+		//assert(_hwscreen != 0);
+		_adjustAspectRatio ^= true;
+		hotswap_gfx_mode();
+			
+		// Blit everything to the screen
+		internUpdateScreen();
+			
+		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+		_modeChanged = true;
+	}
+}
+
 void OSystem_SDL::clearScreen() {
+	assert (_transactionMode == kTransactionNone);
+
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -529,6 +631,8 @@ void OSystem_SDL::clearScreen() {
 }
 
 void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+	assert (_transactionMode == kTransactionNone);
+
 	if (_screen == NULL)
 		return;
 
@@ -746,6 +850,8 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::setShakePos(int shake_pos) {
+	assert (_transactionMode == kTransactionNone);
+
 	_newShakePos = shake_pos;
 }
 
@@ -755,6 +861,8 @@ void OSystem_SDL::setShakePos(int shake_pos) {
 #pragma mark -
 
 void OSystem_SDL::showOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
 	// hide the mouse
 	undraw_mouse();
 
@@ -763,6 +871,8 @@ void OSystem_SDL::showOverlay() {
 }
 
 void OSystem_SDL::hideOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
 	// hide the mouse
 	undraw_mouse();
 
@@ -771,6 +881,8 @@ void OSystem_SDL::hideOverlay() {
 }
 
 void OSystem_SDL::clearOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
 	if (!_overlayVisible)
 		return;
 	
@@ -792,6 +904,8 @@ void OSystem_SDL::clearOverlay() {
 }
 
 void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
+	assert (_transactionMode == kTransactionNone);
+
 	if (!_overlayVisible)
 		return;
 
@@ -816,6 +930,8 @@ void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	assert (_transactionMode == kTransactionNone);
+
 	if (!_overlayVisible)
 		return;
 
@@ -946,6 +1062,8 @@ void OSystem_SDL::toggleMouseGrab() {
 }
 
 void OSystem_SDL::draw_mouse() {
+	assert (_transactionMode == kTransactionNone);
+
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 
@@ -1034,6 +1152,8 @@ void OSystem_SDL::draw_mouse() {
 }
 
 void OSystem_SDL::undraw_mouse() {
+	assert (_transactionMode == kTransactionNone);
+
 	if (!_mouseDrawn)
 		return;
 	_mouseDrawn = false;
@@ -1103,7 +1223,8 @@ void OSystem_SDL::undraw_mouse() {
 
 #ifdef USE_OSD
 void OSystem_SDL::displayMessageOnOSD(const char *msg) {
-	
+	assert (_transactionMode == kTransactionNone);
+
 	uint i;
 	
 	// Lock the OSD surface for drawing

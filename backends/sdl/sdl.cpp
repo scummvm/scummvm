@@ -104,7 +104,7 @@ OSystem_SDL::OSystem_SDL()
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-	_graphicsMutex(0) {
+	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -160,19 +160,7 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 		setFullscreenMode(enable);
 		break;
 	case kFeatureAspectRatioCorrection:
-		if (_screenHeight == 200 && _adjustAspectRatio != enable) {
-			Common::StackLock lock(_graphicsMutex);
-
-			//assert(_hwscreen != 0);
-			_adjustAspectRatio ^= true;
-			hotswap_gfx_mode();
-			
-			// Blit everything to the screen
-			internUpdateScreen();
-			
-			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
-			_modeChanged = true;
-		}
+		setAspectRatioCorrection(enable);
 		break;
 	case kFeatureAutoComputeDirtyRects:
 		if (enable)
@@ -186,6 +174,8 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_SDL::getFeatureState(Feature f) {
+	assert (_transactionMode != kTransactionNone);
+
 	switch (f) {
 	case kFeatureFullscreenMode:
 		return _full_screen;

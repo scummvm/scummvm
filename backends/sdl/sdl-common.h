@@ -53,6 +53,9 @@ public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
+	void beginGFXTransaction(void);
+	void endGFXTransaction(void);
+
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void initSize(uint w, uint h);
@@ -195,11 +198,31 @@ protected:
 		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
 	};
 
+	enum {
+		kTransactionNone = 0,
+		kTransactionCommit = 1,
+		kTransactionActive = 2
+	};
+
+	struct transactionDetails {
+		int mode;
+		bool modeChanged;
+		int w;
+		bool wChanged;
+		int h;
+		bool hChanged;
+		bool fs;
+		bool fsChanged;
+		bool ar;
+		bool arChanged;
+	} _transactionDetails;
+
 	bool _forceFull; // Force full redraw on next updateScreen
 	ScalerProc *_scalerProc;
 	int _scalerType;
 	int _scaleFactor;
 	int _mode;
+	int _transactionMode;
 	bool _full_screen;
 	uint32 _mode_flags;
 	bool _modeChanged;
@@ -281,6 +304,7 @@ protected:
 	virtual void hotswap_gfx_mode();
 	
 	void setFullscreenMode(bool enable);
+	void setAspectRatioCorrection(bool enable);
 
 	bool save_screenshot(const char *filename);
 	
