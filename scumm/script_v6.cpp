@@ -1742,8 +1742,26 @@ void Scumm_v6::o6_actorOps() {
 		a->initActor(2);
 		break;
 	case 218:
-		// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
-		warning("o6_actorOps(): unimplemented opcode 218");
+		{
+			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
+			warning("o6_actorOps(): unimplemented opcode 218");
+
+			int top_actor = a->top;
+			int bottom_actor = a->bottom;
+//			a->_zbuf = 1; ???
+			a->needRedraw = 1;
+			a->drawActorCostume();
+//			a->_zbuf = 0; ???
+			a->needRedraw = 0;
+			a->drawActorCostume();
+
+			if (a->top > top_actor) {
+				a->bottom = top_actor;
+			}
+			if (a->bottom > bottom_actor) {
+				a->bottom = bottom_actor;
+			}
+		}
 		break;
 	case 227:										/* actor_layer */
 		a->layer = pop();
