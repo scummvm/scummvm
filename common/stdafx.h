@@ -86,6 +86,8 @@
 #include <ctype.h>
 #include <winuser.h>
 #include <direct.h>
+#include <time.h>
+#include <math.h>
 
 #else
 
@@ -110,6 +112,8 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <ctype.h>
+#include <time.h>
+#include <math.h>
 
 
 #endif
