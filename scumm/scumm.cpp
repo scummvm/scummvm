@@ -201,7 +201,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -1181,6 +1181,12 @@ void ScummEngine::scummInit() {
 		_flashlight.yStrips = 7;
 		_flashlight.buffer = NULL;
 	}
+
+	// HACK curcor hotspot is wrong
+	// Original games used 
+	// setCursorHotspot(8, 7);
+	if (_gameId == GID_FUNPACK)
+		setCursorHotspot(16, 16);
 
 	_mouse.x = 104;
 	_mouse.y = 56;
