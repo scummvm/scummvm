@@ -1009,7 +1009,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Do some render mode restirctions
-	if (_renderMode != Common::kRenderDefault && !(_features & GF_PC))
+	if ((_renderMode != Common::kRenderDefault && !(_features & GF_PC)) || _version == 1)
 		_renderMode = Common::kRenderDefault;
 
 	switch (_renderMode) {
