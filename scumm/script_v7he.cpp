@@ -746,7 +746,7 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 20:
-		// Clear/stop unknown animation queue
+		// erase aux animation actor?
 		break;
 	case 21:
 		_skipDrawObject = 1;
@@ -793,7 +793,7 @@ void ScummEngine_v7he::o7_stringLen() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
+		error("o7_stringLen: Reference to zeroed array pointer (%d)", id);
 
 	len = resStrLen(getStringAddress(id));
 	push(len);
