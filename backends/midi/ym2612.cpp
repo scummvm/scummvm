@@ -22,10 +22,12 @@
  * $Header$
  */
 
-#include <math.h>
 #include "common/util.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
+
+#include <math.h>
+
 
 ////////////////////////////////////////
 //
