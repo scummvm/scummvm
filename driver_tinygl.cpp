@@ -417,8 +417,8 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 		} else if (pixel == 0x80) {
 			*texDataPtr = 0;
 		} else if (pixel == 0xFF) {
-			WRITE_LE_UINT16(texDataPtr, ((fgColor.red() & 0x7) << 8) |
-				((fgColor.green() & 0x3) << 3) | ((fgColor.blue() & 0x7) >> 3));
+			WRITE_LE_UINT16(texDataPtr, ((fgColor.red() & 0xF8) << 8) |
+				((fgColor.green() & 0xFC) << 3) | (fgColor.blue() >> 3));
 		}
 	}
 
