@@ -19,10 +19,10 @@ EXEEXT	:=.exe
 
 OBJS	= sdl.o scummvmico.o
 
+include Makefile.common
+
 scummvmico.o: scummvm.ico
 	windres scummvm.rc scummvmico.o
-
-include Makefile.common
 
 
 # Some additional targets
