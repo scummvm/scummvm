@@ -571,7 +571,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	if (from == to)
 		return to;
 
-	assert(from < numOfBoxes);
+	assert(from < numOfBoxes || from == Actor::INVALID_BOX);
 	assert(to < numOfBoxes);
 
 	boxm = getBoxMatrixBaseAddr();
