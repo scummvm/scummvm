@@ -602,10 +602,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 		_playerV2 = NULL;
-	} else if (_features & GF_OLD_BUNDLE && !(_features & GF_AMIGA)) {
+	} else if ((_features & GF_OLD_BUNDLE) && !(_features & GF_AMIGA)) {
 		_playerV2 = NULL;
 		if (!(_features & GF_AMIGA))
-			_playerV2 = new Player_V2();
+			_playerV2 = new Player_V2(this);
 		_imuse = NULL;
 		_imuseDigital = NULL;
 	} else {
@@ -923,6 +923,8 @@ int Scumm::scummLoop(int delta) {
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
+	} else if (_playerV2) {
+		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
 	} else if (_features & GF_SMALL_HEADER) {
 		// TODO: The music delay (given in milliseconds) might have to be tuned a little
 		// to get it correct for all games. Without the ability to watch/listen to the

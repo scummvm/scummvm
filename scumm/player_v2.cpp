@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "common/engine.h"
 #include "player_v2.h"
+#include "scumm.h"
 
 #define FREQ_HZ 236 // Don't change!
 
@@ -326,13 +327,13 @@ static const uint16 pcjr_freq_table[12] = {
 ////////////////////////////////////////
 
 
-Player_V2::Player_V2() {
+Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
 	int i;
 	
 	// This simulates the pc speaker sound, which is driven
 	// by the 8253 (square wave generator) and a low-band filter.
 	
-	_system = g_system;
+	_system = scumm->_system;
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 	_mutex = _system->create_mutex();
 
@@ -355,14 +356,13 @@ Player_V2::Player_V2() {
 	set_pcjr(true);
 	set_master_volume(255);
 
-	_mixer = g_mixer;
-	_mixer->setupPremix(this, premix_proc);
+	scumm->_mixer->setupPremix(this, premix_proc);
 }
 
 Player_V2::~Player_V2() {
 	mutex_up();
 	// Detach the premix callback handler
-	_mixer->setupPremix (0, 0);
+	_scumm->_mixer->setupPremix (0, 0);
 	mutex_down();
 	_system->delete_mutex (_mutex);
 }
@@ -546,6 +546,10 @@ void Player_V2::clear_channel(int i) {
 	channel->d.freqmod_incr = 0;
 	channel->d.freqmod_multiplier = 0;
 	channel->d.freqmod_modulo = 0;
+}
+
+int Player_V2::getMusicTimer() {
+	return channels[0].d.music_timer;
 }
 
 void Player_V2::execute_cmd(ChannelInfo *channel) {
@@ -810,8 +814,8 @@ void Player_V2::do_mix (int16 *data, int len) {
 
 void Player_V2::lowPassFilter(int16 *sample, int len) {
 	for (int i = 0; i < len; i++) {
-		_level = ((int)_level * _decay
-			 + (int)sample[i] * (0x10000-_decay)) >> 16;
+		_level = (_level * _decay
+			 + (unsigned int)sample[i] * (0x10000-_decay)) >> 16;
 		sample[i] = _level;
 	}
 }

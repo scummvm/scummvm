@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sound/mixer.h"
+class Scumm;
 
 struct channel_data {
 	uint16 time_left;          // 00
@@ -46,7 +47,8 @@ struct channel_data {
 	uint16 freqmod_incr;       // 32
 	uint16 freqmod_multiplier; // 34
 	uint16 freqmod_modulo;     // 36
-	uint16 unknown[5];         // 38 - 46
+	uint16 unknown[4];         // 38 - 44
+	uint16 music_timer;        // 46
 	uint16 music_script_nr;    // 48
 } GCC_PACK;
 
@@ -59,7 +61,7 @@ union ChannelInfo {
 
 class Player_V2 {
 public:
-	Player_V2();
+	Player_V2(Scumm *scumm);
 	~Player_V2();
 
 	void set_pcjr(bool pcjr);
@@ -69,9 +71,11 @@ public:
 	void stopSound(int nr);
 	void stopAllSounds();
 	int  getSoundStatus(int nr);
+	int  getMusicTimer();
 
 private:
 	SoundMixer *_mixer;
+	Scumm *_scumm;
 
 
 	bool _pcjr;
