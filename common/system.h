@@ -54,6 +54,8 @@ public:
 		EVENT_LBUTTONUP = 5,
 		EVENT_RBUTTONDOWN = 6,
 		EVENT_RBUTTONUP = 7,
+		EVENT_WHEELUP = 8,
+		EVENT_WHEELDOWN = 9,
 	};
 
 	enum {

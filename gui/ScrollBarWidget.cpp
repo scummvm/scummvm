@@ -31,6 +31,7 @@
  * - Allow for a horizontal scrollbar, too?
  * - If there are less items than fit on one pages, no scrolling can be done
  *   and we thus should not highlight the arrows/slider.
+ * - Allow the mouse wheel to scroll more than one line at a time
  */
 
 #define UP_DOWN_BOX_HEIGHT	10
@@ -102,6 +103,23 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	_draggingPart = kNoPart;
+}
+
+void ScrollBarWidget::handleMouseWheel(int x, int y, int direction)
+{
+	int old_pos = _currentPos;
+
+	if (_numEntries < _entriesPerPage)
+		return;
+
+	if (direction < 0) {
+		_currentPos--;
+	} else {
+		_currentPos++;
+	}
+
+	// Make sure that _currentPos is still inside the bounds
+	checkBounds(old_pos);
 }
 
 void ScrollBarWidget::handleMouseMoved(int x, int y, int button)

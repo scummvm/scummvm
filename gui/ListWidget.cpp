@@ -85,6 +85,11 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount)
 	}
 }
 
+void ListWidget::handleMouseWheel(int x, int y, int direction)
+{
+	_scrollBar->handleMouseWheel(x, y, direction);
+}
+
 bool ListWidget::handleKeyDown(char key, int modifiers)
 {
 	bool handled = true;

@@ -588,6 +588,12 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				event->event_code = EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
 				event->event_code = EVENT_RBUTTONDOWN;
+#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
+			else if (ev.button.button == SDL_BUTTON_WHEELUP)
+				event->event_code = EVENT_WHEELUP;
+			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+				event->event_code = EVENT_WHEELDOWN;
+#endif
 			else
 				break;
 			km.x = event->mouse.x = ev.motion.x;

@@ -163,6 +163,21 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount)
 		w->handleMouseUp(x - w->_x, y - w->_y, button, clickCount);
 }
 
+void Dialog::handleMouseWheel(int x, int y, int direction)
+{
+	Widget *w;
+
+	// This may look a bit backwards, but I think it makes more sense for
+	// the mouse wheel to primarily affect the widget the mouse is at than
+	// the widget that happens to be focused.
+
+	w = findWidget(x, y);
+	if (!w)
+		w = _focusedWidget;
+	if (w)
+		w->handleMouseWheel(x, y, direction);
+}
+
 void Dialog::handleKeyDown(char key, int modifiers)
 {
 	if (_focusedWidget) {
