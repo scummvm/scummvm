@@ -5129,10 +5129,13 @@ void SimonState::playMusic(uint music_unk, uint music)
 			midi.shutdown();
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 			midi.read_all_songs(_game_file, music);
-			_midi_unk1 = music;
 		} else {
 			/* TODO Add XMI midi format support for simon2dos/talkie */
+			//midi.shutdown();
+			//_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+			//midi.read_xmi_songs(_game_file, music);
 		}
+		_midi_unk1 = music;
 		_vc72_var1 = music_unk;
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
