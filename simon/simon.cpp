@@ -3288,8 +3288,6 @@ void SimonState::draw_mouse_pointer()
 		_system->set_mouse_cursor(_simon2_cursors[_mouse_cursor], 16, 16, 7, 7);
 	else
 		_system->set_mouse_cursor(_simon1_cursor, 16, 16, 0, 0);
-
-	_system->show_mouse(true);
 }
 
 
