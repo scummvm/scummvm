@@ -27,6 +27,9 @@
 #include "guimaps.h"
 #include "config-file.h"
 
+#define hline(x, y, x2, color) line(x, y, x2, y, color);
+#define vline(x, y, y2, color) line(x, y, x, y2, color);
+
 #ifdef _WIN32_WCE
 // Additional variables for WinCE specific GUI
 #include "gapi_keys.h"
@@ -510,42 +513,19 @@ void Gui::widgetClear(const GuiWidget * wid)
 
 void Gui::widgetBorder(const GuiWidget * w)
 {
-	int x = w->_x, y = w->_y;
-	int x2 = x + w->_w - 1, y2 = y + w->_h - 1;
-	byte tmp;
-
-	hline(x + 1, y, x2 - 1);
-	hline(x, y + 1, x2);
-	vline(x, y + 1, y2 - 1);
-	vline(x + 1, y, y2);
-
-	tmp = _color;
-	_color = _shadowcolor;
-
-	hline(x + 1, y2 - 1, x2);
-	hline(x + 1, y2, x2 - 1);
-	vline(x2, y + 1, y2 - 1);
-	vline(x2 - 1, y + 1, y2);
-
-	_color = tmp;
+	box(w->_x, w->_y, w->_w, w->_h);
 }
 
-void Gui::hline(int x, int y, int x2)
-{
-	moveto(x, y);
-	lineto(x2, y);
-}
+void Gui::box(int x, int y, int width, int height) {
+	hline(x + 1, y, x + width - 2, _color);
+	hline(x, y + 1, x + width - 1, _color);
+	vline(x, y + 1, y + height - 2, _color);
+	vline(x + 1, y, y + height - 1, _color);
 
-void Gui::vline(int x, int y, int y2)
-{
-	moveto(x, y);
-	lineto(x, y2);
-}
-
-void Gui::moveto(int x, int y)
-{
-	_curX = x;
-	_curY = y;
+	hline(x + 1, y + height - 2, x + width - 1, _shadowcolor);
+	hline(x + 1, y + height - 1, x + width - 2, _shadowcolor);
+	vline(x + width - 1, y + 1, y + height - 2, _shadowcolor);
+	vline(x + width - 2, y + 1, y + height - 1, _shadowcolor);
 }
 
 byte *Gui::getBasePtr(int x, int y)
@@ -561,15 +541,10 @@ byte *Gui::getBasePtr(int x, int y)
 		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100)*320;
 }
 
-void Gui::lineto(int x, int y)
+void Gui::line(int x, int y, int x2, int y2, byte color)
 {
 	byte *ptr;
-	int x2 = _curX;
-	int y2 = _curY;
-
-	_curX = x;
-	_curY = y;
-
+	
 	if (x2 < x)
 		x2 ^= x ^= x2 ^= x;	// Swap x2 and x
 
@@ -584,13 +559,13 @@ void Gui::lineto(int x, int y)
 	if (x == x2) {
 		/* vertical line */
 		while (y++ <= y2) {
-			*ptr = _color;
+			*ptr = color;
 			ptr += 320;
 		}
 	} else if (y == y2) {
 		/* horizontal line */
 		while (x++ <= x2) {
-			*ptr++ = _color;
+			*ptr++ = color;
 		}
 	}
 }
@@ -1192,3 +1167,47 @@ void Gui::launcher()
 	_cur_page = 0;
 	_dialog = LAUNCHER_DIALOG;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+void Gui::loop()
+{
+	if (_active && !_inited) {
+		_inited = true;
+		_old_soundsPaused = _s->_soundsPaused;
+		_s->pauseSounds(true);
+
+		// Backup old cursor
+		memcpy(_old_grabbedCursor, _s->_grabbedCursor, sizeof(_old_grabbedCursor));
+		_old_cursorWidth = _s->_cursorWidth;
+		_old_cursorHeight = _s->_cursorHeight;
+		_old_cursorHotspotX = _s->_cursorHotspotX;
+		_old_cursorHotspotY = _s->_cursorHotspotY;
+		_old_cursor_mode = _s->_system->show_mouse(true);
+
+		_s->_cursorAnimate++;
+		_s->gdi._cursorActive = 1;
+	}
+	_s->animateCursor();
+	_s->getKeyInput(0);
+	
+	_s->drawDirtyScreenParts();
+	_s->_mouseButStat = 0;
+}
+*/

@@ -263,14 +263,24 @@ void Scumm::readIndexFile()
 			break;
 
 		case MKID('DOBJ'):
-			num = fileReadWordLE();
+			if (_features & GF_AFTER_V8)
+				num = fileReadDwordLE();
+			else
+				num = fileReadWordLE();
 			assert(num == _numGlobalObjects);
 
-			if (_features & GF_AFTER_V7) {
+			if (_features & GF_AFTER_V8) { /* FIXME: Not sure.. */
+				for (i=0; i<num; i++) {
+					fileSeek(_fileHandle, 40, SEEK_CUR);
+					_objectStateTable[i] = fileReadByte();
+					_objectRoomTable[i] = fileReadByte();
+					_classData[i] = fileReadDwordLE();
+				}
+				memset(_objectOwnerTable, 0xFF, num);
+			} else if (_features & GF_AFTER_V7) {
 				fileRead(_fileHandle, _objectStateTable, num);
 				fileRead(_fileHandle, _objectRoomTable, num);
 				memset(_objectOwnerTable, 0xFF, num);
-
 			} else {
 				fileRead(_fileHandle, _objectOwnerTable, num);
 				for (i = 0; i < num; i++) {
@@ -278,15 +288,16 @@ void Scumm::readIndexFile()
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
 				}
 			}
-			fileRead(_fileHandle, _classData, num * sizeof(uint32));
 
-			/* This code should be here. Otherwise the flags will be swapped for big endian computers.
-			 * If it doesn't work with this code, something else is wrong */
+			if (!(_features & GF_AFTER_V8)) {
+				fileRead(_fileHandle, _classData, num * sizeof(uint32));
+
+				// Swap flag endian where applicable
 #if defined(SCUMM_BIG_ENDIAN)
-			for (i = 0; i != num; i++) {
-				_classData[i] = FROM_LE_32(_classData[i]);
-			}
+				for (i = 0; i != num; i++)
+					_classData[i] = FROM_LE_32(_classData[i]);
 #endif
+			}
 			break;
 
 		case MKID('RNAM'):
@@ -296,6 +307,10 @@ void Scumm::readIndexFile()
 
 		case MKID('DROO'):
 			readResTypeList(rtRoom, MKID('ROOM'), "room");
+			break;
+
+		case MKID('DRSC'):	// FIXME: Verify
+			readResTypeList(rtRoomScripts,MKID('RMSC'), "room script");
 			break;
 
 		case MKID('DSCR'):
@@ -354,7 +369,10 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 
 	debug(9, "readResTypeList(%s,%x,%s)", resTypeFromId(id), FROM_LE_32(tag), name);
 
-	num = fileReadWordLE();
+	if (_features & GF_AFTER_V8)
+		num = fileReadDwordLE();
+	else
+		num = fileReadWordLE();
 
 	if (1 || _features & GF_AFTER_V6) {
 		if (num != res.num[id]) {
@@ -1152,7 +1170,31 @@ void Scumm::unkHeapProc2(int a, int b)
 
 void Scumm::readMAXS()
 {
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_AFTER_V8) {
+		fileSeek(_fileHandle, 50+50, SEEK_CUR);
+		_numVariables = fileReadDwordLE(); /* ? 1500 */
+		_numBitVariables = fileReadDwordLE(); /* ? 2048 */
+		fileReadDwordLE(); /* 40 */
+		_numScripts = fileReadDwordLE();
+		_numSounds = fileReadDwordLE();
+		_numCharsets = fileReadDwordLE();
+		_numCostumes = fileReadDwordLE();
+		_numRooms = fileReadDwordLE();
+		_numInventory = fileReadDwordLE();
+		_numGlobalObjects = fileReadDwordLE();
+		_numFlObject = fileReadDwordLE();
+		_numLocalObjects = fileReadDwordLE();
+		_numVerbs = fileReadDwordLE();
+		_numNewNames = fileReadDwordLE();
+		fileReadDwordLE();
+		fileReadDwordLE();
+		_numArray = fileReadDwordLE();
+
+		_objectRoomTable = (byte*)calloc(_numGlobalObjects, 1);
+		_numGlobalScripts = 2000;
+
+		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
+	} else if (_features & GF_AFTER_V7) {
 		fileSeek(_fileHandle, 50 + 50, SEEK_CUR);
 		_numVariables = fileReadWordLE();
 		_numBitVariables = fileReadWordLE();
@@ -1247,6 +1289,7 @@ void Scumm::allocateArrays()
 									 MKID('COST'), _numCostumes, "costume", 1);
 
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(rtRoomScripts, MKID('RMSC'), _numRooms, "room script", 1);
 	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 1);
 	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
 	allocResTypeData(rtCharset, MKID('CHAR'), _numCharsets, "charset", 1);

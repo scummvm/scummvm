@@ -236,15 +236,15 @@ void SmushPlayer::parseIACT() {
 						temp = (temp | _imusData[idx][0]) << 4;
 						temp -= 0x8000;
 
-						buf[bpos++] = (temp >> 8) & 0xff;
-						buf[bpos++] = temp & 0xff;
+						buf[bpos++] = (byte)((temp >> 8) & 0xff);
+						buf[bpos++] = (byte)(temp & 0xff);
 
 						temp = (_imusData[idx][1] & 0xf0) << 4;
 						temp = (temp | _imusData[idx][2]) << 4;
 						temp -= 0x8000;
 
-						buf[bpos++] = (temp >> 8) & 0xff;
-						buf[bpos++] = temp & 0xff;
+						buf[bpos++] = (byte)((temp >> 8) & 0xff);
+						buf[bpos++] = (byte)(temp & 0xff);
 						_imusPos[idx] = 0;
 					}
 				}

@@ -248,8 +248,9 @@ enum ResTypes {
 	rtMatrix = 14,
 	rtBox = 15,
 	rtObjectName = 16,
-	rtLast = 16,
-	rtNumTypes = 17
+	rtRoomScripts = 17,
+	rtLast = 17,
+	rtNumTypes = 18
 };
 
 enum {
@@ -449,8 +450,10 @@ enum GameId {
 	GID_FT = 11,
 	GID_DIG = 12,
 	GID_MONKEY_VGA = 13,
+	GID_CMI = 14,
+
 	/* Simon the Sorcerer */
-	GID_SIMON_FIRST = 14,
+	GID_SIMON_FIRST = 20,
 	GID_SIMON_LAST = GID_SIMON_FIRST+3,
 };
 
@@ -476,7 +479,8 @@ enum GameFeatures {
 	GF_NO_SCALLING = 2048,
 	GF_ADLIB_DEFAULT = 4096,
 	GF_AMIGA = 8192,
-	GF_HUMONGOUS = 16384
+	GF_HUMONGOUS = 16384,
+	GF_AFTER_V8 = 32768
 };
 
 enum WhereIsObject {

@@ -426,7 +426,7 @@ static const VersionSettings version_settings[] = {
 	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
 
 	/* Scumm Version 8 */
-//    {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7|GF_AFTER_V8},
 	{NULL, NULL}
 };
 

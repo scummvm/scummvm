@@ -49,8 +49,7 @@ public:
 protected:
 	Scumm *_s;
 	const GuiWidget *_widgets[4];
-	int _return_to;
-	int _curX, _curY;
+	int _return_to;	
 	VirtScreen *_vs;
 	int _parentX, _parentY;
 	bool _active;
@@ -84,11 +83,13 @@ protected:
 	// Drawing
 	void draw(int start, int end);
 	void draw(int item) { draw(item,-1); }
-	void drawWidget(const GuiWidget *w);
-	void moveto(int x, int y);
-	void lineto(int x, int y);
-	void hline(int x, int y, int x2);
-	void vline(int x, int y, int y2);
+	void drawWidget(const GuiWidget *w);	
+	
+    void line(int x, int y, int x2, int y2, byte color);
+	void box(int x, int y, int width, int height);
+
+	//void hline(int x, int y, int x2, byte color);
+	//void vline(int x, int y, int y2, byte color);
 	void drawChar(const char str, int xx, int yy);
 	void drawString(const char *str, int x, int y, int w, byte color, bool center);
 	void widgetClear(const GuiWidget *w);
