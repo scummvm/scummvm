@@ -1458,8 +1458,7 @@ void Actor::walkActorOld() {
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
-			moving |= MF_LAST_LEG;
-			return;
+			break;
 		}
 
 
