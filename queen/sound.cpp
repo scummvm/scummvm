@@ -147,14 +147,14 @@ void SBSound::playSound(byte *sound, uint32 size) {
 
 void SBSound::sfxPlay(const char *name) {
 	waitSfxFinished();	
-	if (_vm->resource()->exists(name)) 
+	if (_vm->resource()->fileExists(name)) 
 		playSound(_vm->resource()->loadFileMalloc(name, SB_HEADER_SIZE), _vm->resource()->fileSize(name) - SB_HEADER_SIZE);
 }
 
 #ifdef USE_MAD
 void MP3Sound::sfxPlay(const char *name) {
 	waitSfxFinished();
-	if (_vm->resource()->exists(name)) 
+	if (_vm->resource()->fileExists(name)) 
 		_mixer->playMP3(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
@@ -162,7 +162,7 @@ void MP3Sound::sfxPlay(const char *name) {
 #ifdef USE_VORBIS
 void OGGSound::sfxPlay(const char *name) {
 	waitSfxFinished();	
-	if (_vm->resource()->exists(name))
+	if (_vm->resource()->fileExists(name))
 		_mixer->playVorbis(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif

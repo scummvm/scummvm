@@ -31,6 +31,8 @@
 #include "queen/sound.h"
 #include "queen/state.h"
 
+#include "common/file.h"
+
 namespace Queen {
 
 /*
@@ -378,10 +380,37 @@ void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 		warning("Failed to find string with ID %i", id);
 }
 
+byte *Talk::loadDialogFile(const char *filename) {
+	static const struct {
+		const char *filename;
+		Language lang;
+	} dogFiles[] = {
+		{ "chief1.dog", FRENCH  },
+		{ "chief2.dog", FRENCH  },
+		{ "bud1.dog",   ITALIAN }
+	};	
+	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
+		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
+			_vm->resource()->getLanguage() == dogFiles[i].lang) {
+			File fdog;
+			fdog.open(filename, _vm->getGameDataPath());
+			if (fdog.isOpen()) {
+				debug(0, "Loading dog file '%s' from game data path", filename);
+				uint32 size = fdog.size() - DOG_HEADER_SIZE;
+				byte *buf = new byte[size];
+				fdog.seek(DOG_HEADER_SIZE);
+				fdog.read(buf, size);
+				return buf;
+			}
+		}
+	}
+	return _vm->resource()->loadFile(filename, DOG_HEADER_SIZE);
+}
+
 void Talk::load(const char *filename) {
 	int i;
 	
-	byte *ptr = _fileData = _vm->resource()->loadFile(filename, 20);
+	byte *ptr = _fileData = loadDialogFile(filename);
 	if (!_fileData) {
 		error("Failed to load resource data file '%s'", filename);
 	}

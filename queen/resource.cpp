@@ -103,6 +103,14 @@ int32 Resource::resourceIndex(const char *filename) const {
 	return -1;
 }
 
+ResourceEntry *Resource::resourceEntry(const char *filename) const {
+	int32 index = resourceIndex(filename);
+	if (index >= 0)
+		return &_resourceTable[index];
+	else 
+		return NULL;
+}
+
 char *Resource::getJAS2Line() {
 	char *startOfLine = _JAS2Ptr + _JAS2Pos;
 	char *curPos = startOfLine;
@@ -114,11 +122,12 @@ char *Resource::getJAS2Line() {
 }
 
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
-	uint32 size = fileSize(filename) - skipBytes;
-	if (dstBuf == NULL) 
+	ResourceEntry *re = resourceEntry(filename);
+	assert(re != NULL);
+	uint32 size = re->size - skipBytes;
+	if (dstBuf == NULL)
 		dstBuf = new byte[size];
-	// skip 'skipBytes' bytes (useful for headers)
-	_resourceFile->seek(fileOffset(filename) + skipBytes, SEEK_SET);
+	_resourceFile->seek(re->offset + skipBytes);
 	_resourceFile->read(dstBuf, size);
 	return dstBuf;
 }
@@ -164,14 +173,14 @@ bool Resource::findCompressedVersion() {
 }
 
 void Resource::checkJASVersion() {
-	int32 offset = fileOffset("QUEEN.JAS");
+	int32 offset = resourceEntry("QUEEN.JAS")->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;
 	else if (isInterview())
 		offset += JAS_VERSION_OFFSET_INTV;
 	else 
 		offset += JAS_VERSION_OFFSET;
-	_resourceFile->seek(offset, SEEK_SET);
+	_resourceFile->seek(offset);
 
 	char versionStr[6];
 	_resourceFile->read(versionStr, 6);
@@ -246,7 +255,7 @@ const GameVersion *Resource::detectGameVersion(uint32 size) const {
 
 File *Resource::giveCompressedSound(const char *filename) {
 	assert(strstr(filename, ".SB"));
-	_resourceFile->seek(fileOffset(filename), SEEK_SET);
+	_resourceFile->seek(resourceEntry(filename)->offset);
 	return _resourceFile;
 }
 

@@ -155,12 +155,12 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 		char filename[20];
 
 		sprintf(filename, "%s.msk", roomName);
-		_dynalum.valid = _vm->resource()->exists(filename);
+		_dynalum.valid = _vm->resource()->fileExists(filename);
 		if (_dynalum.valid)
 			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.msk);
 
 		sprintf(filename, "%s.lum", roomName);
-		_dynalum.valid = _vm->resource()->exists(filename);
+		_dynalum.valid = _vm->resource()->fileExists(filename);
 		if (_dynalum.valid)
 			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.lum);
 	}

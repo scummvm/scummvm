@@ -60,7 +60,8 @@ private:
 	  ARROW_BOB_UP = 62,
 	  ARROW_BOB_DOWN = 63,
 	  ARROW_ZONE_UP   = 5,
-	  ARROW_ZONE_DOWN = 6
+	  ARROW_ZONE_DOWN = 6,
+	  DOG_HEADER_SIZE = 20
 	};
 
 	//! Special commands for speech
@@ -152,6 +153,8 @@ private:
 
 	//! Perform talk in file and return a cutaway filename
 	void talk(const char *filename, int personInRoom, char *cutawayFilename);
+
+	byte *loadDialogFile(const char *filename);
 
 	//! Load talk data from .dog file 
 	void load(const char *filename);

@@ -70,9 +70,8 @@ public:
 
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
-	bool exists(const char *filename) const { return resourceIndex(filename) >= 0; }
-	uint32 fileSize(const char *filename) const { return _resourceTable[resourceIndex(filename)].size; }
-	uint32 fileOffset(const char *filename) const { return _resourceTable[resourceIndex(filename)].offset; }
+	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
+	uint32 fileSize(const char *filename) const { return resourceEntry(filename)->size; }
 
 	File *giveCompressedSound(const char *filename);
 
@@ -109,6 +108,7 @@ protected:
 	bool findCompressedVersion();
 	void checkJASVersion();
 	int32 resourceIndex(const char *filename) const;
+	ResourceEntry *resourceEntry(const char *filename) const;
 	bool readTableFile(const GameVersion *gameVersion);
 	void readTableCompResource();
 	void readTableEntries(File *file);
