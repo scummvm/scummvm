@@ -58,6 +58,8 @@ struct Item {
 	uint16 unk4;
 	uint16 xxx_1;									/* unused? */
 	Child *children;
+	
+	Item() { memset(this, 0, sizeof(Item)); }
 };
 
 struct Subroutine {

@@ -33,10 +33,14 @@ MidiPlayer::MidiPlayer (OSystem *system) {
 	// between songs.
 	_system = system;
 	_mutex = system->create_mutex();
+	_driver = 0;
+	_parser = 0;
+	
 	_data = 0;
 	_masterVolume = 255;
-	_num_songs = 0;
+	_paused = false;
 	_currentTrack = 255;
+	_num_songs = 0;
 }
 
 MidiPlayer::~MidiPlayer() {
