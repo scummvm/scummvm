@@ -6,7 +6,8 @@ Residual in-progress items (in rough order of priority):
 
 Residual TODO list (in rough order of priority):
 ------------------------------------------------ 
- * Figure out how to speed-up zbuffering (only draw buffer around active objects)
+ * Bounds check the ZBuffer/Screen stuff, so it stops trashing memory and making
+   Residual unusable/unstable.
  * Implement 2D primitives 
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
