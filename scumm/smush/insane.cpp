@@ -1489,9 +1489,6 @@ void Insane::readState(void) {
 	_actor[0].inventory[INV_HAND] = 1; // Boot
 	_actor[0].inventory[INV_BOOT] = 1; // Hand
 
-	for (int i = 0; i < 7; i++) // PATCH
-		_actor[0].inventory[i] = 1;
-
 	_smlayer_room = readArray(_numberArray, 320);
 	_smlayer_room2 = readArray(_numberArray, 321);
 	_val55d = readArray(_numberArray, 322);
@@ -2920,7 +2917,7 @@ void Insane::actorsReaction(bool flag) {
 			if (_currEnemy == EN_TORQUE)
 				buttons = 0;
 		}
-		debug(0, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state, 
+		debug(1, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state, 
 				_actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
 		actor01Reaction(buttons);
 		actor02Reaction(buttons);
@@ -4911,7 +4908,7 @@ void Insane::reinitActors(void) {
 }
 
 int Insane::speedTranslator(int value) {
-	const int a[6] = {-5, -4, -2, 2, 4, 5};
+	const int a[7] = {-5, -4, -2, 0, 2, 4, 5};
 	if (value+3 > 6)
 		return 0;
 	
