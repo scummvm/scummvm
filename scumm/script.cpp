@@ -1122,12 +1122,12 @@ void ScummEngine::endCutscene() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	int args[16];
 
-	memset(args, 0, sizeof(args));
-
 	if (ss->cutsceneOverride > 0)	// Only terminate if active
 		ss->cutsceneOverride--;
 
+	memset(args, 0, sizeof(args));
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
+
 	VAR(VAR_OVERRIDE) = 0;
 
 	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
@@ -1142,9 +1142,12 @@ void ScummEngine::endCutscene() {
 }
 
 void ScummEngine::abortCutscene() {
-	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
+	const int idx = vm.cutSceneStackPointer;
+	assert(0 <= idx && idx < 5);
+
+	uint32 offs = vm.cutScenePtr[idx];
 	if (offs) {
-		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
+		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[idx]];
 		ss->offs = offs;
 		ss->status = ssRunning;
 		ss->freezeCount = 0;
@@ -1153,7 +1156,7 @@ void ScummEngine::abortCutscene() {
 			ss->cutsceneOverride--;
 
 		VAR(VAR_OVERRIDE) = 1;
-		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+		vm.cutScenePtr[idx] = 0;
 
 		// HACK to fix issues with SMUSH and the way it does keyboard handling.
 		// In particular, normally abortCutscene() is being called while no
@@ -1169,10 +1172,8 @@ void ScummEngine::abortCutscene() {
 }
 
 void ScummEngine::beginOverride() {
-	int idx;
-
-	idx = vm.cutSceneStackPointer;
-	assert(idx < 5);
+	const int idx = vm.cutSceneStackPointer;
+	assert(0 <= idx && idx < 5);
 
 	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[idx] = _currentScript;
@@ -1188,10 +1189,8 @@ void ScummEngine::beginOverride() {
 }
 
 void ScummEngine::endOverride() {
-	int idx;
-
-	idx = vm.cutSceneStackPointer;
-	assert(idx < 5);
+	const int idx = vm.cutSceneStackPointer;
+	assert(0 <= idx && idx < 5);
 
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
