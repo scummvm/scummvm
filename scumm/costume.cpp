@@ -1317,23 +1317,28 @@ void CostumeRenderer::setPalette(byte *palette) {
 	byte color;
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
-		for (i = 0; i < _loaded._numColors; i++) {
-			_palette[i] = i;
-		}
-		_palette[_loaded._ptr[8]] = palette[0];
-		// TODO / FIXME
-		return;
-	}
-	
-	for (i = 0; i < _loaded._numColors; i++) {
-		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
-			color = palette[i];
-			if (color == 255)
-				color = _loaded._ptr[8 + i];
+		palette[_loaded._ptr[8]] = palette[0];
+		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color)) {
+			for (i = 0; i < 16; i++) {
+				_palette[i] = palette[i];
+			}
 		} else {
-			color = (i == 12) ? 0 : 8;
+			for (i = 0; i < 16; i++) {
+				_palette[i] = 8;
+			}
+			_palette[12] = 0;
 		}
-		_palette[i] = color;
+	} else {
+		for (i = 0; i < _loaded._numColors; i++) {
+			if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
+				color = palette[i];
+				if (color == 255)
+					color = _loaded._ptr[8 + i];
+			} else {
+				color = (i == 12) ? 0 : 8;
+			}
+			_palette[i] = color;
+		}
 	}
 }
 
