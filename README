@@ -73,7 +73,7 @@ prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
      Full Throttle                                 [Game: ft]
-     Zak McKracken (256 color, Towns Kanji ver)    [Game: zak256]
+     Zak McKracken (256 FM Towns Kanji version)    [Game: zak256]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -566,6 +566,8 @@ manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
         adlib     - Uses internal Adlib Emulation (default) 
+        pcjr      - Uses internal PC Speaker Emulation 
+        pcspk     - Uses internal PCjr Emulation
         windows   - Windows MIDI. Uses built-in sequencer, for Windows users
         seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         qt        - Quicktime sound, for Macintosh users.
