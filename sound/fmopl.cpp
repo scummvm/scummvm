@@ -38,9 +38,12 @@
 #include "common/config-manager.h"
 #endif
 
+#if defined(__PALM_OS__)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
 
 static Common::RandomSource oplRnd;			/* OPL random number generator */
-
 
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
@@ -181,7 +184,7 @@ static int *VIB_TABLE;
 #ifndef __PALM_OS__
 static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
 #else
-static int *ENV_CURVE;   // to keep it static ...
+static int *ENV_CURVE = NULL;   // to keep it static ...
 #endif
 
 /* multiple table */
@@ -602,7 +605,8 @@ static int OPLOpenTable(void) {
 	double pom;
 
 #ifdef __PALM_OS__
-	ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
+	if (!ENV_CURVE)
+		ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
 #endif
 
 	/* allocate dynamic tables */
@@ -687,6 +691,7 @@ static void OPLCloseTable(void) {
 	free(VIB_TABLE);
 #ifdef __PALM_OS__
 	free(ENV_CURVE);
+	ENV_CURVE = NULL;
 #endif
 }
 
@@ -727,6 +732,16 @@ static void OPL_initalize(FM_OPL *OPL) {
 
 /* ---------- write a OPL registers ---------- */
 void OPLWriteReg(FM_OPL *OPL, int r, int v) {
+#ifdef __PALM_OS__
+	ARM_START(OPLDriverType)
+		ARM_INIT(COMMON_OPLWRITEREG)
+		ARM_ADDM(OPL)
+		ARM_ADDM(r)
+		ARM_ADDM(v)
+		ARM_CALL(ARM_COMMON, PNO_DATA())
+	ARM_END();
+#endif
+
 	OPL_CH *CH;
 	int slot;
 	uint block_fnum;
@@ -949,6 +964,16 @@ static void OPL_UnLockTable(void) {
 
 /* ---------- update one of chip ----------- */
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
+#ifdef __PALM_OS__
+	ARM_START(OPLDriverType)
+		ARM_INIT(COMMON_YM3812YPDATEONE)
+		ARM_ADDM(OPL)
+		ARM_ADDM(buffer)
+		ARM_ADDM(length)
+		ARM_CALL(ARM_COMMON, PNO_DATA())
+	ARM_END();
+#endif
+	
 	int i;
 	int data;
 	int16 *buf = buffer;
@@ -1156,6 +1181,21 @@ FM_OPL *makeAdlibOPL(int rate) {
 		env_bits = FMOPL_ENV_BITS_LQ;
 		eg_ent = FMOPL_EG_ENT_LQ;
 	}
+#endif
+
+#ifdef __PALM_OS__
+	// HQ is really unstable on PalmOS (at least on ARM),
+	// don't know why... seems to read out of buffer ...
+	env_bits = FMOPL_ENV_BITS_MQ;
+	eg_ent = FMOPL_EG_ENT_MQ;
+
+	ARM_START(OPLDriverType)
+		ARM_INIT(COMMON_OPLCREATE)
+		ARM_ADDM(env_bits)
+		ARM_ADDM(eg_ent)
+		ARM_ADDM(rate)
+		ARM_CALL_RET(ARM_COMMON, PNO_DATA())
+	ARM_END_RET(FM_OPL *);
 #endif
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
