@@ -480,6 +480,7 @@ void Player_V2::stopSound(int nr) {
 }
 
 void Player_V2::startSound(int nr, byte *data) {
+	assert(data);
 	mutex_up();
 
 	int cprio = _current_data ? *(_current_data + _header_len) : 0;
