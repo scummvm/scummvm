@@ -1,5 +1,4 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -80,7 +79,6 @@ void MidiDriver_WIN::set_stream_callback(void *param, StreamCallback *sc)
 void CALLBACK MidiDriver_WIN::midi_callback(HMIDIOUT hmo, UINT wMsg,
                                             DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 {
-
 	switch (wMsg) {
 	case MM_MOM_DONE:{
 			MidiDriver_WIN *md = ((MidiDriver_WIN *) dwInstance);
