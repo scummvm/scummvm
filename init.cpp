@@ -2,71 +2,28 @@
 #include"scumm.h"
 
 Scumm::Scumm(void)
-{
-	int i;
-        for (i=0;i<17;i++)
-        {
-                res.address[i]=0;
-                res.flags[i]=0;
-                res.mode[i]=0;
-                res.name[i]=0;
-                res.num[i]=0;
-                res.roomno[i]=0;
-                res.roomoffs[i]=0;
-                res.tags[i]=0;
-        }
+{	
+	/* Initilize all our stuff */
+	ZeroMemory(&res, sizeof(res));
+	ZeroMemory(&vm, sizeof(vm));
+	ZeroMemory(&camera, sizeof(camera));
+	ZeroMemory(&mouse, sizeof(mouse));
+	ZeroMemory(&string, sizeof(string));
+	ZeroMemory(&_mixer_channel, sizeof(_mixer_channel));
+	ZeroMemory(&charset, sizeof(charset));
+	
+	//ZeroMemory(_objs, sizeof(_objs));
+	ZeroMemory(_colorCycle, sizeof(_colorCycle));        
+	ZeroMemory(_mouthSyncTimes, sizeof(_mouthSyncTimes));        
 
-        _resFilePath=0;
+		_resFilePath=0;
         _resFilePrefix=0;
-
-        for (i=1; i<NUM_SCRIPT_SLOT; i++)
-        {
-                vm.slot[i].status=0;
-                vm.slot[i].cutsceneOverride=0;
-                vm.slot[i].delay=0;
-                vm.slot[i].didexec=0;
-                vm.slot[i].freezeCount=0;
-                vm.slot[i].newfield=0;
-                vm.slot[i].number=0;
-                vm.slot[i].offs=0;
-                vm.slot[i].unk1=0;
-                vm.slot[i].unk2=0;
-                vm.slot[i].unk5=0;
-                vm.slot[i].where=0;
-        }
-
-        for (i=0; i<5;i++)
-        {
-                vm.cutScenePtr[i]=0;
-                vm.cutSceneScript[i]=0;
-                vm.cutSceneData[i]=0;
-        }
-
-        vm.cutSceneScriptIndex=0;
-        vm.cutSceneStackPointer=0;
-
         _scummStackPos=0;
         _verbMouseOver=0;
 
         _palDirtyMax=0;
         _palDirtyMin=0;
         _debugger=0;
-        camera._cur.x=0;
-        camera._cur.y=0;
-        camera._dest.x=0;
-        camera._dest.y=0;
-        camera._accel.x=0;
-        camera._accel.y=0;
-        camera._last.x=0;
-        camera._last.y=0;
-        camera._leftTrigger=0;
-        camera._rightTrigger=0;
-        camera._follows=0;
-        camera._mode=0;
-        camera._movingToActor=0;
-
-        mouse.x=0;
-        mouse.y=0;
 
         _xPos = 0;
         _yPos = 0;
@@ -128,7 +85,7 @@ Scumm::Scumm(void)
         _palManipStart = 0;
         _palManipEnd = 0;
 
-        memset(_colorCycle, 0, sizeof(_colorCycle));
+        
 
         _CLUT_offs = 0;
         _ENCD_offs = 0;
@@ -138,28 +95,12 @@ Scumm::Scumm(void)
 
         _fastMode = 0;
 
-        for (i=0; i<6; i++) {
-                string[i].t_center = 0;
-                string[i].t_xpos = 0;
-                string[i].t_ypos = 0;
-                string[i].t_color = 0;
-                string[i].t_overhead  =0;
-                string[i].t_charset = 0;
-                string[i].t_right = 0;
-        }
-
+        
         _charsetColor = 0;
 
         _insaneFlag = 12;
         _insaneState = 0;
 
-		for(i=0;i<NUM_MIXER;i++) {
-			 _mixer_channel[i]._sfx_sound = 0;
-			 _mixer_channel[i].sound_data.standard._sfx_fp_speed = 0;		
-			 _mixer_channel[i].sound_data.standard._sfx_fp_pos = 0;
-			 _mixer_channel[i].sound_data.standard._sfx_pos = 0;
-			 _mixer_channel[i].sound_data.standard._sfx_size = 0;
-		}
 
 		_haveMsg = 0;
 		_talkDelay = 0;
@@ -167,8 +108,4 @@ Scumm::Scumm(void)
 		_useTalkAnims = 0;
 		_endOfMouthSync = 0;
 		_mouthSyncMode = 0;
-
-
-		for (i=0; i<52; i++)
-			_mouthSyncTimes[i] = 0;
 }

@@ -25,6 +25,22 @@
 #include "math.h"
 
 void Scumm::initActor(Actor *a, int mode) {
+	if (a->init != 1) {		/* Check if this is the first time we've   */
+		a->costume = 0;		/* used this actor. If so, init everything */
+		a->room = 0;
+		a->x = a->y = 0;		
+		a->facing = 0;
+		a->newDirection = 0;
+		a->visible = 0;
+		a->mask = 0;
+		a->walkbox = 0;
+		a->animProgress = a->animSpeed = 0;
+		a->layer = 0;
+
+		a->init = 1;
+	}
+
+
 	if (mode==1) {
 		a->costume = 0;
 		a->room = 0;
@@ -36,7 +52,7 @@ void Scumm::initActor(Actor *a, int mode) {
 		a->facing = 180;
 		a->newDirection = 180;
 	}
-
+	
 	a->elevation = 0;
 	a->width = 24;
 	a->talkColor = 15;
