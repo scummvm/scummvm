@@ -666,7 +666,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	// MD5 Operations: Backup on load, compare, and reset.
 	if (s->isLoading())
-		memcpy(_gameMD5, md5Backup, 16);
+		memcpy(md5Backup, _gameMD5, 16);
 
 	s->saveLoadEntries(this, mainEntries);
 
