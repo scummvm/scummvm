@@ -354,7 +354,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17),
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
 		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),
+		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),	// FIXME - _charsetData is 15*16 these days
 		MKLINE(Scumm, _curExecScript, sleUint16),
 
 		MKLINE(Scumm, camera._dest.x, sleInt16),
@@ -465,7 +465,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, 25 * 17),
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
 		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),
+		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),	// FIXME - _charsetData is 15*16 these days
 		MKLINE(Scumm, _curExecScript, sleUint16),
 
 		MKLINE(Scumm, camera._dest.x, sleInt16),
