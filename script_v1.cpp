@@ -874,8 +874,12 @@ void Scumm::o5_getActorMoving() {
 }
 
 void Scumm::o5_getActorRoom() {
+	int temp;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorRoom")->room);
+	temp=getVarOrDirectByte(0x80);
+	if(temp>30 && _gameId==GID_INDY4)
+		temp=1;
+	setResult(derefActorSafe(temp,"o5_getActorRoom")->room);
 }
 
 void Scumm::o5_getActorScale() {
