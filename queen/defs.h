@@ -24,6 +24,8 @@
 
 namespace Queen {
 
+// Maybe should be an inlined function somwhere else, feel free to change
+#define InRange(x,l,h)     ((x)<=(h) && (x)>=(l)) /* X in [l..h] */
 
 enum {
 	GAME_SCREEN_WIDTH  = 320,

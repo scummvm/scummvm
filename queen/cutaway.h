@@ -105,18 +105,18 @@ class Cutaway {
 		};
 
 		struct CutawayAnim {
-			int object;
-			int unpackFrame;          // Frame to unpack
-			int speed;
-			int bank;
-			int mx;
-			int my;
-			int cx;
-			int cy;
-			int scale;
-			int currentFrame;  // Index to Current Frame
-			int originalFrame;  // Index to Original Object Frame
-			int song;
+			int16 object;
+			int16 unpackFrame;          // Frame to unpack
+			int16 speed;
+			int16 bank;
+			int16 mx;
+			int16 my;
+			int16 cx;
+			int16 cy;
+			int16 scale;
+			int16 currentFrame;  // Index to Current Frame
+			int16 originalFrame;  // Index to Original Object Frame
+			int16 song;
 			bool flip;		// set this if unpackFrame is negative
 		};
 

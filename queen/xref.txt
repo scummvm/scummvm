@@ -360,6 +360,7 @@ zones						Logic::_zones
 
 (UNSORTED)
 ==========
+in()						defs.h InRange() macro
 game_save()
 game_load()
 R_MAP()

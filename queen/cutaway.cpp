@@ -538,7 +538,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	else {
 		if (anim.bank != 13) {
 			/* XXX if (OLDBANK != T) */ {
-				_graphics->bankLoad(_bankNames[anim.bank], 8);
+				_graphics->bankLoad(_bankNames[anim.bank-1], 8);
 				// XXX OLDBANK=T;
 			}
 
@@ -678,6 +678,64 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 	if (object.animType != 1) {
 		// lines 1657-1761 in cutaway.c
+		for (i = 0; i < frameCount; i++) {
+			BobSlot *bob = _graphics->bob(objAnim[i].object);
+			bob->active = true;
+			if (bob->animating) {
+				bob->animating = false;
+				bob->frameNum = objAnim[i].originalFrame;
+			}
+
+			if (objAnim[i].object < 4)
+				bob->frameNum = 29 + bob->frameNum + FRAMES_JOE_XTRA;
+
+			if (objAnim[i].unpackFrame == 0) {
+				// Turn off the bob
+				bob->active = false;
+			}
+			else {
+				if (object.animType == 2 || object.animType == 0) {
+					// Unpack animation, but do not unpack moving people
+
+					if (!(objAnim[0].mx || objAnim[0].my) && InRange(objAnim[i].object, 0, 3))
+						_graphics->bankUnpack(
+								objAnim[i].unpackFrame, 
+								objAnim[i].originalFrame,
+								objAnim[i].bank);
+				}
+
+				if (objAnim[i].cx || objAnim[i].cy) {
+					bob->x = objAnim[i].cx;
+					bob->y = objAnim[i].cy;
+				}
+
+				// Only flip if we are not moving and it is not a person object
+				if (!(objAnim[i].mx || objAnim[i].my) &&
+						!(objAnim[i].object > 0 && objAnim[i].object < 4))
+					bob->xflip = objAnim[i].flip;
+
+				// Add frame alteration
+				bob->frameNum = objAnim[i].originalFrame;
+
+				int j;
+				for (j = 0; j < objAnim[i].speed; j++)
+					_graphics->update();
+			}
+
+			if (_quit)
+				return NULL;
+
+			if (objAnim[i].song > 0)
+				/* XXX playsong(objAnim[i].song) */ ;
+
+			// Load but don't play
+			if(objAnim[i].song < 0) {
+				// XXX loadnoplay=1;
+				// XXX playsong(abs(OBJ_ANIM[J][11]));
+				// XXX loadnoplay=0;
+			}
+
+		} // for()
 	}
 
 	bool moving = true;
