@@ -3276,7 +3276,7 @@ void SimonState::showmessage_helper_2()
 
 void SimonState::readSfxFile(const char *filename)
 {
-	uint num;
+	uint num = 0;
 	if (_game == GAME_SIMON1WIN) { 			/* simon 1 win */
 		uint32 size;
 
@@ -3308,7 +3308,7 @@ void SimonState::readSfxFile(const char *filename)
 
 		int set;
 		uint32 offs;
-		int i;
+		uint i;
 
 		vc_29_stop_all_sounds();
 
@@ -3334,7 +3334,7 @@ void SimonState::readSfxFile(const char *filename)
 #if defined(SCUMM_BIG_ENDIAN)
 	uint r;
 	if (_effects_offsets) {
-		for (r = 0; r <= num; r++)
+		for (r = 0; r < num; r++)
 			_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
 	}
 #endif
