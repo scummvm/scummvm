@@ -2722,7 +2722,8 @@ get_out:;
 #endif
 }
 
-void SimonState::o_wait_for_vga(uint _vga_wait_for) {
+void SimonState::o_wait_for_vga(uint a) {
+	_vga_wait_for = a;
 	_timer_1 = 0;
 	_exit_cutscene = false;
 	_skip_speech = false;
