@@ -315,7 +315,7 @@ SAGA
   twicked for that
 * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
   e.g. a rectangle covering the entire ITE screen should have right=320 and
-  bottom=200. (eriktorbjorn)
+  bottom=200. (eriktorbjorn, partly - mostly? - done)
 * Support various demo versions
 * Support IHNM
 * Add the Wyrmkeep folks to the credits section of our README so we can thank
