@@ -1413,12 +1413,9 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		for (int i = _blastObjectQueuePos - 1; i >= 0; i--) {
 			eo = &_blastObjectQueue[i];
 
-			if (eo->posX <= x && eo->width + eo->posX > x &&
-			    eo->posY <= y && eo->height + eo->posY > y) {
-                		if (!getClass(eo->number, kObjectClassUntouchable)) {
-					push(eo->number);
-					return;
-				}
+			if (eo->rect.contains(x, y) && !getClass(eo->number, kObjectClassUntouchable)) {
+				push(eo->number);
+				return;
 			}
 		}
 		push(0);

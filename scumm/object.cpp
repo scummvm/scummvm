@@ -1412,19 +1412,19 @@ void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int 
 
 	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
-	eo->posX = objectX + (camera._cur.x & 7);
-	eo->posY = objectY + _screenTop;
+	eo->rect.left = objectX + (camera._cur.x & 7);
+	eo->rect.top = objectY + _screenTop;
 	if (objectWidth == 0) {
 		od = &_objs[idx];
-		eo->width = od->width;
+		eo->rect.right = eo->rect.left + od->width;
 	} else {
-		eo->width = objectWidth;
+		eo->rect.right = eo->rect.left + objectWidth;
 	}
 	if (objectHeight == 0) {
 		od = &_objs[idx];
-		eo->height = od->height;
+		eo->rect.bottom = eo->rect.top + od->height;
 	} else {
-		eo->height = objectHeight;
+		eo->rect.bottom = eo->rect.top + objectHeight;
 	}
 
 	eo->scaleX = scaleX;
@@ -1492,8 +1492,8 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 	} else {
 		bdd.dataptr = bomp + 10;	// Why this? See also useBompCursor
 	}
-	bdd.x = eo->posX;
-	bdd.y = eo->posY;
+	bdd.x = eo->rect.left;
+	bdd.y = eo->rect.top;
 	bdd.scale_x = (byte)eo->scaleX;
 	bdd.scale_y = (byte)eo->scaleY;
 
@@ -1533,29 +1533,26 @@ void ScummEngine::removeBlastObjects() {
 void ScummEngine::removeBlastObject(BlastObject *eo) {
 	VirtScreen *vs = &virtscr[0];
 
-	int top, bottom, left, right;
+	Common::Rect r;
 	int left_strip, right_strip;
 	int i;
 
-	top = eo->posY;
-	bottom = eo->posY + eo->height;
-	left = eo->posX;
-	right = eo->posX + eo->width;
+	r = eo->rect;
 
-	if (bottom < 0 || right < 0 || top > vs->height || left > vs->width)
+	if (r.bottom < 0 || r.right < 0 || r.top > vs->height || r.left > vs->width)
 		return;
 
-	if (top < 0)
-		top = 0;
-	if (bottom > vs->height)
-		bottom = vs->height;
-	if (left < 0)
-		left = 0;
-	if (right > vs->width)
-		right = vs->width;
+	if (r.top < 0)
+		r.top = 0;
+	if (r.bottom > vs->height)
+		r.bottom = vs->height;
+	if (r.left < 0)
+		r.left = 0;
+	if (r.right > vs->width)
+		r.right = vs->width;
 
-	left_strip = left / 8;
-	right_strip = (right - 1) / 8;
+	left_strip = r.left / 8;
+	right_strip = (r.right - 1) / 8;
 
 	if (left_strip < 0)
 		left_strip = 0;
@@ -1567,9 +1564,9 @@ void ScummEngine::removeBlastObject(BlastObject *eo) {
 			right_strip = 200;
 	}
 	for (i = left_strip; i <= right_strip; i++)
-		gdi.resetBackground(top, bottom, i);
+		gdi.resetBackground(r.top, r.bottom, i);
 
-	markRectAsDirty(kMainVirtScreen, left, right, top, bottom, USAGE_BIT_RESTORED);
+	markRectAsDirty(kMainVirtScreen, r.left, r.right, r.top, r.bottom, USAGE_BIT_RESTORED);
 }
 
 int ScummEngine::findLocalObjectSlot() {

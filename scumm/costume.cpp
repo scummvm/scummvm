@@ -77,8 +77,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	byte startScaleIndexX;
 	byte newAmiCost;
 	int ex1, ex2;
-	int y_top, y_bottom;
-	int x_left, x_right;
+	Common::Rect rect;
 	int step;
 	
 	newAmiCost = (_vm->_version == 5) && (_vm->_features & GF_AMIGA);
@@ -128,16 +127,16 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
 					v1.x -= v1.scaleXstep;
 			}
-			x_right = x_left = v1.x;
+			rect.right = rect.left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (x_right < 0) {
+				if (rect.right < 0) {
 					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX++];
 				if (scal < _scaleX)
-					x_right++;
+					rect.right++;
 			}
 		} else {
 			startScaleIndexX = _scaleIndexX = xmoveCur + 128;
@@ -146,16 +145,16 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				if (scal < _scaleX)
 					v1.x += v1.scaleXstep;
 			}
-			x_right = x_left = v1.x;
+			rect.right = rect.left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (x_left >= (int)_outwidth) {
+				if (rect.left >= (int)_outwidth) {
 					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX--];
 				if (scal < _scaleX)
-					x_left--;
+					rect.left--;
 			}
 		}
 		_scaleIndexX = startScaleIndexX;
@@ -173,12 +172,12 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			if (scal < _scaleY)
 				v1.y -= step;
 		}
-		y_top = y_bottom = v1.y;
+		rect.top = rect.bottom = v1.y;
 		_scaleIndexY = 128 - ymoveCur;
 		for (i = 0; i < _height; i++) {
 			scal = cost_scaleTable[_scaleIndexY++];
 			if (scal < _scaleY)
-				y_bottom++;
+				rect.bottom++;
 		}
 		_scaleIndexY = 128 - ymoveCur;
 	} else {
@@ -187,14 +186,14 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		v1.x += xmoveCur;
 		v1.y += ymoveCur;
 		if (_mirror) {
-			x_left = v1.x;
-			x_right = v1.x + _width;
+			rect.left = v1.x;
+			rect.right = v1.x + _width;
 		} else {
-			x_left = v1.x - _width;
-			x_right = v1.x;
+			rect.left = v1.x - _width;
+			rect.right = v1.x;
 		}
-		y_top = v1.y;
-		y_bottom = y_top + _height;
+		rect.top = v1.y;
+		rect.bottom = rect.top + _height;
 	}
 
 	v1.skip_width = _width;
@@ -202,14 +201,14 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_vm->_version == 1)
 		//HACK: it fix gfx glitches leaved by actor costume in V1 games, when actor moving to left
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 8, y_top, y_bottom, _actorID);
+		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
 	else
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 1, y_top, y_bottom, _actorID);
+		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 1, rect.top, rect.bottom, _actorID);
 
-	if (y_top >= (int)_outheight || y_bottom <= 0)
+	if (rect.top >= (int)_outheight || rect.bottom <= 0)
 		return 0;
 
-	if (x_left >= (int)_outwidth || x_right <= 0)
+	if (rect.left >= (int)_outwidth || rect.right <= 0)
 		return 0;
 
 	v1.replen = 0;
@@ -224,7 +223,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				v1.x = 0;
 			}
 		} else {
-			skip = x_right - _outwidth;
+			skip = rect.right - _outwidth;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -233,7 +232,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		}
 	} else {
 		if (!use_scaling)
-			skip = x_right - _outwidth;
+			skip = rect.right - _outwidth;
 		if (skip > 0) {
 			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
@@ -241,7 +240,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				v1.x = _outwidth - 1;
 			}
 		} else {
-			skip = -1 - x_left;
+			skip = -1 - rect.left;
 			if (skip <= 0)
 				drawFlag = 2;
 			else
@@ -252,21 +251,21 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (v1.skip_width <= 0)
 		return 0;
 
-	if (x_left < 0)
-		x_left = 0;
+	if (rect.left < 0)
+		rect.left = 0;
 
-	if ((uint) y_top > _outheight)
-		y_top = 0;
+	if ((uint) rect.top > _outheight)
+		rect.top = 0;
 
-	if ((uint) y_bottom > _outheight)
-		y_bottom = _outheight;
+	if ((uint) rect.bottom > _outheight)
+		rect.bottom = _outheight;
 
-	if (_draw_top > y_top)
-		_draw_top = y_top;
-	if (_draw_bottom < y_bottom)
-		_draw_bottom = y_bottom;
+	if (_draw_top > rect.top)
+		_draw_top = rect.top;
+	if (_draw_bottom < rect.bottom)
+		_draw_bottom = rect.bottom;
 
-	if (_height + y_top >= 256) {
+	if (_height + rect.top >= 256) {
 		CHECK_HEAP
 		return 2;
 	}

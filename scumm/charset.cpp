@@ -1264,24 +1264,24 @@ int CharsetRendererNut::getFontHeight() {
 }
 
 void CharsetRendererNut::printChar(int chr) {
-	int shadow_left, shadow_right, shadow_top, shadow_bottom;
+	Common::Rect shadow;
 
 	assert(_current);
 	if (chr == '@')
 		return;
 
-	shadow_left = _left - 1;
-	shadow_top = _top - 1;
+	shadow.left = _left - 1;
+	shadow.top = _top - 1;
 
 	// Note that the character is drawn with a shadow, so it is slightly
 	// larger than the advertised dimensions. See drawShadowChar() for
 	// details.
 
 	if (_firstChar) {
-		_str.left = shadow_left;
-		_str.top = shadow_top;
-		_str.right = shadow_left;
-		_str.bottom = shadow_top;
+		_str.left = shadow.left;
+		_str.top = shadow.top;
+		_str.right = shadow.left;
+		_str.bottom = shadow.top;
 		_firstChar = false;
 	}
 
@@ -1291,23 +1291,23 @@ void CharsetRendererNut::printChar(int chr) {
 	if (chr >= 256 && _vm->_CJKMode)
 		width = 16;
 
-	shadow_right = _left + width + 2;
-	shadow_bottom = _top + height + 2;
+	shadow.right = _left + width + 2;
+	shadow.bottom = _top + height + 2;
 
 	_hasMask = true;
 	_current->drawShadowChar(chr, _left, _top - _vm->_screenTop, _color, !_ignoreCharsetMask);
-	_vm->markRectAsDirty(kMainVirtScreen, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
+	_vm->markRectAsDirty(kMainVirtScreen, shadow.left, shadow.right, shadow.top, shadow.bottom, 0);
 
 	if (_str.left > _left)
 		_str.left = _left;
 
 	_left += width;
 
-	if (_str.right < shadow_right )
-		_str.right = shadow_right;
+	if (_str.right < shadow.right )
+		_str.right = shadow.right;
 
-	if (_str.bottom < shadow_bottom)
-		_str.bottom = shadow_bottom;
+	if (_str.bottom < shadow.bottom)
+		_str.bottom = shadow.bottom;
 }
 
 } // End of namespace Scumm

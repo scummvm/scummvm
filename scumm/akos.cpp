@@ -536,8 +536,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	bool use_scaling;
 	int i, j;
 	int skip = 0, startScaleIndexX, startScaleIndexY;
-	int cur_x, x_right, x_left;
-	int cur_y, y_top, y_bottom;
+	Common::Rect rect;
+	int cur_x, cur_y;
 	int step;
 	byte drawFlag = 1;
 
@@ -586,16 +586,16 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 					cur_x -= v1.scaleXstep;
 			}
 
-			x_left = x_right = cur_x;
+			rect.left = rect.right = cur_x;
 
 			j = startScaleIndexX;
 			for (i = 0, skip = 0; i < _width; i++) {
-				if (x_right < 0) {
+				if (rect.right < 0) {
 					skip++;
 					startScaleIndexX = j;
 				}
 				if (v1.scaletable[j++] < _scaleX)
-					x_right++;
+					rect.right++;
 			}
 		} else {
 			/* No mirror */
@@ -607,16 +607,16 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 					cur_x += v1.scaleXstep;
 			}
 
-			x_left = x_right = cur_x;
+			rect.left = rect.right = cur_x;
 
 			j = startScaleIndexX;
 			for (i = 0, skip = 0; i < _width; i++) {
-				if (x_left >= (int)_outwidth) {
+				if (rect.left >= (int)_outwidth) {
 					startScaleIndexX = j;
 					skip++;
 				}
 				if (v1.scaletable[j--] < _scaleX)
-					x_left--;
+					rect.left--;
 			}
 		}
 
@@ -635,11 +635,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 				cur_y -= step;
 		}
 
-		y_top = y_bottom = cur_y;
+		rect.top = rect.bottom = cur_y;
 		startScaleIndexY = 0x180 - ymoveCur;
 		for (i = 0; i < _height; i++) {
 			if (v1.scaletable[startScaleIndexY++] < _scaleY)
-				y_bottom++;
+				rect.bottom++;
 		}
 
 		startScaleIndexY = 0x180 - ymoveCur;
@@ -651,15 +651,15 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		cur_y += ymoveCur;
 
 		if (_mirror) {
-			x_left = cur_x;
-			x_right = cur_x + _width;
+			rect.left = cur_x;
+			rect.right = cur_x + _width;
 		} else {
-			x_right = cur_x;
-			x_left = cur_x - _width;
+			rect.right = cur_x;
+			rect.left = cur_x - _width;
 		}
 
-		y_top = cur_y;
-		y_bottom = cur_y + _height;
+		rect.top = cur_y;
+		rect.bottom = cur_y + _height;
 
 		startScaleIndexX = 0x180;
 		startScaleIndexY = 0x180;
@@ -671,15 +671,15 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_actorHitMode) {
-		if (_actorHitX < x_left || _actorHitX >= x_right || _actorHitY < y_top || _actorHitY >= y_bottom)
+		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			return 0;
 	} else
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right, y_top, y_bottom, _actorID);
+		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right, rect.top, rect.bottom, _actorID);
 
-	if (y_top >= (int)_outheight || y_bottom <= 0)
+	if (rect.top >= (int)_outheight || rect.bottom <= 0)
 		return 0;
 
-	if (x_left >= (int)_outwidth || x_right <= 0)
+	if (rect.left >= (int)_outwidth || rect.right <= 0)
 		return 0;
 
 	v1.replen = 0;
@@ -692,7 +692,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			codec1_ignorePakCols(skip);
 			cur_x = 0;
 		} else {
-			skip = x_right - _outwidth;
+			skip = rect.right - _outwidth;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -701,13 +701,13 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		}
 	} else {
 		if (!use_scaling)
-			skip = x_right - _outwidth + 1;
+			skip = rect.right - _outwidth + 1;
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
 			cur_x = _outwidth - 1;
 		} else {
-			skip = -1 - x_left;
+			skip = -1 - rect.left;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -722,16 +722,16 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
 
-	if ((uint) y_top > _outheight)
-		y_top = 0;
+	if ((uint) rect.top > _outheight)
+		rect.top = 0;
 
-	if ((uint) y_bottom > _outheight)
-		y_bottom = _outheight;
+	if ((uint) rect.bottom > _outheight)
+		rect.bottom = _outheight;
 
-	if (_draw_top > y_top)
-		_draw_top = y_top;
-	if (_draw_bottom < y_bottom)
-		_draw_bottom = y_bottom;
+	if (_draw_top > rect.top)
+		_draw_top = rect.top;
+	if (_draw_bottom < rect.bottom)
+		_draw_bottom = rect.bottom;
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
@@ -745,7 +745,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 
 byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
-	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
+	Common::Rect clip;
+	int32 maxw, maxh;
 
 	if (_actorHitMode) {
 		warning("codec5: _actorHitMode not yet implemented");
@@ -753,42 +754,42 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	}
 
 	if (!_mirror) {
-		clip_left = (_actorX - xmoveCur - _width) + 1;
+		clip.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
-		clip_left = _actorX + xmoveCur - 1;
+		clip.left = _actorX + xmoveCur - 1;
 	}
 
-	clip_top = _actorY + ymoveCur;
-	clip_right = (clip_left + _width) - 1;
-	clip_bottom = (clip_top + _height) - 1;
+	clip.top = _actorY + ymoveCur;
+	clip.right = (clip.left + _width) - 1;
+	clip.bottom = (clip.top + _height) - 1;
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, clip.left, clip.right + 1, clip.top, clip.bottom + 1, _actorID);
 
-	if (clip_top < 0) {
-		clip_top = 0;
+	if (clip.top < 0) {
+		clip.top = 0;
 	}
 
-	if (clip_bottom > maxh) {
-		clip_bottom = maxh;
+	if (clip.bottom > maxh) {
+		clip.bottom = maxh;
 	}
 
-	if (clip_left < 0) {
-		clip_left = 0;
+	if (clip.left < 0) {
+		clip.left = 0;
 	}
 
-	if (clip_right > maxw) {
-		clip_right = maxw;
+	if (clip.right > maxw) {
+		clip.right = maxw;
 	}
 
-	if ((clip_left >= clip_right) || (clip_top >= clip_bottom))
+	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
-	if (_draw_top > clip_top)
-		_draw_top = clip_top;
-	if (_draw_bottom < clip_bottom)
-		_draw_bottom = clip_bottom + 1;
+	if (_draw_top > clip.top)
+		_draw_top = clip.top;
+	if (_draw_bottom < clip.bottom)
+		_draw_bottom = clip.bottom + 1;
 
 	BompDrawData bdd;
 
@@ -955,7 +956,8 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 }
 
 byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
-	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh;
+	Common::Rect clip;
+	int32 maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
 	const byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
 
@@ -965,14 +967,14 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	}
 	
 	if (!_mirror) {
-		clip_left = (_actorX - xmoveCur - _width) + 1;
+		clip.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
-		clip_left = _actorX + xmoveCur;
+		clip.left = _actorX + xmoveCur;
 	}
 
-	clip_top = ymoveCur + _actorY;
-	clip_right = (clip_left + _width) - 1;
-	clip_bottom = (clip_top + _height) - 1;
+	clip.top = ymoveCur + _actorY;
+	clip.right = (clip.left + _width) - 1;
+	clip.bottom = (clip.top + _height) - 1;
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
 
@@ -981,39 +983,39 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	cur_x = _width - 1;
 	cur_y = _height - 1;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, clip.left, clip.right + 1, clip.top, clip.bottom + 1, _actorID);
 
-	if (clip_left < 0) {
-		skip_x = -clip_left;
-		clip_left = 0;
+	if (clip.left < 0) {
+		skip_x = -clip.left;
+		clip.left = 0;
 	}
 
-	if (clip_right > maxw) {
-		cur_x -= clip_right - maxw;
-		clip_right = maxw;
+	if (clip.right > maxw) {
+		cur_x -= clip.right - maxw;
+		clip.right = maxw;
 	}
 
-	if (clip_top < 0) {
-		skip_y -= clip_top;
-		clip_top = 0;
+	if (clip.top < 0) {
+		skip_y -= clip.top;
+		clip.top = 0;
 	}
 
-	if (clip_bottom > maxh) {
-		cur_y -= clip_bottom - maxh;
-		clip_bottom = maxh;
+	if (clip.bottom > maxh) {
+		cur_y -= clip.bottom - maxh;
+		clip.bottom = maxh;
 	}
 
-	if ((clip_left >= clip_right) || (clip_top >= clip_bottom))
+	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
-	if (_draw_top > clip_top)
-		_draw_top = clip_top;
-	if (_draw_bottom < clip_bottom)
-		_draw_bottom = clip_bottom + 1;
+	if (_draw_top > clip.top)
+		_draw_top = clip.top;
+	if (_draw_bottom < clip.bottom)
+		_draw_bottom = clip.bottom + 1;
 
 	int32 width_unk, height_unk;
 
-	height_unk = clip_top;
+	height_unk = clip.top;
 	int32 pitch = _outwidth;
 
 	int32 dir;
@@ -1024,10 +1026,10 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		int tmp_skip_x = skip_x;
 		skip_x = _width - 1 - cur_x;
 		cur_x = _width - 1 - tmp_skip_x;
-		width_unk = clip_right;
+		width_unk = clip.right;
 	} else {
 		dir = 1;
-		width_unk = clip_left;
+		width_unk = clip.left;
 	}
 
 	int32 out_height;
@@ -1052,8 +1054,8 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	if (_zbuf == 0) {
 		akos16Decompress(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
 	} else {
-		byte *ptr = _vm->getMaskBuffer(clip_left, clip_top, _zbuf);
-		akos16DecompressMask(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip_left / 8);
+		byte *ptr = _vm->getMaskBuffer(clip.left, clip.top, _zbuf);
+		akos16DecompressMask(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip.left / 8);
 	}
 	
 	return 0;

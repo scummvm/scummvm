@@ -180,8 +180,7 @@ struct ColorCycle {
 /** BlastObjects to draw */
 struct BlastObject {
 	uint16 number;
-	int16 posX, posY;
-	uint16 width, height;
+	Common::Rect rect;
 	uint16 scaleX, scaleY;
 	uint16 image;
 	uint16 mode;

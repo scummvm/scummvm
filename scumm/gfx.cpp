@@ -571,7 +571,9 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		return;
 
 	topline = vs->topline;
-	height = topline + vs->height;
+
+	rect.top -= topline;
+	rect.bottom -= topline;
 
 	if (rect.left < 0)
 		rect.left = 0;
@@ -581,12 +583,12 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		return;
 	if (rect.right > vs->width)
 		rect.right = vs->width;
-	if (rect.bottom >= height)
-		rect.bottom = height;
+	if (rect.bottom >= vs->height)
+		rect.bottom = vs->height;
 
-	markRectAsDirty(vs->number, rect.left, rect.right, rect.top - topline, rect.bottom - topline, USAGE_BIT_RESTORED);
+	markRectAsDirty(vs->number, rect.left, rect.right, rect.top, rect.bottom, USAGE_BIT_RESTORED);
 
-	int offset = (rect.top - topline) * vs->width + vs->xstart + rect.left;
+	int offset = (rect.top) * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 
 	height = rect.height();
@@ -608,7 +610,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 			if (rect.right & 0x07)
 				mask_width++;
 
-			mask = getMaskBuffer(rect.left, rect.top, 0);
+			mask = getMaskBuffer(rect.left, rect.top + topline, 0);
 			if (vs->number == kMainVirtScreen)
 				mask += vs->topline * gdi._numStrips;
 

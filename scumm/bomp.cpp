@@ -200,7 +200,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	byte maskbit;
 	byte *mask = 0;
 	byte *charset_mask;
-	int clip_left, clip_right, clip_top, clip_bottom;
+	Common::Rect clip;
 	byte *scalingYPtr = bd.scalingYPtr;
 	byte skip_y_bits = 0x80;
 	byte skip_y_new = 0;
@@ -208,38 +208,38 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 
 	if (bd.x < 0) {
-		clip_left = -bd.x;
+		clip.left = -bd.x;
 	} else {
-		clip_left = 0;
+		clip.left = 0;
 	}
 
 	if (bd.y < 0) {
-		clip_top = -bd.y;
+		clip.top = -bd.y;
 	} else {
-		clip_top = 0;
+		clip.top = 0;
 	}
 
-	clip_right = bd.srcwidth;
-	if (clip_right > bd.outwidth - bd.x) {
-		clip_right = bd.outwidth - bd.x;
+	clip.right = bd.srcwidth;
+	if (clip.right > bd.outwidth - bd.x) {
+		clip.right = bd.outwidth - bd.x;
 	}
 
-	clip_bottom = bd.srcheight;
-	if (clip_bottom > bd.outheight - bd.y) {
-		clip_bottom = bd.outheight - bd.y;
+	clip.bottom = bd.srcheight;
+	if (clip.bottom > bd.outheight - bd.y) {
+		clip.bottom = bd.outheight - bd.y;
 	}
 
 	src = bd.dataptr;
-	dst = bd.out + bd.y * bd.outwidth + bd.x + clip_left;
+	dst = bd.out + bd.y * bd.outwidth + bd.x + clip.left;
 
-	maskbit = revBitMask[(bd.x + clip_left) & 7];
+	maskbit = revBitMask[(bd.x + clip.left) & 7];
 
 	// Always mask against the charset mask
-	charset_mask = getMaskBuffer(bd.x + clip_left, bd.y, 0);
+	charset_mask = getMaskBuffer(bd.x + clip.left, bd.y, 0);
 
 	// Also mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip_left) / 8);
+		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip.left) / 8);
 	}
 
 	// Setup vertical scaling
@@ -249,20 +249,20 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 		skip_y_new = *scalingYPtr++;
 		skip_y_bits = 0x80;
 
-		if (clip_bottom > bd.scaleBottom) {
-			clip_bottom = bd.scaleBottom;
+		if (clip.bottom > bd.scaleBottom) {
+			clip.bottom = bd.scaleBottom;
 		}
 	}
 
 	// Setup horizontal scaling
 	if (bd.scale_x != 255) {
 		assert(bd.scalingXPtr);
-		if (clip_right > bd.scaleRight) {
-			clip_right = bd.scaleRight;
+		if (clip.right > bd.scaleRight) {
+			clip.right = bd.scaleRight;
 		}
 	}
 
-	const int width = clip_right - clip_left;
+	const int width = clip.right - clip.left;
 
 	if (width <= 0)
 		return;
@@ -270,10 +270,10 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	int pos_y = 0;
 	byte line_buffer[1024];
 
-	byte *line_ptr = line_buffer + clip_left;
+	byte *line_ptr = line_buffer + clip.left;
 
 	// Loop over all lines
-	while (pos_y < clip_bottom) {
+	while (pos_y < clip.bottom) {
 		// Decode a single (bomp encoded) line, reversed if we are in mirror mode
 		if (mirror)
 			bompDecodeLineReverse(line_buffer, src + 2, bd.srcwidth);
@@ -303,9 +303,9 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 			bompScaleFuncX(line_buffer, bd.scalingXPtr, 0x80, bd.srcwidth);
 		}
 
-		// The first clip_top lines are to be clipped, i.e. not drawn
-		if (clip_top > 0) {
-			clip_top--;
+		// The first clip.top lines are to be clipped, i.e. not drawn
+		if (clip.top > 0) {
+			clip.top--;
 		} else {
 			// Replace the parts of the line which are masked with the transparency color
 			if (bd.maskPtr)
