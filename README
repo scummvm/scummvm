@@ -345,6 +345,8 @@ arguments - see the next section.
   --aspect-ratio           Enable aspect ratio correction
 
   --floppy-intro           Use floppy version intro for Beneath a Steel Sky CD
+  --copy-protection        Enable copy protection in SCUMM games ,when
+                           ScummVM disables it by default.
   --demo-mode              Start demo mode of Maniac Mansion (Classic version)
   --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
                            (default: 100)
@@ -831,6 +833,8 @@ The following keywords are recognized:
         sfx_volume      number   The sfx volume setting (0-255)
         tempo           number   The music tempo (50-200) (default: 100)
 
+        copy_protection bool     Enable copy protection in SCUMM games ,when
+                                 ScummVM disables it by default.
         demo_mode       bool     Start demo in Maniac Mansion (Classic version)
         floppy_intro    bool     Use floppy version of introduction in Beneath
                                  a Steel Sky (CD version)
