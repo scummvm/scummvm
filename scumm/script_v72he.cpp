@@ -834,9 +834,6 @@ void ScummEngine_v72he::o72_dimArray() {
 	int type = fetchScriptByte();
 
 	switch (type) {
-	case 5:		// SO_INT_ARRAY
-		data = kIntArray;
-		break;
 	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -845,6 +842,9 @@ void ScummEngine_v72he::o72_dimArray() {
 		break;
 	case 4:		// SO_BYTE_ARRAY
 		data = kByteArray;
+		break;
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
 		break;
 	case 6:
 		data = kDwordArray;
