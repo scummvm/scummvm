@@ -214,7 +214,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 	// Humongous Entertainment Scumm Version 6 (Windows versions are version 7 actually)
-	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 60, MDT_NONE,
+	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -237,7 +237,8 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 72, MDT_NONE,
+	/* has old MAXS block */
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
@@ -295,7 +296,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-	{"bluesabctimedemo", "Blue's ABC Time Demo", GID_HEGAME, 6, 72, MDT_NONE,
+	{"bluesabctimedemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
@@ -322,6 +323,12 @@ static const ScummGameSettings scumm_settings[] = {
 	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"pjsamdemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0}

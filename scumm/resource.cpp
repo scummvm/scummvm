@@ -430,7 +430,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('MAXS'):
-			readMAXS();
+			readMAXS(itemsize);
 			break;
 
 		case MKID('DSOU'):
@@ -448,7 +448,8 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		default:
-			error("Bad ID '%s' found in index file directory!", tag2str(blocktype));
+			error("Bad ID %04X('%s') found in index file directory!", blocktype,
+					tag2str(blocktype));
 			return;
 		}
 	}
@@ -530,7 +531,10 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 	assert(id >= 0 && id < (int)(ARRAYSIZE(res.mode)));
 
 	if (num >= 2000) {
-		error("Too many %ss (%d) in directory", name, num);
+		/* FIXME: this used to be an error but it seems the newer humongous titles
+		 * exceed this presumably old limit, need to determine a new ceiling
+		 */
+		warning("Too many %ss (%d) in directory", name, num);
 	}
 
 	res.mode[id] = mode;
@@ -2034,7 +2038,7 @@ void ScummEngine::resourceStats() {
 	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
-void ScummEngine::readMAXS() {
+void ScummEngine::readMAXS(int blockSize) {
 	if (_version == 8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
 		_numVariables = _fileHandle.readUint32LE();     // 1500
@@ -2087,6 +2091,8 @@ void ScummEngine::readMAXS() {
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_heversion >= 72) { // sputm7.2
+		if (blockSize != 32 + 8)
+			error("MAXS block of size %d not supported", blockSize);
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
@@ -2115,6 +2121,8 @@ void ScummEngine::readMAXS() {
 		_numGlobalScripts = 200;
 		_shadowPaletteSize = 256;
 	} else if (_version == 6) {
+		if (blockSize != 30 + 8)
+			error("MAXS block of size %d not supported", blockSize);
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();                      // 16 in Sam/DOTT
 		_numBitVariables = _fileHandle.readUint16LE();

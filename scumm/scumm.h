@@ -674,7 +674,7 @@ protected:
 	void loadRoomObjectsOldBundle();
 
 	virtual void readArrayFromIndexFile();
-	virtual void readMAXS();
+	virtual void readMAXS(int blockSize);
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);
