@@ -2085,7 +2085,7 @@ void SimonEngine::o_print_str() {
 		if ((_game & GF_TALKIE) && (speech_id == 0))
 			o_kill_sprite_simon2(2, num_1 + 2);
 
-		if (_subtitles)
+		if (_subtitles || speech_id == 0)
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 	}
@@ -2657,7 +2657,7 @@ restart:;
 
 		fcs->textRow = unk132_result;
 
-		if (_language == 20) {
+		if (_language == 20) { //Hebrew
 			// init x offset with a 2 character savegame number + a period (18 pix)
 			fcs->textColumn = 3;
 			fcs->textColumnOffset = 6;
@@ -2674,7 +2674,7 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			if (_language == 20) {
+			if (_language == 20) { //Hebrew
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
 					width = _hebrew_char_widths [name[name_len]-64];
