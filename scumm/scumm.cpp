@@ -1357,8 +1357,8 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if ((_features & GF_MACINTOSH) && (_version == 3))  {
-			// This is for the Mac version of Indy3/Loom
+		if (!((_features & GF_MACINTOSH) && (_version == 3))) {
+			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
