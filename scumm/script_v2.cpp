@@ -467,16 +467,17 @@ void Scumm_v2::o2_setObjY() {
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		ObjectData *od = &_objs[getObjectIndex(obj)];
-		od->walk_y = y;
+		od->walk_y = (y << 5) | (od->walk_y & 0x1F);
 	}
 }
 
 void Scumm_v2::o2_getObjY() {
 	int obj = getVarOrDirectWord(0x80);
+	getResultPos();
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		ObjectData *od = &_objs[getObjectIndex(obj)];
-		_vars[_resultVarNumber] = od->walk_y;
+		_vars[_resultVarNumber] = od->walk_y >> 5;
 	} else {
 		_vars[_resultVarNumber] = 0xFF;
 	}
@@ -564,20 +565,19 @@ void Scumm_v2::o2_addDirect() {
 	int a;
 	getResultPosDirect();
 	a = getVarOrDirectWord(0x80);
-	setResult(readVar(_resultVarNumber) + a);
+	_vars[_resultVarNumber] += a;
 }
 
 void Scumm_v2::o2_subDirect() {
 	int a;
 	getResultPosDirect();
 	a = getVarOrDirectWord(0x80);
-	setResult(readVar(_resultVarNumber) - a);
+	_vars[_resultVarNumber] -= a;
 }
 
 void Scumm_v2::o2_waitForActor() {
-	byte *oldaddr = _scriptPointer - 1;
-	if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
-		_scriptPointer = oldaddr;
+	if (derefActorSafe(getVarOrDirectByte(0x80), "o2_waitForActor")->moving) {
+		_scriptPointer -= 2;
 		o5_breakHere();
 	}
 }
@@ -617,11 +617,9 @@ void Scumm_v2::o2_actorSet() {
 }
 
 void Scumm_v2::o2_waitForSentence() {
-	if (_sentenceNum) {
-		if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+	if (_sentenceNum)
+		if (!isScriptInUse(2))
 			return;
-	} else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
-		return;
 
 	_scriptPointer--;
 	o5_breakHere();
