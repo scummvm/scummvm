@@ -1924,6 +1924,17 @@ void Scumm_v6::o6_getVerbEntrypoint()
 	push(getVerbEntrypoint(v, e));
 }
 
+void Scumm::arrayop_1(int a, byte *ptr)
+{
+	ArrayHeader *ah;
+	int r;
+	int len = getStringLen(ptr);
+
+	r = defineArray(a, 4, 0, len);
+	ah = (ArrayHeader *)getResourceAddress(rtString, r);
+	copyString(ah->data, ptr, len);
+}
+
 void Scumm_v6::o6_arrayOps()
 {
 	int a, b, c, d, num;

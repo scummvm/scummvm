@@ -1063,17 +1063,6 @@ int Scumm::getArrayId()
 	return -1;
 }
 
-void Scumm::arrayop_1(int a, byte *ptr)
-{
-	ArrayHeader *ah;
-	int r;
-	int len = getStringLen(ptr);
-
-	r = defineArray(a, 4, 0, len);
-	ah = (ArrayHeader *)getResourceAddress(rtString, r);
-	copyString(ah->data, ptr, len);
-}
-
 void Scumm::copyString(byte *dst, byte *src, int len)
 {
 	if (!src) {

@@ -598,8 +598,21 @@ void Scumm_v8::o8_arrayOps()
 	
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
+		{
+		int idx = pop();
+		ArrayHeader *ah;
+		int r;
+		int len = getStringLen(NULL);
+	
+		r = defineArray(array, 4, 0, len);
+		ah = (ArrayHeader *)getResourceAddress(rtString, r);
+		copyString(ah->data + idx, NULL, len);
+		}
+		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
+		// TODO
 	case 0x16:		// SO_ASSIGN_2DIM_LIST
+		// TODO
 	default:
 		error("o8_arrayOps: default case %d (array %d)", subOp, array);
 	}
@@ -764,13 +777,22 @@ void Scumm_v8::o8_roomOps()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
+	int a;
+	
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
-//	case 0x53:		// SO_339
-//	case 0x54:		// SO_340
 	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
-//	case 0x56:		// SO_342
+		error("o8_roomOps: default case %d", subOp);
+		break;
 	case 0x57:		// SO_ROOM_FADE Fade room
+		a = pop();
+		if (a) {
+			_switchRoomEffect = (byte)(a);
+			_switchRoomEffect2 = (byte)(a >> 8);
+		} else {
+			fadeIn(_newEffect);
+		}
+		break;
 	case 0x58:		// SO_ROOM_RGB_INTENSITY Set room color intensity
 	case 0x59:		// SO_ROOM_TRANSFORM Transform room
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
@@ -881,10 +903,24 @@ void Scumm_v8::o8_verbOps()
 
 void Scumm_v8::o8_system()
 {
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	default:
+		error("o8_system: default case %d", subOp);
+	}
 }
 
 void Scumm_v8::o8_kludge()
 {
+	// TODO
+	int16 args[30];
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+
+	switch (args[0]) {
+	default:
+		warning("o8_kludge: default case %d", args[0]);
+	}
 }
 
 /*
