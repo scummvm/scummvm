@@ -704,13 +704,13 @@ void Scumm_v8::o8_arrayOps()
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
 		b = pop();
-		c = pop();
+		len = getStackList(list, sizeof(list) / sizeof(list[0]));
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, 5, 0, b + c);
+			defineArray(array, 5, 0, b + len);
 		}
-		while (c--) {
-			writeArray(array, 0, b + c, pop());
+		while (--len >= 0) {
+			writeArray(array, 0, b + len, list[len]);
 		}
 		break;
 	case 0x16:		// SO_ASSIGN_2DIM_LIST

@@ -406,7 +406,7 @@ int Scumm::readArray(int array, int idx, int base)
 
 	// FIXME: comment this for the time being as it was causing ft to crash
 	// in the minefeild
-	// assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
+	//assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
 
 	if (ah->type == 4) {
 		return ah->data[base];
@@ -424,12 +424,11 @@ void Scumm::writeArray(int array, int idx, int base, int value)
 		return;
 	base += idx * ah->dim1_size;
 
-	//assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
+	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
 
 	if (ah->type == 4) {
 		ah->data[base] = value;
 	} else if (_features & GF_AFTER_V8) {
-		// FIXME - this is just a guess, might be wrong
 		((uint32 *)ah->data)[base] = TO_LE_32(value);
 	} else {
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
