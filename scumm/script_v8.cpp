@@ -1530,13 +1530,15 @@ void Scumm_v8::o8_kernelGetFunctions()
 			push(0);
 		}
 		break;
+	case 0xE1:		// imGetMusicPosition
+		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)\n");
+		push(0xFFFFF);
+		break;
 	case 0xE2:		// musicLipSyncWidth
 	case 0xE3:		// musicLipSyncHeight
 		// TODO - get lip sync data for the currently active music
-		// FIXME: These are needed for the song intro to Part III - the scene will freeze
-		// without them.
-		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
-		push(255);
+		//warning("o8_kernelGetFunctions: musicLipSync(case 0x%x, len = %d)", args[0], len);
+		push(_rnd.getRandomNumber(255));
 		break;
 	default:
 		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
