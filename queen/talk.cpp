@@ -357,7 +357,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		_logic->animReset(person.actor->bobNum);
 	}
 
-	_talkHead = false;
 	_logic->joeWalk(JWM_NORMAL);
 }
 		
@@ -630,10 +629,13 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		goto exit;
 	}
 
-	if (0 == strcmp(person->name, "FAYE-H") ||
-			0 == strcmp(person->name, "FRANK-H") ||
-			0 == strcmp(person->name, "AZURA-H") ||
-			0 == strcmp(person->name, "X3_RITA")) 
+	if (0 == strcmp(person->name, "FAYE-H" ) ||
+		0 == strcmp(person->name, "FRANK-H") ||
+		0 == strcmp(person->name, "AZURA-H") ||
+		0 == strcmp(person->name, "X3_RITA") || 
+		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == FAYE_HEAD ) ||
+		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == AZURA_HEAD) ||
+		(0 == strcmp(person->name, "JOE") && _logic->currentRoom() == FRANK_HEAD))
 		_talkHead = true;
 	else
 		_talkHead = false;
@@ -808,13 +810,6 @@ void Talk::defaultAnimation(
 
 	if (segment[0] != 0)  {
 
-		int bf;
-
-		if (segment[0] == ' ')
-			bf = 0;
-		else
-			bf = parameters->bf;
-
 		// XXX #ifdef __DOS__
 		// XXX     // 02-21-95 03:44pm DOn't talk until sfx finished
 		// XXX     if(SFXTOGGLE && VOICETOGGLE) {
@@ -841,14 +836,20 @@ void Talk::defaultAnimation(
 			// XXX 			break;
 			// XXX #endif
 
-			int head;
+			if (parameters != NULL) {
 
-			if (parameters->rf > 0)
-				head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
-			else
-				head = bf;
+				int bf;
+				if (segment[0] == ' ')
+					bf = 0;
+				else
+					bf = parameters->bf;
 
-			if (!(_talkHead && isJoe)) {
+				int head;
+				if (parameters->rf > 0)
+					head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
+				else
+					head = bf;
+
 				if (bf > 0) {
 					// Make the head move
 					qzx ^= 1;
@@ -867,8 +868,9 @@ void Talk::defaultAnimation(
 				if (!_talkHead)
 					_logic->update();
 			}
-			else
+			else { // (_talkHead && isJoe)
 				_logic->update();
+			}
 
 			if (_logic->joeWalk() == JWM_SPEAK) {
 				if (_input->talkQuit())
@@ -989,8 +991,7 @@ void Talk::speakSegment(
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == true));
-		// XXX  hey, parameters will be NULL here!
+		_graphics->bobSetText(bob, segment, textX, textY, color, true);
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
@@ -1045,7 +1046,7 @@ void Talk::speakSegment(
 			headStringAnimation(parameters, bobNum, bankNum);
 		}
 
-		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == true));
+		_graphics->bobSetText(bob, segment, textX, textY, color, _talkHead);
 
 		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
 			stringAnimation(parameters, startFrame, bankNum);
