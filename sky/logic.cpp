@@ -605,6 +605,11 @@ void SkyLogic::choose() {
 void SkyLogic::frames() {
 	if (!_compact->sync)
 		simpleAnim();
+	else {
+		_compact->downFlag = 0; // return 'ok' to script
+		_compact->logic = L_SCRIPT;
+		logicScript();
+	}
 }
 
 void SkyLogic::pause() {
