@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "queen/display.h"
 #include "queen/defs.h"
 #include "queen/resource.h"
@@ -114,11 +115,12 @@ Display::Display(OSystem *system)
 	_bufPitch[RB_SCREEN]   = SCREEN_W;
 
 	_pals.room   = new uint8[ 256 * 3 ];
-	_pals.screen = new uint8[ 256 * 4 ];
+	_pals.screen = new uint8[ 256 * 3 ];
 	memset(_pals.room,   0, 256 * 3);
-	memset(_pals.screen, 0, 256 * 4);
+	memset(_pals.screen, 0, 256 * 3);
 	_pals.dirtyMin = 0;
 	_pals.dirtyMax = 255;
+	_pals.scrollable = true;
 	
 	_horizontalScroll = 0;
 }
@@ -174,38 +176,56 @@ void Display::dynalumUpdate(int x, int y) {
 				else if (c > 255) {
 					c = 255;
 				}
-				_pals.screen[i * 4 + j] = (uint8)c;
+				_pals.screen[i * 3 + j] = (uint8)c;
 			}
 		}
 		_pals.dirtyMin = MIN(_pals.dirtyMin, 144);
-		_pals.dirtyMax = MAX(_pals.dirtyMax, 160);
+		_pals.dirtyMax = MAX(_pals.dirtyMax, 159);
 		_dynalum.prevColMask = colMask;
 	}
 }
 
 
-void Display::palSetRoom(const uint8 *pal, int start, int end) {
+void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) {
 
 	int i;
-	pal += start * 3;
-	for (i = start; i < end; ++i, pal += 3) {
-		_pals.screen[i << 2 | 0] = _pals.room[i * 3 + 0] = *(pal + 0);
-		_pals.screen[i << 2 | 1] = _pals.room[i * 3 + 1] = *(pal + 1);
-		_pals.screen[i << 2 | 2] = _pals.room[i * 3 + 2] = *(pal + 2);
-		_pals.screen[i << 2 | 3] = 0;
+	for (i = start; i <= end; i++) {
+		outPal[4 * i + 0] = inPal[3 * i + 0];
+		outPal[4 * i + 1] = inPal[3 * i + 1];
+		outPal[4 * i + 2] = inPal[3 * i + 2];
+		outPal[4 * i + 3] = 0;
 	}
-	_pals.dirtyMin = MIN(_pals.dirtyMin, start);
-	_pals.dirtyMax = MAX(_pals.dirtyMax, end);
 }
 
 
-void Display::palFadeIn(uint8 start, uint8 end, uint16 roomNum) {
-	warning("Display::palFadeIn() unimplemented");
+void Display::palSet(const uint8 *pal, int start, int end) {
+
+	debug(9, "Display::palSet(%d, %d)", start, end);
+	uint8 tempPal[256 * 4];
+	palConvert(tempPal, _pals.screen, start, end);
+	_system->set_palette(tempPal + start * 4, start, end - start + 1);
 }
 
 
-void Display::palFadeOut(uint8 start, uint8 end, uint16 roomNum) {
-	warning("Display::palFadeOut() unimplemented");
+void Display::palFadeIn(int start, int end, uint16 roomNum) {
+
+	debug(9, "Display::palFadeIn(%d, %d)", start, end);
+	// FIXME: unfinished
+	memcpy(_pals.screen + start * 3, _pals.room + start * 3, (end - start + 1) * 3);
+	palSet(_pals.screen, start, end);
+	_pals.dirtyMin = start;
+	_pals.dirtyMax = end;
+	_pals.scrollable = true;
+}
+
+
+void Display::palFadeOut(int start, int end, uint16 roomNum) {
+
+	debug(9, "Display::palFadeOut(%d, %d)", start, end);
+	// FIXME: unfinished
+	memset(_pals.screen + start * 3, 0, (end - start + 1) * 3);
+	palSet(_pals.screen, start, end);
+	_pals.scrollable = false;
 }
 
 
@@ -274,12 +294,10 @@ void Display::update(bool dynalum, int dynaX, int dynaY) {
 	if (dynalum) {
 		dynalumUpdate(dynaX, dynaY);
 	}
-
-	if (_pals.dirtyMin != 144 || _pals.dirtyMax != 145) {
-		const uint8 *p = _pals.screen + 4 * _pals.dirtyMin;
-		_system->set_palette(p, _pals.dirtyMin, _pals.dirtyMax);
+	if (_pals.dirtyMin != 144 || _pals.dirtyMax != 144) {
+		palSet(_pals.screen, _pals.dirtyMin, _pals.dirtyMax);
 		_pals.dirtyMin = 144;
-		_pals.dirtyMax = 145;
+		_pals.dirtyMax = 144;
 	}
 	_system->copy_rect(_buffers[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
 	_system->update_screen();
@@ -364,7 +382,7 @@ void Display::pcxReadBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal)
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	pcxRead(_buffers[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
-	palSetRoom(pcxBuf + size - 768, 0, useFullPal ? 256 : 144);
+	memcpy(_pals.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
 }
 
 
@@ -372,12 +390,13 @@ void Display::pcxReadPanel(const uint8 *pcxBuf, uint32 size) {
 
 	uint8 *dst = _buffers[RB_PANEL] + PANEL_W * 10;
 	pcxRead(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
-	palSetRoom(pcxBuf + size - 768, 144, 256);
+	memcpy(_pals.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
 }
 
 
 void Display::textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 
+	debug(9, "Display::textDraw(%s)", text);
 	_textRenderer.drawString(_buffers[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
 }
 

@@ -1147,15 +1147,17 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	if (mode != RDM_FADE_NOJOE) {
 		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
-	if (mode != RDM_NOFADE_JOE) {
+	// FIXME: commented for now, to avoid color glitches when
+	// switching rooms during cutaway
+//	if (mode != RDM_NOFADE_JOE) {
 		_graphics->update();
 		if (_currentRoom >= 114) {
 			_display->palFadeIn(0, 255, _currentRoom);
 		}
 		else {
-			_display->palFadeOut(0, 223, _currentRoom);
+			_display->palFadeIn(0, 223, _currentRoom);
 		}
-	}
+//	}
 	if (pod != NULL) {
 		_walk->joeMove(0, pod->x, pod->y, inCutaway);
 	}

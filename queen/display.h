@@ -62,9 +62,10 @@ public:
 	void dynalumInit(Resource *resource, const char *roomName, uint16 roomNum);
 	void dynalumUpdate(int x, int y);
 
-	void palSetRoom(const uint8 *pal, int start, int end);
-	void palFadeIn(uint8 start, uint8 end, uint16 roomNum);
-	void palFadeOut(uint8 start, uint8 end, uint16 roomNum);
+	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
+	void palSet(const uint8 *pal, int start, int end);
+	void palFadeIn(int start, int end, uint16 roomNum);
+	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
 	void palCustomColors(uint16 roomNum); // check_colors
 	void palCustomScroll(uint16 roomNum); // check_pal_scroll
@@ -91,6 +92,10 @@ public:
 
 private:
 
+	enum {
+		FADE_SPEED = 16
+	};
+
 	enum BufferDimension {
 		BACKDROP_W = 640,
 		BACKDROP_H = 200,
@@ -103,9 +108,10 @@ private:
 	TextRenderer _textRenderer;
 
 	struct {
-		uint8 *screen;
 		uint8 *room;
+		uint8 *screen;
 		int dirtyMin, dirtyMax;
+		bool scrollable;
 	} _pals;
 
 	uint8 *_buffers[3];
