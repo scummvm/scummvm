@@ -41,6 +41,7 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 	g_system = _system;
 	g_mixer = _mixer;
 	_timer = new Timer(this);
+	_timer->init();
 }
 
 Engine::~Engine()
