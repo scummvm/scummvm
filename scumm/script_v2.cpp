@@ -436,8 +436,14 @@ int Scumm_v2::readVar(uint var) {
 		var = _scummVars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-	debug(6, "readvar(%d) = %d", var, _scummVars[var]);
+	debug(1, "readvar(%d) = %d", var, _scummVars[var]);
 	return _scummVars[var];
+}
+
+void Scumm_v2::writeVar(uint var, int value) {
+	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+	debug(1, "writeVar(%d) = %d", var, value);
+	_scummVars[var] = value;
 }
 
 void Scumm_v2::getResultPosIndirect() {
@@ -529,7 +535,7 @@ void Scumm_v2::o2_getObjUnknown() {
 }
 
 void Scumm_v2::o2_setBitVar() {
-	byte var = fetchScriptWord();
+	int var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
 
 	int bit_var = var + a;
@@ -540,11 +546,12 @@ void Scumm_v2::o2_setBitVar() {
 		_scummVars[bit_var] |= (1 << bit_offset);
 	else
 		_scummVars[bit_var] &= ~(1 << bit_offset);
+
 }
 
 void Scumm_v2::o2_getBitVar() {
 	getResultPos();
-	byte var = fetchScriptWord();
+	int var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
 
 	int bit_var = var + a;

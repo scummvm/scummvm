@@ -205,6 +205,7 @@ protected:
 	void getResultPosIndirect();
 	virtual void getResultPos();
 	virtual int readVar(uint var);
+	virtual void writeVar(uint var, int value);
 
 	virtual void ifStateCommon(byte type);
 	virtual void ifNotStateCommon(byte type);
