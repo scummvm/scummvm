@@ -68,7 +68,7 @@ void AutoRoute::clipCoordX(uint16 x, uint8 &blkX, int16 &initX) {
 		initX = x - TOP_LEFT_X;
 	} else if (x >= TOP_LEFT_X + GAME_SCREEN_WIDTH) {
 		blkX = (GAME_SCREEN_WIDTH - 1) >> 3;
-		initX = x - (TOP_LEFT_X + GAME_SCREEN_WIDTH);
+		initX = x - (TOP_LEFT_X + GAME_SCREEN_WIDTH - 1);
 	} else {
 		blkX = (x - TOP_LEFT_X) >> 3;
 		initX = 0;
@@ -81,7 +81,7 @@ void AutoRoute::clipCoordY(uint16 y, uint8 &blkY, int16 &initY) {
 		initY = y - TOP_LEFT_Y;
 	} else if (y >= TOP_LEFT_Y + GAME_SCREEN_HEIGHT) {
 		blkY = (GAME_SCREEN_HEIGHT - 1) >> 3;
-		initY = y - (TOP_LEFT_Y + GAME_SCREEN_WIDTH);
+		initY = y - (TOP_LEFT_Y + GAME_SCREEN_HEIGHT);
 	} else {
 		blkY = (y - TOP_LEFT_Y) >> 3;
 		initY = 0;
