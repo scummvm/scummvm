@@ -222,17 +222,24 @@ private:
 	int SDebugPrintInstr(R_SCRIPT_THREAD *thread);
 
 	int SF_sleep(R_SCRIPTFUNC_PARAMS);
-	int SF_3(R_SCRIPTFUNC_PARAMS);
+	int SF_takeObject(R_SCRIPTFUNC_PARAMS);
+	int SF_objectIsCarried(R_SCRIPTFUNC_PARAMS);
 	int SF_setCommandText(R_SCRIPTFUNC_PARAMS);
+	int SF_mainMode(R_SCRIPTFUNC_PARAMS);
 	int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS);
 	int SF_setFacing(R_SCRIPTFUNC_PARAMS);
+	int SF_startBgdAnim(R_SCRIPTFUNC_PARAMS);
 	int SF_freezeInterface(R_SCRIPTFUNC_PARAMS);
+	int SF_dialogMode(R_SCRIPTFUNC_PARAMS);
 	int SF_startAnim(R_SCRIPTFUNC_PARAMS);
+	int SF_stopBgdAnim(R_SCRIPTFUNC_PARAMS);
 	int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS);
 	int SF_moveTo(R_SCRIPTFUNC_PARAMS);
 	int SF_actorWalk(R_SCRIPTFUNC_PARAMS);
 	int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS);
 	int SF_setFrame(R_SCRIPTFUNC_PARAMS);
+	int SF_setRightPortrait(R_SCRIPTFUNC_PARAMS);
+	int SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS);
 	int SF_linkAnim(R_SCRIPTFUNC_PARAMS);
 	int SF_placeActor(R_SCRIPTFUNC_PARAMS);
 	int SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS);
@@ -240,8 +247,10 @@ private:
 	int SF_doAction(R_SCRIPTFUNC_PARAMS);
 	int SF_faceTowards(R_SCRIPTFUNC_PARAMS);
 	int SF_setFollower(R_SCRIPTFUNC_PARAMS);
+	int SF_setBgdAnimSpeed(R_SCRIPTFUNC_PARAMS);
 	int SF_centerActor(R_SCRIPTFUNC_PARAMS);
 	int SF_setActorState(R_SCRIPTFUNC_PARAMS);
+	int SF_finishBgdAnim(R_SCRIPTFUNC_PARAMS);
 	int SF_swapActors(R_SCRIPTFUNC_PARAMS);
 	int SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS);
 	int SF_walkRelative(R_SCRIPTFUNC_PARAMS);
@@ -253,6 +262,7 @@ private:
 	int SF_getActorX(R_SCRIPTFUNC_PARAMS);
 	int SF_getActorY(R_SCRIPTFUNC_PARAMS);
 	int SF_playMusic(R_SCRIPTFUNC_PARAMS);
+	int SF_playSound(R_SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga

@@ -43,20 +43,20 @@ void Script::setupScriptFuncList(void) {
 	static const R_SFUNC_ENTRY SFuncList[R_SFUNC_NUM] = {
 		{0, 0, NULL},
 		{1, 1, OPCODE(SF_sleep)},
-		{2, 0, NULL},
-		{3, 1, OPCODE(SF_3)},
+		{2, 1, OPCODE(SF_takeObject)},
+		{3, 1, OPCODE(SF_objectIsCarried)},
 		{4, 1, OPCODE(SF_setCommandText)},
-		{5, 0, NULL},
+		{5, 0, OPCODE(SF_mainMode)},
 		{6, 3, OPCODE(SF_actorWalkTo)},
-		{7, 0, OPCODE(SF_doAction)},
+		{7, 4, OPCODE(SF_doAction)},
 		{8, 2, OPCODE(SF_setFacing)},
-		{9, 0, NULL},
-		{10, 0, NULL},
+		{9, 2, OPCODE(SF_startBgdAnim)},
+		{10, 1, OPCODE(SF_stopBgdAnim)},
 		{11, 1, OPCODE(SF_freezeInterface)},
-		{12, 0, NULL},
+		{12, 0, OPCODE(SF_dialogMode)},
 		{13, 0, NULL},
-		{14, 0, OPCODE(SF_faceTowards)},
-		{15, 0, OPCODE(SF_setFollower)},
+		{14, 2, OPCODE(SF_faceTowards)},
+		{15, 2, OPCODE(SF_setFollower)},
 		{16, 0, NULL},
 		{17, 0, NULL},
 		{18, 0, NULL},
@@ -64,54 +64,54 @@ void Script::setupScriptFuncList(void) {
 		{20, 0, NULL},
 		{21, 0, NULL},
 		{22, 0, NULL},
-		{23, 0, NULL},
+		{23, 2, OPCODE(SF_setBgdAnimSpeed)},
 		{24, 0, NULL},
-		{25, 0, OPCODE(SF_centerActor)},
+		{25, 1, OPCODE(SF_centerActor)},
 		{26, 3, OPCODE(SF_startAnim)},
 		{27, 3, OPCODE(SF_actorWalkToAsync)},
 		{28, 0, NULL},
-		{29, 0, OPCODE(SF_setActorState)},
+		{29, 2, OPCODE(SF_setActorState)},
 		{30, 3, OPCODE(SF_moveTo)},
 		{31, 0, NULL},
 		{32, 0, NULL},
-		{33, 0, NULL},
-		{34, 0, OPCODE(SF_swapActors)},
+		{33, 1, OPCODE(SF_finishBgdAnim)},
+		{34, 2, OPCODE(SF_swapActors)},
 		{35, 0, NULL},
 		{36, 4, OPCODE(SF_actorWalk)},
 		{37, 4, OPCODE(SF_cycleActorFrames)},
 		{38, 3, OPCODE(SF_setFrame)},
-		{39, 0, NULL},
-		{40, 0, NULL},
+		{39, 1, OPCODE(SF_setRightPortrait)},
+		{40, 1, OPCODE(SF_setLeftPortrait)},
 		{41, 4, OPCODE(SF_linkAnim)},
-		{42, 0, OPCODE(SF_scriptSpecialWalk)},
+		{42, 4, OPCODE(SF_scriptSpecialWalk)},
 		{43, 6, OPCODE(SF_placeActor)},
 		{44, 0, OPCODE(SF_checkUserInterrupt)},
-		{45, 0, OPCODE(SF_walkRelative)},
-		{46, 0, OPCODE(SF_moveRelative)},
+		{45, 5, OPCODE(SF_walkRelative)},
+		{46, 5, OPCODE(SF_moveRelative)},
 		{47, 0, NULL},
 		{48, 0, NULL},
 		{49, 0, NULL},
 		{50, 0, NULL},
 		{51, 0, NULL},
-		{52, 0, OPCODE(SF_throwActor)},
-		{53, 0, OPCODE(SF_waitWalk)},
+		{52, 6, OPCODE(SF_throwActor)},
+		{53, 1, OPCODE(SF_waitWalk)},
 		{54, 0, NULL},
-		{55, 0, OPCODE(SF_changeActorScene)},
-		{56, 0, OPCODE(SF_climb)},
+		{55, 2, OPCODE(SF_changeActorScene)},
+		{56, 4, OPCODE(SF_climb)},
 		{57, 0, NULL},
-		{58, 0, OPCODE(SF_setActorZ)},
+		{58, 2, OPCODE(SF_setActorZ)},
 		{59, 0, NULL},
-		{60, 0, OPCODE(SF_getActorX)},
-		{61, 0, OPCODE(SF_getActorY)},
+		{60, 1, OPCODE(SF_getActorX)},
+		{61, 1, OPCODE(SF_getActorY)},
 		{62, 0, NULL},
-		{63, 0, OPCODE(SF_playMusic)},
+		{63, 1, OPCODE(SF_playMusic)},
 		{64, 0, NULL},
 		{65, 0, NULL},
 		{66, 0, NULL},
 		{67, 0, NULL},
 		{68, 0, NULL},
 		{69, 0, NULL},
-		{70, 0, NULL},
+		{70, 1, OPCODE(SF_playSound)},
 		{71, 0, NULL},
 		{72, 0, NULL},
 		{73, 0, NULL},
@@ -136,10 +136,16 @@ int Script::SF_sleep(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #2 (0x02)
+int Script::SF_takeObject(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	return R_SUCCESS;
+}
+
 // Script function #3 (0x03)
 // Unknown function; pops a parameter and pushes a return value
 // Param1: unknown
-int Script::SF_3(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_objectIsCarried(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T param1;
 	param1 = thread->pop();
@@ -158,6 +164,11 @@ int Script::SF_setCommandText(R_SCRIPTFUNC_PARAMS) {
 	s_idx_parm = thread->pop();
 	// INCOMPLETE
 
+	return R_SUCCESS;
+}
+
+// Script function #5 (0x05)
+int Script::SF_mainMode(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
@@ -193,8 +204,12 @@ int Script::SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #7
+// Script function #7 (0x07)
 int Script::SF_doAction(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
@@ -224,6 +239,19 @@ int Script::SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #9 (0x09)
+int Script::SF_startBgdAnim(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #10 (0x0A)
+int Script::SF_stopBgdAnim(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	return R_SUCCESS;
+}
+
 // Script function #11 (0x0B) nonblocking
 // If the parameter is true, the user interface is disabled while script
 // continues to run. If the parameter is false, the user interface is 
@@ -243,20 +271,36 @@ int Script::SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #14
-int Script::SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
+// Script function #12 (0x0C)
+// Disables mouse input, etc.
+int Script::SF_dialogMode(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #15
+// Script function #14 (0x0E)
+int Script::SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #15 (0x0F)
 int Script::SF_setFollower(R_SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #25
+// Script function #23 (0x17)
+int Script::SF_setBgdAnimSpeed(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #25 (0x19)
 int Script::SF_centerActor(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 
@@ -320,8 +364,10 @@ int Script::SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #29
+// Script function #29 (0x1D)
 int Script::SF_setActorState(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
@@ -362,7 +408,13 @@ int Script::SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #34
+// Script function #33 (0x21)
+int Script::SF_finishBgdAnim(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #34 (0x22)
 int Script::SF_swapActors(R_SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
@@ -473,6 +525,20 @@ int Script::SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #39 (0x27)
+// Sets the right-hand portrait
+int Script::SF_setRightPortrait(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #40 (0x28)
+// Sets the left-hand portrait
+int Script::SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	return R_SUCCESS;
+}
+
 // Script function #41 (0x29) nonblocking
 // Links the specified animations for playback
 
@@ -505,8 +571,12 @@ int Script::SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #42
+// Script function #42 (0x2A)
 int Script::SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
@@ -574,48 +644,75 @@ int Script::SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-// Script function #45
+// Script function #45 (0x2D)
 int Script::SF_walkRelative(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #46
+// Script function #46 (0x2E)
 int Script::SF_moveRelative(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #52
+// Script function #52 (0x34)
 int Script::SF_throwActor(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #53
+// Script function #53 (0x35)
 int Script::SF_waitWalk(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #55
+// Script function #55 (0x37)
 int Script::SF_changeActorScene(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #56
+// Script function #56 (0x38)
 int Script::SF_climb(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #58
+// Script function #58 (0x3A)
 int Script::SF_setActorZ(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #60
+// Script function #60 (0x3C)
 int Script::SF_getActorX(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 
-// Script function #61
+// Script function #61 (0x3D)
 int Script::SF_getActorY(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 
@@ -648,7 +745,7 @@ static int musicTable[] = {
 	MUSIC_26
 };
 
-// Script function #63
+// Script function #63 (0x3F)
 int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T param;
 
@@ -659,6 +756,12 @@ int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	else
 		_vm->_music->stop();
 
+	return R_SUCCESS;
+}
+
+// Script function #70 (0x46)
+int Script::SF_playSound(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
 	return R_SUCCESS;
 }
 
