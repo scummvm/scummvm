@@ -339,7 +339,7 @@ void ConsoleDialog::historyScroll(int direction)
 	if (_historyLine == 0 && direction > 0) {
 		int i;
 		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
-			_history[_historyIndex][i] = _buffer[_promptStartPos + i];
+			_history[_historyIndex][i] = _buffer[(_promptStartPos + i) % kBufferSize];
 		_history[_historyIndex][i] = '\0';
 	}
 	
