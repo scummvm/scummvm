@@ -57,7 +57,7 @@ public:
 	T pop() {
 		T tmp;
 		assert(_size > 0);
-		tmp = _stack[_size];
+		tmp = _stack[_size - 1];
 		_stack[--_size] = 0;
 		return tmp;
 	}
