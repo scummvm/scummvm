@@ -72,9 +72,10 @@ GameSettings Plugin::findGame(const char *gameName) const {
  * the transition is complete.
  */
 class GameSettingsPlugin : public Plugin {
-private:
+protected:
 	GameList _games;
 public:
+	GameSettingsPlugin() { }
 	GameSettingsPlugin(GameList games) : _games(games) { }
 	GameList getSupportedGames() const { return _games; }
 };
@@ -120,7 +121,7 @@ class DynamicPlugin : public GameSettingsPlugin {
 
 public:
 	DynamicPlugin(const char *filename)
-		: GameSettingsPlugin(0), _dlHandle(0), _filename(filename), _ef(0), _df(0) {}
+		: GameSettingsPlugin(), _dlHandle(0), _filename(filename), _ef(0), _df(0) {}
 	
 	const char *getName() const					{ return _name.c_str(); }
 
@@ -234,7 +235,7 @@ void PluginManager::loadPlugins() {
 	// Hence one more symbol should be exported by plugins which returns
 	// the "ABI" version the plugin was built for, and we can compare that
 	// to the ABI version of the executable.
-	#define LOAD_MODULE(name, NAME)
+	#define LOAD_MODULE(name, NAME) \
 		tryLoadPlugin(new DynamicPlugin("scumm/lib" name ".so"));
 #else
 	// "Loader" for the static plugins

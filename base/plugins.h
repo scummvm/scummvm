@@ -75,7 +75,7 @@ public:
 		const char *PLUGIN_name() { return name; } \
 		GameList PLUGIN_getSupportedGames() { return gameListFactory(); } \
 		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
-		GameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); }
+		GameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); } \
 	}
 #endif
 
