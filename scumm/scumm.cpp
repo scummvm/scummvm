@@ -53,7 +53,11 @@
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
+#ifdef __PALM_OS__
+#include "extras/palm-scumm-md5.h"
+#else
 #include "scumm/scumm-md5.h"
+#endif
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -387,6 +391,7 @@ static const ScummGameSettings scumm_settings[] = {
 //
 // Please, add new entries sorted alpabetically
 static const ScummGameSettings multiple_versions_md5_settings[] = {
+#ifndef __PALM_OS__
 	{"084ed0fa98a6d1e9368d67fe9cfbd417", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (puttputt cd)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, 31, MDT_NONE,
@@ -463,7 +468,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PJSamDemo
 	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FreddiCHSH
-
+#endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
 
@@ -575,8 +580,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 	}
 	const MD5Table *elem;
-	elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-
+#ifdef __PALM_OS__
+	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
+#else
+	uint32 arraySize = ARRAYSIZE(md5table) - 1;
+#endif
+	elem = (const MD5Table *)bsearch(md5str, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 	if (!elem)
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
@@ -3131,3 +3140,16 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 }
 
 REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_gameList, Engine_SCUMM_create, Engine_SCUMM_detectGames)
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Scumm_md5table)
+_GSETPTR(md5table, GBVARS_MD5TABLE_INDEX, MD5Table, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(Scumm_md5table)
+_GRELEASEPTR(GBVARS_MD5TABLE_INDEX, GBVARS_SCUMM)
+_GEND
+
+#endif
