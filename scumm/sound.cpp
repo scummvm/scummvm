@@ -1480,32 +1480,70 @@ void Sound::stopCDTimer() {
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
-	if (playMP3CDTrack(track, numLoops, startFrame, duration) == -1)
-		_scumm->_system->play_cdrom(track, numLoops, startFrame, duration);
+
+	// Reset the music timer variable at the start of a new track
+	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
+
+	if (!_soundsPaused && (numLoops != 0 || startFrame != 0)) {
+		int index;
+	
+		// Try to load the track from a .mp3/.ogg file, and if found, use
+		// that. If not found, attempt to do regular Audio CD playback of
+		// the requested track.
+		index = getCachedTrack(track);
+		if (index >= 0) {
+			_scumm->_mixer->stopHandle(_dig_cd.handle);
+			_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, startFrame, duration);
+			_dig_cd.playing = true;
+			_dig_cd.track = track;
+			_dig_cd.numLoops = numLoops;
+			_dig_cd.start = startFrame;
+			_dig_cd.duration = duration;
+		} else {
+			_scumm->_system->play_cdrom(track, numLoops, startFrame, duration);
+		}
+	}
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
 	// play_cdrom() will block during that delay.
-
 	startCDTimer();
 }
 
 void Sound::stopCD() {
 	stopCDTimer();
-	if (stopMP3CD() == -1)
+
+	if (_dig_cd.playing) {
+		_scumm->_mixer->stopHandle(_dig_cd.handle);
+		_dig_cd.playing = false;
+		_dig_cd.track = 0;
+		_dig_cd.numLoops = 0;
+		_dig_cd.start = 0;
+		_dig_cd.duration = 0;
+	} else {
 		_scumm->_system->stop_cdrom();
+	}
 }
 
 int Sound::pollCD() const {
-	if (pollMP3CD())
-		return 1;
-
-	return _scumm->_system->poll_cdrom();
+	return _dig_cd.playing || _scumm->_system->poll_cdrom();
 }
 
 void Sound::updateCD() {
-	if (updateMP3CD() == -1)
+	if (_dig_cd.playing) {
+		// If the sound handle is 0, then playback stopped.
+		if (!_dig_cd.handle) {
+			// If playback just stopped, check if the current track is supposed
+			// to be repeated, and if that's the case, play it again. Else, stop
+			// the CD explicitly
+			if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0)
+				playCDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
+			else
+				stopCD();
+		}
+	} else {
 		_scumm->_system->update_cdrom();
+	}
 }
 
 int Sound::getCachedTrack(int track) {
@@ -1567,64 +1605,6 @@ int Sound::getCachedTrack(int track) {
 
 	debug(2, "Track %d not available in compressed format", track);
 	return -1;
-}
-
-int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int duration) {
-	int index;
-	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
-
-	if (_soundsPaused)
-		return 0;
-
-	if ((numLoops == 0) && (startFrame == 0)) {
-		return 0;
-	}
-
-	index = getCachedTrack(track);
-	if (index < 0)
-		return -1;
-
-	_scumm->_mixer->stopHandle(_dig_cd.handle);
-	_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, startFrame, duration);
-	_dig_cd.playing = true;
-	_dig_cd.track = track;
-	_dig_cd.numLoops = numLoops;
-	_dig_cd.start = startFrame;
-	_dig_cd.duration = duration;
-	return 0;
-}
-
-int Sound::stopMP3CD() {
-	if (_dig_cd.playing) {
-		_scumm->_mixer->stopHandle(_dig_cd.handle);
-		_dig_cd.playing = false;
-		_dig_cd.track = 0;
-		_dig_cd.numLoops = 0;
-		_dig_cd.start = 0;
-		_dig_cd.duration = 0;
-		return 0;
-	}
-	return -1;
-}
-
-int Sound::pollMP3CD() const {
-	if (_dig_cd.playing)
-		return 1;
-	return 0;
-}
-
-int Sound::updateMP3CD() {
-	if (!_dig_cd.playing)
-		return -1;
-
-	if (!_dig_cd.handle) {
-		if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0)
-			playCDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
-		else
-			stopCD();
-	}
-
-	return 0;
 }
 
 #ifdef USE_MAD

@@ -159,10 +159,6 @@ protected:
 	void playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle);
 
 	int getCachedTrack(int track);
-	int playMP3CDTrack(int track, int numLoops, int startFrame, int duration);
-	int stopMP3CD();
-	int pollMP3CD() const;
-	int updateMP3CD();
 };
 
 #endif
