@@ -136,26 +136,6 @@ static void addSimon_simon2win_settings() {
 	writeRecord(&simon2win_settings, sizeof(simon2win_settings), GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON);
 }
 ///////////////////////////////////////////////////////////////////
-static void addSimon_simon2mac_settings() {
-
-
-	GameSpecificSettings simon2mac_settings = {
-	"Simon2.gme",                           // gme_filename
-	"",                                     // wav_filename
-	"",                                     // voc_filename
-	"SIMON2.MP3",                           // mp3_filename
-	"SIMON2.OGG",                           // vorbis_filename
-	"SIMON2.FLA",                           // flac_filename
-	"",                                     // voc_effects_filename
-	"",                                     // mp3_effects_filename
-	"",                                     // vorbis_effects_filename
-	"",                                     // flac_effects_filename
-	"gsptr30",                              // gamepc_filename
-};
-
-	writeRecord(&simon2mac_settings, sizeof(simon2mac_settings), GBVARS_SIMON2MACSETTINGS_INDEX, GBVARS_SIMON);
-}
-///////////////////////////////////////////////////////////////////
 static void addSimon_simon2dos_settings() {
 
 
@@ -391,7 +371,6 @@ void addSimon() {
 	addSimon_simon1amiga_settings();
 	addSimon_simon1demo_settings();
 	addSimon_simon2win_settings();
-	addSimon_simon2mac_settings();
 	addSimon_simon2dos_settings();
 	
 	addSimon_simon1_cursor();
