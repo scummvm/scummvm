@@ -44,7 +44,6 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD CPP /nologo /G6 /MT /W3 /WX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /YX /FD /c
-# SUBTRACT CPP /Z<none>
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -114,7 +113,6 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /YX /FD /c
 # ADD CPP /nologo /G6 /MT /W3 /WX /GX /O2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /c
-# SUBTRACT CPP /Z<none>
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x415 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -138,14 +136,6 @@ LIB32=link.exe -lib
 # Begin Group "smush"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\scumm\smush\blitter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\blitter.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\scumm\smush\brenderer.cpp
