@@ -4862,10 +4862,15 @@ void SimonEngine::delay(uint amount) {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
 					&& (event.kbd.flags == OSystem::KBD_ALT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
+
+					// There is no save slot 0
+					if (_saveLoadSlot == 0)
+						_saveLoadSlot = 10;
+
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 
