@@ -1347,21 +1347,21 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 7:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-//				_imuseDigital->parseScriptCmds(12, param_1, 0x600, param_2, 0, 0, 0, 0);
+				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x600, param_2, 0, 0, 0, 0);
 			}
 		}
 		break;
 	case 8:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-//				_imuseDigital->parseScriptCmds(12, param_1, 0x700, param_2, 0, 0, 0, 0);
+				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x700, param_2, 0, 0, 0, 0);
 			}
 		}
 		break;
 	case 9:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-//				_imuseDigital->parseScriptCmds(12, param_1, 0x500, param_2, 0, 0, 0, 0);
+				_imuseDigital->parseScriptCmds(12, param_1 - 1, 0x500, param_2, 0, 0, 0, 0);
 			}
 		}
 		break;
