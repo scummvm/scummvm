@@ -466,7 +466,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 }
 
-const byte *ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize) {
+void ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize) {
 	uint num = 0;
 	uint32 val;
 	byte chr;
@@ -478,7 +478,7 @@ const byte *ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int
 
 	if (msg == NULL) {
 		warning("Bad message in addMessageToStack, ignoring");
-		return NULL;
+		return;
 	}
 
 	while ((buf[num++] = chr = *msg++) != 0) {
@@ -566,8 +566,6 @@ const byte *ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int
 		if (_msgPtrToAdd >= dstBuffer + dstBufferSize)
 			error("addMessageToStack: buffer overflow!");
 	}
-
-	return msg;
 }
 
 void ScummEngine::addIntToStack(int var) {

@@ -1060,7 +1060,7 @@ protected:
 
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
-	const byte *addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize);
+	void addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);
 	void addNameToStack(int var);
