@@ -94,11 +94,6 @@ int Scumm::whereIsObject(int object) {
 	if (object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
-	if (object < 0) {
-		warning("FIXME! Negative object index! Very bad..");
-		return WIO_NOT_FOUND;
-	}
-
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)

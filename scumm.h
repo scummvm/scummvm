@@ -1320,8 +1320,8 @@ struct Scumm {
 	int fetchScriptWord();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
-	int getVarOrDirectWord(byte mask);
-	int getVarOrDirectByte(byte mask);
+	uint getVarOrDirectWord(byte mask);
+	uint getVarOrDirectByte(byte mask);
 	int readVar(uint var);
 	void writeVar(uint var, int value);
 	void getResultPos();

@@ -1294,7 +1294,7 @@ void Scumm::o5_getObjectOwner() {
 
 void Scumm::o5_getObjectState() {
 	if(_features & GF_SMALL_HEADER) {
-		if((getState(getVarOrDirectWord(0x80)) &0x0F >>4) != getVarOrDirectByte(0x40))
+		if((getState(getVarOrDirectWord(0x80)) &0x0F >>4) != (int)getVarOrDirectByte(0x40))
 			o5_jumpRelative();
 		else
 			ignoreScriptWord();
@@ -1319,6 +1319,7 @@ void Scumm::o5_getVerbEntrypoint() {
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	b = getVarOrDirectWord(0x40);
+
 	setResult(getVerbEntrypoint(a, b));
 }
 
@@ -2377,13 +2378,13 @@ int Scumm::getWordVararg(int16 *ptr) {
 	return i;
 }
 
-int Scumm::getVarOrDirectWord(byte mask) {
+uint Scumm::getVarOrDirectWord(byte mask) {
 	if (_opcode&mask)
 		return readVar(fetchScriptWord());
-	return (int16)fetchScriptWord();
+	return (uint16)fetchScriptWord();
 }
 
-int Scumm::getVarOrDirectByte(byte mask) {
+uint Scumm::getVarOrDirectByte(byte mask) {
 	if (_opcode&mask)
 		return readVar(fetchScriptWord());
 	return fetchScriptByte();
