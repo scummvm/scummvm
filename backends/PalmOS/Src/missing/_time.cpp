@@ -26,7 +26,7 @@
 
 time_t time(time_t *tloc) {
 	UInt32 secs = TimGetSeconds();					// since 1/1/1904 12AM.
-	DateTimeType Epoch = {0, 0, 0, 1, 1, 1970, 0};	// form 1/1/1904 12AM to 1/1/1970 12AM
+	DateTimeType Epoch = {1, 0, 0, 1, 1, 1970, 0};	// form 1/1/1904 12AM to 1/1/1970 12AM
 
 	secs -= TimDateTimeToSeconds (&Epoch);
 	
@@ -52,8 +52,8 @@ struct tm *localtime(const time_t *timer) {
 	tmDate.tm_min	= dt.minute;
 	tmDate.tm_hour	= dt.hour;
 	tmDate.tm_mday	= dt.day;
-	tmDate.tm_mon	= dt.month;
-	tmDate.tm_year	= dt.year;
+	tmDate.tm_mon	= dt.month - 1;
+	tmDate.tm_year	= dt.year - 1900;
 	tmDate.tm_wday	= dt.weekDay;
 	
 	return &tmDate;
