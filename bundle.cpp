@@ -27,6 +27,7 @@ Bundle::Bundle(Scumm * parent) {
 	_voiceFile = NULL;
 	_musicFile = NULL;
 	_scumm = parent;
+	_lastSong = -1;
 }
 
 Bundle::~Bundle() {
@@ -37,7 +38,7 @@ Bundle::~Bundle() {
 		fclose (_musicFile);
 }
 
-int32 Bundle::openVoiceFile(char * filename) {
+bool Bundle::openVoiceFile(char * filename) {
 	int32 tag, offset;
 
 	if (_voiceFile != NULL) {
@@ -79,7 +80,7 @@ int32 Bundle::openVoiceFile(char * filename) {
 	return true;
 }
 
-int32 Bundle::openMusicFile(char * filename) {
+bool Bundle::openMusicFile(char * filename) {
 	int32 tag, offset;
 
 	if (_musicFile != NULL) {
@@ -113,9 +114,9 @@ int32 Bundle::openMusicFile(char * filename) {
 			if ((c = _scumm->fileReadByte(_musicFile)) != 0)
 				name[z++] = c;
 		name[z] = '\0';
-		strcpy(_bundleVoiceTable[i].filename, name);
-		_bundleVoiceTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
-		_bundleVoiceTable[i].size = _scumm->fileReadDwordBE(_musicFile);
+		strcpy(_bundleMusicTable[i].filename, name);
+		_bundleMusicTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
+		_bundleMusicTable[i].size = _scumm->fileReadDwordBE(_musicFile);
 	}
 
 	return true;
@@ -177,31 +178,35 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte * com
 		return 0;
 	}
 
-	_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset, SEEK_SET);
-	tag = _scumm->fileReadDwordBE(_musicFile);
-	num = _scumm->fileReadDwordBE(_musicFile);
-	_scumm->fileReadDwordBE(_musicFile);
-	_scumm->fileReadDwordBE(_musicFile);
-	
-	if (tag != MKID_BE('COMP')) {
-		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag>>24, tag>>16, tag>>8, tag);
-		return 0;
-	}
-
-	for (i = 0; i < num; i++) {
-		_compMusicTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
-		_compMusicTable[i].size   = _scumm->fileReadDwordBE(_musicFile);
-		_compMusicTable[i].codec  = _scumm->fileReadDwordBE(_musicFile);
+	if (_lastSong != index) {
+		_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset, SEEK_SET);
+		tag = _scumm->fileReadDwordBE(_musicFile);
+		num = _scumm->fileReadDwordBE(_musicFile);
 		_scumm->fileReadDwordBE(_musicFile);
+		_scumm->fileReadDwordBE(_musicFile);
+	
+		if (tag != MKID_BE('COMP')) {
+			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag>>24, tag>>16, tag>>8, tag);
+			return 0;
+		}
+
+		for (i = 0; i < num; i++) {
+			_compMusicTable[i].offset = _scumm->fileReadDwordBE(_musicFile);
+			_compMusicTable[i].size   = _scumm->fileReadDwordBE(_musicFile);
+			_compMusicTable[i].codec  = _scumm->fileReadDwordBE(_musicFile);
+			_scumm->fileReadDwordBE(_musicFile);
+		}
 	}
 
-	comp_input  = (byte *)malloc(_compMusicTable[i].size);
+	comp_input  = (byte *)malloc(_compMusicTable[number].size);
 
-	_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset + _compMusicTable[i].offset, SEEK_SET);
-	_scumm->fileRead(_musicFile, comp_input, _compMusicTable[i].size);
-	final_size = decompressCodec(_compMusicTable[i].codec, comp_input, comp_final, _compMusicTable[i].size);
+	_scumm->fileSeek(_musicFile, _bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
+	_scumm->fileRead(_musicFile, comp_input, _compMusicTable[number].size);
+	final_size = decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size);
 
 	free(comp_input);
+
+	_lastSong = index;
 
 	return final_size;
 }
@@ -339,23 +344,41 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 
 		case 4:
 			output_size = compDecode(comp_input, comp_output);
+			p = comp_output;
+			for (z = 2; z < output_size; z++)
+				p[z] += p[z - 1];
+			for (z = 1; z < output_size; z++)
+				p[z] += p[z - 1];
 			
 			// FIXME: not implemented yet
 			memset (comp_output, 0, output_size);
+			output_size = 0;
 		break;
 
 		case 5:
 			output_size = compDecode(comp_input, comp_output);
+			p = comp_output;
+			for (z = 2; z < output_size; z++)
+				p[z] += p[z - 1];
+			for (z = 1; z < output_size; z++)
+				p[z] += p[z - 1];
 			
 			// FIXME: not implemented yet
 			memset (comp_output, 0, output_size);
+			output_size = 0;
 		break;
 
 		case 6:
 			output_size = compDecode(comp_input, comp_output);
+			p = comp_output;
+			for (z = 2; z < output_size; z++)
+				p[z] += p[z - 1];
+			for (z = 1; z < output_size; z++)
+				p[z] += p[z - 1];
 			
 			// FIXME: not implemented yet
 			memset (comp_output, 0, output_size);
+			output_size = 0;
 		break;
 
 		case 10: 

@@ -6,7 +6,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -89,6 +88,10 @@ void Scumm::processSoundQues()
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]
 				);
 #endif
+			
+			if ((_gameId == GID_DIG) && (data[0] == 4096)){
+					playBundleMusic(data[1] - 1);
+			}
 			if ((_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
 				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
 				uint8 * ptr = getResourceAddress(rtSound, data[1]);
@@ -769,6 +772,141 @@ void Scumm::stopSfxSound()
 bool Scumm::isSfxFinished()
 {
 	return !_mixer->has_active_channel();
+}
+
+static Scumm * h_scumm;
+
+static int music_handler (int t) {
+	h_scumm->bundleMusicHandler(t);
+	return t;
+}
+
+#define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
+
+void Scumm::playBundleMusic(int32 song) {
+	char buf[256];
+
+	if (_numberBundleMusic == -1) {
+		sprintf(buf, "%s%smusic.bun", _gameDataPath, _exe_name);
+		if (_bundle->openMusicFile((char*)&buf) == false)
+			return;
+		h_scumm = this;
+		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
+		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByIndex(song);
+		_numberBundleMusic = song;
+		_timer->installProcedure(&music_handler, 1000);
+		return;
+	}
+	if (_numberBundleMusic != song) {
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByIndex(song);
+		_numberBundleMusic = song;
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+	}
+}
+
+void Scumm::stopBundleMusic() {
+	_numberBundleMusic = -1;
+	if (_musicBundleBufFinal) 
+		free(_musicBundleBufFinal);
+	if (_musicBundleBufOutput)
+		free(_musicBundleBufOutput);
+}
+
+int Scumm::bundleMusicHandler(int t) {
+	byte * ptr;
+	int32 l, num = _numberSamplesBundleMusic, length, k;
+	int32 rate = 22050;
+	int32 tag, size = -1, header_size = 0;
+	if (_numberBundleMusic == -1)
+		_timer->releaseProcedure(&music_handler);
+	
+	ptr = _musicBundleBufOutput;
+	
+
+	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
+		length = _bundle->decompressMusicSampleByIndex(_numberBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
+		_offsetSampleBundleMusic += length;
+
+		if (l == 0) {
+			tag = READ_BE_UINT32(ptr); ptr += 4;
+			if (tag != MKID_BE('iMUS')) {
+				warning("Decompression of bundle sound failed");
+				_numberBundleMusic = -1;
+				return t;
+			}
+
+			ptr += 12;
+			while(tag != MKID_BE('DATA')) {
+				tag = READ_BE_UINT32(ptr);  ptr += 4;
+				switch(tag) {
+				case MKID_BE('FRMT'):
+					size = READ_BE_UINT32(ptr); ptr += 24;
+				break;
+				case MKID_BE('TEXT'):
+				case MKID_BE('REGN'):
+				case MKID_BE('STOP'):
+				case MKID_BE('JUMP'):
+					size = READ_BE_UINT32(ptr); ptr += size + 4;
+				break;
+					case MKID_BE('DATA'):
+					size = READ_BE_UINT32(ptr); ptr += 4;
+				break;
+
+				default:
+					error("Unknown sound header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+				}
+			}
+			if (size < 0) {
+				warning("Decompression sound failed (no size field)");
+				_numberBundleMusic = -1;
+				return t;
+			}
+			header_size = (ptr - _musicBundleBufOutput);
+		}
+	
+		l++;
+		_currentSampleBundleMusic = l;
+
+		if (_offsetSampleBundleMusic >= OUTPUT_SIZE + header_size) {
+			memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), OUTPUT_SIZE);
+			_offsetBufBundleMusic = _offsetSampleBundleMusic - OUTPUT_SIZE - header_size;
+			memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (OUTPUT_SIZE + header_size)), _offsetBufBundleMusic);
+			_offsetSampleBundleMusic = _offsetBufBundleMusic;
+			break;
+		}
+	}
+
+	if (l == num)
+		l = 0;
+
+	size = OUTPUT_SIZE;
+	ptr = _musicBundleBufFinal;
+	uint32 s_size = (size * 4) / 3;
+	byte * buffer = (byte*)malloc (s_size + 4);
+	uint32 r = 0, tmp;
+	for (l = 0; l < size; l += 3) {
+		tmp = (ptr[l + 1] & 0x0f) << 8;
+		tmp = (tmp | ptr[l + 0]) << 4;
+		tmp -= 0x8000;
+		buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+		buffer[r++] = (uint8)(tmp & 0xff);
+
+		tmp = (ptr[l + 1] & 0xf0) << 4;
+		tmp = (tmp | ptr[l + 2]) << 4;
+		tmp -= 0x8000;
+		buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+		buffer[r++] = (uint8)(tmp & 0xff);
+	}
+
+	_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+
+	return t;
 }
 
 void Scumm::playBundleSound(char *sound)

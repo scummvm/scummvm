@@ -27,6 +27,7 @@
 #include "system.h"
 #include "sound/mixer.h"
 #include "bundle.h"
+#include "timer.h"
 
 #define SCUMMVM_VERSION "0.2.2 CVS"
 #define SCUMMVM_CVS "2002-08-03"
@@ -339,6 +340,7 @@ public:
 	ObjectData *_objs;
 	ScummDebugger *_debugger;
 	Bundle * _bundle;
+	Timer * _timer;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -747,6 +749,14 @@ public:
 	bool _soundsPaused, _soundsPaused2;
 	bool _soundVolumePreset;
 
+	int32 _numberBundleMusic;
+	int32 _currentSampleBundleMusic;
+	int32 _numberSamplesBundleMusic;
+	int32 _offsetSampleBundleMusic;
+	int32 _offsetBufBundleMusic;
+	byte * _musicBundleBufFinal;
+	byte * _musicBundleBufOutput;
+
 	void setupSound();
 	void processSoundQues();
 	void playSound(int sound);
@@ -770,6 +780,9 @@ public:
 	void pauseSounds(bool pause);
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
+	void playBundleMusic(int32 song);
+	void stopBundleMusic();
+	int bundleMusicHandler(int t);
 	void decompressBundleSound(int index);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned = false);
  	int playSfxSound_MP3(void *sound, uint32 size);

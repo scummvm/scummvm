@@ -52,13 +52,14 @@ private:
 	int32 _numVoiceFiles;
 	int32 _numMusicFiles;
 	Scumm * _scumm;
+	int32 _lastSong;
 
 public:
 	Bundle(Scumm * parent);
 	~Bundle();
 
-	int32 openVoiceFile(char * filename);
-	int32 openMusicFile(char * filename);
+	bool openVoiceFile(char * filename);
+	bool openMusicFile(char * filename);
 	int32 decompressVoiceSampleByName(char * name, byte * comp_final);
 	int32 decompressVoiceSampleByIndex(int32 index, byte * comp_final);
 	int32 decompressMusicSampleByName(char * name, int32 number, byte * comp_final);

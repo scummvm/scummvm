@@ -259,10 +259,6 @@ SOURCE=.\gui\widget.h
 # End Group
 # Begin Source File
 
-SOURCE=.\scaler.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\actor.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -404,6 +400,10 @@ SOURCE=.\saveload.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\scaler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\script.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -526,6 +526,10 @@ SOURCE=.\sys.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\timer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\vars.cpp
 # End Source File
 # Begin Source File
@@ -611,6 +615,10 @@ SOURCE=.\StdAfx.h
 
 SOURCE=.\system.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\timer.h
+# End Source File
 # End Group
 # Begin Source File
 
@@ -622,4 +630,3 @@ SOURCE=.\scummvm.ico
 # End Source File
 # End Target
 # End Project
-

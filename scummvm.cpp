@@ -83,6 +83,8 @@ void Scumm::scummInit()
 
 	setShake(0);
 	setupCursor();
+	
+	_timer->init();
 
 	/* Allocate and initilise actors */
 	_actors = new Actor[MAX_ACTORS];
@@ -190,8 +192,10 @@ void Scumm::scummInit()
 #ifdef COMPRESSED_SOUND_FILE
 	_current_cache = 0;
 #endif
-	
-	_system->set_timer(5 * 60 * 1000, &autosave);
+
+	_numberBundleMusic = -1;
+
+	_timer->installProcedure(&autosave, 5 * 60 * 1000);
 }
 
 

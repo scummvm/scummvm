@@ -211,7 +211,7 @@ void SoundMixer::set_volume(int volume)
 	for (int i = 0; i < 128; i++)
 		_volume_table[i] = i * volume ;
 
-	for (int i = -128; i < 0; i++)
+	for (i = -128; i < 0; i++)
 		_volume_table[i+256] = i * volume ;
 }
 

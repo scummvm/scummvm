@@ -188,6 +188,7 @@ bool ListWidget::handleKeyUp(char key, int modifiers)
 {
 	if (key == _currentKeyDown)
 		_currentKeyDown = 0;
+	return true;
 }
 
 void ListWidget::lostFocusWidget()
