@@ -23,6 +23,7 @@ SCUMM_OBJS = \
 	scumm/object.o \
 	scumm/player_v1.o\
 	scumm/player_v2.o\
+	scumm/player_v3a.o\
 	scumm/resource.o \
 	scumm/resource_v2.o \
 	scumm/resource_v3.o \

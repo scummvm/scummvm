@@ -31,6 +31,7 @@
 #include "imuse_digi.h"
 #include "intern.h"
 #include "object.h"
+#include "player_v3a.h"
 #include "player_v2.h"
 #include "player_v1.h"
 #include "resource.h"
@@ -690,8 +691,11 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_playerV2 = NULL;
+	_playerV3A = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_imuseDigital = new IMuseDigital(this);
+	} else if ((_features & GF_AMIGA) && (_version == 3)) {
+		_playerV3A = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_playerV2 = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
@@ -783,6 +787,7 @@ Scumm::~Scumm () {
 	delete _imuse;
 	delete _imuseDigital;
 	delete _playerV2;
+	delete _playerV3A;
 	free(_languageBuffer);
 	free(_audioNames);
 
@@ -1272,6 +1277,10 @@ int Scumm::scummLoop(int delta) {
 		// Covered automatically by the Sound class
 	} else if (_playerV2) {
 		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
+	} else if (_playerV3A) {
+		for (int i = 0; i < delta; i++)
+			_playerV3A->playMusic();
+		VAR(VAR_MUSIC_TIMER) = _playerV3A->getMusicTimer();
 	} else if (_imuse) {
 		VAR(VAR_MUSIC_TIMER) = _imuse->getMusicTimer();
 	} else if (_features & GF_SMALL_HEADER) {

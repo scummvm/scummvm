@@ -41,6 +41,7 @@ class IMuse;
 class IMuseDigital;
 class NewGui;
 class Player_V2;
+class Player_V3A;
 class Scumm;
 class ScummDebugger;
 class Serializer;
@@ -305,6 +306,7 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
+	Player_V3A *_playerV3A;
 	Sound *_sound;
 
 	VerbSlot *_verbs;

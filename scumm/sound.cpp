@@ -26,6 +26,7 @@
 #include "imuse.h"
 #include "imuse_digi.h"
 #include "player_v2.h"
+#include "player_v3a.h"
 #include "scumm.h"
 #include "sound.h"
 #include "sound/mididrv.h"
@@ -430,26 +431,14 @@ void Sound::playSound(int soundID) {
 	}
 	
 
-	// Used in Amiga verisons of indy3ega and loom
-	// Used in Mac. version of indy3ega
-	if (((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3))
-		|| ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
+	if ((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3)) {
 		if (ptr[26] == 00) {
 			size = READ_BE_UINT16(ptr + 12);
 			rate = 3579545 / READ_BE_UINT16(ptr + 20);
 			sound = (char *)malloc(size);
 			int vol = ptr[24] * 4;
 			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
-			if ((_scumm->_features & GF_AMIGA) && (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6))) {
-				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
-				// the second check is for simple looped sounds
-				int loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
-				int loopEnd = READ_BE_UINT16(ptr + 14);
-				_scumm->_mixer->playRaw(NULL, sound, size, rate,
-							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, soundID, vol, 0, loopStart, loopEnd);
-			} else {
-				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-			}
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 			return;
 		}
 	}
@@ -496,7 +485,10 @@ void Sound::playSound(int soundID) {
 	if (_scumm->_playerV2) {
 		_scumm->_playerV2->startSound(soundID, ptr);
 	}
-	
+
+	if (_scumm->_playerV3A)
+		_scumm->_playerV3A->startSound(soundID, ptr);
+
 	if (_scumm->_imuse) {
 		_scumm->_imuse->startSound(soundID);
 	}
@@ -699,6 +691,9 @@ int Sound::isSoundRunning(int sound) const {
 	if (_scumm->_playerV2)
 		return _scumm->_playerV2->getSoundStatus(sound);
 
+	if (_scumm->_playerV3A)
+		return _scumm->_playerV3A->getSoundStatus(sound);
+
 	return 0;
 }
 
@@ -769,9 +764,8 @@ void Sound::stopSound(int a) {
 		_scumm->_imuse->stopSound(a);
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopSound (a);
-	} else 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 3)) {
-		// this handles stopping looped sounds for now
-		_scumm->_mixer->stopID(a);
+	} else 	if (_scumm->_playerV3A) {
+		_scumm->_playerV3A->stopSound(a);
 	}
 
 	for (i = 0; i < 10; i++)
@@ -790,6 +784,8 @@ void Sound::stopAllSounds() {
 		_scumm->_imuse->clear_queue();
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopAllSounds();
+	} else 	if (_scumm->_playerV3A) {
+		_scumm->_playerV3A->stopAllSounds();
 	}
 
 	clearSoundQue();
