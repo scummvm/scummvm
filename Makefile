@@ -17,12 +17,17 @@ CP      := cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CXXFLAGS:= -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
+CXXFLAGS:= -g -O
 DEFINES :=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
 LIBS	:=
 OBJS	:=
+
+# Turn on useful warnings
+CXXFLAGS+= -Wall -W -pedantic -ansi -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
+CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized
+CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-unused-parameter -Wno-reorder
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
@@ -43,8 +48,8 @@ LIBS    += -lmad
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
-# Uncomment this for stricter compile time code verification
-# CXXFLAGS+= -Wshadow -Werror
+# Uncomment this to cause warnings to be treated as errors
+# CXXFLAGS+= -Werror
 
 
 #######################################################################
