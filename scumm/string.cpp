@@ -712,32 +712,26 @@ void ScummEngine::drawBlastTexts() {
 		buf = _blastTextQueue[i].text;
 
 		_charset->_top = _blastTextQueue[i].ypos + _screenTop;
-		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
+		_charset->_left = _blastTextQueue[i].xpos;
 		_charset->_right = _screenWidth - 1;
 		_charset->_center = _blastTextQueue[i].center;
 		_charset->setColor(_blastTextQueue[i].color);
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
-		_charset->_nextLeft = _blastTextQueue[i].xpos;
-		_charset->_nextTop = _charset->_top;
 
 		// Center text if necessary
 		if (_charset->_center) {
-			_charset->_nextLeft -= _charset->getStringWidth(0, buf) / 2;
-			if (_charset->_nextLeft < 0)
-				_charset->_nextLeft = 0;
+			_charset->_left -= _charset->getStringWidth(0, buf) / 2;
+			if (_charset->_left < 0)
+				_charset->_left = 0;
 		}
 
 		do {
 			c = *buf++;
 			if (c != 0 && c != 0xFF) {
-				_charset->_left = _charset->_nextLeft;
-				_charset->_top = _charset->_nextTop;
 				if (c >= 0x80 && _useCJKMode)
 					c += *buf++ * 256;
 				_charset->printChar(c);
-				_charset->_nextLeft = _charset->_left;
-				_charset->_nextTop = _charset->_top;
 			}
 		} while (c);
 
