@@ -101,7 +101,6 @@ SIMON
 
 Descumm
 =======
-* Merge descumm & descumm6
 * Turn it into a library, to be used by a command line frontend (like now),
   ScummVM debugger, and ScummEX. Basically, the API could consist of a single
   function, which takes a pointer to a memory buffer, its length, the Scumm
