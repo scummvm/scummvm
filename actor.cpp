@@ -114,14 +114,19 @@ void Scumm::setActorWalkSpeed(Actor *a, uint speedx, uint speedy) {
 }
 
 int Scumm::getAngleFromPos(int x, int y) {
-	if (abs(y)*2 < abs(x)) {
-		if (x>0)
-			return 90;
-		return 270;
+	if (_gameId==GID_DIG) {
+		double temp = atan2 (x, -y);
+		return normalizeAngle((int)(temp * 1.8e2 / 3.14));
 	} else {
-		if (y>0)
-			return 180;
-		return 0;
+		if (abs(y)*2 < abs(x)) {
+			if (x>0)
+				return 90;
+			return 270;
+		} else {
+			if (y>0)
+				return 180;
+			return 0;
+		}
 	}
 }
 
@@ -172,13 +177,7 @@ int Scumm::calcMovementFactor(Actor *a, int newX, int newY) {
 	a->walkdata.xfrac = 0;
 	a->walkdata.yfrac = 0;
 
-	if(_gameId==GID_DIG) {
-		double temp;
-		temp = atan2 (XYFactor, -YXFactor);
-		a->newDirection = normalizeAngle((int)(temp * 1.8e2 / 3.14));
-	} else {
-		a->newDirection = getAngleFromPos(XYFactor, YXFactor);
-	}
+	a->newDirection = getAngleFromPos(XYFactor, YXFactor);
 
 	return actorWalkStep(a);
 }
@@ -498,12 +497,12 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	if (a && a->ignoreBoxes==0) {
 		threshold = 30;
 
-                if ((_features & GF_SMALL_HEADER) && (_classData[a->number] & 0x200000))
-                       return abr;
+		if ((_features & GF_SMALL_HEADER) && (_classData[a->number] & 0x200000))
+			return abr;
 		
 		while(1) {
 			iterations++;
-                        if (iterations > 1000) return abr;   /* Safety net */
+      if (iterations > 1000) return abr;   /* Safety net */
 			box = getNumBoxes() - 1;
 			if (box == 0)
 				return abr;
@@ -511,8 +510,8 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 			best = (uint)0xFFFF;
 			b = 0;
 
-                        if(((_features & GF_SMALL_HEADER) && box) || !(_features & GF_SMALL_HEADER))
-                        for (j=box;j>=firstValidBox;j--) {
+      if(((_features & GF_SMALL_HEADER) && box) || !(_features & GF_SMALL_HEADER))
+      for (j=box;j>=firstValidBox;j--) {
 				flags = getBoxFlags(j);
 				if (flags&0x80 && (!(flags&0x20) || getClass(a->number, 0x1F)) )
 					continue;
