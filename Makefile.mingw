@@ -1,3 +1,6 @@
+# Where is scummvm will be installed
+RESIDUALPATH=C:/residual
+
 ### Modify these paths
 SDL_CFLAGS=-I$(SRC)sdl/include
 SDL_LIBS=-L$(SRC)sdl/lib -lSDL
@@ -11,6 +14,7 @@ OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o
 DEPS = $(OBJS:.o=.d)
+EXEEXT =.exe
 
 residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
@@ -32,3 +36,14 @@ lua-clean:
 -include $(DEPS)
 
 .PHONY: lua-build lua-clean
+
+# Some additional targets
+install:   residual$(EXEEXT)
+	mkdir -p $(RESIDUALPATH)
+	strip residual$(EXEEXT) -o $(RESIDUALPATH)/residual$(EXEEXT)
+
+dist:   install
+	cp README $(RESIDUALPATH)/readme.txt
+	cp SDL/README-SDL.txt $(RESIDUALPATH)
+	cp SDL/lib/SDL.dll $(RESIDUALPATH)
+	u2d $(RESIDUALPATH)/*.txt
