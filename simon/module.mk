@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	simon/debug.o \
 	simon/items.o \
 	simon/midi.o \
+	simon/midiparser_s1d.o \
 	simon/res.o \
 	simon/sound.o \
 	simon/simon.o \
