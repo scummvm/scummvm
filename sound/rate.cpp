@@ -29,6 +29,7 @@
 
 #include "stdafx.h"
 #include "sound/rate.h"
+#include "sound/audiostream.h"
 
 /**
  * The precision of the fractional computations used by the rate converter.

@@ -50,18 +50,55 @@
  * Get the idea? :)
  */
 
+#include "stdafx.h"
 #include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include "rate.h"
+#include "sound/resample.h"
+#include "sound/audiostream.h"
 
-/* resample includes */
-#include "resample.h"
 
-typedef struct {
-	byte priv[1024];
-} eff_struct;
-typedef eff_struct *eff_t;
+/* Conversion constants */
+#define Lc        7
+#define Nc       (1<<Lc)
+#define La        16
+#define Na       (1<<La)
+#define Lp       (Lc+La)
+#define Np       (1<<Lp)
+#define Amask    (Na-1)
+#define Pmask    (Np-1)
+
+#define MAXNWING  (80<<Lc)
+/* Description of constants:
+ *
+ * Nc - is the number of look-up values available for the lowpass filter
+ *    between the beginning of its impulse response and the "cutoff time"
+ *    of the filter.  The cutoff time is defined as the reciprocal of the
+ *    lowpass-filter cut off frequence in Hz.  For example, if the
+ *    lowpass filter were a sinc function, Nc would be the index of the
+ *    impulse-response lookup-table corresponding to the first zero-
+ *    crossing of the sinc function.  (The inverse first zero-crossing
+ *    time of a sinc function equals its nominal cutoff frequency in Hz.)
+ *    Nc must be a power of 2 due to the details of the current
+ *    implementation. The default value of 128 is sufficiently high that
+ *    using linear interpolation to fill in between the table entries
+ *    gives approximately 16-bit precision, and quadratic interpolation
+ *    gives about 23-bit (float) precision in filter coefficients.
+ *
+ * Lc - is log base 2 of Nc.
+ *
+ * La - is the number of bits devoted to linear interpolation of the
+ *    filter coefficients.
+ *
+ * Lp - is La + Lc, the number of bits to the right of the binary point
+ *    in the integer "time" variable. To the left of the point, it indexes
+ *    the input array (X), and to the right, it is interpreted as a number
+ *    between 0 and 1 sample of the input X.  The default value of 23 is
+ *    about right.  There is a constraint that the filter window must be
+ *    "addressable" in a int32_t, more precisely, if Nmult is the number
+ *    of sinc zero-crossings in the right wing of the filter window, then
+ *    (Nwing<<Lp) must be expressible in 31 bits.
+ *
+ */
+
 
 /* this Float MUST match that in filter.c */
 #define Float double/*float*/
@@ -284,6 +321,7 @@ int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_
 	long Nproc;		// The number of bytes we process to generate Nout output bytes
 	const long obufSize = *osamp;
 
+/*
 TODO: adjust for the changes made to AudioInputStream; add support for stereo
 initially, could just average the left/right channel -> bad for quality of course,
 but easiest to implement and would get this going again.
@@ -293,6 +331,7 @@ But better for efficiency would be to rewrite those to deal with 2 channels, too
 Because esp in SrcEX/SrcUD, only very few computations depend on the input data,
 and dealing with both channels in parallel should only be a little slower than dealing
 with them alone
+*/
 
 	// Constrain amount we actually process
 	//fprintf(stderr,"Xp %d, Xread %d\n",r->Xp, r->Xread);
@@ -738,17 +777,6 @@ static void LpFilter(double *c, long N, double frq, double Beta, long Num) {
 
 
 #pragma mark -
-
-
-class ResampleRateConverter : public RateConverter {
-protected:
-	eff_struct effp;
-public:
-	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
-	~ResampleRateConverter();
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
-};
 
 
 ResampleRateConverter::ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality) {

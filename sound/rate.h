@@ -22,13 +22,12 @@
 #ifndef SOUND_RATE_H
 #define SOUND_RATE_H
 
-#include <stdio.h>
-#include <assert.h>
 #include "common/scummsys.h"
 #include "common/engine.h"
 #include "common/util.h"
 
-#include "sound/audiostream.h"
+//#include "sound/audiostream.h"
+class AudioInputStream;
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;

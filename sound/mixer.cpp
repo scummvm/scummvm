@@ -27,6 +27,7 @@
 
 #include "sound/mixer.h"
 #include "sound/rate.h"
+#include "sound/audiostream.h"
 
 
 #pragma mark -
