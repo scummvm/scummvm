@@ -198,11 +198,10 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			break;
 		case 3:
 		case 4:
-			if ((!sequence) && (table->param != 0)) {
-				if (table->param == _digStateMusicTable[_curMusicState].param) {
-					startMusic(table->filename, table->soundId, 0, 127);
-					return;
-				}
+			if ((!sequence) && (table->param != 0) &&
+					(table->param == _digStateMusicTable[_curMusicState].param)) {
+				startMusic(table->filename, table->soundId, 0, 127);
+				return;
 			}
 			startMusic(table->filename, table->soundId, hookId, 127);
 			break;
@@ -330,10 +329,9 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		case 4:
 		case 12:
 			fadeOutMusic(table->fadeOut60TicksDelay);
-			if ((!sequence) && (table->param != 0)) {
-				if (table->param == _comiStateMusicTable[_curMusicState].param) {
-					startMusic(table->filename, table->soundId, 0, 127);
-				}
+			if ((!sequence) && (table->param != 0) &&
+					(table->param == _comiStateMusicTable[_curMusicState].param)) {
+				startMusic(table->filename, table->soundId, 0, 127);
 			} else {
 				if (table->opcode == 12) {
 					startMusic(table->filename, table->soundId, table->hookId, 127);
