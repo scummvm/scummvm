@@ -2469,16 +2469,17 @@ void Router::clearWalkGridList(void) {
 // called from fnAddWalkGrid
 
 void Router::addWalkGrid(int32 gridResource) {
+	int i;
 	// First, scan the list to see if this grid is already included
 
-	for (int i = 0; i < MAX_WALKGRIDS; i++) {
+	for (i = 0; i < MAX_WALKGRIDS; i++) {
 		if (_walkGridList[i] == gridResource)
 			return;
 	}
 
 	// Scan the list for a free slot
 
-	for (int i = 0; i < MAX_WALKGRIDS; i++) {
+	for (i = 0; i < MAX_WALKGRIDS; i++) {
 		if (_walkGridList[i] == 0) {
 			_walkGridList[i] = gridResource;
 			return;

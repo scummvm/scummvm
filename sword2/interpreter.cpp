@@ -301,6 +301,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		int caseCount;
 		bool foundCase;
 		int32 ptrval;
+		int i;
 
 		curCommand = code[ip++];
 
@@ -464,7 +465,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			// Search the cases
 			foundCase = false;
-			for (int i = 0; i < caseCount && !foundCase; i++) {
+			for (i = 0; i < caseCount && !foundCase; i++) {
 				if (value == (int32) READ_LE_UINT32(code + ip)) {
 					// We have found the case, so lets
 					// jump to it

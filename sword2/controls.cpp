@@ -1255,6 +1255,7 @@ public:
 			int textWidth;
 			char tmp;
 			int i;
+			int j;
 
 			switch (result) {
 			case kWheelUp:
@@ -1274,7 +1275,7 @@ public:
 					if (widget == _slotButton[i])
 						break;
 
-				for (int j = 0; j < 8; j++) {
+				for (j = 0; j < 8; j++) {
 					if (j != i) {
 						_slotButton[j]->setEditable(false);
 						_slotButton[j]->setState(0);
