@@ -143,7 +143,7 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
 	byte *chr = msg;
 
 	buf[position++] = SEQ_MIDIPUTC;
-	buf[position++] = 0xFF;
+	buf[position++] = 0xF0;
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 	for (; length; --length, ++chr) {
