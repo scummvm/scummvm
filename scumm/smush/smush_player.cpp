@@ -370,7 +370,8 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 
-	int code = b.getWord();
+	int code;
+	code = b.getWord();
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();
