@@ -40,6 +40,7 @@ Sound::Sound(Scumm *parent) {
 	_nameBundleMusic = NULL;
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
+	_musicDisk = 0;
 	_talkChannel = -1;
 }
 
@@ -960,9 +961,15 @@ void Sound::playBundleMusic(char * song) {
 		if (_scumm->_gameId == GID_CMI) {
 			char bunfile[20];
 			sprintf(bunfile, "musdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
-			printf("Opening bundle\n");
-			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false)
+			if (_musicDisk != _scumm->_vars[_scumm->VAR_CURRENTDISK]) 
+				_scumm->_bundle->_musicFile.close();	
+
+			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
+				_outputMixerSize = 0;
 				return;
+			}
+
+			_musicDisk = _scumm->_vars[_scumm->VAR_CURRENTDISK];
 			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
 			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
