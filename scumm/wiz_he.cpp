@@ -1206,8 +1206,9 @@ void ScummEngine_v72he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 }
 
 void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
-	if (params->processFlags & 0x80000) {
-		warning("displayWizComplexImage() unhandled flags = 0x80000");
+	int paletteNum = 0;
+	if (params->processFlags & kWPFPaletteNum) {
+		paletteNum = params->img.paletteNum;
 	}
 	int zoom = 256;
 	if (params->processFlags & kWPFZoom) {
@@ -1268,6 +1269,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		pwi->state = state;
 		pwi->flags = flags;
 		pwi->unk = unk;
+		pwi->paletteNum = paletteNum;
 		++_wiz._imagesNum;
 	} else if (params->processFlags & (kWPFRotate | kWPFZoom)) {
 		drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, unk, rotationAngle, zoom, r);
@@ -1285,6 +1287,7 @@ void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 		wi.state = state;
 		wi.flags = flags;
 		wi.unk = unk;
+		wi.paletteNum = paletteNum;
 		drawWizImage(rtImage, &wi);
 	}
 }

@@ -617,8 +617,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.left = pop();
 		break;
 	case 40: // HE99+
-		_wizParams.processFlags |= 0x8000;
-		_wizParams.unk_174 = pop();
+		_wizParams.processFlags |= kWPFPaletteNum;
+		_wizParams.img.paletteNum = pop();
 		break;
 	case 46:
 		_wizParams.processFlags |= kWPFZoom;
@@ -923,7 +923,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 56:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_14(spriteId));
+			push(spriteInfoGet_paletteNum(spriteId));
 		else
 			push(0);
 		break;
@@ -1204,7 +1204,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_14(spriteId, args[0]);
+			spriteInfoSet_paletteNum(spriteId, args[0]);
 		break;
 	case 58: // HE 99+
 		args[0] = pop();

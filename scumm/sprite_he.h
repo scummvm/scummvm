@@ -71,7 +71,7 @@ struct SpriteInfo {
 	int res_id;
 	int res_state;
 	int group_num;
-	int field_14;
+	int paletteNum;
 	int zorderPriority;
 	Common::Rect bbox;
 	int dx;

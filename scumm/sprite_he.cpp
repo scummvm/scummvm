@@ -297,10 +297,10 @@ int ScummEngine_v90he::spriteInfoGet_groupNum(int spriteId) {
 	return _spriteTable[spriteId].group_num;
 }
 
-int ScummEngine_v90he::spriteInfoGet_field_14(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_paletteNum(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].field_14;
+	return _spriteTable[spriteId].paletteNum;
 }
 
 int ScummEngine_v90he::spriteInfoGet_zorderPriority(int spriteId) {
@@ -477,11 +477,11 @@ void ScummEngine_v90he::spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32
 //
 // spriteInfoSet functions
 //
-void ScummEngine_v90he::spriteInfoSet_field_14(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_paletteNum(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].field_14 != value) {
-		_spriteTable[spriteId].field_14 = value;
+	if (_spriteTable[spriteId].paletteNum != value) {
+		_spriteTable[spriteId].paletteNum = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	}
 }
@@ -747,7 +747,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].delayAmount = 0;
 	_spriteTable[spriteId].delayCount = 0;
 	_spriteTable[spriteId].class_flags = 0;
-	_spriteTable[spriteId].field_14 = 0;
+	_spriteTable[spriteId].paletteNum = 0;
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
 	_spriteTable[spriteId].zorderPriority = 0;
@@ -1337,9 +1337,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				continue;
 			}
 		}
-		if (spi->field_14) {
-			wiz.processFlags |= 0x8000;
-			wiz.unk_174 = spi->field_14;
+		if (spi->paletteNum) {
+			wiz.processFlags |= kWPFPaletteNum;
+			wiz.img.paletteNum = spi->paletteNum;
 		}
 		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].field_20) {
 			wiz.processFlags |= 0x10000;

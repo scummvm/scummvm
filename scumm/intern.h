@@ -924,7 +924,7 @@ protected:
 	int spriteInfoGet_resId(int spriteId);
 	int spriteInfoGet_resState(int spriteId);
 	int spriteInfoGet_groupNum(int spriteId);
-	int spriteInfoGet_field_14(int spriteId);
+	int spriteInfoGet_paletteNum(int spriteId);
 	int spriteInfoGet_zorderPriority(int spriteId);
 	int spriteInfoGet_grp_tx(int spriteId);
 	int spriteInfoGet_grp_ty(int spriteId);
@@ -949,7 +949,7 @@ protected:
 	int spriteGroupGet_scale_y_ratio_div(int spriteGroupId);
 	void spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty);
 
-	void spriteInfoSet_field_14(int spriteId, int value);
+	void spriteInfoSet_paletteNum(int spriteId, int value);
 	void spriteInfoSet_field_7C(int spriteId, int value);
 	void spriteInfoSet_field_80(int spriteId, int value);
 	void spriteInfoSet_resetSprite(int spriteId);

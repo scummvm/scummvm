@@ -1262,8 +1262,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		displayWizComplexImage(&_wizParams);
 		break;
 	case 57:
-		_wizParams.processFlags |= 0x8000;
-		_wizParams.unk_174 = pop();
+		_wizParams.processFlags |= kWPFPaletteNum;
+		_wizParams.img.paletteNum = pop();
 		break;
 	case 58:
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
@@ -1900,7 +1900,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_14(spriteId, args[0]);
+			spriteInfoSet_paletteNum(spriteId, args[0]);
 		break;
 	case 59:
 		args[0] = pop();
@@ -2616,7 +2616,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 57:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_14(spriteId));
+			push(spriteInfoGet_paletteNum(spriteId));
 		else
 			push(0);
 		break;
