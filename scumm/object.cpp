@@ -320,7 +320,7 @@ void Scumm::drawRoomObjects(int arg)
 			if (_objs[i].obj_nr > 0)
 				drawRoomObject(i, arg);
 	} else {
-		for (i = (_numLocalObjects-1); i != 0; i--)
+		for (i = (_numLocalObjects-1); i > 0; i--)
 			if (_objs[i].obj_nr > 0)
 				drawRoomObject(i, arg);
 	}
@@ -444,6 +444,12 @@ void Scumm::loadRoomObjects()
 	else
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
 
+	// Clear out old room objects (FIXME: Locking/FlObjects stuff?)
+	for (i = 0; i < _numLocalObjects; i++) {
+		_objs[i].obj_nr = 0;
+		_objs[i].fl_object_index = 0;
+	}
+
 	if (_numObjectsInRoom == 0)
 		return;
 
@@ -456,11 +462,6 @@ void Scumm::loadRoomObjects()
 		searchptr = rootptr = room;
 	assert(searchptr);
 
-	// Clear out old room objects (FIXME: Locking/FlObjects stuff?)
-	for (i = 0; i < _numLocalObjects; i++) {
-		_objs[i].obj_nr = 0;
-		_objs[i].fl_object_index = 0;
-	}
 
 	// Load in new room objects
 	for (i = 0; i < _numObjectsInRoom; i++) {
@@ -1626,10 +1627,8 @@ int Scumm::findLocalObjectSlot()
 	int i;
 
         for (i = 1; i < _numLocalObjects; i++) {
-                if (!_objs[i].obj_nr) {
-			printf("Returning slot %d\n", i);
+                if (!_objs[i].obj_nr)
 			return i;
-		}
 	}
 
 	return -1;
