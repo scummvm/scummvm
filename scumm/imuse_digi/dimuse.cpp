@@ -88,7 +88,7 @@ int IMuseDigital::pullProcCallback(void *refCon, CustomProcInputStream *stream, 
 int IMuseDigital::pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int pullSize) {
 	Common::StackLock lock(_mutex, "IMuseDigital::pullProc()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		if (_track[l]->stream == stream) {
+		if ((_track[l]->used) && (_track[l]->stream == stream)) {
 			_vm->_mixer->setChannelVolume(_track[l]->handle, _track[l]->mixerVol);
 			_vm->_mixer->setChannelBalance(_track[l]->handle, _track[l]->mixerPan);
 			int32 mixer_size = pullSize;
