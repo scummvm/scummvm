@@ -713,6 +713,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		} else {
 			push(0);
 		}
+		break;
 	case 1:
 		spriteId = pop();
 		if (spriteId) {
@@ -721,6 +722,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		} else {
 			push(0);
 		}
+		break;
 	case 2:
 		spriteId = pop();
 		if (spriteId) {
