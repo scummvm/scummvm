@@ -496,9 +496,9 @@ else
 	    CXXFLAGS="$CXXFLAGS -faltivec"
 	    ;;
 	MINGW32*)
-	    echo "mingw32 not supported by configure script"
-	    echo "Try 'make -f Makefile.mingw'"
-	    exit 1
+	    DEFINES="$DEFINES -DWIN32"
+	    LIBS="$LIBS -lmingw32 -lwinmm"
+	    OBJS="$OBJS scummvmico.o"
 	    ;;
 	CYGWIN*)
 	    echo "cygwin not supported by configure script"

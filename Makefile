@@ -55,6 +55,9 @@ config.mak: $(srcdir)/configure
 	@echo "If you cannot run configure, use 'make -f Makefile.noconf'"
 	@exit 1
 
+scummvmico.o: scummvm.ico
+	windres scummvm.rc scummvmico.o
+
 dist:
 	$(RM) $(ZIPFILE)
 	$(ZIP) $(ZIPFILE) $(DISTFILES)
