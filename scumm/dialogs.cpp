@@ -606,30 +606,22 @@ PauseDialog::PauseDialog(ScummEngine *scumm)
 	: InfoDialog(scumm, 10) {
 }
 
-ConfirmExitDialog::ConfirmExitDialog(ScummEngine *scumm)
-	: InfoDialog(scumm, "Do you really want to quit (y/n)?") {
-}
-
-void ConfirmExitDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (tolower(ascii) == 'n') { // Close exit dialog if n key is pressed
-		setResult(0);
+void PauseDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (ascii == ' ')  // Close pause dialog if space key is pressed
 		close();
-	} else if (tolower(ascii) == 'y') { // Quit if y key is pressed
-		setResult(1);
-		close();
-	} else
+	else
 		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 }
 
-ConfirmRestartDialog::ConfirmRestartDialog(ScummEngine *scumm)
-	: InfoDialog(scumm, "Do you really want to restart (y/n)?") {
+ConfirmDialog::ConfirmDialog(ScummEngine *scumm, const String& message)
+	: InfoDialog(scumm, message) {
 }
 
-void ConfirmRestartDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (tolower(ascii) == 'n') { // Close restart dialog if n key is pressed
+void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (tolower(ascii) == 'n') {
 		setResult(0);
 		close();
-	} else if (tolower(ascii) == 'y') { // Restart if y key is pressed
+	} else if (tolower(ascii) == 'y') {
 		setResult(1);
 		close();
 	} else

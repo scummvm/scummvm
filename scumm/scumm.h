@@ -351,8 +351,6 @@ protected:
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
 	Dialog *_mainMenuDialog;
-	Dialog *_confirmExitDialog;
-	Dialog *_confirmRestartDialog;
 
 protected:
 	int runDialog(Dialog &dialog);

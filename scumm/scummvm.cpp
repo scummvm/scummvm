@@ -326,8 +326,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
 	_mainMenuDialog = NULL;
-	_confirmExitDialog = NULL;
-	_confirmRestartDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
 	_inventory = NULL;
@@ -862,8 +860,6 @@ ScummEngine::~ScummEngine() {
 	delete _pauseDialog;
 	delete _optionsDialog;
 	delete _mainMenuDialog;
-	delete _confirmExitDialog;
-	delete _confirmRestartDialog;
 
 	delete _sound;
 	if (_musicEngine) {
@@ -1699,7 +1695,7 @@ void ScummEngine::parseEvents() {
 			if (_confirmExit)
 				confirmexitDialog();
 			else
-			_quit = true;
+				_quit = true;
 			break;
 	
 		default:
@@ -2577,19 +2573,17 @@ void ScummEngine::optionsDialog() {
 }
 
 void ScummEngine::confirmexitDialog() {
-	if (!_confirmExitDialog)
-		_confirmExitDialog = new ConfirmExitDialog(this);
+	ConfirmDialog confirmExitDialog(this, "Do you really want to quit (y/n)?");
 
-	if (runDialog(*_confirmExitDialog)) {
+	if (runDialog(confirmExitDialog)) {
 		_quit = true;
 	}
 }
 
 void ScummEngine::confirmrestartDialog() {
-	if (!_confirmRestartDialog)
-		_confirmRestartDialog = new ConfirmRestartDialog(this);
+	ConfirmDialog confirmRestartDialog(this, "Do you really want to restart (y/n)?");
 
-	if (runDialog(*_confirmRestartDialog)) {
+	if (runDialog(confirmRestartDialog)) {
 		restart();
 	}
 }

@@ -142,24 +142,12 @@ protected:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(ScummEngine *scumm);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
-		{
-			if (ascii == ' ')  // Close pause dialog if space key is pressed
-				close();
-			else
-				ScummDialog::handleKeyDown(ascii, keycode, modifiers);
-		}
-};
-
-class ConfirmExitDialog : public InfoDialog {
-public:
-	ConfirmExitDialog(ScummEngine *scumm);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
-class ConfirmRestartDialog : public InfoDialog {
+class ConfirmDialog : public InfoDialog {
 public:
-	ConfirmRestartDialog(ScummEngine *scumm);
+	ConfirmDialog(ScummEngine *scumm, const String& message);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
