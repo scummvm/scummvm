@@ -39,8 +39,7 @@ void Scumm::checkV2Inventory(int x, int y) {
 
 	object = findInventory(_scummVars[VAR_EGO], object+1);
 	if (object > 0) {
-		_scummVars[35] = object;
-		runScript(4, 0, 0, 0);
+		runInputScript(3, object, 0);
 	}
 }
 
@@ -80,14 +79,14 @@ void Scumm::redrawV2Inventory() {
 	if (curInventoryCount > 0) { // Draw Up Arrow
 		_string[1].xpos = 145;
 		_string[1].ypos = virtscr[2].topline + 32;
-		_messagePtr = (const byte *)"U";
+		_messagePtr = (const byte *)"\1\2";
 		drawString(1);
 	}
 
 	if (items == 4) {     // Draw Down Arrow
 		_string[1].xpos = 145;
 		_string[1].ypos = virtscr[2].topline + 47;
-		_messagePtr = (const byte *)"D";
+		_messagePtr = (const byte *)"\3\4";
 		drawString(1);
 	}
 }
@@ -124,14 +123,17 @@ void Scumm::checkExecVerbs() {
 		}
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
+		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
-		if (_mouse.y >= virtscr[0].topline && _mouse.y < virtscr[0].topline + virtscr[0].height) {
+		if (zone->number == 0) {
 			over = checkMouseOver(_mouse.x, _mouse.y);
 			if (over != 0) {
 				runInputScript(1, _verbs[over].verbid, code);
 				return;
 			}
 			runInputScript(2, 0, code);
+		} else if (_features & GF_AFTER_V2 && zone->number == 2 && _mouse.y > zone->topline + 32) {
+			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			over = checkMouseOver(_mouse.x, _mouse.y);
 
@@ -178,9 +180,6 @@ int Scumm::checkMouseOver(int x, int y) {
 
 		return i;
 	} while (--vs, --i);
-
-	if (_features & GF_AFTER_V2)
-		checkV2Inventory(x, y);
 
 	return 0;
 }

@@ -1859,24 +1859,15 @@ int Scumm::getKeyInput() {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 	} else if (_features & GF_AFTER_V2) {
-		// Store the input type. So far we can't distinguise
+		// Store the input type. So far we can't distinguish
 		// between 1, 3 and 5.
 		// 1) Verb	2) Scene	3) Inv.		4) Key
 		// 5) Sentence Bar
 
-		if  (_mouseButStat & MBS_LEFT_CLICK) {
-			VirtScreen *zone = findVirtScreen(_mouse.y);
-
-			if (zone->number == 0)		// Clicked in scene
-				_scummVars[VAR_CLICK_AREA] = 2;
-			else if (zone->number == 2) {	// Clicked in verb/sentence
-				if (_mouse.y > zone->topline + 32)
-					_scummVars[VAR_CLICK_AREA] = 3; // Inventory
-				else
-					_scummVars[VAR_CLICK_AREA] = 1; // Verb
-			}
-		} else if (_lastKeyHit) 		// Key Input
-			_scummVars[VAR_CLICK_AREA] = 4;
+		if (_lastKeyHit) {		// Key Input
+			VAR(VAR_KEYPRESS) = _lastKeyHit;
+			runInputScript(4, 0, 0);
+		}
 	}
 
 	_leftBtnPressed &= ~msClicked;

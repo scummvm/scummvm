@@ -869,10 +869,18 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 
 	if (_features & GF_AFTER_V2) {
 		verbScript = 4;
-		if (a == 1)	// Verb clicked
+		_scummVars[VAR_CLICK_AREA] = a;
+		switch(a) {
+		case 1:		// Verb clicked
 			_scummVars[33] = cmd;
-	} else
+			break;
+		case 3:		// Inventory clicked
+			_scummVars[35] = cmd;
+			break;
+		}
+	} else {
 		verbScript = VAR(VAR_VERB_SCRIPT);
+	}
 
 	memset(args, 0, sizeof(args));
 	args[0] = a;
