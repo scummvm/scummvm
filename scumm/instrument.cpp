@@ -433,7 +433,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 
 void Instrument_Roland::send (MidiChannel *mc) {
 	if (_native_mt32) {
-		if (mc->getNumber() > 7)
+		if (mc->getNumber() > 8)
 			return;
 		_instrument.device_id = mc->getNumber();
 
