@@ -51,7 +51,7 @@ public:
 	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	struct MyMidiHdr {
@@ -311,7 +311,7 @@ public:
 	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	enum {
@@ -523,7 +523,7 @@ public:
 	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	StreamCallback *_stream_proc;
@@ -880,7 +880,7 @@ public:
 	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	AudioUnit au_MusicDevice;
@@ -986,7 +986,7 @@ public:
 	void send(uint32 b) { }
 	void pause(bool p) { }
 	void set_stream_callback(void *param, StreamCallback *sc) { }
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 private:
 };
 
@@ -1059,7 +1059,7 @@ public:
 	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
-	void setPitchBendRange (byte channel, uint range) { }
+	void setPitchBendRange (byte channel, uint range);
 
 private:
 	void send_event(int do_flush);
