@@ -588,9 +588,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
-	// Create debugger
-	_debugger = new ScummDebugger(this);
-
 	// Read settings from the detector & config manager
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
@@ -640,6 +637,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	gdi._numStrips = _screenWidth / 8;
 
 	_newgui = g_gui;
+
+	// Create debugger
+	_debugger = new ScummDebugger(this);
 
 	_sound = new Sound(this);
 	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
