@@ -103,7 +103,7 @@ struct GameSpecificSettings;
 
 class SimonEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
-public:
+protected:
 	void playSting(uint a);
 	
 	byte *_vc_ptr;								/* video code ptr */
@@ -354,9 +354,11 @@ public:
 	RandomSource _rnd;
 
 
+public:
 	SimonEngine(GameDetector *detector, OSystem *syst);
 	virtual ~SimonEngine();
 
+protected:
 	int allocGamePcVars(File *in);
 	Item *allocItem1();
 	void loginPlayerHelper(Item *item, int a, int b);
@@ -594,6 +596,7 @@ public:
 
 	void run_vga_script();
 
+public:
 	// Simon1/Simon2 video script opcodes
 	void vc_1_dummy_op();
 	void vc_2_call();
@@ -654,6 +657,7 @@ public:
 	void vc_55_offset_hit_area();
 	void vc_56();
 	void vc_57_no_op();
+	void vc_58();
 	void vc_59();
 	void vc_60_kill_sprite();
 	void vc_61_sprite_change();
@@ -673,6 +677,7 @@ public:
 	void vc_73_set_op189_flag();
 	void vc_74_clear_op189_flag();
 
+protected:
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vc_read_var_or_word();
@@ -769,7 +774,6 @@ public:
 
 	void o_83_helper();
 	void o_190_helper(uint i);
-	void vc_58();
 	void timer_vga_sprites_helper();
 
 	void decodeStripA(byte *dst, byte *src, int height);
