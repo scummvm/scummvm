@@ -23,7 +23,9 @@
 
 #include "widget.h"
 
-#define SCROLLBAR_WIDTH	9
+enum {
+	kScrollBarWidth		= 9
+};
 
 enum {
 	kSetPositionCmd		= 'SETP'
@@ -42,6 +44,10 @@ protected:
 	}		_part;
 	int		_sliderHeight;
 	int		_sliderPos;
+
+	bool	_isDraggingSlider;
+	int		_sliderDeltaMouseDownPos;
+
 public:
 	int		_numEntries;
 	int		_entriesPerPage;
@@ -53,12 +59,13 @@ public:
 	void handleClick(int x, int y, int button);
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; _isDraggingSlider = false; draw(); }
 
 	void recalc();
 
 protected:
 	void drawWidget(bool hilite);
+	void checkbounds();
 };
 
 

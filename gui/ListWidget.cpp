@@ -41,7 +41,7 @@
 
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w - SCROLLBAR_WIDTH, h)
+	: Widget(boss, x, y, w - kScrollBarWidth, h)
 {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kListWidget;
@@ -49,7 +49,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
 	_currentPos = 3;
 	
-	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, SCROLLBAR_WIDTH, _h);
+	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 	
 	// FIXME - fill in dummy data for now
