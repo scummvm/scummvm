@@ -51,8 +51,8 @@ public:
 
 private:
 	enum {
-		V3A_MAXMUS = 8,
-		V3A_MAXSFX = 8
+		V3A_MAXMUS = 16,
+		V3A_MAXSFX = 16
 	};
 
 	struct musChan {

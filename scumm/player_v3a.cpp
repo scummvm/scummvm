@@ -232,6 +232,11 @@ void Player_V3A::startSound(int nr) {
 			looped = true;
 		}
 		int i = getSfxChan();
+		if (i == -1)
+		{
+			free(sound);
+			return;
+		}
 		_sfx[i].id = nr;
 		_sfx[i].dur = looped ? -1 : (1 + 60 * size / rate);
 		if ((_scumm->_gameId == GID_INDY3) && (nr == 60))
@@ -270,7 +275,7 @@ void Player_V3A::playMusic() {
 		return;
 	if (_songDelay && --_songDelay)
 		return;
-	if (((_songData[_songPtr] & 0xF0) != 0x80) && (_songData[_songPtr] != 0xFB)) {
+	if (_songPtr == 0) {
 		// at the end of the song, and it wasn't looped - kill it
 		_curSong = 0;
 		return;
@@ -287,6 +292,7 @@ void Player_V3A::playMusic() {
 			}
 			if (inst == 0xFB)	// it's a looped song, restart it afterwards
 				_songPtr = 0x1C;
+			else	_songPtr = 0;	// otherwise, terminate it
 			break;
 		}
 		inst &= 0xF;
@@ -312,8 +318,13 @@ void Player_V3A::playMusic() {
 			memcpy(data + _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ldat[oct], _wavetable[inst]->_llen[oct]);
 
 		i = getMusChan();
+		if (i == -1)
+		{
+			free(data);
+			return;
+		}
 		_mus[i].id = i + 1;
-		_mus[i].dur = dur;
+		_mus[i].dur = dur + 1;
 		_mod->startChannel(_mus[i].id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], rate, vol,
 			_wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 	}

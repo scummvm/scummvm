@@ -986,6 +986,52 @@ private:
 	int _ticks;
 };
 
+class V2A_Sound_Special_SteppedPitchbendAndHold : public V2A_Sound_Base<1> {
+public:
+	V2A_Sound_Special_SteppedPitchbendAndHold(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
+		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		char *tmp_data = (char *)malloc(_size);
+		memcpy(tmp_data, data + _offset, _size);
+		_curfreq = _freq1;
+		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _curfreq, (_vol << 2) | (_vol >> 4), 0, _size);
+		_bendrate = 8;
+		_bendctr = 100;
+		_holdctr = 30;
+	}
+	virtual bool update() {
+		assert(_id);
+		if (_curfreq >= _freq2)
+		{
+			_mod->setChannelFreq(_id, BASE_FREQUENCY / _curfreq);
+			_curfreq -= _bendrate;
+			if (--_bendctr)
+				return true;
+			_bendrate--;
+			if (_bendrate < 2)
+				_bendrate = 2;
+		}
+		else
+		{
+			if (!--_holdctr)
+				return false;
+		}
+		return true;
+	}
+private:
+	const uint16 _freq1;
+	const uint16 _freq2;
+	const uint16 _vol;
+
+	uint16 _curfreq;
+	uint16 _bendrate;
+	uint16 _bendctr;
+	uint16 _holdctr;
+
+};
+
 #define CRCToSound(CRC, SOUND)  \
 	if (crc == CRC)             \
 		return new SOUND
@@ -1078,7 +1124,7 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x5AE9D6A7, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CA,0x22A4,0x0113,0x0227));	// Zak 109
 	CRCToSound(0xABE0D3B0, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CE,0x22A4,0x0227,0x0113));	// Zak 105
 	CRCToSound(0x788CC749, V2A_Sound_Unsupported());	// Zak 71
-	CRCToSound(0x2E2AB1FA, V2A_Sound_Unsupported());	// Zak 99
+	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_SteppedPitchbendAndHold(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
 	CRCToSound(0x1304CF20, V2A_Sound_Special_SingleDurationMultiDurations(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false));	// Zak 79
 	CRCToSound(0xAE68ED91, V2A_Sound_Unsupported());	// Zak 54
 	CRCToSound(0xA4F40F97, V2A_Sound_Unsupported());	// Zak 61
