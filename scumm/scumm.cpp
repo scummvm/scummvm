@@ -1329,8 +1329,9 @@ void ScummEngine::initScummVars() {
 				VAR(VAR_SOUNDCARD) = 3;
 		}
 		VAR(VAR_VIDEOMODE) = 0x13;
-		if (_version >= 4) {
+		if ((_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) || _version >= 4)
 			VAR(VAR_HEAPSPACE) = 1400;
+		if (_version >= 4) {
 			VAR(VAR_FIXEDDISK) = true;
 			if (_features & GF_HUMONGOUS) {
 				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music

@@ -65,6 +65,7 @@ void ScummEngine::setupScummVars() {
 	VAR_CUTSCENE_END_SCRIPT = 36;
 	VAR_CHARINC = 37;
 	VAR_WALKTO_OBJ = 38;
+	VAR_HEAPSPACE = 40;
 	VAR_RESTART_KEY = 42;
 	VAR_PAUSE_KEY = 43;
 	VAR_MOUSE_X = 44;
@@ -77,7 +78,6 @@ void ScummEngine::setupScummVars() {
 	if (_version >= 4) {
 		VAR_SCROLL_SCRIPT = 27;
 		VAR_DEBUGMODE = 39;
-		VAR_HEAPSPACE = 40;
 		VAR_MAINMENU_KEY = 50;
 		VAR_FIXEDDISK = 51;
 		VAR_CURSORSTATE = 52;
