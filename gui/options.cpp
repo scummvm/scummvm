@@ -127,11 +127,11 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	if (dir) {
 		_savePath->setLabel(dir);
 	} else {
+		// Default to the current directory...
 		char buf[256];
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
 	}
-// If that is NULL, we should use the current directory...
 
 	//
 	// Add OK & Cancel buttons
@@ -191,6 +191,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kOKCmd:
 		// TODO Write back changes made to config object
 		setResult(1);
+		_detector._master_volume = _soundVolumeMaster;
+		_detector._music_volume = _soundVolumeMusic;
+		_detector._sfx_volume = _soundVolumeSfx;
 		close();
 		break;
 	default:

@@ -720,10 +720,6 @@ void Sound::setupSound() {
 	if (_scumm->_imuse) {
 		_scumm->_imuse->setBase(_scumm->res.address[rtSound]);
 
-		_sound_volume_music = g_config->getInt("music_volume", kDefaultMusicVolume);
-		_sound_volume_master = g_config->getInt("master_volume", kDefaultMasterVolume);
-		_sound_volume_sfx = g_config->getInt("sfx_volume", kDefaultSFXVolume);
-
 		_scumm->_imuse->set_master_volume(_sound_volume_master);
 		_scumm->_imuse->set_music_volume(_sound_volume_music);
 		_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);

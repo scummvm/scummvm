@@ -216,7 +216,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_sound = new Sound(this);
 	_timer = Engine::_timer;
 
-	_sound->_sound_volume_master = 0;
+	_sound->_sound_volume_master = detector->_master_volume;
 	_sound->_sound_volume_sfx = detector->_sfx_volume;	
 	_sound->_sound_volume_music = detector->_music_volume;	
 
