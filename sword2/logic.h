@@ -214,7 +214,7 @@ public:
 	void logicReplace(uint32 new_script);
 	void logicOne(uint32 new_script);
 	void totalRestart(void);
-	uint32 examineRunList(void);
+	void examineRunList(void);
 	void resetKillList(void);
 };
 

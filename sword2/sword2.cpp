@@ -48,6 +48,11 @@
 #include "bs2/driver/driver96.h"
 #include "bs2/driver/palette.h"
 
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
+#endif
+
+extern NewGui *g_gui;
 extern uint16 _debugLevel;
 
 static const GameSettings sword2_settings[] = {
@@ -102,26 +107,6 @@ namespace Sword2 {
 
 uint8 quitGame = 0;
 
-// version & owner details
-
-// So version string is 18 bytes long :
-// Version String =  <8 byte header,5 character version, \0, INT32 time>
-
-uint8 version_string[HEAD_LEN + 10] = { 1, 255, 37, 22, 45, 128, 34, 67 };
-
-uint8 unencoded_name[HEAD_LEN + 48] = {
-	76, 185, 205, 23, 44, 34, 24, 34,
-	'R','e','v','o','l','u','t','i','o','n',' ',
-	'S','o','f','t','w','a','r','e',' ','L','t','d',
-	0 };
-
-uint8 encoded_name[HEAD_LEN + 48] = {
-	44, 32, 190, 222, 123, 65, 233, 99,
-	179, 209, 225, 157, 222, 238, 219, 209, 143, 224, 133, 190,
-	232, 209, 162, 177, 198, 228, 202, 146, 180, 232, 214, 65,
-	65, 65, 116, 104, 116, 114, 107, 104, 32, 49, 64, 35, 123,
-	125, 61, 45, 41, 40, 163, 36, 49, 123, 125, 10 };
-
 uint8 gamePaused = 0;
 uint8 graphics_level_fudged = 0;
 uint8 stepOneCycle = 0;			// for use while game paused
@@ -132,9 +117,12 @@ Display *g_display = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
-	
+
 	_detector = detector;
 	g_sword2 = this;
+	_newgui = NULL;
+	_debuggerDialog = NULL;
+	_debugger = NULL;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
 	_targetName = strdup(detector->_targetName.c_str());
@@ -154,16 +142,33 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	g_sound = _sound = new Sound(_mixer);
 	g_display = _display = new Display(640, 480);
+
+	_newgui = g_gui;
+	_debugger = new Debugger(this);
 }
 
 Sword2Engine::~Sword2Engine() {
 	free(_targetName);
 	delete _sound;
 	delete _display;
+	delete _debugger;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
+
+#ifdef _WIN32_WCE
+	if (isSmartphone())
+		return;
+#endif
+
+	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
+	// exit out normally.
+	if (!_debugger->isAttached()) {
+		printf("%s\n", buf2);	// (Print it again in case debugger segfaults)
+		_debugger->attach(buf2);
+		_debugger->onFrame();
+	}
 }
 
 int32 Sword2Engine::InitialiseGame(void) {
@@ -200,17 +205,10 @@ int32 Sword2Engine::InitialiseGame(void) {
 	debug(5, "CALLING: initialiseFontResourceFlags");
 	initialiseFontResourceFlags();
 
-	// set up the console system
-
-	debug(5, "CALLING: Init_console");
-	Init_console();
-
-#ifdef _SWORD2_DEBUG
 	// read in all the startup information
 
 	debug(5, "CALLING: Init_start_menu");
 	Init_start_menu();
-#endif
 
 	debug(5, "CALLING: Init_sync_system");
 	Init_sync_system();
@@ -248,7 +246,7 @@ void Close_game() {
 int32 GameCycle(void) {
 	// do one game cycle
 
-	//got a screen to run?
+	// got a screen to run?
 	if (g_logic.getRunList()) {
 		//run the logic session UNTIL a full loop has been performed
 		do {
@@ -265,8 +263,7 @@ int32 GameCycle(void) {
 		} while (g_logic.processSession());
 	} else {
 		// start the console and print the start options perhaps?
-		StartConsole();
-		Print_to_console("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
+		g_sword2->_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
 	}
 
 	// if this screen is wide, recompute the scroll offsets every cycle
@@ -320,6 +317,9 @@ void Sword2Engine::go() {
 	g_display->initialiseRenderCycle();
 
 	while (1) {
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
 		g_display->updateDisplay();
 
 #ifdef _SWORD2_DEBUG
@@ -329,92 +329,78 @@ void Sword2Engine::go() {
 //			GrabScreenShot();
 #endif
 
+		// the screen is build. Mostly because of first scroll
+		// cycle stuff
+
 #ifdef _SWORD2_DEBUG
-		if (console_status) {
-			if (One_console()) {
-				EndConsole();
-				UnpauseAllSound();	// see sound.cpp
-			}
+		// if we've just stepped forward one cycle while the
+		// game was paused
+
+		if (stepOneCycle) {
+			PauseGame();
+			stepOneCycle = 0;
 		}
 #endif
 
-		// not in console mode - if the console is quit we want to get
-		// a logic cycle in before
+		if (KeyWaiting()) {
+			ReadKey(&ke);
 
-		if (!console_status) {
-			// the screen is build. Mostly because of first scroll
-			// cycle stuff
+			char c = toupper(ke.ascii);
 
+			if (ke.modifiers == OSystem::KBD_CTRL) {
+				if (ke.keycode == 'd') {
+					_debugger->attach();
+				}
+			}
+
+			if (c == '~' || c == '#')
+				_debugger->attach();
+
+			if (gamePaused) {	// if currently paused
+				if (c == 'P') {
+					// 'P' while paused = unpause!
+					UnpauseGame();
+				}
 #ifdef _SWORD2_DEBUG
-			// if we've just stepped forward one cycle while the
-			// game was paused
+				// frame-skipping only allowed on
+				// debug version
 
-			if (stepOneCycle) {
+				else if (c == ' ') {
+					// SPACE bar while paused =
+					// step one frame!
+					stepOneCycle = 1;
+					UnpauseGame();
+				}
+#endif
+			} else if (c == 'P') {
+				// 'P' while not paused = pause!
 				PauseGame();
-				stepOneCycle = 0;
+			} else if (c == 'C' && _gameId == GID_SWORD2) {
+				g_logic.fnPlayCredits(NULL);
 			}
-#endif
-
-			if (KeyWaiting()) {
-				ReadKey(&ke);
-
-				char c = toupper(ke.ascii);
-
 #ifdef _SWORD2_DEBUG
-				// ESC whether paused or not
-				if (ke.keycode == 27) {
-					PauseAllSound(); // see sound.cpp
-					StartConsole();	 // start the console
-				} else
-#endif
-				if (gamePaused) {	// if currently paused
-					if (c == 'P') {
-						// 'P' while paused = unpause!
-						UnpauseGame();
-					}
-#ifdef _SWORD2_DEBUG
-					// frame-skipping only allowed on
-					// debug version
-
-					else if (c == ' ') {
-						// SPACE bar while paused =
-						// step one frame!
-						stepOneCycle = 1;
-						UnpauseGame();
-					}
-#endif
-				} else if (c == 'P') {
-					// 'P' while not paused = pause!
-					PauseGame();
-				} else if (c == 'C' && _gameId == GID_SWORD2) {
-					g_logic.fnPlayCredits(NULL);
-				}
-#ifdef _SWORD2_DEBUG
-				else if (c == 'S') {
-					// 'S' toggles speed up (by skipping
-					// display rendering)
-					renderSkip = 1 - renderSkip;
-				}
-#endif
+			else if (c == 'S') {
+				// 'S' toggles speed up (by skipping
+				// display rendering)
+				renderSkip = 1 - renderSkip;
 			}
-
-			// skip GameCycle if we're paused
-			if (gamePaused == 0) {
-#ifdef _SWORD2_DEBUG
-				gameCycle++;
-#endif
-
-				if (GameCycle()) {
-					// break out of main game loop
-					break;
-				}
-			}
-
-#ifdef _SWORD2_DEBUG
-			// creates the debug text blocks
-			Build_debug_text();
 #endif
 		}
+
+		// skip GameCycle if we're paused
+		if (gamePaused == 0) {
+#ifdef _SWORD2_DEBUG
+			gameCycle++;
+#endif
+
+			if (GameCycle()) {
+				// break out of main game loop
+				break;
+			}
+		}
+
+		// creates the debug text blocks
+		Build_debug_text();
 
 #ifdef _SWORD2_DEBUG
 		// if not in console & 'renderSkip' is set, only render

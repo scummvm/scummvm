@@ -82,7 +82,6 @@ private:
 	// Debugging functions
 	void debugMemory(void);
 	const char *fetchOwner(uint32 uid);
-	void memoryString(char *string);
 
 public:
 	// List of defined memory handles - each representing a block of memory
@@ -98,6 +97,7 @@ public:
 
 	// Debugging function
 	void displayMemory(void);
+	void memoryString(char *string);
 };
 
 extern MemoryManager memory;

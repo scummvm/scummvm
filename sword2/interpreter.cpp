@@ -273,7 +273,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	code += sizeof(int32) * 3;
 
 	if (READ_LE_UINT32(checksumBlock) != 12345678) {
-		Con_fatal_error("Invalid script in object %s", header->name);
+		error("Invalid script in object %s", header->name);
 		return 0;
 	}
 
@@ -284,7 +284,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		checksum += (unsigned char) code[count];
 
 	if (checksum != (int32) READ_LE_UINT32(checksumBlock + 2)) {
-		Con_fatal_error("Checksum error in object %s", header->name);
+		error("Checksum error in object %s", header->name);
 		return 0;
 	}
 #endif
@@ -632,7 +632,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			DOOPERATION (stack2[stackPointer2 - 2] || stack2[stackPointer2 - 1]);
 			break;
 		default:
-			Con_fatal_error("Interpreter error: Invalid token %d", curCommand);
+			error("Interpreter error: Invalid token %d", curCommand);
 			return 3;
 		}
 	}

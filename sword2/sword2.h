@@ -25,6 +25,8 @@
 #include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "gui/console.h"
+#include "bs2/console.h"
 #include "bs2/driver/d_sound.h"
 #include "bs2/driver/d_draw.h"
 
@@ -53,11 +55,6 @@ void UnpauseGame(void);
 
 void sleepUntil(int32 time);
 
-#define HEAD_LEN 8
-
-extern uint8 version_string[];		// for displaying from the console
-extern uint8 unencoded_name[];
-
 // TODO move stuff into class
 
 class Sword2Engine : public Engine {
@@ -77,8 +74,14 @@ public:
 	uint32 _features;
 	byte _gameId;
 	char *_targetName; // target name for saves
+
 	Sound *_sound;
 	Display *_display;
+
+	NewGui *_newgui;
+	Debugger *_debugger;
+	ConsoleDialog *_debuggerDialog;
+
 	Common::RandomSource _rnd;
 
 	uint32 _speechFontId;

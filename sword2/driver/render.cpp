@@ -328,7 +328,6 @@ void Display::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 d
 	}
 }
 
-#ifdef _SWORD2_DEBUG
 /**
  * Plots a point relative to the top left corner of the screen. This is only
  * used for debugging.
@@ -513,7 +512,6 @@ void Display::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 		}
 	}
 }
-#endif
 
 /**
  * This function tells the driver the size of the background screen for the

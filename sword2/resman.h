@@ -66,10 +66,10 @@ public:
 	// ----console commands
 
 	void printConsoleClusters(void);
-	void examine(uint8 *input);
-	void kill(uint8 *res);
-	void killAll(uint8 wantInfo);
-	void killAllObjects(uint8 wantInfo);
+	void examine(int res);
+	void kill(int res);
+	void killAll(bool wantInfo);
+	void killAllObjects(bool wantInfo);
 	void remove(uint32 res);
 	void removeAll(void);
 

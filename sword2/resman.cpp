@@ -444,7 +444,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 //#ifdef _SWORD2_DEBUG
 	if (res >= _totalResFiles)
-		Con_fatal_error("open illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
+		error("open illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
 //#endif
 
 	// is the resource in memory already?
@@ -459,7 +459,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 //#ifdef _SWORD2_DEBUG
 		if (parent_res_file == 0xffff)
-			Con_fatal_error("open tried to open null & void resource number %d", res);
+			error("open tried to open null & void resource number %d", res);
 //#endif
 
 		// relative resource within the file
@@ -506,7 +506,7 @@ uint8 *ResourceManager::open(uint32 res) {
 
 		// open the cluster file
 		if (!file.open(_resourceFiles[parent_res_file]))
-			Con_fatal_error("open cannot *OPEN* %s", _resourceFiles[parent_res_file]);
+			error("open cannot *OPEN* %s", _resourceFiles[parent_res_file]);
 
 
 		// 1st DWORD of a cluster is an offset to the look-up table
@@ -620,11 +620,11 @@ void ResourceManager::close(uint32 res) {
 
 //#ifdef _SWORD2_DEBUG
 	if (res >= _totalResFiles)
-		Con_fatal_error("closing illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
+		error("closing illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
 
 	//closing but isnt open?
 	if (!(_count[res]))
-		Con_fatal_error("close: closing %d but it isn't open", res);
+		error("close: closing %d but it isn't open", res);
 //#endif
 
 	//one less has it open
@@ -657,7 +657,7 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	// open the cluster file
 
 	if (!fh.open(_resourceFiles[parent_res_file]))
-		Con_fatal_error("fetchLen cannot *OPEN* %s", _resourceFiles[parent_res_file]);
+		error("fetchLen cannot *OPEN* %s", _resourceFiles[parent_res_file]);
 
 	// 1st DWORD of a cluster is an offset to the look-up table
 	table_offset = fh.readUint32LE();
@@ -729,167 +729,123 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 }
 
 void ResourceManager::printConsoleClusters(void) {
-	uint32 j;
-
 	if (_totalClusters) {
-		for (j = 0; j < _totalClusters; j++)
-			Print_to_console(" %s", _resourceFiles[j]);
-		Print_to_console(" %d resources", _totalResFiles);
+		for (uint i = 0; i < _totalClusters; i++)
+			Debug_Printf("%s\n", _resourceFiles[i]);
+		Debug_Printf("%d resources\n", _totalResFiles);
 	} else
-		Print_to_console(" argh! No resources");
-
-	Scroll_console();
+		Debug_Printf("Argh! No resources!\n");
 }
 
-void ResourceManager::examine(uint8 *input) {
-	uint32 j = 0;
-	uint32 res;
+void ResourceManager::examine(int res) {
 	_standardHeader	*file_header;
 
-	do {
-		if (input[j] >= '0' && input[j] <= '9')
-			j++;
-		else
+	if (res < 0 || res >= (int) _totalResFiles)
+		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
+	else if (_resConvTable[res * 2] == 0xffff)
+		Debug_Printf("%d is a null & void resource number\n", res);
+	else {
+		//open up the resource and take a look inside!
+		file_header = (_standardHeader*) res_man.open(res);
+
+		// Debug_Printf("%d\n", file_header->fileType);
+		// Debug_Printf("%s\n", file_header->name);
+
+		//----------------------------------------------------
+		// resource types: (taken from header.h)
+
+		// 1:  ANIMATION_FILE
+		//      all normal animations & sprites including mega-sets &
+		//	font files which are the same format
+		// 2:  SCREEN_FILE
+		//      each contains background, palette, layer sprites,
+		//	parallax layers & shading mask
+		// 3:  GAME_OBJECT
+		//      each contains object hub + structures + script data
+		// 4:  WALK_GRID_FILE
+		//      walk-grid data
+		// 5:  GLOBAL_VAR_FILE
+		//      all the global script variables in one file; "there can
+		//	be only one"
+		// 6:  PARALLAX_FILE_null
+		//      NOT USED
+		// 7:  RUN_LIST
+		//      each contains a list of object resource ids
+		// 8:  TEXT_FILE
+		//      each contains all the lines of text for a location or a
+		//	character's conversation script
+		// 9:  SCREEN_MANAGER
+		//      one for each location; this contains special startup
+		//	scripts
+		// 10: MOUSE_FILE
+		//      mouse pointers and luggage icons (sprites in General,
+		//	Mouse pointers & Luggage icons)
+		// 11: WAV_FILE
+		//      NOT USED HERE
+		// 12: ICON_FILE
+		//      menu icon (sprites in General and Menu icons)
+		// 13: PALETTE_FILE
+		//      NOT USED HERE
+		//----------------------------------------------------
+
+		switch (file_header->fileType) {
+		case ANIMATION_FILE:
+			Debug_Printf("<anim> %s\n", file_header->name);
 			break;
-	} while(input[j]);
-
-	// didn't quit out of loop on a non numeric chr$
-	if (!input[j]) {
-		res = atoi((char*) input);
-
-		if (!res)
-			Print_to_console("illegal resource");
-		else if (res >= _totalResFiles)
-			Print_to_console("illegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
-		else if (_resConvTable[res * 2] == 0xffff)
-			Print_to_console("%d is a null & void resource number", res);
-		else {
-			//open up the resource and take a look inside!
-			file_header = (_standardHeader*) res_man.open(res);
-
-			// Print_to_console("%d", file_header->fileType);
-			// Print_to_console("%s", file_header->name);
-
-			//----------------------------------------------------
-			// resource types: (taken from header.h)
-
-			// 1:  ANIMATION_FILE
-			//      all normal animations & sprites including
-			//      mega-sets & font files which are the same
-			//      format
-			// 2:  SCREEN_FILE
-			//      each contains background, palette, layer
-			//      sprites, parallax layers & shading mask
-			// 3:  GAME_OBJECT
-			//      each contains object hub + structures + script
-			//      data
-			// 4:  WALK_GRID_FILE
-			//      walk-grid data
-			// 5:  GLOBAL_VAR_FILE
-			//      all the global script variables in one file;
-			//      "there can be only one"
-			// 6:  PARALLAX_FILE_null
-			//      NOT USED
-			// 7:  RUN_LIST
-			//      each contains a list of object resource id's
-			// 8:  TEXT_FILE
-			//      each contains all the lines of text for a
-			//      location or a character's conversation script
-			// 9:  SCREEN_MANAGER
-			//      one for each location; this contains special
-			//      startup scripts
-			// 10: MOUSE_FILE
-			//      mouse pointers and luggage icons (sprites in
-			//      General \ Mouse pointers & Luggage icons)
-			// 11: WAV_FILE
-			//      NOT USED HERE
-			// 12: ICON_FILE
-			//      menu icon (sprites in General \ Menu icons)
-			// 13: PALETTE_FILE
-			//      NOT USED HERE
-			//----------------------------------------------------
-
-			switch (file_header->fileType) {
-			case ANIMATION_FILE:
-				Print_to_console(" <anim> %s", file_header->name);
-				break;
-			case SCREEN_FILE:
-				Print_to_console(" <layer> %s", file_header->name);
-				break;
-			case GAME_OBJECT:
-				Print_to_console(" <game object> %s", file_header->name);
-				break;
-			case WALK_GRID_FILE:
-				Print_to_console(" <walk grid> %s", file_header->name);
-				break;
-			case GLOBAL_VAR_FILE:
-				Print_to_console(" <global variables> %s", file_header->name);
-				break;
-			case PARALLAX_FILE_null:
-				Print_to_console(" <parallax file NOT USED!> %s", file_header->name);
-				break;
-			case RUN_LIST:
-				Print_to_console(" <run list> %s", file_header->name);
-				break;
-			case TEXT_FILE:
-				Print_to_console(" <text file> %s", file_header->name);
-				break;
-			case SCREEN_MANAGER:
-				Print_to_console(" <screen manager> %s", file_header->name);
-				break;
-			case MOUSE_FILE:
-				Print_to_console(" <mouse pointer> %s", file_header->name);
-				break;
-			case ICON_FILE:
-				Print_to_console(" <menu icon> %s", file_header->name);
-				break;
-			default:
-				Print_to_console(" unrecognised fileType %d", file_header->fileType);
-				break;
-			}
-			res_man.close(res);
+		case SCREEN_FILE:
+			Debug_Printf("<layer> %s\n", file_header->name);
+			break;
+		case GAME_OBJECT:
+			Debug_Printf("<game object> %s\n", file_header->name);
+			break;
+		case WALK_GRID_FILE:
+			Debug_Printf("<walk grid> %s\n", file_header->name);
+			break;
+		case GLOBAL_VAR_FILE:
+			Debug_Printf("<global variables> %s\n", file_header->name);
+			break;
+		case PARALLAX_FILE_null:
+			Debug_Printf("<parallax file NOT USED!> %s\n", file_header->name);
+			break;
+		case RUN_LIST:
+			Debug_Printf("<run list> %s\n", file_header->name);
+			break;
+		case TEXT_FILE:
+			Debug_Printf("<text file> %s\n", file_header->name);
+			break;
+		case SCREEN_MANAGER:
+			Debug_Printf("<screen manager> %s\n", file_header->name);
+			break;
+		case MOUSE_FILE:
+			Debug_Printf("<mouse pointer> %s\n", file_header->name);
+			break;
+		case ICON_FILE:
+			Debug_Printf("<menu icon> %s\n", file_header->name);
+			break;
+		default:
+			Debug_Printf("unrecognised fileType %d\n", file_header->fileType);
+			break;
 		}
-	} else {
-		Print_to_console("try typing a number");
+		res_man.close(res);
 	}
 }
 
-void ResourceManager::kill(uint8 *input) {
-	int j = 0;
-	uint32 res;
-
-	do {
-		if (input[j] >= '0' && input[j] <= '9')
-			j++;
-		else
-			break;
-	} while (input[j]);
-
-	// didn't quit out of loop on a non numeric chr$
-	if (!input[j]) {
-		res = atoi((char*) input);
-
-// #ifdef _SWORD2_DEBUG
-		if (!res)
-			Print_to_console("illegal resource");
-
-		if (res >= _totalResFiles)
-			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, _totalResFiles, _totalResFiles - 1);
-// #endif
-
-		// if noone has the file open then unlock and allow to float
-		if (!_count[res]) {
-			if (_age[res]) {
-				_age[res] = 0;		// effectively gone from _resList
-				memory.freeMemory(_resList[res]);	// release the memory too
-				Print_to_console(" trashed %d", res);
-			} else
-				Print_to_console("%d not in memory", res);
-		} else
-			Print_to_console(" file is open - cannot remove");
-	} else {
-		Print_to_console("try typing a number");
+void ResourceManager::kill(int res) {
+	if (res < 0 || res >= (int) _totalResFiles) {
+		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
+		return;
 	}
+
+	// if noone has the file open then unlock and allow to float
+	if (!_count[res]) {
+		if (_age[res]) {
+			_age[res] = 0;		// effectively gone from _resList
+			memory.freeMemory(_resList[res]);	// release the memory too
+			Debug_Printf("Trashed %d\n", res);
+		} else
+			Debug_Printf("%d not in memory\n", res);
+	} else
+		Debug_Printf("File is open - cannot remove\n");
 }
 
 void ResourceManager::remove(uint32 res) {
@@ -921,7 +877,7 @@ void ResourceManager::removeAll(void) {
 	} while	(j != -1);
 }
 
-void ResourceManager::killAll(uint8 wantInfo) {
+void ResourceManager::killAll(bool wantInfo) {
 	// remove all res files from memory
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -930,8 +886,6 @@ void ResourceManager::killAll(uint8 wantInfo) {
 	uint32 res;
 	uint32 nuked = 0;
   	_standardHeader *header;
-	int scrolls = 0;
-	_keyboardEvent ke;
 
 	j = memory._baseMemBlock;
 
@@ -949,40 +903,19 @@ void ResourceManager::killAll(uint8 wantInfo) {
 				memory.freeMemory(_resList[res]);	// release the memory too
 				nuked++;
 
-				// if this was called from the console + we
-				// want info
-				if (wantInfo && console_status) {
-					Print_to_console(" nuked %5d: %s", res, header->name);
+				// if this was called from the console,
+				if (wantInfo) {
+					Debug_Printf("Nuked %5d: %s\n", res, header->name);
 					debug(5, " nuked %d: %s", res, header->name);
-					Build_display();
-
-					scrolls++;
-					if (scrolls == 18) {
-						Temp_print_to_console("- Press ESC to stop or any other key to continue");
-						Build_display();
-
-						do {
-							g_display->updateDisplay();
-						} while (!KeyWaiting());
-
-						ReadKey(&ke);
-						if (ke.keycode == 27)
-							break;
-
-						// clear the Press Esc message ready for the new line
-						Clear_console_line();
-						scrolls = 0;
-					}
 				}	
 			}
 		}
 		j = memory._memList[j].child;
 	} while (j != -1);
 
-	// if this was called from the console + we want info!
-	if (wantInfo && console_status) {
-		Scroll_console();
-		Print_to_console(" expelled %d resource(s)", nuked);
+	// if this was called from the console
+	if (wantInfo) {
+		Debug_Printf("Expelled %d resource(s)\n", nuked);
 	}
 }
 
@@ -994,7 +927,7 @@ void ResourceManager::killAll(uint8 wantInfo) {
 // disappear forever, or some plaster-filled holes in sand to crash the game &
 // get James in trouble again.
 
-void ResourceManager::killAllObjects(uint8 wantInfo) {
+void ResourceManager::killAllObjects(bool wantInfo) {
 	// remove all object res files from memory, excluding George
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -1003,8 +936,6 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 	uint32 res;
 	uint32 nuked = 0;
  	_standardHeader *header;
-	int scrolls = 0;
-	_keyboardEvent ke;
 
 	j = memory._baseMemBlock;
 
@@ -1022,30 +953,10 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 					memory.freeMemory(_resList[res]);	// release the memory too
    					nuked++;
 
-					// if this was called from the console + we want info
-					if (wantInfo && console_status)	{
-						Print_to_console(" nuked %5d: %s", res, header->name);
+					// if this was called from the console
+					if (wantInfo) {
+						Debug_Printf("Nuked %5d: %s\n", res, header->name);
 						debug(5, " nuked %d: %s", res, header->name);
-						Build_display();
-
-						scrolls++;
-						if (scrolls==18) {
-							Print_to_console("- Press ESC to stop or any other key to continue");
-							Build_display();
-
-							do {
-								g_display->updateDisplay();
-							} while (!KeyWaiting());
-
-
-							ReadKey(&ke);	//kill the key we just pressed
-							if (ke.keycode == 27)	// ESC
-								break;
-
-							// clear the Press Esc message ready for the new line
-							Clear_console_line();
-							scrolls = 0;
-						}
 					}	
 				}
 			}
@@ -1053,9 +964,9 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 		j = memory._memList[j].child;
 	} while (j != -1);
 
-	// if this was called from the console + we want info
-	if (wantInfo && console_status)
-		Print_to_console(" expelled %d object resource(s)", nuked);
+	// if this was called from the console
+	if (wantInfo)
+		Debug_Printf("Expelled %d object resource(s)\n", nuked);
 }
 
 void ResourceManager::cacheNewCluster(uint32 newCluster) {
@@ -1086,7 +997,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		file = fopen("cd.inf", "r+b");
 
 		if (file == NULL) {
-			Con_fatal_error("init cannot *OPEN* cd.inf");
+			error("init cannot *OPEN* cd.inf");
 		}
 
 		_cd_inf cdInf;
@@ -1096,7 +1007,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		} while ((scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[i]) != 0) && !feof(file));
 
 		if (feof(file)) {
-			Con_fatal_error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[i]);
+			error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[i]);
 		}
 
 		fseek(file, -1, SEEK_CUR);
@@ -1140,7 +1051,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	outFile.open(_resourceFiles[newCluster], NULL, File::kFileWriteMode);
 
 	if (!inFile.isOpen() || !outFile.isOpen()) {
-		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
+		error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 	}
 
 	_spriteInfo textSprite;
@@ -1220,7 +1131,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		realRead = inFile.read(buffer, BUFFERSIZE);
 		read += realRead;
 		if (outFile.write(buffer, realRead) != realRead) {
-			Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
+			error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 		}
 
 		if (step == stepSize) {
@@ -1251,7 +1162,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
-		Con_fatal_error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
+		error("Cache new cluster could not copy %s to %s", buf, _resourceFiles[newCluster]);
 	}
 
 	inFile.close();
@@ -1274,7 +1185,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	file = fopen("cd.inf", "r+b");
 
 	if (file == NULL) {
-		Con_fatal_error("init cannot *OPEN* cd.inf");
+		error("init cannot *OPEN* cd.inf");
 	}
 
 	_cd_inf cdInf;
@@ -1284,7 +1195,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	} while (scumm_stricmp((char *) cdInf.clusterName, _resourceFiles[newCluster]) != 0 && !feof(file));
 
 	if (feof(file)) {
-		Con_fatal_error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[newCluster]);
+		error("cacheNewCluster cannot find %s in cd.inf", _resourceFiles[newCluster]);
 	}
 
 	fseek(file, -1, SEEK_CUR);

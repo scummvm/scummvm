@@ -379,7 +379,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// trash all resources from memory except player object & global
 	// variables
-	res_man.killAll(0);
+	res_man.killAll(false);
 
 	// clean out the system kill list (no more objects to kill)
 	g_logic.resetKillList();
@@ -517,7 +517,7 @@ void GetPlayerStructures(void) {
 	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
+		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
@@ -536,7 +536,7 @@ void PutPlayerStructures(void) {
 	head = (_standardHeader*) res_man.open(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
+		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
 

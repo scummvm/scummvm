@@ -1335,7 +1335,7 @@ public:
 				Reset_mouse_list();
 
 				if (g_logic.processSession())
-					Con_fatal_error("restore 1st cycle failed??");
+					error("restore 1st cycle failed??");
 			}
 		}
 
@@ -1457,7 +1457,7 @@ void Gui::restartControl(void) {
 	this_screen.scroll_flag = 2;
 
 	if (g_logic.processSession())
-		Con_fatal_error("restart 1st cycle failed??");
+		error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want
 	// to fade up instead!

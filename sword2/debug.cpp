@@ -19,11 +19,8 @@
 
 #include "stdafx.h"
 #include "bs2/driver/driver96.h"
+#include "bs2/sword2.h"
 #include "bs2/debug.h"
-
-// this whole file (except ExitWithReport) only included on debug versions
-#ifdef _SWORD2_DEBUG
-
 #include "bs2/build_display.h"		// for 'fps'
 #include "bs2/console.h"
 #include "bs2/defs.h"
@@ -40,25 +37,25 @@
 
 namespace Sword2 {
 
-uint8 displayDebugText = 0;		// "INFO"		0=off; 1=on
-uint8 displayWalkGrid = 0;		// "WALKGRID"
-uint8 displayMouseMarker = 0;		// "MOUSE"
-uint8 displayTime = 0;			// "TIME"
-uint8 displayPlayerMarker = 0;		// "PLAYER"
-uint8 displayTextNumbers = 0;		// "TEXT"
+bool displayDebugText = false;		// "INFO"
+bool displayWalkGrid = false;		// "WALKGRID"
+bool displayMouseMarker = false;	// "MOUSE"
+bool displayTime = false;		// "TIME"
+bool displayPlayerMarker = false;	// "PLAYER"
+bool displayTextNumbers = false;	// "TEXT"
 uint8 renderSkip = 0;			// Toggled on 'S' key - to render only
 					// 1 in 4 frames, to speed up game
 
-uint8 definingRectangles = 0;		// "RECT"
-uint8 draggingRectangle	 = 0;		// 0=waiting to start new rect;
-					// 1=currently dragging a rectangle
+bool definingRectangles = false;	// "RECT"
+uint8 draggingRectangle = 0;		// 0 = waiting to start new rect;
+					// 1 = currently dragging a rectangle
 int16 rect_x1 = 0;
 int16 rect_y1 = 0;
 int16 rect_x2 = 0;
 int16 rect_y2 = 0;
-uint8 rectFlicker = 0;
+bool rectFlicker = false;
 
-uint8 testingSnR = 0;			// "SAVEREST" - for system to kill all
+bool testingSnR = false;		// "SAVEREST" - for system to kill all
 					// object resources (except player) in
 					// fnAddHuman()
 
@@ -87,7 +84,7 @@ void Clear_debug_text_blocks(void) {
 
 	while (blockNo < MAX_DEBUG_TEXT_BLOCKS && debug_text_blocks[blockNo] > 0) {
 		// kill the system text block
-		Kill_text_bloc(debug_text_blocks[blockNo]);
+		fontRenderer.killTextBloc(debug_text_blocks[blockNo]);
 
 		// clear this element of our array of block numbers
 		debug_text_blocks[blockNo] = 0;
@@ -103,9 +100,9 @@ void Make_debug_text_block(char *text, int16 x, int16 y) {
 		blockNo++;
 
 	if (blockNo == MAX_DEBUG_TEXT_BLOCKS)
-		Con_fatal_error("ERROR: debug_text_blocks[] full in Make_debug_text_block()");
+		error("ERROR: debug_text_blocks[] full in Make_debug_text_block()");
 
-	debug_text_blocks[blockNo] = Build_new_block((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
+	debug_text_blocks[blockNo] = fontRenderer.buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
 
 void Build_debug_text(void) {
@@ -136,39 +133,39 @@ void Build_debug_text(void) {
 	// defining a mouse area the easy way, by creating a box on-screen
 	if (draggingRectangle || SYSTEM_TESTING_ANIMS) {
 		// so we can see what's behind the lines
-		rectFlicker = 1 - rectFlicker;
+		rectFlicker = !rectFlicker;
 
 		sprintf (buf, "x1=%d", rect_x1);
-		Make_debug_text_block (buf, 0, 120);
+		Make_debug_text_block(buf, 0, 120);
 
 		sprintf (buf, "y1=%d", rect_y1);
-		Make_debug_text_block (buf, 0, 135);
+		Make_debug_text_block(buf, 0, 135);
 
 		sprintf (buf, "x2=%d", rect_x2);
-		Make_debug_text_block (buf, 0, 150);
+		Make_debug_text_block(buf, 0, 150);
 
 		sprintf (buf, "y2=%d", rect_y2);
-		Make_debug_text_block (buf, 0, 165);
+		Make_debug_text_block(buf, 0, 165);
 	}
 
 	// testingSnR indicator
 
 	if (testingSnR) {		// see fnAddHuman()
 		sprintf (buf, "TESTING LOGIC STABILITY!");
-		Make_debug_text_block (buf, 0, 105);
+		Make_debug_text_block(buf, 0, 105);
 	}
 
 	// speed-up indicator
 
 	if (renderSkip) {		// see sword.cpp
 		sprintf (buf, "SKIPPING FRAMES FOR SPEED-UP!");
-		Make_debug_text_block (buf, 0, 120);
+		Make_debug_text_block(buf, 0, 120);
 	}
 
 	// debug info at top of screen - enabled/disabled as one complete unit
 
 	if (displayTime) {
-		int32 time = timeGetTime();
+		int32 time = SVM_timeGetTime();
 
 		if ((time - startTime) / 1000 >= 10000)
 			startTime = time;
@@ -186,29 +183,29 @@ void Build_debug_text(void) {
 		if (textNumber) {
 			if (SYSTEM_TESTING_TEXT) {
 				if (SYSTEM_WANT_PREVIOUS_LINE)
-					sprintf (buf, "backwards");
+					sprintf(buf, "backwards");
 				else
- 					sprintf (buf, "forwards");
+ 					sprintf(buf, "forwards");
 
-				Make_debug_text_block (buf, 0, 340);
+				Make_debug_text_block(buf, 0, 340);
 			}
 
-			sprintf (buf, "res: %d", textNumber/SIZE);
-			Make_debug_text_block (buf, 0, 355);
+			sprintf(buf, "res: %d", textNumber / SIZE);
+			Make_debug_text_block(buf, 0, 355);
 
-			sprintf (buf, "pos: %d", textNumber&0xffff);
-			Make_debug_text_block (buf, 0, 370);
+			sprintf(buf, "pos: %d", textNumber & 0xffff);
+			Make_debug_text_block(buf, 0, 370);
 
- 			sprintf (buf, "TEXT: %d", officialTextNumber);
-			Make_debug_text_block (buf, 0, 385);
+ 			sprintf(buf, "TEXT: %d", officialTextNumber);
+			Make_debug_text_block(buf, 0, 385);
 		}
 	}
 
 	// resource number currently being checking for animation
 
 	if (SYSTEM_TESTING_ANIMS) {
-		sprintf (buf, "trying resource %d", SYSTEM_TESTING_ANIMS);
-		Make_debug_text_block (buf, 0, 90);
+		sprintf(buf, "trying resource %d", SYSTEM_TESTING_ANIMS);
+		Make_debug_text_block(buf, 0, 90);
 	}
 
 	// general debug info
@@ -217,7 +214,7 @@ void Build_debug_text(void) {
 /*
 		// CD in use
 		sprintf (buf, "CD-%d", currentCD);
-		Make_debug_text_block (buf, 0, 0);
+		Make_debug_text_block(buf, 0, 0);
 */
 
 		// mouse coords & object pointed to
@@ -230,20 +227,20 @@ void Build_debug_text(void) {
 			sprintf(buf, "last click at %d,%d (---)",
 				MOUSE_X, MOUSE_Y);
 
- 		Make_debug_text_block (buf, 0, 15);
+ 		Make_debug_text_block(buf, 0, 15);
 
 		if (mouse_touching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				mousex + this_screen.scroll_offset_x,
-				mousey + this_screen.scroll_offset_y,
+				g_display->_mouseX + this_screen.scroll_offset_x,
+				g_display->_mouseY + this_screen.scroll_offset_y,
 				mouse_touching,
 				FetchObjectName(mouse_touching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				mousex + this_screen.scroll_offset_x,
-				mousey + this_screen.scroll_offset_y);
+				g_display->_mouseX + this_screen.scroll_offset_x,
+				g_display->_mouseY + this_screen.scroll_offset_y);
 
-		Make_debug_text_block (buf, 0, 30);
+		Make_debug_text_block(buf, 0, 30);
 
  		// player coords & graphic info
 		// if player objct has a graphic
@@ -262,56 +259,56 @@ void Build_debug_text(void) {
 				this_screen.player_feet_y,
 				playerGraphic.anim_pc);
 
-		Make_debug_text_block (buf, 0, 45);
+		Make_debug_text_block(buf, 0, 45);
 
  		// frames-per-second counter
 
 		sprintf(buf, "fps %d", fps);
-		Make_debug_text_block (buf, 440, 0);
+		Make_debug_text_block(buf, 440, 0);
 
  		// location number
 
 		sprintf(buf, "location=%d", LOCATION);
-		Make_debug_text_block (buf, 440, 15);
+		Make_debug_text_block(buf, 440, 15);
 
  		// "result" variable
 
 		sprintf(buf, "result=%d", RESULT);
-		Make_debug_text_block (buf, 440, 30);
+		Make_debug_text_block(buf, 440, 30);
 
  		// no. of events in event list
 
 		sprintf(buf, "events=%d", CountEvents());
-		Make_debug_text_block (buf, 440, 45);
+		Make_debug_text_block(buf, 440, 45);
 
 		// sprite list usage
 
 		sprintf(buf, "bgp0: %d/%d", cur_bgp0, MAX_bgp0_sprites);
-		Make_debug_text_block (buf, 560, 0);
+		Make_debug_text_block(buf, 560, 0);
 
 		sprintf(buf, "bgp1: %d/%d", cur_bgp1, MAX_bgp1_sprites);
-		Make_debug_text_block (buf, 560, 15);
+		Make_debug_text_block(buf, 560, 15);
 
 		sprintf(buf, "back: %d/%d", cur_back, MAX_back_sprites);
-		Make_debug_text_block (buf, 560, 30);
+		Make_debug_text_block(buf, 560, 30);
 
 		sprintf(buf, "sort: %d/%d", cur_sort, MAX_sort_sprites);
-		Make_debug_text_block (buf, 560, 45);
+		Make_debug_text_block(buf, 560, 45);
 
 		sprintf(buf, "fore: %d/%d", cur_fore, MAX_fore_sprites);
-		Make_debug_text_block (buf, 560, 60);
+		Make_debug_text_block(buf, 560, 60);
 
 		sprintf(buf, "fgp0: %d/%d", cur_fgp0, MAX_fgp0_sprites);
-		Make_debug_text_block (buf, 560, 75);
+		Make_debug_text_block(buf, 560, 75);
 
 		sprintf(buf, "fgp1: %d/%d", cur_fgp1, MAX_fgp1_sprites);
-		Make_debug_text_block (buf, 560, 90);
+		Make_debug_text_block(buf, 560, 90);
 
 		// largest layer & sprite
 
 		// NB. Strings already constructed in Build_display.cpp
-		Make_debug_text_block (largest_layer_info, 0, 60);
-		Make_debug_text_block (largest_sprite_info, 0, 75);
+		Make_debug_text_block(largest_layer_info, 0, 60);
+		Make_debug_text_block(largest_sprite_info, 0, 75);
 
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
@@ -320,7 +317,7 @@ void Build_debug_text(void) {
 			sprintf(buf, "script waiting for %s (%d)",
 				FetchObjectName(speechScriptWaiting),
 				speechScriptWaiting);
-			Make_debug_text_block (buf, 0, 90);
+			Make_debug_text_block(buf, 0, 90);
 		}
 
 		// variable watch display
@@ -337,9 +334,8 @@ void Build_debug_text(void) {
 			// anyway because it changes throughout the logic loop
 
 			if (varNo) {
-				sprintf(buf, "var(%d) = %d",
-					varNo, varTable[varNo]);
-				Make_debug_text_block (buf, 530, showVarPos);
+				sprintf(buf, "var(%d) = %d", varNo, varTable[varNo]);
+				Make_debug_text_block(buf, 530, showVarPos);
 				showVarPos += 15;	// next line down
 			}
 		}
@@ -349,8 +345,8 @@ void Build_debug_text(void) {
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
 
-		Create_mem_string (buf);
-		Make_debug_text_block (buf, 0, 0);
+		memory.memoryString(buf);
+		Make_debug_text_block(buf, 0, 0);
 	}
 }
 
@@ -368,7 +364,7 @@ void Draw_debug_graphics(void) {
 	// mouse marker & coords
 
 	if (displayMouseMarker)
-		Plot_cross_hair(mousex + this_screen.scroll_offset_x, mousey + this_screen.scroll_offset_y, 215);
+		Plot_cross_hair(g_display->_mouseX + this_screen.scroll_offset_x, g_display->_mouseY + this_screen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -384,46 +380,33 @@ void Draw_debug_graphics(void) {
 }
 
 void Plot_cross_hair(int16 x, int16 y, uint8 pen) {
-	PlotPoint(x, y, pen);			// driver function
+	g_display->plotPoint(x, y, pen);		// driver function
 
-	DrawLine(x - 2, y, x - 5, y, pen);	// driver function
-	DrawLine(x + 2, y, x + 5, y, pen);
+	g_display->drawLine(x - 2, y, x - 5, y, pen);	// driver function
+	g_display->drawLine(x + 2, y, x + 5, y, pen);
 
-	DrawLine(x, y - 2, x, y - 5, pen);
-	DrawLine(x, y + 2, x, y + 5, pen);
+	g_display->drawLine(x, y - 2, x, y - 5, pen);
+	g_display->drawLine(x, y + 2, x, y + 5, pen);
 }
 
 void DrawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
-	DrawLine(x1, y1, x2, y1, pen);	// top edge
-	DrawLine(x1, y2, x2, y2, pen);	// bottom edge
-	DrawLine(x1, y1, x1, y2, pen);	// left edge
-	DrawLine(x2, y1, x2, y2, pen);	// right edge
+	g_display->drawLine(x1, y1, x2, y1, pen);	// top edge
+	g_display->drawLine(x1, y2, x2, y2, pen);	// bottom edge
+	g_display->drawLine(x1, y1, x1, y2, pen);	// left edge
+	g_display->drawLine(x2, y1, x2, y2, pen);	// right edge
 }
 
 void Print_current_info(void) {
 	// prints general stuff about the screen, etc.
 
 	if (this_screen.background_layer_id) {
-		Print_to_console(" background layer id %d",
-			this_screen.background_layer_id);
-		Print_to_console(" %d wide, %d high",
-			this_screen.screen_wide, this_screen.screen_deep);
-		Print_to_console(" %d normal layers",
-			this_screen.number_of_layers);
+		Debug_Printf("background layer id %d\n", this_screen.background_layer_id);
+		Debug_Printf("%d wide, %d high\n", this_screen.screen_wide, this_screen.screen_deep);
+		Debug_Printf("%d normal layers\n", this_screen.number_of_layers);
 
-		LLogic.examineRunList();
+		g_logic.examineRunList();
 	} else
-		Print_to_console(" no screen");
-
-	Scroll_console();
+		Debug_Printf("No screen\n");
 }
 
 } // End of namespace Sword2
-
-#else
-
-namespace Sword2 {
-void Draw_debug_graphics(void) {}
-} // End of namespace Sword2
-
-#endif

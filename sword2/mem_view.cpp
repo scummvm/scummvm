@@ -33,8 +33,6 @@ char buf[50];
 void MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
 	_standardHeader	*file_header;
-	int scrolls = 0;
-	_keyboardEvent ke;
 
 	char inf[][20] = {
 		{ "M_null  " },
@@ -69,7 +67,7 @@ void MemoryManager::displayMemory(void) {
 				pass = 1;	// also illegal
 
 			if (!pass && found_end) { // && file_header->fileType < 10)
-				Print_to_console("%d %s, size 0x%.5x (%dk %d%%), res %d %s %s, A%d, C%d",
+				Debug_Printf("%d %s, size 0x%.5x (%dk %d%%), res %d %s %s, A%d, C%d\n",
 					j, inf[_memList[j].state],
 					_memList[j].size,
 					_memList[j].size / 1024,
@@ -80,9 +78,9 @@ void MemoryManager::displayMemory(void) {
 					res_man.fetchAge(_memList[j].uid),
 					res_man.fetchCount(_memList[j].uid));
 			} else
-				Print_to_console(" %d is an illegal resource", _memList[j].uid);
+				Debug_Printf(" %d is an illegal resource\n", _memList[j].uid);
 		} else {
-			Print_to_console("%d %s, size 0x%.5x (%dk %d%%), %s",
+			Debug_Printf("%d %s, size 0x%.5x (%dk %d%%), %s\n",
 				j, inf[_memList[j].state], _memList[j].size,
 				_memList[j].size / 1024,
 				(_memList[j].size * 100) / _totalFreeMemory,
@@ -93,31 +91,9 @@ void MemoryManager::displayMemory(void) {
 			free += _memList[j].size;
 
 		j = _memList[j].child;
-
-		scrolls++;
-
-		Build_display();
-
-		if (scrolls == 18) {
-			Temp_print_to_console("- Press ESC to stop or any other key to continue");
-			Build_display();
-
-			do {
-				g_display->updateDisplay();
-			} while (!KeyWaiting());
-
-			ReadKey(&ke);	//kill the key we just pressed
-			if (ke.keycode == 27)	//ESC
-				break;
-
-			// clear the Press Esc message ready for the new line
-			Clear_console_line();
-			scrolls = 0;
-		}	
 	} while (j != -1);
 
-	Scroll_console();
-	Print_to_console("(total memory block 0x%.8x %dk %dMB) %d / %d%% free",
+	Debug_Printf("(total memory block 0x%.8x %dk %dMB) %d / %d%% free\n",
 		_totalFreeMemory, _totalFreeMemory / 1024,
 		_totalFreeMemory / (1000 * 1024), free,
 		(free * 100) / _totalFreeMemory);

@@ -211,9 +211,7 @@ private:
 	int32 solidWalkAnimator(_walkData *walkAnim);
 #endif
 
-#ifdef _SWORD2_DEBUG
 	void plotCross(int16 x, int16 y, uint8 colour);
-#endif
 
 public:
 	Router() :
@@ -233,9 +231,7 @@ public:
 	void removeWalkGrid(int32 gridResource);
 	void clearWalkGridList(void);
 
-#ifdef _SWORD2_DEBUG 
 	void plotWalkGrid(void);
-#endif
 };
 
 extern Router router;

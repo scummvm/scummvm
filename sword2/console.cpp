@@ -18,845 +18,619 @@
  */
 
 #include "stdafx.h"
-#include "bs2/driver/driver96.h"
-
-namespace Sword2 {
-uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
-} // End of namespace Sword2
-
-#ifdef _SWORD2_DEBUG
-
-// its the console! <great>
-
-#include "bs2/build_display.h"
+#include "bs2/sword2.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
 #include "bs2/defs.h"
-#include "bs2/events.h"		// so we can display the event list in Con_display_events()
-#include "bs2/header.h"
-#include "bs2/layers.h"
+#include "bs2/events.h"
 #include "bs2/logic.h"
-#include "bs2/maketext.h"	// for initialiseFontResourceFlags()
+#include "bs2/maketext.h"
 #include "bs2/mouse.h"
-#include "bs2/mem_view.h"
-#include "bs2/memory.h"
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
 #include "bs2/save_rest.h"
 #include "bs2/startup.h"
-#include "bs2/sword2.h"
-#include "bs2/time.h"
+
+// FIXME: Much of this is copied from scumm/debugger.cpp which is a pretty
+// lousy form of code reuse.
+
+#ifdef _WIN32_WCE
+extern void force_keyboard(bool);
+#endif
 
 namespace Sword2 {
 
-uint32 Parse_user_input(void);
-void Clear_console_line(void);
-void Con_help(void);
+bool wantSfxDebug = false;	// sfx debug enabled/disabled from console
 
-void Con_colour_block(int x, int width, int height, uint32 pen, uint32 paper, uint8 *sprite_data_ad);
-void Con_print(uint8 *ascii, uint32 pen, uint32 paper);
-uint32 Tconsole(uint32 mode);
+static void Var_check(int var) {
+	Debug_Printf("%d\n", VAR(var));
+}
 
-void Con_list_savegames(void);
-void Con_save_game(int total_commands, uint8 *slotString, uint8 *description);
-void Con_restore_game(int total_commands, uint8 *slotString);
-uint8 Is_number(uint8 *ascii);
-void Con_start_timer(int total_commands, uint8 *slotString);
-void ShowVar(uint8 *varNoPtr);
-void HideVar(uint8 *varNoPtr);
-void Con_display_version(void);
+static void Var_set(int var, int val) {
+	Debug_Printf("was %d, ", VAR(var));
+	VAR(var) = val;
+	Debug_Printf("now %d\n", VAR(var));
+}
 
-void Var_check(uint8 *pointer);
-void Var_set(uint8 *pointer, uint8 *p2);
+Debugger::Debugger(Sword2Engine *s) {
+	_vm = s;
+	_frame_countdown = 0;
+	_dcmd_count = 0;
+	_detach_now = false;
+	_isAttached = false;
+	_errStr = NULL;
 
-void Con_display_events();
+	// Register commands
 
-uint8 wantSfxDebug = 0;	// sfx debug file enabled/disabled from console
+	DCmd_Register("continue", &Debugger::Cmd_Exit);
+	DCmd_Register("exit", &Debugger::Cmd_Exit);
+	DCmd_Register("quit", &Debugger::Cmd_Exit);
+	DCmd_Register("q", &Debugger::Cmd_Exit);
+	DCmd_Register("help", &Debugger::Cmd_Help);
+	DCmd_Register("mem", &Debugger::Cmd_Mem);
+	DCmd_Register("tony", &Debugger::Cmd_Tony);
+	DCmd_Register("res", &Debugger::Cmd_Res);
+	DCmd_Register("starts", &Debugger::Cmd_Starts);
+	DCmd_Register("start", &Debugger::Cmd_Start);
+	DCmd_Register("s", &Debugger::Cmd_Start);
+	DCmd_Register("info", &Debugger::Cmd_Info);
+	DCmd_Register("walkgrid", &Debugger::Cmd_WalkGrid);
+	DCmd_Register("mouse", &Debugger::Cmd_Mouse);
+	DCmd_Register("player", &Debugger::Cmd_Player);
+	DCmd_Register("reslook", &Debugger::Cmd_ResLook);
+	DCmd_Register("cur", &Debugger::Cmd_CurrentInfo);
+	DCmd_Register("runlist", &Debugger::Cmd_RunList);
+	DCmd_Register("kill", &Debugger::Cmd_Kill);
+	DCmd_Register("nuke", &Debugger::Cmd_Nuke);
+	DCmd_Register("var", &Debugger::Cmd_Var);
+	DCmd_Register("rect", &Debugger::Cmd_Rect);
+	DCmd_Register("clear", &Debugger::Cmd_Clear);
+	DCmd_Register("debugon", &Debugger::Cmd_DebugOn);
+	DCmd_Register("debugoff", &Debugger::Cmd_DebugOn);
+	DCmd_Register("saverest", &Debugger::Cmd_SaveRest);
+	DCmd_Register("saves", &Debugger::Cmd_ListSaveGames);
+	DCmd_Register("save", &Debugger::Cmd_SaveGame);
+	DCmd_Register("restore", &Debugger::Cmd_RestoreGame);
+	DCmd_Register("bltfxon", &Debugger::Cmd_BltFxOn);
+	DCmd_Register("bltfxoff", &Debugger::Cmd_BltFxOff);
+	DCmd_Register("timeon", &Debugger::Cmd_TimeOn);
+	DCmd_Register("timeoff", &Debugger::Cmd_TimeOff);
+	DCmd_Register("text", &Debugger::Cmd_Text);
+	DCmd_Register("showvar", &Debugger::Cmd_ShowVar);
+	DCmd_Register("hidevar", &Debugger::Cmd_HideVar);
+	DCmd_Register("version", &Debugger::Cmd_Version);
+	DCmd_Register("soft", &Debugger::Cmd_SoftHard);
+	DCmd_Register("hard", &Debugger::Cmd_SoftHard);
+	DCmd_Register("animtest", &Debugger::Cmd_AnimTest);
+	DCmd_Register("texttest", &Debugger::Cmd_TextTest);
+	DCmd_Register("linetest", &Debugger::Cmd_LineTest);
+	DCmd_Register("grab", &Debugger::Cmd_Grab);
+	DCmd_Register("events", &Debugger::Cmd_Events);
+	DCmd_Register("sfx", &Debugger::Cmd_Sfx);
+	DCmd_Register("english", &Debugger::Cmd_English);
+	DCmd_Register("finnish", &Debugger::Cmd_Finnish);
+	DCmd_Register("polish", &Debugger::Cmd_Polish);
+}
 
-#define	MAX_CONSOLE_BUFFER	70
-#define	MAX_CONSOLE_PARAMS	5
+void Debugger::attach(const char *entry) {
 
-#define	CON_PEN			187
+#ifdef _WIN32_WCE
+	force_keyboard(true);
+#endif
 
-#define VK_TAB			0x09
-#define VK_RETURN		0x0D
-
-char console_buffer[MAX_CONSOLE_BUFFER];
-
-char last_command[MAX_CONSOLE_BUFFER];
-int last_command_len = 0;
-
-uint8 grabbingSequences = 0;
-
-int console_pos = 0;
-
-int console_mode = 0;	// 0 is the base command line
-			// 1 means only parse for yes or no commands
-
-#define	TOTAL_CONSOLE_COMMANDS	47
-
-// note '9' is max command length including null-terminator
-uint8 commands[TOTAL_CONSOLE_COMMANDS][9] = {
-	"HELP",		// 0
-	"MEM",		// 1
-	"Q",		// 2
-	"TONY",		// 3
-	"YES",		// 4
-	"NO",		// 5
-	"RES",		// 6
-	"STARTS",	// 7
-	"START",	// 8
-	"INFO",		// 9
-	"WALKGRID",	// 10
-	"MOUSE",	// 11
-	"PLAYER",	// 12
-	"RESLOOK",	// 13
-	"CUR",		// 14
-	"RUNLIST",	// 15
-	"KILL",		// 16
-	"NUKE",		// 17
-	"S",		// 18
-	"VAR",		// 19
-	"RECT",		// 20
-	"CLEAR",	// 21
-	"DEBUGON",	// 22
-	"DEBUGOFF",	// 23
-	"SAVEREST",	// 24
-	"SAVES",	// 25
-	"SAVE",		// 26
-	"RESTORE",	// 27
-	"BLTFXON",	// 28
-	"BLTFXOFF",	// 29
-	"TIMEON",	// 30
-	"TIMEOFF",	// 31
-	"TEXT",		// 32
-	"SHOWVAR",	// 33
-	"HIDEVAR",	// 34
-	"VERSION",	// 35
-	"SOFT",		// 36
-	"HARD",		// 37
-	"ANIMTEST",	// 38
-	"TEXTTEST",	// 39
-	"LINETEST",	// 40
-	"GRAB",		// 41
-	"EVENTS",	// 42
-	"SFX",		// 43
-	"ENGLISH",	// 44
-	"FINNISH",	// 45
-	"POLISH"	// 46
-};
-
-mem *console_sprite;
-uint32 con_y;
-uint32 con_depth;
-uint32 con_width;
-uint32 con_chr_height;
-
-#define	CON_lines 20	// 10 lines deep
-
-void Init_console(void) {
-	// grab the memory for the console sprite
-
-	uint8 *ad;
-	uint8 white[4] = { 255, 255, 255, 0 };
-
-	con_chr_height = 12;
-	con_width = screenWide;	//max across
-
-	// Force a palatte for the console.
-	g_display->setPalette(CON_PEN, 1, white, RDPAL_INSTANT);
-
-	console_sprite = memory.alloc(con_width * (CON_lines * con_chr_height), MEM_float, UID_con_sprite);
-
-	if (!console_sprite) {
-		ExitWithReport("Init_console alloc fail");
+	if (entry) {
+		_errStr = strdup(entry);
 	}
 
-	con_depth = CON_lines * con_chr_height;
-	con_y = 399 - con_depth;
-
-	// clear the buffer for a nice fresh start
-
-	memset(console_sprite->ad, 0, con_width * CON_lines * con_chr_height);
-
-	debug(5, "console height %d, y %d", con_depth, con_y);
-
-	//first time in message
-	Con_display_version();
+	_frame_countdown = 1;
+	_detach_now = false;
+	_isAttached = true;
 }
 
-void StartConsole(void) {
-	// start console up and restart new line
-	// can ne called for newline
+void Debugger::detach() {
+#if USE_CONSOLE
+	if (_vm->_debuggerDialog) {
+		_vm->_debuggerDialog->setInputeCallback(0, 0);
+		_vm->_debuggerDialog->setCompletionCallback(0, 0);
+	}
+#endif
 
-	console_pos = 0;	// start of new line
+#ifdef _WIN32_WCE
+	force_keyboard(false);
+#endif
 
-	//we need to clear the whole buffer - else the cursor overwrites the
-	// end 0
-
-	console_status = 1;	// on
+	_detach_now = false;
+	_isAttached = false;
 }
 
-void EndConsole(void) {
-	console_status = 0;	// off
+// Temporary execution handler
+void Debugger::onFrame() {
+	if (_frame_countdown == 0)
+		return;
+	--_frame_countdown;
+
+	if (!_frame_countdown) {
+		// Pause sound output
+
+		g_sound->pauseFx();
+		g_sound->pauseSpeech();
+		g_sound->pauseMusic();
+
+		// Enter debugger
+		enter();
+
+		// Resume previous sound state
+
+		g_sound->unpauseFx();
+		g_sound->unpauseSpeech();
+		g_sound->unpauseMusic();
+
+		// Restore old mouse cursor
+		g_display->drawMouse();
+
+		// Detach if we're finished with the debugger
+		if (_detach_now)
+			detach();
+	}
 }
 
-uint32 Tconsole(uint32 mode) {
-	// call from anywhere
-	// returns a positive value of the token typed or 0 for windows
-	// quiting - the caller should drop back
+// Console handler
+#if USE_CONSOLE
+bool Debugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
+	Debugger *debugger = (Debugger *) refCon;
 
-	uint32 ret, breakOut = 0;
+	return debugger->RunCommand(input);
+}
 
-	console_mode = mode;	//set command frame
+bool Debugger::debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
+	Debugger *debugger = (Debugger *) refCon;
 
-	StartConsole();
+	return debugger->TabComplete(input, completion);
+}
+#endif
 
-	while (1) {
-		g_display->updateDisplay();
+///////////////////////////////////////////////////
+// Now the fun stuff:
 
-		if (breakOut)
-			break;
+void Debugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
+	assert(_dcmd_count < (int) sizeof(_dcmds));
+	strcpy(_dcmds[_dcmd_count].name, cmdname);
+	_dcmds[_dcmd_count].function = pointer;
 
-		if ((ret = One_console()) != 0) {
-			EndConsole();
-			return ret;
-		}
+	_dcmd_count++;
+}
 
-		Build_display();	// create and flip the screen
+// Main Debugger Loop
+void Debugger::enter() {
+#if USE_CONSOLE
+	if (!_vm->_debuggerDialog) {
+		_vm->_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
+
+		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
+		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");
 	}
 
-	// a windows message is throwing us out of here
+	if (_errStr) {
+		Debug_Printf("ERROR: %s\n\n", _errStr);
+		free(_errStr);
+		_errStr = NULL;
+	}
 
-	EndConsole();	// switch off drawing
-	return 0;
+	_vm->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
+	_vm->_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+	_vm->_debuggerDialog->runModal();
+#else
+	// TODO: compared to the console input, this here is very bare bone.
+	// For example, no support for tab completion and no history. At least
+	// we should re-add (optional) support for the readline library.
+	// Or maybe instead of choosing between a console dialog and stdio,
+	// we should move that choice into the ConsoleDialog class - that is,
+	// the console dialog code could be #ifdef'ed to not print to the dialog
+	// but rather to stdio. This way, we could also reuse the command history
+	// and tab completion of the console. It would still require a lot of
+	// work, but at least no dependency on a 3rd party library...
+
+	printf("Debugger entered, please switch to this console for input.\n");
+
+	int i;
+	char buf[256];
+
+	do {
+		printf("debug> ");
+		if (!fgets(buf, sizeof(buf), stdin))
+			return;
+
+		i = strlen(buf);
+		while (i > 0 && buf[i - 1] == '\n')
+			buf[--i] = 0;
+
+		if (i == 0)
+			continue;
+	} while (RunCommand(buf));
+
+#endif
 }
 
-void Scroll_console(void) {
-	// scroll the console sprite up 12 pixels
+// Command execution loop
+bool Debugger::RunCommand(const char *inputOrig) {
+	int i = 0, num_params = 0;
+	const char *param[256];
+	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
 
-	uint32 *to_buffer;
-	uint32 *from_buffer;
+	// Parse out any params
+	char *tok = strtok(input, " ");
+	if (tok) {
+		do {
+			param[num_params++] = tok;
+		} while ((tok = strtok(NULL, " ")) != NULL);
+	} else {
+		param[num_params++] = input;
+	}
 
-	// number of dwords
-	x = ((con_depth - con_chr_height) * 640) / 4;
-
-	to_buffer= (uint32 *) console_sprite->ad;
-	from_buffer = to_buffer + ((con_chr_height * 640) / 4);
-
-	memmove(to_buffer, from_buffer, (con_depth - con_chr_heigth) * 640);
-
-	// blank the on-coming bottom line
-	Clear_console_line();
-}
-
-void Clear_console_line(void) {
-	// blank the bottom line
-
-	uint32 *pbuffer;
-
-	//base of our off-screen back buffer
-	pbuffer= (uint32 *) console_sprite->ad;
-
-	//index to console text position
-	pbuffer += ((con_depth-con_chr_height) * con_width / 4);
-
-	// clear the bottom text line
-	memset(pbuffer, 0, con_chr_height * con_width);
-}
-
-void Print_to_console(const char *format, ...) {
-	// print a NULL terminated string of ascii to the next console line
-	// we can assume that the user has just entered a command by pressing
-	// return - which means we're on a clean line so output the line and
-	// line feed
-
-	va_list arg_ptr;
-	char buf[150];
-
-	va_start(arg_ptr,format);
-	_vsnprintf(buf, 150, format, arg_ptr);
-	Con_print((uint8 *) buf, 2, 0);
-	Scroll_console();
-}
-
-void Temp_print_to_console(const char *format, ...) {
-	// print a NULL terminated string of ascii to the next console line
-	// we can assume that the user has just entered a command by pressing
-	// return - which means we're on a clean line so output the line and
-	// line feed
-
-	va_list arg_ptr;	// Variable argument pointer
-	char buf[150];
-
-	va_start(arg_ptr,format);
-	_vsnprintf(buf, 150, format, arg_ptr);
-
-	Con_print((uint8 *) buf, 2, 0);
-}
-
-uint32 One_console(void) {
-	// its the console command line system
-	// do an update - check keys and flash cursor and so on
-
-	char c;
-	static int flash = 0;	//controls the flashing cursor rate
-	uint32 res;
-
-	if (KeyWaiting()) {
-		ReadKey(&c);
-
-		if (c == VK_TAB) {
-			if (last_command_len) {	// if anything stored in buffer
-				// retrieve 'last_command' buffer
-				// first clear the entire current buffer
-				memset (console_buffer, 0, MAX_CONSOLE_BUFFER);
-
-				// now copy in the last command
-				memcpy (console_buffer, last_command, last_command_len);
-				console_pos = last_command_len;
-			}
-		} else if (c == VK_RETURN) {
-			// by putting a space in we'll always have a chr$ in
-			// the buffer
-			console_buffer[console_pos] = ' ';
-			Clear_console_line();
-			Print_to_console(console_buffer);
-
-			// parse the input I guess
-
-			if (console_pos) {
-				// save to 'last_command' buffer, in case need
-				// to repeat same command
-
-				// get a copy of the current command, and its
-				// length
-				memcpy (last_command, console_buffer, console_pos);
-				last_command_len = console_pos;
-
-				res = Parse_user_input();
-				if (res)
-					return res;
-			}
-
-			StartConsole();		// reset buffer
-		} else if (c == 8) {
-			if (console_pos) {
-				// delete cursor chr$
-				console_buffer[console_pos] = 0;
-				console_pos--;
-				console_buffer[console_pos]=0;
-			}
-		} else if (c < 32 || c > 'z')
-			debug(5, "console ignoring key - %d", c);
-		else {
-			// less one to leave room for the cursor
-			if (console_pos < MAX_CONSOLE_BUFFER - 1) {
-				console_buffer[console_pos++] = c;
-			} else {
-				// end of line has been reached, so keep
-				// replacing last letter
-				console_buffer[console_pos - 1] = c;
-			}
+	for (i = 0; i < _dcmd_count; i++) {
+		if (!strcmp(_dcmds[i].name, param[0])) {
+			bool result = (this->*_dcmds[i].function)(num_params, param);
+			free(input);
+			return result;
 		}
 	}
 
-	flash++;
-
-	if (flash < 7)
-		console_buffer[console_pos] = '_';
-	else
-		console_buffer[console_pos] = ' ';
-
-	if (flash == 14)
-		flash = 0;
-
-	// update the real screen - done every cycle to keep the cursor
-	// flashing
-
-	Clear_console_line();
-	Con_print((uint8 *) console_buffer, 2, 0);
-
-	return 0;
+	Debug_Printf("Unknown command\n");
+	free(input);
+	return true;
 }
 
-uint32 Parse_user_input(void) {
-	// pressed return and now we need to analyse whats been written and
-	// call up the relevent commands
+// Commands
 
-	uint8 input[MAX_CONSOLE_PARAMS][MAX_CONSOLE_BUFFER];
-	int i, j, total_commands = 0;
-	int index = 0;
-	uint32 rv;
+bool Debugger::Cmd_Exit(int argc, const char **argv) {
+	_detach_now = true;
+	return false;
+}
+
+bool Debugger::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size, i;
+
+	Debug_Printf("Commands are:\n");
+	for (i = 0 ; i < _dcmd_count ; i++) {
+		size = strlen(_dcmds[i].name) + 1;
+
+		if ((width + size) >= 39) {
+			Debug_Printf("\n");
+			width = size;
+		} else
+			width += size;
+
+		Debug_Printf("%s ", _dcmds[i].name);
+	}
+
+	Debug_Printf("\n");
+	return true;
+}
+
+bool Debugger::Cmd_Mem(int argc, const char **argv) {
+	memory.displayMemory();
+	return true;
+}
+
+bool Debugger::Cmd_Tony(int argc, const char **argv) {
+	Debug_Printf("What about him?\n");
+	return true;
+}
+
+bool Debugger::Cmd_Res(int argc, const char **argv) {
+	res_man.printConsoleClusters();
+	return true;
+}
+
+bool Debugger::Cmd_Starts(int argc, const char **argv) {
+	Con_print_start_menu();
+	return true;
+}
+
+bool Debugger::Cmd_Start(int argc, const char **argv) {
 	uint8 pal[4] = { 255, 255, 255, 0 };
 
-	// quick check for numbers here
-	if (!isalpha(console_buffer[0])) {
-		Print_to_console("Eh?");
-		return 0;
+	if (argc != 2) {
+		Debug_Printf("Usage: %s number\n", argv[0]);
+		return true;
 	}
 
-	j = 0;
-	do {
-		i = 0;
-		do
-			input[j][i++] = toupper(console_buffer[index++]);
-		while (isgraph(console_buffer[index]));
+	Con_start(atoi(argv[1]));
+	g_display->setPalette(187, 1, pal, RDPAL_INSTANT);
+	return true;
+}
 
-		input[j][i] = 0;
+bool Debugger::Cmd_Info(int argc, const char **argv) {
+	displayDebugText = !displayDebugText;
 
-		j++;
-		total_commands++;
+	if (displayDebugText)
+		Debug_Printf("Info text on\n");
+	else
+		Debug_Printf("Info Text off\n");
 
-		if (index == console_pos)
+	return true;
+}
+
+bool Debugger::Cmd_WalkGrid(int argc, const char **argv) {
+	displayWalkGrid = !displayWalkGrid;
+
+	if (displayWalkGrid)
+		Debug_Printf("Walk-grid display on\n");
+	else
+		Debug_Printf("Walk-grid display off\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_Mouse(int argc, const char **argv) {
+	displayMouseMarker = !displayMouseMarker;
+
+	if (displayMouseMarker)
+		Debug_Printf("Mouse marker on\n");
+	else
+		Debug_Printf("Mouse marker off\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_Player(int argc, const char **argv) {
+	displayPlayerMarker = !displayPlayerMarker;
+
+	if (displayPlayerMarker)
+		Debug_Printf("Player feet marker on\n");
+	else
+		Debug_Printf("Player feet marker off\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ResLook(int argc, const char **argv) {
+	if (argc != 2)
+		Debug_Printf("Usage: %s number\n", argv[0]);
+	else
+		res_man.examine(atoi(argv[1]));
+	return true;
+}
+
+bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
+	Print_current_info();
+	return true;
+}
+
+bool Debugger::Cmd_RunList(int argc, const char **argv) {
+	g_logic.examineRunList();
+	return true;
+}
+
+bool Debugger::Cmd_Kill(int argc, const char **argv) {
+	if (argc != 2)
+		Debug_Printf("Usage: %s number\n", argv[0]);
+	else
+		res_man.kill(atoi(argv[1]));
+	return true;
+}
+
+bool Debugger::Cmd_Nuke(int argc, const char **argv) {
+	Debug_Printf("Killing all resources except variable file and player object\n");
+	res_man.killAll(true);
+	return true;
+}
+
+bool Debugger::Cmd_Var(int argc, const char **argv) {
+	switch (argc) {
+	case 2:
+		Var_check(atoi(argv[1]));
+		break;
+	case 3:
+		Var_set(atoi(argv[1]), atoi(argv[2]));
+		break;
+	default:
+		Debug_Printf("Usage: %s number value\n", argv[0]);
+		break;
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_Rect(int argc, const char **argv) {
+	definingRectangles = !definingRectangles;
+
+	if (definingRectangles)
+		Debug_Printf("Mouse rectangles enabled\n");
+	else
+		Debug_Printf("Mouse rectangles disabled\n");
+
+	draggingRectangle = 0;
+	return true;
+}
+
+bool Debugger::Cmd_Clear(int argc, const char **argv) {
+	res_man.killAllObjects(true);
+	return true;
+}
+
+bool Debugger::Cmd_DebugOn(int argc, const char **argv) {
+	displayDebugText = true;
+	displayWalkGrid = true;
+	displayMouseMarker = true;
+	displayPlayerMarker = true;
+	displayTextNumbers = true;
+	Debug_Printf("Enabled all on-screen debug info\n");
+	return true;
+}
+
+bool Debugger::Cmd_DebugOff(int argc, const char **argv) {
+	displayDebugText = false;
+	displayWalkGrid = false;
+	displayMouseMarker = false;
+	displayPlayerMarker = false;
+	displayTextNumbers = false;
+	Debug_Printf("Disabled all on-screen debug info\n");
+	return true;
+}
+
+bool Debugger::Cmd_SaveRest(int argc, const char **argv) {
+	testingSnR = !testingSnR;
+
+	if (testingSnR)
+		Debug_Printf("Enabled S&R logic_script stability checking\n");
+	else
+		Debug_Printf("Disabled S&R logic_script stability checking\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ListSaveGames(int argc, const char **argv) {
+	Debug_Printf("Savegames:\n");
+
+	for (int i = 0; i < 100; i++) {
+		uint8 description[SAVE_DESCRIPTION_LEN];
+
+		// if there is a save game print the name
+		if (GetSaveDescription(i, description) == SR_OK)
+			Debug_Printf("%d: \"%s\"\n", i, description);
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
+	char description[SAVE_DESCRIPTION_LEN];
+	int len = 0;
+	uint16 slotNo;
+	uint32 rv;
+
+	if (argc < 3) {
+		Debug_Printf("Usage: %s slot description\n", argv[0]);
+		return true;
+	}
+
+	// if mouse if off, or system menu is locked off
+	if (mouse_status || mouse_mode_locked) {
+		Debug_Printf("WARNING: Cannot save game while control menu unavailable!\n");
+		return true;
+	}
+
+	description[0] = 0;
+
+	// FIXME: Strange things seem to happen if use too long savegame names,
+	// even when they're shorter than the maximum allowed length
+
+	for (int i = 2; i < argc; i++) {
+		if (len + strlen(argv[i]) + 1 > SAVE_DESCRIPTION_LEN)
 			break;
 
-		do
-			index++;
-		while (console_buffer[index] == ' ');
-	} while (j < MAX_CONSOLE_PARAMS);
-
-	// try to find the first word in the commands base
-
-	for (j = 0; j < TOTAL_CONSOLE_COMMANDS; j++) {
-		i = 0;
-		while (input[0][i] == commands[j][i] && input[0][i])
-			i++;
-
-		// got to the end of an entry - so must have matched the whole
-		// word
-		if (!input[0][i] && !commands[j][i]) {
-			// the console mode denotes the scope of the commands
-			// accepted 0 is the base mode
-
-			switch (console_mode) {
-			// external console commands may only be
-			// requiring a yes/no input for example
-			// a different scope would only accept yes and
-			// no and drop back out when found... see?
-
-			case 0:
-				// base command line
-				switch(j) {
-				case 0:		// HELP
-					Con_help();
-					return 0;
-				case 1:		// MEM
-					memory.displayMemory();
-					return 0;
-				case 2:		// Q
-					// quit the console
-					return 1;
-				case 3:		// TONY
-					Print_to_console("What about him?");
-					return 0;
-				case 6:		// RES
-					res_man.printConsoleClusters();
-					return 0;
-				case 7:		// STARTS
-					Con_print_start_menu();
-					return 0;
-				case 8:		// START
-				case 18:	// S (same as START)
-					Con_start(&input[1][0]);
-					// force the palette
-					g_display->setPalette(187, 1, pal, RDPAL_INSTANT);
-					return 0;
-				case 9:		// INFO
-					displayDebugText = 1 - displayDebugText;
-					if (displayDebugText)
-						Print_to_console("info text on");
-					else
-						Print_to_console("info text off");
-					return 0;
-				case 10:	// WALKGRID
-					displayWalkGrid = 1 - displayWalkGrid;
-					if (displayWalkGrid)
-						Print_to_console("walk-grid display on");
-					else
-						Print_to_console("walk-grid display off");
-					return 0;
-				case 11:	// MOUSE
-					displayMouseMarker = 1 - displayMouseMarker;
-					if (displayMouseMarker)
-						Print_to_console("mouse marker on");
-					else
-						Print_to_console("mouse marker off");
-					return 0;
-				case 12:	// PLAYER
-					displayPlayerMarker = 1 - displayPlayerMarker;
-					if (displayPlayerMarker)
-						Print_to_console("player feet marker on");
-					else
-						Print_to_console("player feet marker off");
-					return 0;
-				case 13:	// RESLOOK
-					res_man.examine(&input[1][0]);
-					return 0;
-				case 14:	// CUR
-					Print_current_info();
-					return 0;
-				case 15:	// RUNLIST
-					g_logic.examineRunList();
-					return 0;
-				case 16:	// KILL
-					res_man.kill(&input[1][0]);
-					return 0;
-				case 17:	// NUKE
-					Print_to_console("killing all resources except variable file & player object...");
-					// '1' means we want output to console
-					res_man.killAll(1);
-					return 0;
-				case 19:	// VAR
-					if (total_commands == 2)
-						Var_check(&input[1][0]);
-					else
-						Var_set(&input[1][0], &input[2][0]);
-					return 0;
-				case 20:	// RECT
-					definingRectangles = 1 - definingRectangles;
-					if (definingRectangles)
-						Print_to_console("mouse rectangles enabled");
-					else
-						Print_to_console("mouse rectangles disabled");
-					// reset (see debug.cpp & mouse.cpp)
-					draggingRectangle = 0;
-					return 0;
-				case 21:	// CLEAR
-					Print_to_console("killing all object resources except player...");
-					// '1' means we want output to console
-					res_man.killAllObjects(1);
-					return 0;
-				case 22:	// DEBUGON
-					displayDebugText = 1;
-					displayWalkGrid = 1;
-					displayMouseMarker = 1;
-					displayPlayerMarker = 1;
-					displayTextNumbers = 1;
-
-					Print_to_console("enabled all on-screen debug info");
-					return 0;
-				case 23:	// DEBUGOFF
-					displayDebugText = 0;
-					displayWalkGrid = 0;
-					displayMouseMarker = 0;
-					displayPlayerMarker = 0;
-					displayTextNumbers = 0;
-					definingRectangles = 0;
-					draggingRectangle = 0;
-
-					Print_to_console("disabled all on-screen debug info");
-					return 0;
-				case 24:	// SAVEREST
-					testingSnR = 1 - testingSnR;
-					if (testingSnR)
-						Print_to_console("Enabled S&R logic_script stability checking");
-					else
-						Print_to_console("Disabled S&R logic_script stability checking");
-					return 0;
-				case 25:	// SAVES
-					Print_to_console("Savegames:");
-					Con_list_savegames();
-					return 0;
-				case 26:	// SAVE <slotNo> <description>
-					Con_save_game(total_commands, &input[1][0], &input[2][0]);
-					return 0;
-				case 27:	// RESTORE <slotNo>
-					Con_restore_game(total_commands, &input[1][0]);
-
-					// quit the console
-					return 1;
-				case 28:	// BLTFXON
-					SetBltFx();
-					Print_to_console("blit fx enabled");
-					return 0;
-				case 29:	// BLTFXOFF
-					ClearBltFx();
-					Print_to_console("blit fx disabled");
-					return 0;
-				case 30:	// TIMEON
-					Con_start_timer(total_commands, &input[1][0]);
-					Print_to_console("timer display on");
-					return 0;
-				case 31:	// TIMEOFF
-					displayTime = 0;
-					Print_to_console("timer display off");
-					return 0;
-				case 32:	// TEXT
-					displayTextNumbers = 1 - displayTextNumbers;
-					if (displayTextNumbers)
-						Print_to_console("text numbers on");
-					else
-						Print_to_console("text numbers off");
-					return 0;
-				case 33:	// SHOWVAR <varNo>
-					// add variable to watch-list
-					ShowVar(&input[1][0]);
-					return 0;
-				case 34:	// HIDEVAR <varNo>
-					// remove variable from watch-list
-					HideVar(&input[1][0]);
-					return 0;
-				case 35:	// VERSION
-					Con_display_version();
-					return 0;
-				case 36:	// SOFT
-				case 37:	// HARD
-					// ScummVM doesn't distinguish between
-					// software and hardware rendering
-					Print_to_console("This command is no longer relevant");
-					return 0;
-				case 38:	// ANIMTEST
-					// automatically do "s 32" to run the
-					// text/speech testing start-script
-
-					Con_start((uint8 *) "32");
-					Print_to_console("Setting flag 'system_testing_anims'");
-
-					// same as typing "VAR 912 <value>" at
-					// the console
-
-					Var_set((uint8 *) "912", &input[1][0]);
-					return 1;
-				case 39:	// TEXTTEST
-					// automatically do "s 33" to run the
-					// text/speech testing start-script
-
-					Con_start((uint8 *) "33");
-
-					Print_to_console("Setting flag 'system_testing_text'");
-
-					// same as typing "VAR 1230 <value>" at
-					// the console
-					Var_set((uint8 *) "1230", &input[1][0]);
-
-					displayTextNumbers = 1;
-					Print_to_console("text numbers on");
-					return 1;
-				case 40:	// LINETEST
-					// automatically do "s 33" to run the
-					// text/speech testing start-script
-
-					Con_start((uint8 *) "33");
-
-					Print_to_console("Setting var 1230 (system_testing_text):");
-
-					// same as typing "VAR 1230 <value>" at
-					// the console
-					Var_set((uint8 *) "1230", &input[1][0]);
-
-					Print_to_console("Setting var 1264 (system_test_line_no):");
-
-					// same as typing "VAR 1264 <value>" at
-					// the console
-					Var_set((uint8 *) "1264", &input[2][0]);
-
-					displayTextNumbers = 1;
-					Print_to_console("text numbers on");
-					return 1;
-				case 41:	// GRAB
-					grabbingSequences = 1 - grabbingSequences;
-					if (grabbingSequences)
-						Print_to_console("PCX-grabbing enabled");
-					else
-						Print_to_console("PCX-grabbing disabled");
-					return 0;
-				case 42:	// EVENTS
-					Con_display_events();
-					return 0;
-				case 43:	// SFX
-					wantSfxDebug = 1 - wantSfxDebug;
-					if (wantSfxDebug)
-						Print_to_console("SFX logging activated (see zebug.txt)");
-					else
-						Print_to_console("SFX logging deactivated");
-					return 0;
-				case 44:	// ENGLISH
-					initialiseFontResourceFlags(DEFAULT_TEXT);
-					Print_to_console("Default fonts selected");
-					return 0;
-				case 45:	// FINNISH
-					initialiseFontResourceFlags(FINNISH_TEXT);
-					Print_to_console("Finnish fonts selected");
-					return 0;
-				case 46:	// POLISH
-					initialiseFontResourceFlags(POLISH_TEXT);
-					Print_to_console("Polish fonts selected");
-					return 0;
-				default:
-					Print_to_console("??");
-					return 0;
-				}
-				break;
-			case 1:
-				// checks for YES and NO and returns the 1 or
-				// 2 to the calling code
-				switch (j) {
-				case 4:	// YES
-					return 1;
-				case 5:	// NO
-					return 2;
-				default:
-					Print_to_console("??");
-					return 0;
-				}
-				break;
-			}
-			break;
+		if (i == 2) {
+			strcpy(description, argv[i]);
+			len = strlen(argv[i]);
+		} else {
+			strcat(description, " ");
+			strcat(description, argv[i]);
+			len += (strlen(argv[i]) + 1);
 		}
 	}
 
-	Print_to_console("?");	//couldn't find a proper match
-	return 0;
+	slotNo = atoi(argv[1]);
+	rv = SaveGame(slotNo, (uint8 *) description);
+
+	if (rv == SR_OK)
+		Debug_Printf("Saved game \"%s\" to file \"savegame.%.3d\"\n", description, slotNo);
+	else if (rv == SR_ERR_FILEOPEN)
+		Debug_Printf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
+	else	// SR_ERR_WRITEFAIL
+		Debug_Printf("ERROR: Write error on file \"savegame.%.3d\"\n", slotNo);
+
+	return true;
 }
 
-void Con_help(void) {
-	// print out a list of commands
+bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
+	uint16 slotNo;
+	uint8 description[SAVE_DESCRIPTION_LEN];
+	uint32 rv;
 
-	int command;
-	int scrolls = 0;
-	char c;
-
-	Scroll_console();
-
-	for (command = 0; command < TOTAL_CONSOLE_COMMANDS; command++) {
-		Print_to_console((char *) commands[command]);
-		Build_display();
-		scrolls++;
-
-		if (scrolls == 18) {
-			Temp_print_to_console("- Press ESC to stop or any other key to continue");
-			Build_display();
-
-			do {
-				g_display->updateDisplay();
-			} while (!KeyWaiting());
-
-			ReadKey(&c);
-			if (c == 27)
-				break;
-
-			// clear the Press Esc message ready for the new line
-			Clear_console_line();
-			scrolls = 0;
-		}	
+	if (argc != 2) {
+		Debug_Printf("Usage: %s slot\n", argv[0]);
+		return true;
 	}
-}
 
-void Con_print(uint8 *ascii, uint32 pen, uint32 paper) {
-	// print pixels in closen pen number - no clipping on this one
-	// where file is the graphic file of ascii characters
-
-	_frameHeader *head;
-	uint8 *charSet, *charPtr;
-	int chr, x = 0;
-
-	// open font file
-	charSet = res_man.open(CONSOLE_FONT_ID);
-
-	do {
-		chr = (int) *(ascii);
-		chr -= 32;
-
-		head = (_frameHeader *) FetchFrameHeader(charSet, chr);
-		charPtr = (uint8 *) (head + 1);
-
-		Con_colour_block( x, head->width, head->height, pen, paper, charPtr);
-
-		x += head->width + 1;
-		ascii++;
-	} while(*(ascii));
-
-	// close font file
-	res_man.close(CONSOLE_FONT_ID);
-}
-
-void Con_colour_block(int x, int width, int height, uint32 pen, uint32 paper, uint8 *sprite_data_ad) {
-	int deltaX, xx, yy;
-	char *ad;
-
-	deltaX = con_width - width;
-
-	ad = (char *) console_sprite->ad;
-
-	// locate bottom character row
-	ad += (con_width * (con_depth - con_chr_height)) + x;
-
-	for (yy = 0; yy < height; yy++) {
-		for (xx = 0; xx < width; xx++) {
-			if (pen = *(sprite_data_ad++))	//color
-				*(ad++)= (uint8) CON_PEN;
-			else	*(ad++)= (uint8) paper;
-		}
-		ad += deltaX;
+	// if mouse if off, or system menu is locked off
+	if (mouse_status || mouse_mode_locked) {
+		Debug_Printf("WARNING: Cannot restore game while control menu unavailable!\n");
+		return true;
 	}
+
+	slotNo = atoi(argv[1]);
+	rv = RestoreGame(slotNo);
+
+	if (rv == SR_OK) {
+		GetSaveDescription(slotNo, description);
+		Debug_Printf("Restored game \"%s\" from file \"savegame.%.3d\"\n", description, slotNo);
+	} else if (rv == SR_ERR_FILEOPEN)
+		Debug_Printf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
+	else if (rv == SR_ERR_INCOMPATIBLE)
+		Debug_Printf("ERROR: \"savegame.%.3d\" is no longer compatible with current player/variable resources\n", slotNo);
+	else	// SR_ERR_READFAIL
+		Debug_Printf("ERROR: Read error on file \"savegame.%.3d\"\n", slotNo);
+
+	return true;
 }
 
-void Con_fatal_error(const char *format, ...) {
-	// Use this to alert the user of a major problem from which we cannot
-	// allow the game to continue. While in console mode the user will
-	// still be ble to use the console commands - which may be useful.
-	// This message is also written with debug() in case the console
-	// itself blows up
+// FIXME: Replace these with a command to modify the graphics detail setting
 
-	va_list arg_ptr;
-	char buf[150];
-	uint8 white[4] = { 255, 255, 255, 0 };
-
-	// set text colour in case screen is faded down!
-	g_display->setPalette(CON_PEN, 1, white, RDPAL_INSTANT);
-
-	va_start(arg_ptr,format);
-	_vsnprintf(buf, 150, format, arg_ptr);
-
-	this_screen.background_layer_id = 0;	//in case error in display loop
-
-	// write to file first in-case the screen is screwed up and we never
-	// see the console
-
-	debug(5, "CON_FATAL_ERROR: %s", buf);
-
-	Print_to_console(buf);
-	Print_to_console("fatal error, sword2 must terminate :-(  (%d)", ID);
-
-	//mode 0 so all commands are available but quit will terminate the game
-	Tconsole(0);
-
-	Close_game();	// should down game services - free's mallocs, etc.
-	CloseAppWindow();
-
-	exit 0;
+bool Debugger::Cmd_BltFxOn(int argc, const char **argv) {
+	// g_display->setBltFx();
+	// Debug_Printf("Blit fx enabled\n");
+	Debug_Printf("FIXME: The setBltFx() function no longer exists\n");
+	return true;
 }
 
-void Var_check(uint8 *pointer) {
-	int var;
-
-	sscanf((char *) pointer, "%d", &var);
-
-	Print_to_console("%d", *(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var));
+bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
+	// g_display->clearBltFx();
+	// Debug_Printf("Blit fx disabled\n");
+	Debug_Printf("FIXME: The clearBltFx() function no longer exists\n");
+	return true;
 }
 
-void Var_set(uint8 *pointer, uint8 *p2) {
-	int var;
-	int val;
-
-	sscanf((char *) pointer, "%d", &var);
-	sscanf((char *) p2, "%d", &val);
-
-	Print_to_console("was %d", *(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var));
-
-	*(uint32 *) (res_man._resList[1]->ad + sizeof(_standardHeader) + 4 * var) = val;
-
-	Print_to_console("now %d", val);
+bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
+	if (argc == 2)
+		startTime = SVM_timeGetTime() - atoi(argv[1]) * 1000;
+	else if (startTime == 0)
+		startTime = SVM_timeGetTime();
+	displayTime = true;
+	Debug_Printf("Timer display on\n");
+	return true;
 }
 
-void ShowVar(uint8 *varNoPtr) {
+bool Debugger::Cmd_TimeOff(int argc, const char **argv) {
+	displayTime = false;
+	Debug_Printf("Timer display off\n");
+	return true;
+}
+
+bool Debugger::Cmd_Text(int argc, const char **argv) {
+	displayTextNumbers = !displayTextNumbers;
+
+	if (displayTextNumbers)
+		Debug_Printf("Text numbers on\n");
+	else
+		Debug_Printf("Text numbers off\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ShowVar(int argc, const char **argv) {
 	int32 showVarNo = 0;
 	int32 varNo;
-	
-	// 'varNo' is what we want to add
-	sscanf((char *) varNoPtr, "%d", &varNo);
 
+	if (argc != 2) {
+		Debug_Printf("Usage: %s number\n", argv[0]);
+		return true;
+	}
+
+	varNo = atoi(argv[1]);
+	
 	// search for a spare slot in the watch-list, but also watch out for
 	// this variable already being in the list
 
@@ -868,20 +642,26 @@ void ShowVar(uint8 *varNoPtr) {
 		if (showVar[showVarNo] == 0) {
 			// empty slot - add it to the list at this slot
 			showVar[showVarNo] = varNo;
-			Print_to_console("var(%d) added to the watch-list", varNo);
+			Debug_Printf("var(%d) added to the watch-list\n", varNo);
 		} else
-			Print_to_console("var(%d) already in the watch-list!", varNo);
+			Debug_Printf("var(%d) already in the watch-list!\n", varNo);
 	} else
-		Print_to_console("Sorry - no more allowed - hide one or extend the system watch-list");
+		Debug_Printf("Sorry - no more allowed - hide one or extend the system watch-list\n");
+
+	return true;
 }
 
-void HideVar(uint8 *varNoPtr) {
+bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 	int32 showVarNo = 0;
 	int32 varNo;
-	
-	// 'varNo' is what we want to remove
-	sscanf((char *) varNoPtr, "%d", &varNo);
 
+	if (argc != 2) {
+		Debug_Printf("Usage: %s number\n", argv[0]);
+		return true;
+	}
+
+	varNo = atoi(argv[1]);
+	
 	// search for 'varNo' in the watch-list
 	while (showVarNo < MAX_SHOWVARS && showVar[showVarNo] != varNo)
 		showVarNo++;
@@ -889,129 +669,33 @@ void HideVar(uint8 *varNoPtr) {
 	if (showVarNo < MAX_SHOWVARS) {
 		// We've found 'varNo' in the list - clear this slot
 		showVar[showVarNo] = 0;
-		Print_to_console("var(%d) removed from watch-list", varNo);
+		Debug_Printf("var(%d) removed from watch-list\n", varNo);
 	} else
-		Print_to_console("Sorry - can't find var(%d) in the list", varNo);
+		Debug_Printf("Sorry - can't find var(%d) in the list\n", varNo);
+
+	return true;
 }
 
-void Con_list_savegames(void) {
-	uint8 description[SAVE_DESCRIPTION_LEN];
-	int j, scrolls = 0;
-	char c;
+bool Debugger::Cmd_Version(int argc, const char **argv) {
 
-	for (j = 0; j < 100; j++) {
-		// if there is a save game print the name
-		if (GetSaveDescription(j, description) == SR_OK) {
-			Print_to_console("%d: \"%s\"", j, description);
+	// The version string is incomplete, so we may as well remove the code
+	// to extract information from it.
 
-			scrolls++;
-			Build_display();
+#if 0
 
-			if (scrolls == 18) {
-				Temp_print_to_console("- Press ESC to stop or any other key to continue");
-				Build_display();
+	#define HEAD_LEN 8
 
-				do {
-					g_display->updateDisplay();
-				} while (!KeyWaiting());
+	// version & owner details
 
-				ReadKey(&c);
-				if (c == 27)
-					break;
+	// So version string is 18 bytes long :
+	// Version String =  <8 byte header,5 character version, \0, INT32 time>
+	uint8 version_string[HEAD_LEN + 10] = { 1, 255, 37, 22, 45, 128, 34, 67 };
+	uint8 unencoded_name[HEAD_LEN + 48] = {
+		76, 185, 205, 23, 44, 34, 24, 34,
+		'R','e','v','o','l','u','t','i','o','n',' ',
+		'S','o','f','t','w','a','r','e',' ','L','t','d',
+		0 };
 
-				// clear the Press Esc message ready for the
-				// new line
-				Clear_console_line();
-				scrolls = 0;
-			}
-		}
-}
-
-void Con_save_game(int total_commands, uint8 *slotString, uint8 *description) {
-	uint16 slotNo;
-	uint32 rv;
-
-	// if mouse if off, or system menu is locked off
-	if (mouse_status || mouse_mode_locked) {
-		Print_to_console("WARNING: Cannot save game while control menu unavailable!");
-		return;
-	}
-
-	if (total_commands >= 3) {
-		// SAVE <slot> <description>
-		if (Is_number(slotString)) {
-			slotNo = atoi((char *) slotString);
-			rv = SaveGame(slotNo,description);
-
-			if (rv == SR_OK)
-				Print_to_console("Saved game \"%s\" to file \"savegame.%.3d\"", description, slotNo);
-			else if (rv == SR_ERR_FILEOPEN)
-				Print_to_console("ERROR: Cannot open file \"savegame.%.3d\"", slotNo);
-			else	// SR_ERR_WRITEFAIL
-				Print_to_console("ERROR: Write error on file \"savegame.%.3d\"", slotNo);
-		}
-	} else
-		Print_to_console("Syntax Error: type SAVE (slot_number) (description)");
-}
-
-void Con_restore_game(int total_commands, uint8 *slotString) {
-	uint16 slotNo;
-	uint8 description[SAVE_DESCRIPTION_LEN];
-	uint32 rv;
-
-	// if mouse if off, or system menu is locked off
-	if (mouse_status || mouse_mode_locked) {
-		Print_to_console("WARNING: Cannot restore game while control menu unavailable!");
-		return;
-	}
-
-	if (total_commands >= 2) {
-		// RESTORE <slot>
-		if (Is_number(slotString)) {
-			slotNo = atoi((char *) slotString);
-			rv = RestoreGame(slotNo);
-
-			if (rv == SR_OK) {
-				GetSaveDescription(slotNo, description);
-				Print_to_console("Restored game \"%s\" from file \"savegame.%.3d\"", description, slotNo);
-			} else if (rv == SR_ERR_FILEOPEN)
-				Print_to_console("ERROR: Cannot open file \"savegame.%.3d\"", slotNo);
-
-			else if (rv == SR_ERR_INCOMPATIBLE)
-				Print_to_console("ERROR: \"savegame.%.3d\" is no longer compatible with current player/variable resources", slotNo);
-
-			else	// SR_ERR_READFAIL
-				Print_to_console("ERROR: Read error on file \"savegame.%.3d\"", slotNo);
-		}
-	} else
-		Print_to_console("Syntax Error: type RESTORE (slot_number)");
-}
-
-void Con_start_timer(int total_commands, uint8 *slotString) {
-	if (total_commands >= 2) {
-		if (Is_number(slotString)) {
-			startTime = timeGetTime() - (atoi((char *) slotString) * 1000);
-		}
-	} else {
-		if (startTime = 0)
-			startTime = timeGetTime();
-	}
-	displayTime = 1;
-}
-
-uint8 Is_number(uint8 *ascii) {
-	// until we reach the null terminator
-	while (*ascii) {
-		if (*ascii >= '0' && *ascii <= '9')
-			ascii++;
-		else
-			return 0;
-	}
-
-	return 1;
-}
-
-void Con_display_version(void) {
 	struct tm *time;
 	time_t t;
 	char dateStamp[255];
@@ -1026,49 +710,196 @@ void Con_display_version(void) {
 	time = localtime(&t);
 	sprintf(dateStamp, "%s", asctime(time));
 	dateStamp[24] = 0;	// fudge over the newline character!
+#endif
 
-	Print_to_console("\"Broken Sword II\" (c) Revolution Software 1997.");
-	Print_to_console("v%s created on %s for %s", version, dateStamp, unencoded_name + HEAD_LEN);
-	Scroll_console();
+	Debug_Printf("\"Broken Sword II\" (c) Revolution Software 1997.\n");
 
+#if 0
+	Debug_Printf("v%s created on %s for %s\n", version, dateStamp, unencoded_name + HEAD_LEN);
+#endif
+
+#if 0
 	// THE FOLLOWING LINES ARE TO BE COMMENTED OUT OF THE FINAL VERSION
-	// Print_to_console("This program has a personalised fingerprint encrypted into the code.");
-	// Print_to_console("If this CD was not sent directly to you by Virgin Interactive or Revolution Software");
-	// Print_to_console("then please contact James Long at Revolution on (+44) 1904 639698.");
-	// Scroll_console();
+	Debug_Printf("This program has a personalised fingerprint encrypted into the code.\n");
+	Debug_Printf("If this CD was not sent directly to you by Virgin Interactive or Revolution Software\n");
+	Debug_Printf("then please contact James Long at Revolution on (+44) 1904 639698.\n");
+#endif
+
+	return true;
 }
 
-void Con_display_events() {
-	uint32 j;
-	uint32 target;
-	uint32 script;
+bool Debugger::Cmd_SoftHard(int argc, const char **argv) {
+	Debug_Printf("ScummVM doesn't distinguish between software and hardware rendering.\n");
+	return true;
+}
 
-	Print_to_console("EVENT LIST:");
+bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
+	if (argc != 2) {
+		Debug_Printf("Usage: %s value\n", argv[0]);
+		return true;
+	}
 
-	for (j = 0; j < MAX_events; j++) {
-		if (event_list[j].id) {
-			target = event_list[j].id;
-			script = event_list[j].interact_id;
+	// Automatically do "s 32" to run the animation testing start script
+	Con_start(32);
 
-			Print_to_console("slot %d: id = %s (%d)", j, FetchObjectName(target), target);
-			Print_to_console("         script = %s (%d) pos %d", FetchObjectName(script / 65536), script / 65536, script % 65536);
+	// Same as typing "VAR 912 <value>" at the console
+	Var_set(912, atoi(argv[1]));
+
+	Debug_Printf("Setting flag 'system_testing_anims'\n");
+	return true;
+}
+
+bool Debugger::Cmd_TextTest(int argc, const char **argv) {
+	if (argc != 2) {
+		Debug_Printf("Usage: %s value\n", argv[0]);
+		return true;
+	}
+
+	// Automatically do "s 33" to run the text/speech testing start script
+	Con_start(33);
+
+	// Same as typing "VAR 1230 <value>" at the console
+	Var_set(1230, atoi(argv[1]));
+
+	displayTextNumbers = true;
+
+	Debug_Printf("Setting flag 'system_testing_text'\n");
+	Debug_Printf("Text numbers on\n");
+	return true;
+}
+
+bool Debugger::Cmd_LineTest(int argc, const char **argv) {
+	if (argc != 3) {
+		Debug_Printf("Usage: %s value1 value2\n", argv[0]);
+		return true;
+	}
+
+	// Automatically do "s 33" to run the text/speech testing start script
+	Con_start(33);
+
+	// Same as typing "VAR 1230 <value>" at the console
+	Var_set(1230, atoi(argv[1]));
+
+	// Same as typing "VAR 1264 <value>" at the console
+	Var_set(1264, atoi(argv[2]));
+
+	displayTextNumbers = true;
+
+	Debug_Printf("Setting flag 'system_testing_text'\n");
+	Debug_Printf("Setting flag 'system_test_line_no'\n");
+	Debug_Printf("Text numbers on\n");
+	return true;
+}
+
+bool Debugger::Cmd_Grab(int argc, const char **argv) {
+	Debug_Printf("FIXME: Continuous screen-grabbing not implemented\n");
+
+#if 0
+	grabbingSequences = !grabbingSequences;
+
+	if (grabbingSequences)
+		Debug_Printf("PCX-grabbing enabled\n");
+	else
+		Debug_Printf("PCX-grabbing disabled\n");
+#endif
+
+	return true;
+}
+
+bool Debugger::Cmd_Events(int argc, const char **argv) {
+	Debug_Printf("EVENT LIST:\n");
+
+	for (uint32 i = 0; i < MAX_events; i++) {
+		if (event_list[i].id) {
+			uint32 target = event_list[i].id;
+			uint32 script = event_list[i].interact_id;
+
+			Debug_Printf("slot %d: id = %s (%d)\n", i, FetchObjectName(target), target);
+			Debug_Printf("         script = %s (%d) pos %d\n", FetchObjectName(script / 65536), script / 65536, script % 65536);
 		}
 	}
+
+	return true;
+}
+
+bool Debugger::Cmd_Sfx(int argc, const char **argv) {
+	wantSfxDebug = !wantSfxDebug;
+
+	if (wantSfxDebug)
+		Debug_Printf("SFX logging activated\n");
+	else
+		Debug_Printf("SFX logging deactivated\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_English(int argc, const char **argv) {
+	g_sword2->initialiseFontResourceFlags(DEFAULT_TEXT);
+	Debug_Printf("Default fonts selected\n");
+	return true;
+}
+
+bool Debugger::Cmd_Finnish(int argc, const char **argv) {
+	g_sword2->initialiseFontResourceFlags(FINNISH_TEXT);
+	Debug_Printf("Finnish fonts selected\n");
+	return true;
+}
+
+bool Debugger::Cmd_Polish(int argc, const char **argv) {
+	g_sword2->initialiseFontResourceFlags(POLISH_TEXT);
+	Debug_Printf("Polish fonts selected\n");
+	return true;
+}
+
+// returns true if something has been completed
+// completion has to be delete[]-ed then
+bool Debugger::TabComplete(const char *input, char*& completion) {
+	// very basic tab completion
+	// for now it just supports command completions
+
+	// adding completions of command parameters would be nice (but hard) :-)
+	// maybe also give a list of possible command completions?
+	//   (but this will require changes to console)
+
+	if (strchr(input, ' '))
+		return false; // already finished the first word
+
+	unsigned int inputlen = strlen(input);
+
+	unsigned int matchlen = 0;
+	char match[30]; // the max. command name is 30 chars
+
+	for (int i = 0; i < _dcmd_count; i++) {
+		if (!strncmp(_dcmds[i].name, input, inputlen)) {
+			unsigned int commandlen = strlen(_dcmds[i].name);
+			if (commandlen == inputlen) { // perfect match
+				return false;
+			}
+			if (commandlen > inputlen) { // possible match
+				// no previous match
+				if (matchlen == 0) {
+					strcpy(match, _dcmds[i].name + inputlen);
+					matchlen = commandlen - inputlen;
+				} else {
+					// take common prefix of previous match and this command
+					unsigned int j;
+					for (j = 0; j < matchlen; j++) {
+						if (match[j] != _dcmds[i].name[inputlen + j]) break;
+					}
+					matchlen = j;
+				}
+				if (matchlen == 0)
+					return false;
+			}
+		}
+	}
+	if (matchlen == 0)
+		return false;
+
+	completion = new char[matchlen + 1];
+	memcpy(completion, match, matchlen);
+	completion[matchlen] = 0;
+	return true;
 }
 
 } // End of namespace Sword2
-
-#else
-
-namespace Sword2 {
-
-void Print_to_console(const char *format, ...) {}
-void Temp_print_to_console(const char *format, ...) {}
-void Clear_console_line(void) {}
-void Scroll_console(void) {}
-void Init_console(void) {}
-void StartConsole(void) {}
-
-} // End of namespace Sword2
-
-#endif

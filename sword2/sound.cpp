@@ -158,9 +158,11 @@ int32 Logic::fnPlayFx(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	_standardHeader *header;
-	char type[10];
+#endif
 
 	if (wantSfxDebug) {
+		char type[10];
+
 		switch (params[1]) {	// 'type'
 		case FX_SPOT:
 			strcpy(type, "SPOT");
@@ -175,9 +177,8 @@ int32 Logic::fnPlayFx(int32 *params) {
 			strcpy(type, "INVALID");
 		}
 
-		debug(5, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", FetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
-#endif
 
 	while (j < FXQ_LENGTH && fxq[j].resource != 0)
 		j++;
@@ -208,7 +209,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("fnPlayFx given invalid resource");
+			error("fnPlayFx given invalid resource");
 #endif
 
 		// but then releases it to "age" out if the space is needed
@@ -224,7 +225,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
 		if (header->fileType != WAV_FILE)
-			Con_fatal_error("fnPlayFx given invalid resource");
+			error("fnPlayFx given invalid resource");
 #endif
 
 		data += sizeof(_standardHeader);

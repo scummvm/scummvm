@@ -63,7 +63,7 @@ int Logic::processSession(void) {
 		head = (_standardHeader*) res_man.open(run_list);
 
 		if (head->fileType != RUN_LIST)
-			Con_fatal_error("Logic_engine %d not a run_list", run_list);
+			error("Logic_engine %d not a run_list", run_list);
 
 		game_object_list = (uint32 *) (head + 1);
 
@@ -87,7 +87,7 @@ int Logic::processSession(void) {
 		head = (_standardHeader*) res_man.open(ID);
 
 		if (head->fileType != GAME_OBJECT)
-			Con_fatal_error("Logic_engine %d not an object", ID);
+			error("Logic_engine %d not an object", ID);
 
 		_curObjectHub = (_object_hub *) (head + 1);
 
@@ -133,7 +133,7 @@ int Logic::processSession(void) {
 				far_head = (_standardHeader*) res_man.open(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
-					Con_fatal_error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
+					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
 
 				// raw_script_ad = (char*) (head + 1) + sizeof(_standardHeader);
 
@@ -171,7 +171,7 @@ int Logic::processSession(void) {
 					ret = 0;
 				}
 			} else if (ret > 2) {
-				Con_fatal_error("processSession: illegal script return type %d", ret);
+				error("processSession: illegal script return type %d", ret);
 			}
 
 			// if ret == 2 then we simply go around again - a new
@@ -300,7 +300,7 @@ void Logic::logicUp(uint32 new_script) {
 
 	// can be 0, 1, 2
 	if (LEVEL == 3)
-		Con_fatal_error("logicUp id %d has run off script tree! :-O", ID);
+		error("logicUp id %d has run off script tree! :-O", ID);
 
 	// setup new script on next level (not the current level)
 
@@ -333,53 +333,25 @@ void Logic::logicReplace(uint32 new_script) {
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-uint32 Logic::examineRunList(void) {
+void Logic::examineRunList(void) {
 	uint32 *game_object_list;
 	_standardHeader *file_header;
-	int scrolls = 0;
-	_keyboardEvent ke;
 
 	if (_currentRunList) {
 		// open and lock in place
 		game_object_list = (uint32 *) (res_man.open(_currentRunList) + sizeof(_standardHeader));
 
-		Print_to_console("runlist number %d", _currentRunList);
+		Debug_Printf("Runlist number %d\n", _currentRunList);
 
 		for (int i = 0; game_object_list[i]; i++) {
 			file_header = (_standardHeader *) res_man.open(game_object_list[i]);
-			Print_to_console(" %d %s", game_object_list[i], file_header->name);
+			Debug_Printf("%d %s\n", game_object_list[i], file_header->name);
 			res_man.close(game_object_list[i]);
-
-			scrolls++;
-			Build_display();
-
-			if (scrolls == 18) {
-				Temp_print_to_console("- Press ESC to stop or any other key to continue");
-				Build_display();
-
-				do {
-					g_display->updateDisplay();
-				} while (!KeyWaiting());
-
-				// kill the key we just pressed
-				ReadKey(&ke);
-				if (ke.keycode == 27)
-					break;
-
-				// clear the Press Esc message ready for the
-				// new line
-
-				Clear_console_line();
-				scrolls = 0;
-			}
 		}
 
 		res_man.close(_currentRunList);
 	} else
-		Print_to_console("no run list set");
-
-	Scroll_console();
-	return 1;
+		Debug_Printf("No run list set\n");
 }
 
 /**
@@ -435,7 +407,7 @@ int32 Logic::fnAddToKillList(int32 *params) {
 #ifdef _SWORD2_DEBUG
 			// no room at the inn
 			if (_kills == OBJECT_KILL_LIST_SIZE)
-				Con_fatal_error("List full in fnAddToKillList(%u)", ID);
+				error("List full in fnAddToKillList(%u)", ID);
 #endif
 
 			// add this 'ID' to the kill list

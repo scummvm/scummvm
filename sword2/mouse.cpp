@@ -572,7 +572,6 @@ void Normal_mouse(void) {
 
 	me = MouseEvent();
 
-#ifdef _SWORD2_DEBUG
 	if (definingRectangles)	{
 		if (draggingRectangle == 0) {
 			// not yet dragging a rectangle, so need click to start
@@ -605,89 +604,86 @@ void Normal_mouse(void) {
 			}
 		}
 	} else {
-#endif
+		// We only care about down clicks when the mouse is over an
+		// object. We ignore mouse releases
 
-	// we only care about down clicks when the mouse is over an object
-	// we ignore mouse releases
+		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)) && mouse_touching) {
+			// there's a mouse event to be processed and the mouse
+			// is on something
 
-	if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)) && mouse_touching) {
-		// there's a mouse event to be processed and the mouse is on
-		// something
+			// ok, there are no menus about so its nice and simple
+			// this is as close to the old advisor_188 script as we
+			// get, I'm sorry to say.
 
-		// ok, there are no menus about so its nice and simple
-		// this is as close to the old advisor_188 script as we get
-		// I'm sorry to say.
+			// if player is walking or relaxing then those need to
+			// terminate correctly
 
-		// if player is walking or relaxing then those need to
-		// terminate correctly
+			// otherwise set player run the targets action script
+			// or, do a special walk if clicking on the scroll-more
+			// icon
 
-		// otherwise set player run the targets action script
-		// or, do a special walk if clicking on the scroll-more icon
+			// PLAYER_ACTION script variable - whatever catches
+			// this must reset to 0 again
+			// PLAYER_ACTION = mouse_touching;
 
-		// PLAYER_ACTION script variable - whatever catches this must
-		// reset to 0 again
-		// PLAYER_ACTION = mouse_touching;
+			// idle or router-anim will catch it
 
-		// idle or router-anim will catch it
+			// set global script variable 'button'
 
-		// set global script variable 'button'
+			if (me->buttons & RD_LEFTBUTTONDOWN) {
+				LEFT_BUTTON  = 1;
+				RIGHT_BUTTON = 0;
+				button_click = 0;	// for re-click
+			} else {
+				LEFT_BUTTON  = 0;
+				RIGHT_BUTTON = 1;
+				button_click = 1;	// for re-click
+			}
 
-		if (me->buttons & RD_LEFTBUTTONDOWN) {
-			LEFT_BUTTON  = 1;
-			RIGHT_BUTTON = 0;
-			button_click = 0;	// for re-click
-		} else {
-			LEFT_BUTTON  = 0;
-			RIGHT_BUTTON = 1;
-			button_click = 1;	// for re-click
-		}
+			// these might be required by the action script about
+			// to be run
+			MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+			MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 
-		// these might be required by the action script about to be run
-		MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-		MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+			// only left button
+			if (mouse_touching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
+				// its the exit double click situation
+				// let the existing interaction continue and
+				// start fading down - switch the human off too
 
-		// only left button
-		if (mouse_touching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
-			// its the exit double click situation
-			// let the existing interaction continue and start
-			// fading down - switch the human off too
+				g_logic.fnNoHuman(NULL);
+				g_logic.fnFadeDown(NULL);
+				EXIT_FADING = 1;	// tell the walker
+			} else if (old_button == button_click && mouse_touching == CLICKED_ID && mouse_pointer_res != NORMAL_MOUSE_ID) {
+				// re-click - do nothing - except on floors
+			} else {
+				// allow the click
+				old_button = button_click;	// for re-click
 
-			g_logic.fnNoHuman(NULL);
-			g_logic.fnFadeDown(NULL);
-			EXIT_FADING = 1;	// tell the walker
-		} else if (old_button == button_click && mouse_touching == CLICKED_ID && mouse_pointer_res != NORMAL_MOUSE_ID) {
-			// re-click - do nothing - except on floors
-		} else {
-			// allow the click
-			old_button = button_click;	// for re-click
+				// for scripts to know what's been clicked
+				// First used for 'room_13_turning_script' in
+				// object 'biscuits_13'
 
-			// for scripts to know what's been clicked
-			// First used for 'room_13_turning_script' in object
-			// 'biscuits_13'
+				CLICKED_ID = mouse_touching;
 
-			CLICKED_ID = mouse_touching;
+				// must clear these two double-click control
+				// flags - do it here so reclicks after exit
+				// clicks are cleared up
 
-			// must clear these two double-click control flags -
-			// do it here so reclicks after exit clicks are
-			// cleared up
+				EXIT_CLICK_ID = 0;
+				EXIT_FADING = 0;
 
-			EXIT_CLICK_ID = 0;
-			EXIT_FADING = 0;
+				Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
 
-			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
-
-			if (OBJECT_HELD)
-				debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
-			else if (LEFT_BUTTON)
-				debug(5, "LEFT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
-			else	// RIGHT BUTTON
-				debug(5, "RIGHT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+				if (OBJECT_HELD)
+					debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
+				else if (LEFT_BUTTON)
+					debug(5, "LEFT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+				else	// RIGHT BUTTON
+					debug(5, "RIGHT-CLICKED ON %s", FetchObjectName(CLICKED_ID));
+			}
 		}
 	}
-
-#ifdef _SWORD2_DEBUG
-	}
-#endif
 }
 
 void Mouse_on_off(void) {
@@ -746,7 +742,7 @@ void Mouse_on_off(void) {
 				Set_luggage(current_luggage_resource);
 			}
 		} else
-			Con_fatal_error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", mouse_touching, FetchObjectName(mouse_touching));
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", mouse_touching, FetchObjectName(mouse_touching));
 	} else if (old_mouse_touching && !mouse_touching) {
 		// the cursor has moved off something - reset cursor to
 		// normal pointer
@@ -1131,11 +1127,10 @@ int32 Logic::fnAddHuman(int32 *params) {
 	// enabled/disabled from console; status printed with on-screen debug
 	// info
 
-#ifdef _SWORD2_DEBUG
-	uint8 black[4] = {   0,  0,    0,   0 };
-	uint8 white[4] = { 255, 255, 255,   0 };
-
 	if (testingSnR) {
+		uint8 black[4] = {   0,  0,    0,   0 };
+		uint8 white[4] = { 255, 255, 255,   0 };
+
 		// testing logic scripts by simulating an instant Save &
 		// Restore
 
@@ -1149,11 +1144,10 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts
 
-		res_man.killAllObjects(0);
+		res_man.killAllObjects(false);
 
 		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
 	}
-#endif
 
 	return IR_CONT;
 }
@@ -1175,7 +1169,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	if (ob_mouse->pointer) {
 #ifdef _SWORD2_DEBUG
 		if (cur_mouse == TOTAL_mouse_list)
-			Con_fatal_error("ERROR: mouse_list full");
+			error("ERROR: mouse_list full");
 #endif
 
 		mouse_list[cur_mouse].x1 = ob_mouse->x1;
@@ -1224,7 +1218,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (cur_mouse == TOTAL_mouse_list)
-		Con_fatal_error("ERROR: mouse_list full");
+		error("ERROR: mouse_list full");
 #endif
 
 	// current object id - used for checking pointer_text when mouse area

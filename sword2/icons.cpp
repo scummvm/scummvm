@@ -40,7 +40,7 @@ int32 Logic::fnAddMenuObject(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (total_temp == TOTAL_engine_pockets)
-		Con_fatal_error("TOTAL_engine_pockets exceeded!");
+		error("TOTAL_engine_pockets exceeded!");
 #endif
 
 	// copy the structure to our in-the-engine list

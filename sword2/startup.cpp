@@ -146,11 +146,11 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (total_startups == MAX_starts)
-		Con_fatal_error("ERROR: start_list full");
+		error("ERROR: start_list full");
 
 	// +1 to allow for NULL terminator
 	if (strlen((char*) params[1]) + 1 > MAX_description)
-		Con_fatal_error("ERROR: startup description too long");
+		error("ERROR: startup description too long");
 #endif
 
 	// this objects id
@@ -162,151 +162,94 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 
 	strcpy(start_list[total_startups].description, (char*) params[1]);
 
-	//point to next
+	// point to next
 	total_startups++;
 
 	return 1;
 }
 
-uint32 Con_print_start_menu(void) {
+void Con_print_start_menu(void) {
 	// the console 'starts' (or 's') command which lists out all the
 	// registered start points in the game
 
-	uint32 j;
-	int scrolls = 0;
-	_keyboardEvent ke;
-
 	if (!total_startups) {
-		Print_to_console("Sorry - no startup positions registered?");
+		Debug_Printf("Sorry - no startup positions registered?\n");
 
 		if (!total_screen_managers)
-			Print_to_console("There is a problem with startup.inf");
+			Debug_Printf("There is a problem with startup.inf\n");
 		else
-			Print_to_console(" (%d screen managers found in startup.inf)", total_screen_managers);
+			Debug_Printf(" (%d screen managers found in startup.inf)\n", total_screen_managers);
 	} else {
-		for(j = 0; j < total_startups; j++) {
-			Print_to_console("%d  (%s)", j, start_list[j].description);
-			Build_display();
-			scrolls++;
-
-			if (scrolls == 18) {
-				Temp_print_to_console("- Press ESC to stop or any other key to continue");
-				Build_display();
-
-				do {
-					// Service windows
-					g_display->updateDisplay();
-				} while (!KeyWaiting());
-
-				// kill the key we just pressed
-				ReadKey(&ke);
-				if (ke.keycode == 27)
-					break;
-
-				// clear the Press Esc message ready for the
-				// new line
-
-				Clear_console_line();
-				scrolls = 0;
-			}	
-		}
+		for (uint i = 0; i < total_startups; i++)
+			Debug_Printf("%d  (%s)\n", i, start_list[i].description);
 	}
-	return 1;
 }
 
-uint32 Con_start(uint8 *input) {
-	// if the second word id is a numeric that can be applied to a
-	// genuine startup then do it
-
-	uint32 j = 0;
-	uint32 start;
+void Con_start(int start) {
 	char *raw_script;
 	char *raw_data_ad;
 	uint32 null_pc;
 
-	// so that typing 'S' then <enter> works on NT
-	if (input[0] == 0) {
-		Con_print_start_menu();
-		return 1;
-	}
+	if (!total_startups)
+		Debug_Printf("Sorry - there are no startups!\n");
+	else if (start >= 0 && start < (int) total_startups) {
+		// do the startup as we've specified a legal start
 
-	while (input[j]) {
-		if (isdigit(input[j]))
-			j++;
-		else
-			break;
-	}
+		// restarting - stop sfx, music & speech!
 
-	//didn't quit out of loop on a non numeric chr$
-	if (!input[j]) {
-		start = atoi((char*) input);
+		Clear_fx_queue();
 
-		if (!total_startups)
-			Print_to_console("Sorry - there are no startups!");
-		else if (start < total_startups) {
-			// do the startup as we've specified a legal start
+		// fade out any music that is currently playing
+		g_logic.fnStopMusic(NULL);
 
-			// restarting - stop sfx, music & speech!
+		// halt the sample prematurely
+		g_sound->unpauseSpeech();
+		g_sound->stopSpeech();
 
-			Clear_fx_queue();
+		// clean out all resources & flags, ready for a total
+		// restart (James24mar97)
 
-			// fade out any music that is currently playing
-			g_logic.fnStopMusic(NULL);
+		// remove all resources from memory, including player
+		// object & global variables
 
-			// halt the sample prematurely
-			g_sound->unpauseSpeech();
-			g_sound->stopSpeech();
+		res_man.removeAll();
 
-			// clean out all resources & flags, ready for a total
-			// restart (James24mar97)
+		// reopen global variables resource & send address to
+		// interpreter - it won't be moving
+		g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+		res_man.close(1);
 
-			// remove all resources from memory, including player
-			// object & global variables
+		// free all the route memory blocks from previous game
+		router.freeAllRouteMem();
 
-			res_man.removeAll();
+		// if there was speech text, kill the text block
+		if (speech_text_bloc_no) {
+			fontRenderer.killTextBloc(speech_text_bloc_no);
+			speech_text_bloc_no = 0;
+		}
 
-			// reopen global variables resource & send address to
-			// interpreter - it won't be moving
-			g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
-			res_man.close(1);
+		// set the key
 
-			// free all the route memory blocks from previous game
-			router.freeAllRouteMem();
+		// Open George
+		raw_data_ad = (char *) res_man.open(8);
+		raw_script = (char *) res_man.open(start_list[start].start_res_id);
 
-			// if there was speech text, kill the text block
-			if (speech_text_bloc_no) {
-				fontRenderer.killTextBloc(speech_text_bloc_no);
-				speech_text_bloc_no = 0;
-			}
+		// denotes script to run
+		null_pc = start_list[start].key & 0xffff;
 
-			// set the key
+		Debug_Printf("Running start %d\n", start);
+		g_logic.runScript(raw_script, raw_data_ad, &null_pc);
 
-			// Open George
-			raw_data_ad = (char *) (res_man.open(8));
-			raw_script = (char *) (res_man.open(start_list[start].start_res_id));
+		res_man.close(start_list[start].start_res_id);
 
-			// denotes script to run
-			null_pc = start_list[start].key & 0xffff;
+		// Close George
+		res_man.close(8);
 
-			Print_to_console("running start %d", start);
-			g_logic.runScript(raw_script, raw_data_ad, &null_pc);
-
-			res_man.close(start_list[start].start_res_id);
-
-			// Close George
-			res_man.close(8);
-
-			// make sure thre's a mouse, in case restarting while
-			// mouse not available
-			g_logic.fnAddHuman(NULL);
-		} else
-			Print_to_console("not a legal start position");
-	} else {
-		// so that typing 'S' then <enter> works under Win95
-		Con_print_start_menu();
-	}
-
-	return 1;
+		// make sure thre's a mouse, in case restarting while
+		// mouse not available
+		g_logic.fnAddHuman(NULL);
+	} else
+		Debug_Printf("Not a legal start position\n");
 }
 
 } // End of namespace Sword2

@@ -153,7 +153,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 #ifdef _SWORD2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res == 0)
-			Con_fatal_error("Animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+			error("Animate: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 		// open anim file
@@ -163,7 +163,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 		// check this this resource is actually an animation file!
 		head = (_standardHeader *) anim_file;
 		if (head->fileType != ANIMATION_FILE)
-			Con_fatal_error("Animate: %s (%d) is not an anim!", FetchObjectName(res), res);
+			error("Animate: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 		// point to anim header
@@ -172,7 +172,7 @@ int32 Animate(int32 *params, uint8 reverse_flag) {
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
 		if (anim_head->noAnimFrames == 0)
- 			Con_fatal_error("Animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
+ 			error("Animate: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 		// now running an anim, looping back to this 'FN' call again
@@ -275,7 +275,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res == 0)
-		Con_fatal_error("fnSetFrame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
+		error("fnSetFrame: %s (id %d) passed zero anim resource", FetchObjectName(ID), ID);
 #endif
 
 	// open the resource (& check it's valid)
@@ -286,7 +286,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 	// check this this resource is actually an animation file!
 	head = (_standardHeader *) anim_file;
 	if (head->fileType != ANIMATION_FILE)
-		Con_fatal_error("fnSetFrame: %s (%d) is not an anim!", FetchObjectName(res), res);
+		error("fnSetFrame: %s (%d) is not an anim!", FetchObjectName(res), res);
 #endif
 
 	// set up pointer to the animation header
@@ -295,7 +295,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
 	if (anim_head->noAnimFrames == 0)
-		Con_fatal_error("fnSetFrame: %s (%d) has zero frame count!", FetchObjectName(res), res);
+		error("fnSetFrame: %s (%d) has zero frame count!", FetchObjectName(res), res);
 #endif */
 
 	// set up anim resource in graphic object
@@ -487,7 +487,7 @@ int32 Logic::fnAddSequenceText(int32 *params) {
 
 #ifdef _SWORD2_DEBUG
 	if (sequenceTextLines == MAX_SEQUENCE_TEXT_LINES)
-		Con_fatal_error("fnAddSequenceText ran out of lines");
+		error("fnAddSequenceText ran out of lines");
 #endif
 
 	sequence_text_list[sequenceTextLines].textNumber = params[0];
@@ -663,7 +663,7 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	header = (_standardHeader *) leadIn;
 	if (header->fileType != WAV_FILE)
-		Con_fatal_error("fnSmackerLeadIn() given invalid resource");
+		error("fnSmackerLeadIn() given invalid resource");
 #endif
 
 	leadIn += sizeof(_standardHeader);
@@ -715,7 +715,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that the name paseed from script is 8 chars or less
 	if (strlen((char *) params[0]) > 8)
-		Con_fatal_error("Sequence filename too long");
+		error("Sequence filename too long");
 #endif
 
 	// add the appropriate file extension & play it

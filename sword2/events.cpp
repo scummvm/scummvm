@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
 #include "bs2/defs.h"
@@ -39,7 +40,6 @@ void Init_event_system(void) {
 	}
 }
 
-#ifdef _SWORD2_DEBUG
 uint32 CountEvents(void) {
 	uint32 count = 0;
 
@@ -50,7 +50,6 @@ uint32 CountEvents(void) {
 
 	return count;
 }
-#endif
 
 int32 Logic::fnRequestSpeech(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
@@ -70,7 +69,7 @@ int32 Logic::fnRequestSpeech(int32 *params) {
 	}
 
 	if (i == MAX_events)
-		Con_fatal_error("fnSetEvent out of event slots");
+		error("fnSetEvent out of event slots");
 
 	// found that slot
 
@@ -95,7 +94,7 @@ void Set_player_action_event(uint32 id, uint32 interact_id) {
 	}
 
 	if (i == MAX_events)
-		Con_fatal_error("Set_event out of event slots");
+		error("Set_event out of event slots");
 
 	// found that slot
 
@@ -129,7 +128,7 @@ int32 Logic::fnSetPlayerActionEvent(int32 *params) {
 	}
 
 	if (i == MAX_events)
-		Con_fatal_error("Set_event out of event slots");
+		error("Set_event out of event slots");
 
 	// found that slot
 
@@ -162,7 +161,7 @@ int32 Logic::fnSendEvent(int32 *params) {
 	}
 
 	if (i == MAX_events)
-		Con_fatal_error("fnSendEvent out of event slots");
+		error("fnSendEvent out of event slots");
 
 	// found that slot
 
@@ -304,7 +303,7 @@ void Start_event(void) {
 	}
 
 	// oh dear - stop the system
-	Con_fatal_error("Start_event can't find event for id %d", ID);
+	error("Start_event can't find event for id %d", ID);
 }
 
 int32 Logic::fnStartEvent(int32 *params) {
@@ -321,7 +320,7 @@ int32 Logic::fnStartEvent(int32 *params) {
 		}
 
 	// oh dear - stop the system
-	Con_fatal_error("fnStartEvent can't find event for id %d", ID);
+	error("fnStartEvent can't find event for id %d", ID);
 	return 0;	// never called - but lets stop them bloody errors
 }
 

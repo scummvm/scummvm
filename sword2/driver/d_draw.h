@@ -153,7 +153,6 @@ private:
 	void clearIconArea(int menu, int pocket, Common::Rect *r);
 
 	void decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
-	void drawMouse(void);
 
 	uint8 getMatch(uint8 r, uint8 g, uint8 b);
 	void fadeServer(void);
@@ -214,6 +213,8 @@ public:
 	int32 setLuggageAnim(uint8 *la, int32 size);
 	int32 animateMouse(void);
 
+	void drawMouse(void);
+
 	void resetRenderEngine(void);
 
 	void setScrollTarget(int16 sx, int16 sy);
@@ -225,10 +226,8 @@ public:
 	int32 initialiseBackgroundLayer(_parallax *p);
 	void closeBackgroundLayer(void);
 
-#ifdef _SWORD2_DEBUG
 	void plotPoint(uint16 x, uint16 y, uint8 colour);
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
-#endif
 
 	int32 createSurface(_spriteInfo *s, uint8 **surface);
 	void drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);

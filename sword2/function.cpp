@@ -367,7 +367,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	res_man.close(1);
 
 	// all objects but george
-	res_man.killAllObjects(0);
+	res_man.killAllObjects(false);
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground

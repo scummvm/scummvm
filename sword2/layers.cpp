@@ -65,7 +65,7 @@ int32 Logic::fnInitBackground(int32 *params) {
 	debug(5, "fnInitBackground(%d)", params[0]);
 
 	if (!params[0]) {
-		Con_fatal_error("ERROR: fnInitBackground cannot have 0 for background layer id!");
+		error("ERROR: fnInitBackground cannot have 0 for background layer id!");
 	}
 #endif
 

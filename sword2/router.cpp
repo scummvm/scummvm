@@ -75,6 +75,7 @@
 
 #include "stdafx.h"
 #include "bs2/driver/driver96.h"
+#include "bs2/sword2.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
 #include "bs2/defs.h"
@@ -492,7 +493,7 @@ int32 Router::smoothestPath() {
 		if (options == 0) {
 			debug(5, "BestTurns fail %d %d %d %d", _route[p].x, _route[p].y, _route[p + 1].x, _route[p + 1].y);
 			debug(5, "BestTurns fail %d %d %d %d", turns[0], turns[1], turns[2], options);
-			Con_fatal_error("BestTurns failed");
+			error("BestTurns failed");
 		}
 #endif
 
@@ -510,7 +511,7 @@ int32 Router::smoothestPath() {
 		if (steps == 0) {
 			debug(5, "BestTurns failed %d %d %d %d", _route[p].x, _route[p].y, _route[p + 1].x, _route[p + 1].y);
 			debug(5, "BestTurns failed %d %d %d %d", turns[0], turns[1], turns[2], options);
-			Con_fatal_error("BestTurns failed");
+			error("BestTurns failed");
 		}
 #endif
 
@@ -1225,7 +1226,7 @@ void Router::slidyWalkAnimator(_walkData *walkAnim) {
 
 #ifdef _SWORD2_DEBUG
 	if (lastRealDir == 99)
-		Con_fatal_error("slidyWalkAnimatorlast direction error");
+		error("slidyWalkAnimatorlast direction error");
 #endif
 
 	// THE SLOW OUT
@@ -2522,7 +2523,6 @@ void Router::setUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir) {
 	_node[_nnodes].dist = 9999;
 }
 
-#ifdef _SWORD2_DEBUG
 void Router::plotWalkGrid(void) {
 	int32 i;
 
@@ -2532,7 +2532,7 @@ void Router::plotWalkGrid(void) {
 	// lines
 
 	for (i = 0; i < _nbars; i++)
-		DrawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
+		g_display->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
 
 	// nodes
 
@@ -2542,10 +2542,9 @@ void Router::plotWalkGrid(void) {
 }
 
 void Router::plotCross(int16 x, int16 y, uint8 colour) {
-	DrawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	DrawLine(x + 1, y - 1, x - 1, y + 1, colour);	
+	g_display->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
+	g_display->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
-#endif
 
 void Router::loadWalkGrid(void) {
 	_walkGridHeader floorHeader;
@@ -2578,12 +2577,12 @@ void Router::loadWalkGrid(void) {
 			// allowed in the complete walkgrid arrays
 
 			if (_nbars + theseBars >= O_GRID_SIZE)
-				Con_fatal_error("Adding walkgrid(%d): %d+%d bars exceeds max %d",
+				error("Adding walkgrid(%d): %d+%d bars exceeds max %d",
 					_walkGridList[i], _nbars, theseBars,
 					O_GRID_SIZE);
 
 			if (_nnodes + theseNodes >= O_GRID_SIZE)
-				Con_fatal_error("Adding walkgrid(%d): %d+%d nodes exceeds max %d",
+				error("Adding walkgrid(%d): %d+%d nodes exceeds max %d",
 					_walkGridList[i], _nnodes, theseBars,
 					O_GRID_SIZE);
 #endif
@@ -2655,7 +2654,7 @@ void Router::addWalkGrid(int32 gridResource) {
 		}
 	}
 
-	Con_fatal_error("ERROR: _walkGridList[] full");
+	error("ERROR: _walkGridList[] full");
 }
 
 // called from fnRemoveWalkGrid

@@ -263,7 +263,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 
 #ifdef _SWORD2_DEBUG			
 			if (charPtr->height != char_height)
-				Con_fatal_error("FONT ERROR: '%c' is not same height as the space", sentence[pos - 1]);
+				error("FONT ERROR: '%c' is not same height as the space", sentence[pos - 1]);
 #endif
 
 			copyChar(charPtr, spritePtr, spriteWidth, pen);
@@ -418,7 +418,7 @@ uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, 
 #ifdef _SWORD2_DEBUG
 	// we've run out - might as well stop the system
 	if (j == MAX_text_blocs)
-		Con_fatal_error("Build_new_block ran out of blocks!");
+		error("Build_new_block ran out of blocks!");
 #endif
 
 	// make the sprite!
@@ -542,7 +542,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 		_blocList[bloc_number].text_mem = 0;
 	} else {
 		// illegal kill - stop the system
-		Con_fatal_error("closing closed text bloc number %d", bloc_number);
+		error("closing closed text bloc number %d", bloc_number);
 	}
 }
 

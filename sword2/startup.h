@@ -39,8 +39,8 @@ typedef	struct {
 extern _startup start_list[MAX_starts];
 
 uint32 Init_start_menu(void);
-uint32 Con_print_start_menu(void);
-uint32 Con_start(uint8 *input);
+void Con_print_start_menu(void);
+void Con_start(int start);
 
 } // End of namespace Sword2
 

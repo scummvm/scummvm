@@ -58,10 +58,7 @@
 #define _MAKETEXT_H
 
 #include "bs2/memory.h"
-
-#ifdef _SWORD2_DEBUG
 #include "bs2/debug.h"
-#endif
 
 // Output colour for character border - should be be black but note that we
 // have to use a different pen number during sequences
@@ -70,13 +67,8 @@
 
 namespace Sword2 {
 
-#ifdef _SWORD2_DEBUG
 // allow enough for all the debug text blocks (see debug.cpp)
 #define MAX_text_blocs MAX_DEBUG_TEXT_BLOCKS + 1
-#else
-// only need one for speech, and possibly one for "PAUSED"
-#define MAX_text_blocs 2
-#endif
 
 enum {
 	// only for debug text, since it doesn't keep text inside the screen
@@ -148,14 +140,6 @@ public:
 
 	uint32 buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 };
-
-extern 
-
-// this one works out the language from the text cluster
-void initialiseFontResourceFlags(void);
-
-// this one allow you to select the fonts yourself
-void initialiseFontResourceFlags(uint8 language);
 
 extern FontRenderer fontRenderer;
 

@@ -93,7 +93,7 @@ int32 Logic::fnWalk(int32 *params) {
 
 		// invalid direction (NB. '8' means end walk on ANY direction)
 		if (params[6] < 0 || params[6] > 8)
-			Con_fatal_error("Invalid direction (%d) in fnWalk", params[6]);
+			error("Invalid direction (%d) in fnWalk", params[6]);
 
 		ob_walkdata = (Object_walkdata *) params[3];
 
@@ -290,7 +290,7 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 		}
 
 		if (pars[6] < 0 || pars[6] > 7)
-			Con_fatal_error("Invalid direction (%d) in fnWalkToAnim", pars[6]);
+			error("Invalid direction (%d) in fnWalkToAnim", pars[6]);
 	}
 
 	// set up the rest of the parameters for fnWalk()
@@ -331,7 +331,7 @@ int32 Logic::fnTurn(int32 *params) {
 
 	if (ob_logic->looping == 0) {
 		if (params[4] < 0 || params[4] > 7)
-			Con_fatal_error("Invalid direction (%d) in fnTurn", params[4]);
+			error("Invalid direction (%d) in fnTurn", params[4]);
 
 	 	ob_mega = (Object_mega *) params[2];
 	
@@ -370,7 +370,7 @@ int32 Logic::fnStandAt(int32 *params) {
 	// check for invalid direction
 
 	if (params[4] < 0 || params[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in fnStandAt", params[4]);
+		error("Invalid direction (%d) in fnStandAt", params[4]);
 
 	// set up pointers to the graphic & mega structure
 
@@ -454,7 +454,7 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
+		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
 	res_man.close(params[2]);
@@ -501,7 +501,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
-		Con_fatal_error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
+		error("Invalid direction (%d) in fnStandAfterAnim", pars[4]);
 
 	// close the anim file
 	res_man.close(params[2]);
@@ -606,7 +606,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
-			Con_fatal_error("fnFaceMega %d not an object", params[4]);
+			error("fnFaceMega %d not an object", params[4]);
 
 		raw_script_ad = (char *) head;
 
@@ -668,7 +668,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		head = (_standardHeader*) res_man.open(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
-			Con_fatal_error("fnWalkToTalkToMega %d not an object", params[4]);
+			error("fnWalkToTalkToMega %d not an object", params[4]);
 
 		raw_script_ad = (char *) head;
 
@@ -721,7 +721,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 int32 Logic::fnSetWalkGrid(int32 *params) {
 	// params:	none
 
-	Con_fatal_error("fnSetWalkGrid no longer valid");
+	error("fnSetWalkGrid no longer valid");
 	return IR_CONT;
 }
 
@@ -764,7 +764,7 @@ int32 Logic::fnRemoveWalkGrid(int32 *params) {
 int32 Logic::fnRegisterWalkGrid(int32 *params) {
 	// params:	none
 
-	Con_fatal_error("fnRegisterWalkGrid no longer valid");
+	error("fnRegisterWalkGrid no longer valid");
 	return IR_CONT;
 }
 
@@ -797,7 +797,7 @@ int32 Logic::fnSetStandbyCoords(int32 *params) {
 	//		2 direction (0..7)
 
 	if (params[2] < 0 || params[2] > 7)
-		Con_fatal_error("Invalid direction (%d) in fnSetStandbyCoords", params[2]);
+		error("Invalid direction (%d) in fnSetStandbyCoords", params[2]);
 
 	standby_x = (int16) params[0];
 	standby_y = (int16) params[1];

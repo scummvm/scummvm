@@ -61,12 +61,10 @@ uint32 cur_fore;
 uint32 cur_fgp0;
 uint32 cur_fgp1;
 
-#ifdef _SWORD2_DEBUG
 uint32 largest_layer_area = 0;	// should be reset to zero at start of each screen change
 uint32 largest_sprite_area = 0;	// - " -
 char largest_layer_info[128]	= { "largest layer:  none registered" };
 char largest_sprite_info[128]	= { "largest sprite: none registered" };
-#endif
 
 // ---------------------------------------------------------------------------
 // last palette used - so that we can restore the correct one after a pause
@@ -110,29 +108,19 @@ void Send_fore_par1_frames(void);
 // ---------------------------------------------------------------------------
 
 void Build_display(void) {
-#ifdef _SWORD2_DEBUG
-	uint8 pal[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0 };
-#endif
 	uint8 *file;
 	_multiScreenHeader *screenLayerTable;
 
-#ifdef _SWORD2_DEBUG		// only used by console
-	_spriteInfo spriteInfo;
-	uint32 rv;		// drivers error return value
-#endif
-
-	if (!console_status && this_screen.new_palette)	{
+	if (this_screen.new_palette) {
 		// start the layer palette fading up
 		Start_new_palette();
 
-#ifdef _SWORD2_DEBUG
 		largest_layer_area = 0;		// should be reset to zero at start of each screen change
 		largest_sprite_area = 0;	// - " -
-#endif
 	}
 
 	// there is a valid screen to run
-	if (!console_status && this_screen.background_layer_id)	{
+	if (this_screen.background_layer_id) {
 		// set the scroll position
 		g_display->setScrollTarget(this_screen.scroll_offset_x, this_screen.scroll_offset_y);
 		// increment the mouse frame
@@ -271,30 +259,6 @@ void Build_display(void) {
 				break;
 		}
 	}
-#ifdef _SWORD2_DEBUG
-	else if (console_status) {
-		spriteInfo.x = 0;
-		spriteInfo.y = con_y;
-		spriteInfo.w = con_width;
-		spriteInfo.h = con_depth;
-		spriteInfo.scale = 0;
-		spriteInfo.scaledWidth = 0;
-		spriteInfo.scaledHeight = 0;
-		spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
-		spriteInfo.blend = 0;
-		spriteInfo.data = console_sprite->ad;
-		spriteInfo.colourTable = 0;
-
-		rv = g_display->drawSprite(&spriteInfo);
-		if (rv)
-			error("Driver Error %.8x (drawing console)", rv);
-	} else{
-		StartConsole();
-		// force the palette
-		g_display->setPalette(0, 3, pal, RDPAL_INSTANT);
-		Print_to_console("no valid screen?");
-	}
-#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -461,9 +425,7 @@ void Process_layer(uint32 layer_number) {
  	_spriteInfo spriteInfo;
 	uint32 rv;
 
-#ifdef _SWORD2_DEBUG
 	uint32 current_layer_area = 0;
-#endif
 
 	// file points to 1st byte in the layer file
 	file = res_man.open(this_screen.background_layer_id);
@@ -487,7 +449,6 @@ void Process_layer(uint32 layer_number) {
 	//------------------------------------------
 	// check for largest layer for debug info
 
-#ifdef _SWORD2_DEBUG
 	current_layer_area = layer_head->width * layer_head->height;
 
 	if (current_layer_area > largest_layer_area) {
@@ -497,7 +458,7 @@ void Process_layer(uint32 layer_number) {
 			FetchObjectName(this_screen.background_layer_id),
 			layer_number, layer_head->width, layer_head->height);
 	}
-#endif
+
 	//------------------------------------------
 
 	rv = g_display->drawSprite(&spriteInfo);
@@ -516,9 +477,7 @@ void Process_image(buildit *build_unit) {
 	uint32 spriteType;
 	uint32 rv;
 
-#ifdef _SWORD2_DEBUG
 	uint32 current_sprite_area = 0;
-#endif
 
 	// open anim resource file & point to base
 	file = res_man.open(build_unit->anim_resource);
@@ -586,7 +545,6 @@ void Process_image(buildit *build_unit) {
 	spriteInfo.data = (uint8 *) (frame_head + 1);
 	spriteInfo.colourTable	= colTablePtr;
 
-#ifdef _SWORD2_DEBUG
 	//------------------------------------------
 	// check for largest layer for debug info
 
@@ -601,7 +559,6 @@ void Process_image(buildit *build_unit) {
 			frame_head->width,
 			frame_head->height);
 	}
-#endif
 
 #ifdef _SWORD2_DEBUG
 	if (SYSTEM_TESTING_ANIMS) {	// see anims.cpp
@@ -703,7 +660,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 
 #ifdef _SWORD2_DEBUG
 	if (ob_graph->anim_resource == 0)
-		Con_fatal_error("ERROR: %s(%d) has no anim resource in Register_frame", FetchObjectName(ID), ID);
+		error("ERROR: %s(%d) has no anim resource in Register_frame", FetchObjectName(ID), ID);
 #endif
 
 	file = res_man.open(ob_graph->anim_resource);
@@ -791,7 +748,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 		if (ob_mouse->pointer) {
 #ifdef _SWORD2_DEBUG
 			if (cur_mouse == TOTAL_mouse_list)
-				Con_fatal_error("ERROR: mouse_list full");
+				error("ERROR: mouse_list full");
 #endif
 
 			mouse_list[cur_mouse].x1 = build_unit->x;
@@ -842,7 +799,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case BGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp0 == MAX_bgp0_sprites)
-			Con_fatal_error("ERROR: bgp0_list full in fnRegisterFrame");
+			error("ERROR: bgp0_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &bgp0_list[cur_bgp0]);
@@ -851,7 +808,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case BGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_bgp1 == MAX_bgp1_sprites)
-			Con_fatal_error("ERROR: bgp1_list full in fnRegisterFrame");
+			error("ERROR: bgp1_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &bgp1_list[cur_bgp1]);
@@ -860,7 +817,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case BACK_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_back == MAX_back_sprites)
-			Con_fatal_error("ERROR: back_list full in fnRegisterFrame");
+			error("ERROR: back_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &back_list[cur_back]);
@@ -869,7 +826,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case SORT_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_sort == MAX_sort_sprites)
-			Con_fatal_error("ERROR: sort_list full in fnRegisterFrame");
+			error("ERROR: sort_list full in fnRegisterFrame");
 #endif
 
 		sort_order[cur_sort] = cur_sort;
@@ -879,7 +836,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case FORE_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fore == MAX_fore_sprites)
-			Con_fatal_error("ERROR: fore_list full in fnRegisterFrame");
+			error("ERROR: fore_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fore_list[cur_fore]);
@@ -888,7 +845,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case FGP0_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp0 == MAX_fgp0_sprites)
-			Con_fatal_error("ERROR: fgp0_list full in fnRegisterFrame");
+			error("ERROR: fgp0_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fgp0_list[cur_fgp0]);
@@ -897,7 +854,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	case FGP1_SPRITE:
 #ifdef _SWORD2_DEBUG
 		if (cur_fgp1 == MAX_fgp1_sprites)
-			Con_fatal_error("ERROR: fgp1_list full in fnRegisterFrame");
+			error("ERROR: fgp1_list full in fnRegisterFrame");
 #endif
 
 		Register_frame(params, &fgp1_list[cur_fgp1]);
@@ -1051,7 +1008,7 @@ void SetFullPalette(int32 palRes) {
 
 #ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
- 			Con_fatal_error("fnSetPalette() called with invalid resource!");
+ 			error("fnSetPalette() called with invalid resource!");
 #endif
 
 		file = (uint8 *) (head + 1);
@@ -1092,7 +1049,7 @@ void SetFullPalette(int32 palRes) {
 			// close screen file
 	  		res_man.close(this_screen.background_layer_id);
 		} else
-			Con_fatal_error("fnSetPalette(0) called, but no current screen available!");
+			error("fnSetPalette(0) called, but no current screen available!");
 	}
 }
 

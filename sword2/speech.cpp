@@ -208,7 +208,7 @@ int32 Logic::fnChoose(int32 *params) {
 		// build menus from subject_list
 
 		if (!IN_SUBJECT)
-			Con_fatal_error("fnChoose with no subjects :-O");
+			error("fnChoose with no subjects :-O");
 
 		// init top menu from master list
 		// all icons are highlighted / full colour
@@ -361,7 +361,7 @@ int32 Logic::fnTheyDo(int32 *params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("fnTheyDo %d not an object", target);
+		error("fnTheyDo %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -423,7 +423,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("fnTheyDoWeWait %d not an object", target);
+		error("fnTheyDoWeWait %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -503,7 +503,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("fnWeWait: %d not an object", target);
+		error("fnWeWait: %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -551,7 +551,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	// request status of target
 	head = (_standardHeader*) res_man.open(target);
 	if (head->fileType != GAME_OBJECT)
-		Con_fatal_error("fnTimedWait %d not an object", target);
+		error("fnTimedWait %d not an object", target);
 
 	raw_script_ad = (char *) head;
 
@@ -934,12 +934,10 @@ int32 Logic::fnISpeak(int32 *params) {
 	static uint8 cycle_skip = 0;
   	uint32	rv;
 
-#ifdef _SWORD2_DEBUG
 	// for text/speech testing & checking for correct file type
 	_standardHeader	*head;
 	// for text/speech testing - keeping track of text resource currently being tested
 	static uint32 currentTextResource = 0;
-#endif
 
 	// set up the pointers which we know we'll always need
 
@@ -974,7 +972,6 @@ int32 Logic::fnISpeak(int32 *params) {
 		} else
 			cycle_skip = 0;
 
-#ifdef _SWORD2_DEBUG
  		textNumber = params[S_TEXT];	// for debug info
 
 		// For testing all text & speech!
@@ -1023,7 +1020,6 @@ int32 Logic::fnISpeak(int32 *params) {
 				return IR_CONT;
 			}
 		}
-#endif
 
 		// Pull out the text line to get the official text number
 		// (for wav id). Once the wav id's go into all script text
@@ -1039,7 +1035,6 @@ int32 Logic::fnISpeak(int32 *params) {
 		// now ok to close the text file
 		res_man.close(text_res);
 
-#ifdef _SWORD2_DEBUG
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
 
@@ -1052,7 +1047,6 @@ int32 Logic::fnISpeak(int32 *params) {
 				return IR_CONT;
 			}
 		}
-#endif
 
 		// set the 'looping_flag' & the text-click-delay
  
@@ -1152,7 +1146,6 @@ int32 Logic::fnISpeak(int32 *params) {
 			else if (speech_pan > 16)
 				speech_pan = 16;
 
-#ifdef _SWORD2_DEBUG
 			// if we're testing text & speech
 			if (SYSTEM_TESTING_TEXT) {
 				// if we've moved onto a new text resource,
@@ -1160,14 +1153,13 @@ int32 Logic::fnISpeak(int32 *params) {
 				// changing again - can only know which CD to
 				// get if the wavID is non-zero
 
-				if ((text_res != currentTextResource) && params[S_WAV]) {
+				if (text_res != currentTextResource && params[S_WAV]) {
 					// ensure correct CD is in for this
 					// wavId
-					GetCorrectCdForSpeech(params[S_WAV]);
+					// GetCorrectCdForSpeech(params[S_WAV]);
 					currentTextResource = text_res;
 				}
 			}
-#endif
 
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or
@@ -1284,53 +1276,45 @@ int32 Logic::fnISpeak(int32 *params) {
 	// ok, all is running along smoothly - but a click means stop
 	// unnaturally
 
-#ifdef _SWORD2_DEBUG
 	// so that we can go to the options panel while text & speech is
 	// being tested
 	if (SYSTEM_TESTING_TEXT == 0 || g_display->_mouseY > 0) {
-#endif
+		me = MouseEvent();
 
-	me = MouseEvent();
+		// Note that we now have TWO click-delays - one for LEFT
+		// button, one for RIGHT BUTTON
 
-	// Note that we now have TWO click-delays - one for LEFT button, one
-	// for RIGHT BUTTON
+		if ((!left_click_delay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
+		    (!right_click_delay && me && (me->buttons&RD_RIGHTBUTTONDOWN))) {
+			// mouse click, after click_delay has expired -> end
+			// the speech we ignore mouse releases
 
-	if ((!left_click_delay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
-	    (!right_click_delay && me && (me->buttons&RD_RIGHTBUTTONDOWN))) {
-		// mouse click, after click_delay has expired -> end the speech
- 		// we ignore mouse releases
+			// if testing text & speech
+			if (SYSTEM_TESTING_TEXT) {
+				// and RB used to click past text
+				if (me->buttons & RD_RIGHTBUTTONDOWN) {
+					// then we want the previous line again
+					SYSTEM_WANT_PREVIOUS_LINE = 1;
+				} else {
+					// LB just want next line again
+					SYSTEM_WANT_PREVIOUS_LINE = 0;
+				}
+			}
 
-#ifdef _SWORD2_DEBUG
-		// if testing text & speech
-		if (SYSTEM_TESTING_TEXT) {
-			// and RB used to click past text
-			if (me->buttons & RD_RIGHTBUTTONDOWN) {
-				// then we want the previous line again
-				SYSTEM_WANT_PREVIOUS_LINE = 1;
-			} else {
-				// LB just want next line again
-				SYSTEM_WANT_PREVIOUS_LINE = 0;
+			do {
+				// trash anything thats buffered
+				me = MouseEvent();
+			} while (me);
+
+			speechFinished = 1;
+
+			// if speech sample playing
+			if (speechRunning) {
+				// halt the sample prematurely
+				g_sound->stopSpeech();
 			}
 		}
-#endif
-
-		do {
-			// trash anything thats buffered
-			me = MouseEvent();
-		} while (me);
-
-		speechFinished = 1;
-
-		// if speech sample playing
-		if (speechRunning) {
-			// halt the sample prematurely
-			g_sound->stopSpeech();
-		}
 	}
-
-#ifdef _SWORD2_DEBUG
-	}
-#endif
 
 	// if we are finishing the speech this cycle, do the business
 
@@ -1358,10 +1342,8 @@ int32 Logic::fnISpeak(int32 *params) {
 		// no longer in a script function loop
 		ob_logic->looping = 0;
 
-#ifdef _SWORD2_DEBUG
 		// reset for debug info
 		textNumber = 0;
-#endif
 
 		// reset to zero, in case text line not even extracted (since
 		// this number comes from the text line)
@@ -1559,7 +1541,7 @@ void GetCorrectCdForSpeech(int32 wavId) {
 	uint8 cd;
 
 	if (!fp.open("cd.bin"))
-		Con_fatal_error("Need cd.bin file for testing speech!");
+		error("Need cd.bin file for testing speech!");
 
 	fp.seek(wavId, SEEK_SET);
 	fp.read(&cd, 1);

@@ -28,7 +28,6 @@ MODULE_OBJS := \
 	bs2/sync.o \
 	bs2/tony_gsdk.o \
 	bs2/walker.o \
-	bs2/driver/_console.o \
 	bs2/driver/d_draw.o \
 	bs2/driver/d_sound.o \
 	bs2/driver/keyboard.o \
