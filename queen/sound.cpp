@@ -143,8 +143,9 @@ void Sound::playSong(int16 songNum) {
 	
 	int16 newTune = _song[songNum - 1].tuneList[0];
 
-	if (_tune[newTune - 1].sfx[0] && sfxOn()) {
-		sfxPlay(_sfxName[_tune[newTune - 1].sfx[0] - 1]);
+	if (_tune[newTune - 1].sfx[0]) {
+		if (sfxOn())
+			sfxPlay(_sfxName[_tune[newTune - 1].sfx[0] - 1]);
 		return;
 	}
 
