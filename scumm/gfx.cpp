@@ -1762,8 +1762,8 @@ void Scumm::restoreCharsetBg()
 void Scumm::restoreBG(int left, int top, int right, int bottom)
 {
 	VirtScreen *vs;
-	int topline, height, width, widthmod;
-	byte *backbuff, *bgbak, *mask;
+	int topline, height, width;
+	byte *backbuff, *bgbak;
 
 	if (left == right || top == bottom)
 		return;
@@ -1798,21 +1798,25 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 
 	backbuff = vs->screenPtr + height;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + height;
-	mask = getResourceAddress(rtBuffer, 9) + top * gdi._numStrips + (left >> 3) + _screenStartStrip;
-	if (vs->number == 0) {
-		// FIXME: hardcoded value
-		mask += vs->topline * 216;
-	}
 
 	height = bottom - top;
 	width = right - left;
-	widthmod = (width >> 2) + 2;
 
 	if (vs->alloctwobuffers && _currentRoom != 0 /*&& _vars[VAR_V5_DRAWFLAGS]&2 */ ) {
 		blit(backbuff, bgbak, width, height);
 		if (vs->number == 0 && charset._hasMask && height) {
+			byte *mask;
+			int mask_width = (width >> 3);
+
+			if (width & 0x07)
+				mask_width++;
+
+			mask = getResourceAddress(rtBuffer, 9) + top * gdi._numStrips + (left >> 3) + _screenStartStrip;
+			if (vs->number == 0)
+				mask += vs->topline * gdi._numStrips;
+
 			do {
-				memset(mask, 0, widthmod);
+				memset(mask, 0, mask_width);
 				mask += gdi._numStrips;
 			} while (--height);
 		}
