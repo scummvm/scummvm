@@ -634,8 +634,9 @@ int Scumm::loadResource(int type, int idx) {
 		tag = _fileHandle.readUint16LE();
 		_fileHandle.seek(-6, SEEK_CUR);
 		/* FIXME */
-		if ((type == rtSound) && (_gameId != GID_ZAK256))
+		if ((type == rtSound) && (_gameId != GID_ZAK256)) {
 			return readSoundResourceSmallHeader(type, idx);
+		}
 	} else {
 		if (type == rtSound) {
 			_fileHandle.readUint32LE();
@@ -1003,16 +1004,15 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	//  16 bytes MDhd header
 	//  14 bytes MThd header
 	//   8 bytes MTrk header
-	//   7 MIDI speed event
+	//   7 bytes MIDI tempo sysex
 	//     + some default instruments
 	// TODO:  - make some real MIDI instrument definitions
-	//        - no sound looping
-	//        - proper handling of the short AD resources format
+	//        - proper handling of the short (non-music, SFX) AD resources format
 	//        - check the LE/BE handling for platforms other than PC
 
 	if (best_offs != 0) {
 		byte *ptr, *track, *instr;
-		uint16 ticks, skip;
+		byte ticks, play_once;
 		byte music_type, num_instr;
 
 		_fileHandle.seek(best_offs - 6, SEEK_SET);
@@ -1032,13 +1032,14 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		
 		// The "speed" of the song
 		ticks = *(ptr + 9);
-
+		
+		// Flag that tells us whether we should loop the song (0) or play it only once (1)
+		play_once = *(ptr + 10);
+		
+		// Number of instruments used
 		num_instr = *(ptr + 16);	// Normally 8
 		if (num_instr != 8)
 			warning("Sound %d has %d instruments, expected 8", idx, num_instr);
-
-		size = best_size;
-		skip = 0x98;
 
 		// copy the instrument data in another memory area
 		instr = (byte *)calloc(8 * 16, 1);
@@ -1046,8 +1047,9 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		memcpy(instr, ptr + 0x19, 8*16);
 
 		// skip over the rest of the header and copy the MIDI data into a buffer
-		ptr  += skip;
-		size -= skip;
+		size = best_size;
+		ptr  += 0x19 + 8 * 16;
+		size -= 0x19 + 8 * 16;
 		CHECK_HEAP 
 		track = (byte *)calloc(size, 1);
 		if (track == NULL) {
@@ -1057,7 +1059,9 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 
 		// Now nuke the old resource, and replace it with a new one
 		nukeResource(type, idx);
-		total_size = 8 + 16 + 14 + 8 + 7 + sizeof(OLD256_MIDI_HACK) - 1 + size;
+		total_size = 8 + 16 + 14 + 8 + 7 + sizeof(OLD256_MIDI_HACK) + size;
+		if (!play_once)
+			total_size += 20;	// Up to 20 additional bytes are needed for the jump sysex
 
 		// Write the ADL header (see also above for more information)
 		ptr = createResource(type, idx, total_size);
@@ -1079,10 +1083,10 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		memcpy(ptr, &ticks, 2); ptr += 2;
 
 		memcpy(ptr, "MTrk", 4); ptr += 4;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >> 24) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >> 16) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7) >>  8) & 0xFF;
-		*ptr++ = ((sizeof(OLD256_MIDI_HACK) - 1 + size + 7)      ) & 0xFF;
+		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >> 24) & 0xFF;
+		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >> 16) & 0xFF;
+		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >>  8) & 0xFF;
+		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7)      ) & 0xFF;
 
 		// Conver the ticks into a MIDI tempo. 
 		dw = (500000 * 256) / ticks;
@@ -1097,7 +1101,8 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		// Copy our hardcoded instrument table into it
 		// Then, convert the instrument table as given in this song resource
 		// And write it *over* the hardcoded table.
-		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK) - 1);
+		// Note: we deliberately.
+		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK));
 
 		
 		/* now fill in the instruments */
@@ -1149,10 +1154,51 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		}
 
 		free(instr);
+		ptr += sizeof(OLD256_MIDI_HACK);
 
-		ptr += sizeof(OLD256_MIDI_HACK) - 1;
+		// Now copy the actual music data 
 		memcpy(ptr, track, size);
 		free(track);
+		
+		if (!play_once) {
+			// The song is meant to be looped. We achieve this by inserting just
+			// before the song end a jump to the song start. More precisely we abuse
+			// a S&M sysex, "maybe_jump" to achieve this effect. We could also
+			// use a set_loop sysex, but it's a bit longer, a little more complicated,
+			// and seemingly has no advantage either.
+
+			// First, find the track end
+			byte *end = ptr + size;
+			for (; ptr < end; ptr++) {
+				if (*ptr == 0xff && *(ptr + 1) == 0x2f)
+					break;
+			}
+			assert(ptr < end);
+
+			// Now insert the jump. The jump offset is measure in ticks, and 
+			// each instrument definition spans 4 ticks... so we jump to tick
+			// 8*4, although jumping to tick 0 would probably work fine, too.
+			// Note: it's possible that some musics don't loop from the start...
+			// in that case we'll have to figure out how the loop range is specified
+			// and then how to handle it appropriately (if it's specified in
+			// ticks, we are fine; but if it's byte offset, we'll have to work
+			// a bit...).
+			int jump_offset = 8 * 4;
+			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
+			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
+			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
+			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// beat -> for now, 0
+			// Ticks
+			*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
+			*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
+			*ptr++ = (byte)((jump_offset >> 4) & 0x0F);
+			*ptr++ = (byte)(jump_offset & 0x0F);
+			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
+
+			// Finally we reinsert the end of song sysex, just in case
+			memcpy(ptr, "\x00\xff\x21", 3); ptr += 3;
+		}
+		
 		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
