@@ -1413,6 +1413,7 @@ void ScummEngine_v72he::getWizImageDim(int resnum, int state, uint32 &w, uint32 
 }
 
 uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags) {
+	debug(1, "drawWizImage(%d, %d, %d, %d, 0x%X)", restype, resnum, x1, y1, flags);
 	if (flags & 64) {
 		drawWizPolygon(resnum, state, x1, flags);
 		return NULL;
@@ -1454,8 +1455,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 				Common::Rect rScreen(0, 0, width-1, height-1);
 				gdi.copyWizImage(dst, wizd, width, height, 0, 0, width, height, &rScreen);
 				setCursorFromBuffer(dst, width, height, width);
-				free(dst);
-				return NULL;
+				// FIXME: ensure that caller frees the returned pointer
 			}
 			cw = width;
 			ch = height;
@@ -1484,7 +1484,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 		if (flags & 4) {
 			warning("printing Wiz image is unimplemented");
 			dst = NULL;
-		} else {
+		} else if (!(flags & 0x20)) {
 			Common::Rect rImage(x1, y1, x1 + width - 1, y1 + height - 1);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
@@ -1502,84 +1502,72 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 
 struct PolygonDrawData {
 	struct InterArea {
-		int16 xmin;
-		int16 xmax;
-		int16 x1;
-		int16 y1;
-		int16 x2;
-		int16 y2;
-	};
-	struct ResArea {
-		uint16 off;
-		int16 x_step;
-		int16 y_step;
-		int16 x_s;
-		int16 y_s;
-		int16 w;
+		bool valid;
+		int32 xmin;
+		int32 xmax;
+		int32 x1;
+		int32 y1;
+		int32 x2;
+		int32 y2;
 	};
 	Common::Point pts[4];
-	ResArea *ra;
 	InterArea *ia;
 	int areasNum;
 	
 	PolygonDrawData(int n) {
 		memset(pts, 0, sizeof(pts));
 		areasNum = n;
-		ra = new ResArea[areasNum];
 		ia = new InterArea[areasNum];
-		for (int i = 0; i < areasNum; ++i) {
-			ia[i].xmin = (int16)0x7FFF;
-			ia[i].xmax = (int16)0x8000;
-		}
+		memset(ia, 0, sizeof(InterArea) * areasNum);
 	}
 	
 	~PolygonDrawData() {
-		delete[] ra;
 		delete[] ia;
 	}
 	
 	void calcIntersection(const Common::Point *p1, const Common::Point *p2, const Common::Point *p3, const Common::Point *p4) {
-		int32 x1 = p1->x << 0x10;
-		int32 x3 = p3->x << 0x10;
-		int32 y3 = p3->y << 0x10;
-  		int16 dy = ABS(p2->y - p1->y) + 1;  		
-  		int32 x_step_1 = ((p2->x - p1->x) << 0x10) / dy;
-  		int32 x_step_2 = ((p4->x - p3->x) << 0x10) / dy;
-  		int32 y_step   = ((p4->y - p3->y) << 0x10) / dy;
-  
+		int32 x1_acc = p1->x << 0x10;
+		int32 x3_acc = p3->x << 0x10;
+		int32 y3_acc = p3->y << 0x10;
+  		uint16 dy = ABS(p2->y - p1->y) + 1;
+  		int32 x1_step = ((p2->x - p1->x) << 0x10) / dy;
+  		int32 x3_step = ((p4->x - p3->x) << 0x10) / dy;
+  		int32 y3_step = ((p4->y - p3->y) << 0x10) / dy;
+
   		int iaidx = p1->y - pts[0].y;
-  		--dy;
   		while (dy--) {
-  			assert(iaidx < areasNum);
+  			assert(iaidx >= 0 && iaidx < areasNum);
   			InterArea *pia = &ia[iaidx];
-  			int32 tx3 = x3 >> 0x10;
-  			int32 x = x1 >> 0x10;
-  			int32 ty3 = y3 >> 0x10;
-  			if (pia->xmin > x) {
-  				pia->xmin = x;
+  			int32 tx1 = x1_acc >> 0x10;
+  			int32 tx3 = x3_acc >> 0x10;
+  			int32 ty3 = y3_acc >> 0x10;
+  			
+  			if (!pia->valid || pia->xmin > tx1) {
+  				pia->xmin = tx1;
   				pia->x1 = tx3;
   				pia->y1 = ty3;
-  			}
-  			if (pia->xmax < x) {
-  				pia->xmax = x;
+			}
+  			if (!pia->valid || pia->xmax < tx1) {
+  				pia->xmax = tx1;
   				pia->x2 = tx3;
   				pia->y2 = ty3;
-  			}
-  			x1 += x_step_1;
-  			x3 += x_step_2;
-  			y3 += y_step;
+			}
+  			pia->valid = true;
+
+  			x1_acc += x1_step;
+  			x3_acc += x3_step;
+  			y3_acc += y3_step;
   			
   			if (p2->y <= p1->y) {
   				--iaidx;
   			} else {
   				++iaidx;
-  			}
-  		}		
+  			}  			
+  		}
 	}
 };
 
 void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags) {
-	warning("ScummEngine_v72he::drawWizPolygon() is untested, please report if you encouter any glitches");
 	int i;
 	WizPolygon *wp = NULL;
 	for (i = 0; i < _wizNumPolygons; ++i) {
@@ -1594,15 +1582,14 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 	if (wp->numVerts != 5) {
 		error("Invalid point count %d for Polygon %d", wp->numVerts, id);
 	}
-	// FIXME: make drawWizImage return a *valid* malloc'ed pointer
 	uint8 *srcWizBuf = drawWizImage(rtImage, resnum, state, 0, 0, 0x20);
 	if (srcWizBuf) {
 		uint8 *dst;
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
 		if (flags & 0x10) {
-			dst = pvs->getPixels(0, pvs->topline);
+			dst = pvs->getPixels(0, 0);
 		} else {
-			dst = pvs->getBackPixels(0, pvs->topline);
+			dst = pvs->getBackPixels(0, 0);
 		}
 		if (wp->bound.left < 0 || wp->bound.top < 0 || wp->bound.right >= pvs->w || wp->bound.bottom >= pvs->h) {
 			error("Invalid coords polygon %d", wp->id);
@@ -1631,14 +1618,10 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
   		}
   		
   		int16 xmin_b, xmax_b, ymin_b, ymax_b;
-  		xmin_b = xmax_b = bbox[0].x;
-  		ymin_b = ymax_b = bbox[0].y;
-  		for (i = 1; i < 4; ++i) {
-  			xmin_b = MIN(bbox[i].x, xmin_b);
-  			xmax_b = MAX(bbox[i].x, xmax_b);
-  			ymin_b = MIN(bbox[i].y, ymin_b);
-  			ymax_b = MAX(bbox[i].y, ymax_b);
-  		}
+  		xmin_b = 0;
+  		xmax_b = wizW - 1;
+  		ymin_b = 0;
+  		ymax_b = wizH - 1;
 
 		PolygonDrawData *pdd = new PolygonDrawData(ymax_p - ymin_p + 1);
 		pdd->pts[0].x = xmin_p;
@@ -1649,38 +1632,29 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 		pdd->pts[2].y = ymin_b;
 		pdd->pts[3].x = xmax_b;
 		pdd->pts[3].y = ymax_b;
-
+		
 		for (i = 0; i < 3; ++i) {
 			pdd->calcIntersection(&wp->vert[i], &wp->vert[i + 1], &bbox[i], &bbox[i + 1]);
 		}
 		pdd->calcIntersection(&wp->vert[3], &wp->vert[0], &bbox[3], &bbox[0]);
 		
-		int yoff = pdd->pts[0].y * pvs->w;
+		uint yoff = pdd->pts[0].y * pvs->w;
 		for (i = 0; i < pdd->areasNum; ++i) {
-			PolygonDrawData::ResArea *pra = &pdd->ra[i];
 			PolygonDrawData::InterArea *pia = &pdd->ia[i];
-			pra->off = pia->xmin + yoff;
-			pra->w = pia->xmax - pia->xmin + 1;
-			pra->x_s = pia->x1 << 0x10;
-			pra->y_s = pia->y1 << 0x10;
-			pra->x_step = ((pia->x2 - pia->x1) << 0x10) / pra->w;
-			pra->y_step = ((pia->y2 - pia->y1) << 0x10) / pra->w;
-			yoff += pvs->w;
-		}
-		
-		for (i = 0; pdd->areasNum; ++i) {
-			PolygonDrawData::ResArea *pra = &pdd->ra[i];
-			uint8 *dstPtr = dst + pra->off;
-			int16 x_acc = pra->x_s;
-			int16 y_acc = pra->y_s;
-			uint16 rw = pra->w;
-			while (rw--) {
+			uint16 dx = pia->xmax - pia->xmin + 1;
+			uint8 *dstPtr = dst + pia->xmin + yoff;
+			int32 x_acc = pia->x1 << 0x10;
+			int32 y_acc = pia->y1 << 0x10;
+			int32 x_step = ((pia->x2 - pia->x1) << 0x10) / dx;
+			int32 y_step = ((pia->y2 - pia->y1) << 0x10) / dx;
+			while (dx--) {
 				uint srcWizOff = (y_acc >> 0x10) * wizW + (x_acc >> 0x10);
 				assert(srcWizOff < wizW * wizH);
-				x_acc += pra->x_step;
-				y_acc += pra->y_step;
+				x_acc += x_step;
+				y_acc += y_step;
 				*dstPtr++ = srcWizBuf[srcWizOff];
 			}
+			yoff += pvs->w;
 		}
 
 		delete pdd;
