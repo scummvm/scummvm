@@ -329,7 +329,7 @@ void Scumm::drawBomp(const BompDrawData &bd, bool mirror) {
 	}
 }
 
-static byte _bompBitsTable[] = {
+static const byte bitCount[] = {
 	8, 7, 7, 6, 7, 6, 6, 5, 7, 6, 6, 5, 6, 5, 5, 4,
 	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
 	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
@@ -382,7 +382,7 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 	count = (size + 7) >> 3;
 	while (count--) {
 		tmp = *scaling++;
-		ret_value += _bompBitsTable[tmp];
+		ret_value += bitCount[tmp];
 	}
 
 	return ret_value;
