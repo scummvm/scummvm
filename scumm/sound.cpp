@@ -487,7 +487,10 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 	
-	if (_scumm->_features & GF_OLD_BUNDLE && _scumm->_version != 1) {
+	if (_scumm->_features & GF_OLD_BUNDLE) {
+		//TODO: support maniac v1 sounds
+		if ((_scumm->_version == 1) && (_scumm->_gameId == GID_MANIAC)) 
+			return;
 		// other versions seem to be 0000 at this point...
 		// hopefully this test is correct
 		// 0xfe7f seems to be sound and 0x764a music
