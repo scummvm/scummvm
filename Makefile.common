@@ -21,6 +21,16 @@ DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	debugrl.h whatsnew.txt readme.txt copying.txt \
 	scummvm.dsp scummvm.dsw sound/fmopl.h gui.h sound.h
 
+all: scummvm$(EXEEXT)
+
+scummvm$(EXEEXT): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+clean:
+	rm -f $(OBJS) scummvm$(EXEEXT)
+
+.PHONY: all clean dist
+
 # Default (dumb) compile & dependcy rules
 .cpp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
@@ -29,7 +39,6 @@ $(OBJS): $(INCS)
 
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
-#
 #DEPDIR := .deps
 #.cpp.o:
 #	mkdir -p $(DEPDIR)
@@ -40,12 +49,3 @@ $(OBJS): $(INCS)
 #
 #-include $(DEPDIR)/*.d
 
-all: scummvm$(EXEEXT)
-
-scummvm$(EXEEXT): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
-
-clean:
-	rm -f $(OBJS) scummvm$(EXEEXT)
-
-.PHONY: all clean dist
