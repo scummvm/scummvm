@@ -574,7 +574,6 @@ protected:
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
 	void stopScript(int script);
-	bool isScriptRunning(int script) const;	// FIXME - should be protected, used by Sound::startTalkSound
 	void nukeArrays(int script);
 
 protected:
@@ -592,6 +591,7 @@ protected:
 
 	bool isScriptInUse(int script) const;
 	bool isRoomScriptRunning(int script) const;
+	bool isScriptRunning(int script) const;
 
 	void killAllScriptsExceptCurrent();
 	void killScriptsAndResources();
