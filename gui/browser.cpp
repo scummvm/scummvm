@@ -197,6 +197,7 @@ void BrowserDialog::updateListing() {
 
 	// Read in the data from the file system
 	_nodeContent = _node.listDir();
+	_nodeContent.sort();
 
 	// Populate the ListWidget
 	Common::StringList list;

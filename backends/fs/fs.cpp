@@ -20,7 +20,21 @@
 
 #include "stdafx.h"
 
-#include "fs.h"
+#include "backends/fs/fs.h"
+#include "common/util.h"
+
+void FSList::sort() {
+	// Simple selection sort
+	for (int i = 0; i < _size-1; i++) {
+		int min = i;
+		for (int j = i+1; j < _size; j++)
+			if (_data[j] < _data[min])
+				min = j;
+		if (min != i)
+			SWAP(_data[min], _data[i]);
+	}
+}
+
 
 FilesystemNode AbstractFilesystemNode::wrap(AbstractFilesystemNode *node) {
 	FilesystemNode wrapper;
