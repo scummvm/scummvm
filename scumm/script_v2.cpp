@@ -438,13 +438,24 @@ int ScummEngine_v2::readVar(uint var) {
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	debug(6, "readvar(%d) = %d", var, _scummVars[var]);
+
 	return _scummVars[var];
 }
 
 void ScummEngine_v2::writeVar(uint var, int value) {
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	debug(6, "writeVar(%d) = %d", var, value);
+
 	_scummVars[var] = value;
+
+	// HACK: Ender's hack around a bug in Maniac. If you take the last dime from
+	// 	 Weird Ed's piggybank, this disables the New Kid option and runs the Jail
+	//	 cutscene. Script 116 sets var[175] to 1, which disables New Kid in 
+	//	 script 164. Unfortunatly, when New Kid is reenabled (var[175] = 0) in
+	//	 script 89, script 164 isn't reran to redraw it. Why? Dunno. Hack? Yes.
+	if ((var == 175) && (_gameId == GID_MANIAC) && 
+	    (vm.slot[_currentScript].number == 89))
+		runScript(164, 0, 0, 0);
 }
 
 void ScummEngine_v2::getResultPosIndirect() {
@@ -790,7 +801,7 @@ void ScummEngine_v2::o2_resourceRoutines() {
 void ScummEngine_v2::o2_verbOps() {
 	int verb = fetchScriptByte();
 	int slot, state;
-	
+
 	switch (verb) {
 	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
