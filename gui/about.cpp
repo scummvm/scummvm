@@ -86,7 +86,7 @@ AboutDialog::AboutDialog()
 	
 	int i;
 	
-	_lineHeight = g_gui.getFont().getFontHeight() + 3;
+	_lineHeight = g_gui.getFontHeight() + 3;
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");

@@ -36,7 +36,7 @@ class Dialog;
 
 
 // Height of a single text line
-#define kLineHeight	(g_gui.getFont().getFontHeight() + 2)
+#define kLineHeight	(g_gui.getFontHeight() + 2)
 
 
 using Graphics::TextAlignment;
@@ -64,9 +64,9 @@ public:
 	// until no dialogs are active anymore.
 	void runLoop();
 
-	bool isActive()	{ return ! _dialogStack.empty(); }
+	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	int getScaleFactor() { return _scaleFactor; }
+	int getScaleFactor() const { return _scaleFactor; }
 	void enableScaling(bool enable) { _scaleEnable = enable; updateScaleFactor(); }
 
 protected:
@@ -140,8 +140,9 @@ public:
 	void drawChar(byte c, int x, int y, OverlayColor color, const Graphics::Font *font = 0);
 	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
-	int getStringWidth(const String &str);
-	int getCharWidth(byte c);
+	int getStringWidth(const String &str) const;
+	int getCharWidth(byte c) const;
+	int getFontHeight() const;
 
 	void drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h = 8);
 

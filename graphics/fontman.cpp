@@ -29,6 +29,7 @@ namespace Graphics {
 
 const ScummFont g_scummfont;
 extern const NewFont g_sysfont;
+extern const NewFont g_sysfont_big;
 
 
 DECLARE_SINGLETON(FontManager);
@@ -46,7 +47,9 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	case kConsoleFont:
 		return &GUI::g_consolefont;
 	case kGUIFont:
-		return &g_scummfont;
+		return &g_sysfont;
+	case kBigGUIFont:
+		return &g_sysfont_big;
 	}
 	return 0;
 }

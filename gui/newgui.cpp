@@ -86,8 +86,11 @@ void NewGui::updateScaleFactor() {
 
 	_scaleFactor = MIN(_system->getWidth() / kDefaultGUIWidth, _system->getHeight() / kDefaultGUIHeight);
 
-	// TODO: Pick a bigger font depending on the 'scale' factor.
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	// Pick the font depending on the scale factor.
+	if (_scaleFactor == 1)
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	else
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 }
 
 void NewGui::runLoop() {
@@ -349,19 +352,23 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
 	if (font == 0)
 		font = &getFont();
-	font->drawChar(&_screen, chr, xx, yy, color, _scaleFactor);
+	font->drawChar(&_screen, chr, xx * _scaleFactor, yy * _scaleFactor, color);
 }
 
-int NewGui::getStringWidth(const String &str) {
-	return getFont().getStringWidth(str);
+int NewGui::getStringWidth(const String &str) const {
+	return getFont().getStringWidth(str) / _scaleFactor;
 }
 
-int NewGui::getCharWidth(byte c) {
-	return getFont().getCharWidth(c);
+int NewGui::getCharWidth(byte c) const {
+	return getFont().getCharWidth(c) / _scaleFactor;
+}
+
+int NewGui::getFontHeight() const {
+	return getFont().getFontHeight() / _scaleFactor;
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis, _scaleFactor);
+	getFont().drawString(&_screen, s, x * _scaleFactor, y * _scaleFactor, w * _scaleFactor, color, align, deltax, useEllipsis);
 }
 
 //

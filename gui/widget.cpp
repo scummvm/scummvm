@@ -186,12 +186,11 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 	// Draw the box
 	gui->box(_x, _y, 14, 14, gui->_color, gui->_shadowcolor);
+	gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 
 	// If checked, draw cross inside the box
 	if (_state)
-		gui->drawBitmap(checked_img, _x + 3, _y + 3, isEnabled() ? gui->_textcolor : gui->_color);
-	else
-		gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
+		gui->drawBitmap(checked_img, _x + 4, _y + 3, isEnabled() ? gui->_textcolor : gui->_color);
 
 	// Finally draw the label
 	gui->drawString(_label, _x + 20, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);

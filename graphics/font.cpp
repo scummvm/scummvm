@@ -36,9 +36,8 @@ int NewFont::getCharWidth(byte chr) const {
 	return desc.width[chr - desc.firstchar];
 }
 
-void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, int scaleFactor) const {
+void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
 	assert(dst != 0);
-	tx *= scaleFactor; ty *= scaleFactor;
 
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
@@ -56,26 +55,15 @@ void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 colo
 	chr -= desc.firstchar;
 	const bitmap_t *tmp = desc.bits + (desc.offset ? desc.offset[chr] : (chr * desc.height));
 
-	for (int y = 0; y < desc.height * scaleFactor; y++, ptr += dst->pitch) {
+	for (int y = 0; y < desc.height; y++, ptr += dst->pitch) {
 		const bitmap_t *buffer = 0;
-		if(scaleFactor != 1) {
-			if(!(y % 2))
-				buffer = tmp++;
-			else
-				buffer = tmp;
-		} else
-			buffer = tmp++;
+		buffer = tmp++;
 		bitmap_t mask = 0x8000;
 		if (ty + y < 0 || ty + y >= dst->h)
 			continue;
 
-		for (int x = 0; x < w * scaleFactor; x++) {
-			if(scaleFactor != 1) {
-				if(!(x % 2) && x != 0)
-					mask >>= 1;
-			} else if(x != 0) {
-				mask >>= 1;
-			}
+		for (int x = 0; x < w; x++) {
+			mask >>= 1;
 
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
@@ -101,7 +89,7 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis, int scaleFactor) const {
+void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;
@@ -166,7 +154,7 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 		if (x+w > rightX)
 			break;
 		if (x >= leftX)
-			drawChar(dst, str[i], x, y, color, scaleFactor);
+			drawChar(dst, str[i], x, y, color);
 		x += w;
 	}
 }

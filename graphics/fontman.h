@@ -35,7 +35,8 @@ public:
 	enum FontUsage {
 		kOSDFont,
 		kConsoleFont,
-		kGUIFont
+		kGUIFont,
+		kBigGUIFont
 	};
 
 	/**

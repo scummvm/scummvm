@@ -63,9 +63,8 @@ int ScummFont::getCharWidth(byte chr) const {
 }
 
 //void ScummFont::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, int scaleFactor) const {
+void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color) const {
 	assert(dst != 0);
-	tx *= scaleFactor; ty *= scaleFactor;
 
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
@@ -73,25 +72,18 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 co
 	uint buffer = 0;
 	uint mask = 0;
 
-	for (int y = 0; y < 8 * scaleFactor; y++) {
+	for (int y = 0; y < 8; y++) {
 		if (ty + y < 0 || ty + y >= dst->h)
 			continue;
-		for (int x = 0; x < 8 * scaleFactor; x++) {
-			if(scaleFactor != 1 && !(x % 2))
-				mask >>= 1;
-			else if(scaleFactor == 1)
-				mask >>= 1;
+		for (int x = 0; x < 8; x++) {
+			mask >>= 1;
 
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
 			
 
 			if (mask == 0) {
-				if(scaleFactor != 1 && !(y % 2))
-					buffer = *tmp++;
-				else if(scaleFactor == 1)
-					buffer = *tmp++;
-
+				buffer = *tmp++;
 				mask = 0x80;
 			}
 			const byte c = ((buffer & mask) != 0);
