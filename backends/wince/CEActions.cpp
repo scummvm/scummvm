@@ -129,7 +129,7 @@ bool CEActions::perform(ActionType action) {
 		case ACTION_PAUSE:
 		case ACTION_SAVE:
 		case ACTION_SKIP:
-			KeysBuffer::Instance()->add(&_key_action[action]);
+			KeysBuffer::Instance()->simulate(&_key_action[action]);
 			return true;
 		case ACTION_KEYBOARD:
 			_mainSystem->swap_panel();

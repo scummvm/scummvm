@@ -37,7 +37,7 @@ namespace CEGUI {
 
 	bool ItemAction::action(int x, int y, bool pushed) {
 
-		if (checkInside(x, y) && _visible) {
+		if (checkInside(x, y) && _visible && pushed) {
 			CEActions::Instance()->perform(_action);
 			return true;
 		}

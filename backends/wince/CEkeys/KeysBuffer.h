@@ -35,6 +35,7 @@ namespace CEKEYS {
 	public:
 		static KeysBuffer* Instance(int capacity = 5);
 		bool add(const Key *key);
+		bool simulate(const Key *key);
 		Key* get();
 		~KeysBuffer();
 	private:

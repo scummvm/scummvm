@@ -38,6 +38,19 @@ namespace CEKEYS {
 		return true;
 	}
 
+	bool KeysBuffer::simulate(const Key *key) {
+		if (_currentAdd == _capacity - 2)
+			return false;
+
+		_currentGet = _currentAdd;
+		_buffer[_currentAdd] = *key;
+		_buffer[_currentAdd++].setPushed(true);
+		_buffer[_currentAdd] = *key;
+		_buffer[_currentAdd++].setPushed(false);
+
+		return true;
+	}
+
 	KeysBuffer* KeysBuffer::Instance(int capacity) {		
 		if (!_instance)
 			_instance = new KeysBuffer(capacity);
