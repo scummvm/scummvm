@@ -791,6 +791,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	SDL_AudioSpec desired;
 
+	memset(&desired, 0, sizeof(desired));
+
 	/* only one format supported at the moment */
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
