@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	scumm/imuse_digi/dimuse.o \
 	scumm/imuse_digi/dimuse_bndmgr.o \
 	scumm/imuse_digi/dimuse_codecs.o \
+	scumm/imuse_digi/dimuse_music.o \
 	scumm/imuse_digi/dimuse_sndmgr.o \
 	scumm/imuse_digi/dimuse_tables.o \
 	scumm/smush/chunk.o \
