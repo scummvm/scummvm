@@ -401,9 +401,8 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 }
 
 void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
-#if 0
-	// FIXME - this whole function doesn't compile on OS X and contains obvious bugs.
-	// E.g. offs is read but never set, same for width.
+/* Only supported for win32 atm. mkdir doesn't work otherwise. */
+#if defined (WIN32) && !defined(_WIN32_WCE)
 
 	int i;
 	uint32 offs;
@@ -419,32 +418,26 @@ void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 		pal_load(pal, vga1, 5, 3);
 	}
 
-#if 0	
 	{
 		char buf[255], buf2[255];
 		sprintf(buf, "bmp_%d", res);
-		mkdir(buf2);	// FIXME - WTF is this ???
-			// First off, mkdir() is not very portable. 
-			// Secondly, the Unix version of mkdir() has two arguments.
-			// Third, the buf2 is *never* set to anything.
-			// Fourth, why not use a sizeof 256 instead of 255?
+		mkdir(buf2);
 	}
-#endif
 
 	int width, height, flags;
 	
-//	i = 538;
+	i = 538;
 
 	for(i=1; ; i++) {
 		p2 = vga + i * 8;
-		//offs = swap32(*(uint32*)p2);
+		offs = TO_BE_32(*(uint32*)p2);
 
 		/* try to detect end of images.
 		 * assume the end when offset >= 200kb */
 		if (offs >= 200*1024)
 			return;
 		
-		//width = swap16(*(uint16*)(p2+6));
+		width = TO_BE_16(*(uint16*)(p2+6));
 		height = p2[5];
 		flags = p2[4];
 
