@@ -47,7 +47,7 @@ public:
 
 
 static const byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
-static const byte special_lengths[16] = { 0, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+static const byte special_lengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 
 MidiParser_SMF::~MidiParser_SMF() {
 	if (_buffer)
@@ -217,7 +217,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	}
 
 	if (midi_type == 1) {
-		_buffer = (byte *) calloc (size, 1);
+		_buffer = (byte *) malloc (size);
 		compressToType0();
 		_num_tracks = 1;
 		_tracks[0] = _buffer;
@@ -278,12 +278,15 @@ void MidiParser_SMF::compressToType0() {
 		}
 
 		// Process MIDI event.
+		bool implicitEvent = false;
 		copy_bytes = 0;
 		pos = track_pos[best_i];
 		do {
 			event = *(pos++);
-			if (event < 0x80)
+			if (event < 0x80) {
 				event = running_status[best_i];
+				implicitEvent = true;
+			}
 		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && pos++);
 		running_status[best_i] = event;
 
@@ -334,6 +337,10 @@ void MidiParser_SMF::compressToType0() {
 				*output++ = (byte) (delta & 0xFF);
 
 				// Write MIDI data
+				if (!implicitEvent)
+					++track_pos[best_i];
+				--copy_bytes;
+				*output++ = running_status[best_i];
 				memcpy (output, track_pos[best_i], copy_bytes);
 				output += copy_bytes;
 			}
