@@ -295,7 +295,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o60_kernelGetFunctions),
+		OPCODE(o72_kernelGetFunctions),
 		OPCODE(o70_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
@@ -1854,6 +1854,38 @@ void ScummEngine_v72he::flushWizBuffer() {
 		}
 	}
 	_wizImagesNum = 0;
+}
+
+void ScummEngine_v72he::o72_kernelGetFunctions() {
+	int args[29];
+	int retval;
+	ArrayHeader *ah;
+	getStackList(args, ARRAYSIZE(args));
+
+	switch (args[0]) {
+	case 1:
+		writeVar(0, 0);
+		defineArray(0, kByteArray, 0, 0, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		retval = readVar(0);
+		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
+		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
+		push(retval);
+		break;
+	case 1001:
+		{
+		double a = args[1] * M_PI / 180.;
+		push((int)(sin(a) * 100000));
+		}
+		break;
+	case 1002:
+		{
+		double a = args[1] * M_PI / 180.;
+		push((int)(cos(a) * 100000));
+		}
+		break;
+	default:
+		error("o72_kernelGetFunctions: default case %d", args[0]);
+	}
 }
 
 void ScummEngine_v72he::o72_drawWizImage() {

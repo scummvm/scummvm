@@ -294,7 +294,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o60_kernelGetFunctions),
+		OPCODE(o72_kernelGetFunctions),
 		OPCODE(o70_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),

@@ -753,6 +753,7 @@ protected:
 	void o72_traceStatus();
 	void o72_unknownCF();
 	void o72_drawWizImage();
+	void o72_kernelGetFunctions();
 	void o72_jumpToScript();
 	void o72_openFile();
 	void o72_readFile();
