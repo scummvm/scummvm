@@ -23,8 +23,6 @@
 
 #include "dialog.h"
 #include "newgui.h"
-#include "common/str.h"
-#include "common/list.h"
 
 #include <stdarg.h>
 
@@ -37,7 +35,9 @@ enum {
 class ScrollBarWidget;
 
 class ConsoleDialog : public Dialog {
-	typedef ScummVM::String String;
+public:
+	typedef bool (*InputCallbackProc)(ConsoleDialog *console, const char *input, void *refCon);
+
 protected:
 	char	_buffer[kBufferSize];
 	int		_linesInBuffer;
@@ -55,10 +55,16 @@ protected:
 	uint32	_caretTime;
 	
 	ScrollBarWidget	*_scrollBar;
+	
+	// The _callbackProc is called whenver a data line is entered
+	// 
+	InputCallbackProc _callbackProc;
+	void	*_callbackRefCon;
 
 public:
 	ConsoleDialog(NewGui *gui);
 
+	void open();
 	void drawDialog();
 
 	void handleTickle();
@@ -70,6 +76,12 @@ public:
 	int vprintf(const char *format, va_list argptr);
 #undef putchar
 	void putchar(int c);
+	
+	void setInputeCallback(InputCallbackProc proc, void *refCon)
+	{
+		_callbackProc = proc;
+		_callbackRefCon = refCon;
+	}
 
 protected:
 	void drawCaret(bool erase);

@@ -48,7 +48,7 @@ This code is not finished, so please don't complain :-)
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(NewGui *gui)
-	: Dialog(gui, 0, 0, 320, 6*kLineHeight+2)
+	: Dialog(gui, 0, 0, 320, 12*kLineHeight+2)
 {
 	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;
@@ -70,8 +70,19 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
 	print("Console is ready\n");
 	
-	print(PROMPT);
-	_promptStartPos = _promptEndPos = _currentPos;
+	_promptStartPos = _promptEndPos = -1;
+	
+	_callbackProc = 0;
+	_callbackRefCon = 0;
+}
+
+void ConsoleDialog::open()
+{
+	Dialog::open();
+	if (_promptStartPos == -1) {
+		print(PROMPT);
+		_promptStartPos = _promptEndPos = _currentPos;
+	}
 }
 
 void ConsoleDialog::drawDialog()
@@ -138,12 +149,18 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			for (i = 0; i < len; i++)
 				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
 			str[len] = 0;
-			printf("You entered '%s'\n", str);
+			
+			bool keepRunning = true;
+			if (_callbackProc)
+				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
+			//printf("You entered '%s'\n", str);
 
 			print(PROMPT);
 			_promptStartPos = _promptEndPos = _currentPos;
 			
 			draw();
+			if (!keepRunning)
+				close();
 			break;
 			}
 		case 27:	// escape
