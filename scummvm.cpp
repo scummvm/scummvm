@@ -53,10 +53,7 @@ void Scumm::scummInit()
 	int i;
 	Actor *a;
 
-
 	tempMusic=0;
-
-
 	debug(9, "scummInit");
 
 	if (_features & GF_SMALL_HEADER)
@@ -208,13 +205,8 @@ int Scumm::scummLoop(int delta)
 	static int counter = 0;
 
 #ifndef _WIN32_WCE
-
-
 	if (_debugger)
 		_debugger->on_frame();
-
-
-
 #endif
 
 	_vars[VAR_TMR_1] += delta;
@@ -259,23 +251,12 @@ int Scumm::scummLoop(int delta)
 
 	{
 
-		if(tempMusic == 3)
-
-		{
-
+		if(tempMusic == 3) {
 			tempMusic = 0;
 			_vars[VAR_MUSIC_FLAG]++;
-
-		}
-
-		else
-
-		{
-
+		} else {
 			tempMusic ++;
-
 		}
-
 	}
 
 
@@ -328,6 +309,7 @@ int Scumm::scummLoop(int delta)
 			if (camera._cur.x != camera._last.x || camera._cur.y != camera._last.y
 					|| _BgNeedsRedraw || _fullRedraw) {
 				redrawBGAreas();
+
 				_videoBuffer = virtscr[0].screenPtr + (camera._cur.y - 100) * 328;
 			}
 		}
@@ -431,7 +413,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	_currentRoom = room;
 	_vars[VAR_ROOM] = room;
-	// printf("startscene with room 0x%x\n", room);
+
 	if (room >= 0x80)
 		_roomResource = _resourceMapper[room & 0x7F];
 	else
@@ -457,6 +439,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = camera._dest.x = 160;
+
 		camera._cur.y = camera._dest.y = 100;
 	}
 
@@ -711,7 +694,9 @@ void Scumm::initRoomSubBlocks()
 
 	initBGBuffers(_scrHeight);
 
+
 	_videoBuffer = virtscr[0].screenPtr;
+
 
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 }
@@ -822,9 +807,13 @@ void Scumm::processKbd()
 
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
 
+
+
 	if(_features & GF_AFTER_V7)
 		_virtual_mouse_y = mouse.y + camera._cur.y-100;
+
 	else
+
 		_virtual_mouse_y = mouse.y;
 
 	if (!(_features & GF_OLD256))

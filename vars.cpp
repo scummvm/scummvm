@@ -140,9 +140,13 @@ void Scumm::setupScummVarsNew()
 	VAR_NEW_ROOM = 35;
 	VAR_WALKTO_OBJ = 36;
 
+
 	VAR_CAMERA_DEST_X = 38;
+
 	VAR_CAMERA_DEST_Y = 39;
+
 	VAR_CAMERA_FOLLOWED_ACTOR = 40;
+
 
 	VAR_SCROLL_SCRIPT = 50;
 	VAR_ENTRY_SCRIPT = 51;
@@ -188,9 +192,7 @@ void Scumm::setupScummVarsNew()
 	VAR_DEBUGMODE = 116;
 
 	VAR_CHARSET_MASK = 119;
-
 	VAR_VIDEONAME = 0xF6/2;
-
 	VAR_CUSTOMSCALETABLE = 131;
 
 	//VAR_V5_DRAWFLAGS = 9;
@@ -201,6 +203,5 @@ void Scumm::setupScummVarsNew()
 	VAR_V5_CHARFLAG = 60;
 
 	VAR_V6_EMSSPACE = 76;
-
 	VAR_STRING2DRAW = 130;
 }

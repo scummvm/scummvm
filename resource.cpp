@@ -652,12 +652,12 @@ byte *Scumm::getStringAddress(int i)
 	return b;
 }
 
-byte *Scumm::getStringAddressVar(int i)
-{
+
+
+byte *Scumm::getStringAddressVar(int i) {
 	byte *addr;
 
 	addr=getResourceAddress(rtString,_vars[i]);
-
 	if(addr==NULL)
 		error("NULL string var %d slot %d",i,_vars[i]);
 
@@ -665,7 +665,6 @@ byte *Scumm::getStringAddressVar(int i)
 			return ((ArrayHeader *)addr)->data;
 
 	return(addr);
-
 }
 
 void Scumm::setResourceCounter(int type, int idx, byte flag)
@@ -1163,15 +1162,26 @@ void Scumm::allocateArrays()
 }
 
 
+
+
 uint32 Scumm::isGlobInMemory(int type, int index)
+
 {
+
 	validateResource("isGlobInMemory",type,index);
+
 	
+
 	if(res.address[type][index]==NULL)
+
 		return(0);
 
+
+
 	return(1);
+
 }
+
 
 uint16 newTag2Old(uint32 oldTag)
 {
@@ -1213,4 +1223,5 @@ uint16 newTag2Old(uint32 oldTag)
 		return (0);
 	}
 }
+
 

@@ -53,7 +53,6 @@ int Scumm::akos_findManyDirection(int16 ManyDirection, uint16 facing)
 
 		--temp;
 		--direction;
-
 	} while (temp);
 
 	return (temp);
@@ -221,9 +220,7 @@ bool Scumm::akos_drawCostumeChannel(AkosRenderer * ar, int chan)
 	if (code != AKC_ComplexChan) {
 		off = ar->akof + (code & 0xFFF);
 
-		assert((code & 0xFFF) * 6 <
-					 READ_BE_UINT32_UNALIGNED((byte *)ar->akof - 4) - 8);
-
+		assert((code & 0xFFF) * 6 < READ_BE_UINT32_UNALIGNED((byte *)ar->akof - 4) - 8);
 		assert((code & 0x7000) == 0);
 
 		ar->srcptr = ar->akcd + READ_LE_UINT32(&off->akcd);
@@ -582,14 +579,14 @@ void Scumm::akos_codec1(AkosRenderer * ar)
 	bool masking;
 	int step;
 
+
 	/* implement custom scale table */
 
-	if(isGlobInMemory(rtString,_vars[VAR_CUSTOMSCALETABLE]))
-	{
+
+
+	if(isGlobInMemory(rtString,_vars[VAR_CUSTOMSCALETABLE])) {
 		ar->v1.scaletable = getStringAddressVar(VAR_CUSTOMSCALETABLE);
-	}
-	else
-	{
+	} else {
 		ar->v1.scaletable = default_scale_table;
 	}
 
@@ -657,7 +654,6 @@ void Scumm::akos_codec1(AkosRenderer * ar)
 				if (x_left >= (int)ar->outwidth) {
 					tmp_x = j;
 					skip++;
-
 				}
 				if (ar->v1.scaletable[j--] < ar->scale_x)
 					x_left--;
@@ -897,34 +893,30 @@ void Scumm::akos_codec1_ignorePakCols(AkosRenderer * ar, int num)
 
 void Scumm::akos_codec5(AkosRenderer * ar)
 {
+
 	VirtScreen *vs;
 	BompDrawData bdd;
-	
+
 	int mirror;
 	int moveX;
 	int moveY;
 	int left;
 	int var_20;
 	int max_width;
+
 	int right;
 	int top;
 	int bottom;
 
 	vs = &virtscr[0];
-
 	//setBlastObjectMode(ar->shadow_mode); // not implemented yet
-
 	mirror = ar->mirror;
-
 	moveX=ar->move_x_cur;
 	moveY=ar->move_y_cur;
 
-	if (!mirror)
-	{
+	if (!mirror) {
 		left = (ar->x - moveX - ar->width) + 1;
-	}
-	else
-	{
+	} else {
 		left = ar->x + moveX -1;
 	}
 
@@ -937,7 +929,6 @@ void Scumm::akos_codec5(AkosRenderer * ar)
 
 	if(left < 0)
 		left = 0;
-
 	if(left > max_width)
 		left -= left - max_width;
 
@@ -1095,12 +1086,8 @@ bool Scumm::akos_increaseAnim(Actor * a, int chan, byte *aksq, uint16 *akfo,
 
 		switch (code) {
 		case AKC_StartAnimInActor:
-			akos_queCommand(4,
-											derefActorSafe(getAnimVar(a, GB(2)),
-																		 "akos_increaseAnim:29"), getAnimVar(a,
-																																				 GB
-																																				 (3)),
-											0);
+			akos_queCommand(4, derefActorSafe(getAnimVar(a, GB(2)),
+							"akos_increaseAnim:29"), getAnimVar(a, GB(3)), 0);
 			continue;
 
 		case AKC_Random:

@@ -237,7 +237,9 @@ void Scumm::CHARSET_1()
 			string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
 			if (string[0].ypos < 1)
 				string[0].ypos = 1;
+
 			if (string[0].ypos < camera._cur.y - 100)
+
 				string[0].ypos = camera._cur.y - 100;
 
 			s = a->scalex * a->new_2 / 0xFF;
@@ -533,6 +535,7 @@ void Scumm::drawString(int a)
 			}
 		} else {
 			if (a == 1 && (_features & GF_AFTER_V6))
+
 				if(string[a].no_talk_anim==0)
 					charset._blitAlso = true;
 			if (_features & GF_OLD256)

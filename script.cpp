@@ -32,6 +32,7 @@ void Scumm::runScript(int script, int a, int b, int16 * lvarptr)
 	int slot;
 	ScriptSlot *s;
 
+
 	if (script == 0)
 		return;
 
@@ -267,6 +268,7 @@ void Scumm::getScriptEntryPoint()
 /* Execute a script - Read opcode, and execute it from the table */
 void Scumm::executeScript()
 {
+
 	OpcodeProc op;
 	while (_currentScript != 0xFF) {
 		_opcode = fetchScriptByte();
@@ -966,10 +968,7 @@ void Scumm::beginOverride()
 
 	idx = vm.cutSceneStackPointer;
 	ptr = &vm.cutScenePtr[idx];
-/*	if (!*ptr) {		// ENDER - FIXME - We don't need this?
-		vm.slot[_currentScript].cutsceneOverride++;
-	} 
-*/
+
 	*ptr = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[idx] = _currentScript;
 
@@ -985,10 +984,7 @@ void Scumm::endOverride()
 
 	idx = vm.cutSceneStackPointer;
 	ptr = &vm.cutScenePtr[idx];
-/*	if (!*ptr) {		// ENDER - FIXME - We don't need this?
-		// vm.slot[_currentScript].cutsceneOverride--;
-		//printf("ending override: %d on script %d\n", vm.slot[_currentScript].cutsceneOverride, _currentScript);
-	} */
+
 	*ptr = 0;
 	vm.cutSceneScript[idx] = 0;
 	_vars[VAR_OVERRIDE] = 0;

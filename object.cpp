@@ -336,6 +336,7 @@ void Scumm::drawObject(int obj, int arg)
 
 	xpos = od->x_pos >> 3;
 	ypos = od->y_pos;
+
 	width = od->width >> 3;
 	height = od->height &= 0xF8;	// Ender
 
@@ -521,7 +522,8 @@ void Scumm::loadRoomObjectsSmall()
 		setupRoomObject(od, room);
 	}
 
-CHECK_HEAP}
+	CHECK_HEAP
+}
 
 void Scumm::setupRoomObject(ObjectData *od, byte *room)
 {
@@ -558,8 +560,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		return;
 	}
 
-	cdhd =
-		(CodeHeader *)findResourceData(MKID('CDHD'),
+	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'),
 																	 room + od->offs_obcd_to_room);
 	if (_features & GF_AFTER_V7)
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
@@ -653,6 +654,7 @@ void Scumm::clearOwnerOf(int obj)
 		} while (++i <= _numObjectsInRoom);
 		return;
 	}
+
 	for (i = 1; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
@@ -1184,6 +1186,7 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	eo->unk3 = f;
 	eo->unk4 = g;
 	eo->image = image;
+
 	eo->mode = mode;
 }
 
@@ -1202,11 +1205,8 @@ void Scumm::drawBlastObjects()
 void Scumm::drawBlastObject(BlastObject * eo)
 {
 	VirtScreen *vs;
-	byte *roomptr, *bomp;
-	byte *ptr;
-	byte *img;
+	byte *bomp, *ptr, *img;
 	int idx;
-
 	BompDrawData bdd;
 
 	vs = &virtscr[0];
@@ -1217,8 +1217,7 @@ void Scumm::drawBlastObject(BlastObject * eo)
 
 	idx = _objs[getObjectIndex(eo->number)].fl_object_index;
 
-	if(idx)
-	{
+	if(idx) {
 		ptr = getResourceAddress(rtFlObject, idx);
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
@@ -1226,19 +1225,16 @@ void Scumm::drawBlastObject(BlastObject * eo)
 		assert(idx != -1);
 		ptr = getResourceAddress(1, _roomResource) + _objs[idx].offs_obim_to_room;
 	}
-
 	if(!ptr)
 		error("BlastObject object %d image not found",eo->number);
 
 	img = findResource(IMxx_tags[eo->image], ptr);
 	if(!img)
 		img = findResource(IMxx_tags[1], ptr); // Backward compatibility with samnmax blast objects
-
 	if(!img)
 		error("blast-object %d invalid image %d (1-x)",eo->number,eo->image);
 
 	bomp = findResourceData(MKID('BOMP'), img);
-
 	if(!bomp)
 		error("object %d is not a blast object",eo->number);
 
@@ -1255,11 +1251,8 @@ void Scumm::drawBlastObject(BlastObject * eo)
 	bdd.scale_y = (unsigned char)eo->unk4;
 
 	drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
-
-
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y,
 								bdd.y + bdd.srcheight, 0);
-
 }
 
 void Scumm::removeBlastObjects()

@@ -495,10 +495,8 @@ int Scumm::getActorXYPos(Actor * a)
 	return 0;
 }
 
-AdjustBoxResult Scumm::adjustXYToBeInBox(Actor * a, int x, int y,
-																				 int pathfrom)
+AdjustBoxResult Scumm::adjustXYToBeInBox(Actor * a, int x, int y, int pathfrom)
 {
-	// Yazoo: need to recheck with Loom for the class data flags (0x400000)
 	AdjustBoxResult abr, tmp;
 	uint threshold;
 	uint best;
@@ -753,7 +751,6 @@ void Scumm::startWalkAnim(Actor * a, int cmd, int angle)
 	}
 }
 
-
 void Scumm::walkActor(Actor * a)
 {
 	int j;
@@ -918,9 +915,13 @@ void Scumm::drawActorCostume(Actor * a)
 			a->mask = 0;
 		else if (g_scumm->getClass(a->number, 21))
 			a->forceClip = 1;
+
 		
+
 		if (_gameId==GID_SAMNMAX && getState(995)) // FIXME: ugly fix for samnmax inventory
+
 			return;
+
 
 		a->needRedraw = false;
 

@@ -94,7 +94,6 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 		size += 320 * 4;
 
 	createResource(rtBuffer, slot+1, size);
-
 	vs->screenPtr = getResourceAddress(rtBuffer, slot+1);
 
 	ptr = vs->screenPtr;
@@ -143,9 +142,8 @@ void Scumm::drawDirtyScreenParts()
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
-		
+
 		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - 100;
-		
 		_system->copy_rect(src , 320, 0, vs->topline, 320, vs->height);
 
 		for (i = 0; i < 40; i++) {
@@ -183,8 +181,11 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 
 	for (i = 0; i < 40; i++) {
 		bottom = vs->bdirty[i];
+
 		if (_vm->camera._cur.y != _vm->camera._last.y)
+
 			drawStripToScreen(vs, start, w, 0, vs->height);
+
 		else
 		if (bottom) {
 			top = vs->tdirty[i];
@@ -196,6 +197,7 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 				continue;
 			}
 		//	drawStripToScreen(vs, start, w, top, bottom);
+
 			drawStripToScreen(vs, start, w, 0, vs->height);
 			w = 8;
 		}
@@ -229,14 +231,13 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 		scrollY = 0;
 
 	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs + scrollY * 320;
-	
-	_vm->_system->copy_rect(
-		ptr, 320, x * 8, vs->topline + t , w, height);
+		_vm->_system->copy_rect(ptr, 320, x * 8, vs->topline + t , w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
 {
 	assert(h > 0);
+
 
 	do {
 		memcpy(dst, src, w);
@@ -358,24 +359,26 @@ void Scumm::initBGBuffers(int height)
 	int size, itemsize, i;
 	byte *room;
 
-	if (_features & GF_AFTER_V7)
-	{
+	if (_features & GF_AFTER_V7) {
 		initVirtScreen(0, 0, virtscr[0].topline, 200, height, 1, 1);
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
 	if (_features & GF_SMALL_HEADER) {
-		gdi._numZBuffer = 2; // ENDER
+		gdi._numZBuffer = 2;
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	}
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
 
-//	itemsize = (_scrHeight + 4) * 40;
-	itemsize = (virtscr[0].height +4) * 40;
-	size = itemsize * gdi._numZBuffer;
+	if (_features & GF_AFTER_V7)
+		itemsize = (virtscr[0].height +4) * 40;
+	else
+		itemsize = (_scrHeight + 4) * 40;
 
+
+	size = itemsize * gdi._numZBuffer;
 	createResource(rtBuffer, 9, size);
 
 	for (i = 0; i < 4; i++)
@@ -663,10 +666,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 	byte *smap_ptr, *where_draw_ptr;
 	int i;
 	byte *zplane_list[4];
+
 	int bottom;
 	byte twobufs;
 	int numzbuf;
 	int sx;
+
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -694,6 +699,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 			zplane_list[i] = findResource(zplane_tags[i], ptr);
 		}
 	}
+
+
 
 	bottom = y + h;
 	if (bottom > vs->height) {
@@ -1928,9 +1935,13 @@ void Scumm::moveCamera()
 		if (cd->_cur.x != old.x || cd->_cur.y != old.y) {
 			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
 			_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
+
 			_vars[VAR_CAMERA_DEST_X] = cd->_dest.x;
+
 			_vars[VAR_CAMERA_DEST_Y] = cd->_dest.y;
+
 			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = cd ->_follows;
+
 			if(_vars[VAR_SCROLL_SCRIPT])
 				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
@@ -2203,6 +2214,7 @@ void Scumm::resetActorBgs()
 		while (onlyActorFlags) {
 			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
 				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
+
 				if((a->bottom - a->top) >=0)
 					gdi.resetBackground(a->top, a->bottom, i);
 			}
@@ -2575,8 +2587,11 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
+
 // param3= clipping
+
 // param2= mirror
+
 // param1= never used ?
 void Scumm::drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3)
 {
@@ -2683,12 +2698,8 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 	byte *curPtr;
 	byte *searchPtr;
 
-
-
 	byte readComp1;
-
 	byte readComp2;
-
 	byte readComp3;
 
 	int colorComp1;
@@ -2714,17 +2725,10 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 
 	curPtr = palPtr + colorMin*3;
 
-	for(i=colorMin;i<colorMax;i++)
-	{
-
+	for(i=colorMin;i<colorMax;i++) {
 		readComp1=*(curPtr++);
-
 		readComp2=*(curPtr++);
-
 		readComp3=*(curPtr++);
-
-
-
 
 		colorComp1=((readComp1)*c)>>8;
 		colorComp2=((readComp2)*d)>>8;
@@ -2734,22 +2738,18 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 		bestResult = 32000;
 		currentIndex = 0;
 
-		for(j=a;j<b;j++)
-		{
+		for(j=a;j<b;j++) {
 			searchComp1 = (*searchPtr++);
 			searchComp2 = (*searchPtr++);
 			searchComp3 = (*searchPtr++);
 
 			currentResult = abs(searchComp1-colorComp1) + abs(searchComp2-colorComp2) + abs(searchComp3-colorComp3);
 
-			if(currentResult<bestResult)
-			{
+			if(currentResult<bestResult) {
 				_proc_special_palette[i]=currentIndex;
 				bestResult=currentResult;
 			}
-
 			currentIndex++;
 		}
 	}
-
 }
