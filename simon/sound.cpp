@@ -235,7 +235,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 	while (_offsets[sound + i] == _offsets[sound])
 			i++;
 
-	uint32 size = _offsets[sound+1] - _offsets[sound];
+	uint32 size = _offsets[sound + i] - _offsets[sound];
 
 	_mixer->playVorbis(handle, _file, size);
 }
