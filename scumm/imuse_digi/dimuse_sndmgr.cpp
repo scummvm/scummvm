@@ -219,13 +219,14 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			_sounds[slot].resPtr = ptr;
 			result = true;
 		} else if (soundType == IMUSE_BUNDLE) {
+			bool header_outside = _vm->_gameId != GID_DIG;
 			if (soundGroup == IMUSE_VOICE)
 				result = openVoiceBundle(slot);
 			else if (soundGroup == IMUSE_MUSIC)
 				result = openMusicBundle(slot);
 			else 
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
-			_sounds[slot]._bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0);
+			_sounds[slot]._bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside);
 			_sounds[slot].name[0] = 0;
 			_sounds[slot].soundId = soundId;
 		} else {
@@ -233,13 +234,14 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		}
 	} else if (soundName != NULL) {
 		if (soundType == IMUSE_BUNDLE) {
+			bool header_outside = _vm->_gameId != GID_DIG;
 			if (soundGroup == IMUSE_VOICE)
 				result = openVoiceBundle(slot);
 			else if (soundGroup == IMUSE_MUSIC)
 				result = openMusicBundle(slot);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
-			_sounds[slot]._bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr);
+			_sounds[slot]._bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside);
 			strcpy(_sounds[slot].name, soundName);
 			_sounds[slot].soundId = soundId;
 		} else {
@@ -394,9 +396,9 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 	}
 
 	int header_size = soundHandle->offsetData;
-
+	bool header_outside = _vm->_gameId != GID_DIG;
 	if (soundHandle->_bundle) {
-		size = soundHandle->_bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size);
+		size = soundHandle->_bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundHandle->resPtr) {
 		*buf = (byte *)malloc(size);
 		memcpy(*buf, soundHandle->resPtr + start + offset + header_size, size);

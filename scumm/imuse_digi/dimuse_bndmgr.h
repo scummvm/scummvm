@@ -79,9 +79,9 @@ public:
 
 	bool openFile(const char *filename, const char *directory);
 	void closeFile();
-	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final);
-	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size);
-	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size);
+	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
+	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
+	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
 };
 
 namespace BundleCodecs {

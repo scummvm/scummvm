@@ -159,13 +159,14 @@ void BundleMgr::closeFile() {
 	}
 }
 
-int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size) {
-	return decompressSampleByIndex(_curSample, offset, size, comp_final, header_size);
+int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
+	return decompressSampleByIndex(_curSample, offset, size, comp_final, header_size, header_outside);
 }
 
-int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size) {
+int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
+	int skip, first_block, last_block;
 	
 	if (index != -1)
 		_curSample = index;
@@ -197,14 +198,24 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		_compTableLoaded = true;
 	}
 
-	int first_block = (offset + header_size) / 0x2000;
-	int last_block = (offset + size + header_size - 1) / 0x2000;
+	if (header_outside) {
+		first_block = offset / 0x2000;
+		last_block = (offset + size - 1) / 0x2000;
+	} else {
+		first_block = (offset + header_size) / 0x2000;
+		last_block = (offset + size + header_size - 1) / 0x2000;
+	}
 
 	comp_output = (byte *)malloc(0x2000);
-	*comp_final = (byte *)malloc(0x2000 * (1 + last_block - first_block));
+	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
+	*comp_final = (byte *)malloc(blocks_final_size);
 	final_size = 0;
 
-	int skip = offset - (first_block * 0x2000) + header_size;
+	if (header_outside) {
+		skip = offset - (first_block * 0x2000);
+	} else {
+		skip = offset - (first_block * 0x2000) + header_size;
+	}
 
 	for (i = first_block; i <= last_block; i++) {
 		byte *curBuf;
@@ -227,10 +238,20 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			curBuf = _blockChache;
 		}
 
-		if ((header_size != 0) && (skip >= header_size))
+		if (header_outside) {
+			if ((header_size != 0) && (i == 0))
+				skip += header_size;
 			output_size -= skip;
+		} else {
+			if ((header_size != 0) && (skip >= header_size))
+				output_size -= skip;
+		}
+
 		if (output_size > size)
 			output_size = size;
+
+		if (final_size + output_size > blocks_final_size)
+			error("");
 
 		memcpy(*comp_final + final_size, curBuf + skip, output_size);
 
@@ -246,7 +267,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	return final_size;
 }
 
-int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final) {
+int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside) {
 	int32 final_size = 0, i;
 
 	if (!_file.isOpen()) {
@@ -256,7 +277,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 
 	for (i = 0; i < _numFiles; i++) {
 		if (!scumm_stricmp(name, _bundleTable[i].filename)) {
-			final_size = decompressSampleByIndex(i, offset, size, comp_final, 0);
+			final_size = decompressSampleByIndex(i, offset, size, comp_final, 0, header_outside);
 			return final_size;
 		}
 	}

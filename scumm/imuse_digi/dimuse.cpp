@@ -154,6 +154,10 @@ void IMuseDigital::callback() {
 						if (_sound->getChannels(_track[l].soundHandle) == 1) {
 							result &= ~1;
 						}
+						if (_sound->getChannels(_track[l].soundHandle) == 2) {
+							if (result & 2)
+								result &= ~2;
+						}
 					} else if (bits == 8) {
 						result = _sound->getDataFromRegion(_track[l].soundHandle, _track[l].curRegion, &data, _track[l].regionOffset, mixer_size);
 						if (_sound->getChannels(_track[l].soundHandle) == 2) {
@@ -194,6 +198,11 @@ void IMuseDigital::switchToNextRegion(int track) {
 		return;
 	}
 
+				if (_track[track].idSound == 2312) {
+					_track[track].curRegion = 4;
+					_track[track].regionOffset = 0;
+					return;
+				}
 	if (++_track[track].curRegion == num_regions) {
 		_track[track].toBeRemoved = true;
 		return;
