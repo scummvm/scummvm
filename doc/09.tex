@@ -42,16 +42,16 @@ messages (see \url{http://www.sysinternals.com/ntw2k/freeware/debugview.shtml}).
     Tools|Options|Directories
   \item Now it should compile successfully. 
   \end{itemize}
-\subsection{PocketPC Windows CE}
+\subsection{Windows Mobile with Microsoft eMbedded Visual C++ 3 or 4}
   \begin{itemize}
-  \item Download the SDLAudio library:\\
-    \url{http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip}
-  \item Open and compile the SDLAudio WCEBuild/WCEBuild workspace in
-    EVC++
-  \item Open the ScummVM wince/PocketScumm workspace
-  \item Enter the SDLAudio directory to your includes path
-  \item Enter the compiled SDLAudio.lib to your link libraries list
-  \item Now it should compile successfully
+  \item Download SDL with additional Windows Mobile tweaks:\\
+    \url{http://arisme.free.fr/ports/SDL.php}
+  \item Download additional third party libraries:\\
+    \url{http://arisme.free.fr/ports}
+  \item Modify your include and library paths accordingly in EVC3/EVC4.
+  \item Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
+  \item Modify the libraries and config parameters if necessary.
+  \item Now it should compile successfully.
   \end{itemize}
 \subsection{Debian GNU/Linux}
   \begin{itemize}
