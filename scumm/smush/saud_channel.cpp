@@ -21,8 +21,8 @@
 
 #include <stdafx.h>
 #include "channel.h"
-#include "chunck.h"
-#include "chunck_type.h"
+#include "chunk.h"
+#include "chunk_type.h"
 
 #include <assert.h>
 #include <string.h> // for memcpy.h
@@ -30,18 +30,18 @@
 #define min(x, y) ((x) > (y) ? (y) : (x))
 #endif
 
-void SaudChannel::handleStrk(Chunck & b) {
+void SaudChannel::handleStrk(Chunk & b) {
 	int size = b.getSize();
 	if(size != 14 && size != 10) {
 		error("STRK has a invalid size : %d", size);
 	}
 }
 
-void SaudChannel::handleSmrk(Chunck & b) {
+void SaudChannel::handleSmrk(Chunk & b) {
 	_markReached = true;
 }
 
-void SaudChannel::handleShdr(Chunck & b) {
+void SaudChannel::handleShdr(Chunk & b) {
 	int size = b.getSize();
 	if(size != 4) warning("SMRK has a invalid size : %d", size);
 }
@@ -49,14 +49,14 @@ void SaudChannel::handleShdr(Chunck & b) {
 bool SaudChannel::handleSubTags(int & offset) {
 	int available_size = _tbufferSize - offset;
 	if(available_size >= 8) {
-		Chunck::type type = READ_BE_UINT32(_tbuffer + offset);
+		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		unsigned int size = READ_BE_UINT32(_tbuffer + offset + 4);
 
 		switch(type) {
 			case TYPE_STRK:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunck c((char*)_tbuffer + offset);
+					ContChunk c((char*)_tbuffer + offset);
 					handleStrk(c);
 				}
 				else
@@ -65,7 +65,7 @@ bool SaudChannel::handleSubTags(int & offset) {
 			case TYPE_SMRK:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunck c((char*)_tbuffer + offset);
+					ContChunk c((char*)_tbuffer + offset);
 					handleSmrk(c);
 				}
 				else
@@ -74,7 +74,7 @@ bool SaudChannel::handleSubTags(int & offset) {
 			case TYPE_SHDR:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunck c((char*)_tbuffer + offset);
+					ContChunk c((char*)_tbuffer + offset);
 					handleShdr(c);
 				}
 				else
@@ -86,7 +86,7 @@ bool SaudChannel::handleSubTags(int & offset) {
 				offset += 8;
 				return false;
 			default:
-				error("unknown chunck in SAUD track : %s ", Chunck::ChunckString(type));
+				error("unknown Chunk in SAUD track : %s ", Chunk::ChunkString(type));
 		}
 		offset += size + 8;
 		return true;
@@ -232,12 +232,12 @@ bool SaudChannel::checkParameters(int index, int nb, int flags, int volume, int 
 	return true;
 }
 
-bool SaudChannel::appendData(Chunck & b, int size) {
+bool SaudChannel::appendData(Chunk & b, int size) {
 	if(_dataSize == -1) { // First call
 		assert(size > 8);
-		Chunck::type saud_type = b.getDword(); saud_type = TO_BE_32(saud_type);
+		Chunk::type saud_type = b.getDword(); saud_type = TO_BE_32(saud_type);
 		unsigned int saud_size = b.getDword(); saud_size = TO_BE_32(saud_size);
-		if(saud_type != TYPE_SAUD) error("Invalid CHUNCK for SaudChannel : %X", saud_type);
+		if(saud_type != TYPE_SAUD) error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
 		_dataSize = -2; // We don't get here again...
 	}

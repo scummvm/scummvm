@@ -28,7 +28,7 @@ SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o 
 
 SMUSH_OBJS = scumm/smush/blitter.o \
 	scumm/smush/brenderer.o \
-	scumm/smush/chunck.o \
+	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
 	scumm/smush/codec37.o \
 	scumm/smush/codec44.o \

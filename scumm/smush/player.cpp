@@ -24,7 +24,7 @@
 
 #include "renderer.h"
 #include "channel.h"
-#include "chunck_type.h"
+#include "Chunk_type.h"
 #include "rect.h"
 #include "blitter.h"
 
@@ -209,16 +209,16 @@ void SmushPlayer::clean() {
 	if(_fr[3]) delete _fr[3];
 }
 
-void SmushPlayer::checkBlock(const Chunck & b, Chunck::type type_expected, unsigned int min_size) {
+void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, unsigned int min_size) {
 	if(type_expected != b.getType()) {
-		error("chunck type is different from expected : %d != %d", b.getType(), type_expected);
+		error("Chunk type is different from expected : %d != %d", b.getType(), type_expected);
 	}
 	if(min_size > b.getSize()) {
-		error( "chunck size is inferior than minimum required size : %d < %d", b.getSize(), min_size);
+		error( "Chunk size is inferior than minimum required size : %d < %d", b.getSize(), min_size);
 	}
 }
 
-void SmushPlayer::handleSoundBuffer(int track_id, int index, int max_frames, int flags, int vol, int bal, Chunck & b, int size) {
+void SmushPlayer::handleSoundBuffer(int track_id, int index, int max_frames, int flags, int vol, int bal, Chunk & b, int size) {
 	debug(6, "smush_player::handleSoundBuffer(%d)", track_id);
 	if(!_voices && (flags & 128) == 128) return;
 	if(!_bgmusic && (flags & 64) == 64) return;
@@ -234,7 +234,7 @@ void SmushPlayer::handleSoundBuffer(int track_id, int index, int max_frames, int
 	c->appendData(b, size);
 }
 
-void SmushPlayer::handleSoundFrame(Chunck & b) {
+void SmushPlayer::handleSoundFrame(Chunk & b) {
 	checkBlock(b, TYPE_PSAD);
 	debug(6, "SmushPlayer::handleSoundFrame()");
 	if(!_outputSound) return;
@@ -253,7 +253,7 @@ void SmushPlayer::handleSoundFrame(Chunck & b) {
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, bal, b, size);
 }
 
-void SmushPlayer::handleSkip(Chunck & b) {
+void SmushPlayer::handleSkip(Chunk & b) {
 	checkBlock(b, TYPE_SKIP, 4);
 	int code = b.getDword();
 	debug(6, "SmushPlayer::handleSkip(%d)", code);
@@ -263,17 +263,17 @@ void SmushPlayer::handleSkip(Chunck & b) {
 		_skipNext =true;
 }
 
-void SmushPlayer::handleStore(Chunck & b) {
+void SmushPlayer::handleStore(Chunk & b) {
 	checkBlock(b, TYPE_STOR, 4);
 	debug(6, "SmushPlayer::handleStore()");
 }
 
-void SmushPlayer::handleFetch(Chunck & b) {
+void SmushPlayer::handleFetch(Chunk & b) {
 	checkBlock(b, TYPE_FTCH, 6);
 	debug(6, "SmushPlayer::handleFetch()");
 }
 
-void SmushPlayer::handleImuseBuffer(int track_id, int index, int nbframes, int size, int unk1, int unk2, Chunck & b, int bsize) {
+void SmushPlayer::handleImuseBuffer(int track_id, int index, int nbframes, int size, int unk1, int unk2, Chunk & b, int bsize) {
 	_Channel * c = _mixer->findChannel(track_id);
 	if(c == 0) {
 		c = new ImuseChannel(track_id, _soundFrequency);
@@ -286,7 +286,7 @@ void SmushPlayer::handleImuseBuffer(int track_id, int index, int nbframes, int s
 	c->appendData(b, bsize);
 }
 
-void SmushPlayer::handleImuseAction8(Chunck & b, int flags, int unknown, int track_id) {
+void SmushPlayer::handleImuseAction8(Chunk & b, int flags, int unknown, int track_id) {
 	assert(flags == 46 && unknown == 0);
 	int unknown2 = b.getWord();
 	track_id |= unknown2 << 16;
@@ -297,7 +297,7 @@ void SmushPlayer::handleImuseAction8(Chunck & b, int flags, int unknown, int tra
 	handleImuseBuffer(track_id, index, nbframes, size, unknown, unknown2, b, bsize);
 }
 
-void SmushPlayer::handleImuseAction(Chunck & b) {
+void SmushPlayer::handleImuseAction(Chunk & b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 	if(!_outputSound) return;
@@ -320,7 +320,7 @@ void SmushPlayer::handleImuseAction(Chunck & b) {
 	}
 }
 
-void SmushPlayer::handleTextResource(Chunck & b) {
+void SmushPlayer::handleTextResource(Chunk & b) {
 	checkBlock(b, TYPE_TRES, 18); 
 	int pos_x = b.getShort();
 	int pos_y = b.getShort();
@@ -375,13 +375,13 @@ void SmushPlayer::handleTextResource(Chunck & b) {
 	}
 }
 
-void SmushPlayer::readPalette(Palette & out, Chunck & in) {
+void SmushPlayer::readPalette(Palette & out, Chunk & in) {
 	unsigned char buffer[768];
 	in.read(buffer, 768);
 	out = Palette(buffer);
 }
 
-void SmushPlayer::handleDeltaPalette(Chunck & b) {
+void SmushPlayer::handleDeltaPalette(Chunk & b) {
 	checkBlock(b, TYPE_XPAL);
 	debug(6, "SmushPlayer::handleDeltaPalette()");
 	if(b.getSize() == 768 * 3 + 4) {
@@ -407,14 +407,14 @@ void SmushPlayer::handleDeltaPalette(Chunck & b) {
 	}
 }
 
-void SmushPlayer::handleNewPalette(Chunck & b) {
+void SmushPlayer::handleNewPalette(Chunk & b) {
 	checkBlock(b, TYPE_NPAL, 768);
 	debug(6, "SmushPlayer::handleNewPalette()");
 	readPalette(_pal, b);
 	updatePalette();
 }
 
-void SmushPlayer::decodeCodec(Chunck & b, const Rect & r, Decoder & codec) {
+void SmushPlayer::decodeCodec(Chunk & b, const Rect & r, Decoder & codec) {
 	assert(_curBuffer);
 	Blitter blit(_curBuffer, _frameSize, r);
 	codec.decode(blit, b);
@@ -449,7 +449,7 @@ void SmushPlayer::initSize(const Rect & r, bool always, bool transparent) {
 	_alreadyInit = true;
 }
 
-void SmushPlayer::handleFrameObject(Chunck & b) {
+void SmushPlayer::handleFrameObject(Chunk & b) {
 	checkBlock(b, TYPE_FOBJ, 14);
 	if(_skipNext) {
 		_skipNext = false;
@@ -496,14 +496,14 @@ void SmushPlayer::handleFrameObject(Chunck & b) {
 	}
 }
 
-void SmushPlayer::handleFrame(Chunck & b) {
+void SmushPlayer::handleFrame(Chunk & b) {
 	checkBlock(b, TYPE_FRME);
 	debug(6, "SmushPlayer::handleFrame(%d)", _frame);
 	_alreadyInit = false;
 	_skipNext = false;
 
 	while(!b.eof()) {
-		Chunck * sub = b.subBlock();
+		Chunk * sub = b.subBlock();
 		if(sub->getSize() & 1) b.seek(1);
 		switch(sub->getType()) {
 			case TYPE_NPAL:
@@ -534,7 +534,7 @@ void SmushPlayer::handleFrame(Chunck & b) {
 				handleSkip(*sub);
 				break;
 			default:
-				error("Unknown frame subchunck found : %s, %d", Chunck::ChunckString(sub->getType()), sub->getSize());
+				error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
 		delete sub;
 	}
@@ -553,7 +553,7 @@ void SmushPlayer::handleFrame(Chunck & b) {
 	_frame++;
 }
 
-void SmushPlayer::handleAnimHeader(Chunck & b) {
+void SmushPlayer::handleAnimHeader(Chunk & b) {
 	checkBlock(b, TYPE_AHDR, 774);
 	debug(6, "SmushPlayer::handleAnimHeader()");
 	_version = b.getWord();
@@ -619,7 +619,7 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 	if(is_encoded) {
 		static const int ETRS_HEADER_LENGTH = 16;
 		assert(length > ETRS_HEADER_LENGTH);
-		Chunck::type type = READ_BE_UINT32(filebuffer);
+		Chunk::type type = READ_BE_UINT32(filebuffer);
 		if(type != TYPE_ETRS) error("invalid type for file"); // mem leak !!!
 		char * old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH];
@@ -730,12 +730,12 @@ bool SmushPlayer::play(const char * file) {
 			}
 		}
 	}
-	FileChunck base = FileChunck(file);
+	FileChunk base = FileChunk(file);
 
 	checkBlock(base, TYPE_ANIM); 
 
 	while(!base.eof()) {
-		Chunck * sub = base.subBlock();
+		Chunk * sub = base.subBlock();
 		switch(sub->getType()) {
 			case TYPE_AHDR:
 				handleAnimHeader(*sub);
@@ -744,7 +744,7 @@ bool SmushPlayer::play(const char * file) {
 				handleFrame(*sub);
 				break;
 			default:
-				error("Unknown chunck found : %d, %d", sub->getType(), sub->getSize());
+				error("Unknown Chunk found : %d, %d", sub->getType(), sub->getSize());
 		}
 		delete sub;
 		if(_renderer->prematureClose())

@@ -26,7 +26,7 @@
 
 #include "rect.h"
 #include "mixer.h"
-#include "chunck.h"
+#include "chunk.h"
 #include "palette.h"
 #include "codec1.h"
 #include "codec37.h"
@@ -81,23 +81,23 @@ public:
 protected:
 	bool readString(const char * file, bool &);
 	void clean();
-	void checkBlock(const Chunck &, Chunck::type, unsigned int = 0);
-	void handleAnimHeader(Chunck &);
-	void handleFrame(Chunck &);
-	void handleNewPalette(Chunck &);
-	void handleFrameObject(Chunck &);
-	void handleSoundBuffer(int, int, int, int, int, int, Chunck &, int);
-	void handleImuseBuffer(int, int, int, int, int, int, Chunck &, int);
-	void handleSoundFrame(Chunck &);
-	void handleSkip(Chunck &);
-	void handleStore(Chunck &);
-	void handleFetch(Chunck &);
-	void handleImuseAction8(Chunck &, int flags, int unknown, int track_id);
-	void handleImuseAction(Chunck &);
-	void handleTextResource(Chunck &);
-	void handleDeltaPalette(Chunck &);
-	void decodeCodec(Chunck &, const Rect &, Decoder &);
-	void readPalette(Palette &, Chunck &);
+	void checkBlock(const Chunk &, Chunk::type, unsigned int = 0);
+	void handleAnimHeader(Chunk &);
+	void handleFrame(Chunk &);
+	void handleNewPalette(Chunk &);
+	void handleFrameObject(Chunk &);
+	void handleSoundBuffer(int, int, int, int, int, int, Chunk &, int);
+	void handleImuseBuffer(int, int, int, int, int, int, Chunk &, int);
+	void handleSoundFrame(Chunk &);
+	void handleSkip(Chunk &);
+	void handleStore(Chunk &);
+	void handleFetch(Chunk &);
+	void handleImuseAction8(Chunk &, int flags, int unknown, int track_id);
+	void handleImuseAction(Chunk &);
+	void handleTextResource(Chunk &);
+	void handleDeltaPalette(Chunk &);
+	void decodeCodec(Chunk &, const Rect &, Decoder &);
+	void readPalette(Palette &, Chunk &);
 	void initSize(const Rect &, bool, bool);
 };
 

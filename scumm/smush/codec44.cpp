@@ -21,10 +21,10 @@
 
 #include <stdafx.h>
 #include "codec44.h"
-#include "chunck.h"
+#include "chunk.h"
 #include "blitter.h"
 
-bool Codec44Decoder::decode(Blitter & dst, Chunck & src) {
+bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
 	int size_line;
 	int num;
 	int w, width = getRect().width() + 1;

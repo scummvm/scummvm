@@ -21,13 +21,13 @@
 
 #include <stdafx.h>
 #include "codec47.h"
-#include "chunck.h"
+#include "chunk.h"
 #include "blitter.h"
 
 DumpDecoder::~DumpDecoder() {
 }
 
-bool DumpDecoder::decode(Blitter & dst, Chunck & src) {
+bool DumpDecoder::decode(Blitter & dst, Chunk & src) {
 	int n = 0, i = 0;
 	int seq = src.getWord();
 	int codec = src.getByte();

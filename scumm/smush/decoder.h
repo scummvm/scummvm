@@ -27,7 +27,7 @@
 #include "rect.h"
 
 class Blitter;
-class Chunck;
+class Chunk;
 
 /*!	@brief base class for codec decompression.
 
@@ -45,7 +45,7 @@ public:
 	Decoder() {};
 	virtual ~Decoder() {};
 	virtual bool initSize(const Point & p, const Rect & r) { _p = p; _r = r; return true; };
-	virtual bool decode(Blitter &, Chunck &) = 0;
+	virtual bool decode(Blitter &, Chunk &) = 0;
 };
 
 #endif

@@ -19,22 +19,22 @@
  *
  */
 
-#ifndef __CHUNCK_H_
-#define __CHUNCK_H_
+#ifndef __CHUNK_H_
+#define __CHUNK_H_
 
 #include "config.h"
 
-/*! 	@brief Interface for chunck handling
+/*! 	@brief Interface for Chunk handling
 
-	This class is an interface for reading from a chunck.
+	This class is an interface for reading from a Chunk.
 
 	\todo handle big endian system.
 */
-class Chunck {
+class Chunk {
 public:
 	enum seek_type { seek_start, seek_end, seek_cur };
-	virtual ~Chunck() {};
-	typedef unsigned int type;			//!< type of a chunck (i.e. The first 4byte field of the chunck structure).
+	virtual ~Chunk() {};
+	typedef unsigned int type;			//!< type of a Chunk (i.e. The first 4byte field of the Chunk structure).
 	/*!	@brief convert a type to a string
 		
 		Utility function that convert a type to a string.
@@ -43,14 +43,14 @@ public:
 		
 		@return the converted string
 	*/
-	static const char * ChunckString(type t);
+	static const char * ChunkString(type t);
 
-	virtual type getType() const = 0;	//!< return the type of the chunck
-	virtual unsigned int getSize() const = 0;	//!< return the size of the chunck
-	virtual Chunck * subBlock() = 0; //!< extract a subchunck from the current read position
-	virtual bool eof() const = 0;	//!< is the chunck completely read ?
-	virtual unsigned int tell() const = 0;	//!< get the chunck current read position
-	virtual bool seek(int delta, seek_type dir = seek_cur) = 0;	//!< move the current read position inside the chunck
+	virtual type getType() const = 0;	//!< return the type of the Chunk
+	virtual unsigned int getSize() const = 0;	//!< return the size of the Chunk
+	virtual Chunk * subBlock() = 0; //!< extract a subChunk from the current read position
+	virtual bool eof() const = 0;	//!< is the Chunk completely read ?
+	virtual unsigned int tell() const = 0;	//!< get the Chunk current read position
+	virtual bool seek(int delta, seek_type dir = seek_cur) = 0;	//!< move the current read position inside the Chunk
 	virtual bool read(void * buffer, unsigned int size) = 0;		//!< read some data for the current read position
 	virtual char getChar() = 0;							//!< extract the character at the current read position
 	virtual unsigned char getByte() = 0;					//!< extract the byte at the current read position
@@ -61,12 +61,12 @@ public:
 
 class FilePtr;
 
-/*! 	@brief file based ::chunck
+/*! 	@brief file based ::Chunk
 
-	This class is an implementation of ::chunck that handles file.
+	This class is an implementation of ::Chunk that handles file.
 
 */
-class FileChunck : public Chunck {
+class FileChunk : public Chunk {
 private:
 	FilePtr * _data;
 	type _type;
@@ -74,13 +74,13 @@ private:
 	unsigned int _offset;
 	unsigned int _curPos;
 protected:
-	FileChunck();
+	FileChunk();
 public:
-	FileChunck(const char * fname);
-	virtual ~FileChunck();
+	FileChunk(const char * fname);
+	virtual ~FileChunk();
 	type getType() const;
 	unsigned int getSize() const;
-	Chunck * subBlock();
+	Chunk * subBlock();
 	bool eof() const;
 	unsigned int tell() const;
 	bool seek(int delta, seek_type dir = seek_cur);
@@ -92,21 +92,21 @@ public:
 	unsigned int getDword();
 };
 
-/*! 	@brief memory based ::chunck
+/*! 	@brief memory based ::Chunk
 
-	This class is an implementation of ::chunck that handles a memory buffer.
+	This class is an implementation of ::Chunk that handles a memory buffer.
 */
-class ContChunck : public Chunck {
+class ContChunk : public Chunk {
 private:
 	char * _data;
-	Chunck::type _type;
+	Chunk::type _type;
 	unsigned int _size;
 	unsigned int _curPos;
 public:
-	ContChunck(char * data);
-	Chunck::type getType() const;
+	ContChunk(char * data);
+	Chunk::type getType() const;
 	unsigned int getSize() const;
-	Chunck * subBlock();
+	Chunk * subBlock();
 	bool eof() const;
 	unsigned int tell() const;
 	bool seek(int delta, seek_type dir = seek_cur);

@@ -74,13 +74,13 @@ protected:
 		return r | (r << 16);
 	}
 	void maketable(int, int);
-	void proc1(Blitter &, Chunck &, int, int, int, int);
-	void proc2(Blitter &, Chunck &, int);
-	void proc3WithFDFE(Blitter &, Chunck &, int, int, int);
-	void proc3WithoutFDFE(Blitter &, Chunck &, int, int, int);
-	void proc4(Blitter &, Chunck &, int, int, int);
+	void proc1(Blitter &, Chunk &, int, int, int, int);
+	void proc2(Blitter &, Chunk &, int);
+	void proc3WithFDFE(Blitter &, Chunk &, int, int, int);
+	void proc3WithoutFDFE(Blitter &, Chunk &, int, int, int);
+	void proc4(Blitter &, Chunk &, int, int, int);
 public:
-	bool decode(Blitter &, Chunck &);
+	bool decode(Blitter &, Chunk &);
 };
 
 #endif

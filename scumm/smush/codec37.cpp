@@ -21,7 +21,7 @@
 
 #include <stdafx.h>
 #include "codec37.h"
-#include "chunck.h"
+#include "chunk.h"
 #include "blitter.h"
 
 #include <assert.h>
@@ -200,7 +200,7 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	}
 }
 
-void Codec37Decoder::proc1(Blitter & dst, Chunck & src, int next_offs, int bw, int bh, int size) {
+void Codec37Decoder::proc1(Blitter & dst, Chunk & src, int next_offs, int bw, int bh, int size) {
 	unsigned char * decoded = new unsigned char[size];
 	int w = 0;
 	while(!src.eof()) {
@@ -234,7 +234,7 @@ void Codec37Decoder::proc1(Blitter & dst, Chunck & src, int next_offs, int bw, i
 	delete []decoded;
 }
 
-void Codec37Decoder::proc2(Blitter & dst, Chunck & src, int size) { // This is codec1 like...
+void Codec37Decoder::proc2(Blitter & dst, Chunk & src, int size) { // This is codec1 like...
 #ifdef DEBUG_CODEC37_PROC2
 	int decoded_size = 0;
 	int coded_size = 0;
@@ -258,7 +258,7 @@ void Codec37Decoder::proc2(Blitter & dst, Chunck & src, int size) { // This is c
 	} while (size);
 }
 
-void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunck & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
 	do {
 		int i = bw;
 		do {
@@ -293,7 +293,7 @@ void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunck & src, int next_offs, i
 	} while (--bh);
 }
 
-void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunck & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
 	do {
 		int i = bw;
 		do {
@@ -316,7 +316,7 @@ void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunck & src, int next_offs
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4(Blitter & dst, Chunck & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
 #ifdef DEBUG_CODEC37_PROC4
 	int b_nb = 0;
 #endif
@@ -371,7 +371,7 @@ void Codec37Decoder::proc4(Blitter & dst, Chunck & src, int next_offs, int bw, i
 	} while (--bh);
 }
 
-bool Codec37Decoder::decode(Blitter & dst, Chunck & src) {
+bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 	int width = getRect().width();
 	int height = getRect().height();
 	int bw = (width + 3) >> 2, bh = (height + 3) >> 2;

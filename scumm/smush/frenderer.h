@@ -131,7 +131,7 @@ public:
 	/*!	@brief draw a centered and possibly using multiple lines string.
 	
 		This method performs calculation of the string size before choosing where to draw it.
-		As I still not have figured out exactly what is the meaning of the fields in the TRES chunck, 
+		As I still not have figured out exactly what is the meaning of the fields in the TRES Chunk, 
 		the real meaning of the parameters can be quite difficult to understand.
 	
 		@remark	The current implementation is incorrect in the sense that it does not conform to the original game.

@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef __COLOR_H_
-#define __COLOR_H_
+#ifndef __Chunk_H_
+#define __Chunk_H_
 
 #include "config.h"
 
-/*! 	@brief simple class for handling a color.
+/*! 	@brief simple class for handling a Chunk.
 
-	This small class is an helper for colors.
+	This small class is an helper for Chunks.
 */
 class Color {
 public:
-	typedef unsigned char value_type;	//!< The type of the color components.
+	typedef unsigned char value_type;	//!< The type of the Chunk components.
 private:
 	value_type _r;	//!< The red component.
 	value_type _g;	//!< The green component.
@@ -47,7 +47,7 @@ public:
 	/*!	@brief handle delta palette modification
 
 		This method is used specifically by player::handleDeltaPalette().
-		It updates the color component using delta values given as short.
+		It updates the Chunk component using delta values given as short.
 
 		@param ptr pointer to a table of 3 shorts that contain delta values to use.
 	*/

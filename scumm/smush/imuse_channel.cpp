@@ -21,8 +21,8 @@
 
 #include <stdafx.h>
 #include "channel.h"
-#include "chunck.h"
-#include "chunck_type.h"
+#include "chunk.h"
+#include "chunk_type.h"
 
 #include <assert.h>
 #include <string.h> // for memcpy.h
@@ -63,12 +63,12 @@ bool ImuseChannel::checkParameters(int index, int nbframes, int size, int unk1, 
 	return true;
 }
 
-bool ImuseChannel::appendData(Chunck & b, int size) {
+bool ImuseChannel::appendData(Chunk & b, int size) {
 	if(_dataSize == -1) { // First call
 		assert(size > 8);
-		Chunck::type imus_type = b.getDword(); imus_type = TO_BE_32(imus_type);
+		Chunk::type imus_type = b.getDword(); imus_type = TO_BE_32(imus_type);
 		unsigned int imus_size = b.getDword(); imus_size = TO_BE_32(imus_size);
-		if(imus_type != TYPE_iMUS) error("Invalid CHUNCK for imuse_channel");
+		if(imus_type != TYPE_iMUS) error("Invalid Chunk for imuse_channel");
 		size -= 8;
 		_tbufferSize = size;
 		assert(_tbufferSize);
@@ -96,8 +96,8 @@ bool ImuseChannel::appendData(Chunck & b, int size) {
 	return processBuffer();
 }
 
-bool ImuseChannel::handleFormat(Chunck & src) {
-	if(src.getSize() != 20) error("invalid size for FRMT chunck");
+bool ImuseChannel::handleFormat(Chunk & src) {
+	if(src.getSize() != 20) error("invalid size for FRMT Chunk");
 	unsigned imuse_start = src.getDword();
 	imuse_start = TO_BE_32(imuse_start);
 	src.seek(4);
@@ -111,23 +111,23 @@ bool ImuseChannel::handleFormat(Chunck & src) {
 	return true;
 }
 
-bool ImuseChannel::handleText(Chunck & src) {
+bool ImuseChannel::handleText(Chunk & src) {
 	return true;
 }
 
-bool ImuseChannel::handleRegion(Chunck & src) {
-	if(src.getSize() != 8) error("invalid size for REGN chunck");
+bool ImuseChannel::handleRegion(Chunk & src) {
+	if(src.getSize() != 8) error("invalid size for REGN Chunk");
 	return true;
 }
 
-bool ImuseChannel::handleStop(Chunck & src) {
-	if(src.getSize() != 4) error("invalid size for STOP chunck");
+bool ImuseChannel::handleStop(Chunk & src) {
+	if(src.getSize() != 4) error("invalid size for STOP Chunk");
 	return true;
 }
 
-bool ImuseChannel::handleMap(Chunck & map) {
+bool ImuseChannel::handleMap(Chunk & map) {
 	while(!map.eof()) {
-		Chunck * sub = map.subBlock();
+		Chunk * sub = map.subBlock();
 		switch(sub->getType()) {
 			case TYPE_FRMT:
 				handleFormat(*sub);
@@ -142,7 +142,7 @@ bool ImuseChannel::handleMap(Chunck & map) {
 				handleStop(*sub);
 				break;
 			default:
-				error("Unknown iMUS subchunck found : %s, %d", Chunck::ChunckString(sub->getType()), sub->getSize());
+				error("Unknown iMUS subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
 		}
 		delete sub;
 	}
@@ -195,13 +195,13 @@ void ImuseChannel::decode() {
 bool ImuseChannel::handleSubTags(int & offset) {
 	int available_size = _tbufferSize - offset;
 	if(available_size >= 8) {
-		Chunck::type type = READ_BE_UINT32(_tbuffer + offset);
+		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		unsigned int size = READ_BE_UINT32(_tbuffer + offset + 4);
 		switch(type) {
 			case TYPE_MAP_: 
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunck c((char*)_tbuffer + offset);
+					ContChunk c((char*)_tbuffer + offset);
 					handleMap(c);
 				}
 				break;
@@ -225,7 +225,7 @@ bool ImuseChannel::handleSubTags(int & offset) {
 				}
 				return false;
 			default:
-				error("unknown chunck in iMUS track : %s ", Chunck::ChunckString(type));
+				error("unknown Chunk in iMUS track : %s ", Chunk::ChunkString(type));
 		}
 		offset += size + 8;
 		return true;

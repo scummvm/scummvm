@@ -21,7 +21,7 @@
 
 #include <stdafx.h>
 #include "blitter.h"
-#include "chunck.h"
+#include "chunk.h"
 
 #include <assert.h>
 #include <string.h> // for memcpy
@@ -114,7 +114,7 @@ void Blitter::blit(char * ptr, unsigned int len) {
 	}
 }
 
-void Blitter::blit(Chunck & src, unsigned int len) {
+void Blitter::blit(Chunk & src, unsigned int len) {
 	while(len) {
 		if(_outside) {
 #ifdef DEBUG_CLIPPER
@@ -185,7 +185,7 @@ void Blitter::putBlock(unsigned char * data) {
 	advanceBlock();
 }
 
-void Blitter::putBlock(Chunck & src) {
+void Blitter::putBlock(Chunk & src) {
 	if(_cur.getX() + 3 < _src.right() && _cur.getY() + 3 < _src.bottom()) { // This is clipping
 		assert((_clip.getX() & 3) == 0);
 		unsigned int * dst =  (unsigned int *)_offset;

@@ -36,7 +36,7 @@
 
 #include "rect.h"
 
-class Chunck;
+class Chunk;
 /*! 	@brief class for handling blitting on a frame buffer
 
 	This class allows to perform secure blitting to a frame buffer in several ways.
@@ -64,13 +64,13 @@ public:
 	Blitter(char * buffer, const Point & dstsize, const Rect & src);
 	virtual ~Blitter();
 	void blit(char *, unsigned int); //!< This method allows to blit directly some data from a buffer
-	void blit(Chunck &, unsigned int); //!< This method allows to blit directly some data from a chunck
+	void blit(Chunk &, unsigned int); //!< This method allows to blit directly some data from a Chunk
 	void put(char); //!< This method allows to blit one byte
 	void put(char, unsigned int); //!< This method allows to blit one byte several times
 	void advance(int = 1, int = 0); //!< This method allows to advance the current position in the blitter
 	void advanceBlock(int = 1, int = 0); //!< This method allows to advance the current position in the blitter in terms of blocks
 	void putBlock(unsigned int); //!< This method allows to blit one block from an int value repeated 4 time
-	void putBlock(Chunck &); //!< This method allows to blit one block directly read from a chunck
+	void putBlock(Chunk &); //!< This method allows to blit one block directly read from a Chunk
 	void putBlock(unsigned char *); //!< This method allows to blit one block directly from a buffer
 	void putBlock(unsigned int, unsigned int, unsigned int, unsigned int); //!< This method allows to blit one block from a 4 int value
 	void blockCopy(int); //!< This method allows to copy one block from another separated by the given offset

@@ -32,7 +32,7 @@
 class DumpDecoder : public Decoder {
 public:
 	virtual ~DumpDecoder();
-	bool decode(Blitter &, Chunck &);
+	bool decode(Blitter &, Chunk &);
 };
 
 #endif

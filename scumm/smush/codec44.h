@@ -41,7 +41,7 @@
 */
 class Codec44Decoder : public Decoder {
 public:
-	bool decode(Blitter & dst, Chunck & src);
+	bool decode(Blitter & dst, Chunk & src);
 };
 
 #endif

@@ -21,13 +21,13 @@
 
 #include <stdafx.h>
 #include "codec1.h"
-#include "chunck.h"
+#include "chunk.h"
 #include "blitter.h"
 
 Codec1Decoder::~Codec1Decoder() {
 }
 
-bool Codec1Decoder::decode(Blitter & dst, Chunck & src) {
+bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 	int val;
 	int size_line;
 	int code, length;

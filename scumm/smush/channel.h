@@ -34,8 +34,8 @@
 # endif
 #endif
 
-class Chunck;
-class ContChunck;
+class Chunk;
+class ContChunk;
 	
 /*! 	@brief interface for a sound channel (a track)
 
@@ -45,7 +45,7 @@ class _Channel {
 public:
 	virtual ~_Channel() {};
 	// called by the smush_player
-	virtual bool appendData(Chunck & b, int size) = 0;
+	virtual bool appendData(Chunk & b, int size) = 0;
 	virtual bool setParameters(int, int, int, int) = 0;
 	virtual bool checkParameters(int, int, int, int, int) = 0;
 	// called by the mixer
@@ -76,9 +76,9 @@ private:
 	int _sbufferSize;			//!< sound buffer size
 
 protected:
-	void handleStrk(Chunck & c);
-	void handleSmrk(Chunck & c);
-	void handleShdr(Chunck & c);
+	void handleStrk(Chunk & c);
+	void handleSmrk(Chunk & c);
+	void handleShdr(Chunk & c);
 	bool handleSubTags(int & offset);
 	bool processBuffer();
 	void recalcVolumeTable();
@@ -89,7 +89,7 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int duration, int flags, int vol1, int vol2);
 	bool checkParameters(int index, int duration, int flags, int vol1, int vol2);
-	bool appendData(Chunck & b, int size);
+	bool appendData(Chunk & b, int size);
 	int availableSoundData() const;
 	void getSoundData(short * sound_buffer, int size);
 	void getSoundData(char * sound_buffer, int size) { error("16bit request for SAUD channel should never happen"); };
@@ -128,11 +128,11 @@ protected:
 	int decode(int size, int &ret);
 	void decode();
 	bool processBuffer();
-	bool handleMap(Chunck &);
-	bool handleFormat(Chunck &);
-	bool handleText(Chunck &);
-	bool handleRegion(Chunck &);
-	bool handleStop(Chunck &);
+	bool handleMap(Chunk &);
+	bool handleFormat(Chunk &);
+	bool handleText(Chunk &);
+	bool handleRegion(Chunk &);
+	bool handleStop(Chunk &);
 	bool handleSubTags(int & offset);
 
 public:
@@ -141,7 +141,7 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int nbframes, int size, int unk1, int unk2);
 	bool checkParameters(int index, int nbframes, int size, int unk1, int unk2);
-	bool appendData(Chunck & b, int size);
+	bool appendData(Chunk & b, int size);
 	int availableSoundData() const;
 	void getSoundData(short * sound_buffer, int size);
 	void getSoundData(char * sound_buffer, int size);
