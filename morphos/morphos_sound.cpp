@@ -56,6 +56,7 @@ static struct MsgPort       *MusicTimerMsgPort = NULL;
 
 bool init_morphos_music( ULONG MidiUnit )
 {
+	MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
 	ScummMidiPort = CreateMsgPort();
 	if( ScummMidiPort )
 	{

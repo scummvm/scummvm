@@ -138,6 +138,7 @@ class OSystem_MorphOS : public OSystem
 		USHORT 		    		ScummColors16[256];
 		WORD			    		ScummWinX;
 		WORD			    		ScummWinY;
+		bool			    		ScummDefaultMouse;
 		bool			    		ScummOrigMouse;
 		int 			    		ScummShakePos;
 		bool						FullScreenMode;
@@ -197,6 +198,7 @@ extern OSystem_MorphOS *TheSystem;
 extern struct SignalSemaphore ScummMusicThreadRunning;
 extern struct SignalSemaphore ScummSoundThreadRunning;
 
+extern LONG ScummMidiUnit;
 extern struct IOMidiRequest *ScummMidiRequest;
 extern struct timerequest   *MusicTimerIORequest;
 

@@ -109,6 +109,7 @@ OSystem_MorphOS::OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_sc
 	ScummSoundThread = NULL;
 	ScummWinX = -1;
 	ScummWinY = -1;
+	ScummDefaultMouse = false;
 	ScummOrigMouse = false;
 	ScummShakePos = 0;
 	ScummPCMode = false;
@@ -247,35 +248,32 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 			return 1;
 
 		case PROP_OPEN_CD:
-			if( value )
+			FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
+			if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
+			if( CDDABase )
 			{
-				FindCDTags[ 0 ].ti_Data = (ULONG)((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
-				if( !CDDABase ) CDDABase = OpenLibrary( "cdda.library", 0 );
-				if( CDDABase )
+				CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
+				if( CDrive )
 				{
-					CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
-					if( CDrive )
+					if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
 					{
-						if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
-						{
-							CDrive = NULL;
-							warning( "Failed to obtain CD drive - music will not play" );
-						}
-						else if( GameID == GID_LOOM256 )
-						{
-							// Offset correction *may* be required
-							struct CDS_TrackInfo ti;
-
-							if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
-								CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
-						}
+						CDrive = NULL;
+						warning( "Failed to obtain CD drive - music will not play" );
 					}
-					else
-						warning( "Could not find game CD inserted in CD-ROM drive - cd audio will not play" );
+					else if( GameID == GID_LOOM256 )
+					{
+						// Offset correction *may* be required
+						struct CDS_TrackInfo ti;
+
+						if( CDDA_GetTrackInfo( CDrive, 1, 0, &ti ) )
+							CDDATrackOffset = ti.ti_TrackStart.tm_Format.tm_Frame-22650;
+					}
 				}
 				else
-					warning( "Failed to open cdda.library - cd audio will not play" );
+					warning( "Could not find game CD inserted in CD-ROM drive - cd audio will not play" );
 			}
+			else
+				warning( "Failed to open cdda.library - cd audio will not play" );
 			break;
 
 		case PROP_SHOW_DEFAULT_CURSOR:
@@ -283,6 +281,7 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 				ClearPointer( ScummWindow );
 			else
 				SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+			ScummOrigMouse = ScummDefaultMouse = value;
 			break;
 
 		case PROP_GET_SAMPLE_RATE:
@@ -592,8 +591,11 @@ void OSystem_MorphOS::create_screen( CS_DSPTYPE dspType )
 		exit(1);
 	}
 
-	SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
-	ScummOrigMouse = false;
+	if( !ScummDefaultMouse )
+	{
+		SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+		ScummOrigMouse = false;
+	}
 
 	if( ScummScreen == NULL )
 	{
@@ -770,20 +772,23 @@ bool OSystem_MorphOS::poll_event( Event *event )
 				newx = (ScummMsg->MouseX-ScummWindow->BorderLeft) >> ScummScale;
 				newy = (ScummMsg->MouseY-ScummWindow->BorderTop) >> ScummScale;
 
-				if( newx < 0 || newx > 320 ||
-					 newy < 0 || newy > 200
-				  )
+				if( !ScummDefaultMouse )
 				{
-					if( !ScummOrigMouse )
+					if( newx < 0 || newx > 320 ||
+						 newy < 0 || newy > 200
+					  )
 					{
-						ScummOrigMouse = true;
-						ClearPointer( ScummWindow );
+						if( !ScummOrigMouse )
+						{
+							ScummOrigMouse = true;
+							ClearPointer( ScummWindow );
+						}
 					}
-				}
-				else if( ScummOrigMouse )
-				{
-					ScummOrigMouse = false;
-					SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+					else if( ScummOrigMouse )
+					{
+						ScummOrigMouse = false;
+						SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
+					}
 				}
 				event->event_code = EVENT_MOUSEMOVE;
 				event->mouse.x = newx;
