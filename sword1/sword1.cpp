@@ -1196,7 +1196,10 @@ uint8 SwordEngine::mainLoop(void) {
 
 			if (_systemVars.forceRestart)
 				retCode = CONTROL_RESTART_GAME;
-			else if (((_keyPressed == 63) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.deathScreenFlag)) {
+
+			// The control panel is triggered by F5 or ESC.
+			// FIXME: This is a very strange way of detecting F5...
+			else if (((_keyPressed == 63 || _keyPressed == 27) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.deathScreenFlag)) {
 				retCode = _control->runPanel();
 				if (!retCode)
 					_screen->fullRefresh();
