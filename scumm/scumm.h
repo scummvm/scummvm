@@ -85,6 +85,7 @@ enum GameFeatures {
 	GF_AFTER_HEV7          = 1 << 15,
 	GF_FMTOWNS             = 1 << 16,
 	GF_FEW_LOCALS          = 1 << 17,
+	GF_NES                 = 1 << 18,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };

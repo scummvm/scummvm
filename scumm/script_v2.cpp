@@ -246,7 +246,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_notEqualZero),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_addIndirect),
-		OPCODE(o2_dummy),
+		OPCODE(o2_switchCostumeSet),
 		/* AC */
 		OPCODE(o2_drawSentence),
 		OPCODE(o5_putActorInRoom),
@@ -1486,6 +1486,16 @@ void Scumm_v2::o2_getActorWalkBox() {
 
 void Scumm_v2::o2_dummy() {
 	warning("o2_dummy invoked (opcode %d)", _opcode);
+}
+
+void Scumm_v2::o2_switchCostumeSet() {
+	// NES version of maniac uses this to switch between the two
+	// groups of costumes it has
+	if (_features & GF_NES) {
+		warning("stub: o2_switchCostumeSet()");
+		fetchScriptByte();
+	} else
+		o2_dummy();
 }
 
 void Scumm_v2::resetSentence() {

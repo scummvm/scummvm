@@ -285,6 +285,7 @@ protected:
 	void o2_startScript();
 	void o2_subtract();
 	void o2_subIndirect();
+	void o2_switchCostumeSet();
 	void o2_verbOps();
 	void o2_waitForActor();
 	void o2_waitForMessage();

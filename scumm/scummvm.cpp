@@ -70,6 +70,8 @@ static const VersionSettings scumm_settings[] = {
 
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, "00.LFL"},
+	{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, VersionSettings::ADLIB_ALWAYS,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, "00.LFL"},
 	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, "00.LFL"},
 
@@ -562,6 +564,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	} else if (_gameId == GID_CMI) {
 		_screenWidth = 640;
 		_screenHeight = 480;
+	} else if (_features & GF_NES) {
+		_screenWidth = 256;
+		_screenHeight = 240;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;

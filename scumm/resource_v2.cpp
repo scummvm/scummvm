@@ -168,6 +168,13 @@ void Scumm_v2::readIndexFile() {
 			_version = 1;
 			readClassicIndexFile();
 			break;
+		case 0x4643:
+			if (!(_features & GF_NES))
+				error("use maniacnes target");
+			warning("NES V1 game detected");
+			_version = 1;
+			readClassicIndexFile();
+			break;
 		default:
 			error("Unknown magic id (0x%X) - this version is unsupported", magic);
 			break;
