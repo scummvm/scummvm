@@ -439,9 +439,11 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	type = fetchScriptByte();
 
 	switch (type) {
+	case 43: // HE 100
 	case 6: // number
 		push(0);
 		break;
+	case 77: // HE 100
 	case 7: // string
 		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
@@ -463,6 +465,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	type = fetchScriptByte();
 
 	switch (type) {
+	case 43: // HE 100
 	case 6: // number
 		value = pop();
 		copyScriptString(section);
@@ -470,6 +473,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		copyScriptString(filename);
 		debug(1,"o80_writeConfigFile: Filename %s Section %s Name %s Value %d", filename, section, name, value);
 		break;
+	case 77: // HE 100
 	case 7: // string
 		copyScriptString(string);
 		copyScriptString(section);
