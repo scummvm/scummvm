@@ -929,7 +929,7 @@ void Scumm::o5_getActorFacing()
 		return;
 	}
 
-	setResult(a->facing);
+	setResult(newDirToOldDir (a->facing));
 }
 
 void Scumm::o5_getActorMoving()
