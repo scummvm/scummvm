@@ -814,16 +814,22 @@ int Sound::isSoundRunning(int sound) const {
 		return pollCD();
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == -2 || sound >= 10001) {
-			// Maybe checks sound channel?
-			return !isSfxFinished();
-		} else if (sound == -1 || sound == 10000) {
+		if (sound == -2) {
+			return -1;
+		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
-			if (_vm->_heversion >= 70 || _currentMusic)
+			if (_currentMusic)
 				sound = _currentMusic;
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
+		} else if (sound >= 10000) {
+			// TODO report sound ID on channel
+			// channel = sound - 10000
+			if (sound == 10000)
+				return _currentMusic;
+			else
+				return 0;
 		}
 	}
 
@@ -899,14 +905,18 @@ void Sound::stopSound(int sound) {
 	int i;
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == -2 || sound >= 10001) {
-			// TODO: Stop sound channel (sound - 100000)
-		} else if (sound == -1 || sound == 10000) {
+		if (sound == -2) {
+		} else if (sound == -1) {
 			// Stop current music
-			if (_vm->_heversion >= 70  || _currentMusic)
+			if (_currentMusic)
 				_vm->_mixer->stopID(_currentMusic);
 			else if (_vm->_imuse)
 				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
+		} else if ( sound >= 10000) {
+			// TODO: Stop sound channel
+			// channel = sound - 10000
+			if (sound == 10000)
+				_vm->_mixer->stopID(_currentMusic);
 		}
 	}
 
