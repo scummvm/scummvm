@@ -1443,7 +1443,10 @@ bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
-	_skyMouse->spriteMouse(MOUSE_CROSS, 11, 11);
+	if (_scriptVariables[OBJECT_HELD])
+		_skyMouse->fnOpenCloseHand(false);
+	else
+		_skyMouse->spriteMouse(MOUSE_CROSS, 4, 4);
 	return true;
 }
 
@@ -1468,12 +1471,12 @@ bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnOpenHand(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnOpenHand");
+	_skyMouse->fnOpenCloseHand(true);
 	return true;
 }
 
 bool SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnCloseHand");
+	_skyMouse->fnOpenCloseHand(false);
 	return true;
 }
 
@@ -2218,10 +2221,10 @@ bool SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 
 bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (SkyState::isDemo())
-		error("End of demo");
+		_skyControl->showGameQuitMsg();
 	
 	if (sectionNo == 5) //linc section - has different mouse icons
-		_skyMouse->replaceMouseCursors(60302);
+		_skyMouse->replaceMouseCursors(60301);
 
 	_currentSection = 0xFF; // force music-, sound- and gridreload
 
@@ -2230,9 +2233,8 @@ bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
-	if (SkyState::isDemo())
-		if (sectionNo > 2)
-			error("End of demo");
+	if (SkyState::isDemo() && (sectionNo > 2))
+		_skyControl->showGameQuitMsg();
 
 	_scriptVariables[CUR_SECTION] = sectionNo;
 	SkyState::_systemVars.currentMusic = 0;
@@ -2242,13 +2244,11 @@ bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 	if (sectionNo != _currentSection) {
 		_currentSection = sectionNo;
-		_saveCurrentSection = sectionNo;
 
 		sectionNo++;
 		_skyMusic->loadSection((byte)sectionNo);
 		_skySound->loadSection((byte)sectionNo);
 		_skyGrid->loadGrids();
-
 	}
 			
 	return true;

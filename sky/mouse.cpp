@@ -26,7 +26,7 @@
 #define NO_MAIN_OBJECTS	24
 #define NO_LINC_OBJECTS	21
 
-uint32 _mouseObjectList[] = {
+uint32 SkyMouse::_mouseMainObjects[24] = {
 	65,
 	9,
 	66,
@@ -50,10 +50,10 @@ uint32 _mouseObjectList[] = {
 	34,
 	35,
 	77,
-	38,
+	38
+};
 
-	//Link cursors
-
+uint32 SkyMouse::_mouseLincObjects[21] = {
 	24625,
 	24649,
 	24827,
@@ -204,7 +204,7 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 
 	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
 	// there's something wrong about the mouse's hotspot. using 4/4 seems to work fine. 
-	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 4, 4);
+	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);
 
@@ -292,3 +292,40 @@ void SkyMouse::buttonEngine1(void) {
 		}
 	}
 }
+
+uint16 SkyMouse::findMouseCursor(uint32 itemNum) {
+
+	uint8 cnt;
+	for (cnt = 0; cnt < NO_MAIN_OBJECTS; cnt++) {
+		if (itemNum == _mouseMainObjects[cnt]) {
+			return cnt;
+		}
+	}
+	for (cnt = 0; cnt < NO_LINC_OBJECTS; cnt++) {
+		if (itemNum == _mouseLincObjects[cnt]) {
+			return cnt;
+		}
+	}
+    return 0;
+}
+
+void SkyMouse::fnOpenCloseHand(bool open) {
+    
+	if ((!open) && (!SkyLogic::_scriptVariables[OBJECT_HELD])) {
+		spriteMouse(1, 0, 0);
+		return;
+	}
+	uint16 cursor = findMouseCursor(SkyLogic::_scriptVariables[OBJECT_HELD]) << 1;
+	if (open)
+		cursor++;
+
+	uint32 size = ((dataFileHeader*)_objectMouseData)->s_sp_size;
+	uint8 *srcData;
+	uint8 *destData;
+	
+	srcData = (uint8 *)_objectMouseData + size * cursor + sizeof(dataFileHeader);
+	destData = (uint8 *)_miceData + sizeof(dataFileHeader);
+	memcpy(destData, srcData, size);
+    spriteMouse(0, 5, 5);
+}
+

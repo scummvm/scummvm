@@ -40,6 +40,8 @@ public:
 	void replaceMouseCursors(uint16 fileNo);
 	bool fnAddHuman(void);
 	void fnSaveCoods(void);
+	void fnOpenCloseHand(bool open);
+	uint16 findMouseCursor(uint32 itemNum);
 	void lockMouse(void);
 	void unlockMouse(void);
 	void restoreMouseData(uint16 frameNum);
@@ -93,7 +95,8 @@ protected:
 
 	uint16	_mouseXOff;
 
-	static uint32 _mouseObjectList[];
+	static uint32 _mouseMainObjects[24];
+	static uint32 _mouseLincObjects[21];
 
 	OSystem *_system;
 	SkyDisk *_skyDisk;

@@ -55,6 +55,8 @@ extern bool draw_keyboard;
  With apologies to the CD32 SteelSky file.
 */
 
+#undef WITH_DEBUG_CHEATS
+
 static const VersionSettings sky_settings[] = {
 	/* Beneath a Steel Sky */
 	{"sky", "Beneath a Steel Sky", GID_SKY_FIRST, 99, VersionSettings::ADLIB_DONT_CARE, 0, "sky.dsk" },
@@ -108,6 +110,30 @@ void SkyState::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
+void SkyState::doCheat(uint8 num) {
+
+	switch(num) {
+		case 1: warning("executed cheat: get jammer");
+			SkyLogic::_scriptVariables[258] = 42; // got_jammer
+			SkyLogic::_scriptVariables[240] = 69; // got_sponsor
+			break;
+		case 2: warning("executed cheat: computer room");
+			SkyLogic::_scriptVariables[479] = 2; // card_status
+			SkyLogic::_scriptVariables[480] = 1; // card_fix
+			break;
+		case 3: warning("executed cheat: get to burke");
+			SkyLogic::_scriptVariables[190] = 42; // knows_port
+			break;
+		case 4: warning("executed cheat: get to reactor section");
+			SkyLogic::_scriptVariables[451] = 42; // foreman_friend
+			_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
+			_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
+			break;
+		default: warning("unknown cheat: %d", num);
+			break;
+	}
+}
+
 void SkyState::go() {
 
 	if (!_dump_file)
@@ -131,6 +157,19 @@ void SkyState::go() {
 
 	while (1) {
 		delay(_systemVars.gameSpeed);
+		if (_key_pressed == 63) {
+			_key_pressed = 0;
+			_skyControl->doControlPanel();
+		}			
+		if ((_key_pressed == 27) && (!_systemVars.pastIntro)) {
+			_skyControl->restartGame();
+			_key_pressed = 0;
+		}
+#ifdef WITH_DEBUG_CHEATS
+		if ((_key_pressed >= '0') && (_key_pressed <= '9')) {
+			doCheat(_key_pressed - '0');
+			_key_pressed = 0;
+		}
 		if (_key_pressed == 'r') {
 			warning("loading grid");
 			_skyLogic->_skyGrid->loadGrids();
@@ -143,16 +182,7 @@ void SkyState::go() {
 				_skyScreen->forceRefresh();
 			_key_pressed = 0;
 		}
-		
-		if (_key_pressed == 63) {
-			_key_pressed = 0;
-			_skyControl->doControlPanel();
-		}			
-		if ((_key_pressed == 27) && (!_systemVars.pastIntro)) {
-			_skyControl->restartGame();
-			_key_pressed = 0;
-		}
-
+#endif
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();

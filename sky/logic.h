@@ -63,6 +63,7 @@ enum scriptVariableOffsets {
 	MENU_LENGTH = 100,
 	SCROLL_OFFSET = 101,
 	MENU = 102,
+	OBJECT_HELD = 103,
 	RND = 115,
 	CUR_SECTION = 143,
 	CONSOLE_TYPE = 345,
@@ -253,7 +254,6 @@ protected:
 	uint32 _objectList[30];
 
 	uint32 _currentSection;
-	uint32 _saveCurrentSection;
 
 	RandomSource _rnd;
 	

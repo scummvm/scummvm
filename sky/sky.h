@@ -119,6 +119,7 @@ protected:
 	void logic_engine();
 	void delay(uint amount);
 	void go();
+	void doCheat(uint8 num);
 
 	//intro related
 	static uint8 fosterImg[297 * 143];
