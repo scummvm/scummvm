@@ -664,7 +664,7 @@ void Insane::readState(void) { // PATCH
 		_enemy[EN_VULTM2].field_10 = readArray(340);
 		_enemy[EN_VULTF2].field_10 = readArray(339);
 	} else {
-		_smlayer_room = _smlayer_room2 = 13;
+		_smlayer_room2 = 13;
 	}
 }
 
