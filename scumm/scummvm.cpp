@@ -354,8 +354,6 @@ void Scumm::scummInit() {
 		a->initActor(1);
 	}
 
-	_vars[VAR_CHARINC] = 4;
-
 	_numNestedScripts = 0;
 	vm.cutSceneStackPointer = 0;
 
@@ -386,11 +384,7 @@ void Scumm::scummInit() {
 	virtscr[0].xstart = 0;
 
 	if (!(_features & GF_AFTER_V7)) {
-		_vars[VAR_V5_DRAWFLAGS] = 11;
-		_vars[VAR_59] = 3;
-
 		// Setup light
-		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 		_flashlightXStrips = 7;
 		_flashlightYStrips = 7;
 		_flashlight.buffer = NULL;
@@ -414,8 +408,6 @@ void Scumm::scummInit() {
 
 	_varwatch = -1;
 	_screenStartStrip = 0;
-
-	_vars[VAR_TALK_ACTOR] = 0;
 
 	_talkDelay = 0;
 	_keepText = false;
@@ -449,9 +441,6 @@ void Scumm::scummInit() {
 
 	initScummVars();
 
-	if (!(_features & GF_AFTER_V6))
-		_vars[VAR_V5_TALK_STRING_Y] = -0x50;
-
 	getGraphicsPerformance();
 
 	_sound->_current_cache = 0;
@@ -461,6 +450,9 @@ void Scumm::scummInit() {
 
 
 void Scumm::initScummVars() {
+	if (!(_features & GF_AFTER_V6))
+		_vars[VAR_V5_TALK_STRING_Y] = -0x50;
+
 	if (!(_features & GF_AFTER_V7)) {
 		_vars[VAR_CURRENTDRIVE] = 0;
 		_vars[VAR_FIXEDDISK] = true;
@@ -471,16 +463,26 @@ void Scumm::initScummVars() {
 		_vars[VAR_SOUNDPARAM] = 0;
 		_vars[VAR_SOUNDPARAM2] = 0;
 		_vars[VAR_SOUNDPARAM3] = 0;
+
 		if (_features & GF_AFTER_V6)
 			_vars[VAR_V6_EMSSPACE] = 10000;
+
+		_vars[VAR_V5_DRAWFLAGS] = 11;
+		_vars[VAR_59] = 3;
+
+		// Setup light
+		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	} else {
-			_vars[VAR_V6_EMSSPACE] = 10000;
+		_vars[VAR_V6_EMSSPACE] = 10000;
 	}
 
 	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
 		_vars[VAR_CURRENTDISK] = 1;
 		_vars[VAR_LANGUAGE] = _language;
 	}
+
+	_vars[VAR_CHARINC] = 4;
+	_vars[VAR_TALK_ACTOR] = 0;
 }
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {

@@ -73,6 +73,7 @@ protected:
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_LoadGame(int argc, const char **argv);
 	bool Cmd_SaveGame(int argc, const char **argv);
+	bool Cmd_Restart(int argc, const char **argv);
 
 	bool Cmd_PrintActor(int argc, const char **argv);
 	bool Cmd_PrintBox(int argc, const char **argv);

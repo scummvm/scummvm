@@ -77,6 +77,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("continue", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
+		DCmd_Register("restart", &ScummDebugger::Cmd_Restart);
 
 		DCmd_Register("actor", &ScummDebugger::Cmd_Actor);
 		DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
@@ -287,6 +288,28 @@ bool ScummDebugger::RunCommand(char *input) {
 
 // Commands
 bool ScummDebugger::Cmd_Exit(int argc, const char **argv) {
+	_detach_now = true;
+	return false;
+}
+
+bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
+	// Reset some stuff
+	_s->_currentRoom = 0;
+	_s->_currentScript = 0xFF;
+	_s->killAllScriptsExceptCurrent();
+	_s->setShake(0);
+	_s->_sound->stopAllSounds();
+
+	// Reinit things
+	_s->allocateArrays();			// Reallocate arrays
+	_s->readIndexFile();			// Reread index (reset objectstate etc)
+	_s->createResource(rtTemp, 6, 500); 	// Create temp buffer
+	_s->initScummVars();			// Reinit scumm variables
+	_s->_sound->setupSound();		// Reinit sound engine
+
+	// Re-run bootscript
+	_s->runScript(1, 0, 0, &_s->_bootParam);
+	
 	_detach_now = true;
 	return false;
 }
