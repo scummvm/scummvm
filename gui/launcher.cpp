@@ -421,9 +421,19 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	// Populate the list
 	updateListing();
 
-	// TODO - make a default selection (maybe the game user played last?)
-	//_list->setSelected(0);
-
+	// Restore last selection
+	String last = ConfMan.get(String("lastselectedgame"), ConfigManager::kApplicationDomain);
+	if (!last.isEmpty()) {
+		int itemToSelect = 0;
+		StringList::const_iterator iter;
+		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
+			if (last == *iter) {
+				_list->setSelected(itemToSelect);
+				break;
+			}
+		}
+	}
+	
 	// En-/Disable the buttons depending on the list selection
 	updateButtons();
 
@@ -433,6 +443,18 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 
 LauncherDialog::~LauncherDialog() {
 	delete _browser;
+}
+
+void LauncherDialog::close() {
+	// Save last selection
+	const int sel = _list->getSelected();
+	if (sel >= 0)
+		ConfMan.set(String("lastselectedgame"), _domains[sel], ConfigManager::kApplicationDomain);	
+	else
+		ConfMan.removeKey(String("lastselectedgame"), ConfigManager::kApplicationDomain);
+ 
+	ConfMan.flushToDisk();	
+	Dialog::close();
 }
 
 void LauncherDialog::updateListing() {
@@ -654,9 +676,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		updateButtons();
 		break;
 	case kQuitCmd:
-#ifdef __PALM_OS__
 		close();
-#endif
 		g_system->quit();
 		break;
 	default:

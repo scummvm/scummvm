@@ -53,6 +53,28 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 ListWidget::~ListWidget() {
 }
 
+void ListWidget::setSelected(int item) {
+	assert(item >= -1 && item < (int)_list.size());
+
+	if (isEnabled() && _selectedItem != item) {
+		int oldSelectedItem = _selectedItem;
+		_selectedItem = item;
+
+		if (_editMode) {
+			// undo any changes made
+			_list[oldSelectedItem] = _backupString;
+			_editMode = false;
+			drawCaret(true);
+		}
+
+		sendCommand(kListSelectionChangedCmd, _selectedItem);
+
+		_currentPos = _selectedItem - _entriesPerPage / 2;
+		scrollToCurrent();
+		draw();
+	}
+}
+
 void ListWidget::setList(const StringList &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
@@ -379,6 +401,8 @@ void ListWidget::scrollToCurrent() {
 
 	if (_currentPos < 0)
 		_currentPos = 0;
+	else if (_currentPos + _entriesPerPage > (int)_list.size())
+		_currentPos = _list.size() - _entriesPerPage;
 
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();

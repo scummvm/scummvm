@@ -69,6 +69,7 @@ public:
 	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
+	void setSelected(int item);
 	const String& getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 	bool isEditable() const						{ return _editable; }
