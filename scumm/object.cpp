@@ -126,6 +126,7 @@ int Scumm::getObjectIndex(int object)
 		// hack in the whole engine. It's that bad.
 		// (Workaround flobject 188/189 not loaded bug)
 		if (_gameId == GID_CMI && ((object == 188 || object == 189))) {
+			warning("FIXME MAJOR: Hacking load of FlObject %d\n", object);
 			loadFlObject(object, 3);
 			return getObjectIndex(object);
 		}
