@@ -195,14 +195,13 @@ public:
 	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
-	void readIndexFile();
-	void loadCharset(int no);
-	void loadRoomObjects();
-	void readMAXS();
-	
-	void readGlobalObjects();
+	virtual void readIndexFile();
+	virtual void loadCharset(int no);
+	virtual void loadRoomObjects();
+	virtual void readMAXS(int blockSize);
+	virtual void readGlobalObjects();
 
-	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 };
 
 /**
@@ -213,8 +212,8 @@ public:
 	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
-	void readRoomsOffsets();
-	void loadCharset(int no);
+	virtual void readRoomsOffsets();
+	virtual void loadCharset(int no);
 };
 
 /**
@@ -225,10 +224,10 @@ public:
 	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
-	void readResTypeList(int id, uint32 tag, const char *name);
-	void readIndexFile();
-	void initRoomSubBlocks();
-	void loadRoomObjects();
+	virtual void readResTypeList(int id, uint32 tag, const char *name);
+	virtual void readIndexFile();
+	virtual void initRoomSubBlocks();
+	virtual void loadRoomObjects();
 };
 
 /**
@@ -236,12 +235,6 @@ protected:
  */
 class ScummEngine_v2 : public ScummEngine_v3old {
 protected:
-	void readIndexFile();
-	void readClassicIndexFile();	// V1
-	void readEnhancedIndexFile();	// V2
-	void loadCharset(int no);
-	void readMAXS();
-
 	typedef void (ScummEngine_v2::*OpcodeProcV2)();
 	struct OpcodeEntryV2 {
 		OpcodeProcV2 proc;
@@ -262,6 +255,12 @@ protected:
 
 	virtual void setupScummVars();
 	virtual void decodeParseString();
+
+	virtual void readIndexFile();
+	void readClassicIndexFile();	// V1
+	void readEnhancedIndexFile();	// V2
+	virtual void loadCharset(int no);
+
 
 	virtual int getVar();
 
@@ -412,6 +411,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
 	virtual void readArrayFromIndexFile();
+
+	virtual void readMAXS(int blockSize);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 
@@ -687,7 +688,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
-	void readRoomsOffsets();
+	virtual void readRoomsOffsets();
+	virtual void readGlobalObjects();
 
 	virtual void redrawBGAreas();
 
@@ -752,12 +754,12 @@ public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
 
 protected:
-	virtual void setupScummVars();
-	virtual void readArrayFromIndexFile();
-
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
+	virtual void setupScummVars();
+	virtual void readArrayFromIndexFile();
 	
 	virtual void redrawBGAreas();
 
@@ -1149,6 +1151,9 @@ public:
 protected:
 	virtual void setupScummVars();
 
+	virtual void readMAXS(int blockSize);
+	virtual void readGlobalObjects();
+
 	virtual void setCameraAt(int pos_x, int pos_y);
 	virtual void setCameraFollows(Actor *a);
 	virtual void moveCamera();
@@ -1176,6 +1181,9 @@ protected:
 	virtual void setupScummVars();
 	virtual void decodeParseString(int m, int n);
 	virtual void readArrayFromIndexFile();
+
+	virtual void readMAXS(int blockSize);
+	virtual void readGlobalObjects();
 
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();

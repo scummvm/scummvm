@@ -80,7 +80,7 @@ void ScummEngine_v3old::readIndexFile() {
 	_fileHandle->clearIOFailed();
 	_fileHandle->seek(0, SEEK_SET);
 
-	readMAXS();
+	readMAXS(0);
 
 	// Jamieson630: palManipulate variable initialization
 	_palManipCounter = 0;

@@ -288,7 +288,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 void ScummEngine::readIndexFile() {
 	uint32 blocktype, itemsize;
 	int numblock = 0;
-	int num, i;
+	int i;
 	bool stop = false;
 
 	debugC(DEBUG_GENERAL, "readIndexFile()");
@@ -351,50 +351,7 @@ void ScummEngine::readIndexFile() {
 		
 		case MKID('DOBJ'):
 			debug(9, "found DOBJ block, reading object table");
-			if (_version == 8)
-				num = _fileHandle->readUint32LE();
-			else
-				num = _fileHandle->readUint16LE();
-			assert(num == _numGlobalObjects);
-
-			if (_version == 8) {	/* FIXME: Not sure.. */
-				char buffer[40];
-				for (i = 0; i < num; i++) {
-					_fileHandle->read(buffer, 40);
-					if (buffer[0]) {
-						// Add to object name-to-id map
-						_objectIDMap[buffer] = i;
-					}
-					_objectStateTable[i] = _fileHandle->readByte();
-					_objectRoomTable[i] = _fileHandle->readByte();
-					_classData[i] = _fileHandle->readUint32LE();
-				}
-				memset(_objectOwnerTable, 0xFF, num);
-			} else if (_version == 7) {
-				_fileHandle->read(_objectStateTable, num);
-				_fileHandle->read(_objectRoomTable, num);
-				memset(_objectOwnerTable, 0xFF, num);
-			} else if (_heversion >= 70) { // HE Windows titles
-				_fileHandle->read(_objectStateTable, num);
-				_fileHandle->read(_objectOwnerTable, num);
-				_fileHandle->read(_objectRoomTable, num);
-			} else {
-				_fileHandle->read(_objectOwnerTable, num);
-				for (i = 0; i < num; i++) {
-					_objectStateTable[i] = _objectOwnerTable[i] >> OF_STATE_SHL;
-					_objectOwnerTable[i] &= OF_OWNER_MASK;
-				}
-			}
-			
-			if (_version != 8) {
-				_fileHandle->read(_classData, num * sizeof(uint32));
-
-				// Swap flag endian where applicable
-#if defined(SCUMM_BIG_ENDIAN)
-				for (i = 0; i != num; i++)
-					_classData[i] = FROM_LE_32(_classData[i]);
-#endif
-			}
+			readGlobalObjects();
 			break;
 
 		case MKID('RNAM'):
@@ -1017,194 +974,53 @@ void ScummEngine::resourceStats() {
 void ScummEngine::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 
-	if (_version == 8) {                    // CMI
-		_fileHandle->seek(50 + 50, SEEK_CUR);            // 176 - 8
-		_numVariables = _fileHandle->readUint32LE();     // 1500
-		_numBitVariables = _fileHandle->readUint32LE();  // 2048
-		_fileHandle->readUint32LE();                     // 40
-		_numScripts = _fileHandle->readUint32LE();       // 458
-		_numSounds = _fileHandle->readUint32LE();        // 789
-		_numCharsets = _fileHandle->readUint32LE();      // 1
-		_numCostumes = _fileHandle->readUint32LE();      // 446
-		_numRooms = _fileHandle->readUint32LE();         // 95
-		_fileHandle->readUint32LE();                     // 80
-		_numGlobalObjects = _fileHandle->readUint32LE(); // 1401
-		_fileHandle->readUint32LE();                     // 60
-		_numLocalObjects = _fileHandle->readUint32LE();  // 200
-		_numNewNames = _fileHandle->readUint32LE();      // 100
-		_numFlObject = _fileHandle->readUint32LE();      // 128
-		_numInventory = _fileHandle->readUint32LE();     // 80
-		_numArray = _fileHandle->readUint32LE();         // 200
-		_numVerbs = _fileHandle->readUint32LE();         // 50
+	_numVariables = _fileHandle->readUint16LE();      // 800
+	_fileHandle->readUint16LE();                      // 16
+	_numBitVariables = _fileHandle->readUint16LE();   // 2048
+	_numLocalObjects = _fileHandle->readUint16LE();   // 200
+	_numArray = 50;
+	_numVerbs = 100;
+	// Used to be 50, which wasn't enough for MI2 and FOA. See bugs
+	// #933610, #936323 and #941275.
+	_numNewNames = 150;
+	_objectRoomTable = NULL;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numGlobalScripts = 2000;
+	_fileHandle->readUint16LE();                      // 50
+	_numCharsets = _fileHandle->readUint16LE();       // 9
+	_fileHandle->readUint16LE();                      // 100
+	_fileHandle->readUint16LE();                      // 50
+	_numInventory = _fileHandle->readUint16LE();      // 80
+	_numGlobalScripts = 200;
 
-		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_version == 7) {
-		_fileHandle->seek(50 + 50, SEEK_CUR);
-		_numVariables = _fileHandle->readUint16LE();
-		_numBitVariables = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();                      // 40 in FT; 16 in Dig
-		_numGlobalObjects = _fileHandle->readUint16LE();
-		_numLocalObjects = _fileHandle->readUint16LE();
-		_numNewNames = _fileHandle->readUint16LE();
-		_numVerbs = _fileHandle->readUint16LE();
-		_numFlObject = _fileHandle->readUint16LE();
-		_numInventory = _fileHandle->readUint16LE();
-		_numArray = _fileHandle->readUint16LE();
-		_numRooms = _fileHandle->readUint16LE();
-		_numScripts = _fileHandle->readUint16LE();
-		_numSounds = _fileHandle->readUint16LE();
-		_numCharsets = _fileHandle->readUint16LE();
-		_numCostumes = _fileHandle->readUint16LE();
+	_shadowPaletteSize = 256;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-
-		if ((_gameId == GID_FT) && (_features & GF_DEMO) && 
-		    (_features & GF_PC))
-			_numGlobalScripts = 300;
-		else
-			_numGlobalScripts = 2000;
-
-		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
-		_numVariables = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();
-		_numRoomVariables = _fileHandle->readUint16LE();
-		_numLocalObjects = _fileHandle->readUint16LE();
-		_numArray = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE(); // unknown
-		_fileHandle->readUint16LE(); // unknown
-		_numFlObject = _fileHandle->readUint16LE();
-		_numInventory = _fileHandle->readUint16LE();
-		_numRooms = _fileHandle->readUint16LE();
-		_numScripts = _fileHandle->readUint16LE();
-		_numSounds = _fileHandle->readUint16LE();
-		_numCharsets = _fileHandle->readUint16LE();
-		_numCostumes = _fileHandle->readUint16LE();
-		_numGlobalObjects = _fileHandle->readUint16LE();
-		_numImages = _fileHandle->readUint16LE();
-		_numSprites = _fileHandle->readUint16LE();
-		_numLocalScripts = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE(); // heap related
-		_numPalettes = _fileHandle->readUint16LE();
-		_numUnk = _fileHandle->readUint16LE();
-		_numTalkies = _fileHandle->readUint16LE();
-		_numNewNames = 10;
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numGlobalScripts = 2048;
-
-	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
-		_numVariables = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();
-		_numRoomVariables = _fileHandle->readUint16LE();
-		_numLocalObjects = _fileHandle->readUint16LE();
-		_numArray = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE(); // unknown
-		_fileHandle->readUint16LE(); // unknown
-		_numFlObject = _fileHandle->readUint16LE();
-		_numInventory = _fileHandle->readUint16LE();
-		_numRooms = _fileHandle->readUint16LE();
-		_numScripts = _fileHandle->readUint16LE();
-		_numSounds = _fileHandle->readUint16LE();
-		_numCharsets = _fileHandle->readUint16LE();
-		_numCostumes = _fileHandle->readUint16LE();
-		_numGlobalObjects = _fileHandle->readUint16LE();
-		_numImages = _fileHandle->readUint16LE();
-		_numSprites = _fileHandle->readUint16LE();
-		_numLocalScripts = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE(); // heap releated
-		_numNewNames = 10;
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		if (_gameId == GID_FREDDI4)
-			_numGlobalScripts = 2048;
-		else
-			_numGlobalScripts = 200;
-
-	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
-		if (blockSize != 32 + 8)
-				error("MAXS block of size %d not supported, please report", blockSize);
-		_numVariables = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();
-		_numBitVariables = _numRoomVariables = _fileHandle->readUint16LE();
-		_numLocalObjects = _fileHandle->readUint16LE();
-		_numArray = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();
-		_numVerbs = _fileHandle->readUint16LE();
-		_numFlObject = _fileHandle->readUint16LE();
-		_numInventory = _fileHandle->readUint16LE();
-		_numRooms = _fileHandle->readUint16LE();
-		_numScripts = _fileHandle->readUint16LE();
-		_numSounds = _fileHandle->readUint16LE();
-		_numCharsets = _fileHandle->readUint16LE();
-		_numCostumes = _fileHandle->readUint16LE();
-		_numGlobalObjects = _fileHandle->readUint16LE();
-		_numImages = _fileHandle->readUint16LE();
-		_numNewNames = 10;
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numGlobalScripts = 200;
-
-	} else if (_version == 6) {
-		if (blockSize != 30 + 8)
-			error("MAXS block of size %d not supported", blockSize);
-		_numVariables = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();                      // 16 in Sam/DOTT
-		_numBitVariables = _fileHandle->readUint16LE();
-		_numLocalObjects = _fileHandle->readUint16LE();
-		_numArray = _fileHandle->readUint16LE();
-		_fileHandle->readUint16LE();                      // 0 in Sam/DOTT
-		_numVerbs = _fileHandle->readUint16LE();
-		_numFlObject = _fileHandle->readUint16LE();
-		_numInventory = _fileHandle->readUint16LE();
-		_numRooms = _fileHandle->readUint16LE();
-		_numScripts = _fileHandle->readUint16LE();
-		_numSounds = _fileHandle->readUint16LE();
-		_numCharsets = _fileHandle->readUint16LE();
-		_numCostumes = _fileHandle->readUint16LE();
-		_numGlobalObjects = _fileHandle->readUint16LE();
-		_numNewNames = 50;
-
-		_objectRoomTable = NULL;
-		_numGlobalScripts = 200;
-
-		_shadowPaletteSize = 256;
-
-		if (_heversion >= 70) {
-			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		}
-	} else {
-		_numVariables = _fileHandle->readUint16LE();      // 800
-		_fileHandle->readUint16LE();                      // 16
-		_numBitVariables = _fileHandle->readUint16LE();   // 2048
-		_numLocalObjects = _fileHandle->readUint16LE();   // 200
-		_numArray = 50;
-		_numVerbs = 100;
-		// Used to be 50, which wasn't enough for MI2 and FOA. See bugs
-		// #933610, #936323 and #941275.
-		_numNewNames = 150;
-		_objectRoomTable = NULL;
-
-		_fileHandle->readUint16LE();                      // 50
-		_numCharsets = _fileHandle->readUint16LE();       // 9
-		_fileHandle->readUint16LE();                      // 100
-		_fileHandle->readUint16LE();                      // 50
-		_numInventory = _fileHandle->readUint16LE();      // 80
-		_numGlobalScripts = 200;
-
-		_shadowPaletteSize = 256;
-
-		_numFlObject = 50;
-	}
+	_numFlObject = 50;
 
 	if (_shadowPaletteSize)
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
 	_dynamicRoomOffsets = true;
+}
+
+void ScummEngine::readGlobalObjects() {
+	int i;
+	int num = _fileHandle->readUint16LE();
+	assert(num == _numGlobalObjects);
+
+	_fileHandle->read(_objectOwnerTable, num);
+	for (i = 0; i < num; i++) {
+		_objectStateTable[i] = _objectOwnerTable[i] >> OF_STATE_SHL;
+		_objectOwnerTable[i] &= OF_OWNER_MASK;
+	}
+
+	_fileHandle->read(_classData, num * sizeof(uint32));
+
+#if defined(SCUMM_BIG_ENDIAN)
+	// Correct the endianess if necessary
+	for (i = 0; i != num; i++)
+		_classData[i] = FROM_LE_32(_classData[i]);
+#endif
 }
 
 void ScummEngine::allocateArrays() {

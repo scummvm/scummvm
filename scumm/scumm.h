@@ -728,6 +728,7 @@ protected:
 
 	virtual void readArrayFromIndexFile();
 	virtual void readMAXS(int blockSize);
+	virtual void readGlobalObjects();
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);

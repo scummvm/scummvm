@@ -69,7 +69,7 @@ void ScummEngine_v4::readIndexFile() {
 	_fileHandle->clearIOFailed();
 	_fileHandle->seek(0, SEEK_SET);
 
-	readMAXS();
+	readMAXS(0);
 
 	// Jamieson630: palManipulate variable initialization
 	_palManipCounter = 0;
@@ -138,7 +138,7 @@ void ScummEngine_v4::loadCharset(int no) {
 	closeRoom();
 }
 
-void ScummEngine_v4::readMAXS() {
+void ScummEngine_v4::readMAXS(int blockSize) {
 	// FIXME - I'm not sure for those values yet, they will have to be rechecked
 
 	_numVariables = 800;				// 800
@@ -160,11 +160,14 @@ void ScummEngine_v4::readMAXS() {
 }
 
 void ScummEngine_v4::readGlobalObjects() {
+	int i;
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
-	for (int i = 0; i != num; i++) {
-		uint32 bits = _fileHandle->readByte();
-		byte tmp;
+
+	uint32 bits;
+	byte tmp;
+	for (i = 0; i != num; i++) {
+		bits = _fileHandle->readByte();
 		bits |= _fileHandle->readByte() << 8;
 		bits |= _fileHandle->readByte() << 16;
 		_classData[i] = bits;
@@ -172,6 +175,231 @@ void ScummEngine_v4::readGlobalObjects() {
 		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
+}
+
+
+void ScummEngine_v8::readGlobalObjects() {
+	int i;
+	int num = _fileHandle->readUint32LE();
+	assert(num == _numGlobalObjects);
+
+	char buffer[40];
+	for (i = 0; i < num; i++) {
+		_fileHandle->read(buffer, 40);
+		if (buffer[0]) {
+			// Add to object name-to-id map
+			_objectIDMap[buffer] = i;
+		}
+		_objectStateTable[i] = _fileHandle->readByte();
+		_objectRoomTable[i] = _fileHandle->readByte();
+		_classData[i] = _fileHandle->readUint32LE();
+	}
+	memset(_objectOwnerTable, 0xFF, num);
+}
+
+void ScummEngine_v7::readGlobalObjects() {
+	int i;
+	int num = _fileHandle->readUint16LE();
+	assert(num == _numGlobalObjects);
+
+	_fileHandle->read(_objectStateTable, num);
+	_fileHandle->read(_objectRoomTable, num);
+	memset(_objectOwnerTable, 0xFF, num);
+
+	_fileHandle->read(_classData, num * sizeof(uint32));
+
+#if defined(SCUMM_BIG_ENDIAN)
+	// Correct the endianess if necessary
+	for (i = 0; i != num; i++)
+		_classData[i] = FROM_LE_32(_classData[i]);
+#endif
+}
+
+void ScummEngine_v8::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	_fileHandle->seek(50 + 50, SEEK_CUR);            // 176 - 8
+	_numVariables = _fileHandle->readUint32LE();     // 1500
+	_numBitVariables = _fileHandle->readUint32LE();  // 2048
+	_fileHandle->readUint32LE();                     // 40
+	_numScripts = _fileHandle->readUint32LE();       // 458
+	_numSounds = _fileHandle->readUint32LE();        // 789
+	_numCharsets = _fileHandle->readUint32LE();      // 1
+	_numCostumes = _fileHandle->readUint32LE();      // 446
+	_numRooms = _fileHandle->readUint32LE();         // 95
+	_fileHandle->readUint32LE();                     // 80
+	_numGlobalObjects = _fileHandle->readUint32LE(); // 1401
+	_fileHandle->readUint32LE();                     // 60
+	_numLocalObjects = _fileHandle->readUint32LE();  // 200
+	_numNewNames = _fileHandle->readUint32LE();      // 100
+	_numFlObject = _fileHandle->readUint32LE();      // 128
+	_numInventory = _fileHandle->readUint32LE();     // 80
+	_numArray = _fileHandle->readUint32LE();         // 200
+	_numVerbs = _fileHandle->readUint32LE();         // 50
+
+	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_numGlobalScripts = 2000;
+
+	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
+	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
+}
+
+void ScummEngine_v7::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	_fileHandle->seek(50 + 50, SEEK_CUR);
+	_numVariables = _fileHandle->readUint16LE();
+	_numBitVariables = _fileHandle->readUint16LE();
+	_fileHandle->readUint16LE();                      // 40 in FT; 16 in Dig
+	_numGlobalObjects = _fileHandle->readUint16LE();
+	_numLocalObjects = _fileHandle->readUint16LE();
+	_numNewNames = _fileHandle->readUint16LE();
+	_numVerbs = _fileHandle->readUint16LE();
+	_numFlObject = _fileHandle->readUint16LE();
+	_numInventory = _fileHandle->readUint16LE();
+	_numArray = _fileHandle->readUint16LE();
+	_numRooms = _fileHandle->readUint16LE();
+	_numScripts = _fileHandle->readUint16LE();
+	_numSounds = _fileHandle->readUint16LE();
+	_numCharsets = _fileHandle->readUint16LE();
+	_numCostumes = _fileHandle->readUint16LE();
+
+	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+
+	if ((_gameId == GID_FT) && (_features & GF_DEMO) && 
+		(_features & GF_PC))
+		_numGlobalScripts = 300;
+	else
+		_numGlobalScripts = 2000;
+
+	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
+	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
+}
+
+void ScummEngine_v6::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+
+	if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
+		_numVariables = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numRoomVariables = _fileHandle->readUint16LE();
+		_numLocalObjects = _fileHandle->readUint16LE();
+		_numArray = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE(); // unknown
+		_fileHandle->readUint16LE(); // unknown
+		_numFlObject = _fileHandle->readUint16LE();
+		_numInventory = _fileHandle->readUint16LE();
+		_numRooms = _fileHandle->readUint16LE();
+		_numScripts = _fileHandle->readUint16LE();
+		_numSounds = _fileHandle->readUint16LE();
+		_numCharsets = _fileHandle->readUint16LE();
+		_numCostumes = _fileHandle->readUint16LE();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_numImages = _fileHandle->readUint16LE();
+		_numSprites = _fileHandle->readUint16LE();
+		_numLocalScripts = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE(); // heap related
+		_numPalettes = _fileHandle->readUint16LE();
+		_numUnk = _fileHandle->readUint16LE();
+		_numTalkies = _fileHandle->readUint16LE();
+		_numNewNames = 10;
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		_numGlobalScripts = 2048;
+
+	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
+		_numVariables = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numRoomVariables = _fileHandle->readUint16LE();
+		_numLocalObjects = _fileHandle->readUint16LE();
+		_numArray = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE(); // unknown
+		_fileHandle->readUint16LE(); // unknown
+		_numFlObject = _fileHandle->readUint16LE();
+		_numInventory = _fileHandle->readUint16LE();
+		_numRooms = _fileHandle->readUint16LE();
+		_numScripts = _fileHandle->readUint16LE();
+		_numSounds = _fileHandle->readUint16LE();
+		_numCharsets = _fileHandle->readUint16LE();
+		_numCostumes = _fileHandle->readUint16LE();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_numImages = _fileHandle->readUint16LE();
+		_numSprites = _fileHandle->readUint16LE();
+		_numLocalScripts = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE(); // heap releated
+		_numNewNames = 10;
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		if (_gameId == GID_FREDDI4)
+			_numGlobalScripts = 2048;
+		else
+			_numGlobalScripts = 200;
+
+	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
+		if (blockSize != 32 + 8)
+				error("MAXS block of size %d not supported, please report", blockSize);
+		_numVariables = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numBitVariables = _numRoomVariables = _fileHandle->readUint16LE();
+		_numLocalObjects = _fileHandle->readUint16LE();
+		_numArray = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numVerbs = _fileHandle->readUint16LE();
+		_numFlObject = _fileHandle->readUint16LE();
+		_numInventory = _fileHandle->readUint16LE();
+		_numRooms = _fileHandle->readUint16LE();
+		_numScripts = _fileHandle->readUint16LE();
+		_numSounds = _fileHandle->readUint16LE();
+		_numCharsets = _fileHandle->readUint16LE();
+		_numCostumes = _fileHandle->readUint16LE();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_numImages = _fileHandle->readUint16LE();
+		_numNewNames = 10;
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		_numGlobalScripts = 200;
+
+	} else if (_version == 6) {
+		if (blockSize != 30 + 8)
+			error("MAXS block of size %d not supported", blockSize);
+		_numVariables = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();                      // 16 in Sam/DOTT
+		_numBitVariables = _fileHandle->readUint16LE();
+		_numLocalObjects = _fileHandle->readUint16LE();
+		_numArray = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();                      // 0 in Sam/DOTT
+		_numVerbs = _fileHandle->readUint16LE();
+		_numFlObject = _fileHandle->readUint16LE();
+		_numInventory = _fileHandle->readUint16LE();
+		_numRooms = _fileHandle->readUint16LE();
+		_numScripts = _fileHandle->readUint16LE();
+		_numSounds = _fileHandle->readUint16LE();
+		_numCharsets = _fileHandle->readUint16LE();
+		_numCostumes = _fileHandle->readUint16LE();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_numNewNames = 50;
+
+		_objectRoomTable = NULL;
+		_numGlobalScripts = 200;
+
+		_shadowPaletteSize = 256;
+
+		if (_heversion >= 70) {
+			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		}
+	}
+
+	if (_shadowPaletteSize)
+		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+
+	allocateArrays();
+	_dynamicRoomOffsets = true;
 }
 
 } // End of namespace Scumm

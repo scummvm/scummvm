@@ -1640,4 +1640,22 @@ void ScummEngine_v70he::readRoomsOffsets() {
 	}
 }
 
+void ScummEngine_v70he::readGlobalObjects() {
+	int i;
+	int num = _fileHandle->readUint16LE();
+	assert(num == _numGlobalObjects);
+
+	_fileHandle->read(_objectStateTable, num);
+	_fileHandle->read(_objectOwnerTable, num);
+	_fileHandle->read(_objectRoomTable, num);
+
+	_fileHandle->read(_classData, num * sizeof(uint32));
+
+#if defined(SCUMM_BIG_ENDIAN)
+	// Correct the endianess if necessary
+	for (i = 0; i != num; i++)
+		_classData[i] = FROM_LE_32(_classData[i]);
+#endif
+}
+
 } // End of namespace Scumm
