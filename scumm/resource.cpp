@@ -242,13 +242,16 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 #endif
 
 		result = displayMessage("Quit", buf);
-		if (result == 2)
-			error("Cannot find file: '%s'", filename);
+		if (result == 2) {
+			//error("Cannot find file: '%s'", filename);
+			_system->quit();
+		}
 	} else { 
 		sprintf(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, (char*)buf);
 		runDialog(dialog);
-		error("Cannot find file: '%s'", filename);
+		//error("Cannot find file: '%s'", filename);
+		_system->quit();
 	}
 }
 
