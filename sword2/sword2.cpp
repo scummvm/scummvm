@@ -43,6 +43,7 @@
 #include "startup.h"
 #include "sword2.h"
 #include "sync.h"
+#include "save_rest.h"
 
 #define MAX_PATH 260
 
@@ -310,24 +311,10 @@ void Sword2State::go()
 
 
 
-//check for restore game on startup - at the mo any passed argument is good enough to trigger this
-	// if	(lpCmdLine[0])	//non zero
 	if (_saveSlot != -1)
-	{
-		// RestoreGame(_saveSlot); use traditional way for now...
-		
-		Set_mouse(NORMAL_MOUSE_ID);
-
-		if	(!Restore_control())	// restore a game
-			Start_game();
-	}
-	//-------------------------------------------------------------
-	// release versions only (full-game and demo)
-//	#if NDEBUG	// comment this out for debug versions to start game automatically!
+		RestoreGame(_saveSlot);
 	else
 		Start_game();
-//	#endif		// comment this out for debug versions to start game automatically!
-	//-------------------------------------------------------------
 
 
 	Zdebug("CALLING: InitialiseRenderCycle");
