@@ -697,9 +697,10 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 	origResId = _spriteTable[spriteId].res_id;
 	origResWizStates = _spriteTable[spriteId].res_wiz_states;
 
-	if (imageNum == 1)
+	if (imageNum == 1) {
 		_spriteTable[spriteId].res_id = *spriteIdptr;
-	else {
+	} else {
+		// This section is currently never called
 		if (!_curSprImageListNum)
 			error("Out of image lists");
 
@@ -957,14 +958,14 @@ void ScummEngine_v90he::spriteGroupSet_case28(int spriteGroupId, int value1, int
 	redrawSpriteGroup(spriteGroupId);
 }
 
-void ScummEngine_v90he::spriteGroupSet_fields_0_4_8_C(int spriteGroupId, int value1, int value2, int value3, int value4) {
+void ScummEngine_v90he::spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].flags |= kSGF01;
-	_spriteGroups[spriteGroupId].bbox.left = value1;
-	_spriteGroups[spriteGroupId].bbox.top = value2;
-	_spriteGroups[spriteGroupId].bbox.right = value3;
-	_spriteGroups[spriteGroupId].bbox.bottom = value4;
+	_spriteGroups[spriteGroupId].bbox.left = x1;
+	_spriteGroups[spriteGroupId].bbox.top = y1;
+	_spriteGroups[spriteGroupId].bbox.right = x2;
+	_spriteGroups[spriteGroupId].bbox.bottom = y2;
 
 	redrawSpriteGroup(spriteGroupId);
 }
@@ -989,50 +990,13 @@ void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int nu
 	_imageListStack = (uint16 *)malloc((_varMaxSprites + 1) * sizeof(uint16));
 }
 
-void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
-	int i;
-
-	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
+void ScummEngine_v90he::spritesResetSpriteGroup(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
-	if (spg->field_10 != 0) {
-		spg->field_10 = 0;
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-			SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
+
+	for (int i = 1; i < _varNumSprites; i++) {
+		if (_spriteTable[i].group_num == spriteGroupId)
+			spriteInfoSet_resetSprite(i);
 	}
-	if (spg->tx != 0 || spg->ty != 0) {
-		spg->tx = spg->ty = 0;
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
-	}
-	spg->flags &= ~kSGF01;
-	spriteMarkIfInGroup(spriteGroupId, kSFChanged | kSFNeedRedraw);
-	if (spg->field_20 != 0) {
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-			SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
-	}
-	spriteGroupCheck(spriteGroupId);
-	spg->scaling = 0;
-	spg->scale_x = 0x3F800000;
-	spg->field_30 = 0;
-	spg->field_34 = 0;
-	spg->scale_y = 0x3F800000;
-	spg->field_38 = 0;
-	spg->field_3C = 0;
 }
 
 void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
@@ -1043,9 +1007,49 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 	}
 	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
 	memset(_spriteGroups, 0, (_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
-	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp)
-		spritesResetGroup(curGrp);
-
+	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp) {
+		SpriteGroup *spg = &_spriteGroups[curGrp];
+		checkRange(_varNumSpriteGroups, 1, curGrp, "Invalid sprite group %d");
+		if (spg->field_10) {
+			spg->field_10 = 0;
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+				SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSFChanged | kSFNeedRedraw;
+				}
+			}
+		}
+		if (spg->tx || spg->ty) {
+			spg->tx = spg->ty = 0;
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+			SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSFChanged | kSFNeedRedraw;
+				}
+			}
+		}
+		spg->flags &= ~kSGF01;
+		spriteMarkIfInGroup(curGrp, kSFChanged | kSFNeedRedraw);
+		if (spg->field_20 != 0) {
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+				SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSFChanged | kSFNeedRedraw;
+				}
+			}
+		}
+		spriteGroupCheck(curGrp);
+		spg->scaling = 0;
+		spg->scale_x = 0x3F800000;
+		spg->field_30 = 0;
+		spg->field_34 = 0;
+		spg->scale_y = 0x3F800000;
+		spg->field_38 = 0;
+		spg->field_3C = 0;
+	}
 	if (refreshScreen) {
 		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
 	}
@@ -1102,7 +1106,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 				}
 				refreshScreen = true;
 			}
-			if (!(spi->flags & (kSFNeedRedraw | kSF30)) && (spi->res_id != 0)) {
+			if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->res_id) {
 				spi->flags |= kSFNeedRedraw;
 			}			
 		}
@@ -1151,9 +1155,9 @@ void ScummEngine_v90he::spritesUpdateImages() {
 		if (spi->flags & kSFYFlipped) {
 			if (spi->field_78 != 0) {
 				--spi->field_64;
-				if (spi->field_64 != 0) {
+				if (spi->field_64) 
 					continue;
-				}
+
 				spi->field_64 = spi->field_78;
 			}
 			int state = spi->res_state;
@@ -1166,9 +1170,9 @@ void ScummEngine_v90he::spritesUpdateImages() {
 						checkRange(_varMaxSprites, 1, spi->imglist_num, "Image list %d out of range");
 						uint16 img1 = _imageListTable[0x21 * spi->imglist_num - 1];
 						uint16 img2 = spi->field_74 + 1;
-						if (img2 >= img1) {
+						if (img2 >= img1)
 							img2 = 0;
-						}
+
 						if (spi->field_74 != img2) {
 							spi->field_74 = img2;
 							spi->res_id = _imageListTable[0x21 * (img2 - 1)];

@@ -858,7 +858,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_fields_0_4_8_C(_curSpriteGroupId, value1, value2, value3, value4);
+		spriteGroupSet_bbox(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
 	case 38:
 		type = pop() - 1;
@@ -945,7 +945,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spritesResetGroup(_curSpriteGroupId);
+		spritesResetSpriteGroup(_curSpriteGroupId);
 		break;
 	case 54:
 		// dummy case

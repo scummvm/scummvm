@@ -959,11 +959,11 @@ protected:
 	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_case26(int spriteGroupId, int value);
 	void spriteGroupSet_case28(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_fields_0_4_8_C(int spriteGroupId, int value1, int value2, int value3, int value4);
+	void spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2);
 	void spriteGroupSet_case56(int spriteGroupId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
-	void spritesResetGroup(int spriteGroupId);
+	void spritesResetSpriteGroup(int spriteGroupId);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);

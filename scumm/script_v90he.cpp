@@ -1507,7 +1507,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_fields_0_4_8_C(_curSpriteGroupId, value1, value2, value3, value4);
+		spriteGroupSet_bbox(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
 	case 56:
 		if (!_curSpriteGroupId)
@@ -1519,7 +1519,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spritesResetGroup(_curSpriteGroupId);
+		spritesResetSpriteGroup(_curSpriteGroupId);
 		break;
 	default:
 		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);
