@@ -313,7 +313,7 @@ void Sword2Engine::go() {
 			if (!_gui->restoreControl())
 				startGame();
 		}
-	} else if (saveExists()) {
+	} else if (!_bootParam && saveExists()) {
 		int32 pars[2] = { 221, FX_LOOP };
 		bool result;
 
@@ -530,8 +530,8 @@ void Sword2Engine::unpauseGame(void) {
 
 	unpauseAllSound();
 
-	// put back game screen palette; see Build_display.cpp
-	setFullPalette(0xffffffff);
+	// put back game screen palette; see build_display.cpp
+	setFullPalette(-1);
 
 	// If graphics level at max, turn up again
 	if (_graphicsLevelFudged) {
