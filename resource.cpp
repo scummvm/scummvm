@@ -399,6 +399,8 @@ void Scumm::loadCharset(int no) {
 	byte *ptr;
 	
 	debug(9, "loadCharset(%d)",no);
+
+	memset(_charsetData, 0, sizeof(_charsetData));
                 
 	checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
 
