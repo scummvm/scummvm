@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/util.h"
 #include "gmchannel.h"
 #include "common/util.h"
 
