@@ -200,6 +200,8 @@ static bool isGame(const FilesystemNode *entry, char *base)
   }
 #else
   char *dot;
+  if(!stricmp(fn, "LOOM.EXE"))
+    return false;
   if((dot = strchr(fn, '.'))!=NULL) {
     if(!strcasecmp(dot, ".SAN"))
       return false;
