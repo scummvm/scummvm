@@ -35,7 +35,8 @@ class MusicPlayer : public MidiDriver {
 public:
 	MusicPlayer(MidiDriver *driver, byte *data, uint32 size);
 	~MusicPlayer();
-	
+
+	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop)		{ _looping = loop; }
@@ -76,6 +77,7 @@ protected:
 	MidiParser *_parser;
 	MidiChannel *_channel[16];
 	byte _channelVolume[16];
+	bool _nativeMT32;
 	
 	Common::RandomSource _rnd;
 				
@@ -97,10 +99,11 @@ class Music {
 public:
 	Music(MidiDriver *_driver, QueenEngine *vm);
 	~Music();
+	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
 	void playSong(uint16 songNum);
 	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
-	void playMusic()					{ _player->playMusic(); }
-	void stopSong()						{ _player->stopMusic(); }
+	void playMusic()			{ _player->playMusic(); }
+	void stopSong()				{ _player->stopMusic(); }
 	
 protected:
 	byte *_musicData;

@@ -352,8 +352,12 @@ void QueenEngine::initialise(void) {
 	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
-	
+	else if (ConfMan.getBool("native_mt32"))
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		
 	_music = new Music(driver, this);
+	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
+	
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 	_saveFileMan = _system->get_savefile_manager();

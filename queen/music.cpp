@@ -113,7 +113,7 @@ static const byte mt32_to_gm[128] = {
 			_channelVolume[channel] = volume;
 			//volume = volume * _masterVolume / 255;
 			b = (b & 0xFF00FFFF) | (volume << 16);
-		} else if ((b & 0xF0) == 0xC0) {
+		} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
 			b = (b & 0xFFFF00FF) | mt32_to_gm[(b >> 8) & 0xFF] << 8;
 		} 
 		else if ((b & 0xFFF0) == 0x007BB0) {
