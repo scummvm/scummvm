@@ -1102,7 +1102,7 @@ void Control::doAutoSave(void) {
 
 	outf = _saveFileMan->open_savefile(fName, _savePath, true);
 	if (outf == NULL) {
-		displayMessage(0, "Untable to create autosave file '%s' in directory '%s'", fName, _savePath);
+		displayMessage(0, "Unable to create autosave file '%s' in directory '%s'", fName, _savePath);
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
