@@ -1549,9 +1549,23 @@ void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 
 // Script function #75 (0x4b)
 void Script::sfRand(SCRIPTFUNC_PARAMS) {
-	int16 param = thread->pop();
+	int16 param;
 
-	thread->_returnValue = _vm->_rnd.getRandomNumber(param - 1);
+	if (_vm->getGameType() == GType_IHNM) {
+		// I don't know what this function does in IHNM, but apparently
+		// it can take three parameters.
+
+		debug(1, "stub: sfRand()");
+
+		for (int i = 0; i < nArgs; i++) {
+			thread->pop();
+		}
+
+		thread->_returnValue = 0;
+	} else {
+		param = thread->pop();
+		thread->_returnValue = _vm->_rnd.getRandomNumber(param - 1);
+	}
 }
 
 // Script function #76 (0x4c)
