@@ -255,143 +255,7 @@ void resMan::Close_ResMan(void) { //Tony29May96
 	free(count);
 }
 
-static void convertEndian(uint8 *file, uint32 len);
-
-uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
-	// returns ad of resource. Loads if not in memory
-	// retains a count
-	// resource can be aged out of memory if count = 0
-	// the resource is locked while count != 0 i.e. until a res_close is
-	// called
-
-	File	file;
-	uint16	parent_res_file;
-	uint16	actual_res;
-	uint32	pos, len;
-
-	uint32	table_offset;
-
-#ifdef _SWORD2_DEBUG
-	if (res >= total_res_files)
-		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
-#endif
-
-	// is the resource in memory already?
-	// if the file is not in memory then age should and MUST be 0
-	if (!age[res]) {
-		// fetch the correct file and read in the correct portion
-		// if the file cannot fit then we must trash the oldest large
-		// enough floating file
-
-		// points to the number of the ascii filename
-		parent_res_file = res_conv_table[res * 2];
-
-#ifdef _SWORD2_DEBUG
-		if (parent_res_file == 0xffff)
-			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
-#endif
-
-		// relative resource within the file
-		actual_res = res_conv_table[(res * 2) + 1];
-
-		// first we have to find the file via the res_conv_table
-
-		// Zdebug("resOpen %s res %d", resource_files[parent_res_file], res);
-
-		// ** at this point here we start to think about where the
-		// ** file is and prompt the user for the right CD to be
-		// ** inserted
-		// **
-		// ** we need to know the position that we're at within the
-		// ** game - LINC should write this someplace.
-
-/* these probably aren't necessary - khalek
-		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM)) {
-			// This cluster is on a CD, we need to cache a new one.
-			CacheNewCluster(parent_res_file);
-		} else if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
-			// Makes sure that the correct CD is in the drive.
-			GetCd(cdTab[parent_res_file] & 3);
-		}
-*/
-
-		// This part of the cluster caching is pretty useful though:
-		//
-		// If we're loading a cluster that's only available from one
-		// of the CDs, remember which one so that we can play the
-		// correct music.
-		//
-		// The code to ask for the correct CD will probably be needed
-		// later, too.
-		//
-		// And there's some music / FX stuff in CacheNewCluster() that
-		// might be needed as well.
-		//
-		// But this will do for now.
-
-		if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
-			curCd = cdTab[parent_res_file] & 3;
-		}
-
-		// open the cluster file
-		if (!file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
-			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
-
-
-		// 1st DWORD of a cluster is an offset to the look-up table
-		table_offset = file.readUint32LE();
-
-		// Zdebug("table offset = %d", table_offset);
-
-		// 2 dwords per resource
-		file.seek(table_offset + actual_res *8, SEEK_SET);
-		// get position of our resource within the cluster file
-		pos = file.readUint32LE();
-		// read the length
-		len = file.readUint32LE();
-
-		// ** get to position in file of our particular resource
-		file.seek(pos, SEEK_SET);
-
-		// Zdebug("res len %d", len);
-
-		// ok, we know the length so try and allocate the memory
-		// if it can't then old files will be ditched until it works
-		resList[res] = Twalloc(len, MEM_locked, res);
-
-/* This probably isn't needed
-		// Do a quick ServiceWindows to stop the music screwing up.
-		ServiceWindows();
-*/
-
-		// now load the file
-		// hurray, load it in.
-		file.read(resList[res]->ad, len);
-
-		//close the cluster
-		file.close();
-
 #ifdef SCUMM_BIG_ENDIAN
-		convertEndian((uint8 *)resList[res]->ad, len);
-#endif
-	} else {
-		// Zdebug("RO %d, already open count=%d", res, count[res]);
-	}
-
-	// number of times opened - the file won't move in memory while count
-	// is non zero
-	count[res]++;
-
-	// update the accessed time stamp - touch the file in other words
-	age[res] = resTime;
-
-	// pass the address of the mem & lock the memory too
-	// might be locked already (if count > 1)
-	Lock_mem(resList[res]);
-
-	return (uint8 *) resList[res]->ad;
-}
-
 static void convertEndian(uint8 *file, uint32 len) {
 	_standardHeader *hdr = (_standardHeader *)file;
 
@@ -540,7 +404,142 @@ static void convertEndian(uint8 *file, uint32 len) {
 			break;
 	}
 }
+#endif
 
+uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
+	// returns ad of resource. Loads if not in memory
+	// retains a count
+	// resource can be aged out of memory if count = 0
+	// the resource is locked while count != 0 i.e. until a res_close is
+	// called
+
+	File	file;
+	uint16	parent_res_file;
+	uint16	actual_res;
+	uint32	pos, len;
+
+	uint32	table_offset;
+
+#ifdef _SWORD2_DEBUG
+	if (res >= total_res_files)
+		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
+#endif
+
+	// is the resource in memory already?
+	// if the file is not in memory then age should and MUST be 0
+	if (!age[res]) {
+		// fetch the correct file and read in the correct portion
+		// if the file cannot fit then we must trash the oldest large
+		// enough floating file
+
+		// points to the number of the ascii filename
+		parent_res_file = res_conv_table[res * 2];
+
+#ifdef _SWORD2_DEBUG
+		if (parent_res_file == 0xffff)
+			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
+#endif
+
+		// relative resource within the file
+		actual_res = res_conv_table[(res * 2) + 1];
+
+		// first we have to find the file via the res_conv_table
+
+		// Zdebug("resOpen %s res %d", resource_files[parent_res_file], res);
+
+		// ** at this point here we start to think about where the
+		// ** file is and prompt the user for the right CD to be
+		// ** inserted
+		// **
+		// ** we need to know the position that we're at within the
+		// ** game - LINC should write this someplace.
+
+/* these probably aren't necessary - khalek
+		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM)) {
+			// This cluster is on a CD, we need to cache a new one.
+			CacheNewCluster(parent_res_file);
+		} else if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
+			// Makes sure that the correct CD is in the drive.
+			GetCd(cdTab[parent_res_file] & 3);
+		}
+*/
+
+		// This part of the cluster caching is pretty useful though:
+		//
+		// If we're loading a cluster that's only available from one
+		// of the CDs, remember which one so that we can play the
+		// correct music.
+		//
+		// The code to ask for the correct CD will probably be needed
+		// later, too.
+		//
+		// And there's some music / FX stuff in CacheNewCluster() that
+		// might be needed as well.
+		//
+		// But this will do for now.
+
+		if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
+			curCd = cdTab[parent_res_file] & 3;
+		}
+
+		// open the cluster file
+		if (!file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
+			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
+
+
+		// 1st DWORD of a cluster is an offset to the look-up table
+		table_offset = file.readUint32LE();
+
+		// Zdebug("table offset = %d", table_offset);
+
+		// 2 dwords per resource
+		file.seek(table_offset + actual_res *8, SEEK_SET);
+		// get position of our resource within the cluster file
+		pos = file.readUint32LE();
+		// read the length
+		len = file.readUint32LE();
+
+		// ** get to position in file of our particular resource
+		file.seek(pos, SEEK_SET);
+
+		// Zdebug("res len %d", len);
+
+		// ok, we know the length so try and allocate the memory
+		// if it can't then old files will be ditched until it works
+		resList[res] = Twalloc(len, MEM_locked, res);
+
+/* This probably isn't needed
+		// Do a quick ServiceWindows to stop the music screwing up.
+		ServiceWindows();
+*/
+
+		// now load the file
+		// hurray, load it in.
+		file.read(resList[res]->ad, len);
+
+		//close the cluster
+		file.close();
+
+#ifdef SCUMM_BIG_ENDIAN
+		convertEndian((uint8 *)resList[res]->ad, len);
+#endif
+	} else {
+		// Zdebug("RO %d, already open count=%d", res, count[res]);
+	}
+
+	// number of times opened - the file won't move in memory while count
+	// is non zero
+	count[res]++;
+
+	// update the accessed time stamp - touch the file in other words
+	age[res] = resTime;
+
+	// pass the address of the mem & lock the memory too
+	// might be locked already (if count > 1)
+	Lock_mem(resList[res]);
+
+	return (uint8 *) resList[res]->ad;
+}
 
 uint8 resMan::Res_check_valid(uint32 res) {	// James 12mar97
 	// returns '1' if resource is valid, otherwise returns '0'
