@@ -36,45 +36,52 @@
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
 
-static int actor_tag, color_tag, text_tag, vbuffer_tag, object_tag;
-
 extern Imuse *g_imuse;
 
 static inline bool isObject(int num) {
-	if (lua_tag(lua_getparam(num)) != object_tag)
-		return false;
-	return true;
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT'))
+		return true;
+	return false;
 }
 
 static inline bool isActor(int num) {
-	if (lua_tag(lua_getparam(num)) != actor_tag)
-		return false;
-	return true;
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('ACTR'))
+		return true;
+	return false;
 }
 
 static inline bool isColor(int num) {
-	if (lua_tag(lua_getparam(num)) != color_tag)
-		return false;
-	return true;
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('COLR'))
+		return true;
+	return false;
 }
 
 // Helper functions to ensure the arguments we get are what we expect
 static inline ObjectState *check_object(int num) {
-	if (lua_tag(lua_getparam(num)) != object_tag)
-		luaL_argerror(num, "objectstate expected");
-	return static_cast<ObjectState *>(lua_getuserdata(lua_getparam(num)));
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT'))
+		return static_cast<ObjectState *>(lua_getuserdata(param));
+	luaL_argerror(num, "objectstate expected");
+	return NULL;
 }
 
 static inline Actor *check_actor(int num) {
-	if (lua_tag(lua_getparam(num)) != actor_tag)
-		luaL_argerror(num, "actor expected");
-	return static_cast<Actor *>(lua_getuserdata(lua_getparam(num)));
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('ACTR'))
+		return static_cast<Actor *>(lua_getuserdata(param));
+	luaL_argerror(num, "actor expected");
+	return NULL;
 }
 
 static inline Color *check_color(int num) {
-	if (lua_tag(lua_getparam(num)) != color_tag)
-		luaL_argerror(num, "color expected");
-	return static_cast<Color *>(lua_getuserdata(lua_getparam(num)));
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('COLR'))
+		return static_cast<Color *>(lua_getuserdata(param));
+	luaL_argerror(num, "color expected");
+	return NULL;
 }
 
 static inline int check_int(int num) {
@@ -201,7 +208,7 @@ static unsigned char clamp_color(int c) {
 
 static void MakeColor() {
 	Color *c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
-	lua_pushusertag(c, color_tag);
+	lua_pushusertag(c, MKID('COLR'));
 }
 
 static void GetColorComponents() {
@@ -210,12 +217,7 @@ static void GetColorComponents() {
 	lua_pushnumber(c->green());
 	lua_pushnumber(c->blue());
 }
-/*
-static void gc_Color() {
-	Color *c = static_cast<Color *>(lua_getuserdata(lua_getparam(1)));
-	delete c;
-}
-*/
+
 // Registry functions
 
 static void ReadRegistryValue() {
@@ -238,7 +240,7 @@ static void LoadActor() {
 		name = "<unnamed>";
 	else
 		name = luaL_check_string(1);
-	lua_pushusertag(new Actor(name), actor_tag);
+	lua_pushusertag(new Actor(name), MKID('ACTR'));
 }
 
 static void SetSelectedActor() {
@@ -255,7 +257,7 @@ static void SetActorTalkColor() {
 static void GetActorTalkColor() {
 	Actor *act = check_actor(1);
 	Color *c = new Color(act->talkColor());
-	lua_pushusertag(c, color_tag);
+	lua_pushusertag(c, MKID('COLR'));
 }
 
 static void SetActorRestChore() {
@@ -662,7 +664,7 @@ static void GetVisibleThings() {
 			continue;
 		if (sel->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
-			lua_pushusertag(*i, actor_tag);
+			lua_pushusertag(*i, MKID('ACTR'));
 			lua_pushnumber(1);
 			lua_settable();
 		}
@@ -1325,7 +1327,7 @@ static void NewObjectState() {
 
 	object = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
 	g_engine->currScene()->addObjectState(object);
-	lua_pushusertag(object, object_tag);
+	lua_pushusertag(object, MKID('STAT'));
 }
 
 static void FreeObjectState() {
@@ -1479,10 +1481,10 @@ static void stubWarning(char *funcName) {
 		else if (lua_istable(lua_getparam(i)))
 			fprintf(stderr, "{...}");
 		else if (lua_isuserdata(lua_getparam(i))) {
-			if (lua_tag(lua_getparam(i)) == actor_tag) {
+			if (lua_tag(lua_getparam(i)) == MKID('ACTR')) {
 				Actor *a = check_actor(i);
 				fprintf(stderr, "<actor \"%s\">", a->name());
-			} else if (lua_tag(lua_getparam(i)) == color_tag) {
+			} else if (lua_tag(lua_getparam(i)) == MKID('COLR')) {
 				Color *c = check_color(i);
 				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 			} else
@@ -2247,13 +2249,6 @@ struct luaL_reg hardwareOpcodes[] = {
 };
 
 void register_lua() {
-	// Create various LUA tags
-	actor_tag = lua_newtag();
-	color_tag = lua_newtag();
-	text_tag = lua_newtag();
-	vbuffer_tag = lua_newtag();
-	object_tag = lua_newtag();
-
 	// Register main opcodes functions
 	luaL_openlib(mainOpcodes, ARRAYSIZE(mainOpcodes));
 
