@@ -2755,7 +2755,6 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	const ScummGameSettings *g;
 	char detectName[128];
 	char detectName2[128];
-	char detectName3[128];
 
 	for (g = scumm_settings; g->gameName; ++g) {
 		// Determine the 'detectname' for this game, that is, the name of a 
@@ -2765,17 +2764,16 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcpy(detectName, g->detectname);
 			strcpy(detectName2, g->detectname);
 			strcat(detectName2, ".");
-			detectName3[0] = '\0';
 		} else {
 			strcpy(detectName, g->gameName);
-			strcpy(detectName2, g->gameName);
-			strcpy(detectName3, g->gameName);
 			strcat(detectName, ".000");
-			if (g->version >= 7) {
+			strcpy(detectName2, g->gameName);
+			if (g->features & GF_HUMONGOUS) {
+				strcat(detectName2, ".he0");
+			} else if (g->version >= 7) {
 				strcat(detectName2, ".la0");
 			} else
 				strcat(detectName2, ".sm0");
-			strcat(detectName3, ".he0");
 		}
 
 		// Iterate over all files in the given directory
@@ -2783,8 +2781,7 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			const char *gameName = file->displayName().c_str();
 
 			if ((0 == scumm_stricmp(detectName, gameName))  || 
-				(0 == scumm_stricmp(detectName2, gameName)) ||
-				(0 == scumm_stricmp(detectName3, gameName))) {
+				(0 == scumm_stricmp(detectName2, gameName))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
 				break;
