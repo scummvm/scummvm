@@ -3035,19 +3035,17 @@ void Scumm_v6::o6_getDateTime()
 }
 
 void Scumm_v6::o6_unknownE0() {
-        int a = fetchScriptByte();
-        warning("o6_unknownEO(%d) stub", a);
-        a -= 222;
-        if (a != 0) {
-                a--;
-                a--;
-                if (a != 0) 
-                        return;
-                pop();
-                return;
-        }
-        pop();
-        return;
+	int a = fetchScriptByte();
+	warning("o6_unknownEO(%d) stub", a);
+	a -= 222;
+	if (a != 0) {
+		a -= 2;
+		if (a != 0) 
+			return;
+		pop();
+	} else {
+		pop();
+	}
 }
 
 void Scumm_v6::o6_localizeArray() {
