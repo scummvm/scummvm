@@ -449,12 +449,16 @@ MidiDriver *MidiDriver_SEQ_create() {
 
 #endif
 
-#if defined(__APPLE__) || defined(__APPLE_CW)
+#if defined(__APPLE__) || defined(macintosh)
 // FIXME - this is for Mac OS X and Mac OS 9. It's not really possible
 // to check for these *cleanly* without a configure script, though..
 
-#include <QuickTime/QuickTimeComponents.h>
-#include <QuickTime/QuickTimeMusic.h>
+
+//#include <QuickTime/QuickTimeComponents.h>
+//#include <QuickTime/QuickTimeMusic.h>
+
+#include <QuickTimeComponents.h>
+#include <QuickTimeMusic.h>
 
 
 
@@ -639,7 +643,7 @@ MidiDriver *MidiDriver_QT_create() {
 	return new MidiDriver_QT();
 }
 
-#endif // __APPLE__ || __APPLE_CW
+#endif // __APPLE__ || macintosh
 
 
 #ifdef __APPLE__
@@ -809,7 +813,7 @@ const char *MidiDriver::get_error_name(int error_code) {
 int MidiDriver::connect_to_timidity(int port)
 {
 	int s = 0;
-#if !defined(__APPLE__CW) && !defined(__MORPHOS__)	// No socket support on Apple Carbon or Morphos
+#if !defined(macintosh) && !defined(__MORPHOS__)	// No socket support on Apple Carbon or Morphos
 	struct hostent *serverhost;
 	struct sockaddr_in sadd;
 
