@@ -665,7 +665,8 @@ void ScummEngine_v7he::o7_startSound() {
 		break;
 
 	case 232:
-		pop();
+		//FIXME Ignoring extra arguments for now.
+		_sound->addSoundToQueue(pop());
 		// _staticVar4 = pop();
 		// _staticVar3 = 0;
 		// _staticVar1 = 11025;

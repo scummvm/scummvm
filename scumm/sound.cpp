@@ -941,7 +941,10 @@ File *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.tlk", _vm->getGameName());
+		if (_vm->_heversion >= 70)
+			sprintf(buf, "%s.he2", _vm->getGameName());
+		else
+			sprintf(buf, "%s.tlk", _vm->getGameName());
 		if (file->open(buf))
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
