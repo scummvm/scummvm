@@ -559,7 +559,6 @@ protected:
 	/* Should be in Resource class */
 	File _fileHandle;
 	uint32 _fileOffset;
-	File _hFileTable[17];
 	int _resourceHeaderSize;
 	char *_exe_name;	// This is the name we use for opening resource files
 	char *_game_name;	// This is the game the user calls it, so use for saving

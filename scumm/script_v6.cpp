@@ -2371,7 +2371,7 @@ void Scumm_v6::o6_setBlastObjectWindow() {
 	b = pop();
 	a = pop();
 
-	warning("o6_bompWindow(%d, %d, %d, %d)", a, b, c, d);
+	warning("o6_setBlastObjectWindow(%d, %d, %d, %d)", a, b, c, d);
 	// sub_274EF(a, b, c, d);
 }
 
