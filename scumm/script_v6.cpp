@@ -2950,26 +2950,70 @@ void Scumm_v6::o6_findAllObjects() {
 	push(readVar(0));
 }
 
+static void sub_FEE_78D2(int num, int16 *arg_1, int16 *arg_2) {
+	byte *ptr = g_scumm->getResourceAddress(rtString, num);
+	*(arg_1) = READ_LE_UINT16(ptr + 4);
+	*(arg_2) = READ_LE_UINT16(ptr + 2);
+}
+
+static void sub_FEE_7822(int num, int16 arg_1, int16 arg_2) {
+	int16 dx = arg_2;
+	dx -= arg_1;
+	int16 var_C = dx;
+	int count = dx * 2;
+
+	while (--count) {
+		int16 cx = var_C + 1;
+		int16 rand1 = (rand() % cx) + arg_1;
+		int16 rand2 = (rand() % cx) + arg_1;
+		g_scumm->_vars[g_scumm->VAR_V6_RANDOM_NR] = rand2;
+		g_scumm->writeArray(num, 0, rand1, g_scumm->readArray(num, 0, rand1));
+		g_scumm->writeArray(num, 0, rand2, g_scumm->readArray(num, 0, rand2));
+	};
+}
+
 void Scumm_v6::o6_pickVarRandom() {
-	int args[16];
+	warning("void Scumm_v6::o6_pickVarRandom()");
+
 	int num;
-	int a, b, i;
+	int args[100];
+	int16 var_C, var_A;
 
 	num = getStackList(args, sizeof(args) / sizeof(args[0]));
-	
-	printf("WARNING: stub o6_pickVarRandom([");
-	for (i=0; i < num; i++) 
-		printf(" %d", args[i]);
-	printf(" ])!\n");
-		
-	
-	a = fetchScriptWord();
-	b = readVar(a);
-	// readArray(a, 0, 0);
-	// push(readVar(a));
+	int16 value = fetchScriptWord();
 
-	// readArray(a, 0, ?);
-	push(2);
+	if (readVar(value) == 0) {
+		defineArray(value, 5, 0, num);
+		if (num > 0) {
+			int *ptr = args;
+			int16 counter = 0;
+			do {
+				writeArray(value, 0, counter + 1, READ_LE_UINT16(ptr));
+				ptr++;
+			} while (++counter < num);
+		}
+
+		sub_FEE_7822(value, 1, num);
+		writeArray(value, 0, 0, 2);
+		push(readArray(value, 0, 1));
+		return;
+	}
+
+	num = readArray(value, 0, 0);
+	sub_FEE_78D2(readVar(value), &var_C, &var_A);
+
+	if (var_A - 1 < num) {
+		int16 var_2 = readArray(value, 0, num - 1);
+		sub_FEE_7822(value, 1, var_A - 1);
+		num = 1;
+		int16 a = readArray(value, 0, num);
+		if (a == var_2) {
+			num = 2;
+		}
+	}
+
+	writeArray(value, 0, 0, num + 1);
+	push(readArray(value, 0, num));
 }
 
 void Scumm_v6::o6_getDateTime()
