@@ -139,6 +139,10 @@ SOURCE=.\sky\disk.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\grid.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\intro.cpp
 # End Source File
 # Begin Source File
