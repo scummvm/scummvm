@@ -30,6 +30,7 @@
 #include "stdafx.h"
 #include "common/engine.h"	// for warning/error/debug
 #include <alsa/asoundlib.h>
+#include "common/util.h" // for hexdump
 
 /*
  *     ALSA sequencer driver
@@ -187,7 +188,17 @@ void MidiDriver_ALSA::send(uint32 b) {
 }
 
 void MidiDriver_ALSA::sysEx(byte *msg, uint16 length) {
-	snd_seq_ev_set_sysex(&ev, length, msg);
+	unsigned char buf[1024];
+
+	if (length > 254) {
+		warning("Cannot send SysEx block - data too large");
+		return;
+	}
+	buf[0] = 0xF0;
+	memcpy(&buf[1], msg, length);
+	buf[length + 1] = 0xF7;
+	// hexdump(buf, length + 2);
+	snd_seq_ev_set_sysex(&ev, length + 2, &buf);
 }
 
 int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port) {
