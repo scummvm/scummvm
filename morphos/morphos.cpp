@@ -65,11 +65,11 @@ Gui gui;
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
 
-typedef void (*ScalerFunc)( uint32 src_x, uint32 src_y, uint32 width, uint32 height );
+typedef void (*ScalerFunc)( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 
-void Super2xSaI( uint32 src_x, uint32 src_y, uint32 width, uint32 height );
-void SuperEagle( uint32 src_x, uint32 src_y, uint32 width, uint32 height );
-void PointScaler( uint32 src_x, uint32 src_y, uint32 width, uint32 height );
+void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
+void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
+void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
 
 static struct Screen  *ScummScreen = NULL;
 static struct Window  *ScummWindow = NULL;
@@ -85,6 +85,7 @@ static USHORT 			  ScummColors16[256];
 static WORD				  ScummWinX = -1;
 static WORD				  ScummWinY = -1;
 static bool				  ScummOrigMouse = false;
+static int 				  ScummShakePos = 0;
 
 static struct MsgPort     *TimerMsgPort = NULL;
 static struct timerequest *TimerIORequest = NULL;
@@ -167,8 +168,6 @@ extern struct SignalSemaphore ScummMusicThreadRunning;
 
 struct Library *CyberGfxBase = NULL;
 struct Device  *TimerBase = NULL;
-
-static int  current_shake_pos;
 
 void updateScreen(Scumm *s);
 
@@ -849,54 +848,9 @@ void waitForTimer( Scumm *s, int msec_delay )
 	} while ( !AllDone );
 }
 
-#define MAX(a,b) (((a)<(b)) ? (b) : (a))
-#define MIN(a,b) (((a)>(b)) ? (b) : (a))
-
 void setShakePos( Scumm *s, int shake_pos )
 {
-	int old_shake_pos = current_shake_pos;
-	int dirty_height, dirty_blackheight;
-	int dirty_top, dirty_blacktop;
-
-	if( shake_pos != old_shake_pos )
-	{
-		current_shake_pos = shake_pos;
-		
-		/* Old shake pos was current_shake_pos, new is shake_pos.
-		 * Move the screen up or down to account for the change.
-		 */
-		MovePixelArray( 0, old_shake_pos << ScummScale, ScummWindow->RPort, 0, shake_pos << ScummScale, ScummScrWidth, ScummScrHeight );
-		
-		/* Also adjust the mouse pointer backup Y coordinate.
-		 * There is a minor mouse glitch when the mouse is moved
-		 * at the blackness of the shake area, but it's hardly noticable
-		 */
-		old_mouse_y += shake_pos - old_shake_pos;
-
-		/* Refresh either the upper part of the screen,
-		 * or the lower part
-		 */
-		if( shake_pos > old_shake_pos )
-		{
-			dirty_height = MIN(shake_pos, 0) - MIN(old_shake_pos,0);
-			dirty_top = -MIN(shake_pos,0);
-			dirty_blackheight = MAX(shake_pos,0) - MAX(old_shake_pos,0);
-			dirty_blacktop = MAX(old_shake_pos,0);
-		}
-		else
-		{
-			dirty_height = MAX(old_shake_pos,0) - MAX(shake_pos, 0);
-			dirty_top = 200 - MAX(old_shake_pos,0);
-			dirty_blackheight = MIN(old_shake_pos,0) - MIN(shake_pos,0);
-			dirty_blacktop = 200 + MIN(shake_pos,0);
-		}
-
-		/* Fill the dirty area with blackness or the scumm image */
-		{
-			FillPixelArray( ScummWindow->RPort, 0, dirty_blacktop << ScummScale, ScummScrWidth, dirty_blackheight << ScummScale, 0 );
-			s->redrawLines(dirty_top, dirty_top + dirty_height);
-		}
-	}
+	ScummShakePos = shake_pos;
 }
 
 #define GET_RESULT(A, B, C, D) ((A != C || A != D) - (B != C || B != D))
@@ -905,7 +859,7 @@ void setShakePos( Scumm *s, int shake_pos )
 
 #define Q_INTERPOLATE(A, B, C, D) ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2) + ((((A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask)) >> 2) & qlowpixelMask)
 
-void Super2xSaI( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
+void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	unsigned int x, y;
 	unsigned long color[16];
@@ -926,7 +880,7 @@ void Super2xSaI( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
 	src_line[2] = src + 320;
 	src_line[3] = src + 320 * 2;
 
-	dst_line[0] = dest+src_y*2*dest_pitch+src_x*2*dest_bpp;
+	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
 
 	x = 0, y = 0;
@@ -1120,7 +1074,7 @@ void Super2xSaI( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
 	UnLockBitMap( handle );
 }
 
-void SuperEagle( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
+void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	unsigned int x, y;
 	unsigned long color[12];
@@ -1141,7 +1095,7 @@ void SuperEagle( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
 	src_line[2] = src + 320;
 	src_line[3] = src + 320 * 2;
 
-	dst_line[0] = dest+src_y*2*dest_pitch+src_x*2*dest_bpp;
+	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
 
 	x = 0, y = 0;
@@ -1341,7 +1295,7 @@ void SuperEagle( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
 	UnLockBitMap( handle );
 }
 
-void PointScaler( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
+void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	byte *src;
 	byte *dest;
@@ -1362,7 +1316,7 @@ void PointScaler( uint32 src_x, uint32 src_y, uint32 width, uint32 height )
 
 	src = (byte *)ScummBuffer+src_y*320+src_x;
 
-	dst_line[0] = dest+src_y*2*dest_pitch+src_x*2*dest_bpp;
+	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
 
 	for( y = 0; y < height; y++ )
@@ -1409,8 +1363,6 @@ void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
 	if( has_mouse )
 		s->drawMouse();
 
-	/* Account for the shaking and do Y clipping */
-	y += current_shake_pos;
 	if( y < 0 )
 	{
 		h += y;
@@ -1455,12 +1407,34 @@ void updateScreen(Scumm *s)
 		rp.BitMap = ScummRenderTo;
 
 		if( ScummDepth == 8 )
-			WritePixelArray( ScummBuffer, 0, 0, 320, &rp, 0, 0, 320, 200, RECTFMT_LUT8 );
+			WritePixelArray( ScummBuffer, 0, 0, 320, &rp, 0, ScummShakePos, 320, 200, RECTFMT_LUT8 );
 		else
-			WriteLUTPixelArray( ScummBuffer, 0, 0, 320, &rp, ScummColors, 0, 0, 320, 200, CTABFMT_XRGB8 );
+			WriteLUTPixelArray( ScummBuffer, 0, 0, 320, &rp, ScummColors, 0, ScummShakePos, 320, 200, CTABFMT_XRGB8 );
 	}
 	else
-		(*ScummScaler)( 0, 0, 320, 200 );
+	{
+		uint32 src_y = 0;
+		uint32 dest_y = 0;
+		if( ScummShakePos < 0 )
+			src_y = -ScummShakePos;
+		else
+			dest_y = ScummShakePos;
+		(*ScummScaler)( 0, src_y, 0, dest_y, 320, 200-src_y-dest_y );
+	}
+
+	/* Account for shaking (blacken rest of screen) */
+	if( ScummShakePos )
+	{
+		struct RastPort rp;
+
+		InitRastPort( &rp );
+		rp.BitMap = ScummRenderTo;
+
+		if( ScummShakePos < 0 )
+			FillPixelArray( &rp, 0, 199 << ScummScale, ScummScrWidth, -ScummShakePos << ScummScale, 0 );
+		else
+			FillPixelArray( &rp, 0, 0, ScummScrWidth, ScummShakePos << ScummScale, 0 );
+	}
 
 	if( ScummScreen )
 	{
@@ -1507,8 +1481,6 @@ void drawMouse( Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vi
 
 	if( visible )
 	{
-		ydraw += current_shake_pos;
-
 		dst = (byte*)ScummBuffer + ydraw*320 + xdraw;
 		bak = old_backup;
 
@@ -1678,12 +1650,16 @@ static bool FindScaler( const char *ScalerName )
 	return true;
 }
 
-static void ReadToolTypes( STRPTR OfFile )
+static void ReadToolTypes( struct WBArg *OfFile )
 {
 	struct DiskObject *dobj;
 	char 	*ToolValue;
+	char IconPath[ 256 ];
 
-	dobj = GetDiskObject( OfFile );
+	NameFromLock( OfFile->wa_Lock, IconPath, 256 );
+	AddPart( IconPath, OfFile->wa_Name, 256 );
+
+	dobj = GetDiskObject( IconPath );
 	if( dobj == NULL )
 		return;
 
@@ -1840,10 +1816,10 @@ int main( int argc, char *argv[] )
 	else
 	{
 		/* We've been started from Workbench */
-		ReadToolTypes( (char *)_WBenchMsg->sm_ArgList[ 0 ].wa_Name );
+		ReadToolTypes( &_WBenchMsg->sm_ArgList[ 0 ] );
 		if( _WBenchMsg->sm_NumArgs > 1 )
 		{
-			ReadToolTypes( (char *)_WBenchMsg->sm_ArgList[ 1 ].wa_Name );
+			ReadToolTypes( &_WBenchMsg->sm_ArgList[ 1 ] );
 			OrigDirLock = CurrentDir( _WBenchMsg->sm_ArgList[ 1 ].wa_Lock );
 		}
 	}
