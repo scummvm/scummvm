@@ -125,15 +125,15 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
-static char * read_creative_voc_file(byte * ptr, int & size, int & rate) {
+byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate) {
 	assert(strncmp((char*)ptr, "Creative Voice File\x1A", 20) == 0);
-	int offset = READ_LE_UINT16(ptr+20);
-	short version = READ_LE_UINT16(ptr+22);
-	short code = READ_LE_UINT16(ptr+24);
+	int32 offset = READ_LE_UINT16(ptr + 20);
+	short version = READ_LE_UINT16(ptr + 22);
+	short code = READ_LE_UINT16(ptr + 24);
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	bool quit = 0;
-	char * ret_sound = 0; size = 0;
+	byte * ret_sound = 0; size = 0;
 	while(!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
@@ -149,9 +149,9 @@ static char * read_creative_voc_file(byte * ptr, int & size, int & rate) {
 				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
 				if(packing == 0) {
 					if(size) {
-						ret_sound = (char*)realloc(ret_sound, size + len);
+						ret_sound = (byte*)realloc(ret_sound, size + len);
 					} else {
-						ret_sound = (char*)malloc(len);
+						ret_sound = (byte*)malloc(len);
 					}
 					memcpy(ret_sound + size, ptr + offset, len);
 					size += len;
@@ -184,10 +184,9 @@ void Sound::playSound(int sound) {
 		sound, _scumm->getResourceRoomNr(rtSound, sound));
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr) {
-		if ((READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) && (_scumm->_imuseDigital)){
-			if (_scumm->_imuseDigital) {
-				_scumm->_imuseDigital->startSound(sound);
-			}
+		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
+			_scumm->_imuseDigital->startSound(sound);
+			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 			ptr += 8;
@@ -234,10 +233,7 @@ void Sound::playSound(int sound) {
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-			char * sounddata = read_creative_voc_file(ptr, size, rate);
-			if(sounddata != NULL) {
-				_scumm->_mixer->playRaw(NULL, sounddata, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, sound);
-			}
+			_scumm->_imuseDigital->startSound(sound);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
@@ -583,14 +579,6 @@ int Sound::isSoundRunning(int sound) {
 		return _scumm->_imuseDigital->getSoundStatus(sound);
 	}
 
-	// Check raw mixer channels, to make sure we're not playing an exotic
-	// sound type manually.
-		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
-			if (_scumm->_mixer->_channels[i] && (_scumm->_mixer->_channels[i]->_id == sound)) {
-				return 1;
-			 }
-		}
-
 	se = _scumm->_imuse;
 	if (!se)
 		return 0;
@@ -855,6 +843,9 @@ File * Sound::openSfxFile() {
 }
 
 void Sound::stopSfxSound() {
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->stopAll();
+	}
 	_scumm->_mixer->stopAll();
 }
 

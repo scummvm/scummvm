@@ -134,7 +134,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
 	// Init iMuse
-	if (_gameId == GID_DIG) {
+	if (_features & GF_AFTER_V7) {
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
 	} else {

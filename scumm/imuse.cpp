@@ -4873,25 +4873,12 @@ void IMuseDigital::handler() {
 			uint32 new_size = _channel[l]._mixerSize;
 			uint32 mixer_size = new_size;
 
-			new_mixer = false;
 			if (_channel[l]._mixerTrack == -1) {
-				_scumm->_system->lock_mutex(_scumm->_mixer->_mutex);
-				for (idx = 0; idx < SoundMixer::NUM_CHANNELS; idx++) {
-					if (_scumm->_mixer->_channels[idx] == NULL) {
-						_channel[l]._mixerTrack = idx;
-						new_mixer = true;
-						break;
-					}
-				}
-			}
-			if(SoundMixer::NUM_CHANNELS == idx) {
-				warning("IMuseDigital::handler() no free SoundMixer channel");
-				return;
-			}
-
-			if (new_mixer == true) {
+				new_mixer = true;
 				mixer_size *= 2;
 				new_size *= 2;
+			} else {
+				new_mixer = false;
 			}
 
 			if (_channel[l]._isLoop == false) {
@@ -4937,19 +4924,18 @@ void IMuseDigital::handler() {
 				}
 			} else if (_channel[l]._bits == 8) {
 				for(i = 0; i < (mixer_size / 2); i++) {
-					buf[i * 2 + 0] = (byte)(((int16)(buf[i * 2 + 0] * _channel[l]._volumeRight)) >> 8);
-					buf[i * 2 + 1] = (byte)(((int16)(buf[i * 2 + 1] * _channel[l]._volume)) >> 8);
+					buf[i * 2 + 0] = (byte)(((int8)(buf[i * 2 + 0] ^ 0x80) * _channel[l]._volumeRight) >> 8) ^ 0x80;
+					buf[i * 2 + 1] = (byte)(((int8)(buf[i * 2 + 1] ^ 0x80) * _channel[l]._volume) >> 8) ^ 0x80;
 				}
 			}
 
 			if (new_mixer) {
-				_scumm->_mixer->playStream(NULL, _channel[l]._mixerTrack, buf, mixer_size,
+				_channel[l]._mixerTrack = _scumm->_mixer->playStream(NULL, -1, buf, mixer_size,
 																				 _channel[l]._freq, _channel[l]._mixerFlags);
 			} else {
 				_scumm->_mixer->append(_channel[l]._mixerTrack, buf, mixer_size,
 															 _channel[l]._freq, _channel[l]._mixerFlags);
 			}
-			_scumm->_system->unlock_mutex(_scumm->_mixer->_mutex);
 
 			if ((new_size != mixer_size) && (_channel[l]._isLoop == true)) {
 				_channel[l]._offset = _channel[l]._jump[0]._dest + (mixer_size - new_size);
@@ -4979,109 +4965,140 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._volumeRight = 127;
 			_channel[l]._volume = 127;
 			_channel[l]._volumeFade = -1;
-			ptr += 16;
 
-			uint32 tag, size = 0;
+			uint32 tag, size = 0, r, t;
 
-			for (;;) {
-				tag = READ_BE_UINT32(ptr); ptr += 4;
-				switch(tag) {
-					case MKID_BE('FRMT'):
-						ptr += 12;
-						_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
-					break;
-					case MKID_BE('TEXT'):
-						size = READ_BE_UINT32(ptr); ptr += size + 4;
-					break;
-					case MKID_BE('REGN'):
-						ptr += 4;
-						if (_channel[l]._numRegions >= MAX_IMUSE_REGIONS) {
-							warning("IMuseDigital::startSound(%d) Not enough space for Region");
-							ptr += 8;
-							break;
-						}
-						_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._numRegions++;
-					break;
-					case MKID_BE('STOP'):
-						ptr += 4;
-						_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
-					break;
-					case MKID_BE('JUMP'):
-						ptr += 4;
-						if (_channel[l]._numJumps >= MAX_IMUSE_JUMPS) {
-							warning("IMuseDigital::startSound(%d) Not enough space for Jump");
-							ptr += 16;
-							break;
-						}
-						_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l]._isLoop = true;
-						_channel[l]._numJumps++;
-					break;
-					case MKID_BE('DATA'):
-						size = READ_BE_UINT32(ptr); ptr += 4;
-					break;
-					default:
-						error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+			if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+				_channel[l]._bits = 8;
+				_channel[l]._channels = 1;
+				_channel[l]._mixerTrack = -1;
+				_channel[l]._mixerSize = (22050 / 5) * 2;
+				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+				byte * t_ptr= _scumm->_sound->readCreativeVocFile(ptr, size, _channel[l]._freq);
+				if (_channel[l]._freq == 22222) {
+					_channel[l]._freq = 22050;
 				}
-				if (tag == MKID_BE('DATA')) break;
-			}
+				if (_channel[l]._freq == 11025) {
+					_channel[l]._mixerSize /= 2;
+				}
+				if (_channel[l]._bits == 8) {
+					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+					if (_channel[l]._channels == 1) {
+						size *= 2;
+						_channel[l]._channels = 2;
+						_channel[l]._data = (byte *)malloc(size);
+						for (t = 0; t < size / 2; t++) {
+							*(_channel[l]._data + t * 2 + 0) = *(t_ptr + t);
+							*(_channel[l]._data + t * 2 + 1) = *(t_ptr + t);
+						}
+					} else {
+						_channel[l]._data = (byte *)malloc(size);
+						memcpy(_channel[l]._data, t_ptr, size);
+					}
+					free(t_ptr);
+					_channel[l]._size = size;
+				}
+			} else if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) {
+				ptr += 16;
+				for (;;) {
+					tag = READ_BE_UINT32(ptr); ptr += 4;
+					switch(tag) {
+						case MKID_BE('FRMT'):
+							ptr += 12;
+							_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+						break;
+						case MKID_BE('TEXT'):
+							size = READ_BE_UINT32(ptr); ptr += size + 4;
+						break;
+						case MKID_BE('REGN'):
+							ptr += 4;
+							if (_channel[l]._numRegions >= MAX_IMUSE_REGIONS) {
+								warning("IMuseDigital::startSound(%d) Not enough space for Region");
+								ptr += 8;
+								break;
+							}
+							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._numRegions++;
+						break;
+						case MKID_BE('STOP'):
+							ptr += 4;
+							_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
+						break;
+						case MKID_BE('JUMP'):
+							ptr += 4;
+							if (_channel[l]._numJumps >= MAX_IMUSE_JUMPS) {
+								warning("IMuseDigital::startSound(%d) Not enough space for Jump");
+								ptr += 16;
+								break;
+							}
+							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._isLoop = true;
+							_channel[l]._numJumps++;
+						break;
+						case MKID_BE('DATA'):
+							size = READ_BE_UINT32(ptr); ptr += 4;
+						break;
+						default:
+							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+					}
+					if (tag == MKID_BE('DATA')) break;
+				}
 
-			uint32 header_size = ptr - s_ptr;
-			_channel[l]._offsetStop -= header_size;
-			if (_channel[l]._bits == 12) {
-				_channel[l]._offsetStop = (_channel[l]._offsetStop / 3) * 4;
-			}
-			uint32 r, t;
-			for (r = 0; r < _channel[l]._numRegions; r++) {
-				_channel[l]._region[r]._offset -= header_size;
+				uint32 header_size = ptr - s_ptr;
+				_channel[l]._offsetStop -= header_size;
 				if (_channel[l]._bits == 12) {
-					_channel[l]._region[r]._offset = (_channel[l]._region[r]._offset / 3) * 4;
-					_channel[l]._region[r]._length = (_channel[l]._region[r]._length / 3) * 4;
+					_channel[l]._offsetStop = (_channel[l]._offsetStop / 3) * 4;
 				}
-			}
-			if (_channel[l]._numJumps > 0) {
-				for (r = 0; r < _channel[l]._numJumps; r++) {
-					_channel[l]._jump[r]._offset -= header_size;
-					_channel[l]._jump[r]._dest -= header_size;
+				for (r = 0; r < _channel[l]._numRegions; r++) {
+					_channel[l]._region[r]._offset -= header_size;
 					if (_channel[l]._bits == 12) {
-						_channel[l]._jump[r]._offset = (_channel[l]._jump[r]._offset / 3) * 4;
-						_channel[l]._jump[r]._dest = (_channel[l]._jump[r]._dest / 3) * 4;
+						_channel[l]._region[r]._offset = (_channel[l]._region[r]._offset / 3) * 4;
+						_channel[l]._region[r]._length = (_channel[l]._region[r]._length / 3) * 4;
 					}
 				}
-			}
-			_channel[l]._mixerTrack = -1;
-			_channel[l]._mixerSize = (22050 / 5) * 2;
-			_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-			if (_channel[l]._bits == 12) {
-				_channel[l]._mixerSize *= 2;
-				_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
-				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
-			}
-			if (_channel[l]._bits == 8) {
-				_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-				if (_channel[l]._channels == 1) {
-					size *= 2;
-					_channel[l]._channels = 2;
-					_channel[l]._data = (byte *)malloc(size);
-					for (t = 0; t < size; t++) {
-						*(_channel[l]._data + l * 2 + 0) = *(ptr + l);
-						*(_channel[l]._data + l * 2 + 1) = *(ptr + l);
+				if (_channel[l]._numJumps > 0) {
+					for (r = 0; r < _channel[l]._numJumps; r++) {
+						_channel[l]._jump[r]._offset -= header_size;
+						_channel[l]._jump[r]._dest -= header_size;
+						if (_channel[l]._bits == 12) {
+							_channel[l]._jump[r]._offset = (_channel[l]._jump[r]._offset / 3) * 4;
+							_channel[l]._jump[r]._dest = (_channel[l]._jump[r]._dest / 3) * 4;
+						}
 					}
-				} else {
-					_channel[l]._data = (byte *)malloc(size);
-					memcpy(_channel[l]._data, ptr, size);
 				}
-				_channel[l]._size = size;
-			}
-			if (_channel[l]._freq == 11025) {
-				_channel[l]._mixerSize /= 2;
+				_channel[l]._mixerTrack = -1;
+				_channel[l]._mixerSize = (22050 / 5) * 2;
+				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+				if (_channel[l]._bits == 12) {
+					_channel[l]._mixerSize *= 2;
+					_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
+					_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
+				}
+				if (_channel[l]._bits == 8) {
+					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+					if (_channel[l]._channels == 1) {
+						size *= 2;
+						_channel[l]._channels = 2;
+						_channel[l]._data = (byte *)malloc(size);
+						for (t = 0; t < size / 2; t++) {
+							*(_channel[l]._data + t * 2 + 0) = *(ptr + t);
+							*(_channel[l]._data + t * 2 + 1) = *(ptr + t);
+						}
+					} else {
+						_channel[l]._data = (byte *)malloc(size);
+						memcpy(_channel[l]._data, ptr, size);
+					}
+					_channel[l]._size = size;
+				}
+				if (_channel[l]._freq == 11025) {
+					_channel[l]._mixerSize /= 2;
+				}
 			}
 			_channel[l]._toBeRemoved = false;
 			_channel[l]._used = true;
@@ -5110,7 +5127,7 @@ void IMuseDigital::stopAll() {
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
-	byte sample = b;
+	int32 sample = b;
 	byte sub_cmd = c >> 8;
 	int8 channel = -1, l;
 
@@ -5121,7 +5138,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 12:
 			switch (sub_cmd) {
-			case 5: // params seems always to be set 0
+			case 5:
 				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
 				return 0;
 			case 6: // volume control (0-127)
