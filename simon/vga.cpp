@@ -26,7 +26,7 @@
 #include "simon/vga.h"
 
 typedef void (SimonState::*VgaOpcodeProc) ();
-static const uint16 vc_get_out_of_code = 0;
+static uint16 vc_get_out_of_code = 0;
 
 // Opcode tables
 static const VgaOpcodeProc vga_opcode_table[] = {
@@ -113,7 +113,7 @@ void SimonState::run_vga_script() {
 		uint opcode;
 
 		if (_continous_vgascript) {
-			if ((void *)_vc_ptr != (void *)&vc_get_out_of_code) {
+			if (_vc_ptr != (byte *)&vc_get_out_of_code) {
 				fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
 				dump_video_script(_vc_ptr, true);
 			}

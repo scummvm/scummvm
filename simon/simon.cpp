@@ -1731,7 +1731,7 @@ void SimonState::f10_key() {
 
 				x_ = (ha->width >> 1) - 4 + ha->x - (_x_scroll << 3);
 
-				if (x_ < 0 || x_ >= 0x137)
+				if (x_ >= 0x137)
 					continue;
 
 				dst = dx_lock_attached();
@@ -2042,7 +2042,7 @@ void SimonState::o_print_str() {
 		if (speech_id != 0 && !_subtitles) {
 			talk_with_speech(speech_id, num_1);
 		} else if (string_ptr != NULL) {
-			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
+			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		}
 		break;
 
@@ -2050,7 +2050,7 @@ void SimonState::o_print_str() {
 	case GAME_SIMON1DOS:
 	case GAME_SIMON1AMIGA:
 	case GAME_SIMON2DOS:
-		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
+		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 
 	case GAME_SIMON2TALKIE:
@@ -2065,7 +2065,7 @@ void SimonState::o_print_str() {
 		if (speech_id == 0)
 			o_kill_thread_simon2(2, num_1 + 2);
 
-		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
+		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 	}
 }
@@ -5076,7 +5076,7 @@ void SimonState::delay(uint amount) {
 	} while (cur < start + amount);
 }
 
-bool SimonState::save_game(uint slot, const char *caption) {
+bool SimonState::save_game(uint slot, char *caption) {
 	File f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -5093,7 +5093,7 @@ bool SimonState::save_game(uint slot, const char *caption) {
 		return false;
 	}
 
-	f.write((char*)caption, 0x12);
+	f.write(caption, 0x12);
 
 	f.writeUint32BE(_itemarray_inited - 1);
 	f.writeUint32BE(0xFFFFFFFF);

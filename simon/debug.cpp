@@ -347,7 +347,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 		}
 	}
 
-	dump_bmp(filename, w, h, b, (uint32 *)palette);
+	dump_bmp(filename, w, h, b, (const uint32 *)palette);
 	free(b);
 }
 

@@ -759,7 +759,7 @@ public:
 
 	Item *getNextItemPtrStrange();
 
-	bool save_game(uint slot, const char *caption);
+	bool save_game(uint slot, char *caption);
 	bool load_game(uint slot);
 
 	void showmessage_helper_2();
