@@ -532,6 +532,7 @@ public:
 	bool isResourceInUse(int type, int i);
 	bool isResourceLoaded(int type, int index);
 	void initRoomSubBlocks();
+	void clearRoomObjects();
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();

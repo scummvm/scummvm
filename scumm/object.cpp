@@ -410,6 +410,35 @@ void Scumm::drawObject(int obj, int arg)
 	}
 }
 
+void Scumm::clearRoomObjects()
+{
+	int i;
+
+	if (_features & GF_SMALL_HEADER) {
+		for (i = 0; i < _numLocalObjects; i++) {
+			_objs[i].obj_nr = 0;
+		}
+	} else {
+		// FIXME: Locking/FlObjects stuff?
+		for (i = 0; i < _numLocalObjects; i++) {
+			if (_objs[i].obj_nr < 1)	// Optimise codepath
+				continue;
+
+			// Nuke all non-flObjects (flObjects are nuked in script.cpp)
+			if (_objs[i].fl_object_index == 0) {
+				_objs[i].obj_nr = 0;
+			} else {
+				// Nuke all unlocked flObjects
+				if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
+					nukeResource(rtFlObject, _objs[i].fl_object_index);
+					_objs[i].obj_nr = 0;
+					_objs[i].fl_object_index = 0;
+				} 
+			}
+		}
+	}
+}
+
 void Scumm::loadRoomObjects()
 {
 	int i, j;
@@ -431,24 +460,6 @@ void Scumm::loadRoomObjects()
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->v7.numObjects));
 	else
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
-
-	// Clear out old room objects (FIXME: Locking/FlObjects stuff?)
-	for (i = 0; i < _numLocalObjects; i++) {
-		if (_objs[i].obj_nr < 1)	// Optimise codepath
-			continue;
-
-		// Nuke all non-flObjects (flObjects are nuked in script.cpp)
-		if (_objs[i].fl_object_index == 0) {
-			_objs[i].obj_nr = 0;
-		} else {
-			// Nuke all unlocked flObjects
-			if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
-				nukeResource(rtFlObject, _objs[i].fl_object_index);
-				_objs[i].obj_nr = 0;
-				_objs[i].fl_object_index = 0;
-			} 
-		}
-	}
 
 	if (_numObjectsInRoom == 0)
 		return;
@@ -543,11 +554,6 @@ void Scumm::loadRoomObjectsSmall()
 
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
-
-	// Clear out old room objects
-	for (i = 0; i < _numLocalObjects; i++) {
-		_objs[i].obj_nr = 0;
-	}
 
 	searchptr = room;
 	for (i = 0; i < _numObjectsInRoom; i++) {
