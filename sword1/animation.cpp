@@ -324,7 +324,7 @@ bool AnimationState::decodeFrame() {
 
 
 				} else
-					printf("dropped frame %i\n", framenum);
+					warning("dropped frame %i", framenum);
 
 				buildLookup(palnum + 1, lutcalcnum);
 
@@ -343,7 +343,7 @@ bool AnimationState::decodeFrame() {
 					}
 
 				} else
-					printf("dropped frame %i\n", framenum);
+					warning("dropped frame %i", framenum);
 
 #endif
 
