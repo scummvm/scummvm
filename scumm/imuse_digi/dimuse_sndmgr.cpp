@@ -43,6 +43,7 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 			closeSound(&_sounds[l]);
 	}
 	delete _cacheBundleDir;
+	g_system->delete_mutex(_mutex);
 #ifdef __PALM_OS__
 	BundleCodecs::releaseImcTables();
 #endif
