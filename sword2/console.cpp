@@ -91,7 +91,7 @@ Debugger::Debugger(Sword2Engine *vm)
 	DCmd_Register("rect", &Debugger::Cmd_Rect);
 	DCmd_Register("clear", &Debugger::Cmd_Clear);
 	DCmd_Register("debugon", &Debugger::Cmd_DebugOn);
-	DCmd_Register("debugoff", &Debugger::Cmd_DebugOn);
+	DCmd_Register("debugoff", &Debugger::Cmd_DebugOff);
 	DCmd_Register("saverest", &Debugger::Cmd_SaveRest);
 	DCmd_Register("timeon", &Debugger::Cmd_TimeOn);
 	DCmd_Register("timeoff", &Debugger::Cmd_TimeOff);
