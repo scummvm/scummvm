@@ -49,6 +49,7 @@ Scumm *g_scumm = 0;
 ScummDebugger g_debugger;
 
 extern NewGui *g_gui;
+extern uint16 _debugLevel;
 
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
 {
@@ -79,6 +80,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	g_scumm = this;
 
 	_debugMode = detector->_debugMode;
+	_debugLevel = detector->_debugLevel;
 	_bootParam = detector->_bootParam;
 	_exe_name = (char*)detector->_gameRealName.c_str();
 	_game_name = (char*)detector->_gameFileName.c_str();

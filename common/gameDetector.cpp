@@ -200,7 +200,7 @@ GameDetector::GameDetector()
 	_amiga = false;
 
 	_talkSpeed = 60;
-	_debugLevel = 1;
+	_debugLevel = 0;
 	_debugMode = 0;
 	_noSubtitles = false;
 	_bootParam = 0;
@@ -278,11 +278,19 @@ void GameDetector::updateconfig()
 
 	_sfx_volume = g_config->getInt("sfx_volume", _sfx_volume);
 
+	_debugLevel = g_config->getInt("debuglevel", _debugLevel);
+	if (_debugLevel > 0) {
+		_debugMode = true;
+		debug(1, "Debuglevel (from config): %d", _debugLevel);
+	}
+
 	// We use strtol for the tempo to allow it to be specified in hex.
 	if ((val = g_config->get("tempo")))
 		_gameTempo = strtol(val, NULL, 0);
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
+
+
 }
 
 void GameDetector::list_games()
@@ -350,7 +358,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					_debugLevel = atoi(option);
-				debug(1,"Debugmode (level %d) on", _debugLevel);
+				debug(1,"Debuglevel (from command line): %d", _debugLevel);
 				break;
 			case 'e':
 				HANDLE_OPTION();
