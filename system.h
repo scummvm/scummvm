@@ -166,6 +166,3 @@ enum {
 	GD_WINCE,
 	GD_DC
 };
-
-
-
