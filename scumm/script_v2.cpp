@@ -824,7 +824,7 @@ void Scumm_v2::o2_verbOps() {
 
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if ((_gameId == GID_MANIAC) && (_version == 1))
-			y+=9;
+			y+=8;
 
 		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
 		//		verb, slot, x, y, unk, _scriptPointer);
@@ -905,14 +905,16 @@ void Scumm_v2::o2_doSentence() {
 		// Execute the sentence
 		_sentenceNum--;
 		
-		if (st->verb != 250 && st->verb != 253) {
+		if (st->verb == 254) {
+			stopObjectScript(st->objectA);
+		} else if (st->verb != 253 && st->verb != 250) {
 			VAR(VAR_ACTIVE_VERB) = st->verb;
 			VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
 			VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 
 			runObjectScript(st->objectA, st->verb, false, false, NULL);
 		} else
-			runObjectScript(st->objectA, 253, false, (st->verb == 250), NULL);
+			runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
 		break;
 	case 2:
 		// Print the sentence
