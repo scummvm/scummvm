@@ -1,6 +1,6 @@
 ScummVM Windows CE FAQ
-Last updated:    2004-12-21
-Release version: 0.7.0
+Last updated:    2005-03-26
+Release version: 0.7.1
 ------------------------------------------------------------------------
 
 This document is intended to give common answers to specific ScummVM
@@ -172,6 +172,7 @@ The following actions are available
     rendered on a 320x240 device.
   * Zoom down   : magnify the lower part of the screen for 640x480 games
     rendered on a 320x240 device.
+  * FT Cheat    : win a Full Throttle action sequence
 
 If you start a game when a Right click mapping is necessary, ScummVM will ask
 you to map one of your hardware key to this action before playing. Just press
@@ -205,6 +206,9 @@ in this zone.
 
 You can change the keys mapping during the game in the "Options" menu.
 
+Note that you'll need to push the Action button (center of the pad) to quit
+a Simon game.
+
 How can I apply a ScummVM command line option (f.e. to change the language) 
 ---------------------------------------------------------------------------
 
@@ -220,11 +224,17 @@ high_sample_rate       bool      Desktop quality (22 kHz) sound output if set.
                                 The default is 11 kHz. 
 				If you have a fast device, you can set this to
                                 true to enjoy better sound effects and music.
-FM_high_quality        bool      Desktop quality FM synthesis if set. Lower 
+FM_high_quality        bool     Desktop quality FM synthesis if set. Lower 
 				quality otherwise. The default is low quality.
 			        You can change this if you have a fast device.
-sound_thread_priority  int       Set the priority of the sound thread 
+sound_thread_priority  int      Set the priority of the sound thread 
                                 (given to SetThreadPriority API)
+Smush_force_redraw     int      Force a Smush frame redraw every X missed
+                                frames. Mainly used for Full Throttle action
+                                sequences. Setting it lower gives more 
+                                priority to screen redraws. Setting it higher
+                                gives more priority to stylus/keyboard input.
+                                The default is 30.
 
 game specific section (f.e. [monkey2]) - game options
 
@@ -380,6 +390,9 @@ How can I save or quit in Simon ?
 "Use" (use the use verb :p) the postcard. The ScummVM option dialog is disabled
 in Simon games.
 
+On Smartphone, you'll need to push the Action button (center of the pad) to
+quit the game.
+
 -------------
 -- The Dig --
 -------------
@@ -411,6 +424,8 @@ I've installed the movies pack but they are not playing
 
 MPEG 2 playback takes too much memory in the current release, and may prevent
 movies from playing in VGA mode. This will get better in the next releases.
+
+This should be fixed in 0.7.1. Waiting for reports ...
 
 ------------------------------------------------------------------------
 Support
