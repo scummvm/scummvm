@@ -1704,7 +1704,7 @@ void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 para
 void Logic::runStartScript(const uint8 *data) {
 	uint16 varId = 0;
 	uint8 fnId = 0;
-	uint32 param1 = 0, param2 = 0, param3 = 0;
+	uint32 param1 = 0;
 	while (*data != opcSeqEnd) {
 		switch (*data++) {
 			case opcCallFn:
