@@ -244,9 +244,6 @@ void SmushPlayer::init() {
 
 	_frame = 0;
 
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->pause(true);
-	}
 	_scumm->_videoFinished = false;
 	_scumm->_insaneState = true;
 
@@ -288,9 +285,6 @@ void SmushPlayer::deinit() {
 	_scumm->_mixer->stopHandle(_IACTchannel);
 
 	_scumm->_insaneState = false;
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->pause(false);
-	}
 	_scumm->_fullRedraw = true;
 }
 
