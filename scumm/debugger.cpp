@@ -270,7 +270,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 							Debug_Printf("You must access this array as %s[element]\n", param[0]);
 						} else {
 							int element = atoi(chr+1);
-							int16 *var = *(int16 **)_dvars[i].variable;
+							int32 *var = *(int32 **)_dvars[i].variable;
 							if (element > _dvars[i].optional) {
 								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 							} else {
@@ -600,14 +600,14 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	int i;
 	ObjectData *o;
 	Debug_Printf("Objects in current room\n"); 
-	Debug_Printf("+---------------------------------+\n");
-	Debug_Printf("|num |  x |  y |width|height|state|\n");
-	Debug_Printf("+----+----+----+-----+------+-----+\n");
+	Debug_Printf("+---------------------------------+--+\n");
+	Debug_Printf("|num |  x |  y |width|height|state|fl|\n");
+	Debug_Printf("+----+----+----+-----+------+-----+--+\n");
 	
 	for (i = 1; (i < _s->_numLocalObjects) && (_s->_objs[i].obj_nr != 0) ; i++) {
 		o = &(_s->_objs[i]);
-		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|\n", 
-				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state);
+		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n", 
+				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state, o->fl_object_index);
 	}
 	Debug_Printf("\n");
 	return true;
