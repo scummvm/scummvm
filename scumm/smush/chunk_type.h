@@ -25,30 +25,30 @@
 #include "common/scummsys.h"
 #include "chunk.h"
 
-static const Chunk::type TYPE_ANIM = MKID('ANIM');
-static const Chunk::type TYPE_AHDR = MKID('AHDR');
-static const Chunk::type TYPE_FRME = MKID('FRME');
-static const Chunk::type TYPE_NPAL = MKID('NPAL');
-static const Chunk::type TYPE_FOBJ = MKID('FOBJ');
-static const Chunk::type TYPE_PSAD = MKID('PSAD');
-static const Chunk::type TYPE_TRES = MKID('TRES');
-static const Chunk::type TYPE_XPAL = MKID('XPAL');
-static const Chunk::type TYPE_IACT = MKID('IACT');
-static const Chunk::type TYPE_STOR = MKID('STOR');
-static const Chunk::type TYPE_FTCH = MKID('FTCH');
-static const Chunk::type TYPE_SKIP = MKID('SKIP');
-static const Chunk::type TYPE_STRK = MKID('STRK');
-static const Chunk::type TYPE_SMRK = MKID('SMRK');
-static const Chunk::type TYPE_SHDR = MKID('SHDR');
-static const Chunk::type TYPE_SDAT = MKID('SDAT');
-static const Chunk::type TYPE_SAUD = MKID('SAUD');
-static const Chunk::type TYPE_iMUS = MKID('iMUS');
-static const Chunk::type TYPE_FRMT = MKID('FRMT');
-static const Chunk::type TYPE_TEXT = MKID('TEXT');
-static const Chunk::type TYPE_REGN = MKID('REGN');
-static const Chunk::type TYPE_STOP = MKID('STOP');
-static const Chunk::type TYPE_MAP_ = MKID('MAP ');
-static const Chunk::type TYPE_DATA = MKID('DATA');
-static const Chunk::type TYPE_ETRS = MKID('ETRS');
+static const Chunk::type TYPE_ANIM = 'ANIM';
+static const Chunk::type TYPE_AHDR = 'AHDR';
+static const Chunk::type TYPE_FRME = 'FRME';
+static const Chunk::type TYPE_NPAL = 'NPAL';
+static const Chunk::type TYPE_FOBJ = 'FOBJ';
+static const Chunk::type TYPE_PSAD = 'PSAD';
+static const Chunk::type TYPE_TRES = 'TRES';
+static const Chunk::type TYPE_XPAL = 'XPAL';
+static const Chunk::type TYPE_IACT = 'IACT';
+static const Chunk::type TYPE_STOR = 'STOR';
+static const Chunk::type TYPE_FTCH = 'FTCH';
+static const Chunk::type TYPE_SKIP = 'SKIP';
+static const Chunk::type TYPE_STRK = 'STRK';
+static const Chunk::type TYPE_SMRK = 'SMRK';
+static const Chunk::type TYPE_SHDR = 'SHDR';
+static const Chunk::type TYPE_SDAT = 'SDAT';
+static const Chunk::type TYPE_SAUD = 'SAUD';
+static const Chunk::type TYPE_iMUS = 'iMUS';
+static const Chunk::type TYPE_FRMT = 'FRMT';
+static const Chunk::type TYPE_TEXT = 'TEXT';
+static const Chunk::type TYPE_REGN = 'REGN';
+static const Chunk::type TYPE_STOP = 'STOP';
+static const Chunk::type TYPE_MAP_ = 'MAP ';
+static const Chunk::type TYPE_DATA = 'DATA';
+static const Chunk::type TYPE_ETRS = 'ETRS';
 
 #endif
