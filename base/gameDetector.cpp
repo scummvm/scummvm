@@ -57,7 +57,8 @@ static const char USAGE_STRING[] =
 	"                           super2xsai,supereagle,advmame2x,advmame3x,hq2x,\n"
 	"                           hq3x,tv2x,dotmatrix)\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,hb,ru)\n"
+	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
+	"                           hb,ru)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
@@ -87,8 +88,8 @@ static const char USAGE_STRING[] =
 	"  --talkspeed=NUM          Set talk speed for SCUMM games (default: 60)\n"
 #endif
 	"\n"
-	"The meaning of long options can be inverted by prefixing them with \"no-\",\n"
-	"e.g. \"--no-aspect-ratio\".\n"
+	"The meaning of boolean long options can be inverted by prefixing them with\n"
+	"\"no-\", e.g. \"--no-aspect-ratio\".\n"
 ;
 #endif
 
