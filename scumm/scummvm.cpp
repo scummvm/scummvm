@@ -551,7 +551,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_USERPUT = 0xFF;
 	VAR_SOUNDRESULT = 0xFF;
 	VAR_TALKSTOP_KEY = 0xFF;
-	VAR_59 = 0xFF;
 	VAR_NOSUBTITLES = 0xFF;
 
 	VAR_SOUNDPARAM = 0xFF;
@@ -570,9 +569,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_V6_SCREEN_WIDTH = 0xFF;
 	VAR_V6_SCREEN_HEIGHT = 0xFF;
 	VAR_V6_EMSSPACE = 0xFF;
-	VAR_V6_RANDOM_NR = 0xFF;
 
-	VAR_STRING2DRAW = 0xFF;
 	VAR_CAMERA_POS_Y = 0xFF;
 
 	VAR_CAMERA_MIN_Y = 0xFF;
@@ -1225,7 +1222,7 @@ void ScummEngine::initScummVars() {
 		if (_version >= 6 && VAR_V6_EMSSPACE != 0xFF)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
-		VAR(VAR_59) = 3;
+		VAR(59) = 3;	// FIXME: What is this good for?
 	}
 	
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {

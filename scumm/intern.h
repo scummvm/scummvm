@@ -49,8 +49,8 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-
 	virtual void decodeParseString();
+
 	int getWordVararg(int *ptr);
 	void saveVars();
 	void loadVars();
@@ -208,7 +208,6 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-
 	virtual void decodeParseString();
 
 	virtual int getVar();
@@ -331,6 +330,8 @@ protected:
 public:
 	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs) {
 		VAR_VIDEONAME = 0xFF;
+		VAR_RANDOM_NR = 0xFF;
+		VAR_STRING2DRAW = 0xFF;
 
 		VAR_TIMEDATE_YEAR = 0xFF;
 		VAR_TIMEDATE_MONTH = 0xFF;
@@ -346,10 +347,9 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void decodeParseString(int a, int b);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);
-
-	virtual void decodeParseString(int a, int b);
 
 	int getStackList(int *args, uint maxnum);
 	int popRoomAndObj(int *room);
@@ -531,6 +531,8 @@ protected:
 	void o6_readINI();
 
 	byte VAR_VIDEONAME;
+	byte VAR_RANDOM_NR;
+	byte VAR_STRING2DRAW;
 
 	byte VAR_TIMEDATE_YEAR;
 	byte VAR_TIMEDATE_MONTH;
@@ -572,7 +574,6 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
-
 	virtual void decodeParseString(int m, int n);
 
 	virtual uint fetchScriptWord();

@@ -1008,7 +1008,6 @@ protected:
 	bool _demoMode;
 	bool _confirmExit;
 
-public:
 	Insane *_insane;
 
 public:
@@ -1173,7 +1172,6 @@ public:
 	byte VAR_USERPUT;
 	byte VAR_SOUNDRESULT;
 	byte VAR_TALKSTOP_KEY;
-	byte VAR_59;
 	byte VAR_NOSUBTITLES;
 
 	byte VAR_SOUNDPARAM;
