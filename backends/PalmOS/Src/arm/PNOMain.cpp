@@ -1,5 +1,5 @@
 #include "PACEInterfaceLib.h"
-#include "ArmNative.h"
+#include "native.h"
 
 // Linker still looks for ARMlet_Main as entry point, but the
 // "ARMlet" name is now officially discouraged.  Compare an
@@ -23,29 +23,25 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 	InitPACEInterface(emulStateP, call68KFuncP);
 #endif
 
-#ifdef COMPILE_PA1SND
-	ARMPa1SndPtr userData = (ARMPa1SndPtr)userData68KP;
-	pcm2adpcm	(	(Int16 *)ReadUnaligned32(&(userData->srcP)),
-					(UInt8 *)ReadUnaligned32(&(userData->dstP)),
-					ReadUnaligned32(&(userData->length))
-				);
+#ifdef COMPILE_WIDELANDSCAPE
+	OSystem_updateScreen_wideLandscape(userData68KP);
 #endif
 
-#ifdef COMPILE_STREAMSND
-	retVal = (unsigned long)sndCallback;
+#ifdef COMPILE_WIDEPORTRAIT
+	OSystem_updateScreen_widePortrait(userData68KP);
 #endif
 
-#ifdef COMPILE_OWIDELS
-	O_WideLandscape(userData68KP);
+#ifdef COMPILE_COPYRECT
+	OSystem_CopyRectToScreen(userData68KP);
 #endif
 
-#ifdef COMPILE_OWIDEPT
-	O_WidePortrait(userData68KP);
+#ifdef COMPILE_COSTUMEPROC3
+	retVal = CostumeRenderer_proc3(userData68KP);
 #endif
 
-#ifdef COMPILE_OCOPYRECT
-	O_CopyRectToScreen(userData68KP);
+#ifdef COMPILE_DRAWSTRIP
+	Gdi_drawStripToScreen(userData68KP);
 #endif
 
-	return retVal;
+	return ByteSwap32(retVal);
 }
