@@ -1690,10 +1690,6 @@ void Control::delay(unsigned int amount) {
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
-#ifdef _WIN32_WCE
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 				_mouseClicked = false;
