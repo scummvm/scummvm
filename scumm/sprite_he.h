@@ -66,6 +66,7 @@ enum SpriteGroupFlags {
 };
 
 struct SpriteInfo {
+	int id;
 	int zorder;
 	int flags;
 	int res_id;

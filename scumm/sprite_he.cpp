@@ -76,7 +76,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				continue;
 			if (spi->bbox.bottom < y)
 				continue;
-			return i;
+			return spi->id;
 		} else {
 			int resId, state, rot_angle, zoom;
 			int32 w, h;
@@ -134,7 +134,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 			}
 
 			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags))
-				return i;
+				return spi->id;
 		}
 	}
 
@@ -1184,6 +1184,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 			else
 				groupZorder = 0;
 
+			spi->id = i;
 			spi->zorder = spi->field_18 + groupZorder;
 
 			_activeSpritesTable[_numSpritesToProcess++] = spi;
