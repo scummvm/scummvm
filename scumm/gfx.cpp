@@ -182,13 +182,11 @@ static const byte default_cursor_hotspots[8] = {
 };
 
 
-static inline uint colorWeight(int red, int green, int blue)
-{
+static inline uint colorWeight(int red, int green, int blue) {
 	return 3 * red * red + 6 * green * green + 2 * blue * blue;
 }
 
-void Scumm::getGraphicsPerformance()
-{
+void Scumm::getGraphicsPerformance() {
 	int i;
 
 	for (i = 10; i != 0; i--) {
@@ -212,8 +210,7 @@ void Scumm::getGraphicsPerformance()
 		initScreens(0, 16, _realWidth, 144);
 }
 
-void Scumm::initScreens(int a, int b, int w, int h)
-{
+void Scumm::initScreens(int a, int b, int w, int h) {
 	int i;
 
 	for (i = 0; i < 3; i++) {
@@ -238,8 +235,7 @@ void Scumm::initScreens(int a, int b, int w, int h)
 }
 
 void Scumm::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
-													 bool scrollable)
-{
+													 bool scrollable) {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
 
@@ -269,7 +265,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 			size += _realWidth * 4;
 		}
 	}
-	
+
 	createResource(rtBuffer, slot + 1, size);
 	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
 	memset(vs->screenPtr, 0, size);			// reset background
@@ -283,8 +279,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	}
 }
 
-VirtScreen *Scumm::findVirtScreen(int y)
-{
+VirtScreen *Scumm::findVirtScreen(int y) {
 	VirtScreen *vs = virtscr;
 	int i;
 
@@ -296,8 +291,7 @@ VirtScreen *Scumm::findVirtScreen(int y)
 	return NULL;
 }
 
-void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit)
-{
+void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit) {
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
 
@@ -337,8 +331,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	setVirtscreenDirty(vs, left, top, right, bottom);
 }
 
-void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom)
-{
+void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom) {
 	int lp = left >> 3;
 	int rp = right >> 3;
 
@@ -358,8 +351,7 @@ void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int
 	}
 }
 
-void Scumm::setDirtyRange(int slot, int top, int bottom)
-{
+void Scumm::setDirtyRange(int slot, int top, int bottom) {
 	int i;
 	VirtScreen *vs = &virtscr[slot];
 	for (i = 0; i < gdi._numStrips; i++) {
@@ -368,8 +360,7 @@ void Scumm::setDirtyRange(int slot, int top, int bottom)
 	}
 }
 
-void Scumm::drawDirtyScreenParts()
-{
+void Scumm::drawDirtyScreenParts() {
 	int i;
 	VirtScreen *vs;
 	byte *src;
@@ -402,15 +393,13 @@ void Scumm::drawDirtyScreenParts()
 	}
 }
 
-void Scumm::updateDirtyScreen(int slot)
-{
+void Scumm::updateDirtyScreen(int slot) {
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
 // Blit the data from the given VirtScreen to the display. If the camera moved,
 // a full blit is done, otherwise only the visible dirty areas are updated.
-void Gdi::updateDirtyScreen(VirtScreen *vs)
-{
+void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	if (vs->height == 0)
 		return;
 
@@ -419,13 +408,13 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 	} else {
 		int i;
 		int start, w, top, bottom;
-	
+
 		w = 8;
 		start = 0;
 
 		for (i = 0; i < _numStrips; i++) {
 			bottom = vs->bdirty[i];
-	
+
 			if (bottom) {
 				top = vs->tdirty[i];
 				vs->tdirty[i] = vs->height;
@@ -449,8 +438,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 }
 
 // Blit the specified rectangle from the given virtual screen to the display.
-void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
-{
+void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	byte *ptr;
 	int height;
 
@@ -476,14 +464,12 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x, vs->topline + t, w, height);
 }
 
-void Gdi::clearUpperMask()
-{
+void Gdi::clearUpperMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1] - _imgBufOffs[0]);
 }
 
 // Reset the background behind an actor or blast object
-void Gdi::resetBackground(int top, int bottom, int strip)
-{
+void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->virtscr[0];
 	byte *backbuff_ptr, *bgbak_ptr;
 	int offs, numLinesToProcess;
@@ -512,8 +498,7 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 	}
 }
 
-void Scumm::blit(byte *dst, byte *src, int w, int h)
-{
+void Scumm::blit(byte *dst, byte *src, int w, int h) {
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
@@ -527,8 +512,7 @@ void Scumm::blit(byte *dst, byte *src, int w, int h)
 
 #pragma mark -
 
-void Scumm::initBGBuffers(int height)
-{
+void Scumm::initBGBuffers(int height) {
 	byte *ptr;
 	int size, itemsize, i;
 	byte *room;
@@ -579,14 +563,13 @@ void Scumm::initBGBuffers(int height)
 	}
 }
 
-void Scumm::drawFlashlight()
-{
+void Scumm::drawFlashlight() {
 	int i, j, offset, x, y;
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlightIsDrawn) {
 		updateDirtyRect(0, _flashlight.x, _flashlight.x + _flashlight.w,
-		                   _flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
+										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 		
 		if (_flashlight.buffer) {
 			i = _flashlight.h;
@@ -600,7 +583,7 @@ void Scumm::drawFlashlight()
 
 	if (_flashlightXStrips == 0 || _flashlightYStrips == 0)
 		return;
-	
+
 	// Calculate the area of the flashlight
 	if (_gameId == GID_ZAK256) {
 		x = _virtual_mouse_x;
@@ -612,9 +595,9 @@ void Scumm::drawFlashlight()
 	}
 	_flashlight.w = _flashlightXStrips * 8;
 	_flashlight.h = _flashlightYStrips * 8;
-	_flashlight.x = x - _flashlight.w/2 - _screenStartStrip * 8;
-	_flashlight.y = y - _flashlight.h/2;
-	
+	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
+	_flashlight.y = y - _flashlight.h / 2;
+
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
 		_flashlight.x = 0;
@@ -626,7 +609,7 @@ void Scumm::drawFlashlight()
 		_flashlight.y = virtscr[0].height - _flashlight.h;
 
 	// Redraw any actors "under" the flashlight
-	for (i = _flashlight.x/8; i < (_flashlight.x+_flashlight.w)/8; i++) {
+	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		virtscr[0].tdirty[i] = 0;
 		virtscr[0].bdirty[i] = virtscr[0].height;
@@ -662,8 +645,7 @@ void Scumm::drawFlashlight()
 
 // Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
 // Note that this only updated the virtual screen, not the actual display.
-void Scumm::redrawBGAreas()
-{
+void Scumm::redrawBGAreas() {
 	int i;
 	int val;
 	int diff;
@@ -713,8 +695,7 @@ void Scumm::redrawBGAreas()
 	_BgNeedsRedraw = false;
 }
 
-void Scumm::redrawBGStrip(int start, int num)
-{
+void Scumm::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
 	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / (3 * sizeof(gfxUsageBits[0])));
@@ -723,11 +704,10 @@ void Scumm::redrawBGStrip(int start, int num)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-	               &virtscr[0], s, 0, virtscr[0].height, s, num, 0);
+								&virtscr[0], s, 0, virtscr[0].height, s, num, 0);
 }
 
-void Scumm::restoreCharsetBg()
-{
+void Scumm::restoreCharsetBg() {
 	if (gdi._mask_left != -1) {
 		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
 		_charset->_hasMask = false;
@@ -740,8 +720,7 @@ void Scumm::restoreCharsetBg()
 	_charset->_nextTop = _string[0].ypos;
 }
 
-void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
-{
+void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
 	byte *backbuff, *bgbak;
@@ -803,16 +782,14 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 	}
 }
 
-int Scumm::hasCharsetMask(int x, int y, int x2, int y2)
-{
+int Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
 	if (!_charset->_hasMask || y > gdi._mask_bottom || x > gdi._mask_right ||
 			y2 < gdi._mask_top || x2 < gdi._mask_left)
 		return 0;
 	return 1;
 }
 
-byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
-{
+byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w, h, i;
 
 	l >>= 3;
@@ -842,8 +819,7 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 }
 
 void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
-										 int stripnr, int numstrip, byte flag)
-{
+										 int stripnr, int numstrip, byte flag) {
 	assert(ptr);
 	assert(h > 0);
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
@@ -1045,8 +1021,7 @@ next_iter:
 }
 
 
-bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess)
-{
+bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
 	byte code = *smap_ptr++;
 	assert(numLinesToProcess);
 
@@ -1148,8 +1123,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	return useOrDecompress;
 }
 
-void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask)
-{
+void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask) {
 	byte maskbits;
 
 	do {
@@ -1185,8 +1159,7 @@ void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask)
 	} while (--height);
 }
 
-void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask)
-{
+void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask) {
 	byte maskbits;
 
 	do {
@@ -1221,9 +1194,7 @@ void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask)
 	} while (--height);
 }
 
-
-void Gdi::draw8Col(byte *dst, byte *src, int height)
-{
+void Gdi::draw8Col(byte *dst, byte *src, int height) {
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
@@ -1248,8 +1219,7 @@ void Gdi::clear8Col(byte *dst, int height)
 	} while (--height);
 }
 
-void Gdi::decompressMaskImg(byte *dst, byte *src, int height)
-{
+void Gdi::decompressMaskImg(byte *dst, byte *src, int height) {
 	byte b, c;
 
 	while (height) {
@@ -1274,8 +1244,7 @@ void Gdi::decompressMaskImg(byte *dst, byte *src, int height)
 	}
 }
 
-void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
-{
+void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height) {
 	byte b, c;
 
 	while (height) {
@@ -1301,10 +1270,14 @@ void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
 }
 
 #define READ_BIT (cl--, bit = bits&1, bits>>=1,bit)
-#define FILL_BITS do { if (cl <= 8) { bits |= (*src++ << cl); cl += 8; }  } while (0)
+#define FILL_BITS do {												\
+										if (cl <= 8) {						\
+											bits |= (*src++ << cl);	\
+											cl += 8;								\
+										}													\
+									} while (0)
 
-void Gdi::unkDecodeA(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeA(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1352,8 +1325,7 @@ void Gdi::unkDecodeA(byte *dst, byte *src, int height)
 	} while (--height);
 }
 
-void Gdi::unkDecodeA_trans(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeA_trans(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1405,8 +1377,7 @@ void Gdi::unkDecodeA_trans(byte *dst, byte *src, int height)
 	} while (--height);
 }
 
-void Gdi::unkDecodeB(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeB(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1436,8 +1407,7 @@ void Gdi::unkDecodeB(byte *dst, byte *src, int height)
 	} while (--height);
 }
 
-void Gdi::unkDecodeB_trans(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeB_trans(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1469,8 +1439,7 @@ void Gdi::unkDecodeB_trans(byte *dst, byte *src, int height)
 	} while (--height);
 }
 
-void Gdi::unkDecodeC(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeC(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1502,8 +1471,7 @@ void Gdi::unkDecodeC(byte *dst, byte *src, int height)
 	} while (--x);
 }
 
-void Gdi::unkDecodeC_trans(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecodeC_trans(byte *dst, byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1539,23 +1507,24 @@ void Gdi::unkDecodeC_trans(byte *dst, byte *src, int height)
 #undef READ_BIT
 #undef FILL_BITS
 
-
 /* Ender - Zak256/Indy256 decoders */
-#define READ_256BIT \
- if ((mask <<= 1) == 256) {buffer = *src++;  mask = 1;}     \
- bits = ((buffer & mask) != 0);
+#define READ_256BIT																\
+											if ((mask <<= 1) == 256) {	\
+												buffer = *src++;					\
+												mask = 1;									\
+											}														\
+											bits = ((buffer & mask) != 0);
 
-#define NEXT_ROW                                            \
-				dst += _vm->_realWidth;                     \
-				if (--h == 0) {                             \
-					if (!--x)                       \
-						  return;                           \
-					dst -= _vertStripNextInc;               \
-					h = height;                             \
+#define NEXT_ROW										\
+				dst += _vm->_realWidth;			\
+				if (--h == 0) {							\
+					if (!--x)									\
+						return;									\
+					dst -= _vertStripNextInc;	\
+					h = height;								\
 				}
 
-void Gdi::unkDecode7(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecode7(byte *dst, byte *src, int height) {
 	uint h = height;
 
 	if (_vm->_features & GF_OLD256) {
@@ -1579,8 +1548,7 @@ void Gdi::unkDecode7(byte *dst, byte *src, int height)
 	} while (--height);
 }
 
-void Gdi::unkDecode8(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecode8(byte *dst, byte *src, int height) {
 	uint h = height;
 
 	int x = 8;
@@ -1595,8 +1563,7 @@ void Gdi::unkDecode8(byte *dst, byte *src, int height)
 	}
 }
 
-void Gdi::unkDecode9(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecode9(byte *dst, byte *src, int height) {
 	unsigned char c, bits, color, run;
 	int i, j;
 	uint buffer = 0, mask = 128;
@@ -1647,8 +1614,7 @@ void Gdi::unkDecode9(byte *dst, byte *src, int height)
 	}
 }
 
-void Gdi::unkDecode10(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecode10(byte *dst, byte *src, int height) {
 	int i;
 	unsigned char local_palette[256], numcolors = *src++;
 	uint h = height;
@@ -1675,8 +1641,7 @@ void Gdi::unkDecode10(byte *dst, byte *src, int height)
 }
 
 
-void Gdi::unkDecode11(byte *dst, byte *src, int height)
-{
+void Gdi::unkDecode11(byte *dst, byte *src, int height) {
 	int bits, i;
 	uint buffer = 0, mask = 128;
 	unsigned char inc = 1, color = *src++;
@@ -1719,13 +1684,11 @@ void Gdi::unkDecode11(byte *dst, byte *src, int height)
 #undef NEXT_ROW
 #undef READ_256BIT
 
-
 #pragma mark -
 #pragma mark --- Camera ---
 #pragma mark -
 
-void Scumm::setCameraAtEx(int at)
-{
+void Scumm::setCameraAtEx(int at) {
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = at;
@@ -1734,8 +1697,7 @@ void Scumm::setCameraAtEx(int at)
 	}
 }
 
-void Scumm::setCameraAt(int pos_x, int pos_y)
-{
+void Scumm::setCameraAt(int pos_x, int pos_y) {
 	if (_features & GF_AFTER_V7) {
 		ScummPoint old;
 
@@ -1782,8 +1744,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 	}
 }
 
-void Scumm::setCameraFollows(Actor *a)
-{
+void Scumm::setCameraFollows(Actor *a) {
 	if (_features & GF_AFTER_V7) {
 		byte oldfollow = camera._follows;
 		int ax, ay;
@@ -1830,8 +1791,7 @@ void Scumm::setCameraFollows(Actor *a)
 	}
 }
 
-void Scumm::clampCameraPos(ScummPoint *pt)
-{
+void Scumm::clampCameraPos(ScummPoint *pt) {
 	if (pt->x < _vars[VAR_CAMERA_MIN_X])
 		pt->x = _vars[VAR_CAMERA_MIN_X];
 
@@ -1845,8 +1805,7 @@ void Scumm::clampCameraPos(ScummPoint *pt)
 		pt->y = _vars[VAR_CAMERA_MAX_Y];
 }
 
-void Scumm::moveCamera()
-{
+void Scumm::moveCamera() {
 	if (_features & GF_AFTER_V7) {
 		ScummPoint old = camera._cur;
 		Actor *a = NULL;
@@ -2011,8 +1970,7 @@ void Scumm::moveCamera()
 	}
 }
 
-void Scumm::cameraMoved()
-{
+void Scumm::cameraMoved() {
 	if (_features & GF_AFTER_V7) {
 
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
@@ -2045,8 +2003,7 @@ void Scumm::cameraMoved()
 #endif
 }
 
-void Scumm::panCameraTo(int x, int y)
-{
+void Scumm::panCameraTo(int x, int y) {
 	if (_features & GF_AFTER_V7) {
 
 		camera._follows = 0;
@@ -2060,8 +2017,7 @@ void Scumm::panCameraTo(int x, int y)
 	}
 }
 
-void Scumm::actorFollowCamera(int act)
-{
+void Scumm::actorFollowCamera(int act) {
 	if (!(_features & GF_AFTER_V7)) {
 		int old;
 
@@ -2086,8 +2042,7 @@ void Scumm::actorFollowCamera(int act)
 #pragma mark --- Transition effects ---
 #pragma mark -
 
-void Scumm::fadeIn(int effect)
-{
+void Scumm::fadeIn(int effect) {
 	switch (effect) {
 	case 1:
 	case 2:
@@ -2118,8 +2073,7 @@ void Scumm::fadeIn(int effect)
 	_screenEffectFlag = true;
 }
 
-void Scumm::fadeOut(int effect)
-{
+void Scumm::fadeOut(int effect) {
 	VirtScreen *vs;
 
 	setDirtyRange(0, 0, 0);
@@ -2173,8 +2127,7 @@ void Scumm::fadeOut(int effect)
  * All effects operate on 8x8 blocks of the screen. These blocks are updated
  * in a certain order; the exact order determines how the effect appears to the user.
  */
-void Scumm::transitionEffect(int a)
-{
+void Scumm::transitionEffect(int a) {
 	int delta[16];								// Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
@@ -2340,7 +2293,6 @@ void Scumm::dissolveEffect(int width, int height) {
 }
 
 void Scumm::scrollEffect(int dir) {
-
 	VirtScreen *vs = &virtscr[0];
 
 	int x, y;
@@ -2435,8 +2387,7 @@ void Scumm::unkScreenEffect5(int a) {
 	warning("stub unkScreenEffect(%d)", a);
 }
 
-void Scumm::setShake(int mode)
-{
+void Scumm::setShake(int mode) {
 	if (_shakeEnabled != (mode != 0))
 		_fullRedraw = true;
 
@@ -2449,8 +2400,7 @@ void Scumm::setShake(int mode)
 #pragma mark --- Palette ---
 #pragma mark -
 
-void Scumm::setPaletteFromPtr(byte *ptr)
-{
+void Scumm::setPaletteFromPtr(byte *ptr) {
 	int i;
 	byte *dest, r, g, b;
 	int numcolor;
@@ -2491,24 +2441,20 @@ void Scumm::setPaletteFromPtr(byte *ptr)
 	setDirtyColors(0, numcolor - 1);
 }
 
-void Scumm::setPaletteFromRes()
-{
+void Scumm::setPaletteFromRes() {
 	byte *ptr;
 	ptr = getResourceAddress(rtRoom, _roomResource) + _CLUT_offs;
 	setPaletteFromPtr(ptr);
 }
 
-
-void Scumm::setDirtyColors(int min, int max)
-{
+void Scumm::setDirtyColors(int min, int max) {
 	if (_palDirtyMin > min)
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
 }
 
-void Scumm::initCycl(byte *ptr)
-{
+void Scumm::initCycl(byte *ptr) {
 	int j;
 	ColorCycle *cycl;
 
@@ -2531,8 +2477,7 @@ void Scumm::initCycl(byte *ptr)
 	}
 }
 
-void Scumm::stopCycle(int i)
-{
+void Scumm::stopCycle(int i) {
 	ColorCycle *cycl;
 
 	checkRange(16, 0, i, "Stop Cycle %d Out Of Range");
@@ -2545,8 +2490,7 @@ void Scumm::stopCycle(int i)
 		cycl->delay = 0;
 }
 
-void Scumm::cyclePalette()
-{
+void Scumm::cyclePalette() {
 	ColorCycle *cycl;
 	int valueToAdd;
 	int i, num;
@@ -2588,8 +2532,7 @@ void Scumm::cyclePalette()
 
 // Perform color cycling on the palManipulate data, too, otherwise
 // color cycling will be disturbed by the palette fade.
-void Scumm::moveMemInPalRes(int start, int end, byte direction)
-{
+void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	byte *startptr, *endptr;
 	byte *startptr2, *endptr2;
 	int num;
@@ -2626,8 +2569,7 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	}
 }
 
-void Scumm::palManipulateInit(int start, int end, int string_id, int time)
-{
+void Scumm::palManipulateInit(int start, int end, int string_id, int time) {
 	byte *pal, *target, *between;
 	byte *string1, *string2, *string3;
 	int i;
@@ -2662,19 +2604,18 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 		*target++ = *string1++;
 		*target++ = *string2++;
 		*target++ = *string3++;
-		*(uint16*)between = ((uint16) *pal++) << 8;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
 		between += 2;
-		*(uint16*)between = ((uint16) *pal++) << 8;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
 		between += 2;
-		*(uint16*)between = ((uint16) *pal++) << 8;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
 		between += 2;
 	}
 
 	_palManipCounter = time;
 }
 
-void Scumm::palManipulate()
-{
+void Scumm::palManipulate() {
 	byte *target, *pal, *between;
 	int i, j;
 
@@ -2700,8 +2641,7 @@ void Scumm::palManipulate()
 	_palManipCounter--;
 }
 
-void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor)
-{
+void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	byte *table;
 	int i;
 	byte *curpal;
@@ -2727,8 +2667,7 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	}
 }
 
-void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
-{
+void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	byte *basepal = getPalettePtr();
 	byte *pal = basepal;
 	byte *compareptr;
@@ -2803,8 +2742,7 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
 void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
-			int16 startColor, int16 endColor)
-{
+			int16 startColor, int16 endColor) {
 	byte *palPtr;
 	byte *curPtr;
 	byte *searchPtr;
@@ -2848,8 +2786,7 @@ void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 gre
 	}
 }
 
-void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
-{
+void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	if (_roomResource == 0) // FIXME - HACK to get COMI demo working
 		return;
 
@@ -2884,8 +2821,7 @@ void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int start
 	}
 }
 
-int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
-{
+int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
 	int i;
 	int ar, ag, ab;
 	uint sum, bestsum, bestitem = 0;
@@ -2934,8 +2870,7 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
-void Scumm::swapPalColors(int a, int b)
-{
+void Scumm::swapPalColors(int a, int b) {
 	byte *ap, *bp;
 	byte t;
 
@@ -2959,8 +2894,7 @@ void Scumm::swapPalColors(int a, int b)
 	setDirtyColors(b, b);
 }
 
-void Scumm::copyPalColor(int dst, int src)
-{
+void Scumm::copyPalColor(int dst, int src) {
 	byte *dp, *sp;
 
 	if ((uint) dst >= 256 || (uint) src >= 256)
@@ -2976,16 +2910,14 @@ void Scumm::copyPalColor(int dst, int src)
 	setDirtyColors(dst, dst);
 }
 
-void Scumm::setPalColor(int idx, int r, int g, int b)
-{
+void Scumm::setPalColor(int idx, int r, int g, int b) {
 	_currentPalette[idx * 3 + 0] = r;
 	_currentPalette[idx * 3 + 1] = g;
 	_currentPalette[idx * 3 + 2] = b;
 	setDirtyColors(idx, idx);
 }
 
-void Scumm::setPalette(int palindex)
-{
+void Scumm::setPalette(int palindex) {
 	byte *pals;
 
 	_curPalIndex = palindex;
@@ -2993,8 +2925,7 @@ void Scumm::setPalette(int palindex)
 	setPaletteFromPtr(pals);
 }
 
-byte *Scumm::findPalInPals(byte *pal, int idx)
-{
+byte *Scumm::findPalInPals(byte *pal, int idx) {
 	byte *offs;
 	uint32 size;
 
@@ -3014,8 +2945,7 @@ byte *Scumm::findPalInPals(byte *pal, int idx)
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
-byte *Scumm::getPalettePtr()
-{
+byte *Scumm::getPalettePtr() {
 	byte *cptr;
 
 	cptr = getResourceAddress(rtRoom, _roomResource);
@@ -3033,8 +2963,7 @@ byte *Scumm::getPalettePtr()
 #pragma mark --- Cursor ---
 #pragma mark -
 
-void Scumm::grabCursor(int x, int y, int w, int h)
-{
+void Scumm::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
@@ -3046,8 +2975,7 @@ void Scumm::grabCursor(int x, int y, int w, int h)
 
 }
 
-void Scumm::grabCursor(byte *ptr, int width, int height)
-{
+void Scumm::grabCursor(byte *ptr, int width, int height) {
 	uint size;
 	byte *dst;
 
@@ -3069,8 +2997,7 @@ void Scumm::grabCursor(byte *ptr, int width, int height)
 	updateCursor();
 }
 
-void Scumm::useIm01Cursor(byte *im, int w, int h)
-{
+void Scumm::useIm01Cursor(byte *im, int w, int h) {
 	VirtScreen *vs = &virtscr[0];
 
 	w <<= 3;
@@ -3089,16 +3016,14 @@ void Scumm::useIm01Cursor(byte *im, int w, int h)
 	blit(vs->screenPtr + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
 }
 
-void Scumm::setCursor(int cursor)
-{
+void Scumm::setCursor(int cursor) {
 	if (cursor >= 0 && cursor <= 3)
 		_currentCursor = cursor;
 	else
 		warning("setCursor(%d)", cursor);
 }
 
-void Scumm::setCursorHotspot2(int x, int y)
-{
+void Scumm::setCursorHotspot2(int x, int y) {
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 	// FIXME this hacks around offset cursor in the humongous games
@@ -3108,14 +3033,12 @@ void Scumm::setCursorHotspot2(int x, int y)
 	}
 }
 
-void Scumm::updateCursor()
-{
+void Scumm::updateCursor() {
 	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
-	                                          _cursor.hotspotX, _cursor.hotspotY);
+														_cursor.hotspotX, _cursor.hotspotY);
 }
 
-void Scumm::animateCursor()
-{
+void Scumm::animateCursor() {
 	if (_cursor.animate) {
 		if (!(_cursor.animateIndex & 0x3)) {
 			decompressDefaultCursor((_cursor.animateIndex >> 2) & 3);
@@ -3124,8 +3047,7 @@ void Scumm::animateCursor()
 	}
 }
 
-void Scumm::useBompCursor(byte *im, int width, int height)
-{
+void Scumm::useBompCursor(byte *im, int width, int height) {
 	uint size;
 
 	width <<= 3;
@@ -3144,8 +3066,7 @@ void Scumm::useBompCursor(byte *im, int width, int height)
 	updateCursor();
 }
 
-void Scumm::decompressDefaultCursor(int idx)
-{
+void Scumm::decompressDefaultCursor(int idx) {
 	int i, j;
 	byte color;
 
@@ -3185,8 +3106,7 @@ void Scumm::decompressDefaultCursor(int idx)
 	updateCursor();
 }
 
-void Scumm::makeCursorColorTransparent(int a)
-{
+void Scumm::makeCursorColorTransparent(int a) {
 	int i, size;
 
 	size = _cursor.width * _cursor.height;
@@ -3356,8 +3276,7 @@ void Scumm::bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, i
 	}
 }
 
-void Scumm::decompressBomp(byte *dst, byte *src, int w, int h)
-{
+void Scumm::decompressBomp(byte *dst, byte *src, int w, int h) {
 	int len, num;
 	byte code, color;
 
@@ -3389,7 +3308,7 @@ void Scumm::decompressBomp(byte *dst, byte *src, int w, int h)
 	} while (--h);
 }
 
-void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
+void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 	byte skip_y = 128;
 	byte skip_y_new = 0;
 	byte bits;
@@ -3422,8 +3341,8 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 		clip_bottom -= tmp_y - bd->outheight;
 	}
 
-	byte * src = bd->dataptr;
-	byte * dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
+	byte *src = bd->dataptr;
+	byte *dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
 
 	mask_pitch = _realWidth / 8;
 	mask_offset = _screenStartStrip + (bd->y * mask_pitch) + ((bd->x + clip_left) >> 3);

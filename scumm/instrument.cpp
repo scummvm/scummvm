@@ -32,7 +32,7 @@ static const byte mt32_to_gm[128] = {
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
 	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
 	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
- 	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
+	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
 	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
 	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
 	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
@@ -43,6 +43,7 @@ static struct {
 	char *name;
 	byte program;
 }
+
 roland_to_gm_map [] = {
 	// Monkey Island 2 instruments
 	// TODO: Complete
@@ -122,8 +123,6 @@ roland_to_gm_map [] = {
 //	{ "street    ", ??? },
 //	{ "trickle4  ", ??? }
 };
-
-
 
 class Instrument_Program : public InstrumentInternal {
 private:
@@ -237,24 +236,20 @@ public:
 	void copy_to (Instrument *dest) { dest->roland ((byte *) &_instrument); }
 };
 
-
-
 ////////////////////////////////////////
 //
 // Instrument class members
 //
 ////////////////////////////////////////
 
-void Instrument::clear()
-{
+void Instrument::clear() {
 	if (_instrument)
 		delete _instrument;
 	_instrument = NULL;
 	_type = itNone;
 }
 
-void Instrument::program (byte prog, bool mt32)
-{
+void Instrument::program (byte prog, bool mt32) {
 	clear();
 	if (prog > 127)
 		return;
@@ -262,8 +257,7 @@ void Instrument::program (byte prog, bool mt32)
 	_instrument = new Instrument_Program (prog, mt32);
 }
 
-void Instrument::adlib (byte *instrument)
-{
+void Instrument::adlib (byte *instrument) {
 	clear();
 	if (!instrument)
 		return;
@@ -271,8 +265,7 @@ void Instrument::adlib (byte *instrument)
 	_instrument = new Instrument_Adlib (instrument);
 }
 
-void Instrument::roland (byte *instrument)
-{
+void Instrument::roland (byte *instrument) {
 	clear();
 	if (!instrument)
 		return;
@@ -280,8 +273,7 @@ void Instrument::roland (byte *instrument)
 	_instrument = new Instrument_Roland (instrument);
 }
 
-void Instrument::saveOrLoad (Serializer *s)
-{
+void Instrument::saveOrLoad (Serializer *s) {
 	if (s->isSaving()) {
 		s->saveByte (_type);
 		if (_instrument)
@@ -308,8 +300,6 @@ void Instrument::saveOrLoad (Serializer *s)
 	}
 }
 
-
-
 ////////////////////////////////////////
 //
 // Instrument_Program class members
@@ -318,21 +308,18 @@ void Instrument::saveOrLoad (Serializer *s)
 
 Instrument_Program::Instrument_Program (byte program, bool mt32) :
 _program (program),
-_mt32 (mt32)
-{
+_mt32 (mt32) {
 	if (program > 127)
 		_program = 255;
 }
 
-Instrument_Program::Instrument_Program (Serializer *s)
-{
+Instrument_Program::Instrument_Program (Serializer *s) {
 	_program = 255;
 	if (!s->isSaving())
 		saveOrLoad (s);
 }
 
-void Instrument_Program::saveOrLoad (Serializer *s)
-{
+void Instrument_Program::saveOrLoad (Serializer *s) {
 	if (s->isSaving()) {
 		s->saveByte (_program);
 		s->saveByte (_mt32 ? 1 : 0);
@@ -342,8 +329,7 @@ void Instrument_Program::saveOrLoad (Serializer *s)
 	}
 }
 
-void Instrument_Program::send (MidiChannel *mc)
-{
+void Instrument_Program::send (MidiChannel *mc) {
 	if (_program > 127)
 		return;
 
@@ -353,41 +339,33 @@ void Instrument_Program::send (MidiChannel *mc)
 		mc->programChange (_mt32 ? mt32_to_gm [_program] : _program);
 }
 
-
-
 ////////////////////////////////////////
 //
 // Instrument_Adlib class members
 //
 ////////////////////////////////////////
 
-Instrument_Adlib::Instrument_Adlib (byte *data)
-{
+Instrument_Adlib::Instrument_Adlib (byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 }
 
-Instrument_Adlib::Instrument_Adlib (Serializer *s)
-{
+Instrument_Adlib::Instrument_Adlib (Serializer *s) {
 	if (!s->isSaving())
 		saveOrLoad (s);
 	else
 		memset (&_instrument, 0, sizeof (_instrument));
 }
 
-void Instrument_Adlib::saveOrLoad (Serializer *s)
-{
+void Instrument_Adlib::saveOrLoad (Serializer *s) {
 	if (s->isSaving())
 		s->saveBytes (&_instrument, sizeof (_instrument));
 	else
 		s->loadBytes (&_instrument, sizeof (_instrument));
 }
 
-void Instrument_Adlib::send (MidiChannel *mc)
-{
+void Instrument_Adlib::send (MidiChannel *mc) {
 	mc->sysEx_customInstrument ('ADL ', (byte *) &_instrument);
 }
-
-
 
 ////////////////////////////////////////
 //
@@ -395,15 +373,13 @@ void Instrument_Adlib::send (MidiChannel *mc)
 //
 ////////////////////////////////////////
 
-Instrument_Roland::Instrument_Roland (byte *data)
-{
+Instrument_Roland::Instrument_Roland (byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 	_instrument_name[10] = '\0';
 }
 
-Instrument_Roland::Instrument_Roland (Serializer *s)
-{
+Instrument_Roland::Instrument_Roland (Serializer *s) {
 	_instrument_name[0] = '\0';
 	if (!s->isSaving())
 		saveOrLoad (s);
@@ -411,8 +387,7 @@ Instrument_Roland::Instrument_Roland (Serializer *s)
 		memset (&_instrument, 0, sizeof (_instrument));
 }
 
-void Instrument_Roland::saveOrLoad (Serializer *s)
-{
+void Instrument_Roland::saveOrLoad (Serializer *s) {
 	if (s->isSaving())
 		s->saveBytes (&_instrument, sizeof (_instrument));
 	else
@@ -421,8 +396,7 @@ void Instrument_Roland::saveOrLoad (Serializer *s)
 	_instrument_name[10] = '\0';
 }
 
-void Instrument_Roland::send (MidiChannel *mc)
-{
+void Instrument_Roland::send (MidiChannel *mc) {
 	if (NATIVE_MT32) { // if (mc->device()->mt32device()) {
 		_instrument.device_id = mc->getNumber();
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));

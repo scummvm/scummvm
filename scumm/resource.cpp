@@ -33,8 +33,7 @@
 uint16 newTag2Old(uint32 oldTag);
 
 /* Open a room */
-void Scumm::openRoom(int room)
-{
+void Scumm::openRoom(int room) {
 	int room_offs, roomlimit;
 	char buf[256];
 
@@ -131,8 +130,7 @@ void Scumm::openRoom(int room)
 	_fileOffset = 0;		// start of file
 }
 
-void Scumm::closeRoom()
-{
+void Scumm::closeRoom() {
 	if (_lastLoadedRoom != -1) {
 		_lastLoadedRoom = -1;
 		_encbyte = 0;
@@ -142,8 +140,7 @@ void Scumm::closeRoom()
 }
 
 /* Delete the currently loaded room offsets */
-void Scumm::deleteRoomOffsets()
-{
+void Scumm::deleteRoomOffsets() {
 	if (!(_features & GF_SMALL_HEADER) && !_dynamicRoomOffsets)
 		return;
 
@@ -154,8 +151,7 @@ void Scumm::deleteRoomOffsets()
 }
 
 /* Read room offsets */
-void Scumm::readRoomsOffsets()
-{
+void Scumm::readRoomsOffsets() {
 	int num, room;
 
 	debug(9, "readRoomOffsets()");
@@ -184,8 +180,7 @@ void Scumm::readRoomsOffsets()
 	}
 }
 
-bool Scumm::openResourceFile(const char *filename)
-{
+bool Scumm::openResourceFile(const char *filename) {
 	char buf[256];
 
 	debug(9, "openResourceFile(%s)", filename);
@@ -200,8 +195,7 @@ bool Scumm::openResourceFile(const char *filename)
 	return _fileHandle.isOpen();
 }
 
-void Scumm::askForDisk(const char *filename, int disknum)
-{
+void Scumm::askForDisk(const char *filename, int disknum) {
 	char buf[128];
 
 	if (_features & GF_AFTER_V8) {
@@ -221,8 +215,7 @@ void Scumm::askForDisk(const char *filename, int disknum)
 	}
 }
 
-void Scumm::readIndexFile()
-{
+void Scumm::readIndexFile() {
 	uint32 blocktype, itemsize;
 	int numblock = 0;
 	int num, i;
@@ -383,8 +376,7 @@ void Scumm::readIndexFile()
 	closeRoom();
 }
 
-void Scumm::readArrayFromIndexFile()
-{
+void Scumm::readArrayFromIndexFile() {
 	int num;
 	int a, b, c;
 
@@ -417,8 +409,7 @@ void Scumm::readArrayFromIndexFile()
 	}
 }
 
-void Scumm::readResTypeList(int id, uint32 tag, const char *name)
-{
+void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 	int num;
 	int i;
 
@@ -468,9 +459,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 	}
 }
 
-
-void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode)
-{
+void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
 	debug(9, "allocResTypeData(%s/%s,%x,%d,%d)", resTypeFromId(id), name, FROM_LE_32(tag), num, mode);
 	assert(id >= 0 && id < (int)(sizeof(res.mode) / sizeof(res.mode[0])));
 
@@ -491,8 +480,7 @@ void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int 
 	}
 }
 
-void Scumm::loadCharset(int no)
-{
+void Scumm::loadCharset(int no) {
 	int i;
 	byte *ptr;
 
@@ -515,14 +503,12 @@ void Scumm::loadCharset(int no)
 	}
 }
 
-void Scumm::nukeCharset(int i)
-{
+void Scumm::nukeCharset(int i) {
 	checkRange(_maxCharsets - 1, 1, i, "Nuking illegal charset %d");
 	nukeResource(rtCharset, i);
 }
 
-void Scumm::ensureResourceLoaded(int type, int i)
-{
+void Scumm::ensureResourceLoaded(int type, int i) {
 	void *addr;
 
 	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
@@ -545,8 +531,7 @@ void Scumm::ensureResourceLoaded(int type, int i)
 			_vars[VAR_ROOM_FLAG] = 1;
 }
 
-int Scumm::loadResource(int type, int idx)
-{
+int Scumm::loadResource(int type, int idx) {
 	int roomNr;
 	uint32 fileOffs;
 	uint32 size, tag;
@@ -626,8 +611,7 @@ int Scumm::loadResource(int type, int idx)
 	error("Cannot read resource");
 }
 
-int Scumm::readSoundResource(int type, int idx)
-{
+int Scumm::readSoundResource(int type, int idx) {
 	uint32 pos, total_size, size, tag, basetag;
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
@@ -915,8 +899,7 @@ static char OLD256_MIDI_HACK[] =
 	"\x04\x00\x00\xf7"
 	"\x00\xb7\x07\x64";     // Controller 7 = 100
 
-int Scumm::readSoundResourceSmallHeader(int type, int idx)
-{
+int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	uint32 pos, total_size, size, dw, tag;
 	uint32 best_size = 0, best_offs = 0;
 	byte *ptr, *track, *instr;
@@ -1104,15 +1087,13 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 }
 
 
-int Scumm::getResourceRoomNr(int type, int idx)
-{
+int Scumm::getResourceRoomNr(int type, int idx) {
 	if (type == rtRoom)
 		return idx;
 	return res.roomno[type][idx];
 }
 
-byte *Scumm::getResourceAddress(int type, int idx)
-{
+byte *Scumm::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
 	CHECK_HEAP
@@ -1139,8 +1120,7 @@ byte *Scumm::getResourceAddress(int type, int idx)
 	return ptr + sizeof(MemBlkHeader);
 }
 
-byte *Scumm::getStringAddress(int i)
-{
+byte *Scumm::getStringAddress(int i) {
 	byte *b = getResourceAddress(rtString, i);
 	if (!b)
 		return NULL;
@@ -1150,10 +1130,7 @@ byte *Scumm::getStringAddress(int i)
 	return b;
 }
 
-
-
-byte *Scumm::getStringAddressVar(int i)
-{
+byte *Scumm::getStringAddressVar(int i) {
 	byte *addr;
 
 	addr = getResourceAddress(rtString, _vars[i]);
@@ -1166,8 +1143,7 @@ byte *Scumm::getStringAddressVar(int i)
 	return (addr);
 }
 
-void Scumm::setResourceCounter(int type, int idx, byte flag)
-{
+void Scumm::setResourceCounter(int type, int idx, byte flag) {
 	res.flags[type][idx] &= ~RF_USAGE;
 	res.flags[type][idx] |= flag;
 }
@@ -1175,8 +1151,7 @@ void Scumm::setResourceCounter(int type, int idx, byte flag)
 /* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
 #define SAFETY_AREA 2
 
-byte *Scumm::createResource(int type, int idx, uint32 size)
-{
+byte *Scumm::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
 	CHECK_HEAP
@@ -1202,8 +1177,7 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 	return ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
-bool Scumm::validateResource(const char *str, int type, int idx)
-{
+bool Scumm::validateResource(const char *str, int type, int idx) {
 	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
 		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
@@ -1211,8 +1185,7 @@ bool Scumm::validateResource(const char *str, int type, int idx)
 	return true;
 }
 
-void Scumm::nukeResource(int type, int idx)
-{
+void Scumm::nukeResource(int type, int idx) {
 	byte *ptr;
 
 	CHECK_HEAP
@@ -1230,8 +1203,7 @@ void Scumm::nukeResource(int type, int idx)
 	}
 }
 
-byte *Scumm::findResourceData(uint32 tag, byte *ptr)
-{
+byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
 	if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(tag, ptr, 0);
 	else
@@ -1242,8 +1214,7 @@ byte *Scumm::findResourceData(uint32 tag, byte *ptr)
 	return ptr + _resourceHeaderSize;
 }
 
-int Scumm::getResourceDataSize(byte *ptr)
-{
+int Scumm::getResourceDataSize(byte *ptr) {
 	if (ptr == NULL)
 		return 0;
 
@@ -1259,8 +1230,7 @@ struct FindResourceState {
 };
 
 /* just O(N) complexity when iterating with this function */
-byte *findResource(uint32 tag, byte *searchin)
-{
+byte *findResource(uint32 tag, byte *searchin) {
 	uint32 size;
 	static FindResourceState frs;
 	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
@@ -1288,8 +1258,7 @@ byte *findResource(uint32 tag, byte *searchin)
 	return f->ptr;
 }
 
-byte *findResourceSmall(uint32 tag, byte *searchin)
-{
+byte *findResourceSmall(uint32 tag, byte *searchin) {
 	uint32 size;
 	static FindResourceState frs;
 	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
@@ -1320,8 +1289,7 @@ byte *findResourceSmall(uint32 tag, byte *searchin)
 	return f->ptr;
 }
 
-byte *findResource(uint32 tag, byte *searchin, int idx)
-{
+byte *findResource(uint32 tag, byte *searchin, int idx) {
 	uint32 curpos, totalsize, size;
 
 	assert(searchin);
@@ -1349,8 +1317,7 @@ byte *findResource(uint32 tag, byte *searchin, int idx)
 	return NULL;
 }
 
-byte *findResourceSmall(uint32 tag, byte *searchin, int idx)
-{
+byte *findResourceSmall(uint32 tag, byte *searchin, int idx) {
 	uint32 curpos, totalsize, size;
 	uint16 smallTag;
 
@@ -1381,8 +1348,7 @@ byte *findResourceSmall(uint32 tag, byte *searchin, int idx)
 	return NULL;
 }
 
-void Scumm::lock(int type, int i)
-{
+void Scumm::lock(int type, int i) {
 	if (!validateResource("Locking", type, i))
 		return;
 	res.flags[type][i] |= RF_LOCK;
@@ -1390,8 +1356,7 @@ void Scumm::lock(int type, int i)
 //  debug(1, "locking %d,%d", type, i);
 }
 
-void Scumm::unlock(int type, int i)
-{
+void Scumm::unlock(int type, int i) {
 	if (!validateResource("Unlocking", type, i))
 		return;
 	res.flags[type][i] &= ~RF_LOCK;
@@ -1419,8 +1384,7 @@ bool Scumm::isResourceInUse(int type, int i)
 	}
 }
 
-void Scumm::increaseResourceCounter()
-{
+void Scumm::increaseResourceCounter() {
 	int i, j;
 	byte counter;
 
@@ -1434,8 +1398,7 @@ void Scumm::increaseResourceCounter()
 	}
 }
 
-void Scumm::expireResources(uint32 size)
-{
+void Scumm::expireResources(uint32 size) {
 	int i, j;
 	byte flag;
 	byte best_counter;
@@ -1480,8 +1443,7 @@ void Scumm::expireResources(uint32 size)
 	debug(5, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
 
-void Scumm::freeResources()
-{
+void Scumm::freeResources() {
 	int i, j;
 	for (i = rtFirst; i <= rtLast; i++) {
 		for (j = res.num[i]; --j >= 0;) {
@@ -1495,8 +1457,7 @@ void Scumm::freeResources()
 	}
 }
 
-void Scumm::loadPtrToResource(int type, int resindex, byte *source)
-{
+void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
 	byte *alloced;
 	int i, len;
 
@@ -1519,15 +1480,13 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source)
 	}
 }
 
-bool Scumm::isResourceLoaded(int type, int idx)
-{
+bool Scumm::isResourceLoaded(int type, int idx) {
 	if (!validateResource("isLoaded", type, idx))
 		return false;
 	return res.address[type][idx] != NULL;
 }
 
-void Scumm::resourceStats()
-{
+void Scumm::resourceStats() {
 	int i, j;
 	uint32 lockedSize = 0, lockedNum = 0;
 	byte flag;
@@ -1544,17 +1503,14 @@ void Scumm::resourceStats()
 	debug(1, "Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
 }
 
-void Scumm::heapClear(int mode)
-{
+void Scumm::heapClear(int mode) {
 }
 
-void Scumm::unkHeapProc2(int a, int b)
-{
+void Scumm::unkHeapProc2(int a, int b) {
 }
 
-void Scumm::readMAXS()
-{
-	if (_features & GF_AFTER_V8) {                      // CMI
+void Scumm::readMAXS() {
+	if (_features & GF_AFTER_V8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
 		_numVariables = _fileHandle.readUint32LE();     // 1500
 		_numBitVariables = _fileHandle.readUint32LE();  // 2048
@@ -1651,8 +1607,7 @@ void Scumm::readMAXS()
 	_dynamicRoomOffsets = 1;
 }
 
-void Scumm::allocateArrays()
-{
+void Scumm::allocateArrays() {
 	// Note: Buffers are now allocated in scummMain to allow for
 	//     early GUI init.
 
@@ -1688,17 +1643,14 @@ void Scumm::allocateArrays()
 }
 
 
-bool Scumm::isGlobInMemory(int type, int idx)
-{
+bool Scumm::isGlobInMemory(int type, int idx) {
 	if (!validateResource("isGlobInMemory", type, idx))
 		return false;
 
 	return res.address[type][idx] != NULL;
 }
 
-
-uint16 newTag2Old(uint32 oldTag)
-{
+uint16 newTag2Old(uint32 oldTag) {
 	switch (oldTag) {
 	case (MKID('RMHD')):
 		return (0x4448);	// HD
@@ -1738,9 +1690,7 @@ uint16 newTag2Old(uint32 oldTag)
 	}
 }
 
-
-char *Scumm::resTypeFromId(int id)
-{
+char *Scumm::resTypeFromId(int id) {
 	static char buf[100];
 
 	switch (id) {

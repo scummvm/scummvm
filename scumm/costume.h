@@ -41,7 +41,6 @@ protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-
 class CostumeRenderer : public BaseCostumeRenderer {
 public:
 	uint _outheight;

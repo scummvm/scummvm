@@ -27,10 +27,7 @@
 
 class Serializer;
 class MidiChannel;
-
 class Instrument;
-
-
 
 class InstrumentInternal {
 public:

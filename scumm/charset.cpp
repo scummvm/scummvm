@@ -23,8 +23,7 @@
 #include "scumm.h"
 #include "nut_renderer.h"
 
-void CharsetRendererCommon::setCurID(byte id)
-{
+void CharsetRendererCommon::setCurID(byte id) {
 	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
 
 	_curId = id;
@@ -38,8 +37,7 @@ void CharsetRendererCommon::setCurID(byte id)
 }
 
 // do spacing for variable width old-style font
-int CharsetRendererClassic::getCharWidth(byte chr)
-{
+int CharsetRendererClassic::getCharWidth(byte chr) {
 	int spacing = 0;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -55,10 +53,9 @@ int CharsetRendererClassic::getCharWidth(byte chr)
 	return spacing;
 }
 
-int CharsetRendererOld256::getCharWidth(byte chr)
-{
+int CharsetRendererOld256::getCharWidth(byte chr) {
 	int spacing = 0;
-	
+
 	spacing = *(_fontPtr - 11 + chr);
 
 	// FIXME - this fixes the inventory icons in Zak256/Indy3
@@ -67,12 +64,11 @@ int CharsetRendererOld256::getCharWidth(byte chr)
 	if ((_vm->_gameId == GID_ZAK256 || _vm->_gameId == GID_INDY3_256)
 			&& (chr >= 1 && chr <= 4))
 		spacing = 6;
-	
+
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, byte *text)
-{
+int CharsetRenderer::getStringWidth(int arg, byte *text) {
 	int pos = 0;
 	int width = 1;
 	byte chr;
@@ -115,8 +111,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text)
 	return width;
 }
 
-void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
-{
+void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastspace = -1;
 	int curw = 1;
 	byte chr;
@@ -176,8 +171,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 }
 
 
-void CharsetRendererOld256::printChar(int chr)
-{																// Indy3 / Zak256
+void CharsetRendererOld256::printChar(int chr) {
+	// Indy3 / Zak256
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr;
 	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
@@ -222,12 +217,9 @@ void CharsetRendererOld256::printChar(int chr)
 
 	if (_top + 8 > _strBottom)
 		_strBottom = _top + 8;
-
 }
 
-
-void CharsetRendererClassic::printChar(int chr)
-{
+void CharsetRendererClassic::printChar(int chr) {
 	int width, height;
 	int offsX, offsY;
 	int d;
@@ -342,8 +334,7 @@ void CharsetRendererClassic::printChar(int chr)
 	_top -= offsY;
 }
 
-void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height)
-{
+void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height) {
 	byte maskmask;
 	int y, x;
 	int maskpos;
@@ -391,8 +382,7 @@ void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int
 }
 
 CharsetRendererNut::CharsetRendererNut(Scumm *vm)
-	 : CharsetRenderer(vm)
-{
+	 : CharsetRenderer(vm) {
 	_current = 0;
 
 	for (int i = 0; i < 5; i++) {
@@ -406,37 +396,31 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 	}
 }
 
-CharsetRendererNut::~CharsetRendererNut()
-{
+CharsetRendererNut::~CharsetRendererNut() {
 	for (int i = 0; i < 5; i++)
 		delete _fr[i];
 }
 
-void CharsetRendererNut::setCurID(byte id)
-{
+void CharsetRendererNut::setCurID(byte id) {
 	assert(id < 5);
 	_curId = id;
 	_current = _fr[id];
 	assert(_current);
 }
 
-int CharsetRendererNut::getCharWidth(byte chr)
-{
+int CharsetRendererNut::getCharWidth(byte chr) {
 	assert(_current);
 	return _current->getCharWidth(chr);
 }
 
-int CharsetRendererNut::getFontHeight()
-{
+int CharsetRendererNut::getFontHeight() {
 	// FIXME / TODO: how to implement this properly???
 	assert(_current);
 	return _current->getCharHeight('|');
 }
 
-void CharsetRendererNut::printChar(int chr)
-{
+void CharsetRendererNut::printChar(int chr) {
 	assert(_current);
-	
 	if (chr == '@')
 		return;
 

@@ -56,11 +56,11 @@ public:
 
 protected:
 	ListWidget       *_savegameList;
-	
+
 	PushButtonWidget *_saveButton;
 	PushButtonWidget *_loadButton;
 	
-	bool			_saveMode;
+	bool _saveMode;
 
 	void fillList();
 	void save();
@@ -69,12 +69,10 @@ protected:
 	void switchToLoadMode();
 };
 
-
 class AboutDialog : public ScummDialog {
 public:
 	AboutDialog(NewGui *gui, Scumm *scumm);
 };
-
 
 class OptionsDialog : public ScummDialog {
 protected:
@@ -88,11 +86,10 @@ public:
 	~OptionsDialog();
 
 	virtual void open();
-
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	
+
 	int _soundVolumeMaster;
 	int _soundVolumeMusic;
 	int _soundVolumeSfx;
@@ -100,7 +97,7 @@ protected:
 	SliderWidget *masterVolumeSlider;
 	SliderWidget *musicVolumeSlider;
 	SliderWidget *sfxVolumeSlider;
-	
+
 	StaticTextWidget *masterVolumeLabel;
 	StaticTextWidget *musicVolumeLabel;
 	StaticTextWidget *sfxVolumeLabel;
@@ -116,13 +113,14 @@ public:
 	// from resources
 	InfoDialog(NewGui *gui, Scumm *scumm, int res);
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount)
-		{ close(); }
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers)
-		{
-			setResult(ascii);
-			close();
-		}
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) { 
+		close();
+	}
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+		setResult(ascii);
+		close();
+	}
+
 protected:
 	void setInfoText (const String& message);
 };

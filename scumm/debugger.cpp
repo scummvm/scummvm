@@ -19,8 +19,7 @@
 
 extern uint16 _debugLevel;
 
-ScummDebugger::ScummDebugger()
-{
+ScummDebugger::ScummDebugger() {
 	_s = 0;
 	_frame_countdown = 0;
 	_dvar_count = 0;
@@ -29,8 +28,7 @@ ScummDebugger::ScummDebugger()
 }
 
 // Initialisation Functions
-void ScummDebugger::attach(Scumm *s)
-{
+void ScummDebugger::attach(Scumm *s) {
 	if (_s)
 		detach();
 	
@@ -72,8 +70,7 @@ void ScummDebugger::attach(Scumm *s)
 	}
 }
 
-void ScummDebugger::detach()
-{
+void ScummDebugger::detach() {
 #ifdef USE_CONSOLE
 	if (_s->_debuggerDialog)
 		_s->_debuggerDialog->setInputeCallback(0, 0);
@@ -83,7 +80,6 @@ void ScummDebugger::detach()
 	_s = NULL;
 	_detach_now = false;
 }
-
 
 // Temporary execution handler
 void ScummDebugger::on_frame() {
@@ -108,8 +104,7 @@ void ScummDebugger::on_frame() {
 
 // Console handler
 #ifdef USE_CONSOLE
-bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon)
-{
+bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
 	ScummDebugger *debugger = (ScummDebugger *)refCon;
 	
 	return debugger->RunCommand((char*)input);
@@ -139,8 +134,7 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 }
 
 // Main Debugger Loop 
-void ScummDebugger::enter()
-{
+void ScummDebugger::enter() {
 #ifdef USE_CONSOLE
 	if (!_s->_debuggerDialog) {
 		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_realWidth);
@@ -396,23 +390,24 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 
 	if (!strcmp(argv[2], "pickup")) {
 		for (i = 1; i < _s->_maxInventoryItems; i++) {
-                	if (_s->_inventory[i] == (uint16)obj) {
-                        	_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
-                        	_s->runHook(obj);
-                        	return true;
-                	}
-        	}
-		
+			if (_s->_inventory[i] == (uint16)obj) {
+				_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+				_s->runHook(obj);
+				return true;
+			}
+		}
+
 		if (argc == 3)
-        		_s->addObjectToInventory(obj, _s->_currentRoom);
+			_s->addObjectToInventory(obj, _s->_currentRoom);
 		else
-        		_s->addObjectToInventory(obj, atoi(argv[3]));
-       		_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
-        	_s->putClass(obj, 32, 1);
-        	_s->putState(obj, 1);
-        	_s->removeObjectFromRoom(obj);
-        	_s->clearDrawObjectQueue();
-        	_s->runHook(obj);
+			_s->addObjectToInventory(obj, atoi(argv[3]));
+
+		_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+		_s->putClass(obj, 32, 1);
+		_s->putState(obj, 1);
+		_s->removeObjectFromRoom(obj);
+		_s->clearDrawObjectQueue();
+		_s->runHook(obj);
 	} else {
 		Debug_Printf("Unknown object command '%s'\n", argv[2]);
 	}
@@ -459,7 +454,6 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
-	
 	if (argc == 1) {
 		if (_s->_debugMode == false)
 			Debug_Printf("Debugging is not enabled at this time\n");
@@ -503,19 +497,18 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 	return true;
 }
 
-void ScummDebugger::printBox(int box)
-{
+void ScummDebugger::printBox(int box) {
 	BoxCoords coords;
 	int flags = _s->getBoxFlags(box);
 	int mask = _s->getMaskFromBox(box);
 	int scale = _s->getBoxScale(box);
 
 	_s->getBoxCoordinates(box, &coords);
-	
+
 	// Print out coords, flags, zbuffer mask
 	Debug_Printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
-	              box,
-	              coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
-	              coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
-	              flags, mask, scale);
+								box,
+								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
+								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
+								flags, mask, scale);
 }

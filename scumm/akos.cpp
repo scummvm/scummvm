@@ -99,8 +99,7 @@ enum AkosOpcodes {
 	AKC_EndSeq = 0xC0FF
 };
 
-bool Scumm::akos_hasManyDirections(Actor *a)
-{
+bool Scumm::akos_hasManyDirections(Actor *a) {
 	byte *akos;
 	AkosHeader *akhd;
 
@@ -111,16 +110,14 @@ bool Scumm::akos_hasManyDirections(Actor *a)
 	return (akhd->flags & 2) != 0;
 }
 
-int Scumm::akos_frameToAnim(Actor *a, int frame)
-{
+int Scumm::akos_frameToAnim(Actor *a, int frame) {
 	if (akos_hasManyDirections(a))
 		return toSimpleDir(1, a->facing) + frame * 8;
 	else
 		return newDirToOldDir(a->facing) + frame * 4;
 }
 
-void Scumm::akos_decodeData(Actor *a, int frame, uint usemask)
-{
+void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
 	uint anim;
 	byte *akos, *r;
 	AkosHeader *akhd;
@@ -195,8 +192,7 @@ void Scumm::akos_decodeData(Actor *a, int frame, uint usemask)
 	} while ((uint16)mask);
 }
 
-void AkosRenderer::setPalette(byte *new_palette)
-{
+void AkosRenderer::setPalette(byte *new_palette) {
 	byte *the_akpl;
 	uint size, i;
 
@@ -220,8 +216,7 @@ void AkosRenderer::setPalette(byte *new_palette)
 	}
 }
 
-void AkosRenderer::setCostume(int costume)
-{
+void AkosRenderer::setCostume(int costume) {
 	akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
@@ -234,15 +229,13 @@ void AkosRenderer::setCostume(int costume)
 	codec = READ_LE_UINT16(&akhd->codec);
 }
 
-void AkosRenderer::setFacing(Actor *a)
-{
+void AkosRenderer::setFacing(Actor *a) {
 	_mirror = (newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
 	if (a->flip)
 		_mirror = !_mirror;
 }
 
-byte AkosRenderer::drawLimb(const CostumeData &cost, int limb)
-{
+byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	uint code;
 	byte *p;
 	AkosOffset *off;
@@ -330,13 +323,11 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb)
 	return true;
 }
 
-void AkosRenderer::codec1_genericDecode()
-{
+void AkosRenderer::codec1_genericDecode() {
 	byte *src, *dst;
 	byte len, maskbit;
 	uint y, color, height;
 	const byte *scaleytab, *mask;
-
 
 	y = v1.y;
 
@@ -394,14 +385,12 @@ void AkosRenderer::codec1_genericDecode()
 	} while (1);
 }
 
-void AkosRenderer::codec1_spec1()
-{
+void AkosRenderer::codec1_spec1() {
 	byte *src, *dst;
 	byte len, maskbit;
 	uint y, color, height;
 	byte pcolor;
 	const byte *scaleytab, *mask;
-
 
 	y = v1.y;
 
@@ -462,19 +451,16 @@ void AkosRenderer::codec1_spec1()
 	} while (1);
 }
 
-void AkosRenderer::codec1_spec2()
-{
+void AkosRenderer::codec1_spec2() {
 	warning("codec1_spec2"); // TODO
 }
 
-void AkosRenderer::codec1_spec3()
-{
+void AkosRenderer::codec1_spec3() {
 	byte *src, *dst;
 	byte len, maskbit;
 	uint y, color, height;
 	uint pcolor;
 	const byte *scaleytab, *mask;
-
 
 	y = v1.y;
 
@@ -639,9 +625,7 @@ const byte default_scale_table[768] = {
 	0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF,
 };
 
-
-void AkosRenderer::codec1()
-{
+void AkosRenderer::codec1() {
 	int num_colors;
 	bool use_scaling;
 	int i, j;
@@ -651,9 +635,7 @@ void AkosRenderer::codec1()
 	bool masking;
 	int step;
 
-
 	/* implement custom scale table */
-
 
 	v1.scaletable = default_scale_table;
 
@@ -785,7 +767,7 @@ void AkosRenderer::codec1()
 	if (_mirror)
 		v1.scaleXstep = -v1.scaleXstep;
 
-	if ((int) y_top >= (int) outheight || y_bottom <= 0)
+	if ((int) y_top >= (int)outheight || y_bottom <= 0)
 		return;
 
 	if ((int)x_left >= (int)outwidth || x_right <= 0)
@@ -852,8 +834,8 @@ void AkosRenderer::codec1()
 	masking = false;
 	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
-		                _vm->getResourceAddress(rtBuffer, 9) +
-		                _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip) != 0;
+										_vm->getResourceAddress(rtBuffer, 9) +
+										_vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;
@@ -884,8 +866,7 @@ void AkosRenderer::codec1()
 }
 
 
-void AkosRenderer::codec1_ignorePakCols(int num)
-{
+void AkosRenderer::codec1_ignorePakCols(int num) {
 	int n;
 	byte repcolor;
 	byte replen;
@@ -1003,7 +984,7 @@ void AkosRenderer::akos16SetupBitReader(byte *src) {
 	akos16.dataptr = src + 4;
 }
 
-void AkosRenderer::akos16PutOnScreen(byte * dest, byte * src, byte transparency, int32 count) {
+void AkosRenderer::akos16PutOnScreen(byte *dest, byte *src, byte transparency, int32 count) {
 	byte tmp_data;
 
 	if (count == 0)
@@ -1083,7 +1064,7 @@ void AkosRenderer::akos16SkipData(int32 numskip) {
 				} else {
 					AKOS16_FILL_BITS()
 					akos16.color = ((byte)akos16.bits) & akos16.mask;
-					AKOS16_EAT_BITS(akos16.shift)					
+					AKOS16_EAT_BITS(akos16.shift)
 					AKOS16_FILL_BITS()
 				}
 			} else {
@@ -1140,14 +1121,14 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	}
 }
 
-void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32 count, byte fillwith) {
+void AkosRenderer::akos16ApplyMask(byte *dest, byte *maskptr, byte bits, int32 count, byte fillwith) {
 	byte tmp;
 	byte tmp_data = *(maskptr++);
 	byte bitpos = 1 << (7 - bits);
 
 	if (count == 0)
 		return;
-	
+
 	for(;;) {
 		tmp = tmp_data;
 		do {
@@ -1165,8 +1146,8 @@ void AkosRenderer::akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32
 	}
 }
 
-void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
-	byte * tmp_buf = akos16.buffer;
+void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
+	byte *tmp_buf = akos16.buffer;
 
 	if (dir < 0) {
 		dest -= (t_width - 1);
@@ -1192,8 +1173,8 @@ void AkosRenderer::akos16Decompress(byte * dest, int32 pitch, byte * src, int32 
 	}
 }
 
-void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
-	byte * tmp_buf = akos16.buffer;
+void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte * maskptr, int32 bitpos_start) {
+	byte *tmp_buf = akos16.buffer;
 	int maskpitch;
 
 	if (dir < 0) {
@@ -1334,20 +1315,19 @@ void AkosRenderer::codec16() {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte * dest = outptr + width_unk + height_unk * _vm->_realWidth;
+	byte *dest = outptr + width_unk + height_unk * _vm->_realWidth;
 
 	if (_zbuf == 0) {
 		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255);
 		return;
 	}
 
-	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
+	byte *ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
 	ptr += _numStrips * clip_top + (clip_left / 8);
 	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
 }
 
-bool Scumm::akos_increaseAnims(byte *akos, Actor *a)
-{
+bool Scumm::akos_increaseAnims(byte *akos, Actor *a) {
 	byte *aksq, *akfo;
 	int i;
 	uint size;
@@ -1366,13 +1346,11 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor *a)
 	return result;
 }
 
-
 #define GW(o) ((int16)READ_LE_UINT16(aksq+curpos+(o)))
 #define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
 #define GB(o) aksq[curpos+(o)]
 
-bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int numakfo)
-{
+bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int numakfo) {
 	byte active;
 	uint old_curpos, curpos, end;
 	uint code;
@@ -1604,8 +1582,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 	return curpos != old_curpos;
 }
 
-void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2)
-{
+void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 	switch (cmd) {
 	case 1:
 		a->putActor(0, 0, 0);
@@ -1657,9 +1634,7 @@ void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2)
 	}
 }
 
-
-bool Scumm::akos_compare(int a, int b, byte cmd)
-{
+bool Scumm::akos_compare(int a, int b, byte cmd) {
 	switch (cmd) {
 	case 0:
 		return a == b;

@@ -42,16 +42,16 @@ enum {
 	bool _soundsPaused2;
 	bool _soundVolumePreset;
 
-	char * _nameBundleMusic;
-	char * _newNameBundleMusic;
+	char *_nameBundleMusic;
+	char *_newNameBundleMusic;
 	byte _musicDisk;
 	byte _voiceDisk;
 	int32 _currentSampleBundleMusic;
 	int32 _numberSamplesBundleMusic;
 	int32 _offsetSampleBundleMusic;
 	int32 _offsetBufBundleMusic;
-	byte * _musicBundleBufFinal;
-	byte * _musicBundleBufOutput;
+	byte *_musicBundleBufFinal;
+	byte *_musicBundleBufOutput;
 	bool _pauseBundleMusic;
 	int32 _bundleMusicTrack;
 	bool _musicBundleToBeChanged;
@@ -125,7 +125,7 @@ enum {
 	};
 #endif
 
-	Scumm * _scumm;
+	Scumm *_scumm;
 
 public:
 
@@ -159,16 +159,16 @@ public:
 	void setupSound();
 	void pauseSounds(bool pause);
 	int startSfxSound(File *file, int file_size);
-	File * openSfxFile();
+	File *openSfxFile();
 	void stopSfxSound();
 	bool isSfxFinished();
-	uint32 decode12BitsSample(byte * src, byte ** dst, uint32 size, bool stereo);
-	void playBundleMusic(char * song);
+	uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo);
+	void playBundleMusic(char *song);
 	void pauseBundleMusic(bool state);
-	void bundleMusicHandler(Scumm * scumm);
+	void bundleMusicHandler(Scumm *scumm);
 	void stopBundleMusic();
 	int playBundleSound(char *sound);
-	byte * readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops);
+	byte *readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
 	int playSfxSound_Vorbis(void *sound, uint32 size);

@@ -123,15 +123,15 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
-byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops) {
-	assert(strncmp((char*)ptr, "Creative Voice File\x1A", 20) == 0);
+byte *Sound::readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &loops) {
+	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
 	int16 code = READ_LE_UINT16(ptr + 24);
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	bool quit = 0;
-	byte * ret_sound = 0; size = 0, loops = 0;
+	byte *ret_sound = 0; size = 0, loops = 0;
 	while(!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
@@ -147,9 +147,9 @@ byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint
 				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
 				if(packing == 0) {
 					if(size) {
-						ret_sound = (byte*)realloc(ret_sound, size + len);
+						ret_sound = (byte *)realloc(ret_sound, size + len);
 					} else {
-						ret_sound = (byte*)malloc(len);
+						ret_sound = (byte *)malloc(len);
 					}
 					memcpy(ret_sound + size, ptr + offset, len);
 					size += len;
@@ -194,7 +194,7 @@ void Sound::playSound(int soundID) {
 			_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
-	
+
 			_scumm->current_cd_sound = soundID;
 			return;
 		}
@@ -202,16 +202,16 @@ void Sound::playSound(int soundID) {
 		// This is rather hackish right now, but works OK. SFX are not sounding
 		// 100% correct, though, not sure right now what is causing this.
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
-	
+
 			// Read info from the header
 			size = READ_BE_UINT32_UNALIGNED(ptr+0x60);
 			rate = READ_BE_UINT32_UNALIGNED(ptr+0x64) >> 16;
-	
+
 			// Skip over the header (fixed size)
 			ptr += 0x72;
-			
+
 			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char*)malloc(size);
+			sound = (char *)malloc(size);
 			memcpy(sound, ptr, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
@@ -223,13 +223,13 @@ void Sound::playSound(int soundID) {
 			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
 			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
 				return;	// abort
-	
+
 			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
 			// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
 			rate = 11025;
-			
+
 			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char*)malloc(size);
+			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 8, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
@@ -245,7 +245,7 @@ void Sound::playSound(int soundID) {
 		// Support for sampled sound effects in Monkey1 and Monkey2
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
 			debug(2, "Using SBL sound effect");
-	
+
 			// TODO - Figuring out how the SBL chunk works. Here's
 			// an example:
 			//
@@ -287,15 +287,15 @@ void Sound::playSound(int soundID) {
 				rate = 8000;
 
 			size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
-	
+
 			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char*)malloc(size);
+			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 33, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		} else if (_scumm->_features & GF_OLD256) {
 			size = READ_LE_UINT32(ptr);
-			
+
 	#if 0
 			// FIXME - this is just some debug output for Zak256
 			if (size != 30) {
@@ -361,9 +361,10 @@ void Sound::playSound(int soundID) {
 			ptr += 0x16;
 			if (size == 30) {
 				int track = *ptr;
-	
+
 				if (track == _scumm->current_cd_sound)
-					if (pollCD() == 1) return;
+					if (pollCD() == 1)
+						return;
 
 				playCDTrack(track, 1, 0, 0);
 				_scumm->current_cd_sound = track;
@@ -371,7 +372,7 @@ void Sound::playSound(int soundID) {
 			}
 	
 			size -= 0x36;
-			sound = (char*)malloc(size);
+			sound = (char *)malloc(size);
 			for (int x = 0; x < size; x++) {
 				int bit = *ptr++;
 				if (_scumm->_gameId == GID_INDY3_256) {
@@ -381,7 +382,7 @@ void Sound::playSound(int soundID) {
 					sound[x] = bit ^ 0x80;
 				} else {
 					if (bit < 0x80)
-						sound[x] = 0x7F-bit;
+						sound[x] = 0x7F - bit;
 					else
 						sound[x] = bit;
 				}
@@ -456,17 +457,15 @@ void Sound::processSfxQueues() {
 	}
 }
 
-static int compar(const void *a, const void *b)
-{
-	return ((MP3OffsetTable *) a)->org_offset -
-		((MP3OffsetTable *) b)->org_offset;
+static int compar(const void *a, const void *b) {
+	return ((MP3OffsetTable *)a)->org_offset - ((MP3OffsetTable *)b)->org_offset;
 }
 
 int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num = 0, i;
 	byte file_byte, file_byte_2;
 	int size;
-	byte* sound;
+	byte *sound;
 
 	if (_sfxFile->isOpen() == false) {
 		warning("startTalkSound: SFX file is not open");
@@ -479,12 +478,11 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	if (_scumm->_features & GF_HUMONGOUS) {
 		// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
 		_sfxFile->seek(offset + 48, SEEK_SET);
-		sound = (byte*)malloc(b - 64);
+		sound = (byte *)malloc(b - 64);
 		_sfxFile->read(sound, b - 64);
 		_scumm->_mixer->playRaw(NULL, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return -1;
 	}
-
 
 	// Some games frequently assume that starting one sound effect will
 	// automatically stop any other that may be playing at that time. So
@@ -511,8 +509,8 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		MP3OffsetTable *result = NULL, key;
 
 		key.org_offset = offset;
-		result = (MP3OffsetTable *) bsearch(&key, offset_table, num_sound_effects,
-		                                    sizeof(MP3OffsetTable), compar);
+		result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
+																				sizeof(MP3OffsetTable), compar);
 
 		if (result == NULL) {
 			warning("startTalkSound: did not find sound at offset %d !", offset);
@@ -678,8 +676,7 @@ void Sound::stopSound(int a) {
 			_soundQue2[i] = 0;
 }
 
-void Sound::stopAllSounds()
-{
+void Sound::stopAllSounds() {
 	IMuse *se = _scumm->_imuse;
 
 	if (_scumm->current_cd_sound != 0) {
@@ -766,7 +763,7 @@ void Sound::pauseSounds(bool pause) {
 		return;
 
 	_soundsPaused = pause;
-	_scumm->_mixer->pause(pause);	
+	_scumm->_mixer->pause(pause);
 
 	_scumm->_sound->pauseBundleMusic(pause);
 
@@ -780,7 +777,6 @@ void Sound::pauseSounds(bool pause) {
 		else
 			startCDTimer();
 	}
-		
 }
 
 int Sound::startSfxSound(File *file, int file_size) {
@@ -858,9 +854,9 @@ int Sound::startSfxSound(File *file, int file_size) {
 	return playSfxSound(data, size, 1000000 / (256 - rate), true);
 }
 
-File * Sound::openSfxFile() {
+File *Sound::openSfxFile() {
 	char buf[256];
-	File * file = new File();
+	File *file = new File();
 
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
@@ -940,18 +936,17 @@ void Sound::stopSfxSound() {
 	}
 }
 
-
 bool Sound::isSfxFinished() {
 	return !_scumm->_mixer->hasActiveChannel();
 }
 
-uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size, bool stereo = false) {
+uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo = false) {
 	uint32 s_size = (size / 3) * 4;
 	uint32 loop_size = s_size / 4;
 	if (stereo == true) {
 		s_size *= 2;
 	}
-	byte *ptr = *dst = (byte*)malloc(s_size);
+	byte *ptr = *dst = (byte *)malloc(s_size);
 
 	uint32 tmp;
 	while(loop_size--) {
@@ -976,24 +971,22 @@ uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size, bool ster
 	return s_size;
 }
 
-static void music_handler (void * engine) {
+static void music_handler (void *engine) {
 	g_scumm->_sound->bundleMusicHandler(g_scumm);
 }
 
-void Sound::playBundleMusic(char * song) {
-
+void Sound::playBundleMusic(char *song) {
 	if (_scumm->_silentDigitalImuse == true) {
 		return;
 	}
 
 	if (_nameBundleMusic == NULL) {
-		// FIXME: we have MUSDISK1.BUN and MUSDISK2.BUN in COMI.
 		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
 			char bunfile[20];
 			sprintf(bunfile, "musdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
 			if (_musicDisk != _scumm->_vars[_scumm->VAR_CURRENTDISK]) 
-				_scumm->_bundle->_musicFile.close();	
+				_scumm->_bundle->_musicFile.close();
 
 			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
 				if (_scumm->_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
@@ -1008,8 +1001,8 @@ void Sound::playBundleMusic(char * song) {
 			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
 				return;
 		}
-		_musicBundleBufFinal = (byte*)malloc(_outputMixerSize);
-		_musicBundleBufOutput = (byte*)malloc(((_outputMixerSize / 0x2000) + 1) * _outputMixerSize);
+		_musicBundleBufFinal = (byte *)malloc(_outputMixerSize);
+		_musicBundleBufOutput = (byte *)malloc(((_outputMixerSize / 0x2000) + 1) * _outputMixerSize);
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
@@ -1038,12 +1031,12 @@ void Sound::stopBundleMusic() {
 	_musicBundleToBeRemoved = true;
 }
 
-void Sound::bundleMusicHandler(Scumm * scumm) {
-	byte * ptr;
+void Sound::bundleMusicHandler(Scumm *scumm) {
+	byte *ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
 	int32 rate = 22050;
 	int32 tag, size = -1, header_size = 0;
-	
+
 	if (_pauseBundleMusic)
 		return;
 
@@ -1121,7 +1114,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 			}
 			header_size = (ptr - _musicBundleBufOutput);
 		}
-	
+
 		l++;
 		_currentSampleBundleMusic = l;
 
@@ -1143,12 +1136,12 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	ptr = _musicBundleBufFinal;
 
-	byte * buffer = NULL;
+	byte *buffer = NULL;
 	uint32 final_size;
 	if (_bundleMusicSampleBits == 12) {
 		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize);
 	} else if (_bundleMusicSampleBits == 16) {
-		buffer = (byte*)malloc(_outputMixerSize);
+		buffer = (byte *)malloc(_outputMixerSize);
 		final_size = _outputMixerSize;
 		memcpy(buffer, ptr, _outputMixerSize);
 	} else {
@@ -1167,7 +1160,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 }
 
 int Sound::playBundleSound(char *sound) {
-	byte * ptr;
+	byte *ptr;
 	bool result;
 
 	if (_scumm->_noDigitalSamples)
@@ -1217,7 +1210,7 @@ int Sound::playBundleSound(char *sound) {
 	}
 	assert(output_size <= 1000000);
 
-	tag = READ_BE_UINT32(ptr); ptr+=4;
+	tag = READ_BE_UINT32(ptr); ptr += 4;
 	if (tag != MKID_BE('iMUS')) {
 		warning("Decompression of bundle sound failed");
 		free(ptr);
@@ -1247,7 +1240,7 @@ int Sound::playBundleSound(char *sound) {
 			break;
 
 			default:
-			error("Unknown sound header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+			error("Unknown sound header %c%c%c%c", tag >> 24, tag >> 16, tag >> 8, tag);
 		}
 	}
 
@@ -1256,8 +1249,8 @@ int Sound::playBundleSound(char *sound) {
 		free(ptr);
 		return -1;
 	}
-	
-	byte * final = (byte *)malloc(size);
+
+	byte *final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
 
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
@@ -1382,8 +1375,7 @@ int Sound::playSfxSound_Vorbis(void *sound, uint32 size) {
 // We use a real timer in an attempt to get better sync with CD tracks. This is
 // necessary for games like Loom CD.
 
-static void cd_timer_handler(void *ptr)
-{
+static void cd_timer_handler(void *ptr) {
 	Scumm *scumm = (Scumm *) ptr;
 
 	// Maybe I could simply update _vars[VAR_MI1_TIMER] directly here, but
@@ -1398,13 +1390,11 @@ static void cd_timer_handler(void *ptr)
 	scumm->_sound->_cd_timer_value += 6;
 }
 
-int Sound::readCDTimer()
-{
+int Sound::readCDTimer() {
 	return _cd_timer_value;
 }
 
-void Sound::startCDTimer()
-{
+void Sound::startCDTimer() {
 	int timer_interval;
 
 	// The timer interval has been tuned for Loom CD and the Monkey 1
@@ -1422,13 +1412,11 @@ void Sound::startCDTimer()
 	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval);
 }
 
-void Sound::stopCDTimer()
-{
+void Sound::stopCDTimer() {
 	_scumm->_timer->releaseProcedure(&cd_timer_handler);
 }
 
-void Sound::playCDTrack(int track, int num_loops, int start, int delay)
-{
+void Sound::playCDTrack(int track, int num_loops, int start, int delay) {
 	if (playMP3CDTrack(track, num_loops, start, delay) == -1)
 		_scumm->_system->play_cdrom(track, num_loops, start, delay);
 
@@ -1439,23 +1427,20 @@ void Sound::playCDTrack(int track, int num_loops, int start, int delay)
 	startCDTimer();
 }
 
-void Sound::stopCD()
-{
+void Sound::stopCD() {
 	stopCDTimer();
 	if (stopMP3CD() == -1)
 		_scumm->_system->stop_cdrom();
 }
 
-int Sound::pollCD()
-{
+int Sound::pollCD() {
 	if (pollMP3CD())
 		return 1;
 
 	return _scumm->_system->poll_cdrom();
 }
 
-void Sound::updateCD()
-{
+void Sound::updateCD() {
 	if (updateMP3CD() == -1)
 		_scumm->_system->update_cdrom();
 }
@@ -1650,7 +1635,7 @@ Sound::MP3TrackInfo::MP3TrackInfo(File *file) {
 	_error_flag = false;
 	return;
 
- error:
+error:
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
 	_error_flag = true;

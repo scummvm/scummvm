@@ -59,7 +59,7 @@ static const VersionSettings scumm_settings[] = {
 //      {"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
 
 	/* Scumm Version 2 */
-	{"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
+	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
 	GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIACEX.EXE"},
 //      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
 //      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "ZAKEXE.EXE"},
@@ -142,13 +142,11 @@ static const VersionSettings scumm_settings[] = {
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
 
-const VersionSettings *Engine_SCUMM_targetList()
-{
+const VersionSettings *Engine_SCUMM_targetList() {
 	return scumm_settings;
 }
 
-Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
-{
+Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
 	if (detector->_amiga)
@@ -173,8 +171,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
 }
 
 Scumm::Scumm (GameDetector *detector, OSystem *syst) 
-	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0)
-{
+	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
 	OSystem::Property prop;
 
 	// Use g_scumm from error() ONLY
@@ -236,10 +233,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	// Override global fullscreen setting with any game-specific define
 	if (g_config->getBool("fullscreen", false)) {
- 		if (!syst->property(OSystem::PROP_GET_FULLSCREEN, 0))
-        		syst->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
- 	}
-
+		if (!syst->property(OSystem::PROP_GET_FULLSCREEN, 0))
+			syst->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	}
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
@@ -301,8 +297,7 @@ Scumm::~Scumm ()
 	delete _audioNames;
 }
 
-void Scumm::scummInit()
-{
+void Scumm::scummInit() {
 	int i;
 	Actor *a;
 
@@ -323,7 +318,7 @@ void Scumm::scummInit()
 		_charset = new CharsetRendererClassic(this);
 
 	memset(_charsetData, 0, sizeof(_charsetData));
-	
+
 	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
 		loadCharset(1);
 
@@ -338,7 +333,7 @@ void Scumm::scummInit()
 		a->initActorClass(this);
 		a->initActor(1);
 	}
-	
+
 	_vars[VAR_CHARINC] = 4;
 
 	_numNestedScripts = 0;
@@ -445,8 +440,7 @@ void Scumm::scummInit()
 }
 
 
-void Scumm::initScummVars()
-{
+void Scumm::initScummVars() {
 	if (!(_features & GF_AFTER_V7)) {
 		_vars[VAR_CURRENTDRIVE] = 0;
 		_vars[VAR_FIXEDDISK] = true;
@@ -467,10 +461,9 @@ void Scumm::initScummVars()
 		_vars[VAR_CURRENTDISK] = 1;
 		_vars[VAR_LANGUAGE] = _language;
 	}
-}	
+}
 
-void Scumm::checkRange(int max, int min, int no, const char *str)
-{
+void Scumm::checkRange(int max, int min, int no, const char *str) {
 	if (no < min || no > max) {
 		char buf[1024];
 		sprintf(buf, str, no);
@@ -479,8 +472,7 @@ void Scumm::checkRange(int max, int min, int no, const char *str)
 	}
 }
 
-int Scumm::scummLoop(int delta)
-{
+int Scumm::scummLoop(int delta) {
 	static int counter = 0;
 
 #ifndef _WIN32_WCE
@@ -572,8 +564,8 @@ load_game:
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
 			// because of odd timing issue with scripts and the variable reset
- 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V8))
- 				_vars[VAR_GAME_LOADED] = 201;
+			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V8))
+				_vars[VAR_GAME_LOADED] = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
@@ -581,7 +573,7 @@ load_game:
 
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values).
- 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
 				_vars[VAR_GAME_LOADED] = 203;
 		}
 
@@ -696,8 +688,7 @@ load_game:
 
 }
 
-void Scumm::startScene(int room, Actor * a, int objectNr)
-{
+void Scumm::startScene(int room, Actor * a, int objectNr) {
 	int i, where;
 	Actor *at;
 
@@ -799,7 +790,6 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	if (_roomResource == 0)
 		return;
 
-
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	if (a) {
@@ -838,8 +828,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	CHECK_HEAP;
 }
 
-void Scumm::initRoomSubBlocks()
-{
+void Scumm::initRoomSubBlocks() {
 	int i, offs;
 	byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr;
@@ -876,7 +865,6 @@ void Scumm::initRoomSubBlocks()
 		_scrHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
 
-
 	if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	else if (_features & GF_AFTER_V8) {
@@ -891,8 +879,7 @@ void Scumm::initRoomSubBlocks()
 		_IM00_offs = ptr - roomptr;
 	} else
 		_IM00_offs =
-			findResource(MKID('IM00'),
-									 findResource(MKID('RMIM'), roomptr)) - roomptr;
+			findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 
 	// Look for an exit script
 	ptr = findResourceData(MKID('EXCD'), roomResPtr);
@@ -976,7 +963,6 @@ void Scumm::initRoomSubBlocks()
 			}
 		}
 	}
-
 
 	//
 	// Setup local script
@@ -1076,8 +1062,7 @@ void Scumm::initRoomSubBlocks()
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 }
 
-void Scumm::setScaleItem(int slot, int a, int b, int c, int d)
-{
+void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
 	byte *ptr;
 	int cur, amounttoadd, i, tmp;
 
@@ -1100,8 +1085,7 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d)
 	}
 }
 
-void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2)
-{
+void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
 	assert(1 <= slot && slot <= 20);
 	_scaleSlots[slot-1].x2 = x2;
 	_scaleSlots[slot-1].y2 = y2;
@@ -1111,8 +1095,7 @@ void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, i
 	_scaleSlots[slot-1].scale1 = scale1;
 }
 
-void Scumm::dumpResource(char *tag, int idx, byte *ptr)
-{
+void Scumm::dumpResource(char *tag, int idx, byte *ptr) {
 	char buf[256];
 	File out;
 
@@ -1138,33 +1121,28 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 	out.close();
 }
 
-void Scumm::clearClickedStatus()
-{
+void Scumm::clearClickedStatus() {
 	checkKeyHit();
 	_mouseButStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 }
 
-int Scumm::checkKeyHit()
-{
+int Scumm::checkKeyHit() {
 	int a = _keyPressed;
 	_keyPressed = 0;
 	return a;
 }
 
-void Scumm::pauseGame(bool user)
-{
+void Scumm::pauseGame(bool user) {
 	pauseDialog();
 }
 
-void Scumm::setOptions()
-{
+void Scumm::setOptions() {
 	//_newgui->optionsDialog();
 }
 
-int Scumm::runDialog(Dialog *dialog)
-{
+int Scumm::runDialog(Dialog *dialog) {
 	// Pause sound put
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
@@ -1182,29 +1160,25 @@ int Scumm::runDialog(Dialog *dialog)
 	return result;
 }
 
-void Scumm::pauseDialog()
-{
+void Scumm::pauseDialog() {
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
 	runDialog(_pauseDialog);
 }
 
-void Scumm::saveloadDialog()
-{
+void Scumm::saveloadDialog() {
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
 	runDialog(_saveLoadDialog);
 }
 
-void Scumm::optionsDialog()
-{
+void Scumm::optionsDialog() {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
 	runDialog(_optionsDialog);
 }
 
-char Scumm::displayError(bool showCancel, const char *message, ...)
-{
+char Scumm::displayError(bool showCancel, const char *message, ...) {
 	char buf[1024], result;
 	va_list va;
 
@@ -1219,14 +1193,12 @@ char Scumm::displayError(bool showCancel, const char *message, ...)
 	return result;
 }
 
-void Scumm::shutDown(int i)
-{
+void Scumm::shutDown(int i) {
 	/* TODO: implement this */
 	warning("shutDown: not implemented");
 }
 
-void Scumm::processKbd()
-{
+void Scumm::processKbd() {
 	int saveloadkey;
 	getKeyInput();
 
@@ -1236,8 +1208,6 @@ void Scumm::processKbd()
 		saveloadkey = _vars[VAR_SAVELOADDIALOG_KEY];
 
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
-
-
 
 	if(_features & GF_AFTER_V7)
 		_virtual_mouse_y = mouse.y + camera._cur.y - (_realHeight / 2);
@@ -1275,7 +1245,7 @@ void Scumm::processKbd()
 
 	if (_lastKeyHit == _vars[VAR_RESTART_KEY]) {
 		warning("Restart not implemented");
-//    pauseGame(true);
+//		pauseGame(true);
 		return;
 	}
 
@@ -1338,8 +1308,7 @@ void Scumm::processKbd()
 	_mouseButStat = _lastKeyHit;
 }
 
-int Scumm::getKeyInput()
-{
+int Scumm::getKeyInput() {
 	_mouseButStat = 0;
 
 	_lastKeyHit = checkKeyHit();
@@ -1394,8 +1363,7 @@ int Scumm::getKeyInput()
 	return _lastKeyHit;
 }
 
-void Scumm::convertKeysToClicks()
-{
+void Scumm::convertKeysToClicks() {
 	if (_lastKeyHit && _cursor.state > 0) {
 		if (_lastKeyHit == 9) {
 			_mouseButStat = MBS_RIGHT_CLICK;
@@ -1407,13 +1375,11 @@ void Scumm::convertKeysToClicks()
 	}
 }
 
-Actor *Scumm::derefActor(int id)
-{
+Actor *Scumm::derefActor(int id) {
 	return &_actors[id];
 }
 
-Actor *Scumm::derefActorSafe(int id, const char *errmsg)
-{
+Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 	if (id < 1 || id >= NUM_ACTORS) {
 		if (_debugLevel > 1)
 		warning
@@ -1424,8 +1390,7 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 	return derefActor(id);
 }
 
-void Scumm::setStringVars(int slot)
-{
+void Scumm::setStringVars(int slot) {
 	StringTab *st = &_string[slot];
 	st->xpos = st->t_xpos;
 	st->ypos = st->t_ypos;
@@ -1437,13 +1402,11 @@ void Scumm::setStringVars(int slot)
 	st->charset = st->t_charset;
 }
 
-void Scumm::startManiac()
-{
+void Scumm::startManiac() {
 	warning("stub startManiac()");
 }
 
-void Scumm::destroy()
-{
+void Scumm::destroy() {
 	freeResources();
 
 	free(_objectStateTable);
@@ -1462,8 +1425,7 @@ void Scumm::destroy()
 //
 // Convert an old style direction to a new style one (angle),
 //
-int newDirToOldDir(int dir)
-{
+int newDirToOldDir(int dir) {
 	if (dir >= 71 && dir <= 109)
 		return 1;
 	if (dir >= 109 && dir <= 251)
@@ -1476,8 +1438,7 @@ int newDirToOldDir(int dir)
 //
 // Convert an new style (angle) direction to an old style one.
 //
-int oldDirToNewDir(int dir)
-{
+int oldDirToNewDir(int dir) {
 	const int new_dir_table[4] = { 270, 90, 180, 0 };
 	return new_dir_table[dir];
 }
@@ -1485,8 +1446,7 @@ int oldDirToNewDir(int dir)
 //
 // Convert an angle to a simple direction.
 //
-int toSimpleDir(int dirType, int dir)
-{
+int toSimpleDir(int dirType, int dir) {
 	const int16 many_direction_tab[16] = {
 		71, 109, 251, 289,  -1,  -1,  -1,  -1,
 		22,  72, 107, 157, 202, 252, 287, 337
@@ -1498,27 +1458,23 @@ int toSimpleDir(int dirType, int dir)
 			return i;
 	}
 	return 0;
-
 }
 
 //
 // Convert a simple direction to an angle
 //
-int fromSimpleDir(int dirType, int dir)
-{
+int fromSimpleDir(int dirType, int dir) {
 	if (dirType)
 		return dir * 45;
 	else
 		return dir * 90;
 }
 
-
 //
 // Normalize the given angle - that means, ensure it is positive, and
 // change it to the closest multiple of 45 degree by abusing toSimpleDir.
 //
-int normalizeAngle(int angle)
-{
+int normalizeAngle(int angle) {
 	int temp;
 
 	temp = (angle + 360) % 360;
@@ -1526,8 +1482,7 @@ int normalizeAngle(int angle)
 	return toSimpleDir(1, temp) * 45;
 }
 
-void NORETURN CDECL error(const char *s, ...)
-{
+void NORETURN CDECL error(const char *s, ...) {
 	char buf[1024];
 #if defined( USE_WINDBG ) || defined ( _WIN32_WCE )
 	char buf2[1024];
@@ -1573,7 +1528,7 @@ void NORETURN CDECL error(const char *s, ...)
 #endif
 #endif
 	}
-	
+
 	// Finally exit. quit() will terminate the program if g_system iss present
 	if (g_system)
 		g_system->quit();
@@ -1603,9 +1558,9 @@ void Scumm::waitForTimer(int msec_delay) {
 					_saveLoadSlot = event.kbd.keycode - '0';
 
 					//  don't overwrite autosave (slot 0)
-	                                if (_saveLoadSlot == 0)
+					if (_saveLoadSlot == 0)
 						_saveLoadSlot = 10;
-					
+
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 					_saveLoadCompatible = false;
@@ -1663,7 +1618,6 @@ void Scumm::waitForTimer(int msec_delay) {
 	}
 }
 
-
 void Scumm::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
@@ -1715,8 +1669,7 @@ void Scumm::updatePalette() {
 	_palDirtyMin = 256;
 }
 
-void Scumm::mainRun()
-{
+void Scumm::mainRun() {
 	int delta = 0;
 	int last_time = _system->get_msecs(); 
 	int new_time;
@@ -1734,15 +1687,14 @@ void Scumm::mainRun()
 	}
 }
 
-void Scumm::launch()
-{
+void Scumm::launch() {
 	gdi._vm = this;
 
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
 
 	_verbRedraw = false;
-	
+
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 0, _realWidth, _realHeight, false, false);
 

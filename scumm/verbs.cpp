@@ -27,8 +27,7 @@
 #include "scumm.h"
 #include "verbs.h"
 
-void Scumm::redrawVerbs()
-{
+void Scumm::redrawVerbs() {
 	int i;
 	for (i = 0; i < _maxVerbs; i++)
 		drawVerb(i, 0);
@@ -36,8 +35,7 @@ void Scumm::redrawVerbs()
 	_verbRedraw = false;
 }
 
-void Scumm::checkExecVerbs()
-{
+void Scumm::checkExecVerbs() {
 	int i, over;
 	VerbSlot *vs;
 
@@ -78,8 +76,7 @@ void Scumm::checkExecVerbs()
 	}
 }
 
-void Scumm::verbMouseOver(int verb)
-{
+void Scumm::verbMouseOver(int verb) {
 	if (_verbMouseOver == verb)
 		return;
 
@@ -94,8 +91,7 @@ void Scumm::verbMouseOver(int verb)
 	}
 }
 
-int Scumm::checkMouseOver(int x, int y)
-{
+int Scumm::checkMouseOver(int x, int y) {
 	VerbSlot *vs;
 	int i = _maxVerbs - 1;
 
@@ -116,8 +112,7 @@ int Scumm::checkMouseOver(int x, int y)
 	return 0;
 }
 
-void Scumm::drawVerb(int verb, int mode)
-{
+void Scumm::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
@@ -192,8 +187,7 @@ void Scumm::drawVerb(int verb, int mode)
 	}
 }
 
-void Scumm::restoreVerbBG(int verb)
-{
+void Scumm::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
@@ -204,8 +198,7 @@ void Scumm::restoreVerbBG(int verb)
 	}
 }
 
-void Scumm::drawVerbBitmap(int verb, int x, int y)
-{
+void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	VirtScreen *vs;
 	VerbSlot *vst;
 	byte twobufs, *imptr;
@@ -280,8 +273,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y)
 	vs->alloctwobuffers = twobufs;
 }
 
-int Scumm::getVerbSlot(int id, int mode)
-{
+int Scumm::getVerbSlot(int id, int mode) {
 	int i;
 	for (i = 1; i < _maxVerbs; i++) {
 		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {
@@ -291,8 +283,7 @@ int Scumm::getVerbSlot(int id, int mode)
 	return 0;
 }
 
-void Scumm::killVerb(int slot)
-{
+void Scumm::killVerb(int slot) {
 	VerbSlot *vs;
 
 	if (slot == 0)
@@ -311,8 +302,7 @@ void Scumm::killVerb(int slot)
 	vs->saveid = 0;
 }
 
-void Scumm::setVerbObject(uint room, uint object, uint verb)
-{
+void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	byte *obimptr;
 	byte *obcdptr;
 	uint32 size, size2;

@@ -26,8 +26,7 @@
 #include "resource.h"
 
 
-void Scumm_v3::readIndexFile()
-{
+void Scumm_v3::readIndexFile() {
 	uint16 blocktype;
 	uint32 itemsize;
 	int numblock = 0;
@@ -151,8 +150,7 @@ void Scumm_v3::readIndexFile()
 	closeRoom();
 }
 
-void Scumm_v3::loadCharset(int no)
-{
+void Scumm_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 

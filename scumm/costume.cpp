@@ -28,8 +28,7 @@
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
-void CostumeRenderer::ignorePakCols(int a)
-{
+void CostumeRenderer::ignorePakCols(int a) {
 	int n;
 
 	n = _height;
@@ -78,8 +77,7 @@ const byte cost_scaleTable[256] = {
 	238, 30, 158, 94, 222, 62, 190, 126, 254
 };
 
-byte CostumeRenderer::mainRoutine(int slot, int frame)
-{
+byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	int xmove, ymove, i, b, s;
 	uint scal;
 	byte scaling;
@@ -297,9 +295,9 @@ byte CostumeRenderer::mainRoutine(int slot, int frame)
 	else
 		masking =
 			_vm->isMaskActiveAt(_left, _top, _right, _bottom,
-			                    _vm->getResourceAddress(rtBuffer, 9) +
-			                    _vm->gdi._imgBufOffs[_zbuf] +
-			                    _vm->_screenStartStrip);
+													_vm->getResourceAddress(rtBuffer, 9) +
+													_vm->gdi._imgBufOffs[_zbuf] +
+													_vm->_screenStartStrip);
 
 	if (masking || charsetmask) {
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * _numStrips + _vm->_screenStartStrip;
@@ -362,8 +360,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame)
 	return b;
 }
 
-void CostumeRenderer::proc6()
-{
+void CostumeRenderer::proc6() {
 	byte *src, *dst;
 	byte len, height, pcolor, width;
 	uint y;
@@ -412,8 +409,7 @@ void CostumeRenderer::proc6()
 	} while (1);
 }
 
-void CostumeRenderer::proc5()
-{
+void CostumeRenderer::proc5() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor;
 	uint y, scrheight;
@@ -475,8 +471,7 @@ void CostumeRenderer::proc5()
 	} while (1);
 }
 
-void CostumeRenderer::proc4()
-{
+void CostumeRenderer::proc4() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor;
 	uint y, scrheight;
@@ -538,8 +533,7 @@ void CostumeRenderer::proc4()
 	} while (1);
 }
 
-void CostumeRenderer::proc3()
-{
+void CostumeRenderer::proc3() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
@@ -600,8 +594,7 @@ void CostumeRenderer::proc3()
 	} while (1);
 }
 
-void CostumeRenderer::proc2()
-{
+void CostumeRenderer::proc2() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
@@ -662,8 +655,7 @@ void CostumeRenderer::proc2()
 	} while (1);
 }
 
-void CostumeRenderer::proc1()
-{
+void CostumeRenderer::proc1() {
 	byte *mask, *src, *dst, *dstorg;
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
@@ -721,8 +713,7 @@ void CostumeRenderer::proc1()
 	} while (1);
 }
 
-void CostumeRenderer::proc6_ami()
-{
+void CostumeRenderer::proc6_ami() {
 	byte len;
 	byte *src, *dst;
 	byte width, height, pcolor;
@@ -772,8 +763,7 @@ void CostumeRenderer::proc6_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc5_ami()
-{
+void CostumeRenderer::proc5_ami() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, width, height, pcolor;
 	uint y, scrheight;
@@ -838,8 +828,7 @@ void CostumeRenderer::proc5_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc4_ami()
-{
+void CostumeRenderer::proc4_ami() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, width, height, pcolor;
 	uint y, scrheight;
@@ -902,8 +891,7 @@ void CostumeRenderer::proc4_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc3_ami()
-{
+void CostumeRenderer::proc3_ami() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
@@ -966,8 +954,7 @@ void CostumeRenderer::proc3_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc2_ami()
-{
+void CostumeRenderer::proc2_ami() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
@@ -1031,8 +1018,7 @@ void CostumeRenderer::proc2_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc1_ami()
-{
+void CostumeRenderer::proc1_ami() {
 	byte *mask, *src, *dst;
 	byte maskbit, len, height, pcolor, width;
 	uint y;
@@ -1096,8 +1082,7 @@ void CostumeRenderer::proc1_ami()
 	} while (1);
 }
 
-void CostumeRenderer::proc_special(byte mask2)
-{
+void CostumeRenderer::proc_special(byte mask2) {
 	byte *mask, *src, *dst, *dstorg;
 	byte maskbit, len, height, pcolor, width;
 	uint y;
@@ -1194,11 +1179,9 @@ void CostumeRenderer::proc_special(byte mask2)
 		StartPos:;
 		} while (--len);
 	} while (1);
-
 }
 
-void LoadedCostume::loadCostume(int id)
-{
+void LoadedCostume::loadCostume(int id) {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
 	if (_vm->_features & GF_AFTER_V6) {
@@ -1227,8 +1210,7 @@ void LoadedCostume::loadCostume(int id)
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
-byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb)
-{
+byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	int i;
 	int code;
 
@@ -1252,13 +1234,11 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb)
 
 }
 
-int Scumm::cost_frameToAnim(Actor *a, int frame)
-{
+int Scumm::cost_frameToAnim(Actor *a, int frame) {
 	return newDirToOldDir(a->facing) + frame * 4;
 }
 
-void Scumm::cost_decodeData(Actor *a, int frame, uint usemask)
-{
+void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	byte *p, *r;
 	uint mask, j;
 	int i;
@@ -1332,8 +1312,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask)
 	} while ((uint16)mask);
 }
 
-void CostumeRenderer::setPalette(byte *palette)
-{
+void CostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
@@ -1349,18 +1328,15 @@ void CostumeRenderer::setPalette(byte *palette)
 	}
 }
 
-void CostumeRenderer::setFacing(Actor *a)
-{
+void CostumeRenderer::setFacing(Actor *a) {
 	_mirror = newDirToOldDir(a->facing) != 0 || (_loaded._ptr[7] & 0x80);
 }
 
-void CostumeRenderer::setCostume(int costume)
-{
+void CostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
 
-byte LoadedCostume::increaseAnims(Actor *a)
-{
+byte LoadedCostume::increaseAnims(Actor *a) {
 	int i;
 	byte r = 0;
 
@@ -1371,8 +1347,7 @@ byte LoadedCostume::increaseAnims(Actor *a)
 	return r;
 }
 
-byte LoadedCostume::increaseAnim(Actor *a, int slot)
-{
+byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	int highflag;
 	int i, end;
 	byte code, nc;
@@ -1420,8 +1395,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot)
 	} while (1);
 }
 
-bool Scumm::isCostumeInUse(int cost)
-{
+bool Scumm::isCostumeInUse(int cost) {
 	int i;
 	Actor *a;
 

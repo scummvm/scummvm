@@ -108,7 +108,7 @@ protected:
 public:
 
 	// Constructor, sets all data to 0
-	  Actor() {
+	Actor() {
 		memset(this, 0, sizeof(Actor));
 	} void initActorClass(Scumm *scumm) {
 		_vm = scumm;

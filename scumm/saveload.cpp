@@ -40,23 +40,20 @@ struct SaveGameHeader {
 };
 
 
-void Scumm::requestSave(int slot, const char *name)
-{
+void Scumm::requestSave(int slot, const char *name) {
 	_saveLoadSlot = slot;
 	_saveLoadCompatible = false;
 	_saveLoadFlag = 1;		// 1 for save
 	strcpy(_saveLoadName, name);
 }
 
-void Scumm::requestLoad(int slot)
-{
+void Scumm::requestLoad(int slot) {
 	_saveLoadSlot = slot;
 	_saveLoadCompatible = false;
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr)
-{
+bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
@@ -82,8 +79,7 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr)
 	return true;
 }
 
-bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr)
-{
+bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	int i, j;
@@ -184,23 +180,20 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr)
 	return true;
 }
 
-void Scumm::makeSavegameName(char *out, int slot, bool compatible)
-{
+void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
 	const char *dir = getSavePath();
 
 	sprintf(out, "%s%s.%c%.2d", dir, _game_name, compatible ? 'c' : 's', slot);
 }
 
-void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr)
-{
+void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
 	char prefix[256];
 	makeSavegameName(prefix, 99, false);
 	prefix[strlen(prefix)-2] = 0;
 	mgr->list_savefiles(prefix, marks, num);
 }
 
-bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr)
-{
+bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
@@ -231,8 +224,7 @@ bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr)
 	return true;
 }
 
-void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
-{
+void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, OBIMoffset, sleUint32, VER_V8),
 		MKLINE(ObjectData, OBCDoffset, sleUint32, VER_V8),
@@ -678,8 +670,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 	}
 }
 
-void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
-{
+void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 
@@ -714,13 +705,11 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
 	}
 }
 
-void Serializer::saveBytes(void *b, int len)
-{
+void Serializer::saveBytes(void *b, int len) {
 	_saveLoadStream->fwrite(b, 1, len);
 }
 
-void Serializer::loadBytes(void *b, int len)
-{
+void Serializer::loadBytes(void *b, int len) {
 	_saveLoadStream->fread(b, 1, len);
 }
 
@@ -728,8 +717,7 @@ void Serializer::loadBytes(void *b, int len)
 
 // Perhaps not necessary anymore with latest checks
 
-bool Serializer::checkEOFLoadStream()
-{
+bool Serializer::checkEOFLoadStream() {
 	if (!_saveLoadStream->fseek(1, SEEK_CUR))
 		return true;
 	if (_saveLoadStream->feof())
@@ -741,46 +729,39 @@ bool Serializer::checkEOFLoadStream()
 #endif
 
 
-void Serializer::saveUint32(uint32 d)
-{
+void Serializer::saveUint32(uint32 d) {
 	uint32 e = FROM_LE_32(d);
 	saveBytes(&e, 4);
 }
 
-void Serializer::saveWord(uint16 d)
-{
+void Serializer::saveWord(uint16 d) {
 	uint16 e = FROM_LE_16(d);
 	saveBytes(&e, 2);
 }
 
-void Serializer::saveByte(byte b)
-{
+void Serializer::saveByte(byte b) {
 	saveBytes(&b, 1);
 }
 
-uint32 Serializer::loadUint32()
-{
+uint32 Serializer::loadUint32() {
 	uint32 e;
 	loadBytes(&e, 4);
 	return FROM_LE_32(e);
 }
 
-uint16 Serializer::loadWord()
-{
+uint16 Serializer::loadWord() {
 	uint16 e;
 	loadBytes(&e, 2);
 	return FROM_LE_16(e);
 }
 
-byte Serializer::loadByte()
-{
+byte Serializer::loadByte() {
 	byte e;
 	loadBytes(&e, 1);
 	return e;
 }
 
-void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype)
-{
+void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
 	byte *at = (byte *)b;
 	uint32 data;
 
@@ -824,8 +805,7 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype)
 	}
 }
 
-void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype)
-{
+void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype) {
 	byte *at = (byte *)b;
 	uint32 data;
 
@@ -872,8 +852,7 @@ void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype)
 	}
 }
 
-void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle)
-{
+void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle) {
 	byte *data = (byte *)b;
 
 	if (isSaving()) {
@@ -889,24 +868,21 @@ void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadE
 	}
 }
 
-void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype)
-{
+void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) {
 	if (isSaving())
 		saveArrayOf(b, len, datasize, filetype);
 	else
 		loadArrayOf(b, len, datasize, filetype);
 }
 
-void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle)
-{
+void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 	if (isSaving())
 		saveEntries(d, sle);
 	else
 		loadEntries(d, sle);
 }
 
-void Serializer::saveEntries(void *d, const SaveLoadEntry *sle)
-{
+void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
 	byte type;
 	byte *at;
 	int size;
@@ -938,8 +914,7 @@ void Serializer::saveEntries(void *d, const SaveLoadEntry *sle)
 	}
 }
 
-void Serializer::loadEntries(void *d, const SaveLoadEntry *sle)
-{
+void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 	byte type;
 	byte *at;
 	int size;

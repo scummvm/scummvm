@@ -39,7 +39,6 @@ struct CameraData {		/* Camera state data */
 	bool _movingToActor;
 };
 
-
 struct VirtScreen {		/* Virtual screen areas */
 	int number;
 	uint16 topline;
@@ -74,7 +73,6 @@ struct BlastObject {		/* BlastObjects to draw */
 	uint16 width, height;
 	uint16 scaleX, scaleY;
 	uint16 image;
-
 	uint16 mode;
 };
 

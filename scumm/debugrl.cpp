@@ -1,3 +1,23 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2002/2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ */
+
 #ifdef HAVE_READLINE
 
 #include "debugrl.h"
@@ -14,13 +34,11 @@ char *_debugger_commands[] = {
 	(char *)NULL
 };
 
-
 // forwards decls
 char **scumm_debugger_completion(const char *text, int start, int end);
 char *scumm_debugger_command_generator(const char *text, int state);
 
-void initialize_readline()
-{
+void initialize_readline() {
 	/* Allow conditional parsing of the ~/.inputrc file. */
 	rl_readline_name = "scummvm";
 
@@ -28,11 +46,8 @@ void initialize_readline()
 	rl_attempted_completion_function = scumm_debugger_completion;
 }
 
-char **scumm_debugger_completion(const char *text, int start, int end)
-{
-
+char **scumm_debugger_completion(const char *text, int start, int end) {
 	char **matches;
-
 	matches = (char **)NULL;
 
 	// If this word is at the start of the line, then it is a command
@@ -53,13 +68,10 @@ char **scumm_debugger_completion(const char *text, int start, int end)
 	return (matches);
 }
 
-
 /* Generator function for command completion.  STATE lets us know whether
    to start from scratch; without any state (i.e. STATE == 0), then we
    start at the top of the list. */
-char *scumm_debugger_command_generator(const char *text, int state)
-{
-
+char *scumm_debugger_command_generator(const char *text, int state) {
 	static int list_index, len;
 	char *name;
 

@@ -26,8 +26,7 @@
 #include "scumm.h"
 class NutRenderer; // V8 Font Renderer
 
-class Scumm_v5 : public Scumm
-{
+class Scumm_v5 : public Scumm {
 protected:
 	typedef void (Scumm_v5::*OpcodeProcV5)();
 	struct OpcodeEntryV5 {
@@ -36,7 +35,7 @@ protected:
 	};
 	
 	const OpcodeEntryV5 *_opcodesV5;
-	
+
 public:
 	Scumm_v5(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
 
@@ -154,13 +153,12 @@ protected:
 	void o5_walkActorTo();
 	void o5_walkActorToActor();
 	void o5_walkActorToObject();
-    void o5_oldRoomEffect();
+	void o5_oldRoomEffect();
 	void o5_pickupObjectOld();
 };
 
 // FIXME - subclassing V2 from Scumm_v5 is a hack: V2 should have its own opcode table
-class Scumm_v2 : public Scumm_v5
-{
+class Scumm_v2 : public Scumm_v5 {
 public:
 	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
 
@@ -170,8 +168,7 @@ public:
 // FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
 // accordingly - that would be more logical I guess. However, if you do so, take care
 // of preserving the right readIndexFile / loadCharset !!!
-class Scumm_v3 : public Scumm_v5
-{
+class Scumm_v3 : public Scumm_v5 {
 public:
 	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
 
@@ -179,16 +176,14 @@ public:
 	virtual void loadCharset(int no);
 };
 
-class Scumm_v4 : public Scumm_v3
-{
+class Scumm_v4 : public Scumm_v3 {
 public:
 	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
 
 	void loadCharset(int no);
 };
 
-class Scumm_v6 : public Scumm
-{
+class Scumm_v6 : public Scumm {
 protected:
 	typedef void (Scumm_v6::*OpcodeProcV6)();
 	struct OpcodeEntryV6 {
@@ -389,8 +384,7 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
-class Scumm_v7 : public Scumm_v6
-{
+class Scumm_v7 : public Scumm_v6 {
 public:
 	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm_v6(detector, syst) {}
 
@@ -398,8 +392,7 @@ protected:
 	virtual void setupScummVars();
 };
 
-class Scumm_v8 : public Scumm_v6
-{
+class Scumm_v8 : public Scumm_v6 {
 protected:
 	typedef void (Scumm_v8::*OpcodeProcV8)();
 	struct OpcodeEntryV8 {

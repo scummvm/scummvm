@@ -85,14 +85,14 @@ static ResString string_map_table_v7[] = {
 	{96, "game name and version"}, //that's how it's supposed to be
 	{77, "Select a game to LOAD"},
 	{76, "Name your SAVE game"},
-        {70, "save"}, //boot8
+	{70, "save"}, //boot8
 	{71, "load"}, //boot9
 	{72, "play"}, //boot10
 	{73, "cancel"}, //boot11
 	{74, "quit"}, //boot12
 	{75, "ok"}, //boot13
 	{85, "game paused"}, // boot3					
-	
+
 	/* this is the almost complete string map for v7
 	{63, "how may I serve you?"},
 	{64, "the dig v1.0"}, //(game name/version)
@@ -158,15 +158,13 @@ static ResString string_map_table_v5[] = {
 #pragma mark -
 
 
-void ScummDialog::addResText(int x, int y, int w, int h, int resID)
-{
+void ScummDialog::addResText(int x, int y, int w, int h, int resID) {
 	// Get the string
 	new StaticTextWidget(this, x, y, w, h, queryResString(resID), kTextAlignCenter);
 }
 
 
-const ScummVM::String ScummDialog::queryResString(int stringno)
-{
+const ScummVM::String ScummDialog::queryResString(int stringno) {
 	char *result;
 	int string;
 
@@ -184,7 +182,7 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 	if (result && *result == '/') {
 		byte tmp[256];
 		_scumm->translateText((byte *)result, tmp);
-		strcpy(result, (char*)tmp);
+		strcpy(result, (char *)tmp);
 	}
 
 	if (!result || *result == '\0') {								// Gracelessly degrade to english :)
@@ -234,7 +232,7 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 				
 				for (i = 1; i < _scumm->_maxVerbs; i++) {
 					if (value == _scumm->_verbs[i].verbid && !_scumm->_verbs[i].type && !_scumm->_verbs[i].saveid) {
-						char* verb = (char*)_scumm->getResourceAddress(rtVerb, i);
+						char *verb = (char *)_scumm->getResourceAddress(rtVerb, i);
 						if (verb) {
 							tmp += verb;
 						}
@@ -250,7 +248,7 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 				if (!value)
 					break;
 
-				char* name = (char*)_scumm->getObjOrActorName(value);
+				char *name = (char *)_scumm->getObjOrActorName(value);
 				if (name) {
 					tmp += name;
 				}
@@ -263,7 +261,7 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 					value = _scumm->readVar(value);
 
 				if (value) {
-					char *str = (char*)_scumm->getStringAddress(value);
+					char *str = (char *)_scumm->getStringAddress(value);
 					if (str) {
 						tmp += str;
 					}
@@ -290,11 +288,9 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 	return tmp;
 }
 
-const char *ScummDialog::queryCustomString(int stringno)
-{
+const char *ScummDialog::queryCustomString(int stringno) {
 	return string_map_table_custom[stringno];
 }
-
 
 #pragma mark -
 
@@ -307,26 +303,24 @@ enum {
 };
 
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 18, 260, 162)
-{
+	: ScummDialog(gui, scumm, 30, 18, 260, 162) {
 	const int x = 196;
 
 	// The headline
 	addResText(0, 7, 260, 16, 1);
-	
+
 	// The five buttons on the side
 	_saveButton = addPushButton(x, 20, queryResString(4), kSaveCmd, 'S');
 	_loadButton = addPushButton(x, 40, queryResString(5), kLoadCmd, 'L');
 	addButton(x, 60, queryResString(6), kPlayCmd, 'P');	// Play
 	addButton(x, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
 	addButton(x, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
-	
+
 	// The save game list
 	_savegameList = new ListWidget(this, 8, 20, 182, 134);
 }
 
-void SaveLoadDialog::open()
-{
+void SaveLoadDialog::open() {
 	switchToLoadMode();
 
 #ifdef _WIN32_WCE
@@ -336,8 +330,7 @@ void SaveLoadDialog::open()
 	ScummDialog::open();
 }
 
-void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
 		if (!_saveMode) {
@@ -392,16 +385,14 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void SaveLoadDialog::close() {
-
-	ScummDialog::close();	
+	ScummDialog::close();
 
 #ifdef _WIN32_WCE
 	force_keyboard(false);
 #endif
 }
 
-void SaveLoadDialog::fillList()
-{
+void SaveLoadDialog::fillList() {
 	// Get savegame names
 	ScummVM::StringList l;
 	char name[32];
@@ -424,22 +415,19 @@ void SaveLoadDialog::fillList()
 	_savegameList->setNumberingMode(_saveMode ? kListNumberingOne : kListNumberingZero);
 }
 
-void SaveLoadDialog::save()
-{
+void SaveLoadDialog::save() {
 	// Save the selected item
 	_scumm->requestSave(_savegameList->getSelected() + 1, _savegameList->getSelectedString().c_str());
 	close();
 }
 
-void SaveLoadDialog::load()
-{
+void SaveLoadDialog::load() {
 	// Load the selected item
 	_scumm->requestLoad(_savegameList->getSelected());
 	close();
 }
 
-void SaveLoadDialog::switchToSaveMode()
-{
+void SaveLoadDialog::switchToSaveMode() {
 	_saveMode = true;
 	_saveButton->setState(true);
 	_loadButton->setState(false);
@@ -450,8 +438,7 @@ void SaveLoadDialog::switchToSaveMode()
 	draw();
 }
 
-void SaveLoadDialog::switchToLoadMode()
-{
+void SaveLoadDialog::switchToLoadMode() {
 	_saveMode = false;
 	_saveButton->setState(false);
 	_loadButton->setState(true);
@@ -462,9 +449,7 @@ void SaveLoadDialog::switchToLoadMode()
 	draw();
 }
 
-
 #pragma mark -
-
 
 enum {
 	kMasterVolumeChanged	= 'mavc',
@@ -480,8 +465,7 @@ enum {
 };
 
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 40, 30, 240, 124)
-{
+	: ScummDialog(gui, scumm, 40, 30, 240, 124) {
 	//
 	// Add the buttons
 	//
@@ -492,7 +476,6 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 #ifdef _WIN32_WCE
 	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
 #endif
-
 
 	//
 	// Sound controllers
@@ -523,7 +506,6 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	subtitlesCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
 	amigaPalCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga palette conversion", 0, 'P');
 
-
 	//
 	// Finally create the sub dialogs
 	//
@@ -533,16 +515,14 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 #endif
 }
 
-OptionsDialog::~OptionsDialog()
-{
+OptionsDialog::~OptionsDialog() {
 	delete _aboutDialog;
 #ifdef _WIN32_WCE
 	delete _keysDialog;
 #endif
 }
 
-void OptionsDialog::open()
-{
+void OptionsDialog::open() {
 	ScummDialog::open();
 
 	// display current sound settings
@@ -563,8 +543,7 @@ void OptionsDialog::open()
 	amigaPalCheckbox->setState((_scumm->_features & GF_AMIGA) != 0);
 }
 
-void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
+void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
 #ifdef _WIN32_WCE
@@ -632,8 +611,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 #pragma mark -
 
 AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 124)
-{
+	: ScummDialog(gui, scumm, 30, 20, 260, 124) {
 	addButton(110, 100, queryCustomString(23), kCloseCmd, 'C');	// Close dialog - FIXME
 	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 30, 240, 16, "http://www.scummvm.org", kTextAlignCenter);
@@ -645,21 +623,18 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 #pragma mark -
 
 InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, int res)
-	: ScummDialog(gui, scumm, 0, 80, 0, 16) // dummy x and w
-{
+: ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(queryResString (res));
 }
 
 InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, const String& message)
-	: ScummDialog(gui, scumm, 0, 80, 0, 16) // dummy x and w
-{
+: ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(message);
 }
 
-void InfoDialog::setInfoText(const String& message)
-{
+void InfoDialog::setInfoText(const String& message) {
 	int width = _gui->getStringWidth(message.c_str()) + 16;
-	
+
 	_x = (_scumm->_realWidth - width) >> 1;
 	_w = width;
 
@@ -669,8 +644,7 @@ void InfoDialog::setInfoText(const String& message)
 #pragma mark -
 
 PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
-	: InfoDialog(gui, scumm, 10)
-{
+	: InfoDialog(gui, scumm, 10) {
 }
 
 #ifdef _WIN32_WCE
@@ -683,18 +657,17 @@ enum {
 
 
 KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 160)
-{	
+	: ScummDialog(gui, scumm, 30, 20, 260, 160) {
 	addButton(200, 20, queryCustomString(24), kMapCmd, 'M');	// Map
 	addButton(200, 40, "OK", kOKCmd, 'O');						// OK
 	addButton(200, 60, "Cancel", kCancelCmd, 'C');				// Cancel
-	
+
 	_actionsList = new ListWidget(this, 10, 20, 180, 90);
 	_actionsList->setNumberingMode(kListNumberingZero);
 
 	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, queryCustomString(25), kTextAlignCenter);
 	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
-	
+
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);
 
@@ -711,7 +684,6 @@ KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
 }
 
 void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-
 	switch(cmd) {
 
 	case kListSelectionChangedCmd:

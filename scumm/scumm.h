@@ -61,11 +61,11 @@ enum {
 
 struct ScummPoint {
 	int x, y;
-	bool operator ==(const ScummPoint &p) const
+	bool operator == (const ScummPoint &p) const
 	{
 		return p.x == x && p.y == y;
 	}
-	bool operator !=(const ScummPoint &p) const
+	bool operator != (const ScummPoint &p) const
 	{
 		return p.x != x || p.y != y;
 	}
@@ -319,7 +319,7 @@ public:
 	// Scumm main loop
 	void mainRun();
 	int scummLoop(int delta);
-	
+
 	// Event handling
 	void waitForTimer(int msec_delay);
 	void processKbd();
@@ -442,15 +442,13 @@ protected:
 
 	bool saveState(int slot, bool compat, SaveFileManager *mgr);
 	bool loadState(int slot, bool compat, SaveFileManager *mgr);
-	bool saveState(int slot, bool compat)
-	{
+	bool saveState(int slot, bool compat) {
 		SaveFileManager *mgr = _system->get_savefile_manager();
 		bool result = saveState(slot, compat, mgr);
 		delete mgr;
 		return result;
 	}
-	bool loadState(int slot, bool compat)
-	{
+	bool loadState(int slot, bool compat) {
 		SaveFileManager *mgr = _system->get_savefile_manager();
 		bool result = loadState(slot, compat, mgr);
 		delete mgr;
@@ -600,7 +598,7 @@ public:
 	int _lastLoadedRoom, _roomResource;
 	byte *findResourceData(uint32 tag, byte *ptr);
 	int getResourceDataSize(byte *ptr);
-	
+
 	int getArrayId();
 	void nukeArray(int a);
 	int defineArray(int a, int b, int c, int d);
@@ -934,7 +932,7 @@ public:
 	Box *getBoxBaseAddr(int box);
 	byte getBoxFlags(int box);
 	int getBoxScale(int box);
-	
+
 	int getScale(int box, int x, int y);
 	void setScaleItem(int slot, int a, int b, int c, int d);
 
@@ -1074,7 +1072,7 @@ public:
 	byte VAR_SOUNDRESULT;
 	byte VAR_TALKSTOP_KEY;
 	byte VAR_59;
-	
+
 	byte VAR_SOUNDPARAM;
 	byte VAR_SOUNDPARAM2;
 	byte VAR_SOUNDPARAM3;

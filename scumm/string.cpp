@@ -28,8 +28,7 @@
 #include "verbs.h"
 #include "scumm/sound.h"
 
-void Scumm::unkMessage1()
-{
+void Scumm::unkMessage1() {
 	byte buffer[100];
 	_msgPtrToAdd = buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
@@ -54,8 +53,7 @@ void Scumm::unkMessage1()
 	} 
 }
 
-void Scumm::unkMessage2()
-{
+void Scumm::unkMessage2() {
 	byte buf[100], *tmp;
 
 	_msgPtrToAdd = buf;
@@ -73,9 +71,7 @@ void Scumm::unkMessage2()
 	_messagePtr = tmp;
 }
 
-
-void Scumm::CHARSET_1()
-{
+void Scumm::CHARSET_1() {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
 	int s, i, t, c;
@@ -143,7 +139,6 @@ void Scumm::CHARSET_1()
 		_charset->setCurID(a->charset);
 	else
 		_charset->setCurID(_string[0].charset);
-
 
 	_charset->_center = _string[0].center;
 	_charset->_right = _string[0].right;
@@ -345,8 +340,7 @@ void Scumm::CHARSET_1()
 	gdi._mask_bottom = _charset->_strBottom;
 }
 
-void Scumm::description()
-{
+void Scumm::description() {
 	int c;
 	byte *buf;
 
@@ -390,8 +384,7 @@ void Scumm::description()
 	gdi._mask_bottom = _charset->_strBottom;
 }
 
-void Scumm::drawDescString(byte *msg)
-{
+void Scumm::drawDescString(byte *msg) {
 	byte c, *buf, buffer[256];
 
 	buf = _msgPtrToAdd = buffer;
@@ -435,8 +428,7 @@ void Scumm::drawDescString(byte *msg)
 	gdi._mask_bottom = _charset->_strBottom;
 }
 
-void Scumm::drawString(int a)
-{
+void Scumm::drawString(int a) {
 	byte buf[256];
 	byte *space;
 	int i;
@@ -561,8 +553,7 @@ void Scumm::drawString(int a)
 	} 
 }
 
-byte *Scumm::addMessageToStack(byte *msg)
-{
+byte *Scumm::addMessageToStack(byte *msg) {
 	int num, numorg;
 	unsigned char *ptr, chr;
 
@@ -677,8 +668,7 @@ byte *Scumm::addMessageToStack(byte *msg)
 	return msg;
 }
 
-void Scumm::addIntToStack(int var)
-{
+void Scumm::addIntToStack(int var) {
 	int num, max;
 	byte flag;
 
@@ -762,8 +752,7 @@ void Scumm::addNameToStack(int var)
 	}
 }
 
-void Scumm::addStringToStack(int var)
-{
+void Scumm::addStringToStack(int var) {
 	byte *ptr;
 
 	if (_features & GF_AFTER_V6 || _gameId == GID_INDY3_256)
@@ -793,8 +782,7 @@ void Scumm::addStringToStack(int var)
 		addMessageToStack((byte *)"");
 }
 
-void Scumm::initCharset(int charsetno)
-{
+void Scumm::initCharset(int charsetno) {
 	int i;
 
 	if (_features & GF_OLD256)
@@ -812,8 +800,7 @@ void Scumm::initCharset(int charsetno)
 		_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 }
 
-int indexCompare(const void *p1, const void *p2)
-{
+int indexCompare(const void *p1, const void *p2) {
 	struct langIndexNode *i1 = (struct langIndexNode *) p1;
 	struct langIndexNode *i2 = (struct langIndexNode *) p2;
 
@@ -838,7 +825,7 @@ void Scumm::loadLanguageBundle() {
 	}
 
 	size = file.size();
-	_languageBuffer = (char*)malloc(size);
+	_languageBuffer = (char *)malloc(size);
 	file.read(_languageBuffer, size);
 	file.close();
 
@@ -916,7 +903,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 				target.tag[l] = toupper(text[l + 1]);
 			target.tag[l] = 0;
 
-			found = (struct langIndexNode *) bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
+			found = (struct langIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
 
 			if (found != NULL) {
 				File file;
@@ -967,7 +954,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 			// skip translation if flag 'h' exist
 			if (buf[pos] == 'h') {
 				pos += 3;
-				byte *pointer = (byte *)strchr((char*)text + 1, '/');
+				byte *pointer = (byte *)strchr((char *)text + 1, '/');
 				if (pointer != NULL)
 					memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 				else
@@ -1028,7 +1015,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 	}
 
 	if (text[0] == '/') {
-		byte *pointer = (byte *)strchr((char*)text + 1, '/');
+		byte *pointer = (byte *)strchr((char *)text + 1, '/');
 		if (pointer != NULL)
 			memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 		else

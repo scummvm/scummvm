@@ -25,8 +25,7 @@
 #include "resource.h"
 
 
-void Scumm_v2::readIndexFile()
-{
+void Scumm_v2::readIndexFile() {
 	int magic = 0;
 	debug(9, "readIndexFile()");
 

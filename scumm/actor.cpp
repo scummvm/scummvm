@@ -32,8 +32,7 @@
 
 #include <math.h>
 
-void Actor::initActor(int mode)
-{
+void Actor::initActor(int mode) {
 	if (mode == 1) {
 		costume = 0;
 		room = 0;
@@ -91,14 +90,12 @@ void Actor::initActor(int mode)
 	}
 }
 
-void Actor::stopActorMoving()
-{
+void Actor::stopActorMoving() {
 	_vm->stopScriptNr(walk_script);
 	moving = 0;
 }
 
-void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY)
-{
+void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	if (newSpeedX == speedx && newSpeedY == speedy)
 		return;
 
@@ -110,8 +107,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY)
 	}
 }
 
-int Scumm::getAngleFromPos(int x, int y)
-{
+int Scumm::getAngleFromPos(int x, int y) {
 	if (_gameId == GID_DIG || _gameId == GID_CMI) {
 		double temp = atan2((double)x, (double)-y);
 		return normalizeAngle((int)(temp * 180 / 3.1415926535));
@@ -128,8 +124,7 @@ int Scumm::getAngleFromPos(int x, int y)
 	}
 }
 
-int Actor::calcMovementFactor(int newX, int newY)
-{
+int Actor::calcMovementFactor(int newX, int newY) {
 	int actorX, actorY;
 	int diffX, diffY;
 	int32 XYFactor, YXFactor;
@@ -181,8 +176,7 @@ int Actor::calcMovementFactor(int newX, int newY)
 	return actorWalkStep();
 }
 
-int Actor::remapDirection(int dir, bool is_walking)
-{
+int Actor::remapDirection(int dir, bool is_walking) {
 	int specdir;
 	byte flags;
 	bool flipX;
@@ -250,8 +244,7 @@ int Actor::remapDirection(int dir, bool is_walking)
 	return normalizeAngle(dir) | 1024;
 }
 
-int Actor::updateActorDirection(bool is_walking)
-{
+int Actor::updateActorDirection(bool is_walking) {
 	int from, to;
 	int diff;
 	int dirType;
@@ -290,16 +283,12 @@ int Actor::updateActorDirection(bool is_walking)
 	return dir;
 }
 
-void Actor::setBox(int box)
-{
+void Actor::setBox(int box) {
 	walkbox = box;
-
 	setupActorScale();
 }
 
-
-int Actor::actorWalkStep()
-{
+int Actor::actorWalkStep() {
 	int tmpX, tmpY;
 	int actorX, actorY;
 	int distX, distY;
@@ -353,8 +342,7 @@ int Actor::actorWalkStep()
 }
 
 
-void Actor::setupActorScale()
-{
+void Actor::setupActorScale() {
 	uint16 scale;
 
 	if (_vm->_features & GF_NO_SCALLING) {
@@ -408,8 +396,7 @@ void Actor::setupActorScale()
 	scaley = (byte)scale;
 }
 
-void Actor::startAnimActor(int f)
-{
+void Actor::startAnimActor(int f) {
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		switch (f) {
 		case 1001:
@@ -482,8 +469,7 @@ void Actor::startAnimActor(int f)
 	}
 }
 
-void Actor::animateActor(int anim)
-{
+void Actor::animateActor(int anim) {
 	int cmd, dir;
 
 	if (_vm->_features & GF_NEW_COSTUMES) {
@@ -521,8 +507,7 @@ void Actor::animateActor(int anim)
 	}
 }
 
-void Actor::setDirection(int direction)
-{
+void Actor::setDirection(int direction) {
 	uint aMask;
 	int i;
 	uint16 vald;
@@ -550,8 +535,7 @@ void Actor::setDirection(int direction)
 	needBgReset = true;
 }
 
-void Actor::putActor(int dstX, int dstY, byte newRoom)
-{
+void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	if (visible && _vm->_currentRoom != newRoom && _vm->_vars[_vm->VAR_TALK_ACTOR] == number) {
 		_vm->clearMsgQueue();
 	}
@@ -582,8 +566,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom)
 	}
 }
 
-int Actor::getActorXYPos(int &xPos, int &yPos)
-{
+int Actor::getActorXYPos(int &xPos, int &yPos) {
 	if (!isInCurrentRoom())
 		return -1;
 
@@ -592,8 +575,7 @@ int Actor::getActorXYPos(int &xPos, int &yPos)
 	return 0;
 }
 
-AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
-{
+AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
 	AdjustBoxResult abr, tmp;
 	uint threshold;
 	uint best;
@@ -691,8 +673,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 	return abr;
 }
 
-void Actor::adjustActorPos()
-{
+void Actor::adjustActorPos() {
 	AdjustBoxResult abr;
 	byte flags;
 
@@ -719,8 +700,7 @@ void Actor::adjustActorPos()
 	}
 }
 
-void Actor::factToObject(int obj)
-{
+void Actor::factToObject(int obj) {
 	int x2, y2, dir;
 	
 	if (!isInCurrentRoom())
@@ -733,8 +713,7 @@ void Actor::factToObject(int obj)
 	turnToDirection(dir);
 }
 
-void Actor::turnToDirection(int newdir)
-{
+void Actor::turnToDirection(int newdir) {
 	if (newdir == -1)
 		return;
 
@@ -746,8 +725,7 @@ void Actor::turnToDirection(int newdir)
 	}
 }
 
-void Actor::hideActor()
-{
+void Actor::hideActor() {
 	if (!visible)
 		return;
 
@@ -761,8 +739,7 @@ void Actor::hideActor()
 	needBgReset = true;
 }
 
-void Actor::showActor()
-{
+void Actor::showActor() {
 	if (_vm->_currentRoom == 0 || visible)
 		return;
 
@@ -779,8 +756,7 @@ void Actor::showActor()
 	needRedraw = true;
 }
 
-void Scumm::showActors()
-{
+void Scumm::showActors() {
 	int i;
 	Actor *a;
 
@@ -791,8 +767,7 @@ void Scumm::showActors()
 	}
 }
 
-void Scumm::stopTalk()
-{
+void Scumm::stopTalk() {
 	int act;
 
 	_sound->stopTalkSound();
@@ -813,14 +788,12 @@ void Scumm::stopTalk()
 	restoreCharsetBg();
 }
 
-void Scumm::clearMsgQueue()
-{
+void Scumm::clearMsgQueue() {
 	_messagePtr = (byte *)" ";
 	stopTalk();
 }
 
-void Scumm::walkActors()
-{
+void Scumm::walkActors() {
 	int i;
 	Actor *a;
 
@@ -835,8 +808,7 @@ void Scumm::walkActors()
 }
 
 /* Used in Scumm v5 only. Play sounds associated with actors */
-void Scumm::playActorSounds()
-{
+void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
 
@@ -857,13 +829,12 @@ void Scumm::playActorSounds()
 
 #define DRAW_ORDER(x)	((x)->y - ((x)->layer << 11))
 
-void Scumm::processActors()
-{
+void Scumm::processActors() {
 	int i;
 	Actor **actors, *a, **ac, **ac2, *tmp, **end;
 	int numactors = 0;
 
-	actors = new Actor*[NUM_ACTORS];
+	actors = new Actor * [NUM_ACTORS];
 	
 	// Make a list of all actors in this room
 	for (i = 1; i < NUM_ACTORS; i++) {
@@ -907,8 +878,7 @@ void Scumm::processActors()
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
-void Scumm::processUpperActors()
-{
+void Scumm::processUpperActors() {
 	Actor *a;
 	int i;
 
@@ -922,8 +892,7 @@ void Scumm::processUpperActors()
 	}
 }
 
-void Actor::drawActorCostume()
-{
+void Actor::drawActorCostume() {
 	if (!needRedraw)
 		return;
 
@@ -1054,8 +1023,7 @@ void Actor::drawActorCostume()
 	}
 }
 
-void Actor::animateCostume()
-{
+void Actor::animateCostume() {
 	if (costume == 0)
 		return;
 
@@ -1081,8 +1049,7 @@ void Actor::animateCostume()
 	}
 }
 
-void Actor::animateLimb(int limb, int f)
-{
+void Actor::animateLimb(int limb, int f) {
 	// This methods is very similiar to animateCostume(). 
 	// However, instead of animating *all* the limbs, it only animates
 	// the specified limb to be at the frame specified by "f". 
@@ -1117,9 +1084,7 @@ void Actor::animateLimb(int limb, int f)
 	}
 }
 
-
-void Scumm::setActorRedrawFlags(bool fg, bool bg)
-{
+void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 	int i, j;
 
 	if (_fullRedraw) {
@@ -1149,8 +1114,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 	}
 }
 
-int Scumm::getActorFromPos(int x, int y)
-{
+int Scumm::getActorFromPos(int x, int y) {
 	int i;
 
 	if (!testGfxAnyUsageBits(x >> 3))
@@ -1165,8 +1129,7 @@ int Scumm::getActorFromPos(int x, int y)
 	return 0;
 }
 
-void Scumm::actorTalk()
-{
+void Scumm::actorTalk() {
 	int oldact;
 	Actor *a;
 
@@ -1210,8 +1173,7 @@ void Scumm::actorTalk()
 	CHARSET_1();
 }
 
-void Actor::setActorCostume(int c)
-{
+void Actor::setActorCostume(int c) {
 	int i;
 
 	costumeNeedsInit = true;
@@ -1236,8 +1198,7 @@ void Actor::setActorCostume(int c)
 
 }
 
-void Actor::startWalkActor(int destX, int destY, int dir)
-{
+void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
 	abr = adjustXYToBeInBox(destX, destY, walkbox);
@@ -1284,8 +1245,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 	walkdata.curbox = walkbox;
 }
 
-void Actor::startWalkAnim(int cmd, int angle)
-{
+void Actor::startWalkAnim(int cmd, int angle) {
 	if (angle == -1)
 		angle = facing;
 
@@ -1321,8 +1281,7 @@ void Actor::startWalkAnim(int cmd, int angle)
 	}
 }
 
-void Actor::walkActor()
-{
+void Actor::walkActor() {
 	int j;
 	int16 foundPathX, foundPathY;
 
@@ -1382,8 +1341,7 @@ void Actor::walkActor()
 	calcMovementFactor(walkdata.destx, walkdata.desty);
 }
 
-void Actor::walkActorOld()
-{
+void Actor::walkActorOld() {
 	ScummPoint gateLoc[5];	// Gate locations
 	int new_dir, next_box;
 
@@ -1475,16 +1433,14 @@ void Actor::walkActorOld()
 	goto restart;
 }
 
-byte *Actor::getActorName()
-{
+byte *Actor::getActorName() {
 	byte *ptr = _vm->getResourceAddress(rtActorName, number);
 	if (ptr == NULL)
 		return (byte *)" ";
 	return ptr;
 }
 
-void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
-{
+void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold) {
 	byte *akos, *rgbs, *akpl;
 	int akpl_size, i;
 	int r, g, b;
@@ -1558,8 +1514,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	}
 }
 
-void Scumm::resetActorBgs()
-{
+void Scumm::resetActorBgs() {
 	Actor *a;
 	int i, j;
 
@@ -1581,8 +1536,7 @@ void Scumm::resetActorBgs()
 	}
 }
 
-void Actor::classChanged(int cls, bool value)
-{
+void Actor::classChanged(int cls, bool value) {
 	switch(cls) {
 	case 20:	// Never clip
 		break;
@@ -1601,7 +1555,6 @@ void Actor::classChanged(int cls, bool value)
 	}
 }
 
-bool Actor::isInClass(int cls)
-{
+bool Actor::isInClass(int cls) {
 	return _vm->getClass(number, cls);
 }

@@ -66,7 +66,6 @@ public:
 	virtual int getFontHeight() = 0;
 };
 
-
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
@@ -92,7 +91,6 @@ public:
 	
 	void printChar(int chr);
 };
-
 
 class CharsetRendererOld256 : public CharsetRendererCommon {
 protected:

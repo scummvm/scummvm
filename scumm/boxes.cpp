@@ -78,8 +78,7 @@ struct PathVertex {		/* Linked list of walkpath nodes */
 PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 
 
-byte Scumm::getMaskFromBox(int box)
-{
+byte Scumm::getMaskFromBox(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
@@ -90,8 +89,7 @@ byte Scumm::getMaskFromBox(int box)
 		return ptr->old.mask;
 }
 
-void Scumm::setBoxFlags(int box, int val)
-{
+void Scumm::setBoxFlags(int box, int val) {
 	debug(2, "setBoxFlags(%d, 0x%02x)", box, val);
 
 	/* FULL_THROTTLE stuff */
@@ -108,8 +106,7 @@ void Scumm::setBoxFlags(int box, int val)
 	}
 }
 
-byte Scumm::getBoxFlags(int box)
-{
+byte Scumm::getBoxFlags(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
@@ -119,8 +116,7 @@ byte Scumm::getBoxFlags(int box)
 		return ptr->old.flags;
 }
 
-void Scumm::setBoxScale(int box, int scale)
-{
+void Scumm::setBoxScale(int box, int scale) {
 	Box *b = getBoxBaseAddr(box);
 	if (_features & GF_AFTER_V8)
 		b->v8.scale = TO_LE_32(scale);
@@ -128,14 +124,12 @@ void Scumm::setBoxScale(int box, int scale)
 		b->old.scale = TO_LE_16(scale);
 }
 
-void Scumm::setBoxScaleSlot(int box, int slot)
-{
+void Scumm::setBoxScaleSlot(int box, int slot) {
 	Box *b = getBoxBaseAddr(box);
 	b->v8.scaleSlot = TO_LE_32(slot);
 }
 
-int Scumm::getScale(int box, int x, int y)
-{
+int Scumm::getScale(int box, int x, int y) {
 	Box *ptr = getBoxBaseAddr(box);
 	assert(ptr);
 
@@ -148,19 +142,19 @@ int Scumm::getScale(int box, int x, int y)
 
 			if (s.y1 == s.y2 && s.x1 == s.x2)
 				error("Invalid scale slot %d", slot);
-			
+
 			if (s.y1 != s.y2) {
 				if (y < 0)
 					y = 0;
-				
+
 				scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
 				if (s.x1 == s.x2) {
 					return scaleY;
 				}
 			}
-		
+
 			scaleX = (s.scale2 - s.scale1) * (x - s.x1) / (s.x2 - s.x1) + s.scale1;
-		
+
 			if (s.y1 == s.y2) {
 				return scaleX;
 			} else {
@@ -187,8 +181,7 @@ int Scumm::getScale(int box, int x, int y)
 	}
 }
 
-int Scumm::getBoxScale(int box)
-{
+int Scumm::getBoxScale(int box) {
 	if (_features & GF_NO_SCALLING)
 		return 255;
 	Box *ptr = getBoxBaseAddr(box);
@@ -200,8 +193,7 @@ int Scumm::getBoxScale(int box)
 		return FROM_LE_16(ptr->old.scale);
 }
 
-byte Scumm::getNumBoxes()
-{
+byte Scumm::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return 0;
@@ -211,8 +203,7 @@ byte Scumm::getNumBoxes()
 		return ptr[0];
 }
 
-Box *Scumm::getBoxBaseAddr(int box)
-{
+Box *Scumm::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return NULL;
@@ -228,8 +219,7 @@ Box *Scumm::getBoxBaseAddr(int box)
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
 
-int Scumm::getSpecialBox(int x, int y)
-{
+int Scumm::getSpecialBox(int x, int y) {
 	int i;
 	int numOfBoxes;
 	byte flag;
@@ -249,8 +239,7 @@ int Scumm::getSpecialBox(int x, int y)
 	return (-1);
 }
 
-bool Scumm::checkXYInBoxBounds(int b, int x, int y)
-{
+bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
 	if (b == 0 && (!(_features & GF_SMALL_HEADER)))
@@ -294,8 +283,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 	return true;
 }
 
-void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box)
-{
+void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
 
 	if (_features & GF_AFTER_V8) {
@@ -343,8 +331,7 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box)
 	}
 }
 
-uint Scumm::distanceFromPt(int x, int y, int ptx, int pty)
-{
+uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
 	int diffx, diffy;
 
 	diffx = abs(ptx - x);
@@ -361,8 +348,7 @@ uint Scumm::distanceFromPt(int x, int y, int ptx, int pty)
 	return diffx + diffy;
 }
 
-ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y)
-{
+ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
 	int lydiff, lxdiff;
 	int32 dist, a, b, c;
 	int x2, y2;
@@ -441,8 +427,7 @@ ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int
 	return pt;
 }
 
-bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold)
-{
+bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 	int t;
 	BoxCoords box;
 
@@ -470,12 +455,11 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold)
 	return true;
 }
 
-AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y)
-{
+AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 	ScummPoint pt;
 	AdjustBoxResult best;
 	uint dist;
-	uint bestdist = (uint) 0xFFFF;
+	uint bestdist = (uint)0xFFFF;
 	BoxCoords box;
 
 	getBoxCoordinates(b, &box);
@@ -516,8 +500,7 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y)
 	return best;
 }
 
-byte *Scumm::getBoxMatrixBaseAddr()
-{
+byte *Scumm::getBoxMatrixBaseAddr() {
 	byte *ptr = getResourceAddress(rtMatrix, 1);
 	if (*ptr == 0xFF)
 		ptr++;
@@ -530,8 +513,7 @@ byte *Scumm::getBoxMatrixBaseAddr()
  * way to 'to' (this can be 'to' itself or a third box).
  * If there is no connection -1 is return.
  */
-int Scumm::getPathToDestBox(byte from, byte to)
-{
+int Scumm::getPathToDestBox(byte from, byte to) {
 	byte *boxm;
 	byte i;
 	int dest = -1;
@@ -561,8 +543,7 @@ int Scumm::getPathToDestBox(byte from, byte to)
  * Computes the next point actor a has to walk towards in a straight
  * line in order to get from box1 to box3 via box2.
  */
-bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY)
-{
+bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY) {
 	BoxCoords box1;
 	BoxCoords box2;
 	ScummPoint tmp;
@@ -695,25 +676,23 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 	return false;
 }
 
-void Scumm::createBoxMatrix()
-{
+void Scumm::createBoxMatrix() {
 	int num, i, j;
 	byte flags;
 	int table_1[66], table_2[66];
 	int counter, val;
 	int code;
 
-
 	// A heap (an optiimsation to avoid calling malloc/free extremly often)
 	_maxBoxVertexHeap = 1000;
 	createResource(rtMatrix, 4, _maxBoxVertexHeap);
 	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
-	
+
 	// Temporary 64*65 distance matrix
 	createResource(rtMatrix, 3, 65 * 64);
 	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
-	
+
 	// The result "matrix" in the special format used by Scumm.
 	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
@@ -825,8 +804,7 @@ void Scumm::createBoxMatrix()
 	nukeResource(rtMatrix, 3);
 }
 
-PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node)
-{
+PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node) {
 	if (node == NULL || vtx == NULL)
 		return NULL;
 
@@ -848,8 +826,7 @@ PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node)
 	return NULL;
 }
 
-PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i)
-{
+PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i) {
 	PathNode *node;
 
 	if (vtx == NULL)
@@ -874,8 +851,7 @@ PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i)
 
 
 /* Check if two boxes are neighbours */
-bool Scumm::areBoxesNeighbours(int box1nr, int box2nr)
-{
+bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	int j, k, m, n;
 	int tmp_x, tmp_y;
 	bool result;
@@ -984,15 +960,13 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr)
 	return result;
 }
 
-void Scumm::addToBoxMatrix(byte b)
-{
+void Scumm::addToBoxMatrix(byte b) {
 	if (++_boxMatrixItem > BOX_MATRIX_SIZE)
 		error("Box matrix overflow");
 	*_boxMatrixPtr1++ = b;
 }
 
-void *Scumm::addToBoxVertexHeap(int size)
-{
+void *Scumm::addToBoxVertexHeap(int size) {
 	byte *ptr = _boxPathVertexHeap;
 
 	_boxPathVertexHeap += size;
@@ -1004,16 +978,14 @@ void *Scumm::addToBoxVertexHeap(int size)
 	return ptr;
 }
 
-PathVertex *Scumm::addPathVertex()
-{
+PathVertex *Scumm::addPathVertex() {
 	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
 
 	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
-void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummPoint gateLoc[5])
-{
+void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummPoint gateLoc[5]) {
 	ScummPoint pt;
 	ScummPoint gateA[2];
 	ScummPoint gateB[2];
@@ -1054,8 +1026,7 @@ void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_
 	return;
 }
 
-void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2])
-{
+void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];
@@ -1161,7 +1132,6 @@ void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB
 	}
 }
 
-bool Scumm::compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3)
-{
+bool Scumm::compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
 	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
 }

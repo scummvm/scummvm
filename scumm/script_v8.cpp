@@ -35,8 +35,7 @@
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
-void Scumm_v8::setupOpcodes()
-{
+void Scumm_v8::setupOpcodes() {
 	static const OpcodeEntryV8 opcodes[256] = {
 		/* 00 */
 		OPCODE(o6_invalid),
@@ -363,20 +362,17 @@ void Scumm_v8::setupOpcodes()
 	_opcodesV8 = opcodes;
 }
 
-void Scumm_v8::executeOpcode(int i)
-{
+void Scumm_v8::executeOpcode(int i) {
 	OpcodeProcV8 op = _opcodesV8[i].proc;
 	(this->*op) ();
 }
 
-const char *Scumm_v8::getOpcodeDesc(int i)
-{
+const char *Scumm_v8::getOpcodeDesc(int i) {
 	return _opcodesV8[i].desc;
 }
 
 // In V8, the word size is 4 byte, not 2 bytes as in V6/V7 games
-uint Scumm_v8::fetchScriptWord()
-{
+uint Scumm_v8::fetchScriptWord() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
@@ -388,13 +384,11 @@ uint Scumm_v8::fetchScriptWord()
 	return a;
 }
 
-int Scumm_v8::fetchScriptWordSigned()
-{
+int Scumm_v8::fetchScriptWordSigned() {
 	return (int32)fetchScriptWord();
 }
 
-int Scumm_v8::readVar(uint var)
-{
+int Scumm_v8::readVar(uint var) {
 	debug(9, "readvar(%d)", var);
 
 	if (!(var & 0xF0000000)) {
@@ -418,8 +412,7 @@ int Scumm_v8::readVar(uint var)
 	return -1;
 }
 
-void Scumm_v8::writeVar(uint var, int value)
-{
+void Scumm_v8::writeVar(uint var, int value) {
 	debug(9, "writeVar(%d, %d)", var, value);
 
 	if (!(var & 0xF0000000)) {
@@ -457,8 +450,7 @@ void Scumm_v8::writeVar(uint var, int value)
 	error("Illegal varbits (w)");
 }
 
-void Scumm_v8::decodeParseString(int m, int n)
-{
+void Scumm_v8::decodeParseString(int m, int n) {
 	byte b;
 	bool containsSpeech;
 
@@ -565,8 +557,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 	}
 }
 
-void Scumm::enqueueText(byte *text, int x, int y, byte color, byte charset, bool center)
-{
+void Scumm::enqueueText(byte *text, int x, int y, byte color, byte charset, bool center) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= 32);
 	
@@ -578,8 +569,7 @@ void Scumm::enqueueText(byte *text, int x, int y, byte color, byte charset, bool
 	bt.center = center;
 }
 
-void Scumm::drawBlastTexts()
-{
+void Scumm::drawBlastTexts() {
 	// FIXME
 
 	byte *buf;
@@ -622,14 +612,12 @@ void Scumm::drawBlastTexts()
 	_charset->_ignoreCharsetMask = false;
 }
 
-void Scumm_v8::o8_mod()
-{
+void Scumm_v8::o8_mod() {
 	int a = pop();
 	push(pop() % a);
 }
 
-void Scumm_v8::o8_wait()
-{
+void Scumm_v8::o8_wait() {
 	// TODO
 	int actnum, offs;
 	Actor *a;
@@ -691,8 +679,7 @@ void Scumm_v8::o8_wait()
 	o6_breakHere();
 }
 
-void Scumm_v8::o8_dim()
-{
+void Scumm_v8::o8_dim() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	
@@ -711,8 +698,7 @@ void Scumm_v8::o8_dim()
 	}
 }
 
-void Scumm_v8::o8_dim2()
-{
+void Scumm_v8::o8_dim2() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord(), a, b;
 	
@@ -735,8 +721,7 @@ void Scumm_v8::o8_dim2()
 	}
 }
 
-void Scumm_v8::o8_arrayOps()
-{
+void Scumm_v8::o8_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
@@ -778,19 +763,17 @@ void Scumm_v8::o8_arrayOps()
 	}
 }
 
-void Scumm_v8::o8_blastText()
-{
+void Scumm_v8::o8_blastText() {
 	// FIXME
 	decodeParseString(5, 0);
 }
 
-void Scumm_v8::o8_cursorCommand()
-{
+void Scumm_v8::o8_cursorCommand() {
 	// TODO
 	byte subOp = fetchScriptByte();
 	int a, i;
 	int args[16];
-	
+
 	switch (subOp) {
 	case 0xDC:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -865,8 +848,7 @@ void Scumm_v8::o8_cursorCommand()
 	_vars[VAR_USERPUT] = _userPut;
 }
 
-void Scumm_v8::o8_createBoxMatrix()
-{
+void Scumm_v8::o8_createBoxMatrix() {
 	int i;
 	Actor *a;
 
@@ -879,8 +861,7 @@ void Scumm_v8::o8_createBoxMatrix()
 	}
 }
 
-void Scumm_v8::o8_resourceRoutines()
-{
+void Scumm_v8::o8_resourceRoutines() {
 	// TODO
 	byte subOp = fetchScriptByte();
 	int resid = pop();
@@ -949,19 +930,18 @@ void Scumm_v8::o8_resourceRoutines()
 	}
 }
 
-void Scumm_v8::o8_roomOps()
-{
+void Scumm_v8::o8_roomOps() {
 	// TODO
 	byte subOp = fetchScriptByte();
 	int a, b, c, d, e;
 	
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
-                d = pop();
-                c = pop();
-                b = pop();
-                a = pop();
-                setPalColor(d, a, b, c);
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		setPalColor(d, a, b, c);
 		break;
 	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
 		// Not used in CMI???
@@ -1030,8 +1010,7 @@ void Scumm_v8::o8_roomOps()
 	}
 }
 
-void Scumm_v8::o8_actorOps()
-{
+void Scumm_v8::o8_actorOps() {
 	byte subOp = fetchScriptByte();
 	Actor *a;
 	int i, j;
@@ -1199,8 +1178,7 @@ void Scumm_v8::o8_actorOps()
 	}
 }
 
-void Scumm_v8::o8_cameraOps()
-{
+void Scumm_v8::o8_cameraOps() {
 	// TODO
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
@@ -1215,8 +1193,7 @@ void Scumm_v8::o8_cameraOps()
 	}
 }
 
-void Scumm_v8::o8_verbOps()
-{
+void Scumm_v8::o8_verbOps() {
 	byte subOp = fetchScriptByte();
 	VerbSlot *vs = NULL;
 	int slot, a, b;
@@ -1230,7 +1207,7 @@ void Scumm_v8::o8_verbOps()
 		//printf("Setting current actor to %d\n", _curActor);
 		return;
 	}
-	
+
 	assert(0 <= _curVerbSlot && _curVerbSlot < _maxVerbs);
 	vs = &_verbs[_curVerbSlot];
 	assert(vs);
@@ -1334,16 +1311,14 @@ void Scumm_v8::o8_verbOps()
 	}
 }
 
-void Scumm_v8::o8_soundKludge()
-{
+void Scumm_v8::o8_soundKludge() {
 	int args[16];
 	int num = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	_sound->soundKludge(args, num);
 }
 
-void Scumm_v8::o8_system()
-{
+void Scumm_v8::o8_system() {
 	// TODO
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
@@ -1359,8 +1334,7 @@ void Scumm_v8::o8_system()
 }
 
 
-void Scumm_v8::o8_startVideo()
-{
+void Scumm_v8::o8_startVideo() {
 	int len = resStrLen(_scriptPointer);
 	
 	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
@@ -1379,8 +1353,7 @@ void Scumm_v8::o8_startVideo()
 	_scriptPointer += len + 1;
 }
 
-void Scumm_v8::o8_kernelSetFunctions()
-{
+void Scumm_v8::o8_kernelSetFunctions() {
 	// TODO
 	Actor *a;
 	int args[30];
@@ -1524,8 +1497,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 	}
 }
 
-void Scumm_v8::o8_kernelGetFunctions()
-{
+void Scumm_v8::o8_kernelGetFunctions() {
 	// TODO
 	int args[30];
 	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -1662,8 +1634,7 @@ void Scumm_v8::o8_kernelGetFunctions()
 
 }
 
-void Scumm_v8::o8_getActorChore()
-{
+void Scumm_v8::o8_getActorChore() {
 	int actnum = pop();
 	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
 	assert(a);
@@ -1678,32 +1649,27 @@ void Scumm_v8::o8_getActorChore()
 	push(a->frame);
 }
 
-void Scumm_v8::o8_getObjectImageX()
-{
+void Scumm_v8::o8_getObjectImageX() {
 	int i = getObjectIndex(pop());
 	push(_objs[i].x_pos);
 }
 
-void Scumm_v8::o8_getObjectImageY()
-{
+void Scumm_v8::o8_getObjectImageY() {
 	int i = getObjectIndex(pop());
 	push(_objs[i].y_pos);
 }
 
-void Scumm_v8::o8_getObjectImageWidth()
-{
+void Scumm_v8::o8_getObjectImageWidth() {
 	int i = getObjectIndex(pop());
 	push(_objs[i].width);
 }
 
-void Scumm_v8::o8_getObjectImageHeight()
-{
+void Scumm_v8::o8_getObjectImageHeight() {
 	int i = getObjectIndex(pop());
 	push(_objs[i].height);
 }
 
-void Scumm_v8::o8_getStringWidth()
-{
+void Scumm_v8::o8_getStringWidth() {
 	int charset = pop();
 	int len = resStrLen(_scriptPointer);
 	int oldID = _charset->getCurID(); 
@@ -1718,20 +1684,19 @@ void Scumm_v8::o8_getStringWidth()
 	_scriptPointer += len + 1;
 }
 
-void Scumm_v8::o8_drawObject()
-{
+void Scumm_v8::o8_drawObject() {
 	int state = pop(), y = pop(), x = pop(), obj = pop(), objnum = getObjectIndex(obj);
 	ObjectData *od;
 
 	if (!objnum)
 		return;
 
-        od = &_objs[objnum];
-        if (x != 0x7FFFFFFF) {
-                od->x_pos = x;
-                od->y_pos = y;
-		printf("setting position: 0x%X b 0x%X\n", x, y);
-        }
+	od = &_objs[objnum];
+	if (x != 0x7FFFFFFF) {
+		od->x_pos = x;
+		od->y_pos = y;
+		debug(1, "setting position: 0x%X b 0x%X\n", x, y);
+	}
 
 	addObjectToDrawQue(objnum);
 
