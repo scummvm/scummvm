@@ -630,6 +630,7 @@ void SoundMixer::Channel_STREAM::append(void *data, uint32 len)
 	byte *cur_pos = _pos;					/* This is just to prevent the variable to move during the tests :-) */
 	if (new_end > (_ptr + _buffer_size)) {
 		/* Wrap-around case */
+		new_end = _ptr + len - ((_ptr + _buffer_size) - _end_of_data);
 		if ((_end_of_data < cur_pos) || (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
 			return;
