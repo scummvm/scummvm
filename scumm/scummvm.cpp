@@ -323,9 +323,7 @@ void Scumm::scummInit() {
 			84,  84, 84, 0,   84,  84, 84,  0,   84,  252, 84, 0,   84,  252, 252, 0,
 			252, 84, 84, 0,   63,  84, 252, 0,   252, 252, 84, 0,   252, 252, 252, 0
 		};
-		memcpy (_currentPalette, pal16, 16 * 4);
-		setDirtyColors(0, 15);
-		updatePalette();
+		_system->set_palette(pal16, 0, 16);
 	}
 	
 	if (_features & GF_AFTER_V3)
