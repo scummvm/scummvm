@@ -1433,13 +1433,12 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
-	//if (_rescache->readResource(roomNr, type, idx))
-	//		return 1;
-
 	if ((_features & GF_OLD_BUNDLE)) {
 		wa_offs = _fileHandle.pos();
 		wa_size = _fileHandle.readUint16LE();
 		_fileHandle.seek(wa_size - 2, SEEK_CUR);
+
+		//FIXME AD resources don't exist in Atari ST versions
 		ad_offs = _fileHandle.pos();
 		ad_size = _fileHandle.readUint16LE();
 		_fileHandle.seek(4, SEEK_CUR);
