@@ -796,7 +796,7 @@ void Scumm_v8::o8_cursorCommand() {
 		break;
 	case 0xDE:		// SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
-			// FIXME is this check right?
+			// FIXME is this check right? see bug #739229
 		if (_cursor.state > 1)
 			warning("Cursor state %d greater than 1 in script", _cursor.state);
 		verbMouseOver(0);
