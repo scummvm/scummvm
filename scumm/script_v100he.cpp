@@ -147,7 +147,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* 54 */
 		OPCODE(o6_printDebug),
-		OPCODE(o6_invalid),
+		OPCODE(o72_printWizImage),
 		OPCODE(o6_printLine),
 		OPCODE(o6_printSystem),
 		/* 58 */
@@ -273,7 +273,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* B8 */
 		OPCODE(o100_unknown27),
 		OPCODE(o6_invalid),
-		OPCODE(o100_unknown29),
+		OPCODE(o100_getWizData),
 		OPCODE(o6_isActorInBox),
 		/* BC */
 		OPCODE(o6_isAnyOf),
@@ -328,7 +328,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* E4 */
 		OPCODE(o70_getStringLen),
 		OPCODE(o70_getStringLenForWidth),
-		OPCODE(o6_invalid),
+		OPCODE(o80_stringToInt),
 		OPCODE(o70_getCharIndexInString),
 		/* E8 */
 		OPCODE(o70_getStringWidth),
@@ -1580,10 +1580,10 @@ void ScummEngine_v100he::o100_quitPauseRestart() {
 	case 67:
 		clearDrawObjectQueue();
 		break;
-	case 72:
+	case 71:
 		shutDown();
 		break;
-	case 73:		// SO_RESTART
+	case 72:		// SO_RESTART
 		restart();
 		break;
 	case 75:
@@ -1792,7 +1792,7 @@ void ScummEngine_v100he::o100_unknown27() {
 	debug(1,"o100_unknown27 stub (%d)", subOp);
 }
 
-void ScummEngine_v100he::o100_unknown29() {
+void ScummEngine_v100he::o100_getWizData() {
 	int state, resId;
 	int32 w, h;
 	int16 x, y;
@@ -1802,24 +1802,22 @@ void ScummEngine_v100he::o100_unknown29() {
 	
 	switch (subOp) {
 	case 0:
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
-		warning("o100_unknown29() case 0 unhandled");
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		push(getWizPixelColor(rtImage, resId, state, x, y, 0));
 		break;		
 	case 6:
 		resId = pop();
 		push(getWizImageStates(resId));
 		break;
 	case 13:
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
-		warning("o100_unknown29() case 13 unhandled");
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		push(isWizPixelNonTransparent(rtImage, resId, state, x, y, 0));
 		break;
 	case 19:
 		state = pop();
@@ -1832,7 +1830,7 @@ void ScummEngine_v100he::o100_unknown29() {
 		pop();
 		pop();
 		push(0);
-		warning("o100_unknown29() case 34 unhandled");
+		warning("o100_getWizData() case 34 unhandled");
 		break;		
 	case 64:
 		state = pop();
@@ -1856,20 +1854,24 @@ void ScummEngine_v100he::o100_unknown29() {
 		pop();
 		pop();
 		push(0);
-		warning("o100_unknown29() case 111 unhandled");
+		warning("o100_getWizData() case 111 unhandled");
 		break;
 	case 112:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
-		warning("o100_unknown29() case 112 unhandled");
+		h = pop();
+		w = pop();
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		if (x == -1 && y == -1 && w == -1 && h == -1) {
+			getWizImageDim(resId, state, w, h);
+			x = 0;
+			y = 0;
+		}		
+		push(computeWizHistogram(resId, state, x, y, w, h));		
 		break;
 	default:
-		error("o100_unknown29: Unknown case %d", subOp);
+		error("o100_getWizData: Unknown case %d", subOp);
 	}
 }
 
@@ -2052,6 +2054,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 	byte name[1024];
 
 	byte b = fetchScriptByte();
+	printf("decodeParseString %d\n", b);
 
 	switch (b) {
 	case 6:		// SO_AT

@@ -950,7 +950,7 @@ protected:
 	void o100_getPaletteData();
 	void o100_readFile();
 	void o100_unknown25();
-	void o100_unknown29();
+	void o100_getWizData();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
