@@ -23,10 +23,10 @@
 #ifndef CONFIG_FILE_H
 #define CONFIG_FILE_H
 
-#include "common/util.h"
-#include "common/map.h"
 #include "common/list.h"
+#include "common/map.h"
 #include "common/str.h"
+#include "common/util.h"
 
 class Config {
 public:

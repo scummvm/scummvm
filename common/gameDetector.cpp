@@ -21,11 +21,11 @@
  */
 
 #include "stdafx.h"
+#include "common/config-file.h"
+#include "common/engine.h"
+#include "common/gameDetector.h"
+#include "common/scaler.h"	// Only for gfx_modes
 #include "sound/mididrv.h"
-#include "engine.h"
-#include "gameDetector.h"
-#include "config-file.h"
-#include "scaler.h"	// Only for gfx_modes
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"

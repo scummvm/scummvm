@@ -18,11 +18,11 @@
  * $Header$
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef COMMON_TIMER_H
+#define COMMON_TIMER_H
 
-#include "scummsys.h"
-#include "engine.h"
+#include "common/scummsys.h"
+#include "common/engine.h"
 
 #define MAX_TIMERS 5
 

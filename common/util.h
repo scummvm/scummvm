@@ -21,8 +21,8 @@
 #ifndef COMMON_UTIL_H
 #define COMMON_UTIL_H
 
-#include "scummsys.h"
-#include "system.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
 template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }

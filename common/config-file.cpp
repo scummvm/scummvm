@@ -21,11 +21,8 @@
  */
 
 #include "stdafx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "config-file.h"
-#include "engine.h" // for debug()
+#include "common/config-file.h"
+#include "common/engine.h" // for debug()
 
 #define MAXLINELEN 256
 

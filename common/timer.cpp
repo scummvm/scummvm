@@ -21,8 +21,8 @@
 #ifndef __MORPHOS__
 
 #include "stdafx.h"
-#include "scummsys.h"
-#include "timer.h"
+#include "common/scummsys.h"
+#include "common/timer.h"
 
 static Timer *g_timer = NULL;
 

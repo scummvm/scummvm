@@ -21,8 +21,8 @@
  */
 
 #include "stdafx.h"
-#include "scummsys.h"
-#include "scaler.h"
+#include "common/scummsys.h"
+#include "common/scaler.h"
 
 // TODO: get rid of the colorMask etc. variables and instead use templates.
 // This should give a respectable boost, since variable access (i.e. memory reads)

@@ -35,10 +35,12 @@
 
 #elif defined(WIN32)
 
-#if _MSC_VER > 1000
+#ifdef _MSC_VER
 #pragma once
-#endif // _MSC_VER > 1000
-
+#pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#pragma warning( disable : 4244 ) // turn off "conversion type" warning
+#pragma warning( disable : 4390 ) // turn oof "empty statement" warning for BS2 code
+#endif
 
 #if !defined(_WIN32_WCE)
 
@@ -79,7 +81,6 @@
 #include <stdarg.h>
 #include <fcntl.h>
 #include <conio.h>
-#include <malloc.h>
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>

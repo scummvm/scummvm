@@ -19,8 +19,8 @@
  */
 
 #include "stdafx.h"
-#include "engine.h"
-#include "util.h"
+#include "common/engine.h"
+#include "common/util.h"
 
 //
 // 8-bit alpha blending routines

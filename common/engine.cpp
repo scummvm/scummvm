@@ -18,11 +18,14 @@
  * $Header$
  */
 
+#if defined(_MSC_VER)
+#include <malloc.h>
+#endif
 #include "stdafx.h"
-#include "engine.h"
-#include "config-file.h"
-#include "gameDetector.h"
-#include "timer.h"
+#include "common/config-file.h"
+#include "common/engine.h"
+#include "common/gameDetector.h"
+#include "common/timer.h"
 #include "sound/mixer.h"
 
 /*
@@ -260,7 +263,7 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void checkHeap() {
-#if defined(WIN32)
+#if defined(_MSC_VER)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");
 	}

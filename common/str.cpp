@@ -19,14 +19,9 @@
  */
 
 #include "stdafx.h"
-#include "str.h"
+#include "common/str.h"
 
 #include <ctype.h>
-
-#ifdef _MSC_VER
-#	pragma warning( disable : 4068 ) // unknown pragmas
-#endif
-
 
 namespace ScummVM {
 
