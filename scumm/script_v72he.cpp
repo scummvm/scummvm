@@ -512,7 +512,7 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
-int ScummEngine_v72he::copyScriptString(byte *dst) {
+void ScummEngine_v72he::copyScriptString(byte *dst) {
 	int i = 0;
 	byte b;
 
@@ -529,8 +529,6 @@ int ScummEngine_v72he::copyScriptString(byte *dst) {
 		}
 	}
 	*dst = 0;
-
-	return i;
 }
 
 void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
@@ -548,7 +546,8 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 	} else {
-		len = copyScriptString(string);
+		copyScriptString(string);
+		len = resStrLen(string) + 1;
 	}
 
 	// The boot script in some HE games just set data file name
@@ -567,7 +566,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			if (chr == 0x64)
 				dst += snprintf((char *)dst, 5, "%d", args[val++]);
 			else if (chr == 0x73)
-				dst += addStringToStack(dst, 256, args[val++]);
+				dst += addStringToStack(dst, 1024, args[val++]);
 			continue;
 		}
 		*dst++ = chr;
@@ -1158,24 +1157,66 @@ void ScummEngine_v72he::o72_verbOps() {
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	int b, c, d, len;
+	int a, b, c, d;
+	int id, len = 0;
 	ArrayHeader *ah;
 	int list[128];
+	byte string[2048];
 
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
-		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
-		copyScriptString(ah->data);
+		copyScriptString(string);
+		len = resStrLen(string) + 1;
+		ah = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(ah->data, string, len);
+		break;
+
+	case 126:
+		len = getStackList(list, ARRAYSIZE(list));
+		a = pop();
+		b = pop();
+		c = pop();
+		d = pop();
+		id = readVar(array);
+		if (id == 0) {
+			defineArray(array, kDwordArray, d, c, b, a);
+		}
+		// TODO write array
+		break;
+	case 127:
+		// TODO
+		fetchScriptWord();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 128:
+		a = pop();
+		b = pop();
+		c = pop();
+		d = pop();
+		id = readVar(array);
+		if (id == 0) {
+			defineArray(array, kDwordArray, d, c, b, a);
+		}
+		// TODO write array
 		break;
 	case 194:			// SO_ASSIGN_STRING
-		ah = defineArray(array, kStringArray, 0, 0, 0, 4096);
-		decodeScriptString(ah->data);
+		decodeScriptString(string);
+		len = resStrLen(string) + 1;
+		ah = defineArray(array, kStringArray, 0, 0, 0, len);
+		memcpy(ah->data, string, len);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
 		b = pop();
 		c = pop();
-		d = readVar(array);
-		if (d == 0) {
+		id = readVar(array);
+		if (id == 0) {
 			defineArray(array, kDwordArray, 0, 0, 0, b + c);
 		}
 		while (c--) {
@@ -1184,8 +1225,8 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 	case 212:		// SO_ASSIGN_2DIM_LIST
 		len = getStackList(list, ARRAYSIZE(list));
-		d = readVar(array);
-		if (d == 0)
+		id = readVar(array);
+		if (id == 0)
 			error("Must DIM a two dimensional array before assigning");
 		c = pop();
 		while (--len >= 0) {
@@ -1710,7 +1751,7 @@ void ScummEngine_v72he::o72_unknownEC() {
 
 void ScummEngine_v72he::o72_unknownED() {
 	int array, pos, len;
-	int letter = 0, result = 0;
+	int chr, result = 0;
 
 	len = pop();
 	pos = pop();
@@ -1723,9 +1764,8 @@ void ScummEngine_v72he::o72_unknownED() {
 
 	writeVar(0, array);
 	while (pos <= len) {
-		letter = readArray(0, 0, pos);
-		if (letter)
-			result += getCharsetOffset(letter);
+		chr = readArray(0, 0, pos);
+		result += getCharsetOffsets(chr);
 		pos++;
 	}
 
@@ -1859,19 +1899,19 @@ void ScummEngine_v72he::o72_writeINI() {
 }
 
 void ScummEngine_v72he::o72_unknownF5() {
-	int letter, ebx;
+	int chr, max;
 	int array, len, pos, result = 0;
-	ebx = pop();
+	max = pop();
 	pos = pop();
 	array = pop();
 
 	len = resStrLen(getStringAddress(array));
-	writeVar(0, array);
 
+	writeVar(0, array);
 	while (pos < len) {
-		letter = readArray(0, 0, pos);
-		result += getCharsetOffset(letter);
-		if (result >= ebx)
+		chr = readArray(0, 0, pos);
+		result += getCharsetOffsets(chr);
+		if (result >= max)
 			break;
 		pos++;
 	}

@@ -404,25 +404,25 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 	return len;
 }
 
-int ScummEngine_v7he::getCharsetOffset(int letter) {
-	int offset, result;
+int ScummEngine_v7he::getCharsetOffsets(int chr) {
+	int width, offsX;
+	int result = 0;
 
-	byte *ptr = getResourceAddress(rtCharset, _string[0]._default.charset);
-	if (!ptr)
-		error("getCharsetOffset: charset %d not found!", _string[0]._default.charset);
+	byte *fontPtr = getResourceAddress(rtCharset, _string[0]._default.charset);
+	if (!fontPtr)
+		error("getCharsetOffsets: charset %d not found!", _string[0]._default.charset);
 
-	offset = READ_LE_UINT32(ptr + 29 + letter * 4 + 4);
-	if (offset == 0)
+	int offs = READ_LE_UINT32(fontPtr + 29 + chr * 4 + 4);
+	if (!offs)
 		return 0;
 
-	ptr += offset;
-	result = READ_LE_UINT16(ptr + 2);
-	byte start = *ptr;
-
-	if (result >= 0x80)
-		result = (result & 0xff) - 256 + start;
+	width = fontPtr[offs] + (signed char)fontPtr[offs + 0];
+	offsX = fontPtr[offs] + (signed char)fontPtr[offs + 2];
+	
+	if (offsX >= 0x80)
+		result = (offsX & 0xff) + width - 256;
 	else
-		result = (result & 0xff) + start;
+		result = (offsX & 0xff) + width;
 
 	return result;
 }
@@ -433,12 +433,6 @@ void ScummEngine_v7he::o7_cursorCommand() {
 	int subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0x13:		// HE 7.2 (Not all games)
-	case 0x14:
-		// Loads cursors from another resource
-		a = pop();
-		debug(1, "o7_cursorCommand: case %x (%d)", subOp, a);
-		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		verbMouseOver(0);
@@ -740,7 +734,7 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 
 void ScummEngine_v7he::o7_unknownED() {
 	int array, pos, len;
-	int letter = 0, result = 0;
+	int chr, result = 0;
 
 	len = pop();
 	pos = pop();
@@ -753,9 +747,8 @@ void ScummEngine_v7he::o7_unknownED() {
 
 	writeVar(0, array);
 	while (pos <= len) {
-		letter = readArray(0, 0, pos);
-		if (letter)
-			result += getCharsetOffset(letter);
+		chr = readArray(0, 0, pos);
+		result += getCharsetOffsets(chr);
 		pos++;
 	}
 
@@ -928,19 +921,19 @@ void ScummEngine_v7he::o7_writeINI() {
 }
 
 void ScummEngine_v7he::o7_unknownF5() {
-	int letter, ebx;
+	int chr, max;
 	int array, len, pos, result = 0;
-	ebx = pop();
+	max = pop();
 	pos = pop();
 	array = pop();
 
 	len = resStrLen(getStringAddress(array));
-	writeVar(0, array);
 
+	writeVar(0, array);
 	while (pos < len) {
-		letter = readArray(0, 0, pos);
-		result += getCharsetOffset(letter);
-		if (result >= ebx)
+		chr = readArray(0, 0, pos);
+		result += getCharsetOffsets(chr);
+		if (result >= max)
 			break;
 		pos++;
 	}

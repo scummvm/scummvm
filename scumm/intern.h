@@ -617,7 +617,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	byte stringLen(byte *);
-	int getCharsetOffset(int letter);
+	int getCharsetOffsets(int chr);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	/* HE version 70 script opcodes */
@@ -705,7 +705,7 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
-	int copyScriptString(byte *dst);
+	void copyScriptString(byte *dst);
 
 	const byte *findWrappedBlock(uint32 tag, const byte *ptr, int state, bool flagError);
 
