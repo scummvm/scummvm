@@ -275,7 +275,7 @@ SCUMM
   - Fix cursor transparency in puzzle of pajama2
   - Fix sprites graphical glitches
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
-  - Add support for o90_unknown2F (For puzzle in pajama2)
+  - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 (For binoculars in pajama2 and black board in freddi2)
   - Add support for various new opcodes
 

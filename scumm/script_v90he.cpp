@@ -1607,30 +1607,30 @@ void ScummEngine_v90he::o90_floodState() {
 
 	switch (subOp) {
 	case 0:
-		_floodState.field_1C = pop();
+		_floodStateParams.field_1C = pop();
 		break;
 	case 3:
-		memset(&_floodState, 0, sizeof(_floodState));
-		_floodState.box.left = 0;
-		_floodState.box.top = 0;
-		_floodState.box.right = 640;
-		_floodState.box.bottom = 480;
+		memset(&_floodStateParams, 0, sizeof(_floodStateParams));
+		_floodStateParams.box.left = 0;
+		_floodStateParams.box.top = 0;
+		_floodStateParams.box.right = 640;
+		_floodStateParams.box.bottom = 480;
 		break;
 	case 11:
-		_floodState.field_14 = pop();
-		_floodState.field_10 = pop();
+		_floodStateParams.field_14 = pop();
+		_floodStateParams.field_10 = pop();
 		break;
 	case 12:
-		_floodState.field_18 = pop();
+		_floodStateParams.field_18 = pop();
 		break;
 	case 13:
-		_floodState.box.bottom = pop();
-		_floodState.box.right = pop();
-		_floodState.box.top = pop();
-		_floodState.box.left = pop();
+		_floodStateParams.box.bottom = pop();
+		_floodStateParams.box.right = pop();
+		_floodStateParams.box.top = pop();
+		_floodStateParams.box.left = pop();
 		break;
 	case 201:
-		//floodState(_floodState);
+		//floodState(_floodStateParams);
 		break;
 	default:
 		error("o90_floodState: Unknown case %d", subOp);

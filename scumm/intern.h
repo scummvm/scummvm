@@ -846,7 +846,7 @@ protected:
 		const char *desc;
 	};
 
-	struct FloodState {
+	struct FloodStateParameters {
 		Common::Rect box;
 		int field_10;
 		int field_14;
@@ -858,7 +858,7 @@ protected:
 	int _hePaletteNum;
 	
 	const OpcodeEntryV90he *_opcodesV90he;
-	FloodState _floodState;
+	FloodStateParameters _floodStateParams;
 	WizParameters _wizParams;
 
 	int _curMaxSpriteId;
