@@ -21,6 +21,7 @@
  */
 
 #include <ctype.h>
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "base/engine.h"
 #include "scumm/saveload.h"
