@@ -925,15 +925,6 @@ void ScummEngine::setObjectName(int obj) {
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	const byte *objptr = getOBCDFromObject(obj);
-	if (_version <= 5 && !objptr) {
-		// WORKAROUND bug #587553 and possibly other related script bug.
-		// We do not error out but rather just generate a warning.
-		debug(2, "Can't find OBCD to rename object %d", obj);
-		return;
-	} else if (_version == 6 && !objptr)
-		error("Can't set name of object %d", obj);
-
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
 			nukeResource(rtObjectName, i);
