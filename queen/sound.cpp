@@ -130,7 +130,7 @@ Sound *Sound::giveSound(SoundMixer *mixer, Input *input, Resource *resource, uin
 }
 
 void Sound::waitSfxFinished() {
-	while((volatile PlayingSoundHandle)_sfxHandle != 0)
+	while(_sfxHandle != 0)
 		_input->delay(10);
 }
 
