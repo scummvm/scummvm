@@ -696,7 +696,7 @@ void Graphics::update() {
 	_display->prepareUpdate();
 	bobDrawAll();
 	textDrawAll();
-	g_system->delay_msecs(100);
+	g_queen->delay(100);
 	_display->palCustomScroll(0); //_currentRoom
 	_display->update(_bobs[0].active, _bobs[0].x, _bobs[0].y);
 }

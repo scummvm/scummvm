@@ -62,10 +62,11 @@ public:
 	QueenEngine(GameDetector *detector, OSystem *syst);
 	virtual ~QueenEngine();
 
+	void delay(uint amount);
+
 protected:
 	byte _fastMode;
 
-	void delay(uint amount);
 	void go();
 
 	//! Called when we go from one room to another
@@ -75,6 +76,9 @@ protected:
 
 	static int CDECL game_thread_proc(void *param);
 };
+
+// XXX: Temporary hack to allow Graphics to call delay()
+extern QueenEngine *g_queen;
 
 } // End of namespace Queen
 

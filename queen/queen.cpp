@@ -59,8 +59,12 @@ REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_targetList, Engine_QU
 
 namespace Queen {
 
+QueenEngine *g_queen;
+
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
+
+	g_queen = this;
 	
 	_game = detector->_game.id;
 
