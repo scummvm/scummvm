@@ -2623,7 +2623,7 @@ void SimonState::timer_vga_sprites_helper() {
 	}
 
 	src = _vga_var7 + x * 4;
-	vc_10_helper_8(dst, src + READ_BE_UINT32_UNALIGNED(&*((uint32 *)src)));
+	decodeStripA(dst, src + READ_BE_UINT32_UNALIGNED(&*((uint32 *)src)), _vga_var5);
 
 	dx_unlock_2();
 
@@ -2789,7 +2789,7 @@ void SimonState::o_vga_reset() {
 	}	
 }
 
-bool SimonState::vc_maybe_skip_proc_3(uint16 a) {
+bool SimonState::itemIsSiblingOf(uint16 a) {
 	Item *item;
 
 	CHECK_BOUNDS(a, _vc_item_array);
@@ -2801,7 +2801,7 @@ bool SimonState::vc_maybe_skip_proc_3(uint16 a) {
 	return getItem1Ptr()->parent == item->parent;
 }
 
-bool SimonState::vc_maybe_skip_proc_2(uint16 a, uint16 b) {
+bool SimonState::itemIsParentOf(uint16 a, uint16 b) {
 	Item *item_a, *item_b;
 
 	CHECK_BOUNDS(a, _vc_item_array);
@@ -4515,12 +4515,12 @@ void SimonState::dx_update_screen_and_palette() {
 		}
 	}
 
-		if (_mouse_pos_changed) {
-			_mouse_pos_changed = false;
-			_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
-		}
-		_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
-		_system->update_screen();
+	if (_mouse_pos_changed) {
+		_mouse_pos_changed = false;
+		_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
+	}
+	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
+	_system->update_screen();
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
 

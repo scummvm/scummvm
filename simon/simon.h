@@ -681,8 +681,8 @@ public:
 	void vc_write_var(uint var, int16 value);
 	void vc_skip_next_instruction();
 
-	bool vc_maybe_skip_proc_3(uint16 val);
-	bool vc_maybe_skip_proc_2(uint16 a, uint16 b);
+	bool itemIsSiblingOf(uint16 val);
+	bool itemIsParentOf(uint16 a, uint16 b);
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
 
 	void add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file);
@@ -773,7 +773,7 @@ public:
 	void vc_58();
 	void timer_vga_sprites_helper();
 
-	void vc_10_helper_8(byte *dst, byte *src);
+	void decodeStripA(byte *dst, byte *src, int height);
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
 	void realizePalette();

@@ -361,19 +361,19 @@ void SimonState::vc_5_skip_if_neq() {
 }
 
 void SimonState::vc_6_skip_ifn_sib_with_a() {			// vc_6_maybe_skip_3_inv
-	if (!vc_maybe_skip_proc_3(vc_read_next_word()))
+	if (!itemIsSiblingOf(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
 void SimonState::vc_7_skip_if_sib_with_a() {			// vc_7_maybe_skip_3
-	if (vc_maybe_skip_proc_3(vc_read_next_word()))
+	if (itemIsSiblingOf(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
 void SimonState::vc_8_skip_if_parent_is() {			// vc_8_maybe_skip_2			
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
-	if (!vc_maybe_skip_proc_2(a, b))
+	if (!itemIsParentOf(a, b))
 		vc_skip_next_instruction();
 }
 
@@ -523,12 +523,12 @@ static uint16 _video_windows[128] = {
 };
 
 /* simon2 specific */
-void SimonState::vc_10_helper_8(byte *dst, byte *src) {
+void SimonState::decodeStripA(byte *dst, byte *src, int height) {
 	const uint pitch = _dx_surface_pitch;
 	int8 reps = (int8)0x80;
 	byte color;
 	byte *dst_org = dst;
-	uint h = _vga_var5, w = 8;
+	uint h = height, w = 8;
 
 	for (;;) {
 		reps = *src++;
@@ -545,7 +545,7 @@ void SimonState::vc_10_helper_8(byte *dst, byte *src) {
 					if (--w == 0)
 						return;
 					dst = ++dst_org;
-					h = _vga_var5;
+					h = height;
 				}
 			} while (--reps >= 0);
 		} else {
@@ -560,7 +560,7 @@ void SimonState::vc_10_helper_8(byte *dst, byte *src) {
 					if (--w == 0)
 						return;
 					dst = ++dst_org;
-					h = _vga_var5;
+					h = height;
 				}
 			} while (++reps != 0);
 		}
@@ -638,12 +638,11 @@ void SimonState::vc_10_draw() {
 		dst = dx_lock_attached();
 		src = state.depack_src + _x_scroll * 4;
 
-		w = 40;
-		do {
-			vc_10_helper_8(dst, src + READ_BE_UINT32_UNALIGNED(&*(uint32 *)src));
+		for (w = 0; w < 40; w++) {
+			decodeStripA(dst, src + READ_BE_UINT32_UNALIGNED(&*(uint32 *)src), height);
 			dst += 8;
 			src += 4;
-		} while (--w);
+		}
 
 		dx_unlock_attached();
 
