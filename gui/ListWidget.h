@@ -89,7 +89,10 @@ public:
 
 protected:
 	void drawWidget(bool hilite);
+	
+	int getCaretPos() const;
 	void drawCaret(bool erase);
+
 	void lostFocusWidget();
 	void scrollToCurrent();
 };

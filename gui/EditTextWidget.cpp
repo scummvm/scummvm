@@ -45,11 +45,7 @@ void EditTextWidget::handleTickle() {
 	uint32 time = g_system->get_msecs();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
-		if (_caretVisible) {
-			drawCaret(true);
-		} else {
-			drawCaret(false);
-		}
+		drawCaret(_caretVisible);
 	}
 }
 
@@ -157,7 +153,7 @@ void EditTextWidget::drawWidget(bool hilite) {
 	g_gui.drawString(_label, _x + 2, _y + 3, _w - 6, g_gui._textcolor, kTextAlignLeft, -_labelOffset, false);
 }
 
-int EditTextWidget::getCaretPos() {
+int EditTextWidget::getCaretPos() const {
 	int caretpos = 0;
 	for (int i = 0; i < _pos; i++)
 		caretpos += g_gui.getCharWidth(_label[i]);
@@ -176,16 +172,13 @@ void EditTextWidget::drawCaret(bool erase) {
 	int x = getAbsX() + 2;
 	int y = getAbsY() + 1;
 
-	int width = getCaretPos();
-	x += width;
+	x += getCaretPos();
 
 	g_gui.vLine(x, y, y + kLineHeight, color);
 	g_gui.addDirtyRect(x, y, 2, kLineHeight);
 
 	_caretVisible = !erase;
 }
-
-
 
 bool EditTextWidget::adjustOffset() {
 	// check if the caret is still within the textbox; if it isn't,
@@ -197,15 +190,11 @@ bool EditTextWidget::adjustOffset() {
 		// scroll left
 		_labelOffset += caretpos;
 		return true;
-	}
-	else if (caretpos >= _w - 6)
-	{
+	} else if (caretpos >= _w - 6) {
 		// scroll right
 		_labelOffset -= (_w - 6 - caretpos);
 		return true;
-	}
-	else if (_labelOffset > 0)
-	{
+	} else if (_labelOffset > 0) {
 		int width = g_gui.getStringWidth(_label);
 		if (width - _labelOffset < (_w - 6)) {
 			// scroll right

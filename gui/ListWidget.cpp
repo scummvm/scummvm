@@ -89,11 +89,7 @@ void ListWidget::handleTickle() {
 	uint32 time = g_system->get_msecs();
 	if (_editMode && _caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
-		if (_caretVisible) {
-			drawCaret(true);
-		} else {
-			drawCaret(false);
-		}
+		drawCaret(_caretVisible);
 	}
 }
 
@@ -178,7 +174,8 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 					dirty = true;
 					_editMode = true;
 					_backupString = _list[_selectedItem];
-				}
+				} else
+					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
 		case 256+17:	// up arrow
@@ -285,6 +282,21 @@ void ListWidget::drawWidget(bool hilite) {
 	}
 }
 
+int ListWidget::getCaretPos() const {
+	int caretpos = 0;
+	NewGui *gui = &g_gui;
+
+	if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
+		char temp[10];
+		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
+		caretpos += gui->getStringWidth(temp);
+	}
+
+	caretpos += gui->getStringWidth(_list[_selectedItem]);
+	
+	return caretpos;
+}
+
 void ListWidget::drawCaret(bool erase) {
 	// Only draw if item is visible
 	if (_selectedItem < _currentPos || _selectedItem >= _currentPos + _entriesPerPage)
@@ -298,19 +310,10 @@ void ListWidget::drawCaret(bool erase) {
 	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
 	int x = getAbsX() + 3;
 	int y = getAbsY() + 1;
-	Common::String	buffer;
 
 	y += (_selectedItem - _currentPos) * kLineHeight;
 
-	if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
-		char temp[10];
-		sprintf(temp, "%2d. ", (_selectedItem + _numberingMode));
-		buffer = temp;
-		buffer += _list[_selectedItem];
-	} else
-		buffer = _list[_selectedItem];
-
-	x += gui->getStringWidth(buffer);
+	x += getCaretPos();
 
 	gui->vLine(x, y, y+kLineHeight, color);
 	gui->addDirtyRect(x, y, 2, kLineHeight);
