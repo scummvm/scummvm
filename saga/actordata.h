@@ -29,20 +29,20 @@
 namespace Saga {
 
 struct R_ACTORTABLE {
-	byte unknown9;
-	byte unknown10;
+	byte unknown4_;
+	byte unknown5_; 
 	byte name_index;
-	int32 unknown1;
-	int16 unknown2; // x
-	int16 unknown3; // y
-	int16 unknown4;
+	int32 unknown8_; // 1
+	int16 x; // x
+	int16 y; // y
+	int16 unknown10; // 4
 	int32 spritelist_rn;
 	int32 spriteindex_rn;
-	byte unknown5;
+	byte unknown24; // 5
 	byte color;
-	byte unknown6;
-	byte unknown7;
-	byte unknown8;
+	byte unknown39; // 6
+	byte unknown3a; // 7
+	byte unknown3b; // 8
 };
 
 #define R_ACTORCOUNT 181
