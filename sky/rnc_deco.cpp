@@ -19,40 +19,31 @@
  *
  */
 
-#include <string.h>
-#include <stdio.h>
-#include <assert.h>
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "sky/rnc_deco.h"
 
-//conditional flags
-#define CHECKSUMS	   1
-#define PROTECTED	   0
-
 //return codes
-#define NOT_PACKED	  0
-#define PACKED_CRC	  -1
+#define NOT_PACKED	0
+#define PACKED_CRC	-1
 #define UNPACKED_CRC	-2
 
 //other defines
-#define TABLE_SIZE	  (16 * 8)
-#define MIN_LENGTH	  2
-#define HEADER_LEN	  18
+#define TABLE_SIZE	(16 * 8)
+#define MIN_LENGTH	2
+#define HEADER_LEN	18
 
-RncDecoder::RncDecoder()
-{
+RncDecoder::RncDecoder() {
 	_bitBuffl = 0;
 	_bitBuffh = 0;
 	_bitCount = 0;
 }
 
-RncDecoder::~RncDecoder()
-{
+RncDecoder::~RncDecoder() {
 
 }
 
-void RncDecoder::initCrc()
-{
+void RncDecoder::initCrc() {
 	uint16 cnt = 0;
 	uint16 tmp1 = 0;
 	uint16 tmp2 = 0;
@@ -71,8 +62,7 @@ void RncDecoder::initCrc()
 }
 
 //calculate 16 bit crc of a block of memory
-uint16 RncDecoder::crcBlock(uint8 *block, uint32 size)
-{
+uint16 RncDecoder::crcBlock(uint8 *block, uint32 size) {
 	uint16 crc = 0;
 	uint8 *crcTable8 = (uint8 *)_crcTable; //make a uint8* to crc_table
 	uint8 tmp;
@@ -91,8 +81,7 @@ uint16 RncDecoder::crcBlock(uint8 *block, uint32 size)
 	return crc;
 }
 
-uint16 RncDecoder::inputBits(uint8 amount)
-{
+uint16 RncDecoder::inputBits(uint8 amount) {
 	uint16 newBitBuffh = _bitBuffh;
 	uint16 newBitBuffl = _bitBuffl;
 	int16 newBitCount = _bitCount;
@@ -120,8 +109,7 @@ uint16 RncDecoder::inputBits(uint8 amount)
 	return returnVal;
 }
 
-void RncDecoder::makeHufftable(uint16 *table) 
-{
+void RncDecoder::makeHufftable(uint16 *table) {
 	uint16 bitLength, i, j;
 	uint16 numCodes = inputBits(5);
 
@@ -153,8 +141,7 @@ void RncDecoder::makeHufftable(uint16 *table)
 	}
 }
 
-uint16 RncDecoder::inputValue(uint16 *table)
-{
+uint16 RncDecoder::inputValue(uint16 *table) {
 	uint16 valOne, valTwo, value = _bitBuffl;
 
 	do {
@@ -177,22 +164,17 @@ uint16 RncDecoder::inputValue(uint16 *table)
 	return value;
 }
 
-int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
-{
+int32 RncDecoder::unpackM1(void *input, void *output, uint16 key) {
 	uint8 *inputHigh, *outputLow, *outputHigh;
 	uint8 *inputptr = (uint8 *)input;
 
 	uint32 unpackLen = 0;
 	uint32 packLen = 0;
 	uint16 counts = 0;
-
-#ifdef CHECKSUMS
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
-#endif
 	
-	if (CHECKSUMS)
-		initCrc();
+	initCrc();
 
 	//Check for "RNC "
 	if (READ_BE_UINT32(inputptr) != 0x524e4301)
@@ -206,20 +188,17 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 
 	uint8 blocks = *(inputptr + 5);
 
-	if (CHECKSUMS) {
-		//read CRC's
-		crcUnpacked = READ_BE_UINT16(inputptr); inputptr += 2;
-		crcPacked = READ_BE_UINT16(inputptr); inputptr += 2;
-		inputptr = (inputptr + HEADER_LEN - 16);
+	//read CRC's
+	crcUnpacked = READ_BE_UINT16(inputptr); inputptr += 2;
+	crcPacked = READ_BE_UINT16(inputptr); inputptr += 2;
+	inputptr = (inputptr + HEADER_LEN - 16);
 
-		if (crcBlock(inputptr, packLen) != crcPacked)
-			return PACKED_CRC;
+	if (crcBlock(inputptr, packLen) != crcPacked)
+		return PACKED_CRC;
 
-		inputptr = (((uint8 *)input) + HEADER_LEN); 
-		_srcPtr = inputptr;
-	}
-
-	// inputLow = *input
+	inputptr = (((uint8 *)input) + HEADER_LEN); 
+	_srcPtr = inputptr;
+	
 	inputHigh = ((uint8 *)input) + packLen + HEADER_LEN;;
 	outputLow = (uint8 *)output;
 	outputHigh = *(((uint8 *)input) + 16) + unpackLen + outputLow;
@@ -272,11 +251,9 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 		} while (--counts);
 	} while (--blocks);
 
-	if (CHECKSUMS) {
-		if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
-			return UNPACKED_CRC;
-	}
-
+	if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
+		return UNPACKED_CRC;
+	
 	// all is done..return the amount of unpacked bytes
 	return unpackLen;
 }
