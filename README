@@ -348,7 +348,7 @@ arguments - see the next section.
                            joystick)
   --platform=WORD          Specify version of game (allowed values: amiga,
                            atari, mac, pc)
-  --multi-midi             Enable combination Adlib and native MIDI
+  --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --aspect-ratio           Enable aspect ratio correction
 
