@@ -951,7 +951,12 @@ int Player::query_part_param(int param, byte chan) {
 			case 15:
 				return part->_vol;
 			case 16:
-				return (int)part->_instrument;
+// FIXME: Need to know where this occurs...
+error("Trying to cast instrument (%d, %d) -- please tell Fingolfin\n", param, chan);
+// In old versions of the code, this used to return part->_program.
+// This was changed in revision 2.29 of imuse.cpp (where this code used
+// to reside).
+//				return (int)part->_instrument;
 			case 17:
 				return part->_transpose;
 			default:

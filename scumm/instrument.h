@@ -60,7 +60,20 @@ public:
 
 	void clear();
 	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
+
+	// FIXME: This is evil! We cast a pointer to an int. Besides not being
+	// portable to 64bit systems, it is unclear why this is needed.
+	// If the only reason is to supply a unique identifier of that
+	// instrument: there are better ways do do that.
+	// OTOH, maybe the code is simply wrong, and what is really meant
+	// here is to first dereference _instrument, then cast it? Like
+	// this: (int)*_instrument
+	// At least this would explain the otherwise unused operator int()
+	// supplied by class Instrument_Program.
+	// If that is the case, the operator int() should all be replaced by
+	// a proper method, like "get_something()"
 	operator int() { return (_instrument ? (int) _instrument : 255); }
+
 	void program (byte program, bool mt32);
 	void adlib (byte *instrument);
 	void roland (byte *instrument);
