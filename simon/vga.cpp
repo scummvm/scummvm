@@ -1195,7 +1195,7 @@ void SimonEngine::vc_25_halt_sprite() {
 	VgaSprite *vsp = find_cur_sprite();
 	// Work around to allow inventory arrows to be
 	// showned in some versions of Simon the Sorcerer 1
-	if (!(_game GF_SIMON2) && !(_game & GF_WIN) &&
+	if (!(_game & GF_SIMON2) && !(_game & GF_WIN) &&
 	      vsp->id == 0x80 && _keep_arrows) {
 		_keep_arrows = 0;
 		return;
