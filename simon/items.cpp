@@ -775,7 +775,7 @@ int SimonState::runScript()
 			break;
 
 		case 135:{
-				warning("Quit if user presses Y unimplemented");
+				o_quit_if_user_presses_y();
 			}
 			break;
 
@@ -1479,6 +1479,20 @@ void SimonState::o_177()
 	}
 }
 
+void SimonState::o_quit_if_user_presses_y()
+{
+	OSystem::Event event;
+
+	for (;;) {
+		_system->poll_event(&event);
+		if (event.event_code == OSystem::EVENT_KEYDOWN)
+			if (event.kbd.keycode == 'y')
+				_system->quit();
+			else if (event.kbd.keycode == 'n')
+				break;
+		delay(10);
+	}
+}
 
 void SimonState::o_unk_137(uint fcs_index)
 {
