@@ -35,7 +35,7 @@ namespace Saga {
 int SagaEngine::processInput() {
 	OSystem::Event event;
 
-	Point imouse_pt;
+	Point imousePt;
 
 	while (g_system->pollEvent(event)) {
 		int in_char;
@@ -113,13 +113,13 @@ int SagaEngine::processInput() {
 		case OSystem::EVENT_LBUTTONDOWN:
 			_mousePos.x = event.mouse.x;
 			_mousePos.y = event.mouse.y;
-			imouse_pt = _mousePos;
-			_vm->_interface->update(&imouse_pt, UPDATE_MOUSECLICK);
+			imousePt = _mousePos;
+			_vm->_interface->update(imousePt, UPDATE_MOUSECLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos.x = event.mouse.x;
 			_mousePos.y = event.mouse.y;
-			imouse_pt = _mousePos;
+			imousePt = _mousePos;
 			break;
 		case OSystem::EVENT_QUIT:
 			g_system->quit();

@@ -303,21 +303,19 @@ int Interface::draw() {
 	return R_SUCCESS;
 }
 
-int Interface::update(Point *imouse_pt, int update_flag) {
+int Interface::update(Point imousePt, int update_flag) {
 	R_GAME_DISPLAYINFO g_di;
 
 	R_SURFACE *back_buf;
 
 	int imouse_x, imouse_y;
 
-	assert(imouse_pt != NULL);
-
 	if (!_active) {
 		return R_SUCCESS;
 	}
 
-	imouse_x = imouse_pt->x;
-	imouse_y = imouse_pt->y;
+	imouse_x = imousePt.x;
+	imouse_y = imousePt.y;
 
 	back_buf = _vm->_gfx->getBackBuffer();
 
@@ -328,17 +326,17 @@ int Interface::update(Point *imouse_pt, int update_flag) {
 	if (imouse_y < g_di.scene_h) {
 		// Mouse is in playfield space
 		if (update_flag == UPDATE_MOUSEMOVE) {
-			handlePlayfieldUpdate(back_buf, imouse_pt);
+			handlePlayfieldUpdate(back_buf, imousePt);
 		} else if (update_flag == UPDATE_MOUSECLICK) {
-			handlePlayfieldClick(back_buf, imouse_pt);
+			handlePlayfieldClick(back_buf, imousePt);
 		}
 	}
 
 	// Update command space
 	if (update_flag == UPDATE_MOUSEMOVE) {
-		handleCommandUpdate(back_buf, imouse_pt);
+		handleCommandUpdate(back_buf, imousePt);
 	} else if (update_flag == UPDATE_MOUSECLICK) {
-		handleCommandClick(back_buf, imouse_pt);
+		handleCommandClick(back_buf, imousePt);
 	}
 
 	drawStatusBar(back_buf);
@@ -371,7 +369,7 @@ int Interface::drawStatusBar(R_SURFACE *ds) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandClick(R_SURFACE *ds, Point *imouse_pt) {
+int Interface::handleCommandClick(R_SURFACE *ds, Point imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -384,7 +382,7 @@ int Interface::handleCommandClick(R_SURFACE *ds, Point *imouse_pt) {
 	int old_set_button;
 	int set_button;
 
-	hit_button = hitTest(imouse_pt, &ibutton_num);
+	hit_button = hitTest(imousePt, &ibutton_num);
 	if (hit_button != R_SUCCESS) {
 		// Clicking somewhere other than a button doesn't do anything
 		return R_SUCCESS;
@@ -422,7 +420,7 @@ int Interface::handleCommandClick(R_SURFACE *ds, Point *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandUpdate(R_SURFACE *ds, Point *imouse_pt) {
+int Interface::handleCommandUpdate(R_SURFACE *ds, Point imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -436,7 +434,7 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, Point *imouse_pt) {
 	int color;
 	int i;
 
-	hit_button = hitTest(imouse_pt, &ibutton_num);
+	hit_button = hitTest(imousePt, &ibutton_num);
 
 	if (hit_button == R_SUCCESS) {
 		// Hovering over a command panel button
@@ -476,27 +474,26 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, Point *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
-	int hit_object;
-	int object_num;
+int Interface::handlePlayfieldClick(R_SURFACE *ds, Point imousePt) {
+	int objectNum;
 	uint16 object_flags = 0;
 
 	int script_num;
 	Point iactor_pt;
 
-	hit_object = _vm->_scene->_objectMap->hitTest(imouse_pt, &object_num);
+	objectNum = _vm->_scene->_objectMap->hitTest(imousePt);
 
-	if (hit_object != R_SUCCESS) {
+	if (objectNum == -1) {
 		// Player clicked on empty spot - walk here regardless of verb
-		_vm->_actor->StoA(&iactor_pt, imouse_pt);
+		_vm->_actor->StoA(&iactor_pt, imousePt);
 		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
 		return R_SUCCESS;
 	}
 
-	object_flags = _vm->_scene->_objectMap->getFlags(object_num);
+	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
 
 	if (object_flags & R_OBJECT_NORMAL) {
-		if ((script_num = _vm->_scene->_objectMap->getEPNum(object_num)) != -1) {
+		if ((script_num = _vm->_scene->_objectMap->getEPNum(objectNum)) != -1) {
 			// Set active verb in script module
 			_vm->_sdata->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
 
@@ -507,35 +504,33 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
 		}
 	} else {
 		// Not a normal scene object - walk to it as if it weren't there
-		_vm->_actor->StoA(&iactor_pt, imouse_pt);
+		_vm->_actor->StoA(&iactor_pt, imousePt);
 		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
 	}
 
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
+int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point imousePt) {
 	const char *object_name;
-	int object_num;
+	int objectNum;
 	uint16 object_flags = 0;
 
 	char new_status[R_STATUS_TEXT_LEN];
 
-	int hit_object;
-
 	new_status[0] = 0;
 
-	hit_object = _vm->_scene->_objectMap->hitTest(imouse_pt, &object_num);
+	objectNum = _vm->_scene->_objectMap->hitTest(imousePt);
 
-	if (hit_object != R_SUCCESS) {
+	if (objectNum == -1) {
 		// Cursor over nothing - just display current verb
 		setStatusText(I_VerbData[_activeVerb].verb_str);
 		return R_SUCCESS;
 	}
 
-	object_flags = _vm->_scene->_objectMap->getFlags(object_num);
+	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
 
-	object_name = _vm->_scene->_objectMap->getName(object_num);
+	object_name = _vm->_scene->_objectMap->getName(objectNum);
 
 	if (object_flags & R_OBJECT_NORMAL) {
 		// Normal scene object - display as subject of verb
@@ -551,7 +546,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::hitTest(Point *imouse_pt, int *ibutton) {
+int Interface::hitTest(Point imousePt, int *ibutton) {
 	R_INTERFACE_BUTTON *buttons;
 
 	int nbuttons;
@@ -567,8 +562,8 @@ int Interface::hitTest(Point *imouse_pt, int *ibutton) {
 	ybase = _cPanel.y;
 
 	for (i = 0; i < nbuttons; i++) {
-		if ((imouse_pt->x >= (xbase + buttons[i].x1)) && (imouse_pt->x < (xbase + buttons[i].x2)) &&
-			(imouse_pt->y >= (ybase + buttons[i].y1)) && (imouse_pt->y < (ybase + buttons[i].y2))) {
+		if ((imousePt.x >= (xbase + buttons[i].x1)) && (imousePt.x < (xbase + buttons[i].x2)) &&
+			(imousePt.y >= (ybase + buttons[i].y1)) && (imousePt.y < (ybase + buttons[i].y2))) {
 			*ibutton = i;
 			return R_SUCCESS;
 		}

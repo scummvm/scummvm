@@ -160,16 +160,16 @@ class Interface {
 	int deactivate();
 	int setStatusText(const char *new_txt);
 	int draw();
-	int update(Point *imouse_pt, int update_flag);
+	int update(Point imousePt, int update_flag);
 
 
  private:
-	int hitTest(Point *imouse_pt, int *ibutton);
+	int hitTest(Point imousePt, int *ibutton);
 	int drawStatusBar(R_SURFACE *ds);
-	int handleCommandUpdate(R_SURFACE *ds, Point *imouse_pt);
-	int handleCommandClick(R_SURFACE *ds, Point *imouse_pt);
-	int handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt);
-	int handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt);
+	int handleCommandUpdate(R_SURFACE *ds, Point imousePt);
+	int handleCommandClick(R_SURFACE *ds, Point imousePt);
+	int handlePlayfieldUpdate(R_SURFACE *ds, Point imousePt);
+	int handlePlayfieldClick(R_SURFACE *ds, Point imousePt);
 
  private:
 	SagaEngine *_vm;

@@ -134,7 +134,7 @@ int Render::drawScene() {
 
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
-		_vm->_scene->_objectMap->draw(backbuf_surface, &mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
+		_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
 		_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(R_RGB_RED));
 	}
 
@@ -167,7 +167,7 @@ int Render::drawScene() {
 
 	// Update user interface
 
-	_vm->_interface->update(&mouse_pt, UPDATE_MOUSEMOVE);
+	_vm->_interface->update(mouse_pt, UPDATE_MOUSEMOVE);
 
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {

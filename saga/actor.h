@@ -197,7 +197,7 @@ class Actor {
 
 	int drawList();
 	int AtoS(Point *logical, const Point *actor);
-	int StoA(Point *actor, const Point *screen);
+	int StoA(Point *actor, const Point screen);
 
 	int move(int index, Point *move_pt);
 	int moveRelative(int index, Point *move_pt);

@@ -63,8 +63,8 @@ public:
 	const char *getName(int object);
 	const uint16 getFlags(int object);
 	const int getEPNum(int object);
-	int draw(R_SURFACE *draw_surface, Point *imousePt, int color, int color2);
-	int hitTest(Point *imouse_pt, int *object_num);
+	int draw(R_SURFACE *draw_surface, Point imousePt, int color, int color2);
+	int hitTest(Point imousePt);
 	void info(void);
 
 private:

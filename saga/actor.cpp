@@ -1022,9 +1022,9 @@ int Actor::AtoS(Point *screen, const Point *actor) {
 	return R_SUCCESS;
 }
 
-int Actor::StoA(Point *actor, const Point *screen) {
-	actor->x = (screen->x * R_ACTOR_LMULT);
-	actor->y = (screen->y * R_ACTOR_LMULT);
+int Actor::StoA(Point *actor, const Point screen) {
+	actor->x = (screen.x * R_ACTOR_LMULT);
+	actor->y = (screen.y * R_ACTOR_LMULT);
 
 	return R_SUCCESS;
 }

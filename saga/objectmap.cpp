@@ -40,6 +40,7 @@ namespace Saga {
 ObjectMap::ObjectMap(SagaEngine *vm) : _vm(vm) {
 	_objectsLoaded = false;
 	_namesLoaded = false;
+	_nNames = 0;
 }
 
 // Shuts down the object map module, destroys module allocation context
@@ -213,6 +214,7 @@ const uint16 ObjectMap::getFlags(int object) {
 	int i;
 
 	assert(_namesLoaded);
+	debug(0, "object: %d nnames: %d", object, _nNames);
 	assert((object > 0) && (object <= _nNames));
 
 	for (i = 0; i < _nObjects; i++) {
@@ -245,7 +247,7 @@ const int ObjectMap::getEPNum(int object) {
 
 // Uses Gfx::drawLine to display all clickareas for each object in the 
 // currently loaded object map resource.
-int ObjectMap::draw(R_SURFACE *ds, Point *imouse_pt, int color, int color2) {
+int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 
@@ -254,7 +256,7 @@ int ObjectMap::draw(R_SURFACE *ds, Point *imouse_pt, int color, int color2) {
 	int draw_color = color;
 	int draw_txt = 0;
 
-	int hit_object = 0;
+	bool hitObject = false;
 	int objectNum = 0;
 
 	int pointcount = 0;
@@ -264,15 +266,13 @@ int ObjectMap::draw(R_SURFACE *ds, Point *imouse_pt, int color, int color2) {
 		return R_FAILURE;
 	}
 
-	if (imouse_pt != NULL) {
-		if (hitTest(imouse_pt, &objectNum) == R_SUCCESS) {
-			hit_object = 1;
-		}
+	if ((objectNum = hitTest(imousePt)) != -1) {
+		hitObject = true;
 	}
 
 	for (i = 0; i < _nObjects; i++) {
 		draw_color = color;
-		if (hit_object && (objectNum == _objectMaps[i].objectNum)) {
+		if (hitObject && (objectNum == _objectMaps[i].objectNum)) {
 			snprintf(txt_buf, sizeof txt_buf, "obj %d: v %d, f %X",
 					_objectMaps[i].objectNum,
 					_objectMaps[i].defaultVerb,
@@ -329,7 +329,7 @@ static bool MATH_HitTestPoly(Point *points, unsigned int npoints, Point test_poi
 	return inside_flag;
 }
 
-int ObjectMap::hitTest(Point *imouse_pt, int *objectNum) {
+int ObjectMap::hitTest(Point imousePt) {
 	Point imouse;
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
@@ -338,10 +338,8 @@ int ObjectMap::hitTest(Point *imouse_pt, int *objectNum) {
 
 	int i, k;
 
-	assert((imouse_pt != NULL) && (objectNum != NULL));
-
-	imouse.x = imouse_pt->x;
-	imouse.y = imouse_pt->y;
+	imouse.x = imousePt.x;
+	imouse.y = imousePt.y;
 
 	// Loop through all scene objects
 	for (i = 0; i < _nObjects; i++) {
@@ -358,22 +356,18 @@ int ObjectMap::hitTest(Point *imouse_pt, int *objectNum) {
 				if ((imouse.x > points[0].x) && (imouse.x <= points[1].x) &&
 					(imouse.y > points[0].y) &&
 					(imouse.y <= points[1].y)) {
-						*objectNum = object_map->objectNum;
-						return R_SUCCESS;
+						return object_map->objectNum;
 				}
 			} else if (n_points > 2) {
 				// Hit-test a polygon
 				if (MATH_HitTestPoly(points, n_points, imouse)) {
-					*objectNum = object_map->objectNum;
-					return R_SUCCESS;
+					return object_map->objectNum;
 				}
 			}
 		}
 	}
 
-	*objectNum = 0;
-
-	return R_FAILURE;
+	return -1;
 }
 
 void ObjectMap::info(void) {
