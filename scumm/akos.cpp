@@ -511,8 +511,8 @@ void AkosRenderer::codec1_genericDecode() {
 	height = _height;
 
 	scaleytab = &v1.scaletable[v1.scaleYindex];
-	maskbit = revBitMask[v1.x & 7];
-	mask = v1.mask_ptr + v1.x / 8;
+	maskbit = revBitMask[(v1.x + _vm->virtscr[0].xstart) & 7];
+	mask = _vm->getMaskBuffer(v1.x, v1.y, _zbuf);
 
 	if (len)
 		goto StartPos;
@@ -532,7 +532,7 @@ void AkosRenderer::codec1_genericDecode() {
 						return;
 					}
 				} else {
-					masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && (*mask & maskbit));
+					masked = (y < 0 || y >= _outheight) || (*mask & maskbit);
 
 					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
@@ -566,14 +566,14 @@ void AkosRenderer::codec1_genericDecode() {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _outwidth)
 						return;
-					maskbit = revBitMask[v1.x & 7];
+					maskbit = revBitMask[(v1.x + _vm->virtscr[0].xstart) & 7];
 					v1.destptr += v1.scaleXstep;
 					skip_column = false;
 				} else
 					skip_column = true;
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
-				mask = v1.mask_ptr + v1.x / 8;
+				mask = _vm->getMaskBuffer(v1.x, v1.y, _zbuf);
 			}
 		StartPos:;
 		} while (--len);
@@ -927,8 +927,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		_draw_bottom = rect.bottom;
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
-
-	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
 
 	codec1_genericDecode();
 	

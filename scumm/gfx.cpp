@@ -328,6 +328,7 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 			// in V7_SMOOTH_SCROLLING_HACK mode. Right now I have no idea
 			// why this hack is needed, but for now it works well enough.
 			lp = left / 8 + _screenStartStrip - 1;
+			//lp = (left + vs->xstart) / 8;
 		} else
 #endif
 		lp = left / 8 + _screenStartStrip;
@@ -756,7 +757,7 @@ void CharsetRenderer::clearCharsetMask() {
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
-	return gdi.getMaskBuffer(x / 8, y, z) + _screenStartStrip;
+	return gdi.getMaskBuffer((x + virtscr[0].xstart) / 8, y, z);
 }
 
 byte *Gdi::getMaskBuffer(int x, int y, int z) {
