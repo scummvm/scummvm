@@ -253,9 +253,8 @@ SCUMM
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
-  - Fix nukeArrays, it is nuking wrong arrays in stopObjectCode() sometimes
 * Humongous entertainment >= v7 titles:
-  - Add support for palette slots (_numPalettes * 1024) in HE99+ games.(For ff5demo/freddicove/pajama3)
+  - Add support for palette slots (_numPalettes * 1024) in HE99+ games.(For ff5demo/freddicove/pajama3) (Kirben)
   - Add support for masking in akos codec32, the charset shouldn't be drawn under moving actors
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
@@ -274,7 +273,7 @@ SCUMM
     The U32 code seems to control the players movements on field.
   - Fix actor parts disappearing in pajama2/racedemo (Related to XMAP support?)
   - Fix cursor transparency in puzzle of pajama2 (Related to floodState support?)
-  - Fix sprites not always redrawing
+  - Fix sprites not always redrawing (Kirben)
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
 * Clean up class Gdi. This class right now mostly is about decoding various
   graphic formats. However some other functionality has crept into it, too.
