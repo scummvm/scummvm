@@ -49,6 +49,10 @@
 #include "backends/dc/DCLauncherDialog.h"
 #endif
 
+#ifdef __PALM_OS__
+#include "args.h"
+#endif
+
 /*
  * Version string and build date string. These can be used by anything that
  * wants to display this information to the user (e.g. about dialog).
@@ -360,6 +364,10 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	GameDetector detector;
 #endif
 	detector.parseCommandLine(argc, argv);
+
+#ifdef __PALM_OS__
+	ArgsFree(argv);
+#endif
 
 	// Ensure the system object exists (it may have already been created 
 	// at an earlier point, though!)
