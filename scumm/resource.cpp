@@ -837,10 +837,61 @@ int Scumm::readSoundResource(int type, int idx) {
 
 		   Maybe I am mistaken when I think it's four byte, some other parts
 		   seem to suggest it's 2 byte oriented, or even variable length...
-		 */
+		*/
+		/*
+		From Markus Magnuson (superqult) we got this information:
+		Mac0
+		---
+		   4 bytes - 'SOUN'
+		BE 4 bytes - block length
+		
+			   4 bytes  - 'Mac0'
+			BE 4 bytes  - (blockLength - 27)
+			   28 bytes - ???
+		
+			   do this three times (once for each channel):
+				  4 bytes  - 'Chan'
+			   BE 4 bytes  - channel length
+				  4 bytes  - instrument name (e.g. 'MARI')
+		
+				  do this for ((chanLength-24)/4) times:
+					 2 bytes  - note duration
+					 1 byte   - note value
+					 1 byte   - note velocity
+		
+				  4 bytes - ???
+				  4 bytes - 'Loop'/'Done'
+				  4 bytes - ???
+		
+		   1 byte - 0x09
+		---
+		
+		Instruments:
+		"MARI" - Marimba
+		"PLUC" - Pizzicato Strings
+		"HARM" - Harmonica
+		"PIPE" - Church Organ?
+		"TROM" - Trombone
+		"STRI" - String Ensemble
+		"HORN" - French Horn?
+		"VIBE" - Vibraphone
+		"SHAK" - Shakuhachi?
+		"PANP" - Pan Flute
+		"WHIS" - Whistle/Bottle
+		"ORGA" - Drawbar Organ
+		"BONG" - Woodblock?
+		"BASS" - Bass
+		
+		
+		Now the task could be to convert this into MIDI, to be fed into iMuse.
+		Or we do something similiar to what is done in Player_V3, assuming
+		we can identify SFX in the MI datafiles for each of the instruments
+		listed above.
+		*/
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+//		dumpResource("sound-", idx, getResourceAddress(type, idx));
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
 		_fileHandle.seek(-12, SEEK_CUR);
