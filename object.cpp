@@ -822,10 +822,9 @@ void Scumm::findObjectInRoom(FindObjectInRoom * fo, byte findWhat, uint id,
 	}
 
 	fo->roomptr = roomptr = getResourceAddress(rtRoom, room);
-	if (!roomptr) {								// FIXME: ZAK256 AIRPORT WORKAROUND (buying book from devotee)
-		warning("findObjectInRoom: failed getting roomptr to %d", room);
-		return;
-	}
+	if (!roomptr)
+		error("findObjectInRoom: failed getting roomptr to %d", room);
+
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
 	if (_features & GF_AFTER_V7)

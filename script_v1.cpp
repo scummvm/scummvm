@@ -825,12 +825,19 @@ void Scumm::o5_actorSetClass()
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
 			_classData[act] = 0;
+
 			if( _features & GF_SMALL_HEADER)
+
 			{
+
 				Actor *a;
+
 				a=derefActor(act);
+
 				a->forceClip=0;
+
 			}
+
 				
 			continue;
 		}
@@ -904,7 +911,7 @@ void Scumm::o5_cursorCommand()
 {
 	int i, j, k;
 	int16 table[16];
-
+	byte origop = _opcode;
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:											/* cursor show */
 		_cursorState = 1;
@@ -922,9 +929,6 @@ void Scumm::o5_cursorCommand()
 		break;
 	case 5:											/* cursor soft on */
 		_cursorState++;
-		if (_cursorState > 1) {
-			error("Cursor state greater than 1 in script");
-		}
 		verbMouseOver(0);
 		break;
 	case 6:											/* cursor soft off */
@@ -1082,9 +1086,13 @@ void Scumm::o5_drawObject()
 		od = &_objs[idx];
 		xpos = ypos = 255;
 		if (temp != 0xFF) {
+
 			od->x_pos = temp<<3;
+
 			od->y_pos = temp2<<3;
 		}
+
+
 
 		addObjectToDrawQue(idx);
 
@@ -1690,6 +1698,10 @@ void Scumm::o5_panCameraTo()
 void Scumm::o5_pickupObject()
 {
 	int obj, room;
+	if (_features & GF_OLD256) {
+		o5_drawObject();
+		return;
+	}
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
@@ -1964,6 +1976,7 @@ void Scumm::o5_roomOps()
 		e = getVarOrDirectByte(0x40);
 		setScaleItem(e - 1, b, a, d, c);
 	case 8:											/* room scale? */
+
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		c = getVarOrDirectByte(0x20);
