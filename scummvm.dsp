@@ -278,10 +278,6 @@ SOURCE=.\main.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\mp3_cd.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\object.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -497,10 +493,6 @@ SOURCE=.\gui.h
 # Begin Source File
 
 SOURCE=.\guimaps.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mp3_cd.h
 # End Source File
 # Begin Source File
 
