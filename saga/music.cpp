@@ -48,14 +48,14 @@ static const byte mt32_to_gm[128] = {
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _driver(driver), _looping(false), _isPlaying(false)  {
+MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false)  {
 	memset(_channel, 0, sizeof(_channel));
 	this->open();
 }
 
 MusicPlayer::~MusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
-	_parser->unloadMusic();
+	stopMusic();
 	this->close();
 }
 
@@ -145,7 +145,10 @@ void MusicPlayer::playMusic() {
 
 void MusicPlayer::stopMusic() {
 	_isPlaying = false;
-	_parser->unloadMusic();
+	if (_parser) {
+		_parser->unloadMusic();
+		delete _parser;
+	}
 }
 
 Music::Music(MidiDriver *driver, int enabled) : _enabled(enabled) {
@@ -215,6 +218,8 @@ int Music::play(uint32 music_rn, uint16 flags) {
 			f_midi.open(file_name);
 		}
 	}
+
+	_player->stopMusic();
 
 	// FIXME: Is resource_data ever freed?
 
