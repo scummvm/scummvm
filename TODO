@@ -267,6 +267,8 @@ SCUMM
 * SMUSH:
   - Add support for codec 37 opcode 1, for PC version of FT demo
   - Add code for MP3 encoded sound tracks
+* PC version of FT demo
+  - Fix actor directions ie ben kicking the door down/grabbing bar tender
 * Humongous Entertainment Games
   - Add proper handling of sound and speech in Humongous games
   - Add support for returning the correct music status for the digital music
@@ -293,6 +295,7 @@ SCUMM
   - Fix inventory flashing at times
   - Add support for PCM music
   - Add variables for _heversion > 70
+  - Add support for Scummsys.9x and C++ engine MAXS blocks
   
 Broken Sword 1 & 2
 ==================
