@@ -104,7 +104,7 @@ private:
 	void release();
 	void setupAnim(const char *file);
 	void updateScreen();
-	void tryOggFile(const char *filename);
+	void tryCmpFile(const char *filename);
 
 	bool readString(const char *file);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);

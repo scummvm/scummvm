@@ -45,6 +45,7 @@
 
 #include "sound/mixer.h"
 #include "sound/vorbis.h"
+#include "sound/mp3.h"
 
 #ifdef DUMP_SMUSH_FRAMES
 #include <png.h>
@@ -1172,21 +1173,33 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	_frame = contFrame;
 }
 
-void SmushPlayer::tryOggFile(const char *filename) {
+void SmushPlayer::tryCmpFile(const char *filename) {
 	_compressedFileMode = false;
 	const char *i = strrchr(filename, '.');
 	if (i == NULL) {
 		error("invalid filename : %s", filename);
 	}
 	char fname[260];
+#ifdef USE_MAD
+	memcpy(fname, filename, i - filename);
+	strcpy(fname + (i - filename), ".mp3");
+	_compressedFile.open(fname);
+	if (_compressedFile.isOpen()) {
+		int size = _compressedFile.size();
+		_compressedFileMode = true;
+		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_compressedFileSoundHandle, makeMP3Stream(&_compressedFile, size));
+		return;
+	}
+#endif
+#ifdef USE_VORBIS
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".ogg");
-#ifdef USE_VORBIS
 	_compressedFile.open(fname);
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
 		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_compressedFileSoundHandle, makeVorbisStream(&_compressedFile, size));
+		return;
 	}
 #endif
 }
@@ -1202,7 +1215,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	}
 	f.close();
 
-	tryOggFile(filename);
+	tryCmpFile(filename);
 
 	_updateNeeded = false;
 	
