@@ -5221,7 +5221,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 }
 
 int IMuseDigital::getSoundStatus(int sound) {
-	debug(1, "IMuseDigital::getSoundStatus(%d)", sound);
+	debug(2, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if ((_channel[l]._idSound == sound) && (_channel[l]._used == true)) {
 			return 1;
