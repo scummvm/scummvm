@@ -38,7 +38,11 @@ enum GameId {
 
 	// Beneath a Steel Sky
 	GID_SKY_FIRST,
-	GID_SKY_LAST = GID_SKY_FIRST + 49
+	GID_SKY_LAST = GID_SKY_FIRST + 49,
+
+	// Broken Sword 2
+	GID_BS2_FIRST,
+	GID_BS2_LAST = GID_BS2_FIRST + 49
 };
 
 
@@ -110,6 +114,11 @@ extern const VersionSettings *Engine_SIMON_targetList();
 #ifndef DISABLE_SKY
 extern const VersionSettings *Engine_SKY_targetList();
 extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
+#endif
+
+#ifndef DISABLE_BS2
+extern const VersionSettings *Engine_BS2_targetList();
+extern Engine *Engine_BS2_create(GameDetector *detector, OSystem *syst);
 #endif
 
 #endif

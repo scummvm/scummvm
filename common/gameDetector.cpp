@@ -223,6 +223,12 @@ GameDetector::GameDetector() {
 		int skyCount = countVersions(skyVersions);
 		totalCount += skyCount;
 #endif
+
+#ifndef DISABLE_BS2
+		const VersionSettings *bs2Versions = Engine_BS2_targetList();
+		int bs2Count = countVersions(bs2Versions);
+		totalCount += bs2Count;
+#endif
 		
 		VersionSettings *v = (VersionSettings *)calloc(totalCount + 1, sizeof(VersionSettings));
 		version_settings = v;
@@ -241,6 +247,12 @@ GameDetector::GameDetector() {
 		memcpy(v, skyVersions, skyCount * sizeof(VersionSettings));
 		v += skyCount;
 #endif
+
+#ifndef DISABLE_BS2
+		memcpy(v, bs2Versions, bs2Count * sizeof(VersionSettings));
+		v += bs2Count;
+#endif
+
 	}
 }
 

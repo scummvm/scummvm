@@ -144,6 +144,13 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
 	}
 #endif
 
+#ifndef DISABLE_BS2
+	if (detector->_game.id >= GID_BS2_FIRST && detector->_game.id <= GID_BS2_LAST) {
+		// Broken Sword 2
+		engine = Engine_BS2_create(detector, syst);
+	}
+#endif
+	
 	return engine;
 }
 
