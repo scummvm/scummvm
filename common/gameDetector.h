@@ -123,9 +123,7 @@ public:
 	int _master_volume;
 	int _music_volume;
 	int _sfx_volume;
-	bool _amiga;
-	bool _atari_st;
-	bool _macintosh;
+	int _platform;
 	int _language;
 
 	bool _demo_mode;

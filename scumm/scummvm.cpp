@@ -232,12 +232,16 @@ const VersionSettings *Engine_SCUMM_targetList() {
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
-	if (detector->_amiga)
+	switch (detector->_platform) {
+	case 1:
 		detector->_game.features |= GF_AMIGA;
-	if (detector->_atari_st)
+		break;
+	case 2:
 		detector->_game.features |= GF_ATARI_ST;
-	if (detector->_macintosh) {
+		break;
+	case 3:
 		detector->_game.features |= GF_MACINTOSH;
+		break;
 	}
 
 	switch (detector->_game.version) {

@@ -57,7 +57,6 @@ static const char USAGE_STRING[] =
 	"\t-g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
 	"\t                 supereagle,advmame2x, advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>       - Set music engine (see README for details)\n"
-	"\t-a             - Specify game is Amiga version\n"
 	"\t-q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,\n"
 	"\t                 gb,hb)\n"
 	"\n"
@@ -84,8 +83,7 @@ static const char USAGE_STRING[] =
 	"\t-d[<num>]      - Enable debug output (debug level [1])\n"
 	"\t-u             - Dump scripts\n"
 	"\n"
-	"\t--atari-st     - Specify game is Atari ST version\n"
-	"\t--macintosh    - Specify game is Macintosh version\n"
+	"\t--platform     - Specify version of game (amiga,atari-st,macintosh)\n"
 	"\t--multi-midi   - Enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - True Roland MT-32 (disable GM emulation)\n"
 	"\t--fullscreen   - Full-screen mode (same as -f)\n"
@@ -175,9 +173,7 @@ GameDetector::GameDetector() {
 	_master_volume = kDefaultMasterVolume;
 	_music_volume = kDefaultMusicVolume;
 	_sfx_volume = kDefaultSFXVolume;
-	_amiga = false;
-	_atari_st = false;
-	_macintosh = false;
+	_platform = 0;
 	_language = 0;
 
 #ifndef DISABLE_SCUMM
@@ -284,9 +280,7 @@ GameDetector::~GameDetector() {
 void GameDetector::updateconfig() {
 	const char *val;
 
-	_amiga = g_config->getBool("amiga", _amiga);
-	_atari_st = g_config->getBool("atari_st", _atari_st);
-	_macintosh = g_config->getBool("macintosh", _macintosh);
+        _platform = g_config->getBool("amiga", _platform);
 
 	_save_slot = g_config->getInt("save_slot", _save_slot);
 
@@ -385,11 +379,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			s++;
 			c = *s++;
 			switch (tolower(c)) {
-			case 'a':
-				CHECK_OPTION();
-				_amiga = (c == 'a');
-				g_config->setBool("amiga", _amiga);
-				break;
 			case 'b':
 				HANDLE_OPTION();
 				_bootParam = atoi(option);
@@ -513,19 +502,28 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(1);
 			case '-':
 				// Long options. Let the fun begin!
+				if (!strncmp(s, "platform", 8)) {
+					s += 8;
+					if (!strcmp (s, "amiga"))
+						_platform = 1;
+					else if (!strcmp (s, "atari-st"))
+						_platform = 2;
+					else if (!strcmp (s, "macintosh"))
+						_platform = 3;
+					else
+						goto ShowHelpAndExit;
+
+					g_config->setBool ("platform", _platform);
+					break;
+				} 
+
 				if (!strncmp(s, "no-", 3)) {
 					long_option_value = false;
 					s += 3;
 				} else
 					long_option_value = true;
 
-				if (!strcmp (s, "atari-st")) {
-					_atari_st = long_option_value;
-					g_config->setBool ("atari_st", _atari_st);
-				} else if (!strcmp (s, "macintosh")) {
-					_macintosh = long_option_value;
-					g_config->setBool ("macintosh", _macintosh);
-				} else if (!strcmp (s, "multi-midi")) {
+				if (!strcmp (s, "multi-midi")) {
 					_multi_midi = long_option_value;
 					g_config->setBool ("multi_midi", _multi_midi);
 				} else if (!strcmp (s, "native-mt32")) {
@@ -658,6 +656,7 @@ bool GameDetector::isMusicDriverAvailable(int drv) {
 const MusicDriver *GameDetector::getMusicDrivers() {
 	return music_drivers;
 }
+
 
 bool GameDetector::parseMusicDriver(const char *s) {
 	const MusicDriver *md = music_drivers;
