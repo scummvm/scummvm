@@ -157,7 +157,7 @@ void Mouse_engine(void) {
 		System_menu_mouse();
 		break;
 	case MOUSE_holding:
-		if (mousey < 400) {
+		if (g_display->_mouseY < 400) {
 			mouse_mode = MOUSE_normal;
 			debug(5, "   releasing");
 		}
@@ -182,10 +182,10 @@ void System_menu_mouse(void) {
 	};
 
 	// can't close when player is dead
-	if (mousey > 0 && !DEAD) {
+	if (g_display->_mouseY > 0 && !DEAD) {
 		// close menu
 		mouse_mode = MOUSE_normal;
-		HideMenu(RDMENU_TOP);
+		g_display->hideMenu(RDMENU_TOP);
 		return;
 	}
 
@@ -194,9 +194,9 @@ void System_menu_mouse(void) {
 	if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// clicked on a top mouse pointer?
 
-		if (mousex >= 24 && mousex < 640 - 24 && mousey < 0) {
+		if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24 && g_display->_mouseY < 0) {
 			// which are we over?
-			hit = (mousex - 24) / 40;
+			hit = (g_display->_mouseX - 24) / 40;
 
 			// no save when dead
 			if (icon_list[hit] == SAVE_ICON && DEAD)
@@ -210,7 +210,7 @@ void System_menu_mouse(void) {
 					// change all others to grey
 					if (j != hit) {
 						icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
-						SetMenuIcon(RDMENU_TOP, j, icon);
+						g_display->setMenuIcon(RDMENU_TOP, j, icon);
 						res_man.close( icon_list[j] );
 					}
 				}
@@ -235,9 +235,9 @@ void System_menu_mouse(void) {
 				// clear the screen & set up the new palette
 				// for the menus
 
-				EraseBackBuffer();
-				ProcessMenu();
-				ResetRenderEngine();
+				g_display->clearScene();
+				g_display->processMenu();
+				g_display->resetRenderEngine();
 
 				// call the relevent screen
 				switch (hit) {
@@ -261,7 +261,7 @@ void System_menu_mouse(void) {
 				// Menu stays open on death screen
 				if (!DEAD) {
 					mouse_mode = MOUSE_normal;
-					HideMenu(RDMENU_TOP);
+					g_display->hideMenu(RDMENU_TOP);
 				} else {
 					Set_mouse(NORMAL_MOUSE_ID);
 					Build_system_menu();
@@ -270,8 +270,8 @@ void System_menu_mouse(void) {
 				// clear the screen & restore the location
 				// palette
 
-				EraseBackBuffer();
-				ProcessMenu();
+				g_display->clearScene();
+				g_display->processMenu();
 
 				// reset game palette, but not after a
 				// successful restore or restart!
@@ -319,10 +319,10 @@ void Drag_mouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
 
-	if (mousey < 400 && !menu_status) {
+	if (g_display->_mouseY < 400 && !menu_status) {
 		// close menu
 		mouse_mode = MOUSE_normal;
-		HideMenu(RDMENU_BOTTOM);
+		g_display->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
@@ -358,8 +358,8 @@ void Drag_mouse(void) {
 			// these might be required by the action script about
 			// to be run
 
-			MOUSE_X = (uint32) mousex + this_screen.scroll_offset_x;
-			MOUSE_Y = (uint32) mousey + this_screen.scroll_offset_y;
+			MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+			MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 
 			// for scripts to know what's been clicked (21jan97).
 			// First used for 'room_13_turning_script' in object
@@ -373,14 +373,14 @@ void Drag_mouse(void) {
 
 			// Hide menu - back to normal menu mode
 
-			HideMenu(RDMENU_BOTTOM);
+			g_display->hideMenu(RDMENU_BOTTOM);
 			mouse_mode = MOUSE_normal;
 		} else {
 			// better check for combine/cancel
 			// cancel puts us back in Menu_mouse mode
-			if (mousex >= 24 && mousex < 640 - 24) {
+			if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
 				// which are we over?
-				pos = (mousex - 24) / 40;
+				pos = (g_display->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
 				if (master_menu_list[pos].icon_resource) {
@@ -432,10 +432,10 @@ void Menu_mouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
 
-	if (mousey < 400 && !menu_status) {
+	if (g_display->_mouseY < 400 && !menu_status) {
 		// close menu
 		mouse_mode = MOUSE_normal;
-		HideMenu(RDMENU_BOTTOM);
+		g_display->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
@@ -448,9 +448,9 @@ void Menu_mouse(void) {
 		// there's a mouse event to be processed
 		// now check if we've clicked on an actual icon
 
-		if (mousex >= 24 && mousex < 640 - 24) {
+		if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
 			// which are we over?
-			pos = (mousex - 24) / 40;
+			pos = (g_display->_mouseX - 24) / 40;
 
 			// clicked on something - what button?
 			if (master_menu_list[pos].icon_resource) {
@@ -518,7 +518,7 @@ void Normal_mouse(void) {
 	_mouseEvent *me;
 
 	// no save in big-object menu lock situation
-	if (mousey < 0 && !menu_status && !mouse_mode_locked && !OBJECT_HELD) {
+	if (g_display->_mouseY < 0 && !menu_status && !mouse_mode_locked && !OBJECT_HELD) {
 		mouse_mode = MOUSE_system_menu;
 
 		if (mouse_touching) {
@@ -533,7 +533,7 @@ void Normal_mouse(void) {
 		return;
 	}
 
-	if (mousey > 399 && !menu_status && !mouse_mode_locked) {
+	if (g_display->_mouseY > 399 && !menu_status && !mouse_mode_locked) {
 		// If an object is being held, i.e. if the mouse cursor has a
 		// luggage, we should be use dragging mode instead of inventory
 		// menu mode.
@@ -578,8 +578,8 @@ void Normal_mouse(void) {
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// set both (x1,y1) and (x2,y2) to this point
-				rect_x1 = rect_x2 = (uint32) mousex + this_screen.scroll_offset_x;
-				rect_y1 = rect_y2 = (uint32) mousey + this_screen.scroll_offset_y;
+				rect_x1 = rect_x2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+				rect_y1 = rect_y2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 				draggingRectangle = 1;
 			}
 		} else if (draggingRectangle == 1) {
@@ -591,8 +591,8 @@ void Normal_mouse(void) {
 				draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				rect_x2 = (uint32) mousex + this_screen.scroll_offset_x;
-				rect_y2 = (uint32) mousey + this_screen.scroll_offset_y;
+				rect_x2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+				rect_y2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -642,8 +642,8 @@ void Normal_mouse(void) {
 		}
 
 		// these might be required by the action script about to be run
-		MOUSE_X = (uint32) mousex + this_screen.scroll_offset_x;
-		MOUSE_Y = (uint32) mousey + this_screen.scroll_offset_y;
+		MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
+		MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
 
 		// only left button
 		if (mouse_touching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
@@ -701,7 +701,7 @@ void Mouse_on_off(void) {
 	// don't detect objects that are hidden behind the menu bars (ie. in
 	// the scrolled-off areas of the screen)
 
-	if (mousey < 0 || mousey > 399)	{	
+	if (g_display->_mouseY < 0 || g_display->_mouseY > 399)	{	
 		pointer_type = 0;
 		mouse_touching = 0;
 	} else {
@@ -799,14 +799,14 @@ void Set_mouse(uint32 res) {
 		// loop
 
 		if (res == NORMAL_MOUSE_ID)
-			SetMouseAnim(icon, len, RDMOUSE_NOFLASH);
+			g_display->setMouseAnim(icon, len, RDMOUSE_NOFLASH);
 		else
- 			SetMouseAnim(icon, len, RDMOUSE_FLASH);
+ 			g_display->setMouseAnim(icon, len, RDMOUSE_FLASH);
 
 		res_man.close(res);
 	} else {
 		// blank cursor
-		SetMouseAnim(NULL, 0, 0);
+		g_display->setMouseAnim(NULL, 0, 0);
 	}
 }
 
@@ -820,11 +820,11 @@ void Set_luggage(uint32	res) {
 		icon = res_man.open(res) + sizeof(_standardHeader);
 		len = res_man._resList[res]->size - sizeof(_standardHeader);
 
-		SetLuggageAnim(icon, len);
+		g_display->setLuggageAnim(icon, len);
 
 		res_man.close(res);
 	} else
-		SetLuggageAnim(NULL, 0);
+		g_display->setLuggageAnim(NULL, 0);
 }
 
 uint32 Check_mouse_list(void) {
@@ -838,10 +838,10 @@ uint32 Check_mouse_list(void) {
 			// mouse-detection-box
 
 			if (mouse_list[j].priority == priority &&
-				mousex + this_screen.scroll_offset_x >= mouse_list[j].x1 &&
-				mousex + this_screen.scroll_offset_x <= mouse_list[j].x2 &&
-				mousey + this_screen.scroll_offset_y >= mouse_list[j].y1 &&
-				mousey + this_screen.scroll_offset_y <= mouse_list[j].y2) {
+				g_display->_mouseX + this_screen.scroll_offset_x >= mouse_list[j].x1 &&
+				g_display->_mouseX + this_screen.scroll_offset_x <= mouse_list[j].x2 &&
+				g_display->_mouseY + this_screen.scroll_offset_y >= mouse_list[j].y1 &&
+				g_display->_mouseY + this_screen.scroll_offset_y <= mouse_list[j].y2) {
 				// record id
 				mouse_touching = mouse_list[j].id;
 
@@ -1017,7 +1017,8 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 			// line reference number
 
 			pointer_text_bloc_no = fontRenderer.buildNewBloc(
-				text + 2, mousex + xOffset, mousey + yOffset,
+				text + 2, g_display->_mouseX + xOffset,
+				g_display->_mouseY + yOffset,
 				POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
 				RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 				g_sword2->_speechFontId, justification);
@@ -1054,12 +1055,12 @@ int32 FN_no_human(int32 *params) {
 
 	// dont hide menu in conversations
 	if (TALK_FLAG == 0)
-		HideMenu(RDMENU_BOTTOM);
+		g_display->hideMenu(RDMENU_BOTTOM);
 
 	if (mouse_mode == MOUSE_system_menu) {
 		// close menu
 		mouse_mode = MOUSE_normal;
-		HideMenu(RDMENU_TOP);
+		g_display->hideMenu(RDMENU_TOP);
 	}
 
 	// script continue
@@ -1117,7 +1118,7 @@ int32 FN_add_human(int32 *params) {
 	}
 
 	// if mouse is over menu area
-	if (mousey > 399) {
+	if (g_display->_mouseY > 399) {
 		if (mouse_mode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
 			mouse_mode = MOUSE_normal;
@@ -1292,7 +1293,7 @@ int32 FN_set_scroll_right_mouse(int32 *params) {
 
 	// Highest priority
 
-	ob_mouse->x1 = this_screen.scroll_offset_x + screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = this_screen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
 	ob_mouse->x2 = this_screen.screen_wide - 1;
 	ob_mouse->y2 = this_screen.screen_deep - 1;
@@ -1327,7 +1328,7 @@ int32 FN_set_object_held(int32 *params) {
 // appropriate to keep it displayed
 
 int32 FN_remove_chooser(int32 *params) {
-	HideMenu(RDMENU_BOTTOM);
+	g_display->hideMenu(RDMENU_BOTTOM);
 	return IR_CONT;
 }
 
@@ -1336,8 +1337,8 @@ int32 FN_disable_menu(int32 *params) {
 	mouse_mode_locked = 1;
 	mouse_mode = MOUSE_normal;
 
-	HideMenu(RDMENU_TOP);
-	HideMenu(RDMENU_BOTTOM);
+	g_display->hideMenu(RDMENU_TOP);
+	g_display->hideMenu(RDMENU_BOTTOM);
 
 	return IR_CONT;
 }

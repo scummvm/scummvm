@@ -31,7 +31,7 @@
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
 #include "bs2/sound.h"
-#include "bs2/sword2.h"		// for CloseGame()
+#include "bs2/sword2.h"
 
 namespace Sword2 {
 
@@ -269,25 +269,25 @@ int32 FN_flash(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case WHITE:
-		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 
 	// There used to be a busy-wait loop here, so I don't know how long
 	// the delay was meant to be. Probably doesn't matter much.
 
-	ServiceWindows();
+	g_display->updateDisplay();
 	g_system->delay_msecs(250);
-	BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
+	g_display->setPalette(0, 1, black, RDPAL_INSTANT);
 #endif
 
 	return IR_CONT;
@@ -305,19 +305,19 @@ int32 FN_colour(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case BLACK:
-		BS2_SetPalette(0, 1, black, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
 		break;
 	case WHITE:
-		BS2_SetPalette(0, 1, white, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		BS2_SetPalette(0, 1, red, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		BS2_SetPalette(0, 1, green, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		BS2_SetPalette(0, 1, blue, RDPAL_INSTANT);
+		g_display->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 #endif
@@ -396,17 +396,17 @@ int32 FN_play_credits(int32 *params) {
 		g_sound->muteSpeech(1);
 		g_sound->stopMusic();
 
-		memcpy(oldPal, palCopy, 1024);
+		memcpy(oldPal, g_display->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
 
-		WaitForFade();
-		FadeDown(0.75);
-		WaitForFade();
+		g_display->waitForFade();
+		g_display->fadeDown();
+		g_display->waitForFade();
 
 		tmpPal[4] = 255;
 		tmpPal[5] = 255;
 		tmpPal[6] = 255;
-		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
+		g_display->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		// Play the credits music. Is it enough with just one
 		// repetition of it?
@@ -419,17 +419,17 @@ int32 FN_play_credits(int32 *params) {
 
 		debug(0, "Credits music length: ~%d ms", music_length);
 
-		CloseMenuImmediately();
+		g_display->closeMenuImmediately();
 
 		while (g_sound->musicTimeRemaining()) {
-			EraseBackBuffer();
-			SetNeedRedraw();
+			g_display->clearScene();
+			g_display->setNeedFullRedraw();
 
 			// FIXME: Draw the credits text. The actual text
 			// messages are stored in credits.clu, and I'm guessing
 			// that credits.bmp or font.clu may be the font.
 
-			ServiceWindows();
+			g_display->updateDisplay();
 
 			_keyboardEvent ke;
 
@@ -442,11 +442,11 @@ int32 FN_play_credits(int32 *params) {
 		FN_stop_music(NULL);
 		g_sound->restoreMusicState();
 
-		BS2_SetPalette(0, 256, oldPal, RDPAL_FADE);
-		FadeUp(0.75);
-		ServiceWindows();
+		g_display->setPalette(0, 256, oldPal, RDPAL_FADE);
+		g_display->fadeUp();
+		g_display->updateDisplay();
 		Build_display();
-		WaitForFade();
+		g_display->waitForFade();
 
 		g_sound->muteFx(0);
 		g_sound->muteSpeech(0);
@@ -457,7 +457,6 @@ int32 FN_play_credits(int32 *params) {
 
 	if (g_sword2->_gameId == GID_SWORD2_DEMO) {
 		Close_game();		// close engine systems down
-		CloseAppWindow();
 		exit(0);		// quit the game
 	}
 

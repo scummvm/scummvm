@@ -28,60 +28,18 @@
 
 namespace Sword2 {
 
-#define MILLISECSPERCYCLE 83
+#define MILLISECSPERCYCLE	83
 
-// Scroll variables.  scrollx and scrolly hold the current scroll position, 
-// and scrollxTarget and scrollyTarget are the target position for the end
-// of the game cycle.
+#define BLOCKWBITS		6
+#define BLOCKHBITS		6
 
-extern int16 scrollx;
-extern int16 scrolly;
-int16 parallaxScrollx;
-int16 parallaxScrolly;
-int16 locationWide;
-int16 locationDeep;
-
-static int16 scrollxTarget;
-static int16 scrollyTarget;
-static int16 scrollxOld;
-static int16 scrollyOld;
-static uint16 layer = 0;
-
-#define RENDERAVERAGETOTAL 4
-
-static int32 renderCountIndex = 0;
-static int32 renderTimeLog[RENDERAVERAGETOTAL] = { 60, 60, 60, 60 };
-static int32 initialTime;
-static int32 startTime;
-static int32 totalTime;
-static int32 renderAverageTime = 60;
-static int32 framesPerGameCycle;
-static int32 renderTooSlow;
-
-#define BLOCKWIDTH 64
-#define BLOCKHEIGHT 64
-#define BLOCKWBITS 6
-#define BLOCKHBITS 6
-#define MAXLAYERS 5
-
-static uint8 xblocks[MAXLAYERS];
-static uint8 yblocks[MAXLAYERS];
-
-// blockSurfaces stores an array of sub-blocks for each of the parallax layers.
-
-typedef struct {
-	byte data[BLOCKWIDTH * BLOCKHEIGHT];
-	bool transparent;
-} BlockSurface;
-
-static BlockSurface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
-
-void UploadRect(Common::Rect *r) {
-	g_system->copy_rect(lpBackBuffer + r->top * screenWide + r->left,
-		screenWide, r->left, r->top, r->right - r->left, r->bottom - r->top);
+void Display::updateRect(Common::Rect *r) {
+	g_system->copy_rect(_buffer + r->top * _screenWide + r->left,
+		_screenWide, r->left, r->top, r->right - r->left,
+		r->bottom - r->top);
 }
 
-void BlitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
+void Display::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
 	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
 		return;
 
@@ -100,7 +58,7 @@ void BlitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect)
 	if (r->right > clip_rect->right)
 		r->right = clip_rect->right;
 
-	byte *dst = lpBackBuffer + r->top * screenWide + r->left;
+	byte *dst = _buffer + r->top * _screenWide + r->left;
 	int i, j;
 
 	if (s->transparent) {
@@ -110,22 +68,19 @@ void BlitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect)
 					dst[j] = src[j];
 			}
 			src += BLOCKWIDTH;
-			dst += screenWide;
+			dst += _screenWide;
 		}
 	} else {
 		for (i = 0; i < r->bottom - r->top; i++) {
 			memcpy(dst, src, r->right - r->left);
 			src += BLOCKWIDTH;
-			dst += screenWide;
+			dst += _screenWide;
 		}
 	}
 
 	// UploadRect(r);
-	SetNeedRedraw();
+	g_display->setNeedFullRedraw();
 }
-
-static uint16 xScale[SCALE_MAXWIDTH];
-static uint16 yScale[SCALE_MAXHEIGHT];
 
 // I've made the scaling two separate functions because there were cases from
 // DrawSprite() where it wasn't obvious if the sprite should grow or shrink,
@@ -140,7 +95,7 @@ static uint16 yScale[SCALE_MAXHEIGHT];
 // be drawn. This is only used at the highest graphics detail setting (and not
 // always even then) and is used to help anti-alias the image.
 
-void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Display::squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	int32 ince, incne, d;
 	int16 x, y;
 
@@ -150,7 +105,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 	incne = 2 * (dstWidth - srcWidth);
 	d = 2 * dstWidth - srcWidth;
 	x = y = 0;
-	xScale[y] = x;
+	_xScale[y] = x;
 
 	while (x < srcWidth) {
 		if (d <= 0) {
@@ -161,7 +116,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 			x++;
 			y++;
 		}
-		xScale[y] = x;
+		_xScale[y] = x;
 	}
 
 	// Work out the y-scale
@@ -170,7 +125,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 	incne = 2 * (dstHeight - srcHeight);
 	d = 2 * dstHeight - srcHeight;
 	x = y = 0;
-	yScale[y] = x;
+	_yScale[y] = x;
 
 	while (x < srcHeight) {
 		if (d <= 0) {
@@ -181,7 +136,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 			x++;
 			y++;
 		}
-		yScale[y] = x;
+		_yScale[y] = x;
 	}
 
 	// Copy the image (with or without anti-aliasing)
@@ -198,19 +153,19 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 				int blue = 0;
 				int i, j;
 
-				for (j = yScale[y]; j < yScale[y + 1]; j++) {
-					for (i = xScale[x]; i < xScale[x + 1]; i++) {
+				for (j = _yScale[y]; j < _yScale[y + 1]; j++) {
+					for (i = _xScale[x]; i < _xScale[x + 1]; i++) {
 						p = src[j * srcPitch + i];
 						if (p) {
-							red += palCopy[p][0];
-							green += palCopy[p][1];
-							blue += palCopy[p][2];
+							red += _palCopy[p][0];
+							green += _palCopy[p][1];
+							blue += _palCopy[p][2];
 							p1 = p;
 							spriteCount++;
 						} else {
-							red += palCopy[backbuf[x]][0];
-							green += palCopy[backbuf[x]][1];
-							blue += palCopy[backbuf[x]][2];
+							red += _palCopy[backbuf[x]][0];
+							green += _palCopy[backbuf[x]][1];
+							blue += _palCopy[backbuf[x]][2];
 						}
 						count++;
 					}
@@ -220,22 +175,22 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 				else if (spriteCount == 1)
 					dst[x] = p1;
 				else
-					dst[x] = QuickMatch((uint8) (red / count), (uint8) (green / count), (uint8) (blue / count));
+					dst[x] = quickMatch((uint8) (red / count), (uint8) (green / count), (uint8) (blue / count));
 			}
 			dst += dstPitch;
-			backbuf += screenWide;
+			backbuf += _screenWide;
 		}
 	} else {
 		for (y = 0; y < dstHeight; y++) {
 			for (x = 0; x < dstWidth; x++) {
-				dst[x] = src[yScale[y] * srcPitch + xScale[x]];
+				dst[x] = src[_yScale[y] * srcPitch + _xScale[x]];
 			}
 			dst += dstPitch;
 		}
 	}
 }
 
-void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Display::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	byte *origDst = dst;
 	int32 ince, incne, d;
 	int16 x, y, i, j, k;
@@ -246,7 +201,7 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 	incne = 2 * (srcWidth - dstWidth);
 	d = 2 * srcWidth - dstWidth;
 	x = y = 0;
-	xScale[y] = x;
+	_xScale[y] = x;
 
 	while (x < dstWidth) {
 		if (d <= 0) {
@@ -256,7 +211,7 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 			d += incne;
 			x++;
 			y++;
-			xScale[y] = x;
+			_xScale[y] = x;
 		}
 	}
 
@@ -266,7 +221,7 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 	incne = 2 * (srcHeight - dstHeight);
 	d = 2 * srcHeight - dstHeight;
 	x = y = 0;
-	yScale[y] = x;
+	_yScale[y] = x;
 	while (x < dstHeight) {
 		if (d <= 0) {
 			d += ince;
@@ -275,17 +230,17 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 			d += incne;
 			x++;
 			y++;
-			yScale[y] = x;
+			_yScale[y] = x;
 		}
 	}
 
 	// Copy the image
 
 	for (y = 0; y < srcHeight; y++) {
-		for (j = yScale[y]; j < yScale[y + 1]; j++) {
+		for (j = _yScale[y]; j < _yScale[y + 1]; j++) {
 			k = 0;
 			for (x = 0; x < srcWidth; x++) {
-				for (i = xScale[x]; i < xScale[x + 1]; i++) {
+				for (i = _xScale[x]; i < _xScale[x + 1]; i++) {
 					dst[k++] = src[y * srcPitch + x];
 				}
 			}
@@ -342,16 +297,16 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 					count++;
 
 				if (count) {
-					int red = palCopy[pt[0]][0] << 2;
-					int green = palCopy[pt[0]][1] << 2;
-					int blue = palCopy[pt[0]][2] << 2;
+					int red = _palCopy[pt[0]][0] << 2;
+					int green = _palCopy[pt[0]][1] << 2;
+					int blue = _palCopy[pt[0]][2] << 2;
 					for (i = 1; i < 5; i++) {
-						red += palCopy[pt[i]][0];
-						green += palCopy[pt[i]][1];
-						blue += palCopy[pt[i]][2];
+						red += _palCopy[pt[i]][0];
+						green += _palCopy[pt[i]][1];
+						blue += _palCopy[pt[i]][2];
 					}
 
-					*dst++ = QuickMatch((uint8) (red >> 3), (uint8) (green >> 3), (uint8) (blue >> 3));
+					*dst++ = quickMatch((uint8) (red >> 3), (uint8) (green >> 3), (uint8) (blue >> 3));
 				} else
 					*dst++ = 0;
 				src++;
@@ -373,27 +328,7 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 	}
 }
 
-int32 RestoreBackgroundLayer(_parallax *p, int16 l)
-{
-	int16 oldLayer = layer;
-
-	debug(2, "RestoreBackgroundLayer %d", l);
-
-	layer = l;
-	if (blockSurfaces[l]) {
-		for (int i = 0; i < xblocks[l] * yblocks[l]; i++) {
-			if (blockSurfaces[l][i])
-				free(blockSurfaces[l][i]);
-		}
-
-		free(blockSurfaces[l]);
-		blockSurfaces[l] = NULL;
-	}
-	InitialiseBackgroundLayer(p);
-	layer = oldLayer;
-	return RD_OK;
-}
-
+#ifdef _SWORD2_DEBUG
 /**
  * Plots a point relative to the top left corner of the screen. This is only
  * used for debugging.
@@ -402,17 +337,15 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
  * @param colour colour of the point
  */
 
-int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
-	uint8 *buf = lpBackBuffer + 40 * RENDERWIDE;
+void Display::plotPoint(uint16 x, uint16 y, uint8 colour) {
+	uint8 *buf = _buffer + 40 * RENDERWIDE;
 	int16 newx, newy;
 	
-	newx = x - scrollx;
-	newy = y - scrolly;
+	newx = x - _scrollX;
+	newy = y - _scrollY;
 
 	if (newx >= 0 && newx < RENDERWIDE && newy >= 0 && newy < RENDERDEEP)
 		buf[newy * RENDERWIDE + newx] = colour;
-
-	return RD_OK;
 }
 
 /**
@@ -425,8 +358,8 @@ int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
  */
 
 // Uses Bressnham's incremental algorithm!
-int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
-	uint8 *buf = lpBackBuffer + 40 * RENDERWIDE;
+void Display::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
+	uint8 *buf = _buffer + 40 * RENDERWIDE;
 	int dx, dy;
 	int dxmod, dymod;
 	int ince, incne;
@@ -434,10 +367,10 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	int x, y;
 	int addTo;
 
-	x1 -= scrollx;
-	y1 -= scrolly;
-	x0 -= scrollx;
-	y0 -= scrolly;
+	x1 -= _scrollX;
+	y1 -= _scrollY;
+	x0 -= _scrollX;
+	y0 -= _scrollY;
 
 	// Lock the surface if we're rendering to the back buffer.
 
@@ -579,9 +512,8 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			}
 		}
 	}
-
-	return RD_OK;
 }
+#endif
 
 /**
  * This function tells the driver the size of the background screen for the
@@ -590,11 +522,9 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
  * @param h height of the current location
  */
 
-int32 SetLocationMetrics(uint16 w, uint16 h) {
-	locationWide = w;
-	locationDeep = h;
-
-	return RD_OK;
+void Display::setLocationMetrics(uint16 w, uint16 h) {
+	_locationWide = w;
+	_locationDeep = h;
 }
 
 /**
@@ -602,45 +532,43 @@ int32 SetLocationMetrics(uint16 w, uint16 h) {
  * parallax can be either foreground, background or the main screen.
  */
 
-int32 RenderParallax(_parallax *p, int16 l) {
+void Display::renderParallax(_parallax *p, int16 l) {
 	int16 x, y;
 	Common::Rect r;
 
-	if (locationWide == screenWide)
+	if (_locationWide == _screenWide)
 		x = 0;
 	else
-		x = ((int32) ((p->w - screenWide) * scrollx) / (int32) (locationWide - screenWide));
+		x = ((int32) ((p->w - _screenWide) * _scrollX) / (int32) (_locationWide - _screenWide));
 
-	if (locationDeep == (screenDeep - MENUDEEP * 2))
+	if (_locationDeep == _screenDeep - MENUDEEP * 2)
 		y = 0;
 	else
-		y = ((int32) ((p->h - (screenDeep - MENUDEEP * 2)) * scrolly) / (int32) (locationDeep - (screenDeep - MENUDEEP * 2)));
+		y = ((int32) ((p->h - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32) (_locationDeep - (_screenDeep - MENUDEEP * 2)));
 
 	Common::Rect clip_rect;
 
 	// Leave enough space for the top and bottom menues
 
 	clip_rect.left = 0;
-	clip_rect.right = screenWide;
+	clip_rect.right = _screenWide;
 	clip_rect.top = MENUDEEP;
-	clip_rect.bottom = screenDeep - MENUDEEP;
+	clip_rect.bottom = _screenDeep - MENUDEEP;
 
-	for (int j = 0; j < yblocks[l]; j++) {
-		for (int i = 0; i < xblocks[l]; i++) {
-			if (blockSurfaces[l][i + j * xblocks[l]]) {
+	for (int j = 0; j < _yBlocks[l]; j++) {
+		for (int i = 0; i < _xBlocks[l]; i++) {
+			if (_blockSurfaces[l][i + j * _xBlocks[l]]) {
 				r.left = i * BLOCKWIDTH - x;
 				r.right = r.left + BLOCKWIDTH;
 				r.top = j * BLOCKHEIGHT - y + 40;
 				r.bottom = r.top + BLOCKHEIGHT;
-				BlitBlockSurface(blockSurfaces[l][i + j * xblocks[l]], &r, &clip_rect);
+				blitBlockSurface(_blockSurfaces[l][i + j * _xBlocks[l]], &r, &clip_rect);
 			}
 		}
 	}
 
-	parallaxScrollx = scrollx - x;
-	parallaxScrolly = scrolly - y;
-
-	return RD_OK;
+	_parallaxScrollX = _scrollX - x;
+	_parallaxScrollY = _scrollY - y;
 }
 
 // Uncomment this when benchmarking the drawing routines.
@@ -650,10 +578,9 @@ int32 RenderParallax(_parallax *p, int16 l) {
  * Initialises the timers before the render loop is entered.
  */
 
-int32 InitialiseRenderCycle(void) {
-	initialTime = SVM_timeGetTime();
-	totalTime = initialTime + MILLISECSPERCYCLE;
-	return RD_OK;
+void Display::initialiseRenderCycle(void) {
+	_initialTime = SVM_timeGetTime();
+	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
 
 /**
@@ -661,24 +588,23 @@ int32 InitialiseRenderCycle(void) {
  * render cycle.
  */
 
-int32 StartRenderCycle(void) {
-	scrollxOld = scrollx;
-	scrollyOld = scrolly;
+void Display::startRenderCycle(void) {
+	_scrollXOld = _scrollX;
+	_scrollYOld = _scrollY;
 
-	startTime = SVM_timeGetTime();
+	_startTime = SVM_timeGetTime();
 
-	if (startTime + renderAverageTime >= totalTime)	{
-		scrollx = scrollxTarget;
-		scrolly = scrollyTarget;
-		renderTooSlow = 1;
+	if (_startTime + _renderAverageTime >= _totalTime)	{
+		_scrollX = _scrollXTarget;
+		_scrollY = _scrollYTarget;
+		_renderTooSlow = true;
 	} else {
-		scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
-		scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
-		renderTooSlow = 0;
+		_scrollX = (int16) (_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollY = (int16) (_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_renderTooSlow = false;
 	}
 
-	framesPerGameCycle = 0;
-	return RD_OK;
+	_framesPerGameCycle = 0;
 }
 
 /**
@@ -687,52 +613,56 @@ int32 StartRenderCycle(void) {
  * terminated, or false if it should continue
  */
 
-int32 EndRenderCycle(bool *end) {
+bool Display::endRenderCycle(void) {
+	static int32 renderTimeLog[4] = { 60, 60, 60, 60 };
+	static int32 renderCountIndex = 0;
 	int32 time;
 
 	time = SVM_timeGetTime();
-	renderTimeLog[renderCountIndex] = time - startTime;
-	startTime = time;
-	renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
+	renderTimeLog[renderCountIndex] = time - _startTime;
+	_startTime = time;
+	_renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
 
-	framesPerGameCycle++;
+	_framesPerGameCycle++;
 
 	if (++renderCountIndex == RENDERAVERAGETOTAL)
 		renderCountIndex = 0;
 
-	if (renderTooSlow) {
-		*end = true;
-		InitialiseRenderCycle();
-	} else if (startTime + renderAverageTime >= totalTime) {
-		*end = true;
-		totalTime += MILLISECSPERCYCLE;
-		initialTime = time;
-#ifdef LIMIT_FRAME_RATE
-	} else if (scrollxTarget == scrollx && scrollyTarget == scrolly) {
-		// If we have already reached the scroll target sleep for the
-		// rest of the render cycle.
-		*end = true;
-		sleepUntil(totalTime);
-		initialTime = SVM_timeGetTime();
-		totalTime += MILLISECSPERCYCLE;
-#endif
-	} else {
-		*end = false;
-
-		// This is an attempt to ensure that we always reach the scroll
-		// target. Otherwise the game frequently tries to pump out new
-		// interpolation frames without ever getting anywhere.
-
-		if (ABS(scrollx - scrollxTarget) <= 1 && ABS(scrolly - scrollyTarget) <= 1) {
-			scrollx = scrollxTarget;
-			scrolly = scrollyTarget;
-		} else {
-			scrollx = (int16) (scrollxOld + ((scrollxTarget - scrollxOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
-			scrolly = (int16) (scrollyOld + ((scrollyTarget - scrollyOld) * (startTime - initialTime + renderAverageTime)) / (totalTime - initialTime));
-		}
+	if (_renderTooSlow) {
+		initialiseRenderCycle();
+		return true;
 	}
 
-	return RD_OK;
+	if (_startTime + _renderAverageTime >= _totalTime) {
+		_totalTime += MILLISECSPERCYCLE;
+		_initialTime = time;
+		return true;
+	}
+
+#ifdef LIMIT_FRAME_RATE
+	if (_scrollXTarget == _scrollX && _scrollYTarget == _scrollY) {
+		// If we have already reached the scroll target sleep for the
+		// rest of the render cycle.
+		sleepUntil(_totalTime);
+		_initialTime = SVM_timeGetTime();
+		_totalTime += MILLISECSPERCYCLE;
+		return true;
+	}
+#endif
+
+	// This is an attempt to ensure that we always reach the scroll target.
+	// Otherwise the game frequently tries to pump out new interpolation
+	// frames without ever getting anywhere.
+
+	if (ABS(_scrollX - _scrollXTarget) <= 1 && ABS(_scrollY - _scrollYTarget) <= 1) {
+		_scrollX = _scrollXTarget;
+		_scrollY = _scrollYTarget;
+	} else {
+		_scrollX = (int16) (_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollY = (int16) (_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+	}
+
+	return false;
 }
 
 /**
@@ -741,11 +671,9 @@ int32 EndRenderCycle(bool *end) {
  * position in the allotted time.
  */
 
-int32 SetScrollTarget(int16 sx, int16 sy) {
-	scrollxTarget = sx;
-	scrollyTarget = sy;
-
-	return RD_OK;
+void Display::setScrollTarget(int16 sx, int16 sy) {
+	_scrollXTarget = sx;
+	_scrollYTarget = sy;
 }
 
 /**
@@ -753,7 +681,7 @@ int32 SetScrollTarget(int16 sx, int16 sy) {
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 InitialiseBackgroundLayer(_parallax *p) {
+int32 Display::initialiseBackgroundLayer(_parallax *p) {
 	uint8 *memchunk;
 	uint8 zeros;
 	uint16 count;
@@ -764,29 +692,29 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 	_parallaxLine line;
 	uint8 *pLine;
 
-	debug(2, "InitialiseBackgroundLayer");
+	debug(2, "initialiseBackgroundLayer");
 
 	// This function is called to re-initialise the layers if they have
 	// been lost. We know this if the layers have already been assigned.
 
-	if (layer == MAXLAYERS)
-		CloseBackgroundLayer();
+	if (_layer == MAXLAYERS)
+		closeBackgroundLayer();
 
 	if (!p) {
-		layer++;
+		_layer++;
 		return RD_OK;
 	}
 
-	xblocks[layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
-	yblocks[layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
+	_xBlocks[_layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
+	_yBlocks[_layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
 
-	blockSurfaces[layer] = (BlockSurface **) calloc(xblocks[layer] * yblocks[layer], sizeof(BlockSurface *));
-	if (!blockSurfaces[layer])
+	_blockSurfaces[_layer] = (BlockSurface **) calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
+	if (!_blockSurfaces[_layer])
 		return RDERR_OUTOFMEMORY;
 
 	// Decode the parallax layer into a large chunk of memory
 
-	memchunk = (uint8 *) malloc(xblocks[layer] * BLOCKWIDTH * yblocks[layer] * BLOCKHEIGHT);
+	memchunk = (uint8 *) malloc(_xBlocks[_layer] * BLOCKWIDTH * _yBlocks[_layer] * BLOCKHEIGHT);
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
 
@@ -835,11 +763,11 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 
 	// Now create the surfaces!
 
-	for (i = 0; i < xblocks[layer] * yblocks[layer]; i++) {
+	for (i = 0; i < _xBlocks[_layer] * _yBlocks[_layer]; i++) {
 		bool block_has_data = false;
 		bool block_is_transparent = false;
 
-		data = memchunk + (p->w * BLOCKHEIGHT * (i / xblocks[layer])) + BLOCKWIDTH * (i % xblocks[layer]);
+		data = memchunk + (p->w * BLOCKHEIGHT * (i / _xBlocks[_layer])) + BLOCKWIDTH * (i % _xBlocks[_layer]);
 
 		for (j = 0; j < BLOCKHEIGHT; j++) {
 			for (k = 0; k < BLOCKWIDTH; k++) {
@@ -853,24 +781,24 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 		//  Only assign a surface to the block if it contains data.
 
 		if (block_has_data) {
-			blockSurfaces[layer][i] = (BlockSurface *) malloc(sizeof(BlockSurface));
+			_blockSurfaces[_layer][i] = (BlockSurface *) malloc(sizeof(BlockSurface));
 
 			//  Copy the data into the surfaces.
-			dst = blockSurfaces[layer][i]->data;
+			dst = _blockSurfaces[_layer][i]->data;
 			for (j = 0; j < BLOCKHEIGHT; j++) {
 				memcpy(dst, data, BLOCKWIDTH);
 				data += p->w;
 				dst += BLOCKWIDTH;
 			}
 
-			blockSurfaces[layer][i]->transparent = block_is_transparent;
+			_blockSurfaces[_layer][i]->transparent = block_is_transparent;
 
 		} else
-			blockSurfaces[layer][i] = NULL;
+			_blockSurfaces[_layer][i] = NULL;
 	}
 
 	free(memchunk);
-	layer++;
+	_layer++;
 
 	return RD_OK;
 }
@@ -879,21 +807,20 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
  * Should be called once after leaving the room to free up memory.
  */
 
-int32 CloseBackgroundLayer(void) {
+void Display::closeBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
 	for (int j = 0; j < MAXLAYERS; j++) {
-		if (blockSurfaces[j]) {
-			for (int i = 0; i < xblocks[j] * yblocks[j]; i++)
-				if (blockSurfaces[j][i])
-					free(blockSurfaces[j][i]);
-			free(blockSurfaces[j]);
-			blockSurfaces[j] = NULL;
+		if (_blockSurfaces[j]) {
+			for (int i = 0; i < _xBlocks[j] * _yBlocks[j]; i++)
+				if (_blockSurfaces[j][i])
+					free(_blockSurfaces[j][i]);
+			free(_blockSurfaces[j]);
+			_blockSurfaces[j] = NULL;
 		}
 	}
 
-	layer = 0;
-	return RD_OK;
+	_layer = 0;
 }
 
 } // End of namespace Sword2

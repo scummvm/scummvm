@@ -164,7 +164,7 @@ void Init_console(void) {
 	con_width = screenWide;	//max across
 
 	// Force a palatte for the console.
-	BS2_SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);
+	g_display->setPalette(CON_PEN, 1, white, RDPAL_INSTANT);
 
 	console_sprite = memory.alloc(con_width * (CON_lines * con_chr_height), MEM_float, UID_con_sprite);
 
@@ -213,7 +213,7 @@ uint32 Tconsole(uint32 mode) {
 	StartConsole();
 
 	while (1) {
-		ServiceWindows();
+		g_display->updateDisplay();
 
 		if (breakOut)
 			break;
@@ -460,7 +460,7 @@ uint32 Parse_user_input(void) {
 				case 18:	// S (same as START)
 					Con_start(&input[1][0]);
 					// force the palette
-					BS2_SetPalette(187, 1, pal, RDPAL_INSTANT);
+					g_display->setPalette(187, 1, pal, RDPAL_INSTANT);
 					return 0;
 				case 9:		// INFO
 					displayDebugText = 1 - displayDebugText;
@@ -729,7 +729,7 @@ void Con_help(void) {
 			Build_display();
 
 			do {
-			  	ServiceWindows();
+				g_display->updateDisplay();
 			} while (!KeyWaiting());
 
 			ReadKey(&c);
@@ -803,8 +803,8 @@ void Con_fatal_error(const char *format, ...) {
 	char buf[150];
 	uint8 white[4] = { 255, 255, 255, 0 };
 
-	// set text colour in case screen is faded down! (James 05mar97)
-	BS2_SetPalette(CON_PEN, 1, white, RDPAL_INSTANT);
+	// set text colour in case screen is faded down!
+	g_display->setPalette(CON_PEN, 1, white, RDPAL_INSTANT);
 
 	va_start(arg_ptr,format);
 	_vsnprintf(buf, 150, format, arg_ptr);
@@ -912,7 +912,7 @@ void Con_list_savegames(void) {
 				Build_display();
 
 				do {
-					ServiceWindows();
+					g_display->updateDisplay();
 				} while (!KeyWaiting());
 
 				ReadKey(&c);

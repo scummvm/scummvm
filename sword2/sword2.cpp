@@ -96,6 +96,7 @@ uint8 stepOneCycle = 0;			// for use while game paused
 
 Sword2Engine *g_sword2 = NULL;
 Sound *g_sound = NULL;
+Display *g_display = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -120,11 +121,13 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(256);
 
 	g_sound = _sound = new Sound(_mixer);
+	g_display = _display = new Display(640, 480);
 }
 
 Sword2Engine::~Sword2Engine() {
 	free(_targetName);
 	delete _sound;
+	delete _display;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {
@@ -199,7 +202,6 @@ int32 Sword2Engine::InitialiseGame(void) {
 
 void Close_game() {
 	debug(5, "Close_game() STARTING:");
-	EraseBackBuffer();
 
 	// Stop music instantly!
 	Kill_music();
@@ -207,6 +209,8 @@ void Close_game() {
 	// free the memory again
 	memory.exit();
 	res_man.exit();
+
+	g_system->quit();
 }
 
 int32 GameCycle(void) {
@@ -250,8 +254,6 @@ int32 GameCycle(void) {
 }
 
 void Sword2Engine::go() {
-	uint32 rv;
-	uint8 breakOut = 0;
 	_keyboardEvent ke;
 
 	// Call the application "Revolution" until the resource manager is
@@ -262,21 +264,12 @@ void Sword2Engine::go() {
 	// manager until a window has been created as any errors are displayed
 	// via a window, thus time becomes a loop.
 
-	debug(5, "CALLING: InitialiseDisplay");
-	rv = InitialiseDisplay(640, 480);
-
-	if (rv != RD_OK) {
-		// ReportDriverError(rv);
-		CloseAppWindow();
-		return;
-	}
-
 	debug(5, "CALLING: readOptionSettings");
 	gui.readOptionSettings();
 
 	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
-		CloseAppWindow();
+		Close_game();
 		return;
 	}
 
@@ -291,11 +284,11 @@ void Sword2Engine::go() {
 	} else
 		Start_game();
 
-	debug(5, "CALLING: InitialiseRenderCycle");
-	InitialiseRenderCycle();
+	debug(5, "CALLING: initialiseRenderCycle");
+	g_display->initialiseRenderCycle();
 
 	while (1) {
-		ServiceWindows();
+		g_display->updateDisplay();
 
 #ifdef _SWORD2_DEBUG
 // FIXME: If we want this, we should re-work it to use the backend's
@@ -303,10 +296,6 @@ void Sword2Engine::go() {
 //		if (grabbingSequences && !console_status)
 //			GrabScreenShot();
 #endif
-
-		// if we are closing down the game, break out of main game loop
-		if (breakOut)
-			break;
 
 #ifdef _SWORD2_DEBUG
 		if (console_status) {
@@ -408,7 +397,6 @@ void Sword2Engine::go() {
 	}
 
 	Close_game();		//close engine systems down
-	CloseAppWindow();
 
 	return;			//quit the game
 }
@@ -465,8 +453,8 @@ void sleepUntil(int32 time) {
 		g_sword2->parseEvents();
 
 		// Make sure menu animations and fades don't suffer
-		ProcessMenu();
-		ServiceWindows();
+		g_display->processMenu();
+		g_display->updateDisplay();
 
 		g_system->delay_msecs(10);
 	}
@@ -481,8 +469,8 @@ void PauseGame(void) {
 	// now ok to close the text file
 	// res_man.close(3258);
 
-	// don't allow Pause while screen fading or while black (James 03sep97)
-	if (GetFadeStatus() != RDFADE_NONE)
+	// don't allow Pause while screen fading or while black
+	if (g_display->getFadeStatus() != RDFADE_NONE)
 		return;
 	
   	PauseAllSound();
@@ -492,8 +480,8 @@ void PauseGame(void) {
 
 	// mouse_mode=MOUSE_normal;
 
-	//this is the only place allowed to do it this way
-	SetLuggageAnim(NULL, 0);
+	// this is the only place allowed to do it this way
+	g_display->setLuggageAnim(NULL, 0);
 
 	// blank cursor
 	Set_mouse(0);
@@ -513,7 +501,7 @@ void PauseGame(void) {
 	// dim the palette during the pause (James26jun97)
 
 	if (stepOneCycle == 0)
-  		DimPalette();
+		g_display->dimPalette();
 
 	gamePaused = 1;
 }

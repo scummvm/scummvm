@@ -220,17 +220,17 @@ int32 FN_choose(int32 *params) {
 			if (j < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", subject_list[j].res, j);
 				icon = res_man.open(subject_list[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 				res_man.close(subject_list[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
-				SetMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
+				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
 			}
 		}
 
 		// start menus appearing
-		ShowMenu(RDMENU_BOTTOM);
+		g_display->showMenu(RDMENU_BOTTOM);
 
 		// lets have the mouse pointer back
 		Set_mouse(NORMAL_MOUSE_ID);
@@ -253,9 +253,9 @@ int32 FN_choose(int32 *params) {
 			// if so then end the choose, highlight only the
 			// chosen, blank the mouse and return the ref code * 8
 
-			if (mousey > 399 && mousex >= 24 && mousex < 640 - 24) {
+			if (g_display->_mouseY > 399 && g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
 				//which are we over?
-				hit = (mousex - 24) / 40;
+				hit = (g_display->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
 				if (hit < IN_SUBJECT) {
@@ -268,7 +268,7 @@ int32 FN_choose(int32 *params) {
 						// change all others to grey
 						if (j != hit) {
 							icon = res_man.open( subject_list[j].res ) + sizeof(_standardHeader);
-							SetMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+							g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 							res_man.close(subject_list[j].res);
 						}
 					}
@@ -338,9 +338,9 @@ int32 FN_end_conversation(int32 *params) {
 
 	debug(5, "FN_end_conversation");
 
-	HideMenu(RDMENU_BOTTOM);
+	g_display->hideMenu(RDMENU_BOTTOM);
 
-	if (mousey > 399) {
+	if (g_display->_mouseY > 399) {
 		// will wait for cursor to move off the bottom menu
 		mouse_mode = MOUSE_holding;
 		debug(5, "   holding");
@@ -1302,7 +1302,7 @@ int32 FN_i_speak(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// so that we can go to the options panel while text & speech is
 	// being tested
-	if (SYSTEM_TESTING_TEXT == 0 || mousey > 0) {
+	if (SYSTEM_TESTING_TEXT == 0 || g_display->_mouseY > 0) {
 #endif
 
 	me = MouseEvent();

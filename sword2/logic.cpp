@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
@@ -347,8 +348,8 @@ uint32 logic::examineRunList(void) {
 				Build_display();
 
 				do {
-					ServiceWindows();
-				} while(!KeyWaiting());
+					g_display->updateDisplay();
+				} while (!KeyWaiting());
 
 				// kill the key we just pressed
 				ReadKey(&ke);

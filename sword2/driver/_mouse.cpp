@@ -29,49 +29,15 @@ namespace Sword2 {
 #define MAX_MOUSE_EVENTS 16
 #define MOUSEFLASHFRAME 6
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
-struct _mouseAnim {
-	uint8 runTimeComp;	// type of runtime compression used for the
-				// frame data
-	uint8 noAnimFrames;	// number of frames in the anim
-	int8 xHotSpot;		
-	int8 yHotSpot;
-	uint8 mousew;
-	uint8 mouseh;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
-
-int16 mousex;
-int16 mousey;
-
 static uint8 mouseBacklog = 0;
 static uint8 mouseLogPos = 0;
-static uint8 mouseFrame;
-static uint8 *mouseSprite = NULL;
-static _mouseAnim *mouseAnim = NULL;
-static _mouseAnim *luggageAnim = NULL;
 static _mouseEvent mouseLog[MAX_MOUSE_EVENTS];
-static int32 *mouseOffsets;
-static int32 *luggageOffset;
 
-// This is the maximum mouse cursor size in the SDL backend
-
-#define MAX_MOUSE_W 80
-#define MAX_MOUSE_H 80
-
-byte _mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
-
-void ResetRenderEngine(void) {
-	parallaxScrollx = 0;
-	parallaxScrolly = 0;
-	scrollx = 0;
-	scrolly = 0;
+void Display::resetRenderEngine(void) {
+	_parallaxScrollX = 0;
+	_parallaxScrollY = 0;
+	_scrollX = 0;
+	_scrollY = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -96,7 +62,7 @@ void LogMouseEvent(uint16 buttons) {
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.
 
-int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0) {
+void Display::decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;
 	int x = 0;
@@ -119,12 +85,10 @@ int32 DecompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pit
 			i += *comp++;
 		}
 	}
-
-	return RD_OK;
 }
 
-void DrawMouse(void) {
-	if (!mouseAnim && !luggageAnim)
+void Display::drawMouse(void) {
+	if (!_mouseAnim && !_luggageAnim)
 		return;
 
 	// When an object is used in the game, the mouse cursor should be a
@@ -140,27 +104,27 @@ void DrawMouse(void) {
 	int deltaX = 0;
 	int deltaY = 0;
 
-	if (mouseAnim) {
-		hotspot_x = mouseAnim->xHotSpot;
-		hotspot_y = mouseAnim->yHotSpot;
-		mouse_width = mouseAnim->mousew;
-		mouse_height = mouseAnim->mouseh;
+	if (_mouseAnim) {
+		hotspot_x = _mouseAnim->xHotSpot;
+		hotspot_y = _mouseAnim->yHotSpot;
+		mouse_width = _mouseAnim->mousew;
+		mouse_height = _mouseAnim->mouseh;
 	}
 
-	if (luggageAnim) {
-		if (!mouseAnim) {
-			hotspot_x = luggageAnim->xHotSpot;
-			hotspot_y = luggageAnim->yHotSpot;
+	if (_luggageAnim) {
+		if (!_mouseAnim) {
+			hotspot_x = _luggageAnim->xHotSpot;
+			hotspot_y = _luggageAnim->yHotSpot;
 		}
-		if (luggageAnim->mousew > mouse_width)
-			mouse_width = luggageAnim->mousew;
-		if (luggageAnim->mouseh > mouse_height)
-			mouse_height = luggageAnim->mouseh;
+		if (_luggageAnim->mousew > mouse_width)
+			mouse_width = _luggageAnim->mousew;
+		if (_luggageAnim->mouseh > mouse_height)
+			mouse_height = _luggageAnim->mouseh;
 	}
 
-	if (mouseAnim && luggageAnim) {
-		deltaX = mouseAnim->xHotSpot - luggageAnim->xHotSpot;
-		deltaY = mouseAnim->yHotSpot - luggageAnim->yHotSpot;
+	if (_mouseAnim && _luggageAnim) {
+		deltaX = _mouseAnim->xHotSpot - _luggageAnim->xHotSpot;
+		deltaY = _mouseAnim->yHotSpot - _luggageAnim->yHotSpot;
 	}
 
 	assert(deltaX >= 0);
@@ -184,12 +148,12 @@ void DrawMouse(void) {
 
 	memset(_mouseData, 0xFF, mouse_width * mouse_height);
 
-	if (luggageAnim)
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + READ_LE_UINT32(luggageOffset), luggageAnim->mousew,
-				luggageAnim->mouseh, mouse_width, deltaX, deltaY);
+	if (_luggageAnim)
+		decompressMouse(_mouseData, (uint8 *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
+				_luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
-	if (mouseAnim)
-		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew, mouseAnim->mouseh, mouse_width);
+	if (_mouseAnim)
+		decompressMouse(_mouseData, _mouseSprite, _mouseAnim->mousew, _mouseAnim->mouseh, mouse_width);
 
 	g_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
@@ -222,19 +186,19 @@ uint8 CheckForMouseEvents(void) {
  * Animates the current mouse pointer
  */
 
-int32 AnimateMouse(void) {
-	uint8 prevMouseFrame = mouseFrame;
+int32 Display::animateMouse(void) {
+	uint8 prevMouseFrame = _mouseFrame;
 
-	if (!mouseAnim)
+	if (!_mouseAnim)
 		return RDERR_UNKNOWN;
 
-	if (++mouseFrame == mouseAnim->noAnimFrames)
-		mouseFrame = MOUSEFLASHFRAME;
+	if (++_mouseFrame == _mouseAnim->noAnimFrames)
+		_mouseFrame = MOUSEFLASHFRAME;
 
-	mouseSprite = (uint8 *) mouseAnim + READ_LE_UINT32(mouseOffsets + mouseFrame);
+	_mouseSprite = (uint8 *) _mouseAnim + READ_LE_UINT32(_mouseOffsets + _mouseFrame);
 
-	if (mouseFrame != prevMouseFrame)
-		DrawMouse();
+	if (_mouseFrame != prevMouseFrame)
+		drawMouse();
 
 	return RD_OK;
 }
@@ -247,32 +211,32 @@ int32 AnimateMouse(void) {
  * or not there is a lead-in animation
  */
 
-int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
-	if (mouseAnim) {
-		free(mouseAnim);
-		mouseAnim = NULL;
+int32 Display::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
+	if (_mouseAnim) {
+		free(_mouseAnim);
+		_mouseAnim = NULL;
 	}
 
 	if (ma)	{
 		if (mouseFlash == RDMOUSE_FLASH)
-			mouseFrame = 0;
+			_mouseFrame = 0;
 		else
-			mouseFrame = MOUSEFLASHFRAME;
+			_mouseFrame = MOUSEFLASHFRAME;
 
-		mouseAnim = (_mouseAnim *) malloc(size);
-		if (!mouseAnim)
+		_mouseAnim = (struct _mouseAnim *) malloc(size);
+		if (!_mouseAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((uint8 *) mouseAnim, ma, size);
-		mouseOffsets = (int32 *) ((uint8 *) mouseAnim + sizeof(_mouseAnim));
+		memcpy((uint8 *) _mouseAnim, ma, size);
+		_mouseOffsets = (int32 *) ((uint8 *) _mouseAnim + sizeof(struct _mouseAnim));
 
-		AnimateMouse();
-		DrawMouse();
+		animateMouse();
+		drawMouse();
 
 		g_system->show_mouse(true);
 	} else {
-		if (luggageAnim)
-			DrawMouse();
+		if (_luggageAnim)
+			drawMouse();
 		else
 			g_system->show_mouse(false);
 	}
@@ -287,27 +251,27 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
  * @param size the size of the animation data
  */
 
-int32 SetLuggageAnim(uint8 *ma, int32 size) {
-	if (luggageAnim) {
-		free(luggageAnim);
-		luggageAnim = NULL;
+int32 Display::setLuggageAnim(uint8 *ma, int32 size) {
+	if (_luggageAnim) {
+		free(_luggageAnim);
+		_luggageAnim = NULL;
 	}
 
 	if (ma)	{
-		luggageAnim = (_mouseAnim *) malloc(size);
-		if (!luggageAnim)
+		_luggageAnim = (struct _mouseAnim *) malloc(size);
+		if (!_luggageAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((uint8 *) luggageAnim, ma, size);
-		luggageOffset = (int32 *) ((uint8 *) luggageAnim + sizeof(_mouseAnim));
+		memcpy((uint8 *) _luggageAnim, ma, size);
+		_luggageOffset = (int32 *) ((uint8 *) _luggageAnim + sizeof(struct _mouseAnim));
 
-		AnimateMouse();
-		DrawMouse();
+		animateMouse();
+		drawMouse();
 
 		g_system->show_mouse(true);
 	} else {
-		if (mouseAnim)
-			DrawMouse();
+		if (_mouseAnim)
+			drawMouse();
 		else
 			g_system->show_mouse(false);
 	}

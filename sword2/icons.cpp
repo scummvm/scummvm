@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/driver/driver96.h"
 #include "bs2/defs.h"
 #include "bs2/icons.h"
@@ -207,23 +208,22 @@ void Build_menu(void) {
 			if (icon_coloured)
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-			SetMenuIcon(RDMENU_BOTTOM, j, icon);
+			g_display->setMenuIcon(RDMENU_BOTTOM, j, icon);
 			res_man.close(res);
 		} else {
 			// no icon here
-			SetMenuIcon(RDMENU_BOTTOM, j, NULL);
+			g_display->setMenuIcon(RDMENU_BOTTOM, j, NULL);
 			debug(5, " NULL for %d", j);
 		}
 	}
 
-	ShowMenu(RDMENU_BOTTOM);
+	g_display->showMenu(RDMENU_BOTTOM);
 }
 
 void Build_system_menu(void) {
 	// start a fresh top system menu
 
 	uint8 *icon;
-	int j;
 
 	uint32 icon_list[5] = {
 		OPTIONS_ICON,
@@ -236,7 +236,7 @@ void Build_system_menu(void) {
 	// build them all high in full colour - when one is clicked on all the
 	// rest will grey out
 
-	for (j = 0; j < ARRAYSIZE(icon_list); j++) {
+	for (int j = 0; j < ARRAYSIZE(icon_list); j++) {
 		icon = res_man.open(icon_list[j]) + sizeof(_standardHeader);
 		
 		// The only case when an icon is grayed is when the player
@@ -245,11 +245,11 @@ void Build_system_menu(void) {
 		if (!DEAD || icon_list[j] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-		SetMenuIcon(RDMENU_TOP, j, icon);
+		g_display->setMenuIcon(RDMENU_TOP, j, icon);
 		res_man.close(icon_list[j]);
 	}
 
-	ShowMenu(RDMENU_TOP);
+	g_display->showMenu(RDMENU_TOP);
 }
 
 } // End of namespace Sword2

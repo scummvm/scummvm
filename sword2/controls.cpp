@@ -74,7 +74,7 @@ public:
 			sprite.data = (uint8 *) (head + 1);
 			sprite.w = head->width;
 			sprite.h = head->height;
-			CreateSurface(&sprite, &_glyph[i]._data);
+			g_display->createSurface(&sprite, &_glyph[i]._data);
 			_glyph[i]._width = head->width;
 			_glyph[i]._height = head->height;
 		}
@@ -84,7 +84,7 @@ public:
 
 	~FontRendererGui() {
 		for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
-			DeleteSurface(_glyph[i]._data);
+			g_display->deleteSurface(_glyph[i]._data);
 	}
 
 	void fetchText(int textId, char *buf) {
@@ -143,7 +143,7 @@ void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 		sprite.w = _glyph[text[i] - 32]._width;
 		sprite.h = _glyph[text[i] - 32]._height;
 
-		DrawSurface(&sprite, _glyph[text[i] - 32]._data);
+		g_display->drawSurface(&sprite, _glyph[text[i] - 32]._data);
 
 		sprite.x += (_glyph[(int) text[i] - 32]._width - CHARACTER_OVERLAP);
 	}
@@ -186,7 +186,7 @@ public:
 	virtual ~Widget() {
 		for (int i = 0; i < _numStates; i++) {
 			if (_surfaces[i]._original)
-				DeleteSurface(_surfaces[i]._surface);
+				g_display->deleteSurface(_surfaces[i]._surface);
 		}
 		free(_sprites);
 		free(_surfaces);
@@ -228,7 +228,7 @@ public:
 	}
 
 	virtual void paint(Common::Rect *clipRect = NULL) {
-		DrawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
+		g_display->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
 	}
 
 	virtual void onMouseEnter() {}
@@ -291,7 +291,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	// Points to just after frame header, ie. start of sprite data
 	_sprites[state].data = (uint8 *) (frame_head + 1);
 
-	CreateSurface(&_sprites[state], &_surfaces[state]._surface);
+	g_display->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
@@ -339,7 +339,7 @@ public:
 	virtual void onAction(Widget *widget, int result = 0) {}
 
 	virtual void paint() {
-		EraseBackBuffer();
+		g_display->clearScene();
 		for (int i = 0; i < _numWidgets; i++)
 			_widgets[i]->paint();
 	}
@@ -362,12 +362,11 @@ int Dialog::run() {
 
 	while (!_finish) {
 		// So that the menu icons will reach their full size
-		ProcessMenu();
+		g_display->processMenu();
+		g_display->updateDisplay();
 
-		ServiceWindows();
-
-		int16 newMouseX = mousex;
-		int16 newMouseY = mousey + 40;
+		int16 newMouseX = g_display->_mouseX;
+		int16 newMouseY = g_display->_mouseY + 40;
 
 		_mouseEvent *me = MouseEvent();
 		_keyboardEvent ke;
@@ -388,7 +387,7 @@ int Dialog::run() {
 				_widgets[i]->onMouseEnter();
 			if (oldHit && !newHit)
 				_widgets[i]->onMouseExit();
-			if (mousex != oldMouseX || mousey != oldMouseY)
+			if (g_display->_mouseX != oldMouseX || g_display->_mouseY != oldMouseY)
 				_widgets[i]->onMouseMove(newMouseX, newMouseY);
 
 			if (me) {
@@ -788,8 +787,8 @@ public:
 		_musicSlider->setValue(g_sound->getMusicVolume());
 		_speechSlider->setValue(g_sound->getSpeechVolume());
 		_fxSlider->setValue(g_sound->getFxVolume());
-		_gfxSlider->setValue(GetRenderType());
-		_gfxPreview->setState(GetRenderType());
+		_gfxSlider->setValue(g_display->getRenderLevel());
+		_gfxPreview->setState(g_display->getRenderLevel());
 	}
 
 	~OptionsDialog() {
@@ -901,7 +900,7 @@ int32 OptionsDialog::writeOptionSettings(void) {
 	buff[3] = g_sound->isMusicMute();
 	buff[4] = g_sound->isSpeechMute();
 	buff[5] = g_sound->isFxMute();
-	buff[6] = GetRenderType();
+	buff[6] = g_display->getRenderLevel();
 	buff[7] = gui._subtitles;
 	buff[8] = gui._pointerTextSelected;
 	buff[9] = gui._stereoReversed;
@@ -1352,7 +1351,7 @@ void SaveLoadDialog::saveLoadError(char* text) {
 	while (1) {
 		_mouseEvent *me;
 
-		ServiceWindows();
+		g_display->updateDisplay();
 
 		if (KeyWaiting()) {
 			_keyboardEvent ke;
@@ -1396,7 +1395,6 @@ void Gui::quitControl(void) {
 
 	// close engine systems down
 	Close_game();
-	CloseAppWindow();
 	exit(0);
 }
 
@@ -1410,13 +1408,13 @@ void Gui::restartControl(void) {
 		return;
 	}
 
-	// Stop music instantly! (James	22aug97)
+	// Stop music instantly!
 	Kill_music();
 
 	//in case we were dead - well we're not anymore!
 	DEAD = 0;
 
-	EraseBackBuffer();
+	g_display->clearScene();
 
 	// restart the game
 	// clear all memory and reset the globals
@@ -1450,9 +1448,9 @@ void Gui::restartControl(void) {
 	// FN_register_frame)
 	Reset_mouse_list();
 
-	CloseMenuImmediately();
+	g_display->closeMenuImmediately();
 
-	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET! (James29may97)
+	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from FN_init_background
 	// switch on scrolling (2 means first time on screen)
 
@@ -1525,33 +1523,7 @@ void Gui::optionControl(void) {
 }
 
 void Gui::updateGraphicsLevel(uint8 newLevel) {
-	switch (newLevel) {
-	case 0:
-		// Lowest setting: no graphics fx
-		ClearTransFx();
-		ClearShadowFx();
-		ClearBltFx();
-		break;
-	case 1:
-		// Medium-low setting: transparency-blending
-		SetTransFx();
-		ClearShadowFx();
-		ClearBltFx();
-		break;
-	case 2:
-		// Medium-high setting: transparency-blending + shading
-		SetTransFx();
-		SetShadowFx();
-		ClearBltFx();
-		break;
-	case 3:
-		// Highest setting: transparency-blending + shading +
-		// edge-blending + improved stretching
-		SetTransFx();
-		SetShadowFx();
-		SetBltFx();
-		break;
-	}
+	g_display->setRenderLevel(newLevel);
 
 	// update our global variable - which needs to be checked when dimming
 	// the palette in PauseGame() in sword2.cpp (since palette-matching

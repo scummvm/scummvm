@@ -27,8 +27,6 @@
 
 namespace Sword2 {
 
-static uint8 *lightMask = 0;
-
 /**
  * This function takes a sprite and creates a mirror image of it.
  * @param dst destination buffer
@@ -37,17 +35,13 @@ static uint8 *lightMask = 0;
  * @param h height of the sprite
  */
 
-int32 MirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
-	int16 x, y;
-
-	for (y = 0; y < h; y++) {
-		for (x = 0; x < w; x++) {
+void Display::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
 			*dst++ = *(src + w - x - 1);
 		}
 		src += w;
 	}
-	
-	return RD_OK;
 }
 
 /**
@@ -58,7 +52,7 @@ int32 MirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
  * @param decompSize the expected size of the decompressed sprite
  */
 
-int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
+int32 Display::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
 	// PARAMETERS:
 	// source	points to the start of the sprite data for input
 	// decompSize	gives size of decompressed data in bytes
@@ -138,7 +132,7 @@ int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
  * Unwinds a run of 16-colour data into 256-colour palette data.
  */
 
-void UnwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
+void Display::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
 		// 1st colour = number in table at position given by upper
@@ -173,7 +167,7 @@ void UnwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
  * @param colTable mapping from the 16 encoded colours to the current palette
  */
 
-int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
+int32 Display::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
 	uint8 headerByte;			// block header byte
 	uint8 *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
@@ -223,7 +217,7 @@ int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTa
 
 			// copy the next 'headerByte' pixels from source to
 			// destination (NB. 2 pixels per byte)
-			UnwindRaw16(dest, source, headerByte, colTable);
+			unwindRaw16(dest, source, headerByte, colTable);
 
 			// increment destination pointer to just after this
 			// block
@@ -253,7 +247,7 @@ int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTa
  * @return RD_OK, or an error code
  */
 
-int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
+int32 Display::createSurface(_spriteInfo *s, uint8 **sprite) {
 	uint8 *newSprite;
 
 	*sprite = (uint8 *) malloc(s->w * s->h);
@@ -264,12 +258,12 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 		memcpy(*sprite, s->data, s->w * s->h);
 	} else {
 		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
-			if (DecompressRLE16(*sprite, s->data, s->w * s->h, s->colourTable)) {
+			if (decompressRLE16(*sprite, s->data, s->w * s->h, s->colourTable)) {
 				free(*sprite);
 				return RDERR_DECOMPRESSION;
 			}
 		} else {
-			if (DecompressRLE256(*sprite, s->data, s->w * s->h)) {
+			if (decompressRLE256(*sprite, s->data, s->w * s->h)) {
 				free(*sprite);
 				return RDERR_DECOMPRESSION;
 			}
@@ -281,7 +275,7 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 				free(*sprite);
 				return RDERR_OUTOFMEMORY;
 			}
-			MirrorSprite(newSprite, *sprite, s->w, s->h);
+			mirrorSprite(newSprite, *sprite, s->w, s->h);
 			free(*sprite);
 			*sprite = newSprite;
 		}
@@ -297,7 +291,7 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
+void Display::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
 	uint16 x, y, srcPitch;
 	uint8 *src, *dst;
@@ -313,8 +307,8 @@ void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 		rd.top = s->y;
 		rd.left = s->x;
 	} else {
-		rd.top = s->y - scrolly;
-		rd.left = s->x - scrollx;
+		rd.top = s->y - _scrollY;
+		rd.left = s->x - _scrollX;
 	}
 
 	rd.right = rd.left + rs.right;
@@ -344,7 +338,7 @@ void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 	}
 
 	src = surface + rs.top * srcPitch + rs.left;
-	dst = lpBackBuffer + screenWide * rd.top + rd.left;
+	dst = _buffer + _screenWide * rd.top + rd.left;
 
 	// Surfaces are always transparent.
 
@@ -354,18 +348,18 @@ void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 				dst[x] = src[x];
 		}
 		src += srcPitch;
-		dst += screenWide;
+		dst += _screenWide;
 	}
 
-	UploadRect(&rd);
-	SetNeedRedraw();
+	updateRect(&rd);
+	setNeedFullRedraw();
 }
 
 /**
  * Destroys a surface.
  */
 
-void DeleteSurface(uint8 *surface) {
+void Display::deleteSurface(uint8 *surface) {
 	free(surface);
 }
 
@@ -390,7 +384,7 @@ void DeleteSurface(uint8 *surface) {
 // FIXME: I'm sure this could be optimized. There's plenty of data copying and
 // mallocing here.
 
-int32 DrawSprite(_spriteInfo *s) {
+int32 Display::drawSprite(_spriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
 	uint8 *backbuf = NULL;
@@ -414,12 +408,12 @@ int32 DrawSprite(_spriteInfo *s) {
 		if (!sprite)
 			return RDERR_OUTOFMEMORY;
 		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
-			if (DecompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
+			if (decompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
 				free(sprite);
 				return RDERR_DECOMPRESSION;
 			}
 		} else {
-			if (DecompressRLE256(sprite, s->data, s->w * s->h)) {
+			if (decompressRLE256(sprite, s->data, s->w * s->h)) {
 				free(sprite);
 				return RDERR_DECOMPRESSION;
 			}
@@ -433,7 +427,7 @@ int32 DrawSprite(_spriteInfo *s) {
 				free(sprite);
 			return RDERR_OUTOFMEMORY;
 		}
-		MirrorSprite(newSprite, sprite, s->w, s->h);
+		mirrorSprite(newSprite, sprite, s->w, s->h);
 		if (freeSprite)
 			free(sprite);
 		sprite = newSprite;
@@ -445,8 +439,8 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	if (!(s->type & RDSPR_DISPLAYALIGN)) {
-		s->x += parallaxScrollx;
-		s->y += parallaxScrolly;
+		s->x += _parallaxScrollX;
+		s->y += _parallaxScrollY;
 	}
 
 	s->y += 40;
@@ -474,8 +468,8 @@ int32 DrawSprite(_spriteInfo *s) {
 	rd.left = s->x;
 
 	if (!(s->type & RDSPR_DISPLAYALIGN)) {
-		rd.top -= scrolly;
-		rd.left -= scrollx;
+		rd.top -= _scrollY;
+		rd.left -= _scrollX;
 	}
 
 	rd.right = rd.left + rs.right;
@@ -515,8 +509,8 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	if (scale != 256) {
-		if ((renderCaps & RDBLTFX_ARITHMETICSTRETCH) && !clipped)
-			backbuf = lpBackBuffer + screenWide * rd.top + rd.left;
+		if ((_renderCaps & RDBLTFX_EDGEBLEND) && !clipped)
+			backbuf = _buffer + _screenWide * rd.top + rd.left;
 			
 
 		if (s->scaledWidth > SCALE_MAXWIDTH || s->scaledHeight > SCALE_MAXHEIGHT) {
@@ -533,14 +527,14 @@ int32 DrawSprite(_spriteInfo *s) {
 		}
 
 		if (scale < 256) {
-			SquashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
+			squashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
 		} else {
 			if (s->scale > 512) {
 				if (freeSprite)
 					free(sprite);
 				return RDERR_INVALIDSCALING;
 			}
-			StretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
+			stretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
 		}
 
 		if (freeSprite)
@@ -557,7 +551,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	// and which is used to simulate light and shadows. Scaled sprites
 	// (actors, presumably) are always affected.
 
-	if ((renderCaps & RDBLTFX_SHADOWBLEND) && lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
+	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
 		uint8 *lightMap;
 
 		if (!freeSprite) {
@@ -568,19 +562,19 @@ int32 DrawSprite(_spriteInfo *s) {
 		}
 
 		src = sprite + rs.top * srcPitch + rs.left;
-		lightMap = lightMask + (rd.top + scrolly - 40) * locationWide + rd.left + scrollx;
+		lightMap = _lightMask + (rd.top + _scrollY - 40) * _locationWide + rd.left + _scrollX;
 
 		for (i = 0; i < rs.height(); i++) {
 			for (j = 0; j < rs.width(); j++) {
 				if (src[j] && lightMap[j]) {
-					uint8 r = ((32 - lightMap[j]) * palCopy[src[j]][0]) >> 5;
-					uint8 g = ((32 - lightMap[j]) * palCopy[src[j]][1]) >> 5;
-					uint8 b = ((32 - lightMap[j]) * palCopy[src[j]][2]) >> 5;
-					src[j] = QuickMatch(r, g, b);
+					uint8 r = ((32 - lightMap[j]) * _palCopy[src[j]][0]) >> 5;
+					uint8 g = ((32 - lightMap[j]) * _palCopy[src[j]][1]) >> 5;
+					uint8 b = ((32 - lightMap[j]) * _palCopy[src[j]][2]) >> 5;
+					src[j] = quickMatch(r, g, b);
 				}
 			}
 			src += srcPitch;
-			lightMap += locationWide;
+			lightMap += _locationWide;
 		}
 	}
 
@@ -589,17 +583,17 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	src = sprite + rs.top * srcPitch + rs.left;
-	dst = lpBackBuffer + screenWide * rd.top + rd.left;
+	dst = _buffer + _screenWide * rd.top + rd.left;
 
 	if (s->type & RDSPR_BLEND) {
-		if (renderCaps & RDBLTFX_ALLHARDWARE) {
+		if (!(_renderCaps & RDBLTFX_SPRITEBLEND)) {
 			for (i = 0; i < rs.height(); i++) {
 				for (j = 0; j < rs.width(); j++) {
 					if (src[j] && ((i & 1) == (j & 1)))
 						dst[j] = src[j];
 				}
 				src += srcPitch;
-				dst += screenWide;
+				dst += _screenWide;
 			}
 		} else {
 			if (s->blend & 0x01) {
@@ -607,14 +601,14 @@ int32 DrawSprite(_spriteInfo *s) {
 				for (i = 0; i < rs.height(); i++) {
 					for (j = 0; j < rs.width(); j++) {
 						if (src[j]) {
-							uint8 r = (palCopy[src[j]][0] * red + palCopy[dst[j]][0] * (8 - red)) >> 3;
-							uint8 g = (palCopy[src[j]][1] * red + palCopy[dst[j]][1] * (8 - red)) >> 3;
-							uint8 b = (palCopy[src[j]][2] * red + palCopy[dst[j]][2] * (8 - red)) >> 3;
-							dst[j] = QuickMatch(r, g, b);
+							uint8 r = (_palCopy[src[j]][0] * red + _palCopy[dst[j]][0] * (8 - red)) >> 3;
+							uint8 g = (_palCopy[src[j]][1] * red + _palCopy[dst[j]][1] * (8 - red)) >> 3;
+							uint8 b = (_palCopy[src[j]][2] * red + _palCopy[dst[j]][2] * (8 - red)) >> 3;
+							dst[j] = quickMatch(r, g, b);
 						}
 					}
 					src += srcPitch;
-					dst += screenWide;
+					dst += _screenWide;
 				}
 			} else if (s->blend & 0x02) {
 				debug(2, "DrawSprite: s->blend & 0x02");
@@ -631,20 +625,20 @@ int32 DrawSprite(_spriteInfo *s) {
 				// Does anyone know where this case was used
 				// anyway?
 
-				red = palCopy[s->blend >> 8][0];
-				green = palCopy[s->blend >> 8][0];
-				blue = palCopy[s->blend >> 8][0];
+				red = _palCopy[s->blend >> 8][0];
+				green = _palCopy[s->blend >> 8][0];
+				blue = _palCopy[s->blend >> 8][0];
 				for (i = 0; i < rs.height(); i++) {
 					for (j = 0; j < rs.width(); j++) {
 						if (src[j]) {
-							uint8 r = (src[j] * red + (16 - src[j]) * palCopy[dst[j]][0]) >> 4;
-							uint8 g = (src[j] * green + (16 - src[j]) * palCopy[dst[j]][1]) >> 4;
-							uint8 b = (src[j] * blue + (16 - src[j]) * palCopy[dst[j]][2]) >> 4;
-							dst[j] = QuickMatch(r, g, b);
+							uint8 r = (src[j] * red + (16 - src[j]) * _palCopy[dst[j]][0]) >> 4;
+							uint8 g = (src[j] * green + (16 - src[j]) * _palCopy[dst[j]][1]) >> 4;
+							uint8 b = (src[j] * blue + (16 - src[j]) * _palCopy[dst[j]][2]) >> 4;
+							dst[j] = quickMatch(r, g, b);
 						}
 					}
 					src += srcPitch;
-					dst += screenWide;
+					dst += _screenWide;
 				}
 			} else {
 				warning("DrawSprite: Invalid blended sprite");
@@ -661,13 +655,13 @@ int32 DrawSprite(_spriteInfo *s) {
 						dst[j] = src[j];
 				}
 				src += srcPitch;
-				dst += screenWide;
+				dst += _screenWide;
 			}
 		} else {
 			for (i = 0; i < rs.height(); i++) {
 				memcpy(dst, src, rs.width());
 				src += srcPitch;
-				dst += screenWide;
+				dst += _screenWide;
 			}
 		}
 	}
@@ -675,8 +669,8 @@ int32 DrawSprite(_spriteInfo *s) {
 	if (freeSprite)
 		free(sprite);
 
-	// UploadRect(&rd);
-	SetNeedRedraw();
+	// updateRect(&rd);
+	setNeedFullRedraw();
 
 	return RD_OK;
 }
@@ -685,20 +679,20 @@ int32 DrawSprite(_spriteInfo *s) {
  * Opens the light masking sprite for a room.
  */
 
-int32 OpenLightMask(_spriteInfo *s) {
+int32 Display::openLightMask(_spriteInfo *s) {
 	// FIXME: The light mask is only needed on higher graphics detail
 	// settings, so to save memory we could simply ignore it on lower
 	// settings. But then we need to figure out how to ensure that it
 	// is properly loaded if the user changes the settings in mid-game.
 
-	if (lightMask)
+	if (_lightMask)
 		return RDERR_NOTCLOSED;
 
-	lightMask = (uint8 *) malloc(s->w * s->h);
-	if (!lightMask)
+	_lightMask = (uint8 *) malloc(s->w * s->h);
+	if (!_lightMask)
 		return RDERR_OUTOFMEMORY;
 
-	if (DecompressRLE256(lightMask, s->data, s->w * s->h))
+	if (decompressRLE256(_lightMask, s->data, s->w * s->h))
 		return RDERR_DECOMPRESSION;
 
 	return RD_OK;
@@ -708,12 +702,12 @@ int32 OpenLightMask(_spriteInfo *s) {
  * Closes the light masking sprite for a room.
  */
 
-int32 CloseLightMask(void) {
-	if (!lightMask)
+int32 Display::closeLightMask(void) {
+	if (!_lightMask)
 		return RDERR_NOTOPEN;
 
-	free(lightMask);
-	lightMask = 0;
+	free(_lightMask);
+	_lightMask = NULL;
 	return RD_OK;
 }
 

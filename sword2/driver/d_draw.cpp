@@ -30,118 +30,90 @@
 
 namespace Sword2 {
 
-byte *lpBackBuffer;
+Display::Display(int16 width, int16 height) 
+	: _iconCount(0), _needFullRedraw(false), _fadeStatus(RDFADE_NONE),
+	  _mouseSprite(NULL), _mouseAnim(NULL), _luggageAnim(NULL),
+	  _layer(0), _renderAverageTime(60), _lightMask(NULL),
+	  _screenWide(width), _screenDeep(height) {
 
-// Game screen metrics
-int16 screenDeep;
-int16 screenWide;
+	int i, j;
 
-// Scroll variables.  scrollx and scrolly hold the current scroll position, 
+	_buffer = (byte *) malloc(width * height);
+	if (!_buffer)
+		error("Could not initialise display");
 
-int16 scrollx;
-int16 scrolly;
-
-int32 renderCaps = 0;
-
-/**
- * Initialise the display with the sizes passed in.
- * @return RD_OK, or an error code if the display cannot be set up.
- */
-
-int32 InitialiseDisplay(int16 width, int16 height) {
 	g_system->init_size(width, height);
 
-	screenWide = width;
-	screenDeep = height;
+	for (i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
+		_blockSurfaces[i] = NULL;
 
-	lpBackBuffer = (byte *) malloc(screenWide * screenDeep);
-	if (!lpBackBuffer)
-		return RDERR_OUTOFMEMORY;
+	for (i = 0; i < 2; i++) {
+		for (j = 0; j < RDMENU_MAXPOCKETS; j++) {
+			_icons[i][j] = NULL;
+			_pocketStatus[i][j] = 0;
+		}
 
-	return RD_OK;
-}
-
-// FIXME: Clean up this mess. I don't want to add any new flags, but some of
-// them should be renamed. Or maybe we should abandon the whole renderCaps
-// thing and simply check the numeric value of the graphics quality setting
-// instead.
-
-// Note that SetTransFx() actually clears a bit. That's intentional.
-
-void SetTransFx(void) {
-	renderCaps &= ~RDBLTFX_ALLHARDWARE;
-}
-
-void ClearTransFx(void) {
-	renderCaps |= RDBLTFX_ALLHARDWARE;
-}
-
-/**
- * Sets the edge blend and arithmetic stretching effects.
- */
-
-void SetBltFx(void) {
-	renderCaps |= (RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
-}
-
-/**
- * Clears the edge blend and arithmetic stretching effects.
- */
-
-void ClearBltFx(void) { 
-	renderCaps &= ~(RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
-}
-
-void SetShadowFx(void) {
-	renderCaps |= RDBLTFX_SHADOWBLEND;
-}
-
-void ClearShadowFx(void) {
-	renderCaps &= ~RDBLTFX_SHADOWBLEND;
+		_menuStatus[i] = RDMENU_HIDDEN;
+	}
 }
 
 /**
  * @return the graphics detail setting
  */
 
-int32 GetRenderType(void) {
-	if (renderCaps & RDBLTFX_ALLHARDWARE)
-		return 0;
-
-	if (renderCaps & (RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH))
-		return 3;
-
-	if (renderCaps & RDBLTFX_SHADOWBLEND)
-		return 2;
-
-	return 1;
+int8 Display::getRenderLevel(void) {
+	return _renderLevel;
 }
+
+void Display::setRenderLevel(int8 level) {
+	_renderLevel = level;
+
+	switch (_renderLevel) {
+	case 0:
+		// Lowest setting: no fancy stuff
+		_renderCaps = 0;
+		break;
+	case 1:
+		// Medium-low setting: transparency-blending
+		_renderCaps = RDBLTFX_SPRITEBLEND;
+		break;
+	case 2:
+		// Medium-high setting: transparency-blending + shading
+		_renderCaps = RDBLTFX_SPRITEBLEND | RDBLTFX_SHADOWBLEND;
+		break;
+	case 3:
+		// Highest setting: transparency-blending + shading +
+		// edge-blending + improved stretching
+		_renderCaps = RDBLTFX_SPRITEBLEND | RDBLTFX_SHADOWBLEND | RDBLTFX_EDGEBLEND;
+		break;
+	}
+}
+
 
 /**
  * Fill the screen buffer with palette colour zero. Note that it does not
  * touch the menu areas of the screen.
  */
 
-int32 EraseBackBuffer( void ) {
-	memset(lpBackBuffer + MENUDEEP * screenWide, 0, screenWide * RENDERDEEP);
-	return RD_OK;
+void Display::clearScene(void) {
+	memset(_buffer + MENUDEEP * _screenWide, 0, _screenWide * RENDERDEEP);
 }
 
 void MoviePlayer::openTextObject(_movieTextObject *obj) {
 	if (obj->textSprite)
-		CreateSurface(obj->textSprite, &_textSurface);
+		g_display->createSurface(obj->textSprite, &_textSurface);
 }
 
 void MoviePlayer::closeTextObject(_movieTextObject *obj) {
 	if (_textSurface) {
-		DeleteSurface(_textSurface);
+		g_display->deleteSurface(_textSurface);
 		_textSurface = NULL;
 	}
 }
 
 void MoviePlayer::drawTextObject(_movieTextObject *obj) {
 	if (obj->textSprite && _textSurface)
-		DrawSurface(obj->textSprite, _textSurface);
+		g_display->drawSurface(obj->textSprite, _textSurface);
 }
 
 /**
@@ -161,14 +133,14 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		uint8 oldPal[1024];
 		uint8 tmpPal[1024];
 
-		EraseBackBuffer();
+		g_display->clearScene();
 
 		// HACK: Draw instructions
 		//
 		// I'm using the the menu area, because that's unlikely to be
 		// touched by anything else during the cutscene.
 
-		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
+		memset(g_display->_buffer, 0, g_display->_screenWide * MENUDEEP);
 
 		uint8 msg[] = "Cutscene - Press ESC to exit";
 		mem *data = fontRenderer.makeTextSprite(msg, 640, 255, g_sword2->_speechFontId);
@@ -176,16 +148,16 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		_spriteInfo msgSprite;
 		uint8 *msgSurface;
 
-		msgSprite.x = screenWide / 2 - frame->width / 2;
+		msgSprite.x = g_display->_screenWide / 2 - frame->width / 2;
 		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
 		msgSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 		msgSprite.data = data->ad + sizeof(_frameHeader);
 
-		CreateSurface(&msgSprite, &msgSurface);
-		DrawSurface(&msgSprite, msgSurface);
-		DeleteSurface(msgSurface);
+		g_display->createSurface(&msgSprite, &msgSurface);
+		g_display->drawSurface(&msgSprite, msgSurface);
+		g_display->deleteSurface(msgSurface);
 		memory.freeMemory(data);
 
 		// In case the cutscene has a long lead-in, start just before
@@ -201,12 +173,12 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		// The text should probably be colored the same as the rest of
 		// the in-game text.
 
-		memcpy(oldPal, palCopy, 1024);
+		memcpy(oldPal, g_display->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
 		tmpPal[255 * 4 + 0] = 255;
 		tmpPal[255 * 4 + 1] = 255;
 		tmpPal[255 * 4 + 2] = 255;
-		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
+		g_display->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		PlayingSoundHandle handle = 0;
 
@@ -217,7 +189,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 				break;
 
 			if (frameCounter == text[textCounter]->startFrame) {
-				EraseBackBuffer();
+				g_display->clearScene();
 				openTextObject(text[textCounter]);
 				drawTextObject(text[textCounter]);
 				if (text[textCounter]->speech) {
@@ -227,13 +199,13 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
-				EraseBackBuffer();
+				g_display->clearScene();
 				textCounter++;
 			}
 
 			frameCounter++;
 
-			ServiceWindows();
+			g_display->updateDisplay();
 
 			_keyboardEvent ke;
 
@@ -252,17 +224,17 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 
 		closeTextObject(text[textCounter]);
 
-		EraseBackBuffer();
-		SetNeedRedraw();
+		g_display->clearScene();
+		g_display->setNeedFullRedraw();
 
 		// HACK: Remove the instructions created above
 		Common::Rect r;
 
-		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
+		memset(g_display->_buffer, 0, g_display->_screenWide * MENUDEEP);
 		r.left = r.top = 0;
-		r.right = screenWide;
+		r.right = g_display->_screenWide;
 		r.bottom = MENUDEEP;
-		UploadRect(&r);
+		g_display->updateRect(&r);
 
 		// FIXME: For now, only play the lead-out music for cutscenes
 		// that have subtitles.
@@ -270,7 +242,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		if (!skipCutscene)
 			g_sound->playLeadOut(musicOut);
 
-		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
+		g_display->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 	}
 
 	// Lead-in and lead-out music are, as far as I can tell, only used for

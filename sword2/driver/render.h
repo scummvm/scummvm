@@ -33,20 +33,6 @@ typedef struct {
 	uint16 offset;
 } _parallaxLine;
 
-extern int16 scrollx;		// current x offset into background of display
-extern int16 scrolly;		// current y offset into background of display
-extern int16 parallaxScrollx;	// current x offset to link a sprite to the
-				// parallax layer
-extern int16 parallaxScrolly;	// current y offset to link a sprite to the
-				// parallax layer
-extern int16 locationWide;
-extern int16 locationDeep;
-
-void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf);
-void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf);
-
-void UploadRect(Common::Rect *r);
-
 } // End of namespace Sword2
 
 #endif

@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "bs2/driver/d_sound.h"
+#include "bs2/driver/d_draw.h"
 
 enum BSGameId {
 	GID_SWORD2 = GID_SWORD2_FIRST,
@@ -77,6 +78,7 @@ public:
 	byte _gameId;
 	char *_targetName; // target name for saves
 	Sound *_sound;
+	Display *_display;
 	Common::RandomSource _rnd;
 
 	uint32 _speechFontId;
@@ -90,6 +92,7 @@ public:
 
 extern Sword2Engine *g_sword2;
 extern Sound *g_sound;
+extern Display *g_display; 
 
 } // End of namespace Sword2
 

@@ -26,6 +26,7 @@
 //	up to 2 foreground parallax layers
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/build_display.h"
 #include "bs2/debug.h"
 #include "bs2/header.h"
@@ -67,11 +68,11 @@ int32 FN_init_background(int32 *params)	{
 #endif
 
 	// if the screen is still fading down then wait for black
-	WaitForFade();
+	g_display->waitForFade();
 
 	// if last screen was using a shading mask (see below)
 	if (this_screen.mask_flag) {
-		rv = CloseLightMask();
+		rv = g_display->closeLightMask();
 		if (rv)
 			error("Driver Error %.8x", rv);
 	}
@@ -80,7 +81,7 @@ int32 FN_init_background(int32 *params)	{
 
 	// for drivers: close the previous screen if one is open
 	if (this_screen.background_layer_id)
-		CloseBackgroundLayer();
+		g_display->closeBackgroundLayer();
 
 	this_screen.background_layer_id = params[0];	// set the res id
 	this_screen.new_palette = params[1];		// yes or no - palette is taken from layer file
@@ -102,7 +103,7 @@ int32 FN_init_background(int32 *params)	{
 	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
 	//initialise the driver back buffer
-	SetLocationMetrics(screen_head->width, screen_head->height);
+	g_display->setLocationMetrics(screen_head->width, screen_head->height);
 
 	if (screen_head->noLayers) {
 		for (int i = 0; i < screen_head->noLayers; i++) {
@@ -124,7 +125,7 @@ int32 FN_init_background(int32 *params)	{
 	// using the screen size setup the scrolling variables
 
 	// if layer is larger than physical screen
-	if (screen_head->width > screenWide || screen_head->height > screenDeep) {
+	if (screen_head->width > g_display->_screenWide || screen_head->height > g_display->_screenDeep) {
 		// switch on scrolling (2 means first time on screen)
 		this_screen.scroll_flag = 2;
 
@@ -139,9 +140,9 @@ int32 FN_init_background(int32 *params)	{
 		// calc max allowed offsets (to prevent scrolling off edge) -
 		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
 		// NB. min scroll offsets are both zero
-		this_screen.max_scroll_offset_x = screen_head->width-screenWide;
+		this_screen.max_scroll_offset_x = screen_head->width - g_display->_screenWide;
 		// 'screenDeep' includes the menu's, so take away 80 pixels
-		this_screen.max_scroll_offset_y = screen_head->height - (screenDeep - (RDMENU_MENUDEEP * 2));
+		this_screen.max_scroll_offset_y = screen_head->height - (g_display->_screenDeep - (RDMENU_MENUDEEP * 2));
 	} else {
 		// layer fits on physical screen - scrolling not required
 		this_screen.scroll_flag = 0;		// switch off scrolling
@@ -151,7 +152,7 @@ int32 FN_init_background(int32 *params)	{
 
 	// no inter-cycle scroll between new screens (see setScrollTarget in
 	// build display)
-	ResetRenderEngine();
+	g_display->resetRenderEngine();
 
 	// these are the physical screen coords where the system
 	// will try to maintain George's actual feet coords
@@ -175,7 +176,7 @@ int32 FN_init_background(int32 *params)	{
 		spriteInfo.data = FetchShadingMask(file);
 		spriteInfo.colourTable = 0;
 
-		rv = OpenLightMask(&spriteInfo);
+		rv = g_display->openLightMask(&spriteInfo);
 		if (rv)
 			error("Driver Error %.8x", rv);
 
@@ -219,22 +220,22 @@ void SetUpBackgroundLayers(void) {
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->bg_parallax[i])
-				InitialiseBackgroundLayer(FetchBackgroundParallaxLayer(file, i));
+				g_display->initialiseBackgroundLayer(FetchBackgroundParallaxLayer(file, i));
 			else
-				InitialiseBackgroundLayer(NULL);
+				g_display->initialiseBackgroundLayer(NULL);
 		}
 
 		// Normal backround layer
 
-		InitialiseBackgroundLayer(FetchBackgroundLayer(file));
+		g_display->initialiseBackgroundLayer(FetchBackgroundLayer(file));
 
 		// Foreground parallax layers
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->fg_parallax[i])
-				InitialiseBackgroundLayer(FetchForegroundParallaxLayer(file, i));
+				g_display->initialiseBackgroundLayer(FetchForegroundParallaxLayer(file, i));
 			else
-				InitialiseBackgroundLayer(NULL);
+				g_display->initialiseBackgroundLayer(NULL);
 		}
 
 		// close the screen file

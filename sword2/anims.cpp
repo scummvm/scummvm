@@ -776,14 +776,14 @@ int32 FN_play_sequence(int32 *params) {
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black
 
-	EraseBackBuffer();
+	g_display->clearScene();
 
 	// zero the entire palette in case we're about to fade up!
 
-	_palEntry  pal[256];
+	_palEntry pal[256];
 
 	memset(pal, 0, 256 * sizeof(_palEntry));
-	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
+	g_display->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
 	debug(5, "FN_play_sequence FINISHED");
 

@@ -196,8 +196,8 @@ uint32 Con_print_start_menu(void) {
 
 				do {
 					// Service windows
-					ServiceWindows();
-				} while(!KeyWaiting());
+					g_display->updateDisplay();
+				} while (!KeyWaiting());
 
 				// kill the key we just pressed
 				ReadKey(&ke);

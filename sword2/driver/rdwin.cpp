@@ -44,8 +44,8 @@ void Sword2Engine::parseEvents() {
 			WriteKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			mousex = event.mouse.x;
-			mousey = event.mouse.y - MENUDEEP;
+			g_display->_mouseX = event.mouse.x;
+			g_display->_mouseY = event.mouse.y - MENUDEEP;
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			LogMouseEvent(RD_LEFTBUTTONDOWN);
@@ -61,7 +61,6 @@ void Sword2Engine::parseEvents() {
 			break;
 		case OSystem::EVENT_QUIT:
 			Close_game();
-			CloseAppWindow();
 			break;
 		default:
 			break;
@@ -69,24 +68,8 @@ void Sword2Engine::parseEvents() {
 	}
 }
 
-/**
- * Quit the game.
- */
-
-int32 CloseAppWindow(void) {
-	warning("stub CloseAppWindow");
-/*
-	DestroyWindow(hwnd);
-*/
-	// just quit for now
-	g_system->quit();
-	return RD_OK;
-}
-
-static bool _needRedraw = false;
-
-void SetNeedRedraw() {
-	_needRedraw = true;
+void Display::setNeedFullRedraw() {
+	_needFullRedraw = true;
 }
 
 /**
@@ -94,29 +77,27 @@ void SetNeedRedraw() {
  * windows and the interface it provides.
  */
 
-int32 ServiceWindows(void) {
+void Display::updateDisplay(void) {
 	g_sword2->parseEvents();
-	FadeServer();
+	fadeServer();
 
 	// FIXME: We re-render the entire picture area of the screen for each
 	// frame, which is pretty horrible.
 
-	if (_needRedraw) {
-		g_system->copy_rect(lpBackBuffer + MENUDEEP * screenWide, screenWide, 0, MENUDEEP, screenWide, screenDeep - 2 * MENUDEEP);
-		_needRedraw = false;
+	if (_needFullRedraw) {
+		g_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
+		_needFullRedraw = false;
 	}
 
 	// We still need to update because of fades, menu animations, etc.
 	g_system->update_screen();
-
-	return RD_OK;
 }
 
 /**
  * Set the window title
  */
 
-void SetWindowName(const char *windowName) {
+void Display::setWindowName(const char *windowName) {
 	OSystem::Property prop;
 
 	prop.caption = windowName;

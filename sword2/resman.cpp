@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/driver/driver96.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
@@ -32,7 +33,6 @@
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
 #include "bs2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
-#include "bs2/sword2.h"	// for CloseGame()
 #include "bs2/router.h"
 
 namespace Sword2 {
@@ -961,8 +961,8 @@ void ResourceManager::killAll(uint8 wantInfo) {
 						Build_display();
 
 						do {
-							ServiceWindows();
-						} while(!KeyWaiting());
+							g_display->updateDisplay();
+						} while (!KeyWaiting());
 
 						ReadKey(&ke);
 						if (ke.keycode == 27)
@@ -1033,8 +1033,8 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 							Build_display();
 
 							do {
-								ServiceWindows();
-							} while(!KeyWaiting());
+								g_display->updateDisplay();
+							} while (!KeyWaiting());
 
 
 							ReadKey(&ke);	//kill the key we just pressed
@@ -1106,28 +1106,28 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	char buf[1024];
 	sprintf(buf, "%sClusters\\%s", _cdPath, _resourceFiles[newCluster]);
 
-	WaitForFade();
+	g_display->waitForFade();
 
-	if (GetFadeStatus() != RDFADE_BLACK) {
-		FadeDown((float) 0.75);
-		WaitForFade();
+	if (g_display->getFadeStatus() != RDFADE_BLACK) {
+		g_display->fadeDown();
+		g_display->waitForFade();
 	}
 
-	EraseBackBuffer();
+	g_display->clearScene();
 
 	Set_mouse(0);
-	Set_luggage(0);	//tw28Aug
+	Set_luggage(0);
 
 	uint8 *bgfile;
 	bgfile = res_man.open(2950);	// open the screen resource
-	InitialiseBackgroundLayer(NULL);
-	InitialiseBackgroundLayer(NULL);
-	InitialiseBackgroundLayer(FetchBackgroundLayer(bgfile));
-	InitialiseBackgroundLayer(NULL);
-	InitialiseBackgroundLayer(NULL);
-	BS2_SetPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
+	g_display->initialiseBackgroundLayer(NULL);
+	g_display->initialiseBackgroundLayer(NULL);
+	g_display->initialiseBackgroundLayer(FetchBackgroundLayer(bgfile));
+	g_display->initialiseBackgroundLayer(NULL);
+	g_display->initialiseBackgroundLayer(NULL);
+	g_display->setPalette(0, 256, FetchPalette(bgfile), RDPAL_FADE);
 
-	RenderParallax(FetchBackgroundLayer(bgfile), 2);
+	g_display->renderParallax(FetchBackgroundLayer(bgfile), 2);
 	res_man.close(2950);		// release the screen resource
 
 	// Git rid of read-only status, if it is set.
@@ -1153,8 +1153,8 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	textSprite.x = screenWide /2 - frame->width / 2;
-	textSprite.y = screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
+	textSprite.x = g_display->_screenWide /2 - frame->width / 2;
+	textSprite.y = g_display->_screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
 	textSprite.w = frame->width;
 	textSprite.h = frame->height;
 	textSprite.scale = 0;
@@ -1194,18 +1194,17 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	int16 textX = textSprite.x;
 	int16 textY = textSprite.y;
 
-	DrawSprite(&barSprite);
+	g_display->drawSprite(&barSprite);
 	barSprite.x = barX;
 	barSprite.y = barY;
 
 	textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-	DrawSprite(&textSprite);
+	g_display->drawSprite(&textSprite);
 	textSprite.x = textX;
 	textSprite.y = textY;
 
-	FadeUp((float) 0.75);
-
-	WaitForFade();
+	g_display->fadeUp();
+	g_display->waitForFade();
 
 	uint32 size = inFile.size();
 
@@ -1227,19 +1226,19 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 			step = 0;
 			// open the screen resource
 			bgfile = res_man.open(2950);
-			RenderParallax(FetchBackgroundLayer(bgfile), 2);
+			g_display->renderParallax(FetchBackgroundLayer(bgfile), 2);
 			// release the screen resource
 			res_man.close(2950);
 			loadingBar = res_man.open(2951);
 			frame = FetchFrameHeader(loadingBar, fr);
 			barSprite.data = (uint8 *) (frame + 1);
 			res_man.close(2951);
-			DrawSprite(&barSprite);
+			g_display->drawSprite(&barSprite);
 			barSprite.x = barX;
 			barSprite.y = barY;
 
 			textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-			DrawSprite(&textSprite);
+			g_display->drawSprite(&textSprite);
 			textSprite.x = textX;
 			textSprite.y = textY;
 
@@ -1247,7 +1246,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		} else
 			step++;
 
-		ServiceWindows();
+		g_display->updateDisplay();
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
@@ -1258,11 +1257,11 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	outFile.close();
 	memory.freeMemory(text_spr);
 
-	EraseBackBuffer();
+	g_display->clearScene();
 
-	FadeDown((float) 0.75);
-	WaitForFade();
-	FadeUp((float) 0.75);
+	g_display->fadeDown();
+	g_display->waitForFade();
+	g_display->fadeUp();
 
 	// Git rid of read-only status.
 	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
@@ -1379,8 +1378,8 @@ void ResourceManager::getCd(int cd) {
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	spriteInfo.x = screenWide / 2 - frame->width / 2;
-	spriteInfo.y = screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
+	spriteInfo.x = g_display->_screenWide / 2 - frame->width / 2;
+	spriteInfo.y = g_display->_screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
 	spriteInfo.w = frame->width;
 	spriteInfo.h = frame->height;
 	spriteInfo.scale = 0;
@@ -1418,10 +1417,10 @@ void ResourceManager::getCd(int cd) {
 			}
 		}
 		
-		ServiceWindows();
+		g_display->updateDisplay();
 
-		EraseBackBuffer();
-		DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+		g_display->clearScene();
+		g_display->drawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.x = oldX;
 	} while (!done);

@@ -22,8 +22,6 @@
 
 namespace Sword2 {
 
-extern void SetNeedRedraw(void);
-
 } // End of namespace Sword2
 
 #endif

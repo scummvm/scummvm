@@ -22,11 +22,7 @@
 
 namespace Sword2 {
 
-extern int16 mousex;		// Mouse x coordinate
-extern int16 mousey;		// Mouse y coordinate
-
 extern void LogMouseEvent(uint16 buttons);
-extern int32 DrawMouse(void);
 
 } // End of namespace Sword2
 

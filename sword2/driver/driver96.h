@@ -176,18 +176,9 @@ namespace Sword2 {
 #define RDPAL_INSTANT			1
 
 //Blitting FX defines
-#define RDBLTFX_MOUSEBLT		0x01
-#define RDBLTFX_FGPARALLAX		0x02
-#define RDBLTFX_ARITHMETICSTRETCH	0x04
-#define RDBLTFX_EDGEBLEND		0x08
-#define RDBLTFX_SHADOWBLEND		0x10
-#define RDBLTFX_FLATALPHA		0x20
-#define RDBLTFX_GRADEDALPHA		0x40
-#define RDBLTFX_ALLHARDWARE		0x80
-
-// Maximum scaled size of a sprite
-#define SCALE_MAXWIDTH 512
-#define SCALE_MAXHEIGHT 512
+#define RDBLTFX_SPRITEBLEND		0x01
+#define RDBLTFX_SHADOWBLEND		0x02
+#define RDBLTFX_EDGEBLEND		0x04
 
 //
 //	Structure definitions
@@ -276,29 +267,6 @@ typedef struct {
 //
 
 //-----------------------------------------------------------------------------
-//  Display functions - from d_draw.c
-//-----------------------------------------------------------------------------
-extern int32 InitialiseDisplay(int16 width, int16 height);
-extern int32 EraseBackBuffer(void);
-extern void SetTransFx(void);
-extern void ClearTransFx(void);
-extern void SetBltFx(void);
-extern void ClearBltFx(void);
-extern void ClearShadowFx(void);
-extern void SetShadowFx(void);
-extern int32 GetRenderType(void);
-extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 *musicOut);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-//	Windows OS functions - from rdwin.c
-//-----------------------------------------------------------------------------
-extern int32 CloseAppWindow(void);
-extern int32 ServiceWindows(void);
-extern void  SetWindowName(const char *windowName);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 //	Language functions - from language.c
 //-----------------------------------------------------------------------------
 extern int32 GetLanguageVersion(uint8 *version);
@@ -306,27 +274,10 @@ extern int32 SetLanguageVersion(uint8 version);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//	Palette functions - from palette.c
-//-----------------------------------------------------------------------------
-extern int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *palette, uint8 setNow);
-extern int32 UpdatePaletteMatchTable(uint8 *data);
-extern uint8 QuickMatch(uint8 r, uint8 g, uint8 b);
-extern int32 FadeUp(float time);
-extern int32 FadeDown(float time);
-extern uint8 GetFadeStatus(void);
-extern int32 DimPalette(void);
-extern void WaitForFade(void);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 //	Mouse functions - from mouse.c
 //-----------------------------------------------------------------------------
 extern _mouseEvent *MouseEvent(void);
-extern int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash);
-extern int32 SetLuggageAnim(uint8 *la, int32 size);
-extern int32 AnimateMouse(void);
-uint8 CheckForMouseEvents(void);		// (James23july97)
-extern void ResetRenderEngine(void);
+uint8 CheckForMouseEvents(void);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -337,56 +288,12 @@ extern int32 ReadKey(_keyboardEvent *ke);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//	Sprite functions - from sprite.c
-//-----------------------------------------------------------------------------
-extern int32 DrawSprite(_spriteInfo *s);
-extern int32 CreateSurface(_spriteInfo *s, uint8 **surface);
-extern void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
-extern void DeleteSurface(uint8 *surface);
-extern int32 OpenLightMask(_spriteInfo *s);
-extern int32 CloseLightMask(void);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-//	Screen drawing and scrolling function - from render.c
-//-----------------------------------------------------------------------------
-extern int32 SetScrollTarget(int16 sx, int16 sy);
-extern int32 InitialiseRenderCycle(void);
-extern int32 StartRenderCycle(void);
-extern int32 EndRenderCycle(bool *end);
-extern int32 RenderParallax(_parallax *p, int16 layer);
-extern int32 SetLocationMetrics(uint16 w, uint16 h);
-extern int32 PlotPoint(uint16 x, uint16 y, uint8 colour);
-extern int32 DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
-extern int32 InitialiseBackgroundLayer(_parallax *p);
-extern int32 CloseBackgroundLayer(void);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-//	Menubar control and drawing functions - from menu.c
-//-----------------------------------------------------------------------------
-extern int32 ProcessMenu(void);
-extern int32 ShowMenu(uint8 menu);
-extern int32 HideMenu(uint8 menu);
-extern int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon);
-extern uint8 GetMenuStatus(uint8 menu);
-extern int32 CloseMenuImmediately(void);
-
-//-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
 extern uint32 SVM_timeGetTime(void);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
-
-//-----------------------------------------------------------------------------
-extern int16 screenWide;	// Width of the screen display
-extern int16 screenDeep;	// Height of the screen display
-extern int16 mousex;		// Mouse screen x coordinate
-extern int16 mousey;		// Mouse screen y coordinate
-extern int32 renderCaps;	// Flags which determine how to render the scene.
-extern uint8 palCopy[256][4];	// Current palette.
 
 } // End of namespace Sword2
 

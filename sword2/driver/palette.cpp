@@ -20,54 +20,31 @@
 #include "stdafx.h"
 #include "common/util.h"
 #include "base/engine.h"
+#include "bs2/sword2.h"
 #include "bs2/driver/d_draw.h"
 #include "bs2/driver/driver96.h"
-#include "bs2/sword2.h"
 
 namespace Sword2 {
 
-#define PALTABLESIZE 64 * 64 * 64
-
-uint8 palCopy[256][4];
-
-static uint8 fadePalette[256][4];
-static uint8 paletteMatch[PALTABLESIZE];
-static uint8 fadeStatus = RDFADE_NONE;
-
-static int32 fadeStartTime;
-static int32 fadeTotalTime;
-
-// --------------------------------------------------------------------------
-// int32 RestorePalette(void)
-//
-// This function restores the palette, and should be called whenever the
-// screen mode changes, or something like that.
-// --------------------------------------------------------------------------
-
-int32 RestorePalette(void) {
-	g_system->set_palette((const byte *) palCopy, 0, 256);
-	return RD_OK;
-}
-
-uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
+uint8 Display::getMatch(uint8 r, uint8 g, uint8 b) {
 	int32 diff;
 	int32 min;
 	int16 diffred, diffgreen, diffblue;
 	int16 i;
 	uint8 minIndex;
 
-	diffred = palCopy[0][0] - r;
-	diffgreen = palCopy[0][1] - g;
-	diffblue = palCopy[0][2] - b;
+	diffred = _palCopy[0][0] - r;
+	diffgreen = _palCopy[0][1] - g;
+	diffblue = _palCopy[0][2] - b;
 
 	diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
 	min = diff;
 	minIndex = 0;
 	if (diff > 0) {
 		for (i = 1; i < 256; i++) {
-			diffred = palCopy[i][0] - r;
-			diffgreen = palCopy[i][1] - g;
-			diffblue = palCopy[i][2] - b;
+			diffred = _palCopy[i][0] - r;
+			diffgreen = _palCopy[i][1] - g;
+			diffblue = _palCopy[i][2] - b;
 
 			diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
 			if (diff < min) {
@@ -90,7 +67,7 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
  * from the current palCopy
  */
 
-int32 UpdatePaletteMatchTable(uint8 *data) {
+void Display::updatePaletteMatchTable(uint8 *data) {
 	if (!data) {
 		int16 red, green, blue;
 		uint8 *p;
@@ -99,20 +76,18 @@ int32 UpdatePaletteMatchTable(uint8 *data) {
 
 		// FIXME: Does this case ever happen?
 
-		p = &paletteMatch[0];
+		p = &_paletteMatch[0];
 		for (red = 0; red < 256; red += 4) {
 			for (green = 0; green < 256; green += 4) {
 				for (blue = 0; blue < 256; blue += 4) {
-					*p++ = GetMatch((uint8) red, (uint8) green, (uint8) blue);
+					*p++ = getMatch((uint8) red, (uint8) green, (uint8) blue);
 				}
 			}
 		}
 	} else {
 		// The provided data is the new palette match table
-		memcpy(paletteMatch, data, PALTABLESIZE);
+		memcpy(_paletteMatch, data, PALTABLESIZE);
 	}
-
-	return RD_OK;
 }
 
 /**
@@ -126,8 +101,8 @@ int32 UpdatePaletteMatchTable(uint8 *data) {
 // FIXME: This used to be inlined - probably a good idea - but the
 // linker complained when I tried to use it in sprite.cpp.
 
-uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
-	return paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
+uint8 Display::quickMatch(uint8 r, uint8 g, uint8 b) {
+	return _paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
 
 /**
@@ -137,27 +112,22 @@ uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
  * @param colourTable the new colour entries
  */
 
-int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
-	if (noEntries == 0) {
-		RestorePalette();
-		return RD_OK;
-	}
-
-	memcpy(&palCopy[startEntry][0], colourTable, noEntries * 4);
-	if (fadeNow == RDPAL_INSTANT)
-		g_system->set_palette((byte *) palCopy, startEntry, noEntries);
-
-	return RD_OK;
+void Display::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
+	if (noEntries) {
+		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
+		if (fadeNow == RDPAL_INSTANT)
+			g_system->set_palette((const byte *) _palCopy, startEntry, noEntries);
+	} else
+		g_system->set_palette((const byte *) _palCopy, 0, 256);
 }
 
-int32 DimPalette(void) {
-	byte *p = (byte *) palCopy;
+void Display::dimPalette(void) {
+	byte *p = (byte *) _palCopy;
 
 	for (int i = 0; i < 256 * 4; i++)
 		p[i] /= 2;
 
 	g_system->set_palette(p, 0, 256);
-	return RD_OK;
 }
 
 /**
@@ -165,13 +135,13 @@ int32 DimPalette(void) {
  * @param time the time it will take the palette to fade up
  */
 
-int32 FadeUp(float time) {
-	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
+int32 Display::fadeUp(float time) {
+	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
-	fadeTotalTime = (int32) (time * 1000);
-	fadeStatus = RDFADE_UP;
-	fadeStartTime = SVM_timeGetTime();
+	_fadeTotalTime = (int32) (time * 1000);
+	_fadeStatus = RDFADE_UP;
+	_fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
 }
@@ -181,13 +151,13 @@ int32 FadeUp(float time) {
  * @param time the time it will take the palette to fade down
  */
 
-int32 FadeDown(float time) {
-	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
+int32 Display::fadeDown(float time) {
+	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
-	fadeTotalTime = (int32) (time * 1000);
-	fadeStatus = RDFADE_DOWN;
-	fadeStartTime = SVM_timeGetTime();
+	_fadeTotalTime = (int32) (time * 1000);
+	_fadeStatus = RDFADE_DOWN;
+	_fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
 }
@@ -198,20 +168,20 @@ int32 FadeDown(float time) {
  * (not faded), or RDFADE_BLACK (completely faded down)
  */
 
-uint8 GetFadeStatus(void) {
-	return fadeStatus;
+uint8 Display::getFadeStatus(void) {
+	return _fadeStatus;
 }
 
-void WaitForFade(void) {
-	while (GetFadeStatus() != RDFADE_NONE && GetFadeStatus() != RDFADE_BLACK) {
-		ServiceWindows();
+void Display::waitForFade(void) {
+	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK) {
+		updateDisplay();
 		g_system->delay_msecs(20);
 	}
 }
 
-void FadeServer() {
+void Display::fadeServer(void) {
 	static int32 previousTime = 0;
-	const byte *newPalette = (const byte *) fadePalette;
+	const byte *newPalette = (const byte *) _fadePalette;
 	int32 currentTime;
 	int16 fadeMultiplier;
 	int16 i;
@@ -221,7 +191,7 @@ void FadeServer() {
 	// actually update the screen.
 
 	// If we're not in the process of fading, do nothing.
-	if (fadeStatus != RDFADE_UP && fadeStatus != RDFADE_DOWN)
+	if (getFadeStatus() != RDFADE_UP && getFadeStatus() != RDFADE_DOWN)
 		return;
 
 	// I don't know if this is necessary, but let's limit how often the
@@ -232,28 +202,28 @@ void FadeServer() {
 
 	previousTime = currentTime;
 
-	if (fadeStatus == RDFADE_UP) {
-		if (currentTime >= fadeStartTime + fadeTotalTime) {
-			fadeStatus = RDFADE_NONE;
-			newPalette = (const byte *) palCopy;
+	if (getFadeStatus() == RDFADE_UP) {
+		if (currentTime >= _fadeStartTime + _fadeTotalTime) {
+			_fadeStatus = RDFADE_NONE;
+			newPalette = (const byte *) _palCopy;
 		} else {
-			fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
+			fadeMultiplier = (int16) (((int32) (currentTime - _fadeStartTime) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-				fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-				fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
+				_fadePalette[i][0] = (_palCopy[i][0] * fadeMultiplier) >> 8;
+				_fadePalette[i][1] = (_palCopy[i][1] * fadeMultiplier) >> 8;
+				_fadePalette[i][2] = (_palCopy[i][2] * fadeMultiplier) >> 8;
 			}
 		}
 	} else {
-		if (currentTime >= fadeStartTime + fadeTotalTime) {
-			fadeStatus = RDFADE_BLACK;
-			memset(fadePalette, 0, sizeof(fadePalette));
+		if (currentTime >= _fadeStartTime + _fadeTotalTime) {
+			_fadeStatus = RDFADE_BLACK;
+			memset(_fadePalette, 0, sizeof(_fadePalette));
 		} else {
-			fadeMultiplier = (int16) (((int32) (fadeTotalTime - (currentTime - fadeStartTime)) * 256) / fadeTotalTime);
+			fadeMultiplier = (int16) (((int32) (_fadeTotalTime - (currentTime - _fadeStartTime)) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
-				fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
-				fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
+				_fadePalette[i][0] = (_palCopy[i][0] * fadeMultiplier) >> 8;
+				_fadePalette[i][1] = (_palCopy[i][1] * fadeMultiplier) >> 8;
+				_fadePalette[i][2] = (_palCopy[i][2] * fadeMultiplier) >> 8;
 			}
 		}
 	}

@@ -23,6 +23,7 @@
 // on them
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/console.h"
 #include "bs2/defs.h"
 #include "bs2/events.h"
@@ -137,7 +138,7 @@ int32 FN_walk(int32 *params) {
 		// resource
 
 		ob_graph->anim_resource = ob_mega->megaset_res;
-	} else if (EXIT_FADING && GetFadeStatus() == RDFADE_BLACK) {
+	} else if (EXIT_FADING && g_display->getFadeStatus() == RDFADE_BLACK) {
 		// double clicked an exit so quit the walk when screen is black
 
 		// ok, thats it - back to script and change screen

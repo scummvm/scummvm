@@ -108,7 +108,6 @@ void Send_fore_par1_frames(void);
 // ---------------------------------------------------------------------------
 
 void Build_display(void) {
-	bool end;
 #ifdef _SWORD2_DEBUG
 	uint8 pal[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0 };
 #endif
@@ -133,25 +132,21 @@ void Build_display(void) {
 	// there is a valid screen to run
 	if (!console_status && this_screen.background_layer_id)	{
 		// set the scroll position
-		SetScrollTarget(this_screen.scroll_offset_x, this_screen.scroll_offset_y);
+		g_display->setScrollTarget(this_screen.scroll_offset_x, this_screen.scroll_offset_y);
 		// increment the mouse frame
-		AnimateMouse();
+		g_display->animateMouse();
 
-		StartRenderCycle();
+		g_display->startRenderCycle();
 
 		while (1) {
-			// START OF RENDER CYCLE
-
-			// ---------------------------------------------------
 			// clear the back buffer, before building up the new
 			// screen from the back forwards
 
 			// FIXME: I'm not convinced that this is needed. Isn't
 			// the whole screen redrawn each time?
 
-			// EraseBackBuffer();
+			// g_display->clearScene();
 
-			// ---------------------------------------------------
 			// first background parallax + related anims
 
 			// open the screen resource
@@ -159,7 +154,7 @@ void Build_display(void) {
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[0]) {
-				RenderParallax(FetchBackgroundParallaxLayer(file, 0), 0);
+				g_display->renderParallax(FetchBackgroundParallaxLayer(file, 0), 0);
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
@@ -169,7 +164,6 @@ void Build_display(void) {
  	 			res_man.close(this_screen.background_layer_id);
 			}
 
- 			// ---------------------------------------------------
 			// second background parallax + related anims
 
 			// open the screen resource
@@ -177,7 +171,7 @@ void Build_display(void) {
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->bg_parallax[1]) {
-				RenderParallax(FetchBackgroundParallaxLayer(file, 1), 1);
+				g_display->renderParallax(FetchBackgroundParallaxLayer(file, 1), 1);
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
@@ -187,16 +181,14 @@ void Build_display(void) {
  	 			res_man.close(this_screen.background_layer_id);
 			}
 
- 			// ---------------------------------------------------
 			// normal backround layer (just the one!)
 
 			// open the screen resource
 			file = res_man.open(this_screen.background_layer_id);
-			RenderParallax(FetchBackgroundLayer(file), 2);
+			g_display->renderParallax(FetchBackgroundLayer(file), 2);
 			// release the screen resource
 			res_man.close(this_screen.background_layer_id);
 
- 			// ---------------------------------------------------
 			// sprites & layers
 
 			Send_back_frames();	// background sprites
@@ -204,7 +196,6 @@ void Build_display(void) {
 			Send_sort_frames();	// sorted sprites & layers
 			Send_fore_frames();	// foreground sprites
 
-			// ---------------------------------------------------
 			// first foreground parallax + related anims
 
 			// open the screen resource
@@ -212,7 +203,7 @@ void Build_display(void) {
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[0]) {
-				RenderParallax(FetchForegroundParallaxLayer(file, 0), 3);
+				g_display->renderParallax(FetchForegroundParallaxLayer(file, 0), 3);
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
@@ -222,7 +213,6 @@ void Build_display(void) {
  	 			res_man.close(this_screen.background_layer_id);
 			}
 
- 			//----------------------------------------------------
 			// second foreground parallax + related anims
 
 			// open the screen resource
@@ -230,7 +220,7 @@ void Build_display(void) {
 			screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
 			if (screenLayerTable->fg_parallax[1]) {
-				RenderParallax(FetchForegroundParallaxLayer(file, 1), 4);
+				g_display->renderParallax(FetchForegroundParallaxLayer(file, 1), 4);
 				// release the screen resource before cacheing
 				// the sprites
 	 			res_man.close(this_screen.background_layer_id);
@@ -240,29 +230,24 @@ void Build_display(void) {
  	 			res_man.close(this_screen.background_layer_id);
 			}
 
- 			// ---------------------------------------------------
 			// walkgrid, mouse & player markers & mouse area
 			// rectangle
 
 			Draw_debug_graphics();
 
- 			// ---------------------------------------------------
 			// text blocks
 
 			// speech blocks and headup debug text
 			fontRenderer.printTextBlocs();
 
- 			// ---------------------------------------------------
 			// menu bar & icons
 
-			ProcessMenu();
+			g_display->processMenu();
 
- 			// ---------------------------------------------------
 			// ready - blit to screen
 
-			ServiceWindows();
+			g_display->updateDisplay();
 
- 			//----------------------------------------------------
 			// update our fps reading
 
 			frameCount++;
@@ -273,20 +258,16 @@ void Build_display(void) {
 				cycleTime = SVM_timeGetTime() + 1000;
 			}
 
- 			// ---------------------------------------------------
-			// check if we've got time to render the screen again
+			// Check if we've got time to render the screen again
 			// this cycle (so drivers can smooth out the scrolling
 			// in between normal game cycles)
-
-			EndRenderCycle(&end);
-
-			// if we haven't got time to render again this cycle,
+			//
+			// If we haven't got time to render again this cycle,
 			// drop out of 'render cycle' while-loop
-			if (end)
-				break;
 
-			// ---------------------------------------------------
-		}	// END OF RENDER CYCLE
+			if (g_display->endRenderCycle())
+				break;
+		}
 	}
 #ifdef _SWORD2_DEBUG
 	else if (console_status) {
@@ -302,13 +283,13 @@ void Build_display(void) {
 		spriteInfo.data = console_sprite->ad;
 		spriteInfo.colourTable = 0;
 
-		rv = DrawSprite(&spriteInfo);
+		rv = g_display->drawSprite(&spriteInfo);
 		if (rv)
 			error("Driver Error %.8x (drawing console)", rv);
 	} else{
 		StartConsole();
 		// force the palette
-		BS2_SetPalette(0, 3, pal, RDPAL_INSTANT);
+		g_display->setPalette(0, 3, pal, RDPAL_INSTANT);
 		Print_to_console("no valid screen?");
 	}
 #endif
@@ -329,24 +310,24 @@ void DisplayMsg(uint8 *text, int time) {
 
 	warning("DisplayMsg: %s", (char *) text);
 	
-	if (GetFadeStatus() != RDFADE_BLACK) {
-		FadeDown((float) 0.75);
-		WaitForFade();
+	if (g_display->getFadeStatus() != RDFADE_BLACK) {
+		g_display->fadeDown();
+		g_display->waitForFade();
 	}
 
 	Set_mouse(0);
 	Set_luggage(0);
 
-	CloseMenuImmediately();
-	EraseBackBuffer();
+	g_display->closeMenuImmediately();
+	g_display->clearScene();
 
 	text_spr = fontRenderer.makeTextSprite(text, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader *) text_spr->ad;
 
-	spriteInfo.x = screenWide / 2 - frame->width / 2;
+	spriteInfo.x = g_display->_screenWide / 2 - frame->width / 2;
 	if (!time)
-		spriteInfo.y = screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
+		spriteInfo.y = g_display->_screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
 	else
 		spriteInfo.y = 400 - frame->height;
 	spriteInfo.w = frame->width;
@@ -359,33 +340,34 @@ void DisplayMsg(uint8 *text, int time) {
 	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
 	spriteInfo.colourTable = 0;
 
-	rv = DrawSprite(&spriteInfo);
+	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x (in DisplayMsg)", rv);
 
-	memcpy((char *) oldPal, (char *) palCopy, 256 * sizeof(_palEntry));
+	memcpy((char *) oldPal, (char *) g_display->_palCopy, 256 * sizeof(_palEntry));
 
 	memset(pal, 0, 256 * sizeof(_palEntry));
 	pal[187].red = 255;
 	pal[187].green = 255;
 	pal[187].blue = 255;
-	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
+	g_display->setPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
 
-	FadeUp((float) 0.75);
+	g_display->fadeUp();
 
 	memory.freeMemory(text_spr);
 
-	WaitForFade();
+	g_display->waitForFade();
 
 	uint32 targetTime = SVM_timeGetTime() + (time * 1000);
 
-	rv = DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+	// Keep the message there even when the user task swaps.
+	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x (in DisplayMsg)", rv);
 
 	sleepUntil(targetTime);
 
-	BS2_SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
+	g_display->setPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
 }
 
 // ---------------------------------------------------------------------------
@@ -394,13 +376,13 @@ void DisplayMsg(uint8 *text, int time) {
 //
 
 void RemoveMsg(void) {
-	FadeDown((float) 0.75);
+	g_display->fadeDown();
 
-	WaitForFade();
+	g_display->waitForFade();
 
-	EraseBackBuffer();
+	g_display->clearScene();
 
-	// FadeUp((float) 0.75);	
+	// g_display->fadeUp();	
 	// removed by JEL (08oct97) to prevent "eye" smacker corruption when
 	// restarting game from CD2 and also to prevent palette flicker when
 	// restoring game to a different CD since the "insert CD" message uses
@@ -516,7 +498,7 @@ void Process_layer(uint32 layer_number) {
 #endif
 	//------------------------------------------
 
-	rv = DrawSprite(&spriteInfo);
+	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x in Process_layer(%d)", rv, layer_number);
 
@@ -559,7 +541,7 @@ void Process_image(buildit *build_unit) {
 		// but the same compression can be decompressed using the
 		// RLE256 routines!
 
-		// NOTE: If this restriction refers to DrawSprite(), I don't
+		// NOTE: If this restriction refers to drawSprite(), I don't
 		// think we have it any more. But I'm not sure.
 
 		if (build_unit->scale || anim_head->blend || build_unit->shadingFlag)
@@ -649,7 +631,7 @@ void Process_image(buildit *build_unit) {
 //	}
 // #endif
 
-	rv = DrawSprite(&spriteInfo);
+	rv = g_display->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x with sprite %s (%d) in Process_image",
 			rv, FetchObjectName(build_unit->anim_resource),
@@ -933,14 +915,14 @@ void Start_new_palette(void) {
 
 	// if the screen is still fading down then wait for black - could
 	// happen when everythings cached into a large memory model
-	WaitForFade();
+	g_display->waitForFade();
 
 	// open the screen file
 	screenFile = res_man.open(this_screen.background_layer_id);
 
-	UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(screenFile));
+	g_display->updatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(screenFile));
 
-	BS2_SetPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
+	g_display->setPalette(0, 256, FetchPalette(screenFile), RDPAL_FADE);
 
 	// indicating that it's a screen palette
 	lastPaletteRes = 0;
@@ -949,8 +931,7 @@ void Start_new_palette(void) {
   	res_man.close(this_screen.background_layer_id);
 
 	// start fade up
-	// FadeUp((float) 1.75);
-	FadeUp((float) 0.75);
+	g_display->fadeUp();
 
 	// reset
  	this_screen.new_palette = 0;
@@ -980,17 +961,17 @@ int32 FN_fade_down(int32 *params) {
 	// NONE means up! can only be called when screen is fully faded up -
 	// multiple calls wont have strange effects
 
-	if (GetFadeStatus() == RDFADE_NONE)
-		FadeDown((float) 0.75);
+	if (g_display->getFadeStatus() == RDFADE_NONE)
+		g_display->fadeDown();
 
 	return IR_CONT;
 }
 
 int32 FN_fade_up(int32 *params) {
-	WaitForFade();
+	g_display->waitForFade();
 
-	if (GetFadeStatus() == RDFADE_BLACK)
-		FadeUp((float) 0.75);
+	if (g_display->getFadeStatus() == RDFADE_BLACK)
+		g_display->fadeUp();
 
 	return IR_CONT;
 }
@@ -1076,9 +1057,9 @@ void SetFullPalette(int32 palRes) {
 		file[3] = 0;
 
 		// not yet in separate palette files
-		// UpdatePaletteMatchTable(file + (256 * 4));
+		// g_display->updatePaletteMatchTable(file + (256 * 4));
 
-		BS2_SetPalette(0, 256, file, RDPAL_INSTANT);
+		g_display->setPalette(0, 256, file, RDPAL_INSTANT);
 
 		if (palRes != CONTROL_PANEL_PALETTE) {	// (James 03sep97)
 			// indicating that it's a separate palette resource
@@ -1092,9 +1073,9 @@ void SetFullPalette(int32 palRes) {
 		if (this_screen.background_layer_id) {
 			// open the screen file
 			file = res_man.open(this_screen.background_layer_id);
-			UpdatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(file));
+			g_display->updatePaletteMatchTable((uint8 *) FetchPaletteMatchTable(file));
 
-			BS2_SetPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
+			g_display->setPalette(0, 256, FetchPalette(file), RDPAL_INSTANT);
 
 			// indicating that it's a screen palette
 			lastPaletteRes = 0;
@@ -1115,7 +1096,7 @@ int32 FN_change_shadows(int32 *params) {
 
 	// if last screen was using a shading mask (see below)
 	if (this_screen.mask_flag) {
-		rv = CloseLightMask();
+		rv = g_display->closeLightMask();
 
 		if (rv)
 			error("Driver Error %.8x [%s line %u]", rv);

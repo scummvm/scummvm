@@ -22,11 +22,6 @@
 
 namespace Sword2 {
 
-extern uint8 paletteMatch[64*64*64];
-
-extern int32 RestorePalette(void);
-extern void FadeServer();
-
 } // End of namespace Sword2
 
 #endif

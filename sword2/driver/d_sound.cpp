@@ -245,7 +245,7 @@ void Sound::playLeadOut(uint8 *leadOut) {
 	}
 
 	while (_fx[i]._handle) {
-		ServiceWindows();
+		g_display->updateDisplay();
 		g_system->delay_msecs(30);
 	}
 }

@@ -29,23 +29,7 @@ namespace Sword2 {
 #define MENUDEEP 40
 #define MAXMENUANIMS 8
 
-static uint8 menuStatus[2] = {
-	RDMENU_HIDDEN, RDMENU_HIDDEN
-};
-
-static byte *icons[2][RDMENU_MAXPOCKETS] = {
-	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, 
-	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
-};
-
-static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] = {
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-};
-
-static uint8 iconCount = 0;
-
-void ClearIconArea(int menu, int pocket, Common::Rect *r) {
+void Display::clearIconArea(int menu, int pocket, Common::Rect *r) {
 	byte *dst;
 	int i;
 
@@ -54,11 +38,11 @@ void ClearIconArea(int menu, int pocket, Common::Rect *r) {
 	r->left = RDMENU_ICONSTART + pocket * (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
 	r->right = r->left + RDMENU_ICONWIDE;
 
-	dst = lpBackBuffer + r->top * screenWide + r->left;
+	dst = _buffer + r->top * _screenWide + r->left;
 
 	for (i = 0; i < RDMENU_ICONDEEP; i++) {
 		memset(dst, 0, RDMENU_ICONWIDE);
-		dst += screenWide;
+		dst += _screenWide;
 	}
 }
 
@@ -68,7 +52,7 @@ void ClearIconArea(int menu, int pocket, Common::Rect *r) {
  * system is.
  */
 
-int32 ProcessMenu(void) {
+void Display::processMenu(void) {
 	byte *src, *dst;
 	uint8 menu;
 	uint8 i, j;
@@ -90,84 +74,84 @@ int32 ProcessMenu(void) {
 			delta = 250;
 			frameCount = 1;
 		} else {
-			frameCount = (uint8) ((iconCount + 8) * delta / 750);
-			lastTime += frameCount * 750 / (iconCount + 8);
+			frameCount = (uint8) ((_iconCount + 8) * delta / 750);
+			lastTime += frameCount * 750 / (_iconCount + 8);
 		}
 	}
 
 	while (frameCount-- > 0) {
 		for (menu = RDMENU_TOP; menu <= RDMENU_BOTTOM; menu++) {
-			if (menuStatus[menu] == RDMENU_OPENING) {
+			if (_menuStatus[menu] == RDMENU_OPENING) {
 				// The menu is opening, so process it here
 				complete = 1;
 
 				// Propagate the animation from the first icon.
 				for (i = RDMENU_MAXPOCKETS - 1; i > 0; i--) {
-					pocketStatus[menu][i] = pocketStatus[menu][i - 1];
-					if (pocketStatus[menu][i] != MAXMENUANIMS)
+					_pocketStatus[menu][i] = _pocketStatus[menu][i - 1];
+					if (_pocketStatus[menu][i] != MAXMENUANIMS)
 						complete = 0;
 				}
-				if (pocketStatus[menu][i] != MAXMENUANIMS)
+				if (_pocketStatus[menu][i] != MAXMENUANIMS)
 					complete = 0;
 
 				// ... and animate the first icon
-				if (pocketStatus[menu][0] != MAXMENUANIMS)
-					pocketStatus[menu][0]++;
+				if (_pocketStatus[menu][0] != MAXMENUANIMS)
+					_pocketStatus[menu][0]++;
 
 				// Check to see if the menu is fully open
 				if (complete)
-					menuStatus[menu] = RDMENU_SHOWN;
-			} else if (menuStatus[menu] == RDMENU_CLOSING) {
+					_menuStatus[menu] = RDMENU_SHOWN;
+			} else if (_menuStatus[menu] == RDMENU_CLOSING) {
 				// The menu is closing, so process it here
 				complete = 1;
 
 				// Propagate the animation from the first icon.
 				for (i = RDMENU_MAXPOCKETS - 1; i > 0; i--) {
-					if (icons[menu][i] && pocketStatus[menu][i] != 0 && pocketStatus[menu][i - 1] == 0) {
-						ClearIconArea(menu, i, &r1);
-						UploadRect(&r1);
+					if (_icons[menu][i] && _pocketStatus[menu][i] != 0 && _pocketStatus[menu][i - 1] == 0) {
+						clearIconArea(menu, i, &r1);
+						updateRect(&r1);
 					}
 
-					pocketStatus[menu][i] = pocketStatus[menu][i - 1];
-					if (pocketStatus[menu][i] != 0)
+					_pocketStatus[menu][i] = _pocketStatus[menu][i - 1];
+					if (_pocketStatus[menu][i] != 0)
 						complete = 0;
 				}
-				if (pocketStatus[menu][i] != 0)
+				if (_pocketStatus[menu][i] != 0)
 					complete = 0;
 
 				// ... and animate the first icon
-				if (pocketStatus[menu][0] != 0) {
-					pocketStatus[menu][0]--;
+				if (_pocketStatus[menu][0] != 0) {
+					_pocketStatus[menu][0]--;
 
-					if (pocketStatus[menu][0] == 0) {
-						ClearIconArea(menu, 0, &r1);
-						UploadRect(&r1);
+					if (_pocketStatus[menu][0] == 0) {
+						clearIconArea(menu, 0, &r1);
+						updateRect(&r1);
 					}
 				}
 
 				// Check to see if the menu is fully closed
 				if (complete)
-					menuStatus[menu] = RDMENU_HIDDEN;
+					_menuStatus[menu] = RDMENU_HIDDEN;
 			}
 		}
 	}
 	
 	// Does the menu need to be drawn?
 	for (menu = RDMENU_TOP; menu <= RDMENU_BOTTOM; menu++) {
-		if (menuStatus[menu] != RDMENU_HIDDEN) {
+		if (_menuStatus[menu] != RDMENU_HIDDEN) {
 			// Draw the menu here.
 			curx = RDMENU_ICONSTART + RDMENU_ICONWIDE / 2;
 			cury = (MENUDEEP / 2) + (RENDERDEEP + MENUDEEP) * menu;
 
 			for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
-				if (icons[menu][i]) {
+				if (_icons[menu][i]) {
 					// Since we no longer clear the screen
 					// after each frame we need to clear
 					// the icon area.
 
-					ClearIconArea(menu, i, &r1);
+					clearIconArea(menu, i, &r1);
 					
-					if (pocketStatus[menu][i] == MAXMENUANIMS) {
+					if (_pocketStatus[menu][i] == MAXMENUANIMS) {
 						xoff = (RDMENU_ICONWIDE / 2);
 						r2.left = curx - xoff;
 						r2.right = r2.left + RDMENU_ICONWIDE;
@@ -175,30 +159,30 @@ int32 ProcessMenu(void) {
 						r2.top = cury - yoff;
 						r2.bottom = r2.top + RDMENU_ICONDEEP;
 					} else {
-						xoff = (RDMENU_ICONWIDE / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
+						xoff = (RDMENU_ICONWIDE / 2) * _pocketStatus[menu][i] / MAXMENUANIMS;
 						r2.left = curx - xoff;
 						r2.right = curx + xoff;
-						yoff = (RDMENU_ICONDEEP / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
+						yoff = (RDMENU_ICONDEEP / 2) * _pocketStatus[menu][i] / MAXMENUANIMS;
 						r2.top = cury - yoff;
 						r2.bottom = cury + yoff;
 					}
 
 					if (xoff != 0 && yoff != 0) {
-						dst = lpBackBuffer + r2.top * screenWide + r2.left;
-						src = icons[menu][i];
+						dst = _buffer + r2.top * _screenWide + r2.left;
+						src = _icons[menu][i];
 
-						if (pocketStatus[menu][i] != MAXMENUANIMS) {
-							SquashImage(
-								dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
+						if (_pocketStatus[menu][i] != MAXMENUANIMS) {
+							squashImage(
+								dst, _screenWide, r2.right - r2.left, r2.bottom - r2.top,
 								src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP, NULL);
 						} else {
 							for (j = 0; j < RDMENU_ICONDEEP; j++) {
 								memcpy(dst, src, RDMENU_ICONWIDE);
 								src += RDMENU_ICONWIDE;
-								dst += screenWide;
+								dst += _screenWide;
 							}
 						}
-						UploadRect(&r1);
+						updateRect(&r1);
 					}
 				}
 				curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
@@ -207,8 +191,6 @@ int32 ProcessMenu(void) {
 			}
 		}
 	}
-	
-	return RD_OK;
 }
 
 /**
@@ -217,17 +199,17 @@ int32 ProcessMenu(void) {
  * @return RD_OK, or an error code
  */
 
-int32 ShowMenu(uint8 menu) {
+int32 Display::showMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
 
 	// Check that the menu is not currently shown, or in the process of
 	// being shown.
-	if (menuStatus[menu] == RDMENU_SHOWN || menuStatus[menu] == RDMENU_OPENING)
+	if (_menuStatus[menu] == RDMENU_SHOWN || _menuStatus[menu] == RDMENU_OPENING)
 		return RDERR_INVALIDCOMMAND;
 
-	menuStatus[menu] = RDMENU_OPENING;
+	_menuStatus[menu] = RDMENU_OPENING;
 	return RD_OK;
 }
 
@@ -237,17 +219,17 @@ int32 ShowMenu(uint8 menu) {
  * @return RD_OK, or an error code
  */
 
-int32 HideMenu(uint8 menu) {
+int32 Display::hideMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
 
 	// Check that the menu is not currently hidden, or in the process of
 	// being hidden.
-	if (menuStatus[menu] == RDMENU_HIDDEN || menuStatus[menu] == RDMENU_CLOSING)
+	if (_menuStatus[menu] == RDMENU_HIDDEN || _menuStatus[menu] == RDMENU_CLOSING)
 		return RDERR_INVALIDCOMMAND;
 
-	menuStatus[menu] = RDMENU_CLOSING;
+	_menuStatus[menu] = RDMENU_CLOSING;
 	return RD_OK;
 }
 
@@ -255,26 +237,25 @@ int32 HideMenu(uint8 menu) {
  * This function hides both menus immediately.
  */
 
-int32 CloseMenuImmediately(void) {
+void Display::closeMenuImmediately(void) {
 	Common::Rect r;
 	int i;
 
-	menuStatus[0] = RDMENU_HIDDEN;
-	menuStatus[1] = RDMENU_HIDDEN;
+	_menuStatus[0] = RDMENU_HIDDEN;
+	_menuStatus[1] = RDMENU_HIDDEN;
 
 	for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
-		if (icons[0][i]) {
-			ClearIconArea(0, i, &r);
-			UploadRect(&r);
+		if (_icons[0][i]) {
+			clearIconArea(0, i, &r);
+			updateRect(&r);
 		}
-		if (icons[1][i]) {
-			ClearIconArea(1, i, &r);
-			UploadRect(&r);
+		if (_icons[1][i]) {
+			clearIconArea(1, i, &r);
+			updateRect(&r);
 		}
 	}
 
-	memset(pocketStatus, 0, sizeof(uint8) * 2 * RDMENU_MAXPOCKETS);
-	return RD_OK;
+	memset(_pocketStatus, 0, sizeof(uint8) * 2 * RDMENU_MAXPOCKETS);
 }
 
 /**
@@ -285,10 +266,8 @@ int32 CloseMenuImmediately(void) {
  * @return RD_OK, or an error code
  */
 
-int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
+int32 Display::setMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 	Common::Rect r;
-
-	debug(5, "stub SetMenuIcon( %d, %d )", menu, pocket);
 
 	// Check for invalid menu parameter.
 	if (menu > RDMENU_BOTTOM)
@@ -299,33 +278,24 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 		return RDERR_INVALIDPOCKET;
 
 	// If there is an icon in the requested menu/pocket, clear it out.
-	if (icons[menu][pocket]) {
-		iconCount--;
-		free(icons[menu][pocket]);
-		icons[menu][pocket] = NULL;
-		ClearIconArea(menu, pocket, &r);
-		UploadRect(&r);
+	if (_icons[menu][pocket]) {
+		_iconCount--;
+		free(_icons[menu][pocket]);
+		_icons[menu][pocket] = NULL;
+		clearIconArea(menu, pocket, &r);
+		updateRect(&r);
 	}
 
 	// Only put the icon in the pocket if it is not NULL
 	if (icon != NULL) {
-		iconCount++;
-		icons[menu][pocket] = (uint8 *) malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
-		if (icons[menu][pocket] == NULL)
+		_iconCount++;
+		_icons[menu][pocket] = (uint8 *) malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+		if (_icons[menu][pocket] == NULL)
 			return RDERR_OUTOFMEMORY;
-		memcpy(icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+		memcpy(_icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 	}
+
 	return RD_OK;
-}
-
-/**
- * @return The status of the menu
- */
-
-uint8 GetMenuStatus(uint8 menu) {
-	if (menu > RDMENU_BOTTOM)
-		return RDMENU_HIDDEN;
-	return menuStatus[menu];
 }
 
 } // End of namespace Sword2

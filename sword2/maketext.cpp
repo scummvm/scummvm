@@ -525,7 +525,7 @@ void FontRenderer::printTextBlocs(void) {
 			spriteInfo.data = _blocList[j].text_mem->ad + sizeof(_frameHeader);
 			spriteInfo.colourTable = 0;
 
-			rv = DrawSprite(&spriteInfo);
+			rv = g_display->drawSprite(&spriteInfo);
 			if (rv)
 				error("Driver Error %.8x in Print_text_blocs", rv);
 		}
@@ -603,7 +603,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	// GERMAN:   "Baphomet's Fluch II"
 	// default:  "Some game or other, part 86"
 
-	SetWindowName((char *) textLine);
+	g_display->setWindowName((char *) textLine);
 
 	// now ok to close the text file
 	res_man.close(TEXT_RES);

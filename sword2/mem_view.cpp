@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/header.h"
@@ -102,8 +103,8 @@ void MemoryManager::displayMemory(void) {
 			Build_display();
 
 			do {
-				ServiceWindows();
-			} while(!KeyWaiting());
+				g_display->updateDisplay();
+			} while (!KeyWaiting());
 
 			ReadKey(&ke);	//kill the key we just pressed
 			if (ke.keycode == 27)	//ESC
