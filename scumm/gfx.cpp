@@ -1752,12 +1752,12 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 }
 
 #define READ_BIT (cl--, bit = bits&1, bits>>=1,bit)
-#define FILL_BITS do {												\
-										if (cl <= 8) {						\
-											bits |= (*src++ << cl);	\
-											cl += 8;								\
-										}													\
-									} while (0)
+#define FILL_BITS do {				\
+		if (cl <= 8) {			\
+			bits |= (*src++ << cl);	\
+			cl += 8;		\
+		}				\
+	} while (0)
 
 void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 	byte color = *src++;
