@@ -556,7 +556,6 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
 
 	void unknownEA_func(int a, int b, int c, int d, int e);
