@@ -124,5 +124,10 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
     lastkey = 0;
   else if(newkey != lastkey)
     keyPressed = lastkey = newkey;
+
+  if (mouse_x<0) mouse_x=0;
+  if (mouse_x>319) mouse_x=319;
+  if (mouse_y<0) mouse_y=0;
+  if (mouse_y>199) mouse_y=199;
 }
 
