@@ -502,11 +502,12 @@ Configuration file:
 -------------------
 By default, the configuration file is saved in, and loaded from:
 
-        Windows: <windir>\scummvm.ini,
-        Linux:   ~/.scummvmrc
-        Others:  scummvm.ini in the current directory
+        Windows:  <windir>\scummvm.ini,
+        Linux:    ~/.scummvmrc
+        Mac OS X: ~/Library/Preferences/ScummVM Preferences
+        Others:   scummvm.ini in the current directory
 
-An example config file is as follows:
+An example config file looks as follows:
 
         [scummvm]
         gfx_mode=supereagle

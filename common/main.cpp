@@ -48,7 +48,11 @@ extern "C" int main(int argc, char *argv[]);
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 256
 #endif
+#ifdef MACOSX
+#define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
+#else
 #define DEFAULT_CONFIG_FILE ".scummvmrc"
+#endif
 #else
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
@@ -153,9 +157,9 @@ int main(int argc, char *argv[])
 		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
 	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
 #else
-    char scummhome[255];
+    char scummhome[256];
 	#if defined (WIN32) && !defined(_WIN32_WCE)
-		GetWindowsDirectory(scummhome, 255);
+		GetWindowsDirectory(scummhome, 256);
 		strcat(scummhome, "\\");
 		strcat(scummhome, DEFAULT_CONFIG_FILE);
 	#else	
