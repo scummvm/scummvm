@@ -367,7 +367,22 @@ void OSystem_PS2::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyScreenRect((const uint8*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+	if (w > x + _width)
+		w = _width - x;
+	if (h > y + _height)
+		h = _height - y;
+	if ((w > 0) && (h > 0))
+		_screen->copyScreenRect((const uint8*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
 void OSystem_PS2::updateScreen(void) {
