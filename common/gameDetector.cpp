@@ -469,6 +469,10 @@ const VersionSettings version_settings[] = {
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
+	{"puttdemo", "Putt Putt joins the parade (demo)", GID_SAMNMAX, 6, 1, 1,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
+	{"moondemo", "Putt Putt goes to the moon (demo)", GID_SAMNMAX, 6, 1, 1,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
@@ -479,11 +483,6 @@ const VersionSettings version_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
-	
-	{"puttdemo", "Putt Putt joins the parade (demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
-	{"moondemo", "Putt Putt goes to the moon (demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6},
 
