@@ -541,6 +541,7 @@ void ScummEngine::redrawBGAreas() {
 	int i;
 	int val;
 	int diff;
+	bool cont = true;
 
 	if (!(_features & GF_NEW_CAMERA))
 		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_version > 3 && _gameId != GID_PASS))
@@ -548,16 +549,28 @@ void ScummEngine::redrawBGAreas() {
 
 	val = 0;
 
+	if (_heversion >= 70) {
+		byte *room = getResourceAddress(rtRoomStart, _roomResource) + _IM00_offs;
+		if (findResource(MKID('BMAP'), room) != NULL) {
+			if (_fullRedraw) {
+				_BgNeedsRedraw = 0;
+				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, _screenWidth);
+			}
+			cont = false;
+		}
+	}
+
 	// Redraw parts of the background which are marked as dirty.
-	if (!_fullRedraw && _BgNeedsRedraw) {
+	if (!_fullRedraw && _BgNeedsRedraw && cont) {
 		for (i = 0; i != gdi._numStrips; i++) {
 			if (testGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY)) {
 				redrawBGStrip(i, 1);
+				cont = false;
 			}
 		}
 	}
 
-	if (_features & GF_NEW_CAMERA) {
+	if (_features & GF_NEW_CAMERA && cont) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
@@ -1027,11 +1040,14 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	else
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
-	// newer Humongous titles use this
-	//	smap_ptr = _vm->findResource(MKID('BMAP'), ptr);
-	// HACK Until BMAP support is added
-	if (smap_ptr == NULL)
+	if (!smap_ptr) {
+		// This will go away eventually. HE 7.2 titles used different function
+		// here which read BMAP. But it was replaced not in every place. So
+		// this is a placeholder which shows that not all such cases are
+		// processed yet.
+		warning("We shouldn't be here, no SMAP");
 		return;
+	}
 
 	assert(smap_ptr);
 
@@ -1255,6 +1271,137 @@ next_iter:
 		sx++;
 		stripnr++;
 	}
+}
+
+/**
+ * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
+ * and objects, used throughout in 7.2+ HE versions
+ */
+void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width) {
+	assert(ptr);
+	const byte *bmap_ptr;
+	byte code;
+	const byte *z_plane_ptr;
+	byte *mask_ptr;
+	const byte *zplane_list[9];
+
+	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
+
+	if (bmap_ptr == NULL) {
+		error("Room %d has no compressed bitmap?", _vm->_roomResource);
+		return;
+	}
+
+	code = *bmap_ptr++;
+	debug(0, "code: %d", code);
+	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
+		int decomp_shr = code % 10;
+		int decomp_mask = 0xFF >> (8 - decomp_shr);
+
+		decompressBMAPbg((byte *)vs->backBuf + startstrip * 8, width, vs->w, vs->h, bmap_ptr, decomp_shr, decomp_mask);
+	}
+	copyVirtScreenBuffers(0, 0, vs->w - 1, vs->h - 1);
+
+	if (_numZBuffer <= 1)
+		return;
+
+	const uint32 zplane_tags[] = {
+		MKID('ZP00'),
+		MKID('ZP01'),
+		MKID('ZP02'),
+		MKID('ZP03'),
+		MKID('ZP04')
+	};
+			
+	for (int i = 1; i < _numZBuffer; i++) {
+		zplane_list[i] = _vm->findResource(zplane_tags[i], ptr);
+	}
+
+	for (int i = 0; i < _numStrips; i++)
+		for (int j = 1; j < _numZBuffer; j++) {
+			uint32 offs;
+
+			if (!zplane_list[j])
+				continue;
+
+			offs = READ_LE_UINT16(zplane_list[j] + i * 2 + 8);
+
+			mask_ptr = getMaskBuffer(i, 0, j);
+
+			if (offs) {
+				z_plane_ptr = zplane_list[j] + offs;
+
+				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
+			}
+		}
+}
+
+void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int h, const byte *ptr, int shr, int mask) {
+	int reswidth = screenwidth - w;
+	int al, cl, eax, w_, ebp, ecx, ebx, edx;
+
+	// FIXME: This will be translated to C after debugging
+	ebx = *ptr++;
+	al = *ptr++;
+	cl = *ptr++;
+	eax = (cl << 8) | al;
+	cl = *ptr++;
+	eax |= cl << 16;
+
+	edx = 24;
+
+	do {
+		w_ = w;
+
+		do {
+			*dst++ = ebx;
+			if (edx <= 16) {
+				ebp = *ptr++;
+				ebp <<= edx;
+				eax |= ebp;
+				edx += 8;
+				ebp = *ptr++;
+				ebp <<= edx;
+				eax |= ebp;
+				edx += 8;
+			}
+			ecx = eax & 1;
+			edx--;
+			eax >>= 1;
+
+			if (ecx) {
+				ecx = eax & 1;
+				edx--;
+				eax >>= 1;
+				if (!ecx) {
+					ebx = eax & mask;
+					edx -= shr;
+					eax >>= shr;
+				} else {
+					ecx = eax & 7;
+					edx -= 3;
+					eax >>= 3;
+					if (ecx >= 4)
+						ebx += ecx - 3;
+					else
+						ebx += ecx - 4;
+				}
+			}
+		} while (--w_ > 0);
+		dst += reswidth;
+	} while (--h > 400); // FIXME: should be zero. But overwrites memory due to bugs
+}
+
+void Gdi::copyVirtScreenBuffers(int x, int y, int w, int h) {
+	int rw = w - x + 1;
+	int rh = h - y + 1;
+	byte *src, *dst;
+
+	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + y * _numStrips) * 8 + x;
+	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + y * _numStrips) * 8 + x;
+	
+	copyBufferBox(dst, src, rw, rh);
+	_vm->markRectAsDirty(kMainVirtScreen, x, w, y, h, 0);
 }
 
 /**
@@ -1617,6 +1764,22 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	}
 	
 	return useOrDecompress;
+}
+
+void Gdi::copyBufferBox(byte *dst, const byte *src, int width, int height) {
+	assert(width <= _vm->_screenWidth && width > 0);
+	assert(height <= _vm->_screenHeight && height > 0);
+
+	do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(dst, src, width);
+#else
+		for(int i = 0; i < width; i++)
+			dst[i] = src[i];
+#endif
+		dst += _vm->_screenWidth;
+		src += _vm->_screenWidth;
+	} while (--height);
 }
 
 void Gdi::draw8Col(byte *dst, const byte *src, int height) {

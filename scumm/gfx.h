@@ -252,6 +252,7 @@ protected:
 	void decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck);
 	void decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck);
 
+	void copyBufferBox(byte *dst, const byte *src, int width, int height);
 	void draw8Col(byte *dst, const byte *src, int height);
 	void clear8Col(byte *dst, int height);
 	void decompressMaskImgOr(byte *dst, const byte *src, int height);
@@ -262,6 +263,8 @@ protected:
 	
 	byte *getMaskBuffer(int x, int y, int z);
 
+	void decompressBMAPbg(byte *dst, int screenwidth, int w, int h, const byte *ptr, int shr, int mask);
+
 public:
 	void init();
 
@@ -270,6 +273,8 @@ public:
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
 	                int stripnr, int numstrip, StripTable *table);
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
+	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width);
+	void copyVirtScreenBuffers(int x, int y, int w, int h);
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }
