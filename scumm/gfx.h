@@ -109,17 +109,22 @@ struct BompDrawData {		/* Bomp graphics data */
 	uint16 shadowMode;
 };
 
-struct Gdi {
+class Gdi {
+	friend class Scumm;	// Mostly for the code in saveload.cpp ...
+public:
 	Scumm *_vm;
 
+protected:
 	byte *_readPtr;
 	uint _readOffs;
 
+public:
 	int _numZBuffer;
 	int _imgBufOffs[5];
 	byte _disable_zbuffer;
 	int32 _numStrips;
 
+protected:
 	bool _useOrDecompress;
 	int _numLinesToProcess;
 	int _tempNumLines;
@@ -130,8 +135,9 @@ struct Gdi {
 
 	int16 _drawMouseX;
 	int16 _drawMouseY;
+public:
 	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
-	byte _currentCursor;
+protected:
 	byte _mouseColors[4];
 	byte _mouseColor;
 	byte _mouseClipMask1, _mouseClipMask2, _mouseClipMask3;
@@ -142,7 +148,6 @@ struct Gdi {
 	byte *_bgbak_ptr;
 	byte *_mask_ptr;
 	byte *_mask_ptr_dest;
-	byte *_z_plane_ptr;
 
 	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
@@ -164,27 +169,31 @@ struct Gdi {
 	void unkDecode10();
 	void unkDecode11();
 
+public:
 	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
 	void disableZBuffer() { _disable_zbuffer++; }
 	void enableZBuffer() { _disable_zbuffer--; }
 
-	void draw8ColWithMasking();
-	void clear8ColWithMasking();
-	void clear8Col();
-	void decompressMaskImgOr();
-	void decompressMaskImg();
+protected:
+	void draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask);
+	void draw8Col(byte *dst, byte *src, int height);
+	void clear8ColWithMasking(byte *dst, int height, byte *mask);
+	void clear8Col(byte *dst, int height);
+	void decompressMaskImgOr(byte *dst, byte *src, int height);
+	void decompressMaskImg(byte *dst, byte *src, int height);
 
-	void resetBackground(int top, int bottom, int strip);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
-	void updateDirtyScreen(VirtScreen *vs);
-
+public:
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
 		dbDrawMaskOnAll = 2,
 		dbClear = 4
 	};
+
+	void resetBackground(int top, int bottom, int strip);
+	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	void updateDirtyScreen(VirtScreen *vs);
 };
 
 #endif

@@ -273,7 +273,7 @@ void Scumm::blit(byte *dst, byte *src, int w, int h)
 void Scumm::setCursor(int cursor)
 {
 	if (cursor >= 0 && cursor <= 3)
-		gdi._currentCursor = cursor;
+		_currentCursor = cursor;
 	else
 		warning("setCursor(%d)", cursor);
 }
@@ -452,7 +452,7 @@ void Scumm::setPaletteFromPtr(byte *ptr)
 		// check for that. And somebody before me added a check for V7 games, turning this
 		// off there, too... I wonder if it hurts other games, too? What exactly is broken
 		// if we remove this patch?
-		if ((_gameId == GID_MONKEY_VGA) || (_features & GF_AFTER_V7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
+		if ((_features & GF_AFTER_V7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;
@@ -728,8 +728,7 @@ void Scumm::fadeOut(int effect)
 
 	// Fill screen 0 with black
 	vs = &virtscr[0];
-	gdi._backbuff_ptr = vs->screenPtr + vs->xstart;
-	memset(gdi._backbuff_ptr, 0, vs->size);
+	memset(vs->screenPtr + vs->xstart, 0, vs->size);
 
 	// Fade to black with the specified effect, if any.
 	switch (effect) {
@@ -921,14 +920,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
 				if (flag & dbClear || !lightsOn)
-					clear8ColWithMasking();
+					clear8ColWithMasking(_backbuff_ptr, h, _mask_ptr);
 				else
-					draw8ColWithMasking();
+					draw8ColWithMasking(_backbuff_ptr, _bgbak_ptr, h, _mask_ptr);
 			} else {
 				if (flag & dbClear || !lightsOn)
-					clear8Col();
+					clear8Col(_backbuff_ptr, h);
 				else
-					_vm->blit(_backbuff_ptr, _bgbak_ptr, 8, h);
+					draw8Col(_backbuff_ptr, _bgbak_ptr, h);
 			}
 		}
 		CHECK_HEAP;
@@ -950,13 +949,13 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		// are still too unstable for me to investigate.
 
 		if (flag & dbDrawMaskOnAll) {
-			_z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
+			byte *z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
 				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 				if (_useOrDecompress && flag & dbAllowMaskOr)
-					decompressMaskImgOr();
+					decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
 				else
-					decompressMaskImg();
+					decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
 			}
 		} else {
 			for (i = 1; i < numzbuf; i++) {
@@ -976,15 +975,15 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 
 				if (offs) {
-					_z_plane_ptr = zplane_list[i] + offs;
+					byte *z_plane_ptr = zplane_list[i] + offs;
 
 					if (_useOrDecompress && flag & dbAllowMaskOr)
-						decompressMaskImgOr();
+						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
 					else
-						decompressMaskImg();
+						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
 				} else {
 					if (!(_useOrDecompress && flag & dbAllowMaskOr))
-						for (int height = 0; height < _numLinesToProcess; height++)
+						for (int height = 0; height < h; height++)
 							_mask_ptr_dest[height * _numStrips] = 0;
 					/* needs better abstraction, FIXME */
 				}
@@ -1135,12 +1134,8 @@ int Scumm::hasCharsetMask(int x, int y, int x2, int y2)
 	return 1;
 }
 
-void Gdi::draw8ColWithMasking()
+void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask)
 {
-	int height = _numLinesToProcess;
-	byte *mask = _mask_ptr;
-	byte *dst = _backbuff_ptr;
-	byte *src = _bgbak_ptr;
 	byte maskbits;
 
 	do {
@@ -1164,7 +1159,7 @@ void Gdi::draw8ColWithMasking()
 				dst[7] = src[7];
 		} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
-			memcpy(dst, src, 2 * sizeof(uint32));
+			memcpy(dst, src, 8);
 #else
 			((uint32 *)dst)[0] = ((uint32 *)src)[0];
 			((uint32 *)dst)[1] = ((uint32 *)src)[1];
@@ -1176,11 +1171,8 @@ void Gdi::draw8ColWithMasking()
 	} while (--height);
 }
 
-void Gdi::clear8ColWithMasking()
+void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask)
 {
-	int height = _numLinesToProcess;
-	byte *mask = _mask_ptr;
-	byte *dst = _backbuff_ptr;
 	byte maskbits;
 
 	do {
@@ -1204,7 +1196,7 @@ void Gdi::clear8ColWithMasking()
 				dst[7] = 0;
 		} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
-			memset(dst, 0, 2 * sizeof(uint32));
+			memset(dst, 0, 8);
 #else
 			((uint32 *)dst)[0] = 0;
 			((uint32 *)dst)[1] = 0;
@@ -1215,14 +1207,11 @@ void Gdi::clear8ColWithMasking()
 	} while (--height);
 }
 
-void Gdi::clear8Col()
+void Gdi::clear8Col(byte *dst, int height)
 {
-	int height = _numLinesToProcess;
-	byte *dst = _backbuff_ptr;
-
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memset(dst, 0, 2 * sizeof(uint32));
+		memset(dst, 0, 8);
 #else
 		((uint32 *)dst)[0] = 0;
 		((uint32 *)dst)[1] = 0;
@@ -1231,11 +1220,23 @@ void Gdi::clear8Col()
 	} while (--height);
 }
 
-void Gdi::decompressMaskImg()
+void Gdi::draw8Col(byte *dst, byte *src, int height)
 {
-	byte *src = _z_plane_ptr;
-	byte *dst = _mask_ptr_dest;
-	int height = _numLinesToProcess;
+	do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(dst, src, 8);
+#else
+		((uint32 *)dst)[0] = ((uint32 *)src)[0];
+		((uint32 *)dst)[1] = ((uint32 *)src)[1];
+#endif
+		dst += _vm->_realWidth;
+		src += _vm->_realWidth;
+	} while (--height);
+}
+
+
+void Gdi::decompressMaskImg(byte *dst, byte *src, int height)
+{
 	byte b, c;
 	
 	while (1) {
@@ -1262,15 +1263,13 @@ void Gdi::decompressMaskImg()
 	}
 }
 
-void Gdi::decompressMaskImgOr()
+void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
 {
-	byte *src = _z_plane_ptr;
-	byte *dst = _mask_ptr_dest;
-	int height = _numLinesToProcess;
 	byte b, c;
 
 	while (1) {
 		b = *src++;
+		
 		if (b & 0x80) {
 			b &= 0x7F;
 			c = *src++;
@@ -1600,7 +1599,7 @@ void Gdi::unkDecode7()
 	do {
 		/* Endian safe */
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 2 * sizeof(uint32));
+		memcpy(dst, src, 8);
 #else
 		((uint32 *)dst)[0] = ((uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((uint32 *)src)[1];
@@ -2720,11 +2719,11 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 	if (_numLinesToProcess) {
 		if ((_vm->_features & GF_AFTER_V6) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
-				draw8ColWithMasking();
+				draw8ColWithMasking(_backbuff_ptr, _bgbak_ptr, _numLinesToProcess, _mask_ptr);
 			else
-				_vm->blit(_backbuff_ptr, _bgbak_ptr, 8, _numLinesToProcess);
+				draw8Col(_backbuff_ptr, _bgbak_ptr, _numLinesToProcess);
 		} else {
-			clear8Col();
+			clear8Col(_backbuff_ptr, _numLinesToProcess);
 		}
 	}
 }
@@ -3028,12 +3027,12 @@ void Scumm::decompressDefaultCursor(int idx)
 	} else {
 		_cursorWidth = 16;
 		_cursorHeight = 16;
-		_cursorHotspotX = default_cursor_hotspots[2 * gdi._currentCursor];
-		_cursorHotspotY = default_cursor_hotspots[2 * gdi._currentCursor + 1];
+		_cursorHotspotX = default_cursor_hotspots[2 * _currentCursor];
+		_cursorHotspotY = default_cursor_hotspots[2 * _currentCursor + 1];
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
-				if (default_cursor_images[gdi._currentCursor][i] & (1 << j))
+				if (default_cursor_images[_currentCursor][i] & (1 << j))
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}
 		}

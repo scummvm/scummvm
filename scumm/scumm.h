@@ -200,14 +200,10 @@ struct CharsetRenderer {
 
 	byte _ignoreCharsetMask;
 
-	byte *_backbuff_ptr, *_bgbak_ptr;
-	byte *_mask_ptr;
-	byte *_dest_ptr;
-		
 	byte _colorMap[16];
 	byte _buffer[512];
 
-	void drawBits();
+	void drawBits(byte *dst, byte *mask);
 	void printChar(int chr);
 	void printCharOld(int chr);
 	int getSpacing(byte chr, byte *charset);
@@ -696,6 +692,7 @@ public:
 	int _cursorHotspotX, _cursorHotspotY, _cursorWidth, _cursorHeight;
 	byte _cursorAnimate, _cursorAnimateIndex, _grabbedCursor[2048];
 	int8 _cursorState;
+	byte _currentCursor;
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;

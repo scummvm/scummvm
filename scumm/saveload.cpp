@@ -398,7 +398,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _userPut, sleByte),
 		MKLINE(Scumm, _cursorState, sleByte),
 		MKLINE(Scumm, gdi._cursorActive, sleByte),
-		MKLINE(Scumm, gdi._currentCursor, sleByte),
+		MKLINE(Scumm, _currentCursor, sleByte),
 
 		MKLINE(Scumm, _doEffect, sleByte),
 		MKLINE(Scumm, _switchRoomEffect, sleByte),
@@ -513,7 +513,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _userPut, sleByte),
 		MKLINE(Scumm, _cursorState, sleByte),
 		MKLINE(Scumm, gdi._cursorActive, sleByte),
-		MKLINE(Scumm, gdi._currentCursor, sleByte),
+		MKLINE(Scumm, _currentCursor, sleByte),
 
 		MKLINE(Scumm, _doEffect, sleByte),
 		MKLINE(Scumm, _switchRoomEffect, sleByte),
