@@ -156,6 +156,10 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define ROUND(x) rint(x)
 	#endif
 
+	#if defined(__APPLE__) && defined(__MACH__)
+	#define MACOSX
+	#endif
+	
 #elif defined(__MORPHOS__)
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
