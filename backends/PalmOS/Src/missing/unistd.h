@@ -20,6 +20,13 @@
  *
  */
 
+#ifndef __UNISTD_H__
+#define __UNISTD_H__
+
 #include <PalmOS.h>
 
+extern const Char *gUnistdCWD;
+
 Char *getcwd(Char *buf, UInt32 size); 
+
+#endif
