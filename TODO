@@ -16,3 +16,5 @@ Unassigned (help wanted):
  * Fix the screenblocks zBuffer code
  * Lip syncing
  * Abstract rendering code and implement software renderer
+ * Fix drawEmergString() to work with Mesa
+ * Make Smush work on BE archs
