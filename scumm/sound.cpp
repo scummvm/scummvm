@@ -158,17 +158,17 @@ void Sound::playSound(int soundID) {
 	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
 		_vm->getResourceRoomNr(rtSound, soundID));
 
-	if ((_vm->_heversion == 70 || _vm->_heversion == 71) && soundID >= 4000) {
+	if ((_vm->_heversion >= 70) && soundID >= 4000) {
 		int music_offs, total_size;
 		char buf[32];
 		File musicFile;
 		sprintf(buf, "%s.he4", _vm->getGameName());
 		if (musicFile.open(buf) == false) {
+			warning("playSound: Music file is not open");
 			return;
 		}
 		musicFile.seek(4, SEEK_SET);
 		total_size = musicFile.readUint32BE();
-		debug(1, "Total Music file size %d", total_size);
 
 		// Skip header junk
 		musicFile.seek(+20, SEEK_CUR);
@@ -183,25 +183,23 @@ void Sound::playSound(int soundID) {
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();
 
-		musicFile.seek(music_offs, SEEK_SET);
-
-
 		if (music_offs > total_size || (size + music_offs) > total_size)
 			error("Bad music offsets");
 
-		byte *src_ptr = (byte *) calloc(size, 1);
-		musicFile.read(src_ptr, size);
+		musicFile.seek(music_offs, SEEK_SET);
+		ptr = (byte *) calloc(size, 1);
+		musicFile.read(ptr, size);
 		musicFile.close();
 
-		rate = 11025;
-
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
-		memcpy(sound, src_ptr, size);
-		_currentMusic = soundID;
-		_vm->_mixer->stopHandle(_musicChannelHandle);
-		_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
-		return;
+		if (_vm->_heversion == 70) {
+			// Allocate a sound buffer, copy the data into it, and play
+			sound = (char *)malloc(size);
+			memcpy(sound, ptr, size);
+			_currentMusic = soundID;
+			_vm->_mixer->stopHandle(_musicChannelHandle);
+			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, 11025, flags, soundID);
+			return;
+		}
 	}
 
 	ptr = _vm->getResourceAddress(rtSound, soundID);
