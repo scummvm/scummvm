@@ -273,7 +273,7 @@ void CostumeRenderer::procC64() {
 	const byte *src;
 	byte *dst;
 	byte color;
-	byte len;
+	byte len = 0;	// FIXME - err, len is never set to anything...
 
 	int y = 0;
 	src = _srcptr;
