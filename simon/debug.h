@@ -47,7 +47,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"VVJ|IS_GEF",
 	NULL,
 	NULL,
-	"WJ|UNK23",
+	"WJ|UNK_23",
 	/* 24 */
 	NULL,
 	"IJ|HAS_CHILD_1",
@@ -121,13 +121,13 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
 	NULL,
-	"B|UNK82",
+	"B|UNK_82",
 	"|RETM10",
 	/* 84 */
 	NULL,
 	NULL,
 	NULL,
-	"W|UNK87",
+	"W|UNK_87",
 	/* 88 */
 	"|OR_SCRIPT_WORD_10",
 	"|AND_SCRIPT_WORD_10",
@@ -139,17 +139,17 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	/* 96 */
-	"WB|UNK96",
+	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WBWWW|START_VGA",
 	"W|KILL_THREAD",
 	/* 100 */
 	"|VGA_RESET",
-	"BWWWWWW|UNK101",
-	"B|UNK102",
-	"|UNK103",
+	"BWWWWWW|UNK_101",
+	"B|UNK_102",
+	"|UNK_103",
 	/* 104 */
-	"B|UNK104",
+	"B|UNK_104",
 	NULL,
 	NULL,
 	"WWWWWIW|ADD_ITEM_HITAREA",
@@ -161,7 +161,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	/* 112 */
 	NULL,
 	NULL,
-	"IB|UNK114",
+	"IB|UNK_114",
 	"IBJ|HAS_FLAG",
 	/* 116 */
 	"IB|SET_FLAG",
@@ -169,19 +169,19 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	NULL,
 	"W|WAIT_VGA",
 	/* 120 */
-	"W|UNK120",
+	"W|UNK_120",
 	"BI|SET_VGA_ITEM",
 	NULL,
 	NULL,
 	/* 124 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
-	"IBB|UNK126",
+	"IBB|UNK_126",
 	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK130",
+	"Bww|UNK_130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -190,7 +190,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"|QUIT_IF_USER_PRESSES_Y",
 	/* 136 */
 	"IV|GET_ITEM_UNK3",
-	"B|UNK137",
+	"B|UNK_137",
 	"|VGA_POINTER_OP_4",
 	"II|SET_PARENT_SPECIAL",
 	/* 140 */
@@ -219,12 +219,12 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK160",
+	"B|UNK_160",
 	"BWBW|SETUP_TEXT",
 	"BBT|PRINT_STR",
 	"W|SOUND_1",
 	/* 164 */
-	"|UNK164",
+	"|UNK_164",
 	"IWWJ|ITEM_UNK1_UNK2_IS",
 	"B|SET_BIT2",
 	"B|CLEAR_BIT2",
@@ -240,9 +240,9 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK177",
+	"BBI|UNK_177",
 	"WWBB|PATHFIND",
-	"BBB|UNK179",
+	"BBB|UNK_179",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -285,7 +285,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"VVJ|IS_GEF",
 	NULL,
 	NULL,
-	"WJ|UNK23",
+	"WJ|UNK_23",
 	/* 24 */
 	NULL,
 	"IJ|HAS_CHILD_1",
@@ -359,13 +359,13 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
 	NULL,
-	"B|UNK82",
+	"B|UNK_82",
 	"|RETM10",
 	/* 84 */
 	NULL,
 	NULL,
 	NULL,
-	"W|UNK87",
+	"W|UNK_87",
 	/* 88 */
 	"|OR_SCRIPT_WORD_10",
 	"|AND_SCRIPT_WORD_10",
@@ -377,17 +377,17 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	/* 96 */
-	"WB|UNK96",
+	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WBWWW|START_VGA",
 	"W|KILL_THREAD",
 	/* 100 */
 	"|VGA_RESET",
-	"BWWWWWW|UNK101",
-	"B|UNK102",
-	"|UNK103",
+	"BWWWWWW|UNK_101",
+	"B|UNK_102",
+	"|UNK_103",
 	/* 104 */
-	"B|UNK104",
+	"B|UNK_104",
 	NULL,
 	NULL,
 	"WWWWWIW|ADD_ITEM_HITAREA",
@@ -399,7 +399,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	/* 112 */
 	NULL,
 	NULL,
-	"IB|UNK114",
+	"IB|UNK_114",
 	"IBJ|HAS_FLAG",
 	/* 116 */
 	"IB|SET_FLAG",
@@ -407,19 +407,19 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	NULL,
 	"W|WAIT_VGA",
 	/* 120 */
-	"W|UNK120",
+	"W|UNK_120",
 	"BI|SET_VGA_ITEM",
 	NULL,
 	NULL,
 	/* 124 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
-	"IBB|UNK126",
+	"IBB|UNK_126",
 	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK130",
+	"Bww|UNK_130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -457,12 +457,12 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK160",
+	"B|UNK_160",
 	"BWBW|SETUP_TEXT",
 	"BBTW|PRINT_STR",
 	"W|SOUND_1",
 	/* 164 */
-	"|UNK164",
+	"|UNK_164",
 	"IWWJ|ITEM_UNK1_UNK2_IS",
 	"B|SET_BIT2",
 	"B|CLEAR_BIT2",
@@ -478,9 +478,9 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK177",
+	"BBI|UNK_177",
 	"WWBB|PATHFIND",
-	"BBB|UNK179",
+	"BBB|UNK_179",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -523,7 +523,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"VVJ|IS_GEF",
 	NULL,
 	NULL,
-	"WJ|UNK23",
+	"WJ|UNK_23",
 	/* 24 */
 	NULL,
 	"IJ|HAS_CHILD_1",
@@ -597,13 +597,13 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
 	NULL,
-	"B|UNK82",
+	"B|UNK_82",
 	"|RETM10",
 	/* 84 */
 	NULL,
 	NULL,
 	NULL,
-	"W|UNK87",
+	"W|UNK_87",
 	/* 88 */
 	"|OR_SCRIPT_WORD_10",
 	"|AND_SCRIPT_WORD_10",
@@ -615,17 +615,17 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	/* 96 */
-	"WB|UNK96",
+	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WWBWWW|START_VGA",
 	"WW|KILL_THREAD",
 	/* 100 */
 	"|VGA_RESET",
-	"BWWWWWW|UNK101",
-	"B|UNK102",
-	"|UNK103",
+	"BWWWWWW|UNK_101",
+	"B|UNK_102",
+	"|UNK_103",
 	/* 104 */
-	"B|UNK104",
+	"B|UNK_104",
 	NULL,
 	NULL,
 	"WWWWWIW|ADD_ITEM_HITAREA",
@@ -637,7 +637,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	/* 112 */
 	NULL,
 	NULL,
-	"IB|UNK114",
+	"IB|UNK_114",
 	"IBJ|HAS_FLAG",
 	/* 116 */
 	"IB|SET_FLAG",
@@ -645,19 +645,19 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	NULL,
 	"W|WAIT_VGA",
 	/* 120 */
-	"W|UNK120",
+	"W|UNK_120",
 	"BI|SET_VGA_ITEM",
 	NULL,
 	NULL,
 	/* 124 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
-	"IBB|UNK126",
+	"IBB|UNK_126",
 	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK130",
+	"Bww|UNK_130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -666,7 +666,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"|QUIT_IF_USER_PRESSES_Y",
 	/* 136 */
 	"IV|GET_ITEM_UNK3",
-	"B|UNK137",
+	"B|UNK_137",
 	"|VGA_POINTER_OP_4",
 	"II|SET_PARENT_SPECIAL",
 	/* 140 */
@@ -695,12 +695,12 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK160",
+	"B|UNK_160",
 	"BWBW|SETUP_TEXT",
 	"BBT|PRINT_STR",
 	"W|SOUND_1",
 	/* 164 */
-	"|UNK164",
+	"|UNK_164",
 	"IWWJ|ITEM_UNK1_UNK2_IS",
 	"B|SET_BIT2",
 	"B|CLEAR_BIT2",
@@ -716,9 +716,9 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK177",
+	"BBI|UNK_177",
 	"WWBB|PATHFIND",
-	"BBB|UNK179",
+	"BBB|UNK_179",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -731,8 +731,8 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"|FADE_TO_BLACK",
 	/* 188 */
 	"BSJ|STRING2_IS",
-	"|UNK189",
-	"B|UNK190",
+	"|UNK_189",
+	"B|UNK_190",
 };
 
 static const char *const simon2talkie_opcode_name_table[256] = {
@@ -765,7 +765,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"VVJ|IS_GEF",
 	NULL,
 	NULL,
-	"WJ|UNK23",
+	"WJ|UNK_23",
 	/* 24 */
 	NULL,
 	"IJ|HAS_CHILD_1",
@@ -839,13 +839,13 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	/* 80 */
 	"IIJ|IS_ITEM_EQ",
 	NULL,
-	"B|UNK82",
+	"B|UNK_82",
 	"|RETM10",
 	/* 84 */
 	NULL,
 	NULL,
 	NULL,
-	"W|UNK87",
+	"W|UNK_87",
 	/* 88 */
 	"|OR_SCRIPT_WORD_10",
 	"|AND_SCRIPT_WORD_10",
@@ -857,17 +857,17 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	NULL,
 	NULL,
 	/* 96 */
-	"WB|UNK96",
+	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WWBWWW|START_VGA",
 	"WW|KILL_THREAD",
 	/* 100 */
 	"|VGA_RESET",
-	"BWWWWWW|UNK101",
-	"B|UNK102",
-	"|UNK103",
+	"BWWWWWW|UNK_101",
+	"B|UNK_102",
+	"|UNK_103",
 	/* 104 */
-	"B|UNK104",
+	"B|UNK_104",
 	NULL,
 	NULL,
 	"WWWWWIW|ADD_ITEM_HITAREA",
@@ -879,7 +879,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	/* 112 */
 	NULL,
 	NULL,
-	"IB|UNK114",
+	"IB|UNK_114",
 	"IBJ|HAS_FLAG",
 	/* 116 */
 	"IB|SET_FLAG",
@@ -887,19 +887,19 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	NULL,
 	"W|WAIT_VGA",
 	/* 120 */
-	"W|UNK120",
+	"W|UNK_120",
 	"BI|SET_VGA_ITEM",
 	NULL,
 	NULL,
 	/* 124 */
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
-	"IBB|UNK126",
+	"IBB|UNK_126",
 	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK130",
+	"Bww|UNK_130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -908,7 +908,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"|QUIT_IF_USER_PRESSES_Y",
 	/* 136 */
 	"IV|GET_ITEM_UNK3",
-	"B|UNK137",
+	"B|UNK_137",
 	"|VGA_POINTER_OP_4",
 	"II|SET_PARENT_SPECIAL",
 	/* 140 */
@@ -937,12 +937,12 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"IBW|SET_ITEM_PROP",
 	NULL,
 	/* 160 */
-	"B|UNK160",
+	"B|UNK_160",
 	"BWBW|SETUP_TEXT",
 	"BBTW|PRINT_STR",
 	"W|SOUND_1",
 	/* 164 */
-	"|UNK164",
+	"|UNK_164",
 	"IWWJ|ITEM_UNK1_UNK2_IS",
 	"B|SET_BIT2",
 	"B|CLEAR_BIT2",
@@ -958,9 +958,9 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK177",
+	"BBI|UNK_177",
 	"WWBB|PATHFIND",
-	"BBB|UNK179",
+	"BBB|UNK_179",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -973,18 +973,18 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"|FADE_TO_BLACK",
 	/* 188 */
 	"BSJ|STRING2_IS",
-	"|UNK189",
-	"B|UNK190",
+	"|UNK_189",
+	"B|UNK_190",
 };
 
 const char *const simon1_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY1",
+	"ddd|DUMMY_1",
 	"d|CALL",
 	"ddddd|NEW_THREAD",
 	/* 4 */
-	"ddd|DUMMY4",
+	"ddd|DUMMY_4",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1014,7 +1014,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"ddddd|SET_WINDOW",
 	"|RESET",
 	/* 28 */
-	"dddd|DUMMY_3",
+	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
 	"d|SET_PALETTE_MODE",
@@ -1045,13 +1045,13 @@ const char *const simon1_video_opcode_name_table[] = {
 	"d|CLEAR_HITAREA_BIT_0x40",
 	/* 52 */
 	"d|PLAY_SOUND",
-	"dd|DUMMY53",
-	"ddd|DUMMY54",
+	"dd|DUMMY_53",
+	"ddd|DUMMY_54",
 	"ddd|OFFSET_HIT_AREA",
 	/* 56 */
-	"|DUMMY57",
-	"|UNK58",
-	"|DUMMY_9",
+	"|DUMMY_56",
+	"|DUMMY_57",
+	"|UNK_58",
 	"|SKIP_IF_TEXT",
 	/* 60 */
 	"d|KILL_THREAD",
@@ -1063,11 +1063,11 @@ const char *const simon1_video_opcode_name_table[] = {
 const char *const simon2_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY1",
+	"ddd|DUMMY_1",
 	"d|CALL",
 	"ddddd|NEW_THREAD",
 	/* 4 */
-	"ddd|DUMMY4",
+	"ddd|DUMMY_4",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1097,7 +1097,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"ddddd|SET_WINDOW",
 	"|RESET",
 	/* 28 */
-	"dddd|DUMMY_3",
+	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
 	"d|SET_PALETTE_MODE",
@@ -1128,13 +1128,13 @@ const char *const simon2_video_opcode_name_table[] = {
 	"d|CLEAR_HITAREA_BIT_0x40",
 	/* 52 */
 	"d|PLAY_SOUND",
-	"dd|DUMMY53",
-	"ddd|DUMMY54",
+	"dd|DUMMY_53",
+	"ddd|DUMMY_54",
 	"ddd|OFFSET_HIT_AREA",
 	/* 56 */
 	"i|SLEEP_EX",
 	"|DUMMY_57",
-	"|UNK58",
+	"|UNK_58",
 	"ddd|KILL_MULTI_THREAD",
 	/* 60 */
 	"dd|KILL_THREAD",
