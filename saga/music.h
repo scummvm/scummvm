@@ -95,6 +95,7 @@ class Music {
 
 	Music(MidiDriver *driver, int enabled);
 	~Music(void);
+	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
 
 	int play(ulong music_rn, uint flags);
 	int pause(void);

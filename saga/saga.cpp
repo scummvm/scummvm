@@ -251,6 +251,8 @@ void SagaEngine::go() {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	_music = new Music(driver, MainData.music_enabled);
+	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
+
 	if (!MainData.music_enabled) {
 		R_printf(R_STDOUT, "Music disabled.\n");
 	}
