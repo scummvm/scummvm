@@ -3175,7 +3175,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case Common::kPlatformFMTowns:
 		game.features |= GF_FMTOWNS;
 		if (game.version == 3) {
-			// The V5 FM-TOWNS games are mostly identical to the PC versions, it seems?
 			game.midi = MDT_TOWNS;
 		}
 		break;
