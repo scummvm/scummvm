@@ -172,6 +172,7 @@ void Scumm_v7::setupScummVars() {
 	VAR_PAUSE_KEY = 64;
 	VAR_SAVELOADDIALOG_KEY = 65;	// ???
 	VAR_TALKSTOP_KEY = 66;
+	VAR_KEYPRESS = 118;
 
 	VAR_TIMER_NEXT = 97;
 	VAR_TMR_1 = 98;
