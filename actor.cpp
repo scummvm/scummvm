@@ -840,7 +840,7 @@ void Scumm::drawActorCostume(Actor *a) {
 	ar.y = a->y - a->elevation;
 	ar.scale_x = a->scalex;
 	ar.scale_y = a->scaley;
-	ar.clipping = a->neverZClip;
+	ar.clipping = a->forceClip;
 	if (ar.clipping == 100) {
 		ar.clipping = a->mask;
 		if (ar.clipping > (byte)gdi._numZBuffer)
