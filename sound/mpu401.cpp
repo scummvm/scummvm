@@ -23,10 +23,16 @@
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
-void MidiChannel_MPU401::init(MidiDriver_MPU401 *owner, byte channel) {
+void MidiChannel_MPU401::init(MidiDriver *owner, byte channel) {
 	_owner = owner;
 	_channel = channel;
 	_allocated = false;
+}
+
+bool MidiChannel_MPU401::allocate() {
+	if (_allocated)
+		return false;
+	return (_allocated = true);
 }
 
 MidiDriver *MidiChannel_MPU401::device() {
@@ -117,8 +123,7 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 		if (i == 9 || !(_channel_mask & (1 << i)))
 			continue;
 		chan = &_midi_channels[i];
-		if (!chan->_allocated) {
-			chan->allocate();
+		if (chan->allocate()) {
 			return chan;
 		}
 	}

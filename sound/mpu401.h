@@ -35,15 +35,11 @@
 class MidiDriver_MPU401;
 
 class MidiChannel_MPU401 : public MidiChannel {
-	friend class MidiDriver_MPU401;
 
 private:
-	MidiDriver_MPU401 *_owner;
+	MidiDriver *_owner;
 	bool _allocated;
 	byte _channel;
-
-	void init (MidiDriver_MPU401 *owner, byte channel);
-	void allocate() { _allocated = true; }
 
 public:
 	MidiDriver *device();
@@ -64,6 +60,10 @@ public:
 
 	// SysEx messages
 	void sysEx_customInstrument (uint32 type, byte *instr);
+
+	// Only to be called by the owner
+	void init (MidiDriver *owner, byte channel);
+	bool allocate();
 };
 
 
