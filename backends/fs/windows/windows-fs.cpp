@@ -38,7 +38,6 @@ protected:
 	bool _isValid;
 	bool _isPseudoRoot;
 	String _path;
-	WindowsFilesystemNode *_parentNode;
 	
 public:
 	WindowsFilesystemNode();
@@ -57,7 +56,7 @@ public:
 private:
 	static char *toAscii(TCHAR *x);
 	static TCHAR* toUnicode(char *x);
-	static void addFile (FSList* list, ListMode mode, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data);
+	static void addFile (FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
 
@@ -83,7 +82,7 @@ static TCHAR unicodeString[MAX_PATH];
 #endif
 }
 
-void WindowsFilesystemNode::addFile (FSList* list, ListMode mode, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile (FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -99,7 +98,6 @@ void WindowsFilesystemNode::addFile (FSList* list, ListMode mode, const WindowsF
 		return;
 
 	entry._isDirectory = isDirectory;
-	entry._parentNode = (entry._isDirectory ? (WindowsFilesystemNode*)parentNode : NULL);
 	entry._displayName = asciiName;
 	entry._path = base;
 	entry._path += asciiName;
@@ -128,8 +126,7 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 	_isValid = true;
 	_path = "\\";
 	_isPseudoRoot = false;
-#endif
-	_parentNode = this;
+#endif	
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) {
@@ -138,7 +135,6 @@ WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) 
 	_isValid = node->_isValid;
 	_isPseudoRoot = node->_isPseudoRoot;
 	_path = node->_path;
-	_parentNode = node->_parentNode;
 }
 
 FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
@@ -179,9 +175,9 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 		handle = FindFirstFile(toUnicode(searchPath), &desc);
 		if (handle == INVALID_HANDLE_VALUE)
 			return myList;
-		addFile(myList, mode, this, _path.c_str(), &desc);
+		addFile(myList, mode, _path.c_str(), &desc);
 		while (FindNextFile(handle, &desc))
-			addFile(myList, mode, this, _path.c_str(), &desc);
+			addFile(myList, mode, _path.c_str(), &desc);
 
 		FindClose(handle);
 	}
@@ -189,9 +185,31 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 	return myList;
 }
 
+const char *lastPathComponent(const ScummVM::String &str) {
+        const char *start = str.c_str();
+        const char *cur = start + str.size() - 2;
+
+        while (cur > start && *cur != '\\') {
+                --cur;
+        }
+
+        return cur+1;
+}
+
 FilesystemNode *WindowsFilesystemNode::parent() const {
-	assert(_isDirectory);	// FIXME - Why this restriction? Files have parent dirs, too!
-	return _parentNode->clone();
+	assert(_isValid || _isPseudoRoot);
+	WindowsFilesystemNode *p = new WindowsFilesystemNode();
+	if (!_isPseudoRoot) {
+        const char *start = _path.c_str();
+        const char *end = lastPathComponent(_path);
+
+		p->_path = String(start, end - start);
+		p->_isValid = true;
+		p->_isDirectory = true;
+		p->_displayName = lastPathComponent(p->_path);
+		p->_isPseudoRoot = false;
+	}
+	return p;
 }
 
 #endif // defined(_MSC_VER) || defined(__MINGW32__)
