@@ -112,7 +112,6 @@ int RENDER_DrawScene() {
 	char txt_buf[20];
 	int fps_width;
 	R_POINT mouse_pt;
-	int mouse_x, mouse_y;
 
 	if (!RenderModule.initialized) {
 		return R_FAILURE;
@@ -123,10 +122,7 @@ int RENDER_DrawScene() {
 	backbuf_surface = RenderModule.r_backbuf_surface;
 
 	// Get mouse coordinates
-	SYSINPUT_GetMousePos(&mouse_x, &mouse_y);
-
-	mouse_pt.x = mouse_x;
-	mouse_pt.y = mouse_y;
+	mouse_pt = SYSINPUT_GetMousePos();
 
 	SCENE_GetBGInfo(&bg_info);
 	GAME_GetDisplayInfo(&disp_info);

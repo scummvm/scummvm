@@ -206,8 +206,6 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
-	SYSINPUT_Init();
-
 	SYSTIMER_ResetMSCounter();
 
 	// Begin Main Engine Loop

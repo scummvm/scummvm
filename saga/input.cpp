@@ -32,11 +32,7 @@
 
 namespace Saga {
 
-static int _mouse_x, _mouse_y;
-
-int SYSINPUT_Init() {
-	return R_SUCCESS;
-}
+static R_POINT _mousePos;
 
 int SYSINPUT_ProcessInput() {
 	OSystem::Event event;
@@ -120,10 +116,9 @@ int SYSINPUT_ProcessInput() {
 			INTERFACE_Update(&imouse_pt, UPDATE_MOUSECLICK);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			_mouse_x = event.mouse.x;
-			_mouse_y = event.mouse.y;
-			imouse_pt.x = _mouse_x;
-			imouse_pt.y = _mouse_y;
+			_mousePos.x = event.mouse.x;
+			_mousePos.y = event.mouse.y;
+			imouse_pt = _mousePos;
 			break;
 		case OSystem::EVENT_QUIT:
 			g_system->quit();
@@ -136,23 +131,8 @@ int SYSINPUT_ProcessInput() {
 	return R_SUCCESS;
 }
 
-int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y) {
-	*mouse_x = _mouse_x;
-	*mouse_y = _mouse_y;
-
-	return R_SUCCESS;
-}
-
-int SYSINPUT_HideMouse() {
-	g_system->showMouse(false);
-
-	return R_SUCCESS;
-}
-
-int SYSINPUT_ShowMouse() {
-	g_system->showMouse(true);
-
-	return R_SUCCESS;
+R_POINT SYSINPUT_GetMousePos() {
+	return _mousePos;
 }
 
 } // End of namespace Saga

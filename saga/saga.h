@@ -42,7 +42,7 @@ class SndRes;
 class Sound;
 class Music;
 
-typedef Common::MemoryReadStream MemoryReadStream;
+using Common::MemoryReadStream;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 

@@ -71,14 +71,6 @@ struct R_SURFACE {
 #define R_RGB_GREEN 0x0000FF00UL
 #define R_RGB_BLUE  0x000000FFUL
 
-struct SAGA_COLOR {
-	byte r;
-	byte g;
-	byte b;
-};
-
-#define SAGA_COLOR_LEN 3
-
 struct PALENTRY {
 	byte red;
 	byte green;
@@ -86,7 +78,6 @@ struct PALENTRY {
 };
 
 enum R_ERRORCODE {
-	R_STOP = -3,
 	R_MEM = -2,
 	R_FAILURE = -1,
 	R_SUCCESS = 0
@@ -102,7 +93,6 @@ int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
 #define R_PAL_ENTRIES 256
 
 int GFX_Init(OSystem *system, int width, int height);
-R_SURFACE *GFX_GetScreenSurface();
 R_SURFACE *GFX_GetBackBuffer();
 int GFX_GetWhite();
 int GFX_GetBlack();
@@ -113,11 +103,8 @@ int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
 // System : Input 
-int SYSINPUT_Init();
 int SYSINPUT_ProcessInput(void);
-int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y);
-int SYSINPUT_HideMouse(void);
-int SYSINPUT_ShowMouse(void);
+R_POINT SYSINPUT_GetMousePos();
 
 } // End of namespace Saga
 
