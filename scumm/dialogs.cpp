@@ -147,6 +147,7 @@ static ResString string_map_table_v5[] = {
 
 
 const Common::String ScummDialog::queryResString(int stringno) {
+	byte buf[256];
 	byte *result;
 
 	if (stringno == 0)
@@ -163,11 +164,8 @@ const Common::String ScummDialog::queryResString(int stringno) {
 		return string_map_table_v5[stringno - 1].string;
 
 	if (result && *result == '/') {
-		byte tmp[256];
-		_vm->translateText(result, tmp);
-		
-		// FIXME: AARGH! We shouldn't just strcpy into the data we got from getStringAddress
-		strcpy((char *)result, (char *)tmp);
+		_vm->translateText(result, buf);
+		result = buf;
 	}
 
 	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
