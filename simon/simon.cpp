@@ -214,6 +214,10 @@ SimonState::~SimonState() {
 	delete [] _fcs_list;
 }
 
+void SimonState::errorString(const char *buf1, char *buf2) {
+	strcpy(buf2, buf1);
+}
+
 void palette_fadeout(uint32 *pal_values, uint num) {
 	byte *p = (byte *)pal_values;
 

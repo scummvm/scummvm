@@ -96,6 +96,7 @@ struct VgaTimerEntry {
 struct GameSpecificSettings;
 
 class SimonState : public Engine {
+	void errorString(const char *buf_input, char *buf_output);
 public:
 	File *_mus_file;
 	uint16 *_mus_offsets;

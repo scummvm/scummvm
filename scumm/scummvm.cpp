@@ -1482,58 +1482,14 @@ int normalizeAngle(int angle) {
 	return toSimpleDir(1, temp) * 45;
 }
 
-void NORETURN CDECL error(const char *s, ...) {
-	char buf[1024];
-#if defined( USE_WINDBG ) || defined ( _WIN32_WCE )
-	char buf2[1024];
-#endif
-
-	va_list va;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
-
-#ifdef __GP32__ //ph0x FIXME?
-	printf("ERROR: %s\n", buf);
-#endif
-
-	if (g_scumm && g_scumm->_currentScript != 0xFF) {
-		ScriptSlot *ss = &g_scumm->vm.slot[g_scumm->_currentScript];
-		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
-						g_scumm->_roomResource,
-						ss->number,
-						g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer, buf);
-#if defined( USE_WINDBG ) || defined( _WIN32_WCE )
-		sprintf(buf2, "Error(%d:%d:0x%X): %s!\n",
-			g_scumm->_roomResource,
-			ss->number,
-			g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer,
-			buf);
-#if defined ( _WIN32_WCE )	
-		drawError(buf2);
-#else
-		OutputDebugString(buf2);
-#endif
-#endif
-
+void Scumm::errorString(const char *buf1, char *buf2) {
+	if (_currentScript != 0xFF) {
+		ScriptSlot *ss = &vm.slot[_currentScript];
+		sprintf(buf2, "(%d:%d:0x%X): %s", _roomResource,
+			ss->number, _scriptPointer - _scriptOrgPointer, buf1);
 	} else {
-		fprintf(stderr, "Error: %s!\n", buf);
-#if defined( USE_WINDBG ) || defined( _WIN32_WCE )
-		sprintf(&buf[strlen(buf)], "\n");
-#if defined ( _WIN32_WCE )	
-		drawError(buf);
-#else
-		OutputDebugString(buf);
-#endif
-#endif
+		strcpy(buf2, buf1);
 	}
-
-	// Finally exit. quit() will terminate the program if g_system iss present
-	if (g_system)
-		g_system->quit();
-	
-	exit(1);
 }
 
 void Scumm::waitForTimer(int msec_delay) {

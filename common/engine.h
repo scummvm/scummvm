@@ -59,7 +59,12 @@ public:
 	// Create a new engine object based on the detector - either 
 	// a Scumm or a SimonState object currently.
 	static Engine *createFromDetector(GameDetector *detector, OSystem *syst);
+	
+	// Specific for each engine preparare of erroe string
+	virtual void errorString(const char *buf_input, char *buf_output) = 0;
 };
+
+extern Engine *g_engine;
 
 #if defined(__GNUC__)
 void CDECL error(const char *s, ...) NORETURN;

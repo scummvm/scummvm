@@ -256,9 +256,9 @@ struct langIndexNode {
 };
 
 class Scumm : public Engine {
-	friend void NORETURN CDECL error(const char *s, ...);	// FIXME - ugly but error() accesses g_scumm...
 	friend class ScummDebugger;
 	friend class ScummRenderer;	// FIXME - this is mostly for the destructor
+	void errorString(const char *buf_input, char *buf_output);
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode

@@ -27,7 +27,7 @@
 #include "common/util.h"
 
 class SkyState : public Engine {
-
+	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
 	bool _isCDVersion;

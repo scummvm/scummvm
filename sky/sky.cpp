@@ -62,6 +62,10 @@ SkyState::~SkyState() {
 	
 }
 
+void SkyState::errorString(const char *buf1, char *buf2) {
+	strcpy(buf2, buf1);
+}
+
 void SkyState::pollMouseXY() {
 
 	_mouse_x = _sdl_mouse_x;

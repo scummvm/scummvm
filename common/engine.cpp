@@ -28,9 +28,11 @@
 /* FIXME - BIG HACK for MidiEmu */
 OSystem *g_system = 0;
 SoundMixer *g_mixer = 0;
+Engine *g_engine = 0;
 
 Engine::Engine(GameDetector *detector, OSystem *syst)
 	: _system(syst) {
+	g_engine = this;
 	_mixer = new SoundMixer();
 
 	_gameDataPath = detector->_gameDataPath;
@@ -91,6 +93,42 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
 	}
 
 	return engine;
+}
+
+void NORETURN CDECL error(const char *s, ...) {
+	char buf_input[1024];
+	char buf_output[1024];
+	va_list va;
+
+	va_start(va, s);
+	vsprintf(buf_input, s, va);
+	va_end(va);
+
+	if (g_engine) {
+		g_engine->errorString(buf_input, buf_output);
+	} else {
+		strcpy(buf_output, buf_input);
+	}
+
+#ifdef __GP32__ //ph0x FIXME?
+	printf("ERROR: %s\n", buf_output);
+#else
+	fprintf(stderr, "%s!\n", buf_output);
+#endif
+
+#if defined( USE_WINDBG )
+	OutputDebugString(buf_output);
+#endif
+
+#if defined ( _WIN32_WCE )
+	drawError(buf_output);
+#endif
+
+	// Finally exit. quit() will terminate the program if g_system iss present
+	if (g_system)
+		g_system->quit();
+	
+	exit(1);
 }
 
 void CDECL warning(const char *s, ...) {
