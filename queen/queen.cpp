@@ -114,7 +114,8 @@ QueenEngine::~QueenEngine() {
 	delete _logic;
 	delete _music;
 	delete _sound;
-	delete _walk;	
+	delete _walk;
+	delete _saveFileMan;
 }
 
 void QueenEngine::registerDefaultSettings() {
@@ -191,17 +192,110 @@ void QueenEngine::update(bool checkPlayerInput) {
 	if (!_input->cutawayRunning()) {
 		if (_input->quickSave()) {
 			_input->quickSaveReset();
-			_logic->gameSave(0, "Quicksave");
+			saveGameState(0, "Quicksave");
 		}
 		if (_input->quickLoad()) {
 			_input->quickLoadReset();
-			_logic->gameLoad(0);
+			loadGameState(0);
 		}
 		if (checkPlayerInput) {
 			_command->updatePlayer();
 		}
 		if (_input->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 			_display->blankScreen();
+		}
+	}
+}
+
+void QueenEngine::saveGameState(uint16 slot, const char *desc) {
+	debug(3, "Saving game to slot %d", slot);
+	char name[20];
+	makeGameStateName(slot, name);
+	SaveFile *file = _saveFileMan->open_savefile(name, getSavePath(), true);
+	if (file) {
+		// save data
+		byte *saveData = new byte[30000];
+		byte *p = saveData;
+		_bam->saveState(p);
+		_grid->saveState(p);
+		_logic->saveState(p);
+		_sound->saveState(p);
+		uint32 dataSize = p - saveData;
+
+		// write header
+		GameStateHeader header;
+		memset(&header, 0, sizeof(header));
+		file->writeUint32BE('SCVM');
+		header.version = TO_BE_32(SAVESTATE_CUR_VER);
+		header.flags = TO_BE_32(0);
+		header.dataSize = TO_BE_32(dataSize);
+		strncpy(header.description, desc, sizeof(header.description) - 1);
+		file->write(&header, sizeof(header));
+
+		// write save data
+		if (file->write(saveData, dataSize) != dataSize) {
+			warning("Can't write file '%s'. (Disk full?)", name);
+		}
+		delete saveData;
+		delete file;
+	} else {
+		warning("Can't create file '%s', game not saved", name);
+	}
+}
+
+void QueenEngine::loadGameState(uint16 slot) {
+	debug(3, "Loading game from slot %d", slot);
+	GameStateHeader header;
+	SaveFile *file = readGameStateHeader(slot, &header);
+	if (file && header.dataSize != 0) {
+		byte *saveData = new byte[header.dataSize];
+		byte *p = saveData;
+		if (file->read(saveData, header.dataSize) != header.dataSize) {
+			warning("Error reading savegame file");
+		} else {
+			_bam->loadState(header.version, p);
+			_grid->loadState(header.version, p);
+			_logic->loadState(header.version, p);
+			_sound->loadState(header.version, p);
+			assert(header.dataSize == (uint32)(p - saveData));
+			_logic->setupRestoredGame();
+		}
+		delete saveData;
+		delete file;
+	}
+}
+
+SaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
+	char name[20];
+	makeGameStateName(slot, name);
+	SaveFile *file = _saveFileMan->open_savefile(name, getSavePath(), false);
+	if (file && file->readUint32BE() == 'SCVM') {
+		gsh->version = file->readUint32BE();
+		gsh->flags = file->readUint32BE();
+		gsh->dataSize = file->readUint32BE();
+		file->read(gsh->description, sizeof(gsh->description));
+	} else {
+		memset(gsh, 0, sizeof(GameStateHeader));
+	}
+	return file;
+}
+
+void QueenEngine::makeGameStateName(uint16 slot, char *buf) {
+	sprintf(buf, "queen.s%02d", slot);
+}
+
+void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
+	char filename[20];
+	makeGameStateName(0, filename);
+	filename[strlen(filename) - 2] = 0;
+	bool marks[SAVESTATE_MAX];
+	_saveFileMan->list_savefiles(filename, getSavePath(), marks, SAVESTATE_MAX);
+	for (int i = 0; i < SAVESTATE_MAX; ++i) {
+		if (marks[i]) {
+			GameStateHeader header;
+			SaveFile *f = readGameStateHeader(i, &header);
+			strcpy(descriptions[i], header.description);
+			delete f;
 		}
 	}
 }
@@ -245,7 +339,7 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
-	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
+	_resource = new Resource(_gameDataPath);
 	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);
@@ -270,14 +364,12 @@ void QueenEngine::initialise(void) {
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
+	_saveFileMan = _system->get_savefile_manager();
 }
 
 void QueenEngine::timerHandler(void *ptr) {
-	((QueenEngine *)ptr)->gotTimerTick();
-}
-
-void QueenEngine::gotTimerTick() {
-	_display->handleTimer();
+	QueenEngine *vm = (QueenEngine *)ptr;
+	vm->_display->handleTimer();
 }
 
 } // End of namespace Queen

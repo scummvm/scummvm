@@ -1335,35 +1335,15 @@ void Logic::update() {
 }
 
 
-bool Logic::gameSave(uint16 slot, const char *desc) {
-	if (!desc)	//no description entered
-		return false;
-
-	debug(3, "Saving game to slot %d", slot);
-	
-	int i, j;
-	char *buf = new char[32];
-	memcpy(buf, desc, strlen(desc) < 32 ? strlen(desc) : 32);
-	for (i = strlen(desc); i < 32; i++)
-		buf[i] = '\0';
-	byte *saveData = new byte[SAVEGAME_SIZE];
-	byte *ptr = saveData;
-	memcpy(ptr, buf, 32); ptr += 32;
-	delete[] buf;
-	
-	WRITE_BE_UINT16(ptr, _vm->talkSpeed()); ptr += 2;
-	WRITE_BE_UINT16(ptr, 0 /*_settings.musicVolume*/); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->sound()->sfxOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->sound()->speechOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->sound()->musicOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->subtitles() ? 1 : 0); ptr += 2;
-	
+void Logic::saveState(byte *&ptr) {
+	uint16 i;
 	for (i = 0; i < 4; i++) {
 		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
 	}
-	
+
 	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->x); ptr += 2;
 	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->y); ptr += 2;
+
 	WRITE_BE_UINT16(ptr, _currentRoom); ptr += 2;
 
 	for (i = 1; i <= _numObjects; i++)
@@ -1373,61 +1353,26 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 		_itemData[i].writeToBE(ptr);
 		
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
-		WRITE_BE_UINT16(ptr, gameState(i)); ptr += 2;
+		WRITE_BE_UINT16(ptr, _gameState[i]); ptr += 2;
 	}
-	
-	for (i = 1; i <= _numRooms; i++)
-		for (j = 1; j <= _vm->grid()->areaMax(i); j++)
-			_vm->grid()->area(i, j)->writeToBE(ptr);
-			
+				
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
-			_talkSelected[i].writeToBE(ptr);
+		_talkSelected[i].writeToBE(ptr);
 	
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].writeToBE(ptr);
 
 	WRITE_BE_UINT16(ptr, _joe.facing); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->bam()->_flag); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->sound()->lastOverride()); ptr += 2;
-	
-	//TODO: lastmerge, lastalter, altmrgpri
-	for (i = 0; i < 3; i++) {
-		WRITE_BE_UINT16(ptr, 0); ptr += 2;
-	}
-	// TOADD:
-	//	Logic::_puzzleAttemptCount
-	//	Logic::_objectDescription
 
-	if ((ptr - saveData) != SAVEGAME_SIZE) {
-		delete[] saveData;
-		return false;
-	}
-	
-	bool result = _vm->resource()->writeSave(slot, saveData, SAVEGAME_SIZE);
-	delete[] saveData;
-	
-	return result;	
+	// V1
+	WRITE_BE_UINT16(ptr, _puzzleAttemptCount); ptr += 2;
+	for (i = 1; i <= _numObjDesc; i++) 
+		_objectDescription[i].writeToBE(ptr);
 }
 
-bool Logic::gameLoad(uint16 slot) {
-	int i, j;
-	byte *saveData = new byte[SAVEGAME_SIZE];
-	byte *ptr = saveData;
-	if (!_vm->resource()->readSave(slot, saveData)) {
-		warning("Couldn't load savegame from slot %d", slot);
-		delete[] saveData;
-		return false;
-	}
-	
-	debug(3, "Loading game from slot %d", slot);
-	ptr += 32;	//skip description
-	/*_talkSpeed = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
-	/*_settings.musicVolume = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
-	_vm->sound()->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_vm->sound()->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_vm->sound()->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_vm->subtitles(READ_BE_UINT16(ptr) != 0); ptr += 2;
 
+void Logic::loadState(uint32 ver, byte *&ptr) {
+	uint16 i;
 	for (i = 0; i < 4; i++) {
 		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
@@ -1435,8 +1380,8 @@ bool Logic::gameLoad(uint16 slot) {
 	_joe.x = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	_joe.y = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-	currentRoom(READ_BE_UINT16(ptr)); ptr += 2;
-	
+	_currentRoom = READ_BE_UINT16(ptr); ptr += 2;
+
 	for (i = 1; i <= _numObjects; i++)
 		_objectData[i].readFromBE(ptr);
 
@@ -1444,63 +1389,57 @@ bool Logic::gameLoad(uint16 slot) {
 		_itemData[i].readFromBE(ptr);
 
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
-		gameState(i, (int16)READ_BE_UINT16(ptr)); ptr += 2;
+		_gameState[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	for (i = 1; i <= _numRooms; i++)
-		for (j = 1; j <= _vm->grid()->areaMax(i); j++)
-			_vm->grid()->area(i, j)->readFromBE(ptr);
-	
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 		_talkSelected[i].readFromBE(ptr);
 		
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].readFromBE(ptr);
 
-	joeFacing(READ_BE_UINT16(ptr));  ptr += 2;
-	_vm->bam()->_flag = READ_BE_UINT16(ptr); ptr += 2;
-	_vm->sound()->playSong((int16)READ_BE_UINT16(ptr)); ptr += 2;
-	
-	//TODO: lastmerge, lastalter, altmrgpri
-	for (i = 0; i < 3; i++) {
-		READ_BE_UINT16(ptr); ptr += 2;
-	}
+	_joe.facing = READ_BE_UINT16(ptr); ptr += 2;
 
-	if ((ptr - saveData) != SAVEGAME_SIZE) {
-		delete[] saveData;
-		return false;
+	if (ver >= 1) {
+		_puzzleAttemptCount = READ_BE_UINT16(ptr); ptr += 2;
+
+		for (i = 1; i <= _numObjDesc; i++) 
+			_objectDescription[i].readFromBE(ptr);
 	}
-	
+}
+
+void Logic::setupRestoredGame() {
 	if (_vm->bam()->_flag != BamScene::F_STOP) {
 		_vm->bam()->prepareAnimation();
 	}
 
-	joeCutFacing(joeFacing());
-	joeFace();
-	
-	//OLDX = _joe.x;
-	//OLDY = _joe.y;
-	_oldRoom = 0;
-	newRoom(_currentRoom);
-	_entryObj = 0;
+	_vm->sound()->playSong(_vm->sound()->lastOverride());
 
 	switch (gameState(VAR_DRESSING_MODE)) {
 	case 0: 
-		joeUseClothes(false);
+		_vm->display()->palSetJoeNormal();
+		loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
 		break;
 	case 1:
-		joeUseUnderwear();
+		_vm->display()->palSetJoeNormal();
+		loadJoeBanks("JoeU_A.BBK", "JoeU_B.BBK");
 		break;
 	case 2:
-		joeUseDress(false);
+		_vm->display()->palSetJoeDress();
+		loadJoeBanks("JoeD_A.BBK", "JoeD_B.BBK");
 		break;
 	}
 
-	inventoryRefresh();
+	_joe.cutFacing = _joe.facing;
+	joeFace();
 
-	delete[] saveData;
-	return true;
+	_oldRoom = 0;
+	_newRoom = _currentRoom;
+	_entryObj = 0;
+
+	inventoryRefresh();
 }
+
 
 void Logic::sceneStart() {
 	debug(6, "[Logic::sceneStart] _scene = %i", _scene);

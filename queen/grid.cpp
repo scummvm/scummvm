@@ -28,25 +28,24 @@
 
 namespace Queen {
 
-
 Grid::Grid(QueenEngine *vm) 
 	: _vm(vm) {
 	memset(_zones, 0, sizeof(_zones));
 }
 
-
 void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
-
 	uint16 i, j;
 
-	_objMax  = new int16[numRooms + 1];
-	_areaMax = new int16[numRooms + 1];
-	_area    = new Area[numRooms + 1][MAX_AREAS_NUMBER];
+	_numRoomAreas = numRooms;
+
+	_objMax  = new int16[_numRoomAreas + 1];
+	_areaMax = new int16[_numRoomAreas + 1];
+	_area    = new Area[_numRoomAreas + 1][MAX_AREAS_NUMBER];
 
 	_objMax[0] = 0;
 	_areaMax[0] = 0;
 	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
-	for (i = 1; i <= numRooms; i++) {
+	for (i = 1; i <= _numRoomAreas; i++) {
 		_objMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		_areaMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		memset(&_area[i][0], 0, sizeof(Area));
@@ -63,7 +62,6 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 	}
 }
 
-
 void Grid::setZone(GridScreen screen, uint16 zoneNum, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	debug(9, "Grid::setZone(%d, %d, (%d,%d), (%d,%d))", screen, zoneNum, x1, y1, x2, y2);
 	ZoneSlot *pzs = &_zones[screen][zoneNum];
@@ -74,14 +72,12 @@ void Grid::setZone(GridScreen screen, uint16 zoneNum, uint16 x1, uint16 y1, uint
 	pzs->box.y2 = y2;
 }
 
-
 void Grid::setZone(GridScreen screen, uint16 zoneNum, const Box &box) {
 	debug(9, "Grid::setZone(%d, %d, (%d,%d), (%d,%d))", screen, zoneNum, box.x1, box.y1, box.x2, box.y2);
 	ZoneSlot *pzs = &_zones[screen][zoneNum];
 	pzs->valid = true;
 	pzs->box = box;
 }
-
 
 uint16 Grid::findZoneForPos(GridScreen screen, uint16 x, uint16 y) const {
 	debug(9, "Logic::findZoneForPos(%d, (%d,%d))", screen, x, y);
@@ -98,7 +94,6 @@ uint16 Grid::findZoneForPos(GridScreen screen, uint16 x, uint16 y) const {
 	return 0;
 }
 
-
 uint16 Grid::findAreaForPos(GridScreen screen, uint16 x, uint16 y) const {
 	uint16 room = _vm->logic()->currentRoom();
 	uint16 zoneNum = findZoneForPos(screen, x, y);
@@ -110,14 +105,12 @@ uint16 Grid::findAreaForPos(GridScreen screen, uint16 x, uint16 y) const {
 	return zoneNum;
 }
 
-
 void Grid::clear(GridScreen screen) {
 	debug(9, "Grid::clear(%d)", screen);
 	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		_zones[screen][i].valid = false;
 	}
 }
-
 
 void Grid::setupNewRoom(uint16 room, uint16 firstRoomObjNum) {
 	debug(9, "Grid::setupNewRoom()");
@@ -143,7 +136,6 @@ void Grid::setupNewRoom(uint16 room, uint16 firstRoomObjNum) {
 	}
 }
 
-
 void Grid::setupPanel() {
 	for (int i = 0; i <= 7; ++i) {
 		uint16 x = i * 20;
@@ -161,7 +153,6 @@ void Grid::setupPanel() {
 	setZone(GS_PANEL, 14, 285, 10, 320, 49);
 }
 
-
 void Grid::drawZones() {
 	for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
 		const ZoneSlot *pzs = &_zones[GS_ROOM][i];
@@ -172,13 +163,11 @@ void Grid::drawZones() {
 	}
 }
 
-
 const Box *Grid::zone(GridScreen screen, uint16 index) const { 
 	const ZoneSlot *zs = &_zones[screen][index];
 	assert(zs->valid);
 	return &zs->box;
 }
-
 
 Verb Grid::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
 	static const Verb pv[] = {
@@ -201,7 +190,6 @@ Verb Grid::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
 	return pv[findZoneForPos(GS_PANEL, cursorx, cursory)];
 }
 
-
 uint16 Grid::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
 	uint16 roomObj = 0;
 	if (cursory < ROOM_ZONE_HEIGHT) {
@@ -210,7 +198,6 @@ uint16 Grid::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
 	}
 	return roomObj;
 }
-
 
 uint16 Grid::findObjectNumber(uint16 zoneNum) const {
 	// l.316-327 select.c
@@ -229,7 +216,6 @@ uint16 Grid::findObjectNumber(uint16 zoneNum) const {
 	return obj;
 }
 
-
 uint16 Grid::findScale(uint16 x, uint16 y) const {
 	uint16 room = _vm->logic()->currentRoom();
 	uint16 scale = 100;
@@ -240,5 +226,22 @@ uint16 Grid::findScale(uint16 x, uint16 y) const {
 	return scale;
 }
 
+void Grid::saveState(byte *&ptr) {
+	uint16 i, j;
+	for (i = 1; i <= _numRoomAreas; ++i) {
+		for (j = 1; j <= _areaMax[i]; ++j) {
+			_area[i][j].writeToBE(ptr);
+		}
+	}
+}
+
+void Grid::loadState(uint32 ver, byte *&ptr) {
+	uint16 i, j;
+	for (i = 1; i <= _numRoomAreas; ++i) {
+		for (j = 1; j <= _areaMax[i]; ++j) {
+			_area[i][j].readFromBE(ptr);
+		}
+	}
+}
 
 } // End of namespace Queen

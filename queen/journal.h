@@ -98,8 +98,6 @@ public:
 
 	enum {
 		SAVE_PER_PAGE     = 10,
-		MAX_SAVE_DESC_LEN = 32,
-		MAX_SAVE_DESC_NUM = 10 * SAVE_PER_PAGE,
 		MAX_PANEL_TEXTS   = 4 * 2
 	};
 
@@ -121,7 +119,6 @@ private:
 	void showBob(int bobNum, int16 x, int16 y, int frameNum);
 	void hideBob(int bobNum);
 
-	void findSaveDescriptions();
 	void drawSaveDescriptions();
 	void drawSaveSlot();
 
@@ -151,16 +148,11 @@ private:
 	void initEditBuffer(const char *desc);
 	void updateEditBuffer(uint16 ascii, int keycode);
 
-	void makeSavegameName(char *buf, int slot = -1);
-	void saveState(int slot, const char *desc);
-	void loadState(int slot);
-
-
 	struct {
 		bool enable;
 		int posCursor;
 		uint textCharsCount;
-		char text[MAX_SAVE_DESC_LEN];
+		char text[32];
 	} _edit;
 
 	int _currentSavePage;
@@ -172,7 +164,7 @@ private:
 	int _panelTextY[MAX_PANEL_TEXTS];
 
 	uint16 _prevZoneNum;
-	char _saveDescriptions[MAX_SAVE_DESC_NUM][MAX_SAVE_DESC_LEN];
+	char _saveDescriptions[100][32];
 	Mode _mode;
 	bool _quit;
 	bool _quitCleanly;

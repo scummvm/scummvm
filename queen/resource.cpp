@@ -43,9 +43,8 @@ const GameVersion Resource::_gameVersions[] = {
 };
 
 
-Resource::Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath)
-	: _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
-
+Resource::Resource(const Common::String &datafilePath)
+	: _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
 	_resourceFile = new File();
 	if (!findCompressedVersion() && !findNormalVersion())
 		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
@@ -58,7 +57,6 @@ Resource::~Resource() {
 	delete _resourceFile;
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
-	delete _saveFileManager;
 }
 
 int32 Resource::resourceIndex(const char *filename) const {
@@ -246,40 +244,6 @@ File *Resource::giveCompressedSound(const char *filename) {
 	assert(strstr(filename, ".SB"));
 	_resourceFile->seek(resourceEntry(filename)->offset);
 	return _resourceFile;
-}
-
-bool Resource::writeSave(uint16 slot, const byte *saveData, uint32 size) {
-	char name[20];
-	sprintf(name, "queensav.%03d", slot);
-	SaveFile *file = _saveFileManager->open_savefile(name, _savePath, true);
-	if (!file) {
-		warning("Can't create file '%s', game not saved", name);
-		return false;
-	}
-
-	if (file->write(saveData, size) != size) {
-		warning("Can't write file '%s'. (Disk full?)", name);
-		return false;
-	}
-
-	delete file;
-	return true;
-}
-
-bool Resource::readSave(uint16 slot, byte *&ptr) {
-	char name[20];
-	sprintf(name, "queensav.%03d", slot);
-	SaveFile *file = _saveFileManager->open_savefile(name, _savePath, false);
-	if (!file)
-		return false;
-
-	if (file->read(ptr, SAVEGAME_SIZE) != SAVEGAME_SIZE) {
-		warning("Can't read from file '%s'", name);
-		delete file;
-		return false;
-	}
-
-	return true;
 }
 
 LineReader::LineReader(char *buffer) : _buffer(buffer), _current(0) {

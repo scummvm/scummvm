@@ -1233,6 +1233,14 @@ void BamScene::updateFightAnimation() {
 	}
 }
 
+void BamScene::saveState(byte *&ptr) {
+	WRITE_BE_UINT16(ptr, _flag); ptr += 2;
+}
+
+void BamScene::loadState(uint32 ver, byte *&ptr) {
+	_flag = READ_BE_UINT16(ptr); ptr += 2;
+}
+
 const BamScene::BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },

@@ -61,6 +61,9 @@ public:
 	uint16 areaMax(int room) const { return _areaMax[room]; }
 	uint16 objMax(int room) const { return _objMax[room]; } 
 
+	void saveState(byte *&ptr);
+	void loadState(uint32 ver, byte *&ptr);
+
 	enum {
 		MAX_ZONES_NUMBER = 32,
 		MAX_AREAS_NUMBER = 11
@@ -81,6 +84,8 @@ private:
 	int16 *_areaMax;
 
 	Area (*_area)[MAX_AREAS_NUMBER];
+
+	uint16 _numRoomAreas;
 
 	Box *_objectBox;
 

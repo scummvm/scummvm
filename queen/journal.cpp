@@ -49,7 +49,8 @@ void Journal::use() {
 	_edit.enable = false;
 	_mode = M_NORMAL;
 
-	findSaveDescriptions();
+	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
+	_vm->findGameStateDescriptions(_saveDescriptions);
 
 	_panelTextCount = 0;
 	_vm->display()->palFadeOut(0, 255, JOURNAL_ROOM);
@@ -184,29 +185,6 @@ void Journal::hideBob(int bobNum) {
 }
 
 
-void Journal::findSaveDescriptions() {
-	SaveFileManager *mgr = OSystem::instance()->get_savefile_manager();
-	char filename[256];
-	makeSavegameName(filename);
-	bool marks[MAX_SAVE_DESC_NUM];
-	mgr->list_savefiles(filename, _vm->getSavePath(), marks, MAX_SAVE_DESC_NUM);
-
-	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
-	int i;
-	for (i = 0; i < MAX_SAVE_DESC_NUM; ++i) {
-		if (marks[i]) {
-			makeSavegameName(filename, i);
-			SaveFile *f = mgr->open_savefile(filename, _vm->getSavePath(), false);
-			if (f) {
-				f->read(_saveDescriptions[i], MAX_SAVE_DESC_LEN);
-				delete f;
-			}
-		}
-	}
-	delete mgr;
-}
-
-
 void Journal::drawSaveDescriptions() {
 	int i;
 	for (i = 0; i < SAVE_PER_PAGE; ++i) {
@@ -305,7 +283,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 		case ZN_REVIEW_ENTRY:
 			if (_saveDescriptions[currentSlot][0]) {
 				_vm->display()->palFadeOut(0, 223, JOURNAL_ROOM);
-				loadState(currentSlot);
+				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 				// XXX panelflag=1;
 				// XXX walkgameload=1;
@@ -317,7 +295,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			break;
 		case ZN_MAKE_ENTRY:
 			if (_edit.text[0]) {
-				saveState(currentSlot, _edit.text);
+				_vm->saveGameState(currentSlot, _edit.text);
 				_quit = true;
 			} else {
 				exitYesNoMode();
@@ -548,25 +526,5 @@ void Journal::updateEditBuffer(uint16 ascii, int keycode) {
 		update();
 	}
 }
-
-
-void Journal::makeSavegameName(char *buf, int slot) {
-	if (slot >= 0) {
-		sprintf(buf, "queensav.%03d", slot); // "queen.s%02d"
-	} else {
-		sprintf(buf, "queensav."); // "queen.s"
-	}
-}
-
-
-void Journal::saveState(int slot, const char *desc) {
-	_vm->logic()->gameSave(slot, desc);
-}
-
-
-void Journal::loadState(int slot) {
-	_vm->logic()->gameLoad(slot);
-}
-
 
 } // End of namespace Queen

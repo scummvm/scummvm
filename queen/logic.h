@@ -190,8 +190,10 @@ public:
 
 	void update();
 
-	bool gameSave(uint16 slot, const char *desc);
-	bool gameLoad(uint16 slot);
+	void saveState(byte *&ptr);
+	void loadState(uint32 ver, byte *&ptr);
+
+	void setupRestoredGame();
 
 	//! Ugly hack from original code
 	void sceneReset() { _scene = 0; }

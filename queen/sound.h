@@ -74,7 +74,10 @@ public:
 	void toggleMusic()		{ _musicToggle ^= true; }
 
 	int16 lastOverride()		{ return _lastOverride; }
-	
+
+	void saveState(byte *&ptr);
+	void loadState(uint32 ver, byte *&ptr);
+
 protected:
 	SoundMixer *_mixer;
 	QueenEngine *_vm;

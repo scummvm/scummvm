@@ -76,7 +76,7 @@ private:
 class Resource {
 
 public:
-	Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath);
+	Resource(const Common::String &datafilePath);
 	~Resource(void);
 
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
@@ -93,9 +93,6 @@ public:
 	const char *JASVersion() const { return _versionString; }
 	Language getLanguage() const;
 
-	bool writeSave(uint16 slot, const byte *saveData, uint32 size);
-	bool readSave(uint16 slot, byte *&ptr);
-
 	enum {
 		JAS_VERSION_OFFSET_DEMO = 0x119A8,
 		JAS_VERSION_OFFSET_INTV = 0xCF8,
@@ -110,7 +107,6 @@ protected:
 	const char *_savePath;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;
-	SaveFileManager *_saveFileManager;
 
 	bool findNormalVersion();
 	bool findCompressedVersion();

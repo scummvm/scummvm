@@ -28,6 +28,13 @@ class GameDetector;
 
 namespace Queen {
 
+struct GameStateHeader {
+	uint32 version;
+	uint32 flags;
+	uint32 dataSize;
+	char description[32];
+};
+
 class BamScene;
 class BankManager;
 class Command;
@@ -76,6 +83,17 @@ public:
 
 	void update(bool checkPlayerInput = false);
 
+	void saveGameState(uint16 slot, const char *desc);
+	void loadGameState(uint16 slot);
+	void makeGameStateName(uint16 slot, char *buf);
+	void findGameStateDescriptions(char descriptions[100][32]);
+	SaveFile *readGameStateHeader(uint16 slot, GameStateHeader *gsh);
+
+	enum {
+		SAVESTATE_CUR_VER = 1,
+		SAVESTATE_MAX     = 100
+	};
+
 protected:
 
 	void errorString(const char *buf_input, char *buf_output);
@@ -85,7 +103,6 @@ protected:
 	void initialise();
 
 	static void timerHandler(void *ptr);
-	void gotTimerTick();
 
 
 	int _talkSpeed;
@@ -104,6 +121,7 @@ protected:
 	Resource *_resource;
 	Sound *_sound;
 	Walk *_walk;
+	SaveFileManager *_saveFileMan;
 };
 
 } // End of namespace Queen

@@ -190,6 +190,9 @@ public:
 	void updateCarAnimation();
 	void updateFightAnimation();
 
+	void saveState(byte *&ptr);
+	void loadState(uint32 ver, byte *&ptr);
+
 	enum {
 		BOB_OBJ1 = 5,
 		BOB_OBJ2 = 6,
