@@ -63,6 +63,7 @@ using namespace CEGUI;
 
 static GameDetector _gameDetector;
 static FILE *stdout_file;
+static FILE *stderr_file;
 	
 
 // Static member inits
@@ -79,6 +80,7 @@ extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 int SDL_main(int argc, char **argv) {
 	/* Avoid print problems - this file will be put in RAM anyway */
 	stdout_file = fopen("\\scummvm_stdout.txt", "w");
+	stderr_file = fopen("\\scummvm_stderr.txt", "w");
 	return scummvm_main(_gameDetector, argc, argv);
 }    
    
@@ -1328,6 +1330,7 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	DeleteFile(TEXT("\\scummvm_stdout.txt"));
+	DeleteFile(TEXT("\\scummvm_stderr.txt"));
 	CEDevice::disableHardwareKeyMapping();
 	OSystem_SDL_Common::quit();
 }
