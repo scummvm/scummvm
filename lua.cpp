@@ -238,20 +238,11 @@ static void SetActorTalkChore() {
   Actor *act = check_actor(1);
   int index = check_int(2);
   int chore = check_int(3);
-  Costume *costume;
-
-  if (lua_isnil(lua_getparam(4))) {
-    costume = act->currentCostume();
-    if (costume == NULL)
-      error("Actor %s has no costume\n", act->name());
-  } else {
-    costume = act->findCostume(luaL_check_string(4));
-    if (costume == NULL)
-      error("Actor %s has no costume %s\n", act->name(), lua_getstring(lua_getparam(4)));
-  }
+  Costume *costume = get_costume(act, 4);
 
   costume->setTalkChore(index, chore);
 }
+
 static void SetActorVisibility() {
   Actor *act = check_actor(1);
   bool val = getbool(2);
