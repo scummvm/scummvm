@@ -437,6 +437,76 @@ void akos_c1_spec1(AkosRenderer * ar)
 	} while (1);
 }
 
+void akos_c1_spec3(AkosRenderer * ar)
+{
+	byte *src, *dst;
+	byte len, height, maskbit;
+	uint y, color, pcolor;
+	const byte *scaleytab, *mask;
+
+
+	y = ar->v1.y;
+
+	len = ar->v1.replen;
+	src = ar->srcptr;
+	dst = ar->v1.destptr;
+	color = ar->v1.repcolor;
+	height = ar->height;
+
+	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+	maskbit = revBitMask[ar->v1.x & 7];
+	mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
+
+	if (len)
+		goto StartPos;
+
+	do {
+		len = *src++;
+		color = len >> ar->v1.shl;
+		len &= ar->v1.mask;
+		if (!len)
+			len = *src++;
+
+		do {
+			if (*scaleytab++ < ar->scale_y) {
+				if (color && y < ar->outheight
+						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
+					pcolor = ar->palette[color];
+					if (pcolor < 8) {
+						pcolor = (pcolor << 8) + *dst;
+						*dst = ar->shadow_table[pcolor];
+					} else {
+						*dst = pcolor;
+					}
+				}
+				mask += 40;
+				dst += ar->outwidth;
+				y++;
+			}
+			if (!--height) {
+				if (!--ar->v1.skip_width)
+					return;
+				height = ar->height;
+				y = ar->v1.y;
+
+				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+
+				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
+					ar->v1.x += ar->v1.scaleXstep;
+					if (ar->v1.x >= g_scumm->_realWidth)
+						return;
+					maskbit = revBitMask[ar->v1.x & 7];
+					ar->v1.destptr += ar->v1.scaleXstep;
+				}
+				mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
+				ar->v1.tmp_x += ar->v1.scaleXstep;
+				dst = ar->v1.destptr;
+			}
+		StartPos:;
+		} while (--len);
+	} while (1);
+}
+
 const byte default_scale_table[768] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -775,8 +845,7 @@ void AkosRenderer::codec1()
 		warning("akos_c1_spec2");
 		return;
 	case 3:
-//    akos_c1_spec3(this);
-		warning("akos_c1_spec3");
+		akos_c1_spec3(this);
 		return;
 	}
 
