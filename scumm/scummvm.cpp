@@ -91,8 +91,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;
 		_realHeight = 240;
-	} else {
-	if (_gameId == GID_CMI) {
+	}
+	else if (_gameId == GID_CMI) {
 		_realWidth = 640;
 		_realHeight = 480;
 	} else {

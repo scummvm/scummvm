@@ -236,7 +236,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x * 8, vs->topline + t, w, height);
 }
 
-void blit(byte *dst, byte *src, int w, int h)
+void Scumm::blit(byte *dst, byte *src, int w, int h)
 {
 	assert(h > 0);
 	assert(src != NULL);
@@ -244,8 +244,8 @@ void blit(byte *dst, byte *src, int w, int h)
 
 	do {
 		memcpy(dst, src, w);
-		dst += _vm->_realWidth;
-		src += _vm->_realWidth;
+		dst += _realWidth;
+		src += _realWidth;
 	} while (--h);
 }
 
@@ -920,7 +920,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 				if (flag & dbClear || !lightsOn)
 					clear8Col();
 				else
-					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
+					_vm->blit(_backbuff_ptr, _bgbak_ptr, 8, h);
 			}
 		}
 		CHECK_HEAP;
@@ -2604,7 +2604,7 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
 				draw8ColWithMasking();
 			else
-				blit(_backbuff_ptr, _bgbak_ptr, 8, _numLinesToProcess);
+				_vm->blit(_backbuff_ptr, _bgbak_ptr, 8, _numLinesToProcess);
 		} else {
 			clear8Col();
 		}

@@ -188,6 +188,4 @@ struct Gdi {
 	};
 };
 
-void blit(byte *dst, byte *src, int w, int h);
-
 #endif

@@ -839,6 +839,8 @@ public:
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
 
+	void blit(byte *dst, byte *src, int w, int h);
+
 	void decompressBomp(byte *dst, byte *src, int w, int h);
 	uint _shakeFrame;
 	int _screenStartStrip, _screenEndStrip;

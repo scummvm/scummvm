@@ -219,7 +219,7 @@ void Scumm::CHARSET_1()
 
 	if (a && string[0].overhead != 0) {
 		if (!(_features & GF_AFTER_V6)) {
-			string[0].xpos = a->x - camera._cur.x + (_vm->_realWidth / 2);
+			string[0].xpos = a->x - camera._cur.x + (_realWidth / 2);
 
 			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
@@ -451,7 +451,7 @@ void Scumm::description()
 
 	buffer = charset._buffer + charset._bufPos;
 	string[0].ypos = camera._cur.y + 88;
-	string[0].xpos = (_vm->_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
+	string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
 	if (string[0].xpos < 0)
 		string[0].xpos = 0;
 
@@ -958,7 +958,7 @@ void CharsetRenderer::printChar(int chr)
 
 #if !defined(OLD)
 	if (_blitAlso)
-		blit(_backbuff_ptr, _bgbak_ptr, _width, _height);
+		_vm->blit(_backbuff_ptr, _bgbak_ptr, _width, _height);
 #endif
 
 	_left += _width;
