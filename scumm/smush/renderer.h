@@ -77,7 +77,7 @@ public:
 		
 		@return a pointer to the frame buffer to output data to.
 	*/
-	virtual char *lockFrame(int32 frame) = 0;
+	virtual byte *lockFrame(int32 frame) = 0;
 	/*!	@brief unlock a frame buffer
 		
 		This is called by the animation player when a frame has been decoded.

@@ -51,12 +51,12 @@ bool BaseRenderer::initFrame(const Point &p) {
 	_width = p.getX();
 	_height = p.getY();
 	assert(_width && _height);
-	_data = new char[_width * _height];
+	_data = new byte[_width * _height];
 	if(!_data) error("base_renderer unable to allocate frame buffer");
 	return true;
 }
 
-char *BaseRenderer::lockFrame(int32 frame) {
+byte *BaseRenderer::lockFrame(int32 frame) {
 	_frame = frame; 
 	if(!_data) error("no allocated image buffer in lock_frame");
 	return _data;

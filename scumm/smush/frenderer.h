@@ -55,7 +55,7 @@ private:
 	struct {
 		int32 width;
 		int32 height;
-		char *chr;
+		byte *chr;
 	} _chars[256]; //!< array that contains the size of the different frames (i.e. characters) of the font.
 public:
 	/*!	@brief font_renderer constructor
@@ -107,7 +107,7 @@ protected:
 
 		@return the width of the character
 	*/
-	int32 drawChar(char *buffer, const Point &size, int32 x, int32 y, int32 c) const;
+	int32 drawChar(byte *buffer, const Point &size, int32 x, int32 y, int32 c) const;
 	/*!	@brief draw a string in the given frame buffer.
 		
 		@param str		the string to draw.
@@ -118,7 +118,7 @@ protected:
 
 		@bug	This method does not clip. This is not really a bug, as it should always be correctly called, but some asserts would be welcome.
 	*/
-	void drawSubstring(const byte *str, char *buffer, const Point &size, int32 x, int32 y) const;
+	void drawSubstring(const byte *str, byte *buffer, const Point &size, int32 x, int32 y) const;
 public:
 	/*!	@brief change the programmable color of the font.
 		
@@ -146,9 +146,9 @@ public:
 
 		@return \c true if everything went fine, \c false otherwise
 	*/
-	bool drawStringCentered(const char *str, char *buffer, const Point &size, int32 y, int32 xmin, int32 width, int32 offset) const;
-	bool drawStringWrap(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const;
-	bool drawStringWrapCentered(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const;
+	bool drawStringCentered(const char *str, byte *buffer, const Point &size, int32 y, int32 xmin, int32 width, int32 offset) const;
+	bool drawStringWrap(const char *str, byte *buffer, const Point &size, int32 x, int32 y, int32 width) const;
+	bool drawStringWrapCentered(const char *str, byte *buffer, const Point &size, int32 x, int32 y, int32 width) const;
 	/*!	@brief draw a string at an absolute position.
 	
 		@param str		the string to draw.
@@ -159,7 +159,7 @@ public:
 
 		@return \c true if everything went fine, \c false otherwise
 	*/
-	bool drawStringAbsolute(const char *str, char *buffer, const Point &size, int32 x, int32 y) const;
+	bool drawStringAbsolute(const char *str, byte *buffer, const Point &size, int32 x, int32 y) const;
 };
 
 #endif

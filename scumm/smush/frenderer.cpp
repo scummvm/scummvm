@@ -42,11 +42,11 @@ FontRenderer::~FontRenderer() {
 }
 
 void FontRenderer::save(int32 frame) {
-	_chars[_nbChars].width = getWidth();
-	_chars[_nbChars].height = getHeight();
-	int size = getWidth() * getHeight();
-	_chars[_nbChars].chr = new char[size];
-	memcpy(_chars[_nbChars].chr, data(), size);
+	_chars[_nbChars].width = _width;
+	_chars[_nbChars].height = _height;
+	int size = _width * _height;
+	_chars[_nbChars].chr = new byte[size];
+	memcpy(_chars[_nbChars].chr, _data, size);
 	_nbChars++;
 }
 
@@ -83,11 +83,11 @@ int32 FontRenderer::stringHeight(const char *str) const {
 	return ret;
 }
 
-int32 FontRenderer::drawChar(char *buffer, const Point &size, int32 x, int32 y, int32 chr) const {
+int32 FontRenderer::drawChar(byte *buffer, const Point &size, int32 x, int32 y, int32 chr) const {
 	int32 w = _chars[chr].width;
 	int32 h = _chars[chr].height;
-	char *src = _chars[chr].chr;
-	char *dst = buffer + size.getX() * y + x;
+	byte *src = _chars[chr].chr;
+	byte *dst = buffer + size.getX() * y + x;
 
 	if(_original) {
 		for(int32 j = 0; j < h; j++) {
@@ -104,7 +104,7 @@ int32 FontRenderer::drawChar(char *buffer, const Point &size, int32 x, int32 y, 
 				for(int32 i = 0; i < w; i++) {
 					char value = *src++;
 					if(value == -color) {
-						dst[i] = -1;
+						dst[i] = 0xFF;
 					} else if(value == -31) {
 						dst[i] = 0;
 					} else if(value) {
@@ -151,12 +151,12 @@ static char **split(const char *str, char sep) {
 	return ret;
 }
 
-void FontRenderer::drawSubstring(const byte *str, char *buffer, const Point &size, int32 x, int32 y) const {
+void FontRenderer::drawSubstring(const byte *str, byte *buffer, const Point &size, int32 x, int32 y) const {
 	for(int32 i = 0; str[i] != 0; i++)
 		x += drawChar(buffer, size, x, y, str[i]);
 }
 
-bool FontRenderer::drawStringAbsolute(const char *str, char *buffer, const Point &size, int32 x, int32 y) const {
+bool FontRenderer::drawStringAbsolute(const char *str, byte *buffer, const Point &size, int32 x, int32 y) const {
 	debug(9, "FontRenderer::drawStringAbsolute(%s, %d, %d)", str, x, y);
 	while(str) {
 		char line[256];
@@ -175,7 +175,7 @@ bool FontRenderer::drawStringAbsolute(const char *str, char *buffer, const Point
 	return true;
 }
 
-bool FontRenderer::drawStringCentered(const char *str, char *buffer, const Point &size, int32 y, int32 xmin, int32 width, int32 offset) const {
+bool FontRenderer::drawStringCentered(const char *str, byte *buffer, const Point &size, int32 y, int32 xmin, int32 width, int32 offset) const {
 	debug(9, "FontRenderer::drawStringCentered(%s, %d, %d)", str, xmin, y);
 	if ((strchr(str, '\n') != 0)) {
 		char *j = strchr(str, '\n');
@@ -253,7 +253,7 @@ bool FontRenderer::drawStringCentered(const char *str, char *buffer, const Point
 	return true;
 }
 
-bool FontRenderer::drawStringWrap(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const {
+bool FontRenderer::drawStringWrap(const char *str, byte *buffer, const Point &size, int32 x, int32 y, int32 width) const {
 	debug(9, "FontRenderer::drawStringWrap(%s, %d, %d)", str, x, y);
 	if ((strchr(str, '\n') != 0)) {
 		char *j = strchr(str, '\n');
@@ -328,7 +328,7 @@ bool FontRenderer::drawStringWrap(const char *str, char *buffer, const Point &si
 	return true;
 }
 
-bool FontRenderer::drawStringWrapCentered(const char *str, char *buffer, const Point &size, int32 x, int32 y, int32 width) const {
+bool FontRenderer::drawStringWrapCentered(const char *str, byte *buffer, const Point &size, int32 x, int32 y, int32 width) const {
 	int32 max_substr_width = 0;
 	debug(9, "FontRenderer::drawStringWrapCentered(%s, %d, %d)", str, x, y);
 	if ((strchr(str, '\n') != 0)) {

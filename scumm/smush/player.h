@@ -69,7 +69,7 @@ private:
 	bool _bgmusic;			//!< should the player output the background music ?
 	bool _voices;			//!< should the player output the voice ?
 	bool _skips[37];			//!< mapping of frame object identifier to show or hide
-	char *_curBuffer;		//!< pointer to the current frame
+	byte *_curBuffer;		//!< pointer to the current frame
 	int32 _IACTchannel;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
