@@ -135,6 +135,22 @@ SOURCE=.\sound\gmidi.cpp
 SOURCE=.\sound\imuse.cpp
 # End Source File
 # End Group
+# Begin Group "v4"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\v4\resource_v4.cpp
+# End Source File
+# End Group
+# Begin Group "v3"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\v3\resource_v3.cpp
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\actor.cpp
@@ -190,7 +206,7 @@ SOURCE=.\debug.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\gameDetecter.cpp
+SOURCE=.\gameDetector.cpp
 # End Source File
 # Begin Source File
 
@@ -422,7 +438,7 @@ SOURCE=.\sound\fmopl.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gameDetecter.h
+SOURCE=.\gameDetector.h
 # End Source File
 # Begin Source File
 

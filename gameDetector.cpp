@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "scumm.h"
-#include "gameDetecter.h"
+#include "gameDetector.h"
 
 
 #define USAGE_STRING    "ScummVM - Scumm Interpreter\n" \

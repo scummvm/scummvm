@@ -26,7 +26,7 @@
 #include "scumm.h"
 #include "gui.h"
 #include "SDL_thread.h"
-#include "gameDetecter.h"
+#include "gameDetector.h"
 
 #include "cdmusic.h"
 

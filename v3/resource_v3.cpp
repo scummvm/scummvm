@@ -1,5 +1,5 @@
-#include"../stdafx.h"
-#include"../scumm.h"
+#include "stdafx.h"
+#include "scumm.h"
 
 
 void Scumm_v3::readIndexFile() {

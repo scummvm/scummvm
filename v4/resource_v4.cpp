@@ -1,5 +1,5 @@
-#include"../stdafx.h"
-#include"../scumm.h"
+#include "stdafx.h"
+#include "scumm.h"
 
 void Scumm_v4::loadCharset(int no) {
 	uint32 size;
