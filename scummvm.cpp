@@ -906,6 +906,7 @@ void Scumm::convertKeysToClicks()
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 {
 	if (id < 1 || id >= NUM_ACTORS) {
+		if (_debugMode)
 		warning
 			("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
 			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
@@ -1152,6 +1153,7 @@ void Scumm::waitForTimer(int msec_delay) {
 			}
 		}
 
+		_system->update_cdrom(); /* Loop CD Audio if needed */
 		if (_system->get_msecs() >= start_time + msec_delay)
 			break;
 		_system->delay_msecs(10);
@@ -1216,6 +1218,7 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	/* Create a primary virtual screen */
+	_videoBuffer = (byte*)malloc(328*200);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);
@@ -1290,9 +1293,17 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	syst->property(OSystem::PROP_OPEN_CD, detector->_cdrom);
 
 	/* bind the mixer to the system => mixer will be invoked
-	 * automatically when samples need to be generated */
-	scumm->_mixer->bind_to_system(syst);
+	 * automatically when samples need to be generated */	
+	if (!scumm->_mixer->bind_to_system(syst)) {         
+                 warning("Sound initialization failed");   
+                 if (detector->_use_adlib) {   
+                         detector->_use_adlib = false;   
+                         detector->_midi_driver = MD_NULL;   
+                         warning("Adlib music was selected, switching to midi null driver");   
+                 }   
+         } 
 	scumm->_mixer->set_volume(128);
+
 
 	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
