@@ -28,7 +28,7 @@
 #include "saga/cvar_mod.h"
 #include "saga/console.h"
 #include "saga/game_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/render.h"
 
 #include "saga/animation.h"
@@ -257,7 +257,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 				event.code = R_SCENE_EVENT;
 				event.op = EVENT_END;
 				event.time = anim->frame_time + vector_time;
-				EVENT_Queue(&event);
+				_vm->_events->queue(&event);
 			}
 			return R_SUCCESS;
 		}
@@ -269,7 +269,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 	event.param = anim_id;
 	event.time = anim->frame_time + vector_time;
 
-	EVENT_Queue(&event);
+	_vm->_events->queue(&event);
 
 	return R_SUCCESS;
 }

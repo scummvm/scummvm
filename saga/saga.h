@@ -57,6 +57,7 @@ class Sprite;
 class Scene;
 class Interface;
 class Console;
+class Events;
 
 using Common::MemoryReadStream;
 
@@ -116,6 +117,7 @@ public:
 	Scene *_scene;
 	Interface *_interface;
 	Console *_console;
+	Events *_events;
 	
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);

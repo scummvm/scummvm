@@ -39,7 +39,7 @@
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/cvar_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/actionmap.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
@@ -136,7 +136,7 @@ void SagaEngine::go() {
 
 	// Initialize engine modules
 	_sndRes = new SndRes(this);
-	EVENT_Init();
+	_events = new Events(this);
 	_font = new Font(this);
 	_sprite = new Sprite(this);
 	_anim = new Anim(this);
@@ -226,7 +226,7 @@ void SagaEngine::go() {
 				msec = R_MAX_TIME_DELTA;
 			}
 			_actor->direct(msec);
-			EVENT_HandleEvents(msec);
+			_vm->_events->handleEvents(msec);
 			STHREAD_ExecThreads(msec);
 		}
 		// Per frame processing
@@ -243,7 +243,7 @@ void SagaEngine::shutdown() {
 	delete _font;
 	delete _console;
 	CVAR_Shutdown();
-	EVENT_Shutdown();
+	delete _events;
 
 	delete _interface;
 	delete _render;

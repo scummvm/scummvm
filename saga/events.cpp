@@ -40,29 +40,27 @@
 #include "saga/sndres.h"
 #include "saga/music.h"
 
-#include "saga/events_mod.h"
 #include "saga/events.h"
 
 namespace Saga {
 
-static YS_DL_LIST *EventList;
-
-int EVENT_Init() {
+Events::Events(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	debug(0, "Initializing event subsystem...");
-	EventList = ys_dll_create();
-	return (EventList != NULL) ? R_SUCCESS : R_FAILURE;
+	_eventList = ys_dll_create();
+
+	if (_eventList)
+		_initialized = true;
 }
 
-int EVENT_Shutdown() {
+Events::~Events(void) {
 	debug(0, "Shutting down event subsystem...");
-	EVENT_FreeList();
-	return R_SUCCESS;
+	freeList();
 }
 
 // Function to process event list once per frame. 
 // First advances event times, then processes each event with the appropriate
 //  handler depending on the type of event.
-int EVENT_HandleEvents(long msec) {
+int Events::handleEvents(long msec) {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 
@@ -72,10 +70,10 @@ int EVENT_HandleEvents(long msec) {
 	int result;
 
 	// Advance event times
-	ProcessEventTime(msec);
+	processEventTime(msec);
 
 	// Process each event in list
-	for (walk_node = ys_dll_head(EventList); walk_node != NULL; walk_node = next_node) {
+	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
 		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
 
 		// Save next event in case current event is handled and removed 
@@ -85,15 +83,15 @@ int EVENT_HandleEvents(long msec) {
 		switch (event_p->type) {
 
 		case R_ONESHOT_EVENT:
-			result = HandleOneShot(event_p);
+			result = handleOneShot(event_p);
 			break;
 
 		case R_CONTINUOUS_EVENT:
-			result = HandleContinuous(event_p);
+			result = handleContinuous(event_p);
 			break;
 
 		case R_INTERVAL_EVENT:
-			result = HandleInterval(event_p);
+			result = handleInterval(event_p);
 			break;
 
 		default:
@@ -129,7 +127,7 @@ int EVENT_HandleEvents(long msec) {
 	return R_SUCCESS;
 }
 
-int HandleContinuous(R_EVENT *event) {
+int Events::handleContinuous(R_EVENT *event) {
 	double event_pc = 0.0; // Event completion percentage
 	int event_done = 0;
 
@@ -206,7 +204,7 @@ int HandleContinuous(R_EVENT *event) {
 	return R_EVENT_CONTINUE;
 }
 
-static int HandleOneShot(R_EVENT *event) {
+int Events::handleOneShot(R_EVENT *event) {
 	R_SURFACE *back_buf;
 
 	static SCENE_BGINFO bginfo;
@@ -313,18 +311,18 @@ static int HandleOneShot(R_EVENT *event) {
 	return R_EVENT_DELETE;
 }
 
-static int HandleInterval(R_EVENT *event) {
+int Events::handleInterval(R_EVENT *event) {
 	return R_EVENT_DELETE;
 }
 
 // Schedules an event in the event list; returns a pointer to the scheduled
 // event suitable for chaining if desired.
-R_EVENT *EVENT_Queue(R_EVENT *event) {
+R_EVENT *Events::queue(R_EVENT *event) {
 	YS_DL_NODE *new_node;
 	R_EVENT *queued_event;
 
 	event->chain = NULL;
-	new_node = ys_dll_add_tail(EventList, event, sizeof *event);
+	new_node = ys_dll_add_tail(_eventList, event, sizeof *event);
 
 	if (new_node == NULL) {
 		return NULL;
@@ -332,14 +330,14 @@ R_EVENT *EVENT_Queue(R_EVENT *event) {
 
 	queued_event = (R_EVENT *)ys_dll_get_data(new_node);
 
-	InitializeEvent(queued_event);
+	initializeEvent(queued_event);
 
 	return queued_event;
 }
 
 // Places a 'add_event' on the end of an event chain given by 'head_event'
 // (head_event may be in any position in the event chain)
-R_EVENT *EVENT_Chain(R_EVENT *head_event, R_EVENT *add_event) {
+R_EVENT *Events::chain(R_EVENT *head_event, R_EVENT *add_event) {
 	R_EVENT *walk_event;
 	R_EVENT *new_event;
 
@@ -360,12 +358,12 @@ R_EVENT *EVENT_Chain(R_EVENT *head_event, R_EVENT *add_event) {
 	// Place new event
 	walk_event->chain = new_event;
 	new_event->chain = NULL;
-	InitializeEvent(new_event);
+	initializeEvent(new_event);
 
 	return new_event;
 }
 
-static int InitializeEvent(R_EVENT *event) {
+int Events::initializeEvent(R_EVENT *event) {
 	switch (event->type) {
 	case R_ONESHOT_EVENT:
 		break;
@@ -382,7 +380,7 @@ static int InitializeEvent(R_EVENT *event) {
 	return R_SUCCESS;
 }
 
-int EVENT_ClearList() {
+int Events::clearList() {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 	R_EVENT *chain_walk;
@@ -390,7 +388,7 @@ int EVENT_ClearList() {
 	R_EVENT *event_p;
 
 	// Walk down event list
-	for (walk_node = ys_dll_head(EventList); walk_node != NULL; walk_node = next_node) {
+	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
 		next_node = ys_dll_next(walk_node);
 		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
 
@@ -409,7 +407,7 @@ int EVENT_ClearList() {
 }
 
 // Removes all events from the list (even R_NODESTROY)
-int EVENT_FreeList() {
+int Events::freeList() {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 	R_EVENT *chain_walk;
@@ -417,7 +415,7 @@ int EVENT_FreeList() {
 	R_EVENT *event_p;
 
 	// Walk down event list
-	for (walk_node = ys_dll_head(EventList); walk_node != NULL; walk_node = next_node) {
+	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
 		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
 		// Remove any events chained off current node
 		for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
@@ -434,12 +432,12 @@ int EVENT_FreeList() {
 }
 
 // Walks down the event list, updating event times by 'msec'.
-static int ProcessEventTime(long msec) {
+int Events::processEventTime(long msec) {
 	YS_DL_NODE *walk_node;
 	R_EVENT *event_p;
 	uint16 event_count = 0;
 
-	for (walk_node = ys_dll_head(EventList); walk_node != NULL; walk_node = ys_dll_next(walk_node)) {
+	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = ys_dll_next(walk_node)) {
 		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
 		event_p->time -= msec;
 		event_count++;

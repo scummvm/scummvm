@@ -30,7 +30,7 @@
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/cvar_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/actionmap.h"
 #include "saga/isomap.h"
 #include "saga/script_mod.h"
@@ -812,7 +812,7 @@ int Scene::endScene() {
 
 	_animEntries = 0;
 
-	EVENT_ClearList();
+	_vm->_events->clearList();
 	_vm->textClearList(_textList);
 
 	_sceneLoaded = false;
@@ -879,7 +879,7 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 
 		// Activate user interface
 		event.type = R_ONESHOT_EVENT;
@@ -887,7 +887,7 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_ACTIVATE;
 		event.time = 0;
 
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 
 		// Begin palette cycle animation if present
 		event.type = R_ONESHOT_EVENT;
@@ -895,7 +895,7 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 		break;
 	case SCENE_END:
 		break;

@@ -25,7 +25,7 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/game_mod.h"
 
 #include "saga/palanim_mod.h"
@@ -124,7 +124,7 @@ int PALANIM_CycleStart() {
 	event.op = EVENT_CYCLESTEP;
 	event.time = PALANIM_CYCLETIME;
 
-	EVENT_Queue(&event);
+	_vm->_events->queue(&event);
 
 	return R_SUCCESS;
 }
@@ -174,7 +174,7 @@ int PALANIM_CycleStep(int vectortime) {
 	event.op = EVENT_CYCLESTEP;
 	event.time = vectortime + PALANIM_CYCLETIME;
 
-	EVENT_Queue(&event);
+	_vm->_events->queue(&event);
 
 	return R_SUCCESS;
 }

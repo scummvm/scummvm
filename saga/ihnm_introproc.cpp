@@ -29,7 +29,7 @@
 
 #include "saga/animation.h"
 #include "saga/cvar_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/rscfile_mod.h"
 #include "saga/palanim_mod.h"
 
@@ -119,7 +119,7 @@ int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 		_vm->_anim->setFrameTime(0, R_IHNM_INTRO_FRAMETIME);
 		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
 		_vm->_anim->play(0, 0);
@@ -150,7 +150,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		event.duration = R_IHNM_PALFADE_TIME;
 		event.data = current_pal;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
@@ -160,7 +160,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
@@ -172,7 +172,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		event.duration = R_IHNM_PALFADE_TIME;
 		event.data = pal;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, R_IHNM_PALFADE_TIME * 2);
@@ -183,7 +183,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = R_IHNM_DGLOGO_TIME;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	default:
 		break;
@@ -210,7 +210,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		event.duration = R_IHNM_PALFADE_TIME;
 		event.data = current_pal;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
@@ -220,7 +220,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
@@ -232,7 +232,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		event.duration = R_IHNM_PALFADE_TIME;
 		event.data = pal;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		_vm->_anim->play(0, 0);
 
@@ -242,7 +242,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = R_IHNM_TITLE_TIME;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	default:
 		break;
@@ -265,7 +265,7 @@ int IHNM_HateProc(int param, R_SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);

@@ -27,7 +27,7 @@
 #include "saga/gfx.h"
 #include "saga/font.h"
 #include "saga/cvar_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 
 #include "saga/console.h"
 
@@ -80,7 +80,7 @@ int Console::activate() {
 	con_event.time = 0;
 	con_event.duration = _droptime;
 
-	EVENT_Queue(&con_event);
+	_vm->_events->queue(&con_event);
 
 	_active = true;
 
@@ -100,7 +100,7 @@ int Console::deactivate() {
 	con_event.time = 0;
 	con_event.duration = _droptime;
 
-	EVENT_Queue(&con_event);
+	_vm->_events->queue(&con_event);
 
 	return R_SUCCESS;
 }

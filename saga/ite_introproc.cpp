@@ -30,7 +30,7 @@
 
 #include "saga/animation.h"
 #include "saga/cvar_mod.h"
-#include "saga/events_mod.h"
+#include "saga/events.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/rscfile_mod.h"
@@ -190,7 +190,7 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 
 		debug(0, "Intro animation procedure started.");
 		debug(0, "Linking animation resources...");
@@ -221,7 +221,7 @@ int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		EVENT_Queue(&event);
+		_vm->_events->queue(&event);
 		break;
 	case SCENE_END:
 		break;
@@ -257,7 +257,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = PALETTE_FADE_DURATION;
 		event.data = current_pal;
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Display scene background, but stay with black palette
 		event.type = R_ONESHOT_EVENT;
@@ -265,7 +265,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_DISPLAY;
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
@@ -276,7 +276,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		event.duration = PALETTE_FADE_DURATION;
 		event.data = pal;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
@@ -284,7 +284,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
 		text_entry.color = 255;
@@ -305,7 +305,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
 			event.type = R_ONESHOT_EVENT;
@@ -314,7 +314,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
@@ -328,7 +328,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = voice_len;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			event_time = voice_pad;
 		}
@@ -339,7 +339,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -373,7 +373,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
@@ -381,7 +381,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
 		text_entry.color = 255;
@@ -402,7 +402,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
 			event.type = R_ONESHOT_EVENT;
@@ -411,7 +411,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
@@ -425,7 +425,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = voice_len;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			event_time = voice_pad;
 		}
@@ -436,7 +436,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = event_time;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -469,7 +469,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
@@ -477,7 +477,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
 		text_entry.color = 255;
@@ -498,7 +498,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
 			event.type = R_ONESHOT_EVENT;
@@ -507,7 +507,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
@@ -521,7 +521,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = voice_len;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			event_time = voice_pad;
 		}
@@ -532,7 +532,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = event_time;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		break;
 	case SCENE_END:
@@ -566,7 +566,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
@@ -574,7 +574,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
 		text_entry.color = 255;
@@ -595,7 +595,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
 			event.type = R_ONESHOT_EVENT;
@@ -604,7 +604,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
@@ -618,7 +618,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = voice_len;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 
 			event_time = voice_pad;
 		}
@@ -629,7 +629,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = event_time;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		break;
 	case SCENE_END:
@@ -678,7 +678,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		debug(0, "Beginning animation playback.");
 
@@ -695,7 +695,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
 		text_entry.color = 255;
@@ -717,7 +717,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
 
-			q_event = EVENT_Queue(&event);
+			q_event = _vm->_events->queue(&event);
 
 			// Remove text
 			event.type = R_ONESHOT_EVENT;
@@ -726,7 +726,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = credits[i].duration;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 		}
 
 		// End scene after credit display
@@ -735,7 +735,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = 1000;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -795,7 +795,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		event_delay = DISSOLVE_DURATION;
 
@@ -823,7 +823,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
 
-			q_event = EVENT_Queue(&event);
+			q_event = _vm->_events->queue(&event);
 
 			// Remove text
 			event.type = R_ONESHOT_EVENT;
@@ -832,7 +832,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = credits[i].duration;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 		}
 
 		// End scene after credit display
@@ -841,7 +841,7 @@ int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = 1000;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -904,7 +904,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		event_delay = DISSOLVE_DURATION;
 
@@ -932,7 +932,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
 
-			q_event = EVENT_Queue(&event);
+			q_event = _vm->_events->queue(&event);
 
 			// Remove text
 			event.type = R_ONESHOT_EVENT;
@@ -941,7 +941,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 			event.data = entry_p;
 			event.time = credits[i].duration;
 
-			q_event = EVENT_Chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 		}
 
 		// End scene after credit display
@@ -950,7 +950,7 @@ int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_END;
 		event.time = 1000;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -978,14 +978,14 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
-		q_event_start = EVENT_Queue(&event);
+		q_event_start = _vm->_events->queue(&event);
 
 		// End scene after momentary pause
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 5000;
-		q_event = EVENT_Chain(q_event_start, &event);
+		q_event = _vm->_events->chain(q_event_start, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -1021,7 +1021,7 @@ int initialScene(int param, R_SCENE_INFO *scene_info) {
 
 		delay_time += PALETTE_FADE_DURATION;
 
-		q_event = EVENT_Queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		// Activate user interface
 		event.type = R_ONESHOT_EVENT;
@@ -1029,7 +1029,7 @@ int initialScene(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_ACTIVATE;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Set first scene background w/o changing palette
 		event.type = R_ONESHOT_EVENT;
@@ -1038,7 +1038,7 @@ int initialScene(int param, R_SCENE_INFO *scene_info) {
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in to first scene background palette
 		_vm->_scene->getBGPal(&pal);
@@ -1050,13 +1050,13 @@ int initialScene(int param, R_SCENE_INFO *scene_info) {
 		event.duration = PALETTE_FADE_DURATION;
 		event.data = pal;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = EVENT_Chain(q_event, &event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, delay_time);
