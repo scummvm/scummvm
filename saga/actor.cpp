@@ -549,6 +549,8 @@ int Actor::direct(int msec) {
 		}
 	}
 */	
+
+	// FIXME: HACK. This should be turned into cycle event.
 	_lastTickMsec += msec;
 
 	if (_lastTickMsec > ticksToMSec(6)) { // fixme
