@@ -138,12 +138,12 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_engine->currScene()->findPointSector(ei.exitPoint + 0.0001 * puckVector, 0x1000);
+		currSector = g_engine->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVector, 0x1000);
 		if (currSector == prevSector)
 			break;
 	}
 
-	ei.angleWithEdge *= (180.0 / M_PI);
+	ei.angleWithEdge *= (float)(180.0 / M_PI);
 	int turnDir = 1;
 	if (ei.angleWithEdge > 90) {
 		ei.angleWithEdge = 180 - ei.angleWithEdge;
@@ -153,7 +153,7 @@ void Actor::walkForward() {
 	if (ei.angleWithEdge > _reflectionAngle)
 		return;
 
-	ei.angleWithEdge += 0.1;
+	ei.angleWithEdge += (float)0.1;
 	float turnAmt = g_engine->perSecond(_turnRate);
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
