@@ -974,8 +974,11 @@ const tuneData Sound::_tune[] = {
 	{ { 67, 177, 0 }, { 0, 0 }, 2, 0 }, 
 
 	/* 40 - Airport */
-	{ { 81, 0 }, { 0, 0 }, 1, 0 }, 
-
+	//{ { 81, 0 }, { 0, 0 }, 1, 0 },	//This is the value from the original sources
+						//However it points to invalid music (atleast for
+						//Roland music data)...how odd. 
+	{ { 83, 0 }, { 0, 0 }, 1, 0 },
+	
 	/* 41 - Plane Leaves */
 	{ { 68, 1198, 0 }, { 0, 0 }, 2, 0 }, 
 
