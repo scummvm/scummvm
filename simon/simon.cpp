@@ -2743,7 +2743,6 @@ void SimonState::o_wait_for_vga(uint a) {
 			}
 		} else if (_exit_cutscene) {
 			if (vc_get_bit(9)) {
-				_system->show_mouse(true);
 				startSubroutine170();
 				break;
 			}
