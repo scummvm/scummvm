@@ -8,15 +8,15 @@ endif
 
 build:
 	dh_testdir
+	./configure
 	$(MAKE)
 
 clean:
 	dh_testdir
 	dh_testroot
-	-$(MAKE) clean
-	-find . -type d -name .deps | xargs rm -rf
-	rm -f build.rules
 	dh_clean
+	rm -f debian/changelog
+	-$(MAKE) clean
 
 install: build
 	dh_testdir

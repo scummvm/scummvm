@@ -4,4 +4,4 @@ scummvm-cvs (@VERSION@-1) unstable; urgency=low
     you use this package. Instead use the Sourceforge bug tracker
     found at <http://sourceforge.net/tracker/?group_id=37116>.
 
- -- Tore Anderson <tore@linpro.no>  Sat, 01 Mar 2003 01:18:34 +0100
+ -- Tore Anderson <tore@debian.org>  Sat, 01 Mar 2003 01:18:34 +0100

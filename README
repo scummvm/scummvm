@@ -896,10 +896,11 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
-          'libsdl1.2-dev', and 'libmad0-dev' on your system.
-        * Optional: Install the 'libvorbis-dev' and/or the 'libasound2-dev'
-          packages, and edit the Makefile to turn on support for Ogg Vorbis
-          and/or the ALSA sequencer.
+          and 'libsdl1.2-dev' on your system.
+        * Install any of these packages (optional): 'libvorbis-dev' (for Ogg
+          Vorbis support), 'libasound2-dev' (for ALSA sequencer support),
+          'libmad0-dev' (for MAD MP3 support), 'zlib1g-dev' (for compressed
+          saves support).
         * Run 'make deb'.
         * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
         
@@ -962,6 +963,7 @@ X.X Credits:
                                Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
         Tim 'realmz'         - Initial MI1 CD music support
+        Tore Anderson        - Packaging for Debian GNU/Linux
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
