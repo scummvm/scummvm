@@ -1056,7 +1056,11 @@ void Scumm::initScummVars() {
 		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
 		case MD_PCSPK:
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 0; break;
-		default:       VAR(VAR_SOUNDCARD) = 4;
+		default:       
+			if (_features & GF_SMALL_HEADER)
+				VAR(VAR_SOUNDCARD) = 5;
+			else
+				VAR(VAR_SOUNDCARD) = 3;
 		}
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
