@@ -26,7 +26,7 @@
 #include "common/file.h"
 #include "common/util.h"
 
-//#define SOX_HACK
+#define SOX_HACK
 
 #ifdef SOX_HACK
 #include "rate.h"
@@ -726,6 +726,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 		// TODO: call drain method
 		// TODO: Looping
 		destroy();
+		return;
 	}
 
 	const int volume = _mixer->getVolume();
@@ -1183,6 +1184,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	if (_input->eof() && !_is_cd_track) {
 		// TODO: call drain method
 		destroy();
+		return;
 	}
 
 	const int volume = _mixer->getVolume();
