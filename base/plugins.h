@@ -78,7 +78,7 @@ public:
 
 
 /**
- * The REGISTER_PLUGIN is a convenience macro meant to ease writing
+ * REGISTER_PLUGIN is a convenience macro meant to ease writing
  * the plugin interface for our modules. In particular, using it
  * makes it possible to compile the very same code in a module
  * both as a static and a dynamic plugin.
@@ -87,15 +87,38 @@ public:
  * @todo	on Windows, we might need __declspec(dllexport) ?
  */
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(name,gameListFactory,engineFactory,detectGames)
+#define REGISTER_PLUGIN(ID,name) \
+	PluginRegistrator g_##ID##_PluginReg(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);
 #else
-#define REGISTER_PLUGIN(name,gameListFactory,engineFactory,detectGames) \
+#define REGISTER_PLUGIN(ID,name) \
 	extern "C" { \
 		const char *PLUGIN_name() { return name; } \
-		GameList PLUGIN_getSupportedGames() { return gameListFactory(); } \
-		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
-		DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); } \
+		GameList PLUGIN_getSupportedGames() { return Engine_##ID##_gameList(); } \
+		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
+		DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
+#endif
+
+#ifndef DYNAMIC_MODULES
+/**
+ * The PluginRegistrator class is used by the static version of REGISTER_PLUGIN
+ * to allow static 'plugins' to register with the PluginManager.
+ */
+class PluginRegistrator {
+	friend class PluginManager;
+public:
+	typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
+	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
+
+protected:
+	const char *_name;
+	EngineFactory _ef;
+	DetectFunc _df;
+	GameList _games;
+
+public:
+	PluginRegistrator(const char *name, GameList games, EngineFactory ef, DetectFunc df);
+};
 #endif
 
 
@@ -132,50 +155,5 @@ public:
 	DetectedGameList detectGames(const FSList &fslist) const;
 };
 
-
-#ifndef DYNAMIC_MODULES
-
-#define DECLARE_PLUGIN(name) \
-	extern GameList Engine_##name##_gameList(); \
-	extern Engine *Engine_##name##_create(GameDetector *detector, OSystem *syst); \
-	extern DetectedGameList Engine_##name##_detectGames(const FSList &fslist);
-
-// Factory functions => no need to include the specific classes
-// in this header. This serves two purposes:
-// 1) Clean separation from the game modules (scumm, simon) and the generic code
-// 2) Faster (compiler doesn't have to parse lengthy header files)
-#ifndef DISABLE_SCUMM
-DECLARE_PLUGIN(SCUMM)
-#endif
-
-#ifndef DISABLE_SIMON
-DECLARE_PLUGIN(SIMON)
-#endif
-
-#ifndef DISABLE_SKY
-DECLARE_PLUGIN(SKY)
-#endif
-
-#ifndef DISABLE_SWORD1
-DECLARE_PLUGIN(SWORD1)
-#endif
-
-#ifndef DISABLE_SWORD2
-DECLARE_PLUGIN(SWORD2)
-#endif
-
-#ifndef DISABLE_QUEEN
-DECLARE_PLUGIN(QUEEN)
-#endif
-
-#ifndef DISABLE_KYRA
-DECLARE_PLUGIN(KYRA)
-#endif
-
-#ifndef DISABLE_SAGA
-DECLARE_PLUGIN(SAGA)
-#endif
-
-#endif
 
 #endif

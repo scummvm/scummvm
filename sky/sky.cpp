@@ -106,7 +106,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 	return new Sky::SkyEngine(detector, syst);
 }
 
-REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_gameList, Engine_SKY_create, Engine_SKY_detectGames)
+REGISTER_PLUGIN(SKY, "Beneath a Steel Sky")
 
 
 namespace Sky {

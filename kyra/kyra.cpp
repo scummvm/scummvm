@@ -95,7 +95,7 @@ Engine *Engine_KYRA_create(GameDetector *detector, OSystem *syst) {
 	return new Kyra::KyraEngine(detector, syst);
 }
 
-REGISTER_PLUGIN("Legend of Kyrandia Engine", Engine_KYRA_gameList, Engine_KYRA_create, Engine_KYRA_detectGames)
+REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine")
 
 namespace Kyra {
 KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)

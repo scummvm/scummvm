@@ -39,15 +39,24 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 #ifdef UNIX
 #include <dlfcn.h>
-#define DYNAMIC_PLUGIN_PATH(name) (name "/" PLUGIN_PREFIX name PLUGIN_SUFFIX)
+#define PLUGIN_DIRECTORY	"plugins/"
 #else
 #ifdef __DC__
 #include "dcloader.h"
-#define DYNAMIC_PLUGIN_PATH(name) (name ".plg")
+#define PLUGIN_DIRECTORY	""
+#define PLUGIN_PREFIX		""
+#define PLUGIN_SUFFIX		".plg"
 #else
 #error No support for loading plugins on non-unix systems at this point!
 #endif
 #endif
+
+#else
+
+PluginRegistrator::PluginRegistrator(const char *name, GameList games, EngineFactory ef, DetectFunc df)
+	: _name(name), _ef(ef), _df(df), _games(games) {
+	//printf("Automatically registered plugin '%s'\n", name);
+}
 
 #endif
 
@@ -108,7 +117,7 @@ class DynamicPlugin : public Plugin {
 	void *findSymbol(const char *symbol);
 
 public:
-	DynamicPlugin(const char *filename)
+	DynamicPlugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games() {}
 
 	const char *getName() const					{ return _name.c_str(); }
@@ -222,48 +231,56 @@ void PluginManager::loadPlugins() {
 	// Hence one more symbol should be exported by plugins which returns
 	// the "ABI" version the plugin was built for, and we can compare that
 	// to the ABI version of the executable.
-	#define LOAD_MODULE(name, NAME) \
-		tryLoadPlugin(new DynamicPlugin(DYNAMIC_PLUGIN_PATH(name)));
-#else
-	// "Loader" for the static plugins
-	#define LOAD_MODULE(name, NAME) \
-		tryLoadPlugin(new StaticPlugin(name, Engine_##NAME##_gameList(), Engine_##NAME##_create, Engine_##NAME##_detectGames));
-#endif
 
 	// Load all plugins.
-	// Right now the list is hardcoded. On the long run, of course it should
-	// automatically be determined.
-#ifndef DISABLE_SCUMM
-	LOAD_MODULE("scumm", SCUMM);
+	// Scan for all plugins in this directory
+	FilesystemNode dir(PLUGIN_DIRECTORY);
+	FSList files(dir.listDir(FilesystemNode::kListFilesOnly));
+	
+	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
+		Common::String name(i->displayName());
+		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
+			tryLoadPlugin(new DynamicPlugin(i->path()));
+		}
+	}
+
+#else
+	#define LINK_PLUGIN(ID) \
+		extern PluginRegistrator g_##ID##_PluginReg; \
+		plugin = &g_##ID##_PluginReg; \
+		tryLoadPlugin(new StaticPlugin(plugin->_name, plugin->_games, plugin->_ef, plugin->_df));
+
+	// "Loader" for the static plugins.
+	// Iterate over all registered (static) plugins and load them.
+	PluginRegistrator *plugin;
+	
+	#ifndef DISABLE_SIMON
+	LINK_PLUGIN(SCUMM)
+	#endif
+	#ifndef DISABLE_SKY
+	LINK_PLUGIN(SKY)
+	#endif
+	#ifndef DISABLE_SWORD1
+	LINK_PLUGIN(SWORD1)
+	#endif
+	#ifndef DISABLE_SWORD2
+	LINK_PLUGIN(SWORD2)
+	#endif
+	#ifndef DISABLE_SIMON
+	LINK_PLUGIN(SIMON)
+	#endif
+	#ifndef DISABLE_QUEEN
+	LINK_PLUGIN(QUEEN)
+	#endif
+	#ifndef DISABLE_SAGA
+	LINK_PLUGIN(SAGA)
+	#endif
+	#ifndef DISABLE_KYRA
+	//LINK_PLUGIN(KYRA)
+	#endif
+
 #endif
 
-#ifndef DISABLE_SIMON
-	LOAD_MODULE("simon", SIMON);
-#endif
-
-#ifndef DISABLE_SKY
-	LOAD_MODULE("sky", SKY);
-#endif
-
-#ifndef DISABLE_SWORD1
-	LOAD_MODULE("sword1", SWORD1);
-#endif
-
-#ifndef DISABLE_SWORD2
-	LOAD_MODULE("sword2", SWORD2);
-#endif
-
-#ifndef DISABLE_QUEEN
-	LOAD_MODULE("queen", QUEEN);
-#endif
-
-#ifndef DISABLE_KYRA
-	LOAD_MODULE("kyra", KYRA);
-#endif
-
-#ifndef DISABLE_SAGA
-	LOAD_MODULE("saga", SAGA);
-#endif
 }
 
 void PluginManager::unloadPlugins() {

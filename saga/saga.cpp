@@ -105,7 +105,7 @@ Engine *Engine_SAGA_create(GameDetector *detector, OSystem *syst) {
 	return new Saga::SagaEngine(detector, syst);
 }
 
-REGISTER_PLUGIN("SAGA Engine", Engine_SAGA_gameList, Engine_SAGA_create, Engine_SAGA_detectGames)
+REGISTER_PLUGIN(SAGA, "SAGA Engine")
 
 namespace Saga {
 

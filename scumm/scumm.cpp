@@ -3204,7 +3204,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	return engine;
 }
 
-REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_gameList, Engine_SCUMM_create, Engine_SCUMM_detectGames)
+REGISTER_PLUGIN(SCUMM, "Scumm Engine")
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
