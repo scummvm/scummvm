@@ -736,7 +736,6 @@ protected:
 	void processActors();
 	void processUpperActors();
 	int getActorFromPos(int x, int y);
-	void actorFollowCamera(int act);
 	
 	bool isCostumeInUse(int i);
 
@@ -820,10 +819,11 @@ protected:
 	void moveCamera();
 	void cameraMoved();
 	void setCameraAtEx(int at);
-	void setCameraAt(int pos_x, int pos_y);
-	void panCameraTo(int x, int y);
-	void setCameraFollows(Actor *a);
+	virtual void setCameraAt(int pos_x, int pos_y);
+	virtual void panCameraTo(int x, int y);
+	virtual void setCameraFollows(Actor *a);
 	void clampCameraPos(ScummVM::Point *pt);
+	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr();
 	void setupEGAPalette();

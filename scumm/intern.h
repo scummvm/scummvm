@@ -520,9 +520,13 @@ public:
 
 protected:
 	virtual void setupScummVars();
+
+	virtual void setCameraAt(int pos_x, int pos_y);
+	virtual void panCameraTo(int x, int y);
+	virtual void setCameraFollows(Actor *a);
 };
 
-class Scumm_v8 : public Scumm_v6 {
+class Scumm_v8 : public Scumm_v7 {
 protected:
 	typedef void (Scumm_v8::*OpcodeProcV8)();
 	struct OpcodeEntryV8 {
@@ -533,7 +537,7 @@ protected:
 	const OpcodeEntryV8 *_opcodesV8;
 	
 public:
-	Scumm_v8(GameDetector *detector, OSystem *syst) : Scumm_v6(detector, syst) {}
+	Scumm_v8(GameDetector *detector, OSystem *syst) : Scumm_v7(detector, syst) {}
 
 protected:
 	virtual void setupOpcodes();

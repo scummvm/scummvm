@@ -170,4 +170,25 @@ public:
 	};
 };
 
+
+// If you wan to try buggy hacked smooth scrolling support in The Dig, enable
+// the following preprocessor flag by uncommenting it.
+//
+// Note: This is purely experimental, NOT WORKING COMPLETLY and very buggy.
+// Please do not make reports about problems with it - this is only in CVS
+// to get it fixed and so that really interested parties can experiment it.
+// It is NOT FIT FOR GENERAL USAGE! You have been warned.
+//
+// Doing this correctly will be quite some more complicated. Basically, with smooth
+// scrolling, the virtual screen strips don't match the display screen strips.
+// Hence we either have to draw partial strips - but that'd be rather cumbersome.
+// Or the much simple (and IMHO more elegant) solution is to simply use a screen pitch
+// that is 8 pixel wider than the real screen width, and always draw one strip more than 
+// needed to the backbuf. This will still require quite some code to be changed but
+// should otherwise be relatively easy to understand, and using VirtScreen::pitch
+// will actually clean up the code.
+//
+// #define V7_SMOOTH_SCROLLING_HACK
+
+
 #endif

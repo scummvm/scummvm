@@ -6,6 +6,7 @@ SCUMM_OBJS = \
 	scumm/base-costume.o \
 	scumm/boxes.o \
 	scumm/bundle.o \
+	scumm/camera.o \
 	scumm/charset.o \
 	scumm/costume.o \
 	scumm/debugger.o \
