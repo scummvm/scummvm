@@ -1121,12 +1121,7 @@ void ScummEngine_v72he::flushWizBuffer() {
 
 void ScummEngine_v80he::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
-	if (!dataPtr) {
-		warning("loadImgSpot: unknown Image %d", resId);
-		x = y = 0;
-		return;
-	}
-
+	assert(dataPtr);
 	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 	if (spotPtr) {
 		x = (int16)READ_LE_UINT32(spotPtr + 0);

@@ -41,7 +41,7 @@ void ScummEngine_v90he::allocateArrays() {
 //
 int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int d, int num, int *args) {
 	int classId;
-	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d\n", x, y, spriteGroup, d, num);
+	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x, y, spriteGroup, d, num);
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
@@ -676,7 +676,8 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_14 = 0;
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
-	_spriteTable[spriteId].field_18 = 0; // Maybe HE99+?
+	// freddicove specific
+	//_spriteTable[spriteId].field_18 = 0;
 	_spriteTable[spriteId].field_88 = 0;
 }
 
@@ -1256,11 +1257,11 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		spr_flags = spi->flags;
 
 		if (arg) {
-			if (spi->field_0)
-				; //return; // HACK
+			if (spi->field_0 >= 0)
+				return;
 		} else {
 			if (spi->field_0 < 0)
-				; //continue; // HACK
+				continue;
 		}
 		
 		spi->flags &= ~(kSFChanged | kSFNeedRedraw);
