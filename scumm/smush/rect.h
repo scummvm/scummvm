@@ -29,6 +29,7 @@
 	This small class is an helper for position and size values.
 */
 class Point {
+	friend class Rect;
 private:
 	int _x;	//!< The horizontal part of the point
 	int _y;	//!< The vertical part of the point
@@ -59,24 +60,17 @@ class Rect {
 private:
 	Point _topLeft;		//!< The point at the top left of the rectangle
 	Point _bottomRight;	//!< The point at the bottom right of the rectangle
-protected:
-	void check();
 public:
-	Rect();
-	Rect(int x, int y);
-	explicit Rect(const Point & size);
-	Rect(int x1, int y1, int x2, int y2);
-	Rect(const Point & topleft, const Point & bottomright);
-	Rect(const Rect & r);
-	Rect & operator=(const Rect & r);
-	bool operator==(const Rect & r) const;
+	Rect() : _topLeft(0, 0), _bottomRight(0,0) {}
+	Rect(int x, int y) : _topLeft(0, 0), _bottomRight(x, y) {}
+	Rect(int x1, int y1, int x2, int y2) : _topLeft(x1, y1), _bottomRight(x2, y2) {}
 	Point size() const { return (_bottomRight - _topLeft); };
-	int width() const { return size().getX(); }
-	int height() const { return size().getY(); }
-	int left() const { return _topLeft.getX(); }
-	int right() const { return _bottomRight.getX(); }
-	int top() const { return _topLeft.getY(); }
-	int bottom() const { return _bottomRight.getY(); }
+	int width() const { return size()._x; }
+	int height() const { return size()._y; }
+	int left() const { return _topLeft._x; }
+	int right() const { return _bottomRight._x; }
+	int top() const { return _topLeft._y; }
+	int bottom() const { return _bottomRight._y; }
 	const Point & topLeft() const { return _topLeft; }
 	const Point & bottomRight() const { return _bottomRight; }
 
@@ -87,14 +81,22 @@ public:
 		
 		@return true if the given position is inside the rectangle, false otherwise
 	*/
-	bool isInside(int x, int y) const;
+	bool isInside(int x, int y) const
+	{
+		return (_topLeft._x <= x) && (_bottomRight._x > x) && (_topLeft._y <= y) && (_bottomRight._y > y);
+	}
 	/*!	@brief check if given point is inside the rectangle
 		
 		@param p the point to check
 		
 		@return true if the given point is inside the rectangle, false otherwise
 	*/
-	bool isInside(const Point & p) const;
+	bool isInside(const Point & p) const
+	{
+		return (_topLeft._x <= p._x) && (_bottomRight._x > p._x) && (_topLeft._y <= p._y) && (_bottomRight._y > p._y);
+	}
+
+
 	bool clip(Rect & r) const;
 };
 

@@ -36,9 +36,7 @@ SMUSH_OBJS = scumm/smush/blitter.o \
 	scumm/smush/color.o \
 	scumm/smush/frenderer.o \
 	scumm/smush/imuse_channel.o \
-	scumm/smush/palette.o \
 	scumm/smush/player.o \
-	scumm/smush/rect.o \
 	scumm/smush/saud_channel.o \
 	scumm/smush/scumm_renderer.o
 

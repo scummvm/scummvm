@@ -34,12 +34,24 @@ class Palette {
 private:
 	Color _colors[256];
 public:
-	Palette();
-	Palette(unsigned char *);
-	Palette(const Palette &);
-	const Color & operator[](int) const;
-	Color & operator[](int);
-	Palette & operator=(const Palette &);
+	Palette() {}
+	Palette(unsigned char *ptr)
+	{
+		for(int i = 0; i < 256; i++) {
+			_colors[i] = Color(ptr[3 * i + 0], ptr[3 * i + 1], ptr[3 * i + 2]);
+		}
+	
+	}
+	const Color & operator[](int a) const
+	{
+		assert(a >= 0 && a < 256);
+		return _colors[a];
+	}
+	Color & operator[](int a)
+	{
+		assert(a >= 0 && a < 256);
+		return _colors[a];
+	}
 };
 
 #endif
