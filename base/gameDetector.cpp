@@ -79,8 +79,9 @@ static const char USAGE_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"\n"
-#ifndef DISABLE_SKY
-	"  --floppy-intro           Use floppy version intro for Beneath a Steel Sky CD\n"
+#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
+        "                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
 #ifndef DISABLE_SCUMM
 	"  --copy-protection        Enable the original copy protection in SCUMM games\n"
@@ -136,8 +137,8 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("tempo", 0);
 #endif
 
-#ifndef DISABLE_SKY
-	ConfMan.registerDefault("floppy_intro", false);
+#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+	ConfMan.registerDefault("alt_intro", false);
 #endif
 
 	// Miscellaneous
@@ -439,9 +440,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 #endif
 
-#ifndef DISABLE_SKY
-			DO_LONG_OPTION_BOOL("floppy-intro")
-				ConfMan.set("floppy_intro", cmdValue, kTransientDomain);
+#if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
+			DO_LONG_OPTION_BOOL("alt-intro")
+				ConfMan.set("alt_intro", cmdValue, kTransientDomain);
 			END_OPTION
 #endif
 

@@ -123,7 +123,7 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = ConfMan.hasKey("debuglevel");
 
-	_floppyIntro = ConfMan.getBool("floppy_intro");
+	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_fastMode = 0;
 
