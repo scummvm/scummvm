@@ -3068,23 +3068,28 @@ static void clear_blend_cache()
 
 static byte blend(byte *pal, byte method, int dest_color)
 {
-	double val = 1.0;
+	int val = 0;
 	int cache = 0;
+
+	// FIXME: Check if this gives the correct blending for the Dig
+	// inventory box and conversation menus. For now, I have deliberately
+	// selected them so that the subsequent multiplication and shift could
+	// be replaced by just a shift.
 
 	switch (method) {
 		case 1:
 			cache = 0;
-			val = 0.5;
+			val = 128;
 			break;
 
 		case 2:
 			cache = 1;
-			val = 0.4;
+			val = 64;
 			break;
 
 		case 3:
 			cache = 2;
-			val = 1.1;
+			val = 256;
 			break;
 
 		case 255:
@@ -3099,9 +3104,9 @@ static byte blend(byte *pal, byte method, int dest_color)
 		byte g = *(pal + 3 * dest_color + 1);
 		byte b = *(pal + 3 * dest_color + 2);
 
-		int new_r = (int) (val * r + 0.5);
-		int new_g = (int) (val * g + 0.5);
-		int new_b = (int) (val * b + 0.5);
+		int new_r = (val * r) >> 8;
+		int new_g = (val * g) >> 8;
+		int new_b = (val * b) >> 8;
 
 		if (new_r > 255)
 			new_r = 255;
@@ -3117,10 +3122,9 @@ static byte blend(byte *pal, byte method, int dest_color)
 }
 
 // param3= clipping
-
 // param2= mirror
-
 // param1= never used ?
+
 void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3)
 {
 	byte *scale_rows = NULL;
@@ -3146,6 +3150,8 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 		scale_cols = (byte *) calloc(bd->srcwidth, 1);
 		if (scale_cols == NULL) {
 			warning("drawBomp: out of memory");
+			if (scale_rows)
+				free(scale_rows);
 			return;
 		}
 	}
@@ -3166,16 +3172,21 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 			scale_rows[(i * 255) / bd->scale_y] = 1;
 	}
 
+	// FIXME: Be more intelligent about clearing the blend cache. It
+	// should be possible to clear it only for the parts of the palette
+	// that have changed since the last time.
+
 	clear_blend_cache();
 
 	dest += bd->x;
 	src = bd->dataptr;
+
 	for (src_y = 0, dst_y = bd->y; src_y < bd->srcheight; src_y++) {
 		byte code, color;
 		uint len, num;
 		byte *d = dest;
 
-		if (dst_y < 0 || dst_y >= bd->outheight) {
+		if ((dst_y < 0 || dst_y >= bd->outheight) || (bd->scale_y != 255 && !scale_rows[src_y])) {
 			src += READ_LE_UINT16(src) + 2;
 			continue;
 		}
@@ -3193,42 +3204,31 @@ void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, in
 			len -= num;
 			if (code & 1) {
 				color = *src++;
-				if (bd->scale_y == 255 || scale_rows[src_y]) {
-					do {
-						if (dst_x >= 0 && dst_x < bd->outwidth && (bd->scale_x || scale_cols[src_x]))
+				for (i = 0; i < num; i++) {
+					if (bd->scale_x == 255 || scale_cols[src_x]) {
+						if (dst_x >= 0 && dst_x < bd->outwidth)
 							*d = blend(_currentPalette, color, *d);
-						if (bd->scale_x == 255 || scale_cols[src_x]) {
-							d++;
-							dst_x++;
-						}
-						src_x++;
-					} while (--num);
-				} else {
-					src_x += num;
-					dst_x += num;
+						d++;
+						dst_x++;
+					}
+					src_x++;
 				}
 			} else {
-				if (bd->scale_y == 255 || scale_rows[src_y]) {
-					for (i = 0; i < num; i++) {
-						if (dst_x >= 0 && dst_x < bd->outwidth && (bd->scale_x || scale_cols[src_x]))
+				for (i = 0; i < num; i++) {
+					if (bd->scale_x == 255 || scale_cols[src_x]) {
+						if (dst_x >= 0 && dst_x < bd->outwidth)
 							*d = blend(_currentPalette, src[i], *d);
-						if (bd->scale_x == 255 || scale_cols[src_x]) {
-							d++;
-							dst_x++;
-						}
-						src_x++;
+						d++;
+						dst_x++;
 					}
-				} else {
-					dst_x += num;
-					src_x += num;
+					src_x++;
 				}
 				src += num;
 			}
 		}
-		if (bd->scale_y == 255 || scale_rows[src_y]) {
-			dest += bd->outwidth;
-			dst_y++;
-		}
+		dest += bd->outwidth;
+		dst_y++;
+		
 	}
 
 	if (scale_rows)
