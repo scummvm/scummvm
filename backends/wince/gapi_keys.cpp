@@ -29,15 +29,20 @@
 #include <sipapi.h>
 #include <Aygshell.h>
 #include <gx.h>
+#include "dynamic_imports.h"
 
 #include "gapi_keys.h"
 
 #include "screen.h"
 
-struct oneAction _actions[NUMBER_ACTIONS];
+struct oneAction _actions[TOTAL_ACTIONS];
 struct GXKeyList _portrait_keys;
 struct GXKeyList _landscape_keys;
 pAction *_action_functions;
+
+void handleSelectGameUp(void);
+void handleSelectGameDown(void);
+void handleSelectGameButton(void);
 
 const char* ActionsText[] = {
 	"None",
@@ -54,10 +59,10 @@ const char* ActionsText[] = {
 	"Boss"
 };
 
-bool _typeExists(int x) {
+bool _typeExists(unsigned int x) {
 	int i;
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		if (_actions[i].action_type == x)
 			return true;
 
@@ -69,23 +74,30 @@ const char* getActionName(int action) {
 	return ActionsText[action];
 }
 
-void GAPIKeysInit(pAction *functions) {
+void GAPIKeysInit() {
+	dynamicGXOpenInput();
+	GAPIKeysGetReference();
+}
+
+void GAPIKeysInitActions(pAction *functions) {
 	int i;
-	GXOpenInput();
-	for (i=0; i<NUMBER_ACTIONS; i++) {
+
+	for (i=0; i<TOTAL_ACTIONS; i++) {
 		_actions[i].action_key = 0;
 	}
 
 	/* Default actions */
 
+	/*
 	_actions[0].action_type = ACTION_PAUSE;
 	_actions[1].action_type = ACTION_SAVE;
 	_actions[2].action_type = ACTION_QUIT;
 	_actions[3].action_type = ACTION_SKIP;
 	_actions[4].action_type = ACTION_HIDE;
+	*/
 
 	_action_functions = functions;
-	GAPIKeysGetReference();
+	
 }
 
 void GAPIKeysGetReference() {
@@ -97,11 +109,23 @@ void GAPIKeysGetReference() {
 	}
 	*/
 
-	_portrait_keys = GXGetDefaultKeys(GX_NORMALKEYS);
-	_landscape_keys = GXGetDefaultKeys(GX_LANDSCAPEKEYS);
+	_portrait_keys = dynamicGXGetDefaultKeys(GX_NORMALKEYS);
+	_landscape_keys = dynamicGXGetDefaultKeys(GX_LANDSCAPEKEYS);
 }
 
-int GAPIKeysTranslate(int key) {
+void GAPIKeysHandleSelect(int key) {
+	if (key == _portrait_keys.vkUp)
+		handleSelectGameUp();
+	if (key == _portrait_keys.vkDown)
+		handleSelectGameDown();
+	if (key == _portrait_keys.vkA ||
+		key == _portrait_keys.vkB ||
+		key == _portrait_keys.vkC ||
+		key == _portrait_keys.vkStart)
+		handleSelectGameButton();
+}
+
+unsigned int GAPIKeysTranslate(unsigned int key) {
 /*
 	if (key == _landscape_keys.vkUp)
 		return _portrait_keys.vkUp;
@@ -166,26 +190,26 @@ const unsigned char getGAPIKeyMapping(short key) {
 }
 */
 
-const char* getGAPIKeyName(int key) {
+const char* getGAPIKeyName(unsigned int key) {
 	static char key_name[50];
 
 	if (!key)
 		return "Not mapped";
-	if (key == _portrait_keys.vkA)
+	if (key == (unsigned int)_portrait_keys.vkA)
 		return "Button A";
-	if (key == _portrait_keys.vkB)
+	if (key == (unsigned int)_portrait_keys.vkB)
 		return "Button B";
-	if (key == _portrait_keys.vkC)
+	if (key == (unsigned int)_portrait_keys.vkC)
 		return "Button C";
-	if (key == _portrait_keys.vkStart)
+	if (key == (unsigned int)_portrait_keys.vkStart)
 		return "Button Start";
-	if (key == _portrait_keys.vkUp)
+	if (key == (unsigned int)_portrait_keys.vkUp)
 		return "Pad Up";
-	if (key == _portrait_keys.vkDown)
+	if (key == (unsigned int)_portrait_keys.vkDown)
 		return "Pad Down";
-	if (key == _portrait_keys.vkLeft)
+	if (key == (unsigned int)_portrait_keys.vkLeft)
 		return "Pad Left";
-	if (key == _portrait_keys.vkRight)
+	if (key == (unsigned int)_portrait_keys.vkRight)
 		return "Pad Right";
 	if (key == INTERNAL_KEY_CALENDAR)
 		return "Button Calendar";
@@ -237,7 +261,7 @@ struct oneAction* getAction(int action) {
 	return &_actions[action];
 }
 
-bool processAction (int key) {
+bool processAction (unsigned int key) {
 	int i;
 	/*
 	unsigned char GAPI_key;
@@ -247,14 +271,23 @@ bool processAction (int key) {
 		return;
 	*/
 
-	for (i=0; i<NUMBER_ACTIONS; i++) 
+	for (i=0; i<TOTAL_ACTIONS; i++) {
 		//if (_actions[i].action_key == GAPI_key &&
+		/*
 		if (_actions[i].action_key == key &&
 			_actions[i].action_type != ACTION_NONE &&
 			_action_functions[_actions[i].action_type - 1]) {
 					_action_functions[_actions[i].action_type - 1]();
 					return true;
 		}
+		*/
+		
+		if (_actions[i].action_key && _actions[i].action_key == key) {
+			_action_functions[i]();
+			return true;
+		}
+	}
+
 
 	return false;
 }
@@ -262,17 +295,17 @@ bool processAction (int key) {
 void clearActionKey (unsigned char key) {
 	int i;
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		if (_actions[i].action_key == key) {
 			_actions[i].action_key = 0;
 		}
 }
 
-const int* getActionKeys() {
+const unsigned int* getActionKeys() {
 	int i;
-	static int actionKeys[NUMBER_ACTIONS];
+	static unsigned int actionKeys[TOTAL_ACTIONS];
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		actionKeys[i] = _actions[i].action_key;
 
 	return actionKeys;
@@ -280,14 +313,15 @@ const int* getActionKeys() {
 
 const unsigned char* getActionTypes() {
 	int i;
-	static unsigned char actionTypes[NUMBER_ACTIONS];
+	static unsigned char actionTypes[TOTAL_ACTIONS];
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		actionTypes[i] = _actions[i].action_type;
 
 	return actionTypes;
 
 }
+
 
 void setNextType(int action) {
 	int start = _actions[action].action_type;
@@ -323,17 +357,17 @@ void setPreviousType(int action) {
 
 
 
-void setActionKeys(int *actionKeys) {
+void setActionKeys(unsigned int *actionKeys) {
 	int i;
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		_actions[i].action_key = actionKeys[i];
 }
 
 void setActionTypes(unsigned char *actionTypes) {
 	int i;
 
-	for (i=0; i<NUMBER_ACTIONS; i++)
+	for (i=0; i<TOTAL_ACTIONS; i++)
 		_actions[i].action_type = (ActionType)actionTypes[i];
 }
 

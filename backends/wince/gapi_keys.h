@@ -13,19 +13,19 @@ enum ActionType {
 	ACTION_SOUND = 7,
 	ACTION_RIGHTCLICK = 8,
 	ACTION_CURSOR = 9,
-	ACTION_SUBTITLES = 10
+	ACTION_SUBTITLES = 10,
+	ACTION_BOSS = 11
 };
 
 struct oneAction {
-	unsigned char	action_key;
-	int				action_type;
+	unsigned int		action_key;
+	unsigned int		action_type;
 };
 
-
-#define NUMBER_ACTIONS 10
-#define TOTAL_ACTIONS 10
+#define TOTAL_ACTIONS 12
 
 #define GAPI_KEY_BASE 1000
+/*
 #define GAPI_KEY_VKA 1
 #define GAPI_KEY_VKB 2
 #define GAPI_KEY_VKC 3
@@ -38,25 +38,29 @@ struct oneAction {
 #define GAPI_KEY_VKDOWN 10
 #define GAPI_KEY_VKLEFT 11
 #define GAPI_KEY_VKRIGHT 12
+*/
 
 #define INTERNAL_KEY_CALENDAR 0xc1
 #define INTERNAL_KEY_CONTACTS 0xc2
 #define INTERNAL_KEY_INBOX 0xc3
 #define INTERNAL_KEY_ITASK 0xc4
 
-void GAPIKeysInit(pAction*);
+void GAPIKeysInit(void);
+void GAPIKeysInitActions(pAction*);
 void GAPIKeysGetReference(void);
-const unsigned char getGAPIKeyMapping(short);
-const char* getGAPIKeyName(unsigned char);
+//const unsigned char getGAPIKeyMapping(short);
+const char* getGAPIKeyName(unsigned int);
 struct oneAction* getAction(int);
-void processAction (short);
+bool processAction (unsigned int);
 void clearActionKey (unsigned char);
-const unsigned char* getActionKeys(void);
-void setActionKeys(unsigned char *);
+const unsigned int* getActionKeys(void);
+void setActionKeys(unsigned int*);
 const char* getActionName(int);
 void setActionTypes(unsigned char *);
 const unsigned char* getActionTypes();
 void setNextType(int);
 void setPreviousType(int);
+unsigned int GAPIKeysTranslate(unsigned int);
+void GAPIKeysHandleSelect(int);
 
 #endif
