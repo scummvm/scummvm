@@ -76,6 +76,8 @@ void Actor::initActor(int mode) {
 	forceClip = 0;
 	ignoreTurns = false;
 	
+	talkFrequency = 256;
+	
 	if (_vm->_version <= 2) {
 		initFrame = 2;
 		walkFrame = 0;
