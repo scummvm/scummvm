@@ -46,6 +46,8 @@ int main(int /* argc */, char ** /* argv */) {
   atexit(SDL_Quit);
   atexit(saveRegistry);
 
+  SDL_WM_SetCaption("Residual", "Residual");
+  
   Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
   SDL_Event event;
