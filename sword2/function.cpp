@@ -211,7 +211,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	return IR_CONT;
 }
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 #define BLACK	0
 #define WHITE	1
 #define RED	2
@@ -232,7 +232,7 @@ int32 Logic::fnFlash(int32 *params) {
 
 	// params:	0 colour to flash
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	// what colour?
 	switch (params[0]) {
 	case WHITE:
@@ -268,7 +268,7 @@ int32 Logic::fnColour(int32 *params) {
 
 	// params	0: colour (see defines above)
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	// what colour?
 	switch (params[0]) {
 	case BLACK:

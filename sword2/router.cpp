@@ -1150,7 +1150,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		}
 	} while (_modularPath[p].dir < NO_DIRECTIONS);
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	if (lastRealDir == 99)
 		error("slidyWalkAnimatorlast direction error");
 #endif

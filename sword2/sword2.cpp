@@ -100,8 +100,6 @@ REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_gameList, Engine_SWORD2_create,
 
 namespace Sword2 {
 
-Sword2Engine *g_sword2 = NULL;
-
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	// Add default file directories
 	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
@@ -111,19 +109,23 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	File::addDefaultDirectory(_gameDataPath + "sword2/");
 	File::addDefaultDirectory(_gameDataPath + "video/");
 
-	g_sword2 = this;
-	_debugger = NULL;
-	_sound = NULL;
-	_graphics = NULL;
 	_features = detector->_game.features;
 	_targetName = detector->_targetName;
+
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
+	_debugger = NULL;
+	_graphics = NULL;
+	_sound = NULL;
+	_gui = NULL;
+	_fontRenderer = NULL;
+	_logic = NULL;
+	_resman = NULL;
+	_memory = NULL;
+
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
-
-	_mouseX = _mouseY = 0;
 
 	_lastPaletteRes = 0;
 
@@ -149,6 +151,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	memset(&_thisScreen, 0, sizeof(_thisScreen));
 	memset(_mouseList, 0, sizeof(_mouseList));
 
+	_mouseX = _mouseY = 0;
 	_mouseTouching = 0;
 	_oldMouseTouching = 0;
 	_menuSelectedPos = 0;
@@ -164,26 +167,24 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	_playerActivityDelay = 0;
 	_realLuggageItem = 0;
 
-	// used to be a define, but now it's flexible
 	_scrollFraction = 16;
 
-	_gamePaused = false;
+#ifdef SWORD2_DEBUG
 	_stepOneCycle = false;
+	_renderSkip = false;
+#endif
+
+	_gamePaused = false;
 	_graphicsLevelFudged = false;
 
-	_debugger = NULL;
-	_graphics = NULL;
-	_sound = NULL;
-	_gui = NULL;
-	_fontRenderer = NULL;
-	_logic = NULL;
-	_resman = NULL;
-	_memory = NULL;
+	_gameCycle = 0;
 
 	_quit = false;
 }
 
 Sword2Engine::~Sword2Engine() {
+	killMusic();
+
 	delete _debugger;
 	delete _graphics;
 	delete _sound;
@@ -223,7 +224,7 @@ void Sword2Engine::setupPersistentResources() {
 }
     
 void Sword2Engine::mainInit() {
-	// get some falling RAM and put it in your pocket, never let it slip
+	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
 	_graphics = new Graphics(this, 640, 480);
@@ -255,26 +256,15 @@ void Sword2Engine::mainInit() {
 	// nor the scroll wheel.
 	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
-	// Initialise global script variables and player object
 	setupPersistentResources();
-
-	// Set up font resource variables for this language version
-
-	debug(5, "CALLING: initialiseFontResourceFlags");
 	initialiseFontResourceFlags();
-
-	// initialise the sound fx queue
-
-	debug(5, "CALLING: Init_fx_queue");
 	initFxQueue();
 
-	// all demos (not just web)
 	if (_features & GF_DEMO)
 		Logic::_scriptVars[DEMO] = 1;
 	else
 		Logic::_scriptVars[DEMO] = 0;
 
-	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();
 
 	if (_saveSlot != -1) {
@@ -305,13 +295,7 @@ void Sword2Engine::mainInit() {
 	} else
 		startGame();
 
-	debug(5, "CALLING: initialiseRenderCycle");
 	_graphics->initialiseRenderCycle();
-
-	_renderSkip = false;		// Toggled on 'S' key, to render only
-					// 1 in 4 frames, to speed up game
-
-	_gameCycle = 0;
 }
 
 void Sword2Engine::mainRun() {
@@ -319,13 +303,7 @@ void Sword2Engine::mainRun() {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		// the screen is build. Mostly because of first scroll
-		// cycle stuff
-
-#ifdef _SWORD2_DEBUG
-		// if we've just stepped forward one cycle while the
-		// game was paused
-
+#ifdef SWORD2_DEBUG
 		if (_stepOneCycle) {
 			pauseGame();
 			_stepOneCycle = false;
@@ -349,7 +327,7 @@ void Sword2Engine::mainRun() {
 					if (!Logic::_scriptVars[DEMO] && !_logic->_choosing)
 						_logic->fnPlayCredits(NULL);
 					break;
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 				case ' ':
 					if (_gamePaused) {
 						_stepOneCycle = true;
@@ -372,7 +350,7 @@ void Sword2Engine::mainRun() {
 			gameCycle();
 		}
 
-		// We can't use this as termination condition for the looop,
+		// We can't use this as termination condition for the loop,
 		// because we want the break to happen before updating the
 		// screen again.
 
@@ -382,14 +360,13 @@ void Sword2Engine::mainRun() {
 		// creates the debug text blocks
 		_debugger->buildDebugText();
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 		// if not in console & '_renderSkip' is set, only render
 		// display once every 4 game-cycles
 
-		if (console_status || !_renderSkip || (_gameCycle % 4) == 0)
-			buildDisplay();	// create and flip the screen
+		if (!_renderSkip || (_gameCycle % 4) == 0)
+			buildDisplay();
 #else
-		// create and flip the screen
 		buildDisplay();
 #endif
 	}
@@ -398,9 +375,6 @@ void Sword2Engine::mainRun() {
 void Sword2Engine::go() {
 	mainInit();
 	mainRun();
-
-	// Stop music instantly!
-	killMusic();
 }
 
 void Sword2Engine::closeGame() {
@@ -503,29 +477,28 @@ void Sword2Engine::parseEvents() {
 }
 
 void Sword2Engine::gameCycle() {
-	// do one game cycle
+	// Do one game cycle, that is run the logic session until a full loop
+	// has been performed.
 
-	// got a screen to run?
 	if (_logic->getRunList()) {
-		// run the logic session UNTIL a full loop has been performed
 		do {
-			// reset the graphic 'BuildUnit' list before a new
-			// logic list (see fnRegisterFrame)
-			resetRenderLists();
+			// Reset the 'BuildUnit' and mouse hot-spot lists
+			// before each new logic list. The service scripts
+			// will fill thrm through fnRegisterFrame() and
+			// fnRegisterMouse().
 
-			// reset the mouse hot-spot list (see fnRegisterMouse
-			// and fnRegisterFrame)
+			resetRenderLists();
 			resetMouseList();
 
-			// keep going as long as new lists keep getting put in
-			// - i.e. screen changes
+			// Keep going as long as new lists keep getting put in
+			// - i.e. screen changes.
 		} while (_logic->processSession());
 	} else {
-		// start the console and print the start options perhaps?
+		// Start the console and print the start options perhaps?
 		_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
 	}
 
-	// if this screen is wide, recompute the scroll offsets every cycle
+	// If this screen is wide, recompute the scroll offsets every cycle
 	if (_thisScreen.scroll_flag)
 		setScrolling();
 
@@ -534,48 +507,36 @@ void Sword2Engine::gameCycle() {
 }
 
 void Sword2Engine::startGame() {
-	// boot the game straight into a start script
+	// Boot the game straight into a start script. It's always George's
+	// script #1, but with different ScreenManager objects depending on
+	// if it's the demo or the full game, or if we're using a boot param.
 
 	int screen_manager_id;
 
 	debug(5, "startGame() STARTING:");
 
-	// all demos not just web
-	if (Logic::_scriptVars[DEMO])
-		screen_manager_id = 19;		// DOCKS SECTION START
-	else
-		screen_manager_id = 949;	// INTRO & PARIS START
+	if (!_bootParam) {
+		if (Logic::_scriptVars[DEMO])
+			screen_manager_id = 19;		// DOCKS SECTION START
+		else
+			screen_manager_id = 949;	// INTRO & PARIS START
+	} else {
+		// FIXME this could be validated against startup.inf for valid
+		// numbers to stop people shooting themselves in the foot
 
-	// FIXME this could be validated against startup.inf for valid numbers
-	// to stop people shooting themselves in the foot
-
-	if (_bootParam != 0)
-		screen_manager_id = _bootParam;
-	
-	char *raw_script;
-	char *raw_data_ad;
-
-	// the required start-scripts are both script #1 in the respective
-	// ScreenManager objects
+		if (_bootParam != 0)
+			screen_manager_id = _bootParam;
+	}
 
 	uint32 null_pc = 1;
 
-	// open george object, ready for start script to reference
-	raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
+	char *raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
+	char *raw_script = (char *) _resman->openResource(screen_manager_id);
 
-	// open the ScreenManager object
-	raw_script = (char *) _resman->openResource(screen_manager_id);
-
-	// run the start script now (because no console)
 	_logic->runScript(raw_script, raw_data_ad, &null_pc);
 
-	// close the ScreenManager object
 	_resman->closeResource(screen_manager_id);
-
-	// close george
 	_resman->closeResource(CUR_PLAYER_ID);
-
-	debug(5, "startGame() DONE.");
 }
 
 // FIXME: Move this to some better place?
@@ -591,25 +552,21 @@ void Sword2Engine::sleepUntil(uint32 time) {
 }
 
 void Sword2Engine::pauseGame() {
-	// don't allow Pause while screen fading or while black
+	// Don't allow Pause while screen fading or while black
 	if (_graphics->getFadeStatus() != RDFADE_NONE)
 		return;
 	
 	pauseAllSound();
 
-	// make a normal mouse
+	// Make the mouse cursor normal. This is the only place where we are
+	// allowed to clear the luggage this way.
+
 	clearPointerText();
-
-	// this is the only place allowed to do it this way
 	_graphics->setLuggageAnim(NULL, 0);
-
-	// blank cursor
 	setMouse(0);
-
-	// forces engine to choose a cursor
 	_mouseTouching = 1;
 
-	// if level at max, turn down because palette-matching won't work
+	// If level at max, turn down because palette-matching won't work
 	// when dimmed
 
 	if (_gui->_currentGraphicsLevel == 3) {
@@ -617,11 +574,15 @@ void Sword2Engine::pauseGame() {
 		_graphicsLevelFudged = true;
 	}
 
-	// don't dim it if we're single-stepping through frames
+#ifdef SWORD2_DEBUG
+	// Don't dim it if we're single-stepping through frames
 	// dim the palette during the pause
 
 	if (!_stepOneCycle)
 		_graphics->dimPalette();
+#else
+	_graphics->dimPalette();
+#endif
 
 	_gamePaused = true;
 }
@@ -632,7 +593,7 @@ void Sword2Engine::unpauseGame() {
 
 	unpauseAllSound();
 
-	// put back game screen palette; see build_display.cpp
+	// Put back game screen palette; see build_display.cpp
 	setFullPalette(-1);
 
 	// If graphics level at max, turn up again
@@ -643,7 +604,7 @@ void Sword2Engine::unpauseGame() {
 
 	_gamePaused = false;
 
-	// if mouse is about or we're in a chooser menu
+	// If mouse is about or we're in a chooser menu
 	if (!_mouseStatus || _logic->_choosing)
 		setMouse(NORMAL_MOUSE_ID);
 }

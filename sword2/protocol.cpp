@@ -75,7 +75,7 @@ ScreenHeader *Sword2Engine::fetchScreenHeader(byte *screenFile) {
  */
 
 LayerHeader *Sword2Engine::fetchLayerHeader(byte *screenFile, uint16 layerNo) {
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	ScreenHeader *screenHead = fetchScreenHeader(screenFile);
 
 	if (layerNo > screenHead->noLayers - 1)
@@ -118,7 +118,7 @@ AnimHeader *Sword2Engine::fetchAnimHeader(byte *animFile) {
 CdtEntry *Sword2Engine::fetchCdtEntry(byte *animFile, uint16 frameNo) {
 	AnimHeader *animHead = fetchAnimHeader(animFile);
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	if (frameNo > animHead->noAnimFrames - 1)
 		error("fetchCdtEntry(animFile,%d) - anim only %d frames", frameNo, animHead->noAnimFrames);
 #endif
@@ -144,7 +144,7 @@ FrameHeader *Sword2Engine::fetchFrameHeader(byte *animFile, uint16 frameNo) {
 Parallax *Sword2Engine::fetchBackgroundParallaxLayer(byte *screenFile, int layer) {
 	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
 		error("fetchBackgroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
@@ -155,7 +155,7 @@ Parallax *Sword2Engine::fetchBackgroundParallaxLayer(byte *screenFile, int layer
 Parallax *Sword2Engine::fetchBackgroundLayer(byte *screenFile) {
 	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
 		error("fetchBackgroundLayer (%d) - No background layer exists");
 #endif
@@ -166,7 +166,7 @@ Parallax *Sword2Engine::fetchBackgroundLayer(byte *screenFile) {
 Parallax *Sword2Engine::fetchForegroundParallaxLayer(byte *screenFile, int layer) {
 	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
-#ifdef _SWORD2_DEBUG
+#ifdef SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
 		error("fetchForegroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif

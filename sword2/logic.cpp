@@ -335,7 +335,7 @@ int32 Logic::fnAddToKillList(int32 *params) {
 	// params:	none
 
 	// DON'T EVER KILL GEORGE!
-	if (_scriptVars[ID] == 8)
+	if (_scriptVars[ID] == CUR_PLAYER_ID)
 		return IR_CONT;
 
 	// Scan the list to see if it's already included

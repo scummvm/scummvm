@@ -241,7 +241,11 @@ public:
 	bool _wantSfxDebug;
 
 	int32 _gameCycle;
+
+#ifdef SWORD2_DEBUG
 	bool _renderSkip;
+	bool _stepOneCycle;
+#endif
 
 	int32 initBackground(int32 res, int32 new_palette);
 
@@ -392,7 +396,6 @@ public:
 
 	bool _gamePaused;
 	bool _graphicsLevelFudged;
-	bool _stepOneCycle;		// for use while game paused
 
 	void startGame();
 	void gameCycle();
@@ -404,8 +407,6 @@ public:
 	void initialiseFontResourceFlags();
 	void initialiseFontResourceFlags(uint8 language);
 };
-
-extern Sword2Engine *g_sword2;
 
 } // End of namespace Sword2
 
