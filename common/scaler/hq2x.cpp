@@ -102,34 +102,146 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	//	 | w7 | w8 | w9 |
 	//	 +----+----+----+
 
-	while (height--) {
-		w[2] = *(p - 1 - nextlineSrc);
-		w[5] = *(p - 1);
-		w[8] = *(p - 1 + nextlineSrc);
+#if USE_ALTIVEC
+	// TODO:
+	// * come up with a plan that allows the AltiVec/MMX/SSE/other asm to be
+	//   compiled *in addition to* the C++ code. This is necessary since e.g.
+	//   not all PowerPC processors support AltiVec, and when run on those,
+	//   ScummVM should fallback to the "plain" scalers.
+	//   This "switch" could be done in the wrapper HQ2x method (just like it
+	//   also switches between 555 and 565 there).
+	// * add code to configure which detects whether AltiVec/MMX asm may be
+	//   compiled in at all (and also add explicit --disable-asm option)
+	// * ...
 
-		w[3] = *(p - nextlineSrc);
-		w[6] = *(p);
-		w[9] = *(p + nextlineSrc);
+	// The YUV threshold.
+	static const vector unsigned char vThreshold = (vector unsigned char)((vector unsigned int)0x00300706);
+	
+	// Bit pattern mask.
+	static const vector signed int vPatternMask1 = (vector signed int)(0x01,0x02,0x04,0x08);
+	static const vector signed int vPatternMask2 = (vector signed int)(0x10,0x20,0x40,0x80);
+
+	// Permutation masks for the incremental vector loading (see below for more information).
+	static const vector unsigned char vPermuteToV1234 = (vector unsigned char)( 4, 5, 6, 7,  8,9,10,11,  20,21,22,23,  16,17,18,19);
+	static const vector unsigned char vPermuteToV6789 = (vector unsigned char)(24,25,26,27,  8,9,10,11,  12,13,14,15,  28,29,30,31);
+
+	// The YUV vectors.
+	vector signed char vecYUV5555;
+	vector signed char vecYUV1234;
+	vector signed char vecYUV6789;
+/*
+	// The pixel vectors.
+	// TODO: Keep the pixels up-to-date in this, just like for the YUV data.
+	// But instead of just keeping the 16 bit pixel values in them, keep
+	// them convert to 32 bit RGB in there! This way, we avoid converting
+	// the same pixels to 32 bit repeatedly (which may be expensive, esp.
+	// when reading 16 bit pixels in 565 format). 
+	// The Altivec enhanced interpolation functions (to be written :-)
+	// then can directly make use of these vectors.
+	vector signed char vecRGB5555;
+	vector signed char vecRGB1234;
+	vector signed char vecRGB6789;
+*/
+#endif
+
+
+
+	while (height--) {
+		w[1] = *(p - 1 - nextlineSrc);
+		w[4] = *(p - 1);
+		w[7] = *(p - 1 + nextlineSrc);
+
+		w[2] = *(p - nextlineSrc);
+		w[5] = *(p);
+		w[8] = *(p + nextlineSrc);
+
+#if USE_ALTIVEC
+		// Load inital values of vecYUV1234 / vecYUV6789
+		const int arr1234[4] = {0, YUV(1), YUV(2), 0};
+		const int arr6789[4] = {YUV(5), 0, YUV(7), YUV(8)};
+
+		vecYUV1234 = *(const vector signed char *)arr1234;
+		vecYUV6789 = *(const vector signed char *)arr6789;
+#endif
 
 		int tmpWidth = width;
 		while (tmpWidth--) {
 			p++;
-
-			w[1] = w[2];
-			w[4] = w[5];
-			w[7] = w[8];
-
-			w[2] = w[3];
-			w[5] = w[6];
-			w[8] = w[9];
 
 			w[3] = *(p - nextlineSrc);
 			w[6] = *(p);
 			w[9] = *(p + nextlineSrc);
 
 			int pattern = 0;
-			const int yuv5 = YUV(5);
 
+#if USE_ALTIVEC
+			/*
+			Consider this peephole into the image buffer:
+			+----+----+----+----+
+			|    |    |    |    |
+			| w00| w01| w02| w03|
+			+----+----+----+----+
+			|    |    |    |    |
+			| w10| w11| w12| w13|
+			+----+----+----+----+
+			|    |    |    |    |
+			| w20| w21| w22| w23|
+			+----+----+----+----+
+			
+			In the previous loop iteration, w11 was the center point, and our
+			vectors contain the following data from the previous iteration:
+			vecYUV5555 = { w11, w11, w11, w11 }
+			vecYUV1234 = { w00, w01, w02, w10 }
+			vecYUV6789 = { w12, w20, w21, w22 }
+
+			Now we have the new center point w12, and we would like to have
+			the following values in our vectors:
+			vecYUV5555 = { w12, w12, w12, w12 }
+			vecYUV1234 = { w01, w02, w03, w11 }
+			vecYUV6789 = { w13, w21, w22, w23 }
+
+			To this end we load a single new vector:
+			vTmp = { w11, w03, w13, w23 }
+
+			We then can compute all the new vector values using permutations only:
+			vecYUV5555 = { vecYUV6789[0], vecYUV6789[0], vecYUV6789[0], vecYUV6789[0] }
+			vecYUV1234 = { vecYUV1234[1], vecYUV1234[2],  vTmp[1],  vTmp[0] }
+			vecYUV6789 = {  vTmp[2], vecYUV6789[2], vecYUV6789[3],  vTmp[3] }
+			
+			Beautiful, isn't it? :-)
+			*/
+
+			// Load the new values into a temporary vector (see above for an explanation)
+			const int tmpArr[4] = {YUV(4), YUV(3), YUV(6), YUV(9)};
+			vector signed char vTmp = *(const vector signed char *)tmpArr;
+			
+			// Next update the data vectors
+			vecYUV5555 = (vector signed char)vec_splat((vector unsigned int)vecYUV6789, 0);
+			vecYUV1234 = vec_perm(vecYUV1234, vTmp, vPermuteToV1234);
+			vecYUV6789 = vec_perm(vecYUV6789, vTmp, vPermuteToV6789);
+
+			// Compute the absolute difference between the center point's YUV and the outer points
+			const vector signed char vDiff1 = vec_abs(vec_sub(vecYUV5555, vecYUV1234));
+			const vector signed char vDiff2 = vec_abs(vec_sub(vecYUV5555, vecYUV6789));
+			
+			// Compare the difference to the threshold (byte-wise)
+			const vector bool char vCmp1 = vec_cmpgt((vector unsigned char)vDiff1, vThreshold);
+			const vector bool char vCmp2 = vec_cmpgt((vector unsigned char)vDiff2, vThreshold);
+			
+			// Convert all non-zero (long) vector elements to 0xF...F, keep 0 at 0.
+			// Then and in the patter masks. The idea is that for 0 components, we get 0,
+			// while for the other components we get exactly the mask value.
+			const vector signed int vPattern1 = vec_and(vec_cmpgt((vector unsigned int)vCmp1, (vector unsigned int)0), vPatternMask1);
+			const vector signed int vPattern2 = vec_and(vec_cmpgt((vector unsigned int)vCmp2, (vector unsigned int)0), vPatternMask2);
+			
+			// Now sum up the components of all vectors. Since our pattern mask values
+			// are all "orthogonal", this is effectively the same as ORing them all
+			// together. In the end, the rightmost word of vSum contains the 'pattern'
+			vector signed int vSum = vec_sums(vPattern1, (vector signed int)0);
+			vSum = vec_sums(vPattern2, vSum);
+			pattern = ((int *)&vSum)[3];
+#else
+			const int yuv5 = YUV(5);
 			if (w[5] != w[1] && diffYUV(yuv5, YUV(1))) pattern |= 0x0001;
 			if (w[5] != w[2] && diffYUV(yuv5, YUV(2))) pattern |= 0x0002;
 			if (w[5] != w[3] && diffYUV(yuv5, YUV(3))) pattern |= 0x0004;
@@ -138,6 +250,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			if (w[5] != w[7] && diffYUV(yuv5, YUV(7))) pattern |= 0x0020;
 			if (w[5] != w[8] && diffYUV(yuv5, YUV(8))) pattern |= 0x0040;
 			if (w[5] != w[9] && diffYUV(yuv5, YUV(9))) pattern |= 0x0080;
+#endif
 
 			switch (pattern) {
 			case 0:
@@ -1930,6 +2043,15 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				}
 				break;
 			}
+
+			w[1] = w[2];
+			w[4] = w[5];
+			w[7] = w[8];
+
+			w[2] = w[3];
+			w[5] = w[6];
+			w[8] = w[9];
+
 			q += 2;
 		}
 		p += nextlineSrc - width;
