@@ -116,6 +116,30 @@ typedef signed long int32;
 #define NORETURN
 #endif
 
+#elif defined(__DC__)
+
+#define scumm_stricmp strcasecmp
+#define CHECK_HEAP
+#define SCUMM_LITTLE_ENDIAN
+#define SCUMM_NEED_ALIGNMENT
+
+#define FORCEINLINE inline
+#define NORETURN __attribute__((__noreturn__))
+#define GCC_PACK __attribute__((packed))
+#define CDECL
+
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned long uint32;
+typedef unsigned int uint;
+typedef signed char int8;
+typedef signed short int16;
+typedef signed long int32;
+
+#define START_PACK_STRUCTS pack (push,1)
+#define END_PACK_STRUCTS   pack(pop)
+
 #else
 #error No system type defined
 #endif
