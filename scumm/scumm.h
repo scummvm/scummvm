@@ -749,6 +749,13 @@ public:
 	uint32 _CLUT_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
+	void buildStripOffsets();
+	int _egaStripOffsets[160];
+	int _egaStripRun[160];
+	byte _egaStripColor[160];
+	int _egaStripZOffsets[120];
+	int _egaStripZRun[120];
+
 	//ender: fullscreen
 	bool _fullRedraw, _BgNeedsRedraw, _verbRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;

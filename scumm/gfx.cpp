@@ -848,6 +848,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	assert(smap_ptr);
 
+	byte *roomptr = _vm->getResourceAddress(rtRoom, _vm->_roomResource);
+
 	zplane_list[0] = smap_ptr;
 
 	if (_disable_zbuffer)
@@ -941,8 +943,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		if (_vm->_features & GF_SMALL_HEADER) {
-			if (_vm->_features & GF_16COLOR) {
-				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
+			if (_vm->_features & GF_AFTER_V2) {
+				decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], h, stripnr);
+				useOrDecompress = false;
+			} else if (_vm->_features & GF_16COLOR) {
+				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
+				useOrDecompress = false;
 			} else {
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
 			}
@@ -1002,7 +1008,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (!zplane_list[i])
 					continue;
 
-				if (_vm->_features & GF_OLD_BUNDLE)
+				if (_vm->_features & GF_AFTER_V2)
+					offs = 0;
+				else if (_vm->_features & GF_OLD_BUNDLE)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2);
 				else if (_vm->_features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
@@ -1018,7 +1026,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (offs) {
 					byte *z_plane_ptr = zplane_list[i] + offs;
 
-					if (useOrDecompress && (flag & dbAllowMaskOr)) {
+					if (_vm->_features & GF_AFTER_V2)
+						decompressMaskImgOld(_mask_ptr_dest, roomptr + _vm->_egaStripZOffsets[stripnr], stripnr);
+					else if (useOrDecompress && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, h);
 					} else {
 						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
@@ -1101,13 +1111,170 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 	}
 }
 
+void Scumm::buildStripOffsets() {
+	byte *roomptr = getResourceAddress(rtRoom, _roomResource);
+	byte *bitmap = roomptr + READ_LE_UINT16(roomptr + 10);
+	byte *zplane = roomptr + READ_LE_UINT16(roomptr + 12);
+	int room_width = READ_LE_UINT16(roomptr + 4) >> 3;
+	byte color, data;
+	int x, y, length;
+	int run = 1;
+
+	for (x = 0 ; x < room_width << 3; x++) {
+
+		if ((x % 8) == 0) {
+			_egaStripRun[x >> 3] = run;
+			_egaStripColor[x >> 3] = color;
+			_egaStripOffsets[x >> 3] = bitmap - roomptr;
+		}
+
+		for (y = 0; y < 128; y++) {
+			if (--run == 0) {
+				data = *bitmap++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+				} else {
+					run = data >> 4;
+				}
+				if (run == 0) {
+					run = *bitmap++;
+				}
+				color = data & 0x0f;
+			}
+		}
+	}
+
+	x = 0;
+	y = 128;
+	
+	for (;;) {
+		length = *zplane++;
+		if (length & 0x80) {
+			length &= 0x7f;
+			data = *zplane++;
+			do {
+				if (y == 128) {
+					_egaStripZOffsets[x] = zplane - roomptr - 1;
+					_egaStripZRun[x] = length | 0x80;
+				}
+				if (--y == 0) {
+			    if (--room_width == 0)
+						return;
+					x++;
+			    y = 128;
+				}
+			} while (--length);
+		} else {
+	    do {
+				data = *zplane++;
+				if (y == 128) {
+					_egaStripZOffsets[x] = zplane - roomptr - 1;
+					_egaStripZRun[x] = length;
+				}
+				if (--y == 0) {
+			    if (--room_width == 0)
+						return;
+					x++;
+			    y = 128;
+				}
+			} while (--length);
+		}
+	}
+}
+
+void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
+	byte color = _vm->_egaStripColor[stripnr];
+	int run = _vm->_egaStripRun[stripnr];
+	bool dither = false;
+	byte dither_table[128];
+	byte data;
+	int x = 4;
+	do {
+		byte *ptr_dither_table = dither_table;
+		int y = 128;
+		do {
+			if (--run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+					dither = true;
+				} else {
+					run = data >> 4;
+					dither = false;
+				}
+				if (run == 0) {
+					run = *src++;
+				}
+				color = _vm->_shadowPalette[data & 0x0f];
+			}
+			if (!dither) {
+				*ptr_dither_table = color;
+			}
+			*dst = *ptr_dither_table++;
+			dst += _vm->_realWidth;
+		} while (--y);
+		dst -= _vm->_realWidth * 128;
+		dst++;
+
+		ptr_dither_table = dither_table;
+		y = 128;
+		do {
+			if (--run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+					dither = true;
+				} else {
+					run = data >> 4;
+					dither = false;
+				}
+				if (run == 0) {
+					run = *src++;
+				}
+				color = _vm->_shadowPalette[data & 0x0f];
+			}
+			if (!dither) {
+				*ptr_dither_table = color;
+			}
+			*dst = *ptr_dither_table++;
+
+			dst += _vm->_realWidth;
+		} while (--y);
+		dst -= _vm->_realWidth * 128;
+		dst++;
+	} while (--x);
+}
+
+void Gdi::decompressMaskImgOld(byte *dst, byte *src, int stripnr) {
+	int run = _vm->_egaStripRun[stripnr];
+	int y = 128;
+	byte data;
+
+	for (;;) {
+		if (run & 0x80) {
+			run &= 0x7f;
+			data = *src++;
+			do {
+				*dst++ = data;
+				dst += _numStrips;
+				if (--y == 0)
+					return;
+			} while (--run);
+		} else {
+			do {
+				data = *src++;
+				*dst++ = data;
+				dst += _numStrips;
+				if (--y == 0)
+					return;
+			} while (--run);
+		}
+		run = *src++;
+	} 
+}
+
 bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
 	assert(numLinesToProcess);
-
-	if (_vm->_features & GF_16COLOR) {
-		decodeStripEGA(bgbak_ptr, smap_ptr, numLinesToProcess);
-		return false;
-	}
 
 	byte code = *smap_ptr++;
 
