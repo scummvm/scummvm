@@ -2790,13 +2790,15 @@ static void doCyclePalette(byte *palette, int cycleStart, int cycleEnd, int size
 }
 
 /**
- * Adjust an 'indirect' color palette for the color cycling performed on its master
- * palette. An indirect palette is a palette which contains indices pointing into
- * another palette - it provides a level of indirection to map palette colors to
- * other colors. Now when the target palette is cycled, the indirect palette suddenly
- * point at the wrong color(s). This function takes care of adjusting an indirect
- * palette by searching through it and replacing all indices that are in the
- * cycle range by the new (cycled) index.
+ * Adjust an 'indirect' color palette for the color cycling performed on its
+ * master palette. An indirect palette is a palette which contains indices
+ * pointing into another palette - it provides a level of indirection to map
+ * palette colors to other colors. Now when the target palette is cycled, the
+ * indirect palette suddenly point at the wrong color(s). This function takes
+ * care of adjusting an indirect palette by searching through it and replacing
+ * all indices that are in the cycle range by the new (cycled) index.
+ *
+ * Finally, the palette entries still have to be cycled normally.
  */
 static void doCycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, bool forward) {
 	int num = cycleEnd - cycleStart + 1;
@@ -2808,6 +2810,8 @@ static void doCycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, 
 			palette[i] = (palette[i] - cycleStart + offset) % num + cycleStart;
 		}
 	}
+	
+	doCyclePalette(palette, cycleStart, cycleEnd, 1, forward);
 }
 
 
