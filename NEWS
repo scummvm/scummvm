@@ -19,6 +19,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      location (for reencoded cutscenes and the like)
    - Disabled Alt-x and Ctrl-z quit keys in favour of Ctrl-q on unix like
      operating systems, like Linux (exception: Mac OS X still uses Cmd-q)
+   - Separate smaller font for the console, allowing for more visible
+     information, for example in the SCUMM debugger.
    - Added support for setting output sample rate at run-time, although there
      is currently no GUI for it.
 
