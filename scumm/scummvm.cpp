@@ -94,6 +94,8 @@ static const VersionSettings scumm_settings[] = {
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 2, 2,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, 2, 02,
+	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
