@@ -1131,6 +1131,7 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 		if (start_frame == 0 && end_frame == 0) {
 			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
 		} else {
+			// MsaTimeToSu doesn't work ...
 			_msaTrackStart = (UInt32) ((float)_msaStartFrame / ((float)fullLength / (float)SU));
 			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
 		}
@@ -1318,6 +1319,10 @@ bool OSystem_PALMOS::set_sound_proc(SoundProc *proc, void *param, SoundFormat fo
 //	_sound.active = false;
 
 	return _sound.active;
+}
+
+void OSystem_PALMOS::clear_sound_proc() {
+	_sound.active = false;
 }
 
 void OSystem_PALMOS::check_sound() {

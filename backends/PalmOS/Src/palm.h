@@ -85,8 +85,24 @@ public:
 	
 	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat);
 
-	// Set function that generates samples 
+	/** @name Sound */
+	//@{
+	/**
+	 * Set the audio callback which is invoked whenever samples need to be generated.
+	 * Currently, only the 16-bit signed mode is ever used for Simon & Scumm
+	 * @param proc		pointer to the callback.
+	 * @param param		an arbitrary parameter which is stored and passed to proc.
+	 * @param format	the sample type format.
+	 */
 	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	
+	/**
+	 * Remove any audio callback previously set via set_sound_proc, thus effectively
+	 * stopping all audio output immediately.
+	 * @see set_sound_proc
+	 */
+	void clear_sound_proc();
+	//@} 
 
 	// Poll cdrom status
 	// Returns true if cd audio is playing
