@@ -597,6 +597,29 @@ protected:
 	void o6_readFilePos();
 };
 
+class ScummEngine_v7he : public ScummEngine_v6he {
+protected:
+	typedef void (ScummEngine_v7he::*OpcodeProcV7he)();
+	struct OpcodeEntryV7he {
+		OpcodeProcV7he proc;
+		const char *desc;
+	};
+	
+	const OpcodeEntryV7he *_opcodesV7he;
+
+public:
+	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6he(detector, syst, gs) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+
+	/* Version 7 script opcodes */
+	void o7_objectX();
+	void o7_objectY();
+};
+
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
 	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6(detector, syst, gs) {}

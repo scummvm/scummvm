@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	scumm/script_v5.o \
 	scumm/script_v6.o \
 	scumm/script_v6he.o \
+	scumm/script_v7he.o \
 	scumm/script_v8.o \
 	scumm/scummvm.o \
 	scumm/sound.o \

@@ -2957,10 +2957,15 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		engine = new ScummEngine_v5(detector, syst, game);
 		break;
 	case 6:
-		if (game.features & GF_HUMONGOUS)
-			engine = new ScummEngine_v6he(detector, syst, game);
-		else
+		if (game.features & GF_HUMONGOUS) {
+			// TODO: probably use another variable with version number
+			if (game.features & GF_AFTER_HEV7)
+				engine = new ScummEngine_v7he(detector, syst, game);
+			else
+				engine = new ScummEngine_v6he(detector, syst, game);
+		} else {
 			engine = new ScummEngine_v6(detector, syst, game);
+		}
 		break;
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game);
