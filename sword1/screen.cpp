@@ -265,6 +265,10 @@ void Screen::newScreen(uint32 screen) {
 		Logic::_scriptVars[SCROLL_OFFSET_X] = 0;
 		Logic::_scriptVars[SCROLL_OFFSET_Y] = 0;
 	}
+	if (_screenBuf)
+		free(_screenBuf);
+	if (_screenGrid)
+		free(_screenGrid);
 	_screenBuf = (uint8*)malloc(_scrnSizeX * _scrnSizeY);
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
 	memset(_screenGrid, 0, _gridSizeX * _gridSizeY);
