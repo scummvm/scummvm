@@ -571,18 +571,18 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 30:
 		// _heversion >= 70
-		_actorClipBottom = pop();
-		_actorClipRight = pop();
-		_actorClipTop = pop();
-		_actorClipLeft = pop();
+		_actorClipOverride.bottom = pop();
+		_actorClipOverride.right = pop();
+		_actorClipOverride.top = pop();
+		_actorClipOverride.left = pop();
 		warning("o6_actorOps: stub case %d", b);
 		break;
 	case 64:
 		// _heversion >= 72
-		_actorClipBottom = pop();
-		_actorClipRight = pop();
-		_actorClipTop = pop();
-		_actorClipLeft = pop();
+		_actorClipOverride.bottom = pop();
+		_actorClipOverride.right = pop();
+		_actorClipOverride.top = pop();
+		_actorClipOverride.left = pop();
 		warning("o6_actorOps: stub case %d", b);
 		break;
 	case 76:		// SO_COSTUME

@@ -849,10 +849,7 @@ public:
 	int16 _queueTalkColor[16];
 	byte _queueTalkString[16][128];
 
-	int _actorClipTop;
-	int _actorClipBottom;
-	int _actorClipLeft;
-	int _actorClipRight;
+	Common::Rect _actorClipOverride;
 
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);

@@ -82,8 +82,12 @@ public:
 	static void initActorClass(ScummEngine *scumm);
 
 public:
+	/** The position of the actor inside the virtual screen. */
 	Common::Point _pos;
+	
+	/** HE specific: This rect is used to clip actor drawing. */
 	Common::Rect clipOverride;
+
 	int offs_x, offs_y;
 	int top, bottom;
 	uint width;

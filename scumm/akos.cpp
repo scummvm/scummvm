@@ -740,14 +740,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.scaleXstep = _mirror ? 1 : -1;
 
 	if (_vm->_heversion >= 71) {
-		if (rect.top < _clipOverride.top)
-			rect.top = _clipOverride.top;
-		if (rect.bottom > _clipOverride.bottom)
-			rect.bottom = _clipOverride.bottom;
-		if (rect.left < _clipOverride.left)
-			rect.left = _clipOverride.left;
-		if (rect.right > _clipOverride.right)
-			rect.right = _clipOverride.right;
+		rect.clip(_clipOverride);
 	}
 
 	if (_actorHitMode) {
@@ -1021,14 +1014,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxh = _outheight;
 
 	if (_vm->_heversion >= 71) {
-		if (clip.top < _clipOverride.top)
-			clip.top = _clipOverride.top;
-		if (clip.bottom > _clipOverride.bottom)
-			clip.bottom = _clipOverride.bottom;
-		if (clip.left < _clipOverride.left)
-			clip.left = _clipOverride.left;
-		if (clip.right > _clipOverride.right)
-			clip.right = _clipOverride.right;
+		clip.clip(_clipOverride);
 	}
 
 	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);

@@ -654,10 +654,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
 
-	_actorClipTop = 0;
-	_actorClipBottom = 479;
-	_actorClipLeft = 0;
-	_actorClipRight = 639;
+	_actorClipOverride.top = 0;
+	_actorClipOverride.bottom = 479;
+	_actorClipOverride.left = 0;
+	_actorClipOverride.right = 639;
 
 	_skipDrawObject = 0;
 	_skipProcessActors = 0;

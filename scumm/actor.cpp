@@ -133,11 +133,8 @@ void Actor::initActor(int mode) {
 	walkScript = 0;
 	talkScript = 0;
 
-	clipOverride.right = _vm->_actorClipRight;
-	clipOverride.left = _vm->_actorClipLeft;
-	clipOverride.top = _vm->_actorClipTop;
-	clipOverride.bottom = _vm->_actorClipBottom;
-	
+	clipOverride = _vm->_actorClipOverride;
+
 	_vm->_classData[number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
 }
 
