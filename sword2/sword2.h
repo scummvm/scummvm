@@ -66,6 +66,7 @@ class Sword2State : public Engine {
 	private:
 		bool _quit;
 		uint32 _bootParam;
+		uint32 _saveSlot;
 };
 
 extern Sword2State *g_sword2;

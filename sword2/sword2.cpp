@@ -108,6 +108,7 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	_gameId = detector->_game.id;
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_bootParam = detector->_bootParam;
+	_saveSlot = detector->_save_slot;
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))
@@ -322,8 +323,10 @@ void Sword2State::go()
 
 //check for restore game on startup - at the mo any passed argument is good enough to trigger this
 	// if	(lpCmdLine[0])	//non zero
-	if (0)
+	if (_saveSlot != -1)
 	{
+		// RestoreGame(_saveSlot); use traditional way for now...
+		
 		Set_mouse(NORMAL_MOUSE_ID);
 
 		if	(!Restore_control())	// restore a game
