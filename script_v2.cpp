@@ -2264,7 +2264,7 @@ void Scumm::o6_miscOps() {
 
 	case 108:
 	case 109:
-		error("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",
+		warning("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",
 			args[1], args[2], args[3], args[4], args[5],
 			0,256);
 		break;
