@@ -2761,8 +2761,15 @@ void Scumm::o5_oldRoomEffect()
 	_opcode = fetchScriptByte();
 	if ((_opcode & 0x1F) == 3) {
 		a = getVarOrDirectWord(0x80);
-	}
-	warning("Unsupported oldRoomEffect");
+		switch(a) {
+			case 4:
+				_fullRedraw =true;
+				break;
+			default:
+				warning("Unsupported oldRoomEffect %d", a);
+				break;
+		}
+	}	
 }
 
 void Scumm::o5_pickupObjectOld()
