@@ -39,7 +39,7 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 
 void SwordMouse::initialize(void) {
 	_numObjs = 0;
-	_mouseStatus = 0; // mouse off and unlocked
+	SwordLogic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
 	_getOff = 0;
 	_specialPtrId = 0;
 	_inTopMenu = false;
@@ -99,7 +99,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 
 	_mouseX = x;
 	_mouseY = y;
-	if (!(_mouseStatus & 1)) {  // no human?
+	if (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
 		// if the mouse is turned off, I want the menu automatically removed,
 		// except while in conversation, while examining a menu object or while combining two menu objects!
 		/*if ((!subject_status)&&(!menu_looking)&&(!second_icon))
@@ -188,7 +188,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 	}
 	_frame = 0;
 
-	if ((resId == 0) || (!(_mouseStatus & 1) && (!_mouseOverride))) {
+	if ((resId == 0) || (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
@@ -206,7 +206,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 
 void SwordMouse::animate(void) {
 	MousePtr *currentPtr;
-	if ((_mouseStatus == 1) || _mouseOverride) {
+	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || _mouseOverride) {
 		if (_specialPtrId)
 			currentPtr = _specialPtr;
 		else
@@ -219,18 +219,17 @@ void SwordMouse::animate(void) {
 }
 
 void SwordMouse::fnNoHuman(void) {
-	if (_mouseStatus & 2) // locked, can't do anything
+	if (SwordLogic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
-	_mouseStatus = 0; // off & unlocked
+	SwordLogic::_scriptVars[MOUSE_STATUS] = 0; // off & unlocked
 	setLuggage(0, 0);
 	setPointer(0, 0);
 }
 
 void SwordMouse::fnAddHuman(void) {
-	if (_mouseStatus & 2) // locked, can't do anything
+	if (SwordLogic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
-	_mouseStatus = 1;
-	// SwordLogic::_scriptVars[SPECIAL_ITEM] = -1;
+	SwordLogic::_scriptVars[MOUSE_STATUS] = 1;
 	SwordLogic::_scriptVars[SPECIAL_ITEM] = 0; // _scriptVars is unsigned...
 	_getOff = SCR_std_off;
 	setPointer(MSE_POINTER, 0);
@@ -247,11 +246,11 @@ void SwordMouse::fnNormalMouse(void) {
 }
 
 void SwordMouse::fnLockMouse(void) {
-	_mouseStatus |= 2;
+	SwordLogic::_scriptVars[MOUSE_STATUS] |= 2;
 }
 
 void SwordMouse::fnUnlockMouse(void) {
-	_mouseStatus &= 1;
+	SwordLogic::_scriptVars[MOUSE_STATUS] &= 1;
 }
 
 void SwordMouse::giveCoords(uint16 *x, uint16 *y) {

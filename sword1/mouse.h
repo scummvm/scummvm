@@ -95,7 +95,7 @@ private:
 	uint16 _mouseX, _mouseY;
 
 	uint32 _currentPtrId, _frame;
-	uint8 _mouseStatus, _mouseCount;
+	uint8 _mouseCount;
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;
