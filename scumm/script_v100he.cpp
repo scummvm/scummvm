@@ -733,17 +733,20 @@ void ScummEngine_v100he::o100_loadSBNG() {
 
 	switch (subOp) {
 	case 0:
-		//_heSBNGId = pop();
+		_heSBNGId = pop();
 		break;
 	case 53:
 		//loadSBNG(_heSBNGId, -1);
 		break;
+	case 92:
+		// dummy case
+		break;
 	case 128:
-		pop();
 		//loadSBNG(_heSBNGId, pop();
+		pop();
 		break;
 	default:
-		warning("o100_loadSBNG: default case %d", subOp);
+		error("o100_loadSBNG: default case %d", subOp);
 	}
 	debug(1,"o100_loadSBNG stub (%d)",subOp);
 }
