@@ -809,7 +809,7 @@ void Scumm::initRoomSubBlocks()
 
 			if (_features & GF_AFTER_V7) {
 				id = READ_LE_UINT16(ptr);
-				checkRange(2050, 2000, id, "Invalid local script %d");
+				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
 			} else {
 				id = ptr[0];
