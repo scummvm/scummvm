@@ -99,10 +99,10 @@ int Scene::IHNMStartProc() {
 		_vm->_scene->queueScene(&IHNM_IntroList[i]);
 	}
 
-	// FIXME: I believe I've found the correct scene, but since we do not
-	// yet support IHNM script loading it won't actually do anything. Also,
-	// it will cause the end titles music to play, which is wrong. (But
-	// hey, it's a nice piece of music!)
+	// FIXME: I suspect the "hate" speech is actually scripted and that we
+	// start at the wrong scene, but the one I think is correct currently
+	// causes ScummVM to crash. Also, the end titles music to plays over
+	// the scene, which is wrong. (But hey, it's a nice piece of music!)
 
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = _vm->getStartSceneNumber();
