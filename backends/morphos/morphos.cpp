@@ -454,7 +454,7 @@ void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
 void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 {
 	ULONG mode = INVALID_ID;
-	int   depths[] = { 8, 15, 16, 24, 32, 0 };
+	int   depths[] = { 8, 15, 16, 32, 0 };
 	int   i;
 	Screen *wb = NULL;
 

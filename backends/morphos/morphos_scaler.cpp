@@ -33,6 +33,7 @@
 #define INTERPOLATE(A, B) (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask))
 #define Q_INTERPOLATE(A, B, C, D) ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2) + ((((A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask)) >> 2) & qlowpixelMask)
 #define SWAP_WORD(word) word = ((word & 0xff) << 8) | (word >> 8)
+#define SWAP_LONG(lng) lng = ((lng & 0xff) << 24) | ((lng & 0xff00) << 8) | ((lng & 0xff0000) >> 8) | (lng >> 24)
 
 MorphOSScaler::GfxScaler MorphOSScaler::ScummScalers[11]
 	=	{ { "none", 	   "normal",	  ST_NONE },
@@ -82,7 +83,8 @@ MorphOSScaler::MorphOSScaler(APTR buffer, int width, int height, ULONG *col_tabl
 
 	ScummPCMode = false;
 	if (pixfmt == PIXFMT_RGB15PC || pixfmt == PIXFMT_BGR15PC ||
-		pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC)
+		pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC ||
+		pixfmt == PIXFMT_BGRA32)
 		ScummPCMode = true;
 	
 	colorMask = (MakeColor(pixfmt, 255, 0, 0) - minr) | (MakeColor(pixfmt, 0, 255, 0) - ming) | (MakeColor(pixfmt, 0, 0, 255) - minb);
@@ -185,25 +187,22 @@ uint32 MorphOSScaler::MakeColor(int pixfmt, int r, int g, int b)
 			col = (((b*31)/255) << 11) | (((g*63)/255) << 5) | ((r*31)/255);
 			break;
 
-		case PIXFMT_RGB24:
 		case PIXFMT_ARGB32:
-			col = (r << 16) | (g << 8) | b;
-			break;
-
-		case PIXFMT_BGR24:
-			col = (b << 16) | (g << 8) | r;
-			break;
-
 		case PIXFMT_BGRA32:
-			col = (b << 24) | (g << 16) | (r << 8);
+			col = (r << 16) | (g << 8) | b;
 			break;
 
 		case PIXFMT_RGBA32:
 			col = (r << 24) | (g << 16) | (b << 8);
 			break;
 
+		case PIXFMT_RGB24:
+		case PIXFMT_BGR24:
+			error("The scaling engines do not support 24 bit modes at the moment");
+			break;
+
 		default:
-			error("Unsupported pixel format: %d. Please contact author at tomjoad@muenster.de.", pixfmt);
+			error("Unsupported pixel format: %d. Please contact author at tomjoad@muenster.de", pixfmt);
 	}
 
 	return col;
@@ -337,6 +336,13 @@ void Super2xSaIScaler::Scale(uint32 src_x, uint32 src_y, uint32 dest_x, uint32 d
 			}
 			else
 			{
+				if (ScummPCMode)
+				{
+					SWAP_LONG(product1a);
+					SWAP_LONG(product1b);
+					SWAP_LONG(product2a);
+					SWAP_LONG(product2b);
+				}
 				*((unsigned long *) (&dst_line[0][x * 8])) = product1a;
 				*((unsigned long *) (&dst_line[0][x * 8 + 4])) = product1b;
 				*((unsigned long *) (&dst_line[1][x * 8])) = product2a;
@@ -559,6 +565,13 @@ void SuperEagleScaler::Scale(uint32 src_x, uint32 src_y, uint32 dest_x, uint32 d
 			}
 			else
 			{
+				if (ScummPCMode)
+				{
+					SWAP_LONG(product1a);
+					SWAP_LONG(product1b);
+					SWAP_LONG(product2a);
+					SWAP_LONG(product2b);
+				}
 				*((unsigned long *) (&dst_line[0][x * 8])) = product1a;
 				*((unsigned long *) (&dst_line[0][x * 8 + 4])) = product1b;
 				*((unsigned long *) (&dst_line[1][x * 8])) = product2a;
@@ -705,6 +718,14 @@ void AdvMame2xScaler::Scale(uint32 src_x, uint32 src_y, uint32 dest_x, uint32 de
 			}
 			else
 			{
+				if (ScummPCMode)
+				{
+					SWAP_LONG(B);
+					SWAP_LONG(D);
+					SWAP_LONG(E);
+					SWAP_LONG(F);
+					SWAP_LONG(H);
+				}
 				*((unsigned long *) (&dst_line[0][x * 8])) = D == B && B != F && D != H ? D : E;
 				*((unsigned long *) (&dst_line[0][x * 8 + 4])) = B == F && B != D && F != H ? F : E;
 				*((unsigned long *) (&dst_line[1][x * 8])) = D == H && D != B && H != F ? D : E;
@@ -761,6 +782,9 @@ void PointScaler::Scale(uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y
 			}
 			else
 			{
+				if (ScummPCMode)
+					SWAP_LONG(color);
+
 				*((unsigned long *) (&dst_line[0][x * 8])) = color;
 				*((unsigned long *) (&dst_line[0][x * 8 + 4])) = color;
 				*((unsigned long *) (&dst_line[1][x * 8])) = color;
