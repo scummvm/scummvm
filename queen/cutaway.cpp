@@ -1352,16 +1352,21 @@ void Cutaway::handleText(
 		flags = 1;
 	}
 
-	BobSlot *bob = 
-		_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
+	if (OBJECT_TYPE_TEXT_SPEAK != type && !_vm->subtitles())
+	{
+		BobSlot *bob = 
+			_vm->graphics()->bob( _vm->logic()->findBob(ABS(object.objectNumber)) );
 
-	_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
+		_vm->graphics()->setBobText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
+	}
 
 	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
 		char voiceFileName[MAX_STRING_SIZE];
 		findCdCut(_basename, index, voiceFileName);
 		strcat(voiceFileName, "1");
-		_vm->sound()->playSfx(voiceFileName);
+
+		if (_vm->sound()->speechOn())
+			_vm->sound()->playSfx(voiceFileName);
 	}
 
 	int i;
@@ -1391,8 +1396,8 @@ int Cutaway::countSpaces(ObjectType type, const char *segment) {
 	while (*segment++)
 		tmp++;
 	
-	if (tmp < 10)
-		tmp = 10;
+	if (tmp < 50)
+		tmp = 50;
 
 	if (OBJECT_TYPE_TEXT_DISPLAY == type)
 		tmp *= 3;
