@@ -1134,7 +1134,7 @@ void IMuseInternal::initMT32 (MidiDriver *midi) {
 	// Display a welcome message on MT-32 displays.
 	memcpy (&buffer[4], "\x20\x00\x00", 3);
 	memcpy (&buffer[7], "                    ", 20);
-	memcpy (&buffer + 7 + (20 - strlen ("ScummVM " SCUMMVM_VERSION)) / 2,
+	memcpy (buffer + 7 + (20 - strlen ("ScummVM " SCUMMVM_VERSION)) / 2,
 	        "ScummVM " SCUMMVM_VERSION,
 	        strlen ("ScummVM " SCUMMVM_VERSION));
 	byte checksum = 0;
