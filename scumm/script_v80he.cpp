@@ -324,7 +324,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_deleteFile),
 		OPCODE(o60_rename),
 		/* E0 */
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknownE0),
 		OPCODE(o72_getPixel),
 		OPCODE(o60_localizeArray),
 		OPCODE(o80_pickVarRandom),
@@ -620,6 +620,34 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	wi.state = 0;
 	wi.flags = 0x40;
 	displayWizImage(&wi);	
+}
+
+void ScummEngine_v80he::o80_unknownE0() {
+	// wizImage related
+	int a, b, c, d, e, f, type = 1;
+
+	a = pop();
+	b = pop();
+	c = pop();
+	d = pop();
+	e = pop();
+	f = pop();
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 55:
+		type = 2;
+		break;
+	case 63:
+		type = 3;
+		break;
+	case 66:
+		type = 1;
+		break;
+	}
+
+	debug(1,"o80_unknownE0 stub: type %d (%d, %d, %d, %d, %d, %d)",subOp, a, b, c, d, e, f);	
 }
 
 void ScummEngine_v80he::o80_pickVarRandom() {
