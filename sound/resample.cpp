@@ -113,7 +113,7 @@ static long SrcEX(resample_t r, long Nx);
 /*
  * Process options
  */
-int st_resample_getopts(eff_t effp, int n, char **argv) {
+int st_resample_getopts(eff_t effp, int n, const char **argv) {
 	resample_t r = (resample_t) effp->priv;
 
 	/* These defaults are conservative with respect to aliasing. */
@@ -262,37 +262,37 @@ int st_resample_start(eff_t effp, st_rate_t inrate, st_rate_t outrate) {
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp) {
+int st_resample_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	resample_t r = (resample_t) effp->priv;
 	long i, k, last;
-	long Nout;		// The number of bytes we effectively output
+	long Nout = 0;	// The number of bytes we effectively output
 	long Nx;		// The number of bytes we will read from input
 	long Nproc;		// The number of bytes we process to generate Nout output bytes
-
 #if 1	// FIXME: Hack to generate stereo output
-	*osamp >>= 1;
+	const long obufSize = *osamp / 2;
+#else
+	const long obufSize = *osamp;
 #endif
 
-	/* constrain amount we actually process */
-	fprintf(stderr,"Xp %d, Xread %d\n",r->Xp, r->Xread);
+	// Constrain amount we actually process
+	//fprintf(stderr,"Xp %d, Xread %d\n",r->Xp, r->Xread);
 
 	// Initially assume we process the full X buffer starting at the filter
 	// start position.
 	Nproc = r->Xsize - r->Xp;
-printf("FOO(1) Nproc %ld\n", Nproc);
 
 	// Nproc is bounded indirectly by the size of output buffer, and also by
 	// the remaining size of the Y buffer (whichever is smaller).
-	i = MIN(r->Ysize - r->Yposition, (long)*osamp);
-	if (Nproc * r->Factor >= i)
-		Nproc = (long)(i / r->Factor);
-
-printf("FOO(2) Nproc %ld\n", Nproc);
+	// We round up for the output buffer, because we want to generate enough
+	// bytes to fill it.
+	i = MIN((long)((r->Ysize - r->Yposition) / r->Factor), (long)ceil((obufSize - r->Yposition) / r->Factor));
+	if (Nproc > i)
+		Nproc = i;
 
 	// Now that we know how many bytes we want to process, we determine
 	// how many bytes to read. We already have Xread bytes in our input
 	// buffer, so we need Nproc - r->Xread more bytes.
-	Nx = Nproc - r->Xread + r->Xoff + r->Xp; // FIXME: Fingolfing thinks this is the correct thing, not what's in the next line!
+	Nx = Nproc - r->Xread + r->Xoff + r->Xp; // FIXME: Fingolfin thinks this is the correct thing, not what's in the next line!
 //	Nx = Nproc - r->Xread; /* space for right-wing future-data */
 	if (Nx <= 0) {
 		st_fail("resample: Can not handle this sample rate change. Nx not positive: %d", Nx);
@@ -324,7 +324,7 @@ printf("FOO(3) Nproc %ld\n", Nproc);
 	}
 	if (r->quadr < 0) { /* exact coeff's method */
 		long creep;
-		Nout = SrcEX(r, Nproc);
+		Nout = SrcEX(r, Nproc) + r->Yposition;
 		fprintf(stderr,"Nproc %d --> %d\n",Nproc,Nout);
 		/* Move converter Nproc samples back in time */
 		r->t -= Nproc * r->b;
@@ -339,7 +339,7 @@ printf("FOO(3) Nproc %ld\n", Nproc);
 		}
 	} else { /* approx coeff's method */
 		long creep;
-		Nout = SrcUD(r, Nproc);
+		Nout = SrcUD(r, Nproc) + r->Yposition;
 		fprintf(stderr,"Nproc %d --> %d\n",Nproc,Nout);
 		/* Move converter Nproc samples back in time */
 		r->Time -= Nproc;
@@ -364,20 +364,31 @@ printf("FOO(3) Nproc %ld\n", Nproc);
 	r->Xread = i;
 	r->Xp = r->Xoff;
 
-printf("osamp = %d, Nout = %ld\n", *osamp, Nout);
-	for (i = 0; i < Nout; i++) {
-		clampedAdd(*obuf++, (int)r->Y[i]);
+printf("osamp = %ld, Nout = %ld\n", obufSize, Nout);
+	long numOutSamples = MIN(obufSize, Nout);
+	for (i = 0; i < numOutSamples; i++) {
+		int sample = (int)(r->Y[i] * vol / 256);
+		clampedAdd(*obuf++, sample);
 #if 1	// FIXME: Hack to generate stereo output
-		clampedAdd(*obuf++, (int)r->Y[i]);
+		clampedAdd(*obuf++, sample);
 #endif
 	}
 
-	// At this point, we used *osamp bytes out of Nout available bytes in the Y buffer.
-	// If there are any bytes remaining, shift them to the start of the buffer,
-	// and update Yposition
-
-
-	*osamp = Nout;
+	// Move down the remaining Y bytes
+	for (i = numOutSamples; i < Nout; i++) {
+		r->Y[i-numOutSamples] = r->Y[i];
+	}
+	if (Nout > numOutSamples)
+		r->Yposition = Nout - numOutSamples;
+	else
+		r->Yposition = 0;
+	
+	// Finally set *osamp to the number of samples we put into the output buffer
+#if 1	// FIXME: Hack to generate stereo output
+	*osamp = numOutSamples * 2;
+#else
+	*osamp = numOutSamples;
+#endif
 
 	return (ST_SUCCESS);
 }
@@ -385,7 +396,7 @@ printf("osamp = %d, Nout = %ld\n", *osamp, Nout);
 /*
  * Process tail of input samples.
  */
-int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp) {
+int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	resample_t r = (resample_t) effp->priv;
 	long isamp_res, osamp_res;
 	st_sample_t *Obuf;
@@ -401,7 +412,7 @@ int st_resample_drain(eff_t effp, st_sample_t *obuf, st_size_t *osamp) {
 		st_sample_t Osamp;
 		Osamp = osamp_res;
 		ZeroInputStream zero(isamp_res);
-		rc = st_resample_flow(effp, zero, Obuf, (st_size_t *) & Osamp);
+		rc = st_resample_flow(effp, zero, Obuf, (st_size_t *) & Osamp, vol);
 		if (rc)
 			return rc;
 		/*fprintf(stderr,"DRAIN isamp,osamp	(%d,%d) -> (%d,%d)\n",

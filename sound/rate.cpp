@@ -55,19 +55,6 @@ typedef struct ratestuff
 } *rate_t;
 
 /*
- * Process options
- */
-int st_rate_getopts(eff_t effp, int n, char **argv)
-{
-	if (n) {
-		st_fail("Rate effect takes no options.");
-		return (ST_EOF);
-	}
-
-	return (ST_SUCCESS);
-}
-
-/*
  * Prepare processing.
  */
 int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
@@ -104,7 +91,7 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp)
+int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
 {
 	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;
@@ -134,10 +121,9 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 		out = ilast + (((icur - ilast) * rate->opos_frac) >> FRAC_BITS);
 
 		/* output sample & increment position */
-
+		out = out * vol / 256;
 		clampedAdd(*obuf++, out);
 		#if 1	// FIXME: Hack to generate stereo output
-
 		clampedAdd(*obuf++, out);
 		#endif
 
@@ -151,14 +137,3 @@ the_end:
 	rate->ilast = ilast;
 	return (ST_SUCCESS);
 }
-
-/*
- * Do anything required when you stop reading samples.	
- * Don't close input file! 
- */
-int st_rate_stop(eff_t effp)
-{
-	/* nothing to do */
-	return (ST_SUCCESS);
-}
-
