@@ -23,7 +23,7 @@
 
 namespace GUI {
 	extern const Graphics::NewFont g_consolefont;
-};
+}
 
 DECLARE_SINGLETON(Graphics::FontManager);
 
