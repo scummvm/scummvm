@@ -62,7 +62,7 @@ cc_check() {
 }
 
 echocheck () {
-	echo -n "Checking for $@... "
+	echo_n "Checking for $@... "
 }
 
 #
@@ -118,6 +118,14 @@ find_sdlconfig()
 	  echo "none found!"
 	  exit 1
 	fi
+}
+
+#
+# Function to provide echo -n for bourne shells that don't have it
+#
+echo_n() 
+{ 
+	printf "$@"
 }
 
 #
@@ -533,7 +541,7 @@ EOF
     #
     # Check whether memory alignment is required
     #
-    echo -n "Alignment required... "
+    echo_n "Alignment required... "
     cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
@@ -763,7 +771,7 @@ if test "$_build_sky" = yes ; then
   echo "    Beneath a Steel Sky"
 fi
 if test "$_build_sword1" = yes ; then
-  echo -n "    Broken Sword I"
+  echo_n "    Broken Sword I"
   if test "$_mpeg2" = yes ; then
 	echo " (w/ mpeg2 cutscenes)"
   else
@@ -771,7 +779,7 @@ if test "$_build_sword1" = yes ; then
   fi
 fi
 if test "$_build_sword2" = yes ; then
-  echo -n "    Broken Sword II"
+  echo_n "    Broken Sword II"
   if test "$_mpeg2" = yes ; then
 	echo " (w/ mpeg2 cutscenes)"
   else
@@ -783,7 +791,7 @@ if test "$_build_queen" = yes ; then
 fi
 echo
 
-echo -n "Backend... "
+echo_n "Backend... "
 echo "$_backend"
 
 #
