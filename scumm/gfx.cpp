@@ -938,6 +938,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	else
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
+	// newer Humongous titles use this
+	if (smap_ptr == NULL)
+		smap_ptr = _vm->findResource(MKID('BMAP'), ptr);
+
 	assert(smap_ptr);
 
 	zplane_list[0] = smap_ptr;
