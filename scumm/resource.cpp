@@ -571,6 +571,11 @@ void ScummEngine::readIndexFile() {
 			readResTypeList(rtImage, MKID('AWIZ'), "images");
 			break;
 			
+		case MKID('DIRT'):
+			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			warning("DIRT index block not yet handled, skipping");
+			break;
+
 		case MKID('DISK'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
 			warning("DISK index block not yet handled, skipping");
@@ -2288,6 +2293,42 @@ void ScummEngine::readMAXS(int blockSize) {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
+	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
+		_numVariables = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // not used in spydemo
+		_fileHandle.readUint16LE(); // _numLocalVariables ?
+		_numLocalObjects = _fileHandle.readUint16LE();
+		_numArray = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // unknown
+		_numFlObject = _fileHandle.readUint16LE();
+		_numInventory = _fileHandle.readUint16LE();
+		_numRooms = _fileHandle.readUint16LE();
+		_numScripts = _fileHandle.readUint16LE();
+		_numSounds = _fileHandle.readUint16LE();
+		_numCharsets = _fileHandle.readUint16LE();
+		_numCostumes = _fileHandle.readUint16LE();
+		_numGlobalObjects = _fileHandle.readUint16LE();
+		_numImages = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // _numLocalScriptOffsets
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // _numTalkie
+
+		/* TODO check these values */
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+
+		_numNewNames = 10;
+		_numRoomVariables = 64;
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
+
+		_numGlobalScripts = 200;
+		_shadowPaletteSize = 256;
+
 	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // not used in spydemo
@@ -2306,7 +2347,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // _numLocalScripts?
+		_fileHandle.readUint16LE(); // _numLocalScriptOffsets
 		_fileHandle.readUint16LE(); // unknown
 
 		/* TODO check these values */
@@ -2320,8 +2361,6 @@ void ScummEngine::readMAXS(int blockSize) {
 
 		_numGlobalScripts = 200;
 		_shadowPaletteSize = 256;
-	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
-		error("MAXS blocks from C++ based games not yet supported");
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)
 				error("MAXS block of size %d not supported, please report", blockSize);
