@@ -1096,6 +1096,8 @@ load_game:
 			runDialog(dialog);
 			delete dialog;
 		}
+		if (success && _saveLoadFlag != 1)
+			clearClickedStatus();
 		_saveLoadFlag = 0;
 		_lastSaveTime = _system->get_msecs();
 	}
