@@ -106,8 +106,8 @@ struct CodeHeader {
 			byte x,y,w,h;
 			byte flags;
 			byte parent;
-			uint16 walk_x;
-			uint16 walk_y;
+			int16 walk_x;
+			int16 walk_y;
 			byte actordir;
 		} GCC_PACK v5;
 
@@ -182,7 +182,7 @@ class ObjectData {
 public:
 	uint32 offs_obim_to_room;
 	uint32 offs_obcd_to_room;
-	uint16 walk_x, walk_y;
+	int16 walk_x, walk_y;
 	uint16 obj_nr;
 	int16 x_pos;
 	int16 y_pos;
