@@ -295,7 +295,7 @@ void Smush::play(const char *filename, const char *directory) {
 	while (!_videoFinished) {
 		
 		if (_updateNeeded) {
-			g_driver->drawSMUSHframe(_width, _height, _dst);
+			g_driver->drawSMUSHframe(_width, _height, _buf);
 			_updateNeeded = false;
 		}
 
