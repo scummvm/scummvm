@@ -84,7 +84,7 @@ void Scumm::initV1MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = 5;
+	v2_mouseover_boxes[kSentenceLine].color = 4;
 	v2_mouseover_boxes[kSentenceLine].hicolor = 7;
 }
 
@@ -101,7 +101,7 @@ void Scumm::initV2MouseOver() {
 		v2_mouseover_boxes[2 * i].rect.top = 34 + 8 * i;
 		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 
-		v2_mouseover_boxes[2 * i].color = 5;
+		v2_mouseover_boxes[2 * i].color = 13;
 		v2_mouseover_boxes[2 * i].hicolor = 14;
 
 
@@ -110,7 +110,7 @@ void Scumm::initV2MouseOver() {
 		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
 		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
 
-		v2_mouseover_boxes[2 * i + 1].color = 5;
+		v2_mouseover_boxes[2 * i + 1].color = 13;
 		v2_mouseover_boxes[2 * i + 1].hicolor = 14;
 	}
 
@@ -139,7 +139,7 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
-	v2_mouseover_boxes[kSentenceLine].color = 5;
+	v2_mouseover_boxes[kSentenceLine].color = 13;
 	v2_mouseover_boxes[kSentenceLine].hicolor = 14;
 }
 

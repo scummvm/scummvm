@@ -982,7 +982,10 @@ void Scumm_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
-	_string[2].color = 5;
+	if(_version == 1)
+		_string[2].color = 13;
+	else
+		_string[2].color = 4;
 
 	sentence[80] = 0;
 	_messagePtr = (byte*)sentence;
