@@ -446,8 +446,8 @@ void Sound::playSound(int soundID) {
 			if ((_scumm->_features & GF_AMIGA) && (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6))) {
 				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
 				// the second check is for simple looped sounds
-					int loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
-					int loopEnd = READ_BE_UINT16(ptr + 14);
+				int loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
+				int loopEnd = READ_BE_UINT16(ptr + 14);
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, soundID, vol, 0, loopStart, loopEnd);
 			} else {
@@ -462,7 +462,7 @@ void Sound::playSound(int soundID) {
 		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
 			size = READ_BE_UINT16(ptr + 6);
 			int start = READ_BE_UINT16(ptr + 8);
-			start +=10;
+			start += 10;
 
 			rate = 11000;
 			if ((READ_BE_UINT16(ptr + 50) == 0x357c) && (ptr[55] == 6))
@@ -473,9 +473,12 @@ void Sound::playSound(int soundID) {
 				vol = READ_BE_UINT16(ptr + 58) * 2;
 
 			sound = (char *)malloc(size);
-			memcpy(sound,ptr + start,size);
+			memcpy(sound, ptr + start, size);
 
 			// Experimental sound looping support
+			// FIXME: Fingolfin says: this makes no sense, folks! "start" is used both as a byte offset,
+			// to determine where in the resource the sound data starts, *and* as a loop start offset.
+			// It's extremely unlikely that this is correct.
 			if (start == 108 || start == 106)
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, soundID, vol, 0,
