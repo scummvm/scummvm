@@ -173,7 +173,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* 70 */
-		OPCODE(o5_lights),
+		OPCODE(o2_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
 		OPCODE(o2_roomOps),
@@ -333,7 +333,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* F0 */
-		OPCODE(o5_lights),
+		OPCODE(o2_lights),
 		OPCODE(o5_getActorCostume),
 		OPCODE(o5_loadRoom),
 		OPCODE(o2_roomOps),
@@ -1214,6 +1214,38 @@ void Scumm_v2::o2_isLessEqual() {
 		o5_jumpRelative();
 }
 
+void Scumm_v2::o2_lights() {
+	warning("o2_lights");
+	int a, b, c;
+
+	a = getVarOrDirectByte(0x80);
+	b = fetchScriptByte();
+	c = fetchScriptByte();
+
+	if (c == 0) {
+		if (_gameId == GID_MANIAC && _version == 1) {
+			// Convert older light mode values into
+			// equivalent values.of later games
+			// 0 Darkness
+			// 1 Flashlight
+			// 2 Lighted area
+			if (a == 2)
+				VAR(VAR_CURRENT_LIGHTS) = 11; 
+			else if (a == 1) 
+				VAR(VAR_CURRENT_LIGHTS) = 4;
+			else if (a == 0)
+				VAR(VAR_CURRENT_LIGHTS) = 0;
+			else
+				warning("o2_lights: light mode  %d unknown", a);
+;		} else
+			VAR(VAR_CURRENT_LIGHTS) = a;
+	} else if (c == 1) {
+		_flashlight.xStrips = a;
+		_flashlight.yStrips = b;
+	}
+	_fullRedraw = 1;
+}
+
 void Scumm_v2::o2_loadRoomWithEgo() {
 	Actor *a;
 	int obj, room, x, y;
@@ -1500,7 +1532,9 @@ void Scumm_v2::o2_getActorWalkBox() {
 }
 
 void Scumm_v2::o2_dummy() {
-	warning("o2_dummy invoked (opcode %d)", _opcode);
+	// Opcode 238 is used in Zak but has no purpose
+	if (!(_gameId == GID_ZAK && _opcode == 238))
+		warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 
 void Scumm_v2::o2_switchCostumeSet() {

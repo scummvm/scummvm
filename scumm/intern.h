@@ -261,6 +261,7 @@ protected:
 	void o2_isGreaterEqual();
 	void o2_isLess();
 	void o2_isLessEqual();
+	void o2_lights();
 	void o2_loadRoomWithEgo();
 	void o2_setBoxFlags();
 	void o2_panCameraTo();
