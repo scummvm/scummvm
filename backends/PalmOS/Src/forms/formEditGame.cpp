@@ -185,7 +185,7 @@ static void OptionsInit(GameInfoType *gameInfoP) {
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsLoadSlotCheckbox), 0);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsStartRoomCheckbox), 0);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsAmigaCheckbox), 0);
-		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsSubtitlesCheckbox), 0);
+		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsSubtitlesCheckbox), 1);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameOptionsTalkSpeedCheckbox), 0);
 	}
 
