@@ -482,7 +482,7 @@ int ScummEngine::readVar(uint var) {
 			}
 		}
 
-		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
+		if ((_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) && var == VAR_NOSUBTITLES) {
 			return !ConfMan.getBool("subtitles");	
 		}
 		
@@ -549,7 +549,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			_scummVars[var] = value;
 
 		// stay in sync with loom cd subtitle var
-		if (_gameId == GID_LOOM256 && var == VAR_NOSUBTITLES) {
+		if ((_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) && var == VAR_NOSUBTITLES) {
 			assert(value == 0 || value == 1);
 			ConfMan.set("subtitles", (value == 0));
 		}
