@@ -34,6 +34,10 @@ protected:
 	T *_data;
 
 public:
+	typedef T *Iterator;
+	typedef const T *ConstIterator;
+
+public:
 	List<T>() : _capacity(0), _size(0), _data(0) {}
 	List<T>(const List<T>& list) : _capacity(0), _size(0), _data(0) {
 		_size = list._size;
@@ -106,6 +110,23 @@ public:
 	
 	bool isEmpty() const { 
 		return (_size == 0);
+	}
+
+
+	Iterator		begin() {
+		return _data;
+	}
+
+	Iterator		end() {
+		return _data + _size;
+	}
+
+	ConstIterator	begin() const {
+		return _data;
+	}
+
+	ConstIterator	end() const {
+		return _data + _size;
 	}
 
 protected:
