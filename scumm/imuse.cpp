@@ -52,7 +52,8 @@ class IMuseDriver;
 struct Part;
 
 struct HookDatas {
-	byte _jump, _transpose;
+	byte _jump[2];
+	byte _transpose;
 	byte _part_onoff[16];
 	byte _part_volume[16];
 	byte _part_program[16];
@@ -1321,7 +1322,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			// Sam & Max: Set hook for a "maybe" jump
 			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 				if (player->_active && player->_id == (uint16)b) {
-					player->_hook._jump = d;
+					player->_hook.set (0, d, 0);
 					return 0;
 				}
 			}
@@ -1557,7 +1558,7 @@ int IMuseInternal::set_volchan_entry(uint a, uint b) {
 int HookDatas::query_param(int param, byte chan) {
 	switch (param) {
 	case 18:
-		return _jump;
+		return _jump[0];
 	case 19:
 		return _transpose;
 	case 20:
@@ -1576,7 +1577,8 @@ int HookDatas::query_param(int param, byte chan) {
 int HookDatas::set(byte cls, byte value, byte chan) {
 	switch (cls) {
 	case 0:
-		_jump = value;
+		_jump[1] = _jump[0];
+		_jump[0] = value;
 		break;
 	case 1:
 		_transpose = value;
@@ -2218,12 +2220,14 @@ void Player::decode_sysex_bytes(byte *src, byte *dst, int len) {
 
 void Player::maybe_jump (byte cmd, uint track, uint beat, uint tick) {
 	// Is this the hook I'm waiting for?
-	if (cmd && _hook._jump != cmd)
+	if (cmd && _hook._jump[0] != cmd)
 		return;
 
 	// Reset hook?
-	if (cmd != 0 && cmd < 0x80)
-		_hook._jump = 0;
+	if (cmd != 0 && cmd < 0x80) {
+		_hook._jump[0] = _hook._jump[1];
+		_hook._jump[1] = 0;
+	}
 
 	jump (track, beat, tick);
 }
@@ -2935,7 +2939,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKLINE(Player, _tick_index, sleUint16, VER_V8),
 		MKLINE(Player, _beat_index, sleUint16, VER_V8),
 		MKLINE(Player, _ticks_per_beat, sleUint16, VER_V8),
-		MKLINE(Player, _hook._jump, sleByte, VER_V8),
+		MKLINE(Player, _hook._jump[0], sleByte, VER_V8),
 		MKLINE(Player, _hook._transpose, sleByte, VER_V8),
 		MKARRAY(Player, _hook._part_onoff[0], sleByte, 16, VER_V8),
 		MKARRAY(Player, _hook._part_volume[0], sleByte, 16, VER_V8),
