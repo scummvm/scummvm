@@ -221,7 +221,7 @@ void luaD_precall (TObject *f, StkId base, int nResults)
     CallInfo *new_ci = (CallInfo *)luaM_malloc(new_ci_size);
     memcpy(new_ci, L->base_ci, L->base_ci_size);
     memset(new_ci + (L->base_ci_size / sizeof(CallInfo)), 0, (new_ci_size) - L->base_ci_size);
-    free(L->base_ci);
+    luaM_free(L->base_ci);
     L->base_ci = new_ci;
     L->base_ci_size = new_ci_size;
     L->ci = L->base_ci + index_ci;
