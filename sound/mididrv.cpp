@@ -1301,7 +1301,7 @@ static int fnums[] = { 0x16b, 0x181, 0x198, 0x1b0, 0x1ca, 0x1e5, 0x202, 0x220, 0
    Copyright (C) 1999-2001 Masanao Izumo <mo@goice.co.jp>
    Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
 */
-float bend_fine[256] = {
+double bend_fine[256] = {
  1.0, 1.0002256593050698, 1.0004513695322617, 1.0006771306930664,
  1.0009029427989777, 1.0011288058614922, 1.0013547198921082, 1.0015806849023274,
  1.0018067009036538, 1.002032767907594, 1.0022588859256572, 1.0024850549693551,
@@ -1368,7 +1368,7 @@ float bend_fine[256] = {
  1.0585073227945128, 1.0587461848213857, 1.058985100749698, 1.0592240705916123
 };
 
-float bend_coarse[128] = {
+double bend_coarse[128] = {
  1.0, 1.0594630943592953, 1.122462048309373, 1.189207115002721,
  1.2599210498948732, 1.3348398541700344, 1.4142135623730951, 1.4983070768766815,
  1.5874010519681994, 1.681792830507429, 1.7817974362806785, 1.8877486253633868,
@@ -1413,10 +1413,10 @@ void MidiDriver_MIDIEMU::midi_fm_playnote(int voice, int note, int volume, int p
 	if (pitchbend != 0) {
 		pitchbend *= 2;
 		if(pitchbend >= 0)
-			pf = bend_fine[(pitchbend>>5) & 0xFF] * bend_coarse[(pitchbend>>13) & 0x7F];
+			pf = (float)(bend_fine[(pitchbend>>5) & 0xFF] * bend_coarse[(pitchbend>>13) & 0x7F]);
 		else {
 			pitchbend = -pitchbend;
-			pf = 1.0 / (bend_fine[(pitchbend>>5) & 0xFF] * bend_coarse[(pitchbend>>13) & 0x7F]);
+			pf = (float)(1.0 / (bend_fine[(pitchbend>>5) & 0xFF] * bend_coarse[(pitchbend>>13) & 0x7F]));
 		}
 		freq = (int) ((float) freq * pf);
 	  
