@@ -679,6 +679,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
+	_WizNumPolygons = 200; // Used as constant in original
+	_WizPolygons = NULL;
 
 	_actorClipOverride.top = 0;
 	_actorClipOverride.bottom = 479;
@@ -1390,6 +1392,13 @@ void ScummEngine::scummInit() {
 	// all keys are released
 	for (i = 0; i < 512; i++)
 		_keyDownMap[i] = false;
+
+	if (_heversion >= 70) {
+		if (_WizPolygons)
+			free (_WizPolygons);
+
+		_WizPolygons = (WizPolygon *)calloc(_WizNumPolygons, sizeof(WizPolygon));
+	}
 
 	initScummVars();
 

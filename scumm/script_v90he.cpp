@@ -358,9 +358,9 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_unknownF8),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
-		OPCODE(o7_unknownFB),
+		OPCODE(o7_polygonOps),
 		/* FC */
-		OPCODE(o7_unknownFC),
+		OPCODE(o7_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),

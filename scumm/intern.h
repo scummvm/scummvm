@@ -620,6 +620,12 @@ protected:
 	int getCharsetOffsets(int chr);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
+	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, 
+					  int vert3x, int vert3y, int vert4x, int vert4y);
+	void polygonErase(int fromId, int toId);
+	bool polygonContains(WizPolygon &pol, int x, int y);
+
+
 	/* HE version 70 script opcodes */
 	void o7_cursorCommand();
 	void o7_startSound();
@@ -637,8 +643,8 @@ protected:
 	void o7_unknownF6();
 	void o7_setFilePath();
 	void o7_unknownFA();
-	void o7_unknownFB();
-	void o7_unknownFC();
+	void o7_polygonOps();
+	void o7_polygonHit();
 };
 
 class ScummEngine_v72he : public ScummEngine_v7he {
@@ -786,7 +792,6 @@ protected:
 
 	void loadImgSpot(int resId, int state, Common::Point &spot);
 	void loadWizCursor(int resId, int resType, bool state);
-
 	
 	/* HE version 80 script opcodes */
 	void o80_unknown45();

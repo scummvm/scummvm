@@ -320,6 +320,14 @@ struct LangIndexNode {
 	int32 offset;
 };
 
+struct WizPolygon {
+	Common::Point vert[5];
+	Common::Rect bound;
+	int id;
+	int numVerts;
+	bool flag;
+};
+
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
@@ -651,6 +659,8 @@ protected:
 	uint32 *_HEV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
+	int _WizNumPolygons;
+	WizPolygon *_WizPolygons;
 
 	void allocateArrays();
 	void openRoom(int room);

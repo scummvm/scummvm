@@ -359,9 +359,9 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o7_setFilePath),
 		OPCODE(o7_unknownFA),
-		OPCODE(o7_unknownFB),
+		OPCODE(o7_polygonOps),
 		/* FC */
-		OPCODE(o7_unknownFC),
+		OPCODE(o7_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1001,54 +1001,126 @@ void ScummEngine_v7he::o7_unknownFA() {
 	_scriptPointer += len + 1;
 }
 
-void ScummEngine_v7he::o7_unknownFB() {
-	int a, b, c, d, e, f, g, h, i;
-	byte subOp = fetchScriptByte();
+void ScummEngine_v7he::o7_polygonOps() {
+	byte b;
+	b = fetchScriptByte();
+	int vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
+	int id;
+	int fromId, toId;
 
-	switch (subOp) {
+	switch (b) {
 	case 246:
-		a = pop();
-		b = pop();
-		c = pop();
-		d = pop();
-		e = pop();
-		f = pop();
-		g = pop();
-		h = pop();
-		i = pop();
-		debug(1,"o7_unknownFB case 246 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, f, g, h, i);
+	case 248:
+		vert4y = pop();
+		vert4x = pop();
+		vert3y = pop();
+		vert3x = pop();
+		vert2y = pop();
+		vert2x = pop();
+		vert1y = pop();
+		vert1x = pop();
+		id = pop();
+
+		polygonStore(id, (b == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
+					 vert4x, vert4y);
 		break;
 	case 247:
-		a = pop();
-		b = pop();
-		debug(1,"o7_unknownFB case 247 stub (%d, %d)", a, b);
+		toId = pop();
+		fromId = pop();
+
+		polygonErase(fromId, toId);
 		break;
-	case 248:
-		a = pop();
-		b = pop();
-		c = pop();
-		d = pop();
-		e = pop();
-		f = pop();
-		g = pop();
-		h = pop();
-		i = pop();
-		debug(1,"o7_unknownFB case 248 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, f, g, h, i);
-		break;
-	default:
-		error("o7_unknownFB: default case %d", subOp);
 	}
 }
 
-void ScummEngine_v7he::o7_unknownFC() {
+void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, 
+							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
+	int i;
+
+	debug(1, "polygonStore(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d", id, flag, vert1x,
+		  vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+
+	for (i = 0; i < _WizNumPolygons; i++)
+		if (_WizPolygons[i].id == 0)
+			break;
+	
+	if (i == _WizNumPolygons) {
+		error("ScummEngine_v7he::polygonStore: out of polygon slot, max = %d", 
+			  _WizNumPolygons);
+	}
+
+	_WizPolygons[i].vert[0].x = vert1x;
+	_WizPolygons[i].vert[0].y = vert1y;
+	_WizPolygons[i].vert[1].x = vert2x;
+	_WizPolygons[i].vert[1].y = vert2y;
+	_WizPolygons[i].vert[2].x = vert3x;
+	_WizPolygons[i].vert[2].y = vert3y;
+	_WizPolygons[i].vert[3].x = vert4x;
+	_WizPolygons[i].vert[3].y = vert4y;
+	_WizPolygons[i].vert[4].x = vert1x;
+	_WizPolygons[i].vert[4].y = vert1y;
+	_WizPolygons[i].id = id;
+	_WizPolygons[i].flag = flag;
+
+	_WizPolygons[i].bound.left = 10000;
+	_WizPolygons[i].bound.top = 10000;
+	_WizPolygons[i].bound.right = -10000;
+	_WizPolygons[i].bound.bottom = -10000;
+
+	for (int j = 0; j < 4; j++) {
+		_WizPolygons[i].bound.left = MIN(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
+		_WizPolygons[i].bound.top = MIN(_WizPolygons[i].bound.top, _WizPolygons[i].vert[j].y);
+		_WizPolygons[i].bound.right = MAX(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
+		_WizPolygons[i].bound.bottom = MAX(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].y);
+	}
+}
+
+void ScummEngine_v7he::polygonErase(int fromId, int toId) {
+	for (int i = 0; i < _WizNumPolygons; i++) {
+		if (_WizPolygons[i].id >= fromId && _WizPolygons[i].id <= toId)
+			memset(&_WizPolygons[i], 0, sizeof(WizPolygon));
+	}
+}
+
+void ScummEngine_v7he::o7_polygonHit() {
 	// Checks virtual mouse x/y co-ordinates when in verb/inventory area
 	// Maybe checks for polygons ?
 	int y = pop();
 	int x = pop();
 
-	int r = findObject(x, y);
-	push(r);
-	debug(1,"o7_unknownFC (x %d, y %d) stub", x, y);
+	debug(1, "o7_polygonHit(%d, %d)", x, y);
+
+	for (int i = 0; i < _WizNumPolygons; i++) {
+		if (_WizPolygons[i].bound.contains(x, y)) {
+			if (polygonContains(_WizPolygons[i], x, y)) {
+				push(_WizPolygons[i].id);
+				return;
+			}
+		}
+	}
+
+	push(0);
+}
+
+bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
+	int pi = pol.numVerts - 1;
+	bool diry = (y < pol.vert[pi].y);
+	bool curdir;
+	bool r = false;
+
+	for (int i = 0; i < pol.numVerts; i++) {
+		curdir = (y <= pol.vert[i].y);
+
+		if (curdir != diry) {
+			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <=
+				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[pi].y - y)) == diry)
+				r = r ? false : true;
+		}
+
+		pi = i;
+		diry = curdir;
+	}
+	return r;
 }
 
 } // End of namespace Scumm
