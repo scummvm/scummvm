@@ -38,9 +38,9 @@ void ScummEngine_v90he::allocateArrays() {
 //
 // spriteInfoGet functions
 //
-int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args) {
-	int code, classId;
-	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x, y, spriteGroupId, d, num);
+int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int d, int num, int *args) {
+	int code, classId, x, y;
+	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x_pos, y_pos, spriteGroupId, d, num);
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
@@ -68,13 +68,13 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				continue;
 			if (spi->bbox.top > spi->bbox.bottom)
 				continue;
-			if (spi->bbox.left > x)
+			if (spi->bbox.left > x_pos)
 				continue;
-			if (spi->bbox.top > y)
+			if (spi->bbox.top > y_pos)
 				continue;
-			if (spi->bbox.right < x)
+			if (spi->bbox.right < x_pos)
 				continue;
-			if (spi->bbox.bottom < y)
+			if (spi->bbox.bottom < y_pos)
 				continue;
 			return spi->id;
 		} else {
@@ -88,8 +88,8 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				state = getWizImageStates(spi->field_80);
 				state /= spi->cur_img_state;
 
-				x -= spi->pos.x;
-				y -= spi->pos.y;
+				x = x_pos - spi->pos.x;
+				y = y_pos - spi->pos.y;
 
 				loadImgSpot(spi->cur_res_id, state, x1, y1);
 				loadImgSpot(spi->field_80, state, x2, y2);
@@ -101,17 +101,17 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 					continue;
 				if (spi->bbox.top > spi->bbox.bottom)
 					continue;
-				if (spi->bbox.left > x)
+				if (spi->bbox.left > x_pos)
 					continue;
-				if (spi->bbox.top > y)
+				if (spi->bbox.top > y_pos)
 					continue;
-				if (spi->bbox.right < x)
+				if (spi->bbox.right < x_pos)
 					continue;
-				if (spi->bbox.bottom < y)
+				if (spi->bbox.bottom < y_pos)
 					continue;
 
-				x -= spi->pos.x;
-				y -= spi->pos.y;
+				x = x_pos - spi->pos.x;
+				y = y_pos - spi->pos.y;
 				state = spi->cur_img_state;
 			}
 
