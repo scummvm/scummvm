@@ -68,6 +68,16 @@ protected:
 	typedef ScummVM::String String;
 
 public:
+
+	/*
+	 * Flag to tell listDir() which kind of files to list.
+	 */
+	typedef enum {
+		kListFilesOnly = 1,
+		kListDirectoriesOnly = 2,
+		kListAll = 3
+	} ListMode;
+
 	/*
 	 * The starting point for any file system browsing. Returns a special node
 	 * representing the FS root.
@@ -110,7 +120,7 @@ public:
 	 * List the content of this directory node.
 	 * If this node is not a directory, throw an exception or call error().
 	 */
-	virtual FSList *listDir() const = 0;
+	virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const = 0;
 
 	/*
 	 * The parent node of this directory.

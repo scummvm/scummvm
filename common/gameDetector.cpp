@@ -441,20 +441,18 @@ const VersionSettings version_settings[] = {
 
 	/* Scumm Version 2 */
 //      {"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
-//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE |
-//      GF_NO_SCALLING},
+//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIACEX.EXE"},
 //      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
-//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE |
-//      GF_NO_SCALLING},
+//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "ZAKEXE.EXE"},
 //      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
 
 	/* Scumm Version 3 */
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_NO_SCALLING | GF_ADLIB_DEFAULT},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_NO_SCALLING | GF_ADLIB_DEFAULT, "INDYVGA.EXE"},
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, 0, 0,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_AUDIOTRACKS | GF_NO_SCALLING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_AUDIOTRACKS | GF_NO_SCALLING, "ZAK.EXP"},
 	{"loom", "Loom", GID_LOOM, 3, 5, 40,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR | GF_NO_SCALLING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR | GF_NO_SCALLING, "LOOM.EXE"},
 
 	/* Scumm Version 4 */
 	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 67,
@@ -519,6 +517,7 @@ const VersionSettings version_settings[] = {
 
 	{NULL, NULL}
 };
+
 
 bool GameDetector::detectGame()
 {

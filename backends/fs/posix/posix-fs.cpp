@@ -50,7 +50,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
-	virtual FSList *listDir() const;
+	virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const;
 	virtual FilesystemNode *parent() const;
 	virtual FilesystemNode *clone() const { return new POSIXFilesystemNode(this); }
 };
@@ -85,7 +85,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const POSIXFilesystemNode *node) {
 	_path = node->_path;
 }
 
-FSList *POSIXFilesystemNode::listDir() const {
+FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
 	struct stat st;
@@ -109,8 +109,10 @@ FSList *POSIXFilesystemNode::listDir() const {
 			continue;
 		entry._isDirectory = S_ISDIR(st.st_mode);
 
-		// FIXME - skip any non-directories for now
-		if (!entry._isDirectory) continue;
+		// Honor the chosen mode
+		if ((mode == kListFilesOnly && entry._isDirectory) ||
+			(mode == kListDirectoriesOnly && !entry._isDirectory))
+			continue;
 
 		if (entry._isDirectory)
 			entry._path += "/";

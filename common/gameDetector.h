@@ -88,6 +88,7 @@ struct VersionSettings {
 	const char *gamename;
 	byte id, major, middle, minor;
 	uint32 features;
+	const char *detectname;
 };
 
 extern const VersionSettings version_settings[];

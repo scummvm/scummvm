@@ -36,16 +36,20 @@ class BrowserDialog : public Dialog {
 	typedef ScummVM::StringList StringList;
 public:
 	BrowserDialog(NewGui *gui);
+	virtual ~BrowserDialog();
 
 	virtual void open();
 	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	
+	FilesystemNode	*getResult()	{ return _choice; };
 
 protected:
 	ListWidget		*_fileList;
 	StaticTextWidget*_currentPath;
 	FilesystemNode	*_node;
 	FSList			*_nodeContent;
+	FilesystemNode	*_choice;
 	
 	void updateListing();
 };

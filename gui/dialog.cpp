@@ -58,14 +58,15 @@ int Dialog::runModal()
 	// Start processing events
 	_gui->runLoop();
 	
-	// FIXME - for now always return 0....
-	return 0;
+	// Return the result code
+	return _result;
 }
 
 void Dialog::open()
 {
 	Widget *w = _firstWidget;
 	
+	_result = 0;
 	_visible = true;
 	_gui->openDialog(this);
 	

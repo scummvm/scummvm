@@ -45,6 +45,9 @@ protected:
 	Widget  *_focusedWidget;
 	bool	_visible;
 
+private:
+	int		_result;
+	
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
 		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
@@ -62,7 +65,7 @@ public:
 protected:
 	virtual void open();
 	virtual void close();
-
+	
 	virtual void draw();
 	virtual void drawDialog();
 
@@ -79,6 +82,8 @@ protected:
 
 	ButtonWidget* addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
 	PushButtonWidget* addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
+
+	void setResult(int result) { _result = result; }
 };
 
 #endif

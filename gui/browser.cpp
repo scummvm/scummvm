@@ -58,6 +58,13 @@ BrowserDialog::BrowserDialog(NewGui *gui)
 	addButton(_w-(kButtonWidth+10), _h-24, "Choose", kChooseCmd, 0);
 }
 
+BrowserDialog::~BrowserDialog()
+{
+	delete _node;
+	delete _nodeContent;
+	delete _choice;
+}
+
 void BrowserDialog::open()
 {
 	// If no node has been set, or the last used one is now invalid,
@@ -71,6 +78,10 @@ void BrowserDialog::open()
 	// Alway refresh file list
 	updateListing();
 
+	// Nothing chosen by default
+	delete _choice;
+	_choice = 0;
+	
 	// Call super implementation
 	Dialog::open();
 }
@@ -92,11 +103,18 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	FilesystemNode *tmp;
 	
 	switch (cmd) {
-	case kChooseCmd:
-		// If nothing is selected in the list widget, choose the current dir.
-		// Else, choose the dir that is selected.
-		// TODO
-		close();
+	case kChooseCmd: {
+			// If nothing is selected in the list widget, choose the current dir.
+			// Else, choose the dir that is selected.
+			int selection = _fileList->getSelected();
+			if (selection >= 0) {
+				_choice = (*_nodeContent)[selection].clone();
+			} else {
+				_choice = _node->clone();
+			}
+			setResult(1);
+			close();
+		}
 		break;
 	case kGoUpCmd:
 		tmp = _node->parent();

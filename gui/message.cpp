@@ -23,44 +23,6 @@
 #include "newgui.h"
 
 
-int MessageDialog::addLine(const char *line, int size)
-{
-	int width = 0, maxWidth = 0;
-	const char *start = line;
-	String tmp;
-
-	for (int i = 0; i < size; ++i) {
-		int w = _gui->getCharWidth(*line);
-
-		// Check if we exceed the maximum line width, if so, split the line
-		// TODO - we could make this more clever by trying to split at
-		// non-letters, e.g. at space/slash/dot
-		if (width + w > 280) {
-			if (maxWidth < width)
-				maxWidth = width;
-			
-			// Add the substring from intervall [start, i-1]
-			tmp = String(start, line - start);
-			_lines.push_back(tmp);
-			
-			start = line;
-			width = w;
-		} else
-			width += w;
-		
-		line++;
-	}
-
-	if (maxWidth < width)
-		maxWidth = width;
-
-	if (start < line) {
-		tmp = String(start, line - start);
-		_lines.push_back(tmp);
-	}
-	return maxWidth;
-}
-
 MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	: Dialog(gui, 30, 20, 260, 124)
 {
@@ -107,3 +69,42 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	// was selected.
 	addButton((_w - kButtonWidth)/2, _h - 24, "OK", kCloseCmd, '\n');	// Confirm dialog
 }
+
+int MessageDialog::addLine(const char *line, int size)
+{
+	int width = 0, maxWidth = 0;
+	const char *start = line;
+	String tmp;
+
+	for (int i = 0; i < size; ++i) {
+		int w = _gui->getCharWidth(*line);
+
+		// Check if we exceed the maximum line width, if so, split the line
+		// TODO - we could make this more clever by trying to split at
+		// non-letters, e.g. at space/slash/dot
+		if (width + w > 280) {
+			if (maxWidth < width)
+				maxWidth = width;
+			
+			// Add the substring from intervall [start, i-1]
+			tmp = String(start, line - start);
+			_lines.push_back(tmp);
+			
+			start = line;
+			width = w;
+		} else
+			width += w;
+		
+		line++;
+	}
+
+	if (maxWidth < width)
+		maxWidth = width;
+
+	if (start < line) {
+		tmp = String(start, line - start);
+		_lines.push_back(tmp);
+	}
+	return maxWidth;
+}
+

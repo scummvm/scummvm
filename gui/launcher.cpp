@@ -24,9 +24,11 @@
 #include "newgui.h"
 #include "ListWidget.h"
 
+#include "backends/fs/fs.h"
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
+
 
 enum {
 	kStartCmd = 'STRT',
@@ -118,6 +120,74 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	bw->setEnabled(false);
 }
 
+bool findGame(FilesystemNode *dir)
+{
+	/*
+	atlantis -> ATLANTIS.000
+	dig -> dig.la0
+	ft -> ft.la0
+	indy3 -> 00.LFL, ???
+	indy3vga -> 00.LFL, INDYVGA.EXE
+	loom -> 00.LFL, LOOMEXE.EXE
+	loomcd -> 000.LFL, LOOM.EXE
+	maniac -> 00.LFL, MANIACEX.EXE
+	monkey -> monkey.000
+	monkey2 -> monkey2.000
+	monkeyvga -> 000.LFL, MONKEY.EXE
+	samnmax -> samnmax.000
+	tentacle -> tentacle.000
+	zak -> 00.LFL, zakexe.exe
+	zak256 -> 00.LFL, ZAK.EXP
+	*/
+	
+	// TODO - this doesn't deal with Simon games at all yet!
+	// We may have to offer a choice dialog between win/dos/talkie versions...
+	
+	// TODO - if we can't decide which game this supposedly is, we should ask the user.
+	// We simply can't autodetect all games, e.g. for old games (with 00.LFL), it is
+	// hard to distinguish them based on file names alone. We do luck for .exe files
+	// but those could be deleted by the user, or for the Amiga/Mac/... versions
+	// may not be present at all.
+	// Or maybe somebody has a better idea? Is there a reliable way to tell from
+	// the XX.lfl files which game we are dealing with (taking into account that
+	// for most of the games many variations exist, so we can't just hard code expected
+	// file sizes or checksums).
+	
+//	ScummVM::Map<String, FilesystemNode *file> map;
+
+	FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
+	int size = files->size();
+	for (int i = 0; i < size; i++) {
+		const char *filename = (*files)[i].displayName().c_str();
+		//printf("%2d. %s\n", i, filename);
+		
+		// Check if there is any game matching this file
+		const VersionSettings *v = version_settings;
+		while (v->filename && v->gamename) {
+			char detectName[256];
+			if (v->detectname)
+				strcpy(detectName, v->detectname);
+			else {
+				strcpy(detectName, v->filename);
+				if (v->features & GF_AFTER_V7)
+					strcat(detectName, ".la0");
+				else if (v->features & GF_HUMONGOUS)
+					strcat(detectName, ".he0");
+				else
+					strcat(detectName, ".000");
+			}
+			if (0 == scumm_stricmp(detectName, filename)) {
+				printf("Match found, apparently this is '%s'\n", v->gamename);
+				return true;
+			}
+			v++;
+		}
+	}
+	
+	printf("Unable to autodetect a game in %s\n", dir->displayName().c_str());
+	return false;
+}
+
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	int item;
@@ -132,7 +202,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// which choices are possible. E.g. if we don't find atlantis.000 in that
 		// directory, then it's not FOA etc.
 		BrowserDialog *browser = new BrowserDialog(_gui);
-		browser->runModal();
+		if (browser->runModal()) {
+			// User did make a choice...
+			FilesystemNode *dir = browser->getResult();
+			
+			// ...so let's examine it and try to figure out which game it is
+			findGame(dir);
+		}
 		delete browser;
 		}
 		break;
