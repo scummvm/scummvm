@@ -73,16 +73,16 @@ void SwordSound::engine(void) {
 			break;
 	}
 	// now process the queue
-	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++) {
-		if (_fxQueue[cnt].delay > 0) {
-			_fxQueue[cnt].delay--;
-			if (_fxQueue[cnt].delay == 0)
-				playSample(&_fxQueue[cnt]);
+	for (uint8 cnt2 = 0; cnt2 < _endOfQueue; cnt2++) {
+		if (_fxQueue[cnt2].delay > 0) {
+			_fxQueue[cnt2].delay--;
+			if (_fxQueue[cnt2].delay == 0)
+				playSample(&_fxQueue[cnt2]);
 		} else {
-			if (!_fxQueue[cnt].handle) { // sound finished
-				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
-				if (cnt != _endOfQueue-1)
-					_fxQueue[cnt] = _fxQueue[_endOfQueue - 1];
+			if (!_fxQueue[cnt2].handle) { // sound finished
+				_resMan->resClose(_fxList[_fxQueue[cnt2].id].sampleId);
+				if (cnt2 != _endOfQueue-1)
+					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
 				_endOfQueue--;
 			}
 		}

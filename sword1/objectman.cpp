@@ -32,7 +32,8 @@ ObjectMan::ObjectMan(ResMan *pResourceMan) {
 }
 
 void ObjectMan::initialize(void) {
-	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
+	uint16 cnt;
+	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		_liveList[cnt] = 0; // we don't need to close the files here. When this routine is
 							// called, the memory was flushed() anyways, so these resources
 							// already *are* closed.
@@ -40,7 +41,7 @@ void ObjectMan::initialize(void) {
 	_liveList[128] = _liveList[129] = _liveList[130] = _liveList[131] = _liveList[133] =
 		_liveList[134] = _liveList[145] = _liveList[146] = _liveList[TEXT_sect] = 1;
 	
-	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++) {
+	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++) {
 		if (_liveList[cnt])
 			_cptData[cnt] = (uint8*)_resMan->cptResOpen(_objectList[cnt]) + sizeof(Header);
 		else

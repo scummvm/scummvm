@@ -76,7 +76,8 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 	uint16 numLines = analyzeSentence(text, maxWidth, lines);
 	
 	uint16 sprWidth = 0;
-	for (uint16 lineCnt = 0; lineCnt < numLines; lineCnt++)
+	uint16 lineCnt;
+	for (lineCnt = 0; lineCnt < numLines; lineCnt++)
 		if (lines[lineCnt].width > sprWidth)
 			sprWidth = lines[lineCnt].width;
 	uint16 sprHeight = _charHeight * numLines;
@@ -93,7 +94,7 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 
 	uint8 *linePtr = ((uint8*)_textBlocks[slot]) + sizeof(FrameHeader);
 	memset(linePtr, NO_COL, sprSize);
-	for (uint16 lineCnt = 0; lineCnt < numLines; lineCnt++) {
+	for (lineCnt = 0; lineCnt < numLines; lineCnt++) {
 		uint8 *sprPtr = linePtr + (sprWidth - lines[lineCnt].width) / 2; // center the text
 		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++)
 			sprPtr += copyChar(*text++, sprPtr, sprWidth, pen) - OVERLAP;

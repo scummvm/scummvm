@@ -531,6 +531,7 @@ void SwordControl::renderText(const char *str, int16 x, uint16 y) {
 // I can hardly believe this is all it takes for loading and saving...
 void SwordControl::saveGameToFile(uint8 slot) {
 	char fName[15];
+	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
 	SaveFileManager *mgr = _system->get_savefile_manager();
@@ -540,7 +541,7 @@ void SwordControl::saveGameToFile(uint8 slot) {
 		error("unable to create file %s", fName);
 
 	_objMan->saveLiveList(liveBuf);
-	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
+	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		outf->writeUint16LE(liveBuf[cnt]);
 
 	BsObject *cpt = _objMan->fetchObject(PLAYER);
@@ -550,19 +551,20 @@ void SwordControl::saveGameToFile(uint8 slot) {
 	SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;
 	SwordLogic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
 
-	for (uint16 cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
+	for (cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
 		outf->writeUint32LE(SwordLogic::_scriptVars[cnt]);
 
 	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
 	uint32 *playerRaw = (uint32*)cpt;
-	for (uint32 cnt = 0; cnt < playerSize; cnt++)
-		outf->writeUint32LE(playerRaw[cnt]);
+	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
+		outf->writeUint32LE(playerRaw[cnt2]);
 	delete outf;
 	delete mgr;
 }
 
 void SwordControl::restoreGameFromFile(uint8 slot) {
 	char fName[15];
+	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
@@ -579,15 +581,15 @@ void SwordControl::restoreGameFromFile(uint8 slot) {
 	uint32 *scriptBuf = (uint32*)(_restoreBuf + 2 * TOTAL_SECTIONS);
 	uint32 *playerBuf = (uint32*)(_restoreBuf + 2 * TOTAL_SECTIONS + 4 * NUM_SCRIPT_VARS);
 
-	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
+	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		liveBuf[cnt] = inf->readUint16LE();
 	
-	for (uint16 cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
+	for (cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
 		scriptBuf[cnt] = inf->readUint32LE();
 
 	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
-	for (uint32 cnt = 0; cnt < playerSize; cnt++)
-		playerBuf[cnt] = inf->readUint32LE();
+	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
+		playerBuf[cnt2] = inf->readUint32LE();
 
 	delete inf;
 	delete mgr;
@@ -604,7 +606,7 @@ void SwordControl::doRestore(void) {
 	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
 	uint32 *playerRaw = (uint32*)_objMan->fetchObject(PLAYER);
 	BsObject *cpt = _objMan->fetchObject(PLAYER);
-	for (uint32 cnt = 0; cnt < playerSize; cnt++) {
+	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++) {
 		*playerRaw = *(uint32*)bufPos;
 		playerRaw++;
 		bufPos += 4;

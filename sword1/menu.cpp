@@ -87,15 +87,16 @@ void SwordMenuIcon::draw(const byte *fadeMask, int8 fadeStatus) {
 }
 
 SwordMenu::SwordMenu(SwordScreen *pScreen, SwordMouse *pMouse) {
+	uint8 cnt;
 	_screen = pScreen;
 	_mouse = pMouse;
 	_subjectBarStatus = MENU_CLOSED;
 	_objectBarStatus = MENU_CLOSED;
 	_fadeSubject = 0;
 	_fadeObject = 0;
-	for (uint8 cnt = 0; cnt < TOTAL_subjects; cnt++)
+	for (cnt = 0; cnt < TOTAL_subjects; cnt++)
 		_subjects[cnt] = NULL;
-	for (uint8 cnt = 0; cnt < TOTAL_pockets; cnt++)
+	for (cnt = 0; cnt < TOTAL_pockets; cnt++)
 		_objects[cnt] = NULL;
 	_inMenu = 0;
 }
@@ -170,12 +171,13 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 }
 
 void SwordMenu::buildSubjects(void) {
-	for (uint8 cnt = 0; cnt < 16; cnt++)
+	uint8 cnt;
+	for (cnt = 0; cnt < 16; cnt++)
 		if (_subjects[cnt]) {
 			delete _subjects[cnt];
 			_subjects[cnt] = NULL;
 		}
-	for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+	for (cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
 		uint32 res = _subjectList[(_subjectBar[cnt] & 65535) - BASE_SUBJECT].subjectRes;
 		uint32 frame = _subjectList[(_subjectBar[cnt] & 65535) - BASE_SUBJECT].frameNo;
 		_subjects[cnt] = new SwordMenuIcon(MENU_BOT, cnt, res, frame, _screen);

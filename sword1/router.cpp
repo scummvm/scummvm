@@ -2314,6 +2314,9 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	int32		walkGridResourceId;
 	BsObject *floorObject;
 
+	int32  cnt;
+	uint32 cntu;
+
 
 
 	// load in floor grid for current mega
@@ -2356,7 +2359,7 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
  	/*memmove(&bars[0],fPolygrid,nbars*sizeof(BarData));
 	fPolygrid += nbars*sizeof(BarData);//move pointer to start of node data*/
-	for (int32 cnt = 0; cnt < nbars; cnt++) {
+	for (cnt = 0; cnt < nbars; cnt++) {
 		bars[cnt].x1   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
 		bars[cnt].y1   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
 		bars[cnt].x2   = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
@@ -2378,7 +2381,7 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 		j ++;
 	}
 	while(j < nnodes);//array starts at 0*/
-	for (int32 cnt = 1; cnt < nnodes; cnt++) {
+	for (cnt = 1; cnt < nnodes; cnt++) {
 		node[cnt].x = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
 		node[cnt].y = READ_LE_UINT16(fPolygrid); fPolygrid += 2;
 	}
@@ -2433,11 +2436,11 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	nTurnFrames = fMegaWalkData[1];
  	fMegaWalkData += 2;
 
-	for (int32 cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
+	for (cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
 		_dx[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
-	for (int32 cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
+	for (cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
 		_dy[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
@@ -2446,12 +2449,12 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
  	memmove(&_dy[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
  	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);*/
 
-	for (uint32 cnt = 0; cnt < NO_DIRECTIONS; cnt++) {
-		modX[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+	for (cntu = 0; cntu < NO_DIRECTIONS; cntu++) {
+		modX[cntu] = (int32)READ_LE_UINT32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
-	for (uint32 cnt = 0; cnt < NO_DIRECTIONS; cnt++) {
-		modY[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+	for (cntu = 0; cntu < NO_DIRECTIONS; cntu++) {
+		modY[cntu] = (int32)READ_LE_UINT32(fMegaWalkData);
 		fMegaWalkData += 4;
 	}
  	/*memmove(&modX[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
