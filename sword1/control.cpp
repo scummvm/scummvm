@@ -165,7 +165,7 @@ Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjM
 	_music = pMusic;
 	_sound = pSound;
 	strcpy(_savePath, savePath);
-	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
+	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 }
 
 void Control::askForCd(void) {
@@ -423,8 +423,12 @@ void Control::setupMainPanel(void) {
 	
 	if (SwordEngine::_systemVars.deathScreenFlag == 1)
 		panelId = SR_DEATHPANEL;
-	else
-		panelId = SR_PANEL_ENGLISH + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH);
+	else {
+		if (SwordEngine::_systemVars.language <= BS1_SPANISH)
+			panelId = SR_PANEL_ENGLISH + SwordEngine::_systemVars.language;
+		else
+			panelId = SR_PANEL_ENGLISH;
+	}
 	
 	ControlButton *panel = new ControlButton( 0, 0, panelId, 0, _resMan, _screenBuf, _system);
 	panel->draw();
