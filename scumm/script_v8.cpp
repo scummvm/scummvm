@@ -1517,6 +1517,7 @@ void Scumm_v8::o8_getObjectImageHeight()
 
 void Scumm_v8::o8_getStringWidth()
 {
+	int a = pop();	// What is this? The first param for getStringWidth()? Or a charset id?
 	int len = resStrLen((char*)_scriptPointer);
 	int width = _charset->getStringWidth(0, _scriptPointer);
 	push(width);
