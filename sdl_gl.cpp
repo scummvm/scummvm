@@ -1014,7 +1014,6 @@ uint32 OSystem_NULL::get_ticks() {
 #ifdef WIN32
 	a = GetTickCount();
 #endif
-
 #ifdef UNIX
 	struct timeval tv;
 	gettimeofday(&tv, NULL);

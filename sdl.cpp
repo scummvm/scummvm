@@ -844,7 +844,6 @@ bool OSystem_SDL::poll_event(Event *event) {
 					quit();
 					break;
 				}
-	
 				if (b == (KBD_CTRL|KBD_ALT) && 
 					(ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='7')) {
 					Property prop;
@@ -852,11 +851,47 @@ bool OSystem_SDL::poll_event(Event *event) {
 					property(PROP_SET_GFX_MODE, &prop);
 					break;
 				}
-	
-	
+				#ifdef QTOPIA
+				// quit on fn+backspace on zaurus
+				if (ev.key.keysym.sym==127) {
+					quit();
+					break;
+				}
+				// map menu key (f11) to f5 (scumm menu)
+				if (ev.key.keysym.sym==292) {
+					event->event_code = EVENT_KEYDOWN;
+					event->kbd.keycode = 286;
+					event->kbd.ascii = mapKey(286, ev.key.keysym.mod);
+				}
+				// map center (space) to tab (default action )
+				// i wanted to map the calendar button but the calendar comes up
+				//
+				else if (ev.key.keysym.sym==32) {
+					event->event_code = EVENT_KEYDOWN;
+					event->kbd.keycode = 9;
+					event->kbd.ascii = mapKey(9, ev.key.keysym.mod);
+				}
+				// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
+				else if (ev.key.keysym.sym==9) {
+					event->event_code = EVENT_KEYDOWN;
+					event->kbd.keycode = 32;
+					event->kbd.ascii = mapKey(32, ev.key.keysym.mod);
+				}
+				else {
+				// let the events fall through if we didn't change them, this may not be the best way to
+				// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+				// and yes i have an huge terminal size so i dont wrap soon enough.
+					event->event_code = EVENT_KEYDOWN;
+					event->kbd.keycode = ev.key.keysym.sym;
+					event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+				}
+				#endif
+				#ifndef QTOPIA
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+				#endif
+				
 				switch(ev.key.keysym.sym) {
 					case SDLK_LEFT:
 						km.x_vel = -1;
@@ -1340,7 +1375,6 @@ uint32 OSystem_NULL::get_ticks() {
 #ifdef WIN32
 	a = GetTickCount();
 #endif
-
 #ifdef UNIX
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
