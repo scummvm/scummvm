@@ -1844,8 +1844,7 @@ void ScummEngine::processKbd() {
 #endif
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
-		warning("Restart not implemented");
-		//restart();
+		restart();
 		return;
 	}
 
