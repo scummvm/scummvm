@@ -224,7 +224,6 @@ SCUMM
   [implementation now that currently depends on font rom, not needing the rom
    would be preferable]
 
-* Fix C64 costume code
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
