@@ -2151,7 +2151,7 @@ void ScummEngine_v5::o5_setObjectName() {
 	
 
 	if (i > size) {
-		warning("New name of object %d too long: old 's' (%d), new '%s' (%d))",
+		warning("New name of object %d too long: old '%s' (%d), new '%s' (%d))",
 				obj, name, i, work, size);
 		i = size;
 	}
