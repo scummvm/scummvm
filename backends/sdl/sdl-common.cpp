@@ -708,6 +708,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			if (_adjustAspectRatio)
 				event->mouse.y = aspect2Real(event->mouse.y);
+			
+			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:

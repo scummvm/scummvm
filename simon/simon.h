@@ -179,7 +179,6 @@ protected:
 	bool _fast_mode;
 	bool _dx_use_3_or_4_for_lock;
 
-	bool _mouse_pos_changed;
 	uint16 _debugMode;
 	uint16 _language;
 	bool _noSubtitles;

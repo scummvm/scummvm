@@ -603,6 +603,7 @@ void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Bo
 	event->event_code = EVENT_MOUSEMOVE;
 	event->mouse.x = x;
 	event->mouse.y = y;
+	set_mouse_pos(event->mouse.x, event->mouse.y);
 }
 
 static void getCoordinates(EventPtr event, Boolean wide, Coord *x, Coord *y) {
@@ -811,6 +812,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			event->event_code = EVENT_MOUSEMOVE;
 			event->mouse.x = x;
 			event->mouse.y = y - _decaly;
+			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
 
 		case penDownEvent:

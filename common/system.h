@@ -198,17 +198,8 @@ public:
 	/** Show or hide the mouse cursor. */
 	virtual bool show_mouse(bool visible) = 0;
 	
-	/**
-	 * Set the position of the mouse cursor.
-	 * @see warp_mouse
-	 */
-	virtual void set_mouse_pos(int x, int y) = 0;
-
 	/** 
-	 * Warp the mouse cursor to the specified position. Where set_mouse_pos()
-	 * only informs the backend of the mouse cursor's current position, this
-	 * function actually moves the cursor to the specified position.
-	 * @see set_mouse_pos
+	 * Move ("warp) the mouse cursor to the specified position.
 	 */
 	virtual void warp_mouse(int x, int y) = 0;
 	

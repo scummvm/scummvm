@@ -1006,6 +1006,7 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 			scumm_event->event_code = EVENT_MOUSEMOVE;
 			scumm_event->mouse.x = event.xmotion.x - scumm_x;
 			scumm_event->mouse.y = event.xmotion.y - scumm_y;
+			set_mouse_pos(scumm_event->mouse.x, scumm_event->mouse.y);
 			return true;
 
 		case ConfigureNotify:{

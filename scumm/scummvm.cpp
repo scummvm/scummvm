@@ -1431,8 +1431,6 @@ void Scumm::parseEvents() {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
-			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-			_system->update_screen();
 			break;
 
 		case OSystem::EVENT_LBUTTONDOWN:

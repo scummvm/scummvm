@@ -1697,7 +1697,6 @@ void SkyControl::delay(unsigned int amount) {
 				case OSystem::EVENT_MOUSEMOVE:
 					_mouseX = event.mouse.x;
 					_mouseY = event.mouse.y;
-					_system->set_mouse_pos(_mouseX, _mouseY);
 					break;
 
 				case OSystem::EVENT_LBUTTONDOWN:

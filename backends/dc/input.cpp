@@ -184,6 +184,7 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     event->event_code = EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;
+    set_mouse_pos(event->mouse.x, event->mouse.y);
     return true;
   } else {
     event->event_code = (EventCode)0;

@@ -1751,6 +1751,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 			return false;
 
 		*event = _event;
+		
+		if (_event.event_code == EVENT_MOUSEMOVE)
+			set_mouse_pos(_event.mouse.x, _event.mouse.y);
 
 		_event.event_code = EVENT_WHEELUP;
 

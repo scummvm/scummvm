@@ -894,6 +894,7 @@ bool OSystem_MorphOS::poll_event(Event *event)
 				event->event_code = EVENT_MOUSEMOVE;
 				event->mouse.x = newx;
 				event->mouse.y = newy;
+				set_mouse_pos(event->mouse.x, event->mouse.y);
 				break;
 			}
 

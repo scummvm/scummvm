@@ -873,107 +873,107 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 	int key;	
 
 	key=GpKeyGet();	
-		if (key == GPC_VK_NONE) {
-			if (lastevent==EVENT_LBUTTONDOWN) {
-				lastevent=0;
-				event->event_code = EVENT_LBUTTONUP;
-				return true;
-			}
-			return false;
-		}	
-
-		if (key == oldkey) {
-			eventcount--;
-			if (eventcount) return false;
-		}
-		oldkey=key;
-		eventcount=EVENT_COUNT;
-
-		event->event_code = EVENT_KEYDOWN;
-
-		if (key & GPC_VK_FL && key & GPC_VK_FR) { // L+R = save state
-			printf("Saving game, please wait...");
-
-			//extern void autosave(void * engine); 
-			//autosave(NULL); //FIXME?
-			do key=GpKeyGet(); while (key != GPC_VK_NONE) ;
-			return false;
-		} else
-
-		if(key & GPC_VK_FL) { // L = debug console
-			//GpGraphicModeSet(8, NULL); //FIXME: if 16bit?
-			currsurface=DEBUG_SURFACE;
-			GpSurfaceFlip(&gpDraw[currsurface]);
-			GpSetPaletteEntry ( 0, 0,0,0 );
-			GpSetPaletteEntry ( 1, 255,0,0 );
-			GpSetPaletteEntry ( 2, 255,255,255 );
-			return false;
-		} else
-
-		if (key & GPC_VK_FR) {  // R = game screen
-			//if (_overlay_visible) GpGraphicModeSet(16, NULL); 
-			//	else GpGraphicModeSet(8, NULL);
-			currsurface=GAME_SURFACE;
-			GpSurfaceFlip(&gpDraw[currsurface]);
-
-			_paletteDirtyStart=0;
-			_paletteDirtyEnd=255; //fixme?			
-			return false;
-		}
-
-		if(key & GPC_VK_START) { // START = menu
-			event->kbd.keycode = 319;
-			event->kbd.ascii = 319;
-			return true;			
-		}
-
-		if(key & GPC_VK_SELECT) { // SELECT == escape/skip
-			if (_overlay_visible) 
-				do key=GpKeyGet(); while (key != GPC_VK_NONE) ; // prevent 2xESC
-			event->kbd.keycode = 27;
-			event->kbd.ascii = 27;		
-			return true;
-		}		
-
-		if (key & GPC_VK_FA) {
-			lastevent=EVENT_LBUTTONDOWN;
-			event->event_code = EVENT_LBUTTONDOWN;
+	if (key == GPC_VK_NONE) {
+		if (lastevent==EVENT_LBUTTONDOWN) {
+			lastevent=0;
+			event->event_code = EVENT_LBUTTONUP;
 			return true;
 		}
-		if (key & GPC_VK_FB) {
-			lastevent=EVENT_RBUTTONDOWN;
-			event->event_code = EVENT_RBUTTONDOWN;
-			return true;
-		}
+		return false;
+	}	
 
-		event->event_code = EVENT_MOUSEMOVE;
+	if (key == oldkey) {
+		eventcount--;
+		if (eventcount) return false;
+	}
+	oldkey=key;
+	eventcount=EVENT_COUNT;
 
-		if(key & GPC_VK_LEFT) {
-			mx-=MOUSE_MIPS;
-			if (mx<1) mx=1; // wrong if 0?
-		}
+	event->event_code = EVENT_KEYDOWN;
 
-		if(key & GPC_VK_RIGHT) {
-			mx+=MOUSE_MIPS;
-			if (mx>319) mx=319;
-		}
+	if (key & GPC_VK_FL && key & GPC_VK_FR) { // L+R = save state
+		printf("Saving game, please wait...");
 
-		if(key & GPC_VK_UP) {
-			my-=MOUSE_MIPS;
-			if (my<1) my=1; // wrong if 0?
-		}
+		//extern void autosave(void * engine); 
+		//autosave(NULL); //FIXME?
+		do key=GpKeyGet(); while (key != GPC_VK_NONE) ;
+		return false;
+	}
+	
+	if (key & GPC_VK_FL) { // L = debug console
+		//GpGraphicModeSet(8, NULL); //FIXME: if 16bit?
+		currsurface=DEBUG_SURFACE;
+		GpSurfaceFlip(&gpDraw[currsurface]);
+		GpSetPaletteEntry ( 0, 0,0,0 );
+		GpSetPaletteEntry ( 1, 255,0,0 );
+		GpSetPaletteEntry ( 2, 255,255,255 );
+		return false;
+	}
+	
+	if (key & GPC_VK_FR) {  // R = game screen
+		//if (_overlay_visible) GpGraphicModeSet(16, NULL); 
+		//	else GpGraphicModeSet(8, NULL);
+		currsurface=GAME_SURFACE;
+		GpSurfaceFlip(&gpDraw[currsurface]);
 
-		if(key & GPC_VK_DOWN) {
-			my+=MOUSE_MIPS;
-			if (my>199) my=199;
-		}
+		_paletteDirtyStart=0;
+		_paletteDirtyEnd=255; //fixme?			
+		return false;
+	}
 
-		event->event_code = EVENT_MOUSEMOVE;
-		km.x = event->mouse.x = mx;
-		km.y = event->mouse.y = my;
+	if (key & GPC_VK_START) { // START = menu
+		event->kbd.keycode = 319;
+		event->kbd.ascii = 319;
+		return true;			
+	}
 
-		event->mouse.x /= _scaleFactor;
-		event->mouse.y /= _scaleFactor;	
+	if (key & GPC_VK_SELECT) { // SELECT == escape/skip
+		if (_overlay_visible) 
+			do key=GpKeyGet(); while (key != GPC_VK_NONE) ; // prevent 2xESC
+		event->kbd.keycode = 27;
+		event->kbd.ascii = 27;		
+		return true;
+	}		
+
+	if (key & GPC_VK_FA) {
+		lastevent=EVENT_LBUTTONDOWN;
+		event->event_code = EVENT_LBUTTONDOWN;
+		return true;
+	}
+	if (key & GPC_VK_FB) {
+		lastevent=EVENT_RBUTTONDOWN;
+		event->event_code = EVENT_RBUTTONDOWN;
+		return true;
+	}
+
+	if(key & GPC_VK_LEFT) {
+		mx-=MOUSE_MIPS;
+		if (mx<1) mx=1; // wrong if 0?
+	}
+
+	if(key & GPC_VK_RIGHT) {
+		mx+=MOUSE_MIPS;
+		if (mx>319) mx=319;
+	}
+
+	if(key & GPC_VK_UP) {
+		my-=MOUSE_MIPS;
+		if (my<1) my=1; // wrong if 0?
+	}
+
+	if(key & GPC_VK_DOWN) {
+		my+=MOUSE_MIPS;
+		if (my>199) my=199;
+	}
+
+	event->event_code = EVENT_MOUSEMOVE;
+	km.x = event->mouse.x = mx;
+	km.y = event->mouse.y = my;
+
+	event->mouse.x /= _scaleFactor;
+	event->mouse.y /= _scaleFactor;	
+
+	set_mouse_pos(event->mouse.x, event->mouse.y);
 }
 
 // Set the function to be invoked whenever samples need to be generated

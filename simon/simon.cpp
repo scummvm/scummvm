@@ -264,7 +264,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_fast_mode = 0;
 	_dx_use_3_or_4_for_lock = 0;
 
-	_mouse_pos_changed = 0;
 	_debugMode = 0;
 	_debugLevel = 0;
 	_language = 0;
@@ -4289,10 +4288,6 @@ void SimonEngine::dx_update_screen_and_palette() {
 		}
 	}
 
-	if (_mouse_pos_changed) {
-		_mouse_pos_changed = false;
-		_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
-	}
 	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
 	_system->update_screen();
 
@@ -4494,7 +4489,6 @@ void SimonEngine::delay(uint amount) {
 				case OSystem::EVENT_MOUSEMOVE:
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;
-					_mouse_pos_changed = true;
 					break;
 
 					case OSystem::EVENT_LBUTTONDOWN:

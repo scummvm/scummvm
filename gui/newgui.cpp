@@ -164,7 +164,6 @@ void NewGui::runLoop() {
 						_currentKeyDown.keycode = 0;
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
-					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
 					activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
 					break;
 				// We don't distinguish between mousebuttons (for now at least)
