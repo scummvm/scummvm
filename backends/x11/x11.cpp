@@ -24,7 +24,6 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
 #include "gameDetector.h"
 
 #include <sys/time.h>
