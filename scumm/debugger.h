@@ -21,7 +21,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#define USE_CONSOLE
+// Choose between text console or ScummConsole
+#define USE_CONSOLE	1
 
 class Scumm;
 class ScummDebugger;

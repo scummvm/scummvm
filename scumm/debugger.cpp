@@ -26,12 +26,7 @@
 #include "common/util.h"
 #include "common/file.h"
 
-// The new debugger doesn't actually have the guts for text console coded yet ;)
-
-#define USE_CONSOLE
-
-// Choose between text console or ScummConsole
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 	#include "gui/console.h"
 	#define Debug_Printf  _s->_debuggerDialog->printf
 #else
@@ -107,7 +102,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 }
 
 void ScummDebugger::detach() {
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 	if (_s->_debuggerDialog) {
 		_s->_debuggerDialog->setInputeCallback(0, 0);
 		_s->_debuggerDialog->setCompletionCallback(0, 0);
@@ -141,7 +136,7 @@ void ScummDebugger::on_frame() {
 }
 
 // Console handler
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
 	ScummDebugger *debugger = (ScummDebugger *)refCon;
 	
@@ -181,7 +176,7 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 
 // Main Debugger Loop 
 void ScummDebugger::enter() {
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 	if (!_s->_debuggerDialog) {
 		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_screenWidth);
 
@@ -199,10 +194,34 @@ void ScummDebugger::enter() {
 											   this);
 	_s->_debuggerDialog->runModal();
 #else
+	// TODO: compared to the console input, this here is very bare bone.
+	// For example, no support for tab completion and no history. At least
+	// we should re-add (optional) support for the readline library.
+	// Or maybe instead of choosing between a console dialog and stdio,
+	// we should move that choice into the ConsoleDialog class - that is,
+	// the console dialog code could be #ifdef'ed to not print to the dialog
+	// but rather to stdio. This way, we could also reuse the command history 
+	// and tab completion of the console. It would still require a lot of
+	// work, but at least no dependency on a 3rd party library...
+
 	printf("Debugger entered, please switch to this console for input.\n");
-//	while(1) {
-//		;
-//	}
+
+	int i;
+	char buf[256];
+
+	do {
+		printf("debug> ");
+		if (!fgets(buf, sizeof(buf), stdin))
+			continue;
+
+		i = strlen(buf);
+		while (i > 0 && buf[i - 1] == '\n')
+			buf[--i] = 0;
+
+		if (i == 0)
+			continue;
+	} while(RunCommand(buf));
+
 #endif
 }
 
