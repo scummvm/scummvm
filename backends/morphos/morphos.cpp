@@ -316,7 +316,7 @@ void OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 }
 
-MutexRef OSystem_MorphOS::create_mutex()
+OSystem::MutexRef OSystem_MorphOS::create_mutex()
 {
 	SignalSemaphore *sem = (SignalSemaphore *) AllocVec(sizeof (SignalSemaphore), MEMF_PUBLIC);
 
