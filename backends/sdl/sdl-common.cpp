@@ -103,7 +103,10 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	_cdrom(0), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
-	_currentShakePos(0), _newShakePos(0) {
+	_currentShakePos(0), _newShakePos(0),
+	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_mutex(0) {
+
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
@@ -112,8 +115,6 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
-	
-	_mutex = 0;
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {
