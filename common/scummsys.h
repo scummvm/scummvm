@@ -315,8 +315,12 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
-	#define PROTO_MKID(a) SWAP_BYTES_32(a)
-	#define PROTO_MKID_BE(a) (a & 0xffffffff)
+	#define PROTO_MKID(a) \
+			((a >> 24) & 0x000000FF) | \
+			((a >>  8) & 0x0000FF00) | \
+			((a <<  8) & 0x00FF0000) | \
+			((a << 24) & 0xFF000000)
+	#define PROTO_MKID_BE(a) (a & 0xFFFFFFFFUL)
 
 	#if defined(INVERSE_MKID)
 	#  define MKID(a) PROTO_MKID_BE(a)
