@@ -426,6 +426,7 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 bool SkyState::isDemo(void) {
 	switch (_systemVars.gameVersion) {
+	case 109: // pc gamer demo
 	case 267: // floppy demo
 	case 365: // cd demo
 		return true;
@@ -437,13 +438,14 @@ bool SkyState::isDemo(void) {
 	case 372:
 		return false;
 	default:
-		error("Unknown game version");
+		error("Unknown game version %d", _systemVars.gameVersion);
 	}
 }
 
 bool SkyState::isCDVersion(void) {
 
 	switch (_systemVars.gameVersion) {
+	case 109:
 	case 267:
 	case 288:
 	case 303:
@@ -455,7 +457,7 @@ bool SkyState::isCDVersion(void) {
 	case 372:
 		return true;
 	default:
-		error("Unknown game version");
+		error("Unknown game version %d", _systemVars.gameVersion);
 	}
 }
 

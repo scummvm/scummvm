@@ -428,6 +428,9 @@ void SkyDisk::dumpFile(uint16 fileNr) {
 uint32 SkyDisk::determineGameVersion() {
 	//determine game version based on number of entries in dinner table
 	switch (_dinnerTableEntries) {
+	case 243:
+		// pc gamer demo (v0.0109)
+		return 109;
 	case 247:	
 		//floppy demo (v0.0267)
 		return 267;
@@ -452,7 +455,7 @@ uint32 SkyDisk::determineGameVersion() {
 		return 372;
 	default:
 		//unknown version
-		error("Unknown game version!");
+		error("Unknown game version! %d dinner table entries", _dinnerTableEntries);
 		break;
 	}
 }

@@ -455,7 +455,7 @@ void SkyText::initHuffTree() {
 		_huffTree = _huffTree_00372;
 		break;
 	default:
-		error("Unknown game version");
+		error("Unknown game version %d", SkyState::_systemVars.gameVersion);
 	}
 }
 
