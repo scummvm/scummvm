@@ -1554,8 +1554,6 @@ void Scumm::unkHeapProc2(int a, int b)
 
 void Scumm::readMAXS()
 {
-	int foo;
-	
 	if (_features & GF_AFTER_V8) {                      // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
 		_numVariables = _fileHandle.readUint32LE();     // 1500
