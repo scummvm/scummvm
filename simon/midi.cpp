@@ -79,11 +79,10 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old)
 
 	for (i = 0; i != s->num_tracks; i++, t++) {
 		if (!old) {
-			uint32 foo = in->readUint32BE();
-			if (foo != 'MTrk')
-				error("Midi track has no 'MTrk' (%d, %08x)", i, foo);
+			if (in->readUint32BE() != 'MTrk')
+				error("Midi track has no 'MTrk'", i, foo);
 
-			t->data_size = in->readUint32LE();
+			t->data_size = in->readUint32BE();
 		} else {
 			uint32 pos = in->pos();
 			in->seek(0, SEEK_END);
