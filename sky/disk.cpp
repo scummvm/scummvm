@@ -147,7 +147,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	_compDest = dest;
 
 	if (dest == NULL) //we need to allocate memory for this file
-		_fileDest = (uint8 *)malloc(_fileSize);
+		_fileDest = (uint8 *)malloc(_fileSize + 4);
 
 	_dataDiskHandle->seek(_fileOffset, SEEK_SET);
 
