@@ -72,7 +72,7 @@ private:
 	void closeData(void);
 
 	void saveGameToFile(uint8 slot);
-	void restoreGameFromFile(uint8 slot);
+	bool restoreGameFromFile(uint8 slot);
 	void readSavegameDescriptions(void);
 	void writeSavegameDescriptions(void);
 	void showSavegameNames(void);
@@ -89,6 +89,8 @@ private:
 
 	void setupMainPanel(void);
 	void setupSaveRestorePanel(bool saving);
+	void setupVolumePanel(void);
+
 	void saveNameScroll(uint8 scroll, bool saving);
 	void saveNameSelect(uint8 id, bool saving);
 	bool saveToFile(void);
@@ -96,14 +98,15 @@ private:
 	bool keyAccepted(uint8 key);
 	void handleSaveKey(uint8 key);
 
+	void renderVolumeBar(uint8 id);
 	uint16 getTextWidth(const char *str);
-	void renderText(const char *str, int16 x, uint16 y);
+	void renderText(const char *str, uint16 x, uint16 y, uint8 mode);
 	uint8 _numButtons;
 	uint8 _selectedButton;
 	void createButtons(const ButtonInfo *buttons, uint8 num);
 	void destroyButtons(void);
 	ControlButton *_buttons[MAX_BUTTONS];
-	static const ButtonInfo _deathButtons[3], _panelButtons[8], _saveButtons[16];
+	static const ButtonInfo _deathButtons[3], _panelButtons[8], _saveButtons[16], _volumeButtons[1];
 	static const char _languageStrings[8 * 20][43];
 	const char (*_lStrings)[43];
 	ObjectMan *_objMan;

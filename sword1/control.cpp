@@ -66,7 +66,7 @@ enum ButtonIds {
 	BUTTON_RESTART,
 	BUTTON_QUIT,
 	BUTTON_SPEED,
-	BUTTON_VOLUME,
+	BUTTON_VOLUME_PANEL,
 	BUTTON_TEXT,
 //-
 	BUTTON_SCROLL_UP_FAST,
@@ -85,18 +85,28 @@ enum ButtonIds {
 	BUTTON_SAVE_CANCEL
 };
 
+enum TextModes {
+	TEXT_LEFT_ALIGN = 0,
+	TEXT_CENTER,
+	TEXT_RIGHT_ALIGN
+};
+
 ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
 	_x = x;
 	_y = y;
 	_id = id;
 	_resId = resId;
 	_resMan = pResMan;
-	_dstBuf = screenBuf + y * SCREEN_WIDTH + x;
 	_frameIdx = 0;
 	_resMan->resOpen(_resId);
 	FrameHeader *tmp = _resMan->fetchFrame(_resMan->fetchRes(_resId), 0);
 	_width = FROM_LE_16(tmp->width);
 	_height = FROM_LE_16(tmp->height);
+	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
+		_x = (640 - _width) / 2;
+		_y = (480 - _height) / 2;
+	}
+	_dstBuf = screenBuf + _y * SCREEN_WIDTH + _x;
 	_system = system;
 }
 
@@ -186,7 +196,10 @@ uint8 SwordControl::runPanel(void) {
 				if (fullRefresh)
 					setupSaveRestorePanel(false);
 				break;
-
+			case BUTTON_VOLUME_PANEL:
+				if (fullRefresh)
+					setupVolumePanel();
+				break;
 		}
 		if (fullRefresh) {
 			fullRefresh = false;
@@ -236,9 +249,12 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 			if (id == BUTTON_RESTART)
 				*retVal |= CONTROL_RESTART_GAME;
 			else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
-				(id == BUTTON_DONE))
+				(id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 				return id;
-			else
+			else if (id == BUTTON_TEXT) {
+				SwordEngine::_systemVars.showText ^= 1;
+				_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
+			} else
 				return 0;
 		case BUTTON_SAVE_PANEL:
 		case BUTTON_RESTORE_PANEL:
@@ -258,6 +274,8 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				}
 			} else if (id == BUTTON_SAVE_CANCEL)
 				return BUTTON_MAIN_PANEL; // mode down to main panel
+		case BUTTON_VOLUME_PANEL:
+			return id;
    	}
 	return 0;
 }
@@ -269,47 +287,43 @@ void SwordControl::deselectSaveslots(void) {
 
 void SwordControl::setupMainPanel(void) {
 	uint32 panelId;
-	uint8 langCode = MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH);
 	
 	if (SwordEngine::_systemVars.deathScreenFlag == 1)
 		panelId = SR_DEATHPANEL;
 	else
-		panelId = SR_PANEL_ENGLISH + langCode;
-
-	FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(panelId), 0);
-	uint16 panelX = (640 - FROM_LE_16(frameHead->width)) / 2;
-	uint16 panelY = (400 - FROM_LE_16(frameHead->height)) / 2;
+		panelId = SR_PANEL_ENGLISH + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH);
 	
-	ControlButton *panel = new ControlButton(panelX, panelY, panelId, 0, _resMan, _screenBuf, _system);
+	ControlButton *panel = new ControlButton( 0, 0, panelId, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
-	_resMan->resClose(panelId);
 
 	if (SwordEngine::_systemVars.deathScreenFlag)
         createButtons(_deathButtons, 3);		
-	else
+	else {
         createButtons(_panelButtons, 8);
+		_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
+	}
 
 	if (SwordEngine::_systemVars.deathScreenFlag == 2) // end of game
-		renderText(_lStrings[STR_THE_END], -480, 188);
+		renderText(_lStrings[STR_THE_END], 480, 188, TEXT_RIGHT_ALIGN);
 
 	if (SwordEngine::_systemVars.deathScreenFlag == 0) { // normal panel
-		renderText(_lStrings[STR_SAVE], 180, 188);
-		renderText(_lStrings[STR_DONE], -460, 332);
-		renderText(_lStrings[STR_RESTORE], 180, 224);
-		renderText(_lStrings[STR_RESTART], 180, 260);
-		renderText(_lStrings[STR_QUIT], 180, 296);
+		renderText(_lStrings[STR_SAVE], 180, 188 + 40, TEXT_LEFT_ALIGN);
+		renderText(_lStrings[STR_DONE], 460, 332 + 40, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_RESTORE], 180, 224 + 40, TEXT_LEFT_ALIGN);
+		renderText(_lStrings[STR_RESTART], 180, 260 + 40, TEXT_LEFT_ALIGN);
+		renderText(_lStrings[STR_QUIT], 180, 296 + 40, TEXT_LEFT_ALIGN);
 
-		renderText(_lStrings[STR_SPEED], -460, 188);
-		renderText(_lStrings[STR_VOLUME], -460, 224);
-		renderText(_lStrings[STR_TEXT], -460, 260);
+		renderText(_lStrings[STR_SPEED], 460, 188 + 40, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_VOLUME], 460, 224 + 40, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_TEXT], 460, 260 + 40, TEXT_RIGHT_ALIGN);
 	} else {
-		renderText(_lStrings[STR_RESTORE], 285, 224);
+		renderText(_lStrings[STR_RESTORE], 285, 224 + 40, TEXT_LEFT_ALIGN);
 		if (SwordEngine::_systemVars.deathScreenFlag == 3) // just started game
-			renderText(_lStrings[STR_START], 285, 260);
+			renderText(_lStrings[STR_START], 285, 260, TEXT_LEFT_ALIGN);
 		else
-			renderText(_lStrings[STR_RESTART], 285, 260);
-		renderText(_lStrings[STR_QUIT], 285, 296);
+			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
+		renderText(_lStrings[STR_QUIT], 285, 296 + 40, TEXT_LEFT_ALIGN);
 	}
 }
 
@@ -322,15 +336,30 @@ void SwordControl::setupSaveRestorePanel(bool saving) {
 	delete panel;
 	_resMan->resClose(SR_WINDOW);
 	createButtons(_saveButtons, 14);
-	renderText(_lStrings[STR_CANCEL], -(_saveButtons[13].x - 10), _saveButtons[13].y);
+	renderText(_lStrings[STR_CANCEL], _saveButtons[13].x - 10, _saveButtons[13].y, TEXT_RIGHT_ALIGN);
 	if (saving) {
-		renderText(_lStrings[STR_SAVE], _saveButtons[12].x + 30, _saveButtons[13].y);
+		renderText(_lStrings[STR_SAVE], _saveButtons[12].x + 30, _saveButtons[13].y, TEXT_LEFT_ALIGN);
 	} else {
-		renderText(_lStrings[STR_RESTORE], _saveButtons[12].x + 30, _saveButtons[13].y);
+		renderText(_lStrings[STR_RESTORE], _saveButtons[12].x + 30, _saveButtons[13].y, TEXT_LEFT_ALIGN);
 	}
     readSavegameDescriptions();
 	_selectedSavegame = 255;
 	showSavegameNames();
+}
+
+void SwordControl::setupVolumePanel(void) {
+	ControlButton *panel = new ControlButton( 0, 0, SR_VOLUME, 0, _resMan, _screenBuf, _system);
+	panel->draw();
+	delete panel;
+
+	renderText(_lStrings[STR_MUSIC], 149, 39 + 40, TEXT_LEFT_ALIGN);
+	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
+	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
+
+	renderText("NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
+
+	createButtons(_volumeButtons, 1);
+	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
 }
 
 bool SwordControl::keyAccepted(uint8 key) {
@@ -368,8 +397,7 @@ bool SwordControl::saveToFile(void) {
 
 bool SwordControl::restoreFromFile(void) {
 	if (_selectedSavegame < 255) {
-		restoreGameFromFile(_selectedSavegame);
-		return true;
+		return restoreGameFromFile(_selectedSavegame);
 	} else
 		return false;
 }
@@ -427,7 +455,7 @@ void SwordControl::writeSavegameDescriptions(void) {
 void SwordControl::showSavegameNames(void) {
 	for (uint8 cnt = 0; cnt < 8; cnt++) {
 		_buttons[cnt]->draw();
-		renderText(_saveNames[cnt + _saveScrollPos], _saveButtons[cnt].x + 6, _saveButtons[cnt].y + 2);
+		renderText(_saveNames[cnt + _saveScrollPos], _saveButtons[cnt].x + 6, _saveButtons[cnt].y + 2, TEXT_LEFT_ALIGN);
 	}
 }
 
@@ -504,9 +532,11 @@ uint16 SwordControl::getTextWidth(const char *str) {
     return width;
 }
 
-void SwordControl::renderText(const char *str, int16 x, uint16 y) {
-	if (x < 0) // negative x coordinate means rightbound.
-		x = (-x) - getTextWidth(str);
+void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
+	if (mode == TEXT_RIGHT_ALIGN) // negative x coordinate means right-aligned.
+		x -= getTextWidth(str);
+	else if (mode == TEXT_CENTER)
+		x -= getTextWidth(str) / 2;
 	
 	uint16 destX = x;
 	while (*str) {
@@ -526,6 +556,10 @@ void SwordControl::renderText(const char *str, int16 x, uint16 y) {
 		str++;
 	}
 	_system->copy_rect(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
+}
+
+void SwordControl::renderVolumeBar(uint8 id) {
+
 }
 
 // I can hardly believe this is all it takes for loading and saving...
@@ -562,15 +596,18 @@ void SwordControl::saveGameToFile(uint8 slot) {
 	delete mgr;
 }
 
-void SwordControl::restoreGameFromFile(uint8 slot) {
+bool SwordControl::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
 	inf = mgr->open_savefile(fName, _savePath, SAVEFILE_READ);
-	if ((!inf) || (!inf->isOpen()))
-		error("Unable to open file %s", fName);
+	if ((!inf) || (!inf->isOpen())) {
+		warning("Can't open file %s in directory %s", fName, _savePath);
+		delete mgr;
+		return false;
+	}
 
 	_restoreBuf = (uint8*)malloc(
 		TOTAL_SECTIONS * 2 + 
@@ -593,6 +630,7 @@ void SwordControl::restoreGameFromFile(uint8 slot) {
 
 	delete inf;
 	delete mgr;
+	return true;
 }
 
 void SwordControl::doRestore(void) {
@@ -670,14 +708,14 @@ const ButtonInfo SwordControl::_deathButtons[3] = {
 };
 
 const ButtonInfo SwordControl::_panelButtons[8] = {
-	{145, 188, SR_BUTTON, BUTTON_SAVE_PANEL },
-	{145, 224, SR_BUTTON, BUTTON_RESTORE_PANEL },
-	{145, 260, SR_BUTTON, BUTTON_RESTART },
-	{145, 296, SR_BUTTON, BUTTON_QUIT },
-	{475, 188, SR_BUTTON, BUTTON_SPEED },
-	{475, 224, SR_BUTTON, BUTTON_VOLUME },
-	{475, 260, SR_BUTTON, BUTTON_TEXT },
-	{475, 332, SR_BUTTON, BUTTON_DONE }
+	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL },
+	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
+	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART },
+	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT },
+	{475, 188 + 40, SR_BUTTON, BUTTON_SPEED },
+	{475, 224 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL },
+	{475, 260 + 40, SR_BUTTON, BUTTON_TEXT },
+	{475, 332 + 40, SR_BUTTON, BUTTON_DONE }
 };
 
 const ButtonInfo SwordControl::_saveButtons[16] = { 
@@ -697,6 +735,10 @@ const ButtonInfo SwordControl::_saveButtons[16] = {
 
 	{125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY},
 	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL}
+};
+
+const ButtonInfo SwordControl::_volumeButtons[1] = {
+	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL } 
 };
 
 const char SwordControl::_languageStrings[8 * 20][43] = {
