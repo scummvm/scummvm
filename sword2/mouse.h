@@ -85,31 +85,17 @@ struct MouseAnim {
 // sprite is to act as mouse detection mask)
 
 struct MouseUnit {
-	// Top-left and bottom-right of mouse area. These coords are inclusive
-	int32 x1;
-	int32 y1;
-	int32 x2;
-	int32 y2;
+	// Basically the same information as in ObjectMouse, except the
+	// coordinates are adjusted to conform to standard ScummVM usage.
 
+	Common::Rect rect;
 	int32 priority;
-
-	// type (or resource id?) of pointer used over this area
 	int32 pointer;
 
-	// up to here, this is basically a copy of the ObjectMouse
-	// structure, but then we have...
+	// In addition, we need an id when checking the mouse list, and a
+	// text id for mouse-overs.
 
-	// object id, used when checking mouse list
 	int32 id;
-
-	// resource id of animation file (if sprite to be used as mask) -
-	// otherwise 0
-	int32 anim_resource;
-
-	// current frame number of animation
-	int32 anim_pc;
-
-	// local id of text line to print when pointer highlights an object
 	int32 pointer_text;
 };
 

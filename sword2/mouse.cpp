@@ -132,19 +132,26 @@ void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
 	assert(_curMouse < TOTAL_mouse_list);
 
 	if (build_unit) {
-		_mouseList[_curMouse].x1 = build_unit->x;
-		_mouseList[_curMouse].y1 = build_unit->y;
-		_mouseList[_curMouse].x2 = build_unit->x + build_unit->scaled_width;
-		_mouseList[_curMouse].y2 = build_unit->y + build_unit->scaled_height;
+		_mouseList[_curMouse].rect.left = build_unit->x;
+		_mouseList[_curMouse].rect.top = build_unit->y;
+		_mouseList[_curMouse].rect.right = 1 + build_unit->x + build_unit->scaled_width;
+		_mouseList[_curMouse].rect.bottom = 1 + build_unit->y + build_unit->scaled_height;
 	} else {
-		_mouseList[_curMouse].x1 = ob_mouse->x1;
-		_mouseList[_curMouse].y1 = ob_mouse->y1;
-		_mouseList[_curMouse].x2 = ob_mouse->x2;
-		_mouseList[_curMouse].y2 = ob_mouse->y2;
+		_mouseList[_curMouse].rect.left = ob_mouse->x1;
+		_mouseList[_curMouse].rect.top = ob_mouse->y1;
+		_mouseList[_curMouse].rect.right = 1 + ob_mouse->x2;
+		_mouseList[_curMouse].rect.bottom = 1 + ob_mouse->y2;
 	}
 
 	_mouseList[_curMouse].priority = ob_mouse->priority;
 	_mouseList[_curMouse].pointer = ob_mouse->pointer;
+
+	// Change all COGS pointers to CROSHAIR. I'm guessing that this was a
+	// design decision made in mid-development and they didn't want to go
+	// back and re-generate the resource files.
+
+	if (_mouseList[_curMouse].pointer == USE)
+		_mouseList[_curMouse].pointer = CROSHAIR;
 
 	// Check if pointer text field is set due to previous object using this
 	// slot (ie. not correct for this one)
@@ -157,11 +164,6 @@ void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
 
 	// Get id from system variable 'id' which is correct for current object
 	_mouseList[_curMouse].id = Logic::_scriptVars[ID];
-
-	// Not using sprite as detection mask - this is only done from
-	// fnRegisterFrame()
-	_mouseList[_curMouse].anim_resource = 0;
-	_mouseList[_curMouse].anim_pc = 0;
 
 	_curMouse++;
 }
@@ -966,23 +968,17 @@ void Mouse::setObjectHeld(uint32 res) {
 uint32 Mouse::checkMouseList() {
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
+	Common::Point mousePos(_pos.x + screenInfo->scroll_offset_x, _pos.y + screenInfo->scroll_offset_y);
+
 	// Number of priorities subject to implementation needs
 	for (int priority = 0; priority < 10; priority++) {
 		for (uint i = 0; i < _curMouse; i++) {
 			// If the mouse pointer is over this
 			// mouse-detection-box
 
-			if (_mouseList[i].priority == priority &&
-			    _pos.x + screenInfo->scroll_offset_x >= _mouseList[i].x1 &&
-			    _pos.x + screenInfo->scroll_offset_x <= _mouseList[i].x2 &&
-			    _pos.y + screenInfo->scroll_offset_y >= _mouseList[i].y1 &&
-			    _pos.y + screenInfo->scroll_offset_y <= _mouseList[i].y2) {
+			if (_mouseList[i].priority == priority && _mouseList[i].rect.contains(mousePos)) {
 				// Record id
 				_mouseTouching = _mouseList[i].id;
-
-				// Change all COGS pointers to CROSHAIR
-				if (_mouseList[i].pointer == USE)
-					_mouseList[i].pointer = CROSHAIR;
 
 				createPointerText(_mouseList[i].pointer_text, _mouseList[i].pointer);
 
