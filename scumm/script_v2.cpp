@@ -719,7 +719,7 @@ void Scumm_v2::o2_drawObject() {
 			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~0x08);
 	}
 
-	putState(obj, getState(_objs[obj].obj_nr) | 0x08);
+	putState(obj, getState(od->obj_nr) | 0x08);
 }
 
 void Scumm_v2::o2_resourceRoutines() {
