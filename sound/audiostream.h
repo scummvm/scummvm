@@ -102,7 +102,7 @@ public:
 	int getRate() const { return -1; }
 };
 
-AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 
 
 // This used to be an inline template function, but
