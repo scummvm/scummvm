@@ -456,6 +456,13 @@ void Actor::startAnimActor(int f)
 			break;
 		}
 
+		// FIXME: This is a hack to fix decapitation, which somehow occurs only on
+		// the standFrame (CHORE mode 3). We hack around this by simply using the
+		// initFrame instead. As far as it goes, I see no difference. Apart from
+		// keeping my lovely head intact.
+		if (f == 3 && _vm->_gameId == GID_INDY3_256)
+			f = initFrame;
+
 		if (isInCurrentRoom() && costume) {
 			animProgress = 0;
 			cost.animCounter1 = 0;
