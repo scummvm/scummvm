@@ -487,6 +487,21 @@ void Sound::stopMusic() {
 int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 	Common::StackLock lock(_mutex);
 
+	int cd = _vm->_resman->whichCd();
+
+	// HACK: We only have one music file handle, so if any music from the
+	// "wrong" CD is playing, kill it immediately.
+
+	for (int i = 0; i < MAXMUS; i++) {
+		if (_music[i] && _music[i]->whichCd() != cd) {
+			delete _music[i];
+			_music[i] = NULL;
+
+			if (fpMus.isOpen())
+				fpMus.close();
+		}
+	}
+
 	if (loop)
 		_loopingMusicId = musicId;
 	else
@@ -545,7 +560,7 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 	if (secondary != -1)
 		_music[secondary]->fadeDown();
 
-	_music[primary] = new MusicInputStream(_vm->_resman->whichCd(), musicId, loop);
+	_music[primary] = new MusicInputStream(cd, musicId, loop);
 
 	if (!_music[primary]->isReady()) {
 		delete _music[primary];
