@@ -833,7 +833,7 @@ void SoundMixer::ChannelMP3::mix(int16 *data, uint len) {
 		}
 		mad_synth_frame(&_synth, &_frame);
 		_posInFrame = 0;
-		_position = (unsigned char *)_stream.next_frame - (unsigned char *)_ptr;
+		_position = _stream.next_frame - (unsigned char *)_ptr;
 	}
 }
 
