@@ -2853,7 +2853,6 @@ void ScummEngine_v6::o6_stampObject() {
 	if (_gameId == GID_TENTACLE)
 		return;
 
-	// V7 version
 	state = pop();
 	y = pop();
 	x = pop();
