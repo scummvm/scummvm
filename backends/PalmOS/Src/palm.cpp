@@ -24,8 +24,16 @@
 #include "scumm.h"
 #include "common/scaler.h"
 
+#include "start.h"
 #include "palm.h"
 #include "vibrate.h"
+
+#include "cd_msa.h"
+
+#ifndef DISABLE_TAPWAVE
+//#include "tapwave.h"
+//#include "cd_zodiac.h"
+#endif
 
 #define EXITDELAY			(500) // delay to exit : calc button : double tap 1/500 sec
 #define ftrOverlayPtr		(1000)
@@ -36,7 +44,7 @@ OSystem *OSystem_PALMOS::create(UInt16 gfx_mode, bool full_screen) {
 	OSystem_PALMOS *syst = new OSystem_PALMOS();
 	syst->_mode = gfx_mode;
 	syst->_vibrate = gVars->vibrator;
-	syst->_fullscreen = (full_screen && gVars->slkRefNum != sysInvalidRefNum);
+	syst->_fullscreen = (full_screen && (gVars->options & optHasWideMode));
 	return syst;
 }
 
@@ -45,6 +53,9 @@ OSystem *OSystem_PALMOS_create(int gfx_mode, bool full_screen) {
 }
 
 void OSystem_PALMOS::set_palette(const byte *colors, uint start, uint num) {
+	if (_quit)
+		return;
+
 	const byte *b = colors;
 	uint i;
 	RGBColorType *base = _currentPalette + start;
@@ -83,8 +94,8 @@ void OSystem_PALMOS::load_gfx_mode() {
 		255	,255,255,0
 	};
 
-	switch(_mode)
-	{
+	// init screens
+	switch(_mode) {
 		case GFX_FLIPPING:
 			gVars->screenLocked = true;
 			_offScreenP	= WinScreenLock(winLockErase) + _screenOffset.addr;
@@ -122,6 +133,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 
 	// palette for preload dialog
 	set_palette(startupPalette,0,16);
+
 	// try to allocate on storage heap
 	FtrPtrNew(appFileCreator, ftrOverlayPtr, _screenWidth * _screenHeight, (void **)&_tmpScreenP);
 	FtrPtrNew(appFileCreator, ftrBackupPtr, _screenWidth * _screenHeight, (void **)&_tmpBackupP);
@@ -185,14 +197,29 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 	}
 	
 	if (_fullscreen || _mode == GFX_WIDE) {
-		if (gVars->slkVersion == vskVersionNum1) {
-			SilkLibEnableResize (gVars->slkRefNum);
-			SilkLibResizeDispWin(gVars->slkRefNum, silkResizeMax);
-			SilkLibDisableResize(gVars->slkRefNum);
+		// Sony wide
+		if (gVars->slkRefNum != sysInvalidRefNum) {
+			if (gVars->slkVersion == vskVersionNum1) {
+				SilkLibEnableResize (gVars->slkRefNum);
+				SilkLibResizeDispWin(gVars->slkRefNum, silkResizeMax);
+				SilkLibDisableResize(gVars->slkRefNum);
+			} else {
+				VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion != vskVersionNum3 ? vskResizeVertically : vskResizeHorizontally));
+				VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
+				VskSetState(gVars->slkRefNum, vskStateEnable, vskResizeDisable);
+			}
+
+		// Tapwave Zodiac and other DIA compatible devices
 		} else {
-			VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion != vskVersionNum3 ? vskResizeVertically : vskResizeHorizontally));
-			VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
-			VskSetState(gVars->slkRefNum, vskStateEnable, vskResizeDisable);
+/*			UInt32 width = hrWidth;
+			UInt32 height= hrHeight;
+			UInt32 depth = 16;
+			Boolean color = true;
+			Err e;*/
+//			e = WinScreenMode (winScreenModeSet, &width, &height, &depth, &color );
+			SysSetOrientation(sysOrientationLandscape);
+			PINSetInputAreaState(pinInputAreaClosed);
+			StatHide();	
 		}
 	}
 
@@ -377,6 +404,36 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 	if (_screenPitch == _screenWidth) {
 		MemMove(_screenP + move, _offScreenP, size - move);
 	} else {
+/*#ifndef DISABLE_TAPWAVE
+	Err e;
+	TwGfxSurfaceType *src;
+	TwGfxSurfaceType *dst;
+	TwGfxRectType d = {0,0,480,300}, s = {0,0,320,200};
+	TwGfxSurfaceInfoType t;
+	byte *temp;
+	TwGfxRectType dd = {0,0,320,200};
+	
+	t.size = sizeof(TwGfxSurfaceInfoType);
+	t.width = 320;
+	t.height = 200;
+	t.rowBytes = 320;
+	t.location = twGfxLocationAcceleratorMemory;
+	t.pixelFormat = twGfxPixelFormatRGB565_LE;
+	
+	TwGfxType *gfx;
+	e = TwGfxOpen(&gfx, NULL);
+	e = TwGfxAllocSurface(gfx, &src, &t);
+	//TwGfxLockSurface(src, (void **)&temp);
+	//MemMove(temp, _offScreenP,320*200);
+	//TwGfxUnlockSurface(src,false);
+	e = TwGfxDrawPalmBitmap(src, (TwGfxPointType *)&dd, WinGetBitmap(_offScreenH));
+	
+	e = TwGfxGetPalmDisplaySurface(gfx, &dst);
+	e = TwGfxStretchBlt(dst, &d, src, &s); 
+	e = TwGfxFreeSurface(src);
+	e = TwGfxClose(gfx);
+#endif*/
+//#if 0
 		byte *src = _offScreenP;
 		byte *dst = _screenP + move;
 		UInt16 h = _screenHeight - _new_shake_pos;
@@ -385,7 +442,9 @@ void OSystem_PALMOS::update_screen__dbuffer() {
 			dst += _screenPitch;
 			src += _screenWidth;
 		} while (--h);
+//#endif
 	}
+
 }
 
 void OSystem_PALMOS::update_screen__direct() {
@@ -914,30 +973,54 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		if (StrCaselessCompare(value->caption,"ScummVM") == 0)
 			return 1;
 		
-		Char *caption = "Loading...\0";
-		UInt16 h = FntLineHeight() + 2;
-		UInt16 w, y;
+		Char *caption = "Loading, please wait\0";
+		Coord h = FntLineHeight() + 2;
+		Coord w, y;
+
+		// quick erase the screen
+		WinScreenLock(winLockErase);
+		WinScreenUnlock();
 		
 		WinSetTextColor(255);
 		WinSetForeColor(255);
 
 		if (_useHRmode) {
+			y = 160 - (h >> 1) - 20;
 			HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
-			y = 160 - (h >> 1);
 			w = FntCharsWidth(caption,StrLen(caption));
 			w = (320 - w) >> 1;
-			HRWinDrawChars(gVars->HRrefNum, caption, StrLen(caption), w, y - h);
+			HRWinDrawChars(gVars->HRrefNum, caption, StrLen(caption), w, y + h);
 
 			HRFntSetFont(gVars->HRrefNum,hrTinyFont);
 			w = FntCharsWidth(value->caption, StrLen(value->caption));
 			w = (320 - w) >> 1;
 			HRWinDrawChars(gVars->HRrefNum, value->caption, StrLen(value->caption), w, y);
 		} else {
+			Err e;
+			BitmapTypeV3 *bmp2P;
+			BitmapType *bmp1P = BmpCreate(320, (h << 1), 8, NULL, &e);
+			WinHandle tmpH = WinCreateBitmapWindow(bmp1P, &e);
+
+			WinSetDrawWindow(tmpH);
+
 			FntSetFont(boldFont);
-			y = 80 - (h >> 1);
+			y = 80 - (h >> 2) - 10;
 			w = FntCharsWidth(caption, StrLen(caption));
-			w = (160 - w) >> 1;
-			WinDrawChars(caption, StrLen(caption), w, y);
+			w = (320 - w) >> 1;
+			WinDrawChars(caption, StrLen(caption), w, 0 + h);
+
+			FntSetFont(stdFont);
+			w = FntCharsWidth(value->caption, StrLen(value->caption));
+			w = (320 - w) >> 1;
+			WinDrawChars(value->caption, StrLen(value->caption), w, 0);
+
+			WinSetDrawWindow(WinGetDisplayWindow());
+			bmp2P = BmpCreateBitmapV3(bmp1P, kDensityDouble, BmpGetBits(bmp1P), NULL);
+			WinDrawBitmap((BitmapPtr)bmp2P, 0, y);
+
+			BmpDelete((BitmapPtr)bmp2P);
+			WinDeleteWindow(tmpH,0);
+			BmpDelete(bmp1P);
 		}
 		return 1;
 
@@ -963,9 +1046,9 @@ void OSystem_PALMOS::quit() {
 //	free(_sndDataP);
 	free(_sndTempP);
 
-	if (_msaRefNum != sysInvalidRefNum) {
-		MsaStop(_msaRefNum, true);	// stop the current track if any (needed if we use enforce open to prevent the track to play after exit)
-		MsaLibClose(_msaRefNum, msaLibOpenModeAlbum);
+	if (_cdPlayer) {
+		_cdPlayer->release();
+		_cdPlayer = NULL;
 	}
 
 	unload_gfx_mode();
@@ -1121,274 +1204,32 @@ void OSystem_PALMOS::undraw_mouse() {
 	}
 }
 
+void OSystem_PALMOS::stop_cdrom() {
+	if (!_cdPlayer)
+		return;
 
-// TODO : unify lib check functions
-static UInt16 checkMSA() {
-	SonySysFtrSysInfoP sonySysFtrSysInfoP;
-	Err error = errNone;
-	UInt16 refNum = sysInvalidRefNum;
-
-	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
-		// not found with audio adapter ?!
-		//if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrMsa) {		
-			if ((error = SysLibFind(sonySysLibNameMsa, &refNum)))
-				if (error == sysErrLibNotFound)
-					error = SysLibLoad(sonySysFileTMsaLib, sonySysFileCMsaLib, &refNum);
-
-			if (!error) {
-//				Char buf[100];
-//				StrPrintF(buf,"MSA refNum %ld, Try to open lib ...", refNum);
-//				FrmCustomAlert(1000,buf,0,0);
-				MsaLibClose(refNum, msaLibOpenModeAlbum);	// close the lib if we previously let it open (?) Need to add Notify for sonySysNotifyMsaEnforceOpenEvent just in case ...
-				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);			
-/*				switch (error) {
-				case msaErrAlreadyOpen:
-					FrmCustomAlert(1000,"msaErrAlreadyOpen",0,0);
-					break;
-				case msaErrMemory:
-					FrmCustomAlert(1000,"msaErrMemory",0,0);
-					break;
-				case msaErrDifferentMode:
-					FrmCustomAlert(1000,"msaErrDifferentMode",0,0);
-					break;
-				case expErrCardNotPresent:
-					FrmCustomAlert(1000,"expErrCardNotPresent",0,0);
-					break;
-				}
-*/
-				if (error == msaErrAlreadyOpen)
-					error = MsaLibEnforceOpen(refNum, msaLibOpenModeAlbum, appFileCreator);
-			
-				error = (error != msaErrStillOpen) ? error : errNone;
-			}
-		//}
-	}
-
-	if (error)
-		refNum = sysInvalidRefNum;
-	
-	return refNum;
-}
-
-void OSystem_PALMOS::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
-	_msaStopTime = get_msecs() + 100;
-	_msaLoops = 0;
-	return;
-}
-
-// frames are 1/75 sec
-#define CD_FPS 75
-#define TO_MSECS(frame)	((UInt32)((frame) * 1000 / CD_FPS))
-// consider frame at 1/1000 sec
-#define TO_SEC(msecs)	((UInt16)((msecs) / 1000))
-#define TO_MIN(msecs)	((UInt16)(TO_SEC((msecs)) / 60))
-#define FROM_MIN(mins)	((UInt32)((mins) * 60 * 1000))
-#define FROM_SEC(secs)	((UInt32)((secs) * 1000))
-
-#define FRAMES_TO_MSF(f, M,S,F) {                                       \
-        int value = f;                                                  \
-        *(F) = value%CD_FPS;                                            \
-        value /= CD_FPS;                                                \
-        *(S) = value%60;                                                \
-        value /= 60;                                                    \
-        *(M) = value;                                                   \
-}
-
-static void doErr(Err e, const Char *msg) {
-	Char err[100];
-	StrPrintF(err, "%ld : " , e);
-	StrCat(err,msg);
-	FrmCustomAlert(1000,err,0,0);
+	_cdPlayer->stop();
 }
 
 void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int duration) {
-	if (!_isCDRomAvalaible)
+	if (!_cdPlayer)
 		return;
 
-	if (!num_loops && !start_frame)
-		return;
-	
-	Err e;
-	
-	// open MSA lib if needed
-	if (_msaRefNum == sysInvalidRefNum) {
-		_msaRefNum = checkMSA();
-
-		// if not found disable CD-Rom if needed
-		if (_msaRefNum == sysInvalidRefNum) {
-//			FrmCustomAlert(1000,"MSA Lib not found",0,0);
-			_isCDRomAvalaible = (gVars->music.setDefaultTrackLength);
-			return;
-		} else {
-			MsaOutSetVolume(_msaRefNum, 20, 20);
-			Err e = MsaOutStartBeep(_msaRefNum, 1000, msaOutBeepPatternOK);
-//			debug(0, ">> MSALib successfully loaded. Play beep result %d", e);
-		}
-
-		UInt32 dummy, albumIterater = albumIteratorStart;
-		Char nameP[256];
-		MemSet(&_msaAlbum, sizeof(_msaAlbum), 0);
-		_msaAlbum.maskflag = msa_INF_ALBUM;
-		_msaAlbum.code = msa_LANG_CODE_ASCII;
-		_msaAlbum.nameP = nameP;
-		_msaAlbum.fileNameLength = 256;
-
-		e = MsaAlbumEnumerate(_msaRefNum, &albumIterater, &_msaAlbum);
-//		if (e) doErr(e, "MsaAlbumEnumerate");
-		e = MsaSetAlbum(_msaRefNum, _msaAlbum.albumRefNum, &dummy);
-//		if (e) doErr(e, "MsaSetAlbum");
-		e = MsaGetPBRate(_msaRefNum, &_msaPBRate);
-//		if (e) doErr(e, "MsaGetPBRate");
-		// TODO : use RMC to control volume
-	}
-/*
-	if (start_frame > 0)
-		start_frame += CD_FPS >> 1;
-*/
-	if (duration > 0)
-		duration += 5;
-
-//	debug(0, ">> Request : track %d / loops : %d / start : %d / duration : %d", track, num_loops, start_frame, duration);
-	
-	_msaLoops = num_loops;
-	_msaTrack = track + gVars->music.firstTrack - 1;	// first track >= 1 ?, not 0 (0=album)
-	_msaStartFrame = TO_MSECS(start_frame);
-	_msaEndFrame = TO_MSECS(duration);
-
-//	debug(0, ">> To MSECS : start : %d / duration : %d", _msaStartFrame, _msaEndFrame);
-
-	// if gVars->MP3 audio track
-//	Err e;
-	MemHandle trackH;
-	
-	// stop current play if any
-	MsaStop(_msaRefNum, true);
-	// retreive track infos
-	e = MsaGetTrackInfo(_msaRefNum, _msaTrack, 0, msa_LANG_CODE_ASCII, &trackH);
-//	if (e) doErr(e, "MsaGetTrackInfo");
-	// track exists
-	if (!e && trackH) {
-		MsaTime tTime;
-		UInt32 SU, fullLength;
-		MsaTrackInfo *tiP;
-	
-		// FIXME : this enable MsaSuToTime to return the right value
-		MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
-		MsaStop(_msaRefNum, true);
-		
-		tiP = (MsaTrackInfo *)MemHandleLock(trackH);	
-		MsaSuToTime(_msaRefNum, tiP->totalsu, &tTime);
-		SU = tiP->totalsu;
-		MemPtrUnlock(tiP);
-		MemHandleFree(trackH);
-		
-//		debug(0, ">> SU of track : %d (%d%:%d.%d)", SU, tTime.minute, tTime.second, tTime.frame);
-
-//		Char buf[200];
-//		StrPrintF(buf,"Track : %ld - %ld%:%ld.%ld (%ld)", track, tTime.minute, tTime.second, tTime.frame, SU);
-//		FrmCustomAlert(1000,buf,0,0);
-
-		_msaStopTime = 0;
-		fullLength = FROM_MIN(tTime.minute) + FROM_SEC(tTime.second) + tTime.frame;
-
-//		debug(0, ">> Full length : %d", fullLength);
-		
-		if (_msaEndFrame > 0) {
-			_msaTrackLength = _msaEndFrame;
-		} else if (_msaStartFrame > 0) {
-			_msaTrackLength = fullLength;
-			_msaTrackLength -= _msaStartFrame;
-		} else {
-			_msaTrackLength = fullLength;
-		}
-		
-		// try to play the track
-		if (start_frame == 0 && duration == 0) {
-			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
-		} else {
-			// FIXME : MsaTimeToSu doesn't work ... (may work with previous FIXME)
-			_msaTrackStart = (UInt32) ((float)(_msaStartFrame) / ((float)fullLength / (float)SU));
-//			debug(0, ">> start at (float) : %d", _msaTrackStart);
-/*
-UInt32 f;
-			FRAMES_TO_MSF(start_frame, &tTime.minute, &tTime.second, &f)
-			tTime.frame = 0;
-			MsaTimeToSu(_msaRefNum, &tTime, &SU);
-			debug(0, ">> start at (MsaTimeToSu) : %d", SU);
-*/
-			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
-		}
-
-		_msaEndTime = get_msecs() + _msaTrackLength;
-//		debug(0, ">> track length : %d / end : %d", _msaTrackLength, _msaEndTime);
-	}
+	_cdPlayer->play(track, num_loops, start_frame, duration);
 }
 
 bool OSystem_PALMOS::poll_cdrom() {
-	if (!_isCDRomAvalaible)
+	if (!_cdPlayer)
 		return false;
-
-	if (_msaRefNum == sysInvalidRefNum)
-		return false;
-
-	MsaPBStatus pb;
-	MsaGetPBStatus(_msaRefNum, &pb);
-	return (_msaLoops != 0 && (get_msecs() < _msaEndTime || pb.status != msa_STOPSTATUS));
+	
+	return _cdPlayer->poll();
 }
 
 void OSystem_PALMOS::update_cdrom() {
-	if (!_isCDRomAvalaible)
+	if (!_cdPlayer)
 		return;
 
-	if (_msaRefNum == sysInvalidRefNum)
-		return;
-
-	// stop replay upon request of stop_cdrom()
-	if (_msaStopTime != 0 && get_msecs() >= _msaStopTime) {
-		MsaStop(_msaRefNum, true);
-		_msaLoops = 0;
-		_msaStopTime = 0;
-		_msaEndTime = 0;
-		return;
-	}
-
-	// not fully played
-	if (get_msecs() < _msaEndTime)
-		return;
-		
-	if (_msaLoops == 0) {
-		MsaStop(_msaRefNum, true);
-		return;
-	}
-
-	// track ends and last play, force stop if still playing
-	if (_msaLoops != 1) {
-		MsaPBStatus pb;
-		MsaGetPBStatus(_msaRefNum, &pb);
-	 	if (pb.status != msa_STOPSTATUS) {
-//			debug(0,"Stop It now");
-			MsaStop(_msaRefNum, true);
-			return;
-		}
-	}
-
-	// loop again ?
-	if (_msaLoops > 0) {
-		MsaStop(_msaRefNum, true); // stop if loop=0
-		_msaLoops--;
-	}
-
-	// loop if needed
-	if (_msaLoops != 0) {
-		MsaStop(_msaRefNum, true);
-//		debug(0,"Next loop : %d", _msaLoops);
-
-		_msaEndTime = get_msecs() + _msaTrackLength;
-		if (_msaStartFrame == 0 && _msaEndFrame == 0)
-			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
-		else
-			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
-	}
+	_cdPlayer->update();
 }
 
 OSystem_PALMOS::OSystem_PALMOS() {
@@ -1418,6 +1259,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	memset(&_mouseCurState,0,sizeof(MousePos));
 	_mouseDrawn = false;
 	_mouseBackupP = NULL;
+	_mouseVisible = false;
 	
 	// overlay
 	_tmpScreenP = NULL;
@@ -1426,9 +1268,19 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	// HiRes
 	_useHRmode	= (gVars->HRrefNum != sysInvalidRefNum);
 	
-	// cd-rom
-	_isCDRomAvalaible = (gVars->music.MP3 || gVars->music.setDefaultTrackLength); // true by default, set to false if MSA not avalaible
-	_msaRefNum = sysInvalidRefNum;
+	// enable cdrom ?
+	// TODO : defaultTrackLength player
+	_cdPlayer = NULL;
+	if (gVars->music.MP3) {
+		_cdPlayer = new MsaCDPlayer(this);
+//		_cdPlayer = new ZodiacCDPlayer(this);
+		_cdPlayer->init();
+		
+		// TODO : use setDefaultTrackLength
+//		_isCDRomAvalaible = _cdPlayer->init();
+//		if (!_isCDRomAvalaible)
+//			_cdPlayer->release();
+	}
 	
 	// sound
 	_isSndPlaying = false;
@@ -1437,7 +1289,6 @@ OSystem_PALMOS::OSystem_PALMOS() {
 }
 
 void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
-
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
@@ -1446,22 +1297,11 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 	if (_mouseDrawn)
 		undraw_mouse();
 
-	// FIXME : i divide dx/dy by 2 because WinScrollRectangle use low-density coordinates on Hi-Density
-	// devices. Hope this will work, if not i will use the SDL-common definition with copy_rect :(
-
-	// FIXME - calling copy_rect repeatedly is horribly inefficient, as it (un)locks the surface repeatedly
-	// and it performs unneeded clipping checks etc.
-	// Furthermore, this code is not correct, techincally: the pixels members of an SDLSource may be 0
-	// while it is not locked (e.g. for HW surfaces which are stored in the graphic card's VRAM).
-
 	RectangleType r, dummy;
 	WinSetDrawWindow(_offScreenH);
-	
-	if (_useHRmode) {
-		RctSetRectangle(&r, ((_offScreenH != _screenH) ? 0 : _screenOffset.x), ((_offScreenH != _screenH) ? 0 : _screenOffset.y), _screenWidth, _screenHeight);
-	} else {
-		RctSetRectangle(&r, ((_offScreenH != _screenH) ? 0 : _screenOffset.x >> 1), ((_offScreenH != _screenH) ? 0 : _screenOffset.y >> 1), _screenWidth >> 1, _screenHeight >> 1);
-	}
+	RctSetRectangle(&r, ((_offScreenH != _screenH) ? 0 : _screenOffset.x), ((_offScreenH != _screenH) ? 0 : _screenOffset.y), _screenWidth, _screenHeight);
+	// FIXME : use this only if the Hi-Density feature is present ?
+	if (!_useHRmode) WinSetCoordinateSystem(kCoordinatesNative);
 
 	// vertical movement
 	if (dy > 0) {
@@ -1470,9 +1310,7 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 			// need to set the draw window
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winDown, dy, &dummy);
 		} else {
-			WinScrollRectangle(&r, winDown, dy >> 1, &dummy);
-//			for (int y = height - 1; y >= dy; y--)
-//				copy_rect((byte *)_offScreenP + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+			WinScrollRectangle(&r, winDown, dy, &dummy);
 		}
 	} else if (dy < 0) {
 		// move up - copy from top to bottom
@@ -1481,9 +1319,7 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 			// need to set the draw window
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winUp, dy, &dummy);
 		} else {
-			WinScrollRectangle(&r, winUp, dy >> 1, &dummy);
-//			for (int y = dy; y < height; y++)
-//				copy_rect((byte *)_offScreenP + _screenWidth * y, _screenWidth, 0, y - dy, _screenWidth, 1);
+			WinScrollRectangle(&r, winUp, dy, &dummy);
 		}
 	}
 
@@ -1494,9 +1330,7 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 			// need to set the draw window
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winRight, dx, &dummy);
 		} else {
-			WinScrollRectangle(&r, winRight, dx >> 1, &dummy);
-//			for (int x = _screenWidth - 1; x >= dx; x--)
-//				copy_rect((byte *)_offScreenP + x - dx, _screenWidth, x, 0, 1, height);
+			WinScrollRectangle(&r, winRight, dx, &dummy);
 		}
 	} else if (dx < 0)  {
 		// move left - copy from left to right
@@ -1505,14 +1339,15 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 			// need to set the draw window
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winLeft, dx, &dummy);
 		} else {
-			WinScrollRectangle(&r, winLeft, dx >> 1, &dummy);
-//			for (int x = dx; x < _screenWidth; x++)
-//				copy_rect((byte *)_offScreenP + x, _screenWidth, x - dx, 0, 1, height);
+			WinScrollRectangle(&r, winLeft, dx, &dummy);
 		}
 	}
-	
+
+	// FIXME : use this only if the Hi-Density feature is present ?
+	if (!_useHRmode) WinSetCoordinateSystem(kCoordinatesStandard);
 	WinSetDrawWindow(_screenH);
-	SysTaskDelay(1); // prevent crash on Clie device using successive [HR]WinScrollRectangle !
+	// Prevent crash on Clie device using successive [HR]WinScrollRectangle !
+	SysTaskDelay(1);
 }
 
 bool OSystem_PALMOS::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
@@ -1531,7 +1366,7 @@ void OSystem_PALMOS::clear_sound_proc() {
 void OSystem_PALMOS::check_sound() {
 	// currently not supported
 	// but i need to use this function to prevent out of memory
-	// on zak256 because the sound buffer growns and it's never
+	// on games because the sound buffer growns and it's never
 	// freed.
 	_sound.proc(_sound.param, _sndTempP, SND_BLOCK);
 }
@@ -1661,27 +1496,36 @@ int16 OSystem_PALMOS::get_width() {
 }
 
 byte OSystem_PALMOS::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	NewGuiColor color = 255;
-	byte nearest = 255;
-	byte check;
-	byte r2,g2,b2;
+	byte color;
 
-	for (int i = 0; i < 256; i++)
-	{
-		r2 = _currentPalette[i].r;
-		g2 = _currentPalette[i].g;
-		b2 = _currentPalette[i].b;
+	if (gVars->stdPalette) {
+		RGBColorType rgb = {0, r, g, b};
+		color = WinRGBToIndex(&rgb);
 
-		check = (ABS(r2 - r) + ABS(g2 - g) + ABS(b2 - b)) / 3;
+	} else {
+		byte nearest = 255;
+		byte check;
+		byte r2, g2, b2;
 
-		if (check == 0)				// perfect match
-			return i;
-		else if (check < nearest) { // else save and continue
-			color = i;
-			nearest = check;
+		color = 255;
+
+		for (int i = 0; i < 256; i++)
+		{
+			r2 = _currentPalette[i].r;
+			g2 = _currentPalette[i].g;
+			b2 = _currentPalette[i].b;
+
+			check = (ABS(r2 - r) + ABS(g2 - g) + ABS(b2 - b)) / 3;
+
+			if (check == 0)				// perfect match
+				return i;
+			else if (check < nearest) { // else save and continue
+				color = i;
+				nearest = check;
+			}
 		}
 	}
-
+	
 	return color;
 }
 

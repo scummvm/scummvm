@@ -25,6 +25,7 @@
 
 #include <SonyClie.h>
 #include "common/system.h"
+#include "cdaudio.h"
 
 Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
@@ -254,20 +255,7 @@ private:
 	void unload_gfx_mode();
 	static void autosave();
 
-	// cdrom
-	Boolean _isCDRomAvalaible;
-	UInt16 _msaRefNum;
-	AlbumInfoType _msaAlbum;
-	UInt16 _msaLoops;
-	UInt32 _msaPBRate;
-	UInt16 _msaTrack;
-	UInt32 _msaStopTime;
-	UInt32 _msaEndTime;
-	UInt32 _msaStartFrame;
-	UInt32 _msaEndFrame;
-	UInt32 _msaTrackStart;
-	UInt32 _msaTrackLength;
-
+	CDAudio *_cdPlayer;
 	// PALM spec
 
 	Int32 _lastKeyPressed;
