@@ -48,6 +48,17 @@ bool BundleMgr::openFile(const char *filename, const char *directory) {
 		return false;
 	}
 
+/*
+ TODO / FIXME
+This is another spot were lots and lots of time is wasted, because the same data is read over
+and over again from the disk. Disk I/O is *slooow*.
+This function by itself actually isn't what is really slow - normally we would call
+it once and then be done with it.
+However, for whatever strange reasons, the higher level code constantly keeps creating
+new BundleMgr, uses them to open a file, play a piece of sound, then delete the BundleMgr.
+Repeat ad infinitum -> extremly slow.
+*/
+
 	tag = _file.readUint32BE();
 	offset = _file.readUint32BE();
 	_numFiles = _file.readUint32BE();
@@ -100,6 +111,13 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		warning("BundleMgr::decompressSampleByIndex() File is not open!");
 		return 0;
 	}
+
+/*
+FIXME / TODO
+ This function is a major speed hog. It re-reads the same data over and over and over again.
+ Disk I/O is about the slowest thing on any modern computer. We used to cache all this data,
+ with good reason... this will have to be done again.
+*/
 
 	_file.seek(_bundleTable[index].offset, SEEK_SET);
 	tag = _file.readUint32BE();
