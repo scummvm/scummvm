@@ -798,10 +798,14 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			byte var3b;
 			int32 adder;
 			
+			byte *endPos = comp_input + input_size;
+			
 			src = comp_input;
 			memset (comp_output, 0, 0x2000);
 			firstWord = READ_BE_UINT16(src);
 			src += 2;
+			assert(src < endPos);
+
 
 			if (firstWord != 0) {
 				if (index != 0) {
@@ -835,6 +839,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				startPos = 0;
 				origLeft = 0x2000;
 			}
+			assert(src < endPos);
 
 			tableEntrySum = 0;
 			for (channel = 0; channel < channels; channel++) {
@@ -847,13 +852,17 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					outputWord = 0;
 					imcTableEntry = 7;
 				}
-				left = origLeft / (2 * channels);
+				left = (origLeft - 1) / (2 * channels) + 1;
 				destPos = startPos + 2 * channel;
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = curTableEntry - 2;
 					var3b = (1 << decompTable) << 1;
 					readPos = src + (tableEntrySum >> 3);
+					if (readPos >= endPos) {
+						error("readPos exceeds endPos: %d >= %d (%d, %d)!" , readPos, endPos, left, origLeft);
+					}
+					assert(readPos < endPos);
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
@@ -894,13 +903,11 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					imcTableEntry = imcTable1[curTablePos];
 				}
 			}
-
 			if (index == 0) {
 				output_size = 0x2000 - firstWord;
 			} else {
 				output_size = 0x2000;
 			}
-
 		}
 		break;
 	default:
