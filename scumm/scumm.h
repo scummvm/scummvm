@@ -715,6 +715,13 @@ protected:
 	void killVerb(int slot);
 	void setVerbObject(uint room, uint object, uint verb);
 
+
+	// TODO: This should be moved into Scumm_v2 if posisble
+	ScummVM::Rect v2_mouseover_boxes[7];
+	int8 v2_mouseover_box;
+
+	void initV2MouseOver();
+	void checkV2MouseOver(ScummVM::Point pos);
 	void checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 

@@ -27,49 +27,158 @@
 #include "scumm.h"
 #include "verbs.h"
 
+enum {
+	kInventoryUpArrow = 4,
+	kInventoryDownArrow = 5,
+	kSentenceLine = 6
+};
+
+void Scumm::initV2MouseOver() {
+	int i;
+
+	v2_mouseover_box = -1;
+
+	// Inventory items
+	for (i = 0; i < 2; i++) {
+		v2_mouseover_boxes[2 * i].left = 0;
+		v2_mouseover_boxes[2 * i].right = 144;
+		v2_mouseover_boxes[2 * i].top = 34 + 8 * i;
+		v2_mouseover_boxes[2 * i].bottom = v2_mouseover_boxes[2 * i].top + 8;
+
+		v2_mouseover_boxes[2 * i + 1].left = 176;
+		v2_mouseover_boxes[2 * i + 1].right = 320;
+		v2_mouseover_boxes[2 * i + 1].top = v2_mouseover_boxes[2 * i].top;
+		v2_mouseover_boxes[2 * i + 1].bottom = v2_mouseover_boxes[2 * i].bottom;
+	}
+
+	// Inventory arrows
+
+	v2_mouseover_boxes[kInventoryUpArrow].left = 144;
+	v2_mouseover_boxes[kInventoryUpArrow].right = 176;
+	v2_mouseover_boxes[kInventoryUpArrow].top = 32;
+	v2_mouseover_boxes[kInventoryUpArrow].bottom = 40;
+
+	v2_mouseover_boxes[kInventoryDownArrow].left = 144;
+	v2_mouseover_boxes[kInventoryDownArrow].right = 176;
+	v2_mouseover_boxes[kInventoryDownArrow].top = 48;
+	v2_mouseover_boxes[kInventoryDownArrow].bottom = 56;
+
+	// Sentence line
+
+	v2_mouseover_boxes[kSentenceLine].left = 0;
+	v2_mouseover_boxes[kSentenceLine].right = 320;
+	v2_mouseover_boxes[kSentenceLine].top = 0;
+	v2_mouseover_boxes[kSentenceLine].bottom = 8;
+}
+
+void Scumm::checkV2MouseOver(ScummVM::Point pos) {
+	VirtScreen *vs = &virtscr[2];
+	ScummVM::Rect rect;
+	byte *ptr, *dst;
+	int i, x, y, new_box = -1;
+
+	// Don't do anything unless the inventory is active
+	if (!(_userState & 64)) {
+		v2_mouseover_box = -1;
+		return;
+	}
+
+	if (_cursor.state > 0) {
+		for (i = 0; i < ARRAYSIZE(v2_mouseover_boxes); i++) {
+			if (v2_mouseover_boxes[i].contains(pos.x, pos.y - vs->topline)) {
+				new_box = i;
+				break;
+			}
+		}
+	}
+
+	if (new_box != v2_mouseover_box) {
+		if (v2_mouseover_box != -1) {
+			rect = v2_mouseover_boxes[v2_mouseover_box];
+
+			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
+
+			// Hackish way to undo highlight: replace color 14 with color 5
+			for (y = rect.height() - 1; y >= 0; y--) {
+				for (x = rect.width() - 1; x >= 0; x--) {
+					if (dst[x] == 14)
+						dst[x] = 5;
+				}
+				dst += _screenWidth;
+			}
+
+			updateDirtyRect(2, rect.left, rect.right, rect.top, rect.bottom, 0);
+		}
+
+		if (new_box != -1) {
+			rect = v2_mouseover_boxes[new_box];
+
+			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
+
+			// Hackish way to apply highlight: replace color 5 with color 14
+			for (y = rect.height() - 1; y >= 0; y--) {
+				for (x = rect.width() - 1; x >= 0; x--) {
+					if (dst[x] == 5)
+						dst[x] = 14;
+				}
+				dst += _screenWidth;
+			}
+
+			updateDirtyRect(2, rect.left, rect.right, rect.top, rect.bottom, 0);
+		}
+
+		v2_mouseover_box = new_box;
+	}
+}
+
 void Scumm::checkV2Inventory(int x, int y) {
 	int object = 0;
 
-	if ((y < virtscr[2].topline + 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
+	y -= virtscr[2].topline;
+
+	if ((y < 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
 
-	if (x > 145 && x < 160) {	// Inventory Arrows
-		if (y < virtscr[2].topline + 38)	// Up arrow
-			_inventoryOffset-=2;
-		else if (y > virtscr[2].topline + 47)	// Down arrow
-			_inventoryOffset+=2;
-
+	if (v2_mouseover_boxes[kInventoryUpArrow].contains(x, y)) {
+		_inventoryOffset -= 2;
 		if (_inventoryOffset < 0)
 			_inventoryOffset = 0;
-
+		redrawV2Inventory();
+ 	} else if (v2_mouseover_boxes[kInventoryDownArrow].contains(x, y)) {
+		_inventoryOffset += 2;
 		if (_inventoryOffset > (getInventoryCount(_scummVars[VAR_EGO])-2))
 			_inventoryOffset = (getInventoryCount(_scummVars[VAR_EGO])-2);
-
 		redrawV2Inventory();
-        }
+	}
 
-	object = ((y - virtscr[2].topline - 34) / 8) * 2;
-	if (x > 150)
-		object++;
+	for (object = 0; object < 4; object++) {
+		if (v2_mouseover_boxes[object].contains(x, y)) {
+			break;
+		}
+	}
 
-	object = findInventory(_scummVars[VAR_EGO], object+1+_inventoryOffset);
+	if (object >= 4)
+		return;
+
+	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 	if (object > 0) {
 		runInputScript(3, object, 0);
 	}
 }
 
 void Scumm::redrawV2Inventory() {
-	int i, items = 0;
-	bool alternate = false;
-	int max_inv = getInventoryCount(_scummVars[VAR_EGO]);
+	int i;
+	int max_inv;
 	ScummVM::Rect inventoryBox;
 
+	v2_mouseover_box = -1;
+
 	// Clear on all invocations, so hiding works properly
-        inventoryBox.top = virtscr[2].topline + 32;
-        inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
-        inventoryBox.left = 0;
-        inventoryBox.right = 319;
-        restoreBG(inventoryBox);
+	inventoryBox.top = virtscr[2].topline + 32;
+	inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
+	inventoryBox.left = 0;
+	inventoryBox.right = virtscr[2].width;
+	restoreBG(inventoryBox);
 
 	if (!(_userState & 64))	// Don't draw inventory unless active
 		return;
@@ -77,36 +186,35 @@ void Scumm::redrawV2Inventory() {
 	_string[1].charset = 1;
 	_string[1].color = 5;
 
-	items = 0;
-	for (i = _inventoryOffset + 1; i <= max_inv; i++) {
-		int obj = findInventory(_scummVars[VAR_EGO], i);
-		if ((obj == 0) || (items == 4)) break;
+	max_inv = getInventoryCount(_scummVars[VAR_EGO]) - _inventoryOffset;
+	if (max_inv > 4)
+		max_inv = 4;
+	for (i = 0; i < max_inv; i++) {
+		int obj = findInventory(_scummVars[VAR_EGO], i + 1 + _inventoryOffset);
+		if (obj == 0)
+			break;
 		
-		_string[1].ypos = virtscr[2].topline + 34 + (8*(items / 2));
-		if (alternate)
-			_string[1].xpos = 200;
-		else
-			_string[1].xpos = 0;
+		_string[1].ypos = v2_mouseover_boxes[i].top + virtscr[2].topline;
+		_string[1].xpos = v2_mouseover_boxes[i].left;
 
 		_messagePtr = getObjOrActorName(obj);
 		assert(_messagePtr);
 		drawString(1);
-		items++;
-
-		alternate = !alternate;
 	}
 
-	if (_inventoryOffset > 0) { // Draw Up Arrow
-		_string[1].xpos = 145;
-		_string[1].ypos = virtscr[2].topline + 32;
-		_messagePtr = (const byte *)"\1\2";
+	// If necessary, draw "up" arrow
+	if (_inventoryOffset > 0) {
+		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].left;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].top + virtscr[2].topline;
+		_messagePtr = (const byte *)" \1\2";
 		drawString(1);
 	}
 
-	if (items == 4) {     // Draw Down Arrow
-		_string[1].xpos = 145;
-		_string[1].ypos = virtscr[2].topline + 47;
-		_messagePtr = (const byte *)"\3\4";
+	// If necessary, draw "down" arrow
+	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].left;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].top + virtscr[2].topline;
+		_messagePtr = (const byte *)" \3\4";
 		drawString(1);
 	}
 }

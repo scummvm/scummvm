@@ -688,6 +688,10 @@ void Scumm::scummInit() {
 			_shadowPalette[i] = i;
 		setupEGAPalette();
 	}
+
+	if (_features & GF_AFTER_V2) {
+		initV2MouseOver();
+	}
 	
 	if (_features & GF_AFTER_V2)
 		_charset = new CharsetRendererV2(this);
@@ -1000,8 +1004,10 @@ load_game:
 			drawVerb(i, 0);
 		verbMouseOver(0);
 
-		if (_features & GF_AFTER_V2)
+		if (_features & GF_AFTER_V2) {
 			redrawV2Inventory();
+			checkV2MouseOver(_mouse);
+		}
 
 		_verbRedraw = false;
 		_fullRedraw = true;
@@ -1067,6 +1073,9 @@ load_game:
 			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
 		}
 		_verbRedraw = false;
+
+		if (_features & GF_AFTER_V2)
+			checkV2MouseOver(_mouse);
 
 		drawBlastObjects();
 		if (_features & GF_AFTER_V8)
