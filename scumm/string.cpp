@@ -163,9 +163,10 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if ((_gameId == GID_CMI || _gameId == GID_DIG) && _sound->_talkChannelHandle.isActive()) {
+	if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_imuseDigital)
+				&& _sound->isSoundRunning(10000)) {
 		// Keep the 'speech' flag in _sound->_sfxMode set as long as the
-		// _talkChannelHandle is valid.
+		// sound 10000 is playing.
 		_sound->_sfxMode |= 2;
 	}
 
@@ -900,7 +901,7 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		pointer[j] = 0;
 
 		// Play speech
-		_imuseDigital->playBundleSound(pointer, &_sound->_talkChannelHandle);
+		_imuseDigital->playBundleSound(pointer);
 
 		ptr = _transText;
 	}

@@ -26,6 +26,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+class File;
+
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
 #endif
@@ -53,5 +55,7 @@ struct VocBlockHeader {
  * return the corresponding sample frequency.
  */
 extern int getSampleRateFromVOCRate(int vocSR);
+extern byte *readCreativeVoc(byte *ptr, int32 &size, int &rate);
+extern byte *loadVocSample(File *file, int32 &size, int &rate);
 
 #endif

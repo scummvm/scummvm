@@ -39,11 +39,6 @@
 
 namespace Scumm {
 
-enum {
-	SOUND_HEADER_SIZE = 26,
-	SOUND_HEADER_BIG_SIZE = 26 + 8
-};
-
 struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 	int org_offset;
 	int new_offset;
@@ -411,7 +406,11 @@ void Sound::processSfxQueues() {
 	if ((_sfxMode & 2) && _scumm->VAR(_scumm->VAR_TALK_ACTOR)) {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
 
-		finished = !_talkChannelHandle.isActive();
+		if (_scumm->_imuseDigital) {
+			finished = !isSoundRunning(10000);
+		} else {
+			finished = !_talkChannelHandle.isActive();
+		}
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
@@ -486,14 +485,13 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			warning("startTalkSound: dig demo: voc file not found");
 			return;
 		}
-
 	} else {
 
 		if (!_sfxFile->isOpen()) {
 			warning("startTalkSound: SFX file is not open");
 			return;
 		}
-	
+
 		// FIXME hack until more is known
 		// the size of the data after the sample isn't known
 		// 64 is just a guess
@@ -506,7 +504,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
-	
+
 		// Some games frequently assume that starting one sound effect will
 		// automatically stop any other that may be playing at that time. So
 		// that is what we do here, but we make an exception for speech.
@@ -515,24 +513,24 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		//
 		// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
 		// from being interrupted.
-	
+
 		if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 			|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 			id = 777777;
 			_scumm->_mixer->stopID(id);
 		}
-	
+
 		if (b > 8) {
 			num = (b - 8) >> 1;
 		}
-	
+
 		if (offset_table != NULL) {
 			MP3OffsetTable *result = NULL, key;
 	
 			key.org_offset = offset;
 			result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
-	
+
 			if (result == NULL) {
 				warning("startTalkSound: did not find sound at offset %d !", offset);
 				return;
@@ -548,10 +546,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			offset += 8;
 			size = -1;
 		}
-	
+
 		_sfxFile->seek(offset, SEEK_SET);
-	
-		assert(num+1 < (int)ARRAYSIZE(_mouthSyncTimes));
+
+		assert(num + 1 < (int)ARRAYSIZE(_mouthSyncTimes));
 		for (i = 0; i < num; i++)
 			_mouthSyncTimes[i] = _sfxFile->readUint16BE();
 	
@@ -566,7 +564,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
-		_scumm->_mixer->stopHandle(_talkChannelHandle);
+		if (_scumm->_imuseDigital) {
+			_scumm->_imuseDigital->stopSound(10000);
+		} else {
+			_scumm->_mixer->stopHandle(_talkChannelHandle);
+		}
 		_sfxMode &= ~2;
 	}
 }
@@ -797,10 +799,6 @@ void Sound::pauseSounds(bool pause) {
 }
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
-	char ident[8];
-	uint size = 0;
-	int rate, comp;
-	byte *data;
 
 	if (_soundsPaused || !_scumm->_mixer->isReady())
 		return;
@@ -818,47 +816,17 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 		return;
 	}
 
-	if (file->read(ident, 8) != 8)
-		goto invalid;
+	int32 size;
+	int rate;
+	byte *data = loadVocSample(_sfxFile, size, rate);
 
-	if (!memcmp(ident, "VTLK", 4)) {
-		file->seek(SOUND_HEADER_BIG_SIZE - 8, SEEK_CUR);
-	} else if (!memcmp(ident, "Creative", 8)) {
-		file->seek(SOUND_HEADER_SIZE - 8, SEEK_CUR);
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->setVocVoice(data, size, rate);
+		_scumm->_imuseDigital->startSound(10000);
+		free(data);
 	} else {
-	invalid:;
-		warning("startSfxSound: invalid header");
-		return;
+		_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, id);
 	}
-
-	VocBlockHeader voc_block_hdr;
-
-	file->read(&voc_block_hdr, sizeof(voc_block_hdr));
-	if (voc_block_hdr.blocktype != 1) {
-		warning("startSfxSound: Expecting block_type == 1, got %d", voc_block_hdr.blocktype);
-		return;
-	}
-
-	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-	rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
-	comp = voc_block_hdr.pack;
-
-	if (comp != 0) {
-		warning("startSfxSound: Unsupported compression type %d", comp);
-		return;
-	}
-
-	data = (byte *)malloc(size);
-	if (data == NULL) {
-		error("startSfxSound: out of memory");
-	}
-
-	if (file->read(data, size) != size) {
-		/* no need to free the memory since error will shut down */
-		error("startSfxSound: cannot read %d bytes", size);
-	}
-
-	_scumm->_mixer->playRaw(handle, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, id);
 }
 
 File *Sound::openSfxFile() {
@@ -869,6 +837,15 @@ File *Sound::openSfxFile() {
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 	offset_table = NULL;
+
+	// for now until better streaming will be, ft voice can't not be compressed
+	if (_scumm->_imuseDigital) {
+		sprintf(buf, "%s.sou", _scumm->getGameName());
+		if (!file->open(buf, _scumm->getGameDataPath())) {
+			file->open("monster.sou", _scumm->getGameDataPath());
+		}
+		return file;
+	}
 
 #ifdef USE_MAD
 	sprintf(buf, "%s.so3", _scumm->getGameName());

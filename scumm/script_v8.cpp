@@ -1078,9 +1078,10 @@ void ScummEngine_v8::o8_actorOps() {
 		// on the current talk channel handle. (If the handle is 0,
 		// setChannelPan() won't do anything.)
 
-		if (_actorToPrintStrFor == a->number)
-			_mixer->setChannelPan(_sound->_talkChannelHandle,
-				(a->talkPan != 64) ? 2 * a->talkPan - 127 : 0);
+		if (_actorToPrintStrFor == a->number) {
+			if (_sound->isSoundRunning(10000))
+				_imuseDigital->parseScriptCmds(12, 0x700, 10000, a->talkPan, 0, 0, 0, 0);
+		}
 
 		break;
 	default:

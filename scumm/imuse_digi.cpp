@@ -634,58 +634,6 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 };
 #endif
 
-static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
-	assert(strncmp((char *)ptr, "Creative Voice File\x1A", 20) == 0);
-	int32 offset = READ_LE_UINT16(ptr + 20);
-	int16 version = READ_LE_UINT16(ptr + 22);
-	int16 code = READ_LE_UINT16(ptr + 24);
-	assert(version == 0x010A || version == 0x0114);
-	assert(code == ~version + 0x1234);
-	bool quit = 0;
-	byte *ret_sound = 0; size = 0;
-	int loops = 0;
-	while (!quit) {
-		int len = READ_LE_UINT32(ptr + offset);
-		offset += 4;
-		code = len & 0xFF;
-		len >>= 8;
-		switch(code) {
-		case 0: quit = 1; break;
-		case 1: {
-			int time_constant = ptr[offset++];
-			int packing = ptr[offset++];
-			len -= 2;
-			rate = getSampleRateFromVOCRate(time_constant);
-			debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
-			if (packing == 0) {
-				if (size) {
-					ret_sound = (byte *)realloc(ret_sound, size + len);
-				} else {
-					ret_sound = (byte *)malloc(len);
-				}
-				memcpy(ret_sound + size, ptr + offset, len);
-				size += len;
-			} else {
-				warning("VOC file packing %d unsupported", packing);
-			}
-			} break;
-		case 6:	// begin of loop
-			loops = len + 1;
-			break;
-		case 7:	// end of loop
-			break;
-		default:
-			warning("Invalid code in VOC file : %d", code);
-			quit = 1;
-			break;
-		}
-		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
-		offset += len;
-	}
-	debug(9, "VOC Data Size : %d", size);
-	return ret_sound;
-}
-
 static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo) {
 	uint32 loop_size = size / 3;
 	uint32 s_size = loop_size * 4;
@@ -722,6 +670,12 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
 	_pause = false;
 	
+	_voiceVocData = NULL;
+	_voiceVocSize = 0;
+	_voiceVocRate = 0;
+
+	_voiceBundleData = NULL;
+
 	_nameBundleMusic = "";
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
@@ -802,17 +756,36 @@ void IMuseDigital::callback() {
 	}
 }
 
+void IMuseDigital::setVocVoice(byte *src, int32 size, int rate) {
+	_voiceVocData = src;
+	_voiceVocSize = size;
+	_voiceVocRate = rate;
+}
+
+void IMuseDigital::setBundleVoice(byte *src) {
+	_voiceBundleData = src;
+}
+
 void IMuseDigital::startSound(int sound) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		if (!_channel[l].used && !_channel[l].handle.isActive()) {
-			byte *ptr = _scumm->getResourceAddress(rtSound, sound);
-			byte *s_ptr = ptr;
-			if (ptr == NULL) {
-				warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
-				return;
+			byte *ptr, *s_ptr;
+			if ((sound == 10000) && (_voiceBundleData)) {
+				s_ptr = ptr = _voiceBundleData;
+			} else if ((sound == 10000) && (_voiceVocData)) {
+				//
+			} else if (sound != 10000) {
+				ptr = _scumm->getResourceAddress(rtSound, sound);
+				s_ptr = ptr;
+				if (ptr == NULL) {
+					warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
+					return;
+				}
+			} else {
+				error("IMuseDigital::startSound() unknown condition");
 			}
 			_channel[l].pan = 0;
 			_channel[l].vol = 127 * 1000;
@@ -832,8 +805,22 @@ void IMuseDigital::startSound(int sound) {
 			int32 size = 0;
 			int t;
 
-			if (READ_UINT32(ptr) == MKID('Crea')) {
-				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l].freq);
+			if ((sound == 10000) && (_voiceVocData)) {
+				_channel[l].mixerSize = _voiceVocRate * 2;
+				_channel[l].size = _voiceVocSize * 2;
+				_channel[l].bits = 8;
+				_channel[l].channels = 2;
+				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
+				_channel[l].data = (byte *)malloc(_channel[l].size);
+
+				for (t = 0; t < _channel[l].size / 2; t++) {
+					*(_channel[l].data + t * 2 + 0) = *(_voiceVocData + t);
+					*(_channel[l].data + t * 2 + 1) = *(_voiceVocData + t);
+				}
+
+				_voiceVocRate = NULL;
+			} else if (READ_UINT32(ptr) == MKID('Crea')) {
+				byte *t_ptr= readCreativeVoc(ptr, size, _channel[l].freq);
 				_channel[l].mixerSize = _channel[l].freq * 2;
 				_channel[l].size = size * 2;
 				_channel[l].bits = 8;
@@ -897,6 +884,9 @@ void IMuseDigital::startSound(int sound) {
 						_channel[l].jump[_channel[l].numJumps].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
 						_channel[l].numJumps++;
 						break;
+					case MKID_BE('SYNC'):
+						size = READ_BE_UINT32(ptr); ptr += size + 4;
+						break;
 					case MKID_BE('DATA'):
 						size = READ_BE_UINT32(ptr); ptr += 4;
 						break;
@@ -905,6 +895,16 @@ void IMuseDigital::startSound(int sound) {
 					}
 					if (tag == MKID_BE('DATA'))
 						break;
+				}
+
+				if ((sound == 10000) && (_voiceBundleData)) {
+					if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
+						Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
+						_channel[l].freq = (_channel[l].freq * a->talkFrequency) / 256;
+
+						// Adjust to fit the mixer's notion of panning.
+						_channel[l].pan = (a->talkPan != 64) ? 2 * a->talkPan - 127 : 0;
+					}
 				}
 
 				uint32 header_size = ptr - s_ptr;
@@ -938,6 +938,26 @@ void IMuseDigital::startSound(int sound) {
 					_channel[l].mixerSize *= 2;
 					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
 					_channel[l].size = decode12BitsSample(ptr, &_channel[l].data, size, (_channel[l].channels == 2) ? false : true);
+				} else if (_channel[l].bits == 16) {
+					_channel[l].mixerSize *= 2;
+					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
+					
+					// FIXME: For some weird reasons, sometimes we get an odd size, even though
+					// the data is supposed to be in 16 bit format... that makes no sense...
+					size &= ~1;
+					
+					if (_channel[l].channels == 1) {
+						size *= 2;
+						_channel[l].channels = 2;
+						_channel[l].data = (byte *)malloc(size);
+						for (t = 0; t < size / 4; t++) {
+							*(_channel[l].data + t * 4 + 0) = *(ptr + t * 2 + 0);
+							*(_channel[l].data + t * 4 + 1) = *(ptr + t * 2 + 1);
+							*(_channel[l].data + t * 4 + 2) = *(ptr + t * 2 + 0);
+							*(_channel[l].data + t * 4 + 3) = *(ptr + t * 2 + 1);
+						}
+					}
+					_channel[l].size = size;
 				} else if (_channel[l].bits == 8) {
 					_channel[l].mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 					if (_channel[l].channels == 1) {
@@ -1408,9 +1428,8 @@ void IMuseDigital::bundleMusicHandler() {
 	free(buffer);
 }
 
-void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle) {
+void IMuseDigital::playBundleSound(const char *sound) {
 	byte *ptr = 0, *orig_ptr = 0;
-	byte *final;
 	bool result;
 
 	if (!_scumm->_mixer->isReady())
@@ -1427,7 +1446,7 @@ void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle
 
 			result = _bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
 
-			if (result == false) 
+			if (result == false)
 				result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
 			_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
 		}
@@ -1439,89 +1458,22 @@ void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle
 	if (!result)
 		return;
 
-	int32 rate = 22050, pan = 0, channels = 0, output_size = 0;
-	int32 tag, size = -1, bits = 0;
-
 	if (_scumm->_gameId == GID_CMI) {
 		char name[20];
 		strcpy(name, sound);
 		if (!(_scumm->_features & GF_DEMO)) // CMI demo does not have .IMX for voice but does for music...
 			strcat(name, ".IMX");
-		output_size = _bundle->decompressVoiceSampleByName(name, &ptr);
+		_bundle->decompressVoiceSampleByName(name, &ptr);
 	} else {
-		output_size = _bundle->decompressVoiceSampleByName(sound, &ptr);
+		_bundle->decompressVoiceSampleByName(sound, &ptr);
 	}
 
-	orig_ptr = ptr;
-	if (output_size == 0 || orig_ptr == 0) {
-		goto bail;
+	if (ptr) {
+		stopSound(10000);
+		setBundleVoice(ptr);
+		startSound(10000);
+		free(ptr);
 	}
-
-	tag = READ_BE_UINT32(ptr); ptr += 4;
-	if (tag != MKID_BE('iMUS')) {
-		warning("Decompression of bundle sound failed");
-		goto bail;
-	}
-
-	ptr += 12;
-	while (tag != MKID_BE('DATA')) {
-		tag = READ_BE_UINT32(ptr); ptr += 4;
-		switch(tag) {
-		case MKID_BE('FRMT'):
-			ptr += 12;
-			bits = READ_BE_UINT32(ptr); ptr += 4;
-			rate = READ_BE_UINT32(ptr); ptr += 4;
-			channels = READ_BE_UINT32(ptr); ptr += 4;
-			break;
-		case MKID_BE('TEXT'):
-		case MKID_BE('REGN'):
-		case MKID_BE('STOP'):
-		case MKID_BE('JUMP'):
-		case MKID_BE('SYNC'):
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
-			break;
-		case MKID_BE('DATA'):
-			size = READ_BE_UINT32(ptr); ptr += 4;
-			break;
-		default:
-			error("Unknown sound header '%s'", tag2str(tag));
-		}
-	}
-
-	if (size < 0) {
-		warning("Decompression sound failed (no size field)");
-		goto bail;
-	}
-
-	final = (byte *)malloc(size);
-	memcpy(final, ptr, size);
-
-	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
-		Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
-		rate = (rate * a->talkFrequency) / 256;
-
-		// Adjust to fit the mixer's notion of panning.
-		pan = (a->talkPan != 64) ? 2 * a->talkPan - 127 : 0;
-	}
-	
-	// Stop any sound currently playing on the given handle
-	if (handle)
-		_scumm->_mixer->stopHandle(*handle);
-
-	assert(channels == 1);
-	if (bits == 8) {
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, -1, 255, pan);
-	} else if (bits == 16) {
-		// FIXME: For some weird reasons, sometimes we get an odd size, even though
-		// the data is supposed to be in 16 bit format... that makes no sense...
-		size &= ~1;
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, -1, 255, pan);
-	} else {
-		warning("IMuseDigital::playBundleSound() to do more options to playRaw...");
-	}
-	
-bail:
-	free(orig_ptr);
 }
 
 } // End of namespace Scumm
