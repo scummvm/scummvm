@@ -1218,8 +1218,7 @@ void Scumm::o5_getActorRoom() {
 	int temp;
 	getResultPos();
 	temp=getVarOrDirectByte(0x80);
-	if(temp>30 && _gameId==GID_INDY4)
-		temp=1;
+
 	setResult(derefActorSafe(temp,"o5_getActorRoom")->room);
 }
 
@@ -1286,9 +1285,6 @@ void Scumm::o5_getDist() {
 	o1 = getVarOrDirectWord(0x80);
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1,o2);
-
-	if ((_gameId==GID_INDY4) && (o2 == 1212))	/* Fix for FOA, another odd bug */
-		r = 0;
 
 	/* Fix for monkey 2, dunno what's wrong in scummvm */
 	if (_gameId==GID_MONKEY2 && vm.slot[_currentScript].number==40 && r<60)
