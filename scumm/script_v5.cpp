@@ -1378,7 +1378,6 @@ void ScummEngine_v5::o5_isGreaterEqual() {
 void ScummEngine_v5::o5_isLess() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
-
 	if (b < a)
 		ignoreScriptWord();
 	else
@@ -1388,6 +1387,15 @@ void ScummEngine_v5::o5_isLess() {
 void ScummEngine_v5::o5_lessOrEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(0x80);
+
+	// WORKAROUND bug #820507 : Work around a bug in Indy3Town.
+	if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) &&
+	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
+	    _currentRoom == 70 && b == -256) {
+	    o5_jumpRelative();
+	    return;
+	}
+
 	if (b <= a)
 		ignoreScriptWord();
 	else
