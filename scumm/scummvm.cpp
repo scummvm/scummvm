@@ -56,6 +56,10 @@
 extern void drawError(char*);
 #endif
 
+#ifdef _MSC_VER
+#	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#endif
+
 // Use g_scumm from error() ONLY
 Scumm *g_scumm = 0;
 ScummDebugger *g_debugger;
