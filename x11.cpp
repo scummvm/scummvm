@@ -208,7 +208,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
   XTextProperty window_name;
   char *name = (char *) &buf;
   
-	scale = scaleFactor;  // not implemented yet! ignored.
+  scale = scaleFactor;  // not implemented yet! ignored.
 
   /* For the window title */
   sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
@@ -276,6 +276,20 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
   /* Initialize the 'local' frame buffer */
   local_fb = (unsigned char *) malloc(320 * 200 * sizeof(unsigned char));
+}
+
+void setWindowName(Scumm *s) {
+  char buf[512], *gameName;
+  XTextProperty window_name;
+  char *name = (char *) &buf;
+    
+  /* For the window title */
+  sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+  free(gameName);
+  
+  XStringListToTextProperty( &name, 1, &window_name );
+  XSetWMProperties(display, window, &window_name, &window_name,
+		   NULL /* argv */, 0 /* argc */, NULL /* size hints */, NULL /* WM hints */, NULL /* class hints */ );  
 }
 
 void setShakePos(Scumm *s, int shake_pos) {

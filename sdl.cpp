@@ -844,6 +844,13 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 	);
 }
 
+void setWindowName(Scumm *s) {
+  char buf[512], *gameName;
+  
+  sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+  free(gameName);
+  SDL_WM_SetCaption(buf,buf);
+}
 
 #if !defined(__APPLE__)
 #undef main

@@ -211,29 +211,30 @@ void Scumm::scummMain(int argc, char **argv) {
 	#endif
 	parseCommandLine(argc, argv);
 
-	#ifdef __MORPHOS__
-       // I need to know the game name in initGraphics()
-       if (!detectGame()) {
-               warning("Game detection failed. Using default settings");
-               _features = GF_DEFAULT;
-       }
-	 #endif
+	if (_exe_name != NULL) {
+	  /* No game selection menu */
+	  if (!detectGame()) {
+	    warning("Game detection failed. Using default settings");
+	    _features = GF_DEFAULT;
+	  }
+	} else {
+	  _gameText = "Please choose a game";
+	}
 	
 	/* Init graphics and create a primary virtual screen */
 	initGraphics(this, _fullScreen, _scale);
 	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);	
 
- #if !defined(__MORPHOS__) && !defined(__APPLE__CW)
-	if (_exe_name==NULL)
-		//error("Specify the name of the game to start on the command line");
-		launcherLoop();
+	if (_exe_name==NULL) {
+	  launcherLoop();
+	  setWindowName(this);
+	}
 
 	if (!detectGame()) {
 		warning("Game detection failed. Using default settings");
 		_features = GF_DEFAULT;
 	}
-#endif
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming that data file are in the current directory");

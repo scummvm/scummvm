@@ -2327,5 +2327,6 @@ void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
 void waitForTimer(Scumm *s, int msec_delay);
 void setShakePos(Scumm *s, int shake_pos);
+void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
 void cd_playtrack(int track, int offset, int delay);
