@@ -427,19 +427,14 @@ void SaveLoadDialog::fillList()
 void SaveLoadDialog::save()
 {
 	// Save the selected item
-	_scumm->_saveLoadSlot = _savegameList->getSelected() + 1;
-	_scumm->_saveLoadCompatible = false;
-	_scumm->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
-	strcpy(_scumm->_saveLoadName, _savegameList->getSelectedString().c_str());
+	_scumm->requestSave(_savegameList->getSelected() + 1, _savegameList->getSelectedString().c_str());
 	close();
 }
 
 void SaveLoadDialog::load()
 {
 	// Load the selected item
-	_scumm->_saveLoadSlot = _savegameList->getSelected();
-	_scumm->_saveLoadCompatible = false;
-	_scumm->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
+	_scumm->requestLoad(_savegameList->getSelected());
 	close();
 }
 

@@ -1501,8 +1501,8 @@ void Scumm_v8::o8_kernelSetFunctions()
 		warning("o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
-		keyScriptKey = args[1];
-		keyScriptNo = args[2];
+		_keyScriptKey = args[1];
+		_keyScriptNo = args[2];
 		break;
 	case 30:	// killAllScriptsButMe
 		warning("o8_kernelSetFunctions: killAllScriptsButMe()");

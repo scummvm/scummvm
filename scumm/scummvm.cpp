@@ -1118,7 +1118,7 @@ void Scumm::shutDown(int i)
 void Scumm::processKbd()
 {
 	int saveloadkey;
-	getKeyInput(0);
+	getKeyInput();
 
 	if (_features & GF_OLD256) /* FIXME: Support ingame screen */
 		saveloadkey = 319;
@@ -1153,8 +1153,8 @@ void Scumm::processKbd()
 	if (!_lastKeyHit)
 		return;
 
-	if (keyScriptNo && (keyScriptKey == _lastKeyHit)) {
-		runScript(keyScriptNo, 0, 0, 0);
+	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
+		runScript(_keyScriptNo, 0, 0, 0);
 		return;
 	}
 
@@ -1228,13 +1228,12 @@ void Scumm::processKbd()
 	_mouseButStat = _lastKeyHit;
 }
 
-int Scumm::getKeyInput(int a)
+int Scumm::getKeyInput()
 {
 	_mouseButStat = 0;
 
 	_lastKeyHit = checkKeyHit();
-	if (a == 0)
-		convertKeysToClicks();
+	convertKeysToClicks();
 
 	if (mouse.x < 0)
 		mouse.x = 0;

@@ -40,6 +40,21 @@ struct SaveGameHeader {
 };
 
 
+void Scumm::requestSave(int slot, const char *name)
+{
+	_saveLoadSlot = slot;
+	_saveLoadCompatible = false;
+	_saveLoadFlag = 1;		// 1 for save
+	strcpy(_saveLoadName, name);
+}
+
+void Scumm::requestLoad(int slot)
+{
+	_saveLoadSlot = slot;
+	_saveLoadCompatible = false;
+	_saveLoadFlag = 2;		// 2 for load
+}
+
 bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr)
 {
 	char filename[256];

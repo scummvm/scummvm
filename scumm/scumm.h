@@ -242,9 +242,9 @@ public:
 	VerbSlot *_verbs;
 	ObjectData *_objs;
 	ScummDebugger *_debugger;
-	Bundle * _bundle;
-	Timer * _timer;
-	Sound * _sound;
+	Bundle *_bundle;
+	Timer *_timer;
+	Sound *_sound;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -272,39 +272,49 @@ public:
 		int16 x, y;
 	} mouse;
 
-	/* Init functions, etc */
-	byte _fastMode;
-
-	/* Scumm main loop */
-
-	void mainRun();
-
-	void scummInit();
-	int scummLoop(int delta);
-	void initScummVars();
-
-	void launch();
-
+	// Constructor / Destructor
 	Scumm(GameDetector *detector, OSystem *syst);
 	virtual ~Scumm();
 
+	// Init functions
+	void scummInit();
+	void initScummVars();
+	virtual void setupScummVars();
+
+	// Startup functions
+	void main();
+	void parseCommandLine(int argc, char **argv);
+	void showHelpAndExit();
+	bool detectGame();
+	void launch();
 	void go();
 
+	// Scumm main loop
+	void mainRun();
+	int scummLoop(int delta);
+	
+	// Event handling
 	void waitForTimer(int msec_delay);
+	void processKbd();
+	int checkKeyHit();
+	void convertKeysToClicks();
+	int getKeyInput();
 
+	// Misc utility functions
+	void checkRange(int max, int min, int no, const char *str);
+	const char *getExeName() const { return _exe_name; }
+	const char *getGameDataPath() const { return _gameDataPath; }
+
+	// Cursor/palette
 	void updateCursor();
 	void animateCursor();
 	void updatePalette();
 
 	/* _insane vars */
-
 	int _smushFrameRate;
 	bool _insaneState;
 	bool _videoFinished;
 	
-	const char *getExeName() const { return _exe_name; }
-	const char *getGameDataPath() const { return _gameDataPath; }
-
 	void pauseGame(bool user);
 	void shutDown(int i);
 	void setOptions(void);
@@ -324,18 +334,8 @@ public:
 	void optionsDialog();
 	char displayError(bool showCancel, const char *message, ...);
 
-	// Misc startup/event functions
-	void main();
-	void parseCommandLine(int argc, char **argv);
-	void showHelpAndExit();
-	bool detectGame();
-	void processKbd();
-
-	int checkKeyHit();
-	void convertKeysToClicks();
-
 protected:
-	int keyScriptKey, keyScriptNo;
+	byte _fastMode;
 
 	/* Random number generation */
 	RandomSource _rnd;
@@ -392,12 +392,9 @@ protected:
 	bool _dumpScripts;
 	uint16 _debugMode, _soundCardType;
 
-public:
 	/* Not sure where this stuff goes */
 	uint16 _language;
-	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 	void startScene(int room, Actor *a, int b);
-	virtual void setupScummVars();
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
 	ObjectIDMap _objectIDMap;
 	byte _numObjectsInRoom;
@@ -408,8 +405,8 @@ public:
 
 	/* GUI class */
 	void drawString(int a);
-	int getKeyInput(int a);
 
+protected:
 	/* Save/Load class - some of this may be GUI */
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
@@ -434,23 +431,25 @@ public:
 	}
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
+public:
 	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);
 	void makeSavegameName(char *out, int slot, bool compatible);
 	void saveLoadResource(Serializer *ser, int type, int index);
 	void listSavegames(bool *marks, int num, SaveFileManager *mgr);
+	
+	void requestSave(int slot, const char *name);
+	void requestLoad(int slot);
 
+protected:
 	/* Heap and memory management */
 	uint32 _maxHeapThreshold, _minHeapThreshold;
-	void checkRange(int max, int min, int no, const char *str);
 	void lock(int type, int i);
 	void unlock(int type, int i);
 	void heapClear(int mode);
 	void unkHeapProc2(int a, int b);
 
 
-protected:
 	/* Script VM - should be in Script class */
-
 	uint32 _localScriptList[NUM_LOCALSCRIPT];
 	byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _numNestedScripts, _currentScript;
@@ -458,6 +457,7 @@ protected:
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int _localParamList[16],  _scummStack[150];
+	int _keyScriptKey, _keyScriptNo;
 	
 	virtual void setupOpcodes() = 0;
 	virtual void executeOpcode(int i) = 0;
@@ -634,10 +634,6 @@ public:
 	byte *getOBCDFromObject(int obj);	
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
-	/* Should be in Costume class */
-	void cost_decodeData(Actor *a, int frame, uint usemask);
-	int cost_frameToAnim(Actor *a, int frame);
-
 
 protected:
 	/* Should be in Verb class */
@@ -683,19 +679,20 @@ public:
 	SentenceTab _sentence[6];
 	StringTab _string[6];
 	void actorTalk();
-	void stopTalk();	
+	void stopTalk();
+	
+	// Costume class
+	void cost_decodeData(Actor *a, int frame, uint usemask);
+	int cost_frameToAnim(Actor *a, int frame);
 
-	/* Akos Class */
-
+	// Akos Class
 	bool akos_increaseAnims(byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
-
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	bool akos_compare(int a, int b, byte cmd);
 	void akos_decodeData(Actor *a, int frame, uint usemask);
 	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(Actor *a);
-
 
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
@@ -795,6 +792,8 @@ public:
 
 	VirtScreen *findVirtScreen(int y);
 	void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
+
+	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 
 	void drawFlashlight();
 	
