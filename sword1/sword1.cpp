@@ -1149,7 +1149,7 @@ uint8 SwordEngine::mainLoop(void) {
 			if (newTime - frameTime < 1000 / FRAME_RATE) {
 				scrollFrameShown = _screen->showScrollFrame();
 				int32 restDelay = (1000 / (FRAME_RATE * 2)) - (_system->get_msecs() - frameTime);
-                if (restDelay > 0)
+				if (restDelay > 0)
 					delay((uint)restDelay);
 			}
 
