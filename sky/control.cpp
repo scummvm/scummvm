@@ -230,8 +230,8 @@ void SkyControl::initPanel(void) {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
 	uint16 volY = (127 - _skyMusic->giveVolume()) / 4 + 59 - MPNL_Y; // volume slider's Y coordinate
-	uint16 spdY = 12 - (SkyState::_systemVars.gameSpeed / SPEED_MULTIPLY);
-	spdY += MPNL_Y + 93; // speed slider's initial position
+	uint16 spdY = (SkyState::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
+	spdY += MPNL_Y + 83; // speed slider's initial position
 
 	_sprites.controlPanel	= _skyDisk->loadFile(60500, NULL);
 	_sprites.button			= _skyDisk->loadFile(60501, NULL);
@@ -437,6 +437,9 @@ void SkyControl::doControlPanel(void) {
 	}
 	initPanel();
 
+	_savedCharSet = _skyText->giveCurrentCharSet();
+	_skyText->fnSetFont(0);
+
 	_skyScreen->clearScreen();
 	if (SkyState::_systemVars.gameVersion < 331)
 		_skyScreen->setPalette(60509);
@@ -490,6 +493,7 @@ void SkyControl::doControlPanel(void) {
 	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+	_skyText->fnSetFont(_savedCharSet);
 }
 
 uint16 SkyControl::handleClick(SkyConResource *pButton) {
@@ -660,28 +664,30 @@ uint16 SkyControl::doMusicSlide(void) {
 
 uint16 SkyControl::doSpeedSlide(void) {
 
-	/*int ofsY = _slide->_y - _mouseY;
-	uint16 speedDelay = 12 - (_slide->_y - (MPNL_Y + 93));
+	int ofsY = _slide->_y - _mouseY;
+	uint16 speedDelay = _slide->_y - (MPNL_Y + 93);
 	speedDelay *= SPEED_MULTIPLY;
+	speedDelay += 2;
 	while (_mouseClicked) {
 		delay(50);
 		int newY = ofsY + _mouseY;
 		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
 		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
+		if ((newY == 110) || (newY == 108)) newY = 109;
 		if (newY != _slide->_y) {
 			_slode->drawToScreen(NO_MASK);
 			_slide->setXY(_slide->_x, (uint16)newY);
 			_slide->drawToScreen(WITH_MASK);
 			_slide2->drawToScreen(WITH_MASK);
-			speedDelay = 12 - (newY - (MPNL_Y + 93));
+			speedDelay = newY - (MPNL_Y + 93);
 			speedDelay *= SPEED_MULTIPLY;
+			speedDelay += 2;
 		}
 		buttonControl(_slide);
 		_text->drawToScreen(WITH_MASK);
 		_system->update_screen();
 	}
 	SkyState::_systemVars.gameSpeed = speedDelay;
-	printf("New delay: %d\n",speedDelay);*/
 	return SPEED_CHANGED;
 }
 
@@ -1143,7 +1149,7 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 	STOSW(destPos, _skySound->_saveSounds[1]);
 
     STOSD(destPos, _skyMusic->giveCurrentMusic());
-	STOSD(destPos, _skyText->giveCurrentCharSet());
+	STOSD(destPos, _savedCharSet);
 	STOSD(destPos, _savedMouse);
 	STOSD(destPos, SkyState::_systemVars.currentPalette);
 	for (cnt = 0; cnt < 838; cnt++)
@@ -1320,7 +1326,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		return RESTORE_FAILED;
 	}
 
-	uint32 music, charSet, mouseType, palette, gameVersion;
+	uint32 music, mouseType, palette, gameVersion;
 	
 	if (saveRev >= 3) {
 		LODSD(srcPos, gameVersion);
@@ -1340,7 +1346,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	}
 	freeMemList(); // memory from last restore isn't needed anymore
 	LODSD(srcPos, music);
-	LODSD(srcPos, charSet);
+	LODSD(srcPos, _savedCharSet);
 	LODSD(srcPos, mouseType);
 	LODSD(srcPos, palette);
 
@@ -1366,7 +1372,6 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
 	_skyDisk->refreshFilesList(reloadList);
 	_skyMusic->startMusic((uint16)music);
-	_skyText->fnSetFont(charSet);
 	_savedMouse = (uint16)mouseType;
 	SkyState::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
 	SkyState::_systemVars.systemFlags |= SF_GAME_RESTORED; // what's that for?
@@ -1475,6 +1480,7 @@ void SkyControl::delay(unsigned int amount) {
 void SkyControl::showGameQuitMsg(bool useScreen) {
 
 	SkyState::_systemVars.quitting = true;
+	_skyText->fnSetFont(0);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 textNum;
