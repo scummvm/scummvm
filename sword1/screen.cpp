@@ -89,12 +89,14 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 			_fullRefresh = true;
 		_oldScrollX = Logic::_scriptVars[SCROLL_OFFSET_X];
 		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
-		int32 distX = inRange(-MAX_SCROLL_DISTANCE, _oldScrollX - offsetX, MAX_SCROLL_DISTANCE);
-		int32 distY = inRange(-MAX_SCROLL_DISTANCE, _oldScrollY - offsetY, MAX_SCROLL_DISTANCE);
-		if ((distX != 0) || (distY != 0))
+		int dx = offsetX - Logic::_scriptVars[SCROLL_OFFSET_X];
+		int dy = offsetY - Logic::_scriptVars[SCROLL_OFFSET_Y];
+		int scrlDistX = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dx)) / SCROLL_FRACTION) * ((dx > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		int scrlDistY = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dy)) / SCROLL_FRACTION) * ((dy > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		if ((scrlDistX != 0) || (scrlDistY != 0))
 			_fullRefresh = true;
-		Logic::_scriptVars[SCROLL_OFFSET_X] -= distX;
-		Logic::_scriptVars[SCROLL_OFFSET_Y] -= distY;
+		Logic::_scriptVars[SCROLL_OFFSET_X] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_X] + scrlDistX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
+		Logic::_scriptVars[SCROLL_OFFSET_Y] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_Y] + scrlDistY, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
 	}
 }
 
