@@ -147,6 +147,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 
 	_effects_sound = 0;
 	_voice_sound = 0;
+	_ambient_sound = 0;
 }
 
 SimonState::~SimonState()
@@ -4840,7 +4841,7 @@ struct VocBlockHeader {
 
 
 #ifdef USE_MAD
-void SimonState::playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle)
+void SimonState::playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
 {
 	sound_file->seek(offsets[sound], SEEK_SET);
 
@@ -4849,11 +4850,11 @@ void SimonState::playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	byte *buffer = (byte *)malloc(size);
 	sound_file->read(buffer, size);
 
-	_mixer->playMP3(sound_handle, buffer, size, SoundMixer::FLAG_AUTOFREE);
+	_mixer->playMP3(sound_handle, buffer, size, flags);
 }
 #endif
 
-void SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle)
+void SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
 {
 	VocHeader voc_hdr;
 	VocBlockHeader voc_block_hdr;
@@ -4875,11 +4876,10 @@ void SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	byte *buffer = (byte *)malloc(size);
 	sound_file->read(buffer, size);
 
-	_mixer->playRaw(sound_handle, buffer, size, samples_per_sec,
-			SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(sound_handle, buffer, size, samples_per_sec, flags);
 }
 
-void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle)
+void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
 {
 	WaveHeader wave_hdr;
 	uint32 data[2];
@@ -4908,8 +4908,7 @@ void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	byte *buffer = (byte *)malloc(data[1]);
 	sound_file->read(buffer, data[1]);
 
-	_mixer->playRaw(sound_handle, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
-			SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(sound_handle, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec), flags);
 }
 
 void SimonState::playVoice(uint voice)
@@ -4922,13 +4921,13 @@ void SimonState::playVoice(uint voice)
 
 #ifdef USE_MAD
 	if (_voice_type == FORMAT_MP3) {
-		playMP3(_voice_file, _voice_offsets, voice, &_voice_sound);
+		playMP3(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_AUTOFREE);
 	} else {
 #endif
 		if (_voice_type == FORMAT_WAV) {            /* WAVE audio */
-			playWav(_voice_file, _voice_offsets, voice, &_voice_sound);
+			playWav(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 		} else if (_voice_type == FORMAT_VOC) {      /* VOC audio */
-			playVoc(_voice_file, _voice_offsets, voice, &_voice_sound);
+			playVoc(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 		}
 #ifdef USE_MAD
 	}
@@ -4943,21 +4942,35 @@ void SimonState::playSound(uint sound)
 	if (_game == GAME_SIMON1TALKIE) {		/* simon 1 talkie */
 #ifdef USE_MAD
 		if (_effects_type == FORMAT_MP3) {
-			playMP3(_effects_file, _effects_offsets, sound, &_effects_sound);
+			playMP3(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_AUTOFREE);
 		} else {
 #endif
-			playVoc(_effects_file, _effects_offsets, sound, &_effects_sound);
+			playVoc(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 #ifdef USE_MAD
 		}
 #endif
 	} else if (_game == GAME_SIMON1WIN){ 		/* simon 1 win */
-		playWav(_effects_file, _effects_offsets, sound, &_effects_sound);
+		playWav(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 	} else if (_game == GAME_SIMON2WIN) {		/* simon 2 win */
-		playWav(_game_file, _effects_offsets, sound, &_effects_sound);
+		playWav(_game_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 	} else if (_game & GAME_SIMON2) {		/* simon 2 dos / talkie */
-		playVoc(_game_file, _effects_offsets, sound, &_effects_sound);
+		playVoc(_game_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 	} else {					/* simon 1 dos */
 		warning("playSound(%d)", sound);
+	}
+}
+
+void SimonState::playAmbient(uint sound)
+{
+	if (_effects_sound != 0)
+		_mixer->stop(_ambient_sound);
+
+	if (_game & GAME_WIN) {
+		playWav(_game_file, _effects_offsets, sound, &_ambient_sound,
+			SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
+	} else {
+		playVoc(_game_file, _effects_offsets, sound, &_ambient_sound,
+			SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 	}
 }
 
