@@ -236,6 +236,8 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 			code = *src++;
 			if (code == 0xFD) {
 				// FIXME: Not implemented yet        
+				 src += 1;
+				 dst += 4;
 			} else if (code == 0xFE) {
 				// FIXME: Not implemented yet
 				src += 4;
