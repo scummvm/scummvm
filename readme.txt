@@ -48,8 +48,8 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
 Please be aware that the engine may contains bugs and non-implemented-
 features that sometimes make it impossible to finish the game. Save often,
-and please file a bug report (follow the link on the homepage) if you discover
-such a bug. Attach a saved game if possible.
+and please file a bug report (follow the link on the homepage) if you
+discover such a bug. Attach a saved game if possible.
 
 Supported Platforms:
 -------------------
@@ -80,15 +80,14 @@ although patches to fix them are welcome.
                 - Some overlap may occur in graphics, expecially the intro
                 - Music does not work with USE_ADLIB
 
-       Day of the Tentacle:
-                - German talkie version may crash when talking to Thomas
-                  Jefferson.
        Loom (256 Talkie):
                 - CD music and voices are not always syncronised
+                - Actor masks are not yet used - actors will always appear
+                  'on top' of everything.
                 - Some voices may be skipped altogether
                 - Staff notes draw incorrectly
                 - Copy data files from CD to harddisk. Windows (XP at least)
-                  cannot correctly data from a volume playing music.
+                  cannot correctly access data from a volume playing music.
 
 Reporting Bugs:
 ---------------
