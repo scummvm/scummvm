@@ -229,7 +229,7 @@ inline bool VorbisInputStream::eosIntern() const {
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, samples + (int)(_bufferEnd - _pos));
+		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
