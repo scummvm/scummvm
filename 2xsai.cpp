@@ -256,9 +256,15 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
 				else
 					product1a = color5;
 
+#ifdef SCUMM_LITTLE_ENDIAN
 				product1a = product1a | (product1b << 16);
 				product2a = product2a | (product2b << 16);
+#endif
 
+#ifdef SCUMM_BIG_ENDIAN
+				product1a = product1b | (product1a << 16);
+				product2a = product2b | (product2a << 16);
+#endif
 				*((uint32 *)dP) = product1a;
 				*((uint32 *)(dP + dstPitch)) = product2a;
 
@@ -370,9 +376,15 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 					product2a = Q_INTERPOLATE(color2, color2, color2, product2a);
 					product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
 				}
+#ifdef SCUMM_LITTLE_ENDIAN
 				product1a = product1a | (product1b << 16);
 				product2a = product2a | (product2b << 16);
+#endif
 
+#ifdef SCUMM_BIG_ENDIAN
+				product1a = product1b | (product1a << 16);
+				product2a = product2b | (product2a << 16);
+#endif
 				*((uint32 *)dP) = product1a;
 				*((uint32 *)(dP + dstPitch)) = product2a;
 
@@ -519,8 +531,15 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 					}
 				}
 
+#ifdef SCUMM_LITTLE_ENDIAN
 				product = colorA | (product << 16);
 				product1 = product1 | (product2 << 16);
+#endif
+
+#ifdef SCUMM_BIG_ENDIAN
+				product = (colorA<<16) | product;
+				product1 = (product1<<16) | product2;
+#endif
 				*((int32 *) dP) = product;
 				*((uint32 *)(dP + dstPitch)) = product1;
 
