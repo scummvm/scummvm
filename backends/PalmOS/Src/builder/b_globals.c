@@ -7,7 +7,8 @@
 #define BUILD		(0)
 #define BUILD_NAME	"Scumm"
 */
-#define BUILD_SIMON
+//#define BUILD_SIMON
+#define BUILD_SCUMM
 
 #ifdef BUILD_SCUMM
 #	define BUILD_RES	GBVARS_SCUMM
@@ -47,19 +48,20 @@ void buildAll() {
 	dbP[BUILD_RES] = DmOpenDatabase(0, olddb, dmModeReadWrite);
 
 #if defined(BUILD_SCUMM)
-	addImuseDigi();
+	addDimuseTables();
 	addNewGui();
 	// temp removed
 	// TODO ::scummvm use sizeof(OLD256_MIDI_HACK) so i need to fix it
 	// directly in the code or call MemHandleSize but it may slow down
 	// code execution
 	addAkos();
-	addBundle();
+	addDimuseCodecs();
 	addCodec47();
 	addGfx();
 	addDialogs();
 	addCharset();
 	addCostume();
+	addPlayerV2();
 
 #elif defined(BUILD_SIMON)
 	addSimon();

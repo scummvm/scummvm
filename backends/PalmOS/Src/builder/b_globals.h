@@ -3,10 +3,10 @@
 void writeRecord(MemPtr ptr, UInt32 size, UInt16 index, UInt16 dbID);
 void buildAll();
 
-void addImuseDigi();
+void addDimuseTables();
 void addNewGui();
 void addAkos();
-void addBundle();
+void addDimuseCodecs();
 void addCodec47();
 void addGfx();
 void addDialogs();
