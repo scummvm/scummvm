@@ -577,23 +577,27 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	boxm = getBoxMatrixBaseAddr();
 
 	if (_features & GF_AFTER_V2) {
+		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
+		// The first numOfBoxes bytes contain indices to the start of the corresponding
+		// row (although that seems unnecessary to me - the value is easily computable.
 		boxm += numOfBoxes + boxm[from];
 		return boxm[to];
 	}
 
-	i = 0;
-	while (i != from) {
+	// Skip up to the matrix data for box 'from'
+	for (i = 0; i < from; i++) {
 		while (*boxm != 0xFF)
 			boxm += 3;
-		i++;
 		boxm++;
 	}
 
+	// Now search for the entry for box 'to'
 	while (boxm[0] != 0xFF) {
 		if (boxm[0] <= to && to <= boxm[1])
 			dest = boxm[2];
 		boxm += 3;
 	}
+
 	return dest;
 }
 
