@@ -463,11 +463,13 @@ enum genMethods {
 	kGenPC
 };
 
-static struct substResFileNames {
+struct SubstResFileNames {
 	const char *winName;
 	const char *macName;
 	int genMethod;
-} substResFileNameTable[] = {
+};
+
+static SubstResFileNames substResFileNameTable[] = {
 	{ "Intentionally/left/blank", "", kGenMacNoParens},
 	{ "racedemo", "500demo", kGenPC},
 	{ "Spydemo", "foxdemo", kGenPC},
@@ -1483,7 +1485,7 @@ void ScummEngine_v90he::scummInit() {
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
 
-	((ScummEngine_v90he *)this)->spritesResetTables(0);
+	spritesResetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 }
 
