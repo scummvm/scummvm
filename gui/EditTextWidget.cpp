@@ -67,13 +67,16 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			break;
 		case 27:	// escape
 			_label = _backupString;
+			if (_pos >= _label.size())
+				_pos = _label.size() - 1;
 			_boss->releaseFocus();
 			dirty = true;
 			break;
 		case 8:		// backspace
-			_label.deleteLastChar();
-			if (_pos > 0)
+			if (_pos > 0) {
 				_pos--;
+				_label.deleteChar(_pos);
+			}
 			dirty = true;
 			break;
 		case 127:	// delete
@@ -87,7 +90,6 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		case 256 + 19:	// right arrow
 			if (_pos < _label.size())
 				_pos++;
-			break;
 			break;
 		case 256 + 22:	// home
 			_pos = 0;
