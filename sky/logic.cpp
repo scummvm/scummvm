@@ -104,6 +104,11 @@ void SkyLogic::engine() {
 
 void SkyLogic::nop() {}
 
+/**
+ * This function is basicly a wrapper around the real script engine. It runs
+ * the script engine until a script has finished.
+ * @see script()
+ */
 void SkyLogic::logicScript() {
 	// Process the current mega's script
 	// If the script finishes then drop back a level
@@ -113,9 +118,7 @@ void SkyLogic::logicScript() {
 		uint16 *scriptNo = SkyCompact::getSub(_compact, mode);
 		uint16 *offset   = SkyCompact::getSub(_compact, mode + 2);
 
-		uint32 scr = script(*scriptNo, *offset);
-		*scriptNo = (uint16)(scr & 0xffff);
-		*offset   = (uint16)(scr >> 16);
+		*offset = script(*scriptNo, *offset);
 
 		if (!*offset) // script finished
 			_compact->mode -= 4;
@@ -920,14 +923,22 @@ void SkyLogic::initScriptVariables() {
 	memcpy(_scriptVariables + 505, forwardList5b, sizeof(forwardList5b));
 }
 
-uint32 SkyLogic::script(uint16 scriptNo, uint16 offset) {
+/**
+ * \fn uint32 SkyLogic::script(uint16 scriptNo, uint16 offset)
+ * \brief This is the actual script engine. 
+ *        It interprets script \a scriptNo starting at \a offset
+ *
+ * \param scriptNo The script to interpret.
+ * 	\li \arg Bits 0-11 - Script number
+ * 	\li \arg Bits 12-15 - Module number
+ * \param offset At which offset to start interpreting the script.
+ *
+ * @return 0 if script finished. Else offset where to continue.
+ */
+uint16 SkyLogic::script(uint16 scriptNo, uint16 offset) {
 script:
 	// process a script
 	// low level interface to interpreter
-
-	// scriptNo:
-	// Bit  0-11 - Script number
-	// Bit 12-15 - Module number
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
 	debug(3, "Doing Script %x\n", (offset << 16) | scriptNo);
@@ -1039,7 +1050,7 @@ script:
 				_compact = saveCpt;
 
 				if (!ret)
-					return (((scriptData - moduleStart) << 16) | scriptNo);
+					return (scriptData - moduleStart);
 			}
 			break;
 		case 12: // more_than
@@ -1092,7 +1103,7 @@ script:
 			}
 		case 13:
 		case 19: // script_exit
-			return scriptNo;
+			return 0;
 		case 20: // restart_script
 			goto script;
 		default:

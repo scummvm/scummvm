@@ -50,6 +50,9 @@
 
 namespace SkyCompact {
 
+/**
+ * Returns the n'th mega set specified by \a megaSet from Compact \a cpt.
+ */
 MegaSet *getMegaSet(Compact *cpt, uint16 megaSet) {
 	switch (megaSet) {
 	case 0:
@@ -65,6 +68,19 @@ MegaSet *getMegaSet(Compact *cpt, uint16 megaSet) {
 	}
 }
 
+/**
+ \brief Returns the turn table for direction \a dir
+ 	from Compact \a cpt in \a megaSet.
+  
+ Functionally equivalent to:
+ \verbatim
+ clear eax
+ mov al,20
+ mul (cpt[esi]).c_dir
+ add ax,(cpt[esi]).c_mega_set
+ lea eax,(cpt[esi+eax]).c_turn_table_up
+ \endverbatim
+*/
 uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir) {
 	MegaSet *m = getMegaSet(cpt, megaSet);
 	switch (dir) {
@@ -83,6 +99,21 @@ uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir) {
 	}
 }
 
+/**
+ * \brief Returns the script for \a mode from Compact \a cpt.
+ *        Add 2 to \a mode to get the offset.
+ *
+ \verbatim
+ uint16 *scriptNo = SkyCompact::getSub(_compact, mode);
+ uint16 *offset   = SkyCompact::getSub(_compact, mode + 2);
+ uint32 script = (*offset << 16) | *scriptNo;
+ \endverbatim
+ * Is functionally equivalent to:
+ \verbatim
+ mov eax,c_base_sub[ebx+esi]
+ \endverbatim
+ where \a esi is the compact and ebx the mode.
+ */ 
 uint16 *getSub(Compact *cpt, uint16 mode) {
 	switch (mode) {
 	case 0:
@@ -189,6 +220,10 @@ static const uint32 turnTableOffsets[] = {
 	MK32_A5(TurnTable, turnTableTalk),
 };
 
+/**
+ * Returns a void pointer to offset \a off in compact \a cpt
+ * as it would be on a 386.
+ */
 void *getCompactElem(Compact *cpt, uint32 off) {
 	if (off < COMPACT_SIZE)
 		return((uint8 *)cpt + compactOffsets[off]);
