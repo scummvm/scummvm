@@ -762,19 +762,24 @@ static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 	VirtScreen *vs = &scumm->virtscr[0];
 	byte *ptr;
 
+	// Clip y
+	y += scumm->_screenTop;
+	if (y < 0 || y >= scumm->_screenHeight)
+		return;
+
 	if (x2 < x1)
 		SWAP(x2, x1);
 	
 	// Clip x1 / x2
 	const int left = scumm->_screenStartStrip * 8;
-	const int right = left + scumm->_screenWidth;
+	const int right = scumm->_screenEndStrip * 8;
 	if (x1 < left)
 		x1 = left;
 	if (x2 >= right)
 		x2 = right - 1;
+	
 
-	ptr = vs->screenPtr + x1
-			+ (y + scumm->camera._cur.y - scumm->_screenHeight / 2) * scumm->_screenWidth;
+	ptr = vs->screenPtr + x1 + y * scumm->_screenWidth;
 
 	while (x1++ <= x2) {
 		*ptr++ = color;
