@@ -559,7 +559,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 	uint threshold;
 	uint best;
 	int box, iterations = 0;			/* Use iterations for those odd times we get stuck in the loop */
-	int firstValidBox, j;
+	int firstValidBox, i, j;
 	byte flags, b;
 
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -587,12 +587,12 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 
 			if (!(_vm->_features & GF_OLD256) || box)
 			for (j = box; j >= firstValidBox; j--) {
-				flags = _vm->getBoxFlags(j);
-				if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
-					continue;
-
 				if (pathfrom >= firstValidBox) {
-					int i = _vm->getPathToDestBox(pathfrom, j);
+					flags = _vm->getBoxFlags(j);
+					if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
+						continue;
+	
+					i = _vm->getPathToDestBox(pathfrom, j);
 					if (i == -1)
 						continue;
 					
