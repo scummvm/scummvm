@@ -1105,12 +1105,13 @@ void ScummEngine_v2::o2_startScript() {
 	int script = getVarOrDirectByte(PARAM_1);
 
 #if defined(BYPASS_COPY_PROT)
-	// The Enchanced version of Zak McKracken included in the
-	// SelectWare Classic Collection bundle has no copy protection
-	// and doesn't include the codes.
+	// The enhanced version of Zak McKracken included in the
+	// SelectWare Classic Collection bundle used CD check instead
+	// of the usual key code check at airports.
 	if ((_gameId == GID_ZAK) && (script == 15) && (_roomResource == 45))
 		return;
 #endif
+
 	runScript(script, 0, 0, 0);
 }
 
