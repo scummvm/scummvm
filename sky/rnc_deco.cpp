@@ -48,24 +48,14 @@ uint16 len_table[TABLE_SIZE/2];
 uint16 crc_table[0x100];
 #endif
 
-uint32 unpack_len = 0;
-uint32 pack_len = 0;
-uint16 pack_paras = 0;
-uint16 counts = 0;
 uint16 bit_buffl = 0;
 uint16 bit_buffh = 0;
-uint8 blocks = 0;
 uint8 bit_count = 0;
-
-#ifdef CHECKSUMS
-uint16 crc_u = 0;
-uint16 crc_p = 0;
-#endif
 
 
 uint8 *esiptr, *ediptr; //these need to be global because input_bits() uses them
 
-void init_crc(void)
+void init_crc()
 {
 	uint16 cnt=0; 
 	uint16 tmp1=0; 
@@ -199,6 +189,15 @@ int UnpackM1(void *input, void *output, uint16 key)
 	uint8 *inputHigh, *outputLow, *outputHigh;
 	uint8 *inputptr = (uint8 *)input;
 
+	uint32 unpack_len = 0;
+	uint32 pack_len = 0;
+	uint16 counts = 0;
+
+#ifdef CHECKSUMS
+	uint16 crc_u = 0;
+	uint16 crc_p = 0;
+#endif
+	
 	if (CHECKSUMS)
 		init_crc();
 
@@ -212,7 +211,7 @@ int UnpackM1(void *input, void *output, uint16 key)
 	unpack_len = READ_BE_UINT32(inputptr); inputptr += 4;
 	pack_len = READ_BE_UINT32(inputptr); inputptr += 4;
 
-	blocks = *(inputptr+5);
+	uint8 blocks = *(inputptr+5);
 
 	if (CHECKSUMS) {
 		//read CRC's
