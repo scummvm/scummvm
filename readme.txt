@@ -154,7 +154,7 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 COMPRESSED_SOUND_FILE. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
-On Win9x/NT/XP you can define WIN_DBG and attach WinDbg to browse the debug 
+On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug 
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
         GCC:
