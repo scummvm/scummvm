@@ -79,7 +79,9 @@ struct Serializer {
 
 	bool _saveOrLoad;
 
-	void saveLoadBytes(void *b, int len);
+	void saveBytes(void *b, int len);
+	void loadBytes(void *b, int len);
+	
 	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
 	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);

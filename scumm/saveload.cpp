@@ -686,7 +686,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
 		size = ((MemBlkHeader *)ptr)->size;
 
 		ser->saveUint32(size);
-		ser->saveLoadBytes(ptr + sizeof(MemBlkHeader), size);
+		ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
 
 		if (type == rtInventory) {
 			ser->saveWord(_inventory[idx]);
@@ -695,7 +695,7 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
 		size = ser->loadUint32();
 		if (size) {
 			createResource(type, idx, size);
-			ser->saveLoadBytes(getResourceAddress(type, idx), size);
+			ser->loadBytes(getResourceAddress(type, idx), size);
 			if (type == rtInventory) {
 				_inventory[idx] = ser->loadWord();
 			}
@@ -703,12 +703,14 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
 	}
 }
 
-void Serializer::saveLoadBytes(void *b, int len)
+void Serializer::saveBytes(void *b, int len)
 {
-	if (_saveOrLoad)
-		_saveLoadStream.fwrite(b, 1, len);
-	else
-		_saveLoadStream.fread(b, 1, len);
+	_saveLoadStream.fwrite(b, 1, len);
+}
+
+void Serializer::loadBytes(void *b, int len)
+{
+	_saveLoadStream.fread(b, 1, len);
 }
 
 #ifdef _WIN32_WCE
@@ -731,38 +733,38 @@ bool Serializer::checkEOFLoadStream()
 void Serializer::saveUint32(uint32 d)
 {
 	uint32 e = FROM_LE_32(d);
-	saveLoadBytes(&e, 4);
+	saveBytes(&e, 4);
 }
 
 void Serializer::saveWord(uint16 d)
 {
 	uint16 e = FROM_LE_16(d);
-	saveLoadBytes(&e, 2);
+	saveBytes(&e, 2);
 }
 
 void Serializer::saveByte(byte b)
 {
-	saveLoadBytes(&b, 1);
+	saveBytes(&b, 1);
 }
 
 uint32 Serializer::loadUint32()
 {
 	uint32 e;
-	saveLoadBytes(&e, 4);
+	loadBytes(&e, 4);
 	return FROM_LE_32(e);
 }
 
 uint16 Serializer::loadWord()
 {
 	uint16 e;
-	saveLoadBytes(&e, 2);
+	loadBytes(&e, 2);
 	return FROM_LE_16(e);
 }
 
 byte Serializer::loadByte()
 {
 	byte e;
-	saveLoadBytes(&e, 1);
+	loadBytes(&e, 1);
 	return e;
 }
 
@@ -773,12 +775,15 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype)
 
 	/* speed up byte arrays */
 	if (datasize == 1 && filetype == sleByte) {
-		saveLoadBytes(b, len);
+		if (isSaving())
+			saveBytes(b, len);
+		else
+			loadBytes(b, len);
 		return;
 	}
 
 	while (--len >= 0) {
-		if (_saveOrLoad) {
+		if (isSaving()) {
 			/* saving */
 			if (datasize == 1) {
 				data = *(byte *)at;
@@ -870,7 +875,7 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle)
 		type = sle->type;
 
 		if (size == 0xFF) {
-			if (_saveOrLoad) {
+			if (isSaving()) {
 				/* save reference */
 				ptr = *((void **)at);
 				saveWord(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
