@@ -87,7 +87,7 @@ Sound::~Sound() {
 void Sound::addSoundToQueue(int sound) {
 	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	// Music resources are in separate file
-	if (!((_vm->_heversion == 70 || _vm->_heversion == 71) && sound >= 4000))
+	if (!((_vm->_heversion >= 70) && sound >= 4000))
 		_vm->ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound);
 }
@@ -195,14 +195,15 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr, size);
+			free(ptr);
 			_currentMusic = soundID;
 			_vm->_mixer->stopHandle(_musicChannelHandle);
 			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, 11025, flags, soundID);
 			return;
 		}
-	}
+	} else 
+		ptr = _vm->getResourceAddress(rtSound, soundID);
 
-	ptr = _vm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
 		return;
 	}
@@ -706,11 +707,9 @@ int Sound::isSoundRunning(int sound) const {
 		return pollCD();
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == 10000)
-			return (_musicChannelHandle.isActive()) ? _currentMusic : 0;
-		else if (sound == -2) {
+		if (sound == -2 || sound == 10001) {
 			return isSfxFinished();
-		} else if (sound == -1) {
+		} else if (sound == -1 || sound == 10000) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			// TODO handle MRAW (pcm music) in humongous games
@@ -790,9 +789,9 @@ void Sound::stopSound(int a) {
 	int i;
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (a == -2) {
+		if (a == -2 || a == 10001) {
 			// Stop current sfx
-		} else if (a == -1) {
+		} else if (a == -1 || a == 10000) {
 			// Stop current music
 		}
 	}
