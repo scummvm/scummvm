@@ -3,3 +3,4 @@
 .gdb_history
 *.s[0-9][0-9]
 *.c[0-9][0-9]
+scummvm
