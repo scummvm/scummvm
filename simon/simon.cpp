@@ -3552,15 +3552,18 @@ void SimonEngine::processSpecialKeys() {
 void SimonEngine::pause() {
 	_key_pressed = 1;
 	_pause = 1;
-	midi.pause(_music_paused ^= 1);
-	_sound->ambientPause(_ambient_paused ^= 1);
+	bool ambient_status = _ambient_paused;
+	bool music_status = _music_paused;
+
+	midi.pause(true);
+	_sound->ambientPause(true);
 	while (_pause) {
 		delay(1);
 		if (_key_pressed == 'p')
 			_pause = 0;
 	}
-	midi.pause(_music_paused ^= 1);
-	_sound->ambientPause(_ambient_paused ^= 1);
+	midi.pause(music_status);
+	_sound->ambientPause(ambient_status);
 
 }
 
