@@ -1156,11 +1156,10 @@ void ScummEngine_v6he::o6_soundOps() {
 void ScummEngine_v6he::o6_localizeArray() {
 	int slot = pop();
 
-	if (slot < _numArray) {
-		_arraySlot[slot] = vm.slot[_currentScript].number;
-	} else {
-		warning("o6_localizeArray(%d): array slot out of range", slot);
-	}
+	if (slot >= _numArray)
+		error("o6_localizeArray(%d): array slot out of range", slot);
+
+	_arraySlot[slot] = vm.slot[_currentScript].number;
 }
 
 void ScummEngine_v6he::o6_seekFilePos() {

@@ -137,7 +137,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 48 */
 		OPCODE(o6_invalid),
 		OPCODE(o80_unknown49),
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown4A),
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
@@ -420,6 +420,15 @@ void ScummEngine_v80he::o80_unknown49() {
 
 	push (result);
 	debug(1,"o80_unknown49 stub (%d, %d)", subOp, snd);
+}
+
+void ScummEngine_v80he::o80_unknown4A() {
+	int slot = pop();
+
+	if (slot >= _numArray)
+		error("o80_unknown4A(%d): array slot out of range", slot);
+
+	_arraySlot[slot] = -1;
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {
