@@ -236,7 +236,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 	_track[track].regionOffset = 0;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, bool sequence, int hookId, int volume) {
 	Common::StackLock lock(_mutex);
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
@@ -244,7 +244,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (!_track[l].used && !_track[l].handle.isActive()) {
 			_track[l].pan = 64;
-			_track[l].vol = 127 * 1000;
+			_track[l].vol = volume * 1000;
 			_track[l].volFadeDest = 0;
 			_track[l].volFadeStep = 0;
 			_track[l].volFadeDelay = 0;
@@ -385,6 +385,19 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 	}*/
 }
 
+void IMuseDigital::fadeOutMusic(int fadeDelay) {
+	Common::StackLock lock(_mutex);
+	debug(5, "IMuseDigital::fadeOutMusic");
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
+			_track[l].volFadeDelay = fadeDelay;
+			_track[l].volFadeDest = 0;
+			_track[l].volFadeStep = (_track[l].volFadeDest - _track[l].vol) * 60 * 40 / (1000 * fadeDelay);
+			_track[l].volFadeUsed = true;
+		}
+	}
+}
+
 void IMuseDigital::pause(bool p) {
 	Common::StackLock lock(_mutex);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
@@ -447,29 +460,29 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 			if (b == 1) {
 				fadeOutMusic(120);
-				startMusic(1, false);
+				startMusic(1, false, 127);
 			} else {
 				if (getSoundStatus(2) == 0) {
 					fadeOutMusic(120);
-					startMusic(2, false);
+					startMusic(2, false, 127);
 				}
 			}
 		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
 			if (b == 2) {
 				fadeOutMusic(120);
-				startMusic("in1.imx", 2002, false, 0);
+				startMusic("in1.imx", 2002, false, 0, 127);
 			} else if (b == 4) {
 				fadeOutMusic(120);
-				startMusic("in2.imx", 2004, false, 0);
+				startMusic("in2.imx", 2004, false, 0, 127);
 			} else if (b == 8) {
 				fadeOutMusic(120);
-				startMusic("out1.imx", 2008, false, 0);
+				startMusic("out1.imx", 2008, false, 0, 127);
 			} else if (b == 9) {
 				fadeOutMusic(120);
-				startMusic("out2.imx", 2009, false, 0);
+				startMusic("out2.imx", 2009, false, 0, 127);
 			} else if (b == 16) {
 				fadeOutMusic(120);
-				startMusic("gun.imx", 2016, false, 0);
+				startMusic("gun.imx", 2016, false, 0, 127);
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_vm->_currentRoom);
 			}
