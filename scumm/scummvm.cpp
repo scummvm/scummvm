@@ -2547,6 +2547,9 @@ void ScummEngine::restart() {
 	}
 	_sound->setupSound();               // Reinit sound engine
 
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+
 	// Re-run bootscript
 	runScript(1, 0, 0, &_bootParam);
 }
