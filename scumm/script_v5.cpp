@@ -499,8 +499,6 @@ void Scumm_v5::o5_actorSet() {
 				a->scaley = getVarOrDirectByte(0x40);
 			}
 
-			if (a->scalex > 255 || a->scaley > 255)
-				error("Setting an bad actor scale!");
 			a->needRedraw = true;
 			a->needBgReset = true;
 			break;
