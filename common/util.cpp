@@ -24,7 +24,7 @@
 //
 // 8-bit alpha blending routines
 //
-#ifndef __PALM_OS__
+#ifndef NEWGUI_256
 static int BlendCache[256][256];
 #endif
 //
@@ -55,7 +55,7 @@ int RGBMatch(byte *palette, int r, int g, int b) {
 // Blend two 8 bit colors into a third, all colors being defined by palette indices.
 //
 int Blend(int src, int dst, byte *palette) {
-#ifndef __PALM_OS__
+#ifndef NEWGUI_256
 	int r, g, b;
 	int alpha = 128;	// Level of transparency [0-256]
 	byte *srcpal = palette + (dst * 3);
@@ -86,7 +86,7 @@ int Blend(int src, int dst, byte *palette) {
 // Reset the blending cache
 //
 void ClearBlendCache(byte *palette, int weight) {
-#ifndef __PALM_OS__
+#ifndef NEWGUI_256
 	for (int i = 0; i < 256; i++)
 		for (int j = 0 ; j < 256 ; j++)
 //			BlendCache[i][j] = i;	// No alphablending
