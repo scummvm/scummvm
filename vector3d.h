@@ -49,6 +49,14 @@ public:
     return *this;
   }
 
+  bool operator ==(const Vector3d &v) {
+    return ( (x() == v.x()) && (y() == v.y()) && (z() == v.z()) );
+  }
+
+  bool operator !=(const Vector3d &v) {
+    return ( (x() != v.x()) || (y() != v.y()) || (z() != v.z()) );
+  }
+
   Vector3d& operator +=(const Vector3d &v) {
     x() += v.x(); y() += v.y(); z() += v.z();
     return *this;
