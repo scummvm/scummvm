@@ -197,13 +197,13 @@ uint32 SwordSound::expandSpeech(void *src, void *dest, uint32 srcSize) {
 
 	uint32 srcPos = 0;
 	while (srcPos < srcSize) {
-		if (compData[srcPos] < 0) {
-			uint16 len = (uint16)(-compData[srcPos]);
+		if ((int16)FROM_LE_16(compData[srcPos]) < 0) {
+			uint16 len = (uint16)(-(int16)FROM_LE_16(compData[srcPos]));
 			for (uint32 cnt = 0; cnt < len; cnt++)
 				*expData++ = compData[srcPos + 1];
 			srcPos += 2;
 		} else {
-			uint32 len = (uint32)compData[srcPos];
+			uint32 len = FROM_LE_16(compData[srcPos]);
 			memcpy(expData, compData + srcPos + 1, len * 2);
 			expData += len;
 			srcPos += len + 1;
