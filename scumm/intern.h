@@ -511,7 +511,7 @@ protected:
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
-	void o6_unknownE1();
+	void o6_getPixel();
 	void o6_setBoxSet();
 	void o6_shuffle();
 

@@ -331,7 +331,7 @@ void ScummEngine_v6::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E0 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownE1),
+		OPCODE(o6_getPixel),
 		OPCODE(o6_invalid),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
@@ -3104,7 +3104,7 @@ void ScummEngine_v6::o6_getDateTime() {
 		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
 }
 
-void ScummEngine_v6::o6_unknownE1() {
+void ScummEngine_v6::o6_getPixel() {
 	// this opcode check ground area in minigame "Asteroid Lander" in the dig
 	int x, y;
 
@@ -3116,28 +3116,14 @@ void ScummEngine_v6::o6_unknownE1() {
 		x = pop();
 	}
 
-	if (x > _screenWidth - 1) {
-		push(-1);
-		return;
-	}
-	if (x < 0) {
-		push(-1);
-		return;
-	}
-
-	if (y < 0) {
-		push(-1);
-		return;
-	}
-	
 	VirtScreen *vs = findVirtScreen(y);
 
-	if (vs == NULL) {
+	if (vs == NULL || x > _screenWidth - 1 || x < 0) {
 		push(-1);
 		return;
 	}
 
-	int offset = (y - vs->topline) * vs->width + x + _screenLeft;
+	int offset = (y - vs->topline) * vs->width + x + vs->xstart;
 
 	byte area = *(vs->screenPtr + offset);
 	push(area);

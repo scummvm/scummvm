@@ -333,7 +333,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_rename),
 		/* E0 */
 		OPCODE(o6_soundOps),
-		OPCODE(o6_unknownE1),
+		OPCODE(o6_getPixel),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
