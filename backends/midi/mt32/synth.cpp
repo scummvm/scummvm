@@ -4075,16 +4075,15 @@ void CSynthMT32::PlaySysex(uint8 * sysex,uint32 len) {
 	//int dummy = 0;                                                                  
 	int32 lens = len;                                                              
 
-
 	// For some reason commands in IMuseInternal::initMT32 do not have prefix byte
-	if(READ_LE_UINT32(header) != 0x12161041) {
-		if(READ_LE_UINT32(sysex) == 0x12161041) {
+	if(READ_BE_UINT32(header) != 0x41101612) {
+		if((READ_LE_UINT32(sysex) == 0x41101612) || (READ_BE_UINT32(sysex) == 0x41001612)) {
 			header = (uint32 *)sysex;
 			sysex--; // We don't access sysex[0], so it's safe
 		}
 	}
 
-	if(READ_LE_UINT32(header) == 0x12161041) {
+	if((READ_BE_UINT32(header) == 0x41101612) || (READ_BE_UINT32(header) == 0x41001612)) {
 		addr = (sysex[5] << 16) | (sysex[6] << 8) | (sysex[7]);
 		//LOG_MSG("Sysex addr: %x", addr);
 		if (addr<0x30000) {

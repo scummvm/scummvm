@@ -72,6 +72,8 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer, const char *path)
 	_synth = new CSynthMT32();
 	rom_path = path;
 	File::addDefaultDirectory(path);
+
+	_baseFreq = 100;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -83,7 +85,7 @@ int MidiDriver_MT32::open() {
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-	
+
 	MidiDriver_Emulated::open();
 	
 	prop.SampleRate = getRate(); // 32000;

@@ -23,7 +23,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#define BASE_FREQ 250
 #define FIXP_SHIFT 16
 
 class MidiDriver_Emulated : public AudioStream, public MidiDriver {
@@ -42,6 +41,8 @@ protected:
 	virtual void generate_samples(int16 *buf, int len) = 0;
 	virtual void on_timer() {}
 
+	int _baseFreq;
+
 public:
 	MidiDriver_Emulated(SoundMixer *mixer) : _mixer(mixer) {
 		_isOpen = false;
@@ -51,18 +52,20 @@ public:
 	
 		_next_tick = 0;
 		_samples_per_tick = 0;
+
+		_baseFreq = 250;
 	}
 
 	int open() {
 		_isOpen = true;
 
-		int d = getRate() / BASE_FREQ;
-		int r = getRate() % BASE_FREQ;
+		int d = getRate() / _baseFreq;
+		int r = getRate() % _baseFreq;
 
 		// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
 		// but less prone to arithmetic overflow.
 
-		_samples_per_tick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / BASE_FREQ;
+		_samples_per_tick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
 		return 0;
 	}
 
@@ -71,7 +74,7 @@ public:
 		_timer_param = timer_param;
 	}
 
-	uint32 getBaseTempo() { return 1000000 / BASE_FREQ; }
+	uint32 getBaseTempo() { return 1000000 / _baseFreq; }
 
 
 	// AudioStream API
