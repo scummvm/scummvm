@@ -174,6 +174,9 @@ bool CEActions::perform(ActionType action) {
 		case ACTION_CURSOR:
 			_mainSystem->swap_mouse_visibility();
 			return true;
+		case ACTION_FREELOOK:
+			_mainSystem->swap_freeLook();
+			return true;
 		case ACTION_ZOOM_UP:
 			_mainSystem->swap_zoom_up();
 			return true;
