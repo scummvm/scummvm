@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "boxes.h"
 #include "common/util.h"
 
 #include <math.h>
@@ -382,13 +383,13 @@ uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
 
 	diffx = abs(ptx - x);
 
-	if (diffx >= 0x100)
-		return 0xFFFF;
+	if (diffx >= 0x1000)
+		return 0xFFFFFF;
 
 	diffy = abs(pty - y);
 
-	if (diffy >= 0x100)
-		return 0xFFFF;
+	if (diffy >= 0x1000)
+		return 0xFFFFFF;
 	diffx *= diffx;
 	diffy *= diffy;
 	return diffx + diffy;
@@ -484,33 +485,29 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 
 	getBoxCoordinates(b, &box);
 
-	if (threshold == 0)
-		return true;
-
 	t = x - threshold;
 	if (t > box.ul.x && t > box.ur.x && t > box.lr.x && t > box.ll.x)
-		return false;
+		return true;
 
 	t = x + threshold;
 	if (t < box.ul.x && t < box.ur.x && t < box.lr.x && t < box.ll.x)
-		return false;
+		return true;
 
 	t = y - threshold;
 	if (t > box.ul.y && t > box.ur.y && t > box.lr.y && t > box.ll.y)
-		return false;
+		return true;
 
 	t = y + threshold;
 	if (t < box.ul.y && t < box.ur.y && t < box.lr.y && t < box.ll.y)
-		return false;
+		return true;
 
-	return true;
+	return false;
 }
 
-AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
+int Scumm::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
 	ScummVM::Point pt;
-	AdjustBoxResult best;
 	uint dist;
-	uint bestdist = (uint)0xFFFF;
+	uint bestdist = 0xFFFFFF;
 	BoxCoords box;
 
 	getBoxCoordinates(b, &box);
@@ -519,36 +516,35 @@ AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
-		best.x = pt.x;
-		best.y = pt.y;
+		outX = pt.x;
+		outY = pt.y;
 	}
 
 	pt = closestPtOnLine(box.ur.x, box.ur.y, box.lr.x, box.lr.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
-		best.x = pt.x;
-		best.y = pt.y;
+		outX = pt.x;
+		outY = pt.y;
 	}
 
 	pt = closestPtOnLine(box.lr.x, box.lr.y, box.ll.x, box.ll.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
-		best.x = pt.x;
-		best.y = pt.y;
+		outX = pt.x;
+		outY = pt.y;
 	}
 
 	pt = closestPtOnLine(box.ll.x, box.ll.y, box.ul.x, box.ul.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
 		bestdist = dist;
-		best.x = pt.x;
-		best.y = pt.y;
+		outX = pt.x;
+		outY = pt.y;
 	}
 
-	best.dist = bestdist;
-	return best;
+	return bestdist;
 }
 
 byte *Scumm::getBoxMatrixBaseAddr() {
@@ -1036,10 +1032,9 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	BoxCoords coords;
 	ScummVM::Point Clo[8];
 	ScummVM::Point poly[8];
-	AdjustBoxResult abr;
 	int line1, line2;
 
-	// For all corner coordinates of the first box, compute the point cloest 
+	// For all corner coordinates of the first box, compute the point closest 
 	// to them on the second box (and also compute the distance of these points).
 	getBoxCoordinates(trap1, &coords);
 	poly[0] = coords.ul;
@@ -1047,10 +1042,7 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	poly[2] = coords.lr;
 	poly[3] = coords.ll;
 	for (i = 0; i < 4; i++) {
-		abr = getClosestPtOnBox(trap2, poly[i].x, poly[i].y);
-		dist[i] = abr.dist;
-		Clo[i].x = abr.x;
-		Clo[i].y = abr.y;
+		dist[i] = getClosestPtOnBox(trap2, poly[i].x, poly[i].y, Clo[i].x, Clo[i].y);
 	}
 
 	// Now do the same but with the roles of the first and second box swapped.
@@ -1060,10 +1052,7 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	poly[6] = coords.lr;
 	poly[7] = coords.ll;
 	for (i = 4; i < 8; i++) {
-		abr = getClosestPtOnBox(trap1, poly[i].x, poly[i].y);
-		dist[i] = abr.dist;
-		Clo[i].x = abr.x;
-		Clo[i].y = abr.y;
+		dist[i] = getClosestPtOnBox(trap1, poly[i].x, poly[i].y, Clo[i].x, Clo[i].y);
 	}
 
 	// Find the three closest "close" points between the two boxes.
@@ -1077,7 +1066,7 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 		}
 		dist[closest[j]] = 0xFFFF;
 		minDist[j] = (int)sqrt((double)minDist[j]);
-		box[j] = (closest[j] > 3);	// Is the poin on the first or on the second box?
+		box[j] = (closest[j] > 3);	// Is the point on the first or on the second box?
 	}
 
 
@@ -1117,7 +1106,6 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	if (line1 < 4) {							/* from box 1 to box 2 */
 		gateA[0] = poly[line1];
 		gateA[1] = Clo[line1];
-
 	} else {
 		gateA[1] = poly[line1];
 		gateA[0] = Clo[line1];
@@ -1126,7 +1114,6 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	if (line2 < 4) {							/* from box */
 		gateB[0] = poly[line2];
 		gateB[1] = Clo[line2];
-
 	} else {
 		gateB[1] = poly[line2];
 		gateB[0] = Clo[line2];

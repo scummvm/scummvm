@@ -38,20 +38,11 @@ typedef enum {
 	kBoxInvisible	= 0x80
 } BoxFlags;
 
-struct AdjustBoxResult {	/* Result type of AdjustBox functions */
-	int16 x, y;
-	uint16 dist;
-};
-
 struct BoxCoords {			/* Box coordinates */
 	ScummVM::Point ul;
 	ScummVM::Point ur;
 	ScummVM::Point ll;
 	ScummVM::Point lr;
 };
-
-struct Box;
-struct PathNode;
-struct PathVertex;
 
 #endif

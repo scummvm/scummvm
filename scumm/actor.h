@@ -67,6 +67,11 @@ struct CostumeData {
 	}
 };
 
+struct AdjustBoxResult {	/* Result type of AdjustBox functions */
+	int16 x, y;
+	byte box;
+};
+
 struct SaveLoadEntry;
 
 class Actor {

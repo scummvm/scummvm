@@ -22,6 +22,7 @@
 #include "scumm.h"
 #include "sound.h"
 #include "actor.h"
+#include "boxes.h"
 #include "imuse.h"
 #include "debugger.h"
 #include "common/util.h"

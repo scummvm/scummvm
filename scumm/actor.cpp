@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "akos.h"
+#include "boxes.h"
 #include "charset.h"
 #include "costume.h"
 #include "resource.h"
@@ -605,17 +606,16 @@ int Actor::getActorXYPos(int &xPos, int &yPos) const {
 
 AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	const uint thresholdTable[] = { 30, 80, 0 };
-	AdjustBoxResult abr, tmp;
-	uint threshold;
-	uint bestDist;
-	int numBoxes;
-	int box;
+	AdjustBoxResult abr;
+	int16 tmpX, tmpY;
+	int tmpDist, bestDist, threshold, numBoxes;
 	byte flags, bestBox;
+	int box;
 	const int firstValidBox = (_vm->_features & GF_SMALL_HEADER) ? 0 : 1;
 
 	abr.x = dstX;
 	abr.y = dstY;
-	abr.dist = kInvalidBox;
+	abr.box = kInvalidBox;
 
 	if (ignoreBoxes)
 		return abr;
@@ -627,7 +627,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		if (numBoxes < firstValidBox)
 			return abr;
 
-		bestDist = (uint) 0xFFFF;
+		bestDist = 0xFFFFFF;
 		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closest
@@ -642,7 +642,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			// For increased performance, we perform a quick test if
 			// the coordinates can even be within a distance of 'threshold'
 			// pixels of the box.
-			if (!_vm->inBoxQuickReject(box, dstX, dstY, threshold))
+			if (threshold > 0 && _vm->inBoxQuickReject(box, dstX, dstY, threshold))
 				continue;
 
 			// Check if the point is contained in the box. If it is,
@@ -650,23 +650,23 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			if (_vm->checkXYInBoxBounds(box, dstX, dstY)) {
 				abr.x = dstX;
 				abr.y = dstY;
-				abr.dist = box;
+				abr.box = box;
 				return abr;
 			}
 
 			// Find the point in the box which is closest to our point.
-			tmp = _vm->getClosestPtOnBox(box, dstX, dstY);
+			tmpDist = _vm->getClosestPtOnBox(box, dstX, dstY, tmpX, tmpY);
 
 			// Check if the box is closer than the previous boxes.
-			if (tmp.dist < bestDist) {
-				abr.x = tmp.x;
-				abr.y = tmp.y;
+			if (tmpDist < bestDist) {
+				abr.x = tmpX;
+				abr.y = tmpY;
 	
-				if (tmp.dist == 0) {
-					abr.dist = box;
+				if (tmpDist == 0) {
+					abr.box = box;
 					return abr;
 				}
-				bestDist = tmp.dist;
+				bestDist = tmpDist;
 				bestBox = box;
 			}
 		}
@@ -674,7 +674,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		// If the closest ('best') box we found is within the threshold, or if
 		// we are on the last run (i.e. threshold == 0), return that box.
 		if (threshold == 0 || threshold * threshold >= bestDist) {
-			abr.dist = bestBox;
+			abr.box = bestBox;
 			return abr;
 		}
 	}
@@ -689,9 +689,9 @@ void Actor::adjustActorPos() {
 
 	x = abr.x;
 	y = abr.y;
-	walkdata.destbox = (byte)abr.dist;
+	walkdata.destbox = abr.box;
 
-	setBox(abr.dist);
+	setBox(abr.box);
 
 	walkdata.destx = -1;
 
@@ -1175,11 +1175,11 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (ignoreBoxes) {
-		abr.dist = kInvalidBox;
+		abr.box = kInvalidBox;
 		walkbox = kInvalidBox;
 	} else {
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
-			abr.dist = walkdata.destbox;
+			abr.box = walkdata.destbox;
 		} else {
 			abr = adjustXYToBeInBox(abr.x, abr.y);
 		}
@@ -1194,7 +1194,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 
 	walkdata.destx = abr.x;
 	walkdata.desty = abr.y;
-	walkdata.destbox = (byte)abr.dist;	/* a box */
+	walkdata.destbox = abr.box;
 	walkdata.destdir = dir;
 	moving = (moving & MF_IN_LEG) | MF_NEW_LEG;
 	walkdata.point3x = 32000;

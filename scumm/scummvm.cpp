@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "boxes.h"
 #include "charset.h"
 #include "debugger.h"
 #include "dialogs.h"

@@ -30,7 +30,6 @@
 #include "common/str.h"
 
 #include "gfx.h"
-#include "boxes.h"
 
 class Actor;
 class BaseCostumeRenderer;
@@ -46,6 +45,9 @@ class Scumm;
 class ScummDebugger;
 class Serializer;
 class Sound;
+
+struct Box;
+struct BoxCoords;
 struct FindObjectInRoom;
 
 typedef ScummVM::Map<ScummVM::String, int> ObjectIDMap;
@@ -1012,7 +1014,7 @@ public:
 	int getPathToDestBox(byte from, byte to);
 	void getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
-	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
+	int getClosestPtOnBox(int box, int x, int y, int16& outX, int16& outY);
 	int getSpecialBox(int param1, int param2);
 	
 	void setBoxFlags(int box, int val);
