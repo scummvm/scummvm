@@ -507,7 +507,8 @@ Credits:
 --------
  The core ScummVM team:
         James Brown        - Current lead developer, ScummVM
-        Vincent Hamm       - Co-lead developer, ScummVM (inactive)
+        Vincent Hamm       - Developer, ScummVM (inactive)
+        Max Horn           - Developer, ScummVM, MacOS X port, new GUI
         Jeremy Newman      - Webmaster
         Ludvig Strigeus    - Original developer, Scumm and SimonVM. (Retired)
 
@@ -515,7 +516,6 @@ Credits:
         Lionel Ulmer       - X11/Linux port
         Nicolas Bacca      - PocketPC/WinCE port
         Mutwin Kraus       - MacOS Carbon port (Retired)
-        Max Horn           - MacOS X port, many bug fixes, new GUI
         Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
 
