@@ -20,161 +20,44 @@
  */
 
 #include "stdafx.h"
-#include "common/util.h"
-#include "common/engine.h"
 #include "common/file.h"
 #include "scumm/scumm.h"
 
 #include "smush_font.h"
 
 SmushFont::SmushFont(bool use_original_colors, bool new_colors) :
-	_nbChars(0),
+	NutRenderer(g_scumm),	// FIXME: evil hack
 	_color(-1),
 	_new_colors(new_colors),
 	_original(use_original_colors) {
-	for(int i = 0; i < 256; i++)
-		_chars[i].src = NULL;
-}
-
-SmushFont::~SmushFont() {
-	for(int i = 0; i < _nbChars; i++) {
-		if(_chars[i].src)
-			delete []_chars[i].src;
-	}
-}
-
-bool SmushFont::loadFont(const char *filename, const char *directory) {
-	debug(8, "SmushFont::loadFont() called");
-
-	File file;
-	file.open(filename, directory);
-	if (file.isOpen() == false) {
-		warning("SmushFont::loadFont() Can't open font file: %s/%s", directory, filename);
-		return false;
-	}
-
-	uint32 tag = file.readUint32BE();
-	if (tag != 'ANIM') {
-		debug(8, "SmushFont::loadFont() there is no ANIM chunk in font header");
-		return false;
-	}
-
-	uint32 length = file.readUint32BE();
-	byte *dataSrc = (byte *)malloc(length);
-	file.read(dataSrc, length);
-	file.close();
-
-	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
-		debug(8, "SmushFont::loadFont() there is no AHDR chunk in font header");
-		free(dataSrc);
-		return false;
-	}
-	
-	_nbChars = READ_LE_UINT16(dataSrc + 10);
-	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
-	for (int l = 0; l < _nbChars; l++) {
-		if (READ_BE_UINT32(dataSrc + offset) == 'FRME') {
-			offset += 8;
-			if (READ_BE_UINT32(dataSrc + offset) == 'FOBJ') {
-				_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
-				_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
-				_chars[l].src = new byte[_chars[l].width * _chars[l].height + 1000];
-				decodeCodec44(_chars[l].src, dataSrc + offset + 22, READ_BE_UINT32(dataSrc + offset + 4) - 14);
-				offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
-			} else {
-				debug(8, "SmushFont::loadFont(%s, %s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, directory, l, offset);
-				break;
-			}
-		} else {
-			debug(8, "SmushFont::loadFont(%s, %s) there is no FRME chunk %d (offset %x)", filename, directory, l, offset);
-			break;
-		}
-	}
-
-	free(dataSrc);
-	return true;
-}
-
-int SmushFont::getCharWidth(byte c) {
-	if(c >= 0x80 && g_scumm->_CJKMode) {
-		if(g_scumm->_gameId == GID_CMI)
-			return 8;
-		if(g_scumm->_gameId == GID_DIG)
-			return 6;
-		return 0;
-	}
-
-	if(c >= _nbChars)
-		error("invalid character in SmushFont::charWidth : %d (%d)", c, _nbChars);
-
-	return _chars[c].width;
-}
-
-int SmushFont::getCharHeight(byte c) {
-	if(c >= 0x80 && g_scumm->_CJKMode) {
-		if(g_scumm->_gameId == GID_CMI)
-			return 16;
-		if(g_scumm->_gameId == GID_DIG)
-			return 10;
-		return 0;
-	}
-
-	if(c >= _nbChars)
-		error("invalid character in SmushFont::charHeight : %d (%d)", c, _nbChars);
-
-	return _chars[c].height;
 }
 
 int SmushFont::getStringWidth(const char *str) {
-	int width = 0;
+	if (!_loaded) {
+		warning("SmushFont::getStringWidth() Font is not loaded");
+		return 0;
+	}
 
+	int width = 0;
 	while(*str) {
 		width += getCharWidth(*str++);
 	}
-
 	return width;
 }
 
 int SmushFont::getStringHeight(const char *str) {
-	int ret = 0;
-
-	for(int i = 0; str[i] != 0; i++) {
-		int h = getCharHeight(str[i]);
-		ret = MAX(ret, h);
+	if (!_loaded) {
+		warning("SmushFont::getStringHeight() Font is not loaded");
+		return 0;
 	}
 
-	return ret;
-}
-
-void SmushFont::decodeCodec44(byte *dst, const byte *src, int length) {
-	byte val;
-	uint16 size_line, num;
-
-	do {
-		size_line = READ_LE_UINT16(src);
-		src += 2;
-		length -= 2;
-
-		while (size_line != 0) {
-			num = *src++;
-			val = *src++;
-			memset(dst, val, num);
-			dst += num;
-			length -= 2;
-			size_line -= 2;
-			if (size_line != 0) {
-				num = READ_LE_UINT16(src) + 1;
-				src += 2;
-				memcpy(dst, src, num);
-				dst += num;
-				src += num;
-				length -= num + 2;
-				size_line -= num + 2;
-			}
-		}
-		dst--;
-
-	} while (length > 1);
+	int height = 0;
+	while(*str) {
+		int charHeight = getCharHeight(*str++);
+		if (height < charHeight)
+			height = charHeight;
+	}
+	return height;
 }
 
 int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {

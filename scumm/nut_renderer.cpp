@@ -23,11 +23,11 @@
 #include "nut_renderer.h"
 
 
-NutRenderer::NutRenderer(Scumm *vm) {
-	_vm = vm;
-	_initialized = false;
-	_loaded = false;
-	_nbChars = 0;
+NutRenderer::NutRenderer(Scumm *vm) :
+	_vm(vm),
+	_initialized(false),
+	_loaded(false),
+	_nbChars(0) {
 	
 	for(int i = 0; i < 256; i++)
 		_chars[i].src = NULL;
@@ -134,10 +134,10 @@ int NutRenderer::getCharWidth(byte c) {
 		return 0;
 	}
 
-	if(c >= 0x80 && g_scumm->_CJKMode) {
-		if(g_scumm->_gameId == GID_CMI)
+	if(c >= 0x80 && _vm->_CJKMode) {
+		if(_vm->_gameId == GID_CMI)
 			return 8;
-		if(g_scumm->_gameId == GID_DIG)
+		if(_vm->_gameId == GID_DIG)
 			return 6;
 		return 0;
 	}
@@ -155,10 +155,10 @@ int NutRenderer::getCharHeight(byte c) {
 		return 0;
 	}
 
-	if(c >= 0x80 && g_scumm->_CJKMode) {
-		if(g_scumm->_gameId == GID_CMI)
+	if(c >= 0x80 && _vm->_CJKMode) {
+		if(_vm->_gameId == GID_CMI)
 			return 16;
-		if(g_scumm->_gameId == GID_DIG)
+		if(_vm->_gameId == GID_DIG)
 			return 10;
 		return 0;
 	}
@@ -167,21 +167,6 @@ int NutRenderer::getCharHeight(byte c) {
 		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _nbChars);
 
 	return _chars[c].height;
-}
-
-int NutRenderer::getStringWidth(const byte *str) {
-	debug(8, "NutRenderer::getStringWidth() called");
-	if (!_loaded) {
-		warning("NutRenderer::getStringWidth() Font is not loaded");
-		return 0;
-	}
-	int width = 0;
-
-	while (*str) {
-		width += getCharWidth(*str++);
-	}
-
-	return width;
 }
 
 void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) {
@@ -263,9 +248,9 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 		return;
 	}
 
-	int width = g_scumm->_2byteWidth;
-	int height = g_scumm->_2byteHeight;
-	byte *src = g_scumm->get2byteCharPtr(c);
+	int width = _vm->_2byteWidth;
+	int height = _vm->_2byteHeight;
+	byte *src = _vm->get2byteCharPtr(c);
 	byte bits = 0;
 
 	byte maskmask;

@@ -39,12 +39,12 @@ protected:
 
 	void decodeCodec44(byte *dst, const byte *src, uint32 length);
 
-	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
-	void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
+	virtual void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
+	virtual void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
 
 public:
 	NutRenderer(Scumm *vm);
-	~NutRenderer();
+	virtual ~NutRenderer();
 
 	bool loadFont(const char *filename, const char *dir);
 
@@ -52,7 +52,6 @@ public:
 
 	int getCharWidth(byte c);
 	int getCharHeight(byte c);
-	int getStringWidth(const byte *string);
 };
 
 

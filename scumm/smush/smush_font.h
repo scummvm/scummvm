@@ -23,35 +23,25 @@
 #define SMUSH_FONT_H
 
 #include "common/scummsys.h"
+#include "scumm/nut_renderer.h"
 
-class SmushFont {
+class SmushFont : public NutRenderer {
 protected:
 	int _nbChars;
 	int16 _color;
 	bool _new_colors;
 	bool _original;
 	
-	struct {
-		int width;
-		int height;
-		byte *src;
-	} _chars[256];
 
-
-	int getCharWidth(byte c);
 	int getStringWidth(const char *str);
-	int getCharHeight(byte c);
 	int getStringHeight(const char *str);
 	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
 	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
-	void decodeCodec44(byte *dst, const byte *src, int length);
 
 public:
 	SmushFont(bool use_original_colors, bool new_colors);
-	~SmushFont();
 
-	bool loadFont(const char *filename, const char *directory);
 	void setColor(byte c) { _color = c; }
 	void drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset);
 	void drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
