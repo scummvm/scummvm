@@ -62,8 +62,8 @@ static const byte mt32_to_gmidi[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
 	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
-	 88,  54,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
-	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
+	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
+ 	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
 	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
 	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
 	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
@@ -2261,8 +2261,83 @@ struct {
 	byte program;
 }
 roland_to_gm_map [] = {
-	// TODO: Construct this database.
-	{ "          ", 0 }
+	// Monkey Island 2 instruments
+	// TODO: Complete
+//	{ "badspit   ", ??? },
+	{ "Big Drum  ", 116 },
+//	{ "burp      ", ??? },
+//	{ "dinkfall  ", ??? },
+//	{ "Fire Pit  ", ??? },
+//	{ "foghorn   ", ??? },
+	{ "glop      ",  39 },
+//	{ "jacob's la", ??? },
+	{ "LeshBass  ",  33 }, 
+//	{ "lowsnort  ", ??? },
+//	{ "ML explosn", ??? },
+	{ "ReggaeBass",  32 },
+//	{ "rope fall ", ??? },
+//	{ "rumble    ", ??? },
+//	{ "SdTrk Bend", ??? },
+//	{ "snort     ", ??? },
+//	{ "spitting  ", ??? },
+	{ "Swell 1   ",  95 },
+	{ "Swell 2   ",  95 }
+//	{ "thnderclap", ??? },
+
+	// Fate of Atlantis instruments
+	// TODO: Build
+//	{ "*aah!     ", ??? },
+//	{ "*ooh!     ", ??? },
+//	{ "*ShotFar4 ", ??? },
+//	{ "*splash3  ", ??? },
+//	{ "*torpedo5 ", ??? },
+//	{ "*whip3    ", ??? },
+//	{ "*woodknock", ??? },
+//	{ "35 lavabub", ??? },
+//	{ "49 bzzt!  ", ??? },
+//	{ "applause  ", ??? },
+//	{ "Arabongo  ", ??? },
+//	{ "Big Drum  ", ??? }, // DUPLICATE (todo: confirm)
+//	{ "bodythud1 ", ??? },
+//	{ "boneKLOK2 ", ??? },
+//	{ "boom10    ", ??? },
+//	{ "boom11    ", ??? },
+//	{ "boom15    ", ??? },
+//	{ "boxclik1a ", ??? },
+//	{ "brassbonk3", ??? },
+//	{ "carstart  ", ??? },
+//	{ "cb tpt 2  ", ??? },
+//	{ "cell door ", ??? },
+//	{ "chains    ", ??? },
+//	{ "crash     ", ??? },
+//	{ "crsrt/idl3", ??? },
+//	{ "Fire Pit  ", ??? }, // DUPLICATE (todo: confirm)
+//	{ "Fzooom    ", ??? },
+//	{ "Fzooom 2  ", ??? },
+//	{ "ghostwhosh", ??? },
+//	{ "glasssmash", ??? },
+//	{ "gloop2    ", ??? },
+//	{ "gunShotNea", ??? },
+//	{ "idoorclse ", ??? },
+//	{ "knife     ", ??? },
+//	{ "lavacmbl4 ", ??? },
+//	{ "Mellow Str", ??? },
+//	{ "mtlheater1", ??? },
+//	{ "pachinko5 ", ??? },
+//	{ "Ping1     ", ??? },
+//	{ "rockcrunch", ??? },
+//	{ "rumble    ", ??? }, // DUPLICATE (todo: confirm)
+//	{ "runngwatr ", ??? },
+//	{ "scrape2   ", ??? },
+//	{ "snakeHiss ", ??? },
+//	{ "snort     ", ??? }, // DUPLICATE (todo: confirm)
+//	{ "spindle4  ", ??? },
+//	{ "splash2   ", ??? },
+//	{ "squirel   ", ??? },
+//	{ "steam3    ", ??? },
+//	{ "stonwheel6", ??? },
+//	{ "street    ", ??? },
+//	{ "trickle4  ", ??? }
 };
 
 void Player::parse_sysex(byte *p, uint len)
