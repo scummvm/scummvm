@@ -709,9 +709,6 @@ int Scumm::readSoundResource(int type, int idx)
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
-		debug(1, "Found base tag Mac1 in sound %d, size %d", idx, total_size);
-		debug(1, "It was at position %d", filePos(_fileHandle));
-
 		fileSeek(_fileHandle, -12, SEEK_CUR);
 		total_size = fileReadDwordBE();
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
