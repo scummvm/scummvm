@@ -14,7 +14,6 @@ Unassigned (help wanted):
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Fix the screenblocks zBuffer code
- * Lip syncing
  * Abstract rendering code and implement software renderer
  * Fix drawEmergString() to work with Mesa
- * Make Smush work on linux/ppc
+ * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)
