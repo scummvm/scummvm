@@ -302,7 +302,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				// pushes data 'blindly' into the mixer, instead of providing
 				// a pull based interface, i.e. a custom AudioInputStream
 				// subclass).
-				freq -= (fraq % 25);
+				freq -= (freq % 25);
 
 				_track[l].iteration = _track[l].pullSize = freq * channels;
 
