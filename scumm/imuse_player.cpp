@@ -652,7 +652,7 @@ int Player::setTranspose(byte relative, int b) {
 	if (b > 24 || b < -24 || relative > 1)
 		return -1;
 	if (relative)
-		b = transpose_clamp(_transpose + b, -7, 7);
+		b = transpose_clamp(_transpose + b, -24, 24);
 
 	_transpose = b;
 

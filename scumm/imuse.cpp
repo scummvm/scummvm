@@ -1419,11 +1419,11 @@ void Part::set_pan(int8 pan) {
 }
 
 void Part::set_transpose(int8 transpose) {
-	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -12, 12);
+	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -24, 24);
 	if (_mc) {
 		_mc->pitchBend(clamp(_pitchbend +
-						(_detune_eff * 64 / 12) +
-						(_transpose_eff * 8192 / 12), -8192, 8191));
+						(_detune_eff * /*64*/82 / _pitchbend_factor) +
+						(_transpose_eff * 8192 / _pitchbend_factor), -8192, 8191));
 	}
 }
 
