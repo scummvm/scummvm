@@ -1879,39 +1879,39 @@ void ScummEngine_v72he::o72_unknownF5() {
 }
 
 void ScummEngine_v72he::o72_unknownF6() {
-	int len, len2, pos, value, array;
+	int len, edi, pos, value, id;
 	value = pop();
-	len = pop();
+	edi = pop();
 	pos = pop();
-	array = pop();
+	id = pop();
 
-	if (len >= 0) {
-		len2 = resStrLen(getStringAddress(array));
-		if (len2 < len)
-			len = len2;
+	if (edi >= 0) {
+		len = resStrLen(getStringAddress(id));
+		if (len < edi)
+			edi = len;
 	} else {
-		len = 12;
+		edi = 0;
 	}
 
 	if (pos < 0)
 		pos = 0;
 
-	writeVar(0, array);
-	if (pos > len) {
-		while (pos > len) {
-			if (readArray(0, 0, pos) == value) {
-				push(pos);
-				return;
-			}
-			pos--;
-		}
-	} else {
-		while (pos < len) {
+	writeVar(0, id);
+	if (edi > pos) {
+		while (edi >= pos) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
 			}
 			pos++;
+		}
+	} else {
+		while (edi <= pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos--;
 		}
 	}
 
