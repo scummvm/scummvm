@@ -2934,7 +2934,7 @@ void ScummEngine_v6::o6_pickOneOfDefault() {
 
 void ScummEngine_v6::o6_stampObject() {
 	int object, x, y, state;
-	
+
 	// dummy opcode in tentacle
 	if (_version == 6)
 		return;
@@ -2948,7 +2948,7 @@ void ScummEngine_v6::o6_stampObject() {
 		if (state == 0) {
 			state = 255;
 		}
-		warning("o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
+		debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
