@@ -1765,6 +1765,7 @@ uint32 SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 	y <<= 2;
 
 	_scriptVariables[RESULT] = eyeTable[x + y] + S91;
+	return 1;
 }
 
 uint32 SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
