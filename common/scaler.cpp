@@ -27,7 +27,22 @@
 int gBitFormat = 565;
 
 // RGB-to-YUV lookup table
-int RGBtoYUV[65536];
+extern "C" {
+
+#ifdef USE_NASM
+// NOTE: if your compiler uses different mangled names, add another
+//       condition here
+
+#ifndef _MSC_VER
+#define RGBtoYUV _RGBtoYUV
+#define LUT16to32 _LUT16to32
+#endif
+
+#endif
+
+uint RGBtoYUV[65536];
+uint LUT16to32[65536];
+}
 
 static const uint16 dotmatrix_565[16] = {
 	0x01E0, 0x0007, 0x3800, 0x0000,
@@ -63,6 +78,10 @@ void InitLUT(uint32 BitFormat) {
 	int Y, u, v;
 	int gInc, gShift;
 	
+	for (int i = 0; i < 65536; i++) {
+		LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
+	}
+
 	if (BitFormat == 565) {
 		gInc = 256 >> 6;
 		gShift = 6 - 3;
@@ -76,8 +95,8 @@ void InitLUT(uint32 BitFormat) {
 			for (b = 0; b < 256; b += 8) {
 				Y = (r + g + b) >> 2;
 				u = 128 + ((r - b) >> 2);
-				v = 128 + ((-r + 2 * g -b) >> 3);
-				RGBtoYUV[ (r << (5+gShift)) + (g << gShift) + (b >> 3) ] = (Y << 16) + (u << 8) + v;
+				v = 128 + ((-r + 2 * g - b) >> 3);
+				RGBtoYUV[ (r << (5 + gShift)) + (g << gShift) + (b >> 3) ] = (Y << 16) + (u << 8) + v;
 			}
 		}
 	}

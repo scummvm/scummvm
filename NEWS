@@ -7,6 +7,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added an 'On Screen Display' to the SDL backend
    - Rewrote the backend API partially
    - Comments in config files are preserved now
+   - Added MMX i386 assembler HQ2x and HQ3x scalers
 
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games

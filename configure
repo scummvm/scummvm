@@ -42,12 +42,16 @@ _build_kyra=no
 _build_saga=no
 _need_memalign=no
 _build_plugins=no
+_nasm=auto
 # more defaults
 _backend=sdl
 _ranlib=ranlib
 _install=install
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
+_nasmpath="$PATH"
+NASMFLAGS=""
+NASM=""
 _prefix=/usr/local
 
 _srcdir=`dirname $0`
@@ -177,6 +181,45 @@ rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
 }
 
+CheckNASM()
+{
+    echocheck "nasm"
+    if test "$_nasm" = no ; then
+	echo "disabled"
+	return;
+    fi
+
+    IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+	
+    for path_dir in $_nasmpath; do
+	if test -x "$path_dir/nasm" ; then
+	    NASM="$path_dir/nasm"
+	    echo $NASM
+	    break
+	fi
+    done
+	
+    IFS="$ac_save_ifs"
+
+    if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+	echo "not found"
+	_nasm=no
+    else
+	case $_host_os in
+	    mingw* | cygwin*)
+		NASMFLAGS="-f win32"
+	    ;;
+	    openbsd*)
+                NASMFLAGS="-f aoutb"
+            ;;
+            *)
+                NASMFLAGS="-f elf"
+            ;;
+	esac
+	_nasm=yes
+    fi
+}
+
 #
 # Greet user
 #
@@ -245,7 +288,10 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
+
+  --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
+  --disable-nasm           disable assembly language optimizations [autodetect]
 
 Some influential environment variables:
   LDFLAGS	linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -282,6 +328,8 @@ for ac_option in $@; do
       --disable-mad)		_mad=no		;;
       --enable-zlib)		_zlib=yes	;;
       --disable-zlib)		_zlib=no	;;
+      --enable-nasm)		_nasm=yes	;;
+      --disable-nasm)		_nasm=no	;;
       --disable-mpeg2)          _mpeg2=no       ;;
       --enable-plugins)         _build_plugins=yes ;;
       --with-mpeg2-prefix=*)
@@ -331,6 +379,10 @@ for ac_option in $@; do
       --with-sdl-prefix=*)
 	arg=`echo $ac_option | cut -d '=' -f 2`
 	_sdlpath="$arg:$arg/bin"
+	;;
+      --with-nasm-prefix=*)
+	arg=`echo $ac_option | cut -d '=' -f 2`
+	_nasmpath="$arg:$arg/bin"
 	;;
       --host=*)
 	_host=`echo $ac_option | cut -d '=' -f 2`
@@ -508,7 +560,6 @@ if test "$_build_saga" = no ; then
 else
 	_mak_saga='# DISABLE_SAGA = 1'
 fi
-
 
 if test -n "$_host"; then
     # Cross-compiling mode - add your target here if needed
@@ -848,6 +899,19 @@ echo "$_mpeg2"
 rm -f $TMPC $TMPO$EXEEXT
 
 #
+# Check for nasm
+#
+CheckNASM
+
+if test "$_nasm" = yes ; then
+    _def_nasm='#define USE_NASM'
+    _make_def_HAVE_NASM='HAVE_NASM = 1'
+else
+    _def_nasm='#undef USE_NASM'
+    _make_def_HAVE_NASM='# HAVE_NASM = 1'
+fi
+
+#
 # figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
@@ -892,10 +956,17 @@ fi
 if test "$_build_kyra" = yes ; then
   echo "    Legend of Kyrandia"
 fi
+
 echo
 
 echo_n "Backend... "
-echo "$_backend"
+echo_n "$_backend"
+
+if test "$_nasm" = yes ; then
+    echo ", assembly routines"
+else
+    echo
+fi
 
 #
 # Backend related stuff
@@ -954,6 +1025,9 @@ $_def_alsa
 $_def_zlib
 $_def_mpeg2
 
+/* Should we use i386 assembly routines */
+$_def_nasm
+
 #endif /* CONFIG_H */
 EOF
 
@@ -970,6 +1044,8 @@ BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
 EXEEXT := $EXEEXT
+NASM := $NASM
+NASMFLAGS := $NASMFLAGS
 
 PREFIX := $_prefix
 BINDIR := $_bindir
@@ -977,6 +1053,7 @@ MANDIR := $_mandir
 
 $_mak_plugins
 $_make_def_HAVE_GCC3
+$_make_def_HAVE_NASM
 $_mak_scumm
 $_mak_simon
 $_mak_sky

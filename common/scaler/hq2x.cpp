@@ -22,6 +22,25 @@
 
 #include "common/scaler/intern.h"
 
+#ifdef USE_NASM
+// Assembly version of HQ2x
+
+extern "C" {
+
+#ifndef _MSC_VER
+#define hq2x_16 _hq2x_16
+#endif
+
+void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
+
+}
+
+void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
+}
+
+#else
+
 #ifdef HAS_ALTIVEC
 #include <sys/sysctl.h> 
 
@@ -120,7 +139,6 @@ void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	#undef bitFormat
 #endif
 
-
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 #ifdef HAS_ALTIVEC
 	if (isAltiVecAvailable()) {
@@ -131,8 +149,11 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 		return;
 	}
 #endif
+
 	if (gBitFormat == 565)
 		HQ2x_565(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
 		HQ2x_555(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
+
+#endif //Assembly version

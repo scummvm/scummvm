@@ -16,6 +16,12 @@ MODULE_OBJS := \
 	common/scaler/hq2x.o \
 	common/scaler/hq3x.o
 
+ifdef HAVE_NASM
+MODULE_OBJS += \
+	common/scaler/hq2x_i386.o \
+	common/scaler/hq3x_i386.o
+endif
+
 MODULE_DIRS += \
 	common \
 	common/scaler

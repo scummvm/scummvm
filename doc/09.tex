@@ -13,6 +13,11 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 USE\_MAD. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
+Some parts of ScummVM, particularly scalers, have highly optimized versions 
+written in assembler. If you wish to use this option, you will need to install 
+nasm assembler (see \url{http://nasm.sf.net}). Note, that currently we have only x86
+MMX optimized versions, and they will not compile on other processors.
+
 On Win9x/NT/XP you can define USE\_WINDBG and attach WinDbg to browse debug 
 messages (see \url{http://www.sysinternals.com/ntw2k/freeware/debugview.shtml}).
 

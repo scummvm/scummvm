@@ -158,6 +158,13 @@ else
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 endif
 
+ifdef HAVE_NASM
+.SUFFIXES: .asm
+
+.asm.o:
+	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
+endif
+
 # Include the dependency tracking files. We add /dev/null at the end
 # of the list to avoid a warning/error if no .d file exist
 -include $(wildcard $(addsuffix /*.d,$(DEPDIRS))) /dev/null
