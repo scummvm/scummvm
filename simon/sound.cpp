@@ -230,6 +230,26 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 }
 #endif
 
+#ifdef USE_VORBIS
+class VorbisSound : public BaseSound {
+public:
+	VorbisSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+};
+
+void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+{
+	if (_offsets == NULL)
+		return;
+
+	_file->seek(_offsets[sound], SEEK_SET);
+
+	uint32 size = _offsets[sound+1] - _offsets[sound];
+
+	_mixer->playVorbis(handle, _file, size);
+}
+#endif
+
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
 	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
 	_voice = 0;
@@ -253,10 +273,21 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 	const char *s;
 
 #ifdef USE_MAD
-	file->open(gss->mp3_filename, gameDataPath);
-	if (file->isOpen()) {
-		_voice_file = true;
-		_voice = new MP3Sound(_mixer, file);
+	if (!_voice && gss->mp3_filename && gss->mp3_filename[0]) {
+		file->open(gss->mp3_filename, gameDataPath);
+		if (file->isOpen()) {
+			_voice_file = true;
+			_voice = new MP3Sound(_mixer, file);
+		}
+	}
+#endif
+#ifdef USE_VORBIS
+	if (!_voice && gss->vorbis_filename && gss->vorbis_filename[0]) {
+		file->open(gss->vorbis_filename, gameDataPath);
+		if (file->isOpen()) {
+			_voice_file = true;
+			_voice = new VorbisSound(_mixer, file);
+		}
 	}
 #endif
 	if (!_voice) {
@@ -308,9 +339,19 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 	if (_game == GAME_SIMON1ACORN || _game == GAME_SIMON1TALKIE) {
 		file = new File();
 #ifdef USE_MAD
-		file->open(gss->mp3_effects_filename, gameDataPath);
-		if (file->isOpen()) {
-			_effects = new MP3Sound(_mixer, file);
+		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
+			file->open(gss->mp3_effects_filename, gameDataPath);
+			if (file->isOpen()) {
+				_effects = new MP3Sound(_mixer, file);
+			}
+		}
+#endif
+#ifdef USE_VORBIS
+		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
+			file->open(gss->vorbis_effects_filename, gameDataPath);
+			if (file->isOpen()) {
+				_effects = new VorbisSound(_mixer, file);
+			}
 		}
 #endif
 		if (!_effects) {

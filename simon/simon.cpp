@@ -136,73 +136,87 @@ static const GameSpecificSettings *simon2dos_settings;
 #else
 #define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
-	"SIMON.GME",									// gme_filename
-	"SIMON.WAV",									// wav_filename
-	"SIMON.VOC",									// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"EFFECTS.VOC",									// voc_effects_filename
-	"EFFECTS.MP3",									// mp3_effects_filename
-	"GAMEPC",									// gamepc_filename
+	"SIMON.GME",                            // gme_filename
+	"SIMON.WAV",                            // wav_filename
+	"SIMON.VOC",                            // voc_filename
+	"SIMON.MP3",                            // mp3_filename
+	"SIMON.OGG",                            // vorbis_filename
+	"EFFECTS.VOC",                          // voc_effects_filename
+	"EFFECTS.MP3",                          // mp3_effects_filename
+	"EFFECTS.OGG",                          // vorbis_effects_filename
+	"GAMEPC",                               // gamepc_filename
 };
 
 static const GameSpecificSettings simon1acorn_settings = {
-	"DATA",										// gme_filename
-	"",										// wav_filename
-	"SIMON",									// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"EFFECTS",									// voc_effects_filename
-	"EFFECTS.MP3",									// mp3_effects_filename
-	"GAMEBASE",									// gamepc_filename
+	"DATA",                                 // gme_filename
+	"",                                     // wav_filename
+	"SIMON",                                // voc_filename
+	"SIMON.MP3",                            // mp3_filename
+	"SIMON.OGG",                            // vorbis_filename
+	"EFFECTS",                              // voc_effects_filename
+	"EFFECTS.MP3",                          // mp3_effects_filename
+	"EFFECTS.OGG",                          // vorbis_effects_filename
+	"GAMEBASE",                             // gamepc_filename
 };
 
 static const GameSpecificSettings simon1amiga_settings = {
-	"",										// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"gameamiga",									// gamepc_filename
+	"",                                     // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"SIMON.MP3",                            // mp3_filename
+	"SIMON.OGG",                            // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"gameamiga",                            // gamepc_filename
 };
 
 static const GameSpecificSettings simon1demo_settings = {
-	"",										// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"",										// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GDEMO",									// gamepc_filename
+	"",                                     // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"",                                     // mp3_filename
+	"",                                     // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GDEMO",                                // gamepc_filename
 };
 
 static const GameSpecificSettings simon2win_settings = {
-	"SIMON2.GME",									// gme_filename
-	"SIMON2.WAV",									// wav_filename
-	"SIMON2.VOC",									// voc_filename
-	"SIMON2.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GSPTR30",									// gamepc_filename
+	"SIMON2.GME",                           // gme_filename
+	"SIMON2.WAV",                           // wav_filename
+	"SIMON2.VOC",                           // voc_filename
+	"SIMON2.MP3",                           // mp3_filename
+	"SIMON2.OGG",                           // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GSPTR30",                              // gamepc_filename
 };
 
 static const GameSpecificSettings simon2mac_settings = {
-	"Simon2.gme",									// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"SIMON2.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"gsptr30",									// gamepc_filename
+	"Simon2.gme",                           // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"SIMON2.MP3",                           // mp3_filename
+	"SIMON2.OGG",                           // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"gsptr30",                              // gamepc_filename
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	"SIMON2.GME",									// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"",										// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GAME32",									// gamepc_filename
+	"SIMON2.GME",                           // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"",                                     // mp3_filename
+	"",                                     // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GAME32",                               // gamepc_filename
 };
 #endif
 

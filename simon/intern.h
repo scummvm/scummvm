@@ -124,16 +124,20 @@ struct GameSpecificSettings {
 	const char *wav_filename;
 	const char *voc_filename;
 	const char *mp3_filename;
+	const char *vorbis_filename;
 	const char *voc_effects_filename;
 	const char *mp3_effects_filename;
+	const char *vorbis_effects_filename;
  	const char *gamepc_filename;
  #else
 	const char gme_filename[12];
 	const char wav_filename[12];
 	const char voc_filename[12];
 	const char mp3_filename[12];
+	const char vorbis_filename[12];
 	const char voc_effects_filename[12];
 	const char mp3_effects_filename[12];
+	const char vorbis_effects_filename[12];
  	const char gamepc_filename[12]; 
  #endif
 };
