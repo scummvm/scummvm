@@ -172,8 +172,10 @@ void String::clear() {
 }
 
 void String::insertChar(char c, int p) {
+	// FIXME: This should be an 'assert', not an 'if' !
 	if (p >= 0 && p <= _len) {
-		ensureCapacity(++_len, true);
+		ensureCapacity(_len + 1, true);
+		_len++;
 		for (int i = _len; i > p; i--) {
 			_str[i] = _str[i-1];
 		}
