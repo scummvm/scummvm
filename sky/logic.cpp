@@ -110,8 +110,8 @@ void SkyLogic::nop() {}
  * @see script()
  */
 void SkyLogic::logicScript() {
-	// Process the current mega's script
-	// If the script finishes then drop back a level
+	/// Process the current mega's script
+	/// If the script finishes then drop back a level
 
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
@@ -147,8 +147,8 @@ void SkyLogic::autoRoute() {
 }
 
 void SkyLogic::arAnim() {
-	// Follow a route
-	// Mega should be in getToMode
+	/// Follow a route
+	/// Mega should be in getToMode
 
 	// only check collisions on character boundaries
 	if ((_compact->xcood & 7) || (_compact->ycood & 7)) {
@@ -277,6 +277,7 @@ void SkyLogic::arAnim() {
 }
 
 void SkyLogic::mainAnim() {
+	/// Extension of arAnim()
 	_compact->extCompact->waitingFor = 0; // clear possible zero-zero skip
 
 	uint16 *sequence = _compact->grafixProg;
@@ -341,7 +342,7 @@ void SkyLogic::arTurn() {
 }
 
 void SkyLogic::alt() {
-	// change the current script
+	/// change the current script
 	_compact->logic = L_SCRIPT;
 	*SkyCompact::getSub(_compact, _compact->mode) = _compact->extCompact->alt;
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
@@ -349,7 +350,7 @@ void SkyLogic::alt() {
 }
 
 void SkyLogic::anim() {
-	// Follow an animation sequence
+	/// Follow an animation sequence
 
 	uint16 *grafixProg = _compact->grafixProg;
 
@@ -400,11 +401,13 @@ void SkyLogic::cursor() {
 }
 
 void SkyLogic::talk() {
-	error("Stub: SkyLogic::talk");
+	warning("Stub: SkyLogic::talk");
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::listen() {
-	// Stay in this mode until id in c_get_to_flag leaves l_talk mode
+	/// Stay in this mode until id in getToFlag leaves L_TALK mode
 
 	Compact *cpt = SkyState::fetchCompact(_compact->flag);
 
@@ -416,11 +419,11 @@ void SkyLogic::listen() {
 }
 
 void SkyLogic::stopped() {
-	// waiting for another mega to move or give-up trying
-
-	// this mode will always be set up from a special script
-	// that will be one level higher than the script we
-	// would wish to restart from
+	/// waiting for another mega to move or give-up trying
+	///
+	/// this mode will always be set up from a special script
+	/// that will be one level higher than the script we
+	/// would wish to restart from
 
 	Compact *cpt = SkyState::fetchCompact(_compact->extCompact->waitingFor);
 
@@ -469,8 +472,8 @@ void SkyLogic::pause() {
 }
 
 void SkyLogic::waitSync() {
-	// checks c_sync, when its non 0
-	// the id is put back into script mode
+	/// checks c_sync, when its non 0
+	/// the id is put back into script mode
 	// use this instead of loops in the script
 
 	if (!_compact->sync)
@@ -481,8 +484,7 @@ void SkyLogic::waitSync() {
 }
 
 void SkyLogic::simpleAnim() {
-	// follow an animation sequence module
-	// whilst ignoring the coordinate data
+	/// follow an animation sequence module whilst ignoring the coordinate data
 
 	uint16 *grafixProg = _compact->grafixProg;
 
@@ -937,8 +939,8 @@ void SkyLogic::initScriptVariables() {
  */
 uint16 SkyLogic::script(uint16 scriptNo, uint16 offset) {
 script:
-	// process a script
-	// low level interface to interpreter
+	/// process a script
+	/// low level interface to interpreter
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
 	debug(3, "Doing Script %x\n", (offset << 16) | scriptNo);
@@ -1257,7 +1259,7 @@ bool SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
-	// turn compact to direction dir
+	/// turn compact to direction dir
 
 	uint16 curDir = _compact->extCompact->dir; // get current direction
 	_compact->extCompact->dir = (uint16)(dir & 0xffff); // set new direction
@@ -1435,7 +1437,7 @@ bool SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 }
 
 bool SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
-	// Kill of text items that are mouse detectable
+	/// Kill of text items that are mouse detectable
 
 	uint32 id = FIRST_TEXT_COMPACT;
 
@@ -1454,8 +1456,8 @@ bool SkyLogic::fnStopMode(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
-	// We have hit another mega
-	// we are going to wait for it to move
+	/// We have hit another mega
+	/// we are going to wait for it to move
 
 	_compact->extCompact->waitingFor = (uint16) id;
 	stopAndWait();
@@ -1487,7 +1489,7 @@ bool SkyLogic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
-	// check for interaction request
+	/// check for interaction request
 	
 	if (!_compact->extCompact->request)
 		return true;
@@ -1502,10 +1504,10 @@ bool SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
-	uint i;
-
-	// initialise the top menu bar
+	/// initialise the top menu bar
 	// firstObject is o0 for game menu, k0 for linc
+
+	uint i;
 
 	// (1) FIRST, SET UP THE 2 ARROWS SO THEY APPEAR ON SCREEN
 
@@ -1579,8 +1581,8 @@ bool SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
-	// return the direction to turn to face another id
-	// pass back result in c_just_flag
+	/// return the direction to turn to face another id
+	/// pass back result in c_just_flag
 
 	Compact *cpt = SkyState::fetchCompact(otherId);
 
@@ -1614,7 +1616,7 @@ bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
-	// Make sprite a foreground sprite
+	/// Make sprite a foreground sprite
 	Compact *cpt = SkyState::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_FOREGROUND;
@@ -1622,14 +1624,14 @@ bool SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
-	// Make us a background sprite
+	/// Make us a background sprite
 	_compact->status &= 0xfff8;
 	_compact->status |= ST_BACKGROUND;
 	return true;
 }
 
 bool SkyLogic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
-	// Make sprite a background sprite
+	/// Make sprite a background sprite
 	Compact *cpt = SkyState::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_BACKGROUND;
@@ -1644,24 +1646,24 @@ bool SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
-	// stop the compact printing
-	// remove foreground, background & sort
+	/// stop the compact printing
+	/// remove foreground, background & sort
 	_compact->status &= 0xfff8;
 	return true;	
 }
 
 bool SkyLogic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
-	// stop the compact printing
-	// remove foreground, background & sort
+	/// stop the compact printing
+	/// remove foreground, background & sort
 	Compact *cpt = SkyState::fetchCompact(us);
 	cpt->status &= 0xfff8;
 	return true;	
 }
 
 bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
-	// used when a mega is to be restarted
-	// eg - when a smaller mega turn to larger
-	// - a mega changes rooms...
+	/// used when a mega is to be restarted
+	/// eg - when a smaller mega turn to larger
+	/// - a mega changes rooms...
 
 	Compact *cpt = SkyState::fetchCompact(id);
 	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
@@ -1673,13 +1675,13 @@ bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 }
 
 bool SkyLogic::fnToggleGrid(uint32 a, uint32 b, uint32 c) {
-	// Toggle a mega's grid plotting
+	/// Toggle a mega's grid plotting
 	_compact->status ^= ST_GRID_PLOT;
 	return true;
 }
 
 bool SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
-	// Set mega to l_pause
+	/// Set mega to L_PAUSE
 	_compact->flag = (uint16)(cycles & 0xffff);
 	_compact->logic = L_PAUSE;
 	return false; // drop out of script
@@ -1741,7 +1743,7 @@ bool SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
 }
 
 bool SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
-	// Move a list of id's to another screen
+	/// Move a list of id's to another screen
 	uint16 *p = SkyCompact::move_list[listNo];
 	for (int i = 0; i < 2; i++) {
 		if (!*p)
@@ -1753,7 +1755,7 @@ bool SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 }
 
 bool SkyLogic::fnNewList(uint32 a, uint32 b, uint32 c) {
-	// Reset the chooser list
+	/// Reset the chooser list
 	for (int i = 0; i < 16; i++)
 		_scriptVariables[TEXT1 + i] = 0;
 	return true;
@@ -1833,9 +1835,9 @@ bool SkyLogic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
-	// return id's x & y coordinate & c_mood (i.e. stood still yes/no)
-	// used by Joey-Logic - done in code like this because scripts can't
-	// get access to another megas compact as easily
+	/// return id's x & y coordinate & c_mood (i.e. stood still yes/no)
+	/// used by Joey-Logic - done in code like this because scripts can't
+	/// get access to another megas compact as easily
 
 	Compact *cpt = SkyState::fetchCompact(id);
 	
@@ -1985,7 +1987,7 @@ bool SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
-	// Kill all text items
+	/// Kill all text items
 
 	uint32 id = FIRST_TEXT_COMPACT;
 
