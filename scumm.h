@@ -983,9 +983,7 @@ public:
 	PlayingSoundHandle _mp3_handle;
 
 	int getCachedTrack(int track);
-	void playMP3CDTrack(int track, int num_loops, int start, int delay);
-
-
+	int playMP3CDTrack(int track, int num_loops, int start, int delay);
 #endif
 
 	int16 _soundQuePos, _soundQue[0x100];

@@ -108,12 +108,12 @@ void Scumm::playSound(int sound)
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
 #ifdef COMPRESSED_SOUND_FILE
-		playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
-						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
-#else
+		if ((playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0)) == -1)
+#endif
  		_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
  						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
-#endif
+
 		current_cd_sound = sound;
 		return;
 	}
@@ -648,7 +648,8 @@ int Scumm::getCachedTrack(int track) {
 	_cached_tracks[current_index] = track;
 	_mp3_tracks[current_index] = NULL;
 	if (!file) {
-		warning("Track %d not available in mp3 format", track);
+		// This warning is pretty pointless.
+		debug(1, "Track %d not available in mp3 format", track);
 		return -1;
 	}
 	// Check the format and bitrate
@@ -713,23 +714,23 @@ int Scumm::getCachedTrack(int track) {
 }
 		
 
-void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
+int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
 	long offset;
 	float frame_size;
 	mad_timer_t duration;
 
 	if (_soundsPaused)
-		return;
+		return 0;
 
 	if (!num_loops && !start) {
 		_mixer->stop(_mp3_handle);
-		return;
+		return 0;
 	}
 
 	index = getCachedTrack(track);
 	if (index < 0)
-		return;
+		return -1;
 
 	// Calc offset
 	frame_size = (float)(144 * _mad_header[index].bitrate / _mad_header[index].samplerate);
@@ -746,7 +747,7 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	fseek(_mp3_tracks[index], offset, SEEK_SET);
 
 	_mixer->play_mp3_cdtrack(&_mp3_handle, _mp3_tracks[index], _mp3_buffer, MP3_BUFFER_SIZE, duration);
-
+	return 0;
 }
 
 #endif
