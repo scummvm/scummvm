@@ -1416,10 +1416,22 @@ void Scumm_v8::o6_kernelGetFunctions()
 		push(0);
 		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
 		break;
-	case 0xD8:		// findBlastObject
-		// FIXME - this is WRONG and just a temporary hack
-		push(findObject(args[1], args[2]));
+	case 0xD8: {		// findBlastObject
+		BlastObject *eo;
+		int i;
+
+		for (i = _enqueuePos; i >= 0; i--) {
+			eo = &_enqueuedObjects[i];
+			if (eo->posX <= args[1] && eo->width + eo->posX > args[1] &&
+			    eo->posY <= args[2] && eo->height + eo->posY > args[2]) {
+				push(eo->number);
+				return;
+			}
+		}
+
+		push(0);
 		break;
+	}
 	case 0xD9:		// actorHit
 		push(0);
 		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
