@@ -2830,7 +2830,7 @@ void ScummEngine::initRoomSubBlocks() {
 		if (ptr) {
 			int slots = READ_LE_UINT32(ptr);
 			ptr += 4;
-			debug(1, "Loading %d polygon slots\n", slots);
+			debug(1, "Loading %d polygon slots", slots);
 
 			bool flag = 1;
 			int id, points, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
