@@ -1023,7 +1023,7 @@ MidiDriver_MIDIEMU::MidiDriver_MIDIEMU(){
 		chp[i][2] = 0;
         }
 	
-	adlib_mode = ADLIB_RYTHM;
+	adlib_mode = ADLIB_MELODIC;
 }
 
 int MidiDriver_MIDIEMU::open(int mode) {
