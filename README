@@ -402,7 +402,7 @@ Curse of Monkey Island
 
 Beneath a Steel Sky:
         gb  - English (Great Britain) (default)
-	en  - English USA
+        en  - English USA
         de  - German
         fr  - French
         it  - Italian
@@ -471,7 +471,7 @@ simon games.
         Keyboard Arrow Keys    - Simulate mouse movement
         Ctrl-f                 - Runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
-	Ctrl-Alt c-d           - Switch between other graphics filters
+        Ctrl-Alt c-d           - Switch between other graphics filters
         Ctrl-Alt b             - Switch between bilinear and non-linear
                                  filtering [OpenGL backend]
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
@@ -748,15 +748,15 @@ An example config file looks as follows:
         fullscreen=true
         savepath=C:\saves\
 
-	[sky]
-	path=C:\games\SteelSky\
+        [sky]
+        path=C:\games\SteelSky\
 
-	[germansky]
-	gameid=sky
-	language=de
-	path=C:\games\SteelSky\
-	description=Beneath a Steel Sky w/ German subtitles
-	
+        [germansky]
+        gameid=sky
+        language=de
+        path=C:\games\SteelSky\
+        description=Beneath a Steel Sky w/ German subtitles
+        
         [germandott]
         gameid=tentacle
         path=C:\german\tentacle\
@@ -773,7 +773,7 @@ An example config file looks as follows:
         cdrom=1
         path=C:\loom\
         talkspeed=55
-	savepath=C:\loom\saves\
+        savepath=C:\loom\saves\
         
         [monkey2]
         path=C:\amiga_mi2\
