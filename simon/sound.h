@@ -35,9 +35,6 @@ private:
 
 	SoundMixer *_mixer;
 
-	int _voice_index;
-	int _ambient_index;
-
 	BaseSound *_voice;
 	BaseSound *_effects;
 

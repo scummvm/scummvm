@@ -37,25 +37,25 @@ public:
 	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
 	BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
 	virtual ~BaseSound();
-	virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags) = 0;
+	virtual void playSound(uint sound, PlayingSoundHandle *handle, byte flags) = 0;
 };
 
 class WavSound : public BaseSound {
 public:
 	WavSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
 	WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
 class VocSound : public BaseSound {
 public:
 	VocSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 class RawSound : public BaseSound {
 public:
 	RawSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
 BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian) {
@@ -131,9 +131,9 @@ struct WaveHeader {
 #pragma END_PACK_STRUCTS
 #endif
 	
-int WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
-		return 0;
+		return;
 
 	WaveHeader wave_hdr;
 	uint32 data[2];
@@ -162,12 +162,12 @@ int WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(data[1]);
 	_file->read(buffer, data[1]);
 
-	return _mixer->playRaw(handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
+	_mixer->playRaw(handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
 }
 
-int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
-		return 0;
+		return;
 
 	VocHeader voc_hdr;
 	VocBlockHeader voc_block_hdr;
@@ -193,12 +193,12 @@ int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	return _mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
+	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
 }
 
-int RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
-		return 0;
+		return;
 
 	flags |= SoundMixer::FLAG_AUTOFREE;
 
@@ -207,34 +207,31 @@ int RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	return _mixer->playRaw(handle, buffer, size, 22050, flags);
+	_mixer->playRaw(handle, buffer, size, 22050, flags);
 }
 
 #ifdef USE_MAD
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	int playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
 };
 
-int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
-		return 0;
+		return;
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
 	uint32 size = _offsets[sound+1] - _offsets[sound];
 
-	return _mixer->playMP3(handle, _file, size);
+	_mixer->playMP3(handle, _file, size);
 }
 #endif
 
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
 	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
-	_voice_index = 0;
-	_ambient_index = 0;
-
 	_voice = 0;
 	_effects = 0;
 
@@ -420,10 +417,8 @@ void SimonSound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
-	if (_voice_handle)
-		_mixer->stopChannel(_voice_index);
-
-	_voice_index = _voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
+	_mixer->stopHandle(_voice_handle);
+	_voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
 void SimonSound::playEffects(uint sound) {
@@ -448,10 +443,8 @@ void SimonSound::playAmbient(uint sound) {
 	if (_ambient_paused)
 		return;
 
-	if (_ambient_handle)
-		_mixer->stopChannel(_ambient_index);
-
-	_ambient_index = _effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
+	_mixer->stopHandle(_ambient_handle);
+	_effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
 }
 
 bool SimonSound::hasVoice() {
@@ -459,7 +452,7 @@ bool SimonSound::hasVoice() {
 }
 
 void SimonSound::stopVoice() {
-	_mixer->stopChannel(_voice_index);
+	_mixer->stopHandle(_voice_handle);
 }
 
 void SimonSound::stopAll() {
@@ -475,7 +468,7 @@ void SimonSound::ambientPause(bool b) {
 	_ambient_paused = b;
 
 	if (_ambient_paused && _ambient_playing) {
-		_mixer->stopChannel(_ambient_index);
+		_mixer->stopHandle(_ambient_handle);
 	} else if (_ambient_playing) {
 		uint tmp = _ambient_playing;
 		_ambient_playing = 0;
