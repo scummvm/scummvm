@@ -39,11 +39,9 @@ protected:
 	int32 _refcount;
 
 	/** The name of this file, for debugging. */
-	char *_name;
+	Common::String _name;
 
 
-	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
-	
 	static Common::StringList _defaultDirectories;
 
 public:
@@ -62,6 +60,8 @@ public:
 	void decRef();
 
 	virtual bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
+	virtual bool exists(const char *filename, const char *directory = NULL);
+
 	virtual void close();
 	bool isOpen() const;
 	bool ioFailed() const;
@@ -69,7 +69,7 @@ public:
 	virtual bool eof();
 	virtual uint32 pos();
 	virtual uint32 size();
-	const char *name() const { return _name; }
+	const char *name() const { return _name.c_str(); }
 	virtual void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	uint32 write(const void *ptr, uint32 size);

@@ -384,14 +384,10 @@ void Disk::dumpFile(uint16 fileNr) {
 	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
-	out.open(buf, File::kFileReadMode, "");
-	if (out.isOpen() == false) {
-		out.open(buf, File::kFileWriteMode, "");
-		if (out.isOpen() == false)
-			return;
-		out.write(filePtr, _lastLoadedFileSize);
+	if (!out.exists(buf, "")) {
+		if (out.open(buf, File::kFileWriteMode, ""))
+			out.write(filePtr, _lastLoadedFileSize);
 	}
-	out.close();
 	free(filePtr);
 }
 

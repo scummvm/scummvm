@@ -26,7 +26,7 @@
 Common::StringList File::_defaultDirectories;
 
 
-FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
+static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
 	char buf[512];
 	char *ptr;
@@ -104,28 +104,27 @@ void File::resetDefaultDirectories() {
 }
 
 File::File()
- : _handle(0), _ioFailed(false), _refcount(1), _name(0) {
+ : _handle(0), _ioFailed(false), _refcount(1) {
 }
 
 //#define DEBUG_FILE_REFCOUNT
 
 File::~File() {
 #ifdef DEBUG_FILE_REFCOUNT
-	warning("File::~File on file '%s'", _name);
+	warning("File::~File on file '%s'", _name.c_str());
 #endif
 	close();
-	delete [] _name;
 }
 void File::incRef() {
 #ifdef DEBUG_FILE_REFCOUNT
-	warning("File::incRef on file '%s'", _name);
+	warning("File::incRef on file '%s'", _name.c_str());
 #endif
 	_refcount++;
 }
 
 void File::decRef() {
 #ifdef DEBUG_FILE_REFCOUNT
-	warning("File::decRef on file '%s'", _name);
+	warning("File::decRef on file '%s'", _name.c_str());
 #endif
 	if (--_refcount == 0) {
 		delete this;
@@ -137,7 +136,7 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
 	if (_handle) {
-		error("File::open: This file object already is opened (%s), won't open '%s'", _name, filename);
+		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename);
 	}
 
 	if (filename == NULL || *filename == 0) {
@@ -168,17 +167,20 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		return false;
 	}
 
-	int len = strlen(filename);
-	if (_name != 0)
-		delete [] _name;
-	_name = new char[len+1];
-	memcpy(_name, filename, len+1);
+
+	_name = filename;
 
 #ifdef DEBUG_FILE_REFCOUNT
-	warning("File::open on file '%s'", _name);
+	warning("File::open on file '%s'", _name.c_str());
 #endif
 
 	return true;
+}
+
+bool File::exists(const char *filename, const char *directory) {
+	// FIXME: Ugly ugly hack!
+	File tmp;
+	return tmp.open(filename, kFileReadMode, directory);
 }
 
 void File::close() {

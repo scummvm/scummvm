@@ -512,13 +512,10 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
 #endif
 
-			if (!out.open(buf, File::kFileReadMode, "")) {
+			if (!out.exists(buf, "")) {
 				if (out.open(buf, File::kFileWriteMode, ""))
 					out.write(_resList[res].ptr, len);
 			}
-
-			if (out.isOpen())
-				out.close();
 		}
 
 		// close the cluster
