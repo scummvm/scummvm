@@ -477,8 +477,15 @@ static int get_int(FILE *f) {
 
 void *Scumm::openSfxFile() {
 	char buf[50];
-	FILE *file;
+	FILE *file = NULL;
 
+	if (_gameId == GID_DIG) {
+		sprintf(buf, "%s%svoice.bun", _gameDataPath, _exe_name);
+		file = fopen(buf, "rb");
+		if (!file)
+			warning("Unable to open DIG voice bundle: %s", buf);
+		return file;
+	}
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
@@ -608,6 +615,10 @@ void Scumm::playSfxSound_MP3(void *sound, uint32 size) {
   mc->sound_data.mp3.silence_cut = 1024; 
 }
 #endif
+
+void Scumm::playBundleSound(char *sound) {
+	warning("playBundleSound: %s", sound);
+}
 
 void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
 	MixerChannel *mc = allocateMixer();

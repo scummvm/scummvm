@@ -973,6 +973,7 @@ public:
 	void pauseSounds(bool pause);
 	MixerChannel *allocateMixer();
 	bool isSfxFinished();
+	void playBundleSound(char *sound);
 	void playSfxSound(void *sound, uint32 size, uint rate);
   	void playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();

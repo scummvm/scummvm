@@ -2354,8 +2354,19 @@ void Scumm::o6_printEgo() {
 }
 
 void Scumm::o6_talkActor() {
+	char *pointer = NULL, *string = NULL;
 	_actorToPrintStrFor = pop();
-	_messagePtr = _scriptPointer;
+	pointer = string = (char *)_scriptPointer;
+
+	pointer = strtok(pointer, "/");
+	if (pointer) {
+			playBundleSound(pointer);
+			pointer = strtok(NULL, "");				
+			_messagePtr = (unsigned char *)pointer;
+	} else {
+			_messagePtr = (unsigned char *)string;
+	}
+	
 	setStringVars(0);
 	actorTalk();
 	_scriptPointer = _messagePtr;
@@ -2526,13 +2537,12 @@ void Scumm::o6_miscOps() {
 		case 15:
 			_insaneFlag = args[1];
 			break;
-		case 16: {
+		case 16:
 			byte buf[200];
 			_msgPtrToAdd = buf;
 			addMessageToStack(getStringAddress(_vars[VAR_STRING2DRAW]));
-			warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
+			//warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
 			break;
-		}
 		case 17:
 			warning("o6_miscOps: stub17(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
 			break;
@@ -2817,7 +2827,7 @@ void Scumm::decodeParseString2(int m, int n) {
 		string[m].no_talk_anim = true;
 		break;
 	case 75:
-		_messagePtr = _scriptPointer;
+		_messagePtr = _scriptPointer;		
 		switch(m) {
 		case 0: actorTalk(); break;
 		case 1: drawString(1); break;
