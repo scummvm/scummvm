@@ -1204,7 +1204,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	g_system->delay_msecs (500);
 
 	// Set partial reserve equally for all channels
-	memcpy(&buffer[4], "\x10\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x48", 13);
+	memcpy(&buffer[4], "\x10\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x4C", 13);
 	midi->sysEx(buffer, 17);
 }
 
@@ -1429,20 +1429,14 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 
 void Part::set_detune(int8 detune) {
 	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-	if (_mc) {
-		_mc->pitchBend(clamp(_pitchbend +
-						(_detune_eff * 64 / 12) +
-						(_transpose_eff * 8192 / 12), -8192, 8191));
-	}
+	if (_mc)
+		sendPitchBend();
 }
 
 void Part::pitchBend(int16 value) {
 	_pitchbend = value;
-	if (_mc) {
-		_mc->pitchBend(clamp(_pitchbend +
-						(_detune_eff * 64 / 12) +
-						(_transpose_eff * 8192 / 12), -8192, 8191));
-	}
+	if (_mc)
+		sendPitchBend();
 }
 
 void Part::volume (byte value) {
@@ -1465,11 +1459,8 @@ void Part::set_pan(int8 pan) {
 
 void Part::set_transpose(int8 transpose) {
 	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -24, 24);
-	if (_mc) {
-		_mc->pitchBend(clamp(_pitchbend +
-						(_detune_eff * /*64*/82 / _pitchbend_factor) +
-						(_transpose_eff * 8192 / _pitchbend_factor), -8192, 8191));
-	}
+	if (_mc)
+		sendPitchBend();
 }
 
 void Part::sustain(bool value) {
@@ -1636,9 +1627,7 @@ bool Part::clearToTransmit() {
 void Part::sendAll() {
 	if (!clearToTransmit()) return;
 	_mc->pitchBendFactor(_pitchbend_factor);
-	_mc->pitchBend(clamp(_pitchbend +
-	               (_detune_eff * 64 / 12) +
-	               (_transpose_eff * 8192 / 12), -8192, 8191));
+	sendPitchBend();
 	_mc->volume(_vol_eff);
 	_mc->sustain(_pedal);
 	_mc->modulationWheel(_modwheel);
@@ -1648,6 +1637,16 @@ void Part::sendAll() {
 		_instrument.send(_mc);
 	_mc->chorusLevel(_effect_level);
 	_mc->priority(_pri_eff);
+}
+
+void Part::sendPitchBend() {
+	int16 bend = _pitchbend;
+	// RPN-based pitchbend range doesn't work for the MT32,
+	// so we'll do the scaling ourselves.
+	if (_player->_se->isNativeMT32())
+		bend = bend * _pitchbend_factor / 12;
+	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) +
+					(_transpose_eff * 8192 / 12), -8192, 8191));
 }
 
 void Part::programChange(byte value) {

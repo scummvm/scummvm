@@ -332,6 +332,7 @@ struct Part {
 	void fix_after_load();
 
 	void sendAll();
+	void sendPitchBend();
 	bool clearToTransmit();
 	
 	Part() {
@@ -442,6 +443,7 @@ public:
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdlibInstrument(byte slot, byte *data);
 	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
+	bool isNativeMT32() { return _native_mt32; }
 
 	// IMuse interface
 
