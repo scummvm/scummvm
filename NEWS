@@ -1,6 +1,14 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.3.1-cvs (2002-12-28)
+- Very experimental Curse of Monkey Island (comi) support
+- New debug console and several GUI/Launcher enhancements (incomplete)
+- New Save/Load code (easier to expand while retaining compatability)
+- Many more Simon the Sorcerer fixes
+- Various minor SCUMM game fixes
+- Code cleanups
+
 0.3.0b (2002-12-08)
 - massive cleanup work for iMUSE. Sam and Max music now plays correctly
 - many bugfixes for Zak256, + sound and music support
