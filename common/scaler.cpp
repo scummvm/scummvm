@@ -685,30 +685,19 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #if ASPECT_MODE == kFastAndNiceAspectMode
 template<int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
+	// For efficiency reasons we blit two pixels at a time, so it is
+	// important that makeRectStretchable() guarantees that the width is
+	// even and that the rect starts on a well-aligned address. (Even
+	// where unaligned memory access is allowed there may be a speed
+	// penalty for it.)
 
-	// TODO: This code may not work correctly on architectures that require alignment.
-	// And even on those which accept it, reading/writing 32 bits words from odd memory
-	// locations usually has a speed penalty. Hence, it might be wise to first check
-	// if the dst address is odd, in which case we blit one pixel first; then we
-	// blit pixel pairs, till we get to the end, at which point we may have to blit
-	// again a single seperate pixel. This would of course cause additional overhead
-	// for each blitted line. Some of that overhead can be avoid by moving
-	// this logic into stretch200To240, since whether dst is at an odd position, and
-	// whether the last pixel has to be blitted seperately or not, is identical for
-	// each blitted line.
-	// 
-	
-	if (width & 1) {
-		// For efficency reasons we normally blit two pixels at a time; but if the 
-		// width is odd, we first blit a single pixel.
-		width--;
-		if (scale == 1) {
-			uint32 B = *srcB++;
-			*dst++ = (uint16)Q_INTERPOLATE(*srcA++, B, B, B);
-		} else {
-			*dst++ = (uint16)INTERPOLATE(*srcA++, *srcB++);
-		}
-	}
+	// These asserts are disabled for maximal speed; but I leave them in here in case
+	// other people want to test if the memory alignment (to an address divisibl by 4)
+	// are really effective.
+	//assert(((int)dst & 3) == 0);
+	//assert(((int)srcA & 3) == 0);
+	//assert(((int)srcB & 3) == 0);
+	//assert((width & 1) == 0);
 
 	width /= 2;
 	const uint32 *sA = (const uint32 *)srcA;
@@ -728,15 +717,32 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #endif
 
 void makeRectStretchable(int &x, int &y, int &w, int &h) {
+#if ASPECT_MODE != kVeryFastAndUglyAspectMode
 	int m = real2Aspect(y) % 6;
 
 	// Ensure that the rect will start on a line that won't have its
 	// colours changed by the stretching function.
-
 	if (m != 0 && m != 5) {
 		y -= m;
 		h += m;
 	}
+
+  #if ASPECT_MODE == kFastAndNiceAspectMode
+	// Force x to be even, to ensure aligned memory access (this assumes
+	// that each line starts at an even memory location, but that should
+	// be the case on every target anyway).
+	if (x & 1) {
+		x--;
+		w++;
+	}
+
+	// Finally force the width to be even, since we blit 2 pixels at a time.
+	// While this means we may sometimes blit one column more than necessary,
+	// this should actually be faster than having the check for the 
+	if (w & 1)
+		w++;
+  #endif
+#endif
 }
 
 /**
