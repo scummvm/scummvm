@@ -122,6 +122,7 @@ public:
 	BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height);
 	virtual ~BaseAnimationState();
 
+	bool init(const char *name);
 protected:
 	bool checkPaletteSwitch();
 #ifdef BACKEND_8BIT

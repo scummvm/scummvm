@@ -39,7 +39,6 @@ public:
 	AnimationState(Screen *scr, SoundMixer *snd, OSystem *sys);
 	~AnimationState();
 
-	bool init(const char *name);
 	bool decodeFrame();
 
 private:

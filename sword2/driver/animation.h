@@ -37,7 +37,6 @@ public:
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();
 
-	bool init(const char *name);
 	bool decodeFrame();
 
 #ifndef BACKEND_8BIT
