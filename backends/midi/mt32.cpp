@@ -116,6 +116,8 @@ static int eatSystemEvents() {
 		switch (event.event_code) {
 		case OSystem::EVENT_QUIT:
 			return 1;
+		default:
+			break;
 		}
 	}
 	return 0;
@@ -126,7 +128,7 @@ static void drawProgress(float progress) {
 	uint32 borderColor = 0x2;
 	uint32 fillColor = 0x4;
 	surf.w = g_system->getWidth() / 7 * 5;
-	surf.h = Graphics::g_sysfont.getFontHeight();
+	surf.h = Graphics::g_scummfont.getFontHeight();
 	int x = g_system->getWidth() / 7;
 	int y = g_system->getHeight() / 2 - surf.h / 2;
 	surf.pitch = surf.w;
