@@ -22,6 +22,14 @@
 #include "stdafx.h"
 #include "CEScaler.h"
 
+template<int bitFormat, int w1, int w2, int w3, int w4>
+static inline uint16 interpolate16_4(uint16 p1, uint16 p2, uint16 p3, uint16 p4)
+ {
+        return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3 + (p4 & redblueMask) * w4) / (w1 + w2 + w3 + w4)) & redblueMask) |
+               ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3 + (p4 & greenMask) * w4) / (w1 + w2 + w3 + w4)) & greenMask);
+}
+
+
 void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *work;
@@ -38,9 +46,16 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + 3));
 		
-			*(((uint16 *)work) + 0) = interpolate16_2<565, 3, 1>(color1, color2);
-			*(((uint16 *)work) + 1) = interpolate16_2<565, 1, 1>(color2, color3);
-			*(((uint16 *)work) + 2) = interpolate16_2<565, 1, 3>(color3, color4);
+			if (gBitFormat == 565) {
+				*(((uint16 *)work) + 0) = interpolate16_2<565, 3, 1>(color1, color2);
+				*(((uint16 *)work) + 1) = interpolate16_2<565, 1, 1>(color2, color3);
+				*(((uint16 *)work) + 2) = interpolate16_2<565, 1, 3>(color3, color4);
+			}
+			else {
+				*(((uint16 *)work) + 0) = interpolate16_2<555, 3, 1>(color1, color2);
+				*(((uint16 *)work) + 1) = interpolate16_2<555, 1, 1>(color2, color3);
+				*(((uint16 *)work) + 2) = interpolate16_2<555, 1, 3>(color3, color4);
+			}
 		
 			work += 3 * sizeof(uint16);
 		}
@@ -65,7 +80,10 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + srcPitch16 + 1));
-			*(((uint16 *)work) + 0) = interpolate16_4<565, 1, 1, 1, 1>(color1, color2, color3, color4);
+			if (gBitFormat == 565)
+				*(((uint16 *)work) + 0) = interpolate16_4<565, 1, 1, 1, 1>(color1, color2, color3, color4);
+			else
+				*(((uint16 *)work) + 0) = interpolate16_4<555, 1, 1, 1, 1>(color1, color2, color3, color4);
 			
 			work += sizeof(uint16);
 		}
