@@ -337,7 +337,7 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 
 	_gfx_device = DEVICE_GAPI;
 
-	if (dynamicGXOpenDisplay(hWndMain, GX_FULLSCREEN) == GAPI_SIMU)
+	if (!noGAPI && dynamicGXOpenDisplay(hWndMain, GX_FULLSCREEN) == GAPI_SIMU)
 		_gfx_device = DEVICE_VIDEO;
 
 	_gfx_mode_switch = gfx_mode_switch;
@@ -353,7 +353,13 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 	
 	memset(&gxdp, 0, sizeof(gxdp));
 
-	gxdp = dynamicGXGetDisplayProperties();
+	if (!noGAPI)
+		gxdp = dynamicGXGetDisplayProperties();
+	else {
+			gxdp.cxWidth = GetSystemMetrics(SM_CXSCREEN);
+			gxdp.cyHeight = GetSystemMetrics(SM_CYSCREEN);
+			gxdp.ffFormat = 0xA8; 
+	}
 
 	// Possible Aero problem
 
@@ -2114,16 +2120,16 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 	UBYTE *work_buffer;
 	int i;
 	int j;
-	long skipmask;
+	//long skipmask;
 
-	skipmask = geom[useMode].xSkipMask;
+	//skipmask = geom[useMode].xSkipMask;
 
 
 	GetWindowRect(hWndMain, &rc);
 
 	work_buffer = noGAPI_video_buffer;
 	unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
-	if (currentScreenMode || wide_screen) {
+	if (currentScreenMode && !wide_screen) {
 	
 		for (i=0; i<width; i++) {
 			for (j=0; j<height; j++) {
@@ -2135,18 +2141,18 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 	else {
 		for (i=0; i<height; i++) {
 			for (j=0; j<width; j++) {
-				*(unsigned short*)work_buffer = buffer[j];
+				*(unsigned short*)work_buffer = buffer[(pitch ? pitch : width) * i + j];
 				work_buffer += 2;
 			}
 		}
 	}
 
-	if (currentScreenMode || wide_screen)
+	if (currentScreenMode && !wide_screen)
 		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
 	else
 		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
 	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
-	if (currentScreenMode || wide_screen)
+	if (currentScreenMode && !wide_screen)
 		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
 	else
 		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
@@ -2164,15 +2170,15 @@ void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	UBYTE *work_buffer;
 	int i;
 	int j;
-	long skipmask;
+	//long skipmask;
 
-	skipmask = geom[useMode].xSkipMask;
+	//skipmask = geom[useMode].xSkipMask;
 
 
 	GetWindowRect(hWndMain, &rc);
 
 	work_buffer = noGAPI_video_buffer;
-	if (currentScreenMode || wide_screen) {
+	if (currentScreenMode && !wide_screen) {
 		unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
 		for (i=0; i<width; i++)
 			for (j=0; j<height; j++) 
@@ -2202,12 +2208,12 @@ void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	}
 	}
 
-	if (currentScreenMode || wide_screen)
+	if (currentScreenMode && !wide_screen)
 		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
 	else
 		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
 	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
-	if (currentScreenMode || wide_screen)
+	if (currentScreenMode && !wide_screen)
 		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
 	else
 		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
