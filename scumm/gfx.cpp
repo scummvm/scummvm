@@ -850,7 +850,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	int numzbuf;
 	int sx;
 	bool lightsOn;
-	bool useOrDecompress;
+	bool useOrDecompress = false;
 
 	// Check whether lights are turned on or not
 	lightsOn = (_vm->_features & GF_AFTER_V6) || (vs->number != 0) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen);
@@ -962,10 +962,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		if (_vm->_features & GF_SMALL_HEADER) {
 			if (_vm->_features & GF_AFTER_V2) {
 				decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], h, stripnr);
-				useOrDecompress = false;
 			} else if (_vm->_features & GF_16COLOR) {
 				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
-				useOrDecompress = false;
 			} else {
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
 			}
@@ -1206,9 +1204,17 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 	byte *ptr_dither_table;
 	memset(dither_table, 0, sizeof(dither_table));	// FIXME - is that correct?
 
+// FIXME - for now only draw the full height stuff.
+// There are also cases where e.g. height = 48. We ignore those for a single
+// reason: in the intro screen, they overdraw the kids faces with a blue
+// rect. Not sure whether that's one purpose or a bug; but for the sake of
+// making it look "more impressive" I put in this temporary hack.
+if (height != 128)
+	return;
+	
 	for (int x = 0; x < 8; x++) {
 		ptr_dither_table = dither_table;
-		for (int y = 0; y < height; y++) {
+		for (int y = 0; y < 128; y++) {
 			if (--run == 0) {
 				byte data = *src++;
 				if (data & 0x80) {
@@ -1226,10 +1232,11 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 			if (!dither) {
 				*ptr_dither_table = color;
 			}
-			*dst = *ptr_dither_table++;
+			if (y < height)
+				*dst = *ptr_dither_table++;
 			dst += _vm->_realWidth;
 		}
-		dst -= _vm->_realWidth * height;
+		dst -= _vm->_realWidth * 128;
 		dst++;
 	}
 }
