@@ -29,6 +29,7 @@
 #include <intuition/intuition.h>
 #include <intuition/screens.h>
 #include <libraries/cdda.h>
+#include <proto/exec.h>
 
 #include "morphos_scaler.h"
 
@@ -165,6 +166,7 @@ class OSystem_MorphOS : public OSystem
 		Region 		 *UpdateRegion;
 		Region 		 *NewUpdateRegion;
 		ULONG			  UpdateRects;
+		SignalSemaphore CritSec;
 
 		/* Overlay-related attributes */
 		APTR 		 OvlBitMap;
@@ -204,6 +206,19 @@ class OSystem_MorphOS : public OSystem
 		/* Game-related attributes */
 		int   GameID;
 };
+
+class AutoLock
+{
+	public:
+		AutoLock(SignalSemaphore* s) : sem(s) { ObtainSemaphore(sem); }
+		~AutoLock() { ReleaseSemaphore(sem); }
+
+	private:
+		SignalSemaphore* sem;
+};
+
+#define AUTO_LOCK	 AutoLock cs(&CritSec);
+
 
 int morphos_main(int argc, char *argv[]);
 
