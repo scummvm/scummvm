@@ -2427,7 +2427,7 @@ bool Player::jump(uint track, uint beat, uint tick) {
 
 	_beat_index = beat;
 	_tick_index = tick;
-	_cur_pos = topos;
+	_cur_pos = curpos; // topos;
 	_next_pos = curpos;
 	_timer_counter = 0;
 	_song_offset = track_offs;
