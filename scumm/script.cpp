@@ -793,7 +793,7 @@ void ScummEngine::runAllScripts() {
 
 	for (int cycle = 1; cycle <= numCycles; cycle++) {
 		for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
-			if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
+			if (vm.slot[_curExecScript].cycle == cycle && vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
 				_currentScript = (byte)_curExecScript;
 				getScriptBaseAddress();
 				getScriptEntryPoint();
