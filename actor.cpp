@@ -919,16 +919,15 @@ void Scumm::drawActorCostume(Actor * a)
 		else if (g_scumm->getClass(a->number, 21))
 			a->forceClip = 1;
 
-		
-
 		if (_gameId==GID_SAMNMAX && getState(995)) // FIXME: ugly fix for samnmax inventory
-
 			return;
-
 
 		a->needRedraw = false;
 
 		setupActorScale(a);
+
+		/* First, zero initialize all fields */
+		memset(&cr, 0, sizeof(cr));
 
 		cr._actorX = a->x - virtscr->xstart;
 		cr._actorY = a->y - a->elevation;
@@ -968,6 +967,9 @@ void Scumm::drawActorCostume(Actor * a)
 		a->needRedraw = false;
 
 		setupActorScale(a);
+
+		/* First, zero initialize all fields */
+		memset(&ar, 0, sizeof(ar));
 
 		ar.x = a->x - virtscr->xstart;
 		ar.y = a->y - a->elevation;
