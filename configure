@@ -687,9 +687,6 @@ $_def_alsa
 $_def_zlib
 $_def_mpeg2
 
-/* Subsystems */
-#define INSANE
-
 #endif /* CONFIG_H */
 EOF
 
