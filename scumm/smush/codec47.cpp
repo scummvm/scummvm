@@ -28,7 +28,7 @@ DumpDecoder::~DumpDecoder() {
 }
 
 bool DumpDecoder::decode(Blitter & dst, Chunk & src) {
-	int n = 0, i = 0;
+	int i = 0;
 	int seq = src.getWord();
 	int codec = src.getByte();
 	int flags = src.getByte();

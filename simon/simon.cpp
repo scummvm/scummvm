@@ -4127,7 +4127,7 @@ void SimonState::openGameFile()
 
 		resfile_read(_game_offsets_ptr, 0, gss->NUM_GAME_OFFSETS * sizeof(uint32));
 #if defined(SCUMM_BIG_ENDIAN)
-		for (int r = 0; r < gss->NUM_GAME_OFFSETS; r++)
+		for (uint r = 0; r < gss->NUM_GAME_OFFSETS; r++)
 			_game_offsets_ptr[r] = READ_LE_UINT32(&_game_offsets_ptr[r]);
 #endif
 	}
@@ -4716,11 +4716,12 @@ void SimonState::initSound()
 		}
 
 #if defined(SCUMM_BIG_ENDIAN)
-		for (int r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
+		uint r;
+		for (r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
 			_voice_offsets[r] = READ_LE_UINT32(&_voice_offsets[r]);
 
 		if (_effects_offsets)
-			for (int r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
+			for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
 				_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
 #endif
 	}

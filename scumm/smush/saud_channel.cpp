@@ -47,10 +47,10 @@ void SaudChannel::handleShdr(Chunk & b) {
 }
 
 bool SaudChannel::handleSubTags(int & offset) {
-	int available_size = _tbufferSize - offset;
-	if(available_size >= 8) {
+	if(_tbufferSize - offset >= 8) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		unsigned int size = READ_BE_UINT32(_tbuffer + offset + 4);
+		unsigned int available_size = _tbufferSize - offset;
 
 		switch(type) {
 			case TYPE_STRK:
@@ -166,14 +166,14 @@ SaudChannel::SaudChannel(int track, int freq) :
 			_track(track), 
 			_nbframes(0),
 			_dataSize(-1),
-			_tbuffer(0), 
-			_sbuffer(0), 
 			_frequency(freq),
-			_tbufferSize(0), 
-			_sbufferSize(0), 
 			_inData(false),
-			_markReached(false)
-			{
+			_markReached(false),
+			_tbuffer(0),
+			_tbufferSize(0),
+			_sbuffer(0),
+			_sbufferSize(0)
+{
 }
 
 SaudChannel::~SaudChannel() {

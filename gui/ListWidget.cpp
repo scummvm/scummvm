@@ -206,7 +206,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kSetPositionCmd:
-		if (_currentPos != data) {
+		if (_currentPos != (int)data) {
 			_currentPos = data;
 			draw();
 		}

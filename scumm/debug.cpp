@@ -270,7 +270,7 @@ void ScummDebugger::printActors(int act)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|$%02x|\n",
 							 a->number, a->room, a->x, a->y, a->elevation, a->costume,
 							 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
-							 a->scalex, a->speedx, a->facing, _s->_classData[a->number]);
+							 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
 		}
 	}
 	printf("+--------------------------------------------------------------+\n");

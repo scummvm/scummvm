@@ -193,10 +193,10 @@ void ImuseChannel::decode() {
 }
 
 bool ImuseChannel::handleSubTags(int & offset) {
-	int available_size = _tbufferSize - offset;
-	if(available_size >= 8) {
+	if(_tbufferSize - offset >= 8) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		unsigned int size = READ_BE_UINT32(_tbuffer + offset + 4);
+		unsigned int available_size = _tbufferSize - offset;
 		switch(type) {
 			case TYPE_MAP_: 
 				_inData = false;
