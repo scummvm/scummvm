@@ -3260,8 +3260,9 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 	byte skip_y_new = 0;
 	byte bits = 0;
 	byte *mask_out = 0;
+	byte *charset_mask;
 	byte tmp;
-	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y;
+	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y, mask_offset, mask_pitch;
 
 	if (bd->x < 0) {
 		clip_left = -bd->x;
@@ -3290,9 +3291,14 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 	byte * src = bd->dataptr;
 	byte * dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
 
+	mask_pitch = _realWidth / 8;
+	mask_offset = _screenStartStrip + (bd->y * mask_pitch) + ((bd->x + clip_left) >> 3);
+
+	charset_mask = getResourceAddress(rtBuffer, 9) + mask_offset;
+	bits = 128 >> ((bd->x + clip_left) & 7);
+
 	if (mask == 1) {
-		mask_out = _bompMaskPtr + (bd->y * _bompMaskPitch) + ((bd->x + clip_left) >> 3);
-		bits = 128 >> ((bd->x + clip_left) & 7);
+		mask_out = _bompMaskPtr + mask_offset;
 	}
 
 	if (mask == 3) {
@@ -3358,6 +3364,7 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 			bompApplyMask(line_ptr, mask_out, bits, clip_right);
 		}
 
+		bompApplyMask(line_ptr, charset_mask, bits, clip_right);
 		bompApplyActorPalette(line_ptr, clip_right);
 
 		switch(bd->shadowMode) {
@@ -3375,7 +3382,8 @@ void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 		}
 
 labelBompSkip:
-		mask_out += _bompMaskPitch;
+		mask_out += mask_pitch;
+		charset_mask += mask_pitch;
 		pos_y++;
 		dst += bd->outwidth;
 		if (pos_y >= clip_bottom)

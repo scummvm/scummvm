@@ -816,7 +816,6 @@ public:
 	int32 _bompScaleRight, _bompScaleBottom;
 	byte *_bompScallingXPtr, *_bompScallingYPtr;
 	byte *_bompMaskPtr;
-	int32 _bompMaskPitch;
 	byte *_bompActorPalletePtr;
 
 
