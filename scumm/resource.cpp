@@ -843,11 +843,39 @@ int Scumm::readSoundResource(int type, int idx) {
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
+	} else if (basetag == MKID('FMUS')) {
+		// Used in 3DO version of puttputt joins the parade and probably others
+		// Specifies a seperate file to be used for music from what I gather.
+		int tmpsize;
+		int i = 0;
+		char buffer[128];
+		debug(1, "Found base tag FMUS in sound %d, size %d", idx, total_size);
+		debug(1, "It was at position %d", _fileHandle.pos());
+		
+		_fileHandle.seek(4, SEEK_CUR);
+		// HSHD size
+		tmpsize = _fileHandle.readUint32BE();
+		// skip to size part of the SDAT block
+		_fileHandle.seek(tmpsize - 4, SEEK_CUR);
+		// SDAT size
+		tmpsize = _fileHandle.readUint32BE();
+		
+		// SDAT contains name of file we want
+		do {
+			buffer[i] = _fileHandle.readByte();
+			i++;
+		} while (i < tmpsize && i < 128 && buffer[i] != ' ');
+		buffer[i] = '\0';
+		debug(1, "FMUS file %s", buffer);
+		
+		res.roomoffs[type][idx] = 0xFFFFFFFF;
+		return 0;
 	} else if (basetag == MKID('Crea')) {
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
 		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
+		
 	} else {
 		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08x in sound %d\n", basetag, idx);
 	}
