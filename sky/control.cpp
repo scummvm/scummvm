@@ -885,8 +885,16 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						_selectedGame = _firstText;
 						refreshNames = true;
 					}
-					if ((clickRes == CANCEL_PRESSED) || (clickRes == NO_DISK_SPACE) || 
-						(clickRes == GAME_RESTORED))
+					if (clickRes == NO_DISK_SPACE) {
+						// HACK: We have a better error dialog in
+						// the trunk, but this will do for 0.6.1,
+						// unless someone fixes NewGui's cursor
+						// color to be more well defined.
+						char saveFailed[] = "Could not save!";
+						getYesNo(saveFailed);
+						quitPanel = true;
+					}
+					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
 						quitPanel = true;
 
 					if (clickRes == GAME_SAVED) {
