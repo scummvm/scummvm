@@ -88,7 +88,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         BeOS            - SDL
         Acorn (RiscOS)  - ???
         Dreamcast       - custom backend 
-	GP32		- custom backend
+        GP32            - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
 
@@ -300,11 +300,11 @@ Command Line Options:
         -y         - Set talk speed ('yak option'). Default is '60'
         -l<file>   - Load alternate configuration file
         -w[<file>] - Write configuration file
-	-v         - Show version information and exit
+        -v         - Show version information and exit
         -z         - Display list of games
         -b<num>    - Start in room <num>.
         -d[<num>]  - Set debug verbosity to <num>
-	-u         - Dump scripts if a directory called 'dumps' exists in current directory
+        -u         - Dump scripts if a directory called 'dumps' exists in current directory
 
 
 Hot Keys:
@@ -326,7 +326,7 @@ simon games.
         Ctrl 0-9 and Alt 0-9   - load and save game state
         Ctrl-g                 - runs in really REALLY fast mode.
         Ctrl-d                 - starts the debugger.
-	Tilde (~)              - Show/hide the debugging console
+        Tilde (~)              - Show/hide the debugging console
         Ctrl-s                 - shows memory consumption.
         [ and ]                - music volume, down/up
         - and +                - text speed, slower/faster
@@ -379,7 +379,7 @@ They are:
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
-	dotmatrix  - 640x400 scaling. Dot matrix effect.
+        dotmatrix  - 640x400 scaling. Dot matrix effect.
 
 To select a graphics filter, pass its name via the '-g' option to scummvm, for example:
 
