@@ -26,6 +26,14 @@
 #include "sky/disk.h"
 #include "common/engine.h"
 
+enum {
+	SOUND_CH0    = 0,
+	SOUND_CH1    = 1,
+	SOUND_BG     = 2,
+	SOUND_VOICE  = 3,
+	SOUND_SPEECH = 4
+};
+
 struct SfxQueue {
 	uint8 count, fxNo, chan, vol;
 };

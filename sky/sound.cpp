@@ -33,14 +33,6 @@
 #pragma START_PACK_STRUCTS
 #endif
 
-enum {
-	SOUND_CH0    = 0,
-	SOUND_CH1    = 1,
-	SOUND_BG     = 2,
-	SOUND_VOICE  = 3,
-	SOUND_SPEECH = 4
-};
-
 struct RoomList {
 	uint8 room;
 	uint8 adlibVolume;

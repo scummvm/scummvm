@@ -40,6 +40,8 @@
 #define WAITVOICE		13
 #define LOADBG			14 // load new background sound
 #define PLAYBG			15 // play background sound
+#define LOOPBG			16 // loop background sound
+#define STOPBG			17 // stop background sound
 #define SEQEND		 65535 // end of intro sequence
 
 #define IC_PREPARE_TEXT 20 // commands used in COMMANDFLIRT block
@@ -235,80 +237,67 @@ uint16 SkyIntro::_mainIntroSeq[] = {
 uint16 SkyIntro::_cdIntroSeq[] = {
 	PLAYVOICE,	59500,
 	LOADBG,		59499,
-	PLAYBG,
+	LOOPBG,
 	WAITVOICE,
 	PLAYVOICE,	59504,
-	PLAYBG,
 	SHOWSCREEN,	CD_1_LOG,
 	FADEUP,		CD_PAL,
 	BGFLIRT,	CD_1,
 		WAITVOICE,
 		PLAYVOICE,	CDV_02,
-		PLAYBG,
 		WAITVOICE,
 	STOPFLIRT,
 	BGFLIRT,	CD_2,
 		PLAYVOICE,	CDV_03,
-		PLAYBG,
 		WAITVOICE,
 		PLAYVOICE,	CDV_04,
-		PLAYBG,
 	WAITFLIRT,
 	WAITVOICE,
 	PLAYVOICE,	CDV_05,
-	PLAYBG,
 	DELAY,		2000,
 	BGFLIRT,	CD_3,
 		WAITVOICE,
 		PLAYVOICE,	CDV_06,
-		PLAYBG,
 	WAITFLIRT,
 	WAITVOICE,
 	PLAYVOICE,	CDV_07,
 	BGFLIRT,	CD_5,
-		PLAYBG,
 		WAITVOICE,
 		PLAYVOICE,	CDV_08,
-		PLAYBG,
 		WAITVOICE,
 		PLAYVOICE,	CDV_09,
-		PLAYBG,
 	WAITFLIRT,
 	WAITVOICE,
 	PLAYVOICE,	CDV_10,
 	BGFLIRT,	CD_7,
-		PLAYBG,
 		WAITVOICE,
 		PLAYVOICE,	CDV_11,
-		PLAYBG,
 	WAITFLIRT,
 	FADEDOWN,
 	SHOWSCREEN,	CD_11_LOG,
 	FADEUP,		CD_11_PAL,
 	WAITVOICE,
 	PLAYVOICE,	CDV_12,
-	PLAYBG,
 	DELAY,		1600,
 	BGFLIRT,	CD_11,
 		WAITVOICE,
 		PLAYVOICE,	CDV_13,
 		WAITVOICE,
-		PLAYBG,
     WAITFLIRT,
 	WAITVOICE,
-	LOADBG,		59498, // quite heli
 	PLAYVOICE,	CDV_14,
+	LOADBG,		59498, // fade-in heli
 	PLAYBG,
 	DOFLIRT,	CD_13,
 	WAITVOICE,
     PLAYVOICE,	CDV_15,
-	PLAYBG,
 	FADEDOWN,
 	SHOWSCREEN,	CD_15_LOG,
 	FADEUP,		CD_15_PAL,
 	WAITVOICE,
+	LOADBG,		59496, // quiet heli
+	LOOPBG,
 	PLAYVOICE,	CDV_16,
-	PLAYBG,
 	WAITVOICE,
 	PLAYVOICE,	CDV_17,
 	DELAY,		2000,
@@ -316,32 +305,27 @@ uint16 SkyIntro::_cdIntroSeq[] = {
 	WAITVOICE,
 	BGFLIRT,	CD_17,
 		PLAYVOICE,	CDV_18,
-		PLAYBG,
+	LOADBG,		59497, // loud heli
+	LOOPBG,
 	WAITFLIRT,
 	WAITVOICE,
-	LOADBG,		59496, // quiet heli
 	FADEDOWN,
 	SHOWSCREEN,	CD_19_LOG,
 	FADEUP,		CD_19_PAL,
 	PLAYVOICE,	CDV_19,
-	PLAYBG,
 	WAITVOICE,
-	LOADBG,		59496,
 	PLAYVOICE,	CDV_20,
-	PLAYBG,
 	FADEDOWN,
 	SHOWSCREEN,	CD_20_LOG,
 	FADEUP,		CD_19_PAL,
-	PLAYBG,
 	WAITVOICE,
 	PLAYVOICE,	CDV_21,
-	PLAYBG,
 	FADEDOWN,
 	SHOWSCREEN,	CD_21_LOG,
 	FADEUP,		CD_19_PAL,
 	WAITVOICE,
-	LOADBG,		59494, // heli whine
 	PLAYVOICE,	CDV_22,
+	LOADBG,		59494, // heli whine
     PLAYBG,
 	WAITVOICE,
 	PLAYVOICE,	CDV_23,
@@ -729,7 +713,11 @@ bool SkyIntro::nextPart(uint16 *&data) {
 			if (!escDelay(200))
 				return false;
 			vData = _skyDisk->loadFile(*data++, NULL);
-			_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+			// HACK: Fill the header with silence. We should
+			// probably use _skySound instead of calling playRaw()
+			// directly, but this will have to do for now.
+			memset(vData, 127, sizeof(struct dataFileHeader));
+			_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
 			return true;
 		case WAITVOICE:
 			while (_voice)
@@ -737,18 +725,22 @@ bool SkyIntro::nextPart(uint16 *&data) {
 					return false;
 			return true;
 		case LOADBG:
-			if (_bgBuf) {
-				if (_bgSfx) {
-					data++;
-					return true;
-				}
+			_mixer->stopID(SOUND_BG);
+			if (_bgBuf)
 				free(_bgBuf);
-			}
 			_bgBuf = _skyDisk->loadFile(*data++, NULL);
 			_bgSize = _skyDisk->_lastLoadedFileSize;
 			return true;
+		case LOOPBG:
+			_mixer->stopID(SOUND_BG);
+			_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_LOOP, SOUND_BG);
+			return true;
 		case PLAYBG:
-			_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025, SoundMixer::FLAG_UNSIGNED);
+			_mixer->stopID(SOUND_BG);
+			_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025, SoundMixer::FLAG_UNSIGNED, SOUND_BG);
+			return true;
+		case STOPBG:
+			_mixer->stopID(SOUND_BG);
 			return true;
 		default:
 			error("Unknown intro command %X", command);
