@@ -232,17 +232,12 @@ void Gdi::init() {
 
 	_numStrips = _vm->_screenWidth / 8;
 #ifdef V7_SMOOTH_SCROLLING_HACK
-	if (_vm->_version >= 7)
-		_numStrips += 1;
-	// TODO: Just increasing _numStrips isn't sufficient, and will cause
-	// problems in some cases. For example in In rooms which are *exactly* of
-	// width equal to _screenWidth, we now may cause an out-of-bounds access.
-	// One possible soution might be to replace _numStrips by a method
-	// Gdi::getNumStrips() which then returns the proper value, computed
-	// dynamically.
+	if (_vm->_version >= 7) {
+		//if (_vm->_screenWidth < _vm->virtscr[0].w)
+			_numStrips += 1;
+	}
 #endif
 }
-
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
@@ -267,8 +262,9 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->bytesPerPixel = 1;
 	vs->pitch = width;
 #ifdef V7_SMOOTH_SCROLLING_HACK
-	if (_version >= 7)
+	if (_version >= 7) {
 		vs->pitch += 8;
+	}
 #endif
 
 	size = vs->pitch * vs->h;
@@ -1212,7 +1208,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		sx = 0;
 	}
 
-	while (numstrip && sx < _numStrips) {
+	while (numstrip && sx < _numStrips && x * 8 < _vm->_roomWidth) {
 		CHECK_HEAP;
 
 		if (y < vs->tdirty[sx])

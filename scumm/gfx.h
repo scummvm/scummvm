@@ -272,7 +272,6 @@ protected:
 
 public:
 	void init();
-	void updateNumStrips();
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
