@@ -157,7 +157,7 @@ class Insane {
 	int16 _smush_frameNum1;
 	int16 _smush_frameNum2;
 	byte _smush_earlyFluContents[0x31a];
-	int16 _enemyState[9][10];
+	int16 _enemyState[10][10];
 	byte _iactBits[0x80];
 	int16 _mainRoadPos;
 	int16 _posBrokenCar;
