@@ -1995,8 +1995,6 @@ void ScummEngine_v5::o5_roomOps() {
 	case 16:	// SO_CYCLE_SPEED
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
-		if (a < 1)
-			a = 1;										/* FIXME: ZAK256 */
 		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
