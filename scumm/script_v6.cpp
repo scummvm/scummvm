@@ -2438,7 +2438,12 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				while (true) {
 					if (*t_ptr == '/') {
 						translateText((byte *)t_ptr, buf_trans);
-						strcat((char *)buf_output, (char *)buf_trans);
+						// hack 
+						if (strstr((char *)buf_trans, "%___") != 0) {
+							strcat((char *)buf_output, " ");
+						} else {
+							strcat((char *)buf_output, (char *)buf_trans);
+						}
 					}
 					t_ptr = strchr((char *)t_ptr + 1, '/');
 					if (t_ptr == NULL)
