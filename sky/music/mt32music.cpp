@@ -40,8 +40,6 @@ MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk)
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0)
 		error("Can't open midi device. Errorcode: %d",midiRes);
-	for (uint8 cnt = 0; cnt < 128; cnt++)
-		_dummyMap[cnt] = cnt;
 	_timerCount = 0;
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 }
@@ -86,7 +84,7 @@ void MT32Music::setupChannels(uint8 *channelData) {
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, _dummyMap, _dummyMap);
+		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, NULL, NULL);
 		_channels[cnt]->updateVolume(_musicVolume);
 	}
 }

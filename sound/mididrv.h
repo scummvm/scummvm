@@ -91,6 +91,9 @@ public:
 public:
 	virtual ~MidiDriver() { }
 
+	static const byte _mt32ToGm[128];
+	static const byte _gmToMt32[128];
+
 	/**
 	 * Error codes returned by open.
 	 * Can be converted to a string with getErrorName().

@@ -39,14 +39,14 @@ typedef struct {
 
 class GmChannel : public ChannelBase {
 public:
-	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab);
+	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive(void);
 private:
-	byte *_mt32_to_gm;
-	uint8 *_veloTab;
+	const byte *_instMap;
+	const byte *_veloTab;
 	MidiDriver *_midiDrv;
 	uint8 *_musicData;
 	uint16 _musicVolume;

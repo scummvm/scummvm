@@ -25,7 +25,7 @@
 
 namespace Sky {
 
-GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab) {
+GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab) {
 
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
@@ -34,7 +34,7 @@ GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv
 	_channelData.eventDataPtr = startOfData;
 	_channelData.channelActive = 1;
 	_channelData.nextEventTime = getNextEventTime();
-	_mt32_to_gm = pInstMap;
+	_instMap = pInstMap;
 	_veloTab = veloTab;
 
 	_musicVolume = 0x7F;
@@ -130,7 +130,9 @@ uint8 GmChannel::process(uint16 aktTime) {
 			}
 		} else {
 			_channelData.note = opcode;
-			uint8 velocity = _veloTab[_musicData[_channelData.eventDataPtr]];
+			byte velocity = _musicData[_channelData.eventDataPtr];
+			if (_veloTab)
+				velocity = _veloTab[velocity];
 			_channelData.eventDataPtr++;
 			_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (opcode << 8) | (velocity << 16));
 		}
@@ -155,8 +157,10 @@ void GmChannel::com90_stopChannel(void) {
 }
 
 void GmChannel::com90_setupInstrument(void) {
-
-	_midiDrv->send((0xC0 | _channelData.midiChannelNumber) | (_mt32_to_gm[_musicData[_channelData.eventDataPtr]] << 8));
+	byte instrument = _musicData[_channelData.eventDataPtr];
+	if (_instMap)
+		instrument = _instMap[instrument];
+	_midiDrv->send((0xC0 | _channelData.midiChannelNumber) | (instrument << 8));
 	_channelData.eventDataPtr++;
 }
 

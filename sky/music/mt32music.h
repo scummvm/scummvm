@@ -41,7 +41,6 @@ private:
 	uint32 _timerCount;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
-	uint8 _dummyMap[128];
 
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
