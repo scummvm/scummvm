@@ -35,7 +35,6 @@
 
 namespace Queen {
 
-
 Debugger::Debugger(QueenEngine *vm) 
 	: _drawAreas(false), _vm(vm) {
 		
@@ -52,23 +51,17 @@ Debugger::Debugger(QueenEngine *vm)
 	DCmd_Register("song", &Debugger::Cmd_Song);
 }
 
-
 void Debugger::preEnter() {
-	// XXX mute all sounds
 }
-
 
 void Debugger::postEnter() {
-	// XXX un-mute all sounds
 	_vm->graphics()->setupMouseCursor();
 }
-
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
 	return false;	
 }
-
 
 bool Debugger::Cmd_Help(int argc, const char **argv) {
 	// console normally has 39 line width
@@ -91,7 +84,6 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::Cmd_Asm(int argc, const char **argv) {
 	if (argc == 2) {
 		uint16 sm = atoi(argv[1]);
@@ -103,13 +95,11 @@ bool Debugger::Cmd_Asm(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::Cmd_Areas(int argc, const char **argv) {
 	_drawAreas = !_drawAreas;
 	DebugPrintf("Room areas display %s\n", _drawAreas ? "on" : "off");
 	return true;
 }
-
 
 bool Debugger::Cmd_Bob(int argc, const char **argv) {
 	if (argc >= 3) {
@@ -144,7 +134,6 @@ bool Debugger::Cmd_Bob(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::Cmd_GameState(int argc, const char **argv) {
 	uint16 slot;
 	switch (argc) {
@@ -167,13 +156,11 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::Cmd_Info(int argc, const char **argv) {
 	DebugPrintf("Version: %s\n", _vm->resource()->JASVersion());
 	DebugPrintf("Audio compression: %d\n", _vm->resource()->compression());
 	return true;
 }
-
 
 bool Debugger::Cmd_Items(int argc, const char **argv) {
 	int n = _vm->logic()->itemDataCount();
@@ -185,7 +172,6 @@ bool Debugger::Cmd_Items(int argc, const char **argv) {
 	DebugPrintf("Enabled all inventory items\n");
 	return true;
 }
-
 
 bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 	int i;
@@ -203,7 +189,6 @@ bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 	DebugPrintf("+--------------------------------+\n");
 	return true;
 }
-
 
 bool Debugger::Cmd_Room(int argc, const char **argv) {	
 	if (argc == 2) {

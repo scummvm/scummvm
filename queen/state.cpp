@@ -24,7 +24,6 @@
 
 namespace Queen {
 
-
 Direction State::findDirection(uint16 state) {
 	static const Direction sd[] = {
 		DIR_BACK,
@@ -35,11 +34,9 @@ Direction State::findDirection(uint16 state) {
 	return sd[(state >> 2) & 3];
 }
 
-
 StateTalk State::findTalk(uint16 state) {
 	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
 }
-
 
 StateGrab State::findGrab(uint16 state) {
 	static const StateGrab sg[] = {
@@ -51,11 +48,9 @@ StateGrab State::findGrab(uint16 state) {
 	return sg[state & 3];
 }
 
-
 StateOn State::findOn(uint16 state) {
 	return (state & (1 << 8)) ? STATE_ON_ON : STATE_ON_OFF;
 }
-
 
 Verb State::findDefaultVerb(uint16 state) {
 	static const Verb sdv[] = {
@@ -82,11 +77,9 @@ Verb State::findDefaultVerb(uint16 state) {
 	return sdv[(state >> 4) & 0xF];
 }
 
-
 StateUse State::findUse(uint16 state) {
 	return (state & (1 << 10)) ? STATE_USE : STATE_USE_ON;
 }
-
 
 void State::alterOn(uint16 *objState, StateOn state) {
 	switch (state) {
@@ -98,7 +91,6 @@ void State::alterOn(uint16 *objState, StateOn state) {
 		break;
 	}
 }
-
 
 void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	uint16 val;
@@ -133,6 +125,5 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	}
 	*objState = (*objState & ~0xF0) | (val << 4);
 }
-
 
 } // End of namespace Queen

@@ -123,13 +123,13 @@ class Input {
 		bool _fastMode;
 
 		//! The current verb received from keyboard
-		Verb _keyVerb;          // KEYVERB
+		Verb _keyVerb;
 
 		//! set if a cutaway is running
-		bool _cutawayRunning;   // CUTON
+		bool _cutawayRunning;
 
 		//! set this if we can quit
-		bool _canQuit;	// inverse of CANTQUIT
+		bool _canQuit;
 
 		//! moved Cutaway::_quit here
 		bool _cutawayQuit;
@@ -138,7 +138,7 @@ class Input {
 		bool _dialogueRunning;
 
 		//! moved Talk::_quit here 
-		bool _talkQuit;         // TALKQUIT
+		bool _talkQuit;
 
 		//! Set if quicksave requested
 		bool _quickSave;

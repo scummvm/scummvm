@@ -366,7 +366,7 @@ OWALK
 PERstr
 PKEYstr
 TALKHEAD
-TALKQUIT
+TALKQUIT					Input::_talkQuit
 TALKstr
 TALK_SELECTED				Logic::_talkSelected
 
@@ -452,7 +452,7 @@ CH,
 OLDG,S2,S1,ITEM,TYPE,C,
 NAME,TL,TI,TS,WC,IMAGE,
 D,P,LI,R
-CANTQUIT
+CANTQUIT					!Input::_canQuit
 
 
 (NO NEED TO BE GLOBAL)

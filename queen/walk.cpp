@@ -126,14 +126,7 @@ void Walk::animateJoe() {
 			// adjust Joe's movespeed according to scale
 			pbs->scale = pwd->area->calcScale(pbs->y);
 			_vm->logic()->joeScale(pbs->scale);
-			if (pbs->xmajor) {
-				pbs->speed = pbs->scale * 6 / 100;
-			} else {
-				pbs->speed = pbs->scale * 3 / 100;
-			}
-			if (pbs->speed == 0) {
-				pbs->speed = 1;
-			}
+			pbs->scaleWalkSpeed(6);			
 			_vm->update(true);
 			if (_vm->input()->cutawayQuit() || _vm->logic()->joeWalk() == JWM_EXECUTE) {
 				stopJoe();
@@ -252,16 +245,8 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 
 		while (pbs->moving) {
 			_vm->update();
-			uint16 scale = pwd->area->calcScale(pbs->y);
-			pbs->scale = scale;
-			if (pbs->xmajor) {
-				pbs->speed = scale * mpd->moveSpeed / 100;
-			} else {
-				pbs->speed = scale * (mpd->moveSpeed / 2) / 100;
-			}
-			if (pbs->speed == 0) {
-				pbs->speed = 1;
-			}
+			pbs->scale = pwd->area->calcScale(pbs->y);
+			pbs->scaleWalkSpeed(mpd->moveSpeed);
 			if (_vm->input()->cutawayQuit()) {
 				stopPerson(bobNum);
 				break;
@@ -306,9 +291,6 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	}
 
 	_vm->graphics()->bob(0)->animating = false;
-	// cyx: the NEW_ROOM = 0 is done in Command::grabCurrentSelection()
-	// XXX if ((CAN==-1) && (walkgameload==0)) NEW_ROOM=0;
-	// XXX walkgameload=0;
 	if (_joeMoveBlock) {
 		can = -2;
 		_joeMoveBlock = false;

@@ -52,7 +52,6 @@ void Journal::use() {
 
 	memset(_saveDescriptions, 0, sizeof(_saveDescriptions));
 	_vm->findGameStateDescriptions(_saveDescriptions);
-
 	_panelTextCount = 0;
 	_vm->display()->palFadeOut(0, 255, JOURNAL_ROOM);
 	prepare();
@@ -289,8 +288,6 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 				_vm->music()->stopSong();
 				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
-				// XXX panelflag=1;
-				// XXX walkgameload=1;
 				_quit = true;
 				_quitCleanly = false;
 			} else {

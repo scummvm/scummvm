@@ -85,10 +85,10 @@ private:
 	};
 
 	struct SpeechParameters {
-		const char *name;								// Nstr
-		signed char state,faceDirection;				// S,F
+		const char *name;
+		signed char state,faceDirection;
 		signed char body,bf,rf,af;
-		const char *animation;							// SANIMstr
+		const char *animation;
 		signed char ff;
 	};
 
@@ -221,7 +221,7 @@ private:
 	const SpeechParameters *findSpeechParameters(
 			const char *name, 
 			int state, 
-			int faceDirection); // FIND_SACTION
+			int faceDirection);
 
 	int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
