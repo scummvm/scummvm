@@ -112,4 +112,4 @@ endif
 
 distclean: clean
 	$(RM_REC) $(DEPDIRS)
-	$(RM) build.rules config.h config.mak
+	$(RM) build.rules config.h config.mak config.log
