@@ -32,7 +32,6 @@ SCUMM_OBJS = \
 	scumm/verbs.o
 
 SMUSH_OBJS = \
-	scumm/smush/blitter.o \
 	scumm/smush/brenderer.o \
 	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
