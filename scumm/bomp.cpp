@@ -27,8 +27,6 @@
 
 static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
 
-static void bompDecodeLineReverse(byte *dst, const byte *src, int size);
-
 static void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
