@@ -1212,7 +1212,10 @@ void Scumm_v5::o5_isEqual() {
 	int16 a, b;
 	int var;
 
-	var = fetchScriptWord();
+	if (_features & GF_AFTER_V2)
+		var = fetchScriptByte();
+	else
+		var = fetchScriptWord();
 	a = readVar(var);
 	b = getVarOrDirectWord(0x80);
 

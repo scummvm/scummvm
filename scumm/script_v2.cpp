@@ -123,7 +123,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_increment),
 		OPCODE(o2_setState08),
 		/* 48 */
-		OPCODE(o2_isEqual),
+		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
 		OPCODE(o2_setObjY),
@@ -283,7 +283,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_decrement),
 		OPCODE(o2_clearState08),
 		/* C8 */
-		OPCODE(o2_isEqual),
+		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
 		OPCODE(o2_setObjY),
@@ -773,17 +773,6 @@ void Scumm_v2::o2_verbOps() {
 		}
 		break;
 	}
-}
-
-void Scumm_v2::o2_isEqual() {
-	int a = getVar();
-	int b = getVarOrDirectWord(0x80);
-
-	if (b == a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
-
 }
 
 void Scumm_v2::o2_doSentence() {
