@@ -286,6 +286,9 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 		if (h > _screenHeight - y) {
 			h = _screenHeight - y;
 		}
+
+		if (_adjustAspectRatio)
+			makeRectStretchable(x, y, w, h);
 	
 		r->x = x;
 		r->y = y;

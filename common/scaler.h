@@ -49,6 +49,8 @@ FORCEINLINE int aspect2Real(int y) {
 	return (y * 5 + 3) / 6;
 }
 
+extern void makeRectStretchable(int &x, int &y, int &w, int &h);
+
 extern int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
 enum {

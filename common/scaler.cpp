@@ -683,6 +683,18 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #endif
 }
 
+void makeRectStretchable(int &x, int &y, int &w, int &h) {
+	int m = real2Aspect(y) % 6;
+
+	// Ensure that the rect will start on a line that won't have its
+	// colours changed by the stretching function.
+
+	if (m != 0 && m != 5) {
+		y -= m;
+		h += m;
+	}
+}
+
 /**
  * Stretch a 16bpp image vertically by factor 1.2. Used to correct the
  * aspect-ratio in games using 320x200 pixel graphics with non-qudratic
