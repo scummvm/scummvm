@@ -2313,7 +2313,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();
-		_fileHandle.readUint16LE();
+		_numVerbs = _fileHandle.readUint16LE();
 		_numFlObject = _fileHandle.readUint16LE();
 		_numInventory = _fileHandle.readUint16LE();
 		_numRooms = _fileHandle.readUint16LE();
@@ -2322,10 +2322,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numCharsets = _fileHandle.readUint16LE();
 		_numCostumes = _fileHandle.readUint16LE();
 		_numGlobalObjects = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE();
-
-		// FIXME: Where is this set???
-		_numVerbs = 200;
+		_numImages = _fileHandle.readUint16LE();
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
