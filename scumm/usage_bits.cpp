@@ -26,8 +26,8 @@ void Scumm::upgradeGfxUsageBits()
 	int i;
 
 	for (i = 409; i >= 0; i--) {
-		bool dirty_bit = gfxUsageBits[i] & 0x80000000;
-		bool restored_bit = gfxUsageBits[i] & 0x40000000;
+		bool dirty_bit = ((gfxUsageBits[i] & 0x80000000) != 0);
+		bool restored_bit = ((gfxUsageBits[i] & 0x40000000) != 0);
 		
 		gfxUsageBits[3 * i] = gfxUsageBits[i] & 0x3FFFFFFF;
 		if (dirty_bit)

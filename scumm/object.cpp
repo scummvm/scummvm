@@ -1693,8 +1693,8 @@ void Scumm::loadFlObject(uint object, uint room)
 
 	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM
 	// data, and a call to createResource might expire them, hence we lock them.
-	isRoomLocked = res.flags[rtRoom][room] & RF_LOCK;
-	isRoomScriptsLocked = res.flags[rtRoomScripts][room] & RF_LOCK;
+	isRoomLocked = ((res.flags[rtRoom][room] & RF_LOCK) != 0);
+	isRoomScriptsLocked = ((res.flags[rtRoomScripts][room] & RF_LOCK) != 0);
 	if (!isRoomLocked)
 		lock(rtRoom, room);
 	if (_features & GF_AFTER_V8 && !isRoomScriptsLocked)
