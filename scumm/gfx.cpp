@@ -805,11 +805,24 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) 
 	}
 }
 
-bool Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
-	if (!_charset->_hasMask || y > gdi._mask_bottom || x > gdi._mask_right ||
-			y2 < gdi._mask_top || x2 < gdi._mask_left)
+bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
+	// FIXME: I wonder if the <= / >= here shouldn't be replaced by < / >
+	// After all, right/bottom are not actually part of the rects.
+	// That is, the pixels part of the rect range from x = left .. right-1
+	// and y = top .. bottom-1. The 'equal' / '=' cases in the check
+	// would mean that the rects are touching on their borders, but not
+	// actually overlapping.
+	return _charset->_hasMask
+			&& top <= gdi._mask_bottom
+			&& left <= gdi._mask_right
+			&& bottom >= gdi._mask_top
+			&& right >= gdi._mask_left;
+/*
+	if (!_charset->_hasMask || top > gdi._mask_bottom || left > gdi._mask_right ||
+			bottom < gdi._mask_top || right < gdi._mask_left)
 		return false;
 	return true;
+*/
 }
 
 bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
@@ -3365,9 +3378,20 @@ void Scumm::grabCursor(byte *ptr, int width, int height) {
 
 void Scumm::useIm01Cursor(byte *im, int w, int h) {
 	VirtScreen *vs = &virtscr[0];
+	byte *buf, *src, *dst;
+	int i;
 
 	w <<= 3;
 	h <<= 3;
+
+	dst = buf = (byte *) malloc(w * h);
+	src = vs->screenPtr + vs->xstart;
+
+	for (i = 0; i < h; i++) {
+		memcpy(dst, src, w);
+		dst += w;
+		src += _screenWidth;
+	}
 
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
 
@@ -3379,7 +3403,16 @@ void Scumm::useIm01Cursor(byte *im, int w, int h) {
 
 	grabCursor(vs->screenPtr + vs->xstart, w, h);
 
-	blit(vs->screenPtr + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
+	src = buf;
+	dst = vs->screenPtr + vs->xstart;
+
+	for (i = 0; i < h; i++) {
+		memcpy(dst, src, w);
+		dst += _screenWidth;
+		src += w;
+	}
+
+	free(buf);
 }
 
 void Scumm::setCursor(int cursor) {
