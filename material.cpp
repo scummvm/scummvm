@@ -34,6 +34,10 @@ Material::Material(const char *filename, const char *data, int len,
   width_ = get_LE_uint32(data + 76 + num_images_ * 40);
   height_ = get_LE_uint32(data + 80 + num_images_ * 40);
 
+  if ((width_ == 0) || (height_ == 0)) {
+    warning("bad texture size (%dx%d) for texture %s\n", width_, height_, filename);
+  }
+
   data += 100 + num_images_ * 40;
   char *texdata = new char[width_ * height_ * 4];
   for (int i = 0; i < num_images_; i++) {
