@@ -364,7 +364,10 @@
 				Name="sdl"
 				Filter="">
 				<File
-					RelativePath="..\..\backends\sdl\sdl-common.cpp">
+					RelativePath="..\..\backends\sdl\events.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\sdl\graphics.cpp">
 				</File>
 				<File
 					RelativePath="..\..\backends\sdl\sdl-common.h">
