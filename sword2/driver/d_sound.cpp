@@ -1412,10 +1412,6 @@ void Sword2Sound::StopMusic(void) {
 		else
 			musLooping[i] = 0;
 	}
-
-	if (fpMus.isOpen()) {
-		fpMus.close();
-	}
 }
 
 int32 Sword2Sound::PauseMusic(void) {
