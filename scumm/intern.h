@@ -645,7 +645,8 @@ protected:
 	const OpcodeEntryV72he *_opcodesV72he;
 
 public:
-	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v7he(detector, syst, gs) {}
+	//ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 
 protected:
 	virtual void setupScummVars();
