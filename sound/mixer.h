@@ -145,6 +145,9 @@ public:
 	/** pause/unpause all channels */
 	void pauseAll(bool paused);
 
+	/** check if sound ID is active */
+	bool isSoundIDActive(int id);
+
 	/** check if mixer is paused */
 	bool isPaused();
 

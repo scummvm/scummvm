@@ -386,6 +386,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	int i, c;
 	byte fontHeight = 0;
 	uint color;
+	int code = (_heversion >= 80) ? 127 : 64;
 
 	addMessageToStack(msg, buf, sizeof(buf));
 
@@ -433,7 +434,19 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 
 	for (i = 0; (c = buf[i++]) != 0;) {
-		if (c == 0xFE || c == 0xFF) {
+		if (c == code) {
+			c = buf[i++];
+			switch (c) {
+			case 110:
+				if (_charset->_center) {
+					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+				} else {
+					_charset->_left = _charset->_startLeft;
+				}
+				_charset->_top += fontHeight;
+				break;
+			}
+		} else if (c == 0xFE || c == 0xFF) {
 			c = buf[i++];
 			switch (c) {
 			case 9:

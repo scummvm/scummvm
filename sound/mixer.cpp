@@ -463,6 +463,13 @@ void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
 		_channels[index]->pause(paused);
 }
 
+bool SoundMixer::isSoundIDActive(int id) {
+	for (int i = 0; i != NUM_CHANNELS; i++)
+		if (_channels[i] && _channels[i]->getId() == id)
+			return true;
+	return false;
+}
+
 bool SoundMixer::hasActiveSFXChannel() {
 	// FIXME/TODO: We need to distinguish between SFX and music channels
 	Common::StackLock lock(_mutex);
