@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	backends/fs/windows/windows-fs.o \
 	backends/midi/adlib.o \
 	backends/midi/coreaudio.o \
+	backends/midi/morphos.o \
 	backends/midi/null.o \
 	backends/midi/quicktime.o \
 	backends/midi/alsa.o \

@@ -21,7 +21,6 @@
 
 /*
  * Raw output support by Michael Pearce
- * MorphOS support by Ruediger Hanke 
  * Alsa support by Nicolas Noble <nicolas@nobis-crew.org> copied from
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
@@ -56,81 +55,6 @@ const char *MidiDriver::getErrorName(int error_code)
 		return "Unknown Error";
 	return midi_errors[error_code];
 }
-
-#ifdef __MORPHOS__
-#include <exec/memory.h>
-#include <exec/types.h>
-#include <devices/etude.h>
-
-#include <clib/alib_protos.h>
-#include <proto/exec.h>
-#include <proto/etude.h>
-
-#include "morphos_sound.h"
-
-/* MorphOS MIDI driver */
-class MidiDriver_ETUDE : public MidiDriver_MPU401 {
-public:
-	MidiDriver_ETUDE();
-	int open(int mode);
-	void close();
-	void send(uint32 b);
-
-private:
-	enum {
-		NUM_BUFFERS = 2,
-		MIDI_EVENT_SIZE = 64,
-		BUFFER_SIZE = MIDI_EVENT_SIZE * 12,
-	};
-
-	uint32 property(int prop, uint32 param);
-
-	bool _isOpen;
-};
-
-MidiDriver_ETUDE::MidiDriver_ETUDE()
-{
-	_isOpen = false;
-}
-
-int MidiDriver_ETUDE::open()
-{
-	if (_isOpen)
-		return MERR_ALREADY_OPEN;
-	_isOpen = true;
-	if (!init_morphos_music(0, ETUDEF_DIRECT))
-		return MERR_DEVICE_NOT_AVAILABLE;
-
-	return 0;
-}
-
-void MidiDriver_ETUDE::close()
-{
-	exit_morphos_music();
-	_isOpen = false;
-}
-
-void MidiDriver_ETUDE::send(uint32 b)
-{
-	if (_isOpen)
-		error("MidiDriver_ETUDE::send called but driver was no opened");
-
-	if (ScummMidiRequest) {
-		ULONG midi_data = READ_LE_UINT32(&b);
-		SendShortMidiMsg(ScummMidiRequest, midi_data);
-	}
-}
-
-extern MidiDriver* EtudeMidiDriver = NULL;
-
-MidiDriver *MidiDriver_ETUDE_create()
-{
-	if (!EtudeMidiDriver)
-		EtudeMidiDriver = new MidiDriver_ETUDE();
-	return EtudeMidiDriver;
-}
-
-#endif // __MORPHOS__
 
 #if defined(UNIX) && !defined(__BEOS__)
 #define SEQ_MIDIPUTC    5
