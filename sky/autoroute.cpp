@@ -1,6 +1,5 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
- * Copyright (C) 2003 Robert "LavosSpawn" Goeffringmann
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,10 +76,10 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	uint16 cnt;
 	//First clear the bottom line and right hand edge of next line
 	for (cnt = 0; cnt < ROUTE_GRID_WIDTH + 1; cnt++)
-		_routeGrid[(ROUTE_GRID_SIZE>>1) - 1 - cnt] = 0;
+		_routeGrid[(ROUTE_GRID_SIZE >> 1) - 1 - cnt] = 0;
 
-	uint16 gridCntX = ROUTE_GRID_WIDTH-2; // ch
-	uint16 gridCntY = ROUTE_GRID_HEIGHT-2; // ebp
+	uint16 gridCntX = ROUTE_GRID_WIDTH - 2; // ch
+	uint16 gridCntY = ROUTE_GRID_HEIGHT - 2; // ebp
 	uint16 bitsLeft = 32;
 	uint32 gridData = screenGrid[0] | (screenGrid[1] << 8) |
 		(screenGrid[2] << 16) | (screenGrid[3] << 24);
@@ -117,12 +116,12 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			routeCalc--;
 			routeCalc[0] = routeCalc[1] = 0; // do edges
 			routeCalc--;
-			gridCntX = ROUTE_GRID_WIDTH-2;
+			gridCntX = ROUTE_GRID_WIDTH - 2;
 			stretch1 = 0; // clear stretch factor
 			gridCntY--;
 		}
 	} while(gridCntY);
-	for (cnt = 0; cnt < ROUTE_GRID_WIDTH-1; cnt++) 
+	for (cnt = 0; cnt < ROUTE_GRID_WIDTH - 1; cnt++) 
 		_routeGrid[cnt] = 0; // clear top line (right hand edge already done
 	
 	// the grid has been initialised
@@ -256,11 +255,11 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 		foundRoute = false;
 		if (!routeDestCalc[0]) {
 			// we have done a section, see if we want to shift backwards (what?)
-			if (numLines < ROUTE_GRID_HEIGHT-4) {
+			if (numLines < ROUTE_GRID_HEIGHT - 4) {
 				routeSrcCalc -= directionY;
 				numLines++;
 			}
-			if (numCols < ROUTE_GRID_WIDTH-4) {
+			if (numCols < ROUTE_GRID_WIDTH - 4) {
 				routeSrcCalc -= directionX;
 				numCols++;
 			}
@@ -273,7 +272,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	}
 	// ok, we know now that it's possible to get from the start position to the desired
 	// destination. Let's see how.
-	uint16 *saveRoute = routeData+(ROUTE_SPACE >> 1)-1; // route_space is given in bytes so >> 1
+	uint16 *saveRoute = routeData + (ROUTE_SPACE >> 1) - 1; // route_space is given in bytes so >> 1
 	saveRoute[0] = 0; // route is null terminated
 	uint16 lastVal;
 	lastVal = routeDestCalc[0];
@@ -341,11 +340,11 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	if (initX < 0) {
         saveRoute -= 4;
 		saveRoute[1] = RIGHTY;
-		saveRoute[0] = ((-initX)+7)&0xFFF8;
+		saveRoute[0] = ((-initX) + 7) & 0xFFF8;
 	} else if (initX > 0) {
 		saveRoute -= 4;
 		saveRoute[1] = LEFTY;
-		saveRoute[0] = (initX+7)&0xFFF8;
+		saveRoute[0] = (initX + 7) & 0xFFF8;
 	}
 	// I wonder why initY isn't checked
 	// saveRoute should now point to routeData

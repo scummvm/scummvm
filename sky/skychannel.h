@@ -1,6 +1,5 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
- * Copyright (C) 2003 Robert "LavosSpawn" Goeffringmann
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +19,8 @@
  *
  */
 
-#ifndef __SkyChannel__
-#define __SkyChannel__
+#ifndef SKYCHANNEL_H
+#define SKYCHANNEL_H
 
 #include "stdafx.h"
 #include "sound/fmopl.h"
@@ -99,4 +98,4 @@ private:
 	//void com90_do_two_Lodsb(void);    // 13
 };
 
-#endif //__SkyChannel__
+#endif //SKYCHANNEL_H

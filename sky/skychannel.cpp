@@ -1,6 +1,5 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
- * Copyright (C) 2003 Robert "LavosSpawn" Goeffringmann
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -221,20 +220,20 @@ void SkyChannel::adlibSetupInstrument(void) {
 }
 
 #ifdef SCUMM_BIG_ENDIAN
-#define ENDIAN16(x) ((x>>8)|((x&0xFF)<<8))
+#define ENDIAN16(x) ((x >> 8) | ((x & 0xFF) << 8))
 #else
 #define ENDIAN16(x) (x)
 #endif
 
 uint16 SkyChannel::getNextNote(uint8 param) {
 
-	int16 freqIndex = ((int16)_channelData.freqOffset)-0x40;
+	int16 freqIndex = ((int16)_channelData.freqOffset) - 0x40;
 	if (freqIndex >= 0x3F) freqIndex++;
 	freqIndex *= _channelData.freqDataSize;
 	freqIndex += param<<6;
-	uint16 freqData = ENDIAN16(_frequenceTable[freqIndex%0x300]);
+	uint16 freqData = ENDIAN16(_frequenceTable[freqIndex % 0x300]);
 	if ((freqIndex%0x300 >= 0x1C0) || (freqIndex/0x300 > 0)) {
-		return (((freqIndex/0x300)-1)<<10)+(freqData&0x7FF);
+		return (((freqIndex / 0x300) - 1) << 10) + (freqData & 0x7FF);
 	} else {
 		// looks like a bug. dunno why. It's what the ASM code says.
 		return (uint16)(((int16)freqData) >> 1);
@@ -280,9 +279,9 @@ void SkyChannel::com90_getFreqOffset(void) {
 	if (_channelData.note & 0x20) {
 		uint16 nextNote = getNextNote(
 			_channelData.lastCommand - 0x18 + _channelData.instrumentData->bindedEffect);
-		setRegister(0xA0|_channelData.adlibChannelNumber, (uint8)nextNote);
-		setRegister(0xB0|_channelData.adlibChannelNumber, (uint8)((nextNote>>8)|0x20));
-		_channelData.note = (uint8)(nextNote>>8)|0x20;
+		setRegister(0xA0 | _channelData.adlibChannelNumber, (uint8)nextNote);
+		setRegister(0xB0 | _channelData.adlibChannelNumber, (uint8)((nextNote >> 8) | 0x20));
+		_channelData.note = (uint8)(nextNote >> 8) | 0x20;
 	}
 }
 

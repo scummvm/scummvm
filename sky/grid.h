@@ -1,6 +1,5 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
- * Copyright (C) 2003 Robert "LavosSpawn" Goeffringmann
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,6 +1,5 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
- * Copyright (C) 2003 Robert "LavosSpawn" Goeffringmann
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +20,8 @@
  */
 
 
-#ifndef __SkyMusicDriver__
-#define __SkyMusicDriver__
+#ifndef SKYMUSIC_H
+#define SKYMUSIC_H
 
 #include "stdafx.h"
 #include "sound/fmopl.h"
@@ -81,4 +80,4 @@ private:
 	void setFMVolume(uint16 param);                                              // 13
 };
 
-#endif //__SkyMusicDriver__
+#endif //SKYMUSIC_H
