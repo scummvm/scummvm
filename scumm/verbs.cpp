@@ -212,15 +212,15 @@ void Scumm::checkV2Inventory(int x, int y) {
 		return;
 
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
-		_inventoryOffset -= 2;
-		if (_inventoryOffset < 0)
-			_inventoryOffset = 0;
-		redrawV2Inventory();
+		if (_inventoryOffset >= 2) {
+			_inventoryOffset -= 2;
+			redrawV2Inventory();
+		}
  	} else if (v2_mouseover_boxes[kInventoryDownArrow].rect.contains(x, y)) {
-		_inventoryOffset += 2;
-		if (_inventoryOffset > (getInventoryCount(_scummVars[VAR_EGO])-2))
-			_inventoryOffset = (getInventoryCount(_scummVars[VAR_EGO])-2);
-		redrawV2Inventory();
+ 		if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+			_inventoryOffset += 2;
+			redrawV2Inventory();
+		}
 	}
 
 	for (object = 0; object < 4; object++) {
