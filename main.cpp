@@ -34,12 +34,6 @@ static void saveRegistry() {
   Registry::instance()->save();
 }
 
-#ifdef WIN32
-	int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-	return main(0, NULL);
-}
-#endif
-
 int main(int /* argc */, char ** /* argv */) {
   char 	GLDriver[1024];
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
