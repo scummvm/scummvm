@@ -26,7 +26,7 @@
 #include "objectstate.h"
 
 #include <SDL.h>
-#include <SDL_opengl.h>
+#include "tinygl/gl.h"
 #include <string>
 
 class CMap;
@@ -57,11 +57,17 @@ public:
 		_currSetup->setupCamera();
 	}
 
+	void setupLights();
+
 	void setSoundPosition(const char *soundName, Vector3d pos);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
 	const char *name() const { return _name.c_str(); }
+
+	void setLightEnableState(bool state) {
+		_enableLights = state;
+	}
 
 	void setSetup(int num);
 	int setup() const { return _currSetup - _setups; }
@@ -105,6 +111,7 @@ private:
 	int _numCmaps;
 	ResPtr<CMap> *_cmaps;
 	int _numSetups, _numLights, _numSectors;
+	bool _enableLights;
 	Sector *_sectors;
 	Light *_lights;
 	Setup *_setups;

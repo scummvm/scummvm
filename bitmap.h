@@ -21,7 +21,7 @@
 #include "resource.h"
 
 #include <cstring>
-#include <SDL_opengl.h>
+#include "tinygl/gl.h"
 
 class Bitmap : public Resource {
 public:
@@ -52,7 +52,7 @@ public:
 	int _width, _height, _x, _y;
 	int _format;
 	int _numTex;
-	GLuint *_texIds;
+	void *_texIds;
 	bool _hasTransparency;
 };
 

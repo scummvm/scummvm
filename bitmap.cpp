@@ -20,7 +20,7 @@
 #include "debug.h"
 #include "bitmap.h"
 #include "smush.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -65,13 +65,13 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 		}
 
 #ifdef SYSTEM_BIG_ENDIAN
-		if (_format == 1)	
+		if (_format == 1)
 			for (int j = 0; j < _width * _height; ++j) {
 				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
 			}
 #endif
-	}	
-	
+	}
+
 	g_driver->createBitmap(this);
 }
 

@@ -23,7 +23,7 @@
 #include "actor.h"
 #include "textobject.h"
 #include "smush.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 #include "imuse/imuse.h"
 

@@ -26,6 +26,7 @@
 #include "timer.h"
 #include "smush.h"
 #include "driver_gl.h"
+#include "driver_tinygl.h"
 
 #include "mixer/mixer.h"
 
@@ -35,7 +36,7 @@
 #include <SDL_video.h>
 
 // Hacky global toggles for experimental/debug code
-bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
+bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 
 #ifdef __MINGW32__
 int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
@@ -44,6 +45,8 @@ int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdL
 #endif
 
 static bool g_lua_initialized = false;
+
+Driver *g_driver = NULL;
 
 static bool parseBoolStr(const char *val) {
 	if (val == NULL || val[0] == 0)
@@ -93,12 +96,16 @@ int main(int argc, char *argv[]) {
 	g_mixer->setVolume(255);
 	g_timer = new Timer();
 	g_smush = new Smush();
-	g_driver = new Driver(640, 480, 24);
+	if (TINYGL_GLOBAL)
+		g_driver = new DriverTinyGL(640, 480, 16);
+	else
+		g_driver = new DriverGL(640, 480, 24);
 	g_imuse = new Imuse(20);
 
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
 	SHOWFPS_GLOBAL = parseBoolStr(g_registry->get("fps"));
+	TINYGL_GLOBAL = parseBoolStr(g_registry->get("soft"));
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-zbuffer") == 0)
 			ZBUFFER_GLOBAL = true;
@@ -108,12 +115,17 @@ int main(int argc, char *argv[]) {
 			SHOWFPS_GLOBAL = true;
 		else if (strcmp(argv[i], "-nofps") == 0)
 			SHOWFPS_GLOBAL = false;
+		else if (strcmp(argv[i], "-soft") == 0)
+			TINYGL_GLOBAL = true;
+		else if (strcmp(argv[i], "-nosoft") == 0)
+			TINYGL_GLOBAL = false;
 		else {
 			printf("Residual CVS Version\n");
 			printf("--------------------\n");
 			printf("Recognised options:\n");
 			printf("\t-[no]zbuffer\t\tEnable/disable ZBuffers (Very slow on older cards)\n");
 			printf("\t-[no]fps\t\tEnable/disable fps display in upper right corner\n");
+			printf("\t-[no]soft\t\tEnable/disable software renderer\n");
 			exit(-1);
 		}
 	}

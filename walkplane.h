@@ -23,7 +23,8 @@
 
 #include <string>
 #include <SDL.h>
-#include <SDL_opengl.h>
+
+#include "tinygl/gl.h"
 
 class TextSplitter;
 

@@ -22,7 +22,7 @@
 
 #include <cstring>
 #include <SDL.h>
-#include <SDL_opengl.h>
+#include "tinygl/gl.h"
 
 class CMap;
 
@@ -45,7 +45,7 @@ public:
 //private:
 	int _numImages, _currImage;
 	int _width, _height;
-	GLuint *_textures;
+	void *_textures;
 };
 
 #endif

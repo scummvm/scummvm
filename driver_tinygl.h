@@ -15,8 +15,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#ifndef DRIVER_GL_H
-#define DRIVER_GL_H
+#ifndef DRIVER_TINYGL_H
+#define DRIVER_TINYGL_H
 
 #include "bits.h"
 #include "vector3d.h"
@@ -26,14 +26,17 @@
 #include "bitmap.h"
 #include "driver.h"
 
+#include "tinygl/gl.h"
+#include "tinygl/zgl.h"
+
 #include <SDL.h>
-#include <SDL_opengl.h>
 
 #define BITMAP_TEXTURE_SIZE 256
 
-class DriverGL : public Driver {
+class DriverTinyGL : public Driver {
 public:
-	DriverGL(int screenW, int screenH, int screenBPP);
+	DriverTinyGL(int screenW, int screenH, int screenBPP);
+	~DriverTinyGL();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
@@ -67,9 +70,12 @@ public:
 	void drawSmushFrame(int offsetX, int offsetY);
 
 private:
-	GLuint _emergFont;
-	int _smushNumTex;
-	GLuint *_smushTexIds;
+	ZBuffer *_zb;
+	SDL_Surface *_screen;
+	SDL_Surface *_smushSurface;
+	SDL_Surface *_zbufferSurface;
+	byte *_fullScreenBitmapData;
+	byte *_fullScreenZBitmapData;
 	int _smushWidth;
 	int _smushHeight;
 };

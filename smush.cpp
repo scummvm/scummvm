@@ -22,7 +22,7 @@
 #include "timer.h"
 #include "resource.h"
 #include "engine.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 

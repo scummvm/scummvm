@@ -205,7 +205,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="3DPrimitives"
+			Name="3dmath"
 			>
 			<File
 				RelativePath="..\..\matrix3.cpp"
@@ -488,6 +488,142 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="tinygl"
+			>
+			<File
+				RelativePath="..\..\tinygl\api.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\arrays.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\clear.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\clip.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\error.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\get.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\gl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\image_util.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\init.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\light.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\list.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\matrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\memory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\misc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\msghandling.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\msghandling.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\opinfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\select.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\specbuf.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\specbuf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\texture.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\vertex.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zbuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zbuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zdither.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zfeatures.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zgl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zline.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zmath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zmath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\ztriangle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tinygl\ztriangle.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\actor.cpp"
 			>
@@ -541,11 +677,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\driver.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\driver_gl.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\driver_gl.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\driver_tinygl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\driver_tinygl.h"
 			>
 		</File>
 		<File

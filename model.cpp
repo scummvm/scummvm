@@ -22,7 +22,7 @@
 #include "resource.h"
 #include "material.h"
 #include "textsplit.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 #include <cstring>
 #include <SDL.h>

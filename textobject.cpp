@@ -19,7 +19,7 @@
 #include "textobject.h"
 #include "engine.h"
 #include "localize.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 TextObject::TextObject(const char *text, const int x, const int y, const Color& fgColor) :
 		_fgColor(fgColor), _x(x), _y(y) {

@@ -20,7 +20,7 @@
 #include "debug.h"
 #include "material.h"
 #include "colormap.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename) {

@@ -21,7 +21,7 @@
 #include "costume.h"
 #include "lipsynch.h"
 #include "localize.h"
-#include "driver_gl.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 

@@ -18,13 +18,10 @@
 #include "debug.h"
 #include "colormap.h"
 #include "material.h"
-#include "driver_gl.h"
 #include "font.h"
+#include "driver_gl.h"
 
-Driver *g_driver;
-
-// Constructor. Should create the driver and open screens, etc.
-Driver::Driver(int screenW, int screenH, int screenBPP) {
+DriverGL::DriverGL(int screenW, int screenH, int screenBPP) {
 	char GLDriver[1024];
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -45,8 +42,7 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 	_smushNumTex = 0;
 }
 
-void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
-	// Set perspective transformation
+void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -60,7 +56,7 @@ void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glRotatef(roll, 0, 0, -1);
 }
 
-void Driver::positionCamera(Vector3d pos, Vector3d interest) {
+void DriverGL::positionCamera(Vector3d pos, Vector3d interest) {
 	Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
@@ -69,15 +65,15 @@ void Driver::positionCamera(Vector3d pos, Vector3d interest) {
 	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
-void Driver::clearScreen() {
+void DriverGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Driver::flipBuffer() {
+void DriverGL::flipBuffer() {
 	SDL_GL_SwapBuffers();
 }
 
-void Driver::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -87,18 +83,18 @@ void Driver::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glRotatef(roll, 0, 1, 0);
 }
 
-void Driver::finishActorDraw() {
+void DriverGL::finishActorDraw() {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 }
 
 
-void Driver::set3DMode() {
+void DriverGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
 	glNormal3fv(face->_normal._coords);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
@@ -112,7 +108,7 @@ void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vert
 	glEnd();
 }
 
-void Driver::drawHierachyNode(const Model::HierNode *node) {
+void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 	if (node->_hierVisible) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -141,13 +137,15 @@ void Driver::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
-void Driver::createBitmap(Bitmap *bitmap) {
+void DriverGL::createBitmap(Bitmap *bitmap) {
+	GLuint *textures;
 	if (bitmap->_format == 1) {
 		bitmap->_hasTransparency = false;
 		bitmap->_numTex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
 		bitmap->_texIds = new GLuint[bitmap->_numTex * bitmap->_numImages];
-		glGenTextures(bitmap->_numTex * bitmap->_numImages, bitmap->_texIds);
+		textures = (GLuint *)bitmap->_texIds;
+		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
 		byte *texData = new byte[4 * bitmap->_width * bitmap->_height];
 
@@ -172,7 +170,8 @@ void Driver::createBitmap(Bitmap *bitmap) {
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[bitmap->_numTex * pic + i]);
+				textures = (GLuint *)bitmap->_texIds;
+				glBindTexture(GL_TEXTURE_2D, textures[bitmap->_numTex * pic + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -189,7 +188,8 @@ void Driver::createBitmap(Bitmap *bitmap) {
 				for (int x = 0; x < bitmap->_width; x += BITMAP_TEXTURE_SIZE) {
 					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
-					glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[cur_tex_idx]);
+					textures = (GLuint *)bitmap->_texIds;
+					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
 						texData + (y * 4 * bitmap->_width) + (4 * x));
 					cur_tex_idx++;
@@ -223,7 +223,8 @@ void Driver::createBitmap(Bitmap *bitmap) {
 	}
 }
 
-void Driver::drawBitmap(const Bitmap *bitmap) {
+void DriverGL::drawBitmap(const Bitmap *bitmap) {
+	GLuint *textures;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 640, 480, 0, 0, 1);
@@ -248,7 +249,8 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 		int cur_tex_idx = bitmap->_numTex * (bitmap->_currImage - 1);
 		for (int y = bitmap->_y; y < (bitmap->_y + bitmap->_height); y += BITMAP_TEXTURE_SIZE) {
 			for (int x = bitmap->_x; x < (bitmap->_x + bitmap->_width); x += BITMAP_TEXTURE_SIZE) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[cur_tex_idx]);
+				textures = (GLuint *)bitmap->_texIds;
+				glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0, 0.0);
 				glVertex2i(x, y);
@@ -271,20 +273,24 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 	} else if (bitmap->_format == 5) {	// ZBuffer image
 		// Only draw the manual zbuffer when enabled
 		if (ZBUFFER_GLOBAL)
-			g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
+			drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
 	}
+	glEnable(GL_LIGHTING);
 }
 
-void Driver::destroyBitmap(Bitmap *bitmap) {
-	if (bitmap->_texIds) {
-		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, bitmap->_texIds);
+void DriverGL::destroyBitmap(Bitmap *bitmap) {
+	GLuint *textures;
+	textures = (GLuint *)bitmap->_texIds;
+	if (textures) {
+		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
 		delete[] bitmap->_texIds;
 	}
 }
 
-void Driver::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void DriverGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
-	glGenTextures(material->_numImages, material->_textures);
+	GLuint *textures;
+	glGenTextures(material->_numImages, (GLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
 	for (int i = 0; i < material->_numImages; i++) {
 		char *texdatapos = texdata;
@@ -301,7 +307,8 @@ void Driver::createMaterial(Material *material, const char *data, const CMap *cm
 				data++;
 			}
 		}
-		glBindTexture(GL_TEXTURE_2D, material->_textures[i]);
+		textures = (GLuint *)material->_textures;
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -313,19 +320,23 @@ void Driver::createMaterial(Material *material, const char *data, const CMap *cm
 	delete[] texdata;
 }
 
-void Driver::selectMaterial(const Material *material) {
-	glBindTexture(GL_TEXTURE_2D, material->_textures[material->_currImage]);
+void DriverGL::selectMaterial(const Material *material) {
+	GLuint *textures;
+	textures = (GLuint *)material->_textures;
+	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
 	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 }
 
-void Driver::destroyMaterial(Material *material) {
-	glDeleteTextures(material->_numImages, material->_textures);
-	delete[] material->_textures;
+void DriverGL::destroyMaterial(Material *material) {
+	GLuint *textures;
+	textures = (GLuint *)material->_textures;
+	glDeleteTextures(material->_numImages, textures);
+	delete[] textures;
 }
 
-void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	if (num != 0) {
 	//		warning("Animation not handled yet in GL texture path !\n");
 	//	}
@@ -361,7 +372,7 @@ void Driver::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
+void DriverGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
@@ -402,7 +413,7 @@ void Driver::prepareSmushFrame(int width, int height, byte *bitmap) {
 	_smushHeight = height;
 }
 
-void Driver::drawSmushFrame(int offsetX, int offsetY) {
+void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -448,10 +459,10 @@ void Driver::drawSmushFrame(int offsetX, int offsetY) {
 	glDisable(GL_TEXTURE_2D);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
 }
 
-// Load emergency font
-void Driver::loadEmergFont() {
+void DriverGL::loadEmergFont() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	_emergFont = glGenLists(128);
@@ -462,8 +473,7 @@ void Driver::loadEmergFont() {
 	}
 }
 
-// Draw text string using emergency font
-void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
+void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -472,6 +482,7 @@ void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColo
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
 
 	glColor3f(fgColor.red(), fgColor.green(), fgColor.blue());
 	glRasterPos2i(x, y);
@@ -479,6 +490,8 @@ void Driver::drawEmergString(int x, int y, const char *text, const Color &fgColo
 	glListBase(_emergFont);
 	//glCallLists(strlen(strrchr(text, '/')) - 1, GL_UNSIGNED_BYTE, strrchr(text, '/') + 1);
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
+
+	glEnable(GL_LIGHTING);
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
