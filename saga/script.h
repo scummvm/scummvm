@@ -26,10 +26,10 @@
 #ifndef SAGA_SCRIPT_H
 #define SAGA_SCRIPT_H
 
-#include "sstack.h"
-#include "sdata.h"
-#include "text_mod.h"
-#include "yslib.h"
+#include "saga/sstack.h"
+#include "saga/sdata.h"
+#include "saga/text_mod.h"
+#include "saga/yslib.h"
 
 namespace Saga {
 

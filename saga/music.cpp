@@ -20,11 +20,11 @@
  * $Header$
  *
  */
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "music.h"
-#include "rscfile_mod.h"
-#include "game_mod.h"
+#include "saga/music.h"
+#include "saga/rscfile_mod.h"
+#include "saga/game_mod.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "common/config-manager.h"

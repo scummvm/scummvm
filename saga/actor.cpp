@@ -21,23 +21,23 @@
  *
  */
 
-#include "saga.h"
-#include "yslib.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
+#include "saga/gfx.h"
 
-#include "game_mod.h"
-#include "cvar_mod.h"
-#include "console_mod.h"
-#include "rscfile_mod.h"
-#include "script_mod.h"
-#include "sndres.h"
-#include "sprite_mod.h"
-#include "font_mod.h"
-#include "text_mod.h"
-#include "sound.h"
+#include "saga/game_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/console_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/script_mod.h"
+#include "saga/sndres.h"
+#include "saga/sprite_mod.h"
+#include "saga/font_mod.h"
+#include "saga/text_mod.h"
+#include "saga/sound.h"
 
-#include "actor.h"
-#include "actordata.h"
+#include "saga/actor.h"
+#include "saga/actordata.h"
 
 namespace Saga {
 

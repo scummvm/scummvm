@@ -22,16 +22,16 @@
  */
 
 // Scripting module simple thread debugging support
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "console_mod.h"
-#include "text_mod.h"
-#include "scene_mod.h"
-#include "font_mod.h"
+#include "saga/gfx.h"
+#include "saga/console_mod.h"
+#include "saga/text_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/font_mod.h"
 
-#include "script.h"
-#include "sthread.h"
+#include "saga/script.h"
+#include "saga/sthread.h"
 
 namespace Saga {
 

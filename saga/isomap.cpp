@@ -22,12 +22,12 @@
  */
 
 // Isometric level module
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "game_mod.h"
-#include "gfx.h"
+#include "saga/game_mod.h"
+#include "saga/gfx.h"
 
-#include "isomap.h"
+#include "saga/isomap.h"
 
 namespace Saga {
 

@@ -26,7 +26,7 @@
 #ifndef SAGA_SCENE_MOD_H__
 #define SAGA_SCENE_MOD_H__
 
-#include "text_mod.h"
+#include "saga/text_mod.h"
 
 namespace Saga {
 

@@ -26,8 +26,8 @@
 #ifndef SAGA_MUSIC_H_
 #define SAGA_MUSIC_H_
 
-#include "rscfile_mod.h"
-#include "game_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/game_mod.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"

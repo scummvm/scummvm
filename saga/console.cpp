@@ -23,14 +23,14 @@
 
 // Console module
 
-#include "saga.h"
-#include "gfx.h"
-#include "font_mod.h"
-#include "cvar_mod.h"
-#include "events_mod.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
+#include "saga/font_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/events_mod.h"
 
-#include "console_mod.h"
-#include "console.h"
+#include "saga/console_mod.h"
+#include "saga/console.h"
 
 namespace Saga {
 

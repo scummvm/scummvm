@@ -22,13 +22,13 @@
  */
 
 // Configuration Variable Module
-#include "saga.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
 
-#include "console_mod.h"
+#include "saga/console_mod.h"
 
-#include "cvar_mod.h"
-#include "cvar.h"
+#include "saga/cvar_mod.h"
+#include "saga/cvar.h"
 
 namespace Saga {
 

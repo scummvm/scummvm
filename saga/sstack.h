@@ -26,7 +26,7 @@
 #ifndef SAGA_SSTACK_H
 #define SAGA_SSTACK_H
 
-#include "script_mod.h"
+#include "saga/script_mod.h"
 
 namespace Saga {
 

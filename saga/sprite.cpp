@@ -22,18 +22,18 @@
  */
 
 // Sprite management module
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "game_mod.h"
-#include "gfx.h"
-#include "scene_mod.h"
-#include "rscfile_mod.h"
+#include "saga/game_mod.h"
+#include "saga/gfx.h"
+#include "saga/scene_mod.h"
+#include "saga/rscfile_mod.h"
 
-#include "text_mod.h"
-#include "font_mod.h"
+#include "saga/text_mod.h"
+#include "saga/font_mod.h"
 
-#include "sprite_mod.h"
-#include "sprite.h"
+#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 

@@ -26,7 +26,7 @@
 #ifndef SAGA_SFUNCS_H
 #define SAGA_SFUNCS_H
 
-#include "sthread.h"
+#include "saga/sthread.h"
 
 namespace Saga {
 

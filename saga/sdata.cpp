@@ -21,13 +21,13 @@
  *
  */
 // Type SDataWord_T must be unpadded
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "text_mod.h"
-#include "script_mod.h"
-#include "script.h"
-#include "sdata.h"
+#include "saga/gfx.h"
+#include "saga/text_mod.h"
+#include "saga/script_mod.h"
+#include "saga/script.h"
+#include "saga/sdata.h"
 
 namespace Saga {
 

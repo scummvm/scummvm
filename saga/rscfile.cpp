@@ -22,10 +22,10 @@
  */
 
 // RSC Resource file management module
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "rscfile_mod.h"
-#include "rscfile.h"
+#include "saga/rscfile_mod.h"
+#include "saga/rscfile.h"
 
 namespace Saga {
 

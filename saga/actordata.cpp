@@ -22,8 +22,8 @@
  */
 
 // Actor data table
-#include "saga.h"
-#include "actordata.h"
+#include "saga/saga.h"
+#include "saga/actordata.h"
 
 namespace Saga {
 

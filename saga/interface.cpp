@@ -22,22 +22,22 @@
  */
 
 // Game interface module
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "game_mod.h"
-#include "cvar_mod.h"
-#include "actor.h"
-#include "console_mod.h"
-#include "font_mod.h"
-#include "objectmap.h"
-#include "rscfile_mod.h"
-#include "script_mod.h"
-#include "sprite_mod.h"
+#include "saga/gfx.h"
+#include "saga/game_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/actor.h"
+#include "saga/console_mod.h"
+#include "saga/font_mod.h"
+#include "saga/objectmap.h"
+#include "saga/rscfile_mod.h"
+#include "saga/script_mod.h"
+#include "saga/sprite_mod.h"
 
-#include "interface_mod.h"
-#include "interface.h"
-#include "sdata.h"
+#include "saga/interface_mod.h"
+#include "saga/interface.h"
+#include "saga/sdata.h"
 
 namespace Saga {
 

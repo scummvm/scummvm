@@ -23,19 +23,19 @@
 
 // Game detection, general game parameters
 
-#include "saga.h"
+#include "saga/saga.h"
 #include "common/file.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
 
-#include "rscfile_mod.h"
-#include "cvar_mod.h"
-#include "ite_introproc_mod.h"
-#include "interface_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/ite_introproc_mod.h"
+#include "saga/interface_mod.h"
 
-#include "game_mod.h"
-#include "game.h"
+#include "saga/game_mod.h"
+#include "saga/game.h"
 
 namespace Saga {
 

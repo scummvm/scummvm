@@ -26,7 +26,7 @@
 #ifndef SAGA_RSCFILE_MOD_H__
 #define SAGA_RSCFILE_MOD_H__
 
-#include "resnames.h"
+#include "saga/resnames.h"
 
 namespace Saga {
 

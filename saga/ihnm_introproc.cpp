@@ -23,21 +23,21 @@
 
 // "I Have No Mouth" Intro sequence scene procedures
 
-#include "saga.h"
-#include "yslib.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
+#include "saga/gfx.h"
 
-#include "animation.h"
-#include "cvar_mod.h"
-#include "events_mod.h"
-#include "font_mod.h"
-#include "rscfile_mod.h"
-#include "scene_mod.h"
-#include "text_mod.h"
-#include "palanim_mod.h"
+#include "saga/animation.h"
+#include "saga/cvar_mod.h"
+#include "saga/events_mod.h"
+#include "saga/font_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/text_mod.h"
+#include "saga/palanim_mod.h"
 
-#include "scene.h"
-#include "ihnm_introproc.h"
+#include "saga/scene.h"
+#include "saga/ihnm_introproc.h"
 
 namespace Saga {
 

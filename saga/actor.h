@@ -26,8 +26,8 @@
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
 
-#include "yslib.h"
-#include "sprite_mod.h"
+#include "saga/yslib.h"
+#include "saga/sprite_mod.h"
 
 namespace Saga {
 
@@ -182,11 +182,6 @@ struct R_ACTORDIALOGUE {
 struct R_ACTIONTIMES {
 	int action;
 	int time;
-};
-
-struct R_ACTOR_MODULE {
-	int init;
-	const char *err_str;
 };
 
 class Actor {

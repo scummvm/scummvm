@@ -22,11 +22,11 @@
  */
 
 // SAGA Image resource management routines
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "game_mod.h"
+#include "saga/game_mod.h"
 
-#include "image.h"
+#include "saga/image.h"
 
 namespace Saga {
 

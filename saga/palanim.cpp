@@ -22,14 +22,14 @@
  */
 
 // Palette animation module
-#include "saga.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
 
-#include "events_mod.h"
-#include "game_mod.h"
+#include "saga/events_mod.h"
+#include "saga/game_mod.h"
 
-#include "palanim_mod.h"
-#include "palanim.h"
+#include "saga/palanim_mod.h"
+#include "saga/palanim.h"
 
 namespace Saga {
 

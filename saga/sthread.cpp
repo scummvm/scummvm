@@ -22,22 +22,21 @@
  */
 
 // Scripting module thread management component
-#include "saga.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
 
-#include "yslib.h"
+#include "saga/gfx.h"
+#include "saga/actor.h"
+#include "saga/console_mod.h"
+#include "saga/text_mod.h"
 
-#include "gfx.h"
-#include "actor.h"
-#include "console_mod.h"
-#include "text_mod.h"
+#include "saga/script.h"
+#include "saga/script_mod.h"
 
-#include "script.h"
-#include "script_mod.h"
-
-#include "sdata.h"
-#include "sstack.h"
-#include "sthread.h"
-#include "sfuncs.h"
+#include "saga/sdata.h"
+#include "saga/sstack.h"
+#include "saga/sthread.h"
+#include "saga/sfuncs.h"
 
 namespace Saga {
 

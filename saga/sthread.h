@@ -26,7 +26,7 @@
 #ifndef SAGA_STHREAD_H__
 #define SAGA_STHREAD_H__
 
-#include "sstack.h"
+#include "saga/sstack.h"
 
 namespace Saga {
 

@@ -20,10 +20,10 @@
  * $Header$
  *
  */
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "sound.h"
-#include "game_mod.h"
+#include "saga/sound.h"
+#include "saga/game_mod.h"
 
 #include "sound/mixer.h"
 

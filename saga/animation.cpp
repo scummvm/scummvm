@@ -22,16 +22,16 @@
  */
 
 // Background animation management module
-#include "saga.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
 
-#include "cvar_mod.h"
-#include "console_mod.h"
-#include "game_mod.h"
-#include "events_mod.h"
-#include "render.h"
+#include "saga/cvar_mod.h"
+#include "saga/console_mod.h"
+#include "saga/game_mod.h"
+#include "saga/events_mod.h"
+#include "saga/render.h"
 
-#include "animation.h"
+#include "saga/animation.h"
 
 namespace Saga {
 

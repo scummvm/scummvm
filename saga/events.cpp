@@ -24,24 +24,24 @@
 // Event management module
 
 
-#include "saga.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
 
-#include "yslib.h"
+#include "saga/yslib.h"
 
-#include "animation.h"
-#include "console_mod.h"
-#include "scene_mod.h"
-#include "interface_mod.h"
-#include "text_mod.h"
-#include "palanim_mod.h"
-#include "render.h"
-#include "game_mod.h"
-#include "sndres.h"
-#include "music.h"
+#include "saga/animation.h"
+#include "saga/console_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/interface_mod.h"
+#include "saga/text_mod.h"
+#include "saga/palanim_mod.h"
+#include "saga/render.h"
+#include "saga/game_mod.h"
+#include "saga/sndres.h"
+#include "saga/music.h"
 
-#include "events_mod.h"
-#include "events.h"
+#include "saga/events_mod.h"
+#include "saga/events.h"
 
 namespace Saga {
 

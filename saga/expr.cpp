@@ -25,9 +25,9 @@
 
 // EXPR_ParseArgs() lifted wholesale from SDL win32 initialization code by Sam Lantinga
 
-#include "saga.h"
-#include "cvar_mod.h"
-#include "expr.h"
+#include "saga/saga.h"
+#include "saga/cvar_mod.h"
+#include "saga/expr.h"
 
 namespace Saga {
 

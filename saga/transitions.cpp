@@ -22,7 +22,7 @@
  */
 
 //Background transition routines
-#include "saga.h"
+#include "saga/saga.h"
 
 namespace Saga {
 

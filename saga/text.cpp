@@ -23,14 +23,14 @@
 
 // Text / dialogue display management module
 
-#include "saga.h"
-#include "yslib.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
 
-#include "gfx.h"
-#include "font_mod.h"
+#include "saga/gfx.h"
+#include "saga/font_mod.h"
 
-#include "text_mod.h"
-#include "text.h"
+#include "saga/text_mod.h"
+#include "saga/text.h"
 
 namespace Saga {
 

@@ -22,14 +22,14 @@
  */
 
 // Font management and font drawing module
-#include "saga.h"
-#include "gfx.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
 
-#include "rscfile_mod.h"
-#include "game_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/game_mod.h"
 
-#include "font_mod.h"
-#include "font.h"
+#include "saga/font_mod.h"
+#include "saga/font.h"
 
 namespace Saga {
 

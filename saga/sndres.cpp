@@ -23,13 +23,13 @@
 
 // Sound resource management class
 
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "game_mod.h"
-#include "rscfile_mod.h"
+#include "saga/game_mod.h"
+#include "saga/rscfile_mod.h"
 
-#include "sndres.h"
-#include "sound.h"
+#include "saga/sndres.h"
+#include "saga/sound.h"
 
 #include "common/file.h"
 

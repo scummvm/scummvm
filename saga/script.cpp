@@ -22,20 +22,20 @@
  */
 
 // Scripting module: Script resource handling functions
-#include "saga.h"
-#include "yslib.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
 
-#include "gfx.h"
-#include "rscfile_mod.h"
-#include "game_mod.h"
-#include "text_mod.h"
-#include "console_mod.h"
-#include "cvar_mod.h"
+#include "saga/gfx.h"
+#include "saga/rscfile_mod.h"
+#include "saga/game_mod.h"
+#include "saga/text_mod.h"
+#include "saga/console_mod.h"
+#include "saga/cvar_mod.h"
 
-#include "script_mod.h"
-#include "script.h"
-#include "sstack.h"
-#include "sthread.h"
+#include "saga/script_mod.h"
+#include "saga/script.h"
+#include "saga/sstack.h"
+#include "saga/sthread.h"
 
 namespace Saga {
 

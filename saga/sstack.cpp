@@ -23,14 +23,14 @@
 
 // Scripting engine stack component
 
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "console_mod.h"
-#include "text_mod.h"
+#include "saga/gfx.h"
+#include "saga/console_mod.h"
+#include "saga/text_mod.h"
 
-#include "script.h"
-#include "sstack.h"
+#include "saga/script.h"
+#include "saga/sstack.h"
 
 namespace Saga {
 

@@ -23,17 +23,17 @@
 
 // Scripting module script function component
 
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "actor.h"
-#include "animation.h"
-#include "console_mod.h"
-#include "interface_mod.h"
-#include "text_mod.h"
+#include "saga/gfx.h"
+#include "saga/actor.h"
+#include "saga/animation.h"
+#include "saga/console_mod.h"
+#include "saga/interface_mod.h"
+#include "saga/text_mod.h"
 
-#include "script.h"
-#include "sfuncs.h"
+#include "saga/script.h"
+#include "saga/sfuncs.h"
 
 namespace Saga {
 

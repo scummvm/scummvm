@@ -22,13 +22,13 @@
  */
 
 /* Action map module */
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "cvar_mod.h"
-#include "gfx.h"
-#include "console_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/gfx.h"
+#include "saga/console_mod.h"
 
-#include "actionmap.h"
+#include "saga/actionmap.h"
 
 namespace Saga {
 

@@ -22,23 +22,23 @@
  */
 
 // Main rendering loop
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "actor.h"
-#include "console_mod.h"
-#include "cvar_mod.h"
-#include "font_mod.h"
-#include "game_mod.h"
-#include "interface_mod.h"
-#include "scene_mod.h"
-#include "sprite_mod.h"
-#include "text_mod.h"
+#include "saga/gfx.h"
+#include "saga/actor.h"
+#include "saga/console_mod.h"
+#include "saga/cvar_mod.h"
+#include "saga/font_mod.h"
+#include "saga/game_mod.h"
+#include "saga/interface_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/sprite_mod.h"
+#include "saga/text_mod.h"
 
-#include "actionmap.h"
-#include "objectmap.h"
+#include "saga/actionmap.h"
+#include "saga/objectmap.h"
 
-#include "render.h"
+#include "saga/render.h"
 #include <common/timer.h>
 
 namespace Saga {

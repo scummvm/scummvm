@@ -26,13 +26,13 @@
 // Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
 // appearing in Graphics Gems IV, "Point in Polygon Strategies."
 // p. 24-46, code: p. 34-45
-#include "saga.h"
+#include "saga/saga.h"
 
-#include "gfx.h"
-#include "cvar_mod.h"
-#include "console_mod.h"
-#include "font_mod.h"
-#include "objectmap.h"
+#include "saga/gfx.h"
+#include "saga/cvar_mod.h"
+#include "saga/console_mod.h"
+#include "saga/font_mod.h"
+#include "saga/objectmap.h"
 
 namespace Saga {
 

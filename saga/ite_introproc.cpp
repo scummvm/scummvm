@@ -24,24 +24,24 @@
 
 // Intro sequence scene procedures
 
-#include "saga.h"
-#include "gfx.h"
-#include "yslib.h"
+#include "saga/saga.h"
+#include "saga/gfx.h"
+#include "saga/yslib.h"
 
-#include "animation.h"
-#include "cvar_mod.h"
-#include "events_mod.h"
-#include "font_mod.h"
-#include "game_mod.h"
-#include "rscfile_mod.h"
-#include "scene_mod.h"
-#include "sndres.h"
-#include "text_mod.h"
-#include "palanim_mod.h"
-#include "music.h"
+#include "saga/animation.h"
+#include "saga/cvar_mod.h"
+#include "saga/events_mod.h"
+#include "saga/font_mod.h"
+#include "saga/game_mod.h"
+#include "saga/rscfile_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/sndres.h"
+#include "saga/text_mod.h"
+#include "saga/palanim_mod.h"
+#include "saga/music.h"
 
-#include "scene.h"
-#include "ite_introproc.h"
+#include "saga/scene.h"
+#include "saga/ite_introproc.h"
 
 namespace Saga {
 
