@@ -1282,7 +1282,7 @@ void Scumm::mainRun()
 		new_time = _system->get_msecs();
 		waitForTimer(delta * 15 + last_time - new_time);
 		last_time = _system->get_msecs();
-		if (_gui->_active) {
+		if (_gui->isActive()) {
 			_gui->loop();
 			delta = 5;
 		} else {

@@ -43,6 +43,39 @@ uint16 _key_mapping_required;
 #endif
 
 enum {
+	GUI_NONE = 0,
+	GUI_RESTEXT = 1,
+	GUI_IMAGE = 2,
+	GUI_STAT = 3,
+	GUI_CUSTOMTEXT = 4,
+	GUI_VARTEXT = 5,
+	GUI_ACTIONTEXT = 6,
+	GUI_KEYTEXT = 7,
+	GUI_SCROLLTEXT = 8,
+	GUI_NEXTTEXT = 9,
+	GUI_UPDOWNARROW = 10
+};
+
+enum {
+	GWF_BORDER = 1,
+	GWF_CLEARBG = 2,
+	GWF_PARENT = 4,
+	GWF_DELAY = 8,
+	GWF_DEFAULT = GWF_BORDER|GWF_CLEARBG,
+	GWF_BUTTON = GWF_BORDER|GWF_CLEARBG|GWF_DELAY
+};
+
+struct GuiWidget {
+	byte _type;
+	byte _page;
+	byte _flags;
+	int16 _x,_y;
+	uint16 _w,_h;
+	uint16 _id;
+	byte _string_number;
+};
+
+enum {
 	SAVELOAD_DIALOG,
 	PAUSE_DIALOG,
 	SOUND_DIALOG,
@@ -51,6 +84,33 @@ enum {
 	ABOUT_DIALOG,
 	LAUNCHER_DIALOG
 };
+
+
+#define IMG_SIZE	8
+
+// Triangles pointing up-/downwards, used for save/load dialog
+static uint32 up_arrow[IMG_SIZE] = {
+	0x00011000,
+	0x00011000,
+	0x00100100,
+	0x00100100,
+	0x01000010,
+	0x01000010,
+	0x10000001,
+	0x10000001,
+};
+
+static uint32 down_arrow[IMG_SIZE] = {
+	0x10000001,
+	0x10000001,
+	0x01000010,
+	0x01000010,
+	0x00100100,
+	0x00100100,
+	0x00011000,
+	0x00011000,
+};
+
 
 
 void Gui::draw(int start, int end)
@@ -111,6 +171,10 @@ void Gui::drawChar(const char str, int xx, int yy)
 	tmp = &guifont[0];
 	tmp += 224 + (str + 1) * 8;
 
+	byte *ptr = getBasePtr(xx, yy);
+	if (ptr == NULL)
+	  return;
+	
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
 			unsigned char color;
@@ -120,8 +184,10 @@ void Gui::drawChar(const char str, int xx, int yy)
 			}
 			color = ((buffer & mask) != 0);
 			if (color)
-				vline(xx + x, yy + y, yy + y);
+				ptr[x] = _color;
+//				vline(xx + x, yy + y, yy + y);
 		}
+		ptr += 320;
 	}
 	_color = tempc;
 
@@ -169,7 +235,8 @@ void Gui::drawWidget(const GuiWidget * w)
 	case GUI_KEYTEXT:
 	case GUI_ACTIONTEXT:
 	case GUI_RESTEXT:
-	case GUI_NEXTTEXT:{
+	case GUI_NEXTTEXT:
+		{
 			char text[500];
 			text[0] = '\0';
 
@@ -217,7 +284,40 @@ void Gui::drawWidget(const GuiWidget * w)
 			break;
 		}
 	case GUI_IMAGE:
-		;
+		break;
+	case GUI_UPDOWNARROW:
+		{
+			uint32 *data;
+			byte color = (_clickWidget && _clickWidget == w->_id) ? _textcolorhi : _textcolor;
+
+			if (w->_string_number == 0)
+				data = up_arrow;
+			else
+				data = down_arrow;
+
+			// Center the image
+			x += w->_w/2 - IMG_SIZE/2;
+			y += w->_h/2 - IMG_SIZE/2;
+			if (w->_flags & GWF_BORDER) {
+				x -= 4;
+				y -= 4;
+			}
+
+			byte *ptr = getBasePtr(x, y);
+			if (ptr == NULL)
+				return;
+	
+			for (int y2 = 0; y2 < IMG_SIZE; y2++) {
+				uint32 mask = 0xF0000000;
+				for (int x2 = 0; x2 < IMG_SIZE; x2++) {
+					if (data[y2] & mask)
+						ptr[x2] = color;
+					mask >>= 4;
+				}
+				ptr += 320;
+			}
+		}
+		break;
 	}
 }
 
@@ -313,10 +413,10 @@ void Gui::lineto(int x, int y)
 	_curY = y;
 
 	if (x2 < x)
-		x2 ^= x ^= x2 ^= x;
+		x2 ^= x ^= x2 ^= x;	// Swap x2 and x
 
 	if (y2 < y)
-		y2 ^= y ^= y2 ^= y;
+		y2 ^= y ^= y2 ^= y;	// Swap y2 and y
 
 	ptr = getBasePtr(x, y);
 
@@ -449,10 +549,10 @@ const GuiWidget save_load_dialog[] = {
 	{GUI_RESTEXT, 0x04, 0, 40, 5, 128, 16, 0, 3},	/* Name your SAVE game */
 
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 16, 170, 96, 0, 0},
-	{GUI_RESTEXT, 0x01, GWF_DEFAULT, 180, 20, 16, 40, 0, 0},
-	{GUI_RESTEXT, 0x01, GWF_DEFAULT, 180, 66, 16, 40, 0, 0},
-	{GUI_RESTEXT, 0xFE, GWF_DEFAULT, 180, 20, 16, 40, 1, 0},
-	{GUI_RESTEXT, 0xFE, GWF_DEFAULT, 180, 66, 16, 40, 2, 0},
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 20, 16, 40, 0, 0}, /* Up (dummy) */
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 66, 16, 40, 0, 1}, /* Down (dummy) */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 20, 16, 40, 1, 0}, /* Up */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 66, 16, 40, 2, 1}, /* Down */
 
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 20, 160, 10, 20, 0},
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 30, 160, 10, 21, 0},
@@ -653,7 +753,7 @@ void Gui::handleCommand(int cmd)
 		getSavegameNames(_slotIndex - 9);
 		draw(20, 28);
 		return;
-	case 2:
+	case 2:											/* down button */
 		if (_slotIndex > 80)
 			return;
 		getSavegameNames(_slotIndex + 9);

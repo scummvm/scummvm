@@ -21,56 +21,37 @@
 #if !defined(gui_h)
 #define gui_h
 
-struct ResString {
-	int num;
-	char string[80];
-};
-
-enum {
-	GUI_NONE = 0,
-	GUI_RESTEXT = 1,
-	GUI_IMAGE = 2,
-	GUI_STAT = 3,
-	GUI_CUSTOMTEXT = 4,
-	GUI_VARTEXT = 5,
-	GUI_ACTIONTEXT = 6,
-	GUI_KEYTEXT = 7,
-	GUI_SCROLLTEXT = 8,
-	GUI_NEXTTEXT = 9
-};
-
-enum {
-	GWF_BORDER = 1,
-	GWF_CLEARBG = 2,
-	GWF_PARENT = 4,
-	GWF_DELAY = 8,
-	GWF_DEFAULT = GWF_BORDER|GWF_CLEARBG,
-	GWF_BUTTON = GWF_BORDER|GWF_CLEARBG|GWF_DELAY
-};
-
-struct GuiWidget {
-	byte _type;
-	byte _page;
-	byte _flags;
-	int16 _x,_y;
-	uint16 _w,_h;
-	uint16 _id;
-	byte _string_number;
-};
+// Forward declaration for GuiWidget
+struct GuiWidget;
 
 #define SAVEGAME_NAME_LEN 32
 
 class Gui {
 public:
+	byte _color,_shadowcolor;
+	byte _bgcolor;
+	byte _textcolor;
+	byte _textcolorhi;
+
+	// Init
+	void init(Scumm *s);
+
+	// Dialogs
+	void saveLoadDialog();
+	void pause();
+	void options();
+	void launcher();
+
+	void loop();
+
+	bool isActive()	{ return _active; }
+
+protected:
 	Scumm *_s;
 	const GuiWidget *_widgets[4];
 	int _return_to;
 	int _curX, _curY;
 	VirtScreen *_vs;
-	byte _color,_shadowcolor;
-	byte _bgcolor;
-	byte _textcolor;
-	byte _textcolorhi;
 	bool _old_cursor_mode;
 	int _parentX, _parentY;
 	byte _active;
@@ -80,17 +61,17 @@ public:
 	int _clickWidget;
 	char *_queryMess;
 
-	/* optiondialog specifics */
+	// optiondialog specifics
 	int _gui_variables[100];
 
-	/* savedialog specifics */	
+	// savedialog specifics	
 	int _slotIndex;
 	int _editString;
 	int _editLen;
 	bool valid_games[9];
 	char game_names[9][SAVEGAME_NAME_LEN];
-	void loop();
-	void init(Scumm *s);
+	
+	// Drawing
 	void draw(int start, int end);
 	void draw(int item) { draw(item,-1); }
 	void drawWidget(const GuiWidget *w);
@@ -104,6 +85,8 @@ public:
 	void widgetBorder(const GuiWidget *w);
 	byte *getBasePtr(int x, int y);
 	const GuiWidget *widgetFromPos(int x, int y);
+	
+	// Actions
 	void leftMouseClick(int x, int y);
 	void handleCommand(int cmd);
 	void close();
@@ -116,12 +99,6 @@ public:
 	byte getDefaultColor(int color);
 
 	char _gui_scroller[255];
-
-	// Dialogs
-	void saveLoadDialog();
-	void pause();
-	void options();
-	void launcher();
 
 	void handleSoundDialogCommand(int cmd);
 	void handleOptionsDialogCommand(int cmd);

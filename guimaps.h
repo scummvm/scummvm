@@ -21,6 +21,10 @@
 #if !defined(guimaps_h)
 #define guimaps_h
 
+struct ResString {
+	int num;
+	char string[80];
+};
 
 // String maps
 static const char* string_map_table_custom[] = { 

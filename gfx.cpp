@@ -153,7 +153,7 @@ void Scumm::drawDirtyScreenParts()
 	}
 
 	/* Handle shaking */
-	if (_shakeEnabled &&  !_gui->_active) {
+	if (_shakeEnabled &&  !_gui->isActive()) {
 		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	}
