@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/11 10:45:39  strigeus
+ * Fixed bug in Scumm::getBoxCoordinates where unsigned integers were read
+ * instead of signed ones.
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -110,27 +115,25 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 
 void Scumm::getBoxCoordinates(int b) {
 	Box *bp = getBoxBaseAddr(b);
-	box.upperLeftX = FROM_LE_16(bp->ulx);
-	box.upperRightX = FROM_LE_16(bp->urx);
-	box.lowerLeftX = FROM_LE_16(bp->llx);
-	box.lowerRightX = FROM_LE_16(bp->lrx);
-	box.upperLeftY = FROM_LE_16(bp->uly);
-	box.upperRightY = FROM_LE_16(bp->ury);
-	box.lowerLeftY = FROM_LE_16(bp->lly);
-	box.lowerRightY = FROM_LE_16(bp->lry);
+	box.upperLeftX = (int16)FROM_LE_16(bp->ulx);
+	box.upperRightX = (int16)FROM_LE_16(bp->urx);
+	box.lowerLeftX = (int16)FROM_LE_16(bp->llx);
+	box.lowerRightX = (int16)FROM_LE_16(bp->lrx);
+	box.upperLeftY = (int16)FROM_LE_16(bp->uly);
+	box.upperRightY = (int16)FROM_LE_16(bp->ury);
+	box.lowerLeftY = (int16)FROM_LE_16(bp->lly);
+	box.lowerRightY = (int16)FROM_LE_16(bp->lry);
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
 	int diffx, diffy;
 	
-	diffx = ptx - x;
-	if (ptx < x) diffx = x - ptx;
+	diffx = abs(ptx-x);
 
 	if (diffx >= 0x100)
 		return 0xFFFF;
 	
-	diffy = pty - y;
-	if (pty < y) diffy = y - pty;
+	diffy = abs(pty - y);
 
 	if (diffy >= 0x100)
 		return 0xFFFF;
