@@ -219,7 +219,7 @@ void OSystem_WINCE3::get_sample_rate() {
 #endif
 }
 
-bool OSystem_WINCE3::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
+bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 	int thread_priority;
 
@@ -322,7 +322,7 @@ void OSystem_WINCE3::update_game_settings() {
 	}
 }
 
-void OSystem_WINCE3::init_size(uint w, uint h) {
+void OSystem_WINCE3::initSize(uint w, uint h) {
 	if (w == 320 && h == 200)
 		h = 240; // use the extra 40 pixels height for the toolbar
 
@@ -333,7 +333,7 @@ void OSystem_WINCE3::init_size(uint w, uint h) {
 	else
 		_toolbarHandler.setOffset(400);	
 
-	OSystem_SDL_Common::init_size(w, h);	
+	OSystem_SDL_Common::initSize(w, h);	
 
 	update_game_settings();
 

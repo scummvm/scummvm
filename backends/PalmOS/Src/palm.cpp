@@ -230,7 +230,7 @@ void OSystem_PALMOS::unload_gfx_mode() {
 
 }
 
-void OSystem_PALMOS::init_size(uint w, uint h) {
+void OSystem_PALMOS::initSize(uint w, uint h) {
 	_screenWidth = w;
 	_screenHeight = h;
 	_offScreenPitch = gVars->screenPitch;	// direct screen / flipping use this, reset later if buffered
@@ -1593,13 +1593,12 @@ static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt
 	return errNone;
 }
 
-bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
+bool OSystem_PALMOS::setSoundCallback(SoundProc proc, void *param) {
 	Boolean success = false;
 
 	if (!_sound.active) {
 		_sound.proc = proc;
 		_sound.param = param;
-		_sound.format = format;
 		_sound.active = true;	// always true when we call this function
 		
 		// try to create sound stream
@@ -1622,7 +1621,7 @@ bool OSystem_PALMOS::set_sound_proc(SoundProc proc, void *param, SoundFormat for
 	return success;
 }
 
-void OSystem_PALMOS::clear_sound_proc() {
+void OSystem_PALMOS::clearSoundCallback() {
 	if (_sound.active) {
 		if (!_sound.useHandler) {
 			SndStreamStop(_sound.sndRefNum);

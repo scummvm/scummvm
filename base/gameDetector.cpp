@@ -96,46 +96,12 @@ static const char USAGE_STRING[] =
 ;
 #endif
 
-/**
- * List of graphic 'modes' we potentially support. Potentially because not all
- * backends actually support all the filters listed here. At this point only
- * the SDL backend supports all (except for the PalmOS ones of course).
- * @todo Remove this explicit list of graphic modes and rather extend the
- * OSystem API to allow querying a backend for the modes it supports.
- */
-const GraphicsMode g_gfx_modes[] = {
-	{"normal", "Normal (no scaling)", GFX_NORMAL},
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
-#ifndef __PALM_OS__     // reduce contant data size
-	{"2x", "2x", GFX_DOUBLESIZE},
-	{"3x", "3x", GFX_TRIPLESIZE},
-	{"2xsai", "2xSAI", GFX_2XSAI},
-	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
-	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
-	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-	{"hq2x", "HQ2x", GFX_HQ2X},
-	{"hq3x", "HQ3x", GFX_HQ3X},
-	{"tv2x", "TV2x", GFX_TV2X},
-	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-#else
-	{"flipping", "Page Flipping", GFX_FLIPPING},
-	{"buffered", "Buffered", GFX_BUFFERED},
-	{"wide", "Wide (HiRes+ only)", GFX_WIDE},
-#endif
-	{0, 0, 0}
-};
-
 GameDetector::GameDetector() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("aspect_ratio", false);
-#ifndef _WIN32_WCE
-	ConfMan.registerDefault("gfx_mode", "2x");
-#else
 	ConfMan.registerDefault("gfx_mode", "normal");
-#endif
 
 	// Sound & Music
 	ConfMan.registerDefault("master_volume", 192);
@@ -350,12 +316,22 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
-				int gfx_mode = parseGraphicsMode(option);
+				// Check whether 'option' specifies a valid graphics mode.
+				bool isValid = false;
+				if (!scumm_stricmp(option, "normal") || !scumm_stricmp(option, "default"))
+					isValid = true;
+				if (!isValid) {
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+					while (gm->name && !isValid) {
+						isValid = !scumm_stricmp(gm->name, option);
+						gm++;
+					}
+				}
 				// TODO: Instead of just showing the generic help text,
 				// maybe print a message like:
 				// "'option' is not a supported graphic mode on this machine.
 				//  Available graphic modes: ..."
-				if (gfx_mode == -1)
+				if (!isValid)
 					goto ShowHelpAndExit;
 				ConfMan.set("gfx_mode", option, kTransientDomain);
 			END_OPTION
@@ -491,22 +467,6 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
-}
-
-int GameDetector::parseGraphicsMode(const String &str) {
-	if (str.isEmpty())
-		return -1;
-
-	const char *s = str.c_str();
-	const GraphicsMode *gm = g_gfx_modes;
-	while (gm->name) {
-		if (!scumm_stricmp(gm->name, s)) {
-			return gm->id;
-		}
-		gm++;
-	}
-
-	return -1;
 }
 
 bool GameDetector::detectGame() {

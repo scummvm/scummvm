@@ -57,7 +57,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk) {
 	int i;
 	uint8 tmpPal[1024];
 
-	_system->init_size(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
 	forceRefresh();
 

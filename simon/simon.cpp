@@ -585,10 +585,10 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
 
-	_system->init_size(320, 200);
+	_system->initSize(320, 200);
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
-	_system->property(OSystem::PROP_WANT_RECT_OPTIM,0);
+	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 }
 
 SimonEngine::~SimonEngine() {
@@ -2888,9 +2888,7 @@ get_out:;
 		delay(10);
 	} while (i == _timer_4);
 
-	OSystem::Property prop;
-        prop.show_keyboard = false;
-        g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {

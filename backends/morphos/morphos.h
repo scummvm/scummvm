@@ -47,7 +47,7 @@ class OSystem_MorphOS : public OSystem
 
 		// Set the size of the video bitmap.
 		// Typically, 320x200
-		virtual void init_size(uint w, uint h);
+		virtual void initSize(uint w, uint h);
 
 		// Draw a bitmap to screen.
 		// The screen will not be updated to reflect the new bitmap
@@ -101,9 +101,9 @@ class OSystem_MorphOS : public OSystem
 		virtual void warp_mouse(int x, int y);
 
 		// Set the function to be invoked whenever samples need to be generated
-		virtual bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
+		virtual bool setSoundCallback(SoundProc proc, void *param);
 				  void fill_sound    (byte * stream, int len);
-				  void clear_sound_proc();
+				  void clearSoundCallback();
 
 		virtual uint32 property(int param, Property *value);
 

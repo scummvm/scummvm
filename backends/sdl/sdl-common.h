@@ -33,7 +33,7 @@ class OSystem_SDL_Common : public OSystem {
 public:
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -72,9 +72,9 @@ public:
 	bool poll_event(Event *event);
 
 	// Set function that generates samples 
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
+	bool setSoundCallback(SoundProc proc, void *param);
 	
-	void clear_sound_proc();
+	void clearSoundCallback();
 
 	// Poll CD status
 	// Returns true if cd audio is playing
@@ -92,8 +92,6 @@ public:
 	// Quit
 	void quit();
 
-	// Set a parameter
-	uint32 property(int param, Property *value);
 
 	// Add a callback timer
 	void set_timer(TimerProc callback, int timer);
@@ -117,7 +115,21 @@ public:
 	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b);
 
-	static OSystem *create(int gfx_mode);
+
+	virtual const GraphicsMode *getSupportedGraphicsModes() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+	
+	virtual void setWindowCaption(const char *caption);
+	virtual bool openCD(int drive);
+	virtual int getOutputSampleRate() const;
+
+	virtual bool hasFeature(Feature f);
+	virtual void setFeatureState(Feature f, bool enable);
+	virtual bool getFeatureState(Feature f);
+
+
+	static OSystem *create();
 
 protected:
 	OSystem_SDL_Common();
@@ -125,7 +137,7 @@ protected:
 
 	static OSystem_SDL_Common *create_intern();
 
-	void init_intern(int gfx_mode);
+	void init_intern();
 
 	// unseen game screen
 	SDL_Surface *_screen;
@@ -218,10 +230,12 @@ protected:
 	/** Set the position of the virtual mouse cursor. */
 	void set_mouse_pos(int x, int y);
 	void fillMouseEvent(Event &event, int x, int y);
+	void toggleMouseGrab();
 
 
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;
+	virtual void hotswap_gfx_mode() = 0;
 
 	virtual bool save_screenshot(const char *filename) = 0;
 	

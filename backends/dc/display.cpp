@@ -141,7 +141,7 @@ void OSystem_Dreamcast::set_palette(const byte *colors, uint start, uint num)
   _screen_dirty = true;
 }
 
-void OSystem_Dreamcast::init_size(uint w, uint h)
+void OSystem_Dreamcast::initSize(uint w, uint h)
 {
   assert(w <= SCREEN_W && h <= SCREEN_H);
 

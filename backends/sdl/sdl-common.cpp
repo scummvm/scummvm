@@ -47,28 +47,22 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-OSystem *OSystem_SDL_create(int gfx_mode) {
-	return OSystem_SDL_Common::create(gfx_mode);
+OSystem *OSystem_SDL_create() {
+	return OSystem_SDL_Common::create();
 }
 
-OSystem *OSystem_SDL_Common::create(int gfx_mode) {
+OSystem *OSystem_SDL_Common::create() {
 	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
 
-	syst->init_intern(gfx_mode);
+	syst->init_intern();
 
 	return syst;
 }
 
-void OSystem_SDL_Common::init_intern(int gfx_mode) {
+void OSystem_SDL_Common::init_intern() {
 
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
-
-	cksum_valid = false;
-	_mode = gfx_mode;
-	_full_screen = ConfMan.getBool("fullscreen");
-	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
-	_mode_flags = 0;
 
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
@@ -83,6 +77,13 @@ void OSystem_SDL_Common::init_intern(int gfx_mode) {
 	
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1); 
+
+	cksum_valid = false;
+	_mode = GFX_DOUBLESIZE;
+	_full_screen = ConfMan.getBool("fullscreen");
+	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
+	_mode_flags = 0;
+
 
 #ifndef MACOSX		// Don't set icon on OS X, as we use a nicer external icon there
 	// Setup the icon
@@ -133,7 +134,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 	SDL_Quit();
 }
 
-void OSystem_SDL_Common::init_size(uint w, uint h) {
+void OSystem_SDL_Common::initSize(uint w, uint h) {
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight)
 		return;
@@ -622,7 +623,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 			// Alt-Return toggles full screen mode				
 			if (b == KBD_ALT && ev.key.keysym.sym == SDLK_RETURN) {
-				property(PROP_TOGGLE_FULLSCREEN, NULL);
+				setFeatureState(kFeatureFullscreenMode, !_full_screen);
 				break;
 			}
 
@@ -654,7 +655,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 #else
 			// Ctrl-m toggles mouse capture
 			if (b == KBD_CTRL && ev.key.keysym.sym == 'm') {
-				property(PROP_TOGGLE_MOUSE_GRAB, NULL);
+				toggleMouseGrab();
 				break;
 			}
 
@@ -695,13 +696,11 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					}
 				}
 				
-
-				Property prop;
 				int factor = _scaleFactor - 1;
 
 				// Ctrl-Alt-a toggles aspect ratio correction
 				if (ev.key.keysym.sym == 'a') {
-					property(PROP_TOGGLE_ASPECT_RATIO, NULL);
+					setFeatureState(kFeatureAspectRatioCorrection, !_adjustAspectRatio);
 					break;
 				}
 
@@ -710,8 +709,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				if (ev.key.keysym.sym == '=' || ev.key.keysym.sym == '+' || ev.key.keysym.sym == '-') {
 					factor += (ev.key.keysym.sym == '-' ? -1 : +1);
 					if (0 <= factor && factor < 4 && gfxModes[_scalerType][factor] >= 0) {
-						prop.gfx_mode = gfxModes[_scalerType][factor];
-						property(PROP_SET_GFX_MODE, &prop);
+						setGraphicsMode(gfxModes[_scalerType][factor]);
 					}
 					break;
 				}
@@ -725,8 +723,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 						assert(factor > 0);
 						factor--;
 					}
-					prop.gfx_mode = gfxModes[_scalerType][factor];
-					property(PROP_SET_GFX_MODE, &prop);
+					setGraphicsMode(gfxModes[_scalerType][factor]);
 					break;
 				}
 			}
@@ -1014,12 +1011,11 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	return false;
 }
 
-bool OSystem_SDL_Common::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
+bool OSystem_SDL_Common::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 
 	memset(&desired, 0, sizeof(desired));
 
-	/* only one format supported at the moment */
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
@@ -1033,55 +1029,140 @@ bool OSystem_SDL_Common::set_sound_proc(SoundProc proc, void *param, SoundFormat
 	return true;
 }
 
-void OSystem_SDL_Common::clear_sound_proc() {
+void OSystem_SDL_Common::clearSoundCallback() {
 	SDL_CloseAudio();
 }
 
-uint32 OSystem_SDL_Common::property(int param, Property *value) {
-	switch(param) {
+static const OSystem::GraphicsMode gfx_modes[] = {
+	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"2x", "2x", GFX_DOUBLESIZE},
+	{"3x", "3x", GFX_TRIPLESIZE},
+	{"2xsai", "2xSAI", GFX_2XSAI},
+	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
+	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
+	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
+	{"hq2x", "HQ2x", GFX_HQ2X},
+	{"hq3x", "HQ3x", GFX_HQ3X},
+	{"tv2x", "TV2x", GFX_TV2X},
+	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
+	{0, 0, 0}
+};
 
-	case PROP_WANT_RECT_OPTIM:
-		_mode_flags |= DF_WANT_RECT_OPTIM;
-		break;
+const OSystem::GraphicsMode *OSystem_SDL_Common::getSupportedGraphicsModes() const {
+	return gfx_modes;
+}
 
-	case PROP_GET_FULLSCREEN:
-		return _full_screen;
+bool OSystem_SDL_Common::setGraphicsMode(int mode) {
+	Common::StackLock lock(_graphicsMutex, this);
 
-	case PROP_GET_GFX_MODE:
-		return _mode;
+	// FIXME! HACK, hard coded threshold, not good
+	// Really should check the 'mode' against the list of supported
+	// modes, and then decide whether to accept it.
+	if (mode > 11)
+		return false;
 
-	case PROP_SET_WINDOW_CAPTION:
-		SDL_WM_SetCaption(value->caption, value->caption);
-		return 1;
+	_mode = mode;
+	hotswap_gfx_mode();
+	return true;
+}
 
-	case PROP_OPEN_CD:
-		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-			_cdrom = NULL;
-		else {
-			_cdrom = SDL_CDOpen(value->cd_num);
-			// Did it open? Check if _cdrom is NULL
-			if (!_cdrom) {
-				warning("Couldn't open drive: %s", SDL_GetError());
-			} else {
-				cd_num_loops = 0;
-				cd_stop_time = 0;
-				cd_end_time = 0;
+int OSystem_SDL_Common::getGraphicsMode() const {
+	return _mode;
+}
+
+
+void OSystem_SDL_Common::setWindowCaption(const char *caption) {
+	SDL_WM_SetCaption(caption, caption);
+}
+
+bool OSystem_SDL_Common::openCD(int drive) {
+	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
+		_cdrom = NULL;
+	else {
+		_cdrom = SDL_CDOpen(drive);
+		// Did it open? Check if _cdrom is NULL
+		if (!_cdrom) {
+			warning("Couldn't open drive: %s", SDL_GetError());
+		} else {
+			cd_num_loops = 0;
+			cd_stop_time = 0;
+			cd_end_time = 0;
+		}
+	}
+	
+	return (_cdrom != NULL);
+}
+
+int OSystem_SDL_Common::getOutputSampleRate() const {
+	return SAMPLES_PER_SEC;
+}
+
+
+bool OSystem_SDL_Common::hasFeature(Feature f) {
+	return
+		(f == kFeatureFullscreenMode) ||
+		(f == kFeatureAspectRatioCorrection) ||
+		(f == kFeatureAutoComputeDirtyRects);
+}
+
+void OSystem_SDL_Common::setFeatureState(Feature f, bool enable) {
+	Common::StackLock lock(_graphicsMutex, this);
+
+	switch (f) {
+	case kFeatureFullscreenMode:
+		if (_full_screen != enable) {
+			//assert(_hwscreen != 0);
+			_full_screen ^= true;
+#ifdef MACOSX
+			// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
+			// it still always returns -1. So we simply don't call it at all and
+			// use hotswap_gfx_mode() directly to switch to fullscreen mode.
+			hotswap_gfx_mode();
+#else
+			if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
+				// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
+				hotswap_gfx_mode();
 			}
+#endif
 		}
 		break;
-
-	case PROP_GET_SAMPLE_RATE:
-		return SAMPLES_PER_SEC;
-
-	case PROP_TOGGLE_MOUSE_GRAB:
-		if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
-			SDL_WM_GrabInput(SDL_GRAB_ON);
+	case kFeatureAspectRatioCorrection:
+		if (_screenHeight == 200 && _adjustAspectRatio != enable) {
+			//assert(_hwscreen != 0);
+			_adjustAspectRatio ^= true;
+			hotswap_gfx_mode();
+		}
+		break;
+	case kFeatureAutoComputeDirtyRects:
+		if (enable)
+			_mode_flags |= DF_WANT_RECT_OPTIM;		
 		else
-			SDL_WM_GrabInput(SDL_GRAB_OFF);
+			_mode_flags &= ~DF_WANT_RECT_OPTIM;		
+		break;
+	default:
 		break;
 	}
+}
 
-	return 0;
+bool OSystem_SDL_Common::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return _full_screen;
+	case kFeatureAspectRatioCorrection:
+		return _adjustAspectRatio;
+	case kFeatureAutoComputeDirtyRects:
+		return _mode_flags & DF_WANT_RECT_OPTIM;
+	default:
+		return false;
+	}
+}
+
+void OSystem_SDL_Common::toggleMouseGrab() {
+	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	else
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 void OSystem_SDL_Common::quit() {

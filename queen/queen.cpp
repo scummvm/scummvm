@@ -97,7 +97,7 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
 
-	_system->init_size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 }
 
 QueenEngine::~QueenEngine() {

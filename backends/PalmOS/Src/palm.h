@@ -37,7 +37,6 @@ Err HwrDisplayPalette(UInt8 operation, Int16 startIndex,
 typedef struct {
 	OSystem::SoundProc proc;
 	void *param;
-	OSystem::SoundFormat format;
 
 	SndStreamRef sndRefNum;
 	bool active, useHandler;
@@ -51,7 +50,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -103,14 +102,14 @@ public:
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
 	 * @param format	the sample type format.
 	 */
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
+	bool setSoundCallback(SoundProc proc, void *param);
 	
 	/**
-	 * Remove any audio callback previously set via set_sound_proc, thus effectively
+	 * Remove any audio callback previously set via setSoundCallback, thus effectively
 	 * stopping all audio output immediately.
-	 * @see set_sound_proc
+	 * @see setSoundCallback
 	 */
-	void clear_sound_proc();
+	void clearSoundCallback();
 	//@} 
 
 	// Poll cdrom status

@@ -31,7 +31,7 @@ namespace Scumm {
 Player_MOD::Player_MOD(ScummEngine *scumm) {
 	int i;
 	_mixer = scumm->_mixer;
-	_samplerate = scumm->_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+	_samplerate = scumm->_system->getOutputSampleRate();
 	_mixamt = 0;
 	_mixpos = 0;
 

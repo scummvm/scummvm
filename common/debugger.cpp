@@ -67,9 +67,7 @@ int Debugger<T>::DebugPrintf(const char *format, ...) {
 template <class T>
 void Debugger<T>::attach(const char *entry) {
 
-	OSystem::Property prop;
-	prop.show_keyboard = true;
-	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	if (entry) {
 		_errStr = strdup(entry);
@@ -82,9 +80,7 @@ void Debugger<T>::attach(const char *entry) {
 
 template <class T>
 void Debugger<T>::detach() {
-	OSystem::Property prop;
-	prop.show_keyboard = false;
-	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	_detach_now = false;
 	_isAttached = false;

@@ -39,7 +39,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 	int16 get_height() { return _screenHeight; }
 	int16 get_width() { return _screenWidth; }
 	
@@ -80,8 +80,8 @@ public:
 	// Set the function to be invoked whenever samples need to be generated
 	// Format is the sample type format.
 	// Only 16-bit signed mode is needed for simon & scumm
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
-	void clear_sound_proc();
+	bool setSoundCallback(SoundProc proc, void *param);
+	void clearSoundCallback();
 	
 	// Get or set a property
 	uint32 property(int param, Property *value);

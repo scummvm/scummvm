@@ -176,12 +176,15 @@ static void do_memory_test(void) {
 #endif
 
 static int launcherDialog(GameDetector &detector, OSystem *system) {
-	// FIXME - we need to call init_size() here so that we can display for example
+	// Set the user specified graphics mode (if any).
+	system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+
+	// FIXME - we need to call initSize() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
 	// with a different widht/height!9 However, this method is not for all OSystem 
 	// implementations reentrant (it is so now for the SDL backend). Thus we need
 	// to fix all backends to support it, if they don't already.
-	system->init_size(320, 200);
+	system->initSize(320, 200);
 	
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
@@ -219,7 +222,6 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 }
 
 static void runGame(GameDetector &detector, OSystem *system) {
-	OSystem::Property prop;
 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
@@ -229,26 +231,22 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	if (caption.isEmpty())	
 		caption = detector._targetName;
 	if (!caption.isEmpty())	{
-		prop.caption = caption.c_str();
-		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+		system->setWindowCaption(caption.c_str());
 	}
 
 	// See if the game should default to 1x scaler
 	if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
 		(detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
-		prop.gfx_mode = GFX_NORMAL;
-		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+		system->setGraphicsMode(GFX_NORMAL);
 	} else {
 	// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
-			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
-			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+			system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		}
 	}
 
 	// (De)activate fullscreen mode as determined by the config settings 
-	if (ConfMan.getBool("fullscreen") != (system->property(OSystem::PROP_GET_FULLSCREEN, 0) != 0))
-		system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 	
 	// Create the game engine
 	Engine *engine = detector.createEngine(system);
@@ -258,18 +256,17 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	engine->go();
 
 	// Stop all sound processing now (this prevents some race conditions later on)
-	system->clear_sound_proc();
+	system->clearSoundCallback();
 
 	// Free up memory
 	delete engine;
 };
 
 #ifndef _WIN32_WCE
-int main(int argc, char *argv[]) {
+extern "C" int main(int argc, char *argv[]) {
 #else
 extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #endif
-	OSystem::Property prop;
 	char *cfgFilename = NULL, *s=argv[1];
 
 #if defined(UNIX)
@@ -346,15 +343,15 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #endif
 	detector.parseCommandLine(argc, argv);
 
-	// Create the system object
+	// Ensure the system object exists (it may have already been created 
+	// at an earlier point, though!)
 	OSystem *system = OSystem::instance();
 
 	// Create the timer services
 	g_timer = new Timer(system);
 
 	// Set initial window caption
-	prop.caption = gScummVMFullVersion;
-	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+	system->setWindowCaption(gScummVMFullVersion);
 
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.isEmpty())

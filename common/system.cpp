@@ -29,11 +29,13 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-OSystem *g_system = 0;
+static OSystem *s_system = 0;
 
 static OSystem *createSystem() {
-	int gfx_mode = GameDetector::parseGraphicsMode(ConfMan.get("gfx_mode"));	// FIXME: Get rid of this again!
-	
+	// Attention: Do not call parseGraphicsMode() here, nor any other function
+	// which needs to access the OSystem instance, else you get stuck in an
+	// endless loop.
+
 #if defined(USE_NULL_DRIVER)
 	return OSystem_NULL_create();
 #elif defined(__DC__)
@@ -52,12 +54,38 @@ static OSystem *createSystem() {
 	return OSystem_PALMOS_create(gfx_mode);
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(gfx_mode);
+	return OSystem_SDL_create();
 #endif
 }
 
 OSystem *OSystem::instance() {
-	if (!g_system)
-		g_system = createSystem();
-	return g_system;
+	if (!s_system)
+		s_system = createSystem();
+	return s_system;
+}
+
+
+bool OSystem::setGraphicsMode(const char *name) {
+	if (!name)
+		return false;
+
+	const GraphicsMode *gm = getSupportedGraphicsModes();
+
+	// Sepcial case for the 'default' filter
+	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
+#ifdef _WIN32_WCE
+		name = "1x";
+#else
+		name = "2x";
+#endif
+	}
+
+	while (gm->name) {
+		if (!scumm_stricmp(gm->name, name)) {
+			return setGraphicsMode(gm->id);
+		}
+		gm++;
+	}
+
+	return false;
 }

@@ -731,22 +731,16 @@ int SimonEngine::runScript() {
 			break;
 
 		case 132:{									/* save game */
-				OSystem::Property prop;
-				prop.show_keyboard = true;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				o_save_game();
-				prop.show_keyboard = false;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 
 		case 133:{									/* load game */
-				OSystem::Property prop;
-				prop.show_keyboard = true;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				o_load_game();
-				prop.show_keyboard = false;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 
@@ -757,12 +751,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 135:{									/* quit if user presses y */
-				OSystem::Property prop;
-				prop.show_keyboard = true;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				o_quit_if_user_presses_y();
-				prop.show_keyboard = false;
-				_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 

@@ -77,15 +77,11 @@ void OptionsDialog::open() {
 		_gfxPopUp->setEnabled(false);
 
 		if (ConfMan.hasKey("gfx_mode", _domain)) {
-			const GraphicsMode *gm = g_gfx_modes;
+			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 			String gfxMode = ConfMan.get("gfx_mode", _domain);
 			int gfxCount = 1;
 			while (gm->name) {
-				OSystem::Property prop;
-				prop.gfx_mode = gm->id;
-
-				if (g_system->property(OSystem::PROP_HAS_SCALER, &prop) != 0)
-					gfxCount++;
+				gfxCount++;
 
 				if (scumm_stricmp(gm->name, gfxMode.c_str()) == 0)
 					_gfxPopUp->setSelected(gfxCount);
@@ -255,7 +251,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
 	const int w = _w - 2 * 10;
-        const GraphicsMode *gm = g_gfx_modes;
+	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	// The GFX mode popup
 	_gfxPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Graphics mode: ", 100);
@@ -263,17 +259,10 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
-        while (gm->name) {
-		OSystem::Property prop;
-		prop.gfx_mode = gm->id;
-
-		if (g_system->property(OSystem::PROP_HAS_SCALER, &prop) != 0) {
-			_gfxPopUp->appendEntry(gm->name, gm->id);
-
-		}
-
-                gm++;
-        }
+	while (gm->name) {
+		_gfxPopUp->appendEntry(gm->name, gm->id);
+		gm++;
+	}
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Fullscreen mode");

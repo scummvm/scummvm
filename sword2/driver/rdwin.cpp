@@ -147,10 +147,7 @@ void Graphics::updateDisplay(bool redrawScene) {
  */
 
 void Graphics::setWindowName(const char *windowName) {
-	OSystem::Property prop;
-
-	prop.caption = windowName;
-	_vm->_system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+	_vm->_system->setWindowCaption(windowName);
 }
 
 } // End of namespace Sword2

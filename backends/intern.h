@@ -27,7 +27,7 @@
 /* Factory functions. This means we don't have to include the headers for
  * all backends.
  */
-extern OSystem *OSystem_SDL_create(int gfx_driver);
+extern OSystem *OSystem_SDL_create();
 extern OSystem *OSystem_NULL_create();
 extern OSystem *OSystem_MorphOS_create(int gfx_driver, bool full_screen);
 extern OSystem *OSystem_Dreamcast_create();

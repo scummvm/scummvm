@@ -30,7 +30,7 @@
 class OSystem_NULL : public OSystem {
 public:
 	void set_palette(const byte *colors, uint start, uint num) {}
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
 	void move_screen(int dx, int dy) {}
 	void update_screen() {}
@@ -41,7 +41,7 @@ public:
 	uint32 get_msecs();
 	void delay_msecs(uint msecs);
 	bool poll_event(Event *event) { return false; }
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format) {}
+	bool setSoundCallback(SoundProc proc, void *param) {}
 	void quit() { exit(1); }
 	uint32 property(int param, Property *value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);
@@ -52,7 +52,7 @@ private:
 	uint32 get_ticks();
 };
 
-void OSystem_NULL::init_size(uint w, uint h, byte sound) {
+void OSystem_NULL::initSize(uint w, uint h, byte sound) {
 	msec_start = get_ticks();
 }
 

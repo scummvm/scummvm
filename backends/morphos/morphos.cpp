@@ -1436,13 +1436,13 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 	UndrawMouse();
 }
 
-bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc proc, void *param, OSystem::SoundFormat format)
+bool OSystem_MorphOS::setSoundCallback(OSystem::SoundProc proc, void *param)
 {
 	if (ScummSoundThread)
 	{
 		if (SoundProc == proc)
 			return true;
-		clear_sound_proc();
+		clearSoundCallback();
 	}
 
 	SoundProc = proc;
@@ -1479,7 +1479,7 @@ void OSystem_MorphOS::fill_sound(byte *stream, int len)
 		memset(stream, 0x0, len);
 }
 
-void OSystem_MorphOS::clear_sound_proc()
+void OSystem_MorphOS::clearSoundCallback()
 {
 	if (ScummSoundThread)
 	{
@@ -1490,7 +1490,7 @@ void OSystem_MorphOS::clear_sound_proc()
 	}
 }
 
-void OSystem_MorphOS::init_size(uint w, uint h)
+void OSystem_MorphOS::initSize(uint w, uint h)
 {
 	if (ScummBuffer)
 	{

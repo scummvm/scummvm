@@ -56,7 +56,7 @@ void OSystem_GP32::set_palette(const byte *colors, uint start, uint num) {
 
 // Set the size of the video bitmap.
 // Typically, 320x200
-void OSystem_GP32::init_size(uint w, uint h) { 
+void OSystem_GP32::initSize(uint w, uint h) { 
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight)
 		return;
@@ -976,11 +976,11 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 // Set the function to be invoked whenever samples need to be generated
 // Format is the sample type format.
 // Only 16-bit signed mode is needed for simon & scumm
-bool OSystem_GP32::set_sound_proc(SoundProc proc, void *param, SoundFormat format) { 
+bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) { 
 	return false; 
 }
 
-void OSystem_GP32::clear_sound_proc() {
+void OSystem_GP32::clearSoundCallback() {
 	//_sound_proc = NULL;
 	//_sound_proc_param = NULL;
 }

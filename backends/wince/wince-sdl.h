@@ -46,7 +46,7 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 
 	// Overloaded from SDL_Common (toolbar handling)
 	bool poll_event(Event *event);
@@ -61,7 +61,7 @@ public:
 	// Overloaded from SDL_Commmon
 	void quit();
 	// Overloaded from SDL_Commmon (master volume and sample rate subtleties)
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
+	bool setSoundCallback(SoundProc proc, void *param);
 
 	// GUI and action stuff
 	void swap_panel_visibility();

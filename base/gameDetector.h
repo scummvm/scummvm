@@ -54,14 +54,6 @@ struct GameSettings {
 	uint32 features;
 };
 
-struct GraphicsMode {
-	const char *name;
-	const char *description;
-	int id;
-};
-
-extern const GraphicsMode g_gfx_modes[];
-
 class GameDetector {
 	typedef Common::String String;
 
@@ -85,7 +77,6 @@ public:
 	static SoundMixer *createMixer();
 	static MidiDriver *createMidi(int midiDriver);
 
-	static int parseGraphicsMode(const String &s);	// Used in main()
 	static int detectMusicDriver(int midiFlags);
 
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);

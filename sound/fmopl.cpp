@@ -1117,3 +1117,27 @@ int OPLTimerOver(FM_OPL *OPL, int c) {
 		(OPL->TimerHandler)(OPL->TimerParam + c, (double)OPL->T[c] * OPL->TimerBase);
 	return OPL->status >> 7;
 }
+
+FM_OPL *makeAdlibOPL(int rate) {
+	// We need to emulate one YM3812 chip
+	int env_bits = FMOPL_ENV_BITS_HQ;
+	int eg_ent = FMOPL_EG_ENT_HQ;
+#ifdef _WIN32_WCE
+	// TODO: On WinCE, use low quality FMOPL by default. 
+	// FIXME: Don't use 'CE_' or similar prefixes if you need platform specific
+	// config keys. Rather use a seperate config domain - e.g. for WinCE we have
+	// two such domains already, "wince" and "smartfon-keys" (although I wonder
+	// a bit about the latter one).
+	if (ConfMan.getBool("CE_FM_high_quality"))
+		env_bits = FMOPL_ENV_BITS_HQ;
+	else
+		env_bits = FMOPL_ENV_BITS_LQ;
+
+	if (ConfMan.getBool("CE_FM_high_quality"))
+		eg_ent = FMOPL_EG_ENT_HQ;
+	else
+		eg_ent = FMOPL_EG_ENT_LQ;
+#endif
+	OPLBuildTables(env_bits, eg_ent);
+	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
+}

@@ -31,9 +31,6 @@ public:
 	// Update the dirty areas of the screen
 	void update_screen();
 
-	// Set a parameter
-	uint32 property(int param, Property *value);
-
 protected:
 	SDL_Surface *_hwscreen;    // hardware screen
 
@@ -42,7 +39,7 @@ protected:
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
 	virtual bool save_screenshot(const char *filename);
-	void hotswap_gfx_mode();
+	virtual void hotswap_gfx_mode();
 };
 
 OSystem_SDL_Common *OSystem_SDL_Common::create_intern() {
@@ -361,48 +358,6 @@ void OSystem_SDL::update_screen() {
 
 	_num_dirty_rects = 0;
 	_forceFull = false;
-}
-
-uint32 OSystem_SDL::property(int param, Property *value) {
-
-	Common::StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
-
-	if (param == PROP_TOGGLE_FULLSCREEN) {
-		assert(_hwscreen != 0);
-		_full_screen ^= true;
-#ifdef MACOSX
-		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-		// it still always returns -1. So we simply don't call it at all and
-		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
-		hotswap_gfx_mode();
-#else
-		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-			hotswap_gfx_mode();
-		}
-#endif
-		return 1;
-	} else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode > 11)	// FIXME! HACK, hard coded threshold, not good
-			return 0;
-
-		_mode = value->gfx_mode;
-		hotswap_gfx_mode();
-
-		return 1;
-	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
-		if (_screenHeight == 200) {
-			assert(_hwscreen != 0);
-			_adjustAspectRatio ^= true;
-			hotswap_gfx_mode();
-		}
-	} else if (param == PROP_HAS_SCALER) {
-		if (value->gfx_mode <= 11)	// FIXME: Hardcoded
-			return 1;
-		return 0;
-	}
-
-	return OSystem_SDL_Common::property(param, value);
 }
 
 bool OSystem_SDL::save_screenshot(const char *filename) {

@@ -60,7 +60,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void init_size(uint w, uint h);
+	void initSize(uint w, uint h);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -99,9 +99,9 @@ public:
 	bool poll_event(Event *event);
 
 	// Set function that generates samples 
-	bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
+	bool setSoundCallback(SoundProc proc, void *param);
 	
-	void clear_sound_proc();
+	void clearSoundCallback();
 	
 	// Poll cdrom status
 	// Returns true if cd audio is playing
@@ -203,7 +203,6 @@ private:
 typedef struct {
 	OSystem::SoundProc sound_proc;
 	void *param;
-	byte format;
 } THREAD_PARAM;
 
 #undef CAPTURE_SOUND
@@ -417,7 +416,7 @@ uint32 OSystem_X11::get_msecs()
 	                ((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
-void OSystem_X11::init_size(uint w, uint h)
+void OSystem_X11::initSize(uint w, uint h)
 {
 	static XShmSegmentInfo shminfo;
 
@@ -456,24 +455,20 @@ void OSystem_X11::init_size(uint w, uint h)
 	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
-bool OSystem_X11::set_sound_proc(SoundProc proc, void *param, SoundFormat format)
+bool OSystem_X11::setSoundCallback(SoundProc proc, void *param)
 {
 	static THREAD_PARAM thread_param;
 
 	/* And finally start the music thread */
 	thread_param.param = param;
 	thread_param.sound_proc = proc;
-	thread_param.format = format;
 
-	if (format == SOUND_16BIT)
-		pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *)&thread_param);
-	else
-		warning("Only support 16 bit sound for now. Disabling sound ");
+	pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *)&thread_param);
 
 	return true;
 }
 
-void OSystem_X11::clear_sound_proc() {
+void OSystem_X11::clearSoundCallback() {
 	// TODO implement this...
 	// The sound_thread has to be stopped in a nice way. In particular,
 	// using pthread_kill would be a bad idea. Rather, use pthread_cancel,

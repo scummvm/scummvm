@@ -97,7 +97,7 @@ SwordEngine::~SwordEngine() {
 }
 
 void SwordEngine::initialize(void) {
-	_system->init_size(640, 480);
+	_system->initSize(640, 480);
 	debug(5, "Starting memory manager");
 	_memMan = new MemMan();
 	debug(5, "Starting resource manager");

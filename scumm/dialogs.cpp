@@ -321,9 +321,7 @@ MainMenuDialog::~MainMenuDialog() {
 }
 
 void MainMenuDialog::open() {
-	OSystem::Property prop;
-	prop.show_keyboard = true;
-	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	ScummDialog::open();
 }
@@ -360,12 +358,9 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::close() {
-	OSystem::Property prop;
-
 	ScummDialog::close();
 
-	prop.show_keyboard = false;
-	g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void MainMenuDialog::save() {

@@ -127,7 +127,7 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 
 	_fastMode = 0;
 
-	_system->init_size(320, 200);
+	_system->initSize(320, 200);
 }
 
 SkyEngine::~SkyEngine() {

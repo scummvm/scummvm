@@ -803,11 +803,9 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	uint16 cnt;
 	uint8 lookListLen;
 	if (allowSave) {
-		OSystem::Property prop;	
 		lookList = _savePanLookList;
 		lookListLen = 6;
-		prop.show_keyboard = true;
-		_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	} else {
 		lookList = _restorePanLookList;
 		if (autoSaveExists())
@@ -915,9 +913,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	free(saveGameTexts);
 
 	if (allowSave) {
-		OSystem::Property prop;
-		prop.show_keyboard = false;
-		_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	}
 		
 	return clickRes;

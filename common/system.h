@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/savefile.h"
 
+
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
  * which is not currently covered by any of our backends, this is the place
@@ -38,105 +39,115 @@
  */
 class OSystem {
 public:
+	/**
+	 * Return a pointer to the (singleton) OSystem instance, i.e. the backend.
+	 * This is not a proper singleton, since OSystem is an interface, not
+	 * a real class.
+	 */
 	static OSystem *instance();
 
 public:
-	typedef struct Mutex *MutexRef;
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	typedef int (*TimerProc)(int interval);
-
-	/**
-	 * The types of events backends can generate.
-	 * @see Event
-	 */
-	enum EventCode {
-		EVENT_KEYDOWN = 1,
-		EVENT_KEYUP = 2,
-		EVENT_MOUSEMOVE = 3,
-		EVENT_LBUTTONDOWN = 4,
-		EVENT_LBUTTONUP = 5,
-		EVENT_RBUTTONDOWN = 6,
-		EVENT_RBUTTONUP = 7,
-		EVENT_WHEELUP = 8,
-		EVENT_WHEELDOWN = 9,
-
-		EVENT_QUIT = 10,
-		EVENT_SCREEN_CHANGED = 11
-	};
-
-	enum {
-		KBD_CTRL = 1,
-		KBD_ALT = 2,
-		KBD_SHIFT = 4
-	};
-
-	/**
-	 * Data structure for an event. A pointer to an instance of Event
-	 * can be passed to poll_event. 
-	 */
-	struct Event {
-		EventCode event_code;
-		struct {
-			int keycode;
-			uint16 ascii;
-			byte flags;
-		} kbd;
-		struct {
-			int x;
-			int y;
-		} mouse;
-	};
-
-	enum {
-		PROP_TOGGLE_FULLSCREEN = 1,
-		PROP_SET_WINDOW_CAPTION,
-		PROP_OPEN_CD,
-		PROP_SET_GFX_MODE,
-		PROP_GET_GFX_MODE,
-		PROP_GET_SAMPLE_RATE,
-		PROP_GET_FULLSCREEN,
-		PROP_GET_FMOPL_ENV_BITS,
-		PROP_GET_FMOPL_EG_ENT,
-		PROP_TOGGLE_ASPECT_RATIO,
-		PROP_TOGGLE_MOUSE_GRAB,
-		PROP_WANT_RECT_OPTIM,
-		PROP_HAS_SCALER,
-		PROP_TOGGLE_VIRTUAL_KEYBOARD
-	};
-	union Property {
-		const char *caption;
-		int cd_num;
-		int gfx_mode;
-		bool show_cursor;
-		bool show_keyboard;
-	};
-	
-	enum SoundFormat {
-		SOUND_8BIT = 0,
-		SOUND_16BIT = 1
-	};
-
 
 	/** Virtual destructor */
 	virtual ~OSystem() {}
+
+	
+	/** @name Graphics */
+	//@{
+	
+	/**
+	 * A feature in this context means an ability of the backend which can be
+	 * either on or off. Examples include:
+	 *  - fullscreen mode
+	 *  - aspect ration correction
+	 *  - a virtual keyboard for text entry (on PDAs)
+	 */
+	enum Feature {
+		kFeatureFullscreenMode,
+		kFeatureAspectRatioCorrection,
+		kFeatureVirtualKeyboard,
+		kFeatureAutoComputeDirtyRects
+	};
+	
+	/**
+	 * Determine whether the backend supports the specified feature.
+	 */
+	virtual bool hasFeature(Feature f) { return false; }
+
+	/**
+	 * En-/disable the specified feature. For example, this may be used to
+	 * enable fullscreen mode, or to deactivate aspect correction, etc.
+	 */
+	virtual void setFeatureState(Feature f, bool enable) {}
+	
+	/**
+	 * Query the state of the specified feature. For example, test whether
+	 * fullscreen mode is active or not.
+	 */
+	virtual bool getFeatureState(Feature f) { return false; }
+
+	//@}
 
 
 	/** @name Graphics */
 	//@{
 
-	/** Set the size of the video bitmap. Typically 320x200 pixels. */
-	virtual void init_size(uint w, uint h) = 0;
+	struct GraphicsMode {
+		const char *name;
+		const char *description;
+		int id;
+	};
+
+	/**
+	 * Retrieve a list of all graphics modes supported by this backend.
+	 * This can be both video modes as well as graphic filters/scalers;
+	 * it is completely up to the backend maintainer to decide what is
+	 * appropriate here and what not.
+	 * The list is terminated by an all-zero entry.
+	 * @return a list of supported graphics modes
+	 */
+	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
+	
+	/**
+	 * Switch to the specified graphics mode. If switching to the new mode
+	 * failed, this method returns false.
+	 * @param mode	the ID of the new graphics mode
+	 * @return true if the switch was successful, false otherwise
+	 */
+	virtual bool setGraphicsMode(int mode) = 0;
+
+	/**
+	 * Switch to the graphics mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 * @param mode	the name of the new graphics mode
+	 * @return true if the switch was successful, false otherwise
+	 */
+	virtual bool setGraphicsMode(const char *name);
+
+	/**
+	 * Determine which graphics mode is currently active.
+	 * @return the active graphics mode
+	 */
+	virtual int getGraphicsMode() const = 0;
+
+	/**
+	 * Set the size of the video bitmap. Typical sizes include:
+	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
+	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
+	 *  - 640x480 (e.g. for Curse of Monkey Island)
+	 */
+	virtual void initSize(uint w, uint h) = 0;
 
 	/**
 	 * Returns the currently set screen height.
-	 * @see init_size
+	 * @see initSize
 	 * @return the currently set screen height
 	 */
 	virtual int16 get_height() = 0;
 
 	/**
 	 * Returns the currently set screen width.
-	 * @see init_size
+	 * @see initSize
 	 * @return the currently set screen width
 	 */
 	virtual int16 get_width() = 0;
@@ -220,6 +231,50 @@ public:
 	/** @name Events and Time */
 	//@{
 
+	typedef int (*TimerProc)(int interval);
+
+	/**
+	 * The types of events backends can generate.
+	 * @see Event
+	 */
+	enum EventCode {
+		EVENT_KEYDOWN = 1,
+		EVENT_KEYUP = 2,
+		EVENT_MOUSEMOVE = 3,
+		EVENT_LBUTTONDOWN = 4,
+		EVENT_LBUTTONUP = 5,
+		EVENT_RBUTTONDOWN = 6,
+		EVENT_RBUTTONUP = 7,
+		EVENT_WHEELUP = 8,
+		EVENT_WHEELDOWN = 9,
+
+		EVENT_QUIT = 10,
+		EVENT_SCREEN_CHANGED = 11
+	};
+
+	enum {
+		KBD_CTRL = 1,
+		KBD_ALT = 2,
+		KBD_SHIFT = 4
+	};
+
+	/**
+	 * Data structure for an event. A pointer to an instance of Event
+	 * can be passed to poll_event. 
+	 */
+	struct Event {
+		EventCode event_code;
+		struct {
+			int keycode;
+			uint16 ascii;
+			byte flags;
+		} kbd;
+		struct {
+			int x;
+			int y;
+		} mouse;
+	};
+
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 get_msecs() = 0;
 
@@ -242,22 +297,30 @@ public:
 
 	/** @name Sound */
 	//@{
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
+
 	/**
 	 * Set the audio callback which is invoked whenever samples need to be generated.
 	 * Currently, only the 16-bit signed mode is ever used for Simon & Scumm
 	 * @param proc		pointer to the callback.
 	 * @param param		an arbitrary parameter which is stored and passed to proc.
-	 * @param format	the sample type format.
 	 */
-	virtual bool set_sound_proc(SoundProc proc, void *param, SoundFormat format) = 0;
+	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
 
 	/**
-	 * Remove any audio callback previously set via set_sound_proc, thus effectively
+	 * Remove any audio callback previously set via setSoundCallback, thus effectively
 	 * stopping all audio output immediately.
-	 * @see set_sound_proc
+	 * @see setSoundCallback
 	 */
-	virtual void clear_sound_proc() = 0;
-	//@} 
+	virtual void clearSoundCallback() = 0;
+
+	/**
+	 * Determine the output sample rate. Audio data provided by the sound
+	 * callback will be played using this rate.
+	 * @return the output sample rate
+	 */
+	virtual int getOutputSampleRate() const = 0;
+	//@}
 		
 
 
@@ -268,7 +331,13 @@ public:
 	//@{
 
 	/**
-	 * Poll CD status
+	 * Initialise the specified CD drive for audio playback.
+	 * @return true if the CD drive was inited succesfully
+	 */
+	virtual bool openCD(int drive) = 0;
+
+	/**
+	 * Poll CD status.
 	 * @return true if CD audio is playing
 	 */
 	virtual bool poll_cdrom() = 0;
@@ -283,20 +352,24 @@ public:
 	virtual void play_cdrom(int track, int num_loops, int start_frame, int duration) = 0;
 
 	/**
-	// Stop audio CD playback
+	 * Stop audio CD playback.
 	 */
 	virtual void stop_cdrom() = 0;
 
 	/**
-	// Update cdrom audio status
+	 * Update cdrom audio status.
 	 */
 	virtual void update_cdrom() = 0;
+
 	//@} 
 
 
 
 	/** @name Mutex handling */
 	//@{
+
+	typedef struct Mutex *MutexRef;
+
 	/**
 	 * Create a new mutex.
 	 * @return the newly created mutex, or 0 if an error occured.
@@ -341,12 +414,16 @@ public:
 
 	/** @name Miscellaneous */
 	//@{
-	/** Get or set a backend property. */
-	virtual uint32 property(int param, Property *value) = 0;
-
 	/** Quit (exit) the application. */
 	virtual void quit() = 0;
 
+	/**
+	  * Set a window caption or any other comparable status display to the
+	  * given value.
+	  * @param caption	the window caption to use from now on
+	 */
+	virtual void setWindowCaption(const char *caption) {}
+	
 	/** Savefile management. */
 	virtual SaveFileManager *get_savefile_manager() {
 		return new SaveFileManager();
@@ -355,6 +432,7 @@ public:
 };
 
 /** The global OSystem instance. Inited in main(). */
-extern OSystem *g_system;
+#define g_system	(OSystem::instance())
+
 
 #endif 

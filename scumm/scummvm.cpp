@@ -314,7 +314,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _features(gs.features),
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0),
 	  _targetName(detector->_targetName) {
-	OSystem::Property prop;
 
 	// Init all vars - maybe now we can get rid of our custom new/delete operators?
 	_imuse = NULL;
@@ -666,10 +665,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Initialize backend
-	syst->init_size(_screenWidth, _screenHeight);
-	prop.cd_num = ConfMan.getInt("cdrom");
-	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
-		syst->property(OSystem::PROP_OPEN_CD, &prop);
+	syst->initSize(_screenWidth, _screenHeight);
+	int cd_num = ConfMan.getInt("cdrom");
+	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
+		syst->openCD(cd_num);
 
 	// Setup GDI object
 	gdi._numStrips = _screenWidth / 8;

@@ -39,7 +39,7 @@ Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height)
 	if (!_buffer)
 		error("Could not initialise display");
 
-	_vm->_system->init_size(width, height);
+	_vm->_system->initSize(width, height);
 
 	_gridWide = width / CELLWIDE;
 	_gridDeep = height / CELLDEEP;

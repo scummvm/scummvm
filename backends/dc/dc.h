@@ -35,7 +35,7 @@ class OSystem_Dreamcast : public OSystem {
 
   // Set the size of the video bitmap.
   // Typically, 320x200
-  void init_size(uint w, uint h);
+  void initSize(uint w, uint h);
   int16 get_height() { return _screen_h; }
   int16 get_width() { return _screen_w; }
 
@@ -71,8 +71,8 @@ class OSystem_Dreamcast : public OSystem {
   bool poll_event(Event *event);
   
   // Set function that generates samples 
-  bool set_sound_proc(SoundProc proc, void *param, SoundFormat format);
-  void clear_sound_proc();
+  bool setSoundCallback(SoundProc proc, void *param);
+  void clearSoundCallback();
 		
   // Poll cdrom status
   // Returns true if cd audio is playing
