@@ -74,6 +74,8 @@ public:
 	void askForCd(void);
 	bool savegamesExist(void);
 private:
+	int displayMessage(const char* altButton, const char *message, ...);
+
 	void saveGameToFile(uint8 slot);
 	bool restoreGameFromFile(uint8 slot);
 	void readSavegameDescriptions(void);
