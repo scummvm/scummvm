@@ -38,7 +38,7 @@
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
-#include "sound/mixer.h"
+class SoundMixer;
 
 class Sword2Sound {
 	public:
