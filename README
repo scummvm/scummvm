@@ -224,18 +224,9 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-// FIXME: Are these two still present? Many walk-related fixes lately...
-       Indiana Jones & the Last Crusade (EGA):
-       Indiana Jones & the Last Crusade (256):
-                - In some rooms Indy may be able to walk to odd places
-
        Monkey Island 1 (EGA):
        Loom (EGA):
                 - MIDI support requires the Roland update from LucasArts
-
-       Sam and Max:
-                - Highway subgame does not behave correctly.
-                - Music is broken under Dreamcast, causing game freezes
 
        Curse of Monkey Island
                 - Demo does not work correctly
@@ -1113,6 +1104,10 @@ X.X Credits:
         with us the source of some of their brilliant games, allowing us to
         release Beneath a Steel Sky as freeware... and generally being
         supportive above and beyond the call of duty.
+
+        John Passfield and Steve Stamatiadis for sharing the source of their
+        classic title, Flight of the Amazon Queen and also being incredibly
+        supportive.
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
         LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
