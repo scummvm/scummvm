@@ -175,6 +175,7 @@ static const MD5Table md5table[] = {
 	{ "a194f15f51ee62badab74b9e7da97693", "bb2demo", Common::EN_USA, Common::kPlatformPC },
 	{ "a194f15f51ee62badab74b9e7da97693", "byb2001-demo", Common::EN_USA, Common::kPlatformPC },
 	{ "a3036878840720fbefa41e6965fa4a0a", "samnmax", Common::EN_USA, Common::kPlatformPC },
+	{ "a7cacad9c40c4dc9e1812abf6c8af9d5", "TODO", Common::EN_USA, Common::kPlatformMacintosh },
 	{ "a85856675429fe88051744f755b72f93", "farm", Common::EN_USA, Common::kPlatformPC },
 	{ "aa6a91b7f6f119d1b7b1f2a4c9e24d59", "moondemo", Common::EN_USA, Common::kPlatformPC },
 	{ "aa8a0cb65f3afbbe2c14c3f9f92775a3", "monkey", Common::FR_FRA, Common::kPlatformPC },
