@@ -789,6 +789,8 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 				dest[j - left] = pic[j][i];
 		dest += _out.pitch;
 	}
+
+	_vm->markRectAsDirty(kMainVirtScreen, _actorX + left - 128, _actorX + right - 128, _actorY + top - 128, _actorY + bottom - 128);
 }
 
 byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
