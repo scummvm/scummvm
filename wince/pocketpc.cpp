@@ -34,6 +34,18 @@
 GameDetector detector;
 Gui gui;
 Scumm *g_scumm;
+Config *scummcfg;
+
+extern void Cls();
+
+extern BOOL isPrescanning();
+extern void changeScanPath();
+extern void startScan();
+extern void endScanPath();
+extern void abortScanPath();
+
+void registry_init();
+void keypad_init();
 
 extern void Cls();
 
@@ -340,6 +352,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	int argc = 3;
 	char* argv[3];
 	char argdir[MAX_PATH];
+
 	sound_activated = true;
 	hide_toolbar = false;
 
@@ -350,6 +363,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	if (!argv[1])
 		return 0;
+
+	scummcfg = new Config("scummvm.ini", "scummvm");
 
 	if (detector.detectMain(argc, argv))
 		return (-1);
@@ -932,7 +947,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	force_full = true;
 
 	_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
-	_ms_backup = (byte*)malloc((40 * 40) * sizeof(byte));
+	_ms_backup = (byte*)malloc((40 * 40 * 3) * sizeof(byte));
 }
 
 void OSystem_WINCE3::unload_gfx_mode() {
