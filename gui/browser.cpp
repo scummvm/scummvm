@@ -88,9 +88,6 @@ void BrowserDialog::open()
 
 void BrowserDialog::close()
 {
-	delete _node;
-	_node = 0;
-
 	delete _nodeContent;
 	_nodeContent = 0;
 
