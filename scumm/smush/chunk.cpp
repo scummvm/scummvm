@@ -38,7 +38,7 @@ public:
 		_curPos(0) {
 			debug(9, "FilePtr created for %s", fname);
 			_ifs.open(fname, directory);
-			if(_ifs.isOpen() == false) error("FilePtr unable to read file %s", fname);
+			if (_ifs.isOpen() == false) error("FilePtr unable to read file %s", fname);
 		}
 
 	~FilePtr() {
@@ -51,7 +51,7 @@ public:
 	}
 
 	bool seek(int32 pos) {
-		if(pos != _curPos) {
+		if (pos != _curPos) {
 			_ifs.seek(pos, SEEK_SET);
 			_curPos = pos;
 		}
@@ -69,7 +69,7 @@ public:
 	}
 
 	void decRef() {
-		if(--_refcount == 0)
+		if (--_refcount == 0)
 			delete this;
 	}
 };
@@ -112,19 +112,19 @@ bool BaseChunk::seek(int32 delta, seek_type dir) {
 			_curPos += delta;
 			break;
 		case seek_start:
-			if(delta < 0)
+			if (delta < 0)
 				error("invalid seek request");
 
 			_curPos = (uint32)delta;
 			break;
 		case seek_end:
-			if(delta > 0 || _size < (uint32)-delta)
+			if (delta > 0 || _size < (uint32)-delta)
 				error("invalid seek request");
 
 			_curPos = (uint32)(_size + delta);
 			break;
 	}
-	if(_curPos > _size) {
+	if (_curPos > _size) {
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
 	return true;
@@ -145,7 +145,7 @@ FileChunk::FileChunk(const char *fname, const char *directory) {
 }
 
 FileChunk::~FileChunk() {
-	if(_data)
+	if (_data)
 		_data->decRef();
 }
 
@@ -166,7 +166,7 @@ Chunk *FileChunk::subBlock() {
 }
 
 bool FileChunk::read(void *buffer, uint32 size) {
-	if(size <= 0 || (_curPos + size) > _size)
+	if (size <= 0 || (_curPos + size) > _size)
 		error("invalid buffer read request");
 
 	_data->seek(_offset + _curPos);
@@ -176,7 +176,7 @@ bool FileChunk::read(void *buffer, uint32 size) {
 }
 
 int8 FileChunk::getChar() {
-	if(_curPos >= _size)
+	if (_curPos >= _size)
 		error("invalid char read request");
 
 	_data->seek(_offset + _curPos);
@@ -187,7 +187,7 @@ int8 FileChunk::getChar() {
 }
 
 byte FileChunk::getByte() {
-	if(_curPos >= _size)
+	if (_curPos >= _size)
 		error("invalid byte read request");
 
 	_data->seek(_offset + _curPos);
@@ -203,7 +203,7 @@ int16 FileChunk::getShort() {
 }
 
 uint16 FileChunk::getWord() {
-	if(_curPos >= _size - 1)
+	if (_curPos >= _size - 1)
 		error("invalid word read request");
 
 	_data->seek(_offset + _curPos);
@@ -214,7 +214,7 @@ uint16 FileChunk::getWord() {
 }
 
 uint32 FileChunk::getDword() {
-	if(_curPos >= _size - 3)
+	if (_curPos >= _size - 3)
 		error("invalid dword read request");
 
 	_data->seek(_offset + _curPos);
@@ -225,7 +225,7 @@ uint32 FileChunk::getDword() {
 }
 
 MemoryChunk::MemoryChunk(byte *data) {
-	if(data == 0)
+	if (data == 0)
 		error("Chunk() called with NULL pointer");
 
 	_type = (Chunk::type)READ_BE_UINT32(data);
@@ -241,7 +241,7 @@ Chunk *MemoryChunk::subBlock() {
 }
 
 bool MemoryChunk::read(void *buffer, uint32 size) {
-	if(size <= 0 || (_curPos + size) > _size)
+	if (size <= 0 || (_curPos + size) > _size)
 		error("invalid buffer read request");
 
 	memcpy(buffer, _data + _curPos, size);
@@ -250,14 +250,14 @@ bool MemoryChunk::read(void *buffer, uint32 size) {
 }
 
 int8 MemoryChunk::getChar() {
-	if(_curPos >= _size)
+	if (_curPos >= _size)
 		error("invalid char read request");
 
 	return _data[_curPos++];
 }
 
 byte MemoryChunk::getByte() {
-	if(_curPos >= _size)
+	if (_curPos >= _size)
 		error("invalid byte read request");
 
 	byte *ptr = (byte *)(_data + _curPos);
@@ -266,7 +266,7 @@ byte MemoryChunk::getByte() {
 }
 
 int16 MemoryChunk::getShort() {
-	if(_curPos >= _size - 1)
+	if (_curPos >= _size - 1)
 		error("invalid int16 read request");
 
 	int16 buffer = getWord();
@@ -274,7 +274,7 @@ int16 MemoryChunk::getShort() {
 }
 
 uint16 MemoryChunk::getWord() {
-	if(_curPos >= _size - 1)
+	if (_curPos >= _size - 1)
 		error("invalid word read request");
 
 	uint16 *ptr = (uint16 *)(_data + _curPos);
@@ -283,7 +283,7 @@ uint16 MemoryChunk::getWord() {
 }
 
 uint32 MemoryChunk::getDword() {
-	if(_curPos >= _size - 3)
+	if (_curPos >= _size - 3)
 		error("invalid dword read request");
 
 	uint32 *ptr = (uint32 *)(_data + _curPos);

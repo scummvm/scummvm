@@ -27,14 +27,14 @@ void smush_decode_codec1(byte *dst, byte *src, int height) {
 	int32 length;
 	int h = height, size_line;
 
-	for(h = 0; h < height; h++) {
+	for (h = 0; h < height; h++) {
 		size_line = READ_LE_UINT16(src);
 		src += 2;
-		while(size_line > 0) {
+		while (size_line > 0) {
 			code = *src++;
 			size_line--;
 			length = (code >> 1) + 1;
-			if(code & 1) {
+			if (code & 1) {
 				val = *src++;
 				size_line--;
 				if (val)
@@ -42,7 +42,7 @@ void smush_decode_codec1(byte *dst, byte *src, int height) {
 				dst += length;
 			} else {
 				size_line -= length;
-				while(length--) {
+				while (length--) {
 					val = *src++;
 					if (val)
 						*dst = val;

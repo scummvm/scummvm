@@ -33,13 +33,13 @@
 		(dst)[1] = (src)[1];	\
 		(dst)[2] = (src)[2];	\
 		(dst)[3] = (src)[3];	\
-	} while(0)
+	} while (0)
 
 #define COPY_2X1_LINE(dst, src)			\
 	do {					\
 		(dst)[0] = (src)[0];	\
 		(dst)[1] = (src)[1];	\
-	} while(0)
+	} while (0)
 
 
 #else /* SCUMM_NEED_ALIGNMENT */
@@ -58,13 +58,13 @@
 		(dst)[1] = val;	\
 		(dst)[2] = val;	\
 		(dst)[3] = val;	\
-	} while(0)
+	} while (0)
 
 #define FILL_2X1_LINE(dst, val)			\
 	do {					\
 		(dst)[0] = val;	\
 		(dst)[1] = val;	\
-	} while(0)
+	} while (0)
 
 #ifdef __PALM_OS__
 static int32 *codec37_table;
@@ -311,7 +311,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 	for (x = 0; x < 16; x++) {
 		value_table37_1_1 = table37_1[x];
 		value_table37_2_1 = table37_2[x];
-		for(y = 0; y < 16; y++) {
+		for (y = 0; y < 16; y++) {
 			value_table37_1_2 = table37_1[y];
 			value_table37_2_2 = table37_2[y];
 
@@ -382,7 +382,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 				} else if ((b1 == 2 && b2 != 3) || (b2 == 2 && b1 != 3)) {
 					if (variable4 >= 0) {
 						i = variable4 + 1;
-						while(i--) {
+						while (i--) {
 							*(ptr_small_big--) = 1;
 						}
 					}
@@ -390,7 +390,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
 					if (param > variable4) {
 						i = param - variable4;
-						while(i--) {
+						while (i--) {
 							*(ptr_small_big++) = 1;
 						}
 					}
@@ -532,14 +532,14 @@ void Codec47Decoder::level2(byte *d_dst) {
 		int32 l = tmp_ptr[96];
 		byte val = *_d_src++;
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
-		while(l--) {
+		while (l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[97];
 		val = *_d_src++;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 32);
-		while(l--) {
+		while (l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
@@ -593,14 +593,14 @@ void Codec47Decoder::level1(byte *d_dst) {
 		byte l = tmp_ptr[384];
 		byte val = *_d_src++;
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
-		while(l--) {
+		while (l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[385];
 		val = *_d_src++;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 128);
-		while(l--) {
+		while (l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
@@ -664,7 +664,7 @@ Codec47Decoder::Codec47Decoder() {
 
 void Codec47Decoder::deinit() {
 	_lastTableWidth = -1;
-	if(_deltaBuf) {
+	if (_deltaBuf) {
 		delete []_deltaBuf;
 		_deltaSize = 0;
 		_deltaBuf = 0;

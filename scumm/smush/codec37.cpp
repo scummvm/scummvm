@@ -32,13 +32,13 @@ void Codec37Decoder::init(int width, int height) {
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3 + 0x13600;
 	_deltaBuf = (byte *)calloc(_deltaSize, sizeof(byte));
-	if(_deltaBuf == 0)
+	if (_deltaBuf == 0)
 		error("unable to allocate decoder buffer");
 	_deltaBufs[0] = _deltaBuf + 0x4D80;
 	_deltaBufs[1] = _deltaBuf + 0xE880 + _frameSize;
 	_offsetTable = new int16[255];
 	_curtable = 0;
-	if(_offsetTable == 0)
+	if (_offsetTable == 0)
 		error("unable to allocate decoder offset table");
 	_tableLastPitch = -1;
 	_tableLastIndex = -1;
@@ -57,13 +57,13 @@ Codec37Decoder::Codec37Decoder() {
 }
 
 void Codec37Decoder::deinit() {
-	if(_offsetTable) {
+	if (_offsetTable) {
 		delete []_offsetTable;
 		_offsetTable = 0;
 		_tableLastPitch = -1;
 		_tableLastIndex = -1;
 	}
-	if(_deltaBuf) {
+	if (_deltaBuf) {
 		free(_deltaBuf);
 		_deltaSize = 0;
 		_deltaBuf = 0;
@@ -258,16 +258,16 @@ void Codec37Decoder::maketable(int pitch, int index) {
 #define WRITE_4X1_LINE(dst, v)			\
 	do {					\
 		int j;				\
-		for(j=0; j<4; j++)		\
+		for (j=0; j<4; j++)		\
 			(dst)[j] = v;		\
-	} while(0)
+	} while (0)
 
 #define COPY_4X1_LINE(dst, src)			\
 	do {					\
 		int j;				\
-		for(j=0; j<4; j++)		\
+		for (j=0; j<4; j++)		\
 			(dst)[j] = (src)[j];	\
-	} while(0)
+	} while (0)
 
 #else /* SCUMM_NEED_ALIGNMENT */
 
@@ -278,7 +278,7 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	do {						\
 		v = *src++;				\
 		v += (v << 8) + (v << 16) + (v << 24);	\
-	} while(0)
+	} while (0)
 
 #define WRITE_4X1_LINE(dst, v)			\
 	*(uint32 *)(dst) = v
@@ -295,11 +295,11 @@ void Codec37Decoder::maketable(int pitch, int index) {
 		int x;						\
 		DECLARE_LITERAL_TEMP(t);			\
 		READ_LITERAL_PIXEL(src, t);			\
-		for(x=0; x<4; x++) {				\
+		for (x=0; x<4; x++) {				\
 			WRITE_4X1_LINE(dst + pitch * x, t);	\
 		}						\
 		dst += 4;					\
-	} while(0)
+	} while (0)
 
 /* Fill four 4x1 pixel blocks with literal pixel values */
 
@@ -307,35 +307,35 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	do {							\
   		int x;						\
 		DECLARE_LITERAL_TEMP(t);			\
-		for(x=0; x<4; x++) {				\
+		for (x=0; x<4; x++) {				\
 			READ_LITERAL_PIXEL(src, t);		\
 			WRITE_4X1_LINE(dst + pitch * x, t);	\
 		}						\
 		dst += 4;					\
-	} while(0)
+	} while (0)
 
 /* Fill sixteen 1x1 pixel blocks with literal pixel values */
 
 #define LITERAL_1X1(src, dst, pitch)				\
 	do {							\
 		int x;						\
-		for(x=0; x<4; x++) {				\
+		for (x=0; x<4; x++) {				\
 			COPY_4X1_LINE(dst + pitch * x, src);	\
 			src += 4;				\
 		}						\
 		dst += 4;					\
-	} while(0)
+	} while (0)
 
 /* Copy a 4x4 pixel block from a different place in the framebuffer */
 
 #define COPY_4X4(dst2, dst, pitch)					  \
 	do {								  \
 		int x;							  \
-		for(x=0; x<4; x++) {					  \
+		for (x=0; x<4; x++) {					  \
 			COPY_4X1_LINE(dst + pitch * x, dst2 + pitch * x); \
 		}							  \
 		dst += 4;						  \
-	} while(0)
+	} while (0)
 
 void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
@@ -396,7 +396,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 						i = bw;
 					}
 				}
-				if(bh == 0) {
+				if (bh == 0) {
 					return;
 				}
 				i++;
@@ -428,7 +428,7 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 						i = bw;
 					}
 				}
-				if(bh == 0) {
+				if (bh == 0) {
 					return;
 				}
 				i++;
@@ -480,7 +480,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 			_curtable ^= 1;
 		}
 
-		if((mask_flags & 4) != 0) {
+		if ((mask_flags & 4) != 0) {
 			proc3WithFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);
@@ -495,7 +495,7 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 			_curtable ^= 1;
 		}
 
-		if((mask_flags & 4) != 0) {
+		if ((mask_flags & 4) != 0) {
 			proc4WithFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);

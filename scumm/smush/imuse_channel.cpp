@@ -36,10 +36,10 @@ ImuseChannel::ImuseChannel(int32 track, int32 freq) :
 }
 
 ImuseChannel::~ImuseChannel() {
-	if(_tbuffer) {
+	if (_tbuffer) {
 		delete []_tbuffer; 
 	}
-	if(_sbuffer) {
+	if (_sbuffer) {
 		warning("_sbuffer should be 0 !!!");
 		delete []_sbuffer; 
 	}
@@ -70,26 +70,26 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 }
 
 bool ImuseChannel::appendData(Chunk &b, int32 size) {
-	if(_dataSize == -1) {
+	if (_dataSize == -1) {
 		assert(size > 8);
 		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES(imus_type);
 		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES(imus_size);
-		if(imus_type != TYPE_iMUS)
+		if (imus_type != TYPE_iMUS)
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
 		_tbufferSize = size;
 		assert(_tbufferSize);
 		_tbuffer = new byte[_tbufferSize];
-		if(!_tbuffer)
+		if (!_tbuffer)
 			error("imuse_channel failed to allocate memory");
 		b.read(_tbuffer, size);
 		_dataSize = -2;
 	} else {
-		if(_tbuffer) {
+		if (_tbuffer) {
 			byte *old = _tbuffer;
 			int32 new_size = size + _tbufferSize;
 			_tbuffer = new byte[new_size];
-			if(!_tbuffer)
+			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
 			delete []old;
@@ -98,7 +98,7 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 		} else {
 			_tbufferSize = size;
 			_tbuffer = new byte[_tbufferSize];
-			if(!_tbuffer)
+			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			b.read(_tbuffer, size);
 		}
@@ -107,7 +107,7 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 }
 
 bool ImuseChannel::handleFormat(Chunk &src) {
-	if(src.getSize() != 20) error("invalid size for FRMT Chunk");
+	if (src.getSize() != 20) error("invalid size for FRMT Chunk");
 	uint32 imuse_start = src.getDword();
 	imuse_start = SWAP_BYTES(imuse_start);
 	src.seek(4);
@@ -126,19 +126,19 @@ bool ImuseChannel::handleText(Chunk &src) {
 }
 
 bool ImuseChannel::handleRegion(Chunk &src) {
-	if(src.getSize() != 8)
+	if (src.getSize() != 8)
 		error("invalid size for REGN Chunk");
 	return true;
 }
 
 bool ImuseChannel::handleStop(Chunk &src) {
-	if(src.getSize() != 4)
+	if (src.getSize() != 4)
 		error("invalid size for STOP Chunk");
 	return true;
 }
 
 bool ImuseChannel::handleMap(Chunk &map) {
-	while(!map.eof()) {
+	while (!map.eof()) {
 		Chunk *sub = map.subBlock();
 		switch(sub->getType()) {
 			case TYPE_FRMT:
@@ -163,10 +163,10 @@ bool ImuseChannel::handleMap(Chunk &map) {
 
 void ImuseChannel::decode() {
 	int remaining_size = _sbufferSize % 3;
-	if(remaining_size) {
+	if (remaining_size) {
 		_srbufferSize -= remaining_size;
 		assert(_inData);
-		if(_tbuffer == 0) {
+		if (_tbuffer == 0) {
 			_tbuffer = new byte[remaining_size];
 			memcpy(_tbuffer, _sbuffer + _sbufferSize - remaining_size, remaining_size);
 			_tbufferSize = remaining_size;
@@ -177,7 +177,7 @@ void ImuseChannel::decode() {
 			byte *old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
 			_tbuffer = new byte[new_size];
-			if(!_tbuffer)  error("imuse_channel failed to allocate memory");
+			if (!_tbuffer)  error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
 			delete []old;
 			memcpy(_tbuffer + _tbufferSize, _sbuffer + _sbufferSize - remaining_size, remaining_size);
@@ -191,7 +191,7 @@ void ImuseChannel::decode() {
 	keep = decoded = new byte[new_size * 2];
 	assert(keep);
 	unsigned char * source = _sbuffer;
-		while(loop_size--) {
+		while (loop_size--) {
 		byte v1 =  *source++;
 		byte v2 =  *source++;
 		byte v3 =  *source++;
@@ -208,14 +208,14 @@ void ImuseChannel::decode() {
 }
 
 bool ImuseChannel::handleSubTags(int32 &offset) {
-	if(_tbufferSize - offset >= 8) {
+	if (_tbufferSize - offset >= 8) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch(type) {
 			case TYPE_MAP_: 
 				_inData = false;
-				if(available_size >= (size + 8)) {
+				if (available_size >= (size + 8)) {
 					MemoryChunk c((byte *)_tbuffer + offset);
 					handleMap(c);
 				}
@@ -226,16 +226,16 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 				offset += 8;
 				{
 					int reqsize = 1;
-					if(_channels == 2)
+					if (_channels == 2)
 						reqsize *= 2;
-					if(_bitsize == 16)
+					if (_bitsize == 16)
 						reqsize *= 2;
-					else if(_bitsize == 12) {
-						if(reqsize > 1)
+					else if (_bitsize == 12) {
+						if (reqsize > 1)
 							reqsize = reqsize * 3 / 2;
 						else reqsize = 3;
 					}
-					if((size % reqsize) != 0) {
+					if ((size % reqsize) != 0) {
 						debug(2, "Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);
 						size += 3 - (size % reqsize);
 					}
@@ -256,23 +256,23 @@ bool ImuseChannel::processBuffer() {
 	assert(_sbuffer == 0);
 	assert(_sbufferSize == 0);
 	
-	if(_inData) {
-		if(_dataSize < _tbufferSize) {			
+	if (_inData) {
+		if (_dataSize < _tbufferSize) {			
 			int32 offset= _dataSize;
-			while(handleSubTags(offset));
+			while (handleSubTags(offset));
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
-			if(offset < _tbufferSize) {
+			if (offset < _tbufferSize) {
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
-				if(!_tbuffer) error("imuse_channel failed to allocate memory");
+				if (!_tbuffer) error("imuse_channel failed to allocate memory");
 				memcpy(_tbuffer, _sbuffer + offset, new_size);
 				_tbufferSize = new_size;
 			} else {
 				_tbuffer = 0;
 				_tbufferSize = 0;
 			}
-			if(_sbufferSize == 0) {
+			if (_sbufferSize == 0) {
 				delete []_sbuffer; 
 				_sbuffer = 0;
 			}
@@ -284,22 +284,22 @@ bool ImuseChannel::processBuffer() {
 		}
 	} else {
 		int32 offset = 0;
-		while(handleSubTags(offset));
-		if(_inData) {
+		while (handleSubTags(offset));
+		if (_inData) {
 			_sbufferSize = _tbufferSize - offset;
 			assert(_sbufferSize);
 			_sbuffer = new byte[_sbufferSize];
-			if(!_sbuffer) error("imuse_channel failed to allocate memory");
+			if (!_sbuffer) error("imuse_channel failed to allocate memory");
 			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
 			delete []_tbuffer;
 			_tbuffer = 0;
 			_tbufferSize = 0;
 		} else {
-			if(offset) {
+			if (offset) {
 				byte * old = _tbuffer;
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
-				if(!_tbuffer) error("imuse_channel failed to allocate memory");
+				if (!_tbuffer) error("imuse_channel failed to allocate memory");
 				memcpy(_tbuffer, old + offset, new_size);
 				_tbufferSize = new_size;
 				delete []old;
@@ -307,23 +307,23 @@ bool ImuseChannel::processBuffer() {
 		}
 	}
 	_srbufferSize = _sbufferSize;
-	if(_sbuffer && _bitsize == 12) decode();
+	if (_sbuffer && _bitsize == 12) decode();
 	return true;
 }
 
 int32 ImuseChannel::availableSoundData(void) const {
 	int32 ret = _sbufferSize;
-	if(_channels == 2) ret /= 2;
-	if(_bitsize > 8) ret /= 2;
+	if (_channels == 2) ret /= 2;
+	if (_bitsize > 8) ret /= 2;
 	return ret;
 }
 
 void ImuseChannel::getSoundData(int16 *snd, int32 size) {
-	if(_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
-	if(_channels == 2) size *= 2;
+	if (_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
+	if (_channels == 2) size *= 2;
 	byte * buf = (byte*)snd;
-	if(_rate == 11025) {
-		for(int32 i = 0; i < size; i++) {
+	if (_rate == 11025) {
+		for (int32 i = 0; i < size; i++) {
 			byte sample1 = *(_sbuffer + i * 2);
 			byte sample2 = *(_sbuffer + i * 2 + 1);
 			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
@@ -333,7 +333,7 @@ void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 			buf[i * 4 + 3] = buf[i * 4 + 1];
 		}
 	} else {
-		for(int32 i = 0; i < size; i++){
+		for (int32 i = 0; i < size; i++){
 			byte sample1 = *(_sbuffer + i * 2);
 			byte sample2 = *(_sbuffer + i * 2 + 1);
 			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
@@ -349,15 +349,15 @@ void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 }
 
 void ImuseChannel::getSoundData(int8 *snd, int32 size) {
-	if(_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
-	if(_channels == 2) size *= 2;
-	if(_rate == 11025) {
-		for(int32 i = 0; i < size; i++) {
+	if (_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
+	if (_channels == 2) size *= 2;
+	if (_rate == 11025) {
+		for (int32 i = 0; i < size; i++) {
 			snd[i * 2] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
 			snd[i * 2 + 1] = snd[i * 2];
 		}
 	} else {
-		for(int32 i = 0; i < size; i++){
+		for (int32 i = 0; i < size; i++){
 			snd[i] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
 		}
 	}

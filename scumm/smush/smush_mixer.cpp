@@ -32,7 +32,7 @@ SmushMixer::SmushMixer(SoundMixer *m) :
 	_mixer(m),
 	_nextIndex(_mixer->_beginSlots),
 	_soundFrequency(22050) {
-	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = NULL;
 		_channels[i].first = true;
@@ -44,8 +44,8 @@ SmushMixer::~SmushMixer() {
 
 SmushChannel *SmushMixer::findChannel(int32 track) {
 	debug(9, "SmushMixer::findChannel(%d)", track);
-	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		if(_channels[i].id == track)
+	for (int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+		if (_channels[i].id == track)
 			return _channels[i].chan;
 	}
 	return NULL;
@@ -57,15 +57,15 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 
 	debug(9, "SmushMixer::addChannel(%d)", track);
 
-	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		if(_channels[i].id == track)
+	for (i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+		if (_channels[i].id == track)
 			warning("SmushMixer::addChannel(%d) : channel already exists", track);
 	}
-	if(_nextIndex >= SoundMixer::NUM_CHANNELS)
+	if (_nextIndex >= SoundMixer::NUM_CHANNELS)
 		_nextIndex = _mixer->_beginSlots;
 
-	for(i = _nextIndex; i < SoundMixer::NUM_CHANNELS; i++) {
-		if(_channels[i].chan == NULL || _channels[i].id == -1) {
+	for (i = _nextIndex; i < SoundMixer::NUM_CHANNELS; i++) {
+		if (_channels[i].chan == NULL || _channels[i].id == -1) {
 			_channels[i].chan = c;
 			_channels[i].id = track;
 			_channels[i].first = true;
@@ -74,8 +74,8 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 		}
 	}
 
-	for(i = _mixer->_beginSlots; i < _nextIndex; i++) {
-		if(_channels[i].chan == NULL || _channels[i].id == -1)	{
+	for (i = _mixer->_beginSlots; i < _nextIndex; i++) {
+		if (_channels[i].chan == NULL || _channels[i].id == -1)	{
 			_channels[i].chan = c;
 			_channels[i].id = track;
 			_channels[i].first = true;
@@ -86,7 +86,7 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 
 	warning("_nextIndex == %d", _nextIndex);
 
-	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+	for (i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		warning("channel %d : %p(%d, %d) %d %d", i, (void *)_channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
@@ -99,9 +99,9 @@ bool SmushMixer::addChannel(SmushChannel *c) {
 
 bool SmushMixer::handleFrame() {
 	debug(9, "SmushMixer::handleFrame()");
-	for(int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		if(_channels[i].id != -1) {
-			if(_channels[i].chan->isTerminated()) {
+	for (int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+		if (_channels[i].id != -1) {
+			if (_channels[i].chan->isTerminated()) {
 				delete _channels[i].chan;
 				_channels[i].id = -1;
 				_channels[i].chan = NULL;
@@ -113,14 +113,14 @@ bool SmushMixer::handleFrame() {
 				int32 size = _channels[i].chan->availableSoundData();
 				int32 flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
-				if(is_short) {
+				if (is_short) {
 					short *data = new int16[size * (stereo ? 2 : 1) * 2];
 					_channels[i].chan->getSoundData(data, size);
-					if(_channels[i].chan->getRate() == 11025) size *= 2;
+					if (_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 4 : 2;
 
-					if(_silentMixer == false) {
-						if(_channels[i].first) {
+					if (_silentMixer == false) {
+						if (_channels[i].first) {
 							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_16BITS);
 							_channels[i].first = false;
 						} else {
@@ -132,11 +132,11 @@ bool SmushMixer::handleFrame() {
 				} else {
 					int8 *data = new int8[size * (stereo ? 2 : 1) * 2];
 					_channels[i].chan->getSoundData(data, size);
-					if(_channels[i].chan->getRate() == 11025) size *= 2;
+					if (_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 2 : 1;
 
-					if(_silentMixer == false) {
-						if(_channels[i].first) {
+					if (_silentMixer == false) {
+						if (_channels[i].first) {
 							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
 							_channels[i].first = false;
 						} else {
@@ -154,8 +154,8 @@ bool SmushMixer::handleFrame() {
 
 bool SmushMixer::stop() {
 	debug(9, "SmushMixer::stop()");
-	for(int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		if(_channels[i].id != -1) {
+	for (int i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
+		if (_channels[i].id != -1) {
 			delete _channels[i].chan;
 			_channels[i].id = -1;
 			_channels[i].chan = NULL;

@@ -57,25 +57,25 @@ public:
 		_lastId(-1) {
 	};
 	~StringResource() {
-		for(int32 i = 0; i < _nbStrings; i++) {
+		for (int32 i = 0; i < _nbStrings; i++) {
 			delete []_strings[i].string;
 		}
 	}
 
 	bool init(char *buffer, int32 length) {
 		char *def_start = strchr(buffer, '#');
-		while(def_start != NULL) {
+		while (def_start != NULL) {
 			char *def_end = strchr(def_start, '\n');
 			assert(def_end != NULL);
 
 			char *id_end = def_end;
-			while(id_end >= def_start && !isdigit(*(id_end-1))) { 
+			while (id_end >= def_start && !isdigit(*(id_end-1))) { 
 				id_end--;
 			}
 
 			assert(id_end > def_start);
 			char *id_start = id_end;
-			while(isdigit(*(id_start - 1))) {
+			while (isdigit(*(id_start - 1))) {
 				id_start--;
 			}
 
@@ -85,17 +85,17 @@ public:
 			int32 id = atoi(idstring);
 			char *data_start = def_end;
 
-			while(*data_start == '\n' || *data_start == '\r') {
+			while (*data_start == '\n' || *data_start == '\r') {
 				data_start++;
 			}
 			char *data_end = data_start;
 
-			while(1) {
-				if(data_end[-2] == '\r' && data_end[1] == '\n' && data_end[-1] == '\n' && data_end[0] == '\r') {
+			while (1) {
+				if (data_end[-2] == '\r' && data_end[1] == '\n' && data_end[-1] == '\n' && data_end[0] == '\r') {
 					break;
 				}
 				data_end++;
-				if(data_end >= buffer + length) {
+				if (data_end >= buffer + length) {
 					data_end = buffer + length;
 					break;
 				}
@@ -130,11 +130,11 @@ public:
 	}
 
 	const char *get(int id) {
-		if(id == _lastId) {
+		if (id == _lastId) {
 			return _lastString;
 		}
-		for(int i = 0; i < _nbStrings; i++) {
-			if(_strings[i].id == id) {
+		for (int i = 0; i < _nbStrings; i++) {
+			if (_strings[i].id == id) {
 				_lastId = id;
 				_lastString = _strings[i].string;
 				return _strings[i].string;
@@ -161,19 +161,19 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
 
-	if(is_encoded) {
+	if (is_encoded) {
 		static const int32 ETRS_HEADER_LENGTH = 16;
 		assert(length > ETRS_HEADER_LENGTH);
 		Chunk::type type = READ_BE_UINT32(filebuffer);
 
-		if(type != TYPE_ETRS) {
+		if (type != TYPE_ETRS) {
 			delete [] filebuffer;
 			return getStrings(file, directory, false);
 		}
 
 		char *old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH + 1];
-		for(int32 i = ETRS_HEADER_LENGTH; i < length; i++) {
+		for (int32 i = ETRS_HEADER_LENGTH; i < length; i++) {
 			filebuffer[i - ETRS_HEADER_LENGTH] = old[i] ^ 0xCC;
 		}
 		filebuffer[length - ETRS_HEADER_LENGTH] = '\0';
@@ -191,7 +191,7 @@ SmushPlayer *player;
 
 void smush_callback(void *ptr) {
 	Scumm *scumm = (Scumm *)ptr;
-	if (scumm->_smushPlay == false)
+	if (!scumm->_smushPlay)
 		return;
 
 	player->_smushProcessFrame = true;
@@ -256,19 +256,19 @@ void SmushPlayer::deinit() {
 	while (_smushProcessFrame) {}
 	_scumm->_timer->releaseProcedure(&smush_callback);
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
 			delete _sf[i];
 			_sf[i] = NULL;
 		}
 	}
 
-	if(_strings) {
+	if (_strings) {
 		delete _strings;
 		_strings = NULL;
 	}
 
-	if(_smixer) {
+	if (_smixer) {
 		_smixer->stop();
 		delete _smixer;
 		_smixer = NULL;
@@ -284,28 +284,28 @@ void SmushPlayer::deinit() {
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
-	if(type_expected != b.getType()) {
+	if (type_expected != b.getType()) {
 		error("Chunk type is different from expected : %d != %d", b.getType(), type_expected);
 	}
-	if(min_size > b.getSize()) {
+	if (min_size > b.getSize()) {
 		error("Chunk size is inferior than minimum required size : %d < %d", b.getSize(), min_size);
 	}
 }
 
 void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk &b, int32 size) {
 	debug(6, "SmushPlayer::handleSoundBuffer(%d)", track_id);
-//	if((flags & 128) == 128) {
+//	if ((flags & 128) == 128) {
 //		return;
 //	}
-//	if((flags & 64) == 64) {
+//	if ((flags & 64) == 64) {
 //		return;
 //	}
 	SmushChannel *c = _smixer->findChannel(track_id);
-	if(c == NULL) {
+	if (c == NULL) {
 		c = new SaudChannel(track_id, _soundFrequency);
 		_smixer->addChannel(c);
 	}
-	if(index == 0) {
+	if (index == 0) {
 		c->setParameters(max_frames, flags, vol, bal);
 	}	else {
 		c->checkParameters(index, max_frames, flags, vol, bal);
@@ -324,7 +324,7 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	int32 vol = b.getByte();
 	int32 bal = b.getChar();
 #ifdef DEBUG
-	if(index == 0) {
+	if (index == 0) {
 		debug(5, "track_id == %d, max_frames == %d, %d, %d, %d", track_id, max_frames, flags, vol, bal);
 	}
 #endif
@@ -336,7 +336,7 @@ void SmushPlayer::handleSkip(Chunk &b) {
 	checkBlock(b, TYPE_SKIP, 4);
 	int32 code = b.getDword();
 	debug(6, "SmushPlayer::handleSkip(%d)", code);
-	if(code >= 0 && code < 37)
+	if (code >= 0 && code < 37)
 		_skipNext = _skips[code];
 	else
 		_skipNext = true;
@@ -361,11 +361,11 @@ void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes,
 	int32 track = (track_flags << 16) | track_id;
 
 	SmushChannel *c = _smixer->findChannel(track);
-	if(c == 0) {
+	if (c == 0) {
 		c = new ImuseChannel(track, _soundFrequency);
 		_smixer->addChannel(c);
 	}
-	if(index == 0)
+	if (index == 0)
 		c->setParameters(nbframes, size, track_flags, unk1);
 	else
 		c->checkParameters(index, nbframes, size, track_flags, unk1);
@@ -496,24 +496,24 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		b.read(string, b.getSize() - 16);
 	} else {
 		int string_id = b.getWord();
-		if(!_strings)
+		if (!_strings)
 			return;
 		str = _strings->get(string_id);
 	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
-	if((!_subtitles) && ((flags & 8) == 8))
+	if ((!_subtitles) && ((flags & 8) == 8))
 		return;
 
 	SmushFont *sf = _sf[0];
 	int color = 15;
-	while(*str == '/') {
+	while (*str == '/') {
 		str++; // For Full Throttle text resources
 	}
 
 	if (_scumm->_gameId == GID_CMI) {
 		_scumm->translateText((const byte *)str - 1, _scumm->_transText);
-		while(*str++ != '/')
+		while (*str++ != '/')
 			;
 		string2 = (char *)_scumm->_transText;
 
@@ -524,7 +524,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			string2[0] = 0;
 	}
 
-	while(str[0] == '^') {
+	while (str[0] == '^') {
 		switch(str[1]) {
 		case 'f':
 			{
@@ -592,17 +592,17 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 
 bool SmushPlayer::readString(const char *file, const char *directory) {
 	const char *i = strrchr(file, '.');
-	if(i == NULL) {
+	if (i == NULL) {
 		error("invalid filename : %s", file);
 	}
 	char fname[260];
 	memcpy(fname, file, i - file);
 	strcpy(fname + (i - file), ".trs");
-	if((_strings = getStrings(fname, directory, false)) != 0) {
+	if ((_strings = getStrings(fname, directory, false)) != 0) {
 		return true;
 	}
 
-	if((_strings = getStrings("digtxt.trs", directory, true)) != 0) {
+	if ((_strings = getStrings("digtxt.trs", directory, true)) != 0) {
 		return true;
 	}
 	return false;
@@ -625,23 +625,23 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 	checkBlock(b, TYPE_XPAL);
 	debug(6, "SmushPlayer::handleDeltaPalette()");
 
-	if(b.getSize() == 0x300 * 3 + 4) {
+	if (b.getSize() == 0x300 * 3 + 4) {
 
 		b.getWord();
 		b.getWord();
 
-		for(int i = 0; i < 0x300; i++) {
+		for (int i = 0; i < 0x300; i++) {
 			_deltaPal[i] = b.getWord();
 		}
 		readPalette(_pal, b);
 		setPalette(_pal);
-	} else if(b.getSize() == 6) {
+	} else if (b.getSize() == 6) {
 
 		b.getWord();
 		b.getWord();
 		b.getWord();
 
-		for(int i = 0; i < 0x300; i++) {
+		for (int i = 0; i < 0x300; i++) {
 			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
 		}
 		setPalette(_pal);
@@ -660,7 +660,7 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 
 void SmushPlayer::handleFrameObject(Chunk &b) {
 	checkBlock(b, TYPE_FOBJ, 14);
-	if(_skipNext) {
+	if (_skipNext) {
 		_skipNext = false;
 		return;
 	}
@@ -671,10 +671,10 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int width = b.getWord();
 	int height = b.getWord();
 
-	if((height != _scumm->_screenHeight) || (width != _scumm->_screenWidth))
+	if ((height != _scumm->_screenHeight) || (width != _scumm->_screenWidth))
 		return;
 
-	if(_alreadyInit == false) {
+	if (!_alreadyInit) {
 		_codec37.init(width, height);
 		_codec47.init(width, height);
 		_alreadyInit = true;
@@ -719,7 +719,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		error("Invalid codec for frame object : %d", (int)codec);
 	}
 
-	if (_storeFrame == true) {
+	if (_storeFrame) {
 		if (_frameBuffer == NULL) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -738,9 +738,9 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	uint32 start_time, end_time;
 	start_time = _scumm->_system->get_msecs();
 
-	while(!b.eof()) {
+	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
-		if(sub->getSize() & 1) b.seek(1);
+		if (sub->getSize() & 1) b.seek(1);
 		switch(sub->getType()) {
 			case TYPE_NPAL:
 				handleNewPalette(*sub);
@@ -813,14 +813,14 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 		_sf[0]->loadFont("scummfnt.nut", directory);
 		_sf[2]->loadFont("titlfnt.nut", directory);
 	} else if (_scumm->_gameId == GID_DIG) {
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			char file_font[11];
 			sprintf((char *)&file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(i != 0, false);
 			_sf[i]->loadFont(file_font, directory);
 		}
 	} else if (_scumm->_gameId == GID_CMI) {
-		for(int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			char file_font[11];
 			sprintf((char *)&file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(false, true);
@@ -876,7 +876,7 @@ void SmushPlayer::updateScreen() {
 void SmushPlayer::play(const char *filename, const char *directory) {
 	File f;
 	f.open(filename, directory);
-	if(f.isOpen() == false) {
+	if (!f.isOpen()) {
 		warning("SmushPlayer::setupAnim() File not found %s", filename);
 		return;
 	}
@@ -889,7 +889,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	while (true) {
 		_scumm->parseEvents();
 		_scumm->processKbd();
-		if(_updateNeeded == true) {
+		if (_updateNeeded) {
 			
 			uint32 end_time, start_time = _scumm->_system->get_msecs();
 			_scumm->_system->update_screen();
@@ -898,7 +898,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_scumm->_videoFinished == true)
+		if (_scumm->_videoFinished)
 			break;
 		if (_scumm->_saveLoadFlag)
 			break;
