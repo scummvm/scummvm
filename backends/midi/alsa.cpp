@@ -30,7 +30,6 @@
 #include "stdafx.h"
 #include "common/engine.h"	// for warning/error/debug
 #include <alsa/asoundlib.h>
-#include "common/util.h" // for hexdump
 
 /*
  *     ALSA sequencer driver
@@ -195,10 +194,10 @@ void MidiDriver_ALSA::sysEx(byte *msg, uint16 length) {
 		return;
 	}
 	buf[0] = 0xF0;
-	memcpy(&buf[1], msg, length);
+	memcpy(buf + 1, msg, length);
 	buf[length + 1] = 0xF7;
-	// hexdump(buf, length + 2);
 	snd_seq_ev_set_sysex(&ev, length + 2, &buf);
+	send_event(1);
 }
 
 int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port) {
