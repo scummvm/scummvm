@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_ADLIB;USE_MAD;BYPASS_COPY_PROT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_ADLIB;USE_MAD;BYPASS_COPY_PROT;INSANE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
