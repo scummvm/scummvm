@@ -1245,54 +1245,54 @@ void SimonEngine::o_inventory_descriptions() {
 
 	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		if (child != NULL && child->avail_props & 0x200) {
-			uint var200 = child->array[getOffsetOfChild2Param(child, 0x200)];
+			uint speech_id = child->array[getOffsetOfChild2Param(child, 0x200)];
 
 			if (child->avail_props & 0x100) {
-				uint var100 = child->array[getOffsetOfChild2Param(child, 0x100)];
+				uint speech_id_offs = child->array[getOffsetOfChild2Param(child, 0x100)];
 
-				if (var200 == 116)
-					var200 = var100 + 115;
-				if (var200 == 92)
-					var200 = var100 + 98;
-				if (var200 == 99)
-					var200 = 9;
-				if (var200 == 97) {
-					switch (var100) {
+				if (speech_id == 116)
+					speech_id = speech_id_offs + 115;
+				if (speech_id == 92)
+					speech_id = speech_id_offs + 98;
+				if (speech_id == 99)
+					speech_id = 9;
+				if (speech_id == 97) {
+					switch (speech_id_offs) {
 					case 12:
-						var200 = 109;
+						speech_id = 109;
 						break;
 					case 14:
-						var200 = 108;
+						speech_id = 108;
 						break;
 					case 18:
-						var200 = 107;
+						speech_id = 107;
 						break;
 					case 20:
-						var200 = 106;
+						speech_id = 106;
 						break;
 					case 22:
-						var200 = 105;
+						speech_id = 105;
 						break;
 					case 28:
-						var200 = 104;
+						speech_id = 104;
 						break;
 					case 90:
-						var200 = 103;
+						speech_id = 103;
 						break;
 					case 92:
-						var200 = 102;
+						speech_id = 102;
 						break;
 					case 100:
-						var200 = 51;
+						speech_id = 51;
 						break;
 					default:
-						error("o_177: invalid case %d", var100);
+						error("o_177: invalid case %d", speech_id_offs);
 					}
 				}
 			}
 
 			if (_speech)
-				talk_with_speech(var200, vga_sprite_id);
+				talk_with_speech(speech_id, vga_sprite_id);
 		}
 
 	} else if (_game & GF_TALKIE) {
