@@ -1853,9 +1853,7 @@ int Scumm::getKeyInput() {
 			VAR(VAR_MOUSE_HOLD) += 2;
 		}
 	} else if (_features & GF_AFTER_V7) {
-//    VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed&msClicked) != 0;
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-//    VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed&msClicked) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 	} else if (_features & GF_AFTER_V2) {
 		// Store the input type. So far we can't distinguise
@@ -1867,12 +1865,12 @@ int Scumm::getKeyInput() {
 			VirtScreen *zone = findVirtScreen(_mouse.y);
 
 			if (zone->number == 0)		// Clicked in scene
-				_scummVars[32] = 2;
+				_scummVars[VAR_CLICK_AREA] = 2;
 			else if (zone->number == 2) 	// Clicked in verb/sentence
-				_scummVars[32] = 1;
+				_scummVars[VAR_CLICK_AREA] = 1;
 
 		} else if (_lastKeyHit) 		// Key Input
-			_scummVars[32] = 4;
+			_scummVars[VAR_CLICK_AREA] = 4;
 	}
 
 	_leftBtnPressed &= ~msClicked;

@@ -1149,6 +1149,8 @@ public:
 
 	byte VAR_CUSTOMSCALETABLE;
 	byte VAR_V6_SOUNDMODE;
+
+	byte VAR_CLICK_AREA;
 };
 
 // This is a constant lookup table of reverse bit masks
