@@ -92,6 +92,8 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_detector = detector;
 
 	_floppyIntro = detector->_floppyIntro;
+
+	_system->init_size(320, 200);
 }
 
 SkyState::~SkyState() {

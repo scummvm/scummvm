@@ -458,6 +458,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_language = detector->_language;
 	_noSubtitles = detector->_noSubtitles;
 
+	_system->init_size(320, 200);
+
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	_system->property(OSystem::PROP_WANT_RECT_OPTIM,0);
 
@@ -4183,8 +4185,6 @@ void SimonEngine::openGameFile() {
 	}
 
 	loadIconFile();
-
-	_system->init_size(320, 200);
 
 	vc_34_force_lock();
 	
