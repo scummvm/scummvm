@@ -1,3 +1,25 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001/2002 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
 #include"stdafx.h"
 #include"scumm.h"
 
@@ -11,10 +33,15 @@ Scumm::Scumm(void)
 	memset(&string, 0, sizeof(string));
 	memset(&_mixer_channel, 0, sizeof(_mixer_channel));
 	memset(&charset, 0, sizeof(charset));
+	memset(&actor, 0, sizeof(actor));
+	memset(&sentence, 0, sizeof(sentence));
 	
 	//memset(_objs, 0, sizeof(_objs));
 	memset(_colorCycle, 0, sizeof(_colorCycle));        
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));        
+
+	/* Initialize the sound queues */
+	clearSoundQue();
 
 		_resFilePath=0;
         _resFilePrefix=0;
@@ -108,4 +135,18 @@ Scumm::Scumm(void)
 		_useTalkAnims = 0;
 		_endOfMouthSync = 0;
 		_mouthSyncMode = 0;
+
+		_lastLoadedRoom = -1; /* This to be sure that the check in openRoom will fail */
+		_roomResource = 0;
+		_dynamicRoomOffsets = 0; /* This seems to be a reasonable default value :-) */
+
+		gdi._mask_left = -1; /* Taken from saveload.cpp */
+		gdi._disable_zbuffer = false; /* By default, ZBuffer should be on */
+		gdi._cursorActive = 0; /* Maybe false ? */
+		_cursorAnimate = 0; /* Reasonable default too I hope */
+		_cursorAnimateIndex = 0; /* Absolutely no idea what THAT should have as a default value */
+		_sfxMode = 0; /* Still same comment :-) */
+		_saveLoadFlag = 0;
+		_completeScreenRedraw = false; /* Maybe it should be true to force a full redraw on start ? */
+		_expire_counter = 0; /* Start expired (0xFF) or not ? */
 }
