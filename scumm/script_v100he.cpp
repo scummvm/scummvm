@@ -1618,9 +1618,8 @@ void ScummEngine_v100he::o100_unknown29() {
 		warning("o100_unknown29() case 0 unhandled");
 		break;		
 	case 6:
-		pop();
-		push(0);
-		warning("o100_unknown29() case 6 unhandled");
+		resId = pop();
+		push(getWizImageStates(resId));
 		break;
 	case 13:
 		pop();
