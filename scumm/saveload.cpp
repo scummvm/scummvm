@@ -161,7 +161,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	gdi._mask.right = gdi._mask.bottom = 0;
 	_charset->_hasMask = false;
 
-	initScreens(0, 0, _screenWidth, _screenHeight);
+	initScreens(0, _screenWidth, _screenHeight);
 
 	// Force a fade to black
 	int old_screenEffectFlag = _screenEffectFlag;
@@ -169,7 +169,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	fadeOut(129);
 	_screenEffectFlag = old_screenEffectFlag ? true : false;
 
-	initScreens(0, sb, _screenWidth, sh);
+	initScreens(sb, _screenWidth, sh);
 
 	_completeScreenRedraw = true;
 

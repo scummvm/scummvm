@@ -215,7 +215,7 @@ void ScummEngine::getGraphicsPerformance() {
 	int i;
 
 	for (i = 10; i != 0; i--) {
-		initScreens(0, 0, _screenWidth, _screenHeight);
+		initScreens(0, _screenWidth, _screenHeight);
 	}
 
 	if (VAR_PERFORMANCE_1 != 0xFF)	// Variable is reserved for game scripts in earlier games
@@ -230,9 +230,9 @@ void ScummEngine::getGraphicsPerformance() {
 		VAR(VAR_PERFORMANCE_2) = 0;
 
 	if (_version >= 7)
-		initScreens(0, 0, _screenWidth, _screenHeight);
+		initScreens(0, _screenWidth, _screenHeight);
 	else
-		initScreens(0, 16, _screenWidth, 144);
+		initScreens(16, _screenWidth, 144);
 }
 
 void ScummEngine::initScreens(int a, int b, int w, int h) {
