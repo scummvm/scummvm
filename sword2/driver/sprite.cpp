@@ -243,37 +243,18 @@ int32 Graphics::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, ui
  */
 
 int32 Graphics::createSurface(_spriteInfo *s, uint8 **sprite) {
-	uint8 *newSprite;
-
 	*sprite = (uint8 *) malloc(s->w * s->h);
 	if (!*sprite)
 		return RDERR_OUTOFMEMORY;
 
+	// Surfaces are either uncompressed or RLE256-compressed. No need to
+	// test for anything else.
+
 	if (s->type & RDSPR_NOCOMPRESSION) {
 		memcpy(*sprite, s->data, s->w * s->h);
-	} else {
-		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
-			if (decompressRLE16(*sprite, s->data, s->w * s->h, s->colourTable)) {
-				free(*sprite);
-				return RDERR_DECOMPRESSION;
-			}
-		} else {
-			if (decompressRLE256(*sprite, s->data, s->w * s->h)) {
-				free(*sprite);
-				return RDERR_DECOMPRESSION;
-			}
-		}
-
-		if (s->type & RDSPR_FLIP) {
-			newSprite = (uint8 *) malloc(s->w * s->h);
-			if (!newSprite) {
-				free(*sprite);
-				return RDERR_OUTOFMEMORY;
-			}
-			mirrorSprite(newSprite, *sprite, s->w, s->h);
-			free(*sprite);
-			*sprite = newSprite;
-		}
+	} else if (decompressRLE256(*sprite, s->data, s->w * s->h)) {
+		free(*sprite);
+		return RDERR_DECOMPRESSION;
 	}
 
 	return RD_OK;
@@ -288,7 +269,7 @@ int32 Graphics::createSurface(_spriteInfo *s, uint8 **sprite) {
 
 void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
-	uint16 x, y, srcPitch;
+	uint16 x, y;
 	uint8 *src, *dst;
 
 	rs.left = 0;
@@ -296,17 +277,9 @@ void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRec
 	rs.top = 0;
 	rs.bottom = s->h;
 
-	srcPitch = s->w;
-
-	if (s->type & RDSPR_DISPLAYALIGN) {
-		rd.top = s->y;
-		rd.left = s->x;
-	} else {
-		rd.top = s->y - _scrollY;
-		rd.left = s->x - _scrollX;
-	}
-
+	rd.left = s->x;
 	rd.right = rd.left + rs.right;
+	rd.top = s->y;
 	rd.bottom = rd.top + rs.bottom;
 
 	if (clipRect) {
@@ -332,7 +305,7 @@ void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRec
 			return;
 	}
 
-	src = surface + rs.top * srcPitch + rs.left;
+	src = surface + rs.top * s->w + rs.left;
 	dst = _buffer + _screenWide * rd.top + rd.left;
 
 	// Surfaces are always transparent.
@@ -342,7 +315,7 @@ void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRec
 			if (src[x])
 				dst[x] = src[x];
 		}
-		src += srcPitch;
+		src += s->w;
 		dst += _screenWide;
 	}
 
@@ -401,7 +374,7 @@ int32 Graphics::drawSprite(_spriteInfo *s) {
 		freeSprite = true;
 		if (!sprite)
 			return RDERR_OUTOFMEMORY;
-		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
+		if ((s->type & 0xff00) == RDSPR_RLE16) {
 			if (decompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
 				free(sprite);
 				return RDERR_DECOMPRESSION;

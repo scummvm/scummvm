@@ -145,7 +145,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
-		msgSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+		msgSprite.type = RDSPR_NOCOMPRESSION;
 		msgSprite.data = data->ad + sizeof(_frameHeader);
 
 		_vm->_graphics->createSurface(&msgSprite, &msgSurface);

@@ -192,7 +192,6 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	_graphics->clearScene();
 	_graphics->processMenu();
-	_graphics->resetRenderEngine();
 
 	// call the relevent screen
 

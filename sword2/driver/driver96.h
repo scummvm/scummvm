@@ -97,9 +97,8 @@ enum {
 	RDSPR_NOCOMPRESSION		= 0x0040,
 	RDSPR_EDGEBLEND			= 0x0080,	// Unused
 
-	// This is the high byte part of the sprite type which defines what
-	// type of compression is used, as long as RDSPR_NOCOMPRESSION is not
-	//  defined.
+	// This defines what type of compression is used, as long as
+	// RDSPR_NOCOMPRESSION is not defined.
 
 	RDSPR_RLE16			= 0x0000,
 	RDSPR_RLE256			= 0x0100,
