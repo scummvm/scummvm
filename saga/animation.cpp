@@ -283,6 +283,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 		link_anim = _anim_tbl[link_anim_id];
 
 		if (link_anim != NULL) {
+			debug(5, "Animation ended going to %d", link_anim_id);
 			link_anim->current_frame = 0;
 			link_anim->state = ANIM_PLAYING;
 		}
@@ -425,7 +426,7 @@ void Anim::readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah) {
 	ah.unknown07 = readS.readByte();
 	ah.nframes = readS.readByte() - 1;
 	ah.loopframe = readS.readByte() - 1;
-	ah.start = readS.readUint16BE(); //FIXME: check on Mac
+	ah.start = readS.readUint16BE();
 
 	if (ah.start != 65535 && ah.start != 0)
 		error("Anim::readAnimHeader(): found different start: %d. Fix Anim::play()", ah.start);

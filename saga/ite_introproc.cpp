@@ -198,11 +198,16 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 		_vm->_anim->link(1, 2);
 		_vm->_anim->link(2, 3);
 		_vm->_anim->link(3, 4);
-		_vm->_anim->link(4, 5);
-		_vm->_anim->link(5, 6);
 
-		// Scene should end on display of last animation frame
-		_vm->_anim->setFlag(6, ANIM_ENDSCENE);
+		if (_vm->_features & GF_MAC_RESOURCES)
+			_vm->_anim->setFlag(4, ANIM_ENDSCENE);
+		else {
+			_vm->_anim->link(4, 5);
+			_vm->_anim->link(5, 6);
+
+			// Scene should end on display of last animation frame
+			_vm->_anim->setFlag(6, ANIM_ENDSCENE);
+		}
 
 		debug(0, "Beginning animation playback.");
 

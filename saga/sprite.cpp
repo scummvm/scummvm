@@ -199,16 +199,24 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 	sprite_p += offset;
 
 	assert(sprite_p);
-	MemoryReadStreamEndian readS(sprite_p, 5, IS_BIG_ENDIAN);
 
-	x_align = readS.readSByte();
-	y_align = readS.readSByte();
+	MemoryReadStreamEndian readS(sprite_p, 8, IS_BIG_ENDIAN);
+	if (!(_vm->_features & GF_MAC_RESOURCES)) {
+		x_align = readS.readSByte();
+		y_align = readS.readSByte();
 
+		so_width = s_width = readS.readByte();
+		so_height = s_height = readS.readByte();
+	} else {
+		x_align = readS.readSint16();
+		y_align = readS.readSint16();
+
+		so_width = s_width = readS.readUint16();
+		so_height = s_height = readS.readUint16();
+	}
+	debug(0, "%d x %d", s_width, s_height);
 	spr_pt.x = screenCoord.x + x_align;
 	spr_pt.y = screenCoord.y + y_align;
-
-	so_width = s_width = readS.readByte();
-	so_height = s_height = readS.readByte();
 
 	if (scale < 256)
 		scaleSpriteCoords(scale, &s_width, &s_height, &x_align, &y_align);
