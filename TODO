@@ -160,6 +160,9 @@ Audio
 =====
 * Get the high quality resample code to work
    [Fingolfin has started work on this]
+* Consider changing the mixer volume to use range 0-255, for sake of
+  consistency (but at a slight loss of efficiency). Note that this requires
+  changes in at least rate.cpp and mixer.cpp.
 
 Config Manager
 ==============
@@ -372,6 +375,19 @@ General
 =======
 * Try to unify the usage of the compression tools, where possible /
   necessary.
+* Make compress_san use the common encoder "API" in compress.c
+* Make compress_queen use the common encoder "API" in compress.c
+* Add FLAC support to compress_sword1 (and the sword1 engine)
+* Add FLAC and MP3 support to compress_san (and the SMUSH player in the scumm
+  engine)
+* Look into troubles with new lame version (see bug #934026)
+* Consider using library APIs to encode data, instead of invoking the
+  lame/oggenc/flac binaries.
+  Pro: Tighter integration, no need to create temporary files.
+  Con: Requires the resp. libs/headers to be compiled in, and the resulting
+       binary would only run if all needed shared libs are present 
+       (unless we static link), whereas the current binary will work even
+       if lame/oggenc/flac are missing
 
 Descumm
 =======
