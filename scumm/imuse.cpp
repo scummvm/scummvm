@@ -222,7 +222,6 @@ struct Part {
 	bool _on;
 	byte _modwheel;
 	bool _pedal;
-	byte _program;
 	int8 _pri;
 	byte _pri_eff;
 	byte _chan;
@@ -291,7 +290,6 @@ private:
 	OSystem *_system;
 	MidiDriver *_md;
 	Instrument _glob_instr[32]; // Adlib custom instruments
-	Instrument _midi_instrument_last[16];
 
 	static void timer_callback (void *);
 
@@ -302,7 +300,6 @@ public:
 
 	void set_instrument(uint slot, byte *instr);
 	void part_load_global_instrument (Part *part, byte slot);
-	void get_channel_instrument (byte channel, Instrument *instrument) { _midi_instrument_last[channel].copy_to (instrument); }
 
 	MidiChannel *allocateChannel() { return _md->allocateChannel(); }
 	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
@@ -422,7 +419,6 @@ public:
 	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
-	void get_channel_instrument (byte channel, Instrument *instrument) { _driver->get_channel_instrument (channel, instrument); }
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
@@ -2792,7 +2788,7 @@ int Player::query_part_param(int param, byte chan) {
 			case 15:
 				return part->_vol;
 			case 16:
-				return part->_program;
+				return (int) part->_instrument;
 			case 17:
 				return part->_transpose;
 			default:
@@ -2951,7 +2947,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKLINE(Part, _on, sleUint8, VER_V8),
 		MKLINE(Part, _modwheel, sleUint8, VER_V8),
 		MKLINE(Part, _pedal, sleUint8, VER_V8),
-		MKLINE(Part, _program, sleUint8, VER_V8),
+		MK_OBSOLETE(Part, _program, sleUint8, VER_V8, VER_V16),
 		MKLINE(Part, _pri, sleUint8, VER_V8),
 		MKLINE(Part, _chan, sleUint8, VER_V8),
 		MKLINE(Part, _effect_level, sleUint8, VER_V8),
@@ -2983,7 +2979,6 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		Part *part = &_parts[0];
 		if (ser->getVersion() >= VER_V11) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
-				part->_program = 255;
 				part->_instrument.saveOrLoad (ser);
 			}
 		} else {
@@ -3106,7 +3101,6 @@ void Part::fix_after_load() {
 	set_detune(_detune);
 	set_pri(_pri);
 	set_pan(_pan);
-	if (_program < 128) _instrument.program (_program, _player->_mt32emulate);
 	sendAll();
 }
 
@@ -3207,10 +3201,8 @@ void Part::setup(Player *player) {
 	_pitchbend_factor = 2;
 	_pitchbend = 0;
 	_effect_level = 64;
-	_program = 255;
 	_instrument.clear();
 	_unassigned_instrument = true;
-//	player->_se->get_channel_instrument (_chan, &_instrument);
 	_chorus = 0;
 	_modwheel = 0;
 	_bank = 0;
@@ -3266,7 +3258,6 @@ void Part::sendAll() {
 	_mc->effectLevel (_effect_level);
 	if (_instrument.isValid()) {
 		_instrument.send (_mc);
-//		part->_instrument.copy_to (&_midi_instrument_last [part->_chan]);
 	}
 	_mc->chorusLevel (_effect_level);
 	_mc->priority (_pri_eff);
@@ -3297,18 +3288,14 @@ int Part::update_actives(uint16 *active) {
 }
 
 void Part::set_program(byte program) {
-	if (_program != program || _bank != 0) {
-		_program = program;
-		_bank = 0;
-		_instrument.program (_program, _player->_mt32emulate);
-		if (clearToTransmit()) _instrument.send (_mc);
-	}
+	_bank = 0;
+	_instrument.program (program, _player->_mt32emulate);
+	if (clearToTransmit()) _instrument.send (_mc);
 }
 
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
-	_program = (byte)b;
-	_instrument.program (_program, _player->_mt32emulate);
+	_instrument.program ((byte) b, _player->_mt32emulate);
 	if (clearToTransmit()) _instrument.send (_mc);
 }
 
@@ -3324,8 +3311,6 @@ IMuseDriver::IMuseDriver (MidiDriver *midi) {
 }
 
 void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
-	int i;
-
 	_system = syst;
 
 	// Open MIDI driver
@@ -3336,10 +3321,6 @@ void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
 	// Connect to the driver's timer
 	_se = eng;
 	_md->setTimerCallback (NULL, &IMuseDriver::timer_callback);
-
-	for (i = 0; i != ARRAYSIZE(_midi_instrument_last); i++) {
-		_midi_instrument_last [i].clear();
-	}
 }
 
 void IMuseDriver::timer_callback (void *) {

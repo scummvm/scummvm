@@ -35,6 +35,7 @@ public:
 	virtual void send (MidiChannel *mc) = 0;
 	virtual void copy_to (Instrument *dest) = 0;
 	virtual bool is_valid() = 0;
+	virtual operator int() { return 255; }
 };
 
 class Instrument {
@@ -54,6 +55,7 @@ public:
 
 	void clear();
 	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
+	operator int() { return (_instrument ? (int) _instrument : 255); }
 	void program (byte program, bool mt32);
 	void adlib (byte *instrument);
 	void roland (byte *instrument);
