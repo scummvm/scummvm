@@ -257,7 +257,7 @@ int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (_spriteTable[spriteId].group_num)
-		return _spriteTable[spriteId].tx + _spriteGroups[spriteId].tx;
+		return _spriteTable[spriteId].tx + _spriteGroups[_spriteTable[spriteId].group_num].tx;
 	else
 		return _spriteTable[spriteId].tx;
 }
@@ -266,7 +266,7 @@ int ScummEngine_v90he::spriteInfoGet_grp_ty(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (_spriteTable[spriteId].group_num)
-		return _spriteTable[spriteId].ty + _spriteGroups[spriteId].ty;
+		return _spriteTable[spriteId].ty + _spriteGroups[_spriteTable[spriteId].group_num].ty;
 	else
 		return _spriteTable[spriteId].ty;
 }
