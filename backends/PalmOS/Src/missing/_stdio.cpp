@@ -28,27 +28,6 @@
 // WARNING :	printf functions must only be used if you compile your code with
 // 				4byte int option, use standard functions if 2byte int mode
 // TODO : enable use of 2byte or 4byte (ifdef PRINTF_4BYTE ...)
-
-
-static void DrawStatus(Boolean show) {
-	UInt8 x,y;
-	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
-	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
-
-	if (gVars->screenLocked)
-		if (screen == gVars->flipping.pageAddr1)
-			screen = gVars->flipping.pageAddr2;
-		else
-			screen = gVars->flipping.pageAddr1;
-
-	screen += 320 + 305;
-	for(y=0;y<3;y++)
-	{
-		for(x=0;x<14;x++)
-			screen[x] = color;
-		screen += 319;
-	}
-}
 ///////////////////////////////////////////////////////////////////////////////
 UInt16 fclose(FileRef *stream) {
 	Err error = VFSFileClose(*stream);
@@ -91,9 +70,7 @@ UInt16 feof(FileRef *stream) {
 ///////////////////////////////////////////////////////////////////////////////
 Char *fgets(Char *s, UInt32 n, FileRef *stream) {
 	UInt32 numBytesRead;
-	DrawStatus(true);
 	Err error = VFSFileRead(*stream, n, s, &numBytesRead);
-	DrawStatus(false);
 	if (error == errNone || error == vfsErrFileEOF) {
 		UInt32 reset = 0;
 		Char *endLine = StrChr(s, '\n');
@@ -219,9 +196,7 @@ FileRef *fopen(const Char *filename, const Char *type) {
 ///////////////////////////////////////////////////////////////////////////////
 UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesRead;
-	DrawStatus(true);
 	Err error = VFSFileRead(*stream, size*nitems, ptr, &numBytesRead);
-	DrawStatus(false);
 	if (error == errNone || error == vfsErrFileEOF)
 		return (UInt32)(numBytesRead/size);
 
@@ -253,9 +228,7 @@ UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 ///////////////////////////////////////////////////////////////////////////////
 UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
 	UInt32 numBytesWritten;
-	DrawStatus(true);
 	Err error = VFSFileWrite(*stream, size*nitems, ptr, &numBytesWritten);
-	DrawStatus(false);
 
 	if (error == errNone || error == vfsErrFileEOF)
 		return (UInt32)(numBytesWritten/size);
