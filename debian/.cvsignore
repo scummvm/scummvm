@@ -1,0 +1,6 @@
+changelog
+files
+scummvm
+scummvm.postinst.debhelper
+scummvm.prerm.debhelper
+scummvm.substvars
