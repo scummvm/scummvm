@@ -344,7 +344,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_stringLen),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -1242,24 +1242,6 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	ah->type = TO_LE_16(type);
 	ah->dim1 = TO_LE_16(newY + 1);
 	ah->dim2 = TO_LE_16(newX + 1);
-}
-
-// TODO: It's Win32 specific
-void ScummEngine_v6he::o6_stringLen() {
-	int a, len;
-
-	if (_features & GF_PC) {
-		o6_invalid();
-	}
-
-	a = pop();
-
-	if (_gameId == GID_FREDDEMO) {
-		len = strlen((char *)getStringAddress(a));
-	} else {
-		len = 0; // TODO: implement
-	}
-	push(len);
 }
 
 void ScummEngine_v6he::o6_readINI() {

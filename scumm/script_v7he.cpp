@@ -344,7 +344,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_stringLen),
+		OPCODE(o7_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -404,6 +404,19 @@ void ScummEngine_v7he::o7_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v7he::o7_stringLen() {
+	int a, len;
+
+	a = pop();
+
+	if (_gameId == GID_FREDDEMO) {
+		len = strlen((char *)getStringAddress(a));
+	} else {
+		len = 0; // TODO: implement
+	}
+	push(len);
 }
 
 void ScummEngine_v7he::o7_unknownF4() {

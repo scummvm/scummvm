@@ -587,7 +587,6 @@ protected:
 	void o6_setVolume();
 	void o6_seekFilePos();
 	void o6_localizeArray();
-	void o6_stringLen();
 	void o6_unknownFA();
 	void o6_redimArray();
 	void o6_readINI();
@@ -620,6 +619,7 @@ protected:
 	/* Version 7 script opcodes */
 	void o7_objectX();
 	void o7_objectY();
+	void o7_stringLen();
 	void o7_unknownF4();
 	void o7_unknownFB();
 };

@@ -210,15 +210,15 @@ static const ScummGameSettings scumm_settings[] = {
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_HE7_RESOURCES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_FREDDI, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_HE7_RESOURCES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_HE7_RESOURCES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_HE7_RESOURCES | GF_DEFAULT_TO_1X_SCALER, 0},
 
 #ifdef HEGAMES
 	{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
