@@ -43,7 +43,7 @@ public:
 	};
 
 	File();
-	~File();
+	virtual ~File();
 	bool open(const char *filename, const char *directory, int mode = kFileReadMode, byte encbyte = 0);
 	void close();
 	bool isOpen();
@@ -53,7 +53,7 @@ public:
 	uint32 pos();
 	uint32 size();
 	const char *name() const { return _name; }
-	void seek(int32 offs, int whence);
+	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	byte readByte();
 	uint16 readUint16LE();
