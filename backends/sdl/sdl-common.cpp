@@ -59,6 +59,7 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect
 	_mode = gfx_mode;
 	_full_screen = full_screen;
 	_adjustAspectRatio = aspect_ratio;
+	_mode_flags = 0;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());

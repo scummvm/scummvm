@@ -56,7 +56,7 @@ OSystem_SDL::OSystem_SDL()
 
 void OSystem_SDL::load_gfx_mode() {
 	_forceFull = true;
-	_mode_flags = DF_UPDATE_EXPAND_1_PIXEL;
+	_mode_flags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	_tmpscreen = NULL;
 	_tmpScreenWidth = (_screenWidth + 3);
