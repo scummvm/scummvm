@@ -29,6 +29,7 @@
 #define SOX_HACK
 
 #ifdef SOX_HACK
+//#define BUGGY_NEW_MP3_PLAYER
 #include "rate.h"
 #endif
 
@@ -144,13 +145,20 @@ public:
 	bool isMusicChannel() { return false; }
 };
 
+#ifdef BUGGY_NEW_MP3_PLAYER
+class ChannelMP3CDMusic : public Channel {
+	RateConverter *_converter;
+	MP3InputStream *_input;
+#else
 class ChannelMP3CDMusic : public ChannelMP3Common {
 	uint32 _bufferSize;
 	mad_timer_t _duration;
 	File *_file;
+#endif
 
 public:
 	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
+	~ChannelMP3CDMusic();
 
 	void mix(int16 *data, uint len);
 	bool isActive();
@@ -993,6 +1001,17 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
+#ifdef BUGGY_NEW_MP3_PLAYER
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
+	: Channel(mixer, handle) {
+	// Create the input stream
+	_input = new MP3InputStream(file, duration);
+
+	// Get a rate converter instance
+printf("ChannelMP3CDMusic: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
+}
+#else
 ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration)
 	: ChannelMP3Common(mixer, handle) {
 	_file = file;
@@ -1000,8 +1019,35 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 	_bufferSize = MP3CD_BUFFERING_SIZE;
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
 }
+#endif
+
+ChannelMP3CDMusic::~ChannelMP3CDMusic() {
+#ifdef BUGGY_NEW_MP3_PLAYER
+	delete _converter;
+	delete _input;
+#endif
+}
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {
+#ifdef BUGGY_NEW_MP3_PLAYER
+	assert(_input);
+	assert(_converter);
+
+	if (_input->eof()) {
+		// TODO: call drain method
+		
+		// TODO: we probably shouldn't call destroy() here, this interfers
+		// with the looping code in scumm/sound.cpp. But then that code
+		// should be rewritten anyway (which would probably allow us to 
+		// get rid of the isActive() method, too.
+		destroy();
+		return;
+	}
+
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
+	_converter->flow(*_input, data, &tmpLen, volume);
+#else
 	mad_timer_t frame_duration;
 	const int volume = _mixer->getMusicVolume();
 
@@ -1103,10 +1149,15 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		mad_synth_frame(&_synth, &_frame);
 		_posInFrame = 0;
 	}
+#endif
 }
 
 bool ChannelMP3CDMusic::isActive() {
+#ifdef BUGGY_NEW_MP3_PLAYER
+	return !_input->eof();
+#else
 	return mad_timer_compare(_duration, mad_timer_zero) > 0;
+#endif
 }
 
 #endif
@@ -1156,6 +1207,11 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 
 	if (_input->eof() && !_is_cd_track) {
 		// TODO: call drain method
+
+		// TODO: we probably shouldn't call destroy() here, this interfers
+		// with the looping code in scumm/sound.cpp. But then that code
+		// should be rewritten anyway (which would probably allow us to 
+		// get rid of the isActive() method, too.
 		destroy();
 		return;
 	}
