@@ -29,7 +29,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
-   - Added initial INSANE support for Full Throttle 'action sequences'
+   - Added INSANE support for Full Throttle 'action sequences'
    - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
    - Added Adlib support for indy3ega and loom (ega)
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
