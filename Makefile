@@ -97,6 +97,12 @@ tools/convbdf$(EXEEXT): tools/convbdf.o
 tools/md5table$(EXEEXT): tools/md5table.o
 	$(CXX) -o $@ $<
 
+#simon/simon-md5.h: tools/simon-md5.txt
+#	tools/md5table$(EXEEXT) --c++ < $< > $@
+
+#scumm/scumm-md5.h: tools/scumm-md5.txt
+#	tools/md5table$(EXEEXT) --c++ < $< > $@
+
 credits:
 	./credits.pl --text > AUTHORS
 	./credits.pl --html > ../web/credits.inc
