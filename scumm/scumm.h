@@ -1056,7 +1056,7 @@ public:
 	byte VAR_TMR_1;
 	byte VAR_TMR_2;
 	byte VAR_TMR_3;
-	byte VAR_MUSIC_FLAG;
+	byte VAR_MUSIC_TIMER;
 	byte VAR_ACTOR_RANGE_MIN;
 	byte VAR_ACTOR_RANGE_MAX;
 	byte VAR_CAMERA_MIN_X;
@@ -1111,9 +1111,7 @@ public:
 	byte VAR_NEW_ROOM;
 	byte VAR_VERSION;
 
-	byte VAR_MI1_TIMER;
 	byte VAR_V5_TALK_STRING_Y;
-	byte VAR_V5_CHARFLAG;
 
 	byte VAR_V6_SCREEN_WIDTH;
 	byte VAR_V6_SCREEN_HEIGHT;

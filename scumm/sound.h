@@ -133,7 +133,6 @@ public:
 	int32 _bundleMusicPosition;
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
-	int _cd_timer_value;
 	bool _soundsPaused;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	byte _sfxMode;
@@ -173,7 +172,6 @@ public:
 	int playSfxSound_MP3(void *sound, uint32 size);
 	int playSfxSound_Vorbis(void *sound, uint32 size);
 
-	int readCDTimer();
 	void startCDTimer();
 	void stopCDTimer();
 

@@ -2053,7 +2053,7 @@ void Scumm_v5::o5_startScript() {
 }
 
 void Scumm_v5::o5_startSound() {
-	_vars[VAR_MUSIC_FLAG] = 0;
+	_vars[VAR_MUSIC_TIMER] = 0;
 	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
@@ -2474,7 +2474,7 @@ void Scumm_v5::decodeParseString() {
 				int delay = (uint16)getVarOrDirectWord(0x40);
 
 				if (_gameId == GID_LOOM256) {
-					_vars[VAR_MI1_TIMER] = 0;
+					_vars[VAR_MUSIC_TIMER] = 0;
 					if (offset == 0 && delay == 0) {
 						_sound->stopCD();
 					} else {

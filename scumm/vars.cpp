@@ -40,7 +40,7 @@ void Scumm::setupScummVars() {
 	VAR_TMR_1 = 11;
 	VAR_TMR_2 = 12;
 	VAR_TMR_3 = 13;
-	VAR_MUSIC_FLAG = 14;
+	VAR_MUSIC_TIMER = 14;
 	VAR_ACTOR_RANGE_MIN = 15;
 	VAR_ACTOR_RANGE_MAX = 16;
 	VAR_CAMERA_MIN_X = 17;
@@ -94,10 +94,12 @@ void Scumm::setupScummVars() {
 	VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
 	VAR_VERSION = 75;
 
-	VAR_MI1_TIMER = 14;
-
 	VAR_V5_TALK_STRING_Y = 54;
-	VAR_V5_CHARFLAG = 60;
+}
+
+void Scumm_v6::setupScummVars() {
+	// Many vars are the same as in V5 games, so just call the inherited method first
+	Scumm::setupScummVars();
 
 	VAR_V6_SCREEN_WIDTH = 41;
 	VAR_V6_SCREEN_HEIGHT = 54;
@@ -105,11 +107,6 @@ void Scumm::setupScummVars() {
 	VAR_V6_RANDOM_NR = 118;
 	
 	VAR_V6_SOUNDMODE = 9;
-}
-
-void Scumm_v6::setupScummVars() {
-	// Many vars are the same as in V5 games, so just call the inherited method first
-	Scumm::setupScummVars();
 
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
@@ -142,6 +139,7 @@ void Scumm_v7::setupScummVars() {
 	VAR_PERFORMANCE_1 = 26;
 	VAR_PERFORMANCE_2 = 27;
 	VAR_GAME_LOADED = 29;
+	VAR_V6_EMSSPACE = 32;
 	VAR_V6_RANDOM_NR = 34;
 	VAR_NEW_ROOM = 35;
 	VAR_WALKTO_OBJ = 36;
@@ -198,11 +196,6 @@ void Scumm_v7::setupScummVars() {
 	VAR_VIDEONAME = 123;
 	VAR_CUSTOMSCALETABLE = 131;
 
-	VAR_MI1_TIMER = 14;
-	VAR_V5_TALK_STRING_Y = 54;
-	VAR_V5_CHARFLAG = 60;
-
-	VAR_V6_EMSSPACE = 32;
 	VAR_STRING2DRAW = 130;
 }
 
@@ -303,7 +296,7 @@ void Scumm_v2::setupScummVars() {
 	VAR_NUM_ACTOR = 11;
 	VAR_CURRENT_LIGHTS = 12;
 	VAR_CURRENTDRIVE = 13;
-	VAR_MUSIC_FLAG = 17;
+	VAR_MUSIC_TIMER = 17;
 	VAR_ACTOR_RANGE_MIN = 19;
 	VAR_ACTOR_RANGE_MAX = 20;
 	VAR_CAMERA_MIN_X = 23;

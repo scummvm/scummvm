@@ -699,7 +699,7 @@ void Scumm::initScummVars() {
 		// Setup light
 		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	} else {
-			_vars[VAR_V6_EMSSPACE] = 10000;
+		_vars[VAR_V6_EMSSPACE] = 10000;
 	}
 
 	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
@@ -725,8 +725,6 @@ void Scumm::checkRange(int max, int min, int no, const char *str) {
 }
 
 int Scumm::scummLoop(int delta) {
-	static int counter = 0;
-
 #ifndef _WIN32_WCE
 	if (_debugger)
 		_debugger->on_frame();
@@ -771,23 +769,30 @@ int Scumm::scummLoop(int delta) {
 	_vars[VAR_MOUSE_Y] = mouse.y;
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
-	if (_gameId == GID_MONKEY_VGA) {
-		// FIXME: Is all this really necessary now?
-		if (delta == 1)
-			_vars[VAR_MI1_TIMER]++;
-		else if (++counter != 2)
-			_vars[VAR_MI1_TIMER] += 5;
-		else {
-			counter = 0;
-			_vars[VAR_MI1_TIMER] += 6;
-		}
-	} else if (_features & GF_AUDIOTRACKS) {
-		_vars[VAR_MI1_TIMER] = _sound->readCDTimer();
-	} else if ((_features & GF_OLD256) || (_features & GF_16COLOR)) {
-
-		if(tempMusic == 3) {
+	if (_features & GF_AUDIOTRACKS) {
+		// Covered automatically by the Sound class
+	} else if ((_features & GF_OLD256) || (_features & GF_16COLOR) || (_gameId == GID_MONKEY_VGA)) {
+		// Original values:
+		//const int ITERATIONS = 4;
+		//const int INCREMENT = 1;
+		
+		// This function (scummLoop) is invoked roughly every delta*15 milliseconds.
+		// In GID_MONKEY_VGA, delta usually is 5 or 6, hence this function is called
+		// every 75-90 ms. 
+		// With the original values, we incremented VAR_MUSIC_TIMER every fourth
+		// iteration by 1. That corresponds to a time interval of 18.75 / 22.5 ms.
+		//
+		// With the new values, we have a ratio of 3/11 = 0.272727... which makes
+		// the GID_MONKEY_VGA intro synced quite perfectly on my system. But I am not sure
+		// which impact this might have on other games, or on other parts in MI.
+		// However, even with the 4/1 values this seems much better than the old code
+		// for handling GID_MONKEY_VGA...
+		const int ITERATIONS = 11;
+		const int INCREMENT = 3;
+		
+		if (tempMusic == ITERATIONS-1) {
 			tempMusic = 0;
-			_vars[VAR_MUSIC_FLAG]++;
+			_vars[VAR_MUSIC_TIMER] += INCREMENT;
 		} else {
 			tempMusic++;
 		}

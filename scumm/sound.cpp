@@ -185,7 +185,7 @@ void Sound::playSound(int soundID) {
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 			ptr += 8;
-			_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
+			_scumm->_vars[_scumm->VAR_MUSIC_TIMER] = 0;
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 
@@ -782,7 +782,7 @@ void Sound::pauseSounds(bool pause) {
 		_scumm->_imuseDigital->pause(pause);
 	}
 
-	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->_vars[_scumm->VAR_MI1_TIMER] > 0) {
+	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->_vars[_scumm->VAR_MUSIC_TIMER] > 0) {
 		if (pause)
 			stopCDTimer();
 		else
@@ -1388,20 +1388,11 @@ int Sound::playSfxSound_Vorbis(void *sound, uint32 size) {
 static void cd_timer_handler(void *ptr) {
 	Scumm *scumm = (Scumm *) ptr;
 
-	// Maybe I could simply update _vars[VAR_MI1_TIMER] directly here, but
-	// I don't feel comfortable just doing that from what might be a
-	// separate thread. If someone tells me it's safe, I'll make the
-	// change right away.
-	
 	// FIXME: Turn off the timer when it's no longer needed. In theory, it
 	// should be possible to check with pollCD(), but since CD sound isn't
 	// properly restarted when reloading a saved game, I don't dare to.
 
-	scumm->_sound->_cd_timer_value += 6;
-}
-
-int Sound::readCDTimer() {
-	return _cd_timer_value;
+	scumm->_vars[scumm->VAR_MUSIC_TIMER] += 6;
 }
 
 void Sound::startCDTimer() {
@@ -1418,7 +1409,6 @@ void Sound::startCDTimer() {
 		timer_interval = 101;
 
 	_scumm->_timer->releaseProcedure(&cd_timer_handler);
-	_cd_timer_value = _scumm->_vars[_scumm->VAR_MI1_TIMER];
 	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval);
 }
 
@@ -1518,7 +1508,7 @@ int Sound::getCachedTrack(int track) {
 
 int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
-	_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
+	_scumm->_vars[_scumm->VAR_MUSIC_TIMER] = 0;
 
 	if (_soundsPaused)
 		return 0;
