@@ -340,50 +340,6 @@ void Scumm::CHARSET_1() {
 	gdi._mask_bottom = _charset->_strBottom;
 }
 
-void Scumm::description() {
-	int c;
-	byte *buf;
-
-	buf = _charsetBuffer;
-	_string[0].ypos = camera._cur.y + 88;
-	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buf) >> 1);
-	if (_string[0].xpos < 0)
-		_string[0].xpos = 0;
-
-	_charsetBufPos = 0;
-	_charset->_top = _string[0].ypos;
-	_charset->_startLeft = _charset->_left = _string[0].xpos;
-	_charset->_right = _realWidth - 1;
-	_charset->_center = false;
-	_charset->_color = 15;
-	_charset->_disableOffsX = _charset->_firstChar = true;
-	_charset->setCurID(3);
-	_charset->_nextLeft = _string[0].xpos;
-	_charset->_nextTop = _string[0].ypos;
-	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
-	// 0 - no display, correct ego actor talking
-	_talkDelay = 0;
-
-	restoreCharsetBg();
-
-	do {
-		c = *buf++;
-		if (c != 0 && c != 0xFF) {
-			_charset->_left = _charset->_nextLeft;
-			_charset->_top = _charset->_nextTop;
-			_charset->printChar(c);
-			_charset->_nextLeft = _charset->_left;
-			_charset->_nextTop = _charset->_top;
-		}
-	} while (c);
-	_haveMsg = 1;
-
-	gdi._mask_left = _charset->_strLeft;
-	gdi._mask_right = _charset->_strRight;
-	gdi._mask_top = _charset->_strTop;
-	gdi._mask_bottom = _charset->_strBottom;
-}
-
 void Scumm::drawDescString(byte *msg) {
 	byte c, *buf, buffer[256];
 
@@ -886,7 +842,7 @@ void Scumm::loadLanguageBundle() {
 }
 
 void Scumm::translateText(byte *text, byte *trans_buff) {
-	if ((_existLanguageFile == true) && (text[0] == '/') && (text[1] != ' ')) {
+	if ((_existLanguageFile == true) && (text[0] == '/')) {
 		char name[20], tmp[500], tmp2[20], num_s[20], number[4];
 		int32 num, l, j, k, r, pos;
 		char enc;
@@ -1016,8 +972,14 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 
 	if (text[0] == '/') {
 		byte *pointer = (byte *)strchr((char *)text + 1, '/');
-		if (pointer != NULL)
-			memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
+		if (pointer != NULL) {
+			pointer++;
+			int l = 0;
+			while (*pointer != '/' && *pointer != 0xff && *pointer != 0) {
+				trans_buff[l++] = *pointer++;
+			}
+			trans_buff[l] = '\0';
+		}
 		else
 			trans_buff[0] = '\0';
 		return;

@@ -982,7 +982,6 @@ public:
 	void restoreCharsetBg();
 	int hasCharsetMask(int x, int y, int x2, int y2);
 	void CHARSET_1();
-	void description();
 	void drawDescString(byte *msg);
 	byte *addMessageToStack(byte *msg);
 	void addIntToStack(int var);
