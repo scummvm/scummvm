@@ -1451,12 +1451,12 @@ int toSimpleDir(int dirType, int dir) {
 		const int16 directions[] = { 22,  72, 107, 157, 202, 252, 287, 337 };
 		for (int i = 0; i < 7; i++)
 			if (dir >= directions[i] && dir <= directions[i+1])
-				return i;
+				return i+1;
 	} else {
 		const int16 directions[] = { 71, 109, 251, 289 };
 		for (int i = 0; i < 3; i++)
 			if (dir >= directions[i] && dir <= directions[i+1])
-				return i;
+				return i+1;
 	}
 
 	return 0;
