@@ -569,10 +569,10 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 3 - wrap around  8
 	switch (flags & 9) {
 	case 0: 
-		sf->drawStringAbsolute(str, _dst, _width, pos_x, pos_y);
+		sf->drawString(str, _dst, _width, _height, pos_x, pos_y, false);
 		break;
 	case 1:
-		sf->drawStringCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top));
+		sf->drawString(str, _dst, _width, _height, pos_x, MAX(pos_y, top), true);
 		break;
 	case 8:
 		// FIXME: Is 'right' the maximum line width here, just
@@ -580,7 +580,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		// in The Dig's intro, where 'left' and 'right' are
 		// always 0 and 321 respectively, and apparently we
 		// handle that correctly.
-		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right);
+		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right, false);
 		break;
 	case 9:
 		// In this case, the 'right' parameter is actually the
@@ -589,7 +589,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		//
 		// Note that in The Dig's "Spacetime Six" movie it's
 		// 621. I have no idea what that means.
-		sf->drawStringWrapCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
+		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width), true);
 		break;
 	default:
 		warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
