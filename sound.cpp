@@ -305,10 +305,12 @@ void Scumm::pauseSounds(bool pause) {
 	_soundsPaused = pause;
 }
 
+#pragma START_PACK_STRUCTS
 struct VOCHeader {
 	byte id[19];
 	byte extra[7];
-};
+} GCC_PACK;
+#pragma END_PACK_STRUCTS 
 
 static const char VALID_VOC_ID[] = "Creative Voice File";
 

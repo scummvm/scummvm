@@ -49,6 +49,7 @@ typedef signed long int32;
 
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
+#define GCC_PACK
 
 #elif defined(__CYGWIN__)
 
@@ -91,11 +92,6 @@ typedef signed long int32;
 #endif
 
 #define FORCEINLINE inline
-
-#if defined(__GNUC__)
-#define NORETURN __attribute__((__noreturn__)) 
-#else
-#endif
 #define CDECL 
 
 typedef unsigned char byte;
@@ -107,8 +103,17 @@ typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
 
+#if defined(__GNUC__)
+#define START_PACK_STRUCTS
+#define END_PACK_STRUCTS
+#define GCC_PACK __attribute__((packed))
+#define NORETURN __attribute__((__noreturn__)) 
+#else
 #define START_PACK_STRUCTS pack (1)
 #define END_PACK_STRUCTS   pack ()
+#define GCC_PACK
+#define NORETURN
+#endif
 
 #else
 #error No system type defined

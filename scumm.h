@@ -37,12 +37,13 @@ enum {
 	NUM_ACTORS = 13
 };
 
-#pragma START_PACK_STRUCTS
-	
 struct Point {
 	int x,y;
 };
 
+
+#pragma START_PACK_STRUCTS
+	
 #define SIZEOF_BOX 20
 struct Box { /* file format */
 	int16 ulx,uly;
@@ -52,23 +53,23 @@ struct Box { /* file format */
 	byte mask;
 	byte flags;
 	uint16 scale;
-};
+} GCC_PACK;
 
 struct ResHeader {
 	uint32 size;
-};
+} GCC_PACK;
 
 struct RoomHeader {
 	uint32 tag, size;
 	uint16 width,height;
 	uint16 numObjects;
-};
+} GCC_PACK;
 
 struct BompHeader {
 	uint32 tag,size;
 	uint16 unk;
 	uint16 width,height;
-};
+} GCC_PACK;
 
 struct CodeHeader {
 	uint32 id;
@@ -94,7 +95,7 @@ struct CodeHeader {
 			byte actordir;
 		} v6;
 	};
-};
+} GCC_PACK;
 
 struct ImageHeader { /* file format */
 	uint32 id;
@@ -107,7 +108,7 @@ struct ImageHeader { /* file format */
 	struct {
 		int16 x,y;
 	} hotspot[15];
-};
+} GCC_PACK;
 
 #pragma END_PACK_STRUCTS
 
