@@ -25,7 +25,41 @@
 #include "resource.h"
 
 void Scumm_v2::readClassicIndexFile() {
-	error("Classic non-blocked format not yet implemented");
+	if (_gameId == GID_MANIAC) {
+		_numGlobalObjects = 800;
+		_numRooms = 55;
+		_numCostumes = 35;
+		_numScripts = 200;
+		_numSounds = 100;
+	} else if (_gameId == GID_ZAK) {
+		_numGlobalObjects = 775;
+		_numRooms = 61;
+		_numCostumes = 37;
+		_numScripts = 155;
+		_numSounds = 120;
+	} else {
+		error("Scumm_v1::readEchancedIndexFile(). Unknown game variant.");
+	}
+
+	_fileHandle.seek(0, SEEK_SET);
+
+	readMAXS();
+
+	// Jamieson630: palManipulate variable initialization
+	_palManipCounter = 0;
+	_palManipPalette = 0; // Will allocate when needed
+	_palManipIntermediatePal = 0; // Will allocate when needed
+
+	_fileHandle.readUint16LE(); /* version magic number */
+	for (int i = 0; i != _numGlobalObjects; i++) {
+		byte tmp = _fileHandle.readByte();
+		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+		_objectStateTable[i] = tmp >> OF_STATE_SHL;
+	}
+	readResTypeList(rtRoom, MKID('ROOM'), "room");
+	readResTypeList(rtCostume, MKID('COST'), "costume");
+	readResTypeList(rtScript, MKID('SCRP'), "script");
+	readResTypeList(rtSound, MKID('SOUN'), "sound");
 }
 
 void Scumm_v2::readEnhancedIndexFile() {
