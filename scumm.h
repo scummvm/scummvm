@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:12  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 17:38:20  strigeus
+ * Autodetection of endianness.
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:12  strigeus
+ *
+ * initial revision
  *
  *
  */

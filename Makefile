@@ -1,6 +1,6 @@
 CC	= gcc
 CFLAGS	= -g -O2 -Wno-multichar
-DEFINES	= -DUNIX -DSCUMM_BIG_ENDIAN -DSCUMM_NEED_ALIGNMENT
+DEFINES	= -DUNIX
 LDFLAGS = `sdl-config --libs`
 INCLUDES= `sdl-config --cflags`
 CPPFLAGS= $(DEFINES) $(INCLUDES)

@@ -42,7 +42,9 @@
 
 #else
 
+#if defined(NEED_SDL_HEADERS)
 #include <SDL.h>
+#endif
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>

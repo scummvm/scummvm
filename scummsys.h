@@ -17,8 +17,12 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/09 17:38:20  strigeus
+ * Autodetection of endianness.
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -43,6 +47,19 @@ typedef signed long int32;
 #define END_PACK_STRUCTS   pack(pop)
 
 #elif defined(UNIX)
+
+/* need this for the SDL_BYTEORDER define */
+
+#include <SDL_byteorder.h>
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define SCUMM_LITTLE_ENDIAN
+#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+#define SCUMM_BIG_ENDIAN
+#define SCUMM_NEED_ALIGNMENT
+#else
+#error Neither SDL_BIG_ENDIAN nor SDL_LITTLE_ENDIAN is set.
+#endif
 
 #define FORCEINLINE inline
 #define NORETURN 
