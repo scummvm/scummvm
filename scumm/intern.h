@@ -189,6 +189,8 @@ protected:
 
 	const OpcodeEntryV2 *_opcodesV2;
 
+	virtual void setupScummVars();
+
 	virtual void setupOpcodes();
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
