@@ -136,6 +136,35 @@ String &String::operator += (char c) {
 	return *this;
 }
 
+bool String::hasPrefix(const char *x) const {
+	assert(x != 0);
+	// Compare x with the start of _str.
+	const char *y = c_str();
+	while (*x && *x == *y) {
+		++x;
+		++y;
+	}
+	// It's a prefix, if and only if all letters in x are 'used up' before
+	// _str ends.
+	return *x == 0;
+}
+
+bool String::hasSuffix(const char *x) const {
+	assert(x != 0);
+	// Compare x with the end of _str.
+	const int x_len = strlen(x);
+	if (x_len > _len)
+		return false;
+	const char *y = c_str() + _len - x_len;
+	while (*x && *x == *y) {
+		++x;
+		++y;
+	}
+	// It's a suffix, if and only if all letters in x are 'used up' before
+	// _str ends.
+	return *x == 0;
+}
+
 void String::deleteLastChar() {
 	if (_len > 0) {
 		ensureCapacity(_len - 1, true);

@@ -60,6 +60,9 @@ public:
 	bool operator >(const String &x) const;
 	bool operator >=(const String &x) const;
 
+	bool hasSuffix(const char *x) const;
+	bool hasPrefix(const char *x) const;
+
 	const char *c_str() const		{ return _str ? _str : ""; }
 	uint size() const				{ return _len; }
 
@@ -75,7 +78,7 @@ public:
 		assert(_str && idx >= 0 && idx < _len);
 		return _str[idx];
 	}
-
+	
 	void deleteLastChar();
 	void deleteChar(int p);
 	void clear();
