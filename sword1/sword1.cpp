@@ -1116,6 +1116,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	} else { // speech1 & speech2 not present. are we running from cd?
 		if (test.open("cows.mad")) {
 			_systemVars.isDemo = true;
+			Logic::_scriptVars[PLAYINGDEMO] = 1;
 			test.close();
 		}
 		if (test.open("cd1.id")) {

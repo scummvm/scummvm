@@ -981,6 +981,8 @@ void Control::doRestore(void) {
 	Logic::_scriptVars[CHANGE_STANCE] = STAND;
 	Logic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
 	SwordEngine::_systemVars.justRestoredGame = 1;
+	if (SwordEngine::_systemVars.isDemo)
+		Logic::_scriptVars[PLAYINGDEMO] = 1;
 }
 
 void Control::delay(uint32 msecs) {

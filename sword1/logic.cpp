@@ -37,6 +37,8 @@
 
 #include "sword1/debug.h"
 
+#include "gui/message.h"
+
 namespace Sword1 {
 
 #define MAX_STACK_SIZE 10
@@ -1630,7 +1632,12 @@ int Logic::fnRestartGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32
 }
 
 int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	error("fnQuitGame() called");
+	if (SwordEngine::_systemVars.isDemo) {
+		GUI::MessageDialog dialog("This is the end of the Broken Sword 1 Demo", "OK", NULL);
+		dialog.runModal();
+		SwordEngine::_systemVars.engineQuit = true;
+	} else
+		error("fnQuitGame() called");
 	return SCRIPT_STOP;
 }
 

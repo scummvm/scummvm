@@ -61,6 +61,10 @@ int Sound::addToQueue(int32 fxNo) {
 			warning("Sound queue overflow");
 			return 0;
 		}
+		if ((fxNo == 168) && (SwordEngine::_systemVars.isDemo)) {
+			// this sound doesn't exist in demo
+			return 0;
+		}
 		_resMan->resOpen(_fxList[fxNo].sampleId);
 		_fxQueue[_endOfQueue].id = fxNo;
 		if (_fxList[fxNo].type == FX_SPOT)
@@ -140,6 +144,8 @@ void Sound::quitScreen(void) {
 }
 
 void Sound::playSample(QueueElement *elem) {
+	//if (((elem->id == 11) || (elem->id == 12) || (elem->id == 224)) && SwordEngine::_systemVars.isDemo)
+	//	return;
 	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem->id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
