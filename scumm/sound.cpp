@@ -1128,7 +1128,7 @@ int Sound::playBundleSound(char *sound) {
 	}
 
 	int32 rate = 22050, channels;
-	int32 tag, size = -1, bits;
+	int32 tag, size = -1, bits = 0;
 
 	if (_scumm->_gameId == GID_CMI) {
 		char name[20];
