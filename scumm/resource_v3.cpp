@@ -27,110 +27,151 @@
 
 
 void Scumm_v3::readIndexFile() {
-	uint16 blocktype;
-	uint32 itemsize;
-	int numblock = 0;
-	int num, i;
+	if (_features & GF_OLD_BUNDLE) {
+		int magic = 0;
+		debug(9, "readIndexFile()");
 
-	debug(9, "readIndexFile()");
+		closeRoom();
+		openRoom(0);
 
-	closeRoom();
-	openRoom(0);
+		magic = _fileHandle.readUint16LE();
+		if (magic != 0x0100)
+			warning("The magic id doesn't match (0x%X)\n", magic);
 
-	while (!_fileHandle.eof()) {
-		itemsize = _fileHandle.readUint32LE();
-		blocktype = _fileHandle.readUint16LE();
-		if (_fileHandle.ioFailed())
-			break;
+		_numGlobalObjects = _fileHandle.readUint16LE();
+		_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+		_numRooms = _fileHandle.readByte();
+		_fileHandle.seek(_numRooms * 3, SEEK_CUR);
+		_numCostumes = _fileHandle.readByte();
+		_fileHandle.seek(_numCostumes * 3, SEEK_CUR);
+		_numScripts = _fileHandle.readByte();
+		_fileHandle.seek(_numScripts * 3, SEEK_CUR);
+		_numSounds = _fileHandle.readByte();
 
-		switch (blocktype) {
-		case 0x4E52:	// 'NR'
-			_fileHandle.readUint16LE();
-			break;
-		case 0x5230:	// 'R0'
-			_numRooms = _fileHandle.readUint16LE();
-			break;
-		case 0x5330:	// 'S0'
-			_numScripts = _fileHandle.readUint16LE();
-			break;
-		case 0x4E30:	// 'N0'
-			_numSounds = _fileHandle.readUint16LE();
-			break;
-		case 0x4330:	// 'C0'
-			_numCostumes = _fileHandle.readUint16LE();
-			break;
-		case 0x4F30:	// 'O0'
-			_numGlobalObjects = _fileHandle.readUint16LE();
-			break;
-		}
-		_fileHandle.seek(itemsize - 8, SEEK_CUR);
-	}
+		_fileHandle.clearIOFailed();
+		_fileHandle.seek(0, SEEK_SET);
 
-	_fileHandle.clearIOFailed();
-	_fileHandle.seek(0, SEEK_SET);
+		readMAXS();
 
-	readMAXS();
+		// Jamieson630: palManipulate variable initialization
+		_palManipCounter = 0;
+		_palManipPalette = 0; // Will allocate when needed
+		_palManipIntermediatePal = 0; // Will allocate when needed
 
-	// Jamieson630: palManipulate variable initialization
-	_palManipCounter = 0;
-	_palManipPalette = 0; // Will allocate when needed
-	_palManipIntermediatePal = 0; // Will allocate when needed
+		_fileHandle.readUint16LE(); /* version magic number */
+		_fileHandle.readUint16LE(); /* nb global objects */
+		_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+		readResTypeList(rtRoom, MKID('ROOM'), "room");
+		readResTypeList(rtCostume, MKID('COST'), "costume");
+		readResTypeList(rtScript, MKID('SCRP'), "script");
+		readResTypeList(rtSound, MKID('SOUN'), "sound");
 
-	while (1) {
-		itemsize = _fileHandle.readUint32LE();
+		closeRoom();
+	} else {
+		uint16 blocktype;
+		uint32 itemsize;
+		int numblock = 0;
+		int num, i;
 
-		if (_fileHandle.ioFailed())
-			break;
+		debug(9, "readIndexFile()");
 
-		blocktype = _fileHandle.readUint16LE();
+		closeRoom();
+		openRoom(0);
 
-		numblock++;
+		while (!_fileHandle.eof()) {
+			itemsize = _fileHandle.readUint32LE();
+			blocktype = _fileHandle.readUint16LE();
+			if (_fileHandle.ioFailed())
+				break;
 
-		switch (blocktype) {
-
-		case 0x4E52:	// 'NR'
-			_fileHandle.seek(itemsize - 6, SEEK_CUR);
-			break;
-
-		case 0x5230:	// 'R0'
-			readResTypeList(rtRoom, MKID('ROOM'), "room");
-			break;
-
-		case 0x5330:	// 'S0'
-			readResTypeList(rtScript, MKID('SCRP'), "script");
-			break;
-
-		case 0x4E30:	// 'N0'
-			readResTypeList(rtSound, MKID('SOUN'), "sound");
-			break;
-
-		case 0x4330:	// 'C0'
-			readResTypeList(rtCostume, MKID('COST'), "costume");
-			break;
-
-		case 0x4F30:	// 'O0'
-			num = _fileHandle.readUint16LE();
-			assert(num == _numGlobalObjects);
-			for (i = 0; i != num; i++) {
-				uint32 bits = _fileHandle.readByte();
-				byte tmp;
-				bits |= _fileHandle.readByte() << 8;
-				bits |= _fileHandle.readByte() << 16;
-				_classData[i] = bits;
-				tmp = _fileHandle.readByte();
-				_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-				_objectStateTable[i] = tmp >> OF_STATE_SHL;
+			switch (blocktype) {
+			case 0x4E52:	// 'NR'
+				_fileHandle.readUint16LE();
+				break;
+			case 0x5230:	// 'R0'
+				_numRooms = _fileHandle.readUint16LE();
+				break;
+			case 0x5330:	// 'S0'
+				_numScripts = _fileHandle.readUint16LE();
+				break;
+			case 0x4E30:	// 'N0'
+				_numSounds = _fileHandle.readUint16LE();
+				break;
+			case 0x4330:	// 'C0'
+				_numCostumes = _fileHandle.readUint16LE();
+				break;
+			case 0x4F30:	// 'O0'
+				_numGlobalObjects = _fileHandle.readUint16LE();
+				break;
 			}
-
-			break;
-
-		default:
-			error("Bad ID %c%c found in directory!", blocktype & 0xFF, blocktype >> 8);
-			return;
+			_fileHandle.seek(itemsize - 8, SEEK_CUR);
 		}
-	}
 
-	closeRoom();
+		_fileHandle.clearIOFailed();
+		_fileHandle.seek(0, SEEK_SET);
+
+		readMAXS();
+
+		// Jamieson630: palManipulate variable initialization
+		_palManipCounter = 0;
+		_palManipPalette = 0; // Will allocate when needed
+		_palManipIntermediatePal = 0; // Will allocate when needed
+
+		while (1) {
+			itemsize = _fileHandle.readUint32LE();
+
+			if (_fileHandle.ioFailed())
+				break;
+
+			blocktype = _fileHandle.readUint16LE();
+
+			numblock++;
+
+			switch (blocktype) {
+
+			case 0x4E52:	// 'NR'
+				_fileHandle.seek(itemsize - 6, SEEK_CUR);
+				break;
+
+			case 0x5230:	// 'R0'
+				readResTypeList(rtRoom, MKID('ROOM'), "room");
+				break;
+
+			case 0x5330:	// 'S0'
+				readResTypeList(rtScript, MKID('SCRP'), "script");
+				break;
+
+			case 0x4E30:	// 'N0'
+				readResTypeList(rtSound, MKID('SOUN'), "sound");
+				break;
+
+			case 0x4330:	// 'C0'
+				readResTypeList(rtCostume, MKID('COST'), "costume");
+				break;
+
+			case 0x4F30:	// 'O0'
+				num = _fileHandle.readUint16LE();
+				assert(num == _numGlobalObjects);
+				for (i = 0; i != num; i++) {
+					uint32 bits = _fileHandle.readByte();
+					byte tmp;
+					bits |= _fileHandle.readByte() << 8;
+					bits |= _fileHandle.readByte() << 16;
+					_classData[i] = bits;
+					tmp = _fileHandle.readByte();
+					_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+					_objectStateTable[i] = tmp >> OF_STATE_SHL;
+				}
+
+				break;
+
+			default:
+				error("Bad ID %c%c found in directory!", blocktype & 0xFF, blocktype >> 8);
+				return;
+			}
+		}
+		closeRoom();
+	}
 }
 
 void Scumm_v3::loadCharset(int no) {
