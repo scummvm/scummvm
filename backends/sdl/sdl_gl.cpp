@@ -47,6 +47,13 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
+	// Overlay
+	virtual void show_overlay();
+	virtual void hide_overlay();
+	virtual void clear_overlay();
+	virtual void grab_overlay(int16 *buf, int pitch);
+	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+
 protected:
 	FB2GL fb2gl;
 
@@ -78,22 +85,14 @@ void OSystem_SDL_GL::set_palette(const byte *colors, uint start, uint num) {
 void OSystem_SDL_GL::load_gfx_mode() {
 	int gl_flags =  FB2GL_320 | FB2GL_PITCH; 
 	force_full = true;
-	scaling = 1;
+	scaling = 2;
 	_mode_flags = 0;
-
-	_sai_func = NULL;
-	sdl_tmpscreen = NULL;
-
-	/* It's easier to work with 8 bit (256 colors) */
-	_mode_flags |= DF_REAL_8BIT;
 	
 	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
 	if (sdl_screen == NULL)
 		error("sdl_screen failed failed");
 
-	_sai_func = Normal1x;
-
-	_mode_flags = DF_WANT_RECT_OPTIM | DF_REAL_8BIT;
+	_mode_flags = DF_WANT_RECT_OPTIM;
 
 	if (_full_screen) gl_flags |= (FB2GL_FS);
 	
@@ -109,8 +108,6 @@ void OSystem_SDL_GL::load_gfx_mode() {
 	}
 
 	SDL_SetGamma(1.25,1.25,1.25);
-	  
-	sdl_tmpscreen = sdl_screen;
 }
 
 void OSystem_SDL_GL::unload_gfx_mode() {
@@ -118,12 +115,6 @@ void OSystem_SDL_GL::unload_gfx_mode() {
 		SDL_FreeSurface(sdl_screen);
 		sdl_screen = NULL; 
 	}
-
-	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
-		free((uint16*)sdl_tmpscreen->pixels);
-		SDL_FreeSurface(sdl_tmpscreen);
-	}
-	sdl_tmpscreen = NULL;
 }
 
 void OSystem_SDL_GL::update_screen() {
@@ -150,7 +141,7 @@ void OSystem_SDL_GL::update_screen() {
 		_palette_changed_last = 0;
 	}
 
-	fb2gl.update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.update(sdl_screen->pixels,320,200,320,0,_current_shake_pos);
 
 }
 
@@ -168,7 +159,7 @@ void OSystem_SDL_GL::hotswap_gfx_mode() {
 	load_gfx_mode();
 
 	fb2gl.setPalette(0,256);
-	fb2gl.update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.update(sdl_screen->pixels,320,200,320,0,_current_shake_pos);
 
 	/* blit image */
 	copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);

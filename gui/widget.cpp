@@ -58,9 +58,6 @@ void Widget::draw()
 	
 	// Now perform the actual widget draw
 	drawWidget(_flags & WIDGET_HILITED);
-	
-	// Flag the draw area as dirty
-	gui->addDirtyRect(_x, _y, _w, _h);
 
 	// Restore x/y
 	if (_flags & WIDGET_BORDER) {
@@ -68,6 +65,10 @@ void Widget::draw()
 		_y -= 4;
 		_w += 8;
 	}
+	
+	// Flag the draw area as dirty
+	gui->addDirtyRect(_x, _y, _w, _h);
+
 	_x -= _boss->_x;
 	_y -= _boss->_y;
 }

@@ -45,33 +45,6 @@
  * ...
  */
 
-Dialog::~Dialog()
-{
-	teardownScreenBuf();
-}
-
-void Dialog::setupScreenBuf()
-{
-	// Create _screenBuf if it doesn't already exist
-	if (!_screenBuf)
-		_screenBuf = new byte[g_scumm->_realWidth * g_scumm->_realHeight];
-	
-	// Draw the fixed parts of the dialog: background and border.
-	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
-	_gui->box(_x, _y, _w, _h);
-	
-	// Finally blit this to _screenBuf
-	_gui->blitTo(_screenBuf, _x, _y, _w, _h); 
-}
-
-void Dialog::teardownScreenBuf()
-{
-	if (_screenBuf) {
-		delete [] _screenBuf;
-		_screenBuf = 0;
-	}
-}
-
 void Dialog::open()
 {
 	Widget *w = _firstWidget;
@@ -112,18 +85,15 @@ void Dialog::draw()
 	if (!isVisible())
 		return;
 
-	if (_screenBuf) {
-		_gui->blitFrom(_screenBuf, _x, _y, _w, _h); 
-	} else {
-		_gui->fillRect(_x, _y, _w, _h, _gui->_bgcolor);
-		_gui->box(_x, _y, _w, _h);
-	}
-	_gui->addDirtyRect(_x, _y, _w, _h);
+	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
+	_gui->box(_x, _y, _w, _h);
 
 	while (w) {
 		w->draw();
 		w = w->_next;
 	}
+
+	_gui->addDirtyRect(_x, _y, _w, _h);
 }
 
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
@@ -314,8 +284,8 @@ enum {
  *   method to Dialog for that.
  */
 
-SaveLoadDialog::SaveLoadDialog(NewGui *gui)
-	: Dialog (gui, 30, 20, 260, 124)
+SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
+	: Dialog (gui, 30, 20, 260, 124), _scumm(scumm)
 {
 	addResText(10, 7, 240, 16, 1);
 //  addResText(10, 7, 240, 16, 2);
@@ -333,10 +303,9 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	// Get savegame names
 	ScummVM::StringList l;
 	char name[32];
-	Scumm *s = _gui->getScumm();
 
 	for (int i = 0; i <= 80; i++) {		// 80 - got this value from the old GUI
-		s->getSavegameName(i, name);
+		_scumm->getSavegameName(i, name);
 		l.push_back(name);
 	}
 
@@ -349,7 +318,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemChangedCmd:
 	case kSaveCmd:
 		if (_savegameList->getSelected() >= 1 && !_savegameList->getSelectedString().isEmpty()) {
-			Scumm *s = _gui->getScumm();
+			Scumm *s = _scumm;
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
 			s->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
@@ -360,7 +329,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 	case kLoadCmd:
 		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
-			Scumm *s = _gui->getScumm();
+			Scumm *s = _scumm;
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
 			s->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
@@ -374,8 +343,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_gui->optionsDialog();
 		break;
 	case kQuitCmd: {
-			Scumm *s = _gui->getScumm();
-			s->_system->quit();
+			_scumm->_system->quit();
 		}
 		break;
 	default:
@@ -441,8 +409,8 @@ PauseDialog::PauseDialog(NewGui *gui)
 	addResText(4, 4, 220, 16, 10);
 }
 
-SoundDialog::SoundDialog(NewGui *gui)
-	: Dialog (gui, 30, 20, 260, 110)
+SoundDialog::SoundDialog(NewGui *gui, Scumm *scumm)
+	: Dialog (gui, 30, 20, 260, 110), _scumm(scumm)
 {
 
 	// set up dialog
@@ -471,14 +439,12 @@ SoundDialog::SoundDialog(NewGui *gui)
 
 void SoundDialog::open()
 {
-	Scumm	*scumm = _gui->getScumm();
-	
 	Dialog::open();
 
 	// get current variables
-	_soundVolumeMaster = scumm->_sound->_sound_volume_master;
-	_soundVolumeMusic = scumm->_sound->_sound_volume_music;
-	_soundVolumeSfx = scumm->_sound->_sound_volume_sfx;
+	_soundVolumeMaster = _scumm->_sound->_sound_volume_master;
+	_soundVolumeMusic = _scumm->_sound->_sound_volume_music;
+	_soundVolumeSfx = _scumm->_sound->_sound_volume_sfx;
 
 	masterVolumeSlider->setValue(_soundVolumeMaster);
 	musicVolumeSlider->setValue(_soundVolumeMusic);
@@ -509,17 +475,15 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		sfxVolumeLabel->draw();
 		break;
 	case kOKCmd: {
-		Scumm	*scumm = _gui->getScumm();
-		
 		// FIXME: Look at Fingolfins comments in Gui::handleSoundDialogCommand(), gui.cpp 
-		scumm->_sound->_sound_volume_master = _soundVolumeMaster;	// Master
-		scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
-		scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
+		_scumm->_sound->_sound_volume_master = _soundVolumeMaster;	// Master
+		_scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
+		_scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
 		
-		scumm->_imuse->set_music_volume(_soundVolumeMusic);
-		scumm->_imuse->set_master_volume(_soundVolumeMaster);
-		scumm->_mixer->setVolume(_soundVolumeSfx);
-		scumm->_mixer->setMusicVolume(_soundVolumeMusic);
+		_scumm->_imuse->set_music_volume(_soundVolumeMusic);
+		_scumm->_imuse->set_master_volume(_soundVolumeMaster);
+		_scumm->_mixer->setVolume(_soundVolumeSfx);
+		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
 		scummcfg->setInt("master_volume", _soundVolumeMaster);
 		scummcfg->setInt("music_volume", _soundVolumeMusic);

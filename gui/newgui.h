@@ -63,10 +63,10 @@ typedef ScummVM::List<OSystem::Event> EventList;
 class NewGui {
 	friend class Dialog;
 public:
-	byte _color, _shadowcolor;
-	byte _bgcolor;
-	byte _textcolor;
-	byte _textcolorhi;
+	int16 _color, _shadowcolor;
+	int16 _bgcolor;
+	int16 _textcolor;
+	int16 _textcolorhi;
 
 	// Dialogs
 	void pauseDialog();
@@ -82,11 +82,13 @@ public:
 	NewGui(Scumm *s);
 
 	void handleEvent(const OSystem::Event &event) { _eventList.push_back(event); }
-	
-	Scumm *getScumm() { return _s; }
 
 protected:
 	Scumm		*_s;
+	OSystem		*_system;
+	int16		*_screen;
+	int			_screen_pitch;
+	
 	bool		_use_alpha_blending;
 	bool		_need_redraw;
 	bool		_prepare_for_gui;
@@ -129,20 +131,18 @@ protected:
 
 public:
 	// Drawing
-	byte *getBasePtr(int x, int y);
+	int16 *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height);
-	void line(int x, int y, int x2, int y2, byte color);
-	void blendRect(int x, int y, int w, int h, byte color);
-	void fillRect(int x, int y, int w, int h, byte color);
-	void checkerRect(int x, int y, int w, int h, byte color);
-	void frameRect(int x, int y, int w, int h, byte color);
+	void line(int x, int y, int x2, int y2, int16 color);
+	void blendRect(int x, int y, int w, int h, int16 color);
+	void fillRect(int x, int y, int w, int h, int16 color);
+	void checkerRect(int x, int y, int w, int h, int16 color);
+	void frameRect(int x, int y, int w, int h, int16 color);
 	void addDirtyRect(int x, int y, int w, int h);
-	void drawChar(const char c, int x, int y);
-	void drawString(const char *str, int x, int y, int w, byte color, int align = kTextAlignLeft);
+	void drawChar(const char c, int x, int y, int16 color);
+	void drawString(const char *str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
 
-	void drawBitmap(uint32 bitmap[8], int x, int y, byte color);
-	void blitTo(byte buffer[320*200], int x, int y, int w, int h);
-	void blitFrom(byte buffer[320*200], int x, int y, int w, int h);
+	void drawBitmap(uint32 bitmap[8], int x, int y, int16 color);
 
 	// Query a string from the resources
 	const char *queryResString(int stringno);

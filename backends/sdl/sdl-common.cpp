@@ -81,7 +81,7 @@ void OSystem_SDL_Common::init_size(uint w, uint h) {
 	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
 
 	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
-	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
+	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 	dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
 
 	load_gfx_mode();
@@ -424,12 +424,15 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 		switch(ev.type) {
 		case SDL_KEYDOWN: {
 				byte b = 0;
-				if (ev.key.keysym.mod & KMOD_SHIFT) b |= KBD_SHIFT;
-				if (ev.key.keysym.mod & KMOD_CTRL) b |= KBD_CTRL;
-				if (ev.key.keysym.mod & KMOD_ALT) b |= KBD_ALT;
+				if (ev.key.keysym.mod & KMOD_SHIFT)
+					b |= KBD_SHIFT;
+				if (ev.key.keysym.mod & KMOD_CTRL)
+					b |= KBD_CTRL;
+				if (ev.key.keysym.mod & KMOD_ALT)
+					b |= KBD_ALT;
 				event->kbd.flags = b;
 
-				/* internal keypress? */				
+				// Alt-Return toggles full screen mode				
 				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
 					property(PROP_TOGGLE_FULLSCREEN, NULL);
 					break;
@@ -439,6 +442,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					quit();
 					break;
 				}
+				// Ctr-Alt-1 till Ctrl-Alt-7 will change the GFX mode
 				if (b == (KBD_CTRL|KBD_ALT) && 
 				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='7')) {
 					Property prop;
@@ -446,20 +450,28 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					property(PROP_SET_GFX_MODE, &prop);
 					break;
 				}
-				#ifdef QTOPIA
+#ifdef MACOSX
+				// quit on Cmd-Q on Mac
+				if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
+					quit();
+					break;
+				}
+#endif
+
+#ifdef QTOPIA
 				// quit on fn+backspace on zaurus
-				if (ev.key.keysym.sym==127) {
+				if (ev.key.keysym.sym == 127) {
 					quit();
 					break;
 				}
 				// map menu key (f11) to f5 (scumm menu)
-				if (ev.key.keysym.sym==292) {
+				if (ev.key.keysym.sym == 292) {
 					event->event_code = EVENT_KEYDOWN;
 					event->kbd.keycode = 286;
 					event->kbd.ascii = mapKey(286, ev.key.keysym.mod);
 				}
 				// map center (space) to tab (default action )
-				// i wanted to map the calendar button but the calendar comes up
+				// I wanted to map the calendar button but the calendar comes up
 				//
 				else if (ev.key.keysym.sym==32) {
 					event->event_code = EVENT_KEYDOWN;
@@ -480,12 +492,11 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					event->kbd.keycode = ev.key.keysym.sym;
 					event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
 				}
-				#endif
-				#ifndef QTOPIA
+#else
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
-				#endif
+#endif
 				
 				switch(ev.key.keysym.sym) {
 					case SDLK_LEFT:
@@ -718,8 +729,6 @@ void OSystem_SDL_Common::draw_mouse() {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	add_dirty_rect(x, y, w, h);
-
 	dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
 	while (h > 0) {
 		int width = w;
@@ -739,6 +748,9 @@ void OSystem_SDL_Common::draw_mouse() {
 
 	SDL_UnlockSurface(sdl_screen);
 	
+	// Mark as dirty
+	add_dirty_rect(x, y, w, h);
+
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouse_drawn = true;
 }

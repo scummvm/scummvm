@@ -747,16 +747,15 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 }
 
 
-/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
 void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height)
 {
-	uint8 *r;
+	uint16 *r;
 
 	while (height--) {
-		r = dstPtr;
+		r = (uint16 *)dstPtr;
 		for (int i = 0; i < width; ++i, ++r) {
-			uint8 color = *(srcPtr + i);
+			uint16 color = *(((uint16 *)srcPtr) + i);
 
 			*r = color;
 		}
@@ -765,7 +764,6 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 	}
 }
 
-/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
 void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height)
 {
@@ -773,42 +771,42 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 
 	while (height--) {
 		r = dstPtr;
-		for (int i = 0; i < width; ++i, r += 2) {
-			uint8 color = *(srcPtr + i);
+		for (int i = 0; i < width; ++i, r += 4) {
+			uint16 color = *(((uint16 *)srcPtr) + i);
 
-			*(r) = color;
-			*(r + 1) = color;
-			*(r + dstPitch) = color;
-			*(r + dstPitch + 1) = color;
+			*(uint16 *)(r + 0) = color;
+			*(uint16 *)(r + 2) = color;
+			*(uint16 *)(r + 0 + dstPitch) = color;
+			*(uint16 *)(r + 2 + dstPitch) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch << 1;
 	}
 }
 
-/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
 void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height)
 {
 	uint8 *r;
-	uint32 dstPitch2 = dstPitch << 1;
+	uint32 dstPitch2 = dstPitch * 2;
+	uint32 dstPitch3 = dstPitch * 3;
 
 	while (height--) {
 		r = dstPtr;
-		for (int i = 0; i < width; ++i, r += 3) {
-			uint8 color = *(srcPtr + i);
+		for (int i = 0; i < width; ++i, r += 6) {
+			uint16 color = *(((uint16 *)srcPtr) + i);
 
-			*(r + 0) = color;
-			*(r + 1) = color;
-			*(r + 2) = color;
-			*(r + 0 + dstPitch) = color;
-			*(r + 1 + dstPitch) = color;
-			*(r + 2 + dstPitch) = color;
-			*(r + 0 + dstPitch2) = color;
-			*(r + 1 + dstPitch2) = color;
-			*(r + 2 + dstPitch2) = color;
+			*(uint16 *)(r + 0) = color;
+			*(uint16 *)(r + 2) = color;
+			*(uint16 *)(r + 4) = color;
+			*(uint16 *)(r + 0 + dstPitch) = color;
+			*(uint16 *)(r + 2 + dstPitch) = color;
+			*(uint16 *)(r + 4 + dstPitch) = color;
+			*(uint16 *)(r + 0 + dstPitch2) = color;
+			*(uint16 *)(r + 2 + dstPitch2) = color;
+			*(uint16 *)(r + 4 + dstPitch2) = color;
 		}
 		srcPtr += srcPitch;
-		dstPtr += dstPitch * 3;
+		dstPtr += dstPitch3;
 	}
 }

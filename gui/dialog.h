@@ -26,6 +26,7 @@
 #include "ListWidget.h"
 
 class NewGui;
+class Scumm;
 
 #define RES_STRING(id)		_gui->queryResString(id)
 #define CUSTOM_STRING(id)	_gui->queryCustomString(id)
@@ -45,15 +46,14 @@ protected:
 	Widget	*_firstWidget;
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
-	byte	*_screenBuf;
 	bool	_visible;
 
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
 		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
-		  _mouseWidget(0), _focusedWidget(0), _screenBuf(0), _visible(false)
+		  _mouseWidget(0), _focusedWidget(0), _visible(false)
 		{}
-	virtual ~Dialog();
+	virtual ~Dialog() {};
 
 	virtual void open();
 	virtual void close();
@@ -70,9 +70,6 @@ public:
 	
 	NewGui	*getGui()	{ return _gui; }
 	
-	virtual void	setupScreenBuf();
-	virtual void	teardownScreenBuf();
-
 	bool isVisible() const		{ return _visible; }
 
 protected:
@@ -85,23 +82,24 @@ protected:
 
 class SaveLoadDialog : public Dialog {
 public:
-	SaveLoadDialog(NewGui *gui);
+	SaveLoadDialog(NewGui *gui, Scumm *scumm);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	Scumm *_scumm;
 	ListWidget	*_savegameList;
 };
 
-
-class SoundDialog;
-class KeysDialog;
-class MiscDialog;
 
 class AboutDialog : public Dialog {
 public:
 	AboutDialog(NewGui *gui);
 };
+
+class SoundDialog;
+class KeysDialog;
+class MiscDialog;
 
 class OptionsDialog : public Dialog {
 protected:
@@ -138,7 +136,7 @@ public:
 
 class SoundDialog : public Dialog {
 public:
-	SoundDialog(NewGui *gui);
+	SoundDialog(NewGui *gui, Scumm *scumm);
 
 	enum {
 		kMasterVolumeChanged	= 'mavc',
@@ -153,6 +151,8 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	Scumm *_scumm;
+	
 	int _soundVolumeMaster;
 	int _soundVolumeMusic;
 	int _soundVolumeSfx;

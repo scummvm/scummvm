@@ -106,17 +106,12 @@ public:
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 protected:
-	typedef void TwoXSaiProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 	SDL_Surface *sdl_screen;      // unseen game screen
-	SDL_Surface *sdl_tmpscreen;   // temporary screen (for 2xsai)
 	SDL_CD *cdrom;
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0,
-		DF_REAL_8BIT				= 1 << 1,
-		DF_SEPARATE_TEMPSCREEN		= 1 << 2,
 		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 3
 	};
 
@@ -166,7 +161,6 @@ protected:
 	int16 _mouse_hotspot_y;
 	int _current_shake_pos;
 	int _new_shake_pos;
-	TwoXSaiProc *_sai_func;
 	SDL_Color *_cur_pal;
 
 	uint _palette_changed_first, _palette_changed_last;
@@ -180,8 +174,8 @@ protected:
 	
 	void add_dirty_rect(int x, int y, int w, int h);
 
-	void draw_mouse();
-	void undraw_mouse();
+	virtual void draw_mouse();
+	virtual void undraw_mouse();
 
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;

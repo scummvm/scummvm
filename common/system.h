@@ -158,6 +158,13 @@ public:
 
 	// Quit
 	virtual void quit() = 0;
+	
+	// Overlay
+	virtual void show_overlay() = 0;
+	virtual void hide_overlay() = 0;
+	virtual void clear_overlay() = 0;
+	virtual void grab_overlay(int16 *buf, int pitch) = 0;
+	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) = 0;
 };
 
 
