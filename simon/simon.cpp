@@ -4450,6 +4450,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 				error("read_vga_from_datfile_2: read failed");
 			dst = setup_vga_destination (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
 			decrunch_file_amiga (buffer, dst, size);
+			delete[] buffer;
 		} else {
 			dst = setup_vga_destination(size + extraBuffer);
 			if (in.read(dst, size) != size)
