@@ -90,11 +90,6 @@ void ConfigManager::switchFile(const String &filename) {
 
 	// Ensure the global domain(s) are setup.
 	_globalDomains.addKey(kApplicationDomain);
-#ifdef _WIN32_WCE
-	// WinCE for some reasons uses additional global domains.
-	_globalDomains.addKey("wince");
-	_globalDomains.addKey("smartfon-keys");
-#endif
 
 	_filename = filename;
 	_domainSaveOrder.clear();
