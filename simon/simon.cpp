@@ -3877,7 +3877,7 @@ void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr,
 			len_div_3 >>= 1;
 		if (_variableArray[86] == 2)
 			len_div_3 <<= 1;
-		_variableArray[85] = len_div_3 * 2;
+		_variableArray[85] = len_div_3 * 5;
 	}
 
 	num_of_rows = strlen(string_ptr) / letters_per_row;
