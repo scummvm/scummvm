@@ -18,6 +18,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/file.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
@@ -365,83 +366,349 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	return IR_CONT;
 }
 
+// FIXME:
+//
+// The original credits used a different font. I think it's stored in the
+// font.clu file, but I don't know how to interpret it.
+//
+// The original used the entire screen. This version cuts off the top and
+// bottom of the screen, because that's where the menus would usually be.
+//
+// The original had some sort of smoke effect at the bottom of the screen.
+
+enum {
+	LINE_LEFT,
+	LINE_CENTER,
+	LINE_RIGHT
+};
+
+struct CreditsLine {
+	char *str;
+	byte type;
+	int top;
+	int height;
+	Memory *sprite;
+};
+
+#define CREDITS_FONT_HEIGHT 20
+
 int32 Logic::fnPlayCredits(int32 *params) {
 	// This function just quits the game if this is the playable demo, ie.
 	// credits are NOT played in the demo any more!
 
 	// params:	none
 
-	if (!DEMO) {
-		uint8 oldPal[1024];
-		uint8 tmpPal[1024];
-		int32 music_length;
-		int32 pars[2];
+	if (DEMO) {
+		_vm->closeGame();
+		return IR_CONT;
+	}
 
-		_vm->_sound->saveMusicState();
+	// Prepare for the credits by fading down, stoping the music, etc.
 
-		_vm->_sound->muteFx(true);
-		_vm->_sound->muteSpeech(true);
-		_vm->_sound->stopMusic();
+	_vm->setMouse(0);
 
-		memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
-		memset(tmpPal, 0, 1024);
+	_vm->_sound->saveMusicState();
 
-		_vm->_graphics->waitForFade();
-		_vm->_graphics->fadeDown();
-		_vm->_graphics->waitForFade();
+	_vm->_sound->muteFx(true);
+	_vm->_sound->muteSpeech(true);
+	_vm->_sound->stopMusic();
 
-		tmpPal[4] = 255;
-		tmpPal[5] = 255;
-		tmpPal[6] = 255;
-		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+	_vm->_graphics->waitForFade();
+	_vm->_graphics->fadeDown();
+	_vm->_graphics->waitForFade();
 
-		// Play the credits music. Is it enough with just one
-		// repetition of it?
+	_vm->_graphics->closeMenuImmediately();
 
-		pars[0] = 309;
-		pars[1] = FX_SPOT;
-		fnPlayMusic(pars);
+	// There are three files which I believe are involved in showing the
+	// credits:
+	//
+	// credits.bmp  - The "Smacker" logo, stored as follows:
+	//
+	//     width     2 bytes, little endian
+	//     height    2 bytes, little endian
+	//     palette   3 * 256 bytes
+	//     data      width * height bytes
+	//
+	//     Note that the maximum colour component in the palette is 0x3F.
+	//     This is the same resolution as the _paletteMatch table. I doubt
+	//     that this is a coincidence, but let's use the image palette
+	//     directly anyway, just to be safe.
+	//
+	// credits.clu  - The credits text
+	//
+	//     This is simply a text file with CRLF line endings.
+	//     '^' is not shown, but used to mark the center of the line.
+	//     '@' is used as a placeholder for the "Smacker" logo. At least
+	//     when it appears alone.
+	//     Remaining lines are centered.
+	//
+	// fonts.clu    - The credits font?
+	//
+	//     FIXME: At this time I don't know how to interpret fonts.clu. For
+	//     now, let's just the standard speech font instead.
 
-		music_length = 1000 * _vm->_sound->musicTimeRemaining();
+	SpriteInfo spriteInfo;
+	File f;
+	int i;
 
-		debug(0, "Credits music length: ~%d ms", music_length);
+	// Read the "Smacker" logo
 
-		_vm->_graphics->closeMenuImmediately();
+	f.open("credits.bmp");
 
-		while (_vm->_sound->musicTimeRemaining()) {
-			_vm->_graphics->clearScene();
-			_vm->_graphics->setNeedFullRedraw();
+	if (!f.isOpen()) {
+		warning("Can't find credits.bmp");
+		return IR_CONT;
+	}
 
-			// FIXME: Draw the credits text. The actual text
-			// messages are stored in credits.clu, and I'm guessing
-			// that credits.bmp or font.clu may be the font.
+	uint16 logoWidth = f.readUint16LE();
+	uint16 logoHeight = f.readUint16LE();
 
-			_vm->_graphics->updateDisplay();
+	uint8 palette[1024];
 
-			KeyboardEvent ke;
+	for (i = 0; i < 256; i++) {
+		palette[i * 4 + 0] = f.readByte() << 2;
+		palette[i * 4 + 1] = f.readByte() << 2;
+		palette[i * 4 + 2] = f.readByte() << 2;
+		palette[i * 4 + 3] = 0;
+	}
 
-			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27)
-				break;
+	uint8 *logoData = (uint8 *) malloc(logoWidth * logoHeight);
 
-			_vm->_system->delay_msecs(30);
+	f.read(logoData, logoWidth * logoHeight);
+	f.close();
+
+	_vm->_graphics->setPalette(0, 256, palette, RDPAL_INSTANT);
+
+	// Read the credits text
+
+	// This should be plenty
+	CreditsLine creditsLines[350];
+
+	for (i = 0; i < ARRAYSIZE(creditsLines); i++) {
+		creditsLines[i].str = NULL;
+		creditsLines[i].sprite = NULL;
+	}
+
+	char textLine[80];
+
+	f.open("credits.clu");
+	if (!f.isOpen()) {
+		warning("Can't find credits.clu");
+		return IR_CONT;
+	}
+
+	int lineTop = 400;
+	int lineCount = 0;
+	int pos = 0;
+
+	textLine[0] = 0;
+
+	int paragraphStart = 0;
+	bool hasCenterMark = false;
+
+	while (1) {
+		if (lineCount >= ARRAYSIZE(creditsLines)) {
+			warning("Too many credits lines");
+			break;
 		}
 
-		fnStopMusic(NULL);
-		_vm->_sound->restoreMusicState();
+		byte b = f.readByte();
 
-		_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
-		_vm->_graphics->fadeUp();
+		if (f.ioFailed())
+			break;
+
+		// Remember that the current paragraph has at least once center
+		// mark. If a paragraph has no center marks, it should be
+		// centered.
+
+		if (b == '^')
+			hasCenterMark = true;
+
+		if (b == '^' && pos != 0) {
+			textLine[pos] = 0;
+
+			creditsLines[lineCount].top = lineTop;
+			creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+			creditsLines[lineCount].type = LINE_LEFT;
+			creditsLines[lineCount].str = strdup(textLine);
+
+			lineCount++;
+			textLine[0] = '^';
+			pos = 1;
+		} else if (b == 0x0a) {
+			creditsLines[lineCount].top = lineTop;
+
+			if (textLine[0] == '^') {
+				creditsLines[lineCount].str = strdup(textLine + 1);
+				creditsLines[lineCount].type = LINE_RIGHT;
+			} else {
+				creditsLines[lineCount].str = strdup(textLine);
+				creditsLines[lineCount].type = LINE_LEFT;
+			}
+
+			if (strcmp(textLine, "@") == 0) {
+				creditsLines[lineCount].height = logoHeight;
+				lineTop += logoHeight;
+			} else {
+				creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+				lineTop += CREDITS_FONT_HEIGHT;
+			}
+
+			if (strlen(textLine) > 0)
+				lineCount++;
+			else {
+				if (!hasCenterMark)
+					for (int j = paragraphStart; j < lineCount; j++)
+						creditsLines[j].type = LINE_CENTER;
+
+				paragraphStart = lineCount;
+				hasCenterMark = false;
+			}
+
+			pos = 0;
+		} else if (b == 0x0d) {
+			textLine[pos++] = 0;
+		} else
+			textLine[pos++] = b;
+	}
+
+	f.close();
+
+	// The paragraph detection above won't find the last paragraph, so we
+	// have to deal with it separately.
+
+	if (!hasCenterMark)
+		for (int j = paragraphStart; j < lineCount; j++)
+			creditsLines[j].type = LINE_CENTER;
+
+	// We could easily add some ScummVM stuff to the credits, if we wanted
+	// to. On the other hand, anyone with the attention span to actually
+	// read all the credits probably already knows. :-)
+
+	// Start the music and roll the credits
+
+	// The credits music (which can also be heard briefly in the "carib"
+	// cutscene) is played once, and there is no attempt at synchronizing
+	// it with the credits scroll.
+
+	int32 pars[2];
+
+	pars[0] = 309;
+	pars[1] = FX_SPOT;
+	fnPlayMusic(pars);
+
+	_vm->_graphics->clearScene();
+	_vm->_graphics->setNeedFullRedraw();
+	_vm->_graphics->updateDisplay();
+	_vm->_graphics->fadeUp(0);
+
+	spriteInfo.scale = 0;
+	spriteInfo.scaledWidth = 0;
+	spriteInfo.scaledHeight = 0;
+	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+	spriteInfo.blend = 0;
+
+	int scrollPos = 0;
+
+	while (scrollPos < lineTop + CREDITS_FONT_HEIGHT) {
+		_vm->_graphics->clearScene();
+		_vm->_graphics->setNeedFullRedraw();
+
+		for (i = 0; i < lineCount; i++) {
+			// Free any sprites that have scrolled off the screen
+
+			if (creditsLines[i].top + creditsLines[i].height < scrollPos) {
+				if (creditsLines[i].sprite) {
+					_vm->_memory->freeMemory(creditsLines[i].sprite);
+					creditsLines[i].sprite = NULL;
+					debug(2, "Freeing sprite '%s'", creditsLines[i].str);
+				}
+				if (creditsLines[i].str) {
+					free(creditsLines[i].str);
+					creditsLines[i].str = NULL;
+				}
+			} else if (creditsLines[i].top < scrollPos + 400) {
+				if (!creditsLines[i].sprite) {
+					debug(2, "Creating sprite '%s'", creditsLines[i].str);
+					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((uint8 *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
+				}
+
+				FrameHeader *frame = (FrameHeader *) creditsLines[i].sprite->ad;
+
+				spriteInfo.y = creditsLines[i].top - scrollPos;
+				spriteInfo.w = frame->width;
+				spriteInfo.h = frame->height;
+				spriteInfo.data = creditsLines[i].sprite->ad + sizeof(FrameHeader);
+
+				switch (creditsLines[i].type) {
+				case LINE_LEFT:
+					spriteInfo.x = 640 / 2 - 5 - frame->width;
+					break;
+				case LINE_RIGHT:
+					spriteInfo.x = 640 / 2 + 5;
+					break;
+				case LINE_CENTER:
+					if (strcmp(creditsLines[i].str, "@") == 0) {
+						spriteInfo.data = logoData;
+						spriteInfo.x = (640 - logoWidth) / 2;
+						spriteInfo.w = logoWidth;
+						spriteInfo.h = logoHeight;
+					} else
+						spriteInfo.x = (640 - frame->width) / 2;
+					break;
+				}
+
+				_vm->_graphics->drawSprite(&spriteInfo);
+			}
+		}
+
 		_vm->_graphics->updateDisplay();
-		_vm->buildDisplay();
-		_vm->_graphics->waitForFade();
 
-		_vm->_sound->muteFx(false);
-		_vm->_sound->muteSpeech(false);
+		KeyboardEvent ke;
+
+		if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
+			fnStopMusic(NULL);
+			break;
+		}
+
+		_vm->_system->delay_msecs(20);
+
+		scrollPos++;
 	}
 
-	if (_vm->_features & GF_DEMO) {
-		_vm->closeGame();
+	// We're done. Clean up and try to put everything back where it was
+	// before the credits.
+
+	for (i = 0; i < lineCount; i++) {
+		if (creditsLines[i].str)
+			free(creditsLines[i].str);
+		if (creditsLines[i].sprite)
+			_vm->_memory->freeMemory(creditsLines[i].sprite);
 	}
+
+	if (logoData)
+		free(logoData);
+
+	_vm->_graphics->fadeDown();
+	_vm->_graphics->waitForFade();
+
+	// The music should have stopped by now, but I suppose there is a
+	// slim chance it hasn't on a really, really fast computer.
+
+	while (_vm->_sound->musicTimeRemaining())
+		_vm->_system->delay_msecs(100);
+
+	_vm->_sound->restoreMusicState();
+	_vm->_sound->muteFx(false);
+	_vm->_sound->muteSpeech(false);
+
+	_vm->_thisScreen.new_palette = 99;
+
+	if (!_vm->_mouseStatus || _choosing)
+		_vm->setMouse(NORMAL_MOUSE_ID);
+
+	if (DEAD)
+		_vm->buildSystemMenu();
 
 	return IR_CONT;
 }
