@@ -3079,7 +3079,12 @@ void ScummEngine_v6::o6_getPixel() {
 }
 
 void ScummEngine_v6::o6_setBoxSet() {
+	//FIXME Causes glitches and game to crash 
+	// Only used in fbear when leaving the basement
+
 	int arg = pop();
+	return;
+
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
 	const byte *boxd = NULL, *boxm = NULL;
 	int32 dboxSize, mboxSize;

@@ -238,17 +238,15 @@ SCUMM
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
-  - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
-    garage and rock animations near rocket.
-  - Fix freezes when letting butterfly into fireworks factory and playing alien
-    tag in puttmoon
-  - Fix creature behind garage door disappearing in moondemo
   - Fix remaining masking issues, when cars come out of garages in puttputt and
     when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
   - Document and fix AKOS differences in Humongous Entertainment games
-  - Support various newer Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
-  - Add variables for _heversion > 72
+  - Add support for akos codec 32 (Used in water)
+  - Add support for akos_drawLimb C025 (Used in zoodemo)
+  - Add support for new charset codes
+  - Add support for debug strings (Replaces %d & %s with ints/strings from stack list)
+  - Add support for various new opcodes
   - Add support for Scummsys.9x and C++ engine MAXS blocks
 
 Broken Sword 2

@@ -121,6 +121,11 @@ SCUMM Games:
      Full Throttle                                   [Game: ft]
      Curse of Monkey Island                          [Game: comi]
 
+     Fatty Bear's Birthday Surprise                  [Game: fbear]
+     Fatty Bear's Fun Pack                           [Game: fbpack]
+     Putt-Putt Goes To The Moon                      [Game: puttmoon]
+     Putt-Putt Joins the Parade                      [Game: puttputt]
+
 Other Games:
      Beneath a Steel Sky                             [Game: sky]
      Broken Sword I                                  [Game: sword1]
@@ -132,21 +137,12 @@ Other Games:
      Simon the Sorcerer 2                            [Game: simon2dos/
                                                             simon2talkie]
 
-The following games should be completable, but have some critical problems that
-prevent them from being fully supported at this time. Please do not file bug
-reports about them.
-        
-     Putt-Putt Joins the Parade                    [Game: puttputt]
-
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-     Putt-Putt Goes To The Moon                    [Game: puttmoon]
      Putt-Putt's Fun Pack                          [Game: funpack]
-     Fatty Bear's Birthday Surprise                [Game: fbear]
-     Fatty Bear's Fun Pack                         [Game: fbpack]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
