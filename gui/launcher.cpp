@@ -32,6 +32,7 @@
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
+#include "common/plugins.h"
 
 enum {
 	kStartCmd = 'STRT',
@@ -214,14 +215,8 @@ void LauncherDialog::close() {
 	Dialog::close();
 }
 
-// FIXME: EVIL HACK! remove use of version_settings by introducing
-// proper APIs for accessing/searching them
-extern const TargetSettings *version_settings;
-
-
 void LauncherDialog::updateListing() {
 	int i;
-	const TargetSettings *v = version_settings;
 	ScummVM::StringList l;
 
 	// Retrieve a list of all games defined in the config file
@@ -234,14 +229,9 @@ void LauncherDialog::updateListing() {
 		if (name.isEmpty())
 			name = domains[i];
 		if (description.isEmpty()) {
-			v = version_settings;
-			while (v->targetName) {
-				if (!scumm_stricmp(v->targetName, name.c_str())) {
-					description = v->description;
-					break;
-				}
-				v++;
-			}
+			const TargetSettings *v = _detector.findTarget(name.c_str());
+			if (v && v->description)
+				description = v->description;
 		} 
 
 		if (!name.isEmpty() && !description.isEmpty()) {
@@ -270,47 +260,51 @@ GameList findGame(FilesystemNode *dir) {
 	char detectName[128];
 	char detectName2[128];
 	char detectName3[128];
-	int i;
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	const TargetSettings *v = version_settings;
-	while (v->targetName && v->description) {
-
-		// Determine the 'detectname' for this game, that is, the name of a 
-		// file that *must* be presented if the directory contains the data
-		// for this game. For example, FOA requires atlantis.000
-		if (v->detectname) {
-			strcpy(detectName, v->detectname);
-			strcpy(detectName2, v->detectname);
-			strcat(detectName2, ".");
-			detectName3[0] = '\0';
-		} else {
-			strcpy(detectName, v->targetName);
-			strcpy(detectName2, v->targetName);
-			strcpy(detectName3, v->targetName);
-			strcat(detectName, ".000");
-			if (v->version >= 7) {
-				strcat(detectName2, ".la0");
-			} else
-				strcat(detectName2, ".sm0");
-			strcat(detectName3, ".he0");
-		}
-
-		// Iterate over all files in the given directory
-		for (i = 0; i < size; i++) {
-			const char *targetName = (*files)[i].displayName().c_str();
-
-			if ((0 == scumm_stricmp(detectName, targetName))  || 
-			    (0 == scumm_stricmp(detectName2, targetName)) ||
-			    (0 == scumm_stricmp(detectName3, targetName))) {
-				// Match found, add to list of candidates, then abort inner loop.
-				list.push_back(v);
-				break;
+	assert(g_pluginManager);
+	const PluginList &plugins = g_pluginManager->getPlugins();
+	int p;
+	for (p = 0; p < plugins.size(); p++) {
+		const TargetSettings *v = plugins[p]->getTargets();
+		while (v->targetName && v->description) {
+	
+			// Determine the 'detectname' for this game, that is, the name of a 
+			// file that *must* be presented if the directory contains the data
+			// for this game. For example, FOA requires atlantis.000
+			if (v->detectname) {
+				strcpy(detectName, v->detectname);
+				strcpy(detectName2, v->detectname);
+				strcat(detectName2, ".");
+				detectName3[0] = '\0';
+			} else {
+				strcpy(detectName, v->targetName);
+				strcpy(detectName2, v->targetName);
+				strcpy(detectName3, v->targetName);
+				strcat(detectName, ".000");
+				if (v->version >= 7) {
+					strcat(detectName2, ".la0");
+				} else
+					strcat(detectName2, ".sm0");
+				strcat(detectName3, ".he0");
 			}
+	
+			// Iterate over all files in the given directory
+			for (int i = 0; i < size; i++) {
+				const char *targetName = (*files)[i].displayName().c_str();
+	
+				if ((0 == scumm_stricmp(detectName, targetName))  || 
+					(0 == scumm_stricmp(detectName2, targetName)) ||
+					(0 == scumm_stricmp(detectName3, targetName))) {
+					// Match found, add to list of candidates, then abort inner loop.
+					list.push_back(v);
+					break;
+				}
+			}
+	
+			v++;
 		}
-
-		v++;
 	}
 
 	return list;

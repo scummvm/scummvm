@@ -159,13 +159,6 @@ static const struct MusicDriver music_drivers[] = {
 };
 
 
-// This contains a pointer to a list of all supported games.
-// FIXME: Get rid of version_settings. The only reaons we still have it is
-// that launcher.cpp uses it. So let's convert launcher.cpp to use the new
-// Plugin API instead!
-const TargetSettings *version_settings = NULL;
-
-
 GameDetector::GameDetector() {
 	_fullScreen = false;
 	_aspectRatio = false;
@@ -213,36 +206,6 @@ GameDetector::GameDetector() {
 	_gfx_mode = GFX_NORMAL;
 #endif
 	_default_gfx_mode = true;
-	
-	if (version_settings == NULL) {
-		assert(g_pluginManager);
-		const PluginList &_plugins = g_pluginManager->getPlugins();
-		int i;
-		int count = 0;
-		
-		// Gather & combine the target lists from the modules
-		for (i = 0; i < _plugins.size(); i++) {
-			count += _plugins[i]->countTargets();
-		}
-
-		TargetSettings *v = (TargetSettings *)calloc(count + 1, sizeof(TargetSettings));
-		version_settings = v;
-
-		for (i = 0; i < _plugins.size(); i++) {
-			count = _plugins[i]->countTargets();
-			memcpy(v, _plugins[i]->getTargets(), count * sizeof(TargetSettings));
-			v += count;
-		}
-	}
-}
-
-GameDetector::~GameDetector() {
-#ifdef __PALM_OS__
-	// This is a previously allocated chunck (line 224)
-	// so we need to free it to prevent memory leak
-	TargetSettings *v = (TargetSettings *)version_settings;
-	free(v);
-#endif
 }
 
 void GameDetector::updateconfig() {
@@ -316,15 +279,15 @@ void GameDetector::updateconfig() {
 }
 
 void GameDetector::list_games() {
-	const PluginList &_plugins = g_pluginManager->getPlugins();
+	const PluginList &plugins = g_pluginManager->getPlugins();
 	const TargetSettings *v;
 	const char *config;
 
 	printf("Game             Full Title                                             Config\n"
 	       "---------------- ------------------------------------------------------ -------\n");
 
-	for (int i = 0; i < _plugins.size(); i++) {
-		v = _plugins[i]->getTargets();
+	for (int i = 0; i < plugins.size(); i++) {
+		v = plugins[i]->getTargets();
 		while (v->targetName && v->description) {
 			config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
 			printf("%-17s%-56s%s\n", v->targetName, v->description, config);
@@ -337,10 +300,10 @@ const TargetSettings *GameDetector::findTarget(const char *targetName) const {
 	// Find the TargetSettings for this target
 	assert(targetName);
 	const TargetSettings *target;
-	const PluginList &_plugins = g_pluginManager->getPlugins();
+	const PluginList &plugins = g_pluginManager->getPlugins();
 	
-	for (int i = 0; i < _plugins.size(); i++) {
-		target = _plugins[i]->findTarget(targetName);
+	for (int i = 0; i < plugins.size(); i++) {
+		target = plugins[i]->findTarget(targetName);
 		if (target)
 			return target;
 	}

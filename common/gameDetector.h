@@ -134,7 +134,6 @@ public:
 
 public:
 	GameDetector();
-	~GameDetector();
 
 	void parseCommandLine(int argc, char **argv);
 	int detectMain();
