@@ -1998,6 +1998,11 @@ void Scumm_v5::o5_setVarRange() {
 
 void Scumm_v5::o5_startMusic() {
 	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
+	if (_gameId == GID_ZAK256) {
+		int a = fetchScriptByte();
+		int b = fetchScriptByte();
+		warning("Just skipped two bytes of unknown meaning: %d, %d", a, b);
+	}
 }
 
 void Scumm_v5::o5_startSound() {
