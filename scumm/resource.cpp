@@ -2111,7 +2111,8 @@ void ScummEngine::readMAXS() {
 		_numLocalObjects = _fileHandle.readUint16LE();   // 200
 		_numArray = 50;
 		_numVerbs = 100;
-		_numNewNames = 50;
+		// Used to be 50, which wasn't enough for MI2. See bug #936323.
+		_numNewNames = 100;
 		_objectRoomTable = NULL;
 
 		_fileHandle.readUint16LE();                      // 50
