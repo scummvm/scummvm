@@ -209,6 +209,9 @@
 			RelativePath="..\..\saga\image_mod.h">
 		</File>
 		<File
+			RelativePath="..\..\saga\input.cpp">
+		</File>
+		<File
 			RelativePath="..\..\saga\interface.cpp">
 		</File>
 		<File
@@ -362,24 +365,6 @@
 			RelativePath="..\..\saga\sthread.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\sys_interface.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\sysgfx.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sysgfx.h">
-		</File>
-		<File
-			RelativePath="..\..\saga\sysinput.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\systimer.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\systimer.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\text.cpp">
 		</File>
 		<File
@@ -387,6 +372,12 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\text_mod.h">
+		</File>
+		<File
+			RelativePath="..\..\saga\timer.cpp">
+		</File>
+		<File
+			RelativePath="..\..\saga\timer.h">
 		</File>
 		<File
 			RelativePath="..\..\saga\transitions.cpp">
