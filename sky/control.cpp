@@ -1585,22 +1585,10 @@ uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 
 uint16 SkyControl::quickSaveRestore(uint16 slot, bool save) {
 	uint16 result;
-	initPanel();
-	_mouseClicked = false;
-
-	_savedCharSet = _skyText->giveCurrentCharSet();
-	_skyText->fnSetFont(0);
-
-	_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->update_screen();
-
-	if (SkyState::_systemVars.gameVersion < 331)
-		_skyScreen->setPalette(60509);
-	else
-		_skyScreen->setPalette(60510);
-
+	
 	_savedMouse = _skyMouse->giveCurrentMouseType();
 	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
+	_savedCharSet = _skyText->giveCurrentCharSet();
 
 	if (save) {
 		if (slot == 0)
@@ -1609,21 +1597,34 @@ uint16 SkyControl::quickSaveRestore(uint16 slot, bool save) {
 			_selectedGame = slot - 1;
 		result = saveGameToFile();
 	} else {
+		initPanel();
+		_mouseClicked = false;
+
+		_skyText->fnSetFont(0);
+
+		_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+		_system->update_screen();
+
+		if (SkyState::_systemVars.gameVersion < 331)
+			_skyScreen->setPalette(60509);
+		else
+			_skyScreen->setPalette(60510);
 		if (slot == 0)
 			result = restoreGameFromFile(true);
 		else {
 			_selectedGame = slot - 1;
 			result = restoreGameFromFile(false);
 		}
-	}
-	_skyMouse->spriteMouse(_savedMouse, 0, 0);
-	_skyText->fnSetFont(_savedCharSet);
-	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-	_skyScreen->showScreen(_skyScreen->giveCurrent());
-	_skyScreen->forceRefresh();
-	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 
-	removePanel();
+		_skyMouse->spriteMouse(_savedMouse, 0, 0);
+		_skyText->fnSetFont(_savedCharSet);
+		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
+		_skyScreen->showScreen(_skyScreen->giveCurrent());
+		_skyScreen->forceRefresh();
+		_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+		removePanel();
+	}
+
     return result;
 }
 
