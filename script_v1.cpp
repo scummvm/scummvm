@@ -1299,7 +1299,7 @@ void Scumm::o5_getObjectOwner() {
 
 void Scumm::o5_getObjectState() {
 	if(_features & GF_SMALL_HEADER) {
-		if((getState(getVarOrDirectWord(0x80)) &0x0F >>4) != (int)getVarOrDirectByte(0x40))
+		if((getState(getVarOrDirectWord(0x80)) &0xF0 >>4) != (int)getVarOrDirectByte(0x40))
 			o5_jumpRelative();
 		else
 			ignoreScriptWord();
