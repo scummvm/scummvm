@@ -670,10 +670,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	_ptr = (byte *)sound;
 	_flags = flags;
 
-printf("ChannelRaw: flags 0x%x, input rate %d, output rate %d, size %d\n", flags, rate, mixer->getOutputRate(), size);
-//hexdump(_ptr, size);
-//puts("\n");
-
 #ifdef SOX_HACK
 	
 	// Create the input stream
@@ -763,10 +759,6 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 										 byte flags, uint32 buffer_size)
 	: Channel(mixer, handle) {
 	assert(size <= buffer_size);
-
-printf("ChannelStream: flags 0x%x, input rate %d, output rate %d, size %d\n", flags, rate, mixer->getOutputRate(), size);
-//hexdump(_ptr, size);
-//puts("\n");
 
 #ifdef SOX_HACK
 	
