@@ -140,6 +140,10 @@ SOURCE=.\simon\debug.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\simon\debug.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\simon\intern.h
 # End Source File
 # Begin Source File
@@ -181,6 +185,10 @@ SOURCE=.\simon\verb.cpp
 # Begin Source File
 
 SOURCE=.\simon\vga.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\vga.h
 # End Source File
 # End Group
 # End Target

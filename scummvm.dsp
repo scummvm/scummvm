@@ -314,6 +314,14 @@ SOURCE=.\gui\chooser.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\console.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\console.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\dialog.cpp
 # End Source File
 # Begin Source File

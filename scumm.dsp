@@ -311,6 +311,14 @@ SOURCE=.\scumm\debug.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\debugger.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\debugger.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\debugrl.cpp
 # End Source File
 # Begin Source File
@@ -416,6 +424,10 @@ SOURCE=.\scumm\vars.cpp
 # Begin Source File
 
 SOURCE=.\scumm\verbs.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\verbs.h
 # End Source File
 # End Group
 # End Target
