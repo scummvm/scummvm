@@ -1381,19 +1381,26 @@ void Scumm::updatePalette() {
 	int first = _palDirtyMin;
 	int num = _palDirtyMax - first + 1;
 	int i;
-	byte *data = _currentPalette + first * 3;
 
 	byte palette_colors[1024],*p = palette_colors;
 
 	// Sam & Max film noir mode
 	if (_gameId == GID_SAMNMAX && readVar(0x8000))
 		desaturatePalette();
-	
-	for (i = 0; i != num; i++, data += 3, p+=4) {
-		p[0] = data[0];
-		p[1] = data[1];
-		p[2] = data[2];
-		p[3] = 0;
+
+	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
+		byte *data;
+
+		if (_features & GF_SMALL_HEADER)
+			data = _currentPalette + _shadowPalette[i] * 3;
+		else
+			data = _currentPalette + i * 3;
+
+		*p++ = data[0];
+		*p++ = data[1];
+		*p++ = data[2];
+		*p++ = 0;
+
 	}
 	
 	_system->set_palette(palette_colors, first, num);

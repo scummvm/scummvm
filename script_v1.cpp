@@ -1922,8 +1922,8 @@ void Scumm::o5_roomOps()
 				b = getVarOrDirectWord(0x40);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
-			_shadowPalette[a] = b;
-			//        _fullRedraw = 1;
+			_shadowPalette[b] = a;
+			setDirtyColors(b, b);
 		} else {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
