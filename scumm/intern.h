@@ -429,8 +429,9 @@ protected:
 	void o8_soundKludge();
 	void o8_system();
 	void o8_startVideo();
-	void o6_kernelSetFunctions();
-	void o6_kernelGetFunctions();
+	void o8_kernelSetFunctions();
+	void o8_kernelGetFunctions();
+	void o8_getDateTime();
 
 	void o8_getObjectImageX();
 	void o8_getObjectImageY();

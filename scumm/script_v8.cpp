@@ -270,12 +270,12 @@ void Scumm_v8::setupOpcodes()
 		/* B4 */
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_setObjectName),
-		OPCODE(o6_invalid),
+		OPCODE(o8_getDateTime),
 		OPCODE(o6_drawBox),
 		/* B8 */
 		OPCODE(o6_invalid),
 		OPCODE(o8_startVideo),
-		OPCODE(o6_kernelSetFunctions),
+		OPCODE(o8_kernelSetFunctions),
 		OPCODE(o6_invalid),
 		/* BC */
 		OPCODE(o6_invalid),
@@ -313,7 +313,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_abs),
 		OPCODE(o6_invalid),
 		/* D8 */
-		OPCODE(o6_kernelGetFunctions),
+		OPCODE(o8_kernelGetFunctions),
 		OPCODE(o6_isActorInBox),
 		OPCODE(o6_getVerbEntrypoint),
 		OPCODE(o6_getActorFromXY),
@@ -509,6 +509,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
+	case 0xD2:
 	case 0xD0:		// SO_PRINT_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
@@ -568,9 +569,9 @@ void Scumm_v8::decodeParseString(int m, int n)
 			return;
 		}
 		break;
-	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
-		error("decodeParseString: SO_PRINT_MUMBLE");
-		break;
+//	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
+//		error("decodeParseString: SO_PRINT_MUMBLE");
+//		break;
 	default:
 		error("decodeParseString: default case %d", b);
 	}
@@ -959,6 +960,8 @@ void Scumm_v8::o8_roomOps()
 		warning("V8 Load game opcode not implemented");
 		break;
 	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
+		warning("o8_roomOps: SO_ROOM_SATURATION(%d, %d, %d, %d, %d)", pop(), pop(), pop(), pop(), pop());
+		break;
 	default:
 		error("o8_roomOps: default case %d", subOp);
 	}
@@ -1286,6 +1289,11 @@ void Scumm_v8::o8_system()
 	}
 }
 
+void Scumm_v8::o8_getDateTime()
+{
+	warning("o8_getDateTime()");
+}
+
 void Scumm_v8::o8_startVideo()
 {
 	int len = resStrLen(_scriptPointer);
@@ -1299,7 +1307,7 @@ void Scumm_v8::o8_startVideo()
 	_scriptPointer += len + 1;
 }
 
-void Scumm_v8::o6_kernelSetFunctions()
+void Scumm_v8::o8_kernelSetFunctions()
 {
 	// TODO
 	int args[30];
@@ -1307,7 +1315,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 
 	switch (args[0]) {
 	case 11:	// lockObject
-//		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
+//		warning("o8_kernelSetFunctions: lockObject(%d)", args[1]);
 		lock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
 //		getObjectIndex(args[1]);
 //		if (ObjData.field28 != 0) {
@@ -1315,7 +1323,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 //		}
 		break;
 	case 12:	// unlockObject
-		warning("o6_kernelSetFunctions: unlockObject(%d)", args[1]);
+		warning("o8_kernelSetFunctions: unlockObject(%d)", args[1]);
 		unlock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
 //		getObjectIndex(args[1]);
 //		if (ObjData.field28 != 0) {
@@ -1323,61 +1331,61 @@ void Scumm_v8::o6_kernelSetFunctions()
 //		}
 		break;
 	case 13:	// remapCostume
-		derefActorSafe(args[1], "o6_kernelSetFunctions:remapCostume")->remapActorPalette(args[2], args[3], args[4], -1);
+		derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostume")->remapActorPalette(args[2], args[3], args[4], -1);
 		break;
 	case 14:	// remapCostumeInsert
-		derefActorSafe(args[1], "o6_kernelSetFunctions:remapCostumeInsert")->remapActorPalette(args[2], args[3], args[4], args[5]);
+		derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostumeInsert")->remapActorPalette(args[2], args[3], args[4], args[5]);
 		break;
 	case 15:	// setVideoFrameRate
 		// not used anymore (was smush frame rate)
 		break;
 	case 20:	// setBoxSlot
-		warning("o6_kernelSetFunctions: setBoxSlot(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: setBoxSlot(%d, %d)", args[1], args[2]);
 		// FIXME - really setBoxScale ?!?
 //		setBoxScale(args[1], args[2]);
 		break;
 	case 21:	// setScaleSlot
-		warning("o6_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+		warning("o8_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:	// setBannerColors
-//		warning("o6_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
-//		warning("o6_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 24:	// clearTextQueue
-		warning("o6_kernelSetFunctions: clearTextQueue()");
+		warning("o8_kernelSetFunctions: clearTextQueue()");
 		break;
 	case 25:	// saveGameWrite
-		warning("o6_kernelSetFunctions: saveGameWrite(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: saveGameWrite(%d, %d)", args[1], args[2]);
 		break;
 	case 26:	// saveGameRead
-		warning("o6_kernelSetFunctions: saveGameRead(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: saveGameRead(%d, %d)", args[1], args[2]);
 		break;
 	case 27:	// saveGameReadName
-		warning("o6_kernelSetFunctions: saveGameReadName(%d)", args[1]);
+		warning("o8_kernelSetFunctions: saveGameReadName(%d)", args[1]);
 		break;
 	case 28:	// saveGameStampScreenshot
-		warning("o6_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		warning("o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
-		warning("o6_kernelSetFunctions: setKeyScript(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: setKeyScript(%d, %d)", args[1], args[2]);
 		break;
 	case 30:	// killAllScriptsButMe
-		warning("o6_kernelSetFunctions: killAllScriptsButMe()");
+		warning("o8_kernelSetFunctions: killAllScriptsButMe()");
 		killAllScriptsExceptCurrent();
 		break;
 	case 31:	// stopAllVideo
-		warning("o6_kernelSetFunctions: stopAllVideo()");
+		warning("o8_kernelSetFunctions: stopAllVideo()");
 		break;
 	case 32:	// writeRegistryValue
-		warning("o6_kernelSetFunctions: writeRegistryValue(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: writeRegistryValue(%d, %d)", args[1], args[2]);
 		break;
 	case 33:	// paletteSetIntensity
-		warning("o6_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
+		warning("o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
-		warning("o6_kernelSetFunctions: queryQuit()");
+		warning("o8_kernelSetFunctions: queryQuit()");
 		break;
 	case 108:	// buildPaletteShadow
 		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
@@ -1393,11 +1401,11 @@ void Scumm_v8::o6_kernelSetFunctions()
 		break;
 
 	default:
-		warning("o6_kernelSetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelSetFunctions: default case %d (len = %d)", args[0], len);
 	}
 }
 
-void Scumm_v8::o6_kernelGetFunctions()
+void Scumm_v8::o8_kernelGetFunctions()
 {
 	// TODO
 	int args[30];
@@ -1414,7 +1422,7 @@ void Scumm_v8::o6_kernelGetFunctions()
 	case 0xD3:		// getKeyState
 	case 0xD7:		// getBox
 		push(0);
-		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
 		break;
 	case 0xD8: {		// findBlastObject
 		BlastObject *eo;
@@ -1434,7 +1442,7 @@ void Scumm_v8::o6_kernelGetFunctions()
 	}
 	case 0xD9:		// actorHit
 		push(0);
-		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		warning("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
 		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
@@ -1465,7 +1473,7 @@ void Scumm_v8::o6_kernelGetFunctions()
 		}
 		break;
 	default:
-		error("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		error("o8_kernelGetFunctions: default case %d (len = %d)", args[0], len);
 	}
 
 }
