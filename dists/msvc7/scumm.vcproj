@@ -177,6 +177,9 @@
 				RelativePath="..\..\scumm\imuse_digi\dimuse_codecs.cpp">
 			</File>
 			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_music.cpp">
+			</File>
+			<File
 				RelativePath="..\..\scumm\imuse_digi\dimuse_sndmgr.cpp">
 			</File>
 			<File
