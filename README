@@ -314,40 +314,49 @@ arguments - see the next section.
 5.1) Command Line Options:
 ---- ---------------------
 
-THIS NEEDS TO BE UPDATED
-        scummvm [OPTIONS] [GAME]
+  Usage: scummvm [OPTIONS]... [GAME]
 
-        [GAME]           - Short name of game to load. For example, 'monkey' for
-                         Monkey Island. This can be either a known gameid, or
-                         a pre-configured target.
+  [GAME]                   Short name of game to load. For example, 'monkey'
+                           for Monkey Island. This can be either a built-in
+                           gameid, or a user configured target.
 
-        -p<path>        - Path to where the game is installed. Default is CWD.
-        -x[num]         - Save game slot to load (default: autosave)
-        -f              - Full-screen mode. (-F forces window mode.)
-        -g<mode>        - Select graphics scaler. See below.
-        -e<mode>        - Select sound engine. See below.
-        -q<lang>        - Select language. See below.
-        -c<num>         - Drive to play CD audio from.  E.g., 0 is first drive.
-        -j[num]         - Enable input with joystick (default: 0 - 1st joystick)
-        -m<num>          - Set the music volume, 0-255.  Default is '192'
-        -o<num>         - Set the master volume, 0-255. Default is '192'
-        -s<num>         - Set the sfx volume, 0-255.    Default is '192'
-        -t<num>         - Set music tempo. 50-200. Default is '100' (percent)
-        -n              - Disable subtitles. Use with games that have voice.
-        -y              - Set talk speed ('yak option'). Default is '60'
-        -v              - Show version information and exit
-        -z              - Display list of games
-        -b<num>         - Pass number to the boot script (boot param)
-        -d<num>         - Set debug verbosity to <num>
-        -u              - Dump scripts if a directory called 'dumps' exists in
-                          current directory
-        --platform=     - Specify version of game (amiga,atari-st,macintosh)
-        --multi-midi    - Enable combination Adlib and native MIDI
-        --native-mt32   - True Roland MT-32 (disable GM emulation)
-        --fullscreen    - Full-screen mode (same as -f)
-        --aspect-ratio  - Enable aspect ratio correction
-        --demo-mode     - Start demo mode of Maniac Mansion (Classic version)
-        --floppy-intro  - Use floppy version intro for Beneath a Steel Sky CD
+  -v, --version            Display ScummVM version information and exit
+  -h, --help               Display a brief help text and exit
+  -z, --list-games         Display list of supported games and exit
+  -t, --list-targets       Display list of configured targets and exit
+
+  -p, --path=PATH          Path to where the game is installed
+  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)
+  -f, --fullscreen         Force full-screen mode
+  -F, --no-fullscreen      Force windowed mode
+  -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  -e, --music-driver=MODE  Select music driver (see also section 7.0)
+  -q, --language=LANG      Select language (see also section 5.2)
+  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
+  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)
+  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
+  -n, --nosubtitles        Disable subtitles (use with games that have voice)
+  -b, --boot-param=NUM     Pass number to the boot script (boot param)
+  -d, --debuglevel=NUM     Set debug verbosity level
+  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'
+                           exists in the current directory
+
+  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first
+                           drive)
+  --joytick[=NUM]          Enable input with joystick (default: 0 = first
+                           joystick)
+  --platform=WORD          Specify version of game (allowed values: amiga,
+                           atari, mac, pc)
+  --multi-midi             Enable combination Adlib and native MIDI
+  --native-mt32            True Roland MT-32 (disable GM emulation)
+  --aspect-ratio           Enable aspect ratio correction
+
+  --floppy-intro           Use floppy version intro for Beneath a Steel Sky CD
+  --demo-mode              Start demo mode of Maniac Mansion (Classic version)
+  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
+                           (default: 100)
+  --talkspeed=NUM          Set talk speed for SCUMM games (default: 60)
+
 
 The meaning of most long options can be inverted by prefixing them with "no-",
 e.g. --no-aspect-ratio. This is useful if you want to override a setting in the
