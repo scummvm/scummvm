@@ -1132,10 +1132,6 @@ void ScummEngine_v6he::o6_setVolume() {
 	}
 }
 
-void ScummEngine_v6he::o6_unknownE4() {
-	warning("o6_unknownE4(%d) stub", pop());
-}
-
 void ScummEngine_v6he::o6_unknownFA() {
 	int len, a = fetchScriptByte();
 	

@@ -586,7 +586,6 @@ protected:
 	void o6_findAllObjects();
 	void o6_setVolume();
 	void o6_unknownE1();
-	void o6_unknownE4();
 	void o6_seekFile();
 	void o6_localizeArray();
 	void o6_unknownEE();
