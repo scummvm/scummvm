@@ -1464,7 +1464,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 
 		switch (code) {
 		case AKC_StartAnimInActor:
-			akos_queCommand(4, derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
+			akos_queCommand(4, derefActor(a->getAnimVar(GB(2)), "akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
 			continue;
 
 		case AKC_Random:
@@ -1510,7 +1510,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			akos_queCommand(4, a, a->getAnimVar(GB(2)), 0);
 			continue;
 		case AKC_SetVarInActor:
-			derefActorSafe(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4));
+			derefActor(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4));
 			continue;
 		case AKC_HideActor:
 			akos_queCommand(1, a, 0, 0);

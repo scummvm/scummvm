@@ -639,8 +639,7 @@ void Scumm_v8::o8_wait() {
 	case 0x1E:		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
 		offs = fetchScriptWordSigned();
 		actnum = pop();
-		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
-		assert(a);
+		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
 		if (a->moving) {
 			_scriptPointer += offs;
 			o6_breakHere();
@@ -666,8 +665,7 @@ void Scumm_v8::o8_wait() {
 	case 0x22:		// SO_WAIT_FOR_ANIMATION
 		offs = fetchScriptWordSigned();
 		actnum = pop();
-		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
-		assert(a);
+		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
 		if (a->isInCurrentRoom() && a->needRedraw) {
 			_scriptPointer += offs;
 			o6_breakHere();
@@ -676,8 +674,7 @@ void Scumm_v8::o8_wait() {
 	case 0x23:		// SO_WAIT_FOR_TURN
 		offs = fetchScriptWordSigned();
 		actnum = pop();
-		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_TURN");
-		assert(a);
+		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_TURN");
 		if (a->isInCurrentRoom() && a->moving & MF_TURN) {
 			_scriptPointer += offs;
 			o6_breakHere();
@@ -1388,13 +1385,11 @@ void Scumm_v8::o8_kernelSetFunctions() {
 		break;
 	}
 	case 13:	// remapCostume
-		a = derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostume");
-		assert(a);
+		a = derefActor(args[1], "o8_kernelSetFunctions:remapCostume");
 		a->remapActorPalette(args[2], args[3], args[4], -1);
 		break;
 	case 14:	// remapCostumeInsert
-		a = derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostumeInsert");
-		assert(a);
+		a = derefActor(args[1], "o8_kernelSetFunctions:remapCostumeInsert");
 		a->remapActorPalette(args[2], args[3], args[4], args[5]);
 		break;
 	case 15:	// setVideoFrameRate
@@ -1416,8 +1411,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 		// lipSyncWidth and lipSyncHeight, which we currently don't support. As a result,
 		// actors will currently not move their mouth at all!
 //		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
-		a = derefActorSafe(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
-		assert(a);
+		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
 
 		a->startAnimActor(args[2]);
 		a->animateLimb(args[3], args[4]);
@@ -1553,8 +1547,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 	case 0xD9: {   // actorHit - used, for example, to detect ship collision
 	               // during ship-to-ship combat.
 #if 0
-		Actor *a = derefActorSafe(args[1], "actorHit");
-		assert(a);
+		Actor *a = derefActor(args[1], "actorHit");
 		int x = args[2];
 		int y = args[3];
 		
@@ -1609,8 +1602,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xDC:		// actorTalkAnimation
 		{
-		Actor *a = derefActorSafe(args[1], "actorTalkAnimation");
-		assert(a);
+		Actor *a = derefActor(args[1], "actorTalkAnimation");
 		push(a->talkStartFrame);
 		}
 		break;
@@ -1655,8 +1647,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 
 void Scumm_v8::o8_getActorChore() {
 	int actnum = pop();
-	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
-	assert(a);
+	Actor *a = derefActor(actnum, "o8_getActorChore");
 
 	// FIXME: This is a hack for the cannon scene, as something isn't quite right
 	// here yet..
@@ -1670,8 +1661,7 @@ void Scumm_v8::o8_getActorChore() {
 
 void Scumm_v8::o8_getActorZPlane() {
 	int actnum = pop();
-	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
-	assert(a);
+	Actor *a = derefActor(actnum, "o8_getActorChore");
 
 	int z = a->forceClip;
 	if (z == 100) {

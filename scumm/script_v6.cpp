@@ -951,7 +951,7 @@ void Scumm_v6::o6_panCameraTo() {
 
 void Scumm_v6::o6_actorFollowCamera() {
 	if (_features & GF_AFTER_V7)
-		setCameraFollows(derefActorSafe(pop(), "actorFollowCamera"));
+		setCameraFollows(derefActor(pop(), "actorFollowCamera"));
 	else
 		actorFollowCamera(pop());
 }
@@ -987,15 +987,14 @@ void Scumm_v6::o6_stopScript() {
 }
 
 void Scumm_v6::o6_walkActorToObj() {
-	int obj, dist;
+	int act, obj, dist;
 	Actor *a, *a2;
 	int x;
 
 	dist = pop();
 	obj = pop();
-	a = derefActorSafe(pop(), "o6_walkActorToObj");
-	if (!a)
-		return;
+	act = pop();
+	a = derefActor(act, "o6_walkActorToObj");
 
 	if (obj >= _numActors) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
@@ -1004,9 +1003,7 @@ void Scumm_v6::o6_walkActorToObj() {
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {
-		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (!a2)
-			return;
+		a2 = derefActor(obj, "o6_walkActorToObj(2)");
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
@@ -1026,21 +1023,19 @@ void Scumm_v6::o6_walkActorTo() {
 	int x, y;
 	y = pop();
 	x = pop();
-	Actor *a = derefActorSafe(pop(), "o6_walkActorTo");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_walkActorTo");
 	a->startWalkActor(x, y, -1);
 }
 
 void Scumm_v6::o6_putActorInRoom() {
-	int room, x, y;
+	int room, x, y, act;
 	Actor *a;
 
 	room = pop();
 	y = pop();
 	x = pop();
-	a = derefActorSafe(pop(), "o6_putActorInRoom");
-	if (!a)
-		return;
+	act = pop();
+	a = derefActor(act, "o6_putActorInRoom");
 
 	if (room == 0xFF || room == 0x7FFFFFFF) {
 		room = a->room;
@@ -1061,7 +1056,7 @@ void Scumm_v6::o6_putActorAtObject() {
 
 	obj = popRoomAndObj(&room);
 
-	a = derefActorSafe(pop(), "o6_putActorAtObject");
+	a = derefActor(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
 	} else {
@@ -1075,18 +1070,13 @@ void Scumm_v6::o6_putActorAtObject() {
 
 void Scumm_v6::o6_faceActor() {
 	int obj = pop();
-	Actor *a = derefActorSafe(pop(), "o6_faceActor");
-	assert(a);
-
+	Actor *a = derefActor(pop(), "o6_faceActor");
 	a->faceToObject(obj);
 }
 
 void Scumm_v6::o6_animateActor() {
 	int anim = pop();
-	Actor *a = derefActorSafe(pop(), "o6_animateActor");
-	if (!a)
-		return;
-
+	Actor *a = derefActor(pop(), "o6_animateActor");
 	a->animateActor(anim);
 }
 
@@ -1136,9 +1126,7 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 
 	obj = popRoomAndObj(&room);
 
-	a = derefActorSafe(VAR(VAR_EGO), "o6_loadRoomWithEgo");
-	assert(a);
-	
+	a = derefActor(VAR(VAR_EGO), "o6_loadRoomWithEgo");
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
@@ -1188,74 +1176,68 @@ void Scumm_v6::o6_isRoomScriptRunning() {
 }
 
 void Scumm_v6::o6_getActorMoving() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorMoving");
-	if (a)
-		push(a->moving);
-	else
-		push(0);
+	Actor *a = derefActor(pop(), "o6_getActorMoving");
+	push(a->moving);
 }
 
 void Scumm_v6::o6_getActorRoom() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorRoom");
-	if (a)
-		push(a->room);
-	else
+	int act = pop();
+	Actor *a = derefActorSafe(act, "o6_getActorRoom");
+	if (!a) {
+		// FIXME: We got called with act = 0. This happens *a lot* in COMI.
+		// But why? Is that just normal, or due to a bug in ScummVM?
+		//warning("Invalid actor %d in o6_getActorRoom", act);
 		push(0);
+		return;
+	}
+
+	push(a->room);
 }
 
 void Scumm_v6::o6_getActorWalkBox() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorWalkBox");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorWalkBox");
 	push(a->ignoreBoxes ? 0 : a->walkbox);
 }
 
 void Scumm_v6::o6_getActorCostume() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorCostume");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorCostume");
 	push(a->costume);
 }
 
 void Scumm_v6::o6_getActorElevation() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorElevation");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorElevation");
 	push(a->elevation);
 }
 
 void Scumm_v6::o6_getActorWidth() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorWidth");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorWidth");
 	push(a->width);
 }
 
 void Scumm_v6::o6_getActorScaleX() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorScale");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorScale");
 	push(a->scalex);
 }
 
 void Scumm_v6::o6_getActorAnimCounter1() {
-	Actor *a = derefActorSafe(pop(), "o6_getActorAnimCounter");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getActorAnimCounter");
 	push(a->cost.animCounter1);
 }
 
 void Scumm_v6::o6_getAnimateVariable() {
 	int var = pop();
-	Actor *a = derefActorSafe(pop(), "o6_getAnimateVariable");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_getAnimateVariable");
 	push(a->getAnimVar(var));
 }
 
 void Scumm_v6::o6_isActorInBox() {
 	int box = pop();
-	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
-	assert(a);
+	Actor *a = derefActor(pop(), "o6_isActorInBox");
 	push(checkXYInBoxBounds(box, a->x, a->y));
 }
 
 void Scumm_v6::o6_getActorLayer() {
-	Actor *a = derefActorSafe(pop(), "getActorLayer");
-	assert(a);
+	Actor *a = derefActor(pop(), "getActorLayer");
 	push(a->layer);
 }
 
@@ -2454,10 +2436,10 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			derefActorSafe(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], -1);
+			derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], -1);
 			break;
 		case 14:
-			derefActorSafe(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
+			derefActor(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
 			break;
 		case 15:
 			_smushFrameRate = args[1];
@@ -2507,7 +2489,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			warning("o6_kernelSetFunctions: stub18(%d,%d)", args[1], args[2]);
 			break;
 		case 107:
-			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 107");
+			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
@@ -2572,7 +2554,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 
 		case 107:									/* set actor scale */
-			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 107");
+			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
@@ -2589,7 +2571,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			break;
 
 		case 111:
-			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 111");
+			a = derefActor(args[1], "o6_kernelSetFunctions: 111");
 			a->shadow_mode = args[2] + args[3];
 			break;
 
@@ -2740,7 +2722,7 @@ void Scumm_v6::o6_kernelGetFunctions() {
 		push(0);
 		break;
 	case 212:
-		a = derefActorSafe(args[1], "o6_kernelGetFunctions:212");
+		a = derefActor(args[1], "o6_kernelGetFunctions:212");
 		// This is used by walk scripts
 		push(a->frame);
 		break;
@@ -2809,7 +2791,7 @@ void Scumm_v6::o6_stampObject() {
 			state = 255;
 		}
 		warning("o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
-		Actor *a = derefActor(object);
+		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
 		a->putActor(x, y, _currentRoom); // TODO

@@ -665,7 +665,7 @@ void Scumm::drawFlashlight() {
 		x = _virtualMouse.x;
 		y = _virtualMouse.y;
 	} else {
-		Actor *a = a = derefActorSafe(VAR(VAR_EGO), "drawFlashlight");
+		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
 		x = a->x;
 		y = a->y;
 	}
@@ -2062,7 +2062,6 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 }
 
 void Scumm::setCameraFollows(Actor *a) {
-	assert(a != NULL);
 
 	if (_features & GF_AFTER_V7) {
 		byte oldfollow = camera._follows;
@@ -2103,9 +2102,8 @@ void Scumm::setCameraFollows(Actor *a) {
 			setCameraAt(a->x, 0);
 
 		for (i = 1; i < _numActors; i++) {
-			a = derefActor(i);
-			if (a->isInCurrentRoom())
-				a->needRedraw = true;
+			if (_actors[i].isInCurrentRoom())
+				_actors[i].needRedraw = true;
 		}
 		runHook(0);
 	}
@@ -2131,7 +2129,7 @@ void Scumm::moveCamera() {
 		Actor *a = NULL;
 
 		if (camera._follows) {
-			a = derefActorSafe(camera._follows, "moveCamera");
+			a = derefActor(camera._follows, "moveCamera");
 			if (abs(camera._cur.x - a->x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
 					abs(camera._cur.y - a->y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
 				camera._movingToActor = true;
@@ -2234,7 +2232,7 @@ void Scumm::moveCamera() {
 		}
 
 		if (camera._mode == CM_FOLLOW_ACTOR) {
-			a = derefActorSafe(camera._follows, "moveCamera");
+			a = derefActor(camera._follows, "moveCamera");
 
 			actorx = a->x;
 			t = (actorx >> 3) - _screenStartStrip;
@@ -2251,7 +2249,7 @@ void Scumm::moveCamera() {
 		}
 
 		if (camera._movingToActor) {
-			a = derefActorSafe(camera._follows, "moveCamera(2)");
+			a = derefActor(camera._follows, "moveCamera(2)");
 			camera._dest.x = a->x;
 		}
 
@@ -2344,7 +2342,7 @@ void Scumm::actorFollowCamera(int act) {
 		}
 
 		old = camera._follows;
-		setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
+		setCameraFollows(derefActor(act, "actorFollowCamera"));
 		if (camera._follows != old)
 			runHook(0);
 

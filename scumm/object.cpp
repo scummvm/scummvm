@@ -879,7 +879,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 	int i;
 
 	if (obj < _numActors)
-		return derefActorSafe(obj, "getObjOrActorName")->getActorName();
+		return derefActor(obj, "getObjOrActorName")->getActorName();
 
 	if (_features & GF_SMALL_HEADER) {
 		byte offset = 0;
@@ -1179,7 +1179,7 @@ int Scumm::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActorSafe(obj, "getObjX")->x;
+		return derefActor(obj, "getObjX")->x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1193,7 +1193,7 @@ int Scumm::getObjY(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActorSafe(obj, "getObjY")->y;
+		return derefActor(obj, "getObjY")->y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1210,7 +1210,7 @@ int Scumm::getObjOldDir(int obj) {
 int Scumm::getObjNewDir(int obj) {
 	int dir;
 	if (obj < _numActors) {
-		dir = derefActorSafe(obj, "getObjNewDir")->facing;
+		dir = derefActor(obj, "getObjNewDir")->facing;
 	} else {
 		int x, y;
 		getObjectXYPos(obj, x, y, dir);
@@ -1276,7 +1276,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 		if (getObjectOrActorXY(b, x, y) == -1)
 			return -1;
 		if (b < _numActors)
-			i = derefActorSafe(b, "unkObjProc1")->scalex;
+			i = derefActor(b, "unkObjProc1")->scalex;
 	} else {
 		x = b;
 		y = c;
@@ -1286,7 +1286,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 		if (getObjectOrActorXY(e, x2, y2) == -1)
 			return -1;
 		if (e < _numActors)
-			j = derefActorSafe(e, "unkObjProc1(2)")->scalex;
+			j = derefActor(e, "unkObjProc1(2)")->scalex;
 	} else {
 		x2 = e;
 		y2 = f;

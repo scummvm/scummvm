@@ -642,8 +642,7 @@ void Scumm_v2::o2_subtract() {
 }
 
 void Scumm_v2::o2_waitForActor() {
-	Actor *a = derefActorSafe(getVarOrDirectByte(0x80), "o2_waitForActor");
-	assert(a);
+	Actor *a = derefActor(getVarOrDirectByte(0x80), "o2_waitForActor");
 	if (a->moving) {
 		_scriptPointer -= 2;
 		o5_breakHere();
@@ -679,8 +678,7 @@ void Scumm_v2::o2_actorSet() {
 		return;
 	}
 	
-	a = derefActorSafe(act, "actorSet");
-	assert(a);
+	a = derefActor(act, "actorSet");
 
 	switch (_opcode) {
 		case 1: 	// Actor Sound
@@ -989,8 +987,7 @@ void Scumm_v2::o2_ifClassOfIs() {
 void Scumm_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorTo");
-	assert(a);
+	a = derefActor(getVarOrDirectByte(0x80), "o2_walkActorTo");
 
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
@@ -1003,8 +1000,7 @@ void Scumm_v2::o2_putActor() {
 	int x, y;
 	Actor *a;
 
-	a = derefActorSafe(act, "o2_putActor");
-	assert(a);
+	a = derefActor(act, "o2_putActor");
 
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
@@ -1025,8 +1021,7 @@ void Scumm_v2::o2_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorToObject");
-	assert(a);
+	a = derefActor(getVarOrDirectByte(0x80), "o2_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
@@ -1039,8 +1034,7 @@ void Scumm_v2::o2_putActorAtObject() {
 	int obj, x, y;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActorAtObject");
-	assert(a);
+	a = derefActor(getVarOrDirectByte(0x80), "o2_putActorAtObject");
 
 	obj = getVarOrDirectByte(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
@@ -1057,8 +1051,7 @@ void Scumm_v2::o2_setActorElevation() {
 	int act = getVarOrDirectByte(0x80);
 	int elevation = getVarOrDirectByte(0x40);
 
-	Actor *a = derefActorSafe(act, "o2_setActorElevation");
-	assert(a);
+	Actor *a = derefActor(act, "o2_setActorElevation");
 	a->elevation = elevation;
 }
 
@@ -1066,8 +1059,7 @@ void Scumm_v2::o2_animateActor() {
 	int act = getVarOrDirectByte(0x80);
 	int anim = getVarOrDirectByte(0x40);
 
-	Actor *a = derefActorSafe(act, "o2_animateActor");
-	assert(a);
+	Actor *a = derefActor(act, "o2_animateActor");
 	a->animateActor(anim);
 }
 
@@ -1117,8 +1109,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(VAR(VAR_EGO), "o2_loadRoomWithEgo");
-	assert(a);
+	a = derefActor(VAR(VAR_EGO), "o2_loadRoomWithEgo");
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -1368,8 +1359,7 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 void Scumm_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
-	assert(a);
+	a = derefActor(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
 	setResult(a->walkbox);
 }
 
