@@ -44,7 +44,7 @@ public:
 	~IMuse();
 
 	enum {
-		PROP_TEMPO_BASE = 1,
+		PROP_TEMPO_BASE = 1
 	};
 
 	void on_timer();

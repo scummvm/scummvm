@@ -287,7 +287,7 @@ public:
 		pcChorus = 128,
 		pcPitchBendFactor = 256,
 		pcPriority = 512,
-		pcAll = 1023,
+		pcAll = 1023
 	};
 
 private:
@@ -2964,7 +2964,7 @@ void Player::sequencer_timer()
 
 enum {
 	TYPE_PART = 1,
-	TYPE_PLAYER = 2,
+	TYPE_PLAYER = 2
 };
 
 int IMuseInternal::saveReference(void *me_ref, byte type, void *ref)

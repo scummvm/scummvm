@@ -40,7 +40,7 @@ enum {
 enum {
 	kTextAlignLeft,
 	kTextAlignCenter,
-	kTextAlignRight,
+	kTextAlignRight
 };
 
 // Extremly simple stack class, doesn't even do any error checking (for now)

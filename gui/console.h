@@ -31,7 +31,7 @@ enum {
 	kLineBufferSize = 256,
 	kCharWidth = 8,
 
-	kHistorySize = 20,
+	kHistorySize = 20
 };
 
 class ScrollBarWidget;

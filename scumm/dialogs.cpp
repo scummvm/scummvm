@@ -476,12 +476,12 @@ enum {
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
 	kOKCmd					= 'ok  ',
-	kCancelCmd				= 'cncl',
+	kCancelCmd				= 'cncl'
 };
 
 enum {
 	kKeysCmd = 'KEYS',
-	kAboutCmd = 'ABOU',
+	kAboutCmd = 'ABOU'
 };
 
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)

@@ -72,7 +72,7 @@ protected:
 	bool Cmd_Room(char _parameter[255][255]);
 	
 #ifdef USE_CONSOLE
-	static bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
+	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
 #endif
 };
 
