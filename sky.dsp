@@ -559,10 +559,6 @@ SOURCE=.\sky\intro.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\introimg.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sky\logic.cpp
 # End Source File
 # Begin Source File

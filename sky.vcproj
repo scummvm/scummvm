@@ -251,9 +251,6 @@
 				RelativePath=".\sky\intro.h">
 			</File>
 			<File
-				RelativePath=".\sky\introimg.cpp">
-			</File>
-			<File
 				RelativePath=".\sky\logic.cpp">
 			</File>
 			<File
