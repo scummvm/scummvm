@@ -539,7 +539,7 @@ void LoadedCostume::loadCostume(int id) {
 	}
 	ptr += 8 + _numColors;
 	_frameOffsets = ptr + 2;
-	_dataOffsets = ptr + ((_vm->_version == 1) ? 20 : 34);	// FIXME - V1 case might be wrong
+	_dataOffsets = ptr + ((_vm->_version == 1) ? 18 : 34);	// FIXME - V1 case might be wrong
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
@@ -632,12 +632,13 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	// FIXME: Maybe V1 only ready one byte here? At least it seems by comparing the
 	// V1 and V2 data that there is a 1-byte len difference.
 /*	if (_version == 1) {
-		mask = *r++;
+		mask = *r++ << 8;
 	} else {
 */
 		mask = READ_LE_UINT16(r);
 		r += 2;
 //	}
+//printf("mask = 0x%x, usemask = 0x%x\n", mask, usemask);
 	i = 0;
 	do {
 		if (mask & 0x8000) {
