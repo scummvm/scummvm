@@ -86,6 +86,7 @@ static WORD				  ScummWinX = -1;
 static WORD				  ScummWinY = -1;
 static bool				  ScummOrigMouse = false;
 static int 				  ScummShakePos = 0;
+static bool				  ScummPCMode = false;
 
 static struct MsgPort     *TimerMsgPort = NULL;
 static struct timerequest *TimerIORequest = NULL;
@@ -199,6 +200,7 @@ static ULONG cd_stop_time = 0;
 
 void cd_play( int track, int num_loops, int start_frame, int length )
 {
+	scumm._vars[14] = 0;
 	if( CDrive && start_frame >= 0 )
 	{
 		struct CDS_TrackInfo ti;
@@ -400,11 +402,6 @@ uint32 makeColForPixFmt( int pixfmt, int r, int g, int b )
 			exit( 1 );
 	}
 
-	if( pixfmt == PIXFMT_RGB15PC || pixfmt == PIXFMT_BGR15PC ||
-		 pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC
-	  )
-		col = ((col >> 8) & 0xff) | ((col << 8) & 0xff00);	/* Not really sure about this?!?! */
-
 
 	return col;
 }
@@ -504,6 +501,12 @@ void createScreen( CS_DSPTYPE dspType )
 			exit( 1 );
 		}
 
+		ULONG	RealDepth = GetBitMapAttr( &ScummScreen->BitMap, BMA_DEPTH );
+		if( RealDepth != ScummDepth )
+		{
+			warning( "Screen did not open in expected depth." );
+			ScummDepth = RealDepth;
+		}
 		ScummScreenBuffer[ 0 ] = AllocScreenBuffer( ScummScreen, NULL, SB_SCREEN_BITMAP );
 		ScummScreenBuffer[ 1 ] = AllocScreenBuffer( ScummScreen, NULL, 0 );
 		ScummRenderTo = ScummScreenBuffer[ 1 ]->sb_BitMap;
@@ -623,6 +626,11 @@ void createScreen( CS_DSPTYPE dspType )
 
 		int pixfmt = GetCyberMapAttr( ScummRenderTo, CYBRMATTR_PIXFMT );
 
+		ScummPCMode = false;
+		if( pixfmt == PIXFMT_RGB15PC || pixfmt == PIXFMT_BGR15PC ||
+			 pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC
+		  )
+			ScummPCMode = true;
 		debug( 1, "Pixelformat = %d", pixfmt );
 
 		colorMask = (makeColForPixFmt( pixfmt, 255, 0, 0 ) - minr) | (makeColForPixFmt( pixfmt, 0, 255, 0 ) - ming) | (makeColForPixFmt( pixfmt, 0, 0, 255 ) - minb);
@@ -859,6 +867,8 @@ void setShakePos( Scumm *s, int shake_pos )
 
 #define Q_INTERPOLATE(A, B, C, D) ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2) + ((((A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask)) >> 2) & qlowpixelMask)
 
+#define SWAP_WORD( word ) word = ((word & 0xff) << 8) | (word >> 8)
+
 void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height )
 {
 	unsigned int x, y;
@@ -982,6 +992,13 @@ void Super2xSaI( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint3
 
 			if (PixelsPerMask == 2)
 			{
+				if( ScummPCMode )
+				{
+					SWAP_WORD( product1a );
+					SWAP_WORD( product1b );
+					SWAP_WORD( product2a );
+					SWAP_WORD( product2b );
+				}
 				*((unsigned long *) (&dst_line[0][x * 4])) = (product1a << 16) | product1b;
 				*((unsigned long *) (&dst_line[1][x * 4])) = (product2a << 16) | product2b;
 			}
@@ -1203,6 +1220,13 @@ void SuperEagle( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint3
 
 			if (PixelsPerMask == 2)
 			{
+				if( ScummPCMode )
+				{
+					SWAP_WORD( product1a );
+					SWAP_WORD( product1b );
+					SWAP_WORD( product2a );
+					SWAP_WORD( product2b );
+				}
 				*((unsigned long *) (&dst_line[0][x * 4])) = (product1a << 16) | product1b;
 				*((unsigned long *) (&dst_line[1][x * 4])) = (product2a << 16) | product2b;
 			}
@@ -1330,6 +1354,9 @@ void PointScaler( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint
 			color = makeColForPixFmt( dest_pixfmt, r, g, b );
 			if( PixelsPerMask == 2 )
 			{
+				if( ScummPCMode )
+					SWAP_WORD( color );
+
 				*((unsigned long *) (&dst_line[0][x * 4])) = (color << 16) | color;
 				*((unsigned long *) (&dst_line[1][x * 4])) = (color << 16) | color;
 			}
