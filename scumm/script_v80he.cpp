@@ -340,12 +340,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o6_readFilePos),
 		/* EC */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownEC),
 		OPCODE(o72_unknownED),
 		OPCODE(o7_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF0),
 		OPCODE(o72_unknownF1),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),

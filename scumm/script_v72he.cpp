@@ -340,12 +340,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o6_readFilePos),
 		/* EC */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownEC),
 		OPCODE(o72_unknownED),
 		OPCODE(o7_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF0),
 		OPCODE(o72_unknownF1),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
@@ -1664,6 +1664,47 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->dim2end = TO_LE_32(newDim2end);
 }
 
+void ScummEngine_v72he::arrrays_unk2(int dst, int src, int len2, int len) {
+	int edi, value;
+	int i = 0;
+
+	if (len == -1) {
+		len = resStrLen(getStringAddress(src));
+		len2 = 0;
+	}
+
+	edi = resStrLen(getStringAddress(dst));
+
+	len -= len2;
+	len++;
+
+	while (i < len) {
+		writeVar(0, src);
+		value = readArray(0, 0, len2 + i);
+		writeVar(0, dst);
+		writeArray(0, 0, edi + i, value);
+		i++;
+	}
+
+	writeArray(0, 0, edi + i, 0);
+}
+
+void ScummEngine_v72he::o72_unknownEC() {
+	int dst, size;
+	int src = pop();
+
+	size = resStrLen(getStringAddress(src)) + 1;
+
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, 0, 0, size);
+	writeArray(0, 0, 0, 0);
+	dst = readVar(0);
+
+	arrrays_unk2(dst, src, -1, -1);
+
+	push(dst);
+	debug(1,"stub o72_unknownEC");
+}
 
 void ScummEngine_v72he::o72_unknownED() {
 	int array, pos, len;
@@ -1691,45 +1732,44 @@ void ScummEngine_v72he::o72_unknownED() {
 }
 
 void ScummEngine_v72he::o72_unknownEF() {
-	int value;
-	int array, array2, len, len2, len3, offset;
-	int b, size;
-	len = pop();
-	b = pop();
-	array2 = pop();
+	int dst, size;
+	int b = pop();
+	int a = pop();
+	int src = pop();
 
-	size = len - b + 2;
+	size = b - a + 2;
 
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, 0, 0, size);
 	writeArray(0, 0, 0, 0);
 
-	array = readVar(0);
+	dst = readVar(0);
 
-	len2 = len;
-	if (len == -1) {
-		len2 = resStrLen(getStringAddress(array2));
-		len = 0;
-	} else {
-		len = b;
-	}
-	len3 = resStrLen(getStringAddress(array));
+	arrrays_unk2(dst, src, a, b);
 
-	offset = 0;
-	len2 -= len;
-	len2++;
-	while (offset < len2) {
-		writeVar(0, array2);
-		value = readArray(0, 0, offset + len);
-		writeVar(0, array);
-		writeArray(0, 0, offset + len3, value);
-		offset++;
-	}
+	push(dst);
+	debug(1,"stub o72_unknownEF");
+}
 
-	writeArray(0, 0, len3 + offset, 0);
+void ScummEngine_v72he::o72_unknownF0() {
+	int dst, size;
 
-	push(array);
-	debug(1,"stub o72_unknownEF (array %d, array2 %d)", array, array2);
+	int src2 = pop();
+	int src1 = pop();
+
+	size = resStrLen(getStringAddress(src1)) * 2 + 1;
+
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, 0, 0, size);
+	writeArray(0, 0, 0, 0);
+
+	dst = readVar(0);
+
+	arrrays_unk2(dst, src1, 0, -1);
+	arrrays_unk2(dst, src2, 0, -1);
+
+	push(dst);
+	debug(1,"stub o72_unknownF0");
 }
 
 void ScummEngine_v72he::o72_unknownF1() {

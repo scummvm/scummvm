@@ -1447,7 +1447,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				tmp = GB(2);
 			else
 				tmp = GB(2) - 1;
-			if ((uint) tmp < 8)
+			if ((uint) tmp < 24)
 				akos_queCommand(3, a, a->sound[tmp], 0);
 			continue;
 		case AKC_CmdQue3Quick:

@@ -696,6 +696,7 @@ protected:
 	void shuffleArray(int num, int minIdx, int maxIdx);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
+	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	void drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
 	void flushWizBuffer();
@@ -747,12 +748,14 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
+	void o72_unknownEC();
 	void o72_unknownED();
 	void o72_unknownEF();
 	void o72_unknownF1();
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
+	void o72_unknownF0();
 	void o72_unknownF4();
 	void o72_unknownF5();
 	void o72_unknownF6();
