@@ -2528,10 +2528,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			enqueueText(message, args[3], args[4], args[2], args[1], true);
 			break;}
 		case 20:
-			// Occurs in The Dig, at the alien pyramid. See bug #742979.
-			// Also occurs in the first scene of The Dig.
-			// Maybe this corresponds to setBoxScaleSlot from V8 ?!
-			warning("o6_kernelSetFunctions: stub20(%d, %d)", args[1], args[2]);
+			warning("o6_kernelSetFunctions: turn 'RadioChatter' effect for voice, on/off(%d)", args[1]);
 			break;
 		case 107:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
