@@ -116,6 +116,10 @@ void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool re
 	runScriptNested(slot);
 }
 
+#ifndef BYPASS_COPY_PROT
+#define BYPASS_COPY_PROT
+#endif
+
 void Scumm::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
@@ -125,6 +129,26 @@ void Scumm::initializeLocals(int slot, int *vars) {
 		for (i = 0; i < 16; i++)
 			vm.localvar[slot][i] = vars[i];
 	}
+
+#if defined(BYPASS_COPY_PROT)
+	// Loom will set bit 15 of variable 214 to 1 if the user enters the
+	// wrong code. But this bit is also used later in the game to determine
+	// if the user has already learned the fourth note. Therefore any
+	// interfering directly with this variable is risky.
+	//
+	// Let's try an alternative solution instead. The correct code is
+	// stored in variables 82-85. Each time the user selects a symbol,
+	// its ID (0-11) is passed to room-69-203 as local variable 0. Variable
+	// 98 is 1, 2, 3 or 4 depending on how many symbols the player has
+	// selected yet.
+	//
+	// If the sum of variables 82-85 is 0, the "fail" bit will be set,
+	// regardless of the player's choice. I don't know why, but it does
+	// mean that it's safer to change local variable 0 than to change
+	// variables 82-85.
+	if (_gameId == GID_LOOM && _currentRoom == 69 && vm.slot[slot].number == 203)
+		vm.localvar[slot][0] = _scummVars[81 + _scummVars[98]];
+#endif
 }
 
 int Scumm::getVerbEntrypoint(int obj, int entry) {
@@ -444,10 +468,6 @@ int Scumm::fetchScriptWordSigned() {
 	return (int16)fetchScriptWord();
 }
 
-#ifndef BYPASS_COPY_PROT
-#define BYPASS_COPY_PROT
-#endif
-
 int Scumm::readVar(uint var) {
 	int a;
 #if defined(BYPASS_COPY_PROT)
@@ -491,9 +511,6 @@ int Scumm::readVar(uint var) {
 #if defined(BYPASS_COPY_PROT)
 			// INDY3 checks this during the game...
 			if (_gameId == GID_INDY3 && var == 94 && bit == 4) {
-				return 0;
-			} else if (_gameId == GID_LOOM && var == 214 && bit == 15 && !copyprotbypassed) {
-				copyprotbypassed = true;
 				return 0;
 			} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 				return 0;
