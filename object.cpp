@@ -401,8 +401,75 @@ void Scumm::loadRoomObjects() {
 	CHECK_HEAP
 }
 
+void Scumm::loadRoomObjectsSmall() {
+       int i,j;
+       ObjectData *od;
+       byte *ptr;
+       uint16 obim_id;
+       byte *room,*searchptr;
+       ImageHeader *imhd;
+       RoomHeader *roomhdr;
+
+       CodeHeader *cdhd;
+
+       CHECK_HEAP
+ 
+       room = getResourceAddress(rtRoom, _roomResource);
+       roomhdr = (RoomHeader*)findResourceData(MKID('RMHD'), room);
+
+       _numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
+
+       if (_numObjectsInRoom == 0)
+               return;
+ 
+       if (_numObjectsInRoom > _numLocalObjects)
+               error("More than %d objects in room %d", _numLocalObjects, _roomResource);
+
+       od = &_objs[1];
+       searchptr = room;
+       for (i=0; i<_numObjectsInRoom; i++,od++) {
+               ptr = findResourceSmall(MKID('OBCD'), searchptr);
+               if (ptr==NULL)
+                       error("Room %d missing object code block(s)", _roomResource);
+
+               od->offs_obcd_to_room = ptr - room;
+               od->obj_nr = READ_LE_UINT16(ptr+6);
+
+#ifdef DUMP_SCRIPTS
+               do {
+                       char buf[32];
+                       sprintf(buf,"roomobj-%d-",_roomResource);
+                       dumpResource(buf, od->obj_nr, ptr);
+               } while (0);
+#endif
+               searchptr = NULL;
+       }
+
+       searchptr = room;
+       for (i=0; i<_numObjectsInRoom; i++) {
+               ptr = findResourceSmall(MKID('OBIM'), searchptr);
+               if (ptr==NULL)
+                       error("Room %d missing image blocks(s)", _roomResource);
+
+               obim_id = READ_LE_UINT16(ptr+6);
+
+               for(j=1; j<=_numObjectsInRoom; j++) {
+                       if (_objs[j].obj_nr==obim_id)
+                               _objs[j].offs_obim_to_room = ptr - room;
+               }
+               searchptr = NULL;
+       }
+
+       od = &_objs[1];
+       for (i=1; i<=_numObjectsInRoom; i++,od++) {
+               setupRoomObject(od, room);
+       }
+
+       CHECK_HEAP
+}
+
 void Scumm::setupRoomObject(ObjectData *od, byte *room) {
-	byte *obcd;
+      byte *obcd;
 	CodeHeader *cdhd;
 	ImageHeader *imhd;
 

@@ -37,7 +37,10 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 
 	if (script < _numGlobalScripts) {
 		scriptPtr = getResourceAddress(rtScript, script);
-		scriptOffs = 8;
+                if(_features & GF_SMALL_HEADER)
+                        scriptOffs = 6;
+                else
+                        scriptOffs = 8;
 		scriptType = WIO_GLOBAL;
 	} else {
 		scriptOffs = _localScriptList[script - _numGlobalScripts];
@@ -662,7 +665,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	slot = getScriptSlot();
 
 	offs = getVerbEntrypoint(object, entry);
-	if (offs==0)
+        if (offs==0)
 		return;
 
 	vm.slot[slot].number = object;
@@ -700,13 +703,19 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
-	verbptr = findResource(MKID('VERB'), objptr);
+        if(_features & GF_SMALL_HEADER)
+                verbptr = objptr+19;
+        else
+                verbptr = findResource(MKID('VERB'), objptr);
+
 	if (verbptr==NULL)
 		error("No verb block in object %d", obj);
 
 	verboffs = verbptr - objptr;
 
-	verbptr += _resourceHeaderSize;
+        if(!(_features & GF_SMALL_HEADER))
+                verbptr += _resourceHeaderSize;
+
 	do {
 		if (!*verbptr)
 			return 0;
@@ -715,7 +724,10 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 		verbptr += 3;
 	} while (1);
 
-	return verboffs + READ_LE_UINT16(verbptr+1);
+        if(_features & GF_SMALL_HEADER)
+                return READ_LE_UINT16(verbptr+1);
+        else
+                return verboffs + READ_LE_UINT16(verbptr+1);
 }
 
 

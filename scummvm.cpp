@@ -46,9 +46,14 @@ void Scumm::scummInit() {
 
 	debug(9, "scummInit");
 
-	_resourceHeaderSize = 8;
+        if(_features & GF_SMALL_HEADER)
+                _resourceHeaderSize = 6;
+        else
+                _resourceHeaderSize = 8;
 
-	loadCharset(1);
+        if(!(_features & GF_SMALL_NAMES))
+                loadCharset(1);
+
 	initScreens(0, 16, 320, 144);
 
 	setShake(0);
@@ -167,7 +172,7 @@ void Scumm::initScummVars() {
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {
 	if (no < min || no > max) {
-		error("Value %d is out of bounds (%d,%d) msg %s", no, min,max, str);
+                error("Value %d is out of bounds (%d,%d) int script(%d) msg %s", no, min,max, vm.slot[_curExecScript].number, str);
 	}
 }
 
@@ -205,8 +210,11 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	initGraphics(this, _fullScreen);
 
-	readIndexFile();
-	
+    if (_features & GF_SMALL_HEADER)
+        readIndexFileSmall();
+    else
+        readIndexFile();
+
 	initRandSeeds();
 
 	if (_features & GF_NEW_OPCODES) 
@@ -412,25 +420,46 @@ struct VersionSettings {
 	uint32 features;
 };
 
+/*
+        This is a list of all known SCUMM games. Commented games are not
+        supported at this time */
+
 static const VersionSettings version_settings[] = {
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2, 
-		GF_USE_KEY},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2, 
-		GF_USE_KEY},
-	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
-		GF_USE_KEY},
-	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
-		GF_USE_KEY},
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2, 
-		GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
-		GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2, 
-		GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY|GF_DRAWOBJ_OTHER_ORDER},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0, 
-		GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
-	{"ft", "Full Throttle", GID_SAMNMAX, 7, 3, 0, 
-		GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
+        /* Scumm Version 1 */
+//      {"maniac",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
+//      {"zak",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
+
+        /* Scumm Version 2 */
+//      {"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,},
+//      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,},
+//      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
+
+        /* Scumm Version 3 */
+        {"indy3",       "Indiana Jones and the Last Crusade (256)",     GID_INDY3_256,  3, 0, 22, GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD256},
+        {"zak256",      "Zak McKracken and the Alien Mindbenders (256)",GID_ZAK256,     3, 0, 0,  GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD256},
+        {"loom",        "Loom",                                         GID_LOOM,       3, 5, 40, GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD_BUNDLE|GF_16COLOR},
+
+        /* Scumm Version 4 */
+        {"monkeyEGA",   "Monkey Island 1 (EGA)",                        GID_MONKEY_EGA, 4, 0, 67, GF_SMALL_HEADER|GF_USE_KEY|GF_16COLOR}, // EGA version
+
+        /* Scumm version 5 */
+        {"loomcd",      "Loom (256 color CD version)",                  GID_LOOM256,    5, 1, 42, GF_SMALL_HEADER|GF_USE_KEY},
+        {"monkey",      "Monkey Island 1",                              GID_MONKEY,     5, 2, 2,  GF_USE_KEY},
+        {"monkey2",     "Monkey Island 2: LeChuck's revenge",           GID_MONKEY2,    5, 2, 2,  GF_USE_KEY},
+        {"atlantis",    "Indiana Jones 4 and the Fate of Atlantis",     GID_INDY4,      5, 5, 0,  GF_USE_KEY},
+        {"playfate",    "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4,   5, 5, 0,  GF_USE_KEY},
+
+        /* Scumm Version 6 */
+        {"tentacle",    "Day Of The Tentacle",                          GID_TENTACLE, 6, 4, 2, GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
+        {"dottdemo",    "Day Of The Tentacle (Demo)",                   GID_TENTACLE, 6, 3, 2, GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
+        {"samnmax",     "Sam & Max",                                    GID_SAMNMAX,  6, 4, 2, GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY|GF_DRAWOBJ_OTHER_ORDER},
+        {"snmdemo",     "Sam & Max (Demo)",                             GID_SAMNMAX,  6, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
+
+        /* Scumm Version 7 */
+        {"ft",          "Full Throttle",                                GID_SAMNMAX,  7, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
+
+        /* Scumm Version 8 */
+//      {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
 	{NULL,NULL}
 };
 
@@ -538,7 +567,10 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	initRoomSubBlocks();
-	loadRoomObjects();
+        if(_features & GF_SMALL_HEADER)
+                loadRoomObjectsSmall();
+        else
+                loadRoomObjects();
 
 #if !defined(FULL_THROTTLE)
 	camera._mode = CM_NORMAL;
@@ -623,8 +655,10 @@ void Scumm::initRoomSubBlocks() {
 	_scrWidth = READ_LE_UINT16(&rmhd->width);
 	_scrHeight = READ_LE_UINT16(&rmhd->height);
 
-	_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr))
-		- roomptr;
+        if( _features & GF_SMALL_HEADER)
+               _IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
+        else
+               _IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 	
 	ptr = findResourceData(MKID('EXCD'), roomptr);
 	if (ptr) {
@@ -717,8 +751,14 @@ void Scumm::initRoomSubBlocks() {
 			setPalette(0);
 		}
 	}
-	
-	initCycl(findResourceData(MKID('CYCL'), roomptr));
+
+        if( _features & GF_SMALL_HEADER)
+                ptr = findResourceData(MKID('CYCL'), roomptr);
+        else
+                ptr = findResourceData(MKID('CYCL'), roomptr);
+
+        if (ptr)
+                initCycl(findResourceData(MKID('CYCL'), roomptr));
 
 	ptr = findResourceData(MKID('TRNS'), roomptr);
 	if (ptr)
@@ -756,7 +796,11 @@ void Scumm::dumpResource(char *tag, int index, byte *ptr) {
 	char buf[256];
 	FILE *out;
 	
-	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
+        uint32 size;
+        if( _features & GF_SMALL_HEADER )
+                size = READ_LE_UINT32(ptr);
+        else
+                size = READ_BE_UINT32_UNALIGNED(ptr+4);
 
 	sprintf(buf, "dumps\\%s%d.dmp", tag,index);
 
@@ -894,7 +938,7 @@ void Scumm::convertKeysToClicks() {
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 	if (id<1 || id>=NUM_ACTORS)
-		error("Invalid actor %d in %s", id, errmsg);
+                error("Invalid actor %d in %s (script %d)", id, errmsg, vm.slot[_curExecScript].number);
 	return derefActor(id);
 }
 

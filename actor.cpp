@@ -449,6 +449,7 @@ int Scumm::getActorXYPos(Actor *a) {
 }
 
 AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
+        // Yazoo: need to recheck with Loom for the class data flags (0x400000)
 	AdjustBoxResult abr,tmp;
 	uint threshold;
 	uint best;
@@ -461,13 +462,17 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 
 	if (a && a->ignoreBoxes==0) {
 		threshold = 30;
+
+                if ((_features & GF_SMALL_HEADER) && (_classData[a->number] & 0x200000))
+                       return abr;
 		
 		while(1) {
 			box = getNumBoxes() - 1;
 			best = (uint)0xFFFF;
 			b = 0;
 
-			do {
+                        if(((_features & GF_SMALL_HEADER) && box) || !(_features & GF_SMALL_HEADER))
+                        do {
 				flags = getBoxFlags(box);
 				if (flags&0x80 && (!(flags&0x20) || getClass(a->number, 0x1F)) )
 					continue;

@@ -337,10 +337,12 @@ void Scumm::initBGBuffers() {
 
 	room = getResourceAddress(rtRoom, _roomResource);
 
-	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
-
-	gdi._numZBuffer = READ_LE_UINT16(ptr+8) + 1;
-
+        if(_features & GF_SMALL_HEADER) {
+                gdi._numZBuffer = 1;
+        } else {
+                ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
+                gdi._numZBuffer = READ_LE_UINT16(ptr+8) + 1;
+        }
 	assert(gdi._numZBuffer>=1 && gdi._numZBuffer<=4);
 	
 	itemsize = (_scrHeight + 4) * 40;
@@ -357,7 +359,17 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 	byte *dest, *epal;
 	int numcolor;
 
-	numcolor = getResourceDataSize(ptr) / 3;
+        if( _features & GF_SMALL_HEADER ) {
+                if (_features & GF_OLD256) {
+                        numcolor = 256;
+                        ptr+=2;
+                } else {
+                        numcolor = READ_LE_UINT16(ptr+6) / 3;
+                        ptr+=8;
+                }
+        } else {
+                numcolor = getResourceDataSize(ptr) / 3;
+        }
 
 	checkRange(256, 0, numcolor, "Too many colors (%d) in Palette");
 
@@ -531,6 +543,7 @@ void Scumm::unkVirtScreen4(int a) {
 //		setDirtyRange(0, 0, vs->height);
 //		updateDirtyScreen(0);
 		/* XXX: EGA_proc4(0); */
+                warning("EGA_proc4"); /* FIXME */
 		break;
 	case 134:
 		unkScreenEffect5(0);
@@ -611,10 +624,16 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 	byte twobufs;
 	int numzbuf;
 	int sx;
-	
+
+        if(_vm->_features & GF_16COLOR) /* FIXME */
+                return;
+
 	CHECK_HEAP
 
-	smap_ptr = findResource(MKID('SMAP'), ptr);
+        if(_vm->_features & GF_SMALL_HEADER)
+                smap_ptr = _smap_ptr = ptr;
+        else
+               smap_ptr = findResource(MKID('SMAP'), ptr);
 
 	assert(smap_ptr);
 
@@ -636,7 +655,10 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr
 	_numLinesToProcess = h;
 
 	do {
-		_smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr*4 + 8);
+                if(_vm->_features & GF_SMALL_HEADER)
+                        _smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr*4 + 4);
+                else
+                        _smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr*4 + 8);
 
 		CHECK_HEAP
 
@@ -723,6 +745,23 @@ void Gdi::decompressBitmap() {
 	case 1:
 		unkDecode7();
 		break;
+
+    case 2:
+        unkDecode8();   /* Ender - Zak256/Indy256 */
+        break;
+ 
+    case 3:
+        unkDecode9();   /* Ender - Zak256/Indy256 */
+        break;
+
+    case 4:
+        unkDecode10();  /* Ender - Zak256/Indy256 */
+        break;
+
+    case 7:                                           
+        unkDecode11();  /* Ender - Zak256/Indy256 */
+        break;
+
 	case 14: case 15: case 16: case 17: case 18:
 		_decomp_shr = code - 10;
 		_decomp_mask = decompress_table[code - 10];
@@ -1207,6 +1246,149 @@ void Gdi::unkDecode7() {
 	} while (--height);
 }
 
+/* Ender - Zak256/Indy256 decoders */
+#define READ_256BIT \
+ if ((mask <<= 1) == 256) {buffer = *src++;  mask = 1;}     \
+ bits = ((buffer & mask) != 0);
+
+#define NEXT_ROW                                               \
+                dst += 320;                                     \
+                if (--h == 0) {                                 \
+                        if (!--_currentX)                       \
+                                return;                         \
+                        dst -= _vertStripNextInc;               \
+                        h = _numLinesToProcess;                 \
+                }
+
+void Gdi::unkDecode8() {
+       byte *src = _smap_ptr;
+       byte *dst = _bgbak_ptr; 
+       int i;
+       uint h = _numLinesToProcess;
+
+       _currentX = 8;
+       for(;;) {
+        uint run = (*src++)+1;
+        byte color = *src++;
+        
+         do {
+             *dst = color;
+             NEXT_ROW
+          } while (--run);
+       }
+}
+
+void Gdi::unkDecode9() { /* FIXME: This one doesn't work.. */
+       byte *src = _smap_ptr;
+       byte *dst = _bgbak_ptr;
+       unsigned char c, bits, color, run;
+       int x, y, i, z;
+       uint buffer, mask = 128;
+       int h = _numLinesToProcess;
+       x = y = i = z = run = 0;
+  
+       while (x < 8) {
+            c = 0;
+            for (i = 0; i < 4; i++) {READ_256BIT;  c+=(bits<<i);}
+            /* printf("%d,", c>>2); */
+            switch ((c>>2)) {
+                case 0:
+                        color= 0;
+                        for (i=0; i<4; i++) {READ_256BIT; color+=bits<<i;}// color+=getbit(-1)<<i;
+                        for (i=0; i<((c&3)+2); i++) {
+                                *dst = (run * 16 + color);
+                                NEXT_ROW
+                        }
+               break;
+
+               case 1:
+                        for (i=0; i<((c&3)+1); i++) {
+                               color = 0;
+                               for (z=0; z < 4; z++) {READ_256BIT; color+=bits<<i;}
+                               *dst = (run * 16 + color);
+                               NEXT_ROW // y++; if (y>=height) {y=0; x++;}}
+                        }
+              break;
+
+              case 2:
+                      run = 0;
+                      for (i = 0; i < 4; i++) {READ_256BIT; c+=run<<i;}
+                      break;
+            }
+  }
+  /* printf("\n"); */
+}
+
+void Gdi::unkDecode10() {
+       byte *src = _smap_ptr;
+       byte *dst = _bgbak_ptr; 
+       int i;
+       unsigned char local_palette[256], numcolors = *src++;
+       uint h = _numLinesToProcess;
+
+       for (i=0; i < numcolors; i++) 
+               local_palette[i] = *src++;
+ 
+       _currentX = 8;
+
+       for(;;) {
+        byte color = *src++;
+        if (color < numcolors) {
+                *dst = local_palette[color];
+                NEXT_ROW
+        } else {
+                uint run = color - numcolors + 1;
+                color = *src++;
+               do {
+                        *dst = color;
+                        NEXT_ROW
+                } while (--run);
+        }
+       }
+}
+ 
+
+void Gdi::unkDecode11() {
+       byte *src = _smap_ptr;
+       byte *dst = _bgbak_ptr;
+       int bits, i;
+       uint buffer, mask = 128;
+       unsigned char inc = 1, color = *src++;
+ 
+       _currentX = 8;
+       do {
+               _tempNumLines = _numLinesToProcess;
+               do {
+                       *dst = color;
+                       dst+=320;
+                       for (i=0; i<3; i++) {READ_256BIT if (!bits) break;}
+                       switch (i) {
+                               case 1:
+                                       inc=-inc;
+                                       color-=inc;
+                               break;
+
+                               case 2:
+                                       color-=inc;
+                               break;
+
+                               case 3:
+                                       color = 0;
+                                       inc = 1;
+                                       for (i=0; i<8; i++) {
+                                               READ_256BIT
+                                               color+= bits<<i;
+                                       }
+                               break;
+                       }
+               } while (--_tempNumLines);
+               dst -= _vertStripNextInc;
+       } while (--_currentX); 
+}
+
+
+#undef NEXT_ROW
+#undef READ_256BIT
 #undef READ_BIT
 #undef FILL_BITS
 
@@ -1893,7 +2075,10 @@ void Scumm::setCursorHotspot2(int x,int y) {
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w,h,i;
-	
+
+        if(_features & GF_SMALL_HEADER) /* FIXME */
+                return false;
+
 	l>>=3;
 	if (l<0) l = 0;
 	if (t<0) t = 0;

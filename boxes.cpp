@@ -43,7 +43,13 @@ byte Scumm::getNumBoxes() {
 }
 
 Box *Scumm::getBoxBaseAddr(int box) {
-	byte *ptr = getResourceAddress(rtMatrix, 2);
+	byte *ptr;
+
+    if(_features & GF_SMALL_HEADER)
+		ptr = getResourceAddress(rtMatrix, 1);
+    else
+		ptr = getResourceAddress(rtMatrix, 2);
+
 	checkRange(ptr[0]-1, 0, box, "Illegal box %d");
 	return (Box*)(ptr + box*SIZEOF_BOX + 2);
 }

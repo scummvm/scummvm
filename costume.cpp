@@ -674,7 +674,7 @@ void CostumeRenderer::loadCostume(int id) {
 	
 	if (_vm->_features&GF_AFTER_V6) {
 		_ptr += 8;
-	} else {
+        } else if(!(_features&GF_SMALL_HEADER)) {
 		_ptr += 2;
 	}
 
@@ -753,7 +753,7 @@ void Scumm::loadCostume(LoadedCostume *lc, int costume) {
 	
 	if (_features&GF_AFTER_V6) {
 		lc->_ptr += 8;
-	} else {
+        } else if (!(_features&GF_SMALL_HEADER)) {
 		lc->_ptr += 2;
 	}
 

@@ -181,7 +181,7 @@ bool SoundEngine::start_sound(int sound) {
 	void *mdhd;
 
 	mdhd = findTag(sound, MDHD_TAG, 0);
-	if (!mdhd)
+    if (!mdhd) 
 		return false;
 
 	player = allocate_player(128);

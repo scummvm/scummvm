@@ -853,6 +853,10 @@ struct Gdi {
 	void unkDecode5();
 	void unkDecode6();
 	void unkDecode7();
+        void unkDecode8();
+        void unkDecode9();
+        void unkDecode10();
+        void unkDecode11();
 
 	void decompressBitmap();
 
@@ -897,6 +901,11 @@ enum GameId {
 	GID_INDY4 = 3,
 	GID_MONKEY = 4,
 	GID_SAMNMAX = 5,
+	GID_MONKEY_EGA = 6,
+	GID_LOOM256 = 7,
+	GID_ZAK256 = 8,
+	GID_INDY3_256 = 9,
+	GID_LOOM = 10,
 };
 
 enum GameFeatures {
@@ -910,6 +919,12 @@ enum GameFeatures {
 	GF_DRAWOBJ_OTHER_ORDER = 16,
 
 	GF_DEFAULT = GF_USE_KEY,
+
+	GF_SMALL_HEADER = 32,
+        GF_SMALL_NAMES = 64,
+        GF_OLD_BUNDLE = 128,
+	GF_16COLOR = 256,
+	GF_OLD256 = 512,
 };
 
 struct ScummDebugger;
@@ -1688,6 +1703,7 @@ struct Scumm {
 	bool isResourceInUse(int type, int i);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
+        void loadRoomObjectsSmall();
 
 	void setPaletteFromRes();
 	void initCycl(byte *ptr);
@@ -1897,7 +1913,8 @@ struct Scumm {
 
 	void readArrayFromIndexFile();
 	void readMAXS();
-	void readIndexFile();
+        void readIndexFile();
+        void readIndexFileSmall();
 
 	int readArray(int array, int index, int base);
 	void writeArray(int array, int index, int base, int value);
@@ -2227,7 +2244,9 @@ void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 tag, byte *searchin, int index);
 byte *findResource(uint32 tag, byte *searchin);
+byte *findResourceSmall(uint32 tag, byte *searchin);
 void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
 void waitForTimer(Scumm *s, int msec_delay);
 void setShakePos(Scumm *s, int shake_pos);
+uint16 newTag2Old(uint32 oldTag);

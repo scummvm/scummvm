@@ -95,7 +95,7 @@ void Scumm::openRoom(int room) {
 
 /* Delete the currently loaded room offsets */
 void Scumm::deleteRoomOffsets() {
-	if (!_dynamicRoomOffsets)
+        if (!(_features & GF_SMALL_HEADER) && !_dynamicRoomOffsets)
 		return;
 	
 	for (int i=0; i<_maxRooms; i++) {
@@ -284,6 +284,127 @@ void Scumm::readIndexFile() {
 	openRoom(-1);
 }
 
+void Scumm::readIndexFileSmall() {
+       uint16 blocktype;
+       uint32 itemsize;
+       int numblock = 0;
+       int num, i;
+
+       debug(9, "readIndexFile()");
+
+       openRoom(-1);
+       openRoom(0);
+
+       if (!(_features & GF_AFTER_V6)) {
+               while (!fileEof(_fileHandle)) {
+                       itemsize = fileReadDwordLE();
+                       blocktype = fileReadWordLE();
+                       if (fileReadFailed(_fileHandle))
+                               break;
+
+                       switch(blocktype) {
+                       case 0x4E52:
+                               fileReadWordLE();
+                               break;
+                       case 0x5230:
+                               _numRooms = fileReadWordLE();
+                               break;
+                       case 0x5330:
+                               _numScripts = fileReadWordLE();
+                               break;
+                       case 0x4E30:
+                               _numSounds = fileReadWordLE();
+                               break;
+                       case 0x4330:
+                               _numCostumes = fileReadWordLE();
+                               break;
+                       case 0x4F30:
+                               _numGlobalObjects = fileReadWordLE();
+                               break;
+                       }
+                       fileSeek(_fileHandle, itemsize-8,SEEK_CUR);
+               }
+               clearFileReadFailed(_fileHandle);
+               fileSeek(_fileHandle, 0, SEEK_SET);
+       }
+
+       /* I'm not sure for those values yet, they will have to be rechecked */
+
+       _numVariables = 800; /* 800 */
+       _numBitVariables = 4096; /* 2048 */
+       _numLocalObjects = 200; /* 200 */
+       _numArray = 50;
+       _numVerbs = 100;
+       _numNewNames = 0;
+       _objectRoomTable = NULL;
+       _numCharsets = 9; /* 9 */
+       _numInventory = 80; /* 80 */
+       _numGlobalScripts = 200;
+
+       _shadowPaletteSize = 256;
+       _shadowPalette = (byte*)alloc(_shadowPaletteSize); // stupid for now. Need to be removed later
+       _numFlObject = 50;
+
+       allocateArrays();
+
+       while (1) {
+               itemsize = fileReadDwordLE();
+
+               if (fileReadFailed(_fileHandle))
+                       break;
+
+               blocktype = fileReadWordLE();
+
+               numblock++;
+
+               switch(blocktype) {
+
+               case 0x4E52:
+                       fileSeek(_fileHandle, itemsize-6,SEEK_CUR);
+                       break;
+
+               case 0x5230:
+                       readResTypeList(rtRoom,MKID('ROOM'),"room");
+                       break;
+
+               case 0x5330:
+                       readResTypeList(rtScript,MKID('SCRP'),"script");
+                       break;
+
+               case 0x4E30:
+                       readResTypeList(rtSound,MKID('SOUN'),"sound");
+                       break;
+
+               case 0x4330:
+                       readResTypeList(rtCostume,MKID('COST'),"costume");
+                       break;
+
+               case 0x4F30:
+                       num = fileReadWordLE();
+                       assert(num == _numGlobalObjects);
+                       for (i=0; i<num; i++) { /* not too sure about all that */
+                               _classData[i] = fileReadWordLE(); //+ fileReadByte();
+                               fileReadByte();
+                               _objectOwnerTable[i] = fileReadByte();
+                               _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
+                               _objectOwnerTable[i] &= OF_OWNER_MASK;
+                       }
+               
+#if defined(SCUMM_BIG_ENDIAN)
+                       for (i=0; i<num; i++) {
+                               _classData[i] = FROM_LE_32(_classData[i]);
+                       }
+#endif
+                       break;
+
+               default:
+                       error("Bad ID %c%c found in directory!", blocktype&0xFF, blocktype>>8);
+                       return;
+               }
+       }
+
+       openRoom(-1);
+}
 
 void Scumm::readArrayFromIndexFile() {
 	int num;
@@ -474,7 +595,7 @@ int Scumm::readSoundResource(int type, int index) {
 		fileSeek(_fileHandle, -8, SEEK_CUR);
 		fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
 		return 1;
-	}
+        }
 #else
 	best_pri = -1;
 	while (pos < total_size) {
@@ -656,6 +777,37 @@ StartScan:
 	} while (READ_UINT32_UNALIGNED(f->ptr) != tag);
 
 	return f->ptr;
+}
+
+byte *findResourceSmall(uint32 tag, byte *searchin) {
+       uint32 size;
+       static FindResourceState frs;
+       FindResourceState *f = &frs; /* easier to make it thread safe like this */
+       uint16 smallTag;
+
+       smallTag=newTag2Old(tag);
+
+       if (searchin) {
+               f->size = READ_LE_UINT32(searchin);
+               f->pos = 6;
+               f->ptr = searchin+6;
+               goto StartScan;
+       }
+
+       do {
+               size = READ_LE_UINT32(f->ptr);
+               if ((int32)size <= 0)
+                       return NULL;
+
+               f->pos += size;
+               f->ptr += size;
+        
+StartScan:
+               if (f->pos >= f->size)
+                      return NULL;
+       } while (READ_LE_UINT16(f->ptr+4) != smallTag);
+
+       return f->ptr;
 }
 
 byte *findResource(uint32 tag, byte *searchin, int index) {
@@ -952,3 +1104,44 @@ void Scumm::allocateArrays() {
 	allocResTypeData(rtFlObject, MKID('NONE'),_numFlObject,"flobject", 0);
 	allocResTypeData(rtMatrix, MKID('NONE'),10,"boxes", 0);
 }
+
+uint16 newTag2Old(uint32 oldTag) {
+       switch(oldTag) {
+               case(MKID('RMHD')):
+                       return(0x4448);
+                       break;
+               case(MKID('IM00')):
+                       return(0x4D42);
+                       break;
+               case(MKID('EXCD')):
+                       return(0x5845);
+                       break;
+               case(MKID('ENCD')):
+                       return(0x4E45);
+                       break;
+               case(MKID('SCAL')):
+                       return(0x4153);
+                       break;
+               case(MKID('LSCR')):
+                       return(0x534C);
+                       break;
+               case(MKID('OBCD')):
+                       return(0x434F);
+                       break;
+               case(MKID('OBIM')):
+                       return(0x494F);
+                       break;
+               case(MKID('SMAP')):
+                       return(0x4D42);
+                       break;
+               case(MKID('CLUT')):
+                       return(0x4150);
+                       break;
+               case(MKID('BOXD')):
+                       return(0x5842);
+                       break;
+               default:
+                       return(0);
+      }
+}
+		
