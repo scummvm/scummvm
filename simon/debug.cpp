@@ -353,7 +353,9 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 
 void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
 	char buf[40];
+#ifndef __PALM_OS__
 	struct stat statbuf;
+#endif
 
 #if defined(MACOS_CARBON)
 	sprintf(buf, ":dumps:File%d_Image%d.bmp", file, image);
@@ -361,8 +363,10 @@ void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int
 	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
 #endif
 
+#ifndef __PALM_OS__
 	if (stat(buf, &statbuf) == 0)
 		return;
+#endif
 
 	dump_bitmap(buf, offs, w, h, 0, _palette, base);
 }
