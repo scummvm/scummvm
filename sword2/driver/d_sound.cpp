@@ -301,6 +301,14 @@ int32 Sword2Sound::IsFxOpen(int32 id) {
 //	a slow timer from rdwin.c
 //	--------------------------------------------------------------------------
 void Sword2Sound::FxServer(void) {
+	// FIXME: This function is called from a separate thread, and
+	// manipulates data structures that are used by several other
+	// functions throughout the file.
+	//
+	// I guess that means we need to add locking and stuff.
+	//
+	// Maybe that explains why BS2 still crashes every now and then.
+
 	int i;
 
 	if (!soundOn)
@@ -318,7 +326,7 @@ void Sword2Sound::FxServer(void) {
 					fxId[i] = 0;
 					if (bufferFx[i] != NULL) {
 						free(bufferFx[i]);
-					bufferFx[i] = NULL;
+						bufferFx[i] = NULL;
 					}
 					bufferSizeFx[i] = 0;
 					flagsFx[i] = 0;
