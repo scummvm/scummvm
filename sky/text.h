@@ -58,6 +58,8 @@ protected:
 	bool getTBit();
 	void initHuffTree();
 	char getTextChar();
+	void patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data);
+	void patchLINCCharset();
 	bool patchMessage(uint32 textNum);
 
 	SkyDisk *_skyDisk;
@@ -113,3 +115,4 @@ public:
 };
 
 #endif
+
