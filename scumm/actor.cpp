@@ -802,16 +802,24 @@ void Scumm::playActorSounds() {
 
 
 #define DRAW_ORDER(x)	((x)->y - ((x)->layer << 11))
+inline int32 drawOrder (const Actor* x) { return (x)->y - ((x)->layer << 11); }
+
+int sortByDrawOrder (const void* a, const void* b)
+{
+	const Actor* actor1 = *(const Actor**)a;
+	const Actor* actor2 = *(const Actor**)b;
+	assert (DRAW_ORDER (actor1)==drawOrder (actor1) && DRAW_ORDER (actor1)==drawOrder (actor1));
+	return drawOrder (actor1)-drawOrder (actor2);
+}
 
 void Scumm::processActors() {
-	int i;
-	Actor **actors, *a, **ac, **ac2, *tmp, **end;
 	int numactors = 0;
 
-	actors = new Actor * [_numActors];
+	// TODO : put this actors as a member array that grows and just realloc when necessary
+	Actor** actors = new Actor * [_numActors];
 	
 	// Make a list of all actors in this room
-	for (i = 1; i < _numActors; i++) {
+	for (int i = 1; i < _numActors; i++) {
 		if ((_features & GF_AFTER_V8) && _actors[i].layer < 0)
 			continue;
 		if (_actors[i].isInCurrentRoom())
@@ -822,23 +830,18 @@ void Scumm::processActors() {
 		return;
 	}
 
-	end = actors + numactors;
-
 	// Sort actors by position before we draw them (to ensure that actors in
 	// front are drawn after those "behind" them).
-	for (ac = end - 1; ac >= actors; --ac) {
-		for (ac2 = actors; ac2 != ac; ++ac2) {
-			if (DRAW_ORDER(*ac2) > DRAW_ORDER(*(ac2 + 1))) {
-				tmp = *(ac2 + 1);
-				*(ac2 + 1) = *ac2;
-				*ac2 = tmp;
-			}
-		}
-	}
+	// Bertrand TODO : Put a std::sort with a inlined comparison operator?
+	// I suppose only STL containers are not allowed, not algorithms, but I prefered leaving a good old qsort
+	// (Which might be slower that the previous code but just fits on one line)
+	qsort (actors, numactors, sizeof (Actor*), sortByDrawOrder);
+
+	Actor** end = actors + numactors;
 
 	// Finally draw the now sorted actors
-	for (ac = actors; ac != end; ++ac) {
-		a = *ac;
+	for (Actor** ac = actors; ac != end; ++ac) {
+		Actor* a = *ac;
 		if (a->costume) {
 			CHECK_HEAP
 			a->drawActorCostume();
