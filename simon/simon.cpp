@@ -4810,7 +4810,7 @@ void SimonState::playSound(uint sound)
 			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 		} else {
 		/* FIXME: not properly implemented */
-		/* Simon 1/2 dos talkie sfx aren't supported */
+		/* Simon 2 dos talkie sfx aren't supported */
 		/* Simon 2 dos sfx isn't supported */
 		const char *s2 = gss->wav_filename2;
 		_music_file = new File();
