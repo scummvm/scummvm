@@ -236,7 +236,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt) {
 	clipCoordX(cpt->extCompact->arTargetX, destX, initDestX);
 	clipCoordY(cpt->extCompact->arTargetY, destY, initDestY);
 
-	((uint16*)cpt->extCompact->animScratch)[0] = 0;
+	memset(cpt->extCompact->animScratch, 0, 64);
 	if ((startX == destX) && (startY == destY))
 		return 2;
 

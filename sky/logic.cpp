@@ -146,11 +146,10 @@ void SkyLogic::logicScript() {
 void SkyLogic::autoRoute() {
 	
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
-	if (!_compact->downFlag) { // route ok
+	if (_compact->downFlag != 1) { // route ok
 		_compact->grafixProg.pos = 0;
 		_compact->grafixProg.ptrTarget = 0;
 		_compact->grafixProg.ptrType = AUTOROUTE;
-		//_compact->grafixProg = (uint16*)_compact->extCompact->animScratch;
 	}
 
 	_compact->logic = L_SCRIPT; // continue the script

@@ -21,11 +21,6 @@
 
 #include "gmchannel.h"
 
-// the MT32 is a lot more sensitive to velocities than most general midi devices,
-// so we need to boost them a little
-
-
-
 SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab)
 {
 	_musicData = pMusicData;
@@ -38,7 +33,8 @@ SkyGmChannel::SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pM
 	_mt32_to_gm = pInstMap;
 	_veloTab = veloTab;
 
-	_musicVolume = 0x100;
+	_musicVolume = 0x7F;
+	_lastVolume = 0xFF;
 }
 
 bool SkyGmChannel::isActive(void) {
@@ -49,6 +45,12 @@ bool SkyGmChannel::isActive(void) {
 void SkyGmChannel::updateVolume(uint16 pVolume) {
 
 	_musicVolume = pVolume;
+	if (_musicVolume > 0)
+		_musicVolume = (_musicVolume * 2) / 3 + 43;
+	if (_lastVolume < 0xFF) {
+		uint8 newVol = (_lastVolume * _musicVolume) >> 7;
+		_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
+	}
 }
 
 void SkyGmChannel::stopNote(void) {
@@ -166,8 +168,9 @@ void SkyGmChannel::com90_getPitch(void) {
 
 void SkyGmChannel::com90_getChannelVolume(void) {
 
-	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (_musicData[_channelData.eventDataPtr] << 16));
-	_channelData.eventDataPtr++;
+	_lastVolume = _musicData[_channelData.eventDataPtr];
+	uint8 newVol = (uint8)((_musicData[_channelData.eventDataPtr++] * _musicVolume) >> 7);
+	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
 void SkyGmChannel::com90_rewindMusic(void) {

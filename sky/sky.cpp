@@ -235,7 +235,7 @@ void SkyState::initialise(void) {
 	OSystem::Property prop;
 
 	_skyDisk = new SkyDisk(_gameDataPath);
-	_skySound = new SkySound(_mixer, _skyDisk);
+	_skySound = new SkySound(_mixer, _skyDisk, _detector->_sfx_volume);
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
