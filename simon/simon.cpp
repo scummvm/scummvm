@@ -4735,15 +4735,8 @@ void SimonState::initSound()
 #endif
 #ifdef USE_MAD
 			if (_voice_type == FORMAT_MP3) {
-				uint8 buf[2048];
-				uint32 pos = 0;
-				_voice_file->seek(0, SEEK_SET);
-			        while ((_voice_file->read(buf, 2048)) > 0) {
-					if (pos == _voice_file->pos())
-						break;
-					pos = _voice_file->pos();
-			        }
-				_voice_offsets[gss->NUM_EFFECTS_RESOURCES] = pos;
+				_voice_file->seek(0, SEEK_END);
+				_voice_offsets[gss->NUM_EFFECTS_RESOURCES] = _voice_file->pos();
 			}
 #endif
 		}
@@ -4789,15 +4782,8 @@ void SimonState::initSound()
 #endif
 #ifdef USE_MAD
 			if (_effects_type == FORMAT_MP3) {
-				uint8 buf[2048];
-				uint32 pos = 0;
-				_effects_file->seek(0, SEEK_SET);
-			        while ((_effects_file->read(buf, 2048)) > 0) {
-					if (pos == _effects_file->pos())
-						break;
-					pos = _effects_file->pos();
-			        }
-				_effects_offsets[gss->NUM_EFFECTS_RESOURCES] = pos;
+				_effects_file->seek(0, SEEK_END);
+				_effects_offsets[gss->NUM_EFFECTS_RESOURCES] = _effects_file->pos();
 			}
 #endif
 		} else {
