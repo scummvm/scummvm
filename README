@@ -509,6 +509,7 @@ simon games.
         m                      - Music on/off
         s                      - Sound effects on/off
         b                      - Background sounds on/off
+        p                      - Toggles pause
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
                                  combined speech & subtitles.
