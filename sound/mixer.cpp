@@ -316,7 +316,6 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 
 void SoundMixer::stopAll() {
 	StackLock lock(_mutex);
-printf("->SoundMixer::stopAll()\n");
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
@@ -329,7 +328,6 @@ void SoundMixer::stop(int index) {
 	}
 
 	StackLock lock(_mutex);
-printf("->SoundMixer::stop(%d)\n", index);
 	if (_channels[index])
 		_channels[index]->destroy();
 }
@@ -357,7 +355,6 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 		return;
 	}
 
-printf("->SoundMixer::stopHandle(%d)\n", index);
 	if (_channels[index])
 		_channels[index]->destroy();
 }
