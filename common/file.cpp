@@ -71,16 +71,16 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 
 		ptr = buf + len;
 		do
-			*ptr++ = toupper(*ptr);
-		while (*ptr);
+			*ptr = toupper(*ptr);
+		while (*ptr++);
 		file = fopen(buf, mode);
 		if (file)
 			return file;
 
 		ptr = buf + len;
 		do
-			*ptr++ = tolower(*ptr);
-		while (*ptr);
+			*ptr = tolower(*ptr);
+		while (*ptr++);
 		file = fopen(buf, mode);
 		if (file)
 			return file;
