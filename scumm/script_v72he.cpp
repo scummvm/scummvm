@@ -1232,12 +1232,14 @@ void ScummEngine_v72he::o72_findObject() {
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	int a, b, c, d;
-	int id, len = 0;
+	int b, c;
+	int dim1end, dim1start, dim2end, dim2start;
+	int id, len, len2;
 	ArrayHeader *ah;
 	int list[128];
 	byte string[2048];
 
+	debug(1,"o72_arrayOps: case %d\n", subOp);
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		copyScriptString(string);
@@ -1247,37 +1249,50 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 
 	case 126:
-		len = getStackList(list, ARRAYSIZE(list));
-		a = pop();
-		b = pop();
-		c = pop();
-		d = pop();
+		len2 = getStackList(list, ARRAYSIZE(list));
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
 		id = readVar(array);
 		if (id == 0) {
-			defineArray(array, kDwordArray, d, c, b, a);
+			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		// TODO write array
+		while (dim2start < dim2end) {
+			len = len2;
+			while (--len >= 0) {
+				writeArray(array, dim2start, len, list[len]);
+			}
+			dim2start++;
+		}
 		break;
 	case 127:
+		{
 		// TODO
-		fetchScriptWord();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		// Array copy and cat?
+		//Array1
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
+		//Array2
+		array = fetchScriptWord();
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
+		}
 		break;
 	case 128:
-		a = pop();
 		b = pop();
 		c = pop();
-		d = pop();
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
 		id = readVar(array);
 		if (id == 0) {
-			defineArray(array, kDwordArray, d, c, b, a);
+			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
 		// TODO write array
 		break;
