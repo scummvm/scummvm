@@ -54,23 +54,27 @@ private:
 	File _voiceFile;
 	File _musicFile;
 
+
+	void initializeImcTables();
+
 	int32 compDecode(byte *src, byte *dst);
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
+
+	int32 decompressVoiceSampleByIndex(int32 index, byte **comp_final);
+	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
+	int32 getNumberOfMusicSamplesByIndex(int32 index);
 
 public:
 	Bundle();
 	~Bundle();
 
-	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
 	void closeVoiceFile();
 	void closeMusicFile();
+
 	int32 decompressVoiceSampleByName(const char *name, byte **comp_final);
-	int32 decompressVoiceSampleByIndex(int32 index, byte **comp_final);
 	int32 decompressMusicSampleByName(const char *name, int32 number, byte *comp_final);
-	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
-	int32 getNumberOfMusicSamplesByIndex(int32 index);
 	int32 getNumberOfMusicSamplesByName(const char *name);
 };
 

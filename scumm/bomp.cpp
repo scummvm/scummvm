@@ -144,7 +144,7 @@ void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
 			if (tmp == 13) {
-				tmp = shadowPalette[*(dst)];
+				tmp = shadowPalette[*dst];
 			}
 			*dst = tmp;
 		}
