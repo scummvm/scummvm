@@ -199,6 +199,9 @@
 				RelativePath="..\..\common\str.h">
 			</File>
 			<File
+				RelativePath="..\..\common\system.cpp">
+			</File>
+			<File
 				RelativePath="..\..\common\system.h">
 			</File>
 			<File
