@@ -87,8 +87,18 @@ int IMuseDigital::pullProcCallback(void *refCon, CustomProcInputStream *stream, 
 
 int IMuseDigital::pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int pullSize) {
 	Common::StackLock lock(_mutex, "IMuseDigital::pullProc()");
+	debug(5, "pullProc() pullSize:%d", pullSize);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		if ((_track[l]->used) && (_track[l]->stream == stream)) {
+			if (_track[l]->toBeRemoved) {
+				debug(5, "IMuseDigital::pullProc() stopped sound: %d", _track[l]->soundId);
+				_track[l]->stream->finish();
+				_track[l]->stream = NULL;
+				_sound->closeSound(_track[l]->soundHandle);
+				_track[l]->soundHandle = NULL;
+				_track[l]->used = false;
+				return 0;
+			}
 			_vm->_mixer->setChannelVolume(_track[l]->handle, _track[l]->mixerVol);
 			_vm->_mixer->setChannelBalance(_track[l]->handle, _track[l]->mixerPan);
 			int32 mixer_size = pullSize;
@@ -97,11 +107,19 @@ int IMuseDigital::pullProc(CustomProcInputStream *stream, byte *mixerBuffer, int
 
 			if (_track[l]->curRegion == -1) {
 				switchToNextRegion(l);
-				if (_track[l]->toBeRemoved)
-					continue;
+				if (_track[l]->toBeRemoved) {
+					return 0;
+				}
 			}
 
 			int bits = _sound->getBits(_track[l]->soundHandle);
+			int channels = _sound->getChannels(_track[l]->soundHandle);
+
+			if ((bits == 16) && (channels == 2))
+				assert((pullSize & 3) == 0);
+			else if ((bits == 16) || (channels == 2))
+				assert((pullSize & 1) == 0);
+
 			do {
 				if (bits == 12) {
 					byte *ptr = NULL;
@@ -172,16 +190,6 @@ void IMuseDigital::callback() {
 					debug(5, "IMuseDigital::callback() A: stopped sound: %d", _track[l]->soundId);
 					delete _track[l]->stream2;
 					_track[l]->stream2 = NULL;
-					_track[l]->used = false;
-					continue;
-				}
-			} else if (_track[l]->stream) {
-				if (_track[l]->toBeRemoved) {
-					debug(5, "IMuseDigital::callback() B: stopped sound: %d", _track[l]->soundId);
-					_track[l]->stream->finish();
-					_track[l]->stream = NULL;
-					_sound->closeSound(_track[l]->soundHandle);
-					_track[l]->soundHandle = NULL;
 					_track[l]->used = false;
 					continue;
 				}
@@ -390,8 +398,11 @@ void IMuseDigital::callback() {
 #endif
 
 void IMuseDigital::switchToNextRegion(int track) {
+	debug(5, "switchToNextRegion(track:%d)", track);
+
 	if (track >= MAX_DIGITAL_TRACKS) {
 		_track[track]->toBeRemoved = true;
+		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(track:%d)", track);
 		return;
 	}
 
@@ -399,6 +410,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 
 	if (++_track[track]->curRegion == num_regions) {
 		_track[track]->toBeRemoved = true;
+		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", track);
 		return;
 	}
 

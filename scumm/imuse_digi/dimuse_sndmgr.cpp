@@ -411,12 +411,14 @@ int ImuseDigiSndMgr::getNumJumps(soundStruct *soundHandle) {
 }
 
 int ImuseDigiSndMgr::getRegionOffset(soundStruct *soundHandle, int region) {
+	debug(5, "getRegionOffset() region:%d");
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	return soundHandle->region[region].offset;
 }
 
 int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId) {
+	debug(5, "getJumpIdByRegionAndHookId() region:%d, hookId:%d", region, hookId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	for (int l = 0; l < soundHandle->numJumps; l++) {
@@ -442,6 +444,7 @@ void ImuseDigiSndMgr::getSyncSizeAndPtrById(soundStruct *soundHandle, int number
 }
 
 int ImuseDigiSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
+	debug(5, "getRegionIdByJumpId() jumpId:%d", jumpId);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(jumpId >= 0 && jumpId < soundHandle->numJumps);
 	for (int l = 0; l < soundHandle->numRegions; l++) {
@@ -454,18 +457,21 @@ int ImuseDigiSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
 }
 
 int ImuseDigiSndMgr::getJumpHookId(soundStruct *soundHandle, int number) {
+	debug(5, "getJumpHookId() number:%d", number);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].hookId;
 }
 
 int ImuseDigiSndMgr::getJumpFade(soundStruct *soundHandle, int number) {
+	debug(5, "getJumpFade() number:%d", number);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].fadeDelay;
 }
 
 int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size) {
+	debug(5, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundHandle->numRegions);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundHandle->numRegions);
