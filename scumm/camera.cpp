@@ -339,7 +339,7 @@ void ScummEngine::cameraMoved() {
 	virtscr[0].xstart = _screenStartStrip << 3;
 #endif
 
-	if (_charset->_hasMask && !(_version <= 3 && _gameId != GID_LOOM)) {
+	if (_charset->_hasMask && (_version >= 4 && _gameId != GID_LOOM256)) {
 		int dx = camera._cur.x - camera._last.x;
 		int dy = camera._cur.y - camera._last.y;
 		if (dx || dy) {
