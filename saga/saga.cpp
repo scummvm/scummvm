@@ -26,9 +26,11 @@
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
 
-#include "sound/mixer.h"
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/system.h"
+
+#include "sound/mixer.h"
 
 #include "saga/saga.h"
 

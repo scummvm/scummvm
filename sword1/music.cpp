@@ -20,10 +20,14 @@
  */
 
 #include "stdafx.h"
+
 #include "sword1/music.h"
-#include "sound/mixer.h"
+
 #include "common/util.h"
 #include "common/file.h"
+#include "common/system.h"
+
+#include "sound/mixer.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"

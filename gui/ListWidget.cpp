@@ -110,7 +110,7 @@ void ListWidget::scrollBarRecalc() {
 }
 
 void ListWidget::handleTickle() {
-	uint32 time = g_system->getMillis();
+	uint32 time = getMillis();
 	if (_editMode && _caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
@@ -172,7 +172,7 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		// Only works in a useful fashion if the list entries are sorted.
 		// TODO: Maybe this should be off by default, and instead we add a
 		// method "enableQuickSelect()" or so ?
-		uint32 time = g_system->getMillis();
+		uint32 time = getMillis();
 		if (_quickSelectTime < time) {
 			_quickSelectStr = (char)ascii;
 		} else {

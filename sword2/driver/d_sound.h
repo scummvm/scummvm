@@ -59,7 +59,7 @@ class Sound : public AudioStream {
 private:
 	Sword2Engine *_vm;
 
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 
 	int32 _panTable[33];
 	bool _soundOn;

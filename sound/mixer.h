@@ -25,12 +25,13 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 
 
 class AudioStream;
 class Channel;
 class File;
+class OSystem;
 
 class PlayingSoundHandle {
 	friend class Channel;
@@ -88,7 +89,7 @@ private:
 	};
 
 	OSystem *_syst;
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 
 	Channel *_premixChannel;
 

@@ -28,6 +28,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

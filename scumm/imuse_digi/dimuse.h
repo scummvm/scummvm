@@ -84,7 +84,7 @@ private:
 
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 

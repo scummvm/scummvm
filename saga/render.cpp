@@ -35,7 +35,9 @@
 #include "saga/objectmap.h"
 
 #include "saga/render.h"
-#include <common/timer.h>
+
+#include "common/timer.h"
+#include "common/system.h"
 
 namespace Saga {
 

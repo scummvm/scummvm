@@ -24,7 +24,7 @@
 #define PLAYER_V2_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 #include "scumm/music.h"
 #include "sound/audiostream.h"
 
@@ -133,12 +133,12 @@ private:
 
 	const uint16 *_freqs_table;
 
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 	ChannelInfo _channels[5];
 
 protected:
-	void mutex_up() { _system->lockMutex (_mutex); }
-	void mutex_down() { _system->unlockMutex (_mutex); }
+	void mutex_up();
+	void mutex_down();
 
 	virtual void nextTick();
 	virtual void clear_channel(int i);

@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/timer.h"
 #include "common/util.h"
+#include "common/system.h"
 
 Timer *g_timer = NULL;
 

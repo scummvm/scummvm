@@ -21,9 +21,11 @@
 #include <ctype.h>
 
 #include "stdafx.h"
-#include "newgui.h"
-#include "dialog.h"
-#include "widget.h"
+#include "gui/newgui.h"
+#include "gui/dialog.h"
+#include "gui/widget.h"
+
+#include "common/system.h"
 
 namespace GUI {
 
@@ -292,6 +294,11 @@ Widget *Dialog::findWidget(int x, int y) {
 
 ButtonWidget *Dialog::addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
 	return new ButtonWidget(this, x, y, kButtonWidth, 16, label, cmd, hotkey);
+}
+
+
+uint32 GuiObject::getMillis() {
+	return g_system->getMillis();
 }
 
 } // End of namespace GUI

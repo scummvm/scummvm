@@ -24,6 +24,7 @@
 
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "common/mutex.h"
 
 class File;
 class OSystem;
@@ -52,7 +53,7 @@ struct MusicInfo {
 class MidiPlayer : public MidiDriver {
 protected:
 	OSystem *_system;
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 	MidiDriver *_driver;
 	bool _map_mt32_to_gm;
 	bool _passThrough;

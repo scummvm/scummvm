@@ -19,6 +19,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"

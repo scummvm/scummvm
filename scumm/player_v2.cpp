@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
+#include "common/system.h"
 #include "scumm/player_v2.h"
 #include "scumm/scumm.h"
 #include "sound/mididrv.h"
@@ -961,6 +962,14 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 
 	if (_level || hasdata)
 		lowPassFilter(data, len);
+}
+
+void Player_V2::mutex_up() {
+	_system->lockMutex (_mutex);
+}
+
+void Player_V2::mutex_down() {
+	_system->unlockMutex (_mutex);
 }
 
 } // End of namespace Scumm

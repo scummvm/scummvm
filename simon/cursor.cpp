@@ -23,6 +23,7 @@
 
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "common/system.h"
 
 namespace Simon {
 

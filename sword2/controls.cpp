@@ -20,6 +20,7 @@
 #include "common/stdafx.h"
 #include "common/rect.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "sword2/sword2.h"
 #include "sword2/controls.h"
 #include "sword2/defs.h"

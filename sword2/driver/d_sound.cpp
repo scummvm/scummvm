@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"

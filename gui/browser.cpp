@@ -25,6 +25,8 @@
 
 #include "backends/fs/fs.h"
 
+#include "common/system.h"
+
 namespace GUI {
 
 #ifdef MACOSX

@@ -25,6 +25,8 @@
 #include "base/engine.h"
 #include "base/version.h"
 
+#include "common/system.h"
+
 #include "graphics/font.h"
 
 namespace GUI {

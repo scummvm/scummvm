@@ -21,6 +21,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "gui/chooser.h"
 #include "gui/newgui.h"

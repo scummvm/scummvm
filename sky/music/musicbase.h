@@ -24,7 +24,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 
 class OSystem;
 
@@ -77,7 +77,7 @@ protected:
 	uint32 _aktTime;
 	Actions _onNextPoll;
 	ChannelBase *_channels[10];
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 	
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;

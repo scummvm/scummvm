@@ -22,6 +22,7 @@
 #include "sky/music/mt32music.h"
 #include "sky/music/gmchannel.h"
 #include "common/util.h"
+#include "common/system.h"
 #include "sound/mididrv.h"
 
 namespace Sky {
@@ -96,7 +97,8 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 
 	uint8 sysExBuf[15];
 	uint8 crc = 0;
-	if (sysExData[0] & 0x80) return false;
+	if (sysExData[0] & 0x80)
+		return false;
 
 	// decompress data from stream
 	sysExBuf[0]  = 0x41; sysExBuf[1] = 0x10; sysExBuf[2] = 0x16; sysExBuf[3] = 0x12; sysExBuf[4] = 0x5;
@@ -113,7 +115,7 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		crc -= sysExBuf[cnt];
 	sysExBuf[14] = crc & 0x7F;					// crc
 	_midiDrv->sysEx(sysExBuf, 15);
-	g_system->delayMillis (5);
+	g_system->delayMillis(5);
 	return true;
 }
 

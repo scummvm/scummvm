@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/system.h"
 
 #include "gui/about.h"
 #include "gui/message.h"

@@ -25,6 +25,7 @@
 #include "base/version.h"
 
 #include "common/util.h"
+#include "common/system.h"
 
 #include "scumm/imuse.h"
 #include "scumm/imuse_internal.h"

@@ -21,9 +21,10 @@
 
 #include "common/stdafx.h"
 #include "graphics/animation.h"
-#include "common/file.h"
 #include "sound/audiostream.h"
 #include "common/config-manager.h"
+#include "common/file.h"
+#include "common/system.h"
 
 namespace Graphics {
 

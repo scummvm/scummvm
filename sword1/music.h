@@ -23,7 +23,7 @@
 #define BSMUSIC_H
 
 #include "scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 #include "common/file.h"
 #include "sound/audiostream.h"
 #include "sound/rate.h"
@@ -109,7 +109,7 @@ private:
 	OSystem *_system;
 	SoundMixer *_mixer;
 	uint32 _sampleRate;
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 
 	static void passMixerFunc(void *param, int16 *buf, uint len);
 	void mixer(int16 *buf, uint32 len);

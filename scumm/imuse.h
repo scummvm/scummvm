@@ -24,7 +24,7 @@
 #define IMUSE_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 #include "scumm/music.h"
 
 class MidiDriver;
@@ -40,7 +40,7 @@ class IMuse : public MusicEngine {
 private:
 	OSystem *_system;
 	IMuseInternal *_target;
-	mutable OSystem::MutexRef _mutex;
+	mutable Common::MutexRef _mutex;
 
 	IMuse(OSystem *system, IMuseInternal *target);
 	void in() const;

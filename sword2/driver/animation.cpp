@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "sound/vorbis.h"
 #include "sound/mp3.h"
 

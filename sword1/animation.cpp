@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/system.h"
 
 namespace Sword1 {
 

@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "base/engine.h"
 #include "base/version.h"
+#include "common/system.h"
 #include "gui/about.h"
 #include "gui/newgui.h"
 #include "gui/widget.h"
@@ -114,7 +115,7 @@ AboutDialog::AboutDialog()
 }
 
 void AboutDialog::open() {
-	_scrollTime = g_system->getMillis() + kScrollStartDelay;
+	_scrollTime = getMillis() + kScrollStartDelay;
 	_scrollPos = 0;
 	_modifiers = 0;
 	_willClose = false;
@@ -193,7 +194,7 @@ void AboutDialog::drawDialog() {
 
 
 void AboutDialog::handleTickle() {
-	const uint32 t = g_system->getMillis();
+	const uint32 t = getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
 		// Scroll faster when shift is pressed

@@ -19,6 +19,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "common/timer.h"
 
 #include "scumm/actor.h"

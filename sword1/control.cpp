@@ -22,7 +22,7 @@
 #include "common/file.h"
 #include "common/stdafx.h"
 #include "common/util.h"
-#include "common/util.h"
+#include "common/system.h"
 
 #include "gui/message.h"
 

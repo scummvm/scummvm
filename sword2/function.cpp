@@ -19,6 +19,7 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
@@ -588,7 +589,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	bool abortCredits = false;
 
 	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
-	uint32 musicStart = _vm->_system->getMillis();
+	uint32 musicStart = _vm->getMillis();
 
 	// Ideally the music should last just a tiny bit longer than the
 	// credits. Note that musicTimeRemaining() will return 0 if the music

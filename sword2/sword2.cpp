@@ -18,11 +18,15 @@
  */
 
 #include "common/stdafx.h"
+
 #include "backends/fs/fs.h"
+
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/system.h"
 
 #include "sword2/sword2.h"
 #include "sword2/console.h"
@@ -545,7 +549,7 @@ void Sword2Engine::startGame() {
 // FIXME: Move this to some better place?
 
 void Sword2Engine::sleepUntil(uint32 time) {
-	while (_system->getMillis() < time) {
+	while (getMillis() < time) {
 		// Make sure menu animations and fades don't suffer, but don't
 		// redraw the entire scene.
 		_graphics->processMenu();
@@ -610,6 +614,10 @@ void Sword2Engine::unpauseGame() {
 	// If mouse is about or we're in a chooser menu
 	if (!_mouseStatus || _logic->_choosing)
 		setMouse(NORMAL_MOUSE_ID);
+}
+
+uint32 Sword2Engine::getMillis() {
+	return _system->getMillis();
 }
 
 } // End of namespace Sword2

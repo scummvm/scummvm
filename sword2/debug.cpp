@@ -116,7 +116,7 @@ void Debugger::buildDebugText(void) {
 	// debug info at top of screen - enabled/disabled as one complete unit
 
 	if (_displayTime) {
-		int32 time = _vm->_system->getMillis();
+		int32 time = _vm->getMillis();
 
 		if ((time - _startTime) / 1000 >= 10000)
 			_startTime = time;

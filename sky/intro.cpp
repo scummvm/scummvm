@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "common/system.h"
 #include "sky/disk.h"
 #include "sky/intro.h"
 #include "sky/music/musicbase.h"

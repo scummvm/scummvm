@@ -22,7 +22,7 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 
 #define MAX_TIMERS 2
 
@@ -31,13 +31,15 @@
 #include "morphos_timer.h"
 #else
 
+class OSystem;
+
 class Timer {
 public:
 	typedef void (*TimerProc)(void *refCon);
 
 private:
 	OSystem *_system;
-	OSystem::MutexRef _mutex;
+	Common::MutexRef _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;

@@ -23,7 +23,6 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 
 namespace Scumm {

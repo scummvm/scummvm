@@ -35,6 +35,7 @@
 #include "base/version.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/timer.h"
 #include "gui/newgui.h"
 #include "gui/launcher.h"

@@ -21,6 +21,7 @@
 #include "stdafx.h"
 
 #include "common/debugger.h"
+#include "common/system.h"
 
 #if USE_CONSOLE
 	#include "gui/console.h"

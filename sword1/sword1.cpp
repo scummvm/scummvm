@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
+#include "common/system.h"
 
 #include "sword1/resman.h"
 #include "sword1/objectman.h"

@@ -23,6 +23,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "scumm/debugger.h"
 #include "scumm/imuse.h"

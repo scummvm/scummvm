@@ -28,6 +28,7 @@
 #include "base/engine.h"
 #include "common/file.h"
 #include "common/util.h"
+#include "common/system.h"
 
 struct TrackFormat {
 	/** Decodername */

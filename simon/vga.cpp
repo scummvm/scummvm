@@ -25,6 +25,8 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 
+#include "common/system.h"
+
 namespace Simon {
 
 typedef void (SimonEngine::*VgaOpcodeProc) ();

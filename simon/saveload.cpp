@@ -34,6 +34,9 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+#include "common/savefile.h"
+#include "common/system.h"
+
 namespace Simon {
 
 void SimonEngine::o_save_game() {

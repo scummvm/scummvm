@@ -29,7 +29,7 @@
 
 #include "base/engine.h"
 
-#include "common/system.h"
+#include "common/util.h"
 
 #include "sword2/driver/driver96.h"
 #include "sword2/build_display.h"
@@ -41,6 +41,7 @@
 #include "sword2/save_rest.h"
 
 class GameDetector;
+class OSystem;
 
 namespace Sword2 {
 
@@ -407,6 +408,11 @@ public:
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags();
 	void initialiseFontResourceFlags(uint8 language);
+
+
+	// Convenience alias for OSystem::getMillis().
+	// This is a bit hackish, of course :-).
+	uint32 getMillis();
 };
 
 } // End of namespace Sword2

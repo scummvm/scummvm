@@ -25,8 +25,9 @@
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"
-#include "common/system.h"	// For events
 #include "graphics/fontman.h"
+
+class OSystem;
 
 namespace GUI {
 

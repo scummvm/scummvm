@@ -20,14 +20,18 @@
  */
 
 #include "stdafx.h"
+
 #include "sword1/credits.h"
 #include "sword1/screen.h"
-#include "common/file.h"
-#include "sound/mixer.h"
-#include "common/util.h"
-#include "sound/audiostream.h"
+#include "sword1/sword1.h"
 
-#include "sword1.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
+#include "common/file.h"
+#include "common/util.h"
+#include "common/system.h"
+
 
 #define CREDITS_X 480
 #define CREDITS_Y 300

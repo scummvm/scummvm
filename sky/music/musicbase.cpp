@@ -22,6 +22,7 @@
 #include "sky/music/musicbase.h"
 #include "sky/disk.h"
 #include "common/util.h"
+#include "common/system.h"
 
 namespace Sky {
 
