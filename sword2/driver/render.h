@@ -30,36 +30,28 @@
 //
 //=============================================================================
 
-
 #ifndef RENDER_H
 #define RENDER_H
 
 #include "menu.h"
 
-#define RENDERWIDE 640
-#define ALIGNRENDERDEEP 480
-#define RENDERDEEP (ALIGNRENDERDEEP - (MENUDEEP * 2))
+#define RENDERWIDE		640
+#define ALIGNRENDERDEEP		480
+#define RENDERDEEP		(ALIGNRENDERDEEP - (MENUDEEP * 2))
 
-
-#define PROFILING 0
-
-
-typedef struct
-{
-	uint16	packets;
-	uint16	offset;
+typedef struct {
+	uint16 packets;
+	uint16 offset;
 } _parallaxLine;
 
-
-
-extern int16					scrollx;			// current x offset into background of display
-extern int16					scrolly;			// current y offset into background of display
-extern int16					parallaxScrollx;	// current x offset to link a sprite to the parallax layer
-extern int16					parallaxScrolly;	// current y offset to link a sprite to the parallax layer
-extern int16					locationWide;
-extern int16					locationDeep;
-
-// extern uint8 myScreenBuffer[RENDERWIDE * RENDERDEEP];
+extern int16 scrollx;		// current x offset into background of display
+extern int16 scrolly;		// current y offset into background of display
+extern int16 parallaxScrollx;	// current x offset to link a sprite to the
+				// parallax layer
+extern int16 parallaxScrolly;	// current y offset to link a sprite to the
+				// parallax layer
+extern int16 locationWide;
+extern int16 locationDeep;
 
 void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf);
 void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf);
@@ -67,4 +59,3 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 void UploadRect(ScummVM::Rect *r);
 
 #endif
-

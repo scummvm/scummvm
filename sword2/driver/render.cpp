@@ -108,11 +108,6 @@
 //
 //=============================================================================
 
-
-
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
@@ -122,55 +117,35 @@
 #include "menu.h"
 #include "../sword2.h"
 
-
-
 #define MILLISECSPERCYCLE 83
 
-
-
-#if PROFILING == 1
-int32 profileCopyScreenBuffer = 0;
-int32 profileRenderLayers = 0;
-int32 profileSpriteRender = 0;
-int32 profileDecompression = 0;
-#endif
-
-
-
-
 // Scroll variables.  scrollx and scrolly hold the current scroll position, 
-//	and scrollxTarget and scrollyTarget are the target position for the end
-//	of the game cycle.
+// and scrollxTarget and scrollyTarget are the target position for the end
+// of the game cycle.
 
-//int16		scrollx;
-//int16		scrolly;
-extern int16		scrollx;
-extern int16		scrolly;
-int16			parallaxScrollx;
-int16			parallaxScrolly;
-int16	locationWide;
-int16	locationDeep;
+extern int16 scrollx;
+extern int16 scrolly;
+int16 parallaxScrollx;
+int16 parallaxScrolly;
+int16 locationWide;
+int16 locationDeep;
 
-static	int16	scrollxTarget;
-static	int16	scrollyTarget;
-static	int16	scrollxOld;
-static	int16	scrollyOld;
-static	uint16	layer = 0;
-
-
+static int16 scrollxTarget;
+static int16 scrollyTarget;
+static int16 scrollxOld;
+static int16 scrollyOld;
+static uint16 layer = 0;
 
 #define RENDERAVERAGETOTAL 4
+
 int32 renderCountIndex = 0;
-int32 renderTimeLog[RENDERAVERAGETOTAL] = {60, 60, 60, 60};
+int32 renderTimeLog[RENDERAVERAGETOTAL] = { 60, 60, 60, 60 };
 int32 initialTime;
 int32 startTime;
 int32 totalTime;
 int32 renderAverageTime = 60;
 int32 framesPerGameCycle;
 int32 renderTooSlow;
-
-
-
 
 #define BLOCKWIDTH 64
 #define BLOCKHEIGHT 64
@@ -512,14 +487,7 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 	return RD_OK;
 }
 
-
-
-
-
-
-int32 PlotPoint(uint16 x, uint16 y, uint8 colour)
-
-{
+int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
 	warning("stub PlotPoint( %d, %d, %d )", x, y, colour);
 /*
 	int16 newx, newy;
@@ -557,11 +525,8 @@ int32 PlotPoint(uint16 x, uint16 y, uint8 colour)
 
 }
 
-
 // Uses Bressnham's incremental algorithm!
-int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour)
-
-{
+int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	warning("stub DrawLine( %d, %d, %d, %d, %d )", x0, y0, x1, y1, colour);
 /*
 	int dx, dy;
@@ -792,21 +757,14 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour)
 		IDirectDrawSurface2_Unlock(lpBackBuffer, ddsd.lpSurface);
 	}
 */
-	return(RD_OK);
-
+	return RD_OK;
 }
 
-
-
-int32 SetLocationMetrics(uint16 w, uint16 h)
-
-{
-
+int32 SetLocationMetrics(uint16 w, uint16 h) {
 	locationWide = w;
 	locationDeep = h;
 
-	return(RD_OK);
-
+	return RD_OK;
 }
 
 int32 RenderParallax(_parallax *p, int16 l) {
@@ -850,42 +808,6 @@ int32 RenderParallax(_parallax *p, int16 l) {
 
 	return RD_OK;
 }
-
-
-/*
-#define LOGSIZE 10
-int32 previousTimeLog[LOGSIZE];
-int32 renderCycleStartLog[LOGSIZE];
-int32 lastRenderTimeLog[LOGSIZE];
-int32 renderCycleEndLog[LOGSIZE];
-int32 timeLeftLog[LOGSIZE];
-int32 scrollxOldLog[LOGSIZE];
-int32 scrollxLog[LOGSIZE];
-int32 scrollxTargetLog[LOGSIZE];
-
-
-void LogMe(int32 in)
-{
-	static int32 i;
-
-	if (in == 0)
-		i = 0;
-
-	previousTimeLog[i] = previousTime;
-	aveRenderCycleLog[i] = aveRenderCycle;
-	renderCycleStartLog[i] = renderCycleStart;
-	lastRenderTimeLog[i] = lastRenderTime;
-	renderCycleEndLog[i] = renderCycleEnd;
-	timeLeftLog[i] = timeLeft;
-	scrollxOldLog[i] = scrollxOld;
-	scrollxLog[i] = scrollx;
-	scrollxTargetLog[i] = scrollxTarget;
-	
-	if (++i == LOGSIZE)
-		i = 0;
-
-}
-*/
 
 // Uncomment this when benchmarking the drawing routines.
 #define LIMIT_FRAME_RATE
@@ -981,6 +903,7 @@ int32 EndRenderCycle(bool *end) {
 int32 SetScrollTarget(int16 sx, int16 sy) {
 	scrollxTarget = sx;
 	scrollyTarget = sy;
+
 	return RD_OK;
 }
 
