@@ -46,31 +46,36 @@ void Actor::initActorClass(ScummEngine *scumm) {
 
 Actor::Actor() {
 	assert(_vm != 0);
-	_offsX = _offsY = 0;
-	top = bottom = 0;
 	number = 0;
-	needRedraw = needBgReset = costumeNeedsInit = visible = false;
-	flip = false;
-	speedx = 8;
-	speedy = 2;
-	frame = 0;
-	_walkbox = 0;
-	animProgress = 0;
-	skipLimb = false;
-	drawToBackBuf = false;
-	memset(animVariable, 0, sizeof(animVariable));
-	memset(palette, 0, sizeof(palette));
-	memset(sound, 0, sizeof(sound));
-	memset(&cost, 0, sizeof(CostumeData));
-	memset(&walkdata, 0, sizeof(ActorWalkData));
-	walkdata.point3.x = 32000;
-	walkScript = 0;
-	memset(talkQueue, 0, sizeof(talkQueue));
 
-	initActor(1);
+	initActor(-1);
 }
 
 void Actor::initActor(int mode) {
+	if (mode == -1) {
+		_offsX = _offsY = 0;
+		top = bottom = 0;
+		needRedraw = needBgReset = costumeNeedsInit = visible = false;
+		flip = false;
+		speedx = 8;
+		speedy = 2;
+		frame = 0;
+		_walkbox = 0;
+		animProgress = 0;
+		skipLimb = false;
+		drawToBackBuf = false;
+		memset(animVariable, 0, sizeof(animVariable));
+		memset(palette, 0, sizeof(palette));
+		memset(sound, 0, sizeof(sound));
+		memset(&cost, 0, sizeof(CostumeData));
+		memset(&walkdata, 0, sizeof(ActorWalkData));
+		walkdata.point3.x = 32000;
+		walkScript = 0;
+		memset(talkQueue, 0, sizeof(talkQueue));
+		
+		mode = 1;
+	}
+
 	if (mode == 1) {
 		costume = 0;
 		room = 0;
@@ -2055,6 +2060,9 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, walkdata.deltaYFactor, sleInt32, VER(8)),
 		MKLINE(Actor, walkdata.xfrac, sleUint16, VER(8)),
 		MKLINE(Actor, walkdata.yfrac, sleUint16, VER(8)),
+
+		MKLINE(Actor, walkdata.point3.x, sleUint16, VER(42)),
+		MKLINE(Actor, walkdata.point3.y, sleUint16, VER(42)),
 	
 		MKARRAY(Actor, cost.active[0], sleByte, 16, VER(8)),
 		MKLINE(Actor, cost.stopped, sleUint16, VER(8)),
