@@ -8,15 +8,7 @@
 typedef UInt32 uint;
 
 typedef struct {
-	uint VGA_DELAY_BASE;
-	uint TABLE_INDEX_BASE;
-	uint TEXT_INDEX_BASE;
-	uint NUM_VIDEO_OP_CODES;
-	uint VGA_MEM_SIZE;
-	uint TABLES_MEM_SIZE;
-	uint MUSIC_INDEX_BASE;
-	uint SOUND_INDEX_BASE;
-#if 0
+#if 0 // original struct
 	const char *gme_filename;
 	const char *wav_filename;
 	const char *voc_filename;
@@ -39,18 +31,6 @@ static void addSimon_simon1_settings() {
 
 
 	GameSpecificSettings simon1_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	1000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"SIMON.GME",									// gme_filename
 	"SIMON.WAV",									// wav_filename
 	"SIMON.VOC",									// voc_filename
@@ -67,18 +47,6 @@ static void addSimon_simon1acorn_settings() {
 
 
 	GameSpecificSettings simon1acorn_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	1000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"DATA",										// gme_filename
 	"",										// wav_filename
 	"SIMON",									// voc_filename
@@ -95,18 +63,6 @@ static void addSimon_simon1amiga_settings() {
 
 
 	GameSpecificSettings simon1amiga_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	1000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"",										// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -124,18 +80,6 @@ static void addSimon_simon1demo_settings() {
 
 
 	GameSpecificSettings simon1demo_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	1000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"",										// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -152,18 +96,6 @@ static void addSimon_simon2win_settings() {
 
 
 	GameSpecificSettings simon2win_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	2000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"SIMON2.GME",									// gme_filename
 	"SIMON2.WAV",									// wav_filename
 	"SIMON2.VOC",									// voc_filename
@@ -180,18 +112,6 @@ static void addSimon_simon2mac_settings() {
 
 
 	GameSpecificSettings simon2mac_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	2000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"Simon2.gme",									// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -208,18 +128,6 @@ static void addSimon_simon2dos_settings() {
 
 
 	GameSpecificSettings simon2dos_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-#ifndef SMALL_MEMORY
-	2000000,									// VGA_MEM_SIZE
-#else
-	500000,
-#endif
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"SIMON2.GME",									// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
