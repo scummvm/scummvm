@@ -297,6 +297,14 @@ static void GetAngleBetweenActors() {
   lua_pushnumber(act1->angleTo(*act2));
 }
 
+static void GetActorYawToPoint() {
+  Actor *act = check_actor(1);
+  double x = luaL_check_number(2);
+  double y = luaL_check_number(3);
+  double z = luaL_check_number(4);
+  lua_pushnumber(act->yawTo(Vector3d(x, y, z)));
+}
+
 static void PutActorInSet() {
   Actor *act = check_actor(1);
   const char *set = "";
@@ -327,10 +335,17 @@ static void WalkActorForward() {
   act->walkForward();
 }
 
-// FIXME
 static void WalkActorTo() {
-  warning("Stub function WalkActorTo called; substituting PutActorAt");
-  PutActorAt();
+  Actor *act = check_actor(1);
+  double x = luaL_check_number(2);
+  double y = luaL_check_number(3);
+  double z = luaL_check_number(4);
+  act->walkTo(Vector3d(x, y, z));
+}
+
+static void IsActorMoving() {
+  Actor *act = check_actor(1);
+  pushbool(act->isWalking());
 }
 
 static void TurnActor() {
@@ -955,7 +970,6 @@ static char *stubFuncs[] = {
   "EnableDebugKeys",
   "WorldToScreen",
   "IsActorResting",
-  "IsActorMoving",
   "CompleteActorChore",
   "SetActorRoll",
   "SetActorPitch",
@@ -972,7 +986,6 @@ static char *stubFuncs[] = {
   "WalkActorVector",
   "PutActorAtInterest",
   "SetActorReflection",
-  "GetActorYawToPoint",
   "GetActorPuckVector",
   "GetActorRect",
   "SetActorMumblechore",
@@ -1191,12 +1204,14 @@ struct luaL_reg builtins[] = {
   { "GetActorRot", GetActorRot },
   { "IsActorTurning", IsActorTurning },
   { "GetAngleBetweenActors", GetAngleBetweenActors },
+  { "GetActorYawToPoint", GetActorYawToPoint },
   { "PutActorInSet", PutActorInSet },
   { "SetActorWalkRate", SetActorWalkRate },
   { "GetActorWalkRate", GetActorWalkRate },
   { "SetActorTurnRate", SetActorTurnRate },
   { "WalkActorForward", WalkActorForward },
   { "WalkActorTo", WalkActorTo },
+  { "IsActorMoving", IsActorMoving },
   { "TurnActor", TurnActor },
   { "PushActorCostume", PushActorCostume },
   { "SetActorTalkChore", SetActorTalkChore },

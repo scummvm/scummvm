@@ -37,6 +37,8 @@ public:
   Color talkColor() const { return talkColor_; }
   void setPos(Vector3d pos) { pos_ = pos; }
   Vector3d pos() const { return pos_; }
+  void walkTo(Vector3d p);
+  bool isWalking() const { return walking_; }
   void setRot(float pitch, float yaw, float roll) {
     pitch_ = pitch; yaw_ = yaw; roll_ = roll;
   }
@@ -54,6 +56,7 @@ public:
   float walkRate() const { return walkRate_; }
 
   float angleTo(const Actor &a) const;
+  float yawTo(Vector3d p) const;
 
   bool inSet(const char *name) const {
     return setName_ == name;
@@ -97,6 +100,10 @@ private:
   // Variables for gradual turning
   bool turning_;
   float destYaw_;
+
+  // Variables for walking to a point
+  bool walking_;
+  Vector3d destPos_;
 
   friend class Engine;
 };

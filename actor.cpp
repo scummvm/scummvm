@@ -28,7 +28,7 @@
 Actor::Actor(const char *name) :
   name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
   pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-  visible_(true), talkSound_(NULL), turning_(false)
+  visible_(true), talkSound_(NULL), turning_(false), walking_(false)
 {
   Engine::instance()->registerActor(this);
 }
@@ -42,6 +42,22 @@ void Actor::turnTo(float pitch, float yaw, float roll) {
   }
   else
     turning_ = false;
+}
+
+void Actor::walkTo(Vector3d p) {
+  // For now, this is just the ignoring-boxes version (which afaict
+  // isn't even in the original).  This will eventually need a
+  // following-boxes version also.
+
+  if (p == pos_)
+    walking_ = false;
+  else {
+    walking_ = true;
+    destPos_ = p;
+
+    if (p.x() != pos_.x() || p.y() != pos_.y())
+      turnTo(pitch_, yawTo(p), roll_);
+  }
 }
 
 void Actor::walkForward() {
@@ -64,6 +80,14 @@ float Actor::angleTo(const Actor &a) const {
   Vector3d delta = a.pos() - pos_;
   delta.z() = 0;
   return angle(forwardVec, delta) * (180 / M_PI);
+}
+
+float Actor::yawTo(Vector3d p) const {
+  Vector3d dpos = p - pos_;
+  if (dpos.x() == 0 && dpos.y() == 0)
+    return 0;
+  else
+    return std::atan2(-dpos.x(), dpos.y()) * (180 / M_PI);
 }
 
 void Actor::sayLine(const char *msg) {
@@ -162,6 +186,21 @@ void Actor::update() {
       yaw_ += turnAmt;
     else
       yaw_ -= turnAmt;
+  }
+
+  if (walking_) {
+    Vector3d dir = destPos_ - pos_;
+    float dist = dir.magnitude();
+    if (dist > 0)
+      dir /= dist;
+    float walkAmt = Engine::instance()->perSecond(walkRate_);
+    if (walkAmt >= dist) {
+      pos_ = destPos_;
+      walking_ = false;
+      turning_ = false;
+    }
+    else
+      pos_ += dir * walkAmt;
   }
 
   for (std::list<Costume *>::iterator i = costumeStack_.begin();
