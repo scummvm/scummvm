@@ -775,7 +775,7 @@ public:
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
 	int16 _talkDelay;
-	void actorTalk();
+	void actorTalk(const byte *msg);
 	void stopTalk();
 	int talkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void talkingActor(int variable);
@@ -1063,14 +1063,14 @@ protected:
 	void initCharset(int charset);
 
 	void CHARSET_1();
-	void drawString(int a);
+	void drawString(int a, const byte *msg);
 	const byte *addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);
 	void addNameToStack(int var);
 	void addStringToStack(int var);
-	void unkMessage1();
-	void unkMessage2();
+	void unkMessage1(const byte *msg);
+	void unkMessage2(const byte *msg);
 public:
 	void clearMsgQueue();	// Used by Actor::putActor
 protected:

@@ -228,18 +228,18 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[i].rect.left;
 
 		_string[1].color = v2_mouseover_boxes[i].color;
-		_messagePtr = getObjOrActorName(obj);
-		assert(_messagePtr);
+
+		const byte *tmp = getObjOrActorName(obj);
+		assert(tmp);
 
 		// Prevent inventory entries from overflowing by truncating the text
 		// after 144/8 = 18 chars
 		byte msg[18 + 1];
 		msg[18] = 0;
-		strncpy((char *)msg, (const char *)_messagePtr, 18);
-		_messagePtr = msg;
+		strncpy((char *)msg, (const char *)tmp, 18);
 		
 		// Draw it
-		drawString(1);
+		drawString(1, msg);
 	}
 
 
@@ -248,8 +248,7 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
 	        _string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
-		_messagePtr = (const byte *)" \1\2";
-		drawString(1);
+		drawString(1, (const byte *)" \1\2");
 	}
 
 	// If necessary, draw "down" arrow
@@ -257,8 +256,7 @@ void ScummEngine::redrawV2Inventory() {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
 	        _string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
-		_messagePtr = (const byte *)" \3\4";
-		drawString(1);
+		drawString(1, (const byte *)" \3\4");
 	}
 }
 
@@ -397,19 +395,18 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		   verb += _inventoryOffset;
 		 */
 
-		_messagePtr = getResourceAddress(rtVerb, verb);
-		if (!_messagePtr)
+		const byte *msg = getResourceAddress(rtVerb, verb);
+		if (!msg)
 			return;
-		assert(_messagePtr);
 
-		if ((_version == 8) && (_messagePtr[0] == '/')) {
-			translateText(_messagePtr, _transText);
-			_messagePtr = _transText;
+		if ((_version == 8) && (msg[0] == '/')) {
+			translateText(msg, _transText);
+			msg = _transText;
 		}
 
 		tmp = _charset->_center;
 		_charset->_center = 0;
-		drawString(4);
+		drawString(4, msg);
 		_charset->_center = tmp;
 
 		vs->curRect.right = _charset->_str.right;

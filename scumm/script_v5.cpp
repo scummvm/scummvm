@@ -2702,6 +2702,7 @@ int ScummEngine_v5::getWordVararg(int *ptr) {
 
 void ScummEngine_v5::decodeParseString() {
 	int textSlot;
+	const byte *msg;
 
 	switch (_actorToPrintStrFor) {
 	case 252:
@@ -2784,19 +2785,21 @@ void ScummEngine_v5::decodeParseString() {
 			}
 			break;
 		case 15:	// SO_TEXTSTRING
-			_messagePtr = _scriptPointer;
+			msg = _scriptPointer;
+			_scriptPointer += resStrLen(_scriptPointer)+ 1;
+
 			switch (textSlot) {
 			case 0:
-				actorTalk();
+				actorTalk(msg);
 				break;
 			case 1:
-				drawString(1);
+				drawString(1, msg);
 				break;
 			case 2:
-				unkMessage1();
+				unkMessage1(msg);
 				break;
 			case 3:
-				unkMessage2();
+				unkMessage2(msg);
 				break;
 			}
 
@@ -2812,8 +2815,6 @@ void ScummEngine_v5::decodeParseString() {
 				_string[textSlot].t_ypos = _string[textSlot].ypos;
  				_string[textSlot].t_color = _string[textSlot].color;
 			}
-
-			_scriptPointer = _messagePtr;
 			return;
 		default:
 			warning("ScummEngine_v5::decodeParseString: Unhandled case %d", _opcode & 0xF);

@@ -428,8 +428,7 @@ void ScummEngine_v2::decodeParseString() {
 			_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
 	}
 
-	_messagePtr = buffer;
-	actorTalk();
+	actorTalk(buffer);
 }
 
 int ScummEngine_v2::readVar(uint var) {
@@ -1055,15 +1054,13 @@ void ScummEngine_v2::o2_drawSentence() {
 		ptr++;
 	}
 
-	_messagePtr = (byte*)sentence;
-
 	sentenceline.top = virtscr[2].topline;
 	sentenceline.bottom = virtscr[2].topline + 8;
 	sentenceline.left = 0;
 	sentenceline.right = 319;
 	restoreBG(sentenceline);
 
-	drawString(2);
+	drawString(2, (byte*)sentence);
 }
 
 void ScummEngine_v2::o2_ifClassOfIs() {

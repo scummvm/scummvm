@@ -46,9 +46,9 @@ void ScummEngine::setStringVars(int slot) {
 	st->charset = st->t_charset;
 }
 
-void ScummEngine::unkMessage1() {
+void ScummEngine::unkMessage1(const byte *msg) {
 	byte buffer[100];
-	_messagePtr = addMessageToStack(_messagePtr, buffer, sizeof(buffer));
+	_messagePtr = addMessageToStack(msg, buffer, sizeof(buffer));
 
 //	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
@@ -71,13 +71,13 @@ void ScummEngine::unkMessage1() {
 	}
 }
 
-void ScummEngine::unkMessage2() {
+void ScummEngine::unkMessage2(const byte *msg) {
 	// Original COMI used different code at this point.
 	// Seemed to use blastText for the messages
 	byte buf[100];
 	const byte *tmp;
 
-	tmp = _messagePtr = addMessageToStack(_messagePtr, buf, sizeof(buf));
+	tmp = _messagePtr = addMessageToStack(msg, buf, sizeof(buf));
 
 	if (_string[3].color == 0)
 		_string[3].color = 4;
@@ -339,14 +339,14 @@ void ScummEngine::CHARSET_1() {
 	_charset->_mask = _charset->_str;
 }
 
-void ScummEngine::drawString(int a) {
+void ScummEngine::drawString(int a, const byte *msg) {
 	byte buf[256];
 	byte *space;
 	int i, c;
 	byte fontHeight = 0;
 	uint color;
 
-	_messagePtr = addMessageToStack(_messagePtr, buf, sizeof(buf));
+	_messagePtr = addMessageToStack(msg, buf, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;

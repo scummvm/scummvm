@@ -2319,11 +2319,11 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	_actorToPrintStrFor = pop();
 
-	_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
+	const byte *msg = translateTextAndPlaySpeech(_scriptPointer);
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 	setStringVars(0);
-	actorTalk();
+	actorTalk(msg);
 }
 
 void ScummEngine_v6::o6_talkEgo() {
@@ -2507,9 +2507,8 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		case 17:{
 			const byte *message;
 			byte buf_input[300], buf_output[300];
-			_messagePtr = getStringAddressVar(VAR_STRING2DRAW);
 			message = buf_input;
-			addMessageToStack(_messagePtr, buf_input, sizeof(buf_input));
+			addMessageToStack(getStringAddressVar(VAR_STRING2DRAW), buf_input, sizeof(buf_input));
 			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
 				byte buf_trans[300];
 				char *t_ptr = (char *)buf_input;
@@ -3115,6 +3114,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
 	byte b;
+	const byte *msg;
 
 	b = fetchScriptByte();
 
@@ -3149,29 +3149,30 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
-		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
-		_scriptPointer += resStrLen(_scriptPointer)+ 1;
+		msg = translateTextAndPlaySpeech(_scriptPointer);
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 		switch (m) {
 		case 0:
-			actorTalk();
+			actorTalk(msg);
 			break;
 		case 1:
-			drawString(1);
+			drawString(1, msg);
 			break;
 		case 2:
-			unkMessage1();
+			unkMessage1(msg);
 			break;
 		case 3:
-			unkMessage2();
+			unkMessage2(msg);
 			break;
 		}
-		return;
+
+		break;
 	case 0xFE:
 		setStringVars(m);
 		if (n)
 			_actorToPrintStrFor = pop();
-		return;
+		break;
 	case 0xFF:
 		_string[m].t_xpos = _string[m].xpos;
 		_string[m].t_ypos = _string[m].ypos;
@@ -3181,7 +3182,7 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].t_right = _string[m].right;
 		_string[m].t_color = _string[m].color;
 		_string[m].t_charset = _string[m].charset;
-		return;
+		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}
