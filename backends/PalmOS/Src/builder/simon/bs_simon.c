@@ -13,16 +13,20 @@ typedef struct {
 	const char *wav_filename;
 	const char *voc_filename;
 	const char *mp3_filename;
+	const char *vorbis_filename;
 	const char *voc_effects_filename;
 	const char *mp3_effects_filename;
+	const char *vorbis_effects_filename;
  	const char *gamepc_filename;
  #else
 	const char gme_filename[12];
 	const char wav_filename[12];
 	const char voc_filename[12];
 	const char mp3_filename[12];
+	const char vorbis_filename[12];
 	const char voc_effects_filename[12];
 	const char mp3_effects_filename[12];
+	const char vorbis_effects_filename[12];
  	const char gamepc_filename[12]; 
  #endif
 } GameSpecificSettings;
@@ -31,14 +35,16 @@ static void addSimon_simon1_settings() {
 
 
 	GameSpecificSettings simon1_settings = {
-	"SIMON.GME",									// gme_filename
-	"SIMON.WAV",									// wav_filename
-	"SIMON.VOC",									// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"EFFECTS.VOC",									// voc_effects_filename
-	"EFFECTS.MP3",									// mp3_effects_filename
-	"GAMEPC",									// gamepc_filename
-};
+		"SIMON.GME",                            // gme_filename
+		"SIMON.WAV",                            // wav_filename
+		"SIMON.VOC",                            // voc_filename
+		"SIMON.MP3",                            // mp3_filename
+		"SIMON.OGG",                            // vorbis_filename
+		"EFFECTS.VOC",                          // voc_effects_filename
+		"EFFECTS.MP3",                          // mp3_effects_filename
+		"EFFECTS.OGG",                          // vorbis_effects_filename
+		"GAMEPC",                               // gamepc_filename
+	};
 
 	writeRecord(&simon1_settings, sizeof(simon1_settings), GBVARS_SIMON1SETTINGS_INDEX, GBVARS_SIMON);
 }
@@ -47,13 +53,15 @@ static void addSimon_simon1acorn_settings() {
 
 
 	GameSpecificSettings simon1acorn_settings = {
-	"DATA",										// gme_filename
-	"",										// wav_filename
-	"SIMON",									// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"EFFECTS",									// voc_effects_filename
-	"EFFECTS.MP3",									// mp3_effects_filename
-	"GAMEBASE",									// gamepc_filename
+	"DATA",                                 // gme_filename
+	"",                                     // wav_filename
+	"SIMON",                                // voc_filename
+	"SIMON.MP3",                            // mp3_filename
+	"SIMON.OGG",                            // vorbis_filename
+	"EFFECTS",                              // voc_effects_filename
+	"EFFECTS.MP3",                          // mp3_effects_filename
+	"EFFECTS.OGG",                          // vorbis_effects_filename
+	"GAMEBASE",                             // gamepc_filename
 };
 
 	writeRecord(&simon1acorn_settings, sizeof(simon1acorn_settings), GBVARS_SIMON1ACORNSETTINGS_INDEX, GBVARS_SIMON);
@@ -63,14 +71,17 @@ static void addSimon_simon1amiga_settings() {
 
 
 	GameSpecificSettings simon1amiga_settings = {
-	"",										// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"SIMON.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"gameamiga",									// gamepc_filename
+	"",                                     // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"SIMON.MP3",                            // mp3_filename
+	"SIMON.OGG",                            // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"gameamiga",                            // gamepc_filename
 };
+
 
 	writeRecord(&simon1amiga_settings, sizeof(simon1amiga_settings), GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_SIMON);
 }
@@ -80,13 +91,15 @@ static void addSimon_simon1demo_settings() {
 
 
 	GameSpecificSettings simon1demo_settings = {
-	"",										// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"",										// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GDEMO",									// gamepc_filename
+	"",                                     // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"",                                     // mp3_filename
+	"",                                     // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GDEMO",                                // gamepc_filename
 };
 
 	writeRecord(&simon1demo_settings, sizeof(simon1demo_settings), GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_SIMON);
@@ -96,14 +109,17 @@ static void addSimon_simon2win_settings() {
 
 
 	GameSpecificSettings simon2win_settings = {
-	"SIMON2.GME",									// gme_filename
-	"SIMON2.WAV",									// wav_filename
-	"SIMON2.VOC",									// voc_filename
-	"SIMON2.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GSPTR30",									// gamepc_filename
+	"SIMON2.GME",                           // gme_filename
+	"SIMON2.WAV",                           // wav_filename
+	"SIMON2.VOC",                           // voc_filename
+	"SIMON2.MP3",                           // mp3_filename
+	"SIMON2.OGG",                           // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GSPTR30",                              // gamepc_filename
 };
+
 
 	writeRecord(&simon2win_settings, sizeof(simon2win_settings), GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON);
 }
@@ -112,13 +128,15 @@ static void addSimon_simon2mac_settings() {
 
 
 	GameSpecificSettings simon2mac_settings = {
-	"Simon2.gme",									// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"SIMON2.MP3",									// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"gsptr30",									// gamepc_filename
+	"Simon2.gme",                           // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"SIMON2.MP3",                           // mp3_filename
+	"SIMON2.OGG",                           // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"gsptr30",                              // gamepc_filename
 };
 
 	writeRecord(&simon2mac_settings, sizeof(simon2mac_settings), GBVARS_SIMON2MACSETTINGS_INDEX, GBVARS_SIMON);
@@ -128,13 +146,15 @@ static void addSimon_simon2dos_settings() {
 
 
 	GameSpecificSettings simon2dos_settings = {
-	"SIMON2.GME",									// gme_filename
-	"",										// wav_filename
-	"",										// voc_filename
-	"",										// mp3_filename
-	"",										// voc_effects_filename
-	"",										// mp3_effects_filename
-	"GAME32",									// gamepc_filename
+	"SIMON2.GME",                           // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"",                                     // mp3_filename
+	"",                                     // vorbis_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"GAME32",                               // gamepc_filename
 };
 
 	writeRecord(&simon2dos_settings, sizeof(simon2dos_settings), GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON);
