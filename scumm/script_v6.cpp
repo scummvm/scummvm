@@ -3145,8 +3145,15 @@ void ScummEngine_v6::o6_setBoxSet() {
 	assert(matrix);
 	memcpy(matrix, boxm, mboxSize);
 
-	if(!(_features & GF_HUMONGOUS))
-		showActors();
+	if (_version == 7) {
+		Actor *a;
+
+		for (i = 1; i < _numActors; i++) {
+			a = &_actors[i];
+			if (a && a->isInCurrentRoom())
+				a->putActor(a->_pos.x, a->_pos.y, _currentRoom);
+		}
+	}
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
