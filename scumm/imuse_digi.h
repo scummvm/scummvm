@@ -78,13 +78,9 @@ private:
 
 		int32 offset;
 		byte *data;
-		int freq;
-		int channels;
-		int bits;
 		int32 size;
 		int idSound;
 		int32 mixerSize;
-		int mixerFlags;
 		bool used;
 		bool toBeRemoved;
 		PlayingSoundHandle handle;

@@ -792,6 +792,9 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 
 			uint32 tag;
 			int32 size = 0;
+			
+			int freq, channels, bits;
+			int mixerFlags;
 
 			if ((sound == kTalkSoundID) && (_voiceVocData) || (READ_UINT32(ptr) == MKID('Crea'))) {
 				if (READ_UINT32(ptr) == MKID('Crea')) {
@@ -799,22 +802,23 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
 				}
 				_channel[l].mixerSize = voc_rate;
-				_channel[l].freq = voc_rate;
-				_channel[l].size = voc_size;
-				_channel[l].bits = 8;
-				_channel[l].channels = 1;
-				_channel[l].mixerFlags = SoundMixer::FLAG_UNSIGNED;
+				freq = voc_rate;
+				size = voc_size;
+				bits = 8;
+				channels = 1;
+				mixerFlags = SoundMixer::FLAG_UNSIGNED;
 				_channel[l].data = voc_src;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
-				for (;;) {
+				freq = channels = bits = 0;
+				do {
 					tag = READ_BE_UINT32(ptr); ptr += 4;
 					switch(tag) {
 					case MKID_BE('FRMT'):
 						ptr += 12;
-						_channel[l].bits = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l].freq = READ_BE_UINT32(ptr); ptr += 4;
-						_channel[l].channels = READ_BE_UINT32(ptr); ptr += 4;
+						bits = READ_BE_UINT32(ptr); ptr += 4;
+						freq = READ_BE_UINT32(ptr); ptr += 4;
+						channels = READ_BE_UINT32(ptr); ptr += 4;
 					break;
 					case MKID_BE('TEXT'):
 						size = READ_BE_UINT32(ptr); ptr += 4;
@@ -864,14 +868,12 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					default:
 						error("IMuseDigital::startSound(%d) Unknown sfx header '%s'", sound, tag2str(tag));
 					}
-					if (tag == MKID_BE('DATA'))
-						break;
-				}
+				} while (tag != MKID_BE('DATA'));
 
 				if ((sound == kTalkSoundID) && (_voiceBundleData)) {
 					if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 						Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
-						_channel[l].freq = (_channel[l].freq * a->talkFrequency) / 256;
+						freq = (freq * a->talkFrequency) / 256;
 						_channel[l].pan = a->talkPan;
 					}
 				}
@@ -879,12 +881,12 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 				uint32 header_size = ptr - s_ptr;
 
 				_channel[l].offsetStop -= header_size;
-				if (_channel[l].bits == 12) {
+				if (bits == 12) {
 					_channel[l].offsetStop = (_channel[l].offsetStop / 3) * 4;
 				}
 				for (r = 0; r < _channel[l].numRegions; r++) {
 					_channel[l].region[r].start -= header_size;
-					if (_channel[l].bits == 12) {
+					if (bits == 12) {
 						_channel[l].region[r].start = (_channel[l].region[r].start / 3) * 4;
 						_channel[l].region[r].length = (_channel[l].region[r].length / 3) * 4;
 					}
@@ -893,16 +895,16 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					for (r = 0; r < _channel[l].numJumps; r++) {
 						_channel[l].jump[r].start -= header_size;
 						_channel[l].jump[r].dest -= header_size;
-						if (_channel[l].bits == 12) {
+						if (bits == 12) {
 							_channel[l].jump[r].start = (_channel[l].jump[r].start / 3) * 4;
 							_channel[l].jump[r].dest = (_channel[l].jump[r].dest / 3) * 4;
 						}
 					}
 				}
 
-				assert(_channel[l].channels == 1 || _channel[l].channels == 2);
+				assert(channels == 1 || channels == 2);
 
-				if (_channel[l].channels == 2) {
+				if (channels == 2) {
 					// FIXME / TODO: Is FLAG_REVERSE_STEREO really needed here?
 					// How do we know that it is needed? If we indeed have reasons
 					// to believe that it is needed, those should be documented in
@@ -912,20 +914,20 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					// channels should be little extra work (in fact, none for
 					// mono data, which includes the 12 bit compressed format).
 
-					_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-					_channel[l].mixerSize = _channel[l].freq * 2;
+					mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+					_channel[l].mixerSize = freq * 2;
 				} else {
-					_channel[l].mixerFlags = 0;
-					_channel[l].mixerSize = _channel[l].freq;
+					mixerFlags = 0;
+					_channel[l].mixerSize = freq;
 				}
 
-				if (_channel[l].bits == 12) {
+				if (bits == 12) {
 					_channel[l].mixerSize *= 2;
-					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
-					_channel[l].size = decode12BitsSample(ptr, &_channel[l].data, size);
-				} else if (_channel[l].bits == 16) {
+					mixerFlags |= SoundMixer::FLAG_16BITS;
+					size = decode12BitsSample(ptr, &_channel[l].data, size);
+				} else if (bits == 16) {
 					_channel[l].mixerSize *= 2;
-					_channel[l].mixerFlags |= SoundMixer::FLAG_16BITS;
+					mixerFlags |= SoundMixer::FLAG_16BITS;
 					
 					// FIXME: For some weird reasons, sometimes we get an odd size, even though
 					// the data is supposed to be in 16 bit format... that makes no sense...
@@ -933,27 +935,29 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					
 					_channel[l].data = (byte *)malloc(size);
 					memcpy(_channel[l].data, ptr, size);
-					_channel[l].size = size;
-				} else if (_channel[l].bits == 8) {
-					_channel[l].mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+				} else if (bits == 8) {
+					mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 
 					_channel[l].data = (byte *)malloc(size);
 					memcpy(_channel[l].data, ptr, size);
-					_channel[l].size = size;
 				} else
-					error("IMuseDigital::startSound() Can't handle %d bit samples", _channel[l].bits);
+					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
+			} else {
+				error("IMuseDigital::startSound(): Unknown sound format");
 			}
-			_channel[l].mixerSize /= 25;	// FIXME: Why division by 25? Maybe to we achieve a "frame rate" of 25 audio blocks per second?
+			_channel[l].size = size;
+			_channel[l].mixerSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
 
 			// Create an AudioInputStream and hook it to the mixer.
-			_channel[l].stream = makeWrappedInputStream(_channel[l].freq, _channel[l].mixerFlags, 100000);
+			_channel[l].stream = makeWrappedInputStream(freq, mixerFlags, 100000);
 			_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
 
 			_channel[l].toBeRemoved = false;
 			_channel[l].used = true;
-			break;
+			return;
 		}
 	}
+	warning("IMuseDigital::startSound(): All slots are full");
 }
 
 void IMuseDigital::stopSound(int sound) {
