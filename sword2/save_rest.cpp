@@ -89,9 +89,9 @@ static _savegameHeader g_header;		// global because easier to copy to/from playe
 
 #ifdef SCUMM_BIG_ENDIAN
 // Quick macro to make swapping in-place easier to write
-#define SWAP32_S(x)	x = (int16)SWAP_BYTES_32(x)
+#define SWAP32_S(x)	x = (int32)SWAP_BYTES_32(x)
 #define SWAP32_U(x)	x = SWAP_BYTES_32(x)
-static void converHeaderEndian(_savegameHeader &header) {
+static void convertHeaderEndian(_savegameHeader &header) {
 	int i;
 	
 	// _savegameHeader
@@ -205,7 +205,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	// copy the header to the buffer
 
 #ifdef SCUMM_BIG_ENDIAN
-	converHeaderEndian(g_header);
+	convertHeaderEndian(g_header);
 #endif
 	memcpy(buffer->ad, &g_header, sizeof(g_header));					// copy the header to the savegame buffer
 
@@ -221,6 +221,7 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
 	}
 #endif
+
  	res_man.Res_close(1);											// close variables resource
 
 	//------------------------------------------------------
@@ -348,7 +349,7 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 
 	memcpy( &g_header, buffer->ad, sizeof(g_header) );		// get a copy of the header from the savegame buffer
 #ifdef SCUMM_BIG_ENDIAN
-	converHeaderEndian(g_header);
+	convertHeaderEndian(g_header);
 #endif
 
   	//------------------------------------------------------
