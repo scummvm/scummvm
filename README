@@ -842,7 +842,7 @@ The following keywords are recognized:
                                  in the launcher.
 
         language        string   Specify language (en, de, fr, it, pt, es, jp,
-                                 zh, kr,se, gb, hb, cz)
+                                 zh, kr,se, gb, hb, cz, ru)
         subtitles       bool     Set to true to enable subtitles.
         talkspeed       number   Text speed (default: 60)
 
