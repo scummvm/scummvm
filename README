@@ -277,7 +277,8 @@ Running:
 --------
 Before you run the engine, you need to put the game's datafiles in a
 directory. The filenames must not be in mixed case on *nix systems
-(ie monkey2.000 or MONKEY2.000). If you use a game with speech, the file
+(for example, these are valid names: "monkey2.000", "MONKEY2.000", while
+this is a bad one: "Monkey2.000"). If you use a game with speech, the file
 monster.sou must reside in the same directory as the datafiles.
 
 For example, to run a copy of Monkey Island installed in C:\Games\LucasArts
