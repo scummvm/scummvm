@@ -165,9 +165,9 @@
 static File fpMus;
 
 // Decompression macros
-#define GetCompressedShift(byte)      ((byte) >> 4)
-#define GetCompressedSign(byte)       (((byte) >> 3) & 1)
-#define GetCompressedAmplitude(byte)  ((byte) & 7)
+#define GetCompressedShift(n)      ((n) >> 4)
+#define GetCompressedSign(n)       (((n) >> 3) & 1)
+#define GetCompressedAmplitude(n)  ((n) & 7)
 
 int32 panTable[33] = {
 	-127, -119, -111, -103, -95, -87, -79, -71, -63, -55, -47, -39, -31, -23, -15, -7,
@@ -943,8 +943,8 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// Calculate the file position of the end of the music
 	music[primaryStream]._fileEnd += music[primaryStream]._filePos;
 
-	music[primaryStream]._lastSample = fpMus.readByte();
-	music[primaryStream]._filePos++;
+	music[primaryStream]._lastSample = fpMus.readUint16LE();
+	music[primaryStream]._filePos += 2;
 	music[primaryStream]._streaming = true;
 
 	return RD_OK;

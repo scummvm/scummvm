@@ -62,7 +62,7 @@ public:
 	int32 _fading;
 	int32 _filePos;
 	int32 _fileEnd;
-	int16 _lastSample;
+	uint16 _lastSample;
 
 	bool isStereo()	const	{ return false; }
 	int getRate() const	{ return 22050; }
