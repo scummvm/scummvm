@@ -384,9 +384,9 @@ int SimonEngine::runScript() {
 						_speechid_array_4[var] = speech_id;
 					}
 				} else {
-					if (var < 20)
-						_stringid_array_3_backup[var] = _stringid_array_3[var];
+					if (var < 20) {
 						_stringid_array_3[var] = string_id;
+					}
 				}
 			}
 			break;
@@ -936,7 +936,7 @@ int SimonEngine::runScript() {
 				_show_preposition = true;
 				o_setup_cond_c();
 				_show_preposition = false;
-				if (!(_game & GF_SIMON2))
+				if (!(_game & GF_SIMON2) && (_game & GF_TALKIE))
 					_reset_arrays = true;
 			}
 			break;
