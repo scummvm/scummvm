@@ -45,6 +45,7 @@ enum {
 	char * _nameBundleMusic;
 	char * _newNameBundleMusic;
 	byte _musicDisk;
+	byte _voiceDisk;
 	int32 _currentSampleBundleMusic;
 	int32 _numberSamplesBundleMusic;
 	int32 _offsetSampleBundleMusic;

@@ -1140,7 +1140,12 @@ int Sound::playBundleSound(char *sound) {
 	if (_scumm->_gameId == GID_CMI) {
 		char voxfile[20];
 		sprintf(voxfile, "voxdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
+		if (_voiceDisk != _scumm->_vars[_scumm->VAR_CURRENTDISK])
+			_scumm->_bundle->_voiceFile.close();
+
 		result = _scumm->_bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
+
+		_voiceDisk = (byte)_scumm->_vars[_scumm->VAR_CURRENTDISK];
 	} else if (_scumm->_gameId == GID_DIG)
 		result = _scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
 	else

@@ -44,7 +44,6 @@ struct BundleAudioTable {
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size, int32 index, int32 & channels);
 	CompTable *_compVoiceTable;
 	CompTable *_compMusicTable;
-	File _voiceFile;
 	BundleAudioTable *_bundleVoiceTable;
 	BundleAudioTable *_bundleMusicTable;
 	int32 _numVoiceFiles;
@@ -60,6 +59,7 @@ public:
 	 ~Bundle();
 
 	File _musicFile;
+	File _voiceFile;
 	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
