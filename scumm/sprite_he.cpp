@@ -866,10 +866,11 @@ void ScummEngine_v90he::spriteGroupSet_tx_ty(int spriteGroupId, int value1, int 
 void ScummEngine_v90he::spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, int value2) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	_spriteGroups[spriteGroupId].tx += value1;
-	_spriteGroups[spriteGroupId].ty += value2;
-
-	redrawSpriteGroup(spriteGroupId);
+	if (value1 || value2) {
+		_spriteGroups[spriteGroupId].tx += value1;
+		_spriteGroups[spriteGroupId].ty += value2;
+		redrawSpriteGroup(spriteGroupId);
+	}
 }
 
 void ScummEngine_v90he::spriteGroupSet_field_20(int spriteGroupId, int value) {
@@ -904,6 +905,9 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int 
 void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
+	if (value == 0)
+		error("spriteGroupSet_scale_x_ratio_div: Divisor must not be 0");
+
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
 		_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
@@ -928,6 +932,9 @@ void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int 
 void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
+	if (value == 0)
+		error("spriteGroupSet_scale_y_ratio_div: Divisor must not be 0");
+
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_div = value;
 		_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
@@ -941,7 +948,6 @@ void ScummEngine_v90he::spriteGroupSet_flagNeedRedrawAnd(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].flags &= ~(kSGFNeedRedraw);
-
 	redrawSpriteGroup(spriteGroupId);
 }
 
