@@ -762,14 +762,10 @@ void Scumm::loadLanguageBundle() {
 	} else {
 		return;
 	}
-printf("Looking for language.bnd...");
-
 	if(file.isOpen() == false) {
 		_existLanguageFile = false;
-		printf(" not found!\n");
 		return;
 	}
-	printf(" found!\n");
 
 	size = file.size();
 	_languageBuffer = (char *)calloc(1, size+1);
