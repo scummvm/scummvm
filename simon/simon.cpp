@@ -4688,6 +4688,7 @@ void SimonState::playVoice(uint voice)
 				|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
 				|| READ_LE_UINT16(&wave_hdr.channels) != 1
 				|| READ_LE_UINT16(&wave_hdr.bits_per_sample) != 8) {
+			warning("playVoice(%d): cannot read RIFF header", voice);
 			return;
 		}
 
