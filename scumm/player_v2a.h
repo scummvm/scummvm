@@ -55,8 +55,7 @@ private:
 		V2A_MAXSLOTS = 8
 	};
 
-	struct soundSlot
-	{
+	struct soundSlot {
 		int id;
 		V2A_Sound *sound;
 	};

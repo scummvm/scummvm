@@ -133,7 +133,7 @@ void Player_V1::parseSpeakerChunk() {
  parse_again:
 	_chunk_type = READ_LE_UINT16(_next_chunk);
 	debug(6, "parseSpeakerChunk: sound %d, offset %4x, chunk %x", 
-		  _current_nr, _next_chunk - _current_data, _chunk_type);
+			_current_nr, _next_chunk - _current_data, _chunk_type);
 
 	_next_chunk += 2;
 	switch (_chunk_type) {
@@ -170,7 +170,7 @@ void Player_V1::parseSpeakerChunk() {
 		_channels[0].freq = _start;
 		_next_chunk += 10;
 		debug(6, "chunk 1: mplex %d, freq %d -> %d step %d  x %d", 
-			  _mplex, _start, _end, _delta, _repeat_ctr);
+				_mplex, _start, _end, _delta, _repeat_ctr);
 		break;
 	case 2:
 		_start = READ_LE_UINT16(_next_chunk);
@@ -180,7 +180,7 @@ void Player_V1::parseSpeakerChunk() {
 		_next_chunk += 6;
 		_forced_level = -1;
 		debug(6, "chunk 2: %d -> %d step %d", 
-			  _start, _end, _delta);
+				_start, _end, _delta);
 		break;
 	case 3:
 		_start = READ_LE_UINT16(_next_chunk);
@@ -190,7 +190,7 @@ void Player_V1::parseSpeakerChunk() {
 		_next_chunk += 6;
 		_forced_level = -1;
 		debug(6, "chunk 3: %d -> %d step %d", 
-			  _start, _end, _delta);
+				_start, _end, _delta);
 		break;
 	}
 }
@@ -209,7 +209,7 @@ void Player_V1::nextSpeakerCmd() {
 			_next_chunk += 2;
 		}
 		debug(7, "nextSpeakerCmd: chunk %d, offset %4x: notelen %d", 
-			  _chunk_type, _next_chunk - 2 - _current_data, _time_left);
+				_chunk_type, _next_chunk - 2 - _current_data, _time_left);
 
 		if (_time_left == 0) {
 			parseSpeakerChunk();
@@ -262,7 +262,7 @@ void Player_V1::parsePCjrChunk() {
 	set_mplex(3000);
 	_forced_level = 0;
 
- parse_again:
+parse_again:
 
 	_chunk_type = READ_LE_UINT16(_next_chunk);
 	debug(6, "parsePCjrChunk: sound %d, offset %4x, chunk %x", 
@@ -539,7 +539,7 @@ void Player_V1::generateSpkSamples(int16 *data, uint len) {
 	} else {
 		squareGenerator(0, _channels[0].freq, 0, 0, data, len);
 		debug(9, "speaker: %8x: freq %d %.1f", _tick_len,
-			  _channels[0].freq, 1193000.0/_channels[0].freq);
+				_channels[0].freq, 1193000.0 / _channels[0].freq);
 	}
 	lowPassFilter(data, len);
 }
@@ -588,7 +588,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 			hasdata = true;
 			squareGenerator(i, freq, vol, 0, data, len);
 			debug(9, "channel[%d]: %8x: freq %d %.1f ; volume %d", 
-				  i, _tick_len, freq, 111860.0/freq,  vol);
+				  i, _tick_len, freq, 111860.0 / freq,  vol);
 		} else {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
@@ -597,7 +597,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
 			debug(9, "channel[%d]: %x: noise freq %d %.1f ; volume %d", 
-				  i, _tick_len, freq, 111860.0/freq,  vol);
+				  i, _tick_len, freq, 111860.0 / freq,  vol);
 		}
 	}
 

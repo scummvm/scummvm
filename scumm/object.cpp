@@ -1399,7 +1399,7 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 }
 
 void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
-                          int objectHeight, int scaleX, int scaleY, int image, int mode) {
+								int objectHeight, int scaleX, int scaleY, int image, int mode) {
 	BlastObject *eo;
 	ObjectData *od;
 

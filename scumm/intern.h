@@ -325,8 +325,7 @@ protected:
 	File _hFileTable[17];
 	
 public:
-	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs)
-	{
+	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine(detector, syst, gs) {
 		VAR_VIDEONAME = 0xFF;
 
 		VAR_TIMEDATE_YEAR = 0xFF;

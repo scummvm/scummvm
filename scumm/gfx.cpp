@@ -802,7 +802,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 		gdi._C64ObjectMode = false;
 	}
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-	               &virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
+					&virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
 
 void ScummEngine::restoreCharsetBg() {
@@ -910,7 +910,7 @@ byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
  * and objects, used throughout all SCUMM versions.
  */
 void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-                     int stripnr, int numstrip, byte flag, StripTable *table) {
+					int stripnr, int numstrip, byte flag, StripTable *table) {
 	assert(ptr);
 	assert(height > 0);
 	byte *backbuff_ptr, *bgbak_ptr;
@@ -1304,10 +1304,10 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	for (x = 0 ; x < width; x++) {
 
 		if ((x % 8) == 0) {
-			assert(x/8 < 160);
-			table->run[x/8] = run;
-			table->color[x/8] = color;
-			table->offsets[x/8] = src - bitmapStart;
+			assert(x / 8 < 160);
+			table->run[x / 8] = run;
+			table->color[x / 8] = color;
+			table->offsets[x / 8] = src - bitmapStart;
 		}
 
 		for (y = 0; y < height; y++) {
@@ -1761,12 +1761,12 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 	}
 }
 
-#define READ_BIT (cl--, bit = bits&1, bits>>=1,bit)
-#define FILL_BITS do {				\
-		if (cl <= 8) {			\
-			bits |= (*src++ << cl);	\
-			cl += 8;		\
-		}				\
+#define READ_BIT (cl--, bit = bits & 1, bits >>= 1, bit)
+#define FILL_BITS do {              \
+		if (cl <= 8) {              \
+			bits |= (*src++ << cl); \
+			cl += 8;                \
+		}                           \
 	} while (0)
 
 void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
@@ -2829,7 +2829,7 @@ void ScummEngine::cyclePalette() {
 			if (_proc_special_palette) {
 				doCycleIndirectPalette(_proc_special_palette, cycl->start, cycl->end, !(cycl->flags & 2));
 			}
-			
+
 			if (_shadowPalette) {
 				if (_version >= 7) {
 					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
@@ -2864,7 +2864,7 @@ void ScummEngine::palManipulateInit(int start, int end, int string_id, int time)
 	string3 = getStringAddress(string_id + 2);
 	if (!string1 || !string2 || !string3) {
 		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
-		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
+				start, end, string_id, time, string_id, string_id + 1, string_id + 2);
 		return;
 	}
 
@@ -2875,7 +2875,7 @@ void ScummEngine::palManipulateInit(int start, int end, int string_id, int time)
 	_palManipStart = start;
 	_palManipEnd = end;
 	_palManipCounter = 0;
-	
+
 	if (!_palManipPalette)
 		_palManipPalette = (byte *)calloc(0x300, 1);
 	if (!_palManipIntermediatePal)
@@ -3509,7 +3509,7 @@ void ScummEngine::setCursorHotspot(int x, int y) {
 
 void ScummEngine::updateCursor() {
 	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
-	                          _cursor.hotspotX, _cursor.hotspotY);
+							_cursor.hotspotX, _cursor.hotspotY);
 }
 
 void ScummEngine::animateCursor() {

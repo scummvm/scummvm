@@ -1297,78 +1297,76 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			if (instr[i*16 + 13])
 				warning("Sound %d instrument %d uses percussion", idx, i);
 
-			debug(4, "Sound %d: instrument %d on channel %d.", 
-				  idx, i, ch);
-			
-			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
-				   sizeof(ADLIB_INSTR_MIDI_HACK));
+			debug(4, "Sound %d: instrument %d on channel %d.", idx, i, ch);
+
+			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, sizeof(ADLIB_INSTR_MIDI_HACK));
 
 			ptr[5]  += ch;
 			ptr[28] += ch;
 			ptr[92] += ch;
-			
+
 			/* flags_1 */
 			ptr[30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
 			ptr[30 + 1] = instr[i * 16 + 3] & 0xf;
-			
+
 			/* oplvl_1 */
 			ptr[30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
 			ptr[30 + 3] = instr[i * 16 + 4] & 0xf;
-			
+
 			/* atdec_1 */
 			ptr[30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
 			ptr[30 + 5] = (~instr[i * 16 + 5]) & 0xf;
-			
+
 			/* sustrel_1 */
 			ptr[30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
 			ptr[30 + 7] = (~instr[i * 16 + 6]) & 0xf;
-			
+
 			/* waveform_1 */
 			ptr[30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
 			ptr[30 + 9] = instr[i * 16 + 7] & 0xf;
-			
+
 			/* flags_2 */
 			ptr[30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
 			ptr[30 + 11] = instr[i * 16 + 8] & 0xf;
-			
+
 			/* oplvl_2 */
 			ptr[30 + 12] = (instr[i * 16 + 9] >> 4) & 0xf;
 			ptr[30 + 13] = instr[i * 16 + 9] & 0xf;
-			
+
 			/* atdec_2 */
 			ptr[30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
 			ptr[30 + 15] = (~instr[i * 16 + 10]) & 0xf;
-			
+
 			/* sustrel_2 */
 			ptr[30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
 			ptr[30 + 17] = (~instr[i * 16 + 11]) & 0xf;
-			
+
 			/* waveform_2 */
 			ptr[30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
 			ptr[30 + 19] = instr[i * 16 + 12] & 0xf;
-			
+
 			/* feedback */
 			ptr[30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
 			ptr[30 + 21] = instr[i * 16 + 2] & 0xf;
 			ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
 		}
-		
+
 		// There is a constant delay of ppqn/3 before the music starts.
 		if (ppqn / 3 >= 128)
 			*ptr++ = (ppqn / 3 >> 7) | 0x80;
 		*ptr++ = ppqn / 3 & 0x7f;
-		
+
 		// Now copy the actual music data 
 		memcpy(ptr, track, size);
 		ptr += size;
-		
+
 		if (!play_once) {
 			// The song is meant to be looped. We achieve this by inserting just
 			// before the song end a jump to the song start. More precisely we abuse
 			// a S&M sysex, "maybe_jump" to achieve this effect. We could also
 			// use a set_loop sysex, but it's a bit longer, a little more complicated,
 			// and has no advantage either.
-			
+
 			// First, find the track end
 			byte *end = ptr;
 			ptr -= size;
@@ -1377,7 +1375,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 					break;
 			}
 			assert(ptr < end);
-			
+
 			// Now insert the jump. The jump offset is measured in ticks.
 			// We have ppqn/3 ticks before the first note.
 
@@ -1399,16 +1397,16 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		 * tracks.
 		 */
 		ptr = writeMIDIHeader(ptr, "ASFX", ppqn, total_size);
-	
+
 		byte current_instr[3][14];
 		int  current_note[3];
 		int track_time[3];
 		byte *track_data[3];
-	
+
 		int track_ctr = 0;
 		byte chunk_type = 0;
 		int delay, delay2, olddelay;
-	
+
 		// Write a tempo change Meta event
 		// 473 / 4 Hz, convert to micro seconds.
 		dw = 1000000 * ppqn * 4 / 473;
@@ -1416,7 +1414,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		*ptr++ = (byte)((dw >> 16) & 0xFF);
 		*ptr++ = (byte)((dw >> 8) & 0xFF);
 		*ptr++ = (byte)(dw & 0xFF);
-	
+
 		for (i = 0; i < 3; i++) {
 			track_time[i] = -1;
 			current_note[i] = -1;
@@ -1445,7 +1443,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 				break;
 			src_ptr++;
 		}
-		
+
 		int curtime = 0;
 		for (;;) {
 			int mintime = -1;
@@ -1459,11 +1457,10 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			}
 			if (mintime < 0)
 				break;
-	
+
 			src_ptr = track_data[ch];
 			chunk_type = *src_ptr;
-	
-	
+
 			if (current_note[ch] >= 0) {
 				delay = mintime - curtime;
 				curtime = mintime;
@@ -1473,71 +1470,70 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 				*ptr++ = 0;
 				current_note[ch] = -1;
 			}
-			
-	
+
 			switch (chunk_type) {
 			case 1:
 				/* Instrument definition */
-				memcpy(current_instr[ch], src_ptr+1, 14);
+				memcpy(current_instr[ch], src_ptr + 1, 14);
 				src_ptr += 15;
 				break;
-	
+
 			case 2:
 				/* tone/parammodulation */
 				memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
 					   sizeof(ADLIB_INSTR_MIDI_HACK));
-				
+
 				ptr[5]  += ch;
 				ptr[28] += ch;
 				ptr[92] += ch;
-	
+
 				/* flags_1 */
 				ptr[30 + 0] = (current_instr[ch][3] >> 4) & 0xf;
 				ptr[30 + 1] = current_instr[ch][3] & 0xf;
-				
+
 				/* oplvl_1 */
 				ptr[30 + 2] = (current_instr[ch][4] >> 4) & 0xf;
 				ptr[30 + 3] = current_instr[ch][4] & 0xf;
-				
+
 				/* atdec_1 */
 				ptr[30 + 4] = ((~current_instr[ch][5]) >> 4) & 0xf;
 				ptr[30 + 5] = (~current_instr[ch][5]) & 0xf;
-				
+
 				/* sustrel_1 */
 				ptr[30 + 6] = ((~current_instr[ch][6]) >> 4) & 0xf;
 				ptr[30 + 7] = (~current_instr[ch][6]) & 0xf;
-					
+
 				/* waveform_1 */
 				ptr[30 + 8] = (current_instr[ch][7] >> 4) & 0xf;
 				ptr[30 + 9] = current_instr[ch][7] & 0xf;
-					
+
 				/* flags_2 */
 				ptr[30 + 10] = (current_instr[ch][8] >> 4) & 0xf;
 				ptr[30 + 11] = current_instr[ch][8] & 0xf;
-				
+
 				/* oplvl_2 */
 				ptr[30 + 12] = ((current_instr[ch][9]) >> 4) & 0xf;
 				ptr[30 + 13] = (current_instr[ch][9]) & 0xf;
-				
+
 				/* atdec_2 */
 				ptr[30 + 14] = ((~current_instr[ch][10]) >> 4) & 0xf;
 				ptr[30 + 15] = (~current_instr[ch][10]) & 0xf;
-				
+
 				/* sustrel_2 */
 				ptr[30 + 16] = ((~current_instr[ch][11]) >> 4) & 0xf;
 				ptr[30 + 17] = (~current_instr[ch][11]) & 0xf;
-				
+
 				/* waveform_2 */
 				ptr[30 + 18] = (current_instr[ch][12] >> 4) & 0xf;
 				ptr[30 + 19] = current_instr[ch][12] & 0xf;
-				
+
 				/* feedback */
 				ptr[30 + 20] = (current_instr[ch][2] >> 4) & 0xf;
 				ptr[30 + 21] = current_instr[ch][2] & 0xf;
-	
+
 				delay = mintime - curtime;
 				curtime = mintime;
-	
+
 				{
 					delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
 					delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
@@ -1547,17 +1543,17 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 					if (delay == -1)
 						delay = 0;
 				}
-								
+
 				/* duration */
 				ptr[30 + 58] = 0; // ((delay * 17 / 63) >> 4) & 0xf;
 				ptr[30 + 59] = 0; // (delay * 17 / 63) & 0xf;
-					
+
 				ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
-	
+
 				olddelay = mintime - curtime;
 				curtime = mintime;
 				ptr = writeVLQ(ptr, olddelay);
-	
+
 				{
 					int freq = ((current_instr[ch][1] & 3) << 8)
 						| current_instr[ch][0];
@@ -1580,22 +1576,22 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 						note = 1;
 					else if (note > 127)
 						note = 127;
-					
+
 					// Insert a note on event 
 					*ptr++ = 0x90 + ch; // key on channel
 					*ptr++ = note;
 					*ptr++ = 63;
 					current_note[ch] = note;
-					track_time[ch] = curtime + delay;				
+					track_time[ch] = curtime + delay;
 				}
 				src_ptr += 11;
 				break;
-				
+
 			case 0x80:
 				track_time[ch] = -1;
 				src_ptr ++;
 				break;
-				
+
 			default:
 				track_time[ch] = -1;
 			}
@@ -1645,10 +1641,9 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 	} else {
 		total_size = size = _fileHandle.readUint32LE();
 		tag = _fileHandle.readUint16LE();
-		debug(4, "  tag='%c%c', size=%d",
-		      (char) (tag & 0xff),
-		      (char) ((tag >> 8) & 0xff), size);
-		
+		debug(4, "  tag='%c%c', size=%d", (char) (tag & 0xff),
+				(char) ((tag >> 8) & 0xff), size);
+
 		if (tag == 0x4F52) { // RO
 			ro_offs = _fileHandle.pos();
 			ro_size = size;
@@ -1657,11 +1652,10 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 			while (pos < total_size) {
 				size = _fileHandle.readUint32LE();
 				tag = _fileHandle.readUint16LE();
-				debug(4, "  tag='%c%c', size=%d",
-				      (char) (tag & 0xff),
-				      (char) ((tag >> 8) & 0xff), size);
+				debug(4, "  tag='%c%c', size=%d", (char) (tag & 0xff),
+						(char) ((tag >> 8) & 0xff), size);
 				pos += size;
-			
+
 				// MI1 and Indy3 uses one or more nested SO resources, which contains AD and WA
 				// resources.
 				if ((tag == 0x4441) && !(ad_offs)) { // AD
@@ -1724,7 +1718,6 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
 }
-
 
 int ScummEngine::getResourceRoomNr(int type, int idx) {
 	if (type == rtRoom)
@@ -1888,16 +1881,12 @@ void ScummEngine::lock(int type, int i) {
 	if (!validateResource("Locking", type, i))
 		return;
 	res.flags[type][i] |= RF_LOCK;
-
-//  debug(1, "locking %d,%d", type, i);
 }
 
 void ScummEngine::unlock(int type, int i) {
 	if (!validateResource("Unlocking", type, i))
 		return;
 	res.flags[type][i] &= ~RF_LOCK;
-
-//  debug(1, "unlocking %d,%d", type, i);
 }
 
 bool ScummEngine::isResourceInUse(int type, int i) const {
@@ -1939,8 +1928,6 @@ void ScummEngine::expireResources(uint32 size) {
 	byte best_counter;
 	int best_type, best_res = 0;
 	uint32 oldAllocatedSize;
-
-//  return;
 
 	if (_expire_counter != 0xFF) {
 		_expire_counter = 0xFF;

@@ -58,30 +58,30 @@ uint16 Player::_active_notes[128];
 //////////////////////////////////////////////////
 
 Player::Player() :
-_midi(0),
-_parser(0),
-_parts(0),
-_active(false),
-_scanning(false),
-_id(0),
-_priority(0),
-_volume(0),
-_pan(0),
-_transpose(0),
-_detune(0),
-_vol_eff(0),
-_track_index(0),
-_loop_to_beat(0),
-_loop_from_beat(0),
-_loop_counter(0),
-_loop_to_tick(0),
-_loop_from_tick(0),
-_speed(128),
-_isMT32(false),
-_isGM(false),
-_se(0),
-_vol_chan(0)
-{ }
+	_midi(0),
+	_parser(0),
+	_parts(0),
+	_active(false),
+	_scanning(false),
+	_id(0),
+	_priority(0),
+	_volume(0),
+	_pan(0),
+	_transpose(0),
+	_detune(0),
+	_vol_eff(0),
+	_track_index(0),
+	_loop_to_beat(0),
+	_loop_from_beat(0),
+	_loop_counter(0),
+	_loop_to_tick(0),
+	_loop_from_tick(0),
+	_speed(128),
+	_isMT32(false),
+	_isGM(false),
+	_se(0),
+	_vol_chan(0){
+}
 
 Player::~Player() {
 	if (_parser) {
@@ -101,7 +101,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 			warning("Player::startSound(): Couldn't find start of sound %d!", sound);
 			return false;
 	}
-	
+
 	_isMT32 = _se->isMT32(sound);
 	_isGM = _se->isGM(sound);
 
@@ -142,8 +142,7 @@ bool Player::isFadingOut() const {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
 		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
-		    _parameterFaders[i].end == 0)
-		{
+						_parameterFaders[i].end == 0) {
 			return true;
 		}
 	}
@@ -1217,7 +1216,7 @@ int Player::save_or_load(Serializer *ser) {
 
 	ser->saveLoadEntries(this, playerEntries);
 	ser->saveLoadArrayOf(_parameterFaders, ARRAYSIZE(_parameterFaders),
-		                  sizeof(ParameterFader), parameterFaderEntries);
+						sizeof(ParameterFader), parameterFaderEntries);
 	return 0;
 }
 

@@ -72,13 +72,13 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 	// fits-all" sound until we actually support the
 	// FM synthesis capabilities of FM Towns.
 	for (; _presend < 12; ++_presend) {
-		if (_instr_to_channel[_presend>>1] >= 16)
+		if (_instr_to_channel[_presend >> 1] >= 16)
 			continue;
 		info.start = pos;
 		info.delta = 0;
 		if (_presend & 1) {
-			byte *data = &_instruments[_presend>>1][0];
-			data[1] = _instr_to_channel[_presend>>1];
+			byte *data = &_instruments[_presend >> 1][0];
+			data[1] = _instr_to_channel[_presend >> 1];
 			info.event = 0xF0;
 			info.ext.data = data;
 			info.length = 48;

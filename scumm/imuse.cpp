@@ -63,8 +63,7 @@ _queue_cleared(0),
 _master_volume(0),
 _music_volume(0),
 _trigger_count(0),
-_snm_trigger_index(0)
-{
+_snm_trigger_index(0) {
 	memset(_channel_volume,0,sizeof(_channel_volume));
 	memset(_channel_volume_eff,0,sizeof(_channel_volume_eff));
 	memset(_volchan_table,0,sizeof(_volchan_table));
@@ -229,7 +228,7 @@ bool IMuseInternal::startSound(int sound) {
 		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
 		return false;
 	}
-	
+
 	// Check which MIDI driver this track should use.
 	// If it's NULL, it ain't something we can play.
 	MidiDriver *driver = getBestMidiDriver(sound);
@@ -461,8 +460,7 @@ int IMuseInternal::get_queue_sound_status(int sound) const {
 
 	for (i = 0; i < ARRAYSIZE (_deferredCommands); ++i) {
 		if (_deferredCommands[i].time_left && _deferredCommands[i].a == 8 &&
-		    _deferredCommands[i].b == sound)
-		{
+			_deferredCommands[i].b == sound) {
 			return 2;
 		}
 	}
@@ -942,9 +940,7 @@ int32 IMuseInternal::ImClearTrigger(int sound, int id) {
 	int i;
 	ImTrigger *trig = _snm_triggers;
 	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trig) {
-		if ((sound == -1 || trig->sound == sound) &&
-		    trig->id && (id == -1 || trig->id == id))
-		{
+		if ((sound == -1 || trig->sound == sound) && trig->id && (id == -1 || trig->id == id)) {
 			trig->sound = trig->id = 0;
 			++count;
 		}
@@ -957,8 +953,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	int count = 0;
 	int i;
 	for (i = 0; i < 16; ++i) {
-		if (_snm_triggers [i].sound == sound)
-		{
+		if (_snm_triggers [i].sound == sound) {
 			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
 			doCommand (8, _snm_triggers[i].command);
 			++count;
@@ -1660,8 +1655,7 @@ void Part::sendPitchBend() {
 	// so we'll do the scaling ourselves.
 	if (_player->_se->isNativeMT32())
 		bend = bend * _pitchbend_factor / 12;
-	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) +
-					(_transpose_eff * 8192 / 12), -8192, 8191));
+	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) + (_transpose_eff * 8192 / 12), -8192, 8191));
 }
 
 void Part::programChange(byte value) {
@@ -1709,9 +1703,8 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 		hipart = NULL;
 		for (i = 32, part = _parts; i; i--, part++) {
 			if (part->_player && part->_player->getMidiDriver() == midi &&
-			    !part->_percussion && part->_on &&
-				!part->_mc && part->_pri_eff >= hipri)
-			{
+						!part->_percussion && part->_on &&
+						!part->_mc && part->_pri_eff >= hipri) {
 				hipri = part->_pri_eff;
 				hipart = part;
 			}

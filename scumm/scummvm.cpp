@@ -82,7 +82,7 @@ struct ScummGameSettings {
 	byte id, version;
 	int midi; // MidiDriverType values
 	uint32 features;
-	
+
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { gameName, description, midi, features, 0 };
 		return dummy;
@@ -663,9 +663,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (!_mixer->bindToSystem(syst)) {
 		warning("Sound mixer initialization failed");
 		if (_midiDriver == MD_ADLIB ||
-		    _midiDriver == MD_PCSPK ||
-		    _midiDriver == MD_PCJR)
-		{
+				_midiDriver == MD_PCSPK ||
+				_midiDriver == MD_PCJR)	{
 			_midiDriver = MD_NULL;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
@@ -792,9 +791,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 ScummEngine::~ScummEngine() {
 	_mixer->stopAll();
-	
+
 	delete [] _actors;
-	
+
 	delete _2byteFontPtr;
 	delete _charset;
 	delete _pauseDialog;

@@ -118,7 +118,7 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 	if (_loaded) {
 		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
-	
+
 	File file;
 	file.open(filename, directory);
 	if (file.isOpen() == false) {
@@ -142,7 +142,7 @@ bool NutRenderer::loadFont(const char *filename, const char *directory) {
 		free(dataSrc);
 		return false;
 	}
-	
+
 	_nbChars = READ_LE_UINT16(dataSrc + 10);
 	uint32 offset = READ_BE_UINT32(dataSrc + 4) + 8;
 	int32 decoded_length;
@@ -304,7 +304,7 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 
 	byte maskmask;
 	int maskpos;
-	
+
 	for (int ty = 0; ty < height; ty++) {
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;
@@ -342,7 +342,7 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 
 	byte maskmask;
 	int maskpos;
-	
+
 	for (int ty = 0; ty < height; ty++) {
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;

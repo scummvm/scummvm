@@ -732,7 +732,7 @@ public:
 		_id = id;
 		_data = (char *)malloc(READ_LE_UINT16(data));
 		memcpy(_data, data, READ_LE_UINT16(data));
-		
+
 		_loopnum = 1;
 		_step = 2;
 		_curfreq = _freq1;
@@ -752,7 +752,7 @@ public:
 		}
 		if (_curfreq >= _freq2)
 			return true;
-		const char steps[8] = {0,2,2,3,4,8,15,2};
+		const char steps[8] = {0, 2, 2, 3, 4, 8, 15, 2};
 		_curfreq = _freq1;
 		_step = steps[++_loopnum];
 		if (_loopnum == 7) {
@@ -818,10 +818,10 @@ public:
 	}
 	virtual bool update() {
 		assert(_id);
-		updatefreq(_freq1,_step1,0x00AA,0x00FA);
-		updatefreq(_freq2,_step2,0x019A,0x03B6);
-		updatefreq(_freq3,_step3,0x00AA,0x00FA);
-		updatefreq(_freq4,_step4,0x019A,0x03B6);
+		updatefreq(_freq1, _step1, 0x00AA, 0x00FA);
+		updatefreq(_freq2, _step2, 0x019A, 0x03B6);
+		updatefreq(_freq3, _step3, 0x00AA, 0x00FA);
+		updatefreq(_freq4, _step4, 0x019A, 0x03B6);
 		_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _freq1);
 		_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / _freq2);
 		_mod->setChannelFreq(_id | 0x200, BASE_FREQUENCY / _freq3);
@@ -986,8 +986,9 @@ private:
 	int _ticks;
 };
 
-#define CRCToSound(CRC, SOUND)	\
-	if (crc == CRC) return new SOUND
+#define CRCToSound(CRC, SOUND)  \
+	if (crc == CRC)             \
+		return new SOUND
 
 static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x8FAB08C4, V2A_Sound_SingleLooped(0x006C,0x2B58,0x016E,0x3F));	// Maniac 17
@@ -1165,7 +1166,7 @@ void Player_V2A::startSound(int nr) {
 	assert(_scumm);
 	byte *data = _scumm->getResourceAddress(rtSound, nr);
 	assert(data);
-	uint32 crc = GetCRC(data + 0x0A,READ_BE_UINT16(data + 0x08));
+	uint32 crc = GetCRC(data + 0x0A, READ_BE_UINT16(data + 0x08));
 	V2A_Sound *snd = findSound(crc);
 	if (snd == NULL) {
 		warning("player_v2a - sound %i not recognized yet (crc %08X)",nr,crc);

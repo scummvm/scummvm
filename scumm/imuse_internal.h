@@ -222,42 +222,42 @@ public:
 	Player();
 	virtual ~Player();
 
-	int    addParameterFader(int param, int target, int time);
-	void   clear();
-	void   clearLoop();
-	void   fixAfterLoad();
+	int	 addParameterFader(int param, int target, int time);
+	void clear();
+	void clearLoop();
+	void fixAfterLoad();
 	Part * getActivePart(uint8 part);
-	uint   getBeatIndex();
-	int8   getDetune() const { return _detune; }
-	byte   getEffectiveVolume() const { return _vol_eff; }
-	int    getID() const { return _id; }
+	uint getBeatIndex();
+	int8 getDetune() const { return _detune; }
+	byte getEffectiveVolume() const { return _vol_eff; }
+	int getID() const { return _id; }
 	MidiDriver *getMidiDriver() const { return _midi; }
-	int    getParam(int param, byte chan);
-	int8   getPan() const { return _pan; }
+	int getParam(int param, byte chan);
+	int8 getPan() const { return _pan; }
 	Part * getPart(uint8 part);
-	byte   getPriority() const { return _priority; }
-	uint   getTicksPerBeat() const { return TICKS_PER_BEAT; }
-	int8   getTranspose() const { return _transpose; }
-	byte   getVolume() const { return _volume; }
-	bool   isActive() const { return _active; }
-	bool   isFadingOut() const;
-	bool   isGM() const { return _isGM; }
-	bool   isMT32() const { return _isMT32; }
-	bool   jump(uint track, uint beat, uint tick);
-	void   onTimer();
-	void   removePart(Part *part);
-	int    scan(uint totrack, uint tobeat, uint totick);
-	int    save_or_load(Serializer *ser);
-	int    setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
-	void   setDetune(int detune);
-	bool   setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
-	void   setPan(int pan);
-	void   setPriority(int pri);
-	void   setSpeed(byte speed);
-	int    setTranspose(byte relative, int b);
-	int    setVolume(byte vol);
-	bool   startSound(int sound, MidiDriver *midi, bool passThrough);
-	int    getMusicTimer() const;
+	byte getPriority() const { return _priority; }
+	uint getTicksPerBeat() const { return TICKS_PER_BEAT; }
+	int8 getTranspose() const { return _transpose; }
+	byte getVolume() const { return _volume; }
+	bool isActive() const { return _active; }
+	bool isFadingOut() const;
+	bool isGM() const { return _isGM; }
+	bool isMT32() const { return _isMT32; }
+	bool jump(uint track, uint beat, uint tick);
+	void onTimer();
+	void removePart(Part *part);
+	int scan(uint totrack, uint tobeat, uint totick);
+	int save_or_load(Serializer *ser);
+	int setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
+	void setDetune(int detune);
+	bool setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
+	void setPan(int pan);
+	void setPriority(int pri);
+	void setSpeed(byte speed);
+	int setTranspose(byte relative, int b);
+	int setVolume(byte vol);
+	bool startSound(int sound, MidiDriver *midi, bool passThrough);
+	int getMusicTimer() const;
 
 public:
 	// MidiDriver interface

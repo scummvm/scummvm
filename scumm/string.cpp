@@ -592,8 +592,7 @@ void ScummEngine::addIntToStack(int var) {
 	_msgPtrToAdd += sprintf((char *)_msgPtrToAdd, "%d", num);
 }
 
-void ScummEngine::addVerbToStack(int var)
-{
+void ScummEngine::addVerbToStack(int var) {
 	int num, k;
 
 	num = readVar(var);
@@ -611,8 +610,7 @@ void ScummEngine::addVerbToStack(int var)
 	}
 }
 
-void ScummEngine::addNameToStack(int var)
-{
+void ScummEngine::addNameToStack(int var) {
 	int num;
 	const byte *ptr = 0;
 
@@ -725,8 +723,8 @@ void ScummEngine::drawBlastTexts() {
 			if (c != 0 && c != 0xFF) {
 				_charset->_left = _charset->_nextLeft;
 				_charset->_top = _charset->_nextTop;
- 				if (c >= 0x80 && _CJKMode)
- 					c += *buf++ * 256;
+				if (c >= 0x80 && _CJKMode)
+					c += *buf++ * 256;
 				_charset->printChar(c);
 				_charset->_nextLeft = _charset->_left;
 				_charset->_nextTop = _charset->_top;

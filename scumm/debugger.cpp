@@ -474,7 +474,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
 	} else {
-		  DebugPrintf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
+		DebugPrintf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
 
 	return true;
@@ -605,8 +605,7 @@ void ScummDebugger::printBox(int box) {
 static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
 
-static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color)
-{
+static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 	VirtScreen *vs = &scumm->virtscr[0];
 	byte *ptr;
 
@@ -634,13 +633,11 @@ static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color)
 	}
 }
 
-static int gfxPrimitivesCompareInt(const void *a, const void *b)
-{
+static int gfxPrimitivesCompareInt(const void *a, const void *b) {
 	return (*(const int *)a) - (*(const int *)b);
 }
 
-static void fillQuad(ScummEngine *scumm, int16 vx[4], int16 vy[4], int color)
-{
+static void fillQuad(ScummEngine *scumm, int16 vx[4], int16 vy[4], int color) {
 	const int N = 4;
 	int i;
 	int y;

@@ -421,7 +421,7 @@ void ScummEngine_v2::decodeParseString() {
 		if (_demoMode && _actorToPrintStrFor == 0xFF)
 			_string[textSlot].color = 1;
 		else if (_actorToPrintStrFor != 0xFF) 
-			_string[textSlot].color =  v1_mm_actor_speech_color[_actorToPrintStrFor];
+			_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
 	}
 
 	_messagePtr = buffer;
@@ -674,7 +674,7 @@ void ScummEngine_v2::o2_actorSet() {
 		_string[0].color = arg;
 		return;
 	}
-	
+
 	a = derefActor(act, "actorSet");
 
 	switch (_opcode) {
@@ -801,7 +801,7 @@ void ScummEngine_v2::o2_verbOps() {
 		_verbs[slot].curmode = state;
 
 		break;
-	
+
 	default: {	// New Verb
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
@@ -888,7 +888,7 @@ void ScummEngine_v2::o2_doSentence() {
 	st->objectB = getVarOrDirectWord(0x20);
 	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
-	
+
 	// Execute or print the sentence
 	_opcode = fetchScriptByte();
 	switch(_opcode) {
@@ -908,7 +908,7 @@ void ScummEngine_v2::o2_doSentence() {
 				VAR(VAR_ACTIVE_VERB) = st->verb;
 				VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
 				VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
-				
+
 				isBackgroundScript = false;
 				isSpecialVerb = false;
 			} else {
@@ -926,7 +926,7 @@ void ScummEngine_v2::o2_doSentence() {
 			int slot = -1;
 			ScriptSlot *ss;
 			int i;
-		
+
 			ss = vm.slot;
 			for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 				if (st->objectA == ss->number &&
@@ -944,7 +944,7 @@ void ScummEngine_v2::o2_doSentence() {
 	case 2:
 		// Print the sentence
 		_sentenceNum--;
-		
+
 		VAR(VAR_SENTENCE_VERB) = st->verb;
 		VAR(VAR_SENTENCE_OBJECT1) = st->objectA;
 		VAR(VAR_SENTENCE_OBJECT2) = st->objectB;
@@ -960,7 +960,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	Common::Rect sentenceline;
 	static char sentence[256];
 	const byte *temp;
-	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
+	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
 	if (!(_userState & 32))
 		return;
@@ -983,7 +983,7 @@ void ScummEngine_v2::o2_drawSentence() {
 			if (_verbs[slot].prep == 0xFF) {
 				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
 				assert(ptr);
-				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr+12) >> 5);
+				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr + 12) >> 5);
 			} else
 				VAR(VAR_SENTENCE_PREPOSITION) = _verbs[slot].prep;
 		}
@@ -1360,16 +1360,16 @@ void ScummEngine_v2::o2_cutscene() {
 	vm.cutSceneData[1] = (int16)VAR(VAR_CURSORSTATE);
 	vm.cutSceneData[2] = _currentRoom;
 	vm.cutSceneData[3] = camera._mode;
-	
+
 	VAR(VAR_CURSORSTATE) = 200;
-	
+
 	// FIXME allows quotes script (173) to start during introudction of
 	// demo mode of V1 Maniac Mansion. setUserState was halting script
 	// 173 before it started.
 	if (!(_gameId == GID_MANIAC && _version == 1 && _demoMode))
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(15);
-	
+
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
 	resetSentence();
@@ -1496,7 +1496,7 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 	if (cmd & 0xFF) {
 		VAR(VAR_CURSORSTATE) = cmd & 0xFF;
 	}
-	
+
 	setUserState(state);
 }
 

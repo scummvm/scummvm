@@ -487,12 +487,12 @@ void Sound::processSfxQueues() {
 				}
 			}
 		}
-		
+
 		if (finished && _scumm->_talkDelay == 0) {
 			_scumm->stopTalk();
 		}
 	}
-		
+
 	if (_sfxMode & 1) {
 		if (isSfxFinished()) {
 			_sfxMode &= ~1;
@@ -615,7 +615,7 @@ int Sound::isSoundRunning(int sound) const {
 
 	if (sound == _currentCDSound)
 		return pollCD();
-	
+
 	if (_scumm->_features & GF_HUMONGOUS) {
 		if (sound == -2) {
 			return isSfxFinished();
@@ -626,7 +626,7 @@ int Sound::isSoundRunning(int sound) const {
 			return _scumm->_imuse->getSoundStatus(sound);
 		}
 	}
-	
+
 	if (isSoundInQueue(sound))
 		return 1;
 
@@ -1632,7 +1632,7 @@ int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startF
 		// FIXME: Using _size here is a problem if offset (or equivalently
 		// startFrame) is non-zero.
 		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
-		              (_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
+					(_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
 	} else {
 		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
 	}
@@ -1680,8 +1680,7 @@ int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int sta
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
 	return mixer->playVorbis(handle, &_ov_file,
-				 duration * ov_info(&_ov_file, -1)->rate / 75,
-				 true);
+							duration * ov_info(&_ov_file, -1)->rate / 75, true);
 }
 
 VorbisTrackInfo::~VorbisTrackInfo() {

@@ -783,7 +783,7 @@ void IMuseDigital::musicTimer() {
 				int8	pan = _channel[l]._volumeRight - _channel[l]._volume;
 				if (_channel[l]._mixerChannel == 0) {
 					_scumm->_mixer->newStream(&_channel[l]._mixerChannel, buf, mixer_size,
-					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000, _channel[l]._volume, pan);
+											_channel[l]._freq, _channel[l]._mixerFlags, 100000, _channel[l]._volume, pan);
 				} else {
 					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
 					_scumm->_mixer->setChannelVolume(_channel[l]._mixerChannel, _channel[l]._volume);

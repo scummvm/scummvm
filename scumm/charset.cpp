@@ -1014,7 +1014,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		return;
 
 	_vm->_charsetColorMap[1] = _color;
-	
+
 	if (is2byte) {
 		_dropShadow = true;
 		charPtr = g_scumm->get2byteCharPtr(chr);

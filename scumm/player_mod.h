@@ -55,8 +55,7 @@ private:
 		MOD_MAXCHANS = 16
 	};
 
-	struct soundChan
-	{
+	struct soundChan {
 		int id;
 		uint8 vol;
 		int8 pan;

@@ -55,21 +55,18 @@ private:
 		V3A_MAXSFX = 8
 	};
 
-	struct musChan
-	{
+	struct musChan {
 		int id;
 		int dur;
 	};
 
-	struct sfxChan
-	{
+	struct sfxChan {
 		int id;
 		int dur;
 		// SFX will eventually have pitch bends
 	};
 
-	struct instData
-	{
+	struct instData {
 		char *_idat[6];
 		uint16 _ilen[6];
 		char *_ldat[6];

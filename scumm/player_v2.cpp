@@ -447,7 +447,7 @@ void Player_V2::chainSound(int nr, byte *data) {
 
 		_channels[i].d.music_script_nr = nr;
 		if (data) {
-			_channels[i].d.next_cmd = READ_LE_UINT16(data+offset+2*i);
+			_channels[i].d.next_cmd = READ_LE_UINT16(data + offset + 2 * i);
 			if (_channels[i].d.next_cmd)
 				_channels[i].d.time_left = 1;
 		}
@@ -521,8 +521,8 @@ void Player_V2::startSound(int nr) {
 	}
 	
 	if (nr != _current_nr
-	    && restartable
-	    && (!_next_nr
+		&& restartable
+		&& (!_next_nr
 		|| nprio <= prio)) {
 
 		_next_nr = nr;
@@ -590,15 +590,15 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 			case 0xf8: // set hull curve
 				debug(7, "channels[%d]: hull curve %2d", 
 				channel - _channels, *script_ptr);
-				channel->d.hull_curve = hull_offsets[*script_ptr/2];
+				channel->d.hull_curve = hull_offsets[*script_ptr / 2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
 				debug(7, "channels[%d]: freqmod curve %2d", 
 				channel - _channels, *script_ptr);
-				channel->d.freqmod_table = freqmod_offsets[*script_ptr/4];
-				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr/4];
+				channel->d.freqmod_table = freqmod_offsets[*script_ptr / 4];
+				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr / 4];
 				script_ptr++;
 				break;
 
@@ -658,16 +658,16 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				offset = READ_LE_UINT16 (script_ptr);
 				script_ptr += 2;
 				debug(7, "loop if %d to %d", opcode, offset);
-				if (!channel->array[opcode/2] || --channel->array[opcode/2])
+				if (!channel->array[opcode / 2] || --channel->array[opcode/2])
 					script_ptr += offset;
 				break;
 
 			case 0xff: // set parameter
 				opcode = *script_ptr++;
 				value = READ_LE_UINT16 (script_ptr);
-				channel->array[opcode/2] = value;
+				channel->array[opcode / 2] = value;
 				debug(7, "channels[%d]: set param %2d = %5d", 
-					  channel - &_channels[0], opcode, value);
+						channel - &_channels[0], opcode, value);
 				script_ptr += 2;
 				if (opcode == 14) {
 				    /* tempo var */
@@ -708,11 +708,11 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 
 				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
-				      dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
-				      note, (signed short) dest_channel->d.transpose, channel->d.time_left,
-				      dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
-				      dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
-				      is_last_note ? "last":"");
+						dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
+						note, (signed short) dest_channel->d.transpose, channel->d.time_left,
+						dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
+						dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
+						is_last_note ? "last":"");
 
 
 				uint16 myfreq;
@@ -775,10 +775,10 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 		+ channel->d.base_freq;
 
 	debug(9, "Freq: %d/%d, %d/%d/%d*%d %d",
-	      channel->d.base_freq, (int16)channel->d.freq_delta,
-	      channel->d.freqmod_table, channel->d.freqmod_offset,
-	      channel->d.freqmod_incr, channel->d.freqmod_multiplier,
-	      channel->d.freq);
+			channel->d.base_freq, (int16)channel->d.freq_delta,
+			channel->d.freqmod_table, channel->d.freqmod_offset,
+			channel->d.freqmod_incr, channel->d.freqmod_multiplier,
+			channel->d.freq);
 
 	if (channel->d.note_length && !--channel->d.note_length) {
 		channel->d.hull_offset  = 16;
@@ -791,15 +791,15 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 
 #if 0
 	debug(9, "channels[%d]: freq %d hull %d/%d/%d", 
-	      channel - &_channels[0], channel->d.freq,
-	      channel->d.hull_curve, channel->d.hull_offset,
-	      channel->d.hull_counter);
+			channel - &_channels[0], channel->d.freq,
+			channel->d.hull_curve, channel->d.hull_offset,
+			channel->d.hull_counter);
 #endif
 
 	if (channel->d.hull_counter && !--channel->d.hull_counter) {
 		for (;;) {
 			const int16 *hull_ptr = hulls
-			+ channel->d.hull_curve + channel->d.hull_offset/2;
+			+ channel->d.hull_curve + channel->d.hull_offset / 2;
 			if (hull_ptr[1] == -1) {
 				channel->d.volume = hull_ptr[0];
 				if (hull_ptr[0] == 0)
@@ -854,14 +854,14 @@ void Player_V2::nextTick() {
 void Player_V2::lowPassFilter(int16 *sample, uint len) {
 	for (uint i = 0; i < len; i++) {
 		_level = (int) (_level * _decay
-				+ sample[0] * (0x10000-_decay)) >> 16;
+				+ sample[0] * (0x10000 - _decay)) >> 16;
 		sample[0] = sample[1] = _level;
 		sample += 2;
 	}
 }
 
 void Player_V2::squareGenerator(int channel, int freq, int vol,
-                                int noiseFeedback, int16 *sample, uint len) {
+								int noiseFeedback, int16 *sample, uint len) {
 	int period = _update_step * freq;
 	long nsample;
 	if (period == 0)
@@ -896,8 +896,8 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 			duration -= _timer_count[channel];
 		
 		nsample = *sample + 
-			(((signed long) (duration - (1 << (FIXP_SHIFT-1)))
-			  * (signed long) _volumetable[vol]) >> FIXP_SHIFT);
+			(((signed long) (duration - (1 << (FIXP_SHIFT - 1)))
+				* (signed long) _volumetable[vol]) >> FIXP_SHIFT);
 		/* overflow: clip value */
 		if (nsample > 0x7fff)
 			nsample = 0x7fff;
@@ -914,8 +914,8 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 	int winning_channel = -1;
 	for (int i = 0; i < 4; i++) {
 		if (winning_channel == -1
-		    && _channels[i].d.volume
-		    && _channels[i].d.time_left) {
+			&& _channels[i].d.volume
+			&& _channels[i].d.time_left) {
 			winning_channel = i;
 		}
 	}
@@ -943,8 +943,8 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		if (_channels[i].d.volume && _channels[i].d.time_left) {
 			for (j = 0; j < i; j++) {
 				if (_channels[j].d.volume
-				    && _channels[j].d.time_left
-				    && freq == (_channels[j].d.freq >> 6)) {
+					&& _channels[j].d.time_left
+					&& freq == (_channels[j].d.freq >> 6)) {
 					/* HACK: this channel is playing at
 					 * the same frequency as another.
 					 * Synchronize it to the same phase to
@@ -978,7 +978,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		}
 #if 0
 		debug(9, "channel[%d]: freq %d %.1f ; volume %d", 
-		      i, freq, 111860.0/freq,  vol);
+				i, freq, 111860.0 / freq,  vol);
 #endif
 	}
 

@@ -246,7 +246,6 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	}
 }
 
-
 Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	// Get savegame names
 	Common::StringList l;
@@ -273,15 +272,15 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 enum {
 	kRowHeight = 18,
 	kBigButtonWidth = 90,
-	kMainMenuWidth 	= (kBigButtonWidth + 2*8),
-	kMainMenuHeight 	= 7*kRowHeight + 3*5 + 7 + 5
+	kMainMenuWidth 	= (kBigButtonWidth + 2 * 8),
+	kMainMenuHeight 	= 7 * kRowHeight + 3 * 5 + 7 + 5
 };
 
 #define addBigButton(label, cmd, hotkey) \
 	new ButtonWidget(this, x, y, kBigButtonWidth, 16, label, cmd, hotkey); y += kRowHeight
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, (320 - kMainMenuWidth)/2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
+	: ScummDialog(scumm, (320 - kMainMenuWidth) / 2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
 	int y = 7;
 
 	const int x = (_w - kBigButtonWidth) / 2;
@@ -418,13 +417,13 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 	// Add the buttons
 	//
 #ifdef _WIN32_WCE
-	addButton(_w-kButtonWidth-8, _h-24 - kButtonHeight - 4, "OK", kOKCmd, 'O');
-	addButton(_w-2*kButtonWidth-12, _h-24 - kButtonHeight - 4, "Cancel", kCancelCmd, 'C');
+	addButton(_w - kButtonWidth - 8, _h - 24 - kButtonHeight - 4, "OK", kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - kButtonHeight - 4, "Cancel", kCancelCmd, 'C');
 
-	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
+	addButton(kButtonWidth+12, _h - 24, "Keys", kKeysCmd, 'K');
 #else
-	addButton(_w-kButtonWidth-8, _h-24, "OK", kOKCmd, 'O');
-	addButton(_w-2*kButtonWidth-12, _h-24, "Cancel", kCancelCmd, 'C');
+	addButton(_w - kButtonWidth-8, _h - 24, "OK", kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCancelCmd, 'C');
 #endif
 
 	//
@@ -433,7 +432,7 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 	int yoffset = 8;
 
 	_masterVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "Master volume: ", 100, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_masterVolumeLabel = new StaticTextWidget(this, 200, yoffset + 2, 24, 16, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
 	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
@@ -445,7 +444,7 @@ OptionsDialog::OptionsDialog(ScummEngine *scumm)
 	yoffset += 16;
 
 	_sfxVolumeSlider = new SliderWidget(this, 5, yoffset, 185, 12, "SFX volume: ", 100, kSfxVolumeChanged);
-	_sfxVolumeLabel  = new StaticTextWidget(this, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
+	_sfxVolumeLabel  = new StaticTextWidget(this, 200, yoffset + 2, 24, 16, "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0); _sfxVolumeSlider->setMaxValue(255);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
@@ -641,7 +640,7 @@ void InfoDialog::setInfoText(const String& message) {
 	_x = (_scumm->_screenWidth - width) >> 1;
 	_w = width;
 
-	new StaticTextWidget(this, 4, 4, _w-8, _h, message, kTextAlignCenter);
+	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter);
 }
 
 #pragma mark -

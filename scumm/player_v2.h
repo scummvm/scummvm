@@ -140,8 +140,8 @@ protected:
 
 	void lowPassFilter(int16 *data, uint len);
 	void squareGenerator(int channel, int freq, int vol,
-	                     int noiseFeedback, int16 *sample, uint len);
-    
+						int noiseFeedback, int16 *sample, uint len);
+
 private:
 	static void premix_proc(void *param, int16 *buf, uint len);
 	void do_mix(int16 *buf, uint len);
