@@ -59,14 +59,6 @@ protected:
 	bool _quickLaunch; // set when starting with -x
 	bool _floppyIntro;
 
-	uint16 _debugMode;
-
-	int _numScreenUpdates;
-
-	FILE *_dump_file;
-
-	int _number_of_savegames;
-
 	int _sdl_mouse_x, _sdl_mouse_y;
 
 	Sound *_skySound;

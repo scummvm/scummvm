@@ -121,8 +121,6 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume")); //unnecessary?
 	
-	_debugMode = ConfMan.hasKey("debuglevel");
-
 	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_fastMode = 0;
