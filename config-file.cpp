@@ -28,6 +28,9 @@
 
 #define MAXLINELEN 256
 
+#define xfree(p) {if (p) free(p);}
+
+
 static char *ltrim(char *t)
 {
 	for (; *t && (*t == ' '); t++);
@@ -72,7 +75,7 @@ keys(0), values(0), nkeys(0)
 
 hashconfig::~hashconfig()
 {
-	free(domain);
+	xfree(domain);
 }
 
 bool hashconfig::is_domain(const char *d) const
@@ -99,7 +102,7 @@ const char *hashconfig::set(const char *key, const char *value)
 
 	for (i = 0; i < nkeys; i++) {
 		if (!strcmp(key, keys[i])) {
-			free(values[i]);
+			xfree(values[i]);
 			return values[i] = value ? Scumm::Strdup(value) : 0;
 		}
 	}
@@ -135,7 +138,7 @@ void hashconfig::flush(FILE * cfg_file) const
 
 void hashconfig::rename(const char *d)
 {
-	free(domain);
+	xfree(domain);
 	domain = d ? Scumm::Strdup(d) : 0;
 }
 
@@ -208,13 +211,13 @@ Config::~Config()
 {
 	int i;
 
-	free(filename);
-	free(domain);
+	xfree(filename);
+	xfree(domain);
 
 	for (i = 0; i < ndomains; i++) {
 		delete hash[i];
 	}
-	free(hash);
+	xfree(hash);
 }
 
 const char *Config::get(const char *key, const char *d) const
@@ -281,7 +284,7 @@ const char *Config::set(const char *key, int value_i, const char *d)
 void Config::set_domain(const char *d)
 {
 	int i;
-	free(domain);
+	xfree(domain);
 	domain = d ? Scumm::Strdup(d) : 0;
 
 	for (i = 0; i < ndomains; i++) {
@@ -346,7 +349,7 @@ void Config::delete_domain(const char *d)
 
 void Config::change_filename(const char *f)
 {
-	free(filename);
+	xfree(filename);
 	filename = f ? Scumm::Strdup(f) : 0;
 }
 
