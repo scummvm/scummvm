@@ -247,6 +247,14 @@ public:
 	void readOptionSettings();
 	void writeOptionSettings();
 
+	bool preChangeRoom_Demo();
+	bool preChangeRoom_Interview();
+	bool preChangeRoom_Game();
+
+	void setupASM_Demo();
+	void setupASM_Interview();
+	void setupASM_Game();
+
 	void executeSpecialMove(uint16 sm);
 
 	void asmMakeJoeUseDress();
@@ -286,8 +294,9 @@ public:
 	void asmMakeWhiteFlash();
 	void asmPanRightToJoeAndRita();
 	void asmPanLeftToBomb();
+	void asmEndDemo();
 
-
+	typedef bool (Logic::*PreChangeRoomProc)();
 	typedef void (Logic::*SpecialMoveProc)();
 
 	enum {
@@ -424,6 +433,11 @@ protected:
 	int _talkSpeed;
 
 	bool _subtitles;
+
+	const SpecialMoveProc *_asmTable;
+	uint16 _asmCount;
+
+	PreChangeRoomProc _preChangeRoom;
 
 	QueenEngine *_vm;
 };
