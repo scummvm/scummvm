@@ -760,23 +760,42 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 	base = (_s->_gameId == GID_LOOM) ? 50 : 100;
 
-	// During the testing of EGA Loom we had some trouble with the drafts
-	// data structure being overwritten. I don't expect this command is
-	// particularly useful any more, but it will attempt to repair the
-	// (probably) static part of it.
+	if (argc == 2) {
+		// We had to debug a problem at the end of the game that only
+		// happened if you interrupted the intro at a specific point.
+		// That made it useful with a command to learn all the drafts
+		// and notes.
 
-	if (argc == 2 && strcmp(argv[1], "fix") == 0) {
-		for (i = 0; i < 16; i++) {
-			_s->_vars[base + 2 * i + 1] = odds[i];
+		if (strcmp(argv[1], "learn") == 0) {
+			for (i = 0; i < 16; i++)
+				_s->_vars[base + 2 * i] |= 0x2000;
+			_s->_vars[base + 72] = 8;
+
+			// In theory, we could run script 18 here to redraw
+			// the distaff, but I don't know if that's a safe
+			// thing to do.
+
+			Debug_Printf("Learned all drafts and notes.\n");
+			return true;
 		}
-		Debug_Printf(
-			"An attempt has been made to repair\n"
-			"the internal drafts data structure.\n"
-			"Continue on your own risk.\n");
-		return true;
+
+		// During the testing of EGA Loom we had some trouble with the
+		// drafts data structure being overwritten. I don't expect
+		// this command is particularly useful any more, but it will
+		// attempt to repair the (probably) static part of it.
+
+		if (strcmp(argv[1], "fix") == 0) {
+			for (i = 0; i < 16; i++)
+				_s->_vars[base + 2 * i + 1] = odds[i];
+			Debug_Printf(
+				"An attempt has been made to repair\n"
+				"the internal drafts data structure.\n"
+				"Continue on your own risk.\n");
+			return true;
+		}
 	}
 
-	// More useful, list the drafts.
+	// Probably the most useful command for ordinary use: list the drafts.
 
 	for (i = 0; i < 16; i++) {
 		draft = _s->_vars[base + i * 2];
