@@ -377,9 +377,10 @@ private:
 };
 
 // plays a single looped waveform starting at a specific frequency/volume, dropping in frequency and fading volume to zero
-class V2A_Sound_Special_FastPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
+// used when Maniac Mansion explodes
+class V2A_Sound_Special_ManiacNuclear : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_FastPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
+	V2A_Sound_Special_ManiacNuclear(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -409,9 +410,10 @@ private:
 };
 
 // plays a single looped waveform, fading the volume from zero to maximum at one rate, then back to zero at another rate
-class V2A_Sound_Special_LoopedFadeinFadeout : public V2A_Sound_Base<1> {
+// used when a microwave oven goes 'Ding'
+class V2A_Sound_Special_ManiacDing : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_LoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate) :
+	V2A_Sound_Special_ManiacDing(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _fade1(fadeinrate), _fade2(fadeoutrate) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -448,9 +450,10 @@ private:
 };
 
 // plays two looped waveforms, fading the volume from zero to maximum at one rate, then back to zero at another rate
-class V2A_Sound_Special_MultiLoopedFadeinFadeout : public V2A_Sound_Base<2> {
+// used in Zak McKracken for several stereo 'Ding' sounds
+class V2A_Sound_Special_ZakStereoDing : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_MultiLoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate) :
+	V2A_Sound_Special_ZakStereoDing(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate) :
 		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _freq2(freq2), _fade1(fadeinrate), _fade2(fadeoutrate) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -492,9 +495,10 @@ private:
 };
 
 // plays a single looped waveform, starting at one frequency and at full volume, bending down to another frequency, and then fading volume to zero
-class V2A_Sound_Special_PitchbendDownThenFadeout : public V2A_Sound_Base<1> {
+// used in Maniac Mansion for the tentacle sounds
+class V2A_Sound_Special_ManiacTentacle : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_PitchbendDownThenFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step) :
+	V2A_Sound_Special_ManiacTentacle(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -526,9 +530,10 @@ private:
 };
 
 // plays a single looped waveform, starting at one frequency, bending down to another frequency, and then back up to the original frequency
-class V2A_Sound_Special_PitchbendDownAndBackUp : public V2A_Sound_Base<1> {
+// used for electronic noises
+class V2A_Sound_Special_ManiacElectric : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_PitchbendDownAndBackUp(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
+	V2A_Sound_Special_ManiacElectric(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -570,9 +575,11 @@ private:
 };
 
 // plays a single looped waveform, simultaneously bending the frequency downward and slowly fading volume to zero
-class V2A_Sound_Special_SlowPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
+// don't remember where this one is used
+// old name: SlowPitchbendDownAndFadeout
+class V2A_Sound_Special_Maniac61 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SlowPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
+	V2A_Sound_Special_Maniac61(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -602,10 +609,11 @@ private:
 	uint8 _curvol;
 };
 
-// intermittently plays two looped waveforms for a specific duration (ringing phone)
-class V2A_Sound_Special_MultiLoopedDurationMulti : public V2A_Sound_Base<2> {
+// intermittently plays two looped waveforms for a specific duration\
+// used for ringing telephones
+class V2A_Sound_Special_ManiacPhone : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_MultiLoopedDurationMulti(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth) :
+	V2A_Sound_Special_ManiacPhone(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth) :
 		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _vol1(vol1), _freq2(freq2), _vol2(vol2), _duration(numframes), _playwidth(playwidth), _loopwidth(loopwidth) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -656,10 +664,11 @@ private:
 	}
 };
 
-// intermittently plays a single waveform for a specified duration (using wrench on pipe)
-class V2A_Sound_Special_SingleDurationMulti : public V2A_Sound_Base<1> {
+// intermittently plays a single waveform for a specified duration
+// used when applying a wrench to a pipe
+class V2A_Sound_Special_ManiacWrench : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SingleDurationMulti(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
+	V2A_Sound_Special_ManiacWrench(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopwidth(loopwidth), _numloops(numloops) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -699,10 +708,11 @@ private:
 	}
 };
 
-// plays a single waveform at irregular intervals for a specified number of frames, possibly looped (typewriter)
-class V2A_Sound_Special_SingleDurationMultiDurations : public V2A_Sound_Base<1> {
+// plays a single waveform at irregular intervals for a specified number of frames, possibly looped
+// used for typewriter noises, as well as tapping on the bus in Zak McKracken
+class V2A_Sound_Special_ManiacTypewriter : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
+	V2A_Sound_Special_ManiacTypewriter(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations), _looped(looped) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -746,10 +756,12 @@ private:
 	}
 };
 
-// plays two looped waveforms pitch bending up at various predefined rates (siren)
-class V2A_Sound_Special_TwinSirenMulti : public V2A_Sound_Base<2> {
+// plays two looped waveforms pitch bending up at various predefined rates
+// used for some sort of siren-like noise in Maniac Mansion
+// old name: TwinSirenMulti
+class V2A_Sound_Special_Maniac44 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_TwinSirenMulti(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
+	V2A_Sound_Special_Maniac44(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
 		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -810,10 +822,11 @@ private:
 	}
 };
 
-// plays 4 looped waveforms, each at modulating frequencies (siren)
-class V2A_Sound_Special_QuadSiren : public V2A_Sound_Base<4> {
+// plays 4 looped waveforms, each at modulating frequencies
+// used for the siren noise in Maniac Mansion
+class V2A_Sound_Special_ManiacSiren : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_QuadSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
+	V2A_Sound_Special_ManiacSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
 		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -883,9 +896,11 @@ private:
 };
 
 // plays 4 looped waveforms
-class V2A_Sound_Special_QuadFreqLooped : public V2A_Sound_Base<4> {
+// some sort of laserbeam-like sound effect in Zak
+// old name: QuadFreqLooped
+class V2A_Sound_Special_Zak70 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_QuadFreqLooped(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
+	V2A_Sound_Special_Zak70(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
 		V2A_Sound_Base<4>(offset, size), _freq1(freq1), _freq2(freq2), _freq3(freq3), _freq4(freq4), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -917,12 +932,14 @@ protected:
 };
 
 // plays 4 looped waveforms and fades volume to zero after a specific delay
-class V2A_Sound_Special_QuadFreqFadeout : public V2A_Sound_Special_QuadFreqLooped {
+// some whooshing-type sound in Zak
+// old name: QuadFreqFadeout
+class V2A_Sound_Special_Zak101 : public V2A_Sound_Special_Zak70 {
 public:
-	V2A_Sound_Special_QuadFreqFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
-		V2A_Sound_Special_QuadFreqLooped(offset, size, freq1, freq2, freq3, freq4, vol), _dur(dur) { }
+	V2A_Sound_Special_Zak101(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
+		V2A_Sound_Special_Zak70(offset, size, freq1, freq2, freq3, freq4, vol), _dur(dur) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
-		V2A_Sound_Special_QuadFreqLooped::start(mod, id, data);
+		V2A_Sound_Special_Zak70::start(mod, id, data);
 		_ticks = _dur;
 	}
 	virtual bool update() {
@@ -944,9 +961,11 @@ private:
 };
 
 // plays a single looped waveform and slowly fades volume to zero
-class V2A_Sound_Special_SingleFadeout : public V2A_Sound_Base<1> {
+// another whooshing-type noise in Zak
+// old name: SingleFadeout
+class V2A_Sound_Special_Zak37 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SingleFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
+	V2A_Sound_Special_Zak37(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -971,9 +990,10 @@ private:
 };
 
 // plays a single looped waveform, slowly bending from one frequency to another and then slowly fading volume from max to zero
-class V2A_Sound_Special_SlowPitchbendThenSlowFadeout : public V2A_Sound_Base<1> {
+// used in Zak for airplane taking off and landing
+class V2A_Sound_Special_ZakAirplane : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SlowPitchbendThenSlowFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
+	V2A_Sound_Special_ZakAirplane(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -1016,6 +1036,7 @@ private:
 };
 
 // plays 4 looped waveforms, starting at specific frequencies and bending at different rates while fading volume to zero
+// used for some weird sound effect
 class V2A_Sound_Special_Zak71 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak71(uint16 offset, uint16 size) :
@@ -1073,10 +1094,11 @@ private:
 	uint8 _vol;
 };
 
-// plays a single looped waveform, bending the frequency upward at a varying rate (slowly accelerating vehicle)
-class V2A_Sound_Special_SteppedPitchbendAndHold : public V2A_Sound_Base<1> {
+// plays a single looped waveform, bending the frequency upward at a varying rate
+// used in Zak for the tram on Mars (?)
+class V2A_Sound_Special_ZakTram : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_SteppedPitchbendAndHold(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
+	V2A_Sound_Special_ZakTram(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -1120,6 +1142,7 @@ private:
 };
 
 // plays one waveform, then switches to a different looped waveform and slowly fades volume to zero
+// used for some odd sound effect
 class V2A_Sound_Special_Zak54 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak54(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq) :
@@ -1196,26 +1219,26 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x62D5B11F, V2A_Sound_Single(0x00AE,0x165C,0x01CB,0x3F));	// Maniac 27
 	CRCToSound(0x3AB22CB5, V2A_Sound_Single(0x00AE,0x294E,0x012A,0x3F));	// Maniac 62
 	CRCToSound(0x2D70BBE9, V2A_Sound_SingleLoopedPitchbend(0x00B4,0x1702,0x03E8,0x0190,0x3F,5));	// Maniac 64
-	CRCToSound(0xFA4C1B1C, V2A_Sound_Special_FastPitchbendDownAndFadeout(0x00B2,0x1702,0x0190,0x3F));	// Maniac 69
-	CRCToSound(0x19D50D67, V2A_Sound_Special_LoopedFadeinFadeout(0x00B6,0x0020,0x00C8,16,2));	// Maniac 14
-	CRCToSound(0x3E6FBE15, V2A_Sound_Special_PitchbendDownThenFadeout(0x00B2,0x0010,0x007C,0x016D,1));	// Maniac 25
-	CRCToSound(0x5305753C, V2A_Sound_Special_PitchbendDownThenFadeout(0x00B2,0x0010,0x007C,0x016D,7));	// Maniac 36
-	CRCToSound(0x28895106, V2A_Sound_Special_PitchbendDownAndBackUp(0x00C0,0x00FE,0x00E9,0x0111,4,0x0A));	// Maniac 59
-	CRCToSound(0xB641ACF6, V2A_Sound_Special_SlowPitchbendDownAndFadeout(0x00C8,0x0100,0x00C8,0x01C2));	// Maniac 61
-	CRCToSound(0xE1A91583, V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x007C,0x3F,0x007B,0x3F,0x3C,5,6));	// Maniac 23
-	CRCToSound(0x64816ED5, V2A_Sound_Special_MultiLoopedDurationMulti(0x00D0,0x0040,0x00BE,0x37,0x00BD,0x37,0x3C,5,6));	// Maniac 24
-	CRCToSound(0x639D72C2, V2A_Sound_Special_SingleDurationMulti(0x00D0,0x10A4,0x0080,0x3F,0x28,3));	// Maniac 46
-	CRCToSound(0xE8826D92, V2A_Sound_Special_SingleDurationMultiDurations(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07", true));	// Maniac 45
+	CRCToSound(0xFA4C1B1C, V2A_Sound_Special_ManiacNuclear(0x00B2,0x1702,0x0190,0x3F));	// Maniac 69
+	CRCToSound(0x19D50D67, V2A_Sound_Special_ManiacDing(0x00B6,0x0020,0x00C8,16,2));	// Maniac 14
+	CRCToSound(0x3E6FBE15, V2A_Sound_Special_ManiacTentacle(0x00B2,0x0010,0x007C,0x016D,1));	// Maniac 25
+	CRCToSound(0x5305753C, V2A_Sound_Special_ManiacTentacle(0x00B2,0x0010,0x007C,0x016D,7));	// Maniac 36
+	CRCToSound(0x28895106, V2A_Sound_Special_ManiacElectric(0x00C0,0x00FE,0x00E9,0x0111,4,0x0A));	// Maniac 59
+	CRCToSound(0xB641ACF6, V2A_Sound_Special_Maniac61(0x00C8,0x0100,0x00C8,0x01C2));	// Maniac 61
+	CRCToSound(0xE1A91583, V2A_Sound_Special_ManiacPhone(0x00D0,0x0040,0x007C,0x3F,0x007B,0x3F,0x3C,5,6));	// Maniac 23
+	CRCToSound(0x64816ED5, V2A_Sound_Special_ManiacPhone(0x00D0,0x0040,0x00BE,0x37,0x00BD,0x37,0x3C,5,6));	// Maniac 24
+	CRCToSound(0x639D72C2, V2A_Sound_Special_ManiacWrench(0x00D0,0x10A4,0x0080,0x3F,0x28,3));	// Maniac 46
+	CRCToSound(0xE8826D92, V2A_Sound_Special_ManiacTypewriter(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07", true));	// Maniac 45
 	CRCToSound(0xEDFF3D41, V2A_Sound_Single(0x00F8,0x2ADE,0x01F8,0x3F));	// Maniac 42 (this should echo, but it's barely noticeable and I don't feel like doing it)
-	CRCToSound(0x15606D06, V2A_Sound_Special_QuadSiren(0x0148,0x0020,0x0168,0x0020,0x3F));	// Maniac 32
-	CRCToSound(0x753EAFE3, V2A_Sound_Special_TwinSirenMulti(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F));	// Maniac 44
+	CRCToSound(0x15606D06, V2A_Sound_Special_ManiacSiren(0x0148,0x0020,0x0168,0x0020,0x3F));	// Maniac 32
+	CRCToSound(0x753EAFE3, V2A_Sound_Special_Maniac44(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F));	// Maniac 44
 	CRCToSound(0xB1AB065C, V2A_Sound_Music(0x0032,0x00B2,0x08B2,0x1222,0x1A52,0x23C2,0x3074,false));	// Maniac 50
 	CRCToSound(0x091F5D9C, V2A_Sound_Music(0x0032,0x0132,0x0932,0x1802,0x23D2,0x3EA2,0x4F04,false));	// Maniac 58
 
 	CRCToSound(0x8E2C8AB3, V2A_Sound_SingleLooped(0x005C,0x0F26,0x0168,0x3C));	// Zak 41
 	CRCToSound(0x3792071F, V2A_Sound_SingleLooped(0x0060,0x1A18,0x06A4,0x3F));	// Zak 88
 	CRCToSound(0xF192EDE9, V2A_Sound_SingleLooped(0x0062,0x0054,0x01FC,0x1E));	// Zak 68
-	CRCToSound(0xC43B0245, V2A_Sound_Special_QuadFreqLooped(0x006C,0x166E,0x00C8,0x0190,0x0320,0x0640,0x32));	// Zak 70
+	CRCToSound(0xC43B0245, V2A_Sound_Special_Zak70(0x006C,0x166E,0x00C8,0x0190,0x0320,0x0640,0x32));	// Zak 70
 	CRCToSound(0xCEB51670, V2A_Sound_SingleLooped(0x00AC,0x26DC,0x012C,0x3F));	// Zak 42
 	CRCToSound(0x10347B51, V2A_Sound_SingleLooped(0x006C,0x00E0,0x0594,0x3F));	// Zak 18
 	CRCToSound(0x9D2FADC0, V2A_Sound_MultiLooped(0x0072,0x1FC8,0x016A,0x3F,0x01CE,0x3F));	// Zak 80
@@ -1224,7 +1247,7 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x9C18DC46, V2A_Sound_Single(0x0076,0x0D8C,0x015E,0x3F));	// Zak 91
 	CRCToSound(0xF98F7EAC, V2A_Sound_Single(0x0076,0x0D8C,0x0140,0x3F));	// Zak 92
 	CRCToSound(0xC925FBEF, V2A_Sound_MultiLoopedDuration(0x0080,0x0010,0x0080,0x3F,0x0090,0x3B,0x0168));	// Zak 53
-	CRCToSound(0xCAB35257, V2A_Sound_Special_QuadFreqFadeout(0x00DA,0x425C,0x023C,0x08F0,0x0640,0x0478,0x3F,0x012C));	// Zak 101
+	CRCToSound(0xCAB35257, V2A_Sound_Special_Zak101(0x00DA,0x425C,0x023C,0x08F0,0x0640,0x0478,0x3F,0x012C));	// Zak 101
 	CRCToSound(0xA31FE4FD, V2A_Sound_Single(0x0094,0x036A,0x00E1,0x3F));	// Zak 97
 	CRCToSound(0x0A1AE0F5, V2A_Sound_Single(0x009E,0x0876,0x0168,0x3F));	// Zak 5
 	CRCToSound(0xD01A66CB, V2A_Sound_Single(0x009E,0x04A8,0x0168,0x3F));	// Zak 47
@@ -1236,9 +1259,9 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x28057CEC, V2A_Sound_Single(0x0098,0x0FEC,0x0140,0x32));	// Zak 63
 	CRCToSound(0x1180A2FC, V2A_Sound_Single(0x0098,0x0F06,0x0190,0x32));	// Zak 64
 	CRCToSound(0x12616755, V2A_Sound_Single(0x0098,0x14C8,0x023C,0x14));	// Zak 9
-	CRCToSound(0x642723AA, V2A_Sound_Special_SingleFadeout(0x00A2,0x1702,0x01F4,0x3F));	// Zak 37
+	CRCToSound(0x642723AA, V2A_Sound_Special_Zak37(0x00A2,0x1702,0x01F4,0x3F));	// Zak 37
 	CRCToSound(0xDEE56848, V2A_Sound_Single(0x009A,0x0F86,0x0100,0x3F));	// Zak 93
-	CRCToSound(0xF9BE27B8, V2A_Sound_Special_SingleFadeout(0x011C,0x1704,0x0228,0x3F));	// Zak 113
+	CRCToSound(0xF9BE27B8, V2A_Sound_Special_Zak37(0x011C,0x1704,0x0228,0x3F));	// Zak 113
 	CRCToSound(0xC73487B2, V2A_Sound_Single(0x00B0,0x18BA,0x0478,0x3F));	// Zak 81
 	CRCToSound(0x32D8F925, V2A_Sound_Single(0x00B0,0x2E46,0x00F0,0x3F));	// Zak 94
 	CRCToSound(0x988C83A5, V2A_Sound_Single(0x00B0,0x0DE0,0x025B,0x3F));	// Zak 106
@@ -1246,23 +1269,23 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x0A2A7646, V2A_Sound_Single(0x00B0,0x36FE,0x016E,0x3F));	// Zak 43
 	CRCToSound(0x6F1FC435, V2A_Sound_Single(0x00B0,0x2808,0x044C,0x3F));	// Zak 108
 	CRCToSound(0x870EFC29, V2A_Sound_SingleLoopedPitchbend(0x00BA,0x0100,0x03E8,0x00C8,0x3F,3));	// Zak 55
-	CRCToSound(0xED773699, V2A_Sound_Special_LoopedFadeinFadeout(0x00B4,0x0020,0x012C,8,4));	// Zak 3
-	CRCToSound(0x0BF59774, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x00F8,0x00F7,8,1));	// Zak 72
-	CRCToSound(0x656FFEDE, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x00C4,0x00C3,8,1));	// Zak 73
-	CRCToSound(0xFC4D41E5, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x00A5,0x00A4,8,1));	// Zak 74
-	CRCToSound(0xC0DD2089, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x009C,0x009B,8,1));	// Zak 75
-	CRCToSound(0x627DFD92, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x008B,0x008A,8,1));	// Zak 76
-	CRCToSound(0x703E05C1, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x007C,0x007B,8,1));	// Zak 77
+	CRCToSound(0xED773699, V2A_Sound_Special_ManiacDing(0x00B4,0x0020,0x012C,8,4));	// Zak 3
+	CRCToSound(0x0BF59774, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x00F8,0x00F7,8,1));	// Zak 72
+	CRCToSound(0x656FFEDE, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x00C4,0x00C3,8,1));	// Zak 73
+	CRCToSound(0xFC4D41E5, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x00A5,0x00A4,8,1));	// Zak 74
+	CRCToSound(0xC0DD2089, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x009C,0x009B,8,1));	// Zak 75
+	CRCToSound(0x627DFD92, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x008B,0x008A,8,1));	// Zak 76
+	CRCToSound(0x703E05C1, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x007C,0x007B,8,1));	// Zak 77
 	CRCToSound(0xB0F77006, V2A_Sound_Unsupported());	// Zak 52
-	CRCToSound(0x5AE9D6A7, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CA,0x22A4,0x0113,0x0227));	// Zak 109
-	CRCToSound(0xABE0D3B0, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CE,0x22A4,0x0227,0x0113));	// Zak 105
+	CRCToSound(0x5AE9D6A7, V2A_Sound_Special_ZakAirplane(0x00CA,0x22A4,0x0113,0x0227));	// Zak 109
+	CRCToSound(0xABE0D3B0, V2A_Sound_Special_ZakAirplane(0x00CE,0x22A4,0x0227,0x0113));	// Zak 105
 	CRCToSound(0x788CC749, V2A_Sound_Special_Zak71(0x00C8,0x0B37));	// Zak 71
-	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_SteppedPitchbendAndHold(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
-	CRCToSound(0x1304CF20, V2A_Sound_Special_SingleDurationMultiDurations(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false));	// Zak 79
+	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_ZakTram(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
+	CRCToSound(0x1304CF20, V2A_Sound_Special_ManiacTypewriter(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false));	// Zak 79
 	CRCToSound(0xAE68ED91, V2A_Sound_Special_Zak54(0x00D4,0x1A25,0x1E1E,0x0B80,0x01F4));	// Zak 54
 	CRCToSound(0xA4F40F97, V2A_Sound_Unsupported());	// Zak 61
 	CRCToSound(0x348F85CE, V2A_Sound_Unsupported());	// Zak 62
-	CRCToSound(0xD473AB86, V2A_Sound_Special_SingleDurationMultiDurations(0x0122,0x03E8,0x00BE,0x3F,7,(const uint8 *)"\x0F\x0B\x04\x0F\x1E\x0F\x66",false));	// Zak 46
+	CRCToSound(0xD473AB86, V2A_Sound_Special_ManiacTypewriter(0x0122,0x03E8,0x00BE,0x3F,7,(const uint8 *)"\x0F\x0B\x04\x0F\x1E\x0F\x66",false));	// Zak 46
 	CRCToSound(0x84A0BA90, V2A_Sound_Unsupported());	// Zak 110
 	CRCToSound(0x92680D9F, V2A_Sound_Unsupported());	// Zak 32
 	CRCToSound(0xABFFDB02, V2A_Sound_Unsupported());	// Zak 86
