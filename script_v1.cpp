@@ -1294,6 +1294,8 @@ void Scumm::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		res = getVarOrDirectByte(0x80);
+	if(_gameId == GID_ZAK256) /*FIXME: find a better way to implement this */
+		_opcode&=0x3F;
 	switch(_opcode&0x1F) {
 	case 1: /* load script */
 		ensureResourceLoaded(rtScript, res);
@@ -1305,7 +1307,10 @@ void Scumm::o5_resourceRoutines() {
 		ensureResourceLoaded(rtCostume, res);
 		break;
 	case 4: /* load room */
-		ensureResourceLoaded(rtRoom, res);
+		if(_gameId == GID_ZAK256)
+			ensureResourceLoaded(rtScript, res & 0x7F); /*FIXME: missing stuff...*/
+		else
+			ensureResourceLoaded(rtRoom, res);
 		break;
 	case 5: /* nuke script */
 		setResourceCounter(rtScript, res, 0x7F);
