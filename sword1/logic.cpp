@@ -889,12 +889,12 @@ int SwordLogic::fnSetFadeTargetPalette(BsObject *cpt, int32 id, int32 spritePal,
 }
 
 int SwordLogic::fnSetPaletteToFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("fnSetPaletteToFade(xx, %d, %d, %d, %d)", id, c, d, e);
+	SwordEngine::_systemVars.wantFade = true;
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	warning("fnSetPaletteToCut(xx, %d, %d, %d, %d)", id, c, d, e);
+	SwordEngine::_systemVars.wantFade = false;
 	return SCRIPT_CONT;
 }
 

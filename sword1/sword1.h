@@ -46,6 +46,7 @@ struct SystemVars {
 
 	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
 	bool	forceRestart;
+	bool	wantFade;			// when true => fade during scene change, else cut.
 	uint8	playSpeech;
 	uint8   showText;
     uint8	language;

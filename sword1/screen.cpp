@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "system.h"
 #include "menu.h"
+#include "sword1.h"
 
 #define SCROLL_FRACTION 16
 #define MAX_SCROLL_DISTANCE 8
@@ -106,7 +107,7 @@ void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeU
 		memset(_currentPalette, 0, 256 * 4);
 		_system->set_palette(_currentPalette, 0, 256);
 	} else
-		_system->set_palette(_targetPalette, start, length);
+		_system->set_palette(_targetPalette + 4 * start, start, length);
 }
 
 void SwordScreen::refreshPalette(void) {
@@ -259,8 +260,8 @@ void SwordScreen::newScreen(uint32 screen) {
 	if (_roomDefTable[_currentScreen].parallax[1])
 		_parallax[1] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].parallax[1]);
 
-	fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], true);
-	fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], true);
+	fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], SwordEngine::_systemVars.wantFade);
+	fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], SwordEngine::_systemVars.wantFade);
 }
 
 void SwordScreen::quitScreen(void) {

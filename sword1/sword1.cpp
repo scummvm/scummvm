@@ -159,6 +159,7 @@ void SwordEngine::reinitialize(void) {
 	_objectMan->initialize(); // resources which have just been wiped.
 	_mouse->initialize();
 	// todo: reinitialize swordmenu.
+	_systemVars.wantFade = true;
 }
 
 void SwordEngine::startPositions(int32 startNumber) {
@@ -1116,9 +1117,8 @@ uint8 SwordEngine::mainLoop(void) {
 			// do something smart here to implement pausing the game. If we even want that, that is.
 		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) && (retCode == 0));
         
-		if (retCode == 0) {
-			if (SwordLogic::_scriptVars[SCREEN] != 53) // we don't fade down after syria pan (53).
-				_screen->fadeDownPalette();
+		if ((retCode == 0) && (SwordLogic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade) {
+			_screen->fadeDownPalette();
 			while (_screen->stillFading()) {
 				_music->stream();
 				_screen->updateScreen();
