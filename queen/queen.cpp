@@ -124,7 +124,8 @@ void QueenEngine::roomChanged() {
 
 			Cutaway::run("cdint.cut", nextFilename, _graphics, _logic, _resource);
 
-			// XXX _graphics->panelLoad();
+			// restore palette colors ranging from 144 to 256
+			_graphics->loadPanel();
 			
 			Cutaway::run("cred.cut",  nextFilename, _graphics, _logic, _resource);
 		}
