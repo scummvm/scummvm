@@ -25,7 +25,7 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "systimer.h"
+#include "timer.h"
 #include "yslib.h"
 
 #include "actor_mod.h"

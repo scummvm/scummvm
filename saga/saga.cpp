@@ -34,7 +34,7 @@
 
 #include "reinherit.h"
 
-#include "systimer.h"
+#include "timer.h"
 
 #include "rscfile_mod.h"
 #include "render_mod.h"

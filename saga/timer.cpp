@@ -25,7 +25,7 @@
 
 #include <SDL.h>
 
-#include "systimer.h"
+#include "timer.h"
 
 namespace Saga {
 
