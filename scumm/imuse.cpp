@@ -1449,7 +1449,8 @@ int IMuseInternal::set_master_volume_intern(uint vol)
 	_master_volume = vol;
 	for (int i = 0; i != 8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i] + 1) * vol >> 7;
-	update_volumes();
+	if (!_paused)
+		update_volumes();
 
 	return 0;
 }
