@@ -62,7 +62,7 @@ protected:
 
 	struct {
 		int16 sound;
-		int16 offset;
+		int32 offset;
 		int16 channel;
 		int16 flags;
 	} _soundQue2[10];
