@@ -110,10 +110,10 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* 34 */
+		OPCODE(o72_findAllObjects),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown37),
 		/* 38 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -505,6 +505,7 @@ void ScummEngine_v90he::o90_unknown25() {
 
 void ScummEngine_v90he::o90_unknown26() {
 	// Incomplete
+	int args[16];
 	int subOp = fetchScriptByte();
 	subOp -= 34;
 
@@ -537,6 +538,8 @@ void ScummEngine_v90he::o90_unknown26() {
 			break;
 		case 23:
 			pop();
+			if (_heversion >= 98)
+				pop();
 			break;
 		case 29:
 			pop();
@@ -557,6 +560,9 @@ void ScummEngine_v90he::o90_unknown26() {
 			break;
 		case 90:
 			pop();
+			break;
+		case 91:
+			getStackList(args, ARRAYSIZE(args));
 			break;
 		case 124:
 			break;
@@ -674,6 +680,50 @@ void ScummEngine_v90he::o90_unknown29() {
 	push(0);
 
 	debug(1,"o90_unknown29 stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_unknown37() {
+	int data, dim1start, dim1end, dim2start, dim2end;
+	int type = fetchScriptByte();
+
+	switch (type) {
+	case 2:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 3:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 4:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 6:
+		data = kDwordArray;
+		break;
+	case 7:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	default:
+		error("o90_unknown37: default case %d", type);
+	}
+
+	if (pop() == 2) {
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
+	} else {
+		dim2end = pop();
+		dim2start = pop();
+		dim1end = pop();
+		dim1start = pop();
+	}
+
+	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
+
+	debug(1,"o90_unknown37 stub");
 }
 
 } // End of namespace Scumm
