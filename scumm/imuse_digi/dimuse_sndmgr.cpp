@@ -565,8 +565,8 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 		char fileName[24];
 		sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
 		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {
-			int32 offset = 0, size = 0;
-			File *oggFile = soundHandle->bundle->getFile(fileName, offset, size);
+			int32 offs = 0, size = 0;
+			File *oggFile = soundHandle->bundle->getFile(fileName, offs, size);
 			if (!soundHandle->compressedStream) {
 				soundHandle->compressedStream = makeVorbisStream(oggFile, size);
 				assert(soundHandle->compressedStream);
