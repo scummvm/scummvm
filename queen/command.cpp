@@ -1227,9 +1227,10 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 	}
 
 	if (ret > 0) {
+		debug(0, "Command::setConditions() - Failed test %X", ret);
 		// we've failed, so see if we need to make Joe speak
 		cmdGs = &_cmdGameState[ret];
-		if (cmdGs->gameStateValue > 0 && lastCmd) {
+		if (cmdGs->speakValue > 0 && lastCmd) {
 			// check to see if fail state is in fact a cutaway
 			const char *objDesc = _logic->objectTextualDescription(cmdGs->speakValue);
 			if (!executeIfCutaway(objDesc) && !executeIfDialog(objDesc)) {
