@@ -277,7 +277,7 @@ public:
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 	
-	void copyVirtScreenBuffers(const Common::Rect &rect);
+	void copyVirtScreenBuffers(Common::Rect rect);
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }

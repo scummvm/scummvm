@@ -230,14 +230,22 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 		}
 		int h = r1.height();
 		int w = r1.width();
+		if (srcx < 0) {
+			src -= srcx;
+		}
+		if (srcy < 0) {
+			src -= srcy * srcw;
+		}
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
+			const uint8 *p = src;
 			for (int i = 0; i < w; ++i) {
-				uint8 col = *src++;
+				uint8 col = *p++;
 				if (transColor == -1 || transColor != col) {
 					dst[i] = palPtr[col];
 				}
 			}
+			src += srcw;
 			dst += dstw;
 		}
 	}
@@ -355,101 +363,88 @@ dec_next:
 }
 
 int Wiz::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h) {
-	int ret = 0;
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return 0;
+	}
 	while (y != 0) {
 		data += READ_LE_UINT16(data) + 2;
 		--y;
 	}
 	uint16 off = READ_LE_UINT16(data); data += 2;
-	if (off != 0) {
-		if (x == 0) {
-			ret = (~*data) & 1;			
+	if (off == 0) {
+		return 0;
+	}
+	while (x > 0) {
+		uint8 code = *data++;
+		if (code & 1) {
+			code >>= 1;
+			if (code > x) {
+				return 0;
+			}
+			x -= code;
+		} else if (code & 2) {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return 1;
+			}
+			x -= code;
+			++data;
 		} else {
-			do {
-				uint8 code = *data++;
-				if (code & 1) {
-					code >>= 1;
-					if (code > x) {
-						ret = 0;
-						break;
-					}
-					x -= code;
-				} else if (code & 2) {
-					code = (code >> 2) + 1;
-					if (code > x) {
-						ret = 1;
-						break;
-					}
-					x -= code;
-					++data;
-				} else {
-					code = (code >> 2) + 1;
-					if (code > x) {
-						ret = 1;
-						break;
-					}
-					x -= code;
-					data += code;
-				}				
-			} while (x > 0);
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return 1;
+			}
+			x -= code;
+			data += code;
 		}
 	}
-	return ret;
+	return (~data[0]) & 1;
 }
 
 uint8 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
-	uint8 c = color;
-	if (x >= 0 && x < w && y >= 0 && y < h) {
-		while (y != 0) {
-			data += READ_LE_UINT16(data) + 2;
-			--y;
-		}
-		uint16 off = READ_LE_UINT16(data); data += 2;
-		if (off != 0) {
-			if (x == 0) {
-				c = (*data & 1) ? color : *data;
-			} else {
-				do {
-					uint8 code = *data++;
-					if (code & 1) {
-						code >>= 1;
-						if (code > x) {
-							c = color;
-							break;
-						}
-						x -= code;
-					} else if (code & 2) {
-						code = (code >> 2) + 1;
-						if (code > x) {
-							c = *data;
-							break;
-						}
-						x -= code;
-						++data;
-					} else {
-						code = (code >> 2) + 1;
-						if (code > x) {
-							c = *(data + x);
-							break;
-						}
-						x -= code;
-						data += code;
-					}				
-				} while (x > 0);
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return color;
+	}
+	while (y != 0) {
+		data += READ_LE_UINT16(data) + 2;
+		--y;
+	}
+	uint16 off = READ_LE_UINT16(data); data += 2;
+	if (off == 0) {
+		return color;
+	}
+	while (x > 0) {
+		uint8 code = *data++;
+		if (code & 1) {
+			code >>= 1;
+			if (code > x) {
+				return color;
 			}
+			x -= code;
+		} else if (code & 2) {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return data[0];
+			}
+			x -= code;
+			++data;
+		} else {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return data[x];
+			}
+			x -= code;
+			data += code;
 		}
 	}
-	return c;
+	return (data[0] & 1) ? color : data[1];
 }
 
 uint8 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
-	uint8 c;
-	if (x >= 0 && x < w && y >= 0 && y < h) {
-		c = data[y * w + x];
-	} else {
-		c = color;
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return color;
 	}
-	return c;
+	return data[y * w + x];
 }
 
 void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect) {
@@ -1215,6 +1210,114 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	}
 }
 
+void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
+	debug(1, "ScummEngine_v90he::createWizEmptyImage(%d, %d, %d)", params->img.resNum, params->resDefImgW, params->resDefImgH);
+	int img_w = 640;
+	if (params->processFlags & 0x2000) {
+		img_w = params->resDefImgW;
+	}
+	int img_h = 480;
+	if (params->processFlags & 0x4000) {
+		img_h = params->resDefImgH;
+	}
+	int img_x = 0;
+	int img_y = 0;
+	if (params->processFlags & 1) {
+		img_x = params->img.x1;
+		img_y = params->img.y1;
+	}
+	const uint16 flags = 0xB;
+	int res_size = 0x1C;
+	if (flags & 1) {
+		res_size += 0x308;
+	}
+	if (flags & 2) {
+		res_size += 0x10;
+	}
+	if (flags & 8) {
+		res_size += 0x10C;
+	}
+	res_size += 8 + img_w * img_h;
+	
+	uint8 *res_data = createResource(rtImage, params->img.resNum, res_size);
+	if (!res_data) {
+		VAR(119) = -1;
+	} else {
+		VAR(119) = 0;
+		WRITE_BE_UINT32(res_data, 'AWIZ'); res_data += 4;
+		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
+		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
+		WRITE_BE_UINT32(res_data, 0x14); res_data += 4;
+		WRITE_LE_UINT32(res_data, 0); res_data += 4;
+		WRITE_LE_UINT32(res_data, img_w); res_data += 4;
+		WRITE_LE_UINT32(res_data, img_h); res_data += 4;
+		if (flags & 1) {
+			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
+			memcpy(res_data, _currentPalette, 0x300); res_data += 0x300;			
+		}
+		if (flags & 2) {
+			WRITE_BE_UINT32(res_data, 'SPOT'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10); res_data += 4;
+			WRITE_BE_UINT32(res_data, img_x); res_data += 4;
+			WRITE_BE_UINT32(res_data, img_y); res_data += 4;
+		}
+		if (flags & 8) {
+			WRITE_BE_UINT32(res_data, 'RMAP'); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10C); res_data += 4;
+			WRITE_BE_UINT32(res_data, 0); res_data += 4;
+			for (int i = 0; i < 0x100; ++i) {
+				*res_data++ = i;
+			}
+		}
+		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
+		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
+	}
+}
+
+void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
+	int state = 0;
+	if (params->processFlags & 0x400) {
+		state = params->img.state;
+	}
+	uint8 *dataPtr = getResourceAddress(rtImage, params->img.resNum);
+	if (dataPtr) {	
+		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+		assert(wizh);
+		uint32 ic = READ_LE_UINT32(wizh + 0x0);
+		uint32 iw = READ_LE_UINT32(wizh + 0x4);
+		uint32 ih = READ_LE_UINT32(wizh + 0x8);
+		assert(ic == 0 || ic == 2 || ic == 3);	
+		Common::Rect r1(iw, ih);
+		if (params->processFlags & 0x200) {
+			if (!r1.intersects(params->box)) {
+				return;
+			}
+			r1.clip(params->box);
+		}
+		if (params->processFlags & 0x40000) {
+			r1.clip(params->box2);
+		}
+		uint8 color;
+		if (params->processFlags & 0x20000) {
+			color = params->fillColor;
+		} else {
+			color = VAR(93);
+		}
+		/*
+		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+		assert(wizd);
+		int dx = r1.width();
+		int dy = r1.height();
+		wizd += r1.top * iw + r1.left;
+		while (dy--) {
+			memset(wizd, color, dx);
+			wizd += iw;
+		} 
+		*/	
+}
+}
+
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	debug(1, "ScummEngine_v90he::processWizImage()");
 	switch (params->processMode) {
@@ -1272,15 +1375,11 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			}
 		}
 		break;
-	case 6:
-	// HE 99+
-	case 7:
 	case 8:
+		createWizEmptyImage(params);
+		break;
 	case 9:
-	case 10:
-	case 11:
-	case 12:
-		warning("unhandled processWizImage mode %d", params->processMode);
+		fillWizRect(params);
 		break;
 	default:
 		warning("invalid processWizImage mode %d", params->processMode);

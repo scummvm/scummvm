@@ -1454,11 +1454,36 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	}
 }
 
-void Gdi::copyVirtScreenBuffers(const Common::Rect &rect) {
+void Gdi::copyVirtScreenBuffers(Common::Rect rect) {
+	byte *src, *dst;
+	VirtScreen *vs = &_vm->virtscr[0];
+
+	debug(1,"copyVirtScreenBuffers: Left %d Right %d Top %d Bottom %d", rect.left, rect.right, rect.top, rect.bottom);
+
+	if (rect.top > vs->h || rect.bottom < 0)
+		return;
+
+	if (rect.left > vs->w || rect.right < 0)
+		return;
+
+	rect.left = MAX(0, (int)rect.left);
+	rect.left = MIN((int)rect.left, (int)vs->w - 1);
+
+	rect.right = MAX(0, (int)rect.right);
+	rect.right = MIN((int)rect.right, (int)vs->w);
+
+	rect.top = MAX(0, (int)rect.top);
+	rect.top = MIN((int)rect.top, (int)vs->h - 1);
+
+	rect.bottom = MAX(0, (int)rect.bottom);
+	rect.bottom = MIN((int)rect.bottom, (int)vs->h);
+
 	const int rw = rect.width();
 	const int rh = rect.height();
-	byte *src, *dst;
 	
+	if (rw == 0 || rh == 0)
+		return;
+
 	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);
 	dst = _vm->virtscr[0].getPixels(rect.left, rect.top);
 	
