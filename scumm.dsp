@@ -303,14 +303,6 @@ SOURCE=.\scumm\costume.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\debug.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\debug.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\debugger.cpp
 # End Source File
 # Begin Source File
