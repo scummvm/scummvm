@@ -318,8 +318,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 }
 
 int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final) {
-	int32 i = 0;
-	int tag, num, final_size;
+	int final_size;
 	byte *comp_input;
 
 	if (_musicFile.isOpen() == false) {
@@ -328,6 +327,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	}
 
 	if (_lastSong != index) {
+		int i, tag, num;
 		_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
 		tag = _musicFile.readUint32BE();
 		num = _musicFile.readUint32BE();

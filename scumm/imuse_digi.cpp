@@ -1294,7 +1294,7 @@ void IMuseDigital::bundleMusicHandler() {
 
 	ptr = _musicBundleBufOutput;
 
-	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
+	for (k = 0, l = _currentSampleBundleMusic; l < num && (_offsetSampleBundleMusic < _outputMixerSize + header_size); k++) {
 		length = _bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
 		_offsetSampleBundleMusic += length;
 
@@ -1338,13 +1338,13 @@ void IMuseDigital::bundleMusicHandler() {
 		l++;
 		_currentSampleBundleMusic = l;
 
-		if (_offsetSampleBundleMusic >= _outputMixerSize + header_size) {
-			memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), _outputMixerSize);
-			_offsetBufBundleMusic = _offsetSampleBundleMusic - _outputMixerSize - header_size;
-			memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (_outputMixerSize + header_size)), _offsetBufBundleMusic);
-			_offsetSampleBundleMusic = _offsetBufBundleMusic;
-			break;
-		}
+	}
+
+	if (_offsetSampleBundleMusic >= _outputMixerSize + header_size) {
+		memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), _outputMixerSize);
+		_offsetBufBundleMusic = _offsetSampleBundleMusic - _outputMixerSize - header_size;
+		memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (_outputMixerSize + header_size)), _offsetBufBundleMusic);
+		_offsetSampleBundleMusic = _offsetBufBundleMusic;
 	}
 
 	if (_currentSampleBundleMusic == num) {
