@@ -1577,8 +1577,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 				} else
 #endif	// _SWORD2_DEBUG
 				{
-					strcpy(speechFile, g_sword2->getGameDataPath());
-					strcat(speechFile,"speech.clu");
+					strcpy(speechFile,"speech.clu");
 				}
 			}
  			//------------------------------

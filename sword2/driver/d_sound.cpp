@@ -359,6 +359,7 @@
 #include "driver96.h"
 #include "rdwin.h"			// for hwnd.
 #include "d_sound.h"
+#include "../sword2.h"
 
 // Decompression macros
 #define MakeCompressedByte(shift,sign,amplitude) (((shift)<<4) + ((sign)<<3) + (amplitude))
@@ -982,7 +983,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 	uint8			*data8;
 	uint32			speechIndex[2];
 	void 			*lpv1;
-	FILE		   *fp;
+	File fp;
 	uint32	bufferSize;
 	
 	if (!speechMuted)
@@ -991,25 +992,26 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			return RDERR_SPEECHPLAYING;
 
 	    //  Open the speech cluster and find the data offset & size
-		fp = fopen(filename, "rb");
-		if (fp == NULL) 
+		if (fp.open(filename, g_sword2->getGameDataPath()) == false)
 			return(RDERR_INVALIDFILENAME);
-		
-		if (fseek(fp, (++speechid) * 8, SEEK_SET))
+	/*	FIXME ? our fseek returns void not int
+		if (fp.seek((++speechid) * 8, SEEK_SET))
 		{
-			fclose(fp);
+			fp.close();
 			return (RDERR_READERROR);
 		}
-
-		if (fread(speechIndex, sizeof(uint32), 2, fp) != 2)
+	*/
+		fp.seek((++speechid) * 8, SEEK_SET);
+		
+		if (fp.read(speechIndex, sizeof(uint32) * 2) != (2 * sizeof(uint32)))
 		{
-			fclose(fp);
+			fp.close();
 			return (RDERR_READERROR);
 		}
 
 		if (speechIndex[0] == 0 || speechIndex[1] == 0)
 		{
-			fclose(fp);
+			fp.close();
 			return (RDERR_INVALIDID);
 		}
 
@@ -1018,25 +1020,27 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		// Create tempory buffer for compressed speech
 		if ((data8 = (uint8 *)malloc(speechIndex[1])) == NULL)
 		{
-			fclose(fp);
+			fp.close();
 			return(RDERR_OUTOFMEMORY);
 		}
-
-		if (fseek(fp, speechIndex[0], SEEK_SET))
+	/* FIXME ? see above
+		if (fp.seek(speechIndex[0], SEEK_SET))
 		{
-			fclose(fp);
+			fp.close();
+			free(data8);
+			return (RDERR_INVALIDID);
+		}
+	*/
+		fp.seek(speechIndex[0], SEEK_SET);
+
+		if (fp.read(data8, sizeof(uint8) * speechIndex[1]) != (speechIndex[1] * sizeof(uint8)))
+		{
+			fp.close();
 			free(data8);
 			return (RDERR_INVALIDID);
 		}
 
-		if (fread(data8, sizeof(uint8), speechIndex[1], fp) != speechIndex[1])
-		{
-			fclose(fp);
-			free(data8);
-			return (RDERR_INVALIDID);
-		}
-
-		fclose(fp);
+		fp.close();
 
 		//	Create the speech sample buffer
 		/*
