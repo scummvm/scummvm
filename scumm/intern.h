@@ -716,7 +716,7 @@ protected:
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
 
-	int findObject(int x, int y, int *args);
+	int findObject(int x, int y, int num, int *args);
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst);

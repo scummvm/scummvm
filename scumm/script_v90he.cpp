@@ -1067,9 +1067,8 @@ void ScummEngine_v90he::o90_mod() {
 
 void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 	int args[16];
-	int num, cls, tmp;
+	int cond, num, cls, tmp;
 	bool b;
-	int cond = 1;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int room = pop();
@@ -1077,6 +1076,7 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 
 	if (room != _currentRoom)
 		warning("o90_findAllObjectsWithClassOf: current room is not %d", room);
+
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
 	for (int i = 1; i < _numLocalObjects; i++) {

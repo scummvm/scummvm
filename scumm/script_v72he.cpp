@@ -592,33 +592,58 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	*dst = 0;
 }
 
-int ScummEngine_v72he::findObject(int x, int y, int *args) {
-	int i, b;
+int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
+	int i, b, result;
+	int cond, cls, tmp;
 	byte a;
 	const int mask = 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
+		result = 0;
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
+		// Check polygon bounds
 		if (polygonDefined(_objs[i].obj_nr)) {
 			if (polygonHit(_objs[i].obj_nr, x, y) != 0)
-				return _objs[i].obj_nr;
+				result = _objs[i].obj_nr;
 			else if (VAR(VAR_POLYGONS_ONLY))
 				continue;
 		}
 
-		b = i;
-		do {
-			a = _objs[b].parentstate;
-			b = _objs[b].parent;
-			if (b == 0) {
-				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
-					return _objs[i].obj_nr;
-				break;
+		if (!result) {
+			// Check object bounds
+			b = i;
+			do {
+				a = _objs[b].parentstate;
+				b = _objs[b].parent;
+				if (b == 0) {
+					if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+					    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+						result = _objs[i].obj_nr;
+					break;
+				}
+			} while ((_objs[b].state & mask) == a);
+		}
+
+
+		if (result) {
+			if (!num)
+				return result;
+
+			// Check object class
+			cond = 1;
+			tmp = num;
+			while (--tmp >= 0) {
+				cls = args[tmp];
+				b = getClass(i, cls);
+				if ((cls & 0x80 && !b) || (!(cls & 0x80) && b))
+					cond = 0;
 			}
-		} while ((_objs[b].state & mask) == a);
+
+			if (cond)
+				return result;
+		}
 	}
 
 	return 0;
@@ -707,12 +732,12 @@ void ScummEngine_v72he::o72_unknown50() {
 }
 
 void ScummEngine_v72he::o72_findObjectWithClassOf() {
-	int args[16];
+	int args[16], num;
 
-	getStackList(args, ARRAYSIZE(args));
+	num = getStackList(args, ARRAYSIZE(args));
 	int y = pop();
 	int x = pop();
-	int r = findObject(x, y, args);
+	int r = findObject(x, y, num, args);
 	push(r);
 }
 
@@ -1338,7 +1363,7 @@ void ScummEngine_v72he::o72_verbOps() {
 void ScummEngine_v72he::o72_findObject() {
 	int y = pop();
 	int x = pop();
-	int r = findObject(x, y, 0);
+	int r = findObject(x, y, 0, 0);
 	push(r);
 }
 
@@ -1417,16 +1442,18 @@ void ScummEngine_v72he::o72_arrayOps() {
 		len |= dim2end;
 		len = len - dim2end + 1;
 		offs = (b >= c) ? 1 : -1;
+		tmp2 = c;
+		tmp3 = len;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
-			tmp2 = c;
-			tmp3 = len;
 			while (tmp <= dim1end) {
 				writeArray(array, dim2start, tmp, tmp2);
-				if (--tmp3 == 0)
+				if (--tmp3 == 0) {
 					tmp2 = c;
-				else
+					tmp3 = len;
+				} else {
 					tmp2 += offs;
+				}
 				tmp++;
 			}
 			dim2start++;
