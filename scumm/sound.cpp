@@ -583,6 +583,8 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
+		} else if (_vm->_heversion >= 70) {
+			finished = !isSoundRunning(1);
 		} else {
 			finished = !_vm->_mixer->isSoundHandleActive(_talkChannelHandle);
 		}
