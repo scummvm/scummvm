@@ -1663,7 +1663,7 @@ void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
 	assert(rw <= _vm->_screenWidth && rw > 0);
 	assert(rh <= _vm->_screenHeight && rh > 0);
 	blit(dst, _vm->virtscr[0].pitch, src, _vm->virtscr[0].pitch, rw, rh);
-	_vm->markRectAsDirty(kMainVirtScreen, rect);
+	_vm->markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
 
 /**
