@@ -537,6 +537,10 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 	// TODO: Play the voice-over sounds.
 
+	// Do we really need to pre-cache the text sprites and speech data
+	// like this? It'd be simpler to just store the text id and construct
+	// the data as we go along.
+
 	if (text) {
 		uint8 oldPal[1024];
 		uint8 tmpPal[1024];
@@ -550,8 +554,11 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		int textCounter = 0;
 
 		// Fake a palette that will hopefully make the text visible.
-		// In the opening cutscene it seems to use colours 1 (black)
-		// and 255 (white).
+		// In the opening cutscene it seems to use colours 1 (black?)
+		// and 255 (white?).
+		//
+		// The text should probably be colored the same as the rest of
+		// the in-game text.
 
 		memcpy(oldPal, palCopy, 1024);
 		memset(tmpPal, 0, 1024);
@@ -568,6 +575,8 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 				EraseBackBuffer();
 				OpenTextObject(text[textCounter]);
 				DrawTextObject(text[textCounter]);
+				if (text[textCounter]->speech)
+					debug(0, "FIXME: Play subtitle speech");
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
@@ -582,10 +591,14 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			char key;
 
-			if (ReadKey(&key) == RD_OK && key == 27)
+			if (ReadKey(&key) == RD_OK && key == 27) {
+				// StopWavSpeech()
 				break;
+			}
 
-			// Simulate ~12 frames per second.
+			// Simulate ~12 frames per second. I don't know what
+			// frame rate the original movies had, or even if it
+			// was constant, but this seems to work reasonably.
 			g_system->delay_msecs(80);
 		}
 
