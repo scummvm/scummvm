@@ -175,234 +175,235 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
-	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
+	debug(3, "playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
-	if (ptr) {
-		if (READ_UINT32(ptr) == MKID('iMUS')){
-			assert(_scumm->_imuseDigital);
-			_scumm->_imuseDigital->startSound(soundID);
-			return;
-		}
-		else if (READ_UINT32(ptr) == MKID('Crea')) {
-			assert(_scumm->_imuseDigital);
-			_scumm->_imuseDigital->startSound(soundID);
-			return;
-		}
-		else if (READ_UINT32(ptr) == MKID('SOUN')) {
-			ptr += 24;
-			int track = ptr[0];
-			int loops = ptr[1];
-			int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-			_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
-			playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
-
-			_currentCDSound = soundID;
-			return;
-		}
-		// Support for SFX in Monkey Island 1, Mac version
-		// This is rather hackish right now, but works OK. SFX are not sounding
-		// 100% correct, though, not sure right now what is causing this.
-		else if (READ_UINT32(ptr) == MKID('Mac1')) {
-
-			// Read info from the header
-			size = READ_BE_UINT32(ptr+0x60);
-			rate = READ_BE_UINT32(ptr+0x64) >> 16;
-
-			// Skip over the header (fixed size)
-			ptr += 0x72;
-
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-			return;
-		}
-		// Support for Putt-Putt sounds - very hackish, too 8-)
-		else if (READ_UINT32(ptr) == MKID('DIGI')) {
-			// TODO - discover what data the first chunk, HSHD, contains
-			// it might be useful here.
-			ptr += 8 + READ_BE_UINT32(ptr+12);
-			if (READ_UINT32(ptr) != MKID('SDAT'))
-				return;	// abort
-
-			size = READ_BE_UINT32(ptr+4) - 8;
-			// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
-			rate = 11025;
-
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr + 8, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-			return;
-		}
-		else if (READ_UINT32(ptr) == MKID('MRAW')) {
-			// pcm music in 3DO humongous games
-			// TODO play via imuse so isSoundRunning can properly report music value?
-			ptr += 8 + READ_BE_UINT32(ptr+12);
-			if (READ_UINT32(ptr) != MKID('SDAT'))
-				return;
-	
-			size = READ_BE_UINT32(ptr+4) - 8;
-			rate = 22050;
-			flags = SoundMixer::FLAG_AUTOFREE;
-
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr + 8, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-			
-			return;
-		}	
-		// XMIDI 
-		else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
-			// Pass XMIDI on to IMuse unprocessed.
-			// IMuse can handle XMIDI resources now.
-		}
-		else if (READ_UINT32(ptr) == MKID('ADL ')) {
-			// played as MIDI, just to make perhaps the later use
-			// of WA possible (see "else if" with GF_OLD256 below)
-		}
-		// Support for sampled sound effects in Monkey Island 1 and 2
-		else if (READ_UINT32(ptr) == MKID('SBL ')) {
-			debug(2, "Using SBL sound effect");
-
-			// TODO - Figuring out how the SBL chunk works. Here's
-			// an example:
-			//
-			// 53 42 4c 20 00 00 11 ae  |SBL ....|
-			// 41 55 68 64 00 00 00 03  |AUhd....|
-			// 00 00 80 41 55 64 74 00  |...AUdt.|
-			// 00 11 9b 01 96 11 00 a6  |........|
-			// 00 7f 7f 7e 7e 7e 7e 7e  |...~~~~~|
-			// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
-			// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
-			// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
-			//
-			// The length of the AUhd chunk always seems to be 3
-			// bytes. Let's skip that for now.
-			//
-			// The starting offset, length and sample rate is all
-			// pure guesswork. The result sounds reasonable to me,
-			// but I've never heard the original.
-			//
-			// I've since discovered that the non-interactive
-			// Sam & Max demo also uses SBL sound effects, but
-			// with different sub-chunks. Example:
-			//
-			// 53 42 4c 20 00 01 15 6e  |SBL ...n|
-			// 57 56 68 64 00 00 00 03  |WVhd....|
-			// 00 00 80 57 56 64 74 00  |...WVdt.|
-			// 01 15 5b 01 56 15 01 a6  |..[.V...|
-			// 00 80 80 80 80 80 80 80  |........|
-			// 80 80 80 80 80 80 80 80  |........|
-			// 80 80 80 80 80 80 80 80  |........|
-			// 80 80 80 80 80 80 80 80  |........|
-			//
-			// I'm going to assume that the sample frequency is
-			// the only important difference between the two.
-
-			// FIXME: SBL resources are apparently horribly
-			// distorted on segacd even though it shares the same
-			// header etc. So don't try to play them for now.
-			if (_scumm->_gameId == GID_MONKEY_SEGA)	{
-				return;
-			}
-	
-			if (READ_UINT32(ptr + 8) == MKID('WVhd'))
-				rate = 11025;
-			else
-				rate = 8000;
-
-			size = READ_BE_UINT32(ptr + 4) - 27;
-
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr + 33, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-			return;
-		} else if (_scumm->_features & GF_FMTOWNS) {
-			size = READ_LE_UINT32(ptr);
-			rate = 11025;
-			int type = *(ptr + 0x0D);
-
-			switch(type) {
-				case 0:	{ // Sound effect
-					int numInstruments = *(ptr + 0x14);
-					ptr += 0x16;
-					size -= 0x16;
-					while (numInstruments--) {
-						int waveSize = READ_LE_UINT32(ptr + 0x0C);
-						int loopStart = READ_LE_UINT32(ptr + 0x10);
-						int loopEnd = READ_LE_UINT32(ptr + 0x14);
-						// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
-						rate = READ_LE_UINT32(ptr + 0x18) * 10;
-
-						ptr += 0x20;
-						size -= 0x20;
-						if (size < waveSize) {
-							warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-							waveSize = size;
-						}
-						sound = (char *)malloc(waveSize);
-						for (int x = 0; x < waveSize; x++) {
-							int bit = *ptr++;
-							if (bit < 0x80)
-								sound[x] = 0x7F - bit;
-							else
-								sound[x] = bit;
-						}
-						size -= waveSize;
-	
-						if (loopEnd > 0)
-							flags |= SoundMixer::FLAG_LOOP;
-
-						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
-					}
-					break;
-				}
-
-				case 1: { // Music (Euphony format)
-					int numInstruments = *(ptr + 0x14);
-					int tuneSize = 0, tempo = 0;
-
-					ptr += (0x16 + (numInstruments * 48));	// Skip instrument definitions
-					ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
-					ptr += 8;	// (Unknown)
-					
-					ptr += 6;	// Instrument channel's. Always 6 bytes according to the disassembly.
-
-					tuneSize = READ_LE_UINT32(ptr);
-					ptr += 5;
-
-					tempo = *ptr++;
-					ptr += 2;
-					// Music data begins here
-
-					warning("Euphony tune #%d unsupported", soundID);
-					break;
-				}
-			
-				case 2: { // CD track resource
-					ptr += 0x16;
-					int track = ptr[0];
-					int loops = ptr[1];
-					int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
-					int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
-
-					if (soundID == _currentCDSound)
-						if (pollCD() == 1)
-							return;
-
-					playCDTrack(track, loops == 0xff ? -1 : loops, start, end - start);
-					_currentCDSound = soundID;
-					break;
-				}			
-			}
-			return;
-		}
-	
+	if (!ptr) {
+		// FIXME: Should we replace this by an assert, and/or print an error message?
+		return;
 	}
-	
+	if (READ_UINT32(ptr) == MKID('iMUS')){
+		assert(_scumm->_imuseDigital);
+		_scumm->_imuseDigital->startSound(soundID);
+		return;
+	}
+	else if (READ_UINT32(ptr) == MKID('Crea')) {
+		assert(_scumm->_imuseDigital);
+		_scumm->_imuseDigital->startSound(soundID);
+		return;
+	}
+	else if (READ_UINT32(ptr) == MKID('SOUN')) {
+		ptr += 24;
+		int track = ptr[0];
+		int loops = ptr[1];
+		int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+		_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
+		playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
+
+		_currentCDSound = soundID;
+		return;
+	}
+	// Support for SFX in Monkey Island 1, Mac version
+	// This is rather hackish right now, but works OK. SFX are not sounding
+	// 100% correct, though, not sure right now what is causing this.
+	else if (READ_UINT32(ptr) == MKID('Mac1')) {
+
+		// Read info from the header
+		size = READ_BE_UINT32(ptr+0x60);
+		rate = READ_BE_UINT32(ptr+0x64) >> 16;
+
+		// Skip over the header (fixed size)
+		ptr += 0x72;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		return;
+	}
+	// Support for Putt-Putt sounds - very hackish, too 8-)
+	else if (READ_UINT32(ptr) == MKID('DIGI')) {
+		// TODO - discover what data the first chunk, HSHD, contains
+		// it might be useful here.
+		ptr += 8 + READ_BE_UINT32(ptr+12);
+		if (READ_UINT32(ptr) != MKID('SDAT'))
+			return;	// abort
+
+		size = READ_BE_UINT32(ptr+4) - 8;
+		// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
+		rate = 11025;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr + 8, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		return;
+	}
+	else if (READ_UINT32(ptr) == MKID('MRAW')) {
+		// pcm music in 3DO humongous games
+		// TODO play via imuse so isSoundRunning can properly report music value?
+		ptr += 8 + READ_BE_UINT32(ptr+12);
+		if (READ_UINT32(ptr) != MKID('SDAT'))
+			return;
+
+		size = READ_BE_UINT32(ptr+4) - 8;
+		rate = 22050;
+		flags = SoundMixer::FLAG_AUTOFREE;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr + 8, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		
+		return;
+	}	
+	// XMIDI 
+	else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
+		// Pass XMIDI on to IMuse unprocessed.
+		// IMuse can handle XMIDI resources now.
+	}
+	else if (READ_UINT32(ptr) == MKID('ADL ')) {
+		// played as MIDI, just to make perhaps the later use
+		// of WA possible (see "else if" with GF_OLD256 below)
+	}
+	// Support for sampled sound effects in Monkey Island 1 and 2
+	else if (READ_UINT32(ptr) == MKID('SBL ')) {
+		debug(2, "Using SBL sound effect");
+
+		// TODO - Figuring out how the SBL chunk works. Here's
+		// an example:
+		//
+		// 53 42 4c 20 00 00 11 ae  |SBL ....|
+		// 41 55 68 64 00 00 00 03  |AUhd....|
+		// 00 00 80 41 55 64 74 00  |...AUdt.|
+		// 00 11 9b 01 96 11 00 a6  |........|
+		// 00 7f 7f 7e 7e 7e 7e 7e  |...~~~~~|
+		// 7e 7f 7f 80 80 7f 7f 7f  |~.......|
+		// 7f 80 80 7f 7e 7d 7d 7e  |....~}}~|
+		// 7e 7e 7e 7e 7e 7e 7e 7f  |~~~~~~~.|
+		//
+		// The length of the AUhd chunk always seems to be 3
+		// bytes. Let's skip that for now.
+		//
+		// The starting offset, length and sample rate is all
+		// pure guesswork. The result sounds reasonable to me,
+		// but I've never heard the original.
+		//
+		// I've since discovered that the non-interactive
+		// Sam & Max demo also uses SBL sound effects, but
+		// with different sub-chunks. Example:
+		//
+		// 53 42 4c 20 00 01 15 6e  |SBL ...n|
+		// 57 56 68 64 00 00 00 03  |WVhd....|
+		// 00 00 80 57 56 64 74 00  |...WVdt.|
+		// 01 15 5b 01 56 15 01 a6  |..[.V...|
+		// 00 80 80 80 80 80 80 80  |........|
+		// 80 80 80 80 80 80 80 80  |........|
+		// 80 80 80 80 80 80 80 80  |........|
+		// 80 80 80 80 80 80 80 80  |........|
+		//
+		// I'm going to assume that the sample frequency is
+		// the only important difference between the two.
+
+		// FIXME: SBL resources are apparently horribly
+		// distorted on segacd even though it shares the same
+		// header etc. So don't try to play them for now.
+		if (_scumm->_gameId == GID_MONKEY_SEGA)	{
+			return;
+		}
+
+		if (READ_UINT32(ptr + 8) == MKID('WVhd'))
+			rate = 11025;
+		else
+			rate = 8000;
+
+		size = READ_BE_UINT32(ptr + 4) - 27;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr + 33, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		return;
+	} else if (_scumm->_features & GF_FMTOWNS) {
+		size = READ_LE_UINT32(ptr);
+		rate = 11025;
+		int type = *(ptr + 0x0D);
+
+		switch(type) {
+			case 0:	{ // Sound effect
+				int numInstruments = *(ptr + 0x14);
+				ptr += 0x16;
+				size -= 0x16;
+				while (numInstruments--) {
+					int waveSize = READ_LE_UINT32(ptr + 0x0C);
+					int loopStart = READ_LE_UINT32(ptr + 0x10);
+					int loopEnd = READ_LE_UINT32(ptr + 0x14);
+					// it's not exactly * 10, maybe it's not even linear, but * 10 sounds ok.
+					rate = READ_LE_UINT32(ptr + 0x18) * 10;
+
+					ptr += 0x20;
+					size -= 0x20;
+					if (size < waveSize) {
+						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
+						waveSize = size;
+					}
+					sound = (char *)malloc(waveSize);
+					for (int x = 0; x < waveSize; x++) {
+						int bit = *ptr++;
+						if (bit < 0x80)
+							sound[x] = 0x7F - bit;
+						else
+							sound[x] = bit;
+					}
+					size -= waveSize;
+
+					if (loopEnd > 0)
+						flags |= SoundMixer::FLAG_LOOP;
+
+					_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				}
+				break;
+			}
+
+			case 1: { // Music (Euphony format)
+				int numInstruments = *(ptr + 0x14);
+				int tuneSize = 0, tempo = 0;
+
+				ptr += (0x16 + (numInstruments * 48));	// Skip instrument definitions
+				ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
+				ptr += 8;	// (Unknown)
+				
+				ptr += 6;	// Instrument channel's. Always 6 bytes according to the disassembly.
+
+				tuneSize = READ_LE_UINT32(ptr);
+				ptr += 5;
+
+				tempo = *ptr++;
+				ptr += 2;
+				// Music data begins here
+
+				warning("Euphony tune #%d unsupported", soundID);
+				break;
+			}
+		
+			case 2: { // CD track resource
+				ptr += 0x16;
+				int track = ptr[0];
+				int loops = ptr[1];
+				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
+
+				if (soundID == _currentCDSound)
+					if (pollCD() == 1)
+						return;
+
+				playCDTrack(track, loops == 0xff ? -1 : loops, start, end - start);
+				_currentCDSound = soundID;
+				break;
+			}			
+		}
+		return;
+	}
+
 	if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
 		// Mac version of Loom uses yet another sound format
 		/*
@@ -431,7 +432,8 @@ void Sound::playSound(int soundID) {
 
 	// Used in Amiga verisons of indy3ega and loom
 	// Used in Mac. version of indy3ega
-	if (((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
+	if (((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3))
+		|| ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
 		if (ptr[26] == 00) {
 			size = READ_BE_UINT16(ptr + 12);
 			rate = 3579545 / READ_BE_UINT16(ptr + 20);
@@ -452,30 +454,28 @@ void Sound::playSound(int soundID) {
 		}
 	}
 
-	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2)) {
-		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
-			size = READ_BE_UINT16(ptr + 6);
-			int start = READ_BE_UINT16(ptr + 8);
-			start += 10;
-			rate = 11000;
-			int vol = 255;
-			int i = 0;
+	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2) && READ_BE_UINT16(ptr + 14) == 0x0880) {
+		size = READ_BE_UINT16(ptr + 6);
+		int start = READ_BE_UINT16(ptr + 8);
+		start += 10;
+		rate = 11000;
+		int vol = 255;
+		int i = 0;
 
-			while (i < start) {
-				if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 6))
-					rate = 3579545 / READ_BE_UINT16(ptr + 2);
+		while (i < start) {
+			if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 6))
+				rate = 3579545 / READ_BE_UINT16(ptr + 2);
 
-				if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 8))
-					vol = READ_BE_UINT16(ptr + 2) * 4;
-				ptr += 2;
-				i += 2;
-			}
-
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-			return;
+			if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 8))
+				vol = READ_BE_UINT16(ptr + 2) * 4;
+			ptr += 2;
+			i += 2;
 		}
+
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
+		return;
 	}
 
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
@@ -487,17 +487,17 @@ void Sound::playSound(int soundID) {
 		// the music is never explicitly stopped.
 		// Rather it seems that starting a new music is supposed to
 		// automatically stop the old song.
-		if (_scumm->_imuse && ptr) {
+		if (_scumm->_imuse) {
 			if (READ_UINT32(ptr) != MKID('ASFX'))
 				_scumm->_imuse->stop_all_sounds();
 		}
 	}
 
-	if (_scumm->_playerV2)
-		_scumm->_playerV2->startSound (soundID, ptr);
-
+	if (_scumm->_playerV2) {
+		_scumm->_playerV2->startSound(soundID, ptr);
+	}
+	
 	if (_scumm->_imuse) {
-		_scumm->getResourceAddress(rtSound, soundID);
 		_scumm->_imuse->startSound(soundID);
 	}
 }
