@@ -181,12 +181,21 @@ void Scumm_v3::loadCharset(int no) {
 	checkRange(4, 0, no, "Loading illegal charset %d");
 	closeRoom();
 
-	openRoom(98 + no);
+	File file;
+	char buf[20];
 
-	size = _fileHandle.readUint16LE();
-
-	_fileHandle.read(createResource(6, no, size), size);
-	closeRoom();
+	sprintf(buf, "%02d.LFL", 99 - no);
+//	sprintf(buf, "%02d.LFL", 98 + no);
+	file.open(buf, _gameDataPath);
+		
+	if (file.isOpen() == false) {
+		error("loadCharset(%d): Missing file charset: %s", no, buf);
+	}
+		
+	size = file.readUint16LE();
+	file.read(createResource(rtCharset, no, size), size);
+		
+	file.close();
 }
 
 void Scumm_v3::readMAXS() {

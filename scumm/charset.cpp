@@ -61,9 +61,9 @@ int CharsetRendererOld256::getCharWidth(byte chr) {
 	// FIXME - this fixes the inventory icons in Zak256/Indy3
 	//  see bug #613109.
 	// chars 1,2: up arrow chars 3,4: down arrow
-	if ((_vm->_gameId == GID_ZAK256 || _vm->_gameId == GID_INDY3_256)
-			&& (chr >= 1 && chr <= 4))
-		spacing = 6;
+//	if ((_vm->_gameId == GID_ZAK256 || _vm->_gameId == GID_INDY3_256)
+//			&& (chr >= 1 && chr <= 4))
+//		spacing = 6;
 
 	return spacing;
 }

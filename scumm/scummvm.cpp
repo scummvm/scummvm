@@ -314,7 +314,7 @@ void Scumm::scummInit() {
 		initScreens(0, 16, _realWidth, 144);
 	}
 
-	if (_features & GF_OLD256)
+	if (_features & GF_AFTER_V3)
 		_charset = new CharsetRendererOld256(this);
 	else if (_features & GF_AFTER_V8)
 		_charset = new CharsetRendererNut(this);
