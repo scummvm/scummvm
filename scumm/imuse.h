@@ -50,6 +50,7 @@ public:
 	virtual int stop_sound(int sound) = 0;
 	virtual int stop_all_sounds() = 0;
 	virtual int get_sound_status(int sound) = 0;
+	virtual bool get_sound_active(int sound) = 0;
 	virtual int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) = 0;
 	virtual int clear_queue() = 0;
 	virtual void setBase(byte **base) = 0;

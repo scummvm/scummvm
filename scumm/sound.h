@@ -144,6 +144,7 @@ public:
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound);
+	bool isSoundActive(int sound);
 	bool isSoundInQueue(int sound);
 	void stopSound(int a);
 	void stopAllSounds();
