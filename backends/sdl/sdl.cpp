@@ -82,6 +82,14 @@ void OSystem_SDL::load_gfx_mode() {
 		_scaleFactor = 3;
 		_scaler_proc = AdvMame3x;
 		break;
+	case GFX_HQ2X:
+		_scaleFactor = 2;
+		_scaler_proc = HQ2x;
+		break;
+	case GFX_HQ3X:
+		_scaleFactor = 3;
+		_scaler_proc = HQ3x;
+		break;
 	case GFX_TV2X:
 		_scaleFactor = 2;
 		_scaler_proc = TV2x;
@@ -89,10 +97,6 @@ void OSystem_SDL::load_gfx_mode() {
 	case GFX_DOTMATRIX:
 		_scaleFactor = 2;
 		_scaler_proc = DotMatrix;
-		break;
-	case GFX_HQ3X:
-		_scaleFactor = 3;
-		_scaler_proc = HQ3x;
 		break;
 
 	case GFX_BILINEAR:

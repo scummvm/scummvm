@@ -57,7 +57,8 @@ static const char USAGE_STRING[] =
 	"\t-x[<num>]      - Load this savegame (default: 0 - autosave)\n"
 	"\t-f             - Full-screen mode (-F forces window mode.)\n"
 	"\t-g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
-	"\t                 supereagle,advmame2x, advmame3x,tv2x,dotmatrix)\n"
+	"\t                 supereagle,advmame2x,advmame3x,hq2x,hq3x,\n"
+	"\t                 tv2x,dotmatrix)\n"
 	"\t-e<mode>       - Set music engine (see README for details)\n"
 	"\t-q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,\n"
 	"\t                 gb,hb)\n"
@@ -113,9 +114,10 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
 	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
+	{"hq2x", "HQ2x", GFX_HQ2X},
+	{"hq3x", "HQ3x", GFX_HQ3X},
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-	{"hq3x", "HQ3x", GFX_HQ3X},
 	{"opengl", "OpenGL", GFX_BILINEAR},
 #else
 	{"flipping", "Page Flipping", GFX_FLIPPING},

@@ -435,6 +435,7 @@ They are:
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
         advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
+        hq2x       - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
         hq3x       - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
@@ -806,7 +807,7 @@ The following keywords are recognized:
         aspect_ratio    bool     Enable aspect ratio correction
         gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
                                  super2xsai, supereagle, advmame2x, advmame3x,
-                                 hq3x, tv2x, dotmatrix)
+                                 hq2x, hq3x, tv2x, dotmatrix)
 
         cdrom           int      Number of CD-ROM unit to use for audio. If
                                  negative, don't even try to access the CD-ROM.
