@@ -156,7 +156,7 @@ uint32 FileChunk::getDword() {
 }
 
 void FileChunk::reinit(uint32 offset) {
-	_data.seek(offset, seek_start);
+	_data.seek(offset);
 	_type = _data.readUint32BE();
 	_size = _data.readUint32BE();
 	_offset = _data.pos();
