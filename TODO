@@ -151,7 +151,6 @@ Audio
 
 Config Manager
 ==============
-* Preserve comments in config file somehow
 * Add a 'notification' system. E.g. the SoundMixer could request to be notified
   whenever the value of the "volume" config option changes. In other words,
   instead of a "pull" approach (where each subsystem has to check whether any

@@ -38,14 +38,9 @@ namespace Common {
  * @todo Implement the callback based notification system (outline below)
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
- * @todo Store comments and write them back out to disk. A simple approach for
- *       that would be to store comments which come before a section, and
- *       comments which comes before a specific config key. While this is
- *       limited, it is at least much better than not saving any comments, and
- *       it shouldn't be hard to implement either.
- * @todo Allow preserving the order of the entries in the config file. Maybe
- *       even add an API to query/modify that order, which could be used by the
- *       launcher to allow arranging the game targets.
+ * @todo Preserve the order of the entries in the config file. Maybe even add
+ *       an API to query/modify that order, which could be used by the launcher
+ *       to allow arranging the game targets.
  */
 class ConfigManager : public Singleton<ConfigManager> {
 	struct IgnoreCaseComparator {
@@ -53,11 +48,31 @@ class ConfigManager : public Singleton<ConfigManager> {
 	};
 	
 public:
-	class Domain : public Map<String, String, IgnoreCaseComparator> {
+	typedef Map<String, String, IgnoreCaseComparator> StringMap;
+	
+	class Domain : public StringMap {
+	private:
+		StringMap _keyValueComments;
+		String _domainComment;
 	public:
+
 		const String &get(const String &key) const {
 			Node *node = findNode(_root, key);
 			return node ? node->_value : String::emptyString;
+		}
+
+		void setDomainComment(const String &comment) {
+			_domainComment = comment;
+		}
+		const String &getDomainComment() const {
+			return _domainComment;
+		}
+
+		void setKVComment(const String &key, const String &comment) {
+			_keyValueComments[key] = comment;
+		}
+		const String &getKVComment(const String &key) const {
+			return _keyValueComments[key];
 		}
 	};
 

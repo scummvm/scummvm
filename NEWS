@@ -4,19 +4,20 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 0.??
  General:
    - Added support for FLAC (losless) encoded audio files
-   - Added an On Screen Display to the SDL backend
+   - Added an 'On Screen Display' to the SDL backend
    - Rewrote the backend API partially
+   - Comments in config files are preserved now
 
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games
 
-0.6.0(PRE) (2003-??-??)
+0.6.0 (2004-03-14)
  New Games:
    - Added Broken Sword 1 engine.
    - Added Broken Sword 2 engine.
    - Added Flight of the Amazon Queen engine
    - Added support for V1 SCUMM games 'Maniac Mansion' and 'Zak McKracken'
-   - SCUMM game Full Throttle is now supported.
+   - SCUMM game Full Throttle is now supported
 
  General:
    - Subtitles now default to disabled. '-n' option now enabled subtitles.

@@ -115,15 +115,22 @@ void ConfigManager::loadFile(const String &filename) {
 	} else {
 		char buf[MAXLINELEN];
 		String domain;
+		String comment;
 		int lineno = 0;
+		
+		// TODO: Detect if a domain occurs multiple times (or likewise, if
+		// a key occurs multiple times inside one domain).
 
 		while (!feof(cfg_file)) {
 			lineno++;
 			if (!fgets(buf, MAXLINELEN, cfg_file))
 				continue;
-			if (!buf[0] || buf[0] == '#') {
-				// Skip empty lines and comments
-				// TODO: Comments should be preserved here!
+
+			if (buf[0] == '#') {
+				// Accumulate comments here. Once we encounter either the start
+				// of a new domain, or a key-value-pair, we associate the value
+				// of the 'comment' variable with that entity.
+				comment += buf;
 			} else if (buf[0] == '[') {
 				// It's a new domain which begins here.
 				char *p = buf + 1;
@@ -144,9 +151,17 @@ void ConfigManager::loadFile(const String &filename) {
 				default:
 					error("Config file buggy: Invalid character '%c' occured in domain name in line %d", *p, lineno);
 				}
+				
+				// Store domain comment
+				if (_globalDomains.contains(domain)) {
+					_globalDomains[domain].setDomainComment(comment);
+				} else {
+					_gameDomains[domain].setDomainComment(comment);
+				}
+				comment.clear();
 			} else {
-				// Skip leading whitespaces
-				char *t = ltrim(buf);
+				// Skip leading & trailing whitespaces
+				char *t = rtrim(ltrim(buf));
 
 				// Skip empty lines
 				if (*t == 0)
@@ -157,24 +172,22 @@ void ConfigManager::loadFile(const String &filename) {
 					error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
 				}
 
-				// It's a new key in the domain.
-				char *p = strchr(t, '\n');
-				if (p)
-					*p = 0;
-				p = strchr(t, '\r');
-				if (p)
-					*p = 0;
-
 				// Split string at '=' into 'key' and 'value'.
-				p = strchr(t, '=');
-				if (!p) {
+				char *p = strchr(t, '=');
+				if (!p)
 					error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
+				*p = 0;
+				String key = rtrim(t);
+				String value = ltrim(p + 1);
+				set(key, value, domain);
+
+				// Store comment
+				if (_globalDomains.contains(domain)) {
+					_globalDomains[domain].setKVComment(key, comment);
 				} else {
-					*p = 0;
-					String key = rtrim(t);
-					String value = rtrim(ltrim(p + 1));
-					set(key, value, domain);
+					_gameDomains[domain].setKVComment(key, comment);
 				}
+				comment.clear();
 			}
 		}
 		fclose(cfg_file);
@@ -211,13 +224,28 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	if (domain.isEmpty())
 		return;		// Don't bother writing empty domains.
 	
+	String comment;
+	
+	// Write domain comment (if any)
+	comment = domain.getDomainComment();
+	if (!comment.isEmpty())
+		fprintf(file, "%s", comment.c_str());
+	
+	// Write domain start
 	fprintf(file, "[%s]\n", name.c_str());
 
+	// Write all key/value pairs in this domain, including comments
 	Domain::const_iterator x;
 	for (x = domain.begin(); x != domain.end(); ++x) {
 		const String &value = x->_value;
-		if (!value.isEmpty())
+		if (!value.isEmpty()) {
+			// Write comment (if any)
+			comment = domain.getKVComment(x->_key);
+			if (!comment.isEmpty())
+				fprintf(file, "%s", comment.c_str());
+			// Write the key/value pair
 			fprintf(file, "%s=%s\n", x->_key.c_str(), value.c_str());
+		}
 	}
 	fprintf(file, "\n");
 }
