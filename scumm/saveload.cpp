@@ -730,6 +730,16 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
+	if (savegameVersion < VER(46)) {
+		// When loading an old savegame, make sure that the 'cycle'
+		// field is set to something sensible, otherwise the scripts
+		// that were running probably won't be.
+
+		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
+			vm.slot[i].cycle = 1;
+		}
+	}
+
 	if (_heversion >= 71) {
 		Wiz *wiz = &((ScummEngine_v70he *)this)->_wiz;
 		s->saveLoadArrayOf(wiz->_polygons, ARRAYSIZE(wiz->_polygons), sizeof(wiz->_polygons[0]), polygonEntries);
