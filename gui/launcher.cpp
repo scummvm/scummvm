@@ -340,17 +340,23 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			}
 		}
 		break;
-	case kRemoveGameCmd:
-		// Remove the currently selected game from the list
-		assert(item >= 0);
-		ConfMan.removeGameDomain(_domains[item]);
-
-		// Write config to disk
-		ConfMan.flushToDisk();
+	case kRemoveGameCmd: {
+	
+		MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
 		
-		// Update the ListWidget and force a redraw
-		updateListing();
-		draw();
+		if (alert.runModal() == 1) {
+			// Remove the currently selected game from the list
+			assert(item >= 0);
+			ConfMan.removeGameDomain(_domains[item]);
+	
+			// Write config to disk
+			ConfMan.flushToDisk();
+			
+			// Update the ListWidget and force a redraw
+			updateListing();
+			draw();
+		}
+		}
 		break;
 	case kEditGameCmd: {
 		// Set game specifc options. Most of these should be "optional", i.e. by 
