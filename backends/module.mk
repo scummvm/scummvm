@@ -7,7 +7,8 @@ MODULE_OBJS = \
 	backends/midi/adlib.o \
 	backends/midi/coreaudio.o \
 	backends/midi/null.o \
-	backends/midi/quicktime.o
+	backends/midi/quicktime.o \
+	backends/midi/alsa.o
 
 # Include common rules 
 include common.rules
