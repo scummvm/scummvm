@@ -47,6 +47,7 @@
 #include "save_rest.h"
 #include "scroll.h"			// for Set_scrolling()
 #include "sound.h"
+#include "sword2.h"
 #include "walker.h"
 
 //------------------------------------------------------------------------------------
@@ -179,33 +180,27 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize)
 {
 	char saveFileName[MAX_FILENAME_LEN];
-	FILE *fp;
 	uint32	itemsWritten;
+	SaveFile *out;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
 
-
-//create saves directory just in case not there
-	scumm_mkdir("saves");
-
-
-	sprintf(saveFileName, "saves\\savegame.%.3d", slotNo);	// construct filename
-
-	fp = fopen(saveFileName, "wb");					// attempt to open file for writing
-
-	if (fp==NULL)
-	{
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);	// construct filename
+	
+	if (!(out = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), true)))
 		return(SR_ERR_FILEOPEN);					// error: couldn't open file
-	}
-	else
-	{
-//		itemsWritten = fwrite(sourceAddress, size, count, fp);
-		itemsWritten = fwrite(buffer, 1, bufferSize, fp);			// write the buffer
- 		fclose(fp);									// close savegame file
+		
 
-		if (itemsWritten == bufferSize)		// if we successfully wrote it all
-			return(SR_OK);					// buffer saved ok
-		else
-			return(SR_ERR_WRITEFAIL);		// write failed for some reason (could be hard drive full)
-	}
+	itemsWritten = out->write(buffer, bufferSize); // write the buffer
+
+	delete out;
+	delete mgr;
+	
+
+	if (itemsWritten == bufferSize)		// if we successfully wrote it all
+		return(SR_OK);					// buffer saved ok
+	else
+		return(SR_ERR_WRITEFAIL);		// write failed for some reason (could be hard drive full)
+
 }
 
 //------------------------------------------------------------------------------------
@@ -253,30 +248,26 @@ uint32 RestoreGame(uint16 slotNo)		// (James05feb97)
 uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize)
 {
 	char saveFileName[MAX_FILENAME_LEN];
-	FILE *fp;
+	SaveFile *in;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
  	uint32	itemsRead;
 
-  
-	sprintf(saveFileName, "saves\\savegame.%.3d", slotNo);	// construct filename
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);	// construct filename
 
-	fp = fopen(saveFileName, "rb");					// attempt to open file for reading
-
-	if (fp==NULL)
-	{
+	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false)))
 		return(SR_ERR_FILEOPEN);					// error: couldn't open file
-	}
-	else
-	{
-//		itemsRead = fread(destAddress, size, count, fp);
-		itemsRead = fread(buffer, 1, bufferSize, fp);	// read savegame into the buffer
+
+	itemsRead = in->read(buffer, bufferSize); // read savegame into the buffer
 
 		if (itemsRead == bufferSize)	// if we successfully read it all
 		{
-	 		fclose(fp);										// close savegame file
+			delete in;
+			delete mgr;
 			return(SR_OK);				// file read ok
 		}
 		else	// didn't read the expected amount of data for some reason
 		{
+			/*
 			if (ferror(fp))	// if it was a genuine read error, before reaching the end of the file
 			{
 	 			fclose(fp);					// close savegame file
@@ -284,11 +275,12 @@ uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize)
 			}
 			else	// we reached the end of the file before we filled the savegame buffer (ie. incompatible savegame file!)
  			{
-	 			fclose(fp);						// close savegame file
+			*/
+				delete in;
+				delete mgr;
 				return(SR_ERR_INCOMPATIBLE);	// error: incompatible save-data - can't use!
-			}
+			//}
 		}
-	}
 }
 
 //------------------------------------------------------------------------------------
@@ -393,24 +385,20 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 {
 	char saveFileName[MAX_FILENAME_LEN];
 	_savegameHeader dummy;
-	FILE *fp;
+	SaveFile *in;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
 
-	sprintf(saveFileName, "saves\\savegame.%.3d", slotNo);			// construct filename
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);	// construct filename
 
-	fp = fopen(saveFileName, "rb");							// attempt to open file for reading
+	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false)))
+		return(SR_ERR_FILEOPEN);					// error: couldn't open file
 
-	if (fp==NULL)
-	{
-		return(SR_ERR_FILEOPEN);							// error: couldn't open file
-	}
-	else
-	{
-//		fread(destAddress, size, count, fp);
-		fread(&dummy, sizeof(_savegameHeader), 1, fp);				// read header
-		fclose(fp);
-		sprintf((char*)description, dummy.description);
-		return(SR_OK);
-	}
+	
+	in->read(&dummy, sizeof(_savegameHeader));	// read header
+	delete in;
+	delete mgr;
+	sprintf((char*)description, dummy.description);
+	return(SR_OK);
 }
 
 //------------------------------------------------------------------------------------

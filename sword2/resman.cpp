@@ -489,7 +489,8 @@ uint32	resMan::Res_fetch_len( uint32 res )	//Tony27Jan96
 {
 //returns the total file length of a resource - i.e. all headers are included too
 
-	FILE	*fh=0;	//file pointer
+	//FILE	*fh=0;	//file pointer
+	File fh;
 	uint16	parent_res_file;
 	uint16	actual_res;
 	uint32	len;
@@ -503,17 +504,17 @@ uint32	resMan::Res_fetch_len( uint32 res )	//Tony27Jan96
 //		first we have to find the file via the res_conv_table
 
 
-	fh = fopen(resource_files[parent_res_file],"rb");	//open the cluster file
-	if	(fh==NULL)
+	// open the cluster file
+	if (fh.open(resource_files[parent_res_file],g_sword2->getGameDataPath()) == false)
 		Con_fatal_error("Res_fetch_len cannot *OPEN* %s", resource_files[parent_res_file]);
 
 
-	fread( &table_offset, sizeof(char), sizeof(uint32), fh);	//1st DWORD of a cluster is an offset to the look-up table
+	fh.read( &table_offset, sizeof(uint32));	//1st DWORD of a cluster is an offset to the look-up table
 
 
-	fseek(fh, table_offset+(actual_res*8)+4, SEEK_SET);	//2 dwords per resource + skip the position dword
+	fh.seek(table_offset+(actual_res*8)+4, SEEK_SET);	//2 dwords per resource + skip the position dword
 	//fread( &pos, sizeof(char), 4, fh);	//get position of our resource within the cluster file
-	fread( &len, sizeof(char), 4, fh);	//read the length
+	fh.read( &len, 4);	//read the length
 
 
 	return(len);

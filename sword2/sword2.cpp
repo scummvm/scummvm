@@ -106,6 +106,7 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
+	_game_name = strdup(detector->_gameFileName.c_str());
 	_bootParam = detector->_bootParam;
 
 	// Setup mixer

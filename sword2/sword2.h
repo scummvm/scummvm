@@ -60,6 +60,7 @@ class Sword2State : public Engine {
 		GameDetector *_detector;
 		uint32 _features;
 		byte _gameId;
+		char *_game_name; // target name for saves
 		Sword2Sound *_sound;
 		OSystem::MutexRef _paletteMutex; // put in a gfx class?
 	private:
