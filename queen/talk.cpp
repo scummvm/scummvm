@@ -35,17 +35,19 @@ namespace Queen {
 void Talk::run(
 		const char *filename, 
 		char *cutawayFilename,
+		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) {
-	Talk *talk = new Talk(logic, resource);
+	Talk *talk = new Talk(graphics, logic, resource);
 	talk->talk(filename, cutawayFilename);
 	delete talk;
 }
 
 Talk::Talk(
+		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) 
-: _logic(logic), _resource(resource), _fileData(NULL), _quit(false) {
+: _graphics(graphics), _logic(logic), _resource(resource), _fileData(NULL), _quit(false) {
 
 	//! TODO Move this to the Logic class later!
 	memset(_talkSelected, 0, sizeof(_talkSelected));
@@ -102,7 +104,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 
 	// TODO: split this loop in several functions
 	while(retval != -1) {
-		debug(0, "retval = %i", retval);
+		// debug(0, "retval = %i", retval);
 		
 		char otherVoiceFilePrefix    [MAX_STRING_SIZE];
 		char joeVoiceFilePrefix   [5][MAX_STRING_SIZE];
@@ -151,7 +153,7 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 			}
 		}
 
-		debug(0, "choicesLeft = %i", choicesLeft);
+		// debug(0, "choicesLeft = %i", choicesLeft);
 
 		if (1 == choicesLeft) {
 			// Automatically run the final dialogue option
@@ -429,21 +431,155 @@ Talk::TalkSelected *Talk::talkSelected() {
 	return _talkSelected + _uniqueKey;
 }
 
+int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
+
+	//debug(0, "splitOption(\"%s\")", str);
+
+	// Check to see if option fits on one line, and exit early
+
+	/* XXX if (_logic->language() == ENGLISH || textWidth(str) <= MAX_TEXT_WIDTH)*/ {
+		strcpy(optionText[0], str);
+		return 1;
+	}
+
+	abort();
+
+	// Split up multiple line option at closest space character
+	// int optionLines = 0;
+}
+
+static char *removeStar(char *str) {
+	
+	// The remove_star function in talk.c uses a static variable, but this
+	// modifies the string instead, so the caller should use a copy of the
+	// string.
+
+	char *p = strchr(str, '*');
+	if (p)
+		*p = '\0';
+
+	return str;
+}
+
+static void text(int x, int y, const char *str) {
+	
+	// This function is just for debugging, the caller should really use some
+	// method in Queen::Graphics.
+	
+	debug(0, "Write '%s' at (%i,%i)", str, x, y);
+}
+
 int16 Talk::selectSentence() {
+	// Function TALK_BOB (lines 577-739) in talk.c
 	int selectedSentence = 0;
 
-	debug(0, "----- Select a sentence of these -----");
+	int scrollX = 0; 	// XXX: global variable
+	int startOption = 1;
+	int optionLines = 0;
+	char optionText[5][MAX_STRING_SIZE];
 
-	for (int i = 1; i <= 4; i++) {
-		if (_talkString[i][0] != '\0') {
-			debug(0, "%i: %s", i, _talkString[i]);
-			if (!selectedSentence)		// XXX debug
-				selectedSentence = i;		// XXX debug
+	// These bobs are up and down arrows
+
+	BobSlot *bob1 = _graphics->bob(SENTENCE_BOB_1);
+	BobSlot *bob2 = _graphics->bob(SENTENCE_BOB_2);
+
+	bob1->x         = 303 + 8 + scrollX;
+	bob1->y         = 150 + 1;
+	bob1->frameNum  = 3;
+	bob1->box.y2    = 199;
+	bob1->active    = false;
+
+	bob2->x         = 303 + scrollX;
+	bob2->y         = 175;
+	bob2->frameNum  = 4;
+	bob2->box.y2    = 199;
+	bob2->active    = false;
+
+	bool rezone = true;
+
+	while (rezone) {
+		rezone = false;
+
+		// Set zones for UP/DOWN text arrows when not English version
+		// XXX ClearZones(1);
+
+		if (_logic->language() != ENGLISH) {
+			// XXX SetZone(1,5,MAXTEXTLEN+1, 0,319,24);
+			// XXX SetZone(1,6,MAXTEXTLEN+1,25,319,49);
+		}
+
+		// blanktexts(151,199);
+
+		int sentenceCount = 0;
+		int yOffset = 1;
+
+		for (int i = startOption; i <= 4; i++) {
+			// XXX TALK_ZONE[I] = 0;
+			if (_talkString[i][0] != '\0') {
+				sentenceCount++;
+				
+				char temp[MAX_STRING_SIZE];
+				strcpy(temp, _talkString[i]);
+				optionLines = splitOption(removeStar(temp), optionText);
+
+				if (yOffset < 5)
+					/* XXX SetZone(
+							1, 
+							I, 
+							0, 
+							(yofs * 10) - PUSHUP, 
+							(VersionStr[1] =='E') ? 319 : MAX_TEXT_WIDTH,
+							10 * optionLines + (yOffset * 10) - PUSHUP) */;
+
+				for (int j = 0; j < optionLines; j++) {
+					if (yOffset < 5)
+						text((j == 0) ? 0 : 24, 150 - PUSHUP + yOffset * 10, optionText[j]);
+					yOffset++;
+				}
+				
+			// XXX TALK_ZONE[i] = sentenceCount;
+			}
+		}
+
+		yOffset--;
+
+		// Up and down dialogue arrows
+
+		if (_logic->language() != ENGLISH) {
+			bob1->active = (startOption > 1);
+			bob2->active = (yOffset > 4);
+		}
+
+		// XXX KEYVERB=0;
+		if (sentenceCount > 0) {
+			// XXX CH=0, S=0, OLDS=0;
+      // XXX while(CH==0) 
+
+			if (_quit)
+				break;
+
+			// XXX update();
+
+			// XXX manage input 
 		}
 	}
-				
+
+
+	// XXX Begin debug stuff
+	// debug(0, "----- Select a sentence of these -----");
+	for (int i = 1; i <= 4; i++) {
+		if (_talkString[i][0] != '\0') {
+			// XXX debug(0, "%i: %s", i, _talkString[i]);
+			if (!selectedSentence)
+				selectedSentence = i;
+		}
+	}
+	// XXX End debug stuff
+
+	bob1->active = false;
+	bob2->active = false;
+
 	debug(0, "Selected sentence %i", selectedSentence);
-	
 	return selectedSentence;
 }
 

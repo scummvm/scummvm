@@ -1014,7 +1014,7 @@ void Cutaway::talk(char *nextFilename) {
 		warning("Cutaway::talk() used but not fully implemented");
 		nextFilename[0] = '\0';
 
-		Talk::run(_talkFile, nextFilename, _logic, _resource);
+		Talk::run(_talkFile, nextFilename, _graphics, _logic, _resource);
 	}
 }
 

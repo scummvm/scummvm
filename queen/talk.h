@@ -26,8 +26,9 @@
 
 namespace Queen {
 
-class Resource;
+class Graphics;
 class Logic;
+class Resource;
 
 class Talk {
 	public:
@@ -36,6 +37,7 @@ class Talk {
 		static void run(
 				const char *filename,
 				char *cutawayFilename,
+				Graphics *graphics,
 				Logic *logic,
 				Resource *resource);
 
@@ -57,7 +59,11 @@ class Talk {
 		enum {
 			MAX_STRING_LENGTH = 255,
 			MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
-			TALK_SELECTED_COUNT = 86
+			MAX_TEXT_WIDTH = (320-18),
+			PUSHUP = 4,
+			TALK_SELECTED_COUNT = 86,
+			SENTENCE_BOB_1 = 62,
+			SENTENCE_BOB_2 = 63
 		};
 
 		//! TODO Move this to struct.h later!
@@ -73,8 +79,9 @@ class Talk {
 			int16 gameStateValue;
 		};
 
-		Logic *_logic;
-		Resource *_resource;
+		Graphics  *_graphics;
+		Logic     *_logic;
+		Resource  *_resource;
 		
 		//! Raw .dog file data (without 20 byte header)
 		byte *_fileData;
@@ -117,7 +124,7 @@ class Talk {
 
 		char _talkString[5][MAX_STRING_SIZE];
 
-		Talk(Logic *logic, Resource *resource);
+		Talk(Graphics *graphics, Logic *logic, Resource *resource);
 		~Talk();
 
 		//! Perform talk in file and return a cutaway filename
@@ -143,6 +150,9 @@ class Talk {
 
 		//! Select what to say
 		int16 selectSentence();
+
+		static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
+
 
 };
 
