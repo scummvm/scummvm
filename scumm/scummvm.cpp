@@ -1279,8 +1279,6 @@ int Scumm::scummLoop(int delta) {
 	} else if (_playerV2) {
 		VAR(VAR_MUSIC_TIMER) = _playerV2->getMusicTimer();
 	} else if (_playerV3A) {
-		for (int i = 0; i < delta; i++)
-			_playerV3A->playMusic();
 		VAR(VAR_MUSIC_TIMER) = _playerV3A->getMusicTimer();
 	} else if (_imuse) {
 		VAR(VAR_MUSIC_TIMER) = _imuse->getMusicTimer();

@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * /scummvm/scumm/player_v3a.cpp
+ * $Header: /cvsroot/scummvm/scummvm/scumm/player_v3a.cpp
  */
 
 #include "stdafx.h"
@@ -23,6 +23,7 @@
 #include "player_v3a.h"
 #include "scumm.h"
 #include "sound/mixer.h"
+#include "common/timer.h"
 
 unsigned short _notefreqs[4][12] = {
 	{0x06B0,0x0650,0x05F4,0x05A0,0x054C,0x0500,0x04B8,0x0474,0x0434,0x03F8,0x03C0,0x0388},
@@ -36,6 +37,12 @@ unsigned short _notefreqs[4][12] = {
 // V3 Amiga sound/music driver
 //
 ////////////////////////////////////////
+
+static void playerv3a_handler (void *engine) {
+	Scumm *scumm = (Scumm *)engine;
+	if (scumm && scumm->_playerV3A)
+		scumm->_playerV3A->playMusic();
+}
 
 Player_V3A::Player_V3A(Scumm *scumm) {
 	int i;
@@ -55,10 +62,15 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 
 	_maxvol = 255;
 
+	scumm->_timer->installProcedure(playerv3a_handler,16666);
+
 	_isinit = false;
 }
 
 Player_V3A::~Player_V3A() {
+	_scumm->_timer->releaseProcedure(playerv3a_handler);
+	if (!_isinit)
+		return;
 	for (int i = 0; _wavetable[i] != NULL; i++) {
 		for (int j = 0; j < 6; j++)
 		{
@@ -165,6 +177,7 @@ void Player_V3A::startSound(int nr) {
 					_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 					offset += 10;
 				}
+				_wavetable[i]->_pitadjust = 0;
 				offset += 2;
 			}
 			_wavetable[i] = NULL;
@@ -192,6 +205,7 @@ void Player_V3A::startSound(int nr) {
 					_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 					offset += 10;
 				}
+				_wavetable[i]->_pitadjust = READ_BE_UINT16(ptr + offset + 2);
 				offset += 4;
 			}
 			_wavetable[i] = NULL;
@@ -245,40 +259,52 @@ void Player_V3A::playMusic() {
 		return;
 	if (!_curSong)
 		return;
+	if ((_songData[_songPtr] == 0xFC) || (_songData[_songPtr] == 0x00)) {
+		// the final delay has been processed - now we can kill the song
+		_curSong = 0;
+		return;
+	}
 	while (1) {
 		uint8 inst = _songData[_songPtr++];
-		if ((inst == 0) || (inst == 0xFC)) {
+		if ((inst == 0x00) || (inst == 0xFC)) {
+			// end of tune - figure out what's still playing
+			// and see how long we have to wait until they're done
 			for (i = 0; i < V3A_MAXCHANS; i++)
 				if ((_soundID[i] >> 8) == _curSong)
 					if (_songDelay < _timeleft[i])
 						_songDelay = _timeleft[i];
-			_curSong = 0;
 			break;
 		}
 		else if (inst == 0xFB) {
 			_songPtr = 0x1C;
+			// tune is going to loop - figure out what's still playing
+			// and see how long we have to wait until we restart
 			for (i = 0; i < V3A_MAXCHANS; i++)
 				if ((_soundID[i] >> 8) == _curSong)
 					if (_songDelay < _timeleft[i])
 						_songDelay = _timeleft[i];
 			break;
 		}
-		uint8 pitch = _songData[_songPtr++];
+		int8 pitch = _songData[_songPtr++];
 		uint8 unk = _songData[_songPtr++];
 		uint8 dur = _songData[_songPtr++];
 		if ((inst == 0x80) && (pitch == 0) && (unk == 0)) {
 			_songDelay = dur;
 			break;
 		}
-		if (_scumm->_gameId == GID_INDY3)
-			pitch -= 24;
-		else if (_scumm->_gameId == GID_LOOM)	// Loom music still has a lot of problems
-			pitch -= 21;			// but this adjustment seems to get it mostly right
-		int pit = pitch % 12;
-		int oct = (pitch / 12);
-		if (oct > 5)
-			oct = 5;
 		inst &= 0x7F;
+		pitch -= 24;
+		pitch += _wavetable[inst]->_pitadjust;
+		while (pitch < 0) {
+			pitch += 12;
+			warning("player_v3a - pitch went below range, adjusting!");
+		}
+		while (pitch >= 72) {
+			pitch -= 12;
+			warning("player_v3a - pitch went above range, adjusting!");
+		}
+		int pit = pitch % 12;
+		int oct = pitch / 12;
 		char *data = (char *)malloc(_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 		if (_wavetable[inst]->_idat[oct])
 			memcpy(data, _wavetable[inst]->_idat[oct], _wavetable[inst]->_ilen[oct]);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * /scummvm/scummvm/scumm/player_v3a.h
+ * $Header: /cvsroot/scummvm/scummvm/scumm/player_v3a.cpp
  *
  */
 
@@ -71,6 +71,7 @@ protected:
 		char *_ldat[6];
 		uint16 _llen[6];
 		uint16 _oct[6];
+		int16 _pitadjust;
 	} **_wavetable;
 
 	void playSound (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart = 0, int loopEnd = 0);
