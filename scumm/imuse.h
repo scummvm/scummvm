@@ -61,17 +61,33 @@ private:
 };
 
 #define MAX_DIGITAL_CHANNELS 10
+#define MAX_IMUSE_JUMPS 1
+#define MAX_IMUSE_REGIONS 3
 
 class IMuseDigital {
 private:
+
+	struct region {
+		uint32 _offset;		// begin of region
+		uint32 _length;		// lenght of region
+	};
+
+	struct jump {
+		uint32 _offset;		// jump position
+		uint32 _dest;			// jump to 
+		uint32 _id;				// id of jump
+		uint32 _unk;			// allmost 500 except one value: 2
+	};
 
 	struct channel {
 		int8 _volumeLeft;
 		int8 _volumeRight;
 		bool _isLoop;
 		uint32 _offsetStop;
-		uint32 _offsetJump;
-		uint32 _offsetRegion;
+		jump _jump[MAX_IMUSE_JUMPS];
+		uint32 _numJumps;
+		region _region[MAX_IMUSE_REGIONS];
+		uint32 _numRegions;
 		uint32 _offset;
 		byte *_data;
 		uint32 _freq;
