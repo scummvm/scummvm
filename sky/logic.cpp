@@ -1104,12 +1104,16 @@ script:
 }
 
 bool SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnCacheChip");
+	//warning("Stub: fnCacheChip");
+	printf("SkyDisk::fnCacheChip(%d);\n",a);
+	_skyDisk->fnCacheChip(a);
 	return true;
 }
 
 bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnCacheFast");
+	//warning("Stub: fnCacheFast");
+	printf("SkyDisk::fnCacheFast(%d);\n",a);
+	_skyDisk->fnCacheFast(a);
 	return true;
 }
 
@@ -1851,7 +1855,8 @@ bool SkyLogic::fnMiniLoad(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnFlushBuffers(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFlushBuffers");
+	_skyDisk->fnFlushBuffers();
+	return true;
 }
 
 bool SkyLogic::fnFlushChip(uint32 a, uint32 b, uint32 c) {

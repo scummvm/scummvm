@@ -182,28 +182,24 @@ void SkyScreen::flip(void) {
 	uint8 *backPos = _backScreen;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
-			if (_gameGrid[cnty * GRID_X +cntx] & 1) {
-				_gameGrid[cnty * GRID_X +cntx] &= ~1;
-				uint8 *saveBackY = backPos;
-				uint8 *saveScreenY = screenPos;
+			if (_gameGrid[cnty * GRID_X + cntx] & 1) {
+				_gameGrid[cnty * GRID_X + cntx] &= ~1;
+				uint8 *copySrc = backPos;
+				uint8 *copyDest = screenPos;
 				for (uint8 gridLineCnt = 0; gridLineCnt < GRID_H; gridLineCnt++) {
-					memcpy(screenPos, backPos, GRID_W);
-					screenPos += GAME_SCREEN_WIDTH;
-					backPos += GAME_SCREEN_WIDTH;
+					memcpy(copyDest, copySrc, GRID_W);
+					copySrc += GAME_SCREEN_WIDTH;
+					copyDest += GAME_SCREEN_WIDTH;
 				}
-				backPos = saveBackY + GRID_W;
-				screenPos = saveBackY + GRID_W;
-			} else {
-				backPos += GRID_W;
-				screenPos += GRID_W;
 			}
+			backPos += GRID_W;
+			screenPos += GRID_W;
 		}
 		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
 	// mouse_flag &= ~MF_NO_UPDATE;
 	// _skyMouse->restoreDataToBackScreen();
-	showScreen(_backScreen);
 }
 
 void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
@@ -214,8 +210,8 @@ void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
 	recreate();
 	spriteEngine();
 	flip();
+	showScreen(_currentScreen);
 	fnFadeUp(palette, scroll);
-	showScreen(_backScreen);
 }
 
 void SkyScreen::fnFadeDown(uint32 scroll) {
@@ -429,16 +425,21 @@ void SkyScreen::sortSprites(void) {
 
 	StSortList sortList[30];
 	uint32 currDrawList = DRAW_LIST_NO;
+	uint32 loadDrawList;
+
 	bool nextDrawList = false;
 	while (SkyLogic::_scriptVariables[currDrawList]) {
 		// big_sort_loop
 		uint32 spriteCnt = 0;
+		loadDrawList = SkyLogic::_scriptVariables[currDrawList];
+		currDrawList++;
+
 		do { // a_new_draw_list:
-			uint16 *drawListData = (uint16*)SkyState::fetchCompact(SkyLogic::_scriptVariables[currDrawList]);
+			uint16 *drawListData = (uint16*)SkyState::fetchCompact(loadDrawList);
 			nextDrawList = false;
 			while ((!nextDrawList) && (drawListData[0])) {
 				if (drawListData[0] == 0xFFFF) {
-					currDrawList = drawListData[1];
+					loadDrawList = drawListData[1];
 					nextDrawList = true;
 				} else {
 					// process_this_id:
@@ -463,7 +464,7 @@ void SkyScreen::sortSprites(void) {
 		} while (nextDrawList);
 		// made_list:
 		if (spriteCnt > 1) { // bubble sort
-			for (uint32 cnt1 = 0; cnt1 < spriteCnt; cnt1++)
+			for (uint32 cnt1 = 0; cnt1 < spriteCnt - 1; cnt1++)
 				for (uint32 cnt2 = cnt1 + 1; cnt2 < spriteCnt; cnt2++)
 					if (sortList[cnt1].yCood <= sortList[cnt2].yCood) {
 						StSortList tmp;
@@ -482,7 +483,9 @@ void SkyScreen::sortSprites(void) {
 			drawSprite((uint8*)sortList[cnt].sprite, sortList[cnt].compact);
 			if (sortList[cnt].compact->status & 8) vectorToGame(0x81);
 			else vectorToGame(1);
-			if (sortList[cnt].compact->status & 0x200) verticalMask();
+			if (sortList[cnt].compact->status & 0x200) {
+				verticalMask();
+			}
 		}
 	}
 }
@@ -517,7 +520,6 @@ void SkyScreen::doSprites(uint8 layer) {
 								uint8 *toBeDrawn = (uint8*)SkyState::fetchItem(spriteData->frame >> 6);
 								drawSprite(toBeDrawn, spriteData);
 								if (layer == FORE) verticalMask();
-
 								if (spriteData->status & 8) vectorToGame(0x81);
 								else vectorToGame(1);
 						}
@@ -597,10 +599,9 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return ;
 	}
 	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
-		spriteData += _maskX1;
 		for (uint8 cntx = 0; cntx < _sprWidth; cntx++)
-			if (spriteData[cntx]) screenPtr[cntx] = spriteData[cntx];
-		spriteData += _maskX2;
+			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
+		spriteData += _sprWidth;
 		screenPtr += GAME_SCREEN_WIDTH;
 	}
 	// Convert the sprite coordinate/size values to blocks for vertical mask and/or vector to game
@@ -618,7 +619,8 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 
 void SkyScreen::vectorToGame(uint8 gridVal) {
 
-	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX; // why?!?!
+	if (_sprWidth == 0) return ;
+	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX;
 	for (uint32 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint32 cntx = 0; cntx < _sprWidth; cntx++)
 			trgGrid[cntx] |= gridVal;

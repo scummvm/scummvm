@@ -57,6 +57,9 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 	_dataDiskHandle->open(dataFilename, _gameDataPath);
 	if (_dataDiskHandle->isOpen() == false) 
 		error("Error opening %s%s!\n", _gameDataPath, dataFilename);
+
+	memset(_buildList, 0, 60 * 2);
+	memset(_loadedFilesList, 0, 60 * 4);
 }
 
 SkyDisk::~SkyDisk(void) {
@@ -252,6 +255,93 @@ uint8 *SkyDisk::getFileInfo(uint16 fileNr) {
 
 	// if file not found return NULL
 	return (uint8 *)NULL;
+}
+
+void SkyDisk::fnCacheChip(uint32 list) {
+
+	// fnCacheChip is called after fnCacheFast
+	uint16 cnt = 0;
+	while (_buildList[cnt]) cnt++;
+	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
+	uint16 fCnt = 0;
+	do {
+		_buildList[cnt + fCnt] = fList[fCnt];
+		fCnt++;
+	} while (fList[fCnt-1]);
+	fnCacheFiles();
+}
+
+void SkyDisk::fnCacheFast(uint32 list) {
+
+	if (list == 0) return;
+	uint8 cnt = 0;
+	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
+	do {
+		_buildList[cnt] = fList[cnt];
+		cnt++;
+	} while (fList[cnt-1]);
+}
+
+void SkyDisk::fnCacheFiles(void) {
+
+	// call trash_all_fx
+	uint16 lCnt, bCnt, targCnt;
+	targCnt = lCnt = 0;
+	bool found;
+	while (_loadedFilesList[lCnt]) {
+		bCnt = 0;
+		found = false;
+		while (_buildList[bCnt] && (!found)) {
+			if ((_buildList[bCnt] & 0x7FFF) == _loadedFilesList[lCnt]) found = true;
+			else bCnt++;
+		}
+		if (found) {
+			_loadedFilesList[targCnt] = _loadedFilesList[lCnt];
+			targCnt++;
+		} else {
+			free(SkyState::_itemList[_loadedFilesList[lCnt]]);
+			SkyState::_itemList[_loadedFilesList[lCnt]] = NULL;
+		}
+		lCnt++;
+	}
+	_loadedFilesList[targCnt] = 0; // mark end of list
+	bCnt = 0;
+	while (_buildList[bCnt]) {
+		if ((_buildList[bCnt] & 0x7FF) == 0x7FF) {
+			// amiga dummy files
+			bCnt++;
+			continue;
+		}
+		lCnt = 0;
+		found = false;
+		while (_loadedFilesList[lCnt] && (!found)) {
+			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFF)) found = true;
+            lCnt++;
+		}
+		if (found) {
+			bCnt++;
+			continue;
+		}
+		// ok, we really have to load the file.
+		_loadedFilesList[targCnt] = _buildList[bCnt];
+		targCnt++;
+		_loadedFilesList[targCnt] = 0;
+		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
+        bCnt++;
+	}
+	_buildList[0] = 0;
+}
+
+void SkyDisk::fnFlushBuffers(void) {
+
+	// dump all loaded sprites
+	uint8 lCnt = 0;
+	while (_loadedFilesList[lCnt]) {
+		free(SkyState::_itemList[_loadedFilesList[lCnt] & 2047]);
+		SkyState::_itemList[_loadedFilesList[lCnt] & 2047] = 0;
+		lCnt++;
+	}
+	_loadedFilesList[0] = 0;
 }
 
 void SkyDisk::dumpFile(uint16 fileNr) {

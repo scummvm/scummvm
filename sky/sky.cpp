@@ -203,10 +203,9 @@ void SkyState::initItemList() {
 
 void SkyState::loadBase0(void) {
 
-	//fnEnterSection(0);
+	_skyLogic->fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
 	_skyGrid->loadGrids();
-	
 }
 
 void SkyState::loadFixedItems(void) {

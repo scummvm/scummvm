@@ -44,7 +44,15 @@ public:
 	uint32 determineGameVersion();
 
 	uint32 _lastLoadedFileSize;
+
+	void fnCacheFast(uint32 list);
+	void fnCacheChip(uint32 list);
+	void fnCacheFiles(void);
+	void fnFlushBuffers(void);
+
 protected:
+
+
 	prefFile *_prefRoot;
     uint8 *givePrefetched(uint16 fileNr, uint32 *fSize);
 
@@ -57,8 +65,7 @@ protected:
 	uint8 *_dinnerTableArea, *_fixedDest, *_fileDest, *_compDest;
 	uint32 _fileFlags, _fileOffset, _fileSize, _decompSize, _compFile;
 	uint16 _buildList[MAX_FILES_IN_LIST];
-	uint32 _loadedFileList[MAX_FILES_IN_LIST];
-
+	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
 	File *_dataDiskHandle;
 	File *_dnrHandle;
 };
