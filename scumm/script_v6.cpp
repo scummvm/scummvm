@@ -2554,6 +2554,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 108:									/* create proc_special_palette */
 		case 109:
+			// Case 108 and 109 share the same function
 			if (num != 6)
 				warning("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
@@ -2587,16 +2588,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 117:
 			// Sam & Max uses this opcode in script-43, right
-			// before a screensaver is selected. Perhaps it's
-			// supposed to turn off all (other) animations, because
-			// some of the screensavers look really stupid in some
-			// rooms, e.g. outside the Tunnel of Love, when parts
-			// of the screen are being redrawn all the time.
-			//
-			// But if so, how are the animations turn back on again
-			// afterwards? My only possible clue is that when the
-			// screensaver is turned off, the VAR_TIMER_NEXT
-			// variable is set to 6. But maybe that's unrelated.
+			// before a screensaver is selected.
 			//
 			// Sam & Max uses variable 132 to specify the number of
 			// minutes of inactivity (no mouse movements) before
