@@ -75,17 +75,6 @@ void ScummEngine::parseEvents() {
 			} else if (event.kbd.ascii == 315 && (_gameId == GID_CMI && !(_features & GF_DEMO))) {
 				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
 				_keyPressed = 319;
-			} else if (_gameId == GID_INDY4 && event.kbd.ascii >= '0' && event.kbd.ascii <= '9') {
-				// To support keyboard fighting in FOA, we need to remap the number keys.
-				// FOA apparently expects PC scancode values (see script 46 if you want
-				// to know where I got these numbers from).
-				static const int numpad[10] = {
-						'0',
-						335, 336, 337,
-						331, 332, 333,
-						327, 328, 329
-					};
-				_keyPressed = numpad[event.kbd.ascii - '0'];
 			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _version >= 7) {
 				// don't let game have arrow keys as we currently steal them
 				// for keyboard cursor control

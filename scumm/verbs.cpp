@@ -297,6 +297,20 @@ void ScummEngine::checkExecVerbs() {
 				}
 			}
 		}
+		
+		if (_gameId == GID_INDY4 && _mouseButStat >= '0' && _mouseButStat <= '9') {
+			// To support keyboard fighting in FOA, we need to remap the number keys.
+			// FOA apparently expects PC scancode values (see script 46 if you want
+			// to know where I got these numbers from).
+			static const int numpad[10] = {
+					'0',
+					335, 336, 337,
+					331, 332, 333,
+					327, 328, 329
+				};
+			_mouseButStat = numpad[_mouseButStat - '0'];
+		}
+		
 		// Generic keyboard input
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
