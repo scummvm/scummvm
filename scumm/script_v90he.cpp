@@ -96,7 +96,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown27),
 		/* 28 */
 		OPCODE(o90_unknown28),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown29),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* 2C */
@@ -509,18 +509,67 @@ void ScummEngine_v90he::o90_unknown26() {
 	subOp -= 34;
 
 	switch (subOp) {
+		case 0:
+			pop();
+			break;
+		case 1:
+			pop();
+			break;
+		case 3:
+			pop();
+			break;
+		case 8:
+			pop();
+			pop();
+			break;
+		case 9:
+			pop();
+			break;
 		case 10:
 			pop();
+			pop();
+			break;
+		case 18:
+			pop();
+			break;
+		case 19:
 			pop();
 			break;
 		case 23:
 			pop();
 			break;
+		case 29:
+			pop();
+			break;
+		case 31:
+			pop();
+			pop();
+			break;
+		case 34:
+			pop();
+			break;
+		case 43:
+			pop();
+			pop();
+			break;
+		case 48:
+			pop();
+			break;
+		case 90:
+			pop();
+			break;
 		case 124:
+			break;
+		case 164:
+			pop();
+			pop();
+			break;
+		case 183:
 			break;
 		default:
 			error("o90_unknown26: Unknown case %d", subOp);
 	}
+	debug(1,"o90_unknown26 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown27() {
@@ -549,12 +598,82 @@ void ScummEngine_v90he::o90_unknown28() {
 	subOp -= 37;
 
 	switch (subOp) {
+		case 6:
+			pop();
+			break;
+		case 7:
+			pop();
+			pop();
+			break;
 		case 20:
+			pop();
+			break;
+		case 28:
+			pop();
+			pop();
+			break;
+		case 30:
+			pop();
+			pop();
+			pop();
 			pop();
 			break;
 		default:
 			error("o90_unknown28: Unknown case %d", subOp);
 	}
+	debug(1,"o90_unknown28 stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_unknown29() {
+	int subOp = fetchScriptByte();
+	subOp -= 30;
+
+	switch (subOp) {
+		case 0:
+			pop();
+			pop();
+			break;
+		case 1:
+			pop();
+			pop();
+			break;
+		case 2:
+			pop();
+			pop();
+			break;
+		case 3:
+			pop();
+			pop();
+			break;
+		case 6:
+			pop();
+			break;
+		case 15:
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 36:
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 100:
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		default:
+			error("o90_unknown29: Unknown case %d", subOp);
+	}
+	push(0);
+
+	debug(1,"o90_unknown29 stub (%d)", subOp);
 }
 
 } // End of namespace Scumm

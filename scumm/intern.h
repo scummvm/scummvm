@@ -807,6 +807,7 @@ protected:
 	void o90_unknown26();
 	void o90_unknown27();
 	void o90_unknown28();
+	void o90_unknown29();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
