@@ -45,13 +45,6 @@ void Insane::runScene(int arraynum) {
 
 	_numberArray = arraynum;
 
-	// set4Values()
-	_val109w = 114;
-	_val110w = 256;
-	_val111w = 4;
-	_val112w = 256;
-	// set1Value()
-	_val113d = 0;
 	// zeroValues1()
 	_objArray2Idx = 0;
 	_objArray2Idx2 = 0;
@@ -67,7 +60,6 @@ void Insane::runScene(int arraynum) {
 	smush_warpMouse(160, 100, -1);
 	putActors();
 	readState();
-	_val10b = _val50d; // FIXME: seems to be unused
 	setTrsFile(_trsFilePtr); // FIXME: we don't need it
 
 	debug(0, "INSANE Arg: %d", readArray(0));
@@ -77,18 +69,19 @@ void Insane::runScene(int arraynum) {
 		initScene(1);
 		setupValues();
 		smlayer_setActorCostume(0, 2, readArray(10));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		startVideo("minedriv.san", 1, 32, 12, 0);
 		break;
 	case 2:
 		setupValues();
 		smlayer_setActorCostume(0, 2, readArray(11));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
-		_val8d = readArray(2);
-		if (_val55d) {
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
+
+		_mainRoadPos = readArray(2);
+		if (_mainRoadPos == _posBrokenTruck) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0);
-		} else if (_val56d) {
+		} else if (_mainRoadPos == _posBrokenCar) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0, _smush_tovista2Flu, 60);
 		} else {
@@ -99,12 +92,12 @@ void Insane::runScene(int arraynum) {
 	case 3:
 		setupValues();
 		smlayer_setActorCostume(0, 2, readArray(11));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
-		_val8d = readArray(2);
-		if (_val55d) {
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
+		_mainRoadPos = readArray(2);
+		if (_mainRoadPos == _posBrokenTruck) {
 			initScene(6);
 			startVideo("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 300);
-		} else if (_val56d) {
+		} else if (_mainRoadPos == _posBrokenCar) {
 			initScene(6);
 			startVideo("toranch.san", 1, 32, 12, 0, _smush_toranchFlu, 240);
 		} else {
@@ -128,7 +121,7 @@ void Insane::runScene(int arraynum) {
 		setupValues();
 		smlayer_setFluPalette(_smush_roadrashRip, 1);
 		smlayer_setActorCostume(0, 2, readArray(10));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		startVideo("minedriv.san", 1, 32, 12, 0, _smush_minedrivFlu, 420);
 		break;
 	case 7:
@@ -196,6 +189,7 @@ int Insane::initScene(int sceneId) {
 		_sceneData2Loaded = 1;
 
 	_currSceneId = sceneId;
+
 	return 1;
 }
 
@@ -624,7 +618,7 @@ void Insane::setSceneCostumes(int sceneId) {
 	switch (sceneId) {
 	case 1:
 		smlayer_setActorCostume(0, 2, readArray(10));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		setupValues();
 		return;
@@ -645,7 +639,7 @@ void Insane::setSceneCostumes(int sceneId) {
 		return;
 		break;
 	case 21:
-		_currEnemy = EN_ROTT3; // PATCH
+		_currEnemy = EN_ROTT3;
 		setEnemyCostumes();
 		_actor[1].y = 200;
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -804,6 +798,7 @@ void Insane::procPreRendering(void) {
 	switchSceneIfNeeded();
 
 	if (_sceneData1Loaded) {
+		_val115_ = 1;
 		if (!_keyboardDisable) {
 			smush_changeState(1);
 			_smush_isPauseImuse = true;
@@ -811,13 +806,12 @@ void Insane::procPreRendering(void) {
 			_keyboardDisable = 1;
 		}
 	} else {
-		_val115w = 0;
+		_val115_ = 0;
 		if (_keyboardDisable) {
-			if (!_val116w) {
-				smush_changeState(0);
-				_smush_isPauseImuse = false;
-				IMUSE_restoreVolume();
-			}
+			smush_changeState(0);
+			_smush_isPauseImuse = false;
+			IMUSE_restoreVolume();
+
 			_keyboardDisable = 0;
 		}
 	}
@@ -830,7 +824,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 	int32 tmpSnd;
 	bool needMore = false;
 
-	if(!_keyboardDisable && !_val116w) {
+	if(!_keyboardDisable) {
 		switch (_currSceneId) {
 		case 12:
 			postCase11(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
@@ -978,7 +972,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		_actor[1].act[0].frame++;
 	}
 	
-	if (!_val115w) {
+	if (!_val115_) {
 		smlayer_overrideDrawActorAt(&renderBitmap[0], renderBitmap[2], renderBitmap[3]);
 		_isBenCut = 0;
 	}
@@ -986,7 +980,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 	if (_isBenCut)
 		smlayer_drawSomething(renderBitmap, codecparam, 89, 56, 1, _smush_bencutNut, 0, 0, 0);
 	
-	if (!_keyboardDisable && !_val116w)
+	if (!_keyboardDisable)
 		_vm->processActors();
 	
 	if (needMore)
@@ -1006,8 +1000,8 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							 _continueFrame, 1300);
 		}
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1021,8 +1015,8 @@ void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 	
 	_val121_ = false;
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_val122_ = false;
 	_val123_ = false;
 	_continueFrame1 = curFrame;
@@ -1041,8 +1035,8 @@ void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			writeArray(9, 0);
 		}
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1080,8 +1074,8 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	}
 	_val121_ = false;
 	_val123_ = false;
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_val124_ = false;
 	_counter1++;
 	_continueFrame1 = curFrame;
@@ -1098,8 +1092,8 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1114,8 +1108,8 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 
 	_val121_ = false;
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_continueFrame = curFrame;
 }
 
@@ -1128,8 +1122,8 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 	
 	_val121_ = false;
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_continueFrame = curFrame;
 }
 
@@ -1171,9 +1165,9 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 	}
 
-	_val212_ = false;
-	_val120_ = false;
-	_val119_ = false;
+	_carIsBroken = false;
+	_roadRightBranch = false;
+	_roadLeftBranch = false;
 	_iactSceneId = 0;
 }
 
@@ -1203,9 +1197,9 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 	}
 	
-	_val212_ = false;
-	_val120_ = false;
-	_val119_ = false;
+	_carIsBroken = false;
+	_roadRightBranch = false;
+	_roadLeftBranch = false;
 	_iactSceneId = 0;
 }
 
@@ -1222,8 +1216,8 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1244,8 +1238,8 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
  	}
 	
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1255,8 +1249,8 @@ void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 						 _continueFrame1, 1300);
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1282,19 +1276,19 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 			switch (_enemy[_currEnemy].weapon) {
 			case INV_CHAIN:
-				_actor[1].inventory[INV_CHAIN] = 1;
+				_actor[0].inventory[INV_CHAIN] = 1;
 				queueSceneSwitch(12, 0, "liftchay.san", 0, 0, 0, 0);
 				break;
 			case INV_CHAINSAW:
-				_actor[1].inventory[INV_CHAINSAW] = 1;
+				_actor[0].inventory[INV_CHAINSAW] = 1;
 				queueSceneSwitch(12, 0, "liftsaw.san", 0, 0, 0, 0);
 				break;
 			case INV_MACE:
-				_actor[1].inventory[INV_MACE] = 1;
+				_actor[0].inventory[INV_MACE] = 1;
 				queueSceneSwitch(12, 0, "liftmace.san", 0, 0, 0, 0);
 				break;
 			case INV_2X4:
-				_actor[1].inventory[INV_2X4] = 1;
+				_actor[0].inventory[INV_2X4] = 1;
 				queueSceneSwitch(12, 0, "liftbord.san", 0, 0, 0, 0);
 				break;
 			default:
@@ -1305,8 +1299,8 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
  	}
 	
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1389,8 +1383,8 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
 
-	_val119_ = 0;
-	_val120_ = 0;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_continueFrame = curFrame;
 }
 
@@ -1406,8 +1400,8 @@ void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				queueSceneSwitch(5, 0, "tovista2.san", 64, 0, 0, 290);
 		}
 	}
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1416,8 +1410,8 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_currSceneId == 16) {
 			writeArray(4, 0);
 			writeArray(5, 1);
-			writeArray(1, _val56d);
-			writeArray(3, _val55d);
+			writeArray(1, _posBrokenCar);
+			writeArray(3, _posBrokenTruck);
 			smush_setToFinish();
 		} else {
 			switch (_tempSceneId) {
@@ -1431,8 +1425,8 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 	}
 
-	_val119_ = false;
-	_val120_ = false;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 }
 
 void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1477,8 +1471,8 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			}
 		}
 	}
-	_val119_ = 0;
-	_val120_ = 0;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
 	_continueFrame = curFrame;
 }
 

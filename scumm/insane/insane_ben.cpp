@@ -239,7 +239,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 		return;
 
 	if (_actor[0].field_8 == 112) {
-		if (_actor[0].frame < 18 || !_needSceneSwitch)
+		if (_actor[0].frame < 18 || _needSceneSwitch)
 			return;
 
 		queueSceneSwitch(18, 0, "fishgogg.san", 64, 0, 0, 0);
@@ -254,7 +254,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 					smush_setToFinish();
 				}
 
-				if (_val119_ && !_needSceneSwitch) {
+				if (_roadLeftBranch && !_needSceneSwitch) {
 					_iactSceneId2 = _iactSceneId;
 					queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 				}
@@ -275,7 +275,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 
 			drawSpeedyActor(buttons);
 
-			if ((buttons & 1) && _currSceneId == 1 && _val119_ && !_needSceneSwitch) {
+			if ((buttons & 1) && _currSceneId == 1 && _roadLeftBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 				queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 			}
@@ -301,7 +301,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if ((buttons & 1) == 0)
 				return;
 
-			if (_val119_ && !_needSceneSwitch) {
+			if (_roadLeftBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
 				if (readArray(4) && _val211d < 3) {
@@ -312,16 +312,16 @@ void Insane::mineChooseRoad(int32 buttons) {
 				}
 			}
 			
-			if (_val120_) {
-				writeArray(1, _val55d);
+			if (_roadRightBranch) {
+				writeArray(1, _posBrokenTruck);
 				writeArray(3, _val57d);
 				smush_setToFinish();
 			}
 
-			if (!_val212_)
+			if (!_carIsBroken)
 				return;
 
-			writeArray(1, _val56d);
+			writeArray(1, _posBrokenCar);
 			writeArray(3, _val57d);
 			smush_setToFinish();
 			break;
@@ -338,7 +338,7 @@ void Insane::mineChooseRoad(int32 buttons) {
 			if ((buttons & 1) == 0)
 				return;
 
-			if (_val119_ && !_needSceneSwitch) {
+			if (_roadLeftBranch && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
 				if (readArray(4) && _val211d < 3) {
@@ -349,16 +349,16 @@ void Insane::mineChooseRoad(int32 buttons) {
 				}
 			}
 			
-			if (_val120_) {
-				writeArray(1, _val55d);
+			if (_roadRightBranch) {
+				writeArray(1, _posBrokenTruck);
 				writeArray(3, _val53d);
 				smush_setToFinish();
 			}
 
-			if (!_val212_)
+			if (!_carIsBroken)
 				return;
 
-			writeArray(1, _val56d);
+			writeArray(1, _posBrokenCar);
 			writeArray(3, _val53d);
 			smush_setToFinish();
 			break;

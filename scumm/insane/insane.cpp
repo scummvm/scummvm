@@ -145,31 +145,24 @@ void Insane::initvars(void) {
 	_kickEnemyProgress = false;
 	_weaponEnemyJustSwitched = false;
 	_beenCheated = 0;
+	_posBrokenTruck = 0;
+	_posBrokenCar = 0;
+	_roadLeftBranch = false;
+	_roadRightBranch = false;
+	_carIsBroken = false;
 	_val11d = 0;
 	_val32d = -1;
 	_val51d = 0;
 	_val52d = 0;
 	_val53d = 0;
 	_val54d = 0;
-	_val55d = 0;
-	_val56d = 0;
 	_val57d = 0;
-	_val109w = 0x40;
-	_val10b = 3;
-	_val110w = 0x100;
-	_val111w = 0x20;
-	_val112w = 0x20;
-	_val113d = 1;
-	_val115w = 0;
-	_val116w = 0;
-	_val119_ = false;
-	_val120_ = false;
+	_val115_ = false;
 	_val121_ = false;
 	_val122_ = false;
 	_val123_ = false;
 	_val124_ = false;
 	_val211d = 0;
-	_val212_ = 0;
 	_val213d = 0;
 	_val214d = -1;
 	_val215d = 0;
@@ -677,11 +670,11 @@ void Insane::readState(void) {
 
 	_smlayer_room = readArray(320);
 	_smlayer_room2 = readArray(321);
-	_val55d = readArray(322);
+	_posBrokenTruck = readArray(322);
 	_val53d = readArray(323);
 	_val57d = readArray(324);
 	_val52d = readArray(325);
-	_val56d = readArray(326);
+	_posBrokenCar = readArray(326);
 	_val54d = readArray(327);
 	_val51d = readArray(328);
 	_enemy[EN_TORQUE].field_8 = readArray(337);
@@ -1090,8 +1083,8 @@ void Insane::escapeKeyHandler(void) {
 	case 16:
 		writeArray(4, 0);
 		writeArray(5, 1);
-		writeArray(1, _val56d);
-		writeArray(3, _val55d);
+		writeArray(1, _posBrokenCar);
+		writeArray(3, _posBrokenTruck);
 		smush_setToFinish();
 		break;
 	case 15:
@@ -1175,12 +1168,10 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 }
 
 void Insane::IMUSE_shutVolume(void) {
-	debug(0, "***************************************************");
 	_vm->_imuse->pause(true);
 }
 
 void Insane::IMUSE_restoreVolume(void) {
-	debug(0, "***************************************************");
 	_vm->_imuse->pause(false);
 }
 

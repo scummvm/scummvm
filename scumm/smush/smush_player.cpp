@@ -958,7 +958,6 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 		pos = 0;
 	} else {
 		_base->reinit(pos);
-		debug(0, "Yup");
 	}
 
 	if (pos != 8 && pos) {

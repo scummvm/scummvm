@@ -36,7 +36,7 @@ namespace Scumm {
 
 void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
-	if (_keyboardDisable || _val116w)
+	if (_keyboardDisable)
 		return;
 
 	switch (_currSceneId) {
@@ -134,14 +134,14 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
 								  _smush_iconsNut, 7, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			_val120_ = true;
+			_roadRightBranch = true;
 			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
@@ -149,7 +149,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			writeArray(1, _val55d);
+			writeArray(1, _posBrokenTruck);
 			writeArray(3, _val57d);
 			smush_setToFinish();
 
@@ -194,7 +194,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (_val32d < 0 || _val32d > 4)
 		if (readArray(8)) {
 			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
-								  _smush_icons2Nut, 20, 0, 0);
+								  _smush_iconsNut, 20, 0, 0);
 			_val122_ = true;
 		}
 }
@@ -427,14 +427,14 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
 								  _smush_icons2Nut, 10, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			_val120_ = true;
+			_roadRightBranch = true;
 			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
@@ -442,7 +442,7 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			writeArray(1, _val55d);
+			writeArray(1, _posBrokenTruck);
 			writeArray(3, _val57d);
 			smush_setToFinish();
 
@@ -451,14 +451,14 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(5) == 0)
 				return;
 			
-			_val212_ = true;
+			_carIsBroken = true;
 			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
 			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
 								  _smush_icons2Nut, 9, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			break;
 		}
@@ -508,14 +508,14 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
 								  _smush_icons2Nut, 10, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			break;
 		case 7:
 			if (readArray(4) != 0)
 				return;
 
-			_val120_ = true;
+			_roadRightBranch = true;
 			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
@@ -523,7 +523,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(4) == 0 || readArray(6) == 0)
 				return;
 
-			writeArray(1, _val55d);
+			writeArray(1, _posBrokenTruck);
 			writeArray(3, _val53d);
 			smush_setToFinish();
 
@@ -532,14 +532,14 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(5) == 0)
 				return;
 			
-			_val212_ = true;
+			_carIsBroken = true;
 			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
 								  _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
 			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
 								  _smush_icons2Nut, 9, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			break;
 		}
@@ -571,7 +571,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
 								  _smush_iconsNut, 6, 0, 0);
-			_val119_ = true;
+			_roadLeftBranch = true;
 			_iactSceneId = par4;
 			if (_counter1 <= 4) {
 				if (_counter1 == 4)
