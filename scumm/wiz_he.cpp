@@ -1292,9 +1292,9 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
 		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
 		WRITE_BE_UINT32(res_data, 0x14); res_data += 4;
-		WRITE_BE_UINT32(res_data, 0); res_data += 4;
-		WRITE_BE_UINT32(res_data, img_w); res_data += 4;
-		WRITE_BE_UINT32(res_data, img_h); res_data += 4;
+		WRITE_LE_UINT32(res_data, 0); res_data += 4;
+		WRITE_LE_UINT32(res_data, img_w); res_data += 4;
+		WRITE_LE_UINT32(res_data, img_h); res_data += 4;
 		if (flags & 1) {
 			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
 			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
