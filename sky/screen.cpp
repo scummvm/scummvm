@@ -365,6 +365,15 @@ void SkyScreen::waitForTimer(void) {
 	}
 }
 
+void SkyScreen::waitForSequence(void) {
+         while (_seqInfo.running) {
+               OSystem::Event event;
+
+               _system->delay_msecs(20);
+               while (_system->poll_event(&event));
+        }
+}
+
 void SkyScreen::handleTimer(void) {
 
 	_gotTick = true;

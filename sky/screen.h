@@ -65,7 +65,7 @@ public:
 	void startSequenceItem(uint16 itemNum);
 	void stopSequence(void);
 	bool sequenceRunning(void) { return _seqInfo.running; };
-	void waitForSequence(void) { while (_seqInfo.running) _system->delay_msecs(20); };
+	void waitForSequence(void);
 	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; };
 	uint8 *giveCurrent(void) { return _currentScreen; };
 	void halvePalette(void);
