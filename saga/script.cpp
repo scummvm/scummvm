@@ -46,6 +46,7 @@ Script::Script() {
 
 	//initialize member variables
 	_dbg_thread = 0;
+	_dbg_singlestep = 0;
 	_scriptContext = 0;
 	_voiceLUTPresent = false;
 	_scriptLUTEntryLen = 0;
