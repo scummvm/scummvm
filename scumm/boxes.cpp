@@ -235,7 +235,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	// we shouldn't subtract 1 from ptr[0] when performing the check?
 	// this also seems to be incorrect for atari st demo of zak
 	// and assumingly other v2 games
-	if (_gameId != GID_MONKEY_EGA)
+	if ((_gameId != GID_MONKEY_EGA) && (_gameId != GID_ZAK))
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
 	if (_features & GF_AFTER_V2)
