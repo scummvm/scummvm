@@ -718,7 +718,23 @@ void Scumm::addVerbToStack(int var)
 	if (num) {
 		for (i = 1; i < _maxVerbs; i++) {
 			if (num == _verbs[i].verbid && !_verbs[i].type && !_verbs[i].saveid) {
-				addMessageToStack(getResourceAddress(rtVerb, i));
+				byte *ptr = getResourceAddress(rtVerb, i);
+                        	if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+                                	char pointer[20];
+                                	int i, j;
+
+                                	translateText(ptr, _transText);
+
+                                	for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
+                                        	if (ptr[i] != '/')
+                                        	pointer[j++] = ptr[i];
+                                	}
+                                	pointer[j] = 0;
+                                	_sound->_talkChannel = _sound->playBundleSound(pointer);
+                                	addMessageToStack(_transText);
+                        	} else {
+                                	addMessageToStack(ptr);
+                        	}
 				break;
 			}
 		}
@@ -749,7 +765,22 @@ void Scumm::addStringToStack(int var)
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			addMessageToStack(ptr);
+	                if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+                        	char pointer[20];
+                        	int i, j;
+
+                        	translateText(ptr, _transText);
+
+                        	for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
+                                	if (ptr[i] != '/')
+                                        	pointer[j++] = ptr[i];
+                        	}
+                        	pointer[j] = 0;
+				_sound->_talkChannel = _sound->playBundleSound(pointer);
+				addMessageToStack(_transText);
+                	} else {
+				addMessageToStack(ptr);
+			}
 			return;
 		}
 	}
