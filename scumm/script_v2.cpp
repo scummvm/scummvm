@@ -362,6 +362,10 @@ void ScummEngine_v2::setupOpcodes() {
 
 #define SENTENCE_SCRIPT 2
 
+#define PARAM_1 0x80
+#define PARAM_2 0x40
+#define PARAM_3 0x20
+
 void ScummEngine_v2::executeOpcode(byte i) {
 	OpcodeProcV2 op = _opcodesV2[i].proc;
 	(this->*op) ();
@@ -452,24 +456,24 @@ void ScummEngine_v2::getResultPos() {
 }
 
 void ScummEngine_v2::setStateCommon(byte type) {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) | type);
 }
 
 void ScummEngine_v2::clearStateCommon(byte type) {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) & ~type);
 }
 
 void ScummEngine_v2::o2_setState08() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) | 0x08);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_v2::o2_clearState08() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) & ~0x08);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
@@ -501,7 +505,7 @@ void ScummEngine_v2::o2_clearState01() {
 
 void ScummEngine_v2::o2_assignVarWordIndirect() {
 	getResultPosIndirect();
-	setResult(getVarOrDirectWord(0x80));
+	setResult(getVarOrDirectWord(PARAM_1));
 }
 
 void ScummEngine_v2::o2_assignVarByte() {
@@ -510,7 +514,7 @@ void ScummEngine_v2::o2_assignVarByte() {
 }
 
 void ScummEngine_v2::o2_setObjPreposition() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	int unk = fetchScriptByte();
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
@@ -523,7 +527,7 @@ void ScummEngine_v2::o2_setObjPreposition() {
 
 void ScummEngine_v2::o2_getObjPreposition() {
 	getResultPos();
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		byte *ptr = getOBCDFromObject(obj) + 12;
@@ -535,13 +539,13 @@ void ScummEngine_v2::o2_getObjPreposition() {
 
 void ScummEngine_v2::o2_setBitVar() {
 	int var = fetchScriptWord();
-	byte a = getVarOrDirectByte(0x80);
+	byte a = getVarOrDirectByte(PARAM_1);
 
 	int bit_var = var + a;
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
-	if (getVarOrDirectByte(0x40))
+	if (getVarOrDirectByte(PARAM_2))
 		_scummVars[bit_var] |= (1 << bit_offset);
 	else
 		_scummVars[bit_var] &= ~(1 << bit_offset);
@@ -555,7 +559,7 @@ void ScummEngine_v2::o2_setBitVar() {
 void ScummEngine_v2::o2_getBitVar() {
 	getResultPos();
 	int var = fetchScriptWord();
-	byte a = getVarOrDirectByte(0x80);
+	byte a = getVarOrDirectByte(PARAM_1);
 
 	int bit_var = var + a;
 	int bit_offset = bit_var & 0x0f;
@@ -573,7 +577,7 @@ void ScummEngine_v2::o2_getBitVar() {
 }
 
 void ScummEngine_v2::ifStateCommon(byte type) {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 
 	if ((getState(obj) & type) == 0)
 		o5_jumpRelative();
@@ -582,7 +586,7 @@ void ScummEngine_v2::ifStateCommon(byte type) {
 }
 
 void ScummEngine_v2::ifNotStateCommon(byte type) {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 
 	if ((getState(obj) & type) != 0)
 		o5_jumpRelative();
@@ -625,33 +629,33 @@ void ScummEngine_v2::o2_ifNotState01() {
 void ScummEngine_v2::o2_addIndirect() {
 	int a;
 	getResultPosIndirect();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	_scummVars[_resultVarNumber] += a;
 }
 
 void ScummEngine_v2::o2_subIndirect() {
 	int a;
 	getResultPosIndirect();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	_scummVars[_resultVarNumber] -= a;
 }
 
 void ScummEngine_v2::o2_add() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	_scummVars[_resultVarNumber] += a;
 }
 
 void ScummEngine_v2::o2_subtract() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	_scummVars[_resultVarNumber] -= a;
 }
 
 void ScummEngine_v2::o2_waitForActor() {
-	Actor *a = derefActor(getVarOrDirectByte(0x80), "o2_waitForActor");
+	Actor *a = derefActor(getVarOrDirectByte(PARAM_1), "o2_waitForActor");
 	if (a->moving) {
 		_scriptPointer -= 2;
 		o5_breakHere();
@@ -675,8 +679,8 @@ void ScummEngine_v2::o2_waitForSentence() {
 }
 
 void ScummEngine_v2::o2_actorOps() {
-	int act = getVarOrDirectByte(0x80);
-	int arg = getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int arg = getVarOrDirectByte(PARAM_2);
 	Actor *a;
 	int i;
 
@@ -729,9 +733,9 @@ void ScummEngine_v2::o2_drawObject() {
 	uint16 x, y, w, h;
 	int xpos, ypos;
 
-	obj = getVarOrDirectWord(0x80);
-	xpos = getVarOrDirectByte(0x40);
-	ypos = getVarOrDirectByte(0x20);
+	obj = getVarOrDirectWord(PARAM_1);
+	xpos = getVarOrDirectByte(PARAM_2);
+	ypos = getVarOrDirectByte(PARAM_3);
 
 	idx = getObjectIndex(obj);
 	if (idx == -1)
@@ -762,15 +766,15 @@ void ScummEngine_v2::o2_drawObject() {
 
 void ScummEngine_v2::o2_resourceRoutines() {
 	const ResTypes resTypes[] = {
-			rtNumTypes,	// Invalid
-			rtNumTypes,	// Invalid
-			rtCostume,
-			rtRoom,
-			rtNumTypes,	// Invalid
-			rtScript,
-			rtSound
-		};
-	int resid = getVarOrDirectByte(0x80);
+		rtNumTypes,	// Invalid
+		rtNumTypes,	// Invalid
+		rtCostume,
+		rtRoom,
+		rtNumTypes,	// Invalid
+		rtScript,
+		rtSound
+	};
+	int resid = getVarOrDirectByte(PARAM_1);
 	int opcode = fetchScriptByte();
 
 	ResTypes type = rtNumTypes;
@@ -796,7 +800,7 @@ void ScummEngine_v2::o2_verbOps() {
 	
 	switch (verb) {
 	case 0:		// SO_DELETE_VERBS
-		slot = getVarOrDirectByte(0x80) + 1;
+		slot = getVarOrDirectByte(PARAM_1) + 1;
 		assert(0 < slot && slot < _maxVerbs);
 
 		//printf("o2_verbOps delete slot = %d\n", slot);
@@ -817,7 +821,7 @@ void ScummEngine_v2::o2_verbOps() {
 	default: {	// New Verb
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
-		slot = getVarOrDirectByte(0x80) + 1;
+		slot = getVarOrDirectByte(PARAM_1) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if ((_gameId == GID_MANIAC) && (_version == 1))
@@ -882,7 +886,7 @@ void ScummEngine_v2::o2_doSentence() {
 	int a;
 	SentenceTab *st;
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	if (a == 0xFC) {
 		_sentenceNum = 0;
 		stopScript(SENTENCE_SCRIPT);
@@ -896,8 +900,8 @@ void ScummEngine_v2::o2_doSentence() {
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = a;
-	st->objectA = getVarOrDirectWord(0x40);
-	st->objectB = getVarOrDirectWord(0x20);
+	st->objectA = getVarOrDirectWord(PARAM_2);
+	st->objectB = getVarOrDirectWord(PARAM_3);
 	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
 
@@ -1064,8 +1068,8 @@ void ScummEngine_v2::o2_drawSentence() {
 }
 
 void ScummEngine_v2::o2_ifClassOfIs() {
-	int obj = getVarOrDirectWord(0x80);
-	int clsop = getVarOrDirectByte(0x40);
+	int obj = getVarOrDirectWord(PARAM_1);
+	int clsop = getVarOrDirectByte(PARAM_2);
 	byte *obcd = getOBCDFromObject(obj);
 
 	if (obcd == 0) {
@@ -1084,42 +1088,42 @@ void ScummEngine_v2::o2_ifClassOfIs() {
 void ScummEngine_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
-	a = derefActor(getVarOrDirectByte(0x80), "o2_walkActorTo");
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorTo");
 
-	x = getVarOrDirectByte(0x40) * 8;
-	y = getVarOrDirectByte(0x20) * 2;
+	x = getVarOrDirectByte(PARAM_2) * 8;
+	y = getVarOrDirectByte(PARAM_1) * 2;
 
 	a->startWalkActor(x, y, -1);
 }
 
 void ScummEngine_v2::o2_putActor() {
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	int x, y;
 	Actor *a;
 
 	a = derefActor(act, "o2_putActor");
 
-	x = getVarOrDirectByte(0x40) * 8;
-	y = getVarOrDirectByte(0x20) * 2;
+	x = getVarOrDirectByte(PARAM_2) * 8;
+	y = getVarOrDirectByte(PARAM_1) * 2;
 
 	a->putActor(x, y, a->room);
 }
 
 void ScummEngine_v2::o2_startScript() {
-	int script = getVarOrDirectByte(0x80);
+	int script = getVarOrDirectByte(PARAM_1);
 	runScript(script, 0, 0, 0);
 }
 
 void ScummEngine_v2::o2_panCameraTo() {
-	panCameraTo(getVarOrDirectByte(0x80) * 8, 0);
+	panCameraTo(getVarOrDirectByte(PARAM_1) * 8, 0);
 }
 
 void ScummEngine_v2::o2_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o2_walkActorToObject");
-	obj = getVarOrDirectWord(0x40);
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorToObject");
+	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
 		getObjectXYPos(obj, x, y, dir);
@@ -1131,9 +1135,9 @@ void ScummEngine_v2::o2_putActorAtObject() {
 	int obj, x, y;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o2_putActorAtObject");
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_putActorAtObject");
 
-	obj = getVarOrDirectWord(0x40);
+	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
 	else {
@@ -1146,22 +1150,22 @@ void ScummEngine_v2::o2_putActorAtObject() {
 
 void ScummEngine_v2::o2_getActorElevation() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o2_getActorElevation");
 	setResult(a->elevation / 2);
 }
 
 void ScummEngine_v2::o2_setActorElevation() {
-	int act = getVarOrDirectByte(0x80);
-	int elevation = (int8)getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int elevation = (int8)getVarOrDirectByte(PARAM_2);
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
 	a->elevation = elevation * 2;
 }
 
 void ScummEngine_v2::o2_animateActor() {
-	int act = getVarOrDirectByte(0x80);
-	int anim = getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int anim = getVarOrDirectByte(PARAM_2);
 
 	Actor *a = derefActor(act, "o2_animateActor");
 	a->animateActor(anim);
@@ -1170,15 +1174,15 @@ void ScummEngine_v2::o2_animateActor() {
 void ScummEngine_v2::o2_actorFromPos() {
 	int x, y;
 	getResultPos();
-	x = getVarOrDirectByte(0x80) * 8;
-	y = getVarOrDirectByte(0x40) * 2;
+	x = getVarOrDirectByte(PARAM_1) * 8;
+	y = getVarOrDirectByte(PARAM_2) * 2;
 	setResult(getActorFromPos(x, y));
 }
 
 void ScummEngine_v2::o2_findObject() {
 	getResultPos();
-	int x = getVarOrDirectByte(0x80) * 8;
-	int y = getVarOrDirectByte(0x40) * 2;
+	int x = getVarOrDirectByte(PARAM_1) * 8;
+	int y = getVarOrDirectByte(PARAM_2) * 2;
 	setResult(findObject(x, y));
 }
 
@@ -1186,7 +1190,7 @@ void ScummEngine_v2::o2_getActorX() {
 	int a;
 	getResultPos();
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	setResult(getObjX(a) / 8);
 }
 
@@ -1194,13 +1198,13 @@ void ScummEngine_v2::o2_getActorY() {
 	int a;
 	getResultPos();
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	setResult(getObjY(a) / 2);
 }
 
 void ScummEngine_v2::o2_isGreater() {
 	uint16 a = getVar();
-	uint16 b = getVarOrDirectWord(0x80);
+	uint16 b = getVarOrDirectWord(PARAM_1);
 	if (b > a)
 		ignoreScriptWord();
 	else
@@ -1209,7 +1213,7 @@ void ScummEngine_v2::o2_isGreater() {
 
 void ScummEngine_v2::o2_isGreaterEqual() {
 	uint16 a = getVar();
-	uint16 b = getVarOrDirectWord(0x80);
+	uint16 b = getVarOrDirectWord(PARAM_1);
 	if (b >= a)
 		ignoreScriptWord();
 	else
@@ -1218,7 +1222,7 @@ void ScummEngine_v2::o2_isGreaterEqual() {
 
 void ScummEngine_v2::o2_isLess() {
 	uint16 a = getVar();
-	uint16 b = getVarOrDirectWord(0x80);
+	uint16 b = getVarOrDirectWord(PARAM_1);
 
 	if (b < a)
 		ignoreScriptWord();
@@ -1228,7 +1232,7 @@ void ScummEngine_v2::o2_isLess() {
 
 void ScummEngine_v2::o2_isLessEqual() {
 	uint16 a = getVar();
-	uint16 b = getVarOrDirectWord(0x80);
+	uint16 b = getVarOrDirectWord(PARAM_1);
 	if (b <= a)
 		ignoreScriptWord();
 	else
@@ -1238,7 +1242,7 @@ void ScummEngine_v2::o2_isLessEqual() {
 void ScummEngine_v2::o2_lights() {
 	int a, b, c;
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	b = fetchScriptByte();
 	c = fetchScriptByte();
 
@@ -1268,8 +1272,8 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	Actor *a;
 	int obj, room, x, y, x2, y2, dir;
 
-	obj = getVarOrDirectWord(0x80);
-	room = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	room = getVarOrDirectByte(PARAM_2);
 
 	a = derefActor(VAR(VAR_EGO), "o2_loadRoomWithEgo");
 
@@ -1302,8 +1306,8 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 void ScummEngine_v2::o2_setOwnerOf() {
 	int obj, owner;
 
-	obj = getVarOrDirectWord(0x80);
-	owner = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	owner = getVarOrDirectByte(PARAM_2);
 
 	setOwnerOf(obj, owner);
 }
@@ -1322,18 +1326,18 @@ void ScummEngine_v2::o2_delay() {
 void ScummEngine_v2::o2_setBoxFlags() {
 	int a, b;
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	b = fetchScriptByte();
 	setBoxFlags(a, b);
 }
 
 void ScummEngine_v2::o2_setCameraAt() {
-	setCameraAtEx(getVarOrDirectByte(0x80) * 8);
+	setCameraAtEx(getVarOrDirectByte(PARAM_1) * 8);
 }
 
 void ScummEngine_v2::o2_roomOps() {
-	int a = getVarOrDirectByte(0x80);
-	int b = getVarOrDirectByte(0x40);
+	int a = getVarOrDirectByte(PARAM_1);
+	int b = getVarOrDirectByte(PARAM_2);
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
@@ -1432,7 +1436,7 @@ void ScummEngine_v2::o2_chainScript() {
 }
 
 void ScummEngine_v2::o2_pickupObject() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 
 	if (obj < 1) {
 		error("pickupObject received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
@@ -1454,7 +1458,7 @@ void ScummEngine_v2::o2_pickupObject() {
 }
 
 void ScummEngine_v2::o2_setObjectName() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	int size = 0;
 	int a;
 	int i = 0;
@@ -1502,7 +1506,7 @@ void ScummEngine_v2::o2_setObjectName() {
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
-	uint16 cmd = getVarOrDirectWord(0x80);
+	uint16 cmd = getVarOrDirectWord(PARAM_1);
 	byte state = cmd >> 8;
 
 	if (cmd & 0xFF) {
@@ -1537,7 +1541,7 @@ void ScummEngine_v2::setUserState(byte state) {
 	// Hide all verbs and inventory
 	Common::Rect rect;
 	rect.top = virtscr[2].topline;
-	rect.bottom = virtscr[2].topline + 8*88;
+	rect.bottom = virtscr[2].topline + 8 * 88;
 	rect.left = 0;
 	rect.right = 319;
 	restoreBG(rect);
@@ -1550,7 +1554,7 @@ void ScummEngine_v2::setUserState(byte state) {
 void ScummEngine_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
-	a = derefActor(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_getActorWalkbox");
 	setResult(a->walkbox);
 }
 
@@ -1576,5 +1580,9 @@ void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
 	VAR(VAR_SENTENCE_PREPOSITION) = 0;
 }
+
+#undef PARAM_1
+#undef PARAM_2
+#undef PARAM_3
 
 } // End of namespace Scumm

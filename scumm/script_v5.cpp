@@ -360,6 +360,10 @@ void ScummEngine_v5::setupOpcodes() {
 	_opcodesV5 = opcodes;
 }
 
+#define PARAM_1 0x80
+#define PARAM_2 0x40
+#define PARAM_3 0x20
+
 void ScummEngine_v5::executeOpcode(byte i) {
 	OpcodeProcV5 op = _opcodesV5[i].proc;
 	(this->*op) ();
@@ -392,15 +396,15 @@ void ScummEngine_v5::o5_actorFollowCamera() {
 void ScummEngine_v5::o5_actorFromPos() {
 	int x, y;
 	getResultPos();
-	x = getVarOrDirectWord(0x80);
-	y = getVarOrDirectWord(0x40);
+	x = getVarOrDirectWord(PARAM_1);
+	y = getVarOrDirectWord(PARAM_2);
 	setResult(getActorFromPos(x, y));
 }
 
 void ScummEngine_v5::o5_actorOps() {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
 
@@ -410,39 +414,39 @@ void ScummEngine_v5::o5_actorOps() {
 
 		switch (_opcode & 0x1F) {
 		case 0:										/* dummy case */
-			getVarOrDirectByte(0x80);
+			getVarOrDirectByte(PARAM_1);
 			break;
 		case 1:			// SO_COSTUME
-			a->setActorCostume(getVarOrDirectByte(0x80));
+			a->setActorCostume(getVarOrDirectByte(PARAM_1));
 			break;
 		case 2:			// SO_STEP_DIST
-			i = getVarOrDirectByte(0x80);
-			j = getVarOrDirectByte(0x40);
+			i = getVarOrDirectByte(PARAM_1);
+			j = getVarOrDirectByte(PARAM_2);
 			a->setActorWalkSpeed(i, j);
 			break;
 		case 3:			// SO_SOUND
-			a->sound[0] = getVarOrDirectByte(0x80);
+			a->sound[0] = getVarOrDirectByte(PARAM_1);
 			break;
 		case 4:			// SO_WALK_ANIMATION
-			a->walkFrame = getVarOrDirectByte(0x80);
+			a->walkFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:			// SO_TALK_ANIMATION
-			a->talkStartFrame = getVarOrDirectByte(0x80);
-			a->talkStopFrame = getVarOrDirectByte(0x40);
+			a->talkStartFrame = getVarOrDirectByte(PARAM_1);
+			a->talkStopFrame = getVarOrDirectByte(PARAM_2);
 			break;
 		case 6:			// SO_STAND_ANIMATION
-			a->standFrame = getVarOrDirectByte(0x80);
+			a->standFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 7:			// SO_ANIMATION
-			getVarOrDirectByte(0x80);
-			getVarOrDirectByte(0x40);
-			getVarOrDirectByte(0x20);
+			getVarOrDirectByte(PARAM_1);
+			getVarOrDirectByte(PARAM_2);
+			getVarOrDirectByte(PARAM_3);
 			break;
 		case 8:			// SO_DEFAULT
 			a->initActor(0);
 			break;
 		case 9:			// SO_ELEVATION
-			a->elevation = getVarOrDirectWord(0x80);
+			a->elevation = getVarOrDirectWord(PARAM_1);
 			a->needRedraw = true;
 			break;
 		case 10:		// SO_ANIMATION_DEFAULT
@@ -453,8 +457,8 @@ void ScummEngine_v5::o5_actorOps() {
 			a->talkStopFrame = 5;
 			break;
 		case 11:		// SO_PALETTE
-			i = getVarOrDirectByte(0x80);
-			j = getVarOrDirectByte(0x40);
+			i = getVarOrDirectByte(PARAM_1);
+			j = getVarOrDirectByte(PARAM_2);
 			checkRange(31, 0, i, "Illegal palette slot %d");
 			a->palette[i] = j;
 			a->needRedraw = true;
@@ -466,15 +470,15 @@ void ScummEngine_v5::o5_actorOps() {
 			// to be changed.
 
 			if (act == 0)
-				_string[0].color = getVarOrDirectByte(0x80);
+				_string[0].color = getVarOrDirectByte(PARAM_1);
 			else
-				a->talkColor = getVarOrDirectByte(0x80);
+				a->talkColor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 13:		// SO_ACTOR_NAME
 			loadPtrToResource(rtActorName, a->number, NULL);
 			break;
 		case 14:		// SO_INIT_ANIMATION
-			a->initFrame = getVarOrDirectByte(0x80);
+			a->initFrame = getVarOrDirectByte(PARAM_1);
 			break;
 		case 15:		// SO_PALETTE_LIST
 			error("o5_actorOps:unk not implemented");
@@ -491,14 +495,14 @@ void ScummEngine_v5::o5_actorOps() {
 #endif
 			break;
 		case 16:		// SO_ACTOR_WIDTH
-			a->width = getVarOrDirectByte(0x80);
+			a->width = getVarOrDirectByte(PARAM_1);
 			break;
 		case 17:		// SO_ACTOR_SCALE
 			if (_version == 4) {
-				a->scalex = a->scaley = getVarOrDirectByte(0x80);
+				a->scalex = a->scaley = getVarOrDirectByte(PARAM_1);
 			} else {
-				a->scalex = getVarOrDirectByte(0x80);
-				a->scaley = getVarOrDirectByte(0x40);
+				a->scalex = getVarOrDirectByte(PARAM_1);
+				a->scaley = getVarOrDirectByte(PARAM_2);
 			}
 
 			a->needRedraw = true;
@@ -507,7 +511,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->forceClip = 0;
 			break;
 		case 19:		// SO_ALWAYS_ZCLIP
-			a->forceClip = getVarOrDirectByte(0x80);
+			a->forceClip = getVarOrDirectByte(PARAM_1);
 			break;
 		case 20:		// SO_IGNORE_BOXES
 		case 21:		// SO_FOLLOW_BOXES
@@ -518,10 +522,10 @@ void ScummEngine_v5::o5_actorOps() {
 			break;
 
 		case 22:		// SO_ANIMATION_SPEED
-			a->setAnimSpeed(getVarOrDirectByte(0x80));
+			a->setAnimSpeed(getVarOrDirectByte(PARAM_1));
 			break;
 		case 23:		// SO_SHADOW
-			a->shadow_mode = getVarOrDirectByte(0x80);
+			a->shadow_mode = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
 			warning("o5_actorOps: default case");
@@ -530,11 +534,11 @@ void ScummEngine_v5::o5_actorOps() {
 }
 
 void ScummEngine_v5::o5_setClass() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	int newClass;
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
-		newClass = getVarOrDirectWord(0x80);
+		newClass = getVarOrDirectWord(PARAM_1);
 		if (newClass == 0) {
 			// Class '0' means: clean all class data
 			_classData[obj] = 0;
@@ -551,7 +555,7 @@ void ScummEngine_v5::o5_setClass() {
 void ScummEngine_v5::o5_add() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #770065: This works around a script bug in LoomCD. To
 	// understand the reasoning behind this, compare script 210 and 218 in
@@ -588,14 +592,14 @@ void ScummEngine_v5::o5_add() {
 void ScummEngine_v5::o5_and() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	setResult(readVar(_resultVarNumber) & a);
 }
 
 void ScummEngine_v5::o5_animateActor() {
-	int act = getVarOrDirectByte(0x80);
-	int anim = getVarOrDirectByte(0x40);
-	
+	int act = getVarOrDirectByte(PARAM_1);
+	int anim = getVarOrDirectByte(PARAM_2);
+
 	// WORKAROUND bug #820357: This seems to be yet another script bug which
 	// the original engine let slip by. For details, refer to the tracker item.
 	if (_gameId == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
@@ -616,7 +620,7 @@ void ScummEngine_v5::o5_chainScript() {
 	int script;
 	int cur;
 
-	script = getVarOrDirectByte(0x80);
+	script = getVarOrDirectByte(PARAM_1);
 
 	getWordVararg(vars);
 
@@ -672,8 +676,8 @@ void ScummEngine_v5::o5_cursorCommand() {
 		_userPut--;
 		break;
 	case 10:		// SO_CURSOR_IMAGE
-		i = getVarOrDirectByte(0x80);
-		j = getVarOrDirectByte(0x40);
+		i = getVarOrDirectByte(PARAM_1);
+		j = getVarOrDirectByte(PARAM_2);
 		// cursor image in both Looms is based on image from charset
 		// omit for now.
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
@@ -684,21 +688,21 @@ void ScummEngine_v5::o5_cursorCommand() {
 		}
 		break;
 	case 11:		// SO_CURSOR_HOTSPOT
-		i = getVarOrDirectByte(0x80);
-		j = getVarOrDirectByte(0x40);
-		k = getVarOrDirectByte(0x20);
+		i = getVarOrDirectByte(PARAM_1);
+		j = getVarOrDirectByte(PARAM_2);
+		k = getVarOrDirectByte(PARAM_3);
 		setCursorHotspot(j, k);
 		break;
 	case 12:		// SO_CURSOR_SET
-		setCursor(getVarOrDirectByte(0x80));
+		setCursor(getVarOrDirectByte(PARAM_1));
 		break;
 	case 13:		// SO_CHARSET_SET
-		initCharset(getVarOrDirectByte(0x80));
+		initCharset(getVarOrDirectByte(PARAM_1));
 		break;
 	case 14:											/* unk */
 		if (_version == 3) {
-			/*int a = */ getVarOrDirectByte(0x80);
-			/*int b = */ getVarOrDirectByte(0x40);
+			/*int a = */ getVarOrDirectByte(PARAM_1);
+			/*int b = */ getVarOrDirectByte(PARAM_2);
 			// This is some kind of "init charset" opcode. However, we don't have to do anything
 			// in here, as our initCharset automatically calls loadCharset for GF_SMALL_HEADER,
 			// games if needed.
@@ -727,7 +731,7 @@ void ScummEngine_v5::o5_endCutscene() {
 }
 
 void ScummEngine_v5::o5_debug() {
-	int a = getVarOrDirectWord(0x80);
+	int a = getVarOrDirectWord(PARAM_1);
 	debug(1, "o5_debug(%d)", a);
 }
 
@@ -754,7 +758,7 @@ void ScummEngine_v5::o5_delayVariable() {
 void ScummEngine_v5::o5_divide() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	if (a == 0) {
 		error("Divide by zero");
 		setResult(0);
@@ -766,7 +770,7 @@ void ScummEngine_v5::o5_doSentence() {
 	int verb;
 	SentenceTab *st;
 
-	verb = getVarOrDirectByte(0x80);
+	verb = getVarOrDirectByte(PARAM_1);
 	if (verb == 0xFE) {
 		_sentenceNum = 0;
 		stopScript(VAR(VAR_SENTENCE_SCRIPT));
@@ -777,8 +781,8 @@ void ScummEngine_v5::o5_doSentence() {
 	st = &_sentence[_sentenceNum++];
 
 	st->verb = verb;
-	st->objectA = getVarOrDirectWord(0x40);
-	st->objectB = getVarOrDirectWord(0x20);
+	st->objectA = getVarOrDirectWord(PARAM_2);
+	st->objectB = getVarOrDirectWord(PARAM_3);
 	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
 }
@@ -786,13 +790,13 @@ void ScummEngine_v5::o5_doSentence() {
 void ScummEngine_v5::o5_drawBox() {
 	int x, y, x2, y2, color;
 
-	x = getVarOrDirectWord(0x80);
-	y = getVarOrDirectWord(0x40);
+	x = getVarOrDirectWord(PARAM_1);
+	y = getVarOrDirectWord(PARAM_2);
 
 	_opcode = fetchScriptByte();
-	x2 = getVarOrDirectWord(0x80);
-	y2 = getVarOrDirectWord(0x40);
-	color = getVarOrDirectByte(0x20);
+	x2 = getVarOrDirectWord(PARAM_1);
+	y2 = getVarOrDirectWord(PARAM_2);
+	color = getVarOrDirectByte(PARAM_3);
 
 	drawBox(x, y, x2, y2, color);
 }
@@ -805,20 +809,20 @@ void ScummEngine_v5::o5_drawObject() {
 
 	state = 1;
 	xpos = ypos = 255;
-	obj = getVarOrDirectWord(0x80);
+	obj = getVarOrDirectWord(PARAM_1);
 
 	if (_features & GF_SMALL_HEADER) {
-		xpos = getVarOrDirectWord(0x40);
-		ypos = getVarOrDirectWord(0x20);
+		xpos = getVarOrDirectWord(PARAM_2);
+		ypos = getVarOrDirectWord(PARAM_3);
 	} else {
 		_opcode = fetchScriptByte();
 		switch (_opcode & 0x1F) {
 		case 1:										/* draw at */
-			xpos = getVarOrDirectWord(0x80);
-			ypos = getVarOrDirectWord(0x40);
+			xpos = getVarOrDirectWord(PARAM_1);
+			ypos = getVarOrDirectWord(PARAM_2);
 			break;
 		case 2:										/* set state */
-			state = getVarOrDirectWord(0x80);
+			state = getVarOrDirectWord(PARAM_1);
 			break;
 		case 0x1F:									/* neither */
 			break;
@@ -860,7 +864,7 @@ void ScummEngine_v5::o5_getStringWidth() {
 	byte *ptr;
 	
 	getResultPos();
-	string = getVarOrDirectByte(0x80);
+	string = getVarOrDirectByte(PARAM_1);
 	ptr = getResourceAddress(rtString, string);
 	assert(ptr);
 
@@ -891,8 +895,8 @@ void ScummEngine_v5::saveVars() {
 			warning("stub saveVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // write a range of string variables
-			a = getVarOrDirectByte(0x80);
-			b = getVarOrDirectByte(0x40);
+			a = getVarOrDirectByte(PARAM_1);
+			b = getVarOrDirectByte(PARAM_2);
 			warning("stub saveVars: strings %d -> %d", a, b);
 			break;
 		case 0x03: // open file
@@ -955,7 +959,7 @@ void ScummEngine_v5::o5_expression() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0x1F) {
 		case 1:										/* varordirect */
-			push(getVarOrDirectWord(0x80));
+			push(getVarOrDirectWord(PARAM_1));
 			break;
 		case 2:										/* add */
 			i = pop();
@@ -988,28 +992,28 @@ void ScummEngine_v5::o5_expression() {
 }
 
 void ScummEngine_v5::o5_faceActor() {
-	int act = getVarOrDirectByte(0x80);
-	int obj = getVarOrDirectWord(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int obj = getVarOrDirectWord(PARAM_2);
 	Actor *a = derefActor(act, "o5_faceActor");
 	a->faceToObject(obj);
 }
 
 void ScummEngine_v5::o5_findInventory() {
 	getResultPos();
-	int x = getVarOrDirectByte(0x80);
-	int y = getVarOrDirectByte(0x40);
+	int x = getVarOrDirectByte(PARAM_1);
+	int y = getVarOrDirectByte(PARAM_2);
 	setResult(findInventory(x, y));
 }
 
 void ScummEngine_v5::o5_findObject() {
 	getResultPos();
-	int x = getVarOrDirectByte(0x80);
-	int y = getVarOrDirectByte(0x40);
+	int x = getVarOrDirectByte(PARAM_1);
+	int y = getVarOrDirectByte(PARAM_2);
 	setResult(findObject(x, y));
 }
 
 void ScummEngine_v5::o5_freezeScripts() {
-	int scr = getVarOrDirectByte(0x80);
+	int scr = getVarOrDirectByte(PARAM_1);
 
 	if (scr != 0)
 		freezeScripts(scr);
@@ -1019,35 +1023,35 @@ void ScummEngine_v5::o5_freezeScripts() {
 
 void ScummEngine_v5::o5_getActorCostume() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorCostume");
 	setResult(a->costume);
 }
 
 void ScummEngine_v5::o5_getActorElevation() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorElevation");
 	setResult(a->elevation);
 }
 
 void ScummEngine_v5::o5_getActorFacing() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorFacing");
 	setResult(newDirToOldDir(a->getFacing()));
 }
 
 void ScummEngine_v5::o5_getActorMoving() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorMoving");
 	setResult(a->moving);
 }
 
 void ScummEngine_v5::o5_getActorRoom() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	// WORKAROUND bug #746349. This is a really odd bug in either the script
 	// or in our script engine. Might be a good idea to investigate this
 	// further by e.g. looking at the FOA engine a bit closer.
@@ -1070,7 +1074,7 @@ void ScummEngine_v5::o5_getActorScale() {
 	// INDY3 uses this opcode for waitForActor
 	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
-		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
+		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
 		if (a->moving) {
 			_scriptPointer = oldaddr;
 			o5_breakHere();
@@ -1079,21 +1083,21 @@ void ScummEngine_v5::o5_getActorScale() {
 	}
 
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	a = derefActor(act, "o5_getActorScale");
 	setResult(a->scalex);
 }
 
 void ScummEngine_v5::o5_getActorWalkBox() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorWalkBox");
 	setResult(a->walkbox);
 }
 
 void ScummEngine_v5::o5_getActorWidth() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorWidth");
 	setResult(a->width);
 }
@@ -1103,9 +1107,9 @@ void ScummEngine_v5::o5_getActorX() {
 	getResultPos();
 
 	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH))
-		a = getVarOrDirectByte(0x80);
+		a = getVarOrDirectByte(PARAM_1);
 	else
-		a = getVarOrDirectWord(0x80);
+		a = getVarOrDirectWord(PARAM_1);
 
 	setResult(getObjX(a));
 }
@@ -1115,7 +1119,7 @@ void ScummEngine_v5::o5_getActorY() {
 	getResultPos();
 
 	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
-		a = getVarOrDirectByte(0x80);
+		a = getVarOrDirectByte(PARAM_1);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin) 
 		if (_roomResource == 36) {
@@ -1123,14 +1127,14 @@ void ScummEngine_v5::o5_getActorY() {
 			return;
 		}
 	} else
-		a = getVarOrDirectWord(0x80);
+		a = getVarOrDirectWord(PARAM_1);
 
 	setResult(getObjY(a));
 }
 
 void ScummEngine_v5::o5_saveLoadGame() {
 	getResultPos();
-	byte a = getVarOrDirectByte(0x80);
+	byte a = getVarOrDirectByte(PARAM_1);
 	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
 		
@@ -1190,7 +1194,7 @@ void ScummEngine_v5::o5_getAnimCounter() {
 		
 	getResultPos();
 
-	int act = getVarOrDirectByte(0x80);
+	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getAnimCounter");
 	setResult(a->cost.animCounter);
 }
@@ -1212,7 +1216,7 @@ void ScummEngine_v5::o5_getClosestObjActor() {
 
 	getResultPos();
 
-	act = getVarOrDirectWord(0x80);
+	act = getVarOrDirectWord(PARAM_1);
 	obj = VAR(VAR_ACTOR_RANGE_MAX);
 
 	do {
@@ -1230,8 +1234,8 @@ void ScummEngine_v5::o5_getDist() {
 	int o1, o2;
 	int r;
 	getResultPos();
-	o1 = getVarOrDirectWord(0x80);
-	o2 = getVarOrDirectWord(0x40);
+	o1 = getVarOrDirectWord(PARAM_1);
+	o2 = getVarOrDirectWord(PARAM_2);
 	r = getObjActToObjActDist(o1, o2);
 
 	// FIXME: MI2 race workaround, see bug #597022
@@ -1243,12 +1247,12 @@ void ScummEngine_v5::o5_getDist() {
 
 void ScummEngine_v5::o5_getInventoryCount() {
 	getResultPos();
-	setResult(getInventoryCount(getVarOrDirectByte(0x80)));
+	setResult(getInventoryCount(getVarOrDirectByte(PARAM_1)));
 }
 
 void ScummEngine_v5::o5_getObjectOwner() {
 	getResultPos();
-	setResult(getOwner(getVarOrDirectWord(0x80)));
+	setResult(getOwner(getVarOrDirectWord(PARAM_1)));
 }
 
 void ScummEngine_v5::o5_getObjectState() {
@@ -1256,13 +1260,13 @@ void ScummEngine_v5::o5_getObjectState() {
 		o5_ifState();
 	} else {
 		getResultPos();
-		setResult(getState(getVarOrDirectWord(0x80)));
+		setResult(getState(getVarOrDirectWord(PARAM_1)));
 	}
 }
 
 void ScummEngine_v5::o5_ifState() {
-	int a = getVarOrDirectWord(0x80);
-	int b = getVarOrDirectByte(0x40);
+	int a = getVarOrDirectWord(PARAM_1);
+	int b = getVarOrDirectByte(PARAM_2);
 
 	if (getState(a) != b)
 		o5_jumpRelative();
@@ -1271,8 +1275,8 @@ void ScummEngine_v5::o5_ifState() {
 }
 
 void ScummEngine_v5::o5_ifNotState() {
-	int a = getVarOrDirectWord(0x80);
-	int b = getVarOrDirectByte(0x40);
+	int a = getVarOrDirectWord(PARAM_1);
+	int b = getVarOrDirectByte(PARAM_2);
 
 	if (getState(a) == b)
 		o5_jumpRelative();
@@ -1282,19 +1286,19 @@ void ScummEngine_v5::o5_ifNotState() {
 
 void ScummEngine_v5::o5_getRandomNr() {
 	getResultPos();
-	setResult(_rnd.getRandomNumber(getVarOrDirectByte(0x80)));
+	setResult(_rnd.getRandomNumber(getVarOrDirectByte(PARAM_1)));
 }
 
 void ScummEngine_v5::o5_isScriptRunning() {
 	getResultPos();
-	setResult(isScriptRunning(getVarOrDirectByte(0x80)));
+	setResult(isScriptRunning(getVarOrDirectByte(PARAM_1)));
 }
 
 void ScummEngine_v5::o5_getVerbEntrypoint() {
 	int a, b;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
-	b = getVarOrDirectWord(0x40);
+	a = getVarOrDirectWord(PARAM_1);
+	b = getVarOrDirectWord(PARAM_2);
 
 	setResult(getVerbEntrypoint(a, b));
 }
@@ -1303,10 +1307,10 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 	int act, cls, b = 0;
 	bool cond = true;
 
-	act = getVarOrDirectWord(0x80);
+	act = getVarOrDirectWord(PARAM_1);
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
-		cls = getVarOrDirectWord(0x80);
+		cls = getVarOrDirectWord(PARAM_1);
 
 		if (!cls) // FIXME: Ender can't remember why this is here,
 			b = false;  // but it fixes an oddball zak256 crash
@@ -1328,8 +1332,8 @@ void ScummEngine_v5::o5_increment() {
 }
 
 void ScummEngine_v5::o5_isActorInBox() {
-	int act = getVarOrDirectByte(0x80);
-	int box = getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int box = getVarOrDirectByte(PARAM_2);
 	Actor *a = derefActor(act, "o5_isActorInBox");
 
 	if (!checkXYInBoxBounds(box, a->_pos.x, a->_pos.y))
@@ -1347,7 +1351,7 @@ void ScummEngine_v5::o5_isEqual() {
 	else
 		var = fetchScriptWord();
 	a = readVar(var);
-	b = getVarOrDirectWord(0x80);
+	b = getVarOrDirectWord(PARAM_1);
 
 	// HACK: See bug report #602348. The sound effects for Largo's screams
 	// are only played on type 5 soundcards. However, there is at least one
@@ -1366,7 +1370,7 @@ void ScummEngine_v5::o5_isEqual() {
 
 void ScummEngine_v5::o5_isGreater() {
 	int16 a = getVar();
-	int16 b = getVarOrDirectWord(0x80);
+	int16 b = getVarOrDirectWord(PARAM_1);
 	if (b > a)
 		ignoreScriptWord();
 	else
@@ -1375,7 +1379,7 @@ void ScummEngine_v5::o5_isGreater() {
 
 void ScummEngine_v5::o5_isGreaterEqual() {
 	int16 a = getVar();
-	int16 b = getVarOrDirectWord(0x80);
+	int16 b = getVarOrDirectWord(PARAM_1);
 	if (b >= a)
 		ignoreScriptWord();
 	else
@@ -1384,7 +1388,7 @@ void ScummEngine_v5::o5_isGreaterEqual() {
 
 void ScummEngine_v5::o5_isLess() {
 	int16 a = getVar();
-	int16 b = getVarOrDirectWord(0x80);
+	int16 b = getVarOrDirectWord(PARAM_1);
 	if (b < a)
 		ignoreScriptWord();
 	else
@@ -1393,7 +1397,7 @@ void ScummEngine_v5::o5_isLess() {
 
 void ScummEngine_v5::o5_lessOrEqual() {
 	int16 a = getVar();
-	int16 b = getVarOrDirectWord(0x80);
+	int16 b = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #820507 : Work around a bug in Indy3Town.
 	if (_gameId == GID_INDY3 && (_features & GF_FMTOWNS) &&
@@ -1411,7 +1415,7 @@ void ScummEngine_v5::o5_lessOrEqual() {
 
 void ScummEngine_v5::o5_isNotEqual() {
 	int16 a = getVar();
-	int16 b = getVarOrDirectWord(0x80);
+	int16 b = getVarOrDirectWord(PARAM_1);
 	if (b != a)
 		ignoreScriptWord();
 	else
@@ -1441,7 +1445,7 @@ void ScummEngine_v5::o5_jumpRelative() {
 void ScummEngine_v5::o5_lights() {
 	int a, b, c;
 
-	a = getVarOrDirectByte(0x80);
+	a = getVarOrDirectByte(PARAM_1);
 	b = fetchScriptByte();
 	c = fetchScriptByte();
 
@@ -1457,7 +1461,7 @@ void ScummEngine_v5::o5_lights() {
 void ScummEngine_v5::o5_loadRoom() {
 	int room;
 
-	room = getVarOrDirectByte(0x80);
+	room = getVarOrDirectByte(PARAM_1);
 	
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
@@ -1473,8 +1477,8 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	int obj, room, x, y;
 	int x2, y2, dir, oldDir;
 
-	obj = getVarOrDirectWord(0x80);
-	room = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	room = getVarOrDirectByte(PARAM_2);
 
 	a = derefActor(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
@@ -1516,7 +1520,7 @@ void ScummEngine_v5::o5_matrixOps() {
 	int a, b;
 
 	if (_version == 3) {
-		a = getVarOrDirectByte(0x80);
+		a = getVarOrDirectByte(PARAM_1);
 		b = fetchScriptByte();
 		setBoxFlags(a, b);
 		return;
@@ -1525,18 +1529,18 @@ void ScummEngine_v5::o5_matrixOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		setBoxFlags(a, b);
 		break;
-	case 2:		// SO_BOX_SCALE
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+	case 2:
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		setBoxScale(a, b);
 		break;
 	case 3:
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		setBoxScale(a, (b - 1) | 0x8000);
 		break;
 	case 4:
@@ -1547,20 +1551,20 @@ void ScummEngine_v5::o5_matrixOps() {
 
 void ScummEngine_v5::o5_move() {
 	getResultPos();
-	setResult(getVarOrDirectWord(0x80));
+	setResult(getVarOrDirectWord(PARAM_1));
 }
 
 void ScummEngine_v5::o5_multiply() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	setResult(readVar(_resultVarNumber) * a);
 }
 
 void ScummEngine_v5::o5_or() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	setResult(readVar(_resultVarNumber) | a);
 }
 
@@ -1572,7 +1576,7 @@ void ScummEngine_v5::o5_beginOverride() {
 }
 
 void ScummEngine_v5::o5_panCameraTo() {
-	panCameraTo(getVarOrDirectWord(0x80), 0);
+	panCameraTo(getVarOrDirectWord(PARAM_1), 0);
 }
 
 void ScummEngine_v5::o5_pickupObject() {
@@ -1582,8 +1586,8 @@ void ScummEngine_v5::o5_pickupObject() {
 		return;
 	}
 
-	obj = getVarOrDirectWord(0x80);
-	room = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	room = getVarOrDirectByte(PARAM_2);
 	if (room == 0)
 		room = _roomResource;
 	addObjectToInventory(obj, room);
@@ -1596,7 +1600,7 @@ void ScummEngine_v5::o5_pickupObject() {
 }
 
 void ScummEngine_v5::o5_print() {
-	_actorToPrintStrFor = getVarOrDirectByte(0x80);
+	_actorToPrintStrFor = getVarOrDirectByte(PARAM_1);
 	decodeParseString();
 }
 
@@ -1618,9 +1622,9 @@ void ScummEngine_v5::o5_putActor() {
 	int x, y;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o5_putActor");
-	x = getVarOrDirectWord(0x40);
-	y = getVarOrDirectWord(0x20);
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActor");
+	x = getVarOrDirectWord(PARAM_2);
+	y = getVarOrDirectWord(PARAM_3);
 	a->putActor(x, y, a->room);
 }
 
@@ -1628,8 +1632,8 @@ void ScummEngine_v5::o5_putActorAtObject() {
 	int obj, x, y;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o5_putActorAtObject");
-	obj = getVarOrDirectWord(0x40);
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActorAtObject");
+	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
 	else {
@@ -1641,8 +1645,8 @@ void ScummEngine_v5::o5_putActorAtObject() {
 
 void ScummEngine_v5::o5_putActorInRoom() {
 	Actor *a;
-	int act = getVarOrDirectByte(0x80);
-	int room = getVarOrDirectByte(0x40);
+	int act = getVarOrDirectByte(PARAM_1);
+	int room = getVarOrDirectByte(PARAM_2);
 
 	a = derefActor(act, "o5_putActorInRoom");
 	
@@ -1678,7 +1682,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
-		resid = getVarOrDirectByte(0x80);
+		resid = getVarOrDirectByte(PARAM_1);
 	if (!(_features & GF_FMTOWNS)) {
 		// FIXME - this probably can be removed eventually, I don't think the following
 		// check will ever be triggered, but then I could be wrong and it's better
@@ -1762,7 +1766,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		nukeCharset(resid);
 		break;
 	case 20:		// SO_LOAD_OBJECT
-		loadFlObject(getVarOrDirectWord(0x40), resid);
+		loadFlObject(getVarOrDirectWord(PARAM_2), resid);
 		break;
 
 	// TODO: For the following see also Hibarnatus' information on bug #805691.
@@ -1776,19 +1780,19 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		break;
 	case 35:
 		// TODO: Might be used to set CD volume in FM Towns Loom
-		foo = getVarOrDirectByte(0x40);
+		foo = getVarOrDirectByte(PARAM_2);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 36:
 		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak. 
-		foo = getVarOrDirectByte(0x40);
+		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 37:
 		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
 		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3). 
-		foo = getVarOrDirectByte(0x40);
+		foo = getVarOrDirectByte(PARAM_2);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 
@@ -1802,16 +1806,16 @@ void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
 
 	if (_version == 3) {
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
+		a = getVarOrDirectWord(PARAM_1);
+		b = getVarOrDirectWord(PARAM_2);
 	}
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:		// SO_ROOM_SCROLL
 		if (_version != 3) {
-			a = getVarOrDirectWord(0x80);
-			b = getVarOrDirectWord(0x40);
+			a = getVarOrDirectWord(PARAM_1);
+			b = getVarOrDirectWord(PARAM_2);
 		}
 		if (a < (_screenWidth / 2))
 			a = (_screenWidth / 2);
@@ -1827,8 +1831,8 @@ void ScummEngine_v5::o5_roomOps() {
 	case 2:		// SO_ROOM_COLOR
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
-				a = getVarOrDirectWord(0x80);
-				b = getVarOrDirectWord(0x40);
+				a = getVarOrDirectWord(PARAM_1);
+				b = getVarOrDirectWord(PARAM_2);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
 			_roomPalette[b] = a;
@@ -1840,26 +1844,26 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 3:		// SO_ROOM_SCREEN
 		if (_version != 3) {
-			a = getVarOrDirectWord(0x80);
-			b = getVarOrDirectWord(0x40);
+			a = getVarOrDirectWord(PARAM_1);
+			b = getVarOrDirectWord(PARAM_2);
 		}
 		initScreens(0, a, _screenWidth, b);
 		break;
 	case 4:		// SO_ROOM_PALETTE
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
-				a = getVarOrDirectWord(0x80);
-				b = getVarOrDirectWord(0x40);
+				a = getVarOrDirectWord(PARAM_1);
+				b = getVarOrDirectWord(PARAM_2);
 			}
 			checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
 			_shadowPalette[b] = a;
 			setDirtyColors(b, b);
 		} else {
-			a = getVarOrDirectWord(0x80);
-			b = getVarOrDirectWord(0x40);
-			c = getVarOrDirectWord(0x20);
+			a = getVarOrDirectWord(PARAM_1);
+			b = getVarOrDirectWord(PARAM_2);
+			c = getVarOrDirectWord(PARAM_3);
 			_opcode = fetchScriptByte();
-			d = getVarOrDirectByte(0x80);
+			d = getVarOrDirectByte(PARAM_1);
 			setPalColor(d, a, b, c);	/* index, r, g, b */
 		}
 		break;
@@ -1870,60 +1874,60 @@ void ScummEngine_v5::o5_roomOps() {
 		setShake(0);
 		break;
 	case 7:		// SO_ROOM_SCALE
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		_opcode = fetchScriptByte();
-		c = getVarOrDirectByte(0x80);
-		d = getVarOrDirectByte(0x40);
+		c = getVarOrDirectByte(PARAM_1);
+		d = getVarOrDirectByte(PARAM_2);
 		_opcode = fetchScriptByte();
-		e = getVarOrDirectByte(0x40);
+		e = getVarOrDirectByte(PARAM_2);
 		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
 	case 8:		// SO_ROOM_INTENSITY
 		if (_features & GF_SMALL_HEADER) {
 			if (_version != 3) {
-				a = getVarOrDirectWord(0x80);
-				b = getVarOrDirectWord(0x40);
+				a = getVarOrDirectWord(PARAM_1);
+				b = getVarOrDirectWord(PARAM_2);
 			}
-			c = getVarOrDirectWord(0x20);
+			c = getVarOrDirectWord(PARAM_3);
 		} else {
-			a = getVarOrDirectByte(0x80);
-			b = getVarOrDirectByte(0x40);
-			c = getVarOrDirectByte(0x20);
+			a = getVarOrDirectByte(PARAM_1);
+			b = getVarOrDirectByte(PARAM_2);
+			c = getVarOrDirectByte(PARAM_3);
 		}
 		darkenPalette(a, a, a, b, c);
 		break;
 	case 9:		// SO_ROOM_SAVEGAME
-		_saveLoadFlag = getVarOrDirectByte(0x80);
-		_saveLoadSlot = getVarOrDirectByte(0x40);
+		_saveLoadFlag = getVarOrDirectByte(PARAM_1);
+		_saveLoadSlot = getVarOrDirectByte(PARAM_2);
 		_saveLoadSlot = 99;					/* use this slot */
 		_saveLoadCompatible = true;
 		break;
 	case 10:	// SO_ROOM_FADE
-		a = getVarOrDirectWord(0x80);
+		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
-			_switchRoomEffect = (byte)(a&0xFF);
+			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);
 		}
 		break;
 	case 11:	// SO_RGB_ROOM_INTENSITY
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
-		c = getVarOrDirectWord(0x20);
+		a = getVarOrDirectWord(PARAM_1);
+		b = getVarOrDirectWord(PARAM_2);
+		c = getVarOrDirectWord(PARAM_3);
 		_opcode = fetchScriptByte();
-		d = getVarOrDirectByte(0x80);
-		e = getVarOrDirectByte(0x40);
+		d = getVarOrDirectByte(PARAM_1);
+		e = getVarOrDirectByte(PARAM_2);
 		darkenPalette(a, b, c, d, e);
 		break;
 	case 12:	// SO_ROOM_SHADOW
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
-		c = getVarOrDirectWord(0x20);
+		a = getVarOrDirectWord(PARAM_1);
+		b = getVarOrDirectWord(PARAM_2);
+		c = getVarOrDirectWord(PARAM_3);
 		_opcode = fetchScriptByte();
-		d = getVarOrDirectByte(0x80);
-		e = getVarOrDirectByte(0x40);
+		d = getVarOrDirectByte(PARAM_1);
+		e = getVarOrDirectByte(PARAM_2);
 		setupShadowPalette(a, b, c, d, e);
 		break;
 
@@ -1932,8 +1936,7 @@ void ScummEngine_v5::o5_roomOps() {
 			SaveFile *file;
 			char filename[256], *s;
 
-			a = getVarOrDirectByte(0x80);
-
+			a = getVarOrDirectByte(PARAM_1);
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
@@ -1953,8 +1956,7 @@ void ScummEngine_v5::o5_roomOps() {
 			SaveFile *file;
 			char filename[256], *s;
 
-			a = getVarOrDirectByte(0x80);
-
+			a = getVarOrDirectByte(PARAM_1);
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
@@ -1978,18 +1980,18 @@ void ScummEngine_v5::o5_roomOps() {
 			break;
 		}
 	case 15:	// SO_ROOM_TRANSFORM
-		a = getVarOrDirectByte(0x80);
+		a = getVarOrDirectByte(PARAM_1);
 		_opcode = fetchScriptByte();
-		b = getVarOrDirectByte(0x80);
-		c = getVarOrDirectByte(0x40);
+		b = getVarOrDirectByte(PARAM_1);
+		c = getVarOrDirectByte(PARAM_2);
 		_opcode = fetchScriptByte();
-		d = getVarOrDirectByte(0x80);
+		d = getVarOrDirectByte(PARAM_1);
 		palManipulateInit(b, c, a, d);
 		break;
 
 	case 16:	// SO_CYCLE_SPEED
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		if (a < 1)
 			a = 1;										/* FIXME: ZAK256 */
 		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
@@ -2005,9 +2007,9 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 
 	_opcode = fetchScriptByte();
 
-	a = getVarOrDirectByte(0x80);
-	b = getVarOrDirectByte(0x40);
-	c = getVarOrDirectByte(0x20);
+	a = getVarOrDirectByte(PARAM_1);
+	b = getVarOrDirectByte(PARAM_2);
+	c = getVarOrDirectByte(PARAM_3);
 
 	switch (_opcode) {
 	case 1:		// SO_SAVE_VERBS
@@ -2050,11 +2052,11 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 }
 
 void ScummEngine_v5::o5_setCameraAt() {
-	setCameraAtEx(getVarOrDirectWord(0x80));
+	setCameraAtEx(getVarOrDirectWord(PARAM_1));
 }
 
 void ScummEngine_v5::o5_setObjectName() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 	int size;
 	int a;
 	int i = 0;
@@ -2172,8 +2174,8 @@ void ScummEngine_v5::o5_setOwnerOf() {
 
 void ScummEngine_v5::o5_setState() {
 	int obj, state;
-	obj = getVarOrDirectWord(0x80);
-	state = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	state = getVarOrDirectByte(PARAM_2);
 	putState(obj, state);
 	removeObjectFromRoom(obj);
 	if (_BgNeedsRedraw)
@@ -2201,7 +2203,7 @@ void ScummEngine_v5::o5_startMusic() {
 		// In FM Towns games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
-		int b = getVarOrDirectByte(0x80);
+		int b = getVarOrDirectByte(PARAM_1);
 		int result = 0;
 		switch (b) {
 		case 0:
@@ -2228,13 +2230,13 @@ void ScummEngine_v5::o5_startMusic() {
 		debug(4,"o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
-		_sound->addSoundToQueue(getVarOrDirectByte(0x80));
+		_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
 	}
 }
 
 void ScummEngine_v5::o5_startSound() {
 	VAR(VAR_MUSIC_TIMER) = 0;
-	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
+	_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
 }
 
 void ScummEngine_v5::o5_stopMusic() {
@@ -2242,13 +2244,13 @@ void ScummEngine_v5::o5_stopMusic() {
 }
 
 void ScummEngine_v5::o5_stopSound() {
-	_sound->stopSound(getVarOrDirectByte(0x80));
+	_sound->stopSound(getVarOrDirectByte(PARAM_1));
 }
 
 void ScummEngine_v5::o5_isSoundRunning() {
 	int snd;
 	getResultPos();
-	snd = getVarOrDirectByte(0x80);
+	snd = getVarOrDirectByte(PARAM_1);
 	if (snd)
 		snd = _sound->isSoundRunning(snd);
 	setResult(snd);
@@ -2282,8 +2284,8 @@ void ScummEngine_v5::o5_startObject() {
 	int obj, script;
 	int data[16];
 
-	obj = getVarOrDirectWord(0x80);
-	script = getVarOrDirectByte(0x40);
+	obj = getVarOrDirectWord(PARAM_1);
+	script = getVarOrDirectByte(PARAM_2);
 
 	getWordVararg(data);
 	runObjectScript(obj, script, 0, 0, data);
@@ -2294,7 +2296,7 @@ void ScummEngine_v5::o5_startScript() {
 	int data[16];
 
 	op = _opcode;
-	script = getVarOrDirectByte(0x80);
+	script = getVarOrDirectByte(PARAM_1);
 
 	getWordVararg(data);
 
@@ -2306,13 +2308,13 @@ void ScummEngine_v5::o5_stopObjectCode() {
 }
 
 void ScummEngine_v5::o5_stopObjectScript() {
-	stopObjectScript(getVarOrDirectWord(0x80));
+	stopObjectScript(getVarOrDirectWord(PARAM_1));
 }
 
 void ScummEngine_v5::o5_stopScript() {
 	int script;
 
-	script = getVarOrDirectByte(0x80);
+	script = getVarOrDirectByte(PARAM_1);
 
 	if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
 		// FIXME: Nasty hack for bug #771499
@@ -2335,20 +2337,20 @@ void ScummEngine_v5::o5_stringOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* loadstring */
-		loadPtrToResource(rtString, getVarOrDirectByte(0x80), NULL);
+		loadPtrToResource(rtString, getVarOrDirectByte(PARAM_1), NULL);
 		break;
 	case 2:											/* copystring */
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		nukeResource(rtString, a);
 		ptr = getResourceAddress(rtString, b);
 		if (ptr)
 			loadPtrToResource(rtString, a, ptr);
 		break;
 	case 3:											/* set string char */
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
-		c = getVarOrDirectByte(0x20);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
+		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
 		if (_gameId != GID_LOOM256) {	/* FIXME - LOOM256 */
 			if (ptr == NULL)
@@ -2360,8 +2362,8 @@ void ScummEngine_v5::o5_stringOps() {
 
 	case 4:											/* get string char */
 		getResultPos();
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		ptr = getResourceAddress(rtString, a);
 		if (ptr == NULL)
 			error("String %d does not exist", a);
@@ -2369,8 +2371,8 @@ void ScummEngine_v5::o5_stringOps() {
 		break;
 
 	case 5:											/* create empty string */
-		a = getVarOrDirectByte(0x80);
-		b = getVarOrDirectByte(0x40);
+		a = getVarOrDirectByte(PARAM_1);
+		b = getVarOrDirectByte(PARAM_2);
 		nukeResource(rtString, a);
 		if (b) {
 			ptr = createResource(rtString, a, b);
@@ -2386,7 +2388,7 @@ void ScummEngine_v5::o5_stringOps() {
 void ScummEngine_v5::o5_subtract() {
 	int a;
 	getResultPos();
-	a = getVarOrDirectWord(0x80);
+	a = getVarOrDirectWord(PARAM_1);
 	setResult(readVar(_resultVarNumber) - a);
 }
 
@@ -2396,7 +2398,7 @@ void ScummEngine_v5::o5_verbOps() {
 	int a, b;
 	byte *ptr;
 
-	verb = getVarOrDirectByte(0x80);
+	verb = getVarOrDirectByte(PARAM_1);
 
 	slot = getVerbSlot(verb, 0);
 	checkRange(_maxVerbs - 1, 0, slot, "Illegal new verb slot %d");
@@ -2407,7 +2409,7 @@ void ScummEngine_v5::o5_verbOps() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0x1F) {
 		case 1:		// SO_VERB_IMAGE
-			a = getVarOrDirectWord(0x80);
+			a = getVarOrDirectWord(PARAM_1);
 			if (slot) {
 				setVerbObject(_roomResource, a, slot);
 				vs->type = kImageVerbType;
@@ -2421,14 +2423,14 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->imgindex = 0;
 			break;
 		case 3:		// SO_VERB_COLOR
-			vs->color = getVarOrDirectByte(0x80);
+			vs->color = getVarOrDirectByte(PARAM_1);
 			break;
 		case 4:		// SO_VERB_HICOLOR
-			vs->hicolor = getVarOrDirectByte(0x80);
+			vs->hicolor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:		// SO_VERB_AT
-			vs->x = getVarOrDirectWord(0x80);
-			vs->y = getVarOrDirectWord(0x40);
+			vs->x = getVarOrDirectWord(PARAM_1);
+			vs->y = getVarOrDirectWord(PARAM_2);
 			// Macintosh verison of indy3ega used different interface, so adjust values.
 			if ((_features & GF_MACINTOSH) && (_gameId == GID_INDY3)) {
 				if ((verb > 0) && (verb < 14) || (verb > 31) && (verb < 35)) {
@@ -2516,19 +2518,19 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 
 		case 16:	// SO_VERB_DIMCOLOR
-			vs->dimcolor = getVarOrDirectByte(0x80);
+			vs->dimcolor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 17:	// SO_VERB_DIM
 			vs->curmode = 2;
 			break;
 		case 18:	// SO_VERB_KEY
-			vs->key = getVarOrDirectByte(0x80);
+			vs->key = getVarOrDirectByte(PARAM_1);
 			break;
 		case 19:	// SO_VERB_CENTER
 			vs->center = 1;
 			break;
 		case 20:	// SO_VERB_NAME_STR
-			ptr = getResourceAddress(rtString, getVarOrDirectWord(0x80));
+			ptr = getResourceAddress(rtString, getVarOrDirectWord(PARAM_1));
 			if (!ptr)
 				nukeResource(rtVerb, slot);
 			else {
@@ -2540,8 +2542,8 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->imgindex = 0;
 			break;
 		case 22:										/* assign object */
-			a = getVarOrDirectWord(0x80);
-			b = getVarOrDirectByte(0x40);
+			a = getVarOrDirectWord(PARAM_1);
+			b = getVarOrDirectByte(PARAM_2);
 			if (slot && vs->imgindex != a) {
 				setVerbObject(b, a, slot);
 				vs->type = kImageVerbType;
@@ -2549,7 +2551,7 @@ void ScummEngine_v5::o5_verbOps() {
 			}
 			break;
 		case 23:										/* set back color */
-			vs->bkcolor = getVarOrDirectByte(0x80);
+			vs->bkcolor = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
 			error("o5_verbOps: unknown subopcode %d", _opcode & 0x1F);
@@ -2572,7 +2574,7 @@ void ScummEngine_v5::o5_wait() {
 	switch (_opcode & 0x1F) {
 	case 1:		// SO_WAIT_FOR_ACTOR
 		{
-			Actor *a = derefActorSafe(getVarOrDirectByte(0x80), "o5_wait");
+			Actor *a = derefActorSafe(getVarOrDirectByte(PARAM_1), "o5_wait");
 			if (a && a->isInCurrentRoom() && a->moving)
 				break;
 			return;
@@ -2607,17 +2609,17 @@ void ScummEngine_v5::o5_walkActorTo() {
 	int x, y;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o5_walkActorTo");
-	x = getVarOrDirectWord(0x40);
-	y = getVarOrDirectWord(0x20);
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_walkActorTo");
+	x = getVarOrDirectWord(PARAM_2);
+	y = getVarOrDirectWord(PARAM_3);
 	a->startWalkActor(x, y, -1);
 }
 
 void ScummEngine_v5::o5_walkActorToActor() {
 	int x, y;
 	Actor *a, *a2;
-	int nr = getVarOrDirectByte(0x80);
-	int nr2 = getVarOrDirectByte(0x40);
+	int nr = getVarOrDirectByte(PARAM_1);
+	int nr2 = getVarOrDirectByte(PARAM_2);
 	int dist = fetchScriptByte();
 
 	if (nr == 106 && _gameId == GID_INDY4) {
@@ -2678,8 +2680,8 @@ void ScummEngine_v5::o5_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	a = derefActor(getVarOrDirectByte(0x80), "o5_walkActorToObject");
-	obj = getVarOrDirectWord(0x40);
+	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_walkActorToObject");
+	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
 		getObjectXYPos(obj, x, y, dir);
@@ -2695,7 +2697,7 @@ int ScummEngine_v5::getWordVararg(int *ptr) {
 
 	i = 0;
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
-		ptr[i++] = getVarOrDirectWord(0x80);
+		ptr[i++] = getVarOrDirectWord(PARAM_1);
 	}
 	return i;
 }
@@ -2722,20 +2724,20 @@ void ScummEngine_v5::decodeParseString() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
 		case 0:		// SO_AT
-			_string[textSlot].xpos = getVarOrDirectWord(0x80);
-			_string[textSlot].ypos = getVarOrDirectWord(0x40);
+			_string[textSlot].xpos = getVarOrDirectWord(PARAM_1);
+			_string[textSlot].ypos = getVarOrDirectWord(PARAM_2);
 			_string[textSlot].overhead = false;
 			break;
 		case 1:		// SO_COLOR
-			_string[textSlot].color = getVarOrDirectByte(0x80);
+			_string[textSlot].color = getVarOrDirectByte(PARAM_1);
 			break;
 		case 2:		// SO_CLIPPED
-			_string[textSlot].right = getVarOrDirectWord(0x80);
+			_string[textSlot].right = getVarOrDirectWord(PARAM_1);
 			break;
 		case 3:		// SO_ERASE
 			{
-			int a = getVarOrDirectWord(0x80);
-			int b = getVarOrDirectWord(0x40);
+			int a = getVarOrDirectWord(PARAM_1);
+			int b = getVarOrDirectWord(PARAM_2);
 			warning("ScummEngine_v5::decodeParseString: Unhandled case 3: %d, %d", a, b);
 			}
 			break;
@@ -2747,7 +2749,7 @@ void ScummEngine_v5::decodeParseString() {
 			if (_version == 3) {
 				// FIXME: this value seems to be some kind of override
 				// for text spacing?!?
-				/* int a = */ getVarOrDirectWord(0x80);
+				/* int a = */ getVarOrDirectWord(PARAM_1);
 				
 			} else {
 				_string[textSlot].center = false;
@@ -2758,8 +2760,8 @@ void ScummEngine_v5::decodeParseString() {
 			_string[textSlot].overhead = true;
 			break;
 		case 8:{	// SO_SAY_VOICE
-				int offset = (uint16)getVarOrDirectWord(0x80);
-				int delay = (uint16)getVarOrDirectWord(0x40);
+				int offset = (uint16)getVarOrDirectWord(PARAM_1);
+				int delay = (uint16)getVarOrDirectWord(PARAM_2);
 
 				if (_gameId == GID_LOOM256) {
 					if (offset == 0 && delay == 0) {
@@ -2835,7 +2837,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 
 	_opcode = fetchScriptByte();
 	if ((_opcode & 0x1F) == 3) {
-		a = getVarOrDirectWord(0x80);
+		a = getVarOrDirectWord(PARAM_1);
 
 #if 1
 		if (_features & GF_FMTOWNS) {
@@ -2846,7 +2848,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 			// that something is missing here :-)
 		
 			if (a == 4) {
-printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
+				printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// No idea what byte_2FCCF is, but it's a globale boolean flag.
 				// I only add it here as a temporary hack to make the pseudo code compile.
 				// Maybe it is just there as a reentry protection guard, given
@@ -2894,7 +2896,7 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 
 		}
 		if (a) {
-			_switchRoomEffect = (byte)(a&0xFF);
+			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);
@@ -2903,7 +2905,7 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 }
 
 void ScummEngine_v5::o5_pickupObjectOld() {
-	int obj = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(PARAM_1);
 
 	if (obj < 1) {
 		error("pickupObjectOld received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
@@ -2924,5 +2926,9 @@ void ScummEngine_v5::o5_pickupObjectOld() {
 	clearDrawObjectQueue();
 	runInventoryScript(1);
 }
+
+#undef PARAM_1
+#undef PARAM_2
+#undef PARAM_3
 
 } // End of namespace Scumm
