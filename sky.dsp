@@ -567,6 +567,10 @@ SOURCE=.\sky\screen.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\screen.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\sky.cpp
 # End Source File
 # Begin Source File
@@ -596,10 +600,6 @@ SOURCE=.\sky\text.cpp
 # Begin Source File
 
 SOURCE=.\sky\text.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\timer.cpp
 # End Source File
 # End Group
 # End Target
