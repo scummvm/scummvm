@@ -26,7 +26,11 @@
 #include "resource.h"
 #include "engine.h"
 
+#ifdef DIRECT3D_DRIVER
+#include "driver_d3d.h"
+#else
 #include "driver_gl.h"
+#endif
 
 Smush *g_smush;
 extern SoundMixer *g_mixer;
@@ -55,15 +59,6 @@ Smush::Smush() {
 
 Smush::~Smush() {
 	deinit();
-	if (_internalBuffer) {
-		free(_internalBuffer);
-		_internalBuffer = NULL;
-	}
-	if (_externalBuffer) {
-		free(_externalBuffer);
-		_externalBuffer = NULL;
-	}
-
 	delete_mutex(_mutex);
 }
 
@@ -89,6 +84,15 @@ void Smush::init() {
 void Smush::deinit() {
 	StackLock lock(_mutex);
     g_timer->removeTimerProc(&timerCallback);
+
+	if (_internalBuffer) {
+		free(_internalBuffer);
+		_internalBuffer = NULL;
+	}
+	if (_externalBuffer) {
+		free(_externalBuffer);
+		_externalBuffer = NULL;
+	}
 
 	_videoFinished = true;
 	_videoPause = true;
