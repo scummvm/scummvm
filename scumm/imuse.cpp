@@ -1115,7 +1115,7 @@ void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 
 	int result = midi->open();
 	if (result)
-		error("IMuse initialization - ", MidiDriver::getErrorName(result));
+		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
 
 	// In case we have an MT-32 attached.
 	initMT32 (midi);
