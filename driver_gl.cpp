@@ -179,7 +179,7 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 //		glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, 2.0f);
 //		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
 		glEnable(GL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "spot")) {
+	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();

@@ -254,7 +254,7 @@ void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
 //		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, 2.0f);
 //		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
 		tglEnable(TGL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "spot")) {
+	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
