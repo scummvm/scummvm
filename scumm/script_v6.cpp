@@ -1041,7 +1041,7 @@ void Scumm_v6::o6_putActorAtObject() {
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
 	} else {
-		x = (_realWidth / 2);
+		x = 160;
 		y = 120;
 	}
 	if (room == 0xFF)
