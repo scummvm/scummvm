@@ -54,6 +54,7 @@ enum {
 	int32 _bundleMusicTrack;
 	bool _musicBundleToBeChanged;
 	bool _musicBundleToBeRemoved;
+	int32 _bundleMusicSampleBits;
 
 	File *_sfxFile;
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;

@@ -1053,7 +1053,10 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 				tag = READ_BE_UINT32(ptr);  ptr += 4;
 				switch(tag) {
 				case MKID_BE('FRMT'):
-					size = READ_BE_UINT32(ptr); ptr += 24;
+					ptr += 12;
+					_bundleMusicSampleBits = READ_BE_UINT32(ptr); ptr += 4;
+					rate = READ_BE_UINT32(ptr); ptr += 4;
+					channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 				case MKID_BE('TEXT'):
 				case MKID_BE('REGN'):
@@ -1099,7 +1102,16 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	ptr = _musicBundleBufFinal;
 
 	byte * buffer = NULL;
-	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
+	uint32 final_size;
+	if (_bundleMusicSampleBits == 12) {
+		final_size = decode12BitsSample(ptr, &buffer, size);
+	} else if (_bundleMusicSampleBits == 16) {
+		buffer = (byte*)malloc(size);
+		final_size = size;
+		memcpy(buffer, ptr, size);
+	} else {
+		warning("Sound::bundleMusicHandler  to do more playStream options...");
+	}
 
 	if (_bundleMusicTrack == -1) {
 		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, _scumm->_mixer->_beginSlots - 1, buffer, final_size, rate,
