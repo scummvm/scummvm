@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-07-14
+Last updated:    2003-07-31
 Release version: 0.5.0-Pre(CVS)
 ------------------------------------------------------------------------
 
@@ -155,6 +155,7 @@ the section on Reporting Bugs.
                 - Floppy demo does not work at all
                 - Only versions 0.0288, 0.0368 and 0.0372 were tested
                 - Amiga versions aren't supported and probably never will be
+                - Not a bug: CD version is missing speech for some dialog
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
@@ -164,13 +165,6 @@ the section on Reporting Bugs.
                 - No sound effects
                 - In some rooms Indy may be able to walk to odd places
                 - There are some minor graphical glitches
-
-       FM Towns versions:
-                - No support for Kanji versions
-                - All the FM Towns versions of games are extremely rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we don't know where to buy or download a copy of these
-                  games. Petition LucasArts to re-release them :)
 
        Monkey Island (EGA & VGA versions):
                 - No sound effects
@@ -200,7 +194,20 @@ the section on Reporting Bugs.
 
        Curse of Monkey Island
                 - The "Pirate Song" scene does not play correctly
-                - 
+                - Some minor graphical glitches remain
+
+       Zak McKracken (Enhanced)
+                - Pushing the feet on the Mars Sarcophagous may not open the
+                  hidden door. A workaround is to use 'Push' on the floor just
+                  before the feet.
+
+       FM Towns versions:
+                - No support for Kanji versions
+                - All the FM Towns versions of games are extremely rare,
+                  And as the ScummVM team does not encourage piracy in any
+                  way, we don't know where to buy or download a copy of these
+                  games. Petition LucasArts to re-release them :)
+
        All CD games:
                - If you are experiencing random crashes, and your game
                  plays music from CD, you have encountered a Windows bug.
@@ -821,7 +828,8 @@ Credits:
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Tony Warriner and everyone at Revolution Sofware Ltd. for sharing
-        with us the source of some of their brilliant games, and being
+        with us the source of some of their brilliant games, allowing us to
+        release Beneath a Steel Sky as freeware... and generally being
         supportive above and beyond the call of duty.
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
