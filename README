@@ -227,7 +227,7 @@ and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3
 or OGG.
 
-3.5) Known Problems in ScummVM 0.6.1
+3.5) Known Problems in ScummVM 0.6.1b
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not

@@ -1,10 +1,12 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.6.1b (2004-07-28)
+0.6.1b (2004-07-31)
  General:
    - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
    - ScummVM should no longer crash on 64-bit architectures
+   - Fixed VOC crash when playing DOTT Floppy
+   - Several minor palette fixes
 
 0.6.1 (2004-07-25)
  General:
