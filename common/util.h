@@ -141,7 +141,8 @@ enum Platform {
 	kPlatformAmiga = 1,
 	kPlatformAtariST = 2,
 	kPlatformMacintosh = 3,
-	kPlatformFMTowns = 4
+	kPlatformFMTowns = 4,
+	kPlatformWindows = 5
 /*
 	kPlatformNES,
 	kPlatformSEGA,
