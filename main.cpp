@@ -33,7 +33,9 @@ Gui gui;
 Scumm *g_scumm;
 
 
-#if !defined(__APPLE__) && !defined(__MORPHOS__)
+#if defined(__APPLE__)
+#include <SDL.h>
+#elif !defined(__MORPHOS__)
 #undef main
 #endif
 
