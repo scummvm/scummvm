@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
 		}
 	
 		// (De)activate fullscreen mode as determined by the config settings 
-		if (ConfMan.getBool("fullscreen") != system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+		if (ConfMan.getBool("fullscreen") != (system->property(OSystem::PROP_GET_FULLSCREEN, 0) != 0))
 			system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 	
 		// Create the game engine

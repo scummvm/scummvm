@@ -76,7 +76,7 @@ private:
 	OSystem::MutexRef _mutex;
 	RateConverter *_converter;
 
-	uint32 _panTable[33];
+	int32 _panTable[33];
 
 	FxHandle _fx[MAXFX];
 	MusicHandle _music[MAXMUS + 1];

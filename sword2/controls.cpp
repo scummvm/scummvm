@@ -842,7 +842,7 @@ public:
 		// we need to update music volume immediately.
 
 		if (widget == _musicSwitch) {
-			g_sound->muteMusic(result);
+			g_sound->muteMusic(result != 0);
 		} else if (widget == _musicSlider) {
 			g_sound->setMusicVolume(result);
 			g_sound->muteMusic(result == 0);
