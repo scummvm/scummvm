@@ -67,6 +67,7 @@ public:
 			return NULL;
 	}
 	Sector *findPointSector(Vector3d p, int flags);
+	void findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt);
 
 	void addObjectState(ObjectState *s) {
 		states_.push_back(s);

@@ -277,6 +277,13 @@ Costume *Actor::findCostume(const char *name) {
 }
 
 void Actor::update() {
+	// Snap actor to walkboxes if following them.  This might be
+	// necessary for example after activating/deactivating
+	// walkboxes, etc.
+	if (constrain_ && ! walking_) {
+		Engine::instance()->currScene()->findClosestSector(pos_, NULL, &pos_);
+	}
+
 	if (turning_) {
 		float turnAmt = Engine::instance()->perSecond(turnRate_);
 		float dyaw = destYaw_ - yaw_;
@@ -308,7 +315,7 @@ void Actor::update() {
 			pos_ = destPos_;
 			walking_ = false;
 			turning_ = false;
-			}
+		}
 		else
 			pos_ += dir * walkAmt;
 

@@ -189,6 +189,31 @@ Sector *Scene::findPointSector(Vector3d p, int flags) {
 	return NULL;
 }
 
+void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
+	Sector *resultSect = NULL;
+	Vector3d resultPt = p;
+	float minDist;
+
+	for (int i = 0; i < numSectors_; i++) {
+		Sector *sector = sectors_ + i;
+		if ((sector->type() & 0x1000) == 0 ||
+		    ! sector->visible())
+			continue;
+		Vector3d closestPt = sector->closestPoint(p);
+		float thisDist = (closestPt - p).magnitude();
+		if (resultSect == NULL || thisDist < minDist) {
+			resultSect = sector;
+			resultPt = closestPt;
+			minDist = thisDist;
+		}
+	}
+
+	if (sect != NULL)
+		*sect = resultSect;
+	if (closestPt != NULL)
+		*closestPt = resultPt;
+}
+
 ObjectState *Scene::findState(const char *filename) {
 	for (StateList::iterator i = states_.begin(); i != states_.end();
 	     i++) {

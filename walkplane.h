@@ -42,6 +42,8 @@ public:
 	Vector3d projectToPlane(Vector3d point) const;
 	Vector3d projectToPuckVector(Vector3d v) const;
 
+	Vector3d closestPoint(Vector3d point) const;
+
 private:
 	int numVertices_, id_;
 

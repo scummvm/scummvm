@@ -128,3 +128,37 @@ Vector3d Sector::projectToPuckVector(Vector3d v) const {
 	result.z() -= dot(normal_, v) / normal_.z();
 	return result;
 }
+
+// Find the closest point on the walkplane to the given point
+Vector3d Sector::closestPoint(Vector3d point) const {
+	// First try to project to the plane
+	Vector3d p2 = point;
+	p2 -= (dot(normal_, p2 - vertices_[0])) * normal_;
+	if (isPointInSector(p2))
+		return p2;
+
+	// Now try to project to some edge
+	for (int i = 0; i < numVertices_; i++) {
+		Vector3d edge = vertices_[i + 1] - vertices_[i];
+		Vector3d delta = point - vertices_[i];
+		float scalar = dot(delta, edge) / dot(edge, edge);
+		if (scalar >= 0 && scalar <= 1 &&
+		    delta.x() * edge.y() > delta.y() * edge.x())
+			// That last test is just whether the z-component
+			// of delta cross edge is positive; we don't
+			// want to return opposite edges.
+			return vertices_[i] + scalar * edge;
+	}
+
+	// Otherwise, just find the closest vertex
+	float minDist = (point - vertices_[0]).magnitude();
+	int index = 0;
+	for (int i = 1; i < numVertices_; i++) {
+		float currDist = (point - vertices_[i]).magnitude();
+		if (currDist < minDist) {
+			minDist = currDist;
+			index = i;
+		}
+	}
+	return vertices_[index];
+}
