@@ -1378,12 +1378,21 @@ void Scumm::o5_resourceRoutines() {
 void Scumm::o5_roomOps() {
 	int a,b,c,d,e;
 
+	if(_features & GF_OLD256)
+	{
+		a = getVarOrDirectByte(0x80);
+		b = getVarOrDirectByte(0x40);
+	}
+	
 	_opcode = fetchScriptByte();
 
 	switch(_opcode & 0x1F) {
 	case 1: /* room scroll */
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
+		if(!(_features & GF_OLD256))
+		{
+			a = getVarOrDirectWord(0x80);
+			b = getVarOrDirectWord(0x40);
+		}
 		if (a < 160) a=160;
 		if (b < 160) b=160;
 		if (a > _scrWidth-160) a=_scrWidth-160;
@@ -1393,8 +1402,11 @@ void Scumm::o5_roomOps() {
 		break;
 	case 2: /* room color */
                 if(_features & GF_SMALL_HEADER) {
-                        a = getVarOrDirectWord(0x80);
-                        b = getVarOrDirectWord(0x40);
+			if(!(_features & GF_OLD256))
+			{
+                        	a = getVarOrDirectWord(0x80);
+                        	b = getVarOrDirectWord(0x40);
+			}
                         checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
                         _currentPalette[a]=b;
                         _fullRedraw = 1;
@@ -1404,14 +1416,20 @@ void Scumm::o5_roomOps() {
 		break;
 
 	case 3: /* set screen */
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
+		if(!(_features & GF_OLD256))
+		{
+			a = getVarOrDirectWord(0x80);
+			b = getVarOrDirectWord(0x40);
+		}
 		initScreens(0,a,320,b);
 		break;
 	case 4: /* set palette color */
                if(_features & GF_SMALL_HEADER) {
-                        a = getVarOrDirectWord(0x80);
-                        b = getVarOrDirectWord(0x40);
+		       if(!(_features & GF_OLD256))
+			{
+                        	a = getVarOrDirectWord(0x80);
+                        	b = getVarOrDirectWord(0x40);
+			}
                        checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
                        _currentPalette[a]=b; /*FIXME: should be shadow palette */
                 //        _fullRedraw = 1;
