@@ -40,7 +40,6 @@
 
 // TODO (in no particular order):
 // o Code review/cleanup
-// o DOS demo INSANE
 
 namespace Scumm {
 

@@ -261,8 +261,6 @@ SCUMM
   - Add code for MP3 and Ogg Vorbis compressed datafiles
 * SMUSH:
   - Add code for MP3 encoded sound tracks
-* PC version of FT demo
-  - Add insane support
 * Humongous Entertainment Games
   - Add proper handling of sound in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
