@@ -655,6 +655,7 @@ private:
 void AdlibPart::init (MidiDriver_ADLIB *owner, byte channel) {
 	_owner = owner;
 	_channel = channel;
+	_pri_eff = 127;
 }
 
 MidiDriver *AdlibPart::device() {
