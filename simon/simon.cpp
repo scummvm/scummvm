@@ -40,7 +40,6 @@ static const GameSpecificSettings simon1_settings = {
 	1,										/* VGA_DELAY_BASE */
 	1576 / 4,									/* TABLE_INDEX_BASE */
 	1460 / 4,									/* TEXT_INDEX_BASE */
-	1700 / 4,									/* NUM_GAME_OFFSETS */
 	64,										/* NUM_VIDEO_OP_CODES */
 	1000000,									/* VGA_MEM_SIZE */
 	50000,										/* TABLES_MEM_SIZE */
@@ -59,7 +58,6 @@ static const GameSpecificSettings simon1demo_settings = {
 	1,										/* VGA_DELAY_BASE */
 	1576 / 4,									/* TABLE_INDEX_BASE */
 	1460 / 4,									/* TEXT_INDEX_BASE */
-	1700 / 4,									/* NUM_GAME_OFFSETS */
 	64,										/* NUM_VIDEO_OP_CODES */
 	1000000,									/* VGA_MEM_SIZE */
 	50000,										/* TABLES_MEM_SIZE */
@@ -78,7 +76,6 @@ static const GameSpecificSettings simon2win_settings = {
 	5,										/* VGA_DELAY_BASE */
 	1580 / 4,									/* TABLE_INDEX_BASE */
 	1500 / 4,									/* TEXT_INDEX_BASE */
-	2116 / 4,									/* NUM_GAME_OFFSETS */
 	75,										/* NUM_VIDEO_OP_CODES */
 	2000000,									/* VGA_MEM_SIZE */
 	100000,										/* TABLES_MEM_SIZE */
@@ -97,7 +94,6 @@ static const GameSpecificSettings simon2dos_settings = {
 	5,										/* VGA_DELAY_BASE */
 	1580 / 4,									/* TABLE_INDEX_BASE */
 	1500 / 4,									/* TEXT_INDEX_BASE */
-	2116 / 4,									/* NUM_GAME_OFFSETS */
 	75,										/* NUM_VIDEO_OP_CODES */
 	2000000,									/* VGA_MEM_SIZE */
 	100000,										/* TABLES_MEM_SIZE */
@@ -4244,13 +4240,15 @@ void SimonState::openGameFile()
 		if (_game_file->isOpen() == false)
 			error("cannot open game file '%s'", gss->gme_filename);
 
-		_game_offsets_ptr = (uint32 *)malloc(gss->NUM_GAME_OFFSETS * sizeof(uint32));
+		uint32 size = _game_file->readUint32LE();
+
+		_game_offsets_ptr = (uint32 *)malloc(size);
 		if (_game_offsets_ptr == NULL)
 			error("out of memory, game offsets");
 
-		resfile_read(_game_offsets_ptr, 0, gss->NUM_GAME_OFFSETS * sizeof(uint32));
+		resfile_read(_game_offsets_ptr, 0, size);
 #if defined(SCUMM_BIG_ENDIAN)
-		for (uint r = 0; r < gss->NUM_GAME_OFFSETS; r++)
+		for (uint r = 0; r < size / sizeof(uint32); r++)
 			_game_offsets_ptr[r] = FROM_LE_32(_game_offsets_ptr[r]);
 #endif
 	}

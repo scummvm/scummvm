@@ -118,7 +118,6 @@ struct GameSpecificSettings {
 	uint VGA_DELAY_BASE;
 	uint TABLE_INDEX_BASE;
 	uint TEXT_INDEX_BASE;
-	uint NUM_GAME_OFFSETS;
 	uint NUM_VIDEO_OP_CODES;
 	uint VGA_MEM_SIZE;
 	uint TABLES_MEM_SIZE;
