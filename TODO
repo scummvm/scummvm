@@ -22,6 +22,17 @@ General
   one can compile scummvm in a directory tree seperate from the source tree.
   That would make it possible to build ScummVM with different build options,
   e.g. have one debug build and one optimized build.
+* Add a FilesystemManager or FileManager or so which should unify and/or
+  replace the current File/FilesystemNode classes (and maybe SaveFileManager).
+  The goal is to make these things as portable as possible while keeping it
+  easy to use for the coder. Some new functionality we need:
+  - check for existance of file/directory
+  - check whether given directory is readable/writeable
+  - convert FSNode into a string representation (for prefs file)
+  - convert said string representation back to FSNode
+  Of course that can be added w/o a FileManager class, too - but it might be
+  nice to have all of these integrated.
+  
 
 Documentation
 =============
@@ -47,16 +58,8 @@ Documentation
 
 GUI
 ===
-* LAUNCHER: fix global options dialog to be properly persistent
 * LAUNCHER: add more options to global options dialog
 * LAUNCHER: add more options to game target options dialog 
-* Global & game target options dialogs probably could share some "panes"
-  -> write code allowing this
-  -> also, 'in game' option dialogs (for volume/scaler/etc. settings)
-     could potentially reuse these, too
-* Maybe rearrange Launcher dialog, too, to look a bit like the current
-  SCUMM in-game menu: instead of two button rows, have a single button
-  column at the right side, and the target list on the left side.
 * Remove hardcoded 320x200 assumptions, use game screen size
 * Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
 
