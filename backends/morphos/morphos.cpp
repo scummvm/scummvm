@@ -929,7 +929,7 @@ void OSystem_MorphOS::copy_rect(const byte *src, int pitch, int x, int y, int w,
 
 bool OSystem_MorphOS::AddUpdateRect(WORD x, WORD y, WORD w, WORD h)
 {
-	if (UpdateRects > 20)
+	if (UpdateRects > 25)
 		return false;
 
 	if (x < 0) { w+=x; x = 0; }
