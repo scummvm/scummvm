@@ -53,6 +53,7 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	case kChooseCmd:
 	case kListItemDoubleClickedCmd:
+		_list->endEditMode();
 		setResult(item);
 		close();
 		break;

@@ -86,6 +86,7 @@ public:
 
 	// Made startEditMode for SCUMM's SaveLoadChooser
 	void startEditMode();
+	void endEditMode();
 
 protected:
 	void drawWidget(bool hilite);
@@ -93,7 +94,6 @@ protected:
 	int findItem(int x, int y) const;
 	void scrollBarRecalc();
 
-	void endEditMode();
 	void abortEditMode();
 	
 	Common::Rect getEditRect() const;
