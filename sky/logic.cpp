@@ -401,9 +401,7 @@ void SkyLogic::cursor() {
 }
 
 void SkyLogic::talk() {
-	warning("Stub: SkyLogic::talk");
-	_compact->logic = L_SCRIPT;
-	logicScript();
+	error("Stub: SkyLogic::talk");
 }
 
 void SkyLogic::listen() {
