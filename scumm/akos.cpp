@@ -1245,7 +1245,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < dst.bottom)
 		_draw_bottom = dst.bottom;
 
-	_vm->gdi.decompressImageHE(_outptr, _outwidth, &dst, _srcptr, &src);
+	_vm->gdi.decompressWizImage(_outptr, _outwidth, &dst, _srcptr, &src);
 	return 0;
 }
 
@@ -1381,7 +1381,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				curpos += aksq[curpos + 2];
 				break;
 			case AKC_C08E:
-				//akos_queCommand(7, a, GB(2), 0);
+				akos_queCommand(7, a, GW(2), 0);
 				curpos += 4;
 				break;
 			default:
@@ -1674,7 +1674,9 @@ void ScummEngine::akos_processQueue() {
 			a->offs_y = param_2;
 			break;
 		case 7:
-			if (param_1 != 0) {
+			if (_heversion >= 72) {
+				queueAuxEntry(a->number, param_1);
+			} else if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setVolume(param_1, param_2);
 				}

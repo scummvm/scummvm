@@ -1481,11 +1481,11 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int s
 		r2.bottom -= diff;
 	}
 	if (r1.isValidRect() && r2.isValidRect()) {
-		decompressImageHE(dst, dst_w, &r2, src, &r1);
+		decompressWizImage(dst, dst_w, &r2, src, &r1);
 	}
 }
 
-void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
+void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
@@ -1493,7 +1493,7 @@ void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRec
 	int h, w, xoff;
 	uint16 off;
 	
-	dstPtr = dst + dstRect->left + dstRect->top * dstWidth;
+	dstPtr = dst + dstRect->left + dstRect->top * dstPitch;
 	dataPtr = src;
 	h = srcRect->top;
 	while (h--) {
@@ -1513,7 +1513,7 @@ void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRec
 		xoff = srcRect->left;
 		off = READ_LE_UINT16(dataPtr);
 		w = srcRect->right - srcRect->left + 1;
-		dstPtrNext = dstWidth + dstPtr;
+		dstPtrNext = dstPitch + dstPtr;
 		dataPtrNext = off + 2 + dataPtr;
 		dataPtr += 2;	
 		if (off == 0) goto dec_next;
@@ -1586,6 +1586,141 @@ dec_sub3:			w -= code;
 dec_next:
 		dataPtr = dataPtrNext;
 		dstPtr = dstPtrNext;
+	}
+}
+
+void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *rect) {
+	Common::Rect r1(0, 0, srcw - 1, srch - 1);
+	Common::Rect r2(srcx, srcy, srcx + srcw - 1, srcy + srch - 1);
+	Common::Rect r3;
+	int diff;
+
+	if (rect) {
+		r3 = *rect;
+		Common::Rect r4(0, 0, dstw - 1, dsth - 1);
+		if (!r3.intersects(r4)) {
+			return;
+		}
+	} else {
+		r3 = Common::Rect(0, 0, dstw - 1, dsth - 1);
+	}
+	diff = r2.left - r3.left;
+	if (diff < 0) {
+		r1.left -= diff;
+		r2.left -= diff;
+	}
+	diff = r2.right - r3.right;
+	if (diff > 0) {
+		r1.right -= diff;
+		r2.right -= diff;
+	}
+	diff = r2.top - r3.top;
+	if (diff < 0) {
+		r1.top -= diff;
+		r2.top -= diff;
+	}
+	diff = r2.bottom - r3.bottom;
+	if (diff > 0) {
+		r1.bottom -= diff;
+		r2.bottom -= diff;
+	}
+	if (r1.isValidRect() && r2.isValidRect()) {
+		decompressAuxImage(dst1, dst2, dstw, &r2, src, &r1);
+	}
+}
+
+void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
+  	uint8 *dstCur2, *dstCur1;
+  	const uint8 *srcCur;
+  	uint8 code;
+  
+  	int w = srcRect->right - srcRect->left + 1;
+  	int h = srcRect->bottom - srcRect->top + 1;
+  	int off = dstRect->top * dstPitch + dstRect->left;
+
+  	dst1 += off;
+  	dst2 += off;
+
+  	int n = srcRect->top;
+  	while (n--) {
+		src += READ_LE_UINT16(src) + 2;
+  	}
+
+  	while (h--) {
+  		uint16 var_8 = READ_LE_UINT16(src);
+  		if (var_8) {
+  			int rw = w;
+  			int xoff = srcRect->left;
+  			srcCur = src + 2;
+  			dstCur1 = dst1;
+  			dstCur2 = dst2;
+  			while (xoff > 0) {
+				code = *srcCur++;
+				if (code & 1) {
+					code >>= 1;
+					if (code > xoff) {
+						code -= xoff;
+						goto dec_sub1;
+					}
+					xoff -= code;
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+					if (code > xoff) {
+						code -= xoff;
+						goto dec_sub2;
+					}
+					xoff -= code;
+					++srcCur;
+				} else {
+					code = (code >> 2) + 1;
+					if (code > xoff) {
+						code -= xoff;
+						srcCur += xoff;
+						goto dec_sub3;
+					}
+					xoff -= code;
+					srcCur += code;
+				}
+  			}
+			while (rw > 0) {
+				code = *srcCur++;
+				if (code & 1) {
+					code >>= 1;
+dec_sub1:			dstCur1 += code;
+					dstCur2 += code;
+					rw -= code;					
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+dec_sub2:			rw -= code;
+					if (rw >= 0) {
+						memset(dstCur1, *srcCur++, code);
+						dstCur1 += code;
+						dstCur2 += code;
+					} else {
+						code += rw;
+						memset(dstCur1, *srcCur, code);
+					}
+				} else {
+					code = (code >> 2) + 1;
+dec_sub3:			rw -= code;
+					if (rw >= 0) {
+						memcpy(dstCur1, dstCur2, code);
+						dstCur1 += code;
+						dstCur2 += code;
+					} else {
+						code += rw;
+						memcpy(dstCur1, dstCur2, code);
+					}								
+				}
+			}
+			src += var_8 + 2;
+			dst1 += dstPitch;
+			dst2 += dstPitch;
+		} else {
+			src += 2;
+			dst1 += dstPitch;
+			dst2 += dstPitch;
+		}
 	}
 }
 

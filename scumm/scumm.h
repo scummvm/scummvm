@@ -329,6 +329,16 @@ struct WizPolygon {
 	bool flag;
 };
 
+struct AuxBlock {
+	bool visible;
+	Common::Rect r;
+};
+	
+struct AuxEntry {
+	int actorNum;
+	int subIndex;
+};
+
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
@@ -837,6 +847,18 @@ protected:
 	int getActorFromPos(int x, int y);
 	
 	bool isCostumeInUse(int i) const;
+
+public:
+	/* Actor AuxQueue stuff (HE) */	
+	AuxBlock _auxBlocks[16];
+	uint16 _auxBlocksNum;
+	AuxEntry _auxEntries[16];
+	uint16 _auxEntriesNum;
+
+	void preProcessAuxQueue();
+	void postProcessAuxQueue();
+	void queueAuxBlock(Actor *a);
+	void queueAuxEntry(int actorNum, int subIndex);
 
 public:
 	/* Actor talking stuff */

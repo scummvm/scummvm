@@ -745,8 +745,9 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		// Fatty Bear's Birthday Surprise
 		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
 		break;
-	case 20:
-		// erase aux animation actor?
+	case 20: // HE72+
+		a = derefActor(args[1], "o7_kernelSetFunctions: 20");
+		queueAuxBlock(a);
 		break;
 	case 21:
 		_skipDrawObject = 1;
@@ -759,19 +760,11 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		_fullRedraw = 1;
 		break;
 	case 24:
-		if (_heversion <= 72) {
-			_skipProcessActors = 1;
-		} else {
-			//Pause aux animation
-		}
+		_skipProcessActors = 1;
 		_fullRedraw = 1;
 		break;
 	case 25:
-		if (_heversion <= 72) {
-			_skipProcessActors = 0;
-		} else {
-			//Resume aux animation
-		}
+		_skipProcessActors = 0;
 		_fullRedraw = 1;
 		break;
 	case 30:

@@ -125,6 +125,7 @@ public:
 	CostumeData cost;
 	uint32 condMask;
 	bool talkUnk;
+	AuxBlock auxBlock;
 protected:
 	byte palette[256];
 	int elevation;

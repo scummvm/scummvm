@@ -137,6 +137,8 @@ void Actor::initActor(int mode) {
 
 	clipOverride = _vm->_actorClipOverride;
 
+	auxBlock.visible = false;
+
 	_vm->_classData[number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
 }
 
@@ -492,8 +494,10 @@ void Actor::startAnimActor(int f) {
 			// Causes Zak to lose his body in several scenes, see bug #771508
 			if (_vm->_version >= 3 && f == initFrame)
 				cost.reset();
-			if (_vm->_features & GF_NEW_COSTUMES)
+			if (_vm->_features & GF_NEW_COSTUMES) {
+				auxBlock.visible = false;
 				_vm->akos_decodeData(this, f, (uint) - 1);
+			}
 			else
 				_vm->cost_decodeData(this, f, (uint) - 1);
 			frame = f;
@@ -602,6 +606,12 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			}
 			adjustActorPos();
 		} else {
+			if (_vm->_heversion >= 72) {
+				if (auxBlock.visible) {
+					_vm->queueAuxBlock(this);
+					auxBlock.visible = false;
+				}
+			}
 			hideActor();
 		}
 	} else {
@@ -1356,6 +1366,12 @@ void Actor::setActorCostume(int c) {
 		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
 		
+		if (_vm->_heversion >= 72) {
+			if (auxBlock.visible) {
+				_vm->queueAuxBlock(this);
+			}
+		}
+		
 		if (visible) {
 			if (costume) {
 				_vm->ensureResourceLoaded(rtCostume, costume);
@@ -1867,6 +1883,101 @@ void Actor::setTalkCondition(int slot) {
 bool Actor::isTalkConditionSet(int slot) {	
 	assert(slot >= 1 && slot <= 0x10);
 	return condMask & (1 << (slot - 1));
+}
+
+void ScummEngine::preProcessAuxQueue() {
+	if (!_skipProcessActors) {
+		for (int i = 0; i < _auxBlocksNum; ++i) {
+			AuxBlock *ab = &_auxBlocks[i];
+			assert(ab->r.top <= ab->r.bottom);
+			if (ab->visible) {
+				gdi.copyVirtScreenBuffers(ab->r);
+			}
+		}
+	}
+	_auxBlocksNum = 0;
+}
+
+void ScummEngine::postProcessAuxQueue() {
+	if (!_skipProcessActors) {
+		for (int i = 0; i < _auxEntriesNum; ++i) {
+			AuxEntry *ae = &_auxEntries[i];
+			if (ae->actorNum != -1) {
+				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
+				const uint8 *cost = getResourceAddress(rtCostume, a->costume);
+				
+				int dy = a->offs_y + a->_pos.y - a->getElevation();
+				int dx = a->offs_x + a->_pos.x;
+
+				const uint8 *akax = findResource(MKID('AKAX'), cost);
+				if (!akax) {
+					error("No AKAX block for actor %d", ae->actorNum);
+				}
+				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
+				if (!auxd) {
+					error("No AUXD block for actor %d", ae->actorNum);
+				}
+				const uint8 *axfd = findResourceData(MKID('AXFD'), auxd);
+				if (!axfd) {
+					error("No AXFD block for actor %d", ae->actorNum);
+				} else {
+					uint16 comp = READ_LE_UINT16(axfd);
+					if (comp == 1 || comp == 16) {
+						int x1 = (int16)READ_LE_UINT16(axfd + 2) + dx;
+						int y1 = (int16)READ_LE_UINT16(axfd + 4) + dy;
+						int x2 = (int16)READ_LE_UINT16(axfd + 6);
+						int y2 = (int16)READ_LE_UINT16(axfd + 8);
+						VirtScreen *pvs = &virtscr[kMainVirtScreen];
+						uint8 *dst1 = pvs->getPixels(0, 0);
+						uint8 *dst2 = pvs->getBackPixels(0, 0);
+						switch (comp) {
+						case 1:
+							gdi.copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x1, y1, x2, y2, 0);
+							break;
+						default:
+							warning("unimplemented compression type %d", comp);
+							break;
+						}
+					}
+				}
+				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
+				if (axur) {
+					uint16 n = READ_LE_UINT16(axur); axur += 2;
+					while (n--) {
+						int x = (int16)READ_LE_UINT16(axur + 0) + dx;
+						int y = (int16)READ_LE_UINT16(axur + 2) + dy;
+						int w = (int16)READ_LE_UINT16(axur + 4) + dx;
+						int h = (int16)READ_LE_UINT16(axur + 6) + dy;
+						markRectAsDirty(kMainVirtScreen, x, w, y, h);
+						axur += 8;
+					}
+				}
+				const uint8 *axer = findResourceData(MKID('AXER'), auxd);
+				if (axer) {
+					a->auxBlock.visible  = true;
+					a->auxBlock.r.left   = (int16)READ_LE_UINT16(axer + 0) + dx;
+					a->auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
+					a->auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
+					a->auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
+				}
+			}
+		}
+	}
+	_auxEntriesNum = 0;
+}
+
+void ScummEngine::queueAuxBlock(Actor *a) {
+	assert(_auxBlocksNum < ARRAYSIZE(_auxBlocks));
+	_auxBlocks[_auxBlocksNum] = a->auxBlock;
+	++_auxBlocksNum;
+}
+
+void ScummEngine::queueAuxEntry(int actorNum, int subIndex) {
+	assert(_auxEntriesNum < ARRAYSIZE(_auxEntries));
+	AuxEntry *ae = &_auxEntries[_auxEntriesNum];
+	ae->actorNum = actorNum;
+	ae->subIndex = subIndex;
+	++_auxEntriesNum;
 }
 
 

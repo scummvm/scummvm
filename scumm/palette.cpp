@@ -785,7 +785,6 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 		return NULL;
 
 	size = getResourceDataSize(offs) / 4;
-
 	if ((uint32)idx >= (uint32)size)
 		return NULL;
 

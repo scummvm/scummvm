@@ -691,6 +691,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_skipDrawObject = 0;
 	_skipProcessActors = 0;
+	_auxBlocksNum = 0;
+	memset(_auxBlocks, 0, sizeof(_auxBlocks));
+	_auxEntriesNum = 0;
+	memset(_auxEntries, 0, sizeof(_auxEntries));
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
 	_heSndChannel = 0;
@@ -1820,8 +1824,14 @@ load_game:
 			drawFlashlight();
 			setActorRedrawFlags();
 		}
-
-		processActors();
+		if (_heversion >= 72) {
+			preProcessAuxQueue();
+			processActors();
+			postProcessAuxQueue();
+		} else {
+			processActors();
+		}
+		
 		_fullRedraw = false;
 		if (_version >= 4 && _heversion <= 60)
 			cyclePalette();
@@ -2329,9 +2339,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
-	if (_heversion >= 70 && _WizPolygons) {
-		for (i = 0; i < _WizNumPolygons; i++)
-			memset(&_WizPolygons[i], 0, sizeof(WizPolygon));
+	if (_heversion >= 70 && _WizPolygons) {		
+		memset(_WizPolygons, 0, _WizNumPolygons * sizeof(WizPolygon));
 	}
 
 	for (i = 0; i < _numRoomVariables; i++)
