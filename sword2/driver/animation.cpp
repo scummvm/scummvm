@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "sound/vorbis.h"
 #include "sound/mp3.h"
 
@@ -357,8 +358,18 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
-		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
-		byte *data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
+		byte *data;
+
+		// Russian version substituted latin characters with cyrillic. That's why
+		// it renders completely unreadable with default message
+		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
+			byte msg[] = "Po\344uk - to\344\345ko pev\345: hagmute k\344abuwy Ucke\343n, u\344u nocetute ca\343t npoekta u ckava\343te budeo po\344uku";
+			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
+		} else {
+			byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
+			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
+		}
+
 		FrameHeader *frame = (FrameHeader *) data;
 		SpriteInfo msgSprite;
 		byte *msgSurface;
