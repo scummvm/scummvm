@@ -314,8 +314,8 @@ void Synth::initPCMList() {
 		Bit8u rFlag = tps[i].len & 0x0F;
 		Bit16u rTuneOffset = (tps[i].pitchMSB << 8) | tps[i].pitchLSB;
 		//FIXME:KG: Pick a number, any number. The one below sounded best to me in listening tests, but needs to be confirmed.
-		double STANDARDFREQ = 261.6255653005986346778499935233; // A below Middle C of 440Hz
-		float rTune = (float)(STANDARDFREQ * pow(2.0, (0x5000 - rTuneOffset) / 4096.0));
+		double STANDARDFREQ = 440.0;
+		float rTune = (float)(STANDARDFREQ * pow(2.0, (0x5000 - rTuneOffset) / 4096.0 - 9.0 / 12.0));
 		//printDebug("%f,%d,%d", pTune, tps[i].pitchCoarse, tps[i].pitchFine);
 		PCMList[i].addr = rAddr;
 		PCMList[i].len = rLen;
