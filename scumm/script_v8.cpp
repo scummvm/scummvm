@@ -493,7 +493,6 @@ void Scumm_v8::decodeParseString(int m, int n) {
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 0xD2:
 	case 0xD0:		// SO_PRINT_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
@@ -545,9 +544,9 @@ void Scumm_v8::decodeParseString(int m, int n) {
 			break;
 		}
 		break;
-//	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
-//		error("decodeParseString: SO_PRINT_WRAP");
-//		break;
+	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
+		//warning("decodeParseString: SO_PRINT_WRAP");
+		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}
